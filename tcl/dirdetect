@@ -1,0 +1,49 @@
+ #sh
+ # The next line is executed by /bin/sh, but not Tcl \
+ exec tclsh $0 $1 $2 $3
+
+ if {($argc != 3)} { 
+   puts stderr "usage: dirdetect in template out"
+   exit 
+ }
+
+set PINK "$env(PINK)"
+source "$PINK/tcl/my_exec.tcl"
+
+global DIRDETECT
+set DIRDETECT(name) "dirdetect"
+set DIRDETECT(infilename) [lindex $argv 0]
+set DIRDETECT(templatename) [lindex $argv 1]
+set DIRDETECT(outfilename) [lindex $argv 2]
+my_exec_q cp $DIRDETECT(infilename) "/tmp/$DIRDETECT(name)_t0" 
+
+# expanding template
+#-----------------------------------
+# codage des templates : 
+# 0 = don't care
+# 1 = hit
+# 2 = miss
+
+my_exec_q seuil $DIRDETECT(templatename) 1 2 "/tmp/$DIRDETECT(name)_h0" 
+my_exec_q setorigin "/tmp/$DIRDETECT(name)_h0" $DIRDETECT(templatename)
+
+my_exec_q seuil $DIRDETECT(templatename) 2 3 "/tmp/$DIRDETECT(name)_m0" 
+my_exec_q setorigin "/tmp/$DIRDETECT(name)_m0" $DIRDETECT(templatename)
+
+my_exec_q rotse "/tmp/$DIRDETECT(name)_h0" 90 "/tmp/$DIRDETECT(name)_h90"
+my_exec_q rotse "/tmp/$DIRDETECT(name)_h0" 180 "/tmp/$DIRDETECT(name)_h180"
+my_exec_q rotse "/tmp/$DIRDETECT(name)_h0" 270 "/tmp/$DIRDETECT(name)_h270"
+
+my_exec_q rotse "/tmp/$DIRDETECT(name)_m0" 90 "/tmp/$DIRDETECT(name)_m90"
+my_exec_q rotse "/tmp/$DIRDETECT(name)_m0" 180 "/tmp/$DIRDETECT(name)_m180"
+my_exec_q rotse "/tmp/$DIRDETECT(name)_m0" 270 "/tmp/$DIRDETECT(name)_m270"
+
+my_exec_q hitormiss "/tmp/$DIRDETECT(name)_t0" "/tmp/$DIRDETECT(name)_h0" "/tmp/$DIRDETECT(name)_m0" "/tmp/$DIRDETECT(name)_t1" 
+my_exec_q hitormiss "/tmp/$DIRDETECT(name)_t0" "/tmp/$DIRDETECT(name)_h90" "/tmp/$DIRDETECT(name)_m90" "/tmp/$DIRDETECT(name)_t2" 
+my_exec_q max "/tmp/$DIRDETECT(name)_t1" "/tmp/$DIRDETECT(name)_t2" "/tmp/$DIRDETECT(name)_t1" 
+my_exec_q hitormiss "/tmp/$DIRDETECT(name)_t0" "/tmp/$DIRDETECT(name)_h180" "/tmp/$DIRDETECT(name)_m180" "/tmp/$DIRDETECT(name)_t2" 
+my_exec_q max "/tmp/$DIRDETECT(name)_t1" "/tmp/$DIRDETECT(name)_t2" "/tmp/$DIRDETECT(name)_t1" 
+my_exec_q hitormiss "/tmp/$DIRDETECT(name)_t0" "/tmp/$DIRDETECT(name)_h270" "/tmp/$DIRDETECT(name)_m270" "/tmp/$DIRDETECT(name)_t2" 
+my_exec_q max "/tmp/$DIRDETECT(name)_t1" "/tmp/$DIRDETECT(name)_t2" "/tmp/$DIRDETECT(name)_t1" 
+
+my_exec_q cp "/tmp/$DIRDETECT(name)_t1" $DIRDETECT(outfilename) 

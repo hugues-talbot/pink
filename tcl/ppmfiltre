@@ -1,0 +1,42 @@
+#sh
+# The next line is executed by /bin/sh, but not Tcl \
+exec tclsh $0 $1 $2 $3
+
+# reads a file
+#-----------------------------------
+proc my_read_val {filename} {
+  set input [open $filename]
+  set tag [gets $input]
+  set line [gets $input]
+  scan $line "%d %g" v1 v2
+  close $input
+  return $v2
+}
+
+if {$argc != 2} { 
+  puts stderr "usage: ppm2gifanim first last"
+  exit 
+}
+
+# get input image file name as first argument
+set PPMFILTER(first) [lindex $argv 0]
+set PPMFILTER(last) [lindex $argv 1]
+set PPMFILTER(seuil) 50000
+
+set data ""
+set i $PPMFILTER(first)
+while {$i <= $PPMFILTER(last)} {
+  set filecount [format "%08d" $i]
+  if {[file exists "$filecount.ppm"]} {
+    catch { exec rgb2hls "$filecount.ppm" _h _l _s } mes
+    catch { exec selndg _l 0 0 _s } mes
+    catch { exec volume _s _v } mes
+    set v [expr [my_read_val _v] / 255]
+    puts "$filecount $v"
+    if {$v > $PPMFILTER(seuil)} {
+      puts "supprimer $filecount.ppm"
+      catch { exec rm -f $filecount.ppm } mes
+    }
+  }
+  set i [expr $i+1]
+}

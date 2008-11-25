@@ -1,0 +1,19 @@
+#!/bin/sh
+USAGE="Usage: $0 in connex out"
+if [ $# -gt 3 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 3 ]
+then
+	echo $USAGE
+        exit
+fi
+label        $1      $2     min     /tmp/_bouchetrous.l
+cadre        $1     /tmp/_bouchetrous.c
+seuil       /tmp/_bouchetrous.l  1  /tmp/_bouchetrous.s
+geodilat    /tmp/_bouchetrous.c  /tmp/_bouchetrous.s  $2 -1 /tmp/_bouchetrous.r
+inverse     /tmp/_bouchetrous.r  $3
+rm -f       /tmp/_bouchetrous.?
+

@@ -1,0 +1,4 @@
+3dkhalimskize $1 h _1
+3dborder _1 _1
+pgm2vtk _1 1 _1.vtk
+multirender _1.vtk

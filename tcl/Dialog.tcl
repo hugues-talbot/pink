@@ -1,0 +1,81 @@
+proc Dialog_Create {top title args} {
+	global dialog
+	if [winfo exists $top] {
+		switch -- [wm state $top] {
+			normal {
+				# Raise a buried window
+				raise $top
+			}
+			withdrawn -
+			iconic {
+				# Open and restore geometry
+				wm deiconify $top
+				catch {wm geometry $top $dialog(geo,$top)}
+			}
+		}
+		return 0
+	} else {
+		eval {toplevel $top} $args
+		wm title $top $title
+		return 1
+	}
+}
+
+proc Dialog_Wait {top varName {focus {}}} {
+	upvar $varName var
+
+	# Poke the variable if the user nukes the window
+	bind $top <Destroy> [list set $varName cancel]
+
+	# Grab focus for the dialog
+	if {[string length $focus] == 0} {
+		set focus $top
+	}
+	set old [focus -displayof $top]
+	focus $focus
+	catch {tkwait visibility $top}
+	catch {grab $top}
+
+	# Wait for the dialog to complete
+	tkwait variable $varName
+	catch {grab release $top}
+	focus $old
+}
+
+proc Dialog_Dismiss {top} {
+	global dialog
+	# Save current size and position
+	catch {
+		# window may have been deleted
+		set dialog(geo,$top) [wm geometry $top]
+		wm withdraw $top
+	}
+}
+
+proc Dialog_Prompt { string defaultval} {
+        global prompt
+        set prompt(result) $defaultval
+	set f .prompt
+	if [Dialog_Create $f "Prompt" -borderwidth 10] {
+		message $f.msg -text $string -aspect 1000
+		entry $f.entry -textvariable prompt(result)
+		set b [frame $f.buttons]
+		pack $f.msg $f.entry $f.buttons -side top -fill x
+		pack $f.entry -pady 5
+		button $b.ok -text OK -command {set prompt(ok) 1}
+		button $b.cancel -text Cancel \
+			-command {set prompt(ok) 0}
+		pack $b.ok -side left
+		pack $b.cancel -side right
+		bind $f.entry <Return> {set prompt(ok) 1 ; break}
+		bind $f.entry <Control-c> {set prompt(ok) 0 ; break}
+	}
+	set prompt(ok) 0
+	Dialog_Wait $f prompt(ok) $f.entry
+	Dialog_Dismiss $f
+	if {$prompt(ok)} {
+		return $prompt(result)
+	} else {
+		return {}
+	}
+}

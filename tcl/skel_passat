@@ -1,0 +1,49 @@
+#sh
+# The next line is executed by /bin/sh, but not Tcl \
+exec tclsh $0 $1 $2 $3
+
+if {($argc != 3)} { 
+  puts stderr "usage: passat in prio out"
+  exit 
+}
+
+set PINK "$env(PINK)"
+source "$PINK/tcl/my_exec.tcl"
+
+global PASSAT
+set PASSAT(name) "passat"
+set PASSAT(infilename) [lindex $argv 0]
+set PASSAT(prio) [lindex $argv 1]
+set PASSAT(outfilename) [lindex $argv 2]
+
+# reads a file
+#-----------------------------------
+proc my_read_val {filename} {
+  set input [open $filename]
+  set tag [gets $input]
+  set line [gets $input]
+  scan $line "%d" v1
+  close $input
+  return $v1
+}
+
+proc tmpfile {tmpname} {
+  global PASSAT
+  return [file join "/tmp" "$PASSAT(name)_$tmpname"]
+}
+
+
+my_exec_q skeleton $PASSAT(infilename) $PASSAT(prio) 26 [tmpfile 1]
+my_exec_q simplepair [tmpfile 1] [tmpfile 2]
+my_exec_q area [tmpfile 2] [tmpfile 3]
+set res [my_read_val [tmpfile 3]]
+while {$res != 0} {
+  puts "PASSAT: $res"
+  my_exec_q sub [tmpfile 1] [tmpfile 2] [tmpfile 4]
+  my_exec_q skeleton [tmpfile 4] $PASSAT(prio) 26 [tmpfile 1]
+  my_exec_q simplepair [tmpfile 1] [tmpfile 2]
+  my_exec_q area [tmpfile 2] [tmpfile 3]
+  set res [my_read_val [tmpfile 3]]
+}
+
+my_exec_q cp [tmpfile 1] $PASSAT(outfilename)

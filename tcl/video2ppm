@@ -1,0 +1,44 @@
+ # Video sequence converter
+ # Michel couprie - décembre 2005
+ #sh
+ # The next line is executed by /bin/sh, but not Tcl \
+ exec tclsh $0 $1 $2 $3 
+
+ if {($argc != 1) && ($argc != 2)} { 
+   puts stderr "usage: videoview sequence \[nframes\]"
+   exit 
+ }
+
+ set PINK "$env(PINK)"
+ source "$PINK/tcl/my_exec.tcl"
+ source "$PINK/tcl/my_write.tcl"
+
+ # ============================================================
+ # Global VARIABLES
+ # ============================================================
+
+ global VV
+ # infilename  : input file name
+ # ds : depth (number of frames)
+
+ set VV(infilename) [lindex $argv 0]
+ if ![file exists $VV(infilename)] {
+   puts stderr "cannot find input file: $VV(infilename)"
+   exit
+ }
+ if {($argc == 2)} { 
+   set VV(ds) [lindex $argv 1]
+ } else {
+   set VV(ds) 1000000000
+ }
+ set VV(ecount) 0
+
+ # ============================================================
+ # VIDEO to IMAGE CONVERSION
+ # ============================================================
+
+ if {($argc == 2)} { 
+   my_exec_q mplayer -nosound -vo pnm -frames $VV(ds) $VV(infilename)
+ } else {
+   my_exec_q mplayer -nosound -vo pnm $VV(infilename)
+ }

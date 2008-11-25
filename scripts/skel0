@@ -1,0 +1,16 @@
+#!/bin/sh
+USAGE="Usage: $0 in out"
+if [ $# -gt 2 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 2 ]
+then
+	echo $USAGE
+        exit
+fi
+medialaxis $1 3 _m
+seuil _m 1 _ms
+distc $1 3 _d
+skeleucl $1 8 _ms $2

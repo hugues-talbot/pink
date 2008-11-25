@@ -1,0 +1,29 @@
+ #sh
+ # The next line is executed by /bin/sh, but not Tcl \
+ exec tclsh $0 $1 $2
+
+ if {$argc != 2} { 
+   puts stderr "usage: videothumb in.mpg out.jpg"
+   exit 
+ }
+
+set PINK "$env(PINK)"
+source "$PINK/tcl/my_exec.tcl"
+source "$PINK/tcl/my_write.tcl"
+
+global VIDEOTHUMB
+set VIDEOTHUMB(name) "videothumb"
+set VIDEOTHUMB(infilename) [lindex $argv 0]
+set VIDEOTHUMB(outfilename) [lindex $argv [expr $argc - 1]]
+
+#converting video file
+#---------------------------
+my_exec_q mplayer -nosound -vo pnm -frames 5 $VIDEOTHUMB(infilename)
+#my_exec_q mpeg2decode -b $VIDEOTHUMB(infilename) -f -r -a4 -d4 -o3 0000%04d
+
+#writing file
+#---------------------------
+my_exec_q convert 00000004.ppm "$VIDEOTHUMB(outfilename)"
+foreach file [glob -nocomplain "0000000?.ppm"] {
+  my_exec_q rm $file
+}
