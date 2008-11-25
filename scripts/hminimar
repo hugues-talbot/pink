@@ -1,0 +1,22 @@
+#!/bin/sh
+USAGE="Usage: $0 in h out"
+if [ $# -gt 3 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 3 ]
+then
+	echo $USAGE
+        exit
+fi
+addconst     $1      $2  _$1.tmp1
+reconseros  _$1.tmp1 $1   vois4    _$1.tmp1
+minima      _$1.tmp1 4   _$1.tmp2
+inverse     _$1.tmp2 _$1.tmp2
+max         _$1.tmp2 $1  _$1.tmp3
+min         _$1.tmp11 _$1.tmp3  $3
+rm           _$1.tmp1
+rm           _$1.tmp2
+rm           _$1.tmp3
+

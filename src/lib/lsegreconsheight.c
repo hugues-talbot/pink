@@ -1,0 +1,189 @@
+/* $Id: lsegreconsheight.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* 
+   Operateurs utilisant l'arbre des composantes.
+   =============================================
+   (algorithme de P. Salembier)
+
+   Operateur : 
+      lsegreconsheight (avec reconstruction basee sur la signature de l'attribut contrast)
+
+*/
+
+#include <stdio.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <math.h>
+#include <mccodimage.h>
+#include <mcimage.h>
+#include <mclifo.h>
+#include <mcfahsalembier.h>
+#include <mcutil.h>
+#include <mcindic.h>
+#include <lsegreconsheight.h>
+
+#define PARANO
+/*
+#define VERBOSE
+#define DEBUG
+#define DEBUGRECONS
+#define DEBUGFLOOD
+*/
+
+#define ATTR_HEIGHT
+#define ATTR_PERIM
+#define ATTR_HBORD
+#define ATTR_CONTRAST
+
+#include "lattrib.c"
+
+/* ======================================================================== */
+/* ======================================================================== */
+/* OPERATEURS BASES SUR L'ARBRE DES COMPOSANTES */
+/* ======================================================================== */
+/* ======================================================================== */
+
+/* ==================================== */
+int32_t lsegreconsheight(struct xvimage *image, int32_t connex, int32_t param)
+/* ==================================== */
+{
+  register int32_t i, k, l;         /* index muet */
+  register int32_t w, x, y, z;      /* index muet de pixel */
+  int32_t rs = rowsize(image);      /* taille ligne */
+  int32_t cs = colsize(image);      /* taille colonne */
+  int32_t N = rs * cs;              /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  Fah * FAH;                    /* la file d'attente hierarchique */
+  int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
+  uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
+                                /* en sortie, contient le numero de la composante de niveau h */
+                                /* qui contient le pixel (avec h = valeur du pixel) */
+  uint32_t *number_nodes;   /* nombre de composantes par niveau */
+  uint8_t *node_at_level; /* tableau de booleens */
+  CompTree * TREE;              /* resultat : l'arbre des composantes */
+  CompactTree * CTREE;          /* resultat : l'arbre des composantes compacte' */
+
+  if (depth(image) != 1) 
+  {
+    fprintf(stderr, "lsegreconsheight: cette version ne traite pas les images volumiques\n");
+    exit(0);
+  }
+
+  switch (connex)
+  {
+    case 4: incr_vois = 2; break;
+    case 8: incr_vois = 1; break;
+    default: 
+      fprintf(stderr, "lsegreconsheight: mauvaise connexite: %d\n", connex);
+      return 0;
+  } /* switch (connex) */
+
+  FAH = CreeFahVide(N);
+
+  STATUS = (uint32_t *)calloc(1,N * sizeof(int32_t));
+  if (STATUS == NULL)
+  {   fprintf(stderr, "lsegreconsheight() : malloc failed for STATUS\n");
+      return(0);
+  }
+
+  number_nodes = (uint32_t *)calloc(256, sizeof(int32_t));
+  if (number_nodes == NULL)
+  {   fprintf(stderr, "lsegreconsheight() : calloc failed for number_nodes\n");
+      return(0);
+  }
+
+  node_at_level = (uint8_t *)calloc(256, sizeof(char));
+  if (node_at_level == NULL)
+  {   fprintf(stderr, "lsegreconsheight() : calloc failed for node_at_level\n");
+      return(0);
+  }
+  
+  TREE = InitCompTree(N);
+  if (TREE == NULL)
+  {   fprintf(stderr, "lsegreconsheight() : InitCompTree failed\n");
+      return(0);
+  }
+
+  /* ================================================ */
+  /* INITIALISATIONS                                  */
+  /* ================================================ */
+
+  for (i = 0; i < N; i++) STATUS[i] = NOT_ANALYZED;
+  k = 0;             /* recherche un pixel k de niveau de gris minimal dans l'image */
+  for (i = 1; i < N; i++) if (F[i] < F[k]) k = i;
+  FahPush(FAH, k, F[k]);
+
+#ifdef VERBOSE
+  fprintf(stderr, "init terminee\n");
+#endif
+
+  /* ================================================ */
+  /* APPEL FONCTION RECURSIVE flood                   */
+  /* ================================================ */
+
+  (void)flood(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
+
+
+#ifdef VERBOSE
+  fprintf(stderr, "flood terminee\n");
+#endif
+#ifdef DEBUG
+  AfficheCompTree(TREE);
+#endif
+
+  CTREE = CompTree2CompactTree(TREE, number_nodes);
+
+#ifdef VERBOSE
+  fprintf(stderr, "CompTree2CompactTree terminee\n");
+#endif
+#ifdef DEBUG
+  AfficheCompactTree(CTREE);
+#endif
+
+  CalculeAttributs(CTREE);
+
+#ifdef VERBOSE
+  fprintf(stderr, "CalculeAttributs terminee\n");
+#endif
+
+  (void)FiltreHeightRec(CTREE, 0, param);
+
+#ifdef VERBOSE
+  fprintf(stderr, "FiltreHeightRec terminee\n");
+#endif
+
+  (void)MaximiseSegmentation(CTREE, 0);
+
+#ifdef VERBOSE
+  fprintf(stderr, "MaximiseSegmentation terminee\n");
+#endif
+
+  Reconstruction(CTREE, 0);
+
+#ifdef VERBOSE
+  fprintf(stderr, "Reconstruction terminee\n");
+#endif
+
+#ifdef DEBUG
+  AfficheCompactTree(CTREE);
+  WriteCompactTree(CTREE, "ctree.graph");
+#endif
+
+  RecupereSegmentation(CTREE, STATUS, rs, N, F);
+
+#ifdef VERBOSE
+  fprintf(stderr, "RecupereSegmentation terminee\n");
+#endif
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  FahTermine(FAH);
+  TermineCompTree(TREE);
+  TermineCompactTree(CTREE);
+  free(STATUS);
+  free(number_nodes);
+  free(node_at_level);
+  return(1);
+} /* lsegreconsheight() */

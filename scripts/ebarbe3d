@@ -1,0 +1,36 @@
+#!/bin/sh
+USAGE="Usage: $0 in connex k out"
+if [ $# -gt 4 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 4 ]
+then
+	echo $USAGE
+        exit
+fi
+
+if [ $2 -eq 6 ]
+then
+	CONNEX=6
+	CONNEXBAR=26
+else
+  if [ $2 -eq 26 ]
+  then
+	CONNEX=26
+	CONNEXBAR=6
+  else
+        echo "bad value for connex (6,26 only)"
+        exit
+  fi
+fi
+hthin       $1 null $CONNEXBAR $3 /tmp/_ebarbe2
+ptend       /tmp/_ebarbe2 $CONNEX /tmp/_ebarbe3
+ptisolated  /tmp/_ebarbe2 $CONNEX /tmp/_ebarbe4
+max         /tmp/_ebarbe4 /tmp/_ebarbe3 /tmp/_ebarbe5
+sub         $1 /tmp/_ebarbe2 /tmp/_ebarbe6
+max         /tmp/_ebarbe6 /tmp/_ebarbe5 /tmp/_ebarbe7
+geodilat    /tmp/_ebarbe5 /tmp/_ebarbe7 $CONNEX $3 /tmp/_ebarbe8
+max         /tmp/_ebarbe2 /tmp/_ebarbe8 $4
+#rm -f       /tmp/_ebarbe?

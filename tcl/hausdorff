@@ -1,0 +1,62 @@
+ #sh
+ # The next line is executed by /bin/sh, but not Tcl \
+ exec tclsh $0 $1 $2 $3
+
+ if {(($argc != 2) && ($argc != 3))} { 
+   puts stderr "usage: hausdorff in1 in2 [codedist]"
+   exit 
+ }
+
+set PINK "$env(PINK)"
+source "$PINK/tcl/my_exec.tcl"
+
+global HAUSDORFF
+set HAUSDORFF(name) "hausdorff"
+set HAUSDORFF(infilename1) [lindex $argv 0]
+set HAUSDORFF(infilename2) [lindex $argv 1]
+if {($argc == 2)} { 
+   set HAUSDORFF(codedist) 0 
+# approximate euclidean distance (truncated)
+} else {
+   set HAUSDORFF(codedist) [lindex $argv 2]
+}
+
+proc tmpfile {tmpname} {
+  global HAUSDORFF
+  return [file join "/tmp" "$HAUSDORFF(name)_$tmpname"]
+}
+
+my_exec_q cp $HAUSDORFF(infilename1) [tmpfile t1] 
+my_exec_q cp $HAUSDORFF(infilename2) [tmpfile t2] 
+
+# reads a file
+#-----------------------------------
+proc my_read_val {filename} {
+  set input [open $filename]
+  set tag [gets $input]
+  set line [gets $input]
+  scan $line "%d %d" v1 v2
+  close $input
+  return $v2
+}
+
+my_exec_q dist [tmpfile t1] $HAUSDORFF(codedist) [tmpfile d1]
+my_exec_q dist [tmpfile t2] $HAUSDORFF(codedist) [tmpfile d2]
+my_exec_q seuil2 [tmpfile t1] 0 1 1 1 [tmpfile b1]
+my_exec_q seuil2 [tmpfile t2] 0 1 1 1 [tmpfile b2]
+my_exec_q mult [tmpfile d1] [tmpfile b2] [tmpfile d1b2]
+my_exec_q mult [tmpfile d2] [tmpfile b1] [tmpfile d2b1]
+my_exec_q max1 [tmpfile d1b2] [tmpfile m1]
+my_exec_q max1 [tmpfile d2b1] [tmpfile m2]
+set m1 [my_read_val [tmpfile m1]]
+set m2 [my_read_val [tmpfile m2]]
+if {($m1 > $m2)} { 
+   set max $m1
+} else {
+   set max $m2
+}
+puts "hausdorff distance: $max"
+
+foreach file [glob -nocomplain [tmpfile "*"]] {
+  catch {exec rm $file} result
+}

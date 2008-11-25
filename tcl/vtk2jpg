@@ -1,0 +1,44 @@
+# The next line is executed by /bin/sh, but not Tcl \
+exec vtk $0 $1 $2
+
+package require vtk
+package require vtkinteraction
+
+# get input image file name as first argument
+if {$argc != 2} { 
+  puts stderr "usage: vtk2jpg in.vtk out.jpg"
+  exit 
+}
+set infilename [lindex $argv 0]
+set outfilename [lindex $argv 1]
+
+# create renderer and window
+vtkRenderer ren1
+    ren1 SetViewport 0 0 1 1
+    ren1 SetBackground 1 1 1
+vtkRenderWindow renWin
+    renWin AddRenderer ren1 
+
+# load geometry
+vtkPolyDataReader obj1
+    obj1 SetFileName $infilename
+vtkPolyDataNormals normals1
+    normals1 SetInput [obj1 GetOutput]
+    normals1 FlipNormalsOn
+vtkPolyDataMapper obj1Mapper
+    obj1Mapper SetInput [normals1 GetOutput]
+vtkActor obj1Actor
+    obj1Actor SetMapper obj1Mapper
+
+ren1 AddProp obj1Actor
+ren1 ResetCamera
+renWin Render
+
+vtkWindowToImageFilter w2i
+w2i SetInput renWin
+
+vtkJPEGWriter writer
+writer SetInput [w2i GetOutput]
+writer SetFileName $outfilename
+writer Write
+exit

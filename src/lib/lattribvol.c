@@ -1,0 +1,470 @@
+/* $Id: lattribvol.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* 
+   Operateurs connexes bases sur l'attribut volume
+   =============================================
+   (algorithme de P. Salembier)
+
+   Operateurs : 
+      lsegmentvol
+      lvolmaxima
+      lvolselnb   (selection d'un nombre donne de composantes)
+
+   Michel Couprie - 1999-2002
+*/
+
+#include <stdio.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <math.h>
+#include <mccodimage.h>
+#include <mcimage.h>
+#include <mclifo.h>
+#include <mcfahsalembier.h>
+#include <mcutil.h>
+#include <mcindic.h>
+#include <lattribvol.h>
+
+#define PARANO
+/*
+#define VERBOSE
+#define DEBUG
+#define DEBUGRECONS
+#define DEBUGFLOOD
+*/
+
+#define ATTR_SURF
+#define ATTR_VOL
+
+#include "lattrib.c"
+
+/* ======================================================================== */
+/* ======================================================================== */
+/* OPERATEURS BASES SUR L'ARBRE DES COMPOSANTES */
+/* ======================================================================== */
+/* ======================================================================== */
+
+/* ==================================== */
+int32_t lsegmentvol(struct xvimage *image, int32_t connex, int32_t param, int32_t maximise)
+/* ==================================== */
+{
+  register int32_t i, k, l;         /* index muet */
+  register int32_t w, x, y, z;      /* index muet de pixel */
+  int32_t rs = rowsize(image);      /* taille ligne */
+  int32_t cs = colsize(image);      /* taille colonne */
+  int32_t ds = depth(image);        /* nb plans */
+  int32_t ps = rs * cs;             /* taille plan */
+  int32_t N = ps * ds;              /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  Fah * FAH;                    /* la file d'attente hierarchique */
+  int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
+  uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
+                                /* en sortie, contient le numero de la composante de niveau h */
+                                /* qui contient le pixel (avec h = valeur du pixel) */
+  uint32_t *number_nodes;   /* nombre de composantes par niveau */
+  uint8_t *node_at_level; /* tableau de booleens */
+  CompTree * TREE;              /* resultat : l'arbre des composantes */
+  CompactTree * CTREE;          /* resultat : l'arbre des composantes compacte' */
+  int32_t nbcomp;
+
+  switch (connex)
+  {
+    case 4: incr_vois = 2; break;
+    case 8: incr_vois = 1; break;
+  } /* switch (connex) */
+
+  FAH = CreeFahVide(N);
+
+  STATUS = (uint32_t *)calloc(1,N * sizeof(int32_t));
+  if (STATUS == NULL)
+  {   fprintf(stderr, "lsegmentvol() : malloc failed for STATUS\n");
+      return(0);
+  }
+
+  number_nodes = (uint32_t *)calloc(256, sizeof(int32_t));
+  if (number_nodes == NULL)
+  {   fprintf(stderr, "lsegmentvol() : calloc failed for number_nodes\n");
+      return(0);
+  }
+
+  node_at_level = (uint8_t *)calloc(256, sizeof(char));
+  if (node_at_level == NULL)
+  {   fprintf(stderr, "lsegmentvol() : calloc failed for node_at_level\n");
+      return(0);
+  }
+  
+  TREE = InitCompTree(N);
+  if (TREE == NULL)
+  {   fprintf(stderr, "lsegmentvol() : InitCompTree failed\n");
+      return(0);
+  }
+
+  /* ================================================ */
+  /* INITIALISATIONS                                  */
+  /* ================================================ */
+
+  for (i = 0; i < N; i++) STATUS[i] = NOT_ANALYZED;
+  k = 0;             /* recherche un pixel k de niveau de gris minimal dans l'image */
+  for (i = 1; i < N; i++) if (F[i] < F[k]) k = i;
+  FahPush(FAH, k, F[k]);
+
+#ifdef VERBOSE
+  fprintf(stderr, "init terminee\n");
+#endif
+
+  /* ================================================ */
+  /* APPEL FONCTION RECURSIVE flood                   */
+  /* ================================================ */
+
+  if ((connex == 4) || (connex == 8))
+    (void)flood(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
+  else
+    (void)flood3d(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
+
+#ifdef VERBOSE
+  fprintf(stderr, "flood terminee\n");
+#endif
+#ifdef DEBUG
+  AfficheCompTree(TREE);
+#endif
+
+  CTREE = CompTree2CompactTree(TREE, number_nodes);
+
+#ifdef VERBOSE
+  fprintf(stderr, "CompTree2CompactTree terminee\n");
+#endif
+
+  CalculeAttributs(CTREE);
+
+#ifdef VERBOSE
+  fprintf(stderr, "CalculeAttributs terminee\n");
+#endif
+#ifdef DEBUG
+  AfficheCompactTree(CTREE);
+#endif
+
+  (void)FiltreVolRec(CTREE, 0, param);
+
+#ifdef VERBOSE
+  fprintf(stderr, "FiltreVolRec terminee\n");
+#endif
+
+  if ( maximise )
+    (void)MaximiseSegmentation(CTREE, 0);
+
+  nbcomp = NbLeafs(CTREE, 0);
+
+#ifdef VERBOSE
+  fprintf(stderr, "nombre de composantes pertinentes : %d\n", nbcomp);
+#endif
+
+#ifdef DEBUG
+  AfficheCompactTree(CTREE);
+  WriteCompactTree(CTREE, "ctree.graph");
+#endif
+
+  RecupereSegmentation(CTREE, STATUS, rs, N, F);
+
+#ifdef VERBOSE
+  fprintf(stderr, "RecupereSegmentation terminee\n");
+#endif
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  FahTermine(FAH);
+  TermineCompTree(TREE);
+  TermineCompactTree(CTREE);
+  free(STATUS);
+  free(number_nodes);
+  free(node_at_level);
+  return(1);
+} /* lsegmentvol() */
+
+/* ==================================== */
+int32_t lvolmaxima(struct xvimage *image, int32_t connex, int32_t param)
+/* ==================================== */
+{
+  register int32_t i, k, l;         /* index muet */
+  register int32_t w, x, y, z;      /* index muet de pixel */
+  int32_t rs = rowsize(image);      /* taille ligne */
+  int32_t cs = colsize(image);      /* taille colonne */
+  int32_t ds = depth(image);        /* nb plans */
+  int32_t ps = rs * cs;             /* taille plan */
+  int32_t N = ps * ds;              /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  Fah * FAH;                    /* la file d'attente hierarchique */
+  int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
+  uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
+                                /* en sortie, contient le numero de la composante de niveau h */
+                                /* qui contient le pixel (avec h = valeur du pixel) */
+  uint32_t *number_nodes;   /* nombre de composantes par niveau */
+  uint8_t *node_at_level; /* tableau de booleens */
+  CompTree * TREE;              /* resultat : l'arbre des composantes */
+  CompactTree * CTREE;          /* resultat : l'arbre des composantes compacte' */
+
+  switch (connex)
+  {
+    case 4: incr_vois = 2; break;
+    case 8: incr_vois = 1; break;
+  } /* switch (connex) */
+
+  FAH = CreeFahVide(N);
+
+  STATUS = (uint32_t *)calloc(1,N * sizeof(int32_t));
+  if (STATUS == NULL)
+  {   fprintf(stderr, "lvolmaxima() : malloc failed for STATUS\n");
+      return(0);
+  }
+
+  number_nodes = (uint32_t *)calloc(256, sizeof(int32_t));
+  if (number_nodes == NULL)
+  {   fprintf(stderr, "lvolmaxima() : calloc failed for number_nodes\n");
+      return(0);
+  }
+
+  node_at_level = (uint8_t *)calloc(256, sizeof(char));
+  if (node_at_level == NULL)
+  {   fprintf(stderr, "lvolmaxima() : calloc failed for node_at_level\n");
+      return(0);
+  }
+  
+  TREE = InitCompTree(N);
+  if (TREE == NULL)
+  {   fprintf(stderr, "lvolmaxima() : InitCompTree failed\n");
+      return(0);
+  }
+
+  /* ================================================ */
+  /* INITIALISATIONS                                  */
+  /* ================================================ */
+
+  for (i = 0; i < N; i++) STATUS[i] = NOT_ANALYZED;
+  k = 0;             /* recherche un pixel k de niveau de gris minimal dans l'image */
+  for (i = 1; i < N; i++) if (F[i] < F[k]) k = i;
+  FahPush(FAH, k, F[k]);
+
+#ifdef VERBOSE
+  fprintf(stderr, "init terminee\n");
+#endif
+
+  /* ================================================ */
+  /* APPEL FONCTION RECURSIVE flood                   */
+  /* ================================================ */
+  
+  if ((connex == 4) || (connex == 8))
+    (void)flood(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
+  else
+    (void)flood3d(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F); 
+
+#ifdef VERBOSE
+  fprintf(stderr, "flood terminee\n");
+#endif
+#ifdef DEBUG
+  AfficheCompTree(TREE);
+#endif
+
+  CTREE = CompTree2CompactTree(TREE, number_nodes);
+
+#ifdef VERBOSE
+  fprintf(stderr, "CompTree2CompactTree terminee\n");
+#endif
+#ifdef DEBUG
+  AfficheCompactTree(CTREE);
+#endif
+
+  CalculeAttributs(CTREE);
+
+#ifdef VERBOSE
+  fprintf(stderr, "CalculeAttributs terminee\n");
+#endif
+
+  (void)FiltreVolRec(CTREE, 0, param);
+
+#ifdef VERBOSE
+  fprintf(stderr, "FiltreVolRec terminee\n");
+#endif
+
+#ifdef DEBUG
+  AfficheCompactTree(CTREE);
+  WriteCompactTree(CTREE, "ctree.graph");
+#endif
+
+  RecupereImageFiltree(CTREE, STATUS, rs, N, F);
+
+#ifdef VERBOSE
+  fprintf(stderr, "RecupereImageFiltree terminee\n");
+#endif
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  FahTermine(FAH);
+  TermineCompTree(TREE);
+  TermineCompactTree(CTREE);
+  free(STATUS);
+  free(number_nodes);
+  free(node_at_level);
+  return(1);
+} /* lvolmaxima() */
+
+/* ==================================== */
+int32_t lvolselnb(struct xvimage *image, int32_t connex, int32_t param)
+/* ==================================== */
+{
+  register int32_t i, k, l;         /* index muet */
+  register int32_t w, x, y, z;      /* index muet de pixel */
+  int32_t rs = rowsize(image);      /* taille ligne */
+  int32_t cs = colsize(image);      /* taille colonne */
+  int32_t ds = depth(image);        /* nb plans */
+  int32_t ps = rs * cs;             /* taille plan */
+  int32_t N = ps * ds;              /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  Fah * FAH;                    /* la file d'attente hierarchique */
+  int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
+  uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
+                                /* en sortie, contient le numero de la composante de niveau h */
+                                /* qui contient le pixel (avec h = valeur du pixel) */
+  uint32_t *number_nodes;   /* nombre de composantes par niveau */
+  uint8_t *node_at_level; /* tableau de booleens */
+  CompTree * TREE;              /* resultat : l'arbre des composantes */
+  CompactTree * cpct;          /* resultat : l'arbre des composantes compacte' */
+  int32_t nbcomp, nbfeuilles;
+  int32_t *A;                       /* tableau pour le tri des composantes par hauteurs croissantes */
+
+  switch (connex)
+  {
+    case 4: incr_vois = 2; break;
+    case 8: incr_vois = 1; break;
+  } /* switch (connex) */
+
+  FAH = CreeFahVide(N);
+
+  STATUS = (uint32_t *)calloc(1,N * sizeof(int32_t));
+  if (STATUS == NULL)
+  {   fprintf(stderr, "lsegmentvol() : malloc failed for STATUS\n");
+      return(0);
+  }
+
+  number_nodes = (uint32_t *)calloc(256, sizeof(int32_t));
+  if (number_nodes == NULL)
+  {   fprintf(stderr, "lsegmentvol() : calloc failed for number_nodes\n");
+      return(0);
+  }
+
+  node_at_level = (uint8_t *)calloc(256, sizeof(char));
+  if (node_at_level == NULL)
+  {   fprintf(stderr, "lsegmentvol() : calloc failed for node_at_level\n");
+      return(0);
+  }
+  
+  TREE = InitCompTree(N);
+  if (TREE == NULL)
+  {   fprintf(stderr, "lsegmentvol() : InitCompTree failed\n");
+      return(0);
+  }
+
+  /* ================================================ */
+  /* INITIALISATIONS                                  */
+  /* ================================================ */
+
+  for (i = 0; i < N; i++) STATUS[i] = NOT_ANALYZED;
+  k = 0;             /* recherche un pixel k de niveau de gris minimal dans l'image */
+  for (i = 1; i < N; i++) if (F[i] < F[k]) k = i;
+  FahPush(FAH, k, F[k]);
+
+#ifdef VERBOSE
+  fprintf(stderr, "init terminee\n");
+#endif
+
+  /* ================================================ */
+  /* APPEL FONCTION RECURSIVE flood                   */
+  /* ================================================ */
+
+  if ((connex == 4) || (connex == 8))
+    (void)flood(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
+  else
+    (void)flood3d(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
+
+#ifdef VERBOSE
+  fprintf(stderr, "flood terminee\n");
+#endif
+#ifdef DEBUG
+  AfficheCompTree(TREE);
+#endif
+
+  cpct = CompTree2CompactTree(TREE, number_nodes);
+
+#ifdef VERBOSE
+  fprintf(stderr, "CompTree2CompactTree terminee\n");
+#endif
+#ifdef DEBUG
+  AfficheCompactTree(cpct);
+#endif
+
+  CalculeAttributs(cpct);
+
+#ifdef VERBOSE
+  fprintf(stderr, "CalculeAttributs terminee\n");
+#endif
+#ifdef DEBUG
+  AfficheCompactTree(cpct);
+#endif
+
+  nbfeuilles = LeafMark(cpct);
+  nbcomp = cpct->nbcomp;
+  A = (int32_t *)calloc(1,nbcomp * sizeof(int32_t));
+  if (A == NULL)
+  {   fprintf(stderr, "lvolselnb() : malloc failed\n");
+      return(0);
+  }
+  for (i = 0; i < nbcomp; i++) A[i] = i;
+  i_TriRapideStochastique (A, cpct->vol, 0, nbcomp-1);
+  i = 0;
+  while ((nbfeuilles > param) && (i < nbcomp))
+  {
+    //printf("i = %d, A[i] = %d, cpct->vol[A[i]] = %d, nbf = %d\n", 
+    //       i, A[i], cpct->vol[A[i]], nbfeuilles);
+    if (NbFilsNonFiltres(cpct, A[i]) == 0)
+    {
+      cpct->flags[A[i]] |= FILTERED_OUT;
+      cpct->flags[A[i]] &= ~LEAF;
+      k = cpct->pere[A[i]];
+      if (NbFilsNonFiltres(cpct, k) != 0) 
+        nbfeuilles--;
+      else
+        cpct->flags[k] |= LEAF;
+    }
+#ifdef PARANO
+    else
+      printf("Erreur imprevue : Composante non feuille : %d\n", A[i]);
+#endif
+    i++;
+  } // while ((nbfeuilles > param) && (i < nbcomp))
+
+#ifdef DEBUG
+  AfficheCompactTree(cpct);
+  WriteCompactTree(cpct, "ctree.graph");
+#endif
+
+  RecupereSegmentation(cpct, STATUS, rs, N, F);
+
+#ifdef VERBOSE
+  fprintf(stderr, "RecupereSegmentation terminee\n");
+#endif
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  FahTermine(FAH);
+  TermineCompTree(TREE);
+  TermineCompactTree(cpct);
+  free(STATUS);
+  free(number_nodes);
+  free(node_at_level);
+  free(A);
+  return(1);
+} /* lvolselnb() */

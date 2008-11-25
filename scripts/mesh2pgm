@@ -1,0 +1,20 @@
+#!/bin/sh
+USAGE="Usage: $0 in[.ifs] resolution"
+if [ $# -gt 2 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 2 ]
+then
+	echo $USAGE
+        exit
+fi
+meshconvert $1.ifs $2 $1.pgm
+encadre $1.pgm 0 $1.pgm
+dist $1.pgm 0 _d
+long2byte _d 2 _d
+heightselnb _d 6 2 _1
+inverse _d _i
+watershedMeyer _i _1 null null 6 $1.pgm
+

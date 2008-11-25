@@ -1,0 +1,10 @@
+3dkhalimskize $1 h _1
+3dborder _1 _1
+pgm2vtk _1 1 _1.vtk
+3dkhalimskize $2 h _2
+3dborder _2 _2
+pgm2vtk _2 1 _2.vtk
+3dkhalimskize $3 h _3
+3dborder _3 _3
+pgm2vtk _3 1 _3.vtk
+multirender _1.vtk _2.vtk _3.vtk &

@@ -1,0 +1,3129 @@
+/* $Id: ldist.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/****************************************************************
+*
+* Routine Name: ldistXXX - library call for dist
+*
+* Purpose:     Calcul de la 4, 8-distance (2D), 6, 18 et 26-distance (3D) 
+*              et de la distance euclidienne
+*
+* Input:       Image binaire
+* Output:      Image en niveaux de gris (entiers longs)
+* Written By:  Michel Couprie Avr  98 (ldist)
+*              Michel Couprie Dec  99 (distances 3D)
+*              Michel Couprie Mai  00 (distances 2D chamfrein)
+*                a voir: reiteration peut-etre superflue - lire Borgefors
+*              Michel Couprie Juin 00 (distances 3D chamfrein)
+*              Xavier Daragon Mai 02 (distance euclidienne quadratique approx. 3D)
+*              Michel Couprie Mai 02 (ldilatdisc, lerosdisc, ldistquad)
+*              Rita Zrour Avril 04 (SEDT exacte Saito-Toriwaki)
+*              Michel Couprie Juillet 04 (REDT exacte Coeurjolly)
+*              Michel Couprie Août 04 (SEDT exacte lineaire Meijster et al.)
+*              Jean Cousty janvier 2005 (REDT 3D)
+*              Michel Couprie mai 2007 (Feature Transform Hesselink et al.) (NON TESTE)
+*
+****************************************************************/
+
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#ifdef HP
+#define _INCLUDE_XOPEN_SOURCE
+#endif
+#include <math.h>
+#include <mcimage.h>
+#include <mccodimage.h>
+#include <mclifo.h>
+#include <mcutil.h>
+#include <mcgeo.h>
+#include <ldist.h>
+
+#define VOI1(p)  ( *( (p)+1)         )        
+#define VOI2(p)  ( *( (p)+1-rs) )
+#define VOI3(p)  ( *( (p)-rs)   )
+#define VOI4(p)  ( *( (p)-rs-1) )
+#define VOI5(p)  ( *( (p)-1)         )
+#define VOI6(p)  ( *( (p)-1+rs) )
+#define VOI7(p)  ( *( (p)+rs)   )
+#define VOI8(p)  ( *( (p)+rs+1) )
+
+#define INFINI 1000000000
+
+/* ==================================== */
+void inverse(struct xvimage * image)
+/* ==================================== */
+{
+  int32_t i, N; uint8_t *pt;
+  N = rowsize(image) * colsize(image) * depth(image);
+  for (pt = UCHARDATA(image), i = 0; i < N; i++, pt++) 
+    if (*pt) *pt = 0; else *pt = NDG_MAX;
+} /* inverse() */
+
+/* ==================================== */
+int32_t ldist(struct xvimage *img,   /* donnee: image binaire */       
+          int32_t mode,
+          struct xvimage *res    /* resultat: distances (image deja allouee) */
+)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "ldist"
+{ 
+  int32_t rs = rowsize(img);
+  int32_t cs = colsize(img);
+  int32_t ds = depth(img);
+  int32_t ps = rs * cs;
+  int32_t N = ps * ds;           /* taille de l'image */
+  uint8_t *F;          /* pointeur sur l'image */
+  int32_t *D;               /* pointeur sur les distances */
+  int32_t i, j, k, d;
+  Lifo * LIFO1;
+  Lifo * LIFO2;
+  Lifo * LIFOtmp;
+
+  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    exit(0);
+  }
+  if (datatype(img) != VFF_TYP_1_BYTE)
+  {
+    fprintf(stderr, "%s: image type must be uint8_t\n", F_NAME);
+    return(0);
+  }
+  if (datatype(res) != VFF_TYP_4_BYTE)
+  {
+    fprintf(stderr, "%s: result type must be uint32_t\n", F_NAME);
+    return(0);
+  }
+
+  F = UCHARDATA(img);
+  D = ULONGDATA(res);
+
+  LIFO1 = CreeLifoVide(N);
+  LIFO2 = CreeLifoVide(N);
+  if ((LIFO1 == NULL) || (LIFO2 == NULL))
+  {   fprintf(stderr, "%s() : CreeLifoVide failed\n", F_NAME);
+      return(0);
+  }
+
+  switch (mode)
+  {
+    case 4:
+      for (i = 0; i < N; i++) /* on met en pile les n-voisins des points marques */
+      {
+        if (F[i]) 
+          D[i] = 0; 
+        else 
+        {
+          D[i] = -1; 
+          for (k = 0; k < 8; k += 2)
+          {
+            j = voisin(i, k, rs, N);
+            if ((j != -1) && (F[j])) { D[i] = 1; LifoPush(LIFO1, i); break; }
+          }    
+        }
+      } /* for (i = 0; i < N; i++) */
+
+      while (! LifoVide(LIFO1)) /* propagation en largeur */
+      {
+        while (! LifoVide(LIFO1))
+        {
+          i = LifoPop(LIFO1);
+          d = D[i];
+          for (k = 0; k < 8; k += 2)
+          {
+            j = voisin(i, k, rs, N);
+            if ((j != -1) && (D[j] == -1)) { D[j] = d + 1; LifoPush(LIFO2, j); }
+          }
+        } /* while (! LifoVide(LIFO1)) */
+        LIFOtmp = LIFO2;
+        LIFO2 = LIFO1;
+        LIFO1 = LIFOtmp;
+      } /* while (! LifoVide(LIFO1)) */
+      break;
+
+    case 8: 
+      for (i = 0; i < N; i++) /* on met en pile les n-voisins des points marques */
+      {
+        if (F[i]) 
+          D[i] = 0; 
+        else 
+        {
+          D[i] = -1; 
+          for (k = 0; k < 8; k += 1)
+          {
+            j = voisin(i, k, rs, N);
+            if ((j != -1) && (F[j])) { D[i] = 1; LifoPush(LIFO1, i); break; }
+          }    
+        }
+      } /* for (i = 0; i < N; i++) */
+
+      while (! LifoVide(LIFO1)) /* propagation en largeur */
+      {
+        while (! LifoVide(LIFO1))
+        {
+          i = LifoPop(LIFO1);
+          d = D[i];
+          for (k = 0; k < 8; k += 1)
+          {
+            j = voisin(i, k, rs, N);
+            if ((j != -1) && (D[j] == -1)) { D[j] = d + 1; LifoPush(LIFO2, j); }
+          }
+        } /* while (! LifoVide(LIFO1)) */
+        LIFOtmp = LIFO2;
+        LIFO2 = LIFO1;
+        LIFO1 = LIFOtmp;
+      } /* while (! LifoVide(LIFO1)) */
+      break;
+
+    case 6:
+      for (i = 0; i < N; i++) /* on met en pile les n-voisins des points marques */
+      {
+        if (F[i]) 
+          D[i] = 0; 
+        else 
+        {
+          D[i] = -1; 
+          for (k = 0; k <= 10; k += 2) /* parcourt les 6 voisins */
+          {
+            j = voisin6(i, k, rs, ps, N);
+            if ((j != -1) && (F[j])) { D[i] = 1; LifoPush(LIFO1, i); break; }
+          }    
+        }
+      } /* for (i = 0; i < N; i++) */
+
+      while (! LifoVide(LIFO1)) /* propagation en largeur */
+      {
+        while (! LifoVide(LIFO1))
+        {
+          i = LifoPop(LIFO1);
+          d = D[i];
+          for (k = 0; k <= 10; k += 2) /* parcourt les 6 voisins */
+          {
+            j = voisin6(i, k, rs, ps, N);
+            if ((j != -1) && (D[j] == -1)) { D[j] = d + 1; LifoPush(LIFO2, j); }
+          }
+        } /* while (! LifoVide(LIFO1)) */
+        LIFOtmp = LIFO2;
+        LIFO2 = LIFO1;
+        LIFO1 = LIFOtmp;
+      } /* while (! LifoVide(LIFO1)) */
+      break;
+
+    case 18:
+      for (i = 0; i < N; i++) /* on met en pile les n-voisins des points marques */
+      {
+        if (F[i]) 
+          D[i] = 0; 
+        else 
+        {
+          D[i] = -1; 
+          for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+          {
+            j = voisin18(i, k, rs, ps, N);
+            if ((j != -1) && (F[j])) { D[i] = 1; LifoPush(LIFO1, i); break; }
+          }    
+        }
+      } /* for (i = 0; i < N; i++) */
+
+      while (! LifoVide(LIFO1)) /* propagation en largeur */
+      {
+        while (! LifoVide(LIFO1))
+        {
+          i = LifoPop(LIFO1);
+          d = D[i];
+          for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+          {
+            j = voisin18(i, k, rs, ps, N);
+            if ((j != -1) && (D[j] == -1)) { D[j] = d + 1; LifoPush(LIFO2, j); }
+          }
+        } /* while (! LifoVide(LIFO1)) */
+        LIFOtmp = LIFO2;
+        LIFO2 = LIFO1;
+        LIFO1 = LIFOtmp;
+      } /* while (! LifoVide(LIFO1)) */
+      break;
+
+    case 26:
+      for (i = 0; i < N; i++) /* on met en pile les n-voisins des points marques */
+      {
+        if (F[i]) 
+          D[i] = 0; 
+        else 
+        {
+          D[i] = -1; 
+          for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+          {
+            j = voisin26(i, k, rs, ps, N);
+            if ((j != -1) && (F[j])) { D[i] = 1; LifoPush(LIFO1, i); break; }
+          }    
+        }
+      } /* for (i = 0; i < N; i++) */
+
+      while (! LifoVide(LIFO1)) /* propagation en largeur */
+      {
+        while (! LifoVide(LIFO1))
+        {
+          i = LifoPop(LIFO1);
+          d = D[i];
+          for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+          {
+            j = voisin26(i, k, rs, ps, N);
+            if ((j != -1) && (D[j] == -1)) { D[j] = d + 1; LifoPush(LIFO2, j); }
+          }
+        } /* while (! LifoVide(LIFO1)) */
+        LIFOtmp = LIFO2;
+        LIFO2 = LIFO1;
+        LIFO1 = LIFOtmp;
+      } /* while (! LifoVide(LIFO1)) */
+      break;
+
+    default: 
+      fprintf(stderr, "%s(): bad mode: %d\n", F_NAME, mode);
+      return 0;
+  } /* switch (mode) */
+
+  LifoTermine(LIFO1);
+  LifoTermine(LIFO2);
+  return(1);
+} // ldist()
+
+/* ==================================== */
+int32_t ldistbyte(struct xvimage *img,   /* donnee: image binaire */       
+          int32_t mode,
+          struct xvimage *res    /* resultat: distances (image deja allouee) */
+)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "ldistbyte"
+// le resultat est code sur 8 bits. 
+// les distances doivent etre entre 0 et 254 (255 est reservee pour marquer)
+// test de depassement effectue
+#define MARK 255
+{ 
+  int32_t rs = rowsize(img);
+  int32_t cs = colsize(img);
+  int32_t ds = depth(img);
+  int32_t ps = rs * cs;
+  int32_t N = ps * ds;           /* taille de l'image */
+  uint8_t *F;          /* pointeur sur l'image */
+  uint8_t *D;          /* pointeur sur les distances */
+  int32_t i, j, k, d;
+  Lifo * LIFO1;
+  Lifo * LIFO2;
+  Lifo * LIFOtmp;
+
+  if (datatype(img) != VFF_TYP_1_BYTE)
+  {
+    fprintf(stderr, "%s: image type must be uint8_t\n", F_NAME);
+    return(0);
+  }
+  if (datatype(res) != VFF_TYP_1_BYTE)
+  {
+    fprintf(stderr, "%s: result type must be uint8_t\n", F_NAME);
+    return(0);
+  }
+
+  F = UCHARDATA(img);
+  D = UCHARDATA(res);
+
+  LIFO1 = CreeLifoVide(N);
+  LIFO2 = CreeLifoVide(N);
+  if ((LIFO1 == NULL) || (LIFO2 == NULL))
+  {
+    fprintf(stderr, "%s() : CreeLifoVide failed\n", F_NAME);
+    return(0);
+  }
+
+  switch (mode)
+  {
+    case 40:
+      for (i = 0; i < N; i++) /* on met en pile les n-voisins des points objet */
+      {
+        if (F[i]) 
+          D[i] = 0; 
+        else 
+        {
+          D[i] = MARK; 
+          for (k = 0; k < 8; k += 2)
+          {
+            j = voisin(i, k, rs, N);
+            if ((j != -1) && (F[j])) { D[i] = 1; LifoPush(LIFO1, i); break; }
+          }    
+        }
+      } /* for (i = 0; i < N; i++) */
+
+      while (! LifoVide(LIFO1)) /* propagation en largeur */
+      {
+        while (! LifoVide(LIFO1))
+        {
+          i = LifoPop(LIFO1);
+          d = D[i];
+          
+          for (k = 0; k < 8; k += 2)
+          {
+            j = voisin(i, k, rs, N);
+            if ((j != -1) && (D[j] == MARK)) 
+            {
+              if (d == MARK-1)
+	      {
+                fprintf(stderr, "%s() : distance overflow - do not use byte mode\n", F_NAME);
+                return(0);
+	      } 
+              D[j] = d + 1; 
+              LifoPush(LIFO2, j); 
+            }
+          }
+        } /* while (! LifoVide(LIFO1)) */
+        LIFOtmp = LIFO2;
+        LIFO2 = LIFO1;
+        LIFO1 = LIFOtmp;
+      } /* while (! LifoVide(LIFO1)) */
+      break;
+
+    case 80: 
+      for (i = 0; i < N; i++) /* on met en pile les n-voisins des points objet */
+      {
+        if (F[i]) 
+          D[i] = 0; 
+        else 
+        {
+          D[i] = MARK; 
+          for (k = 0; k < 8; k += 1)
+          {
+            j = voisin(i, k, rs, N);
+            if ((j != -1) && (F[j])) { D[i] = 1; LifoPush(LIFO1, i); break; }
+          }    
+        }
+      } /* for (i = 0; i < N; i++) */
+
+      while (! LifoVide(LIFO1)) /* propagation en largeur */
+      {
+        while (! LifoVide(LIFO1))
+        {
+          i = LifoPop(LIFO1);
+          d = D[i];
+          for (k = 0; k < 8; k += 1)
+          {
+            j = voisin(i, k, rs, N);
+            if ((j != -1) && (D[j] == MARK))
+            {
+              if (d == MARK-1)
+	      {
+                fprintf(stderr, "%s() : distance overflow - do not use byte mode\n", F_NAME);
+                return(0);
+	      } 
+              D[j] = d + 1; 
+              LifoPush(LIFO2, j); 
+            }
+          }
+        } /* while (! LifoVide(LIFO1)) */
+        LIFOtmp = LIFO2;
+        LIFO2 = LIFO1;
+        LIFO1 = LIFOtmp;
+      } /* while (! LifoVide(LIFO1)) */
+      break;
+
+    case 60:
+      for (i = 0; i < N; i++) /* on met en pile les n-voisins des points objet */
+      {
+        if (F[i]) 
+          D[i] = 0; 
+        else 
+        {
+          D[i] = MARK; 
+          for (k = 0; k <= 10; k += 2) /* parcourt les 6 voisins */
+          {
+            j = voisin6(i, k, rs, ps, N);
+            if ((j != -1) && (F[j])) { D[i] = 1; LifoPush(LIFO1, i); break; }
+          }    
+        }
+      } /* for (i = 0; i < N; i++) */
+
+      while (! LifoVide(LIFO1)) /* propagation en largeur */
+      {
+        while (! LifoVide(LIFO1))
+        {
+          i = LifoPop(LIFO1);
+          d = D[i];
+          for (k = 0; k <= 10; k += 2) /* parcourt les 6 voisins */
+          {
+            j = voisin6(i, k, rs, ps, N);
+            if ((j != -1) && (D[j] == MARK))
+            {
+              if (d == MARK-1)
+	      {
+                fprintf(stderr, "%s() : distance overflow - do not use byte mode\n", F_NAME);
+                return(0);
+	      } 
+              D[j] = d + 1; 
+              LifoPush(LIFO2, j); 
+            }
+          }
+        } /* while (! LifoVide(LIFO1)) */
+        LIFOtmp = LIFO2;
+        LIFO2 = LIFO1;
+        LIFO1 = LIFOtmp;
+      } /* while (! LifoVide(LIFO1)) */
+      break;
+
+    case 180:
+      for (i = 0; i < N; i++) /* on met en pile les n-voisins des points objet */
+      {
+        if (F[i]) 
+          D[i] = 0; 
+        else 
+        {
+          D[i] = MARK; 
+          for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+          {
+            j = voisin18(i, k, rs, ps, N);
+            if ((j != -1) && (F[j])) { D[i] = 1; LifoPush(LIFO1, i); break; }
+          }    
+        }
+      } /* for (i = 0; i < N; i++) */
+
+      while (! LifoVide(LIFO1)) /* propagation en largeur */
+      {
+        while (! LifoVide(LIFO1))
+        {
+          i = LifoPop(LIFO1);
+          d = D[i];
+          for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+          {
+            j = voisin18(i, k, rs, ps, N);
+            if ((j != -1) && (D[j] == MARK))
+            {
+              if (d == MARK-1)
+	      {
+                fprintf(stderr, "%s() : distance overflow - do not use byte mode\n", F_NAME);
+                return(0);
+	      } 
+              D[j] = d + 1; 
+              LifoPush(LIFO2, j); 
+            }
+          }
+        } /* while (! LifoVide(LIFO1)) */
+        LIFOtmp = LIFO2;
+        LIFO2 = LIFO1;
+        LIFO1 = LIFOtmp;
+      } /* while (! LifoVide(LIFO1)) */
+      break;
+
+    case 260:
+      for (i = 0; i < N; i++) /* on met en pile les n-voisins des points objet */
+      {
+        if (F[i]) 
+          D[i] = 0; 
+        else 
+        {
+          D[i] = -1; 
+          for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+          {
+            j = voisin26(i, k, rs, ps, N);
+            if ((j != -1) && (F[j])) { D[i] = 1; LifoPush(LIFO1, i); break; }
+          }    
+        }
+      } /* for (i = 0; i < N; i++) */
+
+      while (! LifoVide(LIFO1)) /* propagation en largeur */
+      {
+        while (! LifoVide(LIFO1))
+        {
+          i = LifoPop(LIFO1);
+          d = D[i];
+          for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+          {
+            j = voisin26(i, k, rs, ps, N);
+            if ((j != -1) && (D[j] == MARK))
+            {
+              if (d == MARK-1)
+	      {
+                fprintf(stderr, "%s() : distance overflow - do not use byte mode\n", F_NAME);
+                return(0);
+	      } 
+              D[j] = d + 1; 
+              LifoPush(LIFO2, j); 
+            }
+          }
+        } /* while (! LifoVide(LIFO1)) */
+        LIFOtmp = LIFO2;
+        LIFO2 = LIFO1;
+        LIFO1 = LIFOtmp;
+      } /* while (! LifoVide(LIFO1)) */
+      break;
+
+    default: 
+      fprintf(stderr, "%s(): bad mode: %d\n", F_NAME, mode);
+      return 0;
+  } /* switch (mode) */
+
+  LifoTermine(LIFO1);
+  LifoTermine(LIFO2);
+  return(1);
+} // ldistbyte()
+
+/* ==================================== */
+int32_t ldistquad(struct xvimage *img,   /* donnee: image binaire */       
+              struct xvimage *res    /* resultat: distances */
+)
+/* ==================================== */
+/* 
+  Call the Danielsson 4SED algorithm (with mc-modification)
+*/
+#undef F_NAME
+#define F_NAME "ldistquad"
+{ 
+  int32_t rs = img->row_size;
+  int32_t cs = img->col_size;
+  int32_t N= rs * cs;            /* taille de l'image */
+  uint8_t *F;          /* pointeur sur l'image */
+  int32_t *D;               /* pointeur sur les distances */
+  vect2Dint *L;              /* tableau de vecteur associe a un point de l'image */
+  int32_t i;
+
+  if (depth(img) != 1)
+  {
+    fprintf(stderr, "%s(): only for 2D images\n", F_NAME);
+    return 0;
+  }
+
+  L = (vect2Dint *)calloc(1,N*sizeof(vect2Dint));
+  F = UCHARDATA(img);
+
+  ldistvect(F, L, rs, cs);
+
+  D = ULONGDATA(res);
+  for (i = 0; i < N; i++)
+    D[i] = (int32_t)(L[i].x * L[i].x + L[i].y * L[i].y);
+
+  free(L);
+  return(1);
+} // ldistquad()
+
+int32_t ldistvect(uint8_t *F, vect2Dint *L, int32_t rs, int32_t cs) 
+/* 
+  Danielsson 4SED algorithm (with mc-modification)
+  input:  - F is a pointer on the image
+          - (rs, cs) is the image size
+  output: - L is the vector image (should be allocated in the calling function)
+*/
+{
+  uint32_t n1,n2,n3;     /* normes des vecteurs (au carre) */
+  int32_t N= rs * cs;            /* taille de l'image */
+  uint8_t *pt;
+  vect2Dint v1,v2,v3;
+  int32_t i,j;
+
+  pt = F;
+
+  for (i = 0; i < N; i++, pt++)
+	{
+	/*  pt de l'image a 0, fond a INFINI */
+	if (*pt)
+	        {
+		L[i].x = 0;
+		L[i].y = 0;
+		}
+		else 
+		{
+		L[i].x = INFINI;
+		L[i].y = INFINI;
+		}
+
+	/* cadre a INFINI */	
+#ifdef CADRE
+	if (bord(i,rs,N) != 0)
+		{
+		L[i].x = INFINI;
+		L[i].y = INFINI;
+		}
+#endif
+	}
+
+  // 1er parcours de haut en bas
+  for (j = 1; j < cs; j++)
+  {
+    for (i = 0; i < rs; i++)
+    {/* parcours de la ligne de la gauche vers la droite */
+      v1.x=L[i+((j-1)*rs)].x;
+      v1.y=L[i+((j-1)*rs)].y-1; // Modif mc: Danielsson dit +1
+      v2.x=L[i+(j*rs)].x;
+      v2.y=L[i+(j*rs)].y;
+      /* calcul des normes des vecteurs */
+      n1=v1.x*v1.x+v1.y*v1.y;
+      n2=v2.x*v2.x+v2.y*v2.y;
+      /* on affecte au vecteur courant le vecteur ayant la plus petite norme */
+      if (n1<n2) { L[i+(j*rs)].x=v1.x; L[i+(j*rs)].y=v1.y; }
+    }
+    for (i = 1; i < rs; i++)
+    {/* parcours de la ligne de la gauche vers la droite */
+      v1.x=L[i-1+(j*rs)].x-1; // Modif mc: Danielsson dit +1
+      v1.y=L[i-1+(j*rs)].y;
+      v2.x=L[i+(j*rs)].x;
+      v2.y=L[i+(j*rs)].y;
+      /* calcul des normes des vecteurs */
+      n1=v1.x*v1.x+v1.y*v1.y;
+      n2=v2.x*v2.x+v2.y*v2.y;
+      /* on affecte au vecteur courant le vecteur ayant la plus petite norme */
+      if (n1<n2) { L[i+(j*rs)].x=v1.x; L[i+(j*rs)].y=v1.y; }
+    }
+    for (i = rs-2; i >= 0; i--)
+    {/* parcours de la ligne de la droite vers la gauche */
+      v1.x=L[i+1+(j*rs)].x+1;
+      v1.y=L[i+1+(j*rs)].y;
+      v2.x=L[i+(j*rs)].x;
+      v2.y=L[i+(j*rs)].y;
+      /* calcul des normes des vecteurs */
+      n1=v1.x*v1.x+v1.y*v1.y;
+      n2=v2.x*v2.x+v2.y*v2.y;
+      /* on affecte au vecteur courant le vecteur ayant la plus petite norme */
+      if (n1<n2) { L[i+(j*rs)].x=v1.x; L[i+(j*rs)].y=v1.y; }
+    }
+  } // for (j = 1; j < cs; j++)
+
+  // 2nd parcours de bas en haut
+  for (j = cs-2; j >= 0; j--)
+  {
+    for (i = 0; i < rs; i++)
+    {/* parcours de la ligne de la gauche vers la droite */
+      v1.x=L[i+((j+1)*rs)].x;
+      v1.y=L[i+((j+1)*rs)].y+1;
+      v2.x=L[i+(j*rs)].x;
+      v2.y=L[i+(j*rs)].y;
+      /* calcul des normes des vecteurs */
+      n1=v1.x*v1.x+v1.y*v1.y;
+      n2=v2.x*v2.x+v2.y*v2.y;
+      /* on affecte au vecteur courant le vecteur ayant la plus petite norme */
+      if (n1<n2) { L[i+(j*rs)].x=v1.x; L[i+(j*rs)].y=v1.y; }
+    }
+    for (i = 1; i < rs; i++)
+    {/* parcours de la ligne de la gauche vers la droite */
+      v1.x=L[i-1+(j*rs)].x-1; // Modif mc: Danielsson dit +1
+      v1.y=L[i-1+(j*rs)].y;
+      v2.x=L[i+(j*rs)].x;
+      v2.y=L[i+(j*rs)].y;
+      /* calcul des normes des vecteurs */
+      n1=v1.x*v1.x+v1.y*v1.y;
+      n2=v2.x*v2.x+v2.y*v2.y;
+      /* on affecte au vecteur courant le vecteur ayant la plus petite norme */
+      if (n1<n2) { L[i+(j*rs)].x=v1.x; L[i+(j*rs)].y=v1.y; }
+    }
+    for (i = rs-2; i >= 0; i--)
+    {/* parcours de la ligne de la droite vers la gauche */
+      v1.x=L[i+1+(j*rs)].x+1;
+      v1.y=L[i+1+(j*rs)].y;
+      v2.x=L[i+(j*rs)].x;
+      v2.y=L[i+(j*rs)].y;
+      /* calcul des normes des vecteurs */
+      n1=v1.x*v1.x+v1.y*v1.y;
+      n2=v2.x*v2.x+v2.y*v2.y;
+      /* on affecte au vecteur courant le vecteur ayant la plus petite norme */
+      if (n1<n2) { L[i+(j*rs)].x=v1.x; L[i+(j*rs)].y=v1.y; }
+    }
+  } // for (j = cs-2; j >= 0; j--)
+
+  return(1);
+} //ldistvect
+
+/* ======================================================== */
+int32_t ldisteuc(struct xvimage* ob, struct xvimage* res)
+/* ======================================================== */
+#undef F_NAME
+#define F_NAME "ldisteuc"
+{
+ int32_t rs=rowsize(ob),cs=colsize(ob),N=rs*cs;
+ uint32_t *R = ULONGDATA(res);
+ int32_t i;
+ double d;
+
+ if (!ldistquad(ob, res)) return 0;
+ 
+ for (i=0; i<N; i++)
+ {
+   d = sqrt((double)(R[i]));
+   R[i] = (uint32_t)arrondi(d);
+ }
+    
+ return 1;
+} // ldisteuc()
+
+/* ======================================================== */
+int32_t ldilatdisc(struct xvimage* ob, int32_t r, int32_t mode)
+/* ======================================================== */
+// dilation by a disc of radius r
+#undef F_NAME
+#define F_NAME "ldilatdisc"
+{
+  int32_t rs = rowsize(ob);
+  int32_t cs = colsize(ob);
+  int32_t ds = depth(ob); 
+  int32_t N = rs*cs*ds;
+  struct xvimage *dist;
+  uint32_t *D;
+  uint8_t *O = UCHARDATA(ob);
+  int32_t i, r2;
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {   
+    fprintf(stderr, "%s(): allocimage failed\n", F_NAME);
+    return 0;
+  }
+  D = ULONGDATA(dist);
+
+  if (mode == 0) r2 = r * r; else r2 = r;
+  switch (mode)
+  {
+    case 0:
+    case 1: if (!ldistquad(ob, dist)) return 0; break;
+    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+    case 3: inverse(ob); if (!lsedt_meijster(ob, dist)) return 0; break;
+    case 4:
+    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+
+  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+
+  freeimage(dist);    
+  return 1;
+} // ldilatdisc()
+
+/* ======================================================== */
+int32_t lerosdisc(struct xvimage* ob, int32_t r, int32_t mode)
+/* ======================================================== */
+// erosion by a disc of radius r
+#undef F_NAME
+#define F_NAME "lerosdisc"
+{
+  int32_t rs = rowsize(ob);
+  int32_t cs = colsize(ob);
+  int32_t ds = depth(ob); 
+  int32_t N = rs*cs*ds;
+  struct xvimage *dist;
+  uint32_t *D;
+  uint8_t *O = UCHARDATA(ob);
+  int32_t i, r2;
+
+  for(i=0; i<N; i++) if (O[i]) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {   
+    fprintf(stderr, "%s(): allocimage failed\n", F_NAME);
+    return 0;
+  }
+  D = ULONGDATA(dist);
+ 
+  if (mode == 0) r2 = r * r; else r2 = r;
+  switch (mode)
+  {
+    case 0:
+    case 1: if (!ldistquad(ob, dist)) return 0; break;
+    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+    case 3: inverse(ob); if (!lsedt_meijster(ob, dist)) return 0; break;
+    case 4:
+    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+
+  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+
+  freeimage(dist);    
+  return 1;
+} // lerosdisc()
+
+/* ======================================================== */
+int32_t lopendisc(struct xvimage* ob, int32_t r, int32_t mode)
+/* ======================================================== */
+// opening by a disc of radius r
+#undef F_NAME
+#define F_NAME "lopendisc"
+{
+  int32_t rs = rowsize(ob);
+  int32_t cs = colsize(ob);
+  int32_t ds = depth(ob); 
+  int32_t N = rs*cs*ds;
+  struct xvimage *dist;
+  uint32_t *D;
+  uint8_t *O = UCHARDATA(ob);
+  int32_t i, r2;
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {   
+    fprintf(stderr, "%s(): allocimage failed\n", F_NAME);
+    return 0;
+  }
+  D = ULONGDATA(dist);
+ 
+  if (mode == 0) r2 = r * r; else r2 = r;
+
+  // inverse + dilate + inverse
+  for(i=0; i<N; i++) if (O[i]) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+  switch (mode)
+  {
+    case 0:
+    case 1: if (!ldistquad(ob, dist)) return 0; break;
+    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+    case 3: inverse(ob); if (!lsedt_meijster(ob, dist)) return 0; break;
+    case 4:
+    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+
+  // dilate
+  switch (mode)
+  {
+    case 0:
+    case 1: if (!ldistquad(ob, dist)) return 0; break;
+    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+    case 3: inverse(ob); if (!lsedt_meijster(ob, dist)) return 0; break;
+    case 4:
+    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+
+  freeimage(dist);    
+  return 1;
+} // lopendisc()
+
+/* ======================================================== */
+int32_t lclosedisc(struct xvimage* ob, int32_t r, int32_t mode)
+/* ======================================================== */
+// closing by a disc of radius r
+#undef F_NAME
+#define F_NAME "lclosedisc"
+{
+  int32_t rs = rowsize(ob);
+  int32_t cs = colsize(ob);
+  int32_t ds = depth(ob); 
+  int32_t N = rs*cs*ds;
+  struct xvimage *dist;
+  uint32_t *D;
+  uint8_t *O = UCHARDATA(ob);
+  int32_t i, r2;
+
+  dist = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {   
+    fprintf(stderr, "%s(): allocimage failed\n", F_NAME);
+    return 0;
+  }
+  D = ULONGDATA(dist);
+ 
+  if (mode == 0) r2 = r * r; else r2 = r;
+
+  // dilate + inverse
+  switch (mode)
+  {
+    case 0:
+    case 1: if (!ldistquad(ob, dist)) return 0; break;
+    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+    case 3: inverse(ob); if (!lsedt_meijster(ob, dist)) return 0; break;
+    case 4:
+    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+
+  // dilate + inverse
+  switch (mode)
+  {
+    case 0:
+    case 1: if (!ldistquad(ob, dist)) return 0; break;
+    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+    case 3: inverse(ob); if (!lsedt_meijster(ob, dist)) return 0; break;
+    case 4:
+    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+
+  freeimage(dist);    
+  return 1;
+} // lclosedisc()
+
+
+#define CHAM_4 5
+#define CHAM_8 7
+
+#define CHAM_6  4
+#define CHAM_18 5
+#define CHAM_26 6
+
+/* ==================================== */
+int32_t lchamfrein(struct xvimage *img,   /* donnee: image binaire */       
+               struct xvimage *res    /* resultat: distances (image deja allouee) */
+)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lchamfrein"
+{ 
+  int32_t rs = rowsize(img);
+  int32_t cs = colsize(img);
+  int32_t ds = depth(img);
+  int32_t ps = rs * cs;
+  int32_t N = ps * ds;           /* taille de l'image */
+  uint8_t *F;          /* pointeur sur l'image */
+  int32_t *D;               /* pointeur sur les distances */
+  int32_t i, j, k, d;
+  int32_t st;
+
+  F = UCHARDATA(img);
+  D = ULONGDATA(res);
+
+  for (i = 0; i < N; i++)
+    if (F[i]) D[i] = 0; else D[i] = INFINI;
+    
+  if (ds == 1)
+  {
+   st = 0;
+   while (!st)
+   {
+    st = 1;
+    /* parcours direct */
+    for (i = 0; i < N; i++)
+    if (!F[i])
+    {
+      d = D[i]; 
+      if ((i%rs!=0)&&(D[i-1]+CHAM_4<d)) { st = 0; d = D[i-1]+CHAM_4; }
+      if ((i>=rs)&&(i%rs!=0)&&(D[i-rs-1]+CHAM_8<d)) { st = 0; d = D[i-rs-1]+CHAM_8; }
+      if ((i>=rs)&&(D[i-rs]+CHAM_4<d)) { st = 0; d = D[i-rs]+CHAM_4; }
+      if ((i%rs!=rs-1)&&(i>=rs)&&(D[i+1-rs]+CHAM_8<d)) { st = 0; d = D[i+1-rs]+CHAM_8; }
+      D[i] = d;
+    }
+    /* parcours retro */
+    for (i = N-1; i >= 0; i--)
+    if (!F[i])
+    {
+      d = D[i]; 
+      if ((i%rs!=rs-1)&&(D[i+1]+CHAM_4<d)) { st = 0; d = D[i+1]+CHAM_4; }
+      if ((i%rs!=0)&&(i<N-rs)&&(D[i-1+rs]+CHAM_8<d)) { st = 0; d = D[i-1+rs]+CHAM_8; }
+      if ((i<N-rs)&&(D[i+rs]+CHAM_4<d)) { st = 0; d = D[i+rs]+CHAM_4; }
+      if ((i<N-rs)&&(i%rs!=rs-1)&&(D[i+rs+1]+CHAM_8<d)) { st = 0; d = D[i+rs+1]+CHAM_8; }
+      D[i] = d;
+    }
+   }
+  }
+  else /* image 3D */
+  {
+   st = 0;
+   while (!st)
+   {
+    st = 1;
+    /* parcours direct */
+    for (i = 0; i < N; i++)
+    if (!F[i])
+    {
+      d = D[i]; 
+      /* plan "AVANT" (-ps) */
+      if ((i>=ps)&&(i%rs!=rs-1)&&(D[-ps+i+1]+CHAM_18<d)) { st = 0; d = D[-ps+i+1]+CHAM_18; }
+      if ((i>=ps)&&(i%rs!=rs-1)&&(i%ps>=rs)&&(D[-ps+i+1-rs]+CHAM_26<d)) { st = 0; d = D[-ps+i+1-rs]+CHAM_26; }
+      if ((i>=ps)&&(i%ps>=rs)&&(D[-ps+i-rs]+CHAM_18<d)) { st = 0; d = D[-ps+i-rs]+CHAM_18; }
+      if ((i>=ps)&&(i%ps>=rs)&&(i%rs!=0)&&(D[-ps+i-rs-1]+CHAM_26<d)) { st = 0; d = D[-ps+i-rs-1]+CHAM_26; }
+      if ((i>=ps)&&(i%rs!=0)&&(D[-ps+i-1]+CHAM_18<d)) { st = 0; d = D[-ps+i-1]+CHAM_18; }
+      if ((i>=ps)&&(i%rs!=0)&&(i%ps<ps-rs)&&(D[-ps+i-1+rs]+CHAM_26<d)) { st = 0; d = D[-ps+i-1+rs]+CHAM_26; }
+      if ((i>=ps)&&(i%ps<ps-rs)&&(D[-ps+i+rs]+CHAM_18<d)) { st = 0; d = D[-ps+i+rs]+CHAM_18; }
+      if ((i>=ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)&&(D[-ps+i+rs+1]+CHAM_26<d)) { st = 0; d = D[-ps+i+rs+1]+CHAM_26; }
+      if ((i>=ps)&&(D[-ps+i]+CHAM_6<d)) { st = 0; d = D[-ps+i]+CHAM_6; }
+      /* plan "COURANT" () */
+      if ((i%rs!=rs-1)&&(i%ps>=rs)&&(D[i+1-rs]+CHAM_18<d)) { st = 0; d = D[i+1-rs]+CHAM_18; }
+      if ((i%ps>=rs)&&(D[i-rs]+CHAM_6<d)) { st = 0; d = D[i-rs]+CHAM_6; }
+      if ((i%ps>=rs)&&(i%rs!=0)&&(D[i-rs-1]+CHAM_18<d)) { st = 0; d = D[i-rs-1]+CHAM_18; }
+      if ((i%rs!=0)&&(D[i-1]+CHAM_6<d)) { st = 0; d = D[i-1]+CHAM_6; }
+      D[i] = d;
+    }
+    /* parcours retro */
+    for (i = N-1; i >= 0; i--)
+    if (!F[i])
+    {
+      d = D[i]; 
+      /* plan "COURANT" () */
+      if ((i%rs!=rs-1)&&(D[i+1]+CHAM_6<d)) { st = 0; d = D[i+1]+CHAM_6; }
+      if ((i%rs!=0)&&(i%ps<ps-rs)&&(D[i-1+rs]+CHAM_18<d)) { st = 0; d = D[i-1+rs]+CHAM_18; }
+      if ((i%ps<ps-rs)&&(D[i+rs]+CHAM_6<d)) { st = 0; d = D[i+rs]+CHAM_6; }
+      if ((i%ps<ps-rs)&&(i%rs!=rs-1)&&(D[i+rs+1]+CHAM_18<d)) { st = 0; d = D[i+rs+1]+CHAM_18; }
+      /* plan "ARRIERE" (+n) */
+      if ((i<N-ps)&&(i%rs!=rs-1)&&(D[ps+i+1]+CHAM_18<d)) { st = 0; d = D[ps+i+1]+CHAM_18; }
+      if ((i<N-ps)&&(i%rs!=rs-1)&&(i%ps>=rs)&&(D[ps+i+1-rs]+CHAM_26<d)) { st = 0; d = D[ps+i+1-rs]+CHAM_26; }
+      if ((i<N-ps)&&(i%ps>=rs)&&(D[ps+i-rs]+CHAM_18<d)) { st = 0; d = D[ps+i-rs]+CHAM_18; }
+      if ((i<N-ps)&&(i%ps>=rs)&&(i%rs!=0)&&(D[ps+i-rs-1]+CHAM_26<d)) { st = 0; d = D[ps+i-rs-1]+CHAM_26; }
+      if ((i<N-ps)&&(i%rs!=0)&&(D[ps+i-1]+CHAM_18<d)) { st = 0; d = D[ps+i-1]+CHAM_18; }
+      if ((i<N-ps)&&(i%rs!=0)&&(i%ps<ps-rs)&&(D[ps+i-1+rs]+CHAM_26<d)) { st = 0; d = D[ps+i-1+rs]+CHAM_26; }
+      if ((i<N-ps)&&(i%ps<ps-rs)&&(D[ps+i+rs]+CHAM_18<d)) { st = 0; d = D[ps+i+rs]+CHAM_18; }
+      if ((i<N-ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)&&(D[ps+i+rs+1]+CHAM_26<d)) { st = 0; d = D[ps+i+rs+1]+CHAM_26; }
+      if ((i<N-ps)&&(D[ps+i]+CHAM_6<d)) { st = 0; d = D[ps+i]+CHAM_6; }
+      D[i] = d;
+    }
+   } /* while (!st) */
+  }
+  return(1);
+} // lchamfrein()
+
+/****************************************/
+/* distance euclidienne quadratique     */
+/* code: Xiangh                         */
+/*************************              */
+/* date: 16/05/2002                     */
+/*************************              */
+/* comments:                            */
+/*  attention, risques de pbs           */
+/*  (manque de memoire)                 */
+/*  dans cette version?                 */
+/*  [risque faible; mais eviter les     */
+/*  images d'arrete superieur a 256     */
+/*  (en fait tout depend du centrage... */
+/*  il serait bon néanmoins de faire    */
+/*  varier DC_SZ selon la distance      */
+/*  (pour une valeur elevee de distance */
+/*  les Dcols devraient etre            */
+/*  de plus en plus vides)]             */
+/****************************************/
+
+/********************************************************************/
+/*                               MACROS                             */
+/********************************************************************/
+
+#define _Drun( cl, et, com)   { \
+   Dcol* __col=cl; int32_t __it;Dcell* et; \
+   while(__col!=NULL) \
+   { for(__it=0;__it<__col->nb;__it++) \
+   { et=(__col->tab)+__it; \
+   com ; } __col=__col->next; } }
+#define DC_SZ 1<<12
+#define MAXD 1<<20
+#define IsSet2(i,x,y,z) UCHARDATA(i)[((z)*(colsize(i))+(y))*(rowsize(i))+(x)]
+
+/********************************************************************/
+/*                               TYPES                              */
+/********************************************************************/
+
+typedef struct _Doc{
+  int16_t x;
+  int16_t y;
+  int16_t z;
+  int16_t dx;
+  int16_t dy;
+  int16_t dz;
+} Dcell; //sert pour les cellules libres ET occupees!
+
+typedef struct _Dcol{
+  int32_t nb;//nombre de cellules occupees
+  Dcell tab[DC_SZ];
+  struct _Dcol* next;
+} Dcol;
+
+typedef struct _Dbase{
+  int32_t max;
+  Dcol** cols;
+  Dcol* add;
+  Dcol* cur;
+} Drow; 
+
+
+/********************************************************************/
+/*                      ALLOUER/DESALLOUER                          */
+/********************************************************************/
+
+Dcol* Dsetcol()
+{
+  Dcol* nw=(Dcol*)calloc(1,sizeof(Dcol));
+  nw->nb=0; 
+  nw->next=NULL;
+  return nw;
+}
+
+Dcol* Dfreecol(Dcol* c)
+{
+  if(c!=NULL)
+    {
+      Dfreecol(c->next);
+      free(c);
+    }
+  return NULL;
+}
+
+Dcol* Dresetcol(Dcol* tg)
+{
+  if(tg!=NULL)
+  {
+    tg->nb=0; 
+    if(tg->next!=NULL) tg->next=Dresetcol(tg->next);
+  }
+  else tg=Dsetcol();
+  return tg;
+}
+
+/* alloue la table des buckets*/
+Drow* Dsetground(int32_t _max)
+{
+  int32_t i,sz=_max+1;
+  Drow* nw=(Drow*)calloc(1,sizeof(Drow));
+  nw->max=_max;
+  nw->cols=(Dcol**)calloc(1,sz*sizeof(Dcol*));
+  for(i=0;i<sz;i++)
+    nw->cols[i]=NULL;
+  nw->cur=NULL;
+  nw->add=Dsetcol();
+  return nw;
+}
+
+
+/********************************************************************/
+/*                     GESTION DES CELLULES                         */
+/********************************************************************/
+
+/*n'est en general pas appele directement*/
+Dcol* Dadd2col(Dcol* c, int32_t x, int32_t y, int32_t z,int32_t dx, int32_t dy, int32_t dz )
+{
+  int32_t free=c->nb;
+  if(free<DC_SZ)
+    {
+      c->tab[free].x=(int16_t)x;
+      c->tab[free].y=(int16_t)y;
+      c->tab[free].z=(int16_t)z;
+      c->tab[free].dx=(int16_t)dx;
+      c->tab[free].dy=(int16_t)dy;
+      c->tab[free].dz=(int16_t)dz;
+      c->nb++;
+    }
+  else
+    {
+      if(c->next==NULL) {c->next=Dsetcol();}
+      Dadd2col(c->next,x,y,z,dx,dy,dz);
+    }
+  return c;
+}
+
+Dcol* Dadd(Drow* r,int32_t x, int32_t y, int32_t z, int32_t dx, int32_t dy, int32_t dz, int32_t val)
+{
+  if(val>r->max) return NULL;
+  if(r->cols[val]==NULL) r->cols[val]=Dsetcol();
+  return Dadd2col(r->cols[val],x,y,z,dx,dy,dz);
+}
+
+int32_t Dcount(Drow* r,int32_t val)
+{
+  int32_t nb=0;
+  Dcol* cur;
+  if((val>r->max)||(r->cols[val]==NULL)) return 0;
+  cur=r->cols[val];
+  do{
+    nb+=cur->nb;
+    cur=cur->next;
+  }while(cur!=NULL);
+  return nb;
+}
+
+int32_t Dhas(Drow* r,int32_t val)
+{
+  if((val>r->max)||(r->cols[val]==NULL)) return 0;
+  return (r->cols[val]->nb)>0;
+}
+
+/********************************************************************/
+/*                    CODE POUR LES DISTANCES                       */
+/********************************************************************/
+
+void testAndAdd(Drow* r, struct xvimage* o,Dcell* t, int32_t d)
+{
+  int32_t nd;
+  int32_t rs=rowsize(o),cs=colsize(o),ds=depth(o);
+  uint32_t* O=ULONGDATA(o);
+  if(t->dx>0 && t->x<rs-1)
+    {
+      nd=d+2*t->dx+1;
+      if(nd<O[(t->z*cs+t->y)*rs+t->x+1]) 
+	{ 
+	  O[(t->z*cs+t->y)*rs+t->x+1]=nd;
+	  Dadd(r,t->x+1,t->y,t->z,t->dx+1,t->dy,t->dz,nd);
+	}
+    }
+  else if(t->dx<0 && t->x>0)
+    {
+      nd=d-2*t->dx+1;
+      if(nd<O[(t->z*cs+t->y)*rs+t->x-1]) 
+	{ 
+	  O[(t->z*cs+t->y)*rs+t->x-1]=nd;
+	  Dadd(r,t->x-1,t->y,t->z,t->dx-1,t->dy,t->dz,nd);
+	}
+    }
+  if(t->dy>0 && t->y<cs-1)
+    {
+      nd=d+2*t->dy+1;
+      if(nd<O[(t->z*cs+(t->y+1))*rs+t->x]) 
+	{ 
+	  O[(t->z*cs+(t->y+1))*rs+t->x]=nd;
+	  Dadd(r,t->x,t->y+1,t->z,t->dx,t->dy+1,t->dz,nd);
+	}
+    }
+  else if(t->dy<0 && t->y>0)
+    {
+      nd=d-2*t->dy+1;
+      if(nd<O[(t->z*cs+(t->y-1))*rs+t->x]) 
+	{ 
+	  O[(t->z*cs+(t->y-1))*rs+t->x]=nd;
+	  Dadd(r,t->x,t->y-1,t->z,t->dx,t->dy-1,t->dz,nd);
+	}
+    }
+  if(t->dz>0 && t->z<ds-1)
+    {
+      nd=d+2*t->dz+1;
+      if(nd<O[((t->z+1)*cs+t->y)*rs+t->x]) 
+	{ 
+	  O[((t->z+1)*cs+t->y)*rs+t->x]=nd;
+	  Dadd(r,t->x,t->y,t->z+1,t->dx,t->dy,t->dz+1,nd);
+	}
+    }
+  else if(t->dz<0 && t->z>0)
+    {
+      nd=d-2*t->dz+1;
+      if(nd<O[((t->z-1)*cs+t->y)*rs+t->x]) 
+	{ 
+	  O[((t->z-1)*cs+t->y)*rs+t->x]=nd;
+	  Dadd(r,t->x,t->y,t->z-1,t->dx,t->dy,t->dz-1,nd);
+	}
+    }
+}
+
+/* ======================================================== */
+int32_t ldistquad3d(struct xvimage* ob, struct xvimage* res)
+/* ======================================================== */
+{
+ int32_t rs=rowsize(ob),cs=colsize(ob),ds=depth(ob);
+ int32_t max=((rs-1)+(cs-1)+(ds-1))*((rs-1)+(cs-1)+(ds-1));
+ uint32_t *O = ULONGDATA(res);
+ uint8_t *I = UCHARDATA(ob);
+ int32_t xi,yi,zi,xj,yj,zj,i,j,d;
+ Drow* r=Dsetground(max);
+ 
+ for(i=0;i<rs*cs*ds;i++) O[i]=MAXD;
+  /*now process*/
+  /*step one: image scan to locate object points and set borders*/
+  for(zi=0;zi<ds;zi++)
+    for(yi=0;yi<cs;yi++)
+      for(xi=0;xi<rs;xi++)
+	{
+	  if(IsSet2(ob,xi,yi,zi))
+	    {
+	      O[(zi*cs+yi)*rs+xi]=0;
+	       for(zj=((zi>0)?zi-1:zi);zj<=((zi<ds-1)?zi+1:zi);zj++)
+		for(yj=((yi>0)?yi-1:yi);yj<=((yi<cs-1)?yi+1:yi);yj++)
+		  for(xj=((xi>0)?xi-1:xi);xj<=((xi<rs-1)?xi+1:xi);xj++)
+		    if(!IsSet2(ob,xj,yj,zj))
+		      {
+			j=(zj-zi)*(zj-zi)+(yj-yi)*(yj-yi)+(xj-xi)*(xj-xi);
+			if(O[(zj*cs+yj)*rs+xj]>j) 
+			  {
+			    Dadd(r,xj,yj,zj,xj-xi,yj-yi,zj-zi,j);
+			    O[(zj*cs+yj)*rs+xj]=j;
+			  }
+		      }
+	    }
+	    
+	}
+
+  /*step two: propagation throught the image*/
+  d=0;
+  while((++d)<=max)
+    {
+      _Drun(r->cols[d],ti,testAndAdd(r,res,ti,d));
+      Dfreecol(r->cols[d]);
+    }
+    
+ return 1;
+} // ldistquad3d_xd()
+
+/*
+
+Copyright (c) 2002, Roberto de Alencar Lotufo, and
+Sate University fo Campinas, Brazil.  All rights reserved.
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in
+supporting documentation, and that the name of Universidade Estadual
+de Campinas not be used in advertising or publicity pertaining to
+distribution of the software without specific, written prior
+permission.
+
+THE STATE UNIVERSITY OF CAMPINAS DISCLAIMS ALL WARRANTIES WITH REGARD TO
+THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS, IN NO EVENT SHALL THE STATE UNIVERSITY OF CAMPINAS BE LIABLE
+FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+     -------------------------------------------------
+     FUNCTION: ldistquad3d_rl - Euclidean Distance transform
+     -------------------------------------------------
+
+ Purpose: giving a binary image determine its
+   Euclidean distance transform. Works for 1D, 2D,
+   and 3D cases
+ In: input binary image: type UBYTE values 0 and 255
+ Return: distance transform USHORT image
+
+This is exact 3-D Euclidean Distance Transform implementation
+based on the paper by
+Lotufo, R. A., and Zampirolli, F. A.
+"Fast Multidimensional Parallel Euclidean Distance Transform Based
+on Mathematical Morphology.". In: XIV Brazilian Symposium on Computer
+Graphics and Image Processing, 2001, Brazil. IEEE Computer Society,
+2001, p.100-105.
+
+pf    : pointer to input  raster image, unsigned byte, uint8
+pg    : pointer to output raster image, integer, int32
+width : n. of pixels in width
+height: n. of pixels in height
+depth : n. of pixels in depth
+*/
+
+/* ======================================================== */
+int32_t ldistquad3d_rl(struct xvimage* imgin, struct xvimage* imgout)
+/* ======================================================== */
+#undef F_NAME
+#define F_NAME "ldistquad3d"
+{
+  int32_t w,h,d, i, j, k, b, y, m, wh;
+  uint32_t inf=(0x7fffffff - 2048);
+  uint8_t *pf,*pfj;
+  int32_t *pg,*pgj, *pgi, *paux;
+
+  int32_t *plist1_r, *plist1_l, *plist2_r, *plist2_l;
+  int32_t ilist1_r, ilist1_rmax, ilist1_l, ilist1_lmax;
+  int32_t ilist2_r, ilist2_l;
+
+  pf=UCHARDATA(imgin);
+  w=rowsize(imgin); h=colsize(imgin); d=depth(imgin);
+  wh = w * h;
+
+  pg = ULONGDATA(imgout);
+  for(m=0;m<w*h*d;m++) pg[m] = inf;
+
+  /* alocacao das filas para a segunda fase do algoritmo */
+  plist1_r = (int32_t *) calloc(1,w*sizeof(int32_t));
+  plist2_r = (int32_t *) calloc(1,w*sizeof(int32_t));
+  plist1_l = (int32_t *) calloc(1,w*sizeof(int32_t));
+  plist2_l = (int32_t *) calloc(1,w*sizeof(int32_t));
+  if ((plist1_r==NULL)||(plist2_r==NULL)||(plist1_l==NULL)||(plist2_l==NULL))
+  {
+    fprintf(stderr, "%s(): cannot allocate buffer\n", F_NAME);
+    return 0;
+  }
+  for(m=0;m<d;m++) { /* for each slice */
+    for(j=0;j<w;j++) { /* para cada coluna j */
+      pfj=&pf[j + m*wh];
+      pgj=&pg[j + m*wh];
+      i=0;
+      while (pfj[i*w] == 0) {
+	i++;
+	if (i>=h) break;
+      }
+      if (i<=(h-1)) { /* se chegou pela primeira vez */
+	k=i; pgj[k*w]=0;
+	b=1; k--;
+	while (k >= 0) { /* volta subindo ate inicio da linha */
+	  pgj[k*w] = pgj[(k+1)*w] + b;
+	  b=b+2;k--;
+	}
+	i++;
+	while (i<=(h-1)) { /* Loop principal deste primeiro passo */
+	  while (pfj[i*w] != 0) {
+	    pgj[i*w]=0; i++;
+	    if (i >= h) break;
+	  }
+	  if (i<=(h-1)) {
+	    b=1;
+	    while (pfj[i*w] == 0) {
+	      pgj[i*w] = pgj[(i-1)*w] + b;
+	      b = b + 2; i++;
+	      if (i >= h) break;
+	    }
+	    if (i<=(h-1)) { 
+	      k=i; pgj[k*w]=0; b=1;
+	      while (pgj[(k-1)*w] > pgj[k*w]) { /* volta subindo */
+		pgj[(k-1)*w] = pgj[k*w] + b;
+		b = b + 2; k--;
+	      }
+	      i++;
+	    }
+	  }
+	}
+      }
+    }
+  }
+  /* segunda parte, erosao por propagacao, linha por linha */
+
+  for (m=0; m<d; m++) { /* for each slice */
+    for (i=0; i<h; i++) { /* for each column */
+      pgi = &pg[i*w + m*wh];
+      for (j=0; j<(w-1); j++) {
+	plist1_r[j] = w-j-2; /* propagacao right, varredura a esquerda */
+	plist1_l[j] = j+1;   /* propagacao left, varredura a direita */
+      }
+      ilist1_r    = ilist1_l    = 0;
+      ilist1_rmax = ilist1_lmax = w - 1; /* n. de pontos na fronteira */
+      b = -1;
+      while (ilist1_lmax + ilist1_rmax) { /* se alguma das listas for nao vazia */
+	b = b + 2;
+	ilist2_r = ilist2_l = 0;
+	while (ilist1_r < ilist1_rmax) { /* propagacao right */
+	  j = plist1_r[ ilist1_r]; ilist1_r++; /* tira da fila */
+	  y = j + 1;
+	  if (pgi[y] > pgi[j] + b) {
+	    pgi[y] = pgi[j] + b;
+	    if (y < (w-1)) {
+	      plist2_r[ilist2_r] = y; ilist2_r++; /* poe na fila */
+	    }
+	  }
+	}
+	while (ilist1_l < ilist1_lmax) { /* propagacao left */
+	  j = plist1_l[ ilist1_l]; ilist1_l++; /* tira da fila */
+	  y = j - 1;
+	  if (pgi[y] > pgi[j] + b) {
+	    pgi[y] = pgi[j] + b;
+	    if (y > 0) {
+	      plist2_l[ilist2_l] = y; ilist2_l++; /* poe na fila */
+	    }
+	  }
+	}    
+	paux = plist1_r; plist1_r = plist2_r; plist2_r = paux;
+	paux = plist1_l; plist1_l = plist2_l; plist2_l = paux;
+	ilist1_r = ilist1_l = 0;
+	ilist1_rmax = ilist2_r;
+	ilist1_lmax = ilist2_l;
+      }
+    }
+  }
+  /* terceira parte, erosao por propagacao, depth by depth */
+
+  if (d > 1) { /* only if image has more than one slice */
+    for (j=0; j<w; j++) { /* for each line */
+      for (i=0; i<h; i++) { /* for each column */
+	pgi = &pg[j + i*w];
+	for (m=0; m<(d-1); m++) {
+	  plist1_r[m] = d-m-2; /* propagacao right, varredura a esquerda */
+	  plist1_l[m] = m+1;   /* propagacao left, varredura a direita */
+	}
+	ilist1_r    = ilist1_l    = 0;
+	ilist1_rmax = ilist1_lmax = d - 1; /* n. de pontos na fronteira */
+	b = -1;
+	while (ilist1_lmax + ilist1_rmax) { /* se alguma das listas for nao vazia */
+	  b = b + 2;
+	  ilist2_r = ilist2_l = 0;
+	  while (ilist1_r < ilist1_rmax) { /* propagacao right */
+	    m = plist1_r[ ilist1_r]; ilist1_r++; /* tira da fila */
+	    y = m + 1;
+	    if (pgi[y*wh] > pgi[m*wh] + b) {
+	      pgi[y*wh] = pgi[m*wh] + b;
+	      if (y < (d-1)) {
+		plist2_r[ilist2_r] = y; ilist2_r++; /* poe na fila */
+	      }
+	    }
+	  }
+	  while (ilist1_l < ilist1_lmax) { /* propagacao left */
+	    m = plist1_l[ ilist1_l]; ilist1_l++; /* tira da fila */
+	    y = m - 1;
+	    if (pgi[y*wh] > pgi[m*wh] + b) {
+	      pgi[y*wh] = pgi[m*wh] + b;
+	      if (y > 0) {
+		plist2_l[ilist2_l] = y; ilist2_l++; /* poe na fila */
+	      }
+	    }
+	  }    
+	  paux = plist1_r; plist1_r = plist2_r; plist2_r = paux;
+	  paux = plist1_l; plist1_l = plist2_l; plist2_l = paux;
+	  ilist1_r = ilist1_l = 0;
+	  ilist1_rmax = ilist2_r;
+	  ilist1_lmax = ilist2_l;
+	}
+      }
+    }
+  }
+  free(plist1_r);
+  free(plist1_l);
+  free(plist2_r);
+  free(plist2_l);
+  return 1;
+} // ldistquad3d_rl
+
+/* ======================================================== */
+int32_t ldisteuc3d(struct xvimage* ob, struct xvimage* res)
+/* ======================================================== */
+{
+ int32_t rs=rowsize(ob),cs=colsize(ob),ds=depth(ob);
+ uint32_t *O = ULONGDATA(res);
+ int32_t i;
+ double d;
+
+ if (!ldistquad3d(ob, res)) return 0;
+ 
+ for(i=0;i<rs*cs*ds;i++)
+ {
+   d = sqrt((double)(O[i]));
+   O[i] = (uint32_t)arrondi(d);
+ }
+    
+ return 1;
+} // ldisteuc3d()
+
+/* ======================================================== */
+int32_t ldilatball(struct xvimage* ob, int32_t r, int32_t mode)
+/* ======================================================== */
+// dilation by a ball of radius r
+#undef F_NAME
+#define F_NAME "ldilatball"
+{
+  int32_t rs=rowsize(ob), cs=colsize(ob), ds=depth(ob), N=rs*cs*ds;
+  struct xvimage *dist;
+  uint32_t *D;
+  uint8_t *O = UCHARDATA(ob);
+  int32_t i, r2;
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  D = ULONGDATA(dist);
+ 
+  if (mode == 0) r2 = r * r; else r2 = r;
+  switch (mode)
+  {
+    case 0:
+    case 1: if (!ldistquad3d(ob, dist)) return 0; break;
+    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+    case 4:
+    case 6:
+    case 8: 
+    case 18: 
+    case 26: 
+      if (!ldist(ob, mode, dist)) return 0; break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+
+  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+
+  freeimage(dist);    
+  return 1;
+} // ldilatball()
+
+/* ======================================================== */
+int32_t lerosball(struct xvimage* ob, int32_t r, int32_t mode)
+/* ======================================================== */
+// erosion by a ball of radius r
+#undef F_NAME
+#define F_NAME "lerosball"
+{
+  int32_t rs=rowsize(ob), cs=colsize(ob), ds=depth(ob), N=rs*cs*ds;
+  struct xvimage *dist;
+  uint32_t *D;
+  uint8_t *O = UCHARDATA(ob);
+  int32_t i, r2;
+
+  for(i=0; i<N; i++) if (O[i]) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  D = ULONGDATA(dist);
+
+  if (mode == 0) r2 = r * r; else r2 = r;
+  switch (mode)
+  {
+    case 0:
+    case 1: if (!ldistquad3d(ob, dist)) return 0; break;
+    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+    case 4:
+    case 8:
+    case 6:
+    case 18:
+    case 26: if (!ldist(ob, mode, dist)) return 0; break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+
+  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+
+  freeimage(dist);    
+  return 1;
+} // lerosball()
+
+/* ======================================================== */
+int32_t lopenball(struct xvimage* ob, int32_t r, int32_t mode)
+/* ======================================================== */
+// opening by a ball of radius r
+#undef F_NAME
+#define F_NAME "lopenball"
+{
+  int32_t rs=rowsize(ob), cs=colsize(ob), ds=depth(ob), N=rs*cs*ds;
+  struct xvimage *dist;
+  uint32_t *D;
+  uint8_t *O = UCHARDATA(ob);
+  int32_t i, r2;
+
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  D = ULONGDATA(dist);
+
+  if (mode == 0) r2 = r * r; else r2 = r;
+
+  // inverse + dilate + inverse
+  for(i=0; i<N; i++) if (O[i]) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+  switch (mode)
+  {
+    case 0:
+    case 1: if (!ldistquad3d(ob, dist)) return 0; break;
+    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+    case 4:
+    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+
+  //dilate
+  switch (mode)
+  {
+    case 0:
+    case 1: if (!ldistquad3d(ob, dist)) return 0; break;
+    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+    case 4:
+    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+
+  freeimage(dist);    
+  return 1;
+} // lopenball()
+
+/* ======================================================== */
+int32_t lcloseball(struct xvimage* ob, int32_t r, int32_t mode)
+/* ======================================================== */
+// closing by a ball of radius r
+#undef F_NAME
+#define F_NAME "lcloseball"
+{
+  int32_t rs=rowsize(ob), cs=colsize(ob), ds=depth(ob), N=rs*cs*ds;
+  struct xvimage *dist;
+  uint32_t *D;
+  uint8_t *O = UCHARDATA(ob);
+  int32_t i, r2;
+
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  D = ULONGDATA(dist);
+
+  if (mode == 0) r2 = r * r; else r2 = r;
+
+  // dilate + inverse
+  switch (mode)
+  {
+    case 0:
+    case 1: if (!ldistquad3d(ob, dist)) return 0; break;
+    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+    case 4:
+    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+
+  // dilate + inverse
+  switch (mode)
+  {
+    case 0:
+    case 1: if (!ldistquad3d(ob, dist)) return 0; break;
+    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+    case 4:
+    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+
+  freeimage(dist);    
+  return 1;
+} // lcloseball()
+
+/* ======================================================== */
+struct xvimage* ldilatdiscloc(struct xvimage* f, int32_t mode)
+/* ======================================================== */
+// local dilation by a disc of radius f(x)
+#undef F_NAME
+#define F_NAME "ldilatdiscloc"
+{
+  struct xvimage *tmp1;
+  struct xvimage *res;
+  uint8_t *T1;
+  uint8_t *R;
+  int32_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
+  int32_t vmax, v, i;
+  int32_t go;
+  tmp1 = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  res = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  if ((tmp1 == NULL) || (res == NULL))
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return(NULL);
+  }
+  T1 = UCHARDATA(tmp1);
+  R = UCHARDATA(res);
+  memset(R, 0, N);
+  if (datatype(f) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(f);
+    vmax = F[0];
+    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
+    for (v = 1; v <= vmax; v++)
+    {
+      memset(T1, 0, N);
+      go = 0;
+      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
+      if (go) 
+      { 
+        ldilatdisc(tmp1, v-1, mode);
+        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
+      }
+    } // for (v = 1; v <= vmax; v++)
+  }
+  else if (datatype(f) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *F = ULONGDATA(f);
+    vmax = F[0];
+    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
+    for (v = 1; v <= vmax; v++)
+    {
+      memset(T1, 0, N);
+      go = 0;
+      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
+      if (go) 
+      { 
+        ldilatdisc(tmp1, v-1, mode);
+        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
+      }
+    } // for (v = 1; v <= vmax; v++)
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad image type\n", F_NAME);
+    return(NULL);
+  }
+
+  freeimage(tmp1);
+  return(res);
+} // ldilatdiscloc()
+
+/* ======================================================== */
+struct xvimage* ldilatballloc(struct xvimage* f, int32_t mode)
+/* ======================================================== */
+// local dilation by a ball of radius f(x)
+// OBSOLETE - see REDT (lredt2d)
+#undef F_NAME
+#define F_NAME "ldilatballloc"
+{
+  struct xvimage *tmp1;
+  struct xvimage *res;
+  uint8_t *T1;
+  uint8_t *R;
+  int32_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
+  int32_t vmax, v, i;
+  int32_t go;
+  tmp1 = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  res = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  if ((tmp1 == NULL) || (res == NULL))
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return(NULL);
+  }
+  T1 = UCHARDATA(tmp1);
+  R = UCHARDATA(res);
+  memset(R, 0, N);
+  if (datatype(f) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(f);
+    vmax = F[0];
+    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
+    for (v = 1; v <= vmax; v++)
+    {
+      memset(T1, 0, N);
+      go = 0;
+      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
+      if (go) 
+      { 
+        ldilatball(tmp1, v-1, mode);
+        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
+      }
+    } // for (v = 1; v <= vmax; v++)
+  }
+  else if (datatype(f) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *F = ULONGDATA(f);
+    vmax = F[0];
+    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
+    for (v = 1; v <= vmax; v++)
+    {
+      memset(T1, 0, N);
+      go = 0;
+      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
+      if (go) 
+      { 
+        ldilatball(tmp1, v-1, mode);
+        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
+      }
+    } // for (v = 1; v <= vmax; v++)
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad image type\n", F_NAME);
+    return(NULL);
+  }
+
+  freeimage(tmp1);
+  return(res);
+} // ldilatballloc()
+
+/* ==================================== */
+int32_t ldistquadSaito(struct xvimage *img,   /* donnee: image binaire */       
+              struct xvimage *res    /* resultat: distances */
+)
+/* ==================================== */
+/* 
+  Call the Saito-Toriwaki algorithm
+
+  ATTENTION: calcule la distance au complémentaire
+*/
+#undef F_NAME
+#define F_NAME "ldistquadSaito"
+{ 
+  int32_t i,j,df,db,n;
+  int32_t w,d,rMax,rStart,rEnd;  
+  int32_t rs = img->row_size;
+  int32_t cs = img->col_size;
+  int32_t N= rs * cs;            /* taille de l'image */
+  uint8_t *F;          /* pointeur sur l'image */
+  int32_t *D;               /* pointeur sur les distances */
+  int32_t * buff = calloc(1,cs * sizeof(int32_t));
+
+  if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE))
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return(0);
+  }
+
+  D = ULONGDATA(res);
+  F = UCHARDATA(img);  
+  for (i=0;i<N;i++) D[i] = (uint32_t)F[i];
+
+  ////Forward scan
+  for (j=0;j<cs;j++)
+  {
+    df=rs;
+    for (i=0;i<rs;i++)
+    {
+      if (D[j*rs+i]!=0)
+        df=df+1;
+      else 
+        df=0;
+      D[j*rs+i]=df*df;
+    }
+  }
+
+  ////Backward scan
+  for (j=0;j<cs;j++)
+  {
+    db=rs;
+    for (i=rs-1;i>=0;i--)
+    {
+      if (D[j*rs+i]!=0)
+	db=db+1;
+      else 
+	db=0;
+      D[j*rs+i]=min(D[j*rs+i],db*db);
+
+    }
+  }
+
+  //%%%% step 2
+  for (i=0;i<rs;i++)
+  {
+	for (j=0;j<cs;j++)
+	{
+	buff[j]=D[i+j*rs];
+	}
+	
+	for (j=0;j<cs;j++)
+	{
+		d=buff[j];
+		if(d!=0)
+		{
+			rMax=(int32_t)(sqrt(d))+1;
+			rStart=min(rMax,j);
+			rEnd=min(rMax,(cs-1-j));
+			
+		for (n=-rStart;n<=rEnd;n++)
+		{
+		w=buff[j+n]+n*n;
+		if (w<d)
+		d=w;
+		}
+		}
+
+		D[i+j*rs]=d;
+	
+	}
+  }
+  free(buff);
+  return(1);
+} // ldistquadSaito()
+
+/* ==================================== */
+int32_t ldistSaito(struct xvimage *img,   /* donnee: image binaire */       
+              struct xvimage *res    /* resultat: distances */
+)
+/* ==================================== */
+/* 
+  Call the Saito-Toriwaki algorithm
+
+  ATTENTION: calcule la distance au complémentaire
+*/
+#undef F_NAME
+#define F_NAME "ldistSaito"
+{ 
+  int32_t i,j,df,db,n;
+  int32_t w,d,rMax,rStart,rEnd;  
+  int32_t rs = img->row_size;
+  int32_t cs = img->col_size;
+  int32_t N= rs * cs;            /* taille de l'image */
+  uint8_t *F;          /* pointeur sur l'image */
+  int32_t *D;               /* pointeur sur les distances */
+  int32_t * buff = calloc(1,cs * sizeof(int32_t));
+  double * R = DOUBLEDATA(res);
+  F = UCHARDATA(img);
+
+  if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_DOUBLE))
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return(0);
+  }
+
+  D = (int32_t *)calloc(1,N * sizeof(int32_t));
+  if (D == NULL)
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return(0);
+  }
+
+  for (i = 0; i < N; i++) D[i] = (int32_t)F[i];
+
+  ////Forward scan
+  for (j=0;j<cs;j++)
+  {
+    df=rs;
+    for (i=0;i<rs;i++)
+    {
+      if (D[j*rs+i]!=0)
+        df=df+1;
+      else 
+        df=0;
+      D[j*rs+i]=df*df;
+    }
+  }
+
+  ////Backward scan
+  for (j=0;j<cs;j++)
+  {
+    db=rs;
+    for (i=rs-1;i>=0;i--)
+    {
+      if (D[j*rs+i]!=0)
+	db=db+1;
+      else 
+	db=0;
+      D[j*rs+i]=min(D[j*rs+i],db*db);
+
+    }
+  }
+
+  //%%%% step 2
+  for (i=0;i<rs;i++)
+  {
+	for (j=0;j<cs;j++)
+	{
+	buff[j]=D[i+j*rs];
+	}
+	
+	for (j=0;j<cs;j++)
+	{
+		d=buff[j];
+		if(d!=0)
+		{
+			rMax=(int32_t)(sqrt(d))+1;
+			rStart=min(rMax,j);
+			rEnd=min(rMax,(cs-1-j));
+			
+		for (n=-rStart;n<=rEnd;n++)
+		{
+		w=buff[j+n]+n*n;
+		if (w<d)
+		d=w;
+		}
+		}
+
+		D[i+j*rs]=d;
+	
+	}
+  }
+
+  for (i = 0; i < N; i++) R[i] = sqrt(D[i]);
+
+  free(buff);
+  free(D);
+  return(1);
+} // ldistSaito()
+
+/* ======================================================== */
+/* ======================================================== */
+// Functions for the Reverse Euclidean Distance Transform (Coeurjolly)
+// Linear algorithm
+/* ======================================================== */
+/* ======================================================== */
+
+#define Sep1(u,v,f,j) (((u*u)-(v*v)-f[u+rs*j]+f[v+rs*j])/(2*(u-v)))
+#define Sep2(u,v,f,i) (((u*u)-(v*v)-f[u*rs+i]+f[v*rs+i])/(2*(u-v)))
+
+#define F1(x,xp,f,j) (f[x+rs*j]-(xp-x)*(xp-x))
+#define F2(y,yp,f,i) (f[y*rs+i]-(yp-y)*(yp-y))
+
+#define Sep1_3d(u,v,f,j,k) (((u*u)-(v*v)-f[u+rs*j+ps*k]+f[v+rs*j+ps*k])/(2*(u-v)))
+#define Sep2_3d(u,v,f,i,k) (((u*u)-(v*v)-f[i+rs*u+ps*k]+f[i+rs*v+ps*k])/(2*(u-v)))
+#define Sep3_3d(u,v,f,i,j) (((u*u)-(v*v)-f[i+rs*j+ps*u]+f[i+rs*j+ps*v])/(2*(u-v)))
+
+#define F1_3d(x,xp,f,j,k) (f[x+rs*j+ps*k]-(xp-x)*(xp-x))
+#define F2_3d(y,yp,f,i,k) (f[i+rs*y+ps*k]-(yp-y)*(yp-y))
+#define F3_3d(z,zp,f,i,j) (f[i+rs*j+ps*z]-(zp-z)*(zp-z))
+
+/* ======================================================== */
+static void REDT_line(int32_t *f, int32_t *g, int32_t rs, int32_t cs)
+/* ======================================================== */
+{
+  int32_t j, u, q;
+  int32_t w;
+  int32_t *s, *t; //sommets des paraboles
+  s = (int32_t *)calloc(1,rs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,rs * sizeof(int32_t));
+
+  for (j = 0; j < cs; j++)
+  {
+    q = 0; s[0] = 0; t[0] = 0;
+    for (u = 1; u < rs; u++)
+    {
+      while ( (q >= 0) && (F1(s[q],t[q],f,j) < F1(u,t[q],f,j)) ) q--;
+      if (q < 0)
+      {
+        q = 0;
+        s[0] = u;
+      }
+      else
+      {
+        w = 1 + Sep1(s[q],u,f,j);
+        if (w < rs)
+        {
+          q++; s[q] = u; t[q] = w;
+        }
+      }
+    } 
+    for (u = rs-1; u >= 0; u--)
+    {
+      g[u + rs*j] = F1(s[q],u,f,j);
+      if (u == t[q]) q--;
+    }
+  }
+  free(s); free(t);
+} //  REDT_line()
+
+/* ======================================================== */
+static void REDT_column(int32_t *f, int32_t *g, int32_t rs, int32_t cs)
+/* ======================================================== */
+{
+  int32_t i, u, q;
+  int32_t w;
+  int32_t *s, *t; //sommets des paraboles
+  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
+
+  for (i = 0; i < rs; i++)
+  {
+    q = 0; s[0] = 0; t[0] = 0;
+    for (u = 1; u < cs; u++)
+    {
+      while ( (q >= 0) && (F2(s[q],t[q],f,i) < F2(u,t[q],f,i)) ) q--;
+      if (q < 0)
+      {
+        q = 0;
+        s[0] = u;
+      }
+      else
+      {
+        w = 1 + Sep2(s[q],u,f,i);
+        if (w < cs)
+        {
+          q++; s[q] = u; t[q] = w;
+        }
+      }
+    } 
+    for (u = cs-1; u >= 0; u--)
+    {
+      g[rs*u + i] = F2(s[q],u,f,i);
+      if (u == t[q]) q--;
+    }
+  }
+  free(s); free(t);
+} //  REDT_column()
+
+/* ======================================================== */
+struct xvimage* lredt2d(struct xvimage* f)
+/* ======================================================== */
+// reverse euclidean distance transform
+// from: "d-Dimensional Reverse Euclidean Distance Transformation and Euclidean Medial Axis 
+//        Extraction in Optimal Time", D. Coeurjolly, DGCI 2003, LNCS 2886, pp. 327-337, 2003.
+// Caution: original data in image f will be lost.
+#undef F_NAME
+#define F_NAME "lredt2d"
+{
+  struct xvimage *tmp;
+  struct xvimage *res;
+  uint8_t *R;
+  int32_t i, rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
+
+  if (ds != 1)
+  {
+    fprintf(stderr, "%s: only for 2D images\n", F_NAME);
+    return(NULL);
+  }
+
+  res = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if ((res == NULL) || (tmp == NULL))
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return(NULL);
+  }
+  R = UCHARDATA(res);
+
+  if (datatype(f) == VFF_TYP_4_BYTE)
+  {
+    int32_t *F = ULONGDATA(f);
+    int32_t *T = ULONGDATA(tmp);
+    REDT_line(F, T, rs, cs);
+    copy2image(f, tmp);
+    REDT_column(F, T, rs, cs);
+    for (i = 0; i < N; i++) if (T[i]) R[i] = NDG_MAX; else R[i] = 0;
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad image type\n", F_NAME);
+    return(NULL);
+  }
+
+  freeimage(tmp);
+  return(res);
+} // lredt2d()
+
+/* ======================================================== */
+static void REDT_line_3d(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
+/* ======================================================== */
+{
+  int32_t j, u, q, k, ps;
+  int32_t w;
+  int32_t *s, *t; //sommets des paraboles
+  s = (int32_t *)calloc(1,rs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,rs * sizeof(int32_t));
+  ps = cs * rs; // taille d'un plan
+  
+  for(k = 0; k < ds; k++)
+    {
+      for (j = 0; j < cs; j++)
+	{
+	  q = 0; s[0] = 0; t[0] = 0;
+	  for (u = 1; u < rs; u++)
+	    {
+	      while ( (q >= 0) && (F1_3d(s[q],t[q],f,j,k) < F1_3d(u,t[q],f,j,k)) ) q--;
+	      if (q < 0)
+		{
+		  q = 0;
+		  s[0] = u;
+		}
+	      else
+		{
+		  w = 1 + Sep1_3d(s[q],u,f,j,k);
+		  if (w < rs)
+		    {
+		      q++; s[q] = u; t[q] = w;
+		    }
+		}
+	    } 
+	  for (u = rs-1; u >= 0; u--)
+	    {
+	      g[u + rs*j + ps*k] = F1_3d(s[q],u,f,j,k);
+	      if (u == t[q]) q--;
+	    }
+	}
+    }
+  free(s); free(t);
+} //  REDT_line_3d()
+
+/* ======================================================== */
+static void REDT_column_3d(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
+/* ======================================================== */
+{
+  int32_t i, u, q, k, ps;
+  int32_t w;
+  int32_t *s, *t; //sommets des paraboles
+  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  ps = rs * cs; // taille d'un plan
+
+  for(k = 0; k < ds; k++)
+    {
+      for (i = 0; i < rs; i++)
+	{
+	  q = 0; s[0] = 0; t[0] = 0;
+	  for (u = 1; u < cs; u++)
+	    {
+	      while ( (q >= 0) && (F2_3d(s[q],t[q],f,i,k) < F2_3d(u,t[q],f,i,k)) ) q--;
+	      if (q < 0)
+		{
+		  q = 0;
+		  s[0] = u;
+		}
+	      else
+		{
+		  w = 1 + Sep2_3d(s[q],u,f,i,k);
+		  if (w < cs)
+		    {
+		      q++; s[q] = u; t[q] = w;
+		    }
+		}
+	    } 
+	  for (u = cs-1; u >= 0; u--)
+	    {
+	      g[k*ps + rs*u + i] = F2_3d(s[q],u,f,i,k);
+	      if (u == t[q]) q--;
+	    }
+	}
+    }
+  free(s); free(t);
+} //  REDT_column_3d()
+
+
+/* ======================================================== */
+static void REDT_zaxis_3d(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
+/* ======================================================== */
+{
+  int32_t i, u, q, j, ps;
+  int32_t w;
+  int32_t *s, *t; //sommets des paraboles
+  s = (int32_t *)calloc(1,ds * sizeof(int32_t));
+  t = (int32_t *)calloc(1,ds * sizeof(int32_t));
+  ps = rs * cs; // taille d'un plan
+
+  for(j = 0; j < cs; j++)
+    {
+      for (i = 0; i < rs; i++)
+	{
+	  q = 0; s[0] = 0; t[0] = 0;
+	  for (u = 1; u < ds; u++)
+	    {
+	      while ( (q >= 0) && (F3_3d(s[q],t[q],f,i,j) < F3_3d(u,t[q],f,i,j)) ) q--;
+	      if (q < 0)
+		{
+		  q = 0;
+		  s[0] = u;
+		}
+	      else
+		{
+		  w = 1 + Sep3_3d(s[q],u,f,i,j);
+		  if (w < ds)
+		    {
+		      q++; s[q] = u; t[q] = w;
+		    }
+		}
+	    } 
+	  for (u = ds-1; u >= 0; u--)
+	    {
+	      g[ps*u +  rs*j + i] = F3_3d(s[q],u,f,i,j);
+	      if (u == t[q]) q--;
+	    }
+	}
+    }
+  free(s); free(t);
+} //  REDT_zaxis_3d()
+
+/* ======================================================== */
+struct xvimage* lredt3d(struct xvimage* f)
+/* ======================================================== */
+// reverse euclidean distance transform
+// from: "d-Dimensional Reverse Euclidean Distance Transformation and Euclidean Medial Axis 
+//        Extraction in Optimal Time", D. Coeurjolly, DGCI 2003, LNCS 2886, pp. 327-337, 2003.
+// Caution: original data in image f will be lost.
+#undef F_NAME
+#define F_NAME "lredt3d"
+{
+  struct xvimage *tmp;
+  struct xvimage *res;
+  uint8_t *R;
+  int32_t i, rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
+
+  if (ds <= 1)
+    {
+      fprintf(stderr, "%s: only for 3D images\n", F_NAME);
+      return(NULL);
+    }
+
+  res = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if ((res == NULL) || (tmp == NULL))
+    {
+      fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+      return(NULL);
+    }
+  R = UCHARDATA(res);
+  
+  if (datatype(f) == VFF_TYP_4_BYTE)
+    {
+      int32_t *F = ULONGDATA(f);
+      int32_t *T = ULONGDATA(tmp);
+      REDT_line_3d(F, T, rs, cs, ds);
+      copy2image(f, tmp);
+      REDT_column_3d(F, T, rs, cs, ds);
+      copy2image(f, tmp);
+      REDT_zaxis_3d(F, T, rs, cs, ds);
+      for (i = 0; i < N; i++) if (T[i]) R[i] = NDG_MAX; else R[i] = 0;
+    }
+  else
+    {
+      fprintf(stderr, "%s: bad image type\n", F_NAME);
+      return(NULL);
+    }
+
+  freeimage(tmp);
+  return(res);
+} // lredt3d()
+
+/* ======================================================== */
+static void ST_line(int32_t *f, int32_t *g, uint8_t *r, int32_t rs, int32_t cs)
+/* ======================================================== */
+{
+  int32_t j, u, q;
+  int32_t w;
+  int32_t *s, *t; //sommets des paraboles
+  s = (int32_t *)calloc(1,rs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,rs * sizeof(int32_t));
+
+  memset(r, 0, rs*cs);
+  for (j = 0; j < cs; j++)
+  {
+    q = 0; s[0] = 0; t[0] = 0;
+    for (u = 1; u < rs; u++)
+    {
+      while ( (q >= 0) && (F1(s[q],t[q],f,j) < F1(u,t[q],f,j)) ) q--;
+      if (q < 0)
+      {
+        q = 0;
+        s[0] = u;
+      }
+      else
+      {
+        w = 1 + Sep1(s[q],u,f,j);
+        if (w < rs)
+        {
+          q++; s[q] = u; t[q] = w;
+        }
+      }
+    } 
+    for (u = rs-1; u >= 0; u--)
+    {
+      r[s[q] + rs*j] = 1;
+      g[u + rs*j] = F1(s[q],u,f,j);
+      if (u == t[q]) q--;
+    }
+  }
+  free(s); free(t);
+} //  ST_line()
+
+/* ======================================================== */
+static void ST_column(int32_t *f, uint8_t *r, int32_t rs, int32_t cs)
+/* ======================================================== */
+// input f: result of line scan
+// input/output r: binary image - positions of the skeleton points
+{
+  int32_t i, u, q;
+  int32_t w;
+  int32_t *s, *t; //sommets des paraboles
+  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
+
+  for (i = 0; i < rs; i++)
+  {
+    q = 0; s[0] = 0; t[0] = 0;
+    for (u = 1; u < cs; u++)
+    {
+      while ( (q >= 0) && (F2(s[q],t[q],f,i) < F2(u,t[q],f,i)) ) q--;
+      if (q < 0)
+      {
+        q = 0;
+        s[0] = u;
+      }
+      else
+      {
+        w = 1 + Sep2(s[q],u,f,i);
+        if (w < cs)
+        {
+          q++; s[q] = u; t[q] = w;
+        }
+      }
+    } 
+    for (u = cs-1; u >= 0; u--)
+    {
+      r[rs*s[q] + i] = 1;
+      if (u == t[q]) q--;
+    }
+  }
+  free(s); free(t);
+} //  ST_column()
+
+/* ======================================================== */
+int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res)
+/* ======================================================== */
+// optimal algorithm for Saito-Toriwaki's skeleton
+// from: "d-Dimensional Reverse Euclidean Distance Transformation and Euclidean Medial Axis 
+//        Extraction in Optimal Time", D. Coeurjolly, DGCI 2003, LNCS 2886, pp. 327-337, 2003.
+// Caution: original data in image f will be lost.
+#undef F_NAME
+#define F_NAME "lskeleton_ST"
+{
+  struct xvimage *tmp;
+  int32_t i, rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
+  int32_t *F = ULONGDATA(f);
+  int32_t *R = ULONGDATA(res);
+  uint8_t *T;
+
+  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    return 0;
+  }    
+
+  if ((datatype(f) != VFF_TYP_4_BYTE) || (datatype(res) != VFF_TYP_4_BYTE))
+  {
+    fprintf(stderr, "%s: bad image type\n", F_NAME);
+    return 0;
+  }
+
+  if (ds != 1)
+  {
+    fprintf(stderr, "%s: only for 2D images\n", F_NAME);
+    return 0;
+  }
+
+  tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  if (tmp == NULL)
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  T = UCHARDATA(tmp);
+
+  ST_line(F, R, T, rs, cs);
+  ST_column(R, T, rs, cs);
+  for (i = 0; i < N; i++) if (T[i]) R[i] = F[i]; else R[i] = 0;
+
+  freeimage(tmp);
+  return 1;
+} // lskeleton_ST()
+
+/* ======================================================== */
+/* ======================================================== */
+// Functions for the exact Squared Euclidean Distance Transform (Meijster et al.)
+// Linear algorithm
+/* ======================================================== */
+/* ======================================================== */
+
+#define F_2_2d(y,yp,f,i) (f[y*rs+i]+(yp-y)*(yp-y))
+#define Sep_2_2d(v,u,f,i) (((u*u)-(v*v)+f[u*rs+i]-f[v*rs+i])/(2*(u-v)))
+
+#define F_2_3d(y,yp,f,i,k) (f[k*ps+y*rs+i]+(yp-y)*(yp-y))
+#define F_3_3d(z,zp,f,i,j) (f[z*ps+j*rs+i]+(zp-z)*(zp-z))
+#define Sep_2_3d(v,u,f,i,k) (((u*u)-(v*v)+f[k*ps+u*rs+i]-f[k*ps+v*rs+i])/(2*(u-v)))
+#define Sep_3_3d(v,u,f,i,j) (((u*u)-(v*v)+f[u*ps+j*rs+i]-f[v*ps+j*rs+i])/(2*(u-v)))
+
+/* ======================================================== */
+void SEDT_line(uint8_t *f, int32_t *g, int32_t rs, int32_t cs)
+/* ======================================================== */
+{
+  int32_t i, j;
+  for (j = 0; j < cs; j++)
+  {
+    if (f[0 + rs*j] == 0) g[0 + rs*j] = 0; else g[0 + rs*j] = rs*cs; // infinity
+    for (i = 1; i < rs; i++)
+    {
+      if (f[i + rs*j] == 0) g[i + rs*j] = 0; 
+      else                  g[i + rs*j] = 1 + g[i-1 + rs*j]; 
+    }
+    for (i = rs-2; i >= 0; i--)
+      if (g[i+1 + rs*j] < g[i + rs*j]) g[i + rs*j] = 1 + g[i+1 + rs*j];
+    for (i = 0; i < rs; i++) 
+    {
+      if (g[i + rs*j] < rs*cs) // NECESSAIRE pour éviter un overflow
+	g[i + rs*j] = g[i + rs*j] * g[i + rs*j];
+    }
+  }
+} //  SEDT_line()
+
+/* ======================================================== */
+void SEDT_column(int32_t *f, int32_t *g, int32_t rs, int32_t cs)
+/* ======================================================== */
+{
+  int32_t i, u, q;
+  int32_t w;
+  int32_t *s, *t;
+  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
+
+  for (i = 0; i < rs; i++)
+  {
+    q = 0; s[0] = 0; t[0] = 0;
+    for (u = 1; u < cs; u++)
+    {
+      while ( (q >= 0) && (F_2_2d(s[q],t[q],f,i) > F_2_2d(u,t[q],f,i)) ) q--;
+      if (q < 0)
+      {
+        q = 0;
+        s[0] = u;
+      }
+      else
+      {
+        w = 1 + Sep_2_2d(s[q],u,f,i);
+        if (w < cs)
+        {
+          q++; s[q] = u; t[q] = w;
+        }
+      }
+    } 
+    for (u = cs-1; u >= 0; u--)
+    {
+      g[rs*u + i] = F_2_2d(s[q],u,f,i);
+      if (u == t[q]) q--;
+    }
+  }
+  free(s); free(t);
+} //  SEDT_column()
+
+/* ======================================================== */
+void SEDT3d_line(uint8_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
+/* ======================================================== */
+{
+  int32_t i, j, k, ps = rs*cs;
+  for (k = 0; k < ds; k++)
+    for (j = 0; j < cs; j++)
+    {
+      if (f[0 + rs*j + ps*k] == 0)
+	g[0 + rs*j + ps*k] = 0; 
+      else 
+	g[0 + rs*j + ps*k] = rs*cs*ds; // infinity
+      for (i = 1; i < rs; i++)
+	if (f[i + rs*j + ps*k] == 0) g[i + rs*j + ps*k] = 0; 
+	else g[i + rs*j + ps*k] = 1 + g[i-1 + rs*j + ps*k]; 
+      for (i = rs-2; i >= 0; i--)
+	if (g[i+1 + rs*j + ps*k] < g[i + rs*j + ps*k])
+	  g[i + rs*j + ps*k] = 1 + g[i+1 + rs*j + ps*k];
+      for (i = 0; i < rs; i++)
+	if (g[i + rs*j + ps*k] < rs*cs*ds) // NECESSAIRE pour éviter un overflow
+	  g[i + rs*j + ps*k] = g[i + rs*j + ps*k] * g[i + rs*j + ps*k];
+    }
+} //  SEDT3d_line()
+
+/* ======================================================== */
+void SEDT3d_column(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
+/* ======================================================== */
+{
+  int32_t i, k, u, q, ps = rs*cs;
+  int32_t w;
+  int32_t *s, *t;
+  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
+
+  for (k = 0; k < ds; k++)
+    for (i = 0; i < rs; i++)
+    {
+      q = 0; s[0] = 0; t[0] = 0;
+      for (u = 1; u < cs; u++)
+      {
+	while ( (q >= 0) && (F_2_3d(s[q],t[q],f,i,k) > F_2_3d(u,t[q],f,i,k)) ) q--;
+	if (q < 0)
+        {
+	  q = 0;
+	  s[0] = u;
+	}
+	else
+        {
+	  w = 1 + Sep_2_3d(s[q],u,f,i,k);
+	  if (w < cs)
+	  {
+	    q++; s[q] = u; t[q] = w;
+	  }
+	}
+      } 
+      for (u = cs-1; u >= 0; u--)
+      {
+	g[ps*k + rs*u + i] = F_2_3d(s[q],u,f,i,k);
+	if (u == t[q]) q--;
+      }
+    }
+  free(s); free(t);
+} //  SEDT3d_column()
+
+/* ======================================================== */
+void SEDT3d_planes(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
+/* ======================================================== */
+{
+  int32_t i, j, u, q, ps = rs*cs;
+  int32_t w;
+  int32_t *s, *t;
+  s = (int32_t *)calloc(1,ds * sizeof(int32_t));
+  t = (int32_t *)calloc(1,ds * sizeof(int32_t));
+
+  for (j = 0; j < cs; j++)
+    for (i = 0; i < rs; i++)
+    {
+      q = 0; s[0] = 0; t[0] = 0;
+      for (u = 1; u < ds; u++)
+      {
+	while ( (q >= 0) && (F_3_3d(s[q],t[q],f,i,j) > F_3_3d(u,t[q],f,i,j)) ) q--;
+	if (q < 0)
+        {
+	  q = 0;
+	  s[0] = u;
+	}
+	else
+        {
+	  w = 1 + Sep_3_3d(s[q],u,f,i,j);
+	  if (w < ds)
+	  {
+	    q++; s[q] = u; t[q] = w;
+	  }
+	}
+      } 
+      for (u = ds-1; u >= 0; u--)
+      {
+	g[ps*u + rs*j + i] = F_3_3d(s[q],u,f,i,j);
+	if (u == t[q]) q--;
+      }
+    }
+  free(s); free(t);
+} //  SEDT3d_planes()
+
+/* ==================================== */
+int32_t lsedt_meijster(struct xvimage *img,   /* donnee: image binaire */       
+		   struct xvimage *res    /* resultat: distances */
+)
+/* ==================================== */
+/* 
+  Call the SEDT linear algorithm (Meijster & al.)
+  ATTENTION: calcule la distance au complémentaire
+*/
+#undef F_NAME
+#define F_NAME "lsedt_meijster"
+{ 
+  int32_t rs = rowsize(img);
+  int32_t cs = colsize(img);
+  int32_t ds = depth(img);
+  int32_t ps = rs * cs;
+  int32_t N = ps * ds;
+  uint8_t *F;          /* pointeur sur l'image */
+  int32_t *D;               /* pointeur sur les distances */
+  struct xvimage *tmp;
+  int32_t *T;
+
+#ifdef DEBUG_MEJSTER
+  printf("lsedt_meijster : begin\n");
+#endif
+
+  if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE))
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return(0);
+  }
+
+  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    return 0;
+  }    
+
+  tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (tmp == NULL)
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return(0);
+  }
+  T = ULONGDATA(tmp);
+  D = ULONGDATA(res);
+  F = UCHARDATA(img);  
+
+  if (ds == 1)
+  {
+    SEDT_line(F, T, rs, cs);
+    SEDT_column(T, D, rs, cs);
+  }
+  else
+  {
+    SEDT3d_line(F, D, rs, cs, ds);
+    SEDT3d_column(D, T, rs, cs, ds);
+    SEDT3d_planes(T, D, rs, cs, ds);
+  }
+
+  freeimage(tmp);
+  return(1);
+} // lsedt_meijster()
+
+/* ==================================== */
+int32_t ldistMeijster(struct xvimage *img,   /* donnee: image binaire */       
+		  struct xvimage *res    /* resultat: distances */
+)
+/* ==================================== */
+/* 
+  Call the Meijster algorithm
+
+  ATTENTION: calcule la distance au complémentaire
+*/
+#undef F_NAME
+#define F_NAME "ldistMeijster"
+{ 
+  int32_t i, rs = rowsize(img), cs = colsize(img), ds = depth(img);
+  int32_t N = rs * cs * ds;
+  uint8_t *F = UCHARDATA(img);
+  double * R = DOUBLEDATA(res);
+  struct xvimage *dist;
+  int32_t *D;
+
+  if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_DOUBLE))
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return(0);
+  }
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return(0);
+  }
+  D = ULONGDATA(dist);
+
+  if (!lsedt_meijster(img, dist))
+  {
+    fprintf(stderr, "%s: lsedt_meijster failed\n", F_NAME);
+    return(0);
+  }
+
+  for (i = 0; i < N; i++) R[i] = sqrt(D[i]);
+
+  freeimage(dist);
+  return(1);
+} // ldistMeijster()
+
+/* ======================================================== */
+/* ======================================================== */
+// Functions for the Feature Transform (Hesselink et al.)
+// Linear algorithm
+/* ======================================================== */
+/* ======================================================== */
+
+/* ======================================================== */
+void FT_line(uint8_t *f, int32_t *ft1, int32_t rs, int32_t cs)
+/* ======================================================== */
+{
+  int32_t i, j;
+  int32_t *g = (int32_t *)calloc(1,rs * sizeof(int32_t));
+  for (j = 0; j < cs; j++)
+  {
+    if (f[rs-1 + rs*j] == 0) g[rs-1] = 0; else g[rs-1] = rs*cs; // infinity
+    for (i = rs-2; i >= 0; i--)
+    {
+      if (f[i + rs*j] == 0) g[i] = 0; 
+      else                  g[i] = 1 + g[i+1]; 
+    }
+    ft1[0 + rs*j] = g[0];
+    for (i = 0; i < rs; i++) 
+    {
+      if ((i - ft1[i-1 + rs*j]) <= g[i])
+	ft1[i + rs*j] = ft1[i-1 + rs*j];
+      else
+	ft1[i + rs*j] = i + g[i];
+    }
+  }
+  free(g);
+} //  FT_line()
+
+/* ======================================================== */
+void FT_column(int32_t *ft1, int32_t *ft2, int32_t rs, int32_t cs)
+/* ======================================================== */
+{
+  int32_t i, j, u, q;
+  int32_t w;
+  int32_t *s, *t, *f;
+  f = (int32_t *)calloc(1,rs * cs * sizeof(int32_t));
+  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
+
+  for (j = 0; j < cs; j++)
+    for (i = 0; i < rs; i++)
+      f[i + rs*j] = (i - ft1[i + rs*j]) * (i - ft1[i + rs*j]);
+  for (i = 0; i < rs; i++)
+  {
+    q = 0; s[0] = 0; t[0] = 0;
+    for (u = 1; u < cs; u++)
+    {
+      while ( (q >= 0) && (F_2_2d(s[q],t[q],f,i) > F_2_2d(u,t[q],f,i)) ) q--;
+      if (q < 0)
+      {
+        q = 0;
+        s[0] = u;
+      }
+      else
+      {
+        w = 1 + Sep_2_2d(s[q],u,f,i);
+        if (w < cs)
+        {
+          q++; s[q] = u; t[q] = w;
+        }
+      }
+    } 
+    for (u = cs-1; u >= 0; u--)
+    {
+      ft2[i + rs*u] = ft1[i + rs*s[q]] + rs*s[q];
+      if (u == t[q]) q--;
+    }
+  } // for (i = 0; i < rs; i++)
+  free(s); free(t); free(f);
+} //  FT_column()
+
+/* ======================================================== */
+void FT3d_line(uint8_t *f, int32_t *ft1, int32_t rs, int32_t cs, int32_t ds)
+/* ======================================================== */
+{
+} //  FT3d_line()
+
+/* ======================================================== */
+void FT3d_column(int32_t *ft1, int32_t *ft2, int32_t rs, int32_t cs, int32_t ds)
+/* ======================================================== */
+{
+} //  FT3d_column()
+
+/* ======================================================== */
+void FT3d_planes(int32_t *ft2, int32_t *ft3, int32_t rs, int32_t cs, int32_t ds)
+/* ======================================================== */
+{
+} //  FT3d_planes()
+
+/* ==================================== */
+int32_t lft_hesselink(struct xvimage *img,   /* donnee: image binaire */       
+		      struct xvimage *res    /* resultat: feature points */
+)
+/* ==================================== */
+/* 
+  Call the FT linear algorithm (Hesselink & al.)
+*/
+#undef F_NAME
+#define F_NAME "lft_hesselink"
+{ 
+  int32_t rs = rowsize(img);
+  int32_t cs = colsize(img);
+  int32_t ds = depth(img);
+  int32_t ps = rs * cs;
+  int32_t N = ps * ds;
+  uint8_t *F;          /* pointeur sur l'image */
+  int32_t *D;               /* pointeur sur les distances */
+  struct xvimage *tmp;
+  int32_t *T;
+
+  if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE))
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return(0);
+  }
+
+  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    return 0;
+  }    
+
+  tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (tmp == NULL)
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return(0);
+  }
+  T = ULONGDATA(tmp);
+  D = ULONGDATA(res);
+  F = UCHARDATA(img);  
+
+  if (ds == 1)
+  {
+    FT_line(F, T, rs, cs);
+    FT_column(T, D, rs, cs);
+  }
+  else
+  {
+    FT3d_line(F, D, rs, cs, ds);
+    FT3d_column(D, T, rs, cs, ds);
+    FT3d_planes(T, D, rs, cs, ds);
+  }
+
+  freeimage(tmp);
+  return(1);
+} // lft_hesselink()
+
+/* ======================================================== */
+int32_t lmedax_Hesselink(struct xvimage* f, struct xvimage* res)
+/* ======================================================== */
+// Integer Medial Axis
+// from: "", W.H. Hesselink and B.T.M. Roerdink
+#undef F_NAME
+#define F_NAME "lmedax_Hesselink"
+{
+  struct xvimage *tmp;
+  int32_t i, j, k, medax, ftp, ftpe, ftp_x, ftp_y, ftp_z, ftpe_x, ftpe_y, ftpe_z;
+  int32_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
+  uint8_t *F = UCHARDATA(f);
+  int32_t *R = ULONGDATA(res);
+  int32_t *T;
+  double mx, my;
+
+  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    return 0;
+  }    
+
+  if ((datatype(f) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE))
+  {
+    fprintf(stderr, "%s: bad image type\n", F_NAME);
+    return 0;
+  }
+
+  tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (tmp == NULL)
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  T = ULONGDATA(tmp);
+
+  if (ds == 1)
+  {
+    FT_line(F, R, rs, cs);
+    FT_column(R, T, rs, cs);
+
+    for (j = 0; j < cs; j++) 
+    for (i = 0; i < rs; i++) 
+    if (F[i + rs*j])
+    {
+      medax = 0;
+      ftp = T[i + rs*j]; ftp_x = ftp % rs; ftp_y = ftp / rs;
+      if ((i > 0) && F[i-1 + rs*j])
+      {
+	ftpe = T[i-1 + rs*j]; ftpe_x = ftpe % rs; ftpe_y = ftpe / rs;
+	mx = ftp_x - 0.5; my = ftp_y;
+	if ((((ftpe_x - ftp_x)*(ftpe_x - ftp_x) + (ftpe_y - ftp_y)*(ftpe_y - ftp_y)) > 1) &&
+	    (((mx - ftpe_x)*(mx - ftpe_x) + (mx - ftpe_y)*(mx - ftpe_y)) <= 
+	     ((mx - ftp_x)*(mx - ftp_x) + (mx - ftp_y)*(mx - ftp_y))))
+	  medax = 1;
+      }	  
+      if (!medax && (i < rs-1) && F[i+1 + rs*j])
+      {
+	ftpe = T[i+1 + rs*j]; ftpe_x = ftpe % rs; ftpe_y = ftpe / rs;
+	mx = ftp_x + 0.5; my = ftp_y;
+	if ((((ftpe_x - ftp_x)*(ftpe_x - ftp_x) + (ftpe_y - ftp_y)*(ftpe_y - ftp_y)) > 1) &&
+	    (((mx - ftpe_x)*(mx - ftpe_x) + (mx - ftpe_y)*(mx - ftpe_y)) <= 
+	     ((mx - ftp_x)*(mx - ftp_x) + (mx - ftp_y)*(mx - ftp_y))))
+	  medax = 1;
+      }	  
+      if (!medax && (j < cs-1) && F[i + rs*(j+1)])
+      {
+	ftpe = T[i + rs*(j+1)]; ftpe_x = ftpe % rs; ftpe_y = ftpe / rs;
+	mx = ftp_x; my = ftp_y + 0.5;
+	if ((((ftpe_x - ftp_x)*(ftpe_x - ftp_x) + (ftpe_y - ftp_y)*(ftpe_y - ftp_y)) > 1) &&
+	    (((mx - ftpe_x)*(mx - ftpe_x) + (mx - ftpe_y)*(mx - ftpe_y)) <= 
+	     ((mx - ftp_x)*(mx - ftp_x) + (mx - ftp_y)*(mx - ftp_y))))
+	  medax = 1;
+      }	  
+      if (!medax && (j > 0) && F[i + rs*(j-1)])
+      {
+	ftpe = T[i + rs*(j-1)]; ftpe_x = ftpe % rs; ftpe_y = ftpe / rs;
+	mx = ftp_x; my = ftp_y - 0.5;
+	if ((((ftpe_x - ftp_x)*(ftpe_x - ftp_x) + (ftpe_y - ftp_y)*(ftpe_y - ftp_y)) > 1) &&
+	    (((mx - ftpe_x)*(mx - ftpe_x) + (mx - ftpe_y)*(mx - ftpe_y)) <= 
+	     ((mx - ftp_x)*(mx - ftp_x) + (mx - ftp_y)*(mx - ftp_y))))
+	  medax = 1;
+      }	  
+      if (medax) R[i + rs*j] = NDG_MAX; else R[i + rs*j] = 0;
+    }
+    else R[i + rs*j] = 0;
+  }
+  else
+  {
+    FT3d_line(F, T, rs, cs, ds);
+    FT3d_column(T, R, rs, cs, ds);
+    FT3d_planes(R, T, rs, cs, ds);
+  }
+
+  freeimage(tmp);
+  return 1;
+} // lmedax_Hesselink()

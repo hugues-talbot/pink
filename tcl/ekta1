@@ -1,0 +1,79 @@
+#!/bin/sh
+# The next line is executed by /bin/sh, but not Tcl \
+#exec tclsh $0 $1
+
+set EKTA1(name) "ekta1"
+
+if {($argc != 1)} { 
+  puts stderr "usage: $EKTA1(name) in.bmp"
+  exit 
+}
+
+set infilename [lindex $argv 0]
+
+if {![file exists $infilename]} {
+  puts stderr "$EKTA1(name): file $infilename not found"
+  exit 
+} 
+
+puts "processing file $infilename"
+set EKTA1(initial) 20
+set EKTA1(final) 150
+set EKTA1(step) 5
+set EKTA1(deltaniv) 10
+
+set PINK "$env(PINK)"
+set env(path) "$PINK/bin;$env(path)"
+source "$PINK/tcl/my_exec.tcl"
+source "$PINK/tcl/my_read.tcl"
+
+# LINUX:
+#set PORTABLE(tmpdir) "/Tmp"
+# WINDOWS:
+set PORTABLE(tmpdir) "C:\\Tmp"
+
+proc tmpfile {tmpname} {
+  global EKTA1
+  global PORTABLE
+  return [file join $PORTABLE(tmpdir) "$EKTA1(name)_$tmpname"]
+}
+
+my_exec_q bmp2pgm $infilename [tmpfile 6]
+
+# calcule l'indice de deformabilite
+#-----------------------------------
+proc compute_index {seuil} {
+  global EKTA1
+  my_exec_q seuil [tmpfile 6] $seuil [tmpfile 7]
+  #my_exec_q seuil infilename $seuil  [tmpfile 7]
+  my_exec_q seuil [tmpfile 6] [expr $seuil+$EKTA1(deltaniv)] [tmpfile 8]
+  #my_exec_q seuil infilename [expr $seuil+$EKTA1(deltaniv)][tmpfile 8]
+ 
+  my_exec_q sub [tmpfile 7] [tmpfile 8] [tmpfile 9]
+  my_exec_q pgm2list [tmpfile 9] b [tmpfile 10]
+  set nbpoints [lindex $readtext 1]
+  if {$nbpoints >= 20} {
+    my_exec_q ellipseparams [tmpfile 10] [tmpfile 11]
+    set readtext [my_read_text [tmpfile 11]]
+    set ge [lindex $readtext 2]
+    set pe [lindex $readtext 3]
+    set ind [expr ($ge - $pe) / ($ge + $pe)]
+    return $ind
+  } else {
+    return -1
+  }
+}
+
+puts "[expr $EKTA1(initial) - $EKTA1(step)] 0"
+for {set k $EKTA1(initial)} {$k < $EKTA1(final)} {incr k $EKTA1(step)} {
+  set i [compute_index $k]
+  puts "$k $i"
+}
+
+foreach file [glob -nocomplain [tmpfile "?"]] {
+  file delete -force $file
+}
+
+foreach file [glob -nocomplain [tmpfile "??"]] {
+  file delete -force $file
+}

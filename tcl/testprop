@@ -1,0 +1,24 @@
+ #sh
+ # The next line is executed by /bin/sh, but not Tcl \
+ exec tclsh $0 $1
+
+ if {($argc != 1)} { 
+   puts stderr "usage: testprop in"
+   exit 
+ }
+
+set PINK "$env(PINK)"
+source "$PINK/tcl/my_exec.tcl"
+source "$PINK/tcl/my_probas.tcl"
+
+set in [lindex $argv 0]
+
+#puts "processing $in"
+#set prob [Prob]
+#my_exec_q zoom $in [expr $prob * 3] _1
+#my_exec_q seuil _1 128 _1
+my_exec_q cp $in _1
+my_exec_q distc _1 3 _d
+my_exec_v bisector _d _1 _b
+
+

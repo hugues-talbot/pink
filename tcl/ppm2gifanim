@@ -1,0 +1,32 @@
+#sh
+# The next line is executed by /bin/sh, but not Tcl \
+exec tclsh $0 $1 $2 $3
+
+if {$argc != 3} { 
+  puts stderr "usage: ppm2gifanim first last outfilename"
+  exit 
+}
+
+# get input image file name as first argument
+set PPM2GIFANIM(first) [lindex $argv 0]
+set PPM2GIFANIM(last) [lindex $argv 1]
+set PPM2GIFANIM(outfilename) [lindex $argv 2]
+
+puts $PPM2GIFANIM(first)
+puts $PPM2GIFANIM(last)
+
+set data ""
+set i $PPM2GIFANIM(first)
+while {$i <= $PPM2GIFANIM(last)} {
+  set filecount [format "%08d" $i]
+  if {[file exists "$filecount.ppm"]} {
+    puts $filecount
+    catch { exec ppm2gif $filecount } mes
+    set data [concat $data "$filecount.gif"]
+  }
+  set i [expr $i+1]
+}
+
+catch { exec gifsicle -d 20 --colors 256 -l -o $PPM2GIFANIM(outfilename) $data } mes
+
+puts $mes

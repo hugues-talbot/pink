@@ -1,0 +1,33 @@
+ #sh
+ # The next line is executed by /bin/sh, but not Tcl \
+ exec tclsh $0 $1
+
+ if {($argc != 1)} { 
+   puts stderr "usage: testprop in"
+   exit 
+ }
+
+set PINK "$env(PINK)"
+source "$PINK/tcl/my_exec.tcl"
+
+# reads a file
+#-----------------------------------
+proc my_read_val {filename} {
+  set input [open $filename]
+  set tag [gets $input]
+  set line [gets $input]
+  scan $line "%d %d" v1 v2
+  close $input
+  return $v2
+}
+
+set in [lindex $argv 0]
+
+#puts "processing $in"
+my_exec_q skelpar $in 0 _s
+my_exec_q medialaxis $in 4 _m
+my_exec_q seuil _m 1 _m
+my_exec_q sub _m _s _d
+my_exec_v printhisto _d
+
+

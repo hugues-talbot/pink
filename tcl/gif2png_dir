@@ -1,0 +1,9 @@
+#sh
+# The next line is executed by /bin/sh, but not Tcl \
+exec tclsh $0
+
+set filelist [glob "*.gif"]
+foreach file $filelist {
+  set name [file rootname $file]
+  catch { exec convert $file "$name.png" } mes
+}
