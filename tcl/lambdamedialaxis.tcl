@@ -19,7 +19,7 @@ set LAMBDAMEDIALAXIS(param) 0
 set LAMBDAMEDIALAXIS(name) lambdamedialaxis
 
 if {$argc != 2} { 
-  puts stderr "usage: lambdamedialaxis in out"
+  puts stderr "usage: lambdamedialaxis.tcl in out"
   exit 
 }
 
