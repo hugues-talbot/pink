@@ -1,4 +1,4 @@
-/* $Id: lmedialaxis.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: lmedialaxis.c,v 1.2 2008-12-01 13:20:03 mcouprie Exp $ */
 /* 
 Fonctions pour l'axe médian exact ou approché, et
 pour la fonction bissectrice.
@@ -38,6 +38,8 @@ Michel Couprie - novembre 2008 - lambda medial axis
 #include <mcgeo.h>
 #include <ldist.h>
 #include <lmedialaxis.h>
+
+#include <lballincl.h>
 
 #ifdef CHRONO
 #include <mcchrono.h>
@@ -501,14 +503,14 @@ typedef struct{
 
 typedef struct {		//used to store all possible neighbors of (1/8) Z2 or (1/48) Z3
     Coordinates neig[48];
-} Neigbors;
+} Neighbors;
 
 ////////////// Function definitions
 
 int32_t callcheckR(int32_t distance,MaskG M);
 int32_t RadiusMax(uint32_t * gg, int32_t rs, int32_t cs, int32_t ds);
-int32_t ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neigbors *Mg);
-int32_t ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neigbors *Mg);
+int32_t ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neighbors *Mg);
+int32_t ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neighbors *Mg);
 int32_t CallMedial(int32_t x, int32_t y, uint32_t *image, int32_t rs, int32_t cs, MaskG MgL, LookUpTable Lut, int32_t nbcollut, int32_t rrmax);
 int32_t CallMedial3d(int32_t x, int32_t y, int32_t z, uint32_t *image, int32_t rs, int32_t cs, int32_t ds, MaskG MgL, LookUpTable Lut, int32_t nbcollut, int32_t rrmax);
 
@@ -538,7 +540,7 @@ int32_t RadiusMax(uint32_t * gg, int32_t rs, int32_t cs, int32_t ds)  //rs=width
 }
 
 //----------------------------------
-int32_t ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neigbors *Mg)
+int32_t ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neighbors *Mg)
 //----------------------------------
 // ATTENTION : roles de x et y inversés (cf. Rita)
 {
@@ -568,7 +570,7 @@ int32_t ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs
 } // ApplySymmetries()
 
 //----------------------------------
-int32_t ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neigbors *Mg)
+int32_t ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neighbors *Mg)
 //----------------------------------
 // ATTENTION : roles de x, y, z inversés (cf. Rita)
 {
@@ -655,7 +657,7 @@ int32_t CallMedial(int32_t x, int32_t y, uint32_t *image, int32_t rs, int32_t cs
 //----------------------------------
 {
   int32_t e, nb, t, j, dist, xx, yy;
-  Neigbors MgN1;
+  Neighbors MgN1;
   dist = (int32_t)(image[x*rs + y]); // sic
   e = callcheckR(rrmax, MgL);
 
@@ -677,7 +679,7 @@ int32_t CallMedial3d(int32_t x, int32_t y, int32_t z, uint32_t *image, int32_t r
 //----------------------------------
 {
   int32_t e, nb, t, j, dist, xx, yy, zz, ps = rs*cs;
-  Neigbors MgN1;
+  Neighbors MgN1;
   dist = (int32_t)(image[x*ps + y*rs + z]); // sic
   e = callcheckR(rrmax, MgL);
 
@@ -1175,16 +1177,20 @@ int32_t lmedialaxisbin(struct xvimage *f, int32_t mode)
 
 typedef double * ImageAngle;
 
+struct  Point2D{
+    int32_t xCoor, yCoor;
+};
 struct  Point3D{
     int32_t xCoor, yCoor, zCoor;
 };
-
+typedef struct Point2D * ListPoint2D;
 typedef struct Point3D * ListPoint3D;
+
 typedef int32_t *tabulateCTg;
 
 /* Function that returns the cosine of the maximum angle */
 /* ==================================== */
-double MaximumAngle(int32_t xc, int32_t yc, ListPoint3D LPoints, int32_t count)
+double MaximumAngle(int32_t xc, int32_t yc, ListPoint2D LPoints, int32_t count)
 /* ==================================== */
 {
   int32_t i, j, x1, y1, x2, y2;
@@ -1217,7 +1223,7 @@ double MaximumAngle(int32_t xc, int32_t yc, ListPoint3D LPoints, int32_t count)
 
 /* Function that returns the maximum diameter of the point set */
 /* ==================================== */
-double MaximumDiameter(ListPoint3D LPoints, int32_t count)
+double MaximumDiameter(ListPoint2D LPoints, int32_t count)
 /* ==================================== */
 {
   int32_t i, j, x1, y1, x2, y2;
@@ -1302,7 +1308,7 @@ double MaximumDiameter3d(ListPoint3D LPoints, int32_t count)
 } // MaximumDiameter3d()
 
 //----------------------------------
-int32_t ApplySymmetriesB(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neigbors *Mg)
+int32_t ApplySymmetriesB(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neighbors *Mg)
 //----------------------------------
 {
   int32_t vectx[8], vecty[8], i;
@@ -1331,7 +1337,7 @@ int32_t ApplySymmetriesB(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t r
 } // ApplySymmetriesB()
 
 //----------------------------------
-int32_t ApplySymmetriesB3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neigbors *Mg)
+int32_t ApplySymmetriesB3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neighbors *Mg)
 //----------------------------------
 {
   int32_t vectx[48], vecty[48], vectz[48], i;
@@ -1412,7 +1418,7 @@ int32_t ApplySymmetriesB3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t 
 double ComputeAngle(int32_t x, int32_t y, uint32_t *image,
 		    int32_t rs, int32_t cs, 
 		    int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
-		    ListPoint3D Aval)
+		    ListPoint2D Aval)
 /* ==================================== */
 // x, y : le point de base
 // image : la carte de distance euclidinenne quadratique
@@ -1424,7 +1430,7 @@ double ComputeAngle(int32_t x, int32_t y, uint32_t *image,
 #define F_NAME "ComputeAngle"
   int32_t nb, i, j, xx, yy, rr, counter, k, c, ti, d, nbdec;
   double maxangle;
-  Neigbors MgN1;
+  Neighbors MgN1;
   int32_t xnew, ynew;
 
   int32_t X[5] = {x, x-1, x+1, x, x};
@@ -1510,7 +1516,7 @@ double ComputeAngle(int32_t x, int32_t y, uint32_t *image,
 double ComputeAngle_8(int32_t x, int32_t y, uint32_t *image,
 		    int32_t rs, int32_t cs, 
 		    int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
-		    ListPoint3D Aval)
+		    ListPoint2D Aval)
 /* ==================================== */
 // VARIANTE avec les 8 voisins
 // x, y : le point de base
@@ -1523,7 +1529,7 @@ double ComputeAngle_8(int32_t x, int32_t y, uint32_t *image,
 #define F_NAME "ComputeAngle"
   int32_t nb, i, j, xx, yy, rr, counter, k, c, ti, d, nbdec;
   double maxangle;
-  Neigbors MgN1;
+  Neighbors MgN1;
   int32_t xnew, ynew;
   int32_t X[9] = {x, x-1, x+1, x, x, x-1, x-1, x+1, x+1};
   int32_t Y[9] = {y, y, y, y-1, y+1, y-1, y+1, y-1, y+1};
@@ -1599,7 +1605,7 @@ double ComputeAngle3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
 #define F_NAME "ComputeAngle3d"
   int32_t nb, i, j, xx, yy, zz, rr, counter, k, c, ti, d, nbdec, ps = rs*cs;
   double maxangle;
-  Neigbors MgN1;
+  Neighbors MgN1;
   int32_t xnew, ynew, znew;
 
   int32_t X[7] = {x, x-1, x+1, x,   x,   x,   x};
@@ -1706,7 +1712,6 @@ int32_t lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
   int32_t ps = rs * cs;
   int32_t N = ps * ds;
   double angle;	
-  ListPoint3D Aval;
   int32_t *TabIndDec;
   Coordinates *ListDecs;
   FILE *fd=NULL;
@@ -1744,13 +1749,6 @@ int32_t lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
     return 0;
   }    
 
-  Aval= (struct Point3D *)calloc(1,N*sizeof(struct Point3D)); // LARGEMENT SURDIMENSIONE
-  if (Aval == NULL)
-  {   
-    fprintf(stderr, "%s: malloc failed\n", F_NAME);
-    return 0;
-  }
-
   distmax = 0;  // calcule la distance max dans l'image de distance
   for (i = 0; i < N; i++)
     if ((imagemask[i] != 0) && (imagedist[i] > distmax)) distmax = imagedist[i];
@@ -1758,6 +1756,14 @@ int32_t lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
 
   if (ds == 1) // 2D
   {
+    ListPoint2D Aval;
+    Aval= (struct Point2D *)calloc(1,N*sizeof(struct Point2D)); // LARGEMENT SURDIMENSIONE
+    if (Aval == NULL)
+    {   
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return 0;
+    }
+
     /* Reading the bissector table from the files */
     sprintf(tablefilename, "%s/src/tables/TabBisector_1.txt", getenv("PINK"));
     fd = fopen (tablefilename, "r");
@@ -1820,9 +1826,18 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
 	else
 	  imageangle[j*rs + i] = 0.0;
       }
+    free(Aval);
   } // if (ds == 1)
   else // 3D
   {
+    ListPoint3D Aval;
+    Aval= (struct Point3D *)calloc(1,N*sizeof(struct Point3D)); // LARGEMENT SURDIMENSIONE
+    if (Aval == NULL)
+    {   
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return 0;
+    }
+
     /* Reading the bissector table from the file */
     sprintf(tablefilename, "%s/src/tables/TabBisector3d_1.txt", getenv("PINK"));
     fd = fopen (tablefilename, "r");
@@ -1887,6 +1902,8 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
 	  else
 	    imageangle[k*ps + j*rs + i] = 0.0;
 	}
+
+    free(Aval);
   } // else (3D)
 
 
@@ -1919,7 +1936,6 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
   printf("\n"); 
 #endif
 
-  free(Aval);
   free(TabIndDec);
   free(ListDecs);
   return 1;
@@ -1930,7 +1946,7 @@ double ComputeAngle_Rita(
 			int32_t x, int32_t y, uint32_t *image,
 			int32_t rs, int32_t cs, int32_t *distarray,
 			int32_t *xarray, int32_t *yarray, int32_t number, 
-			ListPoint3D Aval)
+			ListPoint2D Aval)
 /* ==================================== */
 // x, y : le point de base
 // image : la carte de distance euclidinenne quadratique
@@ -1942,7 +1958,7 @@ double ComputeAngle_Rita(
   int32_t nb, i, j, xx, yy, rr, counter, k, c;
   double maxangle;
   int32_t dist[5];
-  Neigbors MgN1;
+  Neighbors MgN1;
   int32_t xnew, ynew;
 
   int32_t X[5] = {x, x-1, x+1, x, x};
@@ -2007,7 +2023,7 @@ int32_t lbisector_Rita(struct xvimage *id, struct xvimage *im, struct xvimage *i
   int32_t i, j, numb;
   int32_t rs, cs, N;
   double angle;	
-  ListPoint3D Aval;
+  ListPoint2D Aval;
   tabulateCTg distCTg;
   tabulateCTg YcoodCTg;
   tabulateCTg XcoodCTg;
@@ -2051,7 +2067,7 @@ int32_t lbisector_Rita(struct xvimage *id, struct xvimage *im, struct xvimage *i
   imagemask = UCHARDATA(im);
   imageangle = FLOATDATA(ia);
 
-  Aval= (struct Point3D *)calloc(1,N*sizeof(struct Point3D));
+  Aval= (struct Point2D *)calloc(1,N*sizeof(struct Point2D));
 
   /* Reading the CTg table from the file */
   sprintf(tablefilename, "%s/src/tables/TabBisector.txt", getenv("PINK"));
@@ -2104,7 +2120,7 @@ int32_t lbisector_talbot(struct xvimage * image, struct xvimage *angles)
   vect2Dint *L;              /* tableau de vecteur associe a un point de l'image */
   vect2Dint v1,v2;
   double theta;
-  struct Point3D LPoints[5];
+  struct Point2D LPoints[5];
 
   if (depth(image) != 1)
   {
@@ -2243,7 +2259,7 @@ int32_t lbisector_talbot(struct xvimage * image, struct xvimage *angles)
 int32_t Downstream(int32_t x, int32_t y, uint32_t *image,
 		int32_t rs, int32_t cs, 
 		int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
-		ListPoint3D Aval)
+		ListPoint2D Aval)
 /* ==================================== */
 // Calcule l'aval du point (x,y)
 // x, y : le point de base
@@ -2255,7 +2271,7 @@ int32_t Downstream(int32_t x, int32_t y, uint32_t *image,
 #undef F_NAME
 #define F_NAME "Downstream"
   int32_t nb, i, j, xx, yy, rr, counter, k, c, ti, d, nbdec;
-  Neigbors MgN1;
+  Neighbors MgN1;
   int32_t xnew, ynew;
 
   counter=0;
@@ -2301,7 +2317,7 @@ int32_t Downstream3d(int32_t x, int32_t y, int32_t z, uint32_t *image,
 #define F_NAME "Downstream3d"
   int32_t nb, i, j, xx, yy, zz, rr, counter, c, ti, d, nbdec;
   int32_t ps = rs*cs;
-  Neigbors MgN1;
+  Neighbors MgN1;
   int32_t xnew, ynew, znew;
 
   counter=0;
@@ -2352,7 +2368,6 @@ int32_t lprintdownstream(struct xvimage *id)
   int32_t ds = depth(id);
   int32_t ps = rs * cs;
   int32_t N = ps * ds;
-  ListPoint3D Aval;
   int32_t *TabIndDec;
   Coordinates *ListDecs;
   FILE *fd=NULL;
@@ -2367,13 +2382,6 @@ int32_t lprintdownstream(struct xvimage *id)
     return 0;
   }    
 
-  Aval= (struct Point3D *)calloc(1,N*sizeof(struct Point3D)); // LARGEMENT SURDIMENSIONE
-  if (Aval == NULL)
-  {   
-    fprintf(stderr, "%s: malloc failed\n", F_NAME);
-    return 0;
-  }
-
   distmax = 0;  // calcule la distance max dans l'image de distance
   for (i = 0; i < N; i++)
     if (imagedist[i] > distmax) distmax = imagedist[i];
@@ -2381,6 +2389,13 @@ int32_t lprintdownstream(struct xvimage *id)
 
   if (ds == 1) // 2D
   {
+    ListPoint2D Aval;
+    Aval= (struct Point2D *)calloc(1,N*sizeof(struct Point2D)); // LARGEMENT SURDIMENSIONE
+    if (Aval == NULL)
+    {   
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return 0;
+    }
     /* Reading the bissector table from the files */
     sprintf(tablefilename, "%s/src/tables/TabBisector_1.txt", getenv("PINK"));
     fd = fopen (tablefilename, "r");
@@ -2435,9 +2450,17 @@ int32_t lprintdownstream(struct xvimage *id)
 	  printf("\n");	  
 	}
       }
+    free(Aval);
   } // if (ds == 1)
   else // 3D
   {
+    ListPoint3D Aval;
+    Aval= (struct Point3D *)calloc(1,N*sizeof(struct Point3D)); // LARGEMENT SURDIMENSIONE
+    if (Aval == NULL)
+    {   
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return 0;
+    }
     /* Reading the bissector table from the file */
     sprintf(tablefilename, "%s/src/tables/TabBisector3d_1.txt", getenv("PINK"));
     fd = fopen (tablefilename, "r");
@@ -2500,19 +2523,38 @@ int32_t lprintdownstream(struct xvimage *id)
 	    printf("\n");	  
 	  }
 	}
+    free(Aval);
   } // else (3D)
 
-  free(Aval);
   free(TabIndDec);
   free(ListDecs);
   return 1;
-} // lprintdownstream()
+} // lprintdownstream3d()
+
+/* ==================================== */
+/* ==================================== */
+/* ==================================== */
+
+// Data structures and functions for the lambda-medial axis
+
+/* ==================================== */
+/* ==================================== */
+/* ==================================== */
+
+struct  DPoint2D{
+    double xCoor, yCoor;
+};
+struct  DPoint3D{
+    double xCoor, yCoor, zCoor;
+};
+typedef struct DPoint2D * ListDPoint2D;
+typedef struct DPoint3D * ListDPoint3D;
 
 /* ==================================== */
 int32_t ExtendedDownstream(int32_t x, int32_t y, uint32_t *image,
 		    int32_t rs, int32_t cs, 
 		    int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
-		    ListPoint3D Aval)
+		    ListDPoint2D Aval)
 /* ==================================== */
 // Calcule l'aval étendu du point (x,y)
 // x, y : le point de base
@@ -2524,7 +2566,7 @@ int32_t ExtendedDownstream(int32_t x, int32_t y, uint32_t *image,
 #undef F_NAME
 #define F_NAME "ExtendedDownstream"
   int32_t nb, i, j, xx, yy, rr, counter, k, c, ti, d, nbdec;
-  Neigbors MgN1;
+  Neighbors MgN1;
   int32_t xnew, ynew;
 
   int32_t X[5] = {x, x-1, x+1, x, x};
@@ -2585,7 +2627,7 @@ int32_t ExtendedDownstream(int32_t x, int32_t y, uint32_t *image,
 int32_t ExtendedDownstream3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
 		       int32_t rs, int32_t cs, int32_t ds, 
 		       int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
-		       ListPoint3D Aval)
+		       ListDPoint3D Aval)
 /* ==================================== */
 // Calcule l'aval étendu du point (x,y,z)
 // x, y, z : le point de base
@@ -2597,7 +2639,7 @@ int32_t ExtendedDownstream3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
 #undef F_NAME
 #define F_NAME "ExtendedDownstream3d"
   int32_t nb, i, j, xx, yy, zz, rr, counter, k, c, ti, d, nbdec, ps = rs*cs;
-  Neigbors MgN1;
+  Neighbors MgN1;
   int32_t xnew, ynew, znew;
 
   int32_t X[7] = {x, x-1, x+1, x,   x,   x,   x};
@@ -2681,7 +2723,6 @@ int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda)
   int32_t ds = depth(dist);
   int32_t ps = rs * cs;
   int32_t N = ps * ds;
-  ListPoint3D Aval;
   int32_t *TabIndDec;
   Coordinates *ListDecs;
   FILE *fd=NULL;
@@ -2713,13 +2754,6 @@ int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda)
   imagelambda = FLOATDATA(lambda);
   razimage(lambda); // pour stocker le résulat
 
-  Aval= (struct Point3D *)calloc(1,N*sizeof(struct Point3D)); // LARGEMENT SURDIMENSIONE
-  if (Aval == NULL)
-  {   
-    fprintf(stderr, "%s: malloc failed\n", F_NAME);
-    return 0;
-  }
-
   distmax = 0;  // calcule la distance max dans l'image de distance
   for (i = 0; i < N; i++)
     if ((imagedist[i] > distmax)) distmax = imagedist[i];
@@ -2727,6 +2761,14 @@ int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda)
 
   if (ds == 1) // 2D
   {
+    ListDPoint2D Aval;
+    double c_x, c_y, c_r;
+    Aval= (struct DPoint2D *)calloc(1,N*sizeof(struct DPoint2D)); // LARGEMENT SURDIMENSIONE
+    if (Aval == NULL)
+    {   
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return 0;
+    }
     /* Reading the bisector table from the files */
     sprintf(tablefilename, "%s/src/tables/TabBisector_1.txt", getenv("PINK"));
     fd = fopen (tablefilename, "r");
@@ -2786,13 +2828,26 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
         {
 	  card_aval = ExtendedDownstream(i, j, imagedist, rs, cs, 
 				 TabIndDec, nval, ListDecs, Aval);	  
+#ifdef OLD
 	  imagelambda[j*rs + i] = (float)MaximumDiameter(Aval, card_aval);
+#else
+          compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
+	  imagelambda[j*rs + i] = 2*(float)c_r;
+#endif
 	}
       }
-
+    free(Aval);
   } // if (ds == 1)
   else // 3D
   {
+    double c_x, c_y, c_z, c_r;
+    ListDPoint3D Aval;
+    Aval= (struct DPoint3D *)calloc(1,N*sizeof(struct DPoint3D)); // LARGEMENT SURDIMENSIONE
+    if (Aval == NULL)
+    {   
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return 0;
+    }
     /* Reading the bissector table from the file */
     sprintf(tablefilename, "%s/src/tables/TabBisector3d_1.txt", getenv("PINK"));
     fd = fopen (tablefilename, "r");
@@ -2853,14 +2908,19 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
 	  {
 	    card_aval = ExtendedDownstream3d(i, j, k, imagedist, rs, cs, ds, 
 					   TabIndDec, nval, ListDecs, Aval);
+#ifdef OLD
 	    imagelambda[k*ps + j*rs + i] = 
 	      (float)MaximumDiameter3d(Aval, card_aval);
+#else
+	    compute_min_sphere_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_z, &c_r);
+	    imagelambda[k*ps + j*rs + i] = 2*(float)c_r;
+#endif
 	  }
 	}
 
+    free(Aval);
   } // else (3D)
 
-  free(Aval);
   free(TabIndDec);
   free(ListDecs);
   return 1;
