@@ -1,4 +1,4 @@
-/* $Id: lprofil.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: lprofil.c,v 1.2 2008-12-03 07:42:31 mcouprie Exp $ */
 /* operateur interactif de visualisation de profils 1D */
 /* Michel Couprie - mai 1998 */
 
@@ -64,8 +64,9 @@ int32_t lprofil(struct xvimage *image)
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille plan */
   uint8_t *SOURCE = UCHARDATA(image);      /* l'image de depart */
-  int32_t *lp;                     /* pour la liste de points du profil */
-  uint8_t *ep;           /* etiquettes des points du profil */
+  int32_t *lx, *ly;                /* pour la liste de points du profil */
+  int32_t *lp;                     /* pour la liste de valeurs du profil */
+  uint8_t *ep;                     /* etiquettes des points du profil */
   int32_t np;                      /* le nb de points effectif */
 #define NBBUTTONS   2
 #define BOXWIDTH  100
@@ -86,7 +87,9 @@ int32_t lprofil(struct xvimage *image)
   }
 
   lp = (int32_t *)calloc(1,2 * N * sizeof(int32_t));
-  if (lp == NULL)
+  lx = (int32_t *)calloc(1,2 * N * sizeof(int32_t));
+  ly = (int32_t *)calloc(1,2 * N * sizeof(int32_t));
+  if (!lx || !ly || !lp)
   {
     fprintf(stderr, "lprofil: malloc failed\n");
     return 0;
@@ -176,21 +179,21 @@ ReDisplay:
       xx = fin % rs;
       yy = fin / rs;
 
-      lbresenlist(rs, x, y, xx, yy, lp, &np);
+      np = 2*N;
+      lbresenlist(x, y, xx, yy, lx, ly, &np);
 
-      /* dessine le profil et remplace les coord. des points par les ndg */
+      /* dessine le profil et stocke les ndg */
       for (i = 0; i < np; i++)
       {
-        z = lp[i];
 #ifdef ZOOM4
-        Point(2*(z%rs), 2*(z/rs));
-        Point(2*(z%rs)+1, 2*(z/rs));
-        Point(2*(z%rs), 2*(z/rs)+1);
-        Point(2*(z%rs)+1, 2*(z/rs)+1);
+        Point(2*(lx[i]), 2*(ly[i]));
+        Point(2*(lx[i])+1, 2*(ly[i]));
+        Point(2*(lx[i]), 2*(ly[i])+1);
+        Point(2*(lx[i])+1, 2*(ly[i])+1);
 #else
-        Point(z%rs, z/rs);
+        Point(lx[i], ly[i]);
 #endif          
-        lp[i] = SOURCE[z];
+        lp[i] = SOURCE[ly[i]*rs + lx[i]];
       } /* for (i = 0; i < np; i++) */
 
       t++;

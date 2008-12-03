@@ -1,4 +1,4 @@
-/* $Id: extractline.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: extractline.c,v 1.2 2008-12-03 07:42:31 mcouprie Exp $ */
 /*! \file extractline.c
 
 \brief extracts a line between two given points from a 3D image
@@ -38,7 +38,7 @@ int main(argc, argv)
   struct xvimage * imgres;
   int32_t i, j, n, nn, rs, cs, x1, y1, x2, y2;
   uint8_t *I, *R;
-  int32_t *listpoints;
+  int32_t *lx, *ly;
 
   if (argc != 7)
   {
@@ -76,14 +76,16 @@ int main(argc, argv)
   /* ---------------------------------------------------------- */
 
   n = max(abs(x2-x1),(y2-y1))+1;
-  listpoints = (int32_t *)calloc(n, sizeof(int32_t));
+  lx = (int32_t *)calloc(n, sizeof(int32_t));
+  ly = (int32_t *)calloc(n, sizeof(int32_t));
   if (image == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", argv[0]);
     exit(1);
   }
 
-  lbresenlist(rs, x1, y1, x2, y2, listpoints, &nn);
+  nn = n;
+  lbresenlist(x1, y1, x2, y2, lx, ly, &nn);
 #ifdef PARANO
   if (nn != n)
   {
@@ -93,12 +95,13 @@ int main(argc, argv)
 #endif
   imgres = allocimage(NULL, n, 1, 1, datatype(image));
   R = UCHARDATA(imgres);
-  for (i = 0; i < n; i++) R[i] = I[listpoints[i]];    
+  for (i = 0; i < n; i++) R[i] = I[ly[i]*rs + lx[i]];    
 
   writeimage(imgres, argv[argc-1]);
   freeimage(imgres);
   freeimage(image);
-  free(listpoints);
+  free(lx);
+  free(ly);
   return 0;
 } /* main */
 

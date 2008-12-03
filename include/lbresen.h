@@ -1,4 +1,4 @@
-/* $Id: lbresen.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: lbresen.h,v 1.2 2008-12-03 07:42:31 mcouprie Exp $ */
 #include "mcliste.h"
 typedef struct {
   int32_t rs, cs;
@@ -9,7 +9,7 @@ typedef struct {
 #define InEllipse(ell,x,y) (((x)>=(ell)->xmin[(y)])&&((x)<=(ell)->xmax[(y)]))
 
 extern void      lbresen(uint8_t *I, int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By);
-extern void      lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int32_t *lp, int32_t *n);
+extern void      lbresenlist(int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int32_t *lx, int32_t *ly, int32_t *n);
 extern ellipse * AllocEllipseList(int32_t rs, int32_t cs);
 extern void      InitEllipseList(ellipse * ell);
 extern void      FreeEllipseList(ellipse *ell);

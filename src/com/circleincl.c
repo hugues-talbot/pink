@@ -1,4 +1,4 @@
-/* $Id: circleincl.c,v 1.1 2008-12-01 13:20:03 mcouprie Exp $ */
+/* $Id: circleincl.c,v 1.2 2008-12-03 07:42:31 mcouprie Exp $ */
 /*! \file circleincl.c
 
 \brief circle identification and drawing from spare points
@@ -40,7 +40,7 @@ int main(argc, argv)
   FILE *fd = NULL;
   int32_t i, n;
   char type;
-  double *x, *y, xx, yy, R, X, Y;
+  double *points, xx, yy, R, X, Y;
   int32_t filled;
 
   if (argc != 5)
@@ -81,9 +81,8 @@ int main(argc, argv)
   }
 
   fscanf(fd, "%d\n", &n);
-  x = (double *)calloc(1,n * sizeof(double));
-  y = (double *)calloc(1,n * sizeof(double));
-  if ((x == NULL) || (y == NULL))
+  points = (double *)calloc(1, 2 * n * sizeof(double));
+  if (points == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", argv[0]);
     exit(1);
@@ -92,23 +91,24 @@ int main(argc, argv)
   for (i = 0; i < n; i++)
   {
     fscanf(fd, "%lf %lf\n", &xx, &yy);
-    x[i] = xx;
-    y[i] = yy;
+    points[i+i] = xx;
+    points[i+i+1] = yy;
   }
   fclose(fd);
 
   filled = atoi(argv[3]);
 
-  if (!compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &X, &Y, &R))
+  if (!compute_min_disk_with_border_constraint(points, n, NULL, 0, &X, &Y, &R))
   {
-    fprintf(stderr, "%s: lcircleincl failed\n", argv[0]);
+    fprintf(stderr, "%s: compute_min_disk_with_border_constraint failed\n", argv[0]);
     exit(1);
   }
 
-  //printf("%g %g %g %g %g %g\n", R, S, T, U, V, Z);
+#ifdef VERBOSE
+  printf("center %g,%g radius %g\n", X, Y, R);
+#endif
 
-  free(x);
-  free(y);
+  free(points);
 
   circle = copyimage(image);
   El = UCHARDATA(circle);

@@ -27,6 +27,7 @@ Jean Cousty: redt 3d (reverse euclidean distance transform - algo de D. Coeurjol
 André Vital Saude: radialopening, divers scripts tcl, hma
 Laurent Mercier: gestion d'un masque dans delaunay.c
 Nicolas Combaret: toposhrinkgray, ptselectgray
+John Chaussard: lballincl
 
 INSTALLATION
 

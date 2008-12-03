@@ -1,4 +1,4 @@
-/* $Id: delaunaymask.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: delaunaymask.c,v 1.2 2008-12-03 07:42:31 mcouprie Exp $ */
 /*! \file delaunaymask.c
 
 \brief delaunay triangulation
@@ -76,7 +76,7 @@ int main(argc, argv)
   uint8_t *M;
   int32_t npoints;
   int32_t newnv;
-  int32_t *del, *lp;
+  int32_t *del, *lx, *ly;
 
   if (argc != 4)
   {
@@ -154,7 +154,8 @@ int main(argc, argv)
   css = mask->col_size;
   N = rss * css; 
   longlpmax=max(rss,css);
-  lp = (int32_t*)malloc(longlpmax*sizeof(int32_t));
+  lx = (int32_t*)malloc(longlpmax*sizeof(int32_t));
+  ly = (int32_t*)malloc(longlpmax*sizeof(int32_t));
   del = (int32_t*)malloc(longlpmax*sizeof(int32_t));
   npoints = 0;
 
@@ -174,10 +175,11 @@ int main(argc, argv)
 	vois = v[i][j];
 	Dx = arrondi(S[vois].x);
 	Dy = arrondi(S[vois].y);
-	lbresenlist(rss, Cx, Cy, Dx, Dy, lp, &npoints);
+	npoints = longlpmax;
+	lbresenlist(Cx, Cy, Dx, Dy, lx, ly, &npoints);
 	for (k = 0; k < npoints; k++)
 	{
-	  if (M[lp[k]]) // si le point du segment est dans le masque
+	  if (M[ly[k]*rss + lx[k]]) // si le point du segment est dans le masque
 	  {
 	    del[j]=1;
 	    newnv--;
@@ -198,6 +200,7 @@ int main(argc, argv)
       fprintf(fd, "%g %g %g %d %d\n", S[i].x, S[i].y, V[i], ec[i], 0);	
   }
   fclose(fd);
-  free(lp);
+  free(lx);
+  free(ly);
   free(del);
 }

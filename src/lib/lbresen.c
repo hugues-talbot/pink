@@ -1,4 +1,4 @@
-/* $Id: lbresen.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* $Id: lbresen.c,v 1.2 2008-12-03 07:42:31 mcouprie Exp $ */
 /* 
   Trace un segment de droite dans une image.
   Utilise l'algorithme de Bresenham.
@@ -160,11 +160,13 @@ void lbresen(uint8_t *F, int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t
 } /* lbresen() */
 
 /* ================================================= */
-void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int32_t *lp, int32_t *n)
+void lbresenlist(int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int32_t *lx, int32_t *ly, int32_t *n)
 /* ================================================= */
 /*
-  resultat dans la liste lp,n (n est le nb de points).
-  lp doit etre prealablement alloue.
+  resultat dans les listes lx, ly et n (n est le nb de points).
+  lx et ly doivent etre prealablement allouees.
+  n doit contenir au départ le nombre max de points autorisés.
+  si le segment est plus long que cette valeur, lbresenlist se termine.
 */
 {
   int32_t dX = abs(Bx - Ax);
@@ -173,7 +175,7 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
   int32_t dPp;
   int32_t dPm;
   int32_t x, y;
-  int32_t nn;
+  int32_t nn, nmax = *n;
 
   nn = 0;                 /* pour compter les points */
 
@@ -189,7 +191,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Est-Nord */
         for (x = Ax; x <= Bx; x++)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) return;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { y++; P += dPp; }
           else
@@ -200,7 +204,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Est-Sud */
         for (x = Ax; x <= Bx; x++)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) return;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { y--; P += dPp; }
           else
@@ -214,7 +220,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Ouest-Nord */
         for (x = Ax; x >= Bx; x--)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) return;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { y++; P += dPp; }
           else
@@ -225,7 +233,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Ouest-Sud */
         for (x = Ax; x >= Bx; x--)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) return;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { y--; P += dPp; }
           else
@@ -246,7 +256,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Nord-Est */
         for (y = Ay; y <= By; y++)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) return;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { x++; P += dPp; }
           else
@@ -257,7 +269,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Nord-Ouest */
         for (y = Ay; y <= By; y++)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) return;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { x--; P += dPp; }
           else
@@ -271,7 +285,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Sud-Est */
         for (y = Ay; y >= By; y--)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) return;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { x++; P += dPp; }
           else
@@ -282,7 +298,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Sud-Ouest */
         for (y = Ay; y >= By; y--)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) return;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { x--; P += dPp; }
           else
