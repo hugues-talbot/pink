@@ -1,4 +1,4 @@
-/* $Id: lmedialaxis.c,v 1.2 2008-12-01 13:20:03 mcouprie Exp $ */
+/* $Id: lmedialaxis.c,v 1.3 2008-12-11 13:46:16 mcouprie Exp $ */
 /* 
 Fonctions pour l'axe médian exact ou approché, et
 pour la fonction bissectrice.
@@ -1221,32 +1221,6 @@ double MaximumAngle(int32_t xc, int32_t yc, ListPoint2D LPoints, int32_t count)
   return MaxAngle;
 } // MaximumAngle()
 
-/* Function that returns the maximum diameter of the point set */
-/* ==================================== */
-double MaximumDiameter(ListPoint2D LPoints, int32_t count)
-/* ==================================== */
-{
-  int32_t i, j, x1, y1, x2, y2;
-  double tmp, MaxDiam;
-
-  MaxDiam = 0.0;
-
-  if (count > 1)
-  {
-    for (i = 0; i < count-1; i++)
-    {
-      x1 = LPoints[i].xCoor; y1 = LPoints[i].yCoor;
-      for(j = i+1; j < count; j++)
-      {
-	x2 = LPoints[j].xCoor; y2 = LPoints[j].yCoor;
-	tmp = sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
-	if (tmp > MaxDiam) MaxDiam=tmp;
-      }
-    }	
-  }
-  return MaxDiam;
-} // MaximumDiameter()
-
 /* Function that returns the cosine of the maximum angle in 3d */
 /* ==================================== */
 double MaximumAngle3d(int32_t xc, int32_t yc, int32_t zc, ListPoint3D LPoints, int32_t count)
@@ -1280,32 +1254,6 @@ double MaximumAngle3d(int32_t xc, int32_t yc, int32_t zc, ListPoint3D LPoints, i
   }
   return MaxAngle;
 } // MaximumAngle3d()
-
-/* Function that returns the maximum diameter of the point set in 3D */
-/* ==================================== */
-double MaximumDiameter3d(ListPoint3D LPoints, int32_t count)
-/* ==================================== */
-{
-  int32_t i, j, x1, y1, z1, x2, y2, z2;
-  double tmp, MaxDiam;
-
-  MaxDiam = 0.0;
-
-  if (count > 1)
-  {
-    for (i = 0; i < count-1; i++)
-    {
-      x1 = LPoints[i].xCoor; y1 = LPoints[i].yCoor; z1 = LPoints[i].zCoor;
-      for(j = i+1; j < count; j++)
-      {
-	x2 = LPoints[j].xCoor; y2 = LPoints[j].yCoor; z2 = LPoints[j].zCoor;
-	tmp = sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1));
-	if (tmp > MaxDiam) MaxDiam=tmp;
-      }
-    }	
-  }
-  return MaxDiam;
-} // MaximumDiameter3d()
 
 //----------------------------------
 int32_t ApplySymmetriesB(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neighbors *Mg)
@@ -2550,6 +2498,60 @@ struct  DPoint3D{
 typedef struct DPoint2D * ListDPoint2D;
 typedef struct DPoint3D * ListDPoint3D;
 
+/* Function that returns the maximum diameter of the point set */
+/* ==================================== */
+double MaximumDiameter(ListDPoint2D LPoints, int32_t count)
+/* ==================================== */
+{
+  int32_t i, j;
+  double x1, y1, x2, y2;
+  double tmp, MaxDiam;
+
+  MaxDiam = 0.0;
+
+  if (count > 1)
+  {
+    for (i = 0; i < count-1; i++)
+    {
+      x1 = LPoints[i].xCoor; y1 = LPoints[i].yCoor;
+      for(j = i+1; j < count; j++)
+      {
+	x2 = LPoints[j].xCoor; y2 = LPoints[j].yCoor;
+	tmp = sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+	if (tmp > MaxDiam) MaxDiam=tmp;
+      }
+    }	
+  }
+  return MaxDiam;
+} // MaximumDiameter()
+
+/* Function that returns the maximum diameter of the point set in 3D */
+/* ==================================== */
+double MaximumDiameter3d(ListDPoint3D LPoints, int32_t count)
+/* ==================================== */
+{
+  int32_t i, j;
+  double x1, y1, z1, x2, y2, z2;
+  double tmp, MaxDiam;
+
+  MaxDiam = 0.0;
+
+  if (count > 1)
+  {
+    for (i = 0; i < count-1; i++)
+    {
+      x1 = LPoints[i].xCoor; y1 = LPoints[i].yCoor; z1 = LPoints[i].zCoor;
+      for(j = i+1; j < count; j++)
+      {
+	x2 = LPoints[j].xCoor; y2 = LPoints[j].yCoor; z2 = LPoints[j].zCoor;
+	tmp = sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1));
+	if (tmp > MaxDiam) MaxDiam=tmp;
+      }
+    }	
+  }
+  return MaxDiam;
+} // MaximumDiameter3d()
+
 /* ==================================== */
 int32_t ExtendedDownstream(int32_t x, int32_t y, uint32_t *image,
 		    int32_t rs, int32_t cs, 
@@ -2828,6 +2830,7 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
         {
 	  card_aval = ExtendedDownstream(i, j, imagedist, rs, cs, 
 				 TabIndDec, nval, ListDecs, Aval);	  
+#define OLD
 #ifdef OLD
 	  imagelambda[j*rs + i] = (float)MaximumDiameter(Aval, card_aval);
 #else

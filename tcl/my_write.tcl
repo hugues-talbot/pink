@@ -13,7 +13,7 @@ proc my_write_b_list {filename pointlist} {
 proc my_write_curve {filename pointlist} {
   set output [open $filename w]
   set n [expr [llength $pointlist] / 2]
-  puts $output "$n"
+  puts $output "l $n"
   for {set k 0} {$k < [expr $n - 1]} {incr k} {
     puts $output "[lindex $pointlist [expr $k*2]] [lindex $pointlist [expr ($k*2)+1]] [lindex $pointlist [expr ($k+1)*2]] [lindex $pointlist [expr (($k+1)*2)+1]]"
   }

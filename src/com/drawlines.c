@@ -1,4 +1,4 @@
-/* $Id: drawlines.c,v 1.2 2008-12-03 07:42:31 mcouprie Exp $ */
+/* $Id: drawlines.c,v 1.3 2008-12-11 13:46:16 mcouprie Exp $ */
 /*! \file drawlines.c
 
 \brief draw line segments which are specified by a text file
@@ -38,7 +38,7 @@ x31 y31 x32 y32<br>
 #include <mcutil.h>
 #include <ldraw.h>
 
-#define VERBOSE
+//#define VERBOSE
 
 /* =============================================================== */
 int main(argc, argv) 

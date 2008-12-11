@@ -30,15 +30,19 @@ typedef struct ensemble {
 #undef sign
 #define sign(x)		((x)>0?1.0:((x)<0?-1.0:0.0))
 
-/* useful definitions for functions */
-
-typedef double (*FUNCe)(double, ensemble *);		      
+typedef double (*FUNCe)(double, ensemble *);		/* f: R -> R */
+typedef double (*FUNCn)(double, struct xvimage *, struct xvimage *);      
 typedef double (*PFNe)(double *, ensemble *);		/* f: R^N -> R */
+typedef double (*PFNn)(double *, struct xvimage * image1, struct xvimage * image2);
 
 /* prototypes */
 
 extern int32_t powell(PFNe f, ensemble *ens, double p[], int32_t n, double tol,
 		  double scale, int32_t maxiter, double *fmin);
 
+extern int32_t powell_num(PFNn f, struct xvimage * image1, 
+			  struct xvimage * image2, double p[], int32_t n, 
+			  double tol, double scale, int32_t maxiter, 
+			  double *fmin);
 
 

@@ -1,4 +1,4 @@
-/* $Id: proj.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: proj.c,v 1.2 2008-12-11 13:46:16 mcouprie Exp $ */
 /*! \file proj.c
 
 \brief projection parallel to one of the main axes
@@ -87,7 +87,7 @@ int main(argc, argv)
           {
             tmp += (double)(I[k * ps + j*rs + i]);
           } /* for i */
-          R[k*cs + j] = (uint8_t)arrondi((tmp/cs));
+          R[k*cs + j] = (uint8_t)arrondi((tmp/rs));
 	}
         else
 	{
@@ -153,7 +153,7 @@ int main(argc, argv)
           {
             tmp += (double)(I[k * ps + j*rs + i]);
           } /* for k */
-          R[j*rs + i] = (uint8_t)arrondi((tmp/cs));
+          R[j*rs + i] = (uint8_t)arrondi((tmp/ds));
 	}
         else
 	{

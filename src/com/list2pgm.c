@@ -1,4 +1,4 @@
-/* $Id: list2pgm.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: list2pgm.c,v 1.2 2008-12-11 13:46:16 mcouprie Exp $ */
 /*! \file list2pgm.c
 
 \brief converts from point list representation to pgm
@@ -104,7 +104,7 @@ int main(argc, argv)
   }
 
   fscanf(fd, "%c", &type);
-  if ((type != 'b') && (type != 'n') && (type != 'B') && (type != 'N'))
+  if ((type != 'e') && (type != 's') && (type != 'b') && (type != 'n') && (type != 'B') && (type != 'N'))
   {
     fprintf(stderr, "usage: %s: bad file format : %c \n", argv[0], type);
     exit(1);

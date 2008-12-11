@@ -1,12 +1,13 @@
-/* $Id: lrotations.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: lrotations.c,v 1.2 2008-12-11 13:46:16 mcouprie Exp $ */
 /*
-   Rotations 
+   Rotations et transformations affines
 
    Michel Couprie  -  mai 2006
 
    lquasishear
    lrotationRT
    lrotationInter
+   laffine
 */
 
 #include <stdio.h>
@@ -364,3 +365,75 @@ of information occurs.
 
   return image2;
 } // lrotationInter()
+
+/* ==================================== */
+int32_t laffinetransformation(struct xvimage * image, double theta, double hx, double hy, double tx, double ty, struct xvimage * image2)
+/* ==================================== */
+/*
+Composée (dans cet ordre) d'une rotation d'angle theta autour du point 0,0 ;
+d'une  homothétie dans les directions x,y de facteurs (hx, hy)
+et d'une translation de vecteur (tx, ty).
+Méthode: interpolation.
+Le résultat (image2) doit être alloué et de même taille que image.
+L'angle est exprimé en radians. 
+*/
+#undef F_NAME
+#define F_NAME "laffinetransformation"
+{
+  int32_t rs, cs, n, rs2, cs2, xx, yy, xmax, xmin, ymax, ymin;
+  int32_t xm, xM, ym, yM;
+  uint8_t *I1, *I2;
+  double cost = cos(theta);
+  double sint = sin(theta);
+  double x, y, txm, txM, t;
+
+  if ((datatype(image) != VFF_TYP_1_BYTE) || (datatype(image2) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: incompatible image types\n", F_NAME);
+    return(0);
+  }
+
+  if (depth(image) != 1)
+  {
+    fprintf(stderr, "%s : not for 3d images\n", F_NAME);
+    return(0);
+  }
+  rs = rowsize(image);
+  cs = colsize(image);
+  n = rs * cs;
+  I1 = UCHARDATA(image);
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != 1))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    return(0);
+  }
+
+  xmax = rs2 = rs;
+  ymax = cs2 = cs; 
+  xmin = ymin = 0;
+
+  I2 = UCHARDATA(image2);
+  razimage(image2);
+
+  for (yy = ymin; yy < ymax; yy++)
+    for (xx = xmin; xx < xmax; xx++)
+    {
+      x =  (cost * xx) / hx + (sint * yy) / hy - tx;
+      y = (-sint * xx) / hx + (cost * yy) / hy - ty;
+      xm = (int32_t)floor(x);
+      xM = xm + 1;
+      ym = (int32_t)floor(y);
+      yM = ym + 1;
+      if ((xm >= 0) && (ym >= 0) && (xm < rs) && (ym < cs) &&
+	  (xM >= 0) && (yM >= 0) && (xM < rs) && (yM < cs))
+      {
+	txm = I1[ym*rs + xm] * (xM-x) + I1[ym*rs + xM] * (x-xm);
+	txM = I1[yM*rs + xm] * (xM-x) + I1[yM*rs + xM] * (x-xm);
+	t = txm * (yM - y) + txM * (y - ym); 
+	I2[(yy-ymin)*rs2 + xx-xmin] = arrondi(t);
+      }
+    } // for xx for yy
+
+  return 1;
+} // laffinetransformation()

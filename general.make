@@ -295,6 +295,7 @@ $(BDIR)/points2spline \
 $(BDIR)/samplespline
 
 GEO=\
+$(BDIR)/affine \
 $(BDIR)/attribute \
 $(BDIR)/autocrop \
 $(BDIR)/barycentre \
@@ -335,6 +336,7 @@ $(BDIR)/proj3d \
 $(BDIR)/projsphere \
 $(BDIR)/quasishear \
 $(BDIR)/recalagerigide \
+$(BDIR)/recalagerigide_num \
 $(BDIR)/recalagerigide_translateplane \
 $(BDIR)/isometry \
 $(BDIR)/rotate \
@@ -1399,6 +1401,10 @@ $(BDIR)/samplespline:	$(CDIR)/samplespline.c $(IDIR)/mcimage.h $(IDIR)/mcsplines
 # *********************************
 # GEO
 # *********************************
+
+$(BDIR)/affine:	$(CDIR)/affine.c $(IDIR)/mcimage.h $(IDIR)/mclin.h $(IDIR)/mcgeo.h $(IDIR)/lrotations.h $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/lrotations.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/affine.c $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/lrotations.o $(LIBS) -o $(BDIR)/affine
+
 $(BDIR)/attribute:	$(CDIR)/attribute.c $(IDIR)/lattribute.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/lattribute.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/attribute.c $(ODIR)/lattribute.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/attribute
 
@@ -1524,6 +1530,9 @@ $(BDIR)/quasishear:	$(CDIR)/quasishear.c $(IDIR)/mcimage.h $(IDIR)/mclin.h $(IDI
 
 $(BDIR)/recalagerigide:	$(CDIR)/recalagerigide.c $(IDIR)/lrecalagerigide.h $(IDIR)/mcimage.h $(IDIR)/mclin.h $(IDIR)/mcpowell.h $(IDIR)/mcgeo.h $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcpowell.o $(ODIR)/lrecalagerigide.o $(ODIR)/mcgeo.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/recalagerigide.c $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/mcpowell.o $(ODIR)/lrecalagerigide.o $(LIBS) -o $(BDIR)/recalagerigide
+
+$(BDIR)/recalagerigide_num:	$(CDIR)/recalagerigide_num.c $(IDIR)/lrecalagerigide.h $(IDIR)/mcimage.h $(IDIR)/mclin.h $(IDIR)/mcpowell.h $(IDIR)/mcgeo.h $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcpowell.o $(ODIR)/lrecalagerigide.o $(ODIR)/lrotations.o $(ODIR)/mcgeo.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/recalagerigide_num.c $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/mcpowell.o $(ODIR)/lrecalagerigide.o $(ODIR)/lrotations.o $(LIBS) -o $(BDIR)/recalagerigide_num
 
 $(BDIR)/recalagerigide_translateplane:	$(CDIR)/recalagerigide_translateplane.c $(IDIR)/lrecalagerigide_translateplane.h $(IDIR)/mcimage.h $(IDIR)/mclin.h $(IDIR)/mcpowell.h $(IDIR)/mcgeo.h $(ODIR)/mcimage.o $(ODIR)/mclin.o $(ODIR)/mcpowell.o $(ODIR)/lrecalagerigide_translateplane.o $(ODIR)/mcgeo.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/recalagerigide_translateplane.c $(ODIR)/mcimage.o $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/mcpowell.o $(ODIR)/lrecalagerigide_translateplane.o $(LIBS) -o $(BDIR)/recalagerigide_translateplane

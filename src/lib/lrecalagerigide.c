@@ -1,4 +1,4 @@
-/* $Id: lrecalagerigide.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: lrecalagerigide.c,v 1.2 2008-12-11 13:46:16 mcouprie Exp $ */
 /* 
   recalage rigide :
   - de contours simples (courbes fermées)
@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <math.h>
+#include <mccodimage.h>
 #include <mcutil.h>
 #include <mcgeo.h>
 #include <mcpowell.h>
@@ -118,8 +119,8 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
     \return vecteur des paramètres de la déformation recalant X à Y  
     \brief identifie les paramètres de la déformation affine linéaire recalant au mieux X à Y et
        applique cette déformation à X.
-       Cette déformation est la composée (dans cet ordre) d'une homothétie
-       dans les directions x,y de facteurs (hx, hy) ; d'une rotation d'angle theta, 
+       Cette déformation est la composée (dans cet ordre) d'une rotation d'angle theta ;
+       d'une  homothétie dans les directions x,y de facteurs (hx, hy)
        et d'une translation de vecteur (tx, ty).
        Le résultat de l'application de cette déformation à X est stockée dans X en sortie.
 */
@@ -130,6 +131,7 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
   double BX1, BX2, BY1, BY2; // barycentres
   ensemble ens;
   const int32_t MAXITER = 500;
+  const double PRECISION = 1e-6;
 
   // identifie les barycentres et normalise les coordonnées
   BX1 = BX2 = BY1 = BY2 = 0.0;
@@ -143,7 +145,7 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
   ens.X = X; ens.n = n; ens.Y = Y; ens.m = m; 
   ens.Tmp = (double *)calloc(1, 2 * max(n,m) * sizeof(double));
 
-  powell(F, &ens, G, 5, 1e-6, 0.1, MAXITER, &fmin);
+  powell(F, &ens, G, 5, PRECISION, 0.1, MAXITER, &fmin);
 
   G[3] += BY1; G[4] += BY2;
   Tgamma(X, n, G, ens.Tmp);
@@ -269,8 +271,8 @@ double *lrecalagerigide3d(double *X, int32_t n, double *Y, int32_t m)
     \return vecteur des paramètres de la déformation recalant X à Y  
     \brief identifie les paramètres de la déformation affine linéaire recalant au mieux X à Y et
        applique cette déformation à X.
-       Cette déformation est la composée (dans cet ordre) d'une homothétie
-       dans les directions x,y,z de facteurs (hx, hy, hz) ; d'une rotation d'angle theta, 
+       Cette déformation est la composée (dans cet ordre) d'une rotation d'angle theta ;
+       d'une homothétie dans les directions x,y,z de facteurs (hx, hy, hz) ; 
        et d'une translation de vecteur (tx, ty, tz).
        Le résultat de l'application de cette déformation à X est stockée dans X en sortie.
 */
@@ -281,6 +283,7 @@ double *lrecalagerigide3d(double *X, int32_t n, double *Y, int32_t m)
   double BX1, BX2, BX3, BY1, BY2, BY3; // barycentres
   ensemble ens;
   const int32_t MAXITER = 500;
+  const double PRECISION = 1e-6;
 
   // identifie les barycentres et normalise les coordonnées
   BX1 = BX2 = BX3 = BY1 = BY2 = BY3 = 0.0;
@@ -295,7 +298,7 @@ double *lrecalagerigide3d(double *X, int32_t n, double *Y, int32_t m)
   ens.Tmp = (double *)calloc(1, 3 * max(n,m) * sizeof(double));
   
 
-  powell(F3d, &ens, G, 8, 1e-6, 0.1, MAXITER, &fmin);
+  powell(F3d, &ens, G, 8, PRECISION, 0.1, MAXITER, &fmin);
 
   G[5] += BY1; G[6] += BY2; G[7] += BY3;
   Tgamma3d(X, n, G, ens.Tmp);
@@ -309,118 +312,111 @@ double *lrecalagerigide3d(double *X, int32_t n, double *Y, int32_t m)
   return Gamma;
 } // lrecalagerigide3d()
 
-#ifdef NUM
 /* ============================================================= */
 /* ============================================================= */
-/* NUM */
+/* recalage global (affine) pour deux images numériques */
 /* ============================================================= */
 /* ============================================================= */
 
-/* ==================================== */
-double Delta_num(double *X, int32_t n, double *Y, int32_t m)
-/* ==================================== */
-/*! \fn double Delta_num(double *X, int32_t n, double *Y, int32_t m)
-    \param X (entrée) : matrice n * 2 contenant le premier ensemble de points
-    \param n (entrée) : nombre de points dans X
-    \param Y (entrée) : matrice m * 2 contenant le second ensemble de points
-    \param m (entrée) : nombre de points dans X
-    \return distance de X à Y
-    \brief calcule une "distance" de X à Y, définie comme la somme des carrés des distances
-       des points de X à l'ensemble Y.
-*/
-{
-  double tmin, t, x1, x2, delta = 0.0;
-  int32_t i, j;
-  for (i = 0; i < n; i++)
-  {
-    x1 = X[i*2 + 0];
-    x2 = X[i*2 + 1];
-    tmin = distcarre(x1, x2, Y[0], Y[1]);
-    for (j = 1; j < m; j++)
-    {
-      t = distcarre(x1, x2, Y[j*2 + 0], Y[j*2 + 1]);
-      if (t < tmin) tmin = t;
-    } // for (j = 1; j < m; j++)
-    delta += tmin;
-  } // for (i = 0; i < n; i++)
-  return delta;
-} // Delta_num()
+static double SEUIL2;
 
 /* ==================================== */
-void Tgamma_num(double *X, int32_t n, double *Gamma, double *R)
+double F_num(double *G, struct xvimage * image1, struct xvimage * image2)
 /* ==================================== */
-/*! \fn double Tgamma_num(double *X, int32_t n, double *Y, int32_t m)
-    \param X (entrée) : matrice n * 2 contenant un ensemble de points
-    \param n (entrée) : nombre de points dans X
-    \param Gamma (entrée) : paramètres d'une transformation affine linéaire
-    \param R (sortie) : résultat
-    \brief applique la transformation affine linéaire définie par Gamma aux points de X
-    \warning R doit etre initialise aux memes dimensions que X (n,2)
-*/
+// fonction de l'évaluation d'erreur pour 2 images numériques
+// G contient les paramètres d'une transformation affine :
+// G[0] = hx
+// G[1] = hy (homothetie)
+// G[2] = theta (rotation)
+// G[3] = tx
+// G[4] = ty (translation)
+// calcule la somme des carrés des différences entre G(image1) et image2
+// WARNING : les images doivent être de même taille - pas de vérification
+// WARNING : utilise (par effet de bord) la variable globale SEUIL2 (à changer)
 {
-  int32_t i, j;
-  double Rot[2][2];
+  int32_t i, j, x, y, Xm, Ym, XM, YM;
+  int32_t rs = rowsize(image1);
+  int32_t cs = colsize(image1);
+  int32_t N = rs * cs;
+  uint8_t *I1 = UCHARDATA(image1);
+  uint8_t *I2 = UCHARDATA(image2);
+  double RH[2][2];
+  double X, Y, tXm, tXM, t;
+  double ErrorQuad = 0.0;
   
-  // rotation
-  Rot[0][0] = cos(Gamma[2]);  
-  Rot[0][1] = -sin(Gamma[2]);  
-  Rot[1][0] = sin(Gamma[2]);  
-  Rot[1][1] = cos(Gamma[2]);  
-  lin_mult((double *)X, (double *)Rot, (double *)R, n, 2, 2);
-  // homotheties
-  for (i = 0; i < n; i++)
+#define SANS_ZOOM
+#ifdef SANS_ZOOM
+  // rotation 
+  RH[0][0] = cos(G[2]);  
+  RH[0][1] = -sin(G[2]);  
+  RH[1][0] = sin(G[2]);  
+  RH[1][1] = cos(G[2]);  
+#else
+  // rotation et homothetie
+  RH[0][0] = cos(G[2]) * G[0];  
+  RH[0][1] = -sin(G[2]) * G[0];  
+  RH[1][0] = sin(G[2]) * G[1];  
+  RH[1][1] = cos(G[2]) * G[1];  
+#endif
+
+  for (i = 0; i < N; i++)
   {
-    R[i*2 + 0] = R[i*2 + 0] * Gamma[0]; // hx
-    R[i*2 + 1] = R[i*2 + 1] * Gamma[1]; // hy
-  } // for (i = 0; i < n; i++)
-  // translations
-  for (i = 0; i < n; i++)
-  {
-    R[i*2 + 0] = R[i*2 + 0] + Gamma[3]; // tx
-    R[i*2 + 1] = R[i*2 + 1] + Gamma[4]; // ty
-  } // for (i = 0; i < n; i++)
-} // Tgamma_num() 
+    x = i % rs;
+    y = i / rs;
+    X = RH[0][0] * x + RH[0][1] * y + G[3];
+    Y = RH[1][0] * x + RH[1][1] * y + G[4];
+    // encadrement de la cible
+    Xm = (int32_t)floor(X);
+    XM = Xm + 1;
+    Ym = (int32_t)floor(Y);
+    YM = Ym + 1;
+    // cible dans l'image ? 
+    if ((Xm >= 0) && (Ym >= 0) && (Xm < rs) && (Ym < cs) &&
+	(XM >= 0) && (YM >= 0) && (XM < rs) && (YM < cs))
+    {
+      // calcule valeur interpolée dans I2
+      tXm = I2[Ym*rs + Xm] * (XM-X) + I2[Ym*rs + XM] * (X-Xm);
+      tXM = I2[YM*rs + Xm] * (XM-X) + I2[YM*rs + XM] * (X-Xm);
+      t = tXm * (YM - Y) + tXM * (Y - Ym); 
+      // calcule l'erreur quadratique et accumule
+      t = t - I1[y*rs + x];
+      t = t * t;
+      if (t <= SEUIL2)
+	ErrorQuad = ErrorQuad + t;
+    }
+  } // for (i = 0; i < N; i++)
+
+  return ErrorQuad;
+} // F_num()
 
 /* ==================================== */
-double F_num(double *G, ensemble *ens)
-/* ==================================== */
-{
-  Tgamma_num(ens->X, ens->n, G, ens->Tmp);
-  return Delta_num(ens->Tmp, ens->n, ens->Y, ens->m);  
-} // F()
-
-/* ==================================== */
-double *lrecalagerigide2d_num(struct xvimage * image1, struct xvimage * image2)
+int32_t lrecalagerigide2d_num(struct xvimage * image1, struct xvimage * image2, double *G, double seuil)
 /* ==================================== */
 /*! \fn double *lrecalagerigide2d_num(struct xvimage * image1, struct xvimage * image2)
     \param image1 (entrée/sortie) : première image
     \param image2 (entrée) : seconde image
-    \return vecteur des paramètres de la déformation recalant image1 à image2
+    \param image1 (entrée/sortie) : vecteur des paramètres de la déformation recalant image1 à image2 - en entrée : une déformation initiale
+    \return entier 1 si ok, 0 sinon
     \brief identifie les paramètres de la déformation affine linéaire recalant au mieux 
-       image1 à image2 et applique cette déformation à image1.
-       Cette déformation est la composée (dans cet ordre) d'une rotation d'angle theta, 
+       image1 à image2.
+       Cette déformation est la composée (dans cet ordre) d'une rotation 
+       d'angle theta ; d'une homothétie dans les directions x,y de facteurs (hx, hy), 
        et d'une translation de vecteur (tx, ty).
-       Le résultat de l'application de cette déformation à image1 est stockée dans image1 en sortie.
 */
+#undef F_NAME
+#define F_NAME "lrecalagerigide2d_num"
 {
-  double *Gamma, fmin;
-  double G[5] = {1.0, 1.0, 0.0, 0.0, 0.0}; // hx, hy, theta, tx, ty
-  int32_t i, ret;
+  double fmin;
   const int32_t MAXITER = 500;
+  const double PRECISION = 0.00001;
 
+  SEUIL2 = seuil * seuil; // globale utilisée par F_num - pour éliminer les outliers
 
+  if (powell_num(F_num, image1, image2, G, 5, PRECISION, 0.1, MAXITER, &fmin) == M_NOT_FOUND)
+  {
+    fprintf(stderr, "%s() : powell_num failed\n", F_NAME);
+    return(0);    
+  }
 
-  powell(F_num, &ens, G, 5, 1e-6, 0.1, MAXITER, &fmin);
-
-  G[3] += BY1; G[4] += BY2;
-  Tgamma(X, n, G, ens.Tmp);
-  G[3] -= BX1; G[4] -= BX2;
-
-  for (i = 0; i < n+n; i++) X[i] = ens.Tmp[i]; 
-
-  Gamma = (double *)calloc(1,5 * sizeof(double));
-  memcpy(Gamma, G, 5 * sizeof(double));
-  free(ens.Tmp);
-  return Gamma;
+  return 1;
 } // lrecalagerigide2d_num()
-#endif
