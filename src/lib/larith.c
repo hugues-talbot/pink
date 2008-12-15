@@ -1,4 +1,4 @@
-/* $Id: larith.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: larith.c,v 1.2 2008-12-15 07:01:27 mcouprie Exp $ */
 /* 
   operations arithmetiques : 
     ladd
@@ -30,10 +30,8 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#ifdef HP
-#define _INCLUDE_XOPEN_SOURCE
-#endif
 #include <math.h>
+#include <limits.h>
 #include <mcutil.h>
 #include <mcimage.h>
 #include <mccodimage.h>
@@ -122,7 +120,7 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
     lpt1 = ULONGDATA(image1);
     for (i = 0; i < N; i++)
     {
-      lpt1[i] = (uint32_t)min((uint32_t)ULONG_MAX, max(NDG_MIN, (int32_t)(lpt1[i]) + constante));
+      lpt1[i] = (uint32_t)min(((uint32_t)ULONG_MAX),max(NDG_MIN,(int32_t)(lpt1[i])+constante));
     }
   }
   else if (datatype(image1) == VFF_TYP_FLOAT)

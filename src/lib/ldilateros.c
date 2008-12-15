@@ -1,4 +1,4 @@
-/* $Id: ldilateros.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: ldilateros.c,v 1.2 2008-12-15 07:01:27 mcouprie Exp $ */
 /* operateurs de dilatation et d'erosion morphologique */
 /* Michel Couprie - avril 1997 */
 
@@ -7,6 +7,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <mccodimage.h>
 #include <mcutil.h>
 #include <ldilateros.h>

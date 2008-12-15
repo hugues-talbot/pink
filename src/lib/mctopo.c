@@ -1,4 +1,4 @@
-/* $Id: mctopo.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: mctopo.c,v 1.2 2008-12-15 07:01:27 mcouprie Exp $ */
 /* 
 Librairie mctopo : 
 
@@ -20,6 +20,7 @@ Michel Couprie 1996
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <mctopo.h>
 #include <mccodimage.h>
 #include <mcutil.h>

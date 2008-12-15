@@ -1,4 +1,4 @@
-/* $Id: printstats.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: printstats.c,v 1.2 2008-12-15 07:01:27 mcouprie Exp $ */
 /*! \file printstats.c
 
 \brief prints some stats of an image or a region
@@ -20,6 +20,7 @@ Calculates the histogram of \b im.pgm (masked by the binary image
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 

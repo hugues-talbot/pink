@@ -60,7 +60,6 @@ int32_t main(argc, argv)
     {
       switch(datatype(im)){
       case VFF_TYP_1_BYTE:
-printf("ga = %x\n", (int64_t)ga);
 	if( lpgm2ga(im, ga, param, alpha) != 1 )
 	{
 	  fprintf(stderr, "%s: erreur de lppm2ga \n", argv[0]);

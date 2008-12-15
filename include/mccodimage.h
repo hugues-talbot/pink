@@ -1,13 +1,4 @@
-/* $Id: mccodimage.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
-#define SHRT_MIN -32767 
-#define SHRT_MAX +32767 
-#define USHRT_MAX 65535 
-#define INT_MIN -32767 
-#define INT_MAX +32767 
-#define UINT_MAX 65535 
-#define LONG_MIN -2147483647 
-#define LONG_MAX +2147483647
-#define ULONG_MAX 4294967295
+/* $Id: mccodimage.h,v 1.2 2008-12-15 07:01:27 mcouprie Exp $ */
 #define NDG_MAX 255            /* niveau de gris max */
 #define NDG_MIN 0              /* niveau de gris min */
 
