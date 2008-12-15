@@ -1,4 +1,4 @@
-/* $Id: section.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: section.c,v 1.2 2008-12-15 06:38:50 mcouprie Exp $ */
 /*! \file section.c
 
 \brief computes a 2d cross section from a 3d image

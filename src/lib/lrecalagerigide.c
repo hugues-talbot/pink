@@ -1,4 +1,4 @@
-/* $Id: lrecalagerigide.c,v 1.2 2008-12-11 13:46:16 mcouprie Exp $ */
+/* $Id: lrecalagerigide.c,v 1.3 2008-12-15 06:38:50 mcouprie Exp $ */
 /* 
   recalage rigide :
   - de contours simples (courbes fermées)
@@ -20,6 +20,7 @@
 #include <lrecalagerigide.h>
 
 #define VERBOSE
+const int32_t MAXITER = 50;
 
 /* ==================================== */
 static double dist(double x1, double y1, double x2, double y2)
@@ -130,7 +131,6 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
   int32_t i, ret;
   double BX1, BX2, BY1, BY2; // barycentres
   ensemble ens;
-  const int32_t MAXITER = 500;
   const double PRECISION = 1e-6;
 
   // identifie les barycentres et normalise les coordonnées
@@ -282,7 +282,6 @@ double *lrecalagerigide3d(double *X, int32_t n, double *Y, int32_t m)
   int32_t i, ret;
   double BX1, BX2, BX3, BY1, BY2, BY3; // barycentres
   ensemble ens;
-  const int32_t MAXITER = 500;
   const double PRECISION = 1e-6;
 
   // identifie les barycentres et normalise les coordonnées
@@ -360,6 +359,10 @@ double F_num(double *G, struct xvimage * image1, struct xvimage * image2)
 #endif
 
   for (i = 0; i < N; i++)
+#define ESSAI
+#ifdef ESSAI
+      if (I1[i] >= SEUIL2)
+#endif
   {
     x = i % rs;
     y = i / rs;
@@ -381,7 +384,9 @@ double F_num(double *G, struct xvimage * image1, struct xvimage * image2)
       // calcule l'erreur quadratique et accumule
       t = t - I1[y*rs + x];
       t = t * t;
+#ifndef ESSAI
       if (t <= SEUIL2)
+#endif
 	ErrorQuad = ErrorQuad + t;
     }
   } // for (i = 0; i < N; i++)
@@ -390,12 +395,14 @@ double F_num(double *G, struct xvimage * image1, struct xvimage * image2)
 } // F_num()
 
 /* ==================================== */
-int32_t lrecalagerigide2d_num(struct xvimage * image1, struct xvimage * image2, double *G, double seuil)
+int32_t lrecalagerigide2d_num(struct xvimage * image1, struct xvimage * image2, double *G, double seuil, double precision)
 /* ==================================== */
 /*! \fn double *lrecalagerigide2d_num(struct xvimage * image1, struct xvimage * image2)
     \param image1 (entrée/sortie) : première image
     \param image2 (entrée) : seconde image
-    \param image1 (entrée/sortie) : vecteur des paramètres de la déformation recalant image1 à image2 - en entrée : une déformation initiale
+    \param G (entrée/sortie) : vecteur des paramètres de la déformation recalant image1 à image2 - en entrée : une déformation initiale
+    \param seuil (en entrée) : l'erreur ponctuelle quadratique est comparée à seuil^2, au delà elle n'est pas prise en compte (outlier)
+    \param précision (en entrée) : arrêt de l'algo quand la différence entre les coûts globaux P et C aux étapes précedente et courante est inférieure à (P+C)*precision/2
     \return entier 1 si ok, 0 sinon
     \brief identifie les paramètres de la déformation affine linéaire recalant au mieux 
        image1 à image2.
@@ -407,12 +414,14 @@ int32_t lrecalagerigide2d_num(struct xvimage * image1, struct xvimage * image2, 
 #define F_NAME "lrecalagerigide2d_num"
 {
   double fmin;
-  const int32_t MAXITER = 500;
-  const double PRECISION = 0.00001;
 
+#ifdef ESSAI
+  SEUIL2 = seuil; // globale utilisée par F_num 
+#else
   SEUIL2 = seuil * seuil; // globale utilisée par F_num - pour éliminer les outliers
+#endif
 
-  if (powell_num(F_num, image1, image2, G, 5, PRECISION, 0.1, MAXITER, &fmin) == M_NOT_FOUND)
+  if (powell_num(F_num, image1, image2, G, 5, precision, 0.1, MAXITER, &fmin) == M_NOT_FOUND)
   {
     fprintf(stderr, "%s() : powell_num failed\n", F_NAME);
     return(0);    

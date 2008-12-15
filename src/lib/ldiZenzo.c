@@ -1,4 +1,4 @@
-/* $Id: ldiZenzo.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: ldiZenzo.c,v 1.2 2008-12-15 06:38:50 mcouprie Exp $ */
 /* diZenzo gradient based on Deriche filter: Laurent Najman juin 2004 */
 #include <sys/types.h>
 #include <stdint.h>

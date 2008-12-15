@@ -1,4 +1,4 @@
-/* $Id: genbini.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: genbini.c,v 1.2 2008-12-15 06:38:50 mcouprie Exp $ */
 /* \file genbini.c
 
 \brief generates a binary image following interactive specifications

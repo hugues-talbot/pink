@@ -1,10 +1,10 @@
-/* $Id: recalagerigide_num.c,v 1.2 2008-12-11 13:46:16 mcouprie Exp $ */
+/* $Id: recalagerigide_num.c,v 1.3 2008-12-15 06:38:50 mcouprie Exp $ */
 
 /*! \file recalagerigide_num.c
 
 \brief rigid registration of two grayscale images
 
-<B>Usage:</B> recalagerigide_num in1 in2 [seuil] out
+<B>Usage:</B> recalagerigide_num in1 in2 seuil [init] out
 
 <B>Description:</B>
 
@@ -17,20 +17,26 @@ The distance D(Z,Y) between two images Z and Y is defined by:
 D(Z,Y) = sum { (Z[i] - Y[i])^2 ; for all i in support(Z) }
 
 The rigid deformation R is defined as the composition (in this order) 
-of a rotation, a zoom and a translation. 
+of a zoom, a rotation, and a translation. 
 
 In 2d, the parameters are:
-\li theta : angle (in degrees) of the rotation around (0,0)
 \li hx : parameter for the scaling in direction x
 \li hy : parameter for the scaling in direction y
+\li theta : angle (in degrees) of the rotation around (0,0)
 \li tx : parameter for the translation in direction x
 \li ty : parameter for the translation in direction y
 
 The output parameter \b out is the name of a text file in which these 
-values will be written.
+values will be written (type "e" list format, see doc/formats.txt).
 
-The optional parameter \b seuil makes it possible to eliminate outliers: 
+The parameter \b seuil makes it possible to eliminate outliers: 
 points i such that (Z[i] - Y[i])^2 > seuil^2 are not taken into account.
+A value 255 for this parameter means no outlier elimination.
+
+The optional parameter \b init makes it possible to give, 
+in the same format as the output, an initial deformation which is 
+"close" to the expected one. The default initialisation is the identity
+(parameters 0, 1, 1, 0, 0).
 
 <B>Types supported:</B> byte 2d
 
@@ -52,7 +58,8 @@ points i such that (Z[i] - Y[i])^2 > seuil^2 are not taken into account.
 #include <lrecalagerigide.h>
 #include <lrotations.h>
 
-#define VERBOSE
+//#define VERBOSE
+const double PRECISION = 0.0001;
 
 /* =============================================================== */
 int main(argc, argv) 
@@ -63,12 +70,12 @@ int main(argc, argv)
   struct xvimage * image2;
   int32_t rs, cs, ds, ps, N, x, y, z, n;
   double Gamma[5] = {1.0, 1.0, 0.0, 0.0, 0.0}; // hx, hy, theta, tx, ty
-  double seuil = (double)NDG_MAX; 
+  double seuil; 
   FILE *fd = NULL;
 
-  if ((argc != 4) && (argc != 5))
+  if ((argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in1.pgm in2.pgm [seuil] out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in1.pgm in2.pgm seuil [init] out.lst \n", argv[0]);
     exit(1);
   }
 
@@ -94,15 +101,47 @@ int main(argc, argv)
     exit(1);
   }
 
-  if (argc == 5) seuil = atof(argv[3]);
+  seuil = atof(argv[3]);
+
+  if (argc == 6)
+  {
+    char type;
+    int32_t n;
+
+    fd = fopen(argv[4],"r");
+    if (!fd)
+    {
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[4]);
+      exit(1);
+    }
+
+    fscanf(fd, "%c", &type);
+    if (type != 'e')
+    {
+      fprintf(stderr, "usage: %s: bad file format for %s: %c \n", argv[0], argv[4], type);
+      exit(1);
+    }
+
+    fscanf(fd, "%d\n", &n);
+    if (n != 5)
+    {
+      fprintf(stderr, "usage: %s: wrong number of parameters in %s: %d \n", argv[0], argv[4], n);
+      exit(1);
+    }
+
+    fscanf(fd, "%lf%lf%lf%lf%lf", &(Gamma[0]), &(Gamma[1]), &(Gamma[2]), &(Gamma[3]), &(Gamma[4]));
+    Gamma[2] = (Gamma[2] * M_PI) / 180;
+
+    fclose(fd);
+  }
 
   if (depth(image1) == 1) // 2D
   {
-    (void)lrecalagerigide2d_num(image1, image2, Gamma, seuil);
+    (void)lrecalagerigide2d_num(image1, image2, Gamma, seuil, PRECISION);
 #ifdef VERBOSE
-    printf("theta = %g = %g deg\n", Gamma[2], (Gamma[2]*180)/M_PI);
     printf("hx = %g\n", Gamma[0]);
     printf("hy = %g\n", Gamma[1]);
+    printf("theta = %g = %g deg\n", Gamma[2], (Gamma[2]*180)/M_PI);
     printf("tx = %g\n", Gamma[3]);
     printf("ty = %g\n", Gamma[4]);
 #endif
@@ -114,7 +153,7 @@ int main(argc, argv)
   }
 
 #ifdef APPLY_TRANSFORMATION
-  if (! laffinetransformation(image1, Gamma[2], Gamma[0], Gamma[1], Gamma[3], Gamma[4], image2))
+  if (! laffinetransformation(image1, Gamma[0], Gamma[1], Gamma[2], Gamma[3], Gamma[4], image2))
   {
     fprintf(stderr, "%s: function laffinetransformation failed\n", argv[0]);
     exit(1);
@@ -128,7 +167,7 @@ int main(argc, argv)
     exit(1);
   }
   fprintf(fd, "e %d\n", 5); 
-  fprintf(fd, "%g %g %g %g %g\n", (Gamma[2]*180)/M_PI, 1.0, 1.0, Gamma[3], Gamma[4]); 
+  fprintf(fd, "%g %g %g %g %g\n", 1.0, 1.0, (Gamma[2]*180)/M_PI, Gamma[3], Gamma[4]); 
   fclose(fd);
 #endif
 

@@ -22,7 +22,7 @@
 #include <mccodimage.h>
 #include <mcpowell.h>
 
-#define VERBOSE 
+//#define VERBOSE 
 #define MAXDIM		100
 
 static double pold[MAXDIM];
@@ -634,7 +634,6 @@ int32_t powell_num(PFNn f, struct xvimage * image1, struct xvimage * image2,
       /*
       ** now loop over the direction set and try to minimize along each one
       */
-
       for (i = 0; i < n; i++) 
       {
 	for (j = 0; j < n; j++) new_dir[j] = dir[j][i];
@@ -656,12 +655,17 @@ int32_t powell_num(PFNn f, struct xvimage * image1, struct xvimage * image2,
       }
 
       if (go_down == -1) {
+//#define DO_NOT_EXIT
+#ifdef DO_NOT_EXIT
+	return M_FOUND;
+#else
 	printf("***ERROR, go_down = -1\n");
 	printf("cur_value %f new_value %f max_decr %f\n", cur_value,
 	       new_value, max_decr);
 	printf("check %f <= %f\n", 2 * abs(cur_value - new_value),
 	       tol * (abs(cur_value) + abs(new_value)));
 	exit(1);
+#endif
       }
       /*
        * construct the extrapolated point and the average direction moved

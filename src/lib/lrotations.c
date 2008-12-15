@@ -1,4 +1,4 @@
-/* $Id: lrotations.c,v 1.2 2008-12-11 13:46:16 mcouprie Exp $ */
+/* $Id: lrotations.c,v 1.3 2008-12-15 06:38:50 mcouprie Exp $ */
 /*
    Rotations et transformations affines
 
@@ -367,11 +367,11 @@ of information occurs.
 } // lrotationInter()
 
 /* ==================================== */
-int32_t laffinetransformation(struct xvimage * image, double theta, double hx, double hy, double tx, double ty, struct xvimage * image2)
+int32_t laffinetransformation(struct xvimage * image, double hx, double hy, double theta, double tx, double ty, struct xvimage * image2)
 /* ==================================== */
 /*
-Composée (dans cet ordre) d'une rotation d'angle theta autour du point 0,0 ;
-d'une  homothétie dans les directions x,y de facteurs (hx, hy)
+Composée (dans cet ordre) d'une  homothétie dans les directions x,y 
+de facteurs (hx, hy), d'une rotation d'angle theta autour du point 0,0
 et d'une translation de vecteur (tx, ty).
 Méthode: interpolation.
 Le résultat (image2) doit être alloué et de même taille que image.
