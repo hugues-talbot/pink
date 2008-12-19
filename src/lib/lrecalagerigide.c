@@ -1,4 +1,4 @@
-/* $Id: lrecalagerigide.c,v 1.3 2008-12-15 06:38:50 mcouprie Exp $ */
+/* $Id: lrecalagerigide.c,v 1.4 2008-12-19 13:10:43 mcouprie Exp $ */
 /* 
   recalage rigide :
   - de contours simples (courbes fermées)
@@ -153,7 +153,7 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
 
   for (i = 0; i < n+n; i++) X[i] = ens.Tmp[i]; 
 
-  Gamma = (double *)calloc(1,5 * sizeof(double));
+  Gamma = (double *)calloc(1, 5 * sizeof(double));
   memcpy(Gamma, G, 5 * sizeof(double));
   free(ens.Tmp);
   return Gamma;
@@ -323,12 +323,17 @@ static double SEUIL2;
 double F_num(double *G, struct xvimage * image1, struct xvimage * image2)
 /* ==================================== */
 // fonction de l'évaluation d'erreur pour 2 images numériques
+//
 // G contient les paramètres d'une transformation affine :
 // G[0] = hx
 // G[1] = hy (homothetie)
 // G[2] = theta (rotation)
 // G[3] = tx
 // G[4] = ty (translation)
+//
+// dans image2 on a les coordonnées (xmin,ymin,xmax,ymax) d'un rectangle 
+// dont seuls les points seront utilisés.
+//
 // calcule la somme des carrés des différences entre G(image1) et image2
 // WARNING : les images doivent être de même taille - pas de vérification
 // WARNING : utilise (par effet de bord) la variable globale SEUIL2 (à changer)
@@ -359,7 +364,7 @@ double F_num(double *G, struct xvimage * image1, struct xvimage * image2)
 #endif
 
   for (i = 0; i < N; i++)
-#define ESSAI
+//#define ESSAI
 #ifdef ESSAI
       if (I1[i] >= SEUIL2)
 #endif
@@ -373,9 +378,9 @@ double F_num(double *G, struct xvimage * image1, struct xvimage * image2)
     XM = Xm + 1;
     Ym = (int32_t)floor(Y);
     YM = Ym + 1;
-    // cible dans l'image ? 
-    if ((Xm >= 0) && (Ym >= 0) && (Xm < rs) && (Ym < cs) &&
-	(XM >= 0) && (YM >= 0) && (XM < rs) && (YM < cs))
+    // cible dans le rectangle ?
+    if ((Xm >= image2->xmin) && (Ym >= image2->ymin) && (Xm <= image2->xmax) && (Ym <= image2->ymax) &&
+	(XM >= image2->xmin) && (YM >= image2->ymin) && (XM <= image2->xmax) && (YM <= image2->ymax))
     {
       // calcule valeur interpolée dans I2
       tXm = I2[Ym*rs + Xm] * (XM-X) + I2[Ym*rs + XM] * (X-Xm);

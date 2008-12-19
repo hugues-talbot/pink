@@ -1,15 +1,12 @@
 /*! \file graphes.h
     \brief structures de base pour la manipulation de graphes
 */
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
 
 typedef char boolean;
-typedef int32_t TYP_VARC;
-typedef int32_t TYP_VSOM;
+//typedef int32_t TYP_VARC;
+//typedef int32_t TYP_VSOM;
+typedef double TYP_VARC;
+typedef double TYP_VSOM;
 
 #define TRUE 1
 #define FALSE 0
@@ -17,15 +14,6 @@ typedef int32_t TYP_VSOM;
 #ifndef HUGE
 #define HUGE HUGE_VAL
 #endif
-#define SHRT_MIN -32767 
-#define SHRT_MAX +32767 
-#define USHRT_MAX 65535 
-#define INT_MIN -32767 
-#define INT_MAX +32767 
-#define UINT_MAX 65535 
-#define LONG_MIN -2147483647 
-#define LONG_MAX +2147483647
-#define ULONG_MAX 4294967295
 #define M_PI	 3.14159265358979323846
 
 #define SP_AVG 0

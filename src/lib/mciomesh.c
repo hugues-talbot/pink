@@ -1,4 +1,4 @@
-/* $Id: mciomesh.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: mciomesh.c,v 1.2 2008-12-19 13:10:43 mcouprie Exp $ */
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -8,7 +8,7 @@
 #include <mcrbt1.h>
 #include <mciomesh.h>
 
-//#define VERBOSE
+#define VERBOSE
 
 extern Rbt * RBT;
 
@@ -534,6 +534,8 @@ void SaveMeshDXF(FILE *fileout, int32_t obj_id)
 /* ==================================== */
 void LoadMeshMCM(FILE *filein)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadMeshMCM"
 /* filein doit avoir ete ouvert en lecture */
 /* format: 
    V %d     (Sommets - champ obligatoire)
@@ -607,7 +609,7 @@ void LoadMeshMCM(FILE *filein)
     {
       if (nvert == -1)
       {
-        fprintf(stderr, "LoadMeshMCM: bad file format\n");
+        fprintf(stderr, "%s: bad file format\n", F_NAME);
         exit(0);
       }
       for (i = 0; i < nvert; i++)
@@ -620,7 +622,7 @@ void LoadMeshMCM(FILE *filein)
     {
       if (nvert == -1)
       {
-        fprintf(stderr, "LoadMeshMCM: bad file format\n");
+        fprintf(stderr, "%s: bad file format\n", F_NAME);
         exit(0);
       }
       for (i = 0; i < nvert; i++)
@@ -635,7 +637,7 @@ void LoadMeshMCM(FILE *filein)
     {
       if (nfaces == -1)
       {
-        fprintf(stderr, "LoadMeshMCM: bad file format\n");
+        fprintf(stderr, "%s: bad file format\n", F_NAME);
         exit(0);
       }
       for (i = 0; i < nfaces; i++)
@@ -649,7 +651,7 @@ void LoadMeshMCM(FILE *filein)
  end:
   if ((nvert == -1) || (nfaces == -1))
   {
-    fprintf(stderr, "LoadMeshMCM: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
 } /* LoadMeshMCM() */
@@ -657,6 +659,8 @@ void LoadMeshMCM(FILE *filein)
 /* ==================================== */
 void LoadMeshIFS(FILE *filein)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadMeshIFS"
 /* filein doit avoir ete ouvert en lecture */
 /*
 The little-endian IFS (indexed face set) file format is:
@@ -698,7 +702,7 @@ should fly along its object space -z axis.
   fread(buf, sizeof(char), s, filein);
   if (strcmp(buf, "IFS") != 0)
   {
-    fprintf(stderr, "LoadMeshIFS: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
   version = ReadFloat32(filein);
@@ -740,14 +744,120 @@ should fly along its object space -z axis.
   }
   if ((nvert == -1) || (nfaces == -1))
   {
-    fprintf(stderr, "LoadMeshIFS: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
 } /* LoadMeshIFS() */
 
 /* ==================================== */
+void LoadMeshCGAL(FILE *filein)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadMeshCGAL"
+/* filein doit avoir ete ouvert en lecture */
+/*
+The file format is:
+
+file :=
+  fileheader +
+  vertex* +
+  tri*
+
+fileheader   := (uint32)numVertices+1  (uint32)numFaces  (uint32)dim
+vertex       := (float32)x  (float32)y [ (float32)z ]
+tri          := (uint32)v0 + (uint32)v1 + (uint32)v2
+*/
+{
+  int32_t i, j, n, nvert=-1, nfaces=-1, dim;
+  char *ret;
+  int32_t *f1, *f2, *f3, nf, F1, F2, F3;
+  double x, y, z;
+
+  fscanf(filein, "%d%d%d", &nvert, &nfaces, &dim);
+
+  nvert -= 1; // le point 000 est implicite
+#ifdef VERBOSE
+  printf("nombre sommets %ld\n", nvert);
+  printf("nombre faces %ld\n", nfaces);
+  printf("dim %ld\n", dim);
+#endif
+
+  if ((nvert == -1) || (nfaces == -1))
+  {
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
+    exit(0);
+  }
+
+  Vertices = AllocVertices(nvert);
+
+  if (Vertices == NULL)
+  {
+    fprintf(stderr, "%s: AllocVertices failed\n", F_NAME);
+    exit(0);
+  }
+
+  Vertices->cur = nvert;
+  for (i = 0; i < nvert; i++)
+  {
+    //    fscanf(filein, "%lf%lf%lf", &x, &y, &z);
+    fscanf(filein, "%lf%lf", &x, &y);
+    //    Vertices->v[i].x = x; Vertices->v[i].y = y; Vertices->v[i].z = z;
+    Vertices->v[i].x = x; Vertices->v[i].y = y; Vertices->v[i].z = 0;
+  } // for i
+
+  f1 = (int32_t *)malloc(nfaces * sizeof(int32_t));
+  f2 = (int32_t *)malloc(nfaces * sizeof(int32_t));
+  f3 = (int32_t *)malloc(nfaces * sizeof(int32_t));
+
+  if ((f1 == NULL) || (f2 == NULL) || (f3 == NULL))
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    exit(0);
+  }
+
+  nf = 0;
+  for (i = 0; i < nfaces; i++)
+  {
+    fscanf(filein, "%d%d%d", &F1, &F2, &F3);
+    f1[i] = F1; f2[i] = F2; f3[i] = F3; 
+    if ((F1 != 0) && (F2 != 0) && (F3 != 0)) nf++;
+  }
+
+#ifdef VERBOSE
+  printf("nombre faces effectives %ld\n", nf);
+#endif
+
+  Faces = AllocFaces(nf);
+
+  if (Faces == NULL)
+  {
+    fprintf(stderr, "%s: AllocFaces failed\n", F_NAME);
+    exit(0);
+  }
+
+  Faces->cur = nf;
+  nf = 0;
+  for (i = 0; i < nfaces; i++)
+  {
+    if ((f1[i] != 0) && (f2[i] != 0) && (f3[i] != 0)) 
+    {
+      Faces->f[nf].vert[0] = f1[i]-1; 
+      Faces->f[nf].vert[1] = f2[i]-1; 
+      Faces->f[nf].vert[2] = f3[i]-1; 
+      nf++;
+    }
+  }
+
+  free(f3);
+  free(f2);
+  free(f1);
+} /* LoadMeshCGAL() */
+
+/* ==================================== */
 void LoadBuildMCM(FILE *filein)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadBuildMCM"
 /* filein doit avoir ete ouvert en lecture */
 /* format: 
    V %d     (Sommets - champ obligatoire)
@@ -801,7 +911,7 @@ void LoadBuildMCM(FILE *filein)
  end:
   if ((nvert == -1) || (nfaces == -1))
   {
-    fprintf(stderr, "LoadBuildMCM: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
   RbtTermine(RBT);
@@ -811,6 +921,8 @@ void LoadBuildMCM(FILE *filein)
 /* ==================================== */
 void LoadBuildVTK(FILE *filein)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadBuildVTK"
 /* filein doit avoir ete ouvert en lecture */
 /* format: 
 # vtk DataFile Version 3.0
@@ -867,7 +979,7 @@ POLYGONS %d %d     (Faces - champ obligatoire)
         fscanf(filein, "%d%d%d%d", &nf, &f1,  &f2,  &f3);
         if (nf != 3)
         {
-          fprintf(stderr, "LoadMeshVTK: faces must be triangles\n");
+          fprintf(stderr, "%s: faces must be triangles\n", F_NAME);
           exit(0);
         }        
         AddFace(vx[f1], vy[f1], vz[f1], vx[f2], vy[f2], vz[f2], vx[f3], vy[f3], vz[f3]);
@@ -878,7 +990,7 @@ POLYGONS %d %d     (Faces - champ obligatoire)
  end:
   if ((nvert == -1) || (nfaces == -1))
   {
-    fprintf(stderr, "LoadMeshVTK: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
   RbtTermine(RBT);
@@ -890,6 +1002,8 @@ POLYGONS %d %d     (Faces - champ obligatoire)
 /* ==================================== */
 void LoadBuildIFS(FILE *filein)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadBuildIFS"
 /* filein doit avoir ete ouvert en lecture */
 /*
 The little-endian IFS (indexed face set) file format is:
@@ -933,7 +1047,7 @@ should fly along its object space -z axis.
   fread(buf, sizeof(char), s, filein);
   if (strcmp(buf, "IFS") != 0)
   {
-    fprintf(stderr, "LoadMeshIFS: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
   version = ReadFloat32(filein);
@@ -980,7 +1094,7 @@ should fly along its object space -z axis.
 
   if ((nvert == -1) || (nfaces == -1))
   {
-    fprintf(stderr, "LoadMeshIFS: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
   free(vx); 
@@ -988,6 +1102,37 @@ should fly along its object space -z axis.
   free(vz); 
 } /* LoadBuildIFS() */
 
+/* ==================================== */
+void LoadBuildCGAL(FILE *filein)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadBuildCGAL"
+/* filein doit avoir ete ouvert en lecture */
+/*
+The file format is:
+
+file :=
+  fileheader +
+  vertex* +
+  tri*
+
+fileheader   := (uint32)numVertices+1  (uint32)numFaces  (uint32)dummy
+vertex       := (float32)x + (float32)y + (float32)z
+tri          := (uint32)v0 + (uint32)v1 + (uint32)v2
 
 
+A FINIR !!!!!!!!!!
 
+
+*/
+{
+  int32_t i, j, n, nvert=-1, nfaces=-1, dummy;
+  char *ret;
+  double *vx, *vy, *vz;
+  int32_t f1, f2, f3;
+
+  fprintf(stderr, "%s: Not Yet Implemented\n", F_NAME);
+  exit(0);
+
+
+} /* LoadBuildCGAL() */

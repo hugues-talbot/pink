@@ -1,4 +1,4 @@
-/* $Id: mccodimage.h,v 1.2 2008-12-15 07:01:27 mcouprie Exp $ */
+/* $Id: mccodimage.h,v 1.3 2008-12-19 13:10:43 mcouprie Exp $ */
 #define NDG_MAX 255            /* niveau de gris max */
 #define NDG_MIN 0              /* niveau de gris min */
 
@@ -26,6 +26,9 @@ struct xvimage {
 					   number of elements in a vector */
   uint32_t data_storage_type;           /* storage type for disk data */
   double xdim, ydim, zdim;              /* voxel dimensions in real world */
+  uint32_t xmin, xmax;                  /* region of interest: x coordinates */
+  uint32_t ymin, ymax;                  /* region of interest: y coordinates */
+  uint32_t zmin, zmax;                  /* region of interest: z coordinates */
   void * image_data;                    /* pointer on raw data */
 };
 

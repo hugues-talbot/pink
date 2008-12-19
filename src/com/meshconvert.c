@@ -1,4 +1,4 @@
-/* $Id: meshconvert.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: meshconvert.c,v 1.2 2008-12-19 13:10:43 mcouprie Exp $ */
 /*! \file meshconvert.c
 
 \brief mesh format conversion
@@ -61,6 +61,8 @@ int main(int argc, char **argv)
   if (strcmp(argv[1]+strlen(argv[1])-4, ".vtk") == 0) formatin = VTK;
   if (strcmp(argv[1]+strlen(argv[1])-4, ".IFS") == 0) formatin = IFS;
   if (strcmp(argv[1]+strlen(argv[1])-4, ".ifs") == 0) formatin = IFS;
+  if (strcmp(argv[1]+strlen(argv[1])-5, ".CGAL") == 0) formatin = CGAL;
+  if (strcmp(argv[1]+strlen(argv[1])-5, ".cgal") == 0) formatin = CGAL;
   if (formatin == UNKNOWN)
   {
     fprintf(stderr, "%s: bad input file format\n", argv[0]);
@@ -83,6 +85,7 @@ int main(int argc, char **argv)
   if (formatin == MCM) LoadMeshMCM(filein);
   if (formatin == IFS) LoadMeshIFS(filein);
   if (formatin == VTK) LoadBuildVTK(filein);
+  if (formatin == CGAL) LoadMeshCGAL(filein);
   fclose(filein);
   mode = atoi(argv[2]);
   if (argc > 4) p1 = atof(argv[3]);

@@ -12,6 +12,9 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+#include <math.h>
 
 #include <mccodimage.h>
 #include <mcimage.h>
@@ -568,8 +571,8 @@ A weight W(P,Q) is assigned to each edge, according to the value of \b mode:
 	  case SP_MAX: v = max((TYP_VARC)F[j*rs+i],(TYP_VARC)F[j*rs+i+1]); break;
 	  case SP_AVG: v = ((TYP_VARC)F[j*rs+i]+(TYP_VARC)F[j*rs+i+1]) / 2; break;
 	  }
-	  AjouteArcValue(g, p, p+1, v);
-	  AjouteArcValue(g, p+1, p, v);
+	  AjouteArcValue(g, p, p+1, v*v);
+	  AjouteArcValue(g, p+1, p, v*v);
 	}
 	if (j < (cs-1))
 	{
@@ -579,8 +582,8 @@ A weight W(P,Q) is assigned to each edge, according to the value of \b mode:
 	  case SP_MAX: v = max((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i]); break;
 	  case SP_AVG: v = ((TYP_VARC)F[j*rs+i]+(TYP_VARC)F[(j+1)*rs+i]) / 2; break;
 	  }
-	  AjouteArcValue(g, p, p+rs, v);
-	  AjouteArcValue(g, p+rs, p, v);
+	  AjouteArcValue(g, p, p+rs, v*v);
+	  AjouteArcValue(g, p+rs, p, v*v);
 	}
       }
   }

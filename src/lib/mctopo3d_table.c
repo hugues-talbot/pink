@@ -1,4 +1,4 @@
-/* $Id: mctopo3d_table.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: mctopo3d_table.c,v 1.2 2008-12-19 13:10:43 mcouprie Exp $ */
 /* 
 Librairie mctopo3D : 
 
@@ -32,7 +32,7 @@ Michel Couprie 2006
 static voxel cube_topo3d[27];
 static voxel cubec_topo3d[27];
 
-static u_int8_t *table_simple26 = NULL;
+static uint8_t *table_simple26 = NULL;
 #define SetSimple26(x) table_simple26[x/8]|=(1<<(x%8))
 #define IsSimple26(x) (table_simple26[x/8]&(1<<(x%8)))
   
@@ -65,7 +65,7 @@ void init_topo3d()
     fprintf(stderr, "%s: error while opening table\n", F_NAME);
     exit(1);
   }
-  ret = fread(table_simple26, sizeof(u_int8_t), tablesize, fd);
+  ret = fread(table_simple26, sizeof(uint8_t), tablesize, fd);
   if (ret != tablesize)
   {
     fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, tablesize, ret);
@@ -94,7 +94,7 @@ void construitcube(voxel * cube)
 } /* construitcube() */
 
 /* ========================================== */
-u_int32_t encodecube()
+uint32_t encodecube()
 /* ========================================== */
 {
   fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
@@ -102,7 +102,7 @@ u_int32_t encodecube()
 } /* encodecube() */
 
 /* ========================================== */
-void geodesic_neighborhood(voxel * cube, u_int8_t connex, u_int8_t s)
+void geodesic_neighborhood(voxel * cube, uint8_t connex, uint8_t s)
 /* ========================================== */
 /* 
   met a 1 le champ lab des points appartenant au voisinage geodesique d'ordre s du point central,
@@ -142,7 +142,7 @@ void G26(voxel * cube)
 } /* G26() */
 
 /* ========================================== */
-u_int8_t nbcomp(voxel * cube, u_int8_t connex)
+uint8_t nbcomp(voxel * cube, uint8_t connex)
 /* ========================================== */
 /*
   retourne le nombre de composantes connexes de l'objet marque par un lab=1 
@@ -153,7 +153,7 @@ u_int8_t nbcomp(voxel * cube, u_int8_t connex)
 } /* nbcomp() */
 
 /* ========================================== */
-u_int8_t nbvois6(voxel * cube)
+uint8_t nbvois6(voxel * cube)
 /* ========================================== */
 /*
   retourne le nombre de 6-voisins du point central appartenant a l'objet
@@ -164,7 +164,7 @@ u_int8_t nbvois6(voxel * cube)
 } /* nbvois6() */
 
 /* ========================================== */
-u_int8_t nbvois26(voxel * cube)
+uint8_t nbvois26(voxel * cube)
 /* ========================================== */
 /*
   retourne le nombre de 26-voisins du point central appartenant a l'objet
@@ -176,7 +176,7 @@ u_int8_t nbvois26(voxel * cube)
 
 /* ========================================== */
 int32_t nbvoisc6(
-  u_int8_t *B,            /* pointeur base image */
+  uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -198,7 +198,7 @@ int32_t nbvoisc6(
 
 /* ========================================== */
 int32_t nbvoisc18(
-  u_int8_t *B,            /* pointeur base image */
+  uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -232,7 +232,7 @@ int32_t nbvoisc18(
 
 /* ========================================== */
 int32_t nbvoisc26(
-  u_int8_t *B,            /* pointeur base image */
+  uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -274,7 +274,7 @@ int32_t nbvoisc26(
 
 /* ========================================== */
 int32_t nbvoiso6(
-  u_int8_t *B,            /* pointeur base image */
+  uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -296,7 +296,7 @@ int32_t nbvoiso6(
 
 /* ========================================== */
 int32_t nbvoiso18(
-  u_int8_t *B,            /* pointeur base image */
+  uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -330,7 +330,7 @@ int32_t nbvoiso18(
 
 /* ========================================== */
 int32_t nbvoiso26(
-  u_int8_t *B,            /* pointeur base image */
+  uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -371,7 +371,7 @@ int32_t nbvoiso26(
 } /* nbvoiso26() */
 
 /* ========================================== */
-u_int8_t T6(voxel * cube)
+uint8_t T6(voxel * cube)
 /* ========================================== */
 {
   G6(cube);
@@ -379,7 +379,7 @@ u_int8_t T6(voxel * cube)
 } /* T6() */
 
 /* ========================================== */
-u_int8_t T6p(voxel * cube)
+uint8_t T6p(voxel * cube)
 /* ========================================== */
 {
   G6p(cube);
@@ -387,7 +387,7 @@ u_int8_t T6p(voxel * cube)
 } /* T6p() */
 
 /* ========================================== */
-u_int8_t T18(voxel * cube)
+uint8_t T18(voxel * cube)
 /* ========================================== */
 {
   G18(cube);
@@ -395,7 +395,7 @@ u_int8_t T18(voxel * cube)
 } /* T18() */
 
 /* ========================================== */
-u_int8_t T26(voxel * cube)
+uint8_t T26(voxel * cube)
 /* ========================================== */
 {
   G26(cube);
@@ -403,16 +403,16 @@ u_int8_t T26(voxel * cube)
 } /* T26() */
 
 /* ========================================== */
-static u_int8_t simple(voxel * cube, voxel * cubec, u_int8_t connex)
+static uint8_t simple(voxel * cube, voxel * cubec, uint8_t connex)
 /* ========================================== */
 #undef F_NAME
 #define F_NAME ""
 {
   switch (connex)
   {
-    case 6: return (u_int8_t)((T6(cube) == 1) && (T26(cubec) == 1));
-    case 18: return (u_int8_t)((T18(cube) == 1) && (T6p(cubec) == 1));
-    case 26: return (u_int8_t)((T26(cube) == 1) && (T6(cubec) == 1));
+    case 6: return (uint8_t)((T6(cube) == 1) && (T26(cubec) == 1));
+    case 18: return (uint8_t)((T18(cube) == 1) && (T6p(cubec) == 1));
+    case 26: return (uint8_t)((T26(cube) == 1) && (T6(cubec) == 1));
     default: 
       fprintf(stderr, "simple: mauvaise connexite : %d\n", connex); 
       exit(0); 
@@ -421,7 +421,7 @@ static u_int8_t simple(voxel * cube, voxel * cubec, u_int8_t connex)
 
 /* ==================================== */
 int32_t preparecubes(
-  u_int8_t *B,            /* pointeur base image */
+  uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -439,7 +439,7 @@ int32_t preparecubes(
 
 /* ==================================== */
 int32_t preparecubesh(
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t h,                       /* seuil */
   int32_t rs,                      /* taille rangee */
@@ -458,7 +458,7 @@ int32_t preparecubesh(
 
 /* ==================================== */
 int32_t preparecubesh_l(
-  u_int32_t *img,          /* pointeur base image */
+  uint32_t *img,          /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t h,                      /* seuil */
   int32_t rs,                      /* taille rangee */
@@ -483,7 +483,7 @@ int32_t preparecubesh_l(
 
 /* ==================================== */
 int32_t top6(                   /* pour un objet en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -502,7 +502,7 @@ int32_t top6(                   /* pour un objet en 6-connexite */
 
 /* ==================================== */
 int32_t top18(                   /* pour un objet en 18-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -521,7 +521,7 @@ int32_t top18(                   /* pour un objet en 18-connexite */
 
 /* ==================================== */
 int32_t top26(                   /* pour un objet en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -540,7 +540,7 @@ int32_t top26(                   /* pour un objet en 26-connexite */
 
 /* ==================================== */
 int32_t simple6(                   /* pour un objet en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -555,7 +555,7 @@ int32_t simple6(                   /* pour un objet en 6-connexite */
 
 /* ==================================== */
 int32_t simple18(                  /* pour un objet en 18-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -570,7 +570,7 @@ int32_t simple18(                  /* pour un objet en 18-connexite */
 
 /* ==================================== */
 int32_t simple26(                  /* pour un objet en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -579,7 +579,7 @@ int32_t simple26(                  /* pour un objet en 26-connexite */
 #undef F_NAME
 #define F_NAME "simple26"
 {
-  u_int32_t mask = 0, v, k;
+  uint32_t mask = 0, v, k;
   for (k = 0; k < 26; k++)
   {    
     v = voisin26(p, k, rs, ps, N);
@@ -593,7 +593,7 @@ int32_t simple26(                  /* pour un objet en 26-connexite */
 
 /* ==================================== */
 int32_t simple26mask(              /* pour un objet en 26-connexite */
-  u_int32_t mask)
+  uint32_t mask)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "simple26mask"
@@ -604,7 +604,7 @@ int32_t simple26mask(              /* pour un objet en 26-connexite */
 
 /* ==================================== */
 int32_t simple6h(                   /* pour un objet en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* seuil */
   int32_t rs,                      /* taille rangee */
@@ -620,7 +620,7 @@ int32_t simple6h(                   /* pour un objet en 6-connexite */
 
 /* ==================================== */
 int32_t simple18h(                  /* pour un objet en 18-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* seuil */
   int32_t rs,                      /* taille rangee */
@@ -636,7 +636,7 @@ int32_t simple18h(                  /* pour un objet en 18-connexite */
 
 /* ==================================== */
 int32_t simple26h(                  /* pour un objet en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* seuil */
   int32_t rs,                      /* taille rangee */
@@ -652,7 +652,7 @@ int32_t simple26h(                  /* pour un objet en 26-connexite */
 
 /* ==================================== */
 int32_t tbar6h(               /* pour un objet en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* seuil */
   int32_t rs,                      /* taille rangee */
@@ -670,7 +670,7 @@ int32_t tbar6h(               /* pour un objet en 6-connexite */
 
 /* ==================================== */
 int32_t tbar26h(              /* pour un objet en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* seuil */
   int32_t rs,                      /* taille rangee */
@@ -687,7 +687,7 @@ int32_t tbar26h(              /* pour un objet en 26-connexite */
 } /* tbar26h() */
 
 /* ========================================== */
-u_int8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, u_int8_t connex)
+uint8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex)
 /* ========================================== */
 #undef F_NAME
 #define F_NAME "P_simple"
@@ -699,8 +699,8 @@ u_int8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, u_int8_t connex)
            Theoreme 6
 */
 {
-  u_int8_t n;
-  u_int8_t v;
+  uint8_t n;
+  uint8_t v;
   pvoxel x;  /* point central de cube */
   pvoxel y;  /* point de cube */
   pvoxel xc; /* point central de cubec */
@@ -865,7 +865,7 @@ u_int8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, u_int8_t connex)
 
 /* ==================================== */
 int32_t pdestr6(                   /* pour des minima en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -882,7 +882,7 @@ int32_t pdestr6(                   /* pour des minima en 6-connexite */
 
 /* ==================================== */
 int32_t pdestr18(                  /* pour des minima en 18-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -899,7 +899,7 @@ int32_t pdestr18(                  /* pour des minima en 18-connexite */
 
 /* ==================================== */
 int32_t pdestr26(                  /* pour des minima en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -916,7 +916,7 @@ int32_t pdestr26(                  /* pour des minima en 26-connexite */
 
 /* ==================================== */
 int32_t plevdestr6(                   /* pour des minima en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -933,7 +933,7 @@ int32_t plevdestr6(                   /* pour des minima en 6-connexite */
 
 /* ==================================== */
 int32_t plevdestr18(                  /* pour des minima en 18-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -950,7 +950,7 @@ int32_t plevdestr18(                  /* pour des minima en 18-connexite */
 
 /* ==================================== */
 int32_t plevdestr26(                  /* pour des minima en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -967,7 +967,7 @@ int32_t plevdestr26(                  /* pour des minima en 26-connexite */
 
 /* ==================================== */
 int32_t pconstr6(                   /* pour des minima en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -984,7 +984,7 @@ int32_t pconstr6(                   /* pour des minima en 6-connexite */
 
 /* ==================================== */
 int32_t pconstr18(                  /* pour des minima en 18-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1001,7 +1001,7 @@ int32_t pconstr18(                  /* pour des minima en 18-connexite */
 
 /* ==================================== */
 int32_t pconstr26(                  /* pour des minima en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1018,7 +1018,7 @@ int32_t pconstr26(                  /* pour des minima en 26-connexite */
 
 /* ==================================== */
 int32_t plevconstr6(                   /* pour des minima en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1035,7 +1035,7 @@ int32_t plevconstr6(                   /* pour des minima en 6-connexite */
 
 /* ==================================== */
 int32_t plevconstr18(                  /* pour des minima en 18-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1052,7 +1052,7 @@ int32_t plevconstr18(                  /* pour des minima en 18-connexite */
 
 /* ==================================== */
 int32_t plevconstr26(                  /* pour des minima en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1069,7 +1069,7 @@ int32_t plevconstr26(                  /* pour des minima en 26-connexite */
 
 /* ==================================== */
 int32_t peak6(                   /* pour des minima en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1086,7 +1086,7 @@ int32_t peak6(                   /* pour des minima en 6-connexite */
 
 /* ==================================== */
 int32_t peak26(                    /* pour des minima en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1103,7 +1103,7 @@ int32_t peak26(                    /* pour des minima en 26-connexite */
 
 /* ==================================== */
 int32_t well6(                   /* pour des minima en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1120,7 +1120,7 @@ int32_t well6(                   /* pour des minima en 6-connexite */
 
 /* ==================================== */
 int32_t well26(                    /* pour des minima en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1136,8 +1136,8 @@ int32_t well26(                    /* pour des minima en 26-connexite */
 } /* well26() */
 
 /* ==================================== */
-u_int8_t alpha26m(
-  u_int8_t *img,          /* pointeur base image */
+uint8_t alpha26m(
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1146,9 +1146,9 @@ u_int8_t alpha26m(
 /* ou img[x] si pas de telles valeurs */
 /* ==================================== */
 {
-	register u_int8_t val = *(img+p);
+	register uint8_t val = *(img+p);
 	register int32_t q;
-	register u_int8_t v;
+	register uint8_t v;
 	register int32_t alpha = NDG_MIN - 1;
         register int32_t k;
 
@@ -1160,12 +1160,12 @@ u_int8_t alpha26m(
         if (alpha == NDG_MIN - 1) 
           return val;
         else
-          return (u_int8_t)alpha;
+          return (uint8_t)alpha;
 } /* alpha26m() */
 
 /* ==================================== */
-u_int32_t alpha26m_l(
-  u_int32_t *img,          /* pointeur base image */
+uint32_t alpha26m_l(
+  uint32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1174,9 +1174,9 @@ u_int32_t alpha26m_l(
 /* ou img[x] si pas de telles valeurs */
 /* ==================================== */
 {
-	register u_int32_t val = *(img+p);
+	register uint32_t val = *(img+p);
 	register int32_t q;
-	register u_int32_t v;
+	register uint32_t v;
 	register int32_t alpha = NDG_MIN - 1;
         register int32_t k;
 
@@ -1188,12 +1188,12 @@ u_int32_t alpha26m_l(
         if (alpha == NDG_MIN - 1) 
           return val;
         else
-          return (u_int32_t)alpha;
+          return (uint32_t)alpha;
 } /* alpha26m_l() */
 
 /* ==================================== */
-u_int8_t alpha6m(
-  u_int8_t *img,          /* pointeur base image */
+uint8_t alpha6m(
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1202,9 +1202,9 @@ u_int8_t alpha6m(
 /* ou img[x] si pas de telles valeurs */
 /* ==================================== */
 {
-	register u_int8_t val = *(img+p);
+	register uint8_t val = *(img+p);
 	register int32_t q;
-	register u_int8_t v;
+	register uint8_t v;
 	register int32_t alpha = NDG_MIN - 1;
         register int32_t k;
 
@@ -1216,12 +1216,12 @@ u_int8_t alpha6m(
         if (alpha == NDG_MIN - 1) 
           return val;
         else
-          return (u_int8_t)alpha;
+          return (uint8_t)alpha;
 } /* alpha6m() */
 
 /* ==================================== */
-u_int8_t alpha26p(
-  u_int8_t *img,          /* pointeur base image */
+uint8_t alpha26p(
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1230,9 +1230,9 @@ u_int8_t alpha26p(
 /* ou img[x] si pas de telles valeurs */
 /* ==================================== */
 {
-	register u_int8_t val = *(img+p);
+	register uint8_t val = *(img+p);
 	register int32_t q;
-	register u_int8_t v;
+	register uint8_t v;
 	register int32_t alpha = NDG_MAX + 1;
         register int32_t k;
 
@@ -1244,12 +1244,12 @@ u_int8_t alpha26p(
         if (alpha == NDG_MAX + 1) 
           return val;
         else
-          return (u_int8_t)alpha;
+          return (uint8_t)alpha;
 } /* alpha26p() */
 
 /* ==================================== */
-u_int8_t alpha6p(
-  u_int8_t *img,          /* pointeur base image */
+uint8_t alpha6p(
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1258,9 +1258,9 @@ u_int8_t alpha6p(
 /* ou img[x] si pas de telles valeurs */
 /* ==================================== */
 {
-	register u_int8_t val = *(img+p);
+	register uint8_t val = *(img+p);
 	register int32_t q;
-	register u_int8_t v;
+	register uint8_t v;
 	register int32_t alpha = NDG_MAX + 1;
         register int32_t k;
 
@@ -1272,20 +1272,20 @@ u_int8_t alpha6p(
         if (alpha == NDG_MAX + 1) 
           return val;
         else
-          return (u_int8_t)alpha;
+          return (uint8_t)alpha;
 } /* alpha6p() */
 
 /* ==================================== */
-u_int8_t delta6m( 
+uint8_t delta6m( 
 /* retourne la valeur max. a laquelle p est destructible - minima 6-connexes */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N)                       /* taille image */
 /* ==================================== */
 {	
-  u_int8_t ret, sav = img[p];
+  uint8_t ret, sav = img[p];
   while (pdestr6(img, p, rs, ps, N)) img[p] = alpha26m(img, p, rs, ps, N);
   ret = img[p];
   img[p] = sav;
@@ -1293,16 +1293,16 @@ u_int8_t delta6m(
 } /* delta6m() */
 
 /* ==================================== */
-u_int8_t delta26m( 
+uint8_t delta26m( 
 /* retourne la valeur max. a laquelle p est destructible - minima 26-connexes */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N)                       /* taille image */
 /* ==================================== */
 {	
-  u_int8_t ret, sav = img[p];
+  uint8_t ret, sav = img[p];
   while (pdestr26(img, p, rs, ps, N)) img[p] = alpha26m(img, p, rs, ps, N);
   ret = img[p];
   img[p] = sav;
@@ -1310,16 +1310,16 @@ u_int8_t delta26m(
 } /* delta26m() */
 
 /* ==================================== */
-u_int8_t delta6p( 
+uint8_t delta6p( 
 /* retourne la valeur min. a laquelle p est constructible - minima 6-connexes */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N)                       /* taille image */
 /* ==================================== */
 {	
-  u_int8_t ret, sav = img[p];
+  uint8_t ret, sav = img[p];
   while (pconstr6(img, p, rs, ps, N)) img[p] = alpha26p(img, p, rs, ps, N);
   ret = img[p];
   img[p] = sav;
@@ -1327,16 +1327,16 @@ u_int8_t delta6p(
 } /* delta6p() */
 
 /* ==================================== */
-u_int8_t delta26p( 
+uint8_t delta26p( 
 /* retourne la valeur min. a laquelle p est constructible - minima 26-connexes */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N)                       /* taille image */
 /* ==================================== */
 {	
-  u_int8_t ret, sav = img[p];
+  uint8_t ret, sav = img[p];
   while (pconstr26(img, p, rs, ps, N)) img[p] = alpha26p(img, p, rs, ps, N);
   ret = img[p];
   img[p] = sav;
@@ -1346,7 +1346,7 @@ u_int8_t delta26p(
 /* ==================================== */
 int32_t separant6(  /* teste si un point est separant - minima 6-connexes
 	         ie- s'il est separant pour une coupe <= img[p] */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1378,7 +1378,7 @@ int32_t separant6(  /* teste si un point est separant - minima 6-connexes
 /* ==================================== */
 int32_t hseparant6(  /* teste si un point est hseparant - minima 6-connexes
 	         ie- s'il est separant pour la coupe h */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* parametre */
   int32_t rs,                      /* taille rangee */
@@ -1401,7 +1401,7 @@ int32_t hseparant6(  /* teste si un point est hseparant - minima 6-connexes
 /* ==================================== */
 int32_t hfseparant6(  /* teste si un point est hfseparant - minima 6-connexes
 	         ie- s'il est separant pour une coupe c telle que h < c <= img[p] */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* parametre */
   int32_t rs,                      /* taille rangee */
@@ -1433,7 +1433,7 @@ int32_t hfseparant6(  /* teste si un point est hfseparant - minima 6-connexes
 
 /* ==================================== */
 int32_t filsombre6(                /* pour des minima en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1465,7 +1465,7 @@ int32_t filsombre6(                /* pour des minima en 6-connexite */
 
 /* ==================================== */
 int32_t filsombre26(               /* pour des minima en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1497,7 +1497,7 @@ int32_t filsombre26(               /* pour des minima en 26-connexite */
 
 /* ==================================== */
 int32_t filclair6(                /* pour des minima en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1528,7 +1528,7 @@ int32_t filclair6(                /* pour des minima en 6-connexite */
 
 /* ==================================== */
 int32_t filclair26(                /* pour des minima en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1559,7 +1559,7 @@ int32_t filclair26(                /* pour des minima en 26-connexite */
 
 /* ==================================== */
 int32_t t6mm(                   /* pour des minima en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1576,7 +1576,7 @@ int32_t t6mm(                   /* pour des minima en 6-connexite */
 
 /* ==================================== */
 int32_t t6m(                   /* pour des minima en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1593,7 +1593,7 @@ int32_t t6m(                   /* pour des minima en 6-connexite */
 
 /* ==================================== */
 int32_t t26mm(                   /* pour des minima en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1610,7 +1610,7 @@ int32_t t26mm(                   /* pour des minima en 26-connexite */
 
 /* ==================================== */
 int32_t t26m(                   /* pour des minima en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1627,7 +1627,7 @@ int32_t t26m(                   /* pour des minima en 26-connexite */
 
 /* ==================================== */
 int32_t t6pp(
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1644,7 +1644,7 @@ int32_t t6pp(
 
 /* ==================================== */
 int32_t t6p(
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1661,7 +1661,7 @@ int32_t t6p(
 
 /* ==================================== */
 int32_t t26pp(
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1678,7 +1678,7 @@ int32_t t26pp(
 
 /* ==================================== */
 int32_t t26p(
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1695,7 +1695,7 @@ int32_t t26p(
 
 /* ==================================== */
 int32_t t26pp_l(
-  u_int32_t *img,          /* pointeur base image */
+  uint32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1712,7 +1712,7 @@ int32_t t26pp_l(
 
 /* ==================================== */
 int32_t t6pp_l(
-  u_int32_t *img,          /* pointeur base image */
+  uint32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1729,9 +1729,9 @@ int32_t t6pp_l(
 
 /* ==================================== */
 void nbtopoh3d26_l( /* pour les minima en 26-connexite */ 
-  u_int32_t *img,          /* pointeur base image */
+  uint32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
-  u_int32_t h,
+  uint32_t h,
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N,                       /* taille image */
@@ -1753,9 +1753,9 @@ void nbtopoh3d26_l( /* pour les minima en 26-connexite */
 
 /* ==================================== */
 void nbtopoh3d6_l( /* pour les minima en 6-connexite */ 
-  u_int32_t *img,          /* pointeur base image */
+  uint32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
-  u_int32_t h,
+  uint32_t h,
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N,                       /* taille image */
@@ -1776,7 +1776,7 @@ void nbtopoh3d6_l( /* pour les minima en 6-connexite */
 } /* nbtopoh3d6_l() */
 
 /* ==================================== */
-int32_t bordext6(u_int8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+int32_t bordext6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 /* ==================================== */
 /* teste si x a un 6-voisin a 0 */
 {
@@ -1790,7 +1790,7 @@ int32_t bordext6(u_int8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 } /* bordext6() */
 
 /* ==================================== */
-int32_t bordext26(u_int8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+int32_t bordext26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 /* ==================================== */
 /* teste si x a un 26-voisin a 0 */
 {
@@ -1805,7 +1805,7 @@ int32_t bordext26(u_int8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 
 /* ==================================== */
 int32_t curve6( /* point de courbe en 6-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1821,7 +1821,7 @@ int32_t curve6( /* point de courbe en 6-connexite */
 
 /* ==================================== */
 int32_t curve18( /* point de courbe en 18-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1837,7 +1837,7 @@ int32_t curve18( /* point de courbe en 18-connexite */
 
 /* ==================================== */
 int32_t curve26( /* point de courbe en 26-connexite */
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */

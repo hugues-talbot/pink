@@ -1,10 +1,10 @@
-/* $Id: recalagerigide_num.c,v 1.3 2008-12-15 06:38:50 mcouprie Exp $ */
+/* $Id: recalagerigide_num.c,v 1.4 2008-12-19 13:10:43 mcouprie Exp $ */
 
 /*! \file recalagerigide_num.c
 
 \brief rigid registration of two grayscale images
 
-<B>Usage:</B> recalagerigide_num in1 in2 seuil [init] out
+<B>Usage:</B> recalagerigide_num in1 in2 xmin ymin xmax ymax seuil [init] out
 
 <B>Description:</B>
 
@@ -14,7 +14,10 @@ This procedure identifies the parameters of a rigid deformation R such that
 the "distance" between R(X) and Y is a local minimum.
 The distance D(Z,Y) between two images Z and Y is defined by:
 
-D(Z,Y) = sum { (Z[i] - Y[i])^2 ; for all i in support(Z) }
+D(Z,Y) = sum { (Z[i] - Y[i])^2 ; for all i in support(Y) }
+
+where support(Y) is a rectangular zone specified by arguments 
+<B>xmin ymin xmax ymax<B>.
 
 The rigid deformation R is defined as the composition (in this order) 
 of a zoom, a rotation, and a translation. 
@@ -68,14 +71,14 @@ int main(argc, argv)
 {
   struct xvimage * image1;
   struct xvimage * image2;
-  int32_t rs, cs, ds, ps, N, x, y, z, n;
-  double Gamma[5] = {1.0, 1.0, 0.0, 0.0, 0.0}; // hx, hy, theta, tx, ty
+  int32_t rs, cs, ds, ps, N, n;
+  double Gamma[9] = {1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}; // hx, hy, theta, tx, ty
   double seuil; 
   FILE *fd = NULL;
 
-  if ((argc != 5) && (argc != 6))
+  if ((argc != 9) && (argc != 10))
   {
-    fprintf(stderr, "usage: %s in1.pgm in2.pgm seuil [init] out.lst \n", argv[0]);
+    fprintf(stderr, "usage: %s in1.pgm in2.pgm x y w h seuil [init] out.lst \n", argv[0]);
     exit(1);
   }
 
@@ -101,31 +104,35 @@ int main(argc, argv)
     exit(1);
   }
 
-  seuil = atof(argv[3]);
+  image2->xmin = (uint32_t)atoi(argv[3]);
+  image2->ymin = (uint32_t)atoi(argv[4]);
+  image2->xmax = (uint32_t)atoi(argv[5]);
+  image2->ymax = (uint32_t)atoi(argv[6]);
+  seuil = atof(argv[7]);
 
-  if (argc == 6)
+  if (argc == 10)
   {
     char type;
     int32_t n;
 
-    fd = fopen(argv[4],"r");
+    fd = fopen(argv[8],"r");
     if (!fd)
     {
-      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[4]);
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[8]);
       exit(1);
     }
 
     fscanf(fd, "%c", &type);
     if (type != 'e')
     {
-      fprintf(stderr, "usage: %s: bad file format for %s: %c \n", argv[0], argv[4], type);
+      fprintf(stderr, "usage: %s: bad file format for %s: %c \n", argv[0], argv[8], type);
       exit(1);
     }
 
     fscanf(fd, "%d\n", &n);
     if (n != 5)
     {
-      fprintf(stderr, "usage: %s: wrong number of parameters in %s: %d \n", argv[0], argv[4], n);
+      fprintf(stderr, "usage: %s: wrong number of parameters in %s: %d \n", argv[0], argv[8], n);
       exit(1);
     }
 
