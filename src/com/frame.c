@@ -1,4 +1,4 @@
-/* $Id: frame.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: frame.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file frame.c
 
 \brief generates an image with a white border and a black interior
@@ -26,9 +26,8 @@ all other pixels are set to 0.
 #include <mcimage.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   uint8_t *Im;

@@ -1,4 +1,4 @@
-/* $Id: deletepeaks.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: deletepeaks.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file deletepeaks.c
 
 \brief deletes peaks in a grayscale image 
@@ -28,9 +28,8 @@ References:<BR>
 #include <lfiltrestopo.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * mask;

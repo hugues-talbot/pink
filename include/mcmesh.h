@@ -1,4 +1,4 @@
-/* $Id: mcmesh.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mcmesh.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 #define MAXADJFACES 25
 
 typedef struct {
@@ -63,6 +63,15 @@ typedef struct {
   double bzmax;
 } meshbox;
 
+/* structure principale pour un mesh */
+typedef struct {
+  meshtabvertices *Vertices;
+  meshtabfaces *Faces;
+  meshtabedges *Edges;
+  meshtablinks *Links;
+  Rbtp * RBTP;
+} MCM;
+
 extern meshtabvertices *Vertices;
 extern meshtabfaces *Faces;
 extern meshtabedges *Edges;
@@ -72,13 +81,20 @@ extern meshtablinks *Links;
 /* prototypes */
 /* ==================================== */
 
-extern meshtabvertices * AllocVertices(int32_t taillemax);
-extern meshtabfaces * AllocFaces(int32_t taillemax);
-extern meshtabedges * AllocEdges(int32_t taillemax);
-extern meshtablinks * AllocLinks(int32_t nvert, int32_t nedge);
-extern void ReAllocVertices(meshtabvertices **A);
-extern void ReAllocFaces(meshtabfaces **A);
-extern void ReAllocEdges(meshtabedges **A);
+extern meshtabvertices * MCM_AllocVertices(int32_t taillemax);
+extern meshtabfaces * MCM_AllocFaces(int32_t taillemax);
+extern meshtabedges * MCM_AllocEdges(int32_t taillemax);
+extern meshtablinks * MCM_AllocLinks(int32_t nvert, int32_t nedge);
+extern void MCM_ReAllocVertices(meshtabvertices **A);
+extern void MCM_ReAllocFaces(meshtabfaces **A);
+extern void MCM_ReAllocEdges(meshtabedges **A);
+extern MCM * MCM_Init(int32_t taillemax);
+extern void MCM_Termine(MCM *Mesh);
+extern int32_t MCM_AddVertexStraight(MCM *M, double x, double y, double z, int32_t indface);
+extern int32_t MCM_AddVertex(MCM *M, double x, double y, double z, int32_t indface);
+extern void MCM_AddFace(MCM *M, double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
+extern void MCM_Print(MCM *M);
+
 extern void InitMesh(int32_t taillemax);
 extern void TermineMesh();
 extern void AddFace(double x1, double y1, double z1, 
@@ -96,6 +112,7 @@ extern void ComputeEdges();
 extern void ComputeLinks();
 extern void AddNoiseMesh(double alpha);
 extern void RegulMeshLaplacian(int32_t nsteps);
+extern void RegulMeshLaplacian2D(int32_t niters);
 extern void RegulMeshHamam(double theta);
 extern void RegulMeshHamam1(double theta);
 extern void RegulMeshHamam2(int32_t nitermax);

@@ -1,4 +1,4 @@
-/* $Id: pgm2vskel.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: pgm2vskel.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file pgm2vskel.c
 
 \brief decomposition of a valuated curvilinear skeleton into isolated points, end points, curves and junctions
@@ -36,9 +36,8 @@ increase image resolution.
 #include <lskelcurv.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * val;

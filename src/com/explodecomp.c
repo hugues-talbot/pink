@@ -1,4 +1,4 @@
-/* $Id: explodecomp.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: explodecomp.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file explodecomp.c
 
 \brief converts single 2D pgm file into a series of 2D pgm files,
@@ -40,9 +40,8 @@ to be labeled:
 #include <llabelplateaux.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   int32_t i, j, k, x, connex, nblabels;
   char bufname[1024];

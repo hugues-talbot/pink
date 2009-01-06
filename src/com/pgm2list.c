@@ -1,4 +1,4 @@
-/* $Id: pgm2list.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: pgm2list.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file pgm2list.c
 
 \brief converts from pgm format to list format
@@ -48,9 +48,8 @@ Summary of list formats:
 #include <mcimage.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   FILE *fd = NULL;

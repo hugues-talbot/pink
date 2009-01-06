@@ -1,4 +1,4 @@
-/* $Id: hitormiss.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: hitormiss.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file hitormiss.c
 
 \brief morphological hit or miss transformation for binay images
@@ -30,9 +30,8 @@ where '-' denotes the erosion operator, and 'Xb' denotes the complementary of X.
 #include <larith.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * tmp;
@@ -65,13 +64,11 @@ int main(argc, argv)
       fprintf(stderr, "%s: function leros failed\n", argv[0]);
       exit(1);
     }
-writeimage(image, "_t1");
     if (! leros(tmp, elem2, x2, y2))
     {
       fprintf(stderr, "%s: function leros failed\n", argv[0]);
       exit(1);
     }
-writeimage(tmp, "_t2");
     lmin(image,tmp);
   }
   else

@@ -1,5 +1,5 @@
-/* $Id: mclin.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
-#define MCLIN_EPSILON 1E-30
+/* $Id: mclin.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+#define MCLIN_EPSILON 1E-10
 
 extern double * lin_zeros(int32_t n, int32_t m);
 extern double * lin_ones(int32_t n, int32_t m);
@@ -27,6 +27,8 @@ extern void lin_permutmat(int32_t * pi, double * P, int32_t n);
 extern void lin_LU(double * A, double * L, double * U, int32_t n);
 extern void lin_solveLUP(double * LU, int32_t *P, double * b, double * x, int32_t n);
 extern void lin_solve(double * A, double * b, double * x, int32_t n);
+extern void lin_solvebidiag(double * A, double * b, double * x, int32_t n);
+extern void lin_solvetridiag(double * A, double * b, double * x, int32_t n);
 extern double lin_det2(double * m);
 extern int32_t lin_invmat2(double * ma, double * mr);
 extern double lin_det3(double * m);

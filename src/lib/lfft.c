@@ -1,4 +1,4 @@
-/* $Id: lfft.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: lfft.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 
 #include <stdio.h>
 #include <stdint.h>
@@ -342,126 +342,6 @@ int32_t lfft(struct xvimage *image1, struct xvimage *image2, int32_t dir)
 
 #define VERSION_NUM	(0.9)
 
-static void r2tx ();
-static void r4tx ();
-static void r8tx ();
-static void newr8tx ();
-
-int32_t fft842 (int32_t in, int32_t n, float *x, float *y)
-/*
- *  fft842 (in, n, x, y)
- *
- *  This program replaces the vector z = x + iy by its finite discrete,
- *    complex Fourier transform if in = 0.  The inverse transform is
- *    calculated for in = 1.  It performs as many base 8 iterations
- *    as possible and then finishes with a base 4 iteration or a base 2
- *    iteration if needed.
- *
- *  The function is called as fft842 (in, n, x, y).
- *    The integer n should be a power of 2, and x and y pointers to arrays
- *    of n floats each.  If n is non-positive, no transform is performed and
- *    the function returns -1.  If n is not a power of 2, only the values
- *    of x and y up to the largest power of 2 smaller than n are transformed
- *    and the function returns 1.  Otherwise, the function returns 0.
- *
- */
-{
-float fnv, t;
-int32_t i, ij, ipass, ji, lengt, m, mmax, n2pow, n8pow, nt, nthpo, nxtlt;
-int32_t returnval;
-
-i = n;
-m = 0;
-nt = 1;
-while (i > 1)
-{
-  i >>= 1;
-  m++;
-  nt *= 2;
-}
-if (nt > n)
-{
-			 /*  dimension negative or out of range for fft842  */
-  return (-1);
-}
-if (nt < n)
-		    /*  dimension not a power of two for fft842; truncated  */
-  returnval = 1;
-else
-  returnval = 0;
-n2pow = m;
-nthpo = nt;
-mmax = nt >> 1;
-if (!in)
-{
-  for (i=0; i<nthpo; i++)
-    y[i] = -y[i];
-}
-n8pow = n2pow / 3;
-if (n8pow)
-/*
- *  Radix 8 passes, if any.
- */
-{
-  nxtlt = nt;
-  for (ipass=0; ipass<n8pow; ipass++)
-  {
-    nxtlt >>= 3;
-    lengt = 8 * nxtlt;
-    r8tx (nxtlt, nthpo, lengt, x, y);
-  }
-}
-/*
- *  Is there a four factor left?  : Go through the base 4 iteration
- */
-if ((n2pow - 3*n8pow) == 2)
-  r4tx (nthpo, x, y);
-
-else if ((n2pow - 3*n8pow) == 1)
-/*
- *  Go through the base 2 iteration
- */
-  r2tx (nthpo, x, y);
-/*
- *  Now do the bit reversal: decimation in frequency
- */
-ji = 0;
-for (ij=0; ij<nthpo; ij++)
-{
-  if (ij < ji)							  /*  Swap  */
-  {
-    t = x[ij];
-    x[ij] = x[ji];
-    x[ji] = t;
-    t = y[ij];
-    y[ij] = y[ji];
-    y[ji] = t;
-  }
-  m = mmax;
-  while (m >= 2 && ji >= m)
-  {
-    ji -= m;
-    m >>= 1;
-  }
-  ji += m;
-}
-if (in)
-{
-  fnv = 1.0 / nt;
-  for (i=0; i<nthpo; i++)
-  {
-    x[i] *= fnv;
-    y[i] *= fnv;
-  }
-}
-else
-{
-  for (i=0; i<nthpo; i++)
-    y[i] = -y[i];
-}
-return (returnval);
-}
-
 void r2tx (int32_t n, float *cr, float *ci)
 /*
  *-----------------------------------------------------------------------
@@ -655,10 +535,7 @@ for (j=0; j<nxtlt; j++)
   }
 }
 }
-void newr8tx (nxtlt, nthpo,  length, cr, ci,
-           n, Wr, Wi)
-int32_t nxtlt; int32_t nthpo; int32_t length; float *cr; float *ci;
-          int32_t n; double *Wr; double *Wi;
+void newr8tx (int32_t nxtlt, int32_t nthpo, int32_t length, float *cr, float *ci, int32_t n, double *Wr, double *Wi)
 /*
  *-----------------------------------------------------------------------
  * subroutine:  newr8tx
@@ -796,8 +673,8 @@ for (j=0; j<nxtlt; j++)
 
 }
 
-void newfft842 ( in,  n, Wr, Wi,                      /* inputs             */
-	                    x, y)                     /* in-place in & out  */
+void newfft842 (int32_t in, int32_t n, double *Wr, double *Wi, /* inputs  */
+	        float *x, float *y)                 /* in-place in & out  */
 /*
  *
  *  This program replaces the vector z = x + iy by its finite discrete,
@@ -811,8 +688,6 @@ void newfft842 ( in,  n, Wr, Wi,                      /* inputs             */
  *    of n floats each.
  *
  */
-int32_t in; int32_t n; double *Wr; double *Wi;             /* inputs             */
-	     float *x; float *y;
 {
 float fnv, t;
 int32_t i, ij, ipass, ji, length, m, mmax, n2pow, n8pow, nt, nthpo, nxtlt;
@@ -998,6 +873,122 @@ for (i = 0; i < N/8; i++)
 printf("\n");
 #endif
 return(0);
+}
+
+
+int32_t fft842 (int32_t in, int32_t n, float *x, float *y)
+/*
+ *  fft842 (in, n, x, y)
+ *
+ *  This program replaces the vector z = x + iy by its finite discrete,
+ *    complex Fourier transform if in = 0.  The inverse transform is
+ *    calculated for in = 1.  It performs as many base 8 iterations
+ *    as possible and then finishes with a base 4 iteration or a base 2
+ *    iteration if needed.
+ *
+ *  The function is called as fft842 (in, n, x, y).
+ *    The integer n should be a power of 2, and x and y pointers to arrays
+ *    of n floats each.  If n is non-positive, no transform is performed and
+ *    the function returns -1.  If n is not a power of 2, only the values
+ *    of x and y up to the largest power of 2 smaller than n are transformed
+ *    and the function returns 1.  Otherwise, the function returns 0.
+ *
+ */
+{
+float fnv, t;
+int32_t i, ij, ipass, ji, lengt, m, mmax, n2pow, n8pow, nt, nthpo, nxtlt;
+int32_t returnval;
+
+i = n;
+m = 0;
+nt = 1;
+while (i > 1)
+{
+  i >>= 1;
+  m++;
+  nt *= 2;
+}
+if (nt > n)
+{
+			 /*  dimension negative or out of range for fft842  */
+  return (-1);
+}
+if (nt < n)
+		    /*  dimension not a power of two for fft842; truncated  */
+  returnval = 1;
+else
+  returnval = 0;
+n2pow = m;
+nthpo = nt;
+mmax = nt >> 1;
+if (!in)
+{
+  for (i=0; i<nthpo; i++)
+    y[i] = -y[i];
+}
+n8pow = n2pow / 3;
+if (n8pow)
+/*
+ *  Radix 8 passes, if any.
+ */
+{
+  nxtlt = nt;
+  for (ipass=0; ipass<n8pow; ipass++)
+  {
+    nxtlt >>= 3;
+    lengt = 8 * nxtlt;
+    r8tx (nxtlt, nthpo, lengt, x, y);
+  }
+}
+/*
+ *  Is there a four factor left?  : Go through the base 4 iteration
+ */
+if ((n2pow - 3*n8pow) == 2)
+  r4tx (nthpo, x, y);
+
+else if ((n2pow - 3*n8pow) == 1)
+/*
+ *  Go through the base 2 iteration
+ */
+  r2tx (nthpo, x, y);
+/*
+ *  Now do the bit reversal: decimation in frequency
+ */
+ji = 0;
+for (ij=0; ij<nthpo; ij++)
+{
+  if (ij < ji)							  /*  Swap  */
+  {
+    t = x[ij];
+    x[ij] = x[ji];
+    x[ji] = t;
+    t = y[ij];
+    y[ij] = y[ji];
+    y[ji] = t;
+  }
+  m = mmax;
+  while (m >= 2 && ji >= m)
+  {
+    ji -= m;
+    m >>= 1;
+  }
+  ji += m;
+}
+if (in)
+{
+  fnv = 1.0 / nt;
+  for (i=0; i<nthpo; i++)
+  {
+    x[i] *= fnv;
+    y[i] *= fnv;
+  }
+}
+else
+{
+  for (i=0; i<nthpo; i++)
+    y[i] = -y[i];
+}
+return (returnval);
 }
 
 /*

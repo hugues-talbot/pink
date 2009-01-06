@@ -1,4 +1,4 @@
-/* $Id: watershedwithoutline.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: watershedwithoutline.c,v 1.2 2009-01-06 13:18:07 mcouprie Exp $ */
 /*! \file watershedwithoutline.c
 
 \brief watershed transformation without line of separation
@@ -37,9 +37,8 @@ This version does not create any line to separate the catchment basins.
 #include <llpemeyer.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * marqueurs;

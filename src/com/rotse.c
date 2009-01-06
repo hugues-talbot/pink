@@ -1,4 +1,4 @@
-/* $Id: rotse.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: rotse.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file rotse.c
 
 \brief rotation of a structuring element
@@ -30,9 +30,8 @@ Rotation of a structuring element, by an angle of 0, 90, 180 or 270 degrees.
 #include <lsym.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image1;
   int32_t x, y, z, i1, j1, i2, j2;

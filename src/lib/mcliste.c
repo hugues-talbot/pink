@@ -1,4 +1,4 @@
-/* $Id: mcliste.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: mcliste.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* structure de liste d'entiers */
 
 /* #define TESTListe */
@@ -11,8 +11,15 @@
 /* ==================================== */
 Liste * CreeListeVide(int32_t taillemax)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "CreeListeVide"
 {
   Liste * L = (Liste *)calloc(1,sizeof(Liste) + sizeof(int32_t) * (taillemax-1));
+  if (L == NULL)
+  {
+    fprintf(stderr, "%s: erreur calloc\n", F_NAME);
+    exit(1);
+  }
   L->Max = taillemax;
   L->Sp = 0;
   return L;
@@ -26,6 +33,13 @@ void ListeFlush(Liste * L)
 }
 
 /* ==================================== */
+int32_t ListeTaille(Liste * L)
+/* ==================================== */
+{
+  return (L->Sp);
+}
+
+/* ==================================== */
 int32_t ListeVide(Liste * L)
 /* ==================================== */
 {
@@ -33,12 +47,28 @@ int32_t ListeVide(Liste * L)
 }
 
 /* ==================================== */
+int32_t ListeElt(Liste * L, uint32_t n)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "ListeElt"
+{
+  if (n >= L->Sp)
+  {
+    fprintf(stderr, "%s: erreur hors limite\n", F_NAME);
+    exit(1);
+  }
+  return L->Pts[n];
+}
+
+/* ==================================== */
 int32_t ListePop(Liste * L)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "ListePop"
 {
   if (L->Sp == 0)
   {
-    fprintf(stderr, "erreur Liste vide\n");
+    fprintf(stderr, "%s: erreur Liste vide\n", F_NAME);
     exit(1);
   }
   L->Sp -= 1;
@@ -46,16 +76,19 @@ int32_t ListePop(Liste * L)
 }
   
 /* ==================================== */
-void ListePush(Liste * L, int32_t V)
+int32_t ListePush(Liste * L, int32_t V)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "ListePush"
 {
   if (L->Sp > L->Max - 1)
   {
-    fprintf(stderr, "erreur Liste pleine\n");
+    fprintf(stderr, "%s: erreur Liste pleine\n", F_NAME);
     exit(1);
   }
   L->Pts[L->Sp] = V;
   L->Sp += 1;
+  return L->Sp - 1; 
 }
 
 /* ==================================== */

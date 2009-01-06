@@ -1,4 +1,4 @@
-/* $Id: byte2long.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: byte2long.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file byte2long.c
 
 \brief converts a "byte" image to a "int32_t" image
@@ -25,9 +25,8 @@
 #include <mccodimage.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * imagelong;
   struct xvimage * imagebyte;

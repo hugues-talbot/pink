@@ -1,4 +1,4 @@
-/* $Id: llabeltree.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: llabeltree.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /****************************************************************
 *
 * Routine Name: ldistXXX - library call for dist
@@ -54,8 +54,8 @@ int32_t llabeltree2d(struct xvimage *imgx,   /* donnee: image binaire */
   int32_t rs = imgx->row_size;
   int32_t cs = imgx->col_size;
   int32_t N = rs * cs;           /* taille de l'image */
-  uint8_t *X;          /* pointeur sur l'image x */
-  int32_t *D;               /* pointeur sur les distances */
+  uint8_t *X;                    /* pointeur sur l'image x */
+  uint32_t *D;                   /* pointeur sur les distances */
   int32_t i, j, k, current_pixel, incr_vois;
   int32_t d_max = 0;
 
@@ -135,8 +135,8 @@ int32_t llabeltree3d(struct xvimage *imgx,   /* donnee: image binaire */
   int32_t ds = depth(imgx);
   int32_t ps = rs * cs;          /* taille d'un plan */
   int32_t N = ps * ds;           /* taille de l'image */
-  uint8_t *X;          /* pointeur sur l'image x */
-  int32_t *D;               /* pointeur sur les distances */
+  uint8_t *X;                    /* pointeur sur l'image x */
+  uint32_t *D;                   /* pointeur sur les distances */
   int32_t i, j, k, current_pixel, incr_vois;
   int32_t d_max = 0;
 
@@ -209,7 +209,7 @@ int32_t labelbranch2d4(uint8_t *X,  /* donnee: pointeur sur l'image x */
 		   int32_t N,             /* donnee: taille image */
                    int32_t current_pixel, /* donnee: numéro pixel courant */  
                    int32_t intersection,  /* donnee: flag d'intersection */  
-                   int32_t *D        /* resultat: pointeur sur distances */
+                   uint32_t *D        /* resultat: pointeur sur distances */
 ) /* Etiquette les branches avec la 4-connexité */
 /* ==================================== */
 { 
@@ -253,7 +253,7 @@ int32_t labelbranch2d8(uint8_t *X,  /* donnee: pointeur sur l'image x */
 		   int32_t N,             /* donnee: taille image */
                    int32_t current_pixel, /* donnee: numéro pixel courant */  
                    int32_t intersection,  /* donnee: flag d'intersection */  
-                   int32_t *D        /* resultat: pointeur sur distances */
+                   uint32_t *D        /* resultat: pointeur sur distances */
 ) /* Etiquette les branches avec la 8-connexité */
 /* ==================================== */
 { 
@@ -298,7 +298,7 @@ int32_t labelbranch3d6(uint8_t *X,  /* donnee: pointeur sur l'image x */
 		   int32_t N,             /* donnee: taille image */
                    int32_t current_pixel, /* donnee: numéro pixel courant */  
                    int32_t intersection,  /* donnee: flag d'intersection */  
-                   int32_t *D        /* resultat: pointeur sur distances */
+                   uint32_t *D        /* resultat: pointeur sur distances */
 ) /* Etiquette les branches avec la 6-connexité */
 /* ==================================== */
 { 
@@ -343,7 +343,7 @@ int32_t labelbranch3d18(uint8_t *X,  /* donnee: pointeur sur l'image x */
 		    int32_t N,             /* donnee: taille image */
                     int32_t current_pixel, /* donnee: numéro pixel courant */  
                     int32_t intersection,  /* donnee: flag d'intersection */  
-                    int32_t *D        /* resultat: pointeur sur distances */
+                    uint32_t *D        /* resultat: pointeur sur distances */
 ) /* Etiquette les branches avec la 18-connexité */
 /* ==================================== */
 { 
@@ -388,7 +388,7 @@ int32_t labelbranch3d26(uint8_t *X,  /* donnee: pointeur sur l'image x */
 		    int32_t N,             /* donnee: taille image */
                     int32_t current_pixel, /* donnee: numéro pixel courant */  
                     int32_t intersection,  /* donnee: flag d'intersection */  
-                    int32_t *D        /* resultat: pointeur sur distances */
+                    uint32_t *D        /* resultat: pointeur sur distances */
 ) /* Etiquette les branches avec la 26-connexité */
 /* ==================================== */
 { 

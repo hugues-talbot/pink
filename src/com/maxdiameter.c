@@ -1,4 +1,4 @@
-/* $Id: maxdiameter.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: maxdiameter.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file maxdiameter.c
 
 \brief maximal diameter of a binary image
@@ -28,9 +28,8 @@ The distance d is the Euclidean distance.
 
 
 /* =============================================================== */
-int main(argc, argv)
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t connex;

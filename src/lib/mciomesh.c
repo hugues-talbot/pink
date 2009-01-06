@@ -1,16 +1,16 @@
-/* $Id: mciomesh.c,v 1.2 2008-12-19 13:10:43 mcouprie Exp $ */
+/* $Id: mciomesh.c,v 1.3 2009-01-06 13:18:15 mcouprie Exp $ */
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
+#include <mcrbtp.h>
 #include <mcmesh.h>
-#include <mcrbt1.h>
 #include <mciomesh.h>
 
 #define VERBOSE
 
-extern Rbt * RBT;
+extern Rbtp * RBTP;
 
 uint16_t LE_ReadUnsignedShort(FILE *fd)
 {
@@ -437,6 +437,41 @@ POLYGONS %d %d    // Faces - champ obligatoire
 } /* SaveMeshVTK() */
 
 /* ==================================== */
+void MCM_SaveVTK(MCM *M, FILE *fileout)
+/* ==================================== */
+/* fileout doit avoir ete ouvert en ecriture */
+/* format: 
+POINTS %d float   // Sommets - champ obligatoire
+%g %g %g          // coord. vertex
+   ...
+POLYGONS %d %d    // Faces - champ obligatoire 
+                  // arg1: nb polygones; arg2: nb valeurs (=4*arg1 pour des triangles)
+3 %d %d %d        // face: ind. vertices
+   ...
+*/
+{
+  int32_t i, j;
+
+  genheaderVTK(fileout, "MCM_SaveVTK output");
+
+  // SOMMETS
+  fprintf(fileout, "POINTS %d float\n", M->Vertices->cur);
+  for (i = 0; i < M->Vertices->cur; i++)
+  {
+    fprintf(fileout, "%g %g %g", M->Vertices->v[i].x, M->Vertices->v[i].y, M->Vertices->v[i].z);
+    fprintf(fileout, "\n");
+  }
+  fprintf(fileout, "\n");
+
+  // FACES
+  fprintf(fileout, "POLYGONS %d %d\n", M->Faces->cur, 4*M->Faces->cur);
+  for (i = 0; i < M->Faces->cur; i++)
+    fprintf(fileout, "3 %d %d %d\n", M->Faces->f[i].vert[0], M->Faces->f[i].vert[1], M->Faces->f[i].vert[2]);
+  fprintf(fileout, "\n");
+
+} /* MCM_SaveVTK() */
+
+/* ==================================== */
 void SaveMeshAC(FILE *fileout)
 /* ==================================== */
 /* fileout doit avoir ete ouvert en ecriture */
@@ -579,7 +614,7 @@ void LoadMeshMCM(FILE *filein)
     if (buf[0]=='V')
     {
       sscanf(buf+1, "%d", &nvert);
-      Vertices = AllocVertices(nvert);
+      Vertices = MCM_AllocVertices(nvert);
       Vertices->cur = nvert;
       for (i = 0; i < nvert; i++)
       {
@@ -590,7 +625,7 @@ void LoadMeshMCM(FILE *filein)
     else if (buf[0]=='F')
     {
       sscanf(buf+1, "%d", &nfaces);
-      Faces = AllocFaces(nfaces);
+      Faces = MCM_AllocFaces(nfaces);
       Faces->cur = nfaces;
       for (i = 0; i < nfaces; i++)
         fscanf(filein, "%d%d%d", &(Faces->f[i].vert[0]), 
@@ -720,7 +755,7 @@ should fly along its object space -z axis.
 #ifdef VERBOSE
   printf("%s: %ld\n", buf, nvert);
 #endif
-  Vertices = AllocVertices(nvert);
+  Vertices = MCM_AllocVertices(nvert);
   Vertices->cur = nvert;
   for (i = 0; i < nvert; i++)
   {
@@ -734,7 +769,7 @@ should fly along its object space -z axis.
 #ifdef VERBOSE
   printf("%s: %ld\n", buf, nfaces);
 #endif
-  Faces = AllocFaces(nfaces);
+  Faces = MCM_AllocFaces(nfaces);
   Faces->cur = nfaces;
   for (i = 0; i < nfaces; i++)
   {
@@ -788,11 +823,11 @@ tri          := (uint32)v0 + (uint32)v1 + (uint32)v2
     exit(0);
   }
 
-  Vertices = AllocVertices(nvert);
+  Vertices = MCM_AllocVertices(nvert);
 
   if (Vertices == NULL)
   {
-    fprintf(stderr, "%s: AllocVertices failed\n", F_NAME);
+    fprintf(stderr, "%s: MCM_AllocVertices failed\n", F_NAME);
     exit(0);
   }
 
@@ -827,11 +862,11 @@ tri          := (uint32)v0 + (uint32)v1 + (uint32)v2
   printf("nombre faces effectives %ld\n", nf);
 #endif
 
-  Faces = AllocFaces(nf);
+  Faces = MCM_AllocFaces(nf);
 
   if (Faces == NULL)
   {
-    fprintf(stderr, "%s: AllocFaces failed\n", F_NAME);
+    fprintf(stderr, "%s: MCM_AllocFaces failed\n", F_NAME);
     exit(0);
   }
 
@@ -885,8 +920,8 @@ void LoadBuildMCM(FILE *filein)
     if (buf[0]=='V')
     {
       sscanf(buf+1, "%d", &nvert);
-      Vertices = AllocVertices(nvert);
-      RBT = CreeRbtVide(nvert);
+      Vertices = MCM_AllocVertices(nvert);
+      RBTP = CreeRbtpVide(nvert);
       vx = (double *)calloc(1,nvert * sizeof(double));
       vy = (double *)calloc(1,nvert * sizeof(double));
       vz = (double *)calloc(1,nvert * sizeof(double));
@@ -899,7 +934,7 @@ void LoadBuildMCM(FILE *filein)
     else if (buf[0]=='F')
     {
       sscanf(buf+1, "%d", &nfaces);
-      Faces = AllocFaces(nfaces);
+      Faces = MCM_AllocFaces(nfaces);
       for (i = 0; i < nfaces; i++)
       {
         fscanf(filein, "%d%d%d", &f1,  &f2,  &f3);
@@ -914,7 +949,7 @@ void LoadBuildMCM(FILE *filein)
     fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
-  RbtTermine(RBT);
+  RbtpTermine(RBTP);
 
 } /* LoadBuildMCM() */
 
@@ -956,8 +991,8 @@ POLYGONS %d %d     (Faces - champ obligatoire)
 #ifdef VERBOSE
       printf("LoadBuildVTK: loading %d points\n", nvert);
 #endif
-      Vertices = AllocVertices(nvert);
-      RBT = CreeRbtVide(nvert);
+      Vertices = MCM_AllocVertices(nvert);
+      RBTP = CreeRbtpVide(nvert);
       vx = (double *)calloc(1,nvert * sizeof(double));
       vy = (double *)calloc(1,nvert * sizeof(double));
       vz = (double *)calloc(1,nvert * sizeof(double));
@@ -973,7 +1008,7 @@ POLYGONS %d %d     (Faces - champ obligatoire)
 #ifdef VERBOSE
       printf("LoadBuildVTK: loading %d faces\n", nfaces);
 #endif
-      Faces = AllocFaces(nfaces);
+      Faces = MCM_AllocFaces(nfaces);
       for (i = 0; i < nfaces; i++)
       {
         fscanf(filein, "%d%d%d%d", &nf, &f1,  &f2,  &f3);
@@ -993,7 +1028,7 @@ POLYGONS %d %d     (Faces - champ obligatoire)
     fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
-  RbtTermine(RBT);
+  RbtpTermine(RBTP);
   free(vx); 
   free(vy); 
   free(vz); 
@@ -1065,8 +1100,8 @@ should fly along its object space -z axis.
 #ifdef VERBOSE
   printf("%s: %ld\n", buf, nvert);
 #endif
-  Vertices = AllocVertices(nvert);
-  RBT = CreeRbtVide(nvert);
+  Vertices = MCM_AllocVertices(nvert);
+  RBTP = CreeRbtpVide(nvert);
   vx = (double *)calloc(1,nvert * sizeof(double));
   vy = (double *)calloc(1,nvert * sizeof(double));
   vz = (double *)calloc(1,nvert * sizeof(double));
@@ -1082,7 +1117,7 @@ should fly along its object space -z axis.
 #ifdef VERBOSE
   printf("%s: %ld\n", buf, nfaces);
 #endif
-  Faces = AllocFaces(nfaces);
+  Faces = MCM_AllocFaces(nfaces);
   Faces->cur = nfaces;
   for (i = 0; i < nfaces; i++)
   {

@@ -29,9 +29,8 @@ suppress the frame from an image.
 #include <lcrop.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * in;
   struct xvimage * out;

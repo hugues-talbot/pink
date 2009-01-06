@@ -1,4 +1,4 @@
-/* $Id: mccbt.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mccbt.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 #define NIL -1
 
 typedef struct
@@ -22,10 +22,9 @@ typedef struct
 /* prototypes     */
 /* ============== */
 
-extern void initcbt(
+extern void InitCbt(
   cbtcell * arbre,
-  int32_t nbcell
-);
+  int32_t nbcell);
 
 extern int32_t CreateCell(
   cbtcell * arbre,

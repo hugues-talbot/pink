@@ -1,4 +1,4 @@
-/* $Id: lmedialaxis.c,v 1.3 2008-12-11 13:46:16 mcouprie Exp $ */
+/* $Id: lmedialaxis.c,v 1.4 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
 Fonctions pour l'axe médian exact ou approché, et
 pour la fonction bissectrice.
@@ -10,7 +10,6 @@ Michel Couprie - juillet 2004 - révision lbisector
 Laurent Najman - lbisector_talbot
 Michel Couprie - juillet 2004 - révision lbisector_talbot
 Michel Couprie - août 2005 - variante lbisector Coeurjolly 
-Michel Couprie - mai 2007 - integer medial axis Hesselink & al (NON TESTE)
 Michel Couprie - novembre 2008 - lambda medial axis
 */
 
@@ -34,6 +33,7 @@ Michel Couprie - novembre 2008 - lambda medial axis
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mctopo.h>
+#include <ltopotypes.h>
 #include <mcutil.h>
 #include <mcgeo.h>
 #include <ldist.h>
@@ -129,7 +129,6 @@ int32_t lmedax_talbot(struct xvimage *img,   /* donnee: image binaire */
   M = ULONGDATA(res);
   for (i = 0; i < N; i++) 
     M[i] = norm(L[i]);
-  writeimage(res, "_res");
 
   M = ULONGDATA(res);
   for (i = 0; i < N; i++) if (F[i])
@@ -998,16 +997,6 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
         return(NULL);
       }
       freeimage(dist);
-    }
-    else
-    if (mode == 5)
-    {
-      if (! lmedax_Hesselink(f, medial))
-	//      if (! lft_hesselink(f, medial))
-      {
-        fprintf(stderr, "%s: lmedax_Hesselink failed\n", F_NAME);
-        return(NULL);
-      }
     }
     else
     if ((mode == 4) && (ds == 1))

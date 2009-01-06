@@ -1,4 +1,4 @@
-/* $Id: raw2pgm.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: raw2pgm.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file raw2pgm.c
 
 \brief converts from raw format into pgm format
@@ -42,9 +42,8 @@ Parameters:
 #define VERBOSE
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   FILE *fd = NULL;
   int32_t rs, cs, ds, N, nbytesperpix, headersize, littleendian;

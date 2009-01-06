@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky2d.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mckhalimsky2d.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 #define CARRE(i,j) ((i%2)+(j%2)==2)
 #define INTER(i,j) ((i%2)+(j%2)==1)
 #define INTERH(i,j) ((i%2)&&(!(j%2)))
@@ -29,6 +29,7 @@ extern void Betapoint2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *t
 extern void Alphapoint2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n);
 extern void Betacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n);
 extern void Alphacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n);
+extern void Thetacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n);
 extern int32_t CardBetapoint2d(uint8_t *K, int32_t rs, int32_t cs, int32_t i, int32_t j);
 extern int32_t CardThetaCarre2d(struct xvimage *k, int32_t i, int32_t j, uint8_t val);
 extern int32_t BetaTerminal2d(uint8_t *K, int32_t rs, int32_t cs, int32_t i, int32_t j);
@@ -45,4 +46,6 @@ extern int32_t Ensemble2Contractile2d(struct xvimage *b);
 extern void Htkern2d(struct xvimage *b, int32_t n);
 extern int32_t AlphaSimple2d(struct xvimage *b, int32_t i, int32_t j);
 extern int32_t BetaSimple2d(struct xvimage *b, int32_t i, int32_t j);
+extern int32_t Alpha2Simple2d(struct xvimage *b, int32_t i, int32_t j);
+extern int32_t Beta2Simple2d(struct xvimage *b, int32_t i, int32_t j);
 extern int32_t EulerKh2d(struct xvimage *b);

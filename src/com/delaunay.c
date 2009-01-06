@@ -1,4 +1,4 @@
-/* $Id: delaunay.c,v 1.2 2008-12-03 07:42:31 mcouprie Exp $ */
+/* $Id: delaunay.c,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file delaunay.c
 
 \brief delaunay triangulation
@@ -60,9 +60,8 @@ mask will be discarded.
 #define isnotinmask(x,y) (!M[y*rss+x])
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   FILE *fd = NULL;
   int32_t n, i, j, k, rss, css, N;

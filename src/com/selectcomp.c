@@ -1,4 +1,4 @@
-/* $Id: selectcomp.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: selectcomp.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file selectcomp.c
 
 \brief selects a connected component
@@ -31,9 +31,8 @@ current xy plane.
 #include <lgeodesic.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t x, y, z, connex;

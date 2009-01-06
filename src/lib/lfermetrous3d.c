@@ -1,4 +1,4 @@
-/* $Id: lfermetrous3d.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* $Id: lfermetrous3d.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
    Operateur de fermeture de trous en 3d binaire
 
@@ -695,8 +695,6 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
     for (y = 0; y < cs; y++)
     for (z = 0; z < ds; z++) 
       P[z * ps + y * rs + (rs-1)] = NDG_MIN;     /* plan x = rs-1 */
-
-writeimage(p, "_tmp");
 
     free(dejavu);
     freeimage(l);

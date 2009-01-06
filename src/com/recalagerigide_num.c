@@ -1,4 +1,4 @@
-/* $Id: recalagerigide_num.c,v 1.4 2008-12-19 13:10:43 mcouprie Exp $ */
+/* $Id: recalagerigide_num.c,v 1.5 2009-01-06 13:18:06 mcouprie Exp $ */
 
 /*! \file recalagerigide_num.c
 
@@ -65,9 +65,8 @@ in the same format as the output, an initial deformation which is
 const double PRECISION = 0.0001;
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image1;
   struct xvimage * image2;

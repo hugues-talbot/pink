@@ -1,4 +1,4 @@
-/* $Id: volume.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: volume.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file volume.c
 
 \brief return the sum of the pixel values of an image
@@ -28,9 +28,8 @@ the sum of the pixel values of the image \b in.pgm .
 #define VERBOSE
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   double vol;

@@ -1,4 +1,4 @@
-/* $Id: l3dkhalimsky.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: l3dkhalimsky.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
    Operateurs agissant dans la grille de Khalimsky 3d:
 
@@ -699,6 +699,18 @@ int32_t l3dlabel(struct xvimage * f, struct xvimage * lab)
   N = ps * ds;
   F = UCHARDATA(f);
   LAB = ULONGDATA(lab);
+
+  if (datatype(lab) != VFF_TYP_4_BYTE) 
+  {
+    fprintf(stderr, "%s: le resultat doit etre de type VFF_TYP_4_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if ((rowsize(lab) != rs) || (colsize(lab) != cs) || (depth(lab) != ds))
+  {
+    fprintf(stderr, "%s: tailles images incompatibles\n", F_NAME);
+    return 0;
+  }
 
   LIFO = CreeLifoVide(N);
   if (LIFO == NULL)

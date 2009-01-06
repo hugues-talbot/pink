@@ -1,4 +1,4 @@
-/* $Id: lasft.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* $Id: lasft.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /*
    lasft.c
    lhpclosing.c
@@ -27,6 +27,8 @@
 #include <lhtkern3d.h>
 #include <lasft.h>
 #include <lmedialaxis.h>
+#include <ldilateros.h>
+#include <ldilateros3d.h>
 
 #define VERBOSE
 #define FERMETURE_EN_1

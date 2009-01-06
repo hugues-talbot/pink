@@ -1,4 +1,4 @@
-/* $Id: enframe.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: enframe.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file enframe.c
 
 \brief adds a border with a given gray value to an image
@@ -27,9 +27,8 @@ otherwise its value is 1.
 #include <lcrop.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * imageout;

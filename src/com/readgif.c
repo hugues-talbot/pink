@@ -1,4 +1,4 @@
-/* $Id: readgif.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: readgif.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* \file readgif.c
 
 \brief 
@@ -328,9 +328,8 @@ void read_trailer(FILE *fd)
 } /* read_trailer()*/
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   FILE *fd = NULL;
   int32_t ret;

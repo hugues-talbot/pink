@@ -1,4 +1,4 @@
-/* $Id: encadre.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: encadre.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* \file encadre.c
 
 OBSOLETE - voir enframe.c
@@ -35,9 +35,8 @@ all other pixels are copied from <B>in.pgm</B>.
 #include <lcrop.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * imageout;

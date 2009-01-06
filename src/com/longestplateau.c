@@ -1,4 +1,4 @@
-/* $Id: longestplateau.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: longestplateau.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file longestplateau.c
 
 \brief finds the location of the longest plateau in 1D sequence
@@ -60,9 +60,8 @@ int32_t longest(double *tab, int32_t n, int32_t i, double tol)
 } // longest()
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   FILE *fd = NULL;
   int32_t n, i, j, l, imax, lmax;

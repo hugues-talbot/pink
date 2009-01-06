@@ -1,4 +1,4 @@
-/* $Id: mctopo.c,v 1.2 2008-12-15 07:01:27 mcouprie Exp $ */
+/* $Id: mctopo.c,v 1.3 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
 Librairie mctopo : 
 
@@ -1527,18 +1527,18 @@ uint8_t alpha4p(
 /* ==================================== */
 uint8_t calpha8m(
   uint8_t *img,          /* pointeur base image */
-  uint8_t *not,          /* pointeur base image condition */
+  uint8_t *cnd,          /* pointeur base image condition */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N)                       /* taille image */
 /* retourne le sup des valeurs img[q] < img[p] dans le 8-voisinage de p, */
-/* telles que not[q] == 0, */  
+/* telles que cnd[q] == 0, */  
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
 	register uint8_t * ptr = img+p;
-	register uint8_t * ntr = not+p;
+	register uint8_t * ntr = cnd+p;
 	register uint8_t v;
 	register int32_t alpha = NDG_MIN - 1;
 
@@ -1567,18 +1567,18 @@ uint8_t calpha8m(
 /* ==================================== */
 uint8_t calpha4m(
   uint8_t *img,          /* pointeur base image */
-  uint8_t *not,          /* pointeur base image condition */
+  uint8_t *cnd,          /* pointeur base image condition */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N)                       /* taille image */
 /* retourne le sup des valeurs < img[p] dans le 4-voisinage de p, */
-/* telles que not[q] == 0, */  
+/* telles que cnd[q] == 0, */  
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
 	register uint8_t * ptr = img+p;
-	register uint8_t * ntr = not+p;
+	register uint8_t * ntr = cnd+p;
 	register uint8_t v;
 	register int32_t alpha = NDG_MIN - 1;
 
@@ -1600,18 +1600,18 @@ uint8_t calpha4m(
 /* ==================================== */
 uint8_t calpha8p(
   uint8_t *img,          /* pointeur base image */
-  uint8_t *not,          /* pointeur base image condition */
+  uint8_t *cnd,          /* pointeur base image condition */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N)                       /* taille image */
 /* retourne l'inf des valeurs > img[p] dans le 8-voisinage de p, */
-/* telles que not[q] == 0, */  
+/* telles que cnd[q] == 0, */  
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
 	register uint8_t * ptr = img+p;
-	register uint8_t * ntr = not+p;
+	register uint8_t * ntr = cnd+p;
 	register uint8_t v;
 	register int32_t alpha = NDG_MAX + 1;
 
@@ -1640,18 +1640,18 @@ uint8_t calpha8p(
 /* ==================================== */
 uint8_t calpha4p(
   uint8_t *img,          /* pointeur base image */
-  uint8_t *not,          /* pointeur base image condition */
+  uint8_t *cnd,          /* pointeur base image condition */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N)                       /* taille image */
 /* retourne l'inf des valeurs > img[p] dans le 4-voisinage de p, */
-/* telles que not[q] == 0, */  
+/* telles que cnd[q] == 0, */  
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
 	register uint8_t * ptr = img+p;
-	register uint8_t * ntr = not+p;
+	register uint8_t * ntr = cnd+p;
 	register uint8_t v;
 	register int32_t alpha = NDG_MAX + 1;
 

@@ -1,8 +1,10 @@
-/* $Id: lreconsdilat.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: lreconsdilat.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* operateur de reconstruction par dilatation de g sous f */
 /* methode : propagation des changements par fifo */
 /* d'apres la these de Michel Grimaud (pp 22) */
 /* Michel Couprie - juillet 1996 */
+
+OBSOLETE - USE GEODILAT
 
 #include <stdio.h>
 #include <stdint.h>

@@ -1,4 +1,4 @@
-/* $Id: surfels.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: surfels.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* 
   Generation d'un maillage triangulaire d'un ensemble de surfels  
   Michel Couprie  -  Juillet 2001
@@ -11,6 +11,7 @@
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mcrbtp.h>
 #include <mcmesh.h>
 #include <mciomesh.h>
 

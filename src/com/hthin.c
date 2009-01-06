@@ -1,4 +1,4 @@
-/* $Id: hthin.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: hthin.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file hthin.c
 
 \brief grayscale homotopic thinning
@@ -66,9 +66,8 @@ minima ur1_hthin 4 ur1_hthin_m
 #include <lhtkern3d.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * imagecond;

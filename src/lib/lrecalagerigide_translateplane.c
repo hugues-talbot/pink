@@ -1,4 +1,4 @@
-/* $Id: lrecalagerigide_translateplane.c,v 1.2 2008-12-15 07:01:27 mcouprie Exp $ */
+/* $Id: lrecalagerigide_translateplane.c,v 1.3 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
   recalage rigide de contours simples (courbes fermees)
 
@@ -12,6 +12,7 @@
 #include <math.h>
 #include <mcutil.h>
 #include <mccodimage.h>
+#include <mclin.h>
 #include <mcgeo.h>
 #include <mcpowell.h>
 #include <lrecalagerigide.h>

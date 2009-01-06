@@ -1,4 +1,4 @@
-/* $Id: addconst.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: addconst.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file addconst.c
 
 \brief adds a constant value to an image
@@ -26,9 +26,8 @@ exceeds 255, then out[x] is set to 255.
 #include <larith.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv) 
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image1;
   int32_t constante;

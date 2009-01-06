@@ -1,4 +1,4 @@
-/* $Id: lskelpar.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* $Id: lskelpar.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
    Algorithmes 2D "fully parallel" de squelettisation :
 
@@ -3158,7 +3158,6 @@ int32_t lskelwutsai(struct xvimage *image,
 		  i%rs, i/rs, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11);
 #endif
 	  T[i] = 1; // delete point
-	  writeimage(image, "_image");
 	}
       }
 
@@ -4272,8 +4271,6 @@ int32_t lskelbertrand_asym_s(struct xvimage *image,
 #endif
 
   for (i = 0; i < N; i++) if (X[i]) X[i] = 255; // normalize values
-
-writeimage(tmp, "_T");
 
   freeimage(tmp);
   free(M);

@@ -56,7 +56,7 @@ struct xvimage *allocGAimage(
     {   fprintf(stderr,"%s() : malloc failed for name\n", F_NAME);
         return NULL;
     }
-    strcpy((void *)(g->name), name);
+    strcpy((char *)(g->name), name);
   }
   else
     g->name = NULL;
@@ -499,7 +499,7 @@ struct GA4d *allocGA4d(
     {   fprintf(stderr,"%s() : malloc failed for name\n", F_NAME);
         return NULL;
     }
-    strcpy((void *)(g->name), name);
+    strcpy((char *)(g->name), name);
   }
   else
     g->name = NULL;

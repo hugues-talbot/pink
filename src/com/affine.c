@@ -1,4 +1,4 @@
-/* $Id: affine.c,v 1.1 2008-12-15 06:38:50 mcouprie Exp $ */
+/* $Id: affine.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file affine.c
 
 \brief affine transformation of a 2D image
@@ -38,9 +38,8 @@ Method: interpolation.
 #include <lrotations.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * image2;

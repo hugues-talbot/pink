@@ -206,7 +206,7 @@ int32_t Arete(int32_t x, int32_t y, int32_t rs, int32_t N)
 }
 
 /* ==================================== */
-int voisin4D8(int i, int k, int rs, int ps, int N, int Nt)
+int32_t voisin4D8(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N, int32_t Nt)
 /* i : index du point dans l'image */
 /* k : direction du voisin */
 /* rs : taille d'une rangee */

@@ -1,4 +1,4 @@
-/* $Id: radialrankmaxopening.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: radialrankmaxopening.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file radialrankmaxopening.c
 
 \brief radial rank-max opening by line
@@ -31,6 +31,7 @@ exact division of 360 by an integer.
 #include <larith.h>
 #include <ldilateros.h>
 #include <ldraw.h>
+#include <lsym.h>
 #include <lfiltreordre.h>
 
 //#define DEBUG 
@@ -102,9 +103,8 @@ void rankmax_open_image(struct xvimage * img, struct xvimage * org_img, struct x
 }
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
- int argc; char **argv; 
 {
   struct xvimage * image; 
   struct xvimage * opened_image; 

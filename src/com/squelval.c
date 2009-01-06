@@ -1,4 +1,4 @@
-/* $Id: squelval.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: squelval.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* \file squelval.c
 
 \brief valuated skeleton of a binary image
@@ -28,9 +28,8 @@ then the points which correspond to this distance value will be left unchanged.
 #include <lsquelval.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * dist;
@@ -49,14 +48,14 @@ int main(argc, argv)
   image = readimage(argv[1]);
   if (image == NULL)
   {
-    fprintf(stderr, "squelval: readimage failed\n");
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
   dist = readimage(argv[2]);
   if (dist == NULL)
   {
-    fprintf(stderr, "squelval: readimage failed\n");
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
@@ -65,15 +64,16 @@ int main(argc, argv)
 
   if (depth(image) == 1)
   {
-    //    if (! lsquelval(image, dist, connex, inhibit))
+    if (! lsquelval(image, dist, connex, inhibit))
+/*
     niv = allocimage(NULL, rowsize(image) * colsize(image), 1, 1, VFF_TYP_1_BYTE);
     gra = readimage("_g");
     if (! lsquelsmoothval(image, dist, niv, gra, connex, inhibit, 5))
+*/
     {
       fprintf(stderr, "squelval: lsquelval failed\n");
       exit(1);
     }
-    writeimage(niv, "_niv");
   }
   else
   {

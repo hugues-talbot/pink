@@ -1,4 +1,4 @@
-/* $Id: lintophat.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: lintophat.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file lintophat.c
 
 \brief max of morphological black top hats by linear structuring elements
@@ -182,9 +182,8 @@ void close_image(struct xvimage * img, struct xvimage * org_img, struct xvimage 
 }
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
- int argc; char **argv; 
 {
  struct xvimage * image; // Pointer fr das Bild
  int32_t rs;    // row_size ^= width, erhlt man mit(s.u.): rowsize(image)

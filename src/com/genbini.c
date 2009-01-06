@@ -1,4 +1,4 @@
-/* $Id: genbini.c,v 1.2 2008-12-15 06:38:50 mcouprie Exp $ */
+/* $Id: genbini.c,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
 /* \file genbini.c
 
 \brief generates a binary image following interactive specifications
@@ -37,9 +37,8 @@ image: points, spheres (circles), balls (discs) of given sizes and positions.
 #include <lpropgeo.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * imagec;

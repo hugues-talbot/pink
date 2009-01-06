@@ -1,4 +1,4 @@
-/* $Id: section.c,v 1.2 2008-12-15 06:38:50 mcouprie Exp $ */
+/* $Id: section.c,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file section.c
 
 \brief computes a 2d cross section from a 3d image
@@ -33,9 +33,8 @@ The coordinates of the basis for the plane are expressed in "real world" dimensi
 #include <lgeo.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * in;
   struct xvimage * out;

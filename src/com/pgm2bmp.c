@@ -1,4 +1,4 @@
-/* $Id: pgm2bmp.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: pgm2bmp.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* \file pgm2bmp.c
 
 \brief converts a PGM file into a truecolor non-compressed BMP file
@@ -31,9 +31,8 @@ The output file will be non-compressed BMP with 24 bits per pixel.
 #include <mcimage.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * g1;
 

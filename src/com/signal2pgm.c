@@ -1,4 +1,4 @@
-/* $Id: signal2pgm.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: signal2pgm.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file signal2pgm.c
 
 \brief converts from signal representation to pgm
@@ -39,9 +39,8 @@ The optional parameter \b scale allows to scale the y coordinates.
 #include <mcutil.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   FILE *fd = NULL;

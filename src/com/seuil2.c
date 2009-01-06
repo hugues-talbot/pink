@@ -1,4 +1,4 @@
-/* $Id: seuil2.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: seuil2.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file seuil2.c
 
 \brief double threshold
@@ -25,9 +25,8 @@ Every pixel >= \b smax gets value \b vmax
 #include <lseuil.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   uint8_t seuilmin, seuilmax, valmin, valmax;
   struct xvimage * image;

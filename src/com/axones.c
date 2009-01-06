@@ -19,6 +19,7 @@
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <llabelplateaux.h>
+#include <lwarp.h>
 
 /* ==================================== */
 int32_t laxones(
@@ -746,9 +747,8 @@ double ltubule(
 
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv;
 {
   struct xvimage * image;
   struct xvimage * imcentres;

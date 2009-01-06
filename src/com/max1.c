@@ -1,4 +1,4 @@
-/* $Id: max1.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: max1.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file max1.c
 
 \brief return the maximum of the pixel values of an image
@@ -28,9 +28,8 @@ the maximum of the pixel values of the image \b in.pgm .
 #define VERBOSE
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   double maxval;

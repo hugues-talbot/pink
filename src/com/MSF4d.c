@@ -52,9 +52,8 @@ connect
 
 
 /* =============================================================== */
-int32_t main(argc, argv) 
+int32_t main(int32_t argc, char **argv) 
 /* =============================================================== */
-  int32_t argc; char **argv; 
 {
   struct GA4d * ga;
   struct xvimage4D * marqueurs;

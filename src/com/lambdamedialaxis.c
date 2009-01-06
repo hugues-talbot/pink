@@ -1,4 +1,4 @@
-/* $Id: lambdamedialaxis.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: lambdamedialaxis.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file lambdamedialaxis.c
 
 \brief discrete lambda-medial axis transform
@@ -31,9 +31,8 @@ it is a float image representing the function x->lambda(x).
 #include <lmedialaxis.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * distimage;

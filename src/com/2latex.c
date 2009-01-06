@@ -1,4 +1,4 @@
-/* $Id: 2latex.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: 2latex.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* \file pgm2latex.c
 
 \brief converts a grayscale image into a latex file
@@ -35,9 +35,8 @@ Converts a grayscale image into a latex file. The value of each pixel is printed
 #include <mcimage.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * bold = NULL;
@@ -120,16 +119,16 @@ int main(argc, argv)
       if (bold && *(UCHARDATA(bold) + y * rs + x))
       {
         if (underl && *(UCHARDATA(underl) + y * rs + x))
-          macro = "\\zc";
+          macro = (char *)"\\zc";
         else
-          macro = "\\za";
+          macro = (char *)"\\za";
       }
       else
       {
         if (underl && *(UCHARDATA(underl) + y * rs + x))
-          macro = "\\zd";
+          macro = (char *)"\\zd";
         else
-          macro = "\\zb";
+          macro = (char *)"\\zb";
       }
       fprintf(fd, "%s{%3d}", macro, *(UCHARDATA(image) + y * rs + x));
       if (x != rs - 1) fprintf(fd, "&");

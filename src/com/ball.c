@@ -1,4 +1,4 @@
-/* $Id: ball.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: ball.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 
 OBSOLETE - VOIR DRAWBALL
 
@@ -36,9 +36,8 @@ indicate the dimensions of the voxel in the "real" world.
 #include <mcimage.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t i, j, k, xc, yc, zc;

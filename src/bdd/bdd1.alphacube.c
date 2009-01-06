@@ -1,4 +1,6 @@
-/* $Id: bdd1.alphacube.c,v 1.1.1.1 2008-11-25 08:01:36 mcouprie Exp $ */
+/* $Id: bdd1.alphacube.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+#include <bdd.h>
+
 int bddAlpha3SimpleCube(
   int a, int b, int c, int d, int e, int f, int g, int h, int i, int j, 
   int k, int l, int m, int n, int o, int p, int q, int r, int s, int t, 

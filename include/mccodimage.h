@@ -1,4 +1,4 @@
-/* $Id: mccodimage.h,v 1.3 2008-12-19 13:10:43 mcouprie Exp $ */
+/* $Id: mccodimage.h,v 1.4 2009-01-06 13:18:06 mcouprie Exp $ */
 #define NDG_MAX 255            /* niveau de gris max */
 #define NDG_MIN 0              /* niveau de gris min */
 
@@ -32,17 +32,21 @@ struct xvimage {
   void * image_data;                    /* pointer on raw data */
 };
 
-#define UCHARDATA(I)  ((uint8_t*)((I)->image_data))
-#define USHORTDATA(I) ((uint16_t*)((I)->image_data))
-#define ULONGDATA(I)  ((uint32_t*)((I)->image_data))
-#define FLOATDATA(I)  ((float*)((I)->image_data))
-#define DOUBLEDATA(I) ((double*)((I)->image_data))
-#define colsize(I)    ((I)->col_size)
-#define rowsize(I)    ((I)->row_size)
-#define depth(I)      ((I)->depth_size)
-#define tsize(I)      ((I)->time_size)
-#define nbands(I)     ((I)->num_data_bands)
-#define datatype(I)   ((I)->data_storage_type)
+#define UCHARDATA(I)   ((uint8_t*)((I)->image_data))
+#define USHORTDATA(I)  ((uint16_t*)((I)->image_data))
+#define ULONGDATA(I)   ((uint32_t*)((I)->image_data))
+#define FLOATDATA(I)   ((float*)((I)->image_data))
+#define DOUBLEDATA(I)  ((double*)((I)->image_data))
+#define colsize(I)     ((I)->col_size)
+#define rowsize(I)     ((I)->row_size)
+#define depth(I)       ((I)->depth_size)
+#define tsize(I)       ((I)->time_size)
+#define nbands(I)      ((I)->num_data_bands)
+#define datatype(I)    ((I)->data_storage_type)
+#define pixel(I,x,y)   (((uint8_t*)((I)->image_data))[(y)*(I)->row_size+(x)])
+#define voxel(I,x,y,z) (((uint8_t*)((I)->image_data))[((z)*(I)->col_size+(y))*(I)->row_size+(x)])
+#define lpixel(I,x,y)   (((uint32_t*)((I)->image_data))[(y)*(I)->row_size+(x)])
+#define lvoxel(I,x,y,z) (((uint32_t*)((I)->image_data))[((z)*(I)->col_size+(y))*(I)->row_size+(x)])
 
 /*            
 		Codage du voisinage
@@ -80,6 +84,7 @@ extern int32_t voisin18(int32_t i, int32_t k, int32_t rs, int32_t n, int32_t nb)
 extern int32_t voisins4(int32_t i, int32_t j, int32_t rs);
 extern int32_t voisins8(int32_t i, int32_t j, int32_t rs);   
 extern int32_t voisins6(int32_t i, int32_t j, int32_t rs, int32_t ps);   
+extern int32_t voisins18(int32_t i, int32_t j, int32_t rs, int32_t ps);   
 extern int32_t voisins26(int32_t i, int32_t j, int32_t rs, int32_t ps);   
 extern int32_t voisin5(int32_t i, int32_t k, int32_t rs, int32_t nb);
 extern int32_t voisin6b(int32_t i, int32_t k, int32_t rs, int32_t nb, int32_t par);

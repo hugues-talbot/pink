@@ -1,4 +1,4 @@
-/* $Id: showheader.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: showheader.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file showheader.c
 
 \brief prints image information
@@ -28,9 +28,8 @@ Prints all informations contained in the image file header: type, header, size a
 #define BUFFERSIZE 1024
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   if (argc != 2)
   {

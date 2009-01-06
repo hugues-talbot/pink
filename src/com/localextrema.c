@@ -1,4 +1,4 @@
-/* $Id: localextrema.c,v 1.2 2008-12-15 06:38:50 mcouprie Exp $ */
+/* $Id: localextrema.c,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file localextrema.c
 
 \brief local extrema 
@@ -24,9 +24,8 @@ Selects the local maxima or minima of a grayscale image with connexity <B>connex
 #include <llocalextrema.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * maxima;

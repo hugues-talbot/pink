@@ -1,4 +1,4 @@
-/* $Id: lgeo.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: lgeo.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 #ifndef _mcgeo_h
 #include <mcgeo.h>
 #endif
@@ -47,3 +47,4 @@ extern cercle *AjusteCercle(struct xvimage *img, double xc, double yc, double r)
 
 extern cercle *AjusteCercle2(struct xvimage *img, double xc, double yc, double r);
 
+extern int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, double *a, double *b, double *c, double *d);

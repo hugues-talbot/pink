@@ -1,4 +1,4 @@
-/* $Id: pgm2vtk.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: pgm2vtk.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file pgm2vtk.c
 
 \brief generates a vtk file from a 3D image
@@ -189,9 +189,8 @@ void add_cell_triang (FILE * fd, int32_t x)
 }
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t mode;

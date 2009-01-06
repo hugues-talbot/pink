@@ -1,4 +1,4 @@
-/* $Id: ldistgeo.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: ldistgeo.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /****************************************************************
 *
 * Routine Name: ldistXXX - library call for dist
@@ -54,7 +54,7 @@ int32_t ldistgeo2d(struct xvimage *imgx,   /* donnee: image binaire */
   int32_t N = rs * cs;           /* taille de l'image */
   uint8_t *X;          /* pointeur sur l'image x */
   uint8_t *Y;          /* pointeur sur l'image y */
-  int32_t *D;               /* pointeur sur les distances */
+  uint32_t *D;         /* pointeur sur les distances */
   int32_t i, j, k, d, incr_vois;
   Lifo * LIFO1;
   Lifo * LIFO2;
@@ -146,9 +146,9 @@ int32_t ldistgeo3d(struct xvimage *imgx,   /* donnee: image binaire */
   int32_t ds = depth(imgx);
   int32_t ps = rs * cs;          /* taille d'un plan */
   int32_t N = ps * ds;           /* taille de l'image */
-  uint8_t *X;          /* pointeur sur l'image x */
-  uint8_t *Y;          /* pointeur sur l'image y */
-  int32_t *D;               /* pointeur sur les distances */
+  uint8_t *X;                    /* pointeur sur l'image x */
+  uint8_t *Y;                    /* pointeur sur l'image y */
+  uint32_t *D;                   /* pointeur sur les distances */
   int32_t i, j, k, d, incr_vois;
   Lifo * LIFO1;
   Lifo * LIFO2;

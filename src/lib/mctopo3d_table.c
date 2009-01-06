@@ -1,4 +1,4 @@
-/* $Id: mctopo3d_table.c,v 1.2 2008-12-19 13:10:43 mcouprie Exp $ */
+/* $Id: mctopo3d_table.c,v 1.3 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
 Librairie mctopo3D : 
 
@@ -52,7 +52,7 @@ void init_topo3d()
     exit(1);
   }
   tablesize = 1<<23; // 2^26 / 8
-  table_simple26 = malloc(tablesize);
+  table_simple26 = (uint8_t *)malloc(tablesize);
   if (table_simple26 == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", F_NAME);

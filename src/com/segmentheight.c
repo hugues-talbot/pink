@@ -1,4 +1,4 @@
-/* $Id: segmentheight.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: segmentheight.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file segmentheight.c
 
 \brief segmentation based on a height criterion
@@ -26,11 +26,11 @@ or a maximization if option <B>m</B> is set.
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <lattribheight.h>
+#include <lsegreconsheight.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t connex, param;

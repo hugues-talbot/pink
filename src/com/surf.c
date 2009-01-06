@@ -1,4 +1,4 @@
-/* $Id: surf.c,v 1.2 2008-12-15 06:38:50 mcouprie Exp $ */
+/* $Id: surf.c,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file surf.c
 
 \brief topographic view of a 2D image
@@ -136,9 +136,8 @@ int32_t lsurf(struct xvimage * image, int32_t mode)
 } /* lsurf() */
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   int32_t mode;
   struct xvimage * image;

@@ -1,4 +1,4 @@
-/* $Id: scale.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: scale.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file scale.c
 
 \brief product of an image by a scalar
@@ -26,9 +26,8 @@ and if out[x] exceeds 255, then out[x] is set to 255.
 #include <larith.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image1;
   double scale;

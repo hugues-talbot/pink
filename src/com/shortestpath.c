@@ -1,4 +1,4 @@
-/* $Id: shortestpath.c,v 1.1 2008-12-15 06:38:50 mcouprie Exp $ */
+/* $Id: shortestpath.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file shortestpath.c
 
 \brief finds a shortest path from x to y in image 
@@ -30,14 +30,14 @@ in \b out.lst.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <string.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcgraphe.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t connex, mode, S1, S2, S3, D1, D2, D3;

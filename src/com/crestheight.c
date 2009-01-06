@@ -1,4 +1,4 @@
-/* $Id: crestheight.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: crestheight.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file crestheight.c
 
 \brief measures the height of crests in a thinned grayscale image
@@ -97,9 +97,8 @@ int32_t lcrestheight(
 } /* lcrestheight() */
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * skel;
   int32_t connex;

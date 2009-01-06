@@ -1,4 +1,4 @@
-/* $Id: mcskelcurv.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: mcskelcurv.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /*
       Librairie mcskelcurv :
 
@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include <mcimage.h>
 #include <mccodimage.h>

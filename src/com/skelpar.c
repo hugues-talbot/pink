@@ -1,4 +1,4 @@
-/* $Id: skelpar.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: skelpar.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file skelpar.c
 
 \brief parallel binary skeleton
@@ -68,9 +68,8 @@ http://igm.univ-mlv.fr/LabInfo/rapportsInternes/2006/01.pdf<BR>
 #include <lmedialaxis.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * inhibit = NULL;

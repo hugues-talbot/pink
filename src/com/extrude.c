@@ -1,4 +1,4 @@
-/* $Id: extrude.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: extrude.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file extrude.c
 
 \brief catenates a sequence of 2d (resp. 1d) images, made of the repetition of the same image, into a 3d (resp. 2d) image
@@ -30,9 +30,8 @@ Catenates a sequence of 2d (resp. 1d) images, made of the repetition of the same
 #include <mcutil.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   int32_t i, j, x, seqsize;
   struct xvimage * image_in;

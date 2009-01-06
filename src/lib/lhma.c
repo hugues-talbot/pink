@@ -19,6 +19,8 @@ Andre Vital Saude - jan 2006
 #include <mccodimage.h>
 #include <avsimage.h>
 #include <llut.h>
+#include <mcgeo.h>
+#include <ldist.h>
 #include <lhma.h>
 
 //private Functions
@@ -134,8 +136,8 @@ struct xvimage *lhma(struct xvimage *Xh)
   if (ds == 1) {
     for(p.y = 0; p.y < cs; p.y++) 
       for(p.x = 0; p.x < rs; p.x++) {
-	if(point2d(D2Xh, p, rs) !=0) 
-	  point2d(HMA, p, rs) = IsHMAEnhanced2d(p, D2Xh, mlut, Lut, SQDn, rs, cs);
+	if(AVS_point2d(D2Xh, p, rs) !=0) 
+	  AVS_point2d(HMA, p, rs) = IsHMAEnhanced2d(p, D2Xh, mlut, Lut, SQDn, rs, cs);
       }
   }
   else
@@ -143,9 +145,9 @@ struct xvimage *lhma(struct xvimage *Xh)
     for (p.z = 0; p.z < ds; p.z++) 
       for(p.y = 0; p.y < cs; p.y++) 
 	for(p.x = 0; p.x < rs; p.x++) 
-	  if(point3d(D2Xh, p, ps, rs) != 0) {
-	    point3d(HMA, p, ps, rs) = IsHMAEnhanced3d(p, D2Xh, mlut, Lut, SQDn, rs, cs, ds);
-	    if (point3d(HMA, p, ps, rs) == 1) printf("p=(%d,%d,%d)\n", p.x, p.y, p.z);
+	  if(AVS_point3d(D2Xh, p, ps, rs) != 0) {
+	    AVS_point3d(HMA, p, ps, rs) = IsHMAEnhanced3d(p, D2Xh, mlut, Lut, SQDn, rs, cs, ds);
+	    if (AVS_point3d(HMA, p, ps, rs) == 1) printf("p=(%d,%d,%d)\n", p.x, p.y, p.z);
 	  }
 
   }
@@ -226,8 +228,8 @@ struct xvimage *lhma_givenTables(struct xvimage *Xh, MLut mlut, RTLutCol Lut, SQ
   if (ds == 1) {
     for(p.y = 0; p.y < cs; p.y++) 
       for(p.x = 0; p.x < rs; p.x++) {
-	if(point2d(D2Xh, p, rs) !=0) 
-	  point2d(HMA, p, rs) = IsHMAEnhanced2d(p, D2Xh, mlut, Lut, SQDn, rs, cs);
+	if(AVS_point2d(D2Xh, p, rs) !=0) 
+	  AVS_point2d(HMA, p, rs) = IsHMAEnhanced2d(p, D2Xh, mlut, Lut, SQDn, rs, cs);
       }
   }
   else
@@ -235,8 +237,8 @@ struct xvimage *lhma_givenTables(struct xvimage *Xh, MLut mlut, RTLutCol Lut, SQ
     for (p.z = 0; p.z < ds; p.z++) 
       for(p.y = 0; p.y < cs; p.y++) 
 	for(p.x = 0; p.x < rs; p.x++) 
-	  if(point3d(D2Xh, p, ps, rs) != 0)
-	    point3d(HMA, p, ps, rs) = IsHMAEnhanced3d(p, D2Xh, mlut, Lut, SQDn, rs, cs, ds);
+	  if(AVS_point3d(D2Xh, p, ps, rs) != 0)
+	    AVS_point3d(HMA, p, ps, rs) = IsHMAEnhanced3d(p, D2Xh, mlut, Lut, SQDn, rs, cs, ds);
   }
 
   //Free
@@ -411,7 +413,7 @@ int32_t IsHMAEnhanced2d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
   Point v;
 
   //Rx = EnRmin(x, D2Xh(x), 0)
-  Rx = EnRminAuto2d(x, point2d(D2Xh, x, rs), SQDn);
+  Rx = EnRminAuto2d(x, AVS_point2d(D2Xh, x, rs), SQDn);
   if (Rx == 0) return 0; //En(B<(x, D2Xh(x))) is empty
 
   //avoid zero values in RTLut
@@ -425,11 +427,11 @@ int32_t IsHMAEnhanced2d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
     for (j = 0; j < Svg.size; j++) {
       v = Svg.points[j];
       Rv = EnRmin2d(x, Rx, v, Lut[mlut.indmap[i] + Rx], SQDn);
-      if (pixel(D2Xh, x.x + v.x, x.y + v.y, rs) >= Rv) return 0;
+      if (AVS_pixel(D2Xh, x.x + v.x, x.y + v.y, rs) >= Rv) return 0;
     }
   }
 
-  return point2d(D2Xh, x, rs);
+  return AVS_point2d(D2Xh, x, rs);
 } // IsHMAEnhanced2d()
 
 
@@ -452,7 +454,7 @@ int32_t IsHMAEnhanced3d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
   Point v;
 
   //Rx = EnRmin(x, D2Xh(x), 0)
-  Rx = EnRminAuto3d(x, point3d(D2Xh, x, ps, rs), SQDn);
+  Rx = EnRminAuto3d(x, AVS_point3d(D2Xh, x, ps, rs), SQDn);
   if (Rx == 0) return 0; //En(B<(x, D2Xh(x))) is empty
 
   //avoid zero values in RTLut
@@ -466,14 +468,14 @@ int32_t IsHMAEnhanced3d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
     for (j = 0; j < Svg.size; j++) {
       v = Svg.points[j];
       Rv = EnRmin3d(x, Rx, v, Lut[mlut.indmap[i] + Rx], SQDn);
-      if (voxel(D2Xh, x.x + v.x, x.y + v.y, x.z + v.z, ps, rs) >= Rv) return 0;
+      if (AVS_voxel(D2Xh, x.x + v.x, x.y + v.y, x.z + v.z, ps, rs) >= Rv) return 0;
     }
   }
 
-  if (point3d(D2Xh, x, ps, rs) == 1)
+  if (AVS_point3d(D2Xh, x, ps, rs) == 1)
     printf("x=(%d,%d,%d)\n", x.x, x.y, x.z);
 
-  return point3d(D2Xh, x, ps, rs);
+  return AVS_point3d(D2Xh, x, ps, rs);
 } // IsHMAEnhanced3d()
 
 

@@ -1,4 +1,4 @@
-/* $Id: long2byte.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: long2byte.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file long2byte.c
 
 \brief converts a "int32_t" image to a "byte" image
@@ -102,9 +102,8 @@ static void TriRapideStochastique (int32_t * A, int32_t *T, int32_t p, int32_t r
 } /* TriRapideStochastique() */
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * imagelong;
   struct xvimage * imagebyte;

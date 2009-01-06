@@ -1,4 +1,4 @@
-/* $Id: meshaddnoise.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: meshaddnoise.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file meshaddnoise.c
 
 \brief adds gaussian noise to the positions of the vertices of a mesh
@@ -32,6 +32,7 @@ Available output formats: mcm, vtk.
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mcrbtp.h>
 #include <mcmesh.h>
 #include <mciomesh.h>
 
@@ -53,20 +54,20 @@ int main(int argc, char **argv)
     exit(0);
   }
   formatin = UNKNOWN;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".mcm") == 0) formatin = MCM;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".MCM") == 0) formatin = MCM;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".vtk") == 0) formatin = VTK;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".VTK") == 0) formatin = VTK;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".ifs") == 0) formatin = IFS;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".IFS") == 0) formatin = IFS;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".mcm") == 0) formatin = T_MCM;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".MCM") == 0) formatin = T_MCM;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".vtk") == 0) formatin = T_VTK;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".VTK") == 0) formatin = T_VTK;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".ifs") == 0) formatin = T_IFS;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".IFS") == 0) formatin = T_IFS;
   if (formatin == UNKNOWN)
   {
     fprintf(stderr, "%s: bad input file format\n", argv[0]);
     exit(0);
   }
   formatout = UNKNOWN;
-  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".mcm") == 0) formatout = MCM;
-  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".vtk") == 0) formatout = VTK;
+  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".mcm") == 0) formatout = T_MCM;
+  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".vtk") == 0) formatout = T_VTK;
   if (formatout == UNKNOWN)
   {
     fprintf(stderr, "%s: bad output file format\n", argv[0]);
@@ -74,9 +75,9 @@ int main(int argc, char **argv)
   }
 
   filein = fopen(argv[1],"r");
-  if (formatin == MCM) LoadMeshMCM(filein);
-  if (formatin == IFS) LoadMeshIFS(filein);
-  if (formatin == VTK) LoadBuildVTK(filein);
+  if (formatin == T_MCM) LoadMeshMCM(filein);
+  if (formatin == T_IFS) LoadMeshIFS(filein);
+  if (formatin == T_VTK) LoadBuildVTK(filein);
   fclose(filein);
 
   alpha = atof(argv[2]);
@@ -84,10 +85,10 @@ int main(int argc, char **argv)
   AddNoiseMesh(alpha);
 
   fileout = fopen(argv[argc-1],"w");
-  if (formatout == MCM) SaveMeshMCM(fileout);
-  if (formatout == VTK) 
+  if (formatout == T_MCM) SaveMeshMCM(fileout);
+  if (formatout == T_VTK) 
   {
-    genheaderVTK(fileout, "meshaddnoise output");    
+    genheaderVTK(fileout, (char *)"meshaddnoise output");    
     SaveMeshVTK(fileout);
   }
   fclose(fileout);

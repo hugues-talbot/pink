@@ -1,4 +1,4 @@
-/* $Id: nbcomp.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: nbcomp.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file nbcomp.c
 
 \brief returning number of connected components of a grayscale or a binary image
@@ -35,9 +35,8 @@ The output image \b out.pgm has the type "int32_t".
 #include <llabelplateaux.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   int32_t nblabels, connex, i;
   struct xvimage * image;

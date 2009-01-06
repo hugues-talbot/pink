@@ -1,4 +1,4 @@
-/* $Id: mccomptree.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: mccomptree.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
   Arbre des composantes (nouvelle version)
 
@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mcunionfind.h>
+#include <mccodimage.h>
 #include <mccomptree.h>
 
 #define MAXTREE

@@ -1,4 +1,4 @@
-/* $Id: ldist.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: ldist.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 extern int32_t ldist(struct xvimage *img, int32_t connex, struct xvimage *res);
 extern int32_t ldistbyte(struct xvimage *img, int32_t connex, struct xvimage *res);
 extern int32_t ldistquad(struct xvimage *img, struct xvimage *res);
@@ -19,6 +19,7 @@ extern struct xvimage* ldilatdiscloc(struct xvimage* f, int32_t mode);
 extern struct xvimage* ldilatballloc(struct xvimage* f, int32_t mode);
 extern int32_t ldistquadSaito(struct xvimage *img, struct xvimage *res);
 extern int32_t ldistSaito(struct xvimage *img, struct xvimage *res);
+extern int32_t ldistMeijster(struct xvimage *img, struct xvimage *res);
 extern struct xvimage* lredt2d(struct xvimage* f);
 extern struct xvimage* lredt3d(struct xvimage* f);
 extern int32_t lsedt_meijster(struct xvimage *img, struct xvimage *res);
@@ -28,5 +29,3 @@ extern void SEDT3d_line(uint8_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t 
 extern void SEDT3d_column(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds);
 extern void SEDT3d_planes(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds);
 extern int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res);
-extern int32_t lft_hesselink(struct xvimage *img, struct xvimage *res);
-extern int32_t lmedax_Hesselink(struct xvimage* f, struct xvimage* res);

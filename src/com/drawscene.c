@@ -1,4 +1,4 @@
-/* $Id: drawscene.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: drawscene.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file drawscene.c
 
 \brief draw a 3D scene which is specified by a text file into a 3D pgm image
@@ -20,6 +20,7 @@ The file \b scene.3sc contains a scene under the 3Dscene format.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <string.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcsplines.h>
@@ -130,9 +131,8 @@ static void process_closedspline(FILE *fd, struct xvimage * image)
 } // process_closedspline()
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t i, j, ret;

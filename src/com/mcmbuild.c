@@ -1,4 +1,4 @@
-/* $Id: mcmbuild.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: mcmbuild.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* 
   Michel Couprie  -  Mars 2002
 */
@@ -11,6 +11,7 @@
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mcrbtp.h>
 #include <mcmesh.h>
 #include <mciomesh.h>
 

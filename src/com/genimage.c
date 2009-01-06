@@ -1,4 +1,4 @@
-/* $Id: genimage.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: genimage.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file genimage.c
 
 \brief generates a monocolor image of given size
@@ -33,9 +33,8 @@ The color of the result image is given by the parameter <B>col</B>.
 #include <mcimage.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * header;
   struct xvimage * image;

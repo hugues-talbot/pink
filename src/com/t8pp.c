@@ -1,4 +1,4 @@
-/* $Id: t8pp.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: t8pp.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* \file t8pp.c
 
 \brief computes the connecivity number t8pp for each image pixel
@@ -26,9 +26,8 @@ Computes the connecivity number t8pp (as defined in ref. BEC97) for each image p
 #include <ltopotypes.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
 

@@ -1,4 +1,4 @@
-/* $Id: mctopo.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mctopo.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 #define UNDEFINED    0
 
 #define PEAK         1
@@ -52,10 +52,10 @@ extern uint8_t alpha8m(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern uint8_t alpha4m(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern uint8_t alpha8p(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern uint8_t alpha4p(uint8_t *img, int32_t p, int32_t rs, int32_t N);
-extern uint8_t calpha8m(uint8_t *img, uint8_t *not, int32_t p, int32_t rs, int32_t N);
-extern uint8_t calpha4m(uint8_t *img, uint8_t *not, int32_t p, int32_t rs, int32_t N);
-extern uint8_t calpha8p(uint8_t *img, uint8_t *not, int32_t p, int32_t rs, int32_t N);
-extern uint8_t calpha4p(uint8_t *img, uint8_t *not, int32_t p, int32_t rs, int32_t N);
+extern uint8_t calpha8m(uint8_t *img, uint8_t *cnd, int32_t p, int32_t rs, int32_t N);
+extern uint8_t calpha4m(uint8_t *img, uint8_t *cnd, int32_t p, int32_t rs, int32_t N);
+extern uint8_t calpha8p(uint8_t *img, uint8_t *cnd, int32_t p, int32_t rs, int32_t N);
+extern uint8_t calpha4p(uint8_t *img, uint8_t *cnd, int32_t p, int32_t rs, int32_t N);
 extern uint8_t halpha8m(uint8_t *img, int32_t p, uint8_t h, int32_t rs, int32_t N);
 extern uint8_t halpha4m(uint8_t *img, int32_t p, uint8_t h, int32_t rs, int32_t N);
 extern uint8_t halpha8p(uint8_t *img, int32_t p, uint8_t h, int32_t rs, int32_t N);

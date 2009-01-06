@@ -1,4 +1,4 @@
-/* $Id: mcm2vtk.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: mcm2vtk.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* 
   Michel Couprie  -  Mars 2002
 */
@@ -11,6 +11,7 @@
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mcrbtp.h>
 #include <mcmesh.h>
 #include <mciomesh.h>
 
@@ -32,7 +33,7 @@ int main(int argc, char **argv)
   LoadMeshMCM(filein);
   fclose(filein);
   fileout = fopen(argv[2],"w");
-  genheaderVTK(fileout, "mcm2ac output");
+  genheaderVTK(fileout, (char *)"mcm2ac output");
   SaveMeshVTK(fileout);
   fclose(fileout);
   TermineMesh();

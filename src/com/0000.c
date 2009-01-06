@@ -34,6 +34,12 @@ Laurent Mercier: gestion d'un masque dans delaunay.c<br>
 Nicolas Combaret: toposhrinkgray, ptselectgray<br>
 John Chaussard: lballincl<br>
 
+CODE UNDER FREE LICENCE INCLUDED
+
+David Coeurjolly: lvoronoilabelling.c<br>
+Dario Bressanini: mcpowell.c<br>
+Andrew W. Fitzgibbon: lbresen.c<br>
+
   \section install Installation
 
 \subsection linux Linux

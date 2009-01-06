@@ -1,4 +1,4 @@
-/* $Id: lconvol.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: lconvol.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 
 /* lconvol: operateur de convolution par un masque de taille quelconque */
 /* algorithme naif */
@@ -22,7 +22,7 @@
 #define EPSILON 1E-50
 #define BIGNUMBER 1E30
 #define VERBOSE
-#define DEBUG
+//#define DEBUG
 
 #define TRAITEBORDS
 
@@ -436,8 +436,6 @@ int32_t ldirectionalfilter(
     for (i = 0; i < N; i++) 
       if (T[i] > R[i]) R[i] = T[i];
   } // for n
-
-  writeimage(result, "_result");
 
   copy2image(image, result);
   freeimage(temp);

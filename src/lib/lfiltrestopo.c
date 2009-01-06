@@ -1,4 +1,4 @@
-/* $Id: lfiltrestopo.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: lfiltrestopo.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
    Destruction des pics et des puits en 2d
    Michel Couprie - septembre 1996
@@ -25,6 +25,7 @@
 #include <mctopo3d.h>
 #include <mclifo.h>
 #include <mcindic.h>
+#include <lhtkern.h>
 #include <llambdakern.h>
 #include <lfiltrestopo.h>
 

@@ -1,12 +1,9 @@
-/* $Id: lgeo.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: lgeo.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#ifdef HP
-#define _INCLUDE_XOPEN_SOURCE
-#endif
 #include <math.h>
 #include <mcimage.h>
 #include <mccodimage.h>
@@ -47,7 +44,7 @@ int32_t initrectanglearrondi(rectanglearrondi *r)
   double l = r->w, L = r->h, theta = r->angle, x = r->centre.x, y = r->centre.y;
   double d, alpha;
 
-  if (L < EPSILON) /* c'est un cercle : on ne remplit que r->c1 */
+  if (L < MCGEO_EPSILON) /* c'est un cercle : on ne remplit que r->c1 */
   {
     r->c1.x0 = x;
     r->c1.y0 = y;
@@ -103,7 +100,7 @@ printf("distpointrectanglearrondi: h = %g ; a,b,c = %g,%g,%g\n", r->h, r->s1.a, 
 printf("c1 = %g,%g,%g  ", r->c1.x0, r->c1.y0, r->c1.r);
 printf("c2 = %g,%g,%g\n", r->c2.x0, r->c2.y0, r->c2.r);
 #endif
-  if (r->h < EPSILON) return distpointcercle(p, r->c1);
+  if (r->h < MCGEO_EPSILON) return distpointcercle(p, r->c1);
 
   a = r->s1.a; b = r->s1.b; c = r->s1.c; /* distance au premier cote */
   det = a * a + b * b;
@@ -859,7 +856,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < EPSILON) 
+      if (abs(Mx2 - My2) < MCGEO_EPSILON) 
         theta = 0.0;
       else
       {
@@ -1078,7 +1075,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < EPSILON) 
+      if (abs(Mx2 - My2) < MCGEO_EPSILON) 
         theta = 0.0;
       else
       {
@@ -1277,7 +1274,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < EPSILON) 
+      if (abs(Mx2 - My2) < MCGEO_EPSILON) 
         theta = 0.0;
       else
       {
@@ -1475,7 +1472,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < EPSILON) 
+      if (abs(Mx2 - My2) < MCGEO_EPSILON) 
         theta = 0.0;
       else
       {
@@ -2110,3 +2107,109 @@ struct xvimage *lsection(struct xvimage *img,
 
   return result;
 } // lsection()
+
+/* ==================================== */
+int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, double *a, double *b, double *c, double *d)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lidentifyplane"
+/*
+ Identifie les parametres (a, b, c, d) de l'equation d'un plan 3D
+ pour minimiser l'ecart (au sens des moindres carres)
+ entre ce plan et les points contenus dans la liste de points (pbx,pby,pbz).
+ Régression linéaire.
+ */
+{
+  int32_t i, ret;
+  double *X, *Y, *XtX, *XtXi, *XtY, *R;
+
+  if (npb < 3)
+  {
+    fprintf(stderr, "%s: not enough points\n", F_NAME);
+    return 0;
+  }  
+
+  X = lin_zeros(3, npb);
+  Y = lin_zeros(1, npb);
+  XtX = lin_zeros(3, 3);
+  XtXi = lin_zeros(3, 3);
+  XtY = lin_zeros(3, 1);
+  R = lin_zeros(3, 1);
+
+  for (i = 0; i < npb; i++)
+  {
+    X[3*i] = 1.0;
+    X[3*i + 1] = pbx[i];
+    X[3*i + 2] = pby[i];
+    Y[i] = pbz[i];
+  }  
+
+  lin_multAtB(X, X, XtX, npb, 3, npb, 3);
+  ret = lin_inverseLUP(XtX, XtXi, 3);
+  if (ret != 0)
+  { 
+    lin_multAtB(X, Y, XtY, npb, 3, npb, 1);
+    lin_mult(XtXi, XtY, R, 3, 3, 1);
+    *a = R[1];
+    *b = R[2];
+    *c = -1;
+    *d = R[0];
+  }
+  else
+  {
+    for (i = 0; i < npb; i++)
+    {
+      X[3*i] = 1.0;
+      X[3*i + 1] = pbz[i];
+      X[3*i + 2] = pbx[i];
+      Y[i] = pby[i];
+    }  
+
+    lin_multAtB(X, X, XtX, npb, 3, npb, 3);
+    ret = lin_inverseLUP(XtX, XtXi, 3);
+    if (ret != 0)
+    { 
+      lin_multAtB(X, Y, XtY, npb, 3, npb, 1);
+      lin_mult(XtXi, XtY, R, 3, 3, 1);
+      *a = R[2];
+      *b = -1;
+      *c = R[1];
+      *d = R[0];
+    }
+    else
+    {
+      for (i = 0; i < npb; i++)
+      {
+	X[3*i] = 1.0;
+	X[3*i + 1] = pby[i];
+	X[3*i + 2] = pbz[i];
+	Y[i] = pbx[i];
+      }  
+
+      lin_multAtB(X, X, XtX, npb, 3, npb, 3);
+      ret = lin_inverseLUP(XtX, XtXi, 3);
+      if (ret != 0)
+      { 
+	lin_multAtB(X, Y, XtY, npb, 3, npb, 1);
+	lin_mult(XtXi, XtY, R, 3, 3, 1);
+	*a = -1;
+	*b = R[1];
+	*c = R[2];
+	*d = R[0];
+      }
+      else
+      {
+	fprintf(stderr, "%s: cannot compute plane\n", F_NAME);
+	return 0;
+      }
+    }
+  }
+
+  free(X);
+  free(Y);
+  free(XtX);
+  free(XtXi);
+  free(XtY);
+  free(R);
+  return 1;
+} /* lidentifyplane() */

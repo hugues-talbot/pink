@@ -1,4 +1,4 @@
-/* $Id: simplepair.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: simplepair.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file simplepair.c
 
 \brief detects simple pairs in a 3D binary image
@@ -21,14 +21,14 @@ any) is given.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <string.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <lseltopo.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
 

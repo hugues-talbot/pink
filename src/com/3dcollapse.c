@@ -1,4 +1,4 @@
-/* $Id: 3dcollapse.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: 3dcollapse.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file 3dcollapse.c
 
 \brief ultimate constrained collapse guided by a priority image
@@ -38,6 +38,8 @@ then the points of this image will be left unchanged.
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mckhalimsky3d.h>
+#include <mcgeo.h>
+#include <ldist.h>
 #include <l3dcollapse.h>
 
 /* =============================================================== */

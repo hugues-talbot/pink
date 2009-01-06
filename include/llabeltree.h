@@ -1,4 +1,4 @@
-/* $Id: llabeltree.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: llabeltree.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 extern int32_t llabeltree(
   struct xvimage *imgx, 
   int32_t connex,
@@ -20,7 +20,7 @@ extern int32_t labelbranch2d4(uint8_t *X,  /* donnee: pointeur sur l'image x */
 		   int32_t N,             /* donnee: taille image */
                    int32_t current_pixel, /* donnee: numéro pixel courant */  
                    int32_t intersection,  /* donnee: flag d'intersection */  
-                   int32_t *D        /* resultat: pointeur sur distances */
+                   uint32_t *D        /* resultat: pointeur sur distances */
 ); /* Etiquette les branches avec la 4-connexité */
 
 extern int32_t labelbranch2d8(uint8_t *X,  /* donnee: pointeur sur l'image x */
@@ -28,7 +28,7 @@ extern int32_t labelbranch2d8(uint8_t *X,  /* donnee: pointeur sur l'image x */
 		   int32_t N,             /* donnee: taille image */
                    int32_t current_pixel, /* donnee: numéro pixel courant */  
                    int32_t intersection,  /* donnee: flag d'intersection */  
-                   int32_t *D        /* resultat: pointeur sur distances */
+                   uint32_t *D        /* resultat: pointeur sur distances */
 ); /* Etiquette les branches avec la 8-connexité */
 
 extern int32_t labelbranch3d6(uint8_t *X,  /* donnee: pointeur sur l'image x */
@@ -37,7 +37,7 @@ extern int32_t labelbranch3d6(uint8_t *X,  /* donnee: pointeur sur l'image x */
 		   int32_t N,             /* donnee: taille image */
                    int32_t current_pixel, /* donnee: numéro pixel courant */  
                    int32_t intersection,  /* donnee: flag d'intersection */  
-                   int32_t *D        /* resultat: pointeur sur distances */
+                   uint32_t *D        /* resultat: pointeur sur distances */
 ); /* Etiquette les branches avec la 6-connexité */
 
 extern int32_t labelbranch3d18(uint8_t *X,  /* donnee: pointeur sur l'image x */
@@ -46,7 +46,7 @@ extern int32_t labelbranch3d18(uint8_t *X,  /* donnee: pointeur sur l'image x */
 		    int32_t N,             /* donnee: taille image */
                     int32_t current_pixel, /* donnee: numéro pixel courant */  
                     int32_t intersection,  /* donnee: flag d'intersection */  
-                    int32_t *D        /* resultat: pointeur sur distances */
+                    uint32_t *D        /* resultat: pointeur sur distances */
 ); /* Etiquette les branches avec la 18-connexité */
 
 extern int32_t labelbranch3d26(uint8_t *X,  /* donnee: pointeur sur l'image x */
@@ -55,5 +55,5 @@ extern int32_t labelbranch3d26(uint8_t *X,  /* donnee: pointeur sur l'image x */
 		    int32_t N,             /* donnee: taille image */
                     int32_t current_pixel, /* donnee: numéro pixel courant */  
                     int32_t intersection,  /* donnee: flag d'intersection */  
-                    int32_t *D        /* resultat: pointeur sur distances */
+                    uint32_t *D        /* resultat: pointeur sur distances */
 ); /* Etiquette les branches avec la 26-connexité */

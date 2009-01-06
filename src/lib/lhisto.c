@@ -1,4 +1,4 @@
-/* $Id: lhisto.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: lhisto.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* histogramme d'une image en niveaux de gris */
 /* histogramme bivariable */
 /* Michel Couprie - juillet 1996, novembre 1999 */
@@ -37,6 +37,23 @@ int32_t lhisto(struct xvimage *image, struct xvimage *mask, uint32_t *histo)
   }
   return(1);
 } /* lhisto() */
+
+/* ==================================== */
+int32_t lhisto1(struct xvimage *image, uint32_t *histo)
+/* ==================================== */
+{
+  int32_t i;
+  int32_t x;                       /* index muet de pixel */
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t d = depth(image);        /* nombre plans */
+  int32_t N = rs * cs * d;         /* taille image */
+  uint8_t *SOURCE = UCHARDATA(image);      /* l'image de depart */
+
+  for (i = 0; i <= NDG_MAX; i++) histo[i] = 0;
+  for (x = 0; x < N; x++) histo[SOURCE[x]] += 1;
+  return(1);
+} /* lhisto1() */
 
 /* ==================================== */
 int32_t lhisto2(struct xvimage *image1, struct xvimage *image2, 

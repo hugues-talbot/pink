@@ -1,4 +1,4 @@
-/* $Id: attribute.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: attribute.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file attribute.c
 
 \brief labels each connected component with its attribute value 
@@ -32,9 +32,8 @@ Argument \b seuil defines a threshold to filter out lowest attribute values.
 #define USAGE "usage: %s filein.pgm connex seuil <min|max|pla> <area|perim|circ|trous|excen|orien|vdiam|hdiam> fileout.pgm\n"
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   int32_t nblabels, connex, attrib, typregion, seuil, i;
   struct xvimage * image;

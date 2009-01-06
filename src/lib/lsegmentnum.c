@@ -1,4 +1,4 @@
-/* $Id: lsegmentnum.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: lsegmentnum.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* operateur fondamental de segmentation numerique par seuillage */
 /* utilise une File d'Attente Hierarchique */
 /* utilise un arbre des bassins versants (captation basin tree, CBT) */
@@ -195,7 +195,7 @@ int32_t lsegmentnum(
   int32_t *MU;                     /* pour la mesure des regions */
   int32_t etiqcc[4];
   int32_t ncc;
-  int32_t new;
+  int32_t newcell;
   int32_t tracedate = 0;
   int32_t nbcomp = 0;
 
@@ -314,12 +314,12 @@ int32_t lsegmentnum(
 
     if (ncc > 1)
     {
-      new = CreateCell(CBT, &nbcell, nbmaxcell);
-      SetData(CBT, new, k);                  /* conceptuellement : k + 1 */
+      newcell = CreateCell(CBT, &nbcell, nbmaxcell);
+      SetData(CBT, newcell, k);                  /* conceptuellement : k + 1 */
       for (i = 0; i < ncc; i++)
       {
-        MU[new] += MU[etiqcc[i]];
-        SetFather(CBT, etiqcc[i], new);
+        MU[newcell] += MU[etiqcc[i]];
+        SetFather(CBT, etiqcc[i], newcell);
       } /* for i */
     } /* if (ncc > 1) */
 
@@ -396,11 +396,11 @@ int32_t lsegmentnum(
     {
       switch (mesure)
       {
-        case SURFACE:    new = MU[x]; break;
-        case PROFONDEUR: new = (int32_t)Data(CBT, x); break;
-        case VOLUME:     new = MU[x] * (int32_t)Data(CBT, x); break;
+        case SURFACE:    newcell = MU[x]; break;
+        case PROFONDEUR: newcell = (int32_t)Data(CBT, x); break;
+        case VOLUME:     newcell = MU[x] * (int32_t)Data(CBT, x); break;
       } /* switch (mesure) */
-      if (new >= seuil)
+      if (newcell >= seuil)
       {
         nbcomp++;
         Label(CBT,x) = PERTINENT;

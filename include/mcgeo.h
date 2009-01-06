@@ -1,7 +1,5 @@
-/* $Id: mcgeo.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
-#ifndef EPSILON
-#define EPSILON 1E-20
-#endif
+/* $Id: mcgeo.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+#define MCGEO_EPSILON 1E-20
 
 typedef double vec2[2];
 typedef double vec3[3];

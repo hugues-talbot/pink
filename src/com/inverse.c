@@ -1,4 +1,4 @@
-/* $Id: inverse.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: inverse.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file inverse.c
 
 \brief complements a byte image to 255
@@ -25,9 +25,8 @@ For each pixel x, out[x] = 255 - in[x].
 #include <larith.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
 

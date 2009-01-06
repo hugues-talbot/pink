@@ -1,4 +1,4 @@
-/* $Id: radialopening.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: radialopening.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file radialopening.c
 
 \brief radial opening by line
@@ -31,6 +31,7 @@ of 360 by an integer.
 #include <larith.h>
 #include <ldilateros.h>
 #include <ldraw.h>
+#include <lsym.h>
 
 //#define DEBUG 
 //#define VERBOSE
@@ -91,9 +92,8 @@ void open_image(struct xvimage * img, struct xvimage * org_img, struct xvimage *
 }
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
- int argc; char **argv; 
 {
   struct xvimage * image; 
   struct xvimage * opened_image; 

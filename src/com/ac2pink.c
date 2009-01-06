@@ -1,4 +1,4 @@
-/* $Id: ac2pink.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: ac2pink.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file ac2pink.c
 
 \brief converts a 3D scene from AC3D format to Pink 3Dscene format
@@ -39,9 +39,8 @@ POINT ::= ascii_coded_float ascii_coded_float ascii_coded_float
 #define TYP_OBJ_POLYGON    2
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   FILE *fdin = NULL;
   FILE *fdout = NULL;

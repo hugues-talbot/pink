@@ -1,4 +1,4 @@
-/* $Id: drawspline.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: drawspline.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file drawspline.c
 
 \brief draw a spline which is specified by its control points in a text file
@@ -47,9 +47,8 @@ C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn<br>
 #include <ldraw.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t i, j;

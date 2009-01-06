@@ -1,4 +1,4 @@
-/* $Id: histopgm.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: histopgm.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file histopgm.c
 
 \brief histogram of the gray values
@@ -26,9 +26,8 @@ of the histogram of \b in.pgm (masked by the binary image
 #include <lhisto.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * imhist;

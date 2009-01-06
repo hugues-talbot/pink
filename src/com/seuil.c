@@ -1,4 +1,4 @@
-/* $Id: seuil.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: seuil.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file seuil.c
 
 \brief simple threshold
@@ -27,9 +27,8 @@ If n2 is present, for each pixel x, out[x] = if (n <= in[x] < n2) then 255 else 
 #include <lseuil.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   double seuil, seuil2;
   struct xvimage * image;

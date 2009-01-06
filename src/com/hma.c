@@ -44,9 +44,8 @@ void hma_print_usage(char **argv)
 }
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * X = NULL;
   struct xvimage * aux = NULL;

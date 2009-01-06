@@ -1,4 +1,4 @@
-/* $Id: mcfifo.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: mcfifo.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
    Librairie mcfifo :
 
@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <string.h>
 #include <mcfifo.h>
 
 /* ==================================== */

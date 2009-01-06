@@ -1,4 +1,4 @@
-/* $Id: xor.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: xor.c,v 1.2 2009-01-06 13:18:07 mcouprie Exp $ */
 /*! \file xor.c
 
 \brief pixelwise xor of two images
@@ -26,9 +26,8 @@ Images must be of the same type and same dimensions.
 #include <larith.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image1;
   struct xvimage * image2;

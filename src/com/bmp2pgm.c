@@ -1,4 +1,4 @@
-/* $Id: bmp2pgm.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: bmp2pgm.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file bmp2pgm.c
 
 \brief 
@@ -49,9 +49,8 @@ convert
 #include <mcimage.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * g1;
   struct xvimage * g2;

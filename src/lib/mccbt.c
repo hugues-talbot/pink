@@ -1,4 +1,4 @@
-/* $Id: mccbt.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: mccbt.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
 Librairie mccbt :
 
@@ -441,7 +441,7 @@ int32_t * Regularise(
 printf("Regularise()");
 #endif
 
-  T = calloc(nbcell - nbleaf, sizeof(int32_t));
+ T = (int32_t *)calloc(nbcell - nbleaf, sizeof(int32_t));
   if (T == NULL)
   {
     fprintf(stderr, "Regularise: calloc failed\n");
@@ -557,8 +557,8 @@ int32_t * InverseCBT(
 printf("InverseCBT()");
 #endif
 
-  I = calloc(1,nbcell * sizeof(int32_t));
-  T = calloc(nbcell - nbleaf, sizeof(int32_t));
+ I = (int32_t *)calloc(1,nbcell * sizeof(int32_t));
+ T = (int32_t *)calloc(nbcell - nbleaf, sizeof(int32_t));
   if ((I == NULL) || (T == NULL))
   {
     fprintf(stderr, "InverseCBT: allocation failed\n");

@@ -1,4 +1,4 @@
-/* $Id: distc.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: distc.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file distc.c
 
 \brief distance transform (internal)
@@ -47,9 +47,8 @@ The output \b out.pgm is of type int32_t for modes < 40, of type byte for other 
 #include <ldist.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   int32_t mode;
   struct xvimage * image;

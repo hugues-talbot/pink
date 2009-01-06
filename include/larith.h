@@ -1,4 +1,4 @@
-/* $Id: larith.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: larith.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 extern int32_t ladd(
         struct xvimage *image1,
         struct xvimage *image2
@@ -12,6 +12,12 @@ extern int32_t laddconst(
 extern int32_t larea(
   struct xvimage * image, 
   int32_t *area
+);
+
+extern int32_t laverage(
+  struct xvimage * image1,
+  struct xvimage * image2,
+  double alpha
 );
 
 extern int32_t ldiff(

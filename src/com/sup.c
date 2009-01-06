@@ -26,9 +26,8 @@ Images must be of the same type and same dimensions.
 #include <larith.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image1;
   struct xvimage * image2;

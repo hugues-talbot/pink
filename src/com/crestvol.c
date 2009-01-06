@@ -1,4 +1,4 @@
-/* $Id: crestvol.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: crestvol.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file crestvol.c
 
 \brief enhances linear structures in a grayscale image
@@ -41,6 +41,7 @@ curvilinar structures in grayscale images", in preparation, 2003.
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mctopo.h>
 #include <lgeodesic.h>
 #include <lhtkern.h>
 
@@ -100,8 +101,6 @@ int32_t lcrestvol(
   for (p = 0; p < N; p++)
     if (separant4(S, p, rs, N))
       SP[p] = alpha8m(S, p, rs, N);
-
-  writeimage(sp, "_sp");
 
   t1 = allocimage(NULL, rs_es, cs_es, 1, VFF_TYP_1_BYTE);
   t2 = allocimage(NULL, rs_es, cs_es, 1, VFF_TYP_1_BYTE);
@@ -203,9 +202,8 @@ int32_t lcrestvol(
 } /* lcrestvol() */
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * orig;
   struct xvimage * skel;

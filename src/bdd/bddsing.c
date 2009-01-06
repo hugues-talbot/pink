@@ -1,4 +1,5 @@
-/* $Id: bddsing.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: bddsing.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+#include <bdd.h>
 
 int bddSurfsingCarreX(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j)
 {

@@ -1,4 +1,4 @@
-/* $Id: printstats.c,v 1.2 2008-12-15 07:01:27 mcouprie Exp $ */
+/* $Id: printstats.c,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file printstats.c
 
 \brief prints some stats of an image or a region
@@ -29,9 +29,8 @@ Calculates the histogram of \b im.pgm (masked by the binary image
 */
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 #undef F_NAME
 #define F_NAME "printstats"
 {

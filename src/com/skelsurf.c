@@ -1,4 +1,4 @@
-/* $Id: skelsurf.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: skelsurf.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file skelsurf.c
 
 \brief surfacic binary skeleton guided by a priority image
@@ -69,9 +69,8 @@ References:<BR>
 #include <lskeletons.h>
 
 /* =============================================================== */
-int32_t main(argc, argv) 
+int32_t main(int32_t argc, char **argv)
 /* =============================================================== */
-  int32_t argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * prio;

@@ -1,7 +1,17 @@
-/* $Id: lderiche.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: lderiche.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* ============== */
 /* prototype for lderiche.c */
 /* ============== */
+
+extern void derichegen(double *x,
+		       int32_t M,
+		       int32_t N,
+		       double *y1,
+		       double *y2,
+		       double *y,
+		       double a1, double a2, double a3, double a4, 
+		       double a5, double a6, double a7, double a8, 
+		       double b1, double b2, double b3, double b4);
 
 extern int32_t lderiche(
         struct xvimage *image1,

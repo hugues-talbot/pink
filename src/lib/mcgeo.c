@@ -1,4 +1,4 @@
-/* $Id: mcgeo.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: mcgeo.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
 Librairie mcgeo : 
 
@@ -11,9 +11,7 @@ Michel Couprie, mars 1997
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#ifdef HP
-#define _INCLUDE_XOPEN_SOURCE
-#endif
+#include <string.h>
 #include <math.h>
 #include <mcutil.h>
 #include <mcgeo.h>
@@ -235,7 +233,7 @@ int32_t initrectangle(rectangle *r)
   double l = r->w, L = r->h, theta = r->angle, x = r->centre.x, y = r->centre.y;
   double d, alpha;
 
-  if (L < EPSILON) return 0;
+  if (L < MCGEO_EPSILON) return 0;
   d = sqrt(l*l + L*L) / 2.0;
   alpha = atan(l/L);
 
@@ -300,7 +298,7 @@ double distpointdroite3(point3 p, point3 p1, point3 p2)
   bx = p2.x - p1.x; by = p2.y - p1.y; bz = p2.z - p1.z;
   x = p.x - p1.x; y = p.y - p1.y; z = p.z - p1.z;
   nb = bx * bx + by * by + bz * bz;
-  if (nb < EPSILON)
+  if (nb < MCGEO_EPSILON)
   {
     fprintf(stderr, "warning: %s: failed\n", F_NAME);
     return 0.0;
@@ -380,7 +378,7 @@ int32_t solsyst2(
   int32_t i, j;
   
   d = det2(m);
-  if (((d >= 0) && (d < EPSILON)) || ((d <= 0) && (-d < EPSILON))) return 0;
+  if (((d >= 0) && (d < MCGEO_EPSILON)) || ((d <= 0) && (-d < MCGEO_EPSILON))) return 0;
 
   for (i = 0; i < 2; i++) m1[i][0] = b[i]; 
   for (i = 0; i < 2; i++) m1[i][1] = m[i][1];
@@ -407,7 +405,7 @@ int32_t solsyst3(
   int32_t i, j;
   
   d = det3(m);
-  if (((d >= 0) && (d < EPSILON)) || ((d <= 0) && (-d < EPSILON))) return 0;
+  if (((d >= 0) && (d < MCGEO_EPSILON)) || ((d <= 0) && (-d < MCGEO_EPSILON))) return 0;
 
   for (i = 0; i < 3; i++) m1[i][0] = b[i]; 
   for (i = 0; i < 3; i++)
@@ -436,7 +434,7 @@ int32_t invmat2(
 /* ==================================== */
 {
   double det = det2( ma );
-  if ( fabs( det ) < EPSILON ) return 0;
+  if ( fabs( det ) < MCGEO_EPSILON ) return 0;
   mr[0][0] =   ma[1][1] / det;
   mr[1][0] = - ma[1][0] / det;
   mr[0][1] = - ma[0][1] / det;
@@ -451,7 +449,7 @@ int32_t invmat3(
 /* ==================================== */
 {
   double det = det3( ma );
-  if ( fabs( det ) < EPSILON ) return 0;
+  if ( fabs( det ) < MCGEO_EPSILON ) return 0;
   mr[0][0] =  ( ma[1][1]*ma[2][2] - ma[1][2]*ma[2][1] ) / det;
   mr[0][1] = -( ma[0][1]*ma[2][2] - ma[2][1]*ma[0][2] ) / det;
   mr[0][2] =  ( ma[0][1]*ma[1][2] - ma[1][1]*ma[0][2] ) / det;

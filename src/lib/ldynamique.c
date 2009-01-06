@@ -1,4 +1,4 @@
-/* $Id: ldynamique.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: ldynamique.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
   Calcul de la dynamique ordonnée (nouvelle version)
 
@@ -560,7 +560,6 @@ int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t c
 #ifdef DEBUG
   ComponentTreePrint(CT);
 #endif
-  writeimage(order, "_o");
 
   mu = (int32_t *)calloc(CT->nbleafs+1, sizeof(int32_t)); // 0 non utilise
   dyn = (int32_t *)calloc(CT->nbleafs+1, sizeof(int32_t)); // 0 non utilise

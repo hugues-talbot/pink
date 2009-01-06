@@ -1,4 +1,4 @@
-/* $Id: drawrect.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: drawrect.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file drawrect.c
 
 \brief Draws a rectangle with sides parallel to the main axes
@@ -33,9 +33,8 @@ The rectangle is surimposed to the contents of <B>in.pgm</B>.
 #include <mcimage.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   uint8_t *Im;

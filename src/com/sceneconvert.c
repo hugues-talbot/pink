@@ -1,4 +1,4 @@
-/* $Id: sceneconvert.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: sceneconvert.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file sceneconvert.c
 
 \brief converts a 3D scene into another format
@@ -27,6 +27,7 @@ catenated in order to make a full Povray scene.
 #include <string.h>
 #include <stdlib.h>
 #include <mcgeo.h>
+#include <mcrbtp.h>
 #include <mcmesh.h>
 #include <mciomesh.h>
 
@@ -99,9 +100,8 @@ void genmeshbox(scene *s, meshbox *MB)
 } // genmeshbox()
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   int32_t i, j, ret, npoints, format, type;
   FILE *fdout = NULL;
@@ -116,9 +116,9 @@ int main(argc, argv)
   }
 
   if ((strcmp(argv[2], "pov") == 0) || (strcmp(argv[2], "POV") == 0))
-    format = POV;
+    format = T_POV;
   else if ((strcmp(argv[2], "povb") == 0) || (strcmp(argv[2], "POVB") == 0))
-    format = POVB;
+    format = T_POVB;
   else 
   {
     fprintf(stderr, "%s: available formats: POV, POVB\n", argv[0]);
@@ -139,7 +139,7 @@ int main(argc, argv)
     exit(1);
   }
 
-  if (format == POV) 
+  if (format == T_POV) 
   {
     genmeshbox(scene_in, &MB);
     genheaderscenePOV(fdout, MB);
@@ -230,7 +230,7 @@ int main(argc, argv)
 		 argv[0], i, scene_in->tabobj[i]->objtype);
   } // for (i = 0; i < nobj; i++)
 
-  if (format == POV) 
+  if (format == T_POV) 
   {
     genfooterscenePOV(fdout, MB);
   }

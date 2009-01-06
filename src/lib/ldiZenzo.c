@@ -1,4 +1,4 @@
-/* $Id: ldiZenzo.c,v 1.2 2008-12-15 06:38:50 mcouprie Exp $ */
+/* $Id: ldiZenzo.c,v 1.3 2009-01-06 13:18:15 mcouprie Exp $ */
 /* diZenzo gradient based on Deriche filter: Laurent Najman juin 2004 */
 #include <sys/types.h>
 #include <stdint.h>
@@ -183,7 +183,7 @@ int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct
   double e_2a;    /* stocke exp(-2alpha) */
   double a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4;
   double p,q,t, g;
-  int32_t *  dir = ULONGDATA(result);
+  uint32_t *  dir = ULONGDATA(result);
 
 
   if ((depth(imageR) != 1) || (depth(imageB) != 1) || (depth(imageB) != 1))

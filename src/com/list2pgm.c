@@ -1,4 +1,4 @@
-/* $Id: list2pgm.c,v 1.2 2008-12-11 13:46:16 mcouprie Exp $ */
+/* $Id: list2pgm.c,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file list2pgm.c
 
 \brief converts from point list representation to pgm
@@ -45,9 +45,8 @@ The optional parameter \b scale allows to scale the coordinates.
 #include <mcutil.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   FILE *fd = NULL;

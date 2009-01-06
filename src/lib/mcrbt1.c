@@ -1,8 +1,10 @@
-/* $Id: mcrbt1.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: mcrbt1.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
    Librairie mcrbt :
 
    Fonctions pour la gestion d'un arbre rouge et noir
+
+   Data de type point (triplet de double)
 
    D'apres "Introduction a l'algorithmique", 
      T. Cormen, C. Leiserson, R. Rivest, pp. 258, Dunod Ed. 

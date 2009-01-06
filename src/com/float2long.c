@@ -1,4 +1,4 @@
-/* $Id: float2long.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: float2long.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file float2long.c
 
 \brief converts a "float" image to a "int32_t" image
@@ -37,9 +37,8 @@ X = round(offset + factor * x)
 #include <math.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * imagefloat;
   struct xvimage * imagelong;

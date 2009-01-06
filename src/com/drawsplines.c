@@ -1,4 +1,4 @@
-/* $Id: drawsplines.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: drawsplines.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file drawsplines.c
 
 \brief draw spline segments which are specified by a text file
@@ -33,9 +33,8 @@ nb_points_spline_3 x31 y31 x32 y32 ...<br>
 double pol3(double *P, double v) { return P[0] + P[1]*v +  P[2]*v*v +  P[3]*v*v*v; }
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t i, j;

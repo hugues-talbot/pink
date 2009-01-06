@@ -1,4 +1,4 @@
-/* $Id: ldist.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* $Id: ldist.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /****************************************************************
 *
 * Routine Name: ldistXXX - library call for dist
@@ -73,9 +73,9 @@ int32_t ldist(struct xvimage *img,   /* donnee: image binaire */
   int32_t cs = colsize(img);
   int32_t ds = depth(img);
   int32_t ps = rs * cs;
-  int32_t N = ps * ds;           /* taille de l'image */
-  uint8_t *F;          /* pointeur sur l'image */
-  int32_t *D;               /* pointeur sur les distances */
+  int32_t N = ps * ds;       /* taille de l'image */
+  uint8_t *F;                /* pointeur sur l'image */
+  uint32_t *D;               /* pointeur sur les distances */
   int32_t i, j, k, d;
   Lifo * LIFO1;
   Lifo * LIFO2;
@@ -577,9 +577,9 @@ int32_t ldistquad(struct xvimage *img,   /* donnee: image binaire */
 { 
   int32_t rs = img->row_size;
   int32_t cs = img->col_size;
-  int32_t N= rs * cs;            /* taille de l'image */
-  uint8_t *F;          /* pointeur sur l'image */
-  int32_t *D;               /* pointeur sur les distances */
+  int32_t N= rs * cs;        /* taille de l'image */
+  uint8_t *F;                /* pointeur sur l'image */
+  uint32_t *D;               /* pointeur sur les distances */
   vect2Dint *L;              /* tableau de vecteur associe a un point de l'image */
   int32_t i;
 
@@ -980,9 +980,9 @@ int32_t lchamfrein(struct xvimage *img,   /* donnee: image binaire */
   int32_t cs = colsize(img);
   int32_t ds = depth(img);
   int32_t ps = rs * cs;
-  int32_t N = ps * ds;           /* taille de l'image */
-  uint8_t *F;          /* pointeur sur l'image */
-  int32_t *D;               /* pointeur sur les distances */
+  int32_t N = ps * ds;    /* taille de l'image */
+  uint8_t *F;             /* pointeur sur l'image */
+  uint32_t *D;            /* pointeur sur les distances */
   int32_t i, j, k, d;
   int32_t st;
 
@@ -1407,11 +1407,11 @@ int32_t ldistquad3d_rl(struct xvimage* imgin, struct xvimage* imgout)
   int32_t w,h,d, i, j, k, b, y, m, wh;
   uint32_t inf=(0x7fffffff - 2048);
   uint8_t *pf,*pfj;
-  int32_t *pg,*pgj, *pgi, *paux;
+  uint32_t *pg,*pgj, *pgi, *paux;
 
-  int32_t *plist1_r, *plist1_l, *plist2_r, *plist2_l;
-  int32_t ilist1_r, ilist1_rmax, ilist1_l, ilist1_lmax;
-  int32_t ilist2_r, ilist2_l;
+  uint32_t *plist1_r, *plist1_l, *plist2_r, *plist2_l;
+  uint32_t ilist1_r, ilist1_rmax, ilist1_l, ilist1_lmax;
+  uint32_t ilist2_r, ilist2_l;
 
   pf=UCHARDATA(imgin);
   w=rowsize(imgin); h=colsize(imgin); d=depth(imgin);
@@ -1421,10 +1421,10 @@ int32_t ldistquad3d_rl(struct xvimage* imgin, struct xvimage* imgout)
   for(m=0;m<w*h*d;m++) pg[m] = inf;
 
   /* alocacao das filas para a segunda fase do algoritmo */
-  plist1_r = (int32_t *) calloc(1,w*sizeof(int32_t));
-  plist2_r = (int32_t *) calloc(1,w*sizeof(int32_t));
-  plist1_l = (int32_t *) calloc(1,w*sizeof(int32_t));
-  plist2_l = (int32_t *) calloc(1,w*sizeof(int32_t));
+  plist1_r = (uint32_t *) calloc(1,w*sizeof(uint32_t));
+  plist2_r = (uint32_t *) calloc(1,w*sizeof(uint32_t));
+  plist1_l = (uint32_t *) calloc(1,w*sizeof(uint32_t));
+  plist2_l = (uint32_t *) calloc(1,w*sizeof(uint32_t));
   if ((plist1_r==NULL)||(plist2_r==NULL)||(plist1_l==NULL)||(plist2_l==NULL))
   {
     fprintf(stderr, "%s(): cannot allocate buffer\n", F_NAME);
@@ -1944,9 +1944,9 @@ int32_t ldistquadSaito(struct xvimage *img,   /* donnee: image binaire */
   int32_t rs = img->row_size;
   int32_t cs = img->col_size;
   int32_t N= rs * cs;            /* taille de l'image */
-  uint8_t *F;          /* pointeur sur l'image */
-  int32_t *D;               /* pointeur sur les distances */
-  int32_t * buff = calloc(1,cs * sizeof(int32_t));
+  uint8_t *F;                    /* pointeur sur l'image */
+  uint32_t *D;                   /* pointeur sur les distances */
+  int32_t * buff = (int32_t *)calloc(1,cs * sizeof(int32_t));
 
   if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE))
   {
@@ -2038,9 +2038,9 @@ int32_t ldistSaito(struct xvimage *img,   /* donnee: image binaire */
   int32_t rs = img->row_size;
   int32_t cs = img->col_size;
   int32_t N= rs * cs;            /* taille de l'image */
-  uint8_t *F;          /* pointeur sur l'image */
-  int32_t *D;               /* pointeur sur les distances */
-  int32_t * buff = calloc(1,cs * sizeof(int32_t));
+  uint8_t *F;                    /* pointeur sur l'image */
+  uint32_t *D;                   /* pointeur sur les distances */
+  int32_t * buff = (int32_t *)calloc(1,cs * sizeof(int32_t));
   double * R = DOUBLEDATA(res);
   F = UCHARDATA(img);
 
@@ -2050,14 +2050,14 @@ int32_t ldistSaito(struct xvimage *img,   /* donnee: image binaire */
     return(0);
   }
 
-  D = (int32_t *)calloc(1,N * sizeof(int32_t));
+  D = (uint32_t *)calloc(1,N * sizeof(uint32_t));
   if (D == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", F_NAME);
     return(0);
   }
 
-  for (i = 0; i < N; i++) D[i] = (int32_t)F[i];
+  for (i = 0; i < N; i++) D[i] = (uint32_t)F[i];
 
   ////Forward scan
   for (j=0;j<cs;j++)
@@ -2147,14 +2147,14 @@ int32_t ldistSaito(struct xvimage *img,   /* donnee: image binaire */
 #define F3_3d(z,zp,f,i,j) (f[i+rs*j+ps*z]-(zp-z)*(zp-z))
 
 /* ======================================================== */
-static void REDT_line(int32_t *f, int32_t *g, int32_t rs, int32_t cs)
+static void REDT_line(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs)
 /* ======================================================== */
 {
   int32_t j, u, q;
   int32_t w;
-  int32_t *s, *t; //sommets des paraboles
-  s = (int32_t *)calloc(1,rs * sizeof(int32_t));
-  t = (int32_t *)calloc(1,rs * sizeof(int32_t));
+  uint32_t *s, *t; //sommets des paraboles
+  s = (uint32_t *)calloc(1,rs * sizeof(uint32_t));
+  t = (uint32_t *)calloc(1,rs * sizeof(uint32_t));
 
   for (j = 0; j < cs; j++)
   {
@@ -2186,14 +2186,14 @@ static void REDT_line(int32_t *f, int32_t *g, int32_t rs, int32_t cs)
 } //  REDT_line()
 
 /* ======================================================== */
-static void REDT_column(int32_t *f, int32_t *g, int32_t rs, int32_t cs)
+static void REDT_column(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs)
 /* ======================================================== */
 {
   int32_t i, u, q;
   int32_t w;
-  int32_t *s, *t; //sommets des paraboles
-  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
-  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  uint32_t *s, *t; //sommets des paraboles
+  s = (uint32_t *)calloc(1,cs * sizeof(int32_t));
+  t = (uint32_t *)calloc(1,cs * sizeof(int32_t));
 
   for (i = 0; i < rs; i++)
   {
@@ -2256,8 +2256,8 @@ struct xvimage* lredt2d(struct xvimage* f)
 
   if (datatype(f) == VFF_TYP_4_BYTE)
   {
-    int32_t *F = ULONGDATA(f);
-    int32_t *T = ULONGDATA(tmp);
+    uint32_t *F = ULONGDATA(f);
+    uint32_t *T = ULONGDATA(tmp);
     REDT_line(F, T, rs, cs);
     copy2image(f, tmp);
     REDT_column(F, T, rs, cs);
@@ -2274,14 +2274,14 @@ struct xvimage* lredt2d(struct xvimage* f)
 } // lredt2d()
 
 /* ======================================================== */
-static void REDT_line_3d(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
+static void REDT_line_3d(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds)
 /* ======================================================== */
 {
   int32_t j, u, q, k, ps;
   int32_t w;
-  int32_t *s, *t; //sommets des paraboles
-  s = (int32_t *)calloc(1,rs * sizeof(int32_t));
-  t = (int32_t *)calloc(1,rs * sizeof(int32_t));
+  uint32_t *s, *t; //sommets des paraboles
+  s = (uint32_t *)calloc(1,rs * sizeof(uint32_t));
+  t = (uint32_t *)calloc(1,rs * sizeof(uint32_t));
   ps = cs * rs; // taille d'un plan
   
   for(k = 0; k < ds; k++)
@@ -2317,14 +2317,14 @@ static void REDT_line_3d(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t
 } //  REDT_line_3d()
 
 /* ======================================================== */
-static void REDT_column_3d(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
+static void REDT_column_3d(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds)
 /* ======================================================== */
 {
   int32_t i, u, q, k, ps;
   int32_t w;
-  int32_t *s, *t; //sommets des paraboles
-  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
-  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  uint32_t *s, *t; //sommets des paraboles
+  s = (uint32_t *)calloc(1,cs * sizeof(uint32_t));
+  t = (uint32_t *)calloc(1,cs * sizeof(uint32_t));
   ps = rs * cs; // taille d'un plan
 
   for(k = 0; k < ds; k++)
@@ -2361,14 +2361,14 @@ static void REDT_column_3d(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32
 
 
 /* ======================================================== */
-static void REDT_zaxis_3d(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
+static void REDT_zaxis_3d(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds)
 /* ======================================================== */
 {
   int32_t i, u, q, j, ps;
   int32_t w;
-  int32_t *s, *t; //sommets des paraboles
-  s = (int32_t *)calloc(1,ds * sizeof(int32_t));
-  t = (int32_t *)calloc(1,ds * sizeof(int32_t));
+  uint32_t *s, *t; //sommets des paraboles
+  s = (uint32_t *)calloc(1,ds * sizeof(uint32_t));
+  t = (uint32_t *)calloc(1,ds * sizeof(uint32_t));
   ps = rs * cs; // taille d'un plan
 
   for(j = 0; j < cs; j++)
@@ -2435,8 +2435,8 @@ struct xvimage* lredt3d(struct xvimage* f)
   
   if (datatype(f) == VFF_TYP_4_BYTE)
     {
-      int32_t *F = ULONGDATA(f);
-      int32_t *T = ULONGDATA(tmp);
+      uint32_t *F = ULONGDATA(f);
+      uint32_t *T = ULONGDATA(tmp);
       REDT_line_3d(F, T, rs, cs, ds);
       copy2image(f, tmp);
       REDT_column_3d(F, T, rs, cs, ds);
@@ -2455,14 +2455,14 @@ struct xvimage* lredt3d(struct xvimage* f)
 } // lredt3d()
 
 /* ======================================================== */
-static void ST_line(int32_t *f, int32_t *g, uint8_t *r, int32_t rs, int32_t cs)
+static void ST_line(uint32_t *f, uint32_t *g, uint8_t *r, uint32_t rs, uint32_t cs)
 /* ======================================================== */
 {
   int32_t j, u, q;
   int32_t w;
-  int32_t *s, *t; //sommets des paraboles
-  s = (int32_t *)calloc(1,rs * sizeof(int32_t));
-  t = (int32_t *)calloc(1,rs * sizeof(int32_t));
+  uint32_t *s, *t; //sommets des paraboles
+  s = (uint32_t *)calloc(1,rs * sizeof(uint32_t));
+  t = (uint32_t *)calloc(1,rs * sizeof(uint32_t));
 
   memset(r, 0, rs*cs);
   for (j = 0; j < cs; j++)
@@ -2496,16 +2496,16 @@ static void ST_line(int32_t *f, int32_t *g, uint8_t *r, int32_t rs, int32_t cs)
 } //  ST_line()
 
 /* ======================================================== */
-static void ST_column(int32_t *f, uint8_t *r, int32_t rs, int32_t cs)
+static void ST_column(uint32_t *f, uint8_t *r, uint32_t rs, uint32_t cs)
 /* ======================================================== */
 // input f: result of line scan
 // input/output r: binary image - positions of the skeleton points
 {
   int32_t i, u, q;
   int32_t w;
-  int32_t *s, *t; //sommets des paraboles
-  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
-  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  uint32_t *s, *t; //sommets des paraboles
+  s = (uint32_t *)calloc(1,cs * sizeof(uint32_t));
+  t = (uint32_t *)calloc(1,cs * sizeof(uint32_t));
 
   for (i = 0; i < rs; i++)
   {
@@ -2548,8 +2548,8 @@ int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res)
 {
   struct xvimage *tmp;
   int32_t i, rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
-  int32_t *F = ULONGDATA(f);
-  int32_t *R = ULONGDATA(res);
+  uint32_t *F = ULONGDATA(f);
+  uint32_t *R = ULONGDATA(res);
   uint8_t *T;
 
   if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
@@ -2602,10 +2602,10 @@ int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res)
 #define Sep_3_3d(v,u,f,i,j) (((u*u)-(v*v)+f[u*ps+j*rs+i]-f[v*ps+j*rs+i])/(2*(u-v)))
 
 /* ======================================================== */
-void SEDT_line(uint8_t *f, int32_t *g, int32_t rs, int32_t cs)
+void SEDT_line(uint8_t *f, uint32_t *g, uint32_t rs, uint32_t cs)
 /* ======================================================== */
 {
-  int32_t i, j;
+  uint32_t i, j;
   for (j = 0; j < cs; j++)
   {
     if (f[0 + rs*j] == 0) g[0 + rs*j] = 0; else g[0 + rs*j] = rs*cs; // infinity
@@ -2625,14 +2625,14 @@ void SEDT_line(uint8_t *f, int32_t *g, int32_t rs, int32_t cs)
 } //  SEDT_line()
 
 /* ======================================================== */
-void SEDT_column(int32_t *f, int32_t *g, int32_t rs, int32_t cs)
+void SEDT_column(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs)
 /* ======================================================== */
 {
   int32_t i, u, q;
   int32_t w;
-  int32_t *s, *t;
-  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
-  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  uint32_t *s, *t;
+  s = (uint32_t *)calloc(1,cs * sizeof(uint32_t));
+  t = (uint32_t *)calloc(1,cs * sizeof(uint32_t));
 
   for (i = 0; i < rs; i++)
   {
@@ -2664,7 +2664,7 @@ void SEDT_column(int32_t *f, int32_t *g, int32_t rs, int32_t cs)
 } //  SEDT_column()
 
 /* ======================================================== */
-void SEDT3d_line(uint8_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
+void SEDT3d_line(uint8_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds)
 /* ======================================================== */
 {
   int32_t i, j, k, ps = rs*cs;
@@ -2688,14 +2688,14 @@ void SEDT3d_line(uint8_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
 } //  SEDT3d_line()
 
 /* ======================================================== */
-void SEDT3d_column(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
+void SEDT3d_column(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds)
 /* ======================================================== */
 {
   int32_t i, k, u, q, ps = rs*cs;
   int32_t w;
-  int32_t *s, *t;
-  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
-  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  uint32_t *s, *t;
+  s = (uint32_t *)calloc(1,cs * sizeof(uint32_t));
+  t = (uint32_t *)calloc(1,cs * sizeof(uint32_t));
 
   for (k = 0; k < ds; k++)
     for (i = 0; i < rs; i++)
@@ -2728,14 +2728,14 @@ void SEDT3d_column(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
 } //  SEDT3d_column()
 
 /* ======================================================== */
-void SEDT3d_planes(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
+void SEDT3d_planes(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds)
 /* ======================================================== */
 {
   int32_t i, j, u, q, ps = rs*cs;
   int32_t w;
-  int32_t *s, *t;
-  s = (int32_t *)calloc(1,ds * sizeof(int32_t));
-  t = (int32_t *)calloc(1,ds * sizeof(int32_t));
+  uint32_t *s, *t;
+  s = (uint32_t *)calloc(1,ds * sizeof(uint32_t));
+  t = (uint32_t *)calloc(1,ds * sizeof(uint32_t));
 
   for (j = 0; j < cs; j++)
     for (i = 0; i < rs; i++)
@@ -2779,15 +2779,15 @@ int32_t lsedt_meijster(struct xvimage *img,   /* donnee: image binaire */
 #undef F_NAME
 #define F_NAME "lsedt_meijster"
 { 
-  int32_t rs = rowsize(img);
-  int32_t cs = colsize(img);
-  int32_t ds = depth(img);
-  int32_t ps = rs * cs;
-  int32_t N = ps * ds;
-  uint8_t *F;          /* pointeur sur l'image */
-  int32_t *D;               /* pointeur sur les distances */
+  uint32_t rs = rowsize(img);
+  uint32_t cs = colsize(img);
+  uint32_t ds = depth(img);
+  uint32_t ps = rs * cs;
+  uint32_t N = ps * ds;
+  uint8_t *F;                /* pointeur sur l'image */
+  uint32_t *D;               /* pointeur sur les distances */
   struct xvimage *tmp;
-  int32_t *T;
+  uint32_t *T;
 
 #ifdef DEBUG_MEJSTER
   printf("lsedt_meijster : begin\n");
@@ -2849,7 +2849,7 @@ int32_t ldistMeijster(struct xvimage *img,   /* donnee: image binaire */
   uint8_t *F = UCHARDATA(img);
   double * R = DOUBLEDATA(res);
   struct xvimage *dist;
-  int32_t *D;
+  uint32_t *D;
 
   if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_DOUBLE))
   {
@@ -2876,254 +2876,3 @@ int32_t ldistMeijster(struct xvimage *img,   /* donnee: image binaire */
   freeimage(dist);
   return(1);
 } // ldistMeijster()
-
-/* ======================================================== */
-/* ======================================================== */
-// Functions for the Feature Transform (Hesselink et al.)
-// Linear algorithm
-/* ======================================================== */
-/* ======================================================== */
-
-/* ======================================================== */
-void FT_line(uint8_t *f, int32_t *ft1, int32_t rs, int32_t cs)
-/* ======================================================== */
-{
-  int32_t i, j;
-  int32_t *g = (int32_t *)calloc(1,rs * sizeof(int32_t));
-  for (j = 0; j < cs; j++)
-  {
-    if (f[rs-1 + rs*j] == 0) g[rs-1] = 0; else g[rs-1] = rs*cs; // infinity
-    for (i = rs-2; i >= 0; i--)
-    {
-      if (f[i + rs*j] == 0) g[i] = 0; 
-      else                  g[i] = 1 + g[i+1]; 
-    }
-    ft1[0 + rs*j] = g[0];
-    for (i = 0; i < rs; i++) 
-    {
-      if ((i - ft1[i-1 + rs*j]) <= g[i])
-	ft1[i + rs*j] = ft1[i-1 + rs*j];
-      else
-	ft1[i + rs*j] = i + g[i];
-    }
-  }
-  free(g);
-} //  FT_line()
-
-/* ======================================================== */
-void FT_column(int32_t *ft1, int32_t *ft2, int32_t rs, int32_t cs)
-/* ======================================================== */
-{
-  int32_t i, j, u, q;
-  int32_t w;
-  int32_t *s, *t, *f;
-  f = (int32_t *)calloc(1,rs * cs * sizeof(int32_t));
-  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
-  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
-
-  for (j = 0; j < cs; j++)
-    for (i = 0; i < rs; i++)
-      f[i + rs*j] = (i - ft1[i + rs*j]) * (i - ft1[i + rs*j]);
-  for (i = 0; i < rs; i++)
-  {
-    q = 0; s[0] = 0; t[0] = 0;
-    for (u = 1; u < cs; u++)
-    {
-      while ( (q >= 0) && (F_2_2d(s[q],t[q],f,i) > F_2_2d(u,t[q],f,i)) ) q--;
-      if (q < 0)
-      {
-        q = 0;
-        s[0] = u;
-      }
-      else
-      {
-        w = 1 + Sep_2_2d(s[q],u,f,i);
-        if (w < cs)
-        {
-          q++; s[q] = u; t[q] = w;
-        }
-      }
-    } 
-    for (u = cs-1; u >= 0; u--)
-    {
-      ft2[i + rs*u] = ft1[i + rs*s[q]] + rs*s[q];
-      if (u == t[q]) q--;
-    }
-  } // for (i = 0; i < rs; i++)
-  free(s); free(t); free(f);
-} //  FT_column()
-
-/* ======================================================== */
-void FT3d_line(uint8_t *f, int32_t *ft1, int32_t rs, int32_t cs, int32_t ds)
-/* ======================================================== */
-{
-} //  FT3d_line()
-
-/* ======================================================== */
-void FT3d_column(int32_t *ft1, int32_t *ft2, int32_t rs, int32_t cs, int32_t ds)
-/* ======================================================== */
-{
-} //  FT3d_column()
-
-/* ======================================================== */
-void FT3d_planes(int32_t *ft2, int32_t *ft3, int32_t rs, int32_t cs, int32_t ds)
-/* ======================================================== */
-{
-} //  FT3d_planes()
-
-/* ==================================== */
-int32_t lft_hesselink(struct xvimage *img,   /* donnee: image binaire */       
-		      struct xvimage *res    /* resultat: feature points */
-)
-/* ==================================== */
-/* 
-  Call the FT linear algorithm (Hesselink & al.)
-*/
-#undef F_NAME
-#define F_NAME "lft_hesselink"
-{ 
-  int32_t rs = rowsize(img);
-  int32_t cs = colsize(img);
-  int32_t ds = depth(img);
-  int32_t ps = rs * cs;
-  int32_t N = ps * ds;
-  uint8_t *F;          /* pointeur sur l'image */
-  int32_t *D;               /* pointeur sur les distances */
-  struct xvimage *tmp;
-  int32_t *T;
-
-  if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE))
-  {
-    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-    return(0);
-  }
-
-  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }    
-
-  tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (tmp == NULL)
-  {
-    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return(0);
-  }
-  T = ULONGDATA(tmp);
-  D = ULONGDATA(res);
-  F = UCHARDATA(img);  
-
-  if (ds == 1)
-  {
-    FT_line(F, T, rs, cs);
-    FT_column(T, D, rs, cs);
-  }
-  else
-  {
-    FT3d_line(F, D, rs, cs, ds);
-    FT3d_column(D, T, rs, cs, ds);
-    FT3d_planes(T, D, rs, cs, ds);
-  }
-
-  freeimage(tmp);
-  return(1);
-} // lft_hesselink()
-
-/* ======================================================== */
-int32_t lmedax_Hesselink(struct xvimage* f, struct xvimage* res)
-/* ======================================================== */
-// Integer Medial Axis
-// from: "", W.H. Hesselink and B.T.M. Roerdink
-#undef F_NAME
-#define F_NAME "lmedax_Hesselink"
-{
-  struct xvimage *tmp;
-  int32_t i, j, k, medax, ftp, ftpe, ftp_x, ftp_y, ftp_z, ftpe_x, ftpe_y, ftpe_z;
-  int32_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
-  uint8_t *F = UCHARDATA(f);
-  int32_t *R = ULONGDATA(res);
-  int32_t *T;
-  double mx, my;
-
-  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }    
-
-  if ((datatype(f) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE))
-  {
-    fprintf(stderr, "%s: bad image type\n", F_NAME);
-    return 0;
-  }
-
-  tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (tmp == NULL)
-  {
-    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return 0;
-  }
-  T = ULONGDATA(tmp);
-
-  if (ds == 1)
-  {
-    FT_line(F, R, rs, cs);
-    FT_column(R, T, rs, cs);
-
-    for (j = 0; j < cs; j++) 
-    for (i = 0; i < rs; i++) 
-    if (F[i + rs*j])
-    {
-      medax = 0;
-      ftp = T[i + rs*j]; ftp_x = ftp % rs; ftp_y = ftp / rs;
-      if ((i > 0) && F[i-1 + rs*j])
-      {
-	ftpe = T[i-1 + rs*j]; ftpe_x = ftpe % rs; ftpe_y = ftpe / rs;
-	mx = ftp_x - 0.5; my = ftp_y;
-	if ((((ftpe_x - ftp_x)*(ftpe_x - ftp_x) + (ftpe_y - ftp_y)*(ftpe_y - ftp_y)) > 1) &&
-	    (((mx - ftpe_x)*(mx - ftpe_x) + (mx - ftpe_y)*(mx - ftpe_y)) <= 
-	     ((mx - ftp_x)*(mx - ftp_x) + (mx - ftp_y)*(mx - ftp_y))))
-	  medax = 1;
-      }	  
-      if (!medax && (i < rs-1) && F[i+1 + rs*j])
-      {
-	ftpe = T[i+1 + rs*j]; ftpe_x = ftpe % rs; ftpe_y = ftpe / rs;
-	mx = ftp_x + 0.5; my = ftp_y;
-	if ((((ftpe_x - ftp_x)*(ftpe_x - ftp_x) + (ftpe_y - ftp_y)*(ftpe_y - ftp_y)) > 1) &&
-	    (((mx - ftpe_x)*(mx - ftpe_x) + (mx - ftpe_y)*(mx - ftpe_y)) <= 
-	     ((mx - ftp_x)*(mx - ftp_x) + (mx - ftp_y)*(mx - ftp_y))))
-	  medax = 1;
-      }	  
-      if (!medax && (j < cs-1) && F[i + rs*(j+1)])
-      {
-	ftpe = T[i + rs*(j+1)]; ftpe_x = ftpe % rs; ftpe_y = ftpe / rs;
-	mx = ftp_x; my = ftp_y + 0.5;
-	if ((((ftpe_x - ftp_x)*(ftpe_x - ftp_x) + (ftpe_y - ftp_y)*(ftpe_y - ftp_y)) > 1) &&
-	    (((mx - ftpe_x)*(mx - ftpe_x) + (mx - ftpe_y)*(mx - ftpe_y)) <= 
-	     ((mx - ftp_x)*(mx - ftp_x) + (mx - ftp_y)*(mx - ftp_y))))
-	  medax = 1;
-      }	  
-      if (!medax && (j > 0) && F[i + rs*(j-1)])
-      {
-	ftpe = T[i + rs*(j-1)]; ftpe_x = ftpe % rs; ftpe_y = ftpe / rs;
-	mx = ftp_x; my = ftp_y - 0.5;
-	if ((((ftpe_x - ftp_x)*(ftpe_x - ftp_x) + (ftpe_y - ftp_y)*(ftpe_y - ftp_y)) > 1) &&
-	    (((mx - ftpe_x)*(mx - ftpe_x) + (mx - ftpe_y)*(mx - ftpe_y)) <= 
-	     ((mx - ftp_x)*(mx - ftp_x) + (mx - ftp_y)*(mx - ftp_y))))
-	  medax = 1;
-      }	  
-      if (medax) R[i + rs*j] = NDG_MAX; else R[i + rs*j] = 0;
-    }
-    else R[i + rs*j] = 0;
-  }
-  else
-  {
-    FT3d_line(F, T, rs, cs, ds);
-    FT3d_column(T, R, rs, cs, ds);
-    FT3d_planes(R, T, rs, cs, ds);
-  }
-
-  freeimage(tmp);
-  return 1;
-} // lmedax_Hesselink()

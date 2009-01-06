@@ -1,7 +1,7 @@
 PAS FINI
 
 
-/* $Id: vskel2graph.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: vskel2graph.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* \file vskel2graph.c
 
 \brief generation of a graph from a curvilinear skeleton
@@ -354,9 +354,8 @@ int32_t vskel2graph(char *filename_in, char *filename_out)
 } /* readvskel() */
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
 
   if (argc != 3)

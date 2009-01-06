@@ -1,4 +1,4 @@
-/* $Id: watershed.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: watershed.c,v 1.2 2009-01-06 13:18:07 mcouprie Exp $ */
 /*! \file watershed.c
 
 \brief topological binary watershed (Couprie-Bertrand algorithm)
@@ -42,9 +42,8 @@ static void inverse(struct xvimage * image)
 } // inverse
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * marker;

@@ -1,4 +1,4 @@
-/* $Id: linapprox.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: linapprox.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* \file linapprox.c
 
 \brief 
@@ -43,9 +43,8 @@ geo
 #include <llinapprox.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   double *x;
   double *y; 

@@ -1,4 +1,4 @@
-/* $Id: yuv2rgb.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: yuv2rgb.c,v 1.2 2009-01-06 13:18:07 mcouprie Exp $ */
 /* \file yuv2rgb.c
 
 \brief 
@@ -51,14 +51,12 @@ typedef uint32_t pixel;
 #define PGM_MAXMAXVAL 255
 #define CCIR601 1
 
-int32_t
-main(argc, argv)
-char **argv;
+int main(int argc, char **argv)
 {
 	FILE *vf,*uf,*yf;
 	int32_t             rows, cols, format, row;
 	register int32_t    col;
-	char		*usage="<basename> <width> <height> [-split]";
+	char		*usage=(char *)"<basename> <width> <height> [-split]";
 	int32_t  y,u,v,y0,y1,y2,y3,u0,u1,u2,u3,v0,v1,v2,v3;
 	uint8_t  *y1buf,*y2buf,*ubuf,*vbuf;
 	char 		ufname[256],vfname[256],yfname[256];

@@ -1,4 +1,4 @@
-/* $Id: matchrect.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: matchrect.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file matchrect.c
 
 \brief matches (rounded) rectangles to the contours of objects
@@ -29,9 +29,8 @@ Option \b axis is used to output only the big axis of the matched rectangle.
 #include <lgeo.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image1;
   int32_t connex;

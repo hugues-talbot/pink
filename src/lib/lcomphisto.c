@@ -1,4 +1,4 @@
-/* $Id: lcomphisto.c,v 1.1.1.1 2008-11-25 08:01:44 mcouprie Exp $ */
+/* $Id: lcomphisto.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* operateur: compression d'histogramme */
 /* Michel Couprie - septembre 1996 */
 
@@ -7,12 +7,15 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mccodimage.h>
+#include <lhisto.h>
 #include <lcomphisto.h>
 
 /* ==================================== */
 int32_t lcomphisto(struct xvimage *image, int32_t n)
 /* n: nombre de niveaux de gris desires */
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "lcomphisto"
 {
   int32_t i;
   int32_t j;
@@ -31,20 +34,20 @@ int32_t lcomphisto(struct xvimage *image, int32_t n)
   histo = (uint32_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(int32_t));
   if (histo == NULL)
   {
-    fprintf(stderr, "lcomphisto: malloc failed for histo\n");
+    fprintf(stderr, "%s: malloc failed for histo\n", F_NAME);
     return(0);
   }
 
   tabcor = (uint8_t *)calloc(NDG_MAX - NDG_MIN + 1,  sizeof(char));
   if (tabcor == NULL)
   {
-    fprintf(stderr, "lcomphisto: calloc failed for tabcor\n");
+    fprintf(stderr, "%s: calloc failed for tabcor\n", F_NAME);
     return(0);
   }
 
-  if (! lhisto(image, histo))
+  if (! lhisto1(image, histo))
   {
-    fprintf(stderr, "lcomphisto: function lhisto failed\n");
+    fprintf(stderr, "%s: function lhisto failed\n", F_NAME);
     return(0);
   }  
 
@@ -55,7 +58,7 @@ int32_t lcomphisto(struct xvimage *image, int32_t n)
 
   if (n > nndg)
   {
-    fprintf(stderr, "lcomphisto: required histogram larger than actual one\n");
+    fprintf(stderr, "%s: required histogram larger than actual one\n", F_NAME);
     return(0);
   }  
 

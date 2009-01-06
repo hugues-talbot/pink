@@ -1,4 +1,4 @@
-/* $Id: lhthiniso.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: lhthiniso.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
    hthiniso: amincissement avec reduction d'anisotropie
 
@@ -8,12 +8,10 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#ifdef HP
-#define _INCLUDE_XOPEN_SOURCE
-#endif
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mctopo.h>
 #include <mcutil.h>
 #include <lhthiniso.h>
 /*

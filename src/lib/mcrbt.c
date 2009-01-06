@@ -1,4 +1,4 @@
-/* $Id: mcrbt.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: mcrbt.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
    Librairie mcrbt :
 
@@ -49,7 +49,7 @@ typedef struct RBTELT {
 
   RbtElt * RbtSearch(Rbt * T, TypRbtKey k) : 
      recherche dans l'arbre T l'element ayant une valeur de "key" egale a k, retourne
-     un pointeur sur l'element en cas de succes, ou NULL sinon.
+     un pointeur sur l'element en cas de succes, ou RBT->nil sinon.
 
   RbtElt * RbtInsert(Rbt ** T, TypRbtKey k, TypRbtAuxData d) : 
      insere un nouvel element dans l'arbre T, de valeur "key" egale a k 

@@ -35,9 +35,8 @@ the translation of the fusion grid.
 #include <llpemeyer.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * marqueurs;

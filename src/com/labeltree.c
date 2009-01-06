@@ -1,4 +1,4 @@
-/* $Id: labeltree.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: labeltree.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file labeltree.c
 
 \brief branch distance
@@ -32,12 +32,11 @@ The distance d used depends on the parameter \b connex :
 #include <llabeltree.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* /include/llabeltree.h */
 /* /src/lib/llabeltree.c */
 /* /src/com/labeltree.c */
 /* =============================================================== */
-  int argc; char **argv; 
 {
   int32_t connex;
   struct xvimage * image;

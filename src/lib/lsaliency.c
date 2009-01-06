@@ -1,4 +1,4 @@
-/* $Id: lsaliency.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: lsaliency.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 
 #include <stdio.h>
 #include <stdint.h>
@@ -163,7 +163,7 @@ int32_t lsaliency(
   uint8_t *M;
   uint32_t *T, *S;
   uint32_t *it;
-  int32_t * L;
+  uint32_t * L;
   int32_t nbmin; /* Nb of minima */
   int32_t incr_vois, passold, pass;
   register int32_t i, j, k, x, y;
@@ -640,7 +640,7 @@ int32_t lsaliency6b(
   uint8_t *M;
   uint32_t *T, *S;
   uint32_t *it;
-  int32_t * L;
+  uint32_t * L;
   int32_t nbmin; /* Nb of minima */
   int32_t incr_vois, passold, pass;
   register int32_t i, j, k, x, y;
@@ -838,10 +838,10 @@ int32_t lsaliency6b(
     
   }
   FifoTermine(fifo);
-  //#ifdef _DEBUG_SALIENCY_
+#ifdef _DEBUG_SALIENCY_
   writeimage(label, "label.pgm");
   printf("%d minima found\n", nbmin);
-  //#endif
+#endif
   S = ULONGDATA(saliency);
   for (x=0; x<N; x++) {
     if (L[x] == WSHED) {

@@ -1,4 +1,4 @@
-/* $Id: mclin.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: mclin.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
 Librairie mclin : 
 
@@ -527,7 +527,7 @@ int32_t lin_inverse_gauss(double *TB, double *InvB, int32_t N)
 	  return 0;
 	}
       }
-      /**   Copia il risultato nella matrice InvB  ***/
+      /* Copie le résultat dans la matrice InvB */
       for (k=1,p=0;k<=N;k++,p++)
 	for (j=N+2,q=0;j<=2*N+1;j++,q++)
 	  InvB[p*N+q]=A[k*mA+j];
@@ -879,7 +879,7 @@ int32_t lin_inverseLUP(double * A, double * R, int32_t n)
     \return 0 si la matrice est singulière, 1 sinon
     \brief inversion de la matrice, d'apres une décomposition LUP de A
     \warning la mémoire pour stocker le résultat \b R doit avoir été allouée
-    \warning le contenu de la matrice A sont effacées
+    \warning le contenu de la matrice A est effacé
 */
 {
   int32_t i, j, ret;
@@ -894,11 +894,8 @@ int32_t lin_inverseLUP(double * A, double * R, int32_t n)
     exit(0);
   }
   ret = lin_decomposition_LUP(A, pi, n);
-  if (ret == 0) 
-  {
-    fprintf(stderr, "%s: singular matrix\n", F_NAME);
-    exit(0);
-  }
+  if (ret == 0) return 0;
+
   x = (double *)calloc(1,n * sizeof(double));
   e = (double *)calloc(n, sizeof(double));
   if ((x == NULL) || (e == NULL))

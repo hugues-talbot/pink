@@ -1,4 +1,4 @@
-/* $Id: mckhalimskyNd.c,v 1.1.1.1 2008-11-25 08:01:44 mcouprie Exp $ */
+/* $Id: mckhalimskyNd.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
    Librairie mckhalimskyNd
 
@@ -150,11 +150,11 @@ void InitPileNd(int32_t taillepile, int32_t N)
 {
   int32_t i;
   PileNd = (int32_t **)calloc(1,taillepile * sizeof(int32_t *));
-  if (PileNd == NULL) erreur("InitPileNd: malloc failed ");
+  if (PileNd == NULL) erreur((char *)"InitPileNd: malloc failed ");
   for (i = 0; i < taillepile; i++)
   {
     PileNd[i] = (int32_t *)calloc(1,N * sizeof(int32_t));
-    if (PileNd[i] == NULL) erreur("InitPileNd: malloc failed ");
+    if (PileNd[i] == NULL) erreur((char *)"InitPileNd: malloc failed ");
   }
   IndexPileNd = 0;
   TaillePileNd = taillepile;
@@ -174,7 +174,7 @@ int32_t * AllocNd()
 /* ========================================== */
 {
   int32_t * X;
-  if (IndexPileNd >= TaillePileNd) erreur("AllocNd: pile pleine ");
+  if (IndexPileNd >= TaillePileNd) erreur((char *)"AllocNd: pile pleine ");
   X = PileNd[IndexPileNd];
   IndexPileNd++;
 #ifdef DEBUGA
@@ -187,11 +187,11 @@ printf("AllocNd: %x\n", (int32_t)X);
 void FreeNd(int32_t *X)
 /* ========================================== */
 {
-  if (IndexPileNd <= 0) erreur("FreeNd: pile vide");
+  if (IndexPileNd <= 0) erreur((char *)"FreeNd: pile vide");
 #ifdef DEBUGF
 printf("FreeNd: haut pile = %x, arg = %x\n", (int32_t)PileNd[IndexPileNd], (int32_t)X);
 #endif
-  if (PileNd[IndexPileNd-1] != X) erreur("FreeNd: mauvais ordonnancement");
+  if (PileNd[IndexPileNd-1] != X) erreur((char *)"FreeNd: mauvais ordonnancement");
   IndexPileNd --;
 } /* FreeNd() */
 
@@ -209,11 +209,11 @@ void InitPileVoisListNd(int32_t taillepileVoisList, int32_t tailleList)
 {
   int32_t i;
   PileVoisListNd = (int32_t **)calloc(1,taillepileVoisList * sizeof(int32_t *));
-  if (PileVoisListNd == NULL) erreur("InitPileVoisListNd: malloc failed ");
+  if (PileVoisListNd == NULL) erreur((char *)"InitPileVoisListNd: malloc failed ");
   for (i = 0; i < taillepileVoisList; i++)
   {
     PileVoisListNd[i] = (int32_t *)calloc(1,tailleList * sizeof(int32_t));
-    if (PileVoisListNd[i] == NULL) erreur("InitPileVoisListNd: malloc failed ");
+    if (PileVoisListNd[i] == NULL) erreur((char *)"InitPileVoisListNd: malloc failed ");
   }
   IndexPileVoisListNd = 0;
   TaillePileVoisListNd = taillepileVoisList;
@@ -233,7 +233,7 @@ int32_t * AllocVoisListNd()
 /* ========================================== */
 {
   int32_t * X;
-  if (IndexPileVoisListNd >= TaillePileVoisListNd) erreur("AllocVoisListNd: pileVoisList pleine ");
+  if (IndexPileVoisListNd >= TaillePileVoisListNd) erreur((char *)"AllocVoisListNd: pileVoisList pleine ");
   X = PileVoisListNd[IndexPileVoisListNd];
   IndexPileVoisListNd++;
 #ifdef DEBUGA
@@ -246,13 +246,13 @@ printf("AllocVoisListNd: %x\n", (int32_t)X);
 void FreeVoisListNd(int32_t *X)
 /* ========================================== */
 {
-  if (IndexPileVoisListNd <= 0) erreur("FreeVoisListNd: pileVoisList vide");
+  if (IndexPileVoisListNd <= 0) erreur((char *)"FreeVoisListNd: pileVoisList vide");
 #ifdef DEBUGF
 printf("FreeVoisListNd: haut pileVoisList = %x, arg = %x\n", 
         (int32_t)PileVoisListNd[IndexPileVoisListNd], (int32_t)X);
 #endif
   if (X && (PileVoisListNd[IndexPileVoisListNd-1] != X)) 
-    erreur("FreeVoisListNd: mauvais ordonnancement");
+    erreur((char *)"FreeVoisListNd: mauvais ordonnancement");
   IndexPileVoisListNd --;
 } /* FreeVoisListNd() */
 
@@ -272,11 +272,11 @@ Khalimsky * AllocKhalimskyNd(int32_t dim, int32_t *userC)
   Khalimsky *K;
 
   K = (Khalimsky *)calloc(1,sizeof(Khalimsky));
-  if (K == NULL) erreur("AllocKhalimsky: malloc failed");
+  if (K == NULL) erreur((char *)"AllocKhalimsky: malloc failed");
   K->N = dim;
   K->C = (int32_t *)calloc(1,dim * sizeof(int32_t));
   K->D = (int32_t *)calloc(1,dim * sizeof(int32_t));
-  if ((K->C == NULL) || (K->D == NULL)) erreur("AllocKhalimsky: malloc failed");
+  if ((K->C == NULL) || (K->D == NULL)) erreur((char *)"AllocKhalimsky: malloc failed");
   for (i = 0; i < dim; i++) K->C[i] = userC[i];
   K->D[0] = K->C[0];
   for (i = 1; i < dim; i++) K->D[i]  = K->C[i] * K->D[i-1];
@@ -297,7 +297,7 @@ void InitPileGrillesNd(int32_t taillepile, int32_t dim, int32_t *userC)
 {
   int32_t i;
   PileGrillesNd = (Khalimsky **)calloc(1,taillepile * sizeof(Khalimsky *));
-  if (PileGrillesNd == NULL) erreur("InitPileGrillesNd: malloc failed ");
+  if (PileGrillesNd == NULL) erreur((char *)"InitPileGrillesNd: malloc failed ");
   for (i = 0; i < taillepile; i++)
     PileGrillesNd[i] = AllocKhalimskyNd(dim, userC);
   IndexPileGrillesNd = 0;
@@ -318,7 +318,7 @@ Khalimsky * AllocGrilleNd()
 /* ========================================== */
 {
   Khalimsky * G;
-  if (IndexPileGrillesNd >= TaillePileGrillesNd) erreur("AllocGrilleNd: pile pleine ");
+  if (IndexPileGrillesNd >= TaillePileGrillesNd) erreur((char *)"AllocGrilleNd: pile pleine ");
   G = PileGrillesNd[IndexPileGrillesNd];
   IndexPileGrillesNd++;
   return G;
@@ -328,8 +328,8 @@ Khalimsky * AllocGrilleNd()
 void FreeGrilleNd(Khalimsky *G)
 /* ========================================== */
 {
-  if (IndexPileGrillesNd <= 0) erreur("FreeNd: pile vide");
-  if (PileGrillesNd[IndexPileGrillesNd-1] != G) erreur("FreeGrilleNd: mauvais ordonnancement");
+  if (IndexPileGrillesNd <= 0) erreur((char *)"FreeNd: pile vide");
+  if (PileGrillesNd[IndexPileGrillesNd-1] != G) erreur((char *)"FreeGrilleNd: mauvais ordonnancement");
   IndexPileGrillesNd --;
 } /* FreeGrilleNd() */
 
@@ -346,7 +346,7 @@ void InitNd(int32_t N, int32_t *userC)                 /* ! : utilise tL */
   D3[0] = 3;
   for (i = 1; i < N; i++) D3[i] = D3[i-1] * 3;
   tL = (int32_t *)calloc(1,D3[N-1] * sizeof(int32_t));
-  if (tL == NULL) erreur("InitNd: malloc failed");
+  if (tL == NULL) erreur((char *)"InitNd: malloc failed");
   InitPileNd(4*N, N);
   InitPileVoisListNd(32*N, D3[N-1]);
   InitPileGrillesNd(2*N, N, userC);
@@ -908,7 +908,7 @@ void gammamoinsNd(Khalimsky *K, int32_t x, int32_t *L, int32_t *nL)
   sortie: la liste (L, nL) de points (forme entiere) , predecesseurs maximaux de x dans K
 */
 {
-  if (!IsSet(K->S[x],BIT_OBJET)) erreur1("gammamoinsNd: point non objet: ", x);
+  if (!IsSet(K->S[x],BIT_OBJET)) erreur1((char *)"gammamoinsNd: point non objet: ", x);
   marquegammamoinsNd(K, x);
   betamoinsbitNd(K, x, BIT_GAMMA, L, nL);
   marquebetamoinsNd(K, x, BIT_GAMMA, 0);
@@ -924,7 +924,7 @@ void gammaplusNd(Khalimsky *K, int32_t x, int32_t *L, int32_t *nL)
   sortie: la liste (L, nL) de points (forme entiere) , successeurs minimaux de x dans K
 */
 {
-  if (!IsSet(K->S[x],BIT_OBJET)) erreur1("gammaplusNd: point non objet: ", x);
+  if (!IsSet(K->S[x],BIT_OBJET)) erreur1((char *)"gammaplusNd: point non objet: ", x);
   marquegammaplusNd(K, x);
   betaplusbitNd(K, x, BIT_GAMMA, L, nL);
   marquebetaplusNd(K, x, BIT_GAMMA, 0);
@@ -941,7 +941,7 @@ int32_t NbPredNd(Khalimsky *K, int32_t x)                 /* ! : utilise tL */
 */
 {
   int32_t n;
-  if (!IsSet(K->S[x],BIT_OBJET)) erreur1("NbPredNd: point non objet: ", x);
+  if (!IsSet(K->S[x],BIT_OBJET)) erreur1((char *)"NbPredNd: point non objet: ", x);
   marquegammamoinsNd(K, x);
   betamoinsbitNd(K, x, BIT_GAMMA, tL, &n);
   marquebetamoinsNd(K, x, BIT_GAMMA, 0);
@@ -962,7 +962,7 @@ int32_t NbSuccNd(Khalimsky *K, int32_t x)                 /* ! : utilise tL */
 #ifdef DEBUGNS
 printf("NbSuccNd : x = %d\n", x);
 #endif
-  if (!IsSet(K->S[x],BIT_OBJET)) erreur1("NbSuccNd: point non objet: ", x);
+  if (!IsSet(K->S[x],BIT_OBJET)) erreur1((char *)"NbSuccNd: point non objet: ", x);
   marquegammaplusNd(K, x);
   betaplusbitNd(K, x, BIT_GAMMA, tL, &n);
   marquebetaplusNd(K, x, BIT_GAMMA, 0);
@@ -1217,7 +1217,7 @@ struct xvimage *DeKhalimskizeNd(Khalimsky * K)
   {
     rs = C[0]; cs = C[1]; is = rs * cs;
     ima = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
-    if (ima == NULL) erreur("DeKhalimskizeNd: allocimage failed");
+    if (ima == NULL) erreur((char *)"DeKhalimskizeNd: allocimage failed");
     I = UCHARDATA(ima);
     for (x = 0; x < is; x++) 
       if (IsSet(S[x],BIT_OBJET))
@@ -1232,7 +1232,7 @@ struct xvimage *DeKhalimskizeNd(Khalimsky * K)
   {
     rs = C[0]; cs = C[1]; ds = C[2]; is = rs * cs * ds;
     ima = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-    if (ima == NULL) erreur("DeKhalimskizeNd: allocimage failed");
+    if (ima == NULL) erreur((char *)"DeKhalimskizeNd: allocimage failed");
     I = UCHARDATA(ima);
     for (x = 0; x < is; x++) 
       if (IsSet(S[x],BIT_OBJET))

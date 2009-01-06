@@ -1,4 +1,4 @@
-/* $Id: drawball.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: drawball.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 
 /*! \file drawball.c
 
@@ -32,9 +32,8 @@ The parameters <B>xc, yc, zc</B> specify the center of the ball.
 #include <ldraw.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   double xc, yc, zc;

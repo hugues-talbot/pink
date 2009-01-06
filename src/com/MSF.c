@@ -42,13 +42,13 @@ morph
 #include <jccodimage.h>
 #include <mcimage.h>
 #include <jcimage.h>
+#include <llabelextrema.h>
 #include <lMSF.h>
 
 
 /* =============================================================== */
-int32_t main(argc, argv) 
+int32_t main(int32_t argc, char **argv) 
 /* =============================================================== */
-  int32_t argc; char **argv; 
 {
   struct xvimage * ga;
   struct xvimage * marqueurs;

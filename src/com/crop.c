@@ -1,4 +1,4 @@
-/* $Id: crop.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: crop.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file crop.c
 
 \brief extracts a rectangular (cuboidal in 3d) area from an image
@@ -34,9 +34,8 @@ of width <B>w</B>, height <B>h</B> and depth <B>d</B> from the image in.pgm .
 #include <lcrop.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * in;
   struct xvimage * out;

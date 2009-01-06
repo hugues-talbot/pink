@@ -1,4 +1,4 @@
-/* $Id: meshconvert.c,v 1.2 2008-12-19 13:10:43 mcouprie Exp $ */
+/* $Id: meshconvert.c,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file meshconvert.c
 
 \brief mesh format conversion
@@ -30,6 +30,7 @@ default value is 1.0.
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mcrbtp.h>
 #include <mcmesh.h>
 #include <mciomesh.h>
 
@@ -42,9 +43,8 @@ int main(int argc, char **argv)
 {
   FILE *filein = NULL;
   FILE *fileout = NULL;
-  int32_t i, mode;
+  int32_t i;
   int32_t formatin, formatout;
-  double v, p1 = 0.0, p2 = 0.0;
   double resolution = 1.0;
 
   if ((argc != 3) && (argc != 4))
@@ -55,26 +55,26 @@ int main(int argc, char **argv)
   if (argc == 4) resolution = atof(argv[2]);
 
   formatin = UNKNOWN;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".MCM") == 0) formatin = MCM;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".mcm") == 0) formatin = MCM;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".VTK") == 0) formatin = VTK;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".vtk") == 0) formatin = VTK;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".IFS") == 0) formatin = IFS;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".ifs") == 0) formatin = IFS;
-  if (strcmp(argv[1]+strlen(argv[1])-5, ".CGAL") == 0) formatin = CGAL;
-  if (strcmp(argv[1]+strlen(argv[1])-5, ".cgal") == 0) formatin = CGAL;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".MCM") == 0) formatin = T_MCM;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".mcm") == 0) formatin = T_MCM;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".VTK") == 0) formatin = T_VTK;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".vtk") == 0) formatin = T_VTK;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".IFS") == 0) formatin = T_IFS;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".ifs") == 0) formatin = T_IFS;
+  if (strcmp(argv[1]+strlen(argv[1])-5, ".CGAL") == 0) formatin = T_CGAL;
+  if (strcmp(argv[1]+strlen(argv[1])-5, ".cgal") == 0) formatin = T_CGAL;
   if (formatin == UNKNOWN)
   {
     fprintf(stderr, "%s: bad input file format\n", argv[0]);
     exit(0);
   }
   formatout = UNKNOWN;
-  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".MCM") == 0) formatout = MCM;
-  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".mcm") == 0) formatout = MCM;
-  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".VTK") == 0) formatout = VTK;
-  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".vtk") == 0) formatout = VTK;
-  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".PGM") == 0) formatout = PGM;
-  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".pgm") == 0) formatout = PGM;
+  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".MCM") == 0) formatout = T_MCM;
+  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".mcm") == 0) formatout = T_MCM;
+  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".VTK") == 0) formatout = T_VTK;
+  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".vtk") == 0) formatout = T_VTK;
+  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".PGM") == 0) formatout = T_PGM;
+  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".pgm") == 0) formatout = T_PGM;
   if (formatout == UNKNOWN)
   {
     fprintf(stderr, "%s: bad output file format\n", argv[0]);
@@ -82,23 +82,20 @@ int main(int argc, char **argv)
   }
 
   filein = fopen(argv[1],"r");
-  if (formatin == MCM) LoadMeshMCM(filein);
-  if (formatin == IFS) LoadMeshIFS(filein);
-  if (formatin == VTK) LoadBuildVTK(filein);
-  if (formatin == CGAL) LoadMeshCGAL(filein);
+  if (formatin == T_MCM) LoadMeshMCM(filein);
+  if (formatin == T_IFS) LoadMeshIFS(filein);
+  if (formatin == T_VTK) LoadBuildVTK(filein);
+  if (formatin == T_CGAL) LoadMeshCGAL(filein);
   fclose(filein);
-  mode = atoi(argv[2]);
-  if (argc > 4) p1 = atof(argv[3]);
-  if (argc > 5) p2 = atof(argv[4]);
 
   fileout = fopen(argv[argc-1],"w");
-  if (formatout == MCM) SaveMeshMCM(fileout);
-  if (formatout == VTK) 
+  if (formatout == T_MCM) SaveMeshMCM(fileout);
+  if (formatout == T_VTK) 
   {
-    genheaderVTK(fileout, "meshconvert output");    
+    genheaderVTK(fileout, (char *)"meshconvert output");    
     SaveMeshVTK(fileout);
   }
-  if (formatout == PGM) 
+  if (formatout == T_PGM) 
   {
     // 0 1 2     ...     rs-2 rs-1
     //   |bxmin  ...  bxmax|

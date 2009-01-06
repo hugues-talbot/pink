@@ -1,4 +1,4 @@
-/* $Id: pgm2ps.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: pgm2ps.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file pgm2ps.c
 
 \brief converts from pgm to ps for illustrating small image configurations
@@ -394,9 +394,8 @@ void psheader(FILE *fd, int32_t w, int32_t h, double scale)
 }
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image, *marker, *label;
   FILE *fd = NULL;

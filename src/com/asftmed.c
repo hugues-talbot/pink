@@ -1,4 +1,4 @@
-/* $Id: asftmed.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: asftmed.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file asftmed.c
 
 \brief alternate sequential filter controled by topology
@@ -34,9 +34,8 @@ The result <B>out.pgm</B> contains the final result I(n).
 #include <lasft.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t rayonmax, rayon;

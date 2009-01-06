@@ -1,4 +1,4 @@
-/* $Id: redt.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: redt.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file redt.c
 
 \brief reverse euclidean distance transform
@@ -34,9 +34,8 @@ DGCI 2003, LNCS 2886, pp. 327-337, 2003.
 #include <ldist.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * res;

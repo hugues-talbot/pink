@@ -1,4 +1,4 @@
-/* $Id: convexhull.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: convexhull.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file convexhull.c
 
 \brief convex hull of a set of points in the 2D plane
@@ -44,9 +44,8 @@ The parameter \b mode selects the format of the result:
 #include <lgeodesic.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t * listepoints;
@@ -132,9 +131,7 @@ int main(argc, argv)
     for (i = 0; i < rs; i++) if (!F[(cs - 1) * rs + i]) G[(cs - 1) * rs + i] = NDG_MAX;
     for (i = 1; i < cs - 1; i++) if (!F[i * rs]) G[i * rs] = NDG_MAX;
     for (i = 1; i < cs - 1; i++) if (!F[i * rs + rs - 1]) G[i * rs + rs - 1] = NDG_MAX;
-writeimage(mark,"_mark");
     for (i = 0; i < N; i++) F[i] = NDG_MAX - F[i]; // inverse image
-writeimage(image,"_image");
     if (! lgeodilat(mark, image, 4, -1))
     {
       fprintf(stderr, "%s: function lgeodilat failed\n", argv[0]);

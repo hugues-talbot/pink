@@ -1,4 +1,4 @@
-/* $Id: mcmesh.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: mcmesh.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
   Gestion d'une triangulation
   Michel Couprie  -  Mai 2001
@@ -8,6 +8,8 @@
   Update Février 2006 : mesures
   Update Avril 2007 : harmonisation de la détection de la convergence
     pour les méthodes Vollmer et al. et Hamam. 
+  Update Décembre 2008 : RegulMeshLaplacian2D
+  Update Janvier 2009 : versions MCM pour éviter les globales 
 */
 
 #include <stdio.h>
@@ -16,16 +18,13 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <math.h>
+#include <mcrbtp.h>
 #include <mcmesh.h>
-#include <mcrbt1.h>
 #include <mcgeo.h>
 #include <mcprobas.h>
 #include <mcutil.h>
 
-#ifndef EPSILON
-#define EPSILON 1E-20
-#endif
-
+#define MCM_EPSILON 1E-20
 #define RMH_EPSILON 1E-2
 
 //#define OPTIMALSTEP
@@ -41,11 +40,14 @@
 
 #define NITERMAX 20000
 
+// Définition d'un mesh en global
+// Conservé pour la compatibilité
+// Utiliser maintenant les versions préfixées MCM (passage du mesh en argument)
 meshtabvertices *Vertices = NULL;
 meshtabfaces *Faces = NULL;
 meshtabedges *Edges = NULL;
 meshtablinks *Links = NULL;
-Rbt * RBT;
+Rbtp * RBTP;
 
 double normevect(double x, double y, double z)
 {
@@ -53,10 +55,10 @@ double normevect(double x, double y, double z)
 }
 
 /* ==================================== */
-meshtabvertices * AllocVertices(int32_t taillemax)
+meshtabvertices * MCM_AllocVertices(int32_t taillemax)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "AllocVertices"
+#define F_NAME "MCM_AllocVertices"
 {
   meshtabvertices * T = (meshtabvertices *)calloc(1,sizeof(meshtabvertices) + taillemax*sizeof(meshvertex));
   if (T == NULL) 
@@ -79,19 +81,19 @@ meshtabvertices * AllocVertices(int32_t taillemax)
   T->max = taillemax;
   T->cur = 0;
   return T;
-} /* AllocVertices() */
+} /* MCM_AllocVertices() */
 
 /* ==================================== */
-void ReAllocVertices(meshtabvertices **A)
+void MCM_ReAllocVertices(meshtabvertices **A)
 /* ==================================== */
 {
   int32_t i, taillemax;
   meshtabvertices * T, *Tmp;
 
-  //printf("ReAllocVertices: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
+  //printf("MCM_ReAllocVertices: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
 
   taillemax = 2 * (*A)->max;  /* alloue le double de l'ancienne taille */ 
-  T = AllocVertices(taillemax);
+  T = MCM_AllocVertices(taillemax);
   T->cur = (*A)->cur;
   memcpy(T->v, (*A)->v, T->cur * sizeof(meshvertex));
   memcpy(T->lab, (*A)->lab, T->cur * sizeof(char));
@@ -101,13 +103,13 @@ void ReAllocVertices(meshtabvertices **A)
   free(Tmp->lab);
   free(Tmp->tmp);
   free(Tmp);
-} /* ReAllocVertices() */
+} /* MCM_ReAllocVertices() */
 
 /* ==================================== */
-meshtabfaces * AllocFaces(int32_t taillemax)
+meshtabfaces * MCM_AllocFaces(int32_t taillemax)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "AllocFaces"
+#define F_NAME "MCM_AllocFaces"
 {
   meshtabfaces * T = (meshtabfaces *)calloc(1,sizeof(meshtabfaces) + taillemax*sizeof(meshface));
   if (T == NULL) 
@@ -118,31 +120,31 @@ meshtabfaces * AllocFaces(int32_t taillemax)
   T->max = taillemax;
   T->cur = 0;
   return T;
-} /* AllocFaces() */
+} /* MCM_AllocFaces() */
 
 /* ==================================== */
-void ReAllocFaces(meshtabfaces **A)
+void MCM_ReAllocFaces(meshtabfaces **A)
 /* ==================================== */
 {
   int32_t i, taillemax;
   meshtabfaces * T, *Tmp;
 
-  //printf("ReAllocFaces: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
+  //printf("MCM_ReAllocFaces: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
 
   taillemax = 2 * (*A)->max;  /* alloue le double de l'ancienne taille */ 
-  T = AllocFaces(taillemax);
+  T = MCM_AllocFaces(taillemax);
   T->cur = (*A)->cur;
   memcpy(T->f, (*A)->f, T->cur * sizeof(meshface));
   Tmp = *A;
   *A = T;
   free(Tmp);
-} /* ReAllocFaces() */
+} /* MCM_ReAllocFaces() */
 
 /* ==================================== */
-meshtabedges * AllocEdges(int32_t taillemax)
+meshtabedges * MCM_AllocEdges(int32_t taillemax)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "AllocEdges"
+#define F_NAME "MCM_AllocEdges"
 {
   meshtabedges * T = (meshtabedges *)calloc(1,sizeof(meshtabedges) + taillemax*sizeof(meshedge));
   if (T == NULL) 
@@ -153,31 +155,31 @@ meshtabedges * AllocEdges(int32_t taillemax)
   T->max = taillemax;
   T->cur = 0;
   return T;
-} /* AllocEdges() */
+} /* MCM_AllocEdges() */
 
 /* ==================================== */
-void ReAllocEdges(meshtabedges **A)
+void MCM_ReAllocEdges(meshtabedges **A)
 /* ==================================== */
 {
   int32_t i, taillemax;
   meshtabedges * T, *Tmp;
 
-  //printf("ReAllocEdges: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
+  //printf("MCM_ReAllocEdges: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
 
   taillemax = 2 * (*A)->max;  /* alloue le double de l'ancienne taille */ 
-  T = AllocEdges(taillemax);
+  T = MCM_AllocEdges(taillemax);
   T->cur = (*A)->cur;
   memcpy(T->e, (*A)->e, T->cur * sizeof(meshedge));
   Tmp = *A;
   *A = T;
   free(Tmp);
-} /* ReAllocEdges() */
+} /* MCM_ReAllocEdges() */
 
 /* ==================================== */
-meshtablinks * AllocLinks(int32_t nvert, int32_t nedge)
+meshtablinks * MCM_AllocLinks(int32_t nvert, int32_t nedge)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "AllocLinks"
+#define F_NAME "MCM_AllocLinks"
 {
   meshtablinks * T = (meshtablinks *)calloc(1,sizeof(meshtablinks));
   if (T == NULL) 
@@ -195,16 +197,53 @@ meshtablinks * AllocLinks(int32_t nvert, int32_t nedge)
     return NULL;
   }
   return T;
-} /* AllocLinks() */
+} /* MCM_AllocLinks() */
+
+/* ==================================== */
+MCM * MCM_Init(int32_t taillemax)
+/* ==================================== */
+{
+  MCM *M;
+  M = (MCM *)malloc(sizeof(MCM));
+  M->Vertices = MCM_AllocVertices(taillemax);
+  M->Faces = MCM_AllocFaces(taillemax);
+  M->Edges = NULL;
+  M->Links = NULL;
+  M->RBTP = CreeRbtpVide(taillemax);
+  if ((M == NULL) || (M->Vertices == NULL) || (M->Faces == NULL) || (M->RBTP == NULL))
+    exit(0);
+  return M;
+} /* InitMesh() */
 
 /* ==================================== */
 void InitMesh(int32_t taillemax)
 /* ==================================== */
 {
-  Vertices = AllocVertices(taillemax);
-  Faces = AllocFaces(taillemax);
-  RBT = CreeRbtVide(taillemax);
+  Vertices = MCM_AllocVertices(taillemax);
+  Faces = MCM_AllocFaces(taillemax);
+  RBTP = CreeRbtpVide(taillemax);
+  if ((Vertices == NULL) || (Faces == NULL) || (RBTP == NULL))
+    exit(0);
 } /* InitMesh() */
+
+/* ==================================== */
+void MCM_Termine(MCM *M)
+/* ==================================== */
+{
+  free(M->Vertices->lab);
+  free(M->Vertices->tmp);
+  free(M->Vertices);
+  free(M->Faces);
+  if (Edges) free(M->Edges);
+  if (Links) 
+  { 
+    free(M->Links->lastneigh); 
+    free(M->Links->neigh); 
+    free(M->Links); 
+  }
+  RbtpTermine(M->RBTP);
+  free(M);
+} /* MCM_TermineMesh() */
 
 /* ==================================== */
 void TermineMesh()
@@ -216,7 +255,7 @@ void TermineMesh()
   free(Faces);
   if (Edges) free(Edges);
   if (Links) { free(Links->lastneigh); free(Links->neigh); free(Links); }
-  RbtTermine(RBT);
+  RbtpTermine(RBTP);
 } /* TermineMesh() */
 
 /* ==================================== */
@@ -236,22 +275,78 @@ int32_t NotIn(
 } /* NotIn() */
 
 /* ==================================== */
+int32_t MCM_AddVertex(MCM *M, double x, double y, double z, int32_t indface)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "MCM_AddVertex"
+{
+  int32_t i;
+  TypRbtpKey point;
+  RbtpElt * re;
+
+  /* cherche si le sommet est deja la */
+  point.x = x; point.y = y; point.z = z;
+  re = RbtpSearch(M->RBTP, point); 
+  if (re != M->RBTP->nil)
+  {
+    i = re->auxdata; /* index du vertex */
+    /* il est la : on lui ajoute la face si elle n'y est pas deja */
+    if (NotIn(indface, M->Vertices->v[i].face, M->Vertices->v[i].nfaces)) 
+    {
+      if (M->Vertices->v[i].nfaces >= MAXADJFACES)
+      {
+        fprintf(stderr, "%s : WARNING: more than %d faces\n", F_NAME, MAXADJFACES);
+        fprintf(stderr, "x=%g, y=%g, z=%g\n", x, y, z);
+        goto skipadd;
+      }
+      M->Vertices->v[i].face[ M->Vertices->v[i].nfaces++ ] = indface;
+    }
+skipadd:
+    return i;
+  } /* if (re != RBTP->nil) */
+  else 
+    return MCM_AddVertexStraight(M, x, y, z, indface);
+} /* MCM_AddVertex() */
+
+/* ==================================== */
+int32_t MCM_AddVertexStraight(MCM *M, double x, double y, double z, int32_t indface)
+/* ==================================== */
+// version sans vérification de présence
+#undef F_NAME
+#define F_NAME "MCM_AddVertexStraight"
+{
+  int32_t i;
+  TypRbtpKey point;
+  point.x = x; point.y = y; point.z = z;
+  if (M->Vertices->cur >= M->Vertices->max) MCM_ReAllocVertices(&(M->Vertices));
+  i = M->Vertices->cur;
+  M->Vertices->cur += 1;
+  M->Vertices->v[i].x = x;
+  M->Vertices->v[i].y = y;
+  M->Vertices->v[i].z = z;
+  M->Vertices->v[i].face[ 0 ] = indface;
+  M->Vertices->v[i].nfaces = 1;
+  (void)RbtpInsert(&(M->RBTP), point, i);
+  return i;
+} /* MCM_AddVertexStraight() */
+
+/* ==================================== */
 int32_t AddVertex(double x, double y, double z, int32_t indface)
 /* ==================================== */
-/* modifie les var. globales Faces, Vertices */
+/* modifie la var. globale Vertices */
 #undef F_NAME
 #define F_NAME "AddVertex"
 {
   int32_t i;
-  TypRbtKey point;
-  RbtElt * re;
+  TypRbtpKey point;
+  RbtpElt * re;
 
   /* cherche si le sommet est deja la */
   point.x = x;
   point.y = y;
   point.z = z;
-  re = RbtSearch(RBT, point); 
-  if (re != RBT->nil)
+  re = RbtpSearch(RBTP, point); 
+  if (re != RBTP->nil)
   {
     i = re->auxdata; /* index du vertex */
     /* il est la : on lui ajoute la face si elle n'y est pas deja */
@@ -267,8 +362,8 @@ int32_t AddVertex(double x, double y, double z, int32_t indface)
     }
 skipadd:
     return i;
-  } /* if (re != RBT->nil) */
-  if (Vertices->cur >= Vertices->max) ReAllocVertices(&Vertices);
+  } /* if (re != RBTP->nil) */
+  if (Vertices->cur >= Vertices->max) MCM_ReAllocVertices(&Vertices);
   i = Vertices->cur;
   Vertices->cur += 1;
   Vertices->v[i].x = x;
@@ -276,10 +371,9 @@ skipadd:
   Vertices->v[i].z = z;
   Vertices->v[i].face[ 0 ] = indface;
   Vertices->v[i].nfaces = 1;
-  (void)RbtInsert(&RBT, point, i);
+  (void)RbtpInsert(&RBTP, point, i);
   return i;
 } /* AddVertex() */
-
 
 /* ==================================== */
 int32_t AddVertexFixe(double x, double y, double z, int32_t indface)
@@ -293,6 +387,28 @@ int32_t AddVertexFixe(double x, double y, double z, int32_t indface)
 } /* AddVertexFixe() */
 
 /* ==================================== */
+void MCM_AddFace(
+		 MCM *M, 
+		 double x1, double y1, double z1, 
+		 double x2, double y2, double z2, 
+		 double x3, double y3, double z3
+		)
+/* ==================================== */
+{
+  int32_t iv1, iv2, iv3, i, indface;
+  if (M->Faces->cur >= M->Faces->max) MCM_ReAllocFaces(&(M->Faces));
+  indface = M->Faces->cur;
+  M->Faces->cur += 1;
+  iv1 = MCM_AddVertex(M, x1, y1, z1, indface);
+  iv2 = MCM_AddVertex(M, x2, y2, z2, indface);
+  iv3 = MCM_AddVertex(M, x3, y3, z3, indface);
+  M->Faces->f[indface].vert[0] = iv1;
+  M->Faces->f[indface].vert[1] = iv2;
+  M->Faces->f[indface].vert[2] = iv3;
+  M->Faces->f[indface].xn = M->Faces->f[indface].yn = M->Faces->f[indface].zn = 0.0;
+} /* MCM_AddFace() */
+
+/* ==================================== */
 void AddFace(double x1, double y1, double z1, 
              double x2, double y2, double z2, 
              double x3, double y3, double z3
@@ -301,7 +417,7 @@ void AddFace(double x1, double y1, double z1,
 /* modifie les var. globales Faces, Vertices */
 {
   int32_t iv1, iv2, iv3, i, indface;
-  if (Faces->cur >= Faces->max) ReAllocFaces(&Faces);
+  if (Faces->cur >= Faces->max) MCM_ReAllocFaces(&Faces);
   indface = Faces->cur;
   Faces->cur += 1;
   iv1 = AddVertex(x1, y1, z1, indface);
@@ -323,7 +439,7 @@ void AddFaceFixe(double x1, double y1, double z1,
 /* modifie les var. globales Faces, Vertices */
 {
   int32_t iv1, iv2, iv3, i, indface;
-  if (Faces->cur >= Faces->max) ReAllocFaces(&Faces);
+  if (Faces->cur >= Faces->max) MCM_ReAllocFaces(&Faces);
   indface = Faces->cur;
   Faces->cur += 1;
   if (fix1)
@@ -350,7 +466,7 @@ int32_t AddEdge(int32_t v1, int32_t v2, int32_t f1, int32_t f2)
 /* modifie la var. globales Edges */
 {
   int32_t indedge;
-  if (Edges->cur >= Edges->max) ReAllocEdges(&Edges);
+  if (Edges->cur >= Edges->max) MCM_ReAllocEdges(&Edges);
   indedge = Edges->cur;
   Edges->cur += 1;
   Edges->e[indedge].v1 = v1;
@@ -490,10 +606,10 @@ void ComputeLinks()
     } /* for j */
     e += n;
   }
-  Links = AllocLinks(nvertices, e);
+  Links = MCM_AllocLinks(nvertices, e);
   if (Links == NULL) 
   {
-    fprintf(stderr, "%s : AllocLinks failed\n", F_NAME);
+    fprintf(stderr, "%s : MCM_AllocLinks failed\n", F_NAME);
     exit(0);
   }  
   e = 0; // pour indicer le tableau "neigh"
@@ -544,7 +660,7 @@ void NormaleFace(int32_t f, vec3 normale)
   norm = normale[0] * normale[0] + normale[1] * normale[1] + normale[2] * normale[2];
   norm = sqrt(norm);
 
-  if (norm < EPSILON)
+  if (norm < MCM_EPSILON)
   {
     fprintf(stderr, "%s: warning: cannot compute normal\n", F_NAME);
   }
@@ -865,7 +981,7 @@ void RegulMeshLaplacian(int32_t niters)
 /* ==================================== */
 /* 
    ATTENTION : utilise et modifie les champs xp, yp, zp du vertex V.
-   Les sommets dont les labels sont non nuls resteront a leur position initiale .
+   Les sommets dont les labels sont non nuls resteront a leur position initiale.
 */
 #undef F_NAME
 #define F_NAME "RegulMeshLaplacian"
@@ -882,7 +998,7 @@ void RegulMeshLaplacian(int32_t niters)
   alpha = 1.0 / (4 * a);
 
 #ifdef MESURE
-  Edges = AllocEdges(1);
+  Edges = MCM_AllocEdges(1);
   ComputeEdges();
 #endif
 
@@ -951,6 +1067,81 @@ void RegulMeshLaplacian(int32_t niters)
     }
   } // for (iter = 0; iter < niters; iter++)
 } /* RegulMeshLaplacian() */
+
+/* ==================================== */
+void RegulMeshLaplacian2D(int32_t niters)
+/* ==================================== */
+/* 
+   ATTENTION : utilise et modifie les champs xp, yp, zp du vertex V.
+   Les sommets du bord resteront a leur position initiale.
+   Les sommets dont les labels sont non nuls resteront a leur position initiale.
+*/
+#undef F_NAME
+#define F_NAME "RegulMeshLaplacian2D"
+{
+  int32_t i, j, k, n, iter, a;
+  meshvertex V;
+  meshface F;
+  int32_t link[MAXADJFACES];
+  double x, y, z, sx, sy, sz, norme, alpha;
+
+  a = 0; // calcule a = nb max de voisins pour 1 vertex
+  for (i = 0; i < Vertices->cur; i++)
+    if (Vertices->v[i].nfaces > a) a = Vertices->v[i].nfaces; 
+  alpha = 1.0 / (4 * a);
+
+  for (iter = 0; iter < niters; iter++)
+  {
+    for (i = 0; i < Vertices->cur; i++)
+    {
+      if (Vertices->lab[i] == 0)
+      {                              /* pour chaque sommet de la grille dont le label est nul */
+        V = Vertices->v[i];
+        n = 0;
+        for (j = 0; j < V.nfaces; j++) /* parcourt les faces adjacentes */
+          {                                      /* et calcule le link */
+          F = Faces->f[V.face[j]];
+          k = F.vert[0]; if ((k != i) && NotIn(k, link, n)) link[n++] = k;
+          k = F.vert[1]; if ((k != i) && NotIn(k, link, n)) link[n++] = k;
+          k = F.vert[2]; if ((k != i) && NotIn(k, link, n)) link[n++] = k;
+        } /* for j */
+        if (n == V.nfaces) // sommet non bord
+        {
+	  sx = sy = sz = 0.0;
+	  for (j = 0; j < n; j++)
+	  {
+	    sx += Vertices->v[link[j]].x;
+	    sy += Vertices->v[link[j]].y;
+	    sz += Vertices->v[link[j]].z;
+	  } /* for j */
+	  x = sx / n; y = sy / n; z = sz / n;
+	  Vertices->v[i].xp = (1.0 - n * alpha) * Vertices->v[i].x + n * alpha * x;
+	  Vertices->v[i].yp = (1.0 - n * alpha) * Vertices->v[i].y + n * alpha * y;
+	  Vertices->v[i].zp = (1.0 - n * alpha) * Vertices->v[i].z + n * alpha * z;
+	} /* if ... */
+	else
+	{
+	  Vertices->v[i].xp = Vertices->v[i].x;
+	  Vertices->v[i].yp = Vertices->v[i].y;
+	  Vertices->v[i].zp = Vertices->v[i].z;
+	} /* else */
+      }
+      else
+      {
+	Vertices->v[i].xp = Vertices->v[i].x;
+	Vertices->v[i].yp = Vertices->v[i].y;
+	Vertices->v[i].zp = Vertices->v[i].z;
+      } /* else */
+    } /* for i */
+    // stocke le resultat dans (x,y,z) 
+    for (i = 0; i < Vertices->cur; i++)
+    {
+      Vertices->v[i].x = Vertices->v[i].xp;
+      Vertices->v[i].y = Vertices->v[i].yp;
+      Vertices->v[i].z = Vertices->v[i].zp;
+    }
+  } // for (iter = 0; iter < niters; iter++)
+} /* RegulMeshLaplacian2D() */
 
 /* ==================================== */
 void RegulMeshHamam(double theta)
@@ -1439,7 +1630,7 @@ void RegulMeshHamam2(int32_t nitermax)
   if (Links == NULL) ComputeLinks();
 
 #ifdef MESURE
-  Edges = AllocEdges(1);
+  Edges = MCM_AllocEdges(1);
   ComputeEdges();
 #endif
 
@@ -2305,7 +2496,7 @@ void CalculNormales()
     /* normalise la normale */
     norm = normale[0] * normale[0] + normale[1] * normale[1] + normale[2] * normale[2];
     norm = sqrt(norm);
-    if (norm < EPSILON)
+    if (norm < MCM_EPSILON)
     {
       fprintf(stderr, "%s: warning: cannot compute normal for vertex %d\n", F_NAME, i);
     }
@@ -2347,7 +2538,7 @@ void CalculNormalesFaces()
     /* normalise la normale */
     norm = normale[0] * normale[0] + normale[1] * normale[1] + normale[2] * normale[2];
     norm = sqrt(norm);
-    if (norm < EPSILON)
+    if (norm < MCM_EPSILON)
     {
       fprintf(stderr, "%s: warning: cannot compute normal for vertex %d\n", F_NAME, i);
     }
@@ -2359,6 +2550,53 @@ void CalculNormalesFaces()
     }
   } /* for i */
 } /* CalculNormalesFaces() */
+
+/* ==================================== */
+void MCM_Print(MCM *M)
+/* ==================================== */
+{
+  int32_t i, j;
+  printf(" ========== VERTICES ===========\n");
+  for (i = 0; i < M->Vertices->cur; i++)
+  {
+    printf("v[%d]: x=%g, y=%g, z=%g;  ", i, 
+           M->Vertices->v[i].x, M->Vertices->v[i].y, M->Vertices->v[i].z);
+    printf("v[%d]: xp=%g, yp=%g, zp=%g;  faces ", i, 
+       M->Vertices->v[i].xp, M->Vertices->v[i].yp, M->Vertices->v[i].zp);
+    for (j = 0; j < M->Vertices->v[i].nfaces; j++)
+      printf("%d  ", M->Vertices->v[i].face[j]);
+    printf("\n");
+  }
+  printf(" ============ FACES ===========\n");
+  for (i = 0; i < M->Faces->cur; i++)
+  {
+    printf("f[%d]: v1=%d, v2=%d, v3=%d ; normale = %g %g %g\n", i, 
+           M->Faces->f[i].vert[0], M->Faces->f[i].vert[1], M->Faces->f[i].vert[2],
+           M->Faces->f[i].xn, M->Faces->f[i].yn, M->Faces->f[i].zn);
+  }
+  if (M->Edges)
+  {
+    printf(" ============ EDGES ===========\n");
+    for (i = 0; i < M->Edges->cur; i++)
+    {
+      printf("e[%d]: v1=%d, v2=%d, f1=%d, f2=%d, curv=%g\n", i, 
+             M->Edges->e[i].v1, M->Edges->e[i].v2, M->Edges->e[i].f1, M->Edges->e[i].f2,
+             M->Edges->e[i].curv);
+    }
+  }
+  if (M->Links)
+  {
+    printf(" ============ LINKS ===========\n");
+    j = 0;
+    for (i = 0; i < M->Vertices->cur; i++)
+    {
+      printf("neigh[%d]: ", i);
+      for (; j <= M->Links->lastneigh[i]; j++)
+        printf("%d ", M->Links->neigh[j]);
+      printf("\n");
+    }
+  }
+} /* MCM_Print() */
 
 /* ==================================== */
 void PrintMesh()
@@ -2417,7 +2655,7 @@ int32_t main()
   (void)AddFace(0,0,0, 1,0,0, 0,1,0);
   (void)AddFace(0,0,0, 1,0,0, 0,0,1);
   (void)AddFace(0,0,0, 0,0,1, 0,1,0);
-  Edges = AllocEdges(1);
+  Edges = MCM_AllocEdges(1);
   ComputeEdges();
   ComputeLinks();
   ComputeCurvatures();

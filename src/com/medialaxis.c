@@ -1,4 +1,4 @@
-/* $Id: medialaxis.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: medialaxis.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file medialaxis.c
 
 \brief medial axis transform
@@ -39,9 +39,8 @@ For the euclidean distance, set <B>distance</B> to 0.
 #include <lmedialaxis.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * res;
@@ -74,5 +73,3 @@ int main(argc, argv)
 
   return 0;
 } /* main */
-
-

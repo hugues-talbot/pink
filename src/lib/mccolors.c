@@ -1,4 +1,4 @@
-/* $Id: mccolors.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: mccolors.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -28,24 +28,24 @@
 char * colorname(double h)
 /* ======================================================================== */
 {
-  if ((h < 30.0) || (h >= 330.0)) return CN_RED;
-  if ((h >= 30.0) && (h < 90.0)) return CN_YELLOW;
-  if ((h >= 90.0) && (h < 150.0)) return CN_GREEN;
-  if ((h >= 150.0) && (h < 210.0)) return CN_CYAN;
-  if ((h >= 210.0) && (h < 270.0)) return CN_BLUE;
-  if ((h >= 270.0) && (h < 330.0)) return CN_MAGENTA;
+  if ((h < 30.0) || (h >= 330.0)) return (char *)CN_RED;
+  if ((h >= 30.0) && (h < 90.0)) return (char *)CN_YELLOW;
+  if ((h >= 90.0) && (h < 150.0)) return (char *)CN_GREEN;
+  if ((h >= 150.0) && (h < 210.0)) return (char *)CN_CYAN;
+  if ((h >= 210.0) && (h < 270.0)) return (char *)CN_BLUE;
+  if ((h >= 270.0) && (h < 330.0)) return (char *)CN_MAGENTA;
 }
 
 /* ======================================================================== */
 char * nomcouleur(double h)
 /* ======================================================================== */
 {
-  if ((h < 30.0) || (h >= 330.0)) return CN_ROUGE;
-  if ((h >= 30.0) && (h < 90.0)) return CN_JAUNE;
-  if ((h >= 90.0) && (h < 150.0)) return CN_VERT;
-  if ((h >= 150.0) && (h < 210.0)) return CN_CYAN;
-  if ((h >= 210.0) && (h < 270.0)) return CN_BLEU;
-  if ((h >= 270.0) && (h < 330.0)) return CN_MAGENTA;
+  if ((h < 30.0) || (h >= 330.0)) return (char *)CN_ROUGE;
+  if ((h >= 30.0) && (h < 90.0)) return (char *)CN_JAUNE;
+  if ((h >= 90.0) && (h < 150.0)) return (char *)CN_VERT;
+  if ((h >= 150.0) && (h < 210.0)) return (char *)CN_CYAN;
+  if ((h >= 210.0) && (h < 270.0)) return (char *)CN_BLEU;
+  if ((h >= 270.0) && (h < 330.0)) return (char *)CN_MAGENTA;
 }
 
 /* ======================================================================== */

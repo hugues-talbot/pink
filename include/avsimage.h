@@ -16,10 +16,10 @@ typedef struct PointSet {
 } PointSet;
 
 //Image data access
-#define point2d(I, p, rs) (I[(p.y)*rs + (p.x)])
-#define point3d(I, p, ps, rs) (I[(p.z)*ps + (p.y)*rs + (p.x)])
-#define pixel(I, x, y, rs) (I[(y)*(rs) + (x)])
-#define voxel(I, x, y, z, ps, rs) (I[(z)*(ps) + (y)*(rs) + (x)])
+#define AVS_point2d(I, p, rs) (I[(p.y)*rs + (p.x)])
+#define AVS_point3d(I, p, ps, rs) (I[(p.z)*ps + (p.y)*rs + (p.x)])
+#define AVS_pixel(I, x, y, rs) (I[(y)*(rs) + (x)])
+#define AVS_voxel(I, x, y, z, ps, rs) (I[(z)*(ps) + (y)*(rs) + (x)])
 
 //Additional functions
 extern int32_t findMaxLong(uint32_t *gg, int32_t n);

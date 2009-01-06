@@ -1,4 +1,4 @@
-/* $Id: skel_MK2.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: skel_MK2.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file skel_MK2.c
 
 \brief parallel 2D binary ultimate skeleton
@@ -30,9 +30,8 @@ then the points of this image will be left unchanged.
 #include <lskelpar.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * inhibit = NULL;

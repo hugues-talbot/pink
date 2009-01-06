@@ -1,4 +1,4 @@
-/* $Id: catpgm.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: catpgm.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file catpgm.c
 
 \brief catenates a sequence of 2d (resp. 1d) images into a 3d (resp. 2d) image
@@ -32,9 +32,8 @@ and <B>index_end</B> specify respectively the first and the last index of the se
 #include <mcutil.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   int32_t i, j, x, debut, fin, seqsize;
   char bufname[1024];

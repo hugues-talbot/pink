@@ -1,4 +1,4 @@
-/* $Id: l2dkhalimsky.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* $Id: l2dkhalimsky.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* Operateurs agissant dans la grille de Khalimsky 2d */
 /* Michel Couprie - mars 2000 */
 
@@ -416,7 +416,7 @@ int32_t l2dlabelextrema(
   int32_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *F;
-  int32_t *LAB, label;
+  uint32_t *LAB, label;
   Lifo * LIFO;
   int32_t tab[27]; 
   int32_t n, k;
@@ -780,7 +780,7 @@ else
 } /* l2dtopotess() */
 
 /* =============================================================== */
-int32_t testlocal(int32_t w, int32_t *LAB, int32_t rs, int32_t cs)
+int32_t testlocal(int32_t w, uint32_t *LAB, int32_t rs, int32_t cs)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "testlocal"
@@ -825,7 +825,7 @@ int32_t testlocal(int32_t w, int32_t *LAB, int32_t rs, int32_t cs)
 } /* testlocal() */
 
 /* =============================================================== */
-int32_t testlocalmask(int32_t w, int32_t *LAB, uint8_t *MASK, int32_t rs, int32_t cs)
+int32_t testlocalmask(int32_t w, uint32_t *LAB, uint8_t *MASK, int32_t rs, int32_t cs)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "testlocalmask"
@@ -885,7 +885,7 @@ int32_t l2dvoronoi(struct xvimage * lab, struct xvimage * mask)
   int32_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *MASK;
-  int32_t *LAB;
+  uint32_t *LAB;
   Lifo * LIFO;
   Lifo * LIFOAUX;
   Lifo * LIFOVAL;

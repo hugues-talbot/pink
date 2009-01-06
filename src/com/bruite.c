@@ -1,4 +1,4 @@
-/* $Id: bruite.c,v 1.2 2008-12-15 07:01:27 mcouprie Exp $ */
+/* $Id: bruite.c,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file bruite.c
 
 \brief adds noise to an image
@@ -76,9 +76,8 @@ void usage(int argc, char **argv)
 }
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t i,j;

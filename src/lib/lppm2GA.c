@@ -472,71 +472,6 @@ int32_t lpgm2ga4d(struct xvimage4D *im, struct GA4d * ga, int32_t param)
 }
 
 
-//#define MAX_NORM 1
-
-/* Construit un graphe d'arete 2D 4-connexe a partir d'une image rgb */
-/* Chaque arete correspond soit au max des differences d'intensite   */
-/* entre ses extremites sur  les 3  canaux                           */
-/* soit a la norme euclidienne entre les vecteurs couleurs des deux  */
-/* pixels extremites                                                 */
-int32_t lppm2ga(struct xvimage *r, struct xvimage *v, struct xvimage *b, struct xvimage *ga, int32_t param)
-{
-  int32_t i,j;                                /* index muet */
-  int32_t rs = rowsize(ga);                   /* taille ligne */ 
-  int32_t cs = colsize(ga);                   /* taille colone */
-  int32_t N = rs * cs;                        /* taille image */
-  uint8_t *R = UCHARDATA(r);        /* composante rouge */
-  uint8_t *V = UCHARDATA(v);        /* composante verte */
-  uint8_t *B = UCHARDATA(b);        /* composante bleue */
-  uint8_t *GA = UCHARDATA(ga);      /* graphe d'arete est suppose deja allouer */
-  
-  /* vérifier que les tailles des diférentes images sont cohérentes */
-  switch(param)
-  {
-  case 0:
-  for(j = 0; j < cs; j++)
-    for(i = 0; i < rs - 1; i++)
-    {
-      GA[j * rs + i] = (uint8_t)(max(abs( (int32_t)(B[j*rs+i]) - (int32_t)(B[j*rs+i+1]) ),
-			   max(abs( (int32_t)(R[j*rs+i]) - (int32_t)(R[j*rs+i+1]) ),
-			       abs( (int32_t)(V[j*rs+i]) - (int32_t)(V[j*rs+i+1])))));
-    }
-  for(j = 0; j < cs-1; j++)
-    for(i = 0; i < rs; i++)
-    {
-      GA[N + j * rs + i] =(uint8_t)(max(abs((int32_t)(B[j*rs+i]) - (int32_t)(B[j*rs+i+rs])),
-			       max(abs( (int32_t)(R[j*rs+i]) - (int32_t)(R[j*rs+i+rs]) ),
-				   abs( (int32_t)(V[j*rs+i]) - (int32_t)(V[j*rs+i+rs])))));
-    }
-  break;
-  case 1:
-  for(j = 0; j < cs; j++)
-    for(i = 0; i < rs - 1; i++)
-    {
-      GA[j * rs + i] = (uint8_t)( 0.57 * sqrt ( 
-					   ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+1])) * ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+1])) +  
-					   ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+1])) * ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+1])) +  
-					   ( (double)(V[j*rs+i]) - (double)(V[j*rs+i+1])) * ( (double)(V[j*rs+i]) - (double)(V[j*rs+i+1]))
-					   ));
-      // if (GA[j * rs + i] < 8 )  GA[j * rs + i] = 0;
-    }
-   for(j = 0; j < cs-1; j++)
-    for(i = 0; i < rs; i++)
-    {      
-      GA[N + j * rs + i] = (uint8_t)( 0.57 * sqrt ( 
-					   ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+rs]))* ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+rs])) +  
-					   ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+rs]))* ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+rs])) +  
-					   ( (double)(V[j*rs+i]) - (double)(V[j*rs+i+rs]))* ( (double)(V[j*rs+rs]) - (double)(V[j*rs+i+rs]))
-					   ));
-      //  if (GA[N + j * rs + i] < 8)  GA[N + j * rs + i] = 0;
-    }
-   break;
-  case 2:
-   laffinitynetwork(r, v, b, ga);
-  }
-  return 1;
-}
-
 int16_t (**sphere_points)[3];
 /* Construit un graphe d'arete 2D 4-connexe a partir d'une image rgb */
 /* Chaque arete a pour valeur l'inverse de la composante homogénéité */
@@ -913,6 +848,71 @@ int32_t laffinitynetwork(struct xvimage *r, struct xvimage *v, struct xvimage *b
   free(homogeneity_map);
   free(scale_image);
   printf("av calcu;le de affinite\n");
+  return 1;
+}
+
+//#define MAX_NORM 1
+
+/* Construit un graphe d'arete 2D 4-connexe a partir d'une image rgb */
+/* Chaque arete correspond soit au max des differences d'intensite   */
+/* entre ses extremites sur  les 3  canaux                           */
+/* soit a la norme euclidienne entre les vecteurs couleurs des deux  */
+/* pixels extremites                                                 */
+int32_t lppm2ga(struct xvimage *r, struct xvimage *v, struct xvimage *b, struct xvimage *ga, int32_t param)
+{
+  int32_t i,j;                                /* index muet */
+  int32_t rs = rowsize(ga);                   /* taille ligne */ 
+  int32_t cs = colsize(ga);                   /* taille colone */
+  int32_t N = rs * cs;                        /* taille image */
+  uint8_t *R = UCHARDATA(r);        /* composante rouge */
+  uint8_t *V = UCHARDATA(v);        /* composante verte */
+  uint8_t *B = UCHARDATA(b);        /* composante bleue */
+  uint8_t *GA = UCHARDATA(ga);      /* graphe d'arete est suppose deja allouer */
+  
+  /* vérifier que les tailles des diférentes images sont cohérentes */
+  switch(param)
+  {
+  case 0:
+  for(j = 0; j < cs; j++)
+    for(i = 0; i < rs - 1; i++)
+    {
+      GA[j * rs + i] = (uint8_t)(max(abs( (int32_t)(B[j*rs+i]) - (int32_t)(B[j*rs+i+1]) ),
+			   max(abs( (int32_t)(R[j*rs+i]) - (int32_t)(R[j*rs+i+1]) ),
+			       abs( (int32_t)(V[j*rs+i]) - (int32_t)(V[j*rs+i+1])))));
+    }
+  for(j = 0; j < cs-1; j++)
+    for(i = 0; i < rs; i++)
+    {
+      GA[N + j * rs + i] =(uint8_t)(max(abs((int32_t)(B[j*rs+i]) - (int32_t)(B[j*rs+i+rs])),
+			       max(abs( (int32_t)(R[j*rs+i]) - (int32_t)(R[j*rs+i+rs]) ),
+				   abs( (int32_t)(V[j*rs+i]) - (int32_t)(V[j*rs+i+rs])))));
+    }
+  break;
+  case 1:
+  for(j = 0; j < cs; j++)
+    for(i = 0; i < rs - 1; i++)
+    {
+      GA[j * rs + i] = (uint8_t)( 0.57 * sqrt ( 
+					   ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+1])) * ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+1])) +  
+					   ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+1])) * ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+1])) +  
+					   ( (double)(V[j*rs+i]) - (double)(V[j*rs+i+1])) * ( (double)(V[j*rs+i]) - (double)(V[j*rs+i+1]))
+					   ));
+      // if (GA[j * rs + i] < 8 )  GA[j * rs + i] = 0;
+    }
+   for(j = 0; j < cs-1; j++)
+    for(i = 0; i < rs; i++)
+    {      
+      GA[N + j * rs + i] = (uint8_t)( 0.57 * sqrt ( 
+					   ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+rs]))* ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+rs])) +  
+					   ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+rs]))* ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+rs])) +  
+					   ( (double)(V[j*rs+i]) - (double)(V[j*rs+i+rs]))* ( (double)(V[j*rs+rs]) - (double)(V[j*rs+i+rs]))
+					   ));
+      //  if (GA[N + j * rs + i] < 8)  GA[N + j * rs + i] = 0;
+    }
+   break;
+  case 2:
+   laffinitynetwork(r, v, b, ga);
+  }
   return 1;
 }
 

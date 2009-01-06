@@ -1,4 +1,4 @@
-/* $Id: volselnb.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: volselnb.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file volselnb.c
 
 \brief volume based segmentation by selection of a given number or components
@@ -27,9 +27,8 @@ Connexity = <B>connex</B> ; desired number of components = <B>nb</B>.
 #include <lattribvol.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t connex, param;

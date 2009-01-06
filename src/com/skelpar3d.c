@@ -1,4 +1,4 @@
-/* $Id: skelpar3d.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: skelpar3d.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file skelpar3d.c
 
 \brief parallel 3D binary skeleton
@@ -50,9 +50,8 @@ then the points of this image will be left unchanged.
 #include <lmedialaxis.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * inhibit = NULL;
@@ -153,7 +152,6 @@ int main(argc, argv)
 	  fprintf(stderr, "%s: ldistaxetopo3 failed\n", argv[0]);
 	  exit(1);
 	} 
-	writeimage(disttopo, "_disttopo");
 	freeimage(disttopo);
       } break;
     case 7:

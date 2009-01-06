@@ -1,4 +1,4 @@
-/* $Id: drawlines.c,v 1.3 2008-12-11 13:46:16 mcouprie Exp $ */
+/* $Id: drawlines.c,v 1.4 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file drawlines.c
 
 \brief draw line segments which are specified by a text file
@@ -37,13 +37,13 @@ x31 y31 x32 y32<br>
 #include <mcimage.h>
 #include <mcutil.h>
 #include <ldraw.h>
+#include <lbresen.h>
 
 //#define VERBOSE
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t i, j, X1, Y1, X2, Y2, X, Y;

@@ -26,9 +26,8 @@ of the smoothed histogram of \b in.pgm (masked by the binary image
 #include <lhisto.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * imhist;

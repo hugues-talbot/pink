@@ -1,18 +1,18 @@
-/* $Id: mciomesh.h,v 1.2 2008-12-19 13:10:43 mcouprie Exp $ */
-#define UNKNOWN -1
-#define POV   0  /* PovRay 3.1 */ 
-#define COL   1  /* private format (ESIEE - IFC students) */
-#define MCM   2  /* private format (MC) */
-#define AC    3  /* AC3D format */
-#define POVB  4  /* PovRay 3.1 without header and footer */ 
-#define GL    5  /* Structures de donnees C pour OpenGL */
-#define DXF   6  /* DXF */
-#define VTK   7  /* VTK PolyData */
-#define IFS   8  /* Indexed Face Set (Brown University) */
-#define PGM   9  /* 3D pgm extension (point clouds only) */
-#define RAW  10  /* private format for the "mesh" software: see http://mesh.berlios.de/ */
-#define CGAL 11  /* CGAL output format  */
+/* $Id: mciomesh.h,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
 
+const int UNKNOWN = -1;
+const int T_POV =   0;  /* PovRay 3.1 */ 
+const int T_COL =   1;  /* private format (ESIEE - IFC students) */
+const int T_MCM =   2;  /* private format (MC) */
+const int T_AC =    3;  /* AC3D format */
+const int T_POVB =  4;  /* PovRay 3.1 without header and footer */ 
+const int T_GL =    5;  /* Structures de donnees C pour OpenGL */
+const int T_DXF =   6;  /* DXF */
+const int T_VTK =   7;  /* VTK PolyData */
+const int T_IFS =   8;  /* Indexed Face Set (Brown University) */
+const int T_PGM =   9;  /* 3D pgm extension (point clouds only) */
+const int T_RAW =  10;  /* private format for the "mesh" software: see http://mesh.berlios.de/ */
+const int T_CGAL = 11;  /* CGAL output format  */
 
 extern void genheaderPOV(FILE *fileout, int32_t obj_id, meshbox MB);
 extern void genheaderAC(FILE *fileout, meshbox MB, double red, double green, double blue, char *name);
@@ -48,6 +48,7 @@ extern void genfaceDXF(FILE *fileout,
              double xp2, double yp2, double zp2, 
              double xp3, double yp3, double zp3);
 extern void SaveMeshPOV(FILE *fileout);
+extern void SaveMeshSPOV(FILE *fileout);
 extern void SaveMeshCOL(FILE *fileout, int32_t obj_id);
 extern void SaveMeshMCM(FILE *fileout);
 extern void SaveMeshVTK(FILE *fileout);
@@ -62,3 +63,5 @@ extern void LoadBuildMCM(FILE *filein);
 extern void LoadBuildVTK(FILE *filein);
 extern void LoadBuildIFS(FILE *filein);
 extern void LoadBuildCGAL(FILE *filein);
+
+extern void MCM_SaveVTK(MCM *M, FILE *fileout);

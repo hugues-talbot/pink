@@ -1,4 +1,4 @@
-/* $Id: medianfilter.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: medianfilter.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file medianfilter.c
 
 \brief median filter 
@@ -32,9 +32,8 @@ with rank = 0.5 .
 #include <lfiltreordre.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * elem;

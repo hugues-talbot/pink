@@ -1,4 +1,4 @@
-/* $Id: skel2pov.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: skel2pov.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file skel2pov.c
 
 \brief generation of a 3d illustration from a curvilinear skeleton
@@ -31,25 +31,25 @@ Generation of a 3d illustration from a curvilinear skeleton.
 #define SCALEY 1
 #define SCALEZ 1
 
-#define HEAD1 "#include \"colors.inc\""
-#define HEAD2 "#include \"shapes.inc\""
-#define HEAD3 "#include \"textures.inc\""
-#define HEAD4 "#include \"stones.inc\""
+#define HEAD1 (char*)"#include \"colors.inc\""
+#define HEAD2 (char*)"#include \"shapes.inc\""
+#define HEAD3 (char*)"#include \"textures.inc\""
+#define HEAD4 (char*)"#include \"stones.inc\""
 
-#define DECL1  "#declare ColIsol = color red 1.0 green 1.0 blue 0.0;"
-#define DECL2  "#declare ColCurve = color red 0.0 green 0.0 blue 1.0;"
-#define DECL3  "#declare ColEnd  = color red 1.0 green 0.0 blue 0.0;"
-#define DECL4  "#declare ColJunc = color red 0.0 green 1.0 blue 0.0;"
-#define DECL5  "#declare RadSphere = 5;"
-#define DECL6  "#declare RadCylinder = 1;"
+#define DECL1  (char*)"#declare ColIsol = color red 1.0 green 1.0 blue 0.0;"
+#define DECL2  (char*)"#declare ColCurve = color red 0.0 green 0.0 blue 1.0;"
+#define DECL3  (char*)"#declare ColEnd  = color red 1.0 green 0.0 blue 0.0;"
+#define DECL4  (char*)"#declare ColJunc = color red 0.0 green 1.0 blue 0.0;"
+#define DECL5  (char*)"#declare RadSphere = 5;"
+#define DECL6  (char*)"#declare RadCylinder = 1;"
 
-#define LIGHT0 "light_source { <0,0,-200> color White }"
-#define LIGHT1 "light_source { <200,400,-300> color White }"
-#define LIGHT2 "light_source { <-200,-400,-150> color Gray80 }"
-#define LIGHT3 "light_source { <200,-100,150> color Gray80 }"
-#define LIGHT4 "light_source { <-200,0,0> color Gray80 }"
-#define DEBIMAGE "#declare Image = union {"
-#define FINIMAGE "} // Image"
+#define LIGHT0 (char*)"light_source { <0,0,-200> color White }"
+#define LIGHT1 (char*)"light_source { <200,400,-300> color White }"
+#define LIGHT2 (char*)"light_source { <-200,-400,-150> color Gray80 }"
+#define LIGHT3 (char*)"light_source { <200,-100,150> color Gray80 }"
+#define LIGHT4 (char*)"light_source { <-200,0,0> color Gray80 }"
+#define DEBIMAGE (char*)"#declare Image = union {"
+#define FINIMAGE (char*)"} // Image"
 
 /* =============================================================== */
 void camera (FILE * fd, double x, double y, double z, double lx, double ly, double lz)
@@ -104,9 +104,8 @@ static void barycentre(pcell p, int32_t rs, int32_t ps, double *x, double *y, do
 } /* barycentre() */
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   skel * S;
   FILE *fd = NULL;
@@ -165,7 +164,7 @@ int main(argc, argv)
   {
     barycentre(S->tskel[i].pts, rs, ps, &x, &y, &z);
     X[i] = x; Y[i] = y; Z[i] = z;
-    sphere(fd, x, y, z, "RadSphere", "ColIsol");
+    sphere(fd, x, y, z, (char*)"RadSphere", (char*)"ColIsol");
     npoints++; bx += x; by += y; bz += z;
   }
 
@@ -173,7 +172,7 @@ int main(argc, argv)
   {
     barycentre(S->tskel[i].pts, rs, ps, &x, &y, &z);
     X[i] = x; Y[i] = y; Z[i] = z;
-    sphere(fd, x, y, z, "RadSphere", "ColEnd");
+    sphere(fd, x, y, z, (char*)"RadSphere", (char*)"ColEnd");
     npoints++; bx += x; by += y; bz += z;
   }
 
@@ -181,7 +180,7 @@ int main(argc, argv)
   {
     barycentre(S->tskel[i].pts, rs, ps, &x, &y, &z);
     X[i] = x; Y[i] = y; Z[i] = z;
-    sphere(fd, x, y, z, "RadSphere", "ColJunc");    
+    sphere(fd, x, y, z, (char*)"RadSphere", (char*)"ColJunc");    
     npoints++; bx += x; by += y; bz += z;
   }
 
@@ -199,7 +198,7 @@ int main(argc, argv)
     k = p->next->val;
     if (j > k)
     {
-      cylinder(fd, X[j], Y[j], Z[j], X[k], Y[k], Z[k], "RadCylinder", "ColCurve");    
+      cylinder(fd, X[j], Y[j], Z[j], X[k], Y[k], Z[k], (char*)"RadCylinder", (char*)"ColCurve");    
     }
   } // for i
 

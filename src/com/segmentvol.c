@@ -1,4 +1,4 @@
-/* $Id: segmentvol.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: segmentvol.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file segmentvol.c
 
 \brief segmentation by filtering components on a volume criterion
@@ -28,9 +28,8 @@ Connexity = <B>connex</B> ; volume threshold = <B>vol</B>.
 #include <lattribvol.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t connex, param;

@@ -1,4 +1,4 @@
-/* $Id: llpetopo.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: llpetopo.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* operateur de calcul de la ligne de partage des eaux topologique */
 /* utilise une File d'Attente Hierarchique */
 /* utilise un arbre des bassins versants (captation basin tree, CBT) */
@@ -46,11 +46,11 @@
     si |diffanc| == 1
       M[x] = first(diffanc)
     sinon
-      new = CreateCell(CBT)
-      M[x] = new
-      SetData(CBT, new, F[x] + 1)
+      newcell = CreateCell(CBT)
+      M[x] = newcell
+      SetData(CBT, newcell, F[x] + 1)
       pour tout a dans diffanc 
-        SetFather(CBT, a, new)
+        SetFather(CBT, a, newcell)
       finpour
     fin si
     pour tout y dans gamma4(x) pas deja dans FAH
@@ -140,10 +140,10 @@
   tant que FAH non vide
     x = FahPop(FAH);
     etiqcc = liste des M[y], y dans gamma4(x), Data(CBT,M(y)) <= F(x)
-    new = LowComAnc(CBT, etiqcc, SOURCE[x])
-    si new != NIL et Data(CBT, new) - 1 < F[x]  // point abaissable
-      F[x] = Data(CBT, new) - 1
-      M[x] = new
+    newcell = LowComAnc(CBT, etiqcc, SOURCE[x])
+    si newcell != NIL et Data(CBT, newcell) - 1 < F[x]  // point abaissable
+      F[x] = Data(CBT, newcell) - 1
+      M[x] = newcell
       pour tout y dans gamma4(x) pas deja dans FAH
         FahPush(FAH, y, SOURCE[y])
       finpour
@@ -202,7 +202,7 @@ int32_t llpetopo(
   int32_t nombre_examens = 0;
   int32_t etiqcc[4];
   int32_t ncc;
-  int32_t new;
+  int32_t newcell;
 
   if (depth(image) != 1) 
   {
@@ -311,11 +311,11 @@ int32_t llpetopo(
       M[x] = etiqcc[0];
     else
     {
-      new = CreateCell(CBT, &nbcell, nbmaxcell);
-      M[x] = new;
-      SetData(CBT, new, SOURCE[x]);    /* conceptuellement : SOURCE[x] + 1 */
+      newcell = CreateCell(CBT, &nbcell, nbmaxcell);
+      M[x] = newcell;
+      SetData(CBT, newcell, SOURCE[x]);    /* conceptuellement : SOURCE[x] + 1 */
       for (i = 0; i < ncc; i++)
-        SetFather(CBT, etiqcc[i], new);
+        SetFather(CBT, etiqcc[i], newcell);
     }
 
     for (k = 0; k < 8; k += 2)     /* parcourt les voisins en 4-connexite */
@@ -501,13 +501,13 @@ int32_t llpetopo(
       } /* if y */
     } /* for k */
 
-    new = LowComAnc(CBT, ncc, etiqcc, SOURCE[x]);
+    newcell = LowComAnc(CBT, ncc, etiqcc, SOURCE[x]);
 
-    if ((new != NIL) && (Data(CBT, new) < SOURCE[x])) /* le point est CB-simple */
-    {      /* conceptuellement : Data(CBT, new) - 1 */
+    if ((newcell != NIL) && (Data(CBT, newcell) < SOURCE[x])) /* le point est CB-simple */
+    {      /* conceptuellement : Data(CBT, newcell) - 1 */
       nombre_abaissements += 1;
-      SOURCE[x] = Data(CBT, new);   /* conceptuellement : Data(CBT, new) - 1 */
-      M[x] = new;
+      SOURCE[x] = Data(CBT, newcell);   /* conceptuellement : Data(CBT, newcell) - 1 */
+      M[x] = newcell;
 
       /* propagation aux voisins */
 
@@ -527,7 +527,7 @@ int32_t llpetopo(
       FahPush(FAH, x, SOURCE[x]);
       Set(x, EN_FAH);
 
-    } /* if ((new != NIL) && (Data(CBT, new) < SOURCE[x]))  le point est CB-simple */
+    } /* if ((newcell != NIL) && (Data(CBT, newcell) < SOURCE[x]))  le point est CB-simple */
   } /* while (! FahVide(FAH)) */
   /* FIN PROPAGATION */
 

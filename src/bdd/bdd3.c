@@ -1,4 +1,4 @@
-/* $Id: bdd3.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: bdd3.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /* 
   BDD pour les configurations de points terminaux de surface dans H3
 
@@ -8,6 +8,8 @@
 
   Michel Couprie - mai 2000
 */
+#include <bdd.h>
+
 int bddSurfendCarreX(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j)
 {
 int neg = 1;

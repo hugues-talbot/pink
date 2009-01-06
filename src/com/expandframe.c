@@ -1,4 +1,4 @@
-/* $Id: expandframe.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/* $Id: expandframe.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file expandframe.c
 
 \brief expands the values of the image in a n-pixel wide band outside the image 
@@ -30,9 +30,8 @@ Expands the values of the image in a n-pixel wide band outside the image .
 
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image1;
   struct xvimage * image2;

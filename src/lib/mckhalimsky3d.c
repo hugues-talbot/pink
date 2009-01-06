@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky3d.c,v 1.1.1.1 2008-11-25 08:01:44 mcouprie Exp $ */
+/* $Id: mckhalimsky3d.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
    Librairie mckhalimsky3d
 
@@ -47,6 +47,7 @@
 #include <mcutil.h>
 #include <mcimage.h>
 #include <mccodimage.h>
+#include <bdd.h>
 #include <mckhalimsky3d.h>
 
 /*

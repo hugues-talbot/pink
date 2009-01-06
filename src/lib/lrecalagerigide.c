@@ -1,4 +1,4 @@
-/* $Id: lrecalagerigide.c,v 1.4 2008-12-19 13:10:43 mcouprie Exp $ */
+/* $Id: lrecalagerigide.c,v 1.5 2009-01-06 13:18:15 mcouprie Exp $ */
 /* 
   recalage rigide :
   - de contours simples (courbes fermées)
@@ -15,6 +15,7 @@
 #include <math.h>
 #include <mccodimage.h>
 #include <mcutil.h>
+#include <mclin.h>
 #include <mcgeo.h>
 #include <mcpowell.h>
 #include <lrecalagerigide.h>

@@ -1,4 +1,4 @@
-/* $Id: extractline.c,v 1.2 2008-12-03 07:42:31 mcouprie Exp $ */
+/* $Id: extractline.c,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file extractline.c
 
 \brief extracts a line between two given points from a 3D image
@@ -30,9 +30,8 @@ points (x1,y1) and (x2,y2) extracted from <B>in.pgm</B>.
 #include <lbresen.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * imgres;

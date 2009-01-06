@@ -1,4 +1,4 @@
-/* $Id: lgeodesic.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: lgeodesic.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 /* operateurs morphologiques geodesiques */
 /* methode : propagation des changements par fifo */
 /* d'apres la these de Michel Grimaud (pp 22) */
@@ -150,6 +150,20 @@ int32_t lgeodilat(
   FifoTermine(FIFO[1]);
   return 1;
 } /* lgeodilat() */
+
+/* ==================================== */
+int32_t lreconsdilat(
+        struct xvimage *g,
+        struct xvimage *f,
+        int32_t connex) 
+/* reconstruction de g sous f */
+/* g : image marqueur */
+/* f : image masque */
+/* resultat dans g */
+/* ==================================== */
+{
+  return lgeodilat(g, f, connex, -1);
+}
 
 /* ==================================== */
 int32_t lgeoeros(

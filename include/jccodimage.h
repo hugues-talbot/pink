@@ -56,5 +56,5 @@ struct xvimage4D {
 /* prototypes     */
 /* ============== */
 
-//extern int32_t32_t32_t32_t voisin4D8(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N, int32_t Nt);
+extern int32_t voisin4D8(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N, int32_t Nt);
 

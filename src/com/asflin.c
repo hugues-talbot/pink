@@ -1,4 +1,4 @@
-/* $Id: asflin.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: asflin.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
 /*! \file asflin.c
 
 \brief alternate sequential filter by linear structuring elements
@@ -37,9 +37,8 @@ by a closing instead of an opening.
 #define VERBOSE
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   int32_t rayonmin, rayonmax, rayon;

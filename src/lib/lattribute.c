@@ -1,4 +1,4 @@
-/* $Id: lattribute.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* $Id: lattribute.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -143,7 +143,7 @@ int32_t lattribute(
   int32_t k, l;
   int32_t w, x, y, z;
   uint8_t *SOURCE = UCHARDATA(img);
-  int32_t *LABEL = ULONGDATA(lab);
+  uint32_t *LABEL = ULONGDATA(lab);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
   int32_t d = depth(img);
