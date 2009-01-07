@@ -1,3 +1,7 @@
+/* $Id: jcgraphes.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define max(X,Y) ((X)>=(Y)?(X):(Y))
 #define min(X,Y) ((X)<=(Y)?(X):(Y))
 
@@ -67,3 +71,6 @@ extern int32_t updateRAGArc(RAG *rag, int32_t i, int32_t s, uint8_t val);
 // Les deux fonctions suivantes vont plutot dans la bibliothèque
 // hierarchie
 extern void attributNoeud(RAG *rag, struct xvimage *label, struct xvimage *ga);
+#ifdef __cplusplus
+}
+#endif

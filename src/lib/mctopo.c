@@ -1,4 +1,4 @@
-/* $Id: mctopo.c,v 1.3 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: mctopo.c,v 1.4 2009-01-07 12:46:35 mcouprie Exp $ */
 /* 
 Librairie mctopo : 
 
@@ -20,7 +20,6 @@ Michel Couprie 1996
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 #include <mctopo.h>
 #include <mccodimage.h>
 #include <mcutil.h>
@@ -1886,7 +1885,7 @@ uint32_t alpha8p_l(
 	register uint32_t val = *(img+p);
 	register uint32_t * ptr = img+p;
 	register uint32_t v;
-	register int32_t alpha = LONG_MAX;
+	register int32_t alpha = INT32_MAX;
 
         v = (p%rs!=rs-1)             ? *(ptr+1)    : val;
         if ((v > val) && ((int32_t)v < alpha)) alpha = (int32_t)v;
@@ -1904,7 +1903,7 @@ uint32_t alpha8p_l(
         if ((v > val) && ((int32_t)v < alpha)) alpha = (int32_t)v;
         v = ((p<N-rs)&&(p%rs!=rs-1)) ? *(ptr+rs+1) : val;
         if ((v > val) && ((int32_t)v < alpha)) alpha = (int32_t)v;
-        if (alpha == LONG_MAX) 
+        if (alpha == INT32_MAX) 
           return val;
         else
           return (uint32_t)alpha;
@@ -1923,7 +1922,7 @@ uint32_t alpha4p_l(
 	register uint32_t val = *(img+p);
 	register uint32_t * ptr = img+p;
 	register uint32_t v;
-	register int32_t alpha = LONG_MAX;
+	register int32_t alpha = INT32_MAX;
 
         v = (p%rs!=rs-1)             ? *(ptr+1)    : val;
         if ((v > val) && ((int32_t)v < alpha)) alpha = (int32_t)v;
@@ -1933,7 +1932,7 @@ uint32_t alpha4p_l(
         if ((v > val) && ((int32_t)v < alpha)) alpha = (int32_t)v;
         v = (p<N-rs)                 ? *(ptr+rs)   : val;
         if ((v > val) && ((int32_t)v < alpha)) alpha = (int32_t)v;
-        if (alpha == LONG_MAX) 
+        if (alpha == INT32_MAX) 
           return val;
         else
           return (uint32_t)alpha;

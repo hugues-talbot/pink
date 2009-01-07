@@ -1,4 +1,7 @@
-/* $Id: loffset.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: loffset.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============== */
 /* prototype for loffset.c */
 /* ============== */
@@ -11,3 +14,6 @@ extern int32_t loffset(
   int32_t mode
 );
 
+#ifdef __cplusplus
+}
+#endif

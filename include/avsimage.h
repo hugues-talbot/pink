@@ -1,3 +1,7 @@
+/* $Id: avsimage.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /*
   Functions to be added to mcimage.h (or not)
 
@@ -24,3 +28,6 @@ typedef struct PointSet {
 //Additional functions
 extern int32_t findMaxLong(uint32_t *gg, int32_t n);
 extern int32_t samedimsimages(struct xvimage *im1, struct xvimage *im2);
+#ifdef __cplusplus
+}
+#endif

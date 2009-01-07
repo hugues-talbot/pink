@@ -1,4 +1,7 @@
-/* $Id: mcset.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mcset.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
   int32_t setsize;      /* taille du tableau de bits (a multiplier par 32) */
@@ -45,3 +48,6 @@ extern void      FlushSetList(SetList * l);
 extern void      PushSetList(SetList * l, Set *s);
 extern int32_t   InSetList(SetList * l, Set *s);
 extern int32_t   InclusSetList(SetList * l, Set *s);
+#ifdef __cplusplus
+}
+#endif

@@ -1,3 +1,7 @@
+/* $Id: lsaliency.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 int32_t lsaliency(
         struct xvimage *image,
         struct xvimage *masque,
@@ -17,3 +21,6 @@ typedef struct basinT {
   int32_t altitude;
 } basinT;
 */
+#ifdef __cplusplus
+}
+#endif

@@ -1,3 +1,7 @@
+/* $Id: mcgraphe.h,v 1.4 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /*! \file graphes.h
     \brief structures de base pour la manipulation de graphes
 */
@@ -219,3 +223,6 @@ extern graphe * PCCna(graphe * g, int32_t d, int32_t a);
 
 extern graphe * Image2Graphe(struct xvimage *image, int32_t mode, int32_t connex);
 extern struct xvimage *Graphe2Image(graphe * g, int32_t rs);
+#ifdef __cplusplus
+}
+#endif

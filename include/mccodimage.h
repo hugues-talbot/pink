@@ -1,4 +1,8 @@
-/* $Id: mccodimage.h,v 1.4 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: mccodimage.h,v 1.5 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define NDG_MAX 255            /* niveau de gris max */
 #define NDG_MIN 0              /* niveau de gris min */
 
@@ -96,3 +100,6 @@ extern int32_t voisinENAR(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t 
 extern int32_t voisinENAV(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N );
 extern int32_t voisinONAR(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N );
 extern uint32_t maskvois26(uint8_t *F, uint32_t bitmask, int32_t i, int32_t rs, int32_t ps, int32_t N);
+#ifdef __cplusplus
+}
+#endif

@@ -1,4 +1,7 @@
-/* $Id: lccv.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: lccv.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============== */
 /* prototype for lccv.c */
 /* ============== */
@@ -9,3 +12,6 @@ extern int32_t lccv(
 );
 
 extern int32_t lecarttype(struct xvimage *f, struct xvimage *m);
+#ifdef __cplusplus
+}
+#endif

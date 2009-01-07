@@ -1,4 +1,7 @@
-/* $Id: ltopotypes.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: ltopotypes.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============== */
 /* prototype for ltopotypes.c */
 /* ============== */
@@ -14,3 +17,6 @@ extern int32_t lt8pp(struct xvimage * image);
 extern int32_t lt6pp(struct xvimage * image);
 extern int32_t lt26pp(struct xvimage * image);
 extern int32_t lalpha(struct xvimage * image, int32_t connex, char sign);
+#ifdef __cplusplus
+}
+#endif

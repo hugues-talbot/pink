@@ -1,4 +1,7 @@
-/* $Id: llabeltree.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: llabeltree.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int32_t llabeltree(
   struct xvimage *imgx, 
   int32_t connex,
@@ -57,3 +60,6 @@ extern int32_t labelbranch3d26(uint8_t *X,  /* donnee: pointeur sur l'image x */
                     int32_t intersection,  /* donnee: flag d'intersection */  
                     uint32_t *D        /* resultat: pointeur sur distances */
 ); /* Etiquette les branches avec la 26-connexité */
+#ifdef __cplusplus
+}
+#endif

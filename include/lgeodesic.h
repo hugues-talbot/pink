@@ -1,4 +1,7 @@
-/* $Id: lgeodesic.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: lgeodesic.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int32_t lgeodilat(
         struct xvimage *g,
         struct xvimage *f,
@@ -55,3 +58,6 @@ extern int32_t lamont(
         struct xvimage *f,
         int32_t connex,
         int32_t strict) ;
+#ifdef __cplusplus
+}
+#endif

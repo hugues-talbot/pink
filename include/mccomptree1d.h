@@ -1,3 +1,7 @@
+/* $Id: mccomptree1d.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============================================================================== */
 /* 
   Structure de donnees pour la construction de l'arbre des composantes 1d.
@@ -38,3 +42,6 @@ extern void ComponentTree1d( uint8_t *F, int32_t N, // inputs
                            ctree1d **CompTree, // output
                            int32_t **CompMap       // output
 			 );
+#ifdef __cplusplus
+}
+#endif

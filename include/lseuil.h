@@ -1,4 +1,7 @@
-/* $Id: lseuil.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: lseuil.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============== */
 /* prototype for lseuil.c */
 /* ============== */
@@ -18,3 +21,6 @@ extern int32_t lseuil3(
         struct xvimage *f,
         double seuil, double seuil2);
 
+#ifdef __cplusplus
+}
+#endif

@@ -1,4 +1,7 @@
-/* $Id: lhisto.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: lhisto.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============== */
 /* prototype for lhisto.c */
 /* ============== */
@@ -44,3 +47,6 @@ extern int32_t lhistsum(uint32_t *histo);
 extern void labelextr1d(int32_t *F, int32_t n, uint8_t *E);
 
 extern int32_t lhisto2image(uint32_t *histo, int32_t size, struct xvimage **image);
+#ifdef __cplusplus
+}
+#endif

@@ -1,4 +1,7 @@
-/* $Id: l2dkhalimsky.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: l2dkhalimsky.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int32_t l2dmakecomplex(struct xvimage * i);
 extern int32_t l2dclosebeta(struct xvimage * i);
 extern int32_t l2dkhalimskize(struct xvimage * i, struct xvimage **k, int32_t mode);
@@ -16,3 +19,6 @@ extern int32_t l2dvoronoi(struct xvimage * lab, struct xvimage * mask);
 extern int32_t l2dtopotessndg(struct xvimage * f);
 extern int32_t l2dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbtrous, int32_t *euler);
 
+#ifdef __cplusplus
+}
+#endif

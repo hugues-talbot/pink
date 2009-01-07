@@ -1,3 +1,7 @@
+/* $Id: llpeGA.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define TYP_VRAGARC int32_t
 #define TYP_VARC int32_t
 #define TYP_VSOM int32_t
@@ -40,3 +44,6 @@ int32_t flowMappingRecursif(struct  xvimage* ga, int32_t* Label);
 int32_t flowMappingFloat(struct  xvimage* ga, int32_t* Label);
 int32_t flowMappingDouble(struct  xvimage* ga, int32_t* Label);
 int32_t lpeGrapheAreteValuee(GrapheValue *gv, int32_t* Label);
+#ifdef __cplusplus
+}
+#endif

@@ -1,4 +1,7 @@
-/* $Id: mclin.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: mclin.h,v 1.3 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define MCLIN_EPSILON 1E-10
 
 extern double * lin_zeros(int32_t n, int32_t m);
@@ -40,3 +43,6 @@ extern int32_t lellipsefit(double * x, double * y, int32_t n,
 extern int32_t lin_trouvemin(double * x, double * d, double (*F)(double *, int32_t), int32_t n, double *precision);
 
 
+#ifdef __cplusplus
+}
+#endif

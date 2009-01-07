@@ -1,4 +1,4 @@
-/* $Id: ldilateros.c,v 1.2 2008-12-15 07:01:27 mcouprie Exp $ */
+/* $Id: ldilateros.c,v 1.3 2009-01-07 12:46:35 mcouprie Exp $ */
 /* operateurs de dilatation et d'erosion morphologique */
 /* Michel Couprie - avril 1997 */
 
@@ -7,7 +7,6 @@
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <limits.h>
 #include <mccodimage.h>
 #include <mcutil.h>
 #include <ldilateros.h>
@@ -922,7 +921,7 @@ int32_t leroslong(
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
   {
-    inf = ULONG_MAX;
+    inf = UINT32_MAX;
     for (c = 0; c < nptb ; c += 1)
     {
       l = y + tab_es_y[c] - yc;

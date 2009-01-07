@@ -1,4 +1,4 @@
-/* $Id: printstats.c,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: printstats.c,v 1.4 2009-01-07 12:46:35 mcouprie Exp $ */
 /*! \file printstats.c
 
 \brief prints some stats of an image or a region
@@ -20,7 +20,7 @@ Calculates the histogram of \b im.pgm (masked by the binary image
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <limits.h>
+#include <mcutil.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 
@@ -90,8 +90,8 @@ int main(int argc, char **argv)
   }
 
   if (datatype(image) != VFF_TYP_FLOAT) {
-    min = LONG_MAX;
-    max = LONG_MIN;
+    min = INT32_MAX;
+    max = INT32_MIN;
     mean = 0.;
     if (M == NULL) {
       for (i=0; i<N; i++) {
@@ -124,8 +124,8 @@ int main(int argc, char **argv)
     printf("Mean    : %lg\n", mean/(double)nbPoints);
   } else {
     // VFF_TYP_FLOAT
-    float minf = LONG_MAX;
-    float maxf = LONG_MIN;
+    float minf = SOURCEf[0];
+    float maxf = SOURCEf[0];
     float meanf = 0;
     float pixelf;
     if (M == NULL) {

@@ -1,4 +1,7 @@
-/* $Id: ldistgeo.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: ldistgeo.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int32_t ldistgeo(
   struct xvimage *imgx, 
   struct xvimage *imgy, 
@@ -16,3 +19,6 @@ extern int32_t ldistgeo3d(struct xvimage *imgx,   /* donnee: image binaire */
                int32_t connex,
                struct xvimage *res     /* resultat: distances (doit être allouée) */
 		   );
+#ifdef __cplusplus
+}
+#endif

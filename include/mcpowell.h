@@ -1,3 +1,7 @@
+/* $Id: mcpowell.h,v 1.3 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct ensemble {
   double *X;
@@ -46,3 +50,6 @@ extern int32_t powell_num(PFNn f, struct xvimage * image1,
 			  double *fmin);
 
 
+#ifdef __cplusplus
+}
+#endif

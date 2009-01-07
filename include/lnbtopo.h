@@ -1,4 +1,7 @@
-/* $Id: lnbtopo.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: lnbtopo.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define PP 0
 #define P  1
 #define M  2
@@ -14,3 +17,6 @@ extern int32_t lnbtopo(
         int32_t whichnumber
 );
 
+#ifdef __cplusplus
+}
+#endif

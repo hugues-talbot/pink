@@ -1,4 +1,7 @@
-/* $Id: rgbfileheader.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: rgbfileheader.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct RGBFILEHEADER {       /* size 108 bytes */
   uint16_t magic;      /* size 2 bytes : magic number = 474 */
@@ -14,3 +17,6 @@ struct RGBFILEHEADER {       /* size 108 bytes */
   char name[80];             /* size 80 bytes : image name or comment */
   uint32_t cmaptype;    /* size 4 bytes : 0 for NORMAL RGB */
 }; /** plus 404 bytes dummy padding to make header 512 bytes **/
+#ifdef __cplusplus
+}
+#endif

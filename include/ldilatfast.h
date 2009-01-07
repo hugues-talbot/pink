@@ -1,4 +1,7 @@
-/* $Id: ldilatfast.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: ldilatfast.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============== */
 /* prototype for ldilatfast.c */
 /* ============== */
@@ -8,3 +11,6 @@ extern int32_t ldilatfast(
         uint8_t *mask
 );
 
+#ifdef __cplusplus
+}
+#endif

@@ -1,4 +1,7 @@
-/* $Id: lsegment3d.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: lsegment3d.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define SURFACE    0
 #define PROFONDEUR 1
 #define VOLUME     2
@@ -16,3 +19,6 @@ extern int32_t lsegment3d(
         int32_t trace
 );
 
+#ifdef __cplusplus
+}
+#endif

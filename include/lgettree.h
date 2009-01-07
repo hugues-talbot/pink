@@ -1,4 +1,7 @@
-/* $Id: lgettree.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: lgettree.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define MAX(a,b)  ((a)>(b)?(a):(b))
 #define MIN(a,b)  ((a)<(b)?((a!=-1)?(a):(b)):((b!=-1)?(b):(a)))  /* -1 correspond à l'infini */
@@ -275,3 +278,6 @@ extern int32_t freeLigne (
 extern int32_t freeListeNoeud (
   listeNoeud * liste
 );
+#ifdef __cplusplus
+}
+#endif

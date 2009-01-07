@@ -1,3 +1,7 @@
+/* $Id: lskelpar.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern void extract_vois(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
@@ -91,3 +95,6 @@ extern int32_t lskelAK2(struct xvimage *image,
 extern int32_t lskelrosenfeld(struct xvimage *image, 
 			      int32_t nsteps,
 			      struct xvimage *inhibit);
+#ifdef __cplusplus
+}
+#endif

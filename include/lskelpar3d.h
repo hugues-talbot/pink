@@ -1,3 +1,7 @@
+/* $Id: lskelpar3d.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int32_t lskelMK3a(struct xvimage *image, 
 			 int32_t nsteps,
 			 struct xvimage *inhibit);
@@ -38,3 +42,6 @@ extern int32_t lskelRK3(struct xvimage *image,
 extern int32_t lskelSK3(struct xvimage *image, 
 			int32_t nsteps,
 			struct xvimage *inhibit);
+#ifdef __cplusplus
+}
+#endif

@@ -1,3 +1,7 @@
+/* $Id: llut.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /*
 Manage look-up tables (Luts) in Pink
 
@@ -153,3 +157,6 @@ extern void lprint_MLut(MLut mlut);
 /* file Printing */
 extern void lfprint_MLut(MLut mlut, char *filename);
 
+#ifdef __cplusplus
+}
+#endif

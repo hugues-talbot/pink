@@ -1,4 +1,4 @@
-/* $Id: ldilateros3d.c,v 1.2 2008-12-15 07:01:27 mcouprie Exp $ */
+/* $Id: ldilateros3d.c,v 1.3 2009-01-07 12:46:35 mcouprie Exp $ */
 /* operateurs de dilatation et d'erosion morphologique 3D */
 
 #include <stdio.h>
@@ -6,7 +6,6 @@
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <limits.h>
 #include <mccodimage.h>
 #include <mcutil.h>
 #include <ldilateros3d.h>
@@ -575,7 +574,7 @@ int32_t leroslong3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
   {
-    inf = ULONG_MAX;
+    inf = UINT32_MAX;
     for (c = 0; c < nptb ; c += 1)
     {
       k = z + tab_es_z[c] - zc;

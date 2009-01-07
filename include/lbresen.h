@@ -1,4 +1,7 @@
-/* $Id: lbresen.h,v 1.2 2008-12-03 07:42:31 mcouprie Exp $ */
+/* $Id: lbresen.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "mcliste.h"
 typedef struct {
   int32_t rs, cs;
@@ -31,3 +34,6 @@ extern Liste *lellipseliste(int32_t rs, int32_t cs, int32_t xp, int32_t yp, int3
 extern void lellipseliste2(Liste *lp, int32_t rs, int32_t cs, int32_t xp, int32_t yp, int32_t xq, int32_t yq, 
 			    int32_t xoffset, int32_t yoffset);
 extern void lplotellipseliste(Liste *lp, uint8_t *I);
+#ifdef __cplusplus
+}
+#endif

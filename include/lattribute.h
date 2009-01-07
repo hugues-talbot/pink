@@ -1,4 +1,7 @@
-/* $Id: lattribute.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: lattribute.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define LABMAX   0
 #define LABMIN   1
 #define LABPLATEAU   2
@@ -26,3 +29,6 @@ extern int32_t lattribute(
         int32_t *nlabels         /* resultat: nombre d'extrema traites */
 );
 
+#ifdef __cplusplus
+}
+#endif

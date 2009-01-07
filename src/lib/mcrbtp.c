@@ -1,4 +1,4 @@
-/* $Id: mcrbtp.c,v 1.1 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: mcrbtp.c,v 1.2 2009-01-07 12:46:35 mcouprie Exp $ */
 /* 
    Librairie mcrbtp :
 
@@ -224,7 +224,7 @@ RbtpElt * RbtpInsertAux(  /* allocation et insertion simple */
 } /* RbtpInsertAux() */
 
 /* ==================================== */
-void LeftRotate(
+static void LeftRotate(
   Rbtp * T, RbtpElt * x)
 /* ==================================== */
 {
@@ -248,7 +248,7 @@ void LeftRotate(
 } /* LeftRotate() */
 
 /* ==================================== */
-void RightRotate(
+static void RightRotate(
   Rbtp * T, RbtpElt * x)
 /* ==================================== */
 {

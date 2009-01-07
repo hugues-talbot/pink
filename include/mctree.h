@@ -1,4 +1,7 @@
-/* $Id: mctree.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mctree.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* definitions pour le module "mctree.c" */
 
 #define TREEPAGECELLS 1024
@@ -20,3 +23,6 @@ typedef struct TREEPAGE {
 extern void TreeInit();
 extern void TreeTermine();
 extern TreeCell * AllocTreeCell();
+#ifdef __cplusplus
+}
+#endif

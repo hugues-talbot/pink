@@ -1,4 +1,7 @@
-/* $Id: lmoments.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: lmoments.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
   int32_t area;
@@ -28,3 +31,6 @@ extern int32_t lmomentslab(
         Indicateur ** tabindic);/* tableau des resultats */
 
 extern void PrintIndicateur(Indicateur I);
+#ifdef __cplusplus
+}
+#endif

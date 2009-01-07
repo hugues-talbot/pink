@@ -1,3 +1,7 @@
+/* $Id: jclabelextrema.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define LABMAX   0
 #define LABMIN   1
 
@@ -17,3 +21,6 @@ int32_t jcfindextrema(struct xvimage *in,         /* GA de depart */
 #include <sys/types.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#ifdef __cplusplus
+}
+#endif

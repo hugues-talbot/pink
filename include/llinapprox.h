@@ -1,4 +1,7 @@
-/* $Id: llinapprox.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: llinapprox.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern double EuclidianDistance(double px0, double py0, double pxi, double pyi);
 extern double LineDistance(double px0, double py0, double pxi, double pyi, double pxk, double pyk);
@@ -10,3 +13,6 @@ extern void SJCurveAproximate(double* vector_x,
 		       double* vector_y, 
 		       int32_t cont, // nb de points
 		       double epsilon);
+#ifdef __cplusplus
+}
+#endif

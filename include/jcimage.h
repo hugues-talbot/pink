@@ -1,4 +1,7 @@
-/* $Id: jcimage.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: jcimage.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============== */
 /* prototypes for jcimage.c    */
 /* ============== */
@@ -17,3 +20,6 @@ extern struct GA4d * allocGA4d(char * name, int32_t rs, int32_t cs, int32_t d, i
 extern void writeGA4d(struct GA4d * image, char *filename);
 extern struct GA4d *freeGA4d(struct GA4d  *im);
 void writeimage4D(struct xvimage4D * image, char *prefix, int32_t first, int32_t last);
+#ifdef __cplusplus
+}
+#endif

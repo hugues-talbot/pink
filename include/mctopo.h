@@ -1,4 +1,7 @@
-/* $Id: mctopo.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: mctopo.h,v 1.3 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define UNDEFINED    0
 
 #define PEAK         1
@@ -169,3 +172,6 @@ extern int32_t nbtrans8(
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N);                      /* taille image */ 
+#ifdef __cplusplus
+}
+#endif

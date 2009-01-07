@@ -1,4 +1,7 @@
-/* $Id: jclderiche.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: jclderiche.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============== */
 /* prototype for lderiche.c */
 /* ============== */
@@ -20,3 +23,6 @@ extern void derichegen(double *x,               /* image a traiter */
                 double a5, double a6, double a7, double a8, 
                 double b1, double b2, double b3, double b4);
 
+#ifdef __cplusplus
+}
+#endif

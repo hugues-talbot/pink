@@ -1,8 +1,11 @@
+/* $Id: mcxbib.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #ifndef _STDINT_H
 #include <stdint.h>
 #endif
 
-/* $Id: mcxbib.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
@@ -259,3 +262,6 @@ extern void FlushGraphics(
 extern void TerminateGraphics(
 );
 
+#ifdef __cplusplus
+}
+#endif

@@ -1,4 +1,7 @@
-/* $Id: mckhalimskyNd.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mckhalimskyNd.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 typedef struct {
   int32_t N;               /* la dimension de l'espace */
   int32_t *C;              /* les cotes de l'hyperpave */
@@ -23,3 +26,6 @@ extern void InitCubeKhalimsky4Nd(uint32_t c, Khalimsky * K);
 extern int32_t CourbeSimpleNd(Khalimsky *K);
 extern int32_t SurfaceSimpleNd(Khalimsky *K, Khalimsky *Kp);
 
+#ifdef __cplusplus
+}
+#endif

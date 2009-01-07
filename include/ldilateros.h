@@ -1,4 +1,7 @@
-/* $Id: ldilateros.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: ldilateros.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int32_t ldilatnum( struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc);
 extern int32_t lerosnum( struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc);
 extern int32_t ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc);
@@ -21,3 +24,6 @@ static uint8_t horiz[8] = {1, 0, 0, 0, 1, 0, 0, 0};
 static uint8_t vert[8]  = {0, 0, 1, 0, 0, 0, 1, 0};
 static uint8_t mont[8]  = {0, 1, 0, 0, 0, 1, 0, 0};
 static uint8_t desc[8]  = {0, 0, 0, 1, 0, 0, 0, 1};
+#ifdef __cplusplus
+}
+#endif

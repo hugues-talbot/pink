@@ -1,4 +1,7 @@
-/* $Id: llocalextrema.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: llocalextrema.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* ============== */
 /* prototype for llocalextrema.c */
@@ -10,3 +13,6 @@ int32_t llocalextrema(
         int32_t minimum,          /* booleen */
         struct xvimage *max); /* resultat: image des extrema mis a 255 */
 
+#ifdef __cplusplus
+}
+#endif

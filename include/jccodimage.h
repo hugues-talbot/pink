@@ -1,3 +1,7 @@
+/* $Id: jccodimage.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define Sommetx(u,N,rs)   ((u)<(N)?(u):(u-N)) 
 #define Sommety(u,N,rs)   ((u)<(N)?(u+1):(u-N+rs))
 
@@ -58,3 +62,6 @@ struct xvimage4D {
 
 extern int32_t voisin4D8(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N, int32_t Nt);
 
+#ifdef __cplusplus
+}
+#endif

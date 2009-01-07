@@ -1,4 +1,7 @@
-/* $Id: lzoomint.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: lzoomint.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============== */
 /* prototype for lzoomint.c */
 /* ============== */
@@ -15,3 +18,6 @@ extern struct xvimage* lzoomintxyz(
   int32_t zoomy,
   int32_t zoomz,
   int32_t fill);
+#ifdef __cplusplus
+}
+#endif

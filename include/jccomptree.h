@@ -1,3 +1,7 @@
+/* $Id: jccomptree.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============================================================================== */
 /* 
   Structure de donnees pour la construction de l'arbre des composantes.
@@ -64,3 +68,6 @@ extern int32_t mergeTree(RAG *rag, mtree **MergeTree);
 int32_t jcSaliencyTree_b (ctree ** SaliencyTree, int32_t *MST, int32_t *Valeur, RAG *rag, int32_t *STaltitude);
 
 
+#ifdef __cplusplus
+}
+#endif

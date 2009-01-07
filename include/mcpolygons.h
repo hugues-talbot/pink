@@ -1,4 +1,7 @@
-/* $Id: mcpolygons.h,v 1.1 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: mcpolygons.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // nombre maximum de sommets par face (polygone)
 #define MAXVERTFACE 25
@@ -68,3 +71,6 @@ extern void MCP_GetPolyPoints(MCP *P, int32_t indface, int32_t *pi, double *px, 
 extern void MCP_Print(MCP *P);
 extern void MCP_SaveVTK(MCP *P, FILE *fileout);
 extern MCP * MCP_LoadVTK(FILE *fileout);
+#ifdef __cplusplus
+}
+#endif

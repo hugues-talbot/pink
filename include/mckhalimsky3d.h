@@ -1,4 +1,7 @@
-/* $Id: mckhalimsky3d.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mckhalimsky3d.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define CUBE3D(i,j,k)  ((i%2)+(j%2)+(k%2)==3)
 #define CARRE3D(i,j,k) ((i%2)+(j%2)+(k%2)==2)
 #define CARRE3DXY(i,j,k) ((i%2==1)&&(j%2==1)&&(k%2==0))
@@ -111,3 +114,6 @@ extern int32_t simple_26_att(uint8_t *img, int32_t p, int32_t rs, int32_t ps, in
 extern int32_t pairesimple_26_x(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t pairesimple_26_y(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t pairesimple_26_z(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
+#ifdef __cplusplus
+}
+#endif

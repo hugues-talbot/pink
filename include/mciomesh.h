@@ -1,18 +1,21 @@
-/* $Id: mciomesh.h,v 1.3 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: mciomesh.h,v 1.4 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-const int UNKNOWN = -1;
-const int T_POV =   0;  /* PovRay 3.1 */ 
-const int T_COL =   1;  /* private format (ESIEE - IFC students) */
-const int T_MCM =   2;  /* private format (MC) */
-const int T_AC =    3;  /* AC3D format */
-const int T_POVB =  4;  /* PovRay 3.1 without header and footer */ 
-const int T_GL =    5;  /* Structures de donnees C pour OpenGL */
-const int T_DXF =   6;  /* DXF */
-const int T_VTK =   7;  /* VTK PolyData */
-const int T_IFS =   8;  /* Indexed Face Set (Brown University) */
-const int T_PGM =   9;  /* 3D pgm extension (point clouds only) */
-const int T_RAW =  10;  /* private format for the "mesh" software: see http://mesh.berlios.de/ */
-const int T_CGAL = 11;  /* CGAL output format  */
+#define UNKNOWN -1
+#define T_POV   0  /* PovRay 3.1 */ 
+#define T_COL   1  /* private format (ESIEE - IFC students) */
+#define T_MCM   2  /* private format (MC) */
+#define T_AC    3  /* AC3D format */
+#define T_POVB  4  /* PovRay 3.1 without header and footer */ 
+#define T_GL    5  /* Structures de donnees C pour OpenGL */
+#define T_DXF   6  /* DXF */
+#define T_VTK   7  /* VTK PolyData */
+#define T_IFS   8  /* Indexed Face Set (Brown University) */
+#define T_PGM   9  /* 3D pgm extension (point clouds only) */
+#define T_RAW  10  /* private format for the "mesh" software: see http://mesh.berlios.de/ */
+#define T_CGAL 11  /* CGAL output format  */
 
 extern void genheaderPOV(FILE *fileout, int32_t obj_id, meshbox MB);
 extern void genheaderAC(FILE *fileout, meshbox MB, double red, double green, double blue, char *name);
@@ -65,3 +68,6 @@ extern void LoadBuildIFS(FILE *filein);
 extern void LoadBuildCGAL(FILE *filein);
 
 extern void MCM_SaveVTK(MCM *M, FILE *fileout);
+#ifdef __cplusplus
+}
+#endif

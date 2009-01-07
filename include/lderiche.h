@@ -1,4 +1,7 @@
-/* $Id: lderiche.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: lderiche.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============== */
 /* prototype for lderiche.c */
 /* ============== */
@@ -20,3 +23,6 @@ extern int32_t lderiche(
         double l
 );
 
+#ifdef __cplusplus
+}
+#endif

@@ -1,4 +1,7 @@
-/* $Id: lconvol3.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: lconvol3.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============== */
 /* prototype for lconvol3.c */
 /* ============== */
@@ -8,3 +11,6 @@ extern int32_t lconvol3(
   struct xvimage * mask,
   int32_t normalise
 );
+#ifdef __cplusplus
+}
+#endif

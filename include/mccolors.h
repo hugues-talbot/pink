@@ -1,4 +1,7 @@
-/* $Id: mccolors.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mccolors.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define CN_RED     "red"
 #define CN_YELLOW  "yellow"
 #define CN_GREEN   "green"
@@ -17,3 +20,6 @@ extern char * colorname(double h);
 extern char * nomcouleur(double h);
 extern int32_t huedistance(int32_t h1, int32_t h2);
 int32_t circulardiff(int32_t h1, int32_t h2);
+#ifdef __cplusplus
+}
+#endif

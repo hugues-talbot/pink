@@ -1,4 +1,7 @@
-/* $Id: mcliste.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: mcliste.h,v 1.3 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #ifndef _mcliste_h
 typedef struct {
   int32_t Max;          /* taille max de la Liste */
@@ -20,3 +23,6 @@ extern void ListePrintLine(Liste * L);
 extern void ListeTermine(Liste * L);
 #endif
 #define _mcliste_h
+#ifdef __cplusplus
+}
+#endif

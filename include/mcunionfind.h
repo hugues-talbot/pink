@@ -1,4 +1,7 @@
-/* $Id: mcunionfind.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mcunionfind.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* ============== */
 /* types publics  */
 /* ============== */
@@ -22,3 +25,6 @@ extern int32_t TarjanFind(Tarjan * T, int32_t x);
 extern int32_t TarjanLink(Tarjan * T, int32_t x, int32_t y);
 extern int32_t TarjanLinkSafe(Tarjan * T, int32_t x, int32_t y);
 
+#ifdef __cplusplus
+}
+#endif

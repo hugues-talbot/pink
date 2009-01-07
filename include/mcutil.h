@@ -1,4 +1,10 @@
-/* $Id: mcutil.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mcutil.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#  define FLOAT_MAX	3.40282347e+38F
+
 #define mcabs(X) ((X)>=0?(X):-(X))
 #define max(X,Y) ((X)>=(Y)?(X):(Y))
 #define min(X,Y) ((X)<=(Y)?(X):(Y))
@@ -7,12 +13,6 @@
 #define arrondi(z) (((z)-(double)((int32_t)(z)))<=0.5?((int32_t)(z)):((int32_t)(z+1)))
 #define signe(z) (((z)>0.0)?1.0:-1.0)
 #define sqr(x) ((x)*(x))
-
-/* retourne VRAI si Z est plus proche de A que de B */
-#define PlusProche(Z,A,B) (abs((Z)-(A))<abs((Z)-(B)))
-
-#define TestNonNul(P) {if((P)==NULL){\
-perror("Erreur fatale : memoire insuffisante (malloc)\n");exit(0);}}
 
 #ifndef M_PI
 # define M_E		2.7182818284590452354	/* e */
@@ -28,4 +28,7 @@ perror("Erreur fatale : memoire insuffisante (malloc)\n");exit(0);}}
 # define M_2_SQRTPI	1.12837916709551257390	/* 2/sqrt(pi) */
 # define M_SQRT2	1.41421356237309504880	/* sqrt(2) */
 # define M_SQRT1_2	0.70710678118654752440	/* 1/sqrt(2) */
+#endif
+#ifdef __cplusplus
+}
 #endif

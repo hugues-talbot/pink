@@ -1,4 +1,7 @@
-/* $Id: l3dkhalimsky.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: l3dkhalimsky.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int32_t l3dkhalimskize(struct xvimage * i, struct xvimage **k, int32_t mode);
 extern int32_t l3dcolor(struct xvimage * k);
 extern int32_t l3dthin(struct xvimage * k, int32_t nsteps);
@@ -14,3 +17,6 @@ extern int32_t l3dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1
 extern int32_t l3dmakecomplex(struct xvimage * i);
 extern int32_t l3dalpha(struct xvimage * i);
 extern int32_t l3dbeta(struct xvimage * i);
+#ifdef __cplusplus
+}
+#endif

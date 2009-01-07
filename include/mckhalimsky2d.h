@@ -1,4 +1,7 @@
-/* $Id: mckhalimsky2d.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: mckhalimsky2d.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define CARRE(i,j) ((i%2)+(j%2)==2)
 #define INTER(i,j) ((i%2)+(j%2)==1)
 #define INTERH(i,j) ((i%2)&&(!(j%2)))
@@ -49,3 +52,6 @@ extern int32_t BetaSimple2d(struct xvimage *b, int32_t i, int32_t j);
 extern int32_t Alpha2Simple2d(struct xvimage *b, int32_t i, int32_t j);
 extern int32_t Beta2Simple2d(struct xvimage *b, int32_t i, int32_t j);
 extern int32_t EulerKh2d(struct xvimage *b);
+#ifdef __cplusplus
+}
+#endif

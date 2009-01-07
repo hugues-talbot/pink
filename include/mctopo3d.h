@@ -1,4 +1,7 @@
-/* $Id: mctopo3d.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mctopo3d.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum {centre, face, arete, coin} typevoxel;
 
@@ -401,3 +404,6 @@ extern int32_t nbvoiso26(
 extern int32_t curve6(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t curve18(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t curve26(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
+#ifdef __cplusplus
+}
+#endif

@@ -1,4 +1,7 @@
-/* $Id: mcrbt1.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mcrbt1.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define RBT_Black 0
 #define RBT_Red   1
 
@@ -78,3 +81,6 @@ extern TypRbtAuxData RbtPopMax(
 
 extern TypRbtKey RbtMinLevel(
   Rbt * T);
+#ifdef __cplusplus
+}
+#endif

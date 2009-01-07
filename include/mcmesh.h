@@ -1,4 +1,7 @@
-/* $Id: mcmesh.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: mcmesh.h,v 1.3 2009-01-07 12:46:34 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define MAXADJFACES 25
 
 typedef struct {
@@ -137,3 +140,6 @@ extern void MeanAngleFaces(double *mean, double *standev);
 extern double MaxLengthEdges();
 extern void ComputeCurvatures();
 
+#ifdef __cplusplus
+}
+#endif

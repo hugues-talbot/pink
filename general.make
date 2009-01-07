@@ -466,7 +466,7 @@ LDIR = $(PINK)/src/lib
 DDIR = $(PINK)/src/bdd
 TDIR = $(PINK)/src/tables
 
-all:	$(OBJ) $(ARITH) $(CONVERT) $(MORPHO) $(CONNECT) $(TOPO) $(ORDRES) $(DRAW) $(GEO) $(HISTO) $(SIGNAL) $(DIVERS) $(MESH3D) $(ANDRE) doc
+all:	$(OBJ) $(ARITH) $(CONVERT) $(MORPHO) $(CONNECT) $(GA) $(TOPO) $(ORDRES) $(DRAW) $(GEO) $(HISTO) $(SIGNAL) $(DIVERS) $(MESH3D) $(ANDRE) doc
 
 doc:	$(PINK)/pink.dox
 	doxygen $(PINK)/pink.dox

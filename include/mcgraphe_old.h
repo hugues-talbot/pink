@@ -1,4 +1,7 @@
-/* $Id: mcgraphe_old.h,v 1.1 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: mcgraphe_old.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* ================================================ */
 /* types publics */
@@ -36,3 +39,6 @@ extern void nettoiegraphe(graphe * g);
 extern void aretesommets(uint32_t a, uint32_t N, uint32_t rs, uint32_t * s1, uint32_t * s2);
 extern int32_t estsuccesseur(graphe * g, uint32_t som, uint32_t a);
 extern int32_t estsymetrique(graphe * g);
+#ifdef __cplusplus
+}
+#endif

@@ -1,4 +1,7 @@
-/* $Id: ldist.h,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: ldist.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int32_t ldist(struct xvimage *img, int32_t connex, struct xvimage *res);
 extern int32_t ldistbyte(struct xvimage *img, int32_t connex, struct xvimage *res);
 extern int32_t ldistquad(struct xvimage *img, struct xvimage *res);
@@ -23,9 +26,12 @@ extern int32_t ldistMeijster(struct xvimage *img, struct xvimage *res);
 extern struct xvimage* lredt2d(struct xvimage* f);
 extern struct xvimage* lredt3d(struct xvimage* f);
 extern int32_t lsedt_meijster(struct xvimage *img, struct xvimage *res);
-extern void SEDT_line(uint8_t *f, int32_t *g, int32_t rs, int32_t cs);
-extern void SEDT_column(int32_t *f, int32_t *g, int32_t rs, int32_t cs);
-extern void SEDT3d_line(uint8_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds);
-extern void SEDT3d_column(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds);
-extern void SEDT3d_planes(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds);
+extern void SEDT_line(uint8_t *f, uint32_t *g, uint32_t rs, uint32_t cs);
+extern void SEDT_column(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs);
+extern void SEDT3d_line(uint8_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds);
+extern void SEDT3d_column(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds);
+extern void SEDT3d_planes(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds);
 extern int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res);
+#ifdef __cplusplus
+}
+#endif

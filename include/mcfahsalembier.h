@@ -1,4 +1,7 @@
-/* $Id: mcfahsalembier.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/* $Id: mcfahsalembier.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+#ifdef __cplusplus
+extern "C" {
+#endif
 typedef struct FAHELT {
   int32_t Point;
   struct FAHELT * Next;
@@ -62,3 +65,6 @@ extern void FahTermine(
 extern void FahPrint(
   Fah * L
 );
+#ifdef __cplusplus
+}
+#endif

@@ -1,4 +1,4 @@
-/* $Id: mcrbt.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: mcrbt.c,v 1.3 2009-01-07 12:46:35 mcouprie Exp $ */
 /* 
    Librairie mcrbt :
 
@@ -328,7 +328,7 @@ printf("FIN RbtInsertAux\n");
 } /* RbtInsertAux() */
 
 /* ==================================== */
-void LeftRotate(
+static void LeftRotate(
   Rbt * T, RbtElt * x)
 /* ==================================== */
 {
@@ -352,7 +352,7 @@ void LeftRotate(
 } /* LeftRotate() */
 
 /* ==================================== */
-void RightRotate(
+static void RightRotate(
   Rbt * T, RbtElt * x)
 /* ==================================== */
 {
