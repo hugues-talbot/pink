@@ -14,7 +14,7 @@
 #include "mccodimage.h"
 #include "mcimage.h"
 #include "lvoronoilabelling.h"
-#define INFTY UINT_MAX
+#define INFTY INT_MAX
 
 /////////Basic functions to handle operations with INFTY
 
@@ -25,7 +25,7 @@
  * @param b Long number with INFTY
  * @return The sum of a and b handling INFTY
  **************************************************/
-uint32_t sum(uint32_t a, uint32_t b) 
+int32_t sum(int32_t a, int32_t b) 
 {
   if ((a==INFTY) || (b==INFTY))     
     return INFTY;    
@@ -40,7 +40,7 @@ uint32_t sum(uint32_t a, uint32_t b)
  * @param b Long number with INFTY
  * @return The product of a and b handling INFTY
  **************************************************/
-uint32_t prod(uint32_t a, uint32_t b) 
+int32_t prod(int32_t a, int32_t b) 
 {
   if ((a==INFTY) || (b==INFTY)) 
     return INFTY;  
@@ -53,7 +53,7 @@ uint32_t prod(uint32_t a, uint32_t b)
  * @param a Long number with INFTY
  * @return The opposite of a  handling INFTY
  **************************************************/
-uint32_t opp (uint32_t a) {
+int32_t opp (int32_t a) {
   if (a == INFTY) {
     return INFTY;
   }
@@ -69,7 +69,7 @@ uint32_t opp (uint32_t a) {
  * @param divis Long number with INFTY
  * @return The division (integer) of divid out of divis handling INFTY
  **************************************************/
-uint32_t intdivint (uint32_t divid, uint32_t divis) {
+int32_t intdivint (int32_t divid, int32_t divis) {
   if (divis == 0) 
     return  INFTY;
   if (divid == INFTY) 
@@ -88,7 +88,7 @@ uint32_t intdivint (uint32_t divid, uint32_t divis) {
  * @param gi2 
  * @return Definition of a parabola
  **************************************************/
-inline uint32_t F(uint32_t x, uint32_t i, uint32_t gi2)
+inline int32_t F(int32_t x, int32_t i, int32_t gi2)
 {
   return sum((x-i)*(x-i), gi2);
 }
@@ -102,8 +102,8 @@ inline uint32_t F(uint32_t x, uint32_t i, uint32_t gi2)
  * @param gu2 
  * @return The abscissa of the intersection point between two parabolas
  **************************************************/
-inline uint32_t Sep(uint32_t i, uint32_t u, uint32_t gi2, uint32_t gu2) {
-  return intdivint(sum( sum((uint32_t) (u*u - i*i),gu2), opp(gi2) ), 2*(u-i));
+inline int32_t Sep(int32_t i, int32_t u, int32_t gi2, int32_t gu2) {
+  return intdivint(sum( sum((int32_t) (u*u - i*i),gu2), opp(gi2) ), 2*(u-i));
 }
 /////////
 
@@ -119,7 +119,7 @@ inline uint32_t Sep(uint32_t i, uint32_t u, uint32_t gi2, uint32_t gu2) {
 // (Warning   : we  store the  EDT instead of the SDT)
 void phaseVoronoiX(struct xvimage *img, struct xvimage *sdt_x, struct xvimage *dx)
 {
-  uint32_t x,y,z;
+  int32_t x,y,z;
   for (z = 0; z < depth(img) ; z++) 	    
     for (y = 0; y < colsize(img) ; y++) 
       {
@@ -170,16 +170,16 @@ void phaseVoronoiY(struct xvimage *sdt_x, struct xvimage *sdt_xy, struct xvimage
 #define F_NAME "phaseVoronoiY"
 {
   
-  uint32_t *s; //Center of the upper envelope parabolas
-  uint32_t *t; //Separating index between 2 upper envelope parabolas 
-  uint32_t *dxTemp; //Temp array to backup the Voronoi labeling 
-  uint32_t q; 
-  uint32_t w;
-  uint32_t x, y, z, u;  
+  int32_t *s; //Center of the upper envelope parabolas
+  int32_t *t; //Separating index between 2 upper envelope parabolas 
+  int32_t *dxTemp; //Temp array to backup the Voronoi labeling 
+  int32_t q; 
+  int32_t w;
+  int32_t x, y, z, u;  
 
-  s = (uint32_t *)malloc(colsize(sdt_x)*sizeof(uint32_t));
-  t = (uint32_t *)malloc(colsize(sdt_x)*sizeof(uint32_t));
-  dxTemp = (uint32_t *)malloc(colsize(sdt_x)*sizeof(uint32_t));
+  s = (int32_t *)malloc(colsize(sdt_x)*sizeof(int32_t));
+  t = (int32_t *)malloc(colsize(sdt_x)*sizeof(int32_t));
+  dxTemp = (int32_t *)malloc(colsize(sdt_x)*sizeof(int32_t));
   if ((s == NULL) || (t == NULL) || (dxTemp == NULL))
   {
     fprintf(stderr, "%s: malloc failed\n", F_NAME);
@@ -262,18 +262,18 @@ void phaseVoronoiZ(struct xvimage *sdt_xy, struct xvimage *sdt_xyz, struct xvima
 #undef F_NAME
 #define F_NAME "phaseVoronoiZ"
 {  
-  uint32_t *s; //Center of the upper envelope parabolas
-  uint32_t *t; //Separating index between 2 upper envelope parabolas 
-  uint32_t *dyTemp; //Temp array to backup the Voronoi labeling 
-  uint32_t *dxTemp; //Temp array to backup the Voronoi labeling 
-  uint32_t q; 
-  uint32_t w;
-  uint32_t x, y, z, u;
+  int32_t *s; //Center of the upper envelope parabolas
+  int32_t *t; //Separating index between 2 upper envelope parabolas 
+  int32_t *dyTemp; //Temp array to backup the Voronoi labeling 
+  int32_t *dxTemp; //Temp array to backup the Voronoi labeling 
+  int32_t q; 
+  int32_t w;
+  int32_t x, y, z, u;
 
-  s = (uint32_t *)malloc(depth(sdt_xy)*sizeof(uint32_t));
-  t = (uint32_t *)malloc(depth(sdt_xy)*sizeof(uint32_t));
-  dxTemp = (uint32_t *)malloc(depth(sdt_xy)*sizeof(uint32_t));
-  dyTemp = (uint32_t *)malloc(depth(sdt_xy)*sizeof(uint32_t));
+  s = (int32_t *)malloc(depth(sdt_xy)*sizeof(int32_t));
+  t = (int32_t *)malloc(depth(sdt_xy)*sizeof(int32_t));
+  dxTemp = (int32_t *)malloc(depth(sdt_xy)*sizeof(int32_t));
+  dyTemp = (int32_t *)malloc(depth(sdt_xy)*sizeof(int32_t));
   if ((s == NULL) || (t == NULL) || (dxTemp == NULL) || (dyTemp == NULL))
   {
     fprintf(stderr, "%s: malloc failed\n", F_NAME);
@@ -356,17 +356,17 @@ int32_t lvoronoilabelling(struct xvimage *img,   /* donnee: image binaire */
 #undef F_NAME
 #define F_NAME "lvoronoilabelling"
 { 
-  uint32_t rs = rowsize(img);
-  uint32_t cs = colsize(img);
-  uint32_t ds = depth(img);
-  uint32_t ps = rs * cs;
-  uint32_t i, N = ps * ds;
+  int32_t rs = rowsize(img);
+  int32_t cs = colsize(img);
+  int32_t ds = depth(img);
+  int32_t ps = rs * cs;
+  int32_t i, N = ps * ds;
   struct xvimage *sdt_tmp;
   struct xvimage *dx;
   struct xvimage *dy;
   struct xvimage *dz;
-  uint32_t *X, *Y, *Z;
-  uint32_t *V = ULONGDATA(vor);
+  int32_t *X, *Y, *Z;
+  int32_t *V = ULONGDATA(vor);
 
   if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(dist) != VFF_TYP_4_BYTE) || (datatype(vor) != VFF_TYP_4_BYTE))
   {
@@ -435,11 +435,11 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
   struct xvimage *dis;
   struct xvimage *dx;
   struct xvimage *dy;
-  uint32_t i, j, k, p, medax, ftp_x, ftp_y, ftp_z, ftpe_x, ftpe_y, ftpe_z;
-  uint32_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
+  int32_t i, j, k, p, medax, ftp_x, ftp_y, ftp_z, ftpe_x, ftpe_y, ftpe_z;
+  int32_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
   uint8_t *F = UCHARDATA(f);
   uint8_t *R = UCHARDATA(res);
-  uint32_t *X, *Y, *T;
+  int32_t *X, *Y, *T;
   double mx, my, gamma2 = gamma*gamma;
 
   if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
