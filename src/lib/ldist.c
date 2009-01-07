@@ -1,4 +1,4 @@
-/* $Id: ldist.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: ldist.c,v 1.3 2009-01-07 15:09:31 mcouprie Exp $ */
 /****************************************************************
 *
 * Routine Name: ldistXXX - library call for dist
@@ -2605,7 +2605,7 @@ int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res)
 void SEDT_line(uint8_t *f, uint32_t *g, uint32_t rs, uint32_t cs)
 /* ======================================================== */
 {
-  uint32_t i, j;
+  int32_t i, j;
   for (j = 0; j < cs; j++)
   {
     if (f[0 + rs*j] == 0) g[0 + rs*j] = 0; else g[0 + rs*j] = rs*cs; // infinity
