@@ -1,4 +1,4 @@
-/* $Id: llpeGA.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: llpeGA.c,v 1.2 2009-01-08 14:05:19 lnajman Exp $ */
 /* 
    Ligne de partage des eaux sur les aretes d'un graphe et segmentation hiérarchique
 
@@ -28,6 +28,12 @@
 #include <mclifo.h>
 
 #define EN_FAH 0
+int32_t Stream(uint8_t *F, GrapheBasic *g, int32_t sommet, Lifo *FIFO, int32_t *Label, int32_t *alt, uint8_t *G);
+int32_t StreamGArecursif(struct xvimage *ga, int32_t x, Lifo *FIFO, int32_t *Label, int32_t *alt, uint8_t *G);
+int32_t StreamGAFloat(struct xvimage *ga, int32_t x, Lifo *L, Lifo *B,int32_t *psi, float *G);
+int32_t StreamGADouble(struct xvimage *ga, int32_t x, Lifo *L, Lifo *B,int32_t *psi, double *G);
+int32_t StreamGA(struct xvimage *ga, int32_t x, Lifo *L, Lifo *B,int32_t *psi, uint8_t *G);
+
 
 int32_t altitudePoint(struct xvimage *ga, int32_t i)
 {

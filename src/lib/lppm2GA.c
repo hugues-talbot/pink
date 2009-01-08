@@ -8,6 +8,7 @@
 #include <jccodimage.h>
 #include <mcutil.h>
 #include <jclderiche.h>
+#include <lppm2GA.h>
 
 #define SCALE 10
 #define HOMO_SIGMA 1

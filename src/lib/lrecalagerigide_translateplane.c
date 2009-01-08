@@ -1,4 +1,4 @@
-/* $Id: lrecalagerigide_translateplane.c,v 1.3 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: lrecalagerigide_translateplane.c,v 1.4 2009-01-08 14:05:19 lnajman Exp $ */
 /* 
   recalage rigide de contours simples (courbes fermees)
 
@@ -107,7 +107,7 @@ double F(double *G, ensemble *ens)
 } // F()
 
 /* ==================================== */
-double *lrecalagerigide2d(double *X, int n, double *Y, int m)
+double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
 /* ==================================== */
 /*! \fn double *lrecalagerigide2d(double *X, int n, double *Y, int m)
     \param X (entrée/sortie) : matrice n * 2 contenant le premier ensemble de points
