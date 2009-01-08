@@ -14,6 +14,95 @@
 #define HIST_THRESHOLD 0.85
 #define FILTER 0
 
+/*****************************************************************************
+ * FUNCTION: invertMatrix
+ * DESCRIPTION: Computes the inverse of a matrix. 
+ * PARAMETERS:
+ *    a: matrix to be inverted and keep the result
+ *    n: the dimension of the matrix
+ * SIDE EFFECTS: None
+ * ENTRY CONDITIONS: None
+ * RETURN VALUE: 
+ *        <0 : fail
+ *        >0 : successful completion 
+ * EXIT CONDITIONS: None
+ * HISTORY:
+ *    Created: 7/22/00 by Ying Zhuge
+ *
+ *****************************************************************************/
+int32_t invertMatrix(a,n)
+     int32_t n;
+     double a[];
+{
+  int32_t i,j,k,m;
+  double w,g,*b;
+  
+  b= (double*)malloc(n*sizeof(double));
+  if (b == NULL)
+    return (-2);
+  for (k=0; k<=n-1; k++)
+  { 
+    w=a[0];
+    if (fabs(w)+1.0==1.0)
+    { 
+      free(b);
+      return(-2);
+    }
+    m=n-k-1;
+    for (i=1; i<=n-1; i++)
+    { 
+      g=a[i*n]; b[i]=g/w;
+      if (i<=m) b[i]=-b[i];
+      for (j=1; j<=i; j++)
+	a[(i-1)*n+j-1]=a[i*n+j]+g*b[j];
+    }
+    a[n*n-1]=1.0/w;
+    for (i=1; i<=n-1; i++)
+      a[(n-1)*n+i-1]=b[i];
+  }
+  for (i=0; i<=n-2; i++)
+    for (j=i+1; j<=n-1; j++)
+      a[i*n+j]=a[j*n+i];
+  free(b);
+  return(2);
+}
+
+/*****************************************************************************
+ * FUNCTION: multiMatrix
+ * DESCRIPTION: Compute the multipled matrix of two matrixes 
+ * PARAMETERS:
+ *    a: source matrix of m*n  
+ *    b: source matrix of n*k
+ *    c: result matrix
+ *    m: rows of matrix a
+ *    n: cols of matrix a, rows of matrix b
+ *    k: cols of matrix b
+ * SIDE EFFECTS: None
+ * ENTRY CONDITIONS: None
+ * RETURN VALUE: 
+ *       
+ *         
+ * EXIT CONDITIONS: None
+ * HISTORY:
+ *    Created: 7/24/00 by Ying Zhuge
+ *
+ *****************************************************************************/
+
+int32_t  multiMatrix(a,b,m,n,k,c)
+     int32_t m,n,k;
+     double a[],b[],c[];
+{
+  int32_t i,j,l,u;
+  for (i=0; i<=m-1; i++)
+    for (j=0; j<=k-1; j++)
+    {
+      u=i*k+j; c[u]=0.0;
+      for (l=0; l<=n-1; l++)
+	c[u]=c[u]+a[i*n+l]*b[l*k+j];
+    }
+  return 0;
+}
+
 int32_t dericheDerivateurGA(struct xvimage *image, struct xvimage *ga, double alpha) 
 {
   int32_t i,j;
@@ -1200,92 +1289,3 @@ int32_t compute_homogeneitysb(uint8_t ** image, double *feature_mean, uint8_t *x
 
 
 
-
-/*****************************************************************************
- * FUNCTION: invertMatrix
- * DESCRIPTION: Computes the inverse of a matrix. 
- * PARAMETERS:
- *    a: matrix to be inverted and keep the result
- *    n: the dimension of the matrix
- * SIDE EFFECTS: None
- * ENTRY CONDITIONS: None
- * RETURN VALUE: 
- *        <0 : fail
- *        >0 : successful completion 
- * EXIT CONDITIONS: None
- * HISTORY:
- *    Created: 7/22/00 by Ying Zhuge
- *
- *****************************************************************************/
-int32_t invertMatrix(a,n)
-     int32_t n;
-     double a[];
-{
-  int32_t i,j,k,m;
-  double w,g,*b;
-  
-  b= (double*)malloc(n*sizeof(double));
-  if (b == NULL)
-    return (-2);
-  for (k=0; k<=n-1; k++)
-  { 
-    w=a[0];
-    if (fabs(w)+1.0==1.0)
-    { 
-      free(b);
-      return(-2);
-    }
-    m=n-k-1;
-    for (i=1; i<=n-1; i++)
-    { 
-      g=a[i*n]; b[i]=g/w;
-      if (i<=m) b[i]=-b[i];
-      for (j=1; j<=i; j++)
-	a[(i-1)*n+j-1]=a[i*n+j]+g*b[j];
-    }
-    a[n*n-1]=1.0/w;
-    for (i=1; i<=n-1; i++)
-      a[(n-1)*n+i-1]=b[i];
-  }
-  for (i=0; i<=n-2; i++)
-    for (j=i+1; j<=n-1; j++)
-      a[i*n+j]=a[j*n+i];
-  free(b);
-  return(2);
-}
-
-/*****************************************************************************
- * FUNCTION: multiMatrix
- * DESCRIPTION: Compute the multipled matrix of two matrixes 
- * PARAMETERS:
- *    a: source matrix of m*n  
- *    b: source matrix of n*k
- *    c: result matrix
- *    m: rows of matrix a
- *    n: cols of matrix a, rows of matrix b
- *    k: cols of matrix b
- * SIDE EFFECTS: None
- * ENTRY CONDITIONS: None
- * RETURN VALUE: 
- *       
- *         
- * EXIT CONDITIONS: None
- * HISTORY:
- *    Created: 7/24/00 by Ying Zhuge
- *
- *****************************************************************************/
-
-int32_t  multiMatrix(a,b,m,n,k,c)
-     int32_t m,n,k;
-     double a[],b[],c[];
-{
-  int32_t i,j,l,u;
-  for (i=0; i<=m-1; i++)
-    for (j=0; j<=k-1; j++)
-    {
-      u=i*k+j; c[u]=0.0;
-      for (l=0; l<=n-1; l++)
-	c[u]=c[u]+a[i*n+l]*b[l*k+j];
-    }
-  return 0;
-}
