@@ -1,8 +1,8 @@
-/* $Id: mcmesh.h,v 1.3 2009-01-07 12:46:34 mcouprie Exp $ */
+/* $Id: mcmesh.h,v 1.4 2009-01-12 08:59:38 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define MAXADJFACES 25
+#define MCM_MAXADJFACES 25
 
 typedef struct {
   double x, y, z;    /* coordonnees */
@@ -10,16 +10,17 @@ typedef struct {
   double xo, yo, zo; /* coordonnees ter (pour memoriser la position originale) */
                      // utilisees seulement par RegulMeshHC
   int32_t nfaces;
-  int32_t face[MAXADJFACES]; /* indices des faces adjacentes (pas plus de MAXADJFACES) */
+  int32_t face[MCM_MAXADJFACES]; /* indices des faces adjacentes (pas plus de MCM_MAXADJFACES) */
   int32_t nedges;
-  int32_t edge[MAXADJFACES]; /* indices des cotes adjacents (pas plus de MAXADJFACES) */
+  int32_t edge[MCM_MAXADJFACES]; /* indices des cotes adjacents (pas plus de MCM_MAXADJFACES) */
 
   float curv1, curv2; // Pour les courbures
   uint8_t red, green, blue; // pour la couleur
+  int32_t aux;
 } meshvertex;
 
 typedef struct {
-  int32_t vert[3];       /* indices des sommets adjacents */
+  int32_t vert[3];   /* indices des sommets adjacents */
   double xn, yn, zn; /* normale a la face */
 } meshface;
 
@@ -95,7 +96,16 @@ extern MCM * MCM_Init(int32_t taillemax);
 extern void MCM_Termine(MCM *Mesh);
 extern int32_t MCM_AddVertexStraight(MCM *M, double x, double y, double z, int32_t indface);
 extern int32_t MCM_AddVertex(MCM *M, double x, double y, double z, int32_t indface);
-extern void MCM_AddFace(MCM *M, double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3);
+extern void MCM_AddFace(MCM *M, 
+			double x1, double y1, double z1, 
+			double x2, double y2, double z2, 
+			double x3, double y3, double z3
+		       );
+extern void MCM_AddFace2(MCM *M, 
+                         double x1, double y1, double z1, int32_t t1, 
+			 double x2, double y2, double z2, int32_t t2,
+			 double x3, double y3, double z3, int32_t t3
+			);
 extern void MCM_Print(MCM *M);
 
 extern void InitMesh(int32_t taillemax);

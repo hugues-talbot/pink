@@ -1,4 +1,4 @@
-/* $Id: lskelpar3d.c.sav,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: lskelpar3d.c.sav,v 1.2 2009-01-12 08:59:38 mcouprie Exp $ */
 /* 
    Algorithmes 3D "fully parallel" de squelettisation
 */
@@ -55,12 +55,12 @@ int32_t trace = 1;
 
 /* ==================================== */
 static void extract_vois(
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N,                       /* taille image */
-  u_int8_t *vois)    
+  uint8_t *vois)    
 /* 
   retourne dans "vois" les valeurs des 27 voisins de p, dans l'ordre suivant: 
 
@@ -82,7 +82,7 @@ static void extract_vois(
 {
 #undef F_NAME
 #define F_NAME "extract_vois"
-  register u_int8_t * ptr = img+p;
+  register uint8_t * ptr = img+p;
   if ((p%rs==rs-1) || (p%ps<rs) || (p%rs==0) || (p%ps>=ps-rs) || 
       (p < ps) || (p >= N-ps)) /* point de bord */
   {
@@ -123,8 +123,8 @@ static void extract_vois(
 
 /* ==================================== */
 static void insert_vois(
-  u_int8_t *vois,			
-  u_int8_t *img,          /* pointeur base image */
+  uint8_t *vois,			
+  uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -137,7 +137,7 @@ static void insert_vois(
 {
 #undef F_NAME
 #define F_NAME "insert_vois"
-  register u_int8_t * ptr = img+p;
+  register uint8_t * ptr = img+p;
   if ((p%rs==rs-1) || (p%ps<rs) || (p%rs==0) || (p%ps>=ps-rs) || 
       (p < ps) || (p >= N-ps)) /* point de bord */
   {
@@ -177,7 +177,7 @@ static void insert_vois(
 } /* insert_vois() */
 
 /* ==================================== */
-static void print_vois(u_int8_t *vois)    
+static void print_vois(uint8_t *vois)    
 /* 
    affiche vois (debug)
 */
@@ -192,12 +192,12 @@ static void print_vois(u_int8_t *vois)
 } /* print_vois() */
 
 /* ==================================== */
-static void isometrieXZ_vois(u_int8_t *vois) 
+static void isometrieXZ_vois(uint8_t *vois) 
 // effectue une isométrie du voisinage "vois" par échange des axes X et Z (+ symétries)
 // cette isométrie est de plus une involution
 /* ==================================== */
 {
-  u_int8_t v[26];
+  uint8_t v[26];
   int32_t i;
   v[ 0] = vois[17];  v[ 1] = vois[20];  v[ 2] = vois[ 2];  v[ 3] = vois[11];
   v[ 4] = vois[ 8];  v[ 5] = vois[15];  v[ 6] = vois[ 6];  v[ 7] = vois[24];
@@ -210,12 +210,12 @@ static void isometrieXZ_vois(u_int8_t *vois)
 } /* isometrieXZ_vois() */
 
 /* ==================================== */
-static void isometrieYZ_vois(u_int8_t *vois)
+static void isometrieYZ_vois(uint8_t *vois)
 // effectue une isométrie du voisinage "vois" par échange des axes Y et Z (+ symétries)  
 // cette isométrie est de plus une involution
 /* ==================================== */
 {
-  u_int8_t v[26];
+  uint8_t v[26];
   int32_t i;
   v[ 0] = vois[ 0];  v[ 1] = vois[18];  v[ 2] = vois[17];  v[ 3] = vois[22];
   v[ 4] = vois[ 4];  v[ 5] = vois[13];  v[ 6] = vois[ 8];  v[ 7] = vois[ 9];
@@ -228,7 +228,7 @@ static void isometrieYZ_vois(u_int8_t *vois)
 } /* isometrieYZ_vois() */
 
 /* ==================================== */
-int32_t match_end(u_int8_t *v)
+int32_t match_end(uint8_t *v)
 /* ==================================== */
 /*
                12      11      10
@@ -247,7 +247,7 @@ Teste si au moins un des points 12, 11, 13, 8, 3, 2, 4 est objet et tous les aut
 (aussi avec les isométries). 
 */
 {
-  u_int8_t t;
+  uint8_t t;
 #ifdef DEBUG
   if (trace)
   {  
@@ -308,7 +308,7 @@ Teste si au moins un des points 12, 11, 13, 8, 3, 2, 4 est objet et tous les aut
 } // match_end()
 
 /* ==================================== */
-int32_t match_vois2(u_int8_t *v)
+int32_t match_vois2(uint8_t *v)
 /* ==================================== */
 /*
                12      11      10       
@@ -324,7 +324,7 @@ Teste si les conditions suivantes sont réunies:
 Si le test réussit, les points 8, 26 sont marqués 2M_CRUCIAL
 */
 {
-  u_int8_t t;
+  uint8_t t;
 #ifdef DEBUG
   if (trace)
   {  
@@ -352,7 +352,7 @@ Si le test réussit, les points 8, 26 sont marqués 2M_CRUCIAL
 } // match_vois2()
 
 /* ==================================== */
-int32_t match_vois2s(u_int8_t *v)
+int32_t match_vois2s(uint8_t *v)
 /* ==================================== */
 /*
                12      11      10       
@@ -371,7 +371,7 @@ Si le test réussit, alors les points 8, 26 sont marqués 2M_CRUCIAL, de plus:
   Sinon, si t8(w[0...7]) > 1 alors les points 8, 26 sont marqués CURVE
 */
 {
-  u_int8_t t;
+  uint8_t t;
 #ifdef DEBUG
   if (trace)
   {  
@@ -405,7 +405,7 @@ Si le test réussit, alors les points 8, 26 sont marqués 2M_CRUCIAL, de plus:
 } // match_vois2s()
 
 /* ==================================== */
-int32_t match_vois1(u_int8_t *v)
+int32_t match_vois1(uint8_t *v)
 /* ==================================== */
 // A A  P1 P2  B B
 // A A  P3 P4  B B
@@ -466,7 +466,7 @@ int32_t match_vois1(u_int8_t *v)
 } // match_vois1()
 
 /* ==================================== */
-int32_t match_vois1s(u_int8_t *v)
+int32_t match_vois1s(uint8_t *v)
 /* ==================================== */
 // A A  P1 P2  B B
 // A A  P3 P4  B B
@@ -526,7 +526,7 @@ int32_t match_vois1s(u_int8_t *v)
 } // match_vois1s()
 
 /* ==================================== */
-int32_t match_vois0(u_int8_t *v)
+int32_t match_vois0(uint8_t *v)
 /* ==================================== */
 /*
                12      11
@@ -541,7 +541,7 @@ Teste si les conditions suivantes sont réunies:
 Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 */
 {
-  u_int8_t t;
+  uint8_t t;
 #ifdef DEBUG
   if (trace)
   {  
@@ -576,7 +576,7 @@ Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 } // match_vois0()
 
 /* ==================================== */
-int32_t match2(u_int8_t *v)
+int32_t match2(uint8_t *v)
 /* ==================================== */
 {
   int32_t i, ret = 0;
@@ -591,7 +591,7 @@ int32_t match2(u_int8_t *v)
 } /* match2() */
 
 /* ==================================== */
-int32_t match2s(u_int8_t *v)
+int32_t match2s(uint8_t *v)
 /* ==================================== */
 {
   int32_t i, ret = 0;
@@ -606,7 +606,7 @@ int32_t match2s(u_int8_t *v)
 } /* match2s() */
 
 /* ==================================== */
-int32_t match1(u_int8_t *v)
+int32_t match1(uint8_t *v)
 /* ==================================== */
 {
   int32_t i, ret = 0;
@@ -621,7 +621,7 @@ int32_t match1(u_int8_t *v)
 } /* match1() */
 
 /* ==================================== */
-int32_t match1s(u_int8_t *v)
+int32_t match1s(uint8_t *v)
 /* ==================================== */
 {
   int32_t i, ret = 0;
@@ -636,7 +636,7 @@ int32_t match1s(u_int8_t *v)
 } /* match1s() */
 
 /* ==================================== */
-int32_t match0(u_int8_t *v)
+int32_t match0(uint8_t *v)
 /* ==================================== */
 {
   int32_t i, ret = 0;
@@ -667,13 +667,13 @@ Répéter jusqu'à stabilité
   int32_t ds = depth(image);       /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  u_int8_t *S = UCHARDATA(image);      /* l'image de depart */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
-  u_int8_t *T = UCHARDATA(t);
+  uint8_t *T = UCHARDATA(t);
   struct xvimage *r = copyimage(image); 
-  u_int8_t *R = UCHARDATA(r);
+  uint8_t *R = UCHARDATA(r);
   int32_t step, nonstab;
-  u_int8_t v[27];
+  uint8_t v[27];
 
   if (inhibit != NULL)
   {
@@ -800,13 +800,13 @@ Répéter jusqu'à stabilité
   int32_t ds = depth(image);       /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  u_int8_t *S = UCHARDATA(image);      /* l'image de depart */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
-  u_int8_t *T = UCHARDATA(t);
-  u_int8_t *I;
+  uint8_t *T = UCHARDATA(t);
+  uint8_t *I;
   int32_t step, nonstab;
   int32_t top, topb;
-  u_int8_t v[27];
+  uint8_t v[27];
 
   if (inhibit == NULL) 
   {
@@ -928,13 +928,13 @@ Répéter jusqu'à stabilité
   int32_t ds = depth(image);       /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  u_int8_t *S = UCHARDATA(image);      /* l'image de depart */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
-  u_int8_t *T = UCHARDATA(t);
-  u_int8_t *I;
+  uint8_t *T = UCHARDATA(t);
+  uint8_t *I;
   int32_t step, nonstab;
   int32_t top, topb;
-  u_int8_t v[27];
+  uint8_t v[27];
 
   if (inhibit == NULL) 
   {
@@ -1081,15 +1081,15 @@ Répéter jusqu'à stabilité
   int32_t ds = depth(image);       /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  u_int8_t *S = UCHARDATA(image);      /* l'image de depart */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
-  u_int8_t *T = UCHARDATA(t);
+  uint8_t *T = UCHARDATA(t);
   struct xvimage *e = copyimage(image); 
-  u_int8_t *E = UCHARDATA(e);
-  u_int8_t *I;
+  uint8_t *E = UCHARDATA(e);
+  uint8_t *I;
   int32_t step, nonstab;
   int32_t top, topb;
-  u_int8_t v[27];
+  uint8_t v[27];
 
   if (inhibit == NULL) 
   {
@@ -1258,13 +1258,13 @@ Répéter jusqu'à stabilité
   int32_t ds = depth(image);       /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  u_int8_t *S = UCHARDATA(image);      /* l'image de depart */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
-  u_int8_t *T = UCHARDATA(t);
-  u_int8_t *I;
+  uint8_t *T = UCHARDATA(t);
+  uint8_t *I;
   int32_t step, nonstab;
   int32_t top, topb;
-  u_int8_t v[27];
+  uint8_t v[27];
 
   if (inhibit == NULL) 
   {
@@ -1425,19 +1425,19 @@ Répéter jusqu'à stabilité
   int32_t ds = depth(image);       /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  u_int8_t *S = UCHARDATA(image);      /* l'image de depart */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
-  u_int8_t *T = UCHARDATA(t);
+  uint8_t *T = UCHARDATA(t);
   struct xvimage *r = copyimage(image); 
-  u_int8_t *R = UCHARDATA(r);
+  uint8_t *R = UCHARDATA(r);
   struct xvimage *e = copyimage(image); 
-  u_int8_t *E = UCHARDATA(e);
+  uint8_t *E = UCHARDATA(e);
   struct xvimage *d = copyimage(image); 
-  u_int8_t *D = UCHARDATA(d);
+  uint8_t *D = UCHARDATA(d);
   struct xvimage *k = copyimage(image); 
-  u_int8_t *K = UCHARDATA(k);
+  uint8_t *K = UCHARDATA(k);
   int32_t step, nonstab;
-  u_int8_t v[27];
+  uint8_t v[27];
 
   if (inhibit != NULL)
   {
@@ -1578,12 +1578,12 @@ Répéter jusqu'à stabilité
   int32_t ds = depth(image);       /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  u_int8_t *S = UCHARDATA(image);      /* l'image de depart */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
-  u_int8_t *T = UCHARDATA(t);
-  u_int8_t *I = NULL;
+  uint8_t *T = UCHARDATA(t);
+  uint8_t *I = NULL;
   int32_t step, nonstab;
-  u_int8_t v[27];
+  uint8_t v[27];
 
   if (nsteps == -1) nsteps = 1000000000;
 
@@ -1712,14 +1712,14 @@ Retourne dans image l'axe topologique.
   int32_t ds = depth(image);       /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  u_int8_t *S = UCHARDATA(image);      /* l'image de depart */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
-  u_int8_t *T = UCHARDATA(t);
+  uint8_t *T = UCHARDATA(t);
   struct xvimage *r = copyimage(image); 
-  u_int8_t *R = UCHARDATA(r);
-  u_int32_t *O = ULONGDATA(res); 
+  uint8_t *R = UCHARDATA(r);
+  uint32_t *O = ULONGDATA(res); 
   int32_t step, nonstab, minvois;
-  u_int8_t v[27];
+  uint8_t v[27];
   
   if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
   {
@@ -1728,12 +1728,12 @@ Retourne dans image l'axe topologique.
   }
   if (datatype(image) != VFF_TYP_1_BYTE)
   {
-    fprintf(stderr, "%s: image type must be u_int8_t\n", F_NAME);
+    fprintf(stderr, "%s: image type must be uint8_t\n", F_NAME);
     return(0);
   }
   if (datatype(res) != VFF_TYP_4_BYTE)
   {
-    fprintf(stderr, "%s: result type must be u_int32_t\n", F_NAME);
+    fprintf(stderr, "%s: result type must be uint32_t\n", F_NAME);
     return(0);
   }
 
@@ -1843,7 +1843,7 @@ Retourne dans image l'axe topologique.
 #ifdef TEST
 int32_t main()
 {
-  u_int8_t V[27] = {
+  uint8_t V[27] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
     10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
     20, 21, 22, 23, 24, 25, 26
@@ -1869,7 +1869,7 @@ int32_t main()
 // ===================================================================
 
 /* ==================================== */
-int32_t asym_match_vois2(u_int8_t *v)
+int32_t asym_match_vois2(uint8_t *v)
 /* ==================================== */
 /*
                12      11      10       
@@ -1885,7 +1885,7 @@ Teste si les conditions suivantes sont réunies:
 Si le test réussit, le point 8 est marqué 2M_CRUCIAL
 */
 {
-  u_int8_t t;
+  uint8_t t;
   if (!IS_SIMPLE(v[8]) || !IS_SIMPLE(v[26]) || IS_SELECTED(v[8]) || IS_SELECTED(v[26])) return 0;
   if (v[0] || v[9]) t = 1; else t = 0;
   if (v[1] || v[10]) t |= 2;
@@ -1901,7 +1901,7 @@ Si le test réussit, le point 8 est marqué 2M_CRUCIAL
 } // asym_match_vois2()
 
 /* ==================================== */
-int32_t asym_match_vois1(u_int8_t *v)
+int32_t asym_match_vois1(uint8_t *v)
 /* ==================================== */
 // A A  P1 P2  B B
 // A A  P3 P4  B B
@@ -1951,7 +1951,7 @@ int32_t asym_match_vois1(u_int8_t *v)
 } // asym_match_vois1()
 
 /* ==================================== */
-int32_t asym_match_vois0(u_int8_t *v)
+int32_t asym_match_vois0(uint8_t *v)
 /* ==================================== */
 /*
                12      11
@@ -1966,7 +1966,7 @@ Teste si les conditions suivantes sont réunies:
 Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 */
 {
-  u_int8_t t;
+  uint8_t t;
   if (!((v[12]&&v[26]) || (v[11]&&v[4]) || (v[13]&&v[2]) || (v[8]&&v[3]) )) return 0;
 
   if (v[12] && (!IS_SIMPLE(v[12]) || IS_SELECTED(v[12]))) return 0;
@@ -1990,7 +1990,7 @@ Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 } // asym_match_vois0()
 
 /* ==================================== */
-int32_t asym_match2(u_int8_t *v)
+int32_t asym_match2(uint8_t *v)
 /* ==================================== */
 {
   int32_t i, ret = 0;
@@ -2005,7 +2005,7 @@ int32_t asym_match2(u_int8_t *v)
 } /* asym_match2() */
 
 /* ==================================== */
-int32_t asym_match1(u_int8_t *v)
+int32_t asym_match1(uint8_t *v)
 /* ==================================== */
 {
   int32_t i, ret = 0;
@@ -2020,7 +2020,7 @@ int32_t asym_match1(u_int8_t *v)
 } /* asym_match1() */
 
 /* ==================================== */
-int32_t asym_match0(u_int8_t *v)
+int32_t asym_match0(uint8_t *v)
 /* ==================================== */
 {
   int32_t i, ret = 0;
@@ -2053,12 +2053,12 @@ Répéter jusqu'à stabilité
   int32_t ds = depth(image);       /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  u_int8_t *S = UCHARDATA(image);      /* l'image de depart */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
-  u_int8_t *T = UCHARDATA(t);
-  u_int8_t *I = NULL;
+  uint8_t *T = UCHARDATA(t);
+  uint8_t *I = NULL;
   int32_t step, nonstab;
-  u_int8_t v[27];
+  uint8_t v[27];
 
   if (nsteps == -1) nsteps = 1000000000;
 
@@ -2167,13 +2167,13 @@ Répéter jusqu'à stabilité
   int32_t ds = depth(image);       /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  u_int8_t *S = UCHARDATA(image);      /* l'image de depart */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
-  u_int8_t *T = UCHARDATA(t);
-  u_int8_t *I;
+  uint8_t *T = UCHARDATA(t);
+  uint8_t *I;
   int32_t step, nonstab;
   int32_t top, topb;
-  u_int8_t v[27];
+  uint8_t v[27];
 
   if (inhibit == NULL) 
   {

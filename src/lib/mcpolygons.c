@@ -1,4 +1,4 @@
-/* $Id: mcpolygons.c,v 1.1 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: mcpolygons.c,v 1.2 2009-01-12 08:59:38 mcouprie Exp $ */
 /* 
   Gestion d'un maillage polygonal
   Michel Couprie  -  décembre 2008
@@ -187,7 +187,7 @@ int32_t MCP_AddAuxVertex(MCP *P, double x, double y, double z)
 } /* MCP_AddAuxVertex() */
 
 /* ==================================== */
-void MCP_AddFace(MCP *P, Liste *Face)
+int32_t MCP_AddFace(MCP *P, Liste *Face)
 /* ==================================== */
 /* modifie la var. globale MCP_Faces */
 {
@@ -196,15 +196,46 @@ void MCP_AddFace(MCP *P, Liste *Face)
   indface = P->Faces->cur;
   P->Faces->cur += 1;
   n = ListeTaille(Face);
-  if (n > MAXVERTFACE)
+  if (n > MCP_MAXVERTFACE)
   {
-    fprintf(stderr, "%s : too many vertices in a face (max %d)\n", F_NAME, MAXVERTFACE);
+    fprintf(stderr, "%s : too many vertices in a face (max %d)\n", F_NAME, MCP_MAXVERTFACE);
     exit(0);
   }
   P->Faces->f[indface].n = n; 
   for (i = 0; i < n; i++)
     P->Faces->f[indface].vert[i] = ListeElt(Face, i);
+  return indface;
 } /* MCP_AddFace() */
+
+/* ==================================== */
+void MCP_ComputeFaces(MCP *P)
+/* ==================================== */
+/*
+  Met à jour l'information "faces adjacentes" des vertices 
+*/
+#undef F_NAME
+#define F_NAME "MCP_ComputeFaces"
+{
+  int32_t i, j, k;
+  mcpface F;
+  int32_t nvert = P->Vertices->cur;
+  int32_t nface = P->Faces->cur;
+
+  for (k = 0; k < nvert; k++)
+    P->Vertices->v[k].nfaces = 0;
+
+  for (i = 0; i < nface; i++)
+  {
+    F = P->Faces->f[i];
+    assert(F.n > 2);
+    for (j = 0; j < F.n; j++)
+    {
+      k = F.vert[j]; 
+      assert(P->Vertices->v[k].nfaces < MCP_MAXADJFACES);
+      P->Vertices->v[k].face[ P->Vertices->v[k].nfaces++ ] = i;
+    } /* for j */
+  } /* for i */
+} /* MCP_ComputeFaces() */
 
 /* ==================================== */
 int32_t MCP_AddEdge(MCP *P, int32_t v1, int32_t v2)
@@ -291,9 +322,9 @@ void MCP_SubdivEdges(MCP *P, double param)
     ns = floor(len / param);
     if (ns > 1)
     { 
-      if ((ns - 1) > MAXVERTEDGE)
+      if ((ns - 1) > MCP_MAXVERTEDGE)
       {
-	fprintf(stderr, "%s : too many vertices in edge (max %d)\n", F_NAME, MAXVERTEDGE);
+	fprintf(stderr, "%s : too many vertices in edge (max %d)\n", F_NAME, MCP_MAXVERTEDGE);
 	exit(0);
       }
       // ns est le nombre de segments de la subdivision
@@ -537,8 +568,12 @@ void MCP_Print(MCP *P)
   printf(" ========== VERTICES ===========\n");
   for (i = 0; i < P->Vertices->cur; i++)
   {
-    printf("v[%d]: x=%g, y=%g, z=%g\n", i, 
+    printf("v[%d]: x=%g, y=%g, z=%g", i, 
            P->Vertices->v[i].x, P->Vertices->v[i].y, P->Vertices->v[i].z);
+    printf("  faces "); 
+    for (j = 0; j < P->Vertices->v[i].nfaces; j++)
+      printf("%d  ", P->Vertices->v[i].face[j]);
+    printf("\n");
   }
   printf(" ============ FACES ===========\n");
   for (i = 0; i < P->Faces->cur; i++)
@@ -590,6 +625,7 @@ int32_t main()
 
   P->Edges = MCP_AllocEdges(1);
   MCP_ComputeEdges(P);
+  MCP_ComputeFaces(P);
   do
   {
     printf("commande (qUIT, sUBDIVIDE, SaVE pRINT)\n");
@@ -603,6 +639,7 @@ int32_t main()
         break;
       case 's':
 	MCP_SubdivEdges(P, 0.5);
+	MCP_ComputeFaces(P);
         break;
       case 'p': MCP_Print(P); break;
       case 'q': break;

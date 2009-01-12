@@ -1,28 +1,33 @@
-/* $Id: mcpolygons.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+/* $Id: mcpolygons.h,v 1.3 2009-01-12 08:59:38 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 // nombre maximum de sommets par face (polygone)
-#define MAXVERTFACE 25
+#define MCP_MAXVERTFACE 50
 
 // nombre maximum de sommets intermédiaires par edge (subdivision)
-#define MAXVERTEDGE 50
+#define MCP_MAXVERTEDGE 25
+
+// nombre maximum de faces adjacentes a un sommet
+#define MCP_MAXADJFACES 15
 
 typedef struct {
   double x, y, z;    /* coordonnees */
+  int32_t nfaces;
+  int32_t face[MCP_MAXADJFACES]; /* indices des faces adjacentes (pas plus de MCP_MAXADJFACES) */
 } mcpvertex;
 
 typedef struct {
   int32_t n;         /* nombre de sommets adjacents */
   int32_t na;         /* nombre de sommets auxiliaires adjacents */
-  int32_t vert[MAXVERTFACE];   /* indices des sommets adjacents */
+  int32_t vert[MCP_MAXVERTFACE];   /* indices des sommets adjacents */
 } mcpface;
 
 typedef struct {
   int32_t v1, v2;    /* indices des sommets adjacents */
   int32_t n;         /* nombre de sommets dans la subdivision */
-  int32_t vert[MAXVERTEDGE];   /* indices des sommets de la subdivision */
+  int32_t vert[MCP_MAXVERTEDGE];   /* indices des sommets de la subdivision */
 } mcpedge;
 
 typedef struct {
@@ -64,7 +69,9 @@ extern void MCP_ReAllocEdges(mcptabedges **A);
 extern MCP * MCP_Init(int32_t taillemax);
 extern void MCP_Termine(MCP *P);
 extern int32_t MCP_AddVertex(MCP *P, double x, double y, double z);
-extern void MCP_AddFace(MCP *P, Liste *Face);
+extern int32_t MCP_AddAuxVertex(MCP *P, double x, double y, double z);
+extern int32_t MCP_AddFace(MCP *P, Liste *Face);
+extern void MCP_ComputeFaces(MCP *P);
 extern void MCP_ComputeEdges(MCP *P);
 extern void MCP_SubdivEdges(MCP *P, double param);
 extern void MCP_GetPolyPoints(MCP *P, int32_t indface, int32_t *pi, double *px, double *py, double *pz, int32_t *n);

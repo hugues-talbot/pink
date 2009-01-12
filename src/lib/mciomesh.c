@@ -1,4 +1,4 @@
-/* $Id: mciomesh.c,v 1.3 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: mciomesh.c,v 1.4 2009-01-12 08:59:38 mcouprie Exp $ */
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -459,6 +459,7 @@ POLYGONS %d %d    // Faces - champ obligatoire
   for (i = 0; i < M->Vertices->cur; i++)
   {
     fprintf(fileout, "%g %g %g", M->Vertices->v[i].x, M->Vertices->v[i].y, M->Vertices->v[i].z);
+    //printf("%g %g %g\n", M->Vertices->v[i].x, M->Vertices->v[i].y, M->Vertices->v[i].z);
     fprintf(fileout, "\n");
   }
   fprintf(fileout, "\n");

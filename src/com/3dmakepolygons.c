@@ -1,9 +1,9 @@
-/* $Id: 3dmakepolygons.c,v 1.1 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: 3dmakepolygons.c,v 1.2 2009-01-12 08:59:38 mcouprie Exp $ */
 /*! \file 3dmakepolygons.c
 
 \brief identifies polygons from a labelled pure 2D cellular complex
 
-<B>Usage:</B> 3dmakepolygons lab.pgm border.pgm [subdiv] out.vtk
+<B>Usage:</B> 3dmakepolygons lab.pgm border.pgm psubdiv pmerge out.vtk
 
 <B>Description:</B>
 
@@ -17,7 +17,7 @@
 
 /* Michel Couprie - decembre 2008 */
 
-//#define MISEAUPOINT
+#define MISEAUPOINT
 
 #include <stdio.h>
 #include <stdint.h>
@@ -27,6 +27,7 @@
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcliste.h>
+#include <mcgeo.h>
 #include <mcrbt.h>
 #include <mcpolygons.h>
 #include <mckhalimsky3d.h>
@@ -187,7 +188,7 @@ int32_t scanpolygon(struct xvimage * lab, struct xvimage * b,
 
   ListeFlush(poly);
 
-#ifdef MISEAUPOINT
+#ifdef MISEAUPOINT1
   printf("scanpolygon : label %d\n", label);
   printf("  sommet %d,%d,%d (%d): degre > 2\n", i, j, k, k*ps + j*rs + i);
 #endif
@@ -203,7 +204,7 @@ int32_t scanpolygon(struct xvimage * lab, struct xvimage * b,
     d = degrepoint(b, iq, jq, kq);
     if (d != 2)
     {
-#ifdef MISEAUPOINT
+#ifdef MISEAUPOINT1
       printf("  sommet %d,%d,%d (%d): degre %d\n", iq, jq, kq, kq*ps + jq*rs + iq, d);
 #endif	
       if ((iq != i) || (jq != j) || (kq != k))
@@ -227,7 +228,7 @@ int32_t scanpolygon(struct xvimage * lab, struct xvimage * b,
       d = degrepoint(b, iq, jq, kq);
       if (d != 2)
       {
-#ifdef MISEAUPOINT
+#ifdef MISEAUPOINT1
 	printf("  -sommet %d,%d,%d (%d): degre %d\n", iq, jq, kq, kq*ps + jq*rs + iq, d);
 #endif	
 	npoints++;
@@ -251,21 +252,22 @@ int main(int argc, char **argv)
 {
   struct xvimage * lab;
   struct xvimage * bor;
-  int32_t rs, cs, ds, ps, N, i, j, k, x, indx;
+  int32_t rs, cs, ds, ps, N, i, j, k, a, b, x, indx;
   uint32_t *L;
   uint8_t *B;
   int32_t u, v, nl, np, npol, spol, maxlab, label;
   int8_t *marklab;
+  int32_t *markvert;
   Liste * Face;
   Liste * Poly;
   Liste * Labels;
   FILE *fd = NULL;
-  double param;
+  double subdiv, merge, x1, y1, z1, x2, y2, z2;
   MCP *P;
 
-  if ((argc != 4) && (argc != 5))
+  if (argc != 6)
   {
-    fprintf(stderr, "usage: %s lab.pgm border.pgm [subdiv] out.vtk \n", argv[0]);
+    fprintf(stderr, "usage: %s lab.pgm border.pgm psubdiv pmerge out.vtk \n", argv[0]);
     exit(1);
   }
 
@@ -308,11 +310,9 @@ int main(int argc, char **argv)
   }
   B = UCHARDATA(bor);
 
-  if (argc == 5) 
-    param = atof(argv[3]);  
-  else
-    param = 0;
-
+  subdiv = atof(argv[3]);  
+  merge = atof(argv[4]);  
+  
   P = MCP_Init(100);
 
   Face = CreeListeVide(MAXSOMMETS);
@@ -370,7 +370,7 @@ int main(int argc, char **argv)
 	  {
 	    marklab[label] = 1;
 	    spol = scanpolygon(lab, bor, label, i, j, k, Poly);	    
-#ifdef MISEAUPOINT
+#ifdef MISEAUPOINT1
 	    printf("point multiple %d,%d,%d  ", i, j, k);
 	    printf("label %d\n", label);
 	    ListePrintLine(Poly);
@@ -402,10 +402,100 @@ int main(int argc, char **argv)
     } // if (B[x] && SINGL3D(i,j,k))
   } // for i, j, k
 
+  MCP_ComputeFaces(P);
+
+MCP_Print(P);
+
+  // FILTRAGE POUR FUSIONNER LES SOMMETS PROCHES
+  
+  markvert = (int32_t *)calloc(2 * P->Vertices->cur, sizeof(int32_t));
+  // il faut plus de place car des sommets vont être créés
+  if (markvert == NULL)
+  {
+    fprintf(stderr, "%s: malloc failed\n", argv[0]);
+    exit(1);
+  }
+  for (i = 0; i < P->Vertices->cur; i++) markvert[i] = -1;
+
+  for (i = 0; i < P->Faces->cur; i++)
+  {  
+    for (j = 0; j < P->Faces->f[i].n; j++)
+    {  
+      a = P->Faces->f[i].vert[j]; 
+      b = P->Faces->f[i].vert[(j+1)%P->Faces->f[i].n];
+      if ((markvert[a] == -1) && (markvert[b] == -1)) 
+      {
+	x1 = P->Vertices->v[a].x; 
+	y1 = P->Vertices->v[a].y; 
+	z1 = P->Vertices->v[a].z; 
+	x2 = P->Vertices->v[b].x; 
+	y2 = P->Vertices->v[b].y; 
+	z2 = P->Vertices->v[b].z; 
+	if (dist3(x1, y1, z1, x2, y2, z2) < merge) 
+	{	
+	  indx = MCP_AddVertex(P, (x1+x2)/2, (y1+y2)/2, (z1+z2)/2);	  
+	  markvert[a] = indx;
+	  markvert[b] = indx;
+	  markvert[indx] = -1;
+#ifdef MISEAUPOINT
+	  printf("Marque pour fusion: %d,%d -> %d\n", a, b, indx);
+#endif
+	}
+      } // if ((markvert[a] != -1) && (markvert[b] != -1)) 
+    } // for (j = 0; j < P->Faces->f[i].n; j++)
+  } // for (i = 0; i < P->Faces->cur; i++)
+
+  // fusion des sommets marqués dans toutes les faces
+  for (i = 0; i < P->Faces->cur; i++)
+  {  
+    j = 0;
+    while (j < P->Faces->f[i].n)
+    {
+      a = P->Faces->f[i].vert[j]; 
+      b = P->Faces->f[i].vert[(j+1)%P->Faces->f[i].n];
+      if ((markvert[a] != -1) && (markvert[a] == markvert[b]))
+      {
+#ifdef MISEAUPOINT
+	  printf("Fusionne: %d,%d -> %d\n", a, b, markvert[a]);
+#endif
+	// on retire a
+	for (k = j; k < P->Faces->f[i].n - 1; k++)
+	  P->Faces->f[i].vert[k] = P->Faces->f[i].vert[k+1]; 
+	P->Faces->f[i].n -= 1;
+	// on remplace b par markvert[a]
+	if (j < P->Faces->f[i].n)
+	  P->Faces->f[i].vert[j] = markvert[a];
+	else
+	  P->Faces->f[i].vert[0] = markvert[a];
+      }
+      else
+	j++;
+    } // while (j < P->Faces->f[i].n)
+  } // for (i = 0; i < P->Faces->cur; i++)
+
+MCP_Print(P);
+
+  // remplacement des sommets marqués dans toutes les faces
+  for (i = 0; i < P->Faces->cur; i++)
+  {  
+    for (j = 0; j < P->Faces->f[i].n; j++)
+    {
+      a = P->Faces->f[i].vert[j]; 
+      if (markvert[a] != -1)
+	P->Faces->f[i].vert[j] = markvert[a]; // on remplace a par markvert[a]
+    } // 
+  } // for (i = 0; i < P->Faces->cur; i++)
+
+MCP_Print(P);
+ 
+  // SUBDIVISION DES ARETES
+
   P->Edges = MCP_AllocEdges(100);
   MCP_ComputeEdges(P);
-  if (param != 0)
-    MCP_SubdivEdges(P, param);
+
+  if (subdiv > 0) MCP_SubdivEdges(P, subdiv);
+
+  // SAUVEGARDE RESULTAT
 
   fd = fopen(argv[argc - 1], "w");
   if (!fd)
@@ -423,5 +513,6 @@ int main(int argc, char **argv)
   freeimage(lab);
   freeimage(bor);
   free(marklab);
+  free(markvert);
   return 0;
 } /* main */
