@@ -34,7 +34,6 @@ struct xvimage *allocGAimage(
   int32_t N = rs * cs * d;             /* taille image */
   struct xvimage *g;
   int32_t ts;                          /* type size */
-
   switch (t)
   {
   case VFF_TYP_GABYTE:   if(d == 1) ts = 2; else ts = 3; break;      /* cas d'une image d'arete en 2D, chaque pixel a 2 aretes */
@@ -44,11 +43,18 @@ struct xvimage *allocGAimage(
     return NULL;
   } /* switch (t) */
 
-  g = (struct xvimage *)malloc(sizeof(struct xvimage) - 1 + (N * ts));
+  g = (struct xvimage *)malloc(sizeof(struct xvimage));
   if (g == NULL)
-  {   fprintf(stderr,"%s() : malloc failed (%d bytes)\n", F_NAME, sizeof(struct xvimage) - 1 + (N * ts));
+  {   fprintf(stderr,"%s() : malloc failed (%d bytes)\n", F_NAME, sizeof(struct xvimage));
       return NULL;
   }
+  g->image_data = malloc((N*ts-1));
+  if (g->image_data == NULL) {
+    fprintf(stderr,"%s() : malloc failed (%d bytes)\n", F_NAME, ((N*ts-1)));
+    return NULL;
+  }
+
+
   if (name != NULL)
   {
     g->name = (char *)malloc(strlen(name)+1);
@@ -67,6 +73,7 @@ struct xvimage *allocGAimage(
   datatype(g) = t;
   g->xdim = g->ydim = g->zdim = 0.0;
 
+    
   return g;
 } /* allocGAimage() */
  
@@ -176,7 +183,7 @@ struct xvimage * readGAimage(char *filename)
                                  /* PB: ascii int32_t 2d-3d  ==  extension MC */
                                  /* PC: graphe d'arete == extension JC */
                                  /* PD: graphe d'arete flottant == extension JC */ 
- 
+
   if (buffer[0] != 'P')
   {   fprintf(stderr,"%s : invalid image format\n", F_NAME);
       return NULL;
@@ -189,6 +196,7 @@ struct xvimage * readGAimage(char *filename)
     fprintf(stderr,"%s : invalid image format, ne traite que les GAs\n", F_NAME);
       return NULL;
   } /* switch */
+
 
   do 
   {
@@ -217,6 +225,7 @@ struct xvimage * readGAimage(char *filename)
   {   fprintf(stderr,"%s : alloc failed\n", F_NAME);
       return(NULL);
   }
+
   image->xdim = xdim;
   image->ydim = ydim;
   image->zdim = zdim;
