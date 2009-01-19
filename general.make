@@ -173,6 +173,7 @@ $(BDIR)/waterfall \
 $(BDIR)/MSF \
 $(BDIR)/MSF4d \
 $(BDIR)/GA2khalimsky \
+$(BDIR)/GA2tikz \
 $(BDIR)/GAwatershed \
 $(BDIR)/GAwatershedDouble
 
@@ -732,6 +733,9 @@ $(BDIR)/pgm2GA4d:	$(CDIR)/pgm2GA4d.c $(IDIR)/mcimage.h $(IDIR)/jcimage.h $(IDIR)
 
 $(BDIR)/GA2khalimsky:	 $(CDIR)/GA2khalimsky.c $(IDIR)/mcimage.h $(IDIR)/jcimage.h $(IDIR)/mccodimage.h $(IDIR)/lga2khalimsky.h $(ODIR)/mcimage.o $(ODIR)/jcimage.o $(ODIR)/mccodimage.o $(ODIR)/lga2khalimsky.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/GA2khalimsky.c  $(ODIR)/mcimage.o $(ODIR)/jcimage.o $(ODIR)/mccodimage.o $(ODIR)/lga2khalimsky.o $(LIBS) -o $(BDIR)/GA2khalimsky
+
+$(BDIR)/GA2tikz:	 $(CDIR)/GA2tikz.c $(IDIR)/mcimage.h $(IDIR)/jcimage.h $(IDIR)/mccodimage.h $ $(ODIR)/mcimage.o $(ODIR)/jcimage.o $(ODIR)/mccodimage.o 
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/GA2tikz.c  $(ODIR)/mcimage.o $(ODIR)/jcimage.o $(ODIR)/mccodimage.o  $(LIBS) -o $(BDIR)/GA2tikz
 
 $(BDIR)/section:	$(CDIR)/section.c $(IDIR)/mcimage.h $(IDIR)/lgeo.h $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/mcliste.o $(ODIR)/lbresen.o $(ODIR)/llabelextrema.o $(ODIR)/lgeo.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/section.c $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcgeo.o $(ODIR)/mclin.o $(ODIR)/mcliste.o $(ODIR)/lbresen.o $(ODIR)/llabelextrema.o $(ODIR)/lgeo.o $(LIBS) -o $(BDIR)/section
