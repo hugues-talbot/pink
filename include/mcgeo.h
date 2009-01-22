@@ -1,4 +1,4 @@
-/* $Id: mcgeo.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: mcgeo.h,v 1.4 2009-01-22 07:05:36 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -55,12 +55,6 @@ typedef struct {
   double h, w, angle;
 } rectanglearrondi;
 
-typedef struct {
-  int32_t rs;                     /* taille d'une ligne */
-  int32_t cs;                     /* taille d'une colonne */
-  int32_t *tab;
-} mesh;
-
 #define OBJTYPE_LINE 0
 #define OBJTYPE_CLOSEDLINE 1
 #define OBJTYPE_SPLINE 2
@@ -113,12 +107,6 @@ extern int32_t inittriangle(triangle *t);
 extern int32_t danstriangle(triangle *t, double x, double y);
 extern void printtriangle(triangle *t);
 extern int32_t dansdisque(double x, double y, double xc, double yc, double r);
-extern mesh * readmesh(char *filename);
-extern int32_t writemesh(mesh *msh, char *filename);
-extern mesh * allocmesh(int32_t rs, int32_t cs);
-extern void printmesh(mesh *msh);
-extern int32_t checkmesh(mesh *msh, int32_t rs, int32_t cs);
-extern void freemesh(mesh *msh);
 extern double dist2(double x1, double y1, double x2, double y2);
 extern double dist3(double x1, double y1, double z1, double x2, double y2, double z2);
 extern int32_t identcercle(int32_t n, double *x, double *y, double *x0, double *y0, double *r);

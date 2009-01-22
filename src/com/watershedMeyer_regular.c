@@ -1,4 +1,4 @@
-/* $Id: watershedMeyer_regular.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: watershedMeyer_regular.c,v 1.2 2009-01-22 07:05:36 mcouprie Exp $ */
 /*! \file watershedMeyer.c
 
 \brief watershed transformation (Meyer's algorithm)
@@ -34,7 +34,7 @@ for the makers.
 #include <llpemeyer.h>
 
 /* =============================================================== */
-int32_t main(argc, argv) 
+int main(argc, argv) 
 /* =============================================================== */
   int32_t argc; char **argv; 
 {

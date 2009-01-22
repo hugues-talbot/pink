@@ -35,7 +35,7 @@ direct adjacency in dimension 4).
 #include <lppm2GA.h>
 
 /* =============================================================== */
-int32_t main(argc, argv) 
+int main(argc, argv) 
 /* =============================================================== */
   int32_t argc; char **argv; 
 {

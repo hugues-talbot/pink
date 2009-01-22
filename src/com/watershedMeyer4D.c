@@ -1,4 +1,4 @@
-/* $Id: watershedMeyer4D.c,v 1.2 2009-01-06 13:18:07 mcouprie Exp $ */
+/* $Id: watershedMeyer4D.c,v 1.3 2009-01-22 07:05:36 mcouprie Exp $ */
 /*! \file watershedMeyer4D.c
 
 \brief watershed transformation (Meyer's algorithm)
@@ -35,7 +35,7 @@ for the makers.
 #include <llpemeyer4d.h>
 
 /* =============================================================== */
-int32_t main(int32_t argc, char **argv)
+int main(int32_t argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage4D * image;

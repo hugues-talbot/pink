@@ -1,4 +1,4 @@
-/* $Id: mcmesh.h,v 1.4 2009-01-12 08:59:38 mcouprie Exp $ */
+/* $Id: mcmesh.h,v 1.5 2009-01-22 07:05:36 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -106,6 +106,7 @@ extern void MCM_AddFace2(MCM *M,
 			 double x2, double y2, double z2, int32_t t2,
 			 double x3, double y3, double z3, int32_t t3
 			);
+extern int32_t MCM_CheckComplex(MCM *M);
 extern void MCM_Print(MCM *M);
 
 extern void InitMesh(int32_t taillemax);

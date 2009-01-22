@@ -36,7 +36,7 @@ struct xvimage *allocGAimage(
   int32_t ts;                          /* type size */
   switch (t)
   {
-  case VFF_TYP_GABYTE:   if(d == 1) ts = 2; else ts = 3; break;      /* cas d'une image d'arete en 2D, chaque pixel a 2 aretes */
+  case VFF_TYP_GABYTE: if(d == 1) ts = 2; else ts = 3; break;      /* cas d'une image d'arete en 2D, chaque pixel a 2 aretes */
   case VFF_TYP_GAFLOAT: if(d == 1) ts = 2*sizeof(float); else ts = 3*sizeof(float); break;
   case VFF_TYP_GADOUBLE: if(d == 1) ts = 2*sizeof(double); else ts = 3*sizeof(float); break;
   default: fprintf(stderr,"%s() : bad data type, ne gère que les GAs %d\n", F_NAME, t);

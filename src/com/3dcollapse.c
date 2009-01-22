@@ -1,4 +1,4 @@
-/* $Id: 3dcollapse.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: 3dcollapse.c,v 1.3 2009-01-22 07:05:36 mcouprie Exp $ */
 /*! \file 3dcollapse.c
 
 \brief ultimate constrained collapse guided by a priority image
@@ -43,7 +43,7 @@ then the points of this image will be left unchanged.
 #include <l3dcollapse.h>
 
 /* =============================================================== */
-int32_t main(int32_t argc, char **argv) 
+int main(int32_t argc, char **argv) 
 /* =============================================================== */
 {
   struct xvimage * k;

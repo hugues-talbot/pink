@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: text.c,v 1.2 2009-01-22 07:05:36 mcouprie Exp $ */
 /* \file drawtext.c
 
 \brief Draws a text line in a 2D image
@@ -28,7 +28,7 @@ Draws a text line in image <B>in.pgm</B>, at position
 #include <mcdrawps.h>
 
 /* =============================================================== */
-int32_t main(argc, argv) 
+int main(argc, argv) 
 /* =============================================================== */
   int32_t argc; char **argv; 
 {

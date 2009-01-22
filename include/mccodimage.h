@@ -1,4 +1,4 @@
-/* $Id: mccodimage.h,v 1.5 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: mccodimage.h,v 1.6 2009-01-22 07:05:36 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -36,6 +36,7 @@ struct xvimage {
   void * image_data;                    /* pointer on raw data */
 };
 
+#define SCHARDATA(I)   ((int8_t*)((I)->image_data))
 #define UCHARDATA(I)   ((uint8_t*)((I)->image_data))
 #define USHORTDATA(I)  ((uint16_t*)((I)->image_data))
 #define ULONGDATA(I)   ((uint32_t*)((I)->image_data))

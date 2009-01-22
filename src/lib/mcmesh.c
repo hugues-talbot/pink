@@ -1,4 +1,4 @@
-/* $Id: mcmesh.c,v 1.3 2009-01-12 08:59:38 mcouprie Exp $ */
+/* $Id: mcmesh.c,v 1.4 2009-01-22 07:05:36 mcouprie Exp $ */
 /* 
   Gestion d'une triangulation
   Michel Couprie  -  Mai 2001
@@ -23,6 +23,7 @@
 #include <mcgeo.h>
 #include <mcprobas.h>
 #include <mcutil.h>
+#include <assert.h>
 
 #define MCM_EPSILON 1E-20
 #define RMH_EPSILON 1E-2
@@ -595,6 +596,85 @@ void ComputeEdges()
     } /* for k */
   } /* for i */
 } /* ComputeEdges() */
+
+static void swap(double *x, double *y)
+{
+  double t = *x;
+  *x = *y;
+  *y = t;
+} 
+
+static int32_t inclusedge(meshvertex Vi, meshvertex Vj, meshvertex Vk)
+{
+  // teste si l'edge ViVj est strictement inclus dans l'edge ViVk
+  // ou inversement
+  double xi = Vi.x, yi = Vi.y, zi = Vi.z;
+  double xj = Vj.x, yj = Vj.y, zj = Vj.z;
+  double xk = Vk.x, yk = Vk.y, zk = Vk.z;
+  double ijx, ijy, ijz, ikx, iky, ikz;
+  double pc1, pc2, pc3;
+  ijx = (xj - xi); ikx = (xk - xi);
+  ijy = (yj - yi); iky = (yk - yi);
+  ijz = (zj - zi); ikz = (zk - zi);
+  // calcule les produits croisés (teste la collinearité des projections)
+  pc1 = ijx * iky - ikx * ijy;
+  pc2 = ijx * ikz - ikx * ijz;
+  pc3 = ijz * iky - ikz * ijy;
+  if (mcabs(pc1) > MCGEO_EPSILON) return 0;
+  if (mcabs(pc2) > MCGEO_EPSILON) return 0;
+  if (mcabs(pc3) > MCGEO_EPSILON) return 0;
+  // teste si les vecteurs ont des sens opposés
+  if (signe(ijx) != signe(ikx)) return 0;
+  if (signe(ijy) != signe(iky)) return 0;
+  if (signe(ijz) != signe(ikz)) return 0;
+  return 1;							 
+} // inclusedge()
+
+/* ==================================== */
+int32_t MCM_CheckComplex(MCM *M)
+/* ==================================== */
+/*
+  Verifie si le mesh M est un complexe simplicial
+*/
+#undef F_NAME
+#define F_NAME "MCM_CheckComplex"
+{
+  int32_t i, j, k, n, nvertices;
+  meshvertex V;
+  meshface F;
+  int32_t link[MCM_MAXADJFACES];
+  int32_t is_complex = 1;
+
+  nvertices = M->Vertices->cur;
+  for (i = 0; i < nvertices; i++)
+  {
+    V = M->Vertices->v[i];
+    n = 0;
+    for (j = 0; j < V.nfaces; j++) /* parcourt les faces adjacentes */
+    {                                         /* et calcule le link */
+      F = M->Faces->f[V.face[j]];
+      k = F.vert[0]; if ((k != i) && NotIn(k, link, n)) link[n++] = k;
+      assert(n <= MCM_MAXADJFACES);
+      k = F.vert[1]; if ((k != i) && NotIn(k, link, n)) link[n++] = k;
+      assert(n <= MCM_MAXADJFACES);
+      k = F.vert[2]; if ((k != i) && NotIn(k, link, n)) link[n++] = k;
+      assert(n <= MCM_MAXADJFACES);
+    } /* for j */
+
+    for (j = 0; j < n; j++)   /* parcourt le link et vérifie les cotes */
+      for (k = j+1; k < n; k++)
+      {
+	if (inclusedge(M->Vertices->v[i], M->Vertices->v[link[j]], M->Vertices->v[link[k]])) 
+	{
+	  is_complex = 0;
+#ifdef VERBOSE
+	  printf("edge inclusion: (%d,%d) (%d,%d)\n", i, link[j], i, link[k]);
+#endif
+	}
+      } /* for j */
+  } /* for i */
+  return is_complex;
+} /* CheckComplex() */
 
 /* ==================================== */
 void ComputeLinks()

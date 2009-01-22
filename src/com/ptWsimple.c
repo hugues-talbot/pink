@@ -1,4 +1,4 @@
-/* $Id: ptWsimple.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: ptWsimple.c,v 1.3 2009-01-22 07:05:36 mcouprie Exp $ */
 /*! \file label.c
 
 \brief detects W-simple points in a 2D binary image
@@ -27,7 +27,7 @@ The argument \b connex selects the connectivity (4, 8 in 2D).
 #include <llabelextrema.h>
 
 /* =============================================================== */
-int32_t main(int32_t argc, char **argv) 
+int main(int32_t argc, char **argv) 
 /* =============================================================== */
 {
   int32_t nblabels, connex, i,y,k;

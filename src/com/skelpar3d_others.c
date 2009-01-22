@@ -1,4 +1,4 @@
-/* $Id: skelpar3d_others.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: skelpar3d_others.c,v 1.3 2009-01-22 07:05:36 mcouprie Exp $ */
 /*! \file skelpar3d_others.c
 
 \brief parallel 3D binary skeleton
@@ -38,7 +38,7 @@ then the points of this image will be left unchanged.
 #include <lmedialaxis.h>
 
 /* =============================================================== */
-int32_t main(int32_t argc, char **argv)
+int main(int32_t argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
