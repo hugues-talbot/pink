@@ -1,4 +1,4 @@
-/* $Id: mciomesh.c,v 1.4 2009-01-12 08:59:38 mcouprie Exp $ */
+/* $Id: mciomesh.c,v 1.5 2009-02-11 13:57:51 mcouprie Exp $ */
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -448,9 +448,10 @@ POLYGONS %d %d    // Faces - champ obligatoire
                   // arg1: nb polygones; arg2: nb valeurs (=4*arg1 pour des triangles)
 3 %d %d %d        // face: ind. vertices
    ...
+Attention : les faces dont le champ "aux" est différent de 0 ne sont pas sauvées
 */
 {
-  int32_t i, j;
+  int32_t i, j, n, m;
 
   genheaderVTK(fileout, "MCM_SaveVTK output");
 
@@ -465,11 +466,14 @@ POLYGONS %d %d    // Faces - champ obligatoire
   fprintf(fileout, "\n");
 
   // FACES
-  fprintf(fileout, "POLYGONS %d %d\n", M->Faces->cur, 4*M->Faces->cur);
+  n = m = 0;
   for (i = 0; i < M->Faces->cur; i++)
-    fprintf(fileout, "3 %d %d %d\n", M->Faces->f[i].vert[0], M->Faces->f[i].vert[1], M->Faces->f[i].vert[2]);
+    if (M->Faces->f[i].aux == 0) { n++; m += 4; }
+  fprintf(fileout, "POLYGONS %d %d\n", n, m);
+  for (i = 0; i < M->Faces->cur; i++)
+    if (M->Faces->f[i].aux == 0)
+      fprintf(fileout, "3 %d %d %d\n", M->Faces->f[i].vert[0], M->Faces->f[i].vert[1], M->Faces->f[i].vert[2]);
   fprintf(fileout, "\n");
-
 } /* MCM_SaveVTK() */
 
 /* ==================================== */
