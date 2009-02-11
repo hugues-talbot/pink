@@ -1,19 +1,23 @@
+installer cmake, tcl, tk, libtcl-devel, libtk-devel (urpmi cmake; ...)
+
 0/ su root
 1/ cd /usr/local
-2/ install cmake here
-3/ expand vtk archive here
-4/ cd VTK
-5/ ccmake .
-6/ type c
-7/ turn on VTK_WRAP_TCL
+2/ expand vtk archive here
+3/ cd VTK
+4/ ccmake .
+5/ type c
+6/ turn on VTK_WRAP_TCL
+7/ type c
 8/ type c
-9/ type c
-10/ type g
-11/ make 
-12/ make install
+9/ type g
+10/ make 
+11/ make install
 
-ajouter au .bashrc : 
-export TCLLIBPATH=/usr/local/bin
+ajouter au .cshrc : 
+setenv TCLLIBPATH /usr/local/VTK/Wrapping/Tcl
+setenv LD_LIBRARY_PATH /usr/local/bin:/usr/local/lib
+au .bashrc : 
+export TCLLIBPATH=/usr/local/VTK/Wrapping/Tcl
 export LD_LIBRARY_PATH=/usr/local/bin:/usr/local/lib
 
 # - Find Tcl includes and libraries.
@@ -32,8 +36,8 @@ export LD_LIBRARY_PATH=/usr/local/bin:/usr/local/lib
 #  TK_STUB_LIBRARY_DEBUG = path to debug Tk stub library
 #  TK_INCLUDE_PATH    = path to where tk.h can be found
 #  TK_INTERNAL_PATH   = path to where tkWinInt.h is found
+#    ex: /local/VTK/Utilities/TclTk/internals/tk8.4
 #  TK_WISH            = full path to the wish executable
-
 
 # This is the CMakeCache file.
 # For build in directory: /home4/rsz/pub/linux/vtk/vtk-4.5/src

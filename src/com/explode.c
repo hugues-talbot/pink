@@ -1,9 +1,9 @@
-/* $Id: explode.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: explode.c,v 1.3 2009-02-11 13:38:56 mcouprie Exp $ */
 /*! \file explode.c
 
 \brief converts single 3D pgm file into a series of 2D pgm files
 
-<B>Usage:</B> explode in.pgm name_prefix
+<B>Usage:</B> explode in.pgm [begin end] name_prefix
 
 <B>Description:</B>
 Generated file names are of the form: <B>name_prefix</B>nnnn.pgm, 
@@ -15,12 +15,6 @@ where nnnn is a four digit decimal integer.
 \ingroup  convert
 
 \author Michel Couprie
-*/
-
-/* 
-  Michel Couprie - avril 2001
-
-  ATTENTION: pas de nom image resultat
 */
 
 #include <stdio.h>
@@ -38,16 +32,16 @@ int main(int argc, char **argv)
 {
   int32_t i, j, k, x;
   char bufname[1024];
-  int32_t namelen;
+  int32_t namelen, begin, end;
   struct xvimage * image_in;
   struct xvimage * image_out;
   int32_t rs, cs, ds, ps, N;
   uint8_t *I;
   uint8_t *O;
 
-  if (argc != 3)
+  if ((argc != 3) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s in.pgm name_prefix\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm [begin end] name_prefix\n", argv[0]);
     exit(1);
   }
 
@@ -64,8 +58,19 @@ int main(int argc, char **argv)
   N = ps * ds;              /* taille image */
   I = UCHARDATA(image_in);
 
-  strcpy(bufname, argv[2]);
-  namelen = strlen(argv[2]);
+  if (argc == 5)
+  {
+    begin = atoi(argv[2]);
+    end = atoi(argv[3]);
+  }
+  else
+  {
+    begin = 0;
+    end = ds;
+  }
+
+  strcpy(bufname, argv[argc - 1]);
+  namelen = strlen(argv[argc - 1]);
   
   image_out = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
   if (image_out == NULL)
@@ -75,7 +80,7 @@ int main(int argc, char **argv)
   }
   O = UCHARDATA(image_out);
 
-  for (k = 0; k < ds; k++)
+  for (k = begin; k < end; k++)
   {  
     bufname[namelen] =   '0' + (k / 1000) % 10;
     bufname[namelen+1] = '0' + (k / 100) % 10;

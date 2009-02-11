@@ -1,4 +1,4 @@
-/* $Id: mcube.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: mcube.c,v 1.3 2009-02-11 13:38:56 mcouprie Exp $ */
 /*! \file mcube.c
 
 \brief topologically correct "marching cubes"-like algorithm
@@ -308,7 +308,7 @@ int32_t lmarchingcubes(struct xvimage * f, uint8_t v,
     case T_MCM:
       CalculNormales();
       CalculNormalesFaces();
-      Edges = MCM_AllocEdges(1000);
+      Edges = AllocEdges(1000);
       ComputeEdges();
       SaveMeshMCM(fileout);
       break;
@@ -463,7 +463,7 @@ int32_t lmarchingcubes2(struct xvimage * f,
     }
   } /* for z, y, x */
 
-  Edges = MCM_AllocEdges(1000);
+  Edges = AllocEdges(1000);
   ComputeEdges();
   ComputeCurvatures();
   //PrintMesh();

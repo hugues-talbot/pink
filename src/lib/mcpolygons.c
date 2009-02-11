@@ -1,4 +1,4 @@
-/* $Id: mcpolygons.c,v 1.2 2009-01-12 08:59:38 mcouprie Exp $ */
+/* $Id: mcpolygons.c,v 1.3 2009-02-11 13:38:56 mcouprie Exp $ */
 /* 
   Gestion d'un maillage polygonal
   Michel Couprie  -  décembre 2008
@@ -436,8 +436,18 @@ POLYGONS %d %d    // Faces - champ obligatoire
 /* ==================================== */
 void MCP_GetPolyPoints(MCP *P, int32_t indface, int32_t *pi, double *px, double *py, double *pz, int32_t *n)
 /* ==================================== */
-// *n contient en entree la taille allouee pour les tableaux pi,px,py,pz
-// et en sortie, le nombre de points transmis.  
+/*
+Extrait la liste des points d'un polygone
+entrées : 
+  P : un maillage polygonal
+  indface : l'index du polygone considéré
+  *n : la taille allouee pour les tableaux pi,px,py,pz
+
+sorties : 
+  pi : tableau des indices (dans P) des points trouvés
+  px,py,pz : tableau des coordonnées des points trouvés
+  *n : le nombre de points transmis  
+*/
 {
   int32_t i, j, k, a, b, N, nsp, taille = *n;
   RbtElt * re;

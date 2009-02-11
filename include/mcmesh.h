@@ -1,8 +1,10 @@
-/* $Id: mcmesh.h,v 1.5 2009-01-22 07:05:36 mcouprie Exp $ */
+/* $Id: mcmesh.h,v 1.6 2009-02-11 13:38:56 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
 #define MCM_MAXADJFACES 25
+#define MCM_MAXADJEDGES 25
+#define MCM_MAXADJFACESEDGE 10
 
 typedef struct {
   double x, y, z;    /* coordonnees */
@@ -12,7 +14,7 @@ typedef struct {
   int32_t nfaces;
   int32_t face[MCM_MAXADJFACES]; /* indices des faces adjacentes (pas plus de MCM_MAXADJFACES) */
   int32_t nedges;
-  int32_t edge[MCM_MAXADJFACES]; /* indices des cotes adjacents (pas plus de MCM_MAXADJFACES) */
+  int32_t edge[MCM_MAXADJEDGES]; /* indices des cotes adjacents (pas plus de MCM_MAXADJEDGES) */
 
   float curv1, curv2; // Pour les courbures
   uint8_t red, green, blue; // pour la couleur
@@ -22,32 +24,45 @@ typedef struct {
 typedef struct {
   int32_t vert[3];   /* indices des sommets adjacents */
   double xn, yn, zn; /* normale a la face */
+  int32_t aux;
 } meshface;
 
 typedef struct {
   int32_t v1, v2;        /* indices des sommets adjacents */
   int32_t f1, f2;        /* indices des faces adjacentes */
   double curv;       /* pour stocker la courbure (angle entre -pi et pi) */
+} meshedge2;
+
+typedef struct {
+  int32_t v1, v2;        /* indices des sommets adjacents */
+  int32_t nfaces;
+  int32_t face[MCM_MAXADJFACESEDGE]; /* indices des faces adjacentes (pas plus de MCM_MAXADJFACESEDGE) */
 } meshedge;
 
 typedef struct {
-  int32_t max;            /* taille max du tableau de sommets */
-  int32_t cur;            /* taille courante du tableau de sommets */
-  uint8_t *lab; /* tableau de labels associes aux sommets */
-  uint8_t *tmp; /* tableau de valeurs associes aux sommets */
+  int32_t max;        /* taille max du tableau de sommets */
+  int32_t cur;        /* taille courante du tableau de sommets */
+  uint8_t *lab;       /* tableau de labels associes aux sommets */
+  uint8_t *tmp;       /* tableau de valeurs associes aux sommets */
   meshvertex v[1];    /* tableau des elements physiques */
 } meshtabvertices;
 
 typedef struct {
   int32_t max;         /* taille max du tableau de faces */
   int32_t cur;         /* taille courante du tableau de faces */
-  meshface f[1];   /* tableau des elements physiques */
+  meshface f[1];       /* tableau des elements physiques */
 } meshtabfaces;
 
 typedef struct {
   int32_t max;         /* taille max du tableau de cotes */
   int32_t cur;         /* taille courante du tableau de cotes */
-  meshedge e[1];   /* tableau des elements physiques */
+  meshedge2 e[1];      /* tableau des elements physiques */
+} meshtabedges2;
+
+typedef struct {
+  int32_t max;         /* taille max du tableau de cotes */
+  int32_t cur;         /* taille courante du tableau de cotes */
+  meshedge e[1];       /* tableau des elements physiques */
 } meshtabedges;
 
 typedef struct {
@@ -78,7 +93,7 @@ typedef struct {
 
 extern meshtabvertices *Vertices;
 extern meshtabfaces *Faces;
-extern meshtabedges *Edges;
+extern meshtabedges2 *Edges;
 extern meshtablinks *Links;
 
 /* ==================================== */
@@ -94,28 +109,45 @@ extern void MCM_ReAllocFaces(meshtabfaces **A);
 extern void MCM_ReAllocEdges(meshtabedges **A);
 extern MCM * MCM_Init(int32_t taillemax);
 extern void MCM_Termine(MCM *Mesh);
-extern int32_t MCM_AddVertexStraight(MCM *M, double x, double y, double z, int32_t indface);
+extern int32_t MCM_AddVertexStraight(
+  MCM *M, double x, double y, double z, int32_t indface
+);
+extern int32_t MCM_AddVertexStraight2(
+  MCM *M, double x, double y, double z
+);
 extern int32_t MCM_AddVertex(MCM *M, double x, double y, double z, int32_t indface);
-extern void MCM_AddFace(MCM *M, 
-			double x1, double y1, double z1, 
-			double x2, double y2, double z2, 
-			double x3, double y3, double z3
-		       );
-extern void MCM_AddFace2(MCM *M, 
-                         double x1, double y1, double z1, int32_t t1, 
-			 double x2, double y2, double z2, int32_t t2,
-			 double x3, double y3, double z3, int32_t t3
-			);
+extern void MCM_VertexAddFace(MCM *M, int32_t indvert, int32_t indface);
+extern void MCM_VertexAddEdge(MCM *M, int32_t indvert, int32_t indedge);
+extern void MCM_VertexRemoveFace(MCM *M, int32_t indvert, int32_t indface);
+extern int32_t MCM_AddFace(MCM *M, 
+  double x1, double y1, double z1, 
+  double x2, double y2, double z2, 
+  double x3, double y3, double z3
+);
+extern int32_t MCM_AddFaceWithExistingVertices(
+  MCM *M, int32_t iv1, int32_t iv2, int32_t iv3
+);
+extern int32_t MCM_AddFace2(MCM *M, 
+  double x1, double y1, double z1, int32_t t1, 
+  double x2, double y2, double z2, int32_t t2,
+  double x3, double y3, double z3, int32_t t3
+);
+extern int32_t MCM_AddEdge(MCM *M, int32_t v1, int32_t v2);
+extern void MCM_ComputeEdges(MCM *M);
+extern void MCM_VertexMerge2Faces(MCM *M, int32_t indvert);
 extern int32_t MCM_CheckComplex(MCM *M);
+extern int32_t MCM_HealMesh(MCM *M);
+extern int32_t MCM_RemoveDegenerateFaces(MCM *M);
 extern void MCM_Print(MCM *M);
 
 extern void InitMesh(int32_t taillemax);
 extern void TermineMesh();
-extern void AddFace(double x1, double y1, double z1, 
+extern meshtabedges2 * AllocEdges(int32_t taillemax);
+extern int32_t AddFace(double x1, double y1, double z1, 
              double x2, double y2, double z2, 
              double x3, double y3, double z3
 	     );
-extern void AddFaceFixe(double x1, double y1, double z1, 
+extern int32_t AddFaceFixe(double x1, double y1, double z1, 
                  double x2, double y2, double z2, 
                  double x3, double y3, double z3,
                  int32_t fix1, int32_t fix2, int32_t fix3
