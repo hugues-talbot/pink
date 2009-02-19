@@ -3,6 +3,7 @@ $(BDIR)/add \
 $(BDIR)/addconst \
 $(BDIR)/area \
 $(BDIR)/average \
+$(BDIR)/average1 \
 $(BDIR)/diffimages \
 $(BDIR)/dup \
 $(BDIR)/equal \
@@ -520,6 +521,9 @@ $(BDIR)/area:	$(CDIR)/area.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(
 
 $(BDIR)/average:	$(CDIR)/average.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/average.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/average
+
+$(BDIR)/average1:	$(CDIR)/average1.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/larith.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/average1.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/average1
 
 $(BDIR)/diffimages:	$(CDIR)/diffimages.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/diffimages.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/diffimages

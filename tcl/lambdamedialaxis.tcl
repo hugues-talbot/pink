@@ -14,7 +14,8 @@ source [file join "$PINK" "tcl" "my_exec.tcl"]
 #   LAMBDAMEDIALAXIS(im)
 #   LAMBDAMEDIALAXIS(im_rs)
 #   LAMBDAMEDIALAXIS(im_cs)
-set LAMBDAMEDIALAXIS(combine) 0
+set LAMBDAMEDIALAXIS(combine) 1
+set LAMBDAMEDIALAXIS(topo) 0
 set LAMBDAMEDIALAXIS(param) 0
 set LAMBDAMEDIALAXIS(name) lambdamedialaxis
 
@@ -34,6 +35,9 @@ set LAMBDAMEDIALAXIS(infilename) [lindex $argv 0]
 # get output image file name as second argument
 set LAMBDAMEDIALAXIS(outfilename) [lindex $argv 1]
 
+# compute the lambda map - store in tmpfile 0
+my_exec $PINK/linux/bin/lambdamedialaxis $LAMBDAMEDIALAXIS(infilename) [tmpfile 0]
+
 # create a frame for buttons
 frame .top -borderwidth 10
 pack .top -side top -fill x
@@ -43,9 +47,13 @@ button .top.quit -text Quit -command lambdamedialaxis_quit
 pack .top.quit -side right
 
 # create the combine button
-set LAMBDAMEDIALAXIS(combine) 0
 checkbutton .top.combine -text combine -variable LAMBDAMEDIALAXIS(combine) -command lambdamedialaxis_combine
 pack .top.combine -side right
+
+# create the topology button
+set LAMBDAMEDIALAXIS(topo) 0
+checkbutton .top.topo -text topo -variable LAMBDAMEDIALAXIS(topo) -command lambdamedialaxis_topo
+pack .top.topo -side right
 
 # create the radius button
 scale .top.radius -from 0 -to 100 -length 400 -variable LAMBDAMEDIALAXIS(param) \
@@ -74,7 +82,10 @@ $c create image 1 1 -anchor nw  -image $LAMBDAMEDIALAXIS(im)
 proc lambdamedialaxis_run {radius} {
   global LAMBDAMEDIALAXIS
   global PINK
-  my_exec $PINK/linux/bin/lambdamedialaxis $LAMBDAMEDIALAXIS(infilename) $radius [tmpfile 3]
+  my_exec $PINK/linux/bin/seuil [tmpfile 0] $radius [tmpfile 3]
+  if {$LAMBDAMEDIALAXIS(topo) != 0} {
+    my_exec $PINK/linux/bin/skeleton $LAMBDAMEDIALAXIS(infilename) [tmpfile 0] 8 [tmpfile 3] [tmpfile 3]
+  }
   if {$LAMBDAMEDIALAXIS(combine) == 0} {
     $LAMBDAMEDIALAXIS(im) read [tmpfile 3]
   } else {
@@ -88,6 +99,24 @@ proc lambdamedialaxis_run {radius} {
 # action associated to combine button
 proc lambdamedialaxis_combine {} {
   global LAMBDAMEDIALAXIS
+  if {$LAMBDAMEDIALAXIS(combine) == 0} {
+    $LAMBDAMEDIALAXIS(im) read [tmpfile 3]
+  } else {
+    my_exec scale $LAMBDAMEDIALAXIS(infilename) 0.5 [tmpfile 1]
+    my_exec scale [tmpfile 3] 0.5 [tmpfile 2]
+    my_exec add [tmpfile 1] [tmpfile 2] [tmpfile 2]
+    $LAMBDAMEDIALAXIS(im) read [tmpfile 2]
+  }
+}
+
+# action associated to topo button
+proc lambdamedialaxis_topo {} {
+  global LAMBDAMEDIALAXIS
+  global PINK
+  my_exec $PINK/linux/bin/seuil [tmpfile 0] $LAMBDAMEDIALAXIS(param) [tmpfile 3]
+  if {$LAMBDAMEDIALAXIS(topo) != 0} {
+    my_exec $PINK/linux/bin/skeleton $LAMBDAMEDIALAXIS(infilename) [tmpfile 0] 8 [tmpfile 3] [tmpfile 3]
+  }
   if {$LAMBDAMEDIALAXIS(combine) == 0} {
     $LAMBDAMEDIALAXIS(im) read [tmpfile 3]
   } else {

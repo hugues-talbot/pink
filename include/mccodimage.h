@@ -1,4 +1,4 @@
-/* $Id: mccodimage.h,v 1.6 2009-01-22 07:05:36 mcouprie Exp $ */
+/* $Id: mccodimage.h,v 1.7 2009-02-19 07:44:08 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -38,7 +38,9 @@ struct xvimage {
 
 #define SCHARDATA(I)   ((int8_t*)((I)->image_data))
 #define UCHARDATA(I)   ((uint8_t*)((I)->image_data))
+#define SSHORTDATA(I)  ((int16_t*)((I)->image_data))
 #define USHORTDATA(I)  ((uint16_t*)((I)->image_data))
+#define SLONGDATA(I)   ((int32_t*)((I)->image_data))
 #define ULONGDATA(I)   ((uint32_t*)((I)->image_data))
 #define FLOATDATA(I)   ((float*)((I)->image_data))
 #define DOUBLEDATA(I)  ((double*)((I)->image_data))

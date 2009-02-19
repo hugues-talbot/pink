@@ -1,4 +1,4 @@
-/* $Id: lskeletons.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: lskeletons.c,v 1.2 2009-02-19 07:44:08 mcouprie Exp $ */
 /* Michel Couprie -  juillet 2001 */
 
 #include <stdio.h>
@@ -255,20 +255,21 @@ resultat: F
 
   if (imageprio == NULL)
   {
-    fprintf(stderr, "%s() : imageprio is needed\n", F_NAME);
+    fprintf(stderr, "%s: imageprio is needed\n", F_NAME);
     return(0);
   }
 
   if ((rowsize(imageprio) != rs) || (colsize(imageprio) != cs) || (depth(imageprio) != 1))
   {
-    fprintf(stderr, "%s() : bad size for imageprio\n", F_NAME);
+    fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = ULONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "    otherwise, use inhibit map\n", F_NAME);
     return(0);
   }
   taillemaxrbt = 2 * rs +  2 * cs;
@@ -276,7 +277,7 @@ resultat: F
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -344,7 +345,7 @@ resultat: F
   } /* if (connex == 8) */
   else
   {
-    fprintf(stderr, "%s() : bad value for connex\n", F_NAME);
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
     return(0);
   }
 
@@ -376,7 +377,10 @@ int32_t lskelubp2(struct xvimage *image,
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *I = NULL; /* l'image d'inhibition */
-  uint32_t *P = NULL;  /* l'image de priorites (ndg) */
+  uint32_t *P = NULL;  /* l'image de priorites (cas uint32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
   int32_t taillemaxrbt;
 
@@ -384,20 +388,26 @@ int32_t lskelubp2(struct xvimage *image,
 
   if (imageprio == NULL)
   {
-    fprintf(stderr, "%s() : imageprio is needed\n", F_NAME);
+    fprintf(stderr, "%s: imageprio is needed\n", F_NAME);
     return(0);
   }
 
   if ((rowsize(imageprio) != rs) || (colsize(imageprio) != cs) || (depth(imageprio) != 1))
   {
-    fprintf(stderr, "%s() : bad size for imageprio\n", F_NAME);
+    fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = ULONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, uint32_t, float or double\n", F_NAME);
     return(0);
   }
   taillemaxrbt = 2 * rs +  2 * cs;
@@ -405,7 +415,7 @@ int32_t lskelubp2(struct xvimage *image,
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
     return(0);
   }
   if (imageinhib != NULL) I = UCHARDATA(imageinhib);
@@ -422,7 +432,13 @@ int32_t lskelubp2(struct xvimage *image,
   {
     if (F[x] && (!I || !I[x]) && bordext8(F, x, rs, N))
     {
-      RbtInsert(&RBT, P[x], x);
+      switch(datatype(imageprio))
+      {
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+      }
       Set(x, EN_RBT);
     }
   }
@@ -444,7 +460,13 @@ int32_t lskelubp2(struct xvimage *image,
           y = voisin(x, k, rs, N);                             /* non deja empiles */
           if ((y != -1) && (F[y]) && (!I || !I[y]) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+	    switch(datatype(imageprio))
+	    {
+	      case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
@@ -465,7 +487,13 @@ int32_t lskelubp2(struct xvimage *image,
           y = voisin(x, k, rs, N);                             /* non deja empiles */
           if ((y != -1) && (F[y]) && (!I || !I[y]) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+	    switch(datatype(imageprio))
+	    {
+	      case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
@@ -474,7 +502,7 @@ int32_t lskelubp2(struct xvimage *image,
   } /* if (connex == 8) */
   else
   {
-    fprintf(stderr, "%s() : bad value for connex\n", F_NAME);
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
     return(0);
   }
 
@@ -538,20 +566,21 @@ resultat: F
 
   if (imageprio == NULL)
   {
-    fprintf(stderr, "%s() : imageprio is needed\n", F_NAME);
+    fprintf(stderr, "%s: imageprio is needed\n", F_NAME);
     return(0);
   }
 
   if ((rowsize(imageprio) != rs) || (colsize(imageprio) != cs) || (depth(imageprio) != d))
   {
-    fprintf(stderr, "%s() : bad size for imageprio\n", F_NAME);
+    fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = ULONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "    otherwise, use inhibit map\n", F_NAME);
     return(0);
   }
   taillemaxrbt = 2 * rs * cs +  2 * rs * d +  2 * d * cs;
@@ -559,7 +588,7 @@ resultat: F
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -627,7 +656,7 @@ resultat: F
   } /* if (connex == 26) */
   else
   {
-    fprintf(stderr, "%s() : bad value for connex\n", F_NAME);
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
     return(0);
   }
 
@@ -661,7 +690,10 @@ int32_t lskelubp3d2(struct xvimage *image,
   int32_t N = d * ps;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *I = NULL; /* l'image d'inhibition */
-  uint32_t *P = NULL;  /* l'image de priorites (ndg) */
+  uint32_t *P = NULL;  /* l'image de priorites (cas uint32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
   int32_t taillemaxrbt;
 
@@ -671,20 +703,26 @@ int32_t lskelubp3d2(struct xvimage *image,
 
   if (imageprio == NULL)
   {
-    fprintf(stderr, "%s() : imageprio is needed\n", F_NAME);
+    fprintf(stderr, "%s: imageprio is needed\n", F_NAME);
     return(0);
   }
 
   if ((rowsize(imageprio) != rs) || (colsize(imageprio) != cs) || (depth(imageprio) != d))
   {
-    fprintf(stderr, "%s() : bad size for imageprio\n", F_NAME);
+    fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = ULONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, uint32_t, float or double\n", F_NAME);
     return(0);
   }
   taillemaxrbt = 2 * rs * cs +  2 * rs * d +  2 * d * cs;
@@ -692,7 +730,7 @@ int32_t lskelubp3d2(struct xvimage *image,
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
     return(0);
   }
   if (imageinhib != NULL) I = UCHARDATA(imageinhib);
@@ -709,7 +747,13 @@ int32_t lskelubp3d2(struct xvimage *image,
   {
     if (F[x] && (!I || !I[x]) && bordext26(F, x, rs, ps, N))
     {
-      RbtInsert(&RBT, P[x], x);
+      switch(datatype(imageprio))
+      {
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+      }
       Set(x, EN_RBT);
     }
   }
@@ -731,7 +775,13 @@ int32_t lskelubp3d2(struct xvimage *image,
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y]) && (!I[y]) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+	    switch(datatype(imageprio))
+	    {
+	      case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
@@ -752,7 +802,13 @@ int32_t lskelubp3d2(struct xvimage *image,
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y]) && (!I[y]) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+	    switch(datatype(imageprio))
+	    {
+	      case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
@@ -761,7 +817,7 @@ int32_t lskelubp3d2(struct xvimage *image,
   } /* if (connex == 26) */
   else
   {
-    fprintf(stderr, "%s() : bad value for connex\n", F_NAME);
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
     return(0);
   }
 
@@ -818,20 +874,20 @@ resultat: F
 
   if (imageprio == NULL)
   {
-    fprintf(stderr, "%s() : imageprio is needed\n", F_NAME);
+    fprintf(stderr, "%s: imageprio is needed\n", F_NAME);
     return(0);
   }
 
   if ((rowsize(imageprio) != rs) || (colsize(imageprio) != cs) || (depth(imageprio) != 1))
   {
-    fprintf(stderr, "%s() : bad size for imageprio\n", F_NAME);
+    fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = ULONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
     return(0);
   }
 
@@ -840,14 +896,14 @@ resultat: F
     uint8_t *I;
     if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != 1))
     {
-      fprintf(stderr, "%s() : bad size for inhibit\n", F_NAME);
+      fprintf(stderr, "%s: bad size for inhibit\n", F_NAME);
       return(0);
     }
     if (datatype(inhibit) == VFF_TYP_1_BYTE) 
       I = UCHARDATA(inhibit);
     else 
     {
-      fprintf(stderr, "%s() : datatype(inhibit) must be uint8_t\n", F_NAME);
+      fprintf(stderr, "%s: datatype(inhibit) must be uint8_t\n", F_NAME);
       return(0);
     }
     for (x = 0; x < N; x++)
@@ -859,20 +915,20 @@ resultat: F
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
   FIFO1 = CreeFifoVide(N);
   if (FIFO1 == NULL)
   {
-    fprintf(stderr, "%s() : CreeFifoVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeFifoVide failed\n", F_NAME);
     return(0);
   }
   FIFO2 = CreeFifoVide(N);
   if (FIFO2 == NULL)
   {
-    fprintf(stderr, "%s() : CreeFifoVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeFifoVide failed\n", F_NAME);
     return(0);
   }
 
@@ -922,7 +978,7 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
   }
   else
   {
-    fprintf(stderr, "%s() : bad value for connex\n", F_NAME);
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
     return(0);
   }
 
@@ -1101,19 +1157,19 @@ resultat: F
 
   if (imageprio == NULL)
   {
-    fprintf(stderr, "%s() : imageprio is needed\n", F_NAME);
+    fprintf(stderr, "%s: imageprio is needed\n", F_NAME);
     return(0);
   }
   if ((rowsize(imageprio) != rs) || (colsize(imageprio) != cs) || (depth(imageprio) != ds))
   {
-    fprintf(stderr, "%s() : bad size for imageprio\n", F_NAME);
+    fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = ULONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
     return(0);
   }
 
@@ -1122,14 +1178,14 @@ resultat: F
     uint8_t *I;
     if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != ds))
     {
-      fprintf(stderr, "%s() : bad size for inhibit\n", F_NAME);
+      fprintf(stderr, "%s: bad size for inhibit\n", F_NAME);
       return(0);
     }
     if (datatype(inhibit) == VFF_TYP_1_BYTE) 
       I = UCHARDATA(inhibit);
     else 
     {
-      fprintf(stderr, "%s() : datatype(inhibit) must be uint8_t\n", F_NAME);
+      fprintf(stderr, "%s: datatype(inhibit) must be uint8_t\n", F_NAME);
       return(0);
     }
     for (x = 0; x < N; x++)
@@ -1141,7 +1197,7 @@ resultat: F
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -1185,7 +1241,7 @@ resultat: F
   }
   else
   {
-    fprintf(stderr, "%s() : bad value for connex\n", F_NAME);
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
     return(0);
   }
 
@@ -1200,13 +1256,13 @@ resultat: F
     FIFO1 = CreeFifoVide(N/2);
     if (FIFO1 == NULL)
     {
-      fprintf(stderr, "%s() : CreeFifoVide failed\n", F_NAME);
+      fprintf(stderr, "%s: CreeFifoVide failed\n", F_NAME);
       return(0);
     }
     FIFO2 = CreeFifoVide(N/2);
     if (FIFO2 == NULL)
     {
-      fprintf(stderr, "%s() : CreeFifoVide failed\n", F_NAME);
+      fprintf(stderr, "%s: CreeFifoVide failed\n", F_NAME);
       return(0);
     }
 
@@ -1358,20 +1414,20 @@ resultat: F
 
   if (imageprio == NULL)
   {
-    fprintf(stderr, "%s() : imageprio is needed\n", F_NAME);
+    fprintf(stderr, "%s: imageprio is needed\n", F_NAME);
     return(0);
   }
 
   if ((rowsize(imageprio) != rs) || (colsize(imageprio) != cs) || (depth(imageprio) != ds))
   {
-    fprintf(stderr, "%s() : bad size for imageprio\n", F_NAME);
+    fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = ULONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
     return(0);
   }
 
@@ -1380,14 +1436,14 @@ resultat: F
     uint8_t *I;
     if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != ds))
     {
-      fprintf(stderr, "%s() : bad size for inhibit\n", F_NAME);
+      fprintf(stderr, "%s: bad size for inhibit\n", F_NAME);
       return(0);
     }
     if (datatype(inhibit) == VFF_TYP_1_BYTE) 
       I = UCHARDATA(inhibit);
     else 
     {
-      fprintf(stderr, "%s() : datatype(inhibit) must be uint8_t\n", F_NAME);
+      fprintf(stderr, "%s: datatype(inhibit) must be uint8_t\n", F_NAME);
       return(0);
     }
     for (x = 0; x < N; x++)
@@ -1399,7 +1455,7 @@ resultat: F
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -1444,7 +1500,7 @@ resultat: F
   }
   else
   {
-    fprintf(stderr, "%s() : bad value for connex\n", F_NAME);
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
     return(0);
   }
 
@@ -1459,13 +1515,13 @@ resultat: F
     FIFO1 = CreeFifoVide(N/2);
     if (FIFO1 == NULL)
     {
-      fprintf(stderr, "%s() : CreeFifoVide failed\n", F_NAME);
+      fprintf(stderr, "%s: CreeFifoVide failed\n", F_NAME);
       return(0);
     }
     FIFO2 = CreeFifoVide(N/2);
     if (FIFO2 == NULL)
     {
-      fprintf(stderr, "%s() : CreeFifoVide failed\n", F_NAME);
+      fprintf(stderr, "%s: CreeFifoVide failed\n", F_NAME);
       return(0);
     }
 
@@ -1619,20 +1675,20 @@ resultat: F
 
   if (imageprio == NULL)
   {
-    fprintf(stderr, "%s() : imageprio is needed\n", F_NAME);
+    fprintf(stderr, "%s: imageprio is needed\n", F_NAME);
     return(0);
   }
 
   if ((rowsize(imageprio) != rs) || (colsize(imageprio) != cs) || (depth(imageprio) != 1))
   {
-    fprintf(stderr, "%s() : bad size for imageprio\n", F_NAME);
+    fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = ULONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
     return(0);
   }
   taillemaxrbt = 2 * rs +  2 * cs;
@@ -1640,7 +1696,7 @@ resultat: F
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -1649,12 +1705,12 @@ resultat: F
     uint8_t *I;
     if ((rowsize(imageinhibit) != rs) || (colsize(imageinhibit) != cs) || (depth(imageinhibit) != 1))
     {
-      fprintf(stderr, "%s() : bad size for imageinhibit\n", F_NAME);
+      fprintf(stderr, "%s: bad size for imageinhibit\n", F_NAME);
       return(0);
     }
     if (datatype(imageinhibit) != VFF_TYP_1_BYTE) 
     {
-      fprintf(stderr, "%s() : bad type for imageinhibit\n", F_NAME);
+      fprintf(stderr, "%s: bad type for imageinhibit\n", F_NAME);
       return(0);
     }
     I = UCHARDATA(imageinhibit);
@@ -1729,7 +1785,7 @@ resultat: F
   } /* if (connex == 8) */
   else
   {
-    fprintf(stderr, "%s() : bad value for connex\n", F_NAME);
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
     return(0);
   }
 
@@ -1794,20 +1850,20 @@ resultat: F
 
   if (imageprio == NULL)
   {
-    fprintf(stderr, "%s() : imageprio is needed\n", F_NAME);
+    fprintf(stderr, "%s: imageprio is needed\n", F_NAME);
     return(0);
   }
 
   if ((rowsize(imageprio) != rs) || (colsize(imageprio) != cs) || (depth(imageprio) != d))
   {
-    fprintf(stderr, "%s() : bad size for imageprio\n", F_NAME);
+    fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = ULONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
     return(0);
   }
   taillemaxrbt = 2 * rs * cs +  2 * rs * d +  2 * d * cs;
@@ -1815,7 +1871,7 @@ resultat: F
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -1824,12 +1880,12 @@ resultat: F
     uint8_t *I;
     if ((rowsize(imageinhibit) != rs) || (colsize(imageinhibit) != cs) || (depth(imageinhibit) != d))
     {
-      fprintf(stderr, "%s() : bad size for imageinhibit\n", F_NAME);
+      fprintf(stderr, "%s: bad size for imageinhibit\n", F_NAME);
       return(0);
     }
     if (datatype(imageinhibit) != VFF_TYP_1_BYTE) 
     {
-      fprintf(stderr, "%s() : bad type for imageinhibit\n", F_NAME);
+      fprintf(stderr, "%s: bad type for imageinhibit\n", F_NAME);
       return(0);
     }
     I = UCHARDATA(imageinhibit);
@@ -1927,7 +1983,7 @@ resultat: F
   } /* if (connex == 26) */
   else
   {
-    fprintf(stderr, "%s() : bad value for connex\n", F_NAME);
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
     return(0);
   }
 
@@ -1998,7 +2054,7 @@ int32_t lskeleucl(struct xvimage *image,
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -2078,7 +2134,7 @@ int32_t lskeleucl(struct xvimage *image,
   {
     if (ds > 1)
     {
-      fprintf(stderr, "%s() : bad value for connex in 3D : 8\n", F_NAME);
+      fprintf(stderr, "%s: bad value for connex in 3D : 8\n", F_NAME);
       return(0);
     }
 
@@ -2167,7 +2223,7 @@ int32_t lskeleucl(struct xvimage *image,
   } /* if (connex == 26) */
   else
   {
-    fprintf(stderr, "%s() : bad value for connex : %d\n", F_NAME, connex);
+    fprintf(stderr, "%s: bad value for connex : %d\n", F_NAME, connex);
     return(0);
   }
 
@@ -2293,19 +2349,19 @@ resultat: F
 
   if (imageprio == NULL)
   {
-    fprintf(stderr, "%s() : imageprio is needed\n", F_NAME);
+    fprintf(stderr, "%s: imageprio is needed\n", F_NAME);
     return(0);
   }
   if ((rowsize(imageprio) != rs) || (colsize(imageprio) != cs) || (depth(imageprio) != ds))
   {
-    fprintf(stderr, "%s() : bad size for imageprio\n", F_NAME);
+    fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = ULONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
     return(0);
   }
 
@@ -2314,7 +2370,7 @@ resultat: F
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -2328,7 +2384,7 @@ resultat: F
 
   if (connex == 6)
   {
-    fprintf(stderr, "%s() : Connex 6 not implemented\n", F_NAME);
+    fprintf(stderr, "%s: Connex 6 not implemented\n", F_NAME);
     return(0);
   }
   else if (connex == 26)
@@ -2348,7 +2404,7 @@ resultat: F
   }
   else
   {
-    fprintf(stderr, "%s() : bad value for connex\n", F_NAME);
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
     return(0);
   }
 
@@ -2440,7 +2496,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -2472,7 +2528,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
   }
   else
   {
-    fprintf(stderr, "%s() : bad value for connex\n", F_NAME);
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
     return(0);
   }
 

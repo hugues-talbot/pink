@@ -1,4 +1,4 @@
-/* $Id: ldist.c,v 1.3 2009-01-07 15:09:31 mcouprie Exp $ */
+/* $Id: ldist.c,v 1.4 2009-02-19 07:44:08 mcouprie Exp $ */
 /****************************************************************
 *
 * Routine Name: ldistXXX - library call for dist
@@ -2147,14 +2147,14 @@ int32_t ldistSaito(struct xvimage *img,   /* donnee: image binaire */
 #define F3_3d(z,zp,f,i,j) (f[i+rs*j+ps*z]-(zp-z)*(zp-z))
 
 /* ======================================================== */
-static void REDT_line(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs)
+static void REDT_line(int32_t *f, int32_t *g, int32_t rs, int32_t cs)
 /* ======================================================== */
 {
   int32_t j, u, q;
   int32_t w;
-  uint32_t *s, *t; //sommets des paraboles
-  s = (uint32_t *)calloc(1,rs * sizeof(uint32_t));
-  t = (uint32_t *)calloc(1,rs * sizeof(uint32_t));
+  int32_t *s, *t; //sommets des paraboles
+  s = (int32_t *)calloc(1,rs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,rs * sizeof(int32_t));
 
   for (j = 0; j < cs; j++)
   {
@@ -2186,14 +2186,14 @@ static void REDT_line(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs)
 } //  REDT_line()
 
 /* ======================================================== */
-static void REDT_column(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs)
+static void REDT_column(int32_t *f, int32_t *g, int32_t rs, int32_t cs)
 /* ======================================================== */
 {
   int32_t i, u, q;
   int32_t w;
-  uint32_t *s, *t; //sommets des paraboles
-  s = (uint32_t *)calloc(1,cs * sizeof(int32_t));
-  t = (uint32_t *)calloc(1,cs * sizeof(int32_t));
+  int32_t *s, *t; //sommets des paraboles
+  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
 
   for (i = 0; i < rs; i++)
   {
@@ -2256,8 +2256,8 @@ struct xvimage* lredt2d(struct xvimage* f)
 
   if (datatype(f) == VFF_TYP_4_BYTE)
   {
-    uint32_t *F = ULONGDATA(f);
-    uint32_t *T = ULONGDATA(tmp);
+    int32_t *F = SLONGDATA(f);
+    int32_t *T = SLONGDATA(tmp);
     REDT_line(F, T, rs, cs);
     copy2image(f, tmp);
     REDT_column(F, T, rs, cs);
@@ -2274,14 +2274,14 @@ struct xvimage* lredt2d(struct xvimage* f)
 } // lredt2d()
 
 /* ======================================================== */
-static void REDT_line_3d(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds)
+static void REDT_line_3d(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
 /* ======================================================== */
 {
   int32_t j, u, q, k, ps;
   int32_t w;
-  uint32_t *s, *t; //sommets des paraboles
-  s = (uint32_t *)calloc(1,rs * sizeof(uint32_t));
-  t = (uint32_t *)calloc(1,rs * sizeof(uint32_t));
+  int32_t *s, *t; //sommets des paraboles
+  s = (int32_t *)calloc(1,rs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,rs * sizeof(int32_t));
   ps = cs * rs; // taille d'un plan
   
   for(k = 0; k < ds; k++)
@@ -2317,14 +2317,14 @@ static void REDT_line_3d(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uin
 } //  REDT_line_3d()
 
 /* ======================================================== */
-static void REDT_column_3d(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds)
+static void REDT_column_3d(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
 /* ======================================================== */
 {
   int32_t i, u, q, k, ps;
   int32_t w;
-  uint32_t *s, *t; //sommets des paraboles
-  s = (uint32_t *)calloc(1,cs * sizeof(uint32_t));
-  t = (uint32_t *)calloc(1,cs * sizeof(uint32_t));
+  int32_t *s, *t; //sommets des paraboles
+  s = (int32_t *)calloc(1,cs * sizeof(int32_t));
+  t = (int32_t *)calloc(1,cs * sizeof(int32_t));
   ps = rs * cs; // taille d'un plan
 
   for(k = 0; k < ds; k++)
@@ -2361,14 +2361,14 @@ static void REDT_column_3d(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, u
 
 
 /* ======================================================== */
-static void REDT_zaxis_3d(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds)
+static void REDT_zaxis_3d(int32_t *f, int32_t *g, int32_t rs, int32_t cs, int32_t ds)
 /* ======================================================== */
 {
   int32_t i, u, q, j, ps;
   int32_t w;
-  uint32_t *s, *t; //sommets des paraboles
-  s = (uint32_t *)calloc(1,ds * sizeof(uint32_t));
-  t = (uint32_t *)calloc(1,ds * sizeof(uint32_t));
+  int32_t *s, *t; //sommets des paraboles
+  s = (int32_t *)calloc(1,ds * sizeof(int32_t));
+  t = (int32_t *)calloc(1,ds * sizeof(int32_t));
   ps = rs * cs; // taille d'un plan
 
   for(j = 0; j < cs; j++)
@@ -2435,8 +2435,8 @@ struct xvimage* lredt3d(struct xvimage* f)
   
   if (datatype(f) == VFF_TYP_4_BYTE)
     {
-      uint32_t *F = ULONGDATA(f);
-      uint32_t *T = ULONGDATA(tmp);
+      int32_t *F = SLONGDATA(f);
+      int32_t *T = SLONGDATA(tmp);
       REDT_line_3d(F, T, rs, cs, ds);
       copy2image(f, tmp);
       REDT_column_3d(F, T, rs, cs, ds);

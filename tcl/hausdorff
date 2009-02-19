@@ -3,7 +3,7 @@
  exec tclsh $0 $1 $2 $3
 
  if {(($argc != 2) && ($argc != 3))} { 
-   puts stderr "usage: hausdorff in1 in2 [codedist]"
+   puts stderr "usage: hausdorff in1 in2 \[codedist\]"
    exit 
  }
 
@@ -35,7 +35,7 @@ proc my_read_val {filename} {
   set input [open $filename]
   set tag [gets $input]
   set line [gets $input]
-  scan $line "%d %d" v1 v2
+  scan $line "%g %g" v1 v2
   close $input
   return $v2
 }

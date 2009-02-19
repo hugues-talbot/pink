@@ -1,4 +1,4 @@
-/* $Id: larith.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: larith.h,v 1.4 2009-02-19 07:44:08 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,6 +21,15 @@ extern int32_t laverage(
   struct xvimage * image1,
   struct xvimage * image2,
   double alpha
+);
+
+extern double laverage1(
+  struct xvimage * image1
+);
+
+extern double laverage2(
+  struct xvimage * image1, 
+  struct xvimage * mask
 );
 
 extern int32_t ldiff(
