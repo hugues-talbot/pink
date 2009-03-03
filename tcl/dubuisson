@@ -1,0 +1,65 @@
+ #sh
+ # The next line is executed by /bin/sh, but not Tcl \
+ exec tclsh $0 $1 $2 $3 $4
+
+ if {(($argc != 3) && ($argc != 4))} { 
+   puts stderr "usage: dubuisson in1 in2 \[codedist\] out"
+   exit 
+ }
+
+set PINK "$env(PINK)"
+source "$PINK/tcl/my_exec.tcl"
+
+global DUBUISSON
+set DUBUISSON(name) "dubuisson"
+set DUBUISSON(infilename1) [lindex $argv 0]
+set DUBUISSON(infilename2) [lindex $argv 1]
+if {($argc == 2)} { 
+   set DUBUISSON(codedist) 0 
+# approximate euclidean distance (truncated)
+} else {
+   set DUBUISSON(codedist) [lindex $argv 2]
+}
+set DUBUISSON(outfilename) [lindex $argv [expr $argc - 1]]
+
+proc tmpfile {tmpname} {
+  global DUBUISSON
+  return [file join "/tmp" "$DUBUISSON(name)_$tmpname"]
+}
+
+my_exec_q cp $DUBUISSON(infilename1) [tmpfile t1] 
+my_exec_q cp $DUBUISSON(infilename2) [tmpfile t2] 
+
+# reads a file
+#-----------------------------------
+proc my_read_val {filename} {
+  set input [open $filename]
+  set tag [gets $input]
+  set line [gets $input]
+  scan $line "%g %g" v1 v2
+  close $input
+  return $v2
+}
+
+my_exec_q dist [tmpfile t1] $DUBUISSON(codedist) [tmpfile d1]
+my_exec_q dist [tmpfile t2] $DUBUISSON(codedist) [tmpfile d2]
+my_exec_q average1 [tmpfile d1] [tmpfile t2] [tmpfile m1]
+my_exec_q average1 [tmpfile d2] [tmpfile t1] [tmpfile m2]
+
+set m1 [my_read_val [tmpfile m1]]
+set m2 [my_read_val [tmpfile m2]]
+if {($m1 > $m2)} { 
+   set max $m1
+} else {
+   set max $m2
+}
+
+set output [open $DUBUISSON(outfilename) w]
+puts $output "e 1"
+puts $output $max
+close $output
+#puts "dubuisson distance: $max"
+
+foreach file [glob -nocomplain [tmpfile "*"]] {
+  catch {exec rm $file} result
+}

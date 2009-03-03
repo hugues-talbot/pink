@@ -1,4 +1,4 @@
-/* $Id: lmedialaxis.c,v 1.4 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: lmedialaxis.c,v 1.5 2009-03-03 10:53:16 mcouprie Exp $ */
 /* 
 Fonctions pour l'axe médian exact ou approché, et
 pour la fonction bissectrice.
@@ -2230,6 +2230,10 @@ int32_t Downstream(int32_t x, int32_t y, uint32_t *image,
 	for (c = 0; c < counter; c++) // check:if the value already exists, no need to store it
 	  if (xx==Aval[c].xCoor && yy==Aval[c].yCoor) goto skip;
 	Aval[counter].xCoor=xx; Aval[counter].yCoor=yy; counter++;
+//#define VARIANTE
+#ifdef VARIANTE
+	return counter;
+#endif
       skip: ;
       } // if (rr == 0)
     } // for (j = 0; j < nb; j++)

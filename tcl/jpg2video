@@ -1,0 +1,23 @@
+#sh
+# The next line is executed by /bin/sh, but not Tcl \
+exec tclsh $0 $1 $2 $3 $4 $5
+
+if {$argc != 5} { 
+  puts stderr "usage: ppm2video prefix rs cs frequency outfilename"
+  exit 
+}
+
+# get input image file name as first argument
+set JPG2VIDEO(infilename) [lindex $argv 0]
+set JPG2VIDEO(rs) [lindex $argv 1]
+set JPG2VIDEO(cs) [lindex $argv 2]
+set JPG2VIDEO(fr) [lindex $argv 3]
+set JPG2VIDEO(outfilename) [lindex $argv 4]
+
+set filelist [glob "$JPG2VIDEO(infilename)*.jpg"]
+
+catch { exec mencoder mf://*.jpg -mf w=$JPG2VIDEO(rs):h=$JPG2VIDEO(cs):fps=$JPG2VIDEO(fr):type=jpg -ovc lavc -lavcopts vcodec=mpeg4 -oac copy -o $JPG2VIDEO(outfilename) } mes
+
+puts $mes
+
+#catch { exec png2avi $JPG2VIDEO(infilename) $JPG2VIDEO(rs) $JPG2VIDEO(cs) $JPG2VIDEO(fr) $JPG2VIDEO(outfilename) } mes

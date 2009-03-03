@@ -1,0 +1,30 @@
+#sh
+# plots (with gnuplot) the contents of two raw lists of points (x1 y1 x2 y2 ...)
+# The next line is executed by /bin/sh, but not Tcl \
+exec tclsh $0 $1 $2 $3
+
+if {$argc != 3} { 
+  puts stderr "usage: plot list1 list2 out.ps"
+  exit 
+}
+
+set PINK "$env(PINK)"
+source [file join "$PINK" "tcl" "my_exec.tcl"]
+source [file join "$PINK" "tcl" "my_read.tcl"]
+source [file join "$PINK" "tcl" "my_write.tcl"]
+
+# get input image file name as first argument
+set list1 [lindex $argv 0]
+set list2 [lindex $argv 1]
+set outfile [lindex $argv [expr $argc - 1]]
+
+set comname "/tmp/_plot_com"
+
+# without lines (uncomment) : 
+# my_write_text $comname "set terminal postscript eps 22\nset output \"$outfile\"\nplot \"$list_in\" notitle"
+# with lines (uncomment) : 
+my_write_text $comname "set terminal postscript eps 22\nset output \"$outfile\"\nplot \"$list1\" with lines, \"$list2\" with lines"
+
+my_exec_v "gnuplot $comname"
+
+#my_exec_q rm $comname

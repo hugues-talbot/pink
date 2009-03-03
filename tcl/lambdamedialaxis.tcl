@@ -8,6 +8,17 @@ wm title . "Lambda Medial Axis"
 set PINK "$env(PINK)"
 source [file join "$PINK" "tcl" "my_exec.tcl"]
 
+# reads a file
+#-----------------------------------
+proc my_read_val {filename} {
+  set input [open $filename]
+  set tag [gets $input]
+  set line [gets $input]
+  scan $line "%g" v1
+  close $input
+  return $v1
+}
+
 # globals
 #   LAMBDAMEDIALAXIS(infilename)
 #   LAMBDAMEDIALAXIS(outfilename)
@@ -86,6 +97,16 @@ proc lambdamedialaxis_run {radius} {
   if {$LAMBDAMEDIALAXIS(topo) != 0} {
     my_exec $PINK/linux/bin/skeleton $LAMBDAMEDIALAXIS(infilename) [tmpfile 0] 8 [tmpfile 3] [tmpfile 3]
   }
+
+  my_exec $PINK/linux/bin/distc $LAMBDAMEDIALAXIS(infilename) 3 [tmpfile "_d"]
+  my_exec $PINK/linux/bin/normalize [tmpfile 3] 0 1 [tmpfile "_1"]
+  my_exec $PINK/linux/bin/mult [tmpfile "_1"] [tmpfile "_d"] [tmpfile "_d1"]
+  my_exec $PINK/linux/bin/redt [tmpfile "_d1"] [tmpfile "_rec"] 
+  my_exec $PINK/linux/bin/sub $LAMBDAMEDIALAXIS(infilename) [tmpfile "_rec"] [tmpfile "_res"]
+  my_exec $PINK/linux/bin/area [tmpfile "_res"] [tmpfile "_res"]
+  set res [my_read_val [tmpfile  "_res"]]
+  puts "residu = $res"
+
   if {$LAMBDAMEDIALAXIS(combine) == 0} {
     $LAMBDAMEDIALAXIS(im) read [tmpfile 3]
   } else {

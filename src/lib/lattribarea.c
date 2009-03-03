@@ -1,4 +1,4 @@
-/* $Id: lattribarea.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: lattribarea.c,v 1.2 2009-03-03 10:53:16 mcouprie Exp $ */
 /* 
    Operateurs connexes bases sur l'attribut surface
    ================================================
@@ -10,10 +10,13 @@
       lareaselnb   (selection d'un nombre donne de composantes)
 
    Michel Couprie - 1999-2002
+
+   update MC 2009 : fix bug param > surface image
 */
 
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <math.h>
@@ -66,6 +69,12 @@ int32_t lsegmentarea(struct xvimage *image, int32_t connex, int32_t param, int32
   uint8_t *node_at_level; /* tableau de booleens */
   CompTree * TREE;              /* resultat : l'arbre des composantes */
   CompactTree * CTREE;          /* resultat : l'arbre des composantes compacte' */
+
+  if (param >= N) 
+  { 
+    memset(F, NDG_MAX, N);
+    return 1;
+  }
 
   switch (connex)
   {
@@ -205,6 +214,12 @@ int32_t lareaopening(struct xvimage *image, int32_t connex, int32_t param)
   CompTree * TREE;              /* resultat : l'arbre des composantes */
   CompactTree * CTREE;          /* resultat : l'arbre des composantes compacte' */
 
+  if (param >= N) 
+  { 
+    memset(F, 0, N);
+    return 1;
+  }
+
   switch (connex)
   {
     case 4: incr_vois = 2; break;
@@ -321,6 +336,13 @@ int32_t lareaclosing(struct xvimage *image, int32_t connex, int32_t param)
   int32_t ret;
   int32_t N = rowsize(image) * colsize(image) * depth(image);
   uint8_t *F = UCHARDATA(image);
+
+  if (param >= N) 
+  { 
+    memset(F, NDG_MAX, N);
+    return 1;
+  }
+
   for (i = 0; i < N; i++) F[i] = 255 - F[i];
   ret = lareaopening(image, connex, param);
   for (i = 0; i < N; i++) F[i] = 255 - F[i];
@@ -352,6 +374,12 @@ int32_t lareaselnb(struct xvimage *image, int32_t connex, int32_t param)
   CompactTree * cpct;          /* resultat : l'arbre des composantes compacte' */
   int32_t nbcomp, nbfeuilles;
   int32_t *A;                       /* tableau pour le tri des composantes par hauteurs croissantes */
+
+  if (param >= N) 
+  { 
+    memset(F, NDG_MAX, N);
+    return 1;
+  }
 
   switch (connex)
   {

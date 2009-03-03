@@ -1,9 +1,9 @@
  #sh
  # The next line is executed by /bin/sh, but not Tcl \
- exec tclsh $0 $1 $2 $3
+ exec tclsh $0 $1 $2 $3 $4
 
- if {(($argc != 2) && ($argc != 3))} { 
-   puts stderr "usage: hausdorff in1 in2 \[codedist\]"
+ if {(($argc != 3) && ($argc != 4))} { 
+   puts stderr "usage: hausdorff in1 in2 \[codedist\] out"
    exit 
  }
 
@@ -20,6 +20,7 @@ if {($argc == 2)} {
 } else {
    set HAUSDORFF(codedist) [lindex $argv 2]
 }
+set HAUSDORFF(outfilename) [lindex $argv [expr $argc - 1]]
 
 proc tmpfile {tmpname} {
   global HAUSDORFF
@@ -55,7 +56,12 @@ if {($m1 > $m2)} {
 } else {
    set max $m2
 }
-puts "hausdorff distance: $max"
+
+set output [open $HAUSDORFF(outfilename) w]
+puts $output "e 1"
+puts $output $max
+close $output
+#puts "hausdorff distance: $max"
 
 foreach file [glob -nocomplain [tmpfile "*"]] {
   catch {exec rm $file} result
