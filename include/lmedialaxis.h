@@ -1,4 +1,4 @@
-/* $Id: lmedialaxis.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: lmedialaxis.h,v 1.4 2009-03-05 15:50:20 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -8,6 +8,7 @@ extern int32_t lbisector(struct xvimage *id, struct xvimage *im, struct xvimage 
 extern int32_t lbisector_talbot(struct xvimage * image, struct xvimage *angles);
 extern int32_t lmedax_Remy_Thiel(struct xvimage *ImageDist, struct xvimage *ImageMedial);
 extern int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda);
+extern int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct xvimage *lambda);
 #ifdef __cplusplus
 }
 #endif

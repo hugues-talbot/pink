@@ -1,4 +1,4 @@
-/* $Id: lmedialaxis.c,v 1.5 2009-03-03 10:53:16 mcouprie Exp $ */
+/* $Id: lmedialaxis.c,v 1.6 2009-03-05 15:50:20 mcouprie Exp $ */
 /* 
 Fonctions pour l'axe médian exact ou approché, et
 pour la fonction bissectrice.
@@ -38,7 +38,6 @@ Michel Couprie - novembre 2008 - lambda medial axis
 #include <mcgeo.h>
 #include <ldist.h>
 #include <lmedialaxis.h>
-
 #include <lballincl.h>
 
 #ifdef CHRONO
@@ -2230,7 +2229,7 @@ int32_t Downstream(int32_t x, int32_t y, uint32_t *image,
 	for (c = 0; c < counter; c++) // check:if the value already exists, no need to store it
 	  if (xx==Aval[c].xCoor && yy==Aval[c].yCoor) goto skip;
 	Aval[counter].xCoor=xx; Aval[counter].yCoor=yy; counter++;
-//#define VARIANTE
+#define VARIANTE
 #ifdef VARIANTE
 	return counter;
 #endif
@@ -2921,3 +2920,149 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
   free(ListDecs);
   return 1;
 } // llambdamedialaxis()
+
+/* ==================================== */
+int32_t ExtendedDownstreamLambdaPrime(
+  int32_t x, int32_t y, 
+  uint32_t *image, uint32_t *vor,
+  int32_t rs, int32_t cs, 
+  ListDPoint2D Aval)
+/* ==================================== */
+// Calcule l'aval étendu du point (x,y)
+// x, y : le point de base
+// image : la carte de distance euclidinenne quadratique
+// vor : le "voronoi labelling"
+// Aval : tableau pour stocker les points de l'aval étendu
+// Retourne le nombre de points de l'aval étendu
+{
+#undef F_NAME
+#define F_NAME "ExtendedDownstreamLambdaPrime"
+  int32_t i, j, k, xx, yy;
+  int32_t X[5] = {x, x-1, x+1, x, x};
+  int32_t Y[5] = {y, y, y, y-1, y+1};
+  int32_t counter=0;
+
+  for (k = 0; k < 5; k++) // k indexes the point in test and its 4 neighbors
+  {
+    if (X[k] < rs && Y[k] < cs && X[k] >= 0 && Y[k] >= 0)
+    {
+      j = Y[k]*rs + X[k];
+      i = (int32_t)(image[j]);
+      if (i == 0) goto endfor;
+      if (i > image[y*rs + x]) goto endfor;
+      xx = vor[j] % rs;
+      yy = vor[j] / rs;
+      //      for (c = 0; c < counter; c++) // check:if the value already exists, no need to store it
+      //	if ((xx!=Aval[c].xCoor) || (yy!=Aval[c].yCoor)) goto skip;
+      Aval[counter].xCoor=xx; Aval[counter].yCoor=yy; counter++;		
+    skip: ;
+    } // if
+  endfor: ;
+  } // for(k = 0; k < 5; k++)
+
+#ifdef PARANO
+  if (counter == 0) 
+  {
+    printf("ERROR (BUG) - Please report - count = %d point %d,%d\n", counter, x, y);
+    exit(0);
+  }
+#endif
+
+  return counter;
+} // ExtendedDownstreamLambdaPrime()
+ 
+/* ==================================== */
+int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct xvimage *lambda)
+/* ==================================== */
+/*
+   Calcule la fonction "lambda'-axe médian discret" de l'objet 
+   dont la carte de distance euclidienne au carré est dans 'dist',
+   et le voronoi labelling dans vor.
+   L'image 'lambda' (type float) doit être allouée à l'avance. 
+ 
+*/
+{
+#undef F_NAME
+#define F_NAME "llambdaprimemedialaxis"
+  int32_t i, j, k, nval, npoints, npointsmax;
+  int32_t rs = rowsize(dist);
+  int32_t cs = colsize(dist);
+  int32_t ds = depth(dist);
+  int32_t ps = rs * cs;
+  int32_t N = ps * ds;
+  int32_t card_aval;
+  uint32_t *imagedist;
+  uint32_t *imagevor;
+  float *imagelambda;
+
+  if (datatype(dist) != VFF_TYP_4_BYTE)
+  {
+    fprintf(stderr, "%s: distance image must be long\n", F_NAME);
+    return 0;
+  }    
+
+  if (datatype(vor) != VFF_TYP_4_BYTE)
+  {
+    fprintf(stderr, "%s: vor. lab. image must be long\n", F_NAME);
+    return 0;
+  }    
+
+  if (datatype(lambda) != VFF_TYP_FLOAT)
+  {
+    fprintf(stderr, "%s: lambda image must be float\n", F_NAME);
+    return 0;
+  }    
+
+  if ((rowsize(lambda) != rs) || (colsize(lambda) != cs) || (depth(lambda) != ds))
+  {
+    fprintf(stderr, "%s: imcompatible image sizes\n", F_NAME);
+    return 0;
+  }    
+
+  if ((rowsize(vor) != rs) || (colsize(vor) != cs) || (depth(vor) != ds))
+  {
+    fprintf(stderr, "%s: imcompatible image sizes\n", F_NAME);
+    return 0;
+  }    
+
+  imagedist = ULONGDATA(dist);
+  imagevor = ULONGDATA(vor);
+  imagelambda = FLOATDATA(lambda);
+  razimage(lambda); // pour stocker le résulat
+
+  if (ds == 1) // 2D
+  {
+    ListDPoint2D Aval;
+    double c_x, c_y, c_r;
+    Aval= (struct DPoint2D *)calloc(1,N*sizeof(struct DPoint2D)); // LARGEMENT SURDIMENSIONE
+    if (Aval == NULL)
+    {   
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return 0;
+    }
+
+    for (j = 0; j < cs; j++)
+      for (i = 0; i < rs; i++)
+      {
+	if (imagedist[j*rs + i] != 0)
+        {
+	  card_aval = ExtendedDownstreamLambdaPrime(i, j, imagedist, imagevor, rs, cs, Aval);	  
+#define OLD
+#ifdef OLD
+	  imagelambda[j*rs + i] = (float)MaximumDiameter(Aval, card_aval);
+#else
+          compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
+	  imagelambda[j*rs + i] = 2*(float)c_r;
+#endif
+	}
+      }
+    free(Aval);
+  } // if (ds == 1)
+  else // 3D
+  {
+    fprintf(stderr, "%s: 3D not yet implemented\n", F_NAME);
+    return(0);
+  } // else (3D)
+
+  return 1;
+} // llambdaprimemedialaxis()

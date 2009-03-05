@@ -16,6 +16,14 @@
 #include "lvoronoilabelling.h"
 #define INFTY INT_MAX
 
+
+/* ==================================== */
+inline double dist_2(double x1, double y1, double x2, double y2)
+/* ==================================== */
+{
+  return ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+}
+
 /////////Basic functions to handle operations with INFTY
 
 /** 
@@ -482,41 +490,33 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
       if ((i > 0) && F[p-1])
       {
 	ftpe_x = X[p-1]; ftpe_y = Y[p];
-	mx = ftp_x - 0.5; my = ftp_y;
-	if ((((ftpe_x - ftp_x)*(ftpe_x - ftp_x) + 
-	      (ftpe_y - ftp_y)*(ftpe_y - ftp_y)) > gamma2) &&
-	    (((mx - ftpe_x)*(mx - ftpe_x) + (mx - ftpe_y)*(mx - ftpe_y)) <= 
-	     ((mx - ftp_x)*(mx - ftp_x) + (mx - ftp_y)*(mx - ftp_y))))
+	mx = i - 0.5; my = j;
+	if ((dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y) > gamma2) &&
+	    (dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))))
 	  medax = 1;
       }	  
       if (!medax && (i < rs-1) && F[p+1])
       {
 	ftpe_x = X[p+1]; ftpe_y = Y[p];
-	mx = ftp_x + 0.5; my = ftp_y;
-	if ((((ftpe_x - ftp_x)*(ftpe_x - ftp_x) + 
-	      (ftpe_y - ftp_y)*(ftpe_y - ftp_y)) > gamma2) &&
-	    (((mx - ftpe_x)*(mx - ftpe_x) + (mx - ftpe_y)*(mx - ftpe_y)) <= 
-	     ((mx - ftp_x)*(mx - ftp_x) + (mx - ftp_y)*(mx - ftp_y))))
+	mx = i + 0.5; my = j;
+	if ((dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y) > gamma2) &&
+	    (dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))))
 	  medax = 1;
       }	  
       if (!medax && (j < cs-1) && F[p+rs])
       {
 	ftpe_x = X[p]; ftpe_y = Y[p+rs];
-	mx = ftp_x; my = ftp_y + 0.5;
-	if ((((ftpe_x - ftp_x)*(ftpe_x - ftp_x) + 
-	      (ftpe_y - ftp_y)*(ftpe_y - ftp_y)) > gamma2) &&
-	    (((mx - ftpe_x)*(mx - ftpe_x) + (mx - ftpe_y)*(mx - ftpe_y)) <= 
-	     ((mx - ftp_x)*(mx - ftp_x) + (mx - ftp_y)*(mx - ftp_y))))
+	mx = i; my = j + 0.5;
+	if ((dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y) > gamma2) &&
+	    (dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))))
 	  medax = 1;
       }	  
       if (!medax && (j > 0) && F[p-rs])
       {
 	ftpe_x = X[p]; ftpe_y = Y[p-rs];
-	mx = ftp_x; my = ftp_y - 0.5;
-	if ((((ftpe_x - ftp_x)*(ftpe_x - ftp_x) + 
-	      (ftpe_y - ftp_y)*(ftpe_y - ftp_y)) > gamma2) &&
-	    (((mx - ftpe_x)*(mx - ftpe_x) + (mx - ftpe_y)*(mx - ftpe_y)) <= 
-	     ((mx - ftp_x)*(mx - ftp_x) + (mx - ftp_y)*(mx - ftp_y))))
+	mx = i; my = j - 0.5;
+	if ((dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y) > gamma2) &&
+	    (dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))))
 	  medax = 1;
       }	  
       if (medax) R[p] = NDG_MAX; else R[p] = 0;
