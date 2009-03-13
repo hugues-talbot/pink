@@ -24,7 +24,7 @@ set comname "/tmp/_plot_com"
 # without lines (uncomment) : 
 # my_write_text $comname "set terminal postscript eps 22\nset output \"$outfile\"\nplot \"$list_in\" notitle"
 # with lines (uncomment) : 
-my_write_text $comname "set terminal postscript eps 22\nset output \"$outfile\"\nplot \"$list1\" lt 1 lc rgb 'red' with lines, \"$list2\" lt 2 lc rgb 'green' with lines, \"$list3\" lt 3 lc rgb 'blue' with lines"
+my_write_text $comname "set terminal postscript eps 22\nset output \"$outfile\"\nplot \"$list1\" t \"$list1\" lt 1 lc rgb 'red' with lines, \"$list2\" t \"$list2\" lt 2 lc rgb 'green' with lines, \"$list3\" t \"$list3\" lt 3 lc rgb 'blue' with lines"
 
 my_exec_v "gnuplot $comname"
 

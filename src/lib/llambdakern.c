@@ -1,4 +1,4 @@
-/* $Id: llambdakern.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: llambdakern.c,v 1.2 2009-03-13 14:46:14 mcouprie Exp $ */
 /* noyau lambda-homotopique ou de nivellement par abaissement */
 /* Michel Couprie - avril 1999 */
 
@@ -17,7 +17,7 @@
 #include <llabelextrema.h>
 #include <llambdakern.h>
 
-#define EN_FAH       0
+#define EN_FAHP       0
 #define EN_LIFO      1
 #define PARANO
 #define VERBOSE
@@ -78,7 +78,7 @@ int32_t llambdakern(
   struct xvimage *lab;
   uint32_t *M;            /* l'image d'etiquettes de composantes connexes */
   int32_t nminima;                 /* nombre de minima differents */
-  Fah * FAH;
+  Fahp * FAHP;
 
 #ifdef VERBOSE
   printf("%s: connex=%d\n", F_NAME, connex);
@@ -121,9 +121,9 @@ int32_t llambdakern(
 
   IndicsInit(N);
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s : CreeFahVide failed\n", F_NAME);
+  FAHP = CreeFahpVide(N);
+  if (FAHP == NULL)
+  {   fprintf(stderr, "%s : CreeFahpVide failed\n", F_NAME);
       return(0);
   }
 
@@ -132,7 +132,7 @@ int32_t llambdakern(
   /* ================================================ */
 
   /* ========================================================= */
-  /*   INITIALISATION DE LA FAH: empile les voisins des minima */
+  /*   INITIALISATION DE LA FAHP: empile les voisins des minima */
   /* ========================================================= */
 
   for (x = 0; x < N; x++)
@@ -142,8 +142,8 @@ int32_t llambdakern(
       for (k = 0; k < 8; k++)
       {
         y = voisin(x, k, rs, N);
-        if ((y!=-1) && (M[y]==0) && !IsSet(y,EN_FAH) && nonbord(y,rs,N))
-        { FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+        if ((y!=-1) && (M[y]==0) && !IsSet(y,EN_FAHP) && nonbord(y,rs,N))
+        { FahpPush(FAHP, y, F[y]); Set(y, EN_FAHP); }
       }
     } /* if (M[x] != 0) */
   } /* for x */
@@ -156,19 +156,19 @@ int32_t llambdakern(
 
   if (connex == 4)
   {
-    while (! FahVide(FAH))
+    while (! FahpVide(FAHP))
     {
-      x = FahPop(FAH);
-      UnSet(x, EN_FAH);
+      x = FahpPop(FAHP);
+      UnSet(x, EN_FAHP);
       if ((F[x] > G[x]) && testabaisse4(F, x, rs, N, lambda))         
         /* modifie l'image le cas echeant */
         for (k = 0; k < 8; k++)
         {
           y = voisin(x, k, rs, N);
-          if ((y!=-1) && !IsSet(y,EN_FAH) && nonbord(y,rs,N))
-          { FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+          if ((y!=-1) && !IsSet(y,EN_FAHP) && nonbord(y,rs,N))
+          { FahpPush(FAHP, y, F[y]); Set(y, EN_FAHP); }
         }
-    } /* while (! FahVide(FAH)) */
+    } /* while (! FahpVide(FAHP)) */
   }
   else /* connex == 8 */
   {
@@ -181,7 +181,7 @@ int32_t llambdakern(
   /* ================================================ */
 
   IndicsTermine();
-  FahTermine(FAH);
+  FahpTermine(FAHP);
   return(1);
 } // llambdakern()
 
@@ -809,7 +809,7 @@ int32_t lgrayskel(
   struct xvimage *lab;
   uint32_t *M;            /* l'image d'etiquettes de composantes connexes */
   int32_t nminima;                 /* nombre de minima differents */
-  Fah * FAH;
+  Fahp * FAHP;
 
 #ifdef VERBOSE
   printf("%s: connex=%d\n", F_NAME, connex);
@@ -851,9 +851,9 @@ int32_t lgrayskel(
 
   IndicsInit(N);
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s : CreeFahVide failed\n", F_NAME);
+  FAHP = CreeFahpVide(N);
+  if (FAHP == NULL)
+  {   fprintf(stderr, "%s : CreeFahpVide failed\n", F_NAME);
       return(0);
   }
 
@@ -862,7 +862,7 @@ int32_t lgrayskel(
   /* ================================================ */
 
   /* ========================================================= */
-  /*   INITIALISATION DE LA FAH: empile les voisins des minima */
+  /*   INITIALISATION DE LA FAHP: empile les voisins des minima */
   /* ========================================================= */
 
   for (x = 0; x < N; x++)
@@ -872,8 +872,8 @@ int32_t lgrayskel(
       for (k = 0; k < 8; k++)
       {
         y = voisin(x, k, rs, N);
-        if ((y!=-1) && (M[y]==0) && !IsSet(y,EN_FAH) && nonbord(y,rs,N))
-        { FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+        if ((y!=-1) && (M[y]==0) && !IsSet(y,EN_FAHP) && nonbord(y,rs,N))
+        { FahpPush(FAHP, y, F[y]); Set(y, EN_FAHP); }
       }
     } /* if (M[x] != 0) */
   } /* for x */
@@ -886,10 +886,10 @@ int32_t lgrayskel(
 
   if (connex == 4)
   {
-    while (! FahVide(FAH))
+    while (! FahpVide(FAHP))
     {
-      x = FahPop(FAH);
-      UnSet(x, EN_FAH);
+      x = FahpPop(FAHP);
+      UnSet(x, EN_FAHP);
       if ((F[x] > G[x]) && testabaisse4(F, x, rs, N, lambda))         
         /* modifie l'image le cas echeant */
         if (museparant4(F, x, rs, N, lambda))
@@ -898,10 +898,10 @@ int32_t lgrayskel(
           for (k = 0; k < 8; k++)
           {
             y = voisin(x, k, rs, N);
-            if ((y!=-1) && !IsSet(y,EN_FAH) && nonbord(y,rs,N))
-            { FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+            if ((y!=-1) && !IsSet(y,EN_FAHP) && nonbord(y,rs,N))
+            { FahpPush(FAHP, y, F[y]); Set(y, EN_FAHP); }
           }
-    } /* while (! FahVide(FAH)) */
+    } /* while (! FahpVide(FAHP)) */
   }
   else /* connex == 8 */
   {
@@ -914,6 +914,6 @@ int32_t lgrayskel(
   /* ================================================ */
 
   IndicsTermine();
-  FahTermine(FAH);
+  FahpTermine(FAHP);
   return(1);
 } // lgrayskel()

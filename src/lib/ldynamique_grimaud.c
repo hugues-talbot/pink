@@ -1,4 +1,4 @@
-/* $Id: ldynamique_grimaud.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: ldynamique_grimaud.c,v 1.2 2009-03-13 14:46:14 mcouprie Exp $ */
 /* 
    Operateurs utilisant l'arbre des composantes.
    =============================================
@@ -236,7 +236,7 @@ int32_t ldynamique(struct xvimage *image, int32_t connex)
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
   uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
                                 /* en sortie, contient le numero de la composante de niveau h */
@@ -252,7 +252,7 @@ int32_t ldynamique(struct xvimage *image, int32_t connex)
     case 8: incr_vois = 1; break;
   } /* switch (connex) */
 
-  FAH = CreeFahVide(N);
+  FAHS = CreeFahsVide(N);
 
   STATUS = (uint32_t *)calloc(1,N * sizeof(int32_t));
   if (STATUS == NULL)
@@ -285,7 +285,7 @@ int32_t ldynamique(struct xvimage *image, int32_t connex)
   for (i = 0; i < N; i++) STATUS[i] = NOT_ANALYZED;
   k = 0;             /* recherche un pixel k de niveau de gris minimal dans l'image */
   for (i = 1; i < N; i++) if (F[i] < F[k]) k = i;
-  FahPush(FAH, k, F[k]);
+  FahsPush(FAHS, k, F[k]);
 
 #ifdef VERBOSE
   fprintf(stderr, "init terminee\n");
@@ -296,9 +296,9 @@ int32_t ldynamique(struct xvimage *image, int32_t connex)
   /* ================================================ */
 
   if ((connex == 4) || (connex == 8))
-    (void)flood(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
+    (void)flood(F[k], FAHS, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
   else
-    (void)flood3d(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
+    (void)flood3d(F[k], FAHS, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
 
 #ifdef VERBOSE
   fprintf(stderr, "flood terminee\n");
@@ -334,7 +334,7 @@ int32_t ldynamique(struct xvimage *image, int32_t connex)
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   TermineCompTree(TREE);
   TermineCompactTree(CTREE);
   free(STATUS);
@@ -380,7 +380,7 @@ static void SimplifyComp(CompactTree *cpct, int32_t *ncomp, int32_t *tabcomp)
 
 /* ================================================ */
 static void BuildTree(uint8_t *F, int32_t rs, int32_t ps, int32_t N, int32_t connex, int32_t incr_vois,
-	       Fah * FAH, uint32_t *STATUS, 
+	       Fahs * FAHS, uint32_t *STATUS, 
                uint32_t *number_nodes, uint8_t *node_at_level,
                CompTree * TREE, CompactTree ** cpct
               )
@@ -392,12 +392,12 @@ static void BuildTree(uint8_t *F, int32_t rs, int32_t ps, int32_t N, int32_t con
   for (i = 0; i < N; i++) STATUS[i] = NOT_ANALYZED;
   k = 0;             /* recherche un pixel k de niveau de gris minimal dans l'image */
   for (i = 0; i < N; i++) if (F[i] < F[k]) k = i;
-  FahPush(FAH, k, F[k]);
+  FahsPush(FAHS, k, F[k]);
   // APPEL FONCTION RECURSIVE flood
   if ((connex == 4) || (connex == 8))
-    (void)flood(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
+    (void)flood(F[k], FAHS, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
   else
-    (void)flood3d(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
+    (void)flood3d(F[k], FAHS, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
   *cpct = CompTree2CompactTree(TREE, number_nodes);
 } // BuildTree()
 
@@ -465,7 +465,7 @@ static int32_t TrouveComposantes2(int32_t x, uint8_t *F, int32_t rs, int32_t N, 
     return n;
 } // TrouveComposantes2() 
 
-#define EN_FAH     0 
+#define EN_FAHS     0 
 #define WATERSHED  1
 #define MASSIF     2
 #define WATERSHED2 3
@@ -475,7 +475,7 @@ static int32_t TrouveComposantes2(int32_t x, uint8_t *F, int32_t rs, int32_t N, 
 int32_t Watershed(
   struct xvimage *image,
   int32_t incr_vois, 
-  Fah * FAH,
+  Fahs * FAHS,
   uint32_t *STATUS, 
   CompactTree * cpct)
 /* ==================================== */
@@ -497,7 +497,7 @@ int32_t Watershed(
   LIFO = CreeLifoVide(N);
 
   // INITIALISATIONS
-  FahFlush(FAH); // Re-initialise la FAH
+  FahsFlush(FAHS); // Re-initialise la FAHS
 
   // etiquetage des c-maxima (doit pouvoir se faire au vol lors de la construction de l'arbre)
   for (i = 0; i < N; i++)
@@ -514,10 +514,10 @@ int32_t Watershed(
       for (k = 0; k < 8; k += incr_vois)
       {
         j = voisin(i, k, rs, N);
-        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAH)))
+        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAHS)))
 	{
-          Set(j,EN_FAH);
-          FahPush(FAH, j, NDG_MAX - F[j]);
+          Set(j,EN_FAHS);
+          FahsPush(FAHS, j, NDG_MAX - F[j]);
 	}
       } /* for (k = 0; k < 8; k += incr_vois) */
     } // if (IsSet(i,MASSIF))
@@ -525,10 +525,10 @@ int32_t Watershed(
 
   // ******************************* BOUCLE 1
   nbelev = 0;
-  while (!FahVide(FAH))
+  while (!FahsVide(FAHS))
   {
-    x = FahPop(FAH);
-    UnSet(x,EN_FAH);
+    x = FahsPop(FAHS);
+    UnSet(x,EN_FAHS);
 #ifdef DEBUG
     printf("Pop Point %d,%d Niveau %d\n", x % rs, x / rs, F[x]);
 #endif
@@ -564,14 +564,14 @@ int32_t Watershed(
 #ifdef DEBUG
         printf("    Eleve au niveau: %d ; MASSIF\n", F[x]);
 #endif
-        // empile les c-voisins de x non marques MASSIF ni WATERSHED ni EN_FAH
+        // empile les c-voisins de x non marques MASSIF ni WATERSHED ni EN_FAHS
         for (k = 0; k < 8; k += incr_vois)
         {
           y = voisin(x, k, rs, N);
-          if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,WATERSHED)) && (!IsSet(y,EN_FAH)))
+          if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,WATERSHED)) && (!IsSet(y,EN_FAHS)))
           {
-            Set(y,EN_FAH);
-            FahPush(FAH, y, NDG_MAX - F[y]);
+            Set(y,EN_FAHS);
+            FahsPush(FAHS, y, NDG_MAX - F[y]);
 #ifdef DEBUG
             printf("        Push Point %d,%d Niveau %d\n", y % rs, y / rs, F[y]);
 #endif
@@ -580,11 +580,11 @@ int32_t Watershed(
       } // if feuille
       else 
       {
-        Set(x,EN_FAH);
+        Set(x,EN_FAHS);
         LifoPush(LIFO, x);
       }
     } // if (c != -1)
-  } // while (!FahVide(FAH))
+  } // while (!FahsVide(FAHS))
 
 #ifdef VERBOSE
   printf("Nombre d'elevations en premiere passe %d\n", nbelev);
@@ -594,7 +594,7 @@ int32_t Watershed(
   while (!LifoVide(LIFO))
   {
     x = LifoPop(LIFO);
-    UnSet(x,EN_FAH);
+    UnSet(x,EN_FAHS);
 #ifdef DEBUG
     printf("Pop Point %d,%d Niveau %d\n", x % rs, x / rs, F[x]);
 #endif
@@ -640,13 +640,13 @@ int32_t Watershed(
         printf("ERREUR: POINT MASSIF TROUVE EN PASSE 2!!!!\n");
 #endif
 
-      // empile les c-voisins de x non marques MASSIF ni WATERSHED ni EN_FAH
+      // empile les c-voisins de x non marques MASSIF ni WATERSHED ni EN_FAHS
       for (k = 0; k < 8; k += incr_vois)
       {
         y = voisin(x, k, rs, N);
-        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,WATERSHED)) && (!IsSet(y,EN_FAH)))
+        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,WATERSHED)) && (!IsSet(y,EN_FAHS)))
         {
-          Set(y,EN_FAH);
+          Set(y,EN_FAHS);
           LifoPush(LIFO, y);
 #ifdef DEBUG
           printf("        Push Point %d,%d Niveau %d\n", y % rs, y / rs, F[y]);
@@ -664,7 +664,7 @@ int32_t Watershed(
 
 /* ==================================== */
 static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
-	      Fah * FAH, uint32_t *STATUS, CompactTree * cpct)
+	      Fahs * FAHS, uint32_t *STATUS, CompactTree * cpct)
 /* ==================================== */
 // propage a partir d'un point constructible
 #undef F_NAME
@@ -680,7 +680,7 @@ static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
   int32_t nbelev;                   /* nombre d'elevations effectuees */
 
   // INITIALISATIONS
-  FahFlush(FAH); // Re-initialise la FAH
+  FahsFlush(FAHS); // Re-initialise la FAHS
 
   // cherche un point constructible
   for (x = 0; x < N; x++)
@@ -692,18 +692,18 @@ static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
       c = LowestCommonAncestor(cpct, ncomp, tabcomp, F[x]);
     if (c != -1)
     {
-      Set(x,EN_FAH);
-      FahPush(FAH, x, NDG_MAX - F[x]);
+      Set(x,EN_FAHS);
+      FahsPush(FAHS, x, NDG_MAX - F[x]);
       break;
     }
   } // for (x = 0; x < N; x++)
 
   // BOUCLE PRINCIPALE
   nbelev = 0;
-  while (!FahVide(FAH))
+  while (!FahsVide(FAHS))
   {
-    x = FahPop(FAH);
-    UnSet(x,EN_FAH);
+    x = FahsPop(FAHS);
+    UnSet(x,EN_FAHS);
 #ifdef DEBUG
     printf("Pop Point %d,%d Niveau %d\n", x % rs, x / rs, F[x]);
 #endif
@@ -753,21 +753,21 @@ static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
         printf("%s : ERREUR COMPOSANTE BRANCHE!!!\n", F_NAME);
 #endif
 
-      // empile les c-voisins de x non marques MASSIF ni EN_FAH
+      // empile les c-voisins de x non marques MASSIF ni EN_FAHS
       for (k = 0; k < 8; k += incr_vois)
       {
         y = voisin(x, k, rs, N);
-        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAH)))
+        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAHS)))
         {
-          Set(y,EN_FAH);
-          FahPush(FAH, y, NDG_MAX - F[y]);
+          Set(y,EN_FAHS);
+          FahsPush(FAHS, y, NDG_MAX - F[y]);
 #ifdef DEBUG
           printf("        Push Point %d,%d Niveau %d\n", y % rs, y / rs, F[y]);
 #endif
         }
       } // for (k = 0; k < 8; k += incr_vois)
     } // if (c != -1)
-  } // while (!FahVide(FAH))
+  } // while (!FahsVide(FAHS))
 
 #ifdef VERBOSE
     printf("Nombre d'elevations %d\n", nbelev);
@@ -776,7 +776,7 @@ static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
 
 /* ==================================== */
 static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
-	      Fah * FAH, uint32_t *STATUS, CompactTree * cpct)
+	      Fahs * FAHS, uint32_t *STATUS, CompactTree * cpct)
 /* ==================================== */
 // inondation a partir des voisins des maxima, suivant les ndg decroissants
 #undef F_NAME
@@ -796,7 +796,7 @@ static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
 #endif
 
   // INITIALISATIONS
-  FahFlush(FAH); // Re-initialise la FAH
+  FahsFlush(FAHS); // Re-initialise la FAHS
 
   // etiquetage des c-maxima (doit pouvoir se faire au vol lors de la construction de l'arbre)
   for (i = 0; i < N; i++)
@@ -813,10 +813,10 @@ static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
       for (k = 0; k < 8; k += incr_vois)
       {
         j = voisin(i, k, rs, N);
-        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAH)))
+        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAHS)))
 	{
-          Set(j,EN_FAH);
-          FahPush(FAH, j, NDG_MAX - F[j]);
+          Set(j,EN_FAHS);
+          FahsPush(FAHS, j, NDG_MAX - F[j]);
 	}
       } /* for (k = 0; k < 8; k += incr_vois) */
     } // if (IsSet(i,MASSIF))
@@ -824,10 +824,10 @@ static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
 
   // BOUCLE PRINCIPALE
   nbelev = 0;
-  while (!FahVide(FAH))
+  while (!FahsVide(FAHS))
   {
-    x = FahPop(FAH);
-    UnSet(x,EN_FAH);
+    x = FahsPop(FAHS);
+    UnSet(x,EN_FAHS);
 #ifdef DEBUG
     printf("Pop Point %d,%d Niveau %d\n", x % rs, x / rs, F[x]);
 #endif
@@ -885,21 +885,21 @@ static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
         printf("%s : ERREUR COMPOSANTE BRANCHE!!!\n", F_NAME);
 #endif
 
-      // empile les c-voisins de x non marques MASSIF ni EN_FAH
+      // empile les c-voisins de x non marques MASSIF ni EN_FAHS
       for (k = 0; k < 8; k += incr_vois)
       {
         y = voisin(x, k, rs, N);
-        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAH)))
+        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAHS)))
         {
-          Set(y,EN_FAH);
-          FahPush(FAH, y, NDG_MAX - F[y]);
+          Set(y,EN_FAHS);
+          FahsPush(FAHS, y, NDG_MAX - F[y]);
 #ifdef DEBUG
           printf("        Push Point %d,%d Niveau %d\n", y % rs, y / rs, F[y]);
 #endif
         }
       } // for (k = 0; k < 8; k += incr_vois)
     } // if (c != -1)
-  } // while (!FahVide(FAH))
+  } // while (!FahsVide(FAHS))
 
 #ifdef VERBOSE
     printf("Nombre d'elevations %d\n", nbelev);
@@ -908,7 +908,7 @@ static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
 
 /* ==================================== */
 static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
-	      Fah * FAH, uint32_t *STATUS, CompactTree * cpct)
+	      Fahs * FAHS, uint32_t *STATUS, CompactTree * cpct)
 /* ==================================== */
 // propagation en largeur a partir des voisins des maxima
 #undef F_NAME
@@ -928,7 +928,7 @@ static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
 #endif
 
   // INITIALISATIONS
-  FahFlush(FAH); // Re-initialise la FAH
+  FahsFlush(FAHS); // Re-initialise la FAHS
 
   // etiquetage des c-maxima (doit pouvoir se faire au vol lors de la construction de l'arbre)
   for (i = 0; i < N; i++)
@@ -945,10 +945,10 @@ static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
       for (k = 0; k < 8; k += incr_vois)
       {
         j = voisin(i, k, rs, N);
-        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAH)))
+        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAHS)))
 	{
-          Set(j,EN_FAH);
-          FahPush(FAH, j, 0);
+          Set(j,EN_FAHS);
+          FahsPush(FAHS, j, 0);
 	}
       } /* for (k = 0; k < 8; k += incr_vois) */
     } // if (IsSet(i,MASSIF))
@@ -956,10 +956,10 @@ static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
 
   // BOUCLE PRINCIPALE
   nbelev = 0;
-  while (!FahVide(FAH))
+  while (!FahsVide(FAHS))
   {
-    x = FahPop(FAH);
-    UnSet(x,EN_FAH);
+    x = FahsPop(FAHS);
+    UnSet(x,EN_FAHS);
 #ifdef DEBUG
     printf("Pop Point %d,%d Niveau %d\n", x % rs, x / rs, F[x]);
 #endif
@@ -1017,21 +1017,21 @@ static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
         printf("    Eleve au niveau: %d ; MASSIF\n", F[x]);
 #endif
 
-      // empile les c-voisins de x non marques MASSIF ni EN_FAH
+      // empile les c-voisins de x non marques MASSIF ni EN_FAHS
       for (k = 0; k < 8; k += incr_vois)
       {
         y = voisin(x, k, rs, N);
-        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAH)))
+        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAHS)))
         {
-          Set(y,EN_FAH);
-          FahPush(FAH, y, 0);
+          Set(y,EN_FAHS);
+          FahsPush(FAHS, y, 0);
 #ifdef DEBUG
           printf("        Push Point %d,%d Niveau %d\n", y % rs, y / rs, F[y]);
 #endif
         }
       } // for (k = 0; k < 8; k += incr_vois)
     } // if (c != -1)
-  } // while (!FahVide(FAH))
+  } // while (!FahsVide(FAHS))
 
 #ifdef VERBOSE
     printf("Nombre d'elevations %d\n", nbelev);
@@ -1040,7 +1040,7 @@ static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
 
 /* ==================================== */
 static int32_t Watershed4(struct xvimage *image, int32_t incr_vois,
-	      Fah * FAH, uint32_t *STATUS, CompactTree * cpct)
+	      Fahs * FAHS, uint32_t *STATUS, CompactTree * cpct)
 /* ==================================== */
 // inondation a partir des voisins des maxima, suivant les ndg decroissants
 // nouvelle (08/03) caracterisation des points destructibles
@@ -1058,7 +1058,7 @@ static int32_t Watershed4(struct xvimage *image, int32_t incr_vois,
   int32_t lcalevel;                 /* niveau du lca */
 
   // INITIALISATIONS
-  FahFlush(FAH); // Re-initialise la FAH
+  FahsFlush(FAHS); // Re-initialise la FAHS
 
   // etiquetage des c-maxima (doit pouvoir se faire au vol lors de la construction de l'arbre)
   for (i = 0; i < N; i++)
@@ -1075,10 +1075,10 @@ static int32_t Watershed4(struct xvimage *image, int32_t incr_vois,
       for (k = 0; k < 8; k += incr_vois)
       {
         j = voisin(i, k, rs, N);
-        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAH)))
+        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAHS)))
 	{
-          Set(j,EN_FAH);
-          FahPush(FAH, j, NDG_MAX - F[j]);
+          Set(j,EN_FAHS);
+          FahsPush(FAHS, j, NDG_MAX - F[j]);
 	}
       } /* for (k = 0; k < 8; k += incr_vois) */
     } // if (IsSet(i,MASSIF))
@@ -1086,10 +1086,10 @@ static int32_t Watershed4(struct xvimage *image, int32_t incr_vois,
 
   // BOUCLE PRINCIPALE
   nbelev = 0;
-  while (!FahVide(FAH))
+  while (!FahsVide(FAHS))
   {
-    x = FahPop(FAH);
-    UnSet(x,EN_FAH);
+    x = FahsPop(FAHS);
+    UnSet(x,EN_FAHS);
 #ifdef DEBUG
     printf("Pop Point %d,%d Niveau %d\n", x % rs, x / rs, F[x]);
 #endif
@@ -1140,14 +1140,14 @@ printf("    Eleve au niveau: %d ; LPE\n", F[x]);
           printf("%s : ERREUR COMPOSANTE BRANCHE!!!\n", F_NAME);
 #endif
 
-        // empile les c-voisins de x non marques MASSIF ni EN_FAH
+        // empile les c-voisins de x non marques MASSIF ni EN_FAHS
         for (k = 0; k < 8; k += incr_vois)
         {
           y = voisin(x, k, rs, N);
-          if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAH)))
+          if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAHS)))
           {
-            Set(y,EN_FAH);
-            FahPush(FAH, y, NDG_MAX - F[y]);
+            Set(y,EN_FAHS);
+            FahsPush(FAHS, y, NDG_MAX - F[y]);
 #ifdef DEBUG
             printf("        Push Point %d,%d Niveau %d\n", y % rs, y / rs, F[y]);
 #endif
@@ -1155,7 +1155,7 @@ printf("    Eleve au niveau: %d ; LPE\n", F[x]);
         } // for (k = 0; k < 8; k += incr_vois)
       } // if (lcalevel <= F[x])
     } // if (ncomp > 0)
-  } // while (!FahVide(FAH))
+  } // while (!FahsVide(FAHS))
 #ifdef VERBOSE
   printf("Nombre d'elevations %d\n", nbelev);
 #endif
@@ -1256,7 +1256,7 @@ jusqu'a size(tree) ==  1
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *V;             /* l'image resultat (valuations) */
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
   uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
                                 /* en sortie, contient le numero de la composante de niveau h */
@@ -1273,7 +1273,7 @@ jusqu'a size(tree) ==  1
     case 8: incr_vois = 1; break;
   } /* switch (connex) */
 
-  FAH = CreeFahVide(N);
+  FAHS = CreeFahsVide(N);
 
   STATUS = (uint32_t *)calloc(1,N * sizeof(int32_t));
   if (STATUS == NULL)
@@ -1312,7 +1312,7 @@ jusqu'a size(tree) ==  1
   /* ======================================================================= */
 
   BuildTree(F, rs, ps, N, connex, incr_vois,
-	    FAH, STATUS, number_nodes, node_at_level, TREE, &cpct);
+	    FAHS, STATUS, number_nodes, node_at_level, TREE, &cpct);
 
   CalculeDynamiqueMaxima(cpct);
 
@@ -1324,7 +1324,7 @@ jusqu'a size(tree) ==  1
   /* 2EME ETAPE : CALCUL DE LA LIGNE DE PARTAGE DES EAUX */
   /* ======================================================================= */
 
-  Watershed2(image, incr_vois, FAH, STATUS, cpct);
+  Watershed2(image, incr_vois, FAHS, STATUS, cpct);
 
 { int32_t nbcomp = cpct->nbcomp;
   int32_t h, c, comp;  
@@ -1489,7 +1489,7 @@ AfficheCompactTree(cpct);
   /* ================================================ */
 
   IndicsTermine();
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   TermineCompTree(TREE);
   TermineCompactTree(cpct);
   free(STATUS);
@@ -1519,7 +1519,7 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
   uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
                                 /* en sortie, contient le numero de la composante de niveau h */
@@ -1535,7 +1535,7 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
     case 8: incr_vois = 1; break;
   } /* switch (connex) */
 
-  FAH = CreeFahVide(N);
+  FAHS = CreeFahsVide(N);
 
   STATUS = (uint32_t *)calloc(1,N * sizeof(int32_t));
   if (STATUS == NULL)
@@ -1572,7 +1572,7 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
   for (i = 0; i < N; i++) STATUS[i] = NOT_ANALYZED;
   k = 0;             /* recherche un pixel k de niveau de gris minimal dans l'image */
   for (i = 0; i < N; i++) if (F[i] < F[k]) k = i;
-  FahPush(FAH, k, F[k]);
+  FahsPush(FAHS, k, F[k]);
 
 #ifdef VERBOSE
   fprintf(stderr, "init terminee\n");
@@ -1583,9 +1583,9 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
   /* ================================================ */
 
   if ((connex == 4) || (connex == 8))
-    (void)flood(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
+    (void)flood(F[k], FAHS, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
   else
-    (void)flood3d(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
+    (void)flood3d(F[k], FAHS, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
 
 #ifdef VERBOSE
   fprintf(stderr, "flood terminee\n");
@@ -1610,14 +1610,14 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
   /* ======================================================================= */
 
   IndicsInit(N);
-  Watershed4(image, incr_vois, FAH, STATUS, cpct);
+  Watershed4(image, incr_vois, FAHS, STATUS, cpct);
 
   /* ================================================ */
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
   IndicsTermine();
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   TermineCompTree(TREE);
   TermineCompactTree(cpct);
   free(STATUS);

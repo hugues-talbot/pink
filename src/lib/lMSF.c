@@ -9,6 +9,7 @@
 #include <jccodimage.h>
 #include <mcimage.h>
 #include <jcimage.h>
+#include <mcutil.h>
 #include <mcindic.h>
 #include <lMSF.h>
 #include <mcrbt.h>

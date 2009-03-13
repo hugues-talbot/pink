@@ -1,4 +1,4 @@
-/* $Id: lkern.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: lkern.c,v 1.2 2009-03-13 14:46:14 mcouprie Exp $ */
 /* operateur de calcul du noyau homotopique par abaissement 
    pour la 1/2 topologie "moins" 
 
@@ -20,8 +20,8 @@
 #include <llabelextrema.h>
 #include <lkern.h>
 
-#define EN_FAH       0
-#define EN_FAH2      1
+#define EN_FAHP       0
+#define EN_FAHP2      1
 #define PARANO
 /*
 #define DEBUG
@@ -41,7 +41,7 @@ int32_t essentiel(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* essentiel() */
 
 /* ==================================== */
-void saturation(int32_t rs, int32_t cs, int32_t N, uint8_t *F, Fah * FAH)
+void saturation(int32_t rs, int32_t cs, int32_t N, uint8_t *F, Fahp * FAHP)
 /* ==================================== */
 {
   int32_t x;                       /* index muet de pixel */
@@ -52,12 +52,12 @@ void saturation(int32_t rs, int32_t cs, int32_t N, uint8_t *F, Fah * FAH)
 #ifdef DEBUG
   uint8_t oldFx;
 #endif
-  while (!FahVide(FAH))
+  while (!FahpVide(FAHP))
   {
-    level = FahNiveau(FAH);
-    x = FahPop(FAH);
-    UnSet(x, EN_FAH);
-    UnSet(x, EN_FAH2);
+    level = FahpNiveau(FAHP);
+    x = FahpPop(FAHP);
+    UnSet(x, EN_FAHP);
+    UnSet(x, EN_FAHP2);
     if ((F[x] > 0) && (level <= NDG_MAX))
     {
       nbtopoh(F, x, 1, rs, N, &t4mm, &t4m, &t8p, &t8pp);
@@ -75,10 +75,10 @@ printf("point %d (%d %d), val = %d --> %d\n", x, x%rs, x/rs, oldFx, F[x]);
           for (k = 0; k < 8; k += 1) /* parcourt les voisins en 8-connexite */
           {                                       /* pour empiler les voisins */
             y = voisin(x, k, rs, N);             /* non deja empiles */
-            if ((y != -1) && (F[y] > 0) && (! IsSet(y, EN_FAH)))
+            if ((y != -1) && (F[y] > 0) && (! IsSet(y, EN_FAHP)))
             {
-              FahPush(FAH, y, F[y]);
-              Set(y, EN_FAH);
+              FahpPush(FAHP, y, F[y]);
+              Set(y, EN_FAHP);
             } /* if y */
           } /* for k */
         } /* if (pdestr4(F, x, rs, N)) */
@@ -91,16 +91,16 @@ printf("point %d (%d %d), val = %d --> %d\n", x, x%rs, x/rs, oldFx, F[x]);
           for (k = 0; k < 8; k += 1)   /* parcourt les voisins en 8-connexite */
           {                                       /* pour empiler les voisins */
             y = voisin(x, k, rs, N);                      /* non deja empiles */
-            if ((y != -1) && (F[y] > 0) && (! IsSet(y, EN_FAH)))
+            if ((y != -1) && (F[y] > 0) && (! IsSet(y, EN_FAHP)))
             {
-              FahPush(FAH, y, F[y]);
-              Set(y, EN_FAH);
+              FahpPush(FAHP, y, F[y]);
+              Set(y, EN_FAHP);
             } /* if y */
           } /* for k */
         } /* if (pdestr4(F, x, rs, N)) */
       } /* else if (t4mm == 1) */
     } /* ((F[x] > 0) && (F[x] <= NDG_MAX)) */
-  } /* while (! (FifoVide(FAH) ...)) */
+  } /* while (! (FifoVide(FAHP) ...)) */
 finwhile: ;
 } /* saturation() */
 
@@ -115,7 +115,7 @@ int32_t lkern(struct xvimage *image, int32_t connex)
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  Fah * FAH;
+  Fahp * FAHP;
   int32_t t4mm, t4m, t8p, t8pp;
 #ifdef DEBUG
   uint8_t oldFx;
@@ -129,9 +129,9 @@ int32_t lkern(struct xvimage *image, int32_t connex)
 
   IndicsInit(N);
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "lkern() : CreeFahVide failed\n");
+  FAHP = CreeFahpVide(N);
+  if (FAHP == NULL)
+  {   fprintf(stderr, "lkern() : CreeFahpVide failed\n");
       return(0);
   }
 
@@ -143,17 +143,17 @@ int32_t lkern(struct xvimage *image, int32_t connex)
 
   for (x = rs + 1, y = (cs-2) * rs + 1; x < 2*rs-1; x++, y++)
   {
-    FahPush(FAH, x, F[x]); Set(x, EN_FAH);
-    FahPush(FAH, y, F[y]); Set(y, EN_FAH);
+    FahpPush(FAHP, x, F[x]); Set(x, EN_FAHP);
+    FahpPush(FAHP, y, F[y]); Set(y, EN_FAHP);
   }
 
   for (x = 2*rs+1 , y = 3*rs-2; x < (cs-2)*rs+1; y += rs, x += rs)
   {
-    FahPush(FAH, x, F[x]); Set(x, EN_FAH);
-    FahPush(FAH, y, F[y]); Set(y, EN_FAH);
+    FahpPush(FAHP, x, F[x]); Set(x, EN_FAHP);
+    FahpPush(FAHP, y, F[y]); Set(y, EN_FAHP);
   }
 
-  saturation(rs, cs, N, F, FAH);
+  saturation(rs, cs, N, F, FAHP);
 
   /* met a 0 les puits et les interieurs de plateaux (T-- = 0) */
   /* et empile les voisins */
@@ -169,14 +169,14 @@ int32_t lkern(struct xvimage *image, int32_t connex)
       for (k = 0; k < 8; k += 1) /* parcourt les voisins en 8-connexite */
       {                                       /* pour empiler les voisins */
         y = voisin(x, k, rs, N);             /* non deja empiles */
-        if ((y != -1) && (F[y] > 0) && (! IsSet(y, EN_FAH)))
+        if ((y != -1) && (F[y] > 0) && (! IsSet(y, EN_FAHP)))
         {
-          FahPush(FAH, y, F[y]);
-          Set(y, EN_FAH);
+          FahpPush(FAHP, y, F[y]);
+          Set(y, EN_FAHP);
         } /* if y */
       } /* for k */
     } /* if (t4mm == 0) */
-    saturation(rs, cs, N, F, FAH);
+    saturation(rs, cs, N, F, FAHP);
   } /* for (x = 0; x < N; x++) */
 
   /* ================================================ */
@@ -184,6 +184,6 @@ int32_t lkern(struct xvimage *image, int32_t connex)
   /* ================================================ */
 
   IndicsTermine();
-  FahTermine(FAH);
+  FahpTermine(FAHP);
   return(1);
 }

@@ -1,4 +1,4 @@
-/* $Id: ldynamique.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: ldynamique.c,v 1.3 2009-03-13 14:46:14 mcouprie Exp $ */
 /* 
   Calcul de la dynamique ordonnée (nouvelle version)
 
@@ -42,7 +42,7 @@ Algo:
 #include <ldynamique.h>
 #include <assert.h>
 
-#define EN_FAH     0 
+#define EN_FAHS     0 
 #define WATERSHED  1
 #define MASSIF     2
 #define MODIFIE    4
@@ -187,7 +187,7 @@ int32_t lordermaximasurf(struct xvimage *image, struct xvimage *order, int32_t c
   uint32_t *O = ULONGDATA(order);      /* l'image de labels */
   int32_t *A; // table de correspondance pour le tri
   int32_t *T; // table avec l'altitude de chaque maximum
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t *CM;                      /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
   
@@ -197,9 +197,9 @@ int32_t lordermaximasurf(struct xvimage *image, struct xvimage *order, int32_t c
     exit(0);
   }
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s() : CreeFahVide failed\n", F_NAME);
+  FAHS = CreeFahsVide(N);
+  if (FAHS == NULL)
+  {   fprintf(stderr, "%s() : CreeFahsVide failed\n", F_NAME);
       return 0;
   }
   if ((connex == 4) || (connex == 8))
@@ -263,7 +263,7 @@ int32_t lordermaximasurf(struct xvimage *image, struct xvimage *order, int32_t c
     if (O[i])
       O[i] = T[O[i]];
 
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   ComponentTreeFree(CT);
   free(CM);
   free(A);
@@ -294,7 +294,7 @@ int32_t lordermaximavol(struct xvimage *image, struct xvimage *order, int32_t co
   uint32_t *O = ULONGDATA(order);      /* l'image de labels */
   int32_t *A; // table de correspondance pour le tri
   int32_t *T; // table avec l'altitude de chaque maximum
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t *CM;                      /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
   
@@ -304,9 +304,9 @@ int32_t lordermaximavol(struct xvimage *image, struct xvimage *order, int32_t co
     exit(0);
   }
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s() : CreeFahVide failed\n", F_NAME);
+  FAHS = CreeFahsVide(N);
+  if (FAHS == NULL)
+  {   fprintf(stderr, "%s() : CreeFahsVide failed\n", F_NAME);
       return 0;
   }
   if ((connex == 4) || (connex == 8))
@@ -370,7 +370,7 @@ int32_t lordermaximavol(struct xvimage *image, struct xvimage *order, int32_t co
     if (O[i])
       O[i] = T[O[i]];
 
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   ComponentTreeFree(CT);
   free(CM);
   free(A);
@@ -399,7 +399,7 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint32_t *O = ULONGDATA(order);      /* l'image de labels */
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t *CM;                      /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
   int32_t *mu;                      /* pour représenter l'ordre */
@@ -413,9 +413,9 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
     exit(0);
   }
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s() : CreeFahVide failed\n", F_NAME);
+  FAHS = CreeFahsVide(N);
+  if (FAHS == NULL)
+  {   fprintf(stderr, "%s() : CreeFahsVide failed\n", F_NAME);
       return 0;
   }
   if ((connex == 4) || (connex == 8))
@@ -486,7 +486,7 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   ComponentTreeFree(CT);
   free(CM);
   free(mu);
@@ -518,7 +518,7 @@ int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t c
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint32_t *O = ULONGDATA(order);      /* l'image de labels */
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t *CM;                      /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
   int32_t *mu;                      /* pour représenter l'ordre */
@@ -533,9 +533,9 @@ int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t c
     exit(0);
   }
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s() : CreeFahVide failed\n", F_NAME);
+  FAHS = CreeFahsVide(N);
+  if (FAHS == NULL)
+  {   fprintf(stderr, "%s() : CreeFahsVide failed\n", F_NAME);
       return 0;
   }
   if ((connex == 4) || (connex == 8))
@@ -631,7 +631,7 @@ int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t c
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   ComponentTreeFree(CT);
   free(CM);
   free(mu);

@@ -1,4 +1,4 @@
-/* $Id: lfermetrous3d.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: lfermetrous3d.c,v 1.3 2009-03-13 14:46:14 mcouprie Exp $ */
 /* 
    Operateur de fermeture de trous en 3d binaire
 
@@ -67,7 +67,7 @@
 #define VAL_Y_X   254
 #define VAL_Y_X_M 253
 
-#define EN_FAH      0
+#define EN_FAHP      0
 
 #ifdef ANIMATE
 void dump_anime(uint8_t *F, uint8_t *A, int32_t N, int32_t rs, int32_t ps)
@@ -116,7 +116,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
   struct xvimage *dist;        /* pour la fonction distance */
   uint8_t *F = UCHARDATA(image);
   uint32_t *D;
-  Fah * FAH;                   /* fah pour le controle de l'ordre de traitement des points */
+  Fahp * FAHP;                   /* fahp pour le controle de l'ordre de traitement des points */
   int32_t xmin, xmax, ymin, ymax, zmin, zmax; /* le pave englobant */
   int32_t tbar;
 #ifdef ANIMATE
@@ -135,9 +135,9 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
 
   if (tailletrous == -1) tailletrous = 1000000000;
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s : CreeFahVide failed\n", F_NAME);
+  FAHP = CreeFahpVide(N);
+  if (FAHP == NULL)
+  {   fprintf(stderr, "%s : CreeFahpVide failed\n", F_NAME);
       return(0);
   }
 
@@ -192,7 +192,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
   if (connex == 6)
   {
     /* ========================================================= */
-    /*   INITIALISATION DE LA FAH */
+    /*   INITIALISATION DE LA FAHP */
     /* ========================================================= */
 
     for (x = 0; x < N; x++)
@@ -200,7 +200,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
       tbar = tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((F[x] == VAL_Y_X) && ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))))
       {
-        FahPush(FAH, x, max(0,(NPRIO-D[x])));
+        FahpPush(FAHP, x, max(0,(FAHP_NPRIO-D[x])));
         F[x] = VAL_Y_X_M;
 #ifdef ANIMATE
         if (D[x] > anime_dist) anime_dist = D[x];
@@ -229,9 +229,9 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
     anime_step++;
 #endif
 
-    while (!FahVide(FAH))
+    while (!FahpVide(FAHP))
     {
-      x = FahPop(FAH);
+      x = FahpPop(FAHP);
 #ifdef ANIMATE
       if (D[x] < anime_dist) 
       {
@@ -258,12 +258,12 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y] == VAL_Y_X))
           {
-            FahPush(FAH, y, max(0,(NPRIO-D[y])));
+            FahpPush(FAHP, y, max(0,(FAHP_NPRIO-D[y])));
             F[y] = VAL_Y_X_M;
           } /* if y */
         } /* for k */      
       } /* if (tbareqone6h(F, x, VAL_Y_X_M, rs, ps, N)) */
-    } /* while (!FahVide(FAH)) */
+    } /* while (!FahpVide(FAHP)) */
 
 #ifdef ANIMATE
     animname[4] = '0' + (char)((anime_step / 1000) % 10); 
@@ -280,7 +280,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
   else if (connex == 26)
   {
     /* ========================================================= */
-    /*   INITIALISATION DE LA FAH */
+    /*   INITIALISATION DE LA FAHP */
     /* ========================================================= */
 
     for (x = 0; x < N; x++)
@@ -288,7 +288,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
       tbar = tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((F[x] == VAL_Y_X) && ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))))
       {
-        FahPush(FAH, x, max(0,(NPRIO-D[x])));
+        FahpPush(FAHP, x, max(0,(FAHP_NPRIO-D[x])));
         F[x] = VAL_Y_X_M;
 #ifdef ANIMATE
         if (D[x] > anime_dist) anime_dist = D[x];
@@ -317,9 +317,9 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
     anime_step++;
 #endif
 
-    while (!FahVide(FAH))
+    while (!FahpVide(FAHP))
     {
-      x = FahPop(FAH);
+      x = FahpPop(FAHP);
 #ifdef ANIMATE
       if (D[x] < anime_dist) 
       {
@@ -346,12 +346,12 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y] == VAL_Y_X))
           {
-            FahPush(FAH, y, max(0,(NPRIO-D[y])));
+            FahpPush(FAHP, y, max(0,(FAHP_NPRIO-D[y])));
             F[y] = VAL_Y_X_M;
           } /* if y */
         } /* for k */      
       } /* if (tbareqone26h(F, x, VAL_Y_X_M, rs, ps, N)) */
-    } /* while (!FahVide(FAH)) */
+    } /* while (!FahpVide(FAHP)) */
 
 #ifdef ANIMATE
     animname[4] = '0' + (char)((anime_step / 1000) % 10); 
@@ -378,7 +378,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
   /* ================================================ */
 
   termine_topo3d();
-  FahTermine(FAH);
+  FahpTermine(FAHP);
   freeimage(dist);
   linsert(image, in, -1, -1, -1);
   return(1);
@@ -405,7 +405,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
   struct xvimage *dist;        /* pour la fonction distance */
   uint8_t *F = UCHARDATA(image);
   uint32_t *D;
-  Fah * FAH;                   /* fah pour le controle de l'ordre de traitement des points */
+  Fahp * FAHP;                   /* fahp pour le controle de l'ordre de traitement des points */
   int32_t xmin, xmax, ymin, ymax, zmin, zmax; /* le pave englobant */
   int32_t tbar;
 
@@ -413,9 +413,9 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
 
   if (tailletrous == -1) tailletrous = 1000000000;
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s : CreeFahVide failed\n", F_NAME);
+  FAHP = CreeFahpVide(N);
+  if (FAHP == NULL)
+  {   fprintf(stderr, "%s : CreeFahpVide failed\n", F_NAME);
       return(0);
   }
 
@@ -470,7 +470,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
   if (connex == 6)
   {
     /* ========================================================= */
-    /*   INITIALISATION DE LA FAH */
+    /*   INITIALISATION DE LA FAHP */
     /* ========================================================= */
 
     for (x = 0; x < N; x++)
@@ -478,7 +478,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
       tbar = tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((F[x] == VAL_Y_X) && ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))))
       {
-        FahPush(FAH, x, max(0,(NPRIO-D[x])));
+        FahpPush(FAHP, x, max(0,(FAHP_NPRIO-D[x])));
         F[x] = VAL_Y_X_M;
       } /* if */
     } /* for (x = 0; x < N; x++) */
@@ -487,9 +487,9 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
     /*                  DEBUT SATURATION                */
     /* ================================================ */
 
-    while (!FahVide(FAH))
+    while (!FahpVide(FAHP))
     {
-      x = FahPop(FAH);
+      x = FahpPop(FAHP);
       F[x] = VAL_Y_X;
       tbar = tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous)))
@@ -500,18 +500,18 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y] == VAL_Y_X))
           {
-            FahPush(FAH, y, max(0,(NPRIO-D[y])));
+            FahpPush(FAHP, y, max(0,(FAHP_NPRIO-D[y])));
             F[y] = VAL_Y_X_M;
           } /* if y */
         } /* for k */      
       } /* if (tbareqone6h(F, x, VAL_Y_X_M, rs, ps, N)) */
-    } /* while (!FahVide(FAH)) */
+    } /* while (!FahpVide(FAHP)) */
 
   } /* if (connex == 6) */
   else if (connex == 26)
   {
     /* ========================================================= */
-    /*   INITIALISATION DE LA FAH */
+    /*   INITIALISATION DE LA FAHP */
     /* ========================================================= */
 
     for (x = 0; x < N; x++)
@@ -519,7 +519,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
       tbar = tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((F[x] == VAL_Y_X) && ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))))
       {
-        FahPush(FAH, x, max(0,(NPRIO-D[x])));
+        FahpPush(FAHP, x, max(0,(FAHP_NPRIO-D[x])));
         F[x] = VAL_Y_X_M;
       } /* if */
     } /* for (x = 0; x < N; x++) */
@@ -528,9 +528,9 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
     /*                  DEBUT SATURATION                */
     /* ================================================ */
 
-    while (!FahVide(FAH))
+    while (!FahpVide(FAHP))
     {
-      x = FahPop(FAH);
+      x = FahpPop(FAHP);
       F[x] = VAL_Y_X;
       tbar = tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))) 
@@ -541,7 +541,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y] == VAL_Y_X))
           {
-            FahPush(FAH, y, max(0,(NPRIO-D[y])));
+            FahpPush(FAHP, y, max(0,(FAHP_NPRIO-D[y])));
             F[y] = VAL_Y_X_M;
           } /* if y */
         } /* for k */      
@@ -553,7 +553,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
 	printf("On garde le point %d,%d,%d\n", x % rs, (x % ps) / rs, x / ps);
       }
 #endif
-    } /* while (!FahVide(FAH)) */
+    } /* while (!FahpVide(FAHP)) */
 
   } /* if (connex == 26) */
   else
@@ -569,7 +569,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
   /* ================================================ */
 
   termine_topo3d();
-  FahTermine(FAH);
+  FahpTermine(FAHP);
   freeimage(dist);
   linsert(image, in, -1, -1, -1);
   //freeimage(g);
@@ -613,7 +613,7 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
   struct xvimage *l;           /* pour l'image de labels */
   uint32_t *L;
   uint8_t *F = UCHARDATA(image);
-  Fah * FAH;                   /* fah pour le controle de l'ordre de traitement des points */
+  Fahp * FAHP;                   /* fahp pour le controle de l'ordre de traitement des points */
   int32_t tbar;
   int32_t nminima;
   uint8_t *dejavu;
@@ -626,9 +626,9 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
 
   init_topo3d();
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s : CreeFahVide failed\n", F_NAME);
+  FAHP = CreeFahpVide(N);
+  if (FAHP == NULL)
+  {   fprintf(stderr, "%s : CreeFahpVide failed\n", F_NAME);
       return(0);
   }
 
@@ -701,7 +701,7 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
     IndicsInit(N);
 
     /* ========================================================= */
-    /*   INITIALISATION DE LA FAH */
+    /*   INITIALISATION DE LA FAHP */
     /* ========================================================= */
 
     for (x = 0; x < N; x++)
@@ -709,8 +709,8 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
       tbar = t6mm(P, x, rs, ps, N); 
       if ((P[x] > F[x]) && (tbar == 1))
       {
-        FahPush(FAH, x, F[x]);
-        Set(x,EN_FAH);
+        FahpPush(FAHP, x, F[x]);
+        Set(x,EN_FAHP);
       } /* if */
     } /* for (x = 0; x < N; x++) */
 
@@ -718,23 +718,23 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
     /*                  DEBUT SATURATION                */
     /* ================================================ */
 
-    while (!FahVide(FAH))
+    while (!FahpVide(FAHP))
     {
-      x = FahPop(FAH);
-      UnSet(x,EN_FAH);
+      x = FahpPop(FAHP);
+      UnSet(x,EN_FAHP);
       if (testabaisse6(F, P, x, rs, ps, N))
       {
         for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
         {                                              /* pour empiler les voisins */
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
-          if ((y != -1) && !IsSet(y,EN_FAH))
+          if ((y != -1) && !IsSet(y,EN_FAHP))
           {
-            FahPush(FAH, y, F[y]);
-            Set(y,EN_FAH);
+            FahpPush(FAHP, y, F[y]);
+            Set(y,EN_FAHP);
           } /* if y */
         } /* for k */      
       } /* if (testabaisse ... */
-    } /* while (!FahVide(FAH)) */
+    } /* while (!FahpVide(FAHP)) */
   } /* if (connex == 6) */
   else
   {
@@ -750,7 +750,7 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
 
   termine_topo3d();
   IndicsTermine();
-  FahTermine(FAH);
+  FahpTermine(FAHP);
   freeimage(p);
   return(1);
 } /* lfermetrous3d() */

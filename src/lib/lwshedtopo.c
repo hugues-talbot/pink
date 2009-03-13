@@ -1,4 +1,4 @@
-/* $Id: lwshedtopo.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: lwshedtopo.c,v 1.2 2009-03-13 14:46:14 mcouprie Exp $ */
 /* 
   Ligne de partage des eaux topologique (nouvelle version)
 
@@ -29,7 +29,7 @@ Updates:
 static void compressTree(ctree *CT, int32_t *CM, int32_t *newCM, int32_t N);
 static void reconsTree(ctree *CT, int32_t *CM, int32_t *newCM, int32_t N, uint8_t *G);
 
-#define EN_FAH     0 
+#define EN_FAHS     0 
 #define WATERSHED  1
 #define MASSIF     2
 #define MODIFIE    4
@@ -344,7 +344,7 @@ static int32_t W_Constructible(int32_t x, uint8_t *F, int32_t rs, int32_t ps, in
 
 /* ==================================== */
 static void Watershed(struct xvimage *image, int32_t connex,
-	      Fah * FAH, int32_t *CM, ctree * CT)
+	      Fahs * FAHS, int32_t *CM, ctree * CT)
 /* ==================================== */
 // 
 // inondation a partir des voisins des maxima, suivant les ndg decroissants
@@ -370,7 +370,7 @@ static void Watershed(struct xvimage *image, int32_t connex,
   int32_t *Euler, *Depth, *Represent, *Number, **Minim;
 #endif
   // INITIALISATIONS
-  FahFlush(FAH); // Re-initialise la FAH
+  FahsFlush(FAHS); // Re-initialise la FAHS
 
 #ifndef LCASLOW
   Euler = (int32_t *)calloc(2*CT->nbnodes-1, sizeof(int32_t));
@@ -427,8 +427,8 @@ static void Watershed(struct xvimage *image, int32_t connex,
   {
 #ifdef OLDVERSION   
     // empile tous les points
-    Set(i,EN_FAH);
-    FahPush(FAH, i, NDG_MAX - F[i]);
+    Set(i,EN_FAHS);
+    FahsPush(FAHS, i, NDG_MAX - F[i]);
 #else 
     // empile les points voisins d'un minima
     char flag=0;
@@ -461,7 +461,7 @@ static void Watershed(struct xvimage *image, int32_t connex,
 	} break;
     } /* switch (connex) */
     if (flag) { 
-      Set(i,EN_FAH); FahPush(FAH, i, NDG_MAX - F[i]); 
+      Set(i,EN_FAHS); FahsPush(FAHS, i, NDG_MAX - F[i]); 
     }
 #endif
   } // for (i = 0; i < N; i++)
@@ -469,10 +469,10 @@ static void Watershed(struct xvimage *image, int32_t connex,
 
   // BOUCLE PRINCIPALE
   nbelev = 0;
-  while (!FahVide(FAH))
+  while (!FahsVide(FAHS))
   {
-    x = FahPop(FAH);
-    UnSet(x,EN_FAH);
+    x = FahsPop(FAHS);
+    UnSet(x,EN_FAHS);
     W_Constructible(x, F, rs, ps, N, connex, CT, CM, tabcomp, &c, &lcalevel
 #ifndef LCASLOW
 		    , Euler, Represent, Depth, Number, Minim
@@ -496,37 +496,37 @@ static void Watershed(struct xvimage *image, int32_t connex,
         else
           printf("%s : ERREUR COMPOSANTE BRANCHE!!!\n", F_NAME);
 #endif
-        // empile les c-voisins de x non marques MASSIF ni EN_FAH
+        // empile les c-voisins de x non marques MASSIF ni EN_FAHS
 	switch (connex)
 	{
 	case 4: 
 	case 8:
 	  for (k = 0; k < 8; k += incr_vois)
           { y = voisin(x, k, rs, N);
-	    if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAH)))
-            { Set(y,EN_FAH); FahPush(FAH, y, NDG_MAX - F[y]); }
+	    if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAHS)))
+            { Set(y,EN_FAHS); FahsPush(FAHS, y, NDG_MAX - F[y]); }
 	  } break; 
 	case 6: 
 	  for (k = 0; k <= 10; k += 2)
           { y = voisin6(x, k, rs, ps, N);
-	    if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAH)))
-            { Set(y,EN_FAH); FahPush(FAH, y, NDG_MAX - F[y]); }
+	    if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAHS)))
+            { Set(y,EN_FAHS); FahsPush(FAHS, y, NDG_MAX - F[y]); }
 	  } break;
 	case 18: 
 	  for (k = 0; k < 18; k += 1)
           { y = voisin18(x, k, rs, ps, N);
-	    if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAH)))
-            { Set(y,EN_FAH); FahPush(FAH, y, NDG_MAX - F[y]); }
+	    if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAHS)))
+            { Set(y,EN_FAHS); FahsPush(FAHS, y, NDG_MAX - F[y]); }
 	  } break;
 	case 26: 
 	  for (k = 0; k < 26; k += 1)
           { y = voisin26(x, k, rs, ps, N);
-	    if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAH)))
-            { Set(y,EN_FAH); FahPush(FAH, y, NDG_MAX - F[y]); }
+	    if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAHS)))
+            { Set(y,EN_FAHS); FahsPush(FAHS, y, NDG_MAX - F[y]); }
 	  } break;
 	} /* switch (connex) */
     } // if (c != -1)}
-  } // while (!FahVide(FAH))
+  } // while (!FahsVide(FAHS))
 #ifdef VERBOSE
     printf("Nombre d'elevations %d\n", nbelev);
 #endif
@@ -561,13 +561,13 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t *CM, *newCM;               /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s() : CreeFahVide failed\n", F_NAME);
+  FAHS = CreeFahsVide(N);
+  if (FAHS == NULL)
+  {   fprintf(stderr, "%s() : CreeFahsVide failed\n", F_NAME);
       return 0;
   }
   if ((connex == 4) || (connex == 8))
@@ -599,7 +599,7 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
 #endif
 
   IndicsInit(N);
-  Watershed(image, connex, FAH, CM, CT);
+  Watershed(image, connex, FAHS, CM, CT);
   for (i=0; i<N; i++)
     F[i] = CT->tabnodes[CM[i]].data; 
 
@@ -608,7 +608,7 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
   /* ================================================ */
 
   IndicsTermine();
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   ComponentTreeFree(CT);
   free(CM);
   return(1);
@@ -880,7 +880,7 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);
   uint8_t *G = UCHARDATA(marqueur);
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
   int32_t *CM, *newCM;              /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
@@ -892,9 +892,9 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
     return 0;
   }
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s() : CreeFahVide failed\n", F_NAME);
+  FAHS = CreeFahsVide(N);
+  if (FAHS == NULL)
+  {   fprintf(stderr, "%s() : CreeFahsVide failed\n", F_NAME);
       return 0;
   }
 
@@ -950,7 +950,7 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
     }
   }
 
-  Watershed(marqueur, connex, FAH, CM, CT);
+  Watershed(marqueur, connex, FAHS, CM, CT);
 #endif // #ifdef OLDVERSIONBIN
 
 #ifndef OLDVERSIONBIN
@@ -981,7 +981,7 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
   }
   */
 
-  Watershed(image, connex, FAH, CM, CT);
+  Watershed(image, connex, FAHS, CM, CT);
 #endif // ifndef OLDVERSIONBIN
 
 #ifdef _DEBUG_
@@ -1002,7 +1002,7 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
   /* ================================================ */
 
   IndicsTermine();
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   ComponentTreeFree(CT);
   free(CM);
 #ifndef OLDVERSIONBIN

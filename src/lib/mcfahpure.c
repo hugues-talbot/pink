@@ -1,4 +1,4 @@
-/* $Id: mcfahpure.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: mcfahpure.c,v 1.2 2009-03-13 14:46:14 mcouprie Exp $ */
 /* structure de file d'attente hierarchique de points d'image */
 /* les valeurs les plus basses correspondent a la plus grande priorite */
 /* Michel Couprie */
@@ -17,22 +17,22 @@
 #include <mcfahpure.h>
 
 /*
-#define TESTFah
+#define TESTFahp
 #define VERBOSE
 */
 
 /* ==================================== */
-Fah * CreeFahVide(
+Fahp * CreeFahpVide(
   int32_t taillemax)
 /* ==================================== */
 {
   int32_t i;
-  Fah * L = (Fah *)calloc(1,4 * sizeof(int32_t) + 
-                          (NPRIO+4)*sizeof(FahElt *) + 
-                          taillemax*sizeof(FahElt));
+  Fahp * L = (Fahp *)calloc(1,4 * sizeof(int32_t) + 
+                          (FAHP_NPRIO+4)*sizeof(FahpElt *) + 
+                          taillemax*sizeof(FahpElt));
   if (L == NULL)
   {
-    fprintf(stderr, "erreur allocation Fah\n");
+    fprintf(stderr, "erreur allocation Fahp\n");
     exit(1);
   }
   L->Max = taillemax;
@@ -43,15 +43,15 @@ Fah * CreeFahVide(
     L->Elts[i].Next = &(L->Elts[i+1]);
   L->Elts[taillemax - 1].Next = NULL;
   L->Libre = &(L->Elts[0]);
-  for (i = 0; i < NPRIO; i++)
+  for (i = 0; i < FAHP_NPRIO; i++)
     L->Tete[i]= NULL;
   L->Queue = NULL;
   return L;
-} /* CreeFahVide() */
+} /* CreeFahpVide() */
 
 /* ==================================== */
-void FahFlush(
-  Fah * L)
+void FahpFlush(
+  Fahp * L)
 /* ==================================== */
 {
   int32_t i;
@@ -61,53 +61,53 @@ void FahFlush(
     L->Elts[i].Next = &(L->Elts[i+1]);
   L->Elts[L->Max - 1].Next = NULL;
   L->Libre = &(L->Elts[0]);
-  for (i = 0; i < NPRIO; i++)
+  for (i = 0; i < FAHP_NPRIO; i++)
     L->Tete[i]= NULL;
   L->Queue = NULL;
-} /* FahFlush() */
+} /* FahpFlush() */
 
 /* ==================================== */
-int32_t FahVide(
-  Fah * L)
+int32_t FahpVide(
+  Fahp * L)
 /* ==================================== */
 {
   return (L->Queue == NULL);
-} /* FahVide() */
+} /* FahpVide() */
 
 /* ==================================== */
-int32_t FahVideNiveau(
-  Fah * L,
+int32_t FahpVideNiveau(
+  Fahp * L,
   int32_t niv)
 /* ==================================== */
 {
   if (L->Queue == NULL) return 1;
   if (L->Niv > niv) return 1;
   return 0;
-} /* FahVideNiveau() */
+} /* FahpVideNiveau() */
 
 /* ==================================== */
-int32_t FahNiveau(
-  Fah * L)
+int32_t FahpNiveau(
+  Fahp * L)
 /* ==================================== */
 {
   if (L->Queue == NULL)
   {
-    fprintf(stderr, "erreur Fah vide\n");
+    fprintf(stderr, "erreur Fahp vide\n");
     exit(1);
   }
   return L->Niv;
-} /* FahNiveau() */
+} /* FahpNiveau() */
 
 /* ==================================== */
-int32_t FahPop(
-  Fah * L)
+int32_t FahpPop(
+  Fahp * L)
 /* ==================================== */
 {
   int32_t V;
-  FahElt * FE;
+  FahpElt * FE;
   if (L->Queue == NULL)
   {
-    fprintf(stderr, "erreur Fah vide\n");
+    fprintf(stderr, "erreur Fahp vide\n");
     exit(1);
   }
 
@@ -117,7 +117,7 @@ int32_t FahPop(
   {                                /* element du niveau courant: il faut */
     L->Tete[L->Niv] = NULL;        /* annuler le pointeur de tete */
     do (L->Niv)++;                 /* et incrementer le niveau */
-    while ((L->Niv < NPRIO)          
+    while ((L->Niv < FAHP_NPRIO)          
             && (L->Tete[L->Niv] == NULL));
   }
   V = L->Queue->Point;
@@ -126,44 +126,44 @@ int32_t FahPop(
   L->Libre = L->Queue;
   L->Queue = FE;
   return V;
-} /* FahPop() */
+} /* FahpPop() */
   
 /* ==================================== */
-int32_t FahFirst(
-  Fah * L)
+int32_t FahpFirst(
+  Fahp * L)
 /* ==================================== */
 {
   int32_t V;
-  FahElt * FE;
+  FahpElt * FE;
   if (L->Queue == NULL)
   {
-    fprintf(stderr, "erreur Fah vide\n");
+    fprintf(stderr, "erreur Fahp vide\n");
     exit(1);
   }
   return L->Queue->Point;
-} /* FahFirst() */
+} /* FahpFirst() */
   
 /* ==================================== */
-void FahPush(
-  Fah * L,
+void FahpPush(
+  Fahp * L,
   int32_t Po,
   int32_t Ni)
 /* ==================================== */
 {
   if (L->Libre == NULL)
   {
-    fprintf(stderr, "erreur Fah pleine\n");
+    fprintf(stderr, "erreur Fahp pleine\n");
     exit(1);
   }
-  if (Ni >= NPRIO)
+  if (Ni >= FAHP_NPRIO)
   {
-    fprintf(stderr, "erreur niveau = %d; max autorise = %d\n", Ni, NPRIO-1);
+    fprintf(stderr, "erreur niveau = %d; max autorise = %d\n", Ni, FAHP_NPRIO-1);
     exit(1);
   }
 
   L->Util++;
   if (L->Util > L->Maxutil) L->Maxutil = L->Util;
-  if (L->Queue == NULL)    /* insertion dans une Fah vide */
+  if (L->Queue == NULL)    /* insertion dans une Fahp vide */
   {
     L->Queue = L->Libre;
     L->Libre = L->Libre->Next;
@@ -171,10 +171,10 @@ void FahPush(
     L->Niv = Ni;
     L->Queue->Next = NULL;
     L->Tete[Ni] = L->Queue;
-  } /* if Fah Vide */
+  } /* if Fahp Vide */
   else if (L->Tete[Ni] != NULL)   /* insertion dans la liste de niveau Ni non vide */
   {
-    FahElt * FE = L->Tete[Ni]->Next;
+    FahpElt * FE = L->Tete[Ni]->Next;
     L->Tete[Ni]->Next = L->Libre;
     L->Libre = L->Libre->Next;
     L->Tete[Ni] = L->Tete[Ni]->Next;
@@ -183,7 +183,7 @@ void FahPush(
   }
   else /* (L->Tete[Ni] == NULL) */
   {
-    FahElt * FE;
+    FahpElt * FE;
     int32_t NiPrec = Ni;
     while ((NiPrec >= 0) && (L->Tete[NiPrec] == NULL)) NiPrec--; 
     if (NiPrec < 0)              /* creation d'un niveau inferieur au niveau courant */
@@ -206,29 +206,29 @@ void FahPush(
       L->Tete[Ni]->Next = FE;
     }
   }
-} /* FahPush() */
+} /* FahpPush() */
 
 /* ==================================== */
-void FahTermine(
-  Fah * L)
+void FahpTermine(
+  Fahp * L)
 /* ==================================== */
 {
 #ifdef VERBOSE
-  printf("Fah: taux d'utilisation: %g\n", (double)L->Maxutil / (double)L->Max);
+  printf("Fahp: taux d'utilisation: %g\n", (double)L->Maxutil / (double)L->Max);
 #endif
   free(L);
-} /* FahTermine() */
+} /* FahpTermine() */
 
 /* ==================================== */
-void FahPrint(
-  Fah * L)
+void FahpPrint(
+  Fahp * L)
 /* ==================================== */
 {
   int32_t i;
-  FahElt * FE;
-  if (FahVide(L)) {printf("[]\n"); return;}
+  FahpElt * FE;
+  if (FahpVide(L)) {printf("[]\n"); return;}
   FE = L->Queue;
-  for (i = L->Niv; i < NPRIO; i++)
+  for (i = L->Niv; i < FAHP_NPRIO; i++)
     if (L->Tete[i] != NULL) 
     {
       printf("%d [ ", i);
@@ -237,12 +237,12 @@ void FahPrint(
       printf("%d ]\n", FE->Point);
       FE = FE->Next;
     }
-} /* FahPrint() */
+} /* FahpPrint() */
 
-#ifdef TESTFah
+#ifdef TESTFahp
 void main()
 {
-  Fah * L = CreeFahVide(5);
+  Fahp * L = CreeFahpVide(5);
   char r[80];
   int32_t p, n;
 
@@ -257,18 +257,18 @@ void main()
         scanf("%d", &n);
         printf("valeur > ");
         scanf("%d", &p);
-        FahPush(L, p, n);
+        FahpPush(L, p, n);
         break;
       case 'o': 
-        printf("pop: %d\n", FahPop(L));
+        printf("pop: %d\n", FahpPop(L));
         break;
-      case 'p': FahPrint(L); break;
+      case 'p': FahpPrint(L); break;
       case 'v': 
-        printf("vide: %d\n", FahVide(L));
+        printf("vide: %d\n", FahpVide(L));
         break;
       case 'q': break;
     }
   } while (r[0] != 'q');
-  FahTermine(L);
+  FahpTermine(L);
 }
 #endif

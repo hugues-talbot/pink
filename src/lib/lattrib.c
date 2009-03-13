@@ -1,4 +1,4 @@
-/* $Id: lattrib.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: lattrib.c,v 1.2 2009-03-13 14:46:14 mcouprie Exp $ */
 /* 
   Common code for files: 
     lattribarea.c
@@ -1207,7 +1207,7 @@ static int32_t contrib_hbordb(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t
 
 /* ==================================== */
 static int32_t flood(int32_t h,                 /* niveau a inonder */
-          Fah *FAH, 
+          Fahs *FAHS, 
           uint32_t *STATUS,         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
 	                                /* en sortie, contient le numero de la comp. de niveau h */
                                         /* qui contient le pixel */
@@ -1237,9 +1237,9 @@ static int32_t flood(int32_t h,                 /* niveau a inonder */
 #endif
 
   node_at_level[h] = 1; /* CORRECTION BUG: LIGNE AJOUTEE LE 02/08/00 */
-  while (!FahVideNiveau(FAH, h))               /* first step : propagation */
+  while (!FahsVideNiveau(FAHS, h))               /* first step : propagation */
   {                                            /* ======================== */
-    p = FahPopNiveau(FAH, h);
+    p = FahsPopNiveau(FAHS, h);
     STATUS[p] = number_nodes[h];
 #ifdef DEBUGFLOOD
     printf("STATUS[p] %d\n", STATUS[p]);
@@ -1249,7 +1249,7 @@ static int32_t flood(int32_t h,                 /* niveau a inonder */
       q = voisin(p, k, rs, N);
       if ((q != -1) && (STATUS[q] == NOT_ANALYZED))
       {
-        FahPush(FAH, q, ORI[q]);
+        FahsPush(FAHS, q, ORI[q]);
         STATUS[q] = IN_THE_QUEUE;
         node_at_level[ORI[q]] = 1;
         if (ORI[q] > ORI[p])
@@ -1264,7 +1264,7 @@ static int32_t flood(int32_t h,                 /* niveau a inonder */
               exit(0);
             }
 #endif
-            m = flood(m, FAH, STATUS, number_nodes, node_at_level, tree, incr_vois, rs, N, ORI); 
+            m = flood(m, FAHS, STATUS, number_nodes, node_at_level, tree, incr_vois, rs, N, ORI); 
           } while ((m != h) && (m >= 0));
 	} /* if (ORI[q] > ORI[p]) */
       } /* if ((q != -1) && (STATUS[q] == NOT_ANALYZED)) */
@@ -1278,7 +1278,7 @@ static int32_t flood(int32_t h,                 /* niveau a inonder */
 #ifdef ATTR_HBORD
     hbord += contrib_hbord(p, ORI, STATUS, rs, N, incr_vois);
 #endif
-  } /* while (!FahVideNiveau(FAH, h)) */
+  } /* while (!FahsVideNiveau(FAHS, h)) */
 #ifdef DEBUGFLOOD
   printf("retour flood niveau %d\n", h);
 #endif
@@ -1326,7 +1326,7 @@ static int32_t flood(int32_t h,                 /* niveau a inonder */
 
 /* ==================================== */
 static int32_t floodb(int32_t h,                 /* niveau a inonder */
-          Fah *FAH, 
+          Fahs *FAHS, 
           uint32_t *STATUS,         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
 	                                /* en sortie, contient le numero de la comp. de niveau h */
                                         /* qui contient le pixel */
@@ -1357,9 +1357,9 @@ static int32_t floodb(int32_t h,                 /* niveau a inonder */
 #endif
 
   node_at_level[h] = 1; /* CORRECTION BUG: LIGNE AJOUTEE LE 02/08/00 */
-  while (!FahVideNiveau(FAH, h))               /* first step : propagation */
+  while (!FahsVideNiveau(FAHS, h))               /* first step : propagation */
   {                                            /* ======================== */
-    p = FahPopNiveau(FAH, h);
+    p = FahsPopNiveau(FAHS, h);
     STATUS[p] = number_nodes[h];
 #ifdef DEBUGFLOOD
     printf("STATUS[p] %d\n", STATUS[p]);
@@ -1369,7 +1369,7 @@ static int32_t floodb(int32_t h,                 /* niveau a inonder */
       q = voisin6b(p, k, rs, N, connex);
       if ((q != -1) && (STATUS[q] == NOT_ANALYZED))
       {
-        FahPush(FAH, q, ORI[q]);
+        FahsPush(FAHS, q, ORI[q]);
         STATUS[q] = IN_THE_QUEUE;
         node_at_level[ORI[q]] = 1;
         if (ORI[q] > ORI[p])
@@ -1384,7 +1384,7 @@ static int32_t floodb(int32_t h,                 /* niveau a inonder */
               exit(0);
             }
 #endif
-            m = floodb(m, FAH, STATUS, number_nodes, node_at_level, tree, connex, rs, N, ORI); 
+            m = floodb(m, FAHS, STATUS, number_nodes, node_at_level, tree, connex, rs, N, ORI); 
           } while ((m != h) && (m >= 0));
 	} /* if (ORI[q] > ORI[p]) */
       } /* if ((q != -1) && (STATUS[q] == NOT_ANALYZED)) */
@@ -1398,7 +1398,7 @@ static int32_t floodb(int32_t h,                 /* niveau a inonder */
 #ifdef ATTR_HBORD
     hbord += contrib_hbordb(p, ORI, STATUS, rs, N, connex);
 #endif
-  } /* while (!FahVideNiveau(FAH, h)) */
+  } /* while (!FahsVideNiveau(FAHS, h)) */
 #ifdef DEBUGFLOOD
   printf("retour flood niveau %d\n", h);
 #endif
@@ -1448,7 +1448,7 @@ static int32_t floodb(int32_t h,                 /* niveau a inonder */
 /* ==================================== */
 static int32_t flood3d(
           int32_t h,                        /* niveau a inonder */
-          Fah *FAH, 
+          Fahs *FAHS, 
           uint32_t *STATUS,         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
 	                                /* en sortie, contient le numero de la comp. de niveau h */
                                         /* qui contient le pixel */
@@ -1477,9 +1477,9 @@ static int32_t flood3d(
 #endif
 
   node_at_level[h] = 1; /* CORRECTION BUG: LIGNE AJOUTEE LE 02/08/00 */
-  while (!FahVideNiveau(FAH, h))               /* first step : propagation */
+  while (!FahsVideNiveau(FAHS, h))               /* first step : propagation */
   {                                            /* ======================== */
-    p = FahPopNiveau(FAH, h);
+    p = FahsPopNiveau(FAHS, h);
     STATUS[p] = number_nodes[h];
 #ifdef DEBUGFLOOD
     printf("STATUS[p] %d\n", STATUS[p]);
@@ -1493,7 +1493,7 @@ static int32_t flood3d(
           q = voisin6(p, k, rs, ps, N);
           if ((q != -1) && (STATUS[q] == NOT_ANALYZED))
           {
-            FahPush(FAH, q, ORI[q]);
+            FahsPush(FAHS, q, ORI[q]);
             STATUS[q] = IN_THE_QUEUE;
             node_at_level[ORI[q]] = 1;
             if (ORI[q] > ORI[p])
@@ -1508,7 +1508,7 @@ static int32_t flood3d(
                   exit(0);
                 }
 #endif
-                m = flood3d(m, FAH, STATUS, number_nodes, node_at_level, tree, connex, rs, ps, N, ORI); 
+                m = flood3d(m, FAHS, STATUS, number_nodes, node_at_level, tree, connex, rs, ps, N, ORI); 
               } while ((m != h) && (m >= 0));
 	    } /* if (ORI[q] > ORI[p]) */
           } /* if ((q != -1) && (STATUS[q] == NOT_ANALYZED)) */
@@ -1520,7 +1520,7 @@ static int32_t flood3d(
           q = voisin18(p, k, rs, ps, N);
           if ((q != -1) && (STATUS[q] == NOT_ANALYZED))
           {
-            FahPush(FAH, q, ORI[q]);
+            FahsPush(FAHS, q, ORI[q]);
             STATUS[q] = IN_THE_QUEUE;
             node_at_level[ORI[q]] = 1;
             if (ORI[q] > ORI[p])
@@ -1535,7 +1535,7 @@ static int32_t flood3d(
                   exit(0);
                 }
 #endif
-                m = flood3d(m, FAH, STATUS, number_nodes, node_at_level, tree, connex, rs, ps, N, ORI); 
+                m = flood3d(m, FAHS, STATUS, number_nodes, node_at_level, tree, connex, rs, ps, N, ORI); 
               } while ((m != h) && (m >= 0));
 	    } /* if (ORI[q] > ORI[p]) */
           } /* if ((q != -1) && (STATUS[q] == NOT_ANALYZED)) */
@@ -1547,7 +1547,7 @@ static int32_t flood3d(
           q = voisin26(p, k, rs, ps, N);
           if ((q != -1) && (STATUS[q] == NOT_ANALYZED))
           {
-            FahPush(FAH, q, ORI[q]);
+            FahsPush(FAHS, q, ORI[q]);
             STATUS[q] = IN_THE_QUEUE;
             node_at_level[ORI[q]] = 1;
             if (ORI[q] > ORI[p])
@@ -1562,7 +1562,7 @@ static int32_t flood3d(
                   exit(0);
                 }
 #endif
-                m = flood3d(m, FAH, STATUS, number_nodes, node_at_level, tree, connex, rs, ps, N, ORI); 
+                m = flood3d(m, FAHS, STATUS, number_nodes, node_at_level, tree, connex, rs, ps, N, ORI); 
               } while ((m != h) && (m >= 0));
 	    } /* if (ORI[q] > ORI[p]) */
           } /* if ((q != -1) && (STATUS[q] == NOT_ANALYZED)) */
@@ -1576,7 +1576,7 @@ static int32_t flood3d(
 #ifdef ATTR_SURF
     surf += 1;
 #endif
-  } /* while (!FahVideNiveau(FAH, h)) */
+  } /* while (!FahsVideNiveau(FAHS, h)) */
 #ifdef DEBUGFLOOD
   printf("retour flood3d niveau %d\n", h);
 #endif
