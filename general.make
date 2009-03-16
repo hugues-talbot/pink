@@ -149,7 +149,6 @@ $(BDIR)/label \
 $(BDIR)/labeldil \
 $(BDIR)/nbcomp \
 $(BDIR)/propgeo \
-$(BDIR)/reconsdilat \
 $(BDIR)/saliency \
 $(BDIR)/segmentarea \
 $(BDIR)/segmentheight \
@@ -954,9 +953,6 @@ $(BDIR)/nbcomp:	$(CDIR)/nbcomp.c $(IDIR)/mcimage.h $(IDIR)/llabelplateaux.h $(ID
 
 $(BDIR)/propgeo:	$(CDIR)/propgeo.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcindic.h $(IDIR)/mclifo.h $(IDIR)/mcprobas.h $(IDIR)/lpropgeo.h  $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(ODIR)/mcprobas.o $(ODIR)/lpropgeo.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/propgeo.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lpropgeo.o $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(ODIR)/mcprobas.o $(LIBS) -o $(BDIR)/propgeo
-
-$(BDIR)/reconsdilat:	$(CDIR)/reconsdilat.c $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfahsalembier.h $(IDIR)/mccodimage.h $(IDIR)/mccomptree.h $(IDIR)/lwshedtopo.h $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/mccomptree.o $(ODIR)/mcunionfind.o $(ODIR)/lwshedtopo.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/reconsdilat.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/mccomptree.o $(ODIR)/mcunionfind.o $(ODIR)/lwshedtopo.o $(LIBS) -o $(BDIR)/reconsdilat
 
 $(BDIR)/segment:	$(CDIR)/segment.c $(IDIR)/mcimage.h $(IDIR)/llabelextrema.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcxbib.h $(IDIR)/lsegment.h $(OBJ_COMMON) $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcxbib.o $(ODIR)/lsegment.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segment.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcxbib.o $(ODIR)/lsegment.o $(XLIB) $(LIBS) -o $(BDIR)/segment
@@ -1817,8 +1813,8 @@ $(BDIR)/profil:	$(CDIR)/profil.c $(IDIR)/mcimage.h $(IDIR)/mcxbib.h $(IDIR)/lpro
 $(BDIR)/reconsplateaux:	$(CDIR)/reconsplateaux.c $(IDIR)/mccodimage.h $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/mclifo.h $(IDIR)/lreconsplateaux.h $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(ODIR)/lreconsplateaux.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/reconsplateaux.c $(ODIR)/lreconsplateaux.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/reconsplateaux
 
-$(BDIR)/regul:	$(CDIR)/regul.c $(IDIR)/lregul.h $(IDIR)/llvkern.h $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/mclifo.h $(IDIR)/mccodimage.h $(ODIR)/lregul.o $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/llvkern.o $(ODIR)/mcfifo.o $(ODIR)/llabelextrema.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/regul.c $(ODIR)/lregul.o $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/llvkern.o $(ODIR)/mcfifo.o $(ODIR)/llabelextrema.o $(LIBS) -o $(BDIR)/regul
+$(BDIR)/regul:	$(CDIR)/regul.c $(IDIR)/lregul.h $(IDIR)/lhtkern.h $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/mclifo.h $(IDIR)/mccodimage.h $(ODIR)/lregul.o $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/lhtkern.o $(ODIR)/mcfifo.o $(ODIR)/llabelextrema.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/regul.c $(ODIR)/lregul.o $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/lthkern.o $(ODIR)/mcfifo.o $(ODIR)/llabelextrema.o $(LIBS) -o $(BDIR)/regul
 
 $(BDIR)/remspnoise:	$(CDIR)/remspnoise.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lremspnoise.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lremspnoise.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/remspnoise.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lremspnoise.o $(LIBS) -o $(BDIR)/remspnoise
@@ -1943,9 +1939,6 @@ $(ODIR)/lpropgeo.o:	$(LDIR)/lpropgeo.c $(IDIR)/mccodimage.h $(IDIR)/mcfifo.h $(I
 $(ODIR)/lsaliency.o:	$(LDIR)/lsaliency.c $(IDIR)/lsaliency.h 
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lsaliency.c -o $(ODIR)/lsaliency.o
 
-$(ODIR)/lreconseros3d.o:	$(LDIR)/lreconseros3d.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcfifo.h $(IDIR)/mcindic.h $(IDIR)/lreconseros3d.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lreconseros3d.c -o $(ODIR)/lreconseros3d.o
-
 $(ODIR)/lsegreconsheight.o:	$(LDIR)/lsegreconsheight.c $(LDIR)/lattrib.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mclifo.h $(IDIR)/mcfahsalembier.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lsegreconsheight.c -o $(ODIR)/lsegreconsheight.o
 
@@ -2015,9 +2008,6 @@ $(ODIR)/llpetopo.o:	$(LDIR)/llpetopo.c $(IDIR)/mccodimage.h $(IDIR)/mcfah.h $(ID
 
 $(ODIR)/llpetoporeg.o:	$(LDIR)/llpetoporeg.c $(IDIR)/mccodimage.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mcindic.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/llpetoporeg.c -o $(ODIR)/llpetoporeg.o
-
-$(ODIR)/llvkern.o:	$(LDIR)/llvkern.c $(IDIR)/mccodimage.h $(IDIR)/mcfifo.h $(IDIR)/mcfah.h $(IDIR)/mctopo.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/llvkern.c -o $(ODIR)/llvkern.o
 
 $(ODIR)/lnbtopo.o:	$(LDIR)/lnbtopo.c $(IDIR)/mccodimage.h $(IDIR)/mctopo.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lnbtopo.c -o $(ODIR)/lnbtopo.o

@@ -1,4 +1,4 @@
-/* $Id: lskelcurv.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: lskelcurv.c,v 1.2 2009-03-16 15:52:23 mcouprie Exp $ */
 /* analyse de squelettes curvilignes */
 /* Michel Couprie - juin 2004 */
 
@@ -372,7 +372,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
   uint8_t *T0, *T1, *T2, *T3;
   int32_t nbisol, nbend, nbcurv, nbjunc, nbvertex, nbpoints;
   skel * S;
-  pcell p;
+  SKC_pcell p;
 
   // filtre les bords de l'image
   if (ds > 1)
@@ -562,7 +562,7 @@ struct xvimage * lskel2image(skel *S)
   int32_t ds = S->ds;
   int32_t N = ds * cs * rs;
   uint8_t *F;      /* l'image de depart */
-  pcell p;
+  SKC_pcell p;
   struct xvimage * image;
 
   image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);

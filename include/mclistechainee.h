@@ -1,4 +1,4 @@
-/* $Id: mclistechainee.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+/* $Id: mclistechainee.h,v 1.3 2009-03-16 15:52:22 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -6,18 +6,21 @@ extern "C" {
 
 typedef int32_t TypElement;
 
-typedef struct LISTE {         /* definition de la structure Liste        */
-  TypElement elt;              /* element en tete de liste   */
-  struct LISTE   *suite;       /* pointe sur la suite de la liste         */
-} TypListe;
+typedef struct LISTECHAINEE {         /* definition de la structure Listechainee        */
+  TypElement elt;              /* element en tete de listechainee   */
+  struct LISTECHAINEE   *suite;       /* pointe sur la suite de la listechainee         */
+} TypListechainee;
 
-extern TypListe * ListeVide();
-extern TypElement Tete(TypListe * l);
-extern TypListe * Suite(TypListe * l);
-extern TypListe * Cons(TypElement e, TypListe * l);
-extern void AfficheListe(TypListe * l);
-extern void DetruitListe(TypListe * l);
-extern int32_t Vide(TypListe * l);
+extern TypListechainee * ListechaineeVide();
+extern TypElement Tete(TypListechainee * l);
+extern TypListechainee * Suite(TypListechainee * l);
+extern TypListechainee * Cons(TypElement e, TypListechainee * l);
+extern void AfficheListechainee(TypListechainee * l);
+extern void DetruitListechainee(TypListechainee * l);
+extern int32_t EstVideListechainee(TypListechainee * l);
+extern TypListechainee * InListechainee(TypElement el, TypListechainee * lis);
+extern TypListechainee * UnionListechainee (TypListechainee * lis1, TypListechainee * lis2);
+
 #ifdef __cplusplus
 }
 #endif

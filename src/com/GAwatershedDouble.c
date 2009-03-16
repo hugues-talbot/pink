@@ -60,6 +60,7 @@ connect
 #include <llpeGA.h>
 #include <lppm2GA.h>
 //#include <jclabelextrema.h>
+#include <mcutil.h>
 
 #ifdef TIME_WATERSHED_TEST
 #include <time.h>

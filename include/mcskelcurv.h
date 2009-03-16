@@ -1,4 +1,4 @@
-/* $Id: mcskelcurv.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+/* $Id: mcskelcurv.h,v 1.3 2009-03-16 15:52:22 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -9,12 +9,12 @@ extern "C" {
 
 /* structure "classique" de liste */
 
-typedef struct cell {
+typedef struct SKC_cell {
   int32_t val;
-  struct cell * next;
-} cell;
+  struct SKC_cell * next;
+} SKC_cell;
 
-typedef cell * pcell;
+typedef SKC_cell * SKC_pcell;
 
 /*
 Un squelette S est représenté par un graphe comportant 4 types de sommets : 
@@ -31,8 +31,8 @@ Tous les sommets du graphe sont représentés par la structure suivante :
 
 typedef struct {
   float fval;
-  struct cell * pts; // liste des points constituant l'élément de squelette
-  struct cell * adj; // liste des éléments adjacents
+  struct SKC_cell * pts; // liste des points constituant l'élément de squelette
+  struct SKC_cell * adj; // liste des éléments adjacents
 } skelpart;
 
 typedef skelpart * pskelpart;
@@ -51,7 +51,7 @@ typedef struct {
   uint32_t nbcell;
   uint32_t freecell;      // pour la gestion du tas de cellules
   skelpart * tskel;    // tableau des éléments de squelette (tas)
-  cell * tcell;        // tableau des cellules (tas)
+  SKC_cell * tcell;        // tableau des cellules (tas)
 } skel;
 
 #define IS_ISOL(x) (x<S->e_isol)
@@ -66,7 +66,7 @@ typedef struct {
 extern skel * initskel(uint32_t rs, uint32_t cs, uint32_t ds, 
   uint32_t nbvertex, uint32_t nbcell, int32_t connex);
 extern void termineskel(skel * S);
-extern pcell skeladdcell(skel *S, int32_t val, pcell next);
+extern SKC_pcell skeladdcell(skel *S, int32_t val, SKC_pcell next);
 extern void addadjlist(skel * S, uint32_t k, uint32_t v);
 extern void addptslist(skel * S, uint32_t k, uint32_t v);
 extern skel * readskel(char *filename);

@@ -1,4 +1,4 @@
-/* $Id: llpeGA.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: llpeGA.h,v 1.3 2009-03-16 15:52:22 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -20,9 +20,6 @@ extern "C" {
 #define M_PI	 3.14159265358979323846
 #define IN_PROCESS -2
 #define NO_LABEL -1
-
-#define max(X,Y) ((X)>=(Y)?(X):(Y))
-#define min(X,Y) ((X)<=(Y)?(X):(Y))
 
 #ifndef TRUE
 #define TRUE 1

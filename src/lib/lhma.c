@@ -24,13 +24,13 @@ Andre Vital Saude - jan 2006
 #include <lhma.h>
 
 //private Functions
-void applyConstrainedSnSyms2d(PointSet *set, Point vec, Point orig, int32_t rs, int32_t cs);
-void applyConstrainedSnSyms3d(PointSet *set, Point vec, Point orig, int32_t rs, int32_t cs, int32_t ds);
-int32_t EnRmin2d(Point x, int32_t R, Point v, int32_t Rv, SQDLut SQDn);
-int32_t EnRmin3d(Point x, int32_t R, Point v, int32_t Rv, SQDLut SQDn);
-int32_t IsHMAEnhanced2d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
+void applyConstrainedSnSyms2d(AVS_PointSet *set, AVS_Point vec, AVS_Point orig, int32_t rs, int32_t cs);
+void applyConstrainedSnSyms3d(AVS_PointSet *set, AVS_Point vec, AVS_Point orig, int32_t rs, int32_t cs, int32_t ds);
+int32_t EnRmin2d(AVS_Point x, int32_t R, AVS_Point v, int32_t Rv, SQDLut SQDn);
+int32_t EnRmin3d(AVS_Point x, int32_t R, AVS_Point v, int32_t Rv, SQDLut SQDn);
+int32_t IsHMAEnhanced2d(AVS_Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
 		    MLut mlut, RTLutCol Lut, SQDLut SQDn, int32_t rs, int32_t cs);
-int32_t IsHMAEnhanced3d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh, 
+int32_t IsHMAEnhanced3d(AVS_Point x, /*int32_t Rmax,*/ uint32_t *D2Xh, 
 		    MLut mlut, RTLutCol Lut, SQDLut SQDn, int32_t rs, int32_t cs, int32_t ds);
 
 
@@ -58,7 +58,7 @@ struct xvimage *lhma(struct xvimage *Xh)
   int32_t rs, cs, ds, ps, N;
 
   //aux
-  Point p;
+  AVS_Point p;
   int32_t rmax;
 
   //tables
@@ -190,7 +190,7 @@ struct xvimage *lhma_givenTables(struct xvimage *Xh, MLut mlut, RTLutCol Lut, SQ
   int32_t rs, cs, ds, ps, N;
 
   //aux
-  Point p;
+  AVS_Point p;
 
   //test parameters
   if (!Xh) {
@@ -248,14 +248,14 @@ struct xvimage *lhma_givenTables(struct xvimage *Xh, MLut mlut, RTLutCol Lut, SQ
 } // lhma_build()
 
 /* ==================================== */
-int32_t EnRmin2d(Point x, int32_t R, Point v,
+int32_t EnRmin2d(AVS_Point x, int32_t R, AVS_Point v,
 	     int32_t Rv, SQDLut SQDn)
 /* ==================================== */
 {
   int32_t i;
   int32_t Rvless;
-  Point rg, xplusv, S;
-  Point r1, r2;
+  AVS_Point rg, xplusv, S;
+  AVS_Point r1, r2;
 
   S.x = (v.x < 0) ? -1 : 1; S.y = (v.y < 0) ? -1 : 1;
   xplusv.x = x.x + v.x;  xplusv.y = x.y + v.y;
@@ -291,14 +291,14 @@ int32_t EnRmin2d(Point x, int32_t R, Point v,
 }
 
 /* ==================================== */
-int32_t EnRmin3d(Point x, int32_t R, Point v,
+int32_t EnRmin3d(AVS_Point x, int32_t R, AVS_Point v,
 	     int32_t Rv, SQDLut SQDn)
 /* ==================================== */
 {
   int32_t i, j;
   int32_t Rvless;
-  Point rg, xplusv, S;
-  Point psyms[6];
+  AVS_Point rg, xplusv, S;
+  AVS_Point psyms[6];
 
   S.x = (v.x < 0) ? -1 : 1; S.y = (v.y < 0) ? -1 : 1; S.z = (v.z < 0) ? -1 : 1;
   xplusv.x = x.x + v.x;  xplusv.y = x.y + v.y;  xplusv.z = x.z + v.z;
@@ -322,7 +322,7 @@ int32_t EnRmin3d(Point x, int32_t R, Point v,
       psyms[5].x = rg.z; psyms[5].y = rg.y; psyms[5].z = rg.x;
       for(j = 0; j < 6; j++) {
 	//r <- SP'rg
-	Point r = psyms[j];
+	AVS_Point r = psyms[j];
 	r.x *= S.x; r.y*=S.y; r.z *=S.z;
 
 	//if (((x+v-r) in En) and ((v-r)^2 < R) then return Rv
@@ -342,13 +342,13 @@ int32_t EnRmin3d(Point x, int32_t R, Point v,
 }
 
 /* ==================================== */
-int32_t EnRminAuto2d(Point x, int32_t R,
+int32_t EnRminAuto2d(AVS_Point x, int32_t R,
 		 SQDLut SQDn)
 /* ==================================== */
 {
   int32_t i, Rless;
   int32_t Enx = En2d(x.x, x.y);
-  Point rg;
+  AVS_Point rg;
 
   //while (R>0)
   while(R > 0) {
@@ -366,13 +366,13 @@ int32_t EnRminAuto2d(Point x, int32_t R,
 
 
 /* ==================================== */
-int32_t EnRminAuto3d(Point x, int32_t R,
+int32_t EnRminAuto3d(AVS_Point x, int32_t R,
 		 SQDLut SQDn)
 /* ==================================== */
 {
   int32_t i, Rless;
   int32_t Enx = En3d(x.x, x.y, x.z);
-  Point rg;
+  AVS_Point rg;
 
   /*
   if ((R == 1)&&( Enx == En3d(0, 0, 0)) ) {
@@ -397,7 +397,7 @@ int32_t EnRminAuto3d(Point x, int32_t R,
 
 
 /* ==================================== */
-int32_t IsHMAEnhanced2d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
+int32_t IsHMAEnhanced2d(AVS_Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
 		    MLut mlut, RTLutCol Lut, SQDLut SQDn, int32_t rs, int32_t cs)
 /* ==================================== */
 /*
@@ -409,8 +409,8 @@ int32_t IsHMAEnhanced2d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
 {
   int32_t Rx, Rv;
   int32_t i,j;
-  PointSet Svg;
-  Point v;
+  AVS_PointSet Svg;
+  AVS_Point v;
 
   //Rx = EnRmin(x, D2Xh(x), 0)
   Rx = EnRminAuto2d(x, AVS_point2d(D2Xh, x, rs), SQDn);
@@ -437,7 +437,7 @@ int32_t IsHMAEnhanced2d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
 
 
 /* ==================================== */
-int32_t IsHMAEnhanced3d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
+int32_t IsHMAEnhanced3d(AVS_Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
 		    MLut mlut, RTLutCol Lut, SQDLut SQDn, int32_t rs, int32_t cs, int32_t ds)
 /* ==================================== */
 /*
@@ -450,8 +450,8 @@ int32_t IsHMAEnhanced3d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
   int32_t Rx, Rv;
   int32_t i,j;
   int32_t ps = rs*cs;
-  PointSet Svg;
-  Point v;
+  AVS_PointSet Svg;
+  AVS_Point v;
 
   //Rx = EnRmin(x, D2Xh(x), 0)
   Rx = EnRminAuto3d(x, AVS_point3d(D2Xh, x, ps, rs), SQDn);
@@ -481,7 +481,7 @@ int32_t IsHMAEnhanced3d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
 
 
 //----------------------------------
-void applyConstrainedSnSyms2d(PointSet *set, Point vec, Point orig, int32_t rs, int32_t cs)
+void applyConstrainedSnSyms2d(AVS_PointSet *set, AVS_Point vec, AVS_Point orig, int32_t rs, int32_t cs)
 //----------------------------------
 /*
   Apply Sn symmetries to vec with the constraint that orig+vec=(x,y) is
@@ -519,7 +519,7 @@ void applyConstrainedSnSyms2d(PointSet *set, Point vec, Point orig, int32_t rs, 
 
 
 //----------------------------------
-void applyConstrainedSnSyms3d(PointSet *set, Point vec, Point orig, int32_t rs, int32_t cs, int32_t ds)
+void applyConstrainedSnSyms3d(AVS_PointSet *set, AVS_Point vec, AVS_Point orig, int32_t rs, int32_t cs, int32_t ds)
 //----------------------------------
 /*
   Apply Sn symmetries to vec with the constraint that orig+vec=(x,y,z) is

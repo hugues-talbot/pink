@@ -1,4 +1,4 @@
-/* $Id: lhisto.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: lhisto.h,v 1.4 2009-03-16 15:52:22 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -40,7 +40,9 @@ extern int32_t lhistsum(uint32_t *histo);
 
 #define NONMIN 1
 #define NONMAX 2
+#undef MAX
 #define MAX 1
+#undef MIN
 #define MIN 2
 #define NONEXTR 3
 

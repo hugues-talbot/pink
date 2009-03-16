@@ -1,4 +1,4 @@
-/* $Id: jccomptree.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/* $Id: jccomptree.c,v 1.2 2009-03-16 15:52:23 mcouprie Exp $ */
 /* 
   Arbre des composantes (nouvelle version)
 
@@ -31,11 +31,11 @@
 //#define PARANO
 
 /* ==================================== */
-void ComponentTreePrint(ctree * CT)
+void ComponentTreePrint(JCctree * CT)
 /* ==================================== */
 {
   int32_t i;
-  soncell *s;
+  JCsoncell *s;
   printf("root = %d ;  nbnodes: %d ; nbsoncells: %d\n", CT->root, CT->nbnodes, CT->nbsoncells);
   for (i = 0; i < CT->nbnodes; i++) 
   {
@@ -56,8 +56,8 @@ void mergeTreePrint(mtree * MT)
 /* ==================================== */
 {
   int32_t i;
-  soncell *s;
-  ctree *CT = MT->CT;
+  JCsoncell *s;
+  JCctree *CT = MT->CT;
   printf("root = %d ;  nbnodes: %d ; nbsoncells: %d\n", CT->root, CT->nbnodes, CT->nbsoncells);
   for (i = 0; i < CT->nbnodes; i++) 
   {
@@ -78,7 +78,7 @@ void mergeTreePrint(mtree * MT)
 
 /* ==================================== */
 int32_t LowComAncSlow(
-  ctree * CT,
+  JCctree * CT,
   int32_t c1,
   int32_t c2)
 /* Retourne le plus proche commun ancetre des cellules c1,c2
@@ -127,10 +127,10 @@ int32_t LowComAncSlow(
 // from lwshedtopo.c
 
 // Depth-first preprocessing
-int32_t LCApreprocessDepthFirst(ctree *CT, int32_t node, int32_t depth, int32_t *nbr, int32_t *rep, int32_t *Euler, int32_t *Represent, int32_t *Depth, int32_t *Number)
+int32_t LCApreprocessDepthFirst(JCctree *CT, int32_t node, int32_t depth, int32_t *nbr, int32_t *rep, int32_t *Euler, int32_t *Represent, int32_t *Depth, int32_t *Number)
 {
   int32_t son;
-  soncell *sc;
+  JCsoncell *sc;
   //  printf("LCApreprocessDepthFirst\n");
   if (CT->tabnodes[node].nbsons > -1) {
     (*nbr)++;
@@ -148,7 +148,7 @@ int32_t LCApreprocessDepthFirst(ctree *CT, int32_t node, int32_t depth, int32_t 
   return *nbr;
 }
 
-int32_t ** LCApreprocess(ctree *CT, int32_t *Euler, int32_t *Depth, int32_t *Represent, int32_t *Number, int32_t *nbR, int32_t *lognR)
+int32_t ** LCApreprocess(JCctree *CT, int32_t *Euler, int32_t *Depth, int32_t *Represent, int32_t *Number, int32_t *nbR, int32_t *lognR)
 {
   //O(n.log(n)) preprocessing
   int32_t nbr, rep, nbNodes;
@@ -323,15 +323,15 @@ mtree * mergeTreeAlloc(int32_t N)
 } // ComponentTreeAlloc()
 
 /* ==================================== */
-ctree * componentTreeAlloc(int32_t N)
+JCctree * componentTreeAlloc(int32_t N)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "componentTreeAlloc"
 {
-  ctree *CT;
-  CT = (ctree *)malloc(sizeof(ctree));
-  CT->tabnodes = (ctreenode *)malloc(N * sizeof(ctreenode));
-  CT->tabsoncells = (soncell *)malloc(2*N * sizeof(soncell));
+  JCctree *CT;
+  CT = (JCctree *)malloc(sizeof(JCctree));
+  CT->tabnodes = (JCctreenode *)malloc(N * sizeof(JCctreenode));
+  CT->tabsoncells = (JCsoncell *)malloc(2*N * sizeof(JCsoncell));
   CT->flags = (uint8_t *)calloc(N, sizeof(char));
   memset(CT->flags, 0, N);
   if ((CT == NULL) || (CT->tabnodes == NULL) || (CT->tabsoncells == NULL))
@@ -346,7 +346,7 @@ ctree * componentTreeAlloc(int32_t N)
 
 
 /* ==================================== */
-void componentTreeFree(ctree * CT)
+void componentTreeFree(JCctree * CT)
 /* ==================================== */
 {
   free(CT->tabnodes);
@@ -364,9 +364,9 @@ void mergeTreeFree(mtree * MT)
   free(MT);
 } // ComponentTreeFree()
 
-void calculReversePointer(ctree *CT, int32_t root)  
+void calculReversePointer(JCctree *CT, int32_t root)  
 {
-  soncell *s; 
+  JCsoncell *s; 
   for(s = CT->tabnodes[root].sonlist; s != NULL; s = s->next) 
   {
     calculReversePointer(CT, s->son);
@@ -375,19 +375,19 @@ void calculReversePointer(ctree *CT, int32_t root)
 }
 
 //Compute the merge tree of a MST represented by a list of edges and
-//an array of corresponding values (Valeur). Ctree is a structure to
+//an array of corresponding values (Valeur). JCctree is a structure to
 //store a tree and STaltitude gives the altitudes of the nodes. As
 //well as the Component tree and saliency tree algorithm, this is an
 //original contribution which allows to compute a MT (hence, a CT) of
 //a watershed using only one union-find
-int32_t jcSaliencyTree_b (ctree ** SaliencyTree, int32_t *MST, int32_t *Valeur, RAG *rag, int32_t *STaltitude)
+int32_t jcSaliencyTree_b (JCctree ** SaliencyTree, int32_t *MST, int32_t *Valeur, RAG *rag, int32_t *STaltitude)
 {
   int32_t i,x1,x2,n1,n2,z,k, STx, STy, nbsoncellsloc;
-  ctree *ST;
+  JCctree *ST;
   int32_t *clefs; 
   int32_t *STmap;
-  soncell * newsoncell1;
-  soncell * newsoncell2;
+  JCsoncell * newsoncell1;
+  JCsoncell * newsoncell2;
   Tarjan *T;
   int32_t taille = rag->g->nsom;
 
@@ -470,12 +470,12 @@ int32_t mergeTree(RAG *rag, // inputs
   mtree *MT;
   int32_t *clefs; 
   int32_t *CTmap;
-  soncell * newsoncell1;
-  soncell * newsoncell2;
+  JCsoncell * newsoncell1;
+  JCsoncell * newsoncell2;
   Tarjan *T;
   int32_t nbarcs = rag->g->narc/2;
   int32_t nbsoms = rag->g->nsom;
-  ctree *CT;
+  JCctree *CT;
   if( (CTmap = (int32_t *)malloc(sizeof(int32_t) *nbsoms)) == NULL){
     fprintf(stderr, "jcSalliancyTree: erreur de malloc\n"); 
   }

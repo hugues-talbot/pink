@@ -16,6 +16,7 @@
 #include <llpeGA.h>
 #include <jccomptree.h>
 #include <lhierarchie.h>
+#include <mcutil.h>
 
 // Calcul les attributs surface et profondeur du RAG
 void attributNoeud(RAG *rag, struct xvimage *label, struct xvimage *ga)
@@ -79,9 +80,9 @@ RAG *construitRAG(struct xvimage *ga, struct xvimage *label)
 /* Calcule d'attribut d'un arbre des coupes */
 
 /* calcul de la surface des composantes de l'arbre */
-int32_t surfaceRec(ctree *CT, int32_t *SurfaceCompo, int32_t root)
+int32_t surfaceRec(JCctree *CT, int32_t *SurfaceCompo, int32_t root)
 {
-  soncell *s; 
+  JCsoncell *s; 
   if(CT->tabnodes[root].nbsons != 0){
     SurfaceCompo[root] = 0;
     for(s = CT->tabnodes[root].sonlist; s != NULL; s = s->next) 
@@ -95,14 +96,14 @@ int32_t surfaceRec(ctree *CT, int32_t *SurfaceCompo, int32_t root)
 /* calcule la dynamique des composantes de l'arbre de fusion */
 /* fonction inspirée par l'article de F. Meyer, ISMM 96 :    */
 /* "The dynamics of minima and contours"                     */
-void dynaRecCompTree(ctree *CT,  /* arbre des coupes    */
+void dynaRecCompTree(JCctree *CT,  /* arbre des coupes    */
 	      int32_t root,       /* racine de l'arbre   */
 	      int32_t *minSon,    /* cf ordonneMergeTree */
 	      int32_t *dynamic    /* dynamique des feuilles de CT */
 	     )
      /* dynamic est supposé alloué */
 {
-  soncell *s;
+  JCsoncell *s;
   int32_t father = CT->tabnodes[root].father;
   
   if(father == -1)
@@ -124,9 +125,9 @@ void dynaRecCompTree(ctree *CT,  /* arbre des coupes    */
     dynaRecCompTree(CT, s->son, minSon, dynamic);
 }
 
-void volumeRec(ctree *CT, int32_t *SurfaceCompo, int32_t *fuzzyAreaCompo, int32_t *volumeCompo, int32_t root)
+void volumeRec(JCctree *CT, int32_t *SurfaceCompo, int32_t *fuzzyAreaCompo, int32_t *volumeCompo, int32_t root)
 {
-  soncell *s; 
+  JCsoncell *s; 
   if(CT->tabnodes[root].nbsons == 0){
     // feuille
     fuzzyAreaCompo[root] =  SurfaceCompo[root]*(int32_t)CT->tabnodes[root].data;
@@ -155,10 +156,10 @@ void volumeRec(ctree *CT, int32_t *SurfaceCompo, int32_t *fuzzyAreaCompo, int32_
 //que soit le critère (pas seulement pour le volume). Je prefère
 //cependant attendre l'écriture définitive du papier sur la saillence
 //avant de faire des modifications
-int32_t attributOpenningRec(ctree *CT, int32_t *attributCompo, int32_t *attributMerge, int32_t root)
+int32_t attributOpenningRec(JCctree *CT, int32_t *attributCompo, int32_t *attributMerge, int32_t root)
 {
   int32_t max,v;
-  soncell *s; 
+  JCsoncell *s; 
   if(CT->tabnodes[root].father == -1){
     for(s = CT->tabnodes[root].sonlist; s != NULL; s = s->next) 
       attributOpenningRec(CT, attributCompo, attributMerge, s->son);
@@ -182,10 +183,10 @@ int32_t attributOpenningRec(ctree *CT, int32_t *attributCompo, int32_t *attribut
 /* allows to compute the value of the criterion at which a given
    component disappears. Remark that these are not equal to the
    surface of the components*/
-int32_t surfaceOpenningRec(ctree *CT, int32_t *SurfaceCompo, int32_t *SurfaceMerge, int32_t root)
+int32_t surfaceOpenningRec(JCctree *CT, int32_t *SurfaceCompo, int32_t *SurfaceMerge, int32_t root)
 {
   int32_t max,v;
-  soncell *s; 
+  JCsoncell *s; 
   if(CT->tabnodes[root].father == -1){
     for(s = CT->tabnodes[root].sonlist; s != NULL; s = s->next) 
       surfaceOpenningRec(CT, SurfaceCompo, SurfaceMerge, s->son);
@@ -238,7 +239,7 @@ int32_t ordonneCompTree(int32_t *clefs,  /* tableau ordonnant les
 					     coupes clefs[i] donne la
 					     position de i pour
 					     l'ordre  */
-		ctree *CT,                /* L'arbre de fusion */
+		JCctree *CT,                /* L'arbre de fusion */
 		int32_t root,             /* racine de l'arbre */
 		int32_t *minSon           /* application de V(MT) vers
 					     l'ensemble des feuilles
@@ -251,7 +252,7 @@ int32_t ordonneCompTree(int32_t *clefs,  /* tableau ordonnant les
 {
   int32_t r,x;
   int32_t m = LONG_MAX;
-  soncell *s;
+  JCsoncell *s;
   if(CT->tabnodes[root].nbsons == 0){
     // root est une feuille
     minSon[root] = root;  
@@ -268,7 +269,7 @@ int32_t ordonneCompTree(int32_t *clefs,  /* tableau ordonnant les
   return m;
 }
 
-int32_t * surfaceMergeTree(ctree *CT, RAG *rag)
+int32_t * surfaceMergeTree(JCctree *CT, RAG *rag)
 #undef F_NAME
 #define F_NAME "surfaceMergeTree"
 {
@@ -293,7 +294,7 @@ int32_t * surfaceMergeTree(ctree *CT, RAG *rag)
   return SurfaceMerge;
 }
 
-int32_t *dynaMergeTree(ctree *CT, RAG *rag)
+int32_t *dynaMergeTree(JCctree *CT, RAG *rag)
 #undef F_NAME
 #define F_NAME "dynaMergeTree"
 {
@@ -331,7 +332,7 @@ int32_t *dynaMergeTree(ctree *CT, RAG *rag)
   return dynaMerge;
 }
 
-int32_t *volumeMergeTree(ctree *CT, RAG *rag)
+int32_t *volumeMergeTree(JCctree *CT, RAG *rag)
 #undef F_NAME
 #define F_NAME "volumeMergeTree"
 {
@@ -381,7 +382,7 @@ int32_t mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attribut)
   int32_t i;
   int32_t k;
   k = 0;
-  ctree *CT = MT->CT;
+  JCctree *CT = MT->CT;
   // les aretes du mst sont stokées ds MT. A chaque noeud de merge
   // (i.e., les noeuds qui ne sont pas des feuilles) correspond une
   // arete du MST
@@ -395,7 +396,7 @@ int32_t mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attribut)
 #define LCAFAST
 /* Calcul la carte de saillance à partir du CT de saillance du ga
    d'origine et du flow mapping (label) du ga */
-int32_t computeSaliencyMap(ctree *CT, struct xvimage *ga, uint32_t *label, int32_t *attribut)
+int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, uint32_t *label, int32_t *attribut)
 {
   int32_t rs = rowsize(ga);      /* taille ligne */
   int32_t cs = colsize(ga);      /* taille colonne */
@@ -576,7 +577,7 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param)
   int32_t *MST, *Valeur,*STaltitude;      /* Arete du MST et Valuation
 					     par attribut */
   int32_t i;
-  ctree * ST;                             /* Arbre des coupes pour le calcul de la carte de saillance */
+  JCctree * ST;                             /* Arbre des coupes pour le calcul de la carte de saillance */
   if((label = allocimage(NULL,rs,cs,1,VFF_TYP_4_BYTE)) == NULL){
     fprintf(stderr,"%s : ne peut allouer label \n",F_NAME);
     exit(1);

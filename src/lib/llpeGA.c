@@ -1,4 +1,4 @@
-/* $Id: llpeGA.c,v 1.2 2009-01-08 14:05:19 lnajman Exp $ */
+/* $Id: llpeGA.c,v 1.3 2009-03-16 15:52:23 mcouprie Exp $ */
 /* 
    Ligne de partage des eaux sur les aretes d'un graphe et segmentation hiérarchique
 
@@ -26,6 +26,7 @@
 #include <mcrbt.h>
 #include <jclabelextrema.h>
 #include <mclifo.h>
+#include <mcutil.h>
 
 #define EN_FAH 0
 int32_t Stream(uint8_t *F, GrapheBasic *g, int32_t sommet, Lifo *FIFO, int32_t *Label, int32_t *alt, uint8_t *G);

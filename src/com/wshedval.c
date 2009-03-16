@@ -1,4 +1,4 @@
-/* $Id: wshedval.c,v 1.2 2009-01-06 13:18:07 mcouprie Exp $ */
+/* $Id: wshedval.c,v 1.3 2009-03-16 15:52:23 mcouprie Exp $ */
 /* \file wshedval.c
 
 \brief watershed with valuation by the geodesic saliency
@@ -24,7 +24,7 @@ Watershed with valuation by the geodesic saliency
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lsalembier.h>
+#include <ldynamique_grimaud.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)

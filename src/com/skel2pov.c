@@ -1,4 +1,4 @@
-/* $Id: skel2pov.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: skel2pov.c,v 1.3 2009-03-16 15:52:22 mcouprie Exp $ */
 /*! \file skel2pov.c
 
 \brief generation of a 3d illustration from a curvilinear skeleton
@@ -82,7 +82,7 @@ void cylinder (FILE * fd, double x1, double y1, double z1,
               x1, y1, z1, x2, y2, z2, r, color);
 }
 /* ====================================================================== */
-static void barycentre(pcell p, int32_t rs, int32_t ps, double *x, double *y, double *z)
+static void barycentre(SKC_pcell p, int32_t rs, int32_t ps, double *x, double *y, double *z)
 /* ====================================================================== */
 {
   uint32_t v; 
@@ -114,7 +114,7 @@ int main(int argc, char **argv)
   int32_t npoints = 0;
   double bx, by, bz; //pour le calcul du barycentre global
   double *X, *Y, *Z; // tableaux pour les coordonnées
-  pcell p;
+  SKC_pcell p;
 
   if (argc != 3)
   {

@@ -1,10 +1,13 @@
-/* $Id: lhierarchie.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: lhierarchie.h,v 1.3 2009-03-16 15:52:22 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
 // Bibliotheque pour la segmentation hierarchique a base de LPE sur
 // les aretes
 
+#undef SURFACE
+#undef DYNAMIC
+#undef VOLUME
 #define SURFACE 0
 #define DYNAMIC 1
 #define VOLUME 2

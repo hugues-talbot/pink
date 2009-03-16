@@ -1,4 +1,4 @@
-/* $Id: lsaliency.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: lsaliency.c,v 1.3 2009-03-16 15:52:23 mcouprie Exp $ */
 
 #include <stdio.h>
 #include <stdint.h>
@@ -23,7 +23,7 @@ typedef struct _basinT {
   int32_t dynamics;
   int32_t surface;
   int32_t volume;
-  TypListe* neighbors;
+  TypListechainee* neighbors;
   int32_t flag;
   int32_t father;
   //struct _basinT *father;
@@ -167,7 +167,7 @@ int32_t lsaliency(
   int32_t nbmin; /* Nb of minima */
   int32_t incr_vois, passold, pass;
   register int32_t i, j, k, x, y;
-  TypListe* l;
+  TypListechainee* l;
   basinT *basins;
   basinT **orig;
   //const int32_t WSHED_HMAX  =       512;    // Max grey value
@@ -467,7 +467,7 @@ int32_t lsaliency(
   for (i=0; i<nbmin; i++) {
     basins[i].father = NULL;
     basins[i].label = i;
-    basins[i].neighbors = ListeVide();
+    basins[i].neighbors = ListechaineeVide();
   }
 
   if (masque) MA = UCHARDATA(masque);
@@ -529,7 +529,7 @@ int32_t lsaliency(
     }
     printf("Basin %d ; dyn = %d\n", i, basins[i].dynamics);
     printf("Voisin de %d: ", i);
-    AfficheListe(basins[i].neighbors);
+    AfficheListechainee(basins[i].neighbors);
     printf("\n");
   }
   qsort(basins, nbmin, sizeof(basinT), compareBasin);
@@ -567,7 +567,7 @@ int32_t lsaliency(
     }
     orig[lab]->neighbors = Union(orig[lab]->neighbors, basins[i].neighbors);
     printf("Voisin de %d: ", lab);
-    AfficheListe(orig[lab]->neighbors);
+    AfficheListechainee(orig[lab]->neighbors);
     printf("\n");
     //basins[i] = *orig[lab]; 
   }
@@ -611,7 +611,7 @@ int32_t lsaliency(
   }
 
   for (i=0; i<nbmin; i++)
-    DetruitListe(basins[i].neighbors);
+    DetruitListechainee(basins[i].neighbors);
   freeimage(tmp);
   */
   free(basins);
@@ -644,7 +644,7 @@ int32_t lsaliency6b(
   int32_t nbmin; /* Nb of minima */
   int32_t incr_vois, passold, pass;
   register int32_t i, j, k, x, y;
-  TypListe* l;
+  TypListechainee* l;
   basinT *basins;
   basinT **orig;
   //const int32_t WSHED_HMAX  =       512;    // Max grey value

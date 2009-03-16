@@ -1,4 +1,4 @@
-/* $Id: mclistechainee.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: mclistechainee.c,v 1.2 2009-03-16 15:52:23 mcouprie Exp $ */
 /***********************************/
 /*   module de gestion de liste    */
 /* Michel COUPRIE  -  Janvier 1990 */
@@ -57,150 +57,150 @@ On pourra enrichir ce type par les operations:
 /*****************************/
 
 /*************************************************/
-TypListe * ListeVide() 
-{   /* retourne une liste vide */
+TypListechainee * ListechaineeVide() 
+{   /* retourne une listechainee vide */
   return(NULL);
-} /* ListeVide() */
+} /* ListechaineeVide() */
   
 /*************************************************/
-int32_t Vide(TypListe * l) 
+int32_t EstVideListechainee(TypListechainee * l) 
 { 
-                        /* retourne 1 si liste vide */
+                        /* retourne 1 si listechainee vide */
   if (l == NULL) return(1); else return(0);
 } /* Vide() */
   
 /*************************************************/
-TypElement Tete (TypListe * lis) 
+TypElement Tete (TypListechainee * lis) 
 {
                         /* retourne l'element en tete
-                           de la liste lis */
+                           de la listechainee lis */
   return(lis->elt);
 } /* Tete() */
   
 /*************************************************/
-TypListe * Suite (TypListe * lis) 
+TypListechainee * Suite (TypListechainee * lis) 
 {
-                        /* retourne la Suite de la liste lis,
+                        /* retourne la Suite de la listechainee lis,
                                  privee de son premier element */
   return(lis->suite);
 } /* Suite() */
 
 /*************************************************/
-TypListe * Cons (TypElement el, TypListe * lis) 
+TypListechainee * Cons (TypElement el, TypListechainee * lis) 
 {
-                              /* retourne la liste dont la tete est el
+                              /* retourne la listechainee dont la tete est el
                                  et dont la Suite est lis */
-  TypListe * temp;
-  temp = (TypListe *) malloc (sizeof (TypListe));
+  TypListechainee * temp;
+  temp = (TypListechainee *) malloc (sizeof (TypListechainee));
   temp->elt = el;
   temp->suite = lis;
   return(temp);
 } /* Cons() */
 
 /*************************************************/
-void AfficheListe(TypListe * lis) 
+void AfficheListechainee(TypListechainee * lis) 
 {
-                              /* affiche les elements de la liste */
+                              /* affiche les elements de la listechainee */
   for (; lis != NULL; lis = lis->suite) 
     printf("%d ", lis->elt);
-} /* AfficheListe() */
+} /* AfficheListechainee() */
 
 /*************************************************/
-void DetruitListe(TypListe * lis) 
+void DetruitListechainee(TypListechainee * lis) 
 {
                               /* recupere la place occupee par les
-                                 elements de la liste et par les
+                                 elements de la listechainee et par les
                                  liens du chainage. Attention: 
                                  ne modifie pas le contenu de lis */
-  TypListe *temp, *temp1;
+  TypListechainee *temp, *temp1;
   for (temp = lis; temp != NULL; ) {
     temp1 = temp;
     temp = temp->suite;
     free(temp1);
   } /* for */
-} /* DetruitListe() */
+} /* DetruitListechainee() */
 
 /*************************************************/
-TypListe * InListe(TypElement el, TypListe * lis) 
+TypListechainee * InListechainee(TypElement el, TypListechainee * lis) 
 {
-                              /* retourne la premiere sous-liste qui a el en tete */
+                              /* retourne la premiere sous-listechainee qui a el en tete */
   for (; lis != NULL; lis = lis->suite)
     if (lis->elt == el) return lis;                        
   return NULL;
-} /* InListe() */
+} /* InListechainee() */
 
 /*************************************************/
-TypListe * Union (TypListe * lis1, TypListe * lis2) 
+TypListechainee * UnionListechainee (TypListechainee * lis1, TypListechainee * lis2) 
 {
-                              /* retourne la liste lis1 qui contient, si lis1 et lis2
+                              /* retourne la listechainee lis1 qui contient, si lis1 et lis2
                                  representent des ensembles, l'union des elements */
   for (; lis2 != NULL; lis2 = lis2->suite)
-    if (InListe(lis2->elt, lis1) == NULL)
+    if (InListechainee(lis2->elt, lis1) == NULL)
       lis1 = Cons(lis2->elt, lis1);
   return lis1;
 } /* Union() */
 
 /*******************************/
 /* programme principal de test */
-#ifdef TEST_LISTE
+#ifdef TEST_LISTECHAINEE
 main () {
   int32_t erreurs = 0;
-  TypListe *liste1, *liste2;
+  TypListechainee *listechainee1, *listechainee2;
                   
-  liste1 = ListeVide();
-  if (!Vide(liste1)) {
-    printf("Erreur 1: Vide(ListeVide()) != 1\n");
+  listechainee1 = ListechaineeVide();
+  if (!Vide(listechainee1)) {
+    printf("Erreur 1: Vide(ListechaineeVide()) != 1\n");
     erreurs++;  
   }
-  liste2 = Cons(1, liste1); /* (1) */
-  if (Vide(liste2)) {
+  listechainee2 = Cons(1, listechainee1); /* (1) */
+  if (Vide(listechainee2)) {
     printf("Erreur 2: Vide(Cons()) == 1\n");
     erreurs++;  
   }
-  if (Tete(liste2) != 1) {
+  if (Tete(listechainee2) != 1) {
     printf("Erreur 3: Tete(Cons(e,l)) != e\n");
     erreurs++;
   }
-  if (Suite(liste2) != liste1) {
+  if (Suite(listechainee2) != listechainee1) {
     printf("Erreur 4: Suite(Cons(e,l)) != l\n");
     erreurs++;
   }
-  liste1 = liste2;                 /* (1) */
-  liste2 = Cons(2, liste1); /* (2 1) */
-  if (Tete(liste2) != 2) {
+  listechainee1 = listechainee2;                 /* (1) */
+  listechainee2 = Cons(2, listechainee1); /* (2 1) */
+  if (Tete(listechainee2) != 2) {
     printf("Erreur 5: Tete(Cons(e,l)) != e\n");
     erreurs++;
   }
-  if (Suite(liste2) != liste1) {
+  if (Suite(listechainee2) != listechainee1) {
     printf("Erreur 6: Suite(Cons(e,l)) != l\n");
     erreurs++;
   }                    
   printf("affichage attendu = 2 1 ----> ");
-  AfficheListe(liste2);                    
+  AfficheListechainee(listechainee2);                    
   printf("\n");
 
-  liste1 = ListeVide();
-  liste1 = Union(liste1, liste2);
+  listechainee1 = ListechaineeVide();
+  listechainee1 = Union(listechainee1, listechainee2);
   printf("affichage attendu = 2 1 ----> ");
-  AfficheListe(liste1);                    
+  AfficheListechainee(listechainee1);                    
   printf("\n");
 
-  liste1 = ListeVide();
-  liste1 = Cons(1, liste1);
-  liste1 = Union(liste1, liste2);
+  listechainee1 = ListechaineeVide();
+  listechainee1 = Cons(1, listechainee1);
+  listechainee1 = Union(listechainee1, listechainee2);
   printf("affichage attendu = 2 1 ----> ");
-  AfficheListe(liste1);                    
+  AfficheListechainee(listechainee1);                    
   printf("\n");
 
-  liste1 = ListeVide();
-  liste1 = Cons(3, liste1);
-  liste1 = Union(liste1, liste2);
+  listechainee1 = ListechaineeVide();
+  listechainee1 = Cons(3, listechainee1);
+  listechainee1 = Union(listechainee1, listechainee2);
   printf("affichage attendu = 3 2 1 ----> ");
-  AfficheListe(liste1);                    
+  AfficheListechainee(listechainee1);                    
   printf("\n");
 
-  DetruitListe(liste2);
-  printf("destruction liste effectuee\n");
+  DetruitListechainee(listechainee2);
+  printf("destruction listechainee effectuee\n");
   printf("%d erreurs\n", erreurs);
 } /* main() */
-#endif /* TEST_LISTE */
+#endif /* TEST_LISTECHAINEE */

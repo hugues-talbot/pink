@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/types.h>
 #include <mccodimage.h>
+#include <mcutil.h>
 #include <jccodimage.h>
 //#include <mcimage.h>
 #include <jcimage.h>

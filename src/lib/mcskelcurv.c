@@ -1,4 +1,4 @@
-/* $Id: mcskelcurv.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: mcskelcurv.c,v 1.3 2009-03-16 15:52:23 mcouprie Exp $ */
 /*
       Librairie mcskelcurv :
 
@@ -33,7 +33,7 @@ static void erreur(char * mess)
 } /* erreur() */
 
 /* ====================================================================== */
-static int32_t tailleliste(pcell p)
+static int32_t tailleliste(SKC_pcell p)
 /* ====================================================================== */
 {
   int32_t n = 0;
@@ -43,7 +43,7 @@ static int32_t tailleliste(pcell p)
 
 #ifdef DEBUG
 /* ====================================================================== */
-void printliste(pcell p)
+void printliste(SKC_pcell p)
 /* ====================================================================== */
 {
   for (; p != NULL; p = p->next)
@@ -51,7 +51,7 @@ void printliste(pcell p)
 } /* printliste() */
 
 /* ====================================================================== */
-void printptsliste(pcell p, int32_t rs)
+void printptsliste(SKC_pcell p, int32_t rs)
 /* ====================================================================== */
 {
   for (; p != NULL; p = p->next)
@@ -120,7 +120,7 @@ POINT = int32_t
 */
 
 /* ====================================================================== */
-void fprintliste(FILE *fd, pcell p)
+void fprintliste(FILE *fd, SKC_pcell p)
 /* ====================================================================== */
 {
   int32_t n = tailleliste(p);
@@ -129,7 +129,7 @@ void fprintliste(FILE *fd, pcell p)
 } /* fprintliste() */
 
 /* ====================================================================== */
-void fprintvliste(FILE *fd, pcell p, float *V)
+void fprintvliste(FILE *fd, SKC_pcell p, float *V)
 /* ====================================================================== */
 {
   int32_t n = tailleliste(p);
@@ -138,13 +138,13 @@ void fprintvliste(FILE *fd, pcell p, float *V)
 } /* fprintvliste() */
 
 /* ====================================================================== */
-pcell skeladdcell(skel *S, int32_t val, pcell next)
+SKC_pcell skeladdcell(skel *S, int32_t val, SKC_pcell next)
 /* ====================================================================== */
 // alloue une nouvelle cellule de liste et met a jour ses champs val et next
 {
 #undef F_NAME
 #define F_NAME "skeladdcell"
-  pcell p;
+  SKC_pcell p;
   if (S->freecell >= S->nbcell)
   {
     fprintf(stderr, "%s: not enough cells\n", F_NAME);
@@ -161,7 +161,7 @@ pcell skeladdcell(skel *S, int32_t val, pcell next)
 void addadjlist(skel * S, uint32_t k, uint32_t v)
 /* ====================================================================== */
 {
-  pcell p = skeladdcell(S, v, S->tskel[k].adj);
+  SKC_pcell p = skeladdcell(S, v, S->tskel[k].adj);
   S->tskel[k].adj = p;
 } /* addadjlist() */
 
@@ -169,7 +169,7 @@ void addadjlist(skel * S, uint32_t k, uint32_t v)
 void addptslist(skel * S, uint32_t k, uint32_t v)
 /* ====================================================================== */
 {
-  pcell p = skeladdcell(S, v, S->tskel[k].pts);
+  SKC_pcell p = skeladdcell(S, v, S->tskel[k].pts);
   S->tskel[k].pts = p;
 } /* addptslist() */
 
@@ -181,7 +181,7 @@ void writeskel(skel * S, char *filename)
 #define F_NAME "writeskel"
   uint32_t i;
   FILE *fd = NULL;
-  pcell p;
+  SKC_pcell p;
 
   fd = fopen(filename,"w");
   if (!fd)
@@ -238,7 +238,7 @@ void writevskel(skel * S, char *filename, struct xvimage *val)
 #define F_NAME "writevskel"
   uint32_t i;
   FILE *fd = NULL;
-  pcell p;
+  SKC_pcell p;
   float *V;
 
   if ((rowsize(val) != S->rs) || (colsize(val) != S->cs) || (depth(val) != S->ds))
@@ -552,7 +552,7 @@ skel * initskel(uint32_t rs, uint32_t cs, uint32_t ds, uint32_t nbvertex, uint32
       return(0);
   }
  
-  S->tcell = (cell *)calloc(1,nbcell * sizeof(cell));
+  S->tcell = (SKC_cell *)calloc(1,nbcell * sizeof(SKC_cell));
   if (S->tcell == NULL)
   {   fprintf(stderr, "%s : malloc failed for S->tcell\n", F_NAME);
       return(0);

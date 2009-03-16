@@ -1,4 +1,4 @@
-/* $Id: avsimage.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: avsimage.h,v 1.4 2009-03-16 15:52:22 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -12,12 +12,12 @@ extern "C" {
 typedef struct Coordinates {
     int32_t x, y, z;
 } Coordinates;
-typedef Coordinates Point;
+typedef Coordinates AVS_Point;
 
-typedef struct PointSet {
+typedef struct AVS_PointSet {
   int32_t size;
-  Point points[48];
-} PointSet;
+  AVS_Point points[48];
+} AVS_PointSet;
 
 //Image data access
 #define AVS_point2d(I, p, rs) (I[(p.y)*rs + (p.x)])
