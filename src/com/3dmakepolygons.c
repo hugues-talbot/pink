@@ -1,4 +1,4 @@
-/* $Id: 3dmakepolygons.c,v 1.2 2009-01-12 08:59:38 mcouprie Exp $ */
+/* $Id: 3dmakepolygons.c,v 1.3 2009-03-23 12:37:11 mcouprie Exp $ */
 /*! \file 3dmakepolygons.c
 
 \brief identifies polygons from a labelled pure 2D cellular complex
@@ -6,6 +6,12 @@
 <B>Usage:</B> 3dmakepolygons lab.pgm border.pgm psubdiv pmerge out.vtk
 
 <B>Description:</B>
+
+The input \b lab.pgm contains a labelled pure 2D complex, where each label 
+marks a set of 2-facets which is a manifold with boundary
+
+psubdiv: this parameter governs the subdivision of polygon edges 
+pmerge: TODO
 
 <B>Types supported:</B> byte 3d
 
@@ -305,7 +311,7 @@ int main(int argc, char **argv)
 
   if (datatype(bor) != VFF_TYP_1_BYTE) 
   {
-    fprintf(stderr, "%s: the input data %s must be VFF_TYP_4_BYTE\n", argv[0], argv[2]);
+    fprintf(stderr, "%s: the input data %s must be VFF_TYP_1_BYTE\n", argv[0], argv[2]);
     exit(1);
   }
   B = UCHARDATA(bor);

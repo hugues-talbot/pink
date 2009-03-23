@@ -3,6 +3,7 @@ PINK = .
 #  XLIB = -L/usr/X11R6/lib -lX11 -lXext
   XINCL = /usr/include/X11R6
   CC = cc
+  CPP = g++
   CCFLAGS = -g -DPC -DUNIXIO
   ODIR = $(PINK)/linux/obj
   BDIR = $(PINK)/linux/bin

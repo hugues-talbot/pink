@@ -1,6 +1,7 @@
 PINK = .
 # Version MinGW
   CC = c:/MinGW/bin/gcc
+  CPP = c:/MinGW/bin/g++
   CCFLAGS = -g -DPC -DDOSIO -O3
   ODIR = $(PINK)/obj
   BDIR = $(PINK)/bin
