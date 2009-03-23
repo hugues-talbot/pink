@@ -1,4 +1,4 @@
-/* $Id: eden.c,v 1.1 2009-03-23 12:37:11 mcouprie Exp $ */
+/* $Id: eden.c,v 1.2 2009-03-23 12:45:35 mcouprie Exp $ */
 /*! \file eden.c
 
 \brief growth and/or shrinking of an 2D binary image - Eden process
@@ -6,6 +6,31 @@
 <B>Usage:</B> eden in.pgm niter grow shrink topo out.pgm
 
 <B>Description:</B>
+
+Algorithm is as follows.
+
+For growth:
+  \li start from known set
+  \li take pixels from the border into a queue
+  \li choose randomly one such pixels
+  \li set it to 1
+  \li update queues
+  \li repeat
+
+For shrinking:
+  \li same thing but set to 0
+
+For adding boundary noise
+  \li alternate growth and shrinking
+
+With topological constraints
+  \li make sure the point to add or remove is simple
+
+Parameters:
+  \li niter (positive integer): number of iterations
+  \li grow (1/0): perform growing or not
+  \li shrink (1/0): perform shrinking or not
+  \li topo (8/4/0): connectivity for the object - 0: no topological constraint
 
 <B>Types supported:</B> byte 2d
 
