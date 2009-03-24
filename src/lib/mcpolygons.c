@@ -1,4 +1,4 @@
-/* $Id: mcpolygons.c,v 1.3 2009-02-11 13:38:56 mcouprie Exp $ */
+/* $Id: mcpolygons.c,v 1.4 2009-03-24 14:50:25 mcouprie Exp $ */
 /* 
   Gestion d'un maillage polygonal
   Michel Couprie  -  décembre 2008
@@ -407,29 +407,32 @@ POLYGONS %d %d    // Faces - champ obligatoire
   for (i = 0; i < P->Faces->cur; i++)
   {
     F = P->Faces->f[i];
-    fprintf(fileout, "%d ", F.n + F.na);
-    for (j = 0; j < F.n; j++)
+    if (F.n > 0)
     {
-      a = F.vert[j]; 
-      fprintf(fileout, "%d ", a);
-      b = F.vert[(j+1)%F.n];
-      re = RbtSearch(P->RBT, (TypRbtKey)(a*nsp+b));
-      if (re != P->RBT->nil)
+      fprintf(fileout, "%d ", F.n + F.na);
+      for (j = 0; j < F.n; j++)
       {
-	E = P->Edges->e[re->auxdata];
-	if (a == E.v1)
+	a = F.vert[j]; 
+	fprintf(fileout, "%d ", a);
+	b = F.vert[(j+1)%F.n];
+	re = RbtSearch(P->RBT, (TypRbtKey)(a*nsp+b));
+	if (re != P->RBT->nil)
 	{
-	  for (k = 0; k < E.n; k++)
-	    fprintf(fileout, "%d ", E.vert[k]);
-	} 
-	else
-	{
-	  for (k = E.n - 1; k >= 0; k--)
-	    fprintf(fileout, "%d ", E.vert[k]);
-	} /* for k */ 
-      } /* if (re != P->RBT->nil) */
-    } /* for j */ 
-    fprintf(fileout, "\n");
+	  E = P->Edges->e[re->auxdata];
+	  if (a == E.v1)
+	  {
+	    for (k = 0; k < E.n; k++)
+	      fprintf(fileout, "%d ", E.vert[k]);
+	  } 
+	  else
+	  {
+	    for (k = E.n - 1; k >= 0; k--)
+	      fprintf(fileout, "%d ", E.vert[k]);
+	  } /* for k */ 
+	} /* if (re != P->RBT->nil) */
+      } /* for j */ 
+      fprintf(fileout, "\n");
+    } /* if (F.n > 0) */
   } /* for i */ 
 } /* MCP_SaveVTK() */
 

@@ -1,4 +1,4 @@
-/* $Id: average1.c,v 1.1 2009-03-03 10:53:16 mcouprie Exp $ */
+/* $Id: average1.c,v 1.2 2009-03-24 14:50:25 mcouprie Exp $ */
 /*! \file average1.c
 
 \brief return the average of the pixel values of an image
@@ -27,7 +27,7 @@ values which correspond to non-null points of mask are averaged.
 #include <mcimage.h>
 #include <larith.h>
 
-#define VERBOSE
+//#define VERBOSE
 
 /* =============================================================== */
 int main(int argc, char **argv)

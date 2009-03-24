@@ -1,4 +1,4 @@
-/* $Id: larith.c,v 1.3 2009-02-19 07:44:08 mcouprie Exp $ */
+/* $Id: larith.c,v 1.4 2009-03-24 14:50:25 mcouprie Exp $ */
 /* 
   operations arithmetiques : 
     ladd
@@ -267,6 +267,7 @@ double laverage1(struct xvimage * image1)
     exit(0);
   }
 
+  if (n == 0) return 0.0;
   return av / n;
 } /* laverage1() */
 
@@ -319,6 +320,7 @@ double laverage2(struct xvimage * image1, struct xvimage * mask)
     exit(0);
   }
 
+  if (n == 0) return 0.0;
   return av / n;
 } /* laverage2() */
 

@@ -1,4 +1,4 @@
-/* $Id: 3dmakepolygons.c,v 1.3 2009-03-23 12:37:11 mcouprie Exp $ */
+/* $Id: 3dmakepolygons.c,v 1.4 2009-03-24 14:50:25 mcouprie Exp $ */
 /*! \file 3dmakepolygons.c
 
 \brief identifies polygons from a labelled pure 2D cellular complex
@@ -430,7 +430,7 @@ MCP_Print(P);
       a = P->Faces->f[i].vert[j]; 
       b = P->Faces->f[i].vert[(j+1)%P->Faces->f[i].n];
       if ((markvert[a] == -1) && (markvert[b] == -1)) 
-      {
+      { // a et b sont deux sommets consécutifs dans la face i
 	x1 = P->Vertices->v[a].x; 
 	y1 = P->Vertices->v[a].y; 
 	z1 = P->Vertices->v[a].z; 
@@ -438,7 +438,7 @@ MCP_Print(P);
 	y2 = P->Vertices->v[b].y; 
 	z2 = P->Vertices->v[b].z; 
 	if (dist3(x1, y1, z1, x2, y2, z2) < merge) 
-	{	
+	{ // on décide de fusionner a et b
 	  indx = MCP_AddVertex(P, (x1+x2)/2, (y1+y2)/2, (z1+z2)/2);	  
 	  markvert[a] = indx;
 	  markvert[b] = indx;
@@ -460,11 +460,11 @@ MCP_Print(P);
       a = P->Faces->f[i].vert[j]; 
       b = P->Faces->f[i].vert[(j+1)%P->Faces->f[i].n];
       if ((markvert[a] != -1) && (markvert[a] == markvert[b]))
-      {
+      { // a et b sont deux sommets consécutifs dans la face i marqués identiquement
 #ifdef MISEAUPOINT
 	  printf("Fusionne: %d,%d -> %d\n", a, b, markvert[a]);
 #endif
-	// on retire a
+	// on retire a de la face i
 	for (k = j; k < P->Faces->f[i].n - 1; k++)
 	  P->Faces->f[i].vert[k] = P->Faces->f[i].vert[k+1]; 
 	P->Faces->f[i].n -= 1;
@@ -479,7 +479,48 @@ MCP_Print(P);
     } // while (j < P->Faces->f[i].n)
   } // for (i = 0; i < P->Faces->cur; i++)
 
+  // remplacement des sommets marqués dans toutes les faces
+  for (i = 0; i < P->Faces->cur; i++)
+  {  
+    for (j = 0; j < P->Faces->f[i].n; j++)
+    {
+      a = P->Faces->f[i].vert[j]; 
+      if (markvert[a] != -1)
+	P->Faces->f[i].vert[j] = markvert[a]; // on remplace a par markvert[a]
+    } // 
+  } // for (i = 0; i < P->Faces->cur; i++)
+
 MCP_Print(P);
+
+ degenerate = 1;
+ while (degenerate)
+ {
+  degenerate = 0;
+  // FILTRAGE POUR REDUIRE A UN POINT LES FACES DEGENEREES (2 POINTS)
+  for (i = 0; i < P->Faces->cur; i++)
+  {  
+    if (P->Faces->f[i].n == 2)
+    {  
+      degenerate = 1;
+      a = P->Faces->f[i].vert[0]; 
+      b = P->Faces->f[i].vert[1];
+      x1 = P->Vertices->v[a].x; 
+      y1 = P->Vertices->v[a].y; 
+      z1 = P->Vertices->v[a].z; 
+      x2 = P->Vertices->v[b].x; 
+      y2 = P->Vertices->v[b].y; 
+      z2 = P->Vertices->v[b].z; 
+      indx = MCP_AddVertex(P, (x1+x2)/2, (y1+y2)/2, (z1+z2)/2);	  
+      markvert[a] = indx;
+      markvert[b] = indx;
+      markvert[indx] = -1;
+#ifdef MISEAUPOINT
+      printf("Face degeneree: marque pour fusion: %d,%d -> %d\n", a, b, indx);
+#endif
+      P->Faces->f[i].n = 0; // Supprime la face
+      P->Faces->f[i].na = 0;
+    } // if (P->Faces->f[i].n == 2)
+  } // for (i = 0; i < P->Faces->cur; i++)
 
   // remplacement des sommets marqués dans toutes les faces
   for (i = 0; i < P->Faces->cur; i++)
@@ -491,6 +532,7 @@ MCP_Print(P);
 	P->Faces->f[i].vert[j] = markvert[a]; // on remplace a par markvert[a]
     } // 
   } // for (i = 0; i < P->Faces->cur; i++)
+ } // while (degenerate)
 
 MCP_Print(P);
  
