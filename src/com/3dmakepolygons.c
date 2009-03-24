@@ -1,4 +1,4 @@
-/* $Id: 3dmakepolygons.c,v 1.4 2009-03-24 14:50:25 mcouprie Exp $ */
+/* $Id: 3dmakepolygons.c,v 1.5 2009-03-24 15:34:09 mcouprie Exp $ */
 /*! \file 3dmakepolygons.c
 
 \brief identifies polygons from a labelled pure 2D cellular complex
@@ -270,6 +270,7 @@ int main(int argc, char **argv)
   FILE *fd = NULL;
   double subdiv, merge, x1, y1, z1, x2, y2, z2;
   MCP *P;
+  int32_t degenerate;
 
   if (argc != 6)
   {
