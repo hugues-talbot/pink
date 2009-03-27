@@ -28,6 +28,7 @@
 #include <time.h>
 #include <assert.h>
 #include <stdint.h>
+#include <limits.h>
 #include <mctopo.h>
 
 #define MAX_RANDOM INT_MAX

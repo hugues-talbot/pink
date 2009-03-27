@@ -1,5 +1,5 @@
-/* $Id: ptWsimple.c,v 1.3 2009-01-22 07:05:36 mcouprie Exp $ */
-/*! \file label.c
+/* $Id: ptWsimple.c,v 1.4 2009-03-27 12:55:53 mcouprie Exp $ */
+/*! \file ptWsimple.c
 
 \brief detects W-simple points in a 2D binary image
 

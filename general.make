@@ -434,7 +434,6 @@ $(BDIR)/levialdi \
 $(BDIR)/reconsplateaux \
 $(BDIR)/regul \
 $(BDIR)/remspnoise \
-$(BDIR)/segbi \
 $(BDIR)/segmentlignes \
 $(BDIR)/split \
 $(BDIR)/souzabanon
@@ -1823,9 +1822,6 @@ $(BDIR)/regul:	$(CDIR)/regul.c $(IDIR)/lregul.h $(IDIR)/lhtkern.h $(IDIR)/mcimag
 $(BDIR)/remspnoise:	$(CDIR)/remspnoise.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lremspnoise.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lremspnoise.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/remspnoise.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lremspnoise.o $(LIBS) -o $(BDIR)/remspnoise
 
-$(BDIR)/segbi:	$(CDIR)/segbi.c $(IDIR)/mctopo.h $(IDIR)/mcimage.h $(IDIR)/llabelextrema.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfahpure.h $(IDIR)/mccodimage.h $(IDIR)/lsegbi.h $(ODIR)/mctopo.o $(OBJ_COMMON) $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lsegbi.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segbi.c $(ODIR)/mctopo.o $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lsegbi.o $(LIBS) -o $(BDIR)/segbi
-
 $(BDIR)/segmentlignes:	$(CDIR)/segmentlignes.c $(IDIR)/mclifo.h $(IDIR)/mcimage.h $(IDIR)/llabelextrema.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/lsegmentlignes.h $(ODIR)/mclifo.o $(OBJ_COMMON) $(ODIR)/llabelextrema.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegmentlignes.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segmentlignes.c $(ODIR)/mclifo.o $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/llabelextrema.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegmentlignes.o $(LIBS) -o $(BDIR)/segmentlignes
 
@@ -2266,9 +2262,6 @@ $(ODIR)/lregul.o:	$(LDIR)/lregul.c $(IDIR)/mclifo.h $(IDIR)/mccodimage.h $(IDIR)
 
 $(ODIR)/lremspnoise.o:	$(LDIR)/lremspnoise.c $(IDIR)/mccodimage.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lremspnoise.c -o $(ODIR)/lremspnoise.o
-
-$(ODIR)/lsegbi.o:	$(LDIR)/lsegbi.c $(IDIR)/mccodimage.h $(IDIR)/mcfahpure.h $(IDIR)/mclifo.h $(IDIR)/mctopo.h $(IDIR)/mcindic.h $(IDIR)/llabelextrema.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lsegbi.c -o $(ODIR)/lsegbi.o
 
 $(ODIR)/lsegmentlignes.o:	$(LDIR)/lsegmentlignes.c $(IDIR)/mccodimage.h $(IDIR)/mcfah.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/llabelextrema.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lsegmentlignes.c -o $(ODIR)/lsegmentlignes.o

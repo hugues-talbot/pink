@@ -1,4 +1,4 @@
-/* $Id: skeleton.c,v 1.3 2009-02-19 07:44:08 mcouprie Exp $ */
+/* $Id: skeleton.c,v 1.4 2009-03-27 12:55:53 mcouprie Exp $ */
 /*! \file skeleton.c
 
 \brief ultimate binary skeleton guided by a priority image
@@ -215,7 +215,7 @@ int main(int argc, char **argv)
 
   if (depth(image) == 1)
   {
-    if (inhibimage)
+    if (inhibimage || (inhibvalue == -1))
     {
       if (! lskelubp2(image, prio, connex, inhibimage))
       {
@@ -234,7 +234,7 @@ int main(int argc, char **argv)
   }
   else
   {
-    if (inhibimage)
+    if (inhibimage || (inhibvalue == -1))
     {
       if (! lskelubp3d2(image, prio, connex, inhibimage))
       {
