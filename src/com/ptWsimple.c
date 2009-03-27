@@ -1,9 +1,9 @@
-/* $Id: ptWsimple.c,v 1.4 2009-03-27 12:55:53 mcouprie Exp $ */
+/* $Id: ptWsimple.c,v 1.5 2009-03-27 15:54:22 mcouprie Exp $ */
 /*! \file ptWsimple.c
 
 \brief detects W-simple points in a 2D binary image
 
-<B>Usage:</B> label in.pgm connex out.pgm
+<B>Usage:</B> ptWsimple in.pgm connex out.pgm
 
 <B>Description:</B>
 The argument \b connex selects the connectivity (4, 8 in 2D).

@@ -1,4 +1,4 @@
-/* $Id: crestvol.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: crestvol.c,v 1.3 2009-03-27 15:54:22 mcouprie Exp $ */
 /*! \file crestvol.c
 
 \brief enhances linear structures in a grayscale image
@@ -25,7 +25,7 @@ EndFor
 
 References:<BR> 
 "Topological operators for the detection of
-curvilinar structures in grayscale images", in preparation, 2003.
+curvilinar structures in grayscale images", in preparation.
 
 <B>Types supported:</B> byte 2d
 
