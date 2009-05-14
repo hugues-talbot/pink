@@ -1,4 +1,4 @@
-/* $Id: deriche.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: deriche.c,v 1.3 2009-05-14 11:37:26 mcouprie Exp $ */
 /* \file deriche.c
 
 \brief 
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
   image1 = readimage(argv[1]);  
   if (image1 == NULL)
   {
-    fprintf(stderr, "deriche: readimage failed\n");
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
   alpha = atof(argv[2]);
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
   { 
     if (argc != 6)
     {
-      fprintf(stderr, "fonction 3: argument necessaire\n");
+      fprintf(stderr, "%s: fonction 3: argument necessaire\n", argv[0]);
       exit(1);
     }
     l = atof(argv[4]);
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 
   if (! lderiche(image1, alpha, function, l))
   {
-    fprintf(stderr, "deriche: function lderiche failed\n");
+    fprintf(stderr, "%s: function lderiche failed\n", argv[0]);
     exit(1);
   }
 

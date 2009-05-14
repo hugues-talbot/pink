@@ -1,4 +1,4 @@
-/* $Id: lderiche.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: lderiche.c,v 1.2 2009-05-14 11:37:26 mcouprie Exp $ */
 /****************************************************************
 *
 * Routine Name: lderiche - library call for deriche
@@ -8,6 +8,8 @@
 * Input:       Image en niveau de gris
 * Output:      Image en niveau de gris
 * Written By:  Michel Couprie - janvier 1998
+*
+* Update avril 2009: lshencastan
 *
 ****************************************************************/
 
@@ -425,5 +427,94 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
   free(buf1);
   free(buf2);
   return 1;
-}
+} // lderiche()
 
+/* ==================================== */
+int32_t lshencastan(struct xvimage *image, double beta)
+/* ==================================== */
+/*
+    beta : parametre (1/taille) du filtre
+*/
+{ 
+  int32_t i, j;
+  uint8_t *ima = UCHARDATA(image);
+  int32_t rs = image->row_size;
+  int32_t cs = image->col_size;
+  int32_t N = rs * cs;
+  double *Im1;    /* image intermediaire */
+  double *Im2;    /* image intermediaire */
+  double *Imd;    /* image intermediaire */
+  double *buf1;   /* buffer ligne ou colonne */
+  double *buf2;   /* buffer ligne ou colonne */
+  double k;       /* constante de normalisation pour le lisseur */
+  double kp;      /* constante de normalisation pour le derivateur */
+  double e_a;     /* stocke exp(-beta) */
+  double a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4;
+  double t1, t2;
+  double lmax, lmin;
+
+  if (depth(image) != 1) 
+  {
+    fprintf(stderr, "lderiche: cette version ne traite pas les images volumiques\n");
+    exit(0);
+  }
+
+  Im1 = (double *)calloc(1,N * sizeof(double));
+  Im2 = (double *)calloc(1,N * sizeof(double));
+  Imd = (double *)calloc(1,N * sizeof(double));
+  buf1 = (double *)calloc(1,max(rs, cs) * sizeof(double));
+  buf2 = (double *)calloc(1,max(rs, cs) * sizeof(double));
+  if ((Im1==NULL) || (Im2==NULL) || (Imd==NULL) || (buf1==NULL) || (buf2==NULL))
+  {   printf("lderiche() : malloc failed\n");
+      return(0);
+  }
+
+  for (i = 0; i < N; i++) Imd[i] = (double)ima[i];
+
+  e_a = exp(- beta);
+  k = 1.0 - e_a;
+  k = - k * k / e_a;
+  kp = 1.0 - e_a;
+
+#ifdef DEBUG
+printf("beta = %g , e_a = %g , e_2a = %g , k = %g\n", beta, e_a, e_2a, k);
+#endif
+
+  /* valeurs de parametres pour filtre derivateur */
+  a1 = 0;
+  a2 = k * e_a;
+  a3 = - k * e_a;
+  a4 = 0;
+  a5 = 1;
+  a6 = 0;
+  a7 = 0;
+  a8 = 0;
+  b1 = e_a;
+  b2 = 0;
+  b3 = 0;
+  b4 = 0;
+
+  derichegen(Imd, rs, cs, buf1, buf2, Im1,
+             a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
+  derichegen(Imd, rs, cs, buf1, buf2, Im2,
+             a5, a6, a7, a8, a1, a2, a3, a4, b3, b4, b1, b2);
+
+  for (i = 0; i < N; i++)
+  {
+    t1 = Im1[i];
+    t2 = Im2[i];
+    t2 = sqrt(((t1 * t1) + (t2 * t2)) / 2.0);
+    if (t2 <= 255.0)
+      ima[i] = (uint8_t)t2;
+    else
+      ima[i] = 255;
+  }
+
+  free(Im1);
+  free(Im2);
+  free(Imd);
+  free(buf1);
+  free(buf2);
+
+  return 1;
+} // lshencastan()

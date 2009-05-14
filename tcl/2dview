@@ -1,0 +1,66 @@
+#sh
+# The next line is executed by /bin/sh, but not Tcl \
+exec wish $0 $1 $2
+
+# set window title
+wm title . "2Dview"
+
+set PINK "$env(PINK)"
+source [file join "$PINK" "tcl" "my_exec.tcl"]
+
+# globals
+#   2DVIEW(infilename)
+#   2DVIEW(im)
+#   2DVIEW(im_rs)
+#   2DVIEW(im_cs)
+set 2DVIEW(name) 2dview
+
+if {$argc != 1} { 
+  puts stderr "usage: 2dview in"
+  exit 
+}
+
+proc tmpfile {tmpname} {
+  global 2DVIEW
+  return [file join "/tmp" "$2DVIEW(name)_$tmpname"]
+}
+
+# get input image file name as first argument
+set 2DVIEW(infilename) [lindex $argv 0]
+
+# create a frame for buttons
+frame .top -borderwidth 10
+pack .top -side top -fill x
+
+# create the quit button
+button .top.quit -text Quit -command 2dview_quit
+pack .top.quit -side right
+
+my_exec convert $2DVIEW(infilename) [tmpfile in.ppm]
+
+# create an image and load contents from file 
+set 2DVIEW(im) [image create photo imname -file [tmpfile in.ppm]]
+
+# get image size
+set 2DVIEW(im_cs) [image height $2DVIEW(im)]
+set 2DVIEW(im_rs) [image width $2DVIEW(im)]
+
+# create a frame for the image
+frame .imframe -borderwidth 10 -width $2DVIEW(im_rs) -height $2DVIEW(im_cs)
+pack .imframe -side top
+
+# create canvas with the right sizes
+set c [canvas .imframe.c -width [expr $2DVIEW(im_rs) - 2] -height [expr $2DVIEW(im_cs) - 2]]
+pack .imframe.c -fill both -expand true
+
+# put the image into the canvas
+$c create image 1 1 -anchor nw  -image $2DVIEW(im)
+
+# action associated to quit widget
+proc 2dview_quit {} {
+  global 2DVIEW
+  catch {exec rm [tmpfile in.ppm]} result
+  exit
+}
+wm protocol . WM_DELETE_WINDOW 2dview_quit
+bind . "q" 2dview_quit

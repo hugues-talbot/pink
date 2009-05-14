@@ -1,4 +1,4 @@
-/* $Id: mccomptree.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: mccomptree.c,v 1.3 2009-05-14 11:37:26 mcouprie Exp $ */
 /* 
   Arbre des composantes (nouvelle version)
 
@@ -478,6 +478,8 @@ printf("  addson: %d %d\n", currentNode, neighbNode);
 
   *CompTree = CT;
   *CompMap = CM;
+  free(S);
+  free(SubtreeRoot);
   return 1;
 } // ComponentTree()
 
@@ -735,6 +737,8 @@ int32_t ComponentTree3d( uint8_t *F, int32_t rs, int32_t ps, int32_t N, int32_t 
 
   *CompTree = CT;
   *CompMap = CM;
+  free(S);
+  free(SubtreeRoot);
   return 1;
 } // ComponentTree3d()
 

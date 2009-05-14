@@ -1,4 +1,4 @@
-/* $Id: mcpolygons.c,v 1.4 2009-03-24 14:50:25 mcouprie Exp $ */
+/* $Id: mcpolygons.c,v 1.5 2009-05-14 11:37:26 mcouprie Exp $ */
 /* 
   Gestion d'un maillage polygonal
   Michel Couprie  -  décembre 2008
@@ -397,13 +397,19 @@ POLYGONS %d %d    // Faces - champ obligatoire
 
 
   // FACES
-  for (N = i = 0; i < P->Faces->cur; i++)
+  N=0;
+  j=0;
+  for (i = 0; i < P->Faces->cur; i++)
   {
-    F = P->Faces->f[i];
-    N += F.n + F.na;
+    if (P->Faces->f[i].n > 0)
+    {
+      F = P->Faces->f[i];
+      j++;
+      N += F.n + F.na;
+    }
   }
+  fprintf(fileout, "POLYGONS %d %d\n", j, j + N);
 
-  fprintf(fileout, "POLYGONS %d %d\n", P->Faces->cur, P->Faces->cur + N);
   for (i = 0; i < P->Faces->cur; i++)
   {
     F = P->Faces->f[i];

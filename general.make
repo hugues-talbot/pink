@@ -391,7 +391,8 @@ $(BDIR)/fft \
 $(BDIR)/gradientcd \
 $(BDIR)/gaussianfilter \
 $(BDIR)/laplacian \
-$(BDIR)/longestplateau
+$(BDIR)/longestplateau \
+$(BDIR)/shencastan
 
 MESH3D=\
 $(BDIR)/mcube\
@@ -1687,6 +1688,9 @@ $(BDIR)/laplacian:	$(CDIR)/laplacian.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(
 
 $(BDIR)/longestplateau:	$(CDIR)/longestplateau.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(OBJ_COMMON) $(ODIR)/mccodimage.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/longestplateau.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/longestplateau
+
+$(BDIR)/shencastan:	$(CDIR)/shencastan.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lderiche.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lderiche.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/shencastan.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lderiche.o $(LIBS) -o $(BDIR)/shencastan
 
 # ===============================================================
 # MESH3D
