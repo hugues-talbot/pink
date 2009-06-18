@@ -1,4 +1,4 @@
-/* $Id: skelpar3d.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: skelpar3d.c,v 1.3 2009-06-18 06:34:55 mcouprie Exp $ */
 /*! \file skelpar3d.c
 
 \brief parallel 3D binary skeleton
@@ -17,7 +17,7 @@ The possible choices are:
 \li 0: ultimate, without constraint (MK3a)
 \li 1: curvilinear, based on 1D isthmus (CK3a)
 \li 2: medial axis preservation (AK3) - parameter inhibit represents the minimal radius of medial axis balls which are considered
-\li 3: ultimate (MK3)
+\li 3: ultimate (MK3) - if nsteps = -2, returns the topological distance
 \li 4: curvilinear based on ends (EK3)
 \li 5: curvilinear based on ends, with end reconstruction (CK3b)
 \li 6: topological axis (not homotopic)
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "   0: ultimate, without constraint (MK3a)\n");
     fprintf(stderr, "   1: curvilinear, based on 1D isthmus (CK3a)\n");
     fprintf(stderr, "   2: medial axis preservation (AK3) - parameter inhibit represents the minimal radius of medial axis balls which are considered\n");
-    fprintf(stderr, "   3: ultimate (MK3)\n");
+    fprintf(stderr, "   3: ultimate (MK3) - if nsteps = -2, returns the topological distance\n");
     fprintf(stderr, "   4: curvilinear based on ends (EK3)\n");
     fprintf(stderr, "   5: curvilinear based on ends, with end reconstruction (CK3b)\n");
     fprintf(stderr, "   6: topological axis (not homotopic)\n");
@@ -122,11 +122,32 @@ int main(int argc, char **argv)
 	exit(1);
       } break;
     case 3:
-      if (! lskelMK3(image, nsteps, inhibit))
+      if (nsteps == -2)
       {
-	fprintf(stderr, "%s: lskelMK3c failed\n", argv[0]);
-	exit(1);
-      } break;
+	struct xvimage *disttopo = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
+	if (disttopo == NULL)
+	{   
+	  fprintf(stderr, "%s(): allocimage failed\n", argv[0]);
+	  return 0;
+	}
+	if (! ldisttopo3(image, inhibit, disttopo))
+        {
+	  fprintf(stderr, "%s: ldistaxetopo3 failed\n", argv[0]);
+	  exit(1);
+	} 
+	writeimage(disttopo, argv[argc-1]);
+	freeimage(image);
+	freeimage(disttopo);
+	return 0;
+      }
+      else
+      {
+        if (! lskelMK3(image, nsteps, inhibit))
+        {
+	  fprintf(stderr, "%s: lskelMK3c failed\n", argv[0]);
+	  exit(1);
+        } break;
+      }
     case 4:
       if (! lskelEK3(image, nsteps, inhibit))
       {

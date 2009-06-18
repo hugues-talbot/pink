@@ -1,9 +1,9 @@
-/* $Id: explode.c,v 1.3 2009-02-11 13:38:56 mcouprie Exp $ */
+/* $Id: explode.c,v 1.4 2009-06-18 06:34:55 mcouprie Exp $ */
 /*! \file explode.c
 
 \brief converts single 3D pgm file into a series of 2D pgm files
 
-<B>Usage:</B> explode in.pgm [begin end] name_prefix
+<B>Usage:</B> explode in.pgm [begin end step] name_prefix
 
 <B>Description:</B>
 Generated file names are of the form: <B>name_prefix</B>nnnn.pgm, 
@@ -32,16 +32,16 @@ int main(int argc, char **argv)
 {
   int32_t i, j, k, x;
   char bufname[1024];
-  int32_t namelen, begin, end;
+  int32_t namelen, begin, end, step;
   struct xvimage * image_in;
   struct xvimage * image_out;
   int32_t rs, cs, ds, ps, N;
   uint8_t *I;
   uint8_t *O;
 
-  if ((argc != 3) && (argc != 5))
+  if ((argc != 3) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in.pgm [begin end] name_prefix\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm [begin end step] name_prefix\n", argv[0]);
     exit(1);
   }
 
@@ -58,15 +58,17 @@ int main(int argc, char **argv)
   N = ps * ds;              /* taille image */
   I = UCHARDATA(image_in);
 
-  if (argc == 5)
+  if (argc == 6)
   {
     begin = atoi(argv[2]);
     end = atoi(argv[3]);
+    step = atoi(argv[4]);
   }
   else
   {
     begin = 0;
-    end = ds;
+    end = ds-1;
+    step = 1;
   }
 
   strcpy(bufname, argv[argc - 1]);
@@ -80,7 +82,7 @@ int main(int argc, char **argv)
   }
   O = UCHARDATA(image_out);
 
-  for (k = begin; k < end; k++)
+  for (k = begin; k <= end; k += step)
   {  
     bufname[namelen] =   '0' + (k / 1000) % 10;
     bufname[namelen+1] = '0' + (k / 100) % 10;

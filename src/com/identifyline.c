@@ -1,16 +1,16 @@
-/* $Id: identifyplane.c,v 1.2 2009-06-18 06:34:55 mcouprie Exp $ */
-/*! \file identifyplane.c
+/* $Id: identifyline.c,v 1.1 2009-06-18 06:34:55 mcouprie Exp $ */
+/*! \file identifyline.c
 
-\brief identification of a best matching plane from a set of 3D points
+\brief identification of a best matching line from a set of 2D points
 
-<B>Usage:</B> identifyplane in.list out.list
+<B>Usage:</B> identifyline in.list out.list
 
 <B>Description:</B>
-Identifies the parameters (a, b, c, d) of the equation of the 3D plane:
-ax+by+cz+d=0 that minimizes the least square error between this plane 
+Identifies the parameters (a,b) of the equation of the 2D line:
+ax+b=y that minimizes the least square error between this line 
 and the given points. Method: basic linear regression.
 
-<B>Types supported:</B> list 3D
+<B>Types supported:</B> list 2D
 
 <B>Category:</B> geo
 \ingroup  geo
@@ -19,7 +19,7 @@ and the given points. Method: basic linear regression.
 */
 
 /* 
-  Michel Couprie - decembre 2008
+  Michel Couprie - juin 2009
 */
 
 #include <stdio.h>
@@ -39,7 +39,7 @@ int main(int argc, char **argv)
   FILE *fd = NULL;
   int32_t n, i;
   char type;
-  double *pbx, *pby, *pbz, a, b, c, d;
+  double *pbx, *pby, a, b;
 
   if (argc != 3)
   {
@@ -55,7 +55,7 @@ int main(int argc, char **argv)
   }
 
   fscanf(fd, "%c", &type);
-  if (type != 'B')
+  if (type != 'b')
   {
     fprintf(stderr, "usage: %s: bad file format : %c \n", argv[0], type);
     exit(1);
@@ -65,27 +65,26 @@ int main(int argc, char **argv)
 
   pbx = (double *)malloc(n * sizeof(double));
   pby = (double *)malloc(n * sizeof(double));
-  pbz = (double *)malloc(n * sizeof(double));
 
-  if ((pbx == NULL) || (pby == NULL) || (pbz == NULL))
+  if ((pbx == NULL) || (pby == NULL))
   {
     fprintf(stderr, "usage: %s: malloc failed\n", argv[0]);
     exit(1);
   }
 
   for (i = 0; i < n; i++)
-    fscanf(fd, "%lf %lf %lf\n", pbx+i, pby+i, pbz+i);
+    fscanf(fd, "%lf %lf\n", pbx+i, pby+i);
 
   fclose(fd);
 
-  if (!lidentifyplane(pbx, pby, pbz, n, &a, &b, &c, &d))
+  if (!lidentifyline(pbx, pby, n, &a, &b))
   {
-    fprintf(stderr, "%s: lidentifyplane failed\n", argv[0]);
+    fprintf(stderr, "%s: lidentifyline failed\n", argv[0]);
     exit(1);
   }
 
 #ifdef VERBOSE
-  printf("a = %g, b = %g, c = %g, d = %g\n", a, b, c, d);
+  printf("a = %g, b = %g\n", a, b);
 #endif
 
   fd = fopen(argv[argc - 1],"w");
@@ -94,13 +93,12 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc - 1]);
     exit(1);
   }
-  fprintf(fd, "e %d\n", 4); 
-  fprintf(fd, "%g %g %g %g %g\n", a, b, c, d); 
+  fprintf(fd, "e %d\n", 2); 
+  fprintf(fd, "%g %g\n", a, b); 
   fclose(fd);
 
   free(pbx);
   free(pby);
-  free(pbz);
 
   return 0;
 }

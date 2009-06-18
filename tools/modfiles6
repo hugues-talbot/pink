@@ -1,0 +1,5 @@
+#!/bin/csh
+foreach file ($PINK/src/com/*.c)
+  sed -e 's/int32_t main(/int main(/g' $file > toto
+  mv toto $file
+end

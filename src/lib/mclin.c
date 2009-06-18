@@ -1,4 +1,4 @@
-/* $Id: mclin.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: mclin.c,v 1.3 2009-06-18 06:34:55 mcouprie Exp $ */
 /* 
 Librairie mclin : 
 
@@ -963,6 +963,196 @@ int32_t lin_trouvemin(double * x, double * d, double (*F)(double *, int32_t), in
   if (k < MAXITER) return k+1; else return 0;
  
 } // lin_trouvemin()
+
+/* ==================================== */
+int32_t lidentifyline(double *pbx, double *pby, int32_t npb, double *a, double *b)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lidentifyline"
+/*
+ Identifie les parametres (a,b) de l'equation y = ax + b d'une droite
+ pour minimiser l'ecart (au sens des moindres carres)
+ entre cette droite et les points contenus dans la liste de points (pbx,pby).
+ Régression linéaire (voir http://en.wikipedia.org/wiki/Linear_regression ).
+ */
+{
+  int32_t i, ret, noresult = 1;
+  double *X, *Y, *XtX, *XtXi, *XtY, *RtXtY, *YtY, *R;
+  double err;
+
+  if (npb < 2)
+  {
+    fprintf(stderr, "%s: not enough points\n", F_NAME);
+    return 0;
+  }  
+
+  X = lin_zeros(npb, 2);
+  Y = lin_zeros(npb, 1);
+  XtX = lin_zeros(2, 2);
+  XtXi = lin_zeros(2, 2);
+  XtY = lin_zeros(2, 1);
+  R = lin_zeros(2, 1);
+  RtXtY = lin_zeros(1, 1);
+  YtY = lin_zeros(1, 1);
+
+  for (i = 0; i < npb; i++)
+  {
+    X[2*i] = 1.0;
+    X[2*i + 1] = pbx[i];
+    Y[i] = pby[i];
+  }  
+  lin_multAtB(X, X, XtX, npb, 2, npb, 2);
+  ret = lin_invmat2(XtX, XtXi);
+  if (ret != 0)
+  { 
+    noresult = 0;
+    lin_multAtB(X, Y, XtY, npb, 2, npb, 1);
+    lin_mult(XtXi, XtY, R, 2, 2, 1);
+    *a = R[1];
+    *b = R[0];
+  }
+
+  free(X);
+  free(Y);
+  free(XtX);
+  free(XtXi);
+  free(XtY);
+  free(RtXtY);
+  free(YtY);
+  free(R);
+  if (noresult) return 0;
+  return 1;
+} /* lidentifyline() */
+
+/* ==================================== */
+int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, double *a, double *b, double *c, double *d)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lidentifyplane"
+/*
+ Identifie les parametres (a, b, c, d) de l'equation d'un plan 3D
+ pour minimiser l'ecart (au sens des moindres carres)
+ entre ce plan et les points contenus dans la liste de points (pbx,pby,pbz).
+ Régression linéaire (voir http://en.wikipedia.org/wiki/Linear_regression ).
+ */
+{
+  int32_t i, ret, noresult = 1;
+  double *X, *Y, *XtX, *XtXi, *XtY, *RtXtY, *YtY, *R;
+  double err;
+
+  if (npb < 3)
+  {
+    fprintf(stderr, "%s: not enough points\n", F_NAME);
+    return 0;
+  }  
+
+  X = lin_zeros(npb, 3);
+  Y = lin_zeros(npb, 1);
+  XtX = lin_zeros(3, 3);
+  XtXi = lin_zeros(3, 3);
+  XtY = lin_zeros(3, 1);
+  R = lin_zeros(3, 1);
+  RtXtY = lin_zeros(1, 1);
+  YtY = lin_zeros(1, 1);
+
+  // L'équation cherchée est du type : ax + by + cz + d = 0.
+  // Pour réduire le nombre d'inconnues à 3, on force l'un des 
+  // trois paramètres a,b,c à -1.
+  // Pour savoir lequel, on fait les trois calculs et l'on retient
+  // celui qui donne l'erreur minimale.
+
+  err = FLOAT_MAX;
+  for (i = 0; i < npb; i++)
+  {
+    X[3*i] = 1.0;
+    X[3*i + 1] = pbx[i];
+    X[3*i + 2] = pby[i];
+    Y[i] = pbz[i];
+  }  
+  lin_multAtB(X, X, XtX, npb, 3, npb, 3);
+  ret = lin_invmat3(XtX, XtXi);
+  if (ret != 0)
+  { 
+    noresult = 0;
+    lin_multAtB(X, Y, XtY, npb, 3, npb, 1);
+    lin_mult(XtXi, XtY, R, 3, 3, 1);
+    // calcule l'erreur
+    lin_multAtB(R, XtY, RtXtY, 3, 1, 3, 1);
+    lin_multAtB(Y, Y, YtY, npb, 1, npb, 1);
+    err = *YtY - *RtXtY;
+    //    printf("cas 1 : erreur %g\n", err);
+    *a = R[1];
+    *b = R[2];
+    *c = -1;
+    *d = R[0];
+  }
+
+  for (i = 0; i < npb; i++)
+  {
+    X[3*i] = 1.0;
+    X[3*i + 1] = pbz[i];
+    X[3*i + 2] = pbx[i];
+    Y[i] = pby[i];
+  }  
+  lin_multAtB(X, X, XtX, npb, 3, npb, 3);
+  ret = lin_invmat3(XtX, XtXi);
+  if (ret != 0)
+  { 
+    noresult = 0;
+    lin_multAtB(X, Y, XtY, npb, 3, npb, 1);
+    lin_mult(XtXi, XtY, R, 3, 3, 1);
+    // calcule l'erreur
+    lin_multAtB(R, XtY, RtXtY, 3, 1, 3, 1);
+    lin_multAtB(Y, Y, YtY, npb, 1, npb, 1);
+    //    printf("cas 2 : erreur %g\n", *YtY - *RtXtY);
+    if (*YtY - *RtXtY < err)
+    {
+      err = *YtY - *RtXtY;
+      *a = R[2];
+      *b = -1;
+      *c = R[1];
+      *d = R[0];
+    }
+  }
+
+  for (i = 0; i < npb; i++)
+  {
+    X[3*i] = 1.0;
+    X[3*i + 1] = pby[i];
+    X[3*i + 2] = pbz[i];
+    Y[i] = pbx[i];
+  }  
+  lin_multAtB(X, X, XtX, npb, 3, npb, 3);
+  ret = lin_invmat3(XtX, XtXi);
+  if (ret != 0)
+  { 
+    noresult = 0;
+    lin_multAtB(X, Y, XtY, npb, 3, npb, 1);
+    lin_mult(XtXi, XtY, R, 3, 3, 1);
+    // calcule l'erreur
+    lin_multAtB(R, XtY, RtXtY, 3, 1, 3, 1);
+    lin_multAtB(Y, Y, YtY, npb, 1, npb, 1);
+    //    printf("cas 3 : erreur %g\n", *YtY - *RtXtY);
+    if (*YtY - *RtXtY < err)
+    {
+      *a = -1;
+      *b = R[1];
+      *c = R[2];
+      *d = R[0];
+    }
+  }
+
+  free(X);
+  free(Y);
+  free(XtX);
+  free(XtXi);
+  free(XtY);
+  free(RtXtY);
+  free(YtY);
+  free(R);
+  if (noresult) return 0;
+  return 1;
+} /* lidentifyplane() */
 
 /* ============================================= */
 /* ============================================= */

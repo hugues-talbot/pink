@@ -1,13 +1,13 @@
-/* $Id: byte2float.c,v 1.3 2009-06-18 06:34:55 mcouprie Exp $ */
-/*! \file byte2float.c
+/* $Id: long2float.c,v 1.1 2009-06-18 06:34:55 mcouprie Exp $ */
+/*! \file long2float.c
 
-\brief converts a "byte" image to a "float" image
+\brief converts a "long" image to a "float" image
 
-<B>Usage:</B> byte2float in out
+<B>Usage:</B> long2float in out
 
 <B>Description:</B> For each pixel x, out[x] = (float)in[x]
 
-<B>Types supported:</B> byte 2d, byte 3d.
+<B>Types supported:</B> long 2d, long 3d.
 
 <B>Category:</B> convert
 \ingroup convert
@@ -29,9 +29,9 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * imagefloat;
-  struct xvimage * imagebyte;
+  struct xvimage * imagelong;
   float *L;
-  uint8_t *B;
+  uint32_t *B;
   int32_t x;
 
   int32_t rs, cs, d, N;
@@ -42,24 +42,24 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  imagebyte = readimage(argv[1]); 
-  if (imagebyte == NULL)
+  imagelong = readimage(argv[1]); 
+  if (imagelong == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  if (datatype(imagebyte) != VFF_TYP_1_BYTE)
+  if (datatype(imagelong) != VFF_TYP_4_BYTE)
   {
-    fprintf(stderr, "%s: image type must be uint8_t\n", argv[0]);
+    fprintf(stderr, "%s: image type must be uint32_t\n", argv[0]);
     exit(1);
   }
 
-  rs = rowsize(imagebyte);
-  cs = colsize(imagebyte);
-  d = depth(imagebyte);
+  rs = rowsize(imagelong);
+  cs = colsize(imagelong);
+  d = depth(imagelong);
   N = rs * cs * d;
-  B = UCHARDATA(imagebyte);
+  B = ULONGDATA(imagelong);
   
   imagefloat = allocimage(NULL, rs, cs, d, VFF_TYP_FLOAT);
   if (imagefloat == NULL)
@@ -68,16 +68,16 @@ int main(int argc, char **argv)
     exit(1);
   }
   L = FLOATDATA(imagefloat);
-  imagefloat->xdim = imagebyte->xdim;
-  imagefloat->ydim = imagebyte->ydim;
-  imagefloat->zdim = imagebyte->zdim;
+  imagefloat->xdim = imagelong->xdim;
+  imagefloat->ydim = imagelong->ydim;
+  imagefloat->zdim = imagelong->zdim;
 
   for (x = 0; x < N; x++)
     L[x] = (float)B[x];
 
   writeimage(imagefloat, argv[2]);
   freeimage(imagefloat);
-  freeimage(imagebyte);
+  freeimage(imagelong);
 
   return 0;
 } /* main */

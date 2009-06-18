@@ -1,4 +1,4 @@
-/* $Id: larith.c,v 1.4 2009-03-24 14:50:25 mcouprie Exp $ */
+/* $Id: larith.c,v 1.5 2009-06-18 06:34:55 mcouprie Exp $ */
 /* 
   operations arithmetiques : 
     ladd
@@ -9,6 +9,7 @@
     linverse
     lequal
     ldiff
+    ldivide
     linf
     lmax
     lmax1
@@ -372,6 +373,55 @@ int32_t ldiff(
 
   return 1;
 } /* ldiff() */
+
+/* ==================================== */
+int32_t ldivide(
+  struct xvimage * image1,
+  struct xvimage * image2)
+/* quotient (pixel par pixel) de 2 images */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "ldivide"
+{
+  int32_t i;
+  uint8_t *pt1, *pt2;
+  uint32_t *PT1, *PT2; 
+  float *FPT1, *FPT2; 
+  int32_t rs, cs, d, N;
+
+  rs = rowsize(image1);
+  cs = colsize(image1);
+  d = depth(image1);
+  N = rs * cs * d;
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    exit(0);
+  }
+
+  if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
+  {
+    for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+      if (*pt2 != 0) *pt1 = *pt1 / *pt2; else *pt1 = 0;
+  }
+  else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
+  {
+    for (PT1 = ULONGDATA(image1), PT2 = ULONGDATA(image2), i = 0; i < N; i++, PT1++, PT2++)
+      if (*PT2 != 0) *PT1 = *PT1 / *PT2; else *PT1 = 0;
+  }
+  else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
+  {
+    for (FPT1 = FLOATDATA(image1), FPT2 = FLOATDATA(image2), i = 0; i < N; i++, FPT1++, FPT2++)
+      if (*FPT2 != 0.0) *FPT1 = *FPT1 / *FPT2; else *FPT1 = 0.0;
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return 0;
+  }
+
+  return 1;
+} /* ldivide() */
 
 /* ==================================== */
 int32_t lequal(

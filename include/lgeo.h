@@ -1,4 +1,4 @@
-/* $Id: lgeo.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: lgeo.h,v 1.4 2009-06-18 06:34:55 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,7 +50,6 @@ extern cercle *AjusteCercle(struct xvimage *img, double xc, double yc, double r)
 
 extern cercle *AjusteCercle2(struct xvimage *img, double xc, double yc, double r);
 
-extern int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, double *a, double *b, double *c, double *d);
 #ifdef __cplusplus
 }
 #endif

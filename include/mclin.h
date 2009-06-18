@@ -1,4 +1,4 @@
-/* $Id: mclin.h,v 1.3 2009-01-07 12:46:34 mcouprie Exp $ */
+/* $Id: mclin.h,v 1.4 2009-06-18 06:34:55 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -41,7 +41,8 @@ extern int32_t lellipsefit(double * x, double * y, int32_t n,
                        double *x0, double *y0, double *xa, double *ya,
 					   double *xb, double *yb);
 extern int32_t lin_trouvemin(double * x, double * d, double (*F)(double *, int32_t), int32_t n, double *precision);
-
+extern int32_t lidentifyline(double *pbx, double *pby, int32_t npb, double *a, double *b);
+extern int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, double *a, double *b, double *c, double *d);
 
 #ifdef __cplusplus
 }

@@ -6,7 +6,9 @@ $(BDIR)/addconst \
 $(BDIR)/area \
 $(BDIR)/average \
 $(BDIR)/average1 \
+$(BDIR)/correctbias \
 $(BDIR)/diffimages \
+$(BDIR)/div \
 $(BDIR)/dup \
 $(BDIR)/equal \
 $(BDIR)/genimage \
@@ -53,6 +55,7 @@ $(BDIR)/float2long \
 $(BDIR)/hls2rgb \
 $(BDIR)/list2pgm \
 $(BDIR)/long2byte \
+$(BDIR)/long2float \
 $(BDIR)/ombre \
 $(BDIR)/pgm2bmp \
 $(BDIR)/pgm2closedcurve \
@@ -333,6 +336,7 @@ $(BDIR)/fitcircle \
 $(BDIR)/frame \
 $(BDIR)/genplane \
 $(BDIR)/houghcercles \
+$(BDIR)/identifyline \
 $(BDIR)/identifyplane \
 $(BDIR)/insert \
 $(BDIR)/lenoir \
@@ -528,8 +532,14 @@ $(BDIR)/average:	$(CDIR)/average.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMM
 $(BDIR)/average1:	$(CDIR)/average1.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/average1.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/average1
 
+$(BDIR)/correctbias:	$(CDIR)/correctbias.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/correctbias.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/correctbias
+
 $(BDIR)/diffimages:	$(CDIR)/diffimages.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/diffimages.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/diffimages
+
+$(BDIR)/div:	$(CDIR)/div.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/larith.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/div.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/div
 
 $(BDIR)/dup:	$(CDIR)/dup.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/dup.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/dup
@@ -665,6 +675,9 @@ $(BDIR)/list2pgm:	$(CDIR)/list2pgm.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(OB
 
 $(BDIR)/long2byte:	$(CDIR)/long2byte.c $(IDIR)/mcimage.h $(IDIR)/lhisto.h $(OBJ_COMMON) $(ODIR)/lhisto.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/long2byte.c $(OBJ_COMMON) $(ODIR)/lhisto.o $(LIBS) -o $(BDIR)/long2byte
+
+$(BDIR)/long2float:	$(CDIR)/long2float.c $(IDIR)/mcimage.h $(IDIR)/lhisto.h $(OBJ_COMMON) $(ODIR)/lhisto.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/long2float.c $(OBJ_COMMON) $(ODIR)/lhisto.o $(LIBS) -o $(BDIR)/long2float
 
 $(BDIR)/ombre:	$(CDIR)/ombre.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(OBJ_COMMON) $(ODIR)/mccodimage.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ombre.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/ombre
@@ -1517,8 +1530,11 @@ $(BDIR)/genplane:	$(CDIR)/genplane.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 $(BDIR)/houghcercles:	$(CDIR)/houghcercles.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(ODIR)/lhoughcercles.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/houghcercles.c $(ODIR)/lhoughcercles.o $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/houghcercles
 
-$(BDIR)/identifyplane:	$(CDIR)/identifyplane.c $(IDIR)/lgeo.h $(IDIR)/mcgeo.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/llabelextrema.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/lgeo.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/identifyplane.c $(ODIR)/lgeo.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/identifyplane
+$(BDIR)/identifyline:	$(CDIR)/identifyline.c $(IDIR)/mcgeo.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/llabelextrema.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/identifyline.c $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/identifyline
+
+$(BDIR)/identifyplane:	$(CDIR)/identifyplane.c $(IDIR)/mcgeo.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/llabelextrema.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/identifyplane.c $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/identifyplane
 
 $(BDIR)/insert:	$(CDIR)/insert.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/lcrop.h $(ODIR)/lcrop.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/insert.c $(OBJ_COMMON) $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/insert

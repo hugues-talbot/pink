@@ -1,4 +1,4 @@
-/* $Id: skelpar.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: skelpar.c,v 1.3 2009-06-18 06:34:55 mcouprie Exp $ */
 /*! \file skelpar.c
 
 \brief parallel binary skeleton
@@ -78,6 +78,31 @@ int main(int argc, char **argv)
   if ((argc != 5) && (argc != 6))
   {
     fprintf(stderr, "usage: %s in.pgm algorithm nsteps [inhibit] out.pgm\n", argv[0]);
+    fprintf(stderr, "  0: Pavlidis 1981\n");
+    fprintf(stderr, "  1: Eckhardt and Maderlechner 1993\n");
+    fprintf(stderr, "  2: Couprie and Bertrand, ultimate (MK2)\n");
+    fprintf(stderr, "  3: Couprie and Bertrand, curvilinear\n");
+    fprintf(stderr, "  4: Couprie and Bertrand, curvilinear with reconstruction property (AK2)\n");
+    fprintf(stderr, "  5: Rutovitz 1966 [DOES NOT PRESERVE TOPOLOGY]\n");
+    fprintf(stderr, "  6: Zhang and Wang 1988 [DOES NOT PRESERVE TOPOLOGY]\n");
+    fprintf(stderr, "  7: Han, La and Rhee\n");
+    fprintf(stderr, "  8: Guo and Hall 1992 (1)\n");
+    fprintf(stderr, "  9: Guo and Hall 1992 (2)\n");
+    fprintf(stderr, "  10: Guo and Hall 1992 (3)\n");
+    fprintf(stderr, "  11: Chin and Wan and Stover and Iverson 1987\n");
+    fprintf(stderr, "  12: Jang and Chin 1992 [DOES NOT PRESERVE TOPOLOGY]\n");
+    fprintf(stderr, "  13: Jang and Chin (correction mc)\n");
+    fprintf(stderr, "  14: MNS preservation\n");
+    fprintf(stderr, "  15: Jang and Chin 1993 (reconstruction)\n");
+    fprintf(stderr, "  16: Choy, Choy and Siu 1995 [DOES NOT PRESERVE TOPOLOGY]\n");
+    fprintf(stderr, "  17: Bernard and Manzanera 1999\n");
+    fprintf(stderr, "  18: Holt et al. 1987\n");
+    fprintf(stderr, "  19: Hall 1989\n");
+    fprintf(stderr, "  20: Wu and Tsai 1992 [DOES NOT PRESERVE TOPOLOGY]\n");
+    fprintf(stderr, "  21: Manzanera and Bernard (variant by GB)\n");
+    fprintf(stderr, "  22: Bertrand curvilinear with reconstruction, asymmetrical\n");
+    fprintf(stderr, "  23: Bertrand curvilinear with reconstruction, symmetrical\n");
+    fprintf(stderr, "  24: Rosenfeld directionnel\n");
     exit(1);
   }
 

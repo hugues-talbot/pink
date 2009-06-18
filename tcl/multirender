@@ -95,7 +95,7 @@ for {set i 0} {$i < $argc} {incr i} {
 }
 
 set cam1 [ren1 GetActiveCamera]
-$cam1 ParallelProjectionOn
+$cam1 ParallelProjectionOff
 
 ren1 ResetCamera
 

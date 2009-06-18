@@ -1,4 +1,4 @@
-/* $Id: lskelpar3d.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: lskelpar3d.c,v 1.2 2009-06-18 06:34:55 mcouprie Exp $ */
 /* 
    Algorithmes 3D "fully parallel" de squelettisation
 
@@ -1572,7 +1572,7 @@ int32_t lskelMK3(struct xvimage *image,
 /*
 Squelette symétrique ultime avec ensemble de contrainte
 Version révisée d'après le papier IWCIA 2006
-Algo MK3 données: S
+Algo MK3 données: S, I
 Répéter jusqu'à stabilité
   P := voxels simples pour S et non dans I
   C2 := voxels 2M-cruciaux (match2)
@@ -1703,6 +1703,131 @@ writeimage(t,"_T");
 } /* lskelMK3() */
 
 /* ==================================== */
+int32_t ldisttopo3(struct xvimage *image, 
+		   struct xvimage *inhibit,
+		   struct xvimage *res)
+/* ==================================== */
+/*
+Idem squelette symétrique ultime (algo MK3).
+Marque les points (dans res) par le nombre d'itérations nécessaires à leur enlèvement.
+Les points non enlevés sont marqués MARK_INFTY.
+*/
+#undef F_NAME
+#define F_NAME "ldisttopo3"
+//#define MARK_INFTY 2000000000
+#define MARK_INFTY 255
+{ 
+  int32_t i, j, k, x, y, z;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  struct xvimage *t = copyimage(image); 
+  uint8_t *T = UCHARDATA(t);
+  uint32_t *O = ULONGDATA(res); 
+  int32_t step, nonstab, minvois;
+  uint8_t v[27];
+  
+  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    exit(0);
+  }
+  if (datatype(image) != VFF_TYP_1_BYTE)
+  {
+    fprintf(stderr, "%s: image type must be uint8_t\n", F_NAME);
+    return(0);
+  }
+  if (datatype(res) != VFF_TYP_4_BYTE)
+  {
+    fprintf(stderr, "%s: result type must be uint32_t\n", F_NAME);
+    return(0);
+  }
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+  for (i = 0; i < N; i++) if (S[i]) O[i] = MARK_INFTY; else O[i] = 0;
+
+  if (inhibit != NULL) 
+  {
+    fprintf(stderr, "%s: inhibit not yet implemented\n", F_NAME);
+    return(0);
+  }
+
+
+  init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab)
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("disttopo step %d\n", step);
+#endif
+
+    // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES
+    for (i = 0; i < N; i++) 
+      if (IS_OBJECT(S[i]) && simple26(S, i, rs, ps, N))
+	SET_SIMPLE(S[i]);
+#ifdef DEBUG
+writeimage(image,"_S");
+#endif
+    // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2M-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (match2(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+
+    // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1M-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (match1(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+
+    // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0M-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (match0(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+
+    memset(T, 0, N);
+    for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+	T[i] = 1;
+    for (i = 0; i < N; i++)
+      if (S[i] && !T[i]) 
+      {
+	S[i] = 0; 
+	O[i] = step;
+	nonstab = 1; 
+      }
+    for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+  }
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  freeimage(t);
+  termine_topo3d();
+  return(1);
+} /* ldisttopo3() */
+
+/* ==================================== */
 int32_t ldistaxetopo3(struct xvimage *image, 
 		      struct xvimage *inhibit,
 		      struct xvimage *res)
@@ -1715,8 +1840,8 @@ Retourne dans image l'axe topologique.
 */
 #undef F_NAME
 #define F_NAME "ldistaxetopo3"
-     //#define MARK_INFTY 2000000000
-#define MARK_INFTY 255
+#define MARK_INFTY 2000000000
+//#define MARK_INFTY 255
 { 
   int32_t i, j, k, x, y, z;
   int32_t rs = rowsize(image);     /* taille ligne */

@@ -1,4 +1,4 @@
-/* $Id: drawellipse.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: drawellipse.c,v 1.3 2009-06-18 06:34:55 mcouprie Exp $ */
 /*! \file drawellipse.c
 
 \brief Draws an ellipse
@@ -15,8 +15,8 @@ Otherwise it is empty (default).
 
 <B>Types supported:</B> byte 2d
 
-<B>Category:</B> draw
-\ingroup  draw
+<B>Category:</B> draw geo
+\ingroup  draw geo
 
 \author Michel Couprie
 */

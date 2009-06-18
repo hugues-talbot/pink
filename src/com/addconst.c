@@ -1,4 +1,4 @@
-/* $Id: addconst.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: addconst.c,v 1.3 2009-06-18 06:34:55 mcouprie Exp $ */
 /*! \file addconst.c
 
 \brief adds a constant value to an image
@@ -44,6 +44,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
+
   constante = atoi(argv[2]);
 
   if (! laddconst(image1, constante))
