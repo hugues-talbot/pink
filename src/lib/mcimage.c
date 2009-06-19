@@ -1,4 +1,4 @@
-/* $Id: mcimage.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* $Id: mcimage.c,v 1.2 2009-06-19 06:21:29 mcouprie Exp $ */
 /* 
    Librairie mcimage : 
 
@@ -906,12 +906,24 @@ void writeascimage(struct xvimage * image, char *filename)
     if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
     fprintf(fd, "255\n");
 
-    for (i = 0; i < N; i++)
-    {
-      if (i % rs == 0) fprintf(fd, "\n");
-      if (i % ps == 0) fprintf(fd, "\n");
-      fprintf(fd, "%3d ", (int32_t)(UCHARDATA(image)[i]));
-    } /* for i */
+    if (N > 8000) // grandes images : pas de padding (blancs)
+    { 
+      for (i = 0; i < N; i++)
+      {
+        if (i % rs == 0) fprintf(fd, "\n");
+        if (i % ps == 0) fprintf(fd, "\n");
+        fprintf(fd, "%d ", (int32_t)(UCHARDATA(image)[i]));
+      } /* for i */
+    }
+    else
+    { 
+      for (i = 0; i < N; i++)
+      {
+        if (i % rs == 0) fprintf(fd, "\n");
+        if (i % ps == 0) fprintf(fd, "\n");
+        fprintf(fd, "%3d ", (int32_t)(UCHARDATA(image)[i]));
+      } /* for i */
+    }
     fprintf(fd, "\n");
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
