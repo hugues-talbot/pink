@@ -270,6 +270,7 @@ ORDRES=\
 $(BDIR)/2dcolor \
 $(BDIR)/2dkhalimskize \
 $(BDIR)/2dmakecomplex \
+$(BDIR)/2dseltopo \
 $(BDIR)/2dthin \
 $(BDIR)/3dalpha \
 $(BDIR)/3dbeta \
@@ -1332,6 +1333,9 @@ $(BDIR)/2dkhalimskize:	$(CDIR)/2dkhalimskize.c $(IDIR)/mcimage.h $(OBJ_COMMON) $
 
 $(BDIR)/2dmakecomplex:	$(CDIR)/2dmakecomplex.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l2dkhalimsky.h $(ODIR)/l2dkhalimsky.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(ODIR)/bdd1.alphacube.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dmakecomplex.c $(OBJ_COMMON) $(ODIR)/l2dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky2d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/mcindic.o $(LIBS) -o $(BDIR)/2dmakecomplex
+
+$(BDIR)/2dseltopo:	$(CDIR)/2dseltopo.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l2dkhalimsky.h $(ODIR)/l2dkhalimsky.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dseltopo.c $(OBJ_COMMON) $(ODIR)/l2dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mcindic.o $(LIBS) -o $(BDIR)/2dseltopo
 
 $(BDIR)/2dthin:	$(CDIR)/2dthin.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l2dkhalimsky.h $(ODIR)/l2dkhalimsky.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dthin.c $(OBJ_COMMON) $(ODIR)/l2dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mcindic.o $(LIBS) -o $(BDIR)/2dthin

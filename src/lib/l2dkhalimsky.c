@@ -1,4 +1,4 @@
-/* $Id: l2dkhalimsky.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: l2dkhalimsky.c,v 1.3 2009-06-24 05:32:12 mcouprie Exp $ */
 /* Operateurs agissant dans la grille de Khalimsky 2d */
 /* Michel Couprie - mars 2000 */
 
@@ -1536,3 +1536,75 @@ int32_t l2dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbtrous, int32_
   LifoTermine(LIFO);
   return 1;
 } /* l2dinvariants() */
+
+/* =============================================================== */
+int32_t l2dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8_t a2, uint8_t b1, uint8_t b2)
+/* =============================================================== */
+/* 
+  Selects the elements x of the Khalimsky object \b k 
+  which satisfy the following inequalities : 
+  \b a1 <= a(x) <= \b a2
+  \b b1 <= b(x) <= \b b2
+  \b d1 <= d(x) <= \b d2
+  where
+  d(x) = dimension of x
+  a(x) = number of elements under x of dimension d(x) - 1
+  b(x) = number of elements over x of dimension d(x) + 1
+*/
+#undef F_NAME
+#define F_NAME "l2dseltype"
+{
+  int32_t rs, cs, N, i1, j1, k1, i2, j2, k2, x, y, a, b, d;
+  uint8_t * K;
+  struct xvimage * kp;
+  uint8_t * KP;
+  int32_t tab[9]; int32_t n, u;
+
+  rs = rowsize(k);
+  cs = colsize(k);
+  N = rs * cs;
+  K = UCHARDATA(k);
+
+  kp = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
+  if (kp == NULL)
+  {   
+    fprintf(stderr,"%s : allocimage failed\n", F_NAME);
+    return(0);
+  }
+  KP = UCHARDATA(kp);
+  memset(KP, 0, N);
+
+  for (j1 = 0; j1 < cs; j1++)
+  for (i1 = 0; i1 < rs; i1++)
+  {
+    x = j1*rs + i1;
+    d = DIM2D(i1,j1);
+    if (K[x] && (d1 <= d) && (d <= d2))
+    {
+      Alphacarre2d(rs, cs, i1, j1, tab, &n);
+      for (a = u = 0; u < n; u++) /* parcourt les eventuels alpha-voisins */
+      {
+	y = tab[u];
+	i2 = y%rs; j2 = y/rs;
+	if (K[y] && (DIM2D(i2,j2) == (d-1))) a++;
+      }
+      if ((a1 <= a) && (a <= a2))
+      {
+	Betacarre2d(rs, cs, i1, j1, tab, &n);
+	for (b = u = 0; u < n; u++) /* parcourt les eventuels beta-voisins */
+	{
+	  y = tab[u];
+	  i2 = y%rs; j2 = y/rs;
+	  if (K[y] && (DIM2D(i2,j2) == (d+1))) b++;
+	}
+	if ((b1 <= b) && (b <= b2))
+	{
+	  KP[x] = NDG_MAX;
+	}
+      }
+    }
+  } // for k1, j1, i1
+  for (x = 0; x < N; x++) K[x] = KP[x];
+  freeimage(kp);
+  return 1;
+} /* l2dseltype() */

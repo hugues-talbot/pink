@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky2d.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: mckhalimsky2d.h,v 1.4 2009-06-24 05:32:12 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -7,6 +7,7 @@ extern "C" {
 #define INTERH(i,j) ((i%2)&&(!(j%2)))
 #define INTERV(i,j) ((!(i%2))&&(j%2))
 #define SINGL(i,j) ((i%2)+(j%2)==0)
+#define DIM2D(i,j) ((i%2)+(j%2))
 #define NDG_CARRE 255
 #define NDG_INTER 200
 #define NDG_SINGL 128
