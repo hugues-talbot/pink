@@ -1,12 +1,8 @@
-/* $Id: l3dcollapse.c,v 1.2 2009-06-29 09:10:50 mcouprie Exp $ */
+/* $Id: l2dcollapse.c,v 1.1 2009-06-29 09:10:50 mcouprie Exp $ */
 /* 
-
-   l3dcollapse: collapse guidÅÈ et contraint (OBSOLETE)
-     Michel Couprie - avril 2007
-
-   l3dpardircollapse: collapse parallÅËle par sous-ÅÈtapes directionnelles
-   l3dpardircollapse_l: collapse guidÅÈ et contraint - prioritÅÈ ULONG
-   l3dpardircollapse_f: collapse guidÅÈ et contraint - prioritÅÈ FLOAT
+   l2dpardircollapse: collapse parallÅËle par sous-ÅÈtapes directionnelles
+   l2dpardircollapse_l: collapse guidÅÈ et contraint - prioritÅÈ ULONG
+   l2dpardircollapse_f: collapse guidÅÈ et contraint - prioritÅÈ FLOAT
      Michel Couprie - juin 2009
 
 */
@@ -22,8 +18,8 @@
 #include <mcrbt.h>
 #include <mcindic.h>
 #include <mcutil.h>
-#include <mckhalimsky3d.h>
-#include <l3dkhalimsky.h>
+#include <mckhalimsky2d.h>
+#include <l2dkhalimsky.h>
 
 #define EN_RBT        0
 #define EN_LIFO       1
@@ -31,29 +27,27 @@
 #define VERBOSE
 
 /* =============================================================== */
-int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit)
+int32_t l2dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit)
 /* =============================================================== */
 /* 
   collapse sÅÈquentiel, guidÅÈ et contraint
-  OBSOLETE - utiliser l3dpardircollapse_l
+  OBSOLETE - utiliser l2dpardircollapse_l
 */
 #undef F_NAME
-#define F_NAME "l3dcollapse"
+#define F_NAME "l2dcollapse"
 {
-  int32_t i, u, v, n, x, y, z, xv, yv, zv;
-  int32_t rs, cs, ps, ds, N;
+  int32_t i, u, v, n, x, y, xv, yv;
+  int32_t rs, cs, N;
   uint8_t * K;
   uint32_t * P;
   uint8_t * I = NULL;
   Rbt * RBT;
   int32_t taillemaxrbt;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  int32_t tab[GRS2D*GCS2D];
 
   rs = rowsize(k);
   cs = colsize(k);
-  ds = depth(k);
-  ps = rs * cs;
-  N = ps * ds;
+  N = rs * cs;
   K = UCHARDATA(k);
 
   IndicsInit(N);
@@ -64,7 +58,7 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
     return(0);
   }
 
-  if ((rowsize(prio) != rs) || (colsize(prio) != cs) || (depth(prio) != ds))
+  if ((rowsize(prio) != rs) || (colsize(prio) != cs) || (depth(prio) != 1))
   {
     fprintf(stderr, "%s : bad size for prio\n", F_NAME);
     return(0);
@@ -79,7 +73,7 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
 
   if (inhibit != NULL)
   {
-    if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != ds))
+    if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != 1))
     {
       fprintf(stderr, "%s : bad size for inhibit\n", F_NAME);
       return(0);
@@ -93,7 +87,7 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
     }
   }
 
-  taillemaxrbt = 2 * (rs + cs + ds);
+  taillemaxrbt = 2 * (rs + cs);
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
@@ -114,12 +108,11 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
   /*   INITIALISATION DU RBT */
   /* ========================================================= */
 
-  for (z = 0; z < ds; z++)
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
   {
-    i = z*ps + y*rs + x;
-    if (K[i] && ((I == NULL) || (!I[i])) && FaceLibre3d(k, x, y, z))
+    i = y*rs + x;
+    if (K[i] && ((I == NULL) || (!I[i])) && FaceLibre2d(k, x, y))
     {
       RbtInsert(&RBT, P[i], i);
       Set(i, EN_RBT);
@@ -134,17 +127,17 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
   {
     i = RbtPopMin(RBT);
     UnSet(i, EN_RBT);
-    x = i % rs; y = (i % ps) / rs; z = i / ps;
-    u = Collapse3d(k, x, y, z);
+    x = i % rs; y = i / rs;
+    u = Collapse2d(k, x, y);
     if (u != -1)
     {
-      x = u % rs; y = (u % ps) / rs; z = u / ps;
-      Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
+      x = u % rs; y = u / rs;
+      Alphacarre2d(rs, cs, x, y, tab, &n);
       for (u = 0; u < n; u += 1)
       {
         v = tab[u];
-	xv = v % rs; yv = (v % ps) / rs; zv = v / ps;
-	if (K[v] && !IsSet(v, EN_RBT) && ((I == NULL) || (!I[v])) && FaceLibre3d(k, xv, yv, zv))
+	xv = v % rs; yv = v / rs;
+	if (K[v] && !IsSet(v, EN_RBT) && ((I == NULL) || (!I[v])) && FaceLibre2d(k, xv, yv))
 	{
 	  RbtInsert(&RBT, P[v], v);
 	  Set(v, EN_RBT);
@@ -161,10 +154,10 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
   RbtTermine(RBT);
   return 1;
 
-} /* l3dcollapse() */
+} /* l2dcollapse() */
 
 /* =============================================================== */
-int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, uint32_t priomax)
+int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, uint32_t priomax)
 /* =============================================================== */
 /* 
   collapse parallÅËle directionnel
@@ -172,10 +165,10 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
   les ÅÈlÅÈments Å‡ prÅÈserver sont ceux de l'image "inhibit" ou, si celle-ci est "NULL", ceux supÅÈrieurs Å‡ "priomax" 
 */
 #undef F_NAME
-#define F_NAME "l3dpardircollapse_l"
+#define F_NAME "l2dpardircollapse_l"
 {
-  int32_t i, g, f, u, v, n, xf, yf, zf, xg, yg, zg, xv, yv, zv;
-  int32_t rs, cs, ps, ds, N;
+  int32_t i, g, f, u, v, n, xf, yf, xg, yg, xv, yv;
+  int32_t rs, cs, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   uint32_t * P;
@@ -184,15 +177,13 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
   Lifo * LIFO;
   Lifo * LIFOb;
   int32_t taillemaxrbt;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  int32_t tab[GRS2D*GCS2D];
   TypRbtKey p;
   uint32_t nbcol;
 
   rs = rowsize(k);
   cs = colsize(k);
-  ds = depth(k);
-  ps = rs * cs;
-  N = ps * ds;
+  N = rs * cs;
   K = UCHARDATA(k);
 
   IndicsInit(N);
@@ -203,7 +194,7 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
     return(0);
   }
 
-  if ((rowsize(prio) != rs) || (colsize(prio) != cs) || (depth(prio) != ds))
+  if ((rowsize(prio) != rs) || (colsize(prio) != cs) || (depth(prio) != 1))
   {
     fprintf(stderr, "%s : bad size for prio\n", F_NAME);
     return(0);
@@ -218,7 +209,7 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 
   if (inhibit != NULL)
   {
-    if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != ds))
+    if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != 1))
     {
       fprintf(stderr, "%s : bad size for inhibit\n", F_NAME);
       return(0);
@@ -232,7 +223,7 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
     }
   }
 
-  taillemaxrbt = 4 * (rs*cs + cs*ds + ds*rs);
+  taillemaxrbt = 4 * (rs + cs);
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
@@ -261,14 +252,13 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
   /*   INITIALISATION DU RBT */
   /* ========================================================= */
 
-  for (zg = 0; zg < ds; zg++)
   for (yg = 0; yg < cs; yg++)
   for (xg = 0; xg < rs; xg++)
   {
-    g = zg*ps + yg*rs + xg;
+    g = yg*rs + xg;
     if (K[g] && 
 	(((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax)) ) && 
-	FaceLibre3d(k, xg, yg, zg))
+	FaceLibre2d(k, xg, yg))
     {
       RbtInsert(&RBT, (TypRbtKey)P[g], g);
       Set(g, EN_RBT);
@@ -289,8 +279,8 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
     {
       g = RbtPopMin(RBT);
       UnSet(g, EN_RBT);
-      xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
-      f = PaireLibre3d(k, xg, yg, zg);
+      xg = g % rs; yg = g / rs;
+      f = PaireLibre2d(k, xg, yg);
       if (f != -1)
       {
 	LifoPush(LIFO, f);
@@ -308,29 +298,28 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 	  {
 	    f = LIFO->Pts[i];
 	    g = LIFO->Pts[i+1];
-	    xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
+	    xf = f % rs; yf = f / rs;
 	    if (K[f] && K[g] && 
 		(((I != NULL) && (!I[g] && !I[f])) || 
 		 ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
 	    {
-	      xg = g % rs; yg = (g % ps) / rs; zg = g / ps;  
-	      if (xf - xg)      { direc = 0; if (xf > xg) orien = 0; else orien = 1; }
-	      else if (yf - yg) { direc = 1; if (yf > yg) orien = 0; else orien = 1; }
-	      else              { direc = 2; if (zf > zg) orien = 0; else orien = 1; }
-	      if ((DIM3D(xf,yf,zf) == dim) && (direc == dir) && (orien == ori))
+	      xg = g % rs; yg = g / rs;
+	      if (xf - xg) { direc = 0; if (xf > xg) orien = 0; else orien = 1; }
+	      else         { direc = 1; if (yf > yg) orien = 0; else orien = 1; }
+	      if ((DIM2D(xf,yf) == dim) && (direc == dir) && (orien == ori))
 	      {
 		K[g] = K[f] = VAL_NULLE;
 		nbcol++;
 		// PrÅÈparation sous-ÅÈtapes suivantes
-		Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
+		Alphacarre2d(rs, cs, xf, yf, tab, &n);
 		for (u = 0; u < n; u += 1)
 		{
 		  g = tab[u];
-		  xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
+		  xg = g % rs; yg = g / rs;
 		  if (K[g] && (P[g] <= p) && 
 		      (((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax))) )
 		  {
-		    f = PaireLibre3d(k, xg, yg, zg);
+		    f = PaireLibre2d(k, xg, yg);
 		    if ((f != -1) && IsSet(f, BORDER) && !IsSet(g, EN_LIFO))
 		    { 
 		      LifoPush(LIFOb, f); 
@@ -338,7 +327,7 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 		    }
 		  }
 		} // for u
-	      } // if ((DIM3D(xf,yf,zf) == dim) &&...
+	      } // if ((DIM2D(xf,yf) == dim) &&...
 	    } // if (K[f] && K[g])
 	  } // for (i = 0; i < LIFO->Sp; i += 2)
 	  while (!LifoVide(LIFOb))
@@ -355,15 +344,15 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
     for (i = 0; i < LIFO->Sp; i += 2)
     {
       f = LIFO->Pts[i];
-      xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
-      Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
+      xf = f % rs; yf = f / rs;
+      Alphacarre2d(rs, cs, xf, yf, tab, &n);
       for (u = 0; u < n; u += 1)
       {
 	g = tab[u];
-	xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
+	xg = g % rs; yg = g / rs;
 	if (K[g] && !IsSet(g, EN_RBT) && 
 	    (((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax)) ) && 
-	    FaceLibre3d(k, xg, yg, zg))
+	    FaceLibre2d(k, xg, yg))
 	{
 	  RbtInsert(&RBT, (TypRbtKey)P[g], g);
 	  Set(g, EN_RBT);
@@ -383,20 +372,20 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
   LifoTermine(LIFOb);
   return 1;
 
-} /* l3dpardircollapse_l() */
+} /* l2dpardircollapse_l() */
  
 /* =============================================================== */
-int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax)
+int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax)
 /* =============================================================== */
 /* 
   collapse parallÅËle directionnel
   fonction de prioritÅÈ en flottants
 */
 #undef F_NAME
-#define F_NAME "l3dpardircollapse_f"
+#define F_NAME "l2dpardircollapse_f"
 {
-  int32_t i, g, f, u, v, n, xf, yf, zf, xg, yg, zg, xv, yv, zv;
-  int32_t rs, cs, ps, ds, N;
+  int32_t i, g, f, u, v, n, xf, yf, xg, yg, xv, yv;
+  int32_t rs, cs, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   float * P;
@@ -405,15 +394,13 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
   Lifo * LIFO;
   Lifo * LIFOb;
   int32_t taillemaxrbt;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  int32_t tab[GRS2D*GCS2D];
   TypRbtKey p;
   uint32_t nbcol;
 
   rs = rowsize(k);
   cs = colsize(k);
-  ds = depth(k);
-  ps = rs * cs;
-  N = ps * ds;
+  N = rs * cs;
   K = UCHARDATA(k);
 
   IndicsInit(N);
@@ -424,7 +411,7 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
     return(0);
   }
 
-  if ((rowsize(prio) != rs) || (colsize(prio) != cs) || (depth(prio) != ds))
+  if ((rowsize(prio) != rs) || (colsize(prio) != cs) || (depth(prio) != 1))
   {
     fprintf(stderr, "%s : bad size for prio\n", F_NAME);
     return(0);
@@ -439,7 +426,7 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 
   if (inhibit != NULL)
   {
-    if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != ds))
+    if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != 1))
     {
       fprintf(stderr, "%s : bad size for inhibit\n", F_NAME);
       return(0);
@@ -453,7 +440,7 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
     }
   }
 
-  taillemaxrbt = 4 * (rs*cs + cs*ds + ds*rs);
+  taillemaxrbt = 4 * (rs + cs);
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
@@ -482,14 +469,13 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
   /*   INITIALISATION DU RBT */
   /* ========================================================= */
 
-  for (zg = 0; zg < ds; zg++)
   for (yg = 0; yg < cs; yg++)
   for (xg = 0; xg < rs; xg++)
   {
-    g = zg*ps + yg*rs + xg;
+    g = yg*rs + xg;
     if (K[g] && 
 	(((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax)) ) && 
-	FaceLibre3d(k, xg, yg, zg))
+	FaceLibre2d(k, xg, yg))
     {
       RbtInsert(&RBT, (TypRbtKey)P[g], g);
       Set(g, EN_RBT);
@@ -510,8 +496,8 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
     {
       g = RbtPopMin(RBT);
       UnSet(g, EN_RBT);
-      xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
-      f = PaireLibre3d(k, xg, yg, zg);
+      xg = g % rs; yg = g / rs;
+      f = PaireLibre2d(k, xg, yg);
       if (f != -1)
       {
 	LifoPush(LIFO, f);
@@ -529,29 +515,28 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 	  {
 	    f = LIFO->Pts[i];
 	    g = LIFO->Pts[i+1];
-	    xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
+	    xf = f % rs; yf = f / rs;
 	    if (K[f] && K[g] && 
 		(((I != NULL) && (!I[g] && !I[f])) || 
 		 ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
 	    {
-	      xg = g % rs; yg = (g % ps) / rs; zg = g / ps;  
-	      if (xf - xg)      { direc = 0; if (xf > xg) orien = 0; else orien = 1; }
-	      else if (yf - yg) { direc = 1; if (yf > yg) orien = 0; else orien = 1; }
-	      else              { direc = 2; if (zf > zg) orien = 0; else orien = 1; }
-	      if ((DIM3D(xf,yf,zf) == dim) && (direc == dir) && (orien == ori))
+	      xg = g % rs; yg = g / rs;
+	      if (xf - xg) { direc = 0; if (xf > xg) orien = 0; else orien = 1; }
+	      else         { direc = 1; if (yf > yg) orien = 0; else orien = 1; }
+	      if ((DIM2D(xf,yf) == dim) && (direc == dir) && (orien == ori))
 	      {
 		K[g] = K[f] = VAL_NULLE;
 		nbcol++;
 		// PrÅÈparation sous-ÅÈtapes suivantes
-		Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
+		Alphacarre2d(rs, cs, xf, yf, tab, &n);
 		for (u = 0; u < n; u += 1)
 		{
 		  g = tab[u];
-		  xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
+		  xg = g % rs; yg = g / rs;
 		  if (K[g] && (P[g] <= p) && 
 		      (((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax))) )
 		  {
-		    f = PaireLibre3d(k, xg, yg, zg);
+		    f = PaireLibre2d(k, xg, yg);
 		    if ((f != -1) && IsSet(f, BORDER) && !IsSet(g, EN_LIFO))
 		    { 
 		      LifoPush(LIFOb, f); 
@@ -559,7 +544,7 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 		    }
 		  }
 		} // for u
-	      } // if ((DIM3D(xf,yf,zf) == dim) &&...
+	      } // if ((DIM2D(xf,yf) == dim) &&...
 	    } // if (K[f] && K[g])
 	  } // for (i = 0; i < LIFO->Sp; i += 2)
 	  while (!LifoVide(LIFOb))
@@ -576,15 +561,15 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
     for (i = 0; i < LIFO->Sp; i += 2)
     {
       f = LIFO->Pts[i];
-      xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
-      Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
+      xf = f % rs; yf = f / rs;
+      Alphacarre2d(rs, cs, xf, yf, tab, &n);
       for (u = 0; u < n; u += 1)
       {
 	g = tab[u];
-	xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
+	xg = g % rs; yg = g / rs;
 	if (K[g] && !IsSet(g, EN_RBT) && 
 	    (((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax)) ) && 
-	    FaceLibre3d(k, xg, yg, zg))
+	    FaceLibre2d(k, xg, yg))
 	{
 	  RbtInsert(&RBT, (TypRbtKey)P[g], g);
 	  Set(g, EN_RBT);
@@ -604,20 +589,20 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
   LifoTermine(LIFOb);
   return 1;
 
-} /* l3dpardircollapse_f() */
+} /* l2dpardircollapse_f() */
 
 /* =============================================================== */
-int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * inhibit)
+int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * inhibit)
 /* =============================================================== */
 /* 
   collapse parallÅËle directionnel
   sans fonction de prioritÅÈ
 */
 #undef F_NAME
-#define F_NAME "l3dpardircollapse"
+#define F_NAME "l2dpardircollapse"
 {
-  int32_t i, g, f, u, v, n, xf, yf, zf, xg, yg, zg, xv, yv, zv;
-  int32_t rs, cs, ps, ds, N;
+  int32_t i, g, f, u, v, n, xf, yf, xg, yg, xv, yv;
+  int32_t rs, cs, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   uint8_t * I = NULL;
@@ -625,20 +610,18 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
   Lifo * LIFOb;
   Lifo * LIFOt;
   int32_t taillemax;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  int32_t tab[GRS2D*GCS2D];
 
   rs = rowsize(k);
   cs = colsize(k);
-  ds = depth(k);
-  ps = rs * cs;
-  N = ps * ds;
+  N = rs * cs;
   K = UCHARDATA(k);
 
   IndicsInit(N);
 
   if (inhibit != NULL)
   {
-    if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != ds))
+    if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != 1))
     {
       fprintf(stderr, "%s : bad size for inhibit\n", F_NAME);
       return(0);
@@ -652,7 +635,7 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
     }
   }
 
-  taillemax = 4 * (rs*cs + cs*ds + ds*rs);
+  taillemax = 4 * (rs + cs);
   LIFO = CreeLifoVide(taillemax);
   LIFOb = CreeLifoVide(taillemax);
   if ((LIFO == NULL) || (LIFOb == NULL))
@@ -675,21 +658,20 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
   /* INITIALISATION DE LA LIFO ET DE LA "BORDER" */
   /* ========================================================= */
 
-  for (zg = 0; zg < ds; zg++)
   for (yg = 0; yg < cs; yg++)
   for (xg = 0; xg < rs; xg++)
   {
-    g = zg*ps + yg*rs + xg;
+    g = yg*rs + xg;
     if (K[g] && ((I == NULL) || (!I[g])))
     {
-      f = PaireLibre3d(k, xg, yg, zg);
+      f = PaireLibre2d(k, xg, yg);
       if (f != -1) 
       { 
 	LifoPush(LIFO, f); 
 	LifoPush(LIFO, g);
 	Set(g, EN_LIFO);
-	xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
-	Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
+	xf = f % rs; yf = f / rs;
+	Alphacarre2d(rs, cs, xf, yf, tab, &n);
 	for (u = 0; u < n; u += 1)
 	{
 	  g = tab[u];
@@ -716,25 +698,24 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
 	  {
 	    f = LIFO->Pts[i];
 	    g = LIFO->Pts[i+1];
-	    xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
+	    xf = f % rs; yf = f / rs;
 	    if (K[f] && K[g] && ((I == NULL) || (!I[g] && !I[f])))
 	    {
-	      xg = g % rs; yg = (g % ps) / rs; zg = g / ps;  
-	      if (xf - xg)      { direc = 0; if (xf > xg) orien = 0; else orien = 1; }
-	      else if (yf - yg) { direc = 1; if (yf > yg) orien = 0; else orien = 1; }
-	      else              { direc = 2; if (zf > zg) orien = 0; else orien = 1; }
-	      if ((DIM3D(xf,yf,zf) == dim) && (direc == dir) && (orien == ori))
+	      xg = g % rs; yg = g / rs;
+	      if (xf - xg) { direc = 0; if (xf > xg) orien = 0; else orien = 1; }
+	      else         { direc = 1; if (yf > yg) orien = 0; else orien = 1; }
+	      if ((DIM2D(xf,yf) == dim) && (direc == dir) && (orien == ori))
 	      {
 		K[g] = K[f] = VAL_NULLE;
 		// PrÅÈparation sous-ÅÈtapes suivantes
-		Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
+		Alphacarre2d(rs, cs, xf, yf, tab, &n);
 		for (u = 0; u < n; u += 1)
 		{
 		  g = tab[u];
-		  xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
+		  xg = g % rs; yg = g / rs;
 		  if (K[g] && ((I == NULL) || (!I[g])))
 		  {
-		    f = PaireLibre3d(k, xg, yg, zg);
+		    f = PaireLibre2d(k, xg, yg);
 		    if ((f != -1) && IsSet(f, BORDER) && !IsSet(g, EN_LIFO))
 		    { 
 		      LifoPush(LIFOb, f); 
@@ -742,7 +723,7 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
 		    }
 		  }
 		} // for u
-	      } // if ((DIM3D(xf,yf,zf) == dim) &&...
+	      } // if ((DIM2D(xf,yf) == dim) &&...
 	    } // if (K[f] && K[g])
 	  } // for (i = 0; i < LIFO->Sp; i += 2)
 	  while (!LifoVide(LIFOb))
@@ -761,16 +742,16 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
     {
       f = LIFO->Pts[i];
       UnSet(f, BORDER);
-      xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
-      Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
+      xf = f % rs; yf = f / rs;
+      Alphacarre2d(rs, cs, xf, yf, tab, &n);
       for (u = 0; u < n; u += 1)
       {
 	g = tab[u];
 	UnSet(g, BORDER);
 	if (K[g] && !IsSet(g, EN_LIFO) && ((I == NULL) || (!I[g])))
 	{
-	  xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
-	  f = PaireLibre3d(k, xg, yg, zg);
+	  xg = g % rs; yg = g / rs;
+	  f = PaireLibre2d(k, xg, yg);
 	  if (f != -1) 
 	  { 
 	    LifoPush(LIFOb, f); 
@@ -784,8 +765,8 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
     for (i = 0; i < LIFOb->Sp; i += 2)
     {
       f = LIFOb->Pts[i];
-      xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
-      Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
+      xf = f % rs; yf = f / rs;
+      Alphacarre2d(rs, cs, xf, yf, tab, &n);
       for (u = 0; u < n; u += 1)
       {
 	g = tab[u];
@@ -810,4 +791,4 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
   LifoTermine(LIFOb);
   return 1;
 
-} /* l3dpardircollapse() */
+} /* l2dpardircollapse() */

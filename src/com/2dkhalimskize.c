@@ -1,4 +1,4 @@
-/* $Id: 2dkhalimskize.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: 2dkhalimskize.c,v 1.2 2009-06-29 09:10:50 mcouprie Exp $ */
 /*! \file 2dkhalimskize.c
 
 \brief converts a 2D image into a 2D Khalimsky order
@@ -26,7 +26,7 @@ Mode =
 
 In reverse mode, only the beta-terminal elements (squares) are selected.
 
-<B>Types supported:</B> byte 2d
+<B>Types supported:</B> byte 2d, long 2d, float 2d
 
 <B>Category:</B> orders
 \ingroup  orders

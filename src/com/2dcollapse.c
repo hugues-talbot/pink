@@ -1,9 +1,9 @@
-/* $Id: 3dcollapse.c,v 1.4 2009-06-29 09:10:50 mcouprie Exp $ */
-/*! \file 3dcollapse.c
+/* $Id: 2dcollapse.c,v 1.1 2009-06-29 09:10:50 mcouprie Exp $ */
+/*! \file 2dcollapse.c
 
 \brief ultimate constrained collapse guided by a priority image
 
-<B>Usage:</B> 3dcollapse in.pgm prio [inhibit] out.pgm
+<B>Usage:</B> 2dcollapse in.pgm prio [inhibit] out.pgm
 
 <B>Description:</B>
 Ultimate constrained collapse guided by a priority image.
@@ -16,16 +16,15 @@ the possible choices are:
 \li 1: approximate quadratic euclidean distance
 \li 2: chamfer distance
 \li 3: exact quadratic euclidean distance
-\li 6: 6-distance in 3d
-\li 18: 18-distance in 3d
-\li 26: 26-distance in 3d
+\li 4: 4-distance in 2d
+\li 8: 8-distance in 2d
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
 If the parameter \b inhibit is given and is a number I,
 then the points with priority greater than or equal to I will be left unchanged. 
 
-<B>Types supported:</B> byte 3d
+<B>Types supported:</B> byte 2d
 
 <B>Category:</B> orders
 \ingroup  orders
@@ -41,10 +40,10 @@ then the points with priority greater than or equal to I will be left unchanged.
 #include <mcutil.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <mckhalimsky3d.h>
+#include <mckhalimsky2d.h>
 #include <mcgeo.h>
 #include <ldist.h>
-#include <l3dcollapse.h>
+#include <l2dcollapse.h>
 
 /* =============================================================== */
 int main(int32_t argc, char **argv) 
@@ -55,7 +54,7 @@ int main(int32_t argc, char **argv)
   struct xvimage * prio2;
   struct xvimage * inhibimage = NULL;
   int32_t ret, priocode;
-  int32_t rs, cs, ds, N;
+  int32_t rs, cs, N;
   float priomax_f;
   uint32_t priomax_l;
 
@@ -74,8 +73,7 @@ int main(int32_t argc, char **argv)
   }
   rs = rowsize(k);
   cs = colsize(k);
-  ds = depth(k);
-  N = rs*cs*ds;
+  N = rs*cs;
 
   ret = sscanf(argv[2], "%d", &priocode);
   if (ret == 0) // priorité : image 
@@ -86,7 +84,7 @@ int main(int32_t argc, char **argv)
       fprintf(stderr, "%s: readimage failed\n", argv[0]);
       exit(1);
     }
-    if ((rowsize(prio2) != rs) || (colsize(prio2) != cs) || (depth(prio2) != ds))
+    if ((rowsize(prio2) != rs) || (colsize(prio2) != cs) || (depth(prio2) != 1))
     {
       fprintf(stderr, "%s: incompatible image sizes\n", argv[0]);
       exit(1);
@@ -96,7 +94,7 @@ int main(int32_t argc, char **argv)
       uint8_t *B = UCHARDATA(prio2);
       uint32_t *L;
       int32_t x;
-      prio = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+      prio = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
       if (prio == NULL)
       {
         fprintf(stderr, "%s: allocimage failed\n", argv[0]);
@@ -124,7 +122,7 @@ int main(int32_t argc, char **argv)
   {
     int32_t i;
     uint8_t *K;
-    prio = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+    prio = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
     if (prio == NULL)
     {   
       fprintf(stderr, "%s: allocimage failed\n", argv[0]);
@@ -136,41 +134,19 @@ int main(int32_t argc, char **argv)
   
     if (priocode == 0)
     {
-      if (ds == 1)
+      if (! ldisteuc(k, prio))
       {
-        if (! ldisteuc(k, prio))
-        {
-          fprintf(stderr, "%s: ldisteuc failed\n", argv[0]);
-          exit(1);
-        }
-      }
-      else
-      {
-        if (! ldisteuc3d(k, prio))
-        {
-          fprintf(stderr, "%s: ldisteuc3d failed\n", argv[0]);
-          exit(1);
-        }
+        fprintf(stderr, "%s: ldisteuc failed\n", argv[0]);
+        exit(1);
       }
     }
     else
     if (priocode == 1)
     {
-      if (ds == 1)
+      if (! ldistquad(k, prio))
       {
-        if (! ldistquad(k, prio))
-        {
-          fprintf(stderr, "%s: ldistquad failed\n", argv[0]);
-          exit(1);
-        }
-      }
-      else
-      {
-        if (! ldistquad3d(k, prio))
-        {
-          fprintf(stderr, "%s: ldistquad3d failed\n", argv[0]);
-          exit(1);
-        }
+        fprintf(stderr, "%s: ldistquad failed\n", argv[0]);
+        exit(1);
       }
     }
     else
@@ -225,18 +201,18 @@ int main(int32_t argc, char **argv)
   if (datatype(prio) == VFF_TYP_4_BYTE)
   {
     if ((argc == 5) && (inhibimage == NULL)) priomax_l = (uint32_t)floorf(priomax_f);
-    if (! l3dpardircollapse_l(k, prio, inhibimage, priomax_l))
+    if (! l2dpardircollapse_l(k, prio, inhibimage, priomax_l))
     {
-      fprintf(stderr, "%s: function l3dpardircollapse_l failed\n", argv[0]);
+      fprintf(stderr, "%s: function l2dpardircollapse_l failed\n", argv[0]);
       exit(1);
     }
   }
   else
   if (datatype(prio) == VFF_TYP_FLOAT)
   {
-    if (! l3dpardircollapse_f(k, prio, inhibimage, priomax_f))
+    if (! l2dpardircollapse_f(k, prio, inhibimage, priomax_f))
     {
-      fprintf(stderr, "%s: function l3dpardircollapse_f failed\n", argv[0]);
+      fprintf(stderr, "%s: function l2dpardircollapse_f failed\n", argv[0]);
       exit(1);
     }
   }

@@ -1,4 +1,4 @@
-/* $Id: 3dkhalimskize.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/* $Id: 3dkhalimskize.c,v 1.2 2009-06-29 09:10:50 mcouprie Exp $ */
 /*! \file 3dkhalimskize.c
 
 \brief converts a 3D image into a 3D Khalimsky order
@@ -21,7 +21,7 @@ Mode =
 \li    a : average.
 \li    R : reverse.
 
-<B>Types supported:</B> byte 3d
+<B>Types supported:</B> byte 3d, long 3d, float 3d
 
 <B>Category:</B> orders
 \ingroup  orders

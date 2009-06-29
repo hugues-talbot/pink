@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky3d.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: mckhalimsky3d.h,v 1.3 2009-06-29 09:10:50 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -109,6 +109,8 @@ extern int32_t Surfend3d(struct xvimage *b, int32_t i, int32_t j, int32_t k);
 extern int32_t EulerKh3d(struct xvimage *b);
 extern int32_t EulerKh3dVal(struct xvimage *b, uint8_t Val);
 extern int32_t FaceLibre3d(struct xvimage *b, int32_t i, int32_t j, int32_t k);
+extern int32_t PaireLibre3d(struct xvimage *b, int32_t i, int32_t j, int32_t k);
+
 extern int32_t Collapse3d(struct xvimage *b, int32_t i, int32_t j, int32_t k);
 extern int32_t simple_26_att(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t pairesimple_26_x(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);

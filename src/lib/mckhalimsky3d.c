@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky3d.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: mckhalimsky3d.c,v 1.3 2009-06-29 09:10:50 mcouprie Exp $ */
 /* 
    Librairie mckhalimsky3d
 
@@ -254,14 +254,14 @@ struct xvimage * KhalimskizeNDG3d(struct xvimage *o)
                  autres points sont a 0.
 */
 {
+#undef F_NAME
+#define F_NAME "KhalimskizeNDG3d"
   int32_t ors = rowsize(o);
   int32_t ocs = colsize(o);
   int32_t ods = depth(o);
   int32_t ops = ors * ocs;
-  uint8_t *O = UCHARDATA(o);
   struct xvimage *b;
   int32_t brs, bcs, bds, bps, bN;
-  uint8_t *B;
   int32_t i, j, k, ii, jj, kk, n;
 
   brs = 2 * ors + 1;
@@ -270,20 +270,47 @@ struct xvimage * KhalimskizeNDG3d(struct xvimage *o)
   bps = brs * bcs;
   bN = bps * bds;
   
-  b = allocimage(NULL, brs, bcs, bds, VFF_TYP_1_BYTE);
+  b = allocimage(NULL, brs, bcs, bds, datatype(o));
   if (b == NULL)
-  {   fprintf(stderr,"KhalimskizeNDG3d() : malloc failed\n");
+  {   fprintf(stderr,"%s: malloc failed\n", F_NAME);
       return NULL;
   }
-  B = UCHARDATA(b);
 
-  memset(B, VAL_NULLE, bN); /* init a VAL_NULLE */
-
-  for (k = 0; k < ods; k++)
-    for (j = 0; j < ocs; j++)
-      for (i = 0; i < ors; i++)
-        B[(2*k+1) * bps + (2*j+1) * brs + (2*i+1)] = O[k * ops + j * ors + i];
-
+  if (datatype(b) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *O = UCHARDATA(o);
+    uint8_t *B = UCHARDATA(b);
+    memset(B, 0, bN*sizeof(uint8_t));
+    for (k = 0; k < ods; k++)
+      for (j = 0; j < ocs; j++)
+	for (i = 0; i < ors; i++)
+	  B[(2*k+1) * bps + (2*j+1) * brs + (2*i+1)] = O[k * ops + j * ors + i];
+  }
+  else if (datatype(b) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *O = ULONGDATA(o);
+    uint32_t *B = ULONGDATA(b);
+    memset(B, 0, bN*sizeof(uint32_t));
+    for (k = 0; k < ods; k++)
+      for (j = 0; j < ocs; j++)
+	for (i = 0; i < ors; i++)
+	  B[(2*k+1) * bps + (2*j+1) * brs + (2*i+1)] = O[k * ops + j * ors + i];
+  }
+  else if (datatype(b) == VFF_TYP_FLOAT)
+  {
+    float *O = FLOATDATA(o);
+    float *B = FLOATDATA(b);
+    memset(B, 0, bN*sizeof(float));
+    for (k = 0; k < ods; k++)
+      for (j = 0; j < ocs; j++)
+	for (i = 0; i < ors; i++)
+	  B[(2*k+1) * bps + (2*j+1) * brs + (2*i+1)] = O[k * ops + j * ors + i];
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
   return b;
 } /* KhalimskizeNDG3d() */
 
@@ -291,99 +318,260 @@ struct xvimage * KhalimskizeNDG3d(struct xvimage *o)
 void ndgmin3d(struct xvimage *b)
 /* ==================================== */
 {
+#undef F_NAME
+#define F_NAME "ndgmin3d"
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
   int32_t ds = depth(b);
   int32_t ps = rs * cs;
   int32_t N = ps * ds;
-  uint8_t *B = UCHARDATA(b);
   struct xvimage *bp;
-  uint8_t *BP;
   int32_t i, j, k, u, n;
   int32_t tab[GRS3D*GCS3D*GDS3D];
 
-  bp = copyimage(b);
-  BP = UCHARDATA(bp);
-  memset(BP, NDG_MAX, N);
+  if (datatype(b) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *B;
+    uint8_t *BP;
+    B = UCHARDATA(b);
+    bp = copyimage(b);
+    BP = UCHARDATA(bp);
+    memset(BP, NDG_MAX, N);
 
-  for (k = 1; k < ds; k += 2)
-    for (j = 1; j < cs; j += 2)
-      for (i = 1; i < rs; i += 2)
-      {
-        BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
-        Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
-        for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[k * ps + j * rs + i]);
-      }
-  memcpy(B, BP, N);
-  freeimage(bp);
+    for (k = 1; k < ds; k += 2)
+      for (j = 1; j < cs; j += 2)
+	for (i = 1; i < rs; i += 2)
+	{
+	  BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
+	  Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
+	  for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[k * ps + j * rs + i]);
+	}
+    memcpy(B, BP, N*sizeof(uint8_t));
+    freeimage(bp);
+  }
+  else if (datatype(b) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *B;
+    uint32_t *BP;
+    B = ULONGDATA(b);
+    bp = copyimage(b);
+    BP = ULONGDATA(bp);
+    for (k = 1; k < N; k += 1) BP[k] = UINT32_MAX;
+
+    for (k = 1; k < ds; k += 2)
+      for (j = 1; j < cs; j += 2)
+	for (i = 1; i < rs; i += 2)
+	{
+	  BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
+	  Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
+	  for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[k * ps + j * rs + i]);
+	}
+    memcpy(B, BP, N*sizeof(uint32_t));
+    freeimage(bp);
+  }
+  else if (datatype(b) == VFF_TYP_FLOAT)
+  {
+    float *B;
+    float *BP;
+    B = FLOATDATA(b);
+    bp = copyimage(b);
+    BP = FLOATDATA(bp);
+    for (k = 1; k < N; k += 1) BP[k] = FLOAT_MAX;
+
+    for (k = 1; k < ds; k += 2)
+      for (j = 1; j < cs; j += 2)
+	for (i = 1; i < rs; i += 2)
+	{
+	  BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
+	  Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
+	  for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[k * ps + j * rs + i]);
+	}
+    memcpy(B, BP, N*sizeof(float));
+    freeimage(bp);
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
+
 } /* ndgmin3d() */
 
 /* ==================================== */
 void ndgmax3d(struct xvimage *b)
 /* ==================================== */
 {
+#undef F_NAME
+#define F_NAME "ndgmax3d"
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
   int32_t ds = depth(b);
   int32_t ps = rs * cs;
   int32_t N = ps * ds;
-  uint8_t *B = UCHARDATA(b);
   struct xvimage *bp;
-  uint8_t *BP;
   int32_t i, j, k, u, n;
   int32_t tab[GRS3D*GCS3D*GDS3D];
 
-  bp = copyimage(b);
-  BP = UCHARDATA(bp);
-  memset(BP, NDG_MIN, N);
+  if (datatype(b) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *B;
+    uint8_t *BP;
+    B = UCHARDATA(b);
+    bp = copyimage(b);
+    BP = UCHARDATA(bp);
+    memset(BP, NDG_MIN, N);
 
-  for (k = 1; k < ds; k += 2)
-    for (j = 1; j < cs; j += 2)
-      for (i = 1; i < rs; i += 2)
-      {
-        BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
-        Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
-        for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[k * ps + j * rs + i]);
-      }
-  memcpy(B, BP, N);
-  freeimage(bp);
+    for (k = 1; k < ds; k += 2)
+      for (j = 1; j < cs; j += 2)
+	for (i = 1; i < rs; i += 2)
+	{
+	  BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
+	  Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
+	  for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[k * ps + j * rs + i]);
+	}
+    memcpy(B, BP, N*sizeof(uint8_t));
+    freeimage(bp);
+  }
+  else if (datatype(b) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *B;
+    uint32_t *BP;
+    B = ULONGDATA(b);
+    bp = copyimage(b);
+    BP = ULONGDATA(bp);
+    for (k = 1; k < N; k += 1) BP[k] = 0;
+
+    for (k = 1; k < ds; k += 2)
+      for (j = 1; j < cs; j += 2)
+	for (i = 1; i < rs; i += 2)
+	{
+	  BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
+	  Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
+	  for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[k * ps + j * rs + i]);
+	}
+    memcpy(B, BP, N*sizeof(uint32_t));
+    freeimage(bp);
+  }
+  else if (datatype(b) == VFF_TYP_FLOAT)
+  {
+    float *B;
+    float *BP;
+    B = FLOATDATA(b);
+    bp = copyimage(b);
+    BP = FLOATDATA(bp);
+    for (k = 1; k < N; k += 1) BP[k] = 0.0;
+
+    for (k = 1; k < ds; k += 2)
+      for (j = 1; j < cs; j += 2)
+	for (i = 1; i < rs; i += 2)
+	{
+	  BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
+	  Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
+	  for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[k * ps + j * rs + i]);
+	}
+    memcpy(B, BP, N*sizeof(float));
+    freeimage(bp);
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
 } /* ndgmax3d() */
 
 /* ==================================== */
 void ndgmoy3d(struct xvimage *k)
 /* ==================================== */
 /*
-  Entree: une fonction k de H3 dans [0..255] dont
+  Entree: une fonction k de H3 dans R^+ dont
           seules les valeurs des beta-terminaux (cubes) sont significatives.
-  Sortie: une fonction kp de H3 dans [0..255].
+  Sortie: une fonction kp de H3 dans R^+.
           Tous les points x non beta-terminaux 
           ont recu la valeur moy{k[y], y beta-terminal dans betacarre[x]}
 */
 {
+#undef F_NAME
+#define F_NAME "ndgmoy3d"
   int32_t rs = rowsize(k);
   int32_t cs = colsize(k);
   int32_t ds = depth(k);
   int32_t ps = rs * cs;
-  uint8_t *K = UCHARDATA(k);
+  int32_t N = ps * ds;
   int32_t x, y, z, u, n;
   int32_t tab[GRS3D*GCS3D*GDS3D];
-  int32_t sum, nb;
 
-  for (z = 0; z < ds; z++)
-  for (y = 0; y < cs; y++)
-  for (x = 0; x < rs; x++)
-    if (!CUBE3D(x,y,z))
-    {
-      nb = sum = 0;
-      Betacarre3d(rs, cs, ds, x, y, z, tab, &n);
-      for (u = 0; u < n; u++) 
-        if (CUBE3D((tab[u]%rs),((tab[u]%ps)/rs),(tab[u]/ps)))
-        {
-          sum += K[tab[u]];
-          nb++;
-	}
-      K[z * ps + y * rs + x] = (uint8_t)(sum/nb);
-    }
+  if (datatype(k) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *K = UCHARDATA(k);
+    uint32_t nb;
+    uint32_t sum;
+
+    for (z = 0; z < ds; z++)
+      for (y = 0; y < cs; y++)
+	for (x = 0; x < rs; x++)
+	  if (!CUBE3D(x,y,z))
+	  {
+	    nb = sum = 0;
+	    Betacarre3d(rs, cs, ds, x, y, z, tab, &n);
+	    for (u = 0; u < n; u++) 
+	      if (CUBE3D((tab[u]%rs),((tab[u]%ps)/rs),(tab[u]/ps)))
+	      {
+		sum += K[tab[u]];
+		nb++;
+	      }
+	    K[z * ps + y * rs + x] = (uint8_t)(sum/nb);
+	  }
+  }
+  else if (datatype(k) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *K = ULONGDATA(k);
+    uint32_t nb;
+    uint32_t sum;
+
+    for (z = 0; z < ds; z++)
+      for (y = 0; y < cs; y++)
+	for (x = 0; x < rs; x++)
+	  if (!CUBE3D(x,y,z))
+	  {
+	    nb = sum = 0;
+	    Betacarre3d(rs, cs, ds, x, y, z, tab, &n);
+	    for (u = 0; u < n; u++) 
+	      if (CUBE3D((tab[u]%rs),((tab[u]%ps)/rs),(tab[u]/ps)))
+	      {
+		sum += K[tab[u]];
+		nb++;
+	      }
+	    K[z * ps + y * rs + x] = (uint32_t)(sum/nb);
+	  }
+  }
+  else if (datatype(k) == VFF_TYP_FLOAT)
+  {
+    float *K = FLOATDATA(k);
+    uint32_t nb;
+    float sum;
+
+    for (z = 0; z < ds; z++)
+      for (y = 0; y < cs; y++)
+	for (x = 0; x < rs; x++)
+	  if (!CUBE3D(x,y,z))
+	  {
+	    nb = sum = 0;
+	    Betacarre3d(rs, cs, ds, x, y, z, tab, &n);
+	    for (u = 0; u < n; u++) 
+	      if (CUBE3D((tab[u]%rs),((tab[u]%ps)/rs),(tab[u]/ps)))
+	      {
+		sum += K[tab[u]];
+		nb++;
+	      }
+	    K[z * ps + y * rs + x] = (float)(sum/nb);
+	  }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
+
 } /* ndgmoy3d() */
 
 /* ==================================== */
@@ -3819,10 +4007,12 @@ int32_t FaceLibre3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 } /* FaceLibre3d() */
 
 /* ==================================== */
-int32_t Collapse3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t PaireLibre3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 /* ==================================== */
-#undef F_NAME
-#define F_NAME "Collapse3d"
+// Détermine si la face (i,j,k) est libre dans le complexe b, c'est-a-dire si 
+// elle est strictement incluse dans exactement une face de b.
+// Si non, retourne -1.
+// Si oui, retourne la face contenant (i,j,k).
 {
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
@@ -3832,10 +4022,35 @@ int32_t Collapse3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
   int32_t tab[GRS3D*GCS3D*GDS3D];
   int32_t u, uu, n, nn = 0;
 
-  if (!B[k*ps+j*rs+i]) return 0;
+  if (!B[k*ps+j*rs+i]) return -1;
   Betacarre3d(rs, cs, ds, i, j, k, tab, &n);
   for (u = 0; u < n; u++) if (B[tab[u]]) { nn++; uu = u; }
-  if (nn != 1) return 0;
+  if (nn != 1) return -1;
+  return tab[uu];
+} /* PaireLibre3d() */
+
+/* ==================================== */
+int32_t Collapse3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "Collapse3d"
+// Checks whether the face g = (i,j,k) is a free face for the complex b.
+// If it is not, return -1.
+// If it is, it forms a free pair with a face f which contains it. 
+// These two faces are removed from b, and the face f is returned.
+{
+  int32_t rs = rowsize(b);
+  int32_t cs = colsize(b);
+  int32_t ps = rs * cs;
+  int32_t ds = depth(b);
+  uint8_t *B = UCHARDATA(b);
+  int32_t tab[GRS3D*GCS3D*GDS3D];
+  int32_t u, uu, n, nn = 0;
+
+  if (!B[k*ps+j*rs+i]) return -1;
+  Betacarre3d(rs, cs, ds, i, j, k, tab, &n);
+  for (u = 0; u < n; u++) if (B[tab[u]]) { nn++; uu = u; }
+  if (nn != 1) return -1;
   B[tab[uu]] = B[k*ps+j*rs+i] = VAL_NULLE;
   return tab[uu];
 } /* Collapse3d() */
@@ -3867,10 +4082,10 @@ int32_t Collapse3d_1(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, 
   int32_t tab[GRS3D*GCS3D*GDS3D];
   int32_t u, uu, n, nn = 0;
 
-  if (!B[k*ps+j*rs+i]) return 0;
+  if (!B[k*ps+j*rs+i]) return -1;
   Betacarre3d(rs, cs, ds, i, j, k, tab, &n);
   for (u = 0; u < n; u++) if (B[tab[u]]) { nn++; uu = u; }
-  if (nn != 1) return 0;
+  if (nn != 1) return -1;
   B[tab[uu]] = B[k*ps+j*rs+i] = VAL_NULLE;
   return tab[uu];
 } /* Collapse3d_1() */
@@ -3951,7 +4166,8 @@ int32_t simple_26_att(   /* pour un objet en 26-connexite */
     x = lifo[--lp];
     BB[x] &= ~MASK_MRK;
     i = x % RS; j = (x % PS) / RS; k = x / PS;
-    if (xx = Collapse3d_1(BB, RS, CS, DS, i, j, k))
+    xx = Collapse3d_1(BB, RS, CS, DS, i, j, k);
+    if (xx != -1)
     {
       na -= 2;
       ii = xx % RS; jj = (xx % PS) / RS; kk = xx / PS;
@@ -4058,7 +4274,8 @@ int32_t pairesimple_26_x(
     x = lifo[--lp];
     B[x] &= ~MASK_MRK;
     i = x % RS; j = (x % PS) / RS; k = x / PS;
-    if (xx = Collapse3d_1(B, RS, CS, DS, i, j, k))
+    xx = Collapse3d_1(B, RS, CS, DS, i, j, k);
+    if (xx != -1)
     {
       na -= 2;
       ii = xx % RS; jj = (xx % PS) / RS; kk = xx / PS;
@@ -4156,7 +4373,8 @@ int32_t pairesimple_26_y(
     x = lifo[--lp];
     B[x] &= ~MASK_MRK;
     i = x % RS; j = (x % PS) / RS; k = x / PS;
-    if (xx = Collapse3d_1(B, RS, CS, DS, i, j, k))
+    xx = Collapse3d_1(B, RS, CS, DS, i, j, k);
+    if (xx != -1)
     {
       na -= 2;
       ii = xx % RS; jj = (xx % PS) / RS; kk = xx / PS;
@@ -4256,7 +4474,8 @@ int32_t pairesimple_26_z(
     x = lifo[--lp];
     B[x] &= ~MASK_MRK;
     i = x % RS; j = (x % PS) / RS; k = x / PS;
-    if (xx = Collapse3d_1(B, RS, CS, DS, i, j, k))
+    xx = Collapse3d_1(B, RS, CS, DS, i, j, k);
+    if (xx != -1)
     {
       na -= 2;
       ii = xx % RS; jj = (xx % PS) / RS; kk = xx / PS;

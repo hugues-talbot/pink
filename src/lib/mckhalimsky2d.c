@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky2d.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/* $Id: mckhalimsky2d.c,v 1.2 2009-06-29 09:10:50 mcouprie Exp $ */
 /* 
    Librairie mckhalimsky2d
 
@@ -125,6 +125,69 @@ struct xvimage * Khalimskize2d(struct xvimage *o)
 
 /* ==================================== */
 struct xvimage * KhalimskizeNDG2d(struct xvimage *o)
+/* ==================================== */
+/*            
+   o: image originale
+   b: resultat - chaque pixel de o est devenu un beta-terminal de b
+                 et sa valeur de gris a ete transmise. les ndg des
+                 autres points sont a 0.
+*/
+{
+#undef F_NAME
+#define F_NAME "KhalimskizeNDG2d"
+  int32_t ors = rowsize(o);
+  int32_t ocs = colsize(o);
+  struct xvimage *b;
+  int32_t brs, bcs, bN;
+  int32_t i, j, ii, jj, n;
+
+  brs = 2 * ors + 1;
+  bcs = 2 * ocs + 1;
+  bN = brs * bcs;
+  
+  b = allocimage(NULL, brs, bcs, 1, datatype(o));
+  if (b == NULL)
+  {   fprintf(stderr,"%s: malloc failed\n", F_NAME);
+      return NULL;
+  }
+
+  if (datatype(b) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *O = UCHARDATA(o);
+    uint8_t *B = UCHARDATA(b);
+    memset(B, 0, bN*sizeof(uint8_t));
+    for (j = 0; j < ocs; j++)
+      for (i = 0; i < ors; i++)
+	B[(2*j+1) * brs + (2*i+1)] = O[j * ors + i];
+  }
+  else if (datatype(b) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *O = ULONGDATA(o);
+    uint32_t *B = ULONGDATA(b);
+    memset(B, 0, bN*sizeof(uint32_t));
+    for (j = 0; j < ocs; j++)
+      for (i = 0; i < ors; i++)
+	B[(2*j+1) * brs + (2*i+1)] = O[j * ors + i];
+  }
+  else if (datatype(b) == VFF_TYP_FLOAT)
+  {
+    float *O = FLOATDATA(o);
+    float *B = FLOATDATA(b);
+    memset(B, 0, bN*sizeof(float));
+    for (j = 0; j < ocs; j++)
+      for (i = 0; i < ors; i++)
+	B[(2*j+1) * brs + (2*i+1)] = O[j * ors + i];
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
+  return b;
+} /* KhalimskizeNDG2d() */
+
+/* ==================================== */
+struct xvimage * KhalimskizeNDG2d_OLD(struct xvimage *o)
 /* ==================================== */
 /*            
    o: image originale
@@ -325,7 +388,85 @@ skip: ;
 } /* Connex4Obj2d() */
 
 /* ==================================== */
-void ndgmin2d(struct xvimage *k)
+void ndgmin2d(struct xvimage *b)
+/* ==================================== */
+{
+#undef F_NAME
+#define F_NAME "ndgmin2d"
+  int32_t rs = rowsize(b);
+  int32_t cs = colsize(b);
+  int32_t N = rs * cs;
+  struct xvimage *bp;
+  int32_t i, j, u, n;
+  int32_t tab[GRS2D*GCS2D];
+
+  if (datatype(b) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *B;
+    uint8_t *BP;
+    B = UCHARDATA(b);
+    bp = copyimage(b);
+    BP = UCHARDATA(bp);
+    memset(BP, NDG_MAX, N);
+
+    for (j = 1; j < cs; j += 2)
+      for (i = 1; i < rs; i += 2)
+      {
+	BP[j * rs + i] = B[j * rs + i];
+	Alphacarre2d(rs, cs, i, j, tab, &n);
+	for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[j * rs + i]);
+      }
+    memcpy(B, BP, N*sizeof(uint8_t));
+    freeimage(bp);
+  }
+  else if (datatype(b) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *B;
+    uint32_t *BP;
+    B = ULONGDATA(b);
+    bp = copyimage(b);
+    BP = ULONGDATA(bp);
+    for (j = 1; j < N; j += 1) BP[j] = UINT32_MAX;
+
+    for (j = 1; j < cs; j += 2)
+      for (i = 1; i < rs; i += 2)
+      {
+	BP[j * rs + i] = B[j * rs + i];
+	Alphacarre2d(rs, cs, i, j, tab, &n);
+	for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[j * rs + i]);
+      }
+    memcpy(B, BP, N*sizeof(uint32_t));
+    freeimage(bp);
+  }
+  else if (datatype(b) == VFF_TYP_FLOAT)
+  {
+    float *B;
+    float *BP;
+    B = FLOATDATA(b);
+    bp = copyimage(b);
+    BP = FLOATDATA(bp);
+    for (j = 1; j < N; j += 1) BP[j] = FLOAT_MAX;
+
+    for (j = 1; j < cs; j += 2)
+      for (i = 1; i < rs; i += 2)
+      {
+	BP[j * rs + i] = B[j * rs + i];
+	Alphacarre2d(rs, cs, i, j, tab, &n);
+	for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[j * rs + i]);
+      }
+    memcpy(B, BP, N*sizeof(float));
+    freeimage(bp);
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
+
+} /* ndgmin2d() */
+
+/* ==================================== */
+void ndgmin2d_OLD(struct xvimage *k)
 /* ==================================== */
 /*
   Entree: une fonction k de H2 dans [0..255] dont
@@ -393,7 +534,85 @@ void ndgminbeta2d(struct xvimage *k)
 } /* ndgminbeta2d() */
 
 /* ==================================== */
-void ndgmax2d(struct xvimage *k)
+void ndgmax2d(struct xvimage *b)
+/* ==================================== */
+{
+#undef F_NAME
+#define F_NAME "ndgmax2d"
+  int32_t rs = rowsize(b);
+  int32_t cs = colsize(b);
+  int32_t N = rs * cs;
+  struct xvimage *bp;
+  int32_t i, j, u, n;
+  int32_t tab[GRS2D*GCS2D];
+
+  if (datatype(b) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *B;
+    uint8_t *BP;
+    B = UCHARDATA(b);
+    bp = copyimage(b);
+    BP = UCHARDATA(bp);
+    memset(BP, NDG_MIN, N);
+
+    for (j = 1; j < cs; j += 2)
+      for (i = 1; i < rs; i += 2)
+      {
+	BP[j * rs + i] = B[j * rs + i];
+	Alphacarre2d(rs, cs, i, j, tab, &n);
+	for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[j * rs + i]);
+      }
+    memcpy(B, BP, N*sizeof(uint8_t));
+    freeimage(bp);
+  }
+  else if (datatype(b) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *B;
+    uint32_t *BP;
+    B = ULONGDATA(b);
+    bp = copyimage(b);
+    BP = ULONGDATA(bp);
+    for (j = 1; j < N; j += 1) BP[j] = 0;
+
+    for (j = 1; j < cs; j += 2)
+      for (i = 1; i < rs; i += 2)
+      {
+	BP[j * rs + i] = B[j * rs + i];
+	Alphacarre2d(rs, cs, i, j, tab, &n);
+	for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[j * rs + i]);
+      }
+    memcpy(B, BP, N*sizeof(uint32_t));
+    freeimage(bp);
+  }
+  else if (datatype(b) == VFF_TYP_FLOAT)
+  {
+    float *B;
+    float *BP;
+    B = FLOATDATA(b);
+    bp = copyimage(b);
+    BP = FLOATDATA(bp);
+    for (j = 1; j < N; j += 1) BP[j] = 0.0;
+
+    for (j = 1; j < cs; j += 2)
+      for (i = 1; i < rs; i += 2)
+      {
+	BP[j * rs + i] = B[j * rs + i];
+	Alphacarre2d(rs, cs, i, j, tab, &n);
+	for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[j * rs + i]);
+      }
+    memcpy(B, BP, N*sizeof(float));
+    freeimage(bp);
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
+
+} /* ndgmax2d() */
+
+/* ==================================== */
+void ndgmax2d_OLD(struct xvimage *k)
 /* ==================================== */
 /*
   Entree: une fonction k de H2 dans [0..255] dont
@@ -471,12 +690,20 @@ void ndgmoy2d(struct xvimage *k)
           ont recu la valeur moy{k[y], y beta-terminal dans betacarre[x]}
 */
 {
+#undef F_NAME
+#define F_NAME "ndgmoy2d"
   int32_t rs = rowsize(k);
   int32_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
   int32_t i, j, u, n;
   int32_t tab[9];
   int32_t sum, nb;
+
+  if (datatype(k) != VFF_TYP_1_BYTE)
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
 
   for (j = 0; j < cs; j++)
     for (i = 0; i < rs; i++)
@@ -1627,6 +1854,76 @@ int32_t EulerKh2d(struct xvimage *b)
         }
   return n0 - n1 + n2;
 } /* EulerKh2d() */
+
+/* ========================================================================== */
+/* ========================================================================== */
+/*                     Collapse                               */
+/* ========================================================================== */
+/* ========================================================================== */
+
+/* ==================================== */
+int32_t FaceLibre2d(struct xvimage *b, int32_t i, int32_t j)
+/* ==================================== */
+// Détermine si la face (i,j) est libre dans le complexe b, c'est-a-dire si 
+// elle est strictement incluse dans exactement une face de b.
+{
+  int32_t rs = rowsize(b);
+  int32_t cs = colsize(b);
+  uint8_t *B = UCHARDATA(b);
+  int32_t tab[GCS2D*GRS2D];
+  int32_t u, n, nn = 0;
+
+  if (!B[j*rs+i]) return 0;
+  Betacarre2d(rs, cs, i, j, tab, &n);
+  for (u = 0; u < n; u++) if (B[tab[u]]) nn++;
+
+  return (nn == 1);
+} /* FaceLibre2d() */
+
+/* ==================================== */
+int32_t PaireLibre2d(struct xvimage *b, int32_t i, int32_t j)
+/* ==================================== */
+// Détermine si la face (i,j) est libre dans le complexe b, c'est-a-dire si 
+// elle est strictement incluse dans exactement une face de b.
+// Si non, retourne -1.
+// Si oui, retourne la face contenant (i,j).
+{
+  int32_t rs = rowsize(b);
+  int32_t cs = colsize(b);
+  uint8_t *B = UCHARDATA(b);
+  int32_t tab[GCS2D*GRS2D];
+  int32_t u, uu, n, nn = 0;
+
+  if (!B[j*rs+i]) return -1;
+  Betacarre2d(rs, cs, i, j, tab, &n);
+  for (u = 0; u < n; u++) if (B[tab[u]]) { nn++; uu = u; }
+  if (nn != 1) return -1;
+  return tab[uu];
+} /* PaireLibre2d() */
+
+/* ==================================== */
+int32_t Collapse2d(struct xvimage *b, int32_t i, int32_t j)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "Collapse2d"
+// Checks whether the face g = (i,j) is a free face for the complex b.
+// If it is not, return -1.
+// If it is, it forms a free pair with a face f which contains it. 
+// These two faces are removed from b, and the face f is returned.
+{
+  int32_t rs = rowsize(b);
+  int32_t cs = colsize(b);
+  uint8_t *B = UCHARDATA(b);
+  int32_t tab[GCS2D*GRS2D];
+  int32_t u, uu, n, nn = 0;
+
+  if (!B[j*rs+i]) return -1;
+  Betacarre2d(rs, cs, i, j, tab, &n);
+  for (u = 0; u < n; u++) if (B[tab[u]]) { nn++; uu = u; }
+  if (nn != 1) return -1;
+  B[tab[uu]] = B[j*rs+i] = VAL_NULLE;
+  return tab[uu];
+} /* Collapse2d() */
 
 /* ========================================================================== */
 /* ========================================================================== */

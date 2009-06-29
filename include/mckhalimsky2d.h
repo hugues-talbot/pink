@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky2d.h,v 1.4 2009-06-24 05:32:12 mcouprie Exp $ */
+/* $Id: mckhalimsky2d.h,v 1.5 2009-06-29 09:10:50 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -11,6 +11,12 @@ extern "C" {
 #define NDG_CARRE 255
 #define NDG_INTER 200
 #define NDG_SINGL 128
+#define GRS2D 3
+#define GCS2D 3
+
+#define VAL_NULLE    0
+#define VAL_OBJET  255
+#define VAL_MARQUE   1
 
 extern void InitPileGrilles2d();
 extern void TerminePileGrilles2d();
@@ -53,6 +59,9 @@ extern int32_t BetaSimple2d(struct xvimage *b, int32_t i, int32_t j);
 extern int32_t Alpha2Simple2d(struct xvimage *b, int32_t i, int32_t j);
 extern int32_t Beta2Simple2d(struct xvimage *b, int32_t i, int32_t j);
 extern int32_t EulerKh2d(struct xvimage *b);
+extern int32_t FaceLibre2d(struct xvimage *b, int32_t i, int32_t j);
+extern int32_t PaireLibre2d(struct xvimage *b, int32_t i, int32_t j);
+extern int32_t Collapse2d(struct xvimage *b, int32_t i, int32_t j);
 #ifdef __cplusplus
 }
 #endif

@@ -1,4 +1,4 @@
-/* $Id: lskeletons.c,v 1.2 2009-02-19 07:44:08 mcouprie Exp $ */
+/* $Id: lskeletons.c,v 1.3 2009-06-29 09:10:50 mcouprie Exp $ */
 /* Michel Couprie -  juillet 2001 */
 
 #include <stdio.h>
@@ -123,7 +123,7 @@ static int32_t typedir3d(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t 
   if (sum == 0) return 27 - 0;
   else if (sum == 1) 
   {
-    if (n) return 27 - 1;
+    if (n)      return 27 - 1;
     else if (s) return 27 - 2;
     else if (e) return 27 - 3;
     else if (o) return 27 - 4;
@@ -132,7 +132,7 @@ static int32_t typedir3d(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t 
   }
   else if (sum == 2) 
   {
-    if (n && e) return 27 - 7;
+    if (n && e)      return 27 - 7;
     else if (s && o) return 27 - 8;
     else if (e && a) return 27 - 9;
     else if (o && d) return 27 - 10;
