@@ -279,6 +279,7 @@ $(BDIR)/3dbeta \
 $(BDIR)/3dborder \
 $(BDIR)/3dcollapse \
 $(BDIR)/3dpardircollapse \
+$(BDIR)/3dsurfacecollapse \
 $(BDIR)/3dcolor \
 $(BDIR)/3dinvariants \
 $(BDIR)/3disthmus \
@@ -1364,6 +1365,9 @@ $(BDIR)/3dcollapse:	$(CDIR)/3dcollapse.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(I
 
 $(BDIR)/3dpardircollapse:	$(CDIR)/3dpardircollapse.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/ldist.h $(OBJ_COMMON) $(IDIR)/l3dcollapse.h $(ODIR)/l3dcollapse.o $(IDIR)/mckhalimsky3d.h $(ODIR)/mckhalimsky3d.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/3dpardircollapse.c $(OBJ_COMMON) $(ODIR)/l3dcollapse.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(LIBS) -o $(BDIR)/3dpardircollapse
+
+$(BDIR)/3dsurfacecollapse:	$(CDIR)/3dsurfacecollapse.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/ldist.h $(OBJ_COMMON) $(IDIR)/l3dcollapse.h $(ODIR)/l3dcollapse.o $(IDIR)/mckhalimsky3d.h $(ODIR)/mckhalimsky3d.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/3dsurfacecollapse.c $(OBJ_COMMON) $(ODIR)/l3dcollapse.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(LIBS) -o $(BDIR)/3dsurfacecollapse
 
 $(BDIR)/3dcolor:	$(CDIR)/3dcolor.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l3dkhalimsky.h $(ODIR)/l3dkhalimsky.o $(IDIR)/mckhalimsky3d.h $(ODIR)/mckhalimsky3d.o $(ODIR)/mclifo.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/3dcolor.c $(OBJ_COMMON) $(ODIR)/l3dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(LIBS) -o $(BDIR)/3dcolor

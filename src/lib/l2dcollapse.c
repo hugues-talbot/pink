@@ -1,4 +1,4 @@
-/* $Id: l2dcollapse.c,v 1.1 2009-06-29 09:10:50 mcouprie Exp $ */
+/* $Id: l2dcollapse.c,v 1.2 2009-06-30 05:15:47 mcouprie Exp $ */
 /* 
    l2dpardircollapse: collapse parallÅËle par sous-ÅÈtapes directionnelles
    l2dpardircollapse_l: collapse guidÅÈ et contraint - prioritÅÈ ULONG
@@ -223,7 +223,7 @@ int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
     }
   }
 
-  taillemaxrbt = 4 * (rs + cs);
+  taillemaxrbt = (rs * cs)/8;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
@@ -440,7 +440,7 @@ int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
     }
   }
 
-  taillemaxrbt = 4 * (rs + cs);
+  taillemaxrbt = (rs * cs)/8;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
   RBT = CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
@@ -635,7 +635,7 @@ int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
     }
   }
 
-  taillemax = 4 * (rs + cs);
+  taillemax = (rs * cs)/8;
   LIFO = CreeLifoVide(taillemax);
   LIFOb = CreeLifoVide(taillemax);
   if ((LIFO == NULL) || (LIFOb == NULL))
