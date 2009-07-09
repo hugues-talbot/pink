@@ -135,7 +135,8 @@ $(BDIR)/radialrankmaxopening \
 $(BDIR)/rankfilter \
 $(BDIR)/rankmaxopening \
 $(BDIR)/redt \
-$(BDIR)/voronoilabelling
+$(BDIR)/voronoilabelling \
+$(BDIR)/fmm
 
 CONNECT=\
 $(BDIR)/amont \
@@ -487,7 +488,6 @@ doc:	$(PINK)/pink.dox
 	cp -R $(PINK)/doc $(HOME)/public_html/pinkdoc
 
 clean:	
-	rm -f $(PINK)/makefile
 	rm -f $(PINK)/linux/bin/*
 	rm -f $(PINK)/linux/bin2/*
 	rm -f $(PINK)/linux/obj/*
@@ -504,6 +504,7 @@ clean:
 
 cleanall:
 	make clean
+	rm -f $(PINK)/makefile
 	rm -f $(PINK)/doc/latex/*
 	rm -f $(PINK)/doc/html/*
 
@@ -929,6 +930,10 @@ $(BDIR)/redt:	$(CDIR)/redt.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ldis
 
 $(BDIR)/voronoilabelling:	$(CDIR)/voronoilabelling.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lvoronoilabelling.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/lvoronoilabelling.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/voronoilabelling.c $(ODIR)/lvoronoilabelling.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/voronoilabelling
+
+$(BDIR)/fmm: $(CDIR)/fmm.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h $(ODIR)/lfmm.o $(ODIR)/fmmgeodist.o $(ODIR)/lfmmdist.o $(ODIR)/bimage.o $(ODIR)/bimage_utils.o $(ODIR)/lstb_io.o
+	     $(CC) -Wall $(CCFLAGS) -I$(IDIR) $(CDIR)/fmm.c  $(ODIR)/lfmm.o $(ODIR)/lfmmdist.o $(ODIR)/fmmgeodist.o  $(ODIR)/bimage.o $(ODIR)/bimage_utils.o $(ODIR)/lstb_io.o $(OBJ_COMMON)  -o $(BDIR)/fmm
+
 
 # *********************************
 # CONNECT
@@ -1948,6 +1953,24 @@ $(ODIR)/lmedialaxis.o:	$(LDIR)/lmedialaxis.c $(IDIR)/mccodimage.h $(IDIR)/mcimag
 
 $(ODIR)/lvoronoilabelling.o:	$(LDIR)/lvoronoilabelling.c $(IDIR)/mccodimage.h $(IDIR)/mclifo.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lvoronoilabelling.c -o $(ODIR)/lvoronoilabelling.o
+
+$(ODIR)/lfmm.o: $(LDIR)/lfmm.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h
+	$(CC) -c -Wall $(CCFLAGS) -I$(IDIR) $(LDIR)/lfmm.c -o $(ODIR)/lfmm.o
+
+$(ODIR)/bimage.o: $(LDIR)/bimage.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h
+	$(CC) -c -Wall $(CCFLAGS) -I$(IDIR) $(LDIR)/bimage.c -o $(ODIR)/bimage.o
+
+$(ODIR)/bimage_utils.o: $(LDIR)/bimage_utils.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h
+	$(CC) -c -Wall $(CCFLAGS) -I$(IDIR) $(LDIR)/bimage_utils.c -o $(ODIR)/bimage_utils.o
+
+$(ODIR)/lstb_io.o: $(LDIR)/lstb_io.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h
+	$(CC) -c -Wall $(CCFLAGS) -I$(IDIR) $(LDIR)/lstb_io.c -o $(ODIR)/lstb_io.o
+
+$(ODIR)/fmmgeodist.o: $(LDIR)/fmmgeodist.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h
+	$(CC) -c -Wall $(CCFLAGS) -I$(IDIR) $(LDIR)/fmmgeodist.c -o $(ODIR)/fmmgeodist.o
+
+$(ODIR)/lfmmdist.o: $(LDIR)/lfmmdist.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h
+	$(CC) -c -Wall $(CCFLAGS) -I$(IDIR) $(LDIR)/lfmmdist.c -o $(ODIR)/lfmmdist.o
 
 # *********************************
 # CONNECT
