@@ -1,4 +1,4 @@
-/* $Id: float2byte.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: float2byte.c,v 1.3 2009-07-10 05:43:29 mcouprie Exp $ */
 /*! \file float2byte.c
 
 \brief converts a "float" image to a "byte" image
@@ -75,7 +75,6 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: image type must be float\n", argv[0]);
     exit(1);
   }
-
 
   if (argc > 3) mode = atoi(argv[2]);
 

@@ -402,6 +402,7 @@ $(BDIR)/gradientcd \
 $(BDIR)/gaussianfilter \
 $(BDIR)/laplacian \
 $(BDIR)/longestplateau \
+$(BDIR)/meanfilter \
 $(BDIR)/shencastan
 
 MESH3D=\
@@ -1734,6 +1735,9 @@ $(BDIR)/longestplateau:	$(CDIR)/longestplateau.c $(IDIR)/mcimage.h $(IDIR)/mccod
 $(BDIR)/shencastan:	$(CDIR)/shencastan.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lderiche.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lderiche.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/shencastan.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lderiche.o $(LIBS) -o $(BDIR)/shencastan
 
+$(BDIR)/meanfilter:	$(CDIR)/meanfilter.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lmeanfilter.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lmeanfilter.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/meanfilter.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lmeanfilter.o $(LIBS) -o $(BDIR)/meanfilter
+
 # ===============================================================
 # MESH3D
 # ===============================================================
@@ -2270,6 +2274,9 @@ $(ODIR)/lderiche3d.o:	$(LDIR)/lderiche3d.c $(IDIR)/mccodimage.h $(IDIR)/lderiche
 
 $(ODIR)/lfft.o:	$(LDIR)/lfft.c $(IDIR)/mccodimage.h $(IDIR)/lfft.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lfft.c -o $(ODIR)/lfft.o
+
+$(ODIR)/lmeanfilter.o:	$(LDIR)/lmeanfilter.c $(IDIR)/mccodimage.h $(IDIR)/lmeanfilter.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lmeanfilter.c -o $(ODIR)/lmeanfilter.o
 
 # *********************************
 # DIVERS

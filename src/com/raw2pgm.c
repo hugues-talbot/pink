@@ -1,9 +1,9 @@
-/* $Id: raw2pgm.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: raw2pgm.c,v 1.3 2009-07-10 05:43:29 mcouprie Exp $ */
 /*! \file raw2pgm.c
 
 \brief converts from raw format into pgm format
 
-<B>Usage:</B> in.raw rs cs ds headersize nbytespervox littleendian [xdim ydim zdim] out.pgm
+<B>Usage:</B> in.raw rs cs ds headersize datatype littleendian [xdim ydim zdim] out.pgm
 
 <B>Description:</B> Converts from raw format into pgm format. 
 
@@ -13,7 +13,7 @@ Parameters:
 \li \b cs (int32_t): column size (number of voxels in a column)
 \li \b ds (int32_t): number of planes
 \li \b headersize (int32_t): size of the header in bytes (information in the header will be ignored)
-\li \b nbytespervox (int32_t): number of bytes per voxel (1, 2 or 4)
+\li \b datatype (int32_t): (1 for byte, 2 for short int, 4 for long int, 5 for float)
 \li \b littleendian (int32_t) 1: littleendian, 0: bigendian. Usual choice is 0.
 \li \b xdim (float, optional) : gap (in the real world) between two adjacent voxels in a row.  
 \li \b ydim (float, optional) : gap (in the real world) between two adjacent voxels in a column.  
@@ -21,7 +21,7 @@ Parameters:
 
 <B>Types supported:</B> byte 3D, int16_t 3D, int32_t 3D
 
-\warning Signed integers are not supported.
+\warning Signed integers and floating numbers are not supported.
 
 <B>Category:</B> convert
 \ingroup convert

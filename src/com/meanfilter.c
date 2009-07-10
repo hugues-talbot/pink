@@ -1,9 +1,9 @@
-/* $Id: meanfilter.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: meanfilter.c,v 1.3 2009-07-10 05:43:29 mcouprie Exp $ */
 /*! \file meanfilter.c
 
 \brief Mean filter operator
 
-<B>Usage:</B> meanfilter in.pgm roi.pgm connex niter [inhibit.pgm] out.pgm
+<B>Usage:</B> meanfilter in.pgm roi.pgm niter [inhibit.pgm] out.pgm
 
 <B>Description:</B>
 Let F be the function stored in image \b in.pgm.
@@ -17,7 +17,7 @@ Repeat niter times
   For each image point x
     If R[x] and not I[x] then
       S = G[x]; C = 1;
-      For each connex-neighbour y of x
+      For each neighbour y of x
         If R[y] then S = S + G[y]; C = C + 1;
       F[x] = S / C;
 Result: F
@@ -37,7 +37,7 @@ Result: F
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lmean.h>
+#include <lmeanfilter.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
@@ -46,29 +46,27 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * roi;
   struct xvimage * inhibit = NULL;
-  int32_t connex;
   int32_t niter;
 
-  if ((argc != 6) && (argc != 7))
+  if ((argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in.pgm roi.pgm connex niter [inhibit.pgm] out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm roi.pgm niter [inhibit.pgm] out.pgm \n", argv[0]);
     exit(1);
   }
 
   image = readimage(argv[1]);
   roi = readimage(argv[2]);
-  if ((image == NULL) || (mask == NULL))
+  if ((image == NULL) || (roi == NULL))
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  connex = atoi(argv[3]);
-  niter = atoi(argv[4]);
+  niter = atoi(argv[3]);
 
-  if (argc == 7) 
+  if (argc == 6) 
   {
-    inhibit = readimage(argv[5]);
+    inhibit = readimage(argv[4]);
     if (inhibit == NULL)
     {
       fprintf(stderr, "%s: readimage failed\n", argv[0]);
@@ -82,7 +80,7 @@ int main(int argc, char **argv)
     exit(1);
   }
   
-  if (! lmeanfilter(image, roi, inhibit, connex, niter))
+  if (! lmeanfilter(image, roi, inhibit, niter))
   {
     fprintf(stderr, "%s: function lmeanfilter failed\n", argv[0]);
     exit(1);
