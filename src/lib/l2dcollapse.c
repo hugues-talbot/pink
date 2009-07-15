@@ -1,4 +1,4 @@
-/* $Id: l2dcollapse.c,v 1.2 2009-06-30 05:15:47 mcouprie Exp $ */
+/* $Id: l2dcollapse.c,v 1.3 2009-07-15 05:31:01 mcouprie Exp $ */
 /* 
    l2dpardircollapse: collapse parallÅËle par sous-ÅÈtapes directionnelles
    l2dpardircollapse_l: collapse guidÅÈ et contraint - prioritÅÈ ULONG
@@ -18,8 +18,10 @@
 #include <mcrbt.h>
 #include <mcindic.h>
 #include <mcutil.h>
+#include <mcgraphe.h>
 #include <mckhalimsky2d.h>
 #include <l2dkhalimsky.h>
+#include <l2dcollapse.h>
 
 #define EN_RBT        0
 #define EN_LIFO       1
@@ -232,8 +234,8 @@ int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
     return(0);
   }
 
-  LIFO = CreeLifoVide(taillemaxrbt);
-  LIFOb = CreeLifoVide(taillemaxrbt);
+  LIFO = CreeLifoVide(taillemaxrbt*2);
+  LIFOb = CreeLifoVide(taillemaxrbt*2);
   if ((LIFO == NULL) || (LIFOb == NULL))
   {
     fprintf(stderr, "%s : CreeLifoVide failed\n", F_NAME);
@@ -308,7 +310,7 @@ int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 	      else         { direc = 1; if (yf > yg) orien = 0; else orien = 1; }
 	      if ((DIM2D(xf,yf) == dim) && (direc == dir) && (orien == ori))
 	      {
-		K[g] = K[f] = VAL_NULLE;
+		K[g] = K[f] = VAL_NULLE; // COLLAPSE
 		nbcol++;
 		// PrÅÈparation sous-ÅÈtapes suivantes
 		Alphacarre2d(rs, cs, xf, yf, tab, &n);
@@ -449,8 +451,8 @@ int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
     return(0);
   }
 
-  LIFO = CreeLifoVide(taillemaxrbt);
-  LIFOb = CreeLifoVide(taillemaxrbt);
+  LIFO = CreeLifoVide(taillemaxrbt*2);
+  LIFOb = CreeLifoVide(taillemaxrbt*2);
   if ((LIFO == NULL) || (LIFOb == NULL))
   {
     fprintf(stderr, "%s : CreeLifoVide failed\n", F_NAME);
@@ -525,7 +527,7 @@ int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 	      else         { direc = 1; if (yf > yg) orien = 0; else orien = 1; }
 	      if ((DIM2D(xf,yf) == dim) && (direc == dir) && (orien == ori))
 	      {
-		K[g] = K[f] = VAL_NULLE;
+		K[g] = K[f] = VAL_NULLE; // COLLAPSE
 		nbcol++;
 		// PrÅÈparation sous-ÅÈtapes suivantes
 		Alphacarre2d(rs, cs, xf, yf, tab, &n);
@@ -635,7 +637,7 @@ int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
     }
   }
 
-  taillemax = (rs * cs)/8;
+  taillemax = (rs * cs)/4;
   LIFO = CreeLifoVide(taillemax);
   LIFOb = CreeLifoVide(taillemax);
   if ((LIFO == NULL) || (LIFOb == NULL))
@@ -706,7 +708,7 @@ int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
 	      else         { direc = 1; if (yf > yg) orien = 0; else orien = 1; }
 	      if ((DIM2D(xf,yf) == dim) && (direc == dir) && (orien == ori))
 	      {
-		K[g] = K[f] = VAL_NULLE;
+		K[g] = K[f] = VAL_NULLE; // COLLAPSE
 		// PrÅÈparation sous-ÅÈtapes suivantes
 		Alphacarre2d(rs, cs, xf, yf, tab, &n);
 		for (u = 0; u < n; u += 1)
@@ -792,3 +794,295 @@ int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
   return 1;
 
 } /* l2dpardircollapse() */
+
+// 888888888888888888888888888888888888888888888888888888888888888888
+// 888888888888888888888888888888888888888888888888888888888888888888
+//                        TOPOLOGICAL FLOW
+// 888888888888888888888888888888888888888888888888888888888888888888
+// 888888888888888888888888888888888888888888888888888888888888888888
+ 
+/* =============================================================== */
+graphe * l2dtopoflow_l(struct xvimage * k, struct xvimage * prio, struct xvimage * func, struct xvimage * inhibit, float priomax)
+/* =============================================================== */
+/* 
+  construction du flot topologique associÅÈ Å‡ un collapse parallÅËle directionnel
+  (voir l2dpardircollapse_f)
+  fonction de prioritÅÈ en entiers longs
+*/
+#undef F_NAME
+#define F_NAME "l2dtopoflow_l"
+{
+  return(NULL);
+
+} /* l2dtopoflow_l() */
+ 
+/* =============================================================== */
+graphe * l2dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage * func, struct xvimage * inhibit, float priomax)
+/* =============================================================== */
+/* 
+  construction du flot topologique associÅÈ Å‡ un collapse parallÅËle directionnel
+  (voir l2dpardircollapse_f)
+  fonction de prioritÅÈ en flottants
+*/
+#undef F_NAME
+#define F_NAME "l2dtopoflow_f"
+{
+  int32_t i, g, f, ff, u, v, n, xf, yf, xg, yg, xv, yv;
+  int32_t rs, cs, N;
+  int32_t dim, ori, dir, direc, orien;
+  uint8_t * K;
+  float * P;
+  float * F;
+  uint8_t * I = NULL;
+  Rbt * RBT;
+  Lifo * LIFO;
+  Lifo * LIFOb;
+  int32_t taillemaxrbt;
+  int32_t tab[GRS2D*GCS2D];
+  TypRbtKey p;
+  uint32_t nbcol;
+  graphe * flow = NULL;
+  int32_t narcs;
+
+  rs = rowsize(k);
+  cs = colsize(k);
+  N = rs * cs;
+  K = UCHARDATA(k);
+
+  IndicsInit(N);
+
+  if (prio == NULL)
+  {
+    fprintf(stderr, "%s : prio is needed\n", F_NAME);
+    return(NULL);
+  }
+
+  if ((rowsize(prio) != rs) || (colsize(prio) != cs) || (depth(prio) != 1))
+  {
+    fprintf(stderr, "%s : bad size for prio\n", F_NAME);
+    return(NULL);
+  }
+  if (datatype(prio) == VFF_TYP_FLOAT) 
+    P = FLOATDATA(prio); 
+  else 
+  {
+    fprintf(stderr, "%s : datatype(prio) must be float\n", F_NAME);
+    return(NULL);
+  }
+
+  if (func == NULL)
+  {
+    fprintf(stderr, "%s : func is needed\n", F_NAME);
+    return(NULL);
+  }
+
+  if ((rowsize(func) != rs) || (colsize(func) != cs) || (depth(func) != 1))
+  {
+    fprintf(stderr, "%s : bad size for func\n", F_NAME);
+    return(NULL);
+  }
+  if (datatype(func) == VFF_TYP_FLOAT) 
+    F = FLOATDATA(func); 
+  else 
+  {
+    fprintf(stderr, "%s : datatype(func) must be float\n", F_NAME);
+    return(NULL);
+  }
+
+  if (inhibit != NULL)
+  {
+    if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != 1))
+    {
+      fprintf(stderr, "%s : bad size for inhibit\n", F_NAME);
+      return(NULL);
+    }
+    if (datatype(inhibit) == VFF_TYP_1_BYTE) 
+      I = UCHARDATA(inhibit); 
+    else 
+    {
+      fprintf(stderr, "%s : datatype(inhibit) must be uint8_t\n", F_NAME);
+      return(NULL);
+    }
+  }
+
+  taillemaxrbt = (rs * cs)/8;
+  /* cette taille est indicative, le RBT est realloue en cas de depassement */
+  RBT = CreeRbtVide(taillemaxrbt);
+  if (RBT == NULL)
+  {
+    fprintf(stderr, "%s : CreeRbtVide failed\n", F_NAME);
+    return(NULL);
+  }
+
+  LIFO = CreeLifoVide(taillemaxrbt*2);
+  LIFOb = CreeLifoVide(taillemaxrbt*2);
+  if ((LIFO == NULL) || (LIFOb == NULL))
+  {
+    fprintf(stderr, "%s : CreeLifoVide failed\n", F_NAME);
+    return(NULL);
+  }
+
+  /* ================================================ */
+  /*               INITIALISATION GRAPHE              */
+  /* ================================================ */
+
+  narcs = 0; // evalue la taille max du graphe
+  for (yg = 0; yg < cs; yg++)
+  for (xg = 0; xg < rs; xg++)
+  {
+    if (K[yg*rs + xg]) 
+    { 
+      if (CARRE(xg,yg)) narcs += 8;
+      else if (INTER(xg,yg)) narcs += 2;
+    }
+  }
+  flow = InitGraphe(N, narcs); // toutes les faces (dans K ou non) sont des sommets
+  if (flow == NULL)
+  {
+    fprintf(stderr, "%s : InitGraphe failed\n", F_NAME);
+    return(NULL);
+  }
+  for (yg = 0; yg < cs; yg++) // coordonnÅÈes des sommets
+  for (xg = 0; xg < rs; xg++)
+  {
+    flow->x[yg*rs + xg] = xg;
+    flow->y[yg*rs + xg] = yg;
+  }  
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+#ifdef VERBOSE
+  fprintf(stderr, "%s: Debut traitement\n", F_NAME);
+#endif
+
+  /* ========================================================= */
+  /*   INITIALISATION DU RBT */
+  /* ========================================================= */
+
+  for (yg = 0; yg < cs; yg++)
+  for (xg = 0; xg < rs; xg++)
+  {
+    g = yg*rs + xg;
+    if (K[g] && 
+	(((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax)) ) && 
+	FaceLibre2d(k, xg, yg))
+    {
+      RbtInsert(&RBT, (TypRbtKey)P[g], g);
+      Set(g, EN_RBT);
+    }
+  }
+
+  /* ================================================ */
+  /*                  DEBUT SATURATION                */
+  /* ================================================ */
+
+  nbcol = 1;
+  while (!RbtVide(RBT) && nbcol)
+  {
+    nbcol = 0;
+    // construit la liste de toutes les paires libres ayant la prioritÅÈ courante
+    p = RbtMinLevel(RBT); 
+    while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    {
+      g = RbtPopMin(RBT);
+      UnSet(g, EN_RBT);
+      xg = g % rs; yg = g / rs;
+      f = PaireLibre2d(k, xg, yg);
+      if (f != -1)
+      {
+	LifoPush(LIFO, f);
+	LifoPush(LIFO, g);
+	Set(g, EN_LIFO);
+      }
+    }
+
+    for (dir = 0; dir <= 2; dir++) // For all face directions
+      for (ori = 0; ori <= 1; ori++) // For both orientations
+      {
+	for (dim = 3; dim >= 1; dim--) // For dimensions in decreasing order
+	{
+	  for (i = 0; i < LIFO->Sp; i += 2) // Scan the free faces list (dim 3)
+	  {
+	    f = LIFO->Pts[i];
+	    g = LIFO->Pts[i+1];
+	    xf = f % rs; yf = f / rs;
+	    if (K[f] && K[g] && 
+		(((I != NULL) && (!I[g] && !I[f])) || 
+		 ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
+	    {
+	      xg = g % rs; yg = g / rs;
+	      if (xf - xg) { direc = 0; if (xf > xg) orien = 0; else orien = 1; }
+	      else         { direc = 1; if (yf > yg) orien = 0; else orien = 1; }
+	      if ((DIM2D(xf,yf) == dim) && (direc == dir) && (orien == ori))
+	      {
+		K[g] = K[f] = VAL_NULLE; // COLLAPSE
+		nbcol++;
+		AjouteArcValue(flow, f, g, (TYP_VARC)0);
+
+		// PrÅÈparation sous-ÅÈtapes suivantes
+		// et suite construction du flot
+		Alphacarre2d(rs, cs, xf, yf, tab, &n);
+		for (u = 0; u < n; u += 1)
+		{
+		  g = tab[u];
+		  xg = g % rs; yg = g / rs;
+		  if (K[g]) AjouteArcValue(flow, g, f, (TYP_VARC)F[f]);
+		  if (K[g] && (P[g] <= p) && 
+		      (((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax))) )
+		  {
+		    ff = PaireLibre2d(k, xg, yg);
+		    if ((ff != -1) && IsSet(f, BORDER) && !IsSet(g, EN_LIFO))
+		    { 
+		      LifoPush(LIFOb, ff); 
+		      LifoPush(LIFOb, g);
+		    }
+		  }
+		} // for u
+	      } // if ((DIM2D(xf,yf) == dim) &&...
+	    } // if (K[f] && K[g])
+	  } // for (i = 0; i < LIFO->Sp; i += 2)
+	  while (!LifoVide(LIFOb))
+	  { 
+	    g = LifoPop(LIFOb);
+	    f = LifoPop(LIFOb);
+	    LifoPush(LIFO, f); 
+	    LifoPush(LIFO, g); 
+	  }
+      } // for (dim = 3; dim >= 1; dim--)
+    } // for for
+
+    // PREPARATION ETAPE SUIVANTE
+    for (i = 0; i < LIFO->Sp; i += 2)
+    {
+      f = LIFO->Pts[i];
+      xf = f % rs; yf = f / rs;
+      Alphacarre2d(rs, cs, xf, yf, tab, &n);
+      for (u = 0; u < n; u += 1)
+      {
+	g = tab[u];
+	xg = g % rs; yg = g / rs;
+	if (K[g] && !IsSet(g, EN_RBT) && 
+	    (((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax)) ) && 
+	    FaceLibre2d(k, xg, yg))
+	{
+	  RbtInsert(&RBT, (TypRbtKey)P[g], g);
+	  Set(g, EN_RBT);
+	}
+      } // for u
+    } // for (i = 0; i < LIFO->Sp; i += 2)
+    LifoFlush(LIFO);
+  } /* while (!RbtVide(RBT)) */
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  RbtTermine(RBT);
+  LifoTermine(LIFO);
+  LifoTermine(LIFOb);
+  return(flow);
+
+} /* l2dtopoflow_f() */

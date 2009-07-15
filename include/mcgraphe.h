@@ -1,4 +1,4 @@
-/* $Id: mcgraphe.h,v 1.4 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: mcgraphe.h,v 1.5 2009-07-15 05:31:01 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -6,11 +6,20 @@ extern "C" {
     \brief structures de base pour la manipulation de graphes
 */
 
+#include <values.h>
 typedef char boolean;
 //typedef int32_t TYP_VARC;
+//#define MAX_VARC MAXLONG
+//#define MIN_VARC MINLONG
 //typedef int32_t TYP_VSOM;
+//#define MAX_VSOM MAXLONG
+//#define MIN_VSOM MINLONG
 typedef double TYP_VARC;
+#define MAX_VARC MAXDOUBLE 
+#define MIN_VARC MINDOUBLE 
 typedef double TYP_VSOM;
+#define MAX_VSOM MAXDOUBLE 
+#define MIN_VSOM MINDOUBLE 
 
 #define TRUE 1
 #define FALSE 0
@@ -220,6 +229,10 @@ extern void Lee(graphe * g, int32_t i);
 extern void LeeNO(graphe * g, graphe * g_1, int32_t i);
 extern graphe * PCC(graphe * g, int32_t d, int32_t a);
 extern graphe * PCCna(graphe * g, int32_t d, int32_t a);
+extern boolean CircuitNiveaux(graphe * g);
+extern void BellmanSC(graphe * g);
+extern void BellmanSCmax(graphe * g);
+extern void BellmanSC1(graphe * g, int32_t dep);
 
 extern graphe * Image2Graphe(struct xvimage *image, int32_t mode, int32_t connex);
 extern struct xvimage *Graphe2Image(graphe * g, int32_t rs);

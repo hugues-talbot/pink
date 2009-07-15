@@ -1,4 +1,4 @@
-/* $Id: 2dpardircollapse.c,v 1.1 2009-06-29 09:10:50 mcouprie Exp $ */
+/* $Id: 2dpardircollapse.c,v 1.2 2009-07-15 05:31:01 mcouprie Exp $ */
 /*! \file 2dpardircollapse.c
 
 \brief parallel directional constrained collapse
@@ -26,6 +26,7 @@ then the points of this image will be left unchanged.
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mckhalimsky2d.h>
+#include <mcgraphe.h>
 #include <l2dcollapse.h>
 
 /* =============================================================== */

@@ -52,6 +52,7 @@ $(BDIR)/explodecomp \
 $(BDIR)/extrude \
 $(BDIR)/float2byte \
 $(BDIR)/float2long \
+$(BDIR)/graph2pgm \
 $(BDIR)/hls2rgb \
 $(BDIR)/list2pgm \
 $(BDIR)/long2byte \
@@ -275,6 +276,7 @@ $(BDIR)/2dkhalimskize \
 $(BDIR)/2dmakecomplex \
 $(BDIR)/2dseltopo \
 $(BDIR)/2dthin \
+$(BDIR)/2dtopoflow \
 $(BDIR)/3dalpha \
 $(BDIR)/3dbeta \
 $(BDIR)/3dborder \
@@ -674,6 +676,9 @@ $(BDIR)/float2byte:	$(CDIR)/float2byte.c $(IDIR)/mcimage.h $(IDIR)/lhisto.h $(OB
 $(BDIR)/float2long:	$(CDIR)/float2long.c $(IDIR)/mcimage.h $(IDIR)/lhisto.h $(OBJ_COMMON) $(ODIR)/lhisto.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/float2long.c $(OBJ_COMMON) $(ODIR)/lhisto.o $(LIBS) -o $(BDIR)/float2long
 
+$(BDIR)/graph2pgm:	$(CDIR)/graph2pgm.c $(IDIR)/mcimage.h $(IDIR)/mcgraphe.h $(IDIR)/mccodimage.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgraphe.o $(ODIR)/mcfifo.o $(ODIR)/mclifo.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/graph2pgm.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgraphe.o $(ODIR)/mcfifo.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/graph2pgm
+
 $(BDIR)/hls2rgb:	$(CDIR)/hls2rgb.c $(IDIR)/mcimage.h $(IDIR)/mccolors.h $(OBJ_COMMON) $(ODIR)/mccolors.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/hls2rgb.c $(OBJ_COMMON) $(ODIR)/mccolors.o $(LIBS) -o $(BDIR)/hls2rgb
 
@@ -933,7 +938,7 @@ $(BDIR)/voronoilabelling:	$(CDIR)/voronoilabelling.c $(IDIR)/mcimage.h $(IDIR)/m
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/voronoilabelling.c $(ODIR)/lvoronoilabelling.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/voronoilabelling
 
 $(BDIR)/fmm: $(CDIR)/fmm.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h $(ODIR)/lfmm.o $(ODIR)/fmmgeodist.o $(ODIR)/lfmmdist.o $(ODIR)/bimage.o $(ODIR)/bimage_utils.o $(ODIR)/lstb_io.o
-	     $(CC) -Wall $(CCFLAGS) -I$(IDIR) $(CDIR)/fmm.c  $(ODIR)/lfmm.o $(ODIR)/lfmmdist.o $(ODIR)/fmmgeodist.o  $(ODIR)/bimage.o $(ODIR)/bimage_utils.o $(ODIR)/lstb_io.o $(OBJ_COMMON)  -o $(BDIR)/fmm
+	     $(CC) -Wall $(CCFLAGS) -I$(IDIR) $(CDIR)/fmm.c  $(ODIR)/lfmm.o $(ODIR)/lfmmdist.o $(ODIR)/fmmgeodist.o  $(ODIR)/bimage.o $(ODIR)/bimage_utils.o $(ODIR)/lstb_io.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/fmm
 
 
 # *********************************
@@ -1336,11 +1341,11 @@ $(BDIR)/toposhrinkgray:	$(CDIR)/toposhrinkgray.c $(IDIR)/mcimage.h $(IDIR)/mccod
 # ORDRES
 # *********************************
 
-$(BDIR)/2dcollapse:	$(CDIR)/2dcollapse.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/ldist.h $(OBJ_COMMON) $(IDIR)/l2dcollapse.h $(ODIR)/l2dcollapse.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dcollapse.c $(OBJ_COMMON) $(ODIR)/l2dcollapse.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(LIBS) -o $(BDIR)/2dcollapse
+$(BDIR)/2dcollapse:	$(CDIR)/2dcollapse.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/ldist.h $(OBJ_COMMON) $(IDIR)/l2dcollapse.h $(ODIR)/l2dcollapse.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcgraphe.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dcollapse.c $(OBJ_COMMON) $(ODIR)/l2dcollapse.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcgraphe.o $(LIBS) -o $(BDIR)/2dcollapse
 
-$(BDIR)/2dpardircollapse:	$(CDIR)/2dpardircollapse.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/ldist.h $(OBJ_COMMON) $(IDIR)/l2dcollapse.h $(ODIR)/l2dcollapse.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dpardircollapse.c $(OBJ_COMMON) $(ODIR)/l2dcollapse.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(LIBS) -o $(BDIR)/2dpardircollapse
+$(BDIR)/2dpardircollapse:	$(CDIR)/2dpardircollapse.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/ldist.h $(OBJ_COMMON) $(IDIR)/l2dcollapse.h $(ODIR)/l2dcollapse.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mcgraphe.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dpardircollapse.c $(OBJ_COMMON) $(ODIR)/l2dcollapse.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mcgraphe.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(LIBS) -o $(BDIR)/2dpardircollapse
 
 $(BDIR)/2dcolor:	$(CDIR)/2dcolor.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l2dkhalimsky.h $(ODIR)/l2dkhalimsky.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dcolor.c $(OBJ_COMMON) $(ODIR)/l2dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mcindic.o $(LIBS) -o $(BDIR)/2dcolor
@@ -1356,6 +1361,9 @@ $(BDIR)/2dseltopo:	$(CDIR)/2dseltopo.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l
 
 $(BDIR)/2dthin:	$(CDIR)/2dthin.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l2dkhalimsky.h $(ODIR)/l2dkhalimsky.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dthin.c $(OBJ_COMMON) $(ODIR)/l2dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mcindic.o $(LIBS) -o $(BDIR)/2dthin
+
+$(BDIR)/2dtopoflow:	$(CDIR)/2dtopoflow.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/ldist.h $(OBJ_COMMON) $(IDIR)/l2dcollapse.h $(ODIR)/l2dcollapse.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcgraphe.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dtopoflow.c $(OBJ_COMMON) $(ODIR)/l2dcollapse.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcgraphe.o $(LIBS) -o $(BDIR)/2dtopoflow
 
 $(BDIR)/3dalpha:	$(CDIR)/3dalpha.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l3dkhalimsky.h $(ODIR)/l3dkhalimsky.o $(IDIR)/mckhalimsky3d.h $(ODIR)/mckhalimsky3d.o $(ODIR)/mclifo.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/3dalpha.c $(OBJ_COMMON) $(ODIR)/l3dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(LIBS) -o $(BDIR)/3dalpha

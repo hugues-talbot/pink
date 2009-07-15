@@ -24,8 +24,6 @@
 #include <mcutil.h>
 #include <mcgraphe.h>
 
-#define L_INFINITY LONG_MAX
-
 /* ====================================================================== */
 /* ====================================================================== */
 /* FONCTIONS SUR LES LISTES CHAINEES DE SOMMETS */
@@ -489,7 +487,7 @@ void SaveGraphe(graphe * g, char *filename)
   {
     fprintf(fd, "val sommets\n");
     for (i = 0; i < n; i++) 
-      fprintf(fd, "%d %d\n", i, g->v_sommets[i]);
+      fprintf(fd, "%d %g\n", i, (double)(g->v_sommets[i]));
   }
 
   if (g->x)
@@ -505,7 +503,7 @@ void SaveGraphe(graphe * g, char *filename)
     {
       j = p->som;
       v = p->v_arc;
-      fprintf(fd, "%d %d %ld\n", i, j, v);
+      fprintf(fd, "%d %d %g\n", i, j, (double)v);
     }
   
   fclose(fd);
@@ -1203,24 +1201,79 @@ boolean Connexe(graphe * g, graphe *g_1)
 /*! \fn boolean CircuitNiveaux(graphe * g)
     \param g (entrée) : un graphe
     \return booléen
-    \brief si le graphe possède au moins un circuit, retourne FALSE ;
-    sinon, calcule les niveaux des sommets du graphes (dans v_sommets) et retourne TRUE
+    \brief si le graphe possède au moins un circuit, retourne TRUE ;
+           sinon, calcule les niveaux des sommets du graphes (dans v_sommets) 
+           et retourne FALSE
 */
-boolean CircuitNiveaux(graphe * g, int32_t a)
+boolean CircuitNiveaux(graphe * g)
 /* ====================================================================== */
 #undef F_NAME
 #define F_NAME "CircuitNiveaux"
 {
-  int32_t * D;   /* pour les degrés intérieurs */
-  int32_t i, n, s;
+  int32_t * D;   // pour les degrés intérieurs
+  int32_t i, n, x, y, N;
   pcell p;
+  Lifo * T, *U, *V;
 
   n = g->nsom;
+  T = CreeLifoVide(n);
+  U = CreeLifoVide(n);
+  if ((T == NULL) || (U == NULL))
+  {
+    fprintf(stderr, "%s : CreeLifoVide failed\n", F_NAME);
+    exit(0);
+  }
+  D = (int32_t *)calloc(n, sizeof(int32_t));
+  if (D == NULL)
+  {
+    fprintf(stderr, "%s : calloc failed\n", F_NAME);
+    exit(0);
+  }
+  i = N = 0;
+  
+  for (x = 0; x < n; x++)
+    for (p = g->gamma[x]; p != NULL; p = p->next)
+    { 
+      y = p->som;
+      D[y] += 1;
+    }
 
-  // A FINIR
+  for (x = 0; x < n; x++)
+    g->v_sommets[x] = -1;
+  
+  for (x = 0; x < n; x++)
+    if (D[x] == 0)
+    {
+      g->v_sommets[x] = i;
+      N++;
+      LifoPush(T, x);
+    }
+
+  while ((N < n) && !LifoVide(T))
+  {
+    i++;
+    while (!LifoVide(T))
+    {
+      x = LifoPop(T);    
+      for (p = g->gamma[x]; p != NULL; p = p->next)
+      { 
+	y = p->som;
+	D[y] -= 1;
+	if (D[y] == 0)
+	{
+	  g->v_sommets[y] = i;
+	  LifoPush(U, y);
+	  N++;
+	}
+      }
+    } // while (!LifoVide(T))
+    V = T; T = U; U = V;
+  } // while ((N < n) && !LifoVide(T))
 
   free(D);
-  return FALSE;
+  LifoTermine(T);
+  LifoTermine(U);
+  if (N < n) return TRUE; else return FALSE;
 } /* CircuitNiveaux() */
 
 /* ====================================================================== */
@@ -1736,11 +1789,11 @@ void Dijkstra1(graphe * g, int32_t i)
   TYP_VSOM vmin;
 
   S[i] = TRUE;
-  for (k = 0; k < n; k++) g->v_sommets[k] = L_INFINITY;
+  for (k = 0; k < n; k++) g->v_sommets[k] = MAX_VSOM;
   g->v_sommets[i] = 0;
   k = 1;
   x = i;
-  while ((k < n) && (g->v_sommets[x] < L_INFINITY))
+  while ((k < n) && (g->v_sommets[x] < MAX_VSOM))
   {
     for (p = g->gamma[x]; p != NULL; p = p->next)
     { /* pour tout y successeur de x */
@@ -1751,13 +1804,13 @@ void Dijkstra1(graphe * g, int32_t i)
       } // if (!S[y])
     } // for p
     // extraire un sommet x hors de S de valeur g->v_sommets minimale
-    vmin = L_INFINITY;
+    vmin = MAX_VSOM;
     for (y = 0; y < n; y++)
       if (!S[y]) 
         if (g->v_sommets[y] <= vmin) { x = y; vmin = g->v_sommets[y]; }
     k++; 
     S[x] = TRUE;
-  } // while ((k < n) && (g->v_sommets[x] < L_INFINITY))
+  } // while ((k < n) && (g->v_sommets[x] < MAX_VSOM))
 
 } /* Dijkstra1() */
 
@@ -1792,7 +1845,7 @@ void Dijkstra(graphe * g, int32_t i)
 
   S[i] = TRUE;
   TT[i] = TRUE;
-  for (k = 0; k < n; k++) g->v_sommets[k] = L_INFINITY;
+  for (k = 0; k < n; k++) g->v_sommets[k] = MAX_VSOM;
   g->v_sommets[i] = 0;
   x = i;
   do
@@ -1919,6 +1972,265 @@ void LeeNO(graphe * g, graphe * g_1, int32_t i)
 } /* LeeNO() */
 
 /* ====================================================================== */
+/*! \fn void BellmanSC(graphe * g)
+    \param g (entrée) : un graphe pondéré. La pondération de chaque arc doit 
+                        se trouver dans le champ \b v_arc de la structure \b cell
+    \brief calcule, pour chaque sommet x de g, la longueur d'un plus court
+           chemin arrivant en x. Cette longueur est stockée dans le champ
+           \b v_sommets de \b g
+    \warning ne s'applique qu'aux graphes sans circuit
+*/
+void BellmanSC(graphe * g)
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "BellmanSC"
+{
+  int32_t x, y, i, r, rmax, cumul, n = g->nsom;
+  int32_t * T;   // pour les sommets triés
+  int32_t * H;   // histogramme des rangs
+  graphe * g_1 = Symetrique(g);
+  TYP_VARC tmp, minv;
+  pcell p;
+
+  if (CircuitNiveaux(g))
+  {
+    fprintf(stderr, "%s: the graph is not acyclic\n", F_NAME);
+    exit(0);
+  }
+  rmax = 0;
+  for (x = 0; x < n; x++)
+  {
+    r = (int32_t)g->v_sommets[x];
+    if (r > rmax) rmax = r;
+  }
+  H = (int32_t *)calloc(rmax + 1, sizeof(int32_t));
+  if (H == NULL)
+  {
+    fprintf(stderr, "%s : calloc failed\n", F_NAME);
+    exit(0);
+  }
+  for (x = 0; x < n; x++) H[(int32_t)g->v_sommets[x]]++; // calcule l'histo
+  cumul = H[0];
+  H[0] = 0;
+  for (i = 1; i <= rmax; i++) // calcule l'histo cumulé
+  {
+    x = H[i];
+    H[i] = cumul;
+    cumul += x;
+  }
+  T = (int32_t *)malloc(n * sizeof(int32_t));
+  if (T == NULL)
+  {
+    fprintf(stderr, "%s : malloc failed\n", F_NAME);
+    exit(0);
+  }
+  for (x = 0; x < n; x++)  // tri des sommets par rang croissant
+  {
+    r = (int32_t)g->v_sommets[x];
+    T[H[r]] = x;
+    H[r] += 1;
+  }
+  free(H);
+
+  for (x = 0; x < n; x++)
+    g->v_sommets[x] = MAX_VSOM;
+
+  for (i = 0; i < n; i++)
+  {
+    x = T[i];
+    p = g_1->gamma[x];
+    if (p == NULL) g->v_sommets[x] = 0;
+    else
+    {
+      minv = MAX_VARC; 
+      for (; p != NULL; p = p->next)
+      { /* pour tout y prédécesseur de x */
+	y = p->som;
+	tmp = p->v_arc + g->v_sommets[y];
+	if (tmp < minv) minv = tmp;
+      } // for p
+      g->v_sommets[x] = minv;
+    }
+  }
+
+  TermineGraphe(g_1);  
+  free(T);
+} /* BellmanSC() */
+
+/* ====================================================================== */
+/*! \fn void BellmanSCmax(graphe * g)
+    \param g (entrée) : un graphe pondéré. La pondération de chaque arc doit 
+                        se trouver dans le champ \b v_arc de la structure \b cell
+    \brief calcule, pour chaque sommet x de g, la longueur d'un plus long
+           chemin arrivant en x. Cette longueur est stockée dans le champ
+           \b v_sommets de \b g
+    \warning ne s'applique qu'aux graphes sans circuit
+*/
+void BellmanSCmax(graphe * g)
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "BellmanSCmax"
+{
+  int32_t x, y, i, r, rmax, cumul, n = g->nsom;
+  int32_t * T;   // pour les sommets triés
+  int32_t * H;   // histogramme des rangs
+  graphe * g_1 = Symetrique(g);
+  TYP_VARC tmp, maxv;
+  pcell p;
+
+  if (CircuitNiveaux(g))
+  {
+    fprintf(stderr, "%s: the graph is not acyclic\n", F_NAME);
+    exit(0);
+  }
+  rmax = 0;
+  for (x = 0; x < n; x++)
+  {
+    r = (int32_t)g->v_sommets[x];
+    if (r > rmax) rmax = r;
+  }
+  H = (int32_t *)calloc(rmax + 1, sizeof(int32_t));
+  if (H == NULL)
+  {
+    fprintf(stderr, "%s : calloc failed\n", F_NAME);
+    exit(0);
+  }
+  for (x = 0; x < n; x++) H[(int32_t)g->v_sommets[x]]++; // calcule l'histo
+  cumul = H[0];
+  H[0] = 0;
+  for (i = 1; i <= rmax; i++) // calcule l'histo cumulé
+  {
+    x = H[i];
+    H[i] = cumul;
+    cumul += x;
+  }
+  T = (int32_t *)malloc(n * sizeof(int32_t));
+  if (T == NULL)
+  {
+    fprintf(stderr, "%s : malloc failed\n", F_NAME);
+    exit(0);
+  }
+  for (x = 0; x < n; x++)  // tri des sommets par rang croissant
+  {
+    r = (int32_t)g->v_sommets[x];
+    T[H[r]] = x;
+    H[r] += 1;
+  }
+  free(H);
+
+  for (x = 0; x < n; x++)
+    g->v_sommets[x] = MAX_VSOM;
+
+  for (i = 0; i < n; i++)
+  {
+    x = T[i];
+    p = g_1->gamma[x];
+    if (p == NULL) g->v_sommets[x] = 0;
+    else
+    {
+      maxv = MIN_VARC; 
+      for (; p != NULL; p = p->next)
+      { /* pour tout y prédécesseur de x */
+	y = p->som;
+	tmp = p->v_arc + g->v_sommets[y];
+	if (tmp > maxv) maxv = tmp;
+      } // for p
+      g->v_sommets[x] = maxv;
+    }
+  }
+
+  TermineGraphe(g_1);  
+  free(T);
+} /* BellmanSCmax() */
+
+/* ====================================================================== */
+/*! \fn void BellmanSC1(graphe * g, int32_t dep)
+    \param g (entrée) : un graphe pondéré. La pondération de chaque arc doit 
+                        se trouver dans le champ \b v_arc de la structure \b cell
+    \param dep (entrée) : un sommet de \b g
+    \brief calcule, pour chaque sommet x de g, la longueur d'un plus court
+           chemin de dep vers x. Cette longueur est stockée dans le champ
+           \b v_sommets de \b g
+    \warning ne s'applique qu'aux graphes sans circuit
+*/
+/*
+  ATTENTION : PAS TESTE
+*/
+void BellmanSC1(graphe * g, int32_t dep)
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "BellmanSC1"
+{
+  int32_t x, y, i, r, rmax, cumul, n = g->nsom;
+  int32_t * T;   // pour les sommets triés
+  int32_t * H;   // histogramme des rangs
+  graphe * g_1 = Symetrique(g);
+  TYP_VARC tmp, minv;
+  pcell p;
+
+  if (CircuitNiveaux(g))
+  {
+    fprintf(stderr, "%s: the graph is not acyclic\n", F_NAME);
+    exit(0);
+  }
+  rmax = 0;
+  for (x = 0; x < n; x++)
+  {
+    r = (int32_t)g->v_sommets[x];
+    if (r > rmax) rmax = r;
+  }
+  H = (int32_t *)calloc(rmax + 1, sizeof(int32_t));
+  if (H == NULL)
+  {
+    fprintf(stderr, "%s : calloc failed\n", F_NAME);
+    exit(0);
+  }
+  for (x = 0; x < n; x++) H[(int32_t)g->v_sommets[x]]++; // calcule l'histo
+  cumul = H[0];
+  H[0] = 0;
+  for (i = 1; i <= rmax; i++) // calcule l'histo cumulé
+  {
+    x = H[i];
+    H[i] = cumul;
+    cumul += x;
+  }
+  T = (int32_t *)malloc(n * sizeof(int32_t));
+  if (T == NULL)
+  {
+    fprintf(stderr, "%s : malloc failed\n", F_NAME);
+    exit(0);
+  }
+  for (x = 0; x < n; x++)  // tri des sommets par rang croissant
+  {
+    r = (int32_t)g->v_sommets[x];
+    T[H[r]] = x;
+    H[r] += 1;
+  }
+  free(H);
+
+  for (x = 0; x < n; x++)
+    g->v_sommets[x] = MAX_VSOM;
+
+  for (i = 0; i < n; i++) if (T[i] == dep) break;
+  g->v_sommets[dep] = 0;
+  for (; i < n; i++)
+  {
+    x = T[i];
+    minv = MAX_VARC; 
+    for (p = g_1->gamma[x]; p != NULL; p = p->next)
+    { /* pour tout y prédécesseur de x */
+      y = p->som;
+      tmp = p->v_arc + g->v_sommets[y];
+      if (tmp < minv) minv = tmp;
+    } // for p
+    g->v_sommets[x] = minv;
+  }
+
+  TermineGraphe(g_1);  
+  free(T);
+} /* BellmanSC1() */
+
+/* ====================================================================== */
 /*! \fn graphe * PCC(graphe * g, int32_t d, int32_t a)
     \param g (entrée) : un graphe pondéré, représenté par son application successeurs,
             et dont les sommets ont été valués par la distance au sommet \b d
@@ -2008,75 +2320,6 @@ graphe * PCCna(graphe * g, int32_t d, int32_t a)
   for (i = 0; i < n; i++) { pcc->x[i] = g->x[i]; pcc->y[i] = g->y[i]; }
   return pcc;
 } /* PCCna() */
-
-/* ====================================================================== */
-/* ====================================================================== */
-/* PROGRAMME DE TEST */
-/* ====================================================================== */
-/* ====================================================================== */
-
-#ifdef TEST
-int main(int argc, char **argv)
-{
-  graphe * g, *g_1, *a;
-  int32_t s1, s2, na, ns;
-  boolean *Cs;
-
-  if (argc != 3)
-  {
-    fprintf(stderr, "usage: %s <nombre sommets> <nombre arcs>\n", argv[0]);
-    exit(0);
-  }
-
-  ns = atoi(argv[1]);
-  na = atoi(argv[2]);
-  
-  g = GrapheAleatoire(ns, na);
-  AfficheSuccesseurs(g);
-  AfficheArcs(g);
-  g_1 = Symetrique(g);
-  AfficheSuccesseurs(g_1);
-  AfficheArcs(g_1);
-
-  if (Connexe(g, g_1))
-  {
-    printf("graphe connexe\n");
-    a = Kruskal2(g, g_1);
-    AfficheSuccesseurs(a);
-    AfficheArcs(a);
-    TermineGraphe(a);
-  }
-  else printf("graphe NON connexe\n");
-
-  do
-  {
-    printf("entrer un sommet : ");
-    scanf("%d", &s1);
-    if (s1 >= 0) 
-    {
-      Cs = CompFortConnexe(g, g_1, s1);
-      AfficheEnsemble(Cs, g->nsom);
-      free(Cs);
-    }
-  } while (s1 >= 0);
-
-  do
-  {
-    printf("entrer un sommet : ");
-    scanf("%d", &s1);
-    if (s1 >= 0) 
-    {
-      Cs = CompConnexe(g, g_1, s1);
-      AfficheEnsemble(Cs, g->nsom);
-      free(Cs);
-    }
-  } while (s1 >= 0);
-
-  TermineGraphe(g);
-  TermineGraphe(g_1);
-
-} /* main() */
-#endif
 
 /* ====================================================================== */
 /* ====================================================================== */
@@ -2180,3 +2423,120 @@ void AfficheValeursSommets(graphe * g)
   }
   else fprintf(stderr, "%s: valeurs sommets absentes\n", F_NAME);
 } /* AfficheValeursSommets() */
+
+/* ====================================================================== */
+/* ====================================================================== */
+/* PROGRAMMES DE TEST */
+/* ====================================================================== */
+/* ====================================================================== */
+
+#ifdef TESTKRUSKAL
+int main(int argc, char **argv)
+{
+  graphe * g, *g_1, *a;
+  int32_t s1, s2, na, ns;
+  boolean *Cs;
+
+  if (argc != 3)
+  {
+    fprintf(stderr, "usage: %s <nombre sommets> <nombre arcs>\n", argv[0]);
+    exit(0);
+  }
+
+  ns = atoi(argv[1]);
+  na = atoi(argv[2]);
+  
+  g = GrapheAleatoire(ns, na);
+  AfficheSuccesseurs(g);
+  AfficheArcs(g);
+  g_1 = Symetrique(g);
+  AfficheSuccesseurs(g_1);
+  AfficheArcs(g_1);
+
+  if (Connexe(g, g_1))
+  {
+    printf("graphe connexe\n");
+    a = Kruskal2(g, g_1);
+    AfficheSuccesseurs(a);
+    AfficheArcs(a);
+    TermineGraphe(a);
+  }
+  else printf("graphe NON connexe\n");
+
+  do
+  {
+    printf("entrer un sommet : ");
+    scanf("%d", &s1);
+    if (s1 >= 0) 
+    {
+      Cs = CompFortConnexe(g, g_1, s1);
+      AfficheEnsemble(Cs, g->nsom);
+      free(Cs);
+    }
+  } while (s1 >= 0);
+
+  do
+  {
+    printf("entrer un sommet : ");
+    scanf("%d", &s1);
+    if (s1 >= 0) 
+    {
+      Cs = CompConnexe(g, g_1, s1);
+      AfficheEnsemble(Cs, g->nsom);
+      free(Cs);
+    }
+  } while (s1 >= 0);
+
+  TermineGraphe(g);
+  TermineGraphe(g_1);
+
+} /* main() */
+#endif
+
+#ifdef TESTCIRCUITNIVEAUX
+int main(int argc, char **argv)
+{
+  graphe * g;
+  boolean *circ;
+
+  if (argc != 2)
+  {
+    fprintf(stderr, "usage: %s <filename>\n\n", argv[0]);
+    exit(0);
+  }
+
+  g = ReadGraphe(argv[1]);  /* lit le graphe a partir du fichier */
+  AfficheSuccesseurs(g);    /* affiche les ensembles "successeurs" a l'ecran */
+
+  if (CircuitNiveaux(g))
+    printf("Le graphe contient un circuit\n");
+  else
+    AfficheValeursSommets(g);
+
+  TermineGraphe(g);
+  return 0;
+} /* main() */
+#endif
+
+#ifdef TESTBELLMANSC
+int main(int argc, char **argv)
+{
+  graphe * g;
+  boolean *circ;
+
+  if (argc != 2)
+  {
+    fprintf(stderr, "usage: %s <filename>\n\n", argv[0]);
+    exit(0);
+  }
+
+  g = ReadGraphe(argv[1]);  /* lit le graphe a partir du fichier */
+  AfficheSuccesseurs(g);    /* affiche les ensembles "successeurs" a l'ecran */
+
+  BellmanSC(g);
+  AfficheValeursSommets(g);
+
+  TermineGraphe(g);
+  return 0;
+} /* main() */
+#endif

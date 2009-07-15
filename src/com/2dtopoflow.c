@@ -1,9 +1,9 @@
-/* $Id: 2dcollapse.c,v 1.2 2009-07-15 05:31:01 mcouprie Exp $ */
-/*! \file 2dcollapse.c
+/* $Id: 2dtopoflow.c,v 1.1 2009-07-15 05:31:01 mcouprie Exp $ */
+/*! \file 2dtopoflow.c
 
 \brief ultimate constrained collapse guided by a priority image
 
-<B>Usage:</B> 2dcollapse in.pgm prio [inhibit] out.pgm
+<B>Usage:</B> 2dtopoflow in.pgm prio func [inhibit] out.pgm
 
 <B>Description:</B>
 Ultimate constrained collapse guided by a priority image.
@@ -53,15 +53,17 @@ int main(int32_t argc, char **argv)
   struct xvimage * k;
   struct xvimage * prio;
   struct xvimage * prio2;
+  struct xvimage * func;
   struct xvimage * inhibimage = NULL;
   int32_t ret, priocode;
   int32_t rs, cs, N;
   float priomax_f;
   uint32_t priomax_l;
+  graphe * flow;
 
-  if ((argc != 4) && (argc != 5))
+  if ((argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in.pgm prio [inhibit] out.pgm\n", 
+    fprintf(stderr, "usage: %s in.pgm prio func [inhibit] out.pgm\n", 
                     argv[0]);
     exit(1);
   }
@@ -75,6 +77,12 @@ int main(int32_t argc, char **argv)
   rs = rowsize(k);
   cs = colsize(k);
   N = rs*cs;
+  func = readimage(argv[3]);  
+  if (func == NULL)
+  {
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
+    exit(1);
+  }
 
   ret = sscanf(argv[2], "%d", &priocode);
   if (ret == 0) // priorité : image 
@@ -180,9 +188,9 @@ int main(int32_t argc, char **argv)
       if (K[i]) K[i] = 0; else K[i] = NDG_MAX;
   }
 
-  if (argc == 5) 
+  if (argc == 6) 
   {
-    ret = sscanf(argv[3], "%f", &priomax_f);
+    ret = sscanf(argv[4], "%f", &priomax_f);
     if (ret == 0) // inhibit : image
     {
       inhibimage = readimage(argv[3]);
@@ -201,24 +209,28 @@ int main(int32_t argc, char **argv)
 
   if (datatype(prio) == VFF_TYP_4_BYTE)
   {
-    if ((argc == 5) && (inhibimage == NULL)) priomax_l = (uint32_t)floorf(priomax_f);
-    if (! l2dpardircollapse_l(k, prio, inhibimage, priomax_l))
+    if ((argc == 6) && (inhibimage == NULL)) priomax_l = (uint32_t)floorf(priomax_f);
+    if (! (flow = l2dtopoflow_l(k, prio, func, inhibimage, priomax_l)))
     {
-      fprintf(stderr, "%s: function l2dpardircollapse_l failed\n", argv[0]);
+      fprintf(stderr, "%s: function l2dtopoflow_l failed\n", argv[0]);
       exit(1);
     }
   }
   else
   if (datatype(prio) == VFF_TYP_FLOAT)
   {
-    if (! l2dpardircollapse_f(k, prio, inhibimage, priomax_f))
+    double maxf = MINDOUBLE;
+    if (! (flow = l2dtopoflow_f(k, prio, func, inhibimage, priomax_f)))
     {
-      fprintf(stderr, "%s: function l2dpardircollapse_f failed\n", argv[0]);
+      fprintf(stderr, "%s: function l2dtopoflow_f failed\n", argv[0]);
       exit(1);
     }
+    BellmanSCmax(flow);
   }
   
-  writeimage(k, argv[argc-1]);
+  SaveGraphe(flow, argv[argc-1]);
+
+  //  writeimage(k, argv[argc-1]);
   freeimage(k);
 
   return 0;
