@@ -1,4 +1,4 @@
-/* $Id: float2byte.c,v 1.3 2009-07-10 05:43:29 mcouprie Exp $ */
+/* $Id: float2byte.c,v 1.4 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file float2byte.c
 
 \brief converts a "float" image to a "byte" image
@@ -20,6 +20,14 @@ Depending on the value given for the (optional) parameter <B>mode</B>:
 \ingroup  convert
 
 \author Michel Couprie
+*/
+
+/*
+%TEST float2byte %IMAGES/2dfloat/f2fish1.pgm 0 %RESULTS/float2byte_f2fish1_0.pgm
+%TEST float2byte %IMAGES/2dfloat/f2fish1.pgm 1 %RESULTS/float2byte_f2fish1_1.pgm
+%TEST float2byte %IMAGES/2dfloat/f2fish1.pgm 2 %RESULTS/float2byte_f2fish1_2.pgm
+%TEST float2byte %IMAGES/2dfloat/f2fish1.pgm 4 %RESULTS/float2byte_f2fish1_4.pgm
+%TEST float2byte %IMAGES/2dfloat/f2fish1.pgm 5 %RESULTS/float2byte_f2fish1_5.pgm
 */
 
 /*

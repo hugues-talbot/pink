@@ -1,4 +1,4 @@
-/* $Id: ldist.c,v 1.4 2009-02-19 07:44:08 mcouprie Exp $ */
+/* $Id: ldist.c,v 1.5 2009-09-02 14:23:36 mcouprie Exp $ */
 /****************************************************************
 *
 * Routine Name: ldistXXX - library call for dist
@@ -20,6 +20,7 @@
 *              Michel Couprie Août 04 (SEDT exacte lineaire Meijster et al.)
 *              Jean Cousty janvier 2005 (REDT 3D)
 *              Michel Couprie mai 2007 (Feature Transform Hesselink et al.) (NON TESTE)
+*              Michel Couprie août 2009 (lopeningfunction)
 *
 ****************************************************************/
 
@@ -28,9 +29,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#ifdef HP
-#define _INCLUDE_XOPEN_SOURCE
-#endif
+#include <assert.h>
 #include <math.h>
 #include <mcimage.h>
 #include <mccodimage.h>
@@ -38,6 +37,8 @@
 #include <mcutil.h>
 #include <mcgeo.h>
 #include <ldist.h>
+
+//#define VERBOSE
 
 #define VOI1(p)  ( *( (p)+1)         )        
 #define VOI2(p)  ( *( (p)+1-rs) )
@@ -1644,6 +1645,10 @@ int32_t lerosball(struct xvimage* ob, int32_t r, int32_t mode)
   uint8_t *O = UCHARDATA(ob);
   int32_t i, r2;
 
+#ifdef VERBOSE
+  printf("%s: mode = %d, r = %d\n", F_NAME, mode, r);
+#endif
+
   for(i=0; i<N; i++) if (O[i]) O[i] = NDG_MIN; else O[i] = NDG_MAX;
 
   dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
@@ -1708,7 +1713,10 @@ int32_t lopenball(struct xvimage* ob, int32_t r, int32_t mode)
     case 1: if (!ldistquad3d(ob, dist)) return 0; break;
     case 2: if (!lchamfrein(ob, dist)) return 0; break;
     case 4:
-    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    case 8:
+    case 6:
+    case 18:
+    case 26: if (!ldist(ob, mode, dist)) return 0; break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
@@ -1722,7 +1730,10 @@ int32_t lopenball(struct xvimage* ob, int32_t r, int32_t mode)
     case 1: if (!ldistquad3d(ob, dist)) return 0; break;
     case 2: if (!lchamfrein(ob, dist)) return 0; break;
     case 4:
-    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    case 8:
+    case 6:
+    case 18:
+    case 26: if (!ldist(ob, mode, dist)) return 0; break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
@@ -1764,7 +1775,10 @@ int32_t lcloseball(struct xvimage* ob, int32_t r, int32_t mode)
     case 1: if (!ldistquad3d(ob, dist)) return 0; break;
     case 2: if (!lchamfrein(ob, dist)) return 0; break;
     case 4:
-    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    case 8:
+    case 6:
+    case 18:
+    case 26: if (!ldist(ob, mode, dist)) return 0; break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
@@ -1778,7 +1792,10 @@ int32_t lcloseball(struct xvimage* ob, int32_t r, int32_t mode)
     case 1: if (!ldistquad3d(ob, dist)) return 0; break;
     case 2: if (!lchamfrein(ob, dist)) return 0; break;
     case 4:
-    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    case 8:
+    case 6:
+    case 18:
+    case 26: if (!ldist(ob, mode, dist)) return 0; break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
@@ -2876,3 +2893,84 @@ int32_t ldistMeijster(struct xvimage *img,   /* donnee: image binaire */
   freeimage(dist);
   return(1);
 } // ldistMeijster()
+
+/* ==================================== */
+struct xvimage * lopeningfunction(
+  struct xvimage *img,   /* donnee: image binaire */
+  int32_t mode
+)
+/* ==================================== */
+/* 
+This operator associates, to each point x of the input object X, 
+the radius of the biggest ball included in X that includes x.
+The distance used depends on the optional parameter \b dist (default is 0) :
+\li 0: approximate euclidean distance
+\li 2: chamfer distance
+\li 4: 4-distance in 2d
+\li 8: 8-distance in 2d
+\li 6: 6-distance in 3d
+\li 18: 18-distance in 3d
+\li 26: 26-distance in 3d
+
+\warning The input image \b in.pgm must be a binary image. No test is done.
+*/
+#undef F_NAME
+#define F_NAME "lopeningfunction"
+{ 
+  int32_t rs = rowsize(img);
+  int32_t cs = colsize(img);
+  int32_t ds = depth(img); 
+  int32_t N = rs*cs*ds;
+  struct xvimage *res;
+  struct xvimage *tmp;
+  uint8_t *T;
+  uint32_t *R, r, i, vide;
+
+  res = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (res == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return NULL;
+  }
+  R = ULONGDATA(res);
+  razimage(res);
+
+  if (ds == 1)
+  {
+    r = 1;
+    do
+    {
+#ifdef VERBOSE
+      printf("%s: r = %d\n", F_NAME, r);
+#endif
+      vide = 1;
+      tmp = copyimage(img); assert(tmp != NULL);
+      T = UCHARDATA(tmp);
+      lopendisc(tmp, r, mode);
+      for (i = 0; i < N; i++)
+	if (T[i]) { R[i] = r; vide = 0; }
+      freeimage(tmp);
+      r++;
+    } while (!vide && r < 150);
+  }
+  else
+  {
+    r = 1;
+    do
+    {
+#ifdef VERBOSE
+      printf("%s: r = %d\n", F_NAME, r);
+#endif
+      vide = 1;
+      tmp = copyimage(img); assert(tmp != NULL);
+      T = UCHARDATA(tmp);
+      lopenball(tmp, r, mode);
+      for (i = 0; i < N; i++)
+	if (T[i]) { R[i] = r; vide = 0; }
+      freeimage(tmp);
+      r++;
+    } while (!vide);
+  }
+
+  return res;
+} // lopeningfunction()

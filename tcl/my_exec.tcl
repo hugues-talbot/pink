@@ -4,10 +4,9 @@ proc my_exec {command args} {
   set call "catch \{ exec $command $args \} result"
   eval $call
   if {$result != ""} {
-    tk_messageBox -type ok -icon error -message $result
-    return 1
+    puts $result
   }
-  return 0
+  return $result
 }
 
 # external command call with no error check

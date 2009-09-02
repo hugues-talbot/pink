@@ -1,6 +1,5 @@
-/* $Id: 3dborder.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
-/* NOT SUPPORTED - EXPERIMENTAL */
-/* \file 3dborder.c
+/* $Id: 3dborder.c,v 1.2 2009-09-02 14:23:36 mcouprie Exp $ */
+/*! \file 3dborder.c
 
 \brief extracts the border of an object in H3
 

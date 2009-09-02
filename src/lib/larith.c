@@ -1,4 +1,4 @@
-/* $Id: larith.c,v 1.5 2009-06-18 06:34:55 mcouprie Exp $ */
+/* $Id: larith.c,v 1.6 2009-09-02 14:23:36 mcouprie Exp $ */
 /* 
   operations arithmetiques : 
     ladd
@@ -8,9 +8,11 @@
     laverage1
     linverse
     lequal
+    lexp
     ldiff
     ldivide
     linf
+    llog
     lmax
     lmax1
     lmin
@@ -19,6 +21,7 @@
     lneg
     lnormalize
     lnull
+    lpow
     lscale
     lsub
     lsup
@@ -67,7 +70,7 @@ int32_t ladd(
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
     for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
-      *pt1 = (uint8_t)min(NDG_MAX, (int32_t)*pt1 + (int32_t)*pt2);
+      *pt1 = (uint8_t)min(NDG_MAX,((int32_t)*pt1+(int32_t)*pt2));
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
@@ -943,12 +946,11 @@ int32_t lnull(struct xvimage * image1)
 int32_t lscale(
   struct xvimage * image,
   double scale)
-/* produit d' une image par un scalaire - seuil a NDG_MAX */
+/* produit d' une image par un scalaire - seuil a NDG_MAX pour les uint8_t */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lscale"
 {
-  char buf[32];
   int32_t i;
   uint8_t *pt;
   uint32_t *PT;
@@ -977,7 +979,7 @@ int32_t lscale(
   }
   else if (datatype(image) == VFF_TYP_FLOAT)
   {
-    for (FPT = FLOATDATA(image), i = 0; i < N; i++, PT++)
+    for (FPT = FLOATDATA(image), i = 0; i < N; i++, FPT++)
     {
       *FPT = (float)(*FPT * scale);
     }
@@ -989,6 +991,110 @@ int32_t lscale(
   }
   return 1;
 } /* lscale() */
+
+/* ==================================== */
+int32_t lpow(
+  struct xvimage * image,
+  double p)
+/* elevation à la puissance p - seuil a NDG_MAX pour les uint8_t */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lpow"
+{
+  int32_t i;
+  uint8_t *pt;
+  uint32_t *PT;
+  float *FPT;
+  int32_t N;
+
+  N = rowsize(image) * colsize(image) * depth(image);
+
+  /* ---------------------------------------------------------- */
+  /* calcul du resultat */
+  /* ---------------------------------------------------------- */
+  
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    for (pt = UCHARDATA(image), i = 0; i < N; i++, pt++)
+    {
+      *pt = (uint8_t)min(NDG_MAX,(pow((double)(*pt),p)));
+    }
+  }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    for (PT = ULONGDATA(image), i = 0; i < N; i++, PT++)
+    {
+      *PT = (uint32_t)pow((double)(*PT),p);
+    }
+  }
+  else if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    for (FPT = FLOATDATA(image), i = 0; i < N; i++, FPT++)
+    {
+      *FPT = (float)pow((double)(*FPT),p);
+    }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return 0;
+  }
+  return 1;
+} /* lpow() */
+
+/* ==================================== */
+int32_t lexp(struct xvimage * image)
+/* exponentiation */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lexp"
+{
+  int32_t i;
+  float *FPT;
+  int32_t N;
+
+  N = rowsize(image) * colsize(image) * depth(image);
+  if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    for (FPT = FLOATDATA(image), i = 0; i < N; i++, FPT++)
+    {
+      *FPT = (float)exp((double)(*FPT));
+    }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return 0;
+  }
+  return 1;
+} /* lexp() */
+
+/* ==================================== */
+int32_t llog(struct xvimage * image)
+/* logarithme */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "llog"
+{
+  int32_t i;
+  float *FPT;
+  int32_t N;
+
+  N = rowsize(image) * colsize(image) * depth(image);
+  if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    for (FPT = FLOATDATA(image), i = 0; i < N; i++, FPT++)
+    {
+      *FPT = (float)log((double)(*FPT));
+    }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return 0;
+  }
+  return 1;
+} /* llog() */
 
 /* ==================================== */
 int32_t lsub(

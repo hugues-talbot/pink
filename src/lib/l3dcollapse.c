@@ -1,13 +1,17 @@
-/* $Id: l3dcollapse.c,v 1.3 2009-06-30 05:15:47 mcouprie Exp $ */
+/* $Id: l3dcollapse.c,v 1.4 2009-09-02 14:23:36 mcouprie Exp $ */
 /* 
 
    l3dcollapse: collapse guidÅÈ et contraint (OBSOLETE)
-     Michel Couprie - avril 2007
+     
+   Michel Couprie - avril 2007
 
    l3dpardircollapse: collapse parallÅËle par sous-ÅÈtapes directionnelles
    l3dpardircollapse_l: collapse guidÅÈ et contraint - prioritÅÈ ULONG
    l3dpardircollapse_f: collapse guidÅÈ et contraint - prioritÅÈ FLOAT
-     Michel Couprie - juin 2009
+   l3dtopoflow_l: topological flow - prioritÅÈ ULONG
+   l3dtopoflow_f: topological flow - prioritÅÈ FLOAT
+
+   Michel Couprie - juin 2009
 
 */
 
@@ -18,17 +22,19 @@
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <mclifo.h>
+#include <mcrlifo.h>
 #include <mcrbt.h>
 #include <mcindic.h>
 #include <mcutil.h>
+#include <mcgraphe.h>
 #include <mckhalimsky3d.h>
 #include <l3dkhalimsky.h>
+#include <l3dcollapse.h>
 
 #define EN_RBT        0
-#define EN_LIFO       1
+#define EN_RLIFO       1
 #define BORDER        2
-#define VERBOSE
+//#define VERBOSE
 
 /* =============================================================== */
 int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit)
@@ -181,12 +187,11 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
   uint32_t * P;
   uint8_t * I = NULL;
   Rbt * RBT;
-  Lifo * LIFO;
-  Lifo * LIFOb;
+  Rlifo * RLIFO;
+  Rlifo * RLIFOb;
   int32_t taillemaxrbt;
   int32_t tab[GRS3D*GCS3D*GDS3D];
-  TypRbtKey p;
-  uint32_t nbcol;
+  TypRbtKey p, pp;
 
   rs = rowsize(k);
   cs = colsize(k);
@@ -241,11 +246,11 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
     return(0);
   }
 
-  LIFO = CreeLifoVide(taillemaxrbt);
-  LIFOb = CreeLifoVide(taillemaxrbt);
-  if ((LIFO == NULL) || (LIFOb == NULL))
+  RLIFO = CreeRlifoVide(taillemaxrbt);
+  RLIFOb = CreeRlifoVide(taillemaxrbt);
+  if ((RLIFO == NULL) || (RLIFOb == NULL))
   {
-    fprintf(stderr, "%s : CreeLifoVide failed\n", F_NAME);
+    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
     return(0);
   }
 
@@ -266,12 +271,17 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
   for (xg = 0; xg < rs; xg++)
   {
     g = zg*ps + yg*rs + xg;
-    if (K[g] && 
-	(((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax)) ) && 
-	FaceLibre3d(k, xg, yg, zg))
+    if (K[g])
     {
-      RbtInsert(&RBT, (TypRbtKey)P[g], g);
-      Set(g, EN_RBT);
+      f = PaireLibre3d(k, xg, yg, zg);
+      if ((f != -1) && 
+	  (((I != NULL) && (!I[g] && !I[f])) || 
+	   ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
+      {
+	pp = (TypRbtKey)(max(P[g],P[f]));
+	RbtInsert(&RBT, pp, g);
+	Set(g, EN_RBT);
+      }
     }
   }
 
@@ -279,10 +289,8 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
   /*                  DEBUT SATURATION                */
   /* ================================================ */
 
-  nbcol = 1;
-  while (!RbtVide(RBT) && nbcol)
+  while (!RbtVide(RBT))
   {
-    nbcol = 0;
     // construit la liste de toutes les paires libres ayant la prioritÅÈ courante
     p = RbtMinLevel(RBT); 
     while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
@@ -293,21 +301,21 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
       f = PaireLibre3d(k, xg, yg, zg);
       if (f != -1)
       {
-	LifoPush(LIFO, f);
-	LifoPush(LIFO, g);
-	Set(g, EN_LIFO);
+	RlifoPush(&RLIFO, f);
+	RlifoPush(&RLIFO, g);
+	Set(g, EN_RLIFO);
       }
-    }
+    } // while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
 
     for (dir = 0; dir <= 2; dir++) // For all face directions
       for (ori = 0; ori <= 1; ori++) // For both orientations
       {
 	for (dim = 3; dim >= 1; dim--) // For dimensions in decreasing order
 	{
-	  for (i = 0; i < LIFO->Sp; i += 2) // Scan the free faces list (dim 3)
+	  for (i = 0; i < RLIFO->Sp; i += 2) // Scan the free faces list (dim 3)
 	  {
-	    f = LIFO->Pts[i];
-	    g = LIFO->Pts[i+1];
+	    f = RLIFO->Pts[i];
+	    g = RLIFO->Pts[i+1];
 	    xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
 	    if (K[f] && K[g] && 
 		(((I != NULL) && (!I[g] && !I[f])) || 
@@ -319,58 +327,48 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 	      else              { direc = 2; if (zf > zg) orien = 0; else orien = 1; }
 	      if ((DIM3D(xf,yf,zf) == dim) && (direc == dir) && (orien == ori))
 	      {
-		K[g] = K[f] = VAL_NULLE;
-		nbcol++;
-		// PrÅÈparation sous-ÅÈtapes suivantes
+		K[g] = K[f] = VAL_NULLE; // COLLAPSE
+
 		Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
 		for (u = 0; u < n; u += 1)
 		{
 		  g = tab[u];
 		  xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
-		  if (K[g] && (P[g] <= p) && 
+		  if (K[g] &&
 		      (((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax))) )
 		  {
 		    f = PaireLibre3d(k, xg, yg, zg);
-		    if ((f != -1) && IsSet(f, BORDER) && !IsSet(g, EN_LIFO))
-		    { 
-		      LifoPush(LIFOb, f); 
-		      LifoPush(LIFOb, g);
-		    }
-		  }
+		    if ((f != -1) &&
+			(((I != NULL) && (!I[f])) || ((I == NULL) && (P[f] < priomax))) )
+		    {
+		      if ((P[g] <= p) && (P[f] <= p) && !IsSet(g, EN_RLIFO))
+		      { // PrÅÈparation sous-ÅÈtapes suivantes
+			RlifoPush(&RLIFOb, f);
+			RlifoPush(&RLIFOb, g);
+		      }
+		      if (!IsSet(g, EN_RBT))
+		      { // PrÅÈparation ÅÈtape suivante
+			pp = (TypRbtKey)(max(P[g],P[f]));
+			RbtInsert(&RBT, pp, g);
+			Set(g, EN_RBT);
+		      }
+		    } // if (f != -1)
+		  } // if K[g] && ...
 		} // for u
 	      } // if ((DIM3D(xf,yf,zf) == dim) &&...
 	    } // if (K[f] && K[g])
-	  } // for (i = 0; i < LIFO->Sp; i += 2)
-	  while (!LifoVide(LIFOb))
+	  } // for (i = 0; i < RLIFO->Sp; i += 2)
+	  while (!RlifoVide(RLIFOb))
 	  { 
-	    g = LifoPop(LIFOb);
-	    f = LifoPop(LIFOb);
-	    LifoPush(LIFO, f); 
-	    LifoPush(LIFO, g); 
+	    g = RlifoPop(RLIFOb);
+	    f = RlifoPop(RLIFOb);
+	    RlifoPush(&RLIFO, f); 
+	    RlifoPush(&RLIFO, g); 
 	  }
       } // for (dim = 3; dim >= 1; dim--)
     } // for for
 
-    // PREPARATION ETAPE SUIVANTE
-    for (i = 0; i < LIFO->Sp; i += 2)
-    {
-      f = LIFO->Pts[i];
-      xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
-      Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
-      for (u = 0; u < n; u += 1)
-      {
-	g = tab[u];
-	xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
-	if (K[g] && !IsSet(g, EN_RBT) && 
-	    (((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax)) ) && 
-	    FaceLibre3d(k, xg, yg, zg))
-	{
-	  RbtInsert(&RBT, (TypRbtKey)P[g], g);
-	  Set(g, EN_RBT);
-	}
-      } // for u
-    } // for (i = 0; i < LIFO->Sp; i += 2)
-    LifoFlush(LIFO);
+    RlifoFlush(RLIFO);
   } /* while (!RbtVide(RBT)) */
 
   /* ================================================ */
@@ -379,8 +377,8 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 
   IndicsTermine();
   RbtTermine(RBT);
-  LifoTermine(LIFO);
-  LifoTermine(LIFOb);
+  RlifoTermine(RLIFO);
+  RlifoTermine(RLIFOb);
   return 1;
 
 } /* l3dpardircollapse_l() */
@@ -391,6 +389,7 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 /* 
   collapse parallÅËle directionnel
   fonction de prioritÅÈ en flottants
+  les ÅÈlÅÈments Å‡ prÅÈserver sont ceux de l'image "inhibit" ou, si celle-ci est "NULL", ceux supÅÈrieurs Å‡ "priomax" 
 */
 #undef F_NAME
 #define F_NAME "l3dpardircollapse_f"
@@ -402,12 +401,11 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
   float * P;
   uint8_t * I = NULL;
   Rbt * RBT;
-  Lifo * LIFO;
-  Lifo * LIFOb;
+  Rlifo * RLIFO;
+  Rlifo * RLIFOb;
   int32_t taillemaxrbt;
   int32_t tab[GRS3D*GCS3D*GDS3D];
-  TypRbtKey p;
-  uint32_t nbcol;
+  TypRbtKey p, pp;
 
   rs = rowsize(k);
   cs = colsize(k);
@@ -462,11 +460,11 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
     return(0);
   }
 
-  LIFO = CreeLifoVide(taillemaxrbt);
-  LIFOb = CreeLifoVide(taillemaxrbt);
-  if ((LIFO == NULL) || (LIFOb == NULL))
+  RLIFO = CreeRlifoVide(taillemaxrbt);
+  RLIFOb = CreeRlifoVide(taillemaxrbt);
+  if ((RLIFO == NULL) || (RLIFOb == NULL))
   {
-    fprintf(stderr, "%s : CreeLifoVide failed\n", F_NAME);
+    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
     return(0);
   }
 
@@ -487,12 +485,17 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
   for (xg = 0; xg < rs; xg++)
   {
     g = zg*ps + yg*rs + xg;
-    if (K[g] && 
-	(((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax)) ) && 
-	FaceLibre3d(k, xg, yg, zg))
+    if (K[g])
     {
-      RbtInsert(&RBT, (TypRbtKey)P[g], g);
-      Set(g, EN_RBT);
+      f = PaireLibre3d(k, xg, yg, zg);
+      if ((f != -1) && 
+	  (((I != NULL) && (!I[g] && !I[f])) || 
+	   ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
+      {
+	pp = (TypRbtKey)(max(P[g],P[f]));
+	RbtInsert(&RBT, pp, g);
+	Set(g, EN_RBT);
+      }
     }
   }
 
@@ -500,10 +503,8 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
   /*                  DEBUT SATURATION                */
   /* ================================================ */
 
-  nbcol = 1;
-  while (!RbtVide(RBT) && nbcol)
+  while (!RbtVide(RBT))
   {
-    nbcol = 0;
     // construit la liste de toutes les paires libres ayant la prioritÅÈ courante
     p = RbtMinLevel(RBT); 
     while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
@@ -514,21 +515,21 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
       f = PaireLibre3d(k, xg, yg, zg);
       if (f != -1)
       {
-	LifoPush(LIFO, f);
-	LifoPush(LIFO, g);
-	Set(g, EN_LIFO);
+	RlifoPush(&RLIFO, f);
+	RlifoPush(&RLIFO, g);
+	Set(g, EN_RLIFO);
       }
-    }
+    } // while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
 
     for (dir = 0; dir <= 2; dir++) // For all face directions
       for (ori = 0; ori <= 1; ori++) // For both orientations
       {
 	for (dim = 3; dim >= 1; dim--) // For dimensions in decreasing order
 	{
-	  for (i = 0; i < LIFO->Sp; i += 2) // Scan the free faces list (dim 3)
+	  for (i = 0; i < RLIFO->Sp; i += 2) // Scan the free faces list (dim 3)
 	  {
-	    f = LIFO->Pts[i];
-	    g = LIFO->Pts[i+1];
+	    f = RLIFO->Pts[i];
+	    g = RLIFO->Pts[i+1];
 	    xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
 	    if (K[f] && K[g] && 
 		(((I != NULL) && (!I[g] && !I[f])) || 
@@ -540,58 +541,48 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 	      else              { direc = 2; if (zf > zg) orien = 0; else orien = 1; }
 	      if ((DIM3D(xf,yf,zf) == dim) && (direc == dir) && (orien == ori))
 	      {
-		K[g] = K[f] = VAL_NULLE;
-		nbcol++;
-		// PrÅÈparation sous-ÅÈtapes suivantes
+		K[g] = K[f] = VAL_NULLE; // COLLAPSE
+
 		Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
 		for (u = 0; u < n; u += 1)
 		{
 		  g = tab[u];
 		  xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
-		  if (K[g] && (P[g] <= p) && 
+		  if (K[g] &&
 		      (((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax))) )
 		  {
 		    f = PaireLibre3d(k, xg, yg, zg);
-		    if ((f != -1) && IsSet(f, BORDER) && !IsSet(g, EN_LIFO))
-		    { 
-		      LifoPush(LIFOb, f); 
-		      LifoPush(LIFOb, g);
-		    }
-		  }
+		    if ((f != -1) &&
+			(((I != NULL) && (!I[f])) || ((I == NULL) && (P[f] < priomax))) )
+		    {
+		      if ((P[g] <= p) && (P[f] <= p) && !IsSet(g, EN_RLIFO))
+		      { // PrÅÈparation sous-ÅÈtapes suivantes
+			RlifoPush(&RLIFOb, f);
+			RlifoPush(&RLIFOb, g);
+		      }
+		      if (!IsSet(g, EN_RBT))
+		      { // PrÅÈparation ÅÈtape suivante
+			pp = (TypRbtKey)(max(P[g],P[f]));
+			RbtInsert(&RBT, pp, g);
+			Set(g, EN_RBT);
+		      }
+		    } // if (f != -1)
+		  } // if K[g] && ...
 		} // for u
 	      } // if ((DIM3D(xf,yf,zf) == dim) &&...
 	    } // if (K[f] && K[g])
-	  } // for (i = 0; i < LIFO->Sp; i += 2)
-	  while (!LifoVide(LIFOb))
+	  } // for (i = 0; i < RLIFO->Sp; i += 2)
+	  while (!RlifoVide(RLIFOb))
 	  { 
-	    g = LifoPop(LIFOb);
-	    f = LifoPop(LIFOb);
-	    LifoPush(LIFO, f); 
-	    LifoPush(LIFO, g); 
+	    g = RlifoPop(RLIFOb);
+	    f = RlifoPop(RLIFOb);
+	    RlifoPush(&RLIFO, f); 
+	    RlifoPush(&RLIFO, g); 
 	  }
       } // for (dim = 3; dim >= 1; dim--)
     } // for for
 
-    // PREPARATION ETAPE SUIVANTE
-    for (i = 0; i < LIFO->Sp; i += 2)
-    {
-      f = LIFO->Pts[i];
-      xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
-      Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
-      for (u = 0; u < n; u += 1)
-      {
-	g = tab[u];
-	xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
-	if (K[g] && !IsSet(g, EN_RBT) && 
-	    (((I != NULL) && (!I[g])) || ((I == NULL) && (P[g] < priomax)) ) && 
-	    FaceLibre3d(k, xg, yg, zg))
-	{
-	  RbtInsert(&RBT, (TypRbtKey)P[g], g);
-	  Set(g, EN_RBT);
-	}
-      } // for u
-    } // for (i = 0; i < LIFO->Sp; i += 2)
-    LifoFlush(LIFO);
+    RlifoFlush(RLIFO);
   } /* while (!RbtVide(RBT)) */
 
   /* ================================================ */
@@ -600,8 +591,8 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 
   IndicsTermine();
   RbtTermine(RBT);
-  LifoTermine(LIFO);
-  LifoTermine(LIFOb);
+  RlifoTermine(RLIFO);
+  RlifoTermine(RLIFOb);
   return 1;
 
 } /* l3dpardircollapse_f() */
@@ -621,9 +612,9 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   uint8_t * I = NULL;
-  Lifo * LIFO;
-  Lifo * LIFOb;
-  Lifo * LIFOt;
+  Rlifo * RLIFO;
+  Rlifo * RLIFOb;
+  Rlifo * RLIFOt;
   int32_t taillemax;
   int32_t tab[GRS3D*GCS3D*GDS3D];
 
@@ -653,11 +644,11 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
   }
 
   taillemax = 4 * (rs*cs + cs*ds + ds*rs);
-  LIFO = CreeLifoVide(taillemax);
-  LIFOb = CreeLifoVide(taillemax);
-  if ((LIFO == NULL) || (LIFOb == NULL))
+  RLIFO = CreeRlifoVide(taillemax);
+  RLIFOb = CreeRlifoVide(taillemax);
+  if ((RLIFO == NULL) || (RLIFOb == NULL))
   {
-    fprintf(stderr, "%s : CreeLifoVide failed\n", F_NAME);
+    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
     return(0);
   }
 
@@ -672,7 +663,7 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
 #endif
 
   /* ========================================================= */
-  /* INITIALISATION DE LA LIFO ET DE LA "BORDER" */
+  /* INITIALISATION DE LA RLIFO ET DE LA "BORDER" */
   /* ========================================================= */
 
   for (zg = 0; zg < ds; zg++)
@@ -685,9 +676,9 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
       f = PaireLibre3d(k, xg, yg, zg);
       if (f != -1) 
       { 
-	LifoPush(LIFO, f); 
-	LifoPush(LIFO, g);
-	Set(g, EN_LIFO);
+	RlifoPush(&RLIFO, f); 
+	RlifoPush(&RLIFO, g);
+	Set(g, EN_RLIFO);
 	xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
 	Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
 	for (u = 0; u < n; u += 1)
@@ -703,7 +694,7 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
   /*              DEBUT BOUCLE PRINCIPALE             */
   /* ================================================ */
 
-  while (!LifoVide(LIFO) && nsteps > 0)
+  while (!RlifoVide(RLIFO) && nsteps > 0)
   {
     nsteps --;
 
@@ -712,10 +703,10 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
       {
 	for (dim = 3; dim >= 1; dim--) // For dimensions in decreasing order
 	{
-	  for (i = 0; i < LIFO->Sp; i += 2) // Scan the free faces list (dim 3)
+	  for (i = 0; i < RLIFO->Sp; i += 2) // Scan the free faces list (dim 3)
 	  {
-	    f = LIFO->Pts[i];
-	    g = LIFO->Pts[i+1];
+	    f = RLIFO->Pts[i];
+	    g = RLIFO->Pts[i+1];
 	    xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
 	    if (K[f] && K[g] && ((I == NULL) || (!I[g] && !I[f])))
 	    {
@@ -735,31 +726,31 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
 		  if (K[g] && ((I == NULL) || (!I[g])))
 		  {
 		    f = PaireLibre3d(k, xg, yg, zg);
-		    if ((f != -1) && IsSet(f, BORDER) && !IsSet(g, EN_LIFO))
+		    if ((f != -1) && IsSet(f, BORDER) && !IsSet(g, EN_RLIFO))
 		    { 
-		      LifoPush(LIFOb, f); 
-		      LifoPush(LIFOb, g);
+		      RlifoPush(&RLIFOb, f); 
+		      RlifoPush(&RLIFOb, g);
 		    }
 		  }
 		} // for u
 	      } // if ((DIM3D(xf,yf,zf) == dim) &&...
 	    } // if (K[f] && K[g])
-	  } // for (i = 0; i < LIFO->Sp; i += 2)
-	  while (!LifoVide(LIFOb))
+	  } // for (i = 0; i < RLIFO->Sp; i += 2)
+	  while (!RlifoVide(RLIFOb))
 	  { 
-	    g = LifoPop(LIFOb);
-	    f = LifoPop(LIFOb);
-	    LifoPush(LIFO, f); 
-	    LifoPush(LIFO, g); 
+	    g = RlifoPop(RLIFOb);
+	    f = RlifoPop(RLIFOb);
+	    RlifoPush(&RLIFO, f); 
+	    RlifoPush(&RLIFO, g); 
 	  }
       } // for (dim = 3; dim >= 1; dim--)
     } // for for
 
     // PREPARATION ETAPE SUIVANTE
-    for (i = 0; i < LIFO->Sp; i++) UnSet(LIFO->Pts[i], EN_LIFO);
-    for (i = 0; i < LIFO->Sp; i += 2)
+    for (i = 0; i < RLIFO->Sp; i++) UnSet(RLIFO->Pts[i], EN_RLIFO);
+    for (i = 0; i < RLIFO->Sp; i += 2)
     {
-      f = LIFO->Pts[i];
+      f = RLIFO->Pts[i];
       UnSet(f, BORDER);
       xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
       Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
@@ -767,23 +758,23 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
       {
 	g = tab[u];
 	UnSet(g, BORDER);
-	if (K[g] && !IsSet(g, EN_LIFO) && ((I == NULL) || (!I[g])))
+	if (K[g] && !IsSet(g, EN_RLIFO) && ((I == NULL) || (!I[g])))
 	{
 	  xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
 	  f = PaireLibre3d(k, xg, yg, zg);
 	  if (f != -1) 
 	  { 
-	    LifoPush(LIFOb, f); 
-	    LifoPush(LIFOb, g);
-	    Set(g, EN_LIFO);
+	    RlifoPush(&RLIFOb, f); 
+	    RlifoPush(&RLIFOb, g);
+	    Set(g, EN_RLIFO);
 	  }
 	}
       } // for u
     }
 
-    for (i = 0; i < LIFOb->Sp; i += 2)
+    for (i = 0; i < RLIFOb->Sp; i += 2)
     {
-      f = LIFOb->Pts[i];
+      f = RLIFOb->Pts[i];
       xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
       Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
       for (u = 0; u < n; u += 1)
@@ -793,21 +784,21 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
       } // for u
     }
 
-    LifoFlush(LIFO);
+    RlifoFlush(RLIFO);
 
-    LIFOt = LIFOb;
-    LIFOb = LIFO;
-    LIFO = LIFOt;
+    RLIFOt = RLIFOb;
+    RLIFOb = RLIFO;
+    RLIFO = RLIFOt;
 
-  } // while (!LifoVide(LIFO) && nsteps > 0)
+  } // while (!RlifoVide(RLIFO) && nsteps > 0)
 
   /* ================================================ */
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
   IndicsTermine();
-  LifoTermine(LIFO);
-  LifoTermine(LIFOb);
+  RlifoTermine(RLIFO);
+  RlifoTermine(RLIFOb);
   return 1;
 
 } /* l3dpardircollapse() */
@@ -828,9 +819,9 @@ int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * 
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   uint8_t * I = NULL;
-  Lifo * LIFO;
-  Lifo * LIFOb;
-  Lifo * LIFOt;
+  Rlifo * RLIFO;
+  Rlifo * RLIFOb;
+  Rlifo * RLIFOt;
   int32_t taillemax;
   int32_t tab[GRS3D*GCS3D*GDS3D];
   uint32_t nbcol;
@@ -866,11 +857,11 @@ int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * 
   }
 
   taillemax = 4 * (rs*cs + cs*ds + ds*rs);
-  LIFO = CreeLifoVide(taillemax);
-  LIFOb = CreeLifoVide(taillemax);
-  if ((LIFO == NULL) || (LIFOb == NULL))
+  RLIFO = CreeRlifoVide(taillemax);
+  RLIFOb = CreeRlifoVide(taillemax);
+  if ((RLIFO == NULL) || (RLIFOb == NULL))
   {
-    fprintf(stderr, "%s : CreeLifoVide failed\n", F_NAME);
+    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
     return(0);
   }
 
@@ -885,7 +876,7 @@ int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * 
 #endif
 
   /* ========================================================= */
-  /* INITIALISATION DE LA LIFO ET DE LA "BORDER" */
+  /* INITIALISATION DE LA RLIFO ET DE LA "BORDER" */
   /* ========================================================= */
 
   for (zg = 0; zg < ds; zg++)
@@ -898,9 +889,9 @@ int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * 
       f = PaireLibre3d(k, xg, yg, zg);
       if (f != -1) 
       { 
-	LifoPush(LIFO, f); 
-	LifoPush(LIFO, g);
-	Set(g, EN_LIFO);
+	RlifoPush(&RLIFO, f); 
+	RlifoPush(&RLIFO, g);
+	Set(g, EN_RLIFO);
 	xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
 	Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
 	for (u = 0; u < n; u += 1)
@@ -917,7 +908,7 @@ int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * 
   /* ================================================ */
 
   nbcol = 1;
-  while (!LifoVide(LIFO) && nsteps > 0 && nbcol)
+  while (!RlifoVide(RLIFO) && nsteps > 0 && nbcol)
   {
     nsteps --;
     nbcol = 0;
@@ -927,10 +918,10 @@ int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * 
       {
 	for (dim = 3; dim >= 1; dim--) // For dimensions in decreasing order
 	{
-	  for (i = 0; i < LIFO->Sp; i += 2) // Scan the free faces list (dim 3)
+	  for (i = 0; i < RLIFO->Sp; i += 2) // Scan the free faces list (dim 3)
 	  {
-	    f = LIFO->Pts[i];
-	    g = LIFO->Pts[i+1];
+	    f = RLIFO->Pts[i];
+	    g = RLIFO->Pts[i+1];
 	    xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
 	    if (K[f] && K[g] && ((I == NULL) || (!I[g] && !I[f])))
 	    {
@@ -951,31 +942,31 @@ int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * 
 		  if (K[g] && ((I == NULL) || (!I[g])))
 		  {
 		    f = PaireLibre3d(k, xg, yg, zg);
-		    if ((f != -1) && IsSet(f, BORDER) && !IsSet(g, EN_LIFO))
+		    if ((f != -1) && IsSet(f, BORDER) && !IsSet(g, EN_RLIFO))
 		    { 
-		      LifoPush(LIFOb, f); 
-		      LifoPush(LIFOb, g);
+		      RlifoPush(&RLIFOb, f); 
+		      RlifoPush(&RLIFOb, g);
 		    }
 		  }
 		} // for u
 	      } // if ((DIM3D(xf,yf,zf) == dim) &&...
 	    } // if (K[f] && K[g])
-	  } // for (i = 0; i < LIFO->Sp; i += 2)
-	  while (!LifoVide(LIFOb))
+	  } // for (i = 0; i < RLIFO->Sp; i += 2)
+	  while (!RlifoVide(RLIFOb))
 	  { 
-	    g = LifoPop(LIFOb);
-	    f = LifoPop(LIFOb);
-	    LifoPush(LIFO, f); 
-	    LifoPush(LIFO, g); 
+	    g = RlifoPop(RLIFOb);
+	    f = RlifoPop(RLIFOb);
+	    RlifoPush(&RLIFO, f); 
+	    RlifoPush(&RLIFO, g); 
 	  }
       } // for (dim = 3; dim >= 1; dim--)
     } // for for
 
     // PREPARATION ETAPE SUIVANTE
-    for (i = 0; i < LIFO->Sp; i++) UnSet(LIFO->Pts[i], EN_LIFO);
-    for (i = 0; i < LIFO->Sp; i += 2)
+    for (i = 0; i < RLIFO->Sp; i++) UnSet(RLIFO->Pts[i], EN_RLIFO);
+    for (i = 0; i < RLIFO->Sp; i += 2)
     {
-      f = LIFO->Pts[i];
+      f = RLIFO->Pts[i];
       UnSet(f, BORDER);
       xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
       Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
@@ -986,22 +977,22 @@ int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * 
 	xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
 	if (K[g] && (DIM3D(xg,yg,zg) == 2) && BetaTerminal3d(K, rs, cs, ds, xg, yg, zg))
 	  I[g] = 1;
-	else if (K[g] && !IsSet(g, EN_LIFO) && !I[g])
+	else if (K[g] && !IsSet(g, EN_RLIFO) && !I[g])
 	{
 	  f = PaireLibre3d(k, xg, yg, zg);
 	  if (f != -1) 
 	  { 
-	    LifoPush(LIFOb, f); 
-	    LifoPush(LIFOb, g);
-	    Set(g, EN_LIFO);
+	    RlifoPush(&RLIFOb, f); 
+	    RlifoPush(&RLIFOb, g);
+	    Set(g, EN_RLIFO);
 	  }
 	}
       } // for u
     }
 
-    for (i = 0; i < LIFOb->Sp; i += 2)
+    for (i = 0; i < RLIFOb->Sp; i += 2)
     {
-      f = LIFOb->Pts[i];
+      f = RLIFOb->Pts[i];
       xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
       Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
       for (u = 0; u < n; u += 1)
@@ -1011,21 +1002,336 @@ int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * 
       } // for u
     }
 
-    LifoFlush(LIFO);
+    RlifoFlush(RLIFO);
 
-    LIFOt = LIFOb;
-    LIFOb = LIFO;
-    LIFO = LIFOt;
+    RLIFOt = RLIFOb;
+    RLIFOb = RLIFO;
+    RLIFO = RLIFOt;
 
-  } // while (!LifoVide(LIFO) && nsteps > 0)
+  } // while (!RlifoVide(RLIFO) && nsteps > 0)
 
   /* ================================================ */
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
   IndicsTermine();
-  LifoTermine(LIFO);
-  LifoTermine(LIFOb);
+  RlifoTermine(RLIFO);
+  RlifoTermine(RLIFOb);
   return 1;
 
 } /* l3dsurfacecollapse() */
+
+// 888888888888888888888888888888888888888888888888888888888888888888
+// 888888888888888888888888888888888888888888888888888888888888888888
+//                        TOPOLOGICAL FLOW
+// 888888888888888888888888888888888888888888888888888888888888888888
+// 888888888888888888888888888888888888888888888888888888888888888888
+ 
+/* =============================================================== */
+graphe * l3dtopoflow_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax)
+/* =============================================================== */
+/* 
+  construction du flot topologique associÅÈ Å‡ un collapse parallÅËle directionnel
+  (voir l3dpardircollapse_f)
+  fonction de prioritÅÈ en entiers longs
+*/
+#undef F_NAME
+#define F_NAME "l3dtopoflow_l"
+{
+  fprintf(stderr, "%s: Not Yet Implemented\n", F_NAME);
+  return(NULL);
+} /* l3dtopoflow_l() */
+ 
+/* =============================================================== */
+graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax)
+/* =============================================================== */
+/* 
+  construction du flot topologique associÅÈ Å‡ un collapse parallÅËle directionnel
+  (voir l3dpardircollapse_f)
+  fonction de prioritÅÈ en flottants
+  le rÅÈsultat est un graphe dont les sommets (faces du complexe k) 
+  sont valuÅÈs par :
+    TF_NOT_IN_I: la face n'appartient pas au complexe initial (avant collapse)
+    TF_HEAD: la face est une tete de paire libre (face libre)
+    TF_TAIL: la face est une queue de paire libre
+    TF_NOT_IN_F: la face n'appartient pas au complexe final (aprÅËs collapse)
+*/
+#undef F_NAME
+#define F_NAME "l3dtopoflow_f"
+{
+  int32_t i, g, gg, f, ff, u, v, n, xf, yf, zf, xg, yg, zg, xv, yv, zv;
+  int32_t rs, cs, ds, ps, N;
+  int32_t dim, ori, dir, direc, orien;
+  uint8_t * K;
+  float * P;
+  float * F;
+  uint8_t * I = NULL;
+  Rbt * RBT;
+  Rlifo * RLIFO;
+  Rlifo * RLIFOb;
+  int32_t taillemaxrbt;
+  int32_t tab[GRS3D*GCS3D*GDS3D];
+  TypRbtKey p, pp;
+  graphe * flow = NULL;
+  int32_t narcs, ncoll = 0;
+
+  rs = rowsize(k);
+  cs = colsize(k);
+  ds = depth(k);
+  ps = rs * cs;
+  N = ps * ds;
+  K = UCHARDATA(k);
+
+  IndicsInit(N);
+
+  if (prio == NULL)
+  {
+    fprintf(stderr, "%s : prio is needed\n", F_NAME);
+    return(NULL);
+  }
+
+  if ((rowsize(prio) != rs) || (colsize(prio) != cs) || (depth(prio) != ds))
+  {
+    fprintf(stderr, "%s : bad size for prio\n", F_NAME);
+    return(NULL);
+  }
+  if (datatype(prio) == VFF_TYP_FLOAT) 
+    P = FLOATDATA(prio); 
+  else 
+  {
+    fprintf(stderr, "%s : datatype(prio) must be float\n", F_NAME);
+    return(NULL);
+  }
+
+  if (inhibit != NULL)
+  {
+    if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs) || (depth(inhibit) != ds))
+    {
+      fprintf(stderr, "%s : bad size for inhibit\n", F_NAME);
+      return(NULL);
+    }
+    if (datatype(inhibit) == VFF_TYP_1_BYTE) 
+      I = UCHARDATA(inhibit); 
+    else 
+    {
+      fprintf(stderr, "%s : datatype(inhibit) must be uint8_t\n", F_NAME);
+      return(NULL);
+    }
+  }
+
+  taillemaxrbt = N/8;
+  /* cette taille est indicative, le RBT est realloue en cas de depassement */
+  RBT = CreeRbtVide(taillemaxrbt);
+  if (RBT == NULL)
+  {
+    fprintf(stderr, "%s : CreeRbtVide failed\n", F_NAME);
+    return(NULL);
+  }
+
+  RLIFO = CreeRlifoVide(taillemaxrbt);
+  RLIFOb = CreeRlifoVide(taillemaxrbt);
+  if ((RLIFO == NULL) || (RLIFOb == NULL))
+  {
+    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
+    return(NULL);
+  }
+
+  /* ================================================ */
+  /*               INITIALISATION GRAPHE              */
+  /* ================================================ */
+
+  narcs = 0; // evalue la taille max du graphe
+  for (zg = 0; zg < ds; zg++)
+  for (yg = 0; yg < cs; yg++)
+  for (xg = 0; xg < rs; xg++)
+  {
+    if (K[zg*ps + yg*rs + xg]) 
+    { 
+      if (CUBE3D(xg,yg,zg)) narcs += 26;
+      else if (CARRE3D(xg,yg,zg)) narcs += 8;
+      else if (INTER3D(xg,yg,zg)) narcs += 2;
+    }
+  }
+  flow = InitGraphe(N, narcs); // toutes les faces (dans K ou non) sont des sommets
+  if (flow == NULL)
+  {
+    fprintf(stderr, "%s : InitGraphe failed\n", F_NAME);
+    return(NULL);
+  }
+  for (zg = 0; zg < ds; zg++)
+  for (yg = 0; yg < cs; yg++)
+  for (xg = 0; xg < rs; xg++)
+  {
+    g = zg*ps + yg*rs + xg;
+    flow->x[g] = xg; // coordonnÅÈes des sommets
+    flow->y[g] = yg;
+    flow->z[g] = zg;
+    if (!K[g]) flow->v_sommets[g] = TF_NOT_IN_I;
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+#ifdef VERBOSE
+  fprintf(stderr, "%s: Debut traitement\n", F_NAME);
+#endif
+
+  /* ========================================================= */
+  /*   INITIALISATION DU RBT */
+  /* ========================================================= */
+
+  for (zg = 0; zg < ds; zg++)
+  for (yg = 0; yg < cs; yg++)
+  for (xg = 0; xg < rs; xg++)
+  {
+    g = zg*ps + yg*rs + xg;
+    if (K[g])
+    {
+      f = PaireLibre3d(k, xg, yg, zg);
+      if ((f != -1) && 
+	  (((I != NULL) && (!I[g] && !I[f])) || 
+	   ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
+      {
+	pp = (TypRbtKey)(max(P[g],P[f]));
+	RbtInsert(&RBT, pp, g);
+	Set(g, EN_RBT);
+      }
+    }
+  }
+
+  /* ================================================ */
+  /*                  DEBUT SATURATION                */
+  /* ================================================ */
+
+  while (!RbtVide(RBT))
+  {
+    // construit la liste de toutes les paires libres ayant la prioritÅÈ courante
+    p = RbtMinLevel(RBT); 
+    while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    {
+      g = RbtPopMin(RBT);
+      UnSet(g, EN_RBT);
+      xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
+      f = PaireLibre3d(k, xg, yg, zg);
+      if (f != -1)
+      {
+	RlifoPush(&RLIFO, f);
+	RlifoPush(&RLIFO, g);
+	Set(g, EN_RLIFO);
+      }
+    } // while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+
+    for (dir = 0; dir <= 2; dir++) // For all face directions
+      for (ori = 0; ori <= 1; ori++) // For both orientations
+      {
+#ifdef OLDVERSION
+	for (dim = 3; dim >= 1; dim--) // For dimensions in decreasing order
+#else
+	for (dim = 3; dim >= 2; dim--) // For dimensions in decreasing order
+#endif
+	{
+	  for (i = 0; i < RLIFO->Sp; i += 2) // Scan the free faces list (dim 3)
+	  {
+	    f = RLIFO->Pts[i];
+	    g = RLIFO->Pts[i+1];
+	    xf = f % rs; yf = (f % ps) / rs; zf = f / ps;
+	    if (K[f] && K[g] && 
+		(((I != NULL) && (!I[g] && !I[f])) || 
+		 ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
+	    {
+	      xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
+	      if (xf - xg)      { direc = 0; if (xf > xg) orien = 0; else orien = 1; }
+	      else if (yf - yg) { direc = 1; if (yf > yg) orien = 0; else orien = 1; }
+	      else              { direc = 2; if (zf > zg) orien = 0; else orien = 1; }
+	      if ((DIM3D(xf,yf,zf) == dim) && (direc == dir) && (orien == ori))
+	      {
+		K[g] = K[f] = VAL_NULLE; // COLLAPSE
+		ncoll ++;
+#ifdef TRACECOL
+		printf("Collapse : %d,%d,%d -> %d,%d,%d\n", xg, yg, zg, xf, yf, zf);
+#endif
+		flow->v_sommets[g] = TF_HEAD;
+      		flow->v_sommets[f] = TF_TAIL;
+		AjouteArcValue(flow, g, f, (TYP_VARC)1);
+#ifdef TRACECONSGRAPH
+		printf("Ajoute arc : %d [%d,%d,%d] -> %d [%d,%d,%d] (%g)\n", g, xg, yg, zg, f, xf, yf, zf, (TYP_VARC)1);
+#endif
+		Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
+		for (u = 0; u < n; u += 1)
+		{
+		  gg = tab[u];
+		  xg = gg % rs; yg = (gg % ps) / rs; zg = gg / ps;
+#ifdef OLDVERSION
+		  if (K[gg]) 
+		  {
+#ifdef TRACECONSGRAPH
+		    printf("Ajoute arc : %d [%d,%d,%d] -> %d [%d,%d,%d] (%g)\n", f, xf, yf, zf, gg, xg, yg, zg, (TYP_VARC)1);
+#endif
+		    AjouteArcValue(flow, f, gg, (TYP_VARC)1);
+		  }
+#else
+		  if (K[gg] && !SINGL3D(xg,yg,zg)) 
+		  {
+#ifdef TRACECONSGRAPH
+		    printf("Ajoute arc : %d [%d,%d,%d] -> %d [%d,%d,%d] (%g)\n", f, xf, yf, zf, gg, xg, yg, zg, (TYP_VARC)1);
+#endif
+		    AjouteArcValue(flow, f, gg, (TYP_VARC)1);
+		  }
+#endif
+		  if (K[gg] && 
+		      (((I != NULL) && (!I[gg])) || ((I == NULL) && (P[gg] < priomax))) )
+		  {
+		    ff = PaireLibre3d(k, xg, yg, zg);
+		    if ((ff != -1) &&
+			(((I != NULL) && (!I[ff])) || ((I == NULL) && (P[ff] < priomax))) )
+		    {
+		      if ((P[gg] <= p) && (P[ff] <= p) && !IsSet(gg, EN_RLIFO))
+		      { // PrÅÈparation sous-ÅÈtapes suivantes
+			RlifoPush(&RLIFOb, ff);
+			RlifoPush(&RLIFOb, gg);
+		      }
+		      if (!IsSet(gg, EN_RBT))
+		      { // PrÅÈparation ÅÈtape suivante
+			pp = (TypRbtKey)(max(P[gg],P[ff]));
+			RbtInsert(&RBT, pp, gg);
+			Set(gg, EN_RBT);
+		      }
+		    } // if (ff != -1)
+		  } // if K[gg] && ...
+		} // for u
+	      } // if ((DIM3D(xf,yf,zf) == dim) &&...
+	    } // if (K[f] && K[g])
+	  } // for (i = 0; i < RLIFO->Sp; i += 2)
+	  while (!RlifoVide(RLIFOb))
+	  { 
+	    g = RlifoPop(RLIFOb);
+	    f = RlifoPop(RLIFOb);
+	    RlifoPush(&RLIFO, f); 
+	    RlifoPush(&RLIFO, g); 
+	  }
+      } // for (dim = 3; dim >= 1; dim--)
+    } // for for
+
+    RlifoFlush(RLIFO);
+
+  } /* while (!RbtVide(RBT)) */
+
+  for (g = 0; g < N; g++)
+    if (K[g]) flow->v_sommets[g] = TF_NOT_IN_F;
+
+#ifdef VERBOSE
+  fprintf(stderr, "%s: Fin traitement\n", F_NAME);
+#endif
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  RbtTermine(RBT);
+  RlifoTermine(RLIFO);
+  RlifoTermine(RLIFOb);
+  return(flow);
+
+} // l3dtopoflow_f()

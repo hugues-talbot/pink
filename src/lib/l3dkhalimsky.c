@@ -1,4 +1,4 @@
-/* $Id: l3dkhalimsky.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: l3dkhalimsky.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /* 
    Operateurs agissant dans la grille de Khalimsky 3d:
 
@@ -34,6 +34,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mclifo.h>
@@ -1003,14 +1004,15 @@ int32_t l3dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbcav, int32_t 
 } /* l3dinvariants() */
 
 /* =============================================================== */
-int32_t l3dborder(struct xvimage * f)
+int32_t l3dboundary(struct xvimage * f)
 /* =============================================================== */
 /* 
    extrait la frontière interne
+   def: {x in F | theta(x) inter Fbar neq emptyset}
 */
 {
 #undef F_NAME
-#define F_NAME "l3dborder"
+#define F_NAME "l3dboundary"
   struct xvimage * g;
   int32_t rs, cs, ds, ps, N;
   int32_t x, y, z;
@@ -1050,7 +1052,46 @@ int32_t l3dborder(struct xvimage * f)
   
   freeimage(g);
   return 1;
-} /* l3border() */
+} /* l3dboundary() */
+
+/* =============================================================== */
+int32_t l3dborder(struct xvimage * f)
+/* =============================================================== */
+/* 
+   extrait la frontière interne
+   def: closure{x in F | x free for F}
+*/
+{
+#undef F_NAME
+#define F_NAME "l3dborder"
+  struct xvimage * g;
+  int32_t rs, cs, ds, ps;
+  int32_t x, y, z;
+  uint8_t *F;
+  uint8_t *G;
+
+  assert(datatype(f) == VFF_TYP_1_BYTE);
+  rs = rowsize(f);
+  cs = colsize(f);
+  ds = depth(f);
+  ps = rs * cs;
+  F = UCHARDATA(f);
+  g = copyimage(f);
+  if (g == NULL)
+  {   fprintf(stderr,"%s: copyimage failed\n", F_NAME);
+      return 0;
+  }  
+  G = UCHARDATA(g);
+  razimage(f);
+  for (z = 0; z < ds; z++)
+    for (y = 0; y < cs; y++)
+      for (x = 0; x < rs; x++)
+	if (G[z*ps + y*rs + x] && FaceLibre3d(g, x, y, z))
+	  F[z*ps + y*rs + x] = VAL_OBJET;
+  l3dmakecomplex(f);
+  freeimage(g);
+  return 1;
+} /* l2dborder() */
 
 /* =============================================================== */
 int32_t l3dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8_t a2, uint8_t b1, uint8_t b2)

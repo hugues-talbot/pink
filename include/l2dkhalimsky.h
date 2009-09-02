@@ -1,4 +1,4 @@
-/* $Id: l2dkhalimsky.h,v 1.3 2009-06-24 05:32:12 mcouprie Exp $ */
+/* $Id: l2dkhalimsky.h,v 1.4 2009-09-02 14:23:35 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -19,6 +19,8 @@ extern int32_t l2dvoronoi(struct xvimage * lab, struct xvimage * mask);
 extern int32_t l2dtopotessndg(struct xvimage * f);
 extern int32_t l2dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbtrous, int32_t *euler);
 extern int32_t l2dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8_t a2, uint8_t b1, uint8_t b2);
+extern int32_t l2dboundary(struct xvimage * f);
+extern int32_t l2dborder(struct xvimage * f);
 
 #ifdef __cplusplus
 }

@@ -59,7 +59,7 @@ checkbutton .top.combine -text combine -variable OGNIEWICZMEDIALAXIS(combine) -c
 pack .top.combine -side right
 
 # create the radius button
-scale .top.radius -from 1 -to 20 -length 200 -variable OGNIEWICZMEDIALAXIS(param) \
+scale .top.radius -from 1 -to 50 -length 200 -variable OGNIEWICZMEDIALAXIS(param) \
   -orient horizontal -tickinterval 5 -showvalue true -command ogniewiczmedialaxis_run
 pack .top.radius -side left
 

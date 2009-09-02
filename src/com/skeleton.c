@@ -1,7 +1,7 @@
-/* $Id: skeleton.c,v 1.4 2009-03-27 12:55:53 mcouprie Exp $ */
+/* $Id: skeleton.c,v 1.5 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file skeleton.c
 
-\brief ultimate binary skeleton guided by a priority image
+\brief ultimate binary skeleton guided by a priority image (see [BC07])
 
 <B>Usage:</B> skeleton in.pgm prio connex [inhibit] out.pgm
 
@@ -67,6 +67,29 @@ skeleton circuit1 8 8 circuit1_skeleton
 </table>
 
 */
+
+/*
+%TEST skeleton %IMAGES/2dbyte/binary/b2hebreu.pgm 0 8 %RESULTS/skeleton_b2hebreu_0_8.pgm
+%TEST skeleton %IMAGES/2dbyte/binary/b2hebreu.pgm 1 8 %RESULTS/skeleton_b2hebreu_1_8.pgm
+%TEST skeleton %IMAGES/2dbyte/binary/b2hebreu.pgm 2 8 %RESULTS/skeleton_b2hebreu_2_8.pgm
+%TEST skeleton %IMAGES/2dbyte/binary/b2hebreu.pgm 3 8 %RESULTS/skeleton_b2hebreu_3_8.pgm
+%TEST skeleton %IMAGES/2dbyte/binary/b2hebreu.pgm 4 8 %RESULTS/skeleton_b2hebreu_4_8.pgm
+%TEST skeleton %IMAGES/2dbyte/binary/b2hebreu.pgm 8 8 %RESULTS/skeleton_b2hebreu_8_8.pgm
+%TEST skeleton %IMAGES/2dbyte/binary/b2hebreu.pgm 0 4 %RESULTS/skeleton_b2hebreu_0_4.pgm
+%TEST skeleton %IMAGES/2dbyte/binary/b2hebreu.pgm 0 8 3 %RESULTS/skeleton_b2hebreu_0_8_3.pgm
+%TEST skeleton %IMAGES/2dbyte/binary/b2hebreu.pgm 0 8 %IMAGES/2dbyte/binary/b2hebreui.pgm %RESULTS/skeleton_b2hebreu_0_8_i.pgm
+%TEST skeleton %IMAGES/3dbyte/binary/b3a.pgm 0 26 %RESULTS/skeleton_b3a_0_26.pgm
+%TEST skeleton %IMAGES/3dbyte/binary/b3a.pgm 1 26 %RESULTS/skeleton_b3a_1_26.pgm
+%TEST skeleton %IMAGES/3dbyte/binary/b3a.pgm 2 26 %RESULTS/skeleton_b3a_2_26.pgm
+%TEST skeleton %IMAGES/3dbyte/binary/b3a.pgm 3 26 %RESULTS/skeleton_b3a_3_26.pgm
+%TEST skeleton %IMAGES/3dbyte/binary/b3a.pgm 6 26 %RESULTS/skeleton_b3a_6_26.pgm
+%TEST skeleton %IMAGES/3dbyte/binary/b3a.pgm 18 26 %RESULTS/skeleton_b3a_18_26.pgm
+%TEST skeleton %IMAGES/3dbyte/binary/b3a.pgm 26 26 %RESULTS/skeleton_b3a_26_26.pgm
+%TEST skeleton %IMAGES/3dbyte/binary/b3a.pgm 0 6 %RESULTS/skeleton_b3a_0_6.pgm
+%TEST skeleton %IMAGES/3dbyte/binary/b3a.pgm 0 26 4 %RESULTS/skeleton_b3a_0_26_4.pgm
+%TEST skeleton %IMAGES/3dbyte/binary/b3a.pgm 0 26 %IMAGES/3dbyte/binary/b3a2.pgm %RESULTS/skeleton_b3a_0_26_i.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

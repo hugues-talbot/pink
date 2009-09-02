@@ -1,4 +1,4 @@
-/* $Id: larith.h,v 1.5 2009-06-18 06:34:55 mcouprie Exp $ */
+/* $Id: larith.h,v 1.6 2009-09-02 14:23:35 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -88,6 +88,19 @@ extern int32_t lnull(
 extern int32_t lscale(
         struct xvimage * image,
         double scale
+);
+
+extern int32_t lpow(
+	struct xvimage * image,
+	double p
+);
+
+extern int32_t lexp(
+	struct xvimage * image
+);
+
+extern int32_t llog(
+	struct xvimage * image
 );
 
 extern int32_t lsub(

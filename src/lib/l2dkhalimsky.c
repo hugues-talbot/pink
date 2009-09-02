@@ -1,12 +1,20 @@
-/* $Id: l2dkhalimsky.c,v 1.3 2009-06-24 05:32:12 mcouprie Exp $ */
+/* $Id: l2dkhalimsky.c,v 1.4 2009-09-02 14:23:36 mcouprie Exp $ */
 /* Operateurs agissant dans la grille de Khalimsky 2d */
-/* Michel Couprie - mars 2000 */
+/* Michel Couprie - mars 2000 
 
+   l2dseltype: extraction d'éléments selon leur rang et leur type topologique
+     Michel Couprie - avril 2007
+
+   l2dborder: extraction de la frontière interne
+   l2dboundary: extraction de la frontière interne
+     Michel Couprie - août 2009
+ */
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mclifo.h>
@@ -31,6 +39,8 @@ int32_t l2dmakecomplex(struct xvimage * i)
    effectue la fermeture par inclusion de l'ensemble i
 */
 {
+  assert(datatype(i) == VFF_TYP_1_BYTE);
+
   if (depth(i) != 1) 
   {
     fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
@@ -52,6 +62,8 @@ int32_t l2dclosebeta(struct xvimage * i)
    effectue la fermeture par inclusion inverse de l'ensemble i
 */
 {
+  assert(datatype(i) == VFF_TYP_1_BYTE);
+
   if (depth(i) != 1) 
   {
     fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
@@ -94,7 +106,7 @@ int32_t l2dkhalimskize(struct xvimage * i, struct xvimage **k, int32_t mode)
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
 #endif
 
-  if ((mode == 1) || (mode == 2) || (mode == 5) || (mode == 6) || (mode == 7))
+  if ((mode == 0) || (mode == 1) || (mode == 2) || (mode == 5) || (mode == 6) || (mode == 7))
     *k = KhalimskizeNDG2d(i);
   else if (mode == 9)
     *k = DeKhalimskize2d(i);
@@ -1536,6 +1548,88 @@ int32_t l2dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbtrous, int32_
   LifoTermine(LIFO);
   return 1;
 } /* l2dinvariants() */
+
+/* =============================================================== */
+int32_t l2dboundary(struct xvimage * f)
+/* =============================================================== */
+/* 
+   extrait la frontière interne
+   def: {x in F | theta(x) inter Fbar neq emptyset}
+*/
+{
+#undef F_NAME
+#define F_NAME "l2dboundary"
+  struct xvimage * g;
+  int32_t rs, cs;
+  int32_t x, y;
+  uint8_t *F;
+  uint8_t *G;
+  int32_t tab[8], n, u;
+
+  rs = rowsize(f);
+  cs = colsize(f);
+  F = UCHARDATA(f);
+  g = copyimage(f);
+  if (g == NULL)
+  {   fprintf(stderr,"%s: copyimage failed\n", F_NAME);
+      return 0;
+  }  
+  G = UCHARDATA(g);
+  razimage(f);
+
+  for (y = 0; y < cs; y++)
+    for (x = 0; x < rs; x++)
+      if (G[y*rs + x])
+      {
+	Thetacarre2d(rs, cs, x, y, tab, &n);
+	for (u = 0; u < n; u++)
+	  if (G[tab[u]] == 0) 
+	  {
+	    F[y*rs + x] = NDG_MAX;
+	    goto next;
+	  }
+      next:;
+      } 
+  
+  freeimage(g);
+  return 1;
+} /* l2dboundary() */
+
+/* =============================================================== */
+int32_t l2dborder(struct xvimage * f)
+/* =============================================================== */
+/* 
+   extrait la frontière interne
+   def: closure{x in F | x free for F}
+*/
+{
+#undef F_NAME
+#define F_NAME "l2dborder"
+  struct xvimage * g;
+  int32_t rs, cs, N;
+  int32_t x, y;
+  uint8_t *F;
+  uint8_t *G;
+
+  assert(datatype(f) == VFF_TYP_1_BYTE);
+  rs = rowsize(f);
+  cs = colsize(f);
+  F = UCHARDATA(f);
+  g = copyimage(f);
+  if (g == NULL)
+  {   fprintf(stderr,"%s: copyimage failed\n", F_NAME);
+      return 0;
+  }  
+  G = UCHARDATA(g);
+  razimage(f);
+  for (y = 0; y < cs; y++)
+    for (x = 0; x < rs; x++)
+      if (G[y*rs + x] && FaceLibre2d(g, x, y))
+	F[y*rs + x] = VAL_OBJET;
+  l2dmakecomplex(f);
+  freeimage(g);
+  return 1;
+} /* l2dborder() */
 
 /* =============================================================== */
 int32_t l2dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8_t a2, uint8_t b1, uint8_t b2)

@@ -1,25 +1,26 @@
-/* $Id: colorize.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
-/* \file colorize.c
+/* $Id: colorize.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
+/*! \file colorize.c
 
-\brief 
+\brief generates a color image from a grayscale image and a lookup table
 
-<B>Usage:</B> 
+<B>Usage:</B> colorize in.pgm lut.ppm out.ppm
 
 <B>Description:</B>
+Generates a color image from a grayscale image and a lookup table (see genlut.c).
 
 <B>Types supported:</B> byte 2D
 
-<B>Category:</B> 
-\ingroup  
+<B>Category:</B> convert
+\ingroup  convert
 
 \author Michel Couprie
 */
-/* genere une image en couleurs a partir d'une image en gris et d'une LookUp Table */
 
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 
@@ -38,9 +39,9 @@ int main(int argc, char **argv)
   int32_t i;
   uint8_t v;
 
-  if (argc != 3)
+  if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in.pgm out.ppm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm lut.ppm out.ppm \n", argv[0]);
     exit(1);
   }
 
@@ -48,30 +49,40 @@ int main(int argc, char **argv)
 
   if (in == NULL)
   {
-    fprintf(stderr, "randrgb: readimage failed\n");
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
-
-  rs = in->row_size;
-  cs = in->col_size;
+  assert(datatype(in) == VFF_TYP_1_BYTE);
+  rs = rowsize(in);
+  cs = colsize(in);
   N = rs * cs;
 
-  g1 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
-  g2 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
-  g3 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
-  if ((g1 == NULL) || (g2 == NULL) || (g3 == NULL))
+  // Charge la LUT
+  if (!readrgbimage(argv[2], &g1, &g2, &g3))
   {
-    fprintf(stderr, "randrgb: allocimage failed\n");
+    fprintf(stderr, "%s: readrgbimage failed\n", argv[0]);
     exit(1);
   }
+  assert(rowsize(g1) == 256);
+  assert(colsize(g1) == 1);
+  assert(depth(g1) == 1);
+  assert(datatype(g1) == VFF_TYP_1_BYTE);
+  for (i = 0; i < 256; i++)
+  {  
+    r[i] = (UCHARDATA(g1))[i];
+    g[i] = (UCHARDATA(g2))[i];
+    b[i] = (UCHARDATA(g3))[i];
+  }
 
-  /* init la LUT */
-  r[0] = g[0] = b[0] = 0;
-  r[1] = 255; g[1] =   0; b[1] =   0; /* rouge */
-  r[2] =   0; g[2] = 255; b[2] =   0; /* vert */
-  r[3] =   0; g[3] =   0; b[3] = 255; /* bleu */
-  r[4] = 255; g[4] = 255; b[4] =   0; /* jaune */
+  freeimage(g1);
+  freeimage(g2);
+  freeimage(g3);
 
+  g1 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(g1 != NULL);
+  g2 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(g2 != NULL);
+  g3 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(g3 != NULL);
+
+  // Applique la LUT
   for (i = 0; i < N; i++)
   {
     v = (UCHARDATA(in))[i];
@@ -80,7 +91,7 @@ int main(int argc, char **argv)
     (UCHARDATA(g3))[i] = b[v];
   }
   
-  writergbimage(g1, g2, g3, argv[2]);
+  writergbimage(g1, g2, g3, argv[argc-1]);
   freeimage(in);
   freeimage(g1);
   freeimage(g2);

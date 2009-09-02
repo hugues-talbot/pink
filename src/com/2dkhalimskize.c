@@ -1,9 +1,9 @@
-/* $Id: 2dkhalimskize.c,v 1.2 2009-06-29 09:10:50 mcouprie Exp $ */
+/* $Id: 2dkhalimskize.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file 2dkhalimskize.c
 
 \brief converts a 2D image into a 2D Khalimsky order
 
-<B>Usage:</B> 2dkhalimskize in.pgm <4|8|h|m|M|g|G|a> out.pgm
+<B>Usage:</B> 2dkhalimskize in.pgm <0|4|8|h|m|M|g|G|a> out.pgm
 
 <B>Description:</B>
 Converts a 2D image into a 2D Khalimsky order, or conversely.
@@ -24,7 +24,7 @@ Mode =
 \li    a : average,
 \li    R : reverse.
 
-In reverse mode, only the beta-terminal elements (squares) are selected.
+In reverse mode (<B>R</B>), only the beta-terminal elements (squares) are selected.
 
 <B>Types supported:</B> byte 2d, long 2d, float 2d
 
@@ -32,6 +32,19 @@ In reverse mode, only the beta-terminal elements (squares) are selected.
 \ingroup  orders
 
 \author Michel Couprie
+*/
+
+/*
+%TEST 2dkhalimskize %IMAGES/2dbyte/binary/b2fish1.pgm 0 %RESULTS/2dkhalimskize_b2fish1_0.k
+%TEST 2dkhalimskize %IMAGES/2dbyte/binary/b2fish1.pgm 4 %RESULTS/2dkhalimskize_b2fish1_4.k
+%TEST 2dkhalimskize %IMAGES/2dbyte/binary/b2fish1.pgm 8 %RESULTS/2dkhalimskize_b2fish1_8.k
+%TEST 2dkhalimskize %IMAGES/2dbyte/binary/b2fish1.pgm h %RESULTS/2dkhalimskize_b2fish1_h.k
+%TEST 2dkhalimskize %IMAGES/2dbyte/gray/g2fish1.pgm m %RESULTS/2dkhalimskize_g2fish1_m.k
+%TEST 2dkhalimskize %IMAGES/2dbyte/gray/g2fish1.pgm M %RESULTS/2dkhalimskize_g2fish1_M.k
+%TEST 2dkhalimskize %IMAGES/2dlong/l2fish1.pgm g %RESULTS/2dkhalimskize_l2fish1_g.k
+%TEST 2dkhalimskize %IMAGES/2dlong/l2fish1.pgm G %RESULTS/2dkhalimskize_l2fish1_G.k
+%TEST 2dkhalimskize %IMAGES/2dfloat/f2fish1.pgm a %RESULTS/2dkhalimskize_f2fish1_a.k
+%TEST 2dkhalimskize %IMAGES/2dbyte/binary/b2fish1.k R %RESULTS/2dkhalimskize_b2fish1_R.pgm
 */
 
 /* 

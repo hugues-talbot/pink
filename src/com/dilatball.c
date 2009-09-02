@@ -1,4 +1,4 @@
-/* $Id: dilatball.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: dilatball.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file dilatball.c
 
 \brief morphological binary dilation by a ball
@@ -49,6 +49,18 @@ dilatball cells 4 cells_dilatball
   </tr>
 </table>
 
+*/
+
+/*
+%TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 0 %RESULTS/dilatball_b2hebreu_3_0.pgm
+%TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 2 %RESULTS/dilatball_b2hebreu_3_2.pgm
+%TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 4 %RESULTS/dilatball_b2hebreu_3_4.pgm
+%TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 8 %RESULTS/dilatball_b2hebreu_3_8.pgm
+%TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 0 %RESULTS/dilatball_b3a_3_0.pgm
+%TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 2 %RESULTS/dilatball_b3a_3_2.pgm
+%TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 6 %RESULTS/dilatball_b3a_3_6.pgm
+%TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 18 %RESULTS/dilatball_b3a_3_18.pgm
+%TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 26 %RESULTS/dilatball_b3a_3_26.pgm
 */
 
 #include <stdio.h>

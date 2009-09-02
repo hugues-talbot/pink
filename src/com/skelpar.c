@@ -1,4 +1,4 @@
-/* $Id: skelpar.c,v 1.3 2009-06-18 06:34:55 mcouprie Exp $ */
+/* $Id: skelpar.c,v 1.4 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file skelpar.c
 
 \brief parallel binary skeleton
@@ -56,6 +56,17 @@ http://igm.univ-mlv.fr/LabInfo/rapportsInternes/2006/01.pdf<BR>
 
 \author Michel Couprie
 */
+
+/*
+%TEST skelpar %IMAGES/2dbyte/binary/b2hebreu.pgm 2 -1 %RESULTS/skelpar_b2hebreu_2__1.pgm
+%TEST skelpar %IMAGES/2dbyte/binary/b2hebreu.pgm 3 -1 %RESULTS/skelpar_b2hebreu_3__1.pgm
+%TEST skelpar %IMAGES/2dbyte/binary/b2hebreu.pgm 4 -1 %RESULTS/skelpar_b2hebreu_4__1.pgm
+%TEST skelpar %IMAGES/2dbyte/binary/b2hebreu.pgm 22 -1 %RESULTS/skelpar_b2hebreu_22__1.pgm
+%TEST skelpar %IMAGES/2dbyte/binary/b2hebreu.pgm 23 -1 %RESULTS/skelpar_b2hebreu_23__1.pgm
+%TEST skelpar %IMAGES/2dbyte/binary/b2hebreu.pgm 2 3 %RESULTS/skelpar_b2hebreu_2_3.pgm
+%TEST skelpar %IMAGES/2dbyte/binary/b2hebreu.pgm 2 -1 %IMAGES/2dbyte/binary/b2hebreui.pgm %RESULTS/skelpar_b2hebreu_2__1_i.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

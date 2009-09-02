@@ -1,4 +1,4 @@
-/* $Id: seuil.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: seuil.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file seuil.c
 
 \brief simple threshold
@@ -16,6 +16,12 @@ If n2 is present, for each pixel x, out[x] = if (n <= in[x] < n2) then 255 else 
 \ingroup  arith
 
 \author Michel Couprie 1997
+*/
+
+/*
+%TEST seuil %IMAGES/2dbyte/gray/g2fish1.pgm 3 %RESULTS/seuil_g2fish1_3.pgm
+%TEST seuil %IMAGES/2dlong/l2fish1.pgm 3 %RESULTS/seuil_l2fish1_3.pgm
+%TEST seuil %IMAGES/2dfloat/f2fish1.pgm 3 %RESULTS/seuil_f2fish1_3.pgm
 */
 
 #include <stdio.h>

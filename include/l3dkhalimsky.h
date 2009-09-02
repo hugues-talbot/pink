@@ -1,4 +1,4 @@
-/* $Id: l3dkhalimsky.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: l3dkhalimsky.h,v 1.3 2009-09-02 14:23:35 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -12,6 +12,7 @@ extern int32_t l3drecons(struct xvimage * f, uint32_t *tab, int32_t n);
 extern int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double r);
 extern int32_t l3dplane(struct xvimage * k, double a, double b, double c, double d);
 extern int32_t l3dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbcav, int32_t *nbtun, int32_t *euler);
+extern int32_t l3dboundary(struct xvimage * f);
 extern int32_t l3dborder(struct xvimage * f);
 extern int32_t l3dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8_t a2, uint8_t b1, uint8_t b2);
 extern int32_t l3dmakecomplex(struct xvimage * i);

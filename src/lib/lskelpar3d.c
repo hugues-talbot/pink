@@ -1,4 +1,4 @@
-/* $Id: lskelpar3d.c,v 1.2 2009-06-18 06:34:55 mcouprie Exp $ */
+/* $Id: lskelpar3d.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /* 
    Algorithmes 3D "fully parallel" de squelettisation
 
@@ -50,7 +50,7 @@
 #define UNSET_0M_CRUCIAL(f) (f&=~S_0M_CRUCIAL)
 #define UNSET_SELECTED(f)   (f&=~S_SELECTED)
 
-#define VERBOSE
+//#define VERBOSE
 //#define DEBUG
 #ifdef DEBUG
 int32_t trace = 1;

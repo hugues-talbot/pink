@@ -1,4 +1,4 @@
-/* $Id: scale.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: scale.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file scale.c
 
 \brief product of an image by a scalar
@@ -9,7 +9,7 @@
 For each pixel x, out[x] = in[x] * const. If the image is a byte image,
 and if out[x] exceeds 255, then out[x] is set to 255.
 
-<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d
+<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
 
 <B>Category:</B> arith
 \ingroup  arith
@@ -41,18 +41,18 @@ int main(int argc, char **argv)
   image1 = readimage(argv[1]);
   if (image1 == NULL)
   {
-    fprintf(stderr, "scale: readimage failed\n");
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
   scale = atof(argv[2]);
 
   if (! lscale(image1, scale))
   {
-    fprintf(stderr, "scale: function lscale failed\n");
+    fprintf(stderr, "%s: function lscale failed\n", argv[0]);
     exit(1);
   }
 
-  writeimage(image1, argv[3]);
+  writeimage(image1, argv[argc-1]);
   freeimage(image1);
 
   return 0;

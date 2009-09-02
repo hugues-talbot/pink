@@ -1,12 +1,16 @@
-/* $Id: 2dtopoflow.c,v 1.1 2009-07-15 05:31:01 mcouprie Exp $ */
-/*! \file 2dtopoflow.c
+/* $Id: 2dtopoflow.c,v 1.2 2009-09-02 14:23:36 mcouprie Exp $ */
+/* \file 2dtopoflow.c
 
-\brief ultimate constrained collapse guided by a priority image
+\brief computes the topological flow (see [Cou10]) of a 2D complex
 
-<B>Usage:</B> 2dtopoflow in.pgm prio func [inhibit] out.pgm
+<B>Usage:</B> 2dtopoflow in.pgm prio [inhibit] out.pgm
 
 <B>Description:</B>
-Ultimate constrained collapse guided by a priority image.
+
+EXPERIMENTAL - DO NOT USE IN APPLICATIONS
+
+TODO
+
 The lowest values of the priority image correspond to the highest priority.
 
 The parameter \b prio is either an image (byte or int32_t), or a numerical code
@@ -22,7 +26,10 @@ the possible choices are:
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
 If the parameter \b inhibit is given and is a number I,
-then the points with priority greater than or equal to I will be left unchanged. 
+then the points with priority greater than or equal to I will be left unchanged.
+
+References:<BR> 
+[Cou10] M. Couprie: "Topological flows, maps and skeletons", in preparation.<BR>
 
 <B>Types supported:</B> byte 2d
 
@@ -36,15 +43,166 @@ then the points with priority greater than or equal to I will be left unchanged.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <math.h>
 #include <mcutil.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mckhalimsky2d.h>
 #include <mcgeo.h>
+#include <mcdrawps.h>
 #include <mcgraphe.h>
 #include <ldist.h>
 #include <l2dcollapse.h>
+
+#define SHOWGRAPHS
+//#define SHOWIMAGES
+
+#define FS_EPSILON 0.1
+
+#ifdef SHOWGRAPHS
+void ShowGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int noms_sommets, int v_sommets, int col_sommets, int all_arcs, uint8_t *K, int rs, uint8_t *head) 
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "ShowGraphe"
+{
+  int i, j, xx, yy, n = g->nsom;
+  double xmin, xmax, ymin, ymax;
+  double x1, y1, x2, y2, x3, y3, x, y, a, b, d;
+  pcell p;
+  FILE * fd = NULL;
+  char buf[80];
+  
+  if (g->gamma == NULL) 
+  {  fprintf(stderr, "%s: representation successeurs absente\n", F_NAME);
+     return;
+  }
+  
+  if (g->x == NULL) 
+  {  fprintf(stderr, "%s: coordonnees des sommets absentes\n", F_NAME);
+     return;
+  }
+
+  fd = fopen(filename,"w");
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
+    return;
+  }
+
+  /* determine le rectangle englobant et genere le header */
+  xmin = xmax = s*g->x[0];
+  ymin = ymax = s*g->y[0];
+  for (i = 1; i < n; i++) 
+  {
+    if (s*g->x[i] < xmin) xmin = s*g->x[i]; else if (s*g->x[i] > xmax) xmax = s*g->x[i];
+    if (s*g->y[i] < ymin) ymin = s*g->y[i]; else if (s*g->y[i] > ymax) ymax = s*g->y[i];
+  }
+  EPSHeader(fd, xmax - xmin + 2.0 * marge, ymax - ymin + 2.0 * marge, 1.0, 14);
+  
+  /* dessine le fond */
+  PSSetColor (fd, 1.0);
+  PSDrawRect (fd, 0, 0, xmax - xmin + 2.0 * marge, ymax - ymin + 2.0 * marge);
+  PSSetColor (fd, 0.0);
+
+  /* dessine le complexe */
+  PSSetColor (fd, 0.75);
+  PSSetLineWidth (fd, 5);    
+  for (i = 0; i < n; i++) 
+    if (K[i])
+    {
+      xx = i%rs;
+      yy = i/rs;
+      if ((xx%2 == 0) && (yy%2 == 0))
+      {
+	PSDrawdisc(fd, s*g->x[i]-xmin+marge, s*g->y[i]-ymin+marge, 5);
+	if ((xx < rs-2) && K[i+2])
+	  PSLine(fd, s*g->x[i]-xmin+marge, s*g->y[i]-ymin+marge, s*g->x[i+2]-xmin+marge, s*g->y[i+2]-ymin+marge);
+	if ((i < n-(rs+rs)) && K[i+rs+rs])
+	  PSLine(fd, s*g->x[i]-xmin+marge, s*g->y[i]-ymin+marge, s*g->x[i+rs+rs]-xmin+marge, s*g->y[i+rs+rs]-ymin+marge);
+      }
+    }
+  PSSetColor (fd, 0.0);
+  PSSetLineWidth (fd, 1);
+
+  /* dessine les sommets */
+  for (i = 0; i < n; i++) 
+    if (K[i])
+    {
+      if (col_sommets && (g->v_sommets[i] != 0)) 
+	PSDrawdisc(fd, s*g->x[i]-xmin+marge, s*g->y[i]-ymin+marge, r);
+      else
+	PSDrawcircle(fd, s*g->x[i]-xmin+marge, s*g->y[i]-ymin+marge, r);
+    }
+
+  if (noms_sommets && g->nomsommet)
+    for (i = 0; i < n; i++) 
+      if (K[i])
+	PSString(fd, s*g->x[i]-xmin+marge+2*r, s*g->y[i]-ymin+marge-2*r, g->nomsommet[i]);
+  if (v_sommets)
+    for (i = 0; i < n; i++) 
+#ifdef DESSINECOLSEQ
+      if (K[i] && !head[i] && (g->v_sommets[i] < 0))
+      { //pour dessiner une col. seq.
+	sprintf(buf, "%g", -(double)(g->v_sommets[i]));
+	PSString(fd, s*g->x[i]-xmin+marge+2*r, s*g->y[i]-ymin+marge+2*r, buf);
+      }
+#else
+      if (K[i])
+      {
+	sprintf(buf, "%.1f", (double)(g->v_sommets[i]));
+	PSString(fd, s*g->x[i]-xmin+marge+2*r, s*g->y[i]-ymin+marge+2*r, buf);
+      }
+#endif
+
+  /* dessine les arcs */
+  for (i = 0; i < n; i++)
+    if (all_arcs || head[i])
+      for (p = g->gamma[i]; p != NULL; p = p->next)
+      {
+	j = p->som;
+	PSLine(fd, s*g->x[i]-xmin+marge, s*g->y[i]-ymin+marge, s*g->x[j]-xmin+marge, s*g->y[j]-ymin+marge);
+      }
+
+  /* dessine les fleches sur les arcs */
+  if (t > 0.0)
+  {
+    for (i = 0; i < n; i++) 
+    if (all_arcs || head[i])
+    for (p = g->gamma[i]; p != NULL; p = p->next)
+    {
+      j = p->som;
+      x1 = s*g->x[i]-xmin+marge;
+      y1 = s*g->y[i]-ymin+marge;
+      x2 = s*g->x[j]-xmin+marge;
+      y2 = s*g->y[j]-ymin+marge;
+      x = (x2 + x1) / 2; // milieu de l'arc
+      y = (y2 + y1) / 2;
+      a = x2 - x1;
+      b = y2 - y1;             /* (a,b) est un vecteur directeur de l'arc */
+      d = sqrt(a * a + b * b); /* longueur de l'arc */
+      if (d > 1) // sinon on ne dessine pas la fleche
+      { 
+        a /= d; b /= d;          /* norme le vecteur */
+        x1 = x + 2 * t * a;
+        y1 = y + 2 * t * b;      /* pointe de la fleche */
+        x2 = x - 2 * t * a;
+        y2 = y - 2 * t * b;      /* base de la fleche */
+        x3 = x2 + t * -b;        /* (-b,a) est normal a (a,b) */
+        y3 = y2 + t * a;
+        x2 = x2 - t * -b;
+        y2 = y2 - t * a;
+        PSLine(fd, x1, y1, x2, y2);
+        PSLine(fd, x2, y2, x3, y3);
+        PSLine(fd, x3, y3, x1, y1);
+      }
+    }
+  }
+  
+  PSFooter(fd);
+  fclose(fd);
+} // ShowGraphe()
+#endif
 
 /* =============================================================== */
 int main(int32_t argc, char **argv) 
@@ -53,17 +211,26 @@ int main(int32_t argc, char **argv)
   struct xvimage * k;
   struct xvimage * prio;
   struct xvimage * prio2;
-  struct xvimage * func;
   struct xvimage * inhibimage = NULL;
+  uint8_t *K;
   int32_t ret, priocode;
-  int32_t rs, cs, N;
+  int32_t rs, cs, N, i, j, xi, yi, xj, yj;
   float priomax_f;
   uint32_t priomax_l;
+  float * PRIO_F;
+  uint32_t * PRIO_L;
   graphe * flow;
+  graphe * flow_s;
+  graphe * forest;
+  graphe * forest_s;
+  uint8_t * perm;
+  uint8_t * head;
+  TYP_VSOM vmax;
+  pcell p;
 
-  if ((argc != 5) && (argc != 6))
+  if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s in.pgm prio func [inhibit] out.pgm\n", 
+    fprintf(stderr, "usage: %s in.pgm prio [inhibit] out.pgm\n", 
                     argv[0]);
     exit(1);
   }
@@ -77,12 +244,7 @@ int main(int32_t argc, char **argv)
   rs = rowsize(k);
   cs = colsize(k);
   N = rs*cs;
-  func = readimage(argv[3]);  
-  if (func == NULL)
-  {
-    fprintf(stderr, "%s: readimage failed\n", argv[0]);
-    exit(1);
-  }
+  K = UCHARDATA(k);;
 
   ret = sscanf(argv[2], "%d", &priocode);
   if (ret == 0) // priorité : image 
@@ -130,14 +292,12 @@ int main(int32_t argc, char **argv)
   else  // priorité : carte de distance (à calculer)
   {
     int32_t i;
-    uint8_t *K;
     prio = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
     if (prio == NULL)
     {   
       fprintf(stderr, "%s: allocimage failed\n", argv[0]);
       exit(1);
     }
-    K = UCHARDATA(k);;
     for (i = 0; i < N; i++) // inverse l'image
       if (K[i]) K[i] = 0; else K[i] = NDG_MAX;
   
@@ -209,8 +369,8 @@ int main(int32_t argc, char **argv)
 
   if (datatype(prio) == VFF_TYP_4_BYTE)
   {
-    if ((argc == 6) && (inhibimage == NULL)) priomax_l = (uint32_t)floorf(priomax_f);
-    if (! (flow = l2dtopoflow_l(k, prio, func, inhibimage, priomax_l)))
+    PRIO_L = ULONGDATA(prio);
+    if (! (flow = l2dtopoflow_l(k, prio, inhibimage, priomax_l)))
     {
       fprintf(stderr, "%s: function l2dtopoflow_l failed\n", argv[0]);
       exit(1);
@@ -219,19 +379,49 @@ int main(int32_t argc, char **argv)
   else
   if (datatype(prio) == VFF_TYP_FLOAT)
   {
-    double maxf = MINDOUBLE;
-    if (! (flow = l2dtopoflow_f(k, prio, func, inhibimage, priomax_f)))
+    PRIO_F = FLOATDATA(prio);
+    if (! (flow = l2dtopoflow_f(k, prio, inhibimage, priomax_f)))
     {
       fprintf(stderr, "%s: function l2dtopoflow_f failed\n", argv[0]);
       exit(1);
     }
-    BellmanSCmax(flow);
+
+    perm = (boolean *)calloc(N, sizeof(boolean)); assert(perm != NULL);
+    head = (boolean *)calloc(N, sizeof(boolean)); assert(head != NULL);
+    for (i = 0; i < N; i++)
+      if (flow->v_sommets[i] == TF_NOT_IN_F)
+	perm[i] = TRUE;
+      else if (flow->v_sommets[i] == TF_HEAD)
+	head[i] = TRUE;
+
+#ifdef SHOWGRAPHS
+    ShowGraphe(flow, "_flow1", 30, 1, 3, 20, 0, 0, 0, 1, K, rs, head);
+#endif
+
+    flow_s = Symetrique(flow);
+    BellmanSCmax(flow_s);
+
+    forest_s = ForetPCC(flow_s);
+    
+    forest = Symetrique(forest_s);
+
+    for (i = 0; i < N; i++)
+    { 
+      forest->x[i] = flow->x[i];
+      forest->y[i] = flow->y[i];
+    }
+
+#ifdef SHOWGRAPHS
+    ShowGraphe(forest, "_forest", 30, 1, 3, 20, 0, 0, 0, 1, K, rs, head);
+#endif
   }
   
   SaveGraphe(flow, argv[argc-1]);
 
   //  writeimage(k, argv[argc-1]);
   freeimage(k);
+  free(perm);
+  free(head);
 
   return 0;
 } /* main */

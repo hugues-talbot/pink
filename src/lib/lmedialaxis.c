@@ -1,4 +1,4 @@
-/* $Id: lmedialaxis.c,v 1.6 2009-03-05 15:50:20 mcouprie Exp $ */
+/* $Id: lmedialaxis.c,v 1.7 2009-09-02 14:23:36 mcouprie Exp $ */
 /* 
 Fonctions pour l'axe médian exact ou approché, et
 pour la fonction bissectrice.
@@ -52,7 +52,7 @@ int32_t countds = 0;
 double sumpoints = 0;
 #endif
 
-#define STATVOR
+//#define STATVOR
 
 #ifdef STATVOR
 int32_t countvor = 0;

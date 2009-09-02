@@ -1,4 +1,4 @@
-/* $Id: skelpar3d.c,v 1.3 2009-06-18 06:34:55 mcouprie Exp $ */
+/* $Id: skelpar3d.c,v 1.4 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file skelpar3d.c
 
 \brief parallel 3D binary skeleton
@@ -38,6 +38,25 @@ then the points of this image will be left unchanged.
 
 \author Michel Couprie
 */
+
+/*
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 0 -1 %RESULTS/skelpar3d_b3a_0__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 1 -1 %RESULTS/skelpar3d_b3a_1__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 2 -1 %RESULTS/skelpar3d_b3a_2__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 3 -1 %RESULTS/skelpar3d_b3a_3__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 4 -1 %RESULTS/skelpar3d_b3a_4__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 5 -1 %RESULTS/skelpar3d_b3a_5__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 6 -1 %RESULTS/skelpar3d_b3a_6__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 7 -1 %RESULTS/skelpar3d_b3a_7__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 8 -1 %RESULTS/skelpar3d_b3a_8__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 9 -1 %RESULTS/skelpar3d_b3a_9__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 10 -1 %RESULTS/skelpar3d_b3a_10__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 11 -1 %RESULTS/skelpar3d_b3a_11__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 12 -1 %RESULTS/skelpar3d_b3a_12__1.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 3 4 %RESULTS/skelpar3d_b3a_0_4.pgm
+%TEST skelpar3d %IMAGES/3dbyte/binary/b3a.pgm 3 -1 %IMAGES/3dbyte/binary/b3a2.pgm %RESULTS/skelpar3d_b3a_0__1_i.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

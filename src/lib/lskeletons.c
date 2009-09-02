@@ -1,4 +1,4 @@
-/* $Id: lskeletons.c,v 1.3 2009-06-29 09:10:50 mcouprie Exp $ */
+/* $Id: lskeletons.c,v 1.4 2009-09-02 14:23:36 mcouprie Exp $ */
 /* Michel Couprie -  juillet 2001 */
 
 #include <stdio.h>
@@ -218,18 +218,18 @@ Squelette ultime 2D binaire guide par une image de priorites.
 Les valeurs les plus basses correspondent a la plus grande priorite.
 Si le parametre 'inhibit' a une valeur differente de -1,
 il indique une valeur de priorite telle que les points affectes de
-cette valeur ne seront jamais selectionnes. 
+cette valeur, ou plus, ne seront jamais selectionnes. 
 
 Soit F l'objet initial.
 Soit P une fonction de D dans l'ensemble des entiers, 
 P specifie un ordre de priorite dans le traitement des points. 
 Les points ayant les plus basses valeurs sont traites en priorite.
-Les points ayant une valeur specifiee VAL_INHIBIT ne seront
-pas selectionnes.
+Les points ayant une valeur supérieure ou égale à une valeur 
+specifiee VAL_INHIBIT ne seront pas selectionnes.
 
 On definit l'operateur Ultimate Thinning UT(F,P) : 
 repeter jusqu'a stabilite
-  choisir un point x de F, simple pour F, tel que P[x] != VAL_INHIBIT 
+  choisir un point x de F, simple pour F, tel que P[x] < VAL_INHIBIT 
     et de priorite maximale (valeur de P minimale)
   F = F \ {x}
 fin repeter 
@@ -291,7 +291,7 @@ resultat: F
 
   for (x = 0; x < N; x++)
   {
-    if (F[x] && (P[x] != val_inhibit) && bordext8(F, x, rs, N))
+    if (F[x] && (P[x] < val_inhibit) && bordext8(F, x, rs, N))
     {
       RbtInsert(&RBT, P[x], x);
       Set(x, EN_RBT);
@@ -313,7 +313,7 @@ resultat: F
         for (k = 0; k < 8; k += 1)          /* parcourt les voisins en 8-connexite */
         {                                              /* pour empiler les voisins */
           y = voisin(x, k, rs, N);                             /* non deja empiles */
-          if ((y != -1) && (F[y]) && (P[y] != val_inhibit) && (! IsSet(y, EN_RBT)))
+          if ((y != -1) && (F[y]) && (P[y] < val_inhibit) && (! IsSet(y, EN_RBT)))
           {
             RbtInsert(&RBT, P[y], y);
             Set(y, EN_RBT);
@@ -334,7 +334,7 @@ resultat: F
         for (k = 0; k < 8; k += 1)          /* parcourt les voisins en 8-connexite */
         {                                              /* pour empiler les voisins */
           y = voisin(x, k, rs, N);                             /* non deja empiles */
-          if ((y != -1) && (F[y]) && (P[y] != val_inhibit) && (! IsSet(y, EN_RBT)))
+          if ((y != -1) && (F[y]) && (P[y] < val_inhibit) && (! IsSet(y, EN_RBT)))
           {
             RbtInsert(&RBT, P[y], y);
             Set(y, EN_RBT);
@@ -526,18 +526,18 @@ Squelette ultime 3D binaire guide par une image de priorites.
 Les valeurs les plus basses correspondent a la plus grande priorite.
 Si le parametre 'inhibit' a une valeur differente de -1,
 il indique une valeur de priorite telle que les points affectes de
-cette valeur ne seront jamais selectionnes. 
+cette valeur, ou plus, ne seront jamais selectionnes. 
 
 Soit F l'objet initial.
 Soit P une fonction de D dans l'ensemble des entiers, 
 P specifie un ordre de priorite dans le traitement des points. 
 Les points ayant les plus basses valeurs sont traites en priorite.
-Les points ayant une valeur specifiee VAL_INHIBIT ne seront
-pas selectionnes.
+Les points ayant une valeur supérieure ou égale à une valeur 
+specifiee VAL_INHIBIT ne seront pas selectionnes.
 
 On definit l'operateur Ultimate Thinning UT(F,P) : 
 repeter jusqu'a stabilite
-  choisir un point x de F, simple pour F, tel que P[x] != VAL_INHIBIT 
+  choisir un point x de F, simple pour F, tel que P[x] < VAL_INHIBIT 
     et de priorite maximale (valeur de P minimale)
   F = F \ {x}
 fin repeter 
@@ -602,7 +602,7 @@ resultat: F
 
   for (x = 0; x < N; x++)
   {
-    if (F[x] && (P[x] != val_inhibit) && bordext26(F, x, rs, ps, N))
+    if (F[x] && (P[x] < val_inhibit) && bordext26(F, x, rs, ps, N))
     {
       RbtInsert(&RBT, P[x], x);
       Set(x, EN_RBT);
@@ -624,7 +624,7 @@ resultat: F
         for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
         {                                              /* pour empiler les voisins */
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
-          if ((y != -1) && (F[y]) && (P[y] != val_inhibit) && (! IsSet(y, EN_RBT)))
+          if ((y != -1) && (F[y]) && (P[y] < val_inhibit) && (! IsSet(y, EN_RBT)))
           {
             RbtInsert(&RBT, P[y], y);
             Set(y, EN_RBT);
@@ -645,7 +645,7 @@ resultat: F
         for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
         {                                              /* pour empiler les voisins */
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
-          if ((y != -1) && (F[y]) && (P[y] != val_inhibit) && (! IsSet(y, EN_RBT)))
+          if ((y != -1) && (F[y]) && (P[y] < val_inhibit) && (! IsSet(y, EN_RBT)))
           {
             RbtInsert(&RBT, P[y], y);
             Set(y, EN_RBT);
@@ -773,7 +773,7 @@ int32_t lskelubp3d2(struct xvimage *image,
         for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
         {                                              /* pour empiler les voisins */
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
-          if ((y != -1) && (F[y]) && (!I[y]) && (! IsSet(y, EN_RBT)))
+          if ((y != -1) && (F[y]) && (!I || !I[y]) && (! IsSet(y, EN_RBT)))
           {
 	    switch(datatype(imageprio))
 	    {
@@ -800,7 +800,7 @@ int32_t lskelubp3d2(struct xvimage *image,
         for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
         {                                              /* pour empiler les voisins */
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
-          if ((y != -1) && (F[y]) && (!I[y]) && (! IsSet(y, EN_RBT)))
+          if ((y != -1) && (F[y]) && (!I || !I[y]) && (! IsSet(y, EN_RBT)))
           {
 	    switch(datatype(imageprio))
 	    {

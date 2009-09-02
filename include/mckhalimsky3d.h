@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky3d.h,v 1.3 2009-06-29 09:10:50 mcouprie Exp $ */
+/* $Id: mckhalimsky3d.h,v 1.4 2009-09-02 14:23:35 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -73,6 +73,8 @@ extern int32_t ExactementUnBetaTerminal3d(uint8_t *K, int32_t rs, int32_t cs, in
 extern void SatureAlphacarre3d(struct xvimage *k);
 extern void AjouteAlphacarre3d(struct xvimage *k);
 extern void AjouteBetacarre3d(struct xvimage *k);
+extern void MaxAlpha3d(struct xvimage *k);
+extern void MaxBeta3d(struct xvimage *k);
 extern void ColorieKh3d(struct xvimage *k);
 extern void EffaceLiensAlphaLibres3d(struct xvimage *k);
 extern void EffaceLiensBetaLibres3d(struct xvimage *k);

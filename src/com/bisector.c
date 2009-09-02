@@ -1,4 +1,4 @@
-/* $Id: bisector.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: bisector.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file bisector.c
 
 \brief compute the bisector function of a binary image
@@ -24,6 +24,11 @@ References:<BR>
 
 \author Rita Zrour, Michel Couprie
 */
+
+/*
+%TEST bisector %IMAGES/2dlong/l2fish1.pgm %IMAGES/2dbyte/binary/b2fish1.pgm %RESULTS/bisector_b2fish1.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

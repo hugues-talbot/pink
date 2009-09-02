@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky3d.c,v 1.3 2009-06-29 09:10:50 mcouprie Exp $ */
+/* $Id: mckhalimsky3d.c,v 1.4 2009-09-02 14:23:36 mcouprie Exp $ */
 /* 
    Librairie mckhalimsky3d
 
@@ -1500,6 +1500,142 @@ void EffaceLiensBetaLibres3d(struct xvimage *b)
 	  }
   } while (n > 0);
 } /* EffaceLiensBetaLibres3d() */
+
+/* ==================================== */
+void MaxAlpha3d(struct xvimage *k)
+/* ==================================== */
+/*
+  pour chaque element x, faire K[x] = max{K[y] | y in alpha(x)}
+ */
+#undef F_NAME
+#define F_NAME "MaxAlpha3d"
+{
+  int32_t rs = rowsize(k);
+  int32_t cs = colsize(k);
+  int32_t ds = depth(k);
+  int32_t ps = rs * cs;
+  int32_t x, y, z, u, n;
+  int32_t tab[GRS3D*GCS3D*GDS3D];
+
+  if (datatype(k) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *K = UCHARDATA(k);
+    uint8_t M;
+    for (z = 0; z < ds; z += 1)
+      for (y = 0; y < cs; y += 1)
+	for (x = 0; x < rs; x += 1)
+	{
+	  M = K[z * ps + y * rs + x];
+	  Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
+	  for (u = 0; u < n; u++) 
+	    if (K[tab[u]] > M) M = K[tab[u]];
+	  K[z * ps + y * rs + x] = M;
+	}
+  }
+  else if (datatype(k) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *K = ULONGDATA(k);
+    uint32_t M;
+    for (z = 0; z < ds; z += 1)
+      for (y = 0; y < cs; y += 1)
+	for (x = 0; x < rs; x += 1)
+	{
+	  M = K[z * ps + y * rs + x];
+	  Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
+	  for (u = 0; u < n; u++) 
+	    if (K[tab[u]] > M) M = K[tab[u]];
+	  K[z * ps + y * rs + x] = M;
+	}
+  }
+  else if (datatype(k) == VFF_TYP_FLOAT)
+  {
+    float *K = FLOATDATA(k);
+    float M;
+    for (z = 0; z < ds; z += 1)
+      for (y = 0; y < cs; y += 1)
+	for (x = 0; x < rs; x += 1)
+        {
+	  M = K[z * ps + y * rs + x];
+	  Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
+	  for (u = 0; u < n; u++) 
+	    if (K[tab[u]] > M) M = K[tab[u]];
+	  K[z * ps + y * rs + x] = M;
+	}
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
+} /* MaxAlpha3d() */
+
+/* ==================================== */
+void MaxBeta3d(struct xvimage *k)
+/* ==================================== */
+/*
+  pour chaque element x, faire K[x] = max{K[y] | y in beta(x)}
+ */
+#undef F_NAME
+#define F_NAME "MaxBeta3d"
+{
+  int32_t rs = rowsize(k);
+  int32_t cs = colsize(k);
+  int32_t ds = depth(k);
+  int32_t ps = rs * cs;
+  int32_t x, y, z, u, n;
+  int32_t tab[GRS3D*GCS3D*GDS3D];
+
+  if (datatype(k) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *K = UCHARDATA(k);
+    uint8_t M;
+    for (z = 0; z < ds; z += 1)
+      for (y = 0; y < cs; y += 1)
+	for (x = 0; x < rs; x += 1)
+	{
+	  M = K[z * ps + y * rs + x];
+	  Betacarre3d(rs, cs, ds, x, y, z, tab, &n);
+	  for (u = 0; u < n; u++) 
+	    if (K[tab[u]] > M) M = K[tab[u]];
+	  K[z * ps + y * rs + x] = M;
+	}
+  }
+  else if (datatype(k) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *K = ULONGDATA(k);
+    uint32_t M;
+    for (z = 0; z < ds; z += 1)
+      for (y = 0; y < cs; y += 1)
+	for (x = 0; x < rs; x += 1)
+	{
+	  M = K[z * ps + y * rs + x];
+	  Betacarre3d(rs, cs, ds, x, y, z, tab, &n);
+	  for (u = 0; u < n; u++) 
+	    if (K[tab[u]] > M) M = K[tab[u]];
+	  K[z * ps + y * rs + x] = M;
+	}
+  }
+  else if (datatype(k) == VFF_TYP_FLOAT)
+  {
+    float *K = FLOATDATA(k);
+    float M;
+    for (z = 0; z < ds; z += 1)
+      for (y = 0; y < cs; y += 1)
+	for (x = 0; x < rs; x += 1)
+        {
+	  M = K[z * ps + y * rs + x];
+	  Betacarre3d(rs, cs, ds, x, y, z, tab, &n);
+	  for (u = 0; u < n; u++) 
+	    if (K[tab[u]] > M) M = K[tab[u]];
+	  K[z * ps + y * rs + x] = M;
+	}
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
+} /* MaxBeta3d() */
 
 /* ==================================== */
 void EffaceLiensAlphaLibres3d(struct xvimage *b)

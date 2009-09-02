@@ -1,4 +1,4 @@
-/* $Id: 3dcollapse.c,v 1.4 2009-06-29 09:10:50 mcouprie Exp $ */
+/* $Id: 3dcollapse.c,v 1.5 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file 3dcollapse.c
 
 \brief ultimate constrained collapse guided by a priority image
@@ -21,9 +21,11 @@ the possible choices are:
 \li 26: 26-distance in 3d
 
 If the parameter \b inhibit is given and is a binary image name,
-then the points of this image will be left unchanged. 
+then the elements of this image will be left unchanged. 
 If the parameter \b inhibit is given and is a number I,
-then the points with priority greater than or equal to I will be left unchanged. 
+then the elements with priority greater than or equal to I will be left unchanged. 
+
+\warning The result makes sense only if the input image is a complex.
 
 <B>Types supported:</B> byte 3d
 
@@ -31,6 +33,18 @@ then the points with priority greater than or equal to I will be left unchanged.
 \ingroup  orders
 
 \author Michel Couprie
+*/
+
+/*
+%TEST 3dcollapse %IMAGES/3dbyte/binary/b3a.k 0 %RESULTS/3dcollapse_b3a_0.k
+%TEST 3dcollapse %IMAGES/3dbyte/binary/b3a.k 1 %RESULTS/3dcollapse_b3a_1.k
+%TEST 3dcollapse %IMAGES/3dbyte/binary/b3a.k 2 %RESULTS/3dcollapse_b3a_2.k
+%TEST 3dcollapse %IMAGES/3dbyte/binary/b3a.k 3 %RESULTS/3dcollapse_b3a_3.k
+%TEST 3dcollapse %IMAGES/3dbyte/binary/b3a.k 4 %RESULTS/3dcollapse_b3a_4.k
+%TEST 3dcollapse %IMAGES/3dbyte/binary/b3a.k 8 %RESULTS/3dcollapse_b3a_8.k
+%TEST 3dcollapse %IMAGES/3dbyte/binary/b3a.k 0 3 %RESULTS/3dcollapse_b3a_0_3.k
+%TEST 3dcollapse %IMAGES/3dbyte/binary/b3a.k %IMAGES/3dfloat/f3alam.k 10 %RESULTS/3dcollapse_b3a_alam_10.k
+%TEST 3dcollapse %IMAGES/3dbyte/binary/b3a.k 0 %IMAGES/3dbyte/binary/b3a2.k %RESULTS/3dcollapse_b3a_0_i.k
 */
 
 #include <stdio.h>
@@ -43,6 +57,7 @@ then the points with priority greater than or equal to I will be left unchanged.
 #include <mcimage.h>
 #include <mckhalimsky3d.h>
 #include <mcgeo.h>
+#include <mcgraphe.h>
 #include <ldist.h>
 #include <l3dcollapse.h>
 

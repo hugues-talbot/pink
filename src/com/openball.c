@@ -1,7 +1,7 @@
-/* $Id: openball.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: openball.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file openball.c
 
-\brief morphological binary closing by a ball
+\brief morphological binary opening by a ball
 
 <B>Usage:</B> openball in.pgm r [dist] out.pgm
 

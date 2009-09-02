@@ -1,4 +1,4 @@
-/* $Id: 3dkhalimskize.c,v 1.2 2009-06-29 09:10:50 mcouprie Exp $ */
+/* $Id: 3dkhalimskize.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file 3dkhalimskize.c
 
 \brief converts a 3D image into a 3D Khalimsky order
@@ -27,6 +27,16 @@ Mode =
 \ingroup  orders
 
 \author Michel Couprie
+*/
+
+/*
+%TEST 3dkhalimskize %IMAGES/3dbyte/binary/b3a.pgm 6 %RESULTS/3dkhalimskize_b3a_6.k
+%TEST 3dkhalimskize %IMAGES/3dbyte/binary/b3a.pgm 26 %RESULTS/3dkhalimskize_b3a_26.k
+%TEST 3dkhalimskize %IMAGES/3dbyte/binary/b3a.pgm h %RESULTS/3dkhalimskize_b3a_h.k
+%TEST 3dkhalimskize %IMAGES/3dbyte/gray/g3a.pgm m %RESULTS/3dkhalimskize_g3a_m.k
+%TEST 3dkhalimskize %IMAGES/3dlong/l3a.pgm M %RESULTS/3dkhalimskize_l3a_M.k
+%TEST 3dkhalimskize %IMAGES/3dfloat/f3a.pgm a %RESULTS/3dkhalimskize_f3a_a.k
+%TEST 3dkhalimskize %IMAGES/3dbyte/binary/b3a.k R %RESULTS/3dkhalimskize_b3a_R.pgm
 */
 
 /* Michel Couprie - novembre 1999 */

@@ -1,4 +1,4 @@
-/* $Id: mcgraphe.h,v 1.5 2009-07-15 05:31:01 mcouprie Exp $ */
+/* $Id: mcgraphe.h,v 1.6 2009-09-02 14:23:35 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -145,7 +145,7 @@ extern void AfficheSuccesseurs(graphe * g) ;
 extern void AfficheArcs(graphe * g);
 extern void AfficheValeursSommets(graphe * g);
 extern void PSGraphe(graphe * g, char *filename, double r, double t, double marge);
-extern void EPSGraphe(graphe * g, char *filename, double r, double t, double marge, int32_t noms_sommets, int32_t v_sommets, int32_t col_sommets, int32_t v_arcs);
+extern void EPSGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int noms_sommets, int v_sommets, int col_sommets, int v_arcs);
 
 /* ====================================================================== */
 /* ====================================================================== */
@@ -175,12 +175,12 @@ extern int32_t EstDansListe(pcell p, int32_t a);
 /* ====================================================================== */
 /* ====================================================================== */
 
-extern void AjouteArc(graphe * g, int32_t i, int32_t s);
-extern void AjouteArcValue(graphe * g, int32_t i, int32_t s, TYP_VARC v);
-extern void RetireArc(graphe * g, int32_t i, int32_t s);
+extern void    AjouteArc(graphe * g, int32_t i, int32_t s);
+extern void    AjouteArcValue(graphe * g, int32_t i, int32_t s, TYP_VARC v);
+extern void    RetireArc(graphe * g, int32_t i, int32_t s);
 extern int32_t PopSuccesseur(graphe *g, int32_t i);
 extern int32_t EstSuccesseur(graphe *g, int32_t i, int32_t s);
-extern void Gamma2ListArcs(graphe *g);
+extern void    Gamma2ListArcs(graphe *g);
 
 /* ====================================================================== */
 /* ====================================================================== */
@@ -188,7 +188,7 @@ extern void Gamma2ListArcs(graphe *g);
 /* ====================================================================== */
 /* ====================================================================== */
 
-extern graphe * GrapheAleatoire(int32_t nsom, int32_t narc);
+extern graphe *  GrapheAleatoire(int32_t nsom, int32_t narc);
 
 /* ====================================================================== */
 /* ====================================================================== */
@@ -196,13 +196,14 @@ extern graphe * GrapheAleatoire(int32_t nsom, int32_t narc);
 /* ====================================================================== */
 /* ====================================================================== */
 
-extern int32_t Degre(graphe * g, int32_t s);
-extern graphe * Symetrique(graphe * g);
-extern graphe * FermetureSymetrique(graphe * g);
-extern void CompFortConnexe(graphe * g, graphe *g_1, int32_t a, boolean * Ca);
-extern boolean ExisteCircuit(graphe * g, int32_t a);
-extern void CompConnexe(graphe * g, graphe *g_1, int32_t a, boolean * Ca);
-extern boolean Connexe(graphe * g, graphe *g_1);
+extern int32_t   Degre(graphe * g, int32_t s);
+extern graphe *  Symetrique(graphe * g);
+extern graphe *  FermetureSymetrique(graphe * g);
+extern boolean * Descendants(graphe * g, int32_t a);
+extern void      CompFortConnexe(graphe * g, graphe *g_1, int32_t a, boolean * Ca);
+extern boolean   ExisteCircuit(graphe * g, int32_t a);
+extern void      CompConnexe(graphe * g, graphe *g_1, int32_t a, boolean * Ca);
+extern boolean   Connexe(graphe * g, graphe *g_1);
 
 /* ====================================================================== */
 /* ====================================================================== */
@@ -212,11 +213,11 @@ extern boolean Connexe(graphe * g, graphe *g_1);
 
 extern graphe * Kruskal1(graphe * g, graphe *g_1);
 extern graphe * Kruskal2(graphe * g, graphe *g_1);
-extern void DepthTree(graphe * g, int32_t a, TYP_VARC *depth, int32_t *farthest);
+extern void     DepthTree(graphe * g, int32_t a, TYP_VARC *depth, int32_t *farthest);
 extern graphe * MaxDiameterTree(graphe * g);
-extern int32_t LCA(graphe * g, int32_t i, int32_t j);
+extern int32_t  LCA(graphe * g, int32_t i, int32_t j);
 extern graphe * RootTree(graphe * g, graphe * g_1, int32_t i);
-extern void DistRoot(graphe * g, int32_t r);
+extern void     DistRoot(graphe * g, int32_t r);
 
 /* ====================================================================== */
 /* ====================================================================== */
@@ -224,18 +225,43 @@ extern void DistRoot(graphe * g, int32_t r);
 /* ====================================================================== */
 /* ====================================================================== */
 
-extern void Dijkstra(graphe * g, int32_t i);
-extern void Lee(graphe * g, int32_t i);
-extern void LeeNO(graphe * g, graphe * g_1, int32_t i);
+extern void     Dijkstra(graphe * g, int32_t i);
+extern void     Lee(graphe * g, int32_t i);
+extern void     LeeNO(graphe * g, graphe * g_1, int32_t i);
 extern graphe * PCC(graphe * g, int32_t d, int32_t a);
 extern graphe * PCCna(graphe * g, int32_t d, int32_t a);
-extern boolean CircuitNiveaux(graphe * g);
-extern void BellmanSC(graphe * g);
-extern void BellmanSCmax(graphe * g);
-extern void BellmanSC1(graphe * g, int32_t dep);
 
-extern graphe * Image2Graphe(struct xvimage *image, int32_t mode, int32_t connex);
-extern struct xvimage *Graphe2Image(graphe * g, int32_t rs);
+
+/* ====================================================================== */
+/* ====================================================================== */
+/* GRAPHES SANS CIRCUIT (GSC) */
+/* ====================================================================== */
+/* ====================================================================== */
+
+extern boolean CircuitNiveaux(graphe * g);
+extern void    BellmanSC(graphe * g);
+extern void    BellmanSCmax(graphe * g);
+extern void    BellmanSC1(graphe * g, int32_t dep);
+extern void    PointsConfluents(graphe * g, graphe *g_1);
+extern void    IntegreGSC(graphe * g);
+
+/* ====================================================================== */
+/* ====================================================================== */
+/* FORETS */
+/* ====================================================================== */
+/* ====================================================================== */
+
+extern graphe * ForetPCC(graphe * g);
+extern void     IntegreForet(graphe * g);
+
+/* ====================================================================== */
+/* ====================================================================== */
+/* FONCTIONS DE CONVERSION */
+/* ====================================================================== */
+/* ====================================================================== */
+
+extern graphe *         Image2Graphe(struct xvimage *image, int32_t mode, int32_t connex);
+extern struct xvimage * Graphe2Image(graphe * g, int32_t rs);
 #ifdef __cplusplus
 }
 #endif

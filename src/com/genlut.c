@@ -1,9 +1,9 @@
-/* $Id: genlut.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: genlut.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file genlut.c
 
 \brief generates a lookup table
 
-<B>Usage:</B> genlut ncol minhue maxhue out.lut
+<B>Usage:</B> genlut ncol minhue maxhue minlum maxlum minsat maxsat  out.lut
 
 <B>Description:</B> Generates a lookup table with a continuous color gradient.
 

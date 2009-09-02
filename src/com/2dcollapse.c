@@ -1,4 +1,4 @@
-/* $Id: 2dcollapse.c,v 1.2 2009-07-15 05:31:01 mcouprie Exp $ */
+/* $Id: 2dcollapse.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file 2dcollapse.c
 
 \brief ultimate constrained collapse guided by a priority image
@@ -19,10 +19,12 @@ the possible choices are:
 \li 4: 4-distance in 2d
 \li 8: 8-distance in 2d
 
-If the parameter \b inhibit is given and is a binary image name,
-then the points of this image will be left unchanged. 
-If the parameter \b inhibit is given and is a number I,
-then the points with priority greater than or equal to I will be left unchanged. 
+If the parameter \b inhibit is given and is a binary image name, then
+the elements of this image will be left unchanged.  If the parameter
+\b inhibit is given and is a number I, then the elements with priority
+greater than or equal to I will be left unchanged.  
+
+\warning The result makes sense only if the input image is a complex.
 
 <B>Types supported:</B> byte 2d
 
@@ -30,6 +32,18 @@ then the points with priority greater than or equal to I will be left unchanged.
 \ingroup  orders
 
 \author Michel Couprie
+*/
+
+/*
+%TEST 2dcollapse %IMAGES/2dbyte/binary/b2fish1.k 0 %RESULTS/2dcollapse_b2fish1_0.k
+%TEST 2dcollapse %IMAGES/2dbyte/binary/b2fish1.k 1 %RESULTS/2dcollapse_b2fish1_1.k
+%TEST 2dcollapse %IMAGES/2dbyte/binary/b2fish1.k 2 %RESULTS/2dcollapse_b2fish1_2.k
+%TEST 2dcollapse %IMAGES/2dbyte/binary/b2fish1.k 3 %RESULTS/2dcollapse_b2fish1_3.k
+%TEST 2dcollapse %IMAGES/2dbyte/binary/b2fish1.k 4 %RESULTS/2dcollapse_b2fish1_4.k
+%TEST 2dcollapse %IMAGES/2dbyte/binary/b2fish1.k 8 %RESULTS/2dcollapse_b2fish1_8.k
+%TEST 2dcollapse %IMAGES/2dbyte/binary/b2fish1.k 0 3 %RESULTS/2dcollapse_b2fish1_0_3.k
+%TEST 2dcollapse %IMAGES/2dbyte/binary/b2fish1.k %IMAGES/2dfloat/f2fish1lam.k 10 %RESULTS/2dcollapse_b2fish1_f2fish1lam_10.k
+%TEST 2dcollapse %IMAGES/2dbyte/binary/b2fish1.k 0 %IMAGES/2dbyte/binary/b2fish1i.k %RESULTS/2dcollapse_b2fish1_0_i.k
 */
 
 #include <stdio.h>

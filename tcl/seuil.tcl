@@ -12,6 +12,7 @@ if {$argc != 2} {
 
 set PINK "$env(PINK)"
 source "$PINK/tcl/my_exec.tcl"
+source "$PINK/tcl/my_read.tcl"
 
 # globals
 #   SEUIL(infilename)
@@ -19,16 +20,59 @@ source "$PINK/tcl/my_exec.tcl"
 #   SEUIL(im)
 #   SEUIL(im_rs)
 #   SEUIL(im_cs)
+#   SEUIL(datatype)
+set SEUIL(min) 0
+set SEUIL(max) 255
 set SEUIL(combine) 0
 set SEUIL(inverse) 0
 set SEUIL(param) 128
 set SEUIL(name) seuil
+
+proc tmpfile {tmpname} {
+  global SEUIL
+  return [file join "/tmp" "$SEUIL(name)_$tmpname"]
+}
+
+# reads a file for a value 
+#-----------------------------------
+proc my_read_val {filename} {
+  set input [open $filename]
+  set tag [gets $input]
+  set line [gets $input]
+  scan $line "%g %g" v1 v2
+  close $input
+  return $v2
+}
 
 # get input image file name as first argument
 set SEUIL(infilename) [lindex $argv 0]
 
 # get output image file name as second argument
 set SEUIL(outfilename) [lindex $argv 1]
+
+set hdr [my_readpgmheader $SEUIL(infilename)]
+set SEUIL(datatype) [lindex $hdr 0]
+if {$SEUIL(datatype) == "P5"} {
+  # raw byte
+  my_exec cp $SEUIL(infilename) [tmpfile 0]
+} elseif {$SEUIL(datatype) == "P8"} {
+  # raw long
+  my_exec max1 $SEUIL(infilename) [tmpfile m]
+  set SEUIL(max) [my_read_val [tmpfile m]]
+  set SEUIL(param) [expr ($SEUIL(max) - $SEUIL(min)) / 2]
+  my_exec long2byte $SEUIL(infilename) 2 [tmpfile 0]
+} elseif {$SEUIL(datatype) == "P9"} {
+  # raw float
+  my_exec min1 $SEUIL(infilename) [tmpfile m]
+  set SEUIL(min) [my_read_val [tmpfile m]]
+  my_exec max1 $SEUIL(infilename) [tmpfile m]
+  set SEUIL(max) [my_read_val [tmpfile m]]
+  set SEUIL(param) [expr ($SEUIL(max) - $SEUIL(min)) / 2]
+  my_exec float2byte $SEUIL(infilename) 2 [tmpfile 0]
+} else {
+  puts stderr "$SEUIL(name): bad datatype: $SEUIL(datatype)"
+  exit 
+}
 
 # create a frame for buttons
 frame .top -borderwidth 10
@@ -47,12 +91,12 @@ checkbutton .top.inverse -text inverse -variable SEUIL(inverse) -command seuil_i
 pack .top.inverse -side right
 
 # create the param button
-scale .top.param -from 0 -to 255 -length 200 -variable SEUIL(param) \
+scale .top.param -from $SEUIL(min) -to $SEUIL(max) -length 200 -variable SEUIL(param) \
   -orient horizontal -tickinterval 0 -showvalue true -command seuil_run
 pack .top.param -side left
 
 # create an image and load contents from file 
-set SEUIL(im) [image create photo imname -file "$SEUIL(infilename)"]
+set SEUIL(im) [image create photo imname -file "[tmpfile 0]"]
 
 # get image size
 set SEUIL(im_cs) [image height $SEUIL(im)]
@@ -80,8 +124,8 @@ proc seuil_run {param} {
   if {$SEUIL(combine) == 0} {
     $SEUIL(im) read $SEUIL(outfilename)
   } else {
-    my_exec $PINK/linux/bin/surimp $SEUIL(infilename) $SEUIL(outfilename) "/tmp/$SEUIL(name)_1"
-    $SEUIL(im) read "/tmp/$SEUIL(name)_1"
+      my_exec $PINK/linux/bin/surimp [tmpfile 0] $SEUIL(outfilename) [tmpfile 1]
+    $SEUIL(im) read [tmpfile 1]
   }
 }
 
@@ -90,8 +134,8 @@ proc seuil_combine {} {
   global SEUIL
   global PINK
   if {$SEUIL(combine) == 1} {
-    my_exec $PINK/linux/bin/surimp $SEUIL(infilename) $SEUIL(outfilename) "/tmp/$SEUIL(name)_1"
-    $SEUIL(im) read "/tmp/$SEUIL(name)_1"
+    my_exec $PINK/linux/bin/surimp [tmpfile 0] $SEUIL(outfilename) [tmpfile 1]
+    $SEUIL(im) read [tmpfile 1]
   } else {
     $SEUIL(im) read $SEUIL(outfilename)    
   }
@@ -106,7 +150,7 @@ proc seuil_inverse {} {
 # action associated to quit widget
 proc seuil_quit {} {
   global SEUIL
-  foreach file [glob -nocomplain "/tmp/$SEUIL(name)_?"] {
+  foreach file [glob -nocomplain [tmpfile "?"]] {
     catch {exec rm $file} result
   }
   exit

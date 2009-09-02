@@ -11,5 +11,5 @@ then
         exit
 fi
 # la liste resultante est dans /tmp/ogniewicz_temp
-ctran $1 - |voro - - |prune -threshold $2 -fg -raw -
+ctran $1 - |voro - - |prune -pot -threshold $2 -fg -raw -
 exit 0

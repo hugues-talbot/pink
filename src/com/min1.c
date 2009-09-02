@@ -1,4 +1,4 @@
-/* $Id: min1.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: min1.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file min1.c
 
 \brief return the minimum of the pixel values of an image
@@ -49,6 +49,10 @@ int main(int argc, char **argv)
   }
 
   minval = lmin1(image);
+
+#ifdef VERBOSE
+    printf("minval: %g\n", minval);
+#endif
 
   fd = fopen(argv[argc - 1],"w");
   if (!fd)

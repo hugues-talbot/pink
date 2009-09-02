@@ -1,4 +1,4 @@
-/* $Id: zoom.c,v 1.2 2009-01-06 13:18:07 mcouprie Exp $ */
+/* $Id: zoom.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file zoom.c
 
 \brief zoom (shrink or expand) an image
@@ -22,7 +22,7 @@ There are 3 modes, depending on the number of arguments.
 3 arguments: different zoom factors <B>fx</B>, <B>fy</B>, <B>fz</B>
   are given for directions x, y, z.
 
-<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
+<B>Types supported:</B> byte 1d, byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
 
 <B>Category:</B> geo
 \ingroup  geo
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 
   if ((argc != 4) && (argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in.pgm <factor|x rs|y cs|fx fy fz> out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm <f | x rs | y cs | z ds | fx fy fz> out.pgm \n", argv[0]);
     exit(1);
   }
 

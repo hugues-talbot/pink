@@ -1,4 +1,4 @@
-/* $Id: long2byte.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: long2byte.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file long2byte.c
 
 \brief converts a "int32_t" image to a "byte" image
@@ -24,6 +24,15 @@ Useful for label images.
 \ingroup  convert
 
 \author Michel Couprie
+*/
+
+/*
+%TEST long2byte %IMAGES/2dlong/l2fish1.pgm 0 %RESULTS/long2byte_l2fish1_0.pgm
+%TEST long2byte %IMAGES/2dlong/l2fish1.pgm 1 %RESULTS/long2byte_l2fish1_1.pgm
+%TEST long2byte %IMAGES/2dlong/l2fish1.pgm 2 %RESULTS/long2byte_l2fish1_2.pgm
+%TEST long2byte %IMAGES/2dlong/l2fish1.pgm 3 3 %RESULTS/long2byte_l2fish1_3_3.pgm
+%TEST long2byte %IMAGES/2dlong/l2fish1.pgm 4 %RESULTS/long2byte_l2fish1_4.pgm
+%TEST long2byte %IMAGES/2dlong/l2fish1.pgm 5 %RESULTS/long2byte_l2fish1_5.pgm
 */
 
 /*

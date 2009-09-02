@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky2d.c,v 1.2 2009-06-29 09:10:50 mcouprie Exp $ */
+/* $Id: mckhalimsky2d.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /* 
    Librairie mckhalimsky2d
 
@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <string.h>
 #include <mcimage.h>
 #include <mccodimage.h>
@@ -101,6 +102,8 @@ struct xvimage * Khalimskize2d(struct xvimage *o)
   int32_t krs, kcs, kN;
   uint8_t *K;
   int32_t i, j;  
+
+  assert(datatype(o) == VFF_TYP_1_BYTE);
 
   krs = 2 * ors + 1;
   kcs = 2 * ocs + 1;
@@ -680,32 +683,32 @@ void ndgmaxbeta2d(struct xvimage *k)
 } /* ndgmaxbeta2d() */
 
 /* ==================================== */
-void ndgmoy2d(struct xvimage *k)
+void ndgmoy2d(struct xvimage *b)
 /* ==================================== */
 /*
-  Entree: une fonction k de H2 dans [0..255] dont
+  Entree: une fonction b de H2 dans [0..255] dont
           seules les valeurs des beta-terminaux (carres) sont significatives.
-  Sortie: une fonction kp de H2 dans [0..255].
+  Sortie: une fonction bp de H2 dans [0..255].
           Tous les points x non beta-terminaux 
           ont recu la valeur moy{k[y], y beta-terminal dans betacarre[x]}
 */
 {
 #undef F_NAME
 #define F_NAME "ndgmoy2d"
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
-  uint8_t *K = UCHARDATA(k);
-  int32_t i, j, u, n;
-  int32_t tab[9];
-  int32_t sum, nb;
+  int32_t rs = rowsize(b);
+  int32_t cs = colsize(b);
+  int32_t N = rs * cs;
+  struct xvimage *bp;
+  int32_t i, j, u, n, nb;
+  int32_t tab[GRS2D*GCS2D];
 
-  if (datatype(k) != VFF_TYP_1_BYTE)
+  if (datatype(b) == VFF_TYP_1_BYTE)
   {
-    fprintf(stderr, "%s: bad datatype\n", F_NAME);
-    exit(0);
-  }
+    uint8_t *B;
+    uint32_t sum;
+    B = UCHARDATA(b);
 
-  for (j = 0; j < cs; j++)
+    for (j = 0; j < cs; j++)
     for (i = 0; i < rs; i++)
       if (!CARRE(i,j))
       {
@@ -714,11 +717,60 @@ void ndgmoy2d(struct xvimage *k)
         for (u = 0; u < n; u++) 
           if (CARRE((tab[u]%rs),(tab[u]/rs)))
           {
-            sum += K[tab[u]];
+            sum += B[tab[u]];
             nb++;
 	  }
-        K[j * rs + i] = (uint8_t)(sum/nb);
+        B[j * rs + i] = (uint8_t)(sum/nb);
       }
+  }
+  else if (datatype(b) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *B;
+    uint32_t sum;
+    B = ULONGDATA(b);
+
+    for (j = 0; j < cs; j++)
+    for (i = 0; i < rs; i++)
+      if (!CARRE(i,j))
+      {
+        nb = sum = 0;
+        Betacarre2d(rs, cs, i, j, tab, &n);
+        for (u = 0; u < n; u++) 
+          if (CARRE((tab[u]%rs),(tab[u]/rs)))
+          {
+            sum += B[tab[u]];
+            nb++;
+	  }
+        B[j * rs + i] = sum / nb;
+      }
+  }
+  else if (datatype(b) == VFF_TYP_FLOAT)
+  {
+    float *B;
+    float sum;
+    B = FLOATDATA(b);
+
+    for (j = 0; j < cs; j++)
+    for (i = 0; i < rs; i++)
+      if (!CARRE(i,j))
+      {
+        nb = sum = 0;
+        Betacarre2d(rs, cs, i, j, tab, &n);
+        for (u = 0; u < n; u++) 
+          if (CARRE((tab[u]%rs),(tab[u]/rs)))
+          {
+            sum += B[tab[u]];
+            nb++;
+	  }
+        B[j * rs + i] = sum / nb;
+      }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
+
 } /* ndgmoy2d() */
 
 /* ==================================== */
@@ -1257,6 +1309,132 @@ void AjouteBetacarre2d(struct xvimage *k)
         for (u = 0; u < n; u++) K[tab[u]] = VAL_OBJET;
       }
 } /* AjouteBetacarre2d() */
+
+/* ==================================== */
+void MaxAlpha2d(struct xvimage *k)
+/* ==================================== */
+/*
+  pour chaque element x, faire K[x] = max{K[y] | y in alpha(x)}
+ */
+#undef F_NAME
+#define F_NAME "MaxAlpha2d"
+{
+  int32_t rs = rowsize(k);
+  int32_t cs = colsize(k);
+  int32_t i, j, u, n;
+  int32_t tab[GRS2D*GCS2D];
+
+  if (datatype(k) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *K = UCHARDATA(k);
+    uint8_t M;
+    for (j = 0; j < cs; j += 1)
+      for (i = 0; i < rs; i += 1)
+      {
+	M = K[j * rs + i];
+        Alphacarre2d(rs, cs, i, j, tab, &n);
+        for (u = 0; u < n; u++) 
+	  if (K[tab[u]] > M) M = K[tab[u]];
+	K[j * rs + i] = M;
+      }
+  }
+  else if (datatype(k) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *K = ULONGDATA(k);
+    uint32_t M;
+    for (j = 0; j < cs; j += 1)
+      for (i = 0; i < rs; i += 1)
+      {
+	M = K[j * rs + i];
+        Alphacarre2d(rs, cs, i, j, tab, &n);
+        for (u = 0; u < n; u++) 
+	  if (K[tab[u]] > M) M = K[tab[u]];
+	K[j * rs + i] = M;
+      }
+  }
+  else if (datatype(k) == VFF_TYP_FLOAT)
+  {
+    float *K = FLOATDATA(k);
+    float M;
+    for (j = 0; j < cs; j += 1)
+      for (i = 0; i < rs; i += 1)
+      {
+	M = K[j * rs + i];
+        Alphacarre2d(rs, cs, i, j, tab, &n);
+        for (u = 0; u < n; u++) 
+	  if (K[tab[u]] > M) M = K[tab[u]];
+	K[j * rs + i] = M;
+      }
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
+} /* MaxAlpha2d() */
+
+/* ==================================== */
+void MaxBeta2d(struct xvimage *k)
+/* ==================================== */
+/*
+  pour chaque element x, faire K[x] = max{K[y] | y in beta(x)}
+ */
+#undef F_NAME
+#define F_NAME "MaxBeta2d"
+{
+  int32_t rs = rowsize(k);
+  int32_t cs = colsize(k);
+  int32_t i, j, u, n;
+  int32_t tab[GRS2D*GCS2D];
+
+  if (datatype(k) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *K = UCHARDATA(k);
+    uint8_t M;
+    for (j = 0; j < cs; j += 1)
+      for (i = 0; i < rs; i += 1)
+      {
+	M = K[j * rs + i];
+        Betacarre2d(rs, cs, i, j, tab, &n);
+        for (u = 0; u < n; u++) 
+	  if (K[tab[u]] > M) M = K[tab[u]];
+	K[j * rs + i] = M;
+      }
+  }
+  else if (datatype(k) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *K = ULONGDATA(k);
+    uint32_t M;
+    for (j = 0; j < cs; j += 1)
+      for (i = 0; i < rs; i += 1)
+      {
+	M = K[j * rs + i];
+        Betacarre2d(rs, cs, i, j, tab, &n);
+        for (u = 0; u < n; u++) 
+	  if (K[tab[u]] > M) M = K[tab[u]];
+	K[j * rs + i] = M;
+      }
+  }
+  else if (datatype(k) == VFF_TYP_FLOAT)
+  {
+    float *K = FLOATDATA(k);
+    float M;
+    for (j = 0; j < cs; j += 1)
+      for (i = 0; i < rs; i += 1)
+      {
+	M = K[j * rs + i];
+        Betacarre2d(rs, cs, i, j, tab, &n);
+        for (u = 0; u < n; u++) 
+	  if (K[tab[u]] > M) M = K[tab[u]];
+	K[j * rs + i] = M;
+      }
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad datatype\n", F_NAME);
+    exit(0);
+  }
+} /* MaxBeta2d() */
 
 /* ==================================== */
 void EffaceLiensLibres2d(struct xvimage *k)

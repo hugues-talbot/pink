@@ -1,4 +1,4 @@
-/* $Id: erosball.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: erosball.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file erosball.c
 
 \brief morphological binary erosion by a ball
@@ -44,6 +44,18 @@ erosball cells 3 cells_erosball
 
 */
 
+/*
+%TEST erosball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 0 %RESULTS/erosball_b2hebreu_3_0.pgm
+%TEST erosball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 2 %RESULTS/erosball_b2hebreu_3_2.pgm
+%TEST erosball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 4 %RESULTS/erosball_b2hebreu_3_4.pgm
+%TEST erosball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 8 %RESULTS/erosball_b2hebreu_3_8.pgm
+%TEST erosball %IMAGES/3dbyte/binary/b3a.pgm 3 0 %RESULTS/erosball_b3a_3_0.pgm
+%TEST erosball %IMAGES/3dbyte/binary/b3a.pgm 3 2 %RESULTS/erosball_b3a_3_2.pgm
+%TEST erosball %IMAGES/3dbyte/binary/b3a.pgm 3 6 %RESULTS/erosball_b3a_3_6.pgm
+%TEST erosball %IMAGES/3dbyte/binary/b3a.pgm 3 18 %RESULTS/erosball_b3a_3_18.pgm
+%TEST erosball %IMAGES/3dbyte/binary/b3a.pgm 3 26 %RESULTS/erosball_b3a_3_26.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -83,21 +95,10 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (depth(image) == 1)
+  if (! lerosball(image, r, mode))
   {
-    if (! lerosdisc(image, r, mode))
-    {
-      fprintf(stderr, "%s: function lerosdisc failed\n", argv[0]);
-      exit(1);
-    }
-  }
-  else
-  {
-    if (! lerosball(image, r, mode))
-    {
-      fprintf(stderr, "%s: function lerosball failed\n", argv[0]);
-      exit(1);
-    }
+    fprintf(stderr, "%s: function lerosball failed\n", argv[0]);
+    exit(1);
   }
 
   writeimage(image, argv[argc-1]);

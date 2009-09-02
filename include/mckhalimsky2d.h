@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky2d.h,v 1.5 2009-06-29 09:10:50 mcouprie Exp $ */
+/* $Id: mckhalimsky2d.h,v 1.6 2009-09-02 14:23:35 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -47,6 +47,8 @@ extern int32_t ExactementUnBetaTerminal2d(uint8_t *K, int32_t rs, int32_t cs);
 extern void SatureAlphacarre2d(struct xvimage *k);
 extern void AjouteAlphacarre2d(struct xvimage *k);
 extern void AjouteBetacarre2d(struct xvimage *k);
+extern void MaxAlpha2d(struct xvimage *k);
+extern void MaxBeta2d(struct xvimage *k);
 extern void ColorieKh2d(struct xvimage *k);
 extern void EffaceLiensLibres2d(struct xvimage *k);
 extern void CopieAlphacarre2d(uint8_t *G,uint8_t *K,int32_t rs,int32_t cs,int32_t i,int32_t j);

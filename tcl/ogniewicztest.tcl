@@ -60,13 +60,13 @@ checkbutton .top.combine -text combine -variable OGNIEWICZTEST(combine) -command
 pack .top.combine -side right
 
 # create the radius button
-scale .top.radius -from 1 -to 20 -length 100 -variable OGNIEWICZTEST(param) \
-  -orient horizontal -tickinterval 5 -showvalue true -command ogniewicztest_run
+scale .top.radius -from 1 -to 50 -length 100 -variable OGNIEWICZTEST(param) \
+  -orient horizontal -tickinterval 10 -showvalue true -command ogniewicztest_run
 pack .top.radius -side left
 
 # create the angle button
-scale .top.angle -from 0 -to 359 -length 300 -variable OGNIEWICZTEST(angle) \
-  -orient horizontal -tickinterval 45 -showvalue true -command rotation_run
+scale .top.angle -from 0 -to 89 -length 200 -variable OGNIEWICZTEST(angle) \
+  -orient horizontal -tickinterval 15 -showvalue true -command rotation_run
 pack .top.angle -side left
 
 # create an image and load contents from file 

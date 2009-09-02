@@ -1,4 +1,4 @@
-/* $Id: mclifo.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: mclifo.c,v 1.2 2009-09-02 14:23:36 mcouprie Exp $ */
 /* 
    Librairie mclifo :
 
@@ -15,8 +15,7 @@
 #include <mclifo.h>
 
 /* ==================================== */
-Lifo * CreeLifoVide(
-  int32_t taillemax)
+Lifo * CreeLifoVide(int32_t taillemax)
 /* ==================================== */
 {
   Lifo * L = (Lifo *)calloc(1,sizeof(Lifo) + sizeof(int32_t) * (taillemax-1));
@@ -32,24 +31,21 @@ Lifo * CreeLifoVide(
 }
 
 /* ==================================== */
-void LifoFlush(
-  Lifo * L)
+void LifoFlush(Lifo * L)
 /* ==================================== */
 {
   L->Sp = 0;
 }
 
 /* ==================================== */
-int32_t LifoVide(
-  Lifo * L)
+int32_t LifoVide(Lifo * L)
 /* ==================================== */
 {
   return (L->Sp == 0);
 }
 
 /* ==================================== */
-int32_t LifoPop(
-  Lifo * L)
+int32_t LifoPop(Lifo * L)
 /* ==================================== */
 {
   if (L->Sp == 0)
@@ -62,8 +58,7 @@ int32_t LifoPop(
 }
 
 /* ==================================== */
-int32_t LifoHead(
-  Lifo * L)
+int32_t LifoHead(Lifo * L)
 /* ==================================== */
 {
   if (L->Sp == 0)
@@ -115,8 +110,7 @@ void LifoPrintLine(Lifo * L)
 }
 
 /* ==================================== */
-void LifoTermine(
-  Lifo * L)
+void LifoTermine(Lifo * L)
 /* ==================================== */
 {
   free(L);

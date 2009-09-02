@@ -1,4 +1,4 @@
-/* $Id: mclifo.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: mclifo.h,v 1.3 2009-09-02 14:23:35 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -12,43 +12,15 @@ typedef struct {
 /* ============== */
 /* prototypes     */
 /* ============== */
-
-extern Lifo * CreeLifoVide(
-  int32_t taillemax
-);
-
-extern void LifoFlush(
-  Lifo * L
-);
-
-extern int32_t LifoVide(
-  Lifo * L
-);
-
-extern int32_t LifoPop(
-  Lifo * L
-);
-
-extern int32_t LifoHead(
-  Lifo * L
-);
-
-extern void LifoPush(
-  Lifo * L,
-  int32_t V
-);
-
-extern void LifoPrint(
-  Lifo * L
-);
-
-extern void LifoPrintLine(
-  Lifo * L
-);
-
-extern void LifoTermine(
-  Lifo * L
-);
+extern Lifo * CreeLifoVide(int32_t taillemax);
+extern void LifoFlush(Lifo * L);
+extern int32_t LifoVide(Lifo * L);
+extern int32_t LifoPop(Lifo * L);
+extern int32_t LifoHead(Lifo * L);
+extern void LifoPush(Lifo * L, int32_t V);
+extern void LifoPrint(Lifo * L);
+extern void LifoPrintLine(Lifo * L);
+extern void LifoTermine(Lifo * L);
 #ifdef __cplusplus
 }
 #endif

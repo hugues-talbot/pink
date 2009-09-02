@@ -1,4 +1,4 @@
-/* $Id: lzoom.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/* $Id: lzoom.c,v 1.2 2009-09-02 14:23:36 mcouprie Exp $ */
 /* Michel Couprie - decembre 1996 */
 
 #include <string.h>
@@ -77,7 +77,26 @@ int32_t lzoomoutbyte(
   /* calcul du resultat */
   /* ---------------------------------------------------------- */
 
-  if (ds == 1)
+  if ((cs == 1) && (ds == 1))
+  {
+    /* pas efficace - a ameliorer */
+    for (x = 0; x < rs2; x++)
+    {
+      tmp = 0.0;
+      sigmad = 0.0;
+      x1 = (int32_t)(x * kx); dx1 = 1.0 - ((x * kx) - x1);
+      xn = (int32_t)((x+1) * kx); dxn = ((x+1) * kx) - xn; if (xn == rs) xn = rs-1;
+      for (xx = x1; xx <= xn; xx++)
+      {
+	d = 1.0;
+	if (xx == x1) d *= dx1; else if (xx == xn) d *= dxn;
+	tmp += d * ptin[xx];
+	sigmad += d;
+      }
+      ptout[x] = (uint8_t)(tmp / sigmad);
+    }
+  } // if ((cs == 1) && (ds == 1))
+  else if (ds == 1)
   {
     /* pas efficace - a ameliorer */
     for (y = 0; y < cs2; y++)
@@ -430,7 +449,21 @@ int32_t lzoominbyte(
   /* ---------------------------------------------------------- */
 
   memset(ptout, 0, N2);
-  if (ds == 1)
+  if ((cs == 1) && (ds == 1))
+  {
+    double f;
+    for (x2 = 0; x2 < rs2; x2++)
+    {
+      x = x2 / zoomx;
+      xi = (int32_t)floor(x); xs = xi + 1;
+      if ((xi >= 0) && (xs < rs))
+      {
+	f = (x - xi) * ptin[xs] + (xs - x) * ptin[xi];
+	ptout[x2] = arrondi(f);
+      }
+    } // for x2
+  }
+  else if (ds == 1)
   {
     double f, f1, f2;
     for (y2 = 0; y2 < cs2; y2++)
@@ -450,7 +483,6 @@ int32_t lzoominbyte(
         }
       } // for x2
     } // for y2
-
   } /* if (ds == 1) */
   else
   {

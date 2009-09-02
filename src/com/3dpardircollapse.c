@@ -1,4 +1,4 @@
-/* $Id: 3dpardircollapse.c,v 1.1 2009-06-29 09:10:50 mcouprie Exp $ */
+/* $Id: 3dpardircollapse.c,v 1.2 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file 3dpardircollapse.c
 
 \brief parallel directional constrained collapse
@@ -26,6 +26,7 @@ then the points of this image will be left unchanged.
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mckhalimsky3d.h>
+#include <mcgraphe.h>
 #include <l3dcollapse.h>
 
 /* =============================================================== */

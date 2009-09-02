@@ -1,4 +1,4 @@
-/* $Id: ldist.h,v 1.3 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: ldist.h,v 1.4 2009-09-02 14:23:35 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -32,6 +32,7 @@ extern void SEDT3d_line(uint8_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint3
 extern void SEDT3d_column(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds);
 extern void SEDT3d_planes(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds);
 extern int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res);
+extern struct xvimage * lopeningfunction(struct xvimage *img, int32_t mode);
 #ifdef __cplusplus
 }
 #endif

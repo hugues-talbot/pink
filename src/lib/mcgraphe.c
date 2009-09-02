@@ -6,6 +6,8 @@
 
       janvier 2005 : DepthTree, MaxDiameterTree, Lee
       février 2005 : LCA (non efficace)
+
+      juillet-août 2009 : CircuitsNiveaux, BellmanSC, Forêts...
 */
 
 #include <stdio.h>
@@ -15,6 +17,7 @@
 #include <limits.h>
 #include <string.h>
 #include <math.h>
+#include <assert.h>
 
 #include <mccodimage.h>
 #include <mcimage.h>
@@ -22,7 +25,10 @@
 #include <mcfifo.h>
 #include <mcrbt.h>
 #include <mcutil.h>
+#include <mcdrawps.h>
 #include <mcgraphe.h>
+
+#define PARANO
 
 /* ====================================================================== */
 /* ====================================================================== */
@@ -389,7 +395,7 @@ graphe * ReadGraphe(char * filename)
   fd = fopen(filename,"r");
   if (!fd)
   {
-    fprintf(stderr, "%s: file not found: %s\n", filename, F_NAME);
+    fprintf(stderr, "%s: file not found: %s\n", F_NAME, filename);
     return NULL;
   }
 
@@ -508,6 +514,12 @@ void SaveGraphe(graphe * g, char *filename)
   
   fclose(fd);
 } /* SaveGraphe() */
+
+/* ====================================================================== */
+/* ====================================================================== */
+/* FONCTIONS DE CONVERSION */
+/* ====================================================================== */
+/* ====================================================================== */
 
 /* ====================================================================== */
 /*! \fn graphe * Image2Graphe(struct xvimage *image, int32_t mode, int32_t connex)
@@ -688,8 +700,7 @@ struct xvimage *Graphe2Image(graphe * g, int32_t rs)
   F = UCHARDATA(image);
   memset(F, 0, N);
   
-  for (i = 0; i < N; i++)  
-    if (g->v_sommets[i]) F[i] = 255; 
+  for (i = 0; i < N; i++) F[i] = (uint8_t)g->v_sommets[i]; 
 
   return image;
 } /* Graphe2Image() */
@@ -1015,6 +1026,44 @@ graphe * FermetureSymetrique(graphe * g)
 } /* FermetureSymetrique() */
 
 /* ====================================================================== */
+/*! \fn boolean *Descendants(graphe *g, int32_t a)
+    \param g (entrée) : le graphe 
+    \param a (entrée) : un sommet du graphe g
+    \brief retourne l'ensemble des sommets descendants de a dans le graphe g
+    (le sommet a est inclus)
+*/
+boolean * Descendants(graphe * g, int32_t a)
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "Descendants"
+{
+  boolean * D;   /* pour les "descendants" (successeurs a N niveaux) */
+  Lifo * T;   /* liste temporaire geree en pile (Last In, First Out) */
+  int32_t i, s, n;
+  pcell p;
+  n = g->nsom;
+  T = CreeLifoVide(n);
+  D = EnsembleVide(n);
+  D[a] = TRUE;
+  LifoPush(T, a);
+  while (!LifoVide(T))
+  {
+    i = LifoPop(T);
+    for (p = g->gamma[i]; p != NULL; p = p->next) 
+    { /* pour tout s prédécesseur de i */
+      s = p->som;
+      if (!D[s]) 
+      {
+        D[s] = TRUE;
+        LifoPush(T, s);
+      }
+    } // for p
+  } // while (!LifoVide(T))
+  LifoTermine(T);
+  return D;
+} // Descendants()
+
+/* ====================================================================== */
 /*! \fn void CompFortConnexe(graphe * g, graphe *g_1, int32_t a, boolean * Ca)
     \param g (entrée) : un graphe
     \param g_1 (entrée) : le graphe symétrique de g
@@ -1031,55 +1080,13 @@ void CompFortConnexe(graphe * g, graphe *g_1, int32_t a, boolean * Ca)
 {
   boolean * D;   /* pour les "descendants" (successeurs a N niveaux) */
   boolean * A;   /* pour les "ascendants" (predecesseurs a N niveaux) */
-  Lifo * T;   /* liste temporaire geree en pile (Last In, First Out) */
-  int32_t i, n, s;
-  pcell p;
-
+  int32_t i, n;
   n = g->nsom;
-  T = CreeLifoVide(n);
-  A = EnsembleVide(n);
-  D = EnsembleVide(n);
-  memset(Ca, 0, n);   // Ca := vide
-
-  /* calcule les descendants de a */
-  LifoPush(T, a);  
-  while (!LifoVide(T))
-  {
-    i = LifoPop(T);
-    for (p = g->gamma[i]; p != NULL; p = p->next)
-    { /* pour tout sommet s successeur de i */
-      s = p->som;
-      if (!D[s]) 
-      {
-        D[s] = TRUE;
-        LifoPush(T, s);
-      }
-    } // for p
-  } // while (!LifoVide(T))
-
-  /* calcule les ascendants de a */
-  LifoPush(T, a);
-  while (!LifoVide(T))
-  {
-    i = LifoPop(T);
-    for (p = g_1->gamma[i]; p != NULL; p = p->next) 
-    { /* pour tout s successeur de i */
-      s = p->som;
-      if (!A[s]) 
-      {
-        A[s] = TRUE;
-        LifoPush(T, s);
-      }
-    } // for p
-  } // while (!LifoVide(T))
-
-  /* intersection de D et de A, union { a } */
+  D = Descendants(g, a);
+  A = Descendants(g_1, a);
   for (i = 0; i < n; i++) Ca[i] = (D[i] && A[i]);
-  Ca[a] = TRUE;
-    
   free(A);
   free(D);
-  LifoTermine(T);
 } /* CompFortConnexe() */
 
 /* ====================================================================== */
@@ -1972,6 +1979,103 @@ void LeeNO(graphe * g, graphe * g_1, int32_t i)
 } /* LeeNO() */
 
 /* ====================================================================== */
+/*! \fn graphe * PCC(graphe * g, int32_t d, int32_t a)
+    \param g (entrée) : un graphe pondéré, représenté par son application successeurs,
+            et dont les sommets ont été valués par la distance au sommet \b d
+    \param d (entrée) : un sommet (départ)
+    \param a (entrée) : un sommet (arrivée)
+    \return un plus court chemin de \b d vers \b a dans \b g , représenté par un graphe
+    \brief retourne un plus court chemin de \b d vers \b a dans \b g
+*/
+graphe * PCC(graphe * g, int32_t d, int32_t a)
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "PCC"
+{
+  int32_t n = g->nsom;
+  int32_t m = g->narc;
+  graphe * pcc = InitGraphe(n, n-1); /* pour le resultat */
+  graphe * g_1 = Symetrique(g);
+  int32_t i, y, x = a;
+  pcell p;
+
+  while (x != d)
+  {
+    for (p = g_1->gamma[x]; p != NULL; p = p->next)
+    { /* pour tout y predecesseur de x */
+      y = p->som;
+      if ((g->v_sommets[x]-g->v_sommets[y]) == p->v_arc) 
+      {
+        AjouteArcValue(pcc, y, x, p->v_arc);
+        x = y;
+        break;
+      }
+    } // for p
+    if (p == NULL)
+    {
+      printf("WARNING: pas de pcc trouve de %d vers %d\n", d, a);
+      TermineGraphe(g_1);
+      return pcc;
+    }
+  }
+  TermineGraphe(g_1);
+  for (i = 0; i < n; i++) { pcc->x[i] = g->x[i]; pcc->y[i] = g->y[i]; }
+  return pcc;
+} /* PCC() */
+
+/* ====================================================================== */
+/*! \fn graphe * PCCna(graphe * g, int32_t d, int32_t a)
+    \param g (entrée) : un graphe, représenté par son application successeurs,
+            et dont les sommets ont été valués par la distance (nombre d'arcs) au sommet \b d
+    \param d (entrée) : un sommet (départ)
+    \param a (entrée) : un sommet (arrivée)
+    \return un plus court chemin (au sens du nombre d'arcs) de \b d vers \b a dans \b g , 
+    représenté par un graphe
+    \brief retourne un plus court chemin de \b d vers \b a dans \b g
+*/
+graphe * PCCna(graphe * g, int32_t d, int32_t a)
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "PCCna"
+{
+  int32_t n = g->nsom;
+  int32_t m = g->narc;
+  graphe * pcc = InitGraphe(n, n-1); /* pour le resultat */
+  graphe * g_1 = Symetrique(g);
+  int32_t i, y, x = a;
+  pcell p;
+
+  while (x != d)
+  {
+    for (p = g_1->gamma[x]; p != NULL; p = p->next)
+    { /* pour tout y predecesseur de x */
+      y = p->som;
+      if ((g->v_sommets[x]-g->v_sommets[y]) == 1) 
+      {
+        AjouteArcValue(pcc, y, x, p->v_arc);
+        x = y;
+        break;
+      }
+    } // for p
+    if (p == NULL)
+    {
+      printf("WARNING: pas de pcc trouve \n");
+      TermineGraphe(g_1);
+      return pcc;
+    }
+  }
+  TermineGraphe(g_1);
+  for (i = 0; i < n; i++) { pcc->x[i] = g->x[i]; pcc->y[i] = g->y[i]; }
+  return pcc;
+} /* PCCna() */
+
+/* ====================================================================== */
+/* ====================================================================== */
+/* GRAPHES SANS CIRCUIT (GSC) */
+/* ====================================================================== */
+/* ====================================================================== */
+
+/* ====================================================================== */
 /*! \fn void BellmanSC(graphe * g)
     \param g (entrée) : un graphe pondéré. La pondération de chaque arc doit 
                         se trouver dans le champ \b v_arc de la structure \b cell
@@ -2230,96 +2334,212 @@ void BellmanSC1(graphe * g, int32_t dep)
   free(T);
 } /* BellmanSC1() */
 
+static TYP_VSOM IntegreGSC_Aux(graphe * g, graphe * g_1, int32_t s)
+{
+  pcell p;
+  int32_t t;
+  TYP_VSOM sum;
+
+  if (g_1->v_sommets[s] == (TYP_VSOM)1) return g->v_sommets[s];
+  sum = g->v_sommets[s];
+  for (p = g_1->gamma[s]; p != NULL; p = p->next)
+  {
+    t = p->som;
+    sum += IntegreGSC_Aux(g, g_1, t) / g_1->x[t];
+  }
+  g->v_sommets[s] = sum;
+  g_1->v_sommets[s] = (TYP_VSOM)1;
+  return sum;
+}
+
 /* ====================================================================== */
-/*! \fn graphe * PCC(graphe * g, int32_t d, int32_t a)
-    \param g (entrée) : un graphe pondéré, représenté par son application successeurs,
-            et dont les sommets ont été valués par la distance au sommet \b d
-    \param d (entrée) : un sommet (départ)
-    \param a (entrée) : un sommet (arrivée)
-    \return un plus court chemin de \b d vers \b a dans \b g , représenté par un graphe
-    \brief retourne un plus court chemin de \b d vers \b a dans \b g
+/*! \fn void IntegreGSC(graphe * g)
+    \param g (entrée) : un graphe sans circuit orienté et pondéré, 
+    représenté par son application successeurs, et dont les sommets sont valués.
+    \brief pour chaque sommet x, la nouvelle pondération est la somme 
+    des pondérations des ancêtres de x dans la forêt valuée d'origine.
+    \warning cette fonction ne fonctionne que si le graphe g est sans circuit.
+    Aucune vérification n'est faite.
 */
-graphe * PCC(graphe * g, int32_t d, int32_t a)
+void IntegreGSC(graphe * g)
 /* ====================================================================== */
 #undef F_NAME
-#define F_NAME "PCC"
+#define F_NAME "IntegreGSC"
+{
+  int32_t s, n = g->nsom;
+  double d;
+  graphe * g_1 = Symetrique(g);
+  pcell p;
+
+  // ce champ de g_1 sera utilisé comme indicateur: 0=non traité, 1=traité
+  for (s = 0; s < n; s++) g_1->v_sommets[s] = (TYP_VSOM)0;
+  // ce champ de g_1 sera utilisé pour stocker le degré sortant (pour g) de s 
+  for (s = 0; s < n; s++)
+  {  
+    for (d = 0, p = g->gamma[s]; p != NULL; p = p->next) d += 1;
+    g_1->x[s] = d;
+  }
+  // lance la fonction récursive pour tous les sommets
+  for (s = 0; s < n; s++)
+    if (g_1->v_sommets[s] == (TYP_VSOM)0)
+      IntegreGSC_Aux(g, g_1, s);
+  TermineGraphe(g_1);
+} /* IntegreGSC() */
+
+/* ====================================================================== */
+/*! \fn boolean EstConfluent(graphe * g, graphe *g_1, int32_t a)
+    \param g (entrée) : un graphe
+    \param g_1 (entrée) : le graphe symétrique de g
+    \param a (entrée) : un sommet du graphe g
+    \brief retourne VRAI si le sommet a est confluent, ie., si 
+      Succ(Anc(a)\{a}) est inclus dans Anc(a)
+*/
+boolean EstConfluent(graphe * g, graphe *g_1, int32_t a)
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "EstConfluent"
+{
+  boolean * A;   /* pour les "ascendants" (predecesseurs a N niveaux) */
+  Lifo * T;   /* liste temporaire geree en pile (Last In, First Out) */
+  int32_t i, n, s;
+  pcell p;
+  boolean ret = TRUE;
+
+  n = g->nsom;
+  T = CreeLifoVide(n);
+  A = EnsembleVide(n);
+
+  /* calcule les ascendants (stricts) de a */
+  LifoPush(T, a);
+  while (!LifoVide(T))
+  {
+    i = LifoPop(T);
+    for (p = g_1->gamma[i]; p != NULL; p = p->next) 
+    { /* pour tout s prédécesseur de i */
+      s = p->som;
+      if (!A[s]) 
+      {
+        A[s] = TRUE;
+        LifoPush(T, s);
+      }
+    } // for p
+  } // while (!LifoVide(T))
+
+  // vérification de la prop.
+  for (i = 0; i < n; i++) 
+    if (A[i])
+      for (p = g->gamma[i]; p != NULL; p = p->next) 
+      { /* pour tout s successeur de i */
+	s = p->som;
+	if (!A[s] && (s != a)) { ret = FALSE; goto fin; }
+      }
+
+ fin:    
+  free(A);
+  LifoTermine(T);
+  return ret;
+} // EstConfluent()
+
+/* ====================================================================== */
+/*! \fn void PointsConfluents(graphe * g, graphe *g_1)
+    \param g (entrée) : un graphe
+    \param g_1 (entrée) : le graphe symétrique de g
+    \brief marque l'ensemble des sommets confluents de g (utilise v_sommets)
+*/
+void PointsConfluents(graphe * g, graphe *g_1)
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "EstConfluent"
+{
+  int32_t i, n;
+  n = g->nsom;
+  for (i = 0; i < n; i++) 
+    if (EstConfluent(g, g_1, i))
+      g->v_sommets[i] = (TYP_VSOM)1;
+    else
+      g->v_sommets[i] = (TYP_VSOM)0;
+} // PointsConfluents()
+
+/* ====================================================================== */
+/* ====================================================================== */
+/* FORETS */
+/* ====================================================================== */
+/* ====================================================================== */
+
+/* ====================================================================== */
+/*! \fn graphe * ForetPCC(graphe * g)
+    \param g (entrée) : un graphe pondéré, représenté par son application successeurs,
+            et dont les sommets ont été valués par la distance à une source
+    \return une forêt de plus courts chemins relatifs aux sources de g
+    \brief retourne une forêt de plus courts chemins relatifs aux sources de g
+*/
+graphe * ForetPCC(graphe * g)
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "ForetPCC"
 {
   int32_t n = g->nsom;
   int32_t m = g->narc;
-  graphe * pcc = InitGraphe(n, n-1); /* pour le resultat */
+  graphe * fpcc = InitGraphe(n, n-1); /* pour le resultat */
   graphe * g_1 = Symetrique(g);
-  int32_t i, y, x = a;
+  int32_t i, y, x;
   pcell p;
 
-  while (x != d)
+  for (x = 0; x < n; x++)
   {
     for (p = g_1->gamma[x]; p != NULL; p = p->next)
     { /* pour tout y predecesseur de x */
       y = p->som;
       if ((g->v_sommets[x]-g->v_sommets[y]) == p->v_arc) 
       {
-        AjouteArcValue(pcc, y, x, p->v_arc);
-        x = y;
+        AjouteArcValue(fpcc, y, x, p->v_arc);
         break;
       }
     } // for p
-    if (p == NULL)
-    {
-      printf("WARNING: pas de pcc trouve de %d vers %d\n", d, a);
-      TermineGraphe(g_1);
-      return pcc;
-    }
   }
   TermineGraphe(g_1);
-  for (i = 0; i < n; i++) { pcc->x[i] = g->x[i]; pcc->y[i] = g->y[i]; }
-  return pcc;
-} /* PCC() */
+  for (i = 0; i < n; i++) 
+  { 
+    fpcc->x[i] = g->x[i]; 
+    fpcc->y[i] = g->y[i]; 
+    fpcc->v_sommets[i] = g->v_sommets[i];
+  }
+  return fpcc;
+} /* ForetPCC() */
+
+static TYP_VSOM IntegreForet_Aux(graphe * g, graphe * g_1, int32_t s)
+{
+  pcell p;
+  int32_t y;
+  TYP_VSOM sum = g->v_sommets[s];
+  for (p = g_1->gamma[s]; p != NULL; p = p->next)
+  {
+    y = p->som;
+    sum += IntegreForet_Aux(g, g_1, y);
+  }
+  g->v_sommets[s] = sum;
+  return sum;
+}
 
 /* ====================================================================== */
-/*! \fn graphe * PCCna(graphe * g, int32_t d, int32_t a)
-    \param g (entrée) : un graphe, représenté par son application successeurs,
-            et dont les sommets ont été valués par la distance (nombre d'arcs) au sommet \b d
-    \param d (entrée) : un sommet (départ)
-    \param a (entrée) : un sommet (arrivée)
-    \return un plus court chemin (au sens du nombre d'arcs) de \b d vers \b a dans \b g , 
-    représenté par un graphe
-    \brief retourne un plus court chemin de \b d vers \b a dans \b g
+/*! \fn void IntegreForet(graphe * g)
+    \param g (entrée) : un graphe (forêt) orienté et pondéré, représenté par son application successeurs, et dont les sommets sont valués
+    \brief pour chaque sommet x, la nouvelle pondération est la somme des pondérations des ancêtres de x dans la forêt valuée d'origine
 */
-graphe * PCCna(graphe * g, int32_t d, int32_t a)
+void IntegreForet(graphe * g)
 /* ====================================================================== */
 #undef F_NAME
-#define F_NAME "PCCna"
+#define F_NAME "IntegreForet"
 {
   int32_t n = g->nsom;
-  int32_t m = g->narc;
-  graphe * pcc = InitGraphe(n, n-1); /* pour le resultat */
+  int32_t x;
   graphe * g_1 = Symetrique(g);
-  int32_t i, y, x = a;
-  pcell p;
 
-  while (x != d)
-  {
-    for (p = g_1->gamma[x]; p != NULL; p = p->next)
-    { /* pour tout y predecesseur de x */
-      y = p->som;
-      if ((g->v_sommets[x]-g->v_sommets[y]) == 1) 
-      {
-        AjouteArcValue(pcc, y, x, p->v_arc);
-        x = y;
-        break;
-      }
-    } // for p
-    if (p == NULL)
-    {
-      printf("WARNING: pas de pcc trouve \n");
-      TermineGraphe(g_1);
-      return pcc;
-    }
-  }
+  for (x = 0; x < n; x++)
+    if (g->gamma[x] == NULL)
+      IntegreForet_Aux(g, g_1, x);
   TermineGraphe(g_1);
-  for (i = 0; i < n; i++) { pcc->x[i] = g->x[i]; pcc->y[i] = g->y[i]; }
-  return pcc;
-} /* PCCna() */
+} /* IntegreForet() */
 
 /* ====================================================================== */
 /* ====================================================================== */
@@ -2423,6 +2643,256 @@ void AfficheValeursSommets(graphe * g)
   }
   else fprintf(stderr, "%s: valeurs sommets absentes\n", F_NAME);
 } /* AfficheValeursSommets() */
+
+
+/* ====================================================================== */
+/* ====================================================================== */
+/* GENERATION POSTSCRIPT */
+/* ====================================================================== */
+/* ====================================================================== */
+
+/* ====================================================================== */
+/*! \fn void PSGraphe(graphe * g, char *filename, double r, double t, double marge) 
+    \param g (entrée) : un graphe.
+    \param filename (entrée) : nom du fichier postscript à générer.
+    \param r (entrée) : rayon des cercles qui représentent les sommets (0 pour ne pas les dessiner).
+    \param t (entrée) : taille (demi-longueur) des flèches pour les arcs (0 pour ne pas les dessiner).
+    \param marge (entrée) : marge en x et en y.
+    \brief génère une figure PostScript d'après la représentation "successeurs" du graphe g. 
+*/
+void PSGraphe(graphe * g, char *filename, double r, double t, double marge) 
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "PSGraphe"
+{
+  int i, j, n = g->nsom;
+  double xmin, xmax, ymin, ymax;
+  double x1, y1, x2, y2, x3, y3, x, y, a, b, d;
+  pcell p;
+  FILE * fd = NULL;
+  
+  if (g->gamma == NULL) 
+  {  fprintf(stderr, "%s: representation successeurs absente\n", F_NAME);
+     return;
+  }
+  
+  if (g->x == NULL) 
+  {  fprintf(stderr, "%s: coordonnees des sommets absentes\n", F_NAME);
+     return;
+  }
+
+  fd = fopen(filename,"w");
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
+    return;
+  }
+
+  /* determine le rectangle englobant et genere le header */
+  xmin = xmax = g->x[0];
+  ymin = ymax = g->y[0];
+  for (i = 1; i < n; i++) 
+  {
+    if (g->x[i] < xmin) xmin = g->x[i]; else if (g->x[i] > xmax) xmax = g->x[i];
+    if (g->y[i] < ymin) ymin = g->y[i]; else if (g->y[i] > ymax) ymax = g->y[i];
+  }
+  EPSHeader(fd, xmax - xmin + 2.0 * marge, ymax - ymin + 2.0 * marge, 1.0, 14);
+  
+  /* dessine les sommets */
+  for (i = 0; i < n; i++) 
+    PSDrawcircle(fd, g->x[i]-xmin+marge, g->y[i]-ymin+marge, r);
+  if (g->nomsommet)
+    for (i = 0; i < n; i++) 
+      PSString(fd, g->x[i]-xmin+marge+2*r, g->y[i]-ymin+marge+2*r, g->nomsommet[i]);
+
+  /* dessine les arcs */
+  if (r > 0.0)
+  for (i = 0; i < n; i++) 
+    for (p = g->gamma[i]; p != NULL; p = p->next)
+    {
+      j = p->som;
+      PSLine(fd, g->x[i]-xmin+marge, g->y[i]-ymin+marge, g->x[j]-xmin+marge, g->y[j]-ymin+marge);
+    }
+
+  /* dessine les fleches sur les arcs */
+  if (t > 0.0)
+  for (i = 0; i < n; i++) 
+    for (p = g->gamma[i]; p != NULL; p = p->next)
+    {
+      j = p->som;
+      x1 = g->x[i]-xmin+marge;
+      y1 = g->y[i]-ymin+marge;
+      x2 = g->x[j]-xmin+marge;
+      y2 = g->y[j]-ymin+marge;
+      x = (x2 + x1) / 2;
+      y = (y2 + y1) / 2;
+      a = x2 - x1;
+      b = y2 - y1;             /* (a,b) est un vecteur directeur de l'arc */
+      d = sqrt(a * a + b * b); /* longueur de l'arc */
+      if (d > 1) // sinon on ne dessine rien
+      { 
+        a /= d; b /= d;          /* norme le vecteur */
+        x1 = x + 2 * t * a;
+        y1 = y + 2 * t * b;      /* pointe de la fleche */
+        x2 = x - 2 * t * a;
+        y2 = y - 2 * t * b;      /* base de la fleche */
+        x3 = x2 + t * -b;        /* (-b,a) est normal a (a,b) */
+        y3 = y2 + t * a;
+        x2 = x2 - t * -b;
+        y2 = y2 - t * a;
+        PSLine(fd, x1, y1, x2, y2);
+        PSLine(fd, x2, y2, x3, y3);
+        PSLine(fd, x3, y3, x1, y1);
+      }
+    }
+  
+  PSFooter(fd);
+  fclose(fd);
+} /* PSGraphe() */
+
+/* ====================================================================== */
+/*! \fn void EPSGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int noms_sommets, int v_sommets, int col_sommets, int v_arcs ) 
+    \param g (entrée) : un graphe.
+    \param filename (entrée) : nom du fichier postscript à générer.
+    \param s (entrée) : facteur d'échelle à appliquer aux coordonnées des sommets. 
+    \param r (entrée) : rayon des cercles qui représentent les sommets (0 pour ne pas les dessiner).
+    \param t (entrée) : taille (demi-longueur) des flèches pour les arcs (0 pour ne pas les dessiner).
+    \param marge (entrée) : marge en x et en y.
+    \param noms_sommets (entrée) : booléen indiquant s'il faut écrire les noms des sommets.
+    \param v_sommets (entrée) : booléen indiquant s'il faut écrire les valeurs des sommets.
+    \param col_sommets (entrée) : booléen indiquant s'il faut colorier les sommets.
+    \param v_arcs (entrée) : booléen indiquant s'il faut écrire les valeurs des arcs.
+    \brief génère une figure PostScript d'après la représentation "successeurs" du graphe g. 
+*/
+void EPSGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int noms_sommets, int v_sommets, int col_sommets, int v_arcs) 
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "EPSGraphe"
+{
+  int i, j, n = g->nsom;
+  double xmin, xmax, ymin, ymax;
+  double x1, y1, x2, y2, x3, y3, x, y, a, b, d;
+  pcell p;
+  FILE * fd = NULL;
+  char buf[80];
+  
+  if (g->gamma == NULL) 
+  {  fprintf(stderr, "%s: representation successeurs absente\n", F_NAME);
+     return;
+  }
+  
+  if (g->x == NULL) 
+  {  fprintf(stderr, "%s: coordonnees des sommets absentes\n", F_NAME);
+     return;
+  }
+
+  fd = fopen(filename,"w");
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
+    return;
+  }
+
+  /* determine le rectangle englobant et genere le header */
+  xmin = xmax = s*g->x[0];
+  ymin = ymax = s*g->y[0];
+  for (i = 1; i < n; i++) 
+  {
+    if (s*g->x[i] < xmin) xmin = s*g->x[i]; else if (s*g->x[i] > xmax) xmax = s*g->x[i];
+    if (s*g->y[i] < ymin) ymin = s*g->y[i]; else if (s*g->y[i] > ymax) ymax = s*g->y[i];
+  }
+  EPSHeader(fd, xmax - xmin + 2.0 * marge, ymax - ymin + 2.0 * marge, 1.0, 14);
+  
+  /* dessine le fond */
+  PSSetColor (fd, 255);
+  PSDrawRect (fd, 0, 0, xmax - xmin + 2.0 * marge, ymax - ymin + 2.0 * marge);
+  PSSetColor (fd, 0);
+
+  /* dessine les sommets */
+  if (r > 0.0)
+  for (i = 0; i < n; i++) 
+    if (col_sommets && (g->v_sommets[i] != 0)) 
+      PSDrawdisc(fd, s*g->x[i]-xmin+marge, s*g->y[i]-ymin+marge, r);
+    else
+      PSDrawcircle(fd, s*g->x[i]-xmin+marge, s*g->y[i]-ymin+marge, r);
+
+  if (noms_sommets && g->nomsommet)
+    for (i = 0; i < n; i++) 
+      PSString(fd, s*g->x[i]-xmin+marge+2*r, s*g->y[i]-ymin+marge-2*r, g->nomsommet[i]);
+  if (v_sommets)
+    for (i = 0; i < n; i++) 
+    {
+      sprintf(buf, "%g", (double)(g->v_sommets[i]));      
+      PSString(fd, s*g->x[i]-xmin+marge+2*r, s*g->y[i]-ymin+marge+2*r, buf);
+    }
+
+  /* dessine les arcs */
+  for (i = 0; i < n; i++) 
+    for (p = g->gamma[i]; p != NULL; p = p->next)
+    {
+      j = p->som;
+      PSLine(fd, s*g->x[i]-xmin+marge, s*g->y[i]-ymin+marge, s*g->x[j]-xmin+marge, s*g->y[j]-ymin+marge);
+    }
+
+  /* dessine les fleches sur les arcs */
+  if (t > 0.0)
+  {
+    for (i = 0; i < n; i++) 
+    for (p = g->gamma[i]; p != NULL; p = p->next)
+    {
+      j = p->som;
+      x1 = s*g->x[i]-xmin+marge;
+      y1 = s*g->y[i]-ymin+marge;
+      x2 = s*g->x[j]-xmin+marge;
+      y2 = s*g->y[j]-ymin+marge;
+      x = (x2 + x1) / 2; // milieu de l'arc
+      y = (y2 + y1) / 2;
+      if (v_arcs)
+      {
+        sprintf(buf, "%g", (double)(p->v_arc));      
+        PSString(fd, x + r, y, buf);
+      }
+      a = x2 - x1;
+      b = y2 - y1;             /* (a,b) est un vecteur directeur de l'arc */
+      d = sqrt(a * a + b * b); /* longueur de l'arc */
+      if (d > 1) // sinon on ne dessine pas la fleche
+      { 
+        a /= d; b /= d;          /* norme le vecteur */
+        x1 = x + 2 * t * a;
+        y1 = y + 2 * t * b;      /* pointe de la fleche */
+        x2 = x - 2 * t * a;
+        y2 = y - 2 * t * b;      /* base de la fleche */
+        x3 = x2 + t * -b;        /* (-b,a) est normal a (a,b) */
+        y3 = y2 + t * a;
+        x2 = x2 - t * -b;
+        y2 = y2 - t * a;
+        PSLine(fd, x1, y1, x2, y2);
+        PSLine(fd, x2, y2, x3, y3);
+        PSLine(fd, x3, y3, x1, y1);
+      }
+    }
+  }
+  else if (v_arcs)
+  {
+    for (i = 0; i < n; i++) 
+    for (p = g->gamma[i]; p != NULL; p = p->next)
+    {
+      j = p->som;
+      x1 = s*g->x[i]-xmin+marge;
+      y1 = s*g->y[i]-ymin+marge;
+      x2 = s*g->x[j]-xmin+marge;
+      y2 = s*g->y[j]-ymin+marge;
+      x = (x2 + x1) / 2; // milieu de l'arc
+      y = (y2 + y1) / 2;
+      sprintf(buf, "%g", (double)(p->v_arc));      
+      PSString(fd, x, y, buf);
+    }
+  }
+  
+  PSFooter(fd);
+  fclose(fd);
+} /* EPSGraphe() */
+
 
 /* ====================================================================== */
 /* ====================================================================== */
@@ -2534,6 +3004,30 @@ int main(int argc, char **argv)
   AfficheSuccesseurs(g);    /* affiche les ensembles "successeurs" a l'ecran */
 
   BellmanSC(g);
+  AfficheValeursSommets(g);
+
+  TermineGraphe(g);
+  return 0;
+} /* main() */
+#endif
+
+#ifdef TEST
+int main(int argc, char **argv)
+{
+  graphe * g;
+  boolean *circ;
+
+  if (argc != 2)
+  {
+    fprintf(stderr, "usage: %s <filename>\n\n", argv[0]);
+    exit(0);
+  }
+
+  g = ReadGraphe(argv[1]);  /* lit le graphe a partir du fichier */
+  AfficheSuccesseurs(g);    /* affiche les ensembles "successeurs" a l'ecran */
+  AfficheValeursSommets(g);
+
+  IntegreForet(g);
   AfficheValeursSommets(g);
 
   TermineGraphe(g);

@@ -1,4 +1,4 @@
-/* $Id: mcdrawps.h,v 1.2 2009-01-07 12:46:33 mcouprie Exp $ */
+/* $Id: mcdrawps.h,v 1.3 2009-09-02 14:23:35 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -9,6 +9,9 @@ extern void PSDraw (FILE *fd, double x, double y);
 extern void PSLine (FILE *fd, double xd, double yd, double xf, double yf);
 extern void PSDrawcircle (FILE *fd, double x, double y, double r);
 extern void PSDrawdisc (FILE *fd, double x, double y, double r);
+extern void PSSetColor (FILE *fd, double col);
+extern void PSSetLineWidth (FILE *fd, double w);
+extern void PSDrawRect (FILE *fd, double x, double y, double w, double h);
 extern void PSString (FILE *fd, double x, double y, char *s);
 extern void PSFooter(FILE *fd);
 #ifdef __cplusplus

@@ -1,4 +1,4 @@
-/* $Id: skelsurf.c,v 1.3 2009-01-22 07:05:36 mcouprie Exp $ */
+/* $Id: skelsurf.c,v 1.4 2009-09-02 14:23:36 mcouprie Exp $ */
 /*! \file skelsurf.c
 
 \brief surfacic binary skeleton guided by a priority image
@@ -16,8 +16,6 @@ the possible choices are:
 \li 1: approximate quadratic euclidean distance
 \li 2: chamfer distance
 \li 3: exact quadratic euclidean distance
-\li 4: 4-distance in 2d
-\li 8: 8-distance in 2d
 \li 6: 6-distance in 3d
 \li 18: 18-distance in 3d
 \li 26: 26-distance in 3d
@@ -58,6 +56,19 @@ References:<BR>
 
 \author Michel Couprie
 */
+
+/*
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 0 26 %RESULTS/skelsurf_b3a_0_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 1 26 %RESULTS/skelsurf_b3a_1_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 2 26 %RESULTS/skelsurf_b3a_2_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 3 26 %RESULTS/skelsurf_b3a_3_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 6 26 %RESULTS/skelsurf_b3a_6_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 18 26 %RESULTS/skelsurf_b3a_18_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 26 26 %RESULTS/skelsurf_b3a_26_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 0 6 %RESULTS/skelsurf_b3a_0_6.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 0 26 %IMAGES/3dbyte/binary/b3a2.pgm %RESULTS/skelsurf_b3a_0_26_i.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
