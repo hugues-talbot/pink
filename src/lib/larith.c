@@ -1,4 +1,4 @@
-/* $Id: larith.c,v 1.6 2009-09-02 14:23:36 mcouprie Exp $ */
+/* $Id: larith.c,v 1.7 2009-09-08 09:06:02 mcouprie Exp $ */
 /* 
   operations arithmetiques : 
     ladd
@@ -802,7 +802,6 @@ int32_t lneg(
 {
   int32_t i;
   uint8_t *pt;
-  uint32_t *PT, vmax;
   int32_t N;
 
   N = rowsize(image) * colsize(image) * depth(image);

@@ -1,4 +1,4 @@
-/* $Id: heightselnb.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: heightselnb.c,v 1.3 2009-09-08 09:06:02 mcouprie Exp $ */
 /*! \file heightselnb.c
 
 \brief height based segmentation by selection of a given number or components
@@ -16,6 +16,14 @@ Connexity = <B>connex</B> ; desired number of components = <B>nb</B>.
 \ingroup connect
 
 \author Michel Couprie
+*/
+
+/*
+%TEST heightselnb %IMAGES/2dbyte/gray/g2gel.pgm 4 3 %RESULTS/heightselnb_g2gel_4_3.pgm
+%TEST heightselnb %IMAGES/2dbyte/gray/g2gel.pgm 8 3 %RESULTS/heightselnb_g2gel_8_3.pgm
+%TEST heightselnb %IMAGES/3dbyte/gray/g3a.pgm 6 3 %RESULTS/heightselnb_g3a_6_3.pgm
+%TEST heightselnb %IMAGES/3dbyte/gray/g3a.pgm 18 3 %RESULTS/heightselnb_g3a_18_3.pgm
+%TEST heightselnb %IMAGES/3dbyte/gray/g3a.pgm 26 3 %RESULTS/heightselnb_g3a_26_3.pgm
 */
 
 #include <stdio.h>

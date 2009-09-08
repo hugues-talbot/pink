@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky2d.c,v 1.3 2009-09-02 14:23:36 mcouprie Exp $ */
+/* $Id: mckhalimsky2d.c,v 1.4 2009-09-08 09:06:02 mcouprie Exp $ */
 /* 
    Librairie mckhalimsky2d
 
@@ -142,7 +142,7 @@ struct xvimage * KhalimskizeNDG2d(struct xvimage *o)
   int32_t ocs = colsize(o);
   struct xvimage *b;
   int32_t brs, bcs, bN;
-  int32_t i, j, ii, jj, n;
+  int32_t i, j;
 
   brs = 2 * ors + 1;
   bcs = 2 * ocs + 1;
@@ -357,7 +357,7 @@ void DeKhalimskize2d_noalloc(struct xvimage *o, struct xvimage * r)
 } /* DeKhalimskize2d_noalloc() */
 
 /* ==================================== */
-struct xvimage * Connex8Obj2d(struct xvimage *k)
+void Connex8Obj2d(struct xvimage *k)
 /* ==================================== */
 {
   SatureAlphacarre2d(k);
@@ -365,7 +365,7 @@ struct xvimage * Connex8Obj2d(struct xvimage *k)
 } /* Connex8Obj2d() */
 
 /* ==================================== */
-struct xvimage * Connex4Obj2d(struct xvimage *k)
+void Connex4Obj2d(struct xvimage *k)
 /* ==================================== */
 {
   int32_t rs = rowsize(k);
@@ -697,8 +697,6 @@ void ndgmoy2d(struct xvimage *b)
 #define F_NAME "ndgmoy2d"
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
-  int32_t N = rs * cs;
-  struct xvimage *bp;
   int32_t i, j, u, n, nb;
   int32_t tab[GRS2D*GCS2D];
 
@@ -1563,7 +1561,7 @@ int32_t EffaceBetaTerminauxSimples2d(struct xvimage *k)
 {
   int32_t rs = rowsize(k);
   int32_t cs = colsize(k);
-  int32_t N = rs * cs;
+  //KLLL  int32_t N = rs * cs;
   uint8_t *K = UCHARDATA(k);
   struct xvimage *g;
   uint8_t *G;  
@@ -1751,7 +1749,6 @@ int32_t Alpha2Simple2d(struct xvimage *b, int32_t i, int32_t j)
 {
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
-  int32_t N = rs * cs;
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
   uint8_t *G;  
@@ -1782,7 +1779,6 @@ int32_t Beta2Simple2d(struct xvimage *b, int32_t i, int32_t j)
 {
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
-  int32_t N = rs * cs;
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
   uint8_t *G;  
@@ -1963,8 +1959,6 @@ int32_t AlphaSimple2d(struct xvimage *b, int32_t i, int32_t j)
 */
 {
   int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t N = rs * cs;
   uint8_t *B = UCHARDATA(b);
   int32_t n; /* pour compter les transitions dans l'alpha d'un carre */
 
@@ -1992,8 +1986,6 @@ int32_t BetaSimple2d(struct xvimage *b, int32_t i, int32_t j)
 */
 {
   int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t N = rs * cs;
   uint8_t *B = UCHARDATA(b);
   int32_t n; /* pour compter les transitions dans le beta d'un singleton */
 
@@ -2179,7 +2171,6 @@ void DrawPsKh2d(struct xvimage *k, int32_t m, int32_t p, int32_t re, int32_t ri,
   int32_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
   int32_t i, j;
-  int32_t X,Y;
 
   printf("%%!PS-Adobe-2.0 EPSF-2.0\n");
   printf("%%%%Creator: cube2ps by MC - 1998\n");

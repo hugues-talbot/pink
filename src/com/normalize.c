@@ -1,4 +1,4 @@
-/* $Id: normalize.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: normalize.c,v 1.3 2009-09-08 09:06:02 mcouprie Exp $ */
 /*! \file normalize.c
 
 \brief normalization of grayscale values
@@ -33,7 +33,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image1;
-  int32_t ret;
   float nmin, nmax;
 
   if ((argc != 3) && (argc != 5))

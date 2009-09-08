@@ -1,4 +1,4 @@
-/* $Id: lhisto.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: lhisto.c,v 1.3 2009-09-08 09:06:02 mcouprie Exp $ */
 /* histogramme d'une image en niveaux de gris */
 /* histogramme bivariable */
 /* Michel Couprie - juillet 1996, novembre 1999 */
@@ -317,7 +317,7 @@ int32_t lhisto2image(uint32_t *histo, int32_t size, struct xvimage **image)
 {
 #undef F_NAME
 #define F_NAME "lhisto2image"
-  int32_t i, j, k, hmax, hbin, tailleclasse;
+  int32_t i, j, hmax, hbin, tailleclasse;
   int32_t rs, cs;
   uint8_t *I;
   int32_t interbar;

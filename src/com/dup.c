@@ -1,4 +1,4 @@
-/* $Id: dup.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: dup.c,v 1.3 2009-09-08 09:06:02 mcouprie Exp $ */
 /*! \file dup.c
 
 \brief duplicates an image
@@ -29,7 +29,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image1;
-  int32_t constante;
 
   if (argc != 3)
   {

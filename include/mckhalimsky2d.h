@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky2d.h,v 1.6 2009-09-02 14:23:35 mcouprie Exp $ */
+/* $Id: mckhalimsky2d.h,v 1.7 2009-09-08 09:06:02 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -33,8 +33,8 @@ extern void ndgmaxbeta2d(struct xvimage *k);
 extern void ndgmoy2d(struct xvimage *k);
 extern void ndg2grad2d(struct xvimage *k);
 extern void ndg4grad2d(struct xvimage *k);
-extern struct xvimage * Connex8Obj2d(struct xvimage *o);
-extern struct xvimage * Connex4Obj2d(struct xvimage *o);
+extern void Connex8Obj2d(struct xvimage *o);
+extern void Connex4Obj2d(struct xvimage *o);
 extern void Betapoint2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n);
 extern void Alphapoint2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n);
 extern void Betacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n);

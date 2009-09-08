@@ -1,4 +1,4 @@
-/* $Id: 2dflowskeleton.c,v 1.1 2009-09-02 14:23:36 mcouprie Exp $ */
+/* $Id: 2dflowskeleton.c,v 1.2 2009-09-08 09:06:02 mcouprie Exp $ */
 /* !\file 2dflowskeleton.c
 
 \brief computes the flow skeleton (see [Cou10]) of a 2D complex
@@ -48,9 +48,9 @@ References:<BR>
 #include <lmedialaxis.h>
 #include <l2dcollapse.h>
 
-#define SHOWGRAPHS
+	      //#define SHOWGRAPHS
 	      //#define SHOWCONFLUENTPOINTS
-#define SHOWIMAGES
+	      //#define SHOWIMAGES
 
 #define FS_EPSILON 0.1
 #define MARGEX1 5

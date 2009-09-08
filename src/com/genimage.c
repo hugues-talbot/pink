@@ -1,4 +1,4 @@
-/* $Id: genimage.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: genimage.c,v 1.3 2009-09-08 09:06:02 mcouprie Exp $ */
 /*! \file genimage.c
 
 \brief generates a monocolor image of given size
@@ -38,9 +38,8 @@ int main(int argc, char **argv)
 {
   struct xvimage * header;
   struct xvimage * image;
-  int32_t i;
   uint8_t *Im;
-  int32_t rs, cs, ds, ps, N;
+  int32_t rs, cs, ds, N;
   uint8_t col;
   double xdim, ydim, zdim;
 

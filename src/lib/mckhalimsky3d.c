@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky3d.c,v 1.4 2009-09-02 14:23:36 mcouprie Exp $ */
+/* $Id: mckhalimsky3d.c,v 1.5 2009-09-08 09:06:02 mcouprie Exp $ */
 /* 
    Librairie mckhalimsky3d
 
@@ -218,7 +218,7 @@ struct xvimage * Khalimskize3d(struct xvimage *o)
   struct xvimage *b;
   int32_t brs, bcs, bds, bps, bN;
   uint8_t *B;
-  int32_t i, j, k, ii, jj, kk, n;
+  int32_t i, j, k;
 
   brs = 2 * ors + 1;
   bcs = 2 * ocs + 1;
@@ -262,7 +262,7 @@ struct xvimage * KhalimskizeNDG3d(struct xvimage *o)
   int32_t ops = ors * ocs;
   struct xvimage *b;
   int32_t brs, bcs, bds, bps, bN;
-  int32_t i, j, k, ii, jj, kk, n;
+  int32_t i, j, k;
 
   brs = 2 * ors + 1;
   bcs = 2 * ocs + 1;
@@ -496,7 +496,6 @@ void ndgmoy3d(struct xvimage *k)
   int32_t cs = colsize(k);
   int32_t ds = depth(k);
   int32_t ps = rs * cs;
-  int32_t N = ps * ds;
   int32_t x, y, z, u, n;
   int32_t tab[GRS3D*GCS3D*GDS3D];
 
@@ -639,7 +638,7 @@ void DeKhalimskize3dOLD(struct xvimage *b, struct xvimage * r)
   int32_t rN = rps * rds;
   uint8_t *B = UCHARDATA(b);
   uint8_t *R = UCHARDATA(r);
-  int32_t i, j, k, ii, jj, kk, n;
+  int32_t i, j, k;
 
   if ((rrs != brs / 2) || (rcs != bcs / 2) || (rds != bds / 2))
   {
@@ -672,7 +671,6 @@ void Dual3d(struct xvimage *bd, struct xvimage *b)
   int32_t cs = colsize(b);
   int32_t ds = depth(b);
   int32_t ps = rs * cs;
-  int32_t N = ps * ds;
   uint8_t *B = UCHARDATA(b);
   uint8_t *BD = UCHARDATA(bd);
   int32_t bdrs = rs+1;
@@ -1765,7 +1763,7 @@ void EffaceLiensBiLibresNonMarques3d(struct xvimage *b)
 } /* EffaceLiensBiLibresNonMarques3d() */
 
 /* ==================================== */
-struct xvimage * Connex26Obj3d(struct xvimage *b)
+void Connex26Obj3d(struct xvimage *b)
 /* ==================================== */
 {
   SatureAlphacarre3d(b);
@@ -1773,7 +1771,7 @@ struct xvimage * Connex26Obj3d(struct xvimage *b)
 } /* Connex26Obj3d() */
 
 /* ==================================== */
-struct xvimage * Connex6Obj3d(struct xvimage *b)
+void Connex6Obj3d(struct xvimage *b)
 /* ==================================== */
 {
   int32_t rs = rowsize(b);
@@ -2599,7 +2597,6 @@ int32_t EffaceBetaTerminauxSimples3d(struct xvimage *b)
   int32_t cs = colsize(b);
   int32_t ps = rs * cs;
   int32_t ds = depth(b);
-  int32_t N = ds * ps;
   uint8_t *B = UCHARDATA(b);
   int32_t i, j, k;
   struct xvimage *g;
@@ -2826,11 +2823,10 @@ int32_t Alpha2Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
   int32_t cs = colsize(b);
   int32_t ps = rs * cs;
   int32_t ds = depth(b);
-  int32_t N = ps * ds;
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
   uint8_t *G;  
-  int32_t rec, tab;  /* resultats des tests recursif et tabule */
+  int32_t tab;  /* resultats des tests */
 
 #ifndef TEST_SIMPLICITE_RECURSIF
 #ifndef TEST_SIMPLICITE_TABULE
@@ -2946,11 +2942,10 @@ int32_t Beta2Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
   int32_t cs = colsize(b);
   int32_t ps = rs * cs;
   int32_t ds = depth(b);
-  int32_t N = ps * ds;
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
   uint8_t *G;  
-  int32_t rec, tab;  /* resultats des tests recursif et tabule */
+  int32_t tab;  /* resultats des tests */
 
 #ifndef TEST_SIMPLICITE_RECURSIF
 #ifndef TEST_SIMPLICITE_TABULE
@@ -3139,13 +3134,11 @@ int32_t Alpha3Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 {
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
   int32_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   int32_t ret;
   uint32_t d;
 
-  /*  if (!B[k*ps+j*rs+i]) return 0; */
   if (i%2)               /* coord x impaire */
   {
     if (j%2)               /* coord y impaire */
@@ -3226,7 +3219,6 @@ int32_t Beta3Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 {
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
   int32_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   int32_t ret;
@@ -3307,13 +3299,11 @@ int32_t Alpha3Simpleh3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, int3
 {
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
   int32_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   int32_t ret;
   uint32_t d;
 
-  /*  if (!B[k*ps+j*rs+i]) return 0; */
   if (i%2)               /* coord x impaire */
   {
     if (j%2)               /* coord y impaire */
@@ -3388,7 +3378,6 @@ int32_t Beta3Simpleh3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, int32
 {
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
   int32_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   int32_t ret;
@@ -3476,7 +3465,6 @@ int32_t Alpha3Simple3dDefinitionRecursive(struct xvimage *b, int32_t i, int32_t 
 {
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
   int32_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
@@ -3488,7 +3476,6 @@ printf("Alpha3Simple3d : %d %d %d\n", i, j, k);
 if (rowsize(b) == 3) printimage(b);
 #endif
 
-/* if (!B[k*ps+j*rs+i]) return 0; */
   if (SINGL3D(i,j,k)) return 0;
   g = AllocGrille3d();
   G = UCHARDATA(g);
@@ -3512,7 +3499,6 @@ int32_t Beta3Simple3dDefinitionRecursive(struct xvimage *b, int32_t i, int32_t j
 {
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
   int32_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
@@ -3524,7 +3510,6 @@ printf("Beta3Simple3d : %d %d %d\n", i, j, k);
 if (rowsize(b) == 3) printimage(b);
 #endif
 
-/* if (!B[k*ps+j*rs+i]) return 0; */
   if (CUBE3D(i,j,k)) return 0;
   g = AllocGrille3d();
   G = UCHARDATA(g);
@@ -3549,7 +3534,7 @@ printf("Beta3Simple3d : retourne %d\n", ret);
 /* ========================================================================== */
 
 /* ==================================== */
-int32_t PropageRec(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+static void PropageRec(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
 /* ==================================== */
 {
   int32_t tab[GRS3D*GCS3D*GDS3D]; 
@@ -3564,7 +3549,7 @@ int32_t PropageRec(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, in
   for (u = 0; u < n; u++) 
     if (B[tab[u]] == VAL_OBJET) 
       PropageRec(B, rs, cs, ds, tab[u] % rs, (tab[u] % ps) / rs, tab[u] / ps);  
-}
+} // PropageRec()
 
 /* ==================================== */
 int32_t Connexe3d(struct xvimage *b)
@@ -3602,7 +3587,7 @@ int32_t Connexe3d(struct xvimage *b)
 } /* Connexe3d() */
 
 /* ==================================== */
-int32_t PropageRecVal(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k, uint8_t Val)
+static void PropageRecVal(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k, uint8_t Val)
 /* ==================================== */
 {
   int32_t tab[GRS3D*GCS3D*GDS3D]; 
@@ -3758,7 +3743,6 @@ int32_t CourbeSimple3dOld(struct xvimage *b)   /* obsolete */
   int32_t cs = colsize(b);
   int32_t ps = rs * cs;
   int32_t ds = depth(b);
-  int32_t N = ds * ps;
   uint8_t *B = UCHARDATA(b);
   int32_t i, j, k;
   int32_t n = 0;
@@ -3794,7 +3778,6 @@ int32_t CourbeSimple3d(struct xvimage *b)
   int32_t cs = colsize(b);
   int32_t ps = rs * cs;
   int32_t ds = depth(b);
-  int32_t N = ds * ps;
   uint8_t *B = UCHARDATA(b);
   int32_t i, j, k;
   int32_t n = 0;
@@ -3838,7 +3821,6 @@ int32_t CourbeSimpleOuverte3d(struct xvimage *b)
   int32_t cs = colsize(b);
   int32_t ps = rs * cs;
   int32_t ds = depth(b);
-  int32_t N = ds * ps;
   uint8_t *B = UCHARDATA(b);
   int32_t i, j, k;
   int32_t n = 0;    /* nombre total de points */
@@ -3886,10 +3868,8 @@ int32_t Arbre3d(struct xvimage *b)
   int32_t cs = colsize(b);
   int32_t ps = rs * cs;
   int32_t ds = depth(b);
-  int32_t N = ds * ps;
   uint8_t *B = UCHARDATA(b);
   int32_t i, j, k;
-  int32_t n = 0;
   int32_t stabilite;
 
   do
@@ -3978,8 +3958,6 @@ int32_t Tbar3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvimag
   int32_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   uint8_t *G = UCHARDATA(g);
-  int32_t N = rs * cs * ds;
-  int32_t x;
 
   CopieThetacarreCompl3d(G, B, rs, cs, ds, i, j, k);
   return NbCompConnexe3d(g);
@@ -3997,7 +3975,6 @@ int32_t Surfend3d_SANSBDD(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 {
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
   int32_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
@@ -4019,13 +3996,11 @@ int32_t Surfend3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 {
   int32_t rs = rowsize(b);
   int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
   int32_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   int32_t ret;
   uint32_t d, e;
 
-  /*  if (!B[k*ps+j*rs+i]) return 0; */
   if (i%2)               /* coord x impaire */
   {
     if (j%2)               /* coord y impaire */

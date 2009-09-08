@@ -49,7 +49,7 @@ int main(int argc, char **argv)
   uint32_t *FL;
   uint32_t * histo;
   uint32_t * histolisse;
-  int32_t x, y, z, somme, diff, compteur, lissage;
+  int32_t x, y, somme, diff, compteur, lissage;
 
   if ((argc != 5) && (argc != 6))
   {

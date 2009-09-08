@@ -1,4 +1,4 @@
-/* $Id: mcdrawps.c,v 1.2 2009-09-02 14:23:36 mcouprie Exp $ */
+/* $Id: mcdrawps.c,v 1.3 2009-09-08 09:06:02 mcouprie Exp $ */
 
 /*************************************************
     Quelques fonctions pour la generation de postscript
@@ -127,7 +127,7 @@ void PSDrawRect (FILE *fd, double x, double y, double w, double h)
 void PSString (FILE *fd, double x, double y, char *s)
 /*========================================*/
 {
-  int xx, yy, rr;
+  int xx, yy;
   xx = (int)x;
   yy = (int)y;
   fprintf(fd, "newpath ");

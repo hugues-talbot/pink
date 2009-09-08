@@ -1,4 +1,4 @@
-/* $Id: mccodimage.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* $Id: mccodimage.c,v 1.2 2009-09-08 09:06:02 mcouprie Exp $ */
 /* 
    Librairie mccodimage : 
 
@@ -170,6 +170,8 @@ int32_t voisin6(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
 /* N : taille de l'image 3D */
 /* retourne -1 si le voisin n'existe pas */
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "voisin6"
 {
   switch(k)
   {
@@ -179,6 +181,9 @@ int32_t voisin6(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
   case SUD:        if ((i%ps)<ps-rs) return i+rs; else return -1;
   case DEVANT:     if (i>=ps) return i-ps; else return -1;
   case DERRIERE:   if (i<N-ps) return i+ps; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
@@ -191,6 +196,8 @@ int32_t voisin26(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
 /* N : taille de l'image 3D */
 /* retourne -1 si le voisin n'existe pas */
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "voisin26"
 {
   switch(k)
   {
@@ -223,6 +230,9 @@ int32_t voisin26(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
   case 23: if ((i>=ps)&&(i%ps<ps-rs)) return -ps+i+rs; else return -1;
   case 24: if ((i>=ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) return -ps+i+rs+1; else return -1;
   case 25: if ((i>=ps)) return -ps+i; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
@@ -235,6 +245,8 @@ int32_t voisin18(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
 /* N : taille de l'image 3D */
 /* retourne -1 si le voisin n'existe pas */
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "voisin18"
 {
   switch(k)
   {
@@ -259,6 +271,9 @@ int32_t voisin18(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
   case 15: if ((i>=ps)&&(i%rs!=0)) return -ps+i-1; else return -1;
   case 16: if ((i>=ps)&&(i%ps<ps-rs)) return -ps+i+rs; else return -1;
   case 17: if ((i>=ps)) return -ps+i; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
@@ -367,6 +382,8 @@ int32_t voisin5(int32_t i, int32_t k, int32_t rs, int32_t nb)
      4 + + + 7
      + 5 + 6 +
 */
+#undef F_NAME
+#define F_NAME "voisin5"
 {
   int32_t rs2;
   switch(k)
@@ -379,6 +396,9 @@ int32_t voisin5(int32_t i, int32_t k, int32_t rs, int32_t nb)
   case 5: rs2 = rs+rs; if ((i%rs>0)&&(i<nb-rs2))    return i +rs2 -1; else return -1;
   case 6: rs2 = rs+rs; if ((i%rs<rs-1)&&(i<nb-rs2)) return i +rs2 +1; else return -1;
   case 7:              if ((i%rs<rs-2)&&(i<nb-rs))  return i +rs  +2;  else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
@@ -453,7 +473,7 @@ int32_t voisinNESO(int32_t i, int32_t k, int32_t rs, int32_t nb)
 
 int32_t voisin14b(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
 {
-  int32_t px, py, pz, ix, iy, iz;
+  int32_t px, py, pz;
   px = (i%rs)%2;
   py = (i/ps)%2;
   pz = ((i%ps)/rs)%2;
@@ -474,6 +494,8 @@ int32_t voisin14b(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
    les voisin sont numérotés suivant cet ordre
 */
 int32_t voisinONAV(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
+#undef F_NAME
+#define F_NAME "voisinONAV"
 {
   switch(k)
   {
@@ -493,10 +515,15 @@ int32_t voisinONAV(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
   case 11: if ( (i < N-ps ) && (i%rs < rs-1)) return i+ps+1; else return -1;
   case 12: if ( (i < N-ps) &&  (i%ps < ps-rs)) return i+ps+rs; else return -1;
   case 13: if ((i < N-ps ) && (i%rs < rs-1)  && (i%ps < ps-rs)) return i+ps+rs+1; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
 int32_t  voisinENAR(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
+#undef F_NAME
+#define F_NAME "voisinENAR"
 {
   switch(k)
   {
@@ -516,10 +543,15 @@ int32_t  voisinENAR(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
   case 11: if ( (i%rs < rs-1) && ((i%ps)/rs != 0) && (i < N-ps ))  return i+ps-rs+1; else return -1;
   case 12: if (i < N-ps ) return i+ps; else return -1;
   case 13: if ((i%rs < rs-1) && (i < N-ps )) return i+ps+1; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
 int32_t voisinENAV(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
+#undef F_NAME
+#define F_NAME "voisinENAV"
 {
   switch(k)
   {
@@ -539,10 +571,15 @@ int32_t voisinENAV(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
   case 11: if (i < N-ps) return i+ps; else return -1; 
   case 12: if ( (i%rs !=0) && (i%ps<ps-rs) && (i < N-ps )) return i+ps+rs-1; else return -1;
   case 13: if ( (i%ps<ps-rs) && (i < N-ps ) ) return i+ps+rs; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
 int32_t voisinONAR(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
+#undef F_NAME
+#define F_NAME "voisinONAR"
 {
   switch(k)
   {
@@ -562,6 +599,9 @@ int32_t voisinONAR(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
   case 11: if (((i%ps)/rs != 0) &&   (i < N-ps )) return i+ps-rs; else return -1;
   case 12: if ((i%rs !=0) &&  (i < N-ps )) return i+ps-1; else return -1;
   case 13: if (i < N-ps ) return i+ps; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 

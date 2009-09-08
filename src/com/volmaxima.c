@@ -1,4 +1,4 @@
-/* $Id: volmaxima.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: volmaxima.c,v 1.3 2009-09-08 09:06:02 mcouprie Exp $ */
 /*! \file volmaxima.c
 
 \brief volume-based filtering
@@ -14,6 +14,14 @@ Volume-based filtering with connexity <B>connex</B> and volume <B>vol</B>.
 \ingroup connect
 
 \author Michel Couprie
+*/
+
+/*
+%TEST volmaxima %IMAGES/2dbyte/gray/g2gel.pgm 4 20 %RESULTS/volmaxima_g2gel_4_20.pgm
+%TEST volmaxima %IMAGES/2dbyte/gray/g2gel.pgm 8 20 %RESULTS/volmaxima_g2gel_8_20.pgm
+%TEST volmaxima %IMAGES/3dbyte/gray/g3a.pgm 6 20 %RESULTS/volmaxima_g3a_6_20.pgm
+%TEST volmaxima %IMAGES/3dbyte/gray/g3a.pgm 18 20 %RESULTS/volmaxima_g3a_18_20.pgm
+%TEST volmaxima %IMAGES/3dbyte/gray/g3a.pgm 26 20 %RESULTS/volmaxima_g3a_26_20.pgm
 */
 
 #include <stdio.h>

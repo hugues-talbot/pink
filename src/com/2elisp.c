@@ -1,4 +1,4 @@
-/* $Id: 2elisp.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: 2elisp.c,v 1.3 2009-09-08 09:06:02 mcouprie Exp $ */
 /* \file 2elisp.c
 
 \brief
@@ -34,7 +34,6 @@ int main(int argc, char **argv)
   struct xvimage * underl = NULL;
   FILE *fd = NULL;
   int32_t rs, cs, x, y;
-  char *macro;
 
   if ((argc < 3) || (argc > 5))
   {

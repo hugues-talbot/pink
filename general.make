@@ -909,7 +909,7 @@ $(BDIR)/filtreordre:	$(CDIR)/filtreordre.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/filtreordre.c $(ODIR)/lfiltreordre.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/filtreordre
 
 $(BDIR)/fmm: $(CDIR)/fmm.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h $(ODIR)/lfmm.o $(ODIR)/fmmgeodist.o $(ODIR)/lfmmdist.o $(ODIR)/bimage.o $(ODIR)/bimage_utils.o $(ODIR)/lstb_io.o
-	     $(CC) -Wall $(CCFLAGS) -I$(IDIR) $(CDIR)/fmm.c  $(ODIR)/lfmm.o $(ODIR)/lfmmdist.o $(ODIR)/fmmgeodist.o  $(ODIR)/bimage.o $(ODIR)/bimage_utils.o $(ODIR)/lstb_io.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/fmm
+	     $(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/fmm.c  $(ODIR)/lfmm.o $(ODIR)/lfmmdist.o $(ODIR)/fmmgeodist.o  $(ODIR)/bimage.o $(ODIR)/bimage_utils.o $(ODIR)/lstb_io.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/fmm
 
 $(BDIR)/granulometry:	$(CDIR)/granulometry.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/ldist.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/granulometry.c $(ODIR)/ldist.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/granulometry
@@ -2007,22 +2007,22 @@ $(ODIR)/lvoronoilabelling.o:	$(LDIR)/lvoronoilabelling.c $(IDIR)/mccodimage.h $(
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lvoronoilabelling.c -o $(ODIR)/lvoronoilabelling.o
 
 $(ODIR)/lfmm.o: $(LDIR)/lfmm.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h
-	$(CC) -c -Wall $(CCFLAGS) -I$(IDIR) $(LDIR)/lfmm.c -o $(ODIR)/lfmm.o
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lfmm.c -o $(ODIR)/lfmm.o
 
 $(ODIR)/bimage.o: $(LDIR)/bimage.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h
-	$(CC) -c -Wall $(CCFLAGS) -I$(IDIR) $(LDIR)/bimage.c -o $(ODIR)/bimage.o
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/bimage.c -o $(ODIR)/bimage.o
 
 $(ODIR)/bimage_utils.o: $(LDIR)/bimage_utils.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h
-	$(CC) -c -Wall $(CCFLAGS) -I$(IDIR) $(LDIR)/bimage_utils.c -o $(ODIR)/bimage_utils.o
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/bimage_utils.c -o $(ODIR)/bimage_utils.o
 
 $(ODIR)/lstb_io.o: $(LDIR)/lstb_io.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h
-	$(CC) -c -Wall $(CCFLAGS) -I$(IDIR) $(LDIR)/lstb_io.c -o $(ODIR)/lstb_io.o
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lstb_io.c -o $(ODIR)/lstb_io.o
 
 $(ODIR)/fmmgeodist.o: $(LDIR)/fmmgeodist.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h
-	$(CC) -c -Wall $(CCFLAGS) -I$(IDIR) $(LDIR)/fmmgeodist.c -o $(ODIR)/fmmgeodist.o
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/fmmgeodist.c -o $(ODIR)/fmmgeodist.o
 
 $(ODIR)/lfmmdist.o: $(LDIR)/lfmmdist.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h
-	$(CC) -c -Wall $(CCFLAGS) -I$(IDIR) $(LDIR)/lfmmdist.c -o $(ODIR)/lfmmdist.o
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lfmmdist.c -o $(ODIR)/lfmmdist.o
 
 # *********************************
 # CONNECT

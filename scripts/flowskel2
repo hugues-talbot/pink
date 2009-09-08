@@ -1,18 +1,16 @@
 #!/bin/sh
-USAGE="Usage: $0 in out"
-if [ $# -gt 2 ]
+USAGE="Usage: $0 in seuil out"
+if [ $# -gt 3 ]
 then
 	echo $USAGE
         exit
 fi
-if [ $# -lt 2 ]
+if [ $# -lt 3 ]
 then
 	echo $USAGE
         exit
 fi
-2dkhalimskize $1 h _flsk2.k
-lambdamedialaxis _flsk2.k _flsk2_lam.k
-normalize _flsk2.k 0 1 _flsk2_func.k
-byte2float _flsk2_func.k _flsk2_func.k
-2dtopoflow _flsk2.k _flsk2_lam.k _flsk2_func.k _flsk2.graph
-graph2pgm _flsk2.graph _flsk2_lam.k $2
+3dflowskeleton $1 2 _flsk1
+seuil _flsk1 $2 _flsk2
+3dseltopo _flsk2 2 3 0 100 0 100 _flsk3
+3dpardircollapse _flsk2 -1 _flsk3 $3

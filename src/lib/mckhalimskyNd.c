@@ -1,4 +1,4 @@
-/* $Id: mckhalimskyNd.c,v 1.2 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: mckhalimskyNd.c,v 1.3 2009-09-08 09:06:02 mcouprie Exp $ */
 /* 
    Librairie mckhalimskyNd
 
@@ -60,8 +60,8 @@
 #include <mccodimage.h>
 #include <mckhalimskyNd.h>
 
-static int32_t debug=0;
 /*
+static int32_t debug=0;
 #define DEBUGCS
 #define DEBUGSS
 #define DEBUGCONNEXE
@@ -498,7 +498,7 @@ void betamoinsNd(Khalimsky *K, int32_t x, int32_t *L, int32_t *nL)
           ancetres (stricts) de x dans la grille
 */
 {
-  int32_t N = K->N; int32_t *C = K->C; uint8_t *S = K->S; 
+  int32_t N = K->N; int32_t *C = K->C;
   int32_t i, j, n, u, d, y;
   int32_t ci;                /* compte le nombre de coord. impaires */
   int32_t v;                 /* nombre de points dans betamoins(x) U {x} */
@@ -661,7 +661,7 @@ void betaplusNd(Khalimsky *K, int32_t x, int32_t *L, int32_t *nL)
           descendants (stricts) de x dans la grille
 */
 {
-  int32_t N = K->N; int32_t *C = K->C; uint8_t *S = K->S; 
+  int32_t N = K->N; int32_t *C = K->C;
   int32_t i, j, n, u, d, y;
   int32_t ci;                /* compte le nombre de coord. paires */
   int32_t v;                 /* nombre de points dans betaplus(x) U {x} */
@@ -1071,7 +1071,6 @@ void CopieAncetresNd(Khalimsky *Kc, Khalimsky *K, int32_t x)                 /* 
     vecteur y = (xp - x) a chaque point du voisinage de x.
 */
 {
-  int32_t *D = K->D;
   int32_t Nc = Kc->N; int32_t *Dc = Kc->D; uint8_t *Sc = Kc->S; 
   int32_t i, u, n;
   int32_t *tX = AllocNd();
@@ -1134,7 +1133,7 @@ printf("EnsembleSimpleNd\n");
 int32_t CliqueSimpleNd(Khalimsky *K, int32_t x)
 /* ==================================== */
 {
-  int32_t N = K->N; uint8_t *S = K->S; 
+  uint8_t *S = K->S; 
   int32_t ret;
   Khalimsky *G;
 
@@ -1461,7 +1460,7 @@ void PropageRecNd(Khalimsky *K, int32_t x, int32_t bit)
 /* ==================================== */
 /* propage recursivement le bit "bit" dans le theta du point x */
 {
-  int32_t N = K->N; int32_t *D = K->D; uint8_t *S = K->S; 
+  uint8_t *S = K->S; 
   int32_t u, n = 0;
   int32_t *L = AllocVoisListNd();
   Set(S[x],bit);

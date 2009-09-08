@@ -1,4 +1,4 @@
-/* $Id: l3dcollapse.c,v 1.4 2009-09-02 14:23:36 mcouprie Exp $ */
+/* $Id: l3dcollapse.c,v 1.5 2009-09-08 09:06:02 mcouprie Exp $ */
 /* 
 
    l3dcollapse: collapse guidé et contraint (OBSOLETE)
@@ -609,7 +609,7 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
 {
   int32_t i, g, f, u, v, n, xf, yf, zf, xg, yg, zg, xv, yv, zv;
   int32_t rs, cs, ps, ds, N;
-  int32_t dim, ori, dir, direc, orien;
+  int32_t dim, ori, dir, direc, orien, ncol;
   uint8_t * K;
   uint8_t * I = NULL;
   Rlifo * RLIFO;
@@ -694,10 +694,16 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
   /*              DEBUT BOUCLE PRINCIPALE             */
   /* ================================================ */
 
-  while (!RlifoVide(RLIFO) && nsteps > 0)
+  ncol = 1;
+  while (!RlifoVide(RLIFO) && (nsteps > 0) && (ncol > 0))
   {
-    nsteps --;
 
+#ifdef VERBOSE
+    fprintf(stderr, "%s: steps remaining: %d\n", F_NAME, nsteps);
+#endif
+
+    nsteps --;
+    ncol = 0;
     for (dir = 0; dir <= 2; dir++) // For all face directions
       for (ori = 0; ori <= 1; ori++) // For both orientations
       {
@@ -717,6 +723,7 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
 	      if ((DIM3D(xf,yf,zf) == dim) && (direc == dir) && (orien == ori))
 	      {
 		K[g] = K[f] = VAL_NULLE;
+		ncol += 1;
 		// Préparation sous-étapes suivantes
 		Alphacarre3d(rs, cs, ds, xf, yf, zf, tab, &n);
 		for (u = 0; u < n; u += 1)
@@ -789,6 +796,10 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
     RLIFOt = RLIFOb;
     RLIFOb = RLIFO;
     RLIFO = RLIFOt;
+
+#ifdef VERBOSE
+    fprintf(stderr, "%s: %d collapses\n", F_NAME, ncol);
+#endif
 
   } // while (!RlifoVide(RLIFO) && nsteps > 0)
 
@@ -1231,7 +1242,7 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 	for (dim = 3; dim >= 2; dim--) // For dimensions in decreasing order
 #endif
 	{
-	  for (i = 0; i < RLIFO->Sp; i += 2) // Scan the free faces list (dim 3)
+	  for (i = 0; i < RLIFO->Sp; i += 2) // Scan the free faces list
 	  {
 	    f = RLIFO->Pts[i];
 	    g = RLIFO->Pts[i+1];
@@ -1262,7 +1273,8 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 		{
 		  gg = tab[u];
 		  xg = gg % rs; yg = (gg % ps) / rs; zg = gg / ps;
-#ifdef OLDVERSION
+#define OLDVERSION1
+#ifdef OLDVERSION1
 		  if (K[gg]) 
 		  {
 #ifdef TRACECONSGRAPH

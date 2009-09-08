@@ -1,4 +1,4 @@
-/* $Id: mctopo3d.h,v 1.2 2009-01-07 12:46:34 mcouprie Exp $ */
+/* $Id: mctopo3d.h,v 1.3 2009-09-08 09:06:02 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -52,7 +52,7 @@ extern int32_t preparecubesh(
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N);                      /* taille image */
-extern int32_t top6(
+extern void top6(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -60,7 +60,7 @@ extern int32_t top6(
   int32_t N,                       /* taille image */
   int32_t *t,
   int32_t *tb);                    /* resultats */
-extern int32_t top18(
+extern void top18(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -68,7 +68,7 @@ extern int32_t top18(
   int32_t N,                       /* taille image */
   int32_t *t,
   int32_t *tb);                    /* resultats */
-extern int32_t top26(
+extern void top26(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */

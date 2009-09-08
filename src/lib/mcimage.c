@@ -1,4 +1,4 @@
-/* $Id: mcimage.c,v 1.2 2009-06-19 06:21:29 mcouprie Exp $ */
+/* $Id: mcimage.c,v 1.3 2009-09-08 09:06:02 mcouprie Exp $ */
 /* 
    Librairie mcimage : 
 
@@ -693,7 +693,7 @@ void writerawimage(struct xvimage * image, char *filename)
 #define F_NAME "writerawimage"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, d, N, i, ret;
+  int32_t rs, cs, d, N, ret;
 
   rs = rowsize(image);
   cs = colsize(image);
@@ -883,7 +883,7 @@ void writeascimage(struct xvimage * image, char *filename)
 #define F_NAME "writeascimage"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, ps, d, nndg, N, i;
+  int32_t rs, cs, ps, d, N, i;
 
   fd = fopen(filename,"w");
   if (!fd)
@@ -1063,7 +1063,7 @@ void writelongimage(struct xvimage * image,  char *filename)
 */
 {
   FILE *fd = NULL;
-  int32_t rs, cs, d, nndg, N, i;
+  int32_t rs, cs, d, nndg, N;
   int32_t ret;
 
 #ifdef UNIXIO
@@ -1320,7 +1320,7 @@ struct xvimage * readheader(char *filename)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, ndgmax, N, i;
+  int32_t rs, cs, d, ndgmax;
   struct xvimage * image;
   int32_t ascii;  
   int32_t typepixel;
@@ -1680,7 +1680,7 @@ struct xvimage * readlongimage(char *filename)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, nndg, N, i;
+  int32_t rs, cs, d, nndg, N;
   struct xvimage * image;
   int32_t c, ret;
   char *read;

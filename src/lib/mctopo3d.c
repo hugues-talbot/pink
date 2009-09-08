@@ -1,4 +1,4 @@
-/* $Id: mctopo3d.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* $Id: mctopo3d.c,v 1.2 2009-09-08 09:06:02 mcouprie Exp $ */
 /* 
 Librairie mctopo3D : 
 
@@ -758,7 +758,7 @@ int32_t preparecubesh_l(
 /* ******************************************************************************* */
 
 /* ==================================== */
-int32_t top6(                   /* pour un objet en 6-connexite */
+void top6(                   /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -777,7 +777,7 @@ int32_t top6(                   /* pour un objet en 6-connexite */
 } /* top6() */
 
 /* ==================================== */
-int32_t top18(                   /* pour un objet en 18-connexite */
+void top18(                   /* pour un objet en 18-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -796,7 +796,7 @@ int32_t top18(                   /* pour un objet en 18-connexite */
 } /* top18() */
 
 /* ==================================== */
-int32_t top26(                   /* pour un objet en 26-connexite */
+void top26(                   /* pour un objet en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */

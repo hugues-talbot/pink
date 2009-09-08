@@ -1,4 +1,4 @@
-/* $Id: mctopo3d_table.c,v 1.3 2009-01-06 13:18:15 mcouprie Exp $ */
+/* $Id: mctopo3d_table.c,v 1.4 2009-09-08 09:06:02 mcouprie Exp $ */
 /* 
 Librairie mctopo3D : 
 
@@ -402,23 +402,6 @@ uint8_t T26(voxel * cube)
   return nbcomp(cube, 26);
 } /* T26() */
 
-/* ========================================== */
-static uint8_t simple(voxel * cube, voxel * cubec, uint8_t connex)
-/* ========================================== */
-#undef F_NAME
-#define F_NAME ""
-{
-  switch (connex)
-  {
-    case 6: return (uint8_t)((T6(cube) == 1) && (T26(cubec) == 1));
-    case 18: return (uint8_t)((T18(cube) == 1) && (T6p(cubec) == 1));
-    case 26: return (uint8_t)((T26(cube) == 1) && (T6(cubec) == 1));
-    default: 
-      fprintf(stderr, "simple: mauvaise connexite : %d\n", connex); 
-      exit(0); 
-  } /* switch (connex) */
-} /* simple() */
-
 /* ==================================== */
 int32_t preparecubes(
   uint8_t *B,            /* pointeur base image */
@@ -482,7 +465,7 @@ int32_t preparecubesh_l(
 /* ******************************************************************************* */
 
 /* ==================================== */
-int32_t top6(                   /* pour un objet en 6-connexite */
+void top6(                   /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -501,7 +484,7 @@ int32_t top6(                   /* pour un objet en 6-connexite */
 } /* top6() */
 
 /* ==================================== */
-int32_t top18(                   /* pour un objet en 18-connexite */
+void top18(                   /* pour un objet en 18-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -520,7 +503,7 @@ int32_t top18(                   /* pour un objet en 18-connexite */
 } /* top18() */
 
 /* ==================================== */
-int32_t top26(                   /* pour un objet en 26-connexite */
+void top26(                   /* pour un objet en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1386,8 +1369,6 @@ int32_t hseparant6(  /* teste si un point est hseparant - minima 6-connexes
   int32_t N)                       /* taille image */
 /* ==================================== */
 {
-  int32_t k, q;
-
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
       (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */

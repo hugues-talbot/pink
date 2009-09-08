@@ -1,4 +1,4 @@
-/* $Id: moyenne.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+/* $Id: moyenne.c,v 1.3 2009-09-08 09:06:02 mcouprie Exp $ */
 /* \file moyenne.c
 
 \brief 
@@ -31,7 +31,6 @@ int main(int argc, char **argv)
   uint8_t *I;
   uint32_t * F;
   int32_t rs, cs, d, N;
-  int32_t oldrs, oldcs, oldd;
   int32_t i, x;
 
   if (argc < 3)

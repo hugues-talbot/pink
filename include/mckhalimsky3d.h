@@ -1,4 +1,4 @@
-/* $Id: mckhalimsky3d.h,v 1.4 2009-09-02 14:23:35 mcouprie Exp $ */
+/* $Id: mckhalimsky3d.h,v 1.5 2009-09-08 09:06:02 mcouprie Exp $ */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -52,8 +52,8 @@ extern void ndgmoy3d(struct xvimage *k);
 extern struct xvimage * DeKhalimskize3d(struct xvimage *o);
 extern void Dual3d(struct xvimage *bd, struct xvimage *b);
 extern void InitKhalimsky3d(struct xvimage *b, uint32_t c);
-extern struct xvimage * Connex26Obj3d(struct xvimage *o);
-extern struct xvimage * Connex6Obj3d(struct xvimage *o);
+extern void Connex26Obj3d(struct xvimage *o);
+extern void Connex6Obj3d(struct xvimage *o);
 extern void Alphacarre3d(int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k, int32_t *tab, int32_t *n);
 extern void Betacarre3d(int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k, int32_t *tab, int32_t *n);
 extern void Thetacarre3d(int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k, int32_t *tab, int32_t *n);
