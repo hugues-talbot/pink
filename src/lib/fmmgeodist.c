@@ -24,7 +24,7 @@
 
   HISTORY:
   Created by Ben Appleton (28/11/02)
-  Contact: appleton@itee.uq.edu.au
+  Contact: appleton@itee.uq.edu.au / h.talbot@esiee.fr
 **********************************************************************************************/
 
 #include <stdio.h>
