@@ -667,7 +667,7 @@ int32_t llabeldil(struct xvimage *f,
 #undef F_NAME
 #define F_NAME "llabeldil"
 {
-  int32_t x, y, z, v, w;           /* index muet de pixel */
+  int32_t x, y, v, w;           /* index muet de pixel */
   register int32_t i, j;           /* index muet */
   register int32_t k, l, c;        /* index muet */
   int32_t rs = rowsize(f);         /* taille ligne */
@@ -793,9 +793,8 @@ int32_t llabelbin(struct xvimage *f,
 #undef F_NAME
 #define F_NAME "llabelbin"
 {
-  int32_t x, y, z, v, w;           /* index muet de pixel */
-  register int32_t i, j;           /* index muet */
-  register int32_t k, l, c;        /* index muet */
+  int32_t x, v, w;           /* index muet de pixel */
+  register int32_t k;        /* index muet */
   int32_t rs = rowsize(f);         /* taille ligne */
   int32_t cs = colsize(f);         /* taille colonne */
   int32_t ds = depth(f);           /* nb plans */

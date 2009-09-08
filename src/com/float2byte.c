@@ -57,7 +57,7 @@ int main(int argc, char **argv)
   struct xvimage * imagebyte;
   float *L;
   uint8_t *B;
-  int32_t x, i;
+  int32_t x;
   int32_t mode = 0;
   float Min, Max, t;
   double T;

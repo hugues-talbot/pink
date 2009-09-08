@@ -249,8 +249,6 @@ void read_graphic_extension(FILE *fd, FILE *fdout)
 void write_graphic_extension(int32_t delay, FILE *fdout)
 /* =============================================================== */
 {
-  uint8_t flags, transcolindex;
-
   fputc(0x21, fdout); /* extension introducer */
   fputc(0xF9, fdout); /* graphic control label */
   fputc(4, fdout);    /* set block size */
@@ -343,7 +341,7 @@ void read_application_extension(FILE *fd, FILE *fdout)
   c = getc(fd); /* get block size */
   if (c != 11)
   {
-    fprintf(stderr, "read_application_extension: FORMAT ERROR\n", ret);
+    fprintf(stderr, "read_application_extension: FORMAT ERROR\n");
     exit(1);
   }
   ret = fread(buf, sizeof(char), c, fd); /* skip block */
@@ -511,9 +509,6 @@ int main(int argc, char **argv)
   FILE *fd = NULL;
   FILE *fdout = NULL;
   char bufname[256];
-  char bufindex[256];
-  int32_t ret;
-  int32_t c;
   int32_t i, debut, fin, delai;
   int32_t namelen;
   int32_t interact = 0;
@@ -560,7 +555,6 @@ int main(int argc, char **argv)
   read_logical_screen(fd, fdout);
   if (interact)
   {
-    char rep[64];
     int32_t d;
     printf("delay for image %d (-1 to quit interactive mode)?\n", debut);
     scanf("%ld", &d);
@@ -601,7 +595,6 @@ int main(int argc, char **argv)
     skip_logical_screen(fd);
     if (interact)
     {
-      char rep[64];
       int32_t d;
       printf("delay for image %d (-1 to quit interactive mode)?\n", i);
       scanf("%ld", &d);

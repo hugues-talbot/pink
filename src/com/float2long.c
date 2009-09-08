@@ -44,8 +44,8 @@ int main(int argc, char **argv)
   struct xvimage * imagelong;
   float *L;
   int32_t *B;
-  int32_t x, i;
-  int32_t rs, cs, d, N, tmp;
+  int32_t x;
+  int32_t rs, cs, d, N;
   double T, offset, factor;
 
   if (argc != 5)

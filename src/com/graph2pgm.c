@@ -39,8 +39,7 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  FILE *fd = NULL;
-  int32_t rs, cs, ds, ps, N, x, y, z, v, n, i;
+  int32_t rs, cs, ds, ps, N, i;
   char type;
   graphe *g;
 

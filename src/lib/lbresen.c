@@ -961,7 +961,6 @@ void lellipsearclist(ellipse *ell, int32_t rs, int32_t cs, int32_t xp, int32_t y
 ellipse *AllocEllipseList(int32_t rs, int32_t cs)
 /* ================================================= */
 {
-  int32_t i;
   ellipse *ell = (ellipse *)calloc(1,sizeof(ellipse));
   if (ell == NULL)
   {   fprintf(stderr,"allocellipselist() : malloc failed\n");

@@ -472,7 +472,6 @@ int32_t lin_inverse_gauss(double *TB, double *InvB, int32_t N)
       int32_t npivot;
       int32_t mB = N + 2;
       int32_t mA = (N+1) * 2;
-      int32_t mC = N + 1;
       double *B = (double *)calloc((N+1) * (N+2), sizeof(double));
       double *A = (double *)calloc((N+1) * (N+1) * 2, sizeof(double));
       double eps = 10e-20;
@@ -978,7 +977,6 @@ int32_t lidentifyline(double *pbx, double *pby, int32_t npb, double *a, double *
 {
   int32_t i, ret, noresult = 1;
   double *X, *Y, *XtX, *XtXi, *XtY, *RtXtY, *YtY, *R;
-  double err;
 
   if (npb < 2)
   {

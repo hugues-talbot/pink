@@ -375,7 +375,7 @@ int32_t solsyst2(
 {
   mat22 m1;
   double d, d1, d2;
-  int32_t i, j;
+  int32_t i;
   
   d = det2(m);
   if (((d >= 0) && (d < MCGEO_EPSILON)) || ((d <= 0) && (-d < MCGEO_EPSILON))) return 0;
@@ -708,7 +708,7 @@ int32_t writescene(scene *scn, char *filename)
 #define F_NAME "writescene"
 {
   FILE *fd = NULL;
-  int32_t i, j, nobj, npoints;
+  int32_t i, j, nobj;
 
   fd = fopen(filename, "w");
   if (!fd)
@@ -888,7 +888,7 @@ scene * readscene(char *filename)
 #define F_NAME "readscene"
 {
   FILE *fd = NULL;
-  int32_t i, j, nobj, npoints, ret;
+  int32_t j, nobj, ret;
   scene *scn;
   char buf[1024];
 
@@ -958,7 +958,6 @@ object * copyline(object *o)
 #define F_NAME "copyline"
 {
   int32_t npoints, j;
-  double x, y, z;
   object *oc;
 
   npoints = o->npoints;
@@ -994,7 +993,6 @@ object * copyclosedline(object *o)
 #define F_NAME "copyclosedline"
 {
   int32_t npoints, j;
-  double x, y, z;
   object *oc;
 
   npoints = o->npoints;
@@ -1028,7 +1026,6 @@ object * copyspline(object *o)
 #define F_NAME "copyspline"
 {
   int32_t npoints, j;
-  double x, y, z;
   object *oc;
 
   npoints = o->npoints;
@@ -1064,7 +1061,6 @@ object * copyclosedspline(object *o)
 #define F_NAME "copyclosedspline"
 {
   int32_t npoints, j;
-  double x, y, z;
   object *oc;
 
   npoints = o->npoints;

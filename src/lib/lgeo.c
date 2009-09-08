@@ -192,7 +192,7 @@ rectangle *AjusteRectangle(int32_t *pb, int32_t npb, double xc, double yc, doubl
  */
 {
   rectangle *R;
-  double c, cp, cm, d; 
+  double c, cp, cm;
   double dh = INCRH;
   double dw = INCRW;
   double dx = INCRX;
@@ -364,7 +364,7 @@ rectanglearrondi *AjusteRectangleArrondi(int32_t *pb, int32_t npb, double xc, do
 /* ==================================== */
 {
   rectanglearrondi *R;
-  double c, cp, cm, d; 
+  double c, cp, cm;
   double dh = INCRH;
   double dw = INCRW;
   double dx = INCRX;
@@ -536,8 +536,8 @@ int32_t lfenetreincluante(
 #undef F_NAME
 #define F_NAME "lfenetreincluante"
 {
-  int32_t i, k, l, n;
-  int32_t w, x, y, z;
+  int32_t k, n;
+  int32_t w, x, y;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
@@ -681,7 +681,6 @@ int32_t lboxmin(struct xvimage *img)
   int32_t cs = colsize(img);
   int32_t ds = depth(img);
   int32_t ps = rs * cs;
-  int32_t N = ps * ds;          /* taille image */
   int32_t xmin, xmax, ymin, ymax, zmin, zmax;
 
   xmin = rs; xmax = -1; 
@@ -728,8 +727,8 @@ int32_t lmatchrect(
 #undef F_NAME
 #define F_NAME "lmatchrect"
 {
-  int32_t i, k, l, n;
-  int32_t w, x, y, z;
+  int32_t k, n;
+  int32_t w, x, y;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
@@ -746,8 +745,7 @@ int32_t lmatchrect(
   double Mxy1, Mx2, My2, Mxy2, delta;
   double lambda1, lambda2;
   int32_t incr_vois;
-  double xx, yy, xc, yc, a;
-  double x1, y1, x2, y2;
+  double xc, yc;
   double theta;
   rectanglearrondi *Ra;
   rectangle *R;
@@ -944,8 +942,8 @@ int32_t lrectangleincluant(
 #undef F_NAME
 #define F_NAME "lrectangleincluant"
 {
-  int32_t i, k, l, n;
-  int32_t w, x, y, z;
+  int32_t k, n;
+  int32_t w, x, y;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
@@ -962,8 +960,7 @@ int32_t lrectangleincluant(
   double Mxy1, Mx2, My2, Mxy2, delta;
   double lambda1, lambda2;
   int32_t incr_vois;
-  double xx, yy, xc, yc, a;
-  double x1, y1, x2, y2;
+  double xc, yc;
   double theta;
 #ifdef RECTARRONDI
   rectanglearrondi *R;
@@ -1154,8 +1151,8 @@ int32_t lmatchellipse(
 #undef F_NAME
 #define F_NAME "lmatchellipse"
 {
-  int32_t k, l, n;
-  int32_t w, x, y, z;
+  int32_t k, n;
+  int32_t w, x, y;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
@@ -1172,7 +1169,7 @@ int32_t lmatchellipse(
   double Mxy1, Mx2, My2, Mxy2, delta;
   double lambda1, lambda2;
   int32_t incr_vois;
-  double xx, yy, xc, yc, a;
+  double xc, yc;
   double x1, y1, x2, y2;
   double theta;
   ellipse *ell;
@@ -1360,8 +1357,8 @@ int32_t lellipticite(
 #undef F_NAME
 #define F_NAME "lellipticite"
 {
-  int32_t k, l, n;
-  int32_t w, x, y, z;
+  int32_t k, n;
+  int32_t w, x, y;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
@@ -1376,7 +1373,7 @@ int32_t lellipticite(
   double Mxy1, Mx2, My2, Mxy2, delta;
   double lambda1, lambda2;
   int32_t incr_vois;
-  double xx, yy, xc, yc, a;
+  double xc, yc;
   double x1, y1, x2, y2;
   double theta;
   ellipse *ell;
@@ -1566,7 +1563,6 @@ double MeanGrayCircle(struct xvimage *img, cercle *C)
   uint8_t *I = UCHARDATA(img);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
-  int32_t N = rs * cs;          /* taille image */
   double sumgray = 0.0; 
   Liste *lp = lellipseliste(rs, cs, 0, C->r, C->r, 0, C->x0, C->y0);
   int32_t p, i, numpoints = lp->Sp;
@@ -1678,7 +1674,6 @@ cercle *AjusteCercle2(struct xvimage *img, double xc, double yc, double r)
   double cost, cp, cm; 
   double dx = INCRX;
   double dy = INCRY;
-  double dr = INCRR;
   int32_t i, stab;
 
   C = (cercle *)calloc(1,sizeof(cercle));
@@ -1741,7 +1736,6 @@ struct xvimage *lcar2pol(struct xvimage *img, double xc, double yc)
   uint8_t *R;
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
-  int32_t N = rs * cs;          /* taille image */
   int32_t angle_res, xi, yi, xs, ys, r, a;
   double angle_step, max_r, t, x, y, f1, f2, f;
 
@@ -1801,11 +1795,10 @@ int32_t lpol2car(struct xvimage *img, struct xvimage *res, double xc, double yc)
   uint8_t *R = UCHARDATA(res);
   int32_t rsp = rowsize(img);
   int32_t csp = colsize(img);
-  int32_t Np = rsp * csp;          /* taille image polaire */
   int32_t rsc = rowsize(res);
   int32_t csc = colsize(res);
   int32_t N = rsc * csc;           /* taille image cartesienne */
-  double max_r, t, angle_step, r, a, f1, f2, f;
+  double r, a, f1, f2, f;
   int32_t ri, rs, ai, as, x, y;
 
   memset(R, 0, N);
@@ -1851,7 +1844,6 @@ struct xvimage *lsection_old(struct xvimage *img,
   int32_t cs = colsize(img);
   int32_t ds = depth(img);
   int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
   double xdim = img->xdim;
   double ydim = img->ydim;
   double zdim = img->zdim;
@@ -1970,7 +1962,6 @@ struct xvimage *lsection(struct xvimage *img,
   int32_t cs = colsize(img);
   int32_t ds = depth(img);
   int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
   double xdim = img->xdim;
   double ydim = img->ydim;
   double zdim = img->zdim;

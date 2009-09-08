@@ -30,7 +30,7 @@ where nnnn is a four digit decimal integer.
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t i, j, k, x;
+  int32_t i, k;
   char bufname[1024];
   int32_t namelen, begin, end, step;
   struct xvimage * image_in;

@@ -545,10 +545,10 @@ A weight W(P,Q) is assigned to each edge, according to the value of \b mode:
 #undef F_NAME
 #define F_NAME "Image2Graphe"
 {
-  int32_t rs, cs, ds, ps, N, M;
+  int32_t rs, cs, ds, N, M;
   uint8_t *F;
   graphe * g;
-  int32_t i, j, k, p;
+  int32_t i, j, p;
   TYP_VARC v;
 
   if (datatype(image) != VFF_TYP_1_BYTE)
@@ -803,7 +803,7 @@ int32_t EstSuccesseur(graphe *g, int32_t i, int32_t s)
 void Gamma2ListArcs(graphe *g) 
 /* ====================================================================== */
 {
-  int32_t i, a, n = g->nsom, m = g->narc;
+  int32_t i, a, n = g->nsom;
   pcell p;
 
   a = 0;
@@ -847,7 +847,7 @@ graphe * GrapheAleatoire(int32_t nsom, int32_t narc)
   if (narc > mmax)
   {
     fprintf(stderr, "%s : pas plus de %g arcs pour %d sommets\n", 
-                     mmax, nsom, F_NAME);
+	    F_NAME, mmax, nsom);
     exit(0);
   }
 
@@ -975,7 +975,7 @@ graphe * Symetrique(graphe * g)
 #define F_NAME "Symetrique"
 {
   graphe *g_1;
-  int32_t nsom, narc, al_arcs, k, i, j;
+  int32_t nsom, narc, i, j;
   pcell p;
 
   nsom = g->nsom;
@@ -1006,7 +1006,7 @@ graphe * FermetureSymetrique(graphe * g)
 #define F_NAME "FermetureSymetrique"
 {
   graphe *gs;
-  int32_t nsom, narc, al_arcs, k, i, j;
+  int32_t nsom, narc, i, j;
   pcell p;
 
   nsom = g->nsom;
@@ -1993,7 +1993,6 @@ graphe * PCC(graphe * g, int32_t d, int32_t a)
 #define F_NAME "PCC"
 {
   int32_t n = g->nsom;
-  int32_t m = g->narc;
   graphe * pcc = InitGraphe(n, n-1); /* pour le resultat */
   graphe * g_1 = Symetrique(g);
   int32_t i, y, x = a;
@@ -2039,7 +2038,6 @@ graphe * PCCna(graphe * g, int32_t d, int32_t a)
 #define F_NAME "PCCna"
 {
   int32_t n = g->nsom;
-  int32_t m = g->narc;
   graphe * pcc = InitGraphe(n, n-1); /* pour le resultat */
   graphe * g_1 = Symetrique(g);
   int32_t i, y, x = a;
@@ -2479,7 +2477,6 @@ graphe * ForetPCC(graphe * g)
 #define F_NAME "ForetPCC"
 {
   int32_t n = g->nsom;
-  int32_t m = g->narc;
   graphe * fpcc = InitGraphe(n, n-1); /* pour le resultat */
   graphe * g_1 = Symetrique(g);
   int32_t i, y, x;

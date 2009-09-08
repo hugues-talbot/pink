@@ -35,7 +35,7 @@ and <B>index_end</B> specify respectively the first and the last index of the se
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t i, j, x, debut, fin, seqsize;
+  int32_t i, j, debut, fin, seqsize;
   char bufname[1024];
   int32_t namelen;
   struct xvimage * image_in;

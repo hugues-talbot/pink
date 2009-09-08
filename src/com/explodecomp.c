@@ -43,7 +43,7 @@ to be labeled:
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t i, j, k, x, connex, nblabels;
+  int32_t i, k, connex, nblabels;
   char bufname[1024];
   int32_t namelen;
   struct xvimage * image_in;

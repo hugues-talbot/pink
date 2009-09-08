@@ -33,7 +33,7 @@ Catenates a sequence of 2d (resp. 1d) images, made of the repetition of the same
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t i, j, x, seqsize;
+  int32_t i, j, seqsize;
   struct xvimage * image_in;
   struct xvimage * image_out;
   int32_t rs, cs, N;
