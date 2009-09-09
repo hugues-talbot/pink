@@ -67,7 +67,7 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * prio;
   struct xvimage * inhibimage;
-  int32_t connex, ret, dist, i, N;
+  int32_t connex, dist, i, N;
   uint8_t *F;
   uint32_t *P;
   uint8_t *I;

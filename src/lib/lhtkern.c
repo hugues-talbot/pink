@@ -177,10 +177,8 @@ int32_t lhtkern(struct xvimage *image, struct xvimage *imagecond, int32_t connex
 #undef F_NAME
 #define F_NAME "lhtkern"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -332,10 +330,8 @@ int32_t lhtkernu(struct xvimage *image, struct xvimage *imagecond, int32_t conne
 #undef F_NAME
 #define F_NAME "lhtkernu"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -511,10 +507,8 @@ int32_t lhthinalpha(struct xvimage *image, struct xvimage *imagecond, int32_t ni
 #undef F_NAME
 #define F_NAME "lhthinalpha"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -524,7 +518,6 @@ int32_t lhthinalpha(struct xvimage *image, struct xvimage *imagecond, int32_t ni
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t a;
 
@@ -757,10 +750,8 @@ int32_t lhthindelta(struct xvimage *image, struct xvimage *imagecond, int32_t ni
 #undef F_NAME
 #define F_NAME "lhthindelta"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -770,7 +761,6 @@ int32_t lhthindelta(struct xvimage *image, struct xvimage *imagecond, int32_t ni
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t a;
 
@@ -1015,10 +1005,8 @@ int32_t lhthickalpha(struct xvimage *image, struct xvimage *imagecond, int32_t n
 #undef F_NAME
 #define F_NAME "lhthickalpha"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -1028,7 +1016,6 @@ int32_t lhthickalpha(struct xvimage *image, struct xvimage *imagecond, int32_t n
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t a;
 
@@ -1257,10 +1244,8 @@ int32_t lhthickdelta(struct xvimage *image, struct xvimage *imagecond, int32_t n
 #undef F_NAME
 #define F_NAME "lhthickdelta"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -1270,7 +1255,6 @@ int32_t lhthickdelta(struct xvimage *image, struct xvimage *imagecond, int32_t n
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t a;
 
@@ -1599,10 +1583,8 @@ int32_t llvkern(struct xvimage *image, struct xvimage *imagecond, int32_t connex
 #undef F_NAME
 #define F_NAME "llvkern"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -1754,10 +1736,8 @@ int32_t llvkernu(struct xvimage *image, struct xvimage *imagecond, int32_t conne
 #undef F_NAME
 #define F_NAME "llvkernu"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -1910,10 +1890,8 @@ int32_t llthin(struct xvimage *image, struct xvimage *imagecond, int32_t niterma
 #undef F_NAME
 #define F_NAME "llthin"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -1923,7 +1901,6 @@ int32_t llthin(struct xvimage *image, struct xvimage *imagecond, int32_t niterma
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t a;
 
@@ -2154,10 +2131,8 @@ int32_t llthindelta(struct xvimage *image, struct xvimage *imagecond, int32_t ni
 #undef F_NAME
 #define F_NAME "llthindelta"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -2167,7 +2142,6 @@ int32_t llthindelta(struct xvimage *image, struct xvimage *imagecond, int32_t ni
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t a;
 
@@ -2410,10 +2384,8 @@ int32_t llthick(struct xvimage *image, struct xvimage *imagecond, int32_t niterm
 #undef F_NAME
 #define F_NAME "llthick"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -2423,7 +2395,6 @@ int32_t llthick(struct xvimage *image, struct xvimage *imagecond, int32_t niterm
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t a;
 
@@ -2654,10 +2625,8 @@ int32_t llthickdelta(struct xvimage *image, struct xvimage *imagecond, int32_t n
 #undef F_NAME
 #define F_NAME "llthickdelta"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -2667,7 +2636,6 @@ int32_t llthickdelta(struct xvimage *image, struct xvimage *imagecond, int32_t n
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t a;
 
@@ -3036,7 +3004,6 @@ int32_t phi8m(
 	register uint8_t val = *(img+p);
 	register uint8_t phi = NDG_MIN;
 	register uint8_t * ptr = img+p;
-	register int32_t n = 0;
 
         if ((p%rs!=rs-1) && (*(ptr+1) <= val) && (*(ptr+1) > phi)) phi = *(ptr+1);
         if (((p%rs!=rs-1)&&(p>=rs)) && (*(ptr+1-rs) <= val) && (*(ptr+1-rs) > phi)) phi = *(ptr+1-rs);
@@ -3188,10 +3155,8 @@ int32_t lcrestrestoration(struct xvimage *image, struct xvimage *imcond, int32_t
 #undef F_NAME
 #define F_NAME "lcrestrestoration"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -3201,8 +3166,6 @@ int32_t lcrestrestoration(struct xvimage *image, struct xvimage *imcond, int32_t
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
-  uint8_t oldfx;
   int32_t a;
   int32_t stable;  
 #ifdef ANIMATE
@@ -3263,7 +3226,7 @@ do /* repetition de toute la procedure jusqu'a stabilite */
   if (connex == 4)
   {
     for (x = 0; x < N; x++) 
-      if (a = extensible4(F,x,rs,N))
+      if ((a = extensible4(F,x,rs,N)))
       {
 #ifdef DEBUG
         printf("INIT: Push x = %d,%d ; F[x] = %d ; a = %d\n", 
@@ -3539,6 +3502,7 @@ int32_t testmodifie4(uint8_t *F, uint8_t *G, int32_t x, int32_t rs, int32_t N)
     return modifie;
   }
 
+  return modifie;
 } /* testmodifie4() */
 
 /* ==================================== */
@@ -3577,6 +3541,8 @@ int32_t testmodifie8(uint8_t *F, uint8_t *G, int32_t x, int32_t rs, int32_t N)
     }
     return modifie;
   }
+
+  return modifie;
 } /* testmodifie8() */
 
 /* ==================================== */
@@ -3585,10 +3551,8 @@ int32_t ldynrecons(struct xvimage *image, struct xvimage *imagecond, int32_t con
 #undef F_NAME
 #define F_NAME "ldynrecons"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */

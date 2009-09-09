@@ -179,6 +179,7 @@ static void insert_vois(
   *(ptr) = vois[26];
 } /* insert_vois() */
 
+#ifdef DEBUG
 /* ==================================== */
 static void print_vois(uint8_t *vois)    
 /* 
@@ -193,6 +194,7 @@ static void print_vois(uint8_t *vois)
   printf("%2d %2d %2d     %2d %2d %2d     %2d %2d %2d\n\n", 
 	 vois[14],vois[15],vois[16],vois[5],vois[6],vois[7],vois[23],vois[24],vois[25]);
 } /* print_vois() */
+#endif
 
 /* ==================================== */
 static void isometrieXZ_vois(uint8_t *vois) 
@@ -250,7 +252,6 @@ Teste si au moins un des points 12, 11, 13, 8, 3, 2, 4 est objet et tous les aut
 (aussi avec les isométries). 
 */
 {
-  uint8_t t;
 #ifdef DEBUG
   if (trace)
   {  
@@ -544,7 +545,6 @@ Teste si les conditions suivantes sont réunies:
 Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 */
 {
-  uint8_t t;
 #ifdef DEBUG
   if (trace)
   {  
@@ -582,7 +582,7 @@ Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 int32_t match2(uint8_t *v)
 /* ==================================== */
 {
-  int32_t i, ret = 0;
+  int32_t ret = 0;
   if (match_vois2(v)) ret = 1;
   isometrieXZ_vois(v);
   if (match_vois2(v)) ret = 1;
@@ -597,7 +597,7 @@ int32_t match2(uint8_t *v)
 int32_t match2s(uint8_t *v)
 /* ==================================== */
 {
-  int32_t i, ret = 0;
+  int32_t ret = 0;
   if (match_vois2s(v)) ret = 1;
   isometrieXZ_vois(v);
   if (match_vois2s(v)) ret = 1;
@@ -612,7 +612,7 @@ int32_t match2s(uint8_t *v)
 int32_t match1(uint8_t *v)
 /* ==================================== */
 {
-  int32_t i, ret = 0;
+  int32_t ret = 0;
   if (match_vois1(v)) ret = 1;
   isometrieXZ_vois(v);
   if (match_vois1(v)) ret = 1;
@@ -627,7 +627,7 @@ int32_t match1(uint8_t *v)
 int32_t match1s(uint8_t *v)
 /* ==================================== */
 {
-  int32_t i, ret = 0;
+  int32_t ret = 0;
   if (match_vois1s(v)) ret = 1;
   isometrieXZ_vois(v);
   if (match_vois1s(v)) ret = 1;
@@ -642,7 +642,7 @@ int32_t match1s(uint8_t *v)
 int32_t match0(uint8_t *v)
 /* ==================================== */
 {
-  int32_t i, ret = 0;
+  int32_t ret = 0;
   if (match_vois0(v)) ret = 1;
   return ret;
 } /* match0() */
@@ -664,7 +664,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelMK3a"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -797,7 +797,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelEK3"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -808,7 +808,6 @@ Répéter jusqu'à stabilité
   uint8_t *T = UCHARDATA(t);
   uint8_t *I;
   int32_t step, nonstab;
-  int32_t top, topb;
   uint8_t v[27];
 
   if (inhibit == NULL) 
@@ -925,7 +924,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelCK3a"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -1078,7 +1077,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelCK3b"
 { 
-  int32_t i, j, k, x, y, z;
+  int32_t i, j, k;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -1255,7 +1254,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelCK3"
 { 
-  int32_t i, j, k, x, y, z;
+  int32_t i, j, k;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -1431,7 +1430,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelAK3"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -1441,7 +1440,6 @@ Répéter jusqu'à stabilité
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
   struct xvimage *r = copyimage(image); 
-  uint8_t *R = UCHARDATA(r);
   struct xvimage *e = copyimage(image); 
   uint8_t *E = UCHARDATA(e);
   struct xvimage *d = copyimage(image); 
@@ -1584,7 +1582,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelMK3"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -1717,7 +1715,7 @@ Les points non enlevés sont marqués MARK_INFTY.
 //#define MARK_INFTY 2000000000
 #define MARK_INFTY 255
 { 
-  int32_t i, j, k, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -1840,10 +1838,11 @@ Retourne dans image l'axe topologique.
 */
 #undef F_NAME
 #define F_NAME "ldistaxetopo3"
+#undef MARK_INFTY
 #define MARK_INFTY 2000000000
 //#define MARK_INFTY 255
 { 
-  int32_t i, j, k, x, y, z;
+  int32_t i, j, k;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -2103,7 +2102,6 @@ Teste si les conditions suivantes sont réunies:
 Si le test réussit, un des points non nuls est marqué SELECTED
 */
 {
-  uint8_t t;
   if (!((v[12]&&v[26]) || (v[11]&&v[4]) || (v[13]&&v[2]) || (v[8]&&v[3]) )) return 0;
 
   if (v[12] && (!IS_SIMPLE(v[12]) || IS_SELECTED(v[12]))) return 0;
@@ -2130,7 +2128,7 @@ Si le test réussit, un des points non nuls est marqué SELECTED
 int32_t asym_match2(uint8_t *v)
 /* ==================================== */
 {
-  int32_t i, ret = 0;
+  int32_t ret = 0;
   if (asym_match_vois2(v)) ret = 1;
   isometrieXZ_vois(v);
   if (asym_match_vois2(v)) ret = 1;
@@ -2145,7 +2143,7 @@ int32_t asym_match2(uint8_t *v)
 int32_t asym_match1(uint8_t *v)
 /* ==================================== */
 {
-  int32_t i, ret = 0;
+  int32_t ret = 0;
   if (asym_match_vois1(v)) ret = 1;
   isometrieXZ_vois(v);
   if (asym_match_vois1(v)) ret = 1;
@@ -2160,7 +2158,7 @@ int32_t asym_match1(uint8_t *v)
 int32_t asym_match0(uint8_t *v)
 /* ==================================== */
 {
-  int32_t i, ret = 0;
+  int32_t ret = 0;
   if (asym_match_vois0(v)) ret = 1;
   return ret;
 } /* asym_match0() */
@@ -2184,7 +2182,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelAMK3"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -2298,7 +2296,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelACK3a"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -2429,7 +2427,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelACK3"
 { 
-  int32_t i, j, k, x, y, z;
+  int32_t i, j, k;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -2598,7 +2596,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelRK3"
 { 
-  int32_t i, j, k, x, y, z;
+  int32_t i, j, k;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -2754,7 +2752,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelSK3"
 { 
-  int32_t i, j, k, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */

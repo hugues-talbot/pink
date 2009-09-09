@@ -39,13 +39,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * in;
   struct xvimage * out;
-  int32_t i, j, k;
-  uint8_t *I;
-  uint8_t *T1;
-  uint32_t *IL;
-  uint32_t *T1L;
   int32_t x, y, z, w, h, d;
-  int32_t rs, n, p;
 
   if ((argc != 7) && (argc != 9))
   {

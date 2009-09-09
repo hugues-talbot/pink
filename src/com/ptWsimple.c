@@ -95,11 +95,17 @@ int main(int32_t argc, char **argv)
       for(k = 0; k < 8; k += incr){
 	y = voisin(i, k, rs, N);
 	if (y != -1)
+	{
 	  if(LABEL[y] > 0) // y appartient à \Bar{X}
-	    if(label != -1){ 
-	      if(label != LABEL[y])
-		G[i] = 0;
-	    } else label = LABEL[y];
+	  {
+	    if(label != -1) 
+	    {
+	      if(label != LABEL[y]) G[i] = 0;
+	    } 
+	    else 
+	      label = LABEL[y];
+	  }
+	}
       }//for(k = 0 ... )
     }// if(LABEL[i] ...)
   }// for(i = 0...)

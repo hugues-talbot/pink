@@ -37,6 +37,8 @@ The length if the linear structuring elements is given by \b length.
 //#define DEBUG 
 #define THICK
 
+static uint8_t vois4[8] = {1, 0, 1, 0, 1, 0, 1, 0};
+
 /* =============================================================== */
 void setMask(uint8_t * mask, int32_t length, int32_t x, int32_t y) 
 /* =============================================================== */

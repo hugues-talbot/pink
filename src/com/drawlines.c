@@ -95,7 +95,7 @@ int main(int argc, char **argv)
   fscanf(fd, "%c", &tag);
   if (tag != 'l')
   {
-    fprintf(stderr, "%s: bad tag: %s ('l' expected)\n", argv[0], tag);
+    fprintf(stderr, "%s: bad tag: %c ('l' expected)\n", argv[0], tag);
     exit(1);
   }
 

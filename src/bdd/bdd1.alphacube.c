@@ -7,7 +7,7 @@ int bddAlpha3SimpleCube(
   int u, int v, int w, int x, int y, int z)
 {
 int neg = 1;
-l709_1:	if(c)
+if(c)
 goto l267_2;
 neg = !neg; goto l1105_2;
 l267_2:	if(w)

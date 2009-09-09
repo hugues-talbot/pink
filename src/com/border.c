@@ -13,8 +13,8 @@ B(X) = {x in X, (Gamma_k(x) inter Xbar) not empty}
 
 <B>Types supported:</B> byte 2d, byte 3d
 
-<B>Category:</B> 
-\ingroup  
+<B>Category:</B> topobin
+\ingroup  topobin
 
 \author Michel Couprie
 */

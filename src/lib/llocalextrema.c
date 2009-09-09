@@ -10,6 +10,15 @@
 #include <ldilateros.h>
 #include <llocalextrema.h>
 
+/* les elements structurants 3-D */
+/*                               0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 */
+static uint8_t vois26[26]={1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+static uint8_t vois18[26]={0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0};
+static uint8_t vois6 [26]={0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0};
+/* les elements structurants 2-D */
+static uint8_t vois8[8] = {1, 1, 1, 1, 1, 1, 1, 1};
+static uint8_t vois4[8] = {1, 0, 1, 0, 1, 0, 1, 0};
+
 /****************************************************************
 *
 * Routine Name: llocalextrema - library call for localextrema

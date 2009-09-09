@@ -44,8 +44,6 @@ int main(int argc, char **argv)
   struct xvimage * dist;
   struct xvimage * mask;
   struct xvimage * angle;
-  int32_t N, i,j, y;
-  uint8_t *D, *M, *A;
 
   if (argc != 4)
   {

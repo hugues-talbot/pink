@@ -41,7 +41,6 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * inhibit = NULL;
   int32_t connex;
-  int32_t ret, priovalue;
 
   if ((argc != 4) && (argc != 5))
   {

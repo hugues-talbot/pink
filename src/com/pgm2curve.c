@@ -48,6 +48,7 @@ x2 y2 z2 v2<br>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mctopo.h>
@@ -62,11 +63,12 @@ int32_t uniquevoisin4(
 /* =============================================================== */
 /* retourne l'indice du premier voisin objet de p trouvé dans le voisinage */
 {
-	register uint8_t * ptr = img+p;
-        if ((p%rs!=rs-1) && (*(ptr+1))) return p+1;
-        if ((p>=rs) && (*(ptr-rs))) return p-rs;
-        if ((p%rs!=0) && (*(ptr-1))) return p-1;
-        if ((p<N-rs) && (*(ptr+rs))) return p+rs;  
+  register uint8_t * ptr = img+p;
+  if ((p%rs!=rs-1) && (*(ptr+1))) return p+1;
+  if ((p>=rs) && (*(ptr-rs))) return p-rs;
+  if ((p%rs!=0) && (*(ptr-1))) return p-1;
+  if ((p<N-rs) && (*(ptr+rs))) return p+rs;  
+  assert(1); exit(1);
 } // uniquevoisin4()
 
 /* =============================================================== */
@@ -78,15 +80,16 @@ int32_t uniquevoisin8(
 /* =============================================================== */
 /* retourne l'indice du premier voisin objet de p trouvé dans le voisinage */
 {
-	register uint8_t * ptr = img+p;
-        if ((p%rs!=rs-1) && (*(ptr+1))) return p+1;
-        if (((p%rs!=rs-1)&&(p>=rs)) && (*(ptr+1-rs))) return p+1-rs;
-        if ((p>=rs) && (*(ptr-rs))) return p-rs;
-        if (((p>=rs)&&(p%rs!=0)) && (*(ptr-rs-1))) return p-rs-1;
-        if ((p%rs!=0) && (*(ptr-1))) return p-1;
-        if (((p%rs!=0)&&(p<N-rs)) && (*(ptr-1+rs))) return p-1+rs;
-        if ((p<N-rs) && (*(ptr+rs))) return p+rs;
-        if (((p<N-rs)&&(p%rs!=rs-1)) && (*(ptr+rs+1))) return p+rs+1;
+  register uint8_t * ptr = img+p;
+  if ((p%rs!=rs-1) && (*(ptr+1))) return p+1;
+  if (((p%rs!=rs-1)&&(p>=rs)) && (*(ptr+1-rs))) return p+1-rs;
+  if ((p>=rs) && (*(ptr-rs))) return p-rs;
+  if (((p>=rs)&&(p%rs!=0)) && (*(ptr-rs-1))) return p-rs-1;
+  if ((p%rs!=0) && (*(ptr-1))) return p-1;
+  if (((p%rs!=0)&&(p<N-rs)) && (*(ptr-1+rs))) return p-1+rs;
+  if ((p<N-rs) && (*(ptr+rs))) return p+rs;
+  if (((p<N-rs)&&(p%rs!=rs-1)) && (*(ptr+rs+1))) return p+rs+1;
+  assert(1); exit(1);
 } // uniquevoisin8()
 
 /* ========================================== */
@@ -105,6 +108,7 @@ int32_t uniquevoisin6(
   if (((i%ps)<ps-rs) && B[i+rs]) return i+rs;
   if ((i>=ps) && B[i-ps]) return i-ps;
   if ((i<N-ps) && B[i+ps]) return i+ps;
+  assert(1); exit(1);
 } /* uniquevoisin6() */
 
 /* ========================================== */
@@ -135,6 +139,7 @@ int32_t uniquevoisin18(
   if (((i>=ps)&&(i%rs!=0)) && B[-ps+i-1]) return -ps+i-1;
   if (((i>=ps)&&(i%ps<ps-rs)) && B[-ps+i+rs]) return -ps+i+rs;
   if (((i>=ps)) && B[-ps+i]) return -ps+i;
+  assert(1); exit(1);
 } /* uniquevoisin18() */
 
 /* ========================================== */
@@ -173,6 +178,7 @@ int32_t uniquevoisin26(
   if (((i>=ps)&&(i%ps<ps-rs)) && B[-ps+i+rs]) return -ps+i+rs;
   if (((i>=ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && B[-ps+i+rs+1]) return -ps+i+rs+1;
   if (((i>=ps)) && B[-ps+i]) return -ps+i;
+  assert(1); exit(1);
 } /* uniquevoisin26() */
 
 /* =============================================================== */

@@ -33,8 +33,6 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * dist;
-  struct xvimage * niv;
-  struct xvimage * gra;
   int32_t connex;
   int32_t inhibit;
 

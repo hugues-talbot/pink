@@ -94,7 +94,6 @@ int32_t lmedax_talbot(struct xvimage *img,   /* donnee: image binaire */
 #undef F_NAME
 #define F_NAME "lmedax_talbot"
 { 
-  uint32_t n1,n2,n3;     /* normes des vecteurs (au carre) */
   int32_t rs = img->row_size;
   int32_t cs = img->col_size;
   int32_t N= rs * cs;            /* taille de l'image */
@@ -336,7 +335,7 @@ int32_t lmedax_mc(struct xvimage *f)
 #undef F_NAME
 #define F_NAME "lmedax_mc"
 {
-  int32_t i, k;
+  int32_t i;
   int32_t rs = rowsize(f);        /* taille ligne f */
   int32_t cs = colsize(f);        /* taille colonne f */
   int32_t ds = depth(f);
@@ -352,7 +351,6 @@ int32_t lmedax_mc(struct xvimage *f)
   struct xvimage *dist;
   uint32_t *D;
   int32_t r, rmax = 0;
-  double tmp;
 
   dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
   if (dist == NULL)
@@ -714,7 +712,6 @@ from the article: " Exact Medial Axis With Euclidean Distance"
   Output : ImageMedial, the weighted medial axis
 */
 {
-  int32_t i, k;
   int32_t rs = rowsize(ImageDist);        /* taille ligne f */
   int32_t cs = colsize(ImageDist);        /* taille colonne f */
   int32_t ds = depth(ImageDist);
@@ -912,7 +909,7 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
 {
 #undef F_NAME
 #define F_NAME "lmedialaxis"
-  int32_t i, k;
+  int32_t i;
   int32_t rs = rowsize(f);        /* taille ligne f */
   int32_t cs = colsize(f);        /* taille colonne f */
   int32_t ds = depth(f);
@@ -921,8 +918,6 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
   uint8_t *F = UCHARDATA(f);
   struct xvimage *medial;
   uint32_t *D;
-  int32_t rmax = min((rs/2),(cs/2));
-  double tmp;
 
   medial = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
   if (medial == NULL)
@@ -1656,7 +1651,6 @@ int32_t lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
   float *imageangle = FLOATDATA(ia);
   char tablefilename[512];
   int32_t distmax; 
-  int32_t dummy;
 
 #ifdef HISTVOR
   for (i = 0; i < sizevorhisto; i++) vorhisto[i] = extvorhisto[i] = 0;
@@ -2050,11 +2044,10 @@ int32_t lbisector_talbot(struct xvimage * image, struct xvimage *angles)
 {
 #undef F_NAME
 #define F_NAME "lbisector_talbot"
-  int32_t N, i, j, y, rs, cs;
+  int32_t N, i, j, rs, cs;
   uint8_t *F;
   float *A;
   vect2Dint *L;              /* tableau de vecteur associe a un point de l'image */
-  vect2Dint v1,v2;
   double theta;
   struct Point2D LPoints[5];
 
@@ -2206,7 +2199,7 @@ int32_t Downstream(int32_t x, int32_t y, uint32_t *image,
 {
 #undef F_NAME
 #define F_NAME "Downstream"
-  int32_t nb, i, j, xx, yy, rr, counter, k, c, ti, d, nbdec;
+  int32_t nb, i, j, xx, yy, rr, counter, c, ti, d, nbdec;
   Neighbors MgN1;
   int32_t xnew, ynew;
 
@@ -2756,7 +2749,6 @@ int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda)
   if (ds == 1) // 2D
   {
     ListDPoint2D Aval;
-    double c_x, c_y, c_r;
     Aval= (struct DPoint2D *)calloc(1,N*sizeof(struct DPoint2D)); // LARGEMENT SURDIMENSIONE
     if (Aval == NULL)
     {   
@@ -2835,7 +2827,6 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
   } // if (ds == 1)
   else // 3D
   {
-    double c_x, c_y, c_z, c_r;
     ListDPoint3D Aval;
     Aval= (struct DPoint3D *)calloc(1,N*sizeof(struct DPoint3D)); // LARGEMENT SURDIMENSIONE
     if (Aval == NULL)
@@ -2955,7 +2946,6 @@ int32_t ExtendedDownstreamLambdaPrime(
       //      for (c = 0; c < counter; c++) // check:if the value already exists, no need to store it
       //	if ((xx!=Aval[c].xCoor) || (yy!=Aval[c].yCoor)) goto skip;
       Aval[counter].xCoor=xx; Aval[counter].yCoor=yy; counter++;		
-    skip: ;
     } // if
   endfor: ;
   } // for(k = 0; k < 5; k++)
@@ -2984,7 +2974,7 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
 {
 #undef F_NAME
 #define F_NAME "llambdaprimemedialaxis"
-  int32_t i, j, k, nval, npoints, npointsmax;
+  int32_t i, j;
   int32_t rs = rowsize(dist);
   int32_t cs = colsize(dist);
   int32_t ds = depth(dist);
@@ -3033,7 +3023,6 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
   if (ds == 1) // 2D
   {
     ListDPoint2D Aval;
-    double c_x, c_y, c_r;
     Aval= (struct DPoint2D *)calloc(1,N*sizeof(struct DPoint2D)); // LARGEMENT SURDIMENSIONE
     if (Aval == NULL)
     {   

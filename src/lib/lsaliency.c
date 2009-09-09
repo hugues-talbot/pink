@@ -152,7 +152,7 @@ int32_t lsaliency(
 #undef F_NAME
 #define F_NAME "lsaliency"
 {
-  struct xvimage * minima, *label, *tmp;
+  struct xvimage *label;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t srs = 2*rs+1;
@@ -160,16 +160,13 @@ int32_t lsaliency(
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *MA;                             /* l'image de masque */
-  uint8_t *M;
-  uint32_t *T, *S;
+  uint32_t *S;
   uint32_t *it;
   uint32_t * L;
   int32_t nbmin; /* Nb of minima */
-  int32_t incr_vois, passold, pass;
+  int32_t incr_vois;
   register int32_t i, j, k, x, y;
-  TypListechainee* l;
   basinT *basins;
-  basinT **orig;
   //const int32_t WSHED_HMAX  =       512;    // Max grey value
   const int32_t INIT	=	-1;	// initial value of pixels of out 
   const int32_t MASK	=	-2;     // Initial value for each level
@@ -631,22 +628,19 @@ int32_t lsaliency6b(
 #undef F_NAME
 #define F_NAME "lsaliency6b"
 {
-  struct xvimage * minima, *label, *tmp;
+  struct xvimage *label;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *MA;                        /* l'image de masque */
-  uint8_t *M;
-  uint32_t *T, *S;
+  uint32_t *S;
   uint32_t *it;
   uint32_t * L;
   int32_t nbmin; /* Nb of minima */
-  int32_t incr_vois, passold, pass;
-  register int32_t i, j, k, x, y;
-  TypListechainee* l;
+  int32_t incr_vois;
+  register int32_t k, x, y;
   basinT *basins;
-  basinT **orig;
   //const int32_t WSHED_HMAX  =       512;    // Max grey value
   const int32_t INIT	=	-1;	// initial value of pixels of out 
   const int32_t MASK	=	-2;     // Initial value for each level

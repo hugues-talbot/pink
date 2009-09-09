@@ -13,7 +13,7 @@
 int bddSurfendCarreX(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j)
 {
 int neg = 1;
-l15_1:	if(i)
+if(i)
 goto l3_2;
 goto l25_2;
 l3_2:	if(j)
@@ -187,7 +187,7 @@ ret1: return !neg;
 int bddSurfendCarreY(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j)
 {
 int neg = 1;
-l15_1:	if(i)
+if(i)
 goto l3_2;
 goto l25_2;
 l3_2:	if(j)
@@ -361,7 +361,7 @@ ret1: return !neg;
 int bddSurfendCarreZ(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j)
 {
 int neg = 1;
-l15_1:	if(i)
+if(i)
 goto l3_2;
 goto l25_2;
 l3_2:	if(j)
@@ -538,7 +538,7 @@ int bddSurfendCube(
   int u, int v, int w, int x, int y, int z)
 {
 int neg = 1;
-l1389_1:	if(e)
+if(e)
 goto l817_2;
 goto l2001_2;
 l817_2:	if(u)

@@ -602,7 +602,7 @@ static uint8_t simple(voxel * cube, voxel * cubec, uint8_t connex)
 } /* simple() */
 
 /* ==================================== */
-int32_t preparecubes(
+static void preparecubes(
   uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -652,7 +652,7 @@ int32_t preparecubes(
 } /* preparecubes() */
 
 /* ==================================== */
-int32_t preparecubesh(
+static void preparecubesh(
   uint8_t *img,          /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t h,                       /* seuil */
@@ -702,7 +702,7 @@ int32_t preparecubesh(
 } /* preparecubesh() */
 
 /* ==================================== */
-int32_t preparecubesh_l(
+static void preparecubesh_l(
   uint32_t *img,          /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t h,                      /* seuil */
@@ -1667,8 +1667,6 @@ int32_t hseparant6(  /* teste si un point est hseparant - minima 6-connexes
   int32_t N)                       /* taille image */
 /* ==================================== */
 {
-  int32_t k, q;
-
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
       (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */

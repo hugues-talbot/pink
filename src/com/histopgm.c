@@ -33,7 +33,7 @@ int main(int argc, char **argv)
   struct xvimage * imhist;
   struct xvimage * mask = NULL;
   uint32_t * histo;
-  int32_t i,size;
+  int32_t size;
 
   if ((argc != 3) && (argc != 4))
   {

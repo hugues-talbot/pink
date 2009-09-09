@@ -53,15 +53,15 @@ typedef uint32_t pixel;
 
 int main(int argc, char **argv)
 {
-	FILE *vf,*uf,*yf;
-	int32_t             rows, cols, format, row;
-	register int32_t    col;
-	char		*usage=(char *)"<basename> <width> <height> [-split]";
-	int32_t  y,u,v,y0,y1,y2,y3,u0,u1,u2,u3,v0,v1,v2,v3;
-	uint8_t  *y1buf,*y2buf,*ubuf,*vbuf;
-	char 		ufname[256],vfname[256],yfname[256];
+	FILE *vf, *uf, *yf;
+	int32_t rows, cols, row;
+	register int32_t col;
+	char *usage=(char *)"<basename> <width> <height> [-split]";
+	int32_t u, v, y0, y1, y2, y3, u0, u1, u2, u3, v0, v1, v2, v3;
+	uint8_t *y1buf, *y2buf, *ubuf, *vbuf;
+	char ufname[256], vfname[256], yfname[256];
 /* Whether to create YUV in JFIF(JPEG) or CCIR.601(MPEG) scale */
-	int32_t		ccir601=CCIR601;
+	int32_t	ccir601 = CCIR601;
         struct xvimage *imr, *img, *imb;
         uint8_t *pr, *pg, *pb;
         int32_t split = 0;
@@ -69,10 +69,12 @@ int main(int argc, char **argv)
 	if ((argc>5) || (argc<4)) { printf("usage: %s %s\n", argv[0], usage); exit(1); }
 
         if (argc==5)
-                if (strcmp(argv[4],"-split") == 0)
-                        split = 1;
-		else
-                { printf("usage: %s %s\n", argv[0], usage); exit(1); }
+	{
+          if (strcmp(argv[4],"-split") == 0)
+            split = 1;
+	  else
+          { printf("usage: %s %s\n", argv[0], usage); exit(1); }
+	}
 
 	strcpy(ufname,argv[1]);
 	strcpy(vfname,argv[1]);

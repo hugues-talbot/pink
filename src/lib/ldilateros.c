@@ -654,7 +654,6 @@ int32_t ldilat2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab
 {
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t i, j;           /* index muet */
   register int32_t k, l;           /* index muet */
   int32_t rs = rowsize(f);         /* taille ligne */
   int32_t cs = colsize(f);         /* taille colonne */
@@ -765,7 +764,6 @@ int32_t lerosbyte(
 #undef F_NAME
 #define F_NAME "lerosbyte"
 {
-  char buf[32];
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
   register int32_t i, j;                    /* index muet */
@@ -950,7 +948,6 @@ int32_t leros2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_
 {
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t i, j;           /* index muet */
   register int32_t k, l;           /* index muet */
   int32_t rs = rowsize(f);         /* taille ligne */
   int32_t cs = colsize(f);         /* taille colonne */

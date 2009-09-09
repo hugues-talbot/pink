@@ -21,8 +21,7 @@ int32_t lnbtopo(
 #undef F_NAME
 #define F_NAME "lnbtopo"
 {
-  int32_t incr_vois, nvois, k;
-  int32_t p, q;
+  int32_t p;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */

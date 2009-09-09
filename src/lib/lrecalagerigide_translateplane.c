@@ -20,13 +20,6 @@
 #define VERBOSE
 
 /* ==================================== */
-static double dist(double x1, double y1, double x2, double y2)
-/* ==================================== */
-{
-  return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-}
-
-/* ==================================== */
 static double distcarre(double x1, double y1, double x2, double y2)
 /* ==================================== */
 {
@@ -75,7 +68,7 @@ void Tgamma(double *X, int n, double *Gamma, double *R)
     \warning R doit etre initialise aux memes dimensions que X (n,2)
 */
 {
-  int i, j;
+  int i;
   double Rot[2][2];
   
   // rotation
@@ -125,7 +118,7 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
 {
   double *Gamma, fmin;
   double G[5] = {1.0, 1.0, 0.0, 0.0, 0.0}; // hx, hy, theta, tx, ty
-  int i, ret;
+  int i;
   double BX1, BX2, BY1, BY2; // barycentres
   ensemble ens;
   const int MAXITER = 500;
@@ -155,13 +148,6 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
   free(ens.Tmp);
   return Gamma;
 } // lrecalagerigide2d()
-
-/* ==================================== */
-static double dist3d(double x1, double y1, double z1, double x2, double y2, double z2)
-/* ==================================== */
-{
-  return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1));
-}
 
 /* ==================================== */
 static double distcarre3d(double x1, double y1, double z1, double x2, double y2, double z2)
@@ -276,7 +262,7 @@ double *lrecalagerigide3d_translateplane(double *X, int n, double *Y, int m)
 {
   double *Gamma, fmin;
   double G[3] = {0.0, 0.0,0.0}; // tx, ty,
-  int i, ret;
+  int i;
   double BX1, BX2, BX3, BY1, BY2, BY3; // barycentres
   ensemble ens;
   const int MAXITER = 500;
@@ -333,7 +319,7 @@ double *lrecalagerigide3d_translate(double *X, int n, double *Y, int m)
 {
   double *Gamma, fmin;
   double G[3] = {0.0, 0.0,0.0}; // tx, ty,tz
-  int i, ret;
+  int i;
   double BX1, BX2, BX3, BY1, BY2, BY3; // barycentres
   ensemble ens;
   const int MAXITER = 500;

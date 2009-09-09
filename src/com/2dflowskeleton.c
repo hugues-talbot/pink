@@ -46,6 +46,7 @@ References:<BR>
 #include <mcgraphe.h>
 #include <ldist.h>
 #include <lmedialaxis.h>
+#include <l2dkhalimsky.h>
 #include <l2dcollapse.h>
 
 	      //#define SHOWGRAPHS
@@ -302,15 +303,14 @@ int main(int32_t argc, char **argv)
   struct xvimage * func;
   int32_t mode;
   uint8_t *K;
-  int32_t rs, cs, ds=1, N, i, j, xi, yi, xj, yj;
+  int32_t rs, cs, ds=1, N, i;
   float * FUNC;
   float * LAMBDA;
   graphe * flow;
-  uint8_t * perm;
-  uint8_t * head;
+  boolean * perm;
+  boolean * head;
   TYP_VSOM vmax;
   TYP_VSOM epsilon = FS_EPSILON;
-  pcell p;
 
   if ((argc != 4) && (argc != 5))
   {

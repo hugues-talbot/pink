@@ -56,7 +56,6 @@ void RbtpTransRec(
   Rbtp **T, Rbtp * A, RbtpElt * x)
 /* ==================================== */
 {
-  int32_t i;
   if (x == A->nil) return;
   RbtpInsert(T, x->key, x->auxdata);
   RbtpTransRec(T, A, x->left);
@@ -67,7 +66,7 @@ void RbtpTransRec(
 void RbtpReAlloc(Rbtp **A)
 /* ==================================== */
 {
-  int32_t i, taillemax;
+  int32_t taillemax;
   Rbtp * T, *Tmp;
 
 #ifdef VERBOSE

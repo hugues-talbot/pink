@@ -196,7 +196,6 @@ int32_t lsegmentnum(
   int32_t etiqcc[4];
   int32_t ncc;
   int32_t newcell;
-  int32_t tracedate = 0;
   int32_t nbcomp = 0;
 
   if (depth(image) != 1) 

@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int32_t i, j;
+  int32_t j;
   FILE *fd = NULL;
   int32_t npoints;
   double *x, *y, *z, *t;

@@ -8,7 +8,7 @@
 <B>Description:</B>
 Reads a triangulation in file <B>in.list</B> under the following format:
 <pre>
-    G <n>
+    G &lt;n&gt;
     x1 y1 v1 ec1 ns1 s11 s12 ... s1ns1
     x2 y2 v2 ec2 ns2 s21 s22 ... s1ns2
     ...
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
   int32_t *nv; /* la table des nombres de voisins */
   int32_t *ec; /* table de booleens indiquant les points de l'enveloppe convexe */
   struct xvimage * image;
-  int32_t rs, cs, ds, N;
+  int32_t rs, cs, N;
   uint8_t *F;
   int32_t Ax, Ay, Bx, By, v;
 

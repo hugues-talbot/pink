@@ -22,7 +22,7 @@ null value) are considered.
 
 Summary of list formats:
 <pre>  
-  e <n>       s <n>         b <n>         n <n>            B <n>            N <n>    
+  e &lt;n&gt;       s &lt;n&gt;         b &lt;n&gt;         n &lt;n&gt;            B &lt;n&gt;            N &lt;n&gt;    
   x1          x1 v1         x1 y1         x1 y1 v1         x1 y1 z1         x1 y1 z1 v1
   x2    or    x2 v2   or    x2 y2   or    x2 y2 v2   or    x2 y2 z2   or    z2 x2 y2 v2
   ...         ...           ...           ...              ...              ...

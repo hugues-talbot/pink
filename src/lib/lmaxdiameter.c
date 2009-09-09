@@ -17,16 +17,12 @@ int32_t lmaxdiameter(struct xvimage *image, int32_t connex)
 /* ==================================== */
 {
   int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
-  int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
   uint8_t *I = UCHARDATA(image);     /* l'image de depart */
-  uint32_t *IL = ULONGDATA(image);    /* l'image de depart si 32 bits */
   struct xvimage *tmp;
   uint8_t *T;
   //GUJUN

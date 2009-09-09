@@ -114,7 +114,7 @@ int main(int argc, char **argv)
 
   int32_t rs, cs, ds, N, Nmask;
   int32_t sex, sey, sez;
-  int32_t length, i, j, nangles; 
+  int32_t length, i, nangles; 
   uint8_t * mask_data;
   double rank;
 

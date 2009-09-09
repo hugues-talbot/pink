@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * inhibit = NULL;
-  int32_t mode, ret, nsteps;
+  int32_t mode, nsteps;
 
   if ((argc != 5) && (argc != 6))
   {

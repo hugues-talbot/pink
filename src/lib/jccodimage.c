@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <jccodimage.h>
 #include <mcutil.h>
@@ -58,6 +59,7 @@ int32_t voisinGA(int32_t i, int32_t k, int32_t rs, int32_t nb)
     case 4: if((i-nb) < nb-2*rs) return i+rs;else return -1;
     case 5: if( ((i-nb) < nb-rs) && (i%rs < rs-1)) return i-nb+rs; else return -1;
     }
+  assert(1); exit(1);
 }
 
 /* ==================================== */
@@ -156,7 +158,7 @@ int32_t Sommetx3d(int32_t u, int32_t N,int32_t rs, int32_t ps)
   case 0:        return u;
   case 1:        return u-N;
   case 2:        return u-(2*N);
-  default:       printf("Erreur !!!!!!!!!!!!!!!!\n");
+  default:       assert(1); exit(1);
   } 
 }
 /* Etant donne un graphe 6connexe (en 3D) retourne l'extremite x */
@@ -168,7 +170,7 @@ int32_t Sommety3d(int32_t u, int32_t N,int32_t rs, int32_t ps)
   case 0:        return u+1;
   case 1:        return u-N+rs;
   case 2:        return u-(2*N)+ps;
-  default:       printf("Erreur !!!!!!!!!!!!!!!!\n");
+  default:       assert(1); exit(1);
   }
 }
 
@@ -180,9 +182,10 @@ int32_t Sommetx4d(int32_t u, int32_t N, int32_t rs, int32_t ps, int32_t vs)
   case 1:        return u-N;
   case 2:        return u-(2*N);
   case 3:        return u-(3*N);
-  default:       printf("Erreur !!!!!!!!!!!!!!!!\n");
+  default:       assert(1); exit(1);
   }
 }
+
 int32_t Sommety4d(int32_t u, int32_t N, int32_t rs, int32_t ps, int32_t vs)
 {
   switch(u/N)
@@ -191,7 +194,7 @@ int32_t Sommety4d(int32_t u, int32_t N, int32_t rs, int32_t ps, int32_t vs)
   case 1:        return u-N+rs;
   case 2:        return u-(2*N)+ps;
   case 3:        return u-(3*N)+vs;
-  default:       printf("Erreur !!!!!!!!!!!!!!!!\n");
+  default:       assert(1); exit(1);
   }
 }
 
@@ -227,4 +230,5 @@ int32_t voisin4D8(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N, int32
   case 6:  if (i > N) return i-N; else return -1;
   case 7:  if (i < Nt - N) return i+N; else return -1;
   }
+  assert(1); exit(1);
 }/* voisin4D8() */

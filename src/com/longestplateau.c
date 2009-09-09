@@ -10,7 +10,7 @@
 Reads the sequence S from the file <B>in.list</B>. 
 This file must have the following format:
 <pre>  
-  e <n>
+  e &lt;n&gt;
   x1
   x2
   ...
@@ -18,7 +18,7 @@ This file must have the following format:
 </pre>
 The tolerance t (float) is given by the parameter <B>tolerance</B>
 (default value is 0).
-A <it>plateau</it> is a subsequence P of S formed by consecutive elements of P, 
+A <i>plateau</i> is a subsequence P of S formed by consecutive elements of P, 
 between indices i and j, and such that max{P[k];i<=k<=j} - min{P[k];i<=k<=j} <= t.
 The program returns the base index and length of the first occurence of a plateau with 
 maximal length in S.
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   FILE *fd = NULL;
-  int32_t n, i, j, l, imax, lmax;
+  int32_t n, i, l, imax, lmax;
   char type;
   double v, tol, *tab;
 

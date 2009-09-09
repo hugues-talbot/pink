@@ -42,7 +42,7 @@ int32_t lcrestheight(
 #undef F_NAME
 #define F_NAME "lcrestheight"
 { 
-  int32_t p, h;
+  int32_t p;
   int32_t rs = rowsize(skel);     /* taille ligne */
   int32_t cs = colsize(skel);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */

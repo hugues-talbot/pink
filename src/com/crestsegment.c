@@ -57,7 +57,7 @@ int32_t lcrestsegment(struct xvimage *image, int32_t connex, int32_t nitermax, i
 #define ROBUSTE 1
 { 
   int32_t i, k, a, h;
-  int32_t x, y, z;                 /* index muet de pixel */
+  int32_t x, y;                 /* index muet de pixel */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -65,7 +65,6 @@ int32_t lcrestsegment(struct xvimage *image, int32_t connex, int32_t nitermax, i
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t *mu;
 

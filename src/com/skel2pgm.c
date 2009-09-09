@@ -29,7 +29,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int32_t connex;
   skel * S;
 
   if (argc != 3)

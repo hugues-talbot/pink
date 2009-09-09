@@ -121,7 +121,6 @@ int32_t lread_MgLut(MLut *mglut, int32_t maxdist, int32_t ds)
 {
   char tablefilename[512];
   FILE *fd;
-  int32_t i;
 
   sprintf(tablefilename, "%s/src/tables/%s", getenv("PINK"), TAB_MGLUT(ds));
   fd = fopen(tablefilename, "r");
@@ -326,7 +325,8 @@ void lprint_MLut(MLut mlut)
   if (mlut.indmap != NULL) {
     for (i=0; i<mlut.numd; i++) {
       printf("\t%d\t%d\n", mlut.indmap[i] / mlut.rknown, mlut.indmap[i]);
-      fflush(stdout); getchar;
+      fflush(stdout); 
+      //      getchar;   RETIRE SUITE A UN WARNING "instruction sans effet" MC
     }
     printf("\n");
   } else
@@ -392,7 +392,7 @@ int32_t lread_rtlut(MLut *mlut, RTLutCol *Lut, int32_t maxdist, int32_t ds)
 #define lcol (*Lut)
 
   char tablefilename[512];
-  int32_t i, j, newnumd;
+  int32_t i, j;
   FILE *fd = NULL;
 
   //open file

@@ -9,11 +9,11 @@
 
 Reads the file <B>in.list</B>. This file must have one of the following formats:
 <pre>  
-    s <m> 
+    s &lt;n&gt; 
     x1 y1 
     x2 y2 
     ...   
-    xm ym 
+    xn yn 
 </pre>
 
 The optional parameter \b scale allows to scale the y coordinates.

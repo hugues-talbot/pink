@@ -55,7 +55,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
   int32_t *tab_m_x;       /* liste des coord. x des points non nuls du masque. */
   int32_t *tab_m_y;       /* liste des coord. y des points non nuls du masque. */
   float *tab_m_val;   /* liste des valeurs des points non nuls du masque. */
-  float nb, sum;
+  float sum;
   int32_t rs2, cs2;
   if (depth(f) != 1) 
   {
@@ -167,7 +167,6 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
     struct xvimage *mf1;  // FFT de maskpad (partie reelle)
     struct xvimage *mf2;  // FFT de maskpad (partie imaginaire)
     float *IF1, *IF2, *MF1, *MF2;
-    double tmp;
 
     rs2 = max(rs+rs,cs+cs);
     cs2 = 1;
@@ -318,17 +317,15 @@ int32_t ldirectionalfilter(
   int32_t rs = rowsize(image);
   int32_t cs = colsize(image);
   int32_t N = rs * cs;
-  float *F = FLOATDATA(image);
   struct xvimage *kernel;
-  int32_t rsk, csk, Nk;
+  int32_t rsk, csk;
   float *K;
   int32_t n, i, j, x, y, xr, yr, x0, y0;
   struct xvimage *result;
   float *R;
   struct xvimage *temp;
   float *T;
-  float mint, maxt;
-  float tmp, k1, k2, t1, t2, t3;
+  float tmp, k1, k2, t1, t2;
 #ifdef DEBUG
   float sum, sum1, sum2;
   char buf1[256];

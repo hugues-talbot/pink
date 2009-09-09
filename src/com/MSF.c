@@ -54,7 +54,6 @@ int main(int32_t argc, char **argv)
   struct xvimage * marqueurs;
   struct xvimage * labels;
   int32_t nblabels;
-  int32_t nlabels;
 
   if ((argc != 5))
   {

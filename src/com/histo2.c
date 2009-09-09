@@ -30,7 +30,6 @@ int main(int argc, char **argv)
   struct xvimage * image2;
   struct xvimage * mask = NULL;
   struct xvimage * histo;
-  int32_t i;
 
   if ((argc != 4) && (argc != 5))
   {

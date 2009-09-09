@@ -10,13 +10,13 @@
 Reads the file <B>in.ac</B>. This file must be in the AC3D format.
 Generates the output file <B>out.3sc</B> in the 3Dscene format : 
 
-FILE ::= '3Dscene' <N> <OBJ>*
-OBJ ::= <LINE> | <CLOSEDLINE> | <SPLINE> | <CLOSEDSPLINE> | <POLYGON>
-LINE ::= 'line' <N> <POINT>*
-CLOSEDLINE ::= 'closedline' <N> <POINT>*
-SPLINE ::= 'spline' <N> <POINT>*
-CLOSEDSPLINE ::= 'closedspline' <N> <POINT>*
-POLYGON ::= 'polygon' <N> <POINT>*
+FILE ::= '3Dscene' &lt;N&gt; &lt;OBJ&gt;*
+OBJ ::= &lt;LINE&gt; | &lt;CLOSEDLINE&gt; | &lt;SPLINE&gt; | &lt;CLOSEDSPLINE&gt; | &lt;POLYGON&gt;
+LINE ::= 'line' &lt;N&gt; &lt;POINT&gt;*
+CLOSEDLINE ::= 'closedline' &lt;N&gt; &lt;POINT&gt;*
+SPLINE ::= 'spline' &lt;N&gt; &lt;POINT&gt;*
+CLOSEDSPLINE ::= 'closedspline' &lt;N&gt; &lt;POINT&gt;*
+POLYGON ::= 'polygon' &lt;N&gt; &lt;POINT&gt;*
 N ::= ascii_coded_integer
 POINT ::= ascii_coded_float ascii_coded_float ascii_coded_float
 

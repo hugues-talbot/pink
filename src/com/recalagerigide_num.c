@@ -17,7 +17,7 @@ The distance D(Z,Y) between two images Z and Y is defined by:
 D(Z,Y) = sum { (Z[i] - Y[i])^2 ; for all i in support(Y) }
 
 where support(Y) is a rectangular zone specified by arguments 
-<B>xmin ymin xmax ymax<B>.
+<B>xmin ymin xmax ymax</B>.
 
 The rigid deformation R is defined as the composition (in this order) 
 of a zoom, a rotation, and a translation. 
@@ -70,7 +70,6 @@ int main(int argc, char **argv)
 {
   struct xvimage * image1;
   struct xvimage * image2;
-  int32_t rs, cs, ds, ps, N, n;
   double Gamma[9] = {1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}; // hx, hy, theta, tx, ty
   double seuil; 
   FILE *fd = NULL;

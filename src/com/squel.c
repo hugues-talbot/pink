@@ -29,7 +29,6 @@ int main(int argc, char **argv)
   struct xvimage * image;
   int32_t seuil;
   int32_t niseuil;
-  char * nameout;
 
   if (argc != 5)
   {

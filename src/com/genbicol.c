@@ -51,7 +51,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int32_t i;
   uint8_t *Im;
   int32_t rs, cs;
 

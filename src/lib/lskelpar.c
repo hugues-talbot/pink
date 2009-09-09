@@ -148,6 +148,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mctopo.h>
@@ -381,6 +382,7 @@ static int32_t pav_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   return 0;
 } /* pav_match3() */
 
+#ifdef NOT_USED
 /* ==================================== */
 static int32_t pav_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
@@ -408,6 +410,7 @@ static int32_t pav_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   }
   return 0;
 } /* pav_match3b() */
+#endif
 
 /* ==================================== */
 static int32_t pav_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
@@ -457,7 +460,7 @@ int32_t lskelpavlidis(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelpavlidis"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -526,7 +529,7 @@ int32_t lskelpavlidis1(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelpavlidis1"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -574,7 +577,7 @@ int32_t lskeleckhardt(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskeleckhardt"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -658,7 +661,7 @@ static int32_t rutovitz_match(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 {
 #undef F_NAME
 #define F_NAME "rutovitz_match"
-  int32_t i, n;
+  int32_t n;
   uint8_t v[8];
   if (!F[x]) return 0;
   n = nbvois8(F, x, rs, N);
@@ -687,7 +690,7 @@ int32_t lskelrutovitz(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelrutovitz"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -748,7 +751,7 @@ static int32_t zhangwang_match(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 {
 #undef F_NAME
 #define F_NAME "zhangwang_match"
-  int32_t i, n;
+  int32_t n;
   uint8_t v[8];
   if (!F[x]) return 0;
   n = nbvois8(F, x, rs, N);
@@ -774,7 +777,7 @@ int32_t lskelzhangwang(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelzhangwang"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -833,7 +836,7 @@ int32_t lskelzhangwang(struct xvimage *image,
 static int32_t hanlarhee_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i, n;
+  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
 
@@ -866,7 +869,7 @@ static int32_t hanlarhee_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t hanlarhee_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i, n;
+  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
 
@@ -898,7 +901,7 @@ static int32_t hanlarhee_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t hanlarhee_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i, n;
+  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
 
@@ -924,7 +927,7 @@ static int32_t hanlarhee_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t hanlarhee_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i, n;
+  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
 
@@ -951,7 +954,7 @@ static int32_t hanlarhee_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t hanlarhee_match6(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i, n;
+  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
 
@@ -1000,7 +1003,7 @@ static int32_t hanlarhee_match7(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t hanlarhee_match(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i, n;
+  int32_t i;
   uint8_t v[8];
   switch (F[x])
   {
@@ -1018,6 +1021,7 @@ static int32_t hanlarhee_match(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   case 7: return hanlarhee_match7(F, x, rs, N);
   case 8: return 0;
   }
+  assert(1); exit(1);
 } /* hanlarhee_match() */
 
 /* ==================================== */
@@ -1029,7 +1033,7 @@ int32_t lskelhanlarhee(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelhanlarhee"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -1094,7 +1098,6 @@ int32_t lskelhanlarhee(struct xvimage *image,
 static int32_t guohall_L(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i;
   uint8_t v[8];
   int32_t q1, q2;
   if ((x+rs+rs >= N) || (x%rs < 2))
@@ -1114,7 +1117,6 @@ static int32_t guohall_L(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t guohall_d1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i;
   uint8_t v[8];
   int32_t q1, q2;
   if ((x+rs+rs >= N) || (x%rs < 2))
@@ -1131,7 +1133,6 @@ static int32_t guohall_d1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t guohall_d2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i;
   uint8_t v[8];
   int32_t q1, q2;
   if ((x+rs+rs >= N) || (x%rs < 2))
@@ -1148,7 +1149,6 @@ static int32_t guohall_d2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t guohall_d3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i;
   uint8_t v[8];
   int32_t q1, q2;
   if ((x+rs+rs >= N) || (x%rs < 2))
@@ -1165,7 +1165,6 @@ static int32_t guohall_d3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t guohall_b1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
   return (!v[0] && !v[1] && !v[2] && v[4] && !v[5] && v[6]);
@@ -1175,7 +1174,6 @@ static int32_t guohall_b1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t guohall_b2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
   return (!v[2] && !v[3] && !v[4] && v[6] && !v[7] && v[0]);
@@ -1191,7 +1189,7 @@ int32_t lskelguohall(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelguohall"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -1334,7 +1332,6 @@ static int32_t chinwan_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t chinwan_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i;
   uint8_t v[8];
   int32_t q1, q2;
   if ((x+rs+rs >= N) || (x%rs >= rs - 2))
@@ -1356,7 +1353,7 @@ int32_t lskelchinwan(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelchinwan"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -1662,7 +1659,7 @@ int32_t lskeljang(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskeljang"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -1747,7 +1744,7 @@ int32_t lskeljangcor(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskeljang"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -1959,7 +1956,7 @@ int32_t lskelmns(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelmns"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -2230,7 +2227,7 @@ int32_t lskeljangrec(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskeljangrec"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -2537,7 +2534,7 @@ int32_t lskelchoy(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelchoy"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -2699,7 +2696,7 @@ int32_t lskelmanz(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelmanz"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -2778,7 +2775,6 @@ int32_t lskelmanz(struct xvimage *image,
 static int32_t hall_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
   return ((v[0] == 2) && v[2] && v[6]);
@@ -2788,7 +2784,6 @@ static int32_t hall_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t hall_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
   return ((v[6] == 2) && v[0] && v[4]);
@@ -2798,7 +2793,6 @@ static int32_t hall_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t hall_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
-  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
   return ((v[6] == 2) && (v[7] == 2) && (v[0] == 2));
@@ -2816,7 +2810,7 @@ int32_t lskelhall(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelhall"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -3101,7 +3095,7 @@ int32_t lskelwutsai(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelwutsai"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -3451,7 +3445,7 @@ int32_t lskelmcultime(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelmcultime"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -3542,7 +3536,7 @@ int32_t lskelmccurv(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelmccurv"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -3633,7 +3627,7 @@ int32_t lskelmccurvrec(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelmccurvrec"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -3769,7 +3763,7 @@ int32_t lskelmccurvrecold(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelmccurvrec"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -3958,7 +3952,7 @@ int32_t lskelNK2(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelNK2"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -4104,7 +4098,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelbertrand_sym"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -4200,7 +4194,7 @@ int32_t lskelbertrand_asym_s(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelbertrand_asym_s"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -4211,7 +4205,7 @@ int32_t lskelbertrand_asym_s(struct xvimage *image,
   uint8_t *E = (uint8_t *)malloc(N);
   uint8_t *R = (uint8_t *)malloc(N);
   int32_t step, nonstab;
-  int32_t m1, m2, m3, m4, m5, m6;
+  int32_t m1, m2;
 
   if (inhibit != NULL)
   {
@@ -4295,7 +4289,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelMK2"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -4411,7 +4405,7 @@ Répéter jusqu'à stabilité
 #undef F_NAME
 #define F_NAME "lskelAK2"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -4553,7 +4547,6 @@ static int32_t ros_north(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   D D D
  */
 {
-  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
   if (v[2] != 0) return 0;
@@ -4570,7 +4563,6 @@ static int32_t ros_south(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   D 0 D
  */
 {
-  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
   if (v[6] != 0) return 0;
@@ -4587,7 +4579,6 @@ static int32_t ros_east(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   D D D
  */
 {
-  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
   if (v[0] != 0) return 0;
@@ -4604,7 +4595,6 @@ static int32_t ros_west(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   D D D
  */
 {
-  int32_t i;
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
   if (v[4] != 0) return 0;
@@ -4621,7 +4611,7 @@ int32_t lskelrosenfeld(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelrosenfeld"
 { 
-  int32_t i, j, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */

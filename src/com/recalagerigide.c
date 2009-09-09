@@ -69,8 +69,6 @@ int main(int argc, char **argv)
 {
   struct xvimage * image1;
   struct xvimage * image2;
-  int32_t rs, cs, ds, ps, N, x, y, z, n;
-  uint8_t *F;
   int32_t n1, n2;
   double * P1, * P2, *Gamma;
 

@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 {
   int32_t j, nsamples, npoints;
   FILE *fd = NULL;
-  double *x, *y, *z, x1, y1, z1;
+  double *x, *y, x1, y1;
   double *sk, *rhok;
   char type;
 
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
   fscanf(fd, "%c", &type);
   if ((type != 's') && (type != 'S'))
   {
-    fprintf(stderr, "usage: %s : bat file format : %c \n", type);
+    fprintf(stderr, "usage: %s : bat file format : %c \n", argv[0], type);
     exit(1);
   }
 
@@ -100,7 +100,7 @@ int main(int argc, char **argv)
   }
   else
   {
-    fprintf(stderr, "usage: %s : 3D not yet implemented \n");
+    fprintf(stderr, "usage: %s : 3D not yet implemented \n", argv[0]);
     exit(1);
   }
   return 0;

@@ -24,7 +24,7 @@
 int32_t lbarycentrelab(struct xvimage * imagelab)
 /* ==================================== */
 {
-  int32_t i, j, npts;
+  int32_t i, j;
   uint32_t *F;
   int32_t rs, cs, N;
   int32_t nblabels;
@@ -119,7 +119,7 @@ printf("%g %g\n", bxx[i], byy[i]);
 int32_t lbarycentre(struct xvimage * image1, int32_t connex)
 /* ==================================== */
 {
-  int32_t i, j, npts;
+  int32_t i, j;
   uint8_t *F;
   int32_t rs, cs, N;
   struct xvimage *label;
@@ -129,7 +129,6 @@ int32_t lbarycentre(struct xvimage * image1, int32_t connex)
   double *byy;
   int32_t *surf;
   uint32_t lab;
-  char buf[64];
 
   if (depth(image1) != 1) 
   {
@@ -232,7 +231,7 @@ printf("%g %g\n", bxx[i], byy[i]);
 int32_t lbarycentreold(struct xvimage * image1, double * bx, double * by)
 /* ==================================== */
 {
-  int32_t i, j, npts;
+  int32_t i, j;
   uint8_t *F;
   int32_t rs, cs, N;
   struct xvimage *label;

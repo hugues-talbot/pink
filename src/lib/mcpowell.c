@@ -547,7 +547,7 @@ int32_t powell(PFNe f, ensemble * ens, double p[], int32_t n, double tol,
 	flag = linmin(f, ens, p, new_dir, n, &new_value);
 	if (flag != M_FOUND)
 	  // printf("dir %d ener %.13g\n", i, new_value);
-	  1;
+	  ;
 	else if (prev_value - new_value > max_decr) 
 	{
 	  max_decr = prev_value - new_value;
@@ -641,7 +641,7 @@ int32_t powell_num(PFNn f, struct xvimage * image1, struct xvimage * image2,
 	flag = linmin_num(f, image1, image2, p, new_dir, n, &new_value);
 	if (flag != M_FOUND)
 	  // printf("dir %d ener %.13g\n", i, new_value);
-	  1;
+	  ;
 	else if (prev_value - new_value > max_decr) 
 	{
 	  max_decr = prev_value - new_value;

@@ -938,7 +938,7 @@ void writeascimage(struct xvimage * image, char *filename)
     {
       if (i % rs == 0) fprintf(fd, "\n");
       if (i % ps == 0) fprintf(fd, "\n");
-      fprintf(fd, "%ld ", ULONGDATA(image)[i]);
+      fprintf(fd, "%ld ", (long int)(ULONGDATA(image)[i]));
     } /* for i */
     fprintf(fd, "\n");
   }
@@ -1251,9 +1251,10 @@ struct xvimage * readimage(char *filename)
   {
     if (ascii)
     {
+      long int tmp;
       for (i = 0; i < N; i++)
       {
-        fscanf(fd, "%ld", &(ULONGDATA(image)[i]));
+        fscanf(fd, "%ld", &tmp); (ULONGDATA(image)[i]) = (uint32_t)tmp;
       } /* for i */
     }
     else 

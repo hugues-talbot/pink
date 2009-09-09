@@ -40,7 +40,7 @@ int main(int argc, char **argv)
   image1 = readimage(argv[1]);
   if (image1 == NULL)
   {
-    fprintf(stderr, "line: readimage failed\n", argv[0]);
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
   
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
   }
   else
   {
-    fprintf(stderr, "line: bad data type or dimension\n", argv[0]);
+    fprintf(stderr, "%s: bad data type or dimension\n", argv[0]);
     exit(1);
   }
   writeimage(image1, argv[argc-1]);

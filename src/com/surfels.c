@@ -26,7 +26,7 @@ int32_t lsurfels(struct xvimage * f, uint8_t v,
              int32_t obj_id, FILE *fileout)
 /* =============================================================== */
 {
-  int32_t i, j, k, nbfac, fac;
+  int32_t i, j, k;
   int32_t rs, cs, ps, ds, N;
   uint8_t * F;
   uint8_t s;
@@ -112,5 +112,5 @@ int main(int argc, char **argv)
 
   freeimage(f);
   fclose(fileout);
-
+  return 0;
 } /* main */

@@ -101,8 +101,6 @@ int main(int argc, char **argv)
 {
   struct xvimage * image1;
   struct xvimage * image2;
-  int rs, cs, ds, ps, N, x, y, z, n;
-  unsigned char *F;
   int n1, n2;
   double * P1, * P2, *Gamma;
   FILE* fd;
@@ -148,7 +146,7 @@ int main(int argc, char **argv)
     printf("n1 et n2 : %d %d \n", n1, n2);
     Gamma = lrecalagerigide3d_translateplane(P1, n1, P2, n2);
     fd = fopen(argv[argc-1],"w");
-    fprintf(fd, "Parametre de translation\n", Gamma[0]);
+    fprintf(fd, "Parametre de translation\n");
     fprintf(fd, "%d %d\n", -(int)(Gamma[0]+0.5), -(int)(Gamma[1] + 0.5));    
   }
   freeimage(image1);

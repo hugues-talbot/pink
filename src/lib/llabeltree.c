@@ -56,7 +56,7 @@ int32_t llabeltree2d(struct xvimage *imgx,   /* donnee: image binaire */
   int32_t N = rs * cs;           /* taille de l'image */
   uint8_t *X;                    /* pointeur sur l'image x */
   uint32_t *D;                   /* pointeur sur les distances */
-  int32_t i, j, k, current_pixel, incr_vois;
+  int32_t i, k, current_pixel;
   int32_t d_max = 0;
 
   if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != 1))
@@ -137,7 +137,7 @@ int32_t llabeltree3d(struct xvimage *imgx,   /* donnee: image binaire */
   int32_t N = ps * ds;           /* taille de l'image */
   uint8_t *X;                    /* pointeur sur l'image x */
   uint32_t *D;                   /* pointeur sur les distances */
-  int32_t i, j, k, current_pixel, incr_vois;
+  int32_t i, k, current_pixel;
   int32_t d_max = 0;
 
   if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))

@@ -149,7 +149,7 @@ int32_t ldistgeo3d(struct xvimage *imgx,   /* donnee: image binaire */
   uint8_t *X;                    /* pointeur sur l'image x */
   uint8_t *Y;                    /* pointeur sur l'image y */
   uint32_t *D;                   /* pointeur sur les distances */
-  int32_t i, j, k, d, incr_vois;
+  int32_t i, j, k, d;
   Lifo * LIFO1;
   Lifo * LIFO2;
   Lifo * LIFOtmp;

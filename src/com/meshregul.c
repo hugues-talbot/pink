@@ -60,9 +60,9 @@ int main(int argc, char **argv)
 {
   FILE *filein = NULL;
   FILE *fileout = NULL;
-  int32_t i, mode;
+  int32_t mode;
   int32_t formatin, formatout;
-  double v, p1 = -1.0, p2 = -1.0, p3 = -1.0, md0, md, err;
+  double p1 = -1.0, p2 = -1.0, p3 = -1.0;
 #ifdef EVALUATION
   double xc, yc, zc;
   double MSE;
@@ -165,4 +165,5 @@ int main(int argc, char **argv)
     SaveMeshVTK(fileout);
   }
   fclose(fileout);
+  return 0;
 } /* main */

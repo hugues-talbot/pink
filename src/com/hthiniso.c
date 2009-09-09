@@ -27,8 +27,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * imagecond;
-  int32_t nitermax;
   int32_t connex;
   double dmax;
   double pixwhratio = 1.0;

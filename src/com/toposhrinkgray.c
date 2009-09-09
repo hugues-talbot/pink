@@ -235,8 +235,6 @@ int32_t ltoposhrinkgray(struct xvimage *image,
 #define F_NAME "ltoposhrinkgray"
 { 
     int32_t x;                       /* index muet de pixel */
-    int32_t y;                       /* index muet (generalement un voisin de x) */
-    int32_t k;                       /* index muet */
     int32_t rs = rowsize(image);     /* taille ligne */
     int32_t cs = colsize(image);     /* taille colonne */
     int32_t N = rs * cs;             /* taille image */
@@ -358,8 +356,6 @@ int32_t ltoposhrinkgray3d(struct xvimage *image,
 #define F_NAME "ltoposhrinkgray3d"
 { 
     int32_t x;                       /* index muet de pixel */
-    int32_t y;                       /* index muet (generalement un voisin de x) */
-    int32_t k;                       /* index muet */
     int32_t rs = rowsize(image);     /* taille ligne */
     int32_t cs = colsize(image);     /* taille colonne */
     int32_t ps = rs * cs;            /* taille plan */

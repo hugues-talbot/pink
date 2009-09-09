@@ -47,8 +47,7 @@
 int32_t lsegreconsheight(struct xvimage *image, int32_t connex, int32_t param)
 /* ==================================== */
 {
-  register int32_t i, k, l;         /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;         /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t N = rs * cs;              /* taille image */

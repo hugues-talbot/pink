@@ -47,6 +47,16 @@ morph
 #include <mcimage.h>
 #include <ldilateros.h>
 
+/* les elements structurants 2-D */
+static uint8_t vois8[8] = {1, 1, 1, 1, 1, 1, 1, 1};
+static uint8_t vois4[8] = {1, 0, 1, 0, 1, 0, 1, 0};
+static uint8_t croix[8] = {0, 1, 0, 1, 0, 1, 0, 1};
+/* les elements structurants 1-D */
+static uint8_t horiz[8] = {1, 0, 0, 0, 1, 0, 0, 0};
+static uint8_t vert[8]  = {0, 0, 1, 0, 0, 0, 1, 0};
+static uint8_t mont[8]  = {0, 1, 0, 0, 0, 1, 0, 0};
+static uint8_t desc[8]  = {0, 0, 0, 1, 0, 0, 0, 1};
+
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */

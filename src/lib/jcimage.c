@@ -85,7 +85,7 @@ void writerawGAimage(struct xvimage * image, char *filename)
 #define F_NAME "writerawGAimage"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, d, N, i, ret;
+  int32_t rs, cs, d, N, ret;
   int32_t ts;
 
   rs = rowsize(image);
@@ -154,7 +154,7 @@ struct xvimage * readGAimage(char *filename)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, ndgmax, N, i;
+  int32_t rs, cs, d, ndgmax, N;
   struct xvimage * image;
   int32_t ascii;  
   int32_t typepixel;
@@ -288,7 +288,7 @@ struct xvimage4D *allocimage4D(
 
 
 /* ==================================== */
-struct xvimage4D *freeimage4D(struct xvimage4D * im)     /* derniere frame */
+void freeimage4D(struct xvimage4D * im)     /* derniere frame */
 /* ==================================== */
 {
   int32_t i;
@@ -306,7 +306,6 @@ struct xvimage4D *readimage4D(char *prefix,   /* prefixe des noms d'images */
 #define F_NAME "readimage4D"
 {
   struct xvimage4D * image;
-  struct xvimage * im;
   int32_t seqsize, prefixlen, cs, rs, ds,j;
   char bufname[1024];
   
@@ -405,9 +404,8 @@ struct GA4d * readGA4d(char *filename)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, ndgmax, N, i, ss;
+  int32_t rs, cs, d, ndgmax, N, ss;
   struct GA4d * image;
-  int32_t ascii;  
   double xdim=1.0, ydim=1.0, zdim=1.0, tdim=1.0;
   int32_t ret,c;
   
@@ -438,7 +436,7 @@ struct GA4d * readGA4d(char *filename)
   }
   if (buffer[1] != 'D')
   {
-    fprintf(stderr,"%s: not 4d weighted-edge graph"); 
+    fprintf(stderr,"%s: not 4d weighted-edge graph", F_NAME);
     return NULL;
   } /* if */
 
@@ -529,7 +527,7 @@ void writeGA4d(struct GA4d * image, char *filename)
 #define F_NAME "writeGA4d"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, d, N, i, ret, ss;
+  int32_t rs, cs, d, N, ret, ss;
 
   rs = rowsize(image);
   cs = colsize(image);
@@ -562,7 +560,7 @@ void writeGA4d(struct GA4d * image, char *filename)
   fclose(fd);
 } /* writeGA4d() */
 
-struct GA4d *freeGA4d(struct GA4d  *im)
+void freeGA4d(struct GA4d  *im)
 {
   free(im);
 }

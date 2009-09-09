@@ -26,8 +26,8 @@ int32_t lfft(struct xvimage *image1, struct xvimage *image2, int32_t dir)
 #define F_NAME "lfft"
   struct xvimage *r_image, *i_image;
 
-    int32_t i,j,k,cs,rs,ic,ir;      /* Indexes and sizes of rows and columns */
-    int32_t type;                   /* FFT type argument for FORTRAN call */
+    int32_t i, j, cs, rs;       /* Indexes and sizes of rows and columns */
+    int32_t type;               /* FFT type argument for FORTRAN call */
     float *pr, *pi;             /* Pointers to complex pairs array */
 
     float *fptr,                /* pointer to image1 data */
@@ -36,8 +36,7 @@ int32_t lfft(struct xvimage *image1, struct xvimage *image2, int32_t dir)
 
     int32_t m,m1;                    /* Stuff for Nyquist modulation */
 
-    float         *cptr,        /* pointer to complex image data */
-                  *rptr,        /* pointer to real image data */
+    float         *rptr,        /* pointer to real image data */
                   *iptr;        /* pointer to imaginary image data */
 
     cs = colsize(image1);            /* Number of rows */

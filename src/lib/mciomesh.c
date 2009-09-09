@@ -72,7 +72,7 @@ void genheaderPOV(FILE *fileout, int32_t obj_id, meshbox MB)
   fprintf(fileout, "light_source { <%g,%g,%g> color White }\n", 
                    2*MB.bxmax, 2*MB.bymax, 2*MB.bzmin);
   fprintf(fileout, "light_source { <%g,%g,%g> color White }\n", 
-                   0, 0, 3*MB.bzmax);
+	  (double)0, (double)0, 3*MB.bzmax);
   fprintf(fileout, "\n");
   fprintf(fileout, "#declare mytexture = Bright_Bronze\n");
   fprintf(fileout, "\n");
@@ -417,7 +417,7 @@ POLYGONS %d %d    // Faces - champ obligatoire
    ...
 */
 {
-  int32_t i, j;
+  int32_t i;
 
   // SOMMETS
   fprintf(fileout, "POINTS %d float\n", Vertices->cur);
@@ -451,7 +451,7 @@ POLYGONS %d %d    // Faces - champ obligatoire
 Attention : les faces dont le champ "aux" est différent de 0 ne sont pas sauvées
 */
 {
-  int32_t i, j, n, m;
+  int32_t i, n, m;
 
   genheaderVTK(fileout, "MCM_SaveVTK output");
 
@@ -481,7 +481,7 @@ void SaveMeshAC(FILE *fileout)
 /* ==================================== */
 /* fileout doit avoir ete ouvert en ecriture */
 {
-  int32_t i, j;
+  int32_t i;
 
   fprintf(fileout, "numvert %d\n", Vertices->cur);
   for (i = 0; i < Vertices->cur; i++)
@@ -522,7 +522,7 @@ static GLfloat face_indiciess<obj_id>[<nfaces>][6] = {
 };
 */
 {
-  int32_t i, j;
+  int32_t i;
 
   fprintf(fileout, "static GLfloat normals%d[%d][3] = {\n", obj_id, Vertices->cur);
   for (i = 0; i < Vertices->cur-1; i++)
@@ -731,11 +731,10 @@ Models "face" along the negative z-direction.  For example, the P51 Mustang
 should fly along its object space -z axis.
 */
 {
-  int32_t i, j, n, nvert=-1, nfaces=-1, nvertfix;
+  int32_t i, nvert=-1, nfaces=-1;
   float version;
 #define sbuf 1024
   char buf[sbuf];
-  char *ret;
   uint32_t s;
 
   s = LE_ReadUnsignedLong(filein);
@@ -758,7 +757,7 @@ should fly along its object space -z axis.
   fread(buf, sizeof(char), s, filein);
   nvert = (int32_t)ReadUnsignedLong(filein);
 #ifdef VERBOSE
-  printf("%s: %ld\n", buf, nvert);
+  printf("%s: %ld\n", buf, (long int)nvert);
 #endif
   Vertices = MCM_AllocVertices(nvert);
   Vertices->cur = nvert;
@@ -772,7 +771,7 @@ should fly along its object space -z axis.
   fread(buf, sizeof(char), s, filein);
   nfaces = (int32_t)ReadUnsignedLong(filein);
 #ifdef VERBOSE
-  printf("%s: %ld\n", buf, nfaces);
+  printf("%s: %ld\n", buf, (long int)nfaces);
 #endif
   Faces = MCM_AllocFaces(nfaces);
   Faces->cur = nfaces;
@@ -808,18 +807,17 @@ vertex       := (float32)x  (float32)y [ (float32)z ]
 tri          := (uint32)v0 + (uint32)v1 + (uint32)v2
 */
 {
-  int32_t i, j, n, nvert=-1, nfaces=-1, dim;
-  char *ret;
+  int32_t i, nvert=-1, nfaces=-1, dim;
   int32_t *f1, *f2, *f3, nf, F1, F2, F3;
-  double x, y, z;
+  double x, y;
 
   fscanf(filein, "%d%d%d", &nvert, &nfaces, &dim);
 
   nvert -= 1; // le point 000 est implicite
 #ifdef VERBOSE
-  printf("nombre sommets %ld\n", nvert);
-  printf("nombre faces %ld\n", nfaces);
-  printf("dim %ld\n", dim);
+  printf("nombre sommets %ld\n", (long int)nvert);
+  printf("nombre faces %ld\n", (long int)nfaces);
+  printf("dim %ld\n", (long int)dim);
 #endif
 
   if ((nvert == -1) || (nfaces == -1))
@@ -864,7 +862,7 @@ tri          := (uint32)v0 + (uint32)v1 + (uint32)v2
   }
 
 #ifdef VERBOSE
-  printf("nombre faces effectives %ld\n", nf);
+  printf("nombre faces effectives %ld\n", (long int)nf);
 #endif
 
   Faces = MCM_AllocFaces(nf);
@@ -910,7 +908,7 @@ void LoadBuildMCM(FILE *filein)
   
 */
 {
-  int32_t i, j, n, nvert=-1, nfaces=-1, nvertfix;
+  int32_t i, nvert=-1, nfaces=-1;
   double x, y, z;
 #define sbuf 1024
   char buf[sbuf];
@@ -978,7 +976,7 @@ POLYGONS %d %d     (Faces - champ obligatoire)
    ...
 */
 {
-  int32_t i, j, n, nvert=-1, nfaces=-1, nvertfix;
+  int32_t i, nvert=-1, nfaces=-1;
   double x, y, z;
 #define sbuf 1024
   char buf[sbuf];
@@ -1074,11 +1072,10 @@ Models "face" along the negative z-direction.  For example, the P51 Mustang
 should fly along its object space -z axis.
 */
 {
-  int32_t i, j, n, nvert=-1, nfaces=-1, nvertfix;
+  int32_t i, nvert=-1, nfaces=-1;
   float version;
 #define sbuf 1024
   char buf[sbuf];
-  char *ret;
   uint32_t s;
   double *vx, *vy, *vz;
   int32_t f1, f2, f3;
@@ -1103,7 +1100,7 @@ should fly along its object space -z axis.
   fread(buf, sizeof(char), s, filein);
   nvert = (int32_t)ReadUnsignedLong(filein);
 #ifdef VERBOSE
-  printf("%s: %ld\n", buf, nvert);
+  printf("%s: %ld\n", buf, (long int)nvert);
 #endif
   Vertices = MCM_AllocVertices(nvert);
   RBTP = CreeRbtpVide(nvert);
@@ -1120,7 +1117,7 @@ should fly along its object space -z axis.
   fread(buf, sizeof(char), s, filein);
   nfaces = (int32_t)ReadUnsignedLong(filein);
 #ifdef VERBOSE
-  printf("%s: %ld\n", buf, nfaces);
+  printf("%s: %ld\n", buf, (long int)nfaces);
 #endif
   Faces = MCM_AllocFaces(nfaces);
   Faces->cur = nfaces;
@@ -1166,13 +1163,8 @@ A FINIR !!!!!!!!!!
 
 */
 {
-  int32_t i, j, n, nvert=-1, nfaces=-1, dummy;
-  char *ret;
-  double *vx, *vy, *vz;
-  int32_t f1, f2, f3;
 
   fprintf(stderr, "%s: Not Yet Implemented\n", F_NAME);
   exit(0);
-
 
 } /* LoadBuildCGAL() */

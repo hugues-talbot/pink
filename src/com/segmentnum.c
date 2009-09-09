@@ -42,7 +42,6 @@ int main(int argc, char **argv)
   char * nameout;
   int32_t mesure;
   int32_t seuil;
-  int32_t N, i;
 
   if ((argc < 5) || (argc > 6) || ((argc == 6) && (strcmp(argv[4], "trace") != 0)))
   {

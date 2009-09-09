@@ -27,7 +27,7 @@ void ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int3
 #undef F_NAME
 #define F_NAME "ldrawline"
 {
-  int32_t i, rs, cs;
+  int32_t rs, cs;
   uint8_t *F;
 
   rs = rowsize(image1);

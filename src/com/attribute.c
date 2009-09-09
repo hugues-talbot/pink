@@ -35,12 +35,10 @@ Argument \b seuil defines a threshold to filter out lowest attribute values.
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t nblabels, connex, attrib, typregion, seuil, i;
+  int32_t nblabels, connex, attrib, typregion, seuil;
   struct xvimage * image;
   struct xvimage * result;
   uint8_t * I;
-  char *name1, *name;
-  char buf[32];
 
   if (argc != 7)
   {

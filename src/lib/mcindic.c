@@ -23,7 +23,6 @@ Indicstype *Indics = NULL;       /* en global pour etre efficace */
 void IndicsInit(int32_t Size)
 /* ==================================== */
 {
-  int32_t i;
   Indics = (Indicstype *)calloc(Size, sizeof(Indicstype));
   if (Indics == NULL)
   {
@@ -36,7 +35,6 @@ void IndicsInit(int32_t Size)
 void Indics1bitInit(int32_t Size)
 /* ==================================== */
 {
-  int32_t i;
   Indics = (Indicstype *)calloc((Size-1)/8 + 1, sizeof(Indicstype));
   if (Indics == NULL)
   {

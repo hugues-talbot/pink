@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * imgres;
-  int32_t i, j, n, nn, rs, cs, x1, y1, x2, y2;
+  int32_t i, n, nn, rs, cs, x1, y1, x2, y2;
   uint8_t *I, *R;
   int32_t *lx, *ly;
 

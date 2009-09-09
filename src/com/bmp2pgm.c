@@ -9,8 +9,8 @@
 
 <B>Types supported:</B> byte 2D
 
-<B>Category:</B> 
-\ingroup  
+<B>Category:</B> convert
+\ingroup  convert
 
 \author Michel Couprie
 */

@@ -58,7 +58,7 @@ void genheaderscenePOV(FILE *fileout, meshbox MB)
   fprintf(fileout, "light_source { <%g,%g,%g> color White }\n", 
                    2*MB.bxmax, 2*MB.bymax, 2*MB.bzmin);
   fprintf(fileout, "light_source { <%g,%g,%g> color White }\n", 
-                   0, 0, 3*MB.bzmax);
+	  (double)0, (double)0, 3*MB.bzmax);
   fprintf(fileout, "\n");
   fprintf(fileout, "#declare mytexture = Bright_Bronze\n");
   fprintf(fileout, "#declare mytolerance = %g;\n", TOLERANCE);
@@ -103,9 +103,9 @@ void genmeshbox(scene *s, meshbox *MB)
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t i, j, ret, npoints, format, type;
+  int32_t i, j, npoints, format, type;
   FILE *fdout = NULL;
-  double x, y, z, x0, y0, z0, x1, y1, z1, x2, y2, z2;
+  double x, y, z;
   scene *scene_in;
   meshbox MB;
 

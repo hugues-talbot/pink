@@ -157,7 +157,7 @@ int32_t compute_min_sphere_with_border_constraint(double *tab_point, uint32_t nu
 
 int32_t build_circle(double *tab_coord, uint32_t num_points, double* c_x, double* c_y, double* c_r)
 {
-	double a, a_p, b, b_p, x_c, y_c, r_c;
+	double a, a_p, b, b_p, x_c, y_c;
 
 	if(num_points==0)
 	{

@@ -36,7 +36,6 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * image2;
-  int32_t n, i;
   double theta, x, y;
 
   if ((argc != 4) && (argc != 6))

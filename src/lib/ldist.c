@@ -611,10 +611,10 @@ int32_t ldistvect(uint8_t *F, vect2Dint *L, int32_t rs, int32_t cs)
   output: - L is the vector image (should be allocated in the calling function)
 */
 {
-  uint32_t n1,n2,n3;     /* normes des vecteurs (au carre) */
+  uint32_t n1, n2;     /* normes des vecteurs (au carre) */
   int32_t N= rs * cs;            /* taille de l'image */
   uint8_t *pt;
-  vect2Dint v1,v2,v3;
+  vect2Dint v1, v2;
   int32_t i,j;
 
   pt = F;
@@ -984,7 +984,7 @@ int32_t lchamfrein(struct xvimage *img,   /* donnee: image binaire */
   int32_t N = ps * ds;    /* taille de l'image */
   uint8_t *F;             /* pointeur sur l'image */
   uint32_t *D;            /* pointeur sur les distances */
-  int32_t i, j, k, d;
+  int32_t i, d;
   int32_t st;
 
   F = UCHARDATA(img);
@@ -1311,7 +1311,6 @@ int32_t ldistquad3d(struct xvimage* ob, struct xvimage* res)
  int32_t rs=rowsize(ob),cs=colsize(ob),ds=depth(ob);
  int32_t max=((rs-1)+(cs-1)+(ds-1))*((rs-1)+(cs-1)+(ds-1));
  uint32_t *O = ULONGDATA(res);
- uint8_t *I = UCHARDATA(ob);
  int32_t xi,yi,zi,xj,yj,zj,i,j,d;
  Drow* r=Dsetground(max);
  
@@ -2800,7 +2799,6 @@ int32_t lsedt_meijster(struct xvimage *img,   /* donnee: image binaire */
   uint32_t cs = colsize(img);
   uint32_t ds = depth(img);
   uint32_t ps = rs * cs;
-  uint32_t N = ps * ds;
   uint8_t *F;                /* pointeur sur l'image */
   uint32_t *D;               /* pointeur sur les distances */
   struct xvimage *tmp;
@@ -2863,7 +2861,6 @@ int32_t ldistMeijster(struct xvimage *img,   /* donnee: image binaire */
 { 
   int32_t i, rs = rowsize(img), cs = colsize(img), ds = depth(img);
   int32_t N = rs * cs * ds;
-  uint8_t *F = UCHARDATA(img);
   double * R = DOUBLEDATA(res);
   struct xvimage *dist;
   uint32_t *D;

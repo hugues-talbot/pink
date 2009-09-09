@@ -327,7 +327,7 @@ int32_t lalpha(struct xvimage * image, int32_t connex, char sign)
 #undef F_NAME
 #define F_NAME "lalpha"
 {
-  int32_t i, j, k;
+  int32_t k;
   struct xvimage * temp;
   uint8_t *pti;
   uint8_t *ptt;

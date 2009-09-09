@@ -31,7 +31,6 @@ int main(int argc, char **argv)
   struct xvimage * marqueurs;
   int32_t trace;
   char * nameout;
-  int32_t nitermax;
 
   if ((argc < 4) || (argc > 5) || ((argc == 5) && (strcmp(argv[3], "trace") != 0)))
   {

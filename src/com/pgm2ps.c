@@ -399,7 +399,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * image, *marker, *label;
   FILE *fd = NULL;
-  int32_t rs, cs, N, x, y, n, maxval, color;
+  int32_t rs, cs, N, x, y, maxval;
   double X, Y;
   uint8_t *F, *G, *H;
   char type;

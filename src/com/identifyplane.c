@@ -35,7 +35,6 @@ and the given points. Method: basic linear regression.
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * image;
   FILE *fd = NULL;
   int32_t n, i;
   char type;
@@ -95,7 +94,7 @@ int main(int argc, char **argv)
     exit(1);
   }
   fprintf(fd, "e %d\n", 4); 
-  fprintf(fd, "%g %g %g %g %g\n", a, b, c, d); 
+  fprintf(fd, "%g %g %g %g\n", a, b, c, d); 
   fclose(fd);
 
   free(pbx);

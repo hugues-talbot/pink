@@ -196,11 +196,10 @@ int main(int argc, char **argv)
   int32_t mode;
   char * filename;
   FILE *fd = NULL;
-  int32_t rs, cs, ps, ds, N, x, y, z, k;
+  int32_t rs, cs, ps, ds, N, x, y, z;
   uint8_t * K;
   int32_t nb_cells = 0;
   int32_t nb_points = 0;
-  int32_t nb_cell_points = 0;
 
   if (argc != 4)
   {
@@ -281,8 +280,6 @@ int main(int argc, char **argv)
 
   if (mode == 3)
   {
-    int imin, imax;
-
     fprintf (fd, "# vtk DataFile Version 2.0\n");
     fprintf (fd, "pgm2vtk output\n");
     fprintf (fd, "ASCII\n\n");
@@ -394,8 +391,6 @@ int main(int argc, char **argv)
   else
   if (mode == 5)
   {
-    int imin, imax;
-
     fprintf (fd, "# vtk DataFile Version 2.0\n");
     fprintf (fd, "pgm2vtk output\n");
     fprintf (fd, "ASCII\n\n");
@@ -465,7 +460,7 @@ int main(int argc, char **argv)
 
   else
   {
-    fprintf(stderr, "%s: bad mode: %s\n", argv[0], mode);
+    fprintf(stderr, "%s: bad mode: %d\n", argv[0], mode);
     exit(1);
   }
 

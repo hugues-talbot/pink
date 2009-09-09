@@ -47,8 +47,7 @@
 int32_t lsegmentheight(struct xvimage *image, int32_t connex, int32_t param, int32_t maximise)
 /* ==================================== */
 {
-  register int32_t i, k, l;         /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;         /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
@@ -191,7 +190,7 @@ static void ProcessLeafMins(CompactTree * cpct, int32_t som)
   Version pour un filtre morphologique (avec RecupereImageFiltreeH).
 */
 {
-  int32_t i, j, n, h;
+  int32_t i, j, n;
 
   if (!(cpct->flags[som] & LEAFMIN))
   {
@@ -287,8 +286,7 @@ static void RecupereImageFiltreeH(CompactTree * cpct,
 int32_t lheightmaxima_variante(struct xvimage *image, int32_t connex, int32_t param)
 /* ==================================== */
 {
-  register int32_t i, k, l;         /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;         /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
@@ -423,8 +421,7 @@ fprintf(stderr, "flood terminee\n");
 int32_t lheightmaxima(struct xvimage *image, int32_t connex, int32_t param)
 /* ==================================== */
 {
-  register int32_t i, k, l;         /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;         /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
@@ -560,8 +557,7 @@ int32_t lheightselnb(struct xvimage *image, int32_t connex, int32_t param, int32
   mode: parametre obsolete
 */
 {
-  register int32_t i, k, l;         /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;         /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */

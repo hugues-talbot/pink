@@ -39,7 +39,6 @@ int main(int argc, char **argv)
   struct xvimage * image;
   uint8_t *Im;
   int32_t rs, cs, ds, ps, N;
-  char name[128];
   int32_t x, y, z, x1, y1, z1, x2, y2, z2;
 
   if (argc != 9)

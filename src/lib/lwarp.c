@@ -28,7 +28,6 @@ int32_t lwarp(
 /* noclip : booleen */
 {
   int32_t x, y;
-  int32_t xmin, ymin, xmax, ymax;
   uint8_t *F;
   uint8_t *H;                     /* image de travail */
   int32_t rs, cs, N;
@@ -37,9 +36,6 @@ int32_t lwarp(
   vec3 b;
   vec3 sol;
   double X, Y;
-  int32_t iX, iY;
-  double g;
-  double dx, dy;
 
   rs = in->row_size;
   cs = in->col_size;

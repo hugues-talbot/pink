@@ -57,7 +57,6 @@ int main(argc, argv)
   int32_t argc; char **argv; 
 {
   struct xvimage * ga;
-  int32_t nlabels;
   int32_t param;
   if ((argc != 4))
   {

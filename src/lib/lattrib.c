@@ -744,7 +744,7 @@ static int32_t MaximiseSegmentation(CompactTree * cpct, int32_t som)
   {
     j = INDEXFILS(som, i);
     j = cpct->fils[j];
-    if (nf = MaximiseSegmentation(cpct, j)) { f = j; NF += nf; }
+    if ((nf = MaximiseSegmentation(cpct, j))) { f = j; NF += nf; }
   }
   if (NF == 0) return 1;
   if (NF == 1)
@@ -1005,7 +1005,7 @@ static void AfficheCompactTree(CompactTree *cpct)
     {
       f = INDEXFILS(i,j);
       f = cpct->fils[f];
-      printf("C%d,%d ", DECODENIV(cpct->comp[f]), DECODENUM(cpct->comp[f]), f);
+      printf("C%d,%d ", DECODENIV(cpct->comp[f]), DECODENUM(cpct->comp[f]));
     }
     printf("] ");
     if (cpct->flags[i] & FILTERED_OUT) printf(" - OUT");
@@ -1028,7 +1028,7 @@ static void AfficheImaComp(CompactTree * cpct,
 /* ==================================== */
 {
   int32_t i, h;
-  uint32_t c, comp;
+  uint32_t c;
   for (i = 0; i < N; i++) 
   {
     h = ORI[i];
@@ -1042,7 +1042,7 @@ static void AfficheImaComp(CompactTree * cpct,
 static void WriteCompactTree(CompactTree *cpct, char * filename)
 /* ==================================== */
 {
-  uint32_t i, j, n, f;
+  uint32_t i;
   FILE * fd = NULL;
   char buf[256];
 
@@ -1140,6 +1140,7 @@ static void AjouteArc(CompTree *ct, uint32_t i, uint32_t j
   ct->nbarcs += 1;
 } /* AjouteArc() */
 
+#ifdef ATTR_PERIM
 /* ==================================== */
 static int32_t contrib_perim(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t rs, int32_t N, int32_t incr_vois)
 /* ==================================== */
@@ -1155,7 +1156,6 @@ static int32_t contrib_perim(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t 
   return 4 - 2 * nv;
 }
 
-
 /* ==================================== */
 static int32_t contrib_perimb(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t rs, int32_t N, int32_t connex)
 /* ==================================== */
@@ -1170,8 +1170,9 @@ static int32_t contrib_perimb(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t
 
   return 4 - 2 * nv;
 }
+#endif
 
-
+#ifdef ATTR_HBORD
 /* ==================================== */
 static int32_t contrib_hbord(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t rs, int32_t N, int32_t incr_vois)
 /* ==================================== */
@@ -1187,7 +1188,6 @@ static int32_t contrib_hbord(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t 
   return h;
 }
 
-
 /* ==================================== */
 static int32_t contrib_hbordb(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t rs, int32_t N, int32_t connex)
 /* ==================================== */
@@ -1202,7 +1202,7 @@ static int32_t contrib_hbordb(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t
 
   return h;
 }
-
+#endif
 
 
 /* ==================================== */
@@ -1341,7 +1341,6 @@ static int32_t floodb(int32_t h,                 /* niveau a inonder */
 /* ==================================== */
 {
   int32_t p, q, k, m, i, j;
-  const int32_t incr_voisin = 1;
 #ifdef ATTR_SURF
   int32_t surf = 0;
 #endif
@@ -1706,7 +1705,7 @@ static int32_t LowComAnc(
 #undef F_NAME
 #define F_NAME "LowComAnc"
 {
-  int32_t x, i, lca = -1;
+  int32_t x, lca = -1;
 
   x = c1; do
   {
@@ -1751,6 +1750,7 @@ static int32_t Ancestor(CompactTree * cpct, int32_t c1, int32_t c2)
   } while (c2 != CPCT_ROOT);
   return 0;
 } /* Ancestor() */
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

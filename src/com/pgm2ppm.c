@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     struct xvimage * lut_r;
     struct xvimage * lut_g;
     struct xvimage * lut_b;
-    int32_t ncol, i, N, rs;
+    int32_t ncol, i, N;
     uint8_t *G1, *G2, *G3, *R, *G, *B, c;
     g1 = readimage(argv[1]);
     g2 = copyimage(g1);

@@ -161,6 +161,7 @@ int32_t lordermaxima(struct xvimage *image, struct xvimage *order, int32_t conne
 
   free(A);
   free(T);
+  return 1;
 } // lordermaxima()
 
 /* ==================================== */
@@ -217,7 +218,7 @@ int32_t lordermaximasurf(struct xvimage *image, struct xvimage *order, int32_t c
     }
   }
   else
-  { fprintf(stderr, "%s() : bad value for connex : %s\n", F_NAME, connex);
+  { fprintf(stderr, "%s() : bad value for connex : %d\n", F_NAME, connex);
     return 0;
   }
 
@@ -268,6 +269,7 @@ int32_t lordermaximasurf(struct xvimage *image, struct xvimage *order, int32_t c
   free(CM);
   free(A);
   free(T);
+  return 1;
 } // lordermaximasurf()
 
 /* ==================================== */
@@ -324,7 +326,7 @@ int32_t lordermaximavol(struct xvimage *image, struct xvimage *order, int32_t co
     }
   }
   else
-  { fprintf(stderr, "%s() : bad value for connex : %s\n", F_NAME, connex);
+  { fprintf(stderr, "%s() : bad value for connex : %d\n", F_NAME, connex);
     return 0;
   }
 
@@ -375,6 +377,7 @@ int32_t lordermaximavol(struct xvimage *image, struct xvimage *order, int32_t co
   free(CM);
   free(A);
   free(T);
+  return 1;
 } // lordermaximavol()
 
 /* ==================================== */
@@ -390,8 +393,7 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
 #undef F_NAME
 #define F_NAME "ldynamique"
 {
-  register int32_t i, j, k, l;      /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, j, k, x;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
@@ -405,7 +407,6 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
   int32_t *mu;                      /* pour représenter l'ordre */
   int32_t *alpha;                   /* pour certains calculs intermédiaires */
   int32_t *dyn;                     /* pour représenter la dynamique */
-  int32_t nbleafs;                  /* les labels dans O sont entre 1 et nbleafs */
   
   if ((rowsize(order) != rs) || (colsize(order) != cs) || (depth(order) != ds))
   {
@@ -433,7 +434,7 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
     }
   }
   else
-  { fprintf(stderr, "%s() : bad value for connex : %s\n", F_NAME, connex);
+  { fprintf(stderr, "%s() : bad value for connex : %d\n", F_NAME, connex);
     return 0;
   }
 
@@ -509,8 +510,7 @@ int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t c
 #undef F_NAME
 #define F_NAME "lfiltredynamique"
 {
-  register int32_t i, j, k, l;      /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, j, k, x;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
@@ -524,7 +524,6 @@ int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t c
   int32_t *mu;                      /* pour représenter l'ordre */
   int32_t *alpha;                   /* pour certains calculs intermédiaires */
   int32_t *dyn;                     /* pour représenter la dynamique */
-  int32_t nbleafs;                  /* les labels dans O sont entre 1 et nbleafs */
   int32_t noleaf;
 
   if ((rowsize(order) != rs) || (colsize(order) != cs) || (depth(order) != ds))
@@ -553,7 +552,7 @@ int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t c
     }
   }
   else
-  { fprintf(stderr, "%s() : bad value for connex : %s\n", F_NAME, connex);
+  { fprintf(stderr, "%s() : bad value for connex : %d\n", F_NAME, connex);
     return 0;
   }
 

@@ -149,4 +149,5 @@ int main(int argc, char **argv)
     writeimage(image,argv[argc-1]);
   }
   fclose(fileout);
+  return 0;
 } /* main */

@@ -62,7 +62,7 @@ with t in [0,1]
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t i, j, n;
+  int32_t i, n;
   FILE *fd = NULL;
   int32_t npoints;
   double tolerance;

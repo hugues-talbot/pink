@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * result;
-  int32_t r, mode;
+  int32_t mode;
 
   if ((argc != 3) && (argc != 4))
   {

@@ -107,8 +107,8 @@ static void makebinoutput(uint8_t *out, int dimx, int dimy)
 
 int32_t ledengrowth(uint8_t *in,
        	            uint8_t *out,
-           	    uint32_t       dimx,
-                    uint32_t       dimy,
+           	    int32_t       dimx,
+                    int32_t       dimy,
                     int32_t       nbiter,
                     int32_t       grow,
                     int32_t       shrink,
@@ -141,7 +141,7 @@ int32_t ledengrowth(uint8_t *in,
         /* turn pixels on at random */
         for (i = 0 ; i < nbiter ; ++i) {
             uint8_t *pix;
-            int       dx, dy;
+            int32_t dx, dy;
             
             size = borderqueue.size();
             int chosen = static_cast<int>(static_cast<double>(random())/MAX_RANDOM * size);

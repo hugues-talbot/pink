@@ -32,7 +32,6 @@ int main(int argc, char **argv)
 {
   struct xvimage * in;
   struct xvimage * temp1;
-  int32_t i, j;
   uint8_t *I;
   uint8_t *T1;
   int32_t x, y, z, w, h, p;

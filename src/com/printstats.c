@@ -43,7 +43,7 @@ int main(int argc, char **argv)
   int32_t nbPoints=0;
   int32_t min, max;
   double mean;
-  int32_t i, k, s;
+  int32_t i;
   uint8_t *M;
   uint8_t *SOURCEc;      /* l'image de depart */
   uint32_t *SOURCEi;      /* l'image de depart */

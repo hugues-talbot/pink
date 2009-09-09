@@ -251,7 +251,7 @@ int32_t ltriang_delaunay(point *S, int32_t n, int32_t **v, int32_t *nv, int32_t 
 {
 #undef F_NAME
 #define F_NAME "ldelaunay"
-  int32_t i, j, k, h, vprec, vcour, vsuiv;
+  int32_t i, j, k, vprec, vcour, vsuiv;
   for (i = 0; i < n; i++)
   {
     k = nv[i];

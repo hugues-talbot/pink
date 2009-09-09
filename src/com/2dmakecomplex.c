@@ -34,7 +34,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * k;
-  int32_t nsteps;
   
   if ((argc != 3) && (argc != 4))
   {

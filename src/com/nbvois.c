@@ -31,7 +31,6 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   int32_t connex;
-  char * nameout;
 
   if (argc != 4)
   {

@@ -17,7 +17,7 @@
 int32_t ldiZenzoGradient(struct xvimage *imageR, struct xvimage *imageV, struct xvimage *imageB,
 	      double alpha)
 {
-  int32_t i, j;
+  int32_t i;
   uint8_t *imaR = UCHARDATA(imageR);
   uint8_t *imaV = UCHARDATA(imageV);
   uint8_t *imaB = UCHARDATA(imageB);
@@ -158,7 +158,7 @@ int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct
 #undef F_NAME
 #define F_NAME "ldiZenzoDirection"
 {
-  int32_t i, j;
+  int32_t i;
   uint8_t *imaR = UCHARDATA(imageR);
   uint8_t *imaV = UCHARDATA(imageV);
   uint8_t *imaB = UCHARDATA(imageB);
@@ -182,7 +182,7 @@ int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct
   double e_a;     /* stocke exp(-alpha) */
   double e_2a;    /* stocke exp(-2alpha) */
   double a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4;
-  double p,q,t, g;
+  double p,q,t;
   uint32_t *  dir = ULONGDATA(result);
 
 

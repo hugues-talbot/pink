@@ -100,10 +100,8 @@ int32_t lhtkern3dbin(struct xvimage *image, int32_t connex, int32_t nimax)
 #undef F_NAME
 #define F_NAME "lhtkern3dbin"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -298,10 +296,8 @@ int32_t lhtkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t conn
 #undef F_NAME
 #define F_NAME "lhtkern3d"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -453,10 +449,8 @@ int32_t lhtkernu3d(struct xvimage *image, struct xvimage *imagecond, int32_t con
 #undef F_NAME
 #define F_NAME "lhtkernu3d"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -634,8 +628,7 @@ int32_t lhthindelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t 
 #undef F_NAME
 #define F_NAME "lhthindelta3d"
 { 
-  int32_t i, j, k;
-  int32_t x, y, z;
+  int32_t x, y, k;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ps = rs * cs;            /* taille plan */
@@ -646,7 +639,6 @@ int32_t lhthindelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t 
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t a;
 
   if (nitermax == -1) nitermax = 2000000000;   
@@ -911,8 +903,7 @@ int32_t lhthickdelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t
 #undef F_NAME
 #define F_NAME "lhthickdelta3d"
 { 
-  int32_t i, j, k;
-  int32_t x, y, z;
+  int32_t x, y, k;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ps = rs * cs;            /* taille plan */
@@ -923,7 +914,6 @@ int32_t lhthickdelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t a;
 
   if (nitermax == -1) nitermax = 2000000000;   
@@ -1219,10 +1209,8 @@ int32_t llvkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t conn
 #undef F_NAME
 #define F_NAME "llvkern3d"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -1374,10 +1362,8 @@ int32_t llvkernu3d(struct xvimage *image, struct xvimage *imagecond, int32_t con
 #undef F_NAME
 #define F_NAME "llvkernu3d"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -1529,8 +1515,7 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
 #undef F_NAME
 #define F_NAME "llthin3d"
 { 
-  int32_t i, j, k;
-  int32_t x, y, z;
+  int32_t x, y, k;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ps = rs * cs;            /* taille plan */
@@ -1541,7 +1526,6 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t a;
 
   if (nitermax == -1) nitermax = 2000000000;   
@@ -1806,8 +1790,7 @@ int32_t llthick3d(struct xvimage *image, struct xvimage *imagecond, int32_t nite
 #undef F_NAME
 #define F_NAME "llthick3d"
 { 
-  int32_t i, j, k;
-  int32_t x, y, z;
+  int32_t x, y, k;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ps = rs * cs;            /* taille plan */
@@ -1818,7 +1801,6 @@ int32_t llthick3d(struct xvimage *image, struct xvimage *imagecond, int32_t nite
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t a;
 
   if (nitermax == -1) nitermax = 2000000000;   
@@ -2113,10 +2095,8 @@ int32_t lsurfacerestoration(struct xvimage *image, int32_t nitermax, int32_t con
 #undef F_NAME
 #define F_NAME "lsurfacerestoration"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -2127,7 +2107,6 @@ int32_t lsurfacerestoration(struct xvimage *image, int32_t nitermax, int32_t con
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t nivext;
 
   if (depth(image) == 1) 
@@ -2165,7 +2144,7 @@ int32_t lsurfacerestoration(struct xvimage *image, int32_t nitermax, int32_t con
   if (connexmin == 6)
   {
     for (x = 0; x < N; x++) 
-      if (nivext = extensible6(F, x, rs, ps, N))
+      if ((nivext = extensible6(F, x, rs, ps, N)))
       {
         LifoPush(LIFO1, ENCODE(x,nivext));
 #ifdef DEBUG

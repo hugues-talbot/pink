@@ -26,26 +26,21 @@ int32_t ldilatbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc
 #undef F_NAME
 #define F_NAME "ldilatbin3d"
 {
-  int32_t x, y, z, v, w;              /* index muet */
-  register int32_t i, j, k, l, n, o;  /* index muet */
+  register int32_t i, j, k, l;     /* index muet */
   int32_t rs = rowsize(f);         /* taille ligne */
   int32_t cs = colsize(f);         /* taille colonne */
   int32_t ds = depth(f);           /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
   int32_t rsm = rowsize(m);        /* taille ligne masque */
   int32_t csm = colsize(m);        /* taille colonne masque */
   int32_t dsm = depth(m);          /* nb plans masque */
   int32_t psm = rsm * csm;         /* taille plan masque */
   int32_t Nm = psm * dsm;          /* taille masque */
   uint8_t *M = UCHARDATA(m);
-  uint8_t *F = UCHARDATA(f);
   int32_t nptb;                    /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t *tab_es_z;               /* liste des coord. z des points de l'e.s. */
-  int32_t c;
-  int32_t frontiere;
 
   if (!M[zc * psm + yc * rsm + xc]) /* l'element structurant N'est PAS reflexif */
   {
@@ -104,8 +99,8 @@ int32_t ldilatbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t
 #undef F_NAME
 #define F_NAME "ldilatbin3d2"
 {
-  int32_t x, y, z, v, w;              /* index muet */
-  register int32_t i, j, k, l, n, o;  /* index muet */
+  int32_t x, y, z, v, w;           /* index muet */
+  register int32_t l, n, o;        /* index muet */
   int32_t rs = rowsize(f);         /* taille ligne */
   int32_t cs = colsize(f);         /* taille colonne */
   int32_t ds = depth(f);           /* nb plans */
@@ -179,26 +174,21 @@ int32_t lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc,
 #undef F_NAME
 #define F_NAME "lerosbin3d"
 {
-  int32_t x, y, z, v, w;              /* index muet */
-  register int32_t i, j, k, l, n, o;  /* index muet */
+  register int32_t i, j, k, l;     /* index muet */
   int32_t rs = rowsize(f);         /* taille ligne */
   int32_t cs = colsize(f);         /* taille colonne */
   int32_t ds = depth(f);           /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
   int32_t rsm = rowsize(m);        /* taille ligne masque */
   int32_t csm = colsize(m);        /* taille colonne masque */
   int32_t dsm = depth(m);          /* nb plans masque */
   int32_t psm = rsm * csm;         /* taille plan masque */
   int32_t Nm = psm * dsm;          /* taille masque */
   uint8_t *M = UCHARDATA(m);
-  uint8_t *F = UCHARDATA(f);
   int32_t nptb;                    /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t *tab_es_z;               /* liste des coord. z des points de l'e.s. */
-  int32_t c;
-  int32_t frontiere;
 
   if (!M[zc * psm + yc * rsm + xc]) /* l'element structurant N'est PAS reflexif */
   {
@@ -259,8 +249,8 @@ int32_t lerosbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t 
 #undef F_NAME
 #define F_NAME "lerosbin3d2"
 {
-  int32_t x, y, z, v, w;              /* index muet */
-  register int32_t i, j, k, l, n, o;  /* index muet */
+  int32_t x, y, z, v, w;           /* index muet */
+  register int32_t l, n, o;        /* index muet */
   int32_t rs = rowsize(f);         /* taille ligne */
   int32_t cs = colsize(f);         /* taille colonne */
   int32_t ds = depth(f);           /* nb plans */

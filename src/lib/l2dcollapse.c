@@ -180,7 +180,7 @@ int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 #undef F_NAME
 #define F_NAME "l2dpardircollapse_l"
 {
-  int32_t i, g, f, u, v, n, xf, yf, xg, yg, xv, yv;
+  int32_t i, g, f, u, n, xf, yf, xg, yg;
   int32_t rs, cs, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
@@ -212,7 +212,7 @@ int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
     return(0);
   }
   if (datatype(prio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(prio); 
+    P = SLONGDATA(prio); 
   else 
   {
     fprintf(stderr, "%s : datatype(prio) must be long\n", F_NAME);
@@ -392,7 +392,7 @@ int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 #undef F_NAME
 #define F_NAME "l2dpardircollapse_f"
 {
-  int32_t i, g, f, u, v, n, xf, yf, xg, yg, xv, yv;
+  int32_t i, g, f, u, n, xf, yf, xg, yg;
   int32_t rs, cs, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
@@ -603,7 +603,7 @@ int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
 #undef F_NAME
 #define F_NAME "l2dpardircollapse"
 {
-  int32_t i, g, f, u, v, n, xf, yf, xg, yg, xv, yv;
+  int32_t i, g, f, u, n, xf, yf, xg, yg;
   int32_t rs, cs, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
@@ -833,12 +833,11 @@ graphe * l2dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 #undef F_NAME
 #define F_NAME "l2dtopoflow_f"
 {
-  int32_t i, g, gg, f, ff, u, v, n, xf, yf, xg, yg, xv, yv;
+  int32_t i, g, gg, f, ff, u, n, xf, yf, xg, yg;
   int32_t rs, cs, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   float * P;
-  float * F;
   uint8_t * I = NULL;
   Rbt * RBT;
   Rlifo * RLIFO;

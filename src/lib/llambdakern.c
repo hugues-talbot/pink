@@ -65,10 +65,8 @@ int32_t llambdakern(
 #undef F_NAME
 #define F_NAME "llambdakern"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -219,10 +217,8 @@ int32_t llambdathin(
 #undef F_NAME
 #define F_NAME "llambdathin"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -232,7 +228,6 @@ int32_t llambdathin(
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t a;
 
@@ -538,10 +533,8 @@ int32_t llambdathick(
 #undef F_NAME
 #define F_NAME "llambdathick"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -551,7 +544,6 @@ int32_t llambdathick(
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t a;
 
@@ -796,10 +788,8 @@ int32_t lgrayskel(
 #undef F_NAME
 #define F_NAME "lgrayskel"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -891,16 +881,20 @@ int32_t lgrayskel(
       x = FahpPop(FAHP);
       UnSet(x, EN_FAHP);
       if ((F[x] > G[x]) && testabaisse4(F, x, rs, N, lambda))         
+      {
         /* modifie l'image le cas echeant */
         if (museparant4(F, x, rs, N, lambda))
-          G[x] = F[x];
+	  { G[x] = F[x]; }
         else
+	{
           for (k = 0; k < 8; k++)
           {
             y = voisin(x, k, rs, N);
             if ((y!=-1) && !IsSet(y,EN_FAHP) && nonbord(y,rs,N))
             { FahpPush(FAHP, y, F[y]); Set(y, EN_FAHP); }
           }
+	}
+      }
     } /* while (! FahpVide(FAHP)) */
   }
   else /* connex == 8 */

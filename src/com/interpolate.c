@@ -91,7 +91,7 @@ int main(int argc, char **argv)
   writeimage(r, argv[argc-1]);
   freeimage(r);
   freeimage(f);
-
+  return 0;
 } /* main */
 
 

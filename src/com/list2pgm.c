@@ -9,7 +9,7 @@
 
 Reads the file <B>in.list</B>. This file must have one of the following formats:
 <pre>  
-  e <n>       s <n>         b <n>         n <n>            B <n>            N <n>    
+  e &lt;n&gt;       s &lt;n&gt;         b &lt;n&gt;         n &lt;n&gt;            B &lt;n&gt;            N &lt;n&gt;    
   x1          x1 v1         x1 y1         x1 y1 v1         x1 y1 z1         x1 y1 z1 v1
   x2    or    x2 v2   or    x2 y2   or    x2 y2 v2   or    x2 y2 z2   or    z2 x2 y2 v2
   ...         ...           ...           ...              ...              ...
@@ -115,7 +115,7 @@ int main(int argc, char **argv)
   {
     if ((cs != 1) || (ds != 1))
     {
-      fprintf(stderr, "%s: type e is for 1D images\n", type);
+      fprintf(stderr, "%s: type %c is for 1D images\n", argv[0], type);
       exit(1);
     }
     for (i = 0; i < n; i++)
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
   {
     if ((cs != 1) || (ds != 1))
     {
-      fprintf(stderr, "%s: type s is for 1D images\n", type);
+      fprintf(stderr, "%s: type %c is for 1D images\n", argv[0], type);
       exit(1);
     }
     for (i = 0; i < n; i++)
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
   {
     if (ds != 1)
     {
-      fprintf(stderr, "%s: type b is for 2D images\n", type);
+      fprintf(stderr, "%s: type %c is for 2D images\n", argv[0], type);
       exit(1);
     }
     for (i = 0; i < n; i++)
@@ -166,7 +166,7 @@ int main(int argc, char **argv)
   {
     if (ds != 1)
     {
-      fprintf(stderr, "%s: type n is for 2D images\n", type);
+      fprintf(stderr, "%s: type %c is for 2D images\n", argv[0], type);
       exit(1);
     }
     for (i = 0; i < n; i++)

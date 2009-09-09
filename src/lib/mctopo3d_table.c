@@ -403,7 +403,7 @@ uint8_t T26(voxel * cube)
 } /* T26() */
 
 /* ==================================== */
-int32_t preparecubes(
+static void preparecubes(
   uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -421,7 +421,7 @@ int32_t preparecubes(
 } /* preparecubes() */
 
 /* ==================================== */
-int32_t preparecubesh(
+static void preparecubesh(
   uint8_t *img,          /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t h,                       /* seuil */
@@ -440,7 +440,7 @@ int32_t preparecubesh(
 } /* preparecubesh() */
 
 /* ==================================== */
-int32_t preparecubesh_l(
+static void preparecubesh_l(
   uint32_t *img,          /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t h,                      /* seuil */

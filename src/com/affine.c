@@ -8,7 +8,7 @@
 <B>Description:</B>
 
 Applies to in.pgm an affine tranformation composed of a zoom 
-(factors \b hx, \b hy), a rotation (angle \bf theta, center 0,0), and a
+(factors \b hx, \b hy), a rotation (angle \b theta, center 0,0), and a
 translation (vector \b tx, \b ty). Alternatively, the transformation 
 parameters may be given in a type "e" list file (see doc/formats.txt).
 

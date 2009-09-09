@@ -39,19 +39,6 @@ extern void init_topo3d();
 extern void termine_topo3d();
 extern uint32_t encodecube();
 extern void construitcube(voxel * cube);
-extern int32_t preparecubes(
-  uint8_t *img,          /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N);                      /* taille image */
-extern int32_t preparecubesh(
-  uint8_t *img,          /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t h,                       /* seuil */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N);                      /* taille image */
 extern void top6(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */

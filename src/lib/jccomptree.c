@@ -88,7 +88,7 @@ int32_t LowComAncSlow(
 #undef F_NAME
 #define F_NAME "LowComAncSlow"
 {
-  int32_t x, i, lca = -1;
+  int32_t x, lca = -1;
 
   x = c1; do
   {
@@ -227,7 +227,7 @@ int32_t LowComAncFast(int32_t n1, int32_t n2, int32_t *Euler, int32_t *Number, i
 }
 
 /* =============================================================== */
- i_Partitionner(int32_t *A, int32_t *T, int32_t p, int32_t r)
+int32_t i_Partitionner(int32_t *A, int32_t *T, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -248,7 +248,7 @@ int32_t LowComAncFast(int32_t n1, int32_t n2, int32_t *Euler, int32_t *Number, i
 } /* i_Partitionner() */
 
 /* =============================================================== */
- i_PartitionStochastique(int32_t *A, int32_t *T, int32_t p, int32_t r)
+int32_t i_PartitionStochastique(int32_t *A, int32_t *T, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -382,7 +382,7 @@ void calculReversePointer(JCctree *CT, int32_t root)
 //a watershed using only one union-find
 int32_t jcSaliencyTree_b (JCctree ** SaliencyTree, int32_t *MST, int32_t *Valeur, RAG *rag, int32_t *STaltitude)
 {
-  int32_t i,x1,x2,n1,n2,z,k, STx, STy, nbsoncellsloc;
+  int32_t i,x1,x2,n1,n2,z,k, nbsoncellsloc;
   JCctree *ST;
   int32_t *clefs; 
   int32_t *STmap;

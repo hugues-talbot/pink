@@ -307,7 +307,7 @@ int32_t ldesfilssombres3d(struct xvimage * image, struct xvimage * mask, int32_t
 #undef F_NAME
 #define F_NAME "ldesfilssombres3d"
 {
-  int32_t x, y, k;
+  int32_t x;
   uint8_t *F = UCHARDATA(image);
   uint8_t *M;
   int32_t rs = rowsize(image);     /* taille ligne */
@@ -369,7 +369,7 @@ int32_t ldesfilsclairs3d(struct xvimage * image, struct xvimage * mask, int32_t 
 #undef F_NAME
 #define F_NAME "ldesfilsclairs3d"
 {
-  int32_t x, y, k;
+  int32_t x;
   uint8_t *F = UCHARDATA(image);
   uint8_t *M;
   int32_t rs = rowsize(image);     /* taille ligne */

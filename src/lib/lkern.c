@@ -101,7 +101,6 @@ printf("point %d (%d %d), val = %d --> %d\n", x, x%rs, x/rs, oldFx, F[x]);
       } /* else if (t4mm == 1) */
     } /* ((F[x] > 0) && (F[x] <= NDG_MAX)) */
   } /* while (! (FifoVide(FAHP) ...)) */
-finwhile: ;
 } /* saturation() */
 
 /* ==================================== */

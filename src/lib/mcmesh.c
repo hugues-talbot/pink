@@ -89,7 +89,7 @@ meshtabvertices * MCM_AllocVertices(int32_t taillemax)
 void MCM_ReAllocVertices(meshtabvertices **A)
 /* ==================================== */
 {
-  int32_t i, taillemax;
+  int32_t taillemax;
   meshtabvertices * T, *Tmp;
 
   //printf("MCM_ReAllocVertices: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
@@ -128,7 +128,7 @@ meshtabfaces * MCM_AllocFaces(int32_t taillemax)
 void MCM_ReAllocFaces(meshtabfaces **A)
 /* ==================================== */
 {
-  int32_t i, taillemax;
+  int32_t taillemax;
   meshtabfaces * T, *Tmp;
 
   //printf("MCM_ReAllocFaces: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
@@ -163,7 +163,7 @@ meshtabedges * MCM_AllocEdges(int32_t taillemax)
 void MCM_ReAllocEdges(meshtabedges **A)
 /* ==================================== */
 {
-  int32_t i, taillemax;
+  int32_t taillemax;
   meshtabedges * T, *Tmp;
 
   //printf("MCM_ReAllocEdges: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
@@ -198,7 +198,7 @@ meshtabedges2 * AllocEdges(int32_t taillemax)
 void ReAllocEdges(meshtabedges2 **A)
 /* ==================================== */
 {
-  int32_t i, taillemax;
+  int32_t taillemax;
   meshtabedges2 * T, *Tmp;
 
   //printf("MCM_ReAllocEdges: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
@@ -695,7 +695,7 @@ int32_t MCM_AddEdge(MCM *M, int32_t v1, int32_t v2)
 #undef F_NAME
 #define F_NAME "MCM_AddEdge"
 {
-  int32_t indedge, i;
+  int32_t indedge;
   if (M->Edges->cur >= M->Edges->max) MCM_ReAllocEdges(&(M->Edges));
   indedge = M->Edges->cur;
   M->Edges->cur += 1;
@@ -941,13 +941,6 @@ void ComputeEdges()
     } /* for k */
   } /* for i */
 } /* ComputeEdges() */
-
-static void swap(double *x, double *y)
-{
-  double t = *x;
-  *x = *y;
-  *y = t;
-} 
 
 static int32_t inclusedge(MCM *M, int32_t i, int32_t j, int32_t k)
 {
@@ -1225,10 +1218,9 @@ int32_t MCM_RemoveDegenerateFaces(MCM *M)
 #define F_NAME "MCM_RemoveDegenerateFaces"
 {
   int32_t i, j, v0, v1, v2;
-  meshvertex V;
   meshface *F;
   meshedge *E;
-  int32_t m, del, nheal = 0;
+  int32_t del, nheal = 0;
 
   for (i = 0; i < M->Faces->cur; i++)
   {
@@ -1283,7 +1275,6 @@ void ComputeLinks()
   meshvertex V;
   meshface F;
   int32_t link[MCM_MAXADJFACES];
-  int32_t f1, f2;
 
   if (Links != NULL) 
   {
@@ -1689,7 +1680,7 @@ void RegulMeshLaplacian(int32_t niters)
   meshvertex V;
   meshface F;
   int32_t link[MCM_MAXADJFACES];
-  double x, y, z, sx, sy, sz, norme, alpha;
+  double x, y, z, sx, sy, sz, alpha;
 
   a = 0; // calcule a = nb max de voisins pour 1 vertex
   for (i = 0; i < Vertices->cur; i++)
@@ -1782,7 +1773,7 @@ void RegulMeshLaplacian2D(int32_t niters)
   meshvertex V;
   meshface F;
   int32_t link[MCM_MAXADJFACES];
-  double x, y, z, sx, sy, sz, norme, alpha;
+  double x, y, z, sx, sy, sz, alpha;
 
   a = 0; // calcule a = nb max de voisins pour 1 vertex
   for (i = 0; i < Vertices->cur; i++)
@@ -1853,14 +1844,11 @@ void RegulMeshHamam(double theta)
 #undef F_NAME
 #define F_NAME "RegulMeshHamam"
 {
-  int32_t a, n, i, j, k, iter, nv;
-  meshvertex V;
-  meshface F;
-  int32_t link[MCM_MAXADJFACES];
-  double x, y, z, sx, sy, sz, alphax, alphay, alphaz;
+  int32_t a, n, i, j, iter, nv;
+  double sx, sy, sz, alphax, alphay, alphaz;
   double *tx, *ty, *tz;    // resultats intermediaires
   int32_t nitermax = NITERMAX; // garde-fou
-  double normgradx, normgrady, normgradz, divisorx, divisory, divisorz;
+  double normgradx, normgrady, normgradz;
   int32_t stabilite;
 #ifdef OPTIMALSTEP
   double *ux, *uy, *uz;    // resultats intermediaires
@@ -2098,14 +2086,11 @@ void RegulMeshHamam1(double theta)
 #undef F_NAME
 #define F_NAME "RegulMeshHamam1"
 {
-  int32_t a, n, i, j, k, iter, nv;
-  meshvertex V;
-  meshface F;
-  int32_t link[MCM_MAXADJFACES];
-  double x, y, z, sx, sy, sz, alphax, alphay, alphaz;
+  int32_t a, n, i, j, iter, nv;
+  double sx, sy, sz, alphax, alphay, alphaz;
   double *tx, *ty, *tz;    // resultats intermediaires
   int32_t nitermax = NITERMAX; // garde-fou
-  double normgradx, normgrady, normgradz, divisorx, divisory, divisorz;
+  double normgradx, normgrady, normgradz;
   int32_t stabilite;
   double *gx, *gy, *gz; // pour calculer la norme du vecteur des modifications
 
@@ -2294,11 +2279,8 @@ void RegulMeshHamam2(int32_t nitermax)
 #undef F_NAME
 #define F_NAME "RegulMeshHamam2"
 {
-  int32_t a, n, i, j, k, iter, nv;
-  meshvertex V;
-  meshface F;
-  int32_t link[MCM_MAXADJFACES];
-  double x, y, z, sx, sy, sz, alpha, dx, dy, dz;
+  int32_t a, n, i, j, iter, nv;
+  double sx, sy, sz, alpha, dx, dy, dz;
   double *tx, *ty, *tz; // resultats intermediaires
   double normgradx, normgrady, normgradz;
   int32_t stabilite;
@@ -2430,18 +2412,15 @@ void RegulMeshHamam3(double theta)
 #undef F_NAME
 #define F_NAME "RegulMeshHamam3"
 {
-  int32_t a, n, i, j, k, iter, nv;
-  meshvertex V;
-  meshface F;
-  int32_t link[MCM_MAXADJFACES];
-  double x, y, z, sx, sy, sz;
+  int32_t n, i, j, iter, nv;
+  double sx, sy, sz;
   double *dx, *dy, *dz;    // resultats intermediaires
   double *ex, *ey, *ez;    // resultats intermediaires
   double *fx, *fy, *fz;    // resultats intermediaires
   double *tx, *ty, *tz;    // resultats intermediaires
-  double alphax, betax, deltax, gamma_1x, gamma_nx, gamma_n1x;
-  double alphay, betay, deltay, gamma_1y, gamma_ny, gamma_n1y;
-  double alphaz, betaz, deltaz, gamma_1z, gamma_nz, gamma_n1z;
+  double alphax, betax, gamma_1x, gamma_nx, gamma_n1x;
+  double alphay, betay, gamma_1y, gamma_ny, gamma_n1y;
+  double alphaz, betaz, gamma_1z, gamma_nz, gamma_n1z;
   // PLUS D'UTILITE POUR gamma_1
 
   dx = (double *)calloc(1,Vertices->cur * sizeof(double));
@@ -3122,7 +3101,7 @@ double VolMesh()
   Suppose que le maillage constitue une surface combinatoire orientable.
 */
 {
-  int32_t i, j, k0, k1, k2, n;
+  int32_t i, k0, k1, k2;
   meshvertex V;
   meshface F;
   double x0, y0, z0, x1, y1, z1, x2, y2, z2, vol=0.0;
@@ -3153,7 +3132,7 @@ void CalculNormales()
   int32_t i, j, s1, s2;
   meshvertex V;
   meshface F;
-  double x, y, z, norm;
+  double norm;
   vec3 v1, v2, normaleface, normale;
 
   for (i = 0; i < Vertices->cur; i++)
@@ -3212,11 +3191,10 @@ void CalculNormales()
 void CalculNormalesFaces()
 /* ==================================== */
 {
-  int32_t i, j, s0, s1, s2;
-  meshvertex V;
+  int32_t i, s0, s1, s2;
   meshface F;
-  double x, y, z, norm;
   vec3 v1, v2, normale;
+  double norm;
 
   for (i = 0; i < Faces->cur; i++)
   {                              /* pour chaque sommet de la grille */

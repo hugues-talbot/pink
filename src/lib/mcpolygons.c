@@ -36,7 +36,7 @@ mcptabvertices * MCP_AllocVertices(int32_t taillemax)
 void MCP_ReAllocVertices(mcptabvertices **A)
 /* ==================================== */
 {
-  int32_t i, taillemax;
+  int32_t taillemax;
   mcptabvertices * T, *Tmp;
 
   //printf("ReAllocVertices: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
@@ -72,7 +72,7 @@ mcptabfaces * MCP_AllocFaces(int32_t taillemax)
 void MCP_ReAllocFaces(mcptabfaces **A)
 /* ==================================== */
 {
-  int32_t i, taillemax;
+  int32_t taillemax;
   mcptabfaces * T, *Tmp;
 
   //printf("ReAllocFaces: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
@@ -107,7 +107,7 @@ mcptabedges * MCP_AllocEdges(int32_t taillemax)
 void MCP_ReAllocEdges(mcptabedges **A)
 /* ==================================== */
 {
-  int32_t i, taillemax;
+  int32_t taillemax;
   mcptabedges * T, *Tmp;
 
   //printf("ReAllocEdges: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
@@ -458,7 +458,7 @@ sorties :
   *n : le nombre de points transmis  
 */
 {
-  int32_t i, j, k, a, b, N, nsp, taille = *n;
+  int32_t i, j, k, a, b, nsp, taille = *n;
   RbtElt * re;
   mcpface F;
   mcpedge E;
@@ -523,7 +523,7 @@ POLYGONS %d %d    // Faces - champ obligatoire
 #define F_NAME "MCP_LoadVTK"
 {
   MCP *P;
-  int32_t i, j, n, nvert=-1, nfaces=-1, nf, indx, checksum;
+  int32_t i, j, nvert=-1, nfaces=-1, nf, indx;
   double x, y, z;
 #define sbuf 1024
   char buf[sbuf];

@@ -10,7 +10,7 @@ Let F be the input image, G be the output image, and E the structuring
 element.
 
 The rank-max opening [Ron86]
-of structuring element $E$ and parameter \b r \in [0...1]
+of structuring element $E$ and parameter \b r in [0...1]
 may be defined by G = min(F,dilation(rankfilter(F,E,1-r),E))
 
 [Ron86] C. Ronse:

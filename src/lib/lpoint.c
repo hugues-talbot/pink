@@ -17,7 +17,6 @@ int32_t lpoint(struct xvimage * image1, int32_t x, int32_t y, int32_t z, float v
 #undef F_NAME
 #define F_NAME "lpoint"
 {
-  int32_t i;
   int32_t rs, cs, d, n;
 
   rs = rowsize(image1);
@@ -81,7 +80,6 @@ void lshowpoint(struct xvimage * image1, int32_t x, int32_t y, int32_t z)
 #undef F_NAME
 #define F_NAME "lshowpoint"
 {
-  int32_t i;
   int32_t rs, cs, d, n;
 
   rs = rowsize(image1);
@@ -98,7 +96,7 @@ void lshowpoint(struct xvimage * image1, int32_t x, int32_t y, int32_t z)
   if (datatype(image1) == VFF_TYP_4_BYTE)
   {
     uint32_t *pt1 = ULONGDATA(image1);
-    printf("%ld\n", pt1[z * n + y * rs + x]);
+    printf("%ld\n", (long int)pt1[z * n + y * rs + x]);
   }
   else
   if (datatype(image1) == VFF_TYP_FLOAT)

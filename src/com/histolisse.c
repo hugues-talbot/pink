@@ -33,7 +33,7 @@ int main(int argc, char **argv)
   struct xvimage * imhist;
   struct xvimage * mask = NULL;
   uint32_t * histo;
-  int32_t i, x, y, z, somme, lissage;
+  int32_t x, y, z, somme, lissage;
 
   if ((argc != 4) && (argc != 5))
   {

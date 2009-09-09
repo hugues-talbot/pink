@@ -29,11 +29,11 @@ char * colorname(double h)
 /* ======================================================================== */
 {
   if ((h < 30.0) || (h >= 330.0)) return (char *)CN_RED;
-  if ((h >= 30.0) && (h < 90.0)) return (char *)CN_YELLOW;
-  if ((h >= 90.0) && (h < 150.0)) return (char *)CN_GREEN;
-  if ((h >= 150.0) && (h < 210.0)) return (char *)CN_CYAN;
-  if ((h >= 210.0) && (h < 270.0)) return (char *)CN_BLUE;
-  if ((h >= 270.0) && (h < 330.0)) return (char *)CN_MAGENTA;
+  else if ((h >= 30.0) && (h < 90.0)) return (char *)CN_YELLOW;
+  else if ((h >= 90.0) && (h < 150.0)) return (char *)CN_GREEN;
+  else if ((h >= 150.0) && (h < 210.0)) return (char *)CN_CYAN;
+  else if ((h >= 210.0) && (h < 270.0)) return (char *)CN_BLUE;
+  else /* if ((h >= 270.0) && (h < 330.0)) */ return (char *)CN_MAGENTA;
 }
 
 /* ======================================================================== */
@@ -41,11 +41,11 @@ char * nomcouleur(double h)
 /* ======================================================================== */
 {
   if ((h < 30.0) || (h >= 330.0)) return (char *)CN_ROUGE;
-  if ((h >= 30.0) && (h < 90.0)) return (char *)CN_JAUNE;
-  if ((h >= 90.0) && (h < 150.0)) return (char *)CN_VERT;
-  if ((h >= 150.0) && (h < 210.0)) return (char *)CN_CYAN;
-  if ((h >= 210.0) && (h < 270.0)) return (char *)CN_BLEU;
-  if ((h >= 270.0) && (h < 330.0)) return (char *)CN_MAGENTA;
+  else if ((h >= 30.0) && (h < 90.0)) return (char *)CN_JAUNE;
+  else if ((h >= 90.0) && (h < 150.0)) return (char *)CN_VERT;
+  else if ((h >= 150.0) && (h < 210.0)) return (char *)CN_CYAN;
+  else if ((h >= 210.0) && (h < 270.0)) return (char *)CN_BLEU;
+  else /* if ((h >= 270.0) && (h < 330.0)) */ return (char *)CN_MAGENTA;
 }
 
 /* ======================================================================== */

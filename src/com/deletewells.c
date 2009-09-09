@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     mask = readimage(argv[2]);
     if (mask == NULL)
     {
-      fprintf(stderr, "%s: readimage failed\n");
+      fprintf(stderr, "%s: readimage failed\n", argv[0]);
       exit(1);
     }
     connexmin = atoi(argv[3]);
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
   {
     if (! ldespuits(image, mask, connexmin))
     {
-      fprintf(stderr, "%s: function ldespuits failed\n");
+      fprintf(stderr, "%s: function ldespuits failed\n", argv[0]);
       exit(1);
     }
   }
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
   {
     if (! ldespuits3d(image, mask, connexmin))
     {
-      fprintf(stderr, "%s: function ldespuits failed\n");
+      fprintf(stderr, "%s: function ldespuits failed\n", argv[0]);
       exit(1);
     }
   }

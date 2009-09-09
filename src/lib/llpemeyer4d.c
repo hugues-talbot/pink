@@ -51,7 +51,6 @@ int32_t llpemeyer4d(
 #undef F_NAME
 #define F_NAME "llpemeyer4d"
 {
-  register int32_t i;                       /* index muet */
   register int32_t x;                       /* index muet de pixel */
   register int32_t y;                       /* index muet (generalement un voisin de x) */
   register int32_t w;                       /* index muet (generalement un voisin de x) */

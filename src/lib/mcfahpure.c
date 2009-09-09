@@ -133,8 +133,6 @@ int32_t FahpFirst(
   Fahp * L)
 /* ==================================== */
 {
-  int32_t V;
-  FahpElt * FE;
   if (L->Queue == NULL)
   {
     fprintf(stderr, "erreur Fahp vide\n");

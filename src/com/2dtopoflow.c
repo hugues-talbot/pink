@@ -214,7 +214,7 @@ int main(int32_t argc, char **argv)
   struct xvimage * inhibimage = NULL;
   uint8_t *K;
   int32_t ret, priocode;
-  int32_t rs, cs, N, i, j, xi, yi, xj, yj;
+  int32_t rs, cs, N, i;
   float priomax_f;
   uint32_t priomax_l;
   float * PRIO_F;
@@ -223,10 +223,8 @@ int main(int32_t argc, char **argv)
   graphe * flow_s;
   graphe * forest;
   graphe * forest_s;
-  uint8_t * perm;
-  uint8_t * head;
-  TYP_VSOM vmax;
-  pcell p;
+  boolean * perm;
+  boolean * head;
 
   if ((argc != 4) && (argc != 5))
   {

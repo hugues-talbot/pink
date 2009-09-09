@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int32_t rayonmax, rayon;
+  int32_t rayonmax;
   int32_t connex;
 
   if (argc != 5)

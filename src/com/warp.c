@@ -30,8 +30,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  uint8_t *pt;
-  int32_t N;
   triangle ts, td;
   float xa, ya, xb, yb, xc, yc;
 

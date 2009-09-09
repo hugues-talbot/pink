@@ -39,4 +39,5 @@ int main(int argc, char **argv)
   genfooterAC(fileout);
   fclose(fileout);
   TermineMesh();
+  return 0;
 } /* main */

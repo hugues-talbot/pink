@@ -24,14 +24,6 @@
 /* ================================================ */
 /* ================================================ */
 
-/* ========================================== */
-static void erreur(char * mess)
-/* ========================================== */
-{
-  fprintf(stderr, "%s\n", mess);
-  exit(0);
-} /* erreur() */
-
 /* ====================================================================== */
 static int32_t tailleliste(SKC_pcell p)
 /* ====================================================================== */
@@ -181,7 +173,6 @@ void writeskel(skel * S, char *filename)
 #define F_NAME "writeskel"
   uint32_t i;
   FILE *fd = NULL;
-  SKC_pcell p;
 
   fd = fopen(filename,"w");
   if (!fd)
@@ -238,7 +229,6 @@ void writevskel(skel * S, char *filename, struct xvimage *val)
 #define F_NAME "writevskel"
   uint32_t i;
   FILE *fd = NULL;
-  SKC_pcell p;
   float *V;
 
   if ((rowsize(val) != S->rs) || (colsize(val) != S->cs) || (depth(val) != S->ds))
@@ -306,7 +296,7 @@ skel * readskel(char *filename)
   uint32_t i, j, k, v, n;
   char buf[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t ret, dim, rs, cs, ds;
+  int32_t dim, rs, cs, ds;
   int32_t nbisol, nbend, nbcurv, nbjunc, nvertex, ncell, connex;
 
   fd = fopen(filename,"r");

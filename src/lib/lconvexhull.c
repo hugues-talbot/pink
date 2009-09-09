@@ -51,16 +51,16 @@ int32_t angleinfxyneg(int32_t p, int32_t p1, int32_t p2, int32_t rs)
 int32_t lconvexhull(struct xvimage * image1, int32_t ** listepoints, int32_t * npoints)
 /* ==================================== */
 {
-  int32_t i, j, x, y;
+  int32_t i, y;
   uint8_t *F;
   int32_t rs, cs, N;
   int32_t *P;             /* la liste des points de l'objet */
   int32_t n;              /* le nombre de points de l'objet */
   int32_t p0, yp0, ip0;   /* le point initial, son ordonnee et son index dans la liste P*/
   int32_t pk, ypk, ipk;   /* le point intermediaire, son ordonnee et son index */
-  int32_t p, ip;          /* point courant */
-  int32_t ps, ips;        /* point suivant */
-  int32_t ps2, ips2;      /* point suivant aux */
+  int32_t p;              /* point courant */
+  int32_t ips;            /* point suivant */
+  int32_t ips2;           /* point suivant aux */
   int32_t *Ph;            /* la liste des points de l'enveloppe */
   int32_t nh;             /* le nombre de points de l'enveloppe */
 

@@ -4,7 +4,7 @@
 int bddBeta3SimpleCarreX(int a, int b)
 {
 int neg = 1;
-l0_1:	if(a)
+if(a)
 goto l0_2;
 neg = !neg; goto l0_2;
 l0_2:	if(b)
@@ -16,7 +16,7 @@ ret1: return !neg;
 int bddBeta3SimpleCarreY(int a, int b)
 {
 int neg = 1;
-l0_1:	if(a)
+if(a)
 goto l0_2;
 neg = !neg; goto l0_2;
 l0_2:	if(b)
@@ -28,7 +28,7 @@ ret1: return !neg;
 int bddBeta3SimpleCarreZ(int a, int b)
 {
 int neg = 1;
-l0_1:	if(a)
+if(a)
 goto l0_2;
 neg = !neg; goto l0_2;
 l0_2:	if(b)
@@ -40,7 +40,7 @@ ret1: return !neg;
 int bddBeta3SimpleInterX(int a, int b, int c, int d, int e, int f, int g, int h)
 {
 int neg = 1;
-l9_1:	if(g)
+if(g)
 goto l5_2;
 neg = !neg; goto l13_2;
 l5_2:	if(f)
@@ -130,7 +130,7 @@ ret1: return !neg;
 int bddBeta3SimpleInterY(int a, int b, int c, int d, int e, int f, int g, int h)
 {
 int neg = 1;
-l9_1:	if(g)
+if(g)
 goto l5_2;
 neg = !neg; goto l13_2;
 l5_2:	if(f)
@@ -220,7 +220,7 @@ ret1: return !neg;
 int bddBeta3SimpleInterZ(int a, int b, int c, int d, int e, int f, int g, int h)
 {
 int neg = 1;
-l9_1:	if(g)
+if(g)
 goto l5_2;
 neg = !neg; goto l13_2;
 l5_2:	if(f)

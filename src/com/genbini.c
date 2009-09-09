@@ -46,7 +46,6 @@ int main(int argc, char **argv)
   uint8_t *Im;
   uint8_t *Imc;
   int32_t rs, cs, ds, ps, N;
-  int32_t r;
   double rayon;
   double x, y, z, zmin, zmax;
   double theta, incz, inct, ntours;

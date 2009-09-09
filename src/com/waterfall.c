@@ -50,7 +50,6 @@ int main(argc, argv)
 {
   struct xvimage * ga;
   struct xvimage * image;
-  int32_t nlabels;
   if ((argc != 4)){
     fprintf(stderr, "usage: %s image.pgm type (0 gradient en entree, 1 image brute en entree) GAout.pgm\n", argv[0]);
     exit(1);

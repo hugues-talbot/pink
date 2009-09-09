@@ -70,7 +70,7 @@ int main(int argc, char **argv)
   fscanf(fd, "%c", &type);
   if ((type != 'c') && (type != 'b'))
   {
-    fprintf(stderr, "usage: %s : bad file format : %c \n", type);
+    fprintf(stderr, "usage: %s : bad file format : %c \n", argv[0], type);
     exit(1);
   }
   fscanf(fd, "%d", &npoints);

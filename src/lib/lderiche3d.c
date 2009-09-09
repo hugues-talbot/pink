@@ -146,7 +146,7 @@ int32_t lderiche3d(struct xvimage *image, double alpha, int32_t function, double
                4 = lisseur
 */
 { 
-  int32_t i, j;
+  int32_t i;
   uint8_t *ima = UCHARDATA(image);
   int32_t rs = rowsize(image);
   int32_t cs = colsize(image);
@@ -164,10 +164,10 @@ int32_t lderiche3d(struct xvimage *image, double alpha, int32_t function, double
   double kpp;     /* constante de normalisation pour le laplacien */
   double e_a;     /* stocke exp(-alpha) */
   double e_2a;    /* stocke exp(-2alpha) */
-  double a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12;
-  double b1, b2, b3, b4, b5, b6;
+  double a1, a2, a3, a4, a5, a6, a7, a8;
+  double b1, b2, b3, b4;
   double t1, t2, t3;
-  double lmax, lmin, sbuf;
+  double sbuf;
 
   Im1 = (double *)calloc(1,N * sizeof(double));
   Imd = (double *)calloc(1,N * sizeof(double));
@@ -483,7 +483,7 @@ int32_t llisseurrec3d(struct xvimage *image, double alpha)
     alpha : parametre (1/taille) du filtre
 */
 { 
-  int32_t i, j;
+  int32_t i;
   uint8_t *ima = UCHARDATA(image);
   int32_t rs = rowsize(image);
   int32_t cs = colsize(image);
@@ -498,10 +498,9 @@ int32_t llisseurrec3d(struct xvimage *image, double alpha)
   double kpp;     /* constante de normalisation pour le laplacien */
   double e_a;     /* stocke exp(-alpha) */
   double e_2a;    /* stocke exp(-2alpha) */
-  double a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12;
-  double b1, b2, b3, b4, b5, b6;
-  double t1, t2, t3;
-  double lmax, lmin;
+  double a1, a2, a3, a4;
+  double b1, b2;
+  double t1;
 
   Im1 = (double *)calloc(1,N * sizeof(double));
   if (Im1==NULL)

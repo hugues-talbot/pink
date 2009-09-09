@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   FILE *fd = NULL;
-  int32_t rs, cs, ds, ps, N, x, y, z, n;
+  int32_t rs, cs, ds, ps, N;
   uint8_t *F;
   int32_t type;
   float	x_units;

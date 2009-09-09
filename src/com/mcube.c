@@ -65,31 +65,31 @@ Possible values are 6 and 26 (default).
 static int32_t LUT[256][19];
 /* table de decodage des sommets de facettes */
 static int32_t DSF[26][2] = {
-0, 0, /* lignes paires non utilisees */
-0, 1, /* voxels adjacents au sommet 1 */ 0, 0, /* etc */
-0, 2, 0, 0, /* sommet 3 */
-1, 3, 0, 0, /* sommet 5 */
-2, 3, 0, 0, /* sommet 7 */
-0, 4, 0, 0, /* sommet 9 */
-1, 5, 0, 0, /* sommet 11 */
-0, 0, 0, 0, /* sommet 13 (absent) */
-2, 6, 0, 0, /* sommet 15 */
-3, 7, 0, 0, /* sommet 17 */
-4, 5, 0, 0, /* sommet 19 */
-4, 6, 0, 0, /* sommet 21 */
-5, 7, 0, 0, /* sommet 23 */
-6, 7        /* sommet 25 */
+ {0, 0}, /* lignes paires non utilisees */
+ {0, 1}, /* voxels adjacents au sommet 1 */ 0, 0, /* etc */
+ {0, 2}, {0, 0}, /* sommet 3 */
+ {1, 3}, {0, 0}, /* sommet 5 */
+ {2, 3}, {0, 0}, /* sommet 7 */
+ {0, 4}, {0, 0}, /* sommet 9 */
+ {1, 5}, {0, 0}, /* sommet 11 */
+ {0, 0}, {0, 0}, /* sommet 13 (absent) */
+ {2, 6}, {0, 0}, /* sommet 15 */
+ {3, 7}, {0, 0}, /* sommet 17 */
+ {4, 5}, {0, 0}, /* sommet 19 */
+ {4, 6}, {0, 0}, /* sommet 21 */
+ {5, 7}, {0, 0}, /* sommet 23 */
+ {6, 7}          /* sommet 25 */
 };
 /* table des offsets des sommets du cube */
 static int32_t SC[8][3] = {
-0, 0, 0, /* sommet 0 */
-1, 0, 0, /* sommet 1 */
-0, 1, 0, /* sommet 2 */
-1, 1, 0, /* sommet 3 */
-0, 0, 1, /* sommet 4 */
-1, 0, 1, /* sommet 5 */
-0, 1, 1, /* sommet 6 */
-1, 1, 1  /* sommet 7 */
+  {0, 0, 0}, /* sommet 0 */
+  {1, 0, 0}, /* sommet 1 */
+  {0, 1, 0}, /* sommet 2 */
+  {1, 1, 0}, /* sommet 3 */
+  {0, 0, 1}, /* sommet 4 */
+  {1, 0, 1}, /* sommet 5 */
+  {0, 1, 1}, /* sommet 6 */
+  {1, 1, 1}  /* sommet 7 */
 };
 
 void InitLUT();
@@ -214,10 +214,7 @@ int32_t lmarchingcubes(struct xvimage * f, uint8_t v,
   uint8_t cube[8];
   uint8_t s;
   double x1, y1, z1, x2, y2, z2, x3, y3, z3 ;
-  meshvertex V;
-  double v0, v1, fc;
   meshbox MB0; 
-  double shrink;
 
   /* v est la valeur de seuil. si v == 0 alors il s'agit d'une image binaire */
   if (v == 0) s = 1; else s = v;
@@ -391,19 +388,15 @@ int32_t lmarchingcubes2(struct xvimage * f,
    deux points de valeurs differentes et tous deux > 0 est mis a 1
 */
 {
-  int32_t i, j, k, ic, x, y, z, nbfac, fac;
+  int32_t i, j, k, x, y, z, nbfac, fac;
   int32_t rs, cs, ps, ds, N;
   double xoff, yoff, zoff;
   double xdim, ydim, zdim;
   uint32_t c;
   uint8_t * F;
   uint8_t cube[8];
-  uint8_t s;
   double x1, y1, z1, x2, y2, z2, x3, y3, z3 ;
-  meshvertex V;
-  double v0, v1, fc;
   meshbox MB0; 
-  double shrink;
   int32_t fix1, fix2, fix3;
 
   rs = rowsize(f);
@@ -649,7 +642,7 @@ int main(int argc, char **argv)
   TermineMesh();
   freeimage(f);
   fclose(fileout);
-
+  return 0;
 } /* main */
 
 

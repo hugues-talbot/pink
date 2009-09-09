@@ -55,7 +55,7 @@ int32_t RlifoPop(Rlifo * L)
 {
   if (L->Sp == 0)
   {
-    fprintf(stderr, "%s: empty stack\n");
+    fprintf(stderr, "%s: empty stack\n", F_NAME);
     exit(1);
   }
   L->Sp -= 1;
@@ -70,7 +70,7 @@ int32_t RlifoHead(Rlifo * L)
 {
   if (L->Sp == 0)
   {
-    fprintf(stderr, "%s: empty stack\n");
+    fprintf(stderr, "%s: empty stack\n", F_NAME);
     exit(1);
   }
   return L->Pts[L->Sp-1];

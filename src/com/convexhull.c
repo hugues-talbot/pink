@@ -50,7 +50,7 @@ int main(int argc, char **argv)
   struct xvimage * image;
   int32_t * listepoints;
   int32_t npoints;
-  int32_t i, j, k, rs, cs, N, n, mode;
+  int32_t i, rs, cs, N, mode;
   uint8_t *F;
 
   if (argc != 4)

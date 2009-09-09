@@ -21,7 +21,6 @@ int main(int argc, char **argv)
 {
   FILE *filein = NULL;
   FILE *fileout = NULL;
-  meshbox MB0; 
 
   if (argc != 3)
   {
@@ -36,4 +35,5 @@ int main(int argc, char **argv)
   SaveMeshMCM(fileout);
   fclose(fileout);
   TermineMesh();
+  return 0;
 } /* main */

@@ -45,7 +45,6 @@ int32_t lellipseincl(double * X1, double * X2, int32_t np,
   double xx, xy, yy, x, y;
   double err, val, sW;
   int32_t iter, k, ret;
-  double r, s, t, u, v, z;
 
   delta = lin_max(X1, np, 1) - lin_min(X1, np, 1) + lin_max(X2, np, 1) - lin_min(X2, np, 1);
   alpha0 = 1;                        // initialisation pour le pas alpha(eq.7)

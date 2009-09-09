@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int32_t i, x1, y1, x2, y2;
+  int32_t x1, y1, x2, y2;
 
   if (argc != 7)
   {

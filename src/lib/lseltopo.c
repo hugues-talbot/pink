@@ -21,7 +21,7 @@ int32_t lptisolated(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptisolated"
 {
-  int32_t i, x;
+  int32_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
   int32_t rs = rowsize(image);
@@ -85,7 +85,7 @@ int32_t lptinterior(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptinterior"
 {
-  int32_t i, x;
+  int32_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
   int32_t rs = rowsize(image);
@@ -149,7 +149,7 @@ int32_t lptmultiple(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptmultiple"
 {
-  int32_t i, x;
+  int32_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
   int32_t rs = rowsize(image);
@@ -207,7 +207,7 @@ int32_t lptend(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptend"
 {
-  int32_t i, x;
+  int32_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
   int32_t rs = rowsize(image);
@@ -274,7 +274,7 @@ int32_t lptcurve(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptcurve"
 {
-  int32_t i, x;
+  int32_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
   int32_t rs = rowsize(image);
@@ -344,7 +344,7 @@ int32_t lptseparatinggray(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptseparatinggray"
 {
-  int32_t i, x;
+  int32_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
   int32_t rs = rowsize(image);
@@ -352,7 +352,6 @@ int32_t lptseparatinggray(struct xvimage * image, int32_t connex)
   int32_t ds = depth(image);
   int32_t ps = rs * cs;          /* taille plan */
   int32_t N = ps * ds;           /* taille image */
-  int32_t t, tb;
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -391,7 +390,7 @@ int32_t lptseparating(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptseparating"
 {
-  int32_t i, x;
+  int32_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
   int32_t rs = rowsize(image);
@@ -477,7 +476,7 @@ int32_t lptsimple(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptsimple"
 {
-  int32_t i, x;
+  int32_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
   int32_t rs = rowsize(image);
@@ -560,7 +559,7 @@ int32_t lseltopo(struct xvimage * image, int32_t connex, int32_t tm, int32_t tp,
 #undef F_NAME
 #define F_NAME "lseltopo"
 {
-  int32_t i, x;
+  int32_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
   int32_t rs = rowsize(image);

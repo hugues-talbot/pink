@@ -102,7 +102,7 @@ void read_logical_screen(FILE *fd)
 
   l = getc(fd); h = getc(fd); lswidth = h * 256 + l;
   l = getc(fd); h = getc(fd); lsheight  = h * 256 + l;
-  printf("lswidth = %ld ; lsheight = %ld\n", lswidth, lsheight);
+  printf("lswidth = %ld ; lsheight = %ld\n", (long int)lswidth, (long int)lsheight);
   flags = (uint8_t)getc(fd);  
   bgcolindex = (uint8_t)getc(fd);  
   pixasprat = (uint8_t)getc(fd);  
@@ -165,7 +165,7 @@ void read_comment_extension(FILE *fd)
     ret = fread(buf, sizeof(char), c, fd);
     if (ret != c)
     {
-      fprintf(stderr, "read_comment_extension: FORMAT ERROR, %ld byte read\n", ret);
+      fprintf(stderr, "read_comment_extension: FORMAT ERROR, %ld byte read\n", (long int)ret);
       exit(1);
     }
     printf("comment: %s", buf);
@@ -186,13 +186,13 @@ void read_application_extension(FILE *fd)
   c = getc(fd); /* get block size */
   if (c != 11)
   {
-    fprintf(stderr, "read_application_extension: FORMAT ERROR\n", ret);
+    fprintf(stderr, "read_application_extension: FORMAT ERROR\n");
     exit(1);
   }
   ret = fread(buf, sizeof(char), c, fd); /* skip block */
   if (ret != c)
   {
-    fprintf(stderr, "read_application_extension: FORMAT ERROR, %ld byte read\n", ret);
+    fprintf(stderr, "read_application_extension: FORMAT ERROR, %ld byte read\n", (long int)ret);
     exit(1);
   }
   printf("application tag : %x %x %x\n", buf[8], buf[9], buf[10]);
@@ -207,7 +207,7 @@ void read_application_extension(FILE *fd)
     ret = fread(buf, sizeof(char), c, fd);
     if (ret != c)
     {
-      fprintf(stderr, "read_application_extension: FORMAT ERROR, %ld byte read\n", ret);
+      fprintf(stderr, "read_application_extension: FORMAT ERROR, %ld byte read\n", (long int)ret);
       exit(1);
     }
     printf("application specific data : \n");
@@ -264,7 +264,7 @@ void read_image_data(FILE *fd)
     ret = fread(buf, sizeof(char), c, fd);
     if (ret != c)
     {
-      fprintf(stderr, "read_image_data: FORMAT ERROR, %ld byte read\n", ret);
+      fprintf(stderr, "read_image_data: FORMAT ERROR, %ld byte read\n", (long int)ret);
       exit(1);
     }
     c = getc(fd); /* get next block size */
@@ -300,7 +300,7 @@ void read_data(FILE *fd)
       l = getc(fd); h = getc(fd); toppos = h * 256 + l;
       l = getc(fd); h = getc(fd); width = h * 256 + l;
       l = getc(fd); h = getc(fd); height = h * 256 + l;
-      printf("leftpos = %ld ; toppos = %ld ; width = %ld ; height = %ld\n", leftpos, toppos, width, height);
+      printf("leftpos = %ld ; toppos = %ld ; width = %ld ; height = %ld\n", (long int)leftpos, (long int)toppos, (long int)width, (long int)height);
       flags = (uint8_t)getc(fd);  
 
       if (flags & 0x80)
@@ -332,8 +332,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   FILE *fd = NULL;
-  int32_t ret;
-  int32_t c;
 
   if (argc != 2)
   {

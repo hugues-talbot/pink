@@ -144,7 +144,7 @@ void mergenodes(ctree *CT, int32_t node, int32_t nodeaux)
       for (nodeauxson = CT->tabnodes[nodeaux].sonlist; nodeauxson != NULL; nodeauxson = nodeauxson->next)
         if (nodeson->son == nodeauxson->son)
         {
-          fprintf(stderr, "%s : error : son already in list (%d %d)\n", F_NAME);
+          fprintf(stderr, "%s : error : son already in list (%d)\n", F_NAME, nodeson->son);
           return;
         }
 #endif

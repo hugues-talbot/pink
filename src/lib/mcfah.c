@@ -159,8 +159,6 @@ int32_t FahFirst(
   Fah * L)
 /* ==================================== */
 {
-  int32_t V;
-  FahElt * FE;
   if ((L->QueueUrg == NULL) && (L->Queue == NULL))
   {
     fprintf(stderr, "erreur Fah vide\n");

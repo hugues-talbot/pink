@@ -35,7 +35,7 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * masque;
   uint32_t * histo;
-  int32_t i, k, seuil, nbpts, n;
+  int32_t i, seuil, nbpts, n;
   int32_t rs, cs, d, N;
   uint8_t *I;
   uint8_t *M;

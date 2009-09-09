@@ -59,13 +59,11 @@ int32_t lellipsefit(double * x, double * y, int32_t n,
 */
 {
   double S[6][6], L[6][6], C[6][6], InvL[6][6], InvL_t[6][6], temp[6][6], V[6][6], sol[6][6];
-  double Const[6][6] = {0,0,-2,0,0,0,  0,1,0,0,0,0,  -2,0,0,0,0,0, 
-                        0,0,0,0,0,0,  0,0,0,0,0,0,   0,0,0,0,0,0 };
+  double Const[6][6] = {{0,0,-2,0,0,0}, {0,1,0,0,0,0}, {-2,0,0,0,0,0}, 
+			{0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0} };
   double d[6];
-  double norm[1];
   double t;
   int32_t i, j, k, ret;
-  double xmax, ymax;
 
   if (n < 6) 
   {

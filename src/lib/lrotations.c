@@ -39,7 +39,7 @@ int32_t lquasishear(struct xvimage * image, double theta, double xc, double yc)
 {
   uint8_t *I1, *I2;
   int32_t rs, cs, n, x, y, xx, yy;
-  int32_t i, j, k, a, aa, bb, bb2, omega, omega2;
+  int32_t a, aa, bb, bb2, omega, omega2;
 
   if (depth(image) != 1)
   {
@@ -109,7 +109,7 @@ struct xvimage * lquasishear2(struct xvimage * image, double theta)
 #define F_NAME "lquasishear2"
 {
   int32_t rs, cs, n, rs2, cs2, n2, x, y, xx, yy, xmax, xmin, ymax, ymin;
-  int32_t i, j, k, a, aa, bb, bb2, omega, omega2;
+  int32_t a, aa, bb, bb2, omega, omega2;
   struct xvimage *image2;
   uint8_t *I1, *I2;
 

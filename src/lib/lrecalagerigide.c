@@ -24,13 +24,6 @@
 const int32_t MAXITER = 50;
 
 /* ==================================== */
-static double dist(double x1, double y1, double x2, double y2)
-/* ==================================== */
-{
-  return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-}
-
-/* ==================================== */
 static double distcarre(double x1, double y1, double x2, double y2)
 /* ==================================== */
 {
@@ -79,7 +72,7 @@ void Tgamma(double *X, int32_t n, double *Gamma, double *R)
     \warning R doit etre initialise aux memes dimensions que X (n,2)
 */
 {
-  int32_t i, j;
+  int32_t i;
   double Rot[2][2];
   
   // rotation
@@ -129,7 +122,7 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
 {
   double *Gamma, fmin;
   double G[5] = {1.0, 1.0, 0.0, 0.0, 0.0}; // hx, hy, theta, tx, ty
-  int32_t i, ret;
+  int32_t i;
   double BX1, BX2, BY1, BY2; // barycentres
   ensemble ens;
   const double PRECISION = 1e-6;
@@ -159,13 +152,6 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
   free(ens.Tmp);
   return Gamma;
 } // lrecalagerigide2d()
-
-/* ==================================== */
-static double dist3d(double x1, double y1, double z1, double x2, double y2, double z2)
-/* ==================================== */
-{
-  return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1));
-}
 
 /* ==================================== */
 static double distcarre3d(double x1, double y1, double z1, double x2, double y2, double z2)
@@ -218,8 +204,8 @@ void Tgamma3d(double *X, int32_t n, double *Gamma, double *R)
 */
 {
   int32_t i;
-  double Rot1[3][3] = {0,0,0,0,0,0,0,0,0};
-  double Rot2[3][3] = {0,0,0,0,0,0,0,0,0};
+  double Rot1[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
+  double Rot2[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
   double Rot[3][3];
 
   // rotation autour de l'axe z
@@ -280,7 +266,7 @@ double *lrecalagerigide3d(double *X, int32_t n, double *Y, int32_t m)
 {
   double *Gamma, fmin;
   double G[8] = {1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0}; // hx, hy, hz, theta, phi, tx, ty, tz
-  int32_t i, ret;
+  int32_t i;
   double BX1, BX2, BX3, BY1, BY2, BY3; // barycentres
   ensemble ens;
   const double PRECISION = 1e-6;
@@ -339,7 +325,7 @@ double F_num(double *G, struct xvimage * image1, struct xvimage * image2)
 // WARNING : les images doivent être de même taille - pas de vérification
 // WARNING : utilise (par effet de bord) la variable globale SEUIL2 (à changer)
 {
-  int32_t i, j, x, y, Xm, Ym, XM, YM;
+  int32_t i, x, y, Xm, Ym, XM, YM;
   int32_t rs = rowsize(image1);
   int32_t cs = colsize(image1);
   int32_t N = rs * cs;

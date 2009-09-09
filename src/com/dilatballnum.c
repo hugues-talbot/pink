@@ -198,7 +198,7 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * es;
   double r;
-  int32_t xc, yc, zc, rs, cs, ds, ps, nbpoints;
+  int32_t xc, yc, zc, rs, cs, ds, nbpoints;
   int32_t *tabx, *taby, *tabz;
 
   if (argc != 4)

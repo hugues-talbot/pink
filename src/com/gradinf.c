@@ -29,9 +29,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int32_t i;
-  uint8_t *pt;
-  int32_t N;
 
   if (argc != 3)
   {

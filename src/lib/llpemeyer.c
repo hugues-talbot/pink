@@ -60,12 +60,10 @@ int32_t llpemeyer(
 #undef F_NAME
 #define F_NAME "llpemeyer"
 {
-  register int32_t i;                       /* index muet */
   register int32_t x;                       /* index muet de pixel */
   register int32_t y;                       /* index muet (generalement un voisin de x) */
   register int32_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t j;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -292,7 +290,7 @@ int32_t llpemeyer(
   FahTermine(FAH);
   free(M);
   return(1);
-} /*  /* llpemeyer() */
+} // llpemeyer()
 
 /* ==================================== */
 int32_t llpemeyer2(
@@ -304,12 +302,9 @@ int32_t llpemeyer2(
 #undef F_NAME
 #define F_NAME "llpemeyer2"
 {
-  register int32_t i;                       /* index muet */
   register int32_t x;                       /* index muet de pixel */
   register int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t j;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -453,7 +448,7 @@ int32_t llpemeyer2(
   IndicsTermine();
   FahTermine(FAH);
   return(1);
-} /*  /* llpemeyer2() */
+} // llpemeyer2()
 
  /* ==================================== */
  int32_t llpemeyerkhalimsky(
@@ -473,12 +468,10 @@ int32_t llpemeyer2(
  */
 
  {
-   register int32_t i;                       /* index muet */
    register int32_t x;                       /* index muet de pixel */
    register int32_t y;                       /* index muet (generalement un voisin de x) */
    register int32_t w;                       /* index muet (generalement un voisin de x) */
    register int32_t k;                       /* index muet */
-   int32_t j;
    int32_t rs = rowsize(image);     /* taille ligne */
    int32_t cs = colsize(image);     /* taille colonne */
    int32_t N = rs * cs;             /* taille image */
@@ -700,12 +693,10 @@ int32_t llpemeyersansligne(
 #undef F_NAME
 #define F_NAME "llpemeyersansligne"
 {
-  register int32_t i;                       /* index muet */
   register int32_t x;                       /* index muet de pixel */
   register int32_t y;                       /* index muet (generalement un voisin de x) */
   register int32_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t j;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -922,7 +913,7 @@ int32_t llpemeyersansligne(
   IndicsTermine();
   FahTermine(FAH);
   return(1);
-} /*  /* llpemeyersansligne() */
+} // llpemeyersansligne()
 
 /* ==================================== */
 int32_t llpemeyer3d(
@@ -935,12 +926,10 @@ int32_t llpemeyer3d(
 #undef F_NAME
 #define F_NAME "llpemeyer3d"
 {
-  register int32_t i;                       /* index muet */
   register int32_t x;                       /* index muet de pixel */
   register int32_t y;                       /* index muet (generalement un voisin de x) */
   register int32_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t j;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t d = depth(image);        /* nb plans */
@@ -1251,12 +1240,10 @@ int32_t llpemeyer3dsansligne(
 #undef F_NAME
 #define F_NAME "llpemeyer3dsansligne"
 {
-  register int32_t i;                       /* index muet */
   register int32_t x;                       /* index muet de pixel */
   register int32_t y;                       /* index muet (generalement un voisin de x) */
   register int32_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t j;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t d = depth(image);        /* nb plans */
@@ -1579,12 +1566,10 @@ int32_t llpemeyerbiconnecte(
 #undef F_NAME
 #define F_NAME "llpemeyerbiconnecte"
 {
-  register int32_t i;                       /* index muet */
   register int32_t x;                       /* index muet de pixel */
   register int32_t y;                       /* index muet (generalement un voisin de x) */
   register int32_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t j;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -1802,7 +1787,7 @@ int32_t llpemeyerbiconnecte(
   FahTermine(FAH);
   free(M);
   return(1);
-} /*  /* llpemeyer() */
+} // llpemeyer()
 
 
 /* ==================================== */
@@ -1815,12 +1800,10 @@ int32_t llpemeyerbiconnecte3d(
 #undef F_NAME
 #define F_NAME "llpemeyerbiconnecte3d"
 {
-  register int32_t i;                       /* index muet */
   register int32_t x;                       /* index muet de pixel */
   register int32_t y;                       /* index muet (generalement un voisin de x) */
   register int32_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t j;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t d = depth(image);        /* nb plans */

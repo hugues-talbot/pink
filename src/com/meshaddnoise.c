@@ -92,4 +92,5 @@ int main(int argc, char **argv)
     SaveMeshVTK(fileout);
   }
   fclose(fileout);
+  return 0;
 } /* main */

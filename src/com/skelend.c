@@ -73,7 +73,6 @@ int main(int argc, char **argv)
   else
   {
     uint8_t *endpoint;
-    struct xvimage * prio;
     char tablefilename[128];
     int32_t tablesize, ret;
 

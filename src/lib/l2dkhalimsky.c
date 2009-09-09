@@ -1100,7 +1100,7 @@ int32_t l2dtopotessndg(struct xvimage * f)
 */
 {
   int32_t rs, cs, N;
-  int32_t x, y, w;
+  int32_t x;
   struct xvimage * fk;  /* seuil de F au niveau k */ 
   struct xvimage * fkp; /* seuil de F au niveau k+1 */
   struct xvimage * lab; /* pour les labels des CC de fkp */ 
@@ -1108,7 +1108,7 @@ int32_t l2dtopotessndg(struct xvimage * f)
   uint8_t *Fk;
   uint8_t *Fkp;
   uint32_t *LAB;
-  int32_t k, kp;
+  int32_t kp;
   int32_t nlabels;
   int32_t histo[NDG_MAX+1];
 
@@ -1213,7 +1213,7 @@ int32_t l2dtopotessndg_inverse(struct xvimage * f)
 */
 {
   int32_t rs, cs, N;
-  int32_t x, y, w;
+  int32_t x;
   struct xvimage * fk;  /* seuil de F au niveau k */ 
   struct xvimage * fkp; /* seuil de F au niveau k+1 */
   struct xvimage * lab; /* pour les labels des CC de fkp */ 
@@ -1318,6 +1318,7 @@ writeimage(lab, "lab");
   freeimage(lab);
   freeimage(fk);
   freeimage(fkp);
+  return 1;
 } /* l2dtopotessndg() */
 
 /* =============================================================== */
@@ -1330,7 +1331,7 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
 */
 {
   int32_t rs, cs, N;
-  int32_t x, y, w;
+  int32_t x;
   struct xvimage * fk;  /* seuil de F au niveau k */ 
   struct xvimage * fkp; /* seuil de F au niveau k+1 */
   struct xvimage * lab; /* pour les labels des CC de fkp */ 
@@ -1340,7 +1341,7 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
   uint8_t *Fkp;
   uint32_t *LAB;
   uint32_t *MAXI;
-  int32_t k, kp;
+  int32_t kp;
   int32_t nlabels;
   int32_t histo[NDG_MAX+1];
 
@@ -1606,7 +1607,7 @@ int32_t l2dborder(struct xvimage * f)
 #undef F_NAME
 #define F_NAME "l2dborder"
   struct xvimage * g;
-  int32_t rs, cs, N;
+  int32_t rs, cs;
   int32_t x, y;
   uint8_t *F;
   uint8_t *G;
@@ -1648,7 +1649,7 @@ int32_t l2dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8
 #undef F_NAME
 #define F_NAME "l2dseltype"
 {
-  int32_t rs, cs, N, i1, j1, k1, i2, j2, k2, x, y, a, b, d;
+  int32_t rs, cs, N, i1, j1, i2, j2, x, y, a, b, d;
   uint8_t * K;
   struct xvimage * kp;
   uint8_t * KP;

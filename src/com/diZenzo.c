@@ -54,7 +54,6 @@ int main(int argc, char **argv)
   struct xvimage * result;
   double alpha;
   int32_t mode;
-  double l;
 
   if ((argc < 4) || (argc > 5))
   {

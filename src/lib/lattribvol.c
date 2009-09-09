@@ -48,8 +48,7 @@
 int32_t lsegmentvol(struct xvimage *image, int32_t connex, int32_t param, int32_t maximise)
 /* ==================================== */
 {
-  register int32_t i, k, l;         /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;         /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
@@ -186,8 +185,7 @@ int32_t lsegmentvol(struct xvimage *image, int32_t connex, int32_t param, int32_
 int32_t lvolmaxima(struct xvimage *image, int32_t connex, int32_t param)
 /* ==================================== */
 {
-  register int32_t i, k, l;         /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;         /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
@@ -314,8 +312,7 @@ int32_t lvolmaxima(struct xvimage *image, int32_t connex, int32_t param)
 int32_t lvolselnb(struct xvimage *image, int32_t connex, int32_t param)
 /* ==================================== */
 {
-  register int32_t i, k, l;         /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;         /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */

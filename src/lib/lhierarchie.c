@@ -375,7 +375,7 @@ int32_t *volumeMergeTree(JCctree *CT, RAG *rag)
 
 // extraction du MST contenu dans un merge tree, vers un tableau d'arete
 // et revaluation des arets en fonction de Attribut
-int32_t mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attribut) 
+static void mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attribut) 
      /* MST et Valeur sont supposés alloués */
 {
 
@@ -417,7 +417,7 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, uint32_t *label, int
   if ((Euler == NULL) || (Represent == NULL) 
       || (Depth == NULL) || (Number == NULL)) {
     fprintf(stderr, "%s : malloc failed\n", F_NAME);
-    return;
+    return(0);
   }
   
   Minim = LCApreprocess(CT, Euler, Depth, Represent, Number, &nbRepresent, &logn);
@@ -516,7 +516,7 @@ int32_t main_cascade(struct xvimage *image, struct xvimage *ga, int32_t param)
 	switch(param){
 	case 0: updateArcValue(g1,i, y, (uint8_t)max(F[i],F[y])); break;
 	case 1: updateArcValue(g1,i, y, (uint8_t)abs((uint32_t)F[i] - (uint32_t)F[y])); break;
-	default: fprintf(stderr,"%s: Mauvais parametre \n"); exit(0);
+	default: fprintf(stderr,"%s: Mauvais parametre \n", F_NAME); exit(0);
 	}
     }
   }
@@ -539,7 +539,7 @@ int32_t main_cascade(struct xvimage *image, struct xvimage *ga, int32_t param)
 	    case 0: updateArcValue(g2,Label2[Label1[i]], Label2[Label1[y]], max(F[i],F[y])); break;
 	    case 1: updateArcValue(g2,Label2[Label1[i]], Label2[Label1[y]], 
 	    			   (uint8_t)abs((uint32_t)F[i] - (uint32_t)F[y])); break;
-	    default: fprintf(stderr,"%s: Mauvais parametre \n"); exit(0);
+	    default: fprintf(stderr,"%s: Mauvais parametre \n", F_NAME); exit(0);
 	    }
 	  }
 	}
@@ -566,8 +566,6 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param)
   struct xvimage *label;
   int32_t rs = rowsize(ga);               /* taille ligne */
   int32_t cs = colsize(ga);               /* taille colonne */
-  int32_t N = rs * cs;                    /* taille image */
-  uint8_t *F = UCHARDATA(ga);            /* l'image de depart */ 
   uint32_t *LABEL;
   int32_t *Attribut;                      /* Attribut de surface du merge tree */
   RAG *rag;                               /* Graph d'adjacence de
@@ -576,7 +574,6 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param)
 					     saillence */
   int32_t *MST, *Valeur,*STaltitude;      /* Arete du MST et Valuation
 					     par attribut */
-  int32_t i;
   JCctree * ST;                             /* Arbre des coupes pour le calcul de la carte de saillance */
   if((label = allocimage(NULL,rs,cs,1,VFF_TYP_4_BYTE)) == NULL){
     fprintf(stderr,"%s : ne peut allouer label \n",F_NAME);

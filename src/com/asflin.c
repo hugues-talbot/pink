@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   int32_t rayonmin, rayonmax, rayon;
-  int32_t d, xc, yc, zc, n, x, y, z, nptb;
+  int32_t d, xc, yc, zc, x, y, z, nptb;
   int32_t *tab_es_x, *tab_es_y, *tab_es_z;
   int32_t FERMETURE_EN_1 = 0;
   char dir;

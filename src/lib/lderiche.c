@@ -143,7 +143,7 @@ int32_t lderiche(struct xvimage *image, double alpha, int32_t function, double l
                6 = module du gradient en y
 */
 { 
-  int32_t i, j;
+  int32_t i;
   uint8_t *ima = UCHARDATA(image);
   int32_t rs = image->row_size;
   int32_t cs = image->col_size;
@@ -436,7 +436,7 @@ int32_t lshencastan(struct xvimage *image, double beta)
     beta : parametre (1/taille) du filtre
 */
 { 
-  int32_t i, j;
+  int32_t i;
   uint8_t *ima = UCHARDATA(image);
   int32_t rs = image->row_size;
   int32_t cs = image->col_size;
@@ -451,7 +451,6 @@ int32_t lshencastan(struct xvimage *image, double beta)
   double e_a;     /* stocke exp(-beta) */
   double a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4;
   double t1, t2;
-  double lmax, lmin;
 
   if (depth(image) != 1) 
   {

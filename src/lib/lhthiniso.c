@@ -613,10 +613,8 @@ void UpdateRbt4(uint32_t x, uint8_t *F, uint32_t *T,
 int32_t lhthiniso(struct xvimage *image, double dmax, int32_t connex, double pixwhratio)
 /* ==================================== */
 { 
-  int32_t i;                       /* index muet */
   uint32_t x;                       /* index muet de pixel */
   uint32_t y;                       /* index muet (generalement un voisin de x) */
-  uint32_t z;                       /* index muet (generalement un voisin de y) */
   uint32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */

@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <limits.h>
 #include "mccodimage.h"
 #include "mcimage.h"
@@ -22,6 +23,13 @@ inline double dist_2(double x1, double y1, double x2, double y2)
 /* ==================================== */
 {
   return ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+}
+
+/* ==================================== */
+inline double dist_3(double x1, double y1, double z1, double x2, double y2, double z2)
+/* ==================================== */
+{
+  return ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1));
 }
 
 /////////Basic functions to handle operations with INFTY
@@ -183,7 +191,7 @@ void phaseVoronoiY(struct xvimage *sdt_x, struct xvimage *sdt_xy, struct xvimage
   int32_t *dxTemp; //Temp array to backup the Voronoi labeling 
   int32_t q; 
   int32_t w;
-  int32_t x, y, z, u;  
+  int32_t x, z, u;  
 
   s = (int32_t *)malloc(colsize(sdt_x)*sizeof(int32_t));
   t = (int32_t *)malloc(colsize(sdt_x)*sizeof(int32_t));
@@ -276,7 +284,7 @@ void phaseVoronoiZ(struct xvimage *sdt_xy, struct xvimage *sdt_xyz, struct xvima
   int32_t *dxTemp; //Temp array to backup the Voronoi labeling 
   int32_t q; 
   int32_t w;
-  int32_t x, y, z, u;
+  int32_t x, y, u;
 
   s = (int32_t *)malloc(depth(sdt_xy)*sizeof(int32_t));
   t = (int32_t *)malloc(depth(sdt_xy)*sizeof(int32_t));
@@ -374,7 +382,7 @@ int32_t lvoronoilabelling(struct xvimage *img,   /* donnee: image binaire */
   struct xvimage *dy;
   struct xvimage *dz;
   int32_t *X, *Y, *Z;
-  int32_t *V = ULONGDATA(vor);
+  int32_t *V = SLONGDATA(vor);
 
   if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(dist) != VFF_TYP_4_BYTE) || (datatype(vor) != VFF_TYP_4_BYTE))
   {
@@ -398,9 +406,9 @@ int32_t lvoronoilabelling(struct xvimage *img,   /* donnee: image binaire */
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return(0);
   }
-  X = ULONGDATA(dx);
-  Y = ULONGDATA(dy);
-  Z = ULONGDATA(dz);  
+  X = SLONGDATA(dx);
+  Y = SLONGDATA(dy);
+  Z = SLONGDATA(dz);  
 
   if (ds != 1)
   {
@@ -443,12 +451,13 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
   struct xvimage *dis;
   struct xvimage *dx;
   struct xvimage *dy;
+  struct xvimage *dz;
   int32_t i, j, k, p, medax, ftp_x, ftp_y, ftp_z, ftpe_x, ftpe_y, ftpe_z;
-  int32_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
+  int32_t rs = rowsize(f), cs = colsize(f), ds = depth(f), ps = rs * cs;
   uint8_t *F = UCHARDATA(f);
   uint8_t *R = UCHARDATA(res);
-  int32_t *X, *Y, *T;
-  double mx, my, gamma2 = gamma*gamma;
+  int32_t *X, *Y, *Z;
+  double mx, my, mz, gamma2 = gamma*gamma;
 
   if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
   {
@@ -462,21 +471,16 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
     return 0;
   }
 
-  tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  dis = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  dx = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  dy = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if ((tmp == NULL) || (dis == NULL) || (dx == NULL) ||  (dy == NULL))
-  {
-    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return(0);
-  }
-  T = ULONGDATA(tmp);
-  X = ULONGDATA(dx);
-  Y = ULONGDATA(dy);
+  tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(tmp != NULL);
+  dis = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(dis != NULL);
 
   if (ds == 1)
   {
+    dx = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(dx != NULL);
+    dy = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(dy != NULL);
+    X = SLONGDATA(dx);
+    Y = SLONGDATA(dy);
+
     phaseVoronoiX(f,tmp,dx);
     phaseVoronoiY(tmp,dis,dx,dy);
 
@@ -522,21 +526,89 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
       if (medax) R[p] = NDG_MAX; else R[p] = 0;
     }
     else R[p] = 0;
+
+    freeimage(tmp);
+    freeimage(dis);
+    freeimage(dx);
+    freeimage(dy);
   }
   else
   {
-    fprintf(stderr, "%s: 3d not implemented\n", F_NAME);
-    return 0;
-    /*
-    FT3d_line(F, T, rs, cs, ds);
-    FT3d_column(T, R, rs, cs, ds);
-    FT3d_planes(R, T, rs, cs, ds);
-    */
-  }
+    dx = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(dx != NULL);
+    dy = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(dy != NULL);
+    dz = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(dz != NULL);
+    X = SLONGDATA(dx);
+    Y = SLONGDATA(dy);
+    Z = SLONGDATA(dz);
 
-  freeimage(tmp);
-  freeimage(dis);
-  freeimage(dx);
-  freeimage(dy);
+    phaseVoronoiX(f, dis, dx);
+    phaseVoronoiY(dis, tmp, dx, dy);
+    phaseVoronoiZ(tmp, dis, dx, dy, dz);
+
+    for (p = k = 0; k < ds; k++) 
+    for (    j = 0; j < cs; j++) 
+    for (    i = 0; i < rs; i++, p++) 
+    if (F[p])
+    {
+      medax = 0;
+      ftp_x = X[p]; ftp_y = Y[p]; ftp_z = Z[p];
+      if ((i > 0) && F[p-1])
+      {
+	ftpe_x = X[p-1]; ftpe_y = Y[p]; ftpe_z = Z[p];
+	mx = i - 0.5; my = j; mz = k;
+	if ((dist_3(ftpe_x, ftpe_y, ftpe_z, ftp_x, ftp_y, ftp_z) > gamma2) &&
+	    (dist_3(mx, my, mz, ftpe_x, ftpe_y, ftpe_z) <= (dist_3(mx, my, mz, ftp_x, ftp_y, ftp_z))))
+	  medax = 1;
+      }	  
+      if (!medax && (i < rs-1) && F[p+1])
+      {
+	ftpe_x = X[p+1]; ftpe_y = Y[p]; ftpe_z = Z[p];
+	mx = i + 0.5; my = j; mz = k;
+	if ((dist_3(ftpe_x, ftpe_y, ftpe_z, ftp_x, ftp_y, ftp_z) > gamma2) &&
+	    (dist_3(mx, my, mz, ftpe_x, ftpe_y, ftpe_z) <= (dist_3(mx, my, mz, ftp_x, ftp_y, ftp_z))))
+	  medax = 1;
+      }	  
+      if (!medax && (j > 0) && F[p-rs])
+      {
+	ftpe_x = X[p]; ftpe_y = Y[p-rs]; ftpe_z = Z[p];
+	mx = i; my = j - 0.5; mz = k;
+	if ((dist_3(ftpe_x, ftpe_y, ftpe_z, ftp_x, ftp_y, ftp_z) > gamma2) &&
+	    (dist_3(mx, my, mz, ftpe_x, ftpe_y, ftpe_z) <= (dist_3(mx, my, mz, ftp_x, ftp_y, ftp_z))))
+	  medax = 1;
+      }	  
+      if (!medax && (j < cs-1) && F[p+rs])
+      {
+	ftpe_x = X[p]; ftpe_y = Y[p+rs]; ftpe_z = Z[p];
+	mx = i; my = j + 0.5; mz = k;
+	if ((dist_3(ftpe_x, ftpe_y, ftpe_z, ftp_x, ftp_y, ftp_z) > gamma2) &&
+	    (dist_3(mx, my, mz, ftpe_x, ftpe_y, ftpe_z) <= (dist_3(mx, my, mz, ftp_x, ftp_y, ftp_z))))
+	  medax = 1;
+      }	  
+      if (!medax && (k > 0) && F[p-ps])
+      {
+	ftpe_x = X[p]; ftpe_y = Y[p]; ftpe_z = Z[p-ps];
+	mx = i; my = j; mz = k - 0.5;
+	if ((dist_3(ftpe_x, ftpe_y, ftpe_z, ftp_x, ftp_y, ftp_z) > gamma2) &&
+	    (dist_3(mx, my, mz, ftpe_x, ftpe_y, ftpe_z) <= (dist_3(mx, my, mz, ftp_x, ftp_y, ftp_z))))
+	  medax = 1;
+      }	  
+      if (!medax && (j < ds-1) && F[p+ps])
+      {
+	ftpe_x = X[p]; ftpe_y = Y[p]; ftpe_z = Z[p+ps];
+	mx = i; my = j; mz = k + 0.5;
+	if ((dist_3(ftpe_x, ftpe_y, ftpe_z, ftp_x, ftp_y, ftp_z) > gamma2) &&
+	    (dist_3(mx, my, mz, ftpe_x, ftpe_y, ftpe_z) <= (dist_3(mx, my, mz, ftp_x, ftp_y, ftp_z))))
+	  medax = 1;
+      }	  
+      if (medax) R[p] = NDG_MAX; else R[p] = 0;
+    }
+    else R[p] = 0;
+
+    freeimage(tmp);
+    freeimage(dis);
+    freeimage(dx);
+    freeimage(dy);
+    freeimage(dz);
+  }
   return 1;
 } // lmedax_Hesselink()

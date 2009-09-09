@@ -25,7 +25,7 @@ struct xvimage * lcrop(struct xvimage *in, int32_t x, int32_t y, int32_t w, int3
 #undef F_NAME
 #define F_NAME "lcrop"
 {
-  int32_t i, j, k, i0, j0, i1, j1, x0, y0, x1, y1, xx, yy;
+  int32_t i, j, i0, j0, i1, j1, x0, y0, x1, y1, xx, yy;
   int32_t rs, cs;
   struct xvimage * temp1;
 
@@ -673,8 +673,7 @@ struct xvimage * lexpandframe(struct xvimage *in, int32_t n)
   int32_t rs1 = rowsize(in);
   int32_t cs1 = colsize(in);
   int32_t ps1 = rs1 * cs1;
-  int32_t N1 = ps1 * ds1;
-  int32_t rs2, cs2, ds2, x, y, z;
+  int32_t rs2, cs2, x, y;
   struct xvimage *temp1;
 
   if (ds1 > 1)

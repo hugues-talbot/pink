@@ -53,7 +53,7 @@ Definition Grimaud : obligation d'atteindre un maximum de niveau strictement sup
 */
 {
   uint32_t nbcomp = cpct->nbcomp;
-  int32_t i, h, ncompnivh, f, p, s;
+  int32_t i, h, ncompnivh, f, p;
   uint8_t *tmp;
 
   tmp = (uint8_t *)calloc(nbcomp, sizeof(char));
@@ -103,6 +103,7 @@ Definition Grimaud : obligation d'atteindre un maximum de niveau strictement sup
   free(tmp);
 } /* CalculeDynamiqueMaxima() */
 
+#ifdef NOT_USED
 /* ==================================== */
 static void CalculeDynamiqueContours(CompactTree * cpct)
 /* ==================================== */
@@ -112,7 +113,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
 #define CONDITION_VIOLATION 0x01
 {
   uint32_t nbcomp = cpct->nbcomp;
-  int32_t i, h, ncompnivh, f, p, s, v;
+  int32_t i, h, ncompnivh, f, p, v;
   uint8_t *tmp;
 
   tmp = (uint8_t *)calloc(nbcomp, sizeof(char));
@@ -202,6 +203,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
 
   free(tmp);
 } /* CalculeDynamiqueContours() */
+#endif
 
 /* ==================================== */
 static void RecupereDynamique(CompactTree * cpct,           
@@ -228,8 +230,7 @@ int32_t ldynamique(struct xvimage *image, int32_t connex)
 #undef F_NAME
 #define F_NAME "ldynamique"
 {
-  register int32_t i, k, l;         /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;         /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
@@ -386,7 +387,7 @@ static void BuildTree(uint8_t *F, int32_t rs, int32_t ps, int32_t N, int32_t con
               )
 /* ================================================ */
 {
-  int32_t i, j, k;
+  int32_t i, k;
 
   // INITIALISATIONS
   for (i = 0; i < N; i++) STATUS[i] = NOT_ANALYZED;
@@ -472,7 +473,7 @@ static int32_t TrouveComposantes2(int32_t x, uint8_t *F, int32_t rs, int32_t N, 
 #define MODIFIE    4
 
 /* ==================================== */
-int32_t Watershed(
+void Watershed(
   struct xvimage *image,
   int32_t incr_vois, 
   Fahs * FAHS,
@@ -662,8 +663,9 @@ int32_t Watershed(
   LifoTermine(LIFO);
 } // Watershed()
 
+#ifdef NOT_USED
 /* ==================================== */
-static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
+static void Watershed1(struct xvimage *image, int32_t incr_vois,
 	      Fahs * FAHS, uint32_t *STATUS, CompactTree * cpct)
 /* ==================================== */
 // propage a partir d'un point constructible
@@ -673,7 +675,7 @@ static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
   uint8_t *F = UCHARDATA(image);
   int32_t rs = rowsize(image);
   int32_t N = rs * colsize(image);
-  int32_t i, j, k, x, y;
+  int32_t k, x, y;
   int32_t c;                        /* une composante */
   int32_t tabcomp[8];               /* liste de composantes */
   int32_t ncomp;                    /* nombre de composantes dans tabcomp */
@@ -773,9 +775,10 @@ static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
     printf("Nombre d'elevations %d\n", nbelev);
 #endif
 } // Watershed1()
+#endif
 
 /* ==================================== */
-static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
+static void Watershed2(struct xvimage *image, int32_t incr_vois,
 	      Fahs * FAHS, uint32_t *STATUS, CompactTree * cpct)
 /* ==================================== */
 // inondation a partir des voisins des maxima, suivant les ndg decroissants
@@ -906,8 +909,9 @@ static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
 #endif
 } // Watershed2()
 
+#ifdef NOT_USED
 /* ==================================== */
-static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
+static void Watershed3(struct xvimage *image, int32_t incr_vois,
 	      Fahs * FAHS, uint32_t *STATUS, CompactTree * cpct)
 /* ==================================== */
 // propagation en largeur a partir des voisins des maxima
@@ -1037,9 +1041,10 @@ static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
     printf("Nombre d'elevations %d\n", nbelev);
 #endif
 } // Watershed3()
+#endif
 
 /* ==================================== */
-static int32_t Watershed4(struct xvimage *image, int32_t incr_vois,
+static void Watershed4(struct xvimage *image, int32_t incr_vois,
 	      Fahs * FAHS, uint32_t *STATUS, CompactTree * cpct)
 /* ==================================== */
 // inondation a partir des voisins des maxima, suivant les ndg decroissants
@@ -1161,6 +1166,7 @@ printf("    Eleve au niveau: %d ; LPE\n", F[x]);
 #endif
 } // Watershed4()
 
+#ifdef NOT_USED
 /* ==================================== */
 static int32_t trouvefeuillerec(CompactTree * cpct, int32_t p, int32_t v)
 /* ==================================== */
@@ -1219,6 +1225,7 @@ static int32_t InList(int32_t e, int32_t *list, int32_t n)
     if (list[--n] == e) return 1;
   return 0;
 } /* InList() */
+#endif
 
 /* ==================================== */
 int32_t lwshedval(struct xvimage *image, int32_t connex)
@@ -1247,8 +1254,8 @@ repeter
 jusqu'a size(tree) ==  1
 */
 {
-  register int32_t i, j, k, l;      /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;      /* index muet */
+  register int32_t x, y;      /* index muet de pixel */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
@@ -1265,7 +1272,6 @@ jusqu'a size(tree) ==  1
   uint8_t *node_at_level; /* tableau de booleens */
   CompTree * TREE;              /* resultat : l'arbre des composantes */
   CompactTree * cpct;           /* resultat : l'arbre des composantes compacte' */
-  int32_t vmin;
 
   switch (connex)
   {
@@ -1511,8 +1517,7 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lwshedtopo"
 {
-  register int32_t i, j, k, l;      /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */

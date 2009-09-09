@@ -42,7 +42,7 @@ int main(int32_t argc, char **argv)
   struct xvimage4D * marqueurs;
   struct xvimage4D * marqueursfond;
   struct xvimage4D * masque;
-  int32_t connex, nb_images;
+  int32_t connex;
 
   if (argc != 9)
   {

@@ -46,7 +46,6 @@ int32_t lccv(struct xvimage *f, struct xvimage *m)
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
-  uint8_t sup;
   int32_t nptb;                    /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
@@ -138,7 +137,6 @@ int32_t lecarttype(struct xvimage *f, struct xvimage *m)
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
-  uint8_t sup;
   int32_t nptb;                    /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */

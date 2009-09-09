@@ -11,7 +11,7 @@
 <B>Description:</B>
 Reads a point list in file <B>in.list</B> under the following format:
 <pre>  
-    b <n>         n <n>    
+    b &lt;n&gt;         n &lt;n&gt;    
     x1 y1         x1 y1 v1
     x2 y2   ou    x2 y2 v2
     ...           ...
@@ -22,7 +22,7 @@ Computes a Delaunay triangulation and stores the resulting graph
 
 into file <B>out.graph</B> under the following format:
 <pre>
-    G <n>
+    G &lt;n&gt;
     x1 y1 v1 ec1 ns1 s11 s12 ... s1ns1
     x2 y2 v2 ec2 ns2 s21 s22 ... s1ns2
     ...
@@ -202,4 +202,5 @@ int main(int argc, char **argv)
   free(lx);
   free(ly);
   free(del);
+  return 0;
 }

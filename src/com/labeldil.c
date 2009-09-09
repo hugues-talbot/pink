@@ -31,7 +31,7 @@ The output image \b out.pgm has the type "int32_t".
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t nblabels, i;
+  int32_t nblabels;
   struct xvimage * image;
   struct xvimage * result;
   struct xvimage * se;

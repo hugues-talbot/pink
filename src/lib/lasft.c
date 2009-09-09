@@ -269,7 +269,6 @@ void hpopeningdisc_bad(struct xvimage * image, struct xvimage * dist, int32_t r,
 /* =============================================================== */
 /* juste pour montrer que ce n'est pas la bonne definition */
 {
-  struct xvimage * image_sav;
   struct xvimage * image_tmp;
   uint8_t *I, *T;
   int32_t rs, cs, N, i, r2 = r * r;
@@ -818,8 +817,6 @@ int32_t lasft_ndg(struct xvimage * image, struct xvimage * imagec, struct xvimag
 #define F_NAME "ndg" 
 {
   int32_t rayon;
-  int32_t rs = rowsize(image);         /* taille ligne */
-  int32_t cs = colsize(image);         /* taille colonne */
   int32_t d, xc, yc, x, y, nptb;
   int32_t *tab_es_x, *tab_es_y;
 
@@ -1618,9 +1615,6 @@ int32_t lasft_ndg3d(struct xvimage * image, struct xvimage * imagec, struct xvim
 #define F_NAME "ndg3d" 
 {
   int32_t rayon;
-  int32_t rs = rowsize(image);         /* taille ligne */
-  int32_t cs = colsize(image);         /* taille colonne */
-  int32_t ds = depth(image);           /* nb plans */
   int32_t d, xc, yc, zc, x, y, z, nptb;
   int32_t *tab_es_x, *tab_es_y, *tab_es_z;
 
@@ -1695,7 +1689,6 @@ int32_t lasftmed3d(struct xvimage * image, int32_t connex, int32_t rayonmax)
 #undef F_NAME
 #define F_NAME "lasftmed3d" 
 {
-  int32_t rayon;
   struct xvimage * medaxis;   // axe median de image
   struct xvimage * medaxis_i; // axe median de l'inverse de image
   uint8_t *M;

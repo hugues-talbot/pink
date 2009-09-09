@@ -33,14 +33,15 @@ extern "C" {
 #define NO_LABEL -1
 
 extern struct xvimage *mBorderWshed(struct xvimage *ga);
-struct xvimage *SeparatingEdge(struct xvimage *labels);
-struct xvimage *mBorderWshed2d(struct xvimage *ga);
-struct xvimage *mBorderWshed2drapide(struct xvimage *ga);
-int32_t flowMapping(struct  xvimage* ga, int32_t* Label);
-int32_t flowMappingRecursif(struct  xvimage* ga, int32_t* Label);
-int32_t flowMappingFloat(struct  xvimage* ga, int32_t* Label);
-int32_t flowMappingDouble(struct  xvimage* ga, int32_t* Label);
-int32_t lpeGrapheAreteValuee(GrapheValue *gv, int32_t* Label);
+extern struct xvimage *SeparatingEdge(struct xvimage *labels);
+extern struct xvimage *mBorderWshed2d(struct xvimage *ga);
+extern struct xvimage *mBorderWshed2drapide(struct xvimage *ga);
+extern int32_t flowMapping(struct  xvimage* ga, int32_t* Label);
+extern int32_t flowMappingRecursif(struct  xvimage* ga, int32_t* Label);
+extern int32_t flowMappingFloat(struct  xvimage* ga, int32_t* Label);
+extern int32_t flowMappingDouble(struct  xvimage* ga, int32_t* Label);
+extern int32_t lpeGrapheAreteValuee(GrapheValue *gv, int32_t* Label);
+extern int32_t altitudePoint(struct xvimage *ga, int32_t i);
 #ifdef __cplusplus
 }
 #endif

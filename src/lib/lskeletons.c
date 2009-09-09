@@ -31,83 +31,6 @@
 //#define TEST_SIMPLE_PAR_COLLAPSE
 
 /* ==================================== */
-static int32_t typedir(uint8_t *F, int32_t x, int32_t rs, int32_t N)
-/* ==================================== */
-{
-  int32_t y;
-  y = voisin(x, NORD, rs, N); if ((y!=-1) && (F[y]==0)) return 0;
-  y = voisin(x, SUD, rs, N); if ((y!=-1) && (F[y]==0)) return 1;
-  y = voisin(x, EST, rs, N); if ((y!=-1) && (F[y]==0)) return 2;
-  y = voisin(x, OUEST, rs, N); if ((y!=-1) && (F[y]==0)) return 3;
-  return 4;
-} /* typedir() */
-
-/* ==================================== */
-static int32_t typedir3d_old(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
-/* ==================================== */
-{
-  int32_t y;
-  y = voisin6(x, NORD, rs, ps, N); if ((y!=-1) && (F[y]==0)) return 0;
-  y = voisin6(x, SUD, rs, ps, N); if ((y!=-1) && (F[y]==0)) return 1;
-  y = voisin6(x, EST, rs, ps, N); if ((y!=-1) && (F[y]==0)) return 2;
-  y = voisin6(x, OUEST, rs, ps, N); if ((y!=-1) && (F[y]==0)) return 3;
-  y = voisin6(x, DEVANT, rs, ps, N); if ((y!=-1) && (F[y]==0)) return 4;
-  y = voisin6(x, DERRIERE, rs, ps, N); if ((y!=-1) && (F[y]==0)) return 5;
-  return 6;
-} /* typedir3d_old() */
-
-/* ==================================== */
-static int32_t typedir3d_b(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
-/* ==================================== */
-{
-  int32_t y, n, s, e, o, a, d, sum;
-  n = s = e = o = a = d = 0;
-  y = voisin6(x, NORD, rs, ps, N); if ((y!=-1) && (F[y]==0)) n = 1;
-  y = voisin6(x, SUD, rs, ps, N); if ((y!=-1) && (F[y]==0)) s = 1;
-  y = voisin6(x, EST, rs, ps, N); if ((y!=-1) && (F[y]==0)) e = 1;
-  y = voisin6(x, OUEST, rs, ps, N); if ((y!=-1) && (F[y]==0)) o = 1;
-  y = voisin6(x, DEVANT, rs, ps, N); if ((y!=-1) && (F[y]==0)) a = 1;
-  y = voisin6(x, DERRIERE, rs, ps, N); if ((y!=-1) && (F[y]==0)) d = 1;
-  sum = n + s + e + o + a + d;
-  if (sum == 0) return 0;
-  else if (sum == 1) 
-  {
-    if (n) return 1;
-    else if (s) return 2;
-    else if (e) return 3;
-    else if (o) return 4;
-    else if (a) return 5;
-    else /* if (d) */ return 6;
-  }
-  else if (sum == 2) 
-  {
-    if (n && e) return 7;
-    else if (s && o) return 8;
-    else if (e && a) return 9;
-    else if (o && d) return 10;
-    else if (a && n) return 11;
-    else if (d && s) return 12;
-    else if (n && o) return 13;
-    else if (s && e) return 14;
-    else if (e && d) return 15;
-    else if (o && a) return 16;
-    else if (a && s) return 17;
-    else /* if (d && n) */ return 18;
-  }
-  else if (sum == 3) 
-  {
-    if (n && e && a) return 19;
-    else if (s && o && d) return 20;
-    else if (n && e && d) return 21;
-    else if (s && o && a) return 22;
-    else if (n && o && a) return 23;
-    else if (s && e && d) return 24;
-    else if (n && o && d) return 25;
-    else /* if (s && e && a) */ return 26;
-  }
-} /* typedir3d() */
-
-/* ==================================== */
 static int32_t typedir3d(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 /* ==================================== */
 {
@@ -145,7 +68,7 @@ static int32_t typedir3d(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t 
     else if (a && s) return 27 - 17;
     else /* if (d && n) */ return 27 - 18;
   }
-  else if (sum == 3) 
+  else //if (sum == 3) 
   {
     if (n && e && a) return 27 - 19;
     else if (s && o && d) return 27 - 20;
@@ -239,10 +162,9 @@ resultat: F
 #undef F_NAME
 #define F_NAME "lskelubp"
 { 
-  int32_t i, k;
+  int32_t k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -269,7 +191,7 @@ resultat: F
   else 
   {
     fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
-    fprintf(stderr, "    otherwise, use inhibit map\n", F_NAME);
+    fprintf(stderr, "    otherwise, use inhibit map\n");
     return(0);
   }
   taillemaxrbt = 2 * rs +  2 * cs;
@@ -368,10 +290,9 @@ int32_t lskelubp2(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelubp2"
 { 
-  int32_t i, k;
+  int32_t k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -546,10 +467,9 @@ resultat: F
 #undef F_NAME
 #define F_NAME "lskelubp3d"
 { 
-  int32_t i, k;
+  int32_t k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ps = rs * cs;            /* taille plan */
@@ -580,7 +500,7 @@ resultat: F
   else 
   {
     fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
-    fprintf(stderr, "    otherwise, use inhibit map\n", F_NAME);
+    fprintf(stderr, "    otherwise, use inhibit map\n");
     return(0);
   }
   taillemaxrbt = 2 * rs * cs +  2 * rs * d +  2 * d * cs;
@@ -679,10 +599,9 @@ int32_t lskelubp3d2(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskelubp3d2"
 { 
-  int32_t i, k;
+  int32_t k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ps = rs * cs;            /* taille plan */
@@ -855,10 +774,9 @@ resultat: F
 #undef F_NAME
 #define F_NAME "lskelcurv"
 { 
-  int32_t i, k, t, tb;
+  int32_t k, t, tb;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -1137,10 +1055,9 @@ resultat: F
 #undef F_NAME
 #define F_NAME "lskelcurv3d"
 { 
-  int32_t i, k, t, tb;
+  int32_t k, t, tb;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -1394,10 +1311,9 @@ resultat: F
 #undef F_NAME
 #define F_NAME "lskelsurf3d"
 { 
-  int32_t i, k, t, tb;
+  int32_t k, t, tb;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -1658,10 +1574,9 @@ resultat: F
 #undef F_NAME
 #define F_NAME "ltoposhrink"
 { 
-  int32_t i, k;
+  int32_t k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
@@ -1829,10 +1744,9 @@ resultat: F
 #undef F_NAME
 #define F_NAME "ltoposhrink3d"
 { 
-  int32_t i, k;
+  int32_t k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ps = rs * cs;            /* taille plan */
@@ -2005,8 +1919,8 @@ int32_t lskeleucl(struct xvimage *image,
 #undef F_NAME
 #define F_NAME "lskeleucl"
 { 
-  int32_t i, k;
-  int32_t x, y, z;                 /* index muet de pixel */
+  int32_t k;
+  int32_t x, y;                 /* index muet de pixel */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ps = rs * cs;            /* taille plan */
@@ -2020,8 +1934,7 @@ int32_t lskeleucl(struct xvimage *image,
   uint8_t *I = NULL; /* l'image d'inhibition */
   Rbt *RBT;
   int32_t taillemaxrbt;
-  double prio, priox, prioz;
-  uint32_t mini;
+  double prio;
 
   IndicsInit(N);
 
@@ -2320,10 +2233,9 @@ resultat: F
 #undef F_NAME
 #define F_NAME "lskelend3d"
 { 
-  int32_t i, k, t, tb;
+  int32_t k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */
@@ -2332,7 +2244,6 @@ resultat: F
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint32_t *P = NULL;     /* l'image de priorites (ndg) */
   Rbt * RBT;
-  int32_t prio, oldprio;
   int32_t taillemaxrbt;
   uint32_t config;
 
@@ -2466,10 +2377,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
 #undef F_NAME
 #define F_NAME "lskelend3d"
 { 
-  int32_t i, k, t, tb;
   int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nb plans */

@@ -143,7 +143,7 @@ static int32_t LowComAncSlow(
 #undef F_NAME
 #define F_NAME "LowComAncSlow"
 {
-  int32_t x, i, lca = -1;
+  int32_t x, lca = -1;
 
   x = c1; do
   {
@@ -305,7 +305,7 @@ int32_t LowComAncFast(int32_t n1, int32_t n2, int32_t *Euler, int32_t *Number, i
 }
 
 /* ==================================== */
-static int32_t W_Constructible(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t N, int32_t connex, 
+static void W_Constructible(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t N, int32_t connex, 
                            ctree *CT, int32_t *CM, int32_t *tabcomp,
 			   int32_t *c, int32_t *lcalevel
 #ifndef LCASLOW
@@ -358,10 +358,9 @@ static void Watershed(struct xvimage *image, int32_t connex,
   int32_t rs = rowsize(image);
   int32_t ps = rs * colsize(image);
   int32_t N = ps * depth(image);
-  int32_t i, j, k, x, y;
+  int32_t i, k, x, y;
   int32_t c;                        /* une composante */
   int32_t tabcomp[26];              /* liste de composantes */
-  int32_t ncomp;                    /* nombre de composantes dans tabcomp */
   int32_t nbelev;                   /* nombre d'elevations effectuees */
   int32_t lcalevel;                 /* niveau du lca */
   int32_t incr_vois; 
@@ -553,8 +552,7 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lwshedtopo"
 {
-  register int32_t i, j, k, l;      /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
@@ -585,7 +583,7 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
     }
   }
   else
-  { fprintf(stderr, "%s() : bad value for connex : %s\n", F_NAME, connex);
+  { fprintf(stderr, "%s() : bad value for connex : %d\n", F_NAME, connex);
     return 0;
   }
 #ifndef OLDVERSION
@@ -871,8 +869,7 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
 #undef F_NAME
 #define F_NAME "lwshedtopobin"
 {
-  register int32_t i, j, k, l;      /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, x;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
@@ -881,10 +878,8 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
   uint8_t *F = UCHARDATA(image);
   uint8_t *G = UCHARDATA(marqueur);
   Fahs * FAHS;                    /* la file d'attente hierarchique */
-  int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
   int32_t *CM, *newCM;              /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
-  int32_t c, d, e;
 
   if ((rowsize(marqueur) != rs) || (colsize(marqueur) != cs) || (depth(marqueur) != ds))
   {
@@ -920,7 +915,7 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
     }
   }
   else
-  { fprintf(stderr, "%s() : bad value for connex : %s\n", F_NAME, connex);
+  { fprintf(stderr, "%s() : bad value for connex : %d\n", F_NAME, connex);
     return 0;
   }
 

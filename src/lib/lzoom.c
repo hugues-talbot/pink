@@ -759,7 +759,7 @@ int32_t lzoom(
 {
   if ((zoomx <= 0.0) || (zoomy <= 0.0) || (zoomz <= 0.0))
   {  
-    fprintf(stderr,"%s : bad zoom factor : %g - must be > 0\n", F_NAME);
+    fprintf(stderr,"%s: bad zoom factor: must be > 0\n", F_NAME);
     return 0;
   }
   else if ((zoomx >= 1.0) && (zoomy >= 1.0) && (zoomz >= 1.0)) 

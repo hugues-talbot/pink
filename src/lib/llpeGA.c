@@ -56,9 +56,9 @@ int32_t altitudePoint(struct xvimage *ga, int32_t i)
 /*  mBorderWshed2d was previously called flowLPE2d*/
 struct xvimage *mBorderWshed2d(struct xvimage *ga)
 #undef F_NAME
-#define F_NAME mBorderWshed2d
+#define F_NAME "mBorderWshed2d"
 {
-  int32_t i,j,k,x,y,z,u,v, nlabels;
+  int32_t i,j,k,x,y,z,u, nlabels;
   struct xvimage *res;
   uint32_t *Eminima;
   uint32_t *Vminima; 
@@ -68,8 +68,6 @@ struct xvimage *mBorderWshed2d(struct xvimage *ga)
   uint8_t *F = UCHARDATA(ga);            /* l'image de depart */ 
   uint8_t *VF;                           /* fonction indicatrice sur les
 					     sommets */
-  int32_t nbminimas;
-  uint8_t val_min;
   Lifo *L;
   
   /******************INITIALISATION*********************/ 
@@ -152,9 +150,9 @@ struct xvimage *mBorderWshed2d(struct xvimage *ga)
 /*  mBorderWshed2d was previously called flowLPE2d*/
 struct xvimage *mBorderWshed2drapide(struct xvimage *ga)
 #undef F_NAME
-#define F_NAME mBorderWshed2d
+#define F_NAME "mBorderWshed2drapide"
 {
-  int32_t i,j,k,x,y,z,w,u,v, nlabels, label;
+  int32_t i,j,k,x,y,z,w,u, nlabels, label;
   struct xvimage *res;
   //  uint32_t *Eminima;
   uint32_t *Vminima; 
@@ -164,8 +162,6 @@ struct xvimage *mBorderWshed2drapide(struct xvimage *ga)
   uint8_t *F = UCHARDATA(ga);            /* l'image de depart */ 
   uint8_t *VF;                           /* fonction indicatrice sur les
 					     sommets */
-  int32_t nbminimas;
-  uint8_t val_min;
   Lifo *L;
   
   /******************INITIALISATION*********************/ 
@@ -374,7 +370,7 @@ struct xvimage *SeparatingEdge(struct xvimage *labels)
   int32_t i,j,u,x,y;
 
   if( (ga = allocGAimage(NULL, rs, cs, 1, VFF_TYP_GABYTE)) == NULL) {
-      fprintf(stderr,"%s: ne peut allouer de GA \n");
+    fprintf(stderr,"%s: ne peut allouer de GA \n", F_NAME);
       exit(1);
   }
   uint8_t *F = UCHARDATA(ga);      /* le resultat */
@@ -492,7 +488,7 @@ int32_t flowMapping(struct  xvimage* ga, int32_t* Label)
   int32_t rs = rowsize(ga);               /* taille ligne */
   int32_t cs = colsize(ga);               /* taille colonne */
   int32_t N = rs * cs;                    /* nb_som GA */
-  int32_t i,som, alt, nb_labs, labstream;
+  int32_t i,som, nb_labs, labstream;
   uint8_t *G;
   Lifo *FIFO, *B; 
   FIFO = CreeLifoVide(N);
@@ -544,7 +540,7 @@ int32_t StreamGA(struct xvimage *ga, int32_t x, Lifo *L, Lifo *B,int32_t *psi, u
   int32_t cs = colsize(ga);               /* taille colonne */
   int32_t N = rs * cs;                    /* taille image */
   uint8_t *F = UCHARDATA(ga);
-  int32_t labStream, y, k, u, z;
+  int32_t y, k, u, z;
   uint8_t breadth_first;
   
   LifoPush(L,x);
@@ -564,12 +560,14 @@ int32_t StreamGA(struct xvimage *ga, int32_t x, Lifo *L, Lifo *B,int32_t *psi, u
 	  case 3: z = y+rs; break;     /* SUD   */
 	  }
 	  if(psi[z] != IN_PROCESS)
+	  {
 	    if(psi[z] != NO_LABEL){
 	      /* There is an inf-stream under L */
 	      LifoFlush(B);  
 	      return psi[z];
 	    }
 	    else
+	    {
 	      if(G[z] < G[y]){
 		LifoPush(L,z);  
 		psi[z] = IN_PROCESS;
@@ -583,6 +581,8 @@ int32_t StreamGA(struct xvimage *ga, int32_t x, Lifo *L, Lifo *B,int32_t *psi, u
 		LifoPush(L,z); /* G[z] == G[y], then z is also a bottom of L */
 		LifoPush(B,z);
 	      }
+	    }
+	  }
 	}
   }
   LifoFlush(B);
@@ -615,7 +615,7 @@ int32_t flowMappingFloat(struct  xvimage* ga, int32_t* Label)
   int32_t rs = rowsize(ga);               /* taille ligne */
   int32_t cs = colsize(ga);               /* taille colonne */
   int32_t N = rs * cs;                    /* nb_som GA */
-  int32_t i,som, alt, nb_labs, labstream;
+  int32_t i,som, nb_labs, labstream;
   float *G;
   Lifo *FIFO, *B; 
   FIFO = CreeLifoVide(N);
@@ -667,7 +667,7 @@ int32_t StreamGAFloat(struct xvimage *ga, int32_t x, Lifo *L, Lifo *B,int32_t *p
   int32_t cs = colsize(ga);               /* taille colonne */
   int32_t N = rs * cs;                    /* taille image */
   float *F = FLOATDATA(ga);
-  int32_t labStream, y, k, u, z;
+  int32_t y, k, u, z;
   uint8_t breadth_first;
   
   LifoPush(L,x);
@@ -687,12 +687,14 @@ int32_t StreamGAFloat(struct xvimage *ga, int32_t x, Lifo *L, Lifo *B,int32_t *p
 	  case 3: z = y+rs; break;     /* SUD   */
 	  }
 	  if(psi[z] != IN_PROCESS)
+	  {
 	    if(psi[z] != NO_LABEL){
 	      /* There is an inf-stream under L */
 	      LifoFlush(B);  
 	      return psi[z];
 	    }
 	    else
+	    {
 	      if(G[z] < G[y]){
 		LifoPush(L,z);  
 		psi[z] = IN_PROCESS;
@@ -706,6 +708,8 @@ int32_t StreamGAFloat(struct xvimage *ga, int32_t x, Lifo *L, Lifo *B,int32_t *p
 		LifoPush(L,z); /* G[z] == G[y], then z is also a bottom of L */
 		LifoPush(B,z);
 	      }
+	    }
+	  }
 	}
   }
   LifoFlush(B);
@@ -739,7 +743,7 @@ int32_t flowMappingDouble(struct  xvimage* ga, int32_t* Label)
   int32_t rs = rowsize(ga);               /* taille ligne */
   int32_t cs = colsize(ga);               /* taille colonne */
   int32_t N = rs * cs;                    /* nb_som GA */
-  int32_t i,som, alt, nb_labs, labstream;
+  int32_t i,som, nb_labs, labstream;
   double *G;
   Lifo *FIFO, *B; 
   FIFO = CreeLifoVide(N);
@@ -791,7 +795,7 @@ int32_t StreamGADouble(struct xvimage *ga, int32_t x, Lifo *L, Lifo *B,int32_t *
   int32_t cs = colsize(ga);               /* taille colonne */
   int32_t N = rs * cs;                    /* taille image */
   double *F = DOUBLEDATA(ga);
-  int32_t labStream, y, k, u, z;
+  int32_t y, k, u, z;
   uint8_t breadth_first;
   
   LifoPush(L,x);
@@ -811,12 +815,14 @@ int32_t StreamGADouble(struct xvimage *ga, int32_t x, Lifo *L, Lifo *B,int32_t *
 	  case 3: z = y+rs; break;     /* SUD   */
 	  }
 	  if(psi[z] != IN_PROCESS)
+	  {
 	    if(psi[z] != NO_LABEL){
 	      /* There is an inf-stream under L */
 	      LifoFlush(B);  
 	      return psi[z];
 	    }
 	    else
+	    {
 	      if(G[z] < G[y]){
 		LifoPush(L,z);  
 		psi[z] = IN_PROCESS;
@@ -830,6 +836,8 @@ int32_t StreamGADouble(struct xvimage *ga, int32_t x, Lifo *L, Lifo *B,int32_t *
 		LifoPush(L,z); /* G[z] == G[y], then z is also a bottom of L */
 		LifoPush(B,z);
 	      }
+	    }
+	  }
 	}
   }
   LifoFlush(B);

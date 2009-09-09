@@ -155,7 +155,7 @@ int main(argc, argv)
     t1 = clock();   
     watershed = mBorderWshed2d(ga);
     t2 = clock(); 
-    printf("temps (border_watershed) %d ms\n", 
+    printf("temps (border_watershed) %ld ms\n", 
 	   (t2 - t1)/ (CLOCKS_PER_SEC / 1000)); 
     gaout = SeparatingEdge(watershed);
     writerawGAimage(gaout,argv[2]);
@@ -171,7 +171,7 @@ int main(argc, argv)
     FlowMapping = ULONGDATA(watershed);
     flowMapping(ga, FlowMapping);
     t2 = clock();
-    printf("temps (stream_non_recursif) %d ms\n", 
+    printf("temps (stream_non_recursif) %ld ms\n", 
 	   (t2 - t1)/ (CLOCKS_PER_SEC / 1000));
     gaout = SeparatingEdge(watershed);
     writerawGAimage(gaout,argv[2]);
@@ -187,7 +187,7 @@ int main(argc, argv)
     FlowMapping = ULONGDATA(watershed);
     flowMappingRecursif(ga, FlowMapping);
     t2 = clock();
-    printf("temps (stream_recursif) %d ms\n", 
+    printf("temps (stream_recursif) %ld ms\n", 
 	   (t2 - t1)/ (CLOCKS_PER_SEC / 1000));
     gaout = SeparatingEdge(watershed);
     writerawGAimage(gaout,argv[2]);
@@ -196,7 +196,7 @@ int main(argc, argv)
       t1 = clock();   
       watershed = mBorderWshed2drapide(ga);
       t2 = clock(); 
-      printf("temps (border_watershed_rapide) %d ms\n", 
+      printf("temps (border_watershed_rapide) %ld ms\n", 
 	     (t2 - t1)/ (CLOCKS_PER_SEC / 1000)); 
       gaout = SeparatingEdge(watershed);
       writerawGAimage(gaout,argv[2]);

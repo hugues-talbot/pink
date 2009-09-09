@@ -122,8 +122,7 @@ int32_t dericheDerivateurGA(struct xvimage *image, struct xvimage *ga, double al
   double e_a;     /* stocke exp(-alpha) */
   double e_2a;    /* stocke exp(-2alpha) */
   double a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4;
-  double t1, t2;
-  double lmax, lmin;
+  double lmax;
   uint8_t *GA = UCHARDATA(ga);      /* graphe d'arete est suppose deja allouer */
 
   if (depth(image) != 1) 
@@ -579,7 +578,7 @@ int32_t laffinitynetwork(struct xvimage *r, struct xvimage *v, struct xvimage *b
   int32_t diff_value_max[3];
   int32_t hist_sum[3];
   int32_t pow_value[3];
-  double anisotropy_slice, anisotropy_row, anisotropy_col,tt1,tt2, mask_total;
+  double anisotropy_row, anisotropy_col,tt1,tt2, mask_total;
   double homogeneity_cov[3][3];
   double matrixA[1][3], matrixB[1][3],matrixC[3][1],result;
   float  **homogeneity_map, *scale_map;
@@ -1026,9 +1025,9 @@ int32_t lppm2ga(struct xvimage *r, struct xvimage *v, struct xvimage *b, struct 
  *****************************************************************************/
 int32_t compute_scale(uint8_t **image, uint8_t **scale_image, float *scale_map, int32_t *sphere_no_points, /*int16_t ***sphere_points,*/ int32_t N, int32_t rs, int32_t cs, double * feature_mean, int32_t *feature_thr, int32_t * pow_value)
 {
-  int32_t i, j, k, x, y, z, xx, yy, zz, mean_g, tti5, slice, row, col;
-  int32_t flag, tti1,tti2,edge_flag;
-  double inv_scale_sigma, count_obj, count_nonobj, tt1, tt2, tt3;
+  int32_t i, j, k, x, y, xx, yy, row, col;
+  int32_t flag, tti1, edge_flag;
+  double count_obj, count_nonobj;
   double tolerance = 15;
   int32_t mean[3],temp[3];
   double mask_f[3];
@@ -1131,27 +1130,21 @@ int32_t compute_scale(uint8_t **image, uint8_t **scale_image, float *scale_map, 
 
 
 
-int32_t compute_homogeneitysb(uint8_t ** image, double *feature_mean, uint8_t *x_affinity, uint8_t *y_affinity, uint8_t* scale_image, int32_t *sphere_no_points, /*int16_t ***sphere_points,*/ int32_t *feature_thr, float **homogeneity_map, int32_t N, int32_t rs, int32_t cs, int32_t * pow_value)
+void compute_homogeneitysb(uint8_t ** image, double *feature_mean, uint8_t *x_affinity, uint8_t *y_affinity, uint8_t* scale_image, int32_t *sphere_no_points, /*int16_t ***sphere_points,*/ int32_t *feature_thr, float **homogeneity_map, int32_t N, int32_t rs, int32_t cs, int32_t * pow_value)
 {
 
-  int32_t i, j, k, tti1, tti2, xx, yy, zz, x1, x2, y1, y2, z1, z2, x, y, z, iscale, scale1, scale2;
-  double tt1, tt2, tt3, tt4, count_pos, count_neg, sum_pos, sum_neg, temp_sum_pos,
-    temp_sum_neg, inv_k, tt_pos, tt_neg, sum, count, temp_sum, inv_half_scale;
-  int32_t col, row, slice, col1, row1, slice1;
+  int32_t i, j, k, tti1, xx, yy, x1, y1, x, y, z, iscale;
+  double tt1, tt2, inv_k, count;
+  int32_t col, row, col1, row1;
   int32_t temp[3];
   double weight[SCALE][SCALE];  
-  double sum_temp[3],sum_total[3],filter1[3],filter2[3];
-  double *x_affn_temp, *y_affn_temp, *z_affn_temp;
   int32_t edge_flag;
   double val;
-  uint8_t binpix[8] = {128, 64, 32, 16, 8, 4, 2, 1}; 
-  
-// printf("on va calculer poids\n");
   
   for(i = 0;i<SCALE;i++)
     for(j = 0;j<SCALE;j++)
       weight[i][j] = 0;
-      // printf("poids initialise\n");
+
   for(i = 1;i <= SCALE;i++)
   {
     tt1 = (double)i*0.5;

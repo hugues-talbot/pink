@@ -50,7 +50,6 @@ int main(int argc, char **argv)
   struct xvimage * prio;
   struct xvimage * prio2;
   int32_t connex;
-  int32_t ret, priovalue;
   struct xvimage * inhibimage = NULL;
   int32_t tmin, tmax, tbmin, tbmax;
 

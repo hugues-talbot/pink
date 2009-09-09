@@ -26,6 +26,7 @@
 #include <mcrbtp.h>
 #include <mcmesh.h>
 #include <mciomesh.h>
+#include <mclin.h>
 #include <lgeo.h>
 
 #define VERBOSE
@@ -39,7 +40,6 @@ int main(int argc, char **argv)
   FILE *fileout = NULL;
   int32_t i, n;
   int32_t formatin, formatout;
-  double resolution = 1.0;
   double *pbx, *pby, *pbz, a, b, c, d, A, B, C, D;
 
   if (argc != 3)
@@ -129,4 +129,5 @@ int main(int argc, char **argv)
     SaveMeshVTK(fileout);
   }
   fclose(fileout);
+  return 0;
 } /* main */

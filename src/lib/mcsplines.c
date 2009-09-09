@@ -362,7 +362,6 @@ integrale(f, a, t, p) = r avec une erreur max de eps
 retourne t
 */
 {
-  int32_t i;
   double tmp, u, asav = a;
   while (b-a>eps)
   {
@@ -382,7 +381,6 @@ integrale2(f, g, a, t, p) = r avec une erreur max de eps
 retourne t
 */
 {
-  int32_t i;
   double tmp, u, asav = a;
   while (b-a > eps)
   {
@@ -402,7 +400,6 @@ integrale3(f, g, h, a, t, p) = r avec une erreur max de eps
 retourne t
 */
 {
-  int32_t i;
   double tmp, u, asav = a;
   while (b-a > eps)
   {

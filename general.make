@@ -429,7 +429,6 @@ $(BDIR)/mcm2vtk\
 $(BDIR)/mcmbuild
 
 DIVERS=\
-$(BDIR)/axones \
 $(BDIR)/bruite \
 $(BDIR)/interpolate \
 $(BDIR)/colorize \

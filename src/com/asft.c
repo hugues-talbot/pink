@@ -47,7 +47,7 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * imagec = NULL;
   struct xvimage * imagecc = NULL;
-  int32_t rayonmax, rayon;
+  int32_t rayonmax;
   int32_t connex;
 
   if (argc != 7)

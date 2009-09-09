@@ -35,8 +35,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * inhibit = NULL;
-  int32_t ret, nsteps;
-  int32_t filter = 0;
+  int32_t nsteps;
 
   if ((argc != 4) && (argc != 5))
   {

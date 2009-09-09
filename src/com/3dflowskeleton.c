@@ -46,6 +46,7 @@ References:<BR>
 #include <mcgraphe.h>
 #include <ldist.h>
 #include <lmedialaxis.h>
+#include <l3dkhalimsky.h>
 #include <l3dcollapse.h>
 
 #define FS_EPSILON 0.1
@@ -140,17 +141,14 @@ int main(int32_t argc, char **argv)
   struct xvimage * func;
   int32_t mode;
   uint8_t *K;
-  int32_t rs, cs, ds, ps, N, i, j, x, y, z;
+  int32_t rs, cs, ds, ps, N, i;
   float * FUNC;
   float * LAMBDA;
   graphe * flow;
-  uint8_t * perm;
-  uint8_t * head;
+  boolean * perm;
+  boolean * head;
   TYP_VSOM vmax;
   TYP_VSOM epsilon = FS_EPSILON;
-  pcell p;
-  int32_t u, n;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
 
   if (argc != 4)
   {

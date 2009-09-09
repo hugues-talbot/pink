@@ -8,6 +8,7 @@
    l3dpardircollapse: collapse parallÅËle par sous-ÅÈtapes directionnelles
    l3dpardircollapse_l: collapse guidÅÈ et contraint - prioritÅÈ ULONG
    l3dpardircollapse_f: collapse guidÅÈ et contraint - prioritÅÈ FLOAT
+   l3dsurfacecollapse: collapse avec condition d'arrÅÍt surfacique
    l3dtopoflow_l: topological flow - prioritÅÈ ULONG
    l3dtopoflow_f: topological flow - prioritÅÈ FLOAT
 
@@ -180,7 +181,7 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 #undef F_NAME
 #define F_NAME "l3dpardircollapse_l"
 {
-  int32_t i, g, f, u, v, n, xf, yf, zf, xg, yg, zg, xv, yv, zv;
+  int32_t i, g, f, u, n, xf, yf, zf, xg, yg, zg;
   int32_t rs, cs, ps, ds, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
@@ -394,7 +395,7 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 #undef F_NAME
 #define F_NAME "l3dpardircollapse_f"
 {
-  int32_t i, g, f, u, v, n, xf, yf, zf, xg, yg, zg, xv, yv, zv;
+  int32_t i, g, f, u, n, xf, yf, zf, xg, yg, zg;
   int32_t rs, cs, ps, ds, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
@@ -607,7 +608,7 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
 #undef F_NAME
 #define F_NAME "l3dpardircollapse"
 {
-  int32_t i, g, f, u, v, n, xf, yf, zf, xg, yg, zg, xv, yv, zv;
+  int32_t i, g, f, u, n, xf, yf, zf, xg, yg, zg;
   int32_t rs, cs, ps, ds, N;
   int32_t dim, ori, dir, direc, orien, ncol;
   uint8_t * K;
@@ -825,7 +826,7 @@ int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * 
 #undef F_NAME
 #define F_NAME "l3dsurfacecollapse"
 {
-  int32_t i, g, f, u, v, n, xf, yf, zf, xg, yg, zg, xv, yv, zv;
+  int32_t i, g, f, u, n, xf, yf, zf, xg, yg, zg;
   int32_t rs, cs, ps, ds, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
@@ -1070,12 +1071,11 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 #undef F_NAME
 #define F_NAME "l3dtopoflow_f"
 {
-  int32_t i, g, gg, f, ff, u, v, n, xf, yf, zf, xg, yg, zg, xv, yv, zv;
+  int32_t i, g, gg, f, ff, u, n, xf, yf, zf, xg, yg, zg;
   int32_t rs, cs, ds, ps, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   float * P;
-  float * F;
   uint8_t * I = NULL;
   Rbt * RBT;
   Rlifo * RLIFO;

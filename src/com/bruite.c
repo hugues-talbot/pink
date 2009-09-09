@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int32_t i,j;
+  int32_t i;
   uint8_t *ImUC;
   uint32_t *ImUL;
   

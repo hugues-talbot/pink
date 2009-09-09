@@ -138,10 +138,10 @@ int32_t segpointnextseg(struct xvimage * lab, struct xvimage * b,
 } // segpointnextseg()
 
 int32_t point2segs(struct xvimage * lab, struct xvimage * b, int32_t label, 
-		   int32_t i, int32_t j, int32_t k,
-		   int32_t *i1, int32_t *j1, int32_t *k1,
-		   int32_t *i2, int32_t *j2, int32_t *k2
-		  )
+		int32_t i, int32_t j, int32_t k,
+		int32_t *i1, int32_t *j1, int32_t *k1,
+		int32_t *i2, int32_t *j2, int32_t *k2
+	       )
 // retourne deux (si possible) segments de l'image b qui contiennent le point 
 // i,j,k et sont adjacents à un carré marqué label
 {
@@ -180,6 +180,7 @@ int32_t point2segs(struct xvimage * lab, struct xvimage * b, int32_t label,
       assert(ns <= 2);
     }
   }
+  return ns;
 } // point2segs()
 
 int32_t scanpolygon(struct xvimage * lab, struct xvimage * b, 
@@ -261,7 +262,7 @@ int main(int argc, char **argv)
   int32_t rs, cs, ds, ps, N, i, j, k, a, b, x, indx;
   uint32_t *L;
   uint8_t *B;
-  int32_t u, v, nl, np, npol, spol, maxlab, label;
+  int32_t u, v, nl, spol, maxlab, label;
   int8_t *marklab;
   int32_t *markvert;
   Liste * Face;

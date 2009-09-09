@@ -42,17 +42,15 @@ int32_t limagemoments(
         Indicateur * indic)     /* resultat */
 /* ==================================== */
 {
-  int32_t i, x, y, z;
+  int32_t i;
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
-  int32_t d = depth(img);
   int32_t N = rs * cs;          /* taille image */
   int32_t area;
   double mx1, my1, mxy1, mx2, my2, mxy2;
   double Mxy1, Mx2, My2, Mxy2, delta;
   double lambda1, lambda2;
-  double xx, yy, xc, yc, a;
-  int32_t sign;
+  double xx, yy, xc, yc;
   double theta;
   double gdiam;
 
@@ -143,8 +141,8 @@ int32_t lmoments(
         int32_t *nlabels)           /* resultat: nombre d'extrema traites */
 /* ==================================== */
 {
-  int32_t k, l;
-  int32_t w, x, y, z;
+  int32_t k;
+  int32_t w, x, y;
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
   int32_t d = depth(img);
@@ -158,11 +156,9 @@ int32_t lmoments(
   double Mxy1, Mx2, My2, Mxy2, delta;
   double lambda1, lambda2;
   int32_t incr_vois;
-  double xx, yy, xc, yc, a;
-  int32_t sign;
+  double xx, yy, xc, yc;
   double theta;
   double gdiam;
-  double gaxe;
   Indicateur * tab;
   int32_t n;
 
@@ -330,8 +326,8 @@ int32_t lmomentslab(
         Indicateur ** tabindic) /* tableau des resultats */
 /* ==================================== */
 {
-  int32_t k, l;
-  int32_t w, x, y, z;
+  int32_t k;
+  int32_t w, x, y;
   int32_t rs = rowsize(labels);
   int32_t cs = colsize(labels);
   int32_t d = depth(labels);
@@ -344,11 +340,9 @@ int32_t lmomentslab(
   double Mxy1, Mx2, My2, Mxy2, delta;
   double lambda1, lambda2;
   int32_t incr_vois;
-  double xx, yy, xc, yc, a;
-  int32_t sign;
+  double xx, yy, xc, yc;
   double theta;
   double gdiam;
-  double gaxe;
   Indicateur * tab;
 
   if (d != 1) 

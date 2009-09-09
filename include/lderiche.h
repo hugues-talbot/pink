@@ -23,6 +23,8 @@ extern int32_t lderiche(
         double l
 );
 
+extern int32_t lshencastan(struct xvimage *image, double beta);
+
 #ifdef __cplusplus
 }
 #endif

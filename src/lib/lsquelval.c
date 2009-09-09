@@ -63,7 +63,7 @@ int32_t abaisse8(int32_t x, uint32_t *DT, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t y, k, abaisse;
-  int32_t t4mm, t4m, t8p, t8pp, t8mm, t8m, t4p, t4pp;
+  int32_t t4mm, t4m, t8p, t8pp;
   uint32_t d, old;
 
   old = DT[x];
@@ -105,7 +105,7 @@ int32_t abaisse4(int32_t x, uint32_t *DT, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t y, k, abaisse;
-  int32_t t4mm, t4m, t8p, t8pp, t8mm, t8m, t4p, t4pp;
+  int32_t t8mm, t8m, t4p, t4pp;
   uint32_t d, old;
 
   old = DT[x];
@@ -150,7 +150,7 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
 #undef F_NAME
 #define F_NAME "lsquelval"
 { 
-  int32_t i, j, k;
+  int32_t k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
   int32_t rs = rowsize(image);     /* taille ligne */
@@ -163,7 +163,6 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
   uint32_t d;
   Rbt * RBT;
   int32_t taillemaxrbt;
-  int32_t stabilite;
 
   IndicsInit(N);
   if ((rowsize(dx) != rs) || (colsize(dx) != cs) || (depth(dx) != 1))
@@ -354,7 +353,6 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
   int32_t i, j, k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ps = rs * cs;            /* taille plan */
@@ -556,7 +554,6 @@ int32_t smooth(struct xvimage *image, int32_t x, int32_t r, Liste *cx, Liste *cy
 { 
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
   uint8_t *IM = UCHARDATA(image);      /* l'image de depart */
   int32_t y, z, i, j, k, l, open, joker;
 
@@ -600,7 +597,7 @@ int32_t lsquelsmoothval(struct xvimage *image, // entree/sortie: image originale
 #undef F_NAME
 #define F_NAME "lsquelsmoothval"
 { 
-  int32_t i, j, k;
+  int32_t k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
   int32_t rs = rowsize(image);     /* taille ligne */
@@ -615,7 +612,6 @@ int32_t lsquelsmoothval(struct xvimage *image, // entree/sortie: image originale
   uint32_t d;
   Rbt * RBT;
   int32_t taillemaxrbt;
-  int32_t stabilite;
   Liste * cx;                  // pour le cercle de centre x
   Liste * cy;                  // pour le cercle de centre y
   uint32_t dmax;

@@ -79,7 +79,7 @@ int main(argc, argv)
   struct xvimage *watershed;
   double *F;
   double TA, TB,r,rprime;
-  int32_t type,i,j,k,y;
+  int32_t i,j,k,y;
 #ifdef TIME_WATERSHED_TEST
   clock_t t1,t2;
 #endif

@@ -135,7 +135,7 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int32_t i, j, ret;
+  int32_t i, ret;
   FILE *fd = NULL;
   int32_t nobj;
   char buf[1024];

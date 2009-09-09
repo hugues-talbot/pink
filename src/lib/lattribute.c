@@ -139,7 +139,6 @@ int32_t lattribute(
         int32_t *nlabels)        /* resultat: nombre de regions traitees */
 /* ==================================== */
 {
-  char buf[64];
   int32_t k, l;
   int32_t w, x, y, z;
   uint8_t *SOURCE = UCHARDATA(img);
@@ -153,11 +152,9 @@ int32_t lattribute(
   int32_t area;
   int32_t perim;
   int32_t min, max;
-  double circ;
   int32_t val_attrib;
   double mx1, my1, mx2, my2, mxy2;
   int32_t incr_vois;
-  int32_t t8mm, t8pp, dummy;
 
   if (datatype(lab) != VFF_TYP_4_BYTE) 
   {

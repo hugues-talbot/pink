@@ -62,7 +62,7 @@ int32_t lcrestvol(
   int32_t N = rs * cs;             /* taille image */
   uint8_t *S = UCHARDATA(skel);      /* l'image de squelette */
   uint8_t *F = UCHARDATA(orig);      /* l'image originale */
-  uint32_t *V, vol, maxvol;
+  uint32_t *V, maxvol;
   int32_t rs_es = rowsize(es);
   int32_t cs_es = colsize(es);
   int32_t N_es = rs_es * cs_es;
@@ -189,7 +189,7 @@ int32_t lcrestvol(
     return(0);
   }
 
-  printf("maxvol = %ld\n", maxvol);
+  printf("maxvol = %ld\n", (long int)maxvol);
 
   for (p = 0; p < N; p++)
     S[p] = (uint8_t)((V[p] * 255) / maxvol);
