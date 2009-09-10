@@ -1133,7 +1133,7 @@ int32_t compute_scale(uint8_t **image, uint8_t **scale_image, float *scale_map, 
 void compute_homogeneitysb(uint8_t ** image, double *feature_mean, uint8_t *x_affinity, uint8_t *y_affinity, uint8_t* scale_image, int32_t *sphere_no_points, /*int16_t ***sphere_points,*/ int32_t *feature_thr, float **homogeneity_map, int32_t N, int32_t rs, int32_t cs, int32_t * pow_value)
 {
 
-  int32_t i, j, k, tti1, xx, yy, x1, y1, x, y, z, iscale;
+  int32_t i, j, k, tti1, xx, yy, x1, y1, x, y, iscale;
   double tt1, tt2, inv_k, count;
   int32_t col, row, col1, row1;
   int32_t temp[3];

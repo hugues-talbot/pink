@@ -70,6 +70,7 @@ int main(int argc, char **argv)
   if ((strcmp(argv[2], "vois18") == 0) || (strcmp(argv[2], "18") == 0)) mask = vois18; else
   if ((strcmp(argv[2], "vois26") == 0) || (strcmp(argv[2], "26") == 0)) mask = vois26; else
   if ((strcmp(argv[2], "vois4") == 0) || (strcmp(argv[2], "4") == 0)) mask = vois4; else
+  if ((strcmp(argv[2], "vois8") == 0) || (strcmp(argv[2], "4") == 0)) mask = vois8; else
   if (strcmp(argv[2], "croix") == 0) mask = croix; else
   if (strcmp(argv[2], "horiz") == 0) mask = horiz; else
   if (strcmp(argv[2], "vert") == 0) mask = vert; else

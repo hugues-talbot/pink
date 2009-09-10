@@ -497,7 +497,7 @@ all:	$(OBJ) $(ARITH) $(CONVERT) $(MORPHO) $(CONNECT) $(GA) $(TOPO) $(ORDRES) $(D
 
 doc:	$(PINK)/pink.dox
 	doxygen $(PINK)/pink.dox
-	cp -R $(PINK)/doc $(HOME)/public_html/pinkdoc
+	cp -R $(PINK)/doc/* $(HOME)/public_html/pinkdoc
 
 clean:	
 	rm -f $(PINK)/linux/bin/*

@@ -27,10 +27,6 @@ int32_t ldilatbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc
 #define F_NAME "ldilatbin3d"
 {
   register int32_t i, j, k, l;     /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
   int32_t rsm = rowsize(m);        /* taille ligne masque */
   int32_t csm = colsize(m);        /* taille colonne masque */
   int32_t dsm = depth(m);          /* nb plans masque */
@@ -175,10 +171,6 @@ int32_t lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc,
 #define F_NAME "lerosbin3d"
 {
   register int32_t i, j, k, l;     /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
   int32_t rsm = rowsize(m);        /* taille ligne masque */
   int32_t csm = colsize(m);        /* taille colonne masque */
   int32_t dsm = depth(m);          /* nb plans masque */

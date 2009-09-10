@@ -130,7 +130,9 @@ static int32_t TrouveComposantes(int32_t x, uint8_t *F, int32_t rs, int32_t ps, 
   return n;
 } // TrouveComposantes() 
 
-
+#ifdef GCC
+static int32_t LowComAncSlow(ctree * CT, int32_t c1, int32_t c2) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static int32_t LowComAncSlow(
   ctree * CT,

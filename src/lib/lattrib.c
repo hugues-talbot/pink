@@ -442,6 +442,9 @@ static CompactTree * CompTree2CompactTree(CompTree *ct, uint32_t *number_nodes)
   return cpct;
 } /* CompTree2CompactTree() */
 
+#ifdef GCC
+static void ReInitFlags(CompactTree * cpct) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static void ReInitFlags(CompactTree * cpct)
 /* ==================================== */
@@ -583,18 +586,24 @@ static int32_t hbordrec(CompactTree * cpct, uint32_t som, int32_t *nhbord)
 } /* hbordrec() */
 #endif
 
+#ifdef GCC
+static void CalculeAttributs(CompactTree * cpct) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static void CalculeAttributs(CompactTree * cpct)
 /* ==================================== */
 {
-  int32_t *na1, *na2, i;
+  int32_t *na1, *na2;
   uint32_t nbcomp = cpct->nbcomp;
 
   na1 = (int32_t *)malloc(nbcomp * sizeof(int32_t));
   na2 = (int32_t *)malloc(nbcomp * sizeof(int32_t));
 #ifdef ATTR_SURF
   (void)surfrec(cpct, 0, na1);
-  for (i = 0; i < nbcomp; i++) cpct->surf[i] = na1[i];
+  {
+    int32_t i;
+    for (i = 0; i < nbcomp; i++) cpct->surf[i] = na1[i];
+  }
 #endif
 #ifdef ATTR_VOL
   if (cpct->surf == NULL)
@@ -603,28 +612,42 @@ static void CalculeAttributs(CompactTree * cpct)
     exit(0);
   }
   (void)volrec(cpct, 0, na1);
-  for (i = 0; i < nbcomp; i++) cpct->vol[i] = na1[i];
+  {
+    int32_t i;
+    for (i = 0; i < nbcomp; i++) cpct->vol[i] = na1[i];
+  }
 #endif
 #ifdef ATTR_HEIGHT
 
   (void)heightrec(cpct, 0, na1);
   /* pour la mesure de la hauteur, il faut rajouter la difference de niveau avec le pere */
-  for (i = 1; i < nbcomp; i++) cpct->height[i] = na1[i] 
+  {
+    int32_t i;
+    for (i = 1; i < nbcomp; i++) cpct->height[i] = na1[i] 
 	     /* - DECODENIV(cpct->comp[i]) + DECODENIV(cpct->comp[i]) */ /* inutile */
                                                - DECODENIV(cpct->comp[cpct->pere[i]]) - 1;
-
+  }
   cpct->height[0] = NDG_MAX - NDG_MIN;
 #endif
 #ifdef ATTR_PERIM
   (void)perimrec(cpct, 0, na1);
-  for (i = 0; i < nbcomp; i++) cpct->perim[i] = na1[i]; 
+  {
+    int32_t i;
+    for (i = 0; i < nbcomp; i++) cpct->perim[i] = na1[i]; 
+  }
 #endif
 #ifdef ATTR_HBORD
   (void)hbordrec(cpct, 0, na2);
-  for (i = 0; i < nbcomp; i++) cpct->hbord[i] = na2[i];  
+  {
+    int32_t i;
+    for (i = 0; i < nbcomp; i++) cpct->hbord[i] = na2[i];  
+  }
 #endif
 #ifdef ATTR_CONTRAST
-  for (i = 0; i < nbcomp; i++) cpct->contrast[i] = ((double)(na2[i]))/na1[i];  
+  {
+    int32_t i;
+    for (i = 0; i < nbcomp; i++) cpct->contrast[i] = ((double)(na2[i]))/na1[i];  
+  }
 #endif
   free(na1);
   free(na2);
@@ -868,6 +891,9 @@ static int32_t NbLeafs(CompactTree * cpct, int32_t som)
     return 1;
 } /* NbLeafs() */
 
+#ifdef GCC
+static void RecupereImageFiltree(CompactTree * cpct, uint32_t *STATUS, int32_t rs, int32_t N, uint8_t *ORI) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static void RecupereImageFiltree(CompactTree * cpct,           
        uint32_t *STATUS,
@@ -888,6 +914,9 @@ static void RecupereImageFiltree(CompactTree * cpct,
   }  
 } /* RecupereImageFiltree() */
 
+#ifdef GCC
+static void RecupereSegmentation(CompactTree * cpct, uint32_t *STATUS, int32_t rs, int32_t N, uint8_t *ORI) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static void RecupereSegmentation(CompactTree * cpct,           
        uint32_t *STATUS,
@@ -950,6 +979,7 @@ static void TermineCompactTree(CompactTree *cpct)
   free(cpct);
 } /* TermineCompactTree() */
 
+#ifdef DEBUG
 /* ==================================== */
 static void AfficheCompTree(CompTree *ct)
 /* ==================================== */
@@ -1037,7 +1067,11 @@ static void AfficheImaComp(CompactTree * cpct,
     if ((i % rs) == (rs - 1)) printf("\n");
   }  
 } /* AfficheImaComp() */
+#endif
 
+#ifdef GCC
+static void WriteCompactTree(CompactTree *cpct, char * filename) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static void WriteCompactTree(CompactTree *cpct, char * filename)
 /* ==================================== */
@@ -1066,6 +1100,9 @@ static void WriteCompactTree(CompactTree *cpct, char * filename)
   fclose(fd);
 } /* WriteCompactTree() */
 
+#ifdef GCC
+static int32_t LeafCount(CompactTree *cpct) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static int32_t LeafCount(CompactTree *cpct)
 /* ==================================== */
@@ -1076,6 +1113,9 @@ static int32_t LeafCount(CompactTree *cpct)
   return f;
 } /* LeafCount() */
 
+#ifdef GCC
+static int32_t LeafMark(CompactTree *cpct) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static int32_t LeafMark(CompactTree *cpct)
 /* ==================================== */
@@ -1619,6 +1659,9 @@ static int32_t flood3d(
   return m;
 } /* flood3d() */
 
+#ifdef GCC
+static int32_t LowestCommonAncestor(CompactTree *, int32_t, int32_t *, uint8_t) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static int32_t LowestCommonAncestor(
   CompactTree * cpct,
@@ -1693,6 +1736,9 @@ if (NoComAnc) printf("NIL\n"); else printf("%d\n", lca);
     return lca;
 } /* LowestCommonAncestor() */
 
+#ifdef GCC
+static int32_t LowComAnc(CompactTree *, int32_t, int32_t) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static int32_t LowComAnc(
   CompactTree * cpct,
@@ -1737,6 +1783,9 @@ static int32_t LowComAnc(
   return lca;
 } /* LowComAnc() */
 
+#ifdef GCC
+static int32_t Ancestor(CompactTree * cpct, int32_t c1, int32_t c2) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static int32_t Ancestor(CompactTree * cpct, int32_t c1, int32_t c2)
 /* Teste si la composante c1 est ancetre de la composante c2

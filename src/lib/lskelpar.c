@@ -536,7 +536,6 @@ int32_t lskelpavlidis1(struct xvimage *image,
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *tmp = copyimage(image); 
   uint8_t *T = UCHARDATA(tmp);
-  int32_t step;
 
   for (i = 0; i < N; i++) if (F[i]) F[i] = 1; // normalize values
 

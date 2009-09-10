@@ -259,6 +259,9 @@ static void ProcessLeafMinsOp(CompactTree * cpct, int32_t som)
   }
 } /* ProcessLeafMinsOp() */
 
+#ifdef GCC
+static void RecupereImageFiltreeH(CompactTree * cpct, uint32_t *STATUS, int32_t rs, int32_t N, uint8_t *ORI) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static void RecupereImageFiltreeH(CompactTree * cpct,           
        uint32_t *STATUS,

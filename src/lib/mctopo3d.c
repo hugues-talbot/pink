@@ -584,6 +584,9 @@ uint8_t T26(voxel * cube)
   return nbcomp(cube, 26);
 } /* T26() */
 
+#ifdef GCC
+static uint8_t simple(voxel * cube, voxel * cubec, uint8_t connex) __attribute__ ((unused));
+#endif
 /* ========================================== */
 static uint8_t simple(voxel * cube, voxel * cubec, uint8_t connex)
 /* ========================================== */

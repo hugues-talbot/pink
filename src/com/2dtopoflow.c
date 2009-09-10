@@ -61,7 +61,7 @@ References:<BR>
 #define FS_EPSILON 0.1
 
 #ifdef SHOWGRAPHS
-void ShowGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int noms_sommets, int v_sommets, int col_sommets, int all_arcs, uint8_t *K, int rs, uint8_t *head) 
+void ShowGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int noms_sommets, int v_sommets, int col_sommets, int all_arcs, uint8_t *K, int rs, boolean *head) 
 /* ====================================================================== */
 #undef F_NAME
 #define F_NAME "ShowGraphe"

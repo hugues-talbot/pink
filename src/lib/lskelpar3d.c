@@ -1725,7 +1725,7 @@ Les points non enlevés sont marqués MARK_INFTY.
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
   uint32_t *O = ULONGDATA(res); 
-  int32_t step, nonstab, minvois;
+  int32_t step, nonstab;
   uint8_t v[27];
   
   if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))

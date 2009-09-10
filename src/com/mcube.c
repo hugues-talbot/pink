@@ -66,7 +66,7 @@ static int32_t LUT[256][19];
 /* table de decodage des sommets de facettes */
 static int32_t DSF[26][2] = {
  {0, 0}, /* lignes paires non utilisees */
- {0, 1}, /* voxels adjacents au sommet 1 */ 0, 0, /* etc */
+ {0, 1}, {0, 0}, /* voxels adjacents au sommet 1, 2, etc */
  {0, 2}, {0, 0}, /* sommet 3 */
  {1, 3}, {0, 0}, /* sommet 5 */
  {2, 3}, {0, 0}, /* sommet 7 */

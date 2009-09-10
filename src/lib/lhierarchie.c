@@ -474,6 +474,7 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, uint32_t *label, int
    free(Minim[0]);
    free(Minim);
 #endif
+   return(1);
 }
 
 /* waterfall vu comme une succession de LPE sur les aretes*/
@@ -579,7 +580,7 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param)
     fprintf(stderr,"%s : ne peut allouer label \n",F_NAME);
     exit(1);
   }
-  LABEL = ULONGDATA(label);    
+  LABEL = SLONGDATA(label);    
   flowMappingRecursif(ga,LABEL);
   rag = construitRAG(ga, label);
   

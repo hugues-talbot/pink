@@ -475,7 +475,6 @@ int32_t lpropgeolong(
   int32_t incr_voisb;
   int32_t sumndg;        /* pour calculer la moyenne sur la composante */
   int32_t surf;          /* pour calculer la surface de la composante */
-  int32_t tmp;
   uint32_t *SOURCE = ULONGDATA(img1);
   uint8_t *MASK = UCHARDATA(mask);
   uint32_t *MASKLONG = ULONGDATA(mask);

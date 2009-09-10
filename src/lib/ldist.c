@@ -2798,7 +2798,6 @@ int32_t lsedt_meijster(struct xvimage *img,   /* donnee: image binaire */
   uint32_t rs = rowsize(img);
   uint32_t cs = colsize(img);
   uint32_t ds = depth(img);
-  uint32_t ps = rs * cs;
   uint8_t *F;                /* pointeur sur l'image */
   uint32_t *D;               /* pointeur sur les distances */
   struct xvimage *tmp;

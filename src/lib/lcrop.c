@@ -672,7 +672,6 @@ struct xvimage * lexpandframe(struct xvimage *in, int32_t n)
   int32_t ds1 = depth(in);
   int32_t rs1 = rowsize(in);
   int32_t cs1 = colsize(in);
-  int32_t ps1 = rs1 * cs1;
   int32_t rs2, cs2, x, y;
   struct xvimage *temp1;
 

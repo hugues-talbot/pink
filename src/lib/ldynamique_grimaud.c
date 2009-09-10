@@ -1483,7 +1483,9 @@ printf("supprime %d ; nbcomp = %d\n", cpct->pere[comp], nbcomp);
 	  }
 	}
 
+#ifdef DEBUG
 AfficheCompactTree(cpct);
+#endif
 
   } // while (nbcomp > 1)
 }
