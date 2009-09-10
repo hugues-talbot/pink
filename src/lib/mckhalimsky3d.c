@@ -288,8 +288,8 @@ struct xvimage * KhalimskizeNDG3d(struct xvimage *o)
   }
   else if (datatype(b) == VFF_TYP_4_BYTE)
   {
-    uint32_t *O = ULONGDATA(o);
-    uint32_t *B = ULONGDATA(b);
+    int32_t *O = SLONGDATA(o);
+    int32_t *B = SLONGDATA(b);
     memset(B, 0, bN*sizeof(uint32_t));
     for (k = 0; k < ods; k++)
       for (j = 0; j < ocs; j++)
@@ -351,11 +351,11 @@ void ndgmin3d(struct xvimage *b)
   }
   else if (datatype(b) == VFF_TYP_4_BYTE)
   {
-    uint32_t *B;
-    uint32_t *BP;
-    B = ULONGDATA(b);
+    int32_t *B;
+    int32_t *BP;
+    B = SLONGDATA(b);
     bp = copyimage(b);
-    BP = ULONGDATA(bp);
+    BP = SLONGDATA(bp);
     for (k = 1; k < N; k += 1) BP[k] = UINT32_MAX;
 
     for (k = 1; k < ds; k += 2)
@@ -434,11 +434,11 @@ void ndgmax3d(struct xvimage *b)
   }
   else if (datatype(b) == VFF_TYP_4_BYTE)
   {
-    uint32_t *B;
-    uint32_t *BP;
-    B = ULONGDATA(b);
+    int32_t *B;
+    int32_t *BP;
+    B = SLONGDATA(b);
     bp = copyimage(b);
-    BP = ULONGDATA(bp);
+    BP = SLONGDATA(bp);
     for (k = 1; k < N; k += 1) BP[k] = 0;
 
     for (k = 1; k < ds; k += 2)
@@ -523,9 +523,9 @@ void ndgmoy3d(struct xvimage *k)
   }
   else if (datatype(k) == VFF_TYP_4_BYTE)
   {
-    uint32_t *K = ULONGDATA(k);
-    uint32_t nb;
-    uint32_t sum;
+    int32_t *K = SLONGDATA(k);
+    int32_t nb;
+    int32_t sum;
 
     for (z = 0; z < ds; z++)
       for (y = 0; y < cs; y++)
@@ -1532,8 +1532,8 @@ void MaxAlpha3d(struct xvimage *k)
   }
   else if (datatype(k) == VFF_TYP_4_BYTE)
   {
-    uint32_t *K = ULONGDATA(k);
-    uint32_t M;
+    int32_t *K = SLONGDATA(k);
+    int32_t M;
     for (z = 0; z < ds; z += 1)
       for (y = 0; y < cs; y += 1)
 	for (x = 0; x < rs; x += 1)
@@ -1600,8 +1600,8 @@ void MaxBeta3d(struct xvimage *k)
   }
   else if (datatype(k) == VFF_TYP_4_BYTE)
   {
-    uint32_t *K = ULONGDATA(k);
-    uint32_t M;
+    int32_t *K = SLONGDATA(k);
+    int32_t M;
     for (z = 0; z < ds; z += 1)
       for (y = 0; y < cs; y += 1)
 	for (x = 0; x < rs; x += 1)

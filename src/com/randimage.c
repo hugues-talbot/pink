@@ -67,7 +67,7 @@ int main(int argc, char **argv)
   }
   else
   {
-    uint32_t *Im;
+    int32_t *Im;
     image = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
     if (image == NULL)
     {
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
       exit(1);
     }
 
-    Im = ULONGDATA(image);
+    Im = SLONGDATA(image);
     N = rs * cs * ds;
     for (i = 0; i < N; i++)
     {

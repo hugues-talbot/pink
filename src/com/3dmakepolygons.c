@@ -59,7 +59,7 @@ void getlabels(struct xvimage * lab,
   int32_t cs = colsize(lab);
   int32_t ds = depth(lab);
   int32_t ps = rs * cs;
-  uint32_t *L = ULONGDATA(lab);
+  int32_t *L = SLONGDATA(lab);
   int32_t u, n, tab[27];
 
   ListeFlush(Labels);
@@ -107,7 +107,7 @@ int32_t segpointnextseg(struct xvimage * lab, struct xvimage * b,
   int32_t cs = colsize(b);
   int32_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  uint32_t *L = ULONGDATA(lab);
+  int32_t *L = SLONGDATA(lab);
   int32_t ps = rs * cs;
   int32_t u, n, tab[27], ii, jj, kk, u1, n1, tab1[27], ns;
 
@@ -150,7 +150,7 @@ int32_t point2segs(struct xvimage * lab, struct xvimage * b, int32_t label,
   int32_t ds = depth(b);
   int32_t ps = rs * cs;
   uint8_t *B = UCHARDATA(b);
-  uint32_t *L = ULONGDATA(lab);
+  int32_t *L = SLONGDATA(lab);
   int32_t u, n, tab[27], ii, jj, kk, u1, n1, tab1[27], ns;
 
   ns = 0;
@@ -260,7 +260,7 @@ int main(int argc, char **argv)
   struct xvimage * lab;
   struct xvimage * bor;
   int32_t rs, cs, ds, ps, N, i, j, k, a, b, x, indx;
-  uint32_t *L;
+  int32_t *L;
   uint8_t *B;
   int32_t u, v, nl, spol, maxlab, label;
   int8_t *marklab;
@@ -296,7 +296,7 @@ int main(int argc, char **argv)
   ds = depth(lab);
   ps = rs * cs;
   N = ps * ds;
-  L = ULONGDATA(lab);
+  L = SLONGDATA(lab);
 
   bor = readimage(argv[2]);  
   if (bor == NULL)

@@ -35,7 +35,7 @@ int main(int argc, char **argv)
   struct xvimage * k;
   FILE *fd;
   int32_t n;
-  uint32_t *tab;  
+  int32_t *tab;  
   double xx, yy, zz;
   int32_t x, y, z;
   int32_t rs, cs, ds, ps, N;
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 
   fscanf(fd, "%d\n", &n);
 
-  tab = (uint32_t *)calloc(1,n * sizeof(int32_t));
+  tab = (int32_t *)calloc(1,n * sizeof(int32_t));
   if (tab == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", argv[0]);

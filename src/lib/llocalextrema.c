@@ -50,11 +50,11 @@ int32_t llocalextrema(
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
   int32_t k;                       /* index muet */
-  uint32_t *F;
-  uint32_t *M;
+  int32_t *F;
+  int32_t *M;
   uint8_t *F2;
   uint8_t *M2;
-  uint32_t extr;
+  int32_t extr;
   int32_t nbvois;
   uint8_t *mask;
 
@@ -70,8 +70,8 @@ int32_t llocalextrema(
     return 0;
   }
   if (datatype(img) == VFF_TYP_4_BYTE) {
-    F = ULONGDATA(img);
-    M = ULONGDATA(max);
+    F = SLONGDATA(img);
+    M = SLONGDATA(max);
   } else if (datatype(img) == VFF_TYP_1_BYTE) {
     imglong = allocimage(NULL, rowsize(img), colsize(img), depth(img), VFF_TYP_4_BYTE);
     if (imglong == NULL)
@@ -79,7 +79,7 @@ int32_t llocalextrema(
 	fprintf(stderr, "llocalextrema: allocimage failed\n");
 	exit(1);
       }
-    F = ULONGDATA(imglong);
+    F = SLONGDATA(imglong);
 
     // Copy image
     F2 = UCHARDATA(img);
@@ -92,7 +92,7 @@ int32_t llocalextrema(
 	fprintf(stderr, "llocalextrema: allocimage failed\n");
 	exit(1);
       }
-    M = ULONGDATA(maxlong);
+    M = SLONGDATA(maxlong);
   } else {
     fprintf(stderr, "llocalextrema: datatype images not supported\n");
     return 0;

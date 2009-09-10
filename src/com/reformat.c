@@ -150,12 +150,12 @@ struct xvimage * readimage_old(char *filename)
       long int tmp;
       for (i = 0; i < N; i++)
       {
-        fscanf(fd, "%ld", &tmp); ULONGDATA(image)[i] = (uint32_t)tmp;
+        fscanf(fd, "%ld", &tmp); SLONGDATA(image)[i] = (uint32_t)tmp;
       } /* for i */
     }
     else 
     {
-      int32_t ret = fread(ULONGDATA(image), sizeof(int32_t), N, fd);
+      int32_t ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
       if (ret != N)
       {
         fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);

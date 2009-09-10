@@ -139,7 +139,7 @@ int32_t lsegmentlignes(
     fprintf(stderr, "lsegmentlignes: allocimage failed\n");
     return 0;
   }
-  M = ULONGDATA(lab);
+  M = SLONGDATA(lab);
 
   V = (uint8_t *)calloc(N, sizeof(char));   /* init a 0 */
   if (V == NULL)

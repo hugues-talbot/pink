@@ -43,8 +43,8 @@ int32_t llabelextrema(
 {
   int32_t k, w, x, y;
   uint8_t *F;
-  uint32_t *FL;
-  uint32_t *LABEL =  ULONGDATA(lab);
+  int32_t *FL;
+  int32_t *LABEL =  SLONGDATA(lab);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
   int32_t d = depth(img);
@@ -366,7 +366,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
 } /* if (datatype(img) == VFF_TYP_1_BYTE) */
 else if (datatype(img) == VFF_TYP_4_BYTE) 
 {
-  FL = ULONGDATA(img);
+  FL = SLONGDATA(img);
   for (x = 0; x < N; x++)
   {
     if (LABEL[x] == -1)          /* on trouve un point x non etiquete */
@@ -678,8 +678,8 @@ int32_t llabeldil(struct xvimage *f,
   int32_t Nm = rsm * csm;
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
-  uint32_t *LABEL = ULONGDATA(lab);
-  uint32_t label;
+  int32_t *LABEL = SLONGDATA(lab);
+  int32_t label;
   int32_t nptb;                    /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
@@ -801,8 +801,8 @@ int32_t llabelbin(struct xvimage *f,
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(f);
-  uint32_t *LABEL = ULONGDATA(lab);
-  uint32_t label;
+  int32_t *LABEL = SLONGDATA(lab);
+  int32_t label;
   Lifo * LIFO;
 
   if (datatype(lab) != VFF_TYP_4_BYTE) 

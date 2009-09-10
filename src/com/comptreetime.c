@@ -183,7 +183,7 @@ int main(int argc, char **argv)
   F = UCHARDATA(image);
 #endif
 #ifdef IMGLONG
-  F = ULONGDATA(image);
+  F = SLONGDATA(image);
 #endif
 
   /* Najman and Couprie */

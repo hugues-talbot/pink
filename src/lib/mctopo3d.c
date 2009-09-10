@@ -706,7 +706,7 @@ static void preparecubesh(
 
 /* ==================================== */
 static void preparecubesh_l(
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t h,                      /* seuil */
   int32_t rs,                      /* taille rangee */
@@ -1448,8 +1448,8 @@ uint8_t alpha26m(
 } /* alpha26m() */
 
 /* ==================================== */
-uint32_t alpha26m_l(
-  uint32_t *img,          /* pointeur base image */
+int32_t alpha26m_l(
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1458,9 +1458,9 @@ uint32_t alpha26m_l(
 /* ou img[x] si pas de telles valeurs */
 /* ==================================== */
 {
-	register uint32_t val = *(img+p);
+	register int32_t val = *(img+p);
 	register int32_t q;
-	register uint32_t v;
+	register int32_t v;
 	register int32_t alpha = NDG_MIN - 1;
         register int32_t k;
 
@@ -1472,7 +1472,7 @@ uint32_t alpha26m_l(
         if (alpha == NDG_MIN - 1) 
           return val;
         else
-          return (uint32_t)alpha;
+          return (int32_t)alpha;
 } /* alpha26m_l() */
 
 /* ==================================== */
@@ -1977,7 +1977,7 @@ int32_t t26p(
 
 /* ==================================== */
 int32_t t26pp_l(
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -1994,7 +1994,7 @@ int32_t t26pp_l(
 
 /* ==================================== */
 int32_t t6pp_l(
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -2011,9 +2011,9 @@ int32_t t6pp_l(
 
 /* ==================================== */
 void nbtopoh3d26_l( /* pour les minima en 26-connexite */ 
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
-  uint32_t h,
+  int32_t h,
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N,                       /* taille image */
@@ -2035,9 +2035,9 @@ void nbtopoh3d26_l( /* pour les minima en 26-connexite */
 
 /* ==================================== */
 void nbtopoh3d6_l( /* pour les minima en 6-connexite */ 
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
-  uint32_t h,
+  int32_t h,
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N,                       /* taille image */

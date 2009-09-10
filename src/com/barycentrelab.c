@@ -34,9 +34,9 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * imagebyte;
-  uint32_t *L;
+  int32_t *L;
   uint8_t *B;
-  uint32_t x;
+  int32_t x;
   int32_t rs, cs, d, N;
 
   if (argc != 3)
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
   cs = colsize(image);
   d = depth(image);
   N = rs * cs * d;
-  L = ULONGDATA(image);
+  L = SLONGDATA(image);
   
   imagebyte = allocimage(image->name, rs, cs, d, VFF_TYP_1_BYTE);
   if (imagebyte == NULL)

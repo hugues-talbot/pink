@@ -59,7 +59,7 @@ resultat: X, DT
 #define VERBOSE
 
 /* ==================================== */
-int32_t abaisse8(int32_t x, uint32_t *DT, int32_t rs, int32_t N)
+int32_t abaisse8(int32_t x, int32_t *DT, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t y, k, abaisse;
@@ -101,7 +101,7 @@ int32_t abaisse8(int32_t x, uint32_t *DT, int32_t rs, int32_t N)
 } // abaisse8()
 
 /* ==================================== */
-int32_t abaisse4(int32_t x, uint32_t *DT, int32_t rs, int32_t N)
+int32_t abaisse4(int32_t x, int32_t *DT, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t y, k, abaisse;
@@ -485,13 +485,13 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
       do
       {
         abaisse = 0;
-        nbtopoh3d26_l(DT, x, DT[x], rs, ps, N, &t6p, &t26mm);
+        nbtopoh3d26_l((int32_t *)DT, x, DT[x], rs, ps, N, &t6p, &t26mm);
         if ((t6p == 1) && (t26mm == 1))
 	{
-          nbtopoh3d26_l(DT, x, DT[x], rs, ps, N, &t6p, &t26mm);
+          nbtopoh3d26_l((int32_t *)DT, x, DT[x], rs, ps, N, &t6p, &t26mm);
           if ((t6p == 1) && (t26mm == 1))
 	  {
-            d = alpha26m_l(DT, x, rs, ps, N);
+            d = alpha26m_l((int32_t *)DT, x, rs, ps, N);
             d = min((DT[x]-1),(d+1));
             DT[x] = d;
             abaisse = 1;
@@ -510,13 +510,13 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
       do
       {
         abaisse = 0;
-        nbtopoh3d6_l(DT, x, DT[x], rs, ps, N, &t26p, &t6mm);
+        nbtopoh3d6_l((int32_t *)DT, x, DT[x], rs, ps, N, &t26p, &t6mm);
         if ((t26p == 1) && (t6mm == 1))
 	{
-          nbtopoh3d26_l(DT, x, DT[x], rs, ps, N, &t26p, &t6mm);
+          nbtopoh3d26_l((int32_t *)DT, x, DT[x], rs, ps, N, &t26p, &t6mm);
           if ((t26p == 1) && (t6mm == 1))
 	  {
-            d = alpha26m_l(DT, x, rs, ps, N);
+            d = alpha26m_l((int32_t *)DT, x, rs, ps, N);
             d = min((DT[x]-1),(d+1));
             DT[x] = d;
             abaisse = 1;

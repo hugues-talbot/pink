@@ -25,9 +25,9 @@ void attributNoeud(RAG *rag, struct xvimage *label, struct xvimage *ga)
   int32_t rs = rowsize(label);                   /* taille ligne      */
   int32_t cs = colsize(label);                   /* taille colonne    */
   int32_t N = rs * cs;                           /* taille image      */
-  uint32_t *LABEL = ULONGDATA(label);           /* les labels        */
+  int32_t *LABEL = SLONGDATA(label);           /* les labels        */
   int32_t alt;
-  uint32_t l;
+  int32_t l;
   
   for(i = 0; i < rag->g->nsom; i++) {
     /* tout ca peut se calculer au vol lors de la construction de la LPE */
@@ -54,8 +54,8 @@ RAG *construitRAG(struct xvimage *ga, struct xvimage *label)
   int32_t cs = colsize(label);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   int32_t N_t = 2*N;
-  uint32_t *LABEL = ULONGDATA(label);              /* l'image de depart */
-  uint32_t nblabels;
+  int32_t *LABEL = SLONGDATA(label);              /* l'image de depart */
+  int32_t nblabels;
 
   nblabels = 0;
   for(i = 0; i < N; i++)
@@ -396,7 +396,7 @@ static void mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attrib
 #define LCAFAST
 /* Calcul la carte de saillance à partir du CT de saillance du ga
    d'origine et du flow mapping (label) du ga */
-int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, uint32_t *label, int32_t *attribut)
+int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int32_t *attribut)
 {
   int32_t rs = rowsize(ga);      /* taille ligne */
   int32_t cs = colsize(ga);      /* taille colonne */
@@ -516,7 +516,7 @@ int32_t main_cascade(struct xvimage *image, struct xvimage *ga, int32_t param)
       if((y = voisin(i, k, rs, N)) != -1)
 	switch(param){
 	case 0: updateArcValue(g1,i, y, (uint8_t)max(F[i],F[y])); break;
-	case 1: updateArcValue(g1,i, y, (uint8_t)abs((uint32_t)F[i] - (uint32_t)F[y])); break;
+	case 1: updateArcValue(g1,i, y, (uint8_t)abs((int32_t)F[i] - (int32_t)F[y])); break;
 	default: fprintf(stderr,"%s: Mauvais parametre \n", F_NAME); exit(0);
 	}
     }
@@ -539,7 +539,7 @@ int32_t main_cascade(struct xvimage *image, struct xvimage *ga, int32_t param)
 	    switch(param){
 	    case 0: updateArcValue(g2,Label2[Label1[i]], Label2[Label1[y]], max(F[i],F[y])); break;
 	    case 1: updateArcValue(g2,Label2[Label1[i]], Label2[Label1[y]], 
-	    			   (uint8_t)abs((uint32_t)F[i] - (uint32_t)F[y])); break;
+	    			   (uint8_t)abs((int32_t)F[i] - (int32_t)F[y])); break;
 	    default: fprintf(stderr,"%s: Mauvais parametre \n", F_NAME); exit(0);
 	    }
 	  }
@@ -567,7 +567,7 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param)
   struct xvimage *label;
   int32_t rs = rowsize(ga);               /* taille ligne */
   int32_t cs = colsize(ga);               /* taille colonne */
-  uint32_t *LABEL;
+  int32_t *LABEL;
   int32_t *Attribut;                      /* Attribut de surface du merge tree */
   RAG *rag;                               /* Graph d'adjacence de
 					     régions */

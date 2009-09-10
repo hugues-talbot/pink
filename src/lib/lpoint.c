@@ -43,10 +43,10 @@ int32_t lpoint(struct xvimage * image1, int32_t x, int32_t y, int32_t z, float v
   else
   if (datatype(image1) == VFF_TYP_4_BYTE)
   {
-    uint32_t *pt1 = ULONGDATA(image1);
+    int32_t *pt1 = SLONGDATA(image1);
     if ((x >= 0) && (x < rs) && (y >= 0) && (y < cs) && (z >= 0) && (z < d) &&
         (v >= 0))
-      pt1[z * n + y * rs + x] = (uint32_t)v;
+      pt1[z * n + y * rs + x] = (int32_t)v;
     else 
     {
       fprintf(stderr, "%s : out of range\n", F_NAME);
@@ -95,7 +95,7 @@ void lshowpoint(struct xvimage * image1, int32_t x, int32_t y, int32_t z)
   else
   if (datatype(image1) == VFF_TYP_4_BYTE)
   {
-    uint32_t *pt1 = ULONGDATA(image1);
+    int32_t *pt1 = SLONGDATA(image1);
     printf("%ld\n", (long int)pt1[z * n + y * rs + x]);
   }
   else

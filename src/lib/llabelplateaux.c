@@ -56,8 +56,8 @@ int32_t llabelplateaux(
   int32_t x;
   int32_t y;
   uint8_t *F = UCHARDATA(img);
-  uint32_t *FL = ULONGDATA(img);
-  uint32_t *LABEL =  ULONGDATA(lab);
+  int32_t *FL = SLONGDATA(img);
+  int32_t *LABEL =  SLONGDATA(lab);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
   int32_t d = depth(img);

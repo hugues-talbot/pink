@@ -100,7 +100,7 @@ int32_t lrecons(
     fprintf(stderr, "lrecons: allocimage failed\n");
     return 0;
   }
-  LABELS = ULONGDATA(labels);
+  LABELS = SLONGDATA(labels);
   memset(LABELS, 0, N * sizeof(int32_t));
 
   resfus = allocimage(NULL, rs, cs, d, VFF_TYP_4_BYTE);
@@ -109,7 +109,7 @@ int32_t lrecons(
     fprintf(stderr, "lrecons: allocimage failed\n");
     return 0;
   }
-  RESFUS = ULONGDATA(resfus);
+  RESFUS = SLONGDATA(resfus);
 
   for (x = 0; x < N; x++) if (S[x]) S[x] = VAL_SEG;
 

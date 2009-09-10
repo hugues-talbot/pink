@@ -80,7 +80,7 @@ int main(argc, argv)
 #endif
   int32_t rs;               /* taille ligne */
   int32_t cs;               /* taille colonne */
-  uint32_t *FlowMapping; 
+  int32_t *FlowMapping; 
 
 
   if ( (argc != 3) && (argc != 4) )
@@ -117,7 +117,7 @@ int main(argc, argv)
       fprintf(stderr, "%s : erreur de malloc\n",argv[0]);
       exit(0);
     }
-    FlowMapping = ULONGDATA(watershed);
+    FlowMapping = SLONGDATA(watershed);
     flowMapping(ga, FlowMapping);
     gaout = SeparatingEdge(watershed);
     writerawGAimage(gaout,argv[2]);
@@ -129,7 +129,7 @@ int main(argc, argv)
       fprintf(stderr, "%s : erreur de malloc\n",argv[0]);
       exit(0);
     }
-    FlowMapping = ULONGDATA(watershed);
+    FlowMapping = SLONGDATA(watershed);
     flowMappingRecursif(ga, FlowMapping); 
     gaout = SeparatingEdge(watershed);
     writerawGAimage(gaout,argv[2]);
@@ -145,7 +145,7 @@ int main(argc, argv)
       fprintf(stderr, "%s : erreur de malloc\n",argv[0]);
       exit(0);
     }
-    FlowMapping = ULONGDATA(watershed);
+    FlowMapping = SLONGDATA(watershed);
     flowMappingRecursif(ga, FlowMapping);
     writeimage(watershed,argv[2]);
   }
@@ -168,7 +168,7 @@ int main(argc, argv)
       fprintf(stderr, "%s : erreur de malloc\n",argv[0]);
       exit(0);
     }
-    FlowMapping = ULONGDATA(watershed);
+    FlowMapping = SLONGDATA(watershed);
     flowMapping(ga, FlowMapping);
     t2 = clock();
     printf("temps (stream_non_recursif) %ld ms\n", 
@@ -184,7 +184,7 @@ int main(argc, argv)
       fprintf(stderr, "%s : erreur de malloc\n",argv[0]);
       exit(0);
     }
-    FlowMapping = ULONGDATA(watershed);
+    FlowMapping = SLONGDATA(watershed);
     flowMappingRecursif(ga, FlowMapping);
     t2 = clock();
     printf("temps (stream_recursif) %ld ms\n", 
@@ -213,7 +213,7 @@ int main(argc, argv)
       fprintf(stderr, "%s : erreur de malloc\n",argv[0]);
       exit(0);
     }
-    FlowMapping = ULONGDATA(watershed);
+    FlowMapping = SLONGDATA(watershed);
     printf("Je suis dans le bon type\n"); 
     fflush(stdout);
     flowMappingFloat(ga, FlowMapping); // Il faut l'ecrire

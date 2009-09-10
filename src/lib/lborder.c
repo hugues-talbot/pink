@@ -29,7 +29,7 @@ int32_t lborder(struct xvimage *image, int32_t connex)
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
   uint8_t *I = UCHARDATA(image);     /* l'image de depart */
-  uint32_t *IL = ULONGDATA(image);    /* l'image de depart si 32 bits */
+  int32_t *IL = SLONGDATA(image);    /* l'image de depart si 32 bits */
   struct xvimage *tmp;
   uint8_t *T;
 
@@ -89,7 +89,7 @@ int32_t lborder(struct xvimage *image, int32_t connex)
           fprintf(stderr, "lborder: mauvaise connexite: %d\n", connex);
           return 0;
       } /* switch (connex) */
-      for (x = 0; x < N; x++) IL[x] = (uint32_t) T[x];
+      for (x = 0; x < N; x++) IL[x] = (int32_t) T[x];
       break;
     default:
       fprintf(stderr,"lborder() : bad data type %d\n", datatype(image));

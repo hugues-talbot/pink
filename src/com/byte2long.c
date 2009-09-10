@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * imagelong;
   struct xvimage * imagebyte;
-  uint32_t *L;
+  int32_t *L;
   uint8_t *B;
   uint32_t x;
 
@@ -61,13 +61,13 @@ int main(int argc, char **argv)
     fprintf(stderr, "byte2long: allocimage failed\n");
     exit(1);
   }
-  L = ULONGDATA(imagelong);
+  L = SLONGDATA(imagelong);
   imagelong->xdim = imagebyte->xdim;
   imagelong->ydim = imagebyte->ydim;
   imagelong->zdim = imagebyte->zdim;
 
   for (x = 0; x < N; x++)
-    L[x] = (uint32_t)B[x];
+    L[x] = (int32_t)B[x];
 
   writeimage(imagelong, argv[2]);
   freeimage(imagelong);

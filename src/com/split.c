@@ -88,8 +88,8 @@ int main(int argc, char **argv)
   }
   I = UCHARDATA(image);
   S = UCHARDATA(seed);
-  T = ULONGDATA(restmp);
-  R = ULONGDATA(result);
+  T = SLONGDATA(restmp);
+  R = SLONGDATA(result);
   memset(S, 0, N);
   for (i = 0; i < N; i++) 
     if (I[i])

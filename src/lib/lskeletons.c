@@ -169,7 +169,7 @@ resultat: F
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *P = NULL;     /* l'image de priorites (ndg) */
+  int32_t *P = NULL;     /* l'image de priorites (ndg) */
   Rbt * RBT;
   int32_t taillemaxrbt;
 
@@ -187,10 +187,10 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
     fprintf(stderr, "    otherwise, use inhibit map\n");
     return(0);
   }
@@ -298,7 +298,7 @@ int32_t lskelubp2(struct xvimage *image,
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *I = NULL; /* l'image d'inhibition */
-  uint32_t *P = NULL;  /* l'image de priorites (cas uint32) */
+  int32_t *P = NULL;  /* l'image de priorites (cas int32) */
   uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
   float   *PF = NULL;  /* l'image de priorites (cas float) */
   double  *PD = NULL;  /* l'image de priorites (cas double) */
@@ -319,7 +319,7 @@ int32_t lskelubp2(struct xvimage *image,
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
     PB = UCHARDATA(imageprio); 
   else if (datatype(imageprio) == VFF_TYP_FLOAT) 
@@ -328,7 +328,7 @@ int32_t lskelubp2(struct xvimage *image,
     PD = DOUBLEDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, uint32_t, float or double\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
     return(0);
   }
   taillemaxrbt = 2 * rs +  2 * cs;
@@ -476,7 +476,7 @@ resultat: F
   int32_t d = depth(image);
   int32_t N = d * ps;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *P = NULL;  /* l'image de priorites (ndg) */
+  int32_t *P = NULL;  /* l'image de priorites (ndg) */
   Rbt * RBT;
   int32_t taillemaxrbt;
 
@@ -496,10 +496,10 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
     fprintf(stderr, "    otherwise, use inhibit map\n");
     return(0);
   }
@@ -609,7 +609,7 @@ int32_t lskelubp3d2(struct xvimage *image,
   int32_t N = d * ps;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *I = NULL; /* l'image d'inhibition */
-  uint32_t *P = NULL;  /* l'image de priorites (cas uint32) */
+  int32_t *P = NULL;  /* l'image de priorites (cas int32) */
   uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
   float   *PF = NULL;  /* l'image de priorites (cas float) */
   double  *PD = NULL;  /* l'image de priorites (cas double) */
@@ -632,7 +632,7 @@ int32_t lskelubp3d2(struct xvimage *image,
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
     PB = UCHARDATA(imageprio); 
   else if (datatype(imageprio) == VFF_TYP_FLOAT) 
@@ -641,7 +641,7 @@ int32_t lskelubp3d2(struct xvimage *image,
     PD = DOUBLEDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, uint32_t, float or double\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
     return(0);
   }
   taillemaxrbt = 2 * rs * cs +  2 * rs * d +  2 * d * cs;
@@ -781,7 +781,7 @@ resultat: F
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *P = NULL;     /* l'image de priorites (ndg) */
+  int32_t *P = NULL;     /* l'image de priorites (ndg) */
   Rbt * RBT;
   Fifo * FIFO1;
   Fifo * FIFO2;
@@ -802,10 +802,10 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
     return(0);
   }
 
@@ -1064,7 +1064,7 @@ resultat: F
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *P = NULL;     /* l'image de priorites (ndg) */
+  int32_t *P = NULL;     /* l'image de priorites (ndg) */
   Rbt * RBT;
   int32_t prio, oldprio;
   int32_t taillemaxrbt;
@@ -1083,10 +1083,10 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
     return(0);
   }
 
@@ -1320,7 +1320,7 @@ resultat: F
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *P = NULL;     /* l'image de priorites (ndg) */
+  int32_t *P = NULL;     /* l'image de priorites (ndg) */
   Rbt * RBT;
   int32_t prio, oldprio;
   int32_t taillemaxrbt;
@@ -1340,10 +1340,10 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
     return(0);
   }
 
@@ -1581,7 +1581,7 @@ resultat: F
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *P = NULL;     /* l'image de priorites (ndg) */
+  int32_t *P = NULL;     /* l'image de priorites (ndg) */
   Rbt * RBT;
   int32_t taillemaxrbt;
   int32_t t, tb;
@@ -1600,10 +1600,10 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
     return(0);
   }
   taillemaxrbt = 2 * rs +  2 * cs;
@@ -1753,7 +1753,7 @@ resultat: F
   int32_t d = depth(image);
   int32_t N = d * ps;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *P = NULL;  /* l'image de priorites (ndg) */
+  int32_t *P = NULL;  /* l'image de priorites (ndg) */
   Rbt * RBT;
   int32_t taillemaxrbt;
   int32_t t, tb;
@@ -1774,10 +1774,10 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
     return(0);
   }
   taillemaxrbt = 2 * rs * cs +  2 * rs * d +  2 * d * cs;
@@ -2242,7 +2242,7 @@ resultat: F
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *P = NULL;     /* l'image de priorites (ndg) */
+  int32_t *P = NULL;     /* l'image de priorites (ndg) */
   Rbt * RBT;
   int32_t taillemaxrbt;
   uint32_t config;
@@ -2269,10 +2269,10 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
     return(0);
   }
 

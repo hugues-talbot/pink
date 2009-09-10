@@ -216,9 +216,9 @@ int main(int32_t argc, char **argv)
   int32_t ret, priocode;
   int32_t rs, cs, N, i;
   float priomax_f;
-  uint32_t priomax_l;
+  int32_t priomax_l;
   float * PRIO_F;
-  uint32_t * PRIO_L;
+  int32_t * PRIO_L;
   graphe * flow;
   graphe * flow_s;
   graphe * forest;
@@ -261,7 +261,7 @@ int main(int32_t argc, char **argv)
     if (datatype(prio2) == VFF_TYP_1_BYTE)
     {
       uint8_t *B = UCHARDATA(prio2);
-      uint32_t *L;
+      int32_t *L;
       int32_t x;
       prio = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
       if (prio == NULL)
@@ -269,8 +269,8 @@ int main(int32_t argc, char **argv)
         fprintf(stderr, "%s: allocimage failed\n", argv[0]);
         exit(1);
       }
-      L = ULONGDATA(prio);
-      for (x = 0; x < N; x++) L[x] = (uint32_t)B[x];
+      L = SLONGDATA(prio);
+      for (x = 0; x < N; x++) L[x] = (int32_t)B[x];
       freeimage(prio2);
     }
     else if (datatype(prio2) == VFF_TYP_4_BYTE)
@@ -361,13 +361,13 @@ int main(int32_t argc, char **argv)
   }
   else 
   {
-    priomax_l = UINT32_MAX; 
+    priomax_l = INT32_MAX; 
     priomax_f = FLOAT_MAX; 
   }
 
   if (datatype(prio) == VFF_TYP_4_BYTE)
   {
-    PRIO_L = ULONGDATA(prio);
+    PRIO_L = SLONGDATA(prio);
     if (! (flow = l2dtopoflow_l(k, prio, inhibimage, priomax_l)))
     {
       fprintf(stderr, "%s: function l2dtopoflow_l failed\n", argv[0]);

@@ -25,13 +25,13 @@ int32_t lbarycentrelab(struct xvimage * imagelab)
 /* ==================================== */
 {
   int32_t i, j;
-  uint32_t *F;
+  int32_t *F;
   int32_t rs, cs, N;
   int32_t nblabels;
   double *bxx;             /* pour les tables de barycentres par composantes */
   double *byy;
   int32_t *surf;
-  uint32_t lab;
+  int32_t lab;
 
   if (depth(imagelab) != 1) 
   {
@@ -48,7 +48,7 @@ int32_t lbarycentrelab(struct xvimage * imagelab)
   rs = imagelab->row_size;
   cs = imagelab->col_size;
   N = rs * cs;
-  F = ULONGDATA(imagelab);
+  F = SLONGDATA(imagelab);
 
   nblabels = 0;
   for (j = 0; j < N; j++) if (F[j] > nblabels ) nblabels = F[j];
@@ -123,12 +123,12 @@ int32_t lbarycentre(struct xvimage * image1, int32_t connex)
   uint8_t *F;
   int32_t rs, cs, N;
   struct xvimage *label;
-  uint32_t *LABEL;     /* pour les labels des composantes connexes */
+  int32_t *LABEL;     /* pour les labels des composantes connexes */
   int32_t nblabels;
   double *bxx;             /* pour les tables de barycentres par composantes */
   double *byy;
   int32_t *surf;
-  uint32_t lab;
+  int32_t lab;
 
   if (depth(image1) != 1) 
   {
@@ -148,7 +148,7 @@ int32_t lbarycentre(struct xvimage * image1, int32_t connex)
   F = UCHARDATA(image1);
 
   label = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
-  LABEL = ULONGDATA(label);
+  LABEL = SLONGDATA(label);
 
   if (! llabelextrema(image1, connex, LABMAX, label, &nblabels))
   {
@@ -235,12 +235,12 @@ int32_t lbarycentreold(struct xvimage * image1, double * bx, double * by)
   uint8_t *F;
   int32_t rs, cs, N;
   struct xvimage *label;
-  uint32_t *LABEL;     /* pour les labels des composantes connexes */
+  int32_t *LABEL;     /* pour les labels des composantes connexes */
   int32_t nblabels;
   double *bxx;             /* pour les tables de barycentres par composantes */
   double *byy;
   int32_t *surf;
-  uint32_t lab;
+  int32_t lab;
 
   if (depth(image1) != 1) 
   {
@@ -253,7 +253,7 @@ int32_t lbarycentreold(struct xvimage * image1, double * bx, double * by)
   F = UCHARDATA(image1);
 
   label = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
-  LABEL = ULONGDATA(label);
+  LABEL = SLONGDATA(label);
 
   if (! llabelextrema(image1, 4, LABMAX, label, &nblabels))
   {

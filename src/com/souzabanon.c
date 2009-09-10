@@ -58,7 +58,7 @@ int main(int argc, char **argv)
   rs = rowsize(imagelong);
   cs = colsize(imagelong);
   N = rs * cs;
-  g = ULONGDATA(imagelong);
+  g = SLONGDATA(imagelong);
 
   for (x = 1; x <= rs-2; x++)
   for (y = 1; y <= cs-2; y++)

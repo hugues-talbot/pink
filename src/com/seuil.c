@@ -79,7 +79,7 @@ int main(int argc, char **argv)
   {
     int32_t rs, cs, ds, N, x;
     uint8_t *F;
-    uint32_t *FL;
+    int32_t *FL;
     rs = rowsize(image); cs = colsize(image); ds = depth(image); N = rs * cs * ds; 
     imagebin = allocimage(image->name, rs, cs, ds, VFF_TYP_1_BYTE);
     if (imagebin == NULL)
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: allocimage failed\n", argv[0]);
       exit(1);
     }
-    F = UCHARDATA(imagebin); FL = ULONGDATA(image);
+    F = UCHARDATA(imagebin); FL = SLONGDATA(image);
     for (x = 0; x < N; x++) F[x] = (uint8_t)FL[x];
     writeimage(imagebin, argv[argc-1]);
     freeimage(imagebin);

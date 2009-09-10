@@ -36,8 +36,8 @@ int32_t lselndg(struct xvimage * image, int32_t inf, int32_t sup)
   else
   if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    uint32_t *pt;
-    for (pt = ULONGDATA(image), i = 0; i < N; i++, pt++)
+    int32_t *pt;
+    for (pt = SLONGDATA(image), i = 0; i < N; i++, pt++)
       if (!((*pt >= inf) && (*pt <= sup))) *pt = NDG_MIN;
   }
   else

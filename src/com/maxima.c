@@ -31,9 +31,9 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * result;
   uint8_t * I;
-  uint32_t * IL;
+  int32_t * IL;
   int32_t N;
-  uint32_t * R;
+  int32_t * R;
 
   if (argc != 4)
   {
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
-  R = ULONGDATA(result);
+  R = SLONGDATA(result);
 
   if (connex == 0)
   {
@@ -71,8 +71,8 @@ int main(int argc, char **argv)
     }
     else if (datatype(image) == VFF_TYP_4_BYTE) 
     {   
-      uint32_t absmax;
-      IL = ULONGDATA(image);
+      int32_t absmax;
+      IL = SLONGDATA(image);
       absmax = IL[0];
       for (i = 1; i < N; i++) if (IL[i] > absmax) absmax = IL[i];
       for (i = 0; i < N; i++) if (IL[i] == absmax) IL[i] = NDG_MAX; else IL[i] = NDG_MIN;
@@ -96,9 +96,9 @@ int main(int argc, char **argv)
     }
     else if (datatype(image) == VFF_TYP_4_BYTE) 
     {   
-      IL = ULONGDATA(image);
+      IL = SLONGDATA(image);
       for (i = 0; i < N; i++)
-        if (R[i]) IL[i] = (uint32_t)NDG_MAX; else IL[i] = (uint32_t)NDG_MIN;
+        if (R[i]) IL[i] = (int32_t)NDG_MAX; else IL[i] = (int32_t)NDG_MIN;
     }
   }
   if (datatype(image) == VFF_TYP_4_BYTE)

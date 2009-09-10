@@ -46,7 +46,7 @@ int main(int argc, char **argv)
   int32_t d;           /* nb. plans */
   int32_t N;           /* taille image */
   uint8_t *F;
-  uint32_t *FL;
+  int32_t *FL;
   uint32_t * histo;
   uint32_t * histolisse;
   int32_t x, y, somme, diff, compteur, lissage;
@@ -181,7 +181,7 @@ int main(int argc, char **argv)
       exit(1);
     }
     F = UCHARDATA(imagebin);
-    FL = ULONGDATA(image);
+    FL = SLONGDATA(image);
     for (x = 0; x < N; x++) F[x] = (uint8_t)FL[x];
     writeimage(imagebin, argv[argc-1]);
     freeimage(imagebin);

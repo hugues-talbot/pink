@@ -143,7 +143,7 @@ int main(int argc, char **argv)
   else
   if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    uint32_t *F = ULONGDATA(image);
+    int32_t *F = SLONGDATA(image);
     n = 0;                     /* compte le nombre de points non nuls */ 
     
     for (x = 0; x < N; x++) if (F[x]) n++;

@@ -185,7 +185,7 @@ int32_t lsegmentnum(
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *SOURCE = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *M = ULONGDATA(result);
+  int32_t *M = SLONGDATA(result);
   int32_t *T;                      /* table de correspondance pour regularisation */
   int32_t nminima;                 /* nombre de minima differents */
   Fah * FAH;                   /* la file d'attente hierarchique */

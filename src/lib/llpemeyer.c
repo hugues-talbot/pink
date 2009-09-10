@@ -71,7 +71,7 @@ int32_t llpemeyer(
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   uint8_t *BF;                             /* l'image de marqueurs du fond */
   uint8_t *MA;                             /* l'image de masque */
-  uint32_t *M;             /* l'image d'etiquettes */
+  int32_t *M;             /* l'image d'etiquettes */
   int32_t nlabels;                 /* nombre de labels differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[4];
@@ -129,7 +129,7 @@ int32_t llpemeyer(
   /* CREATION DES LABELS INITIAUX                     */
   /* ================================================ */
 
-  M = (uint32_t *)calloc(N, sizeof(int32_t));
+  M = (int32_t *)calloc(N, sizeof(int32_t));
   if (M == NULL)
   {   fprintf(stderr, "%s : calloc failed\n", F_NAME);
       return(0);
@@ -309,7 +309,7 @@ int32_t llpemeyer2(
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);  /* l'image de depart */
-  uint32_t *M = ULONGDATA(marqueurs);   /* l'image de marqueurs */
+  int32_t *M = SLONGDATA(marqueurs);   /* l'image de marqueurs */
   uint8_t *MA;                         /* l'image de masque */
   Fah * FAH;                                 /* la file d'attente hierarchique */
   int32_t etiqcc[4];
@@ -337,7 +337,7 @@ int32_t llpemeyer2(
 
   if (datatype(marqueurs) != VFF_TYP_4_BYTE)
   {
-    fprintf(stderr, "%s: marker image must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s: marker image must be int32_t\n", F_NAME);
     return 0;
   }
 
@@ -479,7 +479,7 @@ int32_t llpemeyer2(
    uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
    uint8_t *BF;                             /* l'image de marqueurs du fond */
    uint8_t *MA;                             /* l'image de masque */
-   uint32_t *M;             /* l'image d'etiquettes */
+   int32_t *M;             /* l'image d'etiquettes */
    int32_t nlabels;                 /* nombre de labels differents */
    Fah * FAH;                   /* la file d'attente hierarchique */
    int32_t etiqcc[4];
@@ -523,7 +523,7 @@ int32_t llpemeyer2(
    /* CREATION DES LABELS INITIAUX                     */
    /* ================================================ */
 
-   M = (uint32_t *)calloc(N, sizeof(int32_t));
+   M = (int32_t *)calloc(N, sizeof(int32_t));
    if (M == NULL)
    {   fprintf(stderr, "%s() : calloc failed\n", F_NAME);
        return(0);
@@ -704,7 +704,7 @@ int32_t llpemeyersansligne(
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   uint8_t *BF;                             /* l'image de marqueurs du fond */
   uint8_t *MA;                             /* l'image de masque */
-  uint32_t *M;             /* l'image d'etiquettes */
+  int32_t *M;             /* l'image d'etiquettes */
   int32_t nlabels;                 /* nombre de labels differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[4];
@@ -768,7 +768,7 @@ int32_t llpemeyersansligne(
   /* CREATION DES LABELS INITIAUX                     */
   /* ================================================ */
 
-  M = ULONGDATA(result);
+  M = SLONGDATA(result);
   memset(M, 0, N*sizeof(int32_t));
   nlabels = 0;
 
@@ -939,7 +939,7 @@ int32_t llpemeyer3d(
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   uint8_t *BF;                             /* l'image de marqueurs du fond */
   uint8_t *MA;                             /* l'image de masque */
-  uint32_t *M;             /* l'image d'etiquettes */
+  int32_t *M;             /* l'image d'etiquettes */
   int32_t nlabels;                 /* nombre de labels differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[6];
@@ -975,7 +975,7 @@ int32_t llpemeyer3d(
   /* CREATION DES LABELS INITIAUX                     */
   /* ================================================ */
 
-  M = (uint32_t *)calloc(N, sizeof(int32_t));
+  M = (int32_t *)calloc(N, sizeof(int32_t));
   if (M == NULL)
   {   fprintf(stderr, "%s() : calloc failed\n", F_NAME);
       return(0);
@@ -1253,7 +1253,7 @@ int32_t llpemeyer3dsansligne(
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   uint8_t *BF;                             /* l'image de marqueurs du fond */
   uint8_t *MA;                             /* l'image de masque */
-  uint32_t *M;             /* l'image d'etiquettes */
+  int32_t *M;             /* l'image d'etiquettes */
   int32_t nlabels;                 /* nombre de labels differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[6];
@@ -1301,7 +1301,7 @@ int32_t llpemeyer3dsansligne(
   /* CREATION DES LABELS INITIAUX                     */
   /* ================================================ */
 
-  M = ULONGDATA(result);
+  M = SLONGDATA(result);
   memset(M, 0, N*sizeof(int32_t));
   nlabels = 0;
 
@@ -1577,7 +1577,7 @@ int32_t llpemeyerbiconnecte(
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   uint8_t *BF;                             /* l'image de marqueurs du fond */
   uint8_t *MA;                             /* l'image de masque */
-  uint32_t *M;             /* l'image d'etiquettes */
+  int32_t *M;             /* l'image d'etiquettes */
   int32_t nlabels;                 /* nombre de labels differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[4];
@@ -1626,7 +1626,7 @@ int32_t llpemeyerbiconnecte(
   /* CREATION DES LABELS INITIAUX                     */
   /* ================================================ */
 
-  M = (uint32_t *)calloc(N, sizeof(int32_t));
+  M = (int32_t *)calloc(N, sizeof(int32_t));
   if (M == NULL)
   {   fprintf(stderr, "%s : calloc failed\n", F_NAME);
       return(0);
@@ -1813,7 +1813,7 @@ int32_t llpemeyerbiconnecte3d(
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   uint8_t *BF;                             /* l'image de marqueurs du fond */
   uint8_t *MA;                             /* l'image de masque */
-  uint32_t *M;             /* l'image d'etiquettes */
+  int32_t *M;             /* l'image d'etiquettes */
   int32_t nlabels;                 /* nombre de labels differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[6];
@@ -1849,7 +1849,7 @@ int32_t llpemeyerbiconnecte3d(
   /* CREATION DES LABELS INITIAUX                     */
   /* ================================================ */
   printf("%s: creation des labels initiaux\n", F_NAME);
-  M = (uint32_t *)calloc(N, sizeof(int32_t));
+  M = (int32_t *)calloc(N, sizeof(int32_t));
   if (M == NULL)
   {   fprintf(stderr, "%s() : calloc failed\n", F_NAME);
       return(0);

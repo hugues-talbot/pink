@@ -29,7 +29,7 @@ int32_t lreconsplateaux(
   int32_t cs = colsize(f);
   int32_t d = depth(f);
   int32_t N = rs * cs;          /* taille image */
-  uint32_t *F = ULONGDATA(f);
+  uint32_t *F = SLONGDATA(f);
   uint8_t *G = UCHARDATA(g);
   Lifo * LIFO;
   int32_t incr_vois;

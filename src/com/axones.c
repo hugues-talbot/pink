@@ -278,7 +278,7 @@ int32_t laxones_sav(
     fprintf(stderr, "laxones: allocimage failed\n");
     exit(0);
   }
-  LABEL = ULONGDATA(lab);
+  LABEL = SLONGDATA(lab);
   if (! llabelplateaux(imcentres, 8, lab, &nblabels))
   {
     fprintf(stderr, "laxones: llabelplateaux failed\n");

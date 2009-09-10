@@ -23,7 +23,7 @@ int32_t lclick(struct xvimage *image, struct xvimage *lab, int32_t zoom)
   int32_t d = depth(image);        /* nb. plans */
   int32_t N = d * n;               /* taille image */
   uint8_t *SOURCE = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *LAB = ULONGDATA(lab);
+  uint32_t *LAB = SLONGDATA(lab);
   int32_t curlab = 1;
   int32_t incr = 0;
   int32_t iplan = 0;

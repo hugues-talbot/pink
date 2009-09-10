@@ -129,7 +129,7 @@ int32_t lordermaxima(struct xvimage *image, struct xvimage *order, int32_t conne
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *O = ULONGDATA(order);      /* l'image de labels */
+  int32_t *O = SLONGDATA(order);      /* l'image de labels */
   int32_t *A; // table de correspondance pour le tri
   int32_t *T; // table avec l'altitude de chaque maximum
   
@@ -185,7 +185,7 @@ int32_t lordermaximasurf(struct xvimage *image, struct xvimage *order, int32_t c
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *O = ULONGDATA(order);      /* l'image de labels */
+  int32_t *O = SLONGDATA(order);      /* l'image de labels */
   int32_t *A; // table de correspondance pour le tri
   int32_t *T; // table avec l'altitude de chaque maximum
   Fahs * FAHS;                    /* la file d'attente hierarchique */
@@ -293,7 +293,7 @@ int32_t lordermaximavol(struct xvimage *image, struct xvimage *order, int32_t co
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *O = ULONGDATA(order);      /* l'image de labels */
+  int32_t *O = SLONGDATA(order);      /* l'image de labels */
   int32_t *A; // table de correspondance pour le tri
   int32_t *T; // table avec l'altitude de chaque maximum
   Fahs * FAHS;                    /* la file d'attente hierarchique */
@@ -400,7 +400,7 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *O = ULONGDATA(order);      /* l'image de labels */
+  int32_t *O = SLONGDATA(order);      /* l'image de labels */
   Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t *CM;                      /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
@@ -517,7 +517,7 @@ int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t c
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *O = ULONGDATA(order);      /* l'image de labels */
+  int32_t *O = SLONGDATA(order);      /* l'image de labels */
   Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t *CM;                      /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */

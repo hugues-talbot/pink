@@ -415,16 +415,16 @@ int32_t ldilatlong3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t y
   int32_t psm = rsm * csm;
   int32_t Nm = psm * dsm;
   uint8_t *M = UCHARDATA(m);
-  uint32_t *F = ULONGDATA(f);
-  uint32_t *H;                    /* image de travail */
-  uint32_t sup;
+  int32_t *F = SLONGDATA(f);
+  int32_t *H;                    /* image de travail */
+  int32_t sup;
   int32_t nptb;                    /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t *tab_es_z;               /* liste des coord. z des points de l'e.s. */
   int32_t c;
 
-  H = (uint32_t *)calloc(1,N*sizeof(int32_t));
+  H = (int32_t *)calloc(1,N*sizeof(int32_t));
   if (H == NULL)
   {  
      fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
@@ -464,7 +464,7 @@ int32_t ldilatlong3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t y
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
   {
-    sup = 0;
+    sup = INT32_MIN;
     for (c = 0; c < nptb ; c += 1)
     {
       k = z + tab_es_z[c] - zc;
@@ -507,16 +507,16 @@ int32_t leroslong3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc
   int32_t psm = rsm * csm;
   int32_t Nm = psm * dsm;
   uint8_t *M = UCHARDATA(m);
-  uint32_t *F = ULONGDATA(f);
-  uint32_t *H;                    /* image de travail */
-  uint32_t inf;
+  int32_t *F = SLONGDATA(f);
+  int32_t *H;                    /* image de travail */
+  int32_t inf;
   int32_t nptb;                    /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t *tab_es_z;               /* liste des coord. z des points de l'e.s. */
   int32_t c;
 
-  H = (uint32_t *)calloc(1,N*sizeof(int32_t));
+  H = (int32_t *)calloc(1,N*sizeof(int32_t));
   if (H == NULL)
   {  
      fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
@@ -556,7 +556,7 @@ int32_t leroslong3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
   {
-    inf = UINT32_MAX;
+    inf = INT32_MAX;
     for (c = 0; c < nptb ; c += 1)
     {
       k = z + tab_es_z[c] - zc;

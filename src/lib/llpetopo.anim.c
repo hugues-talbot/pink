@@ -260,7 +260,7 @@ int32_t llpetopo(
     fprintf(stderr, "llpetopo: allocimage failed\n");
     return 0;
   }
-  M = ULONGDATA(lab);
+  M = SLONGDATA(lab);
 
   if (!llabelextrema(image, 4, LABMIN, lab, &nminima))
   {   

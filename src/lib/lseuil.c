@@ -30,7 +30,7 @@ int32_t lseuil(
   }
   else if (datatype(f) == VFF_TYP_4_BYTE)
   {
-    uint32_t *FL = ULONGDATA(f);
+    int32_t *FL = SLONGDATA(f);
     for (x = 0; x < N; x++) if (FL[x] < seuil) FL[x] = NDG_MIN; else FL[x] = NDG_MAX;  
   }
   else if (datatype(f) == VFF_TYP_FLOAT)
@@ -71,10 +71,10 @@ int32_t lseuil2(
   }
   else if (datatype(f) == VFF_TYP_4_BYTE)
   {
-    uint32_t *F = ULONGDATA(f);
+    int32_t *F = SLONGDATA(f);
     for (x = 0; x < N; x++)
-      if ((int32_t)(F[x]) < (int32_t)seuilmin) F[x] = (uint32_t)valmin;  
-      else if ((int32_t)(F[x]) >= (int32_t)seuilmax) F[x] = (uint32_t)valmax;
+      if ((int32_t)(F[x]) < (int32_t)seuilmin) F[x] = (int32_t)valmin;  
+      else if ((int32_t)(F[x]) >= (int32_t)seuilmax) F[x] = (int32_t)valmax;
   }
   else if (datatype(f) == VFF_TYP_FLOAT)
   {
@@ -115,7 +115,7 @@ int32_t lseuil3(
   }
   else if (datatype(f) == VFF_TYP_4_BYTE)
   {
-    uint32_t *FL = ULONGDATA(f);
+    int32_t *FL = SLONGDATA(f);
     for (x = 0; x < N; x++) 
       if ((FL[x] < seuil2) && (FL[x]>=seuil))
 	FL[x] = NDG_MAX; 

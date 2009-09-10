@@ -608,7 +608,7 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
   struct xvimage *p;           /* pour l'image englobante */
   uint8_t *P;
   struct xvimage *l;           /* pour l'image de labels */
-  uint32_t *L;
+  int32_t *L;
   uint8_t *F = UCHARDATA(image);
   Fahp * FAHP;                   /* fahp pour le controle de l'ordre de traitement des points */
   int32_t tbar;
@@ -635,7 +635,7 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  L = ULONGDATA(l);
+  L = SLONGDATA(l);
 
   p = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
   if (p == NULL)

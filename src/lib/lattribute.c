@@ -142,7 +142,7 @@ int32_t lattribute(
   int32_t k, l;
   int32_t w, x, y, z;
   uint8_t *SOURCE = UCHARDATA(img);
-  uint32_t *LABEL = ULONGDATA(lab);
+  int32_t *LABEL = SLONGDATA(lab);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
   int32_t d = depth(img);

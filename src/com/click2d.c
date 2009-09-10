@@ -62,7 +62,7 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: malloc failed\n", argv[0]);
       exit(1);
     }
-    R = ULONGDATA(result);
+    R = SLONGDATA(result);
     memset(R, 0, N*sizeof(int32_t));
     zoom = atoi(argv[2]);
 

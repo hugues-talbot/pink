@@ -174,7 +174,7 @@ int32_t lsquel(struct xvimage *image, int32_t seuil, int32_t niseuil)
   int32_t N = rs * cs;             /* taille image */
   uint8_t *SOURCE = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *lab;
-  uint32_t *M;            /* l'image d'etiquettes de composantes connexes */
+  int32_t *M;            /* l'image d'etiquettes de composantes connexes */
   int32_t nminima;                 /* nombre de minima differents */
   Fifo * FIFOn;
   Fifo * FIFOs;
@@ -207,7 +207,7 @@ int32_t lsquel(struct xvimage *image, int32_t seuil, int32_t niseuil)
     fprintf(stderr, "lhtkern: allocimage failed\n");
     return 0;
   }
-  M = ULONGDATA(lab);
+  M = SLONGDATA(lab);
 
   if (!llabelextrema(image, 4, LABMIN, lab, &nminima))
   {   

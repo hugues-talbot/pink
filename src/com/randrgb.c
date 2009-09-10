@@ -88,7 +88,7 @@ int main(int argc, char **argv)
   }
   else   if (datatype(in) == VFF_TYP_4_BYTE)
   {
-    uint32_t *F = ULONGDATA(in);
+    int32_t *F = SLONGDATA(in);
     uint8_t v;
     for (i = 0; i < N; i++)
     {

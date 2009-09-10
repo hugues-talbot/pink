@@ -33,7 +33,7 @@ int main(int32_t argc, char **argv)
   int32_t nblabels, connex, i,y,k;
   int32_t rs, cs, d, n, N, label;
   uint8_t *G;
-  uint32_t *LABEL;
+  int32_t *LABEL;
   struct xvimage * image;
   struct xvimage * result;
   struct xvimage * result2;
@@ -85,7 +85,7 @@ int main(int32_t argc, char **argv)
   
   result2 = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
   
-  LABEL = ULONGDATA(result);
+  LABEL = SLONGDATA(result);
   G = UCHARDATA(result2);
   memset(G,0,N);
   for(i = 0; i < N; i++){

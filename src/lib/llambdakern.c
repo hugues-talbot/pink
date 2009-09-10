@@ -74,7 +74,7 @@ int32_t llambdakern(
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *G;            /* l'image de contrainte */
   struct xvimage *lab;
-  uint32_t *M;            /* l'image d'etiquettes de composantes connexes */
+  int32_t *M;            /* l'image d'etiquettes de composantes connexes */
   int32_t nminima;                 /* nombre de minima differents */
   Fahp * FAHP;
 
@@ -109,7 +109,7 @@ int32_t llambdakern(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  M = ULONGDATA(lab);
+  M = SLONGDATA(lab);
 
   if (!llabelextrema(image, connex, LABMIN, lab, &nminima))
   {   
@@ -218,7 +218,7 @@ int32_t llambdathin(
 #define F_NAME "llambdathin"
 { 
   int32_t x;                       /* index muet de pixel */
-  uint32_t y;              /* index muet (generalement un voisin de x) */
+  int32_t y;              /* index muet (generalement un voisin de x) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -534,7 +534,7 @@ int32_t llambdathick(
 #define F_NAME "llambdathick"
 { 
   int32_t x;                       /* index muet de pixel */
-  uint32_t y;              /* index muet (generalement un voisin de x) */
+  int32_t y;              /* index muet (generalement un voisin de x) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -797,7 +797,7 @@ int32_t lgrayskel(
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *G;            /* l'image de contrainte */
   struct xvimage *lab;
-  uint32_t *M;            /* l'image d'etiquettes de composantes connexes */
+  int32_t *M;            /* l'image d'etiquettes de composantes connexes */
   int32_t nminima;                 /* nombre de minima differents */
   Fahp * FAHP;
 
@@ -831,7 +831,7 @@ int32_t lgrayskel(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  M = ULONGDATA(lab);
+  M = SLONGDATA(lab);
 
   if (!llabelextrema(image, connex, LABMIN, lab, &nminima))
   {   

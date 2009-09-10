@@ -183,7 +183,7 @@ int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct
   double e_2a;    /* stocke exp(-2alpha) */
   double a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4;
   double p,q,t;
-  uint32_t *  dir = ULONGDATA(result);
+  int32_t *  dir = SLONGDATA(result);
 
 
   if ((depth(imageR) != 1) || (depth(imageB) != 1) || (depth(imageB) != 1))
@@ -278,7 +278,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
 	t = ImRx[i]*ImRy[i] + ImVx[i]*ImVy[i] + ImBx[i]*ImBy[i];
 	
 	if (p!=q) {
-	  dir[i] = (uint32_t) (180.0/3.1415927*(.5*atan2(2.0*t, (p-q)))+180.);
+	  dir[i] = (int32_t) (180.0/3.1415927*(.5*atan2(2.0*t, (p-q)))+180.);
 	  //printf("%d\n", dir[i]);
 	}
 	else dir[i] = 361;

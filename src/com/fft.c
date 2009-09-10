@@ -173,7 +173,7 @@ int main(int argc, char **argv)
   }
   else if (datatype(image1) == VFF_TYP_4_BYTE)
   {
-    uint32_t *B = ULONGDATA(image1);
+    int32_t *B = SLONGDATA(image1);
     struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
     float *L;
     if (imagefloat == NULL)
@@ -239,7 +239,7 @@ int main(int argc, char **argv)
   }
   else if (datatype(image2) == VFF_TYP_4_BYTE)
   {
-    uint32_t *B = ULONGDATA(image2);
+    int32_t *B = SLONGDATA(image2);
     struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
     float *L;
     if (imagefloat == NULL)

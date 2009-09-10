@@ -737,22 +737,22 @@ int32_t t8pp(        /* nombre topologique pp pour minima 4-connexes */
 
 /* ==================================== */
 int32_t t8pp_l(        /* nombre topologique pp pour minima 4-connexes (images type int32_t) */
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N)                       /* taille image */
 /* ==================================== */
 {
-	register uint32_t val = *(img+p);
-	register uint32_t * ptr = img+p;
-	register uint32_t v0;
-	register uint32_t v1;
-	register uint32_t v2;
-	register uint32_t v3;
-	register uint32_t v4;
-	register uint32_t v5;
-	register uint32_t v6;
-	register uint32_t v7;
+	register int32_t val = *(img+p);
+	register int32_t * ptr = img+p;
+	register int32_t v0;
+	register int32_t v1;
+	register int32_t v2;
+	register int32_t v3;
+	register int32_t v4;
+	register int32_t v5;
+	register int32_t v6;
+	register int32_t v7;
 	register int32_t t;
 
         if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
@@ -1036,22 +1036,22 @@ int32_t t4pp(        /* nombre topologique pp pour minima 8-connexes */
 
 /* ==================================== */
 int32_t t4pp_l(        /* nombre topologique pp pour minima 8-connexes (images type int32_t) */
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N)                       /* taille image */
 /* ==================================== */
 {
-	register uint32_t val = *(img+p);
-	register uint32_t * ptr = img+p;
-	register uint32_t v0;
-	register uint32_t v1;
-	register uint32_t v2;
-	register uint32_t v3;
-	register uint32_t v4;
-	register uint32_t v5;
-	register uint32_t v6;
-	register uint32_t v7;
+	register int32_t val = *(img+p);
+	register int32_t * ptr = img+p;
+	register int32_t v0;
+	register int32_t v1;
+	register int32_t v2;
+	register int32_t v3;
+	register int32_t v4;
+	register int32_t v5;
+	register int32_t v6;
+	register int32_t v7;
 	register int32_t t;
 
         if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
@@ -1213,9 +1213,9 @@ void nbtopoh2(        /* minima 8-connexes - version avec hauteur de la coupe va
 
 /* ==================================== */
 void nbtopoh_l(    /* minima 4-connexes - version avec hauteur de la coupe variable */
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
-  uint32_t h,             /* hauteur de la coupe */
+  int32_t h,             /* hauteur de la coupe */
   int32_t rs,                      /* taille rangee */
   int32_t N,                       /* taille image */
   int32_t *t4mm,
@@ -1224,16 +1224,16 @@ void nbtopoh_l(    /* minima 4-connexes - version avec hauteur de la coupe varia
   int32_t *t8pp)                   /* resultats */
 /* ==================================== */
 {
-	register uint32_t val = h;
-	register uint32_t * ptr = img+p;
-	register uint32_t v0;
-	register uint32_t v1;
-	register uint32_t v2;
-	register uint32_t v3;
-	register uint32_t v4;
-	register uint32_t v5;
-	register uint32_t v6;
-	register uint32_t v7;
+	register int32_t val = h;
+	register int32_t * ptr = img+p;
+	register int32_t v0;
+	register int32_t v1;
+	register int32_t v2;
+	register int32_t v3;
+	register int32_t v4;
+	register int32_t v5;
+	register int32_t v6;
+	register int32_t v7;
 	register int32_t t;
 
         if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
@@ -1278,9 +1278,9 @@ void nbtopoh_l(    /* minima 4-connexes - version avec hauteur de la coupe varia
 
 /* ==================================== */
 void nbtopoh2_l(        /* minima 8-connexes - version avec hauteur de la coupe variable */
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
-  uint32_t h,             /* hauteur de la coupe */
+  int32_t h,             /* hauteur de la coupe */
   int32_t rs,                      /* taille rangee */
   int32_t N,                       /* taille image */
   int32_t *t8mm,
@@ -1289,16 +1289,16 @@ void nbtopoh2_l(        /* minima 8-connexes - version avec hauteur de la coupe 
   int32_t *t4pp)                   /* resultats */
 /* ==================================== */
 {
-	register uint32_t val = h;
-	register uint32_t * ptr = img+p;
-	register uint32_t v0;
-	register uint32_t v1;
-	register uint32_t v2;
-	register uint32_t v3;
-	register uint32_t v4;
-	register uint32_t v5;
-	register uint32_t v6;
-	register uint32_t v7;
+	register int32_t val = h;
+	register int32_t * ptr = img+p;
+	register int32_t v0;
+	register int32_t v1;
+	register int32_t v2;
+	register int32_t v3;
+	register int32_t v4;
+	register int32_t v5;
+	register int32_t v6;
+	register int32_t v7;
 	register int32_t t;
 
         if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
@@ -1806,8 +1806,8 @@ uint8_t halpha4p(
 } /* halpha4p() */
 
 /* ==================================== */
-uint32_t alpha8m_l(
-  uint32_t *img,          /* pointeur base image */
+int32_t alpha8m_l(
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N)                       /* taille image */
@@ -1815,9 +1815,9 @@ uint32_t alpha8m_l(
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
 {
-	register uint32_t val = *(img+p);
-	register uint32_t * ptr = img+p;
-	register uint32_t v;
+	register int32_t val = *(img+p);
+	register int32_t * ptr = img+p;
+	register int32_t v;
 	register int32_t alpha = - 1;
 
         v = (p%rs!=rs-1)             ? *(ptr+1)    : val;
@@ -1839,12 +1839,12 @@ uint32_t alpha8m_l(
         if (alpha == - 1) 
           return val;
         else
-          return (uint32_t)alpha;
+          return (int32_t)alpha;
 } /* alpha8m_l() */
 
 /* ==================================== */
-uint32_t alpha4m_l(
-  uint32_t *img,          /* pointeur base image */
+int32_t alpha4m_l(
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N)                       /* taille image */
@@ -1852,9 +1852,9 @@ uint32_t alpha4m_l(
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
 {
-	register uint32_t val = *(img+p);
-	register uint32_t * ptr = img+p;
-	register uint32_t v;
+	register int32_t val = *(img+p);
+	register int32_t * ptr = img+p;
+	register int32_t v;
 	register int32_t alpha = - 1;
 
         v = (p%rs!=rs-1)             ? *(ptr+1)    : val;
@@ -1869,12 +1869,12 @@ uint32_t alpha4m_l(
         if (alpha == - 1) 
           return val;
         else
-          return (uint32_t)alpha;
+          return (int32_t)alpha;
 } /* alpha4m_l() */
 
 /* ==================================== */
-uint32_t alpha8p_l(
-  uint32_t *img,          /* pointeur base image */
+int32_t alpha8p_l(
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N)                       /* taille image */
@@ -1882,9 +1882,9 @@ uint32_t alpha8p_l(
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
 {
-	register uint32_t val = *(img+p);
-	register uint32_t * ptr = img+p;
-	register uint32_t v;
+	register int32_t val = *(img+p);
+	register int32_t * ptr = img+p;
+	register int32_t v;
 	register int32_t alpha = INT32_MAX;
 
         v = (p%rs!=rs-1)             ? *(ptr+1)    : val;
@@ -1906,12 +1906,12 @@ uint32_t alpha8p_l(
         if (alpha == INT32_MAX) 
           return val;
         else
-          return (uint32_t)alpha;
+          return (int32_t)alpha;
 } /* alpha8p_l() */
 
 /* ==================================== */
-uint32_t alpha4p_l(
-  uint32_t *img,          /* pointeur base image */
+int32_t alpha4p_l(
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N)                       /* taille image */
@@ -1919,9 +1919,9 @@ uint32_t alpha4p_l(
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
 {
-	register uint32_t val = *(img+p);
-	register uint32_t * ptr = img+p;
-	register uint32_t v;
+	register int32_t val = *(img+p);
+	register int32_t * ptr = img+p;
+	register int32_t v;
 	register int32_t alpha = INT32_MAX;
 
         v = (p%rs!=rs-1)             ? *(ptr+1)    : val;
@@ -1935,7 +1935,7 @@ uint32_t alpha4p_l(
         if (alpha == INT32_MAX) 
           return val;
         else
-          return (uint32_t)alpha;
+          return (int32_t)alpha;
 } /* alpha4p_l() */
 
 /* ==================================== */
@@ -2877,7 +2877,7 @@ void top4(                     /* pour un objet en 4-connexite */
 
 /* ==================================== */
 void top8_l(                   /* pour un objet en 8-connexite */
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N,                       /* taille image */
@@ -2885,7 +2885,7 @@ void top8_l(                   /* pour un objet en 8-connexite */
   int32_t *tb)                     /* resultats */
 /* ==================================== */
 {
-	register uint32_t * ptr = img+p;
+	register int32_t * ptr = img+p;
 	register int32_t v;
 
         if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
@@ -2909,7 +2909,7 @@ void top8_l(                   /* pour un objet en 8-connexite */
 
 /* ==================================== */
 void top4_l(                   /* pour un objet en 4-connexite */
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N,                       /* taille image */
@@ -2917,7 +2917,7 @@ void top4_l(                   /* pour un objet en 4-connexite */
   int32_t *tb)                     /* resultats */
 /* ==================================== */
 {
-	register uint32_t * ptr = img+p;
+	register int32_t * ptr = img+p;
 	register int32_t v;
 
         if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
@@ -3124,15 +3124,15 @@ int32_t nbvoisc4(
 
 /* ==================================== */
 int32_t nbvois8neq(
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N)                       /* taille image */
 /* retourne le nombre de 8-voisins de niveau different de celui du point p */
 /* ==================================== */
 {
-	register uint32_t * ptr = img+p;
-        register uint32_t pval = *ptr;
+	register int32_t * ptr = img+p;
+        register int32_t pval = *ptr;
 	register int32_t n = 0;
 
         if (!((p%rs!=rs-1) && (*(ptr+1) == pval))) n++;
@@ -3148,15 +3148,15 @@ int32_t nbvois8neq(
 
 /* ==================================== */
 int32_t nbvois4neq(
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t N)                       /* taille image */
 /* retourne le nombre de 4-voisins de niveau different de celui du point p */
 /* ==================================== */
 {
-	register uint32_t * ptr = img+p;
-        register uint32_t pval = *ptr;
+	register int32_t * ptr = img+p;
+        register int32_t pval = *ptr;
 	register int32_t n = 0;
 
         if (!((p%rs!=rs-1) && (*(ptr+1) == pval))) n++;

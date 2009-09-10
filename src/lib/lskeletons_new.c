@@ -145,7 +145,7 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
     fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
@@ -274,7 +274,7 @@ int32_t lskelubp2(struct xvimage *image,
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
     fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
@@ -427,7 +427,7 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
     fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
@@ -560,7 +560,7 @@ int32_t lskelubp3d2(struct xvimage *image,
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
     fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
@@ -706,7 +706,7 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
     fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
@@ -989,7 +989,7 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
     fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
@@ -1247,7 +1247,7 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
     fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
@@ -1508,7 +1508,7 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
     fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
@@ -1683,7 +1683,7 @@ resultat: F
     return(0);
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(imageprio); 
+    P = SLONGDATA(imageprio); 
   else 
   {
     fprintf(stderr, "%s() : datatype(imageprio) must be uint32_t\n", F_NAME);
@@ -1856,7 +1856,7 @@ int32_t lskeleucl(struct xvimage *image,
     fprintf(stderr, "%s(): allocimage failed\n", F_NAME);
     return 0;
   }
-  P = ULONGDATA(imageprio); 
+  P = SLONGDATA(imageprio); 
 
   if (!ldistquadSaito(image, imageprio))
   {   

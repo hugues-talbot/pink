@@ -20,19 +20,19 @@ extern "C" {
 
 struct xvimage {
   char *name;
-  uint32_t row_size;                    /* Size of a row (number of columns) */
-  uint32_t col_size;                    /* Size of a column (number of rows) */
-  uint32_t depth_size;                  /* Number of planes (for 3d images) */
-  uint32_t time_size;                   /* Number of (2d or 3d) images */
-  uint32_t num_data_bands;	        /* Number of bands per data pixel,
+  int32_t row_size;                    /* Size of a row (number of columns) */
+  int32_t col_size;                    /* Size of a column (number of rows) */
+  int32_t depth_size;                  /* Number of planes (for 3d images) */
+  int32_t time_size;                   /* Number of (2d or 3d) images */
+  int32_t num_data_bands;	        /* Number of bands per data pixel,
 					   or number of bands per image, or
 					   dimension of vector data, or
 					   number of elements in a vector */
-  uint32_t data_storage_type;           /* storage type for disk data */
+  int32_t data_storage_type;           /* storage type for disk data */
   double xdim, ydim, zdim;              /* voxel dimensions in real world */
-  uint32_t xmin, xmax;                  /* region of interest: x coordinates */
-  uint32_t ymin, ymax;                  /* region of interest: y coordinates */
-  uint32_t zmin, zmax;                  /* region of interest: z coordinates */
+  int32_t xmin, xmax;                  /* region of interest: x coordinates */
+  int32_t ymin, ymax;                  /* region of interest: y coordinates */
+  int32_t zmin, zmax;                  /* region of interest: z coordinates */
   void * image_data;                    /* pointer on raw data */
 };
 

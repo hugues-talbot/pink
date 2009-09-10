@@ -69,7 +69,7 @@ int main(int argc, char **argv)
   struct xvimage * inhibimage;
   int32_t connex, dist, i, N;
   uint8_t *F;
-  uint32_t *P;
+  int32_t *P;
   uint8_t *I;
   double radius;
 
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
   }
   N = rowsize(image) * colsize(image) * depth(image);
   F = UCHARDATA(image);
-  P = ULONGDATA(prio);
+  P = SLONGDATA(prio);
   I = UCHARDATA(inhibimage);
   for (i = 0; i < N; i++) // inverse l'image
     if (F[i]) F[i] = 0; else F[i] = NDG_MAX;

@@ -85,7 +85,7 @@ int main(argc, argv)
 #endif
   int32_t rs;               /* taille ligne */
   int32_t cs;               /* taille colonne */
-  uint32_t *FlowMapping; 
+  int32_t *FlowMapping; 
   double max = 0;
   double *G;
   if (argc != 5 )
@@ -175,7 +175,7 @@ int main(argc, argv)
     exit(0);
   }
 
-  FlowMapping = ULONGDATA(watershed);
+  FlowMapping = SLONGDATA(watershed);
   flowMappingDouble(ga, FlowMapping); 
   printf("Je suis dans le bon type\n");
   fflush(stdout);

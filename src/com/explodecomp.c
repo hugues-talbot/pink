@@ -52,7 +52,7 @@ int main(int argc, char **argv)
   int32_t rs, cs, ds, ps, N;
   uint8_t *I;
   uint8_t *O;
-  uint32_t *L;
+  int32_t *L;
   int32_t function;
 
   if (argc != 5)
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
-  L = ULONGDATA(labels);
+  L = SLONGDATA(labels);
   
   if (function != LABPLA)
   {

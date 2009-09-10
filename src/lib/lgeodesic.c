@@ -1080,7 +1080,7 @@ int32_t lamont(
   int32_t ds = depth(f);           /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  uint32_t *F = ULONGDATA(f);
+  int32_t *F = SLONGDATA(f);
   uint8_t *M = UCHARDATA(m);
   Fifo * FIFO;
   int32_t incr_vois;

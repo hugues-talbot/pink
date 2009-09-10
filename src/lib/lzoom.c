@@ -165,8 +165,8 @@ int32_t lzoomoutlong(
 #define F_NAME "lzoomoutlong"
 {
   int32_t x, y, z, x1, y1, z1, xn, yn, zn, xx, yy, zz;
-  uint32_t *ptin;
-  uint32_t *ptout;
+  int32_t *ptin;
+  int32_t *ptout;
   int32_t rs, cs, ds, ps;
   int32_t rs2, cs2, ds2, ps2;
   double kx, ky, kz, tmp, d, dx1, dxn, dy1, dyn, dz1, dzn, sigmad;
@@ -175,7 +175,7 @@ int32_t lzoomoutlong(
   cs = in->col_size;
   ds = depth(in);
   ps = rs * cs;
-  ptin = ULONGDATA(in);
+  ptin = SLONGDATA(in);
 
   if ((zoomx <= 0.0) || (zoomx > 1.0) || 
       (zoomy <= 0.0) || (zoomy > 1.0) ||
@@ -209,7 +209,7 @@ int32_t lzoomoutlong(
     fprintf(stderr,"%s : allocimage failed\n", F_NAME);
     return 0;
   }
-  ptout = ULONGDATA(*out);
+  ptout = SLONGDATA(*out);
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -531,8 +531,8 @@ int32_t lzoominlong(
 {
   int32_t x2, y2, z2, xs, ys, zs, xi, yi, zi;
   double x, y, z;
-  uint32_t *ptin;
-  uint32_t *ptout;
+  int32_t *ptin;
+  int32_t *ptout;
   int32_t rs, cs, ds, ps;
   int32_t rs2, cs2, ds2, ps2, N2;
 
@@ -540,7 +540,7 @@ int32_t lzoominlong(
   cs = in->col_size;
   ds = depth(in);
   ps = rs * cs;
-  ptin = ULONGDATA(in);
+  ptin = SLONGDATA(in);
 
   if ((zoomx < 1.0) || (zoomy < 1.0) || (zoomz < 1.0))
   {   
@@ -569,7 +569,7 @@ int32_t lzoominlong(
   {   fprintf(stderr,"%s : allocimage failed\n", F_NAME);
       return 0;
   }
-  ptout = ULONGDATA(*out);
+  ptout = SLONGDATA(*out);
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */

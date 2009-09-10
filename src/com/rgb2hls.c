@@ -59,7 +59,7 @@ int main(int argc, char **argv)
   struct xvimage * L;
   struct xvimage * S;
   uint8_t *r, *g, *b;
-  uint32_t *h;
+  int32_t *h;
   uint8_t *l, *s;
   int32_t rs, cs, N;
   int32_t x;
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
   r = UCHARDATA(R);
   g = UCHARDATA(G);
   b = UCHARDATA(B);
-  h = ULONGDATA(H);
+  h = SLONGDATA(H);
   l = UCHARDATA(L);
   s = UCHARDATA(S);
 

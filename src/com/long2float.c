@@ -31,7 +31,7 @@ int main(int argc, char **argv)
   struct xvimage * imagefloat;
   struct xvimage * imagelong;
   float *L;
-  uint32_t *B;
+  int32_t *B;
   int32_t x;
 
   int32_t rs, cs, d, N;
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
   if (datatype(imagelong) != VFF_TYP_4_BYTE)
   {
-    fprintf(stderr, "%s: image type must be uint32_t\n", argv[0]);
+    fprintf(stderr, "%s: image type must be int32_t\n", argv[0]);
     exit(1);
   }
 
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
   cs = colsize(imagelong);
   d = depth(imagelong);
   N = rs * cs * d;
-  B = ULONGDATA(imagelong);
+  B = SLONGDATA(imagelong);
   
   imagefloat = allocimage(NULL, rs, cs, d, VFF_TYP_FLOAT);
   if (imagefloat == NULL)

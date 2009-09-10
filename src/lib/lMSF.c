@@ -38,7 +38,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
   int32_t cs = colsize(ga);                     /* taille colonne */
   int32_t N = rs * cs;                          /* taille image */
   uint8_t *F = UCHARDATA(ga);         /* valuation des aretes de depart */
-  uint32_t *G = ULONGDATA(marqueurs); /* labels des sommets du graph */
+  int32_t *G = SLONGDATA(marqueurs); /* labels des sommets du graph */
   int32_t N_t=2*N;                              /* index maximum d'un arete de ga */
   Rbt *L;                            /* ensembles des aretes adjacentes à exactement un label */
 
@@ -130,7 +130,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
   int32_t ds = depth(ga);                       /* taille plan */
   int32_t N = ds * ps;                          /* taille image */
   uint8_t *F = UCHARDATA(ga);         /* valuation des aretes de depart */
-  uint32_t *G =  ULONGDATA(marqueurs); /* labels des sommets du graph */
+  int32_t *G =  SLONGDATA(marqueurs); /* labels des sommets du graph */
   int32_t N_t=3*N;                              /* index maximum d'une arete de ga */
   Rbt *L;                                   /* ensembles des aretes adjacentes à exactement un label */
 

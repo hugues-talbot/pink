@@ -223,8 +223,8 @@ extern uint8_t alpha26m(
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N);                       /* taille image */
-extern uint32_t alpha26m_l(
-  uint32_t *img,          /* pointeur base image */
+extern int32_t alpha26m_l(
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -330,23 +330,23 @@ extern int32_t t26mm(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N)
 extern int32_t t26m(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t t26pp(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t t26p(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
-extern int32_t t26pp_l(uint32_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
-extern int32_t t6pp_l(uint32_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
+extern int32_t t26pp_l(int32_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
+extern int32_t t6pp_l(int32_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t bordext6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N);
 extern int32_t bordext26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N);
 extern void nbtopoh3d26_l( /* pour les minima en 26-connexite */ 
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
-  uint32_t h,
+  int32_t h,
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N,                       /* taille image */
   int32_t *t6p,
   int32_t *t26mm);
 extern void nbtopoh3d6_l( /* pour les minima en 26-connexite */ 
-  uint32_t *img,          /* pointeur base image */
+  int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
-  uint32_t h,
+  int32_t h,
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N,                       /* taille image */

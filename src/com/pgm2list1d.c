@@ -82,7 +82,7 @@ int main(int argc, char **argv)
   }
   else
   {
-    G = ULONGDATA(image);
+    G = SLONGDATA(image);
     for (x = 0; x < rs; x++)
       fprintf(fd, "%d %d\n", x, G[x]); 
   }

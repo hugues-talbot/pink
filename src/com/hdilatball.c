@@ -69,7 +69,7 @@ int main(int argc, char **argv)
   struct xvimage * inhibimage;
   int32_t connex, dist, i, N;
   uint8_t *F;
-  uint32_t *P;
+  int32_t *P;
   uint8_t *I;
   double radius;
 
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
   }
   N = rowsize(image) * colsize(image) * depth(image);
   F = UCHARDATA(image);
-  P = ULONGDATA(prio);
+  P = SLONGDATA(prio);
   I = UCHARDATA(inhibimage);
   
   if (dist == 0)

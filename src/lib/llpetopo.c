@@ -190,7 +190,7 @@ int32_t llpetopo(
   uint8_t *SOURCE = UCHARDATA(image);      /* l'image de depart */
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   struct xvimage *lab;
-  uint32_t *M;            /* l'image d'etiquettes de composantes connexes */
+  int32_t *M;            /* l'image d'etiquettes de composantes connexes */
   int32_t *T;                      /* table de correspondance pour regularisation */
   int32_t *I;                      /* pour l'inversion du CBT */
   int32_t nminima;                 /* nombre de minima differents */
@@ -229,7 +229,7 @@ int32_t llpetopo(
     fprintf(stderr, "llpetopo: allocimage failed\n");
     return 0;
   }
-  M = ULONGDATA(lab);
+  M = SLONGDATA(lab);
 
   if (!llabelextrema(image, 4, LABMIN, lab, &nminima))
   {   

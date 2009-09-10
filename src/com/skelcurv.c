@@ -129,7 +129,7 @@ int main(int argc, char **argv)
       int32_t ds = depth(prio2);
       int32_t N = rs * cs * ds;
       uint8_t *B = UCHARDATA(prio2);
-      uint32_t *L;
+      int32_t *L;
       int32_t x;
       prio = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
       if (prio == NULL)
@@ -137,8 +137,8 @@ int main(int argc, char **argv)
         fprintf(stderr, "%s: allocimage failed\n", argv[0]);
         exit(1);
       }
-      L = ULONGDATA(prio);
-      for (x = 0; x < N; x++) L[x] = (uint32_t)B[x];
+      L = SLONGDATA(prio);
+      for (x = 0; x < N; x++) L[x] = (int32_t)B[x];
       freeimage(prio2);
     }
     else if (datatype(prio2) == VFF_TYP_4_BYTE)

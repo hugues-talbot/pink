@@ -46,7 +46,7 @@ int main(int argc, char **argv)
   int32_t i;
   uint8_t *M;
   uint8_t *SOURCEc;      /* l'image de depart */
-  uint32_t *SOURCEi;      /* l'image de depart */
+  int32_t *SOURCEi;      /* l'image de depart */
   float *SOURCEf;      /* l'image de depart */
   int32_t pixel;
 
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
   switch (datatype(image)) {
   case VFF_TYP_1_BYTE:   SOURCEc = UCHARDATA(image); break;
-  case VFF_TYP_4_BYTE:   SOURCEi = ULONGDATA(image); break;
+  case VFF_TYP_4_BYTE:   SOURCEi = SLONGDATA(image); break;
   case VFF_TYP_FLOAT:    SOURCEf = FLOATDATA(image); break;
   default:
     fprintf(stderr, "%s: cette version ne traite que les images BYTE, LONG et FLOAT\n", F_NAME);

@@ -160,9 +160,9 @@ int32_t lsaliency(
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *MA;                             /* l'image de masque */
-  uint32_t *S;
+  int32_t *S;
   uint32_t *it;
-  uint32_t * L;
+  int32_t * L;
   int32_t nbmin; /* Nb of minima */
   int32_t incr_vois;
   register int32_t i, j, k, x, y;
@@ -208,7 +208,7 @@ int32_t lsaliency(
     exit(1);
   }
   */
-  /* min = ULONGDATA(minima); */
+  /* min = SLONGDATA(minima); */
   label = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
   if (label == NULL)
   {   
@@ -224,7 +224,7 @@ int32_t lsaliency(
   printf("found %d minima\n", nbmin);
   */
 
-  L = ULONGDATA(label);
+  L = SLONGDATA(label);
   // sort in pixels by increasing grey level
   for (h = 0; h <= WSHED_HMAX; h++) 
     hi[h] = 0;
@@ -395,7 +395,7 @@ int32_t lsaliency(
   {
     int32_t xx, yy, max;
   //printf("scs = %d, srs = %d\n", scs, srs);
-  S = ULONGDATA(saliency);
+  S = SLONGDATA(saliency);
   // mettre les barres horizontales et verticales à la saillence
   for (i = 0; i < cs; i++) {
     for (j = 0; j < rs; j++) {
@@ -432,7 +432,7 @@ int32_t lsaliency(
     
   /*
   M = UCHARDATA(minima);
-  T = ULONGDATA(tmp);
+  T = SLONGDATA(tmp);
   for (i = 0; i < N; i++) 
     if (T[i]) M[i] = 1;
   freeimage(tmp);
@@ -469,8 +469,8 @@ int32_t lsaliency(
 
   if (masque) MA = UCHARDATA(masque);
 
-  L = ULONGDATA(label);
-  T = ULONGDATA(tmp);
+  L = SLONGDATA(label);
+  T = SLONGDATA(tmp);
   for (x = 0; x < N; x++)   {
     // Get the altitude of the minimum
     if (M[x] != 0) basins[L[x]].altitude = F[x];
@@ -572,7 +572,7 @@ int32_t lsaliency(
   {
     int32_t xx, yy, max;
   //printf("scs = %d, srs = %d\n", scs, srs);
-  S = ULONGDATA(saliency);
+  S = SLONGDATA(saliency);
   // mettre les barres horizontales et verticales à la saillence
   for (i = 0; i < cs; i++) {
     for (j = 0; j < rs; j++) {
@@ -634,9 +634,9 @@ int32_t lsaliency6b(
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *MA;                        /* l'image de masque */
-  uint32_t *S;
+  int32_t *S;
   uint32_t *it;
-  uint32_t * L;
+  int32_t * L;
   int32_t nbmin; /* Nb of minima */
   int32_t incr_vois;
   register int32_t k, x, y;
@@ -667,7 +667,7 @@ int32_t lsaliency6b(
     exit(1);
   }
 
-  L = ULONGDATA(label);
+  L = SLONGDATA(label);
   // sort in pixels by increasing grey level
   for (h = 0; h <= WSHED_HMAX; h++) 
     hi[h] = 0;
@@ -836,7 +836,7 @@ int32_t lsaliency6b(
   writeimage(label, "label.pgm");
   printf("%d minima found\n", nbmin);
 #endif
-  S = ULONGDATA(saliency);
+  S = SLONGDATA(saliency);
   for (x=0; x<N; x++) {
     if (L[x] == WSHED) {
       int32_t c1, c2;

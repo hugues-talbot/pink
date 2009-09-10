@@ -37,17 +37,17 @@ extern void nbtopoh(uint8_t *img, int32_t p, uint8_t h, int32_t rs, int32_t N,
                     int32_t *t4mm, int32_t *t4m, int32_t *t8p, int32_t *t8pp);
 extern void nbtopoh2(uint8_t *img, int32_t p, uint8_t h, int32_t rs, int32_t N,
                     int32_t *t8mm, int32_t *t8m, int32_t *t4p, int32_t *t4pp);
-extern void nbtopoh_l(uint32_t *img, int32_t p, uint32_t h, int32_t rs, int32_t N,
+extern void nbtopoh_l(int32_t *img, int32_t p, int32_t h, int32_t rs, int32_t N,
                     int32_t *t4mm, int32_t *t4m, int32_t *t8p, int32_t *t8pp);
-extern void nbtopoh2_l(uint32_t *img, int32_t p, uint32_t h, int32_t rs, int32_t N,
+extern void nbtopoh2_l(int32_t *img, int32_t p, int32_t h, int32_t rs, int32_t N,
                     int32_t *t8mm, int32_t *t8m, int32_t *t4p, int32_t *t4pp);
 extern int32_t t8pp(uint8_t *img, int32_t p, int32_t rs, int32_t N);
-extern int32_t t8pp_l(uint32_t *img, int32_t p, int32_t rs, int32_t N);
+extern int32_t t8pp_l(int32_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t t8p(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t t4m(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t t4mm(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t t4pp(uint8_t *img, int32_t p, int32_t rs, int32_t N);
-extern int32_t t4pp_l(uint32_t *img, int32_t p, int32_t rs, int32_t N);
+extern int32_t t4pp_l(int32_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t t4p(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t t8m(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t t8mm(uint8_t *img, int32_t p, int32_t rs, int32_t N);
@@ -63,10 +63,10 @@ extern uint8_t halpha8m(uint8_t *img, int32_t p, uint8_t h, int32_t rs, int32_t 
 extern uint8_t halpha4m(uint8_t *img, int32_t p, uint8_t h, int32_t rs, int32_t N);
 extern uint8_t halpha8p(uint8_t *img, int32_t p, uint8_t h, int32_t rs, int32_t N);
 extern uint8_t halpha4p(uint8_t *img, int32_t p, uint8_t h, int32_t rs, int32_t N);
-extern uint32_t alpha8m_l(uint32_t *img, int32_t p, int32_t rs, int32_t N);
-extern uint32_t alpha4m_l(uint32_t *img, int32_t p, int32_t rs, int32_t N);
-extern uint32_t alpha8p_l(uint32_t *img, int32_t p, int32_t rs, int32_t N);
-extern uint32_t alpha4p_l(uint32_t *img, int32_t p, int32_t rs, int32_t N);
+extern int32_t alpha8m_l(int32_t *img, int32_t p, int32_t rs, int32_t N);
+extern int32_t alpha4m_l(int32_t *img, int32_t p, int32_t rs, int32_t N);
+extern int32_t alpha8p_l(int32_t *img, int32_t p, int32_t rs, int32_t N);
+extern int32_t alpha4p_l(int32_t *img, int32_t p, int32_t rs, int32_t N);
 extern uint8_t beta8m(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern uint8_t beta4m(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern uint8_t beta8p(uint8_t *img, int32_t p, int32_t rs, int32_t N);
@@ -108,8 +108,8 @@ extern int32_t nbvois8(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t nbvois4(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t nbvoisc8(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t nbvoisc4(uint8_t *img, int32_t p, int32_t rs, int32_t N);
-extern int32_t nbvois8neq(uint32_t *img, int32_t p, int32_t rs, int32_t N);
-extern int32_t nbvois4neq(uint32_t *img, int32_t p, int32_t rs, int32_t N);
+extern int32_t nbvois8neq(int32_t *img, int32_t p, int32_t rs, int32_t N);
+extern int32_t nbvois4neq(int32_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t nbvoisp8(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t nbvoisp4(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t nbvoism8(uint8_t *img, int32_t p, int32_t rs, int32_t N);
@@ -120,8 +120,8 @@ extern int32_t extremite8m(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t extremite4m(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern void top4(uint8_t *img, int32_t p, int32_t rs, int32_t N, int32_t *t, int32_t *tb);
 extern void top8(uint8_t *img, int32_t p, int32_t rs, int32_t N, int32_t *t, int32_t *tb);
-extern void top4_l(uint32_t *img, int32_t p, int32_t rs, int32_t N, int32_t *t, int32_t *tb);
-extern void top8_l(uint32_t *img, int32_t p, int32_t rs, int32_t N, int32_t *t, int32_t *tb);
+extern void top4_l(int32_t *img, int32_t p, int32_t rs, int32_t N, int32_t *t, int32_t *tb);
+extern void top8_l(int32_t *img, int32_t p, int32_t rs, int32_t N, int32_t *t, int32_t *tb);
 extern int32_t simple8(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern int32_t simple4(uint8_t *img, int32_t p, int32_t rs, int32_t N);
 extern uint8_t mask(uint8_t *img, int32_t p, int32_t rs, int32_t N);

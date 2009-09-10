@@ -181,7 +181,7 @@ int32_t lsegmentnumi(struct xvimage *image, struct xvimage *result)
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *SOURCE = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *M = ULONGDATA(result);
+  uint32_t *M = SLONGDATA(result);
   struct xvimage *temp;
   uint32_t *TEMP; 
   int32_t *MU;                     /* pour la mesure des regions */
@@ -272,7 +272,7 @@ int32_t lsegmentnumi(struct xvimage *image, struct xvimage *result)
     fprintf(stderr, "lsegmentnumi: allocimage failed\n");
     exit(0);
   }
-  TEMP = ULONGDATA(temp);
+  TEMP = SLONGDATA(temp);
 
   if (!llabelplateaux(image, 4, temp, &nminima))
   {   

@@ -98,7 +98,7 @@ int main(int argc, char **argv)
     }
     case VFF_TYP_4_BYTE:
     {
-      uint32_t *F = ULONGDATA(image);
+      int32_t *F = SLONGDATA(image);
       for (i = 0; i < N; i++)  
         F[i] = (uint8_t)(g->v_sommets[i]); 
       break;

@@ -95,7 +95,7 @@ int32_t lsegellipse(
     fprintf(stderr, "lsegellipse: allocimage failed\n");
     return 0;
   }
-  LABEL = ULONGDATA(labels);
+  LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, minimum, labels, &n))
   {

@@ -71,7 +71,7 @@ int main(int32_t argc, char **argv)
   int32_t ret, priocode;
   int32_t rs, cs, N;
   float priomax_f;
-  uint32_t priomax_l;
+  int32_t priomax_l;
 
   if ((argc != 4) && (argc != 5))
   {
@@ -107,7 +107,7 @@ int main(int32_t argc, char **argv)
     if (datatype(prio2) == VFF_TYP_1_BYTE)
     {
       uint8_t *B = UCHARDATA(prio2);
-      uint32_t *L;
+      int32_t *L;
       int32_t x;
       prio = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
       if (prio == NULL)
@@ -115,8 +115,8 @@ int main(int32_t argc, char **argv)
         fprintf(stderr, "%s: allocimage failed\n", argv[0]);
         exit(1);
       }
-      L = ULONGDATA(prio);
-      for (x = 0; x < N; x++) L[x] = (uint32_t)B[x];
+      L = SLONGDATA(prio);
+      for (x = 0; x < N; x++) L[x] = (int32_t)B[x];
       freeimage(prio2);
     }
     else if (datatype(prio2) == VFF_TYP_4_BYTE)
@@ -209,13 +209,13 @@ int main(int32_t argc, char **argv)
   }
   else 
   {
-    priomax_l = UINT32_MAX; 
+    priomax_l = INT32_MAX; 
     priomax_f = FLOAT_MAX; 
   }
 
   if (datatype(prio) == VFF_TYP_4_BYTE)
   {
-    if ((argc == 5) && (inhibimage == NULL)) priomax_l = (uint32_t)floorf(priomax_f);
+    if ((argc == 5) && (inhibimage == NULL)) priomax_l = (int32_t)floorf(priomax_f);
     if (! l2dpardircollapse_l(k, prio, inhibimage, priomax_l))
     {
       fprintf(stderr, "%s: function l2dpardircollapse_l failed\n", argv[0]);

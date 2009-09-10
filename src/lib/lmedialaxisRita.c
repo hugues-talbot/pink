@@ -127,12 +127,12 @@ int32_t lmedax_talbot(struct xvimage *img,   /* donnee: image binaire */
   for (i = 0; i < N; i++) 
     F[i] = 255-F[i];
 
-  M = ULONGDATA(res);
+  M = SLONGDATA(res);
   for (i = 0; i < N; i++) 
     M[i] = norm(L[i]);
   writeimage(res, "_res");
 
-  M = ULONGDATA(res);
+  M = SLONGDATA(res);
   for (i = 0; i < N; i++) if (F[i])
   {
     printf("i=(%d,%d); L[i]=(%d,%d)\n", i%rs, i/rs, L[i].x, L[i].y);
@@ -189,7 +189,7 @@ int32_t lmedax_meyer(struct xvimage *img,   /* donnee: image binaire */
   int32_t cs = img->col_size;
   int32_t N= rs * cs;            /* taille de l'image */
   uint8_t *F = UCHARDATA(img);          /* pointeur sur l'image */
-  uint32_t *M = ULONGDATA(res);          /* donnees de l'image resultat */
+  uint32_t *M = SLONGDATA(res);          /* donnees de l'image resultat */
   uint32_t *D;          /* distance */
   uint32_t *H;          /* tampon */
   struct xvimage *inv;
@@ -272,7 +272,7 @@ int32_t lmedax_meyer3d(struct xvimage *img,   /* donnee: image binaire */
   int32_t ps = rs * cs;
   int32_t N = ps * ds;                            /* taille de l'image */
   uint8_t *F = UCHARDATA(img);          /* pointeur sur l'image */
-  uint32_t *M = ULONGDATA(res);          /* donnees de l'image resultat */
+  uint32_t *M = SLONGDATA(res);          /* donnees de l'image resultat */
   uint32_t *D;          /* distance */
   uint32_t *H;          /* tampon */
   struct xvimage *inv;
@@ -363,7 +363,7 @@ int32_t lmedax_mc(struct xvimage *f)
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return(0);
   }
-  D = ULONGDATA(dist);
+  D = SLONGDATA(dist);
 
   if (ds == 1)
   {
@@ -807,8 +807,8 @@ from the article: " Exact Medial Axis With Euclidean Distance"
     return 0;
   }    
 
-  imagedist = ULONGDATA(ImageDist);
-  imagemedial = ULONGDATA(ImageMedial);
+  imagedist = SLONGDATA(ImageDist);
+  imagemedial = SLONGDATA(ImageMedial);
   memset(imagemedial, 0, N*sizeof(int32_t));
 
   rmax= findMaxLong(imagedist, N);
@@ -1052,7 +1052,7 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return(NULL);
   }
-  D = ULONGDATA(medial);
+  D = SLONGDATA(medial);
 
     if ((mode == 0) && (ds == 1))
     {
@@ -1136,7 +1136,7 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
         fprintf(stderr, "%s: function lt4pp failed\n", F_NAME);
         return(NULL);
       }
-      T1 = ULONGDATA(dist);
+      T1 = SLONGDATA(dist);
       for (i = 0; i < N; i++) 
         if ((T1[i] == 0) && (F[i] == 0)) ; // F[i] = D[i]; 
         else D[i] = 0; 
@@ -1159,7 +1159,7 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
         fprintf(stderr, "%s: function lt8pp failed\n", F_NAME);
         return(NULL);
       }
-      T1 = ULONGDATA(dist);
+      T1 = SLONGDATA(dist);
       for (i = 0; i < N; i++) 
         if ((T1[i] == 0) && (F[i] == 0)) ; // F[i] = D[i]; 
         else D[i] = 0; 
@@ -1182,7 +1182,7 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
         fprintf(stderr, "%s: function lt6pp failed\n", F_NAME);
         return(NULL);
       }
-      T1 = ULONGDATA(dist);
+      T1 = SLONGDATA(dist);
       for (i = 0; i < N; i++) 
         if ((T1[i] == 0) && (F[i] == 0)) ; // F[i] = D[i]; 
         else D[i] = 0; 
@@ -1205,7 +1205,7 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
         fprintf(stderr, "%s: function lt26pp failed\n", F_NAME);
         return(NULL);
       }
-      T1 = ULONGDATA(dist);
+      T1 = SLONGDATA(dist);
       for (i = 0; i < N; i++) 
         if ((T1[i] == 0) && (F[i] == 0)) ; // F[i] = D[i]; 
         else D[i] = 0; 
@@ -1270,7 +1270,7 @@ int32_t lmedialaxisbin(struct xvimage *f, int32_t mode)
     fprintf(stderr, "%s: lmedialaxis failed\n", F_NAME);
     return(0);
   }
-  D = ULONGDATA(dist);
+  D = SLONGDATA(dist);
   for (i = 0; i < N; i++) if (D[i]) F[i] = NDG_MAX; else F[i] = NDG_MIN;
   return 1;
 } // lmedialaxisbin()
@@ -1769,7 +1769,7 @@ int32_t lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
   int32_t *TabIndDec;
   Coordinates *ListDecs;
   FILE *fd=NULL;
-  uint32_t *imagedist = ULONGDATA(id);
+  uint32_t *imagedist = SLONGDATA(id);
   uint8_t *imagemask = UCHARDATA(im);
   float *imageangle = FLOATDATA(ia);
   char tablefilename[512];
@@ -2086,7 +2086,7 @@ int32_t lbisector_Rita(struct xvimage *id, struct xvimage *im, struct xvimage *i
     fprintf(stderr, "%s: distance image must be int32_t\n", F_NAME);
     return 0;
   }    
-  imagedist = ULONGDATA(id);
+  imagedist = SLONGDATA(id);
   rs = rowsize(id);
   cs = colsize(id);
   N = rs * cs;
@@ -2459,7 +2459,7 @@ int32_t lprintdownstream(struct xvimage *id)
   int32_t *TabIndDec;
   Coordinates *ListDecs;
   FILE *fd=NULL;
-  uint32_t *imagedist = ULONGDATA(id);
+  uint32_t *imagedist = SLONGDATA(id);
   char tablefilename[512];
   int32_t distmax; 
   int32_t card_downstream, n;

@@ -82,7 +82,7 @@ int main(int argc, char **argv)
   struct xvimage * image;
   int32_t i;
   uint8_t *ImUC;
-  uint32_t *ImUL;
+  int32_t *ImUL;
   
   int32_t rs, cs, d, N;
   int32_t n;
@@ -122,10 +122,10 @@ int main(int argc, char **argv)
     }
     break;
   case VFF_TYP_4_BYTE:
-    ImUL = ULONGDATA(image);
+    ImUL = SLONGDATA(image);
     for (i = 0; i < N; i++) {
       tmp = bruite((double)(ImUL[i]), n, alpha, p);
-      ImUL[i] = (uint32_t)max(NDG_MIN,min(UINT_MAX,tmp));
+      ImUL[i] = (int32_t)max(INT32_MIN,min(INT32_MAX,tmp));
     }
     break;
   default:

@@ -338,7 +338,7 @@ int32_t l2dlabel(struct xvimage * f, struct xvimage * lab, int32_t *nlabels)
   int32_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *F;
-  uint32_t *LAB;
+  int32_t *LAB;
   Lifo * LIFO;
   int32_t tab[27]; 
   int32_t n, k;
@@ -359,7 +359,7 @@ int32_t l2dlabel(struct xvimage * f, struct xvimage * lab, int32_t *nlabels)
   cs = colsize(f);
   N = rs * cs;
   F = UCHARDATA(f);
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
   memset(LAB, 0, N*sizeof(int32_t));
 
   LIFO = CreeLifoVide(N);
@@ -428,7 +428,7 @@ int32_t l2dlabelextrema(
   int32_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *F;
-  uint32_t *LAB, label;
+  int32_t *LAB, label;
   Lifo * LIFO;
   int32_t tab[27]; 
   int32_t n, k;
@@ -449,7 +449,7 @@ int32_t l2dlabelextrema(
   cs = colsize(f);
   N = rs * cs;
   F = UCHARDATA(f);
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   LIFO = CreeLifoVide(N);
   if (LIFO == NULL)
@@ -541,7 +541,7 @@ int32_t l2dlabelextrema(
 } /* l2dlabelextrema() */
 
 /* =============================================================== */
-static int32_t simple(int32_t w, uint32_t *LAB, int32_t rs, int32_t cs)
+static int32_t simple(int32_t w, int32_t *LAB, int32_t rs, int32_t cs)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "simple"
@@ -599,7 +599,7 @@ int32_t l2dtopotess(struct xvimage * lab, struct xvimage * mask)
   int32_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *MASK;
-  uint32_t *LAB;
+  int32_t *LAB;
   Lifo * LIFO;
   Lifo * LIFOAUX;
   Lifo * LIFOVAL;
@@ -626,7 +626,7 @@ int32_t l2dtopotess(struct xvimage * lab, struct xvimage * mask)
   rs = rowsize(lab);
   cs = colsize(lab);
   N = rs * cs;
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   if (mask)
   {
@@ -792,7 +792,7 @@ else
 } /* l2dtopotess() */
 
 /* =============================================================== */
-int32_t testlocal(int32_t w, uint32_t *LAB, int32_t rs, int32_t cs)
+int32_t testlocal(int32_t w, int32_t *LAB, int32_t rs, int32_t cs)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "testlocal"
@@ -837,7 +837,7 @@ int32_t testlocal(int32_t w, uint32_t *LAB, int32_t rs, int32_t cs)
 } /* testlocal() */
 
 /* =============================================================== */
-int32_t testlocalmask(int32_t w, uint32_t *LAB, uint8_t *MASK, int32_t rs, int32_t cs)
+int32_t testlocalmask(int32_t w, int32_t *LAB, uint8_t *MASK, int32_t rs, int32_t cs)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "testlocalmask"
@@ -897,7 +897,7 @@ int32_t l2dvoronoi(struct xvimage * lab, struct xvimage * mask)
   int32_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *MASK;
-  uint32_t *LAB;
+  int32_t *LAB;
   Lifo * LIFO;
   Lifo * LIFOAUX;
   Lifo * LIFOVAL;
@@ -924,7 +924,7 @@ int32_t l2dvoronoi(struct xvimage * lab, struct xvimage * mask)
   rs = rowsize(lab);
   cs = colsize(lab);
   N = rs * cs;
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   if (mask)
   {
@@ -1107,7 +1107,7 @@ int32_t l2dtopotessndg(struct xvimage * f)
   uint8_t *F;
   uint8_t *Fk;
   uint8_t *Fkp;
-  uint32_t *LAB;
+  int32_t *LAB;
   int32_t kp;
   int32_t nlabels;
   int32_t histo[NDG_MAX+1];
@@ -1145,7 +1145,7 @@ int32_t l2dtopotessndg(struct xvimage * f)
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   /* calcule histo */  
   memset(histo, 0, (NDG_MAX+1) * sizeof(int32_t));
@@ -1220,7 +1220,7 @@ int32_t l2dtopotessndg_inverse(struct xvimage * f)
   uint8_t *F;
   uint8_t *Fk;
   uint8_t *Fkp;
-  uint32_t *LAB;
+  int32_t *LAB;
   int32_t k, kp;
   int32_t nlabels;
   int32_t histo[NDG_MAX+1];
@@ -1257,7 +1257,7 @@ int32_t l2dtopotessndg_inverse(struct xvimage * f)
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   /* calcule histo */  
   memset(histo, 0, (NDG_MAX+1) * sizeof(int32_t));
@@ -1339,8 +1339,8 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
   uint8_t *F;
   uint8_t *Fk;
   uint8_t *Fkp;
-  uint32_t *LAB;
-  uint32_t *MAXI;
+  int32_t *LAB;
+  int32_t *MAXI;
   int32_t kp;
   int32_t nlabels;
   int32_t histo[NDG_MAX+1];
@@ -1377,7 +1377,7 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   maxi = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
   if (maxi == NULL)
@@ -1385,7 +1385,7 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  MAXI = ULONGDATA(maxi);
+  MAXI = SLONGDATA(maxi);
 
   /* etiquette les maxima de f */
   if (! l2dlabelextrema(f, 0, maxi, &nlabels)) /* value of nlabels not used */
@@ -1463,8 +1463,8 @@ int32_t l2dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbtrous, int32_
   int32_t x, y, w;
   uint8_t *F;
   struct xvimage * lab;
-  uint32_t *LAB;
-  uint32_t nlabels;
+  int32_t *LAB;
+  int32_t nlabels;
   Lifo * LIFO;
   int32_t tab[9]; int32_t n, k;
 
@@ -1489,7 +1489,7 @@ int32_t l2dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbtrous, int32_
     return(0);
     
   }
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   LIFO = CreeLifoVide(N);
   if (LIFO == NULL)

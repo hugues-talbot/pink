@@ -3,7 +3,7 @@
 
 \brief labeling of some flat zones of a grayscale or a binary image
 
-<B>Usage:</B> label in.pgm connex <min|max|pla> out.pgm
+<B>Usage:</B> label in.pgm connex <fgd|bgd|min|max|pla> out.pgm
 
 <B>Description:</B>
 The argument \b connex selects the connectivity (4, 8 in 2D; 6, 18, 26 in 3D).
@@ -23,6 +23,20 @@ The output image \b out.pgm has the type "int32_t".
 
 \author Michel Couprie
 */
+
+/*
+%TEST label %IMAGES/2dbyte/binary/b2hebreu.pgm 8 fgd %RESULTS/label_b2hebreu_8_fgd.pgm
+%TEST label %IMAGES/2dbyte/binary/b2hebreu.pgm 4 fgd %RESULTS/label_b2hebreu_4_fgd.pgm
+%TEST label %IMAGES/2dbyte/binary/b2hebreu.pgm 8 bgd %RESULTS/label_b2hebreu_8_bgd.pgm
+%TEST label %IMAGES/2dbyte/binary/b2hebreu.pgm 4 bgd %RESULTS/label_b2hebreu_4_bgd.pgm
+%TEST label %IMAGES/2dbyte/gray/g2hebreu.pgm 4 min %RESULTS/label_g2hebreu_4_min.pgm
+%TEST label %IMAGES/2dbyte/gray/g2hebreu.pgm 4 max %RESULTS/label_g2hebreu_4_max.pgm
+%TEST label %IMAGES/2dbyte/gray/g2hebreu.pgm 4 pla %RESULTS/label_g2hebreu_4_pla.pgm
+%TEST label %IMAGES/3dbyte/gray/g3a.pgm 6 pla %RESULTS/label_g3a_6_pla.pgm
+%TEST label %IMAGES/3dbyte/gray/g3a.pgm 18 pla %RESULTS/label_g3a_18_pla.pgm
+%TEST label %IMAGES/3dbyte/gray/g3a.pgm 26 pla %RESULTS/label_g3a_26_pla.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

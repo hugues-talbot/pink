@@ -251,9 +251,9 @@ int main(int32_t argc, char **argv)
   else if (mode == 4)
   { // fonction d'ouverture inversée
     struct xvimage *of = lopeningfunction(k, 0);
-    uint32_t *OF, maxof;
+    int32_t *OF, maxof;
     assert(of != NULL);
-    OF = ULONGDATA(of);
+    OF = SLONGDATA(of);
     maxof = OF[0];
     for (i = 0; i < N; i++) if (OF[i] > maxof) maxof = OF[i];
     for (i = 0; i < N; i++) FUNC[i] = (float)(maxof - OF[i]) + 0.1;
@@ -269,7 +269,7 @@ int main(int32_t argc, char **argv)
   }
   else if (mode == 6)
   { // distance map
-    uint32_t *D = ULONGDATA(dist);
+    int32_t *D = SLONGDATA(dist);
     for (i = 0; i < N; i++) FUNC[i] = (float)sqrt(D[i]);
   }
   else

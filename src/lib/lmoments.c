@@ -148,8 +148,8 @@ int32_t lmoments(
   int32_t d = depth(img);
   int32_t N = rs * cs;          /* taille image */
   struct xvimage * labels;
-  uint32_t *LABEL;
-  uint32_t label;
+  int32_t *LABEL;
+  int32_t label;
   Lifo * LIFO;
   int32_t area;
   double mx1, my1, mxy1, mx2, my2, mxy2;
@@ -183,7 +183,7 @@ int32_t lmoments(
     fprintf(stderr, "lmoments: allocimage failed\n");
     return 0;
   }
-  LABEL = ULONGDATA(labels);
+  LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, minimum, labels, &n))
   {
@@ -332,8 +332,8 @@ int32_t lmomentslab(
   int32_t cs = colsize(labels);
   int32_t d = depth(labels);
   int32_t N = rs * cs;          /* taille image */
-  uint32_t *LABEL = ULONGDATA(labels);
-  uint32_t label;
+  int32_t *LABEL = SLONGDATA(labels);
+  int32_t label;
   Lifo * LIFO;
   int32_t area;
   double mx1, my1, mxy1, mx2, my2, mxy2;

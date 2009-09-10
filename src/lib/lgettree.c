@@ -78,7 +78,7 @@ noeudArbre * lgettree2d(struct xvimage *imgx,   /* donnee: image binaire */
   }
 
   X = UCHARDATA(imgx);
-  D = ULONGDATA(res);
+  D = SLONGDATA(res);
 
   k = 0;
   
@@ -163,7 +163,7 @@ noeudArbre * lgettree3d(struct xvimage *imgx,   /* donnee: image binaire */
   }
 
   X = UCHARDATA(imgx);
-  D = ULONGDATA(res);
+  D = SLONGDATA(res);
 
   k = 0;
   
@@ -1036,7 +1036,7 @@ int32_t TronquerImage (listeNoeud * ptrListe,       /* donnee: pointeur sur la l
   int32_t ds = depth(etiquette);
   int32_t ps = rs * cs;          /* taille d'un plan */
   int32_t N = ps * ds;           /* taille de l'image */
-  D = ULONGDATA(etiquette);
+  D = SLONGDATA(etiquette);
   
   result = allocimage(NULL, rowsize(etiquette), colsize(etiquette), depth(etiquette), VFF_TYP_4_BYTE);
   if (result == NULL)
@@ -1045,7 +1045,7 @@ int32_t TronquerImage (listeNoeud * ptrListe,       /* donnee: pointeur sur la l
     exit(1);
   }
 
-  M = ULONGDATA(result);
+  M = SLONGDATA(result);
   
   for (i = 0; i < N; i++)   /* parcours des points de l'image */
     M[i] = 0;               /* copie l'image originale */

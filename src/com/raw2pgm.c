@@ -50,7 +50,7 @@ int main(int argc, char **argv)
   struct xvimage * image;
   uint16_t tmp;
   uint8_t tmp1;
-  uint32_t * I;
+  int32_t * I;
   int32_t i;
 
   if ((argc != 9) && (argc != 12))
@@ -108,7 +108,7 @@ int main(int argc, char **argv)
     fread(UCHARDATA(image), sizeof(char), headersize, fd);
     // sera ecrase par la suite - attention: plante si la taille image est
     // < headersize
-    I = ULONGDATA(image);
+    I = SLONGDATA(image);
     for (i = 0; i < N; i++) 
     { 
       fread(&tmp, 2 * sizeof(char), 1, fd);
@@ -118,7 +118,7 @@ int main(int argc, char **argv)
         tmp = tmp >> 8;
         tmp = tmp | (((uint32_t)tmp1) << 8);      
       }
-      I[i] = (uint32_t)tmp; 
+      I[i] = (int32_t)tmp; 
     }
   }
   else if (nbytesperpix == 4)
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
     fread(UCHARDATA(image), sizeof(char), headersize, fd);
     // sera ecrase par la suite - attention: plante si la taille image est
     // < headersize
-    fread(ULONGDATA(image), 4 * sizeof(char), N, fd);
+    fread(SLONGDATA(image), 4 * sizeof(char), N, fd);
   }
 
   if (argc == 12)

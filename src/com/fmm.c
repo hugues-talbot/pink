@@ -54,8 +54,8 @@ int main(int argc, char **argv)
 {
     struct xvimage  *seeds, *speed ;
     struct xvimage  *voronoi, *distance;
-    uint32_t  rs, cs, ss, dim[4], ndim;
-    uint32_t *SeedIn, *SeedOut;
+    int32_t  rs, cs, ss, dim[4], ndim;
+    int32_t *SeedIn, *SeedOut;
     float    *SpeedIn, *SpeedOut, threshold;
     int      error = 0, stop=0;
 
@@ -80,8 +80,7 @@ int main(int argc, char **argv)
     stop = atoi(argv[3]);
     threshold = (float)atof(argv[4]);
     
-    /* ULONG is really only uint32_t */
-    SeedIn = ULONGDATA(seeds);
+    SeedIn = SLONGDATA(seeds);
     SpeedIn = FLOATDATA(speed);
     
     voronoi = copyimage(seeds);
@@ -97,7 +96,7 @@ int main(int argc, char **argv)
         exit(1);
     }
     
-    SeedOut = ULONGDATA(voronoi);
+    SeedOut = SLONGDATA(voronoi);
     SpeedOut = FLOATDATA(distance);
 
     /* careful: rowsize is the size of a row => nx */

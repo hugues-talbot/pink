@@ -649,7 +649,7 @@ int main(int argc, char **argv)
     } // if (datatype(image) == VFF_TYP_1_BYTE)
     else if (datatype(image) == VFF_TYP_4_BYTE)
     {
-      uint32_t *F = ULONGDATA(image);
+      int32_t *F = SLONGDATA(image);
       if (printcoords)
 	psheader(fd, (rs+1) * GS, (cs+1) * GS, GLOBALSCALE);
       else

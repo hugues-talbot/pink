@@ -85,8 +85,8 @@ int32_t lt4pp(struct xvimage * image)
   struct xvimage * temp;
   uint8_t *pti;
   uint8_t *ptt;
-  uint32_t *pti_l;
-  uint32_t *ptt_l;
+  int32_t *pti_l;
+  int32_t *ptt_l;
   int32_t rs = image->row_size;
   int32_t cs = image->col_size;
   int32_t N = rs * cs;
@@ -119,12 +119,12 @@ int32_t lt4pp(struct xvimage * image)
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    pti_l = ULONGDATA(image);
-    ptt_l = ULONGDATA(temp);
+    pti_l = SLONGDATA(image);
+    ptt_l = SLONGDATA(temp);
     memset(pti_l, 0, 4*N);
     for (j = 1; j < cs - 1; j++) 
       for (i = 1; i < rs - 1; i++) 
-        pti_l[j * rs + i] = (uint32_t)t4pp_l(ptt_l, j * rs + i, rs, N);
+        pti_l[j * rs + i] = (int32_t)t4pp_l(ptt_l, j * rs + i, rs, N);
   }
   else
   {
@@ -146,8 +146,8 @@ int32_t lt8pp(struct xvimage * image)
   struct xvimage * temp;
   uint8_t *pti;
   uint8_t *ptt;
-  uint32_t *pti_l;
-  uint32_t *ptt_l;
+  int32_t *pti_l;
+  int32_t *ptt_l;
   int32_t rs = image->row_size;
   int32_t cs = image->col_size;
   int32_t N = rs * cs;
@@ -180,12 +180,12 @@ int32_t lt8pp(struct xvimage * image)
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    pti_l = ULONGDATA(image);
-    ptt_l = ULONGDATA(temp);
+    pti_l = SLONGDATA(image);
+    ptt_l = SLONGDATA(temp);
     memset(pti_l, 0, 4*N);
     for (j = 1; j < cs - 1; j++) 
       for (i = 1; i < rs - 1; i++) 
-        pti_l[j * rs + i] = (uint32_t)t8pp_l(ptt_l, j * rs + i, rs, N);
+        pti_l[j * rs + i] = (int32_t)t8pp_l(ptt_l, j * rs + i, rs, N);
   }
   else
   {
@@ -207,8 +207,8 @@ int32_t lt6pp(struct xvimage * image)
   struct xvimage * temp;
   uint8_t *pti;
   uint8_t *ptt;
-  uint32_t *pti_l;
-  uint32_t *ptt_l;
+  int32_t *pti_l;
+  int32_t *ptt_l;
   int32_t rs = image->row_size;
   int32_t cs = image->col_size;
   int32_t ds = depth(image);
@@ -240,13 +240,13 @@ int32_t lt6pp(struct xvimage * image)
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    pti_l = ULONGDATA(image);
-    ptt_l = ULONGDATA(temp);
+    pti_l = SLONGDATA(image);
+    ptt_l = SLONGDATA(temp);
     memset(pti_l, 0, 4*N);
     for (k = 1; k < ds - 1; k++) 
       for (j = 1; j < cs - 1; j++) 
         for (i = 1; i < rs - 1; i++) 
-          pti_l[k*ps + j*rs + i] = (uint32_t)t6pp_l(ptt_l, k*ps + j*rs + i, rs, ps, N);
+          pti_l[k*ps + j*rs + i] = (int32_t)t6pp_l(ptt_l, k*ps + j*rs + i, rs, ps, N);
   }
   else
   {
@@ -269,8 +269,8 @@ int32_t lt26pp(struct xvimage * image)
   struct xvimage * temp;
   uint8_t *pti;
   uint8_t *ptt;
-  uint32_t *pti_l;
-  uint32_t *ptt_l;
+  int32_t *pti_l;
+  int32_t *ptt_l;
   int32_t rs = image->row_size;
   int32_t cs = image->col_size;
   int32_t ds = depth(image);
@@ -302,13 +302,13 @@ int32_t lt26pp(struct xvimage * image)
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    pti_l = ULONGDATA(image);
-    ptt_l = ULONGDATA(temp);
+    pti_l = SLONGDATA(image);
+    ptt_l = SLONGDATA(temp);
     memset(pti_l, 0, 4*N);
     for (k = 1; k < ds - 1; k++) 
       for (j = 1; j < cs - 1; j++) 
         for (i = 1; i < rs - 1; i++) 
-          pti_l[k*ps + j*rs + i] = (uint32_t)t26pp_l(ptt_l, k*ps + j*rs + i, rs, ps, N);
+          pti_l[k*ps + j*rs + i] = (int32_t)t26pp_l(ptt_l, k*ps + j*rs + i, rs, ps, N);
   }
   else
   {

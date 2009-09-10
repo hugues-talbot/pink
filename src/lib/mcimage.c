@@ -329,8 +329,8 @@ int32_t copy2image(struct xvimage *dest, struct xvimage *source)
       }
     case VFF_TYP_4_BYTE:
       {
-        uint32_t *S = ULONGDATA(source);
-        uint32_t *D = ULONGDATA(dest);
+        int32_t *S = SLONGDATA(source);
+        int32_t *D = SLONGDATA(dest);
         memcpy(D, S, N*sizeof(int32_t));
         break;
       }
@@ -379,8 +379,8 @@ int32_t equalimages(struct xvimage *im1, struct xvimage *im2)
       }
     case VFF_TYP_4_BYTE:
       {
-        uint32_t *I1 = ULONGDATA(im1);
-        uint32_t *I2 = ULONGDATA(im2);
+        int32_t *I1 = SLONGDATA(im1);
+        int32_t *I2 = SLONGDATA(im2);
         if (memcmp(I1, I2, N*sizeof(int32_t)) != 0) return 0;
         break;
       }
@@ -433,8 +433,8 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
     }
     if (typemax == VFF_TYP_4_BYTE)
     {
-      uint32_t *L = ULONGDATA(im3);
-      for (i = 0; i < N; i++) L[i] = (uint32_t)F[i];
+      int32_t *L = SLONGDATA(im3);
+      for (i = 0; i < N; i++) L[i] = (int32_t)F[i];
     }
     else if (typemax == VFF_TYP_FLOAT)
     {
@@ -450,7 +450,7 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
   else if (type == VFF_TYP_4_BYTE)
   {
     int32_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
-    uint32_t *L = ULONGDATA(im2);
+    int32_t *L = SLONGDATA(im2);
     im3 = allocimage(NULL, rs, cs, ds, typemax);
     if (im3 == NULL)
     {
@@ -498,7 +498,7 @@ int32_t convertlong(struct xvimage **f1)
   struct xvimage *im3;
   int32_t type = datatype(im1);
   int32_t i, rs=rowsize(im1), cs=colsize(im1), ds=depth(im1), N=rs*cs*ds;
-  uint32_t *FL;
+  int32_t *FL;
 
   if (type == VFF_TYP_4_BYTE) return 1;
 
@@ -508,17 +508,17 @@ int32_t convertlong(struct xvimage **f1)
     fprintf(stderr,"%s : allocimage failed\n", F_NAME);
     return 0;
   }
-  FL = ULONGDATA(im3);
+  FL = SLONGDATA(im3);
 
   if (type == VFF_TYP_1_BYTE)
   {
     uint8_t *F = UCHARDATA(im1);
-    for (i = 0; i < N; i++) FL[i] = (uint32_t)F[i];
+    for (i = 0; i < N; i++) FL[i] = (int32_t)F[i];
   }
   else if (type == VFF_TYP_FLOAT)
   {
     float *F = FLOATDATA(im1);
-    for (i = 0; i < N; i++) FL[i] = (uint32_t)F[i];
+    for (i = 0; i < N; i++) FL[i] = (int32_t)F[i];
   }
   else
   {
@@ -561,7 +561,7 @@ int32_t convertfloat(struct xvimage **f1)
   }
   else if (type == VFF_TYP_4_BYTE)
   {
-    uint32_t *F = ULONGDATA(im1);
+    int32_t *F = SLONGDATA(im1);
     for (i = 0; i < N; i++) FL[i] = (float)F[i];
   }
   else
@@ -756,7 +756,7 @@ void writerawimage(struct xvimage * image, char *filename)
     if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
     fprintf(fd, "4294967295\n");
 
-    ret = fwrite(ULONGDATA(image), sizeof(int32_t), N, fd);
+    ret = fwrite(SLONGDATA(image), sizeof(int32_t), N, fd);
     if (ret != N)
     {
       fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
@@ -938,7 +938,7 @@ void writeascimage(struct xvimage * image, char *filename)
     {
       if (i % rs == 0) fprintf(fd, "\n");
       if (i % ps == 0) fprintf(fd, "\n");
-      fprintf(fd, "%ld ", (long int)(ULONGDATA(image)[i]));
+      fprintf(fd, "%ld ", (long int)(SLONGDATA(image)[i]));
     } /* for i */
     fprintf(fd, "\n");
   }
@@ -1089,7 +1089,7 @@ void writelongimage(struct xvimage * image,  char *filename)
   if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
   fprintf(fd, "%d\n", nndg);
 
-  ret = fwrite(ULONGDATA(image), sizeof(int32_t), N, fd);
+  ret = fwrite(SLONGDATA(image), sizeof(int32_t), N, fd);
   if (ret != N)
   {
     fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
@@ -1254,12 +1254,12 @@ struct xvimage * readimage(char *filename)
       long int tmp;
       for (i = 0; i < N; i++)
       {
-        fscanf(fd, "%ld", &tmp); (ULONGDATA(image)[i]) = (uint32_t)tmp;
+        fscanf(fd, "%ld", &tmp); (SLONGDATA(image)[i]) = (int32_t)tmp;
       } /* for i */
     }
     else 
     {
-      int32_t ret = fread(ULONGDATA(image), sizeof(int32_t), N, fd);
+      int32_t ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
       if (ret != N)
       {
         fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
@@ -1552,7 +1552,7 @@ de la forme :
   else
   if (typepixel == VFF_TYP_4_BYTE)
   {
-    int32_t ret = fread(ULONGDATA(image), sizeof(int32_t), N, fd);
+    int32_t ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
     if (ret != N)
     {
       fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
@@ -1743,7 +1743,7 @@ struct xvimage * readlongimage(char *filename)
       return(NULL);
   }
 
-  ret = fread(ULONGDATA(image), sizeof(int32_t), N, fd);
+  ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
   if (ret != N)
   {
     fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);

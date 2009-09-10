@@ -60,8 +60,8 @@ struct xvimage *mBorderWshed2d(struct xvimage *ga)
 {
   int32_t i,j,k,x,y,z,u, nlabels;
   struct xvimage *res;
-  uint32_t *Eminima;
-  uint32_t *Vminima; 
+  int32_t *Eminima;
+  int32_t *Vminima; 
   int32_t rs = rowsize(ga);               /* taille ligne */
   int32_t cs = colsize(ga);               /* taille colonne */
   int32_t N = rs * cs;                    /* taille image */
@@ -82,7 +82,7 @@ struct xvimage *mBorderWshed2d(struct xvimage *ga)
     fprintf(stderr,"%s erreur de allocimage \n", F_NAME);
     exit(1);
   }
-  Vminima = ULONGDATA(res);
+  Vminima = SLONGDATA(res);
 
   if( (VF = malloc(sizeof(uint8_t) * N)) == NULL) {
     fprintf(stderr,"%s ne peut allouer VF \n", F_NAME);
@@ -155,7 +155,7 @@ struct xvimage *mBorderWshed2drapide(struct xvimage *ga)
   int32_t i,j,k,x,y,z,w,u, nlabels, label;
   struct xvimage *res;
   //  uint32_t *Eminima;
-  uint32_t *Vminima; 
+  int32_t *Vminima; 
   int32_t rs = rowsize(ga);               /* taille ligne */
   int32_t cs = colsize(ga);               /* taille colonne */
   int32_t N = rs * cs;                    /* taille image */
@@ -174,7 +174,7 @@ struct xvimage *mBorderWshed2drapide(struct xvimage *ga)
     fprintf(stderr,"%s erreur de allocimage \n", F_NAME);
     exit(1);
   }
-  Vminima = ULONGDATA(res);
+  Vminima = SLONGDATA(res);
 
   if( (VF = malloc(sizeof(uint8_t) * N)) == NULL) {
     fprintf(stderr,"%s ne peut allouer VF \n", F_NAME);
@@ -363,7 +363,7 @@ struct xvimage *SeparatingEdge(struct xvimage *labels)
 #define F_NAME "mSeparatingEdge"
 {
   struct xvimage *ga;
-  uint32_t *lab = ULONGDATA(labels);
+  int32_t *lab = SLONGDATA(labels);
   int32_t rs = rowsize(labels);     /* taille ligne */
   int32_t cs = colsize(labels);     /* taille colonne */
   int32_t N = rs * cs;              /* taille image */

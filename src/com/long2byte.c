@@ -116,11 +116,11 @@ int main(int argc, char **argv)
 {
   struct xvimage * imagelong;
   struct xvimage * imagebyte;
-  uint32_t *L;
+  int32_t *L;
   uint8_t *B;
-  uint32_t x, i;
+  int32_t x, i;
   int32_t mode = 0;
-  uint32_t Max;
+  int32_t Max;
   uint32_t *histo;
   uint32_t *newvals;
   int32_t nbval, nbnewval;
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 
   if (datatype(imagelong) != VFF_TYP_4_BYTE)
   {
-    fprintf(stderr, "%s: image type must be uint32_t\n", argv[0]);
+    fprintf(stderr, "%s: image type must be int32_t\n", argv[0]);
     exit(1);
   }
 
@@ -158,7 +158,7 @@ int main(int argc, char **argv)
   cs = colsize(imagelong);
   d = depth(imagelong);
   N = rs * cs * d;
-  L = ULONGDATA(imagelong);
+  L = SLONGDATA(imagelong);
   
   imagebyte = allocimage(imagelong->name, rs, cs, d, VFF_TYP_1_BYTE);
   if (imagebyte == NULL)

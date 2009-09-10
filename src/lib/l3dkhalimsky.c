@@ -684,8 +684,8 @@ int32_t l3dlabel(struct xvimage * f, struct xvimage * lab)
   int32_t rs, cs, ds, ps, N;
   int32_t x, y, w;
   uint8_t *F;
-  uint32_t *LAB;
-  uint32_t nlabels = 0;
+  int32_t *LAB;
+  int32_t nlabels = 0;
   Lifo * LIFO;
   int32_t tab[27]; int32_t n, k;
 
@@ -699,7 +699,7 @@ int32_t l3dlabel(struct xvimage * f, struct xvimage * lab)
   ps = rs * cs;
   N = ps * ds;
   F = UCHARDATA(f);
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   if (datatype(lab) != VFF_TYP_4_BYTE) 
   {
@@ -763,7 +763,7 @@ int32_t l3dlabel(struct xvimage * f, struct xvimage * lab)
 } /* l3dlabel() */
 
 /* =============================================================== */
-int32_t l3drecons(struct xvimage * f, uint32_t *tab, int32_t n)
+int32_t l3drecons(struct xvimage * f, int32_t *tab, int32_t n)
 /* =============================================================== */
 /* 
   Reconstruction geodesique (au sens du theta-voisinage) de l'ensemble
@@ -877,8 +877,8 @@ int32_t l3dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbcav, int32_t 
   int32_t x, y, w;
   uint8_t *F;
   struct xvimage * lab;
-  uint32_t *LAB;
-  uint32_t nlabels;
+  int32_t *LAB;
+  int32_t nlabels;
   Lifo * LIFO;
   int32_t tab[27]; int32_t n, k;
 
@@ -899,7 +899,7 @@ int32_t l3dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbcav, int32_t 
     return(0);
     
   }
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   LIFO = CreeLifoVide(N);
   if (LIFO == NULL)

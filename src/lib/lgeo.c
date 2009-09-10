@@ -544,8 +544,8 @@ int32_t lfenetreincluante(
   int32_t d = depth(img);
   int32_t N = rs * cs;          /* taille image */
   struct xvimage * labels;
-  uint32_t *LABEL;
-  uint32_t label;
+  int32_t *LABEL;
+  int32_t label;
   struct xvimage * result;
   uint8_t *RES;
   Lifo * LIFO;
@@ -574,7 +574,7 @@ int32_t lfenetreincluante(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LABEL = ULONGDATA(labels);
+  LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, LABMAX, labels, &n))
   {
@@ -735,8 +735,8 @@ int32_t lmatchrect(
   int32_t d = depth(img);
   int32_t N = rs * cs;          /* taille image */
   struct xvimage * labels;
-  uint32_t *LABEL;
-  uint32_t label;
+  int32_t *LABEL;
+  int32_t label;
   struct xvimage * result;
   uint8_t *RES;
   Lifo * LIFO;
@@ -773,7 +773,7 @@ int32_t lmatchrect(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LABEL = ULONGDATA(labels);
+  LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, LABMAX, labels, &n))
   {
@@ -950,8 +950,8 @@ int32_t lrectangleincluant(
   int32_t d = depth(img);
   int32_t N = rs * cs;          /* taille image */
   struct xvimage * labels;
-  uint32_t *LABEL;
-  uint32_t label;
+  int32_t *LABEL;
+  int32_t label;
   struct xvimage * result;
   uint8_t *RES;
   Lifo * LIFO;
@@ -991,7 +991,7 @@ int32_t lrectangleincluant(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LABEL = ULONGDATA(labels);
+  LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, LABMAX, labels, &n))
   {
@@ -1161,8 +1161,8 @@ int32_t lmatchellipse(
   struct xvimage * result;
   uint8_t *RES;
   struct xvimage * labels;
-  uint32_t *LABEL;
-  uint32_t label;
+  int32_t *LABEL;
+  int32_t label;
   Lifo * LIFO;
   int32_t area;
   double mx1, my1, mx2, my2, mxy1;
@@ -1203,7 +1203,7 @@ int32_t lmatchellipse(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LABEL = ULONGDATA(labels);
+  LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, LABMAX, labels, &n))
   {
@@ -1365,8 +1365,8 @@ int32_t lellipticite(
   int32_t d = depth(img);
   int32_t N = rs * cs;          /* taille image */
   struct xvimage * labels;
-  uint32_t *LABEL;
-  uint32_t label;
+  int32_t *LABEL;
+  int32_t label;
   Lifo * LIFO;
   int32_t area;
   double mx1, my1, mx2, my2, mxy1;
@@ -1401,7 +1401,7 @@ int32_t lellipticite(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LABEL = ULONGDATA(labels);
+  LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, LABMAX, labels, &n))
   {
@@ -2059,8 +2059,8 @@ struct xvimage *lsection(struct xvimage *img,
 	  }
       }
   } else if (imType == VFF_TYP_4_BYTE) {
-    uint32_t *F = ULONGDATA(img);
-    uint32_t *R = ULONGDATA(result);
+    int32_t *F = SLONGDATA(img);
+    int32_t *R = SLONGDATA(result);
 
     memset(R, 0, 4*N2);
 

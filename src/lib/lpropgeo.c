@@ -79,7 +79,7 @@ int32_t lpropgeo(
   uint8_t maxb;
   uint8_t moyb;
   uint8_t valcomp;
-  uint32_t valcomplong;
+  int32_t valcomplong;
   int32_t mintrouve;
   int32_t maxtrouve;
   int32_t moytrouve;
@@ -95,7 +95,7 @@ int32_t lpropgeo(
   int32_t tmp;
   uint8_t *SOURCE = UCHARDATA(img1);
   uint8_t *MASK = UCHARDATA(mask);
-  uint32_t *MASKLONG = ULONGDATA(mask);
+  int32_t *MASKLONG = SLONGDATA(mask);
   int32_t rs = rowsize(img1);
   int32_t cs = colsize(img1);
   int32_t N = rs * cs;
@@ -463,11 +463,11 @@ int32_t lpropgeolong(
   int32_t w;
   int32_t x;
   int32_t y;
-  uint32_t min;
-  uint32_t max;
-  uint32_t moy;
+  int32_t min;
+  int32_t max;
+  int32_t moy;
   uint8_t valcomp;
-  uint32_t valcomplong;
+  int32_t valcomplong;
   int32_t mintrouve;
   int32_t maxtrouve;
   int32_t moytrouve;
@@ -475,9 +475,9 @@ int32_t lpropgeolong(
   int32_t incr_voisb;
   int32_t sumndg;        /* pour calculer la moyenne sur la composante */
   int32_t surf;          /* pour calculer la surface de la composante */
-  uint32_t *SOURCE = ULONGDATA(img1);
+  int32_t *SOURCE = SLONGDATA(img1);
   uint8_t *MASK = UCHARDATA(mask);
-  uint32_t *MASKLONG = ULONGDATA(mask);
+  int32_t *MASKLONG = SLONGDATA(mask);
   int32_t rs = rowsize(img1);
   int32_t cs = colsize(img1);
   int32_t N = rs * cs;
@@ -557,7 +557,7 @@ int32_t lpropgeolong(
             } 
           } /* for k ... */
         } /* while (! LifoVide(LIFO)) */
-        moy = (uint32_t)(sumndg/surf);
+        moy = (int32_t)(sumndg/surf);
 
         LifoPush(LIFO, x);
         Set(x, TRAITE2);
@@ -641,7 +641,7 @@ printf("Set TRAITE1 %d (%d,%d)\n",y, y%rs, y/rs);
             } 
           } /* for k ... */
         } /* while (! LifoVide(LIFO)) */
-        moy = (uint32_t)(sumndg/surf);
+        moy = (int32_t)(sumndg/surf);
   
         LifoPush(LIFO, x);
         Set(x, TRAITE2);

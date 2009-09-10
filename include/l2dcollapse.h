@@ -8,7 +8,7 @@ extern "C" {
 #endif
 extern int32_t l2dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit);
 extern int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * inhibit);
-extern int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, uint32_t priomax);
+extern int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, int32_t priomax);
 extern int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);
 extern graphe * l2dtopoflow_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);
 extern graphe * l2dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);

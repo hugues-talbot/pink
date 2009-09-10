@@ -50,7 +50,7 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
   int32_t i, u, v, n, x, y, z, xv, yv, zv;
   int32_t rs, cs, ps, ds, N;
   uint8_t * K;
-  uint32_t * P;
+  int32_t * P;
   uint8_t * I = NULL;
   Rbt * RBT;
   int32_t taillemaxrbt;
@@ -77,10 +77,10 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
     return(0);
   }
   if (datatype(prio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(prio); 
+    P = SLONGDATA(prio); 
   else 
   {
-    fprintf(stderr, "%s : datatype(prio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s : datatype(prio) must be int32_t\n", F_NAME);
     return(0);
   }
 
@@ -171,7 +171,7 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
 } /* l3dcollapse() */
 
 /* =============================================================== */
-int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, uint32_t priomax)
+int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, int32_t priomax)
 /* =============================================================== */
 /* 
   collapse parallÅËle directionnel
@@ -185,7 +185,7 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
   int32_t rs, cs, ps, ds, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
-  uint32_t * P;
+  int32_t * P;
   uint8_t * I = NULL;
   Rbt * RBT;
   Rlifo * RLIFO;
@@ -215,10 +215,10 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
     return(0);
   }
   if (datatype(prio) == VFF_TYP_4_BYTE) 
-    P = ULONGDATA(prio); 
+    P = SLONGDATA(prio); 
   else 
   {
-    fprintf(stderr, "%s : datatype(prio) must be uint32_t\n", F_NAME);
+    fprintf(stderr, "%s : datatype(prio) must be int32_t\n", F_NAME);
     return(0);
   }
 

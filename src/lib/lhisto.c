@@ -71,7 +71,7 @@ int32_t lhisto2(struct xvimage *image1, struct xvimage *image2,
   uint8_t *SOURCE1 = UCHARDATA(image1);      /* l'image de depart 1 */
   uint8_t *SOURCE2 = UCHARDATA(image2);      /* l'image de depart 2 */
   uint8_t *M;
-  uint32_t *H = ULONGDATA(histo);
+  int32_t *H = SLONGDATA(histo);
   int32_t rsh = rowsize(histo);
   int32_t nh = rsh * colsize(histo);
 
@@ -110,7 +110,7 @@ int32_t lhistolong(struct xvimage *image, struct xvimage *mask, uint32_t **histo
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t d = depth(image);        /* nombre plans */
   int32_t N = rs * cs * d;         /* taille image */
-  uint32_t *F = ULONGDATA(image);      /* l'image de depart */
+  int32_t *F = SLONGDATA(image);      /* l'image de depart */
   uint8_t *M;
   int32_t s;
 

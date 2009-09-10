@@ -66,8 +66,8 @@ struct xvimage * lcrop(struct xvimage *in, int32_t x, int32_t y, int32_t w, int3
   }
   else if (datatype(in) == VFF_TYP_4_BYTE)
   {
-    uint32_t *T1L = ULONGDATA(temp1);
-    uint32_t *IL = ULONGDATA(in);
+    int32_t *T1L = SLONGDATA(temp1);
+    int32_t *IL = SLONGDATA(in);
     for (j = j0, yy = y0; j < j1; j++, yy++)
       for (i = i0, xx = x0; i < i1; i++, xx++)
       {
@@ -148,8 +148,8 @@ struct xvimage * lcrop3d(struct xvimage *in, int32_t x, int32_t y, int32_t z, in
   }
   else if (datatype(in) == VFF_TYP_4_BYTE)
   {
-    uint32_t *T1L = ULONGDATA(temp1);
-    uint32_t *IL = ULONGDATA(in);
+    int32_t *T1L = SLONGDATA(temp1);
+    int32_t *IL = SLONGDATA(in);
     for (k = k0, zz = z0; k < k1; k++, zz++)
       for (j = j0, yy = y0; j < j1; j++, yy++)
         for (i = i0, xx = x0; i < i1; i++, xx++)
@@ -265,9 +265,9 @@ struct xvimage * lencadre(struct xvimage *image, int32_t grayval)
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    uint32_t *Imout = ULONGDATA(imageout);
-    uint32_t *Im = ULONGDATA(image);
-    uint32_t grayvalue = (uint32_t)grayval;
+    int32_t *Imout = SLONGDATA(imageout);
+    int32_t *Im = SLONGDATA(image);
+    int32_t grayvalue = (int32_t)grayval;
 
     if (ds > 1)
     {
@@ -466,9 +466,9 @@ struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width)
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    uint32_t *Imout = ULONGDATA(imageout);
-    uint32_t *Im = ULONGDATA(image);
-    uint32_t grayvalue = (uint32_t)grayval;
+    int32_t *Imout = SLONGDATA(imageout);
+    int32_t *Im = SLONGDATA(image);
+    int32_t grayvalue = (int32_t)grayval;
 
     if (ds > 1)
     {
@@ -630,8 +630,8 @@ int32_t linsert(struct xvimage *a, struct xvimage *b, int32_t x, int32_t y, int3
   }
   else if (datatype(a) == VFF_TYP_4_BYTE)
   {
-    uint32_t *A = ULONGDATA(a);
-    uint32_t *B = ULONGDATA(b);
+    int32_t *A = SLONGDATA(a);
+    int32_t *B = SLONGDATA(b);
 
     for (k = 0; k < dsa; k++)
       for (j = 0; j < csa; j++)
@@ -716,7 +716,7 @@ struct xvimage * lexpandframe(struct xvimage *in, int32_t n)
     }
     else if (datatype(in) == VFF_TYP_4_BYTE)
     {
-      uint32_t *T1, *I = ULONGDATA(in);
+      int32_t *T1, *I = SLONGDATA(in);
       rs2 = rs1 + n + n;
       cs2 = cs1 + n + n;
       temp1 = allocimage(NULL, rs2, cs2, 1, VFF_TYP_4_BYTE);
@@ -725,7 +725,7 @@ struct xvimage * lexpandframe(struct xvimage *in, int32_t n)
         fprintf(stderr, "%s: allocimage failed\n", F_NAME);
         return NULL;
       }
-      T1 = ULONGDATA(temp1);
+      T1 = SLONGDATA(temp1);
   
       for (y = 0; y < n; y++)
       {

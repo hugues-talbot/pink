@@ -328,7 +328,7 @@ int32_t lsegment3di(struct xvimage *image, int32_t connex)
     fprintf(stderr, "lsegment3di: allocimage failed\n");
     return 0;
   }
-  M = ULONGDATA(lab);
+  M = SLONGDATA(lab);
 
   if (!llabelextrema(image, connex, LABMIN, lab, &nminima))
   {   
