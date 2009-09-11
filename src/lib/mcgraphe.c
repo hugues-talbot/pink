@@ -1305,17 +1305,17 @@ boolean CircuitNiveaux(graphe * g)
 #define TypeCle TYP_VARC
 
 /* =============================================================== */
-static int Partitionner(int *A, TypeCle *T, int p, int r)
+static int32_t Partitionner(int32_t *A, TypeCle *T, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
   en deux groupes : les elements q tq T[A[q]] <= T[A[p]] et les autres.
 */
 {
-  int t;
+  int32_t t;
   TypeCle x = T[A[p]];
-  int i = p - 1;
-  int j = r + 1;
+  int32_t i = p - 1;
+  int32_t j = r + 1;
   while (1)
   {
     do j--; while (T[A[j]] > x);
@@ -1326,7 +1326,7 @@ static int Partitionner(int *A, TypeCle *T, int p, int r)
 } /* Partitionner() */
 
 /* =============================================================== */
-static int PartitionStochastique(int *A, TypeCle *T, int p, int r)
+static int32_t PartitionStochastique(int32_t *A, TypeCle *T, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -1334,7 +1334,7 @@ static int PartitionStochastique(int *A, TypeCle *T, int p, int r)
   avec q tire au hasard dans [p,r].
 */
 {
-  int t, q;
+  int32_t t, q;
 
   q = p + (rand() % (r - p + 1));
   t = A[p];         /* echange A[p] et A[q] */
@@ -1344,7 +1344,7 @@ static int PartitionStochastique(int *A, TypeCle *T, int p, int r)
 } /* PartitionStochastique() */
 
 /* =============================================================== */
-/*! \fn void TriRapideStochastique (int * A, TypeCle *T, int p, int r)
+/*! \fn void TriRapideStochastique (int32_t * A, TypeCle *T, int32_t p, int32_t r)
     \param A (entrée/sortie) : un tableau d'entiers
     \param T (entrée) : un tableau de valeurs de type TypeCle.
     \param p (entrée) : indice du début de la zone à trier.
@@ -1353,10 +1353,10 @@ static int PartitionStochastique(int *A, TypeCle *T, int p, int r)
            Le tri s'effectue sur un tableau \b A contenant les index
            des elements de \b T, l'indice \b p (compris) à l'indice \b r (compris).
 */
-static void TriRapideStochastique (int * A, TypeCle *T, int p, int r)
+static void TriRapideStochastique (int32_t * A, TypeCle *T, int32_t p, int32_t r)
 /* =============================================================== */
 {
-  int q; 
+  int32_t q; 
   if (p < r)
   {
     q = PartitionStochastique(A, T, p, r);
@@ -2662,7 +2662,7 @@ void PSGraphe(graphe * g, char *filename, double r, double t, double marge)
 #undef F_NAME
 #define F_NAME "PSGraphe"
 {
-  int i, j, n = g->nsom;
+  int32_t i, j, n = g->nsom;
   double xmin, xmax, ymin, ymax;
   double x1, y1, x2, y2, x3, y3, x, y, a, b, d;
   pcell p;
@@ -2748,7 +2748,7 @@ void PSGraphe(graphe * g, char *filename, double r, double t, double marge)
 } /* PSGraphe() */
 
 /* ====================================================================== */
-/*! \fn void EPSGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int noms_sommets, int v_sommets, int col_sommets, int v_arcs ) 
+/*! \fn void EPSGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int32_t noms_sommets, int32_t v_sommets, int32_t col_sommets, int32_t v_arcs ) 
     \param g (entrée) : un graphe.
     \param filename (entrée) : nom du fichier postscript à générer.
     \param s (entrée) : facteur d'échelle à appliquer aux coordonnées des sommets. 
@@ -2761,12 +2761,12 @@ void PSGraphe(graphe * g, char *filename, double r, double t, double marge)
     \param v_arcs (entrée) : booléen indiquant s'il faut écrire les valeurs des arcs.
     \brief génère une figure PostScript d'après la représentation "successeurs" du graphe g. 
 */
-void EPSGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int noms_sommets, int v_sommets, int col_sommets, int v_arcs) 
+void EPSGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int32_t noms_sommets, int32_t v_sommets, int32_t col_sommets, int32_t v_arcs) 
 /* ====================================================================== */
 #undef F_NAME
 #define F_NAME "EPSGraphe"
 {
-  int i, j, n = g->nsom;
+  int32_t i, j, n = g->nsom;
   double xmin, xmax, ymin, ymax;
   double x1, y1, x2, y2, x3, y3, x, y, a, b, d;
   pcell p;
@@ -2898,7 +2898,7 @@ void EPSGraphe(graphe * g, char *filename, double s, double r, double t, double 
 /* ====================================================================== */
 
 #ifdef TESTKRUSKAL
-int main(int argc, char **argv)
+int32_t main(int32_t argc, char **argv)
 {
   graphe * g, *g_1, *a;
   int32_t s1, s2, na, ns;
@@ -2961,7 +2961,7 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef TESTCIRCUITNIVEAUX
-int main(int argc, char **argv)
+int32_t main(int32_t argc, char **argv)
 {
   graphe * g;
   boolean *circ;
@@ -2986,7 +2986,7 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef TESTBELLMANSC
-int main(int argc, char **argv)
+int32_t main(int32_t argc, char **argv)
 {
   graphe * g;
   boolean *circ;
@@ -3009,7 +3009,7 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef TEST
-int main(int argc, char **argv)
+int32_t main(int32_t argc, char **argv)
 {
   graphe * g;
   boolean *circ;

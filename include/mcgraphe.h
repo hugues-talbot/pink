@@ -145,7 +145,7 @@ extern void AfficheSuccesseurs(graphe * g) ;
 extern void AfficheArcs(graphe * g);
 extern void AfficheValeursSommets(graphe * g);
 extern void PSGraphe(graphe * g, char *filename, double r, double t, double marge);
-extern void EPSGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int noms_sommets, int v_sommets, int col_sommets, int v_arcs);
+extern void EPSGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int32_t noms_sommets, int32_t v_sommets, int32_t col_sommets, int32_t v_arcs);
 
 /* ====================================================================== */
 /* ====================================================================== */
