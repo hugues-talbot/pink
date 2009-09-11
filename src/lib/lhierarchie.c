@@ -251,7 +251,7 @@ int32_t ordonneCompTree(int32_t *clefs,  /* tableau ordonnant les
      /* minSon est supposé alloué */
 {
   int32_t r,x;
-  int32_t m = LONG_MAX;
+  int32_t m = INT32_MAX;
   JCsoncell *s;
   if(CT->tabnodes[root].nbsons == 0){
     // root est une feuille

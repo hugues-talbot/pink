@@ -3,8 +3,6 @@
 extern "C" {
 #endif
 
-#  define FLOAT_MAX	3.40282347e+38F
-
 #define mcabs(X) ((X)>=0?(X):-(X))
 #define max(X,Y) ((X)>=(Y)?(X):(Y))
 #define min(X,Y) ((X)<=(Y)?(X):(Y))

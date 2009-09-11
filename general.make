@@ -92,9 +92,6 @@ MORPHO=\
 $(BDIR)/asf \
 $(BDIR)/asfbin \
 $(BDIR)/asflin \
-$(BDIR)/asft \
-$(BDIR)/asftmed \
-$(BDIR)/asftndg \
 $(BDIR)/asfr \
 $(BDIR)/bisector \
 $(BDIR)/bisector_talbot \
@@ -193,6 +190,9 @@ $(BDIR)/GAwatershedDouble
 
 TOPO=\
 $(BDIR)/alpha \
+$(BDIR)/asft \
+$(BDIR)/asftmed \
+$(BDIR)/asftndg \
 $(BDIR)/border \
 $(BDIR)/crestheight \
 $(BDIR)/crestrestoration \
@@ -497,14 +497,13 @@ all:	$(OBJ) $(ARITH) $(CONVERT) $(MORPHO) $(CONNECT) $(GA) $(TOPO) $(ORDRES) $(D
 
 doc:	$(PINK)/pink.dox
 	doxygen $(PINK)/pink.dox
+ifeq ($(HOME),/user/coupriem)
 	cp -R $(PINK)/doc/* $(HOME)/public_html/pinkdoc
+endif	
 
 clean:	
-	rm -f $(PINK)/linux/bin/*
-	rm -f $(PINK)/linux/bin2/*
-	rm -f $(PINK)/linux/obj/*
-	rm -f $(PINK)/hpux/bin/*
-	rm -f $(PINK)/hpux/obj/*
+	rm -f $(BDIR)/*
+	rm -f $(ODIR)/*
 	rm -f $(CDIR)/*~
 	rm -f $(LDIR)/*~
 	rm -f $(IDIR)/*~
@@ -817,15 +816,6 @@ $(BDIR)/asflin:	$(CDIR)/asflin.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/
 $(BDIR)/asfr:	$(CDIR)/asfr.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ldilateros.h $(IDIR)/lgeodesic.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/ldilateros.o $(ODIR)/lgeodesic.o $(ODIR)/mcfifo.o $(ODIR)/mcindic.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/asfr.c $(ODIR)/ldilateros.o $(ODIR)/lgeodesic.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mcfifo.o $(ODIR)/mcindic.o $(LIBS) -o $(BDIR)/asfr
 
-$(BDIR)/asft:	$(CDIR)/asft.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lasft.h $(IDIR)/ldilateros.h $(IDIR)/ldilateros3d.h $(IDIR)/lhtkern.h $(IDIR)/lhtkern3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lhtkern.o $(ODIR)/lhtkern3d.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(OBJMCFAH) $(ODIR)/mcindic.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/lasft.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/asft.c $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lhtkern.o $(ODIR)/lhtkern3d.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(OBJMCFAH) $(ODIR)/mcindic.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/lasft.o $(LIBS) -o $(BDIR)/asft
-
-$(BDIR)/asftmed:	$(CDIR)/asftmed.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lasft.h $(IDIR)/ldilateros.h $(IDIR)/ldilateros3d.h $(IDIR)/lhtkern.h $(IDIR)/lhtkern3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lhtkern.o $(ODIR)/lhtkern3d.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(OBJMCFAH) $(ODIR)/mcindic.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/lasft.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/asftmed.c $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lhtkern.o $(ODIR)/lhtkern3d.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(OBJMCFAH) $(ODIR)/mcindic.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/lasft.o $(LIBS) -o $(BDIR)/asftmed
-
-$(BDIR)/asftndg:	$(CDIR)/asftndg.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lasft.h $(IDIR)/ldilateros.h $(IDIR)/ldilateros3d.h $(IDIR)/lhtkern.h $(IDIR)/lhtkern3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lhtkern.o $(ODIR)/lhtkern3d.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(OBJMCFAH) $(ODIR)/mcindic.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/lasft.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/asftndg.c $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lhtkern.o $(ODIR)/lhtkern3d.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(OBJMCFAH) $(ODIR)/mcindic.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/lasft.o $(LIBS) -o $(BDIR)/asftndg
-
 $(BDIR)/closeball:	$(CDIR)/closeball.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/ldist.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/closeball.c $(ODIR)/ldist.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/closeball
 
@@ -1111,6 +1101,15 @@ $(BDIR)/waterfall:	$(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/jclabelextrema.o 
 
 $(BDIR)/alpha:	$(CDIR)/alpha.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/ltopotypes.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(ODIR)/ltopotypes.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/alpha.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/ltopotypes.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/alpha
+
+$(BDIR)/asft:	$(CDIR)/asft.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lasft.h $(IDIR)/ldilateros.h $(IDIR)/ldilateros3d.h $(IDIR)/lhtkern.h $(IDIR)/lhtkern3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lhtkern.o $(ODIR)/lhtkern3d.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(OBJMCFAH) $(ODIR)/mcindic.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/lasft.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/asft.c $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lhtkern.o $(ODIR)/lhtkern3d.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(OBJMCFAH) $(ODIR)/mcindic.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/lasft.o $(LIBS) -o $(BDIR)/asft
+
+$(BDIR)/asftmed:	$(CDIR)/asftmed.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lasft.h $(IDIR)/ldilateros.h $(IDIR)/ldilateros3d.h $(IDIR)/lhtkern.h $(IDIR)/lhtkern3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lhtkern.o $(ODIR)/lhtkern3d.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(OBJMCFAH) $(ODIR)/mcindic.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/lasft.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/asftmed.c $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lhtkern.o $(ODIR)/lhtkern3d.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(OBJMCFAH) $(ODIR)/mcindic.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/lasft.o $(LIBS) -o $(BDIR)/asftmed
+
+$(BDIR)/asftndg:	$(CDIR)/asftndg.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lasft.h $(IDIR)/ldilateros.h $(IDIR)/ldilateros3d.h $(IDIR)/lhtkern.h $(IDIR)/lhtkern3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lhtkern.o $(ODIR)/lhtkern3d.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(OBJMCFAH) $(ODIR)/mcindic.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/lasft.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/asftndg.c $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lhtkern.o $(ODIR)/lhtkern3d.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(OBJMCFAH) $(ODIR)/mcindic.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/lasft.o $(LIBS) -o $(BDIR)/asftndg
 
 $(BDIR)/border:	$(CDIR)/border.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/lborder.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(ODIR)/lborder.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/border.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(ODIR)/lborder.o $(LIBS) -o $(BDIR)/border

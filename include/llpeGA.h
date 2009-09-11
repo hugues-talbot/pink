@@ -8,16 +8,6 @@ extern "C" {
 #ifndef HUGE
 #define HUGE HUGE_VAL
 #endif
-#define SHRT_MIN -32767 
-#define SHRT_MAX +32767 
-#define USHRT_MAX 65535 
-#define INT_MIN -32767 
-#define INT_MAX +32767 
-#define UINT_MAX 65535 
-#define LONG_MIN -2147483647 
-#define LONG_MAX +2147483647
-#define ULONG_MAX 4294967295
-#define M_PI	 3.14159265358979323846
 #define IN_PROCESS -2
 #define NO_LABEL -1
 

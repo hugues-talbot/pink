@@ -125,7 +125,7 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
     lpt1 = SLONGDATA(image1);
     for (i = 0; i < N; i++)
     {
-      lpt1[i] = (int32_t)min(((int32_t)LONG_MAX),max(NDG_MIN,(int32_t)(lpt1[i])+constante));
+      lpt1[i] = (int32_t)min(INT32_MAX,max(INT32_MIN,(int32_t)(lpt1[i])+constante));
     }
   }
   else if (datatype(image1) == VFF_TYP_FLOAT)

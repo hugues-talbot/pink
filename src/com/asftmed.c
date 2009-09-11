@@ -6,7 +6,7 @@
 <B>Usage:</B> asftmed in.pgm connex rmax out.pgm
 
 <B>Description:</B>
-Alternate sequential filter controled by topology. 
+Alternate sequential filter controled by topology (see [CB04]).
 Disc- or Ball-shaped structuring elements of increasing radius,
 ranging from 1 to <B>rmax</B>,
 are generated. Let D1...Dn be these structuring elements, sorted by increasing radius.
@@ -15,6 +15,11 @@ homotopic pseudo-closing of the homotopic pseudo-opening of I(i-1) by the struct
 Furthermore, the medial axes (distance 8 in 2D, 26 in 3D) of both the input image and its inverse 
 are used as constraint sets.
 The result <B>out.pgm</B> contains the final result I(n).
+
+Reference:<BR> 
+[CB04] M. Couprie and G. Bertrand:
+<A HREF="http://www.esiee.fr/~coupriem/Pdf/cb04.pdf">Topology preserving alternating sequential filter for smoothing 
+2D and 3D objects</A>, <I> Journal of Electronic Imaging</I>, Vol.&nbsp;13, No.&nbsp;4, pp.&nbsp;720-730, 2004.
 
 <B>Types supported:</B> byte 2d, byte 3d
 

@@ -24,6 +24,11 @@ DGCI 2003, LNCS 2886, pp. 327-337, 2003.
 \author Michel Couprie 2004, Jean Cousty 2005 (3d)
 */
 
+/*
+%TEST redt %IMAGES/2dlong/l2fish1distc3.pgm %RESULTS/redt_l2fish1distc3.pgm
+%TEST redt %IMAGES/2dlong/l2fish1distc3subset.pgm %RESULTS/redt_l2fish1distc3subset.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

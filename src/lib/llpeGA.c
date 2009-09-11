@@ -310,7 +310,7 @@ int32_t lpeGrapheAreteValuee(GrapheValue *gv, int32_t* Label)
   /* Boucle principale */
   for(i = 0; i < nb_som; i++){
     if(Label[i] == NO_LABEL){
-      alt = LONG_MAX;
+      alt = INT32_MAX;
       labstream = Stream(gv->F, g, i, FIFO, Label, &alt, G);
       if(labstream == NO_LABEL){
 	nb_labs++;
@@ -422,7 +422,7 @@ int32_t flowMappingRecursif(struct  xvimage* ga, int32_t* Label)
   /* Boucle principale */
   for(i = 0; i < N; i++){
     if(Label[i] == NO_LABEL){
-      alt = LONG_MAX;
+      alt = INT32_MAX;
       labstream = StreamGArecursif(ga,i,FIFO,Label, &alt, G);
       if(labstream == NO_LABEL){
 	nb_labs++;

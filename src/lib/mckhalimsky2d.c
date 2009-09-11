@@ -429,7 +429,7 @@ void ndgmin2d(struct xvimage *b)
     B = SLONGDATA(b);
     bp = copyimage(b);
     BP = SLONGDATA(bp);
-    for (j = 1; j < N; j += 1) BP[j] = UINT32_MAX;
+    for (j = 1; j < N; j += 1) BP[j] = INT32_MAX;
 
     for (j = 1; j < cs; j += 2)
       for (i = 1; i < rs; i += 2)
