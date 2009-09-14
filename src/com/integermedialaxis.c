@@ -3,11 +3,13 @@
 
 \brief integer medial axis transform
 
-<B>Usage:</B> integermedialaxis in.pgm gamma out.pgm
+<B>Usage:</B> integermedialaxis in.pgm [gamma] out.pgm
 
 <B>Description:</B>
-Integer medial axis of the binary image \b X, as defined in [HR05]. 
+Integer medial axis, as defined in [HR05],
+of the binary image \b X contained in \b in.pgm.
 
+References:<BR> 
 [HR05] "Euclidean Skeletons of 3D Data Sets in Linear Time 
 by the Integer Medial Axis Transform", 
 W.H. Hesselink and B.T.M. Roerdink,

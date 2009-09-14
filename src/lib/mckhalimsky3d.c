@@ -44,6 +44,7 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <mcutil.h>
 #include <mcimage.h>
 #include <mccodimage.h>
@@ -376,7 +377,7 @@ void ndgmin3d(struct xvimage *b)
     B = FLOATDATA(b);
     bp = copyimage(b);
     BP = FLOATDATA(bp);
-    for (k = 1; k < N; k += 1) BP[k] = FLOAT_MAX;
+    for (k = 1; k < N; k += 1) BP[k] = MAXFLOAT;
 
     for (k = 1; k < ds; k += 2)
       for (j = 1; j < cs; j += 2)

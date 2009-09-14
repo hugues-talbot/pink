@@ -3,7 +3,7 @@
 */
 #ifndef CYGWIN 
 /* Not cygwin, use regular values.h */
-#include <values.h>
+#include "/usr/include/values.h"
 #else
 /* Cygwin, use this values.h */
 

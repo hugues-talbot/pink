@@ -6,11 +6,13 @@
 <B>Usage:</B> lambdamedialaxis in.pgm [lambda] out.pgm
 
 <B>Description:</B>
-Discrete lambda-medial axis of the binary image \b X contained in \b in.pgm. 
+Discrete lambda-medial axis, as defined in [CCT09], 
+of the binary image \b X contained in \b in.pgm.
 If the parameter \b lambda is given, the output is a binary image. Otherwise, 
 it is a float image representing the function x->lambda(x).
 
-\warning Experimental.
+References:<BR> 
+[CCT09] John Chaussard, Michel Couprie, and Hugues Talbot. A discrete lambda-medial axis. 15th Discrete Geometry for Computer Imagery (DGCI'09). Lecture Notes in Computer Science.   2009.  pp. 1–12. To appear.
 
 <B>Types supported:</B> byte 2d, byte 3d
 

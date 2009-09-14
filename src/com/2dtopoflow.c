@@ -362,7 +362,7 @@ int main(int32_t argc, char **argv)
   else 
   {
     priomax_l = INT32_MAX; 
-    priomax_f = FLOAT_MAX; 
+    priomax_f = MAXFLOAT; 
   }
 
   if (datatype(prio) == VFF_TYP_4_BYTE)

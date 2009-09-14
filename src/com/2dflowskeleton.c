@@ -16,7 +16,8 @@ The parameter \b mode selects the function to be integrated in order to build th
 \li 3: border indicator function and substraction of lambda from the integrated map
 \li 4: inverse opening function
 \li 5: bisector function
-\li 6: Euclidean distance map
+\li 6: inverse Euclidean distance map
+\li 7: lambda function
 
 \warning The input image \b in.pgm must be a complex, otherwise the result is meaningless (no verification is done)
 
@@ -366,7 +367,7 @@ int main(int32_t argc, char **argv)
   // -----------------------------------------------------------
   kk = copyimage(k); // sauve k car l2dtopoflow modifie le complexe
   assert(kk != NULL);
-  if (! (flow = l2dtopoflow_f(kk, lambda, NULL, FLOAT_MAX)))
+  if (! (flow = l2dtopoflow_f(kk, lambda, NULL, MAXFLOAT)))
   {
     fprintf(stderr, "%s: function l2dtopoflow_f failed\n", argv[0]);
     exit(1);
@@ -476,11 +477,17 @@ int main(int32_t argc, char **argv)
       fprintf(stderr, "%s: lbisector failed\n", F_NAME);
       exit(1);
     }
+    MaxAlpha2d(func); // fermeture (en ndg)
   }
   else if (mode == 6)
   { // distance map
     uint32_t *D = ULONGDATA(dist);
-    for (i = 0; i < N; i++) FUNC[i] = (float)sqrt(D[i]);
+    for (i = 0; i < N; i++) FUNC[i] = (float)(1.0/sqrt(D[i]));
+  }
+  else if (mode == 7)
+  { // lambda function
+    copy2image(func, lambda);
+    MaxAlpha2d(func); // fermeture (en ndg)
   }
   else
   {

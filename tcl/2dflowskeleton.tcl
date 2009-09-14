@@ -1,6 +1,6 @@
 #sh
 # The next line is executed by /bin/sh, but not Tcl \
-exec wish $0 $1 $2 $3
+exec wish $0 $1 $2 $3 $4
 
 # set window title
 wm title . "Flow skeleton"
@@ -28,10 +28,11 @@ proc my_read_val {filename} {
 #   2DFLOWSKELETON(im_cs)
 set 2DFLOWSKELETON(combine) 0
 set 2DFLOWSKELETON(param) 1
+set 2DFLOWSKELETON(maxparam) 100
 set 2DFLOWSKELETON(name) 2dflowskeleton
 
-if {$argc != 3} { 
-  puts stderr "usage: 2dflowskeleton.tcl in mode out"
+if {($argc != 3) && ($argc != 4)} { 
+  puts stderr "usage: 2dflowskeleton.tcl in mode \[maxparam\] out"
   exit 
 }
 
@@ -46,8 +47,15 @@ set 2DFLOWSKELETON(infilename) [lindex $argv 0]
 # get mode as second argument
 set 2DFLOWSKELETON(mode) [lindex $argv 1]
 
-# get output image file name as third argument
-set 2DFLOWSKELETON(outfilename) [lindex $argv 2]
+if {$argc == 3} { 
+  # get output image file name as third argument
+  set 2DFLOWSKELETON(outfilename) [lindex $argv 2]
+}
+
+if {$argc == 4} { 
+  set 2DFLOWSKELETON(maxparam) [lindex $argv 2]
+  set 2DFLOWSKELETON(outfilename) [lindex $argv 3]
+}
 
 my_exec_q $PINK/linux/bin/2dflowskeleton $2DFLOWSKELETON(infilename) $2DFLOWSKELETON(mode) [tmpfile _map]
 
@@ -65,7 +73,7 @@ checkbutton .top.combine -text combine -variable 2DFLOWSKELETON(combine) -comman
 pack .top.combine -side right
 
 # create the radius button
-scale .top.radius -from 1 -to 200 -length 200 -variable 2DFLOWSKELETON(param) \
+scale .top.radius -from 1 -to $2DFLOWSKELETON(maxparam) -length 300 -variable 2DFLOWSKELETON(param) \
   -orient horizontal -tickinterval 0 -showvalue true -command 2dflowskeleton_run
 pack .top.radius -side left
 

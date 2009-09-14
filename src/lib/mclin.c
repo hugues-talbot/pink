@@ -1059,7 +1059,7 @@ int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, doubl
   // Pour savoir lequel, on fait les trois calculs et l'on retient
   // celui qui donne l'erreur minimale.
 
-  err = FLOAT_MAX;
+  err = MAXFLOAT;
   for (i = 0; i < npb; i++)
   {
     X[3*i] = 1.0;
