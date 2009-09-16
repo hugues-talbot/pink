@@ -57,6 +57,7 @@ typedef struct RAG{
   uint8_t *F;              // valuation des aretes
   uint8_t *profondeur;     // profondeur des regions
   uint32_t *surface;       //
+  uint32_t *altitude;       //
   uint32_t *tete;          // representation du graphe
   uint32_t *queue;         // par liste d'aretes
 } RAG;
@@ -68,7 +69,7 @@ extern int32_t updateRAGArc(RAG *rag, int32_t i, int32_t s, uint8_t val);
 
 // Les deux fonctions suivantes vont plutot dans la bibliothèque
 // hierarchie
-extern void attributNoeud(RAG *rag, struct xvimage *label, struct xvimage *ga);
+extern void attributNoeud(RAG *rag, struct xvimage *label, struct xvimage *ga, struct xvimage *annexe);
 #ifdef __cplusplus
 }
 #endif

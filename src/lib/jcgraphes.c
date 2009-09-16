@@ -161,6 +161,10 @@ RAG *initRAG(int32_t nsom, int32_t nmaxarc)
     fprintf(stderr, "initRAG : malloc failed\n");
     exit(0);
   }
+  if( (_rag->altitude = (uint32_t *)malloc(sizeof(uint32_t)*nsom)) == NULL){
+    fprintf(stderr, "initRAG : malloc failed\n");
+    exit(0);
+  }
   if( (_rag->tete = (uint32_t *)malloc(sizeof(uint32_t)*nmaxarc)) == NULL){
     fprintf(stderr, "initRAG : malloc failed\n");
     exit(0);
@@ -179,6 +183,7 @@ void termineRAG(RAG * rag)
   free(rag->F);
   free(rag->profondeur);
   free(rag->surface);
+  free(rag->altitude);
   free(rag->tete);
   free(rag->queue);
   free(rag);

@@ -19,20 +19,24 @@
 #include <mcutil.h>
 
 // Calcul les attributs surface et profondeur du RAG
-void attributNoeud(RAG *rag, struct xvimage *label, struct xvimage *ga)
+void attributNoeud(RAG *rag, struct xvimage *label, struct xvimage *ga, struct xvimage *annexe)
 {
   int32_t i;
   int32_t rs = rowsize(label);                   /* taille ligne      */
   int32_t cs = colsize(label);                   /* taille colonne    */
   int32_t N = rs * cs;                           /* taille image      */
   int32_t *LABEL = SLONGDATA(label);           /* les labels        */
+  uint8_t *F;
   int32_t alt;
   int32_t l;
-  
+
+  if (annexe!=NULL)   F = UCHARDATA(annexe);
+
   for(i = 0; i < rag->g->nsom; i++) {
     /* tout ca peut se calculer au vol lors de la construction de la LPE */
     rag->surface[i] = 0;
     rag->profondeur[i] = 255;
+    rag->altitude[i] = 0;
   }
   
   for(i = 0; i < N; i++) {
@@ -40,11 +44,13 @@ void attributNoeud(RAG *rag, struct xvimage *label, struct xvimage *ga)
     l = LABEL[i];
     rag->profondeur[l] = min(alt,rag->profondeur[l]);
     rag->surface[l] ++;
+    if (annexe!=NULL)
+      rag->altitude[l] = F[i];
   }
 }
 
 // Construit un RAG a partir d'une partition (label) et d'un ga
-RAG *construitRAG(struct xvimage *ga, struct xvimage *label)
+RAG *construitRAG(struct xvimage *ga, struct xvimage *label, struct xvimage *annexe)
 #undef F_NAME
 #define F_NAME "construitRAGOpening"
 {
@@ -72,7 +78,7 @@ RAG *construitRAG(struct xvimage *ga, struct xvimage *label)
     }
   }
   // Puis calcul les attributs de noeuds du rag
-  attributNoeud(rag,label,ga);  
+  attributNoeud(rag,label,ga,annexe);  
   return rag;
 }
 
@@ -91,6 +97,31 @@ int32_t surfaceRec(JCctree *CT, int32_t *SurfaceCompo, int32_t root)
     }
   }
   return SurfaceCompo[root];
+}
+
+// OmegaCC
+/* calcul de omega des composantes de l'arbre */
+int32_t omegaRec(JCctree *CT, int32_t *omegaCompo, int32_t root)
+{
+  JCsoncell *s; 
+  if(CT->tabnodes[root].nbsons == 0){
+    //CT->tabnodes[root].max = CT->tabnodes[root].min = ;
+    omegaCompo[root] = 0;
+    return omegaCompo[root];
+  } else { //if(CT->tabnodes[root].nbsons != 0)
+    omegaCompo[root] = 0;
+    for(s = CT->tabnodes[root].sonlist; s != NULL; s = s->next) 
+    {
+      omegaRec(CT, omegaCompo, s->son);
+      CT->tabnodes[root].max = (CT->tabnodes[root].max > CT->tabnodes[s->son].max) ? 
+	CT->tabnodes[root].max : CT->tabnodes[s->son].max;
+      CT->tabnodes[root].min = (CT->tabnodes[root].min < CT->tabnodes[s->son].min) ? 
+	CT->tabnodes[root].min : CT->tabnodes[s->son].min;
+    }
+    omegaCompo[root] = CT->tabnodes[root].max - CT->tabnodes[root].min;
+    //printf("Node %d , omega = %d\n", root, omegaCompo[root]);
+    return omegaCompo[root];
+  }
 }
 
 /* calcule la dynamique des composantes de l'arbre de fusion */
@@ -207,6 +238,83 @@ int32_t surfaceOpenningRec(JCctree *CT, int32_t *SurfaceCompo, int32_t *SurfaceM
   SurfaceMerge[root] = max; 
   return SurfaceMerge[root];
 } 
+
+// Si meme altitude, meme attribut
+propagate1(JCctree *CT, int32_t root, int32_t *omegaCompo)
+{
+  JCsoncell *s;
+  // 
+
+  if(CT->tabnodes[root].nbsons != 0){
+    // root n'est pas une feuille
+      if(CT->tabnodes[root].father != -1){
+	// On a un parent
+	if(CT->tabnodes[CT->tabnodes[root].father].data == CT->tabnodes[root].data){
+	  // l'altitude de ce pere est celle du fils
+	  omegaCompo[root] = omegaCompo[CT->tabnodes[root].father]; //On oublie et on egalise
+	}
+      }
+      
+    s = CT->tabnodes[root].sonlist;
+    propagate1(CT, s->son, omegaCompo);
+    propagate1(CT, CT->tabnodes[root].lastson->son, omegaCompo);
+  }
+  return;
+}
+
+// Valeurs extinctions
+propagate2(JCctree *CT, int32_t root, int32_t *omegaCompo, int32_t valeur)
+{
+  JCsoncell *s;
+  // 
+  int32_t tmp;
+
+  tmp = omegaCompo[root];
+  omegaCompo[root] = valeur;
+
+  if(CT->tabnodes[root].nbsons != 0){
+    // root n'est pas une feuille
+      
+    s = CT->tabnodes[root].sonlist;
+    propagate2(CT, s->son, omegaCompo, valeur);
+    propagate2(CT, CT->tabnodes[root].lastson->son, omegaCompo, tmp);
+  }
+  return;
+}
+
+int32_t * omegaMergeTree(JCctree *CT, RAG *rag)
+#undef F_NAME
+#define F_NAME "omegaMergeTree"
+{
+  int32_t *omegaCompo;
+  int32_t *omegaMerge;
+  int32_t i;
+
+  if( (omegaCompo = (int32_t*)malloc(sizeof(int32_t) * CT->nbnodes)) == NULL){
+    fprintf(stderr,"%s: erreur de malloc\n", F_NAME);
+    exit(0);
+  }
+  if( (omegaMerge = (int32_t*)malloc(sizeof(int32_t) * CT->nbnodes)) == NULL){
+    fprintf(stderr,"%s: erreur de malloc\n", F_NAME);
+    exit(0);
+  }  
+  /* Initialisation des feuilles de CT */
+  for(i = 0; i <rag->g->nsom; i++) {
+    omegaCompo[i] = 0;
+    CT->tabnodes[i].max = CT->tabnodes[i].min = rag->altitude[i];
+  }
+  omegaRec(CT, omegaCompo, CT->root); 
+  //ComponentTreeDotty(CT);
+  
+  propagate1(CT, CT->root, omegaCompo);
+  propagate2(CT, CT->root, omegaCompo, 255);
+  //attributOpenningRec(CT, omegaCompo, omegaMerge, CT->root); 
+  for(i = 0; i < CT->nbnodes; i++)
+    omegaMerge[i] = omegaCompo[i];
+  //omegaMerge[i] = computeOmegaMerge(CT, i, omegaCompo);
+  free(omegaCompo);
+  return omegaMerge;
+}
 
 int32_t* altitudeOrdering(uint8_t* F, int32_t N)
 /* Trie par denombrement */
@@ -560,7 +668,7 @@ int32_t main_cascade(struct xvimage *image, struct xvimage *ga, int32_t param)
 
 /* Calcule la carte de saillance du ga d'origine pour le critere param */
 /* Le resulat est stocke ds ga */
-int32_t saliencyGa(struct xvimage *ga, int32_t param) 
+int32_t saliencyGa(struct xvimage *ga, int32_t param, struct xvimage *annexe) 
 #undef F_NAME
 #define F_NAME "saliencyGa"
 {
@@ -582,7 +690,7 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param)
   }
   LABEL = SLONGDATA(label);    
   flowMappingRecursif(ga,LABEL);
-  rag = construitRAG(ga, label);
+  rag = construitRAG(ga, label, annexe);
   
   printf("nbre de regions: %d \n",rag->g->nsom);
   
@@ -600,6 +708,9 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param)
     break;
   case VOLUME:
     Attribut = volumeMergeTree(MT->CT,rag);
+    break;
+  case OMEGA:
+    Attribut = omegaMergeTree(MT->CT,rag);
     break;
   default: fprintf(stderr, "%s #1: Parametre incorecte \n",F_NAME); exit(0);
   }

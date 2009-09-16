@@ -39,8 +39,10 @@ void ComponentTreePrint(JCctree * CT)
   printf("root = %d ;  nbnodes: %d ; nbsoncells: %d\n", CT->root, CT->nbnodes, CT->nbsoncells);
   for (i = 0; i < CT->nbnodes; i++) 
   {
-    printf("node: %d ; level %d ; nbsons: %d ; father: %d ; ", 
-            i, CT->tabnodes[i].data, CT->tabnodes[i].nbsons, CT->tabnodes[i].father);
+    printf("node: %d ; level %d ; nbsons: %d ; father: %d ; max = %d ; min = %d ; ", 
+	   i, CT->tabnodes[i].data, CT->tabnodes[i].nbsons, 
+	   CT->tabnodes[i].father,
+	   CT->tabnodes[i].max, CT->tabnodes[i].min);
     if (CT->tabnodes[i].nbsons > 0)
     {
       printf("sons: ");
@@ -49,6 +51,40 @@ void ComponentTreePrint(JCctree * CT)
     }
     printf("\n");
   }
+} // ComponentTreePrint() 
+
+/* ==================================== */
+void ComponentTreeDotty(JCctree * CT)
+/* ==================================== */
+{
+  FILE *fp;
+  int32_t i;
+  JCsoncell *s;
+  fp = fopen("CT.dot", "w");
+  fprintf(fp, "digraph G {\n");
+  fprintf(fp, "size=\"8,6\"; ratio=fill;\n");
+  //printf("root = %d ;  nbnodes: %d ; nbsoncells: %d\n", CT->root, CT->nbnodes, CT->nbsoncells);
+  for (i = 0; i < CT->nbnodes; i++) 
+  {
+    /*printf("node: %d ; level %d ; nbsons: %d ; father: %d ; max = %d ; min = %d ; ", 
+            i, CT->tabnodes[i].data, CT->tabnodes[i].nbsons, CT->tabnodes[i].father,
+	   CT->tabnodes[i].max, CT->tabnodes[i].min);
+    */
+    fprintf(fp, "n%d [label = \"max = %d, min = %d, level = %d\"]\n", i,  
+	   CT->tabnodes[i].max, CT->tabnodes[i].min,
+	   CT->tabnodes[i].data);
+    if (CT->tabnodes[i].nbsons > 0)
+    {
+      //printf("sons: ");
+      for (s = CT->tabnodes[i].sonlist; s != NULL; s = s->next) {
+	fprintf(fp, "n%d -> n%d;\n", s->son, i); 
+        //printf("%d  ", s->son);
+      }
+    }
+    //printf("\n");
+  }
+  fprintf(fp, "}\n");
+  fclose(fp);
 } // ComponentTreePrint() 
 
 /* ==================================== */
