@@ -31,6 +31,8 @@ The possible choices are:
 In modes other than 2, if the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
 
+<B>Warning:</B> The object must not have any point on the frame of the image.
+
 <B>Types supported:</B> byte 3d
 
 <B>Category:</B> topobin

@@ -660,6 +660,8 @@ Répéter jusqu'à stabilité
   R := voxels de P à préserver (match2, match1)
   T :=  [S  \  P]  \cup  R
   S := T \cup [S \ (T \oplus \Gamma_26*)]
+
+Attention : l'objet ne doit pas toucher le bord de l'image
 */
 #undef F_NAME
 #define F_NAME "lskelMK3a"
@@ -793,6 +795,9 @@ Répéter jusqu'à stabilité
   C0 := voxels 0M-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
 */
 #undef F_NAME
 #define F_NAME "lskelEK3"
@@ -920,6 +925,9 @@ Répéter jusqu'à stabilité
   C0 := voxels 0M-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
 */
 #undef F_NAME
 #define F_NAME "lskelCK3a"
@@ -1073,6 +1081,9 @@ Répéter jusqu'à stabilité
   C0 := voxels 0M-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
 */
 #undef F_NAME
 #define F_NAME "lskelCK3b"
@@ -1250,6 +1261,9 @@ Répéter jusqu'à stabilité
   C0 := voxels 0M-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
 */
 #undef F_NAME
 #define F_NAME "lskelCK3"
@@ -1426,6 +1440,9 @@ Répéter jusqu'à stabilité
   P := voxels de S \ K simples pour S
   R := voxels de P qui s'apparient avec le masque C (bertrand_match3)
   S := [S  \  P]  \cup  R
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
 */
 #undef F_NAME
 #define F_NAME "lskelAK3"
@@ -1578,6 +1595,9 @@ Répéter jusqu'à stabilité
   C0 := voxels 0M-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
 */
 #undef F_NAME
 #define F_NAME "lskelMK3"
@@ -2178,6 +2198,9 @@ Répéter jusqu'à stabilité
   C0 := voxels 0M-cruciaux (asym_match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
 */
 #undef F_NAME
 #define F_NAME "lskelAMK3"
@@ -2292,6 +2315,9 @@ Répéter jusqu'à stabilité
   C0 := voxels 0M-cruciaux (asym_match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
 */
 #undef F_NAME
 #define F_NAME "lskelACK3a"
@@ -2423,6 +2449,9 @@ Répéter jusqu'à stabilité
   C0 := voxels 0M-cruciaux (asym_match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
 */
 #undef F_NAME
 #define F_NAME "lskelACK3"
@@ -2592,6 +2621,9 @@ Répéter jusqu'à stabilité
   C0 := voxels 0M-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
 */
 #undef F_NAME
 #define F_NAME "lskelRK3"
@@ -2748,6 +2780,9 @@ Répéter jusqu'à stabilité
   C0 := voxels 0M-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
 */
 #undef F_NAME
 #define F_NAME "lskelSK3"

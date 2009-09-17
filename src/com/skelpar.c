@@ -44,6 +44,8 @@ The possible choices are:
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
 
+<B>Warning:</B> The object must not have any point on the frame of the image.
+
 References:<BR> 
 [COU05] M. Couprie, Note on fifteen 2D parallel thinning algorithms,
 IGM2006-01}, Universit\'e de Marne-la-Vall\'ee, 2006,
