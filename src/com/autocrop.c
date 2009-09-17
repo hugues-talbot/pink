@@ -3,7 +3,7 @@
 
 \brief eliminates null regions at the periphery of an image
 
-<B>Usage:</B> autocrop in.pgm out.pgm
+<B>Usage:</B> autocrop in.pgm [threshold] out.pgm
 
 <B>Description:</B>
 Selects the minimum rectangle (cuboid in 3d) that contain all non-null information 
@@ -34,13 +34,15 @@ int main(int argc, char **argv)
   struct xvimage * temp1;
   uint8_t *I;
   uint8_t *T1;
+  uint8_t seuil;
   int32_t x, y, z, w, h, p;
   int32_t xmin, xmax, ymin, ymax, zmin, zmax;
   int32_t rs, cs, n, N, d;
+  
 
-  if (argc != 3)
+  if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s in.pgm out.ppm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm [threshold] out.ppm\n", argv[0]);
     exit(1);
   }
 
@@ -51,6 +53,11 @@ int main(int argc, char **argv)
     exit(1);
   }
   
+  if (argc == 4) 
+    seuil = atoi(argv[2]);
+  else 
+    seuil = 1;
+
   rs = rowsize(in);
   cs = colsize(in);
   N = rs * cs;
@@ -62,7 +69,7 @@ int main(int argc, char **argv)
   for (z = 0; z < d; z++)
     for (y = 0; y < cs; y++)
       for (x = 0; x < rs; x++)
-        if (I[z * N + y * rs + x])
+        if (I[z * N + y * rs + x] >= seuil)
         {
           if (z < zmin) zmin = z; if (z > zmax) zmax = z; 
           if (y < ymin) ymin = y; if (y > ymax) ymax = y; 
@@ -92,7 +99,7 @@ int main(int argc, char **argv)
       for (x = 0; x < w; x++)
         T1[z*n + y*w + x] = I[((zmin+z)*N) + ((ymin+y)*rs) + xmin+x];
 
-  writeimage(temp1, argv[2]);
+  writeimage(temp1, argv[argc-1]);
   freeimage(in);
   freeimage(temp1);
 

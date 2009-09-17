@@ -40,6 +40,7 @@ The optional parameter \b scale allows to scale the coordinates.
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcutil.h>
@@ -50,10 +51,27 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   FILE *fd = NULL;
-  int32_t rs, cs, ds, ps, N, x, y, z, v, n, i;
+  int32_t rs, cs, ds, ps, N, x, y, z, n, i;
   double xx, yy, zz, vv, scale;
   uint8_t *F;
+  float *FF;
   char type;
+
+  fd = fopen(argv[1],"r");
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[1]);
+    exit(1);
+  }
+
+  fscanf(fd, "%c", &type);
+  if ((type != 'e') && (type != 's') && (type != 'b') && (type != 'n') && (type != 'B') && (type != 'N'))
+  {
+    fprintf(stderr, "usage: %s: bad file format : %c \n", argv[0], type);
+    exit(1);
+  }
+
+  fscanf(fd, "%d\n", &n);
 
   if ((argc != 4) && (argc != 6) && (argc != 5) && (argc != 7))
   {
@@ -74,7 +92,16 @@ int main(int argc, char **argv)
     ds = depth(image);
     ps = rs * cs;
     N = ps * ds;
-    F = UCHARDATA(image);
+    if ((type == 'e') || (type == 'b') || (type == 'B'))
+    {
+      F = UCHARDATA(image);
+      assert(datatype(image) == VFF_TYP_1_BYTE);
+    }
+    else
+    {
+      FF = FLOATDATA(image);
+      assert(datatype(image) == VFF_TYP_FLOAT);
+    }
   }
   else
   {
@@ -83,33 +110,20 @@ int main(int argc, char **argv)
     ds = atoi(argv[4]);
     ps = rs * cs;
     N = ps * ds;
-    image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-    if (image == NULL)
+    if ((type == 'e') || (type == 'b') || (type == 'B'))
     {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
+      image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE); assert(image != NULL);
+      F = UCHARDATA(image);
     }
-    F = UCHARDATA(image);
-    memset(F, 0, N);
+    else
+    {
+      image = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT); assert(image != NULL);
+      FF = FLOATDATA(image);
+    }
+    razimage(image);
   }
 
   if ((argc == 5) || (argc == 7)) scale = atof(argv[argc-2]); else scale = 1.0;
-
-  fd = fopen(argv[1],"r");
-  if (!fd)
-  {
-    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[1]);
-    exit(1);
-  }
-
-  fscanf(fd, "%c", &type);
-  if ((type != 'e') && (type != 's') && (type != 'b') && (type != 'n') && (type != 'B') && (type != 'N'))
-  {
-    fprintf(stderr, "usage: %s: bad file format : %c \n", argv[0], type);
-    exit(1);
-  }
-
-  fscanf(fd, "%d\n", &n);
 
   if (type == 'e') 
   {
@@ -134,14 +148,14 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: type %c is for 1D images\n", argv[0], type);
       exit(1);
     }
+printf("list2pgm: type = s\n");
     for (i = 0; i < n; i++)
     {
       fscanf(fd, "%lf %lf\n", &xx, &vv);
       xx *= scale;
       x = arrondi(xx);
-      v = arrondi(vv);
-      if ((x >= 0) && (x < rs) && (v >= 0) && (v < 256))
-        F[x] = v;
+      if ((x >= 0) && (x < rs))
+        FF[x] = (float)vv;
     }
   }
   else if (type == 'b') 
@@ -176,9 +190,8 @@ int main(int argc, char **argv)
       yy *= scale;
       x = arrondi(xx);
       y = arrondi(yy);
-      v = arrondi(vv);
-      if ((x >= 0) && (x < rs) && (y >= 0) && (y < cs) && (v >= 0) && (v < 256))
-        F[y * rs + x] = v;
+      if ((x >= 0) && (x < rs) && (y >= 0) && (y < cs))
+        FF[y * rs + x] = (float)vv;
     }
   } else if (type == 'B') 
   {
@@ -206,9 +219,8 @@ int main(int argc, char **argv)
       x = arrondi(xx);
       y = arrondi(yy);
       z = arrondi(zz);
-      v = arrondi(vv);
-      if ((x >= 0) && (x < rs) && (y >= 0) && (y < cs) && (z >= 0) && (z < ds) && (v >= 0) && (v < 256))
-        F[z * ps + y * rs + x] = v;
+      if ((x >= 0) && (x < rs) && (y >= 0) && (y < cs) && (z >= 0) && (z < ds))
+        FF[z * ps + y * rs + x] = (float)vv;
     }
   }
 

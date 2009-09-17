@@ -15,6 +15,7 @@ Michel Couprie 1998-2007
 
 Update nov. 2006 : modif geodesic_neighborhood pour compatibilité 64 bits
 Update nov. 2007 : modif nbcomp pour compatibilité 64 bits
+Update sep. 2009 : ajout des tests is_on_frame()
 */
 
 #include <stdint.h>
@@ -22,6 +23,7 @@ Update nov. 2007 : modif nbcomp pour compatibilité 64 bits
 #include <stdio.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mclifo.h>
 #include <mcutil.h>
 #include <mccodimage.h>
@@ -32,6 +34,17 @@ static Lifo * LIFO_topo3d1 = NULL;
 static Lifo * LIFO_topo3d2 = NULL;
 static voxel cube_topo3d[27];
 static voxel cubec_topo3d[27];
+
+
+static inline int32_t is_on_frame(int32_t p, int32_t rs, int32_t ps, int32_t N)
+{
+  if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
+      (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
+      (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
+    return 1;
+  else
+    return 0;
+}
   
 /* ========================================== */
 void init_topo3d()
@@ -770,10 +783,8 @@ void top6(                   /* pour un objet en 6-connexite */
   int32_t *t,
   int32_t *tb)                     /* resultats */
 /* ==================================== */
-/*
-  ATTENTION: p ne doit pas etre un point de bord (test a faire avant).
-*/
 {
+  assert(!is_on_frame(p, rs, ps, N));
   preparecubes(img, p, rs, ps, N);
   *t = T6(cube_topo3d);
   *tb = T26(cubec_topo3d);
@@ -789,10 +800,8 @@ void top18(                   /* pour un objet en 18-connexite */
   int32_t *t,
   int32_t *tb)                     /* resultats */
 /* ==================================== */
-/*
-  ATTENTION: p ne doit pas etre un point de bord (test a faire avant).
-*/
 {
+  assert(!is_on_frame(p, rs, ps, N));
   preparecubes(img, p, rs, ps, N);
   *t = T18(cube_topo3d);
   *tb = T6p(cubec_topo3d);
@@ -808,10 +817,8 @@ void top26(                   /* pour un objet en 26-connexite */
   int32_t *t,
   int32_t *tb)                     /* resultats */
 /* ==================================== */
-/*
-  ATTENTION: p ne doit pas etre un point de bord (test a faire avant).
-*/
 {
+  assert(!is_on_frame(p, rs, ps, N));
   preparecubes(img, p, rs, ps, N);
   *t = T26(cube_topo3d);
   *tb = T6(cubec_topo3d);
@@ -2021,13 +2028,7 @@ void nbtopoh3d26_l( /* pour les minima en 26-connexite */
   int32_t *t26mm)
 /* ==================================== */
 {
-  if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
-      (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
-      (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
-    {
-      printf("ERREUR: nbtopoh3d26_l: point de bord\n");
-      exit(0);
-    }
+  assert(!is_on_frame(p, rs, ps, N));
   preparecubesh_l(img, p, h, rs, ps, N);
   *t6p = T6(cube_topo3d);
   *t26mm = T26(cubec_topo3d);
@@ -2045,13 +2046,7 @@ void nbtopoh3d6_l( /* pour les minima en 6-connexite */
   int32_t *t6mm)
 /* ==================================== */
 {
-  if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
-      (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
-      (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
-    {
-      printf("ERREUR: nbtopoh3d6_l: point de bord\n");
-      exit(0);
-    }
+  assert(!is_on_frame(p, rs, ps, N));
   preparecubesh_l(img, p, h, rs, ps, N);
   *t26p = T26(cube_topo3d);
   *t6mm = T6(cubec_topo3d);
@@ -2093,8 +2088,8 @@ int32_t curve6( /* point de courbe en 6-connexite */
   int32_t ps,                      /* taille plan */
   int32_t N)                       /* taille image */
 /* ==================================== */
-/*  ATTENTION: i ne doit pas etre un point de bord (test a faire avant). */
 {
+  assert(!is_on_frame(p, rs, ps, N));
   if (img[p] == 0) return 0;
   preparecubes(img, p, rs, ps, N);
   if ((T6(cube_topo3d) == 2) && (nbvoiso6(img, p, rs, ps, N) == 2)) return 1;
@@ -2109,8 +2104,8 @@ int32_t curve18( /* point de courbe en 18-connexite */
   int32_t ps,                      /* taille plan */
   int32_t N)                       /* taille image */
 /* ==================================== */
-/*  ATTENTION: i ne doit pas etre un point de bord (test a faire avant). */
 {
+  assert(!is_on_frame(p, rs, ps, N));
   if (img[p] == 0) return 0;
   preparecubes(img, p, rs, ps, N);
   if ((T18(cube_topo3d) == 2) && (nbvoiso18(img, p, rs, ps, N) == 2)) return 1;
@@ -2125,8 +2120,8 @@ int32_t curve26( /* point de courbe en 26-connexite */
   int32_t ps,                      /* taille plan */
   int32_t N)                       /* taille image */
 /* ==================================== */
-/*  ATTENTION: i ne doit pas etre un point de bord (test a faire avant). */
 {
+  assert(!is_on_frame(p, rs, ps, N));
   if (img[p] == 0) return 0;
   preparecubes(img, p, rs, ps, N);
   if ((T26(cube_topo3d) == 2) && (nbvoiso26(img, p, rs, ps, N) == 2)) return 1;

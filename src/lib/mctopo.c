@@ -14,12 +14,14 @@ Michel Couprie 1996
 23 avril 1999: nouvelle definition des points lambda-simples
 02 juin 1999: fonction deltaNm et deltaNp, avec N = 4,8
 29 juin 2001: typetopobin et typetopobin8
+Update sep. 2009 : ajout des tests is_on_frame()
 */
 
 #include <sys/types.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mctopo.h>
 #include <mccodimage.h>
 #include <mcutil.h>
@@ -229,6 +231,14 @@ static int32_t Comp8Tab[256][4] =
   {0xfc,0x0,0x0,0x0}, {0xfd,0x0,0x0,0x0}, {0xfe,0x0,0x0,0x0}, {0xff,0x0,0x0,0x0}
 };
 
+static inline int32_t is_on_frame(int32_t p, int32_t rs, int32_t N)
+{
+  if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
+    return 1;
+  else
+    return 0;
+}
+
 /* ==================================== */
 void veriftopo()
 /* ==================================== */
@@ -265,11 +275,7 @@ uint8_t mask(
 {
 	register uint8_t * ptr = img+p;
 	register uint8_t v;
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: mask: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 	if ( *(ptr+1)   ) v=1; else v=0;
  	if ( *(ptr+1-rs)) v|=2;
  	if ( *(ptr-rs)  ) v|=4;
@@ -304,11 +310,7 @@ uint8_t maskmm(
 	register uint8_t v7;
 	register uint8_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: maskmm: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -354,11 +356,7 @@ uint8_t maskpp(
 	register uint8_t v7;
 	register uint8_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: maskpp: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -405,11 +403,7 @@ uint8_t maskmmh(
 	register uint8_t v7;
 	register uint8_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: maskmm: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -456,11 +450,7 @@ uint8_t maskpph(
 	register uint8_t v7;
 	register uint8_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: maskpp: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -507,11 +497,7 @@ void nbtopo(        /* nombres topologiques pour minima 4-connexes */
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: nbtopo: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -567,11 +553,7 @@ int32_t t4mm(        /* nombre topologique mm pour minima 4-connexes */
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: t4mm: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -614,11 +596,7 @@ int32_t t4m(        /* nombre topologique m pour minima 4-connexes */
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: t4m: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -661,11 +639,7 @@ int32_t t8p(        /* nombre topologique p pour minima 4-connexes */
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: t8p: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -708,11 +682,7 @@ int32_t t8pp(        /* nombre topologique pp pour minima 4-connexes */
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: t8pp: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -755,11 +725,7 @@ int32_t t8pp_l(        /* nombre topologique pp pour minima 4-connexes (images t
 	register int32_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: t8pp: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -806,11 +772,7 @@ void nbtopo2(        /* nombres topologiques pour minima 8-connexes */
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: nbtopo2: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -866,11 +828,7 @@ int32_t t8mm(        /* nombre topologique mm pour minima 8-connexes */
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: t8mm: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -913,11 +871,7 @@ int32_t t8m(        /* nombre topologique m pour minima 8-connexes */
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: t8m: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -960,11 +914,7 @@ int32_t t4p(        /* nombre topologique p pour minima 8-connexes */
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: t4p: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -1007,11 +957,7 @@ int32_t t4pp(        /* nombre topologique pp pour minima 8-connexes */
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: t4pp: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -1054,11 +1000,7 @@ int32_t t4pp_l(        /* nombre topologique pp pour minima 8-connexes (images t
 	register int32_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: t4pp: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -1106,11 +1048,7 @@ void nbtopoh(    /* minima 4-connexes - version avec hauteur de la coupe variabl
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: nbtopoh: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -1171,11 +1109,7 @@ void nbtopoh2(        /* minima 8-connexes - version avec hauteur de la coupe va
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: nbtopoh2: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -1236,11 +1170,7 @@ void nbtopoh_l(    /* minima 4-connexes - version avec hauteur de la coupe varia
 	register int32_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: nbtopoh: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -1301,11 +1231,7 @@ void nbtopoh2_l(        /* minima 8-connexes - version avec hauteur de la coupe 
 	register int32_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: nbtopoh2: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -1363,11 +1289,7 @@ int32_t t8ph(
 	register uint8_t v7;
 	register int32_t t;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: t8ph: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);
@@ -2823,11 +2745,7 @@ void top8(                     /* pour un objet en 8-connexite */
 	register uint8_t * ptr = img+p;
 	register int32_t v;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: top8: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
 	if ( *(ptr+1)   ) v=1; else v=0;
  	if ( *(ptr+1-rs)) v|=2;
@@ -2855,11 +2773,7 @@ void top4(                     /* pour un objet en 4-connexite */
 	register uint8_t * ptr = img+p;
 	register int32_t v;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: top4: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
 	if ( *(ptr+1)   ) v=1; else v=0;
  	if ( *(ptr+1-rs)) v|=2;
@@ -2888,11 +2802,7 @@ void top8_l(                   /* pour un objet en 8-connexite */
 	register int32_t * ptr = img+p;
 	register int32_t v;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: top8: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
 	if ( *(ptr+1)   ) v=1; else v=0;
  	if ( *(ptr+1-rs)) v|=2;
@@ -2920,11 +2830,7 @@ void top4_l(                   /* pour un objet en 4-connexite */
 	register int32_t * ptr = img+p;
 	register int32_t v;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: top4: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
 	if ( *(ptr+1)   ) v=1; else v=0;
  	if ( *(ptr+1-rs)) v|=2;
@@ -3396,11 +3302,7 @@ int32_t ridge(
 	register uint8_t v6;
 	register uint8_t v7;
 
-        if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
-	{
-          printf("ERREUR: ridge: point de bord\n");
-          exit(0);
-	}
+	assert(!is_on_frame(p, rs, N));
 
         v0 = *(ptr+1)   ;
         v1 = *(ptr+1-rs);

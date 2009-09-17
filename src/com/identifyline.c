@@ -10,7 +10,7 @@ Identifies the parameters (a,b) of the equation of the 2D line:
 ax+b=y that minimizes the least square error between this line 
 and the given points. Method: basic linear regression.
 
-<B>Types supported:</B> list 2D
+<B>Types supported:</B> list 1D, list 2D
 
 <B>Category:</B> geo
 \ingroup  geo
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
   }
 
   fscanf(fd, "%c", &type);
-  if (type != 'b')
+  if ((type != 's') && (type != 'b'))
   {
     fprintf(stderr, "usage: %s: bad file format : %c \n", argv[0], type);
     exit(1);

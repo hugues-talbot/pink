@@ -51,6 +51,7 @@ greater than or equal to I will be left unchanged.
 #include <sys/types.h>
 #include <stdlib.h>
 #include <math.h>
+#include <values.h>
 #include <mcutil.h>
 #include <mccodimage.h>
 #include <mcimage.h>
