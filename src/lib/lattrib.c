@@ -1,4 +1,37 @@
-/* $Id: lattrib.c,v 1.2 2009-03-13 14:46:14 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
   Common code for files: 
     lattribarea.c
@@ -162,6 +195,9 @@ static int32_t d_Partitionner(int32_t *A, double *T, int32_t p, int32_t r)
   } /* while (1) */   
 } /* d_Partitionner() */
 
+#ifdef GCC
+static int32_t d_PartitionStochastique(int32_t *A, double *T, int32_t p, int32_t r) __attribute__ ((unused));
+#endif
 /* =============================================================== */
 static int32_t d_PartitionStochastique(int32_t *A, double *T, int32_t p, int32_t r)
 /* =============================================================== */
@@ -180,6 +216,9 @@ static int32_t d_PartitionStochastique(int32_t *A, double *T, int32_t p, int32_t
   return d_Partitionner(A, T, p, r);
 } /* d_PartitionStochastique() */
 
+#ifdef GCC
+static void d_TriRapideStochastique (int32_t * A, double *T, int32_t p, int32_t r) __attribute__ ((unused));
+#endif
 /* =============================================================== */
 static void d_TriRapideStochastique (int32_t * A, double *T, int32_t p, int32_t r)
 /* =============================================================== */
@@ -238,6 +277,9 @@ static int32_t i_PartitionStochastique(int32_t *A, int32_t *T, int32_t p, int32_
   return i_Partitionner(A, T, p, r);
 } /* i_PartitionStochastique() */
 
+#ifdef GCC
+static void i_TriRapideStochastique (int32_t * A, int32_t *T, int32_t p, int32_t r) __attribute__ ((unused));
+#endif
 /* =============================================================== */
 static void i_TriRapideStochastique (int32_t * A, int32_t *T, int32_t p, int32_t r)
 /* =============================================================== */
@@ -509,6 +551,7 @@ static int32_t volrec(CompactTree * cpct, uint32_t som, int32_t *na1)
   return na1[som];
 } /* volrec() */
 
+#ifdef OLD
 /* ==================================== */
 static int32_t volrec_old(CompactTree * cpct, uint32_t som, int32_t *na1)
 /* ==================================== */
@@ -525,6 +568,7 @@ static int32_t volrec_old(CompactTree * cpct, uint32_t som, int32_t *na1)
   }
   return na1[som];
 } /* volrec_old() */
+#endif
 #endif
 
 #ifdef ATTR_HEIGHT
@@ -687,6 +731,10 @@ static int32_t FiltreHeightRec(CompactTree * cpct, int32_t som, int32_t h)
 #endif
 
 #ifdef ATTR_SURF
+
+#ifdef GCC
+static int32_t FiltreSurfRec(CompactTree * cpct, int32_t som, int32_t h) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static int32_t FiltreSurfRec(CompactTree * cpct, int32_t som, int32_t h)
 /* ==================================== */
@@ -752,6 +800,10 @@ static int32_t FiltreVolRec(CompactTree * cpct, int32_t som, int32_t h)
 } /* FiltreVolRec() */
 #endif
 
+
+#ifdef GCC
+static int32_t MaximiseSegmentation(CompactTree * cpct, int32_t som) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static int32_t MaximiseSegmentation(CompactTree * cpct, int32_t som)
 /* ==================================== */
@@ -865,6 +917,9 @@ static void Reconstruction(CompactTree * cpct, int32_t som)
 } /*  Reconstruction() */
 #endif
 
+#ifdef GCC
+static int32_t NbLeafs(CompactTree * cpct, int32_t som) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static int32_t NbLeafs(CompactTree * cpct, int32_t som)
 /* ==================================== */
@@ -1126,6 +1181,9 @@ static int32_t LeafMark(CompactTree *cpct)
   return f;
 } /* LeafMark() */
 
+#ifdef GCC
+static int32_t NbFilsNonFiltres(CompactTree * cpct, int32_t som) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static int32_t NbFilsNonFiltres(CompactTree * cpct, int32_t som)
 /* ==================================== */
@@ -1363,7 +1421,9 @@ static int32_t flood(int32_t h,                 /* niveau a inonder */
   return m;
 } /* flood() */
 
-
+#ifdef GCC
+static int32_t floodb(int32_t h, Fahs *FAHS, uint32_t *STATUS, uint32_t *number_nodes, uint8_t *node_at_level, CompTree * tree, int32_t connex, int32_t rs, int32_t N, uint8_t *ORI) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static int32_t floodb(int32_t h,                 /* niveau a inonder */
           Fahs *FAHS, 
@@ -1482,8 +1542,9 @@ static int32_t floodb(int32_t h,                 /* niveau a inonder */
   return m;
 } /* floodb() */
 
-
-
+#ifdef GCC
+static int32_t flood3d(int32_t h, Fahs *FAHS, uint32_t *STATUS, uint32_t *number_nodes, uint8_t *node_at_level, CompTree * tree, int32_t connex, int32_t rs, int32_t ps, int32_t N, uint8_t *ORI) __attribute__ ((unused));
+#endif
 /* ==================================== */
 static int32_t flood3d(
           int32_t h,                        /* niveau a inonder */

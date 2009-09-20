@@ -12,8 +12,6 @@ extern "C" {
 #define signe(z) (((z)>0.0)?1.0:-1.0)
 #define sqr(x) ((x)*(x))
 
-#define MAXFLOAT	3.40282347e+38F
-
 #ifndef M_PI
 # define M_E		2.7182818284590452354	/* e */
 # define M_LOG2E	1.4426950408889634074	/* log_2 e */
