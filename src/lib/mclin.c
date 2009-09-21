@@ -55,7 +55,7 @@ conventions :
 #include <sys/types.h>
 #include <stdlib.h>
 #include <math.h>
-#include <values.h>
+#include <float.h>
 #include <mcutil.h>
 #include <mclin.h>
 
@@ -1093,7 +1093,7 @@ int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, doubl
   // Pour savoir lequel, on fait les trois calculs et l'on retient
   // celui qui donne l'erreur minimale.
 
-  err = MAXFLOAT;
+  err = FLT_MAX;
   for (i = 0; i < npb; i++)
   {
     X[3*i] = 1.0;

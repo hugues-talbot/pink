@@ -84,7 +84,6 @@ greater than or equal to I will be left unchanged.
 #include <sys/types.h>
 #include <stdlib.h>
 #include <math.h>
-#include <values.h>
 #include <mcutil.h>
 #include <mccodimage.h>
 #include <mcimage.h>
@@ -244,7 +243,7 @@ int main(int32_t argc, char **argv)
   else 
   {
     priomax_l = INT32_MAX; 
-    priomax_f = MAXFLOAT; 
+    priomax_f = FLT_MAX; 
   }
 
   if (datatype(prio) == VFF_TYP_4_BYTE)

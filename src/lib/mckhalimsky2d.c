@@ -47,9 +47,9 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <sys/types.h>
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 #include <assert.h>
 #include <string.h>
-#include <values.h>
 #include <mcimage.h>
 #include <mccodimage.h>
 #include <mcutil.h>
@@ -483,7 +483,7 @@ void ndgmin2d(struct xvimage *b)
     B = FLOATDATA(b);
     bp = copyimage(b);
     BP = FLOATDATA(bp);
-    for (j = 1; j < N; j += 1) BP[j] = MAXFLOAT;
+    for (j = 1; j < N; j += 1) BP[j] = FLT_MAX;
 
     for (j = 1; j < cs; j += 2)
       for (i = 1; i < rs; i += 2)

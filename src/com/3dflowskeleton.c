@@ -228,7 +228,7 @@ int main(int32_t argc, char **argv)
   // -----------------------------------------------------------
   kk = copyimage(k); // sauve k car l3dtopoflow modifie le complexe
   assert(kk != NULL);
-  if (! (flow = l3dtopoflow_f(kk, lambda, NULL, MAXFLOAT)))
+  if (! (flow = l3dtopoflow_f(kk, lambda, NULL, FLT_MAX)))
   {
     fprintf(stderr, "%s: function l3dtopoflow_f failed\n", argv[0]);
     exit(1);
