@@ -39,20 +39,20 @@ extern "C" {
     \brief structures de base pour la manipulation de graphes
 */
 
-#include <values.h>
+#include <float.h>
 typedef char boolean;
 //typedef int32_t TYP_VARC;
-//#define MAX_VARC MAXLONG
-//#define MIN_VARC MINLONG
+//#define MAX_VARC INT32_MAX
+//#define MIN_VARC INT32_MIN
 //typedef int32_t TYP_VSOM;
-//#define MAX_VSOM MAXLONG
-//#define MIN_VSOM MINLONG
+//#define MAX_VSOM INT32_MAX
+//#define MIN_VSOM INT32_MIN
 typedef double TYP_VARC;
-#define MAX_VARC MAXDOUBLE 
-#define MIN_VARC MINDOUBLE 
+#define MAX_VARC DBL_MAX
+#define MIN_VARC DBL_MIN
 typedef double TYP_VSOM;
-#define MAX_VSOM MAXDOUBLE 
-#define MIN_VSOM MINDOUBLE 
+#define MAX_VSOM DBL_MAX
+#define MIN_VSOM DBL_MIN
 
 #define TRUE 1
 #define FALSE 0
