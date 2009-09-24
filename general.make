@@ -498,7 +498,7 @@ all:	$(OBJ) $(ARITH) $(CONVERT) $(MORPHO) $(CONNECT) $(GA) $(TOPO) $(ORDRES) $(D
 doc:	$(PINK)/pink.dox
 	doxygen $(PINK)/pink.dox
 ifeq ($(HOME),/user/coupriem)
-	cp -R $(PINK)/doc/* $(HOME)/public_html/pinkdoc
+	cp $(PINK)/doc/html/* $(HOME)/public_html/Pink/doc/html
 endif	
 
 clean:	

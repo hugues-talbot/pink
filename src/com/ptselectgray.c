@@ -36,12 +36,16 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief detects points in a 2D or 3D grayscale image corresponding to a given criterion 
 
-<B>Usage:</B> ptselectgray in.pgm connex t+min t+max t--min t--max out.pgm
+<B>Usage:</B> ptselectgray in.pgm connex mint+ maxt+ mint-- maxt-- out.pgm
 
 <B>Description:</B>
 
-Select all points p such that
-t+min <= T+(p) <= t+max and t--min <= T--(p) <= t--max 
+Select all points p such that the condition:<BR>
+mint+ <= T+(p) <= maxt+ and mint-- <= T--(p) <= maxt--<BR>
+is satisfied.<BR>
+
+The parameter \b connex gives the connectivity used for the minima;
+possible choices are 4, 8 in 2D and 6, 26 in 3D.
 
 <B>Types supported:</B> byte 2d, byte 3d 
 
@@ -94,7 +98,7 @@ int main(int argc, char** argv)
 
     if (argc != 8)
     {
-        fprintf(stderr, "usage: %s in.pgm connex t+min t+max t--min t--max out.pgm\n", argv[0]);
+        fprintf(stderr, "usage: %s in.pgm connex mint+ maxt+ mint-- maxt-- out.pgm\n", argv[0]);
         exit(1);
     }
 
@@ -265,7 +269,7 @@ int32_t lptselectgray(struct xvimage *image,
 //    IndicsTermine();
     free(R);
     return(1);
-} /* ltoposhrinkgray3d() */
+} // lptselectgray()
 
 
 

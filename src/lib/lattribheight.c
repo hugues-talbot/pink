@@ -214,7 +214,7 @@ int32_t lsegmentheight(struct xvimage *image, int32_t connex, int32_t param, int
   return(1);
 } /* lsegmentheight() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static void ProcessLeafMins(CompactTree * cpct, int32_t som) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -295,7 +295,7 @@ static void ProcessLeafMinsOp(CompactTree * cpct, int32_t som)
   }
 } /* ProcessLeafMinsOp() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static void RecupereImageFiltreeH(CompactTree * cpct, uint32_t *STATUS, int32_t rs, int32_t N, uint8_t *ORI) __attribute__ ((unused));
 #endif
 /* ==================================== */

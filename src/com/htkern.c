@@ -68,7 +68,7 @@ grayscale image processing"</A>, <I> Journal of Electronic Imaging</I>, Vol.&nbs
 
 <B>Example:</B>
 
-htkern ur1 null 4 ur1_htkern
+htkern ur1 null 4 ur1_htkern<BR>
 minima ur1_htkern 4 ur1_htkern_m
 
 <table>

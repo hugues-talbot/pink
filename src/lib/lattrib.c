@@ -195,7 +195,7 @@ static int32_t d_Partitionner(int32_t *A, double *T, int32_t p, int32_t r)
   } /* while (1) */   
 } /* d_Partitionner() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static int32_t d_PartitionStochastique(int32_t *A, double *T, int32_t p, int32_t r) __attribute__ ((unused));
 #endif
 /* =============================================================== */
@@ -216,7 +216,7 @@ static int32_t d_PartitionStochastique(int32_t *A, double *T, int32_t p, int32_t
   return d_Partitionner(A, T, p, r);
 } /* d_PartitionStochastique() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static void d_TriRapideStochastique (int32_t * A, double *T, int32_t p, int32_t r) __attribute__ ((unused));
 #endif
 /* =============================================================== */
@@ -277,7 +277,7 @@ static int32_t i_PartitionStochastique(int32_t *A, int32_t *T, int32_t p, int32_
   return i_Partitionner(A, T, p, r);
 } /* i_PartitionStochastique() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static void i_TriRapideStochastique (int32_t * A, int32_t *T, int32_t p, int32_t r) __attribute__ ((unused));
 #endif
 /* =============================================================== */
@@ -484,7 +484,7 @@ static CompactTree * CompTree2CompactTree(CompTree *ct, uint32_t *number_nodes)
   return cpct;
 } /* CompTree2CompactTree() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static void ReInitFlags(CompactTree * cpct) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -630,7 +630,7 @@ static int32_t hbordrec(CompactTree * cpct, uint32_t som, int32_t *nhbord)
 } /* hbordrec() */
 #endif
 
-#ifdef GCC
+#ifdef __GNUC__
 static void CalculeAttributs(CompactTree * cpct) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -732,7 +732,7 @@ static int32_t FiltreHeightRec(CompactTree * cpct, int32_t som, int32_t h)
 
 #ifdef ATTR_SURF
 
-#ifdef GCC
+#ifdef __GNUC__
 static int32_t FiltreSurfRec(CompactTree * cpct, int32_t som, int32_t h) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -801,7 +801,7 @@ static int32_t FiltreVolRec(CompactTree * cpct, int32_t som, int32_t h)
 #endif
 
 
-#ifdef GCC
+#ifdef __GNUC__
 static int32_t MaximiseSegmentation(CompactTree * cpct, int32_t som) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -917,7 +917,7 @@ static void Reconstruction(CompactTree * cpct, int32_t som)
 } /*  Reconstruction() */
 #endif
 
-#ifdef GCC
+#ifdef __GNUC__
 static int32_t NbLeafs(CompactTree * cpct, int32_t som) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -946,7 +946,7 @@ static int32_t NbLeafs(CompactTree * cpct, int32_t som)
     return 1;
 } /* NbLeafs() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static void RecupereImageFiltree(CompactTree * cpct, uint32_t *STATUS, int32_t rs, int32_t N, uint8_t *ORI) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -969,7 +969,7 @@ static void RecupereImageFiltree(CompactTree * cpct,
   }  
 } /* RecupereImageFiltree() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static void RecupereSegmentation(CompactTree * cpct, uint32_t *STATUS, int32_t rs, int32_t N, uint8_t *ORI) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -1124,7 +1124,7 @@ static void AfficheImaComp(CompactTree * cpct,
 } /* AfficheImaComp() */
 #endif
 
-#ifdef GCC
+#ifdef __GNUC__
 static void WriteCompactTree(CompactTree *cpct, char * filename) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -1155,7 +1155,7 @@ static void WriteCompactTree(CompactTree *cpct, char * filename)
   fclose(fd);
 } /* WriteCompactTree() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static int32_t LeafCount(CompactTree *cpct) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -1168,7 +1168,7 @@ static int32_t LeafCount(CompactTree *cpct)
   return f;
 } /* LeafCount() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static int32_t LeafMark(CompactTree *cpct) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -1181,7 +1181,7 @@ static int32_t LeafMark(CompactTree *cpct)
   return f;
 } /* LeafMark() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static int32_t NbFilsNonFiltres(CompactTree * cpct, int32_t som) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -1421,7 +1421,7 @@ static int32_t flood(int32_t h,                 /* niveau a inonder */
   return m;
 } /* flood() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static int32_t floodb(int32_t h, Fahs *FAHS, uint32_t *STATUS, uint32_t *number_nodes, uint8_t *node_at_level, CompTree * tree, int32_t connex, int32_t rs, int32_t N, uint8_t *ORI) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -1542,7 +1542,7 @@ static int32_t floodb(int32_t h,                 /* niveau a inonder */
   return m;
 } /* floodb() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static int32_t flood3d(int32_t h, Fahs *FAHS, uint32_t *STATUS, uint32_t *number_nodes, uint8_t *node_at_level, CompTree * tree, int32_t connex, int32_t rs, int32_t ps, int32_t N, uint8_t *ORI) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -1720,7 +1720,7 @@ static int32_t flood3d(
   return m;
 } /* flood3d() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static int32_t LowestCommonAncestor(CompactTree *, int32_t, int32_t *, uint8_t) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -1797,7 +1797,7 @@ if (NoComAnc) printf("NIL\n"); else printf("%d\n", lca);
     return lca;
 } /* LowestCommonAncestor() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static int32_t LowComAnc(CompactTree *, int32_t, int32_t) __attribute__ ((unused));
 #endif
 /* ==================================== */
@@ -1844,7 +1844,7 @@ static int32_t LowComAnc(
   return lca;
 } /* LowComAnc() */
 
-#ifdef GCC
+#ifdef __GNUC__
 static int32_t Ancestor(CompactTree * cpct, int32_t c1, int32_t c2) __attribute__ ((unused));
 #endif
 /* ==================================== */
