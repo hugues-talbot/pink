@@ -45,7 +45,7 @@ extern int32_t lptseparatinggray(struct xvimage * image, int32_t connex);
 extern int32_t lptsimple(struct xvimage * image, int32_t connex);
 extern int32_t lseltopo(struct xvimage * image, int32_t connex, int32_t tm, int32_t tp, int32_t tbm, int32_t tbp);
 extern int32_t lsimplepair(struct xvimage * image, uint32_t onepair);
-
+extern int32_t lminimalsimplepair(struct xvimage * image, uint32_t onepair);
 #ifdef __cplusplus
 }
 #endif

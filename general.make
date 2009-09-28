@@ -228,6 +228,7 @@ $(BDIR)/lvkern \
 $(BDIR)/lvkernu \
 $(BDIR)/maxima \
 $(BDIR)/minima \
+$(BDIR)/minimalsimplepair \
 $(BDIR)/nbtopo \
 $(BDIR)/nbvois \
 $(BDIR)/pgm2skel \
@@ -1218,6 +1219,9 @@ $(BDIR)/maxima:	$(CDIR)/maxima.c $(IDIR)/llabelextrema.h $(IDIR)/mcimage.h $(IDI
 
 $(BDIR)/minima:	$(CDIR)/minima.c $(IDIR)/llabelextrema.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mccodimage.h $(ODIR)/llabelextrema.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/minima.c $(ODIR)/llabelextrema.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/minima
+
+$(BDIR)/minimalsimplepair:	$(CDIR)/minimalsimplepair.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/lseltopo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mclifo.o $(ODIR)/lseltopo.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/minimalsimplepair.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/lseltopo.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(LIBS) -o $(BDIR)/minimalsimplepair
 
 $(BDIR)/localextrema:	$(CDIR)/localextrema.c $(IDIR)/llocalextrema.h $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(ODIR)/llocalextrema.o $(OBJ_COMMON) $(ODIR)/mccodimage.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/localextrema.c $(ODIR)/llocalextrema.o $(OBJ_COMMON) $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/localextrema

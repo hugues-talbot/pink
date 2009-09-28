@@ -1,3 +1,3 @@
-3dborder $1 _1
-pgm2vtk _1 1 _1.vtk
-multirender _1.vtk &
+3dborder $1 /tmp/visu1pgm_1
+pgm2vtk /tmp/visu1pgm_1 1 /tmp/visu1pgm_1.vtk
+multirender /tmp/visu1pgm_1.vtk &

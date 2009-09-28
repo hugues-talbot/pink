@@ -77,7 +77,7 @@ Repeat until stability
 Result: X
 \endverbatim
 
-References:<BR> 
+Reference:<BR> 
 [BC07] G. Bertrand and M. Couprie: <A HREF="http://www.esiee.fr/~coupriem/Pdf/chapitre_topo.pdf">"Transformations topologiques discretes"</A>, in <I>G&eacute;om&eacute;trie discr&egrave;te et images num&eacute;riques</I>, D. Coeurjolly and A. Montanvert and J.M. Chassery, pp.&nbsp;187-209, Herm&egrave;s, 2007.<BR>
 <B>Types supported:</B> byte 2d, byte 3d
 

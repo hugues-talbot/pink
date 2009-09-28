@@ -48,6 +48,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcskelcurv.h>
 #include <lseltopo.h>
 
+#define PARANO
+
 /* ==================================== */
 int32_t lptisolated(struct xvimage * image, int32_t connex)
 /* ==================================== */
@@ -743,3 +745,81 @@ int32_t lsimplepair(struct xvimage * image, uint32_t onepair)
   free(RES);
   return 1;
 } /* lsimplepair() */
+
+/* ==================================== */
+int32_t lminimalsimplepair(struct xvimage * image, uint32_t onepair)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lminimalsimplepair"
+{
+  int32_t x, y, z, p, p1;
+  uint8_t *SOURCE = UCHARDATA(image);
+  uint8_t *RES;
+  int32_t rs = rowsize(image);
+  int32_t cs = colsize(image);
+  int32_t ds = depth(image);
+  int32_t ps = rs * cs;          /* taille plan */
+  int32_t N = ps * ds;           /* taille image */
+
+  RES = (uint8_t *)calloc(N, sizeof(char));
+  if (RES == NULL)
+  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+      return 0;
+  }
+
+  init_topo3d();
+
+  for (z = 1; z < ds-1; z++)
+    for (y = 1; y < cs-1; y++)
+      for (x = 1; x < rs-2; x++)
+      {
+	p = z*ps + y*rs + x; p1 = z*ps + y*rs + x+1;
+	if (SOURCE[p] && SOURCE[p1] && 
+	    !simple26(SOURCE, p, rs, ps, N) && !simple26(SOURCE, p1, rs, ps, N))
+	{
+	  if (pairesimple_26_x(SOURCE, p, rs, ps, N)) 
+	  {
+	    RES[p] = RES[p1] = NDG_MAX;
+	    if (onepair) goto fin;
+	  }
+	}
+      }
+
+  for (z = 1; z < ds-1; z++)
+    for (y = 1; y < cs-2; y++)
+      for (x = 1; x < rs-1; x++)
+      {
+	p = z*ps + y*rs + x; p1 = z*ps + (y+1)*rs + x;
+	if (SOURCE[p] && SOURCE[p1] && 
+	    !simple26(SOURCE, p, rs, ps, N) && !simple26(SOURCE, p1, rs, ps, N))
+	{
+	  if (pairesimple_26_y(SOURCE, p, rs, ps, N))
+	  {
+	    RES[p] = RES[p1] = NDG_MAX;
+	    if (onepair) goto fin;
+	  }
+	}
+      }
+
+  for (z = 1; z < ds-2; z++)
+    for (y = 1; y < cs-1; y++)
+      for (x = 1; x < rs-1; x++)
+      {
+	p = z*ps + y*rs + x; p1 = (z+1)*ps + y*rs + x;
+	if (SOURCE[p] && SOURCE[p1] && 
+	    !simple26(SOURCE, p, rs, ps, N) && !simple26(SOURCE, p1, rs, ps, N))
+	{
+	  if (pairesimple_26_z(SOURCE, p, rs, ps, N))
+	  {
+	    RES[p] = RES[p1] = NDG_MAX;
+	    if (onepair) goto fin;
+	  }
+	}
+      }
+
+ fin:
+  termine_topo3d();
+  for (x = 0; x < N; x++) SOURCE[x] = RES[x];
+  free(RES);
+  return 1;
+} /* lminimalsimplepair() */

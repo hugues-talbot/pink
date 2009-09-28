@@ -32,16 +32,20 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file simplepair.c
+/*! \file minimalsimplepair.c
 
-\brief detects simple pairs in a 3D binary image
+\brief detects minimal simple pairs in a 3D binary image
 
-<B>Usage:</B> simplepair in.pgm [all] out.pgm
+<B>Usage:</B> minimalsimplepair in.pgm [all] out.pgm
 
 <B>Description:</B>
-Detects simple pairs in a 3D binary image. 
-If the optional parameter \b all is used, then all simple pairs are searched. 
+Detects minimal simple pairs in a 3D binary image. 
+If the optional parameter \b all is used, then all 
+minimal simple pairs are searched.
 Otherwise, only one pair (if any) is given.
+
+If the input image contains no simple point, consider using "simplepair" (faster)
+instead of "minimalsimplepair".
 
 Reference:<BR> 
 [PCB08] Nicolas Passat, Michel Couprie, and Gilles Bertrand:
@@ -92,17 +96,17 @@ int main(int argc, char **argv)
 
   if (argc == 4)
   {
-    if (! lsimplepair(image, 0))
+    if (! lminimalsimplepair(image, 0))
     {
-      fprintf(stderr, "%s: function lsimplepair failed\n", argv[0]);
+      fprintf(stderr, "%s: function lminimalsimplepair failed\n", argv[0]);
       exit(1);
     }
   }
   else
   {
-    if (! lsimplepair(image, 1))
+    if (! lminimalsimplepair(image, 1))
     {
-      fprintf(stderr, "%s: function lsimplepair failed\n", argv[0]);
+      fprintf(stderr, "%s: function lminimalsimplepair failed\n", argv[0]);
       exit(1);
     }
   }

@@ -1,4 +1,4 @@
-3dkhalimskize $1 h _1
-3dborder _1 _1
-pgm2vtk _1 1 _1.vtk
-multirender _1.vtk
+3dkhalimskize $1 h /tmp/visu1pgm_1
+3dborder /tmp/visu1pgm_1 /tmp/visu1pgm_1
+pgm2vtk /tmp/visu1pgm_1 1 /tmp/visu1pgm_1.vtk
+multirender /tmp/visu1pgm_1.vtk
