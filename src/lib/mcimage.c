@@ -63,9 +63,11 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <mcutil.h>
-#include <mcimage.h>
-#include <mccodimage.h>
+
+/* keep those private */
+#include "mcutil.h"
+#include "mcimage.h"
+#include "mccodimage.h"
 
 #define BUFFERSIZE 10000
 
@@ -103,7 +105,7 @@ struct xvimage *allocimage(
   g = (struct xvimage *)malloc(sizeof(struct xvimage));
   if (g == NULL)
   {   
-    fprintf(stderr,"%s : malloc failed (%d bytes)\n", F_NAME, sizeof(struct xvimage));
+    fprintf(stderr,"%s : malloc failed (%lu bytes)\n", F_NAME, sizeof(struct xvimage));
     return NULL;
   }
 
@@ -2063,7 +2065,7 @@ int32_t readbmp(char *filename, struct xvimage ** r, struct xvimage ** g, struct
 #undef F_NAME
 #define F_NAME "readbmp"
 {
-  FILE *fd;
+  FILE *fd = NULL;
   struct BITMAPFILEHEADER FileHeader;
   struct BITMAPINFOHEADER InfoHeader;
   uint8_t *R, *G, *B;
@@ -2172,7 +2174,7 @@ void writebmp(
 #undef F_NAME
 #define F_NAME "writebmp"
 {
-  FILE *fd;
+  FILE *fd = NULL;
   uint8_t *R, *G, *B;
   int32_t i, j, rs, cs, N;
 
@@ -2263,7 +2265,7 @@ int32_t readrgb(char *filename, struct xvimage ** r, struct xvimage ** g, struct
 #undef F_NAME
 #define F_NAME "readrgb"
 {
-  FILE *fd;
+  FILE *fd = NULL;
   struct RGBFILEHEADER FileHeader;
   uint8_t *R, *G, *B;
   int32_t i, j, rs, cs, N;
