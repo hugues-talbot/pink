@@ -34,14 +34,15 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file inverse.c
 
-\brief complements a byte image to 255
+\brief computes the pixelwise inverse of an image
 
 <B>Usage:</B> inverse in.pgm out.pgm
 
 <B>Description:</B>
-For each pixel x, out[x] = 255 - in[x].
+Byte images: for each pixel x, out[x] = 255 - in[x].<br>
+Long or float images: for each pixel x, out[x] = VMAX - in[x], where VMAX = max{in[x]}.
 
-<B>Types supported:</B> byte 2d, byte 3d
+<B>Types supported:</B> byte 2d, byte 3d, long 2d, long 3d, float 2d, float 3d
 
 <B>Category:</B> arith
 \ingroup  arith

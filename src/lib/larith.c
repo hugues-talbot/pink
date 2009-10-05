@@ -565,25 +565,33 @@ int32_t linverse(
 #undef F_NAME
 #define F_NAME "linverse"
 {
-  int32_t i;
-  uint8_t *pt;
-  int32_t *PT, vmax;
-  int32_t N;
+  int32_t i, N;
 
   N = rowsize(image) * colsize(image) * depth(image);
 
   if (datatype(image) == VFF_TYP_1_BYTE)
   {
+    uint8_t *pt;
     for (pt = UCHARDATA(image), i = 0; i < N; i++, pt++)
       *pt = NDG_MAX - *pt;
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
+    int32_t *pt, vmax;
     vmax = 0;
-    for (PT = SLONGDATA(image), i = 0; i < N; i++, PT++)
-      if (*PT > vmax) vmax = *PT;
-    for (PT = SLONGDATA(image), i = 0; i < N; i++, PT++)
-      *PT = vmax - *PT;
+    for (pt = SLONGDATA(image), i = 0; i < N; i++, pt++)
+      if (*pt > vmax) vmax = *pt;
+    for (pt = SLONGDATA(image), i = 0; i < N; i++, pt++)
+      *pt = vmax - *pt;
+  }
+  else if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    float *pt, vmax;
+    vmax = 0;
+    for (pt = FLOATDATA(image), i = 0; i < N; i++, pt++)
+      if (*pt > vmax) vmax = *pt;
+    for (pt = FLOATDATA(image), i = 0; i < N; i++, pt++)
+      *pt = vmax - *pt;
   }
   else
   {
