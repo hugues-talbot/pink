@@ -170,12 +170,16 @@ struct xvimage* lzoomintxyz(
   int32_t fill) /* booleen : remplit l'espace inter-pixels */
 /* ==================================== */
 {
+#undef F_NAME
+#define F_NAME "lzoomintxyz"
   int32_t xx, yy, zz;
   int32_t i, j, k;
   uint8_t *ptin;
   uint8_t *ptout;
   int32_t rs, cs, ds, ps, N, rsz, csz, dsz, psz;
   struct xvimage * out;
+
+  printf("%s: zoomx=%d, zoomy=%d, zoomz=%d, fill=%d\n", F_NAME, zoomx, zoomy, zoomz, fill);
 
   rs = in->row_size;
   cs = in->col_size;
@@ -286,7 +290,7 @@ struct xvimage* lzoomintxyz(
         for (zz = 0; zz < ds; zz++)
           for (yy = 0; yy < cs; yy++)
             for (xx = 0; xx < rs; xx++)
-              ptout[(zz*zoomz)*psz + yy*rsz + xx] = ptin[zz*zoomz*ps + yy*zoomy*rs + xx*zoomx];
+              ptout[(zz*zoomz)*psz + (yy*zoomy)*rsz + (xx*zoomx)] = ptin[zz*ps + yy*rs + xx];
     } 
     else // zoomx<0 et zoomy<0 et zoomz<0 
       for (zz = 0; zz < ds; zz++)

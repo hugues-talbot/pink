@@ -56,15 +56,6 @@ extern int32_t laverage(
   double alpha
 );
 
-extern double laverage1(
-  struct xvimage * image1
-);
-
-extern double laverage2(
-  struct xvimage * image1, 
-  struct xvimage * mask
-);
-
 extern int32_t ldiff(
 	struct xvimage * image1,
         struct xvimage * image2

@@ -46,8 +46,8 @@ values which correspond to non-null points of mask are averaged.
 
 <B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
 
-<B>Category:</B> arith
-\ingroup  arith
+<B>Category:</B> signal stats
+\ingroup  signal stats
 
 \author Michel Couprie
 */
@@ -58,7 +58,7 @@ values which correspond to non-null points of mask are averaged.
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <larith.h>
+#include <lstat.h>
 
 //#define VERBOSE
 

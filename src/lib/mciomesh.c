@@ -627,7 +627,7 @@ void LoadMeshMCM(FILE *filein)
    %d (ind. vertex)
    ...
 
-   F %d     (Faces - champ obligatoire)
+   F %d     (Faces - champ optionnel)
    %d %d %d (face: ind. vertices)
    ...
 
@@ -722,7 +722,8 @@ void LoadMeshMCM(FILE *filein)
   } // while (1)
 
  end:
-  if ((nvert == -1) || (nfaces == -1))
+  //  if ((nvert == -1) || (nfaces == -1))
+  if (nvert == -1)
   {
     fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);

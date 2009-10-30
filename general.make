@@ -5,7 +5,6 @@ $(BDIR)/add \
 $(BDIR)/addconst \
 $(BDIR)/area \
 $(BDIR)/average \
-$(BDIR)/average1 \
 $(BDIR)/correctbias \
 $(BDIR)/diffimages \
 $(BDIR)/div \
@@ -402,6 +401,7 @@ $(BDIR)/seuilhisto \
 $(BDIR)/stretch
 
 SIGNAL=\
+$(BDIR)/average1 \
 $(BDIR)/ccv \
 $(BDIR)/convol \
 $(BDIR)/convol3 \
@@ -416,7 +416,9 @@ $(BDIR)/gaussianfilter \
 $(BDIR)/laplacian \
 $(BDIR)/longestplateau \
 $(BDIR)/meanfilter \
-$(BDIR)/shencastan
+$(BDIR)/shencastan \
+$(BDIR)/standarddeviation1 \
+$(BDIR)/variance1
 
 MESH3D=\
 $(BDIR)/mcube\
@@ -546,9 +548,6 @@ $(BDIR)/area:	$(CDIR)/area.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(
 
 $(BDIR)/average:	$(CDIR)/average.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/average.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/average
-
-$(BDIR)/average1:	$(CDIR)/average1.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/larith.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/average1.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/average1
 
 $(BDIR)/correctbias:	$(CDIR)/correctbias.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/correctbias.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/correctbias
@@ -1743,8 +1742,12 @@ $(BDIR)/stretch:	$(CDIR)/stretch.c $(IDIR)/mcimage.h $(IDIR)/lstretch.h $(OBJ_CO
 # *********************************
 # SIGNAL
 # *********************************
-$(BDIR)/ccv:	$(CDIR)/ccv.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lccv.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lccv.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ccv.c $(ODIR)/lccv.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/ccv
+
+$(BDIR)/average1:	$(CDIR)/average1.c $(IDIR)/lstat.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/lstat.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/average1.c $(ODIR)/lstat.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/average1
+
+$(BDIR)/ccv:	$(CDIR)/ccv.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lstat.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lstat.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ccv.c $(ODIR)/lstat.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/ccv
 
 $(BDIR)/convol:	$(CDIR)/convol.c $(IDIR)/mcimage.h $(IDIR)/lconvol.h $(OBJ_COMMON) $(ODIR)/lfft.o $(ODIR)/lcrop.o $(ODIR)/lconvol.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/convol.c $(ODIR)/lconvol.o $(ODIR)/lcrop.o $(OBJ_COMMON) $(ODIR)/lfft.o $(LIBS) -o $(BDIR)/convol
@@ -1764,8 +1767,8 @@ $(BDIR)/deriche3d:	$(CDIR)/deriche3d.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(
 $(BDIR)/directionalfilter:	$(CDIR)/directionalfilter.c $(IDIR)/mcimage.h $(IDIR)/lconvol.h $(ODIR)/lfft.o $(OBJ_COMMON) $(ODIR)/lcrop.o $(ODIR)/lconvol.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/directionalfilter.c $(ODIR)/lconvol.o $(ODIR)/lcrop.o $(ODIR)/lfft.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/directionalfilter
 
-$(BDIR)/ecarttype:	$(CDIR)/ecarttype.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lccv.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lccv.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ecarttype.c $(ODIR)/lccv.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/ecarttype
+$(BDIR)/ecarttype:	$(CDIR)/ecarttype.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lstat.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lstat.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ecarttype.c $(ODIR)/lstat.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/ecarttype
 
 $(BDIR)/fft:	$(CDIR)/fft.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lfft.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lfft.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/fft.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lfft.o $(LIBS) -o $(BDIR)/fft
@@ -1787,6 +1790,12 @@ $(BDIR)/shencastan:	$(CDIR)/shencastan.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h 
 
 $(BDIR)/meanfilter:	$(CDIR)/meanfilter.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lmeanfilter.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lmeanfilter.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/meanfilter.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lmeanfilter.o $(LIBS) -o $(BDIR)/meanfilter
+
+$(BDIR)/standarddeviation1:	$(CDIR)/standarddeviation1.c $(IDIR)/lstat.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/lstat.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/standarddeviation1.c $(ODIR)/lstat.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/standarddeviation1
+
+$(BDIR)/variance1:	$(CDIR)/variance1.c $(IDIR)/lstat.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/lstat.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/variance1.c $(ODIR)/lstat.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/variance1
 
 # ===============================================================
 # MESH3D
@@ -2304,8 +2313,8 @@ $(ODIR)/lstretch.o:	$(LDIR)/lstretch.c $(IDIR)/mccodimage.h
 # SIGNAL
 # *********************************
 
-$(ODIR)/lccv.o:	$(LDIR)/lccv.c $(IDIR)/mccodimage.h $(IDIR)/mcutil.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lccv.c -o $(ODIR)/lccv.o
+$(ODIR)/lstat.o:	$(LDIR)/lstat.c $(IDIR)/mccodimage.h $(IDIR)/mcutil.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lstat.c -o $(ODIR)/lstat.o
 
 $(ODIR)/lconvol.o:	$(LDIR)/lconvol.c $(IDIR)/mccodimage.h $(IDIR)/lfft.h $(IDIR)/lcrop.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lconvol.c -o $(ODIR)/lconvol.o

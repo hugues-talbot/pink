@@ -190,6 +190,10 @@ tel:  01 45 92 66 88          fax:  01 45 92 66 99
 */
 
 /*!
+\defgroup stats Statistics
+*/
+
+/*!
 \defgroup mesh3d Three-dimensional meshing
 */
 
