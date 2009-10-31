@@ -32,96 +32,74 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file identifyline.c
+/*! \file variance1.c
 
-\brief identification of a best matching line from a set of 2D points
+\brief return the variance of the pixel values of an image
 
-<B>Usage:</B> identifyline in.list out.list
+<B>Usage:</B> variance1 in.pgm [mask.pgm] out.list
 
 <B>Description:</B>
-Identifies the parameters (a,b) of the equation of the 2D line:
-ax+b=y that minimizes the least square error between this line 
-and the given points. Method: basic linear regression.
+This function returns (in the list <B>out.list</B>) 
+the variance of the pixel values of the image \b in.pgm .
+If the optional parameter \b mask.pgm is given, then only the 
+values which correspond to non-null points of mask are considered.
 
-<B>Types supported:</B> list 1D, list 2D
+<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
 
-<B>Category:</B> geo
-\ingroup  geo
+<B>Category:</B> arith
+\ingroup  arith
 
 \author Michel Couprie
 */
 
-/*
-%TEST identifyline %IMAGES/2dlist/binary/line1.list %RESULTS/identifyline_line1.list
-%TEST identifyline %IMAGES/2dlist/binary/line2.list %RESULTS/identifyline_line2.list
-*/
-
-/* 
-  Michel Couprie - juin 2009
-*/
-
 #include <stdio.h>
 #include <stdint.h>
-#include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <mcimage.h>
+#include <math.h>
 #include <mccodimage.h>
-#include <mclin.h>
+#include <mcimage.h>
+#include <lstat.h>
+
+//#define VERBOSE
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
+  struct xvimage * image;
+  struct xvimage * mask = NULL;
+  double varianceval;
   FILE *fd = NULL;
-  int32_t n, i;
-  char type;
-  double *pbx, *pby, a, b;
 
-  if (argc != 3)
+  if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s in.list out.list\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm [mask.pgm] out.list\n", argv[0]);
     exit(1);
   }
 
-  fd = fopen(argv[1],"r");
-  if (!fd)
+  image = readimage(argv[1]);
+  if (image == NULL)
   {
-    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[1]);
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  fscanf(fd, "%c", &type);
-  if ((type != 's') && (type != 'b'))
+  if (argc == 4)
   {
-    fprintf(stderr, "usage: %s: bad file format : %c \n", argv[0], type);
-    exit(1);
+    mask = readimage(argv[2]);
+    if (mask == NULL)
+    {
+      fprintf(stderr, "%s: readimage failed\n", argv[0]);
+      exit(1);
+    }
+    varianceval = lvariance2(image, mask);
   }
-
-  fscanf(fd, "%d\n", &n);
-
-  pbx = (double *)malloc(n * sizeof(double));
-  pby = (double *)malloc(n * sizeof(double));
-
-  if ((pbx == NULL) || (pby == NULL))
-  {
-    fprintf(stderr, "usage: %s: malloc failed\n", argv[0]);
-    exit(1);
-  }
-
-  for (i = 0; i < n; i++)
-    fscanf(fd, "%lf %lf\n", pbx+i, pby+i);
-
-  fclose(fd);
-
-  if (!lidentifyline(pbx, pby, n, &a, &b))
-  {
-    fprintf(stderr, "%s: lidentifyline failed\n", argv[0]);
-    exit(1);
-  }
+  else
+    varianceval = lvariance1(image);
 
 #ifdef VERBOSE
-  printf("a = %g, b = %g\n", a, b);
+    printf("varianceval: %g\n", varianceval);
 #endif
 
   fd = fopen(argv[argc - 1],"w");
@@ -130,13 +108,12 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc - 1]);
     exit(1);
   }
-  fprintf(fd, "e %d\n", 2); 
-  fprintf(fd, "%g %g\n", a, b); 
+  fprintf(fd, "s %d\n", 1); 
+  fprintf(fd, "%d %g\n", 0, varianceval); 
   fclose(fd);
 
-  free(pbx);
-  free(pby);
+  freeimage(image);
+  if (mask) freeimage(mask);
 
   return 0;
-}
-
+} /* main */

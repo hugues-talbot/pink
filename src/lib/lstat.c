@@ -33,22 +33,16 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 /* 
-   Operateur de calcul du carre du coefficient de variation du niveau de gris
-   dans le voisinage d'un point
+   Statistiques
 
-   Operateur de calcul de l'ecart-type du niveau de gris
-   dans le voisinage d'un point
-
-   Calcul a partir des moments d'ordre 0, 1 et 2:
+   Calculs a partir des moments d'ordre 0, 1 et 2:
 
      moyenne = m1 / m0
      variance = (m2 / m0) - (m1*m1 / (m0*m0))
      ecart-type = sqrt(variance)
      ccv = variance / (moyenne * moyenne)
 
-   Michel Couprie - avril 1998 
- 
-   Modif: decembre 1999 (ajout ecart-type)
+   Michel Couprie - octobre 2009 
 */
 
 #include <stdio.h>
@@ -58,7 +52,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <math.h>
 #include <mccodimage.h>
 #include <mcutil.h>
-#include <lccv.h>
+#include <lstat.h>
+
+/* ==================================== */
+/* ==================================== */
+/* OPERATEURS LOCAUX */
+/* ==================================== */
+/* ==================================== */
 
 /* ==================================== */
 int32_t lccv(struct xvimage *f, struct xvimage *m)
@@ -242,5 +242,235 @@ int32_t lecarttype(struct xvimage *f, struct xvimage *m)
   return 1;
 } /* lecarttype() */
 
+/* ==================================== */
+/* ==================================== */
+/* OPERATEURS GLOBAUX */
+/* ==================================== */
+/* ==================================== */
 
+/* ==================================== */
+double laverage1(struct xvimage * image1)
+/* average of values in an image */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "laverage1"
+{
+  int32_t i, rs, cs, d, N, n = 0;
+  double av = 0.0;
 
+  rs = rowsize(image1);
+  cs = colsize(image1);
+  d = depth(image1);
+  N = rs * cs * d;
+
+  if (datatype(image1) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(image1);
+    for (i = 1; i < N; i++) if ((double)F[i] != 0) { av += (double)F[i]; n++; }
+  }
+  else if (datatype(image1) == VFF_TYP_4_BYTE)
+  {
+    int32_t *F = SLONGDATA(image1);
+    for (i = 1; i < N; i++) if ((double)F[i] != 0) { av += (double)F[i]; n++; }
+  }
+  else if (datatype(image1) == VFF_TYP_FLOAT)
+  {
+    float *F = FLOATDATA(image1);
+    for (i = 1; i < N; i++) if ((double)F[i] != 0) { av += (double)F[i]; n++; }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    exit(0);
+  }
+
+  if (n == 0) return 0.0;
+  return av / n;
+} /* laverage1() */
+
+/* ==================================== */
+double laverage2(struct xvimage * image1, struct xvimage * mask)
+/* average of values in an image */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "laverage2"
+{
+  int32_t i, rs, cs, d, N, n = 0;
+  double av = 0.0;
+  uint8_t *M = UCHARDATA(mask);
+
+  rs = rowsize(image1);
+  cs = colsize(image1);
+  d = depth(image1);
+  N = rs * cs * d;
+
+  if ((rowsize(mask) != rs) || (colsize(mask) != cs) || (depth(mask) != d))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    exit(0);
+  }
+
+  if (datatype(mask) != VFF_TYP_1_BYTE)
+  {
+    fprintf(stderr, "%s: mask image must be byte\n", F_NAME);
+    exit(0);
+  }
+
+  if (datatype(image1) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(image1);
+    for (i = 1; i < N; i++) if (M[i] != 0) { av += (double)F[i]; n++; }
+  }
+  else if (datatype(image1) == VFF_TYP_4_BYTE)
+  {
+    int32_t *F = SLONGDATA(image1);
+    for (i = 1; i < N; i++) if (M[i] != 0) { av += (double)F[i]; n++; }
+  }
+  else if (datatype(image1) == VFF_TYP_FLOAT)
+  {
+    float *F = FLOATDATA(image1);
+    for (i = 1; i < N; i++) if (M[i] != 0) { av += (double)F[i]; n++; }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    exit(0);
+  }
+
+  if (n == 0) return 0.0;
+  return av / n;
+} /* laverage2() */
+
+/* ==================================== */
+double lvariance1(struct xvimage * image1)
+/* variance of values in an image */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lvariance1"
+{
+  int32_t i, rs, cs, ds, N;
+  double m0, m1, m2, M1;
+
+  rs = rowsize(image1);
+  cs = colsize(image1);
+  ds = depth(image1);
+  N = rs * cs * ds;
+
+  m1 = m2 = m0 = (double)0.0;
+  if (datatype(image1) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(image1);
+    for (i = 1; i < N; i++) 
+      { 
+	M1 = (double)F[i]; 
+	m0 += 1.0;
+	m1 += M1;
+	m2 += M1 * M1;
+      }
+  }
+  else if (datatype(image1) == VFF_TYP_4_BYTE)
+  {
+    int32_t *F = SLONGDATA(image1);
+    for (i = 1; i < N; i++) 
+      { 
+	M1 = (double)F[i]; 
+	m0 += 1.0;
+	m1 += M1;
+	m2 += M1 * M1;
+      }
+  }
+  else if (datatype(image1) == VFF_TYP_FLOAT)
+  {
+    float *F = FLOATDATA(image1);
+    for (i = 1; i < N; i++) 
+      { 
+	M1 = (double)F[i]; 
+	m0 += 1.0;
+	m1 += M1;
+	m2 += M1 * M1;
+      }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    exit(0);
+  }
+
+  if (m0 == 0.0) return 0.0;
+  return sqrt((m2 / m0) - ((m1*m1) / (m0*m0)));
+} /* lvariance1() */
+
+/* ==================================== */
+double lvariance2(struct xvimage * image1, struct xvimage * mask)
+/* variance of values in an image */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lvariance2"
+{
+  int32_t i, rs, cs, ds, N;
+  uint8_t *M = UCHARDATA(mask);
+  double m0, m1, m2, M1;
+
+  rs = rowsize(image1);
+  cs = colsize(image1);
+  ds = depth(image1);
+  N = rs * cs * ds;
+
+  if ((rowsize(mask) != rs) || (colsize(mask) != cs) || (depth(mask) != ds))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    exit(0);
+  }
+
+  if (datatype(mask) != VFF_TYP_1_BYTE)
+  {
+    fprintf(stderr, "%s: mask image must be byte\n", F_NAME);
+    exit(0);
+  }
+
+  m1 = m2 = m0 = (double)0.0;
+  if (datatype(image1) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(image1);
+    for (i = 1; i < N; i++) 
+      if (M[i] != 0) 
+      { 
+	M1 = (double)F[i]; 
+	m0 += 1.0;
+	m1 += M1;
+	m2 += M1 * M1;
+      }
+  }
+  else if (datatype(image1) == VFF_TYP_4_BYTE)
+  {
+    int32_t *F = SLONGDATA(image1);
+    for (i = 1; i < N; i++) 
+      if (M[i] != 0) 
+      { 
+	M1 = (double)F[i]; 
+	m0 += 1.0;
+	m1 += M1;
+	m2 += M1 * M1;
+      }
+  }
+  else if (datatype(image1) == VFF_TYP_FLOAT)
+  {
+    float *F = FLOATDATA(image1);
+    for (i = 1; i < N; i++) 
+      if (M[i] != 0) 
+      { 
+	M1 = (double)F[i]; 
+	m0 += 1.0;
+	m1 += M1;
+	m2 += M1 * M1;
+      }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    exit(0);
+  }
+
+  if (m0 == 0.0) return 0.0;
+  return sqrt((m2 / m0) - ((m1*m1) / (m0*m0)));
+} /* lvariance2() */

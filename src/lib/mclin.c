@@ -1057,6 +1057,67 @@ int32_t lidentifyline(double *pbx, double *pby, int32_t npb, double *a, double *
 } /* lidentifyline() */
 
 /* ==================================== */
+int32_t lidentifyparabola(double *pbx, double *pby, int32_t npb, double *a, double *b, double *c)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lidentifyparabola"
+/*
+ Identifie les parametres (a,b,c) de l'equation y = ax^2 + bx + c d'une parabole
+ d'axe de symétrie vertical, pour minimiser l'ecart (au sens des moindres carres)
+ entre cette parabole et les points contenus dans la liste de points (pbx,pby).
+ Régression linéaire (voir http://en.wikipedia.org/wiki/Linear_regression ).
+ */
+{
+  int32_t i, ret, noresult = 1;
+  double *X, *Y, *XtX, *XtXi, *XtY, *RtXtY, *YtY, *R;
+
+  if (npb < 3)
+  {
+    fprintf(stderr, "%s: not enough points\n", F_NAME);
+    return 0;
+  }  
+
+  X = lin_zeros(npb, 3);
+  Y = lin_zeros(npb, 1);
+  XtX = lin_zeros(3, 3);
+  XtXi = lin_zeros(3, 3);
+  XtY = lin_zeros(3, 1);
+  R = lin_zeros(3, 1);
+  RtXtY = lin_zeros(1, 1);
+  YtY = lin_zeros(1, 1);
+
+  for (i = 0; i < npb; i++)
+  {
+    X[3*i] = 1.0;
+    X[3*i + 1] = pbx[i];
+    X[3*i + 2] = pbx[i] * pbx[i];
+    Y[i] = pby[i];
+  }  
+  lin_multAtB(X, X, XtX, npb, 3, npb, 3);
+  ret = lin_invmat3(XtX, XtXi);
+  if (ret != 0)
+  { 
+    noresult = 0;
+    lin_multAtB(X, Y, XtY, npb, 3, npb, 1);
+    lin_mult(XtXi, XtY, R, 3, 3, 1);
+    *a = R[2];
+    *b = R[1];
+    *c = R[0];
+  }
+
+  free(X);
+  free(Y);
+  free(XtX);
+  free(XtXi);
+  free(XtY);
+  free(RtXtY);
+  free(YtY);
+  free(R);
+  if (noresult) return 0;
+  return 1;
+} /* lidentifyparabola() */
+
+/* ==================================== */
 int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, double *a, double *b, double *c, double *d)
 /* ==================================== */
 #undef F_NAME
