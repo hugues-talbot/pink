@@ -1331,7 +1331,7 @@ Les valeurs les plus basses correspondent a la plus grande priorite.
 
 De facon tres schematique,
 on definit l'operateur Surfacic Thinning CT(F,P) : 
-C = empty image
+C = {y in F | Tb(y) > 1}
 repeter jusqu'a stabilite
   choisir un point x de F, simple pour F, tel que C[x] == 0 
     et de priorite maximale (valeur de P minimale)
@@ -1411,6 +1411,30 @@ resultat: F
   /* ================================================ */
   /*               DEBUT ALGO                         */
   /* ================================================ */
+
+  if (connex == 6)
+  {
+    for (x = 0; x < N; x++)
+    {
+      if (F[x] && (nonbord3d(x,rs,ps,N)))
+      {
+	top6(F, x, rs, ps, N, &t, &tb);
+	if (tb > 1) Set(x, CONTRAINTE);
+      }
+    }
+  }
+  else 
+  if (connex == 26)
+  {
+    for (x = 0; x < N; x++)
+    {
+      if (F[x] && (nonbord3d(x,rs,ps,N)))
+      {
+	top26(F, x, rs, ps, N, &t, &tb);
+	if (tb > 1) Set(x, CONTRAINTE);
+      }
+    }
+  }
 
   /* ========================================================= */
   /*   INITIALISATION DU RBT */
