@@ -43,8 +43,8 @@ exec tclsh $0 $1
 # ============================================================
 # ============================================================
 
-if {($argc != 0)} { 
-  puts stderr "usage: pinktest"
+if {($argc != 0) && ($argc != 1)} { 
+    puts stderr "usage: pinktest \[operator\]"
   exit 
 }
 
@@ -55,7 +55,13 @@ set PINKTEST(name)     "pinktest"
 set PINKTEST(testtag)  "%TEST"
 set PINKTEST(testdir)  [file join "$env(HOME)" "Pinktests"]
 set PINKTEST(comdir)   [file join "$PINK" "src" "com"]
-set PINKTEST(filelist) [glob "$PINKTEST(comdir)/*.c"]
+if {($argc == 1)} { 
+  set PINKTEST(operator)     [lindex $argv 0]
+  set PINKTEST(filelist) [glob "$PINKTEST(comdir)/$PINKTEST(operator).c"]
+} else {
+  set PINKTEST(operator)     ""
+  set PINKTEST(filelist) [glob "$PINKTEST(comdir)/*.c"]
+}
 
 proc tmpfile {tmpname} {
   global PINKTEST
@@ -96,7 +102,6 @@ while {[gets $PINKTEST(input) comexec] >= 0} {
   } else {
     puts "CHECK OK: $filename"
   }
-  
 }
 
 close $PINKTEST(input)

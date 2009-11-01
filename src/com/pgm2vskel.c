@@ -39,18 +39,22 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> pgm2vskel in.pgm val.pgm connex out.skel
 
 <B>Description:</B>
-The skeleton found in \b in.pgm is decomposed into isolated points, end points, curves and junctions ;
-and its description is stored in \b out.skel . Each point of the skeleton is valuated by the corresponding value
+The skeleton found in \b in.pgm is decomposed into isolated points, 
+end points, curves and junctions ;
+and its description is stored in \b out.skel . 
+Each point of the skeleton is valuated by the corresponding value
 found in \b val.pgm .
 The parameter \b connex sets the adjacency relation used for the object
 (4, 8 (2d) or 6, 18, 26 (3d)).
 
-\warning No verification is done to check that the input image \b in.pgm contains indeed a curvilinear skeleton.
+\warning No verification is done to check that the input image \b in.pgm 
+contains indeed a curvilinear skeleton.
 In the contrary case, the result would be meaningless.
 
-\warning IMPORTANT LIMITATION: different junctions in the original image must not be in direct contact with each other
-(i.e., connected) otherwise they will be considered as a single junction. To prevent this to occur, one can 
-increase image resolution. 
+\warning IMPORTANT LIMITATION: different junctions in the original image 
+must not be in direct contact with each other
+(i.e., connected) otherwise they will be considered as a single junction. 
+To prevent this to occur, one can increase image resolution. 
 
 <B>Types supported:</B> byte 2d, byte 3d
 

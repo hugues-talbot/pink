@@ -58,6 +58,10 @@ increase image resolution.
 
 \author Michel Couprie 2004
 */
+
+/*
+%TEST pgm2skel %IMAGES/2dbyte/binary/b2skel.pgm 8 %RESULTS/pgm2skel_b2skel.pgm
+*/
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
