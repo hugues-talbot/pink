@@ -175,9 +175,10 @@ int32_t lderiche(struct xvimage *image, double alpha, int32_t function, double l
                5 = module du gradient en x
                6 = module du gradient en y
 */
+#undef F_NAME
+#define F_NAME "lderiche"
 { 
   int32_t i;
-  uint8_t *ima = UCHARDATA(image);
   int32_t rs = image->row_size;
   int32_t cs = image->col_size;
   int32_t N = rs * cs;
@@ -197,7 +198,7 @@ int32_t lderiche(struct xvimage *image, double alpha, int32_t function, double l
 
   if (depth(image) != 1) 
   {
-    fprintf(stderr, "lderiche: cette version ne traite pas les images volumiques\n");
+    fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
     exit(0);
   }
 
@@ -207,11 +208,31 @@ int32_t lderiche(struct xvimage *image, double alpha, int32_t function, double l
   buf1 = (double *)calloc(1,max(rs, cs) * sizeof(double));
   buf2 = (double *)calloc(1,max(rs, cs) * sizeof(double));
   if ((Im1==NULL) || (Im2==NULL) || (Imd==NULL) || (buf1==NULL) || (buf2==NULL))
-  {   fprintf(stderr,"lderiche() : malloc failed\n");
+  {   fprintf(stderr,"%s: malloc failed\n", F_NAME);
       return(0);
   }
 
-  for (i = 0; i < N; i++) Imd[i] = (double)ima[i];
+
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *ima = UCHARDATA(image);
+    for (i = 0; i < N; i++) Imd[i] = (double)ima[i];
+  }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    int32_t *ima = SLONGDATA(image);
+    for (i = 0; i < N; i++) Imd[i] = (double)ima[i];
+  }
+  else if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    float *ima = FLOATDATA(image);
+    for (i = 0; i < N; i++) Imd[i] = (double)ima[i];
+  }
+  else
+  {
+    fprintf(stderr,"%s: malloc failed\n", F_NAME);
+    return(0);
+  }
 
   e_a = exp(- alpha);
   e_2a = exp(- 2.0 * alpha);
@@ -248,15 +269,36 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       derichegen(Imd, rs, cs, buf1, buf2, Im2,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
-      for (i = 0; i < N; i++)
+      if (datatype(image) == VFF_TYP_1_BYTE)
       {
-        t1 = Im1[i];
-        t2 = Im2[i];
-        t2 = sqrt(((t1 * t1) + (t2 * t2)) / 2);
-        if (t2 <= 255.0)
-          ima[i] = (uint8_t)t2;
-        else
-          ima[i] = 255;
+	uint8_t *ima = UCHARDATA(image);
+	for (i = 0; i < N; i++)      
+	{
+	  t1 = Im1[i]; t2 = Im2[i];
+	  t2 = sqrt((t1 * t1) + (t2 * t2));
+	  if (t2 <= 255.0)
+	    ima[i] = (uint8_t)t2;
+	  else
+	    ima[i] = 255;
+	}
+      }
+      else if (datatype(image) == VFF_TYP_4_BYTE)
+      {
+	int32_t *ima = SLONGDATA(image);
+	for (i = 0; i < N; i++)      
+	{
+	  t1 = Im1[i]; t2 = Im2[i];
+	  ima[i] = (int32_t)sqrt((t1 * t1) + (t2 * t2));
+	}
+      }
+      else if (datatype(image) == VFF_TYP_FLOAT)
+      {
+	float *ima = FLOATDATA(image);
+	for (i = 0; i < N; i++)      
+	{
+	  t1 = Im1[i]; t2 = Im2[i];
+	  ima[i] = (float)sqrt((t1 * t1) + (t2 * t2));
+	}
       }
       break;
 
@@ -281,15 +323,41 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       derichegen(Imd, rs, cs, buf1, buf2, Im2,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
-
-      for (i = 0; i < N; i++)
+      if (datatype(image) == VFF_TYP_1_BYTE)
       {
-        t1 = Im1[i];
-        t2 = Im2[i];
-        if (abs(t1) >= EPSILON)
-          ima[i] = (uint8_t)((DIRMAX * (atan(t2/t1) + M_PI_2)) / M_PI);
-        else
-          ima[i] = DIRMAX;
+	uint8_t *ima = UCHARDATA(image);
+	for (i = 0; i < N; i++)      
+	{
+	  t1 = Im1[i]; t2 = Im2[i];
+	  if (abs(t1) >= EPSILON)
+	    ima[i] = (uint8_t)((DIRMAX * (atan(t2/t1) + M_PI_2)) / M_PI);
+	  else
+	    ima[i] = DIRMAX;
+	}
+      }
+      else if (datatype(image) == VFF_TYP_4_BYTE)
+      {
+	int32_t *ima = SLONGDATA(image);
+	for (i = 0; i < N; i++)      
+	{
+	  t1 = Im1[i]; t2 = Im2[i];
+	  if (abs(t1) >= EPSILON)
+	    ima[i] = (int32_t)((DIRMAX * (atan(t2/t1) + M_PI_2)) / M_PI);
+	  else
+	    ima[i] = DIRMAX;
+	}
+      }
+      else if (datatype(image) == VFF_TYP_FLOAT)
+      {
+	float *ima = FLOATDATA(image);
+	for (i = 0; i < N; i++)      
+	{
+	  t1 = Im1[i]; t2 = Im2[i];
+	  if (abs(t1) >= EPSILON)
+	    ima[i] = (float)((DIRMAX * (atan(t2/t1) + M_PI_2)) / M_PI);
+	  else
+	    ima[i] = DIRMAX;
+	}
       }
       break;
 
@@ -312,18 +380,25 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       derichegen(Imd, rs, cs, buf1, buf2, Im2,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
-
-      lmin = lmax = 0.0;
-      for (i = 0; i < N; i++)
+      if (datatype(image) == VFF_TYP_1_BYTE)
       {
-        Im1[i] = t2 = - (Im1[i] + Im2[i]);
-        if (t2 > lmax) lmax = t2;
-        if (t2 < lmin) lmin = t2;
-      }        
-      lmax = max(lmax, -lmin);
-      for (i = 0; i < N; i++)      
-        ima[i] = 127 + (uint8_t)(Im1[i] * 128.0 / lmax);
-
+	uint8_t *ima = UCHARDATA(image);
+	lmin = lmax = 0.0;
+	for (i = 0; i < N; i++)
+	  {
+	    Im1[i] = t2 = - (Im1[i] + Im2[i]);
+	    if (t2 > lmax) lmax = t2;
+	    if (t2 < lmin) lmin = t2;
+	  }        
+	lmax = max(lmax, -lmin);
+	for (i = 0; i < N; i++)      
+	  ima[i] = 127 + (uint8_t)(Im1[i] * 128.0 / lmax);
+      }
+      else 
+      {
+        fprintf(stderr, "%s: mode 2 not yet implemented for long and float\n", F_NAME);
+        return 0;
+      }
       break;
 
     case 3:  /* f - l * laplacien(f) */
@@ -347,13 +422,23 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       derichegen(Imd, rs, cs, buf1, buf2, Im2,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
-      for (i = 0; i < N; i++)      
+      if (datatype(image) == VFF_TYP_1_BYTE)
       {
-        t1 = -(Im1[i] + Im2[i]);
-        t2 = (double)(ima[i]) - l * t1;
-        if (t2 < 0.0) t2 = 0.0;
-        if (t2 > 255.0) t2 = 255.0;
-        ima[i] = (uint8_t)floor(t2);
+	uint8_t *ima = UCHARDATA(image);
+
+	for (i = 0; i < N; i++)      
+	  {
+	    t1 = -(Im1[i] + Im2[i]);
+	    t2 = (double)(ima[i]) - l * t1;
+	    if (t2 < 0.0) t2 = 0.0;
+	    if (t2 > 255.0) t2 = 255.0;
+	    ima[i] = (uint8_t)floor(t2);
+	  }
+      }
+      else 
+      {
+        fprintf(stderr, "%s: mode 3 not yet implemented for long and float\n", F_NAME);
+        return 0;
       }
 
       break;
@@ -371,14 +456,29 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
 
-      for (i = 0; i < N; i++)      
+      if (datatype(image) == VFF_TYP_1_BYTE)
       {
-        t1 =  Im1[i];
-        if (t1 < 0.0) t1 = 0.0;
-        if (t1 > 255.0) t1 = 255.0;
-        ima[i] = (uint8_t)floor(t1);
+	uint8_t *ima = UCHARDATA(image);
+	for (i = 0; i < N; i++)      
+	{
+	  t1 =  Im1[i];
+	  if (t1 < 0.0) t1 = 0.0;
+	  if (t1 > 255.0) t1 = 255.0;
+	  ima[i] = (uint8_t)floor(t1);
+	}
       }
-
+      else if (datatype(image) == VFF_TYP_4_BYTE)
+      {
+	int32_t *ima = SLONGDATA(image);
+	for (i = 0; i < N; i++)      
+	  ima[i] = (int32_t)floor(Im1[i]);
+      }
+      else if (datatype(image) == VFF_TYP_FLOAT)
+      {
+	float *ima = FLOATDATA(image);
+	for (i = 0; i < N; i++)      
+	  ima[i] = (float)Im1[i];
+      }
       break;
 
     case 5: /* module du gradient en x */
@@ -401,15 +501,26 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
 
-      for (i = 0; i < N; i++)
+
+      if (datatype(image) == VFF_TYP_1_BYTE)
       {
-        t1 = Im1[i];
-        t2 = abs(t1);
-        if (t2 <= 255.0)
-          ima[i] = (uint8_t)t2;
-        else
-          ima[i] = 255;
+	uint8_t *ima = UCHARDATA(image);
+	for (i = 0; i < N; i++)
+	  {
+	    t1 = Im1[i];
+	    t2 = abs(t1);
+	    if (t2 <= 255.0)
+	      ima[i] = (uint8_t)t2;
+	    else
+	      ima[i] = 255;
+	  }
       }
+      else 
+      {
+        fprintf(stderr, "%s: mode 2 not yet implemented for long and float\n", F_NAME);
+        return 0;
+      }
+
       break;
 
     case 6: /* module du gradient en y */
@@ -432,19 +543,29 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
 
-      for (i = 0; i < N; i++)
+
+      if (datatype(image) == VFF_TYP_1_BYTE)
       {
-        t1 = Im1[i];
-        t2 = abs(t1);
-        if (t2 <= 255.0)
-          ima[i] = (uint8_t)t2;
-        else
-          ima[i] = 255;
+	uint8_t *ima = UCHARDATA(image);
+	for (i = 0; i < N; i++)
+	  {
+	    t1 = Im1[i];
+	    t2 = abs(t1);
+	    if (t2 <= 255.0)
+	      ima[i] = (uint8_t)t2;
+	    else
+	      ima[i] = 255;
+	  }
+      }
+      else 
+      {
+        fprintf(stderr, "%s: mode 2 not yet implemented for long and float\n", F_NAME);
+        return 0;
       }
       break;
 
       default: 
-        fprintf(stderr, "lderiche : fonction %d inexistante ; utiliser : \n", function);
+        fprintf(stderr, "%s: fonction %d inexistante ; utiliser : \n", F_NAME, function);
         fprintf(stderr, "  0 : module du gradient lisse'\n");
         fprintf(stderr, "  1 : direction du gradient lisse'\n");
         fprintf(stderr, "  2 : laplacien lisse'\n");

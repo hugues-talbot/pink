@@ -44,7 +44,7 @@ operator (convolution with a Gaussian kernel). The parameter
 \b alpha (double) controls the spatial extension of the
 filter: 0 < alpha < infinity, typical value: alpha = 1
 
-<B>Types supported:</B> byte 2d, byte 3d
+<B>Types supported:</B> byte 2d, byte 3d, long 3d, float 3d
 
 <B>Category:</B> signal
 \ingroup  signal

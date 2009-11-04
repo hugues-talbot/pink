@@ -78,6 +78,17 @@ int main(int argc, char **argv)
     exit(1);
   }
 
+  if (! (((argv[3][0] == 'x') && (argv[3][1] == 'y')) ||
+         ((argv[3][0] == 'y') && (argv[3][1] == 'x')) ||
+         ((argv[3][0] == 'x') && (argv[3][1] == 'z')) ||
+         ((argv[3][0] == 'z') && (argv[3][1] == 'x')) ||
+         ((argv[3][0] == 'y') && (argv[3][1] == 'z')) ||
+         ((argv[3][0] == 'z') && (argv[3][1] == 'y'))))
+  {
+    fprintf(stderr, "usage: %s filein.pgm n plane fileout.pgm (plane=xy|yx|xz|zx|yz|zy)\n", argv[0]);
+    exit(1);
+  }
+
   image = readimage(argv[1]);
   if (image == NULL)
   {

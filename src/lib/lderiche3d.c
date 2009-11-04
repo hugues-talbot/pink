@@ -178,9 +178,10 @@ int32_t lderiche3d(struct xvimage *image, double alpha, int32_t function, double
                3 = f - l * laplacien(f)
                4 = lisseur
 */
+#undef F_NAME
+#define F_NAME "lderiche3d"
 { 
   int32_t i;
-  uint8_t *ima = UCHARDATA(image);
   int32_t rs = rowsize(image);
   int32_t cs = colsize(image);
   int32_t ds = depth(image);
@@ -205,27 +206,49 @@ int32_t lderiche3d(struct xvimage *image, double alpha, int32_t function, double
   Im1 = (double *)calloc(1,N * sizeof(double));
   Imd = (double *)calloc(1,N * sizeof(double));
   if ((Im1==NULL) || (Imd==NULL))
-  {   fprintf(stderr,"lderiche3d() : malloc failed\n");
-      return(0);
+  {
+    fprintf(stderr,"%s: malloc failed\n", F_NAME);
+    return(0);
   }
   if (function == 0)
   {
     Im2 = (double *)calloc(1,N * sizeof(double));
     Im3 = (double *)calloc(1,N * sizeof(double));
     if ((Im2==NULL) || (Im3==NULL))
-    {   fprintf(stderr,"lderiche3d() : malloc failed\n");
-        return(0);
+    {
+      fprintf(stderr,"%s: malloc failed\n", F_NAME);
+      return(0);
     }
   }
   sbuf = max((max(rs,cs)),ds);
   buf1 = (double *)calloc(1,sbuf * sizeof(double));
   buf2 = (double *)calloc(1,sbuf * sizeof(double));
   if ((buf1==NULL) || (buf2==NULL))
-  {   fprintf(stderr,"lderiche3d() : malloc failed\n");
-      return(0);
+  {   
+    fprintf(stderr,"%s: malloc failed\n", F_NAME);
+    return(0);
   }
 
-  for (i = 0; i < N; i++) Imd[i] = (double)ima[i];
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *ima = UCHARDATA(image);
+    for (i = 0; i < N; i++) Imd[i] = (double)ima[i];
+  }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    int32_t *ima = SLONGDATA(image);
+    for (i = 0; i < N; i++) Imd[i] = (double)ima[i];
+  }
+  else if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    float *ima = FLOATDATA(image);
+    for (i = 0; i < N; i++) Imd[i] = (double)ima[i];
+  }
+  else
+  {
+    fprintf(stderr,"%s: malloc failed\n", F_NAME);
+    return(0);
+  }
 
   e_a = exp(- alpha);
   e_2a = exp(- 2.0 * alpha);
@@ -272,21 +295,42 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
                    a1, a2, a3, a4, b1, b2,           /* lisse en y */
                    a5, a6, a7, a8, b1, b2);          /* derive en z */
 
-      for (i = 0; i < N; i++)
+
+      if (datatype(image) == VFF_TYP_1_BYTE)
       {
-        t1 = Im1[i];
-        t2 = Im2[i];
-        t3 = Im3[i];
-        t2 = sqrt((t1 * t1) + (t2 * t2) + (t3 * t3));
-        if (t2 <= 255.0)
-          ima[i] = (uint8_t)t2;
-        else
-          ima[i] = 255;
+	uint8_t *ima = UCHARDATA(image);
+	for (i = 0; i < N; i++)      
+	{
+	  t1 = Im1[i]; t2 = Im2[i]; t3 = Im3[i];
+	  t2 = sqrt((t1 * t1) + (t2 * t2) + (t3 * t3));
+	  if (t2 <= 255.0)
+	    ima[i] = (uint8_t)t2;
+	  else
+	    ima[i] = 255;
+	}
+      }
+      else if (datatype(image) == VFF_TYP_4_BYTE)
+      {
+	int32_t *ima = SLONGDATA(image);
+	for (i = 0; i < N; i++)      
+	{
+	  t1 = Im1[i]; t2 = Im2[i]; t3 = Im3[i];
+	  ima[i] = (int32_t)sqrt((t1 * t1) + (t2 * t2) + (t3 * t3));
+	}
+      }
+      else if (datatype(image) == VFF_TYP_FLOAT)
+      {
+	float *ima = FLOATDATA(image);
+	for (i = 0; i < N; i++)      
+	{
+	  t1 = Im1[i]; t2 = Im2[i]; t3 = Im3[i];
+	  ima[i] = (float)sqrt((t1 * t1) + (t2 * t2) + (t3 * t3));
+	}
       }
       break;
 
     case 1:  /* direction du gradient lisse' */
-        fprintf(stderr, "Not Yet Implemented\n");
+        fprintf(stderr, "%s: mode 1 not yet implemented\n", F_NAME);
         return 0;
 
     case 2:  /* laplacien lisse' */
@@ -302,7 +346,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       a8 = - e_2a;
       b1 = b3 = 2 * e_a;
       b2 = b4 = - e_2a;
-      fprintf(stderr, "Not Yet Implemented\n");
+      fprintf(stderr, "%s: mode 2 not yet implemented\n", F_NAME);
       /*
       deriche3dgen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
@@ -338,7 +382,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
 
       b1 = b3 = 2 * e_a;
       b2 = b4 = - e_2a;
-      fprintf(stderr, "Not Yet Implemented\n");
+      fprintf(stderr, "%s: mode 3 not yet implemented\n", F_NAME);
       /*
       deriche3dgen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
@@ -371,17 +415,33 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
                    a1, a2, a3, a4, b1, b2,           /* lisse en y */
                    a1, a2, a3, a4, b1, b2);          /* lisse en z */
 
-      for (i = 0; i < N; i++)      
+      if (datatype(image) == VFF_TYP_1_BYTE)
       {
-        t1 =  Im1[i];
-        if (t1 < 0.0) t1 = 0.0;
-        if (t1 > 255.0) t1 = 255.0;
-        ima[i] = (uint8_t)floor(t1);
+	uint8_t *ima = UCHARDATA(image);
+	for (i = 0; i < N; i++)      
+	{
+	  t1 =  Im1[i];
+	  if (t1 < 0.0) t1 = 0.0;
+	  if (t1 > 255.0) t1 = 255.0;
+	  ima[i] = (uint8_t)floor(t1);
+	}
+      }
+      else if (datatype(image) == VFF_TYP_4_BYTE)
+      {
+	int32_t *ima = SLONGDATA(image);
+	for (i = 0; i < N; i++)      
+	  ima[i] = (int32_t)floor(Im1[i]);
+      }
+      else if (datatype(image) == VFF_TYP_FLOAT)
+      {
+	float *ima = FLOATDATA(image);
+	for (i = 0; i < N; i++)      
+	  ima[i] = (float)Im1[i];
       }
       break;
 
       default: 
-        fprintf(stderr, "lderiche3d : fonction %d inexistante ; utiliser : \n", function);
+        fprintf(stderr, "%s: fonction %d inexistante ; utiliser : \n", F_NAME, function);
         fprintf(stderr, "  0 : module du gradient lisse'\n");
         fprintf(stderr, "  1 : direction du gradient lisse'\n");
         fprintf(stderr, "  2 : laplacien lisse'\n");
