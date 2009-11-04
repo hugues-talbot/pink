@@ -44,12 +44,11 @@ and its description is stored in \b out.skel .
 The parameter \b connex sets the adjacency relation used for the object
 (4, 8 (2d) or 6, 18, 26 (3d)).
 
-\warning No verification is done to check that the input image \b in.pgm contains indeed a curvilinear skeleton.
-In the contrary case, the result would be meaningless.
-
-\warning IMPORTANT LIMITATION: different junctions in the original image must not be in direct contact with each other
-(i.e., connected) otherwise they will be considered as a single junction. To prevent this to occur, one can 
-increase image resolution. 
+\warning IMPORTANT LIMITATION: 
+different junctions in the original image must not be in direct
+contact with each other (i.e., connected) otherwise they will be
+considered as a single junction. To prevent this to occur, one can
+increase image resolution.
 
 <B>Types supported:</B> byte 2d, byte 3d
 
@@ -60,8 +59,11 @@ increase image resolution.
 */
 
 /*
-%TEST pgm2skel %IMAGES/2dbyte/binary/b2skel.pgm 8 %RESULTS/pgm2skel_b2skel.pgm
+%TEST pgm2skel %IMAGES/2dbyte/binary/b2skel0.pgm 8 %RESULTS/pgm2skel_b2skel0.pgm
+%TEST pgm2skel %IMAGES/2dbyte/binary/b2skel1.pgm 8 %RESULTS/pgm2skel_b2skel1.pgm
+%TEST pgm2skel %IMAGES/3dbyte/binary/b3skel0.pgm 8 %RESULTS/pgm2skel_b3skel0.pgm
 */
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -103,8 +105,11 @@ int main(int argc, char **argv)
   //printskel(S);
 
   writeskel(S, argv[argc-1]);
+printf("after writeskel\n");
   termineskel(S);
+printf("after termineskel\n");
   freeimage(image);
+printf("after free\n");
 
   return 0;
 } /* main */

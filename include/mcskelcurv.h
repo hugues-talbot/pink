@@ -75,16 +75,16 @@ La structure pour représenter un squelette :
 */
 
 typedef struct {
-  int32_t connex;
-  uint32_t rs, cs, ds;
-  uint32_t e_isol;
-  uint32_t e_end;
-  uint32_t e_curv;
-  uint32_t e_junc;
-  uint32_t nbcell;
-  uint32_t freecell;      // pour la gestion du tas de cellules
+  int32_t connex;      // connexité pour l'objet 
+  uint32_t rs, cs, ds; // dimensions image
+  uint32_t e_isol;     // fin des index "points isolés" 
+  uint32_t e_end;      // fin des index "points extrémités" 
+  uint32_t e_curv;     // fin des index "points de courbe" 
+  uint32_t e_junc;     // fin des index "points de jonction" 
+  uint32_t nbcell;     // nombre total de cellules de liste
+  uint32_t freecell;   // pour la gestion du tas de cellules
   skelpart * tskel;    // tableau des éléments de squelette (tas)
-  SKC_cell * tcell;        // tableau des cellules (tas)
+  SKC_cell * tcell;    // tableau des cellules (tas)
 } skel;
 
 #define IS_ISOL(x) (x<S->e_isol)

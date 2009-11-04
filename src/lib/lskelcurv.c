@@ -51,7 +51,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #define PARANO
 #define VERBOSE
-//#define DEBUG
+#define DEBUG
 
 /* ====================================================================== */
 static void processend(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t *M,
@@ -63,7 +63,7 @@ static void processend(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t *
   int32_t m = start + pos; 
 
 #ifdef DEBUG
-  printf("%s : i = %d,%d\n", F_NAME, i%S->rs, i/S->rs);
+  printf("%s: i = %d,%d\n", F_NAME, i%S->rs, i/S->rs);
 #endif
 
   M[i] = m;
@@ -148,14 +148,14 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
   int32_t trouve = 0, closed = 0, incr_vois, connex = S->connex;
 
 #ifdef DEBUG
-  printf("%s : i = %d,%d\n", F_NAME, i%S->rs, i/S->rs);
+  printf("%s: i = %d,%d\n", F_NAME, i%S->rs, i/S->rs);
 #endif
 
   if ((connex == 4) || (connex == 8))
   {
     if (ds != 1)
     {   
-      fprintf(stderr,"%s : connexity 4 or 8 not defined for 3D\n", F_NAME);
+      fprintf(stderr,"%s: connexity 4 or 8 not defined for 3D\n", F_NAME);
       exit(0);
     }
     if (connex == 4) incr_vois = 2; else incr_vois = 1;
@@ -178,7 +178,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
   } // while (!trouve)
 
 #ifdef DEBUG
-  printf("%s : extremite i = %d,%d\n", F_NAME, i%S->rs, i/S->rs);
+  printf("%s: extremite i = %d,%d\n", F_NAME, i%S->rs, i/S->rs);
 #endif
 
   // 2eme étape: parcourt la courbe et enregistre les infos
@@ -191,7 +191,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
     T2[i] = 3;
     ii = i; // point de base
 #ifdef DEBUG
-  printf("%s : closed : point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
+  printf("%s: closed : point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
 #endif
     trouve = 0;
     while (!trouve)
@@ -201,7 +201,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
       if (T2[j] != 2) { trouve = 1; break; }
       T2[j] = 3;
 #ifdef DEBUG
-  printf("%s : closed : point j = %d,%d traité\n", F_NAME, j%S->rs, j/S->rs);
+  printf("%s: closed : point j = %d,%d traité\n", F_NAME, j%S->rs, j/S->rs);
 #endif
       addptslist(S, m, j);
       i = j;
@@ -209,7 +209,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
 
     addptslist(S, m, ii);
 #ifdef DEBUG
-  printf("%s : closed : point ii = %d,%d traité (FIN)\n", F_NAME, ii%S->rs, ii/S->rs);
+  printf("%s: closed : point ii = %d,%d traité (FIN)\n", F_NAME, ii%S->rs, ii/S->rs);
 #endif
 
   }
@@ -224,7 +224,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
       T2[i] = 3;
       oldi = i;
 #ifdef DEBUG
-      printf("%s : courbe %d adj junc %d\n", F_NAME, m, M[i]);
+      printf("%s: courbe %d adj junc %d\n", F_NAME, m, M[i]);
 #endif
     }
     else
@@ -233,8 +233,8 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
       addadjlist(S, m, M[i]);
       T2[i] = 3;
 #ifdef DEBUG
-      printf("%s : point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
-      printf("%s : courbe %d adj end %d\n", F_NAME, m, M[i]);
+      printf("%s: point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
+      printf("%s: courbe %d adj end %d\n", F_NAME, m, M[i]);
 #endif
     }
 
@@ -273,7 +273,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
     {      
       T2[i] = 3;
 #ifdef DEBUG
-  printf("%s : point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
+  printf("%s: point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
 #endif
       addptslist(S, m, i);
       trouve2voisins(i, rs, ps, N, connex, F, &j, &k);
@@ -287,8 +287,8 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
       addptslist(S, m, i);
       addadjlist(S, m, M[i]);
 #ifdef DEBUG
-      printf("%s : point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
-      printf("%s : courbe %d adj junc %d\n", F_NAME, m, M[i]);
+      printf("%s: point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
+      printf("%s: courbe %d adj junc %d\n", F_NAME, m, M[i]);
 #endif
     }
     else
@@ -297,8 +297,8 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
       addptslist(S, m, i);
       addadjlist(S, m, M[i]);
 #ifdef DEBUG
-      printf("%s : point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
-      printf("%s : courbe %d adj end %d\n", F_NAME, m, M[i]);
+      printf("%s: point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
+      printf("%s: courbe %d adj end %d\n", F_NAME, m, M[i]);
 #endif
     }
     if (oldi != -1) T2[oldi] = 0;
@@ -319,14 +319,14 @@ static void processjunc(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t 
   int32_t m = start + pos; 
 
 #ifdef DEBUG
-  printf("%s : i = %d,%d ; m = %d\n", F_NAME, i%S->rs, i/S->rs, m);
+  printf("%s: i = %d,%d ; m = %d\n", F_NAME, i%S->rs, i/S->rs, m);
 #endif
 
   if ((connex == 4) || (connex == 8))
   {
     if (ds != 1)
     {   
-      fprintf(stderr,"%s : connexity 4 or 8 not defined for 3D\n", F_NAME);
+      fprintf(stderr,"%s: connexity 4 or 8 not defined for 3D\n", F_NAME);
       exit(0);
     }
     if (connex == 4) incr_vois = 2; else incr_vois = 1;
@@ -335,7 +335,7 @@ static void processjunc(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t 
   LIFO = CreeLifoVide(N);
   if (LIFO == NULL)
   {   
-    fprintf(stderr,"%s : CreeLifoVide failed\n", F_NAME);
+    fprintf(stderr,"%s: CreeLifoVide failed\n", F_NAME);
     exit(0);
   }
 
@@ -353,7 +353,7 @@ static void processjunc(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t 
     addptslist(S, m, i);
 
 #ifdef DEBUG
-  printf("%s : traite point i = %d,%d\n", F_NAME, i%S->rs, i/S->rs);
+  printf("%s: traite point i = %d,%d\n", F_NAME, i%S->rs, i/S->rs);
 #endif
 
     if ((connex == 4) || (connex == 8))
@@ -454,10 +454,10 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
   T1 = UCHARDATA(temp1);
   T2 = UCHARDATA(temp2);
   T3 = UCHARDATA(temp3);
-  M = (int32_t *)calloc(1,N * sizeof(int32_t));
+  M = (int32_t *)calloc(N, sizeof(int32_t));
   if (M == NULL)
   {
-    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    fprintf(stderr, "%s: calloc failed\n", F_NAME);
     return NULL;
   }
   for (i = 0; i < N; i++) M[i] = -1;
@@ -480,8 +480,24 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
     return NULL;
   }
 
+
+  if (! lptsimple(temp3, connex))
+  {
+    fprintf(stderr, "%s: function lpsimple failed\n", F_NAME);
+    return NULL;
+  }
+  for (i = 0; i < N; i++)
+    if (T3[i] && !T1[i])
+    {
+      fprintf(stderr, "%s: input image is not a curvilinear skeleton\n", F_NAME);
+      return NULL;
+    }
+      
+  copy2image(temp3, image);
+
+
   // comptage des points isoles et extremites et 
-  // detection des points de jonction par complementation
+  // detection des points de jonction (T3) par complementation
   // réalise de plus l'union de T2 et de T1 (résulat dans T2)
   nbisol = nbend = nbcurv = nbjunc = nbpoints = 0;
   for (i = 0; i < N; i++) 
@@ -491,7 +507,8 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
       nbpoints++;
       if (T0[i]) { nbisol++; T3[i] = 0; } else
       if (T1[i]) { nbend++; T3[i] = 0; T2[i] = NDG_MAX; } else
-      if (T2[i]) T3[i] = 0;
+      if (T2[i]) T3[i] = 0; else
+      if (T3[i]) T3[i] = NDG_MAX;
     }
   } // for (i = 0; i < N; i++) 
 
@@ -517,6 +534,11 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
     return NULL;
   }
   nbjunc -= 1;
+
+#ifdef DEBUG
+  writeimage(lab2, "_labelcurv");
+  writeimage(lab3, "_labeljunc");
+#endif
 
 #ifdef VERBOSE
   printf("nb isol : %d ; nb end : %d ; nb curves : %d ; nb junctions : %d\n", nbisol, nbend, nbcurv, nbjunc);
@@ -580,6 +602,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
   free(temp1);
   free(temp2);
   free(temp3);
+
   return S;
 } /* limage2skel() */
 

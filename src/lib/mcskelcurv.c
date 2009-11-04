@@ -49,7 +49,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mccodimage.h>
 #include <mcskelcurv.h>
 
-//#define DEBUG
+#define DEBUG
 
 /* ================================================ */
 /* ================================================ */
@@ -343,7 +343,7 @@ skel * readskel(char *filename)
   if (strncmp(buf, "3Dskel", 6) == 0) dim = 3; else
   if (strncmp(buf, "2Dskel", 6) == 0) dim = 2; else
   {
-    fprintf(stderr, "%s : bad file format : %s\n", F_NAME, buf);
+    fprintf(stderr, "%s: bad file format : %s\n", F_NAME, buf);
     return NULL;
   }
 
@@ -356,7 +356,7 @@ skel * readskel(char *filename)
 
   S = initskel(rs, cs, ds, nvertex, ncell, connex); 
   if (S == NULL)
-  {   fprintf(stderr, "%s : initskel failed\n", F_NAME);
+  {   fprintf(stderr, "%s: initskel failed\n", F_NAME);
       return NULL;
   }
 
@@ -364,7 +364,7 @@ skel * readskel(char *filename)
   fscanf(fd, "%s", buf);
   if (strncmp(buf, "isol", 4) != 0)
   {
-    fprintf(stderr, "%s : bad file format (0) : %s\n", F_NAME, buf);
+    fprintf(stderr, "%s: bad file format (0) : %s\n", F_NAME, buf);
     return NULL;
   }
   fscanf(fd, "%d", &nbisol);
@@ -379,14 +379,14 @@ skel * readskel(char *filename)
     fscanf(fd, "%s", buf);
     if (strncmp(buf, "vertex", 6) != 0)
     {
-      fprintf(stderr, "%s : bad file format (1) : %s\n", F_NAME, buf);
+      fprintf(stderr, "%s: bad file format (1) : %s\n", F_NAME, buf);
       return NULL;
     }
     fscanf(fd, "%d", &k);
     fscanf(fd, "%s", buf);
     if (strncmp(buf, "adj", 3) != 0)
     {
-      fprintf(stderr, "%s : bad file format (2) : %s\n", F_NAME, buf);
+      fprintf(stderr, "%s: bad file format (2) : %s\n", F_NAME, buf);
       return NULL;
     }
     fscanf(fd, "%d", &n);
@@ -398,7 +398,7 @@ skel * readskel(char *filename)
     fscanf(fd, "%s", buf);
     if (strncmp(buf, "pts", 3) != 0)
     {
-      fprintf(stderr, "%s : bad file format (3) : %s\n", F_NAME, buf);
+      fprintf(stderr, "%s: bad file format (3) : %s\n", F_NAME, buf);
       return NULL;
     }
     fscanf(fd, "%d", &n);
@@ -413,7 +413,7 @@ skel * readskel(char *filename)
   fscanf(fd, "%s", buf);
   if (strncmp(buf, "end", 3) != 0)
   {
-    fprintf(stderr, "%s : bad file format (4) : %s\n", F_NAME, buf);
+    fprintf(stderr, "%s: bad file format (4) : %s\n", F_NAME, buf);
     return NULL;
   }
   fscanf(fd, "%d", &nbend);
@@ -428,14 +428,14 @@ skel * readskel(char *filename)
     fscanf(fd, "%s", buf);
     if (strncmp(buf, "vertex", 6) != 0)
     {
-      fprintf(stderr, "%s : bad file format (5) : %s\n", F_NAME, buf);
+      fprintf(stderr, "%s: bad file format (5) : %s\n", F_NAME, buf);
       return NULL;
     }
     fscanf(fd, "%d", &k);
     fscanf(fd, "%s", buf);
     if (strncmp(buf, "adj", 3) != 0)
     {
-      fprintf(stderr, "%s : bad file format (6) : %s\n", F_NAME, buf);
+      fprintf(stderr, "%s: bad file format (6) : %s\n", F_NAME, buf);
       return NULL;
     }
     fscanf(fd, "%d", &n);
@@ -447,7 +447,7 @@ skel * readskel(char *filename)
     fscanf(fd, "%s", buf);
     if (strncmp(buf, "pts", 3) != 0)
     {
-      fprintf(stderr, "%s : bad file format (7) : %s\n", F_NAME, buf);
+      fprintf(stderr, "%s: bad file format (7) : %s\n", F_NAME, buf);
       return NULL;
     }
     fscanf(fd, "%d", &n);
@@ -462,7 +462,7 @@ skel * readskel(char *filename)
   fscanf(fd, "%s", buf);
   if (strncmp(buf, "curv", 4) != 0)
   {
-    fprintf(stderr, "%s : bad file format (8) : %s\n", F_NAME, buf);
+    fprintf(stderr, "%s: bad file format (8) : %s\n", F_NAME, buf);
     return NULL;
   }
   fscanf(fd, "%d", &nbcurv);
@@ -477,14 +477,14 @@ skel * readskel(char *filename)
     fscanf(fd, "%s", buf);
     if (strncmp(buf, "vertex", 6) != 0)
     {
-      fprintf(stderr, "%s : bad file format (9) : %s\n", F_NAME, buf);
+      fprintf(stderr, "%s: bad file format (9) : %s\n", F_NAME, buf);
       return NULL;
     }
     fscanf(fd, "%d", &k);
     fscanf(fd, "%s", buf);
     if (strncmp(buf, "adj", 3) != 0)
     {
-      fprintf(stderr, "%s : bad file format (10) : %s\n", F_NAME, buf);
+      fprintf(stderr, "%s: bad file format (10) : %s\n", F_NAME, buf);
       return NULL;
     }
     fscanf(fd, "%d", &n);
@@ -496,7 +496,7 @@ skel * readskel(char *filename)
     fscanf(fd, "%s", buf);
     if (strncmp(buf, "pts", 3) != 0)
     {
-      fprintf(stderr, "%s : bad file format (11) : %s\n", F_NAME, buf);
+      fprintf(stderr, "%s: bad file format (11) : %s\n", F_NAME, buf);
       return NULL;
     }
     fscanf(fd, "%d", &n);
@@ -511,7 +511,7 @@ skel * readskel(char *filename)
   fscanf(fd, "%s", buf);
   if (strncmp(buf, "junc", 4) != 0)
   {
-    fprintf(stderr, "%s : bad file format (12) : %s\n", F_NAME, buf);
+    fprintf(stderr, "%s: bad file format (12) : %s\n", F_NAME, buf);
     return NULL;
   }
   fscanf(fd, "%d", &nbjunc);
@@ -526,14 +526,14 @@ skel * readskel(char *filename)
     fscanf(fd, "%s", buf);
     if (strncmp(buf, "vertex", 6) != 0)
     {
-      fprintf(stderr, "%s : bad file format (13) : %s\n", F_NAME, buf);
+      fprintf(stderr, "%s: bad file format (13) : %s\n", F_NAME, buf);
       return NULL;
     }
     fscanf(fd, "%d", &k);
     fscanf(fd, "%s", buf);
     if (strncmp(buf, "adj", 3) != 0)
     {
-      fprintf(stderr, "%s : bad file format (14) : %s\n", F_NAME, buf);
+      fprintf(stderr, "%s: bad file format (14) : %s\n", F_NAME, buf);
       return NULL;
     }
     fscanf(fd, "%d", &n);
@@ -545,7 +545,7 @@ skel * readskel(char *filename)
     fscanf(fd, "%s", buf);
     if (strncmp(buf, "pts", 3) != 0)
     {
-      fprintf(stderr, "%s : bad file format (15) : %s\n", F_NAME, buf);
+      fprintf(stderr, "%s: bad file format (15) : %s\n", F_NAME, buf);
       return NULL;
     }
     fscanf(fd, "%d", &n);
@@ -571,13 +571,13 @@ skel * initskel(uint32_t rs, uint32_t cs, uint32_t ds, uint32_t nbvertex, uint32
   
   S = (skel *)calloc(1,sizeof(skel));
   if (S == NULL)
-  {   fprintf(stderr, "%s : malloc failed for S\n", F_NAME);
+  {   fprintf(stderr, "%s: calloc failed for S\n", F_NAME);
       return(0);
   }
  
-  S->tcell = (SKC_cell *)calloc(1,nbcell * sizeof(SKC_cell));
+  S->tcell = (SKC_cell *)calloc(nbcell, sizeof(SKC_cell));
   if (S->tcell == NULL)
-  {   fprintf(stderr, "%s : malloc failed for S->tcell\n", F_NAME);
+  {   fprintf(stderr, "%s: calloc failed for S->tcell\n", F_NAME);
       return(0);
   }
 
@@ -588,9 +588,9 @@ skel * initskel(uint32_t rs, uint32_t cs, uint32_t ds, uint32_t nbvertex, uint32
   S->freecell = 0;
   S->nbcell = nbcell;
  
-  S->tskel = (skelpart *)calloc(1,nbvertex * sizeof(skelpart));
+  S->tskel = (skelpart *)calloc(nbvertex, sizeof(skelpart));
   if (S->tskel == NULL)
-  {   fprintf(stderr, "%s : malloc failed for S->tskel\n", F_NAME);
+  {   fprintf(stderr, "%s: calloc failed for S->tskel\n", F_NAME);
       return(0);
   }
 
@@ -603,9 +603,21 @@ skel * initskel(uint32_t rs, uint32_t cs, uint32_t ds, uint32_t nbvertex, uint32
 void termineskel(skel * S)
 /* ====================================================================== */
 {
+#ifdef DEBUG
+  printf("termineskel: begin\n");
+#endif
   free(S->tcell);
+#ifdef DEBUG
+  printf("termineskel 1\n");
+#endif
   free(S->tskel);
+#ifdef DEBUG
+  printf("termineskel 2\n");
+#endif
   free(S);
+#ifdef DEBUG
+  printf("termineskel: end\n");
+#endif
 } /* termineskel() */
 
 #ifdef TESTSKEL
