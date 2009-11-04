@@ -65,10 +65,10 @@ knowledge of the CeCILL license and that you accept its terms.
 
 /* ==================================== */
 int32_t llabelextrema(
-        struct xvimage *img, /* image de depart */
+        struct xvimage *img,     /* image de depart */
         int32_t connex,          /* 4, 8 (2d) ou 6, 18, 26 (3d) 0/1 pour biconnecte */
         int32_t minimum,         /* booleen */
-        struct xvimage *lab, /* resultat: image de labels */
+        struct xvimage *lab,     /* resultat: image de labels */
         int32_t *nlabels)        /* resultat: nombre d'extrema traites + 1 (0 = non extremum) */
 /* ==================================== */
 #undef F_NAME
@@ -150,6 +150,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -181,6 +182,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
 		      label = 0;
 		      *nlabels -= 1;
 		      LABEL[w] = label;
+		      LifoFlush(LIFO);
 		      LifoPush(LIFO, w);
 		    } 
 		  else
@@ -212,6 +214,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
 		      label = 0;
 		      *nlabels -= 1;
 		      LABEL[w] = label;
+		      LifoFlush(LIFO);		      
 		      LifoPush(LIFO, w);
 		    } 
 		  else
@@ -243,6 +246,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
 		      label = 0;
 		      *nlabels -= 1;
 		      LABEL[w] = label;
+		      LifoFlush(LIFO);
 		      LifoPush(LIFO, w);
 		    } 
 		  else
@@ -274,6 +278,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -306,9 +311,10 @@ if (datatype(img) == VFF_TYP_1_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
 #ifdef DEBUG
-		  printf("Push(%d,%d), non extremum: label %d\n", y%rs, y/rs, label);
+		  printf("Push(%d,%d), non extremum: label %d\n", w%rs, w/rs, label);
 #endif
                 } 
                 else
@@ -344,6 +350,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -376,6 +383,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -431,6 +439,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -462,6 +471,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
 		      label = 0;
 		      *nlabels -= 1;
 		      LABEL[w] = label;
+		      LifoFlush(LIFO);
 		      LifoPush(LIFO, w);
 		    } 
 		  else
@@ -493,6 +503,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
 		      label = 0;
 		      *nlabels -= 1;
 		      LABEL[w] = label;
+		      LifoFlush(LIFO);
 		      LifoPush(LIFO, w);
 		    } 
 		  else
@@ -524,6 +535,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
 		      label = 0;
 		      *nlabels -= 1;
 		      LABEL[w] = label;
+		      LifoFlush(LIFO);
 		      LifoPush(LIFO, w);
 		    } 
 		  else
@@ -555,6 +567,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -587,6 +600,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -619,6 +633,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -651,6 +666,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else

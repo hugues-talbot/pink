@@ -61,7 +61,7 @@ increase image resolution.
 /*
 %TEST pgm2skel %IMAGES/2dbyte/binary/b2skel0.pgm 8 %RESULTS/pgm2skel_b2skel0.pgm
 %TEST pgm2skel %IMAGES/2dbyte/binary/b2skel1.pgm 8 %RESULTS/pgm2skel_b2skel1.pgm
-%TEST pgm2skel %IMAGES/3dbyte/binary/b3skel0.pgm 8 %RESULTS/pgm2skel_b3skel0.pgm
+%TEST pgm2skel %IMAGES/3dbyte/binary/b3skel0.pgm 26 %RESULTS/pgm2skel_b3skel0.pgm
 */
 
 #include <stdio.h>
@@ -105,11 +105,8 @@ int main(int argc, char **argv)
   //printskel(S);
 
   writeskel(S, argv[argc-1]);
-printf("after writeskel\n");
   termineskel(S);
-printf("after termineskel\n");
   freeimage(image);
-printf("after free\n");
 
   return 0;
 } /* main */

@@ -50,8 +50,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lseltopo.h>
 
 #define PARANO
-#define VERBOSE
-#define DEBUG
+//#define VERBOSE
+//#define DEBUG
 
 /* ====================================================================== */
 static void processend(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t *M,
@@ -407,6 +407,10 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
   skel * S;
   SKC_pcell p;
 
+#ifdef DEBUG
+  printf("%s: begin\n", F_NAME);
+#endif
+
   // filtre les bords de l'image
   if (ds > 1)
   {
@@ -480,7 +484,6 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
     return NULL;
   }
 
-
   if (! lptsimple(temp3, connex))
   {
     fprintf(stderr, "%s: function lpsimple failed\n", F_NAME);
@@ -494,7 +497,6 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
     }
       
   copy2image(temp3, image);
-
 
   // comptage des points isoles et extremites et 
   // detection des points de jonction (T3) par complementation
@@ -536,6 +538,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
   nbjunc -= 1;
 
 #ifdef DEBUG
+  printf("%s: llabelextrema done\n", F_NAME);
   writeimage(lab2, "_labelcurv");
   writeimage(lab3, "_labeljunc");
 #endif

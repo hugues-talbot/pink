@@ -49,7 +49,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mccodimage.h>
 #include <mcskelcurv.h>
 
-#define DEBUG
+//#define DEBUG
 
 /* ================================================ */
 /* ================================================ */
