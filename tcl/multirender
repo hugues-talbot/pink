@@ -34,7 +34,7 @@
 #ATTENTION: BUGGE avec la version NVIDIA (carte graphique)
 #sh
 # The next line is executed by /bin/sh, but not Tcl \
-exec vtk $0 $1 $2 $3 $4 $5 $6
+exec vtk $0 $1 $2 $3 $4 $5 $6 $7
 
 # A multiple renderer - Michel Couprie 2006
 package require vtk
@@ -44,8 +44,8 @@ package require vtkinteraction
 wm title . "Multiple Renderer"
 
 # get input image file name as first argument
-if {($argc < 1) || ($argc > 7)} { 
-  puts stderr "usage: render in \[in2 ... in7\]"
+if {($argc < 1) || ($argc > 8)} { 
+  puts stderr "usage: render in1 \[in2 ... in8\]"
   exit 
 }
 
@@ -74,19 +74,23 @@ source "$PINK/tcl/my_dialog.tcl"
  set RENDER(movielength) 30
  set RENDER(fps) 15
 
+# white
  set RENDER_COL(0) "1.0 1.0 1.0"
-# set RENDER_COL(0) "0.1 0.1 0.1"
-
+# orange
  set RENDER_COL(1) "1.0 0.49 0.25"
-# set RENDER_COL(1) "1.0 1.0 1.0"
-
- set RENDER_COL(2) "0.25 1.0 0.49"
-# set RENDER_COL(2) "0.1 0.1 0.1"
-
+# red
+ set RENDER_COL(2) "1.0 0.0 0.0"
+# indigo
  set RENDER_COL(3) "0.49 0.25 1.0"
+# green
  set RENDER_COL(4) "0.49 1.0 0.25"
+#
  set RENDER_COL(5) "1.0 0.25 0.49"
+#
  set RENDER_COL(6) "0.25 0.49 1.0"
+# black
+ set RENDER_COL(7) "0.1 0.1 0.1"
+
  set RENDER_OPA(0) 1.0
  set RENDER_OPA(1) 1.0
  set RENDER_OPA(2) 1.0
@@ -94,6 +98,7 @@ source "$PINK/tcl/my_dialog.tcl"
  set RENDER_OPA(4) 1.0
  set RENDER_OPA(5) 1.0
  set RENDER_OPA(6) 1.0
+ set RENDER_OPA(7) 1.0
  set RENDER_WFR(0) 0
  set RENDER_WFR(1) 0
  set RENDER_WFR(2) 0
@@ -101,12 +106,17 @@ source "$PINK/tcl/my_dialog.tcl"
  set RENDER_WFR(4) 0
  set RENDER_WFR(5) 0
  set RENDER_WFR(6) 0
+ set RENDER_WFR(7) 0
 
 # create renderer and window
 vtkRenderer ren1
     ren1 SetViewport 0 0 1 1
+# fond gris clair:
+    ren1 SetBackground 0.8 0.8 0.8
+# pour un gradient: nouvelle version VTK ?
+#    ren1 SetBackground2 1 1 1
 # fond blanc:
-    ren1 SetBackground 1 1 1
+#    ren1 SetBackground 1 1 1
 # fond bleu:
 #    ren1 SetBackground 0 0 0.7
 vtkRenderWindow renWin

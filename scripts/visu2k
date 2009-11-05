@@ -1,3 +1,15 @@
+#!/bin/sh
+USAGE="Usage: $0 in1.k in2.k"
+if [ $# -gt 2 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 2 ]
+then
+	echo $USAGE
+        exit
+fi
 3dborder $1 /tmp/visu2k_1
 pgm2vtk /tmp/visu2k_1 1 /tmp/visu2k_1.vtk
 3dborder $2 /tmp/visu2k_2

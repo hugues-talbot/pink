@@ -1,3 +1,15 @@
+#!/bin/sh
+USAGE="Usage: $0 in1.pgm in2.pgm in3.pgm"
+if [ $# -gt 3 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 3 ]
+then
+	echo $USAGE
+        exit
+fi
 3dkhalimskize $1 h /tmp/visu3pgm_1
 3dborder /tmp/visu3pgm_1 /tmp/visu3pgm_1
 pgm2vtk /tmp/visu3pgm_1 1 /tmp/visu3pgm_1.vtk

@@ -38,6 +38,9 @@ extern "C" {
 
 extern skel * limage2skel(struct xvimage *image, int32_t connex);
 extern struct xvimage * lskel2image(skel *S);
+extern struct xvimage * lskelmarked2image(skel *S);
+extern int32_t lskelfilter1(skel *S, double length, double angle);
+extern int32_t lskelfilter2(skel *S, double delta, double theta);
 #ifdef __cplusplus
 }
 #endif

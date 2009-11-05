@@ -63,7 +63,8 @@ Tous les sommets du graphe sont représentés par la structure suivante :
 */
 
 typedef struct {
-  float fval;
+  uint8_t tag;           // associated tag (for marking, etc)
+  float fval;            // associated value
   struct SKC_cell * pts; // liste des points constituant l'élément de squelette
   struct SKC_cell * adj; // liste des éléments adjacents
 } skelpart;

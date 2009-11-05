@@ -136,6 +136,12 @@ extern int32_t voisinENAR(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t 
 extern int32_t voisinENAV(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N );
 extern int32_t voisinONAR(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N );
 extern uint32_t maskvois26(uint8_t *F, uint32_t bitmask, int32_t i, int32_t rs, int32_t ps, int32_t N);
+extern int32_t sont4voisins(int32_t p, int32_t q, int32_t rs);
+extern int32_t sont8voisins(int32_t p, int32_t q, int32_t rs);
+extern int32_t sont6voisins(int32_t p, int32_t q, int32_t rs, int32_t ps);
+extern int32_t sont18voisins(int32_t p, int32_t q, int32_t rs, int32_t ps);
+extern int32_t sont26voisins(int32_t p, int32_t q, int32_t rs, int32_t ps);
+ 
 #ifdef __cplusplus
 }
 #endif

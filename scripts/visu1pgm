@@ -1,3 +1,15 @@
+#!/bin/sh
+USAGE="Usage: $0 in.pgm"
+if [ $# -gt 1 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 1 ]
+then
+	echo $USAGE
+        exit
+fi
 3dkhalimskize $1 h /tmp/visu1pgm_1
 3dborder /tmp/visu1pgm_1 /tmp/visu1pgm_1
 pgm2vtk /tmp/visu1pgm_1 1 /tmp/visu1pgm_1.vtk

@@ -658,3 +658,59 @@ uint32_t maskvois26(uint8_t *F, uint32_t bitmask, int32_t i, int32_t rs, int32_t
   }
   return mask;
 }
+
+/* ==================================== */
+int32_t sont4voisins(int32_t p, int32_t q, int32_t rs)
+/* ==================================== */
+{
+  int32_t xp = p % rs, xq = q % rs, yp = p / rs, yq = q / rs;
+  return ((abs(xp-xq) + abs(yp-yq)) == 1);
+}
+
+/* ==================================== */
+int32_t sont8voisins(int32_t p, int32_t q, int32_t rs)
+/* ==================================== */
+{
+  int32_t xp = p % rs, xq = q % rs, yp = p / rs, yq = q / rs;
+  int32_t ax = abs(xp-xq);
+  int32_t ay = abs(yp-yq);
+  return (max(ax,ay) == 1);
+}
+
+/* ==================================== */
+int32_t sont6voisins(int32_t p, int32_t q, int32_t rs, int32_t ps)
+/* ==================================== */
+{
+  int32_t xp = p % rs, xq = q % rs; 
+  int32_t yp = (p%ps) / rs, yq = (q%ps) / rs; 
+  int32_t zp = p / ps, zq = q / ps;
+  return ((abs(xp-xq) + abs(yp-yq) + abs(zp-zq)) == 1);
+}
+
+/* ==================================== */
+int32_t sont26voisins(int32_t p, int32_t q, int32_t rs, int32_t ps)
+/* ==================================== */
+{
+  int32_t xp = p % rs, xq = q % rs; 
+  int32_t yp = (p%ps) / rs, yq = (q%ps) / rs; 
+  int32_t zp = p / ps, zq = q / ps;
+  int32_t ax = abs(xp-xq);
+  int32_t ay = abs(yp-yq);
+  int32_t axy = max(ax,ay);
+  int32_t az = abs(zp-zq);
+  return (max(axy,az) == 1);
+}
+
+/* ==================================== */
+int32_t sont18voisins(int32_t p, int32_t q, int32_t rs, int32_t ps)
+/* ==================================== */
+{
+  int32_t xp = p % rs, xq = q % rs; 
+  int32_t yp = (p%ps) / rs, yq = (q%ps) / rs; 
+  int32_t zp = p / ps, zq = q / ps;
+  int32_t ax = abs(xp-xq);
+  int32_t ay = abs(yp-yq);
+  int32_t axy = max(ax,ay);
+  int32_t az = abs(zp-zq);
+  return ((max(axy,az) == 1) && ((ax + ay + az) <= 2));
+}

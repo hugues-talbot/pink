@@ -40,6 +40,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <math.h>
+#include <assert.h>
 #include <mcimage.h>
 #include <mccodimage.h>
 #include <mctopo.h>
@@ -52,6 +54,32 @@ knowledge of the CeCILL license and that you accept its terms.
 #define PARANO
 //#define VERBOSE
 //#define DEBUG
+
+#define VAL_ISOL 1
+#define VAL_END  2
+#define VAL_CURV 3
+#define VAL_JUNC 4
+
+/* ==================================== */
+static double dist3(double x1, double y1, double z1, double x2, double y2, double z2)
+/* ==================================== */
+{
+  return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1));
+}
+
+/* ==================================== */
+static double scalarprod(double x1, double y1, double z1, double x2, double y2, double z2)
+/* ==================================== */
+{
+  return (x1 * x2) + (y1 * y2) + (z1 * z2);
+}
+
+/* ==================================== */
+static double norm(double x, double y, double z)
+/* ==================================== */
+{
+  return sqrt((x * x) + (y * y) + (z * z));
+}
 
 /* ====================================================================== */
 static void processend(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t *M,
@@ -187,7 +215,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
     int32_t ii, m = start + pos;
     S->tskel[m].adj = S->tskel[m].pts = NULL;
 
-    addptslist(S, m, i);
+    if (T2[i]) addptslist(S, m, i);
     T2[i] = 3;
     ii = i; // point de base
 #ifdef DEBUG
@@ -203,15 +231,14 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
 #ifdef DEBUG
   printf("%s: closed : point j = %d,%d traité\n", F_NAME, j%S->rs, j/S->rs);
 #endif
-      addptslist(S, m, j);
+      if (T2[j]) addptslist(S, m, j);
       i = j;
     } // while (!trouve)
 
-    addptslist(S, m, ii);
+    if (T2[ii]) addptslist(S, m, ii);
 #ifdef DEBUG
   printf("%s: closed : point ii = %d,%d traité (FIN)\n", F_NAME, ii%S->rs, ii/S->rs);
 #endif
-
   }
   else // courbe ouverte
   {
@@ -229,7 +256,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
     }
     else
     {
-      addptslist(S, m, i);
+      if (T2[i]) addptslist(S, m, i);
       addadjlist(S, m, M[i]);
       T2[i] = 3;
 #ifdef DEBUG
@@ -284,7 +311,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
     // traite dernier point
     if (T3[i]) 
     {
-      addptslist(S, m, i);
+      //      addptslist(S, m, i);
       addadjlist(S, m, M[i]);
 #ifdef DEBUG
       printf("%s: point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
@@ -633,9 +660,355 @@ struct xvimage * lskel2image(skel *S)
   F = UCHARDATA(image);      /* l'image de depart */
   memset(F, 0, N);
 
-  for (i = 0; i < S->e_junc; i++)
+  for (i = S->e_curv; i < S->e_junc; i++)
+  {
     for (p = S->tskel[i].pts; p != NULL; p = p->next) 
-      F[p->val] = NDG_MAX;
+      F[p->val] = VAL_JUNC;
+  }
+  for (i = S->e_end; i < S->e_curv; i++)
+  {
+    for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+      F[p->val] = VAL_CURV;
+  }
+  for (i = S->e_isol; i < S->e_end; i++)
+  {
+    for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+      F[p->val] = VAL_END;
+  }
+  for (i = 0; i < S->e_isol; i++)
+  {
+    for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+      F[p->val] = VAL_ISOL;
+  }
 
   return image;
 } /* lskel2image() */
+
+/* ====================================================================== */
+struct xvimage * lskelmarked2image(skel *S)
+/* ====================================================================== */
+// only the marked items are transfered
+{
+#undef F_NAME
+#define F_NAME "lskelmarked2image"
+  int32_t i;
+  int32_t rs = S->rs;
+  int32_t cs = S->cs;
+  int32_t ds = S->ds;
+  int32_t N = ds * cs * rs;
+  uint8_t *F;      /* l'image de depart */
+  SKC_pcell p;
+  struct xvimage * image;
+
+  image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  if (image == NULL)
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return NULL;
+  }
+  F = UCHARDATA(image);      /* l'image de depart */
+  memset(F, 0, N);
+
+  for (i = 0; i < S->e_junc; i++)
+  {
+    if (S->tskel[i].tag)
+      for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+	F[p->val] = NDG_MAX;
+  }
+
+  return image;
+} /* lskelmarked2image() */
+
+/* ====================================================================== */
+static void coordvertex(skel *S, int32_t V, double *Vx, double *Vy, double *Vz)
+/* ====================================================================== */
+// computes the coordinates (Vx, Vy, Vz) of vertex V in S 
+{
+  int32_t rs = S->rs;
+  int32_t cs = S->cs;
+  int32_t ps = rs*cs;
+  int32_t n = 0;
+  double x=0.0, y=0.0, z=0.0;
+  SKC_pcell p = S->tskel[V].pts;
+
+  assert(p != NULL);
+  for (; p != NULL; p = p->next)
+  {
+    x += (double)(p->val % rs);
+    y += (double)((p->val % ps) / rs);
+    z += (double)(p->val / ps);
+    n += 1;
+  }  
+  *Vx = x/n; *Vy = y/n; *Vz = z/n; 
+} // coordvertex()
+
+/* ====================================================================== */
+static double distancetoskel(skel *S, double x, double y, double z)
+/* ====================================================================== */
+//
+{
+  int32_t rs = S->rs;
+  int32_t cs = S->cs;
+  int32_t ps = rs*cs;
+  int32_t i;
+  double xx, yy, zz, d, min = (double)(ps * S->ds);
+  SKC_pcell p;
+
+  for (i = 0; i < S->e_junc; i++)
+  {
+    for (p = S->tskel[i].pts; p != NULL; p = p->next)
+    {
+      xx = (double)(p->val % rs);
+      yy = (double)((p->val % ps) / rs);
+      zz = (double)(p->val / ps);
+      d = dist3(xx, yy, zz, x, y, z);
+      if (d < min) min = d;
+    }
+  }
+  return min;
+} // distancetoskel()
+
+/* ====================================================================== */
+int32_t lskelfilter1(skel *S, double length, double angle)
+/* ====================================================================== */
+/*
+The skeleton found in S is searched for "small" branches which 
+satisfies the following criteria:
+\li Extremities A, B are both junctions.
+\li Branch length (AB) is less than \b length parameter.
+\li Let AA be the symmetric of A wrt B, and BB be the symmetric of B wrt A.
+    The distance from AA to the skeleton is more than AB sin( \b angle ), or
+    the distance from BB to the skeleton is more than AB sin( \b angle ).
+
+The matching branches are marked (field "tag" = 1)
+
+Parameter \b length is given in pixels, parameter \b angle in radians.
+*/
+{
+#undef F_NAME
+#define F_NAME "lskelfilter1"
+  int32_t i, A, B;
+  SKC_pcell p;
+  double AB, Ax, Ay, Az, Bx, By, Bz, AAx, AAy, AAz, BBx, BBy, BBz;
+  double dAA, dBB;
+
+#ifdef DEBUG
+  printf("lskelfilter1: length = %g, angle %g, l sin a %g\n", 
+	 length, angle, length * sin(angle));
+#endif	  
+
+  for (i = S->e_end; i < S->e_curv; i++)
+  {
+    S->tskel[i].tag = 0; // not marked
+    p = S->tskel[i].adj;
+    A = p->val;
+    assert(p->next != NULL);
+    p = p->next;
+    B = p->val;
+    assert(p->next == NULL);
+    if (IS_JUNC(A) && IS_JUNC(B))
+    {
+      coordvertex(S, A, &Ax, &Ay, &Az);
+      coordvertex(S, B, &Bx, &By, &Bz);
+      AB = dist3(Ax, Ay, Az, Bx, By, Bz);
+#ifdef DEBUG
+      printf("arc %d, (%g,%g,%g)-(%g,%g,%g), length %g\n", 
+	     i, Ax, Ay, Az, Bx, By, Bz, AB);
+#endif	  
+      if (AB <= length)
+      {
+	// symétrique de A par rapport à B
+	AAx = Bx + Bx - Ax; BBy = By + By - Ay; BBz = Bz + Bz - Az; 
+	// symétrique de B par rapport à A
+	BBx = Ax + Ax - Bx; AAy = Ay + Ay - By; AAz = Az + Az - Bz; 
+	dAA = distancetoskel(S, AAx, AAy, AAz);
+	dBB = distancetoskel(S, BBx, BBy, BBz);
+
+#ifdef DEBUG
+	printf("dAA = %g, dBB = %g, AB * sin(angle) = %g\n", 
+	       dAA, dBB, AB * sin(angle));
+#endif	  
+	
+	if ((dAA >= (AB * sin(angle))) || (dBB >= (AB * sin(angle))))
+	{
+	  S->tskel[i].tag = 1; // mark for deletion
+#ifdef DEBUG
+	  printf("mark %d\n", i);
+#endif	  
+	}
+      } // if (AB >= length)
+    } // if (IS_JUNC(A) && IS_JUNC(B))
+  } // for (i = S->e_end; i < S->e_curv; i++)
+
+  return 1;
+} /* lskelfilter1() */
+
+/* ====================================================================== */
+void points_at_head(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
+/* ====================================================================== */
+// détermine deux points e et f au "début" de l'arc de courbe Ai, 
+// séparés d'une distance euclidienne d'au moins delta
+{
+  int32_t rs = S->rs;
+  int32_t ps = rs * S->cs;
+  SKC_pcell p = S->tskel[Ai].pts;
+  double x, y, z, xx, yy, zz;
+
+  assert(p != NULL);
+  assert(p->next != NULL);
+  *e = p->val;
+  x = (double)(*e % rs);
+  y = (double)((*e % ps) / rs);
+  z = (double)(*e / ps);
+  for (p = p->next; p != NULL; p = p->next)
+  {
+    xx = (double)(p->val % rs);
+    yy = (double)((p->val % ps) / rs);
+    zz = (double)(p->val / ps);
+    if (dist3(x, y, z, xx, yy, zz) >= delta)
+    {
+      *f = p->val;
+      break;
+    }
+    assert(p->next != NULL);
+  }
+} // points_at_head()
+
+/* ====================================================================== */
+void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
+/* ====================================================================== */
+// détermine deux points e et f en "fin" de l'arc de courbe Ai, 
+// séparés d'une distance euclidienne d'au moins delta
+{
+  int32_t rs = S->rs;
+  int32_t ps = rs * S->cs;
+  SKC_pcell p = S->tskel[Ai].pts, pp;
+  double x, y, z, xx, yy, zz;
+
+  assert(p != NULL);
+  assert(p->next != NULL);
+
+  for (; p != NULL; p = p->next) *e = p->val;
+
+  x = (double)(*e % rs);
+  y = (double)((*e % ps) / rs);
+  z = (double)(*e / ps);
+
+  pp = S->tskel[Ai].pts;
+  xx = (double)(pp->val % rs);
+  yy = (double)((pp->val % ps) / rs);
+  zz = (double)(pp->val / ps);
+  assert(dist3(x, y, z, xx, yy, zz) >= delta);
+
+  for (p = pp->next; p != NULL; p = p->next)
+  {
+    xx = (double)(p->val % rs);
+    yy = (double)((p->val % ps) / rs);
+    zz = (double)(p->val / ps);
+    if (dist3(x, y, z, xx, yy, zz) < delta)
+      break;
+    pp = p;
+  }
+  *f = pp->val;
+} // points_at_tail()
+
+/* ====================================================================== */
+int32_t adj_point_junc(skel *S, int32_t e, int32_t J)
+/* ====================================================================== */
+{
+  SKC_pcell p;
+  int32_t connex = S->connex;
+  int32_t rs = S->rs;
+  int32_t ps = rs * S->cs;
+
+  switch(connex)
+  {
+    case 4:
+      for (p = S->tskel[J].pts; p != NULL; p = p->next)
+	if (sont4voisins(p->val, e, rs)) return 1;
+      break;
+    case 8:
+      for (p = S->tskel[J].pts; p != NULL; p = p->next)
+	if (sont8voisins(p->val, e, rs)) return 1;
+      break;
+    case 6:
+      for (p = S->tskel[J].pts; p != NULL; p = p->next)
+	if (sont6voisins(p->val, e, rs, ps)) return 1;
+      break;
+    case 18:
+      for (p = S->tskel[J].pts; p != NULL; p = p->next)
+	if (sont18voisins(p->val, e, rs, ps)) return 1;
+      break;
+    case 26:
+      for (p = S->tskel[J].pts; p != NULL; p = p->next)
+	if (sont26voisins(p->val, e, rs, ps)) return 1;
+      break;
+  }
+  return 0;
+} // adj_point_junc()
+
+/* ====================================================================== */
+int32_t lskelfilter2(skel *S, double delta, double theta)
+/* ====================================================================== */
+/*
+  For each junction J
+    For each arc Ai adjacent to J
+      compute and store the vector Vi tangent to Ai starting from J
+    For each couple (Vi,Vj) of vectors 
+      compute the cosine similarity Cij between Vi and -Vj
+        (see http://en.wikipedia.org/wiki/Cosine_similarity)
+      if Cij <= theta then mark the arcs Ai and Aj as "aligned"
+*/
+{
+#undef F_NAME
+#define F_NAME "lskelfilter2"
+  int32_t rs = S->rs;
+  int32_t ps = rs * S->cs;
+  int32_t J, Ai, nadj, e, f, i, j, A[26];
+  SKC_pcell p;
+  double Vx[26], Vy[26], Vz[26], Cij;
+
+#ifdef DEBUG
+  printf("lskelfilter2: delta = %g, theta %g\n", delta, theta);
+#endif	  
+
+  for (J = S->e_curv; J < S->e_junc; J++)
+  {
+    for (p = S->tskel[J].adj,nadj = 0; p != NULL; p = p->next, nadj++)
+    {
+      Ai = p->val;
+      A[nadj] = Ai;
+      points_at_head(S, Ai, delta, &e, &f);
+      if (adj_point_junc(S, e, J))
+      {
+	Vx[nadj] = (double)((e % rs) - (f % rs));
+	Vy[nadj] = (double)(((e % ps) / rs) - ((f % ps) / rs));
+	Vz[nadj] = (double)((e / ps) - (f / ps));
+      }
+      else
+      {
+	points_at_tail(S, Ai, delta, &e, &f);
+	assert(adj_point_junc(S, e, J));
+	Vx[nadj] = (double)((e % rs) - (f % rs));
+	Vy[nadj] = (double)(((e % ps) / rs) - ((f % ps) / rs));
+	Vz[nadj] = (double)((e / ps) - (f / ps));	
+      }
+    } // for (p = S->tskel[J].adj,nadj = 0; p != NULL; p = p->next, nadj++)
+    for (i = 0; i < nadj-1; i++)
+      for (j = i+1; j < nadj; j++)
+      {
+	Cij = acos(scalarprod(Vx[i], Vy[i], Vz[i], -Vx[j], -Vy[j], -Vz[j]) / 
+		      (norm(Vx[i], Vy[i], Vz[i]) * norm(Vx[j], Vy[j], Vz[j])));
+	if (Cij <= theta)
+	{
+	  S->tskel[A[i]].tag = 1;
+	  S->tskel[A[j]].tag = 1;
+#ifdef DEBUG
+	  printf("mark %d and %d\n", A[i], A[j]);
+#endif	  
+	}
+      }
+  } // for (J = S->e_curv; J < S->e_junc; J++)
+
+  return 1;
+} /* lskelfilter2() */
