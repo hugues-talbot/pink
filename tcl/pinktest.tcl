@@ -53,7 +53,7 @@ source "$PINK/tcl/my_exec.tcl"
 
 set PINKTEST(name)     "pinktest"
 set PINKTEST(testtag)  "%TEST"
-set PINKTEST(testdir)  [file join "$env(HOME)" "Pinktests"]
+set PINKTEST(testdir)  [file join "$env(HOME)" "Pinktest"]
 set PINKTEST(comdir)   [file join "$PINK" "src" "com"]
 if {($argc == 1)} { 
   set PINKTEST(operator)     [lindex $argv 0]

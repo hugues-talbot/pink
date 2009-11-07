@@ -34,20 +34,25 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file drawline.c
 
-\brief draw a line segment in a 2D image
+\brief draw a straight line segment in a 2D image
 
-<B>Usage:</B> drawline in.pgm x1 y1 x2 y2 out.pgm
+<B>Usage:</B> drawline in.pgm x1 y1 [z1] x2 y2 [z2] out.pgm
 
 <B>Description:</B>
 
-Draws a bresenham line segment between (x1,y1) and (x2,y2)
+Draws a straight line segment between (x1,y1[,z1]) and (x2,y2[,z2])
 
-<B>Types supported:</B> byte 2D
+<B>Types supported:</B> byte 2D, byte 3D
 
 <B>Category:</B> draw
 \ingroup  draw
 
 \author Michel Couprie
+*/
+
+/*
+%TEST drawline %IMAGES/2dbyte/binary/b2empty_30_40.pgm 0 0 29 39 %RESULTS/drawline_b2empty_30_40.pgm
+%TEST drawline %IMAGES/3dbyte/binary/b3empty_20_30_40.pgm 0 0 0 19 29 39 %RESULTS/drawline_b3empty_20_30_40.pgm
 */
 
 #include <stdio.h>
@@ -63,11 +68,11 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int32_t x1, y1, x2, y2;
+  int32_t x1, y1, z1, x2, y2, z2;
 
-  if (argc != 7)
+  if ((argc != 7) && (argc != 9))
   {
-    fprintf(stderr, "usage: %s in.pgm x1 y1 x2 y2 out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm x1 y1 [z1] x2 y2 [z2] out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -77,18 +82,31 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
-  if (depth(image) > 1)
+
+  if (argc == 7)
   {
-    fprintf(stderr, "%s: image volumiques : pas implemente\n", argv[0]);
-    exit(1);
+    if (depth(image) > 1)
+    {
+      fprintf(stderr, "%s: image must be 2D\n", argv[0]);
+      exit(1);
+    }
+    x1 = atoi(argv[2]);
+    y1 = atoi(argv[3]);
+    x2 = atoi(argv[4]);
+    y2 = atoi(argv[5]);
+    ldrawline(image, x1, y1, x2, y2);
   }
 
-  x1 = atoi(argv[2]);
-  y1 = atoi(argv[3]);
-  x2 = atoi(argv[4]);
-  y2 = atoi(argv[5]);
-
-  ldrawline(image, x1, y1, x2, y2);
+  if (argc == 9)
+  {
+    x1 = atoi(argv[2]);
+    y1 = atoi(argv[3]);
+    z1 = atoi(argv[4]);
+    x2 = atoi(argv[5]);
+    y2 = atoi(argv[6]);
+    z2 = atoi(argv[7]);
+    ldrawline3d(image, x1, y1, z1, x2, y2, z2);
+  }
 
   writeimage(image, argv[argc-1]);
   freeimage(image);

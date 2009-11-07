@@ -55,6 +55,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #define EN_RBT        0
 #define EN_FIFO       1
 #define CONTRAINTE    2
+#define CONTRAINTE1   2
+#define CONTRAINTE2   3
 #define PARANO
 //#define DEBUG1
 //#define DEBUG
@@ -1330,7 +1332,7 @@ Squelette surfacique 3D binaire guide par une image de priorites.
 Les valeurs les plus basses correspondent a la plus grande priorite.
 
 De facon tres schematique,
-on definit l'operateur Surfacic Thinning CT(F,P) : 
+on definit l'operateur Surfacic Thinning ST(F,P) : 
 C = {y in F | Tb(y) > 1}
 repeter jusqu'a stabilite
   choisir un point x de F, simple pour F, tel que C[x] == 0 
@@ -2427,6 +2429,8 @@ int32_t lskelend3d(struct xvimage *image,
 /* ==================================== */
 /* 
 Squelette curviligne ou surfacique 3D binaire.
+
+Algo par passes directionnelles.
 
 Le prédicat "endpoint" est défini par un tableau de 2^27 booléens 
 (codés sur 2^24 octets) passé en paramètre.

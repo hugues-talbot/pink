@@ -95,7 +95,7 @@ int main(int argc, char **argv)
   else
     niseuil = atoi(argv[3]);
 
-  if (depth(image) == 1)
+  if (depth(image) == 1) // 2D
   {
     if (! lsquelbin(image, connex, niseuil))
     {
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
       exit(1);
     }
   }
-  else
+  else // 3D
   {
     uint8_t *endpoint;
     char tablefilename[128];
@@ -121,15 +121,16 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: allocimage failed\n", argv[0]);
       exit(1);
     }    
-    if (! lsedt_meijster(image, prio))
-    {
-      fprintf(stderr, "%s: lsedt_meijster failed\n", argv[0]);
-      exit(1);
-    }
 #ifdef DIST6
     if (! ldist(image, 6, prio))
     {
       fprintf(stderr, "%s: ldist failed\n", argv[0]);
+      exit(1);
+    }
+#else
+    if (! lsedt_meijster(image, prio))
+    {
+      fprintf(stderr, "%s: lsedt_meijster failed\n", argv[0]);
       exit(1);
     }
 #endif
