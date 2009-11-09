@@ -52,8 +52,20 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lseltopo.h>
 
 #define PARANO
-//#define VERBOSE
+#define VERBOSE
 //#define DEBUG
+
+//#define DEBUG1
+#ifdef DEBUG1
+static uint32_t nptsisol=0;
+static uint32_t nptsend=0;
+static uint32_t nptscurv=0;
+static uint32_t nptsjunc=0;
+static uint32_t nadjisol=0;
+static uint32_t nadjend=0;
+static uint32_t nadjcurv=0;
+static uint32_t nadjjunc=0;
+#endif
 
 #define VAL_ISOL 1
 #define VAL_END  2
@@ -97,12 +109,17 @@ static void processend(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t *
   M[i] = m;
   S->tskel[m].adj = NULL; // les relations d'adjacence seront 
                                         // traitées plus tard
+#ifdef DEBUG1
+  nptsend++;
+  printf("add point end %d nb %d\n", i, nptsend);
+#endif
   S->tskel[m].pts = skeladdcell(S, i, NULL);
 } // processend()
 
 /* ====================================================================== */
 static void trouve2voisins(int32_t i, int32_t rs, int32_t ps, int32_t N, int32_t connex, uint8_t *F, int32_t *v1, int32_t *v2)
 /* ====================================================================== */
+// retourne dans v1 et v2 les 2 voisins de i qui sont des points objet (F)
 {
 #undef F_NAME
 #define F_NAME "trouve2voisins"
@@ -190,6 +207,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
   }
 
   // 1ere étape: cherche une extrémité si elle existe
+  // l'extrémité est hors de la courbe : point "end" ou "junc"
   while (!trouve)
   {
     if (T1[i] || T3[i]) { trouve = 1; }
@@ -215,7 +233,12 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
     int32_t ii, m = start + pos;
     S->tskel[m].adj = S->tskel[m].pts = NULL;
 
-    if (T2[i]) addptslist(S, m, i);
+    assert(T2[i]);
+#ifdef DEBUG1
+    nptscurv++;
+    printf("add 1 point curv %d,%d nb %d\n", m, i, nptscurv);
+#endif
+    addptslist(S, m, i);
     T2[i] = 3;
     ii = i; // point de base
 #ifdef DEBUG
@@ -229,13 +252,21 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
       if (T2[j] != 2) { trouve = 1; break; }
       T2[j] = 3;
 #ifdef DEBUG
-  printf("%s: closed : point j = %d,%d traité\n", F_NAME, j%S->rs, j/S->rs);
+      printf("%s: closed : point j = %d,%d traité\n", F_NAME, j%S->rs, j/S->rs);
 #endif
-      if (T2[j]) addptslist(S, m, j);
+#ifdef DEBUG1
+      nptscurv++;
+      printf("add 2 point curv %d,%d nb %d\n", m, j, nptscurv);
+#endif
+      addptslist(S, m, j);
       i = j;
     } // while (!trouve)
 
-    if (T2[ii]) addptslist(S, m, ii);
+#ifdef DEBUG1
+    nptscurv++;
+    printf("add 3 point curv %d,%d nb %d\n", m, ii, nptscurv);
+#endif
+    addptslist(S, m, ii);
 #ifdef DEBUG
   printf("%s: closed : point ii = %d,%d traité (FIN)\n", F_NAME, ii%S->rs, ii/S->rs);
 #endif
@@ -245,18 +276,32 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
     int32_t m = start + pos; 
     S->tskel[m].adj = S->tskel[m].pts = NULL;
 
-    if (T3[i]) 
+    if (T3[i]) // extrémité "junc"
     {
+#ifdef DEBUG1
+      nadjcurv++;
+      printf("add 4 adj curv %d,%d nb %d\n", m, M[i], nadjcurv);
+#endif
       addadjlist(S, m, M[i]);
-      T2[i] = 3;
+      T2[i] = 3; // marque le point extrémité même si c'est une jonction
       oldi = i;
 #ifdef DEBUG
       printf("%s: courbe %d adj junc %d\n", F_NAME, m, M[i]);
 #endif
     }
-    else
+    else  // extrémité "end"
     {
-      if (T2[i]) addptslist(S, m, i);
+      assert(T1[i] && T2[i]); 
+#ifdef DEBUG1
+      nptscurv++;
+      printf("add 5 point curv %d,%d nb %d\n", m, i, nptscurv);
+#endif
+      addptslist(S, m, i);
+
+#ifdef DEBUG1
+      nadjcurv++;
+      printf("add 6 adj curv %d,%d nb %d\n", m, M[i], nadjcurv);
+#endif
       addadjlist(S, m, M[i]);
       T2[i] = 3;
 #ifdef DEBUG
@@ -265,7 +310,8 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
 #endif
     }
 
-    if (T1[i]) 
+    // trouve le premier "vrai point de courbe" adjacent à l'extrémité i
+    if (T1[i]) // extrémité "end"
     {
       if ((connex == 4) || (connex == 8))
 	for (k = 0; k < 8; k += incr_vois)
@@ -279,8 +325,13 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
       else if (connex == 26)
 	for (k = 0; k < 26; k += 1)
 	  { j = voisin26(i, k, rs, ps, N); if ((j != -1) && F[j]) break; }
+#ifdef DEBUG1
+      nptscurv++;
+      printf("add 7a point curv %d,%d nb %d\n", m, i, nptscurv);
+#endif
+      addptslist(S, m, i);
     }
-    else // T3
+    else // T3[i], extrémité "junc"
     {
       if ((connex == 4) || (connex == 8))
 	for (k = 0; k < 8; k += incr_vois)
@@ -295,23 +346,41 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
 	for (k = 0; k < 26; k += 1)
 	  { j = voisin26(i, k, rs, ps, N); if ((j != -1) && (T2[j]==2)) break; }
     }
-    i = j;
+
+    i = j; // premier point de la courbe
     while ((!T1[i]) && (!T3[i]))
     {      
       T2[i] = 3;
 #ifdef DEBUG
-  printf("%s: point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
+      printf("%s: point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
+#endif
+#ifdef DEBUG1
+      nptscurv++;
+      printf("add 7 point curv %d,%d nb %d\n", m, i, nptscurv);
 #endif
       addptslist(S, m, i);
       trouve2voisins(i, rs, ps, N, connex, F, &j, &k);
-      if (T2[j] == 3) j = k; 
-      i = j;
+
+#ifdef DEBUG1
+      printf("voisins: %d [%d,%d,%d] %d [%d,%d,%d] \n", 
+	     j, T1[j], T2[j], T3[j], k, T1[k], T2[k], T3[k]);
+#endif
+
+      if ((T2[j] == 3) && ((T2[k] != 3) || T3[k] || T1[k])) i = k; 
+      else if ((T2[k] == 3) && ((T2[j] != 3) || T3[j] || T1[j])) i = j; 
+      else if (T2[k] != 3) i = k; 
+      else if (T2[j] != 3) i = j; 
+      else assert(0);
     } // while (!trouve)
 
     // traite dernier point
     if (T3[i]) 
     {
       //      addptslist(S, m, i);
+#ifdef DEBUG1
+      nadjcurv++;
+      printf("add 8 adj curv %d,%d nb %d\n", m, M[i], nadjcurv);
+#endif
       addadjlist(S, m, M[i]);
 #ifdef DEBUG
       printf("%s: point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
@@ -321,7 +390,15 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
     else
     {
       T2[i] = 3;
+#ifdef DEBUG1
+      nptscurv++;
+      printf("add 9 point curv %d,%d nb %d\n", m, i, nptscurv);
+#endif
       addptslist(S, m, i);
+#ifdef DEBUG1
+      nadjcurv++;
+      printf("add 10 adj curv %d,%d nb %d\n", m, M[i], nadjcurv);
+#endif
       addadjlist(S, m, M[i]);
 #ifdef DEBUG
       printf("%s: point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
@@ -329,7 +406,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
 #endif
     }
     if (oldi != -1) T2[oldi] = 0;
-  }
+  } // courbe ouverte
 } // processcurv()
 
 /* ====================================================================== */
@@ -377,6 +454,10 @@ static void processjunc(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t 
 
     // traiter point
     M[i] = m;     // enregistre i
+#ifdef DEBUG1
+    nptsjunc++;
+    printf("add point junc %d,%d nb %d\n", m, i, nptsjunc);
+#endif
     addptslist(S, m, i);
 
 #ifdef DEBUG
@@ -576,7 +657,11 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
 
   // construction de la structure "squelette"
   nbvertex = nbisol + nbend + nbcurv + nbjunc; 
-  S = initskel(rs, cs, ds, nbvertex, nbpoints + 2*nbcurv + nbvertex * (nbvertex-1), connex);
+#ifdef DEBUG1
+  printf("initskel nbvertex %d, nbpoints %d, nbcurv %d, cells %d\n", 
+	 nbvertex, nbpoints, nbcurv, nbpoints + nbend + 2*nbcurv + nbvertex * (nbvertex-1));
+#endif
+  S = initskel(rs, cs, ds, nbvertex, nbpoints + nbend + 2*nbcurv + nbvertex * (nbvertex-1), connex);
   if (S == NULL)
   {
     fprintf(stderr, "%s: function initskel failed\n", F_NAME);
@@ -593,6 +678,10 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
   {
     if (T0[i])
     {
+#ifdef DEBUG1
+      nptsisol++;
+      printf("add point isol %d,%d nb %d\n", nbisol, i, nptsisol);
+#endif
       addptslist(S, nbisol, i);
       M[i] = nbisol;
       nbisol++;
@@ -622,7 +711,13 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
   // ajoute les relations d'adjacence réciproques
   for (i = S->e_end; i < S->e_curv; i++) 
     for (p = S->tskel[i].adj; p != NULL; p = p->next)
+    {
+#ifdef DEBUG1
+      nadjcurv++;
+      printf("add adj curv %d,%d nb %d\n", p->val, i, nadjcurv);
+#endif
       addadjlist(S, p->val, i);
+    }
 
   // ménage
   free(M);
@@ -668,7 +763,12 @@ struct xvimage * lskel2image(skel *S)
   for (i = S->e_end; i < S->e_curv; i++)
   {
     for (p = S->tskel[i].pts; p != NULL; p = p->next) 
-      F[p->val] = VAL_CURV;
+    {
+      if (S->tskel[i].tag)
+	F[p->val] = VAL_ISOL;
+      else
+	F[p->val] = VAL_CURV;
+    }
   }
   for (i = S->e_isol; i < S->e_end; i++)
   {
@@ -855,8 +955,15 @@ void points_at_head(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
   double x, y, z, xx, yy, zz;
 
   assert(p != NULL);
-  assert(p->next != NULL);
   *e = p->val;
+  if (p->next == NULL)
+  {
+    *f = p->val;
+#ifdef VERBOSE
+    printf("Warning: arc %d length 1\n", Ai);
+#endif    
+    return;
+  }
   x = (double)(*e % rs);
   y = (double)((*e % ps) / rs);
   z = (double)(*e / ps);
@@ -870,7 +977,14 @@ void points_at_head(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
       *f = p->val;
       break;
     }
-    assert(p->next != NULL);
+    if (p->next == NULL)
+    {
+      *f = p->val;
+#ifdef VERBOSE
+      printf("Warning: arc %d length %g\n", Ai, dist3(x, y, z, xx, yy, zz));
+#endif    
+      return;
+    }
   }
 } // points_at_head()
 
@@ -886,7 +1000,14 @@ void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
   double x, y, z, xx, yy, zz;
 
   assert(p != NULL);
-  assert(p->next != NULL);
+  if (p->next == NULL)
+  {
+    *e = *f = p->val;
+#ifdef VERBOSE
+    printf("Warning: arc %d length 1\n", Ai);
+#endif    
+    return;
+  }
 
   for (; p != NULL; p = p->next) *e = p->val;
 
@@ -898,7 +1019,14 @@ void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
   xx = (double)(pp->val % rs);
   yy = (double)((pp->val % ps) / rs);
   zz = (double)(pp->val / ps);
-  assert(dist3(x, y, z, xx, yy, zz) >= delta);
+  if (dist3(x, y, z, xx, yy, zz) < delta)
+  {
+    *f = pp->val;
+#ifdef VERBOSE
+    printf("Warning: arc %d length %g\n", Ai, dist3(x, y, z, xx, yy, zz));
+#endif    
+    return;
+  }
 
   for (p = pp->next; p != NULL; p = p->next)
   {
@@ -972,6 +1100,9 @@ int32_t lskelfilter2(skel *S, double delta, double theta)
   printf("lskelfilter2: delta = %g, theta %g\n", delta, theta);
 #endif	  
 
+  for (Ai = S->e_end; Ai < S->e_curv; Ai++)
+    S->tskel[Ai].tag = 1; // mark all arcs as "not aligned"
+
   for (J = S->e_curv; J < S->e_junc; J++)
   {
     for (p = S->tskel[J].adj,nadj = 0; p != NULL; p = p->next, nadj++)
@@ -1001,8 +1132,8 @@ int32_t lskelfilter2(skel *S, double delta, double theta)
 		      (norm(Vx[i], Vy[i], Vz[i]) * norm(Vx[j], Vy[j], Vz[j])));
 	if (Cij <= theta)
 	{
-	  S->tskel[A[i]].tag = 1;
-	  S->tskel[A[j]].tag = 1;
+	  S->tskel[A[i]].tag = 0;
+	  S->tskel[A[j]].tag = 0;
 #ifdef DEBUG
 	  printf("mark %d and %d\n", A[i], A[j]);
 #endif	  
