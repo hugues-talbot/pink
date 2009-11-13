@@ -75,7 +75,8 @@ extern int32_t lellipsefit(double * x, double * y, int32_t n,
 					   double *xb, double *yb);
 extern int32_t lin_trouvemin(double * x, double * d, double (*F)(double *, int32_t), int32_t n, double *precision);
 extern int32_t lidentifyline(double *pbx, double *pby, int32_t npb, double *a, double *b);
-extern int32_t lidentifyparabola(double *pbx, double *pby, int32_t npb, double *a, double *b, double *c);
+extern int32_t lidentifyparabola2(double *pbx, double *pby, int32_t npb, double *a, double *b);
+extern int32_t lidentifyparabola3(double *pbx, double *pby, int32_t npb, double *a, double *b, double *c);
 extern int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, double *a, double *b, double *c, double *d);
 
 #ifdef __cplusplus

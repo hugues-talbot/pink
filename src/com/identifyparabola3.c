@@ -32,28 +32,32 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file correctbias.c
+/*! \file identifyparabola3.c
 
-\brief correction of a luminosity bias expressed by a linear function
+\brief identification of a best matching parabola from a set of 2D points
 
-<B>Usage:</B> correctbias in.pgm factor type [xc yc] out.pgm
+<B>Usage:</B> identifyparabola3 in.list out.list
 
 <B>Description:</B>
-Let \b a be the value of parameter \b factor.
-The bias \b type can be:
-\li 0 radial (center \b xc, \b yc), linear (add -ax to the value of the element of abcissa x).
-\li 1 radial (center \b xc, \b yc), parabolic (add -a^2 x to the value of the element of abcissa x).
+Identifies the parameters (a,b,c) of the equation of the 2D parabola:
+ax^2+bx+c=y that minimizes the least square error between this parabola 
+and the given points. Method: basic linear regression.
 
-<B>Types supported:</B> byte 2D
+<B>Types supported:</B> list 1D, list 2D
 
-<B>Category:</B> arith
-\ingroup arith
+<B>Category:</B> geo
+\ingroup  geo
 
 \author Michel Couprie
 */
 
+/*
+%TEST identifyparabola3 %IMAGES/2dlist/binary/parabola1.list %RESULTS/identifyparabola3_parabola1.list
+%TEST identifyparabola3 %IMAGES/2dlist/binary/parabola2.list %RESULTS/identifyparabola3_parabola2.list
+*/
+
 /* 
-  Michel Couprie - juin 2009
+  Michel Couprie - octobre 2009
 */
 
 #include <stdio.h>
@@ -61,79 +65,77 @@ The bias \b type can be:
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <math.h>
-#include <mcutil.h>
 #include <mcimage.h>
 #include <mccodimage.h>
+#include <mclin.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * image;
+  FILE *fd = NULL;
+  int32_t n, i;
   char type;
-  double xc, yc, a, T, R;
-  int32_t rs, cs, N, x, y;
-  uint8_t *I;
+  double *pbx, *pby, a, b, c;
 
-  if ((argc != 5) && (argc != 7))
+  if (argc != 3)
   {
-    fprintf(stderr, "usage: %s in.pgm a type [xc yc] out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.list out.list\n", argv[0]);
     exit(1);
   }
 
-  image = readimage(argv[1]);  
-  if (image == NULL)
+  fd = fopen(argv[1],"r");
+  if (!fd)
   {
-    fprintf(stderr, "%s: readimage failed\n", argv[0]);
-    exit(1);
-  }
-  I = UCHARDATA(image);
-  rs = rowsize(image);
-  cs = colsize(image);
-  N = rs * cs;
-
-  a = atof(argv[2]);
-  type = argv[3][0];
-  if (argc == 7)
-  {
-    xc = atof(argv[4]);
-    yc = atof(argv[5]);
-  }
-
-  if (type == '0')
-  {
-    for (x = 0; x < rs; x++)
-    for (y = 0; y < cs; y++)
-    {
-      R = sqrt((xc-x)*(xc-x) + (yc-y)*(yc-y));
-      T = (double)(I[y*rs + x]) - (a * R);
-      if (T > 255) T = 255; 
-      if (T < 0) T = 0; 
-      I[y*rs + x] = arrondi(T);
-    }
-  } 
-  else if (type == '1')
-  {
-    for (x = 0; x < rs; x++)
-    for (y = 0; y < cs; y++)
-    {
-      R = sqrt((xc-x)*(xc-x) + (yc-y)*(yc-y));
-      T = (double)(I[y*rs + x]) - (a * a * R);
-      if (T > 255) T = 255; 
-      if (T < 0) T = 0; 
-      I[y*rs + x] = arrondi(T);
-    }
-  } 
-  else
-  {
-    fprintf(stderr, "%s: bad type: '%c'\n", argv[0], type);
+    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[1]);
     exit(1);
   }
 
-  writeimage(image, argv[argc-1]);
-  freeimage(image);
+  fscanf(fd, "%c", &type);
+  if ((type != 's') && (type != 'b'))
+  {
+    fprintf(stderr, "usage: %s: bad file format : %c \n", argv[0], type);
+    exit(1);
+  }
 
+  fscanf(fd, "%d\n", &n);
+
+  pbx = (double *)malloc(n * sizeof(double));
+  pby = (double *)malloc(n * sizeof(double));
+
+  if ((pbx == NULL) || (pby == NULL))
+  {
+    fprintf(stderr, "usage: %s: malloc failed\n", argv[0]);
+    exit(1);
+  }
+
+  for (i = 0; i < n; i++)
+    fscanf(fd, "%lf %lf\n", pbx+i, pby+i);
+
+  fclose(fd);
+
+  if (!lidentifyparabola3(pbx, pby, n, &a, &b, &c))
+  {
+    fprintf(stderr, "%s: lidentifyparabola3 failed\n", argv[0]);
+    exit(1);
+  }
+
+#ifdef VERBOSE
+  printf("a = %g, b = %g, c = %g\n", a, b, c);
+#endif
+
+  fd = fopen(argv[argc - 1],"w");
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc - 1]);
+    exit(1);
+  }
+  fprintf(fd, "e %d\n", 3); 
+  fprintf(fd, "%g %g %g\n", a, b, c); 
+  fclose(fd);
+
+  free(pbx);
+  free(pby);
 
   return 0;
 }

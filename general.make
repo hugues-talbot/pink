@@ -357,7 +357,8 @@ $(BDIR)/frame \
 $(BDIR)/genplane \
 $(BDIR)/houghcercles \
 $(BDIR)/identifyline \
-$(BDIR)/identifyparabola \
+$(BDIR)/identifyparabola2 \
+$(BDIR)/identifyparabola3 \
 $(BDIR)/identifyplane \
 $(BDIR)/insert \
 $(BDIR)/lenoir \
@@ -1618,8 +1619,11 @@ $(BDIR)/houghcercles:	$(CDIR)/houghcercles.c $(IDIR)/mcimage.h $(IDIR)/mccodimag
 $(BDIR)/identifyline:	$(CDIR)/identifyline.c $(IDIR)/mcgeo.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/llabelextrema.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/identifyline.c $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/identifyline
 
-$(BDIR)/identifyparabola:	$(CDIR)/identifyparabola.c $(IDIR)/mcgeo.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/llabelextrema.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/identifyparabola.c $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/identifyparabola
+$(BDIR)/identifyparabola2:	$(CDIR)/identifyparabola2.c $(IDIR)/mcgeo.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/llabelextrema.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/identifyparabola2.c $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/identifyparabola2
+
+$(BDIR)/identifyparabola3:	$(CDIR)/identifyparabola3.c $(IDIR)/mcgeo.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/llabelextrema.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/identifyparabola3.c $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/identifyparabola3
 
 $(BDIR)/identifyplane:	$(CDIR)/identifyplane.c $(IDIR)/mcgeo.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/llabelextrema.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/identifyplane.c $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/identifyplane

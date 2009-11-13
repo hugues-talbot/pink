@@ -66,7 +66,7 @@ set otherwise.
 The algorithm is the following:
 
 \verbatim
-C = null image
+C = {y in F | Tb(y) > 1}
 Repeat until stability
   choose a point x in X, simple for X, such that C[x] == 0 
     and such that P[x] is minimal
