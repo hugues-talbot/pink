@@ -119,7 +119,7 @@ int main(int argc, char **argv)
     for (y = 0; y < cs; y++)
     {
       R = sqrt((xc-x)*(xc-x) + (yc-y)*(yc-y));
-      T = (double)(I[y*rs + x]) - (a * a * R);
+      T = (double)(I[y*rs + x]) - (a * R * R);
       if (T > 255) T = 255; 
       if (T < 0) T = 0; 
       I[y*rs + x] = arrondi(T);

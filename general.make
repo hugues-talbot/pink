@@ -80,7 +80,6 @@ $(BDIR)/readgif \
 $(BDIR)/reformat \
 $(BDIR)/rgb2hls \
 $(BDIR)/rgb2ppm \
-$(BDIR)/section \
 $(BDIR)/setorigin \
 $(BDIR)/setvoxdim \
 $(BDIR)/surimp \
@@ -379,6 +378,7 @@ $(BDIR)/isometry \
 $(BDIR)/rotate \
 $(BDIR)/rotatebin \
 $(BDIR)/rotse \
+$(BDIR)/section \
 $(BDIR)/selrect \
 $(BDIR)/surrect \
 $(BDIR)/sym \
