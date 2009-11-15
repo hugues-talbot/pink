@@ -796,7 +796,7 @@ Squelette curviligne 2D binaire guide par une image de priorites.
 Les valeurs les plus basses correspondent a la plus grande priorite.
 
 On definit l'operateur Curvilinear Thinning CT(F,P) : 
-C = empty image
+C = {y in F | T(y) > 1}
 repeter jusqu'a stabilite
   choisir un point x de F, simple pour F, tel que C[x] == 0 
     et de priorite maximale (valeur de P minimale)
@@ -816,7 +816,10 @@ resultat: F
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  int32_t *P = NULL;     /* l'image de priorites (ndg) */
+  int32_t *P = NULL;  /* l'image de priorites (cas int32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
   Fifo * FIFO1;
   Fifo * FIFO2;
@@ -838,9 +841,15 @@ resultat: F
   }
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
     return(0);
   }
 
@@ -889,6 +898,30 @@ resultat: F
   /*               DEBUT ALGO                         */
   /* ================================================ */
 
+  if (connex == 4)
+  {
+    for (x = 0; x < N; x++)
+    {
+      if (F[x] && (nonbord(x,rs,N)))
+      {
+	top4(F, x, rs, N, &t, &tb);
+	if (t > 1) Set(x, CONTRAINTE);
+      }
+    }
+  }
+  else 
+  if (connex == 8)
+  {
+    for (x = 0; x < N; x++)
+    {
+      if (F[x] && (nonbord(x,rs,N)))
+      {
+	top8(F, x, rs, N, &t, &tb);
+	if (t > 1) Set(x, CONTRAINTE);
+      }
+    }
+  }
+
   /* ========================================================= */
   /*   INITIALISATION DU RBT */
   /* ========================================================= */
@@ -900,9 +933,21 @@ resultat: F
       if (F[x] && bordext4(F, x, rs, N))
       {
 #ifdef PRIODIR
-        RbtInsert(&RBT, P[x]*10 + typedir(F, x, rs, N), x);
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_1_BYTE: assert(0); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[x]*10+typedir(F,x,rs,N),x); break;
+	}
 #else
-        RbtInsert(&RBT, P[x], x);
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+	}
 #endif
         Set(x, EN_RBT);
 #ifdef DEBUG
@@ -918,9 +963,21 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
       if (F[x] && bordext8(F, x, rs, N))
       {
 #ifdef PRIODIR
-        RbtInsert(&RBT, P[x]*10 + typedir(F, x, rs, N), x);
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_1_BYTE: assert(0); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[x]*10+typedir(F,x,rs,N),x); break;
+	}
 #else
-        RbtInsert(&RBT, P[x], x);
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+	}
 #endif
         Set(x, EN_RBT);
 #ifdef DEBUG
@@ -973,9 +1030,21 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
               if ((! IsSet(y, CONTRAINTE)) && (! IsSet(y, EN_RBT)))
 	      {
 #ifdef PRIODIR
-                RbtInsert(&RBT, P[y]*10 + typedir(F, y, rs, N), y);
+		switch(datatype(imageprio))
+		{
+		case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_1_BYTE: assert(0); break;
+		case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[y]*10+typedir(F,y,rs,N),y); break;
+		}
 #else
-                RbtInsert(&RBT, P[y], y);
+		switch(datatype(imageprio))
+		{
+		case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+		case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+		case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+		case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+		}
 #endif
                 Set(y, EN_RBT);
 	      }
@@ -1030,9 +1099,21 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
               if ((! IsSet(y, CONTRAINTE)) && (! IsSet(y, EN_RBT)))
 	      {
 #ifdef PRIODIR
-                RbtInsert(&RBT, P[y]*10 + typedir(F, y, rs, N), y);
+		switch(datatype(imageprio))
+		{
+		case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_1_BYTE: assert(0); break;
+		case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[y]*10+typedir(F,y,rs,N),y); break;
+		}
 #else
-                RbtInsert(&RBT, P[y], y);
+		switch(datatype(imageprio))
+		{
+		case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+		case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+		case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+		case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+		}
 #endif
                 Set(y, EN_RBT);
 	      }
@@ -1077,7 +1158,7 @@ Les valeurs les plus basses correspondent a la plus grande priorite.
 
 De facon tres schematique,
 on definit l'operateur Curvilinear Thinning CT(F,P) : 
-C = empty image
+C = {y in F | T(y) > 1}
 repeter jusqu'a stabilite
   choisir un point x de F, simple pour F, tel que C[x] == 0 
     et de priorite maximale (valeur de P minimale)
@@ -1099,7 +1180,10 @@ resultat: F
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  int32_t *P = NULL;     /* l'image de priorites (ndg) */
+  int32_t *P = NULL;  /* l'image de priorites (cas int32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
   int32_t prio, oldprio;
   int32_t taillemaxrbt;
@@ -1117,11 +1201,18 @@ resultat: F
     fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
+
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
     return(0);
   }
 
@@ -1157,6 +1248,30 @@ resultat: F
   /*               DEBUT ALGO                         */
   /* ================================================ */
 
+  if (connex == 6)
+  {
+    for (x = 0; x < N; x++)
+    {
+      if (F[x] && (nonbord3d(x,rs,ps,N)))
+      {
+	top6(F, x, rs, ps, N, &t, &tb);
+	if (t > 1) Set(x, CONTRAINTE);
+      }
+    }
+  }
+  else 
+  if (connex == 26)
+  {
+    for (x = 0; x < N; x++)
+    {
+      if (F[x] && (nonbord3d(x,rs,ps,N)))
+      {
+	top26(F, x, rs, ps, N, &t, &tb);
+	if (t > 1) Set(x, CONTRAINTE);
+      }
+    }
+  }
+
   /* ========================================================= */
   /*   INITIALISATION DU RBT */
   /* ========================================================= */
@@ -1168,9 +1283,21 @@ resultat: F
       if (F[x] && bordext6(F, x, rs, ps, N))
       {
 #ifdef PRIODIR
-        RbtInsert(&RBT, P[x]*10 + typedir3d(F, x, rs, ps, N), x);
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_1_BYTE: assert(0); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+	}
 #else
-        RbtInsert(&RBT, P[x], x);
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+	}
 #endif
         Set(x, EN_RBT);
       }
@@ -1183,9 +1310,21 @@ resultat: F
       if (F[x] && bordext26(F, x, rs, ps, N))
       {
 #ifdef PRIODIR
-        RbtInsert(&RBT, P[x]*10 + typedir3d(F, x, rs, ps, N), x);
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_1_BYTE: assert(0); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+	}
 #else
-        RbtInsert(&RBT, P[x], x);
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+	}
 #endif
         Set(x, EN_RBT);
       }
@@ -1250,9 +1389,21 @@ resultat: F
               if ((! IsSet(y, CONTRAINTE)) && (! IsSet(y, EN_RBT)))
 	      {
 #ifdef PRIODIR
-                RbtInsert(&RBT, P[y]*10 + typedir3d(F, y, rs, ps, N), y);
+		switch(datatype(imageprio))
+		{
+		case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_1_BYTE: assert(0); break;
+		case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		}
 #else
-                RbtInsert(&RBT, P[y], y);
+		switch(datatype(imageprio))
+		{
+		case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+		case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+		case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+		case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+		}
 #endif
                 Set(y, EN_RBT);
 	      }
@@ -1299,9 +1450,21 @@ resultat: F
             if ((! IsSet(y, CONTRAINTE)) && (! IsSet(y, EN_RBT)))
 	    {
 #ifdef PRIODIR
-              RbtInsert(&RBT, P[y]*10 + typedir3d(F, y, rs, ps, N), y);
+		switch(datatype(imageprio))
+		{
+		case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_1_BYTE: assert(0); break;
+		case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		}
 #else
-              RbtInsert(&RBT, P[y], y);
+		switch(datatype(imageprio))
+		{
+		case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+		case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+		case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+		case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+		}
 #endif
               Set(y, EN_RBT);
 	    }
@@ -1355,7 +1518,10 @@ resultat: F
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  int32_t *P = NULL;     /* l'image de priorites (ndg) */
+  int32_t *P = NULL;  /* l'image de priorites (cas int32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
   int32_t prio, oldprio;
   int32_t taillemaxrbt;
@@ -1374,11 +1540,18 @@ resultat: F
     fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
+
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
     return(0);
   }
 
@@ -1450,9 +1623,21 @@ resultat: F
       if (F[x] && bordext6(F, x, rs, ps, N))
       {
 #ifdef PRIODIR
-        RbtInsert(&RBT, P[x]*10 + typedir3d(F, x, rs, ps, N), x);
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_1_BYTE: assert(0); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+	}
 #else
-        RbtInsert(&RBT, P[x], x);
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+	}
 #endif
         Set(x, EN_RBT);
       }
@@ -1465,9 +1650,21 @@ resultat: F
       if (F[x] && bordext26(F, x, rs, ps, N))
       {
 #ifdef PRIODIR
-        RbtInsert(&RBT, P[x]*10 + typedir3d(F, x, rs, ps, N), x);
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_1_BYTE: assert(0); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+	}
 #else
-        RbtInsert(&RBT, P[x], x);
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+	}
 #endif
         Set(x, EN_RBT);
       }
@@ -1532,9 +1729,21 @@ resultat: F
               if ((! IsSet(y, CONTRAINTE)) && (! IsSet(y, EN_RBT)))
 	      {
 #ifdef PRIODIR
-                RbtInsert(&RBT, P[y]*10 + typedir3d(F, y, rs, ps, N), y);
+		switch(datatype(imageprio))
+		{
+		case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_1_BYTE: assert(0); break;
+		case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		}
 #else
-                RbtInsert(&RBT, P[y], y);
+		switch(datatype(imageprio))
+		{
+		case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+		case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+		case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+		case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+		}
 #endif
                 Set(y, EN_RBT);
 	      }
@@ -1581,9 +1790,21 @@ resultat: F
             if ((! IsSet(y, CONTRAINTE)) && (! IsSet(y, EN_RBT)))
 	    {
 #ifdef PRIODIR
-              RbtInsert(&RBT, P[y]*10 + typedir3d(F, y, rs, ps, N), y);
+		switch(datatype(imageprio))
+		{
+		case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_1_BYTE: assert(0); break;
+		case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		}
 #else
-              RbtInsert(&RBT, P[y], y);
+		switch(datatype(imageprio))
+		{
+		case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+		case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+		case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+		case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+		}
 #endif
               Set(y, EN_RBT);
 	    }
@@ -1640,7 +1861,10 @@ resultat: F
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  int32_t *P = NULL;     /* l'image de priorites (ndg) */
+  int32_t *P = NULL;  /* l'image de priorites (cas int32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
   int32_t taillemaxrbt;
   int32_t t, tb;
@@ -1658,13 +1882,21 @@ resultat: F
     fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
+
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
     return(0);
   }
+
   taillemaxrbt = 2 * rs +  2 * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
   RBT = CreeRbtVide(taillemaxrbt);
@@ -1703,7 +1935,13 @@ resultat: F
   {
     if (F[x] && !IsSet(x, CONTRAINTE) && bordext8(F, x, rs, N))
     {
-      RbtInsert(&RBT, P[x], x);
+      switch(datatype(imageprio))
+      {
+      case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
+      case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
+      case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
+      case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+      }
       Set(x, EN_RBT);
     }
   }
@@ -1727,7 +1965,13 @@ resultat: F
           y = voisin(x, k, rs, N);                             /* non deja empiles */
           if ((y != -1) && (F[y]) && !IsSet(y, CONTRAINTE) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+	    switch(datatype(imageprio))
+	    {
+	    case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+	    case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+	    case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+	    case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
@@ -1750,7 +1994,13 @@ resultat: F
           y = voisin(x, k, rs, N);                             /* non deja empiles */
           if ((y != -1) && (F[y]) && !IsSet(y, CONTRAINTE) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+	    switch(datatype(imageprio))
+	    {
+	    case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+	    case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+	    case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+	    case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
@@ -1812,7 +2062,10 @@ resultat: F
   int32_t d = depth(image);
   int32_t N = d * ps;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  int32_t *P = NULL;  /* l'image de priorites (ndg) */
+  int32_t *P = NULL;  /* l'image de priorites (cas int32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
   int32_t taillemaxrbt;
   int32_t t, tb;
@@ -1832,13 +2085,21 @@ resultat: F
     fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
     return(0);
   }
+
   if (datatype(imageprio) == VFF_TYP_4_BYTE) 
     P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
   else 
   {
-    fprintf(stderr, "%s: datatype(imageprio) must be int32_t\n", F_NAME);
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
     return(0);
   }
+
   taillemaxrbt = 2 * rs * cs +  2 * rs * d +  2 * d * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
   RBT = CreeRbtVide(taillemaxrbt);
@@ -1877,7 +2138,13 @@ resultat: F
   {
     if (F[x] && !IsSet(x, CONTRAINTE) && bordext26(F, x, rs, ps, N))
     {
-      RbtInsert(&RBT, P[x], x);
+      switch(datatype(imageprio))
+      {
+      case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
+      case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
+      case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
+      case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+      }
       Set(x, EN_RBT);
     }
   }
@@ -1901,7 +2168,13 @@ resultat: F
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y]) && !IsSet(y, CONTRAINTE) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+	    switch(datatype(imageprio))
+	    {
+	    case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+	    case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+	    case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+	    case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
@@ -1924,7 +2197,13 @@ resultat: F
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y]) && !IsSet(y, CONTRAINTE) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+	    switch(datatype(imageprio))
+	    {
+	    case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+	    case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+	    case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+	    case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
@@ -1947,7 +2226,13 @@ resultat: F
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y]) && !IsSet(y, CONTRAINTE) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+	    switch(datatype(imageprio))
+	    {
+	    case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
+	    case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
+	    case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
+	    case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
@@ -2364,7 +2649,7 @@ resultat: F
       if (F[x] && bordext26(F, x, rs, ps, N))
       {
 #ifdef PRIODIR
-        RbtInsert(&RBT, P[x]*10 + typedir3d(F, x, rs, ps, N), x);
+        RbtInsert(&RBT, P[x]*30 + typedir3d(F, x, rs, ps, N), x);
 #else
         RbtInsert(&RBT, P[x], x);
 #endif
@@ -2401,7 +2686,7 @@ resultat: F
           if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
           {
 #ifdef PRIODIR
-	    RbtInsert(&RBT, P[y]*10 + typedir3d(F, y, rs, ps, N), y);
+	    RbtInsert(&RBT, P[y]*30 + typedir3d(F, y, rs, ps, N), y);
 #else
 	    RbtInsert(&RBT, P[y], y);
 #endif

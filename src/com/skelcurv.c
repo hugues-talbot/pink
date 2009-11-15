@@ -42,7 +42,7 @@ knowledge of the CeCILL license and that you accept its terms.
 Curvilinear binary skeleton guided by a priority image.
 The lowest values of the priority image correspond to the highest priority.
 
-The parameter \b prio is either an image (byte or int32_t), or a numerical code
+The parameter \b prio is either an image (byte or int32_t or float or double), or a numerical code
 indicating that a distance map will be used as a priority image; 
 the possible choices are:
 \li 0: approximate euclidean distance
@@ -128,7 +128,6 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * prio;
-  struct xvimage * prio2;
   struct xvimage * inhibit = NULL;
   int32_t connex;
   int32_t ret, priovalue;
@@ -149,38 +148,10 @@ int main(int argc, char **argv)
   ret = sscanf(argv[2], "%d", &priovalue);
   if (ret == 0)
   {
-    prio2 = readimage(argv[2]);
-    if (prio2 == NULL)
+    prio = readimage(argv[2]);
+    if (prio == NULL)
     {
       fprintf(stderr, "%s: readimage failed\n", argv[0]);
-      exit(1);
-    }
-    if (datatype(prio2) == VFF_TYP_1_BYTE)
-    {
-      int32_t rs = rowsize(prio2);
-      int32_t cs = colsize(prio2);
-      int32_t ds = depth(prio2);
-      int32_t N = rs * cs * ds;
-      uint8_t *B = UCHARDATA(prio2);
-      int32_t *L;
-      int32_t x;
-      prio = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-      if (prio == NULL)
-      {
-        fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-        exit(1);
-      }
-      L = SLONGDATA(prio);
-      for (x = 0; x < N; x++) L[x] = (int32_t)B[x];
-      freeimage(prio2);
-    }
-    else if (datatype(prio2) == VFF_TYP_4_BYTE)
-    {
-      prio = prio2;
-    }
-    else
-    {
-      fprintf(stderr, "%s: bad datatype for prio\n", argv[0]);
       exit(1);
     }
   }

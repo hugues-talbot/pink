@@ -52,7 +52,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lseltopo.h>
 
 #define PARANO
-#define VERBOSE
+//#define VERBOSE
 //#define DEBUG
 
 //#define DEBUG1
