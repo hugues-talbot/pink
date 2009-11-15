@@ -247,7 +247,7 @@ int BVECT_print(BVECT * in) {
 		if (i != in->length - 1) printf(", ");
 	}
 	printf(")");
-	#elif
+	#else
 	LSTB_debug("(");
 	for (i = 0; i < in->length; i++) {
 		LSTB_debug("%i", in->buf[i]);
