@@ -3031,14 +3031,14 @@ int32_t nbvoisc8(
 	register uint8_t * ptr = img+p;
 	register int32_t n = 0;
 
-        if (!((p%rs!=rs-1) && (*(ptr+1)))) n++;
-        if (!(((p%rs!=rs-1)&&(p>=rs)) && (*(ptr+1-rs)))) n++;
-        if (!((p>=rs) && (*(ptr-rs)))) n++;
-        if (!(((p>=rs)&&(p%rs!=0)) && (*(ptr-rs-1)))) n++;
-        if (!((p%rs!=0) && (*(ptr-1)))) n++;
-        if (!(((p%rs!=0)&&(p<N-rs)) && (*(ptr-1+rs)))) n++;
-        if (!((p<N-rs) && (*(ptr+rs)))) n++;
-        if (!(((p<N-rs)&&(p%rs!=rs-1)) && (*(ptr+rs+1)))) n++;
+        if ((p%rs!=rs-1) && (*(ptr+1)==0)) n++;
+        if (((p%rs!=rs-1)&&(p>=rs)) && (*(ptr+1-rs)==0)) n++;
+        if ((p>=rs) && (*(ptr-rs)==0)) n++;
+        if (((p>=rs)&&(p%rs!=0)) && (*(ptr-rs-1)==0)) n++;
+        if ((p%rs!=0) && (*(ptr-1)==0)) n++;
+        if (((p%rs!=0)&&(p<N-rs)) && (*(ptr-1+rs)==0)) n++;
+        if ((p<N-rs) && (*(ptr+rs)==0)) n++;
+        if (((p<N-rs)&&(p%rs!=rs-1)) && (*(ptr+rs+1)==0)) n++;
         return n;
 } /* nbvoisc8() */
 
@@ -3054,10 +3054,10 @@ int32_t nbvoisc4(
 	register uint8_t * ptr = img+p;
 	register int32_t n = 0;
 
-        if (!((p%rs!=rs-1) && (*(ptr+1)))) n++;
-        if (!((p>=rs) && (*(ptr-rs)))) n++;
-        if (!((p%rs!=0) && (*(ptr-1)))) n++;
-        if (!((p<N-rs) && (*(ptr+rs)))) n++;
+        if ((p%rs!=rs-1) && (*(ptr+1)==0)) n++;
+        if ((p>=rs) && (*(ptr-rs)==0)) n++;
+        if ((p%rs!=0) && (*(ptr-1)==0)) n++;
+        if ((p<N-rs) && (*(ptr+rs)==0)) n++;
         return n;
 } /* nbvoisc4() */
 

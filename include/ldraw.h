@@ -44,6 +44,7 @@ extern void ldrawcubic1(struct xvimage * image1, double *x, double *y, int32_t n
 extern void ldrawcubic2(struct xvimage * image1, double *x, double *y, int32_t nseg, double tmin, double tmax);
 extern void ldrawcubic3d(struct xvimage * image1, double *x, double *y, double *z, int32_t nseg, double tmin, double tmax);
 extern void ldrawball(struct xvimage * image1, double r, double xc, double yc, double zc);
+extern void ldrawdisc(struct xvimage * image1, double r, double xc, double yc);
 extern void ldrawtorus(struct xvimage * image1, double c, double a, double xc, double yc, double zc);
 
 

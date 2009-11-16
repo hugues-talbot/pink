@@ -301,6 +301,32 @@ void ldrawball(struct xvimage * image1, double r, double xc, double yc, double z
 } // ldrawball()
 
 /* ==================================== */
+void ldrawdisc(struct xvimage * image1, double r, double xc, double yc)
+/* ==================================== */
+/* draws a euclidean disc */
+#undef F_NAME
+#define F_NAME "ldrawdisc"
+{
+  int32_t i, j, rs, cs;
+  uint8_t *F;
+  double r2, x, y;
+  
+  rs = rowsize(image1);
+  cs = colsize(image1);
+  F = UCHARDATA(image1);
+  
+  r2 = r * r;
+  for (j = 0; j < cs; j++)
+  for (i = 0; i < rs; i++)
+  {
+    x = xc - i; 
+    y = yc - j; 
+    if (x * x + y * y <= r2)
+      F[j * rs + i] = NDG_MAX;
+  }
+} // ldrawdisc()
+
+/* ==================================== */
 void ldrawtorus(struct xvimage * image1, double c, double a, double xc, double yc, double zc)
 /* ==================================== */
 /* draws a torus of equation (c-sqrt((xc-x)^2+(yc-y)^2))^2+(zc-z)^2 <= a^2 */

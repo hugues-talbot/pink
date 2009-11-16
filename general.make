@@ -901,7 +901,7 @@ $(BDIR)/erosnum:	$(CDIR)/erosnum.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR
 $(BDIR)/filtreordre:	$(CDIR)/filtreordre.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lfiltreordre.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lfiltreordre.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/filtreordre.c $(ODIR)/lfiltreordre.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/filtreordre
 
-$(BDIR)/fmm: $(CDIR)/fmm.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h $(ODIR)/lfmm.o $(ODIR)/fmmgeodist.o $(ODIR)/lfmmdist.o $(ODIR)/bimage.o $(ODIR)/bimage_utils.o $(ODIR)/lstb_io.o
+$(BDIR)/fmm: $(CDIR)/fmm.c $(IDIR)/lfmm.h $(IDIR)/pde_toolbox.h $(IDIR)/pde_toolbox_defs.h $(ODIR)/lfmm.o $(ODIR)/fmmgeodist.o $(ODIR)/lfmmdist.o $(ODIR)/bimage.o $(ODIR)/bimage_utils.o $(ODIR)/lstb_io.o
 	     $(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/fmm.c  $(ODIR)/lfmm.o $(ODIR)/lfmmdist.o $(ODIR)/fmmgeodist.o  $(ODIR)/bimage.o $(ODIR)/bimage_utils.o $(ODIR)/lstb_io.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/fmm
 
 $(BDIR)/granulometry:	$(CDIR)/granulometry.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/ldist.o
