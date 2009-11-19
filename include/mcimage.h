@@ -87,6 +87,13 @@ extern void writergbimage(
   char *filename
 );
 
+extern void writergbascimage(
+  struct xvimage * redimage,
+  struct xvimage * greenimage,
+  struct xvimage * blueimage,
+  char *filename
+);
+
 extern struct xvimage * readimage(
   char *filename
 );

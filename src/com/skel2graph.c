@@ -32,23 +32,23 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file colorize.c
 
-\brief generates a color image from a grayscale image and a lookup table
+/*! \file skel2graph.c
 
-<B>Usage:</B> colorize in.pgm lut.ppm out.ppm
+\brief generation of a graph from a curvilinear skeleton
+
+<B>Usage:</B> skel2graph in.skel out.graph
 
 <B>Description:</B>
-Generates a color image from a grayscale image and a lookup table (see genlut.c).
+Generation of a graph from a curvilinear skeleton.
 
-<B>Types supported:</B> byte 2D
+<B>Types supported:</B> 2Dskel, 3Dskel
 
-<B>Category:</B> convert
-\ingroup  convert
+<B>Category:</B> topobin
+\ingroup  topobin
 
-\author Michel Couprie
+\author Michel Couprie 2009
 */
-
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -56,79 +56,45 @@ Generates a color image from a grayscale image and a lookup table (see genlut.c)
 #include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mcgraphe.h>
+#include <mcskelcurv.h>
+#include <lskelcurv.h>
+
+/* ====================================================================== */
+graphe * skel2graph(skel * s)
+/* ====================================================================== */
+// Les sommets du graphe sont les points isolés,  les extrémités, les arcs et les jonctions.
+// Pour les jonctions, et les arcs, on prend pour coordonnées le barycentre des points.
+{
+#undef F_NAME
+#define F_NAME "skel2graph"
+  graphe * g;
+
+  
+
+  return g;
+} // skel2graph()
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * in;
-  struct xvimage * g1;
-  struct xvimage * g2;
-  struct xvimage * g3;
-  uint8_t r[256]; /* la LookUp Table */
-  uint8_t g[256];
-  uint8_t b[256];
-  int32_t rs, cs, N;
-  int32_t i;
-  uint8_t v;
+  skel * s; 
+  graphe * g; 
 
-  if (argc != 4)
+  if (argc != 3)
   {
-    fprintf(stderr, "usage: %s in.pgm lut.ppm out.ppm \n", argv[0]);
+    fprintf(stderr, "usage: %s filein.skel fileout.pgm\n", argv[0]);
     exit(1);
   }
 
-  in = readimage(argv[1]);
+  s = readskel(argv[1]);
+  assert(s != NULL);
 
-  if (in == NULL)
-  {
-    fprintf(stderr, "%s: readimage failed\n", argv[0]);
-    exit(1);
-  }
-  assert(datatype(in) == VFF_TYP_1_BYTE);
-  rs = rowsize(in);
-  cs = colsize(in);
-  N = rs * cs;
+  g = skel2graph(s);
+  assert(g != NULL);
 
-  // Charge la LUT
-  if (!readrgbimage(argv[2], &g1, &g2, &g3))
-  {
-    fprintf(stderr, "%s: readrgbimage failed\n", argv[0]);
-    exit(1);
-  }
-  assert(rowsize(g1) >= 256);
-  assert(colsize(g1) == 1);
-  assert(depth(g1) == 1);
-  assert(datatype(g1) == VFF_TYP_1_BYTE);
-  for (i = 0; i < 256; i++)
-  {  
-    r[i] = (UCHARDATA(g1))[i];
-    g[i] = (UCHARDATA(g2))[i];
-    b[i] = (UCHARDATA(g3))[i];
-  }
-
-  freeimage(g1);
-  freeimage(g2);
-  freeimage(g3);
-
-  g1 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(g1 != NULL);
-  g2 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(g2 != NULL);
-  g3 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(g3 != NULL);
-
-  // Applique la LUT
-  for (i = 0; i < N; i++)
-  {
-    v = (UCHARDATA(in))[i];
-    (UCHARDATA(g1))[i] = r[v];
-    (UCHARDATA(g2))[i] = g[v];
-    (UCHARDATA(g3))[i] = b[v];
-  }
-  
-  writergbimage(g1, g2, g3, argv[argc-1]);
-  freeimage(in);
-  freeimage(g1);
-  freeimage(g2);
-  freeimage(g3);
+  SaveGraphe(g, argv[argc-1]);  
 
   return 0;
 } /* main */

@@ -62,6 +62,16 @@ extern int32_t lattribute(
         int32_t *nlabels         /* resultat: nombre d'extrema traites */
 );
 
+extern int32_t lattribute3d(
+        struct xvimage *img, /* image de depart */
+        int32_t connex,          /* 6, 18, 26  */
+        int32_t minimum,         /* booleen */
+        int32_t attrib,          /* 0: surface, 1: perimetre, 2: circularite ... */
+        int32_t seuil,           /* en dessous de seuil, l'attribut est mis a 0 */
+        struct xvimage *lab, /* resultat: image d'attributs */
+        int32_t *nlabels         /* resultat: nombre d'extrema traites */
+);
+
 #ifdef __cplusplus
 }
 #endif

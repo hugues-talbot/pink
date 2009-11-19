@@ -36,11 +36,13 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts a pgm file to ascii mode
 
-<B>Usage:</B> pgmascmode filename [outfilename]
+<B>Usage:</B> pgmascmode filename [outfilename | "wh" outfilename]
 
 <B>Description:</B> Converts a pgm file to ascii mode.
 If only parameter \b filename is given, then the result
 is also named \b filename .
+If the keyword "wh" is used as second parameter (stands for "without header"), then 
+an ascii file without header is produced.
 
 <B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
 
@@ -56,15 +58,98 @@ is also named \b filename .
 #include <mccodimage.h>
 #include <mcimage.h>
 
+/* ==================================== */
+void writeascimage_without_header(struct xvimage * image, char *filename)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "writeascimage"
+{
+  FILE *fd = NULL;
+  int32_t rs, cs, ps, d, N, i;
+
+  fd = fopen(filename,"w");
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
+    exit(0);
+  }
+
+  rs = rowsize(image);
+  cs = colsize(image);
+  d = depth(image);
+  ps = rs * cs;
+  N = ps * d;
+
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    if (N > 8000) // grandes images : pas de padding (blancs)
+    { 
+      for (i = 0; i < N; i++)
+      {
+        if (i % rs == 0) fprintf(fd, "\n");
+        if (i % ps == 0) fprintf(fd, "\n");
+        fprintf(fd, "%d ", (int32_t)(UCHARDATA(image)[i]));
+      } /* for i */
+    }
+    else
+    { 
+      for (i = 0; i < N; i++)
+      {
+        if (i % rs == 0) fprintf(fd, "\n");
+        if (i % ps == 0) fprintf(fd, "\n");
+        fprintf(fd, "%3d ", (int32_t)(UCHARDATA(image)[i]));
+      } /* for i */
+    }
+    fprintf(fd, "\n");
+  }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    for (i = 0; i < N; i++)
+    {
+      if (i % rs == 0) fprintf(fd, "\n");
+      if (i % ps == 0) fprintf(fd, "\n");
+      fprintf(fd, "%ld ", (long int)(SLONGDATA(image)[i]));
+    } /* for i */
+    fprintf(fd, "\n");
+  }
+  else if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    for (i = 0; i < N; i++)
+    {
+      if (i % rs == 0) fprintf(fd, "\n");
+      if (i % ps == 0) fprintf(fd, "\n");
+      fprintf(fd, "%8g ", FLOATDATA(image)[i]);
+    } /* for i */
+    fprintf(fd, "\n");
+  }
+  else if (datatype(image) == VFF_TYP_DOUBLE)
+  {
+    for (i = 0; i < N; i++)
+    {
+      if (i % rs == 0) fprintf(fd, "\n");
+      if (i % ps == 0) fprintf(fd, "\n");
+      fprintf(fd, "%8g ", DOUBLEDATA(image)[i]);
+    } /* for i */
+    fprintf(fd, "\n");
+  }
+  fclose(fd);
+}
+
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
 
-  if ((argc != 2) && (argc != 3))
+  if ((argc != 2) && (argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s filename [outfilename] \n", argv[0]);
+    fprintf(stderr, "usage: %s filename [outfilename | 'wh' outfilename] \n", argv[0]);
+    exit(1);
+  }
+
+  if ((argc == 4) && ((argv[2][0] != 'w') || (argv[2][1] != 'h')))
+  {
+    fprintf(stderr, "usage: %s filename [outfilename | 'wh' outfilename] \n", argv[0]);
     exit(1);
   }
 
@@ -74,7 +159,10 @@ int main(int argc, char **argv)
       exit(1);
   }
 
-  writeascimage(image, argv[argc-1]);
+  if (argc == 4)
+    writeascimage_without_header(image, argv[argc-1]);
+  else
+    writeascimage(image, argv[argc-1]);
   freeimage(image);
 
   return 0;

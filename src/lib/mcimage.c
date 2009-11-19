@@ -1086,7 +1086,63 @@ void writergbimage(
   } /* for i */
 
   fclose(fd);
-}
+} // writergbimage()
+
+/* ==================================== */
+void writergbascimage(
+  struct xvimage * redimage,
+  struct xvimage * greenimage,
+  struct xvimage * blueimage,
+  char *filename)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "writergbascimage"
+{
+  FILE *fd = NULL;
+  int32_t rs, cs, nndg, N, i, j;
+
+#ifdef UNIXIO
+  fd = fopen(filename,"w");
+#endif
+#ifdef DOSIO
+  fd = fopen(filename,"wb");
+#endif
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
+    exit(0);
+  }
+
+  rs = redimage->row_size;
+  cs = redimage->col_size;
+  if ((greenimage->row_size != rs) || (greenimage->col_size != cs) ||
+      (blueimage->row_size != rs) || (blueimage->col_size != cs))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    exit(0);
+  }
+  
+  N = rs * cs;
+  nndg = 255;
+
+  fputs("P3\n", fd);
+  fprintf(fd, "##rgb\n");
+  fprintf(fd, "%d %d\n", rs, cs);
+  fprintf(fd, "%d\n", nndg);
+
+  for (j = 0; i < cs; i++)
+  {
+    for (i = 0; i < rs; i++)
+    {
+      fprintf(fd, " %d", (int32_t)(UCHARDATA(redimage)[i]));
+      fprintf(fd, " %d", (int32_t)(UCHARDATA(greenimage)[i]));
+      fprintf(fd, " %d", (int32_t)(UCHARDATA(blueimage)[i]));
+    } /* for i */
+    fprintf(fd, "\n");
+  } /* for j */
+
+  fclose(fd);
+} // writergbascimage()
 
 /* ==================================== */
 void writelongimage(struct xvimage * image,  char *filename)

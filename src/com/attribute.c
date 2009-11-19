@@ -41,9 +41,11 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Description:</B>
 Labels each connected component with its attribute value.
 Argument \b connex defines the connectivity.
-Argument \b seuil defines a threshold to filter out lowest attribute values.
+Argument \b seuil defines a threshold: components with attribute value not higher than \b seuil are filtered out.
 
-<B>Types supported:</B> byte 2d
+Warning: in 3D only the attribute "area" is implemented.
+
+<B>Types supported:</B> byte 2d, byte 3d
 
 <B>Category:</B> geo
 \ingroup  geo
@@ -120,10 +122,21 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (! lattribute(image, connex, typregion, attrib, seuil, result, &nblabels))
+  if (depth(image) == 1)
   {
-    fprintf(stderr, "%s: lattribute failed\n", argv[0]);
-    exit(1);
+    if (! lattribute(image, connex, typregion, attrib, seuil, result, &nblabels))
+    {
+      fprintf(stderr, "%s: lattribute failed\n", argv[0]);
+      exit(1);
+    }
+  }
+  else
+  {
+    if (! lattribute3d(image, connex, typregion, attrib, seuil, result, &nblabels))
+    {
+      fprintf(stderr, "%s: lattribute failed\n", argv[0]);
+      exit(1);
+    }
   }
 
 #ifdef VERBOSE

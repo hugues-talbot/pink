@@ -167,10 +167,12 @@ int32_t lattribute(
         int32_t typregion,       /* = <LABMIN | LABMAX | LABPLATEAU> */
         int32_t attrib,          /* 0: surface, 1: perimetre, 2: circularite, 3: nb. trous, 
                                 4: excentricite */
-        int32_t seuil,           /* en dessous de seuil, l'attribut est mis a 0 */
+        int32_t seuil,           /* en dessous (<=) de seuil, l'attribut est mis a 0 */
         struct xvimage *lab, /* resultat: image d'attributs */
         int32_t *nlabels)        /* resultat: nombre de regions traitees */
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "lattribute"
 {
   int32_t k, l;
   int32_t w, x, y, z;
@@ -191,19 +193,19 @@ int32_t lattribute(
 
   if (datatype(lab) != VFF_TYP_4_BYTE) 
   {
-    fprintf(stderr, "lattribute: le resultat doit etre de type VFF_TYP_4_BYTE\n");
+    fprintf(stderr, "%s: le resultat doit etre de type VFF_TYP_4_BYTE\n", F_NAME);
     return 0;
   }
 
   if ((rowsize(lab) != rs) || (colsize(lab) != cs) || (depth(lab) != d))
   {
-    fprintf(stderr, "lattribute: tailles images incompatibles\n");
+    fprintf(stderr, "%s: tailles images incompatibles\n", F_NAME);
     return 0;
   }
 
   if (depth(img) != 1) 
   {
-    fprintf(stderr, "lattribute: cette version ne traite pas les images volumiques\n");
+    fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
     exit(0);
   }
 
@@ -212,7 +214,7 @@ int32_t lattribute(
     case 4: incr_vois = 2; break;
     case 8: incr_vois = 1; break;
     default: 
-      fprintf(stderr, "lattribute: mauvaise connexite: %d\n", connex);
+      fprintf(stderr, "%s: mauvaise connexite: %d\n", F_NAME, connex);
       return 0;
   } /* switch (connex) */
 
@@ -221,7 +223,7 @@ int32_t lattribute(
 
   LIFO = CreeLifoVide(N);
   if (LIFO == NULL)
-  {   fprintf(stderr, "lattribute() : CreeLifoVide failed\n");
+    {   fprintf(stderr, "%s: CreeLifoVide failed\n", F_NAME);
       return(0);
   }
 
@@ -249,7 +251,7 @@ printf("AMORCE p=%d,%d h=%d set LABEL = %d\n", x%rs, x/rs, SOURCE[x], LABEL[x]);
         case VDIAM: min = cs-1; max = 0; break;
         case HDIAM: min = rs-1; max = 0; break;
         default: 
-          fprintf(stderr, "lattribute: mauvais attribut: %d\n", attrib);
+          fprintf(stderr, "%s: mauvais attribut: %d\n", F_NAME, attrib);
           return 0;
       } /* switch (attrib) */
       LifoPush(LIFO, x);         /* on va parcourir le plateau auquel appartient x */
@@ -371,7 +373,7 @@ printf(" p=%d,%d h=%d masque=%x t4m=%d t8b=%d\n", y%rs, y/rs, SOURCE[y], masque,
         if (attrib == ORIEN) val_attrib = orientation(mx1, my1, mx2, my2, mxy2, area);
         if (attrib == VDIAM) val_attrib = max - min + 1;
         if (attrib == HDIAM) val_attrib = max - min + 1;
-        if (val_attrib < seuil) val_attrib = 0;
+        if (val_attrib <= seuil) val_attrib = 0;
 #ifdef VERBOSE
 printf("valeur attribut = %d\n", val_attrib);
 #endif
@@ -399,7 +401,7 @@ else
 {
   if (attrib == TROUS)
   {
-    fprintf(stderr, "lattribute: attribut TROUS non compatible avec typreg = PLA\n");
+    fprintf(stderr, "%s: attribut TROUS non compatible avec typreg = PLA\n", F_NAME);
     return 0;
   }
   for (x = 0; x < N; x++)
@@ -418,7 +420,7 @@ else
 	case EXCEN: 
 	case ORIEN: area = 0; mx1 = my1 = mx2 = my2 = mxy2 = 0.0; break;
         default: 
-          fprintf(stderr, "lattribute: mauvais attribut: %d\n", attrib);
+          fprintf(stderr, "%s: mauvais attribut: %d\n", F_NAME, attrib);
           return 0;
       } /* switch (attrib) */
       LifoPush(LIFO, x);
@@ -483,7 +485,7 @@ else
       if (attrib == ORIEN) val_attrib = orientation(mx1, my1, mx2, my2, mxy2, area);
       if (attrib == VDIAM) val_attrib = max - min + 1;
       if (attrib == HDIAM) val_attrib = max - min + 1;
-      if (val_attrib < seuil) val_attrib = 0;
+      if (val_attrib <= seuil) val_attrib = 0;
 
       LifoPush(LIFO, x);         /* on re-parcourt le plateau pour propager l'attribut */
       LABEL[x] = val_attrib;
@@ -508,5 +510,377 @@ else
 
   *nlabels += 1; /* pour le niveau 0 */
   return(1);
-}
-/* -library_code_end */
+} // lattribute()
+
+
+/* ==================================== */
+int32_t lattribute3d(
+        struct xvimage *img, /* image de depart */
+        int32_t connex,          /* 6, 18, 26  */
+        int32_t typregion,       /* = <LABMIN | LABMAX | LABPLATEAU> */
+        int32_t attrib,          /* 0: surface */
+        int32_t seuil,           /* en dessous (<=) de seuil, l'attribut est mis a 0 */
+        struct xvimage *lab,     /* resultat: image d'attributs */
+        int32_t *nlabels)        /* resultat: nombre de regions traitees */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lattribute3d"
+{
+  int32_t k;
+  int32_t w, x, y;
+  uint8_t *SOURCE = UCHARDATA(img);
+  int32_t *LABEL = SLONGDATA(lab);
+  int32_t rs = rowsize(img);
+  int32_t cs = colsize(img);
+  int32_t ds = depth(img);
+  int32_t ps = rs * cs;
+  int32_t N = ps * ds;
+  Lifo * LIFO;
+  int32_t label;
+  int32_t val_attrib;
+
+  if (datatype(lab) != VFF_TYP_4_BYTE) 
+  {
+    fprintf(stderr, "%s: le resultat doit etre de type VFF_TYP_4_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if ((rowsize(lab) != rs) || (colsize(lab) != cs) || (depth(lab) != ds))
+  {
+    fprintf(stderr, "%s: tailles images incompatibles\n", F_NAME);
+    return 0;
+  }
+
+  /* le LABEL initialement est mis a NONMARQUE */
+  for (x = 0; x < N; x++) LABEL[x] = NONMARQUE;
+
+  LIFO = CreeLifoVide(N);
+  if (LIFO == NULL)
+    {   fprintf(stderr, "%s: CreeLifoVide failed\n", F_NAME);
+      return(0);
+  }
+
+  *nlabels = 0;
+
+if ((typregion == LABMIN) || (typregion == LABMAX))
+{
+  for (x = 0; x < N; x++)
+  {
+    if (LABEL[x] == NONMARQUE)   /* on trouve un point x non etiquete */
+    {
+      *nlabels += 1;
+      LABEL[x] = MARQUE;
+      switch (attrib)            /* on initialise les attributs de cette composante */
+      {
+	case AREA: val_attrib = 0; break;
+        default: 
+          fprintf(stderr, "%s: bad attribute: %d\n", F_NAME, attrib);
+          return 0;
+      } /* switch (attrib) */
+      LifoPush(LIFO, x);         /* on va parcourir le plateau auquel appartient x */
+      while (! LifoVide(LIFO))
+      {
+        w = LifoPop(LIFO);
+        label = LABEL[w];
+        if (label == MARQUE)     /* c'est une propagation de "marquage" : pour l'instant, */
+	{                        /* on croit qu'on est dans un extremum */     
+          switch (attrib)
+          {
+  	    case AREA: val_attrib++; break;
+	  } /* switch (attrib) */
+	  switch (connex)
+	  {
+	  case 6:
+            for (k = 0; k <= 10; k += 2) /* parcourt les 6 voisins */
+            {
+              y = voisin6(w, k, rs, ps, N);
+              if (y != -1)
+              {
+               if (((typregion == LABMIN) && (SOURCE[y] < SOURCE[w])) || 
+                   ((typregion == LABMAX) && (SOURCE[y] > SOURCE[w])))
+               {   /* w non dans un minimum (resp. maximum) */
+                if (label == MARQUE)
+		{
+                  label = NONEXTREM;
+                  *nlabels -= 1;
+                  LABEL[w] = label;
+                  LifoPush(LIFO, w);
+		}
+               }   
+	       else if ((SOURCE[y] == SOURCE[w]) && (LABEL[y] == NONMARQUE))
+               {
+                LABEL[y] = label;
+                LifoPush(LIFO, y);
+               } /* if ((SOURCE[y] == SOURCE[w]) && (LABEL[y] == NONMARQUE)) */
+	      } /* if (y != -1) */
+	    } // for k
+	    break;
+	  case 18:
+            for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+            {
+              y = voisin18(w, k, rs, ps, N);
+              if (y != -1)
+              {
+               if (((typregion == LABMIN) && (SOURCE[y] < SOURCE[w])) || 
+                   ((typregion == LABMAX) && (SOURCE[y] > SOURCE[w])))
+               {   /* w non dans un minimum (resp. maximum) */
+                if (label == MARQUE)
+		{
+                  label = NONEXTREM;
+                  *nlabels -= 1;
+                  LABEL[w] = label;
+                  LifoPush(LIFO, w);
+		}
+               }   
+	       else if ((SOURCE[y] == SOURCE[w]) && (LABEL[y] == NONMARQUE))
+               {
+                LABEL[y] = label;
+                LifoPush(LIFO, y);
+               } /* if ((SOURCE[y] == SOURCE[w]) && (LABEL[y] == NONMARQUE)) */
+	      } /* if (y != -1) */
+	    } // for k
+	    break;
+	  case 26:
+            for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+            {
+              y = voisin26(w, k, rs, ps, N);
+              if (y != -1)
+              {
+               if (((typregion == LABMIN) && (SOURCE[y] < SOURCE[w])) || 
+                   ((typregion == LABMAX) && (SOURCE[y] > SOURCE[w])))
+               {   /* w non dans un minimum (resp. maximum) */
+                if (label == MARQUE)
+		{
+                  label = NONEXTREM;
+                  *nlabels -= 1;
+                  LABEL[w] = label;
+                  LifoPush(LIFO, w);
+		}
+               }   
+	       else if ((SOURCE[y] == SOURCE[w]) && (LABEL[y] == NONMARQUE))
+               {
+                LABEL[y] = label;
+                LifoPush(LIFO, y);
+               } /* if ((SOURCE[y] == SOURCE[w]) && (LABEL[y] == NONMARQUE)) */
+	      } /* if (y != -1) */
+	    } // for k
+	    break;
+	  } // switch (connex)
+	} /* if (label == MARQUE) */
+        else                           /* propagation de "demarquage" */
+	{
+	  switch (connex)
+	  {
+	  case 6:
+            for (k = 0; k <= 10; k += 2) /* parcourt les 6 voisins */
+            {
+              y = voisin6(w, k, rs, ps, N);
+              if (y != -1)
+              {
+                if ((SOURCE[y] == SOURCE[w]) && (LABEL[y] != NONEXTREM))
+                {
+                  LABEL[y] = NONEXTREM;
+                  LifoPush(LIFO, y);
+                } /* if .. */
+	      } /* if (y != -1) */
+	    } // for k
+	    break;
+	  case 18:
+            for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+            {
+              y = voisin18(w, k, rs, ps, N);
+              if (y != -1)
+              {
+                if ((SOURCE[y] == SOURCE[w]) && (LABEL[y] != NONEXTREM))
+                {
+                  LABEL[y] = NONEXTREM;
+                  LifoPush(LIFO, y);
+                } /* if .. */
+	      } /* if (y != -1) */
+	    } // for k
+	    break;
+	  case 26:
+            for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+            {
+              y = voisin26(w, k, rs, ps, N);
+              if (y != -1)
+              {
+                if ((SOURCE[y] == SOURCE[w]) && (LABEL[y] != NONEXTREM))
+                {
+                  LABEL[y] = NONEXTREM;
+                  LifoPush(LIFO, y);
+                } /* if .. */
+	      } /* if (y != -1) */
+	    } // for k
+	    break;
+	  } // switch (connex)
+	} /* else if (label == MARQUE) */
+      } /* while (! LifoVide(LIFO)) */
+
+      if (label == MARQUE)
+      {
+        if (val_attrib <= seuil) val_attrib = 0;
+        LifoPush(LIFO, x);         /* on re-parcourt le plateau pour propager l'attribut */
+        LABEL[x] = val_attrib;
+        while (! LifoVide(LIFO))
+        {
+          w = LifoPop(LIFO);
+
+	  switch (connex)
+	  {
+	  case 6:
+            for (k = 0; k <= 10; k += 2) /* parcourt les 6 voisins */
+            {
+              y = voisin6(w, k, rs, ps, N);
+              if ((y != -1) && (LABEL[y] == MARQUE)) 
+              {
+                LABEL[y] = val_attrib;
+                LifoPush(LIFO, y);
+	      }
+	    } // for k
+	    break;
+	  case 18:
+            for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+            {
+              y = voisin18(w, k, rs, ps, N);
+              if ((y != -1) && (LABEL[y] == MARQUE)) 
+              {
+                LABEL[y] = val_attrib;
+                LifoPush(LIFO, y);
+	      }
+	    } // for k
+	    break;
+	  case 26:
+            for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+            {
+              y = voisin26(w, k, rs, ps, N);
+              if ((y != -1) && (LABEL[y] == MARQUE)) 
+              {
+                LABEL[y] = val_attrib;
+                LifoPush(LIFO, y);
+	      }
+	    } // for k
+	    break;
+	  } // switch (connex)
+	} /* while (! LifoVide(LIFO)) */
+      } /* if (label == MARQUE) */
+
+    } /* if (LABEL[x] != -1) */
+  } /* for (x = 0; x < N; x++) */
+} /* if ((typregion == LABMIN) || (typregion == LABMAX)) */
+else
+{
+  for (x = 0; x < N; x++)
+  {
+    if (LABEL[x] == NONMARQUE)
+    {
+      *nlabels += 1;
+      LABEL[x] = *nlabels;
+      switch (attrib)            /* on initialise les attributs de cette composante */
+      {
+	case AREA: val_attrib = 0; break;
+        default: 
+          fprintf(stderr, "%s: bad attribute: %d\n", F_NAME, attrib);
+          return 0;
+      } /* switch (attrib) */
+      LifoPush(LIFO, x);
+      while (! LifoVide(LIFO))
+      {
+        w = LifoPop(LIFO);
+        switch (attrib)
+        {
+	  case AREA: val_attrib++; break;
+	} /* switch (attrib) */
+
+	switch (connex)
+	  {
+	  case 6:
+            for (k = 0; k <= 10; k += 2) /* parcourt les 6 voisins */
+            {
+              y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (LABEL[y] == NONMARQUE) && (SOURCE[y] == SOURCE[w]))
+	      {
+		LABEL[y] = MARQUE;
+		LifoPush(LIFO, y);
+	      } /* if y ... */
+	    } // for k
+	    break;
+	  case 18:
+            for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+            {
+              y = voisin18(w, k, rs, ps, N);
+	      if ((y != -1) && (LABEL[y] == NONMARQUE) && (SOURCE[y] == SOURCE[w]))
+	      {
+		LABEL[y] = MARQUE;
+		LifoPush(LIFO, y);
+	      } /* if y ... */
+	    } // for k
+	    break;
+	  case 26:
+            for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+            {
+              y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (LABEL[y] == NONMARQUE) && (SOURCE[y] == SOURCE[w]))
+	      {
+		LABEL[y] = MARQUE;
+		LifoPush(LIFO, y);
+	      } /* if y ... */
+	    } // for k
+	    break;
+	  } // switch (connex)
+      } /* while (! LifoVide(LIFO)) */
+      if (val_attrib <= seuil) val_attrib = 0;
+
+      LifoPush(LIFO, x);         /* on re-parcourt le plateau pour propager l'attribut */
+      LABEL[x] = val_attrib;
+      while (! LifoVide(LIFO))
+      {
+        w = LifoPop(LIFO);
+
+	switch (connex)
+	  {
+	  case 6:
+            for (k = 0; k <= 10; k += 2) /* parcourt les 6 voisins */
+            {
+              y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (LABEL[y] == MARQUE)) 
+	      {
+		LABEL[y] = val_attrib;
+		LifoPush(LIFO, y);
+	      }
+	    } // for k
+	    break;
+	  case 18:
+            for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+            {
+              y = voisin18(w, k, rs, ps, N);
+	      if ((y != -1) && (LABEL[y] == MARQUE)) 
+	      {
+		LABEL[y] = val_attrib;
+		LifoPush(LIFO, y);
+	      }
+	    } // for k
+	    break;
+	  case 26:
+            for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+            {
+              y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (LABEL[y] == MARQUE)) 
+	      {
+		LABEL[y] = val_attrib;
+		LifoPush(LIFO, y);
+	      }
+	    } // for k
+	    break;
+	  } // switch (connex)
+      } /* while (! LifoVide(LIFO)) */
+    } /* if (LABEL[x] == NONMARQUE) */
+  } /* for (x = 0; x < N; x++) */
+} /* else if ((typregion == LABMIN) || (typregion == LABMAX)) */
+
+  LifoTermine(LIFO);
+
+  *nlabels += 1; /* pour le niveau 0 */
+  return(1);
+} // lattribute3d()
+

@@ -34,7 +34,7 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*
    ** FILE
-   **   powell.c - powell's conjugate directions minimization method
+   **   powell.c - Brent-Powell conjugate directions minimization method
    **
    ** DESCRIPTION
    **   performs a minimization of a multidimensional user supplied function
@@ -47,6 +47,10 @@ knowledge of the CeCILL license and that you accept its terms.
    **   Dipartimento di Scienze Matematiche Fisiche e Chimiche 
    **   Universita' dell'Insubria, sede di Como
    **   E-mail: dario@fis.unico.it
+
+Reference:
+Brent, R. P. (1973) Algorithms for Minimization without Derivatives. Prentice-Hall, Englewood-Cliffs, New Jersey, USA
+
  */
 
 #include <stdio.h>
