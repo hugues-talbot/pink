@@ -61,18 +61,97 @@ Generation of a graph from a curvilinear skeleton.
 #include <lskelcurv.h>
 
 /* ====================================================================== */
-graphe * skel2graph(skel * s)
+graphe * skel2graph(skel * S)
 /* ====================================================================== */
 // Les sommets du graphe sont les points isolés,  les extrémités, les arcs et les jonctions.
 // Pour les jonctions, et les arcs, on prend pour coordonnées le barycentre des points.
 {
 #undef F_NAME
 #define F_NAME "skel2graph"
-  graphe * g;
+  graphe * G;
+  int32_t i, rs, ps, v, n;
+  double x, y, z;
+  int32_t nsom, ncurv;
+  SKC_pcell p;
 
-  
+  rs = S->rs;
+  ps = rs * S->cs;
+  ncurv = S->e_curv - S->e_end;
+  nsom  = S->e_junc;
 
-  return g;
+  G = InitGraphe(nsom, ncurv * 4);
+
+  // pts isolés  
+  for (i = 0; i < S->e_isol; i++)
+  {
+    p = S->tskel[i].pts;
+    assert(p != NULL);
+    v = p->val;
+    G->x[i] = (double)(v % rs);
+    G->y[i] = (double)((v % ps) / rs);
+    G->z[i] = (double)(v / ps);
+    assert(p->next == NULL);
+  }
+  // pts extrémités  
+  for (i = S->e_isol; i < S->e_end; i++)
+  {
+    p = S->tskel[i].pts;
+    assert(p != NULL);
+    v = p->val;
+    G->x[i] = (double)(v % rs);
+    G->y[i] = (double)((v % ps) / rs);
+    G->z[i] = (double)(v / ps);
+    assert(p->next == NULL);
+  }
+  // pts de courbe
+  for (i = S->e_end; i < S->e_curv; i++)
+  {
+    p = S->tskel[i].adj; 
+    assert(p != NULL);
+    v = p->val;
+    AjouteArc(G, i, v);
+    AjouteArc(G, v, i);
+
+    p = p->next;
+    assert(p != NULL);
+    v = p->val;
+    AjouteArc(G, i, v);
+    AjouteArc(G, v, i);
+
+    p = p->next;
+    assert(p == NULL);
+
+    x = y = z = 0.0;
+    for (p = S->tskel[i].pts, n = 0; p != NULL; p = p->next, n++)
+    {
+      v = p->val;
+      x += (double)(v % rs);
+      y += (double)((v % ps) / rs);
+      z += (double)(v / ps);
+    }
+    assert(n > 0);
+    G->x[i] = x / n;
+    G->y[i] = y / n;
+    G->z[i] = z / n;    
+  }
+  // pts de jonction
+  for (i = S->e_curv; i < S->e_junc; i++)
+  {
+    x = y = z = 0.0;
+    for (p = S->tskel[i].pts, n = 0; p != NULL; p = p->next, n++)
+    {
+      v = p->val;
+      x += (double)(v % rs);
+      y += (double)((v % ps) / rs);
+      z += (double)(v / ps);
+    }
+    assert(n > 0);
+    G->x[i] = x / n;
+    G->y[i] = y / n;
+    G->z[i] = z / n;
+  }
+
+  return G;
 } // skel2graph()
 
 /* =============================================================== */
@@ -84,7 +163,7 @@ int main(int argc, char **argv)
 
   if (argc != 3)
   {
-    fprintf(stderr, "usage: %s filein.skel fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.skel fileout.graph\n", argv[0]);
     exit(1);
   }
 

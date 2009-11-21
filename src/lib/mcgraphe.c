@@ -57,7 +57,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcimage.h>
 #include <mclifo.h>
 #include <mcfifo.h>
-#include <mcrbt.h>
 #include <mcutil.h>
 #include <mcdrawps.h>
 #include <mcgraphe.h>
