@@ -36,13 +36,19 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief decomposition of a curvilinear skeleton into isolated points, end points, curves and junctions
 
-<B>Usage:</B> pgm2skel in.pgm connex out.skel
+<B>Usage:</B> pgm2skel in.pgm connex [len] out.skel
 
 <B>Description:</B>
 The skeleton found in \b in.pgm is decomposed into isolated points, end points, curves and junctions ;
 and its description is stored in \b out.skel .
 The parameter \b connex sets the adjacency relation used for the object
 (4, 8 (2d) or 6, 18, 26 (3d)).
+
+The optional parameter \len indicates the minimum length 
+(in pixels/voxels) of a curve. If a set of curve points with less than \len points, then: a) if it contains at least one end point it will be eliminated (together with its end point(s)), b) otherwise it will be considered as part of a junction.
+If this parameter is given, then isolated points will be eliminated. 
+
+\warning Points at the border of the image will be ignored.
 
 \warning IMPORTANT LIMITATION: 
 different junctions in the original image must not be in direct
@@ -55,7 +61,7 @@ increase image resolution.
 <B>Category:</B> topobin
 \ingroup  topobin
 
-\author Michel Couprie 2004
+\author Michel Couprie 2004, 2009
 */
 
 /*
@@ -78,12 +84,12 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int32_t connex;
+  int32_t connex, len = INT32_MAX;
   skel * S;
 
-  if (argc != 4)
+  if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s filein.pgm connex fileout.skel\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex [len] fileout.skel\n", argv[0]);
     exit(1);
   }
 
@@ -96,7 +102,10 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[2]);
 
-  if (! (S = limage2skel(image, connex)))
+  if (argc == 5)
+    len = atoi(argv[3]);
+
+  if (! (S = limage2skel(image, connex, len)))
   {
     fprintf(stderr, "%s: function limage2skel failed\n", argv[0]);
     exit(1);

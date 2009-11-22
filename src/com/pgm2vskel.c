@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * val;
-  int32_t connex;
+  int32_t connex, len = INT32_MAX;
   skel * S;
 
   if (argc != 5)
@@ -97,7 +97,7 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[3]);
 
-  if (! (S = limage2skel(image, connex)))
+  if (! (S = limage2skel(image, connex, len)))
   {
     fprintf(stderr, "%s: function limage2skel failed\n", argv[0]);
     exit(1);

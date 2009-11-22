@@ -51,7 +51,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <llabelextrema.h>
 #include <lseltopo.h>
 
-#define PARANO
 //#define VERBOSE
 //#define DEBUG
 
@@ -170,13 +169,201 @@ static void trouve2voisins(int32_t i, int32_t rs, int32_t ps, int32_t N, int32_t
     fprintf(stderr, "%s: bad connectivity: %d\n", F_NAME, connex);
     exit(0);
   } // switch (connex)
-#ifdef PARANO
-  if (n != 2)
-  {
-    fprintf(stderr, "%s: WARNING: curve point %d,%d,%d with %d neighbors\n", F_NAME, i%rs, (i%ps)/rs, i/ps, n);
-  }
-#endif
+  assert(n == 2);
 } // trouve2voisins()
+
+/* ====================================================================== */
+static int32_t trouve1voisin(int32_t i, int32_t rs, int32_t ps, int32_t N, int32_t connex, uint8_t *F)
+/* ====================================================================== */
+// retourne un voisin de i qui est un point objet (F), ou -1 si non trouvé
+{
+#undef F_NAME
+#define F_NAME "trouve1voisin"
+  int32_t j, k = 0;
+  switch (connex)
+  {
+  case 4:
+    for (k = 0; k < 8; k += 2)
+    {
+      j = voisin(i, k, rs, N);
+      if ((j != -1) && F[j]) return j;
+    } // for k
+    break;
+  case 8:
+    for (k = 0; k < 8; k += 1)
+    {
+      j = voisin(i, k, rs, N);
+      if ((j != -1) && F[j]) return j;
+    } // for k
+    break;
+  case 6:
+    for (k = 0; k <= 10; k += 2)
+    {
+      j = voisin6(i, k, rs, ps, N);
+      if ((j != -1) && F[j]) return j;
+    } // for k
+    break;
+  case 18:
+    for (k = 0; k < 18; k += 1)
+    {
+      j = voisin18(i, k, rs, ps, N);
+      if ((j != -1) && F[j]) return j;
+    } // for k
+    break;
+  case 26:
+    for (k = 0; k < 26; k += 1)
+    {
+      j = voisin26(i, k, rs, ps, N);
+      if ((j != -1) && F[j]) return j;
+    } // for k
+    break;
+  default:
+    fprintf(stderr, "%s: bad connectivity: %d\n", F_NAME, connex);
+    exit(0);
+  } // switch (connex)
+  return -1;
+} // trouve1voisin()
+
+/* ====================================================================== */
+static void scancurve(int32_t i, struct xvimage *image, int32_t connex, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t *length, int32_t *nbend, int32_t *nbjunc)
+/* ====================================================================== */
+{
+#undef F_NAME
+#define F_NAME "scancurve"
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t ds = depth(image);
+  int32_t N = ds * ps;             /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  int32_t j, k, jj, kk, le=1, ne=0, nj=0;
+
+#ifdef DEBUG
+  printf("%s: i=%d,%d\n", F_NAME, i%rs, i/rs);
+#endif
+
+  assert((T2[i] == NDG_MAX) && !T1[i]);
+  T2[i] = 1;
+  trouve2voisins(i, rs, ps, N, connex, F, &jj, &kk);
+  // suit la branche jj
+  i = jj;
+  while(1)
+  {
+    if (T1[i]) { ne++; break; }
+    if (T3[i]) { nj++; break; }
+    assert((T2[i] == NDG_MAX) && !T1[i]);
+    T2[i] = 1;
+    le++;
+    trouve2voisins(i, rs, ps, N, connex, F, &j, &k);
+    if (T2[j] == 1) i = k; else i = j;
+    if (T2[i] == 1) break; // courbe fermée
+  } // while(1)
+
+  // suit la branche kk
+  i = kk;
+  while(1)
+  {
+    if (T2[i] == 1) break; // courbe fermée
+    if (T1[i]) { ne++; break; }
+    if (T3[i]) { nj++; break; }
+    assert((T2[i] == NDG_MAX) && !T1[i]);
+    T2[i] = 1;
+    le++;
+    trouve2voisins(i, rs, ps, N, connex, F, &j, &k);
+    if (T2[j] == 1) i = k; else i = j;
+    assert(T2[i] != 1);
+  } // while(1)
+
+  *length = le;
+  *nbend = ne;
+  *nbjunc = nj;
+} // scancurve()
+
+/* ====================================================================== */
+static void deletecurve(int32_t i, struct xvimage *image, int32_t connex, uint8_t *T1, uint8_t *T2, uint8_t *T3)
+/* ====================================================================== */
+{
+#undef F_NAME
+#define F_NAME "deletecurve"
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t ds = depth(image);
+  int32_t N = ds * ps;             /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  int32_t jj, kk;
+
+#ifdef DEBUG
+  printf("%s: i=%d,%d\n", F_NAME, i%rs, i/rs);
+#endif
+  assert(T2[i] == 1);
+  T2[i] = F[i] = 0;
+  trouve2voisins(i, rs, ps, N, connex, F, &jj, &kk);
+  // suit la branche jj
+  i = jj;
+  while(1)
+  {
+    if (T1[i]) { T1[i] = T2[i] = F[i] = 0; break; }
+    if (T3[i]) break;
+    assert(T2[i] == 1);
+    T2[i] = F[i] = 0;
+    i = trouve1voisin(i, rs, ps, N, connex, F);
+    if (i == -1) break;
+  } // while(1)
+
+  // suit la branche kk
+  i = kk;
+  while(1)
+  {
+    if (T1[i]) { T1[i] = T2[i] = F[i] = 0; break; }
+    if (T3[i]) break;
+    assert(T2[i] == 1);
+    T2[i] = F[i] = 0;
+    i = trouve1voisin(i, rs, ps, N, connex, F);
+    if (i == -1) break;
+  } // while(1)
+} // deletecurve()
+
+/* ====================================================================== */
+static void curve2junction(int32_t i, struct xvimage *image, int32_t connex, uint8_t *T2, uint8_t *T3)
+/* ====================================================================== */
+{
+#undef F_NAME
+#define F_NAME "curve2junction"
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t ds = depth(image);
+  int32_t N = ds * ps;             /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  int32_t j, k, jj, kk;
+
+#ifdef DEBUG
+  printf("%s: i=%d,%d\n", F_NAME, i%rs, i/rs);
+#endif
+  assert(T2[i] == 1);
+  T2[i] = 0; T3[i] = NDG_MAX;
+  trouve2voisins(i, rs, ps, N, connex, F, &jj, &kk);
+  // suit la branche jj
+  i = jj;
+  while(1)
+  {
+    if (T2[i] != 1) break;
+    T2[i] = 0; T3[i] = NDG_MAX;
+    trouve2voisins(i, rs, ps, N, connex, F, &j, &k);
+    if (T2[j] != 1) i = k; else i = j;
+  } // while(1)
+
+  // suit la branche kk
+  i = kk;
+  while(1)
+  {
+    if (T2[i] != 1) break;
+    T2[i] = 0; T3[i] = NDG_MAX;
+    trouve2voisins(i, rs, ps, N, connex, F, &j, &k);
+    if (T2[j] != 1) i = k; else i = j;
+  } // while(1)
+} // curve2junction()
 
 /* ====================================================================== */
 static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t *M,
@@ -494,13 +681,37 @@ static void processjunc(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t 
   LifoTermine(LIFO);
 } // processjunc()
 
+
 /* ====================================================================== */
-skel * limage2skel(struct xvimage *image, int32_t connex)
+static int32_t is_simple(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t N, int32_t connex)
+/* ====================================================================== */
+{
+  int32_t t, tb;
+  switch (connex)
+  {
+  case 4:
+    top4(F, x, rs, N, &t, &tb);
+    if ((t == 1) && (tb == 1)) return 1; else return 0;
+  case 8:
+    top8(F, x, rs, N, &t, &tb);
+    if ((t == 1) && (tb == 1)) return 1; else return 0;
+  case 6:
+    if (simple6(F, x, rs, ps, N)) return 1; else return 0;
+  case 18:
+    if (simple18(F, x, rs, ps, N)) return 1; else return 0;
+  case 26:
+    if (simple26(F, x, rs, ps, N)) return 1; else return 0;
+  default: assert(0);
+  }
+}
+
+/* ====================================================================== */
+skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
 /* ====================================================================== */
 {
 #undef F_NAME
 #define F_NAME "limage2skel"
-  int32_t i, x, y, z;
+  int32_t i, j, x, y, z;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ps = rs * cs;            /* taille plan */
@@ -512,6 +723,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
   struct xvimage *lab2, *lab3;
   uint8_t *T0, *T1, *T2, *T3;
   int32_t nbisol, nbend, nbcurv, nbjunc, nbvertex, nbpoints;
+  int32_t length, ne, nj, ret;
   skel * S;
   SKC_pcell p;
 
@@ -553,50 +765,21 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
   }
 
   // detection des differents types de points
-  temp0 = copyimage(image);
-  temp1 = copyimage(image);
-  temp2 = copyimage(image);
-  temp3 = copyimage(image);
-  if ((temp0 == NULL) || (temp1 == NULL) || (temp2 == NULL) || (temp3 == NULL))
-  {
-    fprintf(stderr, "%s: function copyimage failed\n", F_NAME);
-    return NULL;
-  }
+  temp0 = copyimage(image); assert(temp0);
+  temp1 = copyimage(image); assert(temp1);
+  temp2 = copyimage(image); assert(temp2);
+  temp3 = copyimage(image); assert(temp3);
   T0 = UCHARDATA(temp0);
   T1 = UCHARDATA(temp1);
   T2 = UCHARDATA(temp2);
   T3 = UCHARDATA(temp3);
-  M = (int32_t *)calloc(N, sizeof(int32_t));
-  if (M == NULL)
-  {
-    fprintf(stderr, "%s: calloc failed\n", F_NAME);
-    return NULL;
-  }
+  M = (int32_t *)calloc(N, sizeof(int32_t)); assert (M);
   for (i = 0; i < N; i++) M[i] = -1;
+  ret = lptisolated(temp0, connex); assert(ret);
+  ret = lptend(temp1, connex); assert(ret);
+  ret = lptcurve(temp2, connex); assert(ret);
+  ret = lptsimple(temp3, connex); assert(ret);
 
-  if (! lptisolated(temp0, connex))
-  {
-    fprintf(stderr, "%s: function lptisolated failed\n", F_NAME);
-    return NULL;
-  }
-
-  if (! lptend(temp1, connex))
-  {
-    fprintf(stderr, "%s: function lptend failed\n", F_NAME);
-    return NULL;
-  }
-
-  if (! lptcurve(temp2, connex))
-  {
-    fprintf(stderr, "%s: function lptcurve failed\n", F_NAME);
-    return NULL;
-  }
-
-  if (! lptsimple(temp3, connex))
-  {
-    fprintf(stderr, "%s: function lpsimple failed\n", F_NAME);
-    return NULL;
-  }
   for (i = 0; i < N; i++)
     if (T3[i] && !T1[i])
     {
@@ -606,21 +789,90 @@ skel * limage2skel(struct xvimage *image, int32_t connex)
       
   copy2image(temp3, image);
 
-  // comptage des points isoles et extremites et 
   // detection des points de jonction (T3) par complementation
   // réalise de plus l'union de T2 et de T1 (résulat dans T2)
+  for (i = 0; i < N; i++) 
+  {
+    if (F[i])
+    {
+      if (T0[i]) { T3[i] = 0; } else
+      if (T1[i]) { T3[i] = 0; T2[i] = NDG_MAX; } else
+      if (T2[i]) T3[i] = 0; else
+      if (T3[i]) T3[i] = NDG_MAX;
+    }
+  } // for (i = 0; i < N; i++) 
+
+  if (len != INT32_MAX)
+  {
+    // élimination des courbes de longueur inférieure à len
+    for (i = 0; i < N; i++) 
+    {
+      if (T0[i] && (len > 0)) F[i] = T0[i] = 0; // points isolés
+      if (T1[i] && (len > 1)) // branches de longueur 1
+      {
+	j = trouve1voisin(i, rs, ps, N, connex, F);
+	assert(j != -1);
+	if (T3[j]) F[i] = T1[i] = T2[i] = 0;
+      } 
+      if ((T2[i] == NDG_MAX) && !T1[i])
+      {
+	scancurve(i, image, connex, T1, T2, T3, &length, &ne, &nj); // etiquette à 1
+	if (length < len)
+	{
+	  if (((ne == 0) && (nj == 0)) || (ne > 0))
+	    deletecurve(i, image, connex, T1, T2, T3);
+	  else 
+	    curve2junction(i, image, connex, T2, T3);
+	}
+      }
+    } // for (i = 0; i < N; i++) 
+    for (i = 0; i < N; i++) if (T2[i]) T2[i] = NDG_MAX;
+
+    do { // retire itérativement les points simples non end
+      nbpoints = 0;
+      for (i = 0; i < N; i++)
+	if (F[i] && !T1[i] && is_simple(i, F, rs, ps, N, connex))
+	{
+	  nbpoints++;
+	  F[i] = 0;
+	}
+    } while (nbpoints);
+
+    // Re-caractérisation des points
+    copy2image(temp0, image);
+    copy2image(temp1, image);
+    copy2image(temp2, image);
+    copy2image(temp3, image);
+    ret = lptisolated(temp0, connex); assert(ret);
+    ret = lptend(temp1, connex); assert(ret);
+    ret = lptcurve(temp2, connex); assert(ret);
+    // detection des points de jonction (T3) par complementation
+    // réalise de plus l'union de T2 et de T1 (résulat dans T2)
+    for (i = 0; i < N; i++) 
+    {
+      if (F[i])
+      {
+	if (T0[i]) { T3[i] = 0; } else
+	if (T1[i]) { T3[i] = 0; T2[i] = NDG_MAX; } else
+	if (T2[i]) T3[i] = 0; else
+	if (T3[i]) T3[i] = NDG_MAX;
+      }
+    } // for (i = 0; i < N; i++) 
+
+  } // if (len != INT32_MAX)
+
+  // comptage des points isoles et extremites et 
   nbisol = nbend = nbcurv = nbjunc = nbpoints = 0;
   for (i = 0; i < N; i++) 
   {
     if (F[i])
     {
       nbpoints++;
-      if (T0[i]) { nbisol++; T3[i] = 0; } else
-      if (T1[i]) { nbend++; T3[i] = 0; T2[i] = NDG_MAX; } else
-      if (T2[i]) T3[i] = 0; else
-      if (T3[i]) T3[i] = NDG_MAX;
+      if (T0[i]) nbisol++;
+      if (T1[i]) nbend++;
     }
   } // for (i = 0; i < N; i++) 
+
 
   // etiquetage des courbes et des jonctions
   lab2 = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);

@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-extern skel * limage2skel(struct xvimage *image, int32_t connex);
+extern skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len);
 extern struct xvimage * lskel2image(skel *S);
 extern struct xvimage * lskelmarked2image(skel *S);
 extern int32_t lskelfilter1(skel *S, double length, double angle);
