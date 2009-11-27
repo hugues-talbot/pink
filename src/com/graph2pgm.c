@@ -40,10 +40,11 @@ knowledge of the CeCILL license and that you accept its terms.
 
 <B>Description:</B>
 
-Reads the file <B>in.graph</B>. 
+Reads the file <B>in.graph</B>. Each vertex of this graph must have integer coordinates, and 
+represents a pixel/voxel of a 2D/3D image.
 If a file name <B>in.pgm</B> is given, then the points read in <B>in.graph</B> are 
 inserted (if possible) into the image read in <B>in.pgm</B>. Else, they are inserted in
-a new image, the dimensions of which are <B>rs</B>, <B>cs</B>, and <B>d</B>.
+a new image, the dimensions of which are <B>rs</B>, <B>cs</B>, and <B>ds</B>.
 
 <B>Types supported:</B> graph
 
