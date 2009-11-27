@@ -102,6 +102,11 @@ int main(int argc, char **argv)
     ds = depth(image);
     ps = rs * cs;
     N = ps * ds;
+    if (N != g->nsom)
+    {
+      fprintf(stderr, "%s: nb. of vertices must be equal to nb. of image points\n", argv[0]);
+      exit(1);
+    }
     type = datatype(image);
   }
   else
@@ -111,6 +116,11 @@ int main(int argc, char **argv)
     ds = atoi(argv[4]);
     ps = rs * cs;
     N = ps * ds;
+    if (N != g->nsom)
+    {
+      fprintf(stderr, "%s: nb. of vertices must be equal to nb. of image points\n", argv[0]);
+      exit(1);
+    }
     type = VFF_TYP_1_BYTE;
     image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
     if (image == NULL)

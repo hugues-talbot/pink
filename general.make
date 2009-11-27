@@ -533,7 +533,7 @@ tgz:
 	cp -R $(PINK) /tmp/Pinktmp
 	cd /tmp/Pinktmp; make clean
 	cd /tmp/Pinktmp/Bdd ; make clean
-	cd /tmp; tar cvf pink.tar Pinktmp; gzip pink.tar; mv pink.tar.gz $(HOME)/pink.tgz 
+	cd /tmp; tar zcvf pink.tgz Pinktmp; mv pink.tar.gz $(HOME)/pink.tgz 
 	rm -f -r /tmp/Pinktmp
 
 # ===============================================================
