@@ -52,8 +52,8 @@ and the given points. Method: basic linear regression.
 */
 
 /*
-%TEST identifyparabola3 %IMAGES/2dlist/binary/parabola1.list %RESULTS/identifyparabola3_parabola1.list
-%TEST identifyparabola3 %IMAGES/2dlist/binary/parabola2.list %RESULTS/identifyparabola3_parabola2.list
+%TEST identifyparabola3 %IMAGES/2dlist/binary/l2parabola1.list %RESULTS/identifyparabola3_l2parabola1.list
+%TEST identifyparabola3 %IMAGES/2dlist/binary/l2parabola2.list %RESULTS/identifyparabola3_l2parabola2.list
 */
 
 /* 

@@ -32,42 +32,37 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file identifyparabola2.c
+/*! \file pca.c
 
-\brief identification of a best matching parabola from a set of 2D points
+\brief principal component analysis
 
-<B>Usage:</B> identifyparabola2 in.list out.list
+<B>Usage:</B> pca in.list out.list
 
 <B>Description:</B>
-Identifies the parameters (a,b) of the equation of the 2D parabola:
-ax^2+b=y that minimizes the least square error between this parabola 
-and the given points. Method: basic linear regression.
+Computes the main direction (2D or 3D vector) of a set of points in 2D or 3D space, by the method of Pricipal Component Analysis (PCA).
 
-<B>Types supported:</B> list 1D, list 2D
+<B>Types supported:</B> list 2D, list 3D
 
-<B>Category:</B> geo
-\ingroup  geo
+<B>Category:</B> stats
+\ingroup stats
 
 \author Michel Couprie
 */
 
 /*
-%TEST identifyparabola2 %IMAGES/2dlist/binary/l2parabola1.list %RESULTS/identifyparabola2_l2parabola1.list
-%TEST identifyparabola2 %IMAGES/2dlist/binary/l2parabola2.list %RESULTS/identifyparabola2_l2parabola2.list
+%TEST pca %IMAGES/2dlist/binary/l2cloud1.list %RESULTS/pca_l2cloud1.list
 */
 
-/* 
-  Michel Couprie - octobre 2009
-*/
-
+#include <assert.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <mcimage.h>
+#include <math.h>
+#include <mcutil.h>
 #include <mccodimage.h>
-#include <mclin.h>
+#include <mcimage.h>
+#include <lmoments.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
@@ -76,11 +71,11 @@ int main(int argc, char **argv)
   FILE *fd = NULL;
   int32_t n, i;
   char type;
-  double *pbx, *pby, a, b;
+  double *X, *Y, *Z, dx, dy, dz;
 
   if (argc != 3)
   {
-    fprintf(stderr, "usage: %s in.list out.list\n", argv[0]);
+    fprintf(stderr, "usage: %s in.list out.list \n", argv[0]);
     exit(1);
   }
 
@@ -92,51 +87,59 @@ int main(int argc, char **argv)
   }
 
   fscanf(fd, "%c", &type);
-  if ((type != 's') && (type != 'b'))
+  if ((type != 'b') && (type != 'B'))
   {
     fprintf(stderr, "usage: %s: bad file format : %c \n", argv[0], type);
     exit(1);
   }
 
   fscanf(fd, "%d\n", &n);
-
-  pbx = (double *)malloc(n * sizeof(double));
-  pby = (double *)malloc(n * sizeof(double));
-
-  if ((pbx == NULL) || (pby == NULL))
+  
+  if (type == 'b') // 2D
   {
-    fprintf(stderr, "usage: %s: malloc failed\n", argv[0]);
-    exit(1);
+    X = (double *)malloc(n * sizeof(double)); assert(X != NULL);
+    Y = (double *)malloc(n * sizeof(double)); assert(Y != NULL);
+    for (i = 0; i < n; i++)
+      fscanf(fd, "%lf %lf\n", &(X[i]), &(Y[i]));
+    if (! ldirectionprincipale2d(X, Y, n, &dx, &dy))
+    {
+      fprintf(stderr, "%s: ldirectionprincipale2d failed\n", argv[0]);
+      exit(1);
+    }
+    fclose(fd);
+    fd = fopen(argv[argc-1],"w");
+    if (!fd)
+    {
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc-1]);
+      exit(1);
+    }
+    fprintf(fd, "e %d\n", 2); 
+    fprintf(fd, "%lf %lf\n", dx, dy); 
+    fclose(fd);
   }
-
-  for (i = 0; i < n; i++)
-    fscanf(fd, "%lf %lf\n", pbx+i, pby+i);
-
-  fclose(fd);
-
-  if (!lidentifyparabola2(pbx, pby, n, &a, &b))
+  else // 3D
   {
-    fprintf(stderr, "%s: lidentifyparabola2 failed\n", argv[0]);
-    exit(1);
+    X = (double *)malloc(n * sizeof(double)); assert(X != NULL);
+    Y = (double *)malloc(n * sizeof(double)); assert(Y != NULL);
+    Z = (double *)malloc(n * sizeof(double)); assert(Z != NULL);
+    for (i = 0; i < n; i++)
+      fscanf(fd, "%lf %lf %lf\n", &(X[i]), &(Y[i]), &(Z[i]));
+    if (! ldirectionprincipale3d(X, Y, Z, n, &dx, &dy, &dz))
+    {
+      fprintf(stderr, "%s: ldirectionprincipale3d failed\n", argv[0]);
+      exit(1);
+    }
+    fclose(fd);
+    fd = fopen(argv[argc-1],"w");
+    if (!fd)
+    {
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc-1]);
+      exit(1);
+    }
+    fprintf(fd, "e %d\n", 3); 
+    fprintf(fd, "%lf %lf %lf\n", dx, dy, dz); 
+    fclose(fd);
   }
-
-#ifdef VERBOSE
-  printf("a = %g, b = %g\n", a, b);
-#endif
-
-  fd = fopen(argv[argc - 1],"w");
-  if (!fd)
-  {
-    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc - 1]);
-    exit(1);
-  }
-  fprintf(fd, "e %d\n", 2); 
-  fprintf(fd, "%g %g\n", a, b); 
-  fclose(fd);
-
-  free(pbx);
-  free(pby);
 
   return 0;
-}
-
+} /* main */

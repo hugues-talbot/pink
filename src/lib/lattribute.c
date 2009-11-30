@@ -86,6 +86,7 @@ knowledge of the CeCILL license and that you accept its terms.
 *
 * 17/05/08 : ajout des attributs VDIAM et HDIAM (vertical and horizontal diameter)
 *
+* 30/11/09 : lattribute3d
 ****************************************************************/
 
 #define NONMARQUE -1
@@ -103,12 +104,12 @@ knowledge of the CeCILL license and that you accept its terms.
 #define K2 (13924.0/757.0)
 #define EPSILON 1E-6
 
-int32_t excentricity(double mx1, double my1, double mx2, double my2, double mxy2, int32_t n)
+static int32_t excentricity(double mx1, double my1, double mx2, double my2, double mxy2, int32_t n)
 {
   double Mx2, My2, Mxy2, delta;
   double lambda1, lambda2;
 
-  /* moments centres d'ordre 2 */
+  /* moments centres d'ordre 2 (variances et covariances) */
   Mx2 = mx2 - mx1 * mx1 / n;  
   My2 = my2 - my1 * my1 / n;  
   Mxy2 = mxy2 - mx1 * my1 / n;
@@ -129,14 +130,14 @@ int32_t excentricity(double mx1, double my1, double mx2, double my2, double mxy2
   return 255 - (int32_t)(lambda2 * 255 / lambda1);
 } /* excentricity() */
 
-int32_t orientation(double mx1, double my1, double mx2, double my2, double mxy2, int32_t n)
+static int32_t orientation(double mx1, double my1, double mx2, double my2, double mxy2, int32_t n)
 {
   double Mx2, My2, Mxy2, delta;
   double lambda1;
   double x, y, a;
   int32_t sign, theta;
 
-  /* moments centres d'ordre 2 */
+  /* moments centres d'ordre 2 (variances et covariances) */
   Mx2 = mx2 - mx1 * mx1 / n;  
   My2 = my2 - my1 * my1 / n;  
   Mxy2 = mxy2 - mx1 * my1 / n;
@@ -166,7 +167,7 @@ int32_t lattribute(
         int32_t connex,          /* 4, 8  */
         int32_t typregion,       /* = <LABMIN | LABMAX | LABPLATEAU> */
         int32_t attrib,          /* 0: surface, 1: perimetre, 2: circularite, 3: nb. trous, 
-                                4: excentricite */
+                                4: excentricite, 5: orientation, 6: diamètre vertical, 7: diamètre horizontal */
         int32_t seuil,           /* en dessous (<=) de seuil, l'attribut est mis a 0 */
         struct xvimage *lab, /* resultat: image d'attributs */
         int32_t *nlabels)        /* resultat: nombre de regions traitees */
@@ -188,7 +189,8 @@ int32_t lattribute(
   int32_t perim;
   int32_t min, max;
   int32_t val_attrib;
-  double mx1, my1, mx2, my2, mxy2;
+  double mx1, my1; // cumuls des variables x et y
+  double mx2, my2, mxy2; // cumuls des x^2, y^2 et xy
   int32_t incr_vois;
 
   if (datatype(lab) != VFF_TYP_4_BYTE) 
@@ -512,7 +514,6 @@ else
   return(1);
 } // lattribute()
 
-
 /* ==================================== */
 int32_t lattribute3d(
         struct xvimage *img, /* image de depart */
@@ -526,7 +527,7 @@ int32_t lattribute3d(
 #undef F_NAME
 #define F_NAME "lattribute3d"
 {
-  int32_t k;
+  int32_t k, i;
   int32_t w, x, y;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t *LABEL = SLONGDATA(lab);
@@ -538,6 +539,10 @@ int32_t lattribute3d(
   Lifo * LIFO;
   int32_t label;
   int32_t val_attrib;
+  int32_t area;
+  double mx1, my1, mz1; // cumuls des variables x, y et z
+  double mx2, my2, mz2; // cumuls des x^2, y^2 et z^2
+  double mxy2, myz2, mxz2; // cumuls des xy, yz et xz
 
   if (datatype(lab) != VFF_TYP_4_BYTE) 
   {
@@ -573,6 +578,11 @@ if ((typregion == LABMIN) || (typregion == LABMAX))
       switch (attrib)            /* on initialise les attributs de cette composante */
       {
 	case AREA: val_attrib = 0; break;
+	case EXCEN: 
+	case ORIEN: 
+	  area = 0; 
+	  mx1 = my1 = mz1 = mx2 = my2 = mz2 = mxy2 = myz2 = mxz2 = 0.0; 
+	  break;
         default: 
           fprintf(stderr, "%s: bad attribute: %d\n", F_NAME, attrib);
           return 0;
@@ -587,6 +597,18 @@ if ((typregion == LABMIN) || (typregion == LABMAX))
           switch (attrib)
           {
   	    case AREA: val_attrib++; break;
+	    case EXCEN: 
+	    case ORIEN: 
+	    {
+	      double x = (double)(i % rs);
+	      double y = (double)((i % ps) / rs);
+	      double z = (double)(i / ps);
+	      area++; 
+	      mx1 += x; my1 += y; mz1 += z; 
+	      mx2 += x * x; my2 += y * y; 
+	      mxy2 += x * y; mxz2 += x * z; myz2 += y * z;
+	    }
+	    break;
 	  } /* switch (attrib) */
 	  switch (connex)
 	  {
@@ -830,7 +852,6 @@ else
 	  } // switch (connex)
       } /* while (! LifoVide(LIFO)) */
       if (val_attrib <= seuil) val_attrib = 0;
-
       LifoPush(LIFO, x);         /* on re-parcourt le plateau pour propager l'attribut */
       LABEL[x] = val_attrib;
       while (! LifoVide(LIFO))

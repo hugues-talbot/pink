@@ -42,8 +42,8 @@ knowledge of the CeCILL license and that you accept its terms.
 
 <B>Types supported:</B> byte 2D
 
-<B>Category:</B> 
-\ingroup  
+<B>Category:</B> stats
+\ingroup  stats
 
 \author Michel Couprie
 */

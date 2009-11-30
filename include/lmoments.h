@@ -64,6 +64,19 @@ extern int32_t lmomentslab(
         Indicateur ** tabindic);/* tableau des resultats */
 
 extern void PrintIndicateur(Indicateur I);
+
+extern int32_t llistemoments2d(
+	double *X, double *Y, int32_t N,
+        Indicateur * indic);     /* resultat */
+
+extern int32_t ldirectionprincipale2d(
+	double *X, double *Y, int32_t N,
+        double *dirx, double *diry);
+
+extern int32_t ldirectionprincipale3d(
+	double *X, double *Y, double *Z, int32_t N,
+        double *dirx, double *diry, double *dirz);
+
 #ifdef __cplusplus
 }
 #endif

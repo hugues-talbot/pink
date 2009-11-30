@@ -369,6 +369,7 @@ $(BDIR)/matchrect \
 $(BDIR)/maxdiameter \
 $(BDIR)/moments \
 $(BDIR)/offset \
+$(BDIR)/pca \
 $(BDIR)/point \
 $(BDIR)/proj \
 $(BDIR)/proj3d \
@@ -391,7 +392,6 @@ $(BDIR)/warp \
 $(BDIR)/zoom \
 $(BDIR)/zoomint \
 $(BDIR)/zoomrgb \
-
 
 HISTO=\
 $(BDIR)/comphisto \
@@ -1661,11 +1661,14 @@ $(BDIR)/maxdiameter:	$(CDIR)/maxdiameter.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.
 $(BDIR)/meshwarp:	$(CDIR)/meshwarp.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcgeo.h $(IDIR)/mcxbib.h $(IDIR)/lmeshwarp.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcgeo.o $(ODIR)/mcxbib.o $(ODIR)/lvoronoi.o $(ODIR)/lmeshwarp.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/meshwarp.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcgeo.o $(ODIR)/mcxbib.o $(ODIR)/lvoronoi.o $(ODIR)/lmeshwarp.o $(XLIB) $(LIBS) -o $(BDIR)/meshwarp
 
-$(BDIR)/moments:	$(CDIR)/moments.c $(IDIR)/lmoments.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/llabelextrema.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/lmoments.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/moments.c $(ODIR)/lmoments.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/moments
+$(BDIR)/moments:	$(CDIR)/moments.c $(IDIR)/lmoments.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/llabelextrema.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mclin.o $(ODIR)/llabelextrema.o $(ODIR)/lmoments.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/moments.c $(ODIR)/lmoments.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mclin.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/moments
 
 $(BDIR)/offset:	$(CDIR)/offset.c $(IDIR)/mcimage.h $(IDIR)/loffset.h $(OBJ_COMMON) $(ODIR)/loffset.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/offset.c $(OBJ_COMMON) $(ODIR)/loffset.o $(LIBS) -o $(BDIR)/offset
+
+$(BDIR)/pca:	$(CDIR)/pca.c $(IDIR)/lmoments.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mclin.h $(IDIR)/llabelextrema.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mclin.o $(ODIR)/llabelextrema.o $(ODIR)/lmoments.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/pca.c $(ODIR)/lmoments.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mclin.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/pca
 
 $(BDIR)/point:	$(CDIR)/point.c $(IDIR)/lpoint.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/lpoint.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/point.c $(ODIR)/lpoint.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/point

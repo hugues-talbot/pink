@@ -681,6 +681,25 @@ static void processjunc(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t 
   LifoTermine(LIFO);
 } // processjunc()
 
+/* ====================================================================== */
+static int32_t is_end(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t N, int32_t connex)
+/* ====================================================================== */
+{
+  switch (connex)
+  {
+  case 4:
+    if (nbvois4(F, x, rs, N) == 1) return 1; else return 0;
+  case 8:
+    if (nbvois8(F, x, rs, N) == 1) return 1; else return 0;
+  case 6:
+    if (nbvoiso6(F, x, rs, ps, N) == 1) return 1; else return 0;
+  case 18:
+    if (nbvoiso18(F, x, rs, ps, N) == 1) return 1; else return 0;
+  case 26:
+    if (nbvoiso26(F, x, rs, ps, N) == 1) return 1; else return 0;
+  default: assert(0);
+  }
+} // is_end()
 
 /* ====================================================================== */
 static int32_t is_simple(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t N, int32_t connex)
@@ -703,7 +722,7 @@ static int32_t is_simple(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t 
     if (simple26(F, x, rs, ps, N)) return 1; else return 0;
   default: assert(0);
   }
-}
+} // is_simple()
 
 /* ====================================================================== */
 skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
@@ -723,7 +742,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
   struct xvimage *lab2, *lab3;
   uint8_t *T0, *T1, *T2, *T3;
   int32_t nbisol, nbend, nbcurv, nbjunc, nbvertex, nbpoints;
-  int32_t length, ne, nj, ret;
+  int32_t length, ne, nj, nc, ret;
   skel * S;
   SKC_pcell p;
 
@@ -831,33 +850,31 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
     do { // retire itérativement les points simples non end
       nbpoints = 0;
       for (i = 0; i < N; i++)
-	if (F[i] && !T1[i] && is_simple(i, F, rs, ps, N, connex))
+	if (F[i] && !is_end(i, F, rs, ps, N, connex) && is_simple(i, F, rs, ps, N, connex))
 	{
 	  nbpoints++;
 	  F[i] = 0;
 	}
     } while (nbpoints);
 
+#ifdef RECARAC
     // Re-caractérisation des points
-    copy2image(temp0, image);
-    copy2image(temp1, image);
-    copy2image(temp2, image);
-    copy2image(temp3, image);
-    ret = lptisolated(temp0, connex); assert(ret);
-    ret = lptend(temp1, connex); assert(ret);
-    ret = lptcurve(temp2, connex); assert(ret);
-    // detection des points de jonction (T3) par complementation
-    // réalise de plus l'union de T2 et de T1 (résulat dans T2)
+    // Une jonction qui n'est adjacente qu'à deux courbes est recaractérisée courbe
+    // Une jonction qui n'est adjacente qu'à une courbe est recaractérisée extrémité
+    // Une jonction qui n'est adjacente à aucune courbe est recaractérisée isolé
+
     for (i = 0; i < N; i++) 
     {
-      if (F[i])
+      if (T3[i] == NDG_MAX)
       {
-	if (T0[i]) { T3[i] = 0; } else
-	if (T1[i]) { T3[i] = 0; T2[i] = NDG_MAX; } else
-	if (T2[i]) T3[i] = 0; else
-	if (T3[i]) T3[i] = NDG_MAX;
+	nc = scanjunction(i, image, connex, T2, T3); // etiquette à 1
+	if (nc == 2) junction2curve(i, image, connex, T2, T3);
+	else if (nc == 1) junction2end(i, image, connex, T1, T2, T3);
+	else if (nc == 0) junction2isol(i, image, connex, T0, T3);
       }
     } // for (i = 0; i < N; i++) 
+    for (i = 0; i < N; i++) if (T3[i]) T3[i] = NDG_MAX;
+#endif
 
   } // if (len != INT32_MAX)
 

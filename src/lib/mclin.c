@@ -585,7 +585,8 @@ int32_t lin_jacobi(double * A, int32_t n, double * D, double * V, int32_t nrot)
     \param V (sortie) : vecteurs propres
     \param nrot (entrée) : non utilisé
     \return 0 si erreur (trop d'itérations), 1 sinon
-    \brief calcul des valeurs et vecteurs de a par la méthode de Jacobi
+    \brief calcul des valeurs et vecteurs propres de a par la méthode de Jacobi
+    \warning la matrice A doit être symétrique
     \warning la mémoire pour stocker les résultat \b D et \b V doit avoir été allouée
 */
 {

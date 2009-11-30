@@ -32,17 +32,16 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+#include <assert.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#ifdef HP
-#define _INCLUDE_XOPEN_SOURCE
-#endif
 #include <math.h>
 #include <mcimage.h>
 #include <mccodimage.h>
 #include <mclifo.h>
+#include <mclin.h>
 #include <mcutil.h>
 #include <lmoments.h>
 #include <llabelextrema.h>
@@ -57,14 +56,13 @@ knowledge of the CeCILL license and that you accept its terms.
 * Written By: Michel Couprie - novembre 1998
 *
 * Update april 1999 : version lmomentslab pour une image de labels
+* Update nov. 2009 : versions 3d et listes de points
 *
 ****************************************************************/
 
-/*
 #define DEBUG
+/*
 #define VERBOSE
-#define DEBUGEXCEN
-#define DEBUGORIEN
 */
 
 #define EPSILON 1E-6
@@ -74,11 +72,15 @@ int32_t limagemoments(
         struct xvimage *img,    /* image de depart */
         Indicateur * indic)     /* resultat */
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "limagemoments"
+// WARNING : not tested
 {
   int32_t i;
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
   int32_t N = rs * cs;          /* taille image */
+  uint8_t *F = UCHARDATA(img);
   int32_t area;
   double mx1, my1, mxy1, mx2, my2, mxy2;
   double Mxy1, Mx2, My2, Mxy2, delta;
@@ -89,65 +91,66 @@ int32_t limagemoments(
 
   if (depth(img) != 1) 
   {
-    fprintf(stderr, "lmoments: cette version ne traite pas les images volumiques\n");
+    fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
     exit(0);
   }
 
   area = 0; mx1 = my1 = mxy1 = mx2 = my2 = mxy2 = 0.0;
   for (i = 0; i < N; i++)
-  {
-     area++; mx1 += i%rs; my1 += i/rs; mxy1 += ((i%rs) * (i/rs));
-     mxy2 += (i%rs) * (i/rs); mx2 += (i%rs) * (i%rs); my2 += (i/rs) * (i/rs);
+    if (F[i])
+    {    
+      area++; mx1 += i%rs; my1 += i/rs; mxy1 += ((i%rs) * (i/rs));
+      mxy2 += (i%rs) * (i/rs); mx2 += (i%rs) * (i%rs); my2 += (i/rs) * (i/rs);
+    }
 
-     indic->area = area;
-     xc = indic->xcentre = mx1/area;
-     yc = indic->ycentre = my1/area;
+  indic->area = area;
+  xc = indic->xcentre = mx1/area;
+  yc = indic->ycentre = my1/area;
 
      /* moments centres d'ordre 1 */
-     Mxy1 = (mxy1 - (mx1 * yc)) - (my1 * xc) + (area * xc * yc);
+  Mxy1 = (mxy1 - (mx1 * yc)) - (my1 * xc) + (area * xc * yc);
       
      /* moments centres d'ordre 2 */
-     Mx2 = mx2 - mx1 * mx1 / area;  
-     My2 = my2 - my1 * my1 / area;  
-     Mxy2 = mxy2 - mx1 * my1 / area;
+  Mx2 = mx2 - mx1 * mx1 / area;  
+  My2 = my2 - my1 * my1 / area;  
+  Mxy2 = mxy2 - mx1 * my1 / area;
 
      /* calcul des longueurs des demi-axes */
-     delta = (Mx2 - My2) * (Mx2 - My2) + 4 * Mxy2 * Mxy2;
-     lambda1 = sqrt(2 * (Mx2 + My2 + sqrt(delta)) / area);
-     lambda2 = sqrt(2 * (Mx2 + My2 - sqrt(delta)) / area);
+  delta = (Mx2 - My2) * (Mx2 - My2) + 4 * Mxy2 * Mxy2;
+  lambda1 = sqrt(2 * (Mx2 + My2 + sqrt(delta)) / area);
+  lambda2 = sqrt(2 * (Mx2 + My2 - sqrt(delta)) / area);
 #ifdef DEBUG
 printf("Mx2 = %g ; My2 = %g ; Mxy2 = %g ; delta = %g\n", Mx2, My2, Mxy2, delta);
 printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
 #endif
-     if (lambda2 < 0.0)
-     {
-       fprintf(stderr, "lmoments : valeur propre negative : %g\n", lambda2);
-       return 0;
-     }
+  if (lambda2 < 0.0)
+  {
+    fprintf(stderr, "%s: valeur propre negative : %g\n", F_NAME, lambda2);
+    return 0;
+  }
 
-     if (abs(Mx2 - My2) < EPSILON) 
-       theta = 0.0;
-     else
-     {
-       double mi1, mi2, theta2;
-       theta = 0.5 * atan( 2 * Mxy1 / (Mx2 - My2));
-       /* la direction est determinee a pi/2 pres */
-       /* on calcule les moments d'inertie pour theta et theta + pi/2 */
-       /* pour lever l'ambiguite */
-       mi1 = cos(theta) * cos(theta) * My2 + 
-             sin(theta) * sin(theta) * Mx2 -
-             2 *sin(theta) * cos(theta) * Mxy1;
-       theta2 = theta + (M_PI / 2);
-       mi2 = cos(theta2) * cos(theta2) * My2 + 
-             sin(theta2) * sin(theta2) * Mx2 - 
-             2 * sin(theta2) * cos(theta2) * Mxy1;
+  if (abs(Mx2 - My2) < EPSILON) 
+    theta = 0.0;
+  else
+  {
+    double mi1, mi2, theta2;
+    theta = 0.5 * atan( 2 * Mxy1 / (Mx2 - My2));
+    /* la direction est determinee a pi/2 pres */
+    /* on calcule les moments d'inertie pour theta et theta + pi/2 */
+    /* pour lever l'ambiguite */
+    mi1 = cos(theta) * cos(theta) * My2 + 
+      sin(theta) * sin(theta) * Mx2 -
+      2 *sin(theta) * cos(theta) * Mxy1;
+    theta2 = theta + (M_PI / 2);
+    mi2 = cos(theta2) * cos(theta2) * My2 + 
+      sin(theta2) * sin(theta2) * Mx2 - 
+      2 * sin(theta2) * cos(theta2) * Mxy1;
 #ifdef DEBUG
 printf("mi1 = %g ; mi2 = %g ; theta1 = %g ; theta2 = %g\n", 
         mi1, mi2, theta * 180 / M_PI, theta2 * 180 / M_PI);
 #endif
-       if (mi2 < mi1) theta = theta2;
-     }
-  } //   for (i = 0; i < N; i++)
+    if (mi2 < mi1) theta = theta2;
+  }
   indic->gaxe = lambda1;
   indic->excen = lambda2 / lambda1;
   indic->orien = theta;
@@ -173,6 +176,8 @@ int32_t lmoments(
         Indicateur ** tabindic, /* tableau des resultats */
         int32_t *nlabels)           /* resultat: nombre d'extrema traites */
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "lmoments"
 {
   int32_t k;
   int32_t w, x, y;
@@ -197,7 +202,7 @@ int32_t lmoments(
 
   if (depth(img) != 1) 
   {
-    fprintf(stderr, "lmoments: cette version ne traite pas les images volumiques\n");
+    fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
     exit(0);
   }
 
@@ -206,34 +211,34 @@ int32_t lmoments(
     case 4: incr_vois = 2; break;
     case 8: incr_vois = 1; break;
     default: 
-      fprintf(stderr, "lmoments: mauvaise connexite: %d\n", connex);
+      fprintf(stderr, "%s: mauvaise connexite: %d\n", F_NAME, connex);
       return 0;
   } /* switch (connex) */
 
   labels = allocimage(NULL, rs, cs, d, VFF_TYP_4_BYTE);
   if (labels == NULL)
   {   
-    fprintf(stderr, "lmoments: allocimage failed\n");
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
   LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, minimum, labels, &n))
   {
-    fprintf(stderr, "lmoments: llabelextrema failed\n");
+    fprintf(stderr, "%s: llabelextrema failed\n", F_NAME);
     return 0;
   }
 
   tab = (Indicateur *)calloc(1,(n - 1) * sizeof(Indicateur));
   if (tab == NULL)
   {
-    fprintf(stderr, "lmoments: malloc failed\n");
+    fprintf(stderr, "%s: calloc failed\n", F_NAME);
     return 0;
   }
 
   LIFO = CreeLifoVide(N);
   if (LIFO == NULL)
-  {   fprintf(stderr, "lattribute() : CreeLifoVide failed\n");
+  {   fprintf(stderr, "%s: CreeLifoVide failed\n", F_NAME);
       return(0);
   }
 
@@ -286,7 +291,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
 #endif
       if (lambda2 < 0.0)
       {
-        fprintf(stderr, "lmoments : valeur propre negative : %g\n", lambda2);
+        fprintf(stderr, "%s: valeur propre negative : %g\n", F_NAME, lambda2);
         return 0;
       }
 
@@ -358,6 +363,8 @@ int32_t lmomentslab(
         int32_t nlabels,            /* nombre de composantes */
         Indicateur ** tabindic) /* tableau des resultats */
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "lmomentslab"
 {
   int32_t k;
   int32_t w, x, y;
@@ -380,7 +387,7 @@ int32_t lmomentslab(
 
   if (d != 1) 
   {
-    fprintf(stderr, "lmomentslab: cette version ne traite pas les images volumiques\n");
+    fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
     exit(0);
   }
 
@@ -389,20 +396,20 @@ int32_t lmomentslab(
     case 4: incr_vois = 2; break;
     case 8: incr_vois = 1; break;
     default: 
-      fprintf(stderr, "lmomentslab: mauvaise connexite: %d\n", connex);
+      fprintf(stderr, "%s: mauvaise connexite: %d\n", F_NAME, connex);
       return 0;
   } /* switch (connex) */
 
   tab = (Indicateur *)calloc(1,nlabels * sizeof(Indicateur));
   if (tab == NULL)
   {
-    fprintf(stderr, "lmomentslab: malloc failed\n");
+    fprintf(stderr, "%s: calloc failed\n", F_NAME);
     return 0;
   }
 
   LIFO = CreeLifoVide(N);
   if (LIFO == NULL)
-  {   fprintf(stderr, "lattribute() : CreeLifoVide failed\n");
+    {   fprintf(stderr, "%s: CreeLifoVide failed\n", F_NAME);
       return(0);
   }
 
@@ -455,7 +462,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
 #endif
       if (lambda2 < 0.0)
       {
-        fprintf(stderr, "lmomentslab : valeur propre negative : %g\n", lambda2);
+        fprintf(stderr, "%s: valeur propre negative : %g\n", F_NAME, lambda2);
         return 0;
       }
 
@@ -466,7 +473,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         double mi1, mi2, theta2;
         theta = 0.5 * atan( 2 * Mxy1 / (Mx2 - My2));
         /* la direction est determinee a pi/2 pres */
-        /* on calcule les moment d'inertie pour theta et theta + pi/2 */
+        /* on calcule les moments d'inertie pour theta et theta + pi/2 */
         /* pour lever l'ambiguite */
         mi1 = cos(theta) * cos(theta) * My2 + 
               sin(theta) * sin(theta) * Mx2 -
@@ -528,4 +535,207 @@ void PrintIndicateur(Indicateur I)
   printf("gdiam = %g \t", I.gdiam);
   printf("\n");
 }
-/* -library_code_end */
+
+/* ==================================== */
+int32_t llistemoments2d(
+	double *X, double *Y, int32_t N,
+        Indicateur * indic)     /* resultat */
+/* ==================================== */
+// WARNING : not tested
+#undef F_NAME
+#define F_NAME "llistemoments2d"
+{
+  int32_t i;
+  double mx1, my1, mxy1, mx2, my2, mxy2;
+  double Mxy1, Mx2, My2, Mxy2, delta;
+  double lambda1, lambda2;
+  double xx, yy, xc, yc;
+  double theta;
+  double gdiam;
+
+  mx1 = my1 = mxy1 = mx2 = my2 = mxy2 = 0.0;
+  for (i = 0; i < N; i++)
+  {
+     mx1 += X[i]; my1 += Y[i]; mxy1 += (X[i] * Y[i]);
+     mxy2 += X[i] * Y[i]; mx2 += X[i] * X[i]; my2 += Y[i] * Y[i];
+  }
+
+  indic->area = N;
+  xc = indic->xcentre = mx1/N;
+  yc = indic->ycentre = my1/N;
+
+  /* moments centres d'ordre 1 */
+  Mxy1 = (mxy1 - (mx1 * yc)) - (my1 * xc) + (N * xc * yc);
+      
+  /* moments centres d'ordre 2 */
+  Mx2 = mx2 - mx1 * mx1 / N;  
+  My2 = my2 - my1 * my1 / N;  
+  Mxy2 = mxy2 - mx1 * my1 / N;
+
+  /* calcul des longueurs des demi-axes */
+  delta = (Mx2 - My2) * (Mx2 - My2) + 4 * Mxy2 * Mxy2;
+  lambda1 = sqrt(2 * (Mx2 + My2 + sqrt(delta)) / N);
+  lambda2 = sqrt(2 * (Mx2 + My2 - sqrt(delta)) / N);
+#ifdef DEBUG
+printf("Mx2 = %g ; My2 = %g ; Mxy2 = %g ; delta = %g\n", Mx2, My2, Mxy2, delta);
+printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
+#endif
+  if (lambda2 < 0.0)
+  {
+    fprintf(stderr, "%s : valeur propre negative : %g\n", F_NAME, lambda2);
+    return 0;
+  }
+
+  if (abs(Mx2 - My2) < EPSILON) 
+    theta = 0.0;
+  else
+  {
+    double mi1, mi2, theta2;
+    theta = 0.5 * atan( 2 * Mxy1 / (Mx2 - My2));
+    /* la direction est determinee a pi/2 pres */
+    /* on calcule les moments d'inertie pour theta et theta + pi/2 */
+    /* pour lever l'ambiguite */
+    mi1 = cos(theta) * cos(theta) * My2 + 
+      sin(theta) * sin(theta) * Mx2 -
+      2 *sin(theta) * cos(theta) * Mxy1;
+    theta2 = theta + (M_PI / 2);
+    mi2 = cos(theta2) * cos(theta2) * My2 + 
+      sin(theta2) * sin(theta2) * Mx2 - 
+      2 * sin(theta2) * cos(theta2) * Mxy1;
+#ifdef DEBUG
+printf("mi1 = %g ; mi2 = %g ; theta1 = %g ; theta2 = %g\n", 
+        mi1, mi2, theta * 180 / M_PI, theta2 * 180 / M_PI);
+#endif
+    if (mi2 < mi1) theta = theta2;
+  }
+  indic->gaxe = lambda1;
+  indic->excen = lambda2 / lambda1;
+  indic->orien = theta;
+
+  gdiam = 0.0; /* calcule le plus grand demi-diametre */
+  for (i = 0; i < N; i++)
+  {
+    xx = X[i];
+    yy = Y[i];
+    theta = (xc - xx)*(xc - xx) + (yc - yy)*(yc - yy);
+    if (theta > gdiam) gdiam = theta;
+  } // for (i = 0; i < N; i++)
+  indic->gdiam = sqrt(gdiam);
+
+  return(1);
+} // llistemoments2d
+
+/* ==================================== */
+int32_t ldirectionprincipale2d(
+	double *X, double *Y, int32_t N,
+        double *dirx, double *diry)     /* resultat */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "directionprincipale2d("
+{
+  int32_t i, ret, imax;
+  double mx1, my1;  // cumuls des variables x et y
+  double mx2, my2, mxy2; // cumuls des x^2, y^2 et xy
+  double cov[2][2]; // pour la matrice de covariance
+  double D[2];      // pour les valeurs propres
+  double V[2][2];   // pour les vecteurs propres
+  double maxvp;
+
+  mx1 = my1 = mx2 = my2 = mxy2 = 0.0;
+  for (i = 0; i < N; i++)
+  {
+     mx1 += X[i]; my1 += Y[i];
+     mx2 += X[i] * X[i]; my2 += Y[i] * Y[i];
+     mxy2 += X[i] * Y[i]; 
+  }
+
+  // moments centres d'ordre 2 (matrice de variance - covariance)
+  cov[0][0] = mx2 - mx1 * mx1 / N;  
+  cov[1][1] = my2 - my1 * my1 / N;  
+  cov[1][0] = cov[0][1] = mxy2 - mx1 * my1 / N;
+
+  ret = lin_jacobi((double *)cov, 2, (double *)D, (double *)V, 0);      
+  assert(ret != 0);
+
+#ifdef DEBUG
+  printf("D = \n");
+  lin_printmat((double *)D, 1, 2);
+  printf("V = \n");
+  lin_printmat((double *)V, 2, 2);
+#endif
+
+  // recherche de la plus grande valeur propre
+  assert(D[0] >= 0);
+  assert(D[1] >= 0);
+  imax = 0; 
+  maxvp = D[0];
+  if (D[1] > maxvp) { imax = 1; maxvp = D[1]; }
+
+  printf("imax = %d\n", imax);
+
+  // le résultat est le vecteur propre associé à la plus grande valeur propre
+  *dirx = V[0][imax];
+  *diry = V[1][imax];
+
+  return(1);
+} // ldirectionprincipale2d
+
+/* ==================================== */
+int32_t ldirectionprincipale3d(
+	double *X, double *Y, double *Z, int32_t N,
+        double *dirx, double *diry, double *dirz)     /* resultat */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "directionprincipale3d("
+{
+  int32_t i, ret, imax;
+  double mx1, my1, mz1; // cumuls des variables x, y et z
+  double mx2, my2, mz2; // cumuls des x^2, y^2 et z^2
+  double mxy2, myz2, mxz2; // cumuls des xy, yz et xz
+  double cov[3][3]; // pour la matrice de covariance
+  double D[3];      // pour les valeurs propres
+  double V[3][3];   // pour les vecteurs propres
+  double maxvp;
+
+  mx1 = my1 = mz1 = mx2 = my2 = mz2 = mxy2 = myz2 = mxz2 = 0.0; 
+  for (i = 0; i < N; i++)
+  {
+     mx1 += X[i]; my1 += Y[i]; mz1 += Z[i];
+     mx2 += X[i] * X[i]; my2 += Y[i] * Y[i]; mz2 += Z[i] * Z[i];
+     mxy2 += X[i] * Y[i]; myz2 += Y[i] * Z[i]; mxz2 += X[i] * Z[i]; 
+  }
+
+  // moments centres d'ordre 2 (matrice de variance - covariance)
+  cov[0][0] = mx2 - mx1 * mx1 / N;  
+  cov[1][1] = my2 - my1 * my1 / N;  
+  cov[2][2] = mz2 - mz1 * mz1 / N;  
+  cov[1][0] = cov[0][1] = mxy2 - mx1 * my1 / N;
+  cov[2][0] = cov[0][2] = mxz2 - mx1 * mz1 / N;
+  cov[1][2] = cov[2][1] = myz2 - my1 * mz1 / N;
+
+  ret = lin_jacobi((double *)cov, 3, (double *)D, (double *)V, 0);      
+  assert(ret != 0);
+
+#ifdef DEBUG
+  printf("D = \n");
+  lin_printmat((double *)D, 1, 3);
+  printf("V = \n");
+  lin_printmat((double *)V, 3, 3);
+#endif
+
+  // recherche de la plus grande valeur propre
+  assert(D[0] >= 0);
+  assert(D[1] >= 0);
+  assert(D[2] >= 0);
+  imax = 0; 
+  maxvp = D[0];
+  if (D[1] > maxvp) { imax = 1; maxvp = D[1]; }
+  if (D[2] > maxvp) { imax = 2; maxvp = D[2]; }
+
+  // le résultat est le vecteur propre associé à la plus grande valeur propre
+  *dirx = V[0][imax];
+  *diry = V[1][imax];
+  *dirz = V[2][imax];
+
+  return(1);
+} // ldirectionprincipale3d

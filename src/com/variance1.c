@@ -46,8 +46,8 @@ values which correspond to non-null points of mask are considered.
 
 <B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
 
-<B>Category:</B> arith
-\ingroup  arith
+<B>Category:</B> signal stats
+\ingroup signal stats
 
 \author Michel Couprie
 */

@@ -52,8 +52,8 @@ and the given points. Method: basic linear regression.
 */
 
 /*
-%TEST identifyline %IMAGES/2dlist/binary/line1.list %RESULTS/identifyline_line1.list
-%TEST identifyline %IMAGES/2dlist/binary/line2.list %RESULTS/identifyline_line2.list
+%TEST identifyline %IMAGES/2dlist/binary/l2line1.list %RESULTS/identifyline_l2line1.list
+%TEST identifyline %IMAGES/2dlist/binary/l2line2.list %RESULTS/identifyline_l2line2.list
 */
 
 /* 
