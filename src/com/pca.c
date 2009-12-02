@@ -39,7 +39,13 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> pca in.list out.list
 
 <B>Description:</B>
-Computes the main direction (2D or 3D vector) of a set of points in 2D or 3D space, by the method of Pricipal Component Analysis (PCA).
+Computes the main directions (2D or 3D vectors) of a set of points in 2D or 3D space, by the method of Pricipal Component Analysis (PCA).
+
+The output is a file in the list "b" or "B" format that contains the following information:
+\li center of mass (point)
+\li first principal direction (vector) 
+\li second principal direction (vector) 
+\li for 3D images, third principal direction (vector) 
 
 <B>Types supported:</B> list 2D, list 3D
 
@@ -71,7 +77,7 @@ int main(int argc, char **argv)
   FILE *fd = NULL;
   int32_t n, i;
   char type;
-  double *X, *Y, *Z, dx, dy, dz;
+  double *X, *Y, *Z, x, y, z, dx1, dy1, dz1, dx2, dy2, dz2, dx3, dy3, dz3;
 
   if (argc != 3)
   {
@@ -101,9 +107,9 @@ int main(int argc, char **argv)
     Y = (double *)malloc(n * sizeof(double)); assert(Y != NULL);
     for (i = 0; i < n; i++)
       fscanf(fd, "%lf %lf\n", &(X[i]), &(Y[i]));
-    if (! ldirectionprincipale2d(X, Y, n, &dx, &dy))
+    if (! ldirectionsprincipales2d(X, Y, n, &x, &y, &dx1, &dy1, &dx2, &dy2))
     {
-      fprintf(stderr, "%s: ldirectionprincipale2d failed\n", argv[0]);
+      fprintf(stderr, "%s: ldirectionsprincipales2d failed\n", argv[0]);
       exit(1);
     }
     fclose(fd);
@@ -113,8 +119,10 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc-1]);
       exit(1);
     }
-    fprintf(fd, "e %d\n", 2); 
-    fprintf(fd, "%lf %lf\n", dx, dy); 
+    fprintf(fd, "e %d\n", 3*2); 
+    fprintf(fd, "%lf %lf\n", x, y); 
+    fprintf(fd, "%lf %lf\n", dx1, dy1); 
+    fprintf(fd, "%lf %lf\n", dx2, dy2); 
     fclose(fd);
   }
   else // 3D
@@ -124,9 +132,9 @@ int main(int argc, char **argv)
     Z = (double *)malloc(n * sizeof(double)); assert(Z != NULL);
     for (i = 0; i < n; i++)
       fscanf(fd, "%lf %lf %lf\n", &(X[i]), &(Y[i]), &(Z[i]));
-    if (! ldirectionprincipale3d(X, Y, Z, n, &dx, &dy, &dz))
+    if (! ldirectionsprincipales3d(X, Y, Z, n, &x, &y, &z, &dx1, &dy1, &dz1, &dx2, &dy2, &dz2, &dx3, &dy3, &dz3))
     {
-      fprintf(stderr, "%s: ldirectionprincipale3d failed\n", argv[0]);
+      fprintf(stderr, "%s: ldirectionsprincipales3d failed\n", argv[0]);
       exit(1);
     }
     fclose(fd);
@@ -136,8 +144,11 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc-1]);
       exit(1);
     }
-    fprintf(fd, "e %d\n", 3); 
-    fprintf(fd, "%lf %lf %lf\n", dx, dy, dz); 
+    fprintf(fd, "e %d\n", 4*3); 
+    fprintf(fd, "%lf %lf %lf\n", x, y, z); 
+    fprintf(fd, "%lf %lf %lf\n", dx1, dy1, dz1); 
+    fprintf(fd, "%lf %lf %lf\n", dx2, dy2, dz2); 
+    fprintf(fd, "%lf %lf %lf\n", dx3, dy3, dz3); 
     fclose(fd);
   }
 

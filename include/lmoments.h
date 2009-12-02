@@ -69,13 +69,19 @@ extern int32_t llistemoments2d(
 	double *X, double *Y, int32_t N,
         Indicateur * indic);     /* resultat */
 
-extern int32_t ldirectionprincipale2d(
+extern int32_t ldirectionsprincipales2d(
 	double *X, double *Y, int32_t N,
-        double *dirx, double *diry);
+        double *xc, double *yc,      /* resultat */
+        double *dx1, double *dy1,    /* resultat */
+        double *dx2, double *dy2);   /* resultat */
 
-extern int32_t ldirectionprincipale3d(
+
+extern int32_t ldirectionsprincipales3d(
 	double *X, double *Y, double *Z, int32_t N,
-        double *dirx, double *diry, double *dirz);
+        double *xc, double *yc, double *zc,      /* resultat */
+        double *dx1, double *dy1, double *dz1,   /* resultat */
+        double *dx2, double *dy2, double *dz2,   /* resultat */
+        double *dx3, double *dy3, double *dz3);  /* resultat */
 
 #ifdef __cplusplus
 }

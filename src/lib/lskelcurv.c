@@ -742,7 +742,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
   struct xvimage *lab2, *lab3;
   uint8_t *T0, *T1, *T2, *T3;
   int32_t nbisol, nbend, nbcurv, nbjunc, nbvertex, nbpoints;
-  int32_t length, ne, nj, nc, ret;
+  int32_t length, ne, nj, ret;
   skel * S;
   SKC_pcell p;
 

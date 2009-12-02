@@ -42,7 +42,8 @@ knowledge of the CeCILL license and that you accept its terms.
 Deriche's recursive implementation of the Gaussian filter
 operator (convolution with a Gaussian kernel). The parameter 
 \b alpha (double) controls the spatial extension of the
-filter: 0 < alpha < infinity, typical value: alpha = 1
+filter: 0 < alpha < infinity, typical value: alpha = 1. 
+Intuitively, the "width" of the gaussian kernel corresponds to 1/\b alpha.
 
 <B>Types supported:</B> byte 2d, long 2d, float 2d, byte 3d, long 3d, float 3d
 

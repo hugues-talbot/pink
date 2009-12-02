@@ -626,20 +626,21 @@ printf("mi1 = %g ; mi2 = %g ; theta1 = %g ; theta2 = %g\n",
 } // llistemoments2d
 
 /* ==================================== */
-int32_t ldirectionprincipale2d(
+int32_t ldirectionsprincipales2d(
 	double *X, double *Y, int32_t N,
-        double *dirx, double *diry)     /* resultat */
+        double *xc, double *yc,      /* resultat */
+        double *dx1, double *dy1,    /* resultat */
+        double *dx2, double *dy2)    /* resultat */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "directionprincipale2d("
+#define F_NAME "directionsprincipales2d("
 {
-  int32_t i, ret, imax;
+  int32_t i, ret;
   double mx1, my1;  // cumuls des variables x et y
   double mx2, my2, mxy2; // cumuls des x^2, y^2 et xy
   double cov[2][2]; // pour la matrice de covariance
   double D[2];      // pour les valeurs propres
   double V[2][2];   // pour les vecteurs propres
-  double maxvp;
 
   mx1 = my1 = mx2 = my2 = mxy2 = 0.0;
   for (i = 0; i < N; i++)
@@ -655,7 +656,7 @@ int32_t ldirectionprincipale2d(
   cov[1][0] = cov[0][1] = mxy2 - mx1 * my1 / N;
 
   ret = lin_jacobi((double *)cov, 2, (double *)D, (double *)V, 0);      
-  assert(ret != 0);
+  if (ret == 0) return 0;
 
 #ifdef DEBUG
   printf("D = \n");
@@ -664,38 +665,41 @@ int32_t ldirectionprincipale2d(
   lin_printmat((double *)V, 2, 2);
 #endif
 
-  // recherche de la plus grande valeur propre
-  assert(D[0] >= 0);
-  assert(D[1] >= 0);
-  imax = 0; 
-  maxvp = D[0];
-  if (D[1] > maxvp) { imax = 1; maxvp = D[1]; }
+  *xc = mx1 / N; *yc = my1 / N;
 
-  printf("imax = %d\n", imax);
-
-  // le résultat est le vecteur propre associé à la plus grande valeur propre
-  *dirx = V[0][imax];
-  *diry = V[1][imax];
+  if (abs(D[1]) > abs(D[0])) 
+  { 
+    *dx1 = V[0][1]; *dy1 = V[1][1];
+    *dx2 = V[0][0]; *dy2 = V[1][0];
+  }
+  else
+  { 
+    *dx1 = V[0][0]; *dy1 = V[1][0];
+    *dx2 = V[0][1]; *dy2 = V[1][1];
+  }
 
   return(1);
-} // ldirectionprincipale2d
+} // ldirectionsprincipales2d
 
 /* ==================================== */
-int32_t ldirectionprincipale3d(
+int32_t ldirectionsprincipales3d(
 	double *X, double *Y, double *Z, int32_t N,
-        double *dirx, double *diry, double *dirz)     /* resultat */
+        double *xc, double *yc, double *zc,      /* resultat */
+        double *dx1, double *dy1, double *dz1,   /* resultat */
+        double *dx2, double *dy2, double *dz2,   /* resultat */
+        double *dx3, double *dy3, double *dz3)   /* resultat */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "directionprincipale3d("
+#define F_NAME "directionsprincipales3d("
 {
-  int32_t i, ret, imax;
+  int32_t i, ret;
   double mx1, my1, mz1; // cumuls des variables x, y et z
   double mx2, my2, mz2; // cumuls des x^2, y^2 et z^2
   double mxy2, myz2, mxz2; // cumuls des xy, yz et xz
   double cov[3][3]; // pour la matrice de covariance
   double D[3];      // pour les valeurs propres
   double V[3][3];   // pour les vecteurs propres
-  double maxvp;
+  double tmp;
 
   mx1 = my1 = mz1 = mx2 = my2 = mz2 = mxy2 = myz2 = mxz2 = 0.0; 
   for (i = 0; i < N; i++)
@@ -714,7 +718,7 @@ int32_t ldirectionprincipale3d(
   cov[1][2] = cov[2][1] = myz2 - my1 * mz1 / N;
 
   ret = lin_jacobi((double *)cov, 3, (double *)D, (double *)V, 0);      
-  assert(ret != 0);
+  if (ret == 0) return 0;
 
 #ifdef DEBUG
   printf("D = \n");
@@ -723,19 +727,41 @@ int32_t ldirectionprincipale3d(
   lin_printmat((double *)V, 3, 3);
 #endif
 
-  // recherche de la plus grande valeur propre
-  assert(D[0] >= 0);
-  assert(D[1] >= 0);
-  assert(D[2] >= 0);
-  imax = 0; 
-  maxvp = D[0];
-  if (D[1] > maxvp) { imax = 1; maxvp = D[1]; }
-  if (D[2] > maxvp) { imax = 2; maxvp = D[2]; }
 
-  // le résultat est le vecteur propre associé à la plus grande valeur propre
-  *dirx = V[0][imax];
-  *diry = V[1][imax];
-  *dirz = V[2][imax];
+  *xc = mx1 / N; *yc = my1 / N; *zc = mz1 / N;
+
+  if (abs(D[1]) > abs(D[0])) 
+  { 
+    tmp = D[1]; D[1] = D[0]; D[0] = tmp;
+    tmp = V[0][1]; V[0][1] = V[0][0]; V[0][0] = tmp;
+    tmp = V[1][1]; V[1][1] = V[1][0]; V[1][0] = tmp;
+    tmp = V[2][1]; V[2][1] = V[2][0]; V[2][0] = tmp;
+  }
+  if (abs(D[2]) > abs(D[1])) 
+  { 
+    tmp = D[2]; D[2] = D[1]; D[1] = tmp;
+    tmp = V[0][2]; V[0][2] = V[0][1]; V[0][1] = tmp;
+    tmp = V[1][2]; V[1][2] = V[1][1]; V[1][1] = tmp;
+    tmp = V[2][2]; V[2][2] = V[2][1]; V[2][1] = tmp;
+  }
+  if (abs(D[1]) > abs(D[0])) 
+  { 
+    tmp = D[1]; D[1] = D[0]; D[0] = tmp;
+    tmp = V[0][1]; V[0][1] = V[0][0]; V[0][0] = tmp;
+    tmp = V[1][1]; V[1][1] = V[1][0]; V[1][0] = tmp;
+    tmp = V[2][1]; V[2][1] = V[2][0]; V[2][0] = tmp;
+  }
+
+#ifdef DEBUG
+  printf("D' = \n");
+  lin_printmat((double *)D, 1, 3);
+  printf("V' = \n");
+  lin_printmat((double *)V, 3, 3);
+#endif
+
+  *dx1 = V[0][0]; *dy1 = V[1][0]; *dz1 = V[2][0];
+  *dx2 = V[0][1]; *dy2 = V[1][1]; *dz2 = V[2][1];
+  *dx3 = V[0][2]; *dy3 = V[1][2]; *dz3 = V[2][2];
 
   return(1);
-} // ldirectionprincipale3d
+} // ldirectionsprincipales3d
