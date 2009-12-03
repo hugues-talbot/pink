@@ -50,6 +50,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcskelcurv.h>
 #include <llabelextrema.h>
 #include <lseltopo.h>
+#include <lmoments.h>
 
 //#define VERBOSE
 //#define DEBUG
@@ -1213,7 +1214,7 @@ Parameter \b length is given in pixels, parameter \b angle in radians.
 } /* lskelfilter1() */
 
 /* ====================================================================== */
-void points_at_head(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
+static void points_at_head(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
 /* ====================================================================== */
 // détermine deux points e et f au "début" de l'arc de courbe Ai, 
 // séparés d'une distance euclidienne d'au moins delta
@@ -1258,7 +1259,7 @@ void points_at_head(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
 } // points_at_head()
 
 /* ====================================================================== */
-void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
+static void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
 /* ====================================================================== */
 // détermine deux points e et f en "fin" de l'arc de courbe Ai, 
 // séparés d'une distance euclidienne d'au moins delta
@@ -1310,7 +1311,7 @@ void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
 } // points_at_tail()
 
 /* ====================================================================== */
-int32_t adj_point_junc(skel *S, int32_t e, int32_t J)
+static int32_t adj_point_junc(skel *S, int32_t e, int32_t J)
 /* ====================================================================== */
 {
   SKC_pcell p;
@@ -1345,7 +1346,7 @@ int32_t adj_point_junc(skel *S, int32_t e, int32_t J)
 } // adj_point_junc()
 
 /* ====================================================================== */
-int32_t lskelfilter2(skel *S, double delta, double theta)
+int32_t lskelfilter2_old(skel *S, double delta, double theta)
 /* ====================================================================== */
 /*
   For each junction J
@@ -1358,7 +1359,7 @@ int32_t lskelfilter2(skel *S, double delta, double theta)
 */
 {
 #undef F_NAME
-#define F_NAME "lskelfilter2"
+#define F_NAME "lskelfilter2_old"
   int32_t rs = S->rs;
   int32_t ps = rs * S->cs;
   int32_t J, Ai, nadj, e, f, i, j, A[26];
@@ -1410,5 +1411,206 @@ int32_t lskelfilter2(skel *S, double delta, double theta)
       }
   } // for (J = S->e_curv; J < S->e_junc; J++)
 
+  return 1;
+} /* lskelfilter2_old() */
+
+/* ====================================================================== */
+static void list_points_at_head(skel *S, int32_t Ai, double delta, int32_t *listpoints, int32_t *npoints)
+/* ====================================================================== */
+// Renvoie dans listpoints la liste des points du "début" de l'arc de courbe Ai, 
+// séparés d'une distance euclidienne de moins (<=) de delta du premier.
+// Renvoie dans npoints le nombre de points trouvés.
+// Le tableau listpoints doit avoir été alloué.
+// En entrée, *npoints contient la taille du tableau listpoints.
+{
+  int32_t rs = S->rs;
+  int32_t ps = rs * S->cs;
+  SKC_pcell p = S->tskel[Ai].pts;
+  double x, y, z, xx, yy, zz;
+  int32_t n, nmax;
+
+  nmax = *npoints;
+  assert(nmax > 0);
+
+  assert(p != NULL);
+  listpoints[0] = p->val;
+  n = 1;
+
+  x = (double)(p->val % rs);
+  y = (double)((p->val % ps) / rs);
+  z = (double)(p->val / ps);
+
+  p = p->next;
+  for (; p != NULL; p = p->next)
+  {
+    xx = (double)(p->val % rs);
+    yy = (double)((p->val % ps) / rs);
+    zz = (double)(p->val / ps);
+    if (dist3(x, y, z, xx, yy, zz) > delta) break;
+    assert(n < nmax);
+    listpoints[n] = p->val;
+    n++;
+  }
+  *npoints = n;
+} // list_points_at_head()
+
+/* ====================================================================== */
+static void list_points_at_tail(skel *S, int32_t Ai, double delta, int32_t *listpoints, int32_t *npoints)
+/* ====================================================================== */
+// Renvoie dans listpoints la liste des points de la "fin" de l'arc de courbe Ai, 
+// séparés d'une distance euclidienne de moins (<=) de delta du dernier.
+// Le dernier point de l'arc est le premier point de listpoints.
+// Renvoie dans npoints le nombre de points trouvés.
+// Le tableau listpoints doit avoir été alloué.
+// En entrée, *npoints contient la taille du tableau listpoints.
+{
+  int32_t rs = S->rs;
+  int32_t ps = rs * S->cs;
+  SKC_pcell p = S->tskel[Ai].pts;
+  double x, y, z, xx, yy, zz;
+  int32_t i, n, nmax, e;
+
+  nmax = *npoints;
+  assert(nmax > 0);
+
+  assert(p != NULL);
+  for (; p != NULL; p = p->next) e = p->val; // atteint le dernier point
+  x = (double)(e % rs);
+  y = (double)((e % ps) / rs);
+  z = (double)(e / ps); 
+
+  for (n = 0, p = S->tskel[Ai].pts; p != NULL; p = p->next) // repart du début
+  {
+    xx = (double)(p->val % rs);
+    yy = (double)((p->val % ps) / rs);
+    zz = (double)(p->val / ps);
+    if (dist3(x, y, z, xx, yy, zz) <= delta)
+    {
+      assert(n < nmax);
+      listpoints[n] = p->val;
+      n++;
+    }
+  }
+  // retourne la liste des points mémorisés
+  for (i = 0; i < n/2; i++)
+  {
+    e = listpoints[i];
+    listpoints[i] = listpoints[n-1-i];
+    listpoints[n-1-i] = e;
+  }
+  *npoints = n;
+} // list_points_at_tail()
+
+/* ====================================================================== */
+int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
+/* ====================================================================== */
+/*
+  For each junction J
+    For each arc Ai adjacent to J
+      compute and store the vector Vi tangent to Ai starting from J
+    For each couple (Vi,Vj) of vectors 
+      compute the cosine similarity Cij between Vi and -Vj
+        (see http://en.wikipedia.org/wiki/Cosine_similarity)
+      if Cij <= theta then mark the arcs Ai and Aj as "aligned"
+*/
+{
+#undef F_NAME
+#define F_NAME "lskelfilter2"
+  int32_t rs = S->rs, ps = rs * S->cs;
+  int32_t ret, J, Ai, nadj, i, j, A[26], npoints, nmaxpoints, *listpoints;
+  SKC_pcell p;
+  double Vx[26], Vy[26], Vz[26], Cij;
+  double *X, *Y, *Z, x, y, z, xx, yy, zz, dmy;
+
+#ifdef DEBUG
+  printf("lskelfilter2: delta1 = %g, delta2 = %g, theta %g\n", delta1, delta2, theta);
+#endif	  
+
+  nmaxpoints = delta2 * 4;
+  listpoints = (int32_t *)malloc(nmaxpoints * sizeof(int32_t));
+  assert(listpoints != NULL);
+
+  for (Ai = S->e_end; Ai < S->e_curv; Ai++)
+    S->tskel[Ai].tag = 1; // mark all arcs as "not aligned"
+
+  for (J = S->e_curv; J < S->e_junc; J++)
+  { // scan all junctions
+    for (p = S->tskel[J].adj,nadj = 0; p != NULL; p = p->next, nadj++)
+    { // scan arcs Ai adjacent to junction J
+      Ai = p->val;
+      A[nadj] = Ai;
+
+      npoints = nmaxpoints;
+      list_points_at_head(S, Ai, delta2, listpoints, &npoints);
+      assert(npoints > 0);
+      if (adj_point_junc(S, listpoints[0], J))
+      { // arc partant de la jonction 
+	x = (double)(listpoints[0] % rs);
+	y = (double)((listpoints[0] % ps) / rs);
+	z = (double)(listpoints[0] / ps);
+	for (j = i = 0; i < npoints; i++)
+	{
+	  xx = (double)(listpoints[i] % rs);
+	  yy = (double)((listpoints[i] % ps) / rs);
+	  yy = (double)(listpoints[i] / ps);
+	  if (dist3(x, y, z, xx, yy, zz) >= delta1)
+	  {
+	    X[j] = xx; Y[j] = yy; Z[j] = zz; 
+	    j++;
+	  }
+	}
+	assert(j > 1);
+	ret = ldirectionsprincipales3d(X, Y, Z, j, 
+				       &dmy, &dmy, &dmy, 
+				       &(Vx[nadj]), &(Vy[nadj]), &(Vz[nadj]),
+				       &dmy, &dmy, &dmy, 
+				       &dmy, &dmy, &dmy);
+	assert(ret != 0);
+      } // if (adj_point_junc(S, listpoints[0], J))
+      else
+      { // arc arrivant à la jonction 
+	list_points_at_tail(S, Ai, delta2, listpoints, &npoints);
+	assert(npoints > 0);
+	assert(adj_point_junc(S, listpoints[0], J));
+	x = (double)(listpoints[0] % rs);
+	y = (double)((listpoints[0] % ps) / rs);
+	z = (double)(listpoints[0] / ps);
+	for (j = i = 0; i < npoints; i++)
+	{
+	  xx = (double)(listpoints[i] % rs);
+	  yy = (double)((listpoints[i] % ps) / rs);
+	  yy = (double)(listpoints[i] / ps);
+	  if (dist3(x, y, z, xx, yy, zz) >= delta1)
+	  {
+	    X[j] = xx; Y[j] = yy; Z[j] = zz; 
+	    j++;
+	  }
+	}
+	assert(j > 1);
+	ret = ldirectionsprincipales3d(X, Y, Z, j, 
+				       &dmy, &dmy, &dmy, 
+				       &(Vx[nadj]), &(Vy[nadj]), &(Vz[nadj]),
+				       &dmy, &dmy, &dmy, 
+				       &dmy, &dmy, &dmy);
+	assert(ret != 0);
+      } // else
+    } // for (p = S->tskel[J].adj,nadj = 0; p != NULL; p = p->next, nadj++)
+    for (i = 0; i < nadj-1; i++)
+      for (j = i+1; j < nadj; j++)
+      {
+	Cij = acos(scalarprod(Vx[i], Vy[i], Vz[i], Vx[j], Vy[j], Vz[j]) / 
+		      (norm(Vx[i], Vy[i], Vz[i]) * norm(Vx[j], Vy[j], Vz[j])));
+	if (Cij <= theta)
+	{
+	  S->tskel[A[i]].tag = 0;
+	  S->tskel[A[j]].tag = 0;
+#ifdef DEBUG
+	  printf("mark %d and %d\n", A[i], A[j]);
+#endif	  
+	}
+      }
+  } // for (J = S->e_curv; J < S->e_junc; J++)
+
+  free(listpoints); free(X); free(Y); free(Z);
   return 1;
 } /* lskelfilter2() */

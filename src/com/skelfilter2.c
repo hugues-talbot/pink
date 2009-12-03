@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief selection of "aligned branches" in a curvilinear skeleton
 
-<B>Usage:</B> skelfilter2 in.skel delta theta out.pgm
+<B>Usage:</B> skelfilter2 in.skel delta1 delta2 theta out.pgm
 
 <B>Description:</B>
 
@@ -50,7 +50,9 @@ For each junction J
     if Cij <= theta then mark the arcs Ai and Aj as "aligned"
 \endverbatim
 
-Parameter \b delta is used to compute the tangent vectors.
+Parameters \b delta1 and \b delta2 are used to compute the tangent vectors:
+the points taken into account for computing the vector for arc A have a 
+Euclidean distance to the nearest junction point that is between \b delta1 and \b delta2.
 
 Only the marked branches are kept.
 
@@ -85,11 +87,11 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   skel * S;
-  double length, angle;
+  double delta1, delta2, angle;
 
-  if (argc != 5)
+  if (argc != 6)
   {
-    fprintf(stderr, "usage: %s in.skel length angle out.skel\n", argv[0]);
+    fprintf(stderr, "usage: %s in.skel delta1 delta2 angle out.skel\n", argv[0]);
     exit(1);
   }
 
@@ -100,13 +102,14 @@ int main(int argc, char **argv)
     exit(1);
   }
   
-  length = atof(argv[2]);
-  angle = atof(argv[3]);
+  delta1 = atof(argv[2]);
+  delta2 = atof(argv[3]);
+  angle = atof(argv[4]);
 
   //  printskel(S);
 
   angle = (angle * M_PI) / 180;
-  if (!lskelfilter2(S, length, angle))
+  if (!lskelfilter2(S, delta1, delta2, angle))
   {
     fprintf(stderr, "%s: function lskelfilter2 failed\n", argv[0]);
     exit(1);

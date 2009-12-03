@@ -39,11 +39,15 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> gaussianfilter in.pgm alpha out.pgm
 
 <B>Description:</B>
-Deriche's recursive implementation of the Gaussian filter
-operator (convolution with a Gaussian kernel). The parameter 
-\b alpha (double) controls the spatial extension of the
+Deriche's recursive implementation of the smoothing filter
+operator (approximates the convolution with a Gaussian kernel). 
+The parameter \b alpha (double) controls the spatial extension of the
 filter: 0 < alpha < infinity, typical value: alpha = 1. 
-Intuitively, the "width" of the gaussian kernel corresponds to 1/\b alpha.
+Intuitively, the "width" of the Gaussian kernel corresponds to 1/\b alpha.
+
+Reference:<BR> 
+[Der90] R. Deriche, "Fast algorithms for low-level vision",
+IEEE Transactions on PAMI, 12(1), 78-87, 1990.<BR>
 
 <B>Types supported:</B> byte 2d, long 2d, float 2d, byte 3d, long 3d, float 3d
 
