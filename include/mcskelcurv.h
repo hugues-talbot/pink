@@ -88,15 +88,16 @@ typedef struct {
   SKC_cell * tcell;    // tableau des cellules (tas)
 } skel;
 
-#define IS_ISOL(x) (x<S->e_isol)
-#define IS_END(x) ((x>=S->e_isol)&&(x<S->e_end))
-#define IS_CURV(x) ((x>=S->e_end)&&(x<S->e_curv))
-#define IS_JUNC(x) (x>=S->e_curv)
+#define IS_ISOL(x) ((x)<S->e_isol)
+#define IS_END(x) (((x)>=S->e_isol)&&((x)<S->e_end))
+#define IS_CURV(x) (((x)>=S->e_end)&&((x)<S->e_curv))
+#define IS_JUNC(x) ((x)>=S->e_curv)
 
 /* ================================================ */
 /* prototypes */
 /* ================================================ */
 
+extern void printskel(skel * S);
 extern skel * initskel(uint32_t rs, uint32_t cs, uint32_t ds, 
   uint32_t nbvertex, uint32_t nbcell, int32_t connex);
 extern void termineskel(skel * S);

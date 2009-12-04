@@ -48,6 +48,8 @@ For each junction J
     compute the cosine similarity Cij between Vi and -Vj
       (see http://en.wikipedia.org/wiki/Cosine_similarity)
     if Cij <= theta then mark the arcs Ai and Aj as "aligned"
+For each arc Ai not adjacent to any junction
+  mark Ai
 \endverbatim
 
 Parameters \b delta1 and \b delta2 are used to compute the tangent vectors:
@@ -65,10 +67,10 @@ Only the marked branches are kept.
 */
 
 /*
-%TEST skelfilter2 %IMAGES/2dskel/s2skel4.skel 5 15 %RESULTS/skelfilter2_s2skel4.skel
-%TEST skelfilter2 %IMAGES/2dskel/s2skel8.skel 5 15 %RESULTS/skelfilter2_s2skel8.skel
-%TEST skelfilter2 %IMAGES/3dskel/s3skel6.skel 5 15 %RESULTS/skelfilter2_s3skel6.skel
-%TEST skelfilter2 %IMAGES/3dskel/s3skel26.skel 5 15 %RESULTS/skelfilter2_s3skel26.skel
+%TEST skelfilter2 %IMAGES/2dskel/s2skel4.skel 3 8 30 %RESULTS/skelfilter2_s2skel4.skel
+%TEST skelfilter2 %IMAGES/2dskel/s2skel8.skel 3 8 30 %RESULTS/skelfilter2_s2skel8.skel
+%TEST skelfilter2 %IMAGES/3dskel/s3skel6.skel 3 8 30 %RESULTS/skelfilter2_s3skel6.skel
+%TEST skelfilter2 %IMAGES/3dskel/s3skel26.skel 3 8 30 %RESULTS/skelfilter2_s3skel26.skel
 */
 
 #include <stdio.h>

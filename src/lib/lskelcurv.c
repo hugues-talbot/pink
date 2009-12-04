@@ -47,13 +47,14 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mctopo.h>
 #include <mctopo3d.h>
 #include <mclifo.h>
+#include <mcutil.h>
 #include <mcskelcurv.h>
 #include <llabelextrema.h>
 #include <lseltopo.h>
 #include <lmoments.h>
 
 //#define VERBOSE
-//#define DEBUG
+#define DEBUG
 
 //#define DEBUG1
 #ifdef DEBUG1
@@ -1509,7 +1510,7 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
     For each arc Ai adjacent to J
       compute and store the vector Vi tangent to Ai starting from J
     For each couple (Vi,Vj) of vectors 
-      compute the cosine similarity Cij between Vi and -Vj
+      compute the cosine similarity Cij between Vi and Vj
         (see http://en.wikipedia.org/wiki/Cosine_similarity)
       if Cij <= theta then mark the arcs Ai and Aj as "aligned"
 */
@@ -1522,16 +1523,34 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
   double Vx[26], Vy[26], Vz[26], Cij;
   double *X, *Y, *Z, x, y, z, xx, yy, zz, dmy;
 
+#ifdef DEBUGDRAW
+  struct xvimage *dbg = allocimage(NULL, S->rs, S->cs, S->ds, VFF_TYP_1_BYTE); assert(dbg != NULL);
+  razimage(dbg);
+#endif	  
 #ifdef DEBUG
   printf("lskelfilter2: delta1 = %g, delta2 = %g, theta %g\n", delta1, delta2, theta);
 #endif	  
 
   nmaxpoints = delta2 * 4;
-  listpoints = (int32_t *)malloc(nmaxpoints * sizeof(int32_t));
-  assert(listpoints != NULL);
+  listpoints = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(listpoints != NULL);
+  X = (double *)malloc(nmaxpoints * sizeof(double)); assert(X != NULL);
+  Y = (double *)malloc(nmaxpoints * sizeof(double)); assert(Y != NULL);
+  Z = (double *)malloc(nmaxpoints * sizeof(double)); assert(Z != NULL);
 
   for (Ai = S->e_end; Ai < S->e_curv; Ai++)
-    S->tskel[Ai].tag = 1; // mark all arcs as "not aligned"
+  { 
+    p = S->tskel[Ai].adj;
+    if (p == NULL) // arc fermé (cycle)
+    {
+      S->tskel[Ai].tag = 0; // mark as "aligned"
+      break;
+    }
+    assert(p->next != NULL); // soit 0, soit 2 adjacences
+    if ((!IS_JUNC(p->val)) && (!IS_JUNC(p->next->val)))
+      S->tskel[Ai].tag = 0; // mark as "aligned"
+    else
+      S->tskel[Ai].tag = 1; // mark as "not aligned"
+  }
 
   for (J = S->e_curv; J < S->e_junc; J++)
   { // scan all junctions
@@ -1552,7 +1571,7 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
 	{
 	  xx = (double)(listpoints[i] % rs);
 	  yy = (double)((listpoints[i] % ps) / rs);
-	  yy = (double)(listpoints[i] / ps);
+	  zz = (double)(listpoints[i] / ps);
 	  if (dist3(x, y, z, xx, yy, zz) >= delta1)
 	  {
 	    X[j] = xx; Y[j] = yy; Z[j] = zz; 
@@ -1566,9 +1585,13 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
 				       &dmy, &dmy, &dmy, 
 				       &dmy, &dmy, &dmy);
 	assert(ret != 0);
+#ifdef DEBUGDRAW
+	ldrawline(dbg, arrondi(x), arrondi(y), arrondi((x+(10*Vx[nadj]))), arrondi((y+(10*Vy[nadj]))));
+#endif
       } // if (adj_point_junc(S, listpoints[0], J))
       else
       { // arc arrivant à la jonction 
+	npoints = nmaxpoints;
 	list_points_at_tail(S, Ai, delta2, listpoints, &npoints);
 	assert(npoints > 0);
 	assert(adj_point_junc(S, listpoints[0], J));
@@ -1579,7 +1602,7 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
 	{
 	  xx = (double)(listpoints[i] % rs);
 	  yy = (double)((listpoints[i] % ps) / rs);
-	  yy = (double)(listpoints[i] / ps);
+	  zz = (double)(listpoints[i] / ps);
 	  if (dist3(x, y, z, xx, yy, zz) >= delta1)
 	  {
 	    X[j] = xx; Y[j] = yy; Z[j] = zz; 
@@ -1593,8 +1616,16 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
 				       &dmy, &dmy, &dmy, 
 				       &dmy, &dmy, &dmy);
 	assert(ret != 0);
+#ifdef DEBUGDRAW
+	ldrawline(dbg, arrondi(x), arrondi(y), arrondi((x+(10*Vx[nadj]))), arrondi((y+(10*Vy[nadj]))));
+#endif
       } // else
     } // for (p = S->tskel[J].adj,nadj = 0; p != NULL; p = p->next, nadj++)
+
+#ifdef DEBUGDRAW
+    writeimage(dbg, "_dbg");
+#endif
+
     for (i = 0; i < nadj-1; i++)
       for (j = i+1; j < nadj; j++)
       {

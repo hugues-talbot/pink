@@ -192,18 +192,6 @@ extern void PlongementRadial(graphe * g, int32_t c);
 
 /* ====================================================================== */
 /* ====================================================================== */
-/* FONCTIONS SUR LES LISTES CHAINEES DE SOMMETS */
-/* ====================================================================== */
-/* ====================================================================== */
-
-extern pcell AlloueCell(pcell * plibre);
-extern void LibereCell(pcell * plibre, pcell p);
-extern void RetireTete(pcell * plibre, pcell * pliste);
-extern void AjouteTete(pcell * plibre, pcell * pliste, int32_t a, TYP_VARC v);
-extern int32_t EstDansListe(pcell p, int32_t a);
-
-/* ====================================================================== */
-/* ====================================================================== */
 /* FONCTIONS DE MANIPULATION DES ARCS */
 /* ====================================================================== */
 /* ====================================================================== */

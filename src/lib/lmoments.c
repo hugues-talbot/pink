@@ -60,10 +60,8 @@ knowledge of the CeCILL license and that you accept its terms.
 *
 ****************************************************************/
 
-#define DEBUG
-/*
-#define VERBOSE
-*/
+//#define DEBUG
+//#define VERBOSE
 
 #define EPSILON 1E-6
 
@@ -721,6 +719,8 @@ int32_t ldirectionsprincipales3d(
   if (ret == 0) return 0;
 
 #ifdef DEBUG
+  printf("cov = \n");
+  lin_printmat((double *)cov, 3, 3);
   printf("D = \n");
   lin_printmat((double *)D, 1, 3);
   printf("V = \n");

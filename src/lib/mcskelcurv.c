@@ -66,9 +66,8 @@ static int32_t tailleliste(SKC_pcell p)
   return n;
 } /* tailleliste() */
 
-#ifdef DEBUG
 /* ====================================================================== */
-void printliste(SKC_pcell p)
+static void printliste(SKC_pcell p)
 /* ====================================================================== */
 {
   for (; p != NULL; p = p->next)
@@ -76,7 +75,7 @@ void printliste(SKC_pcell p)
 } /* printliste() */
 
 /* ====================================================================== */
-void printptsliste(SKC_pcell p, int32_t rs)
+static void printptsliste(SKC_pcell p, int32_t rs)
 /* ====================================================================== */
 {
   for (; p != NULL; p = p->next)
@@ -114,7 +113,6 @@ void printskel(skel * S)
     printf("pts: "); printptsliste(S->tskel[i].pts, S->rs); printf("\n");
   }
 } /* printskel() */
-#endif
 
 /* ================================================ */
 /* ================================================ */

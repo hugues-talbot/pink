@@ -75,7 +75,7 @@ knowledge of the CeCILL license and that you accept its terms.
     \return pointeur sur une cellule.
     \brief retire la premiere cellule de la liste pointée par plibre et retourne un pointeur sur cette cellule.
 */
-pcell AlloueCell(pcell * plibre)
+static pcell AlloueCell(pcell * plibre)
 /* ====================================================================== */
 #undef F_NAME
 #define F_NAME "AlloueCell"
@@ -97,7 +97,7 @@ pcell AlloueCell(pcell * plibre)
     \param p (entrée) : pointeur sur une cellule.
     \brief insère la cellule p au début de la liste pointée par 'plibre'. 
 */
-void LibereCell(pcell * plibre, pcell p)
+static void LibereCell(pcell * plibre, pcell p)
 /* ====================================================================== */
 {
   p->next = *plibre;
@@ -110,7 +110,7 @@ void LibereCell(pcell * plibre, pcell p)
     \param pliste (entrée) : pointeur sur une liste.
     \brief retire la première cellule de la liste 'pliste'. La cellule est chaînee à la liste 'plibre'. 
 */
-void RetireTete(pcell * plibre, pcell * pliste)
+static void RetireTete(pcell * plibre, pcell * pliste)
 /* ====================================================================== */
 {
   pcell p;
@@ -127,7 +127,7 @@ void RetireTete(pcell * plibre, pcell * pliste)
     \param v (entrée) : une valeur.
     \brief ajoute une cellule contenant le sommet 'a' et la valeur 'v' en tête de la liste 'pliste'. La cellule est prise dans la liste 'plibre'. 
 */
-void AjouteTete(pcell * plibre, pcell * pliste, int32_t a, TYP_VARC v)
+static void AjouteTete(pcell * plibre, pcell * pliste, int32_t a, TYP_VARC v)
 /* ====================================================================== */
 {
   pcell p;
@@ -145,7 +145,7 @@ void AjouteTete(pcell * plibre, pcell * pliste, int32_t a, TYP_VARC v)
     \return booléen.
     \brief retourne 1 si le sommet 'a' se trouve dans la liste 'p', 0 sinon. 
 */
-int32_t EstDansListe(pcell p, int32_t a) 
+static int32_t EstDansListe(pcell p, int32_t a) 
 /* ====================================================================== */
 {
   for (; p != NULL; p = p->next)
@@ -950,7 +950,7 @@ graphe * GrapheAleatoire(int32_t nsom, int32_t narc)
     \return un tableau de \b n booléens, tous égaux à FALSE.
     \brief alloue et initialise un tableau de \b n booléens, représentant l'ensemble vide.
 */
-boolean * EnsembleVide(int32_t n)
+static boolean * EnsembleVide(int32_t n)
 /* ====================================================================== */
 {
   boolean *Ca = (boolean *)calloc(n, sizeof(boolean));
@@ -967,12 +967,12 @@ boolean * EnsembleVide(int32_t n)
     \return un tableau de \b n entiers
     \brief alloue et initialise un tableau de \b n entiers
 */
-int32_t * ListeVide(int32_t n)
+static int32_t * ListeVide(int32_t n)
 /* ====================================================================== */
 {
   int32_t *Ca = (int32_t *)calloc(n, sizeof(int32_t));
   if (Ca == NULL)
-  {   fprintf(stderr, "EnsembleVide : calloc failed\n");
+  {   fprintf(stderr, "ListeVide : calloc failed\n");
       exit(0);
   }
   return Ca;
