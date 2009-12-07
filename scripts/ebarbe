@@ -33,4 +33,4 @@ sub         $1 /tmp/_ebarbe2 /tmp/_ebarbe6
 max         /tmp/_ebarbe6 /tmp/_ebarbe5 /tmp/_ebarbe7
 geodilat    /tmp/_ebarbe5 /tmp/_ebarbe7 $CONNEX $3 /tmp/_ebarbe8
 max         /tmp/_ebarbe2 /tmp/_ebarbe8 $4
-#rm -f       /tmp/_ebarbe?
+rm -f       /tmp/_ebarbe?

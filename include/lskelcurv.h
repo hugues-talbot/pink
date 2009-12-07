@@ -40,7 +40,7 @@ extern skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len);
 extern struct xvimage * lskel2image(skel *S);
 extern struct xvimage * lskelmarked2image(skel *S);
 extern int32_t lskelfilter1(skel *S, double length, double angle);
-extern int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta);
+extern int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_t length);
 #ifdef __cplusplus
 }
 #endif

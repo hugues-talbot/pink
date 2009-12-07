@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief selection of "aligned branches" in a curvilinear skeleton
 
-<B>Usage:</B> skelfilter2 in.skel delta1 delta2 theta out.pgm
+<B>Usage:</B> skelfilter2 in.skel delta1 delta2 theta len out.pgm
 
 <B>Description:</B>
 
@@ -48,7 +48,7 @@ For each junction J
     compute the cosine similarity Cij between Vi and -Vj
       (see http://en.wikipedia.org/wiki/Cosine_similarity)
     if Cij <= theta then mark the arcs Ai and Aj as "aligned"
-For each arc Ai not adjacent to any junction
+For each arc Ai not adjacent to any junction or longer than len
   mark Ai
 \endverbatim
 
@@ -89,11 +89,11 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   skel * S;
-  double delta1, delta2, angle;
+  double delta1, delta2, angle, len;
 
-  if (argc != 6)
+  if (argc != 7)
   {
-    fprintf(stderr, "usage: %s in.skel delta1 delta2 angle out.skel\n", argv[0]);
+    fprintf(stderr, "usage: %s in.skel delta1 delta2 angle len out.skel\n", argv[0]);
     exit(1);
   }
 
@@ -107,11 +107,12 @@ int main(int argc, char **argv)
   delta1 = atof(argv[2]);
   delta2 = atof(argv[3]);
   angle = atof(argv[4]);
+  len = atof(argv[5]);
 
   //  printskel(S);
 
   angle = (angle * M_PI) / 180;
-  if (!lskelfilter2(S, delta1, delta2, angle))
+  if (!lskelfilter2(S, delta1, delta2, angle, len))
   {
     fprintf(stderr, "%s: function lskelfilter2 failed\n", argv[0]);
     exit(1);

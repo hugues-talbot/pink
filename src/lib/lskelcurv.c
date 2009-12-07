@@ -55,6 +55,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 //#define VERBOSE
 #define DEBUG
+#define DEBUGDRAW
 
 //#define DEBUG1
 #ifdef DEBUG1
@@ -725,6 +726,15 @@ static int32_t is_simple(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t 
   default: assert(0);
   }
 } // is_simple()
+
+/* ====================================================================== */
+static int32_t tailleliste(SKC_pcell p)
+/* ====================================================================== */
+{
+  int32_t n = 0;
+  for (; p != NULL; p = p->next) n++;
+  return n;
+} /* tailleliste() */
 
 /* ====================================================================== */
 skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
@@ -1503,7 +1513,7 @@ static void list_points_at_tail(skel *S, int32_t Ai, double delta, int32_t *list
 } // list_points_at_tail()
 
 /* ====================================================================== */
-int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
+int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_t length)
 /* ====================================================================== */
 /*
   For each junction J
@@ -1513,6 +1523,9 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
       compute the cosine similarity Cij between Vi and Vj
         (see http://en.wikipedia.org/wiki/Cosine_similarity)
       if Cij <= theta then mark the arcs Ai and Aj as "aligned"
+
+  Any arc that is closed (cycle), isolated (two ends) or longer than 
+  parameter length is also marked as "aligned"
 */
 {
 #undef F_NAME
@@ -1521,7 +1534,7 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
   int32_t ret, J, Ai, nadj, i, j, A[26], npoints, nmaxpoints, *listpoints;
   SKC_pcell p;
   double Vx[26], Vy[26], Vz[26], Cij;
-  double *X, *Y, *Z, x, y, z, xx, yy, zz, dmy;
+  double *X, *Y, *Z, x, y, z, xc, yc, zc, xx, yy, zz, dmy;
 
 #ifdef DEBUGDRAW
   struct xvimage *dbg = allocimage(NULL, S->rs, S->cs, S->ds, VFF_TYP_1_BYTE); assert(dbg != NULL);
@@ -1546,7 +1559,8 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
       break;
     }
     assert(p->next != NULL); // soit 0, soit 2 adjacences
-    if ((!IS_JUNC(p->val)) && (!IS_JUNC(p->next->val)))
+    if (((!IS_JUNC(p->val)) && (!IS_JUNC(p->next->val))) ||
+	(tailleliste(p) >= length))
       S->tskel[Ai].tag = 0; // mark as "aligned"
     else
       S->tskel[Ai].tag = 1; // mark as "not aligned"
@@ -1573,18 +1587,22 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
 	  yy = (double)((listpoints[i] % ps) / rs);
 	  zz = (double)(listpoints[i] / ps);
 	  if (dist3(x, y, z, xx, yy, zz) >= delta1)
-	  {
-	    X[j] = xx; Y[j] = yy; Z[j] = zz; 
+	  { // origine pour le calcul de la direction principale : (x,y,z) 
+	    X[j] = xx - x; Y[j] = yy - y; Z[j] = zz - z; 
 	    j++;
 	  }
 	}
 	assert(j > 1);
 	ret = ldirectionsprincipales3d(X, Y, Z, j, 
-				       &dmy, &dmy, &dmy, 
+				       &xc, &yc, &zc, 
 				       &(Vx[nadj]), &(Vy[nadj]), &(Vz[nadj]),
 				       &dmy, &dmy, &dmy, 
 				       &dmy, &dmy, &dmy);
 	assert(ret != 0);
+	if (scalarprod(Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc) < 0)
+	{
+	  Vx[nadj] = -Vx[nadj]; Vy[nadj] = -Vy[nadj]; Vz[nadj] = -Vz[nadj];
+	}
 #ifdef DEBUGDRAW
 	ldrawline(dbg, arrondi(x), arrondi(y), arrondi((x+(10*Vx[nadj]))), arrondi((y+(10*Vy[nadj]))));
 #endif
@@ -1604,18 +1622,22 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta)
 	  yy = (double)((listpoints[i] % ps) / rs);
 	  zz = (double)(listpoints[i] / ps);
 	  if (dist3(x, y, z, xx, yy, zz) >= delta1)
-	  {
-	    X[j] = xx; Y[j] = yy; Z[j] = zz; 
+	  { // origine pour le calcul de la direction principale : (x,y,z) 
+	    X[j] = xx - x; Y[j] = yy - y; Z[j] = zz - z; 
 	    j++;
 	  }
 	}
 	assert(j > 1);
 	ret = ldirectionsprincipales3d(X, Y, Z, j, 
-				       &dmy, &dmy, &dmy, 
+				       &xc, &yc, &zc, 
 				       &(Vx[nadj]), &(Vy[nadj]), &(Vz[nadj]),
 				       &dmy, &dmy, &dmy, 
 				       &dmy, &dmy, &dmy);
 	assert(ret != 0);
+	if (scalarprod(Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc) < 0)
+	{
+	  Vx[nadj] = -Vx[nadj]; Vy[nadj] = -Vy[nadj]; Vz[nadj] = -Vz[nadj];
+	}
 #ifdef DEBUGDRAW
 	ldrawline(dbg, arrondi(x), arrondi(y), arrondi((x+(10*Vx[nadj]))), arrondi((y+(10*Vy[nadj]))));
 #endif
