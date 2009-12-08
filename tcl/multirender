@@ -78,10 +78,10 @@ source "$PINK/tcl/my_dialog.tcl"
  set RENDER_COL(0) "1.0 1.0 1.0"
 # orange
  set RENDER_COL(1) "1.0 0.49 0.25"
-# red
- set RENDER_COL(2) "1.0 0.0 0.0"
 # indigo
- set RENDER_COL(3) "0.49 0.25 1.0"
+ set RENDER_COL(2) "0.49 0.25 1.0"
+# red
+ set RENDER_COL(3) "1.0 0.0 0.0"
 # green
  set RENDER_COL(4) "0.49 1.0 0.25"
 #

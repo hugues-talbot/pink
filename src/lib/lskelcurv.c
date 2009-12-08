@@ -53,10 +53,9 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lseltopo.h>
 #include <lmoments.h>
 
-//#define VERBOSE
-#define DEBUG
-#define DEBUGDRAW
-
+#define VERBOSE
+//#define DEBUG
+//#define DEBUGDRAW
 //#define DEBUG1
 #ifdef DEBUG1
 static uint32_t nptsisol=0;
@@ -420,7 +419,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
   // 2eme étape: parcourt la courbe et enregistre les infos
   if (closed) 
   {
-    int32_t ii, m = start + pos;
+    int32_t m = start + pos;
     S->tskel[m].adj = S->tskel[m].pts = NULL;
 
     assert(T2[i]);
@@ -430,7 +429,6 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
 #endif
     addptslist(S, m, i);
     T2[i] = 3;
-    ii = i; // point de base
 #ifdef DEBUG
   printf("%s: closed : point i = %d,%d traité\n", F_NAME, i%S->rs, i/S->rs);
 #endif
@@ -451,15 +449,6 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
       addptslist(S, m, j);
       i = j;
     } // while (!trouve)
-
-#ifdef DEBUG1
-    nptscurv++;
-    printf("add 3 point curv %d,%d nb %d\n", m, ii, nptscurv);
-#endif
-    addptslist(S, m, ii);
-#ifdef DEBUG
-  printf("%s: closed : point ii = %d,%d traité (FIN)\n", F_NAME, ii%S->rs, ii/S->rs);
-#endif
   }
   else // courbe ouverte
   {
@@ -482,11 +471,6 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
     else  // extrémité "end"
     {
       assert(T1[i] && T2[i]); 
-#ifdef DEBUG1
-      nptscurv++;
-      printf("add 5 point curv %d,%d nb %d\n", m, i, nptscurv);
-#endif
-      addptslist(S, m, i);
 
 #ifdef DEBUG1
       nadjcurv++;
@@ -1150,6 +1134,25 @@ static double distancetoskel(skel *S, double x, double y, double z)
 } // distancetoskel()
 
 /* ====================================================================== */
+int32_t lskelmarkvertex(skel *S, int32_t vertex_id)
+/* ====================================================================== */
+// Mark the specified vertex
+{
+#undef F_NAME
+#define F_NAME "lskelmarkvertex"
+  int32_t i;
+
+  if (vertex_id < 0) return 0;
+  if (vertex_id >= S->e_junc) return 0;
+
+  for (i = 0; i < S->e_junc; i++)
+    S->tskel[i].tag = 0; // not marked
+
+  S->tskel[vertex_id].tag = 1; // marked
+  return 1;
+} /* lskelmarkvertex() */
+
+/* ====================================================================== */
 int32_t lskelfilter1(skel *S, double length, double angle)
 /* ====================================================================== */
 /*
@@ -1520,12 +1523,14 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_
     For each arc Ai adjacent to J
       compute and store the vector Vi tangent to Ai starting from J
     For each couple (Vi,Vj) of vectors 
-      compute the cosine similarity Cij between Vi and Vj
+      compute the cosine similarity Cij between Vi and -Vj
         (see http://en.wikipedia.org/wiki/Cosine_similarity)
       if Cij <= theta then mark the arcs Ai and Aj as "aligned"
 
+  The matching branches are marked (field "tag" = 1)
   Any arc that is closed (cycle), isolated (two ends) or longer than 
   parameter length is also marked as "aligned"
+  For the sake of connectivity, junctions are also marked.
 */
 {
 #undef F_NAME
@@ -1550,20 +1555,23 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_
   Y = (double *)malloc(nmaxpoints * sizeof(double)); assert(Y != NULL);
   Z = (double *)malloc(nmaxpoints * sizeof(double)); assert(Z != NULL);
 
-  for (Ai = S->e_end; Ai < S->e_curv; Ai++)
-  { 
+  for (J = S->e_curv; J < S->e_junc; J++) // mark all junctions
+    S->tskel[J].tag = 1; 
+
+  for (Ai = S->e_end; Ai < S->e_curv; Ai++) // scan all arcs
+  {
     p = S->tskel[Ai].adj;
     if (p == NULL) // arc fermé (cycle)
     {
-      S->tskel[Ai].tag = 0; // mark as "aligned"
+      S->tskel[Ai].tag = 1; // mark as "aligned"
       break;
     }
     assert(p->next != NULL); // soit 0, soit 2 adjacences
     if (((!IS_JUNC(p->val)) && (!IS_JUNC(p->next->val))) ||
-	(tailleliste(p) >= length))
-      S->tskel[Ai].tag = 0; // mark as "aligned"
+	(tailleliste(S->tskel[Ai].pts) >= length))
+      S->tskel[Ai].tag = 1; // mark as "aligned"
     else
-      S->tskel[Ai].tag = 1; // mark as "not aligned"
+      S->tskel[Ai].tag = 0; // mark as "not aligned"
   }
 
   for (J = S->e_curv; J < S->e_junc; J++)
@@ -1592,20 +1600,33 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_
 	    j++;
 	  }
 	}
-	assert(j > 1);
-	ret = ldirectionsprincipales3d(X, Y, Z, j, 
-				       &xc, &yc, &zc, 
-				       &(Vx[nadj]), &(Vy[nadj]), &(Vz[nadj]),
-				       &dmy, &dmy, &dmy, 
-				       &dmy, &dmy, &dmy);
-	assert(ret != 0);
-	if (scalarprod(Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc) < 0)
+	if (j > 1)
 	{
-	  Vx[nadj] = -Vx[nadj]; Vy[nadj] = -Vy[nadj]; Vz[nadj] = -Vz[nadj];
-	}
+	  ret = ldirectionsprincipales3d(X, Y, Z, j, 
+					 &xc, &yc, &zc, 
+					 &(Vx[nadj]), &(Vy[nadj]), &(Vz[nadj]),
+					 &dmy, &dmy, &dmy, 
+					 &dmy, &dmy, &dmy); assert(ret != 0);
+#ifdef DEBUG
+	printf("Arc Ai = %d ; V=(%g,%g,%g) ; c=(%g,%g,%g) ; prod=%g\n", 
+	       Ai, Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc, 
+	       scalarprod(Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc));
+#endif	  
+	  if (scalarprod(Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc) < 0)
+	  {
+	    Vx[nadj] = -Vx[nadj]; Vy[nadj] = -Vy[nadj]; Vz[nadj] = -Vz[nadj];
+	  }
 #ifdef DEBUGDRAW
-	ldrawline(dbg, arrondi(x), arrondi(y), arrondi((x+(10*Vx[nadj]))), arrondi((y+(10*Vy[nadj]))));
+	  ldrawline(dbg, arrondi(x), arrondi(y), arrondi((x+(10*Vx[nadj]))), arrondi((y+(10*Vy[nadj]))));
 #endif
+	}
+	else
+	{
+#ifdef VERBOSE
+	  printf("%s: warning: arc %d too short (length %d)\n", F_NAME, Ai, tailleliste(S->tskel[Ai].pts));
+#endif
+	  Vx[nadj] = Vy[nadj] = Vz[nadj] = 0.0;
+	}
       } // if (adj_point_junc(S, listpoints[0], J))
       else
       { // arc arrivant à la jonction 
@@ -1627,20 +1648,33 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_
 	    j++;
 	  }
 	}
-	assert(j > 1);
-	ret = ldirectionsprincipales3d(X, Y, Z, j, 
-				       &xc, &yc, &zc, 
-				       &(Vx[nadj]), &(Vy[nadj]), &(Vz[nadj]),
-				       &dmy, &dmy, &dmy, 
-				       &dmy, &dmy, &dmy);
-	assert(ret != 0);
-	if (scalarprod(Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc) < 0)
+	if (j > 1)
 	{
-	  Vx[nadj] = -Vx[nadj]; Vy[nadj] = -Vy[nadj]; Vz[nadj] = -Vz[nadj];
-	}
+	  ret = ldirectionsprincipales3d(X, Y, Z, j, 
+					 &xc, &yc, &zc, 
+					 &(Vx[nadj]), &(Vy[nadj]), &(Vz[nadj]),
+					 &dmy, &dmy, &dmy, 
+					 &dmy, &dmy, &dmy); assert(ret != 0);
+#ifdef DEBUG
+	printf("Arc Ai = %d ; V=(%g,%g,%g) ; c=(%g,%g,%g) ; prod=%g\n", 
+	       Ai, Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc, 
+	       scalarprod(Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc));
+#endif	  
+	  if (scalarprod(Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc) < 0)
+	  {
+	    Vx[nadj] = -Vx[nadj]; Vy[nadj] = -Vy[nadj]; Vz[nadj] = -Vz[nadj];
+	  }
 #ifdef DEBUGDRAW
-	ldrawline(dbg, arrondi(x), arrondi(y), arrondi((x+(10*Vx[nadj]))), arrondi((y+(10*Vy[nadj]))));
+	  ldrawline(dbg, arrondi(x), arrondi(y), arrondi((x+(10*Vx[nadj]))), arrondi((y+(10*Vy[nadj]))));
 #endif
+	}
+	else
+	{
+#ifdef VERBOSE
+	  printf("%s: warning: arc %d too short (length %d)\n", F_NAME, Ai, tailleliste(S->tskel[Ai].pts));
+#endif
+	  Vx[nadj] = Vy[nadj] = Vz[nadj] = 0.0;
+	}
       } // else
     } // for (p = S->tskel[J].adj,nadj = 0; p != NULL; p = p->next, nadj++)
 
@@ -1649,19 +1683,27 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_
 #endif
 
     for (i = 0; i < nadj-1; i++)
+    {
+#ifdef DEBUG
+      printf("Arc i = %d V=(%g,%g,%g)\n", A[i], Vx[i], Vy[i], Vz[i]);
+#endif	  
       for (j = i+1; j < nadj; j++)
       {
-	Cij = acos(scalarprod(Vx[i], Vy[i], Vz[i], Vx[j], Vy[j], Vz[j]) / 
+	Cij = acos(scalarprod(Vx[i], Vy[i], Vz[i], -Vx[j], -Vy[j], -Vz[j]) / 
 		      (norm(Vx[i], Vy[i], Vz[i]) * norm(Vx[j], Vy[j], Vz[j])));
+#ifdef DEBUG
+	printf("  Arc j = %d V=(%g,%g,%g), Cij = %g(%g)\n", A[j], Vx[j], Vy[j], Vz[j], Cij, (Cij*180)/M_PI);
+#endif	  
 	if (Cij <= theta)
 	{
-	  S->tskel[A[i]].tag = 0;
-	  S->tskel[A[j]].tag = 0;
+	  S->tskel[A[i]].tag = 1;
+	  S->tskel[A[j]].tag = 1;
 #ifdef DEBUG
 	  printf("mark %d and %d\n", A[i], A[j]);
 #endif	  
 	}
-      }
+      } // for j
+    } // for i
   } // for (J = S->e_curv; J < S->e_junc; J++)
 
   free(listpoints); free(X); free(Y); free(Z);

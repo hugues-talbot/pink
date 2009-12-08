@@ -60,6 +60,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define PARANO
 //#define DEBUG1
 //#define DEBUG
+//#define VERBOSE
 
 //#define PRIODIR
 
@@ -2807,7 +2808,9 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
       for (x = 0; x < N; x++)
         if (F[x] && simple6(F, x, rs, ps, N))
           RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
+#ifdef VERBOSE
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
+#endif
     } /* while (!RbtVide(RBT)) */
   } /* if (connex == 6) */
   else if (connex == 18)
@@ -2827,7 +2830,9 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
       for (x = 0; x < N; x++)
         if (F[x] && simple18(F, x, rs, ps, N))
           RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
+#ifdef VERBOSE
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
+#endif
     } /* while (!RbtVide(RBT)) */
   } /* if (connex == 18) */
   else if (connex == 26)
@@ -2854,7 +2859,9 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
       for (x = 0; x < N; x++)
         if (F[x] && simple26(F, x, rs, ps, N))
           RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
+#ifdef VERBOSE
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
+#endif
     } /* while (!RbtVide(RBT)) */
   } /* if (connex == 26) */
 

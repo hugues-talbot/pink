@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 
   if (argc != 7)
   {
-    fprintf(stderr, "usage: %s in.skel delta1 delta2 angle len out.skel\n", argv[0]);
+    fprintf(stderr, "usage: %s in.skel delta1 delta2 angle len out.pgm\n", argv[0]);
     exit(1);
   }
 

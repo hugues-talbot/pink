@@ -34,22 +34,14 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file skelfilter1.c
 
-\brief selection of "junction branches" in a curvilinear skeleton
+\brief selection of a specified vertex in a curvilinear skeleton
 
-<B>Usage:</B> skelfilter1 in.skel length angle out.pgm
+<B>Usage:</B> skelvertex in.skel vertex_id out.pgm
 
 <B>Description:</B>
-The skeleton found in \b in.skel is searched for "small" branches which 
-satisfies the following criteria:
-\li Branch length is less than \b length parameter.
-\li Extremities A, B are both junctions.
-\li Let A' be the symmetric of A wrt B, and B' be the symmetric of B wrt A.
-    The distance from A' to the skeleton is less than AB cos( \b angle ), and
-    the distance from B' to the skeleton is less than AB cos( \b angle ).
 
-Only the matching branches are kept.
-
-Parameter \b length is given in pixels, parameter \b angle in degrees.
+In the output image \b out.pgm, only the pixels/voxels of the skeleton element
+corresponding to \b vertex_id are present.
 
 <B>Types supported:</B> skel 2d, skel 3d
 
@@ -60,10 +52,8 @@ Parameter \b length is given in pixels, parameter \b angle in degrees.
 */
 
 /*
-%TEST skelfilter1 %IMAGES/2dskel/s2skel4.skel 5 15 %RESULTS/skelfilter1_s2skel4.skel
-%TEST skelfilter1 %IMAGES/2dskel/s2skel8.skel 5 15 %RESULTS/skelfilter1_s2skel8.skel
-%TEST skelfilter1 %IMAGES/3dskel/s3skel6.skel 5 15 %RESULTS/skelfilter1_s3skel6.skel
-%TEST skelfilter1 %IMAGES/3dskel/s3skel26.skel 5 15 %RESULTS/skelfilter1_s3skel26.skel
+%TEST skelvertex %IMAGES/2dskel/s2skel4.skel 5 %RESULTS/skelvertex_s2skel4.skel
+%TEST skelvertex %IMAGES/3dskel/s3skel6.skel 5 %RESULTS/skelvertex_s3skel6.skel
 */
 
 #include <stdio.h>
@@ -82,11 +72,11 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   skel * S;
-  double length, angle;
+  int32_t vertex_id;
 
-  if (argc != 5)
+  if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in.skel length angle out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.skel vertex_id out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -97,15 +87,11 @@ int main(int argc, char **argv)
     exit(1);
   }
   
-  length = atof(argv[2]);
-  angle = atof(argv[3]);
+  vertex_id = atoi(argv[2]);
 
-  //  printskel(S);
-
-  angle = (angle * M_PI) / 180;
-  if (!lskelfilter1(S, length, angle))
+  if (!lskelmarkvertex(S, vertex_id))
   {
-    fprintf(stderr, "%s: function lskelfilter1 failed\n", argv[0]);
+    fprintf(stderr, "%s: function lskelvertex failed\n", argv[0]);
     exit(1);
   }
 

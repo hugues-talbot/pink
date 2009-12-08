@@ -126,11 +126,11 @@ void printskel(skel * S)
 
 /*
 FILE = 2Dskel | 3Dskel <CONNEX> <NVERTEX> <NCELL> <RS> <CS> <DS> <ISOL> <END> <CURV> <JUNC>
-ISOL = isol <N> <VERTEX> ... <VERTEX>
-END  = end  <N> <VERTEX> ... <VERTEX>
-CURV = curv <N> <VERTEX> ... <VERTEX>
-JUNC = junc <N> <VERTEX> ... <VERTEX>
-VERTEX = vertex <I> adj <N> <I> ... <I> pts <N> <POINT> ...  <POINT> 
+ISOL = "ISOL" <N> <VERTEX> ... <VERTEX>
+END  = "END"  <N> <VERTEX> ... <VERTEX>
+CURV = "CURV" <N> <VERTEX> ... <VERTEX>
+JUNC = "JUNC" <N> <VERTEX> ... <VERTEX>
+VERTEX = "vertex" <I> "adj" <N> <I> ... <I> "pts" <N> <POINT> ...  <POINT> 
 CONNEX = 4 | 8 | 6 | 18 | 26
 NVERTEX = int32_t
 NCELL = int32_t
@@ -216,7 +216,7 @@ void writeskel(skel * S, char *filename)
 
   fprintf(fd, "%d %d %d %d %d %d\n", S->connex, S->e_junc, S->freecell, S->rs, S->cs, S->ds);
 
-  fprintf(fd, "isol %d\n", S->e_isol);
+  fprintf(fd, "ISOL %d\n", S->e_isol);
   for (i = 0; i < S->e_isol; i++)
   {
     fprintf(fd, "vertex %d\n", i); 
@@ -224,7 +224,7 @@ void writeskel(skel * S, char *filename)
     fprintf(fd, "pts "); fprintliste(fd, S->tskel[i].pts); fprintf(fd, "\n"); 
   }
 
-  fprintf(fd, "end %d\n", S->e_end - S->e_isol);
+  fprintf(fd, "END %d\n", S->e_end - S->e_isol);
   for (i = S->e_isol; i < S->e_end; i++)
   {
     fprintf(fd, "vertex %d\n", i); 
@@ -232,7 +232,7 @@ void writeskel(skel * S, char *filename)
     fprintf(fd, "pts "); fprintliste(fd, S->tskel[i].pts); fprintf(fd, "\n"); 
   }
 
-  fprintf(fd, "curv %d\n", S->e_curv - S->e_end);
+  fprintf(fd, "CURV %d\n", S->e_curv - S->e_end);
   for (i = S->e_end; i < S->e_curv; i++)
   {
     fprintf(fd, "vertex %d\n", i); 
@@ -240,7 +240,7 @@ void writeskel(skel * S, char *filename)
     fprintf(fd, "pts "); fprintliste(fd, S->tskel[i].pts); fprintf(fd, "\n"); 
   }
 
-  fprintf(fd, "junc %d\n", S->e_junc - S->e_curv);
+  fprintf(fd, "JUNC %d\n", S->e_junc - S->e_curv);
   for (i = S->e_curv; i < S->e_junc; i++)
   {
     fprintf(fd, "vertex %d\n", i); 
@@ -282,7 +282,7 @@ void writevskel(skel * S, char *filename, struct xvimage *val)
 
   fprintf(fd, "%d %d %d %d %d %d\n", S->connex, S->e_junc, S->freecell, S->rs, S->cs, S->ds);
 
-  fprintf(fd, "isol %d\n", S->e_isol);
+  fprintf(fd, "ISOL %d\n", S->e_isol);
   for (i = 0; i < S->e_isol; i++)
   {
     fprintf(fd, "vertex %d %d\n", i, 0); 
@@ -290,7 +290,7 @@ void writevskel(skel * S, char *filename, struct xvimage *val)
     fprintf(fd, "pts "); fprintvliste(fd, S->tskel[i].pts, V); fprintf(fd, "\n"); 
   }
 
-  fprintf(fd, "end %d\n", S->e_end - S->e_isol);
+  fprintf(fd, "END %d\n", S->e_end - S->e_isol);
   for (i = S->e_isol; i < S->e_end; i++)
   {
     fprintf(fd, "vertex %d %d\n", i, 0); 
@@ -298,7 +298,7 @@ void writevskel(skel * S, char *filename, struct xvimage *val)
     fprintf(fd, "pts "); fprintvliste(fd, S->tskel[i].pts, V); fprintf(fd, "\n"); 
   }
 
-  fprintf(fd, "curv %d\n", S->e_curv - S->e_end);
+  fprintf(fd, "CURV %d\n", S->e_curv - S->e_end);
   for (i = S->e_end; i < S->e_curv; i++)
   {
     fprintf(fd, "vertex %d %d\n", i, 0); 
@@ -306,7 +306,7 @@ void writevskel(skel * S, char *filename, struct xvimage *val)
     fprintf(fd, "pts "); fprintvliste(fd, S->tskel[i].pts, V); fprintf(fd, "\n"); 
   }
 
-  fprintf(fd, "junc %d\n", S->e_junc - S->e_curv);
+  fprintf(fd, "JUNC %d\n", S->e_junc - S->e_curv);
   for (i = S->e_curv; i < S->e_junc; i++)
   {
     fprintf(fd, "vertex %d %d\n", i, 0); 
@@ -360,7 +360,7 @@ skel * readskel(char *filename)
 
   // POINTS ISOLES
   fscanf(fd, "%s", buf);
-  if (strncmp(buf, "isol", 4) != 0)
+  if ((strncmp(buf, "isol", 4) != 0) && (strncmp(buf, "ISOL", 4) != 0))
   {
     fprintf(stderr, "%s: bad file format (0) : %s\n", F_NAME, buf);
     return NULL;
@@ -409,7 +409,7 @@ skel * readskel(char *filename)
 
   // POINTS EXTREMITES
   fscanf(fd, "%s", buf);
-  if (strncmp(buf, "end", 3) != 0)
+  if ((strncmp(buf, "end", 3) != 0) && (strncmp(buf, "END", 3) != 0))
   {
     fprintf(stderr, "%s: bad file format (4) : %s\n", F_NAME, buf);
     return NULL;
@@ -458,7 +458,7 @@ skel * readskel(char *filename)
 
   // POINTS DE COURBE
   fscanf(fd, "%s", buf);
-  if (strncmp(buf, "curv", 4) != 0)
+  if ((strncmp(buf, "curv", 4) != 0) && (strncmp(buf, "CURV", 4) != 0))
   {
     fprintf(stderr, "%s: bad file format (8) : %s\n", F_NAME, buf);
     return NULL;
@@ -507,7 +507,7 @@ skel * readskel(char *filename)
 
   // POINTS DE JONCTION
   fscanf(fd, "%s", buf);
-  if (strncmp(buf, "junc", 4) != 0)
+  if ((strncmp(buf, "junc", 4) != 0) && (strncmp(buf, "JUNC", 4) != 0))
   {
     fprintf(stderr, "%s: bad file format (12) : %s\n", F_NAME, buf);
     return NULL;
