@@ -35,13 +35,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 extern skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len);
 extern struct xvimage * lskel2image(skel *S);
 extern struct xvimage * lskelmarked2image(skel *S);
 extern int32_t lskelmarkvertex(skel *S, int32_t vertex_id);
 extern int32_t lskelfilter1(skel *S, double length, double angle);
 extern int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_t length);
+extern int32_t lskelfilter3(skel *S, double delta1, double delta2, double theta);
 #ifdef __cplusplus
 }
 #endif

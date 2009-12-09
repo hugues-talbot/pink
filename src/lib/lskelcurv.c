@@ -54,8 +54,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lmoments.h>
 
 #define VERBOSE
-//#define DEBUG
-//#define DEBUGDRAW
+#define DEBUG
+#define DEBUGDRAW
 //#define DEBUG1
 #ifdef DEBUG1
 static uint32_t nptsisol=0;
@@ -1516,6 +1516,100 @@ static void list_points_at_tail(skel *S, int32_t Ai, double delta, int32_t *list
 } // list_points_at_tail()
 
 /* ====================================================================== */
+static void compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, double delta2, int32_t *listpoints, int32_t nmaxpoints, double *X, double *Y, double *Z, double *VVx, double *VVy, double *VVz)
+/* ====================================================================== */
+{
+  int32_t rs = S->rs, ps = rs * S->cs;
+  int32_t i, j, ret, npoints;
+  double x, y, z, xc, yc, zc, xx, yy, zz, dmy, vx, vy, vz;
+
+  npoints = nmaxpoints;
+  list_points_at_head(S, Ai, delta2, listpoints, &npoints);
+  assert(npoints > 0);
+  if (adj_point_junc(S, listpoints[0], J))
+  { // arc partant de la jonction 
+    x = (double)(listpoints[0] % rs);
+    y = (double)((listpoints[0] % ps) / rs);
+    z = (double)(listpoints[0] / ps);
+    for (j = i = 0; i < npoints; i++)
+    {
+      xx = (double)(listpoints[i] % rs);
+      yy = (double)((listpoints[i] % ps) / rs);
+      zz = (double)(listpoints[i] / ps);
+      if (dist3(x, y, z, xx, yy, zz) >= delta1)
+      { // origine pour le calcul de la direction principale : (x,y,z) 
+	X[j] = xx - x; Y[j] = yy - y; Z[j] = zz - z; 
+	j++;
+      }
+    }
+    if (j > 1)
+    {
+      ret = ldirectionsprincipales3d(X, Y, Z, j, 
+				     &xc, &yc, &zc, 
+				     &vx, &vy, &vz, 
+				     &dmy, &dmy, &dmy, 
+				     &dmy, &dmy, &dmy); assert(ret != 0);
+      if (scalarprod(vx, vy, vz, xc, yc, zc) < 0)
+      { vx = -vx; vy = -vy; vz = -vz; }
+#ifdef DEBUG
+      printf("Arc Ai = %d ; V=(%g,%g,%g) ; c=(%g,%g,%g)\n", 
+	     Ai, vx, vy, vz, xc, yc, zc);
+#endif	  
+    }
+    else
+    {
+#ifdef VERBOSE
+      printf("%s: warning: arc %d too short (length %d)\n", F_NAME, Ai, tailleliste(S->tskel[Ai].pts));
+#endif
+      vx = vy = vz = 0.0;
+    }
+  } // if (adj_point_junc(S, listpoints[0], J))
+  else
+  { // arc arrivant à la jonction 
+    npoints = nmaxpoints;
+    list_points_at_tail(S, Ai, delta2, listpoints, &npoints);
+    assert(npoints > 0);
+    assert(adj_point_junc(S, listpoints[0], J));
+    x = (double)(listpoints[0] % rs);
+    y = (double)((listpoints[0] % ps) / rs);
+    z = (double)(listpoints[0] / ps);
+    for (j = i = 0; i < npoints; i++)
+    {
+      xx = (double)(listpoints[i] % rs);
+      yy = (double)((listpoints[i] % ps) / rs);
+      zz = (double)(listpoints[i] / ps);
+      if (dist3(x, y, z, xx, yy, zz) >= delta1)
+      { // origine pour le calcul de la direction principale : (x,y,z) 
+	X[j] = xx - x; Y[j] = yy - y; Z[j] = zz - z; 
+	j++;
+      }
+    }
+    if (j > 1)
+    {
+      ret = ldirectionsprincipales3d(X, Y, Z, j, 
+				     &xc, &yc, &zc, 
+				     &vx, &vy, &vz, 
+				     &dmy, &dmy, &dmy, 
+				     &dmy, &dmy, &dmy); assert(ret != 0);
+      if (scalarprod(vx, vy, vz, xc, yc, zc) < 0)
+      { vx = -vx; vy = -vy; vz = -vz; }
+#ifdef DEBUG
+      printf("Arc Ai = %d ; V=(%g,%g,%g) ; c=(%g,%g,%g)\n", 
+	     Ai, vx, vy, vz, xc, yc, zc);
+#endif	  
+    }
+    else
+    {
+#ifdef VERBOSE
+      printf("%s: warning: arc %d too short (length %d)\n", F_NAME, Ai, tailleliste(S->tskel[Ai].pts));
+#endif
+      vx = vy = vz = 0.0;
+    }
+  } // else
+  *VVx = vx; *VVy = vy; *VVz = vz;
+} // compute_vector()
+
+/* ====================================================================== */
 int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_t length)
 /* ====================================================================== */
 /*
@@ -1535,18 +1629,12 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_
 {
 #undef F_NAME
 #define F_NAME "lskelfilter2"
-  int32_t rs = S->rs, ps = rs * S->cs;
-  int32_t ret, J, Ai, nadj, i, j, A[26], npoints, nmaxpoints, *listpoints;
+  int32_t J, Ai, nadj, i, j, A[26], nmaxpoints, *listpoints;
   SKC_pcell p;
-  double Vx[26], Vy[26], Vz[26], Cij;
-  double *X, *Y, *Z, x, y, z, xc, yc, zc, xx, yy, zz, dmy;
-
-#ifdef DEBUGDRAW
-  struct xvimage *dbg = allocimage(NULL, S->rs, S->cs, S->ds, VFF_TYP_1_BYTE); assert(dbg != NULL);
-  razimage(dbg);
-#endif	  
+  double Vx[26], Vy[26], Vz[26], VVx, VVy, VVz, Cij;
+  double *X, *Y, *Z;
 #ifdef DEBUG
-  printf("lskelfilter2: delta1 = %g, delta2 = %g, theta %g\n", delta1, delta2, theta);
+  printf("%s: delta1 = %g, delta2 = %g, theta %g\n", F_NAME, delta1, delta2, theta);
 #endif	  
 
   nmaxpoints = delta2 * 4;
@@ -1581,106 +1669,10 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_
       Ai = p->val;
       A[nadj] = Ai;
 
-      npoints = nmaxpoints;
-      list_points_at_head(S, Ai, delta2, listpoints, &npoints);
-      assert(npoints > 0);
-      if (adj_point_junc(S, listpoints[0], J))
-      { // arc partant de la jonction 
-	x = (double)(listpoints[0] % rs);
-	y = (double)((listpoints[0] % ps) / rs);
-	z = (double)(listpoints[0] / ps);
-	for (j = i = 0; i < npoints; i++)
-	{
-	  xx = (double)(listpoints[i] % rs);
-	  yy = (double)((listpoints[i] % ps) / rs);
-	  zz = (double)(listpoints[i] / ps);
-	  if (dist3(x, y, z, xx, yy, zz) >= delta1)
-	  { // origine pour le calcul de la direction principale : (x,y,z) 
-	    X[j] = xx - x; Y[j] = yy - y; Z[j] = zz - z; 
-	    j++;
-	  }
-	}
-	if (j > 1)
-	{
-	  ret = ldirectionsprincipales3d(X, Y, Z, j, 
-					 &xc, &yc, &zc, 
-					 &(Vx[nadj]), &(Vy[nadj]), &(Vz[nadj]),
-					 &dmy, &dmy, &dmy, 
-					 &dmy, &dmy, &dmy); assert(ret != 0);
-#ifdef DEBUG
-	printf("Arc Ai = %d ; V=(%g,%g,%g) ; c=(%g,%g,%g) ; prod=%g\n", 
-	       Ai, Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc, 
-	       scalarprod(Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc));
-#endif	  
-	  if (scalarprod(Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc) < 0)
-	  {
-	    Vx[nadj] = -Vx[nadj]; Vy[nadj] = -Vy[nadj]; Vz[nadj] = -Vz[nadj];
-	  }
-#ifdef DEBUGDRAW
-	  ldrawline(dbg, arrondi(x), arrondi(y), arrondi((x+(10*Vx[nadj]))), arrondi((y+(10*Vy[nadj]))));
-#endif
-	}
-	else
-	{
-#ifdef VERBOSE
-	  printf("%s: warning: arc %d too short (length %d)\n", F_NAME, Ai, tailleliste(S->tskel[Ai].pts));
-#endif
-	  Vx[nadj] = Vy[nadj] = Vz[nadj] = 0.0;
-	}
-      } // if (adj_point_junc(S, listpoints[0], J))
-      else
-      { // arc arrivant à la jonction 
-	npoints = nmaxpoints;
-	list_points_at_tail(S, Ai, delta2, listpoints, &npoints);
-	assert(npoints > 0);
-	assert(adj_point_junc(S, listpoints[0], J));
-	x = (double)(listpoints[0] % rs);
-	y = (double)((listpoints[0] % ps) / rs);
-	z = (double)(listpoints[0] / ps);
-	for (j = i = 0; i < npoints; i++)
-	{
-	  xx = (double)(listpoints[i] % rs);
-	  yy = (double)((listpoints[i] % ps) / rs);
-	  zz = (double)(listpoints[i] / ps);
-	  if (dist3(x, y, z, xx, yy, zz) >= delta1)
-	  { // origine pour le calcul de la direction principale : (x,y,z) 
-	    X[j] = xx - x; Y[j] = yy - y; Z[j] = zz - z; 
-	    j++;
-	  }
-	}
-	if (j > 1)
-	{
-	  ret = ldirectionsprincipales3d(X, Y, Z, j, 
-					 &xc, &yc, &zc, 
-					 &(Vx[nadj]), &(Vy[nadj]), &(Vz[nadj]),
-					 &dmy, &dmy, &dmy, 
-					 &dmy, &dmy, &dmy); assert(ret != 0);
-#ifdef DEBUG
-	printf("Arc Ai = %d ; V=(%g,%g,%g) ; c=(%g,%g,%g) ; prod=%g\n", 
-	       Ai, Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc, 
-	       scalarprod(Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc));
-#endif	  
-	  if (scalarprod(Vx[nadj], Vy[nadj], Vz[nadj], xc, yc, zc) < 0)
-	  {
-	    Vx[nadj] = -Vx[nadj]; Vy[nadj] = -Vy[nadj]; Vz[nadj] = -Vz[nadj];
-	  }
-#ifdef DEBUGDRAW
-	  ldrawline(dbg, arrondi(x), arrondi(y), arrondi((x+(10*Vx[nadj]))), arrondi((y+(10*Vy[nadj]))));
-#endif
-	}
-	else
-	{
-#ifdef VERBOSE
-	  printf("%s: warning: arc %d too short (length %d)\n", F_NAME, Ai, tailleliste(S->tskel[Ai].pts));
-#endif
-	  Vx[nadj] = Vy[nadj] = Vz[nadj] = 0.0;
-	}
-      } // else
+      compute_vector(S, Ai, J, delta1, delta2, listpoints, nmaxpoints, 
+		     X, Y, Z, &VVx, &VVy, &VVz);
+      Vx[nadj] = VVx; Vy[nadj] = VVy; Vz[nadj] = VVz;
     } // for (p = S->tskel[J].adj,nadj = 0; p != NULL; p = p->next, nadj++)
-
-#ifdef DEBUGDRAW
-    writeimage(dbg, "_dbg");
-#endif
 
     for (i = 0; i < nadj-1; i++)
     {
@@ -1709,3 +1701,185 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_
   free(listpoints); free(X); free(Y); free(Z);
   return 1;
 } /* lskelfilter2() */
+
+/* ====================================================================== */
+int32_t lskelfilter3(skel *S, double delta1, double delta2, double theta)
+/* ====================================================================== */
+/*
+  "Mikado game" algorithm
+  Let A0 be the arc in S having the greatest length
+  Mark A0 (field "tag" = 1)
+  Let E0, E1 be the vertices adjacent to A0
+  For E in {E0, E1} do
+    While E is a not yet marked junction do
+      Mark E
+      Let A1, ... Ak be the arcs other than A0 adjacent to E
+      Let V0, ... Vk be the corresponding tangent vectors
+      Let m be such that the angle <V0,-Vm> is minimal
+      Let minangle be min{<Vi,-Vj> | 0 <= i < k and i < j <= k} 
+      If <V0,-Vm> <= theta and <V0,-Vm> <= minangle then 
+        E' = extremity of Am different from E
+        A0 = Am; E = E'
+        Mark A0
+*/
+{
+#undef F_NAME
+#define F_NAME "lskelfilter3"
+  int32_t ret, e, i, j, m, Ai, A0, EE[2], E, Ep;
+  int32_t nadj, A[26], nmaxpoints, *listpoints, maxlen;
+  SKC_pcell p;
+  double Vx[26], Vy[26], Vz[26], VVx, VVy, VVz, Cij, angle, minangle;
+  double *X, *Y, *Z;
+
+#ifdef DEBUGDRAW
+  int32_t rs = S->rs, ps = rs * S->cs;
+  double xb, yb, zb;
+  struct xvimage *dbg = allocimage(NULL, S->rs, S->cs, S->ds, VFF_TYP_1_BYTE); assert(dbg != NULL);
+  razimage(dbg);
+#endif	  
+
+#ifdef DEBUG
+  printf("%s: delta1 = %g, delta2 = %g, theta %g\n", F_NAME, delta1, delta2, theta);
+#endif	  
+
+  nmaxpoints = delta2 * 4;
+  listpoints = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(listpoints != NULL);
+  X = (double *)malloc(nmaxpoints * sizeof(double)); assert(X != NULL);
+  Y = (double *)malloc(nmaxpoints * sizeof(double)); assert(Y != NULL);
+  Z = (double *)malloc(nmaxpoints * sizeof(double)); assert(Z != NULL);
+
+  for (i = 0; i < S->e_junc; i++) S->tskel[i].tag = 0; // unmark all
+
+//Let A0 be the arc in S having the greatest length
+  maxlen = 0;
+  for (i = S->e_end; i < S->e_curv; i++) // scan all arcs
+  {
+    ret = tailleliste(S->tskel[i].pts);
+    if (ret > maxlen) { maxlen = ret; A0 = i; }
+  }
+
+//Mark A0 (field "tag" = 1)
+  S->tskel[A0].tag = 1;
+#ifdef DEBUG
+  printf("initial A0: %d    ", A0);
+#endif	  
+  
+//Let E1, E2 be the vertices adjacent to A0
+  p = S->tskel[A0].adj;
+  if (p != NULL) // si arc non fermé
+  {
+    assert(p->next != NULL); // soit 0, soit 2 adjacences
+    EE[0] = p->val;
+    EE[1] = p->next->val;
+#ifdef DEBUG
+    printf("E1 = %d, E2 = %d\n", EE[0], EE[1]);
+#endif	  
+    
+//  For E in {E0, E1} do
+    for (e = 0; e < 2; e++)
+    {
+      E = EE[e];
+#ifdef DEBUGDRAW
+      p = S->tskel[E].pts;
+      xb = (double)(p->val % rs);
+      yb = (double)((p->val % ps) / rs);
+      zb = (double)(p->val / ps);
+#endif	  
+#ifdef DEBUG
+      printf("tracking from E=%d\n", E);
+#endif	  
+
+//    While E is a not yet marked junction do
+      while (IS_JUNC(E) && (S->tskel[E].tag == 0))
+      {
+//      Mark E
+	S->tskel[E].tag = 1;
+#ifdef DEBUG
+	printf("  junction E=%d ; A0=%d\n", E, A0);
+#endif	  
+	
+//      Let A1, ... Ak be the arcs other than A0 adjacent to E
+	for (p = S->tskel[E].adj,nadj = 0; p != NULL; p = p->next, nadj++)
+	{ // scan arcs Ai adjacent to junction E
+	  Ai = p->val;
+	  A[nadj] = Ai;
+	  if (Ai == A0) { Ai = A[0]; A[0] = A0; A[nadj] = Ai; }
+	}
+#ifdef DEBUG
+	printf("  adjacent arcs: ");
+	for (j = 0; j < nadj; j++) printf("%d ", A[j]);
+	printf("\n");
+#endif	  
+
+//      Let V0, ... Vk be the corresponding tangent vectors
+	for (j = 0; j < nadj; j++)
+	{
+	  compute_vector(S, A[j], E, delta1, delta2, listpoints, nmaxpoints, 
+			 X, Y, Z, &VVx, &VVy, &VVz);
+	  Vx[j] = VVx; Vy[j] = VVy; Vz[j] = VVz;
+#ifdef DEBUGDRAW
+	  ldrawline3d(dbg, arrondi(xb), arrondi(yb), arrondi(zb), arrondi((xb+(10*Vx[j]))), arrondi((yb+(10*Vy[j]))), arrondi((zb+(10*Vz[j]))));
+#endif
+	}
+
+//      Let m be such that the angle <V0,-Vm> is minimal
+	angle = 4.0; // greater than any angle
+	m = -1;
+	for (j = 1; j < nadj; j++)
+	{
+	  Cij = acos(scalarprod(Vx[0], Vy[0], Vz[0], -Vx[j], -Vy[j], -Vz[j]) / 
+		     (norm(Vx[0], Vy[0], Vz[0]) * norm(Vx[j], Vy[j], Vz[j])));
+#ifdef DEBUG
+	  printf("    C(%d,%d)=%g(%g)\n", A[0], A[j], Cij, (Cij*180)/M_PI);
+#endif	  
+	  if (Cij < angle) { angle = Cij; m = j; }
+	}
+	assert(m != -1);
+#ifdef DEBUG
+	printf("  angle=%g\n", angle);
+#endif	  
+
+//      Let minangle be min{<Vi,-Vj> | 0 <= i < k and i < j <= k} 
+	minangle = 4.0; // greater than any angle
+	for (i = 0; i < nadj-1; i++)
+	for (j = i+1; j < nadj; j++)
+	{
+	  Cij = acos(scalarprod(Vx[i], Vy[i], Vz[i], -Vx[j], -Vy[j], -Vz[j]) / 
+		     (norm(Vx[i], Vy[i], Vz[i]) * norm(Vx[j], Vy[j], Vz[j])));
+#ifdef DEBUG
+	  printf("    C(%d,%d)=%g(%g)\n", A[i], A[j], Cij, (Cij*180)/M_PI);
+#endif	  
+	  if (Cij < minangle) { minangle = Cij; }
+	}
+#ifdef DEBUG
+	printf("  minangle=%g\n", minangle);
+#endif	  
+
+
+//      If <V0,-Vm> <= theta and <V0,-Vm> <= minangle then 
+	if ((angle <= theta) && (angle <= minangle))
+	{
+//        E' = extremity of Am different from E
+	  p = S->tskel[A[m]].adj;
+	  assert(p != NULL); assert(p->next != NULL);
+	  if (p->val == E) Ep = p->next->val; else Ep = p->val;
+
+//        A0 = Am; E = E'
+	  A0 = A[m]; E = Ep;
+
+//        Mark A0
+	  S->tskel[A0].tag = 1;
+#ifdef DEBUG
+	  printf("  mark %d\n", A0);
+#endif	  
+	} // if (angle <= theta)
+      } // while (IS_JUNC(E) && (S->tskel[E].tag == 0))
+    } // for (i = 0; i < 2; i++)
+  } // if (p != NULL) 
+#ifdef DEBUGDRAW
+  writeimage(dbg, "_dbg");
+#endif
+
+  free(listpoints); free(X); free(Y); free(Z);
+  return 1;
+} /* lskelfilter3() */
