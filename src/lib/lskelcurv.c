@@ -53,10 +53,10 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lseltopo.h>
 #include <lmoments.h>
 
-//#define VERBOSE
-//#define DEBUG
+#define VERBOSE
+#define DEBUG
+#define DEBUG1
 //#define DEBUGDRAW
-//#define DEBUG1
 #ifdef DEBUG1
 static uint32_t nptsisol=0;
 static uint32_t nptsend=0;
@@ -740,7 +740,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t *M; // carte des parties de squelette
   struct xvimage *temp0, *temp1, *temp2, *temp3;
-  struct xvimage *lab2, *lab3;
+  struct xvimage *lab2=NULL, *lab3=NULL;
   uint8_t *T0, *T1, *T2, *T3;
   int32_t nbisol, nbend, nbcurv, nbjunc, nbvertex, nbpoints;
   int32_t length, ne, nj, ret;
@@ -882,7 +882,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
     termine_topo3d();
   } // if (len != INT32_MAX)
 
-  // comptage des points isoles et extremites et 
+  // comptage des points isoles et extremites et ...
   nbisol = nbend = nbcurv = nbjunc = nbpoints = 0;
   for (i = 0; i < N; i++) 
   {
@@ -891,38 +891,45 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
       nbpoints++;
       if (T0[i]) nbisol++;
       if (T1[i]) nbend++;
+      if (T2[i]) nbcurv++;
+      if (T3[i]) nbjunc++;
     }
   } // for (i = 0; i < N; i++) 
 
-
   // etiquetage des courbes et des jonctions
-  lab2 = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  lab3 = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if ((lab2 == NULL) || (lab3 == NULL))
+  
+  if (nbcurv > 0)
   {
-    fprintf(stderr, "%s: function allocimage failed\n", F_NAME);
-    return NULL;
-  }
+    nbcurv = 0;
+    lab2 = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(lab2 != NULL);
 
-  if (! llabelextrema(temp2, connex, 0, lab2, &nbcurv))
-  {
-    fprintf(stderr, "%s: function llabelextrema failed\n", F_NAME);
-    return NULL;
-  }
-  nbcurv -= 1;
-
-  if (! llabelextrema(temp3, connex, 0, lab3, &nbjunc))
-  {
-    fprintf(stderr, "%s: function llabelextrema failed\n", F_NAME);
-    return NULL;
-  }
-  nbjunc -= 1;
-
+    if (! llabelextrema(temp2, connex, 0, lab2, &nbcurv))
+    {
+      fprintf(stderr, "%s: function llabelextrema failed\n", F_NAME);
+      return NULL;
+    }
+    nbcurv -= 1;
 #ifdef DEBUG
-  printf("%s: llabelextrema done\n", F_NAME);
-  writeimage(lab2, "_labelcurv");
-  writeimage(lab3, "_labeljunc");
+    printf("%s: llabelextrema done\n", F_NAME);
+    writeimage(lab2, "_labelcurv");
 #endif
+  }
+
+  if (nbjunc > 0)
+  {
+    nbjunc = 0;
+    lab3 = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(lab3 != NULL);
+    if (! llabelextrema(temp3, connex, 0, lab3, &nbjunc))
+    {
+      fprintf(stderr, "%s: function llabelextrema failed\n", F_NAME);
+      return NULL;
+    }
+    nbjunc -= 1;
+#ifdef DEBUG
+    printf("%s: llabelextrema done\n", F_NAME);
+    writeimage(lab3, "_labeljunc");
+#endif
+  }
 
 #ifdef VERBOSE
   printf("nb isol : %d ; nb end : %d ; nb curves : %d ; nb junctions : %d\n", nbisol, nbend, nbcurv, nbjunc);
@@ -994,8 +1001,8 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
 
   // ménage
   free(M);
-  free(lab2);
-  free(lab3);
+  if (lab2) free(lab2);
+  if (lab3) free(lab3);
   free(temp0);
   free(temp1);
   free(temp2);
@@ -1787,13 +1794,15 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2)
   printf("%s: delta1 = %g, delta2 = %g\n", F_NAME, delta1, delta2);
 #endif	  
 
+  for (i = 0; i < S->e_junc; i++) S->tskel[i].tag = 0; // unmark all
+
+  if (S->e_curv == S->e_end) return 1; // no arc: exit 
+
   nmaxpoints = delta2 * 4;
   listpoints = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(listpoints != NULL);
   X = (double *)malloc(nmaxpoints * sizeof(double)); assert(X != NULL);
   Y = (double *)malloc(nmaxpoints * sizeof(double)); assert(Y != NULL);
   Z = (double *)malloc(nmaxpoints * sizeof(double)); assert(Z != NULL);
-
-  for (i = 0; i < S->e_junc; i++) S->tskel[i].tag = 0; // unmark all
 
 //Let A0 be the arc in S having the greatest length
   maxlen = 0;
@@ -1802,6 +1811,7 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2)
     ret = tailleliste(S->tskel[i].pts);
     if (ret > maxlen) { maxlen = ret; A0 = i; }
   }
+  assert(maxlen > 0);
 
 //Mark A0 (field "tag" = 1)
   S->tskel[A0].tag = 1;

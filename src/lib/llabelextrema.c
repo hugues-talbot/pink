@@ -697,6 +697,11 @@ else
   LifoTermine(LIFO);
 //  if (tailleplateau != N) 
      *nlabels += 1; /* pour le niveau 0 */
+
+#ifdef DEBUG
+      printf("%s: end: nlabels = %d\n", F_NAME, *nlabels);
+#endif
+
   return(1);
 } /* llabelextrema() */
 

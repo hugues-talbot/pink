@@ -766,7 +766,7 @@ static void reconsTree(ctree *CT, int32_t *CM, int32_t *newCM, int32_t N, uint8_
   printf("Reconstruction - Marquage\n");
 #endif
 
-  for (d = 0; d < CT->nbnodes; d++) CT->flags[d] == 0; // utile ???
+  for (d = 0; d < CT->nbnodes; d++) CT->flags[d] = 0; // utile ???
   for (i = 0; i < N; i++) if (G[i]) CT->flags[CM[i]] = 1; // marque les feuilles
 
   for (d = 0; d < CT->nbnodes; d++) 
@@ -847,7 +847,7 @@ static void compressTree(ctree *CT, int32_t *CM, int32_t *newCM, int32_t N)
   int32_t i, d, c, e, f;
 
   //ComponentTreePrint(CT);
-  for (d = 0; d < CT->nbnodes; d++) CT->flags[d] == 0; // utile !!
+  for (d = 0; d < CT->nbnodes; d++) CT->flags[d] = 0; // utile !!
   for (d = 0; d < CT->nbnodes; d++) {
     if (CT->tabnodes[d].nbsons == 0) { // C'est une feuille
       c = CT->tabnodes[d].father;
@@ -915,6 +915,12 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
   Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t *CM, *newCM;              /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
+
+  if ((datatype(image) != VFF_TYP_1_BYTE) || (datatype(marqueur) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: image and marker must be both byte\n", F_NAME);
+    return 0;
+  }
 
   if ((rowsize(marqueur) != rs) || (colsize(marqueur) != cs) || (depth(marqueur) != ds))
   {
