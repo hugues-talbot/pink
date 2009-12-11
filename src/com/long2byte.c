@@ -72,6 +72,7 @@ Useful for label images.
    Michel Couprie - mai 1998
 
    Modif : decembre 1999 - mode 3 (trunchisto)
+   Modif : decembre 2009 - trunchisto sorts in decreasing order
  */
 
 #include <stdio.h>
@@ -92,7 +93,7 @@ static int32_t Partitionner(int32_t *A, int32_t *T, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
-  en deux groupes : les elements q tq T[A[q]] <= T[A[p]] et les autres.
+  en deux groupes : les elements q tq T[A[q]] >= T[A[p]] et les autres.
 */
 {
   int32_t t;
@@ -101,8 +102,8 @@ static int32_t Partitionner(int32_t *A, int32_t *T, int32_t p, int32_t r)
   int32_t j = r + 1;
   while (1)
   {
-    do j--; while (T[A[j]] > x);
-    do i++; while (T[A[i]] < x);
+    do j--; while (T[A[j]] < x);
+    do i++; while (T[A[i]] > x);
     if (i < j) { t = A[i]; A[i] = A[j]; A[j] = t; }
     else return j;
   } /* while (1) */   
@@ -113,7 +114,7 @@ static int32_t PartitionStochastique(int32_t *A, int32_t *T, int32_t p, int32_t 
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
-  en deux groupes : les elements k tels que T[A[k]] <= T[A[q]] et les autres, 
+  en deux groupes : les elements k tels que T[A[k]] >= T[A[q]] et les autres, 
   avec q tire au hasard dans [p,r].
 */
 {
@@ -131,7 +132,7 @@ static void TriRapideStochastique (int32_t * A, int32_t *T, int32_t p, int32_t r
 /* =============================================================== */
 /* 
   trie les valeurs du tableau A de l'indice p (compris) a l'indice r (compris) 
-  par ordre croissant 
+  par ordre décroissant 
 */
 {
   int32_t q; 

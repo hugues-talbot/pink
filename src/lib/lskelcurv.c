@@ -53,9 +53,9 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lseltopo.h>
 #include <lmoments.h>
 
-#define VERBOSE
-#define DEBUG
-#define DEBUGDRAW
+//#define VERBOSE
+//#define DEBUG
+//#define DEBUGDRAW
 //#define DEBUG1
 #ifdef DEBUG1
 static uint32_t nptsisol=0;
@@ -279,6 +279,11 @@ static void scancurve(int32_t i, struct xvimage *image, int32_t connex, uint8_t 
   *length = le;
   *nbend = ne;
   *nbjunc = nj;
+
+#ifdef DEBUG
+  printf("%s: return\n", F_NAME);
+#endif
+
 } // scancurve()
 
 /* ====================================================================== */
@@ -819,6 +824,8 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
 
   if (len != INT32_MAX)
   {
+    init_topo3d();
+
     // élimination des courbes de longueur inférieure à len
     for (i = 0; i < N; i++) 
     {
@@ -872,6 +879,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
     for (i = 0; i < N; i++) if (T3[i]) T3[i] = NDG_MAX;
 #endif
 
+    termine_topo3d();
   } // if (len != INT32_MAX)
 
   // comptage des points isoles et extremites et 
@@ -1360,7 +1368,7 @@ static int32_t adj_point_junc(skel *S, int32_t e, int32_t J)
 } // adj_point_junc()
 
 /* ====================================================================== */
-int32_t lskelfilter2_old(skel *S, double delta, double theta)
+int32_t lskelfilter1a_old(skel *S, double delta, double theta)
 /* ====================================================================== */
 /*
   For each junction J
@@ -1373,7 +1381,7 @@ int32_t lskelfilter2_old(skel *S, double delta, double theta)
 */
 {
 #undef F_NAME
-#define F_NAME "lskelfilter2_old"
+#define F_NAME "lskelfilter1a_old"
   int32_t rs = S->rs;
   int32_t ps = rs * S->cs;
   int32_t J, Ai, nadj, e, f, i, j, A[26];
@@ -1381,7 +1389,7 @@ int32_t lskelfilter2_old(skel *S, double delta, double theta)
   double Vx[26], Vy[26], Vz[26], Cij;
 
 #ifdef DEBUG
-  printf("lskelfilter2: delta = %g, theta %g\n", delta, theta);
+  printf("lskelfilter1a: delta = %g, theta %g\n", delta, theta);
 #endif	  
 
   for (Ai = S->e_end; Ai < S->e_curv; Ai++)
@@ -1426,7 +1434,7 @@ int32_t lskelfilter2_old(skel *S, double delta, double theta)
   } // for (J = S->e_curv; J < S->e_junc; J++)
 
   return 1;
-} /* lskelfilter2_old() */
+} /* lskelfilter1a_old() */
 
 /* ====================================================================== */
 static void list_points_at_head(skel *S, int32_t Ai, double delta, int32_t *listpoints, int32_t *npoints)
@@ -1518,16 +1526,22 @@ static void list_points_at_tail(skel *S, int32_t Ai, double delta, int32_t *list
 /* ====================================================================== */
 static void compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, double delta2, int32_t *listpoints, int32_t nmaxpoints, double *X, double *Y, double *Z, double *VVx, double *VVy, double *VVz)
 /* ====================================================================== */
+#undef F_NAME
+#define F_NAME "compute_vector"
 {
   int32_t rs = S->rs, ps = rs * S->cs;
   int32_t i, j, ret, npoints;
-  double x, y, z, xc, yc, zc, xx, yy, zz, dmy, vx, vy, vz;
+  double xc, yc, zc, dmy, vx, vy, vz;
+#ifdef DELTA_BOULES
+  double x, y, z, xx, yy, zz;
+#endif
 
   npoints = nmaxpoints;
   list_points_at_head(S, Ai, delta2, listpoints, &npoints);
   assert(npoints > 0);
   if (adj_point_junc(S, listpoints[0], J))
   { // arc partant de la jonction 
+#ifdef DELTA_BOULES
     x = (double)(listpoints[0] % rs);
     y = (double)((listpoints[0] % ps) / rs);
     z = (double)(listpoints[0] / ps);
@@ -1537,11 +1551,24 @@ static void compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, double
       yy = (double)((listpoints[i] % ps) / rs);
       zz = (double)(listpoints[i] / ps);
       if (dist3(x, y, z, xx, yy, zz) >= delta1)
-      { // origine pour le calcul de la direction principale : (x,y,z) 
-	X[j] = xx - x; Y[j] = yy - y; Z[j] = zz - z; 
+      { 
+	X[j] = xx; Y[j] = yy; Z[j] = zz;
 	j++;
       }
     }
+#else
+    for (i = (int32_t)delta1, j = 0; i < min(npoints,(int32_t)delta2); i++, j++)
+    {
+      X[j] = (double)(listpoints[i] % rs);
+      Y[j] = (double)((listpoints[i] % ps) / rs);
+      Z[j] = (double)(listpoints[i] / ps);
+    }
+#endif
+    for (i = 1; i < j; i++)
+    { // origine pour le calcul de la direction principale : 1er point trouvé 
+      X[i] -= X[0]; Y[i] -= Y[0]; Z[i] -= Z[0];
+    }
+    X[0] = Y[0] = Z[0] = 0.0;
     if (j > 1)
     {
       ret = ldirectionsprincipales3d(X, Y, Z, j, 
@@ -1570,6 +1597,7 @@ static void compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, double
     list_points_at_tail(S, Ai, delta2, listpoints, &npoints);
     assert(npoints > 0);
     assert(adj_point_junc(S, listpoints[0], J));
+#ifdef DELTA_BOULES
     x = (double)(listpoints[0] % rs);
     y = (double)((listpoints[0] % ps) / rs);
     z = (double)(listpoints[0] / ps);
@@ -1579,11 +1607,24 @@ static void compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, double
       yy = (double)((listpoints[i] % ps) / rs);
       zz = (double)(listpoints[i] / ps);
       if (dist3(x, y, z, xx, yy, zz) >= delta1)
-      { // origine pour le calcul de la direction principale : (x,y,z) 
-	X[j] = xx - x; Y[j] = yy - y; Z[j] = zz - z; 
+      { 
+	X[j] = xx; Y[j] = yy; Z[j] = zz;
 	j++;
       }
     }
+#else
+    for (i = (int32_t)delta1, j = 0; i < min(npoints,(int32_t)delta2); i++, j++)
+    {
+      X[j] = (double)(listpoints[i] % rs);
+      Y[j] = (double)((listpoints[i] % ps) / rs);
+      Z[j] = (double)(listpoints[i] / ps);
+    }
+#endif
+    for (i = 1; i < j; i++)
+    { // origine pour le calcul de la direction principale : 1er point trouvé 
+      X[i] -= X[0]; Y[i] -= Y[0]; Z[i] -= Z[0];
+    }
+    X[0] = Y[0] = Z[0] = 0.0;
     if (j > 1)
     {
       ret = ldirectionsprincipales3d(X, Y, Z, j, 
@@ -1610,7 +1651,7 @@ static void compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, double
 } // compute_vector()
 
 /* ====================================================================== */
-int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_t length)
+int32_t lskelfilter1a(skel *S, double delta1, double delta2, double theta, int32_t length)
 /* ====================================================================== */
 /*
   For each junction J
@@ -1628,7 +1669,7 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_
 */
 {
 #undef F_NAME
-#define F_NAME "lskelfilter2"
+#define F_NAME "lskelfilter1a"
   int32_t J, Ai, nadj, i, j, A[26], nmaxpoints, *listpoints;
   SKC_pcell p;
   double Vx[26], Vy[26], Vz[26], VVx, VVy, VVz, Cij;
@@ -1700,10 +1741,10 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2, double theta, int32_
 
   free(listpoints); free(X); free(Y); free(Z);
   return 1;
-} /* lskelfilter2() */
+} /* lskelfilter1a() */
 
 /* ====================================================================== */
-int32_t lskelfilter3(skel *S, double delta1, double delta2, double theta)
+int32_t lskelfilter2(skel *S, double delta1, double delta2)
 /* ====================================================================== */
 /*
   "Mikado game" algorithm
@@ -1717,14 +1758,18 @@ int32_t lskelfilter3(skel *S, double delta1, double delta2, double theta)
       Let V0, ... Vk be the corresponding tangent vectors
       Let m be such that the angle <V0,-Vm> is minimal
       Let minangle be min{<Vi,-Vj> | 0 <= i < k and i < j <= k} 
-      If <V0,-Vm> <= theta and <V0,-Vm> <= minangle then 
+      If <V0,-Vm> <= minangle then 
         E' = extremity of Am different from E
         A0 = Am; E = E'
         Mark A0
+      EndIf
+    EndWhile
+    If E is a junction then Unmark E
+  EndFor
 */
 {
 #undef F_NAME
-#define F_NAME "lskelfilter3"
+#define F_NAME "lskelfilter2"
   int32_t ret, e, i, j, m, Ai, A0, EE[2], E, Ep;
   int32_t nadj, A[26], nmaxpoints, *listpoints, maxlen;
   SKC_pcell p;
@@ -1739,7 +1784,7 @@ int32_t lskelfilter3(skel *S, double delta1, double delta2, double theta)
 #endif	  
 
 #ifdef DEBUG
-  printf("%s: delta1 = %g, delta2 = %g, theta %g\n", F_NAME, delta1, delta2, theta);
+  printf("%s: delta1 = %g, delta2 = %g\n", F_NAME, delta1, delta2);
 #endif	  
 
   nmaxpoints = delta2 * 4;
@@ -1856,8 +1901,8 @@ int32_t lskelfilter3(skel *S, double delta1, double delta2, double theta)
 #endif	  
 
 
-//      If <V0,-Vm> <= theta and <V0,-Vm> <= minangle then 
-	if ((angle <= theta) && (angle <= minangle))
+//      If <V0,-Vm> <= minangle then 
+	if (angle <= minangle)
 	{
 //        E' = extremity of Am different from E
 	  p = S->tskel[A[m]].adj;
@@ -1872,8 +1917,12 @@ int32_t lskelfilter3(skel *S, double delta1, double delta2, double theta)
 #ifdef DEBUG
 	  printf("  mark %d\n", A0);
 #endif	  
-	} // if (angle <= theta)
+	} // if (angle <= minangle)
       } // while (IS_JUNC(E) && (S->tskel[E].tag == 0))
+
+//    If E is a junction then Unmark E
+      if (IS_JUNC(E)) S->tskel[E].tag = 0;
+
     } // for (i = 0; i < 2; i++)
   } // if (p != NULL) 
 #ifdef DEBUGDRAW
@@ -1882,4 +1931,4 @@ int32_t lskelfilter3(skel *S, double delta1, double delta2, double theta)
 
   free(listpoints); free(X); free(Y); free(Z);
   return 1;
-} /* lskelfilter3() */
+} /* lskelfilter2() */

@@ -34,29 +34,38 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file skelfilter2.c
 
-\brief selection of "aligned branches" in a curvilinear skeleton
+\brief selection of an "aligned branch" in a curvilinear skeleton
 
-<B>Usage:</B> skelfilter2 in.skel delta1 delta2 theta len out.pgm
+<B>Usage:</B> skelfilter2 in.skel delta1 delta2 out.pgm
 
 <B>Description:</B>
 
+Selects a branch in the skeleton \b in.skel that has best aligned arcs.
+
 \verbatim
-For each junction J
-  For each arc Ai adjacent to J
-    compute and store the vector Vi tangent to Ai starting from J
-  For each couple (Vi,Vj) of vectors 
-    compute the cosine similarity Cij between Vi and -Vj
-      (see http://en.wikipedia.org/wiki/Cosine_similarity)
-    if Cij <= theta then mark the arcs Ai and Aj as "aligned"
-For each arc Ai not adjacent to any junction or longer than len
-  mark Ai
+  Let A0 be the arc in S having the greatest length
+  Mark A0 (field "tag" = 1)
+  Let E0, E1 be the vertices adjacent to A0
+  For E in {E0, E1} do
+    While E is a not yet marked junction do
+      Mark E
+      Let A1, ... Ak be the arcs other than A0 adjacent to E
+      Let V0, ... Vk be the corresponding tangent vectors
+      Let m be such that the angle <V0,-Vm> is minimal
+      Let minangle be min{<Vi,-Vj> | 0 <= i < k and i < j <= k} 
+      If <V0,-Vm> <= minangle then 
+        E' = extremity of Am different from E
+        A0 = Am; E = E'
+        Mark A0
+      EndIf
+    EndWhile
+    If E is a junction then Unmark E
+  EndFor
 \endverbatim
 
 Parameters \b delta1 and \b delta2 are used to compute the tangent vectors:
 the points taken into account for computing the vector for arc A have a 
-Euclidean distance to the nearest junction point that is between \b delta1 and \b delta2.
-
-Only the marked branches are kept.
+distance to the nearest junction point that is between \b delta1 and \b delta2.
 
 <B>Types supported:</B> skel 2d, skel 3d
 
@@ -89,11 +98,11 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   skel * S;
-  double delta1, delta2, angle, len;
+  double delta1, delta2;
 
-  if (argc != 7)
+  if (argc != 5)
   {
-    fprintf(stderr, "usage: %s in.skel delta1 delta2 angle len out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.skel delta1 delta2 out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -106,13 +115,10 @@ int main(int argc, char **argv)
   
   delta1 = atof(argv[2]);
   delta2 = atof(argv[3]);
-  angle = atof(argv[4]);
-  len = atof(argv[5]);
 
   //  printskel(S);
 
-  angle = (angle * M_PI) / 180;
-  if (!lskelfilter2(S, delta1, delta2, angle, len))
+  if (!lskelfilter2(S, delta1, delta2))
   {
     fprintf(stderr, "%s: function lskelfilter2 failed\n", argv[0]);
     exit(1);
