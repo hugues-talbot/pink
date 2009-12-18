@@ -32,17 +32,17 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file skel_MK3.c
+/*! \file skel_ACK3.c
 
-\brief parallel 3D binary ultimate skeleton
+\brief parallel 3D binary curvilinear, asymetric skeleton based on 3D and 2D residuals
 
-<B>Usage:</B> skel_MK3 in.pgm nsteps [inhibit] out.pgm
+<B>Usage:</B> skel_ACK3 in.pgm nsteps [inhibit] out.pgm
 
-<B>Description:</B>
-Parallel 3D binary thinning or ultimate skeleton. The parameter \b nsteps gives,
-if positive, the number of parallel thinning steps to be processed.
-If the value given for \b nsteps equals -1, the thinning is continued
-until stability.
+<B>Description:</B> Parallel 3D binary thinning or curvilinear,
+asymetric skeleton based on 3D and 2D residuals. The parameter \b nsteps
+gives, if positive, the number of parallel thinning steps to be
+processed.  If the value given for \b nsteps equals -1, the thinning
+is continued until stability.
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
@@ -98,9 +98,9 @@ int main(int argc, char **argv)
 
   if (depth(image) != 1)
   {
-    if (! lskelMK3(image, nsteps, inhibit))
+    if (! lskelACK3(image, nsteps, inhibit))
     {
-      fprintf(stderr, "%s: lskelMK3 failed\n", argv[0]);
+      fprintf(stderr, "%s: lskelACK3 failed\n", argv[0]);
       exit(1);
     } 
   }

@@ -37,4 +37,6 @@ pgm2vtk /tmp/visuskel_3 1 /tmp/visuskel_3.vtk
 3dborder /tmp/visuskel_4 /tmp/visuskel_4
 pgm2vtk /tmp/visuskel_4 1 /tmp/visuskel_4.vtk
 
-multirender /tmp/visuskel_0.vtk /tmp/visuskel_1.vtk /tmp/visuskel_2.vtk /tmp/visuskel_3.vtk /tmp/visuskel_4.vtk&
+multirender /tmp/visuskel_0.vtk /tmp/visuskel_1.vtk /tmp/visuskel_2.vtk /tmp/visuskel_3.vtk /tmp/visuskel_4.vtk
+
+rm -f /tmp/visuskel_*

@@ -57,7 +57,7 @@ The possible choices are:
 \li 7: curvilinear, based on residual points and 2D isthmus (CK3)
 \li 8: ultimate, asymetric (AMK3)
 \li 9: curvilinear, asymetric, based on thin 1D isthmus (ACK3a)
-\li 10: curvilinear, asymetric, based on thin 1D isthmus - variant (ACK3)
+\li 10: curvilinear, asymetric, based on 3D and 2D residuals (ACK3)
 \li 11: surfacic, based on residual points (RK3)
 \li 12: surfacic, based on 2D isthmuses (SK3)
 
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "   7: curvilinear, based on residual points and 2D isthmus (CK3)\n");
     fprintf(stderr, "   8: ultimate, asymetric (AMK3)\n");
     fprintf(stderr, "   9: curvilinear, asymetric, based on thin 1D isthmus (ACK3a)\n");
-    fprintf(stderr, "  10: curvilinear, asymetric, based on thin 1D isthmus - variant (ACK3)\n");
+    fprintf(stderr, "  10: curvilinear, asymetric, based on 3D and 2D residuals (ACK3)\n");
     fprintf(stderr, "  11: surfacic, based on residual points (RK3)\n");
     fprintf(stderr, "  12: surfacic, based on 2D isthmuses (SK3)\n");
     exit(1);
@@ -242,7 +242,7 @@ int main(int argc, char **argv)
 	exit(1);
       } break;
     case 9:
-      if (! lskelACK3a(image, nsteps, inhibit))
+      if (! lskelACK3a(image, nsteps, 0, inhibit))
       {
 	fprintf(stderr, "%s: lskelACK3a failed\n", argv[0]);
 	exit(1);

@@ -55,6 +55,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define S_1M_CRUCIAL  8
 #define S_0M_CRUCIAL 16
 #define S_CURVE      32
+#define S_EARLYCURVE 64
 #define S_SURF       64
 #define S_SELECTED  128
 
@@ -64,6 +65,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define IS_1M_CRUCIAL(f) (f&S_1M_CRUCIAL)
 #define IS_0M_CRUCIAL(f) (f&S_0M_CRUCIAL)
 #define IS_CURVE(f)      (f&S_CURVE)
+#define IS_EARLYCURVE(f) (f&S_EARLYCURVE)
 #define IS_SURF(f)       (f&S_SURF)
 #define IS_SELECTED(f)   (f&S_SELECTED)
 
@@ -73,6 +75,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define SET_1M_CRUCIAL(f) (f|=S_1M_CRUCIAL)
 #define SET_0M_CRUCIAL(f) (f|=S_0M_CRUCIAL)
 #define SET_CURVE(f)      (f|=S_CURVE)
+#define SET_EARLYCURVE(f) (f|=S_EARLYCURVE)
 #define SET_SURF(f)       (f|=S_SURF)
 #define SET_SELECTED(f)   (f|=S_SELECTED)
 
@@ -682,7 +685,7 @@ int32_t match0(uint8_t *v)
 
 /* ==================================== */
 int32_t lskelMK3a(struct xvimage *image, 
-	     int32_t nsteps,
+	     int32_t n_steps,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
@@ -719,7 +722,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     return 0;
   }
 
-  if (nsteps == -1) nsteps = 1000000000;
+  if (n_steps == -1) n_steps = 1000000000;
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
@@ -731,7 +734,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   step = 0;
   nonstab = 1;
-  while (nonstab && (step < nsteps))
+  while (nonstab && (step < n_steps))
   {
     nonstab = 0;
     step++;
@@ -814,7 +817,7 @@ writeimage(t,"_T");
 
 /* ==================================== */
 int32_t lskelEK3(struct xvimage *image, 
-	     int32_t nsteps,
+	     int32_t n_steps,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
@@ -855,7 +858,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   }
   I = UCHARDATA(inhibit);
 
-  if (nsteps == -1) nsteps = 1000000000;
+  if (n_steps == -1) n_steps = 1000000000;
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
@@ -867,7 +870,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   step = 0;
   nonstab = 1;
-  while (nonstab && (step < nsteps))
+  while (nonstab && (step < n_steps))
   {
     nonstab = 0;
     step++;
@@ -943,7 +946,7 @@ writeimage(t,"_T");
 
 /* ==================================== */
 int32_t lskelCK3a(struct xvimage *image, 
-	     int32_t nsteps,
+	     int32_t n_steps,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
@@ -986,7 +989,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   }
   I = UCHARDATA(inhibit);
 
-  if (nsteps == -1) nsteps = 1000000000;
+  if (n_steps == -1) n_steps = 1000000000;
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
@@ -998,7 +1001,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   step = 0;
   nonstab = 1;
-  while (nonstab && (step < nsteps))
+  while (nonstab && (step < n_steps))
   {
     nonstab = 0;
     step++;
@@ -1096,7 +1099,7 @@ writeimage(t,"_T");
 
 /* ==================================== */
 int32_t lskelCK3b(struct xvimage *image, 
-	     int32_t nsteps,
+	     int32_t n_steps,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
@@ -1144,7 +1147,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   }
   I = UCHARDATA(inhibit);
 
-  if (nsteps == -1) nsteps = 1000000000;
+  if (n_steps == -1) n_steps = 1000000000;
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
@@ -1156,7 +1159,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   step = 0;
   nonstab = 1;
-  while (nonstab && (step < nsteps))
+  while (nonstab && (step < n_steps))
   {
     nonstab = 0;
     step++;
@@ -1278,7 +1281,7 @@ writeimage(t,"_T");
 
 /* ==================================== */
 int32_t lskelCK3(struct xvimage *image, 
-	     int32_t nsteps,
+	     int32_t n_steps,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
@@ -1322,7 +1325,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   }
   I = UCHARDATA(inhibit);
 
-  if (nsteps == -1) nsteps = 1000000000;
+  if (n_steps == -1) n_steps = 1000000000;
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
@@ -1334,7 +1337,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   step = 0;
   nonstab = 1;
-  while (nonstab && (step < nsteps))
+  while (nonstab && (step < n_steps))
   {
     nonstab = 0;
     step++;
@@ -1451,7 +1454,7 @@ writeimage(t,"_T");
 
 /* ==================================== */
 int32_t lskelAK3(struct xvimage *image, 
-	     int32_t nsteps,
+	     int32_t n_steps,
 	     struct xvimage *inhibit,
 	     int32_t filter)
 /* ==================================== */
@@ -1505,7 +1508,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     return 0;
   }
 
-  if (nsteps == -1) nsteps = 1000000000;
+  if (n_steps == -1) n_steps = 1000000000;
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = 1; // normalize values
 
@@ -1520,7 +1523,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   // K := \emptyset ; T := S
   memset(K, 0, N);
   memcpy(T, S, N);
-  while (nonstab && (step < nsteps))
+  while (nonstab && (step < n_steps))
   {
     nonstab = 0;
     step++;
@@ -1614,7 +1617,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
 /* ==================================== */
 int32_t lskelMK3(struct xvimage *image, 
-	     int32_t nsteps,
+	     int32_t n_steps,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
@@ -1648,7 +1651,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   int32_t step, nonstab;
   uint8_t v[27];
 
-  if (nsteps == -1) nsteps = 1000000000;
+  if (n_steps == -1) n_steps = 1000000000;
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
@@ -1662,7 +1665,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   step = 0;
   nonstab = 1;
-  while (nonstab && (step < nsteps))
+  while (nonstab && (step < n_steps))
   {
     nonstab = 0;
     step++;
@@ -2218,7 +2221,7 @@ int32_t asym_match0(uint8_t *v)
 
 /* ==================================== */
 int32_t lskelAMK3(struct xvimage *image, 
-		   int32_t nsteps,
+		   int32_t n_steps,
 		   struct xvimage *inhibit)
 /* ==================================== */
 /*
@@ -2251,7 +2254,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   int32_t step, nonstab;
   uint8_t v[27];
 
-  if (nsteps == -1) nsteps = 1000000000;
+  if (n_steps == -1) n_steps = 1000000000;
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
@@ -2265,7 +2268,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   step = 0;
   nonstab = 1;
-  while (nonstab && (step < nsteps))
+  while (nonstab && (step < n_steps))
   {
     nonstab = 0;
     step++;
@@ -2330,10 +2333,10 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   return(1);
 } /* lskelAMK3() */
 
-
 /* ==================================== */
 int32_t lskelACK3a(struct xvimage *image, 
-	     int32_t nsteps,
+	     int32_t n_steps,
+	     int32_t n_earlysteps,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
@@ -2349,8 +2352,10 @@ Répéter jusqu'à stabilité
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
-Attention : l'objet ne doit pas toucher le bord de l'image
+Les points de courbe détectés dans les n_earlysteps premières étapes
+sont effacés de l'image (modification de la topologie !)
 
+Attention : l'objet ne doit pas toucher le bord de l'image
 */
 #undef F_NAME
 #define F_NAME "lskelACK3a"
@@ -2376,7 +2381,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   }
   I = UCHARDATA(inhibit);
 
-  if (nsteps == -1) nsteps = 1000000000;
+  if (n_steps == -1) n_steps = 1000000000;
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
@@ -2388,7 +2393,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   step = 0;
   nonstab = 1;
-  while (nonstab && (step < nsteps))
+  while (nonstab && (step < n_steps))
   {
     nonstab = 0;
     step++;
@@ -2396,19 +2401,31 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     printf("step %d\n", step);
 #endif
 
+    // MARQUE LES POINTS DE COURBE (3)
+    for (i = 0; i < N; i++)
+    {
+      if (IS_OBJECT(S[i]))
+      {    
+	top26(S, i, rs, ps, N, &top, &topb);
+	if (top > 1) 
+	{ 
+	  SET_CURVE(S[i]);
+	  if (step <= n_earlysteps) SET_EARLYCURVE(S[i]);
+	}
+      }
+    }
+
+    // EFFACE LES POINTS DE COURBE "PRÉCOCES"
+    if (step <= n_earlysteps) 
+      for (i = 0; i < N; i++)
+	if (IS_EARLYCURVE(S[i]))
+	  S[i] = 0;
+
     // MARQUE LES POINTS SIMPLES NON DANS I
     for (i = 0; i < N; i++) 
       if (IS_OBJECT(S[i]) && !I[i] && simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
-    // MARQUE LES POINTS DE COURBE (3)
-    for (i = 0; i < N; i++)
-    {
-      if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
-      {    
-	top26(S, i, rs, ps, N, &top, &topb);
-	if (top > 1) SET_CURVE(S[i]);
-      }
-    }
+
     // DEMARQUE PTS DE COURBE ET LES MEMORISE DANS I
     for (i = 0; i < N; i++)
     { 
@@ -2457,7 +2474,9 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     printf("number of steps: %d\n", step);
 #endif
 
-  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+  for (i = 0; i < N; i++) 
+    if (S[i]) 
+      S[i] = 255; // normalize values
 
   freeimage(t);
   termine_topo3d();
@@ -2466,7 +2485,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
 /* ==================================== */
 int32_t lskelACK3(struct xvimage *image, 
-	     int32_t nsteps,
+	     int32_t n_steps,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
@@ -2476,7 +2495,8 @@ points qui ne sont pas voisins d'un point isthme 2D ni d'un point interieur
 Algo ACK3 données: S
 Répéter jusqu'à stabilité
   C := points de courbe de S
-  P := voxels simples pour S et pas dans C
+  I := I \cup C
+  P := voxels simples pour S et pas dans I
   C2 := voxels 2M-cruciaux (asym_match2)
   C1 := voxels 1M-cruciaux (asym_match1)
   C0 := voxels 0M-cruciaux (asym_match0)
@@ -2510,7 +2530,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   }
   I = UCHARDATA(inhibit);
 
-  if (nsteps == -1) nsteps = 1000000000;
+  if (n_steps == -1) n_steps = 1000000000;
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
@@ -2522,7 +2542,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   step = 0;
   nonstab = 1;
-  while (nonstab && (step < nsteps))
+  while (nonstab && (step < n_steps))
   {
     nonstab = 0;
     step++;
@@ -2639,7 +2659,7 @@ writeimage(t,"_T");
 
 /* ==================================== */
 int32_t lskelRK3(struct xvimage *image, 
-	     int32_t nsteps,
+	     int32_t n_steps,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
@@ -2682,7 +2702,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   }
   I = UCHARDATA(inhibit);
 
-  if (nsteps == -1) nsteps = 1000000000;
+  if (n_steps == -1) n_steps = 1000000000;
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
@@ -2694,7 +2714,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   step = 0;
   nonstab = 1;
-  while (nonstab && (step < nsteps))
+  while (nonstab && (step < n_steps))
   {
     nonstab = 0;
     step++;
@@ -2797,7 +2817,7 @@ writeimage(t,"_T");
 
 /* ==================================== */
 int32_t lskelSK3(struct xvimage *image, 
-	     int32_t nsteps,
+	     int32_t n_steps,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
@@ -2841,7 +2861,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   }
   I = UCHARDATA(inhibit);
 
-  if (nsteps == -1) nsteps = 1000000000;
+  if (n_steps == -1) n_steps = 1000000000;
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
@@ -2853,7 +2873,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   step = 0;
   nonstab = 1;
-  while (nonstab && (step < nsteps))
+  while (nonstab && (step < n_steps))
   {
     nonstab = 0;
     step++;

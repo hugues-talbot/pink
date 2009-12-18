@@ -19,4 +19,5 @@ pgm2vtk /tmp/visu3pgm_2 1 /tmp/visu3pgm_2.vtk
 3dkhalimskize $3 h /tmp/visu3pgm_3
 3dborder /tmp/visu3pgm_3 /tmp/visu3pgm_3
 pgm2vtk /tmp/visu3pgm_3 1 /tmp/visu3pgm_3.vtk
-multirender /tmp/visu3pgm_1.vtk /tmp/visu3pgm_2.vtk /tmp/visu3pgm_3.vtk &
+multirender /tmp/visu3pgm_1.vtk /tmp/visu3pgm_2.vtk /tmp/visu3pgm_3.vtk
+rm -f /tmp/visu3pgm_*

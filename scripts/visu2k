@@ -14,4 +14,5 @@ fi
 pgm2vtk /tmp/visu2k_1 1 /tmp/visu2k_1.vtk
 3dborder $2 /tmp/visu2k_2
 pgm2vtk /tmp/visu2k_2 1 /tmp/visu2k_2.vtk
-multirender /tmp/visu2k_1.vtk /tmp/visu2k_2.vtk &
+multirender /tmp/visu2k_1.vtk /tmp/visu2k_2.vtk
+rm -f /tmp/visu2k_*

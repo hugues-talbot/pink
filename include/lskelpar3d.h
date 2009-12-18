@@ -67,7 +67,7 @@ extern int32_t lskelAMK3(struct xvimage *image,
 			 int32_t nsteps,
 			 struct xvimage *inhibit);
 extern int32_t lskelACK3a(struct xvimage *image, 
-			  int32_t nsteps,
+			  int32_t nsteps, int32_t n_earlysteps,
 			  struct xvimage *inhibit);
 extern int32_t lskelACK3(struct xvimage *image, 
 			 int32_t nsteps,

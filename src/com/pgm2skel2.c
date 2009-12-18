@@ -32,49 +32,60 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file skel_MK3.c
+/*! \file pgm2skel2.c
 
-\brief parallel 3D binary ultimate skeleton
+\brief decomposition of a curvilinear skeleton into isolated points, end points, curves and junctions
 
-<B>Usage:</B> skel_MK3 in.pgm nsteps [inhibit] out.pgm
+<B>Usage:</B> pgm2skel in.pgm junc.pgm connex out.skel
 
 <B>Description:</B>
-Parallel 3D binary thinning or ultimate skeleton. The parameter \b nsteps gives,
-if positive, the number of parallel thinning steps to be processed.
-If the value given for \b nsteps equals -1, the thinning is continued
-until stability.
+The skeleton found in \b in.pgm is decomposed into isolated points, end points, curves and junctions ;
+and its description is stored in \b out.skel .
+The parameter \b connex sets the adjacency relation used for the object
+(4, 8 (2d) or 6, 18, 26 (3d)).
 
-If the parameter \b inhibit is given and is a binary image name,
-then the points of this image will be left unchanged. 
+The image given as parameter\b junc.pgm contains curve points that will artificially considered as junction points. 
 
-<B>Warning:</B> The object must not have any point on the frame of the image.
+\warning Points at the border of the image will be ignored.
 
-<B>Types supported:</B> byte 3d
+\warning IMPORTANT LIMITATION: 
+different junctions in the original image must not be in direct
+contact with each other (i.e., connected) otherwise they will be
+considered as a single junction. To prevent this to occur, one can
+increase image resolution.
+
+<B>Types supported:</B> byte 2d, byte 3d
 
 <B>Category:</B> topobin
 \ingroup  topobin
 
-\author Michel Couprie
+\author Michel Couprie 2009
 */
+
+/*
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lskelpar3d.h>
+#include <mcskelcurv.h>
+#include <lskelcurv.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * inhibit = NULL;
-  int32_t nsteps;
+  struct xvimage * junc;
+  int32_t connex;
+  skel * S;
 
-  if ((argc != 4) && (argc != 5))
+  if (argc != 5)
   {
-    fprintf(stderr, "usage: %s in.pgm nsteps [inhibit] out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm junc.pgm connex fileout.skel\n", argv[0]);
     exit(1);
   }
 
@@ -84,34 +95,27 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
-
-  nsteps = atoi(argv[2]);
-  if (argc == 5)
+  junc = readimage(argv[2]);
+  if (junc == NULL)
   {
-    inhibit = readimage(argv[3]);
-    if (inhibit == NULL)
-    {
-      fprintf(stderr, "%s: readimage failed\n", argv[0]);
-      exit(1);
-    }
-  }
-
-  if (depth(image) != 1)
-  {
-    if (! lskelMK3(image, nsteps, inhibit))
-    {
-      fprintf(stderr, "%s: lskelMK3 failed\n", argv[0]);
-      exit(1);
-    } 
-  }
-  else
-  {
-    fprintf(stderr, "%s: image must be 3D\n", argv[0]);
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  writeimage(image, argv[argc-1]);
+  connex = atoi(argv[3]);
+
+  if (! (S = limage2skel2(image, junc, connex)))
+  {
+    fprintf(stderr, "%s: function limage2skel2 failed\n", argv[0]);
+    exit(1);
+  }
+
+  //printskel(S);
+
+  writeskel(S, argv[argc-1]);
+  termineskel(S);
   freeimage(image);
+  freeimage(junc);
 
   return 0;
 } /* main */

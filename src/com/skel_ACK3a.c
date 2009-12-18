@@ -32,22 +32,26 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file skel_MK3.c
+/*! \file skel_ACK3a.c
 
-\brief parallel 3D binary ultimate skeleton
+\brief parallel 3D binary curvilinear, asymetric skeleton based on thin 1D isthmus
 
-<B>Usage:</B> skel_MK3 in.pgm nsteps [inhibit] out.pgm
+<B>Usage:</B> skel_ACK3a in.pgm nsteps ndel [inhibit] out.pgm
 
-<B>Description:</B>
-Parallel 3D binary thinning or ultimate skeleton. The parameter \b nsteps gives,
-if positive, the number of parallel thinning steps to be processed.
-If the value given for \b nsteps equals -1, the thinning is continued
-until stability.
+<B>Description:</B> Parallel 3D binary thinning or curvilinear,
+asymetric skeleton based on thin 1D isthmus. The parameter \b nsteps
+gives, if positive, the number of parallel thinning steps to be
+processed.  If the value given for \b nsteps equals -1, the thinning
+is continued until stability.
+
+During the first \b ndel steps, detected curve points are deleted. 
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
 
-<B>Warning:</B> The object must not have any point on the frame of the image.
+\warning Setting \b ndel to 0 guarantees topology preservation, giving any other value to this parameter removes such guarantee.
+
+\warning The object must not have any point on the frame of the image.
 
 <B>Types supported:</B> byte 3d
 
@@ -70,11 +74,11 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * inhibit = NULL;
-  int32_t nsteps;
+  int32_t nsteps, ndel;
 
-  if ((argc != 4) && (argc != 5))
+  if ((argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in.pgm nsteps [inhibit] out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm nsteps ndel [inhibit] out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -86,9 +90,10 @@ int main(int argc, char **argv)
   }
 
   nsteps = atoi(argv[2]);
-  if (argc == 5)
+  ndel = atoi(argv[3]);
+  if (argc == 6)
   {
-    inhibit = readimage(argv[3]);
+    inhibit = readimage(argv[4]);
     if (inhibit == NULL)
     {
       fprintf(stderr, "%s: readimage failed\n", argv[0]);
@@ -98,9 +103,9 @@ int main(int argc, char **argv)
 
   if (depth(image) != 1)
   {
-    if (! lskelMK3(image, nsteps, inhibit))
+    if (! lskelACK3a(image, nsteps, ndel, inhibit))
     {
-      fprintf(stderr, "%s: lskelMK3 failed\n", argv[0]);
+      fprintf(stderr, "%s: lskelACK3a failed\n", argv[0]);
       exit(1);
     } 
   }

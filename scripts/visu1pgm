@@ -21,3 +21,4 @@ if [ $# -eq 2 ]
 then
     pgm2vtk /tmp/visu1pgm_1 1 $2
 fi
+rm -f /tmp/visu1pgm_*
