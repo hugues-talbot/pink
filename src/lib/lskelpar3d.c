@@ -49,13 +49,22 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcutil.h>
 #include <lskelpar3d.h>
 
+#define I_INHIBIT     1
+#define I_EARLYCURVE  2
+
+#define IS_INHIBIT(f) (f&I_INHIBIT)
+#define SET_INHIBIT(f) (f|=I_INHIBIT)
+#define IS_EARLYCURVE(f) (f&I_EARLYCURVE)
+#define SET_EARLYCURVE(f) (f|=I_EARLYCURVE)
+
+#define NDG_EARLY   127
+
 #define S_OBJECT      1
 #define S_SIMPLE      2
 #define S_2M_CRUCIAL  4
 #define S_1M_CRUCIAL  8
 #define S_0M_CRUCIAL 16
 #define S_CURVE      32
-#define S_EARLYCURVE 64
 #define S_SURF       64
 #define S_SELECTED  128
 
@@ -65,7 +74,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #define IS_1M_CRUCIAL(f) (f&S_1M_CRUCIAL)
 #define IS_0M_CRUCIAL(f) (f&S_0M_CRUCIAL)
 #define IS_CURVE(f)      (f&S_CURVE)
-#define IS_EARLYCURVE(f) (f&S_EARLYCURVE)
 #define IS_SURF(f)       (f&S_SURF)
 #define IS_SELECTED(f)   (f&S_SELECTED)
 
@@ -75,7 +83,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #define SET_1M_CRUCIAL(f) (f|=S_1M_CRUCIAL)
 #define SET_0M_CRUCIAL(f) (f|=S_0M_CRUCIAL)
 #define SET_CURVE(f)      (f|=S_CURVE)
-#define SET_EARLYCURVE(f) (f|=S_EARLYCURVE)
 #define SET_SURF(f)       (f|=S_SURF)
 #define SET_SELECTED(f)   (f|=S_SELECTED)
 
@@ -2353,7 +2360,7 @@ Répéter jusqu'à stabilité
   S := S \ P
 
 Les points de courbe détectés dans les n_earlysteps premières étapes
-sont effacés de l'image (modification de la topologie !)
+sont marqués dans l'image de sortie par une valeur 127 (au lieu de 255)
 
 Attention : l'objet ne doit pas toucher le bord de l'image
 */
@@ -2378,8 +2385,13 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   {
     inhibit = copyimage(image); 
     razimage(inhibit);
+    I = UCHARDATA(inhibit);
   }
-  I = UCHARDATA(inhibit);
+  else
+  {
+    I = UCHARDATA(inhibit);
+    for (i = 0; i < N; i++) if (I[i]) I[i] = I_INHIBIT;
+  }
 
   if (n_steps == -1) n_steps = 1000000000;
 
@@ -2410,26 +2422,20 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (top > 1) 
 	{ 
 	  SET_CURVE(S[i]);
-	  if (step <= n_earlysteps) SET_EARLYCURVE(S[i]);
+	  if (step <= n_earlysteps) SET_EARLYCURVE(I[i]);
 	}
       }
     }
 
-    // EFFACE LES POINTS DE COURBE "PRÉCOCES"
-    if (step <= n_earlysteps) 
-      for (i = 0; i < N; i++)
-	if (IS_EARLYCURVE(S[i]))
-	  S[i] = 0;
-
     // MARQUE LES POINTS SIMPLES NON DANS I
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && !I[i] && simple26(S, i, rs, ps, N))
+      if (IS_OBJECT(S[i]) && !IS_INHIBIT(I[i]) && simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
 
     // DEMARQUE PTS DE COURBE ET LES MEMORISE DANS I
     for (i = 0; i < N; i++)
     { 
-      if (IS_CURVE(S[i])) { UNSET_SIMPLE(S[i]); I[i] = 1; }
+      if (IS_CURVE(S[i])) { UNSET_SIMPLE(S[i]); SET_INHIBIT(I[i]); }
     }
     // MARQUE LES POINTS 2M-CRUCIAUX
     for (i = 0; i < N; i++) 
@@ -2476,7 +2482,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   for (i = 0; i < N; i++) 
     if (S[i]) 
-      S[i] = 255; // normalize values
+    {
+      if (IS_EARLYCURVE(I[i]))
+	S[i] = NDG_EARLY;
+      else
+	S[i] = NDG_MAX;
+    }
 
   freeimage(t);
   termine_topo3d();

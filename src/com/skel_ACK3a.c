@@ -44,12 +44,13 @@ gives, if positive, the number of parallel thinning steps to be
 processed.  If the value given for \b nsteps equals -1, the thinning
 is continued until stability.
 
-During the first \b ndel steps, detected curve points are deleted. 
+During the first \b ndel steps, detected curve points are marked: 
+they are indicated by a value 127 (instead of 255) in the output image.
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
 
-\warning Setting \b ndel to 0 guarantees topology preservation, giving any other value to this parameter removes such guarantee.
+\warning When \b ndel is not set to 0, the output image may contain points with value 127.
 
 \warning The object must not have any point on the frame of the image.
 

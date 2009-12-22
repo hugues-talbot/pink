@@ -186,7 +186,7 @@ proc setOpacity {opa} {
   set RENDER_OPA($a) $opa
 }
 # set transparency for object 0
-setOpacity 0.15
+setOpacity 0.20
 
 set saveposbutton [button .buttons.savepos -text "Savepos" -command RENDER_savepos\
                 -activebackground white]

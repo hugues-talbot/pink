@@ -41,6 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <math.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mcutil.h>
 #include <mccodimage.h>
 #include <lbresen.h>
@@ -87,8 +88,9 @@ void ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, in
   uint8_t *F;
 
   double len =  dist3(x1, y1, z1, x2, y2, z2);
-  int32_t NBSAMPLES = (int32_t)(10 * len)
-;
+  int32_t NBSAMPLES = (int32_t)(10 * len);
+  assert(NBSAMPLES > 0);
+
 #ifdef DEBUG_DL3
   printf("%s: %d %d %d   %d %d %d\n", F_NAME, x1, y1, z1, x2, y2, z2);
 #endif

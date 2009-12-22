@@ -2430,7 +2430,7 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2)
 	    if (Cij < angle) { angle = Cij; m = j; }
 	  }
 	}
-	assert(m != -1);
+	if (m == -1) break; // only small arcs: stop tracking
 #ifdef DEBUG
 	printf("  angle=%g\n", angle);
 #endif	  
