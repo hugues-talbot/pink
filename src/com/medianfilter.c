@@ -79,10 +79,15 @@ int main(int argc, char **argv)
   }
 
   image = readimage(argv[1]);
-  elem = readse(argv[2], &x, &y, &z);
-  if ((image == NULL) || (elem == NULL))
+  if (image == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
+    exit(1);
+  }
+  elem = readse(argv[2], &x, &y, &z);
+  if (elem == NULL)
+  {
+    fprintf(stderr, "%s: readse failed\n", argv[0]);
     exit(1);
   }
   if (depth(image) == 1)

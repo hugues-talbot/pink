@@ -331,7 +331,8 @@ $(BDIR)/drawtriangulation \
 $(BDIR)/line \
 $(BDIR)/curve2spline \
 $(BDIR)/points2spline \
-$(BDIR)/samplespline
+$(BDIR)/samplespline \
+$(BDIR)/worms
 
 GEO=\
 $(BDIR)/affine \
@@ -385,6 +386,7 @@ $(BDIR)/recalagerigide_num \
 $(BDIR)/recalagerigide_translateplane \
 $(BDIR)/isometry \
 $(BDIR)/rotate \
+$(BDIR)/rotate3dbin \
 $(BDIR)/rotatebin \
 $(BDIR)/rotse \
 $(BDIR)/section \
@@ -1557,6 +1559,9 @@ $(BDIR)/points2spline:	$(CDIR)/points2spline.c $(IDIR)/mcimage.h $(IDIR)/mcsplin
 $(BDIR)/samplespline:	$(CDIR)/samplespline.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/samplespline.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/samplespline
 
+$(BDIR)/worms:	$(CDIR)/worms.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/mcprobas.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mclifo.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcsplines.o $(ODIR)/mcprobas.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/worms.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mclifo.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcsplines.o $(ODIR)/mcprobas.o $(LIBS) -o $(BDIR)/worms
+
 # *********************************
 # GEO
 # *********************************
@@ -1716,6 +1721,9 @@ $(BDIR)/recalagerigide_translateplane:	$(CDIR)/recalagerigide_translateplane.c $
 
 $(BDIR)/rotate:	$(CDIR)/rotate.c $(IDIR)/mcimage.h $(IDIR)/mclin.h $(IDIR)/mcgeo.h $(IDIR)/lrotations.h $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/lrotations.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/rotate.c $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/lrotations.o $(LIBS) -o $(BDIR)/rotate
+
+$(BDIR)/rotate3dbin:	$(CDIR)/rotate3dbin.c $(IDIR)/mcimage.h $(IDIR)/mclin.h $(IDIR)/mcgeo.h $(IDIR)/lrotations.h $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/lrotations.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/rotate3dbin.c $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/lrotations.o $(LIBS) -o $(BDIR)/rotate3dbin
 
 $(BDIR)/rotatebin:	$(CDIR)/rotatebin.c $(IDIR)/mcimage.h $(IDIR)/mclin.h $(IDIR)/mcgeo.h $(IDIR)/lrotations.h $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/lrotations.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/rotatebin.c $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/lrotations.o $(LIBS) -o $(BDIR)/rotatebin

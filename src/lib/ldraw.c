@@ -89,7 +89,7 @@ void ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, in
 
   double len =  dist3(x1, y1, z1, x2, y2, z2);
   int32_t NBSAMPLES = (int32_t)(10 * len);
-  assert(NBSAMPLES > 0);
+  if (NBSAMPLES == 0) return;
 
 #ifdef DEBUG_DL3
   printf("%s: %d %d %d   %d %d %d\n", F_NAME, x1, y1, z1, x2, y2, z2);

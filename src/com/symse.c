@@ -78,7 +78,7 @@ int main(int argc, char **argv)
   image1 = readse(argv[1], &x, &y, &z);  
   if (image1 == NULL)
   {
-    fprintf(stderr, "%s: readimage failed\n", argv[0]);
+    fprintf(stderr, "%s: readse failed\n", argv[0]);
     exit(1);
   }
   rs = rowsize(image1);      /* taille ligne */

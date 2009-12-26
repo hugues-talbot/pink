@@ -55,6 +55,10 @@ image size is computed such that no loss of information occur.
 \author Michel Couprie
 */
 
+/*
+%TEST rotatebin %IMAGES/2dbyte/binary/b2_se_5_7.pgm 25 %RESULTS/rotatebin_b2_se_5_7_25.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

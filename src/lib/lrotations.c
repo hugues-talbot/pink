@@ -48,6 +48,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <sys/types.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <math.h>
 #include <mcimage.h>
 #include <mccodimage.h>
@@ -220,20 +221,16 @@ of information occurs.
 #undef F_NAME
 #define F_NAME "lrotationRT"
 {
-  int32_t rs, cs, n, rs2, cs2, x, y, xx, yy, xmax, xmin, ymax, ymin;
+  int32_t rs, cs, rs2, cs2, x, y, xx, yy, xmax, xmin, ymax, ymin;
   struct xvimage *image2;
   uint8_t *I1, *I2;
   double cost = cos(theta);
   double sint = sin(theta);
 
-  if (depth(image) != 1)
-  {
-    fprintf(stderr, "%s() : 3d not yet implemented\n", F_NAME);
-    return(0);
-  }
+  assert(depth(image) == 1);
+  assert(datatype(image) == VFF_TYP_1_BYTE);
   rs = rowsize(image);
   cs = colsize(image);
-  n = rs * cs;
   I1 = UCHARDATA(image);
 
   if (resize)
@@ -284,6 +281,10 @@ of information occurs.
   I2 = UCHARDATA(image2);
   razimage(image2);
 
+  xc = 2.0; yc = 3.0;
+printf("xc = %g\n", xc);
+printf("yc = %g\n", yc);
+
   for (yy = ymin; yy < ymax; yy++)
     for (xx = xmin; xx < xmax; xx++)
     {
@@ -295,6 +296,330 @@ of information occurs.
 
   return image2;
 } // lrotationRT()
+
+/* ==================================== */
+struct xvimage * lrotationRT3Dx(struct xvimage * image, double theta, double yc, double zc, double *newyc, double *newzc, uint8_t resize)
+/* ==================================== */
+/*
+Rotates the input image of the angle theta (in radians) 
+around the axis defined by y=yc, z=zc.
+Method: truncated real rotation.
+If the boolean resize is 0, the image size is left unchanged 
+(hence parts of image may be lost). 
+Otherwise, the resulting image size is computed such that no loss 
+of information occurs.
+*/
+#undef F_NAME
+#define F_NAME "lrotationRT3Dx"
+{
+  int32_t rs, cs, ds, ps, rs2, cs2, ds2, ps2, x, y, z, xx, yy, zz;
+  int32_t xmax, xmin, ymax, ymin, zmax, zmin;
+  struct xvimage *image2;
+  uint8_t *I1, *I2;
+  double cost = cos(theta);
+  double sint = sin(theta);
+
+  assert(datatype(image) == VFF_TYP_1_BYTE);
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  ps = rs * cs;
+  I1 = UCHARDATA(image);
+
+  if (resize)
+  {
+    zmax = zmin = ymax = ymin = 0; 
+    xmax = rs; xmin = 0;
+
+    yy = (int32_t)floor(cost*(0-yc) - sint*(0-zc) + 0.5 + yc);
+    zz = (int32_t)floor(sint*(0-yc) + cost*(0-zc) + 0.5 + zc);
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+    yy = (int32_t)floor(cost*(cs-1-yc) - sint*(0-zc) + 0.5 + yc);
+    zz = (int32_t)floor(sint*(cs-1-yc) + cost*(0-zc) + 0.5 + zc);
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+    yy = (int32_t)floor(cost*(0-yc) - sint*(ds-1-zc) + 0.5 + yc);
+    zz = (int32_t)floor(sint*(0-yc) + cost*(ds-1-zc) + 0.5 + zc);
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+    yy = (int32_t)floor(cost*(cs-1-yc) - sint*(ds-1-zc) + 0.5 + yc);
+    zz = (int32_t)floor(sint*(cs-1-yc) + cost*(ds-1-zc) + 0.5 + zc);
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+
+    yy = (int32_t)ceil(cost*(0-yc) - sint*(0-zc) + 0.5 + yc);
+    zz = (int32_t)ceil(sint*(0-yc) + cost*(0-zc) + 0.5 + zc);
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+    yy = (int32_t)ceil(cost*(cs-1-yc) - sint*(0-zc) + 0.5 + yc);
+    zz = (int32_t)ceil(sint*(cs-1-yc) + cost*(0-zc) + 0.5 + zc);
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+    yy = (int32_t)ceil(cost*(0-yc) - sint*(ds-1-zc) + 0.5 + yc);
+    zz = (int32_t)ceil(sint*(0-yc) + cost*(ds-1-zc) + 0.5 + zc);
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+    yy = (int32_t)ceil(cost*(cs-1-yc) - sint*(ds-1-zc) + 0.5 + yc);
+    zz = (int32_t)ceil(sint*(cs-1-yc) + cost*(ds-1-zc) + 0.5 + zc);
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+
+    rs2 = rs;
+    cs2 = ymax - ymin + 1;
+    ds2 = zmax - zmin + 1;
+  }
+  else 
+  {
+    xmax = rs2 = rs; 
+    ymax = cs2 = cs;
+    zmax = ds2 = ds; 
+    ymin = zmin = xmin = 0;
+  }
+  ps2 = rs2 * cs2;
+
+  image2 = allocimage(NULL, rs2, cs2, ds2, datatype(image));
+  if (image2 == NULL)
+  {
+    fprintf(stderr, "%s : allocimage failed\n", F_NAME);
+    return NULL;
+  }
+  I2 = UCHARDATA(image2);
+  razimage(image2);
+
+  for (xx = xmin; xx < xmax; xx++)
+  {
+    x = xx;
+    for (zz = zmin; zz < zmax; zz++)
+      for (yy = ymin; yy < ymax; yy++)
+      {
+	y = (int32_t)floor( cost*(yy-yc) + sint*(zz-zc) + 0.5 + yc);
+	z = (int32_t)floor(-sint*(yy-yc) + cost*(zz-zc) + 0.5 + zc);
+	if ((y >= 0) && (z >= 0) && (y < cs) && (z < ds))
+	  I2[(zz-zmin)*ps2 + (yy-ymin)*rs2 + xx-xmin] = I1[z*ps + y*rs + x];
+      } // for yy for zz
+  } // for xx
+
+  *newyc = yc - ymin;
+  *newzc = zc - zmin;
+  return image2;
+} // lrotationRT3Dx()
+
+/* ==================================== */
+struct xvimage * lrotationRT3Dy(struct xvimage * image, double theta, double xc, double zc, double *newxc, double *newzc, uint8_t resize)
+/* ==================================== */
+/*
+Rotates the input image of the angle theta (in radians) 
+around the axis defined by x=xc, z=zc.
+Method: truncated real rotation.
+If the boolean resize is 0, the image size is left unchanged 
+(hence parts of image may be lost). 
+Otherwise, the resulting image size is computed such that no loss 
+of information occurs.
+*/
+#undef F_NAME
+#define F_NAME "lrotationRT3Dy"
+{
+  int32_t rs, cs, ds, ps, rs2, cs2, ds2, ps2, x, y, z, xx, yy, zz;
+  int32_t xmax, xmin, ymax, ymin, zmax, zmin;
+  struct xvimage *image2;
+  uint8_t *I1, *I2;
+  double cost = cos(theta);
+  double sint = sin(theta);
+
+  assert(datatype(image) == VFF_TYP_1_BYTE);
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  ps = rs * cs;
+  I1 = UCHARDATA(image);
+
+  if (resize)
+  {
+    zmax = zmin = xmax = xmin = 0; 
+    ymax = cs; ymin = 0;
+
+    xx = (int32_t)floor(cost*(0-xc) - sint*(0-zc) + 0.5 + xc);
+    zz = (int32_t)floor(sint*(0-xc) + cost*(0-zc) + 0.5 + zc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+    xx = (int32_t)floor(cost*(rs-1-xc) - sint*(0-zc) + 0.5 + xc);
+    zz = (int32_t)floor(sint*(rs-1-xc) + cost*(0-zc) + 0.5 + zc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+    xx = (int32_t)floor(cost*(0-xc) - sint*(ds-1-zc) + 0.5 + xc);
+    zz = (int32_t)floor(sint*(0-xc) + cost*(ds-1-zc) + 0.5 + zc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+    xx = (int32_t)floor(cost*(rs-1-xc) - sint*(ds-1-zc) + 0.5 + xc);
+    zz = (int32_t)floor(sint*(rs-1-xc) + cost*(ds-1-zc) + 0.5 + zc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+
+    xx = (int32_t)ceil(cost*(0-xc) - sint*(0-zc) + 0.5 + xc);
+    zz = (int32_t)ceil(sint*(0-xc) + cost*(0-zc) + 0.5 + zc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+    xx = (int32_t)ceil(cost*(rs-1-xc) - sint*(0-zc) + 0.5 + xc);
+    zz = (int32_t)ceil(sint*(rs-1-xc) + cost*(0-zc) + 0.5 + zc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+    xx = (int32_t)ceil(cost*(0-xc) - sint*(ds-1-zc) + 0.5 + xc);
+    zz = (int32_t)ceil(sint*(0-xc) + cost*(ds-1-zc) + 0.5 + zc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+    xx = (int32_t)ceil(cost*(rs-1-xc) - sint*(ds-1-zc) + 0.5 + xc);
+    zz = (int32_t)ceil(sint*(rs-1-xc) + cost*(ds-1-zc) + 0.5 + zc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (zz > zmax) zmax = zz;  if (zz < zmin) zmin = zz;
+
+    rs2 = xmax - xmin + 1;
+    cs2 = cs;
+    ds2 = zmax - zmin + 1;
+  }
+  else 
+  {
+    xmax = rs2 = rs;
+    ymax = cs2 = cs; 
+    zmax = ds2 = ds; 
+    xmin = ymin = zmin = 0;
+  }
+  ps2 = rs2 * cs2;
+
+  image2 = allocimage(NULL, rs2, cs2, ds2, datatype(image));
+  if (image2 == NULL)
+  {
+    fprintf(stderr, "%s : allocimage failed\n", F_NAME);
+    return NULL;
+  }
+  I2 = UCHARDATA(image2);
+  razimage(image2);
+
+  for (yy = ymin; yy < ymax; yy++)
+  {
+    y = yy;
+    for (zz = zmin; zz < zmax; zz++)
+      for (xx = xmin; xx < xmax; xx++)
+      {
+	x = (int32_t)floor( cost*(xx-xc) + sint*(zz-zc) + 0.5 + xc);
+	z = (int32_t)floor(-sint*(xx-xc) + cost*(zz-zc) + 0.5 + zc);
+	if ((x >= 0) && (z >= 0) && (x < rs) && (z < ds))
+	  I2[(zz-zmin)*ps2 + (yy-ymin)*rs2 + xx-xmin] = I1[z*ps + y*rs + x];
+      } // for xx for zz
+  } // for yy
+
+  *newxc = xc - xmin;
+  *newzc = zc - zmin;
+  return image2;
+} // lrotationRT3Dy()
+
+/* ==================================== */
+struct xvimage * lrotationRT3Dz(struct xvimage * image, double theta, double xc, double yc, double *newxc, double *newyc, uint8_t resize)
+/* ==================================== */
+/*
+Rotates the input image of the angle theta (in radians) 
+around the axis defined by x=xc, y=yc.
+Method: truncated real rotation.
+If the boolean resize is 0, the image size is left unchanged 
+(hence parts of image may be lost). 
+Otherwise, the resulting image size is computed such that no loss 
+of information occurs.
+*/
+#undef F_NAME
+#define F_NAME "lrotationRT3Dz"
+{
+  int32_t rs, cs, ds, ps, rs2, cs2, ds2, ps2, x, y, z, xx, yy, zz;
+  int32_t xmax, xmin, ymax, ymin, zmax, zmin;
+  struct xvimage *image2;
+  uint8_t *I1, *I2;
+  double cost = cos(theta);
+  double sint = sin(theta);
+
+  assert(datatype(image) == VFF_TYP_1_BYTE);
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  ps = rs * cs;
+  I1 = UCHARDATA(image);
+
+  if (resize)
+  {
+    ymax = ymin = xmax = xmin = 0; 
+    zmax = ds; zmin = 0;
+
+    xx = (int32_t)floor(cost*(0-xc) - sint*(0-yc) + 0.5 + xc);
+    yy = (int32_t)floor(sint*(0-xc) + cost*(0-yc) + 0.5 + yc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    xx = (int32_t)floor(cost*(rs-1-xc) - sint*(0-yc) + 0.5 + xc);
+    yy = (int32_t)floor(sint*(rs-1-xc) + cost*(0-yc) + 0.5 + yc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    xx = (int32_t)floor(cost*(0-xc) - sint*(cs-1-yc) + 0.5 + xc);
+    yy = (int32_t)floor(sint*(0-xc) + cost*(cs-1-yc) + 0.5 + yc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    xx = (int32_t)floor(cost*(rs-1-xc) - sint*(cs-1-yc) + 0.5 + xc);
+    yy = (int32_t)floor(sint*(rs-1-xc) + cost*(cs-1-yc) + 0.5 + yc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+
+    xx = (int32_t)ceil(cost*(0-xc) - sint*(0-yc) + 0.5 + xc);
+    yy = (int32_t)ceil(sint*(0-xc) + cost*(0-yc) + 0.5 + yc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    xx = (int32_t)ceil(cost*(rs-1-xc) - sint*(0-yc) + 0.5 + xc);
+    yy = (int32_t)ceil(sint*(rs-1-xc) + cost*(0-yc) + 0.5 + yc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    xx = (int32_t)ceil(cost*(0-xc) - sint*(cs-1-yc) + 0.5 + xc);
+    yy = (int32_t)ceil(sint*(0-xc) + cost*(cs-1-yc) + 0.5 + yc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+    xx = (int32_t)ceil(cost*(rs-1-xc) - sint*(cs-1-yc) + 0.5 + xc);
+    yy = (int32_t)ceil(sint*(rs-1-xc) + cost*(cs-1-yc) + 0.5 + yc);
+    if (xx > xmax) xmax = xx;  if (xx < xmin) xmin = xx;
+    if (yy > ymax) ymax = yy;  if (yy < ymin) ymin = yy;
+
+    rs2 = xmax - xmin + 1;
+    cs2 = ymax - ymin + 1;
+    ds2 = ds;
+  }
+  else 
+  {
+    xmax = rs2 = rs;
+    ymax = cs2 = cs; 
+    zmax = ds2 = ds; 
+    xmin = ymin = zmin = 0;
+  }
+  ps2 = rs2 * cs2;
+
+  image2 = allocimage(NULL, rs2, cs2, ds2, datatype(image));
+  if (image2 == NULL)
+  {
+    fprintf(stderr, "%s : allocimage failed\n", F_NAME);
+    return NULL;
+  }
+  I2 = UCHARDATA(image2);
+  razimage(image2);
+
+  for (zz = zmin; zz < zmax; zz++)
+  {
+    z = zz;
+    for (yy = ymin; yy < ymax; yy++)
+      for (xx = xmin; xx < xmax; xx++)
+      {
+	x = (int32_t)floor( cost*(xx-xc) + sint*(yy-yc) + 0.5 + xc);
+	y = (int32_t)floor(-sint*(xx-xc) + cost*(yy-yc) + 0.5 + yc);
+	if ((x >= 0) && (y >= 0) && (x < rs) && (y < cs))
+	  I2[(zz-zmin)*ps2 + (yy-ymin)*rs2 + xx-xmin] = I1[z*ps + y*rs + x];
+      } // for xx for yy
+  } // for zz
+
+  *newxc = xc - xmin;
+  *newyc = yc - ymin;
+  return image2;
+} // lrotationRT3Dz()
 
 /* ==================================== */
 struct xvimage * lrotationInter(struct xvimage * image, double theta, double xc, double yc, uint8_t resize)

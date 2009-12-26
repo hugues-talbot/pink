@@ -1578,8 +1578,11 @@ de la forme :
   } while (buffer[0] == '#');
 
   if (!dimorigin)
-  {   fprintf(stderr,"%s : origin missing for structuring element\n", F_NAME);
-      return NULL;
+  {   
+#ifdef VERBOSE
+    fprintf(stderr,"%s : origin missing for structuring element\n", F_NAME);
+#endif
+    return NULL;
   }
 
   c = sscanf(buffer, "%d %d %d", &rs, &cs, &d);
@@ -1597,7 +1600,7 @@ de la forme :
   if (!read)
   {
     fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
   sscanf(buffer, "%d", &ndgmax);
@@ -1606,7 +1609,7 @@ de la forme :
   image = allocimage(NULL, rs, cs, d, typepixel);
   if (image == NULL)
   {   fprintf(stderr,"%s : alloc failed\n", F_NAME);
-      return(NULL);
+      return NULL;
   }
 
   if (typepixel == VFF_TYP_1_BYTE)
@@ -1636,7 +1639,7 @@ de la forme :
       if (ret != N)
       {
         fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
-        return(NULL);
+        return NULL;
       }
     }
   } /* if (typepixel == VFF_TYP_1_BYTE) */
@@ -1647,7 +1650,7 @@ de la forme :
     if (ret != N)
     {
       fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
-      return(NULL);
+      return NULL;
     }
   } /* if (typepixel == VFF_TYP_4_BYTE) */
 

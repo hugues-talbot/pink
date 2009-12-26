@@ -80,6 +80,11 @@ int main(int argc, char **argv)
   {
     struct xvimage * se;
     se = readse(argv[2], &x, &y, &z);  
+    if (se == NULL)
+    {
+      fprintf(stderr, "%s: readse failed\n", argv[0]);
+      exit(1);
+    }
     freeimage(se);
   }
   else
