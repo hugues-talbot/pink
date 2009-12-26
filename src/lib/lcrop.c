@@ -35,8 +35,8 @@ knowledge of the CeCILL license and that you accept its terms.
 /* 
   lcrop
   lcrop3d
-  lencadre
   lenframe
+  lsetframe
   linsert
   lexpandframe
 */
@@ -49,6 +49,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <lcrop.h>
@@ -211,195 +212,59 @@ struct xvimage * lcrop3d(struct xvimage *in, int32_t x, int32_t y, int32_t z, in
 } // lcrop3d()
 
 /* =============================================================== */
-struct xvimage * lencadre(struct xvimage *image, int32_t grayval) 
+void lsetframe(struct xvimage *image, int32_t grayval) 
 /* =============================================================== */
-// adds a border with a given gray value to an image
-// obsolete - utiliser lenframe()
+// sets the border of image to value grayval
 #undef F_NAME
-#define F_NAME "lencadre"
+#define F_NAME "lsetframe"
 {
   int32_t rs, cs, ds, ps, x, y, z;
-  int32_t rs2, cs2, ds2, ps2;
-  struct xvimage * imageout;
+  uint8_t * Im;
+
+  assert(datatype(image) == VFF_TYP_1_BYTE);
 
   rs = rowsize(image);
   cs = colsize(image);
   ds = depth(image);
   ps = rs * cs;
-  rs2 = rs + 2;
-  cs2 = cs + 2;
-  ds2 = ds + 2;
-  ps2 = rs2 * cs2;
+  Im = UCHARDATA(image);
 
   if (ds > 1)
   {
-    imageout = allocimage(NULL, rs+2, cs+2, ds+2, datatype(image));
-    if (imageout == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-      return NULL;
-    }
+    for (x = 0; x < rs; x++)
+    for (y = 0; y < cs; y++) 
+      Im[0 * ps + y * rs + x] = grayval;          /* plan z = 0 */
+    for (x = 0; x < rs; x++)
+    for (y = 0; y < cs; y++) 
+      Im[(ds-1) * ps + y * rs + x] = grayval;     /* plan z = ds-1 */
+
+    for (x = 0; x < rs; x++)
+    for (z = 0; z < ds; z++) 
+      Im[z * ps + 0 * rs + x] = grayval;          /* plan y = 0 */
+    for (x = 0; x < rs; x++)
+    for (z = 0; z < ds; z++) 
+      Im[z * ps + (cs-1) * rs + x] = grayval;     /* plan y = cs-1 */
+
+    for (y = 0; y < cs; y++)
+    for (z = 0; z < ds; z++) 
+      Im[z * ps + y * rs + 0] = grayval;          /* plan x = 0 */
+    for (y = 0; y < cs; y++)
+    for (z = 0; z < ds; z++) 
+      Im[z * ps + y * rs + (rs-1)] = grayval;     /* plan x = rs-1 */
   }
   else
   {
-    imageout = allocimage(NULL, rs+2, cs+2, 1, datatype(image));
-    if (imageout == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-      return NULL;
-    }
+    for (x = 0; x < rs; x++) Im[x] = grayval;
+    for (x = 0; x < rs; x++) Im[(cs - 1) * rs + x] = grayval;
+
+    for (y = 1; y < cs - 1; y++) Im[y * rs] = grayval;
+    for (y = 1; y < cs - 1; y++) Im[y * rs + rs - 1] = grayval;
   }
+} // lsetframe()
 
-  if (datatype(image) == VFF_TYP_1_BYTE)
-  {
-    uint8_t *Imout = UCHARDATA(imageout);
-    uint8_t *Im = UCHARDATA(image);
-    uint8_t grayvalue = (uint8_t)grayval;
-
-    if (ds > 1)
-    {
-      for (x = 0; x < rs2; x++)
-      for (y = 0; y < cs2; y++) 
-        Imout[0 * ps2 + y * rs2 + x] = grayvalue;          /* plan z = 0 */
-      for (x = 0; x < rs2; x++)
-      for (y = 0; y < cs2; y++) 
-        Imout[(ds2-1) * ps2 + y * rs2 + x] = grayvalue;    /* plan z = ds2-1 */
-  
-      for (x = 0; x < rs2; x++)
-      for (z = 0; z < ds2; z++) 
-        Imout[z * ps2 + 0 * rs2 + x] = grayvalue;          /* plan y = 0 */
-      for (x = 0; x < rs2; x++)
-      for (z = 0; z < ds2; z++) 
-        Imout[z * ps2 + (cs2-1) * rs2 + x] = grayvalue;    /* plan y = cs2-1 */
-  
-      for (y = 0; y < cs2; y++)
-      for (z = 0; z < ds2; z++) 
-        Imout[z * ps2 + y * rs2 + 0] = grayvalue;          /* plan x = 0 */
-      for (y = 0; y < cs2; y++)
-      for (z = 0; z < ds2; z++) 
-        Imout[z * ps2 + y * rs2 + (rs2-1)] = grayvalue;    /* plan x = rs2-1 */
-  
-      for (x = 1; x < rs2-1; x++)
-      for (y = 1; y < cs2-1; y++) 
-      for (z = 1; z < ds2-1; z++) 
-        Imout[z * ps2 + y * rs2 + x] = Im[(z-1) * ps + (y-1) * rs + (x-1)];
-    }
-    else
-    {
-      for (x = 0; x < rs2; x++) Imout[x] = grayvalue;
-      for (x = 0; x < rs2; x++) Imout[(cs2 - 1) * rs2 + x] = grayvalue;
-  
-      for (y = 1; y < cs2 - 1; y++) Imout[y * rs2] = grayvalue;
-      for (y = 1; y < cs2 - 1; y++) Imout[y * rs2 + rs2 - 1] = grayvalue;
-  
-      for (x = 1; x < rs2-1; x++)
-      for (y = 1; y < cs2-1; y++) 
-        Imout[y * rs2 + x] = Im[(y-1) * rs + (x-1)];
-    }
-  }
-  else if (datatype(image) == VFF_TYP_4_BYTE)
-  {
-    int32_t *Imout = SLONGDATA(imageout);
-    int32_t *Im = SLONGDATA(image);
-    int32_t grayvalue = (int32_t)grayval;
-
-    if (ds > 1)
-    {
-      for (x = 0; x < rs2; x++)
-      for (y = 0; y < cs2; y++) 
-        Imout[0 * ps2 + y * rs2 + x] = grayvalue;          /* plan z = 0 */
-      for (x = 0; x < rs2; x++)
-      for (y = 0; y < cs2; y++) 
-        Imout[(ds2-1) * ps2 + y * rs2 + x] = grayvalue;    /* plan z = ds2-1 */
-  
-      for (x = 0; x < rs2; x++)
-      for (z = 0; z < ds2; z++) 
-        Imout[z * ps2 + 0 * rs2 + x] = grayvalue;          /* plan y = 0 */
-      for (x = 0; x < rs2; x++)
-      for (z = 0; z < ds2; z++) 
-        Imout[z * ps2 + (cs2-1) * rs2 + x] = grayvalue;    /* plan y = cs2-1 */
-  
-      for (y = 0; y < cs2; y++)
-      for (z = 0; z < ds2; z++) 
-        Imout[z * ps2 + y * rs2 + 0] = grayvalue;          /* plan x = 0 */
-      for (y = 0; y < cs2; y++)
-      for (z = 0; z < ds2; z++) 
-        Imout[z * ps2 + y * rs2 + (rs2-1)] = grayvalue;    /* plan x = rs2-1 */
-  
-      for (x = 1; x < rs2-1; x++)
-      for (y = 1; y < cs2-1; y++) 
-      for (z = 1; z < ds2-1; z++) 
-        Imout[z * ps2 + y * rs2 + x] = Im[(z-1) * ps + (y-1) * rs + (x-1)];
-    }
-    else
-    {
-      for (x = 0; x < rs2; x++) Imout[x] = grayvalue;
-      for (x = 0; x < rs2; x++) Imout[(cs2 - 1) * rs2 + x] = grayvalue;
-  
-      for (y = 1; y < cs2 - 1; y++) Imout[y * rs2] = grayvalue;
-      for (y = 1; y < cs2 - 1; y++) Imout[y * rs2 + rs2 - 1] = grayvalue;
-  
-      for (x = 1; x < rs2-1; x++)
-      for (y = 1; y < cs2-1; y++) 
-        Imout[y * rs2 + x] = Im[(y-1) * rs + (x-1)];
-    }
-  }
-  else if (datatype(image) == VFF_TYP_FLOAT)
-  {
-    float *Imout = FLOATDATA(imageout);
-    float *Im = FLOATDATA(image);
-    float grayvalue = (float)grayval;
-
-    if (ds > 1)
-    {
-      for (x = 0; x < rs2; x++)
-      for (y = 0; y < cs2; y++) 
-        Imout[0 * ps2 + y * rs2 + x] = grayvalue;          /* plan z = 0 */
-      for (x = 0; x < rs2; x++)
-      for (y = 0; y < cs2; y++) 
-        Imout[(ds2-1) * ps2 + y * rs2 + x] = grayvalue;    /* plan z = ds2-1 */
-  
-      for (x = 0; x < rs2; x++)
-      for (z = 0; z < ds2; z++) 
-        Imout[z * ps2 + 0 * rs2 + x] = grayvalue;          /* plan y = 0 */
-      for (x = 0; x < rs2; x++)
-      for (z = 0; z < ds2; z++) 
-        Imout[z * ps2 + (cs2-1) * rs2 + x] = grayvalue;    /* plan y = cs2-1 */
-  
-      for (y = 0; y < cs2; y++)
-      for (z = 0; z < ds2; z++) 
-        Imout[z * ps2 + y * rs2 + 0] = grayvalue;          /* plan x = 0 */
-      for (y = 0; y < cs2; y++)
-      for (z = 0; z < ds2; z++) 
-        Imout[z * ps2 + y * rs2 + (rs2-1)] = grayvalue;    /* plan x = rs2-1 */
-  
-      for (x = 1; x < rs2-1; x++)
-      for (y = 1; y < cs2-1; y++) 
-      for (z = 1; z < ds2-1; z++) 
-        Imout[z * ps2 + y * rs2 + x] = Im[(z-1) * ps + (y-1) * rs + (x-1)];
-    }
-    else
-    {
-      for (x = 0; x < rs2; x++) Imout[x] = grayvalue;
-      for (x = 0; x < rs2; x++) Imout[(cs2 - 1) * rs2 + x] = grayvalue;
-  
-      for (y = 1; y < cs2 - 1; y++) Imout[y * rs2] = grayvalue;
-      for (y = 1; y < cs2 - 1; y++) Imout[y * rs2 + rs2 - 1] = grayvalue;
-  
-      for (x = 1; x < rs2-1; x++)
-      for (y = 1; y < cs2-1; y++) 
-        Imout[y * rs2 + x] = Im[(y-1) * rs + (x-1)];
-    }
-  }
-  else
-  {
-    fprintf(stderr, "%s : bad data type\n", F_NAME);
-    return NULL;
-  }
-
-  return imageout;
-} /* lencadre() */
-
+//REMOVED:
+//struct xvimage * lencadre(struct xvimage *image, int32_t grayval);
+//use lenframe instead
 /* =============================================================== */
 struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width) 
 /* =============================================================== */
@@ -623,7 +488,7 @@ struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width)
   }
 
   return imageout;
-} /* lencadre() */
+} /* lenframe() */
 
 /* =============================================================== */
 int32_t linsert(struct xvimage *a, struct xvimage *b, int32_t x, int32_t y, int32_t z) 

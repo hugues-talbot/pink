@@ -1559,8 +1559,8 @@ $(BDIR)/points2spline:	$(CDIR)/points2spline.c $(IDIR)/mcimage.h $(IDIR)/mcsplin
 $(BDIR)/samplespline:	$(CDIR)/samplespline.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/samplespline.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/samplespline
 
-$(BDIR)/worms:	$(CDIR)/worms.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/mcprobas.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mclifo.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcsplines.o $(ODIR)/mcprobas.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/worms.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mclifo.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcsplines.o $(ODIR)/mcprobas.o $(LIBS) -o $(BDIR)/worms
+$(BDIR)/worms:	$(CDIR)/worms.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/mcprobas.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(IDIR)/lrotations.h $(IDIR)/ldilateros3d.h $(IDIR)/lcrop.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mclifo.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcsplines.o $(ODIR)/mcprobas.o $(ODIR)/lrotations.o $(ODIR)/ldilateros3d.o $(ODIR)/lcrop.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/worms.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mclifo.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcsplines.o $(ODIR)/mcprobas.o $(ODIR)/lrotations.o $(ODIR)/ldilateros3d.o $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/worms
 
 # *********************************
 # GEO
@@ -1641,8 +1641,8 @@ $(BDIR)/extractline:	$(CDIR)/extractline.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDI
 $(BDIR)/extractplane:	$(CDIR)/extractplane.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/extractplane.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/extractplane
 
-$(BDIR)/frame:	$(CDIR)/frame.c $(IDIR)/mcimage.h $(OBJ_COMMON)
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/frame.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/frame
+$(BDIR)/frame:	$(CDIR)/frame.c $(IDIR)/mcimage.h $(IDIR)/lcrop.h $(OBJ_COMMON) $(ODIR)/lcrop.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/frame.c $(OBJ_COMMON) $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/frame
 
 $(BDIR)/fitcircle:	$(CDIR)/fitcircle.c $(IDIR)/lgeo.h $(IDIR)/mcimage.h $(IDIR)/mclin.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/mctopo.o $(ODIR)/lgeo.o $(ODIR)/lbresen.o $(ODIR)/mclifo.o $(ODIR)/mcliste.o $(ODIR)/llabelextrema.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/fitcircle.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mclin.o $(ODIR)/lbresen.o $(ODIR)/mclifo.o $(ODIR)/mcliste.o $(ODIR)/lgeo.o $(ODIR)/llabelextrema.o $(ODIR)/mctopo.o $(LIBS) -o $(BDIR)/fitcircle

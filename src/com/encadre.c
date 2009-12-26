@@ -89,10 +89,10 @@ int main(int argc, char **argv)
   }
   
   grayval = atoi(argv[2]);
-  imageout = lencadre(image, grayval);
+  imageout = lenframe(image, grayval, 1);
   if (imageout == NULL)
   {
-    fprintf(stderr, "%s: lencadre failed\n", argv[0]);
+    fprintf(stderr, "%s: lenframe failed\n", argv[0]);
     exit(1);
   }
 

@@ -86,7 +86,7 @@ int main(int argc, char **argv)
   imageout = lenframe(image, grayval, width);
   if (imageout == NULL)
   {
-    fprintf(stderr, "%s: lencadre failed\n", argv[0]);
+    fprintf(stderr, "%s: lenframe failed\n", argv[0]);
     exit(1);
   }
 

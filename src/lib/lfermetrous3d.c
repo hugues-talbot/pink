@@ -135,7 +135,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
 #undef F_NAME
 #define F_NAME "lfermetrous3dbin"
 { 
-  struct xvimage *image = lencadre(in, 0); // ajoute un cadre nul
+  struct xvimage *image = lenframe(in, 0, 1); // ajoute un cadre nul
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
   int32_t z;                       /* index muet (generalement un voisin de y) */
@@ -422,8 +422,8 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
 #undef F_NAME
 #define F_NAME "lfermetrous3dbin2"
 { 
-  struct xvimage *image = lencadre(in, 0); // ajoute un cadre nul
-  struct xvimage *guide = lencadre(g, 0); // ajoute un cadre nul
+  struct xvimage *image = lenframe(in, 0, 1); // ajoute un cadre nul
+  struct xvimage *guide = lenframe(g, 0, 1); // ajoute un cadre nul
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
   int32_t z;                       /* index muet (generalement un voisin de y) */

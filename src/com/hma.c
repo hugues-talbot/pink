@@ -104,7 +104,7 @@ int main(int argc, char **argv)
   cs = colsize(X);
   ds = depth(X); 
 
-  aux = lencadre(X, 0);
+  aux = lenframe(X, 0, 1);
 #ifdef CHRONO
   start_chrono(&Chrono1);
 #endif
