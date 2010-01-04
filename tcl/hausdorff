@@ -60,6 +60,16 @@ proc tmpfile {tmpname} {
   return [file join "/tmp" "$HAUSDORFF(name)_$tmpname"]
 }
 
+if {![file exists $HAUSDORFF(infilename1)]} {
+  puts stderr "$HAUSDORFF(name): error: cannot open input file $HAUSDORFF(infilename1)"
+  exit 
+}
+
+if {![file exists $HAUSDORFF(infilename2)]} {
+  puts stderr "$HAUSDORFF(name): error: cannot open input file $HAUSDORFF(infilename2)"
+  exit 
+}
+
 my_exec_q cp $HAUSDORFF(infilename1) [tmpfile t1] 
 my_exec_q cp $HAUSDORFF(infilename2) [tmpfile t2] 
 

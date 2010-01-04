@@ -281,10 +281,6 @@ of information occurs.
   I2 = UCHARDATA(image2);
   razimage(image2);
 
-  xc = 2.0; yc = 3.0;
-printf("xc = %g\n", xc);
-printf("yc = %g\n", yc);
-
   for (yy = ymin; yy < ymax; yy++)
     for (xx = xmin; xx < xmax; xx++)
     {

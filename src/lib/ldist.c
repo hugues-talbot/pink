@@ -2836,7 +2836,7 @@ int32_t lsedt_meijster(struct xvimage *img,   /* donnee: image binaire */
   struct xvimage *tmp;
   uint32_t *T;
 
-#ifdef DEBUG_MEJSTER
+#ifdef DEBUG_MEIJSTER
   printf("lsedt_meijster : begin\n");
 #endif
 

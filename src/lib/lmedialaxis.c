@@ -845,6 +845,8 @@ from the article: " Exact Medial Axis With Euclidean Distance"
 	  if (CallMedial(i, j, image1, rs, cs, MgL1, LutColumn1, rknown, rmax))	 
 	    imagemedial[i*rs + j] = distance;
 	}
+	else 
+	  imagemedial[i*rs + j] = 0;
       }
     }
 #ifdef CHRONO
