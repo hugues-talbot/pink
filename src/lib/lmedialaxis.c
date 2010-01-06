@@ -2753,6 +2753,7 @@ int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda)
   int32_t card_aval;
   uint32_t *imagedist;
   float *imagelambda;
+  double c_x, c_y, c_z, c_r;
 
   if (datatype(dist) != VFF_TYP_4_BYTE)
   {
@@ -2849,7 +2850,6 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
         {
 	  card_aval = ExtendedDownstream(i, j, imagedist, rs, cs, 
 				 TabIndDec, nval, ListDecs, Aval);	  
-#define OLD
 #ifdef OLD
 	  imagelambda[j*rs + i] = (float)MaximumDiameter(Aval, card_aval);
 #else
@@ -3019,6 +3019,7 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
   uint32_t *imagedist;
   uint32_t *imagevor;
   float *imagelambda;
+  double c_x, c_y, c_r;
 
   if (datatype(dist) != VFF_TYP_4_BYTE)
   {
@@ -3071,7 +3072,6 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
 	if (imagedist[j*rs + i] != 0)
         {
 	  card_aval = ExtendedDownstreamLambdaPrime(i, j, imagedist, imagevor, rs, cs, Aval);	  
-#define OLD
 #ifdef OLD
 	  imagelambda[j*rs + i] = (float)MaximumDiameter(Aval, card_aval);
 #else
