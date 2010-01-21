@@ -32,6 +32,7 @@ $(BDIR)/seuil2 \
 $(BDIR)/seuilauto \
 $(BDIR)/sub \
 $(BDIR)/sup \
+$(BDIR)/threshold \
 $(BDIR)/volume \
 $(BDIR)/xor
 
@@ -643,6 +644,9 @@ $(BDIR)/sub:	$(CDIR)/sub.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(OD
 
 $(BDIR)/sup:	$(CDIR)/sup.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/sup.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/sup
+
+$(BDIR)/threshold:	$(CDIR)/threshold.c $(IDIR)/mcimage.h $(IDIR)/lseuil.h $(OBJ_COMMON) $(ODIR)/lseuil.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/threshold.c $(OBJ_COMMON) $(ODIR)/lseuil.o $(LIBS) -o $(BDIR)/threshold
 
 $(BDIR)/volume:	$(CDIR)/volume.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/volume.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/volume
