@@ -142,7 +142,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
  
  for(u = 0; u < N_t; u++)
    if( ((u < N) && (u%rs < rs-1)) || ((u >= N) && (u < N_t - rs))){
-     if(G[Sommetx(u,N,rs)] != G[Sommety(u,N,rs)]) F[u] = 255; else F[u] = 0;
+     if(G[Sommetx(u,N,rs)] != G[Sommety(u,N,rs)])/*F[u]=255*/; else F[u] = 0;
    }
   /* Terminer indicateur + R&B tree ... */
  IndicsTermine();

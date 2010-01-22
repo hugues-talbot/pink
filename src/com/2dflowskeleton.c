@@ -32,7 +32,7 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/* !\file 2dflowskeleton.c
+/* \file 2dflowskeleton.c
 
 \brief computes the flow skeleton (see [Cou10]) of a 2D complex
 
