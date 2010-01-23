@@ -102,7 +102,7 @@ int main(argc, argv)
   int32_t param;
   if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s GAin.pgm type[0 surface, 1 dynamic, 3 volumeSimple] GAOut.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s GAin.pgm type[0 surface, 1 dynamic, 2 volumeSimple, 3 alphaOmega] GAOut.pgm \n", argv[0]);
     exit(1);
   }
   ga = readGAimage(argv[1]);
