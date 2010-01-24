@@ -724,7 +724,7 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param, struct xvimage *annexe)
     exit(1);
   }
   LABEL = SLONGDATA(label);    
-  flowMappingRecursif(ga,LABEL);
+  flowMapping(ga,LABEL);
   rag = construitRAG(ga, label, annexe);
   
   printf("nbre de regions: %d \n",rag->g->nsom);
