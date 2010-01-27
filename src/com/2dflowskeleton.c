@@ -410,7 +410,7 @@ int main(int32_t argc, char **argv)
   perm = (boolean *)calloc(N, sizeof(boolean)); assert(perm != NULL);
   head = (boolean *)calloc(N, sizeof(boolean)); assert(head != NULL);
   for (i = 0; i < N; i++)
-    if (flow->v_sommets[i] == TF_NOT_IN_F)
+    if (flow->v_sommets[i] == TF_PERMANENT)
       perm[i] = TRUE;
     else if (flow->v_sommets[i] == TF_HEAD)
       head[i] = TRUE;
@@ -540,14 +540,6 @@ int main(int32_t argc, char **argv)
   // -----------------------------------------------------------
   IntegreGSC(flow);
 
-  // met à vmax (infini) les sommets "permanents" (non collapsés)
-  vmax = flow->v_sommets[0];
-  for (i = 0; i < N; i++)
-    if (flow->v_sommets[i] > vmax) vmax = flow->v_sommets[i];
-  for (i = 0; i < N; i++)
-    if (perm[i])
-      flow->v_sommets[i] = vmax;
-
 #ifdef SHOWGRAPHS
   ShowGraphe(flow, "_flow3", 30, 1, 3, 0, 1, 0, 1, K, rs, head);
 #endif
@@ -569,6 +561,14 @@ int main(int32_t argc, char **argv)
   // FONCTION DE MORSE (INVERSÉE) SUR LE COMPLEXE
   // -----------------------------------------------------------  
   Morsify(flow, head, epsilon);
+
+  // met à vmax (infini) les sommets "permanents" (non collapsés)
+  vmax = flow->v_sommets[0];
+  for (i = 0; i < N; i++)
+    if (flow->v_sommets[i] > vmax) vmax = flow->v_sommets[i];
+  for (i = 0; i < N; i++)
+    if (perm[i])
+      flow->v_sommets[i] = vmax;
 
 #ifdef SHOWGRAPHS
   ShowGraphe(flow, "_flow4", 30, 1, 3, 0, 1, 0, 1, K, rs, head);

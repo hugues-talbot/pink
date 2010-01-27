@@ -333,7 +333,7 @@ void ldrawtorus(struct xvimage * image1, double c, double a, double xc, double y
 /* ==================================== */
 /* draws a torus of equation (c-sqrt((xc-x)^2+(yc-y)^2))^2+(zc-z)^2 <= a^2 */
 #undef F_NAME
-#define F_NAME "ldrawball"
+#define F_NAME "ldrawtorus"
 {
   int32_t i, j, k, rs, cs, ds, ps;
   uint8_t *F;

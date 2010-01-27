@@ -84,6 +84,8 @@ References:<BR>
 
 #define FS_EPSILON 0.1
 
+#define DEBUG
+
 /* ====================================================================== */
 /*! \fn void Morsify(graphe * g, boolean * Vh, TYP_VSOM epsilon)
     \param g (entrée) : un graphe pondéré sur les sommets.
@@ -238,7 +240,7 @@ int main(int32_t argc, char **argv)
   perm = (boolean *)calloc(N, sizeof(boolean)); assert(perm != NULL);
   head = (boolean *)calloc(N, sizeof(boolean)); assert(head != NULL);
   for (i = 0; i < N; i++)
-    if (flow->v_sommets[i] == TF_NOT_IN_F)
+    if (flow->v_sommets[i] == TF_PERMANENT)
       perm[i] = TRUE;
     else if (flow->v_sommets[i] == TF_HEAD)
       head[i] = TRUE;
@@ -319,14 +321,6 @@ int main(int32_t argc, char **argv)
   // -----------------------------------------------------------
   IntegreGSC(flow);
 
-  // met à vmax (infini) les sommets "permanents" (non collapsés)
-  vmax = flow->v_sommets[0];
-  for (i = 0; i < N; i++)
-    if (flow->v_sommets[i] > vmax) vmax = flow->v_sommets[i];
-  for (i = 0; i < N; i++)
-    if (perm[i])
-      flow->v_sommets[i] = vmax;
-
   if (mode == 3)
   {
     MaxAlpha3d(lambda); // fermeture (en ndg)
@@ -339,6 +333,16 @@ int main(int32_t argc, char **argv)
   // FONCTION DE MORSE (INVERSÉE) SUR LE COMPLEXE
   // -----------------------------------------------------------  
   Morsify(flow, head, epsilon);
+
+  // met à vmax (infini) les sommets "permanents" (non collapsés)
+  vmax = flow->v_sommets[0];
+
+  for (i = 0; i < N; i++)
+    if (flow->v_sommets[i] > vmax) vmax = flow->v_sommets[i];
+
+  for (i = 0; i < N; i++)
+    if (perm[i])
+      flow->v_sommets[i] = vmax;
   
   for (i = 0; i < N; i++)
     FUNC[i] = (float)flow->v_sommets[i];

@@ -861,7 +861,7 @@ graphe * l2dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
     TF_NOT_IN_I: la face n'appartient pas au complexe initial (avant collapse)
     TF_HEAD: la face est une tete de paire libre (face libre)
     TF_TAIL: la face est une queue de paire libre
-    TF_NOT_IN_F: la face n'appartient pas au complexe final (aprÅËs collapse)
+    TF_PERMANENT: la face n'appartient pas au complexe final (aprÅËs collapse)
 */
 #undef F_NAME
 #define F_NAME "l2dtopoflow_f"
@@ -1106,7 +1106,7 @@ graphe * l2dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
   } /* while (!RbtVide(RBT)) */
 
   for (g = 0; g < N; g++)
-    if (K[g]) flow->v_sommets[g] = TF_NOT_IN_F;
+    if (K[g]) flow->v_sommets[g] = TF_PERMANENT;
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Fin traitement\n", F_NAME);

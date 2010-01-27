@@ -46,6 +46,8 @@ Michel Couprie - août 2005 - variante lbisector Coeurjolly
 Michel Couprie - novembre 2008 - lambda medial axis
 */
 
+#define OLD
+
 //#define CHRONO
 
 #define MODIF_MC
@@ -2785,7 +2787,7 @@ int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda)
   if (ds == 1) // 2D
   {
     ListDPoint2D Aval;
-    Aval= (struct DPoint2D *)calloc(1,N*sizeof(struct DPoint2D)); // LARGEMENT SURDIMENSIONE
+    Aval= (struct DPoint2D *)calloc(N, sizeof(struct DPoint2D)); // LARGEMENT SURDIMENSIONE
     if (Aval == NULL)
     {   
       fprintf(stderr, "%s: malloc failed\n", F_NAME);
@@ -2853,6 +2855,10 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
 #ifdef OLD
 	  imagelambda[j*rs + i] = (float)MaximumDiameter(Aval, card_aval);
 #else
+if ((i == 5)&&(j == 4))
+{
+  printf("\n");
+}
           compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
 	  imagelambda[j*rs + i] = 2*(float)c_r;
 #endif

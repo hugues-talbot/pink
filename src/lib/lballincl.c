@@ -43,7 +43,7 @@ knowledge of the CeCILL license and that you accept its terms.
 * Output: then coordinates of the center of the min disk/ball and its radius
 * Written By: John Chaussard - décembre 2008
 * D'apres l'article "Smallest enclosing disks (balls and ellipsoids)" de Emo Welzl
-*
+* Update: janvier 2010 - correction bug
 ****************************************************************/
 
 #include <stdio.h>
@@ -217,26 +217,34 @@ int32_t build_circle(double *tab_coord, uint32_t num_points, double* c_x, double
 	{
 		//We should test if the points are not the same... >> todo list
 		//Compute slope of first bissector, then of second, etc....
-		if(fabs(tab_coord[3]-tab_coord[1]) > BALLINCL_EPSILON)
+		//Le point B est pivot
+		if( (fabs(tab_coord[3]-tab_coord[1]) > BALLINCL_EPSILON) && (fabs(tab_coord[5]-tab_coord[3]) > BALLINCL_EPSILON))
 		{
-			a=-1.0*(tab_coord[2]-tab_coord[0])/(tab_coord[3]-tab_coord[1]);
+			a=(tab_coord[2]-tab_coord[0])/(tab_coord[3]-tab_coord[1]);
 			b=(tab_coord[2]*tab_coord[2] + tab_coord[3]*tab_coord[3] - tab_coord[0]*tab_coord[0] - tab_coord[1]*tab_coord[1])/(2.0*(tab_coord[3]-tab_coord[1]));
+			a_p=(tab_coord[4]-tab_coord[2])/(tab_coord[5]-tab_coord[3]);
+			b_p=(tab_coord[4]*tab_coord[4] + tab_coord[5]*tab_coord[5] - tab_coord[2]*tab_coord[2] - tab_coord[3]*tab_coord[3]) / (2.0*(tab_coord[5]-tab_coord[3]));
 		}
-		else
+		//Le point A est pivot
+		else if ( (fabs(tab_coord[3]-tab_coord[1]) > BALLINCL_EPSILON) && (fabs(tab_coord[5]-tab_coord[1]) > BALLINCL_EPSILON))
 		{
-			a=-1.0*(tab_coord[2]-tab_coord[4])/(tab_coord[3]-tab_coord[5]);
-			b=(tab_coord[2]*tab_coord[2] + tab_coord[3]*tab_coord[3] - tab_coord[4]*tab_coord[4] - tab_coord[5]*tab_coord[5]) / (2.0*(tab_coord[3]-tab_coord[5]));
-		}
-
-		if(fabs(tab_coord[5]-tab_coord[1]) > BALLINCL_EPSILON)
-		{
-			a_p=-1.0*(tab_coord[4]-tab_coord[0])/(tab_coord[5]-tab_coord[1]);
+			a=(tab_coord[0]-tab_coord[2])/(tab_coord[1]-tab_coord[3]);
+			b=(tab_coord[0]*tab_coord[0] + tab_coord[1]*tab_coord[1] - tab_coord[2]*tab_coord[2] - tab_coord[3]*tab_coord[3])/(2.0*(tab_coord[1]-tab_coord[3]));
+			a_p=(tab_coord[4]-tab_coord[0])/(tab_coord[5]-tab_coord[1]);
 			b_p=(tab_coord[4]*tab_coord[4] + tab_coord[5]*tab_coord[5] - tab_coord[0]*tab_coord[0] - tab_coord[1]*tab_coord[1]) / (2.0*(tab_coord[5]-tab_coord[1]));
 		}
-		else
+		//Le point C est pivot
+		else if ( (fabs(tab_coord[5]-tab_coord[3]) > BALLINCL_EPSILON) && (fabs(tab_coord[5]-tab_coord[1]) > BALLINCL_EPSILON))
 		{
-			a_p=-1.0*(tab_coord[2]-tab_coord[4])/(tab_coord[3]-tab_coord[5]);
+			a=(tab_coord[4]-tab_coord[0])/(tab_coord[5]-tab_coord[1]);
+			b=(tab_coord[4]*tab_coord[4] + tab_coord[5]*tab_coord[5] - tab_coord[0]*tab_coord[0] - tab_coord[1]*tab_coord[1])/(2.0*(tab_coord[5]-tab_coord[1]));
+			a_p=(tab_coord[2]-tab_coord[4])/(tab_coord[3]-tab_coord[5]);
 			b_p=(tab_coord[2]*tab_coord[2] + tab_coord[3]*tab_coord[3] - tab_coord[4]*tab_coord[4] - tab_coord[5]*tab_coord[5]) / (2.0*(tab_coord[3]-tab_coord[5]));
+		}
+		else //Three points are aligned ? (should not happen if used with the min circle function)
+		{
+			fprintf(stderr, "build_circle: function failed as three points given are aligned (or same).\n");
+			return(0);
 		}
 
 		//Three points are aligned ? (should not happen if used with the min circle function)
@@ -246,8 +254,8 @@ int32_t build_circle(double *tab_coord, uint32_t num_points, double* c_x, double
 			return(0);
 		}
 
-		x_c=(b-b_p)/(a_p-a);
-		y_c=a*(*c_x)+b;
+		x_c=(b_p-b)/(a_p-a);
+		y_c=-a*(x_c)+b;
 		*c_r=sqrt( (tab_coord[0]-x_c)*(tab_coord[0]-x_c) + (tab_coord[1]-y_c)*(tab_coord[1]-y_c) );
 		*c_x=x_c; *c_y=y_c;
 		return(1);

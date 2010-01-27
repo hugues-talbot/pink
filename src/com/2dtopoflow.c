@@ -420,7 +420,7 @@ int main(int32_t argc, char **argv)
     perm = (boolean *)calloc(N, sizeof(boolean)); assert(perm != NULL);
     head = (boolean *)calloc(N, sizeof(boolean)); assert(head != NULL);
     for (i = 0; i < N; i++)
-      if (flow->v_sommets[i] == TF_NOT_IN_F)
+      if (flow->v_sommets[i] == TF_PERMANENT)
 	perm[i] = TRUE;
       else if (flow->v_sommets[i] == TF_HEAD)
 	head[i] = TRUE;
