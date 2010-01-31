@@ -78,6 +78,15 @@ extern int32_t lskelRK3(struct xvimage *image,
 extern int32_t lskelSK3(struct xvimage *image, 
 			int32_t nsteps,
 			struct xvimage *inhibit);
+extern int32_t lskelDK3(struct xvimage *image, 
+			 int32_t n_steps,
+			 struct xvimage *inhibit);
+extern int32_t lskelDSK3(struct xvimage *image, 
+			 int32_t n_steps,
+			 struct xvimage *inhibit);
+extern int32_t lskelDRK3(struct xvimage *image, 
+			 int32_t n_steps,
+			 struct xvimage *inhibit);
 #ifdef __cplusplus
 }
 #endif

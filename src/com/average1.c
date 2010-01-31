@@ -60,7 +60,7 @@ values which correspond to non-null points of mask are averaged.
 #include <mcimage.h>
 #include <lstat.h>
 
-//#define VERBOSE
+#define VERBOSE
 
 /* =============================================================== */
 int main(int argc, char **argv)

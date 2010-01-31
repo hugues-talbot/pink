@@ -60,6 +60,9 @@ The possible choices are:
 \li 10: curvilinear, asymetric, based on 3D and 2D residuals (ACK3)
 \li 11: surfacic, based on residual points (RK3)
 \li 12: surfacic, based on 2D isthmuses (SK3)
+\li 13: ultimate, directional, (DK3)
+\li 14: surfacic, directional, based on residual points (DRK3)
+\li 15: surfacic, directional, based on 2D isthmuses (DSK3)
 
 In modes other than 2, if the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
@@ -128,6 +131,9 @@ int main(int argc, char **argv)
     fprintf(stderr, "  10: curvilinear, asymetric, based on 3D and 2D residuals (ACK3)\n");
     fprintf(stderr, "  11: surfacic, based on residual points (RK3)\n");
     fprintf(stderr, "  12: surfacic, based on 2D isthmuses (SK3)\n");
+    fprintf(stderr, "  13: ultimafe, directional (DRK3)\n");
+    fprintf(stderr, "  14: surfacic, directional, based on residual points (DRK3)\n");
+    fprintf(stderr, "  15: surfacic, directional, based on 2D isthmuses (DSK3)\n");
     exit(1);
   }
 
@@ -263,6 +269,24 @@ int main(int argc, char **argv)
       if (! lskelSK3(image, nsteps, inhibit))
       {
 	fprintf(stderr, "%s: lskelSK3 failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 13:
+      if (! lskelDK3(image, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelDK3 failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 14:
+      if (! lskelDRK3(image, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelDRK3 failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 15:
+      if (! lskelDSK3(image, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelDSK3 failed\n", argv[0]);
 	exit(1);
       } break;
     default: 

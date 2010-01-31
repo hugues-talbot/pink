@@ -46,7 +46,7 @@ Michel Couprie - août 2005 - variante lbisector Coeurjolly
 Michel Couprie - novembre 2008 - lambda medial axis
 */
 
-#define OLD
+//#define OLD
 
 //#define CHRONO
 
@@ -3003,6 +3003,58 @@ int32_t ExtendedDownstreamLambdaPrime(
 } // ExtendedDownstreamLambdaPrime()
  
 /* ==================================== */
+int32_t ExtendedDownstream3dLambdaPrime(
+  int32_t x, int32_t y, int32_t z,
+  uint32_t *image, uint32_t *vor,
+  int32_t rs, int32_t cs, int32_t ds,
+  ListDPoint3D Aval)
+/* ==================================== */
+// Calcule l'aval étendu du point (x,y)
+// x, y : le point de base
+// image : la carte de distance euclidinenne quadratique
+// vor : le "voronoi labelling"
+// Aval : tableau pour stocker les points de l'aval étendu
+// Retourne le nombre de points de l'aval étendu
+{
+#undef F_NAME
+#define F_NAME "ExtendedDownstream3dLambdaPrime"
+  int32_t i, j, k, xx, yy, zz, ps = rs*cs;
+  int32_t X[7] = {x, x-1, x+1, x,   x,   x,   x};
+  int32_t Y[7] = {y, y,   y,   y-1, y+1, y,   y};
+  int32_t Z[7] = {z, z,   z,   z,   z,   z+1, z-1};
+  int32_t counter=0;
+
+  for (k = 0; k < 7; k++) // k indexes the point in test and its 6 neighbors
+  {
+    if ((X[k] < rs) && (Y[k] < cs) && (Z[k] < ds) && (X[k] >= 0) && (Y[k] >= 0) && (Z[k] >= 0))
+    {
+      j = Z[k]*ps + Y[k]*rs + X[k];
+      i = (int32_t)(image[j]);
+      if (i == 0) goto endfor;
+      if (i > image[z*ps + y*rs + x]) goto endfor;
+      xx = vor[j] % rs;
+      yy = (vor[j] % ps) / rs;
+      zz = (vor[j] / ps);
+      //      for (c = 0; c < counter; c++) // check:if the value already exists, no need to store it
+      //	if ((xx!=Aval[c].xCoor) || (yy!=Aval[c].yCoor)) goto skip;
+      Aval[counter].xCoor=xx; Aval[counter].yCoor=yy; Aval[counter].zCoor=zz; counter++;
+      //    skip: ;
+    } // if
+  endfor: ;
+  } // for(k = 0; k < 7; k++)
+
+#ifdef PARANO
+  if (counter == 0)
+  {
+    printf("ERROR (BUG) - Please report - count = %d point %d,%d\n", counter, x, y);
+    exit(0);
+  }
+#endif
+
+  return counter;
+} // ExtendedDownstream3dLambdaPrime()
+
+/* ==================================== */
 int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct xvimage *lambda)
 /* ==================================== */
 /*
@@ -3015,7 +3067,7 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
 {
 #undef F_NAME
 #define F_NAME "llambdaprimemedialaxis"
-  int32_t i, j;
+  int32_t i, j, k;
   int32_t rs = rowsize(dist);
   int32_t cs = colsize(dist);
   int32_t ds = depth(dist);
@@ -3090,8 +3142,31 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
   } // if (ds == 1)
   else // 3D
   {
-    fprintf(stderr, "%s: 3D not yet implemented\n", F_NAME);
-    return(0);
+    ListDPoint3D Aval3d;
+    double c_x, c_y, c_z, c_r;
+    Aval3d= (struct DPoint3D *)calloc(1,N*sizeof(struct DPoint3D)); // LARGEMENT SURDIMENSIONE
+    if (Aval3d == NULL)
+    {
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return 0;
+    }
+
+    for (k = 0; k < ds; k++)
+      for (j = 0; j < cs; j++)
+        for (i = 0; i < rs; i++)
+      {
+	if (imagedist[k*ps + j*rs + i] != 0)
+        {
+	  card_aval = ExtendedDownstream3dLambdaPrime(i, j, k, imagedist, imagevor, rs, cs, ds, Aval3d);
+#ifdef OLD
+	  imagelambda[k*ps + j*rs + i] = (float)MaximumDiameter3d(Aval3d, card_aval);
+#else
+          compute_min_sphere_with_border_constraint((double *)Aval3d, card_aval, NULL, 0, &c_x, &c_y, &c_z, &c_r);
+	  imagelambda[k*ps + j*rs + i] = 2*(float)c_r;
+#endif
+	}
+      }
+    free(Aval3d);
   } // else (3D)
 
   return 1;

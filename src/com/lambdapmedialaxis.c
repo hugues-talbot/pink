@@ -117,7 +117,7 @@ int main(int argc, char **argv)
 
   if (! lvoronoilabelling(image, distimage, vorimage))
   {
-    fprintf(stderr, "%s: lsedt_meijster failed\n", argv[0]);
+    fprintf(stderr, "%s: lvoronoilabelling failed\n", argv[0]);
     exit(1);
   }
 

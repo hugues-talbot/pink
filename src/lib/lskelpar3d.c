@@ -93,11 +93,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #define UNSET_0M_CRUCIAL(f) (f&=~S_0M_CRUCIAL)
 #define UNSET_SELECTED(f)   (f&=~S_SELECTED)
 
-//#define VERBOSE
+#define VERBOSE
 //#define DEBUG
 #ifdef DEBUG
 int32_t trace = 1;
 #endif
+
+#define RESIDUEL6
 
 /* ==================================== */
 static void extract_vois(
@@ -2753,7 +2755,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     { 
       if (IS_OBJECT(S[i])) 
       {
-#define RESIDUEL6
 #ifdef RESIDUEL6
         for (k = 0; k < 12; k += 2)        /* parcourt les voisins en 6-connexite */
         {
@@ -2833,8 +2834,7 @@ int32_t lskelSK3(struct xvimage *image,
 /* ==================================== */
 /*
 Squelette symétrique surfacique basé sur les isthmes 2D
-Les points "candidats" à devenir des points de surface sont les
-points qui ne sont pas voisins d'un point isthme 2D
+Les points "candidats" à devenir des points de surface sont les isthmes 2D
 Algo SK3 données: S
 Répéter jusqu'à stabilité
   C := points de surface de S
@@ -2973,3 +2973,478 @@ writeimage(t,"_T");
   termine_topo3d();
   return(1);
 } /* lskelSK3() */
+
+// ===================================================================
+// ===================================================================
+// SQUELETTES DIRECTIONNELS (6 sous-itérations)
+// ===================================================================
+// ===================================================================
+
+
+/* ==================================== */
+static int32_t direction(
+  uint8_t *img,          /* pointeur base image */
+  int32_t p,             /* index du point */
+  int32_t dir,           /* indice direction */
+  int32_t rs,            /* taille rangee */
+  int32_t ps,            /* taille plan */
+  int32_t N              /* taille image */
+)    
+/* 
+  retourne 1 si p a un voisin nul dans la direction dir, 0 sinon :
+
+                .       .       .       
+                .       2       .       
+                .       .       .       
+
+		.	1	.			
+		0       x	3
+                .       4       .       
+
+                .       .       .       
+                .       5       .       
+                .       .       .       
+
+  le point p ne doit pas être un point de bord de l'image
+*/
+/* ==================================== */
+{
+#undef F_NAME
+#define F_NAME "extract_vois"
+  register uint8_t * ptr = img+p;
+  if ((p%rs==rs-1) || (p%ps<rs) || (p%rs==0) || (p%ps>=ps-rs) || 
+      (p < ps) || (p >= N-ps)) /* point de bord */
+  {
+    printf("%s: ERREUR: point de bord\n", F_NAME);
+    exit(0);
+  }
+
+  switch (dir)
+  {
+  case 0: if (*(ptr-1)) return 0; else return 1;
+  case 1: if (*(ptr-rs)) return 0; else return 1;
+  case 2: if (*(ptr-ps)) return 0; else return 1;
+  case 3: if (*(ptr+1)) return 0; else return 1;
+  case 4: if (*(ptr+rs)) return 0; else return 1;
+  case 5: if (*(ptr+ps)) return 0; else return 1;
+  default:
+    printf("%s: ERREUR: bad dir = %d\n", F_NAME, dir);
+    exit(0);
+  } // switch (dir)
+} /* direction() */
+
+/* ==================================== */
+int32_t lskelDK3(struct xvimage *image, 
+	     int32_t n_steps,
+	     struct xvimage *inhibit)
+/* ==================================== */
+/*
+Squelette directionnel ultime avec ensemble de contrainte
+Algo DK3 données: S, I
+Répéter jusqu'à stabilité
+  Pour Dir dans {0..5}
+    P := voxels simples pour S, de direction Dir et non dans I
+    C2 := voxels 2M-cruciaux (match2)
+    C1 := voxels 1M-cruciaux (match1)
+    C0 := voxels 0M-cruciaux (match0)
+    P := P  \  [C2 \cup C1 \cup C0]
+    S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
+*/
+#undef F_NAME
+#define F_NAME "lskelDK3"
+{ 
+  int32_t i, d;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  struct xvimage *t = copyimage(image); 
+  uint8_t *T = UCHARDATA(t);
+  uint8_t *I = NULL;
+  int32_t step, nonstab;
+  uint8_t v[27];
+
+  if (n_steps == -1) n_steps = 1000000000;
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+
+  if (inhibit != NULL) I = UCHARDATA(inhibit);
+
+  init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("DK3 step %d\n", step);
+#endif
+
+    for (d = 0; d < 6; d++)
+    {
+
+      // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES DE DIRECTION d ET PAS DANS I
+      for (i = 0; i < N; i++) 
+	if (IS_OBJECT(S[i]) && simple26(S, i, rs, ps, N) && 
+	    direction(S, i, d, rs, ps, N) && (!I || !I[i]))
+	  SET_SIMPLE(S[i]);
+
+      // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2M-CRUCIAUX
+      for (i = 0; i < N; i++) 
+	if (IS_SIMPLE(S[i]))
+	{ 
+	  extract_vois(S, i, rs, ps, N, v);
+	  if (match2(v))
+	    insert_vois(v, S, i, rs, ps, N);
+	}
+
+      // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1M-CRUCIAUX
+      for (i = 0; i < N; i++) 
+	if (IS_SIMPLE(S[i]))
+	{ 
+	  extract_vois(S, i, rs, ps, N, v);
+	  if (match1(v))
+	    insert_vois(v, S, i, rs, ps, N);
+	}
+
+      // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0M-CRUCIAUX
+      for (i = 0; i < N; i++) 
+	if (IS_SIMPLE(S[i]))
+	{ 
+	  extract_vois(S, i, rs, ps, N, v);
+	  if (match0(v))
+	    insert_vois(v, S, i, rs, ps, N);
+	}
+
+      memset(T, 0, N);
+      for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
+	if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+	  T[i] = 1;
+
+      for (i = 0; i < N; i++)
+	if (S[i] && !T[i]) 
+	{
+	  S[i] = 0; 
+	  nonstab = 1; 
+	}
+      for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+    } // for (d = 0; d < 6; d++)
+  } // while (nonstab && (step < n_steps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  freeimage(t);
+  termine_topo3d();
+  return(1);
+} /* lskelDK3() */
+
+
+/* ==================================== */
+int32_t lskelDRK3(struct xvimage *image, 
+	     int32_t n_steps,
+	     struct xvimage *inhibit)
+/* ==================================== */
+/*
+Squelette directionnel ultime avec ensemble de contrainte
+Algo DRK3 données: S, I
+Répéter jusqu'à stabilité
+  Pour Dir dans {0..5}
+    R := points résiduels de S ; I := I \cup R
+    P := voxels simples pour S, de direction Dir et non dans I
+    C2 := voxels 2M-cruciaux (match2)
+    C1 := voxels 1M-cruciaux (match1)
+    C0 := voxels 0M-cruciaux (match0)
+    P := P  \  [C2 \cup C1 \cup C0]
+    S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
+*/
+#undef F_NAME
+#define F_NAME "lskelDRK3"
+{ 
+  int32_t i, d, j, k;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  struct xvimage *t = copyimage(image); 
+  uint8_t *T = UCHARDATA(t);
+  uint8_t *I = NULL;
+  int32_t step, nonstab;
+  uint8_t v[27];
+  int32_t top, topb;
+
+  if (n_steps == -1) n_steps = 1000000000;
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+
+  if (inhibit != NULL) I = UCHARDATA(inhibit);
+
+  init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("DRK3 step %d\n", step);
+#endif
+
+    for (d = 0; d < 6; d++)
+    {
+
+      // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES DE DIRECTION d ET PAS DANS I
+      for (i = 0; i < N; i++) 
+	if (IS_OBJECT(S[i]) && simple26(S, i, rs, ps, N) && 
+	    direction(S, i, d, rs, ps, N) && (!I || !I[i]))
+	  SET_SIMPLE(S[i]);
+
+      // MARQUE LES POINTS INTERIEURS
+      for (i = 0; i < N; i++)
+      {
+	if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
+	{    
+	  top26(S, i, rs, ps, N, &top, &topb);
+	  if (topb == 0) SET_SELECTED(S[i]);
+	}
+      }
+
+      // DEMARQUE PTS ET REND "NON-SIMPLES" LES POINTS RESIDUELS
+      for (i = 0; i < N; i++)
+      { 
+	if (IS_OBJECT(S[i])) 
+	{
+#ifdef RESIDUEL6
+	  for (k = 0; k < 12; k += 2)        /* parcourt les voisins en 6-connexite */
+	  {
+	    j = voisin6(i, k, rs, ps, N);
+	    if ((j != -1) && IS_SELECTED(S[j])) break;
+	  }
+	  if (k == 12) // le voxel est résiduel
+	    UNSET_SIMPLE(S[i]);
+#else
+	  for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
+          {
+	    j = voisin26(i, k, rs, ps, N);
+	    if ((j != -1) && IS_SELECTED(S[j])) break;
+	  }
+	  if (k == 26) // le voxel est résiduel
+	    UNSET_SIMPLE(S[i]);
+#endif
+	}
+      }
+
+      // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2M-CRUCIAUX
+      for (i = 0; i < N; i++) 
+	if (IS_SIMPLE(S[i]))
+	{ 
+	  extract_vois(S, i, rs, ps, N, v);
+	  if (match2(v))
+	    insert_vois(v, S, i, rs, ps, N);
+	}
+
+      // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1M-CRUCIAUX
+      for (i = 0; i < N; i++) 
+	if (IS_SIMPLE(S[i]))
+	{ 
+	  extract_vois(S, i, rs, ps, N, v);
+	  if (match1(v))
+	    insert_vois(v, S, i, rs, ps, N);
+	}
+
+      // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0M-CRUCIAUX
+      for (i = 0; i < N; i++) 
+	if (IS_SIMPLE(S[i]))
+	{ 
+	  extract_vois(S, i, rs, ps, N, v);
+	  if (match0(v))
+	    insert_vois(v, S, i, rs, ps, N);
+	}
+
+      memset(T, 0, N);
+      for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
+	if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+	  T[i] = 1;
+
+      for (i = 0; i < N; i++)
+	if (S[i] && !T[i]) 
+	{
+	  S[i] = 0; 
+	  nonstab = 1; 
+	}
+      for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+    } // for (d = 0; d < 6; d++)
+  } // while (nonstab && (step < n_steps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  freeimage(t);
+  termine_topo3d();
+  return(1);
+} /* lskelDRK3() */
+
+
+/* ==================================== */
+int32_t lskelDSK3(struct xvimage *image, 
+	     int32_t n_steps,
+	     struct xvimage *inhibit)
+/* ==================================== */
+/*
+Squelette directionnel ultime avec ensemble de contrainte
+Algo DSK3 données: S, I
+Répéter jusqu'à stabilité
+  Pour Dir dans {0..5}
+    C := points de surface de S ; I := I \cup C
+    P := voxels simples pour S, de direction Dir et non dans I
+    C2 := voxels 2M-cruciaux (match2)
+    C1 := voxels 1M-cruciaux (match1)
+    C0 := voxels 0M-cruciaux (match0)
+    P := P  \  [C2 \cup C1 \cup C0]
+    S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
+*/
+#undef F_NAME
+#define F_NAME "lskelDSK3"
+{ 
+  int32_t i, d;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  struct xvimage *t = copyimage(image); 
+  uint8_t *T = UCHARDATA(t);
+  uint8_t *I = NULL;
+  int32_t step, nonstab;
+  uint8_t v[27];
+  int32_t top, topb;
+
+  if (n_steps == -1) n_steps = 1000000000;
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+
+  if (inhibit == NULL) 
+  {
+    inhibit = copyimage(image); 
+    razimage(inhibit);
+  }
+  I = UCHARDATA(inhibit);
+
+  init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("DSK3 step %d\n", step);
+#endif
+
+    for (d = 0; d < 6; d++)
+    {
+
+      // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES DE DIRECTION d ET PAS DANS I
+      for (i = 0; i < N; i++) 
+	if (IS_OBJECT(S[i]) && simple26(S, i, rs, ps, N) && 
+	    direction(S, i, d, rs, ps, N) && (!I || !I[i]))
+	  SET_SIMPLE(S[i]);
+
+      // MARQUE LES ISTHMES 2D
+      for (i = 0; i < N; i++)
+      {
+	if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
+	{    
+	  top26(S, i, rs, ps, N, &top, &topb);
+	  if (topb > 1) { I[i] = 1; UNSET_SIMPLE(S[i]); }
+	}
+      }
+
+      // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2M-CRUCIAUX
+      for (i = 0; i < N; i++) 
+	if (IS_SIMPLE(S[i]))
+	{ 
+	  extract_vois(S, i, rs, ps, N, v);
+	  if (match2(v))
+	    insert_vois(v, S, i, rs, ps, N);
+	}
+
+      // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1M-CRUCIAUX
+      for (i = 0; i < N; i++) 
+	if (IS_SIMPLE(S[i]))
+	{ 
+	  extract_vois(S, i, rs, ps, N, v);
+	  if (match1(v))
+	    insert_vois(v, S, i, rs, ps, N);
+	}
+
+      // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0M-CRUCIAUX
+      for (i = 0; i < N; i++) 
+	if (IS_SIMPLE(S[i]))
+	{ 
+	  extract_vois(S, i, rs, ps, N, v);
+	  if (match0(v))
+	    insert_vois(v, S, i, rs, ps, N);
+	}
+
+      memset(T, 0, N);
+      for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
+	if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+	  T[i] = 1;
+
+      for (i = 0; i < N; i++)
+	if (S[i] && !T[i]) 
+	{
+	  S[i] = 0; 
+	  nonstab = 1; 
+	}
+      for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+    } // for (d = 0; d < 6; d++)
+  } // while (nonstab && (step < n_steps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  freeimage(t);
+  termine_topo3d();
+  return(1);
+} /* lskelDSK3() */
