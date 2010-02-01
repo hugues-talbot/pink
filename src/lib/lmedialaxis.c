@@ -2604,7 +2604,6 @@ int32_t ExtendedDownstream(int32_t x, int32_t y, uint32_t *image,
     {
       i = (int32_t)(image[Y[k]*rs + X[k]]);
       if (i == 0) goto endfor;
-      if (i > image[y*rs + x]) goto endfor;
 #ifdef PARANO
       if (i >= nval)
       {
@@ -2855,10 +2854,6 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
 #ifdef OLD
 	  imagelambda[j*rs + i] = (float)MaximumDiameter(Aval, card_aval);
 #else
-if ((i == 5)&&(j == 4))
-{
-  printf("\n");
-}
           compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
 	  imagelambda[j*rs + i] = 2*(float)c_r;
 #endif

@@ -718,6 +718,10 @@ int32_t lpalagyi(struct xvimage *image,
   uint8_t v[125];
   uint8_t vv[125];
 
+#ifdef VERBOSE
+    printf("Warning: this is a very slow implementation. I might take time...\n");
+#endif
+
   if (nsteps == -1) nsteps = 1000000000;
 
   /* ================================================ */

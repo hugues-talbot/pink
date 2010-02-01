@@ -114,7 +114,7 @@ The parameter \b maxval is an integer which indicates the maximum grayscale valu
 //#define FONTHEIGHT 24
 #define FONTHEIGHT 18
 //#define FONTSCALE 32
-#define FONTSCALE 24
+#define FONTSCALE 16
 #define GLOBALSCALE 0.25
 #define P2P_EPSILON 2
 
@@ -604,6 +604,7 @@ int main(int argc, char **argv)
 	  } else 
 	  {
 	    sprintf(buf, "%d", F[y * rs + x]);
+	    //sprintf(buf, "%c.%c", F[y * rs + x]/10+'0', F[y * rs + x]%10+'0');
 	  }
 	  if (((type == 'd') && (sqrt(F[y * rs + x]) > maxval/2)) || 
 	      ((type != 'd') && (F[y * rs + x] > maxval/2)))

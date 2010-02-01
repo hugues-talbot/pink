@@ -100,6 +100,7 @@ int32_t trace = 1;
 #endif
 
 #define RESIDUEL6
+#define DIRTOURNE
 
 /* ==================================== */
 static void extract_vois(
@@ -2993,6 +2994,7 @@ static int32_t direction(
 /* 
   retourne 1 si p a un voisin nul dans la direction dir, 0 sinon :
 
+#ifdef DIRTOURNE
                 .       .       .       
                 .       2       .       
                 .       .       .       
@@ -3004,7 +3006,19 @@ static int32_t direction(
                 .       .       .       
                 .       5       .       
                 .       .       .       
+#else
+                .       .       .       
+                .       4       .       
+                .       .       .       
 
+		.	2	.			
+		0       x	1
+                .       3       .       
+
+                .       .       .       
+                .       5       .       
+                .       .       .       
+#endif
   le point p ne doit pas être un point de bord de l'image
 */
 /* ==================================== */
@@ -3021,12 +3035,24 @@ static int32_t direction(
 
   switch (dir)
   {
+#ifdef DIRTOURNE
   case 0: if (*(ptr-1)) return 0; else return 1;
   case 1: if (*(ptr-rs)) return 0; else return 1;
   case 2: if (*(ptr-ps)) return 0; else return 1;
+
   case 3: if (*(ptr+1)) return 0; else return 1;
   case 4: if (*(ptr+rs)) return 0; else return 1;
   case 5: if (*(ptr+ps)) return 0; else return 1;
+#else
+  case 0: if (*(ptr-1)) return 0; else return 1;
+  case 1: if (*(ptr+1)) return 0; else return 1;
+
+  case 2: if (*(ptr-rs)) return 0; else return 1;
+  case 3: if (*(ptr+rs)) return 0; else return 1;
+
+  case 4: if (*(ptr-ps)) return 0; else return 1;
+  case 5: if (*(ptr+ps)) return 0; else return 1;
+#endif
   default:
     printf("%s: ERREUR: bad dir = %d\n", F_NAME, dir);
     exit(0);
