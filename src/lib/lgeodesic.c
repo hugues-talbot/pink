@@ -32,10 +32,13 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/* operateurs morphologiques geodesiques */
-/* methode : propagation des changements par fifo */
-/* d'apres la these de Michel Grimaud (pp 22) */
-/* Michel Couprie - juillet 1996 */
+/* 
+ Operateurs morphologiques geodesiques
+ methode : propagation des changements par fifo
+ d'apres la these de Michel Grimaud (pp 22)
+ Michel Couprie - juillet 1996
+ Update 12/02/2010: MC - fix memory leakage (missing calls to IndicsTermine)
+*/
 
 #include <stdio.h>
 #include <stdint.h>
@@ -181,6 +184,7 @@ int32_t lgeodilat(
 
   FifoTermine(FIFO[0]);
   FifoTermine(FIFO[1]);
+  IndicsTermine();
   return 1;
 } /* lgeodilat() */
 
@@ -332,6 +336,7 @@ int32_t lgeoeros(
 
   FifoTermine(FIFO[0]);
   FifoTermine(FIFO[1]);
+  IndicsTermine();
   return 1;
 } /* lgeoeros() */
 
@@ -842,6 +847,7 @@ int32_t lgeodilat3d(
 
   FifoTermine(FIFO[0]);
   FifoTermine(FIFO[1]);
+  IndicsTermine();
   return 1;
 } // lgeodilat3d(
 
@@ -1079,6 +1085,7 @@ int32_t lgeoeros3d(
 
   FifoTermine(FIFO[0]);
   FifoTermine(FIFO[1]);
+  IndicsTermine();
   return 1;
 } // lgeoeros3d(
 
