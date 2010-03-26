@@ -57,7 +57,7 @@ set DUBUISSON(outfilename) [lindex $argv [expr $argc - 1]]
 
 proc tmpfile {tmpname} {
   global DUBUISSON
-  return [file join "/tmp" "$DUBUISSON(name)_$tmpname"]
+  return [file join "/tmp" "$DUBUISSON(infilename1)_$DUBUISSON(name)_$tmpname"]
 }
 
 my_exec_q cp $DUBUISSON(infilename1) [tmpfile t1] 

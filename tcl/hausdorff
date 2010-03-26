@@ -57,7 +57,7 @@ set HAUSDORFF(outfilename) [lindex $argv [expr $argc - 1]]
 
 proc tmpfile {tmpname} {
   global HAUSDORFF
-  return [file join "/tmp" "$HAUSDORFF(name)_$tmpname"]
+  return [file join "/tmp" "$HAUSDORFF(infilename1)_$HAUSDORFF(name)_$tmpname"]
 }
 
 if {![file exists $HAUSDORFF(infilename1)]} {

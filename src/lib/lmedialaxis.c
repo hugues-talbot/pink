@@ -2851,12 +2851,10 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
         {
 	  card_aval = ExtendedDownstream(i, j, imagedist, rs, cs, 
 				 TabIndDec, nval, ListDecs, Aval);	  
-#ifdef OLD
-	  imagelambda[j*rs + i] = (float)MaximumDiameter(Aval, card_aval);
-#else
-          compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
+
+		compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
 	  imagelambda[j*rs + i] = 2*(float)c_r;
-#endif
+
 	}
       }
     free(Aval);
@@ -2930,13 +2928,10 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
 	  {
 	    card_aval = ExtendedDownstream3d(i, j, k, imagedist, rs, cs, ds, 
 					   TabIndDec, nval, ListDecs, Aval);
-#ifdef OLD
-	    imagelambda[k*ps + j*rs + i] = 
-	      (float)MaximumDiameter3d(Aval, card_aval);
-#else
+
 	    compute_min_sphere_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_z, &c_r);
 	    imagelambda[k*ps + j*rs + i] = 2*(float)c_r;
-#endif
+
 	  }
 	}
 
@@ -3125,12 +3120,10 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
 	if (imagedist[j*rs + i] != 0)
         {
 	  card_aval = ExtendedDownstreamLambdaPrime(i, j, imagedist, imagevor, rs, cs, Aval);	  
-#ifdef OLD
-	  imagelambda[j*rs + i] = (float)MaximumDiameter(Aval, card_aval);
-#else
+
           compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
 	  imagelambda[j*rs + i] = 2*(float)c_r;
-#endif
+
 	}
       }
     free(Aval);
@@ -3153,12 +3146,10 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
 	if (imagedist[k*ps + j*rs + i] != 0)
         {
 	  card_aval = ExtendedDownstream3dLambdaPrime(i, j, k, imagedist, imagevor, rs, cs, ds, Aval3d);
-#ifdef OLD
-	  imagelambda[k*ps + j*rs + i] = (float)MaximumDiameter3d(Aval3d, card_aval);
-#else
+
           compute_min_sphere_with_border_constraint((double *)Aval3d, card_aval, NULL, 0, &c_x, &c_y, &c_z, &c_r);
 	  imagelambda[k*ps + j*rs + i] = 2*(float)c_r;
-#endif
+
 	}
       }
     free(Aval3d);
