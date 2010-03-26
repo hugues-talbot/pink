@@ -47,8 +47,7 @@ If \b axis = x, then the rotation axis is defined by y = \b c1, z = \b c2.<br>
 If \b axis = y, then the rotation axis is defined by x = \b c1, z = \b c2.<br>
 If \b axis = z, then the rotation axis is defined by x = \b c1, y = \b c2.<br>
 
-If parameters \b c1 and \b c2 are omitted and \b in.pgm is not a structuring element, then the default values 0, 0 are assumed.
-Otherwise, the coordinates of the rotation axis are (0,0) and the resulting image size is computed such that no loss of information occur.
+If \b in.pgm is not a structuring element, and if parameters \b c1 and \b c2 are omitted then the default values 0, 0 are assumed and the resulting image size is computed such that no loss of information occur. Otherwise, no resize is made.
 
 If \b in.pgm is a structuring element, then parameters \b c1 and \b c2 are ignored and the coordinates of the rotation axis are taken among the ones of the origin of the structuring element.
 
@@ -88,7 +87,7 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * image2;
   double theta, c1, c2, newc1, newc2;
-  int32_t x, y, z, se;
+  int32_t x, y, z, se, resize;
   char axis;
 
   if ((argc != 5) && (argc != 7))
@@ -115,8 +114,10 @@ int main(int argc, char **argv)
 
   axis = argv[3][0];
 
+  resize=1;
   if (argc == 7)
   {
+    if (!se) resize=0;
     c1 = atof(argv[4]);
     c2 = atof(argv[5]);
     if (se) fprintf(stderr, "%s: warning ignored parameters %g,%g (structuring element)\n", argv[0], c1, c2);
@@ -137,11 +138,11 @@ int main(int argc, char **argv)
   switch(axis)
   {
   case 'x':
-    image2 = lrotationRT3Dx(image, theta, c1, c2, &newc1, &newc2, 1); break;
+    image2 = lrotationRT3Dx(image, theta, c1, c2, &newc1, &newc2, resize); break;
   case 'y':
-    image2 = lrotationRT3Dy(image, theta, c1, c2, &newc1, &newc2, 1); break;
+    image2 = lrotationRT3Dy(image, theta, c1, c2, &newc1, &newc2, resize); break;
   case 'z':
-    image2 = lrotationRT3Dz(image, theta, c1, c2, &newc1, &newc2, 1); break;
+    image2 = lrotationRT3Dz(image, theta, c1, c2, &newc1, &newc2, resize); break;
   default:
     fprintf(stderr, "%s: bad value for axis: %c\n", argv[0], axis);
     exit(1);
