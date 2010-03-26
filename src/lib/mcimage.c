@@ -80,25 +80,25 @@ struct xvimage *allocimage(
   char * name,
   int32_t rs,   /* row size */
   int32_t cs,   /* col size */
-  int32_t d,    /* depth */
-  int32_t t)    /* data type */
+  int32_t ds,   /* depth */
+  int32_t dt)   /* data type */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "allocimage"
 {
-  int32_t N = rs * cs * d;             /* taille image */
+  int32_t N = rs * cs * ds;             /* taille image */
   struct xvimage *g;
-  int32_t ts;                          /* type size */
+  int32_t es;                          /* type size */
 
-  switch (t)
+  switch (dt)
   {
-    case VFF_TYP_BIT:      ts = 1; break;
-    case VFF_TYP_1_BYTE:   ts = 1; break;
-    case VFF_TYP_2_BYTE:   ts = 2; break;
-    case VFF_TYP_4_BYTE:   ts = 4; break;
-    case VFF_TYP_FLOAT:    ts = sizeof(float); break;
-    case VFF_TYP_DOUBLE:   ts = sizeof(double); break;
-    default: fprintf(stderr,"%s : bad data type %d\n", F_NAME, t);
+    case VFF_TYP_BIT:      es = 1; break;
+    case VFF_TYP_1_BYTE:   es = 1; break;
+    case VFF_TYP_2_BYTE:   es = 2; break;
+    case VFF_TYP_4_BYTE:   es = 4; break;
+    case VFF_TYP_FLOAT:    es = sizeof(float); break;
+    case VFF_TYP_DOUBLE:   es = sizeof(double); break;
+    default: fprintf(stderr,"%s : bad data type %d\n", F_NAME, dt);
              return NULL;
   } /* switch (t) */
 
@@ -109,10 +109,10 @@ struct xvimage *allocimage(
     return NULL;
   }
 
-  g->image_data = (void *)calloc(1, N * ts);
+  g->image_data = (void *)calloc(1, N * es);
   if (g == NULL)
   {   
-    fprintf(stderr,"%s : calloc failed (%d bytes)\n", F_NAME, N * ts);
+    fprintf(stderr,"%s : calloc failed (%d bytes)\n", F_NAME, N * es);
     return NULL;
   }
 
@@ -130,12 +130,78 @@ struct xvimage *allocimage(
 
   rowsize(g) = rs;
   colsize(g) = cs;
-  depth(g) = d;
-  datatype(g) = t;
+  depth(g) = ds;
+  datatype(g) = dt;
   g->xdim = g->ydim = g->zdim = 0.0;
 
   return g;
 } /* allocimage() */
+
+/* ==================================== */
+struct xvimage *allocmultimage(
+  char * name,
+  int32_t rs,   /* row size */
+  int32_t cs,   /* col size */
+  int32_t ds,   /* depth */
+  int32_t ts,   /* time size */
+  int32_t nb,   /* nb of bands */
+  int32_t dt)   /* data type */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "allocmultimage"
+{
+  int32_t N = rs * cs * ds * ts * nb; /* taille image */
+  struct xvimage *g;
+  int32_t es;                    /* type size */
+
+  switch (dt)
+  {
+    case VFF_TYP_BIT:      es = 1; break;
+    case VFF_TYP_1_BYTE:   es = 1; break;
+    case VFF_TYP_2_BYTE:   es = 2; break;
+    case VFF_TYP_4_BYTE:   es = 4; break;
+    case VFF_TYP_FLOAT:    es = sizeof(float); break;
+    case VFF_TYP_DOUBLE:   es = sizeof(double); break;
+    default: fprintf(stderr,"%s : bad data type %d\n", F_NAME, dt);
+             return NULL;
+  } /* switch (t) */
+
+  g = (struct xvimage *)malloc(sizeof(struct xvimage));
+  if (g == NULL)
+  {   
+    fprintf(stderr,"%s : malloc failed (%d bytes)\n", F_NAME, sizeof(struct xvimage));
+    return NULL;
+  }
+
+  g->image_data = (void *)calloc(1, N * es);
+  if (g == NULL)
+  {   
+    fprintf(stderr,"%s : calloc failed (%d bytes)\n", F_NAME, N * es);
+    return NULL;
+  }
+
+  if (name != NULL)
+  {
+    g->name = (char *)calloc(1,strlen(name)+1);
+    if (g->name == NULL)
+    {   fprintf(stderr,"%s : malloc failed for name\n", F_NAME);
+        return NULL;
+    }
+    strcpy((char *)(g->name), name);
+  }
+  else
+    g->name = NULL;
+
+  rowsize(g) = rs;
+  colsize(g) = cs;
+  depth(g) = ds;
+  tsize(g) = ts;
+  nbands(g) = nb;
+  datatype(g) = dt;
+  g->xdim = g->ydim = g->zdim = 0.0;
+
+  return g;
+} /* allocmultimage() */
 
 /* ==================================== */
 void razimage(struct xvimage *f)
@@ -147,21 +213,21 @@ void razimage(struct xvimage *f)
   int32_t cs = colsize(f);         /* taille colonne */
   int32_t ds = depth(f);           /* nb plans */
   int32_t N = rs * cs * ds;        /* taille image */
-  int32_t ts; 
+  int32_t es; 
   uint8_t *F = UCHARDATA(f);
 
   switch(datatype(f))
   {
-    case VFF_TYP_BIT:      ts = 1; break;
-    case VFF_TYP_1_BYTE:   ts = 1; break;
-    case VFF_TYP_2_BYTE:   ts = 2; break;
-    case VFF_TYP_4_BYTE:   ts = 4; break;
-    case VFF_TYP_FLOAT:    ts = sizeof(float); break;
-    case VFF_TYP_DOUBLE:   ts = sizeof(double); break;
+    case VFF_TYP_BIT:      es = 1; break;
+    case VFF_TYP_1_BYTE:   es = 1; break;
+    case VFF_TYP_2_BYTE:   es = 2; break;
+    case VFF_TYP_4_BYTE:   es = 4; break;
+    case VFF_TYP_FLOAT:    es = sizeof(float); break;
+    case VFF_TYP_DOUBLE:   es = sizeof(double); break;
     default: fprintf(stderr,"%s : bad data type %d\n", F_NAME, datatype(f));
              return;
   } /* switch (t) */
-  memset(F, 0, N*ts);
+  memset(F, 0, N*es);
 } /* razimage() */
 
 /* ==================================== */

@@ -39,7 +39,7 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> skeleucl in.pgm connex [inhibit] out.pgm
 
 <B>Description:</B>
-Eclidean binary skeleton.
+Euclidean binary skeleton.
 
 The parameter \b connex indicates the connectivity of the binary object.
 Possible choices are 4, 8 in 2d and 6, 26 in 3d.

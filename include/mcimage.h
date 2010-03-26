@@ -39,7 +39,8 @@ extern "C" {
 /* prototypes for mcimage.c    */
 /* ============== */
 
-extern struct xvimage *allocimage(char * name, int32_t rs, int32_t cs, int32_t d, int32_t t);
+extern struct xvimage *allocimage(char * name, int32_t rs, int32_t cs, int32_t ds, int32_t t);
+extern struct xvimage *allocmultimage(char * name, int32_t rs, int32_t cs, int32_t ds, int32_t ts, int32_t nb, int32_t t);
 extern void razimage(struct xvimage *f);
 extern struct xvimage *allocheader(char * name, int32_t rs, int32_t cs, int32_t d, int32_t t);
 extern int32_t showheader(char * name);

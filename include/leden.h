@@ -33,9 +33,9 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 extern int32_t ledengrowth(uint8_t *in,
-			   uint8_t *out,
 			   int32_t dimx,
 			   int32_t dimy,
+			   int32_t dimz,
 			   int32_t  nbiter,
 			   int32_t  grow,
 			   int32_t  shrink,

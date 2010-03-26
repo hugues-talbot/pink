@@ -63,7 +63,7 @@ Parameters:
   \li niter (positive integer): number of iterations
   \li grow (1/0): perform growing or not
   \li shrink (1/0): perform shrinking or not
-  \li topo (8/4/0): connectivity for the object - 0: no topological constraint
+  \li topo (26/6/8/4/0): connectivity for the object - 0: no topological constraint
 
 <B>Types supported:</B> byte 2d
 
@@ -86,10 +86,8 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image1;
-  struct xvimage * image2;
-  int32_t niter, grow, shrink, topo, rs, cs;
+  int32_t niter, grow, shrink, topo, rs, cs, ds;
   uint8_t *In;
-  uint8_t *Out;
 
   if (argc != 7)
   {
@@ -109,25 +107,18 @@ int main(int argc, char **argv)
   shrink = atoi(argv[4]);
   topo = atoi(argv[5]);
 
-  image2 = copyimage(image1);
-  if (image2 == NULL)
-  {
-    fprintf(stderr, "%s: copyimage failed\n", argv[0]);
-    exit(1);
-  }
-  Out = UCHARDATA(image2);
   rs = rowsize(image1);
   cs = colsize(image1);
+  ds = depth(image1);
 
-  if (! ledengrowth(In, Out, rs, cs, niter, grow, shrink, topo))
+  if (! ledengrowth(In, rs, cs, ds, niter, grow, shrink, topo))
   {
     fprintf(stderr, "%s: function ledengrowth failed\n", argv[0]);
     exit(1);
   }
 
-  writeimage(image2, argv[argc-1]);
+  writeimage(image1, argv[argc-1]);
   freeimage(image1);
-  freeimage(image2);
 
   return 0;
 } /* main */

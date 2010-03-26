@@ -1,38 +1,4 @@
 /*
-Copyright ESIEE (2009) 
-
-m.couprie@esiee.fr
-
-This software is an image processing library whose purpose is to be
-used primarily for research and teaching.
-
-This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software. You can  use, 
-modify and/ or redistribute the software under the terms of the CeCILL
-license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
-
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
-with a limited warranty  and the software's author,  the holder of the
-economic rights,  and the successive licensors  have only  limited
-liability. 
-
-In this respect, the user's attention is drawn to the risks associated
-with loading,  using,  modifying and/or developing or reproducing the
-software by the user in light of its specific status of free software,
-that may mean  that it is complicated to manipulate,  and  that  also
-therefore means  that it is reserved for developers  and  experienced
-professionals having in-depth computer knowledge. Users are therefore
-encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
-
-The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
-*/
-/*
  * The Eden process
  *
  *
@@ -58,253 +24,310 @@ knowledge of the CeCILL license and that you accept its terms.
  */
 
 #include <deque>
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <assert.h>
 #include <stdint.h>
-#include <limits.h>
+#include <mcset.h>
 #include <mctopo.h>
+#include <mctopo3d.h>
+#include <limits.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <time.h>
+#include <leden.h>
 
 #define MAX_RANDOM INT_MAX
 #define INQUEUE    128 // in queue marker
 
 /* this is not very efficient but quite readable */
 /* count the number of neighbours exactly equal to val */
-static int nb4vois(uint8_t *image, long p, int dimx, int dimy, int val)
+static int nb1vois(uint8_t *image, long p, int dimx, int dimy, int dimz, int val)
 {
-    int x, y, nbvois;
+    int x, y, z, nbvois, ps;
 
-    assert(p < dimx*dimy);
-    
+    ps = dimx*dimy;
     x = p%dimx;
-    y = p/dimx;
-    
+    y = (p%ps)/dimx;
+    z = p/ps;
+
     /* take care of border effects */
     nbvois = 0;
     if (x < (dimx-1))
-        nbvois += (image[y*dimx + x+1] == val);
+        nbvois += (image[z*ps + y*dimx + x+1] == val);
     if (x > 0)
-        nbvois += (image[y*dimx + x-1] == val);
+        nbvois += (image[z*ps + y*dimx + x-1] == val);
     if (y > 0)
-        nbvois += (image[(y-1)*dimx + x] == val);
+        nbvois += (image[z*ps + (y-1)*dimx + x] == val);
     if (y < (dimy -1))
-        nbvois += (image[(y+1)*dimx + x] == val);
+        nbvois += (image[z*ps + (y+1)*dimx + x] == val);
+    if (z > 0)
+        nbvois += (image[(z-1)*ps + y*dimx + x] == val);
+    if (z < (dimz -1))
+        nbvois += (image[(z+1)*ps + y*dimx + x] == val);
 
     return(nbvois);
 }
 
-static void makebinary(uint8_t *in, uint8_t *out, int dimx, int dimy)
-{
-    long nbpix = dimx*dimy;
-    uint8_t *p, *q, *end;
-    
-    p = in;
-    q = out;
-    end = out+nbpix;
-    for ( ; q < end ; ++p, ++q) {
-        *q = *p > 0;
-    }
-    return ;
-}
-
-// this will return a 0-1 binary image
-// maybe change this if a 0-255 binary image is required as output
-static void cleanout(uint8_t *out, int dimx, int dimy, int value)
-{
-    long nbpix = dimx*dimy;
-    
-    uint8_t *p, *end;
-    
-    p = out;
-    end = out+nbpix;
-    for ( ; p < end ; ++p) {
-        if (*p == INQUEUE) 
-            *p = value; // remove the INQUEUE markers
-    }
-    return ;
-}
-
-static void makebinoutput(uint8_t *out, int dimx, int dimy)
-{
-    long nbpix = dimx*dimy;
-    
-    uint8_t *p, *end;
-    
-    p = out;
-    end = out+nbpix;
-    for ( ; p < end ; ++p) {
-        if (*p) 
-            *p = 255;
-    }
-    return ;
-}
-
 int32_t ledengrowth(uint8_t *in,
-       	            uint8_t *out,
-           	    int32_t       dimx,
-                    int32_t       dimy,
-                    int32_t       nbiter,
-                    int32_t       grow,
-                    int32_t       shrink,
-                    int32_t       topo)
+       	            int32_t dimx,
+                    int32_t dimy,
+                    int32_t dimz,
+                    int32_t nbiter,
+                    int32_t grow,
+                    int32_t shrink,
+                    int32_t topo)
 {
-    int       i, nbpix = dimx*dimy;
-    long      delta, size;
-    uint8_t *p, *end;
-    std::deque< uint8_t* > borderqueue;
-    
-    // initiate random number generator
-    srandom(time(0));
+	int32_t i, ps, nbpix, dx, dy, dz, chosen;
+	long delta, size;
+	uint8_t *p, *end, *pix;
+	std::deque< uint8_t* > borderqueue;
+	Set * parcouru;
 
-    // make the output binary 
-    makebinary(in, out, dimx, dimy);
 
-    // from there, work on out only
-    if (grow) {
-        p = out;
-        end = out + nbpix;
-        /* put external border of set in queue */
-        while (p < end) {
-            if (!(*p) && (nb4vois(out, p-out, dimx, dimy, 1) > 0)) {
-                borderqueue.push_back(p);
-                *p = INQUEUE;
+
+
+
+	ps= dimx*dimy;
+	nbpix = dimx*dimy*dimz;
+
+	// initiate random number generator
+	srandom(time(0) * getpid());
+
+	// Init topo 3d
+	if (dimz>1)
+	{
+		init_topo3d();
+	}
+
+	parcouru=CreateEmptySet((nbpix/32)+1);
+	if(parcouru == NULL)
+	{
+		fprintf(stderr, "ledengrowth() : Memory allocation error.\n");
+		return 0;
+	}
+
+
+
+	//Starts the growth process if necessary (adding random points to object)
+	if (grow)
+	{
+		p = in;
+		end = in + nbpix;
+
+		/* put external border of set in queue */
+		while (p < end)
+		{
+			if (!(*p) && (nb1vois(in, p-in, dimx, dimy, dimz, 255) > 0))
+			{
+				borderqueue.push_back(p);
+				SetElement(parcouru, (uint32_t)(p-in));
+			}
+			p++;
+		}
+
+
+		/* turn pixels on at random */
+		for (i = 0 ; i < nbiter ; ++i)
+		{
+			size = borderqueue.size();
+			if(size==0)
+			{
+				printf("Bouh\n");
+
+				break;
+			}
+			chosen = static_cast<uint32_t>(static_cast<double>(random())/MAX_RANDOM * (size-1)); //Should check here that list is not empty
+			pix = borderqueue.at(chosen);
+
+			// remove that pixel from the queue
+			borderqueue.erase(borderqueue.begin()+chosen);
+			ResetElement(parcouru, (uint32_t)(pix-in));
+
+			
+			if(	(topo == 0) ||
+				((topo == 4) && (simple4(in, (int32_t)(pix-in), dimx, nbpix))) ||
+				((topo == 8) && (simple8(in, (int32_t)(pix-in), dimx, nbpix))) ||
+				((topo == 6) && (simple6(in, (int32_t)(pix-in), dimx, ps, nbpix))) ||
+				((topo == 26) && (simple26(in, (int32_t)(pix-in), dimx, ps, nbpix))) )
+				{
+					// turn on that pixel
+					*pix = 255;
+					
+
+					// add the new border pixels onto the queue
+					delta = pix-in;
+					dx = delta % dimx;
+					dy = (delta % ps) / dimx;
+					dz = delta /ps;
+
+					// if pixels are enqueue already they won't be selected again
+					if( (dx > 0) &&
+						(*(pix-1) == 0) &&
+						!InSet(parcouru, (int32_t)(pix-in-1)) )
+						{
+							borderqueue.push_back(pix-1);
+							SetElement(parcouru, (int32_t)(pix-in-1));
+						}
+
+					if( (dx < (dimx-1)) &&
+						(*(pix+1) == 0) &&
+						!InSet(parcouru, (int32_t)(pix-in+1)) )
+						{
+							borderqueue.push_back(pix-1);
+							SetElement(parcouru, (int32_t)(pix-in+1));
+						}
+
+					if( (dy > 0) &&
+						(*(pix-dimx) == 0) &&
+						!InSet(parcouru, (int32_t)(pix-in-dimx)) )
+						{
+							borderqueue.push_back(pix-dimx);
+							SetElement(parcouru, (int32_t)(pix-in-dimx));
+						}
+
+					if( (dy < (dimy-1)) &&
+						(*(pix+dimx) == 0) &&
+						!InSet(parcouru, (int32_t)(pix-in+dimx)) )
+						{
+							borderqueue.push_back(pix+dimx);
+							SetElement(parcouru, (int32_t)(pix-in+dimx));
+						}
+
+					if(	(dz > 0) &&
+						(*(pix-ps) == 0) &&
+						!InSet(parcouru, (int32_t)(pix-in-ps)) )
+						{
+							borderqueue.push_back(pix-ps);
+							SetElement(parcouru, (int32_t)(pix-in-ps));
+						}
+
+					if(	(dz < (dimz-1)) &&
+						(*(pix+ps) == 0) &&
+						!InSet(parcouru, (int32_t)(pix-in+ps)) )
+						{
+							borderqueue.push_back(pix+ps);
+							SetElement(parcouru, (int32_t)(pix-in+ps));
+						}
+				}
+		}
+
+				
+
+		/* clean out the queue */
+		borderqueue.clear();
+		SetEmpty(parcouru);
+	}
+
+
+
+
+    //Starts the shrink process if necessary (removing random points to object)
+	if (shrink)
+	{
+		p = in;
+		end = in + nbpix;
+
+		/* put internal border of set in queue */
+		while (p < end)
+		{
+			if ((*p) && (nb1vois(in, p-in, dimx, dimy, dimz, 0) > 0))
+			{
+				borderqueue.push_back(p);
+				SetElement(parcouru, (uint32_t)(p-in));
             }
             p++;
         }
 
-        /* turn pixels on at random */
-        for (i = 0 ; i < nbiter ; ++i) {
-            uint8_t *pix;
-            int32_t dx, dy;
-            
-            size = borderqueue.size();
-            int chosen = static_cast<int>(static_cast<double>(random())/MAX_RANDOM * size);
-            pix = borderqueue.at(chosen);
-            // remove that pixel from the queue
-            borderqueue.erase(borderqueue.begin()+chosen);
+		/* turn pixels off at random */
+		for (i = 0 ; i < nbiter ; ++i)
+		{
+			size = borderqueue.size();
+			chosen = static_cast<int>(static_cast<double>(random())/MAX_RANDOM * (size-1));
+			pix = borderqueue.at(chosen);
 
-	    if ((topo == 0) || 
-	        ((topo == 4) && (simple4(out, (int32_t)(pix-out), dimx, nbpix))) ||
-	        ((topo == 8) && (simple8(out, (int32_t)(pix-out), dimx, nbpix)))
-	       )
-            {
-	      // turn that pixel to 1
-              *pix = 1;
-              // add the new border pixels onto the queue
-              delta = pix-out;
-              dx = delta % dimx;
-              dy = delta / dimx;
-            
-              // if pixels are enqueue already they won't be selected again
-              if (dx > 0) {
-                if (*(pix-1) == 0) {
-                    borderqueue.push_back(pix-1);
-                    *(pix-1) = INQUEUE;
-                }
-              }
-              if (dx < (dimx-1)) {
-                if (*(pix+1) == 0) {
-                    borderqueue.push_back(pix+1);
-                    *(pix+1) = INQUEUE;
-                }
-              }
-              if (dy > 0) {
-                if (*(pix-dimx) == 0) {
-                    borderqueue.push_back(pix-dimx);
-                    *(pix-dimx) = INQUEUE;
-                }
-              }
-              if (dy < (dimy-1)) {
-                if (*(pix+dimx) == 0) {
-                    borderqueue.push_back(pix+dimx);
-                    *(pix+dimx) = INQUEUE;
-                }
-              }
-	    }
+            // remove that pixel from the queue
+			borderqueue.erase(borderqueue.begin()+chosen);
+
+
+			if(	(topo == 0) ||
+				((topo == 4) && (simple4(in, (int32_t)(pix-in), dimx, nbpix))) ||
+				((topo == 8) && (simple8(in, (int32_t)(pix-in), dimx, nbpix))) ||
+				((topo == 6) && (simple6(in, (int32_t)(pix-in), dimx, ps, nbpix))) ||
+				((topo == 26) && (simple26(in, (int32_t)(pix-in), dimx, ps, nbpix))) )
+				{
+					// turn off that pixel
+					*pix = 0;
+
+					// add the new border pixels onto the queue
+					delta = pix-in;
+					dx = delta % dimx;
+					dy = (delta % ps) / dimx;
+					dz = delta /ps;
+
+
+					// if pixels are enqueue already they won't be added again
+					// here there is no need to check that the neighbours of pix are
+					// on the border since pix is now on the border
+					// if pixels are enqueue already they won't be selected again
+					// if pixels are enqueue already they won't be selected again
+					if( (dx > 0) &&
+						((*pix-1) != 0) &&
+						!InSet(parcouru, (int32_t)(pix-in-1)) )
+						{
+							borderqueue.push_back(pix-1);
+							SetElement(parcouru, (int32_t)(pix-in-1));
+						}
+
+					if( (dx < (dimx-1)) &&
+						((*pix+1) != 0) &&
+						!InSet(parcouru, (int32_t)(pix-in+1)) )
+						{
+							borderqueue.push_back(pix-1);
+							SetElement(parcouru, (int32_t)(pix-in+1));
+						}
+
+					if( (dy > 0) &&
+						((*pix-dimx) != 0) &&
+						!InSet(parcouru, (int32_t)(pix-in-dimx)) )
+						{
+							borderqueue.push_back(pix-dimx);
+							SetElement(parcouru, (int32_t)(pix-in-dimx));
+						}
+
+					if( (dy < (dimy-1)) &&
+						((*pix+dimx) != 0) &&
+						!InSet(parcouru, (int32_t)(pix-in+dimx)) )
+						{
+							borderqueue.push_back(pix+dimx);
+							SetElement(parcouru, (int32_t)(pix-in+dimx));
+						}
+
+					if(	(dz > 0) &&
+						((*pix-ps) != 0) &&
+						!InSet(parcouru, (int32_t)(pix-in-ps)) )
+						{
+							borderqueue.push_back(pix-ps);
+							SetElement(parcouru, (int32_t)(pix-in-ps));
+						}
+
+					if(	(dz < (dimz-1)) &&
+						((*pix+ps) != 0) &&
+						!InSet(parcouru, (int32_t)(pix-in+ps)) )
+						{
+							borderqueue.push_back(pix+ps);
+							SetElement(parcouru, (int32_t)(pix-in+ps));
+						}
+				}
         }
-        /* remove the INQUEUE markers by replacing them with zeroes */
-        cleanout(out, dimx, dimy, 0);
-        /* clean out the queue */
-        borderqueue.clear();
     }
 
-    
-    
-    
-    /* shrink */
-    if (shrink) {
-        p = out;
-        end = out + nbpix;
-        /* put internal border of set in queue */
-        while (p < end) {
-            if ((*p) && (nb4vois(out, p-out, dimx, dimy, 0) > 0)) {
-                borderqueue.push_back(p);
-                *p = INQUEUE;
-            }
-            p++;
-        }
-
-        /* turn pixels off at random */
-        for (i = 0 ; i < nbiter ; ++i) {
-            uint8_t *pix;
-            int       dx, dy;
-            
-            size = borderqueue.size();
-            int chosen = static_cast<int>(static_cast<double>(random())/MAX_RANDOM * size);
-            pix = borderqueue.at(chosen);
-            // remove that pixel from the queue
-            borderqueue.erase(borderqueue.begin()+chosen);
-
-
-	    if ((topo == 0) || 
-	        ((topo == 4) && (simple4(out, (int32_t)(pix-out), dimx, nbpix))) ||
-	        ((topo == 8) && (simple8(out, (int32_t)(pix-out), dimx, nbpix)))
-	       )
-            {
-              // turn that pixel to 0
-              *pix = 0;
-              // add the new border pixels onto the queue
-              delta = pix-out;
-              dx = delta % dimx;
-              dy = delta / dimx;
-            
-              // if pixels are enqueue already they won't be added again
-              // here there is no need to check that the neighbours of pix are
-              // on the border since pix is now on the border
-              if (dx > 0) {
-                if (*(pix-1) == 1) {
-                    borderqueue.push_back(pix-1);
-                    *(pix-1) = INQUEUE;
-                }
-              }
-              if (dx < (dimx-1)) {
-                if (*(pix+1) == 1) {
-                    borderqueue.push_back(pix+1);
-                    *(pix+1) = INQUEUE;
-                }
-              }
-              if (dy > 0) {
-                if (*(pix-dimx) == 1) {
-                    borderqueue.push_back(pix-dimx);
-                    *(pix-dimx) = INQUEUE;
-                }
-              }
-              if (dy < (dimy-1)) {
-                if (*(pix+dimx) == 1) {
-                    borderqueue.push_back(pix+dimx);
-                    *(pix+dimx) = INQUEUE;
-                }
-              }
-            }
-        }
-        
-        /* remove the INQUEUE markers by replacing them with ones this time */
-        makebinoutput(out, dimx, dimy);
-        /* flush the queue */
-        borderqueue.clear();
-    }
+	// Clear topo 3d
+	if (dimz>1)
+	{
+		termine_topo3d();
+	}
+	free(parcouru);
 
     return 1;
 }
-
-

@@ -45,8 +45,8 @@ Parameters:
 \li \b nmax Maximum number of segments 
 \li \b lenmin Minimum length for a segment
 \li \b lenmax Maximum length for a segment
-\li \b bendmin Minimum bending factor for a segment
-\li \b bendmax Maximum bending factor for a segment
+\li \b bendmin Minimum bending factor for a segment (range: [0,0.5])
+\li \b bendmax Maximum bending factor for a segment (range: [0,0.5])
 \li \b dmin Minimum distance between segments
 \li \b dilatse Structuring element or ball radius for dilation
 \li \b out.pgm Output image
@@ -80,6 +80,8 @@ Parameters:
 #include <lcrop.h>
 #include <ldilateros3d.h>
 #include <lrotations.h>
+
+//#define DEBUG
 
 #define VERBOSE
 #define NDG_DIL 127
@@ -137,6 +139,9 @@ int main(int argc, char **argv)
   lenmax = atof(argv[6]);
   bendmin = atof(argv[7]);
   bendmax = atof(argv[8]);
+  assert(bendmax <= 0.5);
+  assert(bendmin >= 0.0);
+  assert(bendmax >= bendmin);
   dmin = (int32_t)atof(argv[9]);
   ntmax = nmax * 20;
   N = rs * cs * ds;
@@ -214,6 +219,12 @@ int main(int argc, char **argv)
       x[1] = x2; y[1] = y2; z[1] = z2; t[1] = 1.0;
       x[2] = x3; y[2] = y3; z[2] = z3; t[2] = 2.0;
 
+#ifdef DEBUG
+      printf("p1: %g,%g,%g\n", x1, y1, z1);
+      printf("p2: %g,%g,%g\n", x2, y2, z2);
+      printf("p3: %g,%g,%g\n", x3, y3, z3);
+#endif
+
       scn_solvespline((double *)t, (double *)x, npoints, (double *)X0, (double *)X1, (double *)X2, (double *)X3);
       scn_solvespline((double *)t, (double *)y, npoints, (double *)Y0, (double *)Y1, (double *)Y2, (double *)Y3);
       scn_solvespline((double *)t, (double *)z, npoints, (double *)Z0, (double *)Z1, (double *)Z2, (double *)Z3);
@@ -226,7 +237,7 @@ int main(int argc, char **argv)
 	ldrawcubic3d(tmp, (double *)Px, (double *)Py, (double *)Pz, 10, t[j], t[j+1]);
       }
 
-      if (n > 1)
+      if (n > 0)
       {
 	if (! ldisteuc3d(img, dis))
 	{
@@ -238,20 +249,28 @@ int main(int argc, char **argv)
 	if (i == N)
 	{
 	  n++;
+#ifdef DEBUG
+	printf("nb fibres generees: %d\n", n);
+#endif
 	  for (i = 0; i < N; i++) if (T[i]) I[i] = n;
 	}
       } // if (n > 1)
       else
       {
 	n++;
+#ifdef DEBUG
+	printf("INIT : nb fibres generees: %d\n", n);
+#endif
 	for (i = 0; i < N; i++) if (T[i]) I[i] = n;
       }
 
       nt++;
-    } // if ((len >= dmin) && (len <= dmax))
+    } // if ((len >= lenmin) && (len <= lenmax)))
   } // while ((n < nmax) && (nt < ntmax))
 #ifdef VERBOSE
   printf("n = %d segments generated; %d trials\n", n, nt);
+  writeimage(img, "_img");
+  writeimage(tmp, "_tmp");
 #endif
 
   if ((dse == NULL) && (radius > 0))
