@@ -33,7 +33,14 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 /* analyse de squelettes curvilignes */
-/* Michel Couprie - juin 2004 */
+/* 
+   Michel Couprie - june 2004 
+
+   Update 2010:
+   - limage2skel: modifications
+   - limage2skel2
+   - skeleton filtering
+*/
 
 #include <stdio.h>
 #include <stdint.h>
@@ -54,7 +61,9 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lmoments.h>
 
 //#define VERBOSE
-//#define DEBUG
+#define DEBUG
+//#define DEBUGCOMPVECT
+//#define DEBUGCURV
 //#define DEBUGADJ
 //#define DEBUGPOINT
 //#define DEBUGDRAW
@@ -120,7 +129,8 @@ static void processend(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t *
   nptsend++;
   printf("add point end %d nb %d\n", i, nptsend);
 #endif
-  S->tskel[m].pts = skeladdcell(S, i, NULL);
+  addptslist(S, m, i);
+  //  S->tskel[m].pts = skeladdptcell(S, i, NULL);
 } // processend()
 
 /* ====================================================================== */
@@ -288,7 +298,7 @@ static void scancurve(int32_t i, struct xvimage *image, int32_t connex, uint8_t 
   *nbend = ne;
   *nbjunc = nj;
 
-#ifdef DEBUG
+#ifdef DEBUGCURV
   printf("%s: return\n", F_NAME);
 #endif
 
@@ -394,7 +404,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
   int32_t rs = S->rs, cs = S->cs, ds = S->ds, ps = rs * cs, N = ps * ds;
   int32_t trouve = 0, closed = 0, incr_vois, connex = S->connex;
 
-#ifdef DEBUG
+#ifdef DEBUGCURV
   printf("%s: initial point i = %d,%d,%d\n", F_NAME, i%rs, (i%ps)/rs, i/ps);
 #endif
 
@@ -433,7 +443,8 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
   if (closed) 
   {
     int32_t m = start + pos;
-    S->tskel[m].adj = S->tskel[m].pts = NULL;
+    S->tskel[m].adj = NULL;
+    S->tskel[m].pts = NULL;
 
     assert(T2[i]);
 #ifdef DEBUGPOINT
@@ -466,7 +477,8 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
   else // courbe ouverte
   {
     int32_t m = start + pos; 
-    S->tskel[m].adj = S->tskel[m].pts = NULL;
+    S->tskel[m].adj = NULL;
+    S->tskel[m].pts = NULL;
 
     if (T3[i]) // extrémité "junc"
     {
@@ -534,7 +546,7 @@ static void processcurv(skel *S, uint8_t *F, uint8_t *T1, uint8_t *T2, uint8_t *
       else if (connex == 26)
 	for (k = 0; k < 26; k += 1)
 	  { j = voisin26(i, k, rs, ps, N); if ((j != -1) && (T2[j]==2)) break; }
-#ifdef DEBUG
+#ifdef DEBUGCURV
       printf("extremite junc, point i=%d (%d,%d,%d)\n", i, i%rs, (i%ps)/rs, i/ps);
 #endif
     }
@@ -641,7 +653,8 @@ static void processjunc(skel *S, uint8_t *T1, uint8_t *T2, uint8_t *T3, int32_t 
   LifoPush(LIFO, i); 
   T3[i] = 2;
 
-  S->tskel[m].adj = S->tskel[m].pts = NULL;
+  S->tskel[m].adj = NULL;
+  S->tskel[m].pts = NULL;
 
   while (! LifoVide(LIFO))
   {
@@ -733,13 +746,22 @@ static int32_t is_simple(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t 
 } // is_simple()
 
 /* ====================================================================== */
-static int32_t tailleliste(SKC_pcell p)
+static int32_t tailleptliste(SKC_pt_pcell p)
 /* ====================================================================== */
 {
   int32_t n = 0;
   for (; p != NULL; p = p->next) n++;
   return n;
-} /* tailleliste() */
+} /* tailleptliste() */
+
+/* ====================================================================== */
+static int32_t tailleadjliste(SKC_adj_pcell p)
+/* ====================================================================== */
+{
+  int32_t n = 0;
+  for (; p != NULL; p = p->next) n++;
+  return n;
+} /* tailleadjliste() */
 
 /* ====================================================================== */
 skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
@@ -757,7 +779,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
   int32_t nbisol, nbend, nbcurv, nbjunc, nbvertex, nbpoints;
   int32_t length, ne, nj, ret;
   skel * S;
-  SKC_pcell p;
+  SKC_adj_pcell p;
 
   assert(image != NULL);
   assert(datatype(image) == VFF_TYP_1_BYTE);
@@ -845,6 +867,9 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
 
   if (len != INT32_MAX)
   {
+#ifdef DEBUG
+    printf("ELIMINATION PETITES COURBES\n");
+#endif
     init_topo3d();
 
     // élimination des courbes de longueur inférieure à len
@@ -959,10 +984,13 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
   // construction de la structure "squelette"
   nbvertex = nbisol + nbend + nbcurv + nbjunc; 
 #ifdef DEBUG
-  printf("initskel nbvertex %d, nbpoints %d, nbcurv %d, cells %d\n", 
-	 nbvertex, nbpoints, nbcurv, nbpoints + nbend + 2*nbcurv + nbvertex * (nbvertex-1));
+  printf("initskel nbvertex %d, nbpoints %d, nbcurv %d, nbend %d, adjcells %d\n", 
+	 nbvertex, nbpoints, nbcurv, nbend, 2*nbcurv + nbvertex * (nbvertex-1));
 #endif
-  S = initskel(rs, cs, ds, nbvertex, nbpoints + nbend + 2*nbcurv + nbvertex * (nbvertex-1), connex);
+  S = initskel(rs, cs, ds, nbvertex, 
+	       nbpoints + nbpoints, // end points are both in curv and end vertices
+	       2*nbcurv + nbvertex * (nbvertex-1), 
+	       connex);
   if (S == NULL)
   {
     fprintf(stderr, "%s: function initskel failed\n", F_NAME);
@@ -1049,7 +1077,7 @@ skel * limage2skel2(struct xvimage *image, struct xvimage *morejunctions, int32_
   int32_t nbisol, nbend, nbcurv, nbjunc, nbvertex, nbpoints;
   int32_t ret;
   skel * S;
-  SKC_pcell p;
+  SKC_adj_pcell p;
 
   assert(image != NULL);
   assert(datatype(image) == VFF_TYP_1_BYTE);
@@ -1207,10 +1235,12 @@ skel * limage2skel2(struct xvimage *image, struct xvimage *morejunctions, int32_
   // construction de la structure "squelette"
   nbvertex = nbisol + nbend + nbcurv + nbjunc; 
 #ifdef DEBUG
-  printf("initskel nbvertex %d, nbpoints %d, nbcurv %d, cells %d\n", 
-	 nbvertex, nbpoints, nbcurv, nbpoints + nbend + 2*nbcurv + nbvertex * (nbvertex-1));
+  printf("initskel nbvertex %d, nbpoints %d, nbcurv %d, nbend %d, adjcells %d\n", 
+	 nbvertex, nbpoints, nbcurv, nbend, 2*nbcurv + nbvertex * (nbvertex-1));
 #endif
-  S = initskel(rs, cs, ds, nbvertex, nbpoints + nbend + 2*nbcurv + nbvertex * (nbvertex-1), connex);
+  S = initskel(rs, cs, ds, nbvertex, 
+	       nbpoints + nbpoints, // end points are both in curv and end vertices
+	       2*nbcurv + nbvertex * (nbvertex-1), connex);
   if (S == NULL)
   {
     fprintf(stderr, "%s: function initskel failed\n", F_NAME);
@@ -1292,7 +1322,7 @@ struct xvimage * lskel2image(skel *S)
   int32_t ds = S->ds;
   int32_t N = ds * cs * rs;
   uint8_t *F;      /* l'image de depart */
-  SKC_pcell p;
+  SKC_pt_pcell p;
   struct xvimage * image;
 
   image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
@@ -1346,7 +1376,7 @@ struct xvimage * lskelmarked2image(skel *S)
   int32_t ds = S->ds;
   int32_t N = ds * cs * rs;
   uint8_t *F;      /* l'image de depart */
-  SKC_pcell p;
+  SKC_pt_pcell p;
   struct xvimage * image;
 
   image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
@@ -1378,7 +1408,7 @@ static void coordvertex(skel *S, int32_t V, double *Vx, double *Vy, double *Vz)
   int32_t ps = rs*cs;
   int32_t n = 0;
   double x=0.0, y=0.0, z=0.0;
-  SKC_pcell p = S->tskel[V].pts;
+  SKC_pt_pcell p = S->tskel[V].pts;
 
   assert(p != NULL);
   for (; p != NULL; p = p->next)
@@ -1401,7 +1431,7 @@ static double distancetoskel(skel *S, double x, double y, double z)
   int32_t ps = rs*cs;
   int32_t i;
   double xx, yy, zz, d, min = (double)(ps * S->ds);
-  SKC_pcell p;
+  SKC_pt_pcell p;
 
   for (i = 0; i < S->e_junc; i++)
   {
@@ -1456,7 +1486,7 @@ Parameter \b length is given in pixels, parameter \b angle in radians.
 #undef F_NAME
 #define F_NAME "lskelfilter1_old"
   int32_t i, A, B;
-  SKC_pcell p;
+  SKC_adj_pcell p;
   double AB, Ax, Ay, Az, Bx, By, Bz, AAx, AAy, AAz, BBx, BBy, BBz;
   double dAA, dBB;
 
@@ -1519,7 +1549,7 @@ static void points_at_head(skel *S, int32_t Ai, double delta, int32_t *e, int32_
 {
   int32_t rs = S->rs;
   int32_t ps = rs * S->cs;
-  SKC_pcell p = S->tskel[Ai].pts;
+  SKC_pt_pcell p = S->tskel[Ai].pts;
   double x, y, z, xx, yy, zz;
 
   assert(p != NULL);
@@ -1564,7 +1594,7 @@ static void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_
 {
   int32_t rs = S->rs;
   int32_t ps = rs * S->cs;
-  SKC_pcell p = S->tskel[Ai].pts, pp;
+  SKC_pt_pcell p = S->tskel[Ai].pts, pp;
   double x, y, z, xx, yy, zz;
 
   assert(p != NULL);
@@ -1612,7 +1642,7 @@ static void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_
 static int32_t adj_point_junc(skel *S, int32_t e, int32_t J)
 /* ====================================================================== */
 {
-  SKC_pcell p;
+  SKC_pt_pcell p;
   int32_t connex = S->connex;
   int32_t rs = S->rs;
   int32_t ps = rs * S->cs;
@@ -1661,7 +1691,7 @@ int32_t lskelfilter1a_old(skel *S, double delta, double theta)
   int32_t rs = S->rs;
   int32_t ps = rs * S->cs;
   int32_t J, Ai, nadj, e, f, i, j, A[26];
-  SKC_pcell p;
+  SKC_adj_pcell p;
   double Vx[26], Vy[26], Vz[26], Cij;
 
 #ifdef DEBUG
@@ -1723,7 +1753,7 @@ static void list_points_at_head(skel *S, int32_t Ai, double delta, int32_t *list
 {
   int32_t rs = S->rs;
   int32_t ps = rs * S->cs;
-  SKC_pcell p = S->tskel[Ai].pts;
+  SKC_pt_pcell p = S->tskel[Ai].pts;
   double x, y, z, xx, yy, zz;
   int32_t n, nmax;
 
@@ -1764,7 +1794,7 @@ static void list_points_at_tail(skel *S, int32_t Ai, double delta, int32_t *list
 {
   int32_t rs = S->rs;
   int32_t ps = rs * S->cs;
-  SKC_pcell p = S->tskel[Ai].pts;
+  SKC_pt_pcell p = S->tskel[Ai].pts;
   double x, y, z, xx, yy, zz;
   int32_t i, n, nmax, e;
 
@@ -1854,7 +1884,7 @@ static int32_t compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, dou
 				     &dmy, &dmy, &dmy); assert(ret != 0);
       if (scalarprod(vx, vy, vz, xc, yc, zc) < 0)
       { vx = -vx; vy = -vy; vz = -vz; }
-#ifdef DEBUG
+#ifdef DEBUGCOMPVECT
       printf("Arc Ai = %d ; V=(%g,%g,%g) ; c=(%g,%g,%g)\n", 
 	     Ai, vx, vy, vz, xc, yc, zc);
 #endif	  
@@ -1862,7 +1892,7 @@ static int32_t compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, dou
     else
     {
 #ifdef VERBOSE
-      printf("%s: warning: arc %d too short (length %d)\n", F_NAME, Ai, tailleliste(S->tskel[Ai].pts));
+      printf("%s: warning: arc %d too short (length %d)\n", F_NAME, Ai, tailleptliste(S->tskel[Ai].pts));
 #endif
       *VVx = *VVy = *VVz = 0.0;
       return 0;
@@ -1911,7 +1941,7 @@ static int32_t compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, dou
 				     &dmy, &dmy, &dmy); assert(ret != 0);
       if (scalarprod(vx, vy, vz, xc, yc, zc) < 0)
       { vx = -vx; vy = -vy; vz = -vz; }
-#ifdef DEBUG
+#ifdef DEBUGCOMPVECT
       printf("Arc Ai = %d ; V=(%g,%g,%g) ; c=(%g,%g,%g)\n", 
 	     Ai, vx, vy, vz, xc, yc, zc);
 #endif	  
@@ -1919,7 +1949,7 @@ static int32_t compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, dou
     else
     {
 #ifdef VERBOSE
-      printf("%s: warning: arc %d too short (length %d)\n", F_NAME, Ai, tailleliste(S->tskel[Ai].pts));
+      printf("%s: warning: arc %d too short (length %d)\n", F_NAME, Ai, tailleptliste(S->tskel[Ai].pts));
 #endif
       *VVx = *VVy = *VVz = 0.0;
       return 0;
@@ -1950,7 +1980,7 @@ int32_t lskelfilter1a(skel *S, double delta1, double delta2, double theta, int32
 #undef F_NAME
 #define F_NAME "lskelfilter1a"
   int32_t ret, J, Ai, nadj, i, j, A[26], nmaxpoints, *listpoints;
-  SKC_pcell p;
+  SKC_adj_pcell p;
   double Vx[26], Vy[26], Vz[26], VVx, VVy, VVz, Cij;
   double *X, *Y, *Z;
 #ifdef DEBUG
@@ -1976,7 +2006,7 @@ int32_t lskelfilter1a(skel *S, double delta1, double delta2, double theta, int32
     }
     assert(p->next != NULL); // soit 0, soit 2 adjacences
     if (((!IS_JUNC(p->val)) && (!IS_JUNC(p->next->val))) ||
-	(tailleliste(S->tskel[Ai].pts) >= length))
+	(tailleptliste(S->tskel[Ai].pts) >= length))
       S->tskel[Ai].tag = 1; // mark as "aligned"
     else
       S->tskel[Ai].tag = 0; // mark as "not aligned"
@@ -2040,7 +2070,7 @@ En entrée, nmax contient la taille du tableau lp.
 #undef F_NAME
 #define F_NAME "mark_sharp_angles"
   int32_t C, i, j, k, n, rs = S->rs, ps = rs * S->cs;
-  SKC_pcell p;
+  SKC_pt_pcell p;
   double xi, yi, zi, xj, yj, zj, xk, yk, zk, angle;
   uint8_t *F;
 
@@ -2131,7 +2161,7 @@ The matching branches are marked (field "tag" = 1).
 #define F_NAME "lskelfilter1"
   int32_t ret, i, j, len, e, m, Ai, EE[2], E;
   int32_t nadj, A[26], nmaxpoints, *listpoints;
-  SKC_pcell p;
+  SKC_adj_pcell p;
   double Vx[26], Vy[26], Vz[26], VVx, VVy, VVz, Cij, angle, maxangle;
   double *X, *Y, *Z;
 
@@ -2152,7 +2182,7 @@ The matching branches are marked (field "tag" = 1).
   for (Ai = S->e_end; Ai < S->e_curv; Ai++) // scan all arcs
   {  
     //Let E1, E2 be the vertices adjacent to A0
-    len = tailleliste(S->tskel[Ai].pts);
+    len = tailleptliste(S->tskel[Ai].pts);
     p = S->tskel[Ai].adj;
     if ((len >= (int32_t)delta2) && (len <= length) && (p != NULL)) 
     {// si arc non fermé et assez court (mais pas trop)
@@ -2174,7 +2204,7 @@ The matching branches are marked (field "tag" = 1).
 	//      Let A1, ... Ak be the arcs other than Ai adjacent to E
 	for (p = S->tskel[E].adj; p != NULL; p = p->next)
 	{ // scan arcs adjacent to junction E
-	  if ((p->val != Ai) && (tailleliste(S->tskel[p->val].pts) >= (int32_t)delta2)) 
+	  if ((p->val != Ai) && (tailleptliste(S->tskel[p->val].pts) >= (int32_t)delta2)) 
 	  { 
 	    A[nadj] = p->val; nadj++; 
 	  }
@@ -2257,7 +2287,7 @@ The matching arcs are marked (field "tag" = 1).
 #undef F_NAME
 #define F_NAME "lskelfilter1b"
   int32_t i, len, Ai;
-  SKC_pcell p;
+  SKC_adj_pcell p;
 
 #ifdef DEBUG
   printf("%s: length = %g, delta1 = %g, delta2 = %g\n", F_NAME, length, delta1, delta2);
@@ -2269,7 +2299,7 @@ The matching arcs are marked (field "tag" = 1).
 
   for (Ai = S->e_end; Ai < S->e_curv; Ai++) // scan all arcs
   {  
-    len = tailleliste(S->tskel[Ai].pts);
+    len = tailleptliste(S->tskel[Ai].pts);
     p = S->tskel[Ai].adj;
     if ((len <= length) && (p != NULL)) 
     { // si arc non fermé et assez court
@@ -2290,20 +2320,20 @@ The matching arcs are marked (field "tag" = 1).
 int32_t lskelfilter2(skel *S, double delta1, double delta2)
 /* ====================================================================== */
 /*
-  "Mikado game" algorithm
+  One iteration of the "Mikado game" algorithm
   Let A0 be the arc in S having the greatest length
-  Mark A0 (field "tag" = 1)
+  Mark A0 (MARK1)
   Let E0, E1 be the vertices adjacent to A0
   For E in {E0, E1} do
     While E is a not yet marked junction do
-      Mark E as end junction (field "tag" = 1)
+      Mark E as end junction (MARK1)
       Let A1, ... Ak be the arcs other than A0 adjacent to E
       Let V0, ... Vk be the corresponding tangent vectors
       Let m be such that the angle <V0,-Vm> is minimal
       Let minangle be min{<Vi,-Vj> | 0 <= i < k and i < j <= k} 
       If <V0,-Vm> == minangle then 
         E' = extremity of Am different from E
-	Mark E as internal junction (field "tag" = 2)
+	Mark E as internal junction (MARK2)
         A0 = Am; E = E'
         Mark A0
       EndIf
@@ -2316,7 +2346,7 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2)
 #define F_NAME "lskelfilter2"
   int32_t ret, e, i, j, m, Ai, A0, EE[2], E, Ep;
   int32_t nadj, A[26], nmaxpoints, *listpoints, maxlen;
-  SKC_pcell p;
+  SKC_adj_pcell p;
   double Vx[26], Vy[26], Vz[26], VVx, VVy, VVz, Cij, angle, minangle, normprod;
   double *X, *Y, *Z;
 
@@ -2331,9 +2361,9 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2)
   printf("%s: delta1 = %g, delta2 = %g\n", F_NAME, delta1, delta2);
 #endif	  
 
-  for (i = 0; i < S->e_junc; i++) S->tskel[i].tag = 0; // unmark all
-
-  if (S->e_curv == S->e_end) return 1; // no arc: exit 
+  for (i = S->e_end, j = 0; i < S->e_curv; i++)
+    if (!SK_DELETED(i)) j++; // counts non-deleted arcs
+  if (j == 0) return 1; // no arc: exit 
 
   nmaxpoints = delta2 * 4;
   listpoints = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(listpoints != NULL);
@@ -2344,14 +2374,15 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2)
 //Let A0 be the arc in S having the greatest length
   maxlen = 0;
   for (i = S->e_end; i < S->e_curv; i++) // scan all arcs
-  {
-    ret = tailleliste(S->tskel[i].pts);
-    if (ret > maxlen) { maxlen = ret; A0 = i; }
-  }
+    if (!SK_DELETED(i))
+    {
+      ret = tailleptliste(S->tskel[i].pts);
+      if (ret > maxlen) { maxlen = ret; A0 = i; }
+    }
   assert(maxlen > 0);
 
-//Mark A0 (field "tag" = 1)
-  S->tskel[A0].tag = 1;
+//Mark A0 (MARK1)
+  SK_MARK1(A0);
 #ifdef DEBUG
   printf("mark initial arc: %d    ", A0);
 #endif	  
@@ -2382,10 +2413,10 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2)
 #endif	  
 
 //    While E is a not yet marked junction do
-      while (IS_JUNC(E) && (S->tskel[E].tag == 0))
+      while (IS_JUNC(E) && (!SK_MARKED1(E)) && (!SK_MARKED2(E)))
       {
 //      Mark E as end junction
-	S->tskel[E].tag = 1;
+	SK_MARK1(E);
 #ifdef DEBUG
 	printf("  mark end junction E=%d ; A0=%d\n", E, A0);
 #endif	  
@@ -2464,7 +2495,8 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2)
 	  if (p->val == E) Ep = p->next->val; else Ep = p->val;
 
 //        Mark E as internal junction
-	  S->tskel[E].tag = 2;
+	  SK_UNMARK1(E);
+	  SK_MARK2(E);
 #ifdef DEBUG
 	  printf("  mark internal junction E=%d\n", E);
 #endif	  
@@ -2473,17 +2505,17 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2)
 	  A0 = A[m]; E = Ep;
 
 //        Mark A0
-	  S->tskel[A0].tag = 1;
+	  SK_MARK1(A0);
 #ifdef DEBUG
 	  printf("  mark arc %d\n", A0);
 #endif	  
 	} // if (angle <= minangle)
-      } // while (IS_JUNC(E) && (S->tskel[E].tag == 0))
+      } // while (IS_JUNC(E) && (!SK_MARKED1(E)) && (!SK_MARKED2(E)))
 
 //    If E is an end junction then Unmark E
-      if (IS_JUNC(E) && (S->tskel[E].tag == 1)) 
+      if (IS_JUNC(E) && (SK_MARKED1(E))) 
       {
-	S->tskel[E].tag = 0;
+	SK_UNMARK1(E);
 #ifdef DEBUG
 	printf("  unmark end junction %d\n", E);
 #endif	  	
@@ -2497,3 +2529,303 @@ int32_t lskelfilter2(skel *S, double delta1, double delta2)
   free(listpoints); free(X); free(Y); free(Z);
   return 1;
 } /* lskelfilter2() */
+
+/* ====================================================================== */
+int32_t lskelfilter2b(skel *S, double delta1, double delta2)
+/* ====================================================================== */
+/*
+  One iteration of the "Mikado game" algorithm
+  Let A0 be the arc in S having the greatest length
+  Mark A0 (MARK1)
+  Let E0, E1 be the vertices adjacent to A0
+  For E in {E0, E1} do
+    While E is a not yet marked junction do
+      Mark E as end junction (MARK1)
+      Let A1, ... Ak be the arcs other than A0 adjacent to E
+      Let V0, ... Vk be the corresponding tangent vectors
+      Let m be such that the angle <V0,-Vm> is minimal
+      Let minangle be min{<Vi,-Vj> | 0 <= i < k and i < j <= k} 
+      If <V0,-Vm> == minangle then 
+        E' = extremity of Am different from E
+	Mark E as internal junction (MARK2)
+        A0 = Am; E = E'
+        Mark A0
+      EndIf
+    EndWhile
+    If E is an end junction then Unmark E
+  EndFor
+*/
+{
+#undef F_NAME
+#define F_NAME "lskelfilter2b"
+  int32_t ret, e, i, j, m, A0, EE[2], E, Ep;
+  int32_t nadj, A[26], maxlen;
+  SKC_adj_pcell p;
+  double Vx[26], Vy[26], Vz[26], Cij, angle, minangle, normprod;
+
+#ifdef DEBUG
+  printf("%s: begin\n", F_NAME);
+#endif	  
+
+  for (i = S->e_end, j = 0; i < S->e_curv; i++)
+    if (!SK_DELETED(i)) j++; // counts non-deleted arcs
+#ifdef DEBUG
+  printf("nb arcs = %d    \n", j);
+#endif	  
+  if (j == 0) return 0; // no arc: exit 
+
+//Let A0 be the arc in S having the greatest length
+  maxlen = 0;
+  for (i = S->e_end; i < S->e_curv; i++) // scan all arcs
+    if (!SK_DELETED(i))
+    {
+      ret = tailleptliste(S->tskel[i].pts);
+      if (ret > maxlen) { maxlen = ret; A0 = i; }
+    }
+  assert(maxlen > 0);
+
+//Mark A0 (MARK1)
+  SK_MARK1(A0);
+#ifdef DEBUG
+  printf("mark initial arc: %d    \n", A0);
+#endif	  
+  
+//Let E1, E2 be the vertices adjacent to A0
+  p = S->tskel[A0].adj;
+  if (p != NULL) // si arc non fermé
+  {
+    assert(p->next != NULL); // soit 0, soit 2 adjacences
+    EE[0] = p->val;
+    EE[1] = p->next->val;
+#ifdef DEBUG
+    printf("E1 = %d, E2 = %d\n", EE[0], EE[1]);
+#endif	  
+    
+//  For E in {E0, E1} do
+    for (e = 0; e < 2; e++)
+    {
+      E = EE[e];
+#ifdef DEBUG
+      printf("tracking from E=%d\n", E);
+#endif	  
+
+//    While E is a not yet marked junction do
+      while (IS_JUNC(E) && (!SK_MARKED1(E)) && (!SK_MARKED2(E)))
+      {
+//      Mark E as end junction
+	SK_MARK1(E);
+#ifdef DEBUG
+	printf("  mark end junction E=%d ; A0=%d\n", E, A0);
+#endif	  
+	
+//      Let A1, ... Ak be the arcs other than A0 adjacent to E
+	for (p = S->tskel[E].adj,nadj = 0; p != NULL; p = p->next, nadj++)
+	{ // scan arcs Ai (p->val) adjacent to junction E
+	  A[nadj] = p->val;
+//        Let V0, ... Vk be the corresponding tangent vectors (stored)
+	  Vx[nadj] = p->vx; Vy[nadj] = p->vy; Vz[nadj] = p->vz;
+	  if (p->val == A0) 
+	  { 
+	    A[nadj] = A[0]; Vx[nadj] = Vx[0]; Vy[nadj] = Vy[0]; Vz[nadj] = Vz[0]; 
+	    A[0] = p->val; Vx[0] = p->vx; Vy[0] = p->vy; Vz[0] = p->vz;
+	  }
+	}
+#ifdef DEBUG
+	printf("  adjacent arcs: ");
+	for (j = 0; j < nadj; j++) printf("%d ", A[j]);
+	printf("\n");
+#endif	  
+	if (nadj <= 2) break; // end or elbow: stop tracking
+
+//      Let m be such that the angle <V0,-Vm> is minimal
+	angle = 4.0; // greater than any angle
+	m = -1;
+	for (j = 1; j < nadj; j++)
+	{
+	  normprod = norm(Vx[0], Vy[0], Vz[0]) * norm(Vx[j], Vy[j], Vz[j]);
+	  if (normprod != 0.0) 
+	  {
+	    Cij = acos(scalarprod(Vx[0], Vy[0], Vz[0], -Vx[j], -Vy[j], -Vz[j]) / normprod);
+#ifdef DEBUG
+	    printf("    C(%d,%d)=%g(%g)\n", A[0], A[j], Cij, (Cij*180)/M_PI);
+#endif	  
+	    if (Cij < angle) { angle = Cij; m = j; }
+	  }
+	}
+	if (m == -1) break; // only small arcs: stop tracking
+#ifdef DEBUG
+	printf("  angle=%g\n", angle);
+#endif	  
+
+//      Let minangle be min{<Vi,-Vj> | 0 <= i < k and i < j <= k} 
+	minangle = 4.0; // greater than any angle
+	for (i = 0; i < nadj-1; i++)
+	for (j = i+1; j < nadj; j++)
+	{
+	  normprod = norm(Vx[i], Vy[i], Vz[i]) * norm(Vx[j], Vy[j], Vz[j]);
+	  if (normprod != 0.0) 
+	  {
+	    Cij = acos(scalarprod(Vx[i], Vy[i], Vz[i], -Vx[j], -Vy[j], -Vz[j]) / normprod);
+#ifdef DEBUG
+	    printf("    C(%d,%d)=%g(%g)\n", A[i], A[j], Cij, (Cij*180)/M_PI);
+#endif	  
+	    if (Cij < minangle) { minangle = Cij; }
+	  }
+	}
+#ifdef DEBUG
+	printf("  minangle=%g\n", minangle);
+#endif	  
+
+//      If <V0,-Vm> <= minangle then 
+	if ((angle <= minangle) && (angle <= MAXANGLE))
+	{
+//        E' = extremity of Am different from E
+	  p = S->tskel[A[m]].adj;
+	  assert(p != NULL); assert(p->next != NULL);
+	  if (p->val == E) Ep = p->next->val; else Ep = p->val;
+
+//        Mark E as internal junction
+	  SK_UNMARK1(E);
+	  SK_MARK2(E);
+#ifdef DEBUG
+	  printf("  mark internal junction E=%d\n", E);
+#endif	  
+
+//        A0 = Am; E = E'
+	  A0 = A[m]; E = Ep;
+
+//        Mark A0
+	  SK_MARK1(A0);
+#ifdef DEBUG
+	  printf("  mark arc %d\n", A0);
+#endif	  
+	} // if (angle <= minangle)
+      } // while (IS_JUNC(E) && (!SK_MARKED1(E)) && (!SK_MARKED2(E)))
+
+//    If E is an end junction then Unmark E
+      if (IS_JUNC(E) && (SK_MARKED1(E))) 
+      {
+	SK_UNMARK1(E);
+#ifdef DEBUG
+	printf("  unmark end junction %d\n", E);
+#endif	  	
+      }
+    } // for (i = 0; i < 2; i++)
+  } // if (p != NULL) 
+
+#ifdef DEBUG
+  printf("%s: end\n", F_NAME);
+#endif	  
+
+  return 1;
+} /* lskelfilter2b() */
+
+/* ====================================================================== */
+int32_t is_elbow(skel *S, int32_t j, double maxelbowangle)
+/* ====================================================================== */
+{
+#undef F_NAME
+#define F_NAME "is_elbow"
+  SKC_adj_pcell p = S->tskel[j].adj;
+  double angle;
+
+  assert(p != NULL); assert(p->next != NULL); assert(p->next->next == NULL);
+  angle = acos(scalarprod(p->vx, p->vy, p->vz, p->next->vx, p->next->vy, p->next->vz) / 
+	       (norm(p->vx, p->vy, p->vz) * norm(p->next->vx, p->next->vy, p->next->vz)));
+  if (angle <= maxelbowangle) 
+    return 1;
+  else
+    return 0;
+} // is_elbow()
+
+/* ====================================================================== */
+struct xvimage * lskelfilter3(skel *S, double delta1, double delta2, double maxbridgelength, double maxelbowangle)
+/* ====================================================================== */
+/*
+  "Mikado game" algorithm
+
+  compute all tangent vectors
+
+  repeat forever
+    1. select a fiber (call to lskelfilter2b)
+    2. if no fiber is found, then stop
+    3. output fiber (write voxels in output image) and delete arcs
+    4. mark (MARK2) branches adjacent to F and not longer than maxbridgelength
+    5. remove all marked branches and
+       update skeleton (merge branches at 2-junctions that are not elbows)
+*/
+{
+#undef F_NAME
+#define F_NAME "lskelfilter3"
+  int32_t ret, i, j, nmaxpoints, *listpoints, nfiber, na, nd;
+  SKC_adj_pcell p;
+  SKC_pt_pcell pp;
+  double VVx, VVy, VVz, *X, *Y, *Z;
+  struct xvimage * result;
+  uint8_t *R;
+  
+  result = allocimage(NULL, S->rs, S->cs, S->ds, VFF_TYP_1_BYTE); 
+  assert(result != NULL);
+  razimage(result);
+  R = UCHARDATA(result);
+  
+  nmaxpoints = delta2 * 4;
+  listpoints = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(listpoints != NULL);
+  X = (double *)malloc(nmaxpoints * sizeof(double)); assert(X != NULL);
+  Y = (double *)malloc(nmaxpoints * sizeof(double)); assert(Y != NULL);
+  Z = (double *)malloc(nmaxpoints * sizeof(double)); assert(Z != NULL);
+
+  // mark all arcs undeleted
+  for (i = S->e_end; i < S->e_curv; i++) SK_UNREMOVE(i);
+
+  // compute all tangent vectors
+  for (j = S->e_curv; j < S->e_junc; j++) // scan all junctions
+    for (p = S->tskel[j].adj; p != NULL; p = p->next)
+      if (IS_CURV(p->val))
+      {
+        ret = compute_vector(S, p->val, j, delta1, delta2, listpoints, 
+			   nmaxpoints, X, Y, Z, &VVx, &VVy, &VVz);
+        p->vx = VVx; p->vy = VVy; p->vz = VVz;
+      }
+
+  nfiber = 0;
+  // repeat
+  while (lskelfilter2b(S, delta1, delta2))
+  { // select a fiber (call to lskelfilter2b)
+    // if no fiber is found, then stop
+    // otherwise the selected fiber F is marked in the skel structure
+    // (MARK1 for arcs and end junction, MARK2 for internal junctions)
+    nfiber++;
+
+    // output fiber (write labeled voxels in output image) and delete arcs
+    for (i = S->e_end; i < S->e_junc; i++) // scan arcs and junctions
+      if (!SK_DELETED(i) && (SK_MARKED1(i) || SK_MARKED2(i)))
+      {
+	for (pp = S->tskel[i].pts; pp != NULL; pp = pp->next)
+	  R[pp->val] = NDG_MAX;        // output
+	if (IS_CURV(i)) skeldelete(S, i); // delete arcs only
+      }
+
+    // remove branches adjacent to F and not longer than maxbridgelength
+    for (j = S->e_curv; j < S->e_junc; j++) // scan all junctions
+      if (!SK_DELETED(i) && (SK_MARKED1(j) || SK_MARKED2(j)))
+      {
+	na = nd = 0; // for counting remaining adjacent arcs
+	for (p = S->tskel[j].adj; p != NULL; p = p->next)
+	  if (IS_CURV(p->val) && !SK_DELETED(p->val))
+	  {
+	    na++;
+	    if (tailleptliste(S->tskel[p->val].pts) <= maxbridgelength) 
+	      { skeldelete(S, p->val); nd++; }
+	  }
+	// update skeleton (merge branches at 2-junctions that are not elbows)
+	// and unmark 
+	if ((nd > 0) && ((na - nd) == 2) && !is_elbow(S, j, maxelbowangle)) 
+	  skeldelete(S, j);
+	SK_UNMARK1(j); SK_UNMARK2(j);
+      } // scan junctions
+  
+  } // while (lskelfilter2b(S, delta1, delta2))
+
+  return result;
+} /* lskelfilter3() */

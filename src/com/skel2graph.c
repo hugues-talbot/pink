@@ -72,7 +72,8 @@ graphe * skel2graph(skel * S)
   int32_t i, rs, ps, v, n;
   double x, y, z;
   int32_t nsom, ncurv;
-  SKC_pcell p;
+  SKC_pt_pcell p;
+  SKC_adj_pcell a;
 
   rs = S->rs;
   ps = rs * S->cs;
@@ -106,20 +107,20 @@ graphe * skel2graph(skel * S)
   // pts de courbe
   for (i = S->e_end; i < S->e_curv; i++)
   {
-    p = S->tskel[i].adj; 
-    assert(p != NULL);
-    v = p->val;
+    a = S->tskel[i].adj; 
+    assert(a != NULL);
+    v = a->val;
     AjouteArc(G, i, v);
     AjouteArc(G, v, i);
 
-    p = p->next;
-    assert(p != NULL);
-    v = p->val;
+    a = a->next;
+    assert(a != NULL);
+    v = a->val;
     AjouteArc(G, i, v);
     AjouteArc(G, v, i);
 
-    p = p->next;
-    assert(p == NULL);
+    a = a->next;
+    assert(a == NULL);
 
     x = y = z = 0.0;
     for (p = S->tskel[i].pts, n = 0; p != NULL; p = p->next, n++)

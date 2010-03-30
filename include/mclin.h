@@ -62,9 +62,9 @@ extern int32_t lin_jacobi(double * A, int32_t n, double * D, double * V, int32_t
 extern void lin_permutmat(int32_t * pi, double * P, int32_t n);
 extern void lin_LU(double * A, double * L, double * U, int32_t n);
 extern void lin_solveLUP(double * LU, int32_t *P, double * b, double * x, int32_t n);
-extern void lin_solve(double * A, double * b, double * x, int32_t n);
-extern void lin_solvebidiag(double * A, double * b, double * x, int32_t n);
-extern void lin_solvetridiag(double * A, double * b, double * x, int32_t n);
+extern int32_t lin_solve(double * A, double * b, double * x, int32_t n);
+extern int32_t lin_solvebidiag(double * A, double * b, double * x, int32_t n);
+extern int32_t lin_solvetridiag(double * A, double * b, double * x, int32_t n);
 extern double lin_det2(double * m);
 extern int32_t lin_invmat2(double * ma, double * mr);
 extern double lin_det3(double * m);

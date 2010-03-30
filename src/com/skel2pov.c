@@ -115,7 +115,7 @@ void cylinder (FILE * fd, double x1, double y1, double z1,
               x1, y1, z1, x2, y2, z2, r, color);
 }
 /* ====================================================================== */
-static void barycentre(SKC_pcell p, int32_t rs, int32_t ps, double *x, double *y, double *z)
+static void barycentre(SKC_pt_pcell p, int32_t rs, int32_t ps, double *x, double *y, double *z)
 /* ====================================================================== */
 {
   uint32_t v; 
@@ -147,7 +147,7 @@ int main(int argc, char **argv)
   int32_t npoints = 0;
   double bx, by, bz; //pour le calcul du barycentre global
   double *X, *Y, *Z; // tableaux pour les coordonnées
-  SKC_pcell p;
+  SKC_adj_pcell a;
 
   if (argc != 3)
   {
@@ -221,14 +221,14 @@ int main(int argc, char **argv)
 
   for (i = S->e_end; i < S->e_curv; i++)
   {
-    p = S->tskel[i].adj; 
-    if ((p == NULL) || (p->next == NULL))
+    a = S->tskel[i].adj; 
+    if ((a == NULL) || (a->next == NULL))
     {
       fprintf(stderr, "%s: error in skelton structure\n", argv[0]);
       exit(1);
     }
-    j = p->val;
-    k = p->next->val;
+    j = a->val;
+    k = a->next->val;
     if (j > k)
     {
       cylinder(fd, X[j], Y[j], Z[j], X[k], Y[k], Z[k], (char*)"RadCylinder", (char*)"ColCurve");    

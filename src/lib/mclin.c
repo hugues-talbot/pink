@@ -40,6 +40,7 @@ fonctions de base d'algebre lineaire
 Michel Couprie, mars 2002
 
 Nov. 2006: cor. bug abs->fabs dans lin_solvebidiag
+Mar. 2010: lin_solve et lin_solvebidiag et lin_solvetridiag renvoient un code err sur div. 0
 */
 
 /*
@@ -768,7 +769,7 @@ void lin_solveLUP(double * LU, int32_t *P, double * b, double * x, int32_t n)
 } // lin_solveLUP()
 
 /* ==================================== */
-void lin_solve(double * A, double * b, double * x, int32_t n)
+int32_t lin_solve(double * A, double * b, double * x, int32_t n)
 /* ==================================== */
 /*! \fn void lin_solve(double * A, double * b, double * x, int32_t n)
     \param A (entrée) : matrice du système
@@ -788,17 +789,18 @@ void lin_solve(double * A, double * b, double * x, int32_t n)
     exit(0);
   }
   ret = lin_decomposition_LUP((double *)A, (int32_t *)pi, n);
-  if (ret == 0)
+  if (ret == 0) 
   {
-    fprintf(stderr, "%s: singular matrix\n", F_NAME);
-    exit(0);
+    free(pi);
+    return 0;
   }
   lin_solveLUP((double *)A, (int32_t *)pi, (double *)b, (double *)x, n);
   free(pi);
+  return 1;
 } // lin_solve()
 
 /* ==================================== */
-void lin_solvebidiag(double * A, double * b, double * x, int32_t n)
+int32_t lin_solvebidiag(double * A, double * b, double * x, int32_t n)
 /* ==================================== */
 /*! \fn void lin_solvebidiag(double * A, double * b, double * x, int32_t n)
     \param A (entrée) : matrice du système (doit être bi-diagonale supérieure)
@@ -814,19 +816,17 @@ void lin_solvebidiag(double * A, double * b, double * x, int32_t n)
   int32_t i;
   for (i = n-1; i >= 0; i--)
     if (fabs(A[i*n+i]) < MCLIN_EPSILON) 
-    {
-      fprintf(stderr, "%s: 0 DIVIDE\n", F_NAME);
-      exit(0);
-    }
+      return 0;
   x[n-1] = b[n-1] / A[(n-1)*n + n-1];
   for (i = n-2; i >= 0; i--)
   {
     x[i] = (b[i] - (A[i*n + i+1] * x[i+1])) / A[i*n + i];
   }
+  return 1;
 } // lin_solvebidiag()
 
 /* ==================================== */
-void lin_solvetridiag(double * A, double * b, double * x, int32_t n)
+int32_t lin_solvetridiag(double * A, double * b, double * x, int32_t n)
 /* ==================================== */
 /*! \fn void lin_solvetridiag(double * A, double * b, double * x, int32_t n)
     \param A (entrée) : matrice du système (doit être tri-diagonale)
@@ -850,7 +850,7 @@ void lin_solvetridiag(double * A, double * b, double * x, int32_t n)
     b[i] = A[(i)*n + i-1] * b[i-1] - A[(i-1)*n + i-1] * b[i];
     // A[(i)*n + i-1] = 0.0; // inutile pour la suite 
   }
-  lin_solvebidiag(A, b, x, n);
+  return lin_solvebidiag(A, b, x, n);
 } // lin_solvetridiag()
 
 /* ==================================== */

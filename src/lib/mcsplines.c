@@ -127,7 +127,13 @@ void scn_solvespline(double *x, double *y, int32_t n,
   for (j = 0; j < n-2; j++)
     P[j] = ((y[j+2] - y[j+1]) / (x[j+2] - x[j+1])) - 
            ((y[j+1] - y[j]) / (x[j+1] - x[j]));
-  lin_solvetridiag(M, P, z, n-2);
+  if (!lin_solvetridiag(M, P, z, n-2))
+  {
+    printf("%s: lin_solvetridiag failed\n", F_NAME);
+#ifdef DEBUG    
+#endif
+    exit(0);
+  }
 
   A[0] = y[0];
   B[0] = ((y[1] - y[0]) / (x[1] - x[0])) - (((x[1] - x[0]) * z[0]) / 6.0) ;
@@ -204,7 +210,13 @@ void scn_solvespline1(double *y, int32_t n,
   for (j = 0; j < n-2; j++)
     P[j] = ((y[j+2] - y[j+1]) / 2) - ((y[j+1] - y[j]) / 2);
 
-  lin_solvetridiag(M, P, z, n-2);
+  if (!lin_solvetridiag(M, P, z, n-2))
+  {
+    printf("%s: lin_solvetridiag failed\n", F_NAME);
+#ifdef DEBUG    
+#endif
+    exit(0);
+  }
 
   A[0] = y[0];
   B[0] = (y[1] - y[0]) - (z[0] / 6.0);
