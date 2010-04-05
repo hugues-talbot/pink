@@ -56,6 +56,7 @@ proc my_exec_q {command args} {
 #-----------------------------------
 proc my_exec_v {command args} {
   set call "catch \{ exec $command $args \} result"
+  puts "$command $args"
   eval $call
   puts $result
 }

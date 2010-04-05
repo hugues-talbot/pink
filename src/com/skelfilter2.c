@@ -118,9 +118,9 @@ int main(int argc, char **argv)
 
   //  printskel(S);
 
-  if (!lskelfilter2(S, delta1, delta2))
+  if (!lskelfilter2b(S, delta1, delta2))
   {
-    fprintf(stderr, "%s: function lskelfilter2 failed\n", argv[0]);
+    fprintf(stderr, "%s: function lskelfilter2b failed\n", argv[0]);
     exit(1);
   }
 

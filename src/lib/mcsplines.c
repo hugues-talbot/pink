@@ -49,13 +49,9 @@ Michel Couprie, Sébastien Couprie, juin 2003
 #include <mclin.h>
 #include <mcsplines.h>
 
-#define CRITERE_DISTANCE
-
-/*
-#define TEST
-#define DEBUG
+//#define TEST
+//#define DEBUG
 #define PARANO
-*/
 
 #define SCN_EPSILON 0.000001
 
@@ -862,6 +858,15 @@ void distancesegments(int32_t *X, int32_t *Y, int32_t *V, int32_t *W, int32_t i1
 /* ==================================== */
 void distancesegments3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t *U, int32_t *V, int32_t *W, int32_t i1, int32_t i2, double *delta, int32_t *arg)
 /* ==================================== */
+/*! \fn void distancesegments3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t *U, int32_t *V, int32_t *W, int32_t i1, int32_t i2, double *delta, int32_t *arg)
+    \param X,Y,Z (entrée) : courbe initiale C
+    \param U,V,W (entrée) : courbe discrétisée D
+    \param i1,i2 (entrée) : intervalle dans lequel les points des 2 courbes sont considérés
+    \param delta (sortie) : distance maximale entre C et D
+    \param arg (sortie) : indice dans C réalisant le max
+    \brief 
+    \warning 
+*/
 {
   double d, dmin, del = -1;
   int32_t ar, i, j;
@@ -1123,11 +1128,7 @@ void scn_approxcurve1(int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_
 
   nctrl = 3;
   Z[0] = 0;
-#ifdef CRITERE_DISTANCE
-  Z[1] = arg;
-#else
   Z[1] = N/2;
-#endif
   Z[2] = N-1;
 
   do
@@ -1159,11 +1160,7 @@ void scn_approxcurve1(int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_
         continuer = 1;
         nctrl++;
         for (j = nctrl-1; j > i+1; j--) Z[j] = Z[j-1];
-#ifdef CRITERE_DISTANCE
-        Z[i+1] = arg;
-#else
         Z[i+1] = (Z[i]+Z[i+2])/2;
-#endif
         i++;
       }
       i++;
@@ -1252,11 +1249,7 @@ void scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t
 
   nctrl = 3;
   C[0] = 0;
-#ifdef CRITERE_DISTANCE
-  C[1] = arg;
-#else
   C[1] = N/2;
-#endif
   C[2] = N-1;
 
   do
@@ -1293,11 +1286,7 @@ void scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t
         continuer = 1;
         nctrl++;
         for (j = nctrl-1; j > i+1; j--) C[j] = C[j-1];
-#ifdef CRITERE_DISTANCE
-        C[i+1] = arg;
-#else
         C[i+1] = (C[i]+C[i+2])/2;
-#endif
         i++;
       }
       i++;      
@@ -1423,11 +1412,7 @@ void scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double del
 
   nctrl = 3;
   C[0] = 0;
-#ifdef CRITERE_DISTANCE
-  C[1] = arg;
-#else
   C[1] = N/2;
-#endif
   C[2] = N-1;
 
   do
@@ -1460,11 +1445,7 @@ void scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double del
         continuer = 1;
         nctrl++;
         for (j = nctrl-1; j > i+1; j--) C[j] = C[j-1];
-#ifdef CRITERE_DISTANCE
-        C[i+1] = arg;
-#else
         C[i+1] = (C[i]+C[i+2])/2;
-#endif
         i++;
       }
       i++;
