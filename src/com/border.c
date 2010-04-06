@@ -39,10 +39,12 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> border in connex out
 
 <B>Description:</B>
-Let X be the subset of Zn which corresponds to the input image \b in, and 
-let k be the value of the parameter \b connex (that is, 4, 8 or 6(3d)).
+Let X be the subset of Zn that corresponds to the input image \b in, and 
+let k be the value of the parameter \b connex (that is, 4, 8 (2d) or 6, 26 (3d)), which is the connectivity chosen for X.
+
 The border B(X) of X is defined by:
-B(X) = {x in X, (Gamma_k(x) inter Xbar) not empty}
+B(X) = {x in X, (Gamma_nk(x) inter Xbar) not empty}
+where nk is the complementary connectivity for k.
 
 <B>Types supported:</B> byte 2d, byte 3d
 

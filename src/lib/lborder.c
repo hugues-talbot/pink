@@ -34,9 +34,9 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /* frontiere d'une image binaire */
 /*
-   Soit X un sous-ensemble de Z2, (n,nb) = (4,8) ou (8,4) ou (26,6)
    la frontiere de F(X) de X est definie par:
-   F(X) = {x de X, Gamma_nb(x) inter Xbar non vide}
+   F(X) = {x de X, Gamma_n(x) inter Xbar non vide}
+   ou n est la connexite du complémentaire de l'objet
 */
 /* Michel Couprie -  avril 1999 */
 
@@ -89,11 +89,11 @@ int32_t lborder(struct xvimage *image, int32_t connex)
           break;
         case 6: 
           for (x = 0; x < N; x++)
-            if (T[x] && nonbord3d(x,rs,ps,N) && (nbvoisc6(T,x,rs,ps,N)) != 0) I[x] = NDG_MAX;
+            if (T[x] && nonbord3d(x,rs,ps,N) && (nbvoisc26(T,x,rs,ps,N)) != 0) I[x] = NDG_MAX;
           break;
         case 26: 
           for (x = 0; x < N; x++)
-            if (T[x] && nonbord3d(x,rs,ps,N) && (nbvoisc26(T,x,rs,ps,N)) != 0) I[x] = NDG_MAX;
+            if (T[x] && nonbord3d(x,rs,ps,N) && (nbvoisc6(T,x,rs,ps,N)) != 0) I[x] = NDG_MAX;
           break;
         default: 
           fprintf(stderr, "lborder: mauvaise connexite: %d\n", connex);
