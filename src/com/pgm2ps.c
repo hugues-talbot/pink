@@ -98,12 +98,27 @@ The parameter \b maxval is an integer which indicates the maximum grayscale valu
 
 #ifdef KHALIMSKY1
 /* parametres pour les elements de Khalimsky: */
+#define R1 14  /* rayon des cercles, demi-largeur des rectangles */
+#define R2 28  /* demi cote des carres */
+#define GS 54  /* pas de la grille */
+#endif
+
+#ifdef KHALIMSKY1bis
+/* parametres pour les elements de Khalimsky: */
 #define R1 18  /* rayon des cercles, demi-largeur des rectangles */
 #define R2 24  /* demi cote des carres */
 #define GS 54  /* pas de la grille */
 #endif
 
 #ifdef KHALIMSKY2
+/* parametres pour les elements de Khalimsky: */
+#define R0 6  /* rayon des cercles */
+#define R1 3  /* demi-largeur des rectangles */
+#define R2 24  /* demi cote des carres */
+#define GS 24  /* pas de la grille */
+#endif
+
+#ifdef KHALIMSKY2bis
 /* parametres pour les elements de Khalimsky: */
 #define R0 3  /* rayon des cercles */
 #define R1 1  /* demi-largeur des rectangles */

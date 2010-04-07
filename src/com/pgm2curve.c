@@ -313,11 +313,11 @@ int main(int argc, char **argv)
     else if (connex == 8)
     { for (x = 0; x < N; x++) if ((F[x]) && (nbvois8(F, x, rs, N) == 1)) { p = x; break; } }
     else if (connex == 6)
-    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso6(F, x, rs, ps, N) != 1)) { p = x; break; } }
+    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso6(F, x, rs, ps, N) == 1)) { p = x; break; } }
     else if (connex == 18)
-    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso18(F, x, rs, ps, N) != 1)) { p = x; break; } }
+    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso18(F, x, rs, ps, N) == 1)) { p = x; break; } }
     else if (connex == 26)
-    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso26(F, x, rs, ps, N) != 1)) { p = x; break; } }
+    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso26(F, x, rs, ps, N) == 1)) { p = x; break; } }
     if (p == -1)
     {
       fprintf(stderr, "%s: no end point\n", argv[0]);

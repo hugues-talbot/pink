@@ -50,7 +50,7 @@ Michel Couprie, Sébastien Couprie, juin 2003
 #include <mcsplines.h>
 
 //#define TEST
-//#define DEBUG
+#define DEBUG
 #define PARANO
 
 #define SCN_EPSILON 0.000001
@@ -1170,7 +1170,12 @@ void scn_approxcurve1(int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_
 #endif
       
     }
-  } while(continuer);
+  } while(continuer && (nctrl <= N));
+
+  if (nctrl > N)
+  {
+    printf("%s: WARNING too many control points, tolerance may be too small\n", F_NAME);  
+  }
 
   *n = nctrl;
   free(x);
@@ -1294,7 +1299,12 @@ void scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t
 #ifdef DEBUG_AC
     printf("%s fin: niter = %d ; nctrl=%d ; \n", F_NAME, niter, nctrl);  
 #endif
-  } while(continuer);
+  } while(continuer && (nctrl <= N));
+
+  if (nctrl > N)
+  {
+    printf("%s: WARNING too many control points, tolerance may be too small\n", F_NAME);  
+  }
 
 #ifdef PARANO
   {
@@ -1455,7 +1465,12 @@ void scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double del
 #endif
       
     }
-  } while(continuer);
+  } while(continuer && (nctrl <= N));
+
+  if (nctrl > N)
+  {
+    printf("%s: WARNING too many control points, tolerance may be too small\n", F_NAME);  
+  }
 
   // renormalisation de l'abcisse curviligne
   // (départ à 0, incrément de 1 pour chaque point de contrôle) 
