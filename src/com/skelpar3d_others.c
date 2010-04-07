@@ -1,5 +1,5 @@
 /*
-Copyright ESIEE (2009) 
+Copyright ESIEE (2009)
 
 m.couprie@esiee.fr
 
@@ -7,16 +7,16 @@ This software is an image processing library whose purpose is to be
 used primarily for research and teaching.
 
 This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software. You can  use, 
+abiding by the rules of distribution of free software. You can  use,
 modify and/ or redistribute the software under the terms of the CeCILL
 license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+"http://www.cecill.info".
 
 As a counterpart to the access to the source code and  rights to copy,
 modify and redistribute granted by the license, users are provided only
 with a limited warranty  and the software's author,  the holder of the
 economic rights,  and the successive licensors  have only  limited
-liability. 
+liability.
 
 In this respect, the user's attention is drawn to the risks associated
 with loading,  using,  modifying and/or developing or reproducing the
@@ -25,9 +25,9 @@ that may mean  that it is complicated to manipulate,  and  that  also
 therefore means  that it is reserved for developers  and  experienced
 professionals having in-depth computer knowledge. Users are therefore
 encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+requirements in conditions enabling the security of their systems and/or
+data to be ensured and,  more generally, to use and operate it in the
+same conditions as regards security.
 
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
@@ -47,10 +47,13 @@ until stability.
 The parameter \b algorithm is a numerical code
 indicating which method will be used for the thinning.
 The possible choices are:
-\li 0: Palagyi (fully parallel, 2007)
+\li 0: Palagyi (curvilinear, directional, 1998 - 6-subiterations directional curve-thinning)
+\li 1: Palagyi (curvilinear, sequential, 2006)
+\li 2: Palagyi (surfacic, parallel directional, 2002)
+\li 3: Palagyi (surfacic, fully parallel, 2008)
 
 If the parameter \b inhibit is given and is a binary image name,
-then the points of this image will be left unchanged. 
+then the points of this image will be left unchanged.
 
 <B>Types supported:</B> byte 3d
 
@@ -81,7 +84,10 @@ int main(int32_t argc, char **argv)
   if ((argc != 5) && (argc != 6))
   {
     fprintf(stderr, "usage: %s in.pgm algorithm nsteps [inhibit] out.pgm\n", argv[0]);
-    fprintf(stderr, "   0: Palagyi (fully parallel, 2007)\n");
+    fprintf(stderr, "   0: Palagyi (curvilinear, parallel directional, 1998)\n");
+    fprintf(stderr, "   1: Palagyi (curvilinear, sequential, 2006)\n");
+    fprintf(stderr, "   2: Palagyi (surfacic, parallel directional, 2002)\n");
+    fprintf(stderr, "   3: Palagyi (surfacic, fully parallel, 2008)\n");
     exit(1);
   }
 
@@ -111,13 +117,45 @@ int main(int32_t argc, char **argv)
     {
     case 0:
       if (argc == 6)
-	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
-      if (! lpalagyi(image, nsteps))
+		fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+	  else if (nsteps!=-1)
+		fprintf(stderr, "%s: warning: step mode not implemented for algo %d\n", argv[0], mode);
+      if (palagyi_skelpar_curv_98(image)!=0)
       {
-	fprintf(stderr, "%s: lpalagyi failed\n", argv[0]);
+	fprintf(stderr, "%s: palagyi_skelpar_curv_98 failed\n", argv[0]);
 	exit(1);
       } break;
-    default: 
+	case 1:
+      if (argc == 6)
+		fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+	  else if (nsteps!=-1)
+		fprintf(stderr, "%s: warning: step mode not implemented for algo %d\n", argv[0], mode);
+      if (palagyi_skelpar_curv_06(image)!=0)
+      {
+	fprintf(stderr, "%s: palagyi_skelpar_curv_06 failed\n", argv[0]);
+	exit(1);
+      } break;
+	case 2:
+      if (argc == 6)
+		fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+	  else if (nsteps!=-1)
+		fprintf(stderr, "%s: warning: step mode not implemented for algo %d\n", argv[0], mode);
+      if (palagyi_skelpar_surf_02(image)!=0)
+      {
+	fprintf(stderr, "%s: palagyi_skelpar_surf_02 failed\n", argv[0]);
+	exit(1);
+      } break;
+	case 3:
+      if (argc == 6)
+		fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+	  else if (nsteps!=-1)
+		fprintf(stderr, "%s: warning: step mode not implemented for algo %d\n", argv[0], mode);
+      if (palagyi_skelpar_surf_08(image)!=0)
+      {
+	fprintf(stderr, "%s: palagyi_skelpar_surf_08 failed\n", argv[0]);
+	exit(1);
+      } break;
+    default:
       fprintf(stderr, "%s: mode %d not implemented\n", argv[0], mode);
       exit(1);
     }
@@ -133,3 +171,11 @@ int main(int32_t argc, char **argv)
 
   return 0;
 } /* main */
+
+
+
+
+
+
+
+
