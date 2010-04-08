@@ -763,6 +763,59 @@ static int32_t tailleadjliste(SKC_adj_pcell p)
   return n;
 } /* tailleadjliste() */
 
+/* ========================================== */
+int32_t extractcurve3d(
+  uint8_t *B,        // entrée/sortie : pointeur base image
+  int32_t i,         // entrée : index du point de départ
+  int32_t rs,        // entrée : taille rangee
+  int32_t ps,        // entrée : taille plan
+  int32_t N,         // entrée : taille image
+  int32_t connex,    // entrée : 6, 18 ou 26
+  int32_t ** X,      // sortie : points
+  int32_t ** Y,
+  int32_t ** Z,
+  int32_t * npoints) // sortie : nombre de points
+/* ========================================== */
+// extrait de l'image B la courbe débutant au point extrémité i
+{
+#undef F_NAME
+#define F_NAME "extractcurve"
+  int32_t n = 0;     // compte le nombre de points
+  int32_t v1, v2, ii, jj;
+
+  ii = i;
+  assert(is_end(ii, B, rs, ps, N, connex)); n++;
+  jj = trouve1voisin(ii, rs, ps, N, connex, B); n++;
+  while (!is_end(jj, B, rs, ps, N, connex))
+  {
+    trouve2voisins(jj, rs, ps, N, connex, B, &v1, &v2);
+    if (v1 == ii) { ii = jj; jj = v2; } else { ii = jj; jj = v1; } 
+    n++;
+  }
+  *npoints = n;
+  *X = (int32_t *)malloc(n * sizeof(int32_t)); assert(*X != NULL); 
+  *Y = (int32_t *)malloc(n * sizeof(int32_t)); assert(*Y != NULL); 
+  *Z = (int32_t *)malloc(n * sizeof(int32_t)); assert(*Z != NULL); 
+  n = 0;
+  ii = i;
+  *X[n] = ii % rs;
+  *Y[n] = (ii % ps) / rs;
+  *Z[n] = ii / ps;
+  jj = trouve1voisin(ii, rs, ps, N, connex, B); n++;
+  *X[n] = jj % rs;
+  *Y[n] = (jj % ps) / rs;
+  *Z[n] = jj / ps;
+  while (!is_end(jj, B, rs, ps, N, connex))
+  {
+    trouve2voisins(jj, rs, ps, N, connex, B, &v1, &v2);
+    if (v1 == ii) { ii = jj; jj = v2; } else { ii = jj; jj = v1; } 
+    n++;
+    *X[n] = jj % rs;
+    *Y[n] = (jj % ps) / rs;
+    *Z[n] = jj / ps;
+  }  
+} // extractcurve()
+
 /* ====================================================================== */
 skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
 /* ====================================================================== */

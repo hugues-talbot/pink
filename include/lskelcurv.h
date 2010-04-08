@@ -45,6 +45,17 @@ extern int32_t lskelfilter1a(skel *S, double delta1, double delta2, double theta
 extern int32_t lskelfilter2(skel *S, double delta1, double delta2);
 extern struct xvimage * lskelfilter3(skel *S, double delta1, double delta2, double maxbridgelength, double maxelbowangle);
 extern struct xvimage * lskelfindelbows(skel *S, double length, double angle);
+extern int32_t extractcurve3d(
+  uint8_t *B,
+  int32_t i,
+  int32_t rs,
+  int32_t ps,
+  int32_t N,
+  int32_t connex,
+  int32_t ** X,
+  int32_t ** Y,
+  int32_t ** Z,
+  int32_t * npoints);
 #ifdef __cplusplus
 }
 #endif
