@@ -739,8 +739,8 @@ $(BDIR)/pgm2bmp:	$(CDIR)/pgm2bmp.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 $(BDIR)/pgm2closedcurve:	$(CDIR)/pgm2closedcurve.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo3d.h $(IDIR)/mctopo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/pgm2closedcurve.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/pgm2closedcurve
 
-$(BDIR)/pgm2curve:	$(CDIR)/pgm2curve.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo3d.h $(IDIR)/mctopo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/pgm2curve.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/pgm2curve
+$(BDIR)/pgm2curve:	$(CDIR)/pgm2curve.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo3d.h $(IDIR)/mctopo.h $(IDIR)/lcurves.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(ODIR)/lcurves.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/pgm2curve.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(ODIR)/lcurves.o $(LIBS) -o $(BDIR)/pgm2curve
 
 $(BDIR)/pgm2list:	$(CDIR)/pgm2list.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(OBJ_COMMON) $(ODIR)/mccodimage.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/pgm2list.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/pgm2list
@@ -2169,6 +2169,9 @@ $(ODIR)/lwshedtopo.o:	$(LDIR)/lwshedtopo.c $(LDIR)/lattrib.c $(IDIR)/mcimage.h $
 
 $(ODIR)/lborder.o:	$(LDIR)/lborder.c $(IDIR)/mccodimage.h $(IDIR)/mctopo.h 
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lborder.c -o $(ODIR)/lborder.o
+
+$(ODIR)/lcurves.o:	$(LDIR)/lcurves.c $(IDIR)/lcurves.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lcurves.c -o $(ODIR)/lcurves.o
 
 $(ODIR)/lfiltrestopo.o:	$(LDIR)/lfiltrestopo.c $(IDIR)/mccodimage.h $(IDIR)/mcutil.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lfiltrestopo.c -o $(ODIR)/lfiltrestopo.o

@@ -50,7 +50,7 @@ Michel Couprie, Sébastien Couprie, juin 2003
 #include <mcsplines.h>
 
 //#define TEST
-#define DEBUG
+//#define DEBUG
 #define PARANO
 
 #define SCN_EPSILON 0.000001

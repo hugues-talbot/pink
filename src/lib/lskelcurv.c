@@ -764,6 +764,54 @@ static int32_t tailleadjliste(SKC_adj_pcell p)
 } /* tailleadjliste() */
 
 /* ========================================== */
+int32_t extractcurve(
+  uint8_t *B,        // entrée/sortie : pointeur base image
+  int32_t i,         // entrée : index du point de départ
+  int32_t rs,        // entrée : taille rangee
+  int32_t N,         // entrée : taille image
+  int32_t connex,    // entrée : 4 ou 8
+  int32_t ** X,      // sortie : points
+  int32_t ** Y,
+  int32_t * npoints) // sortie : nombre de points
+/* ========================================== */
+// extrait de l'image B la courbe débutant au point extrémité i
+{
+#undef F_NAME
+#define F_NAME "extractcurve"
+  int32_t n = 0;     // compte le nombre de points
+  int32_t v1, v2, ii, jj;
+
+  ii = i;
+  assert(is_end(ii, B, rs, 1, N, connex)); n++;
+  jj = trouve1voisin(ii, rs, 1, N, connex, B); n++;
+  while (!is_end(jj, B, rs, 1, N, connex))
+  {
+    trouve2voisins(jj, rs, 1, N, connex, B, &v1, &v2);
+    if (v1 == ii) { ii = jj; jj = v2; } else { ii = jj; jj = v1; } 
+    n++;
+  }
+  *npoints = n;
+  *X = (int32_t *)malloc(n * sizeof(int32_t)); assert(*X != NULL); 
+  *Y = (int32_t *)malloc(n * sizeof(int32_t)); assert(*Y != NULL); 
+  n = 0;
+  ii = i;
+  *X[n] = ii % rs;
+  *Y[n] = ii / rs;
+  jj = trouve1voisin(ii, rs, 1, N, connex, B); n++;
+  *X[n] = jj % rs;
+  *Y[n] = jj / rs;
+  while (!is_end(jj, B, rs, 1, N, connex))
+  {
+    trouve2voisins(jj, rs, 1, N, connex, B, &v1, &v2);
+    if (v1 == ii) { ii = jj; jj = v2; } else { ii = jj; jj = v1; } 
+    n++;
+    *X[n] = jj % rs;
+    *Y[n] = jj / rs;
+  }  
+  return 1;
+} // extractcurve()
+
+/* ========================================== */
 int32_t extractcurve3d(
   uint8_t *B,        // entrée/sortie : pointeur base image
   int32_t i,         // entrée : index du point de départ
@@ -779,7 +827,7 @@ int32_t extractcurve3d(
 // extrait de l'image B la courbe débutant au point extrémité i
 {
 #undef F_NAME
-#define F_NAME "extractcurve"
+#define F_NAME "extractcurve3d"
   int32_t n = 0;     // compte le nombre de points
   int32_t v1, v2, ii, jj;
 
@@ -814,7 +862,8 @@ int32_t extractcurve3d(
     *Y[n] = (jj % ps) / rs;
     *Z[n] = jj / ps;
   }  
-} // extractcurve()
+  return 1;
+} // extractcurve3d()
 
 /* ====================================================================== */
 skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)

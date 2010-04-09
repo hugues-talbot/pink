@@ -86,145 +86,17 @@ x2 y2 z2 v2<br>
 #include <mcimage.h>
 #include <mctopo.h>
 #include <mctopo3d.h>
-
-/* =============================================================== */
-int32_t uniquevoisin4(  
-  uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
-/* =============================================================== */
-/* retourne l'indice du premier voisin objet de p trouvé dans le voisinage */
-{
-  register uint8_t * ptr = img+p;
-  if ((p%rs!=rs-1) && (*(ptr+1))) return p+1;
-  if ((p>=rs) && (*(ptr-rs))) return p-rs;
-  if ((p%rs!=0) && (*(ptr-1))) return p-1;
-  if ((p<N-rs) && (*(ptr+rs))) return p+rs;  
-  assert(1); exit(1);
-} // uniquevoisin4()
-
-/* =============================================================== */
-int32_t uniquevoisin8(  
-  uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
-/* =============================================================== */
-/* retourne l'indice du premier voisin objet de p trouvé dans le voisinage */
-{
-  register uint8_t * ptr = img+p;
-  if ((p%rs!=rs-1) && (*(ptr+1))) return p+1;
-  if (((p%rs!=rs-1)&&(p>=rs)) && (*(ptr+1-rs))) return p+1-rs;
-  if ((p>=rs) && (*(ptr-rs))) return p-rs;
-  if (((p>=rs)&&(p%rs!=0)) && (*(ptr-rs-1))) return p-rs-1;
-  if ((p%rs!=0) && (*(ptr-1))) return p-1;
-  if (((p%rs!=0)&&(p<N-rs)) && (*(ptr-1+rs))) return p-1+rs;
-  if ((p<N-rs) && (*(ptr+rs))) return p+rs;
-  if (((p<N-rs)&&(p%rs!=rs-1)) && (*(ptr+rs+1))) return p+rs+1;
-  assert(1); exit(1);
-} // uniquevoisin8()
-
-/* ========================================== */
-int32_t uniquevoisin6(
-  uint8_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
-/* ========================================== */
-/* retourne l'indice du premier voisin objet de i trouvé dans le voisinage */
-{
-  if ((i%rs!=rs-1) && B[i+1]) return i+1;
-  if (((i%ps)>=rs) && B[i-rs]) return i-rs;
-  if ((i%rs!=0) && B[i-1]) return i-1;
-  if (((i%ps)<ps-rs) && B[i+rs]) return i+rs;
-  if ((i>=ps) && B[i-ps]) return i-ps;
-  if ((i<N-ps) && B[i+ps]) return i+ps;
-  assert(1); exit(1);
-} /* uniquevoisin6() */
-
-/* ========================================== */
-int32_t uniquevoisin18(
-  uint8_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
-/* ========================================== */
-/* retourne l'indice du premier voisin objet de i trouvé dans le voisinage */
-{
-  if (((i<N-ps)&&(i%rs!=rs-1)) && B[ps+i+1]) return ps+i+1;
-  if (((i<N-ps)&&(i%ps>=rs)) && B[ps+i-rs]) return ps+i-rs;
-  if (((i<N-ps)&&(i%rs!=0)) && B[ps+i-1]) return ps+i-1;
-  if (((i<N-ps)&&(i%ps<ps-rs)) && B[ps+i+rs]) return ps+i+rs;
-  if (((i<N-ps)) && B[ps+i]) return ps+i;
-  if (((i%rs!=rs-1)) && B[i+1]) return i+1;
-  if (((i%rs!=rs-1)&&(i%ps>=rs)) && B[i+1-rs]) return i+1-rs;
-  if (((i%ps>=rs)) && B[i-rs]) return i-rs;
-  if (((i%ps>=rs)&&(i%rs!=0)) && B[i-rs-1]) return i-rs-1;
-  if (((i%rs!=0)) && B[i-1]) return i-1;
-  if (((i%rs!=0)&&(i%ps<ps-rs)) && B[i-1+rs]) return i-1+rs;
-  if (((i%ps<ps-rs)) && B[i+rs]) return i+rs;
-  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && B[i+rs+1]) return i+rs+1;
-  if (((i>=ps)&&(i%rs!=rs-1)) && B[-ps+i+1]) return -ps+i+1;
-  if (((i>=ps)&&(i%ps>=rs)) && B[-ps+i-rs]) return -ps+i-rs;
-  if (((i>=ps)&&(i%rs!=0)) && B[-ps+i-1]) return -ps+i-1;
-  if (((i>=ps)&&(i%ps<ps-rs)) && B[-ps+i+rs]) return -ps+i+rs;
-  if (((i>=ps)) && B[-ps+i]) return -ps+i;
-  assert(1); exit(1);
-} /* uniquevoisin18() */
-
-/* ========================================== */
-int32_t uniquevoisin26(
-  uint8_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
-/* ========================================== */
-/* retourne l'indice du premier voisin objet de i trouvé dans le voisinage */
-{
-  if (((i<N-ps)&&(i%rs!=rs-1)) && B[ps+i+1]) return ps+i+1;
-  if (((i<N-ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && B[ps+i+1-rs]) return ps+i+1-rs;
-  if (((i<N-ps)&&(i%ps>=rs)) && B[ps+i-rs]) return ps+i-rs;
-  if (((i<N-ps)&&(i%ps>=rs)&&(i%rs!=0)) && B[ps+i-rs-1]) return ps+i-rs-1;
-  if (((i<N-ps)&&(i%rs!=0)) && B[ps+i-1]) return ps+i-1;
-  if (((i<N-ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && B[ps+i-1+rs]) return ps+i-1+rs;
-  if (((i<N-ps)&&(i%ps<ps-rs)) && B[ps+i+rs]) return ps+i+rs;
-  if (((i<N-ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && B[ps+i+rs+1]) return ps+i+rs+1;
-  if (((i<N-ps)) && B[ps+i]) return ps+i;
-  if (((i%rs!=rs-1)) && B[i+1]) return i+1;
-  if (((i%rs!=rs-1)&&(i%ps>=rs)) && B[i+1-rs]) return i+1-rs;
-  if (((i%ps>=rs)) && B[i-rs]) return i-rs;
-  if (((i%ps>=rs)&&(i%rs!=0)) && B[i-rs-1]) return i-rs-1;
-  if (((i%rs!=0)) && B[i-1]) return i-1;
-  if (((i%rs!=0)&&(i%ps<ps-rs)) && B[i-1+rs]) return i-1+rs;
-  if (((i%ps<ps-rs)) && B[i+rs]) return i+rs;
-  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && B[i+rs+1]) return i+rs+1;
-  if (((i>=ps)&&(i%rs!=rs-1)) && B[-ps+i+1]) return -ps+i+1;
-  if (((i>=ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && B[-ps+i+1-rs]) return -ps+i+1-rs;
-  if (((i>=ps)&&(i%ps>=rs)) && B[-ps+i-rs]) return -ps+i-rs;
-  if (((i>=ps)&&(i%ps>=rs)&&(i%rs!=0)) && B[-ps+i-rs-1]) return -ps+i-rs-1;
-  if (((i>=ps)&&(i%rs!=0)) && B[-ps+i-1]) return -ps+i-1;
-  if (((i>=ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && B[-ps+i-1+rs]) return -ps+i-1+rs;
-  if (((i>=ps)&&(i%ps<ps-rs)) && B[-ps+i+rs]) return -ps+i+rs;
-  if (((i>=ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && B[-ps+i+rs+1]) return -ps+i+rs+1;
-  if (((i>=ps)) && B[-ps+i]) return -ps+i;
-  assert(1); exit(1);
-} /* uniquevoisin26() */
+#include <lcurves.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * sav;
   FILE *fd = NULL;
   int32_t rs, cs, ds, ps, N, x, y, z, p, n, connex, val;
   uint8_t *F;
-  uint8_t *S;
-  int32_t *P;
+  int32_t *X, *Y, *Z = NULL;
 
   if ((argc != 7) && (argc != 6) && (argc != 4))
   {
@@ -243,8 +115,6 @@ int main(int argc, char **argv)
   {
     val = 1;
     connex = connex / 10;
-    sav = copyimage(image);
-    S = UCHARDATA(sav);
   }
   else val = 0;
 
@@ -262,12 +132,6 @@ int main(int argc, char **argv)
   ps = rs * cs;
   N = ps * ds;
   F = UCHARDATA(image);
-  P = (int32_t *)calloc(1,N*sizeof(int32_t));
-  if (P == NULL)
-  {
-    fprintf(stderr, "%s: malloc failed\n", argv[0]);
-    exit(1);
-  }
 
   if (argc > 4)
   {   
@@ -325,6 +189,11 @@ int main(int argc, char **argv)
     }
   }
 
+  if ((connex == 4) || (connex == 8))
+    (void)extractcurve(F, p, rs, N, connex, &X, &Y, &n);
+  else
+    (void)extractcurve3d(F, p, rs, ps, N, connex, &X, &Y, &Z, &n);
+
   fd = fopen(argv[argc - 1],"w");
   if (!fd)
   {
@@ -332,74 +201,19 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  n = 0;                     /* compte le nombre de points */ 
-  if (connex == 4)
-  {
-    do
-    {
-      P[n] = p; n++; F[p] = 0;
-      p = uniquevoisin4(F, p, rs, N);
-    } while (nbvois4(F, p, rs, N) == 1);
-    P[n] = p; n++;
-    if (nbvois4(F, p, rs, N) != 0)
-      fprintf(stderr, "%s: warning: final point not end\n", argv[0]);
-  }
-  else if (connex == 8)
-  {
-    do
-    {
-      P[n] = p; n++; F[p] = 0;
-      p = uniquevoisin8(F, p, rs, N);
-    } while (nbvois8(F, p, rs, N) == 1);
-    P[n] = p; n++;
-    if (nbvois8(F, p, rs, N) != 0)
-      fprintf(stderr, "%s: warning: final point not end\n", argv[0]);
-  }
-  else if (connex == 6)
-  {
-    do
-    {
-      P[n] = p; n++; F[p] = 0;
-      p = uniquevoisin6(F, p, rs, ps, N);
-    } while (nbvoiso6(F, p, rs, ps, N) == 1);
-    P[n] = p; n++;
-    if (nbvoiso6(F, p, rs, ps, N) != 0)
-      fprintf(stderr, "%s: warning: final point not end\n", argv[0]);
-  }
-  else if (connex == 18)
-  {
-    do
-    {
-      P[n] = p; n++; F[p] = 0;
-      p = uniquevoisin18(F, p, rs, ps, N);
-    } while (nbvoiso18(F, p, rs, ps, N) == 1);
-    P[n] = p; n++;
-    if (nbvoiso18(F, p, rs, ps, N) != 0)
-      fprintf(stderr, "%s: warning: final point not end\n", argv[0]);
-  }
-  else if (connex == 26)
-  {
-    do
-    {
-      P[n] = p; n++; F[p] = 0;
-      p = uniquevoisin26(F, p, rs, ps, N);
-    } while (nbvoiso26(F, p, rs, ps, N) == 1);
-    P[n] = p; n++;
-    if (nbvoiso26(F, p, rs, ps, N) != 0)
-      fprintf(stderr, "%s: warning: final point not end\n", argv[0]);
-  }
-
   if (val)
   {
     if ((connex == 4) || (connex == 8))
     {
       fprintf(fd, "cv %d\n", n); 
-      for (x = 0; x < n; x++) fprintf(fd, "%d %d %d\n", P[x] % rs, P[x] / rs, S[P[x]]);
+      for (p = 0; p < n; p++)
+	fprintf(fd, "%d %d %d\n", X[p], Y[p], F[Y[p]*rs + X[p]]);
     }
     else
     {
       fprintf(fd, "CV %d\n", n); 
-      for (x = 0; x < n; x++) fprintf(fd, "%d %d %d %d\n", P[x] % rs, (P[x] % ps) / rs, P[x] / ps, S[P[x]]);
+      for (p = 0; p < n; p++) 
+	fprintf(fd, "%d %d %d %d\n", X[p], Y[p], Z[p], F[Z[p]*ps + Y[p]*rs + X[p]]);
     }
   }
   else
@@ -407,18 +221,21 @@ int main(int argc, char **argv)
     if ((connex == 4) || (connex == 8))
     {
       fprintf(fd, "c %d\n", n); 
-      for (x = 0; x < n; x++) fprintf(fd, "%d %d\n", P[x] % rs, P[x] / rs);
+      for (p = 0; p < n; p++)
+	fprintf(fd, "%d %d\n", X[p], Y[p]);
     }
     else
     {
       fprintf(fd, "C %d\n", n); 
-      for (x = 0; x < n; x++) fprintf(fd, "%d %d %d\n", P[x] % rs, (P[x] % ps) / rs, P[x] / ps);
+      for (p = 0; p < n; p++) 
+	fprintf(fd, "%d %d %d\n", X[p], Y[p], Z[p]);
     }
   }
 
   fclose(fd);
-  if (val) freeimage(sav);
   freeimage(image);
-  free(P);
+  free(X);
+  free(Y);
+  if (Z != NULL) free(Z);
   return 0;
 }
