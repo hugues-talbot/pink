@@ -43,6 +43,7 @@ extern int32_t lskelmarkvertex(skel *S, int32_t vertex_id);
 extern int32_t lskelfilter1(skel *S, double length, double delta1, double delta2);
 extern int32_t lskelfilter1a(skel *S, double delta1, double delta2, double theta, int32_t length);
 extern int32_t lskelfilter2(skel *S, double delta1, double delta2);
+extern int32_t lskelfilter2b(skel *S, double delta1, double delta2);
 extern struct xvimage * lskelfilter3(skel *S, double delta1, double delta2, double maxbridgelength, double maxelbowangle);
 extern struct xvimage * lskelfindelbows(skel *S, double length, double angle);
 #ifdef __cplusplus

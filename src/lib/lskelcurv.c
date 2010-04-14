@@ -2656,6 +2656,8 @@ int32_t lskelfilter2b(skel *S, double delta1, double delta2)
     EndWhile
     If E is an end junction then Unmark E
   EndFor
+
+  Version with pre-computed tangent vectors, stored in the skel structure
 */
 {
 #undef F_NAME
