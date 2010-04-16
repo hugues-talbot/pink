@@ -723,7 +723,7 @@ void skeldelete(skel * S, uint32_t i)
 // Remove element i from skeleton S.
 // CAUTION: some properties of the initial skeleton structure 
 // will not be guaranteed in the result, for example a junction 
-// can be left with less than 2 adjacent elements.
+// can be left with less than 3 adjacent elements.
 {
 #undef F_NAME
 #define F_NAME "skeldelete"
@@ -757,6 +757,9 @@ void skeldelete(skel * S, uint32_t i)
       assert(p->next != NULL); // soit 0, soit 2 adjacences
       e1 = p->val;
       e2 = p->next->val;
+#ifdef TESTSKEL
+      printf("%s: curv i=%d, e1=%d, e2=%d\n", F_NAME, i, e1, e2);
+#endif
       removeadjlist(S, e1, i); // remove i from the adjacency list of e1
       removeadjlist(S, e2, i); // remove i from the adjacency list of e2
       SK_REMOVE(i);
@@ -780,6 +783,9 @@ void skeldelete(skel * S, uint32_t i)
       assert(nadj == 2); // do not remove junction otherwise
       a1 = p->val;
       a2 = p->next->val;
+#ifdef TESTSKEL
+      printf("%s: junc i=%d, a1=%d, a2=%d\n", F_NAME, i, a1, a2);
+#endif
       // transfer all points from a2 and i to a1
       pt = S->tskel[a1].pts;
       assert(pt != NULL);
@@ -793,7 +799,7 @@ void skeldelete(skel * S, uint32_t i)
       assert(pp != NULL); assert(pp->next != NULL);
       assert((pp->val == i) || (pp->next->val == i));
       if (pp->val == i) v2 = pp->next->val; else v2 = pp->val;
-      for (pp = S->tskel[v2].adj; pp != NULL; pp = pp->next)     
+      for (pp = S->tskel[v2].adj; pp != NULL; pp = pp->next)
 	if (pp->val == a2) { pp->val = a1; break; }
       assert(pp != NULL);
 

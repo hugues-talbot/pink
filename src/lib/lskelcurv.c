@@ -61,7 +61,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lmoments.h>
 
 //#define VERBOSE
-#define DEBUG
+//#define DEBUG
 //#define DEBUGCOMPVECT
 //#define DEBUGCURV
 //#define DEBUGADJ

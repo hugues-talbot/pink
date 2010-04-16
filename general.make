@@ -264,9 +264,6 @@ $(BDIR)/skelend \
 $(BDIR)/skelcurv \
 $(BDIR)/skeleton \
 $(BDIR)/skeleucl \
-$(BDIR)/skelfilter1 \
-$(BDIR)/skelfilter2 \
-$(BDIR)/skelfilter3 \
 $(BDIR)/skelfindelbows \
 $(BDIR)/skelpar \
 $(BDIR)/skelpar3d \
@@ -1351,15 +1348,6 @@ $(BDIR)/skeleton:	$(CDIR)/skeleton.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(ID
 
 $(BDIR)/skeleucl:	$(CDIR)/skeleucl.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcindic.h $(IDIR)/lskeletons.h $(IDIR)/ldist.h $(IDIR)/mcgeo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/lskeletons.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skeleucl.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/lskeletons.o $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(LIBS) -o $(BDIR)/skeleucl
-
-$(BDIR)/skelfilter1:	$(CDIR)/skelfilter1.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lskelcurv.h $(IDIR)/lseltopo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcskelcurv.o $(ODIR)/mclifo.o $(ODIR)/lskelcurv.o $(ODIR)/llabelextrema.o $(ODIR)/lseltopo.o $(ODIR)/lmoments.o $(ODIR)/mclin.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skelfilter1.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcskelcurv.o $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(ODIR)/lseltopo.o $(ODIR)/lmoments.o $(ODIR)/mclin.o $(ODIR)/llabelextrema.o $(ODIR)/lskelcurv.o $(ODIR)/mcliste.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(LIBS) -o $(BDIR)/skelfilter1
-
-$(BDIR)/skelfilter2:	$(CDIR)/skelfilter2.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lskelcurv.h $(IDIR)/lseltopo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcskelcurv.o $(ODIR)/mclifo.o $(ODIR)/lskelcurv.o $(ODIR)/llabelextrema.o $(ODIR)/lseltopo.o $(ODIR)/lmoments.o $(ODIR)/mclin.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skelfilter2.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcskelcurv.o $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(ODIR)/lseltopo.o $(ODIR)/lmoments.o $(ODIR)/mclin.o $(ODIR)/llabelextrema.o $(ODIR)/lskelcurv.o $(ODIR)/mcliste.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(LIBS) -o $(BDIR)/skelfilter2
-
-$(BDIR)/skelfilter3:	$(CDIR)/skelfilter3.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lskelcurv.h $(IDIR)/lseltopo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcskelcurv.o $(ODIR)/mclifo.o $(ODIR)/lskelcurv.o $(ODIR)/llabelextrema.o $(ODIR)/lseltopo.o $(ODIR)/lmoments.o $(ODIR)/mclin.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skelfilter3.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcskelcurv.o $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(ODIR)/lseltopo.o $(ODIR)/lmoments.o $(ODIR)/mclin.o $(ODIR)/llabelextrema.o $(ODIR)/lskelcurv.o $(ODIR)/mcliste.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(LIBS) -o $(BDIR)/skelfilter3
 
 $(BDIR)/skelfindelbows:	$(CDIR)/skelfindelbows.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lskelcurv.h $(IDIR)/lseltopo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcskelcurv.o $(ODIR)/mclifo.o $(ODIR)/lskelcurv.o $(ODIR)/llabelextrema.o $(ODIR)/lseltopo.o $(ODIR)/lmoments.o $(ODIR)/mclin.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skelfindelbows.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcskelcurv.o $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(ODIR)/lseltopo.o $(ODIR)/lmoments.o $(ODIR)/mclin.o $(ODIR)/llabelextrema.o $(ODIR)/lskelcurv.o $(ODIR)/mcliste.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(LIBS) -o $(BDIR)/skelfindelbows
