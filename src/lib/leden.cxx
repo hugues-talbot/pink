@@ -36,6 +36,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <leden.h>
+#include <mccodimage.h>
 
 #define MAX_RANDOM INT_MAX
 #define INQUEUE    128 // in queue marker
@@ -118,7 +119,7 @@ int32_t ledengrowth(uint8_t *in,
 		/* put external border of set in queue */
 		while (p < end)
 		{
-			if (!(*p) && (nb1vois(in, p-in, dimx, dimy, dimz, 255) > 0))
+			if (!(*p) && (nb1vois(in, p-in, dimx, dimy, dimz, 255) > 0) && ((dimz==1 && bord((uint32_t)(p-in), dimx, ps)==0) || (dimz>1 && bord3d((uint32_t)(p-in), dimx, ps, nbpix)==0)))
 			{
 				borderqueue.push_back(p);
 				SetElement(parcouru, (uint32_t)(p-in));
@@ -164,7 +165,8 @@ int32_t ledengrowth(uint8_t *in,
 					// if pixels are enqueue already they won't be selected again
 					if( (dx > 0) &&
 						(*(pix-1) == 0) &&
-						!InSet(parcouru, (int32_t)(pix-in-1)) )
+						!InSet(parcouru, (int32_t)(pix-in-1)) && 
+						((dimz==1 && bord((uint32_t)(pix-in-1), dimx, ps)==0) || (dimz>1 && bord3d((uint32_t)(pix-in-1), dimx, ps, nbpix)==0)) )
 						{
 							borderqueue.push_back(pix-1);
 							SetElement(parcouru, (int32_t)(pix-in-1));
@@ -172,7 +174,8 @@ int32_t ledengrowth(uint8_t *in,
 
 					if( (dx < (dimx-1)) &&
 						(*(pix+1) == 0) &&
-						!InSet(parcouru, (int32_t)(pix-in+1)) )
+						!InSet(parcouru, (int32_t)(pix-in+1)) &&
+						((dimz==1 && bord((uint32_t)(pix-in+1), dimx, ps)==0) || (dimz>1 && bord3d((uint32_t)(pix-in+1), dimx, ps, nbpix)==0)) )
 						{
 							borderqueue.push_back(pix-1);
 							SetElement(parcouru, (int32_t)(pix-in+1));
@@ -180,7 +183,8 @@ int32_t ledengrowth(uint8_t *in,
 
 					if( (dy > 0) &&
 						(*(pix-dimx) == 0) &&
-						!InSet(parcouru, (int32_t)(pix-in-dimx)) )
+						!InSet(parcouru, (int32_t)(pix-in-dimx)) &&
+						((dimz==1 && bord((uint32_t)(pix-in-dimx), dimx, ps)==0) || (dimz>1 && bord3d((uint32_t)(pix-in-dimx), dimx, ps, nbpix)==0)) )
 						{
 							borderqueue.push_back(pix-dimx);
 							SetElement(parcouru, (int32_t)(pix-in-dimx));
@@ -188,7 +192,8 @@ int32_t ledengrowth(uint8_t *in,
 
 					if( (dy < (dimy-1)) &&
 						(*(pix+dimx) == 0) &&
-						!InSet(parcouru, (int32_t)(pix-in+dimx)) )
+						!InSet(parcouru, (int32_t)(pix-in+dimx)) &&
+						((dimz==1 && bord((uint32_t)(pix-in+dimx), dimx, ps)==0) || (dimz>1 && bord3d((uint32_t)(pix-in+dimx), dimx, ps, nbpix)==0)) )
 						{
 							borderqueue.push_back(pix+dimx);
 							SetElement(parcouru, (int32_t)(pix-in+dimx));
@@ -196,7 +201,8 @@ int32_t ledengrowth(uint8_t *in,
 
 					if(	(dz > 0) &&
 						(*(pix-ps) == 0) &&
-						!InSet(parcouru, (int32_t)(pix-in-ps)) )
+						!InSet(parcouru, (int32_t)(pix-in-ps)) &&
+						(bord3d((uint32_t)(pix-in-ps), dimx, ps, nbpix)==0) )
 						{
 							borderqueue.push_back(pix-ps);
 							SetElement(parcouru, (int32_t)(pix-in-ps));
@@ -204,7 +210,8 @@ int32_t ledengrowth(uint8_t *in,
 
 					if(	(dz < (dimz-1)) &&
 						(*(pix+ps) == 0) &&
-						!InSet(parcouru, (int32_t)(pix-in+ps)) )
+						!InSet(parcouru, (int32_t)(pix-in+ps)) &&
+						(bord3d((uint32_t)(pix-in+ps), dimx, ps, nbpix)==0) )
 						{
 							borderqueue.push_back(pix+ps);
 							SetElement(parcouru, (int32_t)(pix-in+ps));
