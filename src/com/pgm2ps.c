@@ -615,7 +615,10 @@ int main(int argc, char **argv)
 	    sprintf(buf, "%c", (char)(H[y * rs + x]-1+'A'));
 	  } else 	if (type == 'm') 
 	  {
-	    sprintf(buf, "%d", H[y * rs + x]);
+		if(datatype(label)==VFF_TYP_FLOAT)
+			sprintf(buf, "%1.1f", FLOATDATA(label)[y * rs + x]);
+		else
+	    		sprintf(buf, "%d", H[y * rs + x]);
 	  } else 
 	  {
 	    sprintf(buf, "%d", F[y * rs + x]);
