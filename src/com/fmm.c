@@ -34,7 +34,7 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file fmm.c
 
-\brief  - Fast Marching Method
+\brief fast marching method
 
 <B>Usage:</B> fmm speed.pgm seeds.pgm stop threshold seedout.pgm distanceout.pgm
 
@@ -69,7 +69,7 @@ speed must be float, seeds must be integer.
 <B>Category:</B> morpho
 \ingroup morpho
 
-\author Hugues Talbot & Ben Appleton
+\author Hugues Talbot and Ben Appleton
 */
 
 #include <stdio.h>

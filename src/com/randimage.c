@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief random image generation
 
-<B>Usage:</B> randimage rowsize colsize depth valmax [seed] out.pgm
+<B>Usage:</B> randimage [in.pgm | rowsize colsize depth] valmax [seed] out.pgm
 
 <B>Description:</B> Generates an image with pixel values uniformly randomly
 distributed between 0 and \b valmax (included). 
@@ -69,17 +69,35 @@ int main(int argc, char **argv)
   int32_t i;
   int32_t rs, cs, ds, N, valmax;
 
-  if ((argc != 6) && (argc != 7))
+  if ((argc < 4) && (argc > 7))
   {
-    fprintf(stderr, "usage: %s rowsize colsize depth valmax [seed] out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s [in.pgm | rowsize colsize depth] valmax [seed] out.pgm \n", argv[0]);
     exit(1);
   }
 
-  rs = atoi(argv[1]);
-  cs = atoi(argv[2]);
-  ds = atoi(argv[3]);
-  valmax = atoi(argv[4]);
-  if (argc == 7) srand(atoi(argv[5])); else srand(time(NULL));
+  if ((argc == 4) || (argc == 5))
+  {
+    image = readheader(argv[1]);
+    if (image == NULL)
+    {
+      fprintf(stderr, "%s: readimage failed\n", argv[0]);
+      exit(1);
+    }
+    rs = rowsize(image);
+    cs = colsize(image);
+    ds = depth(image);
+    valmax = atoi(argv[2]);
+    if (argc == 5) srand(atoi(argv[3])); else srand(time(NULL));
+    freeimage(image);
+  }
+  else // 6 or 7
+  {
+    rs = atoi(argv[1]);
+    cs = atoi(argv[2]);
+    ds = atoi(argv[3]);
+    valmax = atoi(argv[4]);
+    if (argc == 7) srand(atoi(argv[5])); else srand(time(NULL));
+  }
 
   if (valmax <= 255)
   {
