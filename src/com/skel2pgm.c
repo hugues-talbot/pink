@@ -57,6 +57,8 @@ Generation of a binary image from a curvilinear skeleton.
 #include <mcskelcurv.h>
 #include <lskelcurv.h>
 
+//#define DEBUG
+
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
@@ -77,7 +79,9 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  //  printskel(S);
+#ifdef DEBUG
+  printskel(S);
+#endif
 
   if (! (image = lskel2image(S)))
   {

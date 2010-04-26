@@ -108,7 +108,8 @@ extern int32_t lskeleucl(
 extern int32_t lskelend3d(
         struct xvimage *image, 
 	int32_t connex, 
-	uint8_t *endpoint
+	uint8_t *endpoint,
+	int32_t niseuil
 );
 #ifdef __cplusplus
 }

@@ -56,6 +56,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcskelcurv.h>
 
 //#define DEBUG
+//#define DEBUG_skeldelete
 
 #ifdef DEBUG
 struct xvimage *DBGIM;
@@ -419,7 +420,7 @@ skel * readskel(char *filename)
   uint32_t i, j, k, v, n;
   char buf[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t dim, rs, cs, ds;
+  int32_t dim, rs, cs, ds, ret;
   int32_t nbisol, nbend, nbcurv, nbjunc, nvertex, nptcell, nadjcell, connex;
 
   fd = fopen(filename,"r");
@@ -437,7 +438,8 @@ skel * readskel(char *filename)
     return NULL;
   }
 
-  fscanf(fd, "%d %d %d %d %d %d %d", &connex, &nvertex, &nptcell, &nadjcell, &rs, &cs, &ds);
+  ret = fscanf(fd, "%d %d %d %d %d %d %d", &connex, &nvertex, &nptcell, &nadjcell, &rs, &cs, &ds);
+  assert(ret == 7);
 
 #ifdef DEBUG
   printf("connex : %d ; nvertex : %d ; nptcell : %d ; nadjcell : %d ; rs : %d ; cs : %d ; ds : %d\n", 
@@ -718,6 +720,17 @@ void termineskel(skel * S)
 } /* termineskel() */
 
 /* ====================================================================== */
+uint32_t nb_adjacent_elts(skel * S, uint32_t i)
+/* ====================================================================== */
+// returns the number of adjacent elements
+{
+  SKC_adj_pcell p;
+  uint32_t nadj = 0;
+  for (p = S->tskel[i].adj; p != NULL; p = p->next) nadj++;
+  return nadj;
+} // nb_adjacent_elts()
+
+/* ====================================================================== */
 void skeldelete(skel * S, uint32_t i)
 /* ====================================================================== */
 // Remove element i from skeleton S.
@@ -730,9 +743,16 @@ void skeldelete(skel * S, uint32_t i)
   SKC_adj_pcell p;
   uint32_t j;
 
+#ifdef DEBUG_skeldelete
+  //  printf("%s: begin\n", F_NAME);
+#endif
+
   p = S->tskel[i].adj;
   if (IS_ISOL(i)) 
   {
+#ifdef DEBUG_skeldelete
+    printf("%s: isolated i=%d\n", F_NAME, i);
+#endif
     assert(p == NULL);
     SK_REMOVE(i);
   }
@@ -744,11 +764,17 @@ void skeldelete(skel * S, uint32_t i)
     assert(!IS_CURV(j) || SK_DELETED(j));
     removeadjlist(S, j, i); // remove i from the adjacency list of j
     SK_REMOVE(i);
+#ifdef DEBUG_skeldelete
+    printf("%s: end i=%d, j=%d\n", F_NAME, i, j);
+#endif
   }
   else if (IS_CURV(i)) 
   {
     if (p == NULL) // si arc fermé
     {
+#ifdef DEBUG_skeldelete
+    printf("%s: curv (closed) i=%d\n", F_NAME, i);
+#endif
       SK_REMOVE(i);
     }
     else
@@ -757,11 +783,11 @@ void skeldelete(skel * S, uint32_t i)
       assert(p->next != NULL); // soit 0, soit 2 adjacences
       e1 = p->val;
       e2 = p->next->val;
-#ifdef TESTSKEL
-      printf("%s: curv i=%d, e1=%d, e2=%d\n", F_NAME, i, e1, e2);
-#endif
       removeadjlist(S, e1, i); // remove i from the adjacency list of e1
       removeadjlist(S, e2, i); // remove i from the adjacency list of e2
+#ifdef DEBUG_skeldelete
+      printf("%s: curv i=%d, e1=%d(t=%d), e2=%d(t=%d)\n", F_NAME, i, e1, S->tskel[e1].tag, e2, S->tskel[e2].tag);
+#endif
       SK_REMOVE(i);
       if (IS_END(e1)) SK_REMOVE(e1);
       if (IS_END(e2)) SK_REMOVE(e2);
@@ -770,10 +796,12 @@ void skeldelete(skel * S, uint32_t i)
   else // IS_JUNC(i)
   {
     SKC_adj_pcell pp;
-    uint32_t nadj = 0;
-    for (pp = p; pp != NULL; pp = pp->next) nadj++; // counts adjacent elements
+    uint32_t nadj = nb_adjacent_elts(S, i);;
     if (nadj == 0)
     {
+#ifdef DEBUG_skeldelete
+    printf("%s: junc (0 neibrs) i=%d\n", F_NAME, i);
+#endif
       SK_REMOVE(i);
     }
     else
@@ -783,8 +811,8 @@ void skeldelete(skel * S, uint32_t i)
       assert(nadj == 2); // do not remove junction otherwise
       a1 = p->val;
       a2 = p->next->val;
-#ifdef TESTSKEL
-      printf("%s: junc i=%d, a1=%d, a2=%d\n", F_NAME, i, a1, a2);
+#ifdef DEBUG_skeldelete
+      printf("%s: junc (2 neibrs) i=%d, a1=%d, a2=%d\n", F_NAME, i, a1, a2);
 #endif
       // transfer all points from a2 and i to a1
       pt = S->tskel[a1].pts;

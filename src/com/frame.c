@@ -36,11 +36,13 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief generates an image with a white border and a black interior
 
-<B>Usage:</B> frame in.pgm out.pgm
+<B>Usage:</B> frame in.pgm [width] out.pgm
 
 <B>Description:</B>
 The result out.pgm has the same size as in.pgm. Its border is set to 255, 
 all other pixels are set to 0.
+
+If the optional parameter \b width is given, then the border has thickness 'width'.
 
 <B>Types supported:</B> byte 2d, byte 3d
 
@@ -64,8 +66,9 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
+  int32_t width; 
  
-  if (argc != 3)
+  if ((argc != 3) && (argc != 4))
   {
     fprintf(stderr, "usage: %s filein.pgm fileout.pgm\n", argv[0]);
     exit(1);
@@ -78,10 +81,12 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  razimage(image);
-  lsetframe(image, NDG_MAX);
+  if (argc == 4) width = atoi(argv[2]); else width = 1;
 
-  writeimage(image, argv[2]);
+  razimage(image);
+  lsetthickframe(image, width, NDG_MAX);
+
+  writeimage(image, argv[argc - 1]);
   freeimage(image);
 
   return 0;

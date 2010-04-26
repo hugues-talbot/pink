@@ -109,11 +109,6 @@ int main(int argc, char **argv)
     char tablefilename[128];
     int32_t tablesize, ret;
 
-    if (niseuil != 0)
-    {
-      fprintf(stderr, "%s: param. niseuil not implemented for 3d\n", argv[0]);
-      exit(1);
-    }
 #ifdef PRIO
     prio = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
     if (prio == NULL)
@@ -159,7 +154,7 @@ int main(int argc, char **argv)
     fclose(fd);
 
     //    if (! lskelend3d(image, prio, connex, endpoint))
-    if (! lskelend3d(image, connex, endpoint))
+    if (! lskelend3d(image, connex, endpoint, niseuil))
     {
       fprintf(stderr, "%s: lskelend3d failed\n", argv[0]);
       exit(1);

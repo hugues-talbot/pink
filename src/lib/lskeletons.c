@@ -2710,8 +2710,9 @@ resultat: F
 
 /* ==================================== */
 int32_t lskelend3d(struct xvimage *image, 
-	       int32_t connex, 
-	       uint8_t *endpoint)
+		   int32_t connex, 
+		   uint8_t *endpoint,
+		   int32_t niseuil)
 /* ==================================== */
 /* 
 Squelette curviligne ou surfacique 3D binaire.
@@ -2803,7 +2804,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
       {
 	x = RbtPopMin(RBT);
 	config = encodevois(x, F, rs, ps, N);
-	if ((!IsEnd(config)) && testabaisse6bin(F, x, rs, ps, N)) nbdel++;
+	if (((nbiter < niseuil) || (!IsEnd(config))) && testabaisse6bin(F, x, rs, ps, N)) nbdel++;
       } /* while (!RbtVide(RBT)) */
       for (x = 0; x < N; x++)
         if (F[x] && simple6(F, x, rs, ps, N))
@@ -2825,7 +2826,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
       {
 	x = RbtPopMin(RBT);
 	config = encodevois(x, F, rs, ps, N);
-	if ((!IsEnd(config)) && testabaisse18bin(F, x, rs, ps, N)) nbdel++;
+	if (((nbiter < niseuil) || (!IsEnd(config))) && testabaisse18bin(F, x, rs, ps, N)) nbdel++;
       } /* while (!RbtVide(RBT)) */
       for (x = 0; x < N; x++)
         if (F[x] && simple18(F, x, rs, ps, N))
@@ -2854,7 +2855,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
 	printf("; point %d (%d,%d,%d)\n", x, x % rs, (x % ps) / rs, x / ps);
 #endif
 	config = encodevois(x, F, rs, ps, N);
-	if ((!IsEnd(config)) && testabaisse26bin(F, x, rs, ps, N)) nbdel++;
+	if (((nbiter < niseuil) || (!IsEnd(config))) && testabaisse26bin(F, x, rs, ps, N)) nbdel++;
       } /* while (!RbtVide(RBT)) */
       for (x = 0; x < N; x++)
         if (F[x] && simple26(F, x, rs, ps, N))

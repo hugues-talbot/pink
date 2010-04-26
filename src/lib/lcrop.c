@@ -262,6 +262,64 @@ void lsetframe(struct xvimage *image, int32_t grayval)
   }
 } // lsetframe()
 
+/* =============================================================== */
+void lsetthickframe(struct xvimage *image, int32_t width, int32_t grayval) 
+/* =============================================================== */
+// sets the (thick) border of image to value grayval
+#undef F_NAME
+#define F_NAME "lsetthickframe"
+{
+  int32_t rs, cs, ds, ps, x, y, z, w;
+  uint8_t * Im;
+
+  assert(datatype(image) == VFF_TYP_1_BYTE);
+
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  ps = rs * cs;
+  Im = UCHARDATA(image);
+  assert(width < rs); assert(width < cs); assert(width < ds);
+
+  if (ds > 1)
+  {
+    for (w = 0; w < width; w++)
+    {
+      for (x = 0; x < rs; x++)
+	for (y = 0; y < cs; y++) 
+	  Im[w * ps + y * rs + x] = grayval;          /* plan z = w */
+      for (x = 0; x < rs; x++)
+	for (y = 0; y < cs; y++) 
+	  Im[(ds-1-w) * ps + y * rs + x] = grayval;     /* plan z = ds-1-w */
+
+      for (x = 0; x < rs; x++)
+	for (z = 0; z < ds; z++) 
+	  Im[z * ps + w * rs + x] = grayval;          /* plan y = w */
+      for (x = 0; x < rs; x++)
+	for (z = 0; z < ds; z++) 
+	  Im[z * ps + (cs-1-w) * rs + x] = grayval;     /* plan y = cs-1-w */
+
+      for (y = 0; y < cs; y++)
+	for (z = 0; z < ds; z++) 
+	  Im[z * ps + y * rs + w] = grayval;          /* plan x = w */
+      for (y = 0; y < cs; y++)
+	for (z = 0; z < ds; z++) 
+	  Im[z * ps + y * rs + (rs-1-w)] = grayval;     /* plan x = rs-1-w */
+    }
+  }
+  else
+  {
+    for (w = 0; w < width; w++)
+    {
+      for (x = 0; x < rs; x++) Im[w*rs + x] = grayval;
+      for (x = 0; x < rs; x++) Im[(cs-1-w) * rs + x] = grayval;
+
+      for (y = 1; y < cs - 1; y++) Im[y * rs + w] = grayval;
+      for (y = 1; y < cs - 1; y++) Im[y * rs + rs-1-w] = grayval;
+    }
+  }
+} // lsetthickframe()
+
 //REMOVED:
 //struct xvimage * lencadre(struct xvimage *image, int32_t grayval);
 //use lenframe instead

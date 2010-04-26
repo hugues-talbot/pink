@@ -135,11 +135,11 @@ extern SKC_pt_pcell skeladdptcell(skel *S, int32_t val, SKC_pt_pcell next);
 extern SKC_adj_pcell skeladdadjcell(skel *S, int32_t val, SKC_adj_pcell next);
 extern void addadjlist(skel * S, uint32_t k, uint32_t v);
 extern void addptslist(skel * S, uint32_t k, uint32_t v);
+extern uint32_t nb_adjacent_elts(skel * S, uint32_t i);
 extern skel * readskel(char *filename);
 extern void writeskel(skel * S, char *filename);
 extern void writevskel(skel * S, char *filename, struct xvimage *val);
 extern void skeldelete(skel * S, uint32_t i);
-
 #ifdef __cplusplus
 }
 #endif
