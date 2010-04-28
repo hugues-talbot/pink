@@ -58,6 +58,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #define CONTRAINTE1   2
 #define CONTRAINTE2   3
 #define PARANO
+
+#define DEBUG_lskelend3d
 //#define DEBUG1
 //#define DEBUG
 //#define VERBOSE
@@ -2744,6 +2746,10 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
 }
 #endif
 
+#ifdef DEBUG_lskelend3d
+ printf("%s: begin niseuil=%d\n", F_NAME, niseuil);
+#endif
+
   IndicsInit(N);
   init_topo3d();
 
@@ -2861,6 +2867,9 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
         if (F[x] && simple26(F, x, rs, ps, N))
           RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
 #ifdef VERBOSE
+      printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
+#endif
+#ifdef DEBUG_lskelend3d
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
 #endif
     } /* while (!RbtVide(RBT)) */

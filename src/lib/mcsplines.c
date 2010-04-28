@@ -44,6 +44,7 @@ Michel Couprie, Sébastien Couprie, juin 2003
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <math.h>
 #include <mcutil.h>
 #include <mclin.h>
@@ -96,16 +97,11 @@ void scn_solvespline(double *x, double *y, int32_t n,
   int32_t i, j;
   double *M, *P, *z, *A, *B;
 
-  M = (double *)calloc(1,(n-2) * (n-2) * sizeof(double));
-  P = (double *)calloc(1,(n-2) * sizeof(double));
-  z = (double *)calloc(1,(n-2) * sizeof(double));
-  A = (double *)calloc(1,(n-1) * sizeof(double));
-  B = (double *)calloc(1,(n-1) * sizeof(double));
-  if ((M == NULL) || (P == NULL) || (z == NULL) || (A == NULL) || (B == NULL))
-  {
-    fprintf(stderr, "%s: malloc failed\n", F_NAME);
-    exit(0);
-  }
+  M = (double *)calloc(1,(n-2) * (n-2) * sizeof(double)); assert(M != NULL);
+  P = (double *)calloc(1,(n-2) * sizeof(double)); assert(P != NULL);
+  z = (double *)calloc(1,(n-2) * sizeof(double)); assert(z != NULL);
+  A = (double *)calloc(1,(n-1) * sizeof(double)); assert(A != NULL);
+  B = (double *)calloc(1,(n-1) * sizeof(double)); assert(B != NULL);
 
   for (i = 0; i < n-2; i++)
     for (j = 0; j < n-2; j++)
@@ -179,16 +175,11 @@ void scn_solvespline1(double *y, int32_t n,
 {
   int32_t i, j;
   double *M, *P, *z, *A, *B;
-  M = (double *)calloc(1,(n-2) * (n-2) * sizeof(double));
-  P = (double *)calloc(1,(n-2) * sizeof(double));
-  z = (double *)calloc(1,(n-2) * sizeof(double));
-  A = (double *)calloc(1,(n-1) * sizeof(double));
-  B = (double *)calloc(1,(n-1) * sizeof(double));
-  if ((M == NULL) || (P == NULL) || (z == NULL) || (A == NULL) || (B == NULL))
-  {
-    fprintf(stderr, "%s: malloc failed\n", F_NAME);
-    exit(0);
-  }
+  M = (double *)calloc(1,(n-2) * (n-2) * sizeof(double)); assert(M != NULL);
+  P = (double *)calloc(1,(n-2) * sizeof(double)); assert(P != NULL);
+  z = (double *)calloc(1,(n-2) * sizeof(double)); assert(z != NULL);
+  A = (double *)calloc(1,(n-1) * sizeof(double)); assert(A != NULL);
+  B = (double *)calloc(1,(n-1) * sizeof(double)); assert(B != NULL);
 
   for (i = 0; i < n-2; i++)
     for (j = 0; j < n-2; j++)
@@ -275,17 +266,12 @@ void scn_solveclosedspline(double *x, double *y, int32_t n,
   }
 
   nn = n + 4;
-  xx = (double *)calloc(nn, sizeof(double));
-  yy = (double *)calloc(nn, sizeof(double));
-  ZZ0 = (double *)calloc(1,(nn-1) * sizeof(double));
-  ZZ1 = (double *)calloc(1,(nn-1) * sizeof(double));
-  ZZ2 = (double *)calloc(1,(nn-1) * sizeof(double));
-  ZZ3 = (double *)calloc(1,(nn-1) * sizeof(double));
-  if ((xx == NULL) || (yy == NULL) || (ZZ0 == NULL) || (ZZ1 == NULL) || (ZZ2 == NULL) || (ZZ3 == NULL))
-  {
-    fprintf(stderr, "%s: malloc failed\n", F_NAME);
-    exit(0);
-  }
+  xx = (double *)calloc(nn, sizeof(double)); assert(xx != NULL);
+  yy = (double *)calloc(nn, sizeof(double)); assert(yy != NULL);
+  ZZ0 = (double *)calloc(1,(nn-1) * sizeof(double)); assert(ZZ0 != NULL);
+  ZZ1 = (double *)calloc(1,(nn-1) * sizeof(double)); assert(ZZ1 != NULL);
+  ZZ2 = (double *)calloc(1,(nn-1) * sizeof(double)); assert(ZZ2 != NULL);
+  ZZ3 = (double *)calloc(1,(nn-1) * sizeof(double)); assert(ZZ3 != NULL);
 
   xx[0] = x[0] - x[n-1] + x[n-3];
   yy[0] = y[n-3];
@@ -508,15 +494,15 @@ void scn_samplespline(double *x, double *y, int32_t n, int32_t m, double *X, dou
     return;
   }
   
-  t = (double *)calloc(1,n * sizeof(double));
-  X0 = (double *)calloc(1,(n-1) * sizeof(double));
-  X1 = (double *)calloc(1,(n-1) * sizeof(double));
-  X2 = (double *)calloc(1,(n-1) * sizeof(double));
-  X3 = (double *)calloc(1,(n-1) * sizeof(double));
-  Y0 = (double *)calloc(1,(n-1) * sizeof(double));
-  Y1 = (double *)calloc(1,(n-1) * sizeof(double));
-  Y2 = (double *)calloc(1,(n-1) * sizeof(double));
-  Y3 = (double *)calloc(1,(n-1) * sizeof(double));
+  t = (double *)calloc(1,n * sizeof(double)); assert(t != NULL);
+  X0 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X0 != NULL);
+  X1 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X1 != NULL);
+  X2 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X2 != NULL);
+  X3 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X3 != NULL);
+  Y0 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y0 != NULL);
+  Y1 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y1 != NULL);
+  Y2 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y2 != NULL);
+  Y3 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y3 != NULL);
   for(i = 0; i < n; i++) t[i] = (double)i;
 
 
@@ -636,19 +622,19 @@ void scn_samplespline3d(double *x, double *y, double *z, int32_t n, int32_t m, d
     return;
   }
   
-  t = (double *)calloc(1,n * sizeof(double));
-  X0 = (double *)calloc(1,(n-1) * sizeof(double));
-  X1 = (double *)calloc(1,(n-1) * sizeof(double));
-  X2 = (double *)calloc(1,(n-1) * sizeof(double));
-  X3 = (double *)calloc(1,(n-1) * sizeof(double));
-  Y0 = (double *)calloc(1,(n-1) * sizeof(double));
-  Y1 = (double *)calloc(1,(n-1) * sizeof(double));
-  Y2 = (double *)calloc(1,(n-1) * sizeof(double));
-  Y3 = (double *)calloc(1,(n-1) * sizeof(double));
-  Z0 = (double *)calloc(1,(n-1) * sizeof(double));
-  Z1 = (double *)calloc(1,(n-1) * sizeof(double));
-  Z2 = (double *)calloc(1,(n-1) * sizeof(double));
-  Z3 = (double *)calloc(1,(n-1) * sizeof(double));
+  t = (double *)calloc(1,n * sizeof(double)); assert(t != NULL);
+  X0 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X0 != NULL);
+  X1 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X1 != NULL);
+  X2 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X2 != NULL);
+  X3 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X3 != NULL);
+  Y0 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y0 != NULL);
+  Y1 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y1 != NULL);
+  Y2 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y2 != NULL);
+  Y3 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y3 != NULL);
+  Z0 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Z0 != NULL);
+  Z1 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Z1 != NULL);
+  Z2 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Z2 != NULL);
+  Z3 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Z3 != NULL);
   for(i = 0; i < n; i++) t[i] = (double)i;
 
   if ((x[0] != x[n-1]) || (y[0] != y[n-1]) || (z[0] != z[n-1]))
@@ -730,33 +716,39 @@ void scn_curvatures(double *x, double *y, int32_t n, int32_t m, double *sk, doub
     \param m (entrée) : nombre des échantillons
     \param sk (sortie) : tableau  des absisses curvilignes (taille m)
     \param rhok (sortie) : tableau des courbures (taille m)
-    \brief calcule des courbures le int32_t d'une spline 2D paramétrée
+    \brief calcule de la courbure le long d'une spline 2D paramétrée : 
+           K = (x'y'' - y'x'') / (x'^2 + y'^2)^(3/2)
+	   source: http://en.wikipedia.org/wiki/Curvature
     \warning la mémoire pour stocker les résultats sk, rhok doit avoir été allouée
 */
 {
+#undef F_NAME
+#define F_NAME "scn_curvatures"
   double *X0, *X1, *X2, *X3;
   double *Y0, *Y1, *Y2, *Y3;
   double *t;
   double tk, tmp, eval, xp, yp, xs, ys, L = 0;
   double sum, sumsav;
-  int32_t p = m*10;
+  int32_t p = m * 10;
   int32_t i, j, k;
   double f[3], g[3];
   
-  t = (double *)calloc(1,n * sizeof(double));
-  X0 = (double *)calloc(1,(n-1) * sizeof(double));
-  X1 = (double *)calloc(1,(n-1) * sizeof(double));
-  X2 = (double *)calloc(1,(n-1) * sizeof(double));
-  X3 = (double *)calloc(1,(n-1) * sizeof(double));
-  Y0 = (double *)calloc(1,(n-1) * sizeof(double));
-  Y1 = (double *)calloc(1,(n-1) * sizeof(double));
-  Y2 = (double *)calloc(1,(n-1) * sizeof(double));
-  Y3 = (double *)calloc(1,(n-1) * sizeof(double));
-  for(i=0;i<n;i++) t[i] = (double)i;
+  t = (double *)calloc(1,n * sizeof(double)); assert(t != NULL);
+  X0 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X0 != NULL);
+  X1 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X1 != NULL);
+  X2 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X2 != NULL);
+  X3 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X3 != NULL);
+  Y0 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y0 != NULL);
+  Y1 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y1 != NULL);
+  Y2 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y2 != NULL);
+  Y3 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y3 != NULL);
+
+  for(i=0; i < n; i++) t[i] = (double)i;
+
   scn_solvespline(t, x, n, X0, X1, X2, X3);
   scn_solvespline(t, y, n, Y0, Y1, Y2, Y3);
 
-  for(i=0;i<n-1;i++)
+  for(i=0; i < n-1; i++)
   {
     f[0] = X1[i]; f[1] = 2*X2[i]; f[2] = 3*X3[i];
     g[0] = Y1[i]; g[1] = 2*Y2[i]; g[2] = 3*Y3[i];
@@ -764,7 +756,7 @@ void scn_curvatures(double *x, double *y, int32_t n, int32_t m, double *sk, doub
   }
 
   sk[0] = rhok[0] = 0.0;
-  for(k=1;k<m;k++)
+  for(k=1; k < m; k++)
   {
     tmp=k*L/m;
     j = 0;
@@ -796,6 +788,107 @@ void scn_curvatures(double *x, double *y, int32_t n, int32_t m, double *sk, doub
   free(X0); free(X1); free(X2); free(X3); 
   free(Y0); free(Y1); free(Y2); free(Y3); 
 } // scn_curvatures()
+
+/* ==================================== */
+void scn_curvatures3d(double *x, double *y, double *z, int32_t n, int32_t m, double *sk, double *rhok)
+/* ==================================== */
+/*! \fn double * scn_curvatures(double *x, double *y, double *z, int32_t n, int32_t m, double *sk, double *rhok)
+    \param x (entrée) : tableau des abcisses des points de contrôle (taille n)
+    \param y (entrée) : tableau des ordonnées des points de contrôle (taille n)
+    \param z (entrée) : tableau des cotes des points de contrôle (taille n)
+    \param n (entrée) : nombre de points de contrôle
+    \param m (entrée) : nombre des échantillons
+    \param sk (sortie) : tableau  des absisses curvilignes (taille m)
+    \param rhok (sortie) : tableau des courbures (taille m)
+    \brief calcule de la courbure le long d'une spline 3D paramétrée : 
+      K = ((z''y' - y''z')^2 + (x''z' - z''x')^2 + (y''x' - x''y')^2)^(1/2) / 
+          (x'^2 + y'^2 + z'^2)^(3/2)
+      source: http://en.wikipedia.org/wiki/Curvature
+    \warning la mémoire pour stocker les résultats sk, rhok doit avoir été allouée
+*/
+{
+#undef F_NAME
+#define F_NAME "scn_curvatures3d"
+  double *X0, *X1, *X2, *X3;
+  double *Y0, *Y1, *Y2, *Y3;
+  double *Z0, *Z1, *Z2, *Z3;
+  double *t;
+  double tk, tmp, eval, xp, yp, zp, xs, ys, zs, L = 0;
+  double sum, sumsav;
+  int32_t p = m * 10;
+  int32_t i, j, k;
+  double f[3], g[3], h[3];
+  
+  t = (double *)calloc(1,n * sizeof(double)); assert(t != NULL);
+  X0 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X0 != NULL);
+  X1 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X1 != NULL);
+  X2 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X2 != NULL);
+  X3 = (double *)calloc(1,(n-1) * sizeof(double)); assert(X3 != NULL);
+  Y0 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y0 != NULL);
+  Y1 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y1 != NULL);
+  Y2 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y2 != NULL);
+  Y3 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Y3 != NULL);
+  Z0 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Z0 != NULL);
+  Z1 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Z1 != NULL);
+  Z2 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Z2 != NULL);
+  Z3 = (double *)calloc(1,(n-1) * sizeof(double)); assert(Z3 != NULL);
+
+  for (i = 0; i < n; i++) t[i] = (double)i;
+
+  scn_solvespline(t, x, n, X0, X1, X2, X3);
+  scn_solvespline(t, y, n, Y0, Y1, Y2, Y3);
+  scn_solvespline(t, z, n, Z0, Z1, Z2, Z3);
+
+  for (i = 0; i < n-1; i++)
+  {
+    f[0] = X1[i]; f[1] = 2*X2[i]; f[2] = 3*X3[i];
+    g[0] = Y1[i]; g[1] = 2*Y2[i]; g[2] = 3*Y3[i];
+    h[0] = Z1[i]; h[1] = 2*Z2[i]; h[2] = 3*Z3[i];
+    L = L + integrale3(f, g, h, t[i], t[i+1], p);
+  }
+
+  sk[0] = rhok[0] = 0.0;
+  for (k = 1; k < m; k++)
+  {
+    tmp = (k*L) / m;
+    j = 0;
+    sumsav = sum = 0; 
+    while (sum < tmp)
+    {
+      sumsav = sum;
+      f[0] = X1[j]; f[1] = 2*X2[j]; f[2] = 3*X3[j];
+      g[0] = Y1[j]; g[1] = 2*Y2[j]; g[2] = 3*Y3[j];
+      h[0] = Z1[j]; h[1] = 2*Z2[j]; h[2] = 3*Z3[j];
+      sum = sum + integrale3(f, g, h, t[j], t[j+1], p);
+      j++;
+    }
+    j--;
+    f[0] = X1[j]; f[1] = 2*X2[j]; f[2] = 3*X3[j];
+    g[0] = Y1[j]; g[1] = 2*Y2[j]; g[2] = 3*Y3[j];
+    h[0] = Z1[j]; h[1] = 2*Z2[j]; h[2] = 3*Z3[j];
+    tk = dicho3(f, g, h, t[j], t[j+1], tmp-sumsav, p, SCN_EPSILON);    
+    xp = evalpoly(3, (double *)f, tk);
+    yp = evalpoly(3, (double *)g, tk);
+    zp = evalpoly(3, (double *)h, tk);
+    eval = sqrt(xp*xp + yp*yp + zp*zp);
+    eval = eval * eval * eval;
+    f[0] = 2*X2[j]; f[1] = 6*X3[j]; f[2] = 0;
+    g[0] = 2*Y2[j]; g[1] = 6*Y3[j]; g[2] = 0;
+    h[0] = 2*Z2[j]; h[1] = 6*Z3[j]; h[2] = 0;
+    sk[k] = tmp;
+    xs = evalpoly(3, (double *)f, tk);
+    ys = evalpoly(3, (double *)g, tk);
+    zs = evalpoly(3, (double *)h, tk);
+    tk = (zs*yp - ys*zp) * (zs*yp - ys*zp);
+    tk = tk + (xs*zp - zs*xp) * (xs*zp - zs*xp);
+    tk = tk + (ys*xp - xs*yp) * (ys*xp - xs*yp);
+    rhok[k] = sqrt(tk) / eval;
+  }             
+  free(t);
+  free(X0); free(X1); free(X2); free(X3); 
+  free(Y0); free(Y1); free(Y2); free(Y3); 
+  free(Z0); free(Z1); free(Z2); free(Z3); 
+} // scn_curvatures3d()
 
 // =================================================
 // APPROXIMATION D'UNE COURBE DISCRETE
@@ -1101,14 +1194,16 @@ void scn_approxcurve1(int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_
 #define F_NAME "scn_approxcurve1"
 {
   int32_t i, j, continuer;
-  double *x = (double *)calloc(1,N * sizeof(double));
-  double *y = (double *)calloc(1,N * sizeof(double));
-  int32_t *W = (int32_t *)calloc(1,N * sizeof(int32_t));
+  double *x = (double *)calloc(1,N * sizeof(double)); 
+  double *y = (double *)calloc(1,N * sizeof(double)); 
+  int32_t *W = (int32_t *)calloc(1,N * sizeof(int32_t)); 
   double delta; 
   int32_t arg;
   int32_t nctrl;
   int32_t niter = 0;
   
+  assert(x != NULL); assert(y != NULL); assert(W != NULL);
+
   C0[0] = (double)Y[0];
   C1[0] = ((double)Y[N-1] - (double)Y[0]) / (double)N;
   C2[0] = C3[0] = 0.0;
@@ -1211,15 +1306,18 @@ void scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t
 #define F_NAME "scn_approxcurve"
 {
   int32_t i, j, continuer;
-  double *t = (double *)calloc(1,N * sizeof(double));
-  double *x = (double *)calloc(1,N * sizeof(double));
-  double *y = (double *)calloc(1,N * sizeof(double));
-  int32_t *V = (int32_t *)calloc(1,N * sizeof(int32_t));
-  int32_t *W = (int32_t *)calloc(1,N * sizeof(int32_t));
+  double *t, *x, *y;
+  int32_t *V, *W;
   double delta; 
   int32_t arg;
   int32_t nctrl;
   int32_t niter = 0;
+
+  t = (double *)calloc(1,N * sizeof(double)); assert(t != NULL);
+  x = (double *)calloc(1,N * sizeof(double)); assert(x != NULL);
+  y = (double *)calloc(1,N * sizeof(double)); assert(y != NULL);
+  V = (int32_t *)calloc(1,N * sizeof(int32_t)); assert(V != NULL);
+  W = (int32_t *)calloc(1,N * sizeof(int32_t)); assert(W != NULL);
 
   if ((X[0] == X[N-1]) && (Y[0] == Y[N-1]))
   {
@@ -1378,16 +1476,19 @@ void scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double del
 #define F_NAME "scn_approxcurve3d"
 {
   int32_t i, j, continuer;
-  double *t = (double *)calloc(1,N * sizeof(double));
-  double *x = (double *)calloc(1,N * sizeof(double));
-  double *y = (double *)calloc(1,N * sizeof(double));
-  int32_t *U = (int32_t *)calloc(1,N * sizeof(int32_t));
-  int32_t *V = (int32_t *)calloc(1,N * sizeof(int32_t));
-  int32_t *W = (int32_t *)calloc(1,N * sizeof(int32_t));
+  double *t, *x, *y;
+  int32_t *U, *V, *W;
   double delta; 
   int32_t arg;
   int32_t nctrl;
   int32_t niter = 0;
+
+  t = (double *)calloc(1,N * sizeof(double)); assert(t != NULL);
+  x = (double *)calloc(1,N * sizeof(double)); assert(x != NULL);
+  y = (double *)calloc(1,N * sizeof(double)); assert(y != NULL);
+  U = (int32_t *)calloc(1,N * sizeof(int32_t)); assert(U != NULL);
+  V = (int32_t *)calloc(1,N * sizeof(int32_t)); assert(V != NULL);
+  W = (int32_t *)calloc(1,N * sizeof(int32_t)); assert(W != NULL);
 
   if ((X[0] == X[N-1]) && (Y[0] == Y[N-1]) && (Z[0] == Z[N-1]))
   {

@@ -65,6 +65,7 @@ x3 y3 z3<br>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcsplines.h>
@@ -75,7 +76,7 @@ int main(int argc, char **argv)
 {
   int32_t j, nsamples, npoints;
   FILE *fd = NULL;
-  double *x, *y, x1, y1;
+  double *x, *y, *z, x1, y1, z1;
   double *sk, *rhok;
   char type;
 
@@ -92,6 +93,11 @@ int main(int argc, char **argv)
     exit(1);
   }
 
+  nsamples = atoi(argv[2])+1;
+  
+  sk = (double *)calloc(1,nsamples*sizeof(double)); assert(sk != NULL);
+  rhok = (double *)calloc(1,nsamples*sizeof(double)); assert(rhok != NULL);
+
   fscanf(fd, "%c", &type);
   if ((type != 's') && (type != 'S'))
   {
@@ -102,19 +108,14 @@ int main(int argc, char **argv)
   fscanf(fd, "%d", &npoints);
   if (type == 's')
   {
-    x = (double *)calloc(1,npoints*sizeof(double));
-    y = (double *)calloc(1,npoints*sizeof(double));
+    x = (double *)calloc(1,npoints*sizeof(double)); assert(x != NULL);
+    y = (double *)calloc(1,npoints*sizeof(double)); assert(y != NULL);
     for (j = 0; j < npoints; j++)
     {
       fscanf(fd, "%lf%lf", &x1, &y1);
       x[j] = x1; y[j] = y1;
     }
     fclose(fd);
-
-    nsamples = atoi(argv[2])+1;
-
-    sk = (double *)calloc(1,nsamples*sizeof(double));
-    rhok = (double *)calloc(1,nsamples*sizeof(double));
 
     scn_curvatures(x, y, npoints, nsamples, sk, rhok);
 
@@ -129,13 +130,36 @@ int main(int argc, char **argv)
       fprintf(fd, "%lf %lf\n", sk[j], rhok[j]);
     fclose(fd);
 
-    free(x); free(y); free(sk); free(rhok);
+    free(x); free(y);
   }
-  else
+  else // 3D
   {
-    fprintf(stderr, "usage: %s : 3D not yet implemented \n", argv[0]);
-    exit(1);
+    x = (double *)calloc(1,npoints*sizeof(double)); assert(x != NULL);
+    y = (double *)calloc(1,npoints*sizeof(double)); assert(y != NULL);
+    z = (double *)calloc(1,npoints*sizeof(double)); assert(z != NULL);
+    for (j = 0; j < npoints; j++)
+    {
+      fscanf(fd, "%lf%lf%lf", &x1, &y1, &z1);
+      x[j] = x1; y[j] = y1; z[j] = z1;
+    }
+    fclose(fd);
+
+    scn_curvatures3d(x, y, z, npoints, nsamples, sk, rhok);
+
+    fd = fopen(argv[argc-1],"w");
+    if (!fd)
+    {
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc-1]);
+      exit(1);
+    }
+//    fprintf(fd, "%d\n", nsamples-1);
+    for (j = 1; j < nsamples; j++)
+      fprintf(fd, "%lf %lf\n", sk[j], rhok[j]);
+    fclose(fd);
+
+    free(x); free(y); free(z); 
   }
+  free(sk); free(rhok);
   return 0;
 } /* main */
 
