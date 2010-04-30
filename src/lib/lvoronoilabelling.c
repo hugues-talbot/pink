@@ -46,6 +46,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdlib.h>
 #include <assert.h>
 #include <limits.h>
+#include <math.h>
 #include "mccodimage.h"
 #include "mcimage.h"
 #include "lvoronoilabelling.h"
@@ -483,6 +484,7 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
 {
   struct xvimage *tmp;
   struct xvimage *dis;
+  struct xvimage *tmp2;
   struct xvimage *dx;
   struct xvimage *dy;
   struct xvimage *dz;
@@ -492,6 +494,7 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
   uint8_t *R = UCHARDATA(res);
   int32_t *X, *Y, *Z;
   double mx, my, mz, gamma2 = gamma*gamma;
+  float max;
 
   if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
   {
@@ -507,6 +510,7 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
 
   tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(tmp != NULL);
   dis = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(dis != NULL);
+  //tmp2 = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT); assert(tmp2 != NULL);
 
   if (ds == 1)
   {
@@ -556,7 +560,39 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
 	if ((dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y) > gamma2) &&
 	    (dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))))
 	  medax = 1;
+      }	 
+      
+      /*max=0.0;
+      if ((i > 0) && F[p-1])
+      {
+	ftpe_x = X[p-1]; ftpe_y = Y[p];
+	mx = i - 0.5; my = j;
+	if (max <= dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y))
+	  max=dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y);
       }	  
+      if ((i < rs-1) && F[p+1])
+      {
+	ftpe_x = X[p+1]; ftpe_y = Y[p];
+	mx = i + 0.5; my = j;
+	if (max <= dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y))
+	  max=dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y);
+      }	  
+      if ((j < cs-1) && F[p+rs])
+      {
+	ftpe_x = X[p]; ftpe_y = Y[p+rs];
+	mx = i; my = j + 0.5;
+	if (max <= dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y))
+	  max=dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y);
+      }	  
+      if ((j > 0) && F[p-rs])
+      {
+	ftpe_x = X[p]; ftpe_y = Y[p-rs];
+	mx = i; my = j - 0.5;
+	if (max <= dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y))
+	  max=dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y);
+      }
+ 
+      FLOATDATA(tmp2)[p] = sqrt(max);*/
       if (medax) R[p] = NDG_MAX; else R[p] = 0;
     }
     else R[p] = 0;
@@ -565,6 +601,9 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
     freeimage(dis);
     freeimage(dx);
     freeimage(dy);
+
+    //writeimage(tmp2, "debug_Hesselink.pgm");
+    //freeimage(tmp2);
   }
   else
   {
