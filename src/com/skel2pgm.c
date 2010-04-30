@@ -36,10 +36,12 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief generation of a binary image from a curvilinear skeleton
 
-<B>Usage:</B> skel2pgm in.skel out.pgm
+<B>Usage:</B> skel2pgm in.skel [id] out.pgm
 
 <B>Description:</B>
 Generation of a binary image from a curvilinear skeleton.
+
+If the optional argument \b id is given, then only the skeleton element having this index is considered.
 
 <B>Types supported:</B> 2Dskel, 3Dskel
 
@@ -65,10 +67,11 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   skel * S;
+  int32_t id;
 
-  if (argc != 3)
+  if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s filein.skel fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.skel [id] fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -79,11 +82,13 @@ int main(int argc, char **argv)
     exit(1);
   }
 
+  if (argc == 4) id = atoi(argv[2]); else id = -1;
+
 #ifdef DEBUG
   printskel(S);
 #endif
 
-  if (! (image = lskel2image(S)))
+  if (! (image = lskel2image(S, id)))
   {
     fprintf(stderr, "%s: function lskel2image failed\n", argv[0]);
     exit(1);

@@ -1415,8 +1415,10 @@ skel * limage2skel2(struct xvimage *image, struct xvimage *morejunctions, int32_
 } /* limage2skel2() */
 
 /* ====================================================================== */
-struct xvimage * lskel2image(skel *S)
+struct xvimage * lskel2image(skel *S, int32_t id)
 /* ====================================================================== */
+// if id == -1 then output all skeleton elements. 
+// otherwise output element id.
 {
 #undef F_NAME
 #define F_NAME "lskel2image"
@@ -1438,31 +1440,37 @@ struct xvimage * lskel2image(skel *S)
   F = UCHARDATA(image);      /* l'image de depart */
   memset(F, 0, N);
 
-  for (i = S->e_curv; i < S->e_junc; i++)
+  if (id == -1)
   {
-    for (p = S->tskel[i].pts; p != NULL; p = p->next) 
-      F[p->val] = VAL_JUNC;
-  }
-  for (i = S->e_end; i < S->e_curv; i++)
-  {
-    for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+    for (i = S->e_curv; i < S->e_junc; i++)
     {
-      if (S->tskel[i].tag)
+      for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+	F[p->val] = VAL_JUNC;
+    }
+    for (i = S->e_end; i < S->e_curv; i++)
+    {
+      for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+      {
+	if (S->tskel[i].tag)
+	  F[p->val] = VAL_ISOL;
+	else
+	  F[p->val] = VAL_CURV;
+      }
+    }
+    for (i = S->e_isol; i < S->e_end; i++)
+    {
+      for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+	F[p->val] = VAL_END;
+    }
+    for (i = 0; i < S->e_isol; i++)
+    {
+      for (p = S->tskel[i].pts; p != NULL; p = p->next) 
 	F[p->val] = VAL_ISOL;
-      else
-	F[p->val] = VAL_CURV;
     }
   }
-  for (i = S->e_isol; i < S->e_end; i++)
-  {
-    for (p = S->tskel[i].pts; p != NULL; p = p->next) 
-      F[p->val] = VAL_END;
-  }
-  for (i = 0; i < S->e_isol; i++)
-  {
-    for (p = S->tskel[i].pts; p != NULL; p = p->next) 
-      F[p->val] = VAL_ISOL;
-  }
+  else
+    for (p = S->tskel[id].pts; p != NULL; p = p->next)
+      F[p->val] = NDG_MAX;
 
   return image;
 } /* lskel2image() */
@@ -2664,7 +2672,7 @@ int32_t lskelfilter2b(skel *S, double delta1, double delta2)
 {
 #undef F_NAME
 #define F_NAME "lskelfilter2b"
-  int32_t ret, e, i, j, m, A0, EE[2], E, Ep;
+  int32_t ret, e, i, j, m, A0, A0sav, EE[2], E, Ep;
   int32_t nadj, A[26], maxlen;
   SKC_adj_pcell p;
   double Vx[26], Vy[26], Vz[26], Cij, angle, minangle, normprod;
@@ -2708,8 +2716,10 @@ int32_t lskelfilter2b(skel *S, double delta1, double delta2)
 #endif	  
     
 //  For E in {E0, E1} do
+    A0sav = A0;
     for (e = 0; e < 2; e++)
     {
+      A0 = A0sav;
       E = EE[e];
 #ifdef DEBUG_lskelfilter2b
       printf("tracking from E=%d\n", E);
@@ -2868,16 +2878,16 @@ struct xvimage * lskelfilter3(skel *S, double delta1, double delta2, double maxb
   SKC_pt_pcell pp;
   double VVx, VVy, VVz, *X, *Y, *Z;
   struct xvimage * result;
-  uint8_t *R;
+  int32_t *R;
 
 #ifdef DEBUG_lskelfilter3
   printf("%s: begin e_isol=%d e_end=%d e_curv=%d e_junc=%d \n", F_NAME, S->e_isol, S->e_end, S->e_curv, S->e_junc);
 #endif
   
-  result = allocimage(NULL, S->rs, S->cs, S->ds, VFF_TYP_1_BYTE); 
+  result = allocimage(NULL, S->rs, S->cs, S->ds, VFF_TYP_4_BYTE); 
   assert(result != NULL);
   razimage(result);
-  R = UCHARDATA(result);
+  R = SLONGDATA(result);
   
   nmaxpoints = delta2 * 4;
   listpoints = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(listpoints != NULL);
@@ -2916,7 +2926,7 @@ struct xvimage * lskelfilter3(skel *S, double delta1, double delta2, double maxb
       if (!SK_DELETED(i) && (SK_MARKED1(i) || SK_MARKED2(i)))
       {
 	for (pp = S->tskel[i].pts; pp != NULL; pp = pp->next)
-	  {  R[pp->val] = NDG_MAX; n++; }       // output
+        {  R[pp->val] = nfiber; n++; }       // output
 	if (IS_CURV(i)) skeldelete(S, i); // delete arcs only
       }
 

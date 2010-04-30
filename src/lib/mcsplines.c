@@ -42,6 +42,7 @@ Michel Couprie, Sébastien Couprie, juin 2003
 
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -155,6 +156,85 @@ void scn_solvespline(double *x, double *y, int32_t n,
   free(A); 
   free(B);
 } // scn_solvespline()
+
+/* ==================================== */
+void scn_solvespline_noalloc(double *x, double *y, int32_t n, 
+			     double *Z0, double *Z1, double *Z2, double *Z3,
+			     double *M, double *P, double *z, double *A, double*B)
+/* ==================================== */
+/*! \fn double * scn_solvespline_noalloc(double *x, double *y, int32_t n, double *A, double *B)
+    \param x (entrée) : tableau des abcisses
+    \param y (entrée) : tableau des ordonnées
+    \param n (entrée) : nombre de points
+    \param Z0 (sortie) : tableau des coef. spline de degré 0 (taille n-1) 
+    \param Z1 (sortie) : tableau des coef. spline de degré 1 (taille n-1) 
+    \param Z2 (sortie) : tableau des coef. spline de degré 2 (taille n-1) 
+    \param Z3 (sortie) : tableau des coef. spline de degré 3 (taille n-1) 
+    \param M (sortie) : tableau provisoire de taille (n-2)*(n-2)
+    \param P (sortie) : tableau provisoire de taille (n-2)
+    \param z (sortie) : tableau provisoire de taille (n-2)
+    \param A (sortie) : tableau provisoire de taille (n-1)
+    \param B (sortie) : tableau provisoire de taille (n-1)
+    \brief calcule la spline cubique naturelle passant par les n points de contrôle donnés par x, y
+    \warning la mémoire pour stocker les résultats Z0, Z1, Z2, Z3 doit avoir été allouée
+*/
+#undef F_NAME
+#define F_NAME "scn_solvespline_noalloc"
+{
+  int32_t i, j;
+
+  memset(M, 0, (n-2) * (n-2) * sizeof(double));
+  memset(P, 0, (n-2) * sizeof(double));
+  memset(z, 0, (n-2) * sizeof(double));
+  memset(A, 0, (n-1) * sizeof(double));
+  memset(B, 0, (n-1) * sizeof(double));
+
+  for (i = 0; i < n-2; i++)
+    for (j = 0; j < n-2; j++)
+    {
+      if (i == j)
+        M[i*(n-2) + j] = (x[i+2] - x[i]) / 3;
+      else if (j == (i+1))
+        M[i*(n-2) + j] = (x[j+1] - x[j]) / 6;
+      else if (j == (i-1))
+        M[i*(n-2) + j] = (x[i+1] - x[i]) / 6;
+      else
+        M[i*(n-2) + j] = 0.0;
+    }
+
+  for (j = 0; j < n-2; j++)
+    P[j] = ((y[j+2] - y[j+1]) / (x[j+2] - x[j+1])) - 
+           ((y[j+1] - y[j]) / (x[j+1] - x[j]));
+  if (!lin_solvetridiag(M, P, z, n-2))
+  {
+    printf("%s: lin_solvetridiag failed\n", F_NAME);
+#ifdef DEBUG    
+#endif
+    exit(0);
+  }
+
+  A[0] = y[0];
+  B[0] = ((y[1] - y[0]) / (x[1] - x[0])) - (((x[1] - x[0]) * z[0]) / 6.0) ;
+  for (j = 1; j < n-1; j++)
+  {
+    A[j] = y[j] - ((z[j-1] * (x[j+1]-x[j]) * (x[j+1]-x[j])) / 6.0);
+    B[j] = ((y[j+1] - y[j]) / (x[j+1] - x[j])) - 
+           (((x[j+1] - x[j]) * (z[j] - z[j-1])) / 6.0) ;
+  }
+
+  Z3[0] = z[0] / (6 * (x[1] - x[0]));
+  Z2[0] = (-z[0]*x[0]) / (2 * (x[1] - x[0]));
+  Z1[0] = ((z[0]*x[0]*x[0]) / (2 * (x[1] - x[0]))) + B[0];
+  Z0[0] = ((-z[0]*x[0]*x[0]*x[0]) / (6 * (x[1] - x[0]))) - B[0]*x[0] + A[0];
+  for (j = 1; j < n-1; j++)
+  {
+    Z3[j] = (z[j] - z[j-1]) / (6 * (x[j+1] - x[j]));
+    Z2[j] = (-z[j]*x[j] + z[j-1]*x[j+1]) / (2 * (x[j+1] - x[j]));
+    Z1[j] = ((z[j]*x[j]*x[j] - z[j-1]*x[j+1]*x[j+1]) / (2 * (x[j+1] - x[j]))) + B[j];
+    Z0[j] = ((-z[j]*x[j]*x[j]*x[j] + z[j-1]*x[j+1]*x[j+1]*x[j+1]) / 
+             (6 * (x[j+1] - x[j]))) - B[j]*x[j] + A[j];
+  }  
+} // scn_solvespline_noalloc()
 
 /* ==================================== */
 void scn_solvespline1(double *y, int32_t n, 

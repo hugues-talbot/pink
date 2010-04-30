@@ -38,6 +38,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
@@ -59,7 +60,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #define CONTRAINTE2   3
 #define PARANO
 
-#define DEBUG_lskelend3d
+//#define DEBUG_lskelendcurvlab3d
+//#define DEBUG_lskelend3d
 //#define DEBUG1
 //#define DEBUG
 //#define VERBOSE
@@ -80,6 +82,57 @@ static int32_t typedir3d(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t 
   y = voisin6(x, OUEST, rs, ps, N); if ((y!=-1) && (F[y]==0)) o = 1;
   y = voisin6(x, DEVANT, rs, ps, N); if ((y!=-1) && (F[y]==0)) a = 1;
   y = voisin6(x, DERRIERE, rs, ps, N); if ((y!=-1) && (F[y]==0)) d = 1;
+  sum = n + s + e + o + a + d;
+  if (sum == 0) return 27 - 0;
+  else if (sum == 1) 
+  {
+    if (n)      return 27 - 1;
+    else if (s) return 27 - 2;
+    else if (e) return 27 - 3;
+    else if (o) return 27 - 4;
+    else if (a) return 27 - 5;
+    else /* if (d) */ return 27 - 6;
+  }
+  else if (sum == 2) 
+  {
+    if (n && e)      return 27 - 7;
+    else if (s && o) return 27 - 8;
+    else if (e && a) return 27 - 9;
+    else if (o && d) return 27 - 10;
+    else if (a && n) return 27 - 11;
+    else if (d && s) return 27 - 12;
+    else if (n && o) return 27 - 13;
+    else if (s && e) return 27 - 14;
+    else if (e && d) return 27 - 15;
+    else if (o && a) return 27 - 16;
+    else if (a && s) return 27 - 17;
+    else /* if (d && n) */ return 27 - 18;
+  }
+  else //if (sum == 3) 
+  {
+    if (n && e && a) return 27 - 19;
+    else if (s && o && d) return 27 - 20;
+    else if (n && e && d) return 27 - 21;
+    else if (s && o && a) return 27 - 22;
+    else if (n && o && a) return 27 - 23;
+    else if (s && e && d) return 27 - 24;
+    else if (n && o && d) return 27 - 25;
+    else /* if (s && e && a) */ return 27 - 26;
+  }
+} /* typedir3d() */
+
+/* ==================================== */
+static int32_t typedir3dlab(int32_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+/* ==================================== */
+{
+  int32_t y, n, s, e, o, a, d, sum;
+  n = s = e = o = a = d = 0;
+  y = voisin6(x, NORD, rs, ps, N); if ((y!=-1) && (F[y]!=F[x])) n = 1;
+  y = voisin6(x, SUD, rs, ps, N); if ((y!=-1) && (F[y]!=F[x])) s = 1;
+  y = voisin6(x, EST, rs, ps, N); if ((y!=-1) && (F[y]!=F[x])) e = 1;
+  y = voisin6(x, OUEST, rs, ps, N); if ((y!=-1) && (F[y]!=F[x])) o = 1;
+  y = voisin6(x, DEVANT, rs, ps, N); if ((y!=-1) && (F[y]!=F[x])) a = 1;
+  y = voisin6(x, DERRIERE, rs, ps, N); if ((y!=-1) && (F[y]!=F[x])) d = 1;
   sum = n + s + e + o + a + d;
   if (sum == 0) return 27 - 0;
   else if (sum == 1) 
@@ -167,6 +220,33 @@ static int32_t testabaisse26bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, i
 #endif
   return modifie;
 } /* testabaisse26bin() */
+
+/* ==================================== */
+static int32_t testabaisse6lab(int32_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+/* ==================================== */
+{
+  int32_t modifie = 0;
+  if (simple6lab(F, x, rs, ps, N)) { modifie = 1; F[x] = 0; }
+  return modifie;
+} /* testabaisse6lab() */
+
+/* ==================================== */
+static int32_t testabaisse18lab(int32_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+/* ==================================== */
+{
+  int32_t modifie = 0;
+  if (simple18lab(F, x, rs, ps, N)) { modifie = 1; F[x] = 0; }
+  return modifie;
+} /* testabaisse18lab() */
+
+/* ==================================== */
+static int32_t testabaisse26lab(int32_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+/* ==================================== */
+{
+  int32_t modifie = 0;
+  if (simple26lab(F, x, rs, ps, N)) { modifie = 1; F[x] = 0; }
+  return modifie;
+} /* testabaisse26lab() */
 
 /* ==================================== */
 int32_t lskelubp(struct xvimage *image, 
@@ -2884,3 +2964,152 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
   RbtTermine(RBT);
   return(1);
 } /* lskelend3d() */
+
+/* ==================================== */
+int32_t lskelendcurvlab3d(struct xvimage *image, 
+			  int32_t connex, 
+			  int32_t niseuil)
+/* ==================================== */
+/* 
+Squelette curviligne 3D sur une image de labels (chaque label est traité comme une image binaire).
+
+Algo par passes directionnelles.
+*/
+#undef F_NAME
+#define F_NAME "lskelendcurvlab3d"
+{ 
+  int32_t x;                       /* index muet de pixel */
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  int32_t *F = SLONGDATA(image);      /* l'image de depart */
+  Rbt * RBT;
+  int32_t taillemaxrbt;
+
+#ifdef DEBUG_lskelendcurvlab3d
+ printf("%s: begin niseuil=%d\n", F_NAME, niseuil);
+#endif
+
+  assert(datatype(image) == VFF_TYP_4_BYTE);
+
+  IndicsInit(N);
+  init_topo3d();
+
+  taillemaxrbt = 2 * rs +  2 * cs + 2 * ds;
+  /* cette taille est indicative, le RBT est realloue en cas de depassement */
+  RBT = CreeRbtVide(taillemaxrbt); assert(RBT != NULL);
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  /* ========================================================= */
+  /*   INITIALISATION DU RBT */
+  /* ========================================================= */
+
+  if (connex == 6)
+  {
+    for (x = 0; x < N; x++)
+      if (F[x] && simple6lab(F, x, rs, ps, N))
+        RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
+  }
+  else if (connex == 18)
+  {
+    for (x = 0; x < N; x++)
+      if (F[x] && simple18lab(F, x, rs, ps, N))
+        RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
+  }
+  else if (connex == 26)
+  {
+    for (x = 0; x < N; x++)
+      if (F[x] && simple26lab(F, x, rs, ps, N))
+        RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
+    return(0);
+  }
+
+  /* ================================================ */
+  /*                  DEBUT SATURATION                */
+  /* ================================================ */
+
+  if (connex == 6)
+  {
+    int32_t nbdel = 1; 
+    int32_t nbiter = 0; 
+    while (nbdel)
+    {
+      nbdel = 0; 
+      nbiter++;
+      while (!RbtVide(RBT))
+      {
+	x = RbtPopMin(RBT);
+	if (((nbiter < niseuil) || (nbvoislab6(F, x, rs, ps, N) > 1)) && testabaisse6lab(F, x, rs, ps, N)) nbdel++;
+      } /* while (!RbtVide(RBT)) */
+      for (x = 0; x < N; x++)
+        if (F[x] && simple6lab(F, x, rs, ps, N))
+          RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
+#ifdef VERBOSE
+      printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
+#endif
+    } /* while (!RbtVide(RBT)) */
+  } /* if (connex == 6) */
+  else if (connex == 18)
+  {           
+    int32_t nbdel = 1; 
+    int32_t nbiter = 0; 
+    while (nbdel)
+    {
+      nbdel = 0; 
+      nbiter++;
+      while (!RbtVide(RBT))
+      {
+	x = RbtPopMin(RBT);
+	if (((nbiter < niseuil) || (nbvoislab18(F, x, rs, ps, N) > 1)) && testabaisse18lab(F, x, rs, ps, N)) nbdel++;
+      } /* while (!RbtVide(RBT)) */
+      for (x = 0; x < N; x++)
+        if (F[x] && simple18lab(F, x, rs, ps, N))
+          RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
+#ifdef VERBOSE
+      printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
+#endif
+    } /* while (!RbtVide(RBT)) */
+  } /* if (connex == 18) */
+  else if (connex == 26)
+  {           
+    int32_t nbdel = 1; 
+    int32_t nbiter = 0; 
+    while (nbdel)
+    {
+      nbdel = 0; 
+      nbiter++;
+      while (!RbtVide(RBT))
+      {
+	x = RbtPopMin(RBT);
+	if (((nbiter < niseuil) || (nbvoislab26(F, x, rs, ps, N) > 1)) && testabaisse26lab(F, x, rs, ps, N)) nbdel++;
+      } /* while (!RbtVide(RBT)) */
+      for (x = 0; x < N; x++)
+        if (F[x] && simple26lab(F, x, rs, ps, N))
+          RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
+#ifdef VERBOSE
+      printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
+#endif
+#ifdef DEBUG_lskelendcurvlab3d
+      printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
+#endif
+    } /* while (!RbtVide(RBT)) */
+  } /* if (connex == 26) */
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  termine_topo3d();
+  RbtTermine(RBT);
+  return(1);
+} /* lskelendcurvlab3d() */

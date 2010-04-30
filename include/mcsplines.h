@@ -38,6 +38,9 @@ extern "C" {
 
 extern void scn_solvespline(double *x, double *y, int32_t n, 
 			    double *Z0, double *Z1, double *Z2, double *Z3);
+extern void scn_solvespline_noalloc(double *x, double *y, int32_t n, 
+		        double *Z0, double *Z1, double *Z2, double *Z3,
+			double *M, double *P, double *z, double *A, double*B);
 extern void scn_solvespline1(double *y, int32_t n, 
 			     double *Z0, double *Z1, double *Z2, double *Z3);
 extern void scn_solveclosedspline(double *x, double *y, int32_t n, 

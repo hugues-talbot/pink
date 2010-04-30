@@ -135,6 +135,24 @@ extern int32_t simple26h(             /* pour un objet en 26-connexite */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N);                      /* taille image */
+extern int32_t simple6lab(                  /* pour un objet en 26-connexite */
+  int32_t *img,          /* pointeur base image */
+  int32_t p,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N);                      /* taille image */
+extern int32_t simple18lab(                  /* pour un objet en 26-connexite */
+  int32_t *img,          /* pointeur base image */
+  int32_t p,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N);                      /* taille image */
+extern int32_t simple26lab(                  /* pour un objet en 26-connexite */
+  int32_t *img,          /* pointeur base image */
+  int32_t p,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N);                      /* taille image */
 extern int32_t tbar6h(               /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
@@ -421,6 +439,42 @@ extern int32_t nbvoiso26(
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N);                      /* taille image */
+extern int32_t nbvoislab6(
+  int32_t *B,            /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N);                       /* taille image */
+extern int32_t nbvoislab18(
+  int32_t *B,            /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N);                       /* taille image */
+extern int32_t nbvoislab26(
+  int32_t *B,            /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N);                       /* taille image */
+extern int32_t nbvoislabc6(
+  int32_t *B,            /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N);                       /* taille image */
+extern int32_t nbvoislabc18(
+  int32_t *B,            /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N);                       /* taille image */
+extern int32_t nbvoislabc26(
+  int32_t *B,            /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N);                       /* taille image */
 extern int32_t curve6(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t curve18(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t curve26(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);

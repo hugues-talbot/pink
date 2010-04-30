@@ -32,22 +32,20 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file watershedMeyer2.c
+/*! \file watershedMeyer3.c
 
-\brief watershed transformation (Meyer's algorithm) with labelled markers  
+\brief watershed transformation (Meyer's algorithm) with labelled markers and without separation lines
 
-<B>Usage:</B> watershedMeyer2 in mark <roi|null> connex out
+<B>Usage:</B> watershedMeyer3 in mark <roi|null> connex out
 
 <B>Description:</B>
-Performs the watershed transformation on the image <B>in</B>, taking the
+Performs the watershed transformation without separation lines, on the image <B>in</B>, taking the
 set of markers in <B>mark</B>, in the form of a label image where all the pixels
 sharing the same label (even if not connected) belong to the same marker.
 If this parameter is present, <B>roi</B>
 indicates the region of interest on which the operation is performed.
 The parameter <B>connex</B> gives the adjacency relation (4,8 in 2D; 6,18,26 in 3D) 
 for the makers.
-
-The result is a label image.
 
 <B>Types supported:</B> byte 2d, byte 3d
 
@@ -105,17 +103,17 @@ int main(int argc, char **argv)
 
   if ((connex == 4) || (connex == 8))
   {
-    if (! llpemeyer2(image, marqueurs, masque, connex))
+    if (! llpemeyer3(image, marqueurs, masque, connex))
     {
-      fprintf(stderr, "%s: llpemeyer2 failed\n", argv[0]);
+      fprintf(stderr, "%s: llpemeyer3 failed\n", argv[0]);
       exit(1);
     }
   }
   else if ((connex == 6) || (connex == 18) || (connex == 26))
   {
-    if (! llpemeyer3d2(image, marqueurs, masque, connex))
+    if (! llpemeyer3d3(image, marqueurs, masque, connex))
     {
-      fprintf(stderr, "%s: llpemeyer3d2 failed\n", argv[0]);
+      fprintf(stderr, "%s: llpemeyer3d3 failed\n", argv[0]);
       exit(1);
     }
   }
@@ -124,6 +122,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: bad connexity: %d\n", argv[0], connex);
     exit(1);
   }
+
 
   writeimage(marqueurs, argv[argc - 1]);
   freeimage(image);

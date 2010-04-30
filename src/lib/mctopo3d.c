@@ -599,6 +599,208 @@ int32_t nbvoiso26(
 } /* nbvoiso26() */
 
 /* ========================================== */
+int32_t nbvoislab6(
+  int32_t *B,            /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N)                       /* taille image */
+/* ========================================== */
+/*
+  retourne le nombre de 6-voisins du point central de même label
+*/
+{
+  int32_t lab = B[i];
+  int32_t nbvois = 0;
+  if ((i%rs!=rs-1) && (B[i+1]==lab))    nbvois++;
+  if (((i%ps)>=rs) && (B[i-rs]==lab))   nbvois++;
+  if ((i%rs!=0) && (B[i-1]==lab))       nbvois++;
+  if (((i%ps)<ps-rs) && (B[i+rs]==lab)) nbvois++;
+  if ((i>=ps) && (B[i-ps]==lab))        nbvois++;
+  if ((i<N-ps) && (B[i+ps]==lab))      nbvois++;
+  return nbvois;
+} /* nbvoislab6() */
+
+/* ========================================== */
+int32_t nbvoislab18(
+  int32_t *B,            /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N)                       /* taille image */
+/* ========================================== */
+/*
+  retourne le nombre de 18-voisins du point central de même label
+*/
+{
+  int32_t lab = B[i];
+  int32_t nbvois = 0;
+  if (((i<N-ps)&&(i%rs!=rs-1)) && (B[ps+i+1]==lab)) nbvois++;
+  if (((i<N-ps)&&(i%ps>=rs)) && (B[ps+i-rs]==lab)) nbvois++;
+  if (((i<N-ps)&&(i%rs!=0)) && (B[ps+i-1]==lab)) nbvois++;
+  if (((i<N-ps)&&(i%ps<ps-rs)) && (B[ps+i+rs]==lab)) nbvois++;
+  if (((i<N-ps)) && (B[ps+i]==lab)) nbvois++;
+  if (((i%rs!=rs-1)) && (B[i+1]==lab)) nbvois++;
+  if (((i%rs!=rs-1)&&(i%ps>=rs)) && (B[i+1-rs]==lab)) nbvois++;
+  if (((i%ps>=rs)) && (B[i-rs]==lab)) nbvois++;
+  if (((i%ps>=rs)&&(i%rs!=0)) && (B[i-rs-1]==lab)) nbvois++;
+  if (((i%rs!=0)) && (B[i-1]==lab)) nbvois++;
+  if (((i%rs!=0)&&(i%ps<ps-rs)) && (B[i-1+rs]==lab)) nbvois++;
+  if (((i%ps<ps-rs)) && (B[i+rs]==lab)) nbvois++;
+  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && (B[i+rs+1]==lab)) nbvois++;
+  if (((i>=ps)&&(i%rs!=rs-1)) && (B[-ps+i+1]==lab)) nbvois++;
+  if (((i>=ps)&&(i%ps>=rs)) && (B[-ps+i-rs]==lab)) nbvois++;
+  if (((i>=ps)&&(i%rs!=0)) && (B[-ps+i-1]==lab)) nbvois++;
+  if (((i>=ps)&&(i%ps<ps-rs)) && (B[-ps+i+rs]==lab)) nbvois++;
+  if (((i>=ps)) && (B[-ps+i]==lab)) nbvois++;
+  return nbvois;
+} /* nbvoislab18() */
+
+/* ========================================== */
+int32_t nbvoislab26(
+  int32_t *B,            /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N)                       /* taille image */
+/* ========================================== */
+/*
+  retourne le nombre de 26-voisins du point central de même label
+*/
+{
+  int32_t lab = B[i];
+  int32_t nbvois = 0;
+  if (((i<N-ps)&&(i%rs!=rs-1)) && (B[ps+i+1]==lab)) nbvois++;
+  if (((i<N-ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && (B[ps+i+1-rs]==lab)) nbvois++;
+  if (((i<N-ps)&&(i%ps>=rs)) && (B[ps+i-rs]==lab)) nbvois++;
+  if (((i<N-ps)&&(i%ps>=rs)&&(i%rs!=0)) && (B[ps+i-rs-1]==lab)) nbvois++;
+  if (((i<N-ps)&&(i%rs!=0)) && (B[ps+i-1]==lab)) nbvois++;
+  if (((i<N-ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && (B[ps+i-1+rs]==lab)) nbvois++;
+  if (((i<N-ps)&&(i%ps<ps-rs)) && (B[ps+i+rs]==lab)) nbvois++;
+  if (((i<N-ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && (B[ps+i+rs+1]==lab)) nbvois++;
+  if (((i<N-ps)) && (B[ps+i]==lab)) nbvois++;
+  if (((i%rs!=rs-1)) && (B[i+1]==lab)) nbvois++;
+  if (((i%rs!=rs-1)&&(i%ps>=rs)) && (B[i+1-rs]==lab)) nbvois++;
+  if (((i%ps>=rs)) && (B[i-rs]==lab)) nbvois++;
+  if (((i%ps>=rs)&&(i%rs!=0)) && (B[i-rs-1]==lab)) nbvois++;
+  if (((i%rs!=0)) && (B[i-1]==lab)) nbvois++;
+  if (((i%rs!=0)&&(i%ps<ps-rs)) && (B[i-1+rs]==lab)) nbvois++;
+  if (((i%ps<ps-rs)) && (B[i+rs]==lab)) nbvois++;
+  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && (B[i+rs+1]==lab)) nbvois++;
+  if (((i>=ps)&&(i%rs!=rs-1)) && (B[-ps+i+1]==lab)) nbvois++;
+  if (((i>=ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && (B[-ps+i+1-rs]==lab)) nbvois++;
+  if (((i>=ps)&&(i%ps>=rs)) && (B[-ps+i-rs]==lab)) nbvois++;
+  if (((i>=ps)&&(i%ps>=rs)&&(i%rs!=0)) && (B[-ps+i-rs-1]==lab)) nbvois++;
+  if (((i>=ps)&&(i%rs!=0)) && (B[-ps+i-1]==lab)) nbvois++;
+  if (((i>=ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && (B[-ps+i-1+rs]==lab)) nbvois++;
+  if (((i>=ps)&&(i%ps<ps-rs)) && (B[-ps+i+rs]==lab)) nbvois++;
+  if (((i>=ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && (B[-ps+i+rs+1]==lab)) nbvois++;
+  if (((i>=ps)) && (B[-ps+i]==lab)) nbvois++;
+  return nbvois;
+} /* nbvoislab26() */
+
+/* ========================================== */
+int32_t nbvoislabc6(
+  int32_t *B,            /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N)                       /* taille image */
+/* ========================================== */
+/*
+  retourne le nombre de 6-voisins du point central de label différent et non nul
+*/
+{
+  int32_t lab = B[i];
+  int32_t nbvois = 0;
+  if ((i%rs!=rs-1) && B[i+1] && (B[i+1]!=lab))    nbvois++;
+  if (((i%ps)>=rs) && B[i-rs] && (B[i-rs]!=lab))   nbvois++;
+  if ((i%rs!=0) && B[i-1] && (B[i-1]!=lab))       nbvois++;
+  if (((i%ps)<ps-rs) && B[i+rs] && (B[i+rs]!=lab)) nbvois++;
+  if ((i>=ps) && B[i-ps] && (B[i-ps]!=lab))        nbvois++;
+  if ((i<N-ps) && B[i+ps] && (B[i+ps]!=lab))      nbvois++;
+  return nbvois;
+} /* nbvoislabc6() */
+
+/* ========================================== */
+int32_t nbvoislabc18(
+  int32_t *B,            /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N)                       /* taille image */
+/* ========================================== */
+/*
+  retourne le nombre de 18-voisins du point central de label différent et non nul
+*/
+{
+  int32_t lab = B[i];
+  int32_t nbvois = 0;
+  if (((i<N-ps)&&(i%rs!=rs-1)) && B[ps+i+1] && (B[ps+i+1]!=lab)) nbvois++;
+  if (((i<N-ps)&&(i%ps>=rs)) && B[ps+i-rs] && (B[ps+i-rs]!=lab)) nbvois++;
+  if (((i<N-ps)&&(i%rs!=0)) && B[ps+i-1] && (B[ps+i-1]!=lab)) nbvois++;
+  if (((i<N-ps)&&(i%ps<ps-rs)) && B[ps+i+rs] && (B[ps+i+rs]!=lab)) nbvois++;
+  if (((i<N-ps)) && B[ps+i] && (B[ps+i]!=lab)) nbvois++;
+  if (((i%rs!=rs-1)) && B[i+1] && (B[i+1]!=lab)) nbvois++;
+  if (((i%rs!=rs-1)&&(i%ps>=rs)) && B[i+1-rs] && (B[i+1-rs]!=lab)) nbvois++;
+  if (((i%ps>=rs)) && B[i-rs] && (B[i-rs]!=lab)) nbvois++;
+  if (((i%ps>=rs)&&(i%rs!=0)) && B[i-rs-1] && (B[i-rs-1]!=lab)) nbvois++;
+  if (((i%rs!=0)) && B[i-1] && (B[i-1]!=lab)) nbvois++;
+  if (((i%rs!=0)&&(i%ps<ps-rs)) && B[i-1+rs] && (B[i-1+rs]!=lab)) nbvois++;
+  if (((i%ps<ps-rs)) && B[i+rs] && (B[i+rs]!=lab)) nbvois++;
+  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && B[i+rs+1] && (B[i+rs+1]!=lab)) nbvois++;
+  if (((i>=ps)&&(i%rs!=rs-1)) && B[-ps+i+1] && (B[-ps+i+1]!=lab)) nbvois++;
+  if (((i>=ps)&&(i%ps>=rs)) && B[-ps+i-rs] && (B[-ps+i-rs]!=lab)) nbvois++;
+  if (((i>=ps)&&(i%rs!=0)) && B[-ps+i-1] && (B[-ps+i-1]!=lab)) nbvois++;
+  if (((i>=ps)&&(i%ps<ps-rs)) && B[-ps+i+rs] && (B[-ps+i+rs]!=lab)) nbvois++;
+  if (((i>=ps)) && B[-ps+i] && (B[-ps+i]!=lab)) nbvois++;
+  return nbvois;
+} /* nbvoislabc18() */
+
+/* ========================================== */
+int32_t nbvoislabc26(
+  int32_t *B,            /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N)                       /* taille image */
+/* ========================================== */
+/*
+  retourne le nombre de 26-voisins du point central de label différent et non nul
+*/
+{
+  int32_t lab = B[i];
+  int32_t nbvois = 0;
+  if (((i<N-ps)&&(i%rs!=rs-1)) && B[ps+i+1] && (B[ps+i+1]!=lab)) nbvois++;
+  if (((i<N-ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && B[ps+i+1-rs] && (B[ps+i+1-rs]!=lab)) nbvois++;
+  if (((i<N-ps)&&(i%ps>=rs)) && B[ps+i-rs] && (B[ps+i-rs]!=lab)) nbvois++;
+  if (((i<N-ps)&&(i%ps>=rs)&&(i%rs!=0)) && B[ps+i-rs-1] && (B[ps+i-rs-1]!=lab)) nbvois++;
+  if (((i<N-ps)&&(i%rs!=0)) && B[ps+i-1] && (B[ps+i-1]!=lab)) nbvois++;
+  if (((i<N-ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && B[ps+i-1+rs] && (B[ps+i-1+rs]!=lab)) nbvois++;
+  if (((i<N-ps)&&(i%ps<ps-rs)) && B[ps+i+rs] && (B[ps+i+rs]!=lab)) nbvois++;
+  if (((i<N-ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && B[ps+i+rs+1] && (B[ps+i+rs+1]!=lab)) nbvois++;
+  if (((i<N-ps)) && B[ps+i] && (B[ps+i]!=lab)) nbvois++;
+  if (((i%rs!=rs-1)) && B[i+1] && (B[i+1]!=lab)) nbvois++;
+  if (((i%rs!=rs-1)&&(i%ps>=rs)) && B[i+1-rs] && (B[i+1-rs]!=lab)) nbvois++;
+  if (((i%ps>=rs)) && B[i-rs] && (B[i-rs]!=lab)) nbvois++;
+  if (((i%ps>=rs)&&(i%rs!=0)) && B[i-rs-1] && (B[i-rs-1]!=lab)) nbvois++;
+  if (((i%rs!=0)) && B[i-1] && (B[i-1]!=lab)) nbvois++;
+  if (((i%rs!=0)&&(i%ps<ps-rs)) && B[i-1+rs] && (B[i-1+rs]!=lab)) nbvois++;
+  if (((i%ps<ps-rs)) && B[i+rs] && (B[i+rs]!=lab)) nbvois++;
+  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && B[i+rs+1] && (B[i+rs+1]!=lab)) nbvois++;
+  if (((i>=ps)&&(i%rs!=rs-1)) && B[-ps+i+1] && (B[-ps+i+1]!=lab)) nbvois++;
+  if (((i>=ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && B[-ps+i+1-rs] && (B[-ps+i+1-rs]!=lab)) nbvois++;
+  if (((i>=ps)&&(i%ps>=rs)) && B[-ps+i-rs] && (B[-ps+i-rs]!=lab)) nbvois++;
+  if (((i>=ps)&&(i%ps>=rs)&&(i%rs!=0)) && B[-ps+i-rs-1] && (B[-ps+i-rs-1]!=lab)) nbvois++;
+  if (((i>=ps)&&(i%rs!=0)) && B[-ps+i-1] && (B[-ps+i-1]!=lab)) nbvois++;
+  if (((i>=ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && B[-ps+i-1+rs] && (B[-ps+i-1+rs]!=lab)) nbvois++;
+  if (((i>=ps)&&(i%ps<ps-rs)) && B[-ps+i+rs] && (B[-ps+i+rs]!=lab)) nbvois++;
+  if (((i>=ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && B[-ps+i+rs+1] && (B[-ps+i+rs+1]!=lab)) nbvois++;
+  if (((i>=ps)) && B[-ps+i] && (B[-ps+i]!=lab)) nbvois++;
+  return nbvois;
+} /* nbvoislabc26() */
+
+/* ========================================== */
 uint8_t T6(voxel * cube)
 /* ========================================== */
 {
@@ -637,7 +839,7 @@ static uint8_t simple(voxel * cube, voxel * cubec, uint8_t connex) __attribute__
 static uint8_t simple(voxel * cube, voxel * cubec, uint8_t connex)
 /* ========================================== */
 #undef F_NAME
-#define F_NAME ""
+#define F_NAME "simple"
 {
   switch (connex)
   {
@@ -799,6 +1001,58 @@ static void preparecubesh_l(
   for (i = 0; i < 27; i++) 
     if (cube_topo3d[i].val == 1) cubec_topo3d[i].val = 0; else cubec_topo3d[i].val = 1;
 } /* preparecubesh_l() */
+
+/* ==================================== */
+static void preparecubeslab(
+  int32_t *img,                    /* pointeur base image */
+  int32_t i,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N)                       /* taille image */
+/* ==================================== */
+/*
+  Transfere le voisinage de i pour l'image 3d img dans les 
+  structures cube_topo3d (vois. original) et cubec_topo3d (complementaire).
+  Les points pris en compte sont ceux qui ont le même label que i.
+  ATTENTION: i ne doit pas etre un point de bord (test a faire avant).
+*/
+{
+  int32_t lab = img[i];
+  /* plan "ARRIERE" (+ps) */
+  if (img[ps+i+1]==lab)    cube_topo3d[17].val = 1; else cube_topo3d[17].val = 0;
+  if (img[ps+i+1-rs]==lab) cube_topo3d[26].val = 1; else cube_topo3d[26].val = 0;
+  if (img[ps+i-rs]==lab)   cube_topo3d[25].val = 1; else cube_topo3d[25].val = 0;
+  if (img[ps+i-rs-1]==lab) cube_topo3d[24].val = 1; else cube_topo3d[24].val = 0;
+  if (img[ps+i-1]==lab)    cube_topo3d[15].val = 1; else cube_topo3d[15].val = 0;
+  if (img[ps+i-1+rs]==lab) cube_topo3d[6].val = 1; else cube_topo3d[6].val = 0;
+  if (img[ps+i+rs]==lab)   cube_topo3d[7].val = 1; else cube_topo3d[7].val = 0;
+  if (img[ps+i+rs+1]==lab) cube_topo3d[8].val = 1; else cube_topo3d[8].val = 0;
+  if (img[ps+i]==lab)      cube_topo3d[16].val = 1; else cube_topo3d[16].val = 0;
+  /* plan "COURANT" () */
+  if (img[i+1]==lab)       cube_topo3d[14].val = 1; else cube_topo3d[14].val = 0;
+  if (img[i+1-rs]==lab)    cube_topo3d[23].val = 1; else cube_topo3d[23].val = 0;
+  if (img[i-rs]==lab)      cube_topo3d[22].val = 1; else cube_topo3d[22].val = 0;
+  if (img[i-rs-1]==lab)    cube_topo3d[21].val = 1; else cube_topo3d[21].val = 0;
+  if (img[i-1]==lab)       cube_topo3d[12].val = 1; else cube_topo3d[12].val = 0;
+  if (img[i-1+rs]==lab)    cube_topo3d[3].val = 1; else cube_topo3d[3].val = 0;
+  if (img[i+rs]==lab)      cube_topo3d[4].val = 1; else cube_topo3d[4].val = 0;
+  if (img[i+rs+1]==lab)    cube_topo3d[5].val = 1; else cube_topo3d[5].val = 0;
+  if (img[i]==lab)         cube_topo3d[13].val = 1; else cube_topo3d[13].val = 0;
+  /* plan "AVANT" (-ps) */
+  if (img[-ps+i+1]==lab)    cube_topo3d[11].val = 1; else cube_topo3d[11].val = 0;
+  if (img[-ps+i+1-rs]==lab) cube_topo3d[20].val = 1; else cube_topo3d[20].val = 0;
+  if (img[-ps+i-rs]==lab)   cube_topo3d[19].val = 1; else cube_topo3d[19].val = 0;
+  if (img[-ps+i-rs-1]==lab) cube_topo3d[18].val = 1; else cube_topo3d[18].val = 0;
+  if (img[-ps+i-1]==lab)    cube_topo3d[9].val = 1; else cube_topo3d[9].val = 0;
+  if (img[-ps+i-1+rs]==lab) cube_topo3d[0].val = 1; else cube_topo3d[0].val = 0;
+  if (img[-ps+i+rs]==lab)   cube_topo3d[1].val = 1; else cube_topo3d[1].val = 0;
+  if (img[-ps+i+rs+1]==lab) cube_topo3d[2].val = 1; else cube_topo3d[2].val = 0;
+  if (img[-ps+i]==lab)      cube_topo3d[10].val = 1; else cube_topo3d[10].val = 0;
+  
+  for (i = 0; i < 27; i++) 
+    if (cube_topo3d[i].val == 1) cubec_topo3d[i].val = 0; else cubec_topo3d[i].val = 1;
+} /* preparecubesh_l() */
+
 
 /* ******************************************************************************* */
 /* ******************************************************************************* */
@@ -973,6 +1227,63 @@ int32_t simple26h(                  /* pour un objet en 26-connexite */
   preparecubesh(img, p, h, rs, ps, N);
   return ((T26(cube_topo3d) == 1) && (T6(cubec_topo3d) == 1));
 } /* simple26h() */
+
+/* ==================================== */
+int32_t simple6lab(                   /* pour un objet en 6-connexite */
+  int32_t *img,          /* pointeur base image */
+  int32_t p,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N)                       /* taille image */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "simple6lab"
+{
+  if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
+      (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
+      (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
+    return 0;
+  preparecubeslab(img, p, rs, ps, N);
+  return ((T6(cube_topo3d) == 1) && (T26(cubec_topo3d) == 1));
+} /* simple6lab() */
+
+/* ==================================== */
+int32_t simple18lab(                  /* pour un objet en 18-connexite */
+  int32_t *img,          /* pointeur base image */
+  int32_t p,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N)                       /* taille image */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "simple18lab"
+{
+  if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
+      (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
+      (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
+    return 0;
+  preparecubeslab(img, p, rs, ps, N);
+  return ((T18(cube_topo3d) == 1) && (T6p(cubec_topo3d) == 1));
+} /* simple18lab() */
+
+/* ==================================== */
+int32_t simple26lab(                  /* pour un objet en 26-connexite */
+  int32_t *img,          /* pointeur base image */
+  int32_t p,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N)                       /* taille image */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "simple26lab"
+{
+  if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
+      (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
+      (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
+    return 0;
+  preparecubeslab(img, p, rs, ps, N);
+  return ((T26(cube_topo3d) == 1) && (T6(cubec_topo3d) == 1));
+} /* simple26lab() */
 
 /* ==================================== */
 int32_t tbar6h(               /* pour un objet en 6-connexite */

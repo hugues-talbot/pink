@@ -111,6 +111,11 @@ extern int32_t lskelend3d(
 	uint8_t *endpoint,
 	int32_t niseuil
 );
+extern int32_t lskelendcurvlab3d(
+	struct xvimage *image, 
+	int32_t connex, 
+	int32_t niseuil
+);
 #ifdef __cplusplus
 }
 #endif

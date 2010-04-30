@@ -170,6 +170,7 @@ $(BDIR)/volselnb \
 $(BDIR)/watershed \
 $(BDIR)/watershedMeyer \
 $(BDIR)/watershedMeyer2 \
+$(BDIR)/watershedMeyer3 \
 $(BDIR)/watershedthin \
 $(BDIR)/watershedwithoutline \
 $(BDIR)/wshedtopo
@@ -407,6 +408,7 @@ $(BDIR)/histo2 \
 $(BDIR)/histolisse \
 $(BDIR)/histopgm \
 $(BDIR)/histscal \
+$(BDIR)/histosieve \
 $(BDIR)/histstretch \
 $(BDIR)/printhisto \
 $(BDIR)/printstats \
@@ -1102,6 +1104,9 @@ $(BDIR)/watershedwithoutline:	$(CDIR)/watershedwithoutline.c $(IDIR)/mcimage.h $
 $(BDIR)/watershedMeyer2:	$(CDIR)/watershedMeyer2.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccodimage.h $(IDIR)/llpemeyer.h $(OBJ_COMMON) $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/llpemeyer.o $(ODIR)/mckhalimsky2d.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/watershedMeyer2.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/llpemeyer.o $(ODIR)/mckhalimsky2d.o $(LIBS) -o $(BDIR)/watershedMeyer2
 
+$(BDIR)/watershedMeyer3:	$(CDIR)/watershedMeyer3.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccodimage.h $(IDIR)/llpemeyer.h $(OBJ_COMMON) $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/llpemeyer.o $(ODIR)/mckhalimsky2d.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/watershedMeyer3.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/llpemeyer.o $(ODIR)/mckhalimsky2d.o $(LIBS) -o $(BDIR)/watershedMeyer3
+
 $(BDIR)/wshedtopo:	$(CDIR)/wshedtopo.c $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfahsalembier.h $(IDIR)/mccodimage.h $(IDIR)/mccomptree.h $(IDIR)/lwshedtopo.h $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/mccomptree.o $(ODIR)/mcunionfind.o $(ODIR)/lwshedtopo.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/wshedtopo.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/mccomptree.o $(ODIR)/mcunionfind.o $(ODIR)/lwshedtopo.o $(LIBS) -o $(BDIR)/wshedtopo
 
@@ -1778,6 +1783,9 @@ $(BDIR)/histolisse:	$(CDIR)/histolisse.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(OD
 
 $(BDIR)/histscal:	$(CDIR)/histscal.c $(IDIR)/lhistscal.h $(IDIR)/mcfah.h $(IDIR)/mcimage.h $(ODIR)/lhistscal.o $(OBJMCFAH) $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/histscal.c $(ODIR)/lhistscal.o $(OBJMCFAH) $(OBJ_COMMON) $(LIBS) -o $(BDIR)/histscal
+
+$(BDIR)/histosieve:	$(CDIR)/histosieve.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto.o $(OBJ_COMMON)
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/histosieve.c $(ODIR)/lhisto.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/histosieve
 
 $(BDIR)/histstretch:	$(CDIR)/histstretch.c $(IDIR)/lhistscal.h $(IDIR)/mcfah.h $(IDIR)/mcimage.h $(ODIR)/lhistscal.o $(OBJMCFAH) $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/histstretch.c $(ODIR)/lhistscal.o $(OBJMCFAH) $(OBJ_COMMON) $(LIBS) -o $(BDIR)/histstretch

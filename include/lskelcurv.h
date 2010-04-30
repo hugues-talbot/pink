@@ -37,7 +37,7 @@ extern "C" {
 #endif
 extern skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len);
 extern skel * limage2skel2(struct xvimage *image, struct xvimage *morejunctions, int32_t connex);
-extern struct xvimage * lskel2image(skel *S);
+  extern struct xvimage * lskel2image(skel *S, int32_t id);
 extern struct xvimage * lskelmarked2image(skel *S);
 extern int32_t lskelmarkvertex(skel *S, int32_t vertex_id);
 extern int32_t lskelfilter1(skel *S, double length, double delta1, double delta2);

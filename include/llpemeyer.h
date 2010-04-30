@@ -63,6 +63,13 @@ extern int32_t llpemeyer2(
         int32_t connex
 );
 
+extern int32_t llpemeyer3(
+        struct xvimage *image,
+        struct xvimage *marqueurs,
+        struct xvimage *masque,
+        int32_t connex
+);
+
 extern int32_t llpemeyer3d(
         struct xvimage *image,
         struct xvimage *marqueurs,
@@ -81,6 +88,13 @@ extern int32_t llpemeyer3dsansligne(
 );
 
 extern int32_t llpemeyer3d2(
+        struct xvimage *image,
+        struct xvimage *marqueurs,
+        struct xvimage *masque,
+        int32_t connex
+);
+
+extern int32_t llpemeyer3d3(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *masque,

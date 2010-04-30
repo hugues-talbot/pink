@@ -32,103 +32,110 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file watershedMeyer2.c
+/*! \file histosieve.c
 
-\brief watershed transformation (Meyer's algorithm) with labelled markers  
+\brief eliminates points with values that are seldom in the histogram
 
-<B>Usage:</B> watershedMeyer2 in mark <roi|null> connex out
+<B>Usage:</B> histosieve in.pgm val out.pgm
 
 <B>Description:</B>
-Performs the watershed transformation on the image <B>in</B>, taking the
-set of markers in <B>mark</B>, in the form of a label image where all the pixels
-sharing the same label (even if not connected) belong to the same marker.
-If this parameter is present, <B>roi</B>
-indicates the region of interest on which the operation is performed.
-The parameter <B>connex</B> gives the adjacency relation (4,8 in 2D; 6,18,26 in 3D) 
-for the makers.
 
-The result is a label image.
+The points which value appear strictly less than \b val times in the image are eliminated.
 
-<B>Types supported:</B> byte 2d, byte 3d
+<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d
 
-<B>Category:</B> connect
-\ingroup connect
+<B>Category:</B> histo
+\ingroup histo
 
 \author Michel Couprie
 */
 
+/*
+   Michel Couprie - mai 2010
+ */
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
-#include <string.h>
 #include <stdlib.h>
-#include <mccodimage.h>
 #include <mcimage.h>
-#include <llpemeyer.h>
+#include <mccodimage.h>
+#include <mcutil.h>
+#include <lhisto.h>
+#include <math.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * marqueurs;
-  struct xvimage * masque;
-  int32_t connex;
+  int32_t x, i;
+  uint32_t *histo;
+  uint32_t val, nbval;
+  int32_t rs, cs, d, N;
 
-  if (argc != 6)
+  if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in mark <roi|null> connex out\n", argv[0]);
+    fprintf(stderr, "usage: %s in1.pgm val out.pgm \n", argv[0]);
     exit(1);
   }
 
-  image = readimage(argv[1]);
-  marqueurs = readimage(argv[2]);
-  if ((image == NULL) || (marqueurs == NULL))
+  image = readimage(argv[1]);  
+  if (image == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  if (strcmp(argv[3],"null") == 0) 
-    masque = NULL;
+  rs = rowsize(image);
+  cs = colsize(image);
+  d = depth(image);
+  N = rs * cs * d;
+
+  val = atoi(argv[2]);  
+
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(image);
+
+    histo = (uint32_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(int32_t));
+    if (histo == NULL)
+    {
+      fprintf(stderr, "%s: malloc failed\n", argv[0]);
+      exit(1);
+    }
+
+    if (! lhisto1(image, histo))
+    {
+      fprintf(stderr, "%s: function lhisto1 failed\n", argv[0]);
+      exit(1);
+    }
+
+    for (x = 0; x < N; x++) 
+      if (histo[F[x]] < val) F[x] = 0;
+  }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    int32_t *F = SLONGDATA(image);
+    if (! lhistolong(image, NULL, &histo, &nbval))
+    {
+      fprintf(stderr, "%s: function lhistolong failed\n", argv[0]);
+      exit(1);
+    }
+
+    for (x = 0; x < N; x++) 
+      if (histo[F[x]] < val) F[x] = 0;
+  }
   else
   {
-    masque = readimage(argv[3]);
-    if (masque == NULL)
-    {
-      fprintf(stderr, "%s: readimage failed\n", argv[0]);
-      exit(1);
-    }
-  }
-
-  connex = atoi(argv[4]);
-
-  if ((connex == 4) || (connex == 8))
-  {
-    if (! llpemeyer2(image, marqueurs, masque, connex))
-    {
-      fprintf(stderr, "%s: llpemeyer2 failed\n", argv[0]);
-      exit(1);
-    }
-  }
-  else if ((connex == 6) || (connex == 18) || (connex == 26))
-  {
-    if (! llpemeyer3d2(image, marqueurs, masque, connex))
-    {
-      fprintf(stderr, "%s: llpemeyer3d2 failed\n", argv[0]);
-      exit(1);
-    }
-  }
-  else    
-  {
-    fprintf(stderr, "%s: bad connexity: %d\n", argv[0], connex);
+    fprintf(stderr, "%s: bad data type\n", argv[0]);
     exit(1);
   }
 
-  writeimage(marqueurs, argv[argc - 1]);
+
+  free(histo);
+  writeimage(image, argv[argc-1]);
   freeimage(image);
-  freeimage(marqueurs);
-  if (masque) freeimage(masque);
 
   return 0;
 } /* main */
