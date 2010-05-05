@@ -2604,6 +2604,7 @@ int32_t ExtendedDownstream(int32_t x, int32_t y, uint32_t *image,
     {
       i = (int32_t)(image[Y[k]*rs + X[k]]);
       if (i == 0) goto endfor;
+      if (i > image[y*rs + x]) goto endfor;
 #ifdef PARANO
       if (i >= nval)
       {
