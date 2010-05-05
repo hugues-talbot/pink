@@ -494,7 +494,6 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
   uint8_t *R = UCHARDATA(res);
   int32_t *X, *Y, *Z;
   double mx, my, mz, gamma2 = gamma*gamma;
-  float max;
 
   if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
   {
@@ -510,7 +509,10 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
 
   tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(tmp != NULL);
   dis = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(dis != NULL);
-  //tmp2 = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT); assert(tmp2 != NULL);
+  //#define GAMMAMAP
+#ifdef GAMMAMAP
+  tmp2 = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT); assert(tmp2 != NULL);
+#endif
 
   if (ds == 1)
   {
@@ -531,7 +533,7 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
       //printf("i,j=%d,%d; ftp=%d,%d\n", i, j, ftp_x, ftp_y);
       if ((i > 0) && F[p-1])
       {
-	ftpe_x = X[p-1]; ftpe_y = Y[p];
+	ftpe_x = X[p-1]; ftpe_y = Y[p-1];
 	mx = i - 0.5; my = j;
 	if ((dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y) > gamma2) &&
 	    (dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))))
@@ -539,7 +541,7 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
       }	  
       if (!medax && (i < rs-1) && F[p+1])
       {
-	ftpe_x = X[p+1]; ftpe_y = Y[p];
+	ftpe_x = X[p+1]; ftpe_y = Y[p+1];
 	mx = i + 0.5; my = j;
 	if ((dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y) > gamma2) &&
 	    (dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))))
@@ -547,7 +549,7 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
       }	  
       if (!medax && (j < cs-1) && F[p+rs])
       {
-	ftpe_x = X[p]; ftpe_y = Y[p+rs];
+	ftpe_x = X[p+rs]; ftpe_y = Y[p+rs];
 	mx = i; my = j + 0.5;
 	if ((dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y) > gamma2) &&
 	    (dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))))
@@ -555,44 +557,51 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
       }	  
       if (!medax && (j > 0) && F[p-rs])
       {
-	ftpe_x = X[p]; ftpe_y = Y[p-rs];
+	ftpe_x = X[p-rs]; ftpe_y = Y[p-rs];
 	mx = i; my = j - 0.5;
 	if ((dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y) > gamma2) &&
 	    (dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))))
 	  medax = 1;
       }	 
       
-      /*max=0.0;
+#ifdef GAMMAMAP
+      float max=0.0; int32_t max_x, max_y;
       if ((i > 0) && F[p-1])
       {
-	ftpe_x = X[p-1]; ftpe_y = Y[p];
+	ftpe_x = X[p-1]; ftpe_y = Y[p-1];
 	mx = i - 0.5; my = j;
-	if (max <= dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y))
-	  max=dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y);
+	if ((dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))) && 
+	    (max <= dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y)))
+	  { max=dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y); max_x = ftpe_x; max_y = ftpe_y; }
       }	  
       if ((i < rs-1) && F[p+1])
       {
-	ftpe_x = X[p+1]; ftpe_y = Y[p];
+	ftpe_x = X[p+1]; ftpe_y = Y[p+1];
 	mx = i + 0.5; my = j;
-	if (max <= dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y))
-	  max=dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y);
+	if ((dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))) && 
+	    (max <= dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y)))
+	  { max=dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y); max_x = ftpe_x; max_y = ftpe_y; }
       }	  
       if ((j < cs-1) && F[p+rs])
       {
-	ftpe_x = X[p]; ftpe_y = Y[p+rs];
+	ftpe_x = X[p+rs]; ftpe_y = Y[p+rs];
 	mx = i; my = j + 0.5;
-	if (max <= dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y))
-	  max=dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y);
+	if ((dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))) && 
+	    (max <= dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y)))
+	  { max=dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y); max_x = ftpe_x; max_y = ftpe_y; }
       }	  
       if ((j > 0) && F[p-rs])
       {
-	ftpe_x = X[p]; ftpe_y = Y[p-rs];
+	ftpe_x = X[p-rs]; ftpe_y = Y[p-rs];
 	mx = i; my = j - 0.5;
-	if (max <= dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y))
-	  max=dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y);
-      }
- 
-      FLOATDATA(tmp2)[p] = sqrt(max);*/
+	if ((dist_2(mx, my, ftpe_x, ftpe_y) <= (dist_2(mx, my, ftp_x, ftp_y))) && 
+	    (max <= dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y)))
+	  { max=dist_2(ftpe_x, ftpe_y, ftp_x, ftp_y); max_x = ftpe_x; max_y = ftpe_y; }
+      } 
+      printf("point %d,%d: ftp = %d,%d, ftpe = %d,%d, max = %g\n", 
+	     i,j,ftp_x,ftp_y,max_x,max_y,max);
+      FLOATDATA(tmp2)[p] = sqrt(max);
+#endif
       if (medax) R[p] = NDG_MAX; else R[p] = 0;
     }
     else R[p] = 0;
@@ -602,8 +611,10 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
     freeimage(dx);
     freeimage(dy);
 
-    //writeimage(tmp2, "debug_Hesselink.pgm");
-    //freeimage(tmp2);
+#ifdef GAMMAMAP
+    writeimage(tmp2, "_gammamap.pgm");
+    freeimage(tmp2);
+#endif
   }
   else
   {
@@ -627,7 +638,7 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
       ftp_x = X[p]; ftp_y = Y[p]; ftp_z = Z[p];
       if ((i > 0) && F[p-1])
       {
-	ftpe_x = X[p-1]; ftpe_y = Y[p]; ftpe_z = Z[p];
+	ftpe_x = X[p-1]; ftpe_y = Y[p-1]; ftpe_z = Z[p-1];
 	mx = i - 0.5; my = j; mz = k;
 	if ((dist_3(ftpe_x, ftpe_y, ftpe_z, ftp_x, ftp_y, ftp_z) > gamma2) &&
 	    (dist_3(mx, my, mz, ftpe_x, ftpe_y, ftpe_z) <= (dist_3(mx, my, mz, ftp_x, ftp_y, ftp_z))))
@@ -635,7 +646,7 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
       }	  
       if (!medax && (i < rs-1) && F[p+1])
       {
-	ftpe_x = X[p+1]; ftpe_y = Y[p]; ftpe_z = Z[p];
+	ftpe_x = X[p+1]; ftpe_y = Y[p+1]; ftpe_z = Z[p+1];
 	mx = i + 0.5; my = j; mz = k;
 	if ((dist_3(ftpe_x, ftpe_y, ftpe_z, ftp_x, ftp_y, ftp_z) > gamma2) &&
 	    (dist_3(mx, my, mz, ftpe_x, ftpe_y, ftpe_z) <= (dist_3(mx, my, mz, ftp_x, ftp_y, ftp_z))))
@@ -643,7 +654,7 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
       }	  
       if (!medax && (j > 0) && F[p-rs])
       {
-	ftpe_x = X[p]; ftpe_y = Y[p-rs]; ftpe_z = Z[p];
+	ftpe_x = X[p-rs]; ftpe_y = Y[p-rs]; ftpe_z = Z[p-rs];
 	mx = i; my = j - 0.5; mz = k;
 	if ((dist_3(ftpe_x, ftpe_y, ftpe_z, ftp_x, ftp_y, ftp_z) > gamma2) &&
 	    (dist_3(mx, my, mz, ftpe_x, ftpe_y, ftpe_z) <= (dist_3(mx, my, mz, ftp_x, ftp_y, ftp_z))))
@@ -651,7 +662,7 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
       }	  
       if (!medax && (j < cs-1) && F[p+rs])
       {
-	ftpe_x = X[p]; ftpe_y = Y[p+rs]; ftpe_z = Z[p];
+	ftpe_x = X[p+rs]; ftpe_y = Y[p+rs]; ftpe_z = Z[p+rs];
 	mx = i; my = j + 0.5; mz = k;
 	if ((dist_3(ftpe_x, ftpe_y, ftpe_z, ftp_x, ftp_y, ftp_z) > gamma2) &&
 	    (dist_3(mx, my, mz, ftpe_x, ftpe_y, ftpe_z) <= (dist_3(mx, my, mz, ftp_x, ftp_y, ftp_z))))
@@ -659,7 +670,7 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
       }	  
       if (!medax && (k > 0) && F[p-ps])
       {
-	ftpe_x = X[p]; ftpe_y = Y[p]; ftpe_z = Z[p-ps];
+	ftpe_x = X[p-ps]; ftpe_y = Y[p-ps]; ftpe_z = Z[p-ps];
 	mx = i; my = j; mz = k - 0.5;
 	if ((dist_3(ftpe_x, ftpe_y, ftpe_z, ftp_x, ftp_y, ftp_z) > gamma2) &&
 	    (dist_3(mx, my, mz, ftpe_x, ftpe_y, ftpe_z) <= (dist_3(mx, my, mz, ftp_x, ftp_y, ftp_z))))
@@ -667,7 +678,7 @@ Mathematical Morphology: 40 Years On, Springer, 2005, pp. 259-268
       }	  
       if (!medax && (j < ds-1) && F[p+ps])
       {
-	ftpe_x = X[p]; ftpe_y = Y[p]; ftpe_z = Z[p+ps];
+	ftpe_x = X[p+ps]; ftpe_y = Y[p+ps]; ftpe_z = Z[p+ps];
 	mx = i; my = j; mz = k + 0.5;
 	if ((dist_3(ftpe_x, ftpe_y, ftpe_z, ftp_x, ftp_y, ftp_z) > gamma2) &&
 	    (dist_3(mx, my, mz, ftpe_x, ftpe_y, ftpe_z) <= (dist_3(mx, my, mz, ftp_x, ftp_y, ftp_z))))
