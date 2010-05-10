@@ -32,11 +32,11 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file watershedMeyer2.c
+/*! \file watershedMeyer2lab.c
 
 \brief watershed transformation (Meyer's algorithm) with labelled markers  
 
-<B>Usage:</B> watershedMeyer2 in mark <roi|null> connex out
+<B>Usage:</B> watershedMeyer2lab in mark <roi|null> connex out
 
 <B>Description:</B>
 Performs the watershed transformation on the image <B>in</B>, taking the
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  writeimage(image, argv[argc - 1]);
+  writeimage(marqueurs, argv[argc - 1]);
   freeimage(image);
   freeimage(marqueurs);
   if (masque) freeimage(masque);

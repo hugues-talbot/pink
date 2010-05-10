@@ -170,6 +170,7 @@ $(BDIR)/volselnb \
 $(BDIR)/watershed \
 $(BDIR)/watershedMeyer \
 $(BDIR)/watershedMeyer2 \
+$(BDIR)/watershedMeyer2lab \
 $(BDIR)/watershedMeyer3 \
 $(BDIR)/watershedthin \
 $(BDIR)/watershedwithoutline \
@@ -1103,6 +1104,9 @@ $(BDIR)/watershedwithoutline:	$(CDIR)/watershedwithoutline.c $(IDIR)/mcimage.h $
 
 $(BDIR)/watershedMeyer2:	$(CDIR)/watershedMeyer2.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccodimage.h $(IDIR)/llpemeyer.h $(OBJ_COMMON) $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/llpemeyer.o $(ODIR)/mckhalimsky2d.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/watershedMeyer2.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/llpemeyer.o $(ODIR)/mckhalimsky2d.o $(LIBS) -o $(BDIR)/watershedMeyer2
+
+$(BDIR)/watershedMeyer2lab:	$(CDIR)/watershedMeyer2lab.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccodimage.h $(IDIR)/llpemeyer.h $(OBJ_COMMON) $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/llpemeyer.o $(ODIR)/mckhalimsky2d.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/watershedMeyer2lab.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/llpemeyer.o $(ODIR)/mckhalimsky2d.o $(LIBS) -o $(BDIR)/watershedMeyer2lab
 
 $(BDIR)/watershedMeyer3:	$(CDIR)/watershedMeyer3.c $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccodimage.h $(IDIR)/llpemeyer.h $(OBJ_COMMON) $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/llpemeyer.o $(ODIR)/mckhalimsky2d.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/watershedMeyer3.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/llpemeyer.o $(ODIR)/mckhalimsky2d.o $(LIBS) -o $(BDIR)/watershedMeyer3
