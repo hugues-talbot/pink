@@ -279,10 +279,11 @@ void lsetthickframe(struct xvimage *image, int32_t width, int32_t grayval)
   ds = depth(image);
   ps = rs * cs;
   Im = UCHARDATA(image);
-  assert(width < rs); assert(width < cs); assert(width < ds);
+  assert(width < rs); assert(width < cs);
 
   if (ds > 1)
   {
+    assert(width < ds);
     for (w = 0; w < width; w++)
     {
       for (x = 0; x < rs; x++)

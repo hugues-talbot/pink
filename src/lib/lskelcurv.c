@@ -950,7 +950,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
   for (i = 0; i < N; i++)
     if (T3[i] && !T1[i])
     {
-      fprintf(stderr, "%s: input image is not a curvilinear skeleton\n", F_NAME);
+      fprintf(stderr, "%s: input image is not a curvilinear skeleton %d\n", F_NAME, i);
       return NULL;
     }
       
@@ -1160,7 +1160,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
   free(temp1);
   free(temp2);
   free(temp3);
-
+  /*olena a ecrit */
   return S;
 } /* limage2skel() */
 
