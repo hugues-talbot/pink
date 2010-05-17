@@ -20,7 +20,7 @@ endif ( NOT HAVE_BOOST_LIBRARIES )
 
 
 foreach( q ${com_src} )
-	 string( REGEX MATCH [^/]*.c[^.]*$ filename ${q} )
+         string( REGEX MATCH [^/]*.c[^.]*$ filename ${q} )
 	 string( REGEX REPLACE .c[^.]*$ "" executable ${filename} )
 	 add_executable( ${executable} ${q} )
 	 add_dependencies( ${executable} pink )
