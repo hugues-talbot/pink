@@ -195,7 +195,7 @@ static int32_t lskeletons_testabaisse6bin(uint8_t *F, int32_t x, int32_t rs, int
 /* ==================================== */
 {
   int32_t modifie = 0;
-  if (simple6(F, x, rs, ps, N)) { modifie = 1; F[x] = NDG_MIN; }
+  if (mctopo3d_simple6(F, x, rs, ps, N)) { modifie = 1; F[x] = NDG_MIN; }
   return modifie;
 } /* lskeletons_testabaisse6bin() */
 
@@ -216,7 +216,7 @@ static int32_t testabaisse26bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, i
 #ifdef TEST_SIMPLE_PAR_COLLAPSE
   if (simple_26_att(F, x, rs, ps, N)) { modifie = 1; F[x] = NDG_MIN; }
 #else
-  if (simple26(F, x, rs, ps, N)) { modifie = 1; F[x] = NDG_MIN; }
+  if (mctopo3d_simple26(F, x, rs, ps, N)) { modifie = 1; F[x] = NDG_MIN; }
 #endif
   return modifie;
 } /* testabaisse26bin() */
@@ -226,7 +226,7 @@ static int32_t lskeletons_testabaisse6lab(int32_t *F, int32_t x, int32_t rs, int
 /* ==================================== */
 {
   int32_t modifie = 0;
-  if (simple6lab(F, x, rs, ps, N)) { modifie = 1; F[x] = 0; }
+  if (mctopo3d_simple6lab(F, x, rs, ps, N)) { modifie = 1; F[x] = 0; }
   return modifie;
 } /* lskeletons_testabaisse6lab() */
 
@@ -244,7 +244,7 @@ static int32_t testabaisse26lab(int32_t *F, int32_t x, int32_t rs, int32_t ps, i
 /* ==================================== */
 {
   int32_t modifie = 0;
-  if (simple26lab(F, x, rs, ps, N)) { modifie = 1; F[x] = 0; }
+  if (mctopo3d_simple26lab(F, x, rs, ps, N)) { modifie = 1; F[x] = 0; }
   return modifie;
 } /* testabaisse26lab() */
 
@@ -314,10 +314,10 @@ resultat: F
   }
   taillemaxrbt = 2 * rs +  2 * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -333,7 +333,7 @@ resultat: F
   {
     if (F[x] && (P[x] < val_inhibit) && bordext8(F, x, rs, N))
     {
-      RbtInsert(&RBT, P[x], x);
+      mcrbt_RbtInsert(&RBT, P[x], x);
       Set(x, EN_RBT);
     }
   }
@@ -344,7 +344,7 @@ resultat: F
 
   if (connex == 4)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -355,17 +355,17 @@ resultat: F
           y = voisin(x, k, rs, N);                             /* non deja empiles */
           if ((y != -1) && (F[y]) && (P[y] < val_inhibit) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+            mcrbt_RbtInsert(&RBT, P[y], y);
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (testabaisse4bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 4) */
   else
   if (connex == 8)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -376,12 +376,12 @@ resultat: F
           y = voisin(x, k, rs, N);                             /* non deja empiles */
           if ((y != -1) && (F[y]) && (P[y] < val_inhibit) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+            mcrbt_RbtInsert(&RBT, P[y], y);
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (testabaisse8bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 8) */
   else
   {
@@ -395,7 +395,7 @@ resultat: F
   /* ================================================ */
 
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelubp() */
 
@@ -451,10 +451,10 @@ int32_t lskelubp2(struct xvimage *image,
   }
   taillemaxrbt = 2 * rs +  2 * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
   if (imageinhib != NULL) I = UCHARDATA(imageinhib);
@@ -473,10 +473,10 @@ int32_t lskelubp2(struct xvimage *image,
     {
       switch(datatype(imageprio))
       {
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
       }
       Set(x, EN_RBT);
     }
@@ -488,7 +488,7 @@ int32_t lskelubp2(struct xvimage *image,
 
   if (connex == 4)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -501,21 +501,21 @@ int32_t lskelubp2(struct xvimage *image,
           {
 	    switch(datatype(imageprio))
 	    {
-	      case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-	      case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-	      case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-	      case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (testabaisse4bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 4) */
   else
   if (connex == 8)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -528,16 +528,16 @@ int32_t lskelubp2(struct xvimage *image,
           {
 	    switch(datatype(imageprio))
 	    {
-	      case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-	      case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-	      case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-	      case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (testabaisse8bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 8) */
   else
   {
@@ -550,7 +550,7 @@ int32_t lskelubp2(struct xvimage *image,
   /* ================================================ */
 
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelubp2() */
 
@@ -600,7 +600,7 @@ resultat: F
 
   IndicsInit(N);
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   if (imageprio == NULL)
   {
@@ -623,10 +623,10 @@ resultat: F
   }
   taillemaxrbt = 2 * rs * cs +  2 * rs * d +  2 * d * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -640,9 +640,9 @@ resultat: F
 
   for (x = 0; x < N; x++)
   {
-    if (F[x] && (P[x] < val_inhibit) && bordext26(F, x, rs, ps, N))
+    if (F[x] && (P[x] < val_inhibit) && mctopo3d_bordext26(F, x, rs, ps, N))
     {
-      RbtInsert(&RBT, P[x], x);
+      mcrbt_RbtInsert(&RBT, P[x], x);
       Set(x, EN_RBT);
     }
   }
@@ -653,7 +653,7 @@ resultat: F
 
   if (connex == 6)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -664,17 +664,17 @@ resultat: F
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y]) && (P[y] < val_inhibit) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+            mcrbt_RbtInsert(&RBT, P[y], y);
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 6) */
   else
   if (connex == 26)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -685,12 +685,12 @@ resultat: F
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y]) && (P[y] < val_inhibit) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, P[y], y);
+            mcrbt_RbtInsert(&RBT, P[y], y);
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (testabaisse26bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 26) */
   else
   {
@@ -704,7 +704,7 @@ resultat: F
 
   termine_topo3d();
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelubp3d() */
 
@@ -736,7 +736,7 @@ int32_t lskelubp3d2(struct xvimage *image,
 
   IndicsInit(N);
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   if (imageprio == NULL)
   {
@@ -764,10 +764,10 @@ int32_t lskelubp3d2(struct xvimage *image,
   }
   taillemaxrbt = 2 * rs * cs +  2 * rs * d +  2 * d * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
   if (imageinhib != NULL) I = UCHARDATA(imageinhib);
@@ -782,14 +782,14 @@ int32_t lskelubp3d2(struct xvimage *image,
 
   for (x = 0; x < N; x++)
   {
-    if (F[x] && (!I || !I[x]) && bordext26(F, x, rs, ps, N))
+    if (F[x] && (!I || !I[x]) && mctopo3d_bordext26(F, x, rs, ps, N))
     {
       switch(datatype(imageprio))
       {
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
       }
       Set(x, EN_RBT);
     }
@@ -801,7 +801,7 @@ int32_t lskelubp3d2(struct xvimage *image,
 
   if (connex == 6)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -814,21 +814,21 @@ int32_t lskelubp3d2(struct xvimage *image,
           {
 	    switch(datatype(imageprio))
 	    {
-	      case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-	      case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-	      case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-	      case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 6) */
   else
   if (connex == 26)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -841,16 +841,16 @@ int32_t lskelubp3d2(struct xvimage *image,
           {
 	    switch(datatype(imageprio))
 	    {
-	      case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-	      case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-	      case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-	      case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (testabaisse26bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 26) */
   else
   {
@@ -864,7 +864,7 @@ int32_t lskelubp3d2(struct xvimage *image,
 
   termine_topo3d();
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelubp3d2() */
 
@@ -957,10 +957,10 @@ resultat: F
 
   taillemaxrbt = 2 * rs +  2 * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -1018,18 +1018,18 @@ resultat: F
 #ifdef PRIODIR
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[x]*10+typedir(F,x,rs,N),x); break;
         case VFF_TYP_1_BYTE: assert(0); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[x]*10+typedir(F,x,rs,N),x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[x]*10+typedir(F,x,rs,N),x); break;
 	}
 #else
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
 	}
 #endif
         Set(x, EN_RBT);
@@ -1048,18 +1048,18 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
 #ifdef PRIODIR
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[x]*10+typedir(F,x,rs,N),x); break;
         case VFF_TYP_1_BYTE: assert(0); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[x]*10+typedir(F,x,rs,N),x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[x]*10+typedir(F,x,rs,N),x); break;
 	}
 #else
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
 	}
 #endif
         Set(x, EN_RBT);
@@ -1081,16 +1081,16 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
 
   if (connex == 4)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       prio = (int32_t)RbtMinLevel(RBT) / 10;
       oldprio = prio;
 
-      while (!RbtVide(RBT) && (prio == oldprio)) 
+      while (!mcrbt_RbtVide(RBT) && (prio == oldprio)) 
       {
         x = RbtPopMin(RBT);
         FifoPush(FIFO1, x);
-        if (!RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
+        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
       } 
 
       while (!FifoVide(FIFO1))
@@ -1115,18 +1115,18 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
 #ifdef PRIODIR
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[y]*10+typedir(F,y,rs,N),y); break;
 		case VFF_TYP_1_BYTE: assert(0); break;
-		case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[y]*10+typedir(F,y,rs,N),y); break;
-		case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[y]*10+typedir(F,y,rs,N),y); break;
 		}
 #else
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-		case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-		case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-		case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+		case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 		}
 #endif
                 Set(y, EN_RBT);
@@ -1146,20 +1146,20 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
           if (tb > 1) Set(x, CONTRAINTE);
         }
       } // while (!FifoVide(FIFO2))
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 4) */
   else if (connex == 8)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       prio = (int32_t)RbtMinLevel(RBT) / 10;
       oldprio = prio;
 
-      while (!RbtVide(RBT) && (prio == oldprio)) 
+      while (!mcrbt_RbtVide(RBT) && (prio == oldprio)) 
       {
         x = RbtPopMin(RBT);
         FifoPush(FIFO1, x);
-        if (!RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
+        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
       } 
 
       while (!FifoVide(FIFO1))
@@ -1184,18 +1184,18 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
 #ifdef PRIODIR
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[y]*10+typedir(F,y,rs,N),y); break;
 		case VFF_TYP_1_BYTE: assert(0); break;
-		case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[y]*10+typedir(F,y,rs,N),y); break;
-		case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[y]*10+typedir(F,y,rs,N),y); break;
 		}
 #else
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-		case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-		case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-		case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+		case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 		}
 #endif
                 Set(y, EN_RBT);
@@ -1215,7 +1215,7 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
           if (tb > 1) Set(x, CONTRAINTE);
         }
       } // while (!FifoVide(FIFO2))
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 8) */
 
   /* ================================================ */
@@ -1223,7 +1223,7 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
   /* ================================================ */
 
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   FifoTermine(FIFO1);
   FifoTermine(FIFO2);
   return(1);
@@ -1272,7 +1272,7 @@ resultat: F
   int32_t taillemaxrbt;
 
   IndicsInit(N);
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   if (imageprio == NULL)
   {
@@ -1320,10 +1320,10 @@ resultat: F
 
   taillemaxrbt = 2 * rs +  2 * cs + 2 * ds;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -1337,7 +1337,7 @@ resultat: F
     {
       if (F[x] && (nonbord3d(x,rs,ps,N)))
       {
-	top6(F, x, rs, ps, N, &t, &tb);
+	mctopo3d_top6(F, x, rs, ps, N, &t, &tb);
 	if (t > 1) Set(x, CONTRAINTE);
       }
     }
@@ -1349,7 +1349,7 @@ resultat: F
     {
       if (F[x] && (nonbord3d(x,rs,ps,N)))
       {
-	top26(F, x, rs, ps, N, &t, &tb);
+	mctopo3d_top26(F, x, rs, ps, N, &t, &tb);
 	if (t > 1) Set(x, CONTRAINTE);
       }
     }
@@ -1363,23 +1363,23 @@ resultat: F
   {
     for (x = 0; x < N; x++)
     {
-      if (F[x] && bordext6(F, x, rs, ps, N))
+      if (F[x] && mctopo3d_bordext6(F, x, rs, ps, N))
       {
 #ifdef PRIODIR
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[x]*30+typedir3d(F,x,rs,ps,N),x); break;
         case VFF_TYP_1_BYTE: assert(0); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[x]*30+typedir3d(F,x,rs,ps,N),x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[x]*30+typedir3d(F,x,rs,ps,N),x); break;
 	}
 #else
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
 	}
 #endif
         Set(x, EN_RBT);
@@ -1390,23 +1390,23 @@ resultat: F
   {
     for (x = 0; x < N; x++)
     {
-      if (F[x] && bordext26(F, x, rs, ps, N))
+      if (F[x] && mctopo3d_bordext26(F, x, rs, ps, N))
       {
 #ifdef PRIODIR
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[x]*30+typedir3d(F,x,rs,ps,N),x); break;
         case VFF_TYP_1_BYTE: assert(0); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[x]*30+typedir3d(F,x,rs,ps,N),x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[x]*30+typedir3d(F,x,rs,ps,N),x); break;
 	}
 #else
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
 	}
 #endif
         Set(x, EN_RBT);
@@ -1440,16 +1440,16 @@ resultat: F
       return(0);
     }
 
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       prio = (int32_t)RbtMinLevel(RBT) / 10;
       oldprio = prio;
 
-      while (!RbtVide(RBT) && (prio == oldprio)) 
+      while (!mcrbt_RbtVide(RBT) && (prio == oldprio)) 
       {
         x = RbtPopMin(RBT);
         FifoPush(FIFO1, x);
-        if (!RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
+        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
       } 
 
       while (!FifoVide(FIFO1))
@@ -1474,18 +1474,18 @@ resultat: F
 #ifdef PRIODIR
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[y]*30+typedir3d(F,y,rs,ps,N),y); break;
 		case VFF_TYP_1_BYTE: assert(0); break;
-		case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[y]*30+typedir3d(F,y,rs,ps,N),y); break;
-		case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[y]*30+typedir3d(F,y,rs,ps,N),y); break;
 		}
 #else
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-		case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-		case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-		case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+		case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 		}
 #endif
                 Set(y, EN_RBT);
@@ -1501,17 +1501,17 @@ resultat: F
         UnSet(x,EN_FIFO);
         if ((! IsSet(x, CONTRAINTE)) && (nonbord3d(x,rs,ps,N)))
         {
-          top6(F, x, rs, ps, N, &t, &tb);
+          mctopo3d_top6(F, x, rs, ps, N, &t, &tb);
           if (t > 1) Set(x, CONTRAINTE);
         }
       } // while (!FifoVide(FIFO2))
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
     FifoTermine(FIFO1);
     FifoTermine(FIFO2);
   } /* if (connex == 6) */
   else if (connex == 26)  // NOTE : en 26 connexite pas besoin de la strategie a 2 passes (FIFO)
   {           
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -1524,7 +1524,7 @@ resultat: F
           {
             if ((! IsSet(y, CONTRAINTE)) && (nonbord3d(y,rs,ps,N)))
 	    {
-              top26(F, y, rs, ps, N, &t, &tb);
+              mctopo3d_top26(F, y, rs, ps, N, &t, &tb);
               if (t > 1) 
 	      {
                 Set(y, CONTRAINTE);
@@ -1535,18 +1535,18 @@ resultat: F
 #ifdef PRIODIR
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[y]*30+typedir3d(F,y,rs,ps,N),y); break;
 		case VFF_TYP_1_BYTE: assert(0); break;
-		case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[y]*30+typedir3d(F,y,rs,ps,N),y); break;
-		case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[y]*30+typedir3d(F,y,rs,ps,N),y); break;
 		}
 #else
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-		case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-		case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-		case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+		case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 		}
 #endif
               Set(y, EN_RBT);
@@ -1554,7 +1554,7 @@ resultat: F
           } /* if y */
         } /* for k */      
       } /* if (testabaisse8bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 26) */
 
   /* ================================================ */
@@ -1563,7 +1563,7 @@ resultat: F
 
   IndicsTermine();
   termine_topo3d();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelcurv3d() */
 
@@ -1610,7 +1610,7 @@ resultat: F
   int32_t taillemaxrbt;
 
   IndicsInit(N);
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   if (imageprio == NULL)
   {
@@ -1659,10 +1659,10 @@ resultat: F
 
   taillemaxrbt = 2 * rs +  2 * cs + 2 * ds;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -1676,7 +1676,7 @@ resultat: F
     {
       if (F[x] && (nonbord3d(x,rs,ps,N)))
       {
-	top6(F, x, rs, ps, N, &t, &tb);
+	mctopo3d_top6(F, x, rs, ps, N, &t, &tb);
 	if (tb > 1) Set(x, CONTRAINTE);
       }
     }
@@ -1688,7 +1688,7 @@ resultat: F
     {
       if (F[x] && (nonbord3d(x,rs,ps,N)))
       {
-	top26(F, x, rs, ps, N, &t, &tb);
+	mctopo3d_top26(F, x, rs, ps, N, &t, &tb);
 	if (tb > 1) Set(x, CONTRAINTE);
       }
     }
@@ -1703,23 +1703,23 @@ resultat: F
   {
     for (x = 0; x < N; x++)
     {
-      if (F[x] && bordext6(F, x, rs, ps, N))
+      if (F[x] && mctopo3d_bordext6(F, x, rs, ps, N))
       {
 #ifdef PRIODIR
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[x]*30+typedir3d(F,x,rs,ps,N),x); break;
         case VFF_TYP_1_BYTE: assert(0); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[x]*30+typedir3d(F,x,rs,ps,N),x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[x]*30+typedir3d(F,x,rs,ps,N),x); break;
 	}
 #else
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
 	}
 #endif
         Set(x, EN_RBT);
@@ -1730,23 +1730,23 @@ resultat: F
   {
     for (x = 0; x < N; x++)
     {
-      if (F[x] && bordext26(F, x, rs, ps, N))
+      if (F[x] && mctopo3d_bordext26(F, x, rs, ps, N))
       {
 #ifdef PRIODIR
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[x]*30+typedir3d(F,x,rs,ps,N),x); break;
         case VFF_TYP_1_BYTE: assert(0); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[x]*30+typedir3d(F,x,rs,ps,N),x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[x]*30+typedir3d(F,x,rs,ps,N),x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[x]*30+typedir3d(F,x,rs,ps,N),x); break;
 	}
 #else
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
 	}
 #endif
         Set(x, EN_RBT);
@@ -1780,16 +1780,16 @@ resultat: F
       return(0);
     }
 
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       prio = (int32_t)RbtMinLevel(RBT) / 10;
       oldprio = prio;
 
-      while (!RbtVide(RBT) && (prio == oldprio)) 
+      while (!mcrbt_RbtVide(RBT) && (prio == oldprio)) 
       {
         x = RbtPopMin(RBT);
         FifoPush(FIFO1, x);
-        if (!RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
+        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
       } 
 
       while (!FifoVide(FIFO1))
@@ -1814,18 +1814,18 @@ resultat: F
 #ifdef PRIODIR
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[y]*30+typedir3d(F,y,rs,ps,N),y); break;
 		case VFF_TYP_1_BYTE: assert(0); break;
-		case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[y]*30+typedir3d(F,y,rs,ps,N),y); break;
-		case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[y]*30+typedir3d(F,y,rs,ps,N),y); break;
 		}
 #else
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-		case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-		case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-		case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+		case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 		}
 #endif
                 Set(y, EN_RBT);
@@ -1841,17 +1841,17 @@ resultat: F
         UnSet(x,EN_FIFO);
         if ((! IsSet(x, CONTRAINTE)) && (nonbord3d(x,rs,ps,N)))
         {
-          top6(F, x, rs, ps, N, &t, &tb);
+          mctopo3d_top6(F, x, rs, ps, N, &t, &tb);
           if (tb > 1) Set(x, CONTRAINTE);
         }
       } // while (!FifoVide(FIFO2))
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
     FifoTermine(FIFO1);
     FifoTermine(FIFO2);
   } /* if (connex == 6) */
   else if (connex == 26)  // NOTE : en 26 connexite pas besoin de la strategie a 2 passes (FIFO)
   {           
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -1864,7 +1864,7 @@ resultat: F
           {
             if ((! IsSet(y, CONTRAINTE)) && (nonbord3d(y,rs,ps,N)))
 	    {
-              top26(F, y, rs, ps, N, &t, &tb);
+              mctopo3d_top26(F, y, rs, ps, N, &t, &tb);
               if (tb > 1) 
 	      {
                 Set(y, CONTRAINTE);
@@ -1875,18 +1875,18 @@ resultat: F
 #ifdef PRIODIR
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: RbtInsert(&RBT,P[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[y]*30+typedir3d(F,y,rs,ps,N),y); break;
 		case VFF_TYP_1_BYTE: assert(0); break;
-		case VFF_TYP_FLOAT : RbtInsert(&RBT,PF[y]*30+typedir3d(F,y,rs,ps,N),y); break;
-		case VFF_TYP_DOUBLE: RbtInsert(&RBT,PD[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[y]*30+typedir3d(F,y,rs,ps,N),y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[y]*30+typedir3d(F,y,rs,ps,N),y); break;
 		}
 #else
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-		case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-		case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-		case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+		case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 		}
 #endif
               Set(y, EN_RBT);
@@ -1894,7 +1894,7 @@ resultat: F
           } /* if y */
         } /* for k */      
       } /* if (testabaisse8bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 8) */
 
   /* ================================================ */
@@ -1903,7 +1903,7 @@ resultat: F
 
   IndicsTermine();
   termine_topo3d();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelsurf3d() */
 
@@ -1982,10 +1982,10 @@ resultat: F
 
   taillemaxrbt = 2 * rs +  2 * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -2020,10 +2020,10 @@ resultat: F
     {
       switch(datatype(imageprio))
       {
-      case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
-      case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
-      case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
-      case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
       }
       Set(x, EN_RBT);
     }
@@ -2035,7 +2035,7 @@ resultat: F
 
   if (connex == 4)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -2050,21 +2050,21 @@ resultat: F
           {
 	    switch(datatype(imageprio))
 	    {
-	    case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-	    case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-	    case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-	    case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	    case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	    case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	    case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (testabaisse4bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 4) */
   else
   if (connex == 8)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -2079,16 +2079,16 @@ resultat: F
           {
 	    switch(datatype(imageprio))
 	    {
-	    case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-	    case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-	    case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-	    case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	    case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	    case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	    case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (testabaisse8bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 8) */
   else
   {
@@ -2102,7 +2102,7 @@ resultat: F
   /* ================================================ */
 
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   return(1);
 } /* ltoposhrink() */
 
@@ -2155,7 +2155,7 @@ resultat: F
 
   IndicsInit(N);
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   if (imageprio == NULL)
   {
@@ -2185,10 +2185,10 @@ resultat: F
 
   taillemaxrbt = 2 * rs * cs +  2 * rs * d +  2 * d * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -2219,14 +2219,14 @@ resultat: F
 
   for (x = 0; x < N; x++)
   {
-    if (F[x] && !IsSet(x, CONTRAINTE) && bordext26(F, x, rs, ps, N))
+    if (F[x] && !IsSet(x, CONTRAINTE) && mctopo3d_bordext26(F, x, rs, ps, N))
     {
       switch(datatype(imageprio))
       {
-      case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[x], x); break;
-      case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[x], x); break;
-      case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[x], x); break;
-      case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[x], x); break;
+      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
       }
       Set(x, EN_RBT);
     }
@@ -2238,11 +2238,11 @@ resultat: F
 
   if (connex == 6)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
-      top6(F, x, rs, ps, N, &t, &tb);
+      mctopo3d_top6(F, x, rs, ps, N, &t, &tb);
       if ((tmin <= t) && (t <= tmax) && (tbmin <= tb) && (tb <= tbmax))
       {
         F[x] = 0;
@@ -2253,25 +2253,25 @@ resultat: F
           {
 	    switch(datatype(imageprio))
 	    {
-	    case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-	    case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-	    case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-	    case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	    case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	    case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	    case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 6) */
   else
   if (connex == 18)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
-      top18(F, x, rs, ps, N, &t, &tb);
+      mctopo3d_top18(F, x, rs, ps, N, &t, &tb);
       if ((tmin <= t) && (t <= tmax) && (tbmin <= tb) && (tb <= tbmax))
       {
         F[x] = 0;
@@ -2282,25 +2282,25 @@ resultat: F
           {
 	    switch(datatype(imageprio))
 	    {
-	    case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-	    case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-	    case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-	    case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	    case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	    case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	    case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 18) */
   else
   if (connex == 26)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
-      top26(F, x, rs, ps, N, &t, &tb);
+      mctopo3d_top26(F, x, rs, ps, N, &t, &tb);
       if ((tmin <= t) && (t <= tmax) && (tbmin <= tb) && (tb <= tbmax))
       {
         F[x] = 0;
@@ -2311,16 +2311,16 @@ resultat: F
           {
 	    switch(datatype(imageprio))
 	    {
-	    case VFF_TYP_4_BYTE: RbtInsert(&RBT, P[y], y); break;
-	    case VFF_TYP_1_BYTE: RbtInsert(&RBT, PB[y], y); break;
-	    case VFF_TYP_FLOAT : RbtInsert(&RBT, PF[y], y); break;
-	    case VFF_TYP_DOUBLE: RbtInsert(&RBT, PD[y], y); break;
+	    case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	    case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	    case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	    case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
 	    }
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 26) */
   else
   {
@@ -2334,7 +2334,7 @@ resultat: F
 
   termine_topo3d();
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   return(1);
 } /* ltoposhrink3d() */
 
@@ -2391,10 +2391,10 @@ int32_t lskeleucl(struct xvimage *image,
 
   taillemaxrbt = 2 * rs +  2 * cs + 2 * ds;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -2412,7 +2412,7 @@ int32_t lskeleucl(struct xvimage *image,
     {
       if (F[x] && (!I[x]) && bordext8(F, x, rs, N))
       {
-	RbtInsert(&RBT, D[x], x);
+	mcrbt_RbtInsert(&RBT, D[x], x);
 	Set(x,EN_RBT);
       }
       if (F[x] && I[x])
@@ -2424,7 +2424,7 @@ int32_t lskeleucl(struct xvimage *image,
 	  {
 	    prio = D[x] + (D[y] - D[x]) / 
 	           dist2((double)(y%rs), (double)(y/rs), (double)(x%rs), (double)(x/rs));
-	    RbtInsert(&RBT, prio, y);
+	    mcrbt_RbtInsert(&RBT, prio, y);
 	    P[y] = prio;
 	    Set(y,EN_RBT);
 	  }
@@ -2436,9 +2436,9 @@ int32_t lskeleucl(struct xvimage *image,
   {
     for (x = 0; x < N; x++)
     {
-      if (F[x] && (!I[x]) && bordext26(F, x, rs, ps, N))
+      if (F[x] && (!I[x]) && mctopo3d_bordext26(F, x, rs, ps, N))
       {
-	RbtInsert(&RBT, D[x], x);
+	mcrbt_RbtInsert(&RBT, D[x], x);
 	Set(x,EN_RBT);
       }
       if (F[x] && I[x])
@@ -2451,7 +2451,7 @@ int32_t lskeleucl(struct xvimage *image,
 	    prio = D[x] + (D[y] - D[x]) / 
 	           dist3((double)(y%rs), (double)((y%ps)/rs), (double)(y/ps), 
 			 (double)(x%rs), (double)((x%ps)/rs), (double)(x/ps)); 
-	    RbtInsert(&RBT, prio, y);
+	    mcrbt_RbtInsert(&RBT, prio, y);
 	    P[y] = prio;
 	    Set(y,EN_RBT);
 	  }
@@ -2478,7 +2478,7 @@ int32_t lskeleucl(struct xvimage *image,
       return(0);
     }
 
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       prio = RbtMinLevel(RBT); 
       x = RbtPopMin(RBT);
@@ -2491,7 +2491,7 @@ int32_t lskeleucl(struct xvimage *image,
           y = voisin(x, k, rs, N);                             /* non deja empiles */
           if ((y != -1) && F[y] && (!I[y]) && (!IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, D[y], y);
+            mcrbt_RbtInsert(&RBT, D[y], y);
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
@@ -2507,20 +2507,20 @@ int32_t lskeleucl(struct xvimage *image,
 	    prio = D[x] + (D[y] - D[x]) / dist2((double)(y%rs), (double)(y/rs), (double)(x%rs), (double)(x/rs));
 	    if (prio < P[y]) 
 	    { 
-	      RbtInsert(&RBT, prio, y);
+	      mcrbt_RbtInsert(&RBT, prio, y);
 	      P[y] = prio;
 	    }
 	  } // if y
         } // for k
       } // else if (D[x] >= r)
     finwhile:;
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 8) */
   else
   if (connex == 26)
   {
-    init_topo3d();
-    while (!RbtVide(RBT))
+    mctopo3d_init_topo3d();
+    while (!mcrbt_RbtVide(RBT))
     {
       prio = RbtMinLevel(RBT); 
       x = RbtPopMin(RBT);
@@ -2533,7 +2533,7 @@ int32_t lskeleucl(struct xvimage *image,
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && F[y] && (!I[y]) && (!IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, D[y], y);
+            mcrbt_RbtInsert(&RBT, D[y], y);
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
@@ -2551,14 +2551,14 @@ int32_t lskeleucl(struct xvimage *image,
 			 (double)(x%rs), (double)((x%ps)/rs), (double)(x/ps)); 
 	    if (prio < P[y]) 
 	    { 
-	      RbtInsert(&RBT, prio, y);
+	      mcrbt_RbtInsert(&RBT, prio, y);
 	      P[y] = prio;
 	    }
 	  } // if y
         } // for k
       } // else
     finwhile26:;
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
     termine_topo3d();
   } /* if (connex == 26) */
   else
@@ -2572,7 +2572,7 @@ int32_t lskeleucl(struct xvimage *image,
   /* ================================================ */
 
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   freeimage(imageprio);
   freeimage(imagedist);
   return(1);
@@ -2683,7 +2683,7 @@ resultat: F
 #endif
 
   IndicsInit(N);
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   if (imageprio == NULL)
   {
@@ -2705,10 +2705,10 @@ resultat: F
 
   taillemaxrbt = 2 * rs +  2 * cs + 2 * ds;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -2729,12 +2729,12 @@ resultat: F
   {
     for (x = 0; x < N; x++)
     {
-      if (F[x] && bordext26(F, x, rs, ps, N))
+      if (F[x] && mctopo3d_bordext26(F, x, rs, ps, N))
       {
 #ifdef PRIODIR
-        RbtInsert(&RBT, P[x]*30 + typedir3d(F, x, rs, ps, N), x);
+        mcrbt_RbtInsert(&RBT, P[x]*30 + typedir3d(F, x, rs, ps, N), x);
 #else
-        RbtInsert(&RBT, P[x], x);
+        mcrbt_RbtInsert(&RBT, P[x], x);
 #endif
         Set(x, EN_RBT);
       }
@@ -2755,7 +2755,7 @@ resultat: F
   } /* if (connex == 6) */
   else if (connex == 26)
   {           
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -2769,15 +2769,15 @@ resultat: F
           if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
           {
 #ifdef PRIODIR
-	    RbtInsert(&RBT, P[y]*30 + typedir3d(F, y, rs, ps, N), y);
+	    mcrbt_RbtInsert(&RBT, P[y]*30 + typedir3d(F, y, rs, ps, N), y);
 #else
-	    RbtInsert(&RBT, P[y], y);
+	    mcrbt_RbtInsert(&RBT, P[y], y);
 #endif
 	    Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } /* if (testabaisse8bin(F, x, rs, N)) */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 26) */
 
   /* ================================================ */
@@ -2786,7 +2786,7 @@ resultat: F
 
   IndicsTermine();
   termine_topo3d();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelend3d_sav() */
 
@@ -2831,14 +2831,14 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
 #endif
 
   IndicsInit(N);
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   taillemaxrbt = 2 * rs +  2 * cs + 2 * ds;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s: CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -2853,20 +2853,20 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
   if (connex == 6)
   {
     for (x = 0; x < N; x++)
-      if (F[x] && simple6(F, x, rs, ps, N))
-        RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
+      if (F[x] && mctopo3d_simple6(F, x, rs, ps, N))
+        mcrbt_RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
   }
   else if (connex == 18)
   {
     for (x = 0; x < N; x++)
       if (F[x] && simple18(F, x, rs, ps, N))
-        RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
+        mcrbt_RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
   }
   else if (connex == 26)
   {
     for (x = 0; x < N; x++)
-      if (F[x] && simple26(F, x, rs, ps, N))
-        RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
+      if (F[x] && mctopo3d_simple26(F, x, rs, ps, N))
+        mcrbt_RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
   }
   else
   {
@@ -2886,19 +2886,19 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
     {
       nbdel = 0; 
       nbiter++;
-      while (!RbtVide(RBT))
+      while (!mcrbt_RbtVide(RBT))
       {
 	x = RbtPopMin(RBT);
 	config = encodevois(x, F, rs, ps, N);
 	if (((nbiter < niseuil) || (!IsEnd(config))) && lskeletons_testabaisse6bin(F, x, rs, ps, N)) nbdel++;
-      } /* while (!RbtVide(RBT)) */
+      } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
-        if (F[x] && simple6(F, x, rs, ps, N))
-          RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
+        if (F[x] && mctopo3d_simple6(F, x, rs, ps, N))
+          mcrbt_RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
 #ifdef VERBOSE
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
 #endif
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 6) */
   else if (connex == 18)
   {           
@@ -2908,19 +2908,19 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
     {
       nbdel = 0; 
       nbiter++;
-      while (!RbtVide(RBT))
+      while (!mcrbt_RbtVide(RBT))
       {
 	x = RbtPopMin(RBT);
 	config = encodevois(x, F, rs, ps, N);
 	if (((nbiter < niseuil) || (!IsEnd(config))) && testabaisse18bin(F, x, rs, ps, N)) nbdel++;
-      } /* while (!RbtVide(RBT)) */
+      } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
         if (F[x] && simple18(F, x, rs, ps, N))
-          RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
+          mcrbt_RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
 #ifdef VERBOSE
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
 #endif
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 18) */
   else if (connex == 26)
   {           
@@ -2930,7 +2930,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
     {
       nbdel = 0; 
       nbiter++;
-      while (!RbtVide(RBT))
+      while (!mcrbt_RbtVide(RBT))
       {
 #ifdef DEBUG
 	{ int32_t lev = RbtMinLevel(RBT);
@@ -2942,17 +2942,17 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
 #endif
 	config = encodevois(x, F, rs, ps, N);
 	if (((nbiter < niseuil) || (!IsEnd(config))) && testabaisse26bin(F, x, rs, ps, N)) nbdel++;
-      } /* while (!RbtVide(RBT)) */
+      } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
-        if (F[x] && simple26(F, x, rs, ps, N))
-          RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
+        if (F[x] && mctopo3d_simple26(F, x, rs, ps, N))
+          mcrbt_RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
 #ifdef VERBOSE
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
 #endif
 #ifdef DEBUG_lskelend3d
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
 #endif
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 26) */
 
   /* ================================================ */
@@ -2961,7 +2961,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
 
   IndicsTermine();
   termine_topo3d();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelend3d() */
 
@@ -2995,11 +2995,11 @@ Algo par passes directionnelles.
   assert(datatype(image) == VFF_TYP_4_BYTE);
 
   IndicsInit(N);
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   taillemaxrbt = 2 * rs +  2 * cs + 2 * ds;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt); assert(RBT != NULL);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt); assert(RBT != NULL);
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -3012,20 +3012,20 @@ Algo par passes directionnelles.
   if (connex == 6)
   {
     for (x = 0; x < N; x++)
-      if (F[x] && simple6lab(F, x, rs, ps, N))
-        RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
+      if (F[x] && mctopo3d_simple6lab(F, x, rs, ps, N))
+        mcrbt_RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
   }
   else if (connex == 18)
   {
     for (x = 0; x < N; x++)
       if (F[x] && simple18lab(F, x, rs, ps, N))
-        RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
+        mcrbt_RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
   }
   else if (connex == 26)
   {
     for (x = 0; x < N; x++)
-      if (F[x] && simple26lab(F, x, rs, ps, N))
-        RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
+      if (F[x] && mctopo3d_simple26lab(F, x, rs, ps, N))
+        mcrbt_RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
   }
   else
   {
@@ -3045,18 +3045,18 @@ Algo par passes directionnelles.
     {
       nbdel = 0; 
       nbiter++;
-      while (!RbtVide(RBT))
+      while (!mcrbt_RbtVide(RBT))
       {
 	x = RbtPopMin(RBT);
-	if (((nbiter < niseuil) || (nbvoislab6(F, x, rs, ps, N) > 1)) && lskeletons_testabaisse6lab(F, x, rs, ps, N)) nbdel++;
-      } /* while (!RbtVide(RBT)) */
+	if (((nbiter < niseuil) || (mctopo3d_nbvoislab6(F, x, rs, ps, N) > 1)) && lskeletons_testabaisse6lab(F, x, rs, ps, N)) nbdel++;
+      } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
-        if (F[x] && simple6lab(F, x, rs, ps, N))
-          RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
+        if (F[x] && mctopo3d_simple6lab(F, x, rs, ps, N))
+          mcrbt_RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
 #ifdef VERBOSE
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
 #endif
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 6) */
   else if (connex == 18)
   {           
@@ -3066,18 +3066,18 @@ Algo par passes directionnelles.
     {
       nbdel = 0; 
       nbiter++;
-      while (!RbtVide(RBT))
+      while (!mcrbt_RbtVide(RBT))
       {
 	x = RbtPopMin(RBT);
 	if (((nbiter < niseuil) || (mctopo3d_nbvoislab18(F, x, rs, ps, N) > 1)) && testabaisse18lab(F, x, rs, ps, N)) nbdel++;
-      } /* while (!RbtVide(RBT)) */
+      } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
         if (F[x] && simple18lab(F, x, rs, ps, N))
-          RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
+          mcrbt_RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
 #ifdef VERBOSE
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
 #endif
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 18) */
   else if (connex == 26)
   {           
@@ -3087,21 +3087,21 @@ Algo par passes directionnelles.
     {
       nbdel = 0; 
       nbiter++;
-      while (!RbtVide(RBT))
+      while (!mcrbt_RbtVide(RBT))
       {
 	x = RbtPopMin(RBT);
 	if (((nbiter < niseuil) || (mctopo3d_nbvoislab26(F, x, rs, ps, N) > 1)) && testabaisse26lab(F, x, rs, ps, N)) nbdel++;
-      } /* while (!RbtVide(RBT)) */
+      } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
-        if (F[x] && simple26lab(F, x, rs, ps, N))
-          RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
+        if (F[x] && mctopo3d_simple26lab(F, x, rs, ps, N))
+          mcrbt_RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
 #ifdef VERBOSE
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
 #endif
 #ifdef DEBUG_lskelendcurvlab3d
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
 #endif
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 26) */
 
   /* ================================================ */
@@ -3110,6 +3110,6 @@ Algo par passes directionnelles.
 
   IndicsTermine();
   termine_topo3d();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelendcurvlab3d() */

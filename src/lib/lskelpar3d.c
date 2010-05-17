@@ -736,7 +736,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -754,7 +754,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && simple26(S, i, rs, ps, N))
+      if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
 #ifdef DEBUG
 writeimage(image,"_S");
@@ -872,7 +872,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -898,7 +898,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     // MARQUE LES POINTS SIMPLES NON DANS I
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && !I[i] && simple26(S, i, rs, ps, N))
+      if (IS_OBJECT(S[i]) && !I[i] && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
 
     // MARQUE LES POINTS 2M-CRUCIAUX
@@ -1003,7 +1003,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -1021,7 +1021,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     // MARQUE LES POINTS SIMPLES NON DANS I
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && !I[i] && simple26(S, i, rs, ps, N))
+      if (IS_OBJECT(S[i]) && !I[i] && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
     // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS DE COURBE (2)
     for (i = 0; i < N; i++) 
@@ -1044,7 +1044,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     {
       if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
       {    
-	top26(S, i, rs, ps, N, &top, &topb);
+	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
 	if (top > 1) SET_CURVE(S[i]);
       }
     }
@@ -1161,7 +1161,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -1187,7 +1187,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
     // MARQUE LES POINTS SIMPLES NON DANS I
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && !I[i] && simple26(S, i, rs, ps, N))
+      if (IS_OBJECT(S[i]) && !I[i] && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
     // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS DE COURBE (2)
     for (i = 0; i < N; i++) 
@@ -1210,7 +1210,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     {
       if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
       {    
-	top26(S, i, rs, ps, N, &top, &topb);
+	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
 	if (top > 1) SET_CURVE(S[i]);
       }
     }
@@ -1339,7 +1339,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -1357,7 +1357,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     // MARQUE LES POINTS SIMPLES NON DANS I
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && !I[i] && simple26(S, i, rs, ps, N))
+      if (IS_OBJECT(S[i]) && !I[i] && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
     // MARQUE LES POINTS DE SURFACE (2)
     for (i = 0; i < N; i++) 
@@ -1372,7 +1372,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     {
       if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
       {    
-	top26(S, i, rs, ps, N, &top, &topb);
+	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
 	if (topb > 1) SET_SURF(S[i]);
 	if (topb == 0) SET_SELECTED(S[i]);
       }
@@ -1522,7 +1522,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = 1; // normalize values
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -1544,12 +1544,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     //  E := T \ominus \Gamma_6 
     memset(E, 0, N);
     for (i = 0; i < N; i++) 
-      if (T[i] && (nbvoiso6(T, i, rs, ps, N) == 6)) E[i] = 1;
+      if (T[i] && (mctopo3d_nbvoiso6(T, i, rs, ps, N) == 6)) E[i] = 1;
 
     //  D := E \oplus \Gamma_6
     memset(D, 0, N);
     for (i = 0; i < N; i++)
-      if (E[i] || (nbvoiso6(E, i, rs, ps, N) >= 1)) D[i] = 1;
+      if (E[i] || (mctopo3d_nbvoiso6(E, i, rs, ps, N) >= 1)) D[i] = 1;
 
     //  D := T \ D
     for (i = 0; i < N; i++)
@@ -1566,13 +1566,13 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     if (step > filter)
     {
       for (i = 0; i < N; i++) 
-	if (S[i] && !K[i] && simple26(S, i, rs, ps, N))
+	if (S[i] && !K[i] && mctopo3d_simple26(S, i, rs, ps, N))
 	  SET_SIMPLE(S[i]);
     }
     else
     {
       for (i = 0; i < N; i++) 
-	if (S[i] && simple26(S, i, rs, ps, N))
+	if (S[i] && mctopo3d_simple26(S, i, rs, ps, N))
 	  SET_SIMPLE(S[i]);
     }
 
@@ -1667,7 +1667,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   if (inhibit != NULL) I = UCHARDATA(inhibit);
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -1685,7 +1685,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES ET PAS DANS I
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && simple26(S, i, rs, ps, N) && (!I || !I[i]))
+      if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N) && (!I || !I[i]))
 	SET_SIMPLE(S[i]);
 #ifdef DEBUG
 writeimage(image,"_S");
@@ -1820,7 +1820,7 @@ Les points non enlevés sont marqués MARK_INFTY.
   }
 
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -1838,7 +1838,7 @@ Les points non enlevés sont marqués MARK_INFTY.
 
     // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && simple26(S, i, rs, ps, N))
+      if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
 #ifdef DEBUG
 writeimage(image,"_S");
@@ -1948,7 +1948,7 @@ Retourne dans image l'axe topologique.
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
   for (i = 0; i < N; i++) if (S[i]) O[i] = MARK_INFTY; else O[i] = 0;
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -1966,7 +1966,7 @@ Retourne dans image l'axe topologique.
 
     // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && simple26(S, i, rs, ps, N))
+      if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
     // DEUXIEME SOUS-ITERATION : MARQUE LES CLIQUES CRUCIALES CORRESPONDANT AUX 2-FACES
     for (i = 0; i < N; i++) 
@@ -2270,7 +2270,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   if (inhibit != NULL) I = UCHARDATA(inhibit);
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -2288,7 +2288,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES ET PAS DANS I
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && simple26(S, i, rs, ps, N) && (!I || !I[i]))
+      if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N) && (!I || !I[i]))
 	SET_SIMPLE(S[i]);
 
     // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2M-CRUCIAUX
@@ -2400,7 +2400,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -2421,7 +2421,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     {
       if (IS_OBJECT(S[i]))
       {    
-	top26(S, i, rs, ps, N, &top, &topb);
+	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
 	if (top > 1) 
 	{ 
 	  SET_CURVE(S[i]);
@@ -2432,7 +2432,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     // MARQUE LES POINTS SIMPLES NON DANS I
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && !IS_INHIBIT(I[i]) && simple26(S, i, rs, ps, N))
+      if (IS_OBJECT(S[i]) && !IS_INHIBIT(I[i]) && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
 
     // DEMARQUE PTS DE COURBE ET LES MEMORISE DANS I
@@ -2548,7 +2548,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -2566,7 +2566,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     // MARQUE LES POINTS SIMPLES NON DANS I
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && !I[i] && simple26(S, i, rs, ps, N))
+      if (IS_OBJECT(S[i]) && !I[i] && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
     // MARQUE LES POINTS DE SURFACE (2)
     for (i = 0; i < N; i++) 
@@ -2581,7 +2581,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     {
       if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
       {    
-	top26(S, i, rs, ps, N, &top, &topb);
+	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
 	if (topb > 1) SET_SURF(S[i]);
 	if (topb == 0) SET_SELECTED(S[i]);
       }
@@ -2720,7 +2720,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -2738,7 +2738,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     // MARQUE LES POINTS SIMPLES NON DANS I
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && !I[i] && simple26(S, i, rs, ps, N))
+      if (IS_OBJECT(S[i]) && !I[i] && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
 
     // MARQUE LES POINTS INTERIEURS
@@ -2746,7 +2746,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     {
       if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
       {    
-	top26(S, i, rs, ps, N, &top, &topb);
+	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
 	if (topb == 0) SET_SELECTED(S[i]);
       }
     }
@@ -2877,7 +2877,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -2895,7 +2895,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     // MARQUE LES POINTS SIMPLES NON DANS I
     for (i = 0; i < N; i++) 
-      if (IS_OBJECT(S[i]) && !I[i] && simple26(S, i, rs, ps, N))
+      if (IS_OBJECT(S[i]) && !I[i] && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
     // MARQUE LES POINTS DE SURFACE (2)
     for (i = 0; i < N; i++)
@@ -2910,7 +2910,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     {
       if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
       {    
-	top26(S, i, rs, ps, N, &top, &topb);
+	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
 	if (topb > 1) SET_SURF(S[i]);
       }
     }
@@ -3101,7 +3101,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   if (inhibit != NULL) I = UCHARDATA(inhibit);
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -3122,7 +3122,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
       // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES DE DIRECTION d ET PAS DANS I
       for (i = 0; i < N; i++) 
-	if (IS_OBJECT(S[i]) && simple26(S, i, rs, ps, N) && 
+	if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N) && 
 	    direction(S, i, d, rs, ps, N) && (!I || !I[i]))
 	  SET_SIMPLE(S[i]);
 
@@ -3224,7 +3224,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
   if (inhibit != NULL) I = UCHARDATA(inhibit);
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -3245,7 +3245,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
       // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES DE DIRECTION d ET PAS DANS I
       for (i = 0; i < N; i++) 
-	if (IS_OBJECT(S[i]) && simple26(S, i, rs, ps, N) && 
+	if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N) && 
 	    direction(S, i, d, rs, ps, N) && (!I || !I[i]))
 	  SET_SIMPLE(S[i]);
 
@@ -3254,7 +3254,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       {
 	if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
 	{    
-	  top26(S, i, rs, ps, N, &top, &topb);
+	  mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
 	  if (topb == 0) SET_SELECTED(S[i]);
 	}
       }
@@ -3387,7 +3387,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   }
   I = UCHARDATA(inhibit);
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -3408,7 +3408,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
       // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES DE DIRECTION d ET PAS DANS I
       for (i = 0; i < N; i++) 
-	if (IS_OBJECT(S[i]) && simple26(S, i, rs, ps, N) && 
+	if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N) && 
 	    direction(S, i, d, rs, ps, N) && (!I || !I[i]))
 	  SET_SIMPLE(S[i]);
 
@@ -3417,7 +3417,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       {
 	if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
 	{    
-	  top26(S, i, rs, ps, N, &top, &topb);
+	  mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
 	  if (topb > 1) { I[i] = 1; UNSET_SIMPLE(S[i]); }
 	}
       }

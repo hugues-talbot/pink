@@ -102,10 +102,10 @@ int32_t lnbtopo(
       }
       break;
     case 6:
-      init_topo3d();
+      mctopo3d_init_topo3d();
       switch (whichnumber)
       {
-        case PP: for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)t6pp(I, p, rs, ps, N); break;
+        case PP: for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)mctopo3d_t6pp(I, p, rs, ps, N); break;
         case P:  for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)t6p(I, p, rs, ps, N);  break;
         case M:  for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)mctopo3d_t6m(I, p, rs, ps, N);  break;
         case MM: for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)mctopo3d_t6mm(I, p, rs, ps, N); break;
@@ -113,11 +113,11 @@ int32_t lnbtopo(
       termine_topo3d();
       break;
     case 26:
-      init_topo3d();
+      mctopo3d_init_topo3d();
       switch (whichnumber)
       {
         case PP: for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)mctopo3d_t26pp(I, p, rs, ps, N); break;
-        case P:  for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)t26p(I, p, rs, ps, N);  break;
+        case P:  for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)mctopo3d_t26p(I, p, rs, ps, N);  break;
         case M:  for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)mctopo3d_t26m(I, p, rs, ps, N);  break;
         case MM: for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)mctopo3d_t26mm(I, p, rs, ps, N); break;
       }

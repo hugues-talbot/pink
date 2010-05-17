@@ -163,7 +163,7 @@ MCP * MCP_Init(int32_t taillemax)
   P->Vertices = MCP_AllocVertices(taillemax);
   P->Faces = MCP_AllocFaces(taillemax);
   P->Edges = NULL;
-  P->RBT = CreeRbtVide(taillemax);
+  P->RBT = mcrbt_CreeRbtVide(taillemax);
   if ((P == NULL) || (P->Vertices == NULL) || (P->Faces == NULL) || (P->RBT == NULL))
     exit(0);
   return P;
@@ -176,7 +176,7 @@ void MCP_Termine(MCP *P)
   free(P->Vertices);
   free(P->Faces);
   if (P->Edges) free(P->Edges);
-  RbtTermine(P->RBT);
+  mcrbt_RbtTermine(P->RBT);
   free(P);
 } /* MCP_Termine() */
 
@@ -314,8 +314,8 @@ void MCP_ComputeEdges(MCP *P)
       if (RbtSearch(P->RBT, (TypRbtKey)(a*N+b)) == P->RBT->nil)
       {
 	e = MCP_AddEdge(P, a, b);
-	(void)RbtInsert(&P->RBT, (TypRbtKey)(a*N+b), (TypRbtAuxData)e);
-	(void)RbtInsert(&P->RBT, (TypRbtKey)(b*N+a), (TypRbtAuxData)e);
+	(void)mcrbt_RbtInsert(&P->RBT, (TypRbtKey)(a*N+b), (TypRbtAuxData)e);
+	(void)mcrbt_RbtInsert(&P->RBT, (TypRbtKey)(b*N+a), (TypRbtAuxData)e);
       }
     } /* for j */
   } /* for i */

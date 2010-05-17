@@ -90,7 +90,7 @@ int32_t lptisolated(struct xvimage * image, int32_t connex)
   else if (connex == 6)
   {
     for (x = 0; x < N; x++)
-      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (nbvoiso6(SOURCE, x, rs, ps, N) == 0))
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (mctopo3d_nbvoiso6(SOURCE, x, rs, ps, N) == 0))
         RES[x] = NDG_MAX;
   }
   else if (connex == 18)
@@ -154,7 +154,7 @@ int32_t lptinterior(struct xvimage * image, int32_t connex)
   else if (connex == 6)
   {
     for (x = 0; x < N; x++)
-      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (nbvoiso6(SOURCE, x, rs, ps, N) == 6))
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (mctopo3d_nbvoiso6(SOURCE, x, rs, ps, N) == 6))
         RES[x] = NDG_MAX;
   }
   else if (connex == 18)
@@ -218,11 +218,11 @@ int32_t lptmultiple(struct xvimage * image, int32_t connex)
   }
   else if (connex == 6)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
       if (SOURCE[x] && nonbord3d(x, rs, ps, N))
       {
-        top6(SOURCE, x, rs, ps, N, &t, &tb);
+        mctopo3d_top6(SOURCE, x, rs, ps, N, &t, &tb);
         if (t > 2) RES[x] = NDG_MAX;
       }
     termine_topo3d();
@@ -276,7 +276,7 @@ int32_t lptend(struct xvimage * image, int32_t connex)
   else if (connex == 6)
   {
     for (x = 0; x < N; x++)
-      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (nbvoiso6(SOURCE, x, rs, ps, N) == 1))
+      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (mctopo3d_nbvoiso6(SOURCE, x, rs, ps, N) == 1))
         RES[x] = NDG_MAX;
   }
   else if (connex == 18)
@@ -342,7 +342,7 @@ int32_t lptcurve(struct xvimage * image, int32_t connex)
   }
   else if (connex == 6)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
       if (SOURCE[x] && nonbord3d(x, rs, ps, N) && curve6(SOURCE, x, rs, ps, N))
         RES[x] = NDG_MAX;
@@ -350,17 +350,17 @@ int32_t lptcurve(struct xvimage * image, int32_t connex)
   }
   else if (connex == 18)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
-      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && curve18(SOURCE, x, rs, ps, N))
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && mctopo3d_curve18(SOURCE, x, rs, ps, N))
         RES[x] = NDG_MAX;
     termine_topo3d();
   }
   else if (connex == 26)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
-      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && curve26(SOURCE, x, rs, ps, N))
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && mctopo3d_curve26(SOURCE, x, rs, ps, N))
         RES[x] = NDG_MAX;
     termine_topo3d();
   }
@@ -465,33 +465,33 @@ int32_t lptseparating(struct xvimage * image, int32_t connex)
   }
   else if (connex == 6)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
       if (SOURCE[x] && nonbord3d(x, rs, ps, N))
       {
-        top6(SOURCE, x, rs, ps, N, &t, &tb);
+        mctopo3d_top6(SOURCE, x, rs, ps, N, &t, &tb);
         if (tb >= 2) RES[x] = NDG_MAX;
       }
     termine_topo3d();
   }
   else if (connex == 18)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
       if (SOURCE[x] && nonbord3d(x, rs, ps, N))
       {
-        top18(SOURCE, x, rs, ps, N, &t, &tb);
+        mctopo3d_top18(SOURCE, x, rs, ps, N, &t, &tb);
         if (tb >= 2) RES[x] = NDG_MAX;
       }
     termine_topo3d();
   }
   else if (connex == 26)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
       if (SOURCE[x] && nonbord3d(x, rs, ps, N))
       {
-        top26(SOURCE, x, rs, ps, N, &t, &tb);
+        mctopo3d_top26(SOURCE, x, rs, ps, N, &t, &tb);
         if (tb >= 2) RES[x] = NDG_MAX;
       }
     termine_topo3d();
@@ -551,17 +551,17 @@ int32_t lptsimple(struct xvimage * image, int32_t connex)
   }
   else if (connex == 6)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
       if (SOURCE[x] && nonbord3d(x, rs, ps, N))
       {
-        if (simple6(SOURCE, x, rs, ps, N)) RES[x] = NDG_MAX;
+        if (mctopo3d_simple6(SOURCE, x, rs, ps, N)) RES[x] = NDG_MAX;
       }
     termine_topo3d();
   }
   else if (connex == 18)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
       if (SOURCE[x] && nonbord3d(x, rs, ps, N))
       {
@@ -571,11 +571,11 @@ int32_t lptsimple(struct xvimage * image, int32_t connex)
   }
   else if (connex == 26)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
       if (SOURCE[x] && nonbord3d(x, rs, ps, N))
       {
-        if (simple26(SOURCE, x, rs, ps, N)) RES[x] = NDG_MAX;
+        if (mctopo3d_simple26(SOURCE, x, rs, ps, N)) RES[x] = NDG_MAX;
       }
     termine_topo3d();
   }
@@ -634,33 +634,33 @@ int32_t lseltopo(struct xvimage * image, int32_t connex, int32_t tm, int32_t tp,
   }
   else if (connex == 6)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
       if (SOURCE[x] && nonbord3d(x, rs, ps, N))
       {
-        top6(SOURCE, x, rs, ps, N, &t, &tb);
+        mctopo3d_top6(SOURCE, x, rs, ps, N, &t, &tb);
         if ((t >= tm) && (t <= tp) && (tb >= tbm) && (tb <= tbp)) RES[x] = NDG_MAX;
       }
     termine_topo3d();
   }
   else if (connex == 18)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
       if (SOURCE[x] && nonbord3d(x, rs, ps, N))
       {
-        top18(SOURCE, x, rs, ps, N, &t, &tb);
+        mctopo3d_top18(SOURCE, x, rs, ps, N, &t, &tb);
         if ((t >= tm) && (t <= tp) && (tb >= tbm) && (tb <= tbp)) RES[x] = NDG_MAX;
       }
     termine_topo3d();
   }
   else if (connex == 26)
   {
-    init_topo3d();
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
       if (SOURCE[x] && nonbord3d(x, rs, ps, N))
       {
-        top26(SOURCE, x, rs, ps, N, &t, &tb);
+        mctopo3d_top26(SOURCE, x, rs, ps, N, &t, &tb);
         if ((t >= tm) && (t <= tp) && (tb >= tbm) && (tb <= tbp)) RES[x] = NDG_MAX;
       }
     termine_topo3d();
@@ -767,7 +767,7 @@ int32_t lminimalsimplepair(struct xvimage * image, uint32_t onepair)
       return 0;
   }
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   for (z = 1; z < ds-1; z++)
     for (y = 1; y < cs-1; y++)
@@ -775,7 +775,7 @@ int32_t lminimalsimplepair(struct xvimage * image, uint32_t onepair)
       {
 	p = z*ps + y*rs + x; p1 = z*ps + y*rs + x+1;
 	if (SOURCE[p] && SOURCE[p1] && 
-	    !simple26(SOURCE, p, rs, ps, N) && !simple26(SOURCE, p1, rs, ps, N))
+	    !mctopo3d_simple26(SOURCE, p, rs, ps, N) && !mctopo3d_simple26(SOURCE, p1, rs, ps, N))
 	{
 	  if (pairesimple_26_x(SOURCE, p, rs, ps, N)) 
 	  {
@@ -791,7 +791,7 @@ int32_t lminimalsimplepair(struct xvimage * image, uint32_t onepair)
       {
 	p = z*ps + y*rs + x; p1 = z*ps + (y+1)*rs + x;
 	if (SOURCE[p] && SOURCE[p1] && 
-	    !simple26(SOURCE, p, rs, ps, N) && !simple26(SOURCE, p1, rs, ps, N))
+	    !mctopo3d_simple26(SOURCE, p, rs, ps, N) && !mctopo3d_simple26(SOURCE, p1, rs, ps, N))
 	{
 	  if (pairesimple_26_y(SOURCE, p, rs, ps, N))
 	  {
@@ -807,7 +807,7 @@ int32_t lminimalsimplepair(struct xvimage * image, uint32_t onepair)
       {
 	p = z*ps + y*rs + x; p1 = (z+1)*ps + y*rs + x;
 	if (SOURCE[p] && SOURCE[p1] && 
-	    !simple26(SOURCE, p, rs, ps, N) && !simple26(SOURCE, p1, rs, ps, N))
+	    !mctopo3d_simple26(SOURCE, p, rs, ps, N) && !mctopo3d_simple26(SOURCE, p1, rs, ps, N))
 	{
 	  if (pairesimple_26_z(SOURCE, p, rs, ps, N))
 	  {

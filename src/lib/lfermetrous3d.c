@@ -163,7 +163,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
   fprintf(stderr, "%s : connex = %d, tailletrous = %d\n", F_NAME, connex, tailletrous);
 #endif
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   if (tailletrous == -1) tailletrous = 1000000000;
 
@@ -229,7 +229,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
 
     for (x = 0; x < N; x++)
     {
-      tbar = tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
+      tbar = mctopo3d_tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((F[x] == VAL_Y_X) && ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))))
       {
         FahpPush(FAHP, x, max(0,(FAHP_NPRIO-D[x])));
@@ -281,7 +281,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
       }
 #endif
       F[x] = VAL_Y_X;
-      tbar = tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
+      tbar = mctopo3d_tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous)))
       {
         F[x] = VAL_NULLE;
@@ -440,7 +440,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
   int32_t xmin, xmax, ymin, ymax, zmin, zmax; /* le pave englobant */
   int32_t tbar;
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   if (tailletrous == -1) tailletrous = 1000000000;
 
@@ -506,7 +506,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
 
     for (x = 0; x < N; x++)
     {
-      tbar = tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
+      tbar = mctopo3d_tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((F[x] == VAL_Y_X) && ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))))
       {
         FahpPush(FAHP, x, max(0,(FAHP_NPRIO-D[x])));
@@ -522,7 +522,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
     {
       x = FahpPop(FAHP);
       F[x] = VAL_Y_X;
-      tbar = tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
+      tbar = mctopo3d_tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous)))
       {
         F[x] = VAL_NULLE;
@@ -654,7 +654,7 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
 
   if (tailletrous == -1) tailletrous = 1000000000;
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   FAHP = CreeFahpVide(N);
   if (FAHP == NULL)

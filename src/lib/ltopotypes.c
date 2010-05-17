@@ -255,7 +255,7 @@ int32_t lt6pp(struct xvimage * image)
     return(0);
   }
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -269,7 +269,7 @@ int32_t lt6pp(struct xvimage * image)
     for (k = 1; k < ds - 1; k++) 
       for (j = 1; j < cs - 1; j++) 
         for (i = 1; i < rs - 1; i++) 
-          pti[k*ps + j*rs + i] = (uint8_t)t6pp(ptt, k*ps + j*rs + i, rs, ps, N);
+          pti[k*ps + j*rs + i] = (uint8_t)mctopo3d_t6pp(ptt, k*ps + j*rs + i, rs, ps, N);
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
@@ -317,7 +317,7 @@ int32_t lmctopo3d_t26pp(struct xvimage * image)
     return(0);
   }
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -395,7 +395,7 @@ int32_t lalpha(struct xvimage * image, int32_t connex, char sign)
       else
       if (connex == 6)
 	for (k = 0; k < N; k++) 
-	  pti[k] = (uint8_t)alpha6m(ptt, k, rs, ps, N);
+	  pti[k] = (uint8_t)mctopo3d_alpha6m(ptt, k, rs, ps, N);
       else
       if (connex == 8)
 	for (k = 0; k < N; k++) 
@@ -415,7 +415,7 @@ int32_t lalpha(struct xvimage * image, int32_t connex, char sign)
     {
       if (connex == 26)
 	for (k = 0; k < N; k++) 
-	  pti[k] = (uint8_t)alpha26p(ptt, k, rs, ps, N);
+	  pti[k] = (uint8_t)mctopo3d_alpha26p(ptt, k, rs, ps, N);
       else
       if (connex == 6)
 	for (k = 0; k < N; k++) 

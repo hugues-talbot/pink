@@ -135,10 +135,10 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
 
   taillemaxrbt = 2 * (rs + cs + ds);
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s : mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -161,7 +161,7 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
     i = z*ps + y*rs + x;
     if (K[i] && ((I == NULL) || (!I[i])) && FaceLibre3d(k, x, y, z))
     {
-      RbtInsert(&RBT, P[i], i);
+      mcrbt_RbtInsert(&RBT, P[i], i);
       Set(i, EN_RBT);
     }
   }
@@ -170,7 +170,7 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
   /*                  DEBUT SATURATION                */
   /* ================================================ */
 
-  while (!RbtVide(RBT))
+  while (!mcrbt_RbtVide(RBT))
   {
     i = RbtPopMin(RBT);
     UnSet(i, EN_RBT);
@@ -186,19 +186,19 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
 	xv = v % rs; yv = (v % ps) / rs; zv = v / ps;
 	if (K[v] && !IsSet(v, EN_RBT) && ((I == NULL) || (!I[v])) && FaceLibre3d(k, xv, yv, zv))
 	{
-	  RbtInsert(&RBT, P[v], v);
+	  mcrbt_RbtInsert(&RBT, P[v], v);
 	  Set(v, EN_RBT);
 	}
       }
     }
-  } /* while (!RbtVide(RBT)) */
+  } /* while (!mcrbt_RbtVide(RBT)) */
 
   /* ================================================ */
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   return 1;
 
 } /* l3dcollapse() */
@@ -273,10 +273,10 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 
   taillemaxrbt = 4 * (rs*cs + cs*ds + ds*rs);
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s : mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -313,7 +313,7 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 	   ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
       {
 	pp = (TypRbtKey)(max(P[g],P[f]));
-	RbtInsert(&RBT, pp, g);
+	mcrbt_RbtInsert(&RBT, pp, g);
 	Set(g, EN_RBT);
       }
     }
@@ -323,11 +323,11 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
   /*                  DEBUT SATURATION                */
   /* ================================================ */
 
-  while (!RbtVide(RBT))
+  while (!mcrbt_RbtVide(RBT))
   {
     // construit la liste de toutes les paires libres ayant la priorité courante
     p = RbtMinLevel(RBT); 
-    while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
     {
       g = RbtPopMin(RBT);
       UnSet(g, EN_RBT);
@@ -339,7 +339,7 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 	RlifoPush(&RLIFO, g);
 	Set(g, EN_RLIFO);
       }
-    } // while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    } // while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
 
     for (dir = 0; dir <= 2; dir++) // For all face directions
       for (ori = 0; ori <= 1; ori++) // For both orientations
@@ -383,7 +383,7 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 		      if (!IsSet(g, EN_RBT))
 		      { // Préparation étape suivante
 			pp = (TypRbtKey)(max(P[g],P[f]));
-			RbtInsert(&RBT, pp, g);
+			mcrbt_RbtInsert(&RBT, pp, g);
 			Set(g, EN_RBT);
 		      }
 		    } // if (f != -1)
@@ -403,14 +403,14 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
     } // for for
 
     RlifoFlush(RLIFO);
-  } /* while (!RbtVide(RBT)) */
+  } /* while (!mcrbt_RbtVide(RBT)) */
 
   /* ================================================ */
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   RlifoTermine(RLIFO);
   RlifoTermine(RLIFOb);
   return 1;
@@ -487,10 +487,10 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 
   taillemaxrbt = 4 * (rs*cs + cs*ds + ds*rs);
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s : mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -527,7 +527,7 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 	   ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
       {
 	pp = (TypRbtKey)(max(P[g],P[f]));
-	RbtInsert(&RBT, pp, g);
+	mcrbt_RbtInsert(&RBT, pp, g);
 	Set(g, EN_RBT);
       }
     }
@@ -537,11 +537,11 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
   /*                  DEBUT SATURATION                */
   /* ================================================ */
 
-  while (!RbtVide(RBT))
+  while (!mcrbt_RbtVide(RBT))
   {
     // construit la liste de toutes les paires libres ayant la priorité courante
     p = RbtMinLevel(RBT); 
-    while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
     {
       g = RbtPopMin(RBT);
       UnSet(g, EN_RBT);
@@ -553,7 +553,7 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 	RlifoPush(&RLIFO, g);
 	Set(g, EN_RLIFO);
       }
-    } // while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    } // while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
 
     for (dir = 0; dir <= 2; dir++) // For all face directions
       for (ori = 0; ori <= 1; ori++) // For both orientations
@@ -597,7 +597,7 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 		      if (!IsSet(g, EN_RBT))
 		      { // Préparation étape suivante
 			pp = (TypRbtKey)(max(P[g],P[f]));
-			RbtInsert(&RBT, pp, g);
+			mcrbt_RbtInsert(&RBT, pp, g);
 			Set(g, EN_RBT);
 		      }
 		    } // if (f != -1)
@@ -617,14 +617,14 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
     } // for for
 
     RlifoFlush(RLIFO);
-  } /* while (!RbtVide(RBT)) */
+  } /* while (!mcrbt_RbtVide(RBT)) */
 
   /* ================================================ */
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   RlifoTermine(RLIFO);
   RlifoTermine(RLIFOb);
   return 1;
@@ -1165,10 +1165,10 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 
   taillemaxrbt = N/8;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s : mcrbt_CreeRbtVide failed\n", F_NAME);
     return(NULL);
   }
 
@@ -1238,7 +1238,7 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 	   ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
       {
 	pp = (TypRbtKey)(max(P[g],P[f]));
-	RbtInsert(&RBT, pp, g);
+	mcrbt_RbtInsert(&RBT, pp, g);
 	Set(g, EN_RBT);
       }
     }
@@ -1248,11 +1248,11 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
   /*                  DEBUT SATURATION                */
   /* ================================================ */
 
-  while (!RbtVide(RBT))
+  while (!mcrbt_RbtVide(RBT))
   {
     // construit la liste de toutes les paires libres ayant la priorité courante
     p = RbtMinLevel(RBT); 
-    while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
     {
       g = RbtPopMin(RBT);
       UnSet(g, EN_RBT);
@@ -1264,7 +1264,7 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 	RlifoPush(&RLIFO, g);
 	Set(g, EN_RLIFO);
       }
-    } // while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    } // while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
 
     for (dir = 0; dir <= 2; dir++) // For all face directions
       for (ori = 0; ori <= 1; ori++) // For both orientations
@@ -1340,7 +1340,7 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 		      if (!IsSet(gg, EN_RBT))
 		      { // Préparation étape suivante
 			pp = (TypRbtKey)(max(P[gg],P[ff]));
-			RbtInsert(&RBT, pp, gg);
+			mcrbt_RbtInsert(&RBT, pp, gg);
 			Set(gg, EN_RBT);
 		      }
 		    } // if (ff != -1)
@@ -1361,7 +1361,7 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 
     RlifoFlush(RLIFO);
 
-  } /* while (!RbtVide(RBT)) */
+  } /* while (!mcrbt_RbtVide(RBT)) */
 
   for (g = 0; g < N; g++)
     if (K[g]) flow->v_sommets[g] = TF_PERMANENT;
@@ -1375,7 +1375,7 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
   /* ================================================ */
 
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   RlifoTermine(RLIFO);
   RlifoTermine(RLIFOb);
   return(flow);

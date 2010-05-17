@@ -2011,7 +2011,7 @@ int32_t mctopo3d_separant6(  /* teste si un point est separant - minima 6-connex
 } /* mctopo3d_separant6() */
 
 /* ==================================== */
-int32_t hmctopo3d_separant6(  /* teste si un point est mctopo3d_hseparant - minima 6-connexes
+int32_t mctopo3d_hseparant6(  /* teste si un point est mctopo3d_hseparant - minima 6-connexes
 	         ie- s'il est mctopo3d_separant pour la coupe h */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
@@ -2029,10 +2029,10 @@ int32_t hmctopo3d_separant6(  /* teste si un point est mctopo3d_hseparant - mini
   preparecubesh(img, p, h, rs, ps, N);
   if (mctopo3d_T6(cubec_topo3d) >= 2) return 1;
   return 0;
-} /* hmctopo3d_separant6() */
+} /* mctopo3d_hseparant6() */
 
 /* ==================================== */
-int32_t hfmctopo3d_separant6(  /* teste si un point est mctopo3d_hfseparant - minima 6-connexes
+int32_t mctopo3d_hfseparant6(  /* teste si un point est mctopo3d_hfseparant - minima 6-connexes
 	         ie- s'il est mctopo3d_separant pour une coupe c telle que h < c <= img[p] */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
@@ -2062,7 +2062,7 @@ int32_t hfmctopo3d_separant6(  /* teste si un point est mctopo3d_hfseparant - mi
     }
   }	
   return 0;
-} /* hfmctopo3d_separant6() */
+} /* mctopo3d_hfseparant6() */
 
 /* ==================================== */
 int32_t mctopo3d_filsombre6(                /* pour des minima en 6-connexite */

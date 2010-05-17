@@ -86,20 +86,20 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
     return 0;
   }
   IndicsInit(N_t);
-  L = CreeRbtVide(N_t);
+  L = mcrbt_CreeRbtVide(N_t);
   for(u = 0; u < N_t; u ++){
     if( ( (u < N) && (u%rs < rs-1)) || ((u >= N) && (u < N_t - rs))){
       x = Sommetx(u,N,rs);
       y = Sommety(u,N,rs);
       if((min(G[x],G[y]) == 0) && (max(G[x],G[y]) > 0)){
 	/* u est growing edge */
-	RbtInsert(&L, (TypRbtKey)F[u], u);
+	mcrbt_RbtInsert(&L, (TypRbtKey)F[u], u);
 	Set(u, TRUE);
       }else Set(u, FALSE);
     }else Set(u,FALSE);
   }
   
- while(!RbtVide(L)){
+ while(!mcrbt_RbtVide(L)){
    u = RbtPopMin(L);
 #ifdef DEBUG
    printf("poped arete u no: %d de niveau %d\n",u,F[u]);
@@ -131,7 +131,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
 #endif
 	 if((min(G[x_1],G[y_1]) == 0) && (max(G[x_1],G[y_1]) > 0)){
 	   /* v est une growing edge */
-	   RbtInsert(&L, (TypRbtKey)F[v], v);
+	   mcrbt_RbtInsert(&L, (TypRbtKey)F[v], v);
 	   Set(v,TRUE);
 	 }	  
        }
@@ -146,7 +146,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
    }
   /* Terminer indicateur + R&B tree ... */
  IndicsTermine();
- RbtTermine(L);
+ mcrbt_RbtTermine(L);
  return 1;
 }
 //#define DEBUG
@@ -177,7 +177,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
     return 0;
   }
   IndicsInit(N_t);
-  L = CreeRbtVide(N_t);
+  L = mcrbt_CreeRbtVide(N_t);
   for(u = 0; u < N_t; u ++){
     if( ( (u < N) && (u%rs < rs-1)) ||
 	((u >= N) && (u < 2*N) && ( (u%ps) < (ps-rs))) ||
@@ -187,13 +187,13 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
       if((min(G[x],G[y]) == 0) && (max(G[x],G[y]) > 0)){
 	/* u est growing edge */
 	/*	printf("Initialisation: ds Rbt: (%d,%d)\n", x,y);*/
-	RbtInsert(&L, (TypRbtKey)F[u], u);
+	mcrbt_RbtInsert(&L, (TypRbtKey)F[u], u);
 	Set(u, TRUE);
       }else Set(u, FALSE);
     }else Set(u,FALSE);
   }
   
-  while(!RbtVide(L)){
+  while(!mcrbt_RbtVide(L)){
     u = RbtPopMin(L);
 #ifdef DEBUG
     printf("poped arete u no: %d de niveau %d\n",u,F[u]);
@@ -225,7 +225,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
 #endif
 	  if((min(G[x_1],G[y_1]) == 0) && (max(G[x_1],G[y_1]) > 0)){
 	    /* v est une growing edge */
-	    RbtInsert(&L, (TypRbtKey)F[v], v);
+	    mcrbt_RbtInsert(&L, (TypRbtKey)F[v], v);
 	    Set(v,TRUE);
 	  }	  
 	}
@@ -243,7 +243,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
   /* Terminer indicateur + R&B tree ... */
 
   IndicsTermine();
-  RbtTermine(L);
+  mcrbt_RbtTermine(L);
   return 1;
 }
 
@@ -280,7 +280,7 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
   }
   IndicsInit(N_t);
   /*Pas du tout robuste c'est juste qqch pour passer sur des images 4d du coeur*/
-  L = CreeRbtVide(N_t/10);
+  L = mcrbt_CreeRbtVide(N_t/10);
   for(u = 0; u < N_t; u ++){
     if( ( (u < N) && (u%rs < rs-1)) ||
 	( (u >= N) && (u < 2*N) && ( (u%ps) < (ps-rs) ) ) ||
@@ -297,13 +297,13 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
       if((min(G[x/vs][x%vs],G[y/vs][y%vs]) == 0) && (max(G[x/vs][x%vs],G[y/vs][y%vs]) > 0)){
 	/* u est growing edge */
 	/*	printf("Initialisation: ds Rbt: (%d,%d)\n", x,y);*/
-	RbtInsert(&L, (TypRbtKey)F[u], u);
+	mcrbt_RbtInsert(&L, (TypRbtKey)F[u], u);
 	Set(u, TRUE);
       }else Set(u, FALSE);
     }else Set(u,FALSE);
   }
   printf("Initialisation OK \n");
-  while(!RbtVide(L)){
+  while(!mcrbt_RbtVide(L)){
     u = RbtPopMin(L);
 #ifdef DEBUG
     printf("Arete poped F[(%d,%d,%d,%d),%d] = %d\n", u%rs, (u%ps)/rs, (u%vs)/ps, (u%N)/vs, u/N,F[u]); 
@@ -338,7 +338,7 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
 #ifdef DEBUG
 	    printf("Arete pushed F[(%d,%d,%d,%d),%d] = %d\n", v%rs, (v%ps)/rs, (v%vs)/ps, (v%N)/vs, v/N,F[v]);
 #endif	    
-	    RbtInsert(&L, (TypRbtKey)F[v], v);
+	    mcrbt_RbtInsert(&L, (TypRbtKey)F[v], v);
 	    Set(v,TRUE);
 	  }	  
 	}
@@ -360,6 +360,6 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
   /* Terminer indicateur + R&B tree ... */
   
   IndicsTermine();
-  RbtTermine(L);
+  mcrbt_RbtTermine(L);
   return 1;
 }
