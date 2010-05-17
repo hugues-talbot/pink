@@ -145,7 +145,7 @@ int main(int argc, char** argv)
         if (strcmp(argv[7], "a") == 0)
         {
             pValAb = alpha8m;
-            pValAb3d = alpha26m;
+            pValAb3d = mctopo3d_alpha26m;
         }
         else
         {
@@ -154,7 +154,7 @@ int main(int argc, char** argv)
                 if ((tpmin == 1) && (tpmax == 1) && (tmmmin == 1) && (tmmmin == 1))
                 {
                     if (connex == 8) pValAb = delta8m; else pValAb = delta4m;
-                    if (connex == 26) pValAb3d = delta26m; else pValAb3d = delta6m;
+                    if (connex == 26) pValAb3d = mctopo3d_delta26m; else pValAb3d = mctopo3d_delta6m;
                 }
                 else
                 {
@@ -350,8 +350,8 @@ int32_t largepdestr6(uint8_t *img,          /* pointeur base image */
 //         return 0;
 // 
 //     preparecubesh(img, p, img[p], rs, ps, N);
-    return ((t26pmin <= t26p(img, p, rs, ps, N)) && (t26p(img, p, rs, ps, N) <= t26pmax) &&
-            (t6mmmin <= t6mm(img, p, rs, ps, N)) && (t6mm(img, p, rs, ps, N) <= t6mmmax));
+    return ((t26pmin <= mctopo3d_t26p(img, p, rs, ps, N)) && (mctopo3d_t26p(img, p, rs, ps, N) <= t26pmax) &&
+            (t6mmmin <= mctopo3d_t6mm(img, p, rs, ps, N)) && (mctopo3d_t6mm(img, p, rs, ps, N) <= t6mmmax));
 } /* largepdestr6() */
 
 /* ==================================== */
@@ -371,8 +371,8 @@ int32_t largepdestr26(uint8_t *img,          /* pointeur base image */
 //          (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
 //         return 0;
 //     preparecubesh(img, p, img[p], rs, ps, N);
-    return ((t6pmin <= t6p(img, p, rs, ps, N)) && (t6p(img, p, rs, ps, N) <= t6pmax) &&
-            (t26mmmin <= t26mm(img, p, rs, ps, N)) && (t26mm(img, p, rs, ps, N) <= t26mmmax));
+    return ((t6pmin <= mctopo3d_t6p(img, p, rs, ps, N)) && (mctopo3d_t6p(img, p, rs, ps, N) <= t6pmax) &&
+            (t26mmmin <= mctopo3d_t26mm(img, p, rs, ps, N)) && (mctopo3d_t26mm(img, p, rs, ps, N) <= t26mmmax));
 } /* largepdestr26() */
 
 /* ==================================== */
@@ -399,7 +399,7 @@ int32_t ltoposhrinkgray3d(struct xvimage *image,
     uint8_t *G = UCHARDATA(travail);/* l'image de travail */
     uint8_t *I = NULL;
 
-    init_topo3d();
+    mctopo3d_init_topo3d();
     
     if (imageinhibit != NULL)
     {
@@ -447,7 +447,7 @@ int32_t ltoposhrinkgray3d(struct xvimage *image,
         }
     }
 
-    termine_topo3d();
+    mctopo3d_termine_topo3d();
     freeimage(travail);
     return(1);
 } /* ltoposhrinkgray3d() */

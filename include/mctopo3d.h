@@ -268,7 +268,7 @@ extern int32_t well26(                   /* pour des minima en 26-connexite */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N);                       /* taille image */
-extern uint8_t alpha26m(
+extern uint8_t mctopo3d_alpha26m(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -286,26 +286,26 @@ extern uint8_t alpha6m(
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N);                       /* taille image */
-extern uint8_t alpha26p(
+extern uint8_t mctopo3d_alpha26p(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N);                       /* taille image */
-extern uint8_t alpha6p(
+extern uint8_t mctopo3d_alpha6p(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N);                       /* taille image */
-extern uint8_t delta6m( 
+extern uint8_t mctopo3d_delta6m( 
 /* retourne la valeur max. a laquelle p est destructible - minima 6-connexes */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N);                      /* taille image */
-extern uint8_t delta26m( 
+extern uint8_t mctopo3d_delta26m( 
 /* retourne la valeur max. a laquelle p est destructible - minima 26-connexes */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
@@ -373,7 +373,7 @@ extern int32_t filclair26(                /* pour des minima en 26-connexite */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N);                      /* taille image */
-extern int32_t t6mm(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
+extern int32_t mctopo3d_t6mm(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t t6m(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t t6pp(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);
 extern int32_t t6p(uint8_t *img, int32_t p, int32_t rs, int32_t ps, int32_t N);

@@ -115,9 +115,9 @@ int main(int argc, char **argv)
   connex = atoi(argv[2]);
   
   if (argc == 4) inverse(image);
-  if (! lwshedtopo(image, connex))
+  if (! lwshedtopo_lwshedtopo(image, connex))
   {
-    fprintf(stderr, "%s: lwshedtopo failed\n", argv[0]);
+    fprintf(stderr, "%s: lwshedtopo_lwshedtopo failed\n", argv[0]);
     exit(1);
   }
   if (argc == 4) inverse(image);

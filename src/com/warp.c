@@ -90,9 +90,9 @@ int main(int argc, char **argv)
   td.xb = (double)xb;  td.yb = (double)yb;
   td.xc = (double)xc;  td.yc = (double)yc;
 
-  if (! lwarp(image, &ts, &td, 0))
+  if (! lwarp_lwarp(image, &ts, &td, 0))
   {
-    fprintf(stderr, "warp: function lwarp failed\n");
+    fprintf(stderr, "warp: function lwarp_lwarp failed\n");
     exit(1);
   }
 
