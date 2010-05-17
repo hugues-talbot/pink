@@ -270,9 +270,9 @@ int main(int argc, char **argv)
       } break;
     case 15:
       inhibit = copyimage(image);
-      if (!lmedialaxisbin(inhibit, 4))
+      if (!lmedialaxis_lmedialaxisbin(inhibit, 4))
       {
-	fprintf(stderr, "%s: lmedialaxis failed\n", argv[0]);
+	fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", argv[0]);
 	exit(1);
       }      
       if (! lskeljangrec(image, nsteps, inhibit))
@@ -318,9 +318,9 @@ int main(int argc, char **argv)
       } break;
     case 22:
       inhibit = copyimage(image);
-      if (!lmedialaxisbin(inhibit, 4))
+      if (!lmedialaxis_lmedialaxisbin(inhibit, 4))
       {
-	fprintf(stderr, "%s: lmedialaxis failed\n", argv[0]);
+	fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", argv[0]);
 	exit(1);
       }      
       if (! lskelNK2(image, nsteps, inhibit))

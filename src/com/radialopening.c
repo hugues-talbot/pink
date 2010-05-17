@@ -108,7 +108,7 @@ void open_image(struct xvimage * img, struct xvimage * org_img, struct xvimage *
   copy2image(img, org_img);
 
   //Erosion
-  leros(img, mask, rowsize(mask)/2, colsize(mask)/2);
+  ldilateros_leros(img, mask, rowsize(mask)/2, colsize(mask)/2);
 
   
   //As mask is a line dilated by an ordinary structuring element,
@@ -119,7 +119,7 @@ void open_image(struct xvimage * img, struct xvimage * org_img, struct xvimage *
   }
 
   //Dilation
-  ldilat(img, mask, rowsize(mask)/2, colsize(mask)/2);
+  ldilateros_ldilat(img, mask, rowsize(mask)/2, colsize(mask)/2);
 
   return;
 }
@@ -203,7 +203,7 @@ int main(int argc, char **argv)
 #endif
     drawline(mask, length, angle*(double)i);
     if (dilatmask != NULL) {
-      ldilat(mask, dilatmask, sex, sey);
+      ldilateros_ldilat(mask, dilatmask, sex, sey);
     }
     open_image(opened_image, image, mask);
 #ifdef DEBUG

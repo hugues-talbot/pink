@@ -96,7 +96,7 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (! llpetopo(image, marqueurs, trace))
+  if (! llpetopo_llpetopo(image, marqueurs, trace))
   {
     fprintf(stderr, "lpetopo: llpetopo failed\n");
     exit(1);

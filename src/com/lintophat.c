@@ -281,7 +281,7 @@ int main(int argc, char **argv)
  	// write new Mask (erster Quadrant, Teil I)
  	drawLine(mask_data, length, length/2, k, 1);
 #ifdef THICK
-        ldilatfast(mask, vois4);
+        ldilateros_ldilatfast(mask, vois4);
 #endif
 
  	close_image(closed_image, image, mask, length/2+1, length/2+1);
@@ -300,7 +300,7 @@ int main(int argc, char **argv)
  	// write new Mask (erster Quadrant, Teil II)
  	drawLine(mask_data, length, length/2, k, 2);
 #ifdef THICK
-        ldilatfast(mask, vois4);
+        ldilateros_ldilatfast(mask, vois4);
 #endif
 
  	close_image(closed_image, image, mask, length/2+1, length/2+1);
@@ -319,7 +319,7 @@ int main(int argc, char **argv)
  	// write new Mask (zweiter Quadrant, Teil I)
  	drawLine(mask_data, length, length/2, k, 3);
 #ifdef THICK
-        ldilatfast(mask, vois4);
+        ldilateros_ldilatfast(mask, vois4);
 #endif
  	
  	close_image(closed_image, image, mask, length/2+1, length/2+1);
@@ -337,7 +337,7 @@ int main(int argc, char **argv)
  	// write new Mask (zweiter Quadrant, Teil II)
  	drawLine(mask_data, length, length/2, k, 4);
 #ifdef THICK
-        ldilatfast(mask, vois4);
+        ldilateros_ldilatfast(mask, vois4);
 #endif
  	
  	close_image(closed_image, image, mask, length/2+1, length/2+1);

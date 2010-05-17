@@ -153,17 +153,17 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: (x,y) not end\n", argv[0]);
       exit(1);
     }
-    else if ((connex == 6) && (nbvoiso6(F, p, rs, ps, N) != 1))
+    else if ((connex == 6) && (mctopo3d_nbvoiso6(F, p, rs, ps, N) != 1))
     {
       fprintf(stderr, "%s: (x,y,z) not end\n", argv[0]);
       exit(1);
     }
-    else if ((connex == 18) && (nbvoiso18(F, p, rs, ps, N) != 1))
+    else if ((connex == 18) && (mctopo3d_nbvoiso18(F, p, rs, ps, N) != 1))
     {
       fprintf(stderr, "%s: (x,y,z) not end\n", argv[0]);
       exit(1);
     }
-    else if ((connex == 26) && (nbvoiso26(F, p, rs, ps, N) != 1))
+    else if ((connex == 26) && (mctopo3d_nbvoiso26(F, p, rs, ps, N) != 1))
     {
       fprintf(stderr, "%s: (x,y,z) not end\n", argv[0]);
       exit(1);
@@ -177,11 +177,11 @@ int main(int argc, char **argv)
     else if (connex == 8)
     { for (x = 0; x < N; x++) if ((F[x]) && (nbvois8(F, x, rs, N) == 1)) { p = x; break; } }
     else if (connex == 6)
-    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso6(F, x, rs, ps, N) == 1)) { p = x; break; } }
+    { for (x = 0; x < N; x++) if ((F[x]) && (mctopo3d_nbvoiso6(F, x, rs, ps, N) == 1)) { p = x; break; } }
     else if (connex == 18)
-    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso18(F, x, rs, ps, N) == 1)) { p = x; break; } }
+    { for (x = 0; x < N; x++) if ((F[x]) && (mctopo3d_nbvoiso18(F, x, rs, ps, N) == 1)) { p = x; break; } }
     else if (connex == 26)
-    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso26(F, x, rs, ps, N) == 1)) { p = x; break; } }
+    { for (x = 0; x < N; x++) if ((F[x]) && (mctopo3d_nbvoiso26(F, x, rs, ps, N) == 1)) { p = x; break; } }
     if (p == -1)
     {
       fprintf(stderr, "%s: no end point\n", argv[0]);
@@ -190,9 +190,9 @@ int main(int argc, char **argv)
   }
 
   if ((connex == 4) || (connex == 8))
-    (void)extractcurve(F, p, rs, N, connex, &X, &Y, &n);
+    (void)lcurves_extractcurve(F, p, rs, N, connex, &X, &Y, &n);
   else
-    (void)extractcurve3d(F, p, rs, ps, N, connex, &X, &Y, &Z, &n);
+    (void)lcurves_extractcurve3d(F, p, rs, ps, N, connex, &X, &Y, &Z, &n);
 
   fd = fopen(argv[argc - 1],"w");
   if (!fd)

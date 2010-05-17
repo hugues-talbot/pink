@@ -125,8 +125,8 @@ void rankmax_open_image(struct xvimage * img, struct xvimage * org_img, struct x
   }
 
   //Dilation
-  if (! ldilat(img, mask, rowsize(mask)/2, colsize(mask)/2)) {
-    fprintf(stderr, "%s: function ldilat failed\n", F_NAME);
+  if (! ldilateros_ldilat(img, mask, rowsize(mask)/2, colsize(mask)/2)) {
+    fprintf(stderr, "%s: function ldilateros_ldilat failed\n", F_NAME);
     exit(1);
   }
   
@@ -218,7 +218,7 @@ int main(int argc, char **argv)
 #endif
     drawline(mask, length, angle*(double)i);
     if (dilatmask != NULL) {
-      ldilat(mask, dilatmask, sex, sey);
+      ldilateros_ldilat(mask, dilatmask, sex, sey);
     }
     rankmax_open_image(opened_image, image, mask, rank);
     if (! lmax(result_image, opened_image)) {

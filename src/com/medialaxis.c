@@ -94,9 +94,9 @@ int main(int argc, char **argv)
 
   distance = atoi(argv[2]);
   
-  if (! (res = lmedialaxis(image, distance)))
+  if (! (res = lmedialaxis_lmedialaxis(image, distance)))
   {
-    fprintf(stderr, "%s: lmedialaxis failed\n", argv[0]);
+    fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", argv[0]);
     exit(1);
   }
 

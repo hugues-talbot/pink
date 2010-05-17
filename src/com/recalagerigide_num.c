@@ -175,7 +175,7 @@ int main(int argc, char **argv)
 
   if (depth(image1) == 1) // 2D
   {
-    (void)lrecalagerigide2d_num(image1, image2, Gamma, seuil, PRECISION);
+    (void)lrecalagerigide_lrecalagerigide2d_num(image1, image2, Gamma, seuil, PRECISION);
 #ifdef VERBOSE
     printf("hx = %g\n", Gamma[0]);
     printf("hy = %g\n", Gamma[1]);

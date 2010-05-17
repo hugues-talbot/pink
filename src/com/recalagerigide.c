@@ -130,7 +130,7 @@ int main(int argc, char **argv)
 
   if (depth(image1) == 1) // 2D
   {
-    Gamma = lrecalagerigide2d(P1, n1, P2, n2);
+    Gamma = lrecalagerigide_lrecalagerigide2d(P1, n1, P2, n2);
     printf("sx = %g\n", Gamma[0]);
     printf("sy = %g\n", Gamma[1]);
     printf("theta = %g = %g deg\n", Gamma[2], (Gamma[2]*180)/M_PI);

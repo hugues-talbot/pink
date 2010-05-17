@@ -290,17 +290,17 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: (x,y) not a curve point\n", argv[0]);
       exit(1);
     }
-    else if ((connex == 6) && (nbvoiso6(F, p, rs, ps, N) != 2))
+    else if ((connex == 6) && (mctopo3d_nbvoiso6(F, p, rs, ps, N) != 2))
     {
       fprintf(stderr, "%s: (x,y,z) not a curve point\n", argv[0]);
       exit(1);
     }
-    else if ((connex == 18) && (nbvoiso18(F, p, rs, ps, N) != 2))
+    else if ((connex == 18) && (mctopo3d_nbvoiso18(F, p, rs, ps, N) != 2))
     {
       fprintf(stderr, "%s: (x,y,z) not a curve point\n", argv[0]);
       exit(1);
     }
-    else if ((connex == 26) && (nbvoiso26(F, p, rs, ps, N) != 2))
+    else if ((connex == 26) && (mctopo3d_nbvoiso26(F, p, rs, ps, N) != 2))
     {
       fprintf(stderr, "%s: (x,y,z) not a curve point\n", argv[0]);
       exit(1);
@@ -314,11 +314,11 @@ int main(int argc, char **argv)
     else if (connex == 8)
     { for (x = 0; x < N; x++) if ((F[x]) && (nbvois8(F, x, rs, N) == 2)) { p = x; break; } }
     else if (connex == 6)
-    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso6(F, x, rs, ps, N) != 2)) { p = x; break; } }
+    { for (x = 0; x < N; x++) if ((F[x]) && (mctopo3d_nbvoiso6(F, x, rs, ps, N) != 2)) { p = x; break; } }
     else if (connex == 18)
-    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso18(F, x, rs, ps, N) != 2)) { p = x; break; } }
+    { for (x = 0; x < N; x++) if ((F[x]) && (mctopo3d_nbvoiso18(F, x, rs, ps, N) != 2)) { p = x; break; } }
     else if (connex == 26)
-    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso26(F, x, rs, ps, N) != 2)) { p = x; break; } }
+    { for (x = 0; x < N; x++) if ((F[x]) && (mctopo3d_nbvoiso26(F, x, rs, ps, N) != 2)) { p = x; break; } }
     if (p == -1)
     {
       fprintf(stderr, "%s: no curve point\n", argv[0]);
@@ -371,9 +371,9 @@ int main(int argc, char **argv)
     {
       P[n] = p; n++; F[p] = 0;
       p = uniquevoisin6(F, p, rs, ps, N);
-    } while (nbvoiso6(F, p, rs, ps, N) == 1);
+    } while (mctopo3d_nbvoiso6(F, p, rs, ps, N) == 1);
     P[n] = p; n++;
-    if (nbvoiso6(F, p, rs, ps, N) != 0)
+    if (mctopo3d_nbvoiso6(F, p, rs, ps, N) != 0)
       fprintf(stderr, "%s: warning: final point not a curve point\n", argv[0]);
     if (!voisins6(p, sp, rs, ps))
       fprintf(stderr, "%s: warning: not a closed curve\n", argv[0]);
@@ -386,9 +386,9 @@ int main(int argc, char **argv)
     {
       P[n] = p; n++; F[p] = 0;
       p = uniquevoisin18(F, p, rs, ps, N);
-    } while (nbvoiso18(F, p, rs, ps, N) == 1);
+    } while (mctopo3d_nbvoiso18(F, p, rs, ps, N) == 1);
     P[n] = p; n++;
-    if (nbvoiso18(F, p, rs, ps, N) != 0)
+    if (mctopo3d_nbvoiso18(F, p, rs, ps, N) != 0)
       fprintf(stderr, "%s: warning: final point not a curve point\n", argv[0]);
     if (!voisins18(p, sp, rs, ps))
       fprintf(stderr, "%s: warning: not a closed curve\n", argv[0]);
@@ -401,9 +401,9 @@ int main(int argc, char **argv)
     {
       P[n] = p; n++; F[p] = 0;
       p = uniquevoisin26(F, p, rs, ps, N);
-    } while (nbvoiso26(F, p, rs, ps, N) == 1);
+    } while (mctopo3d_nbvoiso26(F, p, rs, ps, N) == 1);
     P[n] = p; n++;
-    if (nbvoiso26(F, p, rs, ps, N) != 0)
+    if (mctopo3d_nbvoiso26(F, p, rs, ps, N) != 0)
       fprintf(stderr, "%s: warning: final point not a curve point\n", argv[0]);
     if (!voisins26(p, sp, rs, ps))
       fprintf(stderr, "%s: warning: not a closed curve\n", argv[0]);

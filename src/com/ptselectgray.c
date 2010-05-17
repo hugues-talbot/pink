@@ -292,8 +292,8 @@ int32_t largepdestr6(uint8_t *img,          /* pointeur base image */
                      int32_t t6mmmax)
 /* ==================================== */
 {
-    return ((t26pmin <= t26p(img, p, rs, ps, N)) && (t26p(img, p, rs, ps, N) <= t26pmax) &&
-            (t6mmmin <= t6mm(img, p, rs, ps, N)) && (t6mm(img, p, rs, ps, N) <= t6mmmax));
+    return ((t26pmin <= mctopo3d_t26p(img, p, rs, ps, N)) && (mctopo3d_t26p(img, p, rs, ps, N) <= t26pmax) &&
+            (t6mmmin <= mctopo3d_t6mm(img, p, rs, ps, N)) && (mctopo3d_t6mm(img, p, rs, ps, N) <= t6mmmax));
 } /* largepdestr6() */
 
 
@@ -312,8 +312,8 @@ int32_t largepdestr26(uint8_t *img,          /* pointeur base image */
                         int32_t t26mmmax)
 /* ==================================== */
 {
-    return ((t6pmin <= t6p(img, p, rs, ps, N)) && (t6p(img, p, rs, ps, N) <= t6pmax) &&
-            (t26mmmin <= t26mm(img, p, rs, ps, N)) && (t26mm(img, p, rs, ps, N) <= t26mmmax));
+    return ((t6pmin <= mctopo3d_t6p(img, p, rs, ps, N)) && (mctopo3d_t6p(img, p, rs, ps, N) <= t6pmax) &&
+            (t26mmmin <= mctopo3d_t26mm(img, p, rs, ps, N)) && (mctopo3d_t26mm(img, p, rs, ps, N) <= t26mmmax));
 } /* largepdestr26() */
 
 
@@ -340,7 +340,7 @@ int32_t lptselectgray3d(struct xvimage *image,
     uint8_t *F = UCHARDATA(image);      /* l'image de depart */
     uint8_t* R;
 
-    init_topo3d();
+    mctopo3d_init_topo3d();
 
     R = (uint8_t*)calloc(N, sizeof(uint8_t));
     if (R == NULL)
@@ -387,7 +387,7 @@ int32_t lptselectgray3d(struct xvimage *image,
     /* UN PEU DE MENAGE                                 */
     /* ================================================ */
 
-    termine_topo3d();
+    mctopo3d_termine_topo3d();
     free(R);
     return(1);
 }

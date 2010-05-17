@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 
   if (depth(image) == 1)
   {
-    if (! leros(image, elem, x, y))
+    if (! ldilateros_leros(image, elem, x, y))
     {
       fprintf(stderr, "%s: function leros failed\n", argv[0]);
       exit(1);
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
       exit(1);
     }
 
-    if (! ldilat(image, elem, rs - 1 - x, cs - 1 - y))
+    if (! ldilateros_ldilat(image, elem, rs - 1 - x, cs - 1 - y))
     {
       fprintf(stderr, "%s: function ldilat failed\n", argv[0]);
       exit(1);

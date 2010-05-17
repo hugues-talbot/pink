@@ -116,7 +116,7 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: function lfiltreordre failed\n", argv[0]);
       exit(1);
     }
-    if (! ldilat(image, elem, x, y))
+    if (! ldilateros_ldilat(image, elem, x, y))
     {
       fprintf(stderr, "%s: function lfiltreordre failed\n", argv[0]);
       exit(1);
