@@ -156,7 +156,7 @@ int main(int argc, char **argv)
     break;
   } // switch (function)
 
-  writelongimage(result, argv[argc-1]);
+  writeimage(result, argv[argc-1]);
   freeimage(result);
   freeimage(image);
 

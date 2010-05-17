@@ -39,7 +39,7 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> gettree in.pgm connex [ext] out.pgm
 
 <B>Description:</B>
-Level of the branch section defined by his level in the tree. Returns the
+Level of the branch section defined by its level in the tree. Returns the
 structure of the tree.
 
 The distance d used depends on the parameter \b connex :
@@ -53,7 +53,7 @@ The parameter <B>ext</B> is the size of the authorized extension of an intersect
 <B>Category:</B> morpho
 \ingroup   morpho
 
-\author Cédric Allène
+\author Cï¿½dric Allï¿½ne
 */
 #include <stdio.h>
 #include <stdint.h>
