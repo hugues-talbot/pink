@@ -71,7 +71,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #define ATTR_SURF
 
-#include "lattrib.c"
+#include "lattrib.h"
 
 /* ======================================================================== */
 /* ======================================================================== */

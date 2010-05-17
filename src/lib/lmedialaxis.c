@@ -38,11 +38,11 @@ pour la fonction bissectrice.
 
 Michel Couprie - mai 2002
 Rita Zrour - juin 2004
-  axe médian euclidien exact (algo de Rémy-Thiel) et fonction bissectrice (lbisector_Rita)
-Michel Couprie - juillet 2004 - révision lbisector
-Laurent Najman - lbisector_talbot
-Michel Couprie - juillet 2004 - révision lbisector_talbot
-Michel Couprie - août 2005 - variante lbisector Coeurjolly 
+  axe médian euclidien exact (algo de Rémy-Thiel) et fonction bissectrice (lmedialaxis_lbisector_Rita)
+Michel Couprie - juillet 2004 - révision lmedialaxis_lbisector
+Laurent Najman - lmedialaxis_lbisector_talbot
+Michel Couprie - juillet 2004 - révision lmedialaxis_lbisector_talbot
+Michel Couprie - août 2005 - variante lmedialaxis_lbisector Coeurjolly 
 Michel Couprie - novembre 2008 - lambda medial axis
 */
 
@@ -115,7 +115,7 @@ static double norm(vect2Dint v) { return sqrt((double)(v.x*v.x + v.y*v.y)); }
 static double pscal(vect2Dint u, vect2Dint v) { return (double)(u.x*v.x + u.y*v.y); }
 
 /* ==================================== */
-int32_t lmedax_talbot(struct xvimage *img,   /* donnee: image binaire */       
+int32_t lmedialaxis_lmedax_talbot(struct xvimage *img,   /* donnee: image binaire */       
                   struct xvimage *res    /* resultat: centres des boules max (approx) */
 )
 /* ==================================== */
@@ -127,7 +127,7 @@ int32_t lmedax_talbot(struct xvimage *img,   /* donnee: image binaire */
   suivant l'algo de Danielsson 4SED
 */
 #undef F_NAME
-#define F_NAME "lmedax_talbot"
+#define F_NAME "lmedialaxis_lmedax_talbot"
 { 
   int32_t rs = img->row_size;
   int32_t cs = img->col_size;
@@ -203,10 +203,10 @@ int32_t lmedax_talbot(struct xvimage *img,   /* donnee: image binaire */
   }
   free(L);
   return(1);
-} // lmedax_talbot()
+} // lmedialaxis_lmedax_talbot()
 
 /* ==================================== */
-int32_t lmedax_meyer(struct xvimage *img,   /* donnee: image binaire */       
+int32_t lmedialaxis_lmedax_meyer(struct xvimage *img,   /* donnee: image binaire */       
                  struct xvimage *res    /* resultat: centres des boules max (approx) */
 )
 /* ==================================== */
@@ -214,7 +214,7 @@ int32_t lmedax_meyer(struct xvimage *img,   /* donnee: image binaire */
   Methode de Meyer (approximation)
 */
 #undef F_NAME
-#define F_NAME "lmedax_meyer"
+#define F_NAME "lmedialaxis_lmedax_meyer"
 { 
   int32_t rs = img->row_size;
   int32_t cs = img->col_size;
@@ -284,10 +284,10 @@ int32_t lmedax_meyer(struct xvimage *img,   /* donnee: image binaire */
     if (F[x] && (M[x] < D[x])) M[x] = D[x]; else M[x] = 0;  
   free(D);
   return(1);
-} // lmedax_meyer()
+} // lmedialaxis_lmedax_meyer()
 
 /* ==================================== */
-int32_t lmedax_meyer3d(struct xvimage *img,   /* donnee: image binaire */       
+int32_t lmedialaxis_lmedax_meyer3d(struct xvimage *img,   /* donnee: image binaire */       
                    struct xvimage *res    /* resultat: centres des boules max (approx) */
 )
 /* ==================================== */
@@ -295,7 +295,7 @@ int32_t lmedax_meyer3d(struct xvimage *img,   /* donnee: image binaire */
   Methode de Meyer (approximation)
 */
 #undef F_NAME
-#define F_NAME "lmedax_meyer3d"
+#define F_NAME "lmedialaxis_lmedax_meyer3d"
 { 
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
@@ -362,13 +362,13 @@ int32_t lmedax_meyer3d(struct xvimage *img,   /* donnee: image binaire */
     if (F[x] && (M[x] < D[x])) M[x] = D[x]; else M[x] = 0;  
   free(D);
   return(1);
-} // lmedax_meyer3d()
+} // lmedialaxis_lmedax_meyer3d()
 
 /* ==================================== */
-int32_t lmedax_mc(struct xvimage *f)
+int32_t lmedialaxis_lmedax_mc(struct xvimage *f)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lmedax_mc"
+#define F_NAME "lmedialaxis_lmedax_mc"
 {
   int32_t i;
   int32_t rs = rowsize(f);        /* taille ligne f */
@@ -495,7 +495,7 @@ int32_t lmedax_mc(struct xvimage *f)
   freeimage(tmp2);
   freeimage(res);
   return 1;
-} // lmedax_mc()
+} // lmedialaxis_lmedax_mc()
 
 
 /* ==================================== */
@@ -540,8 +540,8 @@ typedef struct {		//used to store all possible neighbors of (1/8) Z2 or (1/48) Z
 
 int32_t callcheckR(int32_t distance,MaskG M);
 int32_t RadiusMax(uint32_t * gg, int32_t rs, int32_t cs, int32_t ds);
-int32_t ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neighbors *Mg);
-int32_t ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neighbors *Mg);
+int32_t lmedialaxis_ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neighbors *Mg);
+int32_t lmedialaxis_ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neighbors *Mg);
 int32_t CallMedial(int32_t x, int32_t y, uint32_t *image, int32_t rs, int32_t cs, MaskG MgL, LookUpTable Lut, int32_t nbcollut, int32_t rrmax);
 int32_t CallMedial3d(int32_t x, int32_t y, int32_t z, uint32_t *image, int32_t rs, int32_t cs, int32_t ds, MaskG MgL, LookUpTable Lut, int32_t nbcollut, int32_t rrmax);
 
@@ -571,7 +571,7 @@ int32_t RadiusMax(uint32_t * gg, int32_t rs, int32_t cs, int32_t ds)  //rs=width
 }
 
 //----------------------------------
-int32_t ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neighbors *Mg)
+int32_t lmedialaxis_ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neighbors *Mg)
 //----------------------------------
 // ATTENTION : roles de x et y inversés (cf. Rita)
 {
@@ -598,10 +598,10 @@ int32_t ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs
     }
   }
   return count;	// this is important to know how many vector are present in Mg
-} // ApplySymmetries()
+} // lmedialaxis_ApplySymmetries()
 
 //----------------------------------
-int32_t ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neighbors *Mg)
+int32_t lmedialaxis_ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neighbors *Mg)
 //----------------------------------
 // ATTENTION : roles de x, y, z inversés (cf. Rita)
 {
@@ -677,7 +677,7 @@ int32_t ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y
     }
   }
   return count;		// this is important to know how many vector are present in Mg
-} // ApplySymmetries3d()
+} // lmedialaxis_ApplySymmetries3d()
 
 /*This function takes a point in the initial image find all possible neighbors in Mglut;
 calls find neighbors to check for each vector in Mglut its neighbors; puts the point in the 
@@ -694,7 +694,7 @@ int32_t CallMedial(int32_t x, int32_t y, uint32_t *image, int32_t rs, int32_t cs
 
   for(t = 0; t < e; t++) //t determine the position of the vector in Mglut
   {	
-    nb = ApplySymmetries(MgL[t].x, MgL[t].y, x, y, rs, cs, &MgN1);
+    nb = lmedialaxis_ApplySymmetries(MgL[t].x, MgL[t].y, x, y, rs, cs, &MgN1);
     for(j = 0; j < nb; j++)
     {
       xx = x + MgN1.neig[j].x; 
@@ -716,7 +716,7 @@ int32_t CallMedial3d(int32_t x, int32_t y, int32_t z, uint32_t *image, int32_t r
 
   for(t = 0; t < e; t++) //t determine the position of the vector in Mglut
   {	
-    nb = ApplySymmetries3d(MgL[t].x, MgL[t].y, MgL[t].z, x, y, z, rs, cs, ds, &MgN1);
+    nb = lmedialaxis_ApplySymmetries3d(MgL[t].x, MgL[t].y, MgL[t].z, x, y, z, rs, cs, ds, &MgN1);
     for(j = 0; j < nb; j++)
     {
       xx = x + MgN1.neig[j].x; 
@@ -729,10 +729,10 @@ int32_t CallMedial3d(int32_t x, int32_t y, int32_t z, uint32_t *image, int32_t r
 } // CallMedial3d()
 
 /* ==================================== */
-int32_t lmedax_Remy_Thiel(struct xvimage *ImageDist, struct xvimage *ImageMedial)
+int32_t lmedialaxis_lmedax_Remy_Thiel(struct xvimage *ImageDist, struct xvimage *ImageMedial)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lmedax_Remy_Thiel"
+#define F_NAME "lmedialaxis_lmedax_Remy_Thiel"
 /*
 from the article: " Exact Medial Axis With Euclidean Distance"
   algorithm to compute the medial axis based on the look-up table
@@ -938,14 +938,14 @@ from the article: " Exact Medial Axis With Euclidean Distance"
   }
 
   return 1;
-} // lmedax_Remy_Thiel()
+} // lmedialaxis_lmedax_Remy_Thiel()
 
 /* ==================================== */
-struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
+struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
 /* ==================================== */
 {
 #undef F_NAME
-#define F_NAME "lmedialaxis"
+#define F_NAME "lmedialaxis_lmedialaxis"
   int32_t i;
   int32_t rs = rowsize(f);        /* taille ligne f */
   int32_t cs = colsize(f);        /* taille colonne f */
@@ -966,19 +966,19 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
 
     if ((mode == 0) && (ds == 1))
     {
-      if (! lmedax_meyer(f, medial))
-	//if (! lmedax_talbot(f, medial))
+      if (! lmedialaxis_lmedax_meyer(f, medial))
+	//if (! lmedialaxis_lmedax_talbot(f, medial))
       {
-        fprintf(stderr, "%s: lmedax_meyer failed\n", F_NAME);
+        fprintf(stderr, "%s: lmedialaxis_lmedax_meyer failed\n", F_NAME);
         return(NULL);
       }
     }
     else
     if ((mode == 0) && (ds > 1))
     {
-      if (! lmedax_meyer3d(f, medial))
+      if (! lmedialaxis_lmedax_meyer3d(f, medial))
       {
-        fprintf(stderr, "%s: lmedax_meyer3d failed\n", F_NAME);
+        fprintf(stderr, "%s: lmedialaxis_lmedax_meyer3d failed\n", F_NAME);
         return(NULL);
       }
     }
@@ -1022,9 +1022,9 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
         fprintf(stderr, "%s: lsedt_meijster failed\n", F_NAME);
         return(NULL);
       }
-      if (! lmedax_Remy_Thiel(dist, medial))
+      if (! lmedialaxis_lmedax_Remy_Thiel(dist, medial))
       {
-        fprintf(stderr, "%s: lmedax_Remy_Thiel failed\n", F_NAME);
+        fprintf(stderr, "%s: lmedialaxis_lmedax_Remy_Thiel failed\n", F_NAME);
         return(NULL);
       }
       freeimage(dist);
@@ -1160,10 +1160,10 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
     }
 #endif
   return medial;
-} // lmedialaxis()
+} // lmedialaxis_lmedialaxis()
 
 /* ==================================== */
-int32_t lmedialaxisbin(struct xvimage *f, int32_t mode)
+int32_t lmedialaxis_lmedialaxisbin(struct xvimage *f, int32_t mode)
 /* ==================================== */
 {
 #undef F_NAME
@@ -1174,7 +1174,7 @@ int32_t lmedialaxisbin(struct xvimage *f, int32_t mode)
   struct xvimage *dist;
   uint32_t *D;
 
-  dist = lmedialaxis(f, mode);
+  dist = lmedialaxis_lmedialaxis(f, mode);
   if (dist == NULL)
   {   
     fprintf(stderr, "%s: lmedialaxis failed\n", F_NAME);
@@ -1183,7 +1183,7 @@ int32_t lmedialaxisbin(struct xvimage *f, int32_t mode)
   D = ULONGDATA(dist);
   for (i = 0; i < N; i++) if (D[i]) F[i] = NDG_MAX; else F[i] = NDG_MIN;
   return 1;
-} // lmedialaxisbin()
+} // lmedialaxis_lmedialaxisbin()
 
 /* ==================================== */
 /* ==================================== */
@@ -1276,7 +1276,7 @@ double MaximumAngle3d(int32_t xc, int32_t yc, int32_t zc, ListPoint3D LPoints, i
 } // MaximumAngle3d()
 
 //----------------------------------
-int32_t ApplySymmetriesB(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neighbors *Mg)
+int32_t lmedialaxis_ApplySymmetriesB(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neighbors *Mg)
 //----------------------------------
 {
   int32_t vectx[8], vecty[8], i;
@@ -1302,10 +1302,10 @@ int32_t ApplySymmetriesB(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t r
     }
   }
   return count;	// this is important to know how many vector are present in Mg
-} // ApplySymmetriesB()
+} // lmedialaxis_ApplySymmetriesB()
 
 //----------------------------------
-int32_t ApplySymmetriesB3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neighbors *Mg)
+int32_t lmedialaxis_ApplySymmetriesB3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neighbors *Mg)
 //----------------------------------
 {
   int32_t vectx[48], vecty[48], vectz[48], i;
@@ -1380,10 +1380,10 @@ int32_t ApplySymmetriesB3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t 
     }
   }
   return count;		// this is important to know how many vector are present in Mg
-} // ApplySymmetriesB3d()
+} // lmedialaxis_ApplySymmetriesB3d()
 
 /* ==================================== */
-double ComputeAngle(int32_t x, int32_t y, uint32_t *image,
+double lmedialaxis_ComputeAngle(int32_t x, int32_t y, uint32_t *image,
 		    int32_t rs, int32_t cs, 
 		    int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		    ListPoint2D Aval)
@@ -1395,7 +1395,7 @@ double ComputeAngle(int32_t x, int32_t y, uint32_t *image,
 //          logiquement locale, passé en paramètre pour éviter allocations/libérations
 {
 #undef F_NAME
-#define F_NAME "ComputeAngle"
+#define F_NAME "lmedialaxis_ComputeAngle"
   int32_t nb, i, j, xx, yy, rr, counter, k, c, ti, d, nbdec;
   double maxangle;
   Neighbors MgN1;
@@ -1431,7 +1431,7 @@ double ComputeAngle(int32_t x, int32_t y, uint32_t *image,
       for(d = 0; d < nbdec; d++)
       {
 	xnew = ListDecs[ti+d].x; ynew = ListDecs[ti+d].y;
-	nb = ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
+	nb = lmedialaxis_ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
 	for (j = 0; j < nb; j++)
         {
 	  xx = X[k] + MgN1.neig[j].x; yy = Y[k] + MgN1.neig[j].y; 
@@ -1478,10 +1478,10 @@ double ComputeAngle(int32_t x, int32_t y, uint32_t *image,
   maxangle = MaximumAngle(x, y, Aval, counter);
 
   return maxangle;
-} // ComputeAngle()
+} // lmedialaxis_ComputeAngle()
  
 /* ==================================== */
-double ComputeAngle_8(int32_t x, int32_t y, uint32_t *image,
+double lmedialaxis_ComputeAngle_8(int32_t x, int32_t y, uint32_t *image,
 		    int32_t rs, int32_t cs, 
 		    int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		    ListPoint2D Aval)
@@ -1494,7 +1494,7 @@ double ComputeAngle_8(int32_t x, int32_t y, uint32_t *image,
 //          logiquement locale, passé en paramètre pour éviter allocations/libérations
 {
 #undef F_NAME
-#define F_NAME "ComputeAngle"
+#define F_NAME "lmedialaxis_ComputeAngle"
   int32_t nb, i, j, xx, yy, rr, counter, k, c, ti, d, nbdec;
   double maxangle;
   Neighbors MgN1;
@@ -1525,7 +1525,7 @@ double ComputeAngle_8(int32_t x, int32_t y, uint32_t *image,
       for(d = 0; d < nbdec; d++)
       {
 	xnew = ListDecs[ti+d].x; ynew = ListDecs[ti+d].y;
-	nb = ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
+	nb = lmedialaxis_ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
 	for (j = 0; j < nb; j++)
         {
 	  xx = X[k] + MgN1.neig[j].x; yy = Y[k] + MgN1.neig[j].y;
@@ -1555,10 +1555,10 @@ double ComputeAngle_8(int32_t x, int32_t y, uint32_t *image,
   maxangle = MaximumAngle(x, y, Aval, counter);
 
   return maxangle;
-} // ComputeAngle_8()
+} // lmedialaxis_ComputeAngle_8()
 
 /* ==================================== */
-double ComputeAngle3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
+double lmedialaxis_ComputeAngle3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
 		       int32_t rs, int32_t cs, int32_t ds, 
 		       int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		       ListPoint3D Aval)
@@ -1570,7 +1570,7 @@ double ComputeAngle3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
 //          logiquement locale, passé en paramètre pour éviter allocations/libérations
 {
 #undef F_NAME
-#define F_NAME "ComputeAngle3d"
+#define F_NAME "lmedialaxis_ComputeAngle3d"
   int32_t nb, i, j, xx, yy, zz, rr, counter, k, c, ti, d, nbdec, ps = rs*cs;
   double maxangle;
   Neighbors MgN1;
@@ -1609,7 +1609,7 @@ double ComputeAngle3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
 	xnew = ListDecs[ti+d].x; // direction of search to reach the first zero (CTg table)
 	ynew = ListDecs[ti+d].y;
 	znew = ListDecs[ti+d].z;
-	nb = ApplySymmetriesB3d(xnew, ynew, znew, X[k], Y[k], Z[k], rs, cs, ds, &MgN1);	
+	nb = lmedialaxis_ApplySymmetriesB3d(xnew, ynew, znew, X[k], Y[k], Z[k], rs, cs, ds, &MgN1);	
 	for (j = 0; j < nb; j++)
         {
 	  xx = X[k] + MgN1.neig[j].x; 
@@ -1659,10 +1659,10 @@ double ComputeAngle3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
   maxangle = MaximumAngle3d(x, y, z, Aval, counter);
 
   return maxangle;
-} // ComputeAngle3d()
+} // lmedialaxis_ComputeAngle3d()
 
 /* ==================================== */
-int32_t lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
+int32_t lmedialaxis_lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
 /* ==================================== */
 /*
    Calcule la fonction bissectrice pour les points non nuls de l'image 'im'. 
@@ -1672,7 +1672,7 @@ int32_t lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
 */
 {
 #undef F_NAME
-#define F_NAME "lbisector"
+#define F_NAME "lmedialaxis_lbisector"
   int32_t i, j, k, nval, npoints, npointsmax;
   int32_t rs = rowsize(id);
   int32_t cs = colsize(id);
@@ -1787,7 +1787,7 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
       {
 	if (imagemask[j*rs + i] != 0)
         {
-	  angle = ComputeAngle(i, j, imagedist, rs, cs, TabIndDec, nval, ListDecs, Aval);
+	  angle = lmedialaxis_ComputeAngle(i, j, imagedist, rs, cs, TabIndDec, nval, ListDecs, Aval);
 	  imageangle[j*rs + i] = (float)acos(angle);				
 	}
 	else
@@ -1863,7 +1863,7 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
         {
 	  if (imagemask[k*ps + j*rs + i] != 0)
           {
-	    angle = ComputeAngle3d(i, j, k, imagedist, rs, cs, ds, TabIndDec, nval, ListDecs, Aval);
+	    angle = lmedialaxis_ComputeAngle3d(i, j, k, imagedist, rs, cs, ds, TabIndDec, nval, ListDecs, Aval);
 	    imageangle[k*ps + j*rs + i] = (float)acos(angle);				
 	  }
 	  else
@@ -1906,10 +1906,10 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
   free(TabIndDec);
   free(ListDecs);
   return 1;
-} // lbisector()
+} // lmedialaxis_lbisector()
  
 /* ==================================== */
-double ComputeAngle_Rita(
+double lmedialaxis_ComputeAngle_Rita(
 			int32_t x, int32_t y, uint32_t *image,
 			int32_t rs, int32_t cs, int32_t *distarray,
 			int32_t *xarray, int32_t *yarray, int32_t number, 
@@ -1949,7 +1949,7 @@ double ComputeAngle_Rita(
 	xnew = xarray[i]; // direction of search to reach the first zero (CTg table)
 	ynew = yarray[i];
 			
-	nb=ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
+	nb=lmedialaxis_ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
 	for (j = 0; j < nb; j++)
 	{
 	  xx = X[k] + MgN1.neig[j].x;
@@ -1974,10 +1974,10 @@ double ComputeAngle_Rita(
 
   maxangle=MaximumAngle(x,y,Aval,counter);
   return maxangle;
-} // ComputeAngle_Rita()
+} // lmedialaxis_ComputeAngle_Rita()
 
 /* ==================================== */
-int32_t lbisector_Rita(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
+int32_t lmedialaxis_lbisector_Rita(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
 /* ==================================== */
 /*
    Calcule la fonction bissectrice pour les points non nuls de l'image 'im'. 
@@ -1986,7 +1986,7 @@ int32_t lbisector_Rita(struct xvimage *id, struct xvimage *im, struct xvimage *i
 */
 {
 #undef F_NAME
-#define F_NAME "lbisector_Rita"
+#define F_NAME "lmedialaxis_lbisector_Rita"
   int32_t i, j, numb;
   int32_t rs, cs, N;
   double angle;	
@@ -2061,7 +2061,7 @@ int32_t lbisector_Rita(struct xvimage *id, struct xvimage *im, struct xvimage *i
     {
       if (imagemask[i*rs + j] != 0)
       {
-	angle = ComputeAngle_Rita(i,j,imagedist,rs,cs,distCTg,XcoodCTg,YcoodCTg,numb,Aval);
+	angle = lmedialaxis_ComputeAngle_Rita(i,j,imagedist,rs,cs,distCTg,XcoodCTg,YcoodCTg,numb,Aval);
 	imageangle[i*rs + j] = (float)acos(angle);				
       }
       else
@@ -2073,14 +2073,14 @@ int32_t lbisector_Rita(struct xvimage *id, struct xvimage *im, struct xvimage *i
   free(YcoodCTg);
   free(XcoodCTg);
   return 1;
-} // lbisector_Rita()
+} // lmedialaxis_lbisector_Rita()
 
 /* =============================================================== */
-int32_t lbisector_talbot(struct xvimage * image, struct xvimage *angles) 
+int32_t lmedialaxis_lbisector_talbot(struct xvimage * image, struct xvimage *angles) 
 /* =============================================================== */
 {
 #undef F_NAME
-#define F_NAME "lbisector_talbot"
+#define F_NAME "lmedialaxis_lbisector_talbot"
   int32_t N, i, j, rs, cs;
   uint8_t *F;
   float *A;
@@ -2219,10 +2219,10 @@ int32_t lbisector_talbot(struct xvimage * image, struct xvimage *angles)
   } // for j
   free(L);
   return 1;
-} // lbisector_talbot()
+} // lmedialaxis_lbisector_talbot()
 
 /* ==================================== */
-int32_t Downstream(int32_t x, int32_t y, uint32_t *image,
+int32_t lmedialaxis_Downstream(int32_t x, int32_t y, uint32_t *image,
 		int32_t rs, int32_t cs, 
 		int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		ListPoint2D Aval)
@@ -2235,7 +2235,7 @@ int32_t Downstream(int32_t x, int32_t y, uint32_t *image,
 // Retourne le nombre de points de l'aval
 {
 #undef F_NAME
-#define F_NAME "Downstream"
+#define F_NAME "lmedialaxis_Downstream"
   int32_t nb, i, j, xx, yy, rr, counter, c, ti, d, nbdec;
   Neighbors MgN1;
   int32_t xnew, ynew;
@@ -2249,7 +2249,7 @@ int32_t Downstream(int32_t x, int32_t y, uint32_t *image,
   for(d = 0; d < nbdec; d++)
   {
     xnew = ListDecs[ti+d].x; ynew = ListDecs[ti+d].y;
-    nb = ApplySymmetriesB(xnew, ynew, x, y, rs, cs, &MgN1);	
+    nb = lmedialaxis_ApplySymmetriesB(xnew, ynew, x, y, rs, cs, &MgN1);	
     for (j = 0; j < nb; j++)
     {
       xx = x + MgN1.neig[j].x; yy = y + MgN1.neig[j].y; 
@@ -2268,10 +2268,10 @@ int32_t Downstream(int32_t x, int32_t y, uint32_t *image,
     } // for (j = 0; j < nb; j++)
   } // for(d = 0; d < nbdec; d++)
   return counter;
-} // Downstream()
+} // lmedialaxis_Downstream()
 
 /* ==================================== */
-int32_t Downstream3d(int32_t x, int32_t y, int32_t z, uint32_t *image,
+int32_t lmedialaxis_Downstream3d(int32_t x, int32_t y, int32_t z, uint32_t *image,
 		int32_t rs, int32_t cs, int32_t ds, 
 		int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		ListPoint3D Aval)
@@ -2284,7 +2284,7 @@ int32_t Downstream3d(int32_t x, int32_t y, int32_t z, uint32_t *image,
 // Retourne le nombre de points de l'aval
 {
 #undef F_NAME
-#define F_NAME "Downstream3d"
+#define F_NAME "lmedialaxis_Downstream3d"
   int32_t nb, i, j, xx, yy, zz, rr, counter, c, ti, d, nbdec;
   int32_t ps = rs*cs;
   Neighbors MgN1;
@@ -2301,7 +2301,7 @@ int32_t Downstream3d(int32_t x, int32_t y, int32_t z, uint32_t *image,
     xnew = ListDecs[ti+d].x; 
     ynew = ListDecs[ti+d].y; 
     znew = ListDecs[ti+d].z;
-    nb = ApplySymmetriesB3d(xnew, ynew, znew, x, y, z, rs, cs, ds, &MgN1);	
+    nb = lmedialaxis_ApplySymmetriesB3d(xnew, ynew, znew, x, y, z, rs, cs, ds, &MgN1);	
     for (j = 0; j < nb; j++)
     {
       xx = x + MgN1.neig[j].x; 
@@ -2321,17 +2321,17 @@ int32_t Downstream3d(int32_t x, int32_t y, int32_t z, uint32_t *image,
     } // for (j = 0; j < nb; j++)
   } // for(d = 0; d < nbdec; d++)
   return counter;
-} // Downstream3d()
+} // lmedialaxis_Downstream3d()
 
 /* ==================================== */
-int32_t lprintdownstream(struct xvimage *id)
+int32_t lmedialaxis_lprintdownstream(struct xvimage *id)
 /* ==================================== */
 /*
   Imprime le downstream de chaque point objet (pour tests)
 */
 {
 #undef F_NAME
-#define F_NAME "lprintdownstream"
+#define F_NAME "lmedialaxis_lprintdownstream"
   int32_t i, j, k, nval, npoints, npointsmax;
   int32_t rs = rowsize(id);
   int32_t cs = colsize(id);
@@ -2411,7 +2411,7 @@ int32_t lprintdownstream(struct xvimage *id)
     for (j = 0; j < cs; j++)
       for (i = 0; i < rs; i++)
       {
-	card_downstream = Downstream(i, j, imagedist, rs, cs, TabIndDec, nval, ListDecs, Aval);
+	card_downstream = lmedialaxis_Downstream(i, j, imagedist, rs, cs, TabIndDec, nval, ListDecs, Aval);
 	if ((imagedist[j*rs + i]) && card_downstream)
 	{
 	  printf("[%d,%d,%d] : ", i, j, 0);//BUG
@@ -2484,7 +2484,7 @@ int32_t lprintdownstream(struct xvimage *id)
       for (j = 0; j < cs; j++)
 	for (i = 0; i < rs; i++)
         {
-	  card_downstream = Downstream3d(i, j, k, imagedist, rs, cs, ds, TabIndDec, nval, ListDecs, Aval);
+	  card_downstream = lmedialaxis_Downstream3d(i, j, k, imagedist, rs, cs, ds, TabIndDec, nval, ListDecs, Aval);
 	  if ((imagedist[k*ps + j*rs + i]) && card_downstream)
 	  {
 	    printf("[%d,%d,%d] : ", i, j, k);
@@ -2499,7 +2499,7 @@ int32_t lprintdownstream(struct xvimage *id)
   free(TabIndDec);
   free(ListDecs);
   return 1;
-} // lprintdownstream3d()
+} // lmedialaxis_lprintdownstream3d()
 
 /* ==================================== */
 /* ==================================== */
@@ -2575,7 +2575,7 @@ double MaximumDiameter3d(ListDPoint3D LPoints, int32_t count)
 } // MaximumDiameter3d()
 
 /* ==================================== */
-int32_t ExtendedDownstream(int32_t x, int32_t y, uint32_t *image,
+int32_t Extendedlmedialaxis_Downstream(int32_t x, int32_t y, uint32_t *image,
 		    int32_t rs, int32_t cs, 
 		    int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		    ListDPoint2D Aval)
@@ -2588,7 +2588,7 @@ int32_t ExtendedDownstream(int32_t x, int32_t y, uint32_t *image,
 // Retourne le nombre de points de l'aval étendu
 {
 #undef F_NAME
-#define F_NAME "ExtendedDownstream"
+#define F_NAME "Extendedlmedialaxis_Downstream"
   int32_t nb, i, j, xx, yy, rr, counter, k, c, ti, d, nbdec;
   Neighbors MgN1;
   int32_t xnew, ynew;
@@ -2617,7 +2617,7 @@ int32_t ExtendedDownstream(int32_t x, int32_t y, uint32_t *image,
       for(d = 0; d < nbdec; d++)
       {
 	xnew = ListDecs[ti+d].x; ynew = ListDecs[ti+d].y;
-	nb = ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
+	nb = lmedialaxis_ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
 	for (j = 0; j < nb; j++)
         {
 	  xx = X[k] + MgN1.neig[j].x; yy = Y[k] + MgN1.neig[j].y; 
@@ -2645,10 +2645,10 @@ int32_t ExtendedDownstream(int32_t x, int32_t y, uint32_t *image,
 #endif
 
   return counter;
-} // ExtendedDownstream()
+} // Extendedlmedialaxis_Downstream()
 
 /* ==================================== */
-int32_t ExtendedDownstream3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
+int32_t Extendedlmedialaxis_Downstream3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
 		       int32_t rs, int32_t cs, int32_t ds, 
 		       int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		       ListDPoint3D Aval)
@@ -2661,7 +2661,7 @@ int32_t ExtendedDownstream3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
 // Retourne le nombre de points de l'aval étendu
 {
 #undef F_NAME
-#define F_NAME "ExtendedDownstream3d"
+#define F_NAME "Extendedlmedialaxis_Downstream3d"
   int32_t nb, i, j, xx, yy, zz, rr, counter, k, c, ti, d, nbdec, ps = rs*cs;
   Neighbors MgN1;
   int32_t xnew, ynew, znew;
@@ -2693,7 +2693,7 @@ int32_t ExtendedDownstream3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
 	xnew = ListDecs[ti+d].x; // direction of search to reach the first zero (CTg table)
 	ynew = ListDecs[ti+d].y;
 	znew = ListDecs[ti+d].z;
-	nb = ApplySymmetriesB3d(xnew, ynew, znew, X[k], Y[k], Z[k], rs, cs, ds, &MgN1);	
+	nb = lmedialaxis_ApplySymmetriesB3d(xnew, ynew, znew, X[k], Y[k], Z[k], rs, cs, ds, &MgN1);	
 	for (j = 0; j < nb; j++)
         {
 	  xx = X[k] + MgN1.neig[j].x; 
@@ -2727,7 +2727,7 @@ int32_t ExtendedDownstream3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
 #endif
 
   return counter;
-} // ExtendedDownstream3d()
+} // Extendedlmedialaxis_Downstream3d()
  
 /* ==================================== */
 int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda)
@@ -2850,7 +2850,7 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
       {
 	if (imagedist[j*rs + i] != 0)
         {
-	  card_aval = ExtendedDownstream(i, j, imagedist, rs, cs, 
+	  card_aval = Extendedlmedialaxis_Downstream(i, j, imagedist, rs, cs, 
 				 TabIndDec, nval, ListDecs, Aval);	  
 
 		compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
@@ -2927,7 +2927,7 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
 	{
 	  if (imagedist[k*ps + j*rs + i] != 0)
 	  {
-	    card_aval = ExtendedDownstream3d(i, j, k, imagedist, rs, cs, ds, 
+	    card_aval = Extendedlmedialaxis_Downstream3d(i, j, k, imagedist, rs, cs, ds, 
 					   TabIndDec, nval, ListDecs, Aval);
 
 	    compute_min_sphere_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_z, &c_r);
@@ -2945,7 +2945,7 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
 } // llambdamedialaxis()
 
 /* ==================================== */
-int32_t ExtendedDownstreamLambdaPrime(
+int32_t Extendedlmedialaxis_DownstreamLambdaPrime(
   int32_t x, int32_t y, 
   uint32_t *image, uint32_t *vor,
   int32_t rs, int32_t cs, 
@@ -2959,7 +2959,7 @@ int32_t ExtendedDownstreamLambdaPrime(
 // Retourne le nombre de points de l'aval étendu
 {
 #undef F_NAME
-#define F_NAME "ExtendedDownstreamLambdaPrime"
+#define F_NAME "Extendedlmedialaxis_DownstreamLambdaPrime"
   int32_t i, j, k, xx, yy;
   int32_t X[5] = {x, x-1, x+1, x, x};
   int32_t Y[5] = {y, y, y, y-1, y+1};
@@ -2991,10 +2991,10 @@ int32_t ExtendedDownstreamLambdaPrime(
 #endif
 
   return counter;
-} // ExtendedDownstreamLambdaPrime()
+} // Extendedlmedialaxis_DownstreamLambdaPrime()
  
 /* ==================================== */
-int32_t ExtendedDownstream3dLambdaPrime(
+int32_t Extendedlmedialaxis_Downstream3dLambdaPrime(
   int32_t x, int32_t y, int32_t z,
   uint32_t *image, uint32_t *vor,
   int32_t rs, int32_t cs, int32_t ds,
@@ -3008,7 +3008,7 @@ int32_t ExtendedDownstream3dLambdaPrime(
 // Retourne le nombre de points de l'aval étendu
 {
 #undef F_NAME
-#define F_NAME "ExtendedDownstream3dLambdaPrime"
+#define F_NAME "Extendedlmedialaxis_Downstream3dLambdaPrime"
   int32_t i, j, k, xx, yy, zz, ps = rs*cs;
   int32_t X[7] = {x, x-1, x+1, x,   x,   x,   x};
   int32_t Y[7] = {y, y,   y,   y-1, y+1, y,   y};
@@ -3043,7 +3043,7 @@ int32_t ExtendedDownstream3dLambdaPrime(
 #endif
 
   return counter;
-} // ExtendedDownstream3dLambdaPrime()
+} // Extendedlmedialaxis_Downstream3dLambdaPrime()
 
 /* ==================================== */
 int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct xvimage *lambda)
@@ -3120,7 +3120,7 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
       {
 	if (imagedist[j*rs + i] != 0)
         {
-	  card_aval = ExtendedDownstreamLambdaPrime(i, j, imagedist, imagevor, rs, cs, Aval);	  
+	  card_aval = Extendedlmedialaxis_DownstreamLambdaPrime(i, j, imagedist, imagevor, rs, cs, Aval);	  
 
           compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
 	  imagelambda[j*rs + i] = 2*(float)c_r;
@@ -3146,7 +3146,7 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
       {
 	if (imagedist[k*ps + j*rs + i] != 0)
         {
-	  card_aval = ExtendedDownstream3dLambdaPrime(i, j, k, imagedist, imagevor, rs, cs, ds, Aval3d);
+	  card_aval = Extendedlmedialaxis_Downstream3dLambdaPrime(i, j, k, imagedist, imagevor, rs, cs, ds, Aval3d);
 
           compute_min_sphere_with_border_constraint((double *)Aval3d, card_aval, NULL, 0, &c_x, &c_y, &c_z, &c_r);
 	  imagelambda[k*ps + j*rs + i] = 2*(float)c_r;

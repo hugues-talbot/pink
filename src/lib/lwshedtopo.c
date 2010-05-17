@@ -576,7 +576,7 @@ static void Watershed(struct xvimage *image, int32_t connex,
 } // Watershed()
 
 /* ==================================== */
-int32_t lwshedtopo(struct xvimage *image, int32_t connex)
+int32_t lwshedtopo_lwshedtopo(struct xvimage *image, int32_t connex)
 /* ==================================== */
 /*! \fn int32_t lwshedtopo(struct xvimage *image, int32_t connex)
     \param image (entrée/sortie) : une image 2D ndg
@@ -585,7 +585,7 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
     \brief ligne de partage des eaux "topologique" (algo MC, GB, LN)
 */
 #undef F_NAME
-#define F_NAME "lwshedtopo"
+#define F_NAME "lwshedtopo_lwshedtopo"
 {
   register int32_t i;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
@@ -645,7 +645,7 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
   ComponentTreeFree(CT);
   free(CM);
   return(1);
-} /* lwshedtopo() */
+} /* lwshedtopo_lwshedtopo() */
 
 /* ==================================== */
 static void Reconstruction(struct xvimage *g, struct xvimage *f, int32_t *CM, ctree * CT)
@@ -688,7 +688,7 @@ static void Reconstruction(struct xvimage *g, struct xvimage *f, int32_t *CM, ct
 } // Reconstruction()
 
 /* ==================================== */
-int32_t lreconsdilat(
+int32_t lwshedtopo_lreconsdilat(
         struct xvimage *g,
         struct xvimage *f,
         int32_t connex) 
@@ -700,7 +700,7 @@ int32_t lreconsdilat(
 /* ==================================== */
 {
 #undef F_NAME
-#define F_NAME "lreconsdilat"
+#define F_NAME "lwshedtopo_lreconsdilat"
   uint8_t *F = UCHARDATA(f);
   int32_t rs = rowsize(f);      /* taille ligne */
   int32_t cs = colsize(f);      /* taille colonne */
@@ -721,7 +721,7 @@ int32_t lreconsdilat(
   ComponentTreeFree(CT);
   free(CM);
   return(1);
-} /* lreconsdilat() */
+} /* lwshedtopo_lreconsdilat() */
 
 /* ==================================== */
 int32_t lreconseros(
@@ -751,7 +751,7 @@ int32_t lreconseros(
   }
   for (i = 0; i < N; i++) F[i] = NDG_MAX - F[i];
   for (i = 0; i < N; i++) G[i] = NDG_MAX - G[i];
-  ret = lreconsdilat(g, f, connex);
+  ret = lwshedtopo_lreconsdilat(g, f, connex);
   for (i = 0; i < N; i++) G[i] = NDG_MAX - G[i];
 
   return(ret);

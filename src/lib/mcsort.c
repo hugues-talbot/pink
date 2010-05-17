@@ -48,7 +48,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcsort.h>
 
 /* =============================================================== */
-int32_t Partitionner(int32_t *A, int32_t p, int32_t r)
+int32_t mcsort_Partitionner(int32_t *A, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -66,10 +66,10 @@ int32_t Partitionner(int32_t *A, int32_t p, int32_t r)
     if (i < j) { t = A[i]; A[i] = A[j]; A[j] = t; }
     else return j;
   } /* while (1) */   
-} /* Partitionner() */
+} /* mcsort_Partitionner() */
 
 /* =============================================================== */
-int32_t PartitionStochastique(int32_t *A, int32_t p, int32_t r)
+int32_t mcsort_PartitionStochastique(int32_t *A, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -82,8 +82,8 @@ int32_t PartitionStochastique(int32_t *A, int32_t p, int32_t r)
   t = A[p];         /* echange A[p] et A[q] */
   A[p] = A[q]; 
   A[q] = t;
-  return Partitionner(A, p, r);
-} /* PartitionStochastique() */
+  return mcsort_Partitionner(A, p, r);
+} /* mcsort_PartitionStochastique() */
 
 /* =============================================================== */
 void TriRapide (int32_t * A, int32_t p, int32_t r)
@@ -96,7 +96,7 @@ void TriRapide (int32_t * A, int32_t p, int32_t r)
   int32_t q; 
   if (p < r)
   {
-    q = Partitionner(A, p, r);
+    q = mcsort_Partitionner(A, p, r);
     TriRapide (A, p, q) ;
     TriRapide (A, q+1, r) ;
   }
@@ -113,14 +113,14 @@ void TriRapideStochastique (int32_t * A, int32_t p, int32_t r)
   int32_t q; 
   if (p < r)
   {
-    q = PartitionStochastique(A, p, r);
+    q = mcsort_PartitionStochastique(A, p, r);
     TriRapideStochastique (A, p, q) ;
     TriRapideStochastique (A, q+1, r) ;
   }
 } /* TriRapideStochastique() */
 
 /* =============================================================== */
-int32_t SelectionStochastique (int32_t * A, int32_t p, int32_t r, int32_t i)
+int32_t mcsort_SelectionStochastique (int32_t * A, int32_t p, int32_t r, int32_t i)
 /* =============================================================== */
 /* 
   retourne la valeur de rang i dans le tableau A 
@@ -129,11 +129,11 @@ int32_t SelectionStochastique (int32_t * A, int32_t p, int32_t r, int32_t i)
 {
   int32_t q, k; 
   if (p == r) return A[p];
-  q = PartitionStochastique(A, p, r);
+  q = mcsort_PartitionStochastique(A, p, r);
   k = q - p + 1;
-  if (i <= k) return SelectionStochastique (A, p, q, i);
-  else        return SelectionStochastique (A, q+1, r, i - k) ;
-} /* SelectionStochastique() */
+  if (i <= k) return mcsort_SelectionStochastique (A, p, q, i);
+  else        return mcsort_SelectionStochastique (A, q+1, r, i - k) ;
+} /* mcsort_SelectionStochastique() */
 
 /* =============================================================== */
 int32_t ElimineDupliques(int32_t *A, int32_t n)

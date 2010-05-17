@@ -1338,7 +1338,7 @@ boolean CircuitNiveaux(graphe * g)
 #define TypeCle TYP_VARC
 
 /* =============================================================== */
-static int32_t Partitionner(int32_t *A, TypeCle *T, int32_t p, int32_t r)
+static int32_t mcgraphe_Partitionner(int32_t *A, TypeCle *T, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -1356,7 +1356,7 @@ static int32_t Partitionner(int32_t *A, TypeCle *T, int32_t p, int32_t r)
     if (i < j) { t = A[i]; A[i] = A[j]; A[j] = t; }
     else return j;
   } /* while (1) */   
-} /* Partitionner() */
+} /* mcgraphe_Partitionner() */
 
 /* =============================================================== */
 static int32_t PartitionStochastique(int32_t *A, TypeCle *T, int32_t p, int32_t r)
@@ -1373,7 +1373,7 @@ static int32_t PartitionStochastique(int32_t *A, TypeCle *T, int32_t p, int32_t 
   t = A[p];         /* echange A[p] et A[q] */
   A[p] = A[q]; 
   A[q] = t;
-  return Partitionner(A, T, p, r);
+  return mcgraphe_Partitionner(A, T, p, r);
 } /* PartitionStochastique() */
 
 /* =============================================================== */

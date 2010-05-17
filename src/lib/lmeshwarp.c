@@ -137,7 +137,7 @@ int32_t warptriangle(
 
 
 /* ==================================== */
-int32_t lwarp(
+int32_t lmeshwarp_lwarp(
   struct xvimage * in,
   point *S, 
   point *SD, 
@@ -162,7 +162,7 @@ int32_t lwarp(
 
   H = (uint8_t *)calloc(1,N * sizeof(char));
   if (H == NULL)
-  {   fprintf(stderr,"lwarp() : malloc failed for H\n");
+  {   fprintf(stderr,"lmeshwarp_lwarp() : malloc failed for H\n");
       return(0);
   }
 
@@ -194,7 +194,7 @@ int32_t lwarp(
   }
   free(H);
   return 1;
-} /* lwarp() */
+} /* lmeshwarp_lwarp() */
 
 /* ==================================== */
 void desmesh(
@@ -579,7 +579,7 @@ ReDisplay:
       case 0: switch(xx)
               {
                 case 0: /* WARP */
-                  lwarp(image, S, SD, nbmeshpoints, voisins, nbvois, envconv);
+                  lmeshwarp_lwarp(image, S, SD, nbmeshpoints, voisins, nbvois, envconv);
                   for (i = 0; i < nbmeshpoints; i++) S[i] = SD[i];
                   delaunay = 1;
                   affimage = 1;

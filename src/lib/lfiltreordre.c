@@ -51,7 +51,7 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 
 /* =============================================================== */
-int32_t Partitionner(uint8_t *A, int32_t p, int32_t r)
+int32_t lfiltreordre_Partitionner(uint8_t *A, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -69,10 +69,10 @@ int32_t Partitionner(uint8_t *A, int32_t p, int32_t r)
     if (i < j) { t = A[i]; A[i] = A[j]; A[j] = t; }
     else return j;
   } /* while (1) */   
-} /* Partitionner() */
+} /* lfiltreordre_Partitionner() */
 
 /* =============================================================== */
-int32_t PartitionStochastique(uint8_t *A, int32_t p, int32_t r)
+int32_t lfiltreordre_PartitionStochastique(uint8_t *A, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -86,11 +86,11 @@ int32_t PartitionStochastique(uint8_t *A, int32_t p, int32_t r)
   t = A[p];         /* echange A[p] et A[q] */
   A[p] = A[q]; 
   A[q] = t;
-  return Partitionner(A, p, r);
-} /* PartitionStochastique() */
+  return lfiltreordre_Partitionner(A, p, r);
+} /* lfiltreordre_PartitionStochastique() */
 
 /* =============================================================== */
-uint8_t SelectionStochastique (uint8_t * A, int32_t p, int32_t r, int32_t i)
+uint8_t lfiltreordre_SelectionStochastique (uint8_t * A, int32_t p, int32_t r, int32_t i)
 /* =============================================================== */
 /* 
   retourne la valeur de rang i dans le tableau A 
@@ -99,11 +99,11 @@ uint8_t SelectionStochastique (uint8_t * A, int32_t p, int32_t r, int32_t i)
 {
   int32_t q, k; 
   if (p == r) return A[p];
-  q = PartitionStochastique(A, p, r);
+  q = lfiltreordre_PartitionStochastique(A, p, r);
   k = q - p + 1;
-  if (i <= k) return SelectionStochastique (A, p, q, i);
-  else        return SelectionStochastique (A, q+1, r, i - k) ;
-} /* SelectionStochastique() */
+  if (i <= k) return lfiltreordre_SelectionStochastique (A, p, q, i);
+  else        return lfiltreordre_SelectionStochastique (A, q+1, r, i - k) ;
+} /* lfiltreordre_SelectionStochastique() */
 
 /* ==================================== */
 int32_t lfiltreordre(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, double r)
@@ -187,7 +187,7 @@ int32_t lfiltreordre(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t y
       else
         tab_es_val[c] = 0;
     }
-    F[y * rs + x] = SelectionStochastique(tab_es_val, 0, nptb - 1, rang);
+    F[y * rs + x] = lfiltreordre_SelectionStochastique(tab_es_val, 0, nptb - 1, rang);
   }
 
   free(H);
@@ -283,7 +283,7 @@ int32_t lfiltreordre3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t
       else
         tab_es_val[c] = 0;
     }
-    F[z * ps + y * rs + x] = SelectionStochastique(tab_es_val, 0, nptb - 1, rang);
+    F[z * ps + y * rs + x] = lfiltreordre_SelectionStochastique(tab_es_val, 0, nptb - 1, rang);
   }
 
   free(H);

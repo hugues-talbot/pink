@@ -68,7 +68,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define ATTR_HBORD
 #define ATTR_CONTRAST
 
-#include "lattrib.c"
+#include "lattrib.h"
 
 /* ======================================================================== */
 /* ======================================================================== */

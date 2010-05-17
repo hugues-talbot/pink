@@ -70,7 +70,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #define ATTR_DYN
 
-#include "lattrib.c"
+#include "lattrib.h"
 
 /* ======================================================================== */
 /* ======================================================================== */
@@ -1541,16 +1541,16 @@ AfficheCompactTree(cpct);
 } /* lwshedval() */
 
 /* ==================================== */
-int32_t lwshedtopo(struct xvimage *image, int32_t connex)
+int32_t ldynamique_grimaud_lwshedtopo(struct xvimage *image, int32_t connex)
 /* ==================================== */
-/*! \fn int32_t lwshedtopo(struct xvimage *image, int32_t connex)
+/*! \fn int32_t ldynamique_grimaud_lwshedtopo(struct xvimage *image, int32_t connex)
     \param image (entrée/sortie) : une image 2D ndg
     \param connex (entrée) : 4 ou 8 
     \return code erreur : 0 si échec, 1 sinon
     \brief ligne de partage des eaux "topologique" (algo MC, GB)
 */
 #undef F_NAME
-#define F_NAME "lwshedtopo"
+#define F_NAME "ldynamique_grimaud_lwshedtopo"
 {
   register int32_t i, k;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
@@ -1664,4 +1664,4 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
   free(number_nodes);
   free(node_at_level);
   return(1);
-} /* lwshedtopo() */
+} /* ldynamique_grimaud_lwshedtopo() */

@@ -68,7 +68,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #define ATTR_HEIGHT
 
-#include "lattrib.c"
+#include "lattrib.h"
 
 /* ======================================================================== */
 /* ======================================================================== */

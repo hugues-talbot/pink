@@ -50,7 +50,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define DEBUGWARP
 */
 
-int32_t lwarp(
+int32_t lwarp_lwarp(
   struct xvimage *in, 
   triangle *ts, 
   triangle *td, 
@@ -77,7 +77,7 @@ int32_t lwarp(
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
-  {   fprintf(stderr,"lwarp() : malloc failed for H\n");
+  {   fprintf(stderr,"lwarp_lwarp() : malloc failed for H\n");
       return(0);
   }
   for (x = 0; x < N; x++) H[x] = F[x];
