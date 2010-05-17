@@ -973,17 +973,17 @@ int32_t lasftmed(struct xvimage * image, int32_t connex, int32_t rayonmax)
   int32_t N = rowsize(image) * colsize(image);
 
   medaxis = copyimage(image);
-  if (! lmedialaxisbin(medaxis, 8))
+  if (! lmedialaxis_lmedialaxisbin(medaxis, 8))
   {
-    fprintf(stderr, "lasft: lmedialaxisbin failed\n");
+    fprintf(stderr, "lasft: lmedialaxis_lmedialaxisbin failed\n");
     exit(0);
   }
   medaxis_i = copyimage(image);
   M = UCHARDATA(medaxis_i);
   for (x = 0; x < N; x++) M[x] = NDG_MAX - M[x]; // inverse M
-  if (! lmedialaxisbin(medaxis_i, 8))
+  if (! lmedialaxis_lmedialaxisbin(medaxis_i, 8))
   {
-    fprintf(stderr, "lasft: lmedialaxisbin failed\n");
+    fprintf(stderr, "lasft: lmedialaxis_lmedialaxisbin failed\n");
     exit(0);
   }
 
@@ -1728,17 +1728,17 @@ int32_t lasftmed3d(struct xvimage * image, int32_t connex, int32_t rayonmax)
   int32_t x, N = rowsize(image) * colsize(image) * depth(image);
 
   medaxis = copyimage(image);
-  if (! lmedialaxisbin(medaxis, 26))
+  if (! lmedialaxis_lmedialaxisbin(medaxis, 26))
   {
-    fprintf(stderr, "%s: lmedialaxisbin failed\n", F_NAME);
+    fprintf(stderr, "%s: lmedialaxis_lmedialaxisbin failed\n", F_NAME);
     exit(0);
   }
   medaxis_i = copyimage(image);
   M = UCHARDATA(medaxis_i);
   for (x = 0; x < N; x++) M[x] = NDG_MAX - M[x]; // inverse M
-  if (! lmedialaxisbin(medaxis_i, 26))
+  if (! lmedialaxis_lmedialaxisbin(medaxis_i, 26))
   {
-    fprintf(stderr, "%s: lmedialaxisbin failed\n", F_NAME);
+    fprintf(stderr, "%s: lmedialaxis_lmedialaxisbin failed\n", F_NAME);
     exit(0);
   }
 

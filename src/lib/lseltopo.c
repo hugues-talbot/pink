@@ -96,7 +96,7 @@ int32_t lptisolated(struct xvimage * image, int32_t connex)
   else if (connex == 18)
   {
     for (x = 0; x < N; x++)
-      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (nbvoiso18(SOURCE, x, rs, ps, N) == 0))
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (mctopo3d_nbvoiso18(SOURCE, x, rs, ps, N) == 0))
         RES[x] = NDG_MAX;
   }
   else if (connex == 26)
@@ -160,7 +160,7 @@ int32_t lptinterior(struct xvimage * image, int32_t connex)
   else if (connex == 18)
   {
     for (x = 0; x < N; x++)
-      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (nbvoiso18(SOURCE, x, rs, ps, N) == 18))
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (mctopo3d_nbvoiso18(SOURCE, x, rs, ps, N) == 18))
         RES[x] = NDG_MAX;
   }
   else if (connex == 26)
@@ -282,7 +282,7 @@ int32_t lptend(struct xvimage * image, int32_t connex)
   else if (connex == 18)
   {
     for (x = 0; x < N; x++)
-      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (nbvoiso18(SOURCE, x, rs, ps, N) == 1))
+      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (mctopo3d_nbvoiso18(SOURCE, x, rs, ps, N) == 1))
         RES[x] = NDG_MAX;
   }
   else if (connex == 26)

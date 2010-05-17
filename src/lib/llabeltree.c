@@ -383,7 +383,7 @@ int32_t labelbranch3d18(uint8_t *X,  /* donnee: pointeur sur l'image x */
   int32_t d, k, j, d_max, l;
       
   d = D[current_pixel];
-  if (nbvoiso18 (X, current_pixel, rs, ps, N) > 2)
+  if (mctopo3d_nbvoiso18 (X, current_pixel, rs, ps, N) > 2)
   {
     if (intersection == 0) intersection = 1;
   }

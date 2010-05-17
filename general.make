@@ -1,3 +1,4 @@
+# -*- makefile -*-
 OBJMCFAH=$(ODIR)/mcfah.o $(ODIR)/mcfahpure.o $(ODIR)/mcfahsalembier.o
 
 ARITH=\

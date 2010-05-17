@@ -45,7 +45,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <ldilatbin.h>
 
 /* ==================================== */
-int32_t ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+int32_t ldilatbin_ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 /* m : masque representant l'element structurant */
 /* xc, yc : coordonnees de l'origine de l'element structurant */
 /* ==================================== */
@@ -71,20 +71,20 @@ int32_t ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 
   if (depth(f) != 1) 
   {
-    fprintf(stderr, "ldilatbin: cette version ne traite pas les images volumiques\n");
+    fprintf(stderr, "ldilatbin_ldilatbin: cette version ne traite pas les images volumiques\n");
     return 0;
   }
 
   if (!M[yc * rsm + xc]) /* l'element structurant N'est PAS reflexif */
   {
-    fprintf(stderr, "ldilatbin: l'element structurant doit etre reflexif\n");
+    fprintf(stderr, "ldilatbin_ldilatbin: l'element structurant doit etre reflexif\n");
     return 0;
   }
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
   {  
-     fprintf(stderr,"ldilatbin() : malloc failed for H\n");
+     fprintf(stderr,"ldilatbin_ldilatbin() : malloc failed for H\n");
      return(0);
   }
 
@@ -99,7 +99,7 @@ int32_t ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   tab_es_y = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   if ((tab_es_x == NULL) || (tab_es_y == NULL))
   {  
-     fprintf(stderr,"ldilatbin() : malloc failed for tab_es\n");
+     fprintf(stderr,"ldilatbin_ldilatbin() : malloc failed for tab_es\n");
      return(0);
   }
 

@@ -398,7 +398,7 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
   uint32_t d;
   Rbt * RBT;
   int32_t taillemaxrbt;
-  int32_t t6mm, t26mm, t6p, t26p;
+  int32_t mctopo3d_t6mm, mctopo3d_t26mm, t6p, t26p;
 
   IndicsInit(N);
   init_topo3d();
@@ -518,11 +518,11 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
       do
       {
         abaisse = 0;
-        nbtopoh3d26_l((int32_t *)DT, x, DT[x], rs, ps, N, &t6p, &t26mm);
-        if ((t6p == 1) && (t26mm == 1))
+        nbtopoh3d26_l((int32_t *)DT, x, DT[x], rs, ps, N, &t6p, &mctopo3d_t26mm);
+        if ((t6p == 1) && (mctopo3d_t26mm == 1))
 	{
-          nbtopoh3d26_l((int32_t *)DT, x, DT[x], rs, ps, N, &t6p, &t26mm);
-          if ((t6p == 1) && (t26mm == 1))
+          nbtopoh3d26_l((int32_t *)DT, x, DT[x], rs, ps, N, &t6p, &mctopo3d_t26mm);
+          if ((t6p == 1) && (mctopo3d_t26mm == 1))
 	  {
             d = alpha26m_l((int32_t *)DT, x, rs, ps, N);
             d = min((DT[x]-1),(d+1));
@@ -543,11 +543,11 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
       do
       {
         abaisse = 0;
-        nbtopoh3d6_l((int32_t *)DT, x, DT[x], rs, ps, N, &t26p, &t6mm);
-        if ((t26p == 1) && (t6mm == 1))
+        nbtopoh3d6_l((int32_t *)DT, x, DT[x], rs, ps, N, &t26p, &mctopo3d_t6mm);
+        if ((t26p == 1) && (mctopo3d_t6mm == 1))
 	{
-          nbtopoh3d26_l((int32_t *)DT, x, DT[x], rs, ps, N, &t26p, &t6mm);
-          if ((t26p == 1) && (t6mm == 1))
+          nbtopoh3d26_l((int32_t *)DT, x, DT[x], rs, ps, N, &t26p, &mctopo3d_t6mm);
+          if ((t26p == 1) && (mctopo3d_t6mm == 1))
 	  {
             d = alpha26m_l((int32_t *)DT, x, rs, ps, N);
             d = min((DT[x]-1),(d+1));

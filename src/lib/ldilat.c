@@ -44,7 +44,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcutil.h>
 
 /* ==================================== */
-int32_t ldilat( struct xvimage *f, 
+int32_t ldilat_ldilat( struct xvimage *f, 
             struct xvimage *m, 
             int32_t xc, 
             int32_t yc)
@@ -69,13 +69,13 @@ int32_t ldilat( struct xvimage *f,
 
   if (depth(f) != 1) 
   {
-    fprintf(stderr, "ldilat: cette version ne traite pas les images volumiques\n");
+    fprintf(stderr, "ldilat_ldilat: cette version ne traite pas les images volumiques\n");
     return 0;
   }
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
-  {   fprintf(stderr,"ldilat() : malloc failed for H\n");
+  {   fprintf(stderr,"ldilat_ldilat() : malloc failed for H\n");
       return(0);
   }
   for (x = 0; x < N; x++) H[x] = F[x];

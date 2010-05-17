@@ -65,28 +65,28 @@ Michel Couprie 2006
 static voxel cube_topo3d[27];
 static voxel cubec_topo3d[27];
 
-static uint8_t *table_simple26 = NULL;
-#define SetSimple26(x) table_simple26[x/8]|=(1<<(x%8))
-#define IsSimple26(x) (table_simple26[x/8]&(1<<(x%8)))
+static uint8_t *table_mctopo3d_table_simple26 = NULL;
+#define SetSimple26(x) table_mctopo3d_table_simple26[x/8]|=(1<<(x%8))
+#define IsSimple26(x) (table_mctopo3d_table_simple26[x/8]&(1<<(x%8)))
   
 /* ========================================== */
-void init_topo3d()
+void mctopo3d_table_init_topo3d()
 /* ========================================== */
 #undef F_NAME
-#define F_NAME "init_topo3d"
+#define F_NAME "mctopo3d_table_init_topo3d"
 {
   char tablefilename[128];
   int32_t tablesize, ret;
   FILE *fd;
 
-  if (table_simple26 != NULL)
+  if (table_mctopo3d_table_simple26 != NULL)
   {
-    fprintf(stderr, "%s: table_simple26 already loaded\n", F_NAME);
+    fprintf(stderr, "%s: table_mctopo3d_table_simple26 already loaded\n", F_NAME);
     exit(1);
   }
   tablesize = 1<<23; // 2^26 / 8
-  table_simple26 = (uint8_t *)malloc(tablesize);
-  if (table_simple26 == NULL)
+  table_mctopo3d_table_simple26 = (uint8_t *)malloc(tablesize);
+  if (table_mctopo3d_table_simple26 == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", F_NAME);
     exit(1);
@@ -98,7 +98,7 @@ void init_topo3d()
     fprintf(stderr, "%s: error while opening table\n", F_NAME);
     exit(1);
   }
-  ret = fread(table_simple26, sizeof(uint8_t), tablesize, fd);
+  ret = fread(table_mctopo3d_table_simple26, sizeof(uint8_t), tablesize, fd);
   if (ret != tablesize)
   {
     fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, tablesize, ret);
@@ -108,34 +108,34 @@ void init_topo3d()
 #ifdef VERBOSE
   printf("%s: %s loaded\n", F_NAME, TABSIMP26NAME);
 #endif
-} /* init_topo3d() */
+} /* mctopo3d_table_init_topo3d() */
 
 /* ========================================== */
-void termine_topo3d()
+void mctopo3d_table_termine_topo3d()
 /* ========================================== */
 {
-  free(table_simple26);
-  table_simple26 = NULL;
-} /* termine_topo3d() */
+  free(table_mctopo3d_table_simple26);
+  table_mctopo3d_table_simple26 = NULL;
+} /* mctopo3d_table_termine_topo3d() */
 
 /* ========================================== */
-void construitcube(voxel * cube)
-/* ========================================== */
-{
-  fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
-  exit(1);
-} /* construitcube() */
-
-/* ========================================== */
-uint32_t encodecube()
+void mctopo3d_table_construitcube(voxel * cube)
 /* ========================================== */
 {
   fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
   exit(1);
-} /* encodecube() */
+} /* mctopo3d_table_construitcube() */
 
 /* ========================================== */
-void geodesic_neighborhood(voxel * cube, uint8_t connex, uint8_t s)
+uint32_t mctopo3d_table_encodecube()
+/* ========================================== */
+{
+  fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
+  exit(1);
+} /* mctopo3d_table_encodecube() */
+
+/* ========================================== */
+void mctopo3d_table_geodesic_neighborhood(voxel * cube, uint8_t connex, uint8_t s)
 /* ========================================== */
 /* 
   met a 1 le champ lab des points appartenant au voisinage geodesique d'ordre s du point central,
@@ -144,38 +144,38 @@ void geodesic_neighborhood(voxel * cube, uint8_t connex, uint8_t s)
 {  
   fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
   exit(1);
-} /* geodesic_neighborhood() */
+} /* mctopo3d_table_geodesic_neighborhood() */
 
 /* ========================================== */
-void G6(voxel * cube)
+void mctopo3d_table_G6(voxel * cube)
 /* ========================================== */
 {
-  geodesic_neighborhood(cube, 6, 2);	
-} /* G6() */
+  mctopo3d_table_geodesic_neighborhood(cube, 6, 2);	
+} /* mctopo3d_table_G6() */
 
 /* ========================================== */
-void G6p(voxel * cube)
+void mctopo3d_table_G6p(voxel * cube)
 /* ========================================== */
 {
-  geodesic_neighborhood(cube, 6, 3);	
-} /* G6p() */
+  mctopo3d_table_geodesic_neighborhood(cube, 6, 3);	
+} /* mctopo3d_table_G6p() */
 
 /* ========================================== */
-void G18(voxel * cube)
+void mctopo3d_table_G18(voxel * cube)
 /* ========================================== */
 {
-  geodesic_neighborhood(cube, 18, 2);	
-} /* G18() */
+  mctopo3d_table_geodesic_neighborhood(cube, 18, 2);	
+} /* mctopo3d_table_G18() */
 
 /* ========================================== */
-void G26(voxel * cube)
+void mctopo3d_table_G26(voxel * cube)
 /* ========================================== */
 {
-  geodesic_neighborhood(cube, 26, 1);	
-} /* G26() */
+  mctopo3d_table_geodesic_neighborhood(cube, 26, 1);	
+} /* mctopo3d_table_G26() */
 
 /* ========================================== */
-uint8_t nbcomp(voxel * cube, uint8_t connex)
+uint8_t mctopo3d_table_nbcomp(voxel * cube, uint8_t connex)
 /* ========================================== */
 /*
   retourne le nombre de composantes connexes de l'objet marque par un lab=1 
@@ -183,10 +183,10 @@ uint8_t nbcomp(voxel * cube, uint8_t connex)
 {
   fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
   exit(1);
-} /* nbcomp() */
+} /* mctopo3d_table_nbcomp() */
 
 /* ========================================== */
-uint8_t nbvois6(voxel * cube)
+uint8_t mctopo3d_table_nbvois6(voxel * cube)
 /* ========================================== */
 /*
   retourne le nombre de 6-voisins du point central appartenant a l'objet
@@ -194,10 +194,10 @@ uint8_t nbvois6(voxel * cube)
 {
   fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
   exit(1);
-} /* nbvois6() */
+} /* mctopo3d_table_nbvois6() */
 
 /* ========================================== */
-uint8_t nbvois26(voxel * cube)
+uint8_t mctopo3d_table_nbvois26(voxel * cube)
 /* ========================================== */
 /*
   retourne le nombre de 26-voisins du point central appartenant a l'objet
@@ -205,10 +205,10 @@ uint8_t nbvois26(voxel * cube)
 {
   fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
   exit(1);
-} /* nbvois26() */
+} /* mctopo3d_table_nbvois26() */
 
 /* ========================================== */
-int32_t nbvoisc6(
+int32_t mctopo3d_table_nbvoisc6(
   uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -219,18 +219,18 @@ int32_t nbvoisc6(
   retourne le nombre de 6-voisins du point central de niveau nul
 */
 {
-  int32_t nbvois = 0;
-  if ((i%rs!=rs-1) && !B[i+1])    nbvois++;
-  if (((i%ps)>=rs) && !B[i-rs])   nbvois++;
-  if ((i%rs!=0) && !B[i-1])       nbvois++;
-  if (((i%ps)<ps-rs) && !B[i+rs]) nbvois++;
-  if ((i>=ps) && !B[i-ps])        nbvois++;
-  if ((i<N-ps) && !B[i+ps])      nbvois++;
-  return nbvois;
-} /* nbvoisc6() */
+  int32_t mctopo3d_table_nbvois = 0;
+  if ((i%rs!=rs-1) && !B[i+1])    mctopo3d_table_nbvois++;
+  if (((i%ps)>=rs) && !B[i-rs])   mctopo3d_table_nbvois++;
+  if ((i%rs!=0) && !B[i-1])       mctopo3d_table_nbvois++;
+  if (((i%ps)<ps-rs) && !B[i+rs]) mctopo3d_table_nbvois++;
+  if ((i>=ps) && !B[i-ps])        mctopo3d_table_nbvois++;
+  if ((i<N-ps) && !B[i+ps])      mctopo3d_table_nbvois++;
+  return mctopo3d_table_nbvois;
+} /* mctopo3d_table_nbvoisc6() */
 
 /* ========================================== */
-int32_t nbvoisc18(
+int32_t mctopo3d_table_nbvoisc18(
   uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -241,30 +241,30 @@ int32_t nbvoisc18(
   retourne le nombre de 18-voisins du point central de niveau nul
 */
 {
-  int32_t nbvois = 0;
-  if (((i<N-ps)&&(i%rs!=rs-1)) && !B[ps+i+1]) nbvois++;
-  if (((i<N-ps)&&(i%ps>=rs)) && !B[ps+i-rs]) nbvois++;
-  if (((i<N-ps)&&(i%rs!=0)) && !B[ps+i-1]) nbvois++;
-  if (((i<N-ps)&&(i%ps<ps-rs)) && !B[ps+i+rs]) nbvois++;
-  if (((i<N-ps)) && !B[ps+i]) nbvois++;
-  if (((i%rs!=rs-1)) && !B[i+1]) nbvois++;
-  if (((i%rs!=rs-1)&&(i%ps>=rs)) && !B[i+1-rs]) nbvois++;
-  if (((i%ps>=rs)) && !B[i-rs]) nbvois++;
-  if (((i%ps>=rs)&&(i%rs!=0)) && !B[i-rs-1]) nbvois++;
-  if (((i%rs!=0)) && !B[i-1]) nbvois++;
-  if (((i%rs!=0)&&(i%ps<ps-rs)) && !B[i-1+rs]) nbvois++;
-  if (((i%ps<ps-rs)) && !B[i+rs]) nbvois++;
-  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && !B[i+rs+1]) nbvois++;
-  if (((i>=ps)&&(i%rs!=rs-1)) && !B[-ps+i+1]) nbvois++;
-  if (((i>=ps)&&(i%ps>=rs)) && !B[-ps+i-rs]) nbvois++;
-  if (((i>=ps)&&(i%rs!=0)) && !B[-ps+i-1]) nbvois++;
-  if (((i>=ps)&&(i%ps<ps-rs)) && !B[-ps+i+rs]) nbvois++;
-  if (((i>=ps)) && !B[-ps+i]) nbvois++;
-  return nbvois;
-} /* nbvoisc18() */
+  int32_t mctopo3d_table_nbvois = 0;
+  if (((i<N-ps)&&(i%rs!=rs-1)) && !B[ps+i+1]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%ps>=rs)) && !B[ps+i-rs]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%rs!=0)) && !B[ps+i-1]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%ps<ps-rs)) && !B[ps+i+rs]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)) && !B[ps+i]) mctopo3d_table_nbvois++;
+  if (((i%rs!=rs-1)) && !B[i+1]) mctopo3d_table_nbvois++;
+  if (((i%rs!=rs-1)&&(i%ps>=rs)) && !B[i+1-rs]) mctopo3d_table_nbvois++;
+  if (((i%ps>=rs)) && !B[i-rs]) mctopo3d_table_nbvois++;
+  if (((i%ps>=rs)&&(i%rs!=0)) && !B[i-rs-1]) mctopo3d_table_nbvois++;
+  if (((i%rs!=0)) && !B[i-1]) mctopo3d_table_nbvois++;
+  if (((i%rs!=0)&&(i%ps<ps-rs)) && !B[i-1+rs]) mctopo3d_table_nbvois++;
+  if (((i%ps<ps-rs)) && !B[i+rs]) mctopo3d_table_nbvois++;
+  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && !B[i+rs+1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%rs!=rs-1)) && !B[-ps+i+1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%ps>=rs)) && !B[-ps+i-rs]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%rs!=0)) && !B[-ps+i-1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%ps<ps-rs)) && !B[-ps+i+rs]) mctopo3d_table_nbvois++;
+  if (((i>=ps)) && !B[-ps+i]) mctopo3d_table_nbvois++;
+  return mctopo3d_table_nbvois;
+} /* mctopo3d_table_nbvoisc18() */
 
 /* ========================================== */
-int32_t nbvoisc26(
+int32_t mctopo3d_table_nbvoisc26(
   uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -275,38 +275,38 @@ int32_t nbvoisc26(
   retourne le nombre de 26-voisins du point central de niveau nul
 */
 {
-  int32_t nbvois = 0;
-  if (((i<N-ps)&&(i%rs!=rs-1)) && !B[ps+i+1]) nbvois++;
-  if (((i<N-ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && !B[ps+i+1-rs]) nbvois++;
-  if (((i<N-ps)&&(i%ps>=rs)) && !B[ps+i-rs]) nbvois++;
-  if (((i<N-ps)&&(i%ps>=rs)&&(i%rs!=0)) && !B[ps+i-rs-1]) nbvois++;
-  if (((i<N-ps)&&(i%rs!=0)) && !B[ps+i-1]) nbvois++;
-  if (((i<N-ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && !B[ps+i-1+rs]) nbvois++;
-  if (((i<N-ps)&&(i%ps<ps-rs)) && !B[ps+i+rs]) nbvois++;
-  if (((i<N-ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && !B[ps+i+rs+1]) nbvois++;
-  if (((i<N-ps)) && !B[ps+i]) nbvois++;
-  if (((i%rs!=rs-1)) && !B[i+1]) nbvois++;
-  if (((i%rs!=rs-1)&&(i%ps>=rs)) && !B[i+1-rs]) nbvois++;
-  if (((i%ps>=rs)) && !B[i-rs]) nbvois++;
-  if (((i%ps>=rs)&&(i%rs!=0)) && !B[i-rs-1]) nbvois++;
-  if (((i%rs!=0)) && !B[i-1]) nbvois++;
-  if (((i%rs!=0)&&(i%ps<ps-rs)) && !B[i-1+rs]) nbvois++;
-  if (((i%ps<ps-rs)) && !B[i+rs]) nbvois++;
-  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && !B[i+rs+1]) nbvois++;
-  if (((i>=ps)&&(i%rs!=rs-1)) && !B[-ps+i+1]) nbvois++;
-  if (((i>=ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && !B[-ps+i+1-rs]) nbvois++;
-  if (((i>=ps)&&(i%ps>=rs)) && !B[-ps+i-rs]) nbvois++;
-  if (((i>=ps)&&(i%ps>=rs)&&(i%rs!=0)) && !B[-ps+i-rs-1]) nbvois++;
-  if (((i>=ps)&&(i%rs!=0)) && !B[-ps+i-1]) nbvois++;
-  if (((i>=ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && !B[-ps+i-1+rs]) nbvois++;
-  if (((i>=ps)&&(i%ps<ps-rs)) && !B[-ps+i+rs]) nbvois++;
-  if (((i>=ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && !B[-ps+i+rs+1]) nbvois++;
-  if (((i>=ps)) && !B[-ps+i]) nbvois++;
-  return nbvois;
-} /* nbvoisc26() */
+  int32_t mctopo3d_table_nbvois = 0;
+  if (((i<N-ps)&&(i%rs!=rs-1)) && !B[ps+i+1]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && !B[ps+i+1-rs]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%ps>=rs)) && !B[ps+i-rs]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%ps>=rs)&&(i%rs!=0)) && !B[ps+i-rs-1]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%rs!=0)) && !B[ps+i-1]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && !B[ps+i-1+rs]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%ps<ps-rs)) && !B[ps+i+rs]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && !B[ps+i+rs+1]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)) && !B[ps+i]) mctopo3d_table_nbvois++;
+  if (((i%rs!=rs-1)) && !B[i+1]) mctopo3d_table_nbvois++;
+  if (((i%rs!=rs-1)&&(i%ps>=rs)) && !B[i+1-rs]) mctopo3d_table_nbvois++;
+  if (((i%ps>=rs)) && !B[i-rs]) mctopo3d_table_nbvois++;
+  if (((i%ps>=rs)&&(i%rs!=0)) && !B[i-rs-1]) mctopo3d_table_nbvois++;
+  if (((i%rs!=0)) && !B[i-1]) mctopo3d_table_nbvois++;
+  if (((i%rs!=0)&&(i%ps<ps-rs)) && !B[i-1+rs]) mctopo3d_table_nbvois++;
+  if (((i%ps<ps-rs)) && !B[i+rs]) mctopo3d_table_nbvois++;
+  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && !B[i+rs+1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%rs!=rs-1)) && !B[-ps+i+1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && !B[-ps+i+1-rs]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%ps>=rs)) && !B[-ps+i-rs]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%ps>=rs)&&(i%rs!=0)) && !B[-ps+i-rs-1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%rs!=0)) && !B[-ps+i-1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && !B[-ps+i-1+rs]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%ps<ps-rs)) && !B[-ps+i+rs]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && !B[-ps+i+rs+1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)) && !B[-ps+i]) mctopo3d_table_nbvois++;
+  return mctopo3d_table_nbvois;
+} /* mctopo3d_table_nbvoisc26() */
 
 /* ========================================== */
-int32_t nbvoiso6(
+int32_t mctopo3d_table_nbvoiso6(
   uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -317,18 +317,18 @@ int32_t nbvoiso6(
   retourne le nombre de 6-voisins du point central de niveau NON nul
 */
 {
-  int32_t nbvois = 0;
-  if ((i%rs!=rs-1) && B[i+1])    nbvois++;
-  if (((i%ps)>=rs) && B[i-rs])   nbvois++;
-  if ((i%rs!=0) && B[i-1])       nbvois++;
-  if (((i%ps)<ps-rs) && B[i+rs]) nbvois++;
-  if ((i>=ps) && B[i-ps])        nbvois++;
-  if ((i<N-ps) && B[i+ps])      nbvois++;
-  return nbvois;
-} /* nbvoiso6() */
+  int32_t mctopo3d_table_nbvois = 0;
+  if ((i%rs!=rs-1) && B[i+1])    mctopo3d_table_nbvois++;
+  if (((i%ps)>=rs) && B[i-rs])   mctopo3d_table_nbvois++;
+  if ((i%rs!=0) && B[i-1])       mctopo3d_table_nbvois++;
+  if (((i%ps)<ps-rs) && B[i+rs]) mctopo3d_table_nbvois++;
+  if ((i>=ps) && B[i-ps])        mctopo3d_table_nbvois++;
+  if ((i<N-ps) && B[i+ps])      mctopo3d_table_nbvois++;
+  return mctopo3d_table_nbvois;
+} /* mctopo3d_table_nbvoiso6() */
 
 /* ========================================== */
-int32_t nbvoiso18(
+int32_t mctopo3d_table_nbvoiso18(
   uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -339,30 +339,30 @@ int32_t nbvoiso18(
   retourne le nombre de 18-voisins du point central de niveau NON nul
 */
 {
-  int32_t nbvois = 0;
-  if (((i<N-ps)&&(i%rs!=rs-1)) && B[ps+i+1]) nbvois++;
-  if (((i<N-ps)&&(i%ps>=rs)) && B[ps+i-rs]) nbvois++;
-  if (((i<N-ps)&&(i%rs!=0)) && B[ps+i-1]) nbvois++;
-  if (((i<N-ps)&&(i%ps<ps-rs)) && B[ps+i+rs]) nbvois++;
-  if (((i<N-ps)) && B[ps+i]) nbvois++;
-  if (((i%rs!=rs-1)) && B[i+1]) nbvois++;
-  if (((i%rs!=rs-1)&&(i%ps>=rs)) && B[i+1-rs]) nbvois++;
-  if (((i%ps>=rs)) && B[i-rs]) nbvois++;
-  if (((i%ps>=rs)&&(i%rs!=0)) && B[i-rs-1]) nbvois++;
-  if (((i%rs!=0)) && B[i-1]) nbvois++;
-  if (((i%rs!=0)&&(i%ps<ps-rs)) && B[i-1+rs]) nbvois++;
-  if (((i%ps<ps-rs)) && B[i+rs]) nbvois++;
-  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && B[i+rs+1]) nbvois++;
-  if (((i>=ps)&&(i%rs!=rs-1)) && B[-ps+i+1]) nbvois++;
-  if (((i>=ps)&&(i%ps>=rs)) && B[-ps+i-rs]) nbvois++;
-  if (((i>=ps)&&(i%rs!=0)) && B[-ps+i-1]) nbvois++;
-  if (((i>=ps)&&(i%ps<ps-rs)) && B[-ps+i+rs]) nbvois++;
-  if (((i>=ps)) && B[-ps+i]) nbvois++;
-  return nbvois;
-} /* nbvoiso18() */
+  int32_t mctopo3d_table_nbvois = 0;
+  if (((i<N-ps)&&(i%rs!=rs-1)) && B[ps+i+1]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%ps>=rs)) && B[ps+i-rs]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%rs!=0)) && B[ps+i-1]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%ps<ps-rs)) && B[ps+i+rs]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)) && B[ps+i]) mctopo3d_table_nbvois++;
+  if (((i%rs!=rs-1)) && B[i+1]) mctopo3d_table_nbvois++;
+  if (((i%rs!=rs-1)&&(i%ps>=rs)) && B[i+1-rs]) mctopo3d_table_nbvois++;
+  if (((i%ps>=rs)) && B[i-rs]) mctopo3d_table_nbvois++;
+  if (((i%ps>=rs)&&(i%rs!=0)) && B[i-rs-1]) mctopo3d_table_nbvois++;
+  if (((i%rs!=0)) && B[i-1]) mctopo3d_table_nbvois++;
+  if (((i%rs!=0)&&(i%ps<ps-rs)) && B[i-1+rs]) mctopo3d_table_nbvois++;
+  if (((i%ps<ps-rs)) && B[i+rs]) mctopo3d_table_nbvois++;
+  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && B[i+rs+1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%rs!=rs-1)) && B[-ps+i+1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%ps>=rs)) && B[-ps+i-rs]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%rs!=0)) && B[-ps+i-1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%ps<ps-rs)) && B[-ps+i+rs]) mctopo3d_table_nbvois++;
+  if (((i>=ps)) && B[-ps+i]) mctopo3d_table_nbvois++;
+  return mctopo3d_table_nbvois;
+} /* mctopo3d_table_nbvoiso18() */
 
 /* ========================================== */
-int32_t nbvoiso26(
+int32_t mctopo3d_table_nbvoiso26(
   uint8_t *B,            /* pointeur base image */
   int32_t i,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -373,67 +373,67 @@ int32_t nbvoiso26(
   retourne le nombre de 26-voisins du point central de niveau NON nul
 */
 {
-  int32_t nbvois = 0;
-  if (((i<N-ps)&&(i%rs!=rs-1)) && B[ps+i+1]) nbvois++;
-  if (((i<N-ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && B[ps+i+1-rs]) nbvois++;
-  if (((i<N-ps)&&(i%ps>=rs)) && B[ps+i-rs]) nbvois++;
-  if (((i<N-ps)&&(i%ps>=rs)&&(i%rs!=0)) && B[ps+i-rs-1]) nbvois++;
-  if (((i<N-ps)&&(i%rs!=0)) && B[ps+i-1]) nbvois++;
-  if (((i<N-ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && B[ps+i-1+rs]) nbvois++;
-  if (((i<N-ps)&&(i%ps<ps-rs)) && B[ps+i+rs]) nbvois++;
-  if (((i<N-ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && B[ps+i+rs+1]) nbvois++;
-  if (((i<N-ps)) && B[ps+i]) nbvois++;
-  if (((i%rs!=rs-1)) && B[i+1]) nbvois++;
-  if (((i%rs!=rs-1)&&(i%ps>=rs)) && B[i+1-rs]) nbvois++;
-  if (((i%ps>=rs)) && B[i-rs]) nbvois++;
-  if (((i%ps>=rs)&&(i%rs!=0)) && B[i-rs-1]) nbvois++;
-  if (((i%rs!=0)) && B[i-1]) nbvois++;
-  if (((i%rs!=0)&&(i%ps<ps-rs)) && B[i-1+rs]) nbvois++;
-  if (((i%ps<ps-rs)) && B[i+rs]) nbvois++;
-  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && B[i+rs+1]) nbvois++;
-  if (((i>=ps)&&(i%rs!=rs-1)) && B[-ps+i+1]) nbvois++;
-  if (((i>=ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && B[-ps+i+1-rs]) nbvois++;
-  if (((i>=ps)&&(i%ps>=rs)) && B[-ps+i-rs]) nbvois++;
-  if (((i>=ps)&&(i%ps>=rs)&&(i%rs!=0)) && B[-ps+i-rs-1]) nbvois++;
-  if (((i>=ps)&&(i%rs!=0)) && B[-ps+i-1]) nbvois++;
-  if (((i>=ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && B[-ps+i-1+rs]) nbvois++;
-  if (((i>=ps)&&(i%ps<ps-rs)) && B[-ps+i+rs]) nbvois++;
-  if (((i>=ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && B[-ps+i+rs+1]) nbvois++;
-  if (((i>=ps)) && B[-ps+i]) nbvois++;
-  return nbvois;
-} /* nbvoiso26() */
+  int32_t mctopo3d_table_nbvois = 0;
+  if (((i<N-ps)&&(i%rs!=rs-1)) && B[ps+i+1]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && B[ps+i+1-rs]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%ps>=rs)) && B[ps+i-rs]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%ps>=rs)&&(i%rs!=0)) && B[ps+i-rs-1]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%rs!=0)) && B[ps+i-1]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && B[ps+i-1+rs]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%ps<ps-rs)) && B[ps+i+rs]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && B[ps+i+rs+1]) mctopo3d_table_nbvois++;
+  if (((i<N-ps)) && B[ps+i]) mctopo3d_table_nbvois++;
+  if (((i%rs!=rs-1)) && B[i+1]) mctopo3d_table_nbvois++;
+  if (((i%rs!=rs-1)&&(i%ps>=rs)) && B[i+1-rs]) mctopo3d_table_nbvois++;
+  if (((i%ps>=rs)) && B[i-rs]) mctopo3d_table_nbvois++;
+  if (((i%ps>=rs)&&(i%rs!=0)) && B[i-rs-1]) mctopo3d_table_nbvois++;
+  if (((i%rs!=0)) && B[i-1]) mctopo3d_table_nbvois++;
+  if (((i%rs!=0)&&(i%ps<ps-rs)) && B[i-1+rs]) mctopo3d_table_nbvois++;
+  if (((i%ps<ps-rs)) && B[i+rs]) mctopo3d_table_nbvois++;
+  if (((i%ps<ps-rs)&&(i%rs!=rs-1)) && B[i+rs+1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%rs!=rs-1)) && B[-ps+i+1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%rs!=rs-1)&&(i%ps>=rs)) && B[-ps+i+1-rs]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%ps>=rs)) && B[-ps+i-rs]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%ps>=rs)&&(i%rs!=0)) && B[-ps+i-rs-1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%rs!=0)) && B[-ps+i-1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%rs!=0)&&(i%ps<ps-rs)) && B[-ps+i-1+rs]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%ps<ps-rs)) && B[-ps+i+rs]) mctopo3d_table_nbvois++;
+  if (((i>=ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && B[-ps+i+rs+1]) mctopo3d_table_nbvois++;
+  if (((i>=ps)) && B[-ps+i]) mctopo3d_table_nbvois++;
+  return mctopo3d_table_nbvois;
+} /* mctopo3d_table_nbvoiso26() */
 
 /* ========================================== */
-uint8_t T6(voxel * cube)
+uint8_t mctopo3d_table_T6(voxel * cube)
 /* ========================================== */
 {
-  G6(cube);
-  return nbcomp(cube, 6);
-} /* T6() */
+  mctopo3d_table_G6(cube);
+  return mctopo3d_table_nbcomp(cube, 6);
+} /* mctopo3d_table_T6() */
 
 /* ========================================== */
-uint8_t T6p(voxel * cube)
+uint8_t mctopo3d_table_T6p(voxel * cube)
 /* ========================================== */
 {
-  G6p(cube);
-  return nbcomp(cube, 6);
-} /* T6p() */
+  mctopo3d_table_G6p(cube);
+  return mctopo3d_table_nbcomp(cube, 6);
+} /* mctopo3d_table_T6p() */
 
 /* ========================================== */
-uint8_t T18(voxel * cube)
+uint8_t mctopo3d_table_T18(voxel * cube)
 /* ========================================== */
 {
-  G18(cube);
-  return nbcomp(cube, 18);
-} /* T18() */
+  mctopo3d_table_G18(cube);
+  return mctopo3d_table_nbcomp(cube, 18);
+} /* mctopo3d_table_T18() */
 
 /* ========================================== */
-uint8_t T26(voxel * cube)
+uint8_t mctopo3d_table_T26(voxel * cube)
 /* ========================================== */
 {
-  G26(cube);
-  return nbcomp(cube, 26);
-} /* T26() */
+  mctopo3d_table_G26(cube);
+  return mctopo3d_table_nbcomp(cube, 26);
+} /* mctopo3d_table_T26() */
 
 /* ==================================== */
 static void preparecubes(
@@ -498,7 +498,7 @@ static void preparecubesh_l(
 /* ******************************************************************************* */
 
 /* ==================================== */
-void top6(                   /* pour un objet en 6-connexite */
+void mctopo3d_table_top6(                   /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -512,12 +512,12 @@ void top6(                   /* pour un objet en 6-connexite */
 */
 {
   preparecubes(img, p, rs, ps, N);
-  *t = T6(cube_topo3d);
-  *tb = T26(cubec_topo3d);
-} /* top6() */
+  *t = mctopo3d_table_T6(cube_topo3d);
+  *tb = mctopo3d_table_T26(cubec_topo3d);
+} /* mctopo3d_table_top6() */
 
 /* ==================================== */
-void top18(                   /* pour un objet en 18-connexite */
+void mctopo3d_table_top18(                   /* pour un objet en 18-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -531,12 +531,12 @@ void top18(                   /* pour un objet en 18-connexite */
 */
 {
   preparecubes(img, p, rs, ps, N);
-  *t = T18(cube_topo3d);
-  *tb = T6p(cubec_topo3d);
-} /* top18() */
+  *t = mctopo3d_table_T18(cube_topo3d);
+  *tb = mctopo3d_table_T6p(cubec_topo3d);
+} /* mctopo3d_table_top18() */
 
 /* ==================================== */
-void top26(                   /* pour un objet en 26-connexite */
+void mctopo3d_table_top26(                   /* pour un objet en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -550,12 +550,12 @@ void top26(                   /* pour un objet en 26-connexite */
 */
 {
   preparecubes(img, p, rs, ps, N);
-  *t = T26(cube_topo3d);
-  *tb = T6(cubec_topo3d);
-} /* top26() */
+  *t = mctopo3d_table_T26(cube_topo3d);
+  *tb = mctopo3d_table_T6(cubec_topo3d);
+} /* mctopo3d_table_top26() */
 
 /* ==================================== */
-int32_t simple6(                   /* pour un objet en 6-connexite */
+int32_t mctopo3d_table_simple6(                   /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -563,14 +563,14 @@ int32_t simple6(                   /* pour un objet en 6-connexite */
   int32_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "simple6"
+#define F_NAME "mctopo3d_table_simple6"
 {
   fprintf(stderr, "%s: tabulated version not implrmented\n", F_NAME);
   exit(1);
-} /* simple6() */
+} /* mctopo3d_table_simple6() */
 
 /* ==================================== */
-int32_t simple18(                  /* pour un objet en 18-connexite */
+int32_t mctopo3d_table_simple18(                  /* pour un objet en 18-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -578,14 +578,14 @@ int32_t simple18(                  /* pour un objet en 18-connexite */
   int32_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "simple18"
+#define F_NAME "mctopo3d_table_simple18"
 {
   fprintf(stderr, "%s: tabulated version not implrmented\n", F_NAME);
   exit(1);
-} /* simple18() */
+} /* mctopo3d_table_simple18() */
 
 /* ==================================== */
-int32_t simple26(                  /* pour un objet en 26-connexite */
+int32_t mctopo3d_table_simple26(                  /* pour un objet en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -593,7 +593,7 @@ int32_t simple26(                  /* pour un objet en 26-connexite */
   int32_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "simple26"
+#define F_NAME "mctopo3d_table_simple26"
 {
   uint32_t mask = 0, v, k;
   for (k = 0; k < 26; k++)
@@ -605,21 +605,21 @@ int32_t simple26(                  /* pour un objet en 26-connexite */
 //printf("\nmask = %x\n\n", mask);
   if (IsSimple26(mask)) return 1;
   return 0;
-} /* simple26() */
+} /* mctopo3d_table_simple26() */
 
 /* ==================================== */
-int32_t simple26mask(              /* pour un objet en 26-connexite */
+int32_t mctopo3d_table_simple26mask(              /* pour un objet en 26-connexite */
   uint32_t mask)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "simple26mask"
+#define F_NAME "mctopo3d_table_simple26mask"
 {
   if (IsSimple26(mask)) return 1;
   return 0;
-} /* simple26mask() */
+} /* mctopo3d_table_simple26mask() */
 
 /* ==================================== */
-int32_t simple6h(                   /* pour un objet en 6-connexite */
+int32_t mctopo3d_table_simple6h(                   /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* seuil */
@@ -628,14 +628,14 @@ int32_t simple6h(                   /* pour un objet en 6-connexite */
   int32_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "simple6h"
+#define F_NAME "mctopo3d_table_simple6h"
 {
   fprintf(stderr, "%s: tabulated version not implrmented\n", F_NAME);
   exit(1);
-} /* simple6h() */
+} /* mctopo3d_table_simple6h() */
 
 /* ==================================== */
-int32_t simple18h(                  /* pour un objet en 18-connexite */
+int32_t mctopo3d_table_simple18h(                  /* pour un objet en 18-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* seuil */
@@ -644,14 +644,14 @@ int32_t simple18h(                  /* pour un objet en 18-connexite */
   int32_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "simple18h"
+#define F_NAME "mctopo3d_table_simple18h"
 {
   fprintf(stderr, "%s: tabulated version not implrmented\n", F_NAME);
   exit(1);
-} /* simple18h() */
+} /* mctopo3d_table_simple18h() */
 
 /* ==================================== */
-int32_t simple26h(                  /* pour un objet en 26-connexite */
+int32_t mctopo3d_table_simple26h(                  /* pour un objet en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* seuil */
@@ -660,14 +660,14 @@ int32_t simple26h(                  /* pour un objet en 26-connexite */
   int32_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "simple26h"
+#define F_NAME "mctopo3d_table_simple26h"
 {
   fprintf(stderr, "%s: tabulated version not implrmented\n", F_NAME);
   exit(1);
-} /* simple26h() */
+} /* mctopo3d_table_simple26h() */
 
 /* ==================================== */
-int32_t tbar6h(               /* pour un objet en 6-connexite */
+int32_t mctopo3d_table_tbar6h(               /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* seuil */
@@ -681,11 +681,11 @@ int32_t tbar6h(               /* pour un objet en 6-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return -1;
   preparecubesh(img, p, h, rs, ps, N);
-  return T26(cubec_topo3d);
-} /* tbar6h() */
+  return mctopo3d_table_T26(cubec_topo3d);
+} /* mctopo3d_table_tbar6h() */
 
 /* ==================================== */
-int32_t tbar26h(              /* pour un objet en 26-connexite */
+int32_t mctopo3d_table_tbar26h(              /* pour un objet en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* seuil */
@@ -699,14 +699,14 @@ int32_t tbar26h(              /* pour un objet en 26-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return -1;
   preparecubesh(img, p, h, rs, ps, N);
-  return T6(cubec_topo3d);
-} /* tbar26h() */
+  return mctopo3d_table_T6(cubec_topo3d);
+} /* mctopo3d_table_tbar26h() */
 
 /* ========================================== */
-uint8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex)
+uint8_t mctopo3d_table_P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex)
 /* ========================================== */
 #undef F_NAME
-#define F_NAME "P_simple"
+#define F_NAME "mctopo3d_table_P_simple"
 /*
   cube contient X
   cubep contient P
@@ -729,16 +729,16 @@ uint8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex)
   switch (connex) /* teste la condition 2 (theoreme 6) */
   {
     case 6:  
-      if (T26(cubec) != 1) return 0; 
+      if (mctopo3d_table_T26(cubec) != 1) return 0; 
       break;
     case 18: 
-      if (T6p(cubec) != 1) return 0; 
+      if (mctopo3d_table_T6p(cubec) != 1) return 0; 
       break;
     case 26: 
-      if (T6(cubec) != 1) return 0; 
+      if (mctopo3d_table_T6(cubec) != 1) return 0; 
       break;
     default: 
-      fprintf(stderr, "P_simple: mauvaise connexite : %d\n", connex); 
+      fprintf(stderr, "mctopo3d_table_P_simple: mauvaise connexite : %d\n", connex); 
       exit(0); 
   } /* switch (connex) */
   
@@ -756,7 +756,7 @@ uint8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex)
           yc = xc->v26[n];
           v = yc->val;
           yc->val = 1;
-          if (T26(cubec) != 1) return 0;
+          if (mctopo3d_table_T26(cubec) != 1) return 0;
           yc->val = v;
         } /* if (yp->val) */
       } /* for (n = 0; n < x->n26v; n++) */
@@ -770,7 +770,7 @@ uint8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex)
           yc = xc->v6[n];
           v = yc->val;
           yc->val = 1;
-          if (T6p(cubec) != 1) return 0;
+          if (mctopo3d_table_T6p(cubec) != 1) return 0;
           yc->val = v;
         } /* if (yp->val) */
       } /* for (n = 0; n < x->n6v; n++) */
@@ -784,13 +784,13 @@ uint8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex)
           yc = xc->v6[n];
           v = yc->val;
           yc->val = 1;
-          if (T6(cubec) != 1) return 0;
+          if (mctopo3d_table_T6(cubec) != 1) return 0;
           yc->val = v;
         } /* if (yp->val) */
       } /* for (n = 0; n < x->n6v; n++) */
       break;
     default: 
-      fprintf(stderr, "P_simple: mauvaise connexite : %d\n", connex); 
+      fprintf(stderr, "mctopo3d_table_P_simple: mauvaise connexite : %d\n", connex); 
       exit(0); 
   } /* switch (connex) */
   
@@ -805,16 +805,16 @@ uint8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex)
   switch (connex) /* teste la condition 1 (theoreme 6) */
   {
     case 6:  
-      if (T6(cubec) != 1) return 0;
+      if (mctopo3d_table_T6(cubec) != 1) return 0;
       break;
     case 18: 
-      if (T18(cubec) != 1) return 0;
+      if (mctopo3d_table_T18(cubec) != 1) return 0;
       break;
     case 26: 
-      if (T26(cubec) != 1) return 0;
+      if (mctopo3d_table_T26(cubec) != 1) return 0;
       break;
     default: 
-      fprintf(stderr, "P_simple: mauvaise connexite : %d\n", connex); 
+      fprintf(stderr, "mctopo3d_table_P_simple: mauvaise connexite : %d\n", connex); 
       exit(0); 
   } /* switch (connex) */
   
@@ -829,7 +829,7 @@ uint8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex)
           yc = xc->v6[n];
           v = yc->val;
           yc->val = 1;
-          if (T6(cubec) != 1) return 0;
+          if (mctopo3d_table_T6(cubec) != 1) return 0;
           yc->val = v;
         } /* if (yp->val) */
       } /* for (n = 0; n < x->n6v; n++) */
@@ -843,7 +843,7 @@ uint8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex)
           yc = xc->v18[n];
           v = yc->val;
           yc->val = 1;
-          if (T18(cubec) != 1) return 0;
+          if (mctopo3d_table_T18(cubec) != 1) return 0;
           yc->val = v;
         } /* if (yp->val) */
       } /* for (n = 0; n < x->n18v; n++) */
@@ -857,17 +857,17 @@ uint8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex)
           yc = xc->v26[n];
           v = yc->val;
           yc->val = 1;
-          if (T26(cubec) != 1) return 0;
+          if (mctopo3d_table_T26(cubec) != 1) return 0;
           yc->val = v;
         } /* if (yp->val) */
       } /* for (n = 0; n < x->n26v; n++) */
       break;
     default: 
-      fprintf(stderr, "P_simple: mauvaise connexite : %d\n", connex); 
+      fprintf(stderr, "mctopo3d_table_P_simple: mauvaise connexite : %d\n", connex); 
       exit(0); 
   } /* switch (connex) */
   return 1;
-} /* P_simple() */
+} /* mctopo3d_table_P_simple() */
 
 
 
@@ -880,7 +880,7 @@ uint8_t P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex)
 /* ******************************************************************************* */
 
 /* ==================================== */
-int32_t pdestr6(                   /* pour des minima en 6-connexite */
+int32_t mctopo3d_table_pdestr6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -893,11 +893,11 @@ int32_t pdestr6(                   /* pour des minima en 6-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  return ((T26(cube_topo3d) == 1) && (T6(cubec_topo3d) == 1));
-} /* pdestr6() */
+  return ((mctopo3d_table_T26(cube_topo3d) == 1) && (mctopo3d_table_T6(cubec_topo3d) == 1));
+} /* mctopo3d_table_pdestr6() */
 
 /* ==================================== */
-int32_t pdestr18(                  /* pour des minima en 18-connexite */
+int32_t mctopo3d_table_pdestr18(                  /* pour des minima en 18-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -910,11 +910,11 @@ int32_t pdestr18(                  /* pour des minima en 18-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  return ((T6p(cube_topo3d) == 1) && (T18(cubec_topo3d) == 1));
-} /* pdestr18() */
+  return ((mctopo3d_table_T6p(cube_topo3d) == 1) && (mctopo3d_table_T18(cubec_topo3d) == 1));
+} /* mctopo3d_table_pdestr18() */
 
 /* ==================================== */
-int32_t pdestr26(                  /* pour des minima en 26-connexite */
+int32_t mctopo3d_table_pdestr26(                  /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -927,11 +927,11 @@ int32_t pdestr26(                  /* pour des minima en 26-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  return ((T6(cube_topo3d) == 1) && (T26(cubec_topo3d) == 1));
-} /* pdestr26() */
+  return ((mctopo3d_table_T6(cube_topo3d) == 1) && (mctopo3d_table_T26(cubec_topo3d) == 1));
+} /* mctopo3d_table_pdestr26() */
 
 /* ==================================== */
-int32_t plevdestr6(                   /* pour des minima en 6-connexite */
+int32_t mctopo3d_table_plevdestr6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -944,11 +944,11 @@ int32_t plevdestr6(                   /* pour des minima en 6-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  return (T6(cubec_topo3d) == 1);
-} /* plevdestr6() */
+  return (mctopo3d_table_T6(cubec_topo3d) == 1);
+} /* mctopo3d_table_plevdestr6() */
 
 /* ==================================== */
-int32_t plevdestr18(                  /* pour des minima en 18-connexite */
+int32_t mctopo3d_table_plevdestr18(                  /* pour des minima en 18-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -961,11 +961,11 @@ int32_t plevdestr18(                  /* pour des minima en 18-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  return (T18(cubec_topo3d) == 1);
-} /* plevdestr18() */
+  return (mctopo3d_table_T18(cubec_topo3d) == 1);
+} /* mctopo3d_table_plevdestr18() */
 
 /* ==================================== */
-int32_t plevdestr26(                  /* pour des minima en 26-connexite */
+int32_t mctopo3d_table_plevdestr26(                  /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -978,11 +978,11 @@ int32_t plevdestr26(                  /* pour des minima en 26-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  return (T26(cubec_topo3d) == 1);
-} /* plevdestr26() */
+  return (mctopo3d_table_T26(cubec_topo3d) == 1);
+} /* mctopo3d_table_plevdestr26() */
 
 /* ==================================== */
-int32_t pconstr6(                   /* pour des minima en 6-connexite */
+int32_t mctopo3d_table_pconstr6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -995,11 +995,11 @@ int32_t pconstr6(                   /* pour des minima en 6-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  return ((T26(cube_topo3d) == 1) && (T6(cubec_topo3d) == 1));
-} /* pconstr6() */
+  return ((mctopo3d_table_T26(cube_topo3d) == 1) && (mctopo3d_table_T6(cubec_topo3d) == 1));
+} /* mctopo3d_table_pconstr6() */
 
 /* ==================================== */
-int32_t pconstr18(                  /* pour des minima en 18-connexite */
+int32_t mctopo3d_table_pconstr18(                  /* pour des minima en 18-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1012,11 +1012,11 @@ int32_t pconstr18(                  /* pour des minima en 18-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  return ((T6p(cube_topo3d) == 1) && (T18(cubec_topo3d) == 1));
-} /* pconstr18() */
+  return ((mctopo3d_table_T6p(cube_topo3d) == 1) && (mctopo3d_table_T18(cubec_topo3d) == 1));
+} /* mctopo3d_table_pconstr18() */
 
 /* ==================================== */
-int32_t pconstr26(                  /* pour des minima en 26-connexite */
+int32_t mctopo3d_table_pconstr26(                  /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1029,11 +1029,11 @@ int32_t pconstr26(                  /* pour des minima en 26-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  return ((T6(cube_topo3d) == 1) && (T26(cubec_topo3d) == 1));
-} /* pconstr26() */
+  return ((mctopo3d_table_T6(cube_topo3d) == 1) && (mctopo3d_table_T26(cubec_topo3d) == 1));
+} /* mctopo3d_table_pconstr26() */
 
 /* ==================================== */
-int32_t plevconstr6(                   /* pour des minima en 6-connexite */
+int32_t mctopo3d_table_plevconstr6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1046,11 +1046,11 @@ int32_t plevconstr6(                   /* pour des minima en 6-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  return (T26(cube_topo3d) == 1);
-} /* plevconstr6() */
+  return (mctopo3d_table_T26(cube_topo3d) == 1);
+} /* mctopo3d_table_plevconstr6() */
 
 /* ==================================== */
-int32_t plevconstr18(                  /* pour des minima en 18-connexite */
+int32_t mctopo3d_table_plevconstr18(                  /* pour des minima en 18-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1063,11 +1063,11 @@ int32_t plevconstr18(                  /* pour des minima en 18-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  return (T6p(cube_topo3d) == 1);
-} /* plevconstr18() */
+  return (mctopo3d_table_T6p(cube_topo3d) == 1);
+} /* mctopo3d_table_plevconstr18() */
 
 /* ==================================== */
-int32_t plevconstr26(                  /* pour des minima en 26-connexite */
+int32_t mctopo3d_table_plevconstr26(                  /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1080,11 +1080,11 @@ int32_t plevconstr26(                  /* pour des minima en 26-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  return (T6(cube_topo3d) == 1);
-} /* plevconstr26() */
+  return (mctopo3d_table_T6(cube_topo3d) == 1);
+} /* mctopo3d_table_plevconstr26() */
 
 /* ==================================== */
-int32_t peak6(                   /* pour des minima en 6-connexite */
+int32_t mctopo3d_table_peak6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1097,11 +1097,11 @@ int32_t peak6(                   /* pour des minima en 6-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  return (T26(cube_topo3d) == 0);
-} /* peak6() */
+  return (mctopo3d_table_T26(cube_topo3d) == 0);
+} /* mctopo3d_table_peak6() */
 
 /* ==================================== */
-int32_t peak26(                    /* pour des minima en 26-connexite */
+int32_t mctopo3d_table_peak26(                    /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1114,11 +1114,11 @@ int32_t peak26(                    /* pour des minima en 26-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  return (T6(cube_topo3d) == 0);
-} /* peak26() */
+  return (mctopo3d_table_T6(cube_topo3d) == 0);
+} /* mctopo3d_table_peak26() */
 
 /* ==================================== */
-int32_t well6(                   /* pour des minima en 6-connexite */
+int32_t mctopo3d_table_well6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1131,11 +1131,11 @@ int32_t well6(                   /* pour des minima en 6-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  return (T6(cubec_topo3d) == 0);
-} /* well6() */
+  return (mctopo3d_table_T6(cubec_topo3d) == 0);
+} /* mctopo3d_table_well6() */
 
 /* ==================================== */
-int32_t well26(                    /* pour des minima en 26-connexite */
+int32_t mctopo3d_table_well26(                    /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1148,11 +1148,11 @@ int32_t well26(                    /* pour des minima en 26-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  return (T26(cubec_topo3d) == 0);
-} /* well26() */
+  return (mctopo3d_table_T26(cubec_topo3d) == 0);
+} /* mctopo3d_table_well26() */
 
 /* ==================================== */
-uint8_t alpha26m(
+uint8_t mctopo3d_table_alpha26m(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1165,22 +1165,22 @@ uint8_t alpha26m(
 	register uint8_t val = *(img+p);
 	register int32_t q;
 	register uint8_t v;
-	register int32_t alpha = NDG_MIN - 1;
+	register int32_t mctopo3d_table_alpha = NDG_MIN - 1;
         register int32_t k;
 
         for (k = 0; k < 26; k += 1)
         {
           q = voisin26(p, k, rs, ps, N);
-          if ((q != -1) && ((v=img[q]) < val) && ((int32_t)v > alpha)) alpha = (int32_t)v;
+          if ((q != -1) && ((v=img[q]) < val) && ((int32_t)v > mctopo3d_table_alpha)) mctopo3d_table_alpha = (int32_t)v;
 	}
-        if (alpha == NDG_MIN - 1) 
+        if (mctopo3d_table_alpha == NDG_MIN - 1) 
           return val;
         else
-          return (uint8_t)alpha;
-} /* alpha26m() */
+          return (uint8_t)mctopo3d_table_alpha;
+} /* mctopo3d_table_alpha26m() */
 
 /* ==================================== */
-int32_t alpha26m_l(
+int32_t mctopo3d_table_alpha26m_l(
   int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1193,22 +1193,22 @@ int32_t alpha26m_l(
 	register int32_t val = *(img+p);
 	register int32_t q;
 	register int32_t v;
-	register int32_t alpha = NDG_MIN - 1;
+	register int32_t mctopo3d_table_alpha = NDG_MIN - 1;
         register int32_t k;
 
         for (k = 0; k < 26; k += 1)
         {
           q = voisin26(p, k, rs, ps, N);
-          if ((q != -1) && ((v=img[q]) < val) && ((int32_t)v > alpha)) alpha = (int32_t)v;
+          if ((q != -1) && ((v=img[q]) < val) && ((int32_t)v > mctopo3d_table_alpha)) mctopo3d_table_alpha = (int32_t)v;
 	}
-        if (alpha == NDG_MIN - 1) 
+        if (mctopo3d_table_alpha == NDG_MIN - 1) 
           return val;
         else
-          return (int32_t)alpha;
-} /* alpha26m_l() */
+          return (int32_t)mctopo3d_table_alpha;
+} /* mctopo3d_table_alpha26m_l() */
 
 /* ==================================== */
-uint8_t alpha6m(
+uint8_t mctopo3d_table_alpha6m(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1221,22 +1221,22 @@ uint8_t alpha6m(
 	register uint8_t val = *(img+p);
 	register int32_t q;
 	register uint8_t v;
-	register int32_t alpha = NDG_MIN - 1;
+	register int32_t mctopo3d_table_alpha = NDG_MIN - 1;
         register int32_t k;
 
         for (k = 0; k <= 10; k += 2)
         {
           q = voisin6(p, k, rs, ps, N);
-          if ((q != -1) && ((v=img[q]) < val) && ((int32_t)v > alpha)) alpha = (int32_t)v;
+          if ((q != -1) && ((v=img[q]) < val) && ((int32_t)v > mctopo3d_table_alpha)) mctopo3d_table_alpha = (int32_t)v;
 	}
-        if (alpha == NDG_MIN - 1) 
+        if (mctopo3d_table_alpha == NDG_MIN - 1) 
           return val;
         else
-          return (uint8_t)alpha;
-} /* alpha6m() */
+          return (uint8_t)mctopo3d_table_alpha;
+} /* mctopo3d_table_alpha6m() */
 
 /* ==================================== */
-uint8_t alpha26p(
+uint8_t mctopo3d_table_alpha26p(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1249,22 +1249,22 @@ uint8_t alpha26p(
 	register uint8_t val = *(img+p);
 	register int32_t q;
 	register uint8_t v;
-	register int32_t alpha = NDG_MAX + 1;
+	register int32_t mctopo3d_table_alpha = NDG_MAX + 1;
         register int32_t k;
 
         for (k = 0; k < 26; k += 1)
         {
           q = voisin26(p, k, rs, ps, N);
-          if ((q != -1) && ((v=img[q]) > val) && ((int32_t)v < alpha)) alpha = (int32_t)v;
+          if ((q != -1) && ((v=img[q]) > val) && ((int32_t)v < mctopo3d_table_alpha)) mctopo3d_table_alpha = (int32_t)v;
 	}
-        if (alpha == NDG_MAX + 1) 
+        if (mctopo3d_table_alpha == NDG_MAX + 1) 
           return val;
         else
-          return (uint8_t)alpha;
-} /* alpha26p() */
+          return (uint8_t)mctopo3d_table_alpha;
+} /* mctopo3d_table_alpha26p() */
 
 /* ==================================== */
-uint8_t alpha6p(
+uint8_t mctopo3d_table_alpha6p(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1277,22 +1277,22 @@ uint8_t alpha6p(
 	register uint8_t val = *(img+p);
 	register int32_t q;
 	register uint8_t v;
-	register int32_t alpha = NDG_MAX + 1;
+	register int32_t mctopo3d_table_alpha = NDG_MAX + 1;
         register int32_t k;
 
         for (k = 0; k <= 10; k += 2)
         {
           q = voisin6(p, k, rs, ps, N);
-          if ((q != -1) && ((v=img[q]) > val) && ((int32_t)v < alpha)) alpha = (int32_t)v;
+          if ((q != -1) && ((v=img[q]) > val) && ((int32_t)v < mctopo3d_table_alpha)) mctopo3d_table_alpha = (int32_t)v;
 	}
-        if (alpha == NDG_MAX + 1) 
+        if (mctopo3d_table_alpha == NDG_MAX + 1) 
           return val;
         else
-          return (uint8_t)alpha;
-} /* alpha6p() */
+          return (uint8_t)mctopo3d_table_alpha;
+} /* mctopo3d_table_alpha6p() */
 
 /* ==================================== */
-uint8_t delta6m( 
+uint8_t mctopo3d_table_delta6m( 
 /* retourne la valeur max. a laquelle p est destructible - minima 6-connexes */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
@@ -1302,14 +1302,14 @@ uint8_t delta6m(
 /* ==================================== */
 {	
   uint8_t ret, sav = img[p];
-  while (pdestr6(img, p, rs, ps, N)) img[p] = alpha26m(img, p, rs, ps, N);
+  while (mctopo3d_table_pdestr6(img, p, rs, ps, N)) img[p] = mctopo3d_table_alpha26m(img, p, rs, ps, N);
   ret = img[p];
   img[p] = sav;
   return ret;
-} /* delta6m() */
+} /* mctopo3d_table_delta6m() */
 
 /* ==================================== */
-uint8_t delta26m( 
+uint8_t mctopo3d_table_delta26m( 
 /* retourne la valeur max. a laquelle p est destructible - minima 26-connexes */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
@@ -1319,14 +1319,14 @@ uint8_t delta26m(
 /* ==================================== */
 {	
   uint8_t ret, sav = img[p];
-  while (pdestr26(img, p, rs, ps, N)) img[p] = alpha26m(img, p, rs, ps, N);
+  while (mctopo3d_table_pdestr26(img, p, rs, ps, N)) img[p] = mctopo3d_table_alpha26m(img, p, rs, ps, N);
   ret = img[p];
   img[p] = sav;
   return ret;
-} /* delta26m() */
+} /* mctopo3d_table_delta26m() */
 
 /* ==================================== */
-uint8_t delta6p( 
+uint8_t mctopo3d_table_delta6p( 
 /* retourne la valeur min. a laquelle p est constructible - minima 6-connexes */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
@@ -1336,14 +1336,14 @@ uint8_t delta6p(
 /* ==================================== */
 {	
   uint8_t ret, sav = img[p];
-  while (pconstr6(img, p, rs, ps, N)) img[p] = alpha26p(img, p, rs, ps, N);
+  while (mctopo3d_table_pconstr6(img, p, rs, ps, N)) img[p] = mctopo3d_table_alpha26p(img, p, rs, ps, N);
   ret = img[p];
   img[p] = sav;
   return ret;
-} /* delta6p() */
+} /* mctopo3d_table_delta6p() */
 
 /* ==================================== */
-uint8_t delta26p( 
+uint8_t mctopo3d_table_delta26p( 
 /* retourne la valeur min. a laquelle p est constructible - minima 26-connexes */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
@@ -1353,15 +1353,15 @@ uint8_t delta26p(
 /* ==================================== */
 {	
   uint8_t ret, sav = img[p];
-  while (pconstr26(img, p, rs, ps, N)) img[p] = alpha26p(img, p, rs, ps, N);
+  while (mctopo3d_table_pconstr26(img, p, rs, ps, N)) img[p] = mctopo3d_table_alpha26p(img, p, rs, ps, N);
   ret = img[p];
   img[p] = sav;
   return ret;
-} /* delta26p() */
+} /* mctopo3d_table_delta26p() */
 
 /* ==================================== */
-int32_t separant6(  /* teste si un point est separant - minima 6-connexes
-	         ie- s'il est separant pour une coupe <= img[p] */
+int32_t mctopo3d_table_separant6(  /* teste si un point est separant - minima 6-connexes
+	         ie- s'il est mctopo3d_table_separant pour une coupe <= img[p] */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1377,7 +1377,7 @@ int32_t separant6(  /* teste si un point est separant - minima 6-connexes
     return 0;
 
   preparecubesh(img, p, img[p], rs, ps, N);
-  if (T6(cubec_topo3d) >= 2) return 1;
+  if (mctopo3d_table_T6(cubec_topo3d) >= 2) return 1;
 
   for (k = 0; k < 26; k += 1)
   {
@@ -1385,15 +1385,15 @@ int32_t separant6(  /* teste si un point est separant - minima 6-connexes
     if ((q != -1) && (img[q] <= img[p]))
     {
       preparecubesh(img, p, img[q], rs, ps, N);
-      if (T6(cubec_topo3d) >= 2) return 1;
+      if (mctopo3d_table_T6(cubec_topo3d) >= 2) return 1;
     }
   }	
   return 0;
-} /* separant6() */
+} /* mctopo3d_table_separant6() */
 
 /* ==================================== */
-int32_t hseparant6(  /* teste si un point est hseparant - minima 6-connexes
-	         ie- s'il est separant pour la coupe h */
+int32_t hmctopo3d_table_separant6(  /* teste si un point est mctopo3d_table_hseparant - minima 6-connexes
+	         ie- s'il est mctopo3d_table_separant pour la coupe h */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* parametre */
@@ -1408,13 +1408,13 @@ int32_t hseparant6(  /* teste si un point est hseparant - minima 6-connexes
     return 0;
 
   preparecubesh(img, p, h, rs, ps, N);
-  if (T6(cubec_topo3d) >= 2) return 1;
+  if (mctopo3d_table_T6(cubec_topo3d) >= 2) return 1;
   return 0;
-} /* hseparant6() */
+} /* hmctopo3d_table_separant6() */
 
 /* ==================================== */
-int32_t hfseparant6(  /* teste si un point est hfseparant - minima 6-connexes
-	         ie- s'il est separant pour une coupe c telle que h < c <= img[p] */
+int32_t hfmctopo3d_table_separant6(  /* teste si un point est mctopo3d_table_hfseparant - minima 6-connexes
+	         ie- s'il est mctopo3d_table_separant pour une coupe c telle que h < c <= img[p] */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* parametre */
@@ -1431,7 +1431,7 @@ int32_t hfseparant6(  /* teste si un point est hfseparant - minima 6-connexes
     return 0;
 
   preparecubesh(img, p, img[p], rs, ps, N);
-  if (T6(cubec_topo3d) >= 2) return 1;
+  if (mctopo3d_table_T6(cubec_topo3d) >= 2) return 1;
 
   for (k = 0; k < 26; k += 1)
   {
@@ -1439,14 +1439,14 @@ int32_t hfseparant6(  /* teste si un point est hfseparant - minima 6-connexes
     if ((q != -1) && (img[q] > h) && (img[q] <= img[p]))
     {
       preparecubesh(img, p, img[q], rs, ps, N);
-      if (T6(cubec_topo3d) >= 2) return 1;
+      if (mctopo3d_table_T6(cubec_topo3d) >= 2) return 1;
     }
   }	
   return 0;
-} /* hfseparant6() */
+} /* hfmctopo3d_table_separant6() */
 
 /* ==================================== */
-int32_t filsombre6(                /* pour des minima en 6-connexite */
+int32_t mctopo3d_table_filsombre6(                /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1468,17 +1468,17 @@ int32_t filsombre6(                /* pour des minima en 6-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  T = T26(cube_topo3d);
+  T = mctopo3d_table_T26(cube_topo3d);
   if (T != 1) return 0;
-  Tb = T6(cubec_topo3d);
+  Tb = mctopo3d_table_T6(cubec_topo3d);
   if (Tb == 0) return 1;
-  Nb = nbvois6(cubec_topo3d);
+  Nb = mctopo3d_table_nbvois6(cubec_topo3d);
   if (Tb > 0) return (Nb == Tb);
   return 0;
-} /* filsombre6() */
+} /* mctopo3d_table_filsombre6() */
 
 /* ==================================== */
-int32_t filsombre26(               /* pour des minima en 26-connexite */
+int32_t mctopo3d_table_filsombre26(               /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1500,17 +1500,17 @@ int32_t filsombre26(               /* pour des minima en 26-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  T = T6(cube_topo3d);
+  T = mctopo3d_table_T6(cube_topo3d);
   if (T != 1) return 0;
-  Tb = T26(cubec_topo3d);
+  Tb = mctopo3d_table_T26(cubec_topo3d);
   if (Tb == 0) return 1;
-  Nb = nbvois26(cubec_topo3d);
+  Nb = mctopo3d_table_nbvois26(cubec_topo3d);
   if (Tb > 0) return (Nb == Tb);
   return 0;
-} /* filsombre26() */
+} /* mctopo3d_table_filsombre26() */
 
 /* ==================================== */
-int32_t filclair6(                /* pour des minima en 6-connexite */
+int32_t mctopo3d_table_filclair6(                /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1531,17 +1531,17 @@ int32_t filclair6(                /* pour des minima en 6-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  Tb = T6(cubec_topo3d);
+  Tb = mctopo3d_table_T6(cubec_topo3d);
   if (Tb != 1) return 0;
-  T = T26(cube_topo3d);
+  T = mctopo3d_table_T26(cube_topo3d);
   if (T == 0) return 1;
-  Nb = nbvois26(cube_topo3d);
+  Nb = mctopo3d_table_nbvois26(cube_topo3d);
   if (T > 0) return (Nb == T);
   return 0;
-} /* filclair6() */
+} /* mctopo3d_table_filclair6() */
 
 /* ==================================== */
-int32_t filclair26(                /* pour des minima en 26-connexite */
+int32_t mctopo3d_table_filclair26(                /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1562,17 +1562,17 @@ int32_t filclair26(                /* pour des minima en 26-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  Tb = T26(cubec_topo3d);
+  Tb = mctopo3d_table_T26(cubec_topo3d);
   if (Tb != 1) return 0;
-  T = T6(cube_topo3d);
+  T = mctopo3d_table_T6(cube_topo3d);
   if (T == 0) return 1;
-  Nb = nbvois6(cube_topo3d);
+  Nb = mctopo3d_table_nbvois6(cube_topo3d);
   if (T > 0) return (Nb == T);
   return 0;
-} /* filclair26() */
+} /* mctopo3d_table_filclair26() */
 
 /* ==================================== */
-int32_t t6mm(                   /* pour des minima en 6-connexite */
+int32_t mctopo3d_table_t6mm(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1585,11 +1585,11 @@ int32_t t6mm(                   /* pour des minima en 6-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  return T6(cubec_topo3d);
-} /* t6mm() */
+  return mctopo3d_table_T6(cubec_topo3d);
+} /* mctopo3d_table_t6mm() */
 
 /* ==================================== */
-int32_t t6m(                   /* pour des minima en 6-connexite */
+int32_t mctopo3d_table_t6m(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1602,11 +1602,11 @@ int32_t t6m(                   /* pour des minima en 6-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  return T6(cubec_topo3d);
-} /* t6m() */
+  return mctopo3d_table_T6(cubec_topo3d);
+} /* mctopo3d_table_t6m() */
 
 /* ==================================== */
-int32_t t26mm(                   /* pour des minima en 26-connexite */
+int32_t mctopo3d_table_t26mm(                   /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1619,11 +1619,11 @@ int32_t t26mm(                   /* pour des minima en 26-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  return T26(cubec_topo3d);
-} /* t26mm() */
+  return mctopo3d_table_T26(cubec_topo3d);
+} /* mctopo3d_table_t26mm() */
 
 /* ==================================== */
-int32_t t26m(                   /* pour des minima en 26-connexite */
+int32_t mctopo3d_table_t26m(                   /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1636,11 +1636,11 @@ int32_t t26m(                   /* pour des minima en 26-connexite */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  return T26(cubec_topo3d);
-} /* t26m() */
+  return mctopo3d_table_T26(cubec_topo3d);
+} /* mctopo3d_table_t26m() */
 
 /* ==================================== */
-int32_t t6pp(
+int32_t mctopo3d_table_t6pp(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1653,11 +1653,11 @@ int32_t t6pp(
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  return T6(cube_topo3d);
-} /* t6pp() */
+  return mctopo3d_table_T6(cube_topo3d);
+} /* mctopo3d_table_t6pp() */
 
 /* ==================================== */
-int32_t t6p(
+int32_t mctopo3d_table_t6p(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1670,11 +1670,11 @@ int32_t t6p(
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  return T6(cube_topo3d);
-} /* t6p() */
+  return mctopo3d_table_T6(cube_topo3d);
+} /* mctopo3d_table_t6p() */
 
 /* ==================================== */
-int32_t t26pp(
+int32_t mctopo3d_table_t26pp(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1687,11 +1687,11 @@ int32_t t26pp(
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p]+1, rs, ps, N);
-  return T26(cube_topo3d);
-} /* t26pp() */
+  return mctopo3d_table_T26(cube_topo3d);
+} /* mctopo3d_table_t26pp() */
 
 /* ==================================== */
-int32_t t26p(
+int32_t mctopo3d_table_t26p(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1704,11 +1704,11 @@ int32_t t26p(
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh(img, p, img[p], rs, ps, N);
-  return T26(cube_topo3d);
-} /* t26p() */
+  return mctopo3d_table_T26(cube_topo3d);
+} /* mctopo3d_table_t26p() */
 
 /* ==================================== */
-int32_t t26pp_l(
+int32_t mctopo3d_table_t26pp_l(
   int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1721,11 +1721,11 @@ int32_t t26pp_l(
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh_l(img, p, img[p]+1, rs, ps, N);
-  return T26(cube_topo3d);
-} /* t26pp_l() */
+  return mctopo3d_table_T26(cube_topo3d);
+} /* mctopo3d_table_t26pp_l() */
 
 /* ==================================== */
-int32_t t6pp_l(
+int32_t mctopo3d_table_t6pp_l(
   int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1738,59 +1738,59 @@ int32_t t6pp_l(
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     return 0;
   preparecubesh_l(img, p, img[p]+1, rs, ps, N);
-  return T6(cube_topo3d);
-} /* t6pp_l() */
+  return mctopo3d_table_T6(cube_topo3d);
+} /* mctopo3d_table_t6pp_l() */
 
 /* ==================================== */
-void nbtopoh3d26_l( /* pour les minima en 26-connexite */ 
+void mctopo3d_table_nbtopoh3d26_l( /* pour les minima en 26-connexite */ 
   int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N,                       /* taille image */
-  int32_t *t6p,
-  int32_t *t26mm)
+  int32_t *mctopo3d_table_t6p,
+  int32_t *mctopo3d_table_t26mm)
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
       (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     {
-      printf("ERREUR: nbtopoh3d26_l: point de bord\n");
+      printf("ERREUR: mctopo3d_table_nbtopoh3d26_l: point de bord\n");
       exit(0);
     }
   preparecubesh_l(img, p, h, rs, ps, N);
-  *t6p = T6(cube_topo3d);
-  *t26mm = T26(cubec_topo3d);
-} /* nbtopoh3d26_l() */
+  *mctopo3d_table_t6p = mctopo3d_table_T6(cube_topo3d);
+  *mctopo3d_table_t26mm = mctopo3d_table_T26(cubec_topo3d);
+} /* mctopo3d_table_nbtopoh3d26_l() */
 
 /* ==================================== */
-void nbtopoh3d6_l( /* pour les minima en 6-connexite */ 
+void mctopo3d_table_nbtopoh3d6_l( /* pour les minima en 6-connexite */ 
   int32_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N,                       /* taille image */
-  int32_t *t26p,
-  int32_t *t6mm)
+  int32_t *mctopo3d_table_t26p,
+  int32_t *mctopo3d_table_t6mm)
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
       (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
       (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
     {
-      printf("ERREUR: nbtopoh3d6_l: point de bord\n");
+      printf("ERREUR: mctopo3d_table_nbtopoh3d6_l: point de bord\n");
       exit(0);
     }
   preparecubesh_l(img, p, h, rs, ps, N);
-  *t26p = T26(cube_topo3d);
-  *t6mm = T6(cubec_topo3d);
-} /* nbtopoh3d6_l() */
+  *mctopo3d_table_t26p = mctopo3d_table_T26(cube_topo3d);
+  *mctopo3d_table_t6mm = mctopo3d_table_T6(cubec_topo3d);
+} /* mctopo3d_table_nbtopoh3d6_l() */
 
 /* ==================================== */
-int32_t bordext6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+int32_t mctopo3d_table_bordext6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 /* ==================================== */
 /* teste si x a un 6-voisin a 0 */
 {
@@ -1801,10 +1801,10 @@ int32_t bordext6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
     if ((y != -1) && (F[y] == 0)) return 1;
   } /* for k */      
   return 0;
-} /* bordext6() */
+} /* mctopo3d_table_bordext6() */
 
 /* ==================================== */
-int32_t bordext26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+int32_t mctopo3d_table_bordext26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 /* ==================================== */
 /* teste si x a un 26-voisin a 0 */
 {
@@ -1815,10 +1815,10 @@ int32_t bordext26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
     if ((y != -1) && (F[y] == 0)) return 1;
   } /* for k */      
   return 0;
-} /* bordext26() */
+} /* mctopo3d_table_bordext26() */
 
 /* ==================================== */
-int32_t curve6( /* point de courbe en 6-connexite */
+int32_t mctopo3d_table_curve6( /* point de courbe en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1829,12 +1829,12 @@ int32_t curve6( /* point de courbe en 6-connexite */
 {
   if (img[p] == 0) return 0;
   preparecubes(img, p, rs, ps, N);
-  if ((T6(cube_topo3d) == 2) && (nbvoiso6(img, p, rs, ps, N) == 2)) return 1;
+  if ((mctopo3d_table_T6(cube_topo3d) == 2) && (mctopo3d_table_nbvoiso6(img, p, rs, ps, N) == 2)) return 1;
   return 0;
-} /* curve6() */
+} /* mctopo3d_table_curve6() */
 
 /* ==================================== */
-int32_t curve18( /* point de courbe en 18-connexite */
+int32_t mctopo3d_table_curve18( /* point de courbe en 18-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1845,12 +1845,12 @@ int32_t curve18( /* point de courbe en 18-connexite */
 {
   if (img[p] == 0) return 0;
   preparecubes(img, p, rs, ps, N);
-  if ((T18(cube_topo3d) == 2) && (nbvoiso18(img, p, rs, ps, N) == 2)) return 1;
+  if ((mctopo3d_table_T18(cube_topo3d) == 2) && (mctopo3d_table_nbvoiso18(img, p, rs, ps, N) == 2)) return 1;
   return 0;
-} /* curve18() */
+} /* mctopo3d_table_curve18() */
 
 /* ==================================== */
-int32_t curve26( /* point de courbe en 26-connexite */
+int32_t mctopo3d_table_curve26( /* point de courbe en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -1861,6 +1861,6 @@ int32_t curve26( /* point de courbe en 26-connexite */
 {
   if (img[p] == 0) return 0;
   preparecubes(img, p, rs, ps, N);
-  if ((T26(cube_topo3d) == 2) && (nbvoiso26(img, p, rs, ps, N) == 2)) return 1;
+  if ((mctopo3d_table_T26(cube_topo3d) == 2) && (mctopo3d_table_nbvoiso26(img, p, rs, ps, N) == 2)) return 1;
   return 0;
-} /* curve26() */
+} /* mctopo3d_table_curve26() */

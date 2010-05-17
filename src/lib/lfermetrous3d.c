@@ -614,7 +614,7 @@ int32_t lfermetrous3d_testabaisse6(uint8_t *F, uint8_t *P, int32_t x, int32_t rs
 {
   int32_t modifie = 0;
 
-  while ((P[x] > F[x]) && (t6mm(P, x, rs, ps, N) == 1))
+  while ((P[x] > F[x]) && (mctopo3d_t6mm(P, x, rs, ps, N) == 1))
   { 
     modifie = 1; 
     P[x] = max(F[x],alpha26m(P, x, rs, ps, N)); /* alpha26m : sic */
@@ -736,7 +736,7 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
 
     for (x = 0; x < N; x++)
     {
-      tbar = t6mm(P, x, rs, ps, N); 
+      tbar = mctopo3d_t6mm(P, x, rs, ps, N); 
       if ((P[x] > F[x]) && (tbar == 1))
       {
         FahpPush(FAHP, x, F[x]);

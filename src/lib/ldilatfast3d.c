@@ -44,7 +44,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <ldilatfast3d.h>
 
 /* ==================================== */
-int32_t ldilatfast3d(struct xvimage *f, uint8_t *mask)
+int32_t ldilatfast3d_ldilatfast3d(struct xvimage *f, uint8_t *mask)
 /* mask : masque du 26-voisinage representant l'element structurant */
 /* ==================================== */
 {
@@ -62,7 +62,7 @@ int32_t ldilatfast3d(struct xvimage *f, uint8_t *mask)
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
-  {   fprintf(stderr,"ldilatfast3d() : malloc failed for H\n");
+  {   fprintf(stderr,"ldilatfast3d_ldilatfast3d() : malloc failed for H\n");
       return(0);
   }
   memcpy(H, F, N);

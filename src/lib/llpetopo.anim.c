@@ -228,7 +228,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define DISPARU  3
 
 /* ==================================== */
-int32_t llpetopo(
+int32_t llpetopo_anim_llpetopo(
         struct xvimage *image,
         struct xvimage *marqueurs,
         int32_t trace)
@@ -270,34 +270,34 @@ int32_t llpetopo(
 
   if (depth(image) != 1) 
   {
-    fprintf(stderr, "llpetopo: cette version ne traite pas les images volumiques\n");
+    fprintf(stderr, "llpetopo_anim_llpetopo: cette version ne traite pas les images volumiques\n");
     exit(0);
   }
   
   if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs))
   {
-    fprintf(stderr, "llpetopo: incompatible image sizes\n");
+    fprintf(stderr, "llpetopo_anim_llpetopo: incompatible image sizes\n");
     return 0;
   }
 
   IndicsInit(N);
   FAH = CreeFahVide(N+1);
   if (FAH == NULL)
-  {   fprintf(stderr, "llpetopo() : CreeFah failed\n");
+  {   fprintf(stderr, "llpetopo_anim_llpetopo() : CreeFah failed\n");
       return(0);
   }
 
   lab = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
   if (lab == NULL)
   {   
-    fprintf(stderr, "llpetopo: allocimage failed\n");
+    fprintf(stderr, "llpetopo_anim_llpetopo: allocimage failed\n");
     return 0;
   }
   M = SLONGDATA(lab);
 
   if (!llabelextrema(image, 4, LABMIN, lab, &nminima))
   {   
-    fprintf(stderr, "llpetopo: llabelextrema failed\n");
+    fprintf(stderr, "llpetopo_anim_llpetopo: llabelextrema failed\n");
     return 0;
   }
 
@@ -305,7 +305,7 @@ int32_t llpetopo(
   nbmaxcell = nminima * 2;
   CBT = (cbtcell *)calloc(1,nbmaxcell * sizeof(cbtcell));
   if (CBT == NULL)
-  {   fprintf(stderr, "llpetopo() : malloc failed for CBT\n");
+  {   fprintf(stderr, "llpetopo_anim_llpetopo() : malloc failed for CBT\n");
       return(0);
   }
 
@@ -442,7 +442,7 @@ int32_t llpetopo(
 
   T = Regularise(CBT, nminima, nbcell);
   if (T == NULL)
-  {   fprintf(stderr, "llpetopo() : Regularise failed\n");
+  {   fprintf(stderr, "llpetopo_anim_llpetopo() : Regularise failed\n");
       return(0);
   }
 
@@ -479,13 +479,13 @@ int32_t llpetopo(
 
   T = (int32_t *) calloc(nbcell, sizeof(int32_t));
   if (T == NULL)
-  {   fprintf(stderr, "llpetopo() : calloc failed for T\n");
+  {   fprintf(stderr, "llpetopo_anim_llpetopo() : calloc failed for T\n");
       return(0);
   }
 
   I = InverseCBT(CBT, nminima, nbcell);
   if (I == NULL)
-  {   fprintf(stderr, "llpetopo() : InverseCBT failed\n");
+  {   fprintf(stderr, "llpetopo_anim_llpetopo() : InverseCBT failed\n");
       return(0);
   }
 

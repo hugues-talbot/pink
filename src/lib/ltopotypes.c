@@ -279,7 +279,7 @@ int32_t lt6pp(struct xvimage * image)
     for (k = 1; k < ds - 1; k++) 
       for (j = 1; j < cs - 1; j++) 
         for (i = 1; i < rs - 1; i++) 
-          pti_l[k*ps + j*rs + i] = (int32_t)t6pp_l(ptt_l, k*ps + j*rs + i, rs, ps, N);
+          pti_l[k*ps + j*rs + i] = (int32_t)mctopo3d_t6pp_l(ptt_l, k*ps + j*rs + i, rs, ps, N);
   }
   else
   {
@@ -293,10 +293,10 @@ int32_t lt6pp(struct xvimage * image)
 } /* lt6pp() */
 
 /* ==================================== */
-int32_t lt26pp(struct xvimage * image)
+int32_t lmctopo3d_t26pp(struct xvimage * image)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lt26pp"
+#define F_NAME "lmctopo3d_t26pp"
 {
   int32_t i, j, k;
   struct xvimage * temp;
@@ -331,7 +331,7 @@ int32_t lt26pp(struct xvimage * image)
     for (k = 1; k < ds - 1; k++) 
       for (j = 1; j < cs - 1; j++) 
         for (i = 1; i < rs - 1; i++) 
-          pti[k*ps + j*rs + i] = (uint8_t)t26pp(ptt, k*ps + j*rs + i, rs, ps, N);
+          pti[k*ps + j*rs + i] = (uint8_t)mctopo3d_t26pp(ptt, k*ps + j*rs + i, rs, ps, N);
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
@@ -341,7 +341,7 @@ int32_t lt26pp(struct xvimage * image)
     for (k = 1; k < ds - 1; k++) 
       for (j = 1; j < cs - 1; j++) 
         for (i = 1; i < rs - 1; i++) 
-          pti_l[k*ps + j*rs + i] = (int32_t)t26pp_l(ptt_l, k*ps + j*rs + i, rs, ps, N);
+          pti_l[k*ps + j*rs + i] = (int32_t)mctopo3d_t26pp_l(ptt_l, k*ps + j*rs + i, rs, ps, N);
   }
   else
   {
@@ -352,7 +352,7 @@ int32_t lt26pp(struct xvimage * image)
   termine_topo3d();
   freeimage(temp);
   return 1;
-} /* lt26pp() */
+} /* lmctopo3d_t26pp() */
 
 /* ==================================== */
 int32_t lalpha(struct xvimage * image, int32_t connex, char sign)
@@ -419,7 +419,7 @@ int32_t lalpha(struct xvimage * image, int32_t connex, char sign)
       else
       if (connex == 6)
 	for (k = 0; k < N; k++) 
-	  pti[k] = (uint8_t)alpha6p(ptt, k, rs, ps, N);
+	  pti[k] = (uint8_t)mctopo3d_alpha6p(ptt, k, rs, ps, N);
       else
       if (connex == 8)
 	for (k = 0; k < N; k++) 

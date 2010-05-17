@@ -305,7 +305,7 @@ int32_t ldespuits3d(struct xvimage * image, struct xvimage * mask, int32_t conne
     {
       for (i = 0; i < N; i++)
         if (M[i] && (well6(F, i, rs, ps, N)))
-          F[i] = alpha6p(F, i, rs, ps, N);
+          F[i] = mctopo3d_alpha6p(F, i, rs, ps, N);
     }
     else
     {
@@ -320,7 +320,7 @@ int32_t ldespuits3d(struct xvimage * image, struct xvimage * mask, int32_t conne
     {
       for (i = 0; i < N; i++)
         if (well6(F, i, rs, ps, N))
-          F[i] = alpha6p(F, i, rs, ps, N);      
+          F[i] = mctopo3d_alpha6p(F, i, rs, ps, N);      
     }
     else
     {
@@ -366,8 +366,8 @@ int32_t ldesfilssombres3d(struct xvimage * image, struct xvimage * mask, int32_t
     if (connexmin == 6)
     {
       for (x = 0; x < N; x++) /* init : empile les points candidats */
-        if (M[x] && (filsombre6(F, x, rs, ps, N)))
-          F[x] = alpha6p(F, x, rs, ps, N);
+        if (M[x] && (mctopo3d_filsombre6(F, x, rs, ps, N)))
+          F[x] = mctopo3d_alpha6p(F, x, rs, ps, N);
     }
     else
     {
@@ -381,8 +381,8 @@ int32_t ldesfilssombres3d(struct xvimage * image, struct xvimage * mask, int32_t
     if (connexmin == 6)
     {
       for (x = 0; x < N; x++) /* init : empile les points candidats */
-        if (filsombre6(F, x, rs, ps, N))
-          F[x] = alpha6p(F, x, rs, ps, N);
+        if (mctopo3d_filsombre6(F, x, rs, ps, N))
+          F[x] = mctopo3d_alpha6p(F, x, rs, ps, N);
     }
     else
     {

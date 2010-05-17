@@ -50,7 +50,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lerosbin3d.h>
 
 /* ==================================== */
-int32_t lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t lerosbin3d_lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /* m : masque representant l'element structurant */
 /* xc, yc, zc : coordonnees de l'origine de l'element structurant */
 /* ==================================== */
@@ -80,14 +80,14 @@ int32_t lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc,
 
   if (!M[zc * psm + yc * rsm + xc]) /* l'element structurant N'est PAS reflexif */
   {
-    fprintf(stderr, "lerosbin3d: l'element structurant doit etre reflexif\n");
+    fprintf(stderr, "lerosbin3d_lerosbin3d: l'element structurant doit etre reflexif\n");
     return 0;
   }
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
   {  
-     fprintf(stderr,"lerosbin3d() : malloc failed for H\n");
+     fprintf(stderr,"lerosbin3d_lerosbin3d() : malloc failed for H\n");
      return(0);
   }
 
@@ -103,7 +103,7 @@ int32_t lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc,
   tab_es_z = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   if ((tab_es_x == NULL) || (tab_es_y == NULL) || (tab_es_z == NULL))
   {  
-     fprintf(stderr,"lerosbin3d() : malloc failed for tab_es\n");
+     fprintf(stderr,"lerosbin3d_lerosbin3d() : malloc failed for tab_es\n");
      return(0);
   }
 

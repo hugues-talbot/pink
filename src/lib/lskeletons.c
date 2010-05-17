@@ -3069,7 +3069,7 @@ Algo par passes directionnelles.
       while (!RbtVide(RBT))
       {
 	x = RbtPopMin(RBT);
-	if (((nbiter < niseuil) || (nbvoislab18(F, x, rs, ps, N) > 1)) && testabaisse18lab(F, x, rs, ps, N)) nbdel++;
+	if (((nbiter < niseuil) || (mctopo3d_nbvoislab18(F, x, rs, ps, N) > 1)) && testabaisse18lab(F, x, rs, ps, N)) nbdel++;
       } /* while (!RbtVide(RBT)) */
       for (x = 0; x < N; x++)
         if (F[x] && simple18lab(F, x, rs, ps, N))
@@ -3090,7 +3090,7 @@ Algo par passes directionnelles.
       while (!RbtVide(RBT))
       {
 	x = RbtPopMin(RBT);
-	if (((nbiter < niseuil) || (nbvoislab26(F, x, rs, ps, N) > 1)) && testabaisse26lab(F, x, rs, ps, N)) nbdel++;
+	if (((nbiter < niseuil) || (mctopo3d_nbvoislab26(F, x, rs, ps, N) > 1)) && testabaisse26lab(F, x, rs, ps, N)) nbdel++;
       } /* while (!RbtVide(RBT)) */
       for (x = 0; x < N; x++)
         if (F[x] && simple26lab(F, x, rs, ps, N))

@@ -188,7 +188,7 @@ int32_t ldilatbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t
 } /* ldilatbin3d2() */
 
 /* ==================================== */
-int32_t lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t ldilateros3d_lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /*
    Operateur d'erosion binaire 3D par un element structurant 
    de taille quelconque
@@ -201,7 +201,7 @@ int32_t lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc,
 /* xc, yc, zc : coordonnees de l'origine de l'element structurant */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lerosbin3d"
+#define F_NAME "ldilateros3d_lerosbin3d"
 {
   register int32_t i, j, k, l;     /* index muet */
   int32_t rsm = rowsize(m);        /* taille ligne masque */
@@ -247,9 +247,9 @@ int32_t lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc,
           l += 1;
         }
 
-  if (!lerosbin3d2(f, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+  if (!ldilateros3d_lerosbin3d2(f, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
   {
-     fprintf(stderr,"%s() : lerosbin3d2 failed\n", F_NAME);
+     fprintf(stderr,"%s() : ldilateros3d_lerosbin3d2 failed\n", F_NAME);
      return(0);
   }
 
@@ -257,10 +257,10 @@ int32_t lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc,
   free(tab_es_y);
   free(tab_es_z);
   return 1;
-} /* lerosbin3d() */
+} /* ldilateros3d_lerosbin3d() */
 
 /* ==================================== */
-int32_t lerosbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_es_y, int32_t *tab_es_z, 
+int32_t ldilateros3d_lerosbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_es_y, int32_t *tab_es_z, 
                  int32_t xc, int32_t yc, int32_t zc)
 /*
    Operateur d'erosion binaire 3D par un element structurant 
@@ -272,7 +272,7 @@ int32_t lerosbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t 
 */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lerosbin3d2"
+#define F_NAME "ldilateros3d_lerosbin3d2"
 {
   int32_t x, y, z, v, w;           /* index muet */
   register int32_t l, n, o;        /* index muet */
@@ -331,16 +331,16 @@ int32_t lerosbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t 
   free(H);
 
   return 1;
-} /* lerosbin3d2() */
+} /* ldilateros3d_lerosbin3d2() */
 
 /* ==================================== */
-int32_t ldilatfast3d(struct xvimage *f, uint8_t *mask)
+int32_t ldilateros3d_ldilateros3d_ldilatfast3d(struct xvimage *f, uint8_t *mask)
 /* operateur de dilatation numerique 3d par un element structurant de taille inferieure a 3x3x3 */
 /* Michel Couprie - juillet 1997 */
 /* mask : masque du 26-voisinage representant l'element structurant */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "ldilatfast3d"
+#define F_NAME "ldilateros3d_ldilateros3d_ldilatfast3d"
 {
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
@@ -377,16 +377,16 @@ int32_t ldilatfast3d(struct xvimage *f, uint8_t *mask)
 
   free(H);
   return 1;
-} /* ldilatfast3d() */
+} /* ldilateros3d_ldilateros3d_ldilatfast3d() */
 
 /* ==================================== */
-int32_t lerosfast3d(struct xvimage *f, uint8_t *mask)
+int32_t ldilateros3d_lerosfast3d(struct xvimage *f, uint8_t *mask)
 /* operateur d'erosion numerique 3d par un element structurant de taille inferieure a 3x3x3 */
 /* Michel Couprie - juillet 1997 */
 /* mask : masque du 26-voisinage representant l'element structurant */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lerosfast3d"
+#define F_NAME "ldilateros3d_lerosfast3d"
 {
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
@@ -423,7 +423,7 @@ int32_t lerosfast3d(struct xvimage *f, uint8_t *mask)
 
   free(H);
   return 1;
-} /* lerosfast3d() */
+} /* ldilateros3d_lerosfast3d() */
 
 /* ==================================== */
 int32_t ldilatlong3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)

@@ -170,7 +170,7 @@ static int32_t is_end(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t N, 
   case 6:
     if (nbvoiso6(F, x, rs, ps, N) == 1) return 1; else return 0;
   case 18:
-    if (nbvoiso18(F, x, rs, ps, N) == 1) return 1; else return 0;
+    if (mctopo3d_nbvoiso18(F, x, rs, ps, N) == 1) return 1; else return 0;
   case 26:
     if (nbvoiso26(F, x, rs, ps, N) == 1) return 1; else return 0;
   default: assert(0);
@@ -178,7 +178,7 @@ static int32_t is_end(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t N, 
 } // is_end()
 
 /* ========================================== */
-int32_t extractcurve(
+int32_t lcurves_extractcurve(
   uint8_t *B,        // entrée/sortie : pointeur base image
   int32_t i,         // entrée : index du point de départ
   int32_t rs,        // entrée : taille rangee
@@ -191,7 +191,7 @@ int32_t extractcurve(
 // extrait de l'image B la courbe débutant au point extrémité i
 {
 #undef F_NAME
-#define F_NAME "extractcurve"
+#define F_NAME "lcurves_extractcurve"
   int32_t n = 0;     // compte le nombre de points
   int32_t v1, v2, ii, jj;
 
@@ -223,10 +223,10 @@ int32_t extractcurve(
     (*Y)[n] = jj / rs;
   }  
   return 1;
-} // extractcurve()
+} // lcurves_extractcurve()
 
 /* ========================================== */
-int32_t extractcurve3d(
+int32_t lcurves_extractcurve3d(
   uint8_t *B,        // entrée/sortie : pointeur base image
   int32_t i,         // entrée : index du point de départ
   int32_t rs,        // entrée : taille rangee
@@ -241,7 +241,7 @@ int32_t extractcurve3d(
 // extrait de l'image B la courbe débutant au point extrémité i
 {
 #undef F_NAME
-#define F_NAME "extractcurve3d"
+#define F_NAME "lcurves_extractcurve3d"
   int32_t n = 0;     // compte le nombre de points
   int32_t v1, v2, ii, jj;
 
@@ -277,4 +277,4 @@ int32_t extractcurve3d(
     (*Z)[n] = jj / ps;
   }  
   return 1;
-} // extractcurve3d()
+} // lcurves_extractcurve3d()

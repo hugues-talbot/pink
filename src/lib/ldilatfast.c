@@ -44,7 +44,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcutil.h>
 
 /* ==================================== */
-int32_t ldilatfast(struct xvimage *f, uint8_t *mask) 
+int32_t ldilatfast_ldilatfast(struct xvimage *f, uint8_t *mask) 
 /* mask : masque du 8-voisinage representant l'element structurant */
 /* ==================================== */
 {
@@ -60,13 +60,13 @@ int32_t ldilatfast(struct xvimage *f, uint8_t *mask)
 
   if (depth(f) != 1) 
   {
-    fprintf(stderr, "ldilatfast: cette version ne traite pas les images volumiques\n");
+    fprintf(stderr, "ldilatfast_ldilatfast: cette version ne traite pas les images volumiques\n");
     return 0;
   }
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
-  {   fprintf(stderr,"ldilatfast() : malloc failed for H\n");
+  {   fprintf(stderr,"ldilatfast_ldilatfast() : malloc failed for H\n");
       return(0);
   }
   for (x = 0; x < N; x++) H[x] = F[x];
