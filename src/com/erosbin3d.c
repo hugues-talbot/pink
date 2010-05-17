@@ -105,9 +105,9 @@ int main(int argc, char **argv)
   x = atoi(argv[3]);
   y = atoi(argv[4]);
   z = atoi(argv[5]);
-  if (! lerosbin3d(image, elem, x, y, z))
+  if (! ldilateros3d_lerosbin3d(image, elem, x, y, z))
   {
-    fprintf(stderr, "%s: function lerosbin3d failed\n", argv[0]);
+    fprintf(stderr, "%s: function ldilateros3d_lerosbin3d failed\n", argv[0]);
     exit(1);
   }
 

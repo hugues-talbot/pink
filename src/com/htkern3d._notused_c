@@ -99,7 +99,7 @@ int main(int argc, char **argv)
     }
   }
 
-  if (! lhtkern3d(image, imagecond, connexmin))
+  if (! mctopo3d_lhtkern3d(image, imagecond, connexmin))
   {
     fprintf(stderr, "htkern3d: lhtkern3d failed\n");
     exit(1);

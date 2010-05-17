@@ -52,7 +52,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lborder.h>
 
 /* ==================================== */
-int32_t lborder(struct xvimage *image, int32_t connex)
+int32_t mctopo3d_lborder(struct xvimage *image, int32_t connex)
 /* ==================================== */
 {
   int32_t x;                       /* index muet de pixel */
@@ -72,7 +72,7 @@ int32_t lborder(struct xvimage *image, int32_t connex)
       tmp = copyimage(image);
       if (tmp == NULL)
       {
-        fprintf(stderr, "lborder: copyimage failed\n");
+        fprintf(stderr, "mctopo3d_lborder: copyimage failed\n");
         return 0;
       }
       T = UCHARDATA(tmp);
@@ -93,10 +93,10 @@ int32_t lborder(struct xvimage *image, int32_t connex)
           break;
         case 26: 
           for (x = 0; x < N; x++)
-            if (T[x] && nonbord3d(x,rs,ps,N) && (nbvoisc6(T,x,rs,ps,N)) != 0) I[x] = NDG_MAX;
+            if (T[x] && nonbord3d(x,rs,ps,N) && (mctopo3d_nbvoisc6(T,x,rs,ps,N)) != 0) I[x] = NDG_MAX;
           break;
         default: 
-          fprintf(stderr, "lborder: mauvaise connexite: %d\n", connex);
+          fprintf(stderr, "mctopo3d_lborder: mauvaise connexite: %d\n", connex);
           return 0;
       } /* switch (connex) */  
       break;
@@ -104,7 +104,7 @@ int32_t lborder(struct xvimage *image, int32_t connex)
       tmp = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
       if (tmp == NULL)
       {
-        fprintf(stderr, "lborder: allocimage failed\n");
+        fprintf(stderr, "mctopo3d_lborder: allocimage failed\n");
         return 0;
       }
       T = UCHARDATA(tmp);
@@ -120,13 +120,13 @@ int32_t lborder(struct xvimage *image, int32_t connex)
             if (nbvois4neq(IL,x,rs,N) != 0) T[x] = NDG_MAX;
           break;
         default: 
-          fprintf(stderr, "lborder: mauvaise connexite: %d\n", connex);
+          fprintf(stderr, "mctopo3d_lborder: mauvaise connexite: %d\n", connex);
           return 0;
       } /* switch (connex) */
       for (x = 0; x < N; x++) IL[x] = (int32_t) T[x];
       break;
     default:
-      fprintf(stderr,"lborder() : bad data type %d\n", datatype(image));
+      fprintf(stderr,"mctopo3d_lborder() : bad data type %d\n", datatype(image));
       return 0;
   } /* switch(datatype(image)) */
 

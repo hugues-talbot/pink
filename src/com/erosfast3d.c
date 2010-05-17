@@ -115,9 +115,9 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (! lerosfast3d(image, mask))
+  if (! ldilateros3d_lerosfast3d(image, mask))
   {
-    fprintf(stderr, "%s: function lerosfast3d failed\n", argv[0]);
+    fprintf(stderr, "%s: function ldilateros3d_lerosfast3d failed\n", argv[0]);
     exit(1);
   }
 

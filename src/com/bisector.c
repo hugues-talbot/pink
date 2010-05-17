@@ -99,10 +99,10 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (! lbisector(dist, mask, angle))
+  if (! lmedialaxis_lbisector(dist, mask, angle))
     //  if (! lprintdownstream(dist))      pour les tests
   {
-    fprintf(stderr, "%s: lbisector failed\n", argv[0]);
+    fprintf(stderr, "%s: lmedialaxis_lbisector failed\n", argv[0]);
     exit(1);
   }
 

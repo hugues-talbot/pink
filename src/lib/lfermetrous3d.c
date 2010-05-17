@@ -317,7 +317,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
 
     for (x = 0; x < N; x++)
     {
-      tbar = tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
+      tbar = mctopo3d_tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((F[x] == VAL_Y_X) && ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))))
       {
         FahpPush(FAHP, x, max(0,(FAHP_NPRIO-D[x])));
@@ -369,7 +369,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
       }
 #endif
       F[x] = VAL_Y_X;
-      tbar = tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
+      tbar = mctopo3d_tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))) 
       {
         F[x] = VAL_NULLE;
@@ -547,7 +547,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
 
     for (x = 0; x < N; x++)
     {
-      tbar = tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
+      tbar = mctopo3d_tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((F[x] == VAL_Y_X) && ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))))
       {
         FahpPush(FAHP, x, max(0,(FAHP_NPRIO-D[x])));
@@ -563,7 +563,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
     {
       x = FahpPop(FAHP);
       F[x] = VAL_Y_X;
-      tbar = tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
+      tbar = mctopo3d_tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))) 
       {
         F[x] = VAL_NULLE;

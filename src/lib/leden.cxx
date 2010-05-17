@@ -98,7 +98,7 @@ int32_t ledengrowth(uint8_t *in,
 	// Init topo 3d
 	if (dimz>1)
 	{
-		init_topo3d();
+		mctopo3d_init_topo3d();
 	}
 
 	parcouru=CreateEmptySet((nbpix/32)+1);
@@ -149,8 +149,8 @@ int32_t ledengrowth(uint8_t *in,
 			if(	(topo == 0) ||
 				((topo == 4) && (simple4(in, (int32_t)(pix-in), dimx, nbpix))) ||
 				((topo == 8) && (simple8(in, (int32_t)(pix-in), dimx, nbpix))) ||
-				((topo == 6) && (simple6(in, (int32_t)(pix-in), dimx, ps, nbpix))) ||
-				((topo == 26) && (simple26(in, (int32_t)(pix-in), dimx, ps, nbpix))) )
+				((topo == 6) && (mctopo3d_simple6(in, (int32_t)(pix-in), dimx, ps, nbpix))) ||
+				((topo == 26) && (mctopo3d_simple26(in, (int32_t)(pix-in), dimx, ps, nbpix))) )
 				{
 					// turn on that pixel
 					*pix = 255;
@@ -260,8 +260,8 @@ int32_t ledengrowth(uint8_t *in,
 			if(	(topo == 0) ||
 				((topo == 4) && (simple4(in, (int32_t)(pix-in), dimx, nbpix))) ||
 				((topo == 8) && (simple8(in, (int32_t)(pix-in), dimx, nbpix))) ||
-				((topo == 6) && (simple6(in, (int32_t)(pix-in), dimx, ps, nbpix))) ||
-				((topo == 26) && (simple26(in, (int32_t)(pix-in), dimx, ps, nbpix))) )
+				((topo == 6) && (mctopo3d_simple6(in, (int32_t)(pix-in), dimx, ps, nbpix))) ||
+				((topo == 26) && (mctopo3d_simple26(in, (int32_t)(pix-in), dimx, ps, nbpix))) )
 				{
 					// turn off that pixel
 					*pix = 0;
@@ -332,7 +332,7 @@ int32_t ledengrowth(uint8_t *in,
 	// Clear topo 3d
 	if (dimz>1)
 	{
-		termine_topo3d();
+		mctopo3d_termine_topo3d();
 	}
 	free(parcouru);
 

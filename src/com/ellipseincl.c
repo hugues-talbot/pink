@@ -150,7 +150,7 @@ int main(int argc, char **argv)
   ldrawfilledellipse(ellipse, R, S, T, U, V, Z);
   if (!filled) 
   {
-    if (! lborder(ellipse, 8))
+    if (! mctopo3d_lborder(ellipse, 8))
     {
       fprintf(stderr, "lellipseincl: lborder failed\n");
       exit(1);

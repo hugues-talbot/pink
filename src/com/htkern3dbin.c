@@ -91,7 +91,7 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (! lhtkern3dbin(image, connex, nimax))
+  if (! mctopo3d_lhtkern3dbin(image, connex, nimax))
   {
     fprintf(stderr, "%s: lhtkern3d failed\n", argv[0]);
     exit(1);

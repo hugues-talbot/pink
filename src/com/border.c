@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[2]);
 
-  if (! lborder(image, connex))
+  if (! mctopo3d_lborder(image, connex))
   {
     fprintf(stderr, "border: lborder failed\n");
     exit(1);

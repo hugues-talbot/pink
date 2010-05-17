@@ -137,9 +137,9 @@ int main(int argc, char **argv)
     exit(1);    
   } // switch (mode)
 
-  if (! ldynamique(image, order, connex))
+  if (! ldynamique_ldynamique(image, order, connex))
   {
-    fprintf(stderr, "%s: ldynamique failed\n", argv[0]);
+    fprintf(stderr, "%s: ldynamique_ldynamique failed\n", argv[0]);
     exit(1);
   }
 

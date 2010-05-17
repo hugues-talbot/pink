@@ -102,7 +102,7 @@ int main(int argc, char **argv)
 
   if (depth(image) == 1)
   {
-    if (! leros(image, elem, x, y))
+    if (! ldilateros_leros(image, elem, x, y))
     {
       fprintf(stderr, "%s: function leros failed\n", argv[0]);
       exit(1);

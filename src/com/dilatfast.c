@@ -117,7 +117,7 @@ int main(int argc, char **argv)
 
   if ((mask == vois6)  || (mask == vois18) || (mask == vois26))
   {
-    if (! ldilatfast3d(image, mask))
+    if (! ldilateros3d_ldilatfast3d(image, mask))
     {
       fprintf(stderr, "%s: function ldilatfast3d failed\n", argv[0]);
       exit(1);
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
   }
   else
   {
-    if (! ldilatfast(image, mask))
+    if (! ldilateros_ldilatfast(image, mask))
     {
       fprintf(stderr, "%s: function ldilatfast failed\n", argv[0]);
       exit(1);

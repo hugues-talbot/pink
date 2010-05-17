@@ -334,13 +334,13 @@ int32_t ldilateros3d_lerosbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_e
 } /* ldilateros3d_lerosbin3d2() */
 
 /* ==================================== */
-int32_t ldilateros3d_ldilateros3d_ldilatfast3d(struct xvimage *f, uint8_t *mask)
+int32_t ldilateros3d_ldilatfast3d(struct xvimage *f, uint8_t *mask)
 /* operateur de dilatation numerique 3d par un element structurant de taille inferieure a 3x3x3 */
 /* Michel Couprie - juillet 1997 */
 /* mask : masque du 26-voisinage representant l'element structurant */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "ldilateros3d_ldilateros3d_ldilatfast3d"
+#define F_NAME "ldilateros3d_ldilatfast3d"
 {
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
@@ -377,7 +377,7 @@ int32_t ldilateros3d_ldilateros3d_ldilatfast3d(struct xvimage *f, uint8_t *mask)
 
   free(H);
   return 1;
-} /* ldilateros3d_ldilateros3d_ldilatfast3d() */
+} /* ldilateros3d_ldilatfast3d() */
 
 /* ==================================== */
 int32_t ldilateros3d_lerosfast3d(struct xvimage *f, uint8_t *mask)

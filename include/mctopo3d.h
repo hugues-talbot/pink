@@ -68,8 +68,8 @@ typedef voxel * pvoxel;
 
 #define encode(x,y,z) ((x)+(y)*3+(z)*9)
 
-extern void init_topo3d();
-extern void termine_topo3d();
+extern void mctopo3d_init_topo3d();
+extern void mctopo3d_termine_topo3d();
 extern uint32_t encodecube();
 extern void construitcube(voxel * cube);
 extern void top6(
@@ -96,7 +96,7 @@ extern void top26(
   int32_t N,                       /* taille image */
   int32_t *t,
   int32_t *tb);                    /* resultats */
-extern int32_t simple6(               /* pour un objet en 6-connexite */
+extern int32_t mctopo3d_simple6(               /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -108,7 +108,7 @@ extern int32_t simple18(              /* pour un objet en 18-connexite */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
   int32_t N);                      /* taille image */
-extern int32_t simple26(              /* pour un objet en 26-connexite */
+extern int32_t mctopo3d_simple26(              /* pour un objet en 26-connexite */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */

@@ -147,9 +147,9 @@ int main(int argc, char **argv)
   ldrawball(circle, R, X, Y, 0);
   if (!filled) 
   {
-    if (! lborder(circle, 8))
+    if (! mctopo3d_lborder(circle, 8))
     {
-      fprintf(stderr, "lcircleincl: lborder failed\n");
+      fprintf(stderr, "lcircleincl: mctopo3d_lborder failed\n");
       exit(1);
     }
   }

@@ -92,12 +92,12 @@ int main(int argc, char **argv)
   linverse(tmp);
   if (depth(image) == 1)
   {
-    if (! leros(image, elem1, x1, y1))
+    if (! ldilateros_leros(image, elem1, x1, y1))
     {
       fprintf(stderr, "%s: function leros failed\n", argv[0]);
       exit(1);
     }
-    if (! leros(tmp, elem2, x2, y2))
+    if (! ldilateros_leros(tmp, elem2, x2, y2))
     {
       fprintf(stderr, "%s: function leros failed\n", argv[0]);
       exit(1);

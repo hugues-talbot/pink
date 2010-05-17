@@ -82,9 +82,9 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (! lbisector_talbot(image, angles))
+  if (! lmedialaxis_lbisector_talbot(image, angles))
   {
-    fprintf(stderr, "%s: lbisector_talbot failed\n", argv[0]);
+    fprintf(stderr, "%s: lmedialaxis_lbisector_talbot failed\n", argv[0]);
     exit(1);
   }
 

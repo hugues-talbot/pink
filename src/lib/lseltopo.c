@@ -344,7 +344,7 @@ int32_t lptcurve(struct xvimage * image, int32_t connex)
   {
     mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
-      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && curve6(SOURCE, x, rs, ps, N))
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && mctopo3d_curve6(SOURCE, x, rs, ps, N))
         RES[x] = NDG_MAX;
     mctopo3d_termine_topo3d();
   }

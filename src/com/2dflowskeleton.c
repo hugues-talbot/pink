@@ -505,9 +505,9 @@ int main(int32_t argc, char **argv)
   }
   else if (mode == 5)
   { // fonction bisectrice
-    if (! lbisector(dist, k, func))
+    if (! lmedialaxis_lbisector(dist, k, func))
     {
-      fprintf(stderr, "%s: lbisector failed\n", F_NAME);
+      fprintf(stderr, "%s: lmedialaxis_lbisector failed\n", F_NAME);
       exit(1);
     }
     MaxAlpha2d(func); // fermeture (en ndg)

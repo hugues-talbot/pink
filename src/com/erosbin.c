@@ -104,7 +104,7 @@ int main(int argc, char **argv)
   
   x = atoi(argv[3]);
   y = atoi(argv[4]);
-  if (! lerosbin(image, elem, x, y))
+  if (! ldilateros_lerosbin(image, elem, x, y))
   {
     fprintf(stderr, "%s: function lerosbin failed\n", argv[0]);
     exit(1);

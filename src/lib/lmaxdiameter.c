@@ -91,7 +91,7 @@ int32_t lmaxdiameter(struct xvimage *image, int32_t connex)
           break;
         case 6:
           for (x = 0; x < N; x++)
-            if (T[x] && (nbvoisc6(T,x,rs,ps,N)) == 0) I[x] = NDG_MIN;
+            if (T[x] && (mctopo3d_nbvoisc6(T,x,rs,ps,N)) == 0) I[x] = NDG_MIN;
           break;
         case 18:
           for (x = 0; x < N; x++)
