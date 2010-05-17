@@ -35,10 +35,10 @@ knowledge of the CeCILL license and that you accept its terms.
 /* 
    Operateurs topologiques en 3d binaire et ndg
 
-   lhtkern3dbin - noyau homotopique binaire
+   mctopo3d_lhtkern3dbin - noyau homotopique binaire
       methode:  saturation par etapes (utilise 2 lifos)
 
-   lhtkern3d - noyau homotopique en niveaux de gris par abaissement
+   mctopo3d_lhtkern3d - noyau homotopique en niveaux de gris par abaissement
       methode: inodation par niveaux croissants - utilise une fah
 
    lhtkernu3d - noyau homotopique en niveaux de gris par elevation
@@ -98,7 +98,7 @@ knowledge of the CeCILL license and that you accept its terms.
 /* ******************************************************************************* */
 
 /* ==================================== */
-int32_t lhtkern3d_testabaisse6bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+int32_t mctopo3d_lhtkern3d_testabaisse6bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -110,7 +110,7 @@ int32_t lhtkern3d_testabaisse6bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps,
   }
 
   return modifie;
-} /* lhtkern3d_testabaisse6bin() */
+} /* mctopo3d_lhtkern3d_testabaisse6bin() */
 
 /* ==================================== */
 int32_t testabaisse26bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
@@ -128,10 +128,10 @@ int32_t testabaisse26bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t 
 } /* testabaisse26bin() */
 
 /* ==================================== */
-int32_t lhtkern3dbin(struct xvimage *image, int32_t connex, int32_t nimax)
+int32_t mctopo3d_lhtkern3dbin(struct xvimage *image, int32_t connex, int32_t nimax)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lhtkern3dbin"
+#define F_NAME "mctopo3d_lhtkern3dbin"
 { 
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
@@ -190,7 +190,7 @@ int32_t lhtkern3dbin(struct xvimage *image, int32_t connex, int32_t nimax)
       {
         x = LifoPop(LIFO1);
         UnSet(x, EN_LIFO);
-        if (lhtkern3d_testabaisse6bin(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
+        if (mctopo3d_lhtkern3d_testabaisse6bin(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
         {
           for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
           {                                              /* pour empiler les voisins */
@@ -201,7 +201,7 @@ int32_t lhtkern3dbin(struct xvimage *image, int32_t connex, int32_t nimax)
               Set(y, EN_LIFO);
             } /* if y */
           } /* for k */      
-        } /* if (lhtkern3d_testabaisse6bin(F, x, rs, N)) */
+        } /* if (mctopo3d_lhtkern3d_testabaisse6bin(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
 
       LIFOtmp = LIFO1; LIFO1 = LIFO2; LIFO2 = LIFOtmp;
@@ -250,12 +250,12 @@ int32_t lhtkern3dbin(struct xvimage *image, int32_t connex, int32_t nimax)
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   LifoTermine(LIFO1);
   LifoTermine(LIFO2);
   return(1);
-} /* lhtkern3dbin() */
+} /* mctopo3d_lhtkern3dbin() */
 
 /* ******************************************************************************* */
 /* ******************************************************************************* */
@@ -264,7 +264,7 @@ int32_t lhtkern3dbin(struct xvimage *image, int32_t connex, int32_t nimax)
 /* ******************************************************************************* */
 
 /* ==================================== */
-int32_t lhtkern3d_testabaisse6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+int32_t mctopo3d_lhtkern3d_testabaisse6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -272,11 +272,11 @@ int32_t lhtkern3d_testabaisse6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, in
   while (mctopo3d_pdestr6(F, x, rs, ps, N)) 
   { 
     modifie = 1; 
-    F[x] = alpha26m(F, x, rs, ps, N); /* alpha26m : sic */
+    F[x] = mctopo3d_alpha26m(F, x, rs, ps, N); /* mctopo3d_alpha26m : sic */
   }
 
   return modifie;
-} /* lhtkern3d_testabaisse6() */
+} /* mctopo3d_lhtkern3d_testabaisse6() */
 
 /* ==================================== */
 int32_t testabaisse26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
@@ -287,7 +287,7 @@ int32_t testabaisse26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
   while (mctopo3d_pdestr26(F, x, rs, ps, N)) 
   { 
     modifie = 1; 
-    F[x] = alpha26m(F, x, rs, ps, N); /* alpha26m : sic */
+    F[x] = mctopo3d_alpha26m(F, x, rs, ps, N); /* mctopo3d_alpha26m : sic */
   }
 
   return modifie;
@@ -299,10 +299,10 @@ int32_t testeleve6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 {
   int32_t modifie = 0;
 
-  while (pconstr6(F, x, rs, ps, N)) 
+  while (mctopo3d_pconstr6(F, x, rs, ps, N)) 
   { 
     modifie = 1; 
-    F[x] = mctopo3d_alpha26p(F, x, rs, ps, N); /* alpha26m : sic */
+    F[x] = mctopo3d_alpha26p(F, x, rs, ps, N); /* mctopo3d_alpha26m : sic */
   }
 
   return modifie;
@@ -317,17 +317,17 @@ int32_t testeleve26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
   while (mctopo3d_pconstr26(F, x, rs, ps, N)) 
   { 
     modifie = 1; 
-    F[x] = mctopo3d_alpha26p(F, x, rs, ps, N); /* alpha26m : sic */
+    F[x] = mctopo3d_alpha26p(F, x, rs, ps, N); /* mctopo3d_alpha26m : sic */
   }
 
   return modifie;
 } /* testeleve26() */
 
 /* ==================================== */
-int32_t lhtkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t connexmin)
+int32_t mctopo3d_lhtkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t connexmin)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lhtkern3d"
+#define F_NAME "mctopo3d_lhtkern3d"
 { 
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
@@ -423,7 +423,7 @@ int32_t lhtkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t conn
     {
       x = FahPop(FAH);
       UnSet(x, EN_FAH);
-      if (lhtkern3d_testabaisse6(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
+      if (mctopo3d_lhtkern3d_testabaisse6(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
       {
         if (imagecond != NULL) F[x] = max(F[x],G[x]);
         for (k = 0; k < 26; k += 1) /* parcourt les voisins en 26-connexite */
@@ -438,7 +438,7 @@ int32_t lhtkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t conn
             }
           } /* if y */
         } /* for k */      
-      } /* if (lhtkern3d_testabaisse6(F, x, rs, ps, N)) */
+      } /* if (mctopo3d_lhtkern3d_testabaisse6(F, x, rs, ps, N)) */
     } /* while (!FahVide(FAH)) */
   } /* if (connexmin == 6) */
   else
@@ -470,11 +470,11 @@ int32_t lhtkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t conn
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   FahTermine(FAH);
   return(1);
-} /* lhtkern3d() */
+} /* mctopo3d_lhtkern3d() */
 
 /* ==================================== */
 int32_t lhtkernu3d(struct xvimage *image, struct xvimage *imagecond, int32_t connexmin)
@@ -528,7 +528,7 @@ int32_t lhtkernu3d(struct xvimage *image, struct xvimage *imagecond, int32_t con
     if (imagecond != NULL)
     {
       for (x = 0; x < N; x++) 
-        if ((G[x] > F[x]) && (pconstr6(F, x, rs, ps, N)))
+        if ((G[x] > F[x]) && (mctopo3d_pconstr6(F, x, rs, ps, N)))
         {
           FahPush(FAH, x, NDG_MAX-F[x]);
           Set(x, EN_FAH);
@@ -537,7 +537,7 @@ int32_t lhtkernu3d(struct xvimage *image, struct xvimage *imagecond, int32_t con
     else
     {
       for (x = 0; x < N; x++) 
-        if (pconstr6(F, x, rs, ps, N))
+        if (mctopo3d_pconstr6(F, x, rs, ps, N))
         {
           FahPush(FAH, x, NDG_MAX-F[x]);
           Set(x, EN_FAH);
@@ -584,7 +584,7 @@ int32_t lhtkernu3d(struct xvimage *image, struct xvimage *imagecond, int32_t con
           y = voisin26(x, k, rs, ps, N);                /* non deja empiles */
           if ((y != -1) && (! IsSet(y, EN_FAH)))
           {
-            if (((imagecond == NULL) || (G[y] > F[y])) && (pconstr6(F, y, rs, ps, N))) 
+            if (((imagecond == NULL) || (G[y] > F[y])) && (mctopo3d_pconstr6(F, y, rs, ps, N))) 
             {
               FahPush(FAH, y, NDG_MAX-F[y]);
               Set(y, EN_FAH);
@@ -623,7 +623,7 @@ int32_t lhtkernu3d(struct xvimage *image, struct xvimage *imagecond, int32_t con
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   FahTermine(FAH);
   return(1);
@@ -917,7 +917,7 @@ int32_t lhthindelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t 
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   LifoTermine(LIFO1);
   LifoTermine(LIFO2);
@@ -991,13 +991,13 @@ int32_t lhthickdelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t
     if (imagecond != NULL)
     {
       for (x = 0; x < N; x++) 
-        if ((G[x] > F[x]) && (pconstr6(F, x, rs, ps, N))) 
+        if ((G[x] > F[x]) && (mctopo3d_pconstr6(F, x, rs, ps, N))) 
           LifoPush(LIFO1, ENCODE(x, mctopo3d_delta6p(F, x, rs, ps, N)));
     }
     else
     {
       for (x = 0; x < N; x++) 
-        if (pconstr6(F, x, rs, ps, N)) 
+        if (mctopo3d_pconstr6(F, x, rs, ps, N)) 
           LifoPush(LIFO1, ENCODE(x, mctopo3d_delta6p(F, x, rs, ps, N)));
     }
   } /* if (connexmin == 6) */
@@ -1046,12 +1046,12 @@ int32_t lhthickdelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t
 #ifdef DEBUG
         printf("Pop x = %d,%d,%d ; F[x] = %d ; a = %d\n", x%rs, (x%ps)/rs, x/ps, F[x], a);
 #endif
-        if (pconstr6(F, x, rs, ps, N))
+        if (mctopo3d_pconstr6(F, x, rs, ps, N))
 	{
           F[x] = min(mctopo3d_delta6p(F, x, rs, ps, N),a);
           if (imagecond != NULL) F[x] = min(F[x],G[x]);
           LifoPush(LIFO2, x);
-        } /* if (pconstr6(F, x, rs, ps, N)) */
+        } /* if (mctopo3d_pconstr6(F, x, rs, ps, N)) */
       } /* while (!LifoVide(LIFO1)) */
 
   /* --------------------------------------------------------- */
@@ -1062,7 +1062,7 @@ int32_t lhthickdelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t
       {
         x = LifoPop(LIFO2);
         if ((! IsSet(x,EN_LIFO)) &&
-            ((imagecond == NULL) || (G[x] > F[x])) && (pconstr6(F, x, rs, ps, N)))
+            ((imagecond == NULL) || (G[x] > F[x])) && (mctopo3d_pconstr6(F, x, rs, ps, N)))
         {
 #ifdef DEBUG
           printf("Push x = %d,%d,%d ; F[x] = %d ; a- = %d\n", 
@@ -1075,7 +1075,7 @@ int32_t lhthickdelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t
         {                                      /* pour empiler les voisins */
           y = voisin26(x, k, rs, ps, N);       /* non deja empiles */
           if ((y != -1) && (! IsSet(y,EN_LIFO)) &&
-              ((imagecond == NULL) || (G[y] > F[y])) && (pconstr6(F, y, rs, ps, N)))
+              ((imagecond == NULL) || (G[y] > F[y])) && (mctopo3d_pconstr6(F, y, rs, ps, N)))
           {
 #ifdef DEBUG
             printf("Push y = %d,%d,%d ; F[y] = %d ; a- = %d\n", 
@@ -1162,7 +1162,7 @@ int32_t lhthickdelta3d(struct xvimage *image, struct xvimage *imagecond, int32_t
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   LifoTermine(LIFO1);
   LifoTermine(LIFO2);
@@ -1185,7 +1185,7 @@ int32_t testlevabaisse6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N
   while (mctopo3d_plevdestr6(F, x, rs, ps, N)) 
   { 
     modifie = 1; 
-    F[x] = alpha26m(F, x, rs, ps, N); /* alpha26m : sic */
+    F[x] = mctopo3d_alpha26m(F, x, rs, ps, N); /* mctopo3d_alpha26m : sic */
   }
 
   return modifie;
@@ -1200,7 +1200,7 @@ int32_t testlevabaisse26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t 
   while (mctopo3d_plevdestr26(F, x, rs, ps, N)) 
   { 
     modifie = 1; 
-    F[x] = alpha26m(F, x, rs, ps, N); /* alpha26m : sic */
+    F[x] = mctopo3d_alpha26m(F, x, rs, ps, N); /* mctopo3d_alpha26m : sic */
   }
 
   return modifie;
@@ -1215,7 +1215,7 @@ int32_t testleveleve6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
   while (mctopo3d_plevconstr6(F, x, rs, ps, N)) 
   { 
     modifie = 1; 
-    F[x] = mctopo3d_alpha26p(F, x, rs, ps, N); /* alpha26m : sic */
+    F[x] = mctopo3d_alpha26p(F, x, rs, ps, N); /* mctopo3d_alpha26m : sic */
   }
 
   return modifie;
@@ -1230,7 +1230,7 @@ int32_t testleveleve26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
   while (mctopo3d_plevconstr26(F, x, rs, ps, N)) 
   { 
     modifie = 1; 
-    F[x] = mctopo3d_alpha26p(F, x, rs, ps, N); /* alpha26m : sic */
+    F[x] = mctopo3d_alpha26p(F, x, rs, ps, N); /* mctopo3d_alpha26m : sic */
   }
 
   return modifie;
@@ -1383,7 +1383,7 @@ int32_t llvkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t conn
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   FahTermine(FAH);
   return(1);
@@ -1536,7 +1536,7 @@ int32_t llvkernu3d(struct xvimage *image, struct xvimage *imagecond, int32_t con
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   FahTermine(FAH);
   return(1);
@@ -1605,7 +1605,7 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
       for (x = 0; x < N; x++) 
         if ((G[x] < F[x]) && (mctopo3d_plevdestr6(F, x, rs, ps, N))) 
         {
-          a = alpha26m(F, x, rs, ps, N);
+          a = mctopo3d_alpha26m(F, x, rs, ps, N);
           LifoPush(LIFO1, ENCODE(x,a));
 #ifdef DEBUG
           printf("Init : Push x = %d,%d,%d(%x) ; F[x] = %d ; a = %d(%x) ; ENCODE(x,a) = %x\n", 
@@ -1618,7 +1618,7 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
       for (x = 0; x < N; x++) 
         if (mctopo3d_plevdestr6(F, x, rs, ps, N)) 
 	{
-          a = alpha26m(F, x, rs, ps, N);
+          a = mctopo3d_alpha26m(F, x, rs, ps, N);
           LifoPush(LIFO1, ENCODE(x,a));
 #ifdef DEBUG
           printf("Init : Push x = %d,%d,%d(%x) ; F[x] = %d ; a = %d(%x) ; ENCODE(x,a) = %x\n", 
@@ -1634,7 +1634,7 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
       for (x = 0; x < N; x++) 
         if ((G[x] < F[x]) && (mctopo3d_plevdestr26(F, x, rs, ps, N))) 
         {
-          a = alpha26m(F, x, rs, ps, N);
+          a = mctopo3d_alpha26m(F, x, rs, ps, N);
           LifoPush(LIFO1, ENCODE(x,a));
 #ifdef DEBUG
           printf("Init : Push x = %d,%d,%d(%x) ; F[x] = %d ; a = %d(%x) ; ENCODE(x,a) = %x\n", 
@@ -1647,7 +1647,7 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
       for (x = 0; x < N; x++) 
         if (mctopo3d_plevdestr26(F, x, rs, ps, N)) 
 	{
-          a = alpha26m(F, x, rs, ps, N);
+          a = mctopo3d_alpha26m(F, x, rs, ps, N);
           LifoPush(LIFO1, ENCODE(x,a));
 #ifdef DEBUG
           printf("Init : Push x = %d,%d,%d(%x) ; F[x] = %d ; a = %d(%x) ; ENCODE(x,a) = %x\n", 
@@ -1689,7 +1689,7 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
 #endif
         if (mctopo3d_plevdestr6(F, x, rs, ps, N))
 	{
-          F[x] = max(alpha26m(F, x, rs, ps, N),a);
+          F[x] = max(mctopo3d_alpha26m(F, x, rs, ps, N),a);
           if (imagecond != NULL) F[x] = max(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (mctopo3d_plevdestr6(F, x, rs, ps, N)) */
@@ -1707,9 +1707,9 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
         {
 #ifdef DEBUG
           printf("Push x = %d,%d,%d ; F[x] = %d ; a- = %d\n", 
-                  x%rs, (x%ps)/rs, x/ps, F[x], alpha26m(F, x, rs, ps, N));
+                  x%rs, (x%ps)/rs, x/ps, F[x], mctopo3d_alpha26m(F, x, rs, ps, N));
 #endif
-          LifoPush(LIFO1, ENCODE(x,alpha26m(F,x,rs,ps,N)));
+          LifoPush(LIFO1, ENCODE(x,mctopo3d_alpha26m(F,x,rs,ps,N)));
           Set(x,EN_LIFO);
 	}
         for (k = 0; k < 26; k += 1)            /* parcourt les voisins */
@@ -1720,9 +1720,9 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
           {
 #ifdef DEBUG
             printf("Push y = %d,%d,%d ; F[y] = %d ; a- = %d\n", 
-                    y%rs, (y%ps)/rs, y/ps, F[y], alpha26m(F, y, rs, ps, N));
+                    y%rs, (y%ps)/rs, y/ps, F[y], mctopo3d_alpha26m(F, y, rs, ps, N));
 #endif
-            LifoPush(LIFO1, ENCODE(y,alpha26m(F,y,rs,ps,N)));
+            LifoPush(LIFO1, ENCODE(y,mctopo3d_alpha26m(F,y,rs,ps,N)));
             Set(y,EN_LIFO);
           } /* if y */
         } /* for k */      
@@ -1758,7 +1758,7 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
 #endif
         if (mctopo3d_plevdestr26(F, x, rs, ps, N))
 	{
-          F[x] = max(alpha26m(F, x, rs, ps, N),a);
+          F[x] = max(mctopo3d_alpha26m(F, x, rs, ps, N),a);
           if (imagecond != NULL) F[x] = max(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (mctopo3d_plevdestr26(F, x, rs, ps, N)) */
@@ -1776,9 +1776,9 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
         {
 #ifdef DEBUG
           printf("Push x = %d,%d,%d ; F[x] = %d ; a- = %d\n", 
-                  x%rs, (x%ps)/rs, x/ps, F[x], alpha26m(F, x, rs, ps, N));
+                  x%rs, (x%ps)/rs, x/ps, F[x], mctopo3d_alpha26m(F, x, rs, ps, N));
 #endif
-          LifoPush(LIFO1, ENCODE(x,alpha26m(F,x,rs,ps,N)));
+          LifoPush(LIFO1, ENCODE(x,mctopo3d_alpha26m(F,x,rs,ps,N)));
           Set(x,EN_LIFO);
 	}
         for (k = 0; k < 26; k += 1)            /* parcourt les voisins */
@@ -1789,9 +1789,9 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
           {
 #ifdef DEBUG
             printf("Push y = %d,%d,%d ; F[y] = %d ; a- = %d\n", 
-                    y%rs, (y%ps)/rs, y/ps, F[y], alpha26m(F, y, rs, ps, N));
+                    y%rs, (y%ps)/rs, y/ps, F[y], mctopo3d_alpha26m(F, y, rs, ps, N));
 #endif
-            LifoPush(LIFO1, ENCODE(y,alpha26m(F,y,rs,ps,N)));
+            LifoPush(LIFO1, ENCODE(y,mctopo3d_alpha26m(F,y,rs,ps,N)));
             Set(y,EN_LIFO);
           } /* if y */
         } /* for k */      
@@ -1804,7 +1804,7 @@ int32_t llthin3d(struct xvimage *image, struct xvimage *imagecond, int32_t niter
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   LifoTermine(LIFO1);
   LifoTermine(LIFO2);
@@ -2049,7 +2049,7 @@ int32_t llthick3d(struct xvimage *image, struct xvimage *imagecond, int32_t nite
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   LifoTermine(LIFO1);
   LifoTermine(LIFO2);
@@ -2223,14 +2223,14 @@ int32_t lsurfacerestoration(struct xvimage *image, int32_t nitermax, int32_t con
                 x%rs, (x%ps)/rs, x/ps, F[x], nivext);
 #endif
 
-        if (pconstr6(F, x, rs, ps, N))
+        if (mctopo3d_pconstr6(F, x, rs, ps, N))
 	{
           F[x] = min(mctopo3d_delta6p(F,x,rs,ps,N),nivext);
           LifoPush(LIFO2, x);
 #ifdef DEBUG
           printf("========> ELEVE constr : %d\n", F[x]);
 #endif
-        } /* if (pconstr6(F, x, rs, ps, N)) */
+        } /* if (mctopo3d_pconstr6(F, x, rs, ps, N)) */
 
         else if (trouextensible6(F, x, rs, ps, N))
 	{
@@ -2273,7 +2273,7 @@ int32_t lsurfacerestoration(struct xvimage *image, int32_t nitermax, int32_t con
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   LifoTermine(LIFO1);
   LifoTermine(LIFO2);

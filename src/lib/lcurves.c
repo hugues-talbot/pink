@@ -172,7 +172,7 @@ static int32_t is_end(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t N, 
   case 18:
     if (mctopo3d_nbvoiso18(F, x, rs, ps, N) == 1) return 1; else return 0;
   case 26:
-    if (nbvoiso26(F, x, rs, ps, N) == 1) return 1; else return 0;
+    if (mctopo3d_nbvoiso26(F, x, rs, ps, N) == 1) return 1; else return 0;
   default: assert(0);
   }
 } // is_end()

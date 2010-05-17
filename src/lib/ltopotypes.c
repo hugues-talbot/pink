@@ -287,7 +287,7 @@ int32_t lt6pp(struct xvimage * image)
     return(0);
   }
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   freeimage(temp);
   return 1;
 } /* lt6pp() */
@@ -349,7 +349,7 @@ int32_t lmctopo3d_t26pp(struct xvimage * image)
     return(0);
   }
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   freeimage(temp);
   return 1;
 } /* lmctopo3d_t26pp() */
@@ -391,7 +391,7 @@ int32_t lalpha(struct xvimage * image, int32_t connex, char sign)
     {
       if (connex == 26)
 	for (k = 0; k < N; k++) 
-	  pti[k] = (uint8_t)alpha26m(ptt, k, rs, ps, N);
+	  pti[k] = (uint8_t)mctopo3d_alpha26m(ptt, k, rs, ps, N);
       else
       if (connex == 6)
 	for (k = 0; k < N; k++) 

@@ -409,7 +409,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   FahpTermine(FAHP);
   freeimage(dist);
   linsert(image, in, -1, -1, -1);
@@ -599,7 +599,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   FahpTermine(FAHP);
   freeimage(dist);
   linsert(image, in, -1, -1, -1);
@@ -617,7 +617,7 @@ int32_t lfermetrous3d_testabaisse6(uint8_t *F, uint8_t *P, int32_t x, int32_t rs
   while ((P[x] > F[x]) && (mctopo3d_t6mm(P, x, rs, ps, N) == 1))
   { 
     modifie = 1; 
-    P[x] = max(F[x],alpha26m(P, x, rs, ps, N)); /* alpha26m : sic */
+    P[x] = max(F[x],mctopo3d_alpha26m(P, x, rs, ps, N)); /* mctopo3d_alpha26m : sic */
   }
 
   return modifie;
@@ -778,7 +778,7 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   FahpTermine(FAHP);
   freeimage(p);

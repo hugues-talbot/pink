@@ -719,7 +719,7 @@ static int32_t is_end(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t N, 
   case 18:
     if (mctopo3d_nbvoiso18(F, x, rs, ps, N) == 1) return 1; else return 0;
   case 26:
-    if (nbvoiso26(F, x, rs, ps, N) == 1) return 1; else return 0;
+    if (mctopo3d_nbvoiso26(F, x, rs, ps, N) == 1) return 1; else return 0;
   default: assert(0);
   }
 } // is_end()
@@ -740,7 +740,7 @@ static int32_t is_simple(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t 
   case 6:
     if (mctopo3d_simple6(F, x, rs, ps, N)) return 1; else return 0;
   case 18:
-    if (simple18(F, x, rs, ps, N)) return 1; else return 0;
+    if (mctopo3d_simple18(F, x, rs, ps, N)) return 1; else return 0;
   case 26:
     if (mctopo3d_simple26(F, x, rs, ps, N)) return 1; else return 0;
   default: assert(0);
@@ -1029,7 +1029,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
     for (i = 0; i < N; i++) if (T3[i]) T3[i] = NDG_MAX;
 #endif
 
-    termine_topo3d();
+    mctopo3d_termine_topo3d();
   } // if (len != INT32_MAX)
 
   // comptage des points isoles et extremites et ...

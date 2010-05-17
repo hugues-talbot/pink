@@ -800,7 +800,7 @@ writeimage(t,"_T");
 
     memset(R, 0, N);
     for (i = 0; i < N; i++)
-      if (nbvoiso26(T, i, rs, ps, N) >= 1) R[i] = 1; // calcule R = Dilat(T)
+      if (mctopo3d_nbvoiso26(T, i, rs, ps, N) >= 1) R[i] = 1; // calcule R = Dilat(T)
     for (i = 0; i < N; i++)
       if (T[i] || (S[i] && !R[i])) T[i] = 1; else T[i] = 0; // T := T \cup [S \ R]
 
@@ -821,7 +821,7 @@ writeimage(t,"_T");
 
   freeimage(t);
   freeimage(r);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelMK3a() */
 
@@ -950,7 +950,7 @@ writeimage(t,"_T");
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelEK3() */
 
@@ -1103,7 +1103,7 @@ writeimage(t,"_T");
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelCK3a() */
 
@@ -1285,7 +1285,7 @@ writeimage(t,"_T");
 
   freeimage(t);
   freeimage(e);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelCK3b() */
 
@@ -1458,7 +1458,7 @@ writeimage(t,"_T");
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelCK3() */
 
@@ -1621,7 +1621,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   freeimage(e);
   freeimage(d);
   freeimage(k);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelAK3() */
 
@@ -1762,7 +1762,7 @@ writeimage(t,"_T");
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelMK3() */
 
@@ -1887,7 +1887,7 @@ writeimage(image,"_S");
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* ldisttopo3() */
 
@@ -1990,7 +1990,7 @@ Retourne dans image l'axe topologique.
 	T[i] = 1;
     memset(R, 0, N);
     for (i = 0; i < N; i++)
-      if (nbvoiso26(T, i, rs, ps, N) >= 1) R[i] = 1; // calcule R = Dilat(T)
+      if (mctopo3d_nbvoiso26(T, i, rs, ps, N) >= 1) R[i] = 1; // calcule R = Dilat(T)
     for (i = 0; i < N; i++)
       if (T[i] || (S[i] && !R[i])) T[i] = 1; else T[i] = 0; // T := T \cup [S \ R]
 
@@ -2038,7 +2038,7 @@ Retourne dans image l'axe topologique.
 
   freeimage(t);
   freeimage(r);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* ldistaxetopo3() */
 
@@ -2339,7 +2339,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelAMK3() */
 
@@ -2493,7 +2493,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     }
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelACK3a() */
 
@@ -2661,7 +2661,7 @@ writeimage(t,"_T");
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelACK3() */
 
@@ -2824,7 +2824,7 @@ writeimage(t,"_T");
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelRK3() */
 
@@ -2971,7 +2971,7 @@ writeimage(t,"_T");
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelSK3() */
 
@@ -3175,7 +3175,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelDK3() */
 
@@ -3333,7 +3333,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelDRK3() */
 
@@ -3471,6 +3471,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
 
   freeimage(t);
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return(1);
 } /* lskelDSK3() */

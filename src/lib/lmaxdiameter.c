@@ -99,7 +99,7 @@ int32_t lmaxdiameter(struct xvimage *image, int32_t connex)
           break;
         case 26:
           for (x = 0; x < N; x++)
-            if (T[x] && (nbvoisc26(T,x,rs,ps,N)) == 0) I[x] = NDG_MIN;
+            if (T[x] && (mctopo3d_nbvoisc26(T,x,rs,ps,N)) == 0) I[x] = NDG_MIN;
           break;
         default:
           fprintf(stderr, "lmaxdiameter: mauvaise connexite: %d\n", connex);

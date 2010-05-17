@@ -1037,9 +1037,9 @@ void hpclosing3d(struct xvimage *image, int32_t nptb, int32_t *tab_es_x, int32_t
     exit(0);
   }
   memcpy(C, I, N); // copie image dans image_cpy
-  if (! lerosbin3d2(image_cpy, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+  if (! ldilateros3d_lerosbin3d2(image_cpy, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
   {
-    fprintf(stderr, "%s: function lerosbin3d2 failed\n", F_NAME);
+    fprintf(stderr, "%s: function ldilateros3d_lerosbin3d2 failed\n", F_NAME);
     exit(0);
   }
   // max image_cpy image_sav image_cpy
@@ -1166,9 +1166,9 @@ void hpopening3d(struct xvimage *image, int32_t nptb, int32_t *tab_es_x, int32_t
   I = UCHARDATA(image);
   S = UCHARDATA(image_sav);
   T = UCHARDATA(image_tmp);
-  if (! lerosbin3d2(image_tmp, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+  if (! ldilateros3d_lerosbin3d2(image_tmp, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
   {
-    fprintf(stderr, "%s: function lerosbin3d2 failed\n", F_NAME);
+    fprintf(stderr, "%s: function ldilateros3d_lerosbin3d2 failed\n", F_NAME);
     exit(0);
   }
   if (!lhthindelta3d(image, image_tmp, -1, connex))
@@ -1329,9 +1329,9 @@ void condhpclosing3d(
 
   memcpy(T, I, N); // copie image dans image_tmp
 
-  if (! lerosbin3d2(image_tmp, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+  if (! ldilateros3d_lerosbin3d2(image_tmp, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
   {
-    fprintf(stderr, "%s: function lerosbin3d2 failed\n", F_NAME);
+    fprintf(stderr, "%s: function ldilateros3d_lerosbin3d2 failed\n", F_NAME);
     exit(0);
   }
 
@@ -1449,9 +1449,9 @@ void condhpopening3d(
   S = UCHARDATA(image_sav);
   T = UCHARDATA(image_tmp);
 
-  if (! lerosbin3d2(image_tmp, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+  if (! ldilateros3d_lerosbin3d2(image_tmp, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
   {
-    fprintf(stderr, "%s: function lerosbin3d2 failed\n", F_NAME);
+    fprintf(stderr, "%s: function ldilateros3d_lerosbin3d2 failed\n", F_NAME);
     exit(0);
   }
 

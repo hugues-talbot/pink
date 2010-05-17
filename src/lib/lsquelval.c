@@ -570,7 +570,7 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   mcrbt_RbtTermine(RBT);
   freeimage(dt);

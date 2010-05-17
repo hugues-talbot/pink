@@ -347,7 +347,7 @@ noeudArbre * getbranch3d26(uint8_t *X,  /* donnee: pointeur sur l'image x */
      
   d = D[current_pixel];                              /* récupère le niveau dans l'arbre du point courant */
 
-  nbVois = nbvoiso26 (X, current_pixel, rs, ps, N);  /* calcule le nombre de voisin du point courant */
+  nbVois = mctopo3d_nbvoiso26 (X, current_pixel, rs, ps, N);  /* calcule le nombre de voisin du point courant */
 
   if (nbVois > 2)  /* s'il y a plus de 2 voisins, on se trouve dans une intersection */
   {
@@ -492,7 +492,7 @@ liste * fils3d26(uint8_t *X,  /* donnee: pointeur sur l'image x */
   i = 0;
   d = D[current_pixel];                             /* récupère le niveau dans l'arbre du point courant */
 
-  if (nbvoiso26 (X, current_pixel, rs, ps, N) > 2)  /* teste le nombre de voisins */
+  if (mctopo3d_nbvoiso26 (X, current_pixel, rs, ps, N) > 2)  /* teste le nombre de voisins */
   {
     if (compteur != extension)  /* si il y a des voxels de liaison entre les noyaux de l'intersection */
     {

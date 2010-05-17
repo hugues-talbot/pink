@@ -89,7 +89,7 @@ int32_t lborder(struct xvimage *image, int32_t connex)
           break;
         case 6: 
           for (x = 0; x < N; x++)
-            if (T[x] && nonbord3d(x,rs,ps,N) && (nbvoisc26(T,x,rs,ps,N)) != 0) I[x] = NDG_MAX;
+            if (T[x] && nonbord3d(x,rs,ps,N) && (mctopo3d_nbvoisc26(T,x,rs,ps,N)) != 0) I[x] = NDG_MAX;
           break;
         case 26: 
           for (x = 0; x < N; x++)

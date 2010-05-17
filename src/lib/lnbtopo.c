@@ -106,11 +106,11 @@ int32_t lnbtopo(
       switch (whichnumber)
       {
         case PP: for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)mctopo3d_t6pp(I, p, rs, ps, N); break;
-        case P:  for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)t6p(I, p, rs, ps, N);  break;
+        case P:  for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)mctopo3d_t6p(I, p, rs, ps, N);  break;
         case M:  for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)mctopo3d_t6m(I, p, rs, ps, N);  break;
         case MM: for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)mctopo3d_t6mm(I, p, rs, ps, N); break;
       }
-      termine_topo3d();
+      mctopo3d_termine_topo3d();
       break;
     case 26:
       mctopo3d_init_topo3d();
@@ -122,7 +122,7 @@ int32_t lnbtopo(
         case MM: for (p = 0; p < N; p++) if (nonbord3d(p, rs, ps, N)) F[p] = (uint8_t)mctopo3d_t26mm(I, p, rs, ps, N); break;
       }
       break;
-      termine_topo3d();
+      mctopo3d_termine_topo3d();
     default: 
       fprintf(stderr, "%s: bad value for connex: %d\n", F_NAME, connex);
       return 0;

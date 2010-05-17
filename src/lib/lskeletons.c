@@ -204,7 +204,7 @@ static int32_t testabaisse18bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, i
 /* ==================================== */
 {
   int32_t modifie = 0;
-  if (simple18(F, x, rs, ps, N)) { modifie = 1; F[x] = NDG_MIN; }
+  if (mctopo3d_simple18(F, x, rs, ps, N)) { modifie = 1; F[x] = NDG_MIN; }
   return modifie;
 } /* testabaisse18bin() */
 
@@ -235,7 +235,7 @@ static int32_t testabaisse18lab(int32_t *F, int32_t x, int32_t rs, int32_t ps, i
 /* ==================================== */
 {
   int32_t modifie = 0;
-  if (simple18lab(F, x, rs, ps, N)) { modifie = 1; F[x] = 0; }
+  if (mctopo3d_simple18lab(F, x, rs, ps, N)) { modifie = 1; F[x] = 0; }
   return modifie;
 } /* testabaisse18lab() */
 
@@ -702,7 +702,7 @@ resultat: F
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   mcrbt_RbtTermine(RBT);
   return(1);
@@ -862,7 +862,7 @@ int32_t lskelubp3d2(struct xvimage *image,
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   mcrbt_RbtTermine(RBT);
   return(1);
@@ -1562,7 +1562,7 @@ resultat: F
   /* ================================================ */
 
   IndicsTermine();
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelcurv3d() */
@@ -1902,7 +1902,7 @@ resultat: F
   /* ================================================ */
 
   IndicsTermine();
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelsurf3d() */
@@ -2332,7 +2332,7 @@ resultat: F
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
   mcrbt_RbtTermine(RBT);
   return(1);
@@ -2559,7 +2559,7 @@ int32_t lskeleucl(struct xvimage *image,
       } // else
     finwhile26:;
     } /* while (!mcrbt_RbtVide(RBT)) */
-    termine_topo3d();
+    mctopo3d_termine_topo3d();
   } /* if (connex == 26) */
   else
   {
@@ -2785,7 +2785,7 @@ resultat: F
   /* ================================================ */
 
   IndicsTermine();
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelend3d_sav() */
@@ -2859,7 +2859,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
   else if (connex == 18)
   {
     for (x = 0; x < N; x++)
-      if (F[x] && simple18(F, x, rs, ps, N))
+      if (F[x] && mctopo3d_simple18(F, x, rs, ps, N))
         mcrbt_RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
   }
   else if (connex == 26)
@@ -2915,7 +2915,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
 	if (((nbiter < niseuil) || (!IsEnd(config))) && testabaisse18bin(F, x, rs, ps, N)) nbdel++;
       } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
-        if (F[x] && simple18(F, x, rs, ps, N))
+        if (F[x] && mctopo3d_simple18(F, x, rs, ps, N))
           mcrbt_RbtInsert(&RBT, typedir3d(F, x, rs, ps, N), x);
 #ifdef VERBOSE
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
@@ -2960,7 +2960,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
   /* ================================================ */
 
   IndicsTermine();
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelend3d() */
@@ -3018,7 +3018,7 @@ Algo par passes directionnelles.
   else if (connex == 18)
   {
     for (x = 0; x < N; x++)
-      if (F[x] && simple18lab(F, x, rs, ps, N))
+      if (F[x] && mctopo3d_simple18lab(F, x, rs, ps, N))
         mcrbt_RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
   }
   else if (connex == 26)
@@ -3072,7 +3072,7 @@ Algo par passes directionnelles.
 	if (((nbiter < niseuil) || (mctopo3d_nbvoislab18(F, x, rs, ps, N) > 1)) && testabaisse18lab(F, x, rs, ps, N)) nbdel++;
       } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
-        if (F[x] && simple18lab(F, x, rs, ps, N))
+        if (F[x] && mctopo3d_simple18lab(F, x, rs, ps, N))
           mcrbt_RbtInsert(&RBT, typedir3dlab(F, x, rs, ps, N), x);
 #ifdef VERBOSE
       printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
@@ -3109,7 +3109,7 @@ Algo par passes directionnelles.
   /* ================================================ */
 
   IndicsTermine();
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelendcurvlab3d() */

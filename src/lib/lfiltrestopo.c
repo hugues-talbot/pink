@@ -242,13 +242,13 @@ int32_t ldespics3d(struct xvimage * image, struct xvimage * mask, int32_t connex
     if (connexmin == 6)
     {
       for (i = 0; i < N; i++)
-        if (M[i] && (peak6(F, i, rs, ps, N)))
-          F[i] = alpha26m(F, i, rs, ps, N);
+        if (M[i] && (mctopo3d_peak6(F, i, rs, ps, N)))
+          F[i] = mctopo3d_alpha26m(F, i, rs, ps, N);
     }
     else
     {
       for (i = 0; i < N; i++)
-        if (M[i] && (peak26(F, i, rs, ps, N)))
+        if (M[i] && (mctopo3d_peak26(F, i, rs, ps, N)))
           F[i] = mctopo3d_alpha6m(F, i, rs, ps, N);
     }
   }
@@ -257,18 +257,18 @@ int32_t ldespics3d(struct xvimage * image, struct xvimage * mask, int32_t connex
     if (connexmin == 6)
     {
       for (i = 0; i < N; i++)
-        if (peak6(F, i, rs, ps, N))
-          F[i] = alpha26m(F, i, rs, ps, N);      
+        if (mctopo3d_peak6(F, i, rs, ps, N))
+          F[i] = mctopo3d_alpha26m(F, i, rs, ps, N);      
     }
     else
     {
       for (i = 0; i < N; i++)
-        if (peak26(F, i, rs, ps, N))
+        if (mctopo3d_peak26(F, i, rs, ps, N))
           F[i] = mctopo3d_alpha6m(F, i, rs, ps, N);      
     }
   }
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return 1;
 } /* ldespics3d() */
 
@@ -330,7 +330,7 @@ int32_t ldespuits3d(struct xvimage * image, struct xvimage * mask, int32_t conne
     }
   }
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return 1;
 } /* ldespics3d() */
 
@@ -392,7 +392,7 @@ int32_t ldesfilssombres3d(struct xvimage * image, struct xvimage * mask, int32_t
     }
   }
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return 1;
 } /* ldesfilssombres3d() */
 
@@ -429,7 +429,7 @@ int32_t ldesfilsclairs3d(struct xvimage * image, struct xvimage * mask, int32_t 
     {
       for (x = 0; x < N; x++) /* init : empile les points candidats */
         if (M[x] && (mctopo3d_filclair6(F, x, rs, ps, N)))
-          F[x] = alpha26m(F, x, rs, ps, N);
+          F[x] = mctopo3d_alpha26m(F, x, rs, ps, N);
     }
     else
     {
@@ -444,7 +444,7 @@ int32_t ldesfilsclairs3d(struct xvimage * image, struct xvimage * mask, int32_t 
     {
       for (x = 0; x < N; x++) /* init : empile les points candidats */
         if (mctopo3d_filclair6(F, x, rs, ps, N))
-          F[x] = alpha26m(F, x, rs, ps, N);
+          F[x] = mctopo3d_alpha26m(F, x, rs, ps, N);
     }
     else
     {
@@ -454,7 +454,7 @@ int32_t ldesfilsclairs3d(struct xvimage * image, struct xvimage * mask, int32_t 
     }
   }
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   return 1;
 } /* ldesfilsclairs3d() */
 
