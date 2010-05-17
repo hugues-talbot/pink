@@ -133,7 +133,7 @@ void addson(ctree *CT, int32_t node, int32_t nodeaux)
   if (CT->nbsoncells >= CT->nbnodes)
   {
     fprintf(stderr, "%s : fatal error : maximum nb of cells exceeded\n", F_NAME);
-    //    ComponentTreePrint(CT);
+    //    mccomptree_ComponentTreePrint(CT);
     exit(1);
   }
 #ifdef PARANO
@@ -235,7 +235,7 @@ void ComponentTreeFree(ctree * CT)
 } // ComponentTreeFree()
 
 /* ==================================== */
-void ComponentTreePrint(ctree * CT)
+void mccomptree_ComponentTreePrint(ctree * CT)
 /* ==================================== */
 {
   int32_t i;
@@ -258,7 +258,7 @@ void ComponentTreePrint(ctree * CT)
     }
     printf("\n");
   }
-} // ComponentTreePrint()
+} // mccomptree_ComponentTreePrint()
 
 #ifdef ATTRIB_AREA
 /* ==================================== */
@@ -829,7 +829,7 @@ int32_t main() {
 
   ComponentTree(F, rs, rs*cs, 4, &CT, &CM);
   printf("component tree:\n");
-  ComponentTreePrint(CT);
+  mccomptree_ComponentTreePrint(CT);
   printf("component mapping:\n");
   for (i = 0; i < rs*cs; i++)
   {

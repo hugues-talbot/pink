@@ -101,7 +101,7 @@ int BVECT_prod(BVECT *in) {
 /* prod:
 	Some programs still need this function - sigh!
 */
-int prod(BVECT * in) {
+int bimage_prod(BVECT * in) {
 	int i, returnValue;
 
 	returnValue = 1;
@@ -110,7 +110,7 @@ int prod(BVECT * in) {
 	}
 
 	return returnValue;
-}
+} /*bimage_prod*/
 
 /* BVECT_sum:
 	Return the sum of a vector

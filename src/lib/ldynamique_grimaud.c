@@ -38,7 +38,7 @@ knowledge of the CeCILL license and that you accept its terms.
    (algorithme de P. Salembier)
 
    Operateurs : 
-     ldynamique (d'apres Grimaud et L. Najman)
+     ldynamique_grimaud_ldynamique (d'apres Grimaud et L. Najman)
      lwshedtopo (d'apres MC, GB)
      lwshedval (d'apres LN, MC)
 
@@ -258,10 +258,10 @@ static void RecupereDynamique(CompactTree * cpct,
 } /* RecupereDynamique() */
 
 /* ==================================== */
-int32_t ldynamique(struct xvimage *image, int32_t connex)
+int32_t ldynamique_grimaud_ldynamique(struct xvimage *image, int32_t connex)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "ldynamique"
+#define F_NAME "ldynamique_grimaud_ldynamique"
 {
   register int32_t i, k;         /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
@@ -375,7 +375,7 @@ int32_t ldynamique(struct xvimage *image, int32_t connex)
   free(number_nodes);
   free(node_at_level);
   return(1);
-} /* ldynamique() */
+} /* ldynamique_grimaud_ldynamique() */
 
 /* ==================================== */
 static void SimplifyComp(CompactTree *cpct, int32_t *ncomp, int32_t *tabcomp) 
@@ -1541,16 +1541,16 @@ AfficheCompactTree(cpct);
 } /* lwshedval() */
 
 /* ==================================== */
-int32_t ldynamique_grimaud_lwshedtopo(struct xvimage *image, int32_t connex)
+int32_t ldynamique_grimaud_ldynamique_grimaud_lwshedtopo(struct xvimage *image, int32_t connex)
 /* ==================================== */
-/*! \fn int32_t ldynamique_grimaud_lwshedtopo(struct xvimage *image, int32_t connex)
+/*! \fn int32_t ldynamique_grimaud_ldynamique_grimaud_lwshedtopo(struct xvimage *image, int32_t connex)
     \param image (entrée/sortie) : une image 2D ndg
     \param connex (entrée) : 4 ou 8 
     \return code erreur : 0 si échec, 1 sinon
     \brief ligne de partage des eaux "topologique" (algo MC, GB)
 */
 #undef F_NAME
-#define F_NAME "ldynamique_grimaud_lwshedtopo"
+#define F_NAME "ldynamique_grimaud_ldynamique_grimaud_lwshedtopo"
 {
   register int32_t i, k;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
@@ -1664,4 +1664,4 @@ int32_t ldynamique_grimaud_lwshedtopo(struct xvimage *image, int32_t connex)
   free(number_nodes);
   free(node_at_level);
   return(1);
-} /* ldynamique_grimaud_lwshedtopo() */
+} /* ldynamique_grimaud_ldynamique_grimaud_lwshedtopo() */

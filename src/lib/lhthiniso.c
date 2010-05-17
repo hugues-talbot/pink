@@ -65,7 +65,7 @@ knowledge of the CeCILL license and that you accept its terms.
    est rendue necessaire par le maintien d'une structure de 
    pointeurs sur les noeuds de l'arbre. Or, ces noeuds peuvent changer de 
    place a l'occasion de certaines mises a jour (destrutions). 
-   Une modification du code de "RbtDeleteAux" a donc ete effectuee.
+   Une modification du code de "lhthiniso_RbtDeleteAux" a donc ete effectuee.
 
    D'apres "Introduction a l'algorithmique", 
      T. Cormen, C. Leiserson, R. Rivest, pp. 258, Dunod Ed. 
@@ -99,7 +99,7 @@ typedef struct {
 } Rbt;
 
 /* ==================================== */
-Rbt * CreeRbtVide(
+Rbt * lhthiniso_CreeRbtVide(
   int32_t taillemax)
 /* ==================================== */
 {
@@ -107,7 +107,7 @@ Rbt * CreeRbtVide(
   Rbt * T = (Rbt *)calloc(1,sizeof(Rbt) + taillemax*sizeof(RbtElt));
   /* le tableau Elts du Rbt peut stocker taillemax+1 elements, dont 1 pour nil */
   if (T == NULL)
-  {   fprintf(stderr, "CreeRbtVide() : malloc failed\n");
+  {   fprintf(stderr, "lhthiniso_CreeRbtVide() : malloc failed\n");
       return NULL;
   }
   T->max = taillemax;
@@ -124,18 +124,18 @@ Rbt * CreeRbtVide(
   T->root = T->nil;
 
   return T;
-} /* CreeRbtVide() */
+} /* lhthiniso_CreeRbtVide() */
 
 /* ==================================== */
-int32_t RbtVide(
+int32_t lhthiniso_RbtVide(
   Rbt * T)
 /* ==================================== */
 {
   return (T->util == 0);
-} /* RbtVide() */
+} /* lhthiniso_RbtVide() */
 
 /* ==================================== */
-void RbtTermine(
+void lhthiniso_RbtTermine(
   Rbt * T)
 /* ==================================== */
 {
@@ -143,24 +143,24 @@ void RbtTermine(
   printf("Rbt: taux d'utilisation: %g\n", (double)T->maxutil / (double)T->max);
 #endif
   free(T);
-} /* RbtTermine() */
+} /* lhthiniso_RbtTermine() */
 
 /* ==================================== */
-RbtElt * RbtMinimum(
+RbtElt * lhthiniso_RbtMinimum(
   Rbt * T, RbtElt * x)
 /* ==================================== */
 {
   while (x->left != T->nil) x = x->left;
   return x;
-} /* RbtMinimum() */
+} /* lhthiniso_RbtMinimum() */
 
 /* ==================================== */
-RbtElt * RbtSuccessor(
+RbtElt * lhthiniso_RbtSuccessor(
   Rbt * T, RbtElt * x)
 /* ==================================== */
 {
   RbtElt * y;
-  if (x->right != T->nil) return RbtMinimum(T, x->right);
+  if (x->right != T->nil) return lhthiniso_RbtMinimum(T, x->right);
   y = x->parent;
   while ((y != T->nil) && (x == y->right))
   {
@@ -168,10 +168,10 @@ RbtElt * RbtSuccessor(
     y = y->parent;
   }
   return y;
-} /* RbtSuccessor() */
+} /* lhthiniso_RbtSuccessor() */
 
 /* ==================================== */
-void RbtInsertSimple(
+void lhthiniso_RbtInsertSimple(
   Rbt * T, RbtElt * z)
 /* ==================================== */
 {
@@ -194,10 +194,10 @@ void RbtInsertSimple(
     if ((z->key < y->key) || ((z->key == y->key) && (z->key2 < y->key2))) 
       y->left = z; else y->right = z;
   }
-} /* RbtInsertSimple() */
+} /* lhthiniso_RbtInsertSimple() */
 
 /* ==================================== */
-RbtElt * RbtInsertAux(  /* allocation et insertion simple */
+RbtElt * lhthiniso_RbtInsertAux(  /* allocation et insertion simple */
   Rbt * T, TypRbtKey k, TypRbtKey k2, TypRbtAuxData d)
 /* ==================================== */
 {
@@ -205,7 +205,7 @@ RbtElt * RbtInsertAux(  /* allocation et insertion simple */
 
   if (T->libre == NULL)
   {
-    fprintf(stderr, "RbtInsertAux: Fatal error: Rbt full\n");
+    fprintf(stderr, "lhthiniso_RbtInsertAux: Fatal error: Rbt full\n");
     exit(1);
   }
 
@@ -218,9 +218,9 @@ RbtElt * RbtInsertAux(  /* allocation et insertion simple */
   z->auxdata = d;
   z->left = T->nil;
   z->right = T->nil;
-  RbtInsertSimple(T, z);
+  lhthiniso_RbtInsertSimple(T, z);
   return z;
-} /* RbtInsertAux() */
+} /* lhthiniso_RbtInsertAux() */
 
 /* ==================================== */
 void LeftRotate(
@@ -271,7 +271,7 @@ void RightRotate(
 } /* RightRotate() */
 
 /* ==================================== */
-RbtElt * RbtInsert(
+RbtElt * lhthiniso_RbtInsert(
   Rbt * T, TypRbtKey k, TypRbtKey2 k2, TypRbtAuxData d)
 /* ==================================== */
 {
@@ -279,7 +279,7 @@ RbtElt * RbtInsert(
   RbtElt * xcopy;
   RbtElt * uncle;
 
-  xcopy = x = RbtInsertAux(T, k, k2, d);          /* allocation et insertion simple */
+  xcopy = x = lhthiniso_RbtInsertAux(T, k, k2, d);          /* allocation et insertion simple */
   x->color = Red;
 
   /* re-equilibrage de l'arbre */
@@ -335,7 +335,7 @@ RbtElt * RbtInsert(
 }
 
 /* ==================================== */
-void RbtDeleteFixup(
+void lhthiniso_RbtDeleteFixup(
   Rbt * T, RbtElt * x)
 /* ==================================== */
 {
@@ -407,10 +407,10 @@ void RbtDeleteFixup(
     }
   } /* while */
   x->color = Black;
-} /* RbtDeleteFixup() */
+} /* lhthiniso_RbtDeleteFixup() */
 
 /* ==================================== */
-RbtElt * RbtDeleteAux(         /* return deleted node */
+RbtElt * lhthiniso_RbtDeleteAux(         /* return deleted node */
   Rbt * T, RbtElt * z, RbtElt **R)
 /* ==================================== */
 {
@@ -420,7 +420,7 @@ RbtElt * RbtDeleteAux(         /* return deleted node */
   if ((z->left == T->nil) || (z->right == T->nil))
     d = z;
   else 
-    d = RbtSuccessor(T, z);
+    d = lhthiniso_RbtSuccessor(T, z);
   if (d->left != T->nil)
     c = d->left;
   else 
@@ -446,20 +446,20 @@ RbtElt * RbtDeleteAux(         /* return deleted node */
     R[x] = z;
   }
   if (d->color == Black)
-    RbtDeleteFixup(T, c);     /* c is now "Double-Black" */
+    lhthiniso_RbtDeleteFixup(T, c);     /* c is now "Double-Black" */
   return d;
-} /* RbtDeleteAux() */
+} /* lhthiniso_RbtDeleteAux() */
 
 /* ==================================== */
-void RbtDelete(
+void lhthiniso_RbtDelete(
   Rbt * T, RbtElt * z, RbtElt **R)
 /* ==================================== */
 {
-  z = RbtDeleteAux(T, z, R);
+  z = lhthiniso_RbtDeleteAux(T, z, R);
   z->right = T->libre;
   T->libre = z;
   T->util -= 1;
-} /* RbtDelete() */
+} /* lhthiniso_RbtDelete() */
 
 #ifdef DEBUGRBT
 /* ==================================== */
@@ -538,7 +538,7 @@ void UpdateRbt4alpha(uint32_t x, uint8_t *F, uint32_t *T,
 #ifdef DEBUGISO
       printf("delete x=(%d,%d)\n", x%rs, x/rs);
 #endif
-    RbtDelete(RBT, R[x], R); 
+    lhthiniso_RbtDelete(RBT, R[x], R); 
     R[x] = NULL; 
   }
 
@@ -568,7 +568,7 @@ void UpdateRbt4alpha(uint32_t x, uint8_t *F, uint32_t *T,
       printf("insere x=(%d,%d), z=(%d,%d), kk=%d, d=%g\n", x%rs, x/rs, z%rs, z/rs, kk, dz, r);
 #endif
       z = ENCODEDIR(x,kk);
-      r = RbtInsert(RBT, dz, F[x], z);
+      r = lhthiniso_RbtInsert(RBT, dz, F[x], z);
       R[x] = r;
     }
   } /* if (pdestr4(F, x, rs, N)) */
@@ -594,7 +594,7 @@ void UpdateRbt4(uint32_t x, uint8_t *F, uint32_t *T,
 #ifdef DEBUGISO
       printf("delete x=(%d,%d)\n", x%rs, x/rs);
 #endif
-    RbtDelete(RBT, R[x], R); 
+    lhthiniso_RbtDelete(RBT, R[x], R); 
     R[x] = NULL; 
   }
 
@@ -636,7 +636,7 @@ void UpdateRbt4(uint32_t x, uint8_t *F, uint32_t *T,
       printf("insere x=(%d,%d), z=(%d,%d), kk=%d, d=%g\n", x%rs, x/rs, z%rs, z/rs, kk, dz, r);
 #endif
       z = ENCODEDIR(x,kk);
-      r = RbtInsert(RBT, dz, F[x], z);
+      r = lhthiniso_RbtInsert(RBT, dz, F[x], z);
       R[x] = r;
     }
   } /* if (pdestr4(F, x, rs, N)) */
@@ -681,9 +681,9 @@ int32_t lhthiniso(struct xvimage *image, double dmax, int32_t connex, double pix
     return(0);
   }
 
-  RBT = CreeRbtVide(N);
+  RBT = lhthiniso_CreeRbtVide(N);
   if (RBT == NULL)
-  {   fprintf(stderr, "lhthiniso() : CreeRbtVide failed\n");
+  {   fprintf(stderr, "lhthiniso() : lhthiniso_CreeRbtVide failed\n");
       return(0);
   }
 
@@ -705,9 +705,9 @@ int32_t lhthiniso(struct xvimage *image, double dmax, int32_t connex, double pix
 
   if (connex == 4)
   {
-    while (!RbtVide(RBT))
+    while (!lhthiniso_RbtVide(RBT))
     {
-      r = RbtMinimum(RBT, RBT->root);
+      r = lhthiniso_RbtMinimum(RBT, RBT->root);
       x = r->auxdata;
       k = DECODEDIR(x);
       x = DECODEPIX(x);
@@ -738,7 +738,7 @@ int32_t lhthiniso(struct xvimage *image, double dmax, int32_t connex, double pix
       printf("abaisse x=(%d,%d), %d -> %d\n", 
               x%rs, x/rs, F[x], F[y]);
 #endif
-      RbtDelete(RBT, R[x], R);
+      lhthiniso_RbtDelete(RBT, R[x], R);
       R[x] = NULL;
       F[x] = F[y];
       T[x] = T[y];
@@ -748,14 +748,14 @@ int32_t lhthiniso(struct xvimage *image, double dmax, int32_t connex, double pix
         y = voisin(x, k, rs, N);
         if (y != -1) UpdateRbt4(y, F, T, rs, N, R, RBT, dmax);
       } /* for k */
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!lhthiniso_RbtVide(RBT)) */
   } /* if (connex == 4) */
 
   /* ================================================ */
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  RbtTermine(RBT);
+  lhthiniso_RbtTermine(RBT);
   free(T);
   free(R);
   return(1);

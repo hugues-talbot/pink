@@ -414,9 +414,9 @@ int32_t lordermaximavol(struct xvimage *image, struct xvimage *order, int32_t co
 } // lordermaximavol()
 
 /* ==================================== */
-int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
+int32_t ldynamique_ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
 /* ==================================== */
-/*! \fn int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
+/*! \fn int32_t ldynamique_ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
     \param image (entrée/sortie) : une image
     \param order (entrée) : labels définissant un ordre sur les maxima (de 1 à nbmaxima)
     \param connex (entrée) : 4 ou 8 (2D), 6, 18 ou 26 (3D) 
@@ -424,7 +424,7 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
     \brief calcule la dynamique ordonnée des maxima
 */
 #undef F_NAME
-#define F_NAME "ldynamique"
+#define F_NAME "ldynamique_ldynamique"
 {
   register int32_t i, j, k, x;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
@@ -527,7 +527,7 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
   free(dyn);
   free(alpha);
   return(1);
-} /* ldynamique() */
+} /* ldynamique_ldynamique() */
 
 /* ==================================== */
 int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t connex, int32_t seuil)

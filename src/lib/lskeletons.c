@@ -191,13 +191,13 @@ static int32_t testabaisse8bin(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* testabaisse8bin() */
 
 /* ==================================== */
-static int32_t testabaisse6bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+static int32_t lskeletons_testabaisse6bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
   if (simple6(F, x, rs, ps, N)) { modifie = 1; F[x] = NDG_MIN; }
   return modifie;
-} /* testabaisse6bin() */
+} /* lskeletons_testabaisse6bin() */
 
 /* ==================================== */
 static int32_t testabaisse18bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
@@ -222,13 +222,13 @@ static int32_t testabaisse26bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, i
 } /* testabaisse26bin() */
 
 /* ==================================== */
-static int32_t testabaisse6lab(int32_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+static int32_t lskeletons_testabaisse6lab(int32_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
   if (simple6lab(F, x, rs, ps, N)) { modifie = 1; F[x] = 0; }
   return modifie;
-} /* testabaisse6lab() */
+} /* lskeletons_testabaisse6lab() */
 
 /* ==================================== */
 static int32_t testabaisse18lab(int32_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
@@ -657,7 +657,7 @@ resultat: F
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
-      if (testabaisse6bin(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
+      if (lskeletons_testabaisse6bin(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
       {
         for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
         {                                              /* pour empiler les voisins */
@@ -668,7 +668,7 @@ resultat: F
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
-      } /* if (testabaisse6bin(F, x, rs, N)) */
+      } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
     } /* while (!RbtVide(RBT)) */
   } /* if (connex == 6) */
   else
@@ -805,7 +805,7 @@ int32_t lskelubp3d2(struct xvimage *image,
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
-      if (testabaisse6bin(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
+      if (lskeletons_testabaisse6bin(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
       {
         for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
         {                                              /* pour empiler les voisins */
@@ -822,7 +822,7 @@ int32_t lskelubp3d2(struct xvimage *image,
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
-      } /* if (testabaisse6bin(F, x, rs, N)) */
+      } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
     } /* while (!RbtVide(RBT)) */
   } /* if (connex == 6) */
   else
@@ -1457,7 +1457,7 @@ resultat: F
         x = FifoPop(FIFO1);
         UnSet(x,EN_RBT);
 
-        if ((! IsSet(x, CONTRAINTE)) && testabaisse6bin(F, x, rs, ps, N))
+        if ((! IsSet(x, CONTRAINTE)) && lskeletons_testabaisse6bin(F, x, rs, ps, N))
         {
           for (k = 0; k <= 10; k += 2)        /* parcourt les voisins en 6-connexite */
           {                                              /* pour empiler les voisins */
@@ -1797,7 +1797,7 @@ resultat: F
         x = FifoPop(FIFO1);
         UnSet(x,EN_RBT);
 
-        if ((! IsSet(x, CONTRAINTE)) && testabaisse6bin(F, x, rs, ps, N))
+        if ((! IsSet(x, CONTRAINTE)) && lskeletons_testabaisse6bin(F, x, rs, ps, N))
         {
           for (k = 0; k <= 10; k += 2)        /* parcourt les voisins en 6-connexite */
           {                                              /* pour empiler les voisins */
@@ -2261,7 +2261,7 @@ resultat: F
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
-      } /* if (testabaisse6bin(F, x, rs, N)) */
+      } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
     } /* while (!RbtVide(RBT)) */
   } /* if (connex == 6) */
   else
@@ -2290,7 +2290,7 @@ resultat: F
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
-      } /* if (testabaisse6bin(F, x, rs, N)) */
+      } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
     } /* while (!RbtVide(RBT)) */
   } /* if (connex == 18) */
   else
@@ -2319,7 +2319,7 @@ resultat: F
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
-      } /* if (testabaisse6bin(F, x, rs, N)) */
+      } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
     } /* while (!RbtVide(RBT)) */
   } /* if (connex == 26) */
   else
@@ -2890,7 +2890,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
       {
 	x = RbtPopMin(RBT);
 	config = encodevois(x, F, rs, ps, N);
-	if (((nbiter < niseuil) || (!IsEnd(config))) && testabaisse6bin(F, x, rs, ps, N)) nbdel++;
+	if (((nbiter < niseuil) || (!IsEnd(config))) && lskeletons_testabaisse6bin(F, x, rs, ps, N)) nbdel++;
       } /* while (!RbtVide(RBT)) */
       for (x = 0; x < N; x++)
         if (F[x] && simple6(F, x, rs, ps, N))
@@ -3048,7 +3048,7 @@ Algo par passes directionnelles.
       while (!RbtVide(RBT))
       {
 	x = RbtPopMin(RBT);
-	if (((nbiter < niseuil) || (nbvoislab6(F, x, rs, ps, N) > 1)) && testabaisse6lab(F, x, rs, ps, N)) nbdel++;
+	if (((nbiter < niseuil) || (nbvoislab6(F, x, rs, ps, N) > 1)) && lskeletons_testabaisse6lab(F, x, rs, ps, N)) nbdel++;
       } /* while (!RbtVide(RBT)) */
       for (x = 0; x < N; x++)
         if (F[x] && simple6lab(F, x, rs, ps, N))

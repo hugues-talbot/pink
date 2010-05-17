@@ -204,7 +204,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define MARQUE2    3
 
 /* ==================================== */
-static int32_t NotIn(
+static int32_t lsegment3di_NotIn(
   int32_t e,
   int32_t *list,                   
   int32_t n)                       
@@ -217,7 +217,7 @@ static int32_t NotIn(
   while (n > 0)
     if (list[--n] == e) return 0;
   return 1;
-} /* NotIn() */
+} /* lsegment3di_NotIn() */
 
 /* ==================================== */
 int32_t lsegment3di(struct xvimage *image, int32_t connex)
@@ -530,7 +530,7 @@ int32_t lsegment3di(struct xvimage *image, int32_t connex)
                     printf("segment() : ncc = %d ; nccmax = %d\n", ncc, nccmax);
                     return(0);
                   }
-                  if (NotIn(M[y], etiqcc, ncc))
+                  if (lsegment3di_NotIn(M[y], etiqcc, ncc))
 		  {
                     etiqcc[ncc] = M[y];
                     ncc += 1;
@@ -558,7 +558,7 @@ int32_t lsegment3di(struct xvimage *image, int32_t connex)
                     printf("segment() : ncc = %d ; nccmax = %d\n", ncc, nccmax);
                     return(0);
                   }
-                  if (NotIn(M[y], etiqcc, ncc))
+                  if (lsegment3di_NotIn(M[y], etiqcc, ncc))
 		  {
                     etiqcc[ncc] = M[y];
                     ncc += 1;
@@ -586,7 +586,7 @@ int32_t lsegment3di(struct xvimage *image, int32_t connex)
                     printf("segment() : ncc = %d ; nccmax = %d\n", ncc, nccmax);
                     return(0);
                   }
-                  if (NotIn(M[y], etiqcc, ncc))
+                  if (lsegment3di_NotIn(M[y], etiqcc, ncc))
 		  {
                     etiqcc[ncc] = M[y];
                     ncc += 1;

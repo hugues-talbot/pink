@@ -60,9 +60,9 @@ static double distcarre(double x1, double y1, double x2, double y2)
 }
 
 /* ==================================== */
-double Delta(double *X, int n, double *Y, int m)
+double lrecalagerigide_translateplane_Delta(double *X, int n, double *Y, int m)
 /* ==================================== */
-/*! \fn double Delta(double *X, int n, double *Y, int m)
+/*! \fn double lrecalagerigide_translateplane_Delta(double *X, int n, double *Y, int m)
     \param X (entrée) : matrice n * 2 contenant le premier ensemble de points
     \param n (entrée) : nombre de points dans X
     \param Y (entrée) : matrice m * 2 contenant le second ensemble de points
@@ -87,12 +87,12 @@ double Delta(double *X, int n, double *Y, int m)
     delta += tmin;
   } // for (i = 0; i < n; i++)
   return delta;
-} // Delta()
+} // lrecalagerigide_translateplane_Delta()
 
 /* ==================================== */
-void Tgamma(double *X, int n, double *Gamma, double *R)
+void lrecalagerigide_translateplane_Tgamma(double *X, int n, double *Gamma, double *R)
 /* ==================================== */
-/*! \fn double Tgamma(double *X, int n, double *Y, int m)
+/*! \fn double lrecalagerigide_translateplane_Tgamma(double *X, int n, double *Y, int m)
     \param X (entrée) : matrice n * 2 contenant un ensemble de points
     \param n (entrée) : nombre de points dans X
     \param Gamma (entrée) : paramètres d'une transformation affine linéaire
@@ -122,20 +122,20 @@ void Tgamma(double *X, int n, double *Gamma, double *R)
     R[i*2 + 0] = R[i*2 + 0] + Gamma[3]; // tx
     R[i*2 + 1] = R[i*2 + 1] + Gamma[4]; // ty
   } // for (i = 0; i < n; i++)
-} // Tgamma() 
+} // lrecalagerigide_translateplane_Tgamma() 
 
 /* ==================================== */
-double F(double *G, ensemble *ens)
+double lrecalagerigide_transparentplane_F(double *G, ensemble *ens)
 /* ==================================== */
 {
-  Tgamma(ens->X, ens->n, G, ens->Tmp);
-  return Delta(ens->Tmp, ens->n, ens->Y, ens->m);  
-} // F()
+  lrecalagerigide_translateplane_Tgamma(ens->X, ens->n, G, ens->Tmp);
+  return lrecalagerigide_translateplane_Delta(ens->Tmp, ens->n, ens->Y, ens->m);  
+} // lrecalagerigide_transparentplane_F()
 
 /* ==================================== */
-double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
+double *lrecalagerigide_translateplane_lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
 /* ==================================== */
-/*! \fn double *lrecalagerigide2d(double *X, int n, double *Y, int m)
+/*! \fn double *lrecalagerigide_translateplane_lrecalagerigide2d(double *X, int n, double *Y, int m)
     \param X (entrée/sortie) : matrice n * 2 contenant le premier ensemble de points
     \param n (entrée) : nombre de points dans X
     \param Y (entrée) : matrice m * 2 contenant le second ensemble de points
@@ -168,10 +168,10 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
   ens.X = X; ens.n = n; ens.Y = Y; ens.m = m; 
   ens.Tmp = (double *)calloc(1, 2 * max(n,m) * sizeof(double));
 
-  powell(F, &ens, G, 5, 1e-6, 0.1, MAXITER, &fmin);
+  powell(lrecalagerigide_transparentplane_F, &ens, G, 5, 1e-6, 0.1, MAXITER, &fmin);
 
   G[3] += BY1; G[4] += BY2;
-  Tgamma(X, n, G, ens.Tmp);
+  lrecalagerigide_translateplane_Tgamma(X, n, G, ens.Tmp);
   G[3] -= BX1; G[4] -= BX2;
 
   for (i = 0; i < n+n; i++) X[i] = ens.Tmp[i]; 
@@ -180,7 +180,7 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
   memcpy(Gamma, G, 5 * sizeof(double));
   free(ens.Tmp);
   return Gamma;
-} // lrecalagerigide2d()
+} // lrecalagerigide_translateplane_lrecalagerigide2d()
 
 /* ==================================== */
 static double distcarre3d(double x1, double y1, double z1, double x2, double y2, double z2)
@@ -190,9 +190,9 @@ static double distcarre3d(double x1, double y1, double z1, double x2, double y2,
 }
 
 /* ==================================== */
-double Delta3d(double *X, int n, double *Y, int m)
+double lrecalagerigide_translateplane_Delta3d(double *X, int n, double *Y, int m)
 /* ==================================== */
-/*! \fn double Delta3d(double *X, int n, double *Y, int m)
+/*! \fn double lrecalagerigide_translateplane_Delta3d(double *X, int n, double *Y, int m)
     \param X (entrée) : matrice n * 3 contenant le premier ensemble de points
     \param n (entrée) : nombre de points dans X
     \param Y (entrée) : matrice m * 3 contenant le second ensemble de points
@@ -218,12 +218,12 @@ double Delta3d(double *X, int n, double *Y, int m)
     delta += tmin;
   } // for (i = 0; i < n; i++)
   return delta;
-} // Delta3d()
+} // lrecalagerigide_translateplane_Delta3d()
 
 /* ==================================== */
-void Tgamma3d(double *X, int n, double *Gamma, double *R)
+void lrecalagerigide_translateplane_Tgamma3d(double *X, int n, double *Gamma, double *R)
 /* ==================================== */
-/*! \fn double Tgamma3d(double *X, int n, double *Y, int m)
+/*! \fn double lrecalagerigide_translateplane_Tgamma3d(double *X, int n, double *Y, int m)
     \param X (entrée) : matrice n * 2 contenant un ensemble de points
     \param n (entrée) : nombre de points dans X
     \param Gamma (entrée) : paramètres d'une transformation affine linéaire
@@ -241,13 +241,13 @@ void Tgamma3d(double *X, int n, double *Gamma, double *R)
     R[i*3 + 1] = X[i*3 + 1] + Gamma[1]; // ty
     R[i*3 + 2] = X[i*3 + 2] ; // translation en z = 0
   } // for (i = 0; i < n; i++)
-} // Tgamma3d() 
+} // lrecalagerigide_translateplane_Tgamma3d() 
 
 
 /* ==================================== */
-void Tgamma3dbis(double *X, int n, double *Gamma, double *R)
+void lrecalagerigide_translateplane_Tgamma3dbis(double *X, int n, double *Gamma, double *R)
 /* ==================================== */
-/*! \fn double Tgamma3d(double *X, int n, double *Y, int m)
+/*! \fn double lrecalagerigide_translateplane_Tgamma3d(double *X, int n, double *Y, int m)
     \param X (entrée) : matrice n * 2 contenant un ensemble de points
     \param n (entrée) : nombre de points dans X
     \param Gamma (entrée) : paramètres d'une transformation affine linéaire
@@ -265,15 +265,15 @@ void Tgamma3dbis(double *X, int n, double *Gamma, double *R)
     R[i*3 + 1] = X[i*3 + 1] + Gamma[1]; // ty
     R[i*3 + 2] = X[i*3 + 2] + Gamma[2] ; 
   } // for (i = 0; i < n; i++)
-} // Tgamma3d() 
+} // lrecalagerigide_translateplane_Tgamma3d() 
 
 /* ==================================== */
-double F3d(double *G, ensemble *ens)
+double lrecalagerigide_transparentplane_F3d(double *G, ensemble *ens)
 /* ==================================== */
 {
-  Tgamma3d(ens->X, ens->n, G, ens->Tmp);
-  return Delta3d(ens->Tmp, ens->n, ens->Y, ens->m);  
-} // F3d()
+  lrecalagerigide_translateplane_Tgamma3d(ens->X, ens->n, G, ens->Tmp);
+  return lrecalagerigide_translateplane_Delta3d(ens->Tmp, ens->n, ens->Y, ens->m);  
+} // lrecalagerigide_transparentplane_F3d()
 
 
 /* ==================================== */
@@ -315,12 +315,12 @@ double *lrecalagerigide3d_translateplane(double *X, int n, double *Y, int m)
   ens.Tmp = (double *)calloc(1, 3 * max(n,m) * sizeof(double));
   
 
-  //  powell(F3d, &ens, G, 2, 1e-6, 0.1, MAXITER, &fmin);
-  powell(F3d, &ens, G, 2, 1.0, 0.1, MAXITER, &fmin);
+  //  powell(lrecalagerigide_transparentplane_F3d, &ens, G, 2, 1e-6, 0.1, MAXITER, &fmin);
+  powell(lrecalagerigide_transparentplane_F3d, &ens, G, 2, 1.0, 0.1, MAXITER, &fmin);
   printf("les params : %lf %lf \n", G[0], G[1]);
 
   G[0] += BY1; G[1] += BY2; G[2] += BY3;
-  Tgamma3dbis(X, n, G, ens.Tmp);
+  lrecalagerigide_translateplane_Tgamma3dbis(X, n, G, ens.Tmp);
   G[0] -= BX1; G[1] -= BX2; 
   printf("les params : %lf %lf \n", G[0], G[1]);
   
@@ -372,12 +372,12 @@ double *lrecalagerigide3d_translate(double *X, int n, double *Y, int m)
   ens.Tmp = (double *)calloc(1, 3 * max(n,m) * sizeof(double));
   
 
-  //  powell(F3d, &ens, G, 2, 1e-6, 0.1, MAXITER, &fmin);
-  powell(F3d, &ens, G, 3, 1.0, 0.1, MAXITER, &fmin);
+  //  powell(lrecalagerigide_transparentplane_F3d, &ens, G, 2, 1e-6, 0.1, MAXITER, &fmin);
+  powell(lrecalagerigide_transparentplane_F3d, &ens, G, 3, 1.0, 0.1, MAXITER, &fmin);
   printf("les params : %lf %lf \n", G[0], G[1]);
 
   G[0] += BY1; G[1] += BY2; G[2] += BY3;
-  Tgamma3dbis(X, n, G, ens.Tmp);
+  lrecalagerigide_translateplane_Tgamma3dbis(X, n, G, ens.Tmp);
   G[0] -= BX1; G[1] -= BX2; G[2] -= BX3;
   printf("les params : %lf %lf %lf \n", G[0], G[1], G[2]);
   printf("Cout de la transformation : %lf\n", fmin);

@@ -609,7 +609,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
 } /* lfermetrous3dbin2() */
 
 /* ==================================== */
-int32_t testabaisse6(uint8_t *F, uint8_t *P, int32_t x, int32_t rs, int32_t ps, int32_t N)
+int32_t lfermetrous3d_testabaisse6(uint8_t *F, uint8_t *P, int32_t x, int32_t rs, int32_t ps, int32_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -621,7 +621,7 @@ int32_t testabaisse6(uint8_t *F, uint8_t *P, int32_t x, int32_t rs, int32_t ps, 
   }
 
   return modifie;
-} /* testabaisse6() */
+} /* lfermetrous3d_testabaisse6() */
 
 /* ==================================== */
 int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous)
@@ -752,7 +752,7 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
     {
       x = FahpPop(FAHP);
       UnSet(x,EN_FAHP);
-      if (testabaisse6(F, P, x, rs, ps, N))
+      if (lfermetrous3d_testabaisse6(F, P, x, rs, ps, N))
       {
         for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
         {                                              /* pour empiler les voisins */

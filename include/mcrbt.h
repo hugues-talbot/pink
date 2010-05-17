@@ -64,13 +64,13 @@ typedef struct {
 /* prototypes     */
 /* ============== */
 
-extern Rbt * CreeRbtVide(
+extern Rbt * mcrbt_CreeRbtVide(
   int32_t taillemax);
 
 extern void RbtFlush(
   Rbt * T);
 
-extern int32_t RbtVide(
+extern int32_t mcrbt_RbtVide(
   Rbt * T);
 
 extern void RbtTermine(
@@ -82,7 +82,7 @@ extern void RbtPrint(
 extern RbtElt * RbtSearch(
   Rbt * T, TypRbtKey k);
 
-extern RbtElt * RbtMinimum(
+extern RbtElt * mcrbt_RbtMinimum(
   Rbt * T, RbtElt * x);
 
 extern RbtElt * RbtMaximum(
@@ -91,7 +91,7 @@ extern RbtElt * RbtMaximum(
 extern RbtElt * RbtSuccessor(
   Rbt * T, RbtElt * x);
 
-extern RbtElt * RbtInsert(
+extern RbtElt * mcrbt_RbtInsert(
   Rbt ** T, TypRbtKey k, TypRbtAuxData d);
 
 extern void RbtDelete(

@@ -69,7 +69,7 @@ Michel Couprie --- novembre 1996
 /* ============================================= */
 
 /* ==================================== */
-int32_t NotIn(
+int32_t mccbt_NotIn(
   int32_t e,
   int32_t *list,                   
   int32_t n)                       
@@ -82,7 +82,7 @@ int32_t NotIn(
   while (n > 0)
     if (list[--n] == e) return 0;
   return 1;
-} /* NotIn() */
+} /* mccbt_NotIn() */
 
 /* ==================================== */
 int32_t RgMinimum(
@@ -295,7 +295,7 @@ printf(") -> ");
         a = arbre[a].father;
     }
     if (a != argv[i]) arbre[argv[i]].ancestor = a;
-    if (NotIn(a, argv, nv))
+    if (mccbt_NotIn(a, argv, nv))
     {
       argv[nv] = a;
       nv += 1;

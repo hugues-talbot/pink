@@ -98,7 +98,7 @@ knowledge of the CeCILL license and that you accept its terms.
 /* ******************************************************************************* */
 
 /* ==================================== */
-int32_t testabaisse6bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+int32_t lhtkern3d_testabaisse6bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -110,7 +110,7 @@ int32_t testabaisse6bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N
   }
 
   return modifie;
-} /* testabaisse6bin() */
+} /* lhtkern3d_testabaisse6bin() */
 
 /* ==================================== */
 int32_t testabaisse26bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
@@ -190,7 +190,7 @@ int32_t lhtkern3dbin(struct xvimage *image, int32_t connex, int32_t nimax)
       {
         x = LifoPop(LIFO1);
         UnSet(x, EN_LIFO);
-        if (testabaisse6bin(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
+        if (lhtkern3d_testabaisse6bin(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
         {
           for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
           {                                              /* pour empiler les voisins */
@@ -201,7 +201,7 @@ int32_t lhtkern3dbin(struct xvimage *image, int32_t connex, int32_t nimax)
               Set(y, EN_LIFO);
             } /* if y */
           } /* for k */      
-        } /* if (testabaisse6bin(F, x, rs, N)) */
+        } /* if (lhtkern3d_testabaisse6bin(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
 
       LIFOtmp = LIFO1; LIFO1 = LIFO2; LIFO2 = LIFOtmp;
@@ -264,7 +264,7 @@ int32_t lhtkern3dbin(struct xvimage *image, int32_t connex, int32_t nimax)
 /* ******************************************************************************* */
 
 /* ==================================== */
-int32_t testabaisse6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+int32_t lhtkern3d_testabaisse6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -276,7 +276,7 @@ int32_t testabaisse6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
   }
 
   return modifie;
-} /* testabaisse6() */
+} /* lhtkern3d_testabaisse6() */
 
 /* ==================================== */
 int32_t testabaisse26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
@@ -423,7 +423,7 @@ int32_t lhtkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t conn
     {
       x = FahPop(FAH);
       UnSet(x, EN_FAH);
-      if (testabaisse6(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
+      if (lhtkern3d_testabaisse6(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
       {
         if (imagecond != NULL) F[x] = max(F[x],G[x]);
         for (k = 0; k < 26; k += 1) /* parcourt les voisins en 26-connexite */
@@ -438,7 +438,7 @@ int32_t lhtkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t conn
             }
           } /* if y */
         } /* for k */      
-      } /* if (testabaisse6(F, x, rs, ps, N)) */
+      } /* if (lhtkern3d_testabaisse6(F, x, rs, ps, N)) */
     } /* while (!FahVide(FAH)) */
   } /* if (connexmin == 6) */
   else

@@ -86,12 +86,12 @@ int32_t sum(int32_t a, int32_t b)
 
 /**
  **************************************************
- * @b prod
+ * @b lvoronoilabelling_prod
  * @param a Long number with INFTY
  * @param b Long number with INFTY
  * @return The product of a and b handling INFTY
  **************************************************/
-int32_t prod(int32_t a, int32_t b)
+int32_t lvoronoilabelling_prod(int32_t a, int32_t b)
 {
   if ((a==INFTY) || (b==INFTY))
     return INFTY;
@@ -139,7 +139,7 @@ int32_t intdivint (int32_t divid, int32_t divis) {
  * @param gi2
  * @return Definition of a parabola
  **************************************************/
-inline int32_t F(int32_t x, int32_t i, int32_t gi2)
+inline int32_t lvoronoilabelling_F(int32_t x, int32_t i, int32_t gi2)
 {
   return sum((x-i)*(x-i), gi2);
 }
@@ -251,8 +251,8 @@ void phaseVoronoiY(struct xvimage *sdt_x, struct xvimage *sdt_xy, struct xvimage
 	for (u=1; u < colsize(sdt_x) ; u++)
 	  {
 	    while ((q >= 0) &&
-		   (F(t[q],s[q],prod(lvoxel(sdt_x,x,s[q],z),lvoxel(sdt_x,x,s[q],z))) >
-		    F(t[q],u,prod(lvoxel(sdt_x,x,u,z),lvoxel(sdt_x,x,u,z))))
+		   (lvoronoilabelling_F(t[q],s[q],lvoronoilabelling_prod(lvoxel(sdt_x,x,s[q],z),lvoxel(sdt_x,x,s[q],z))) >
+		    lvoronoilabelling_F(t[q],u,lvoronoilabelling_prod(lvoxel(sdt_x,x,u,z),lvoxel(sdt_x,x,u,z))))
 		   )
 	      q--;
 
@@ -265,8 +265,8 @@ void phaseVoronoiY(struct xvimage *sdt_x, struct xvimage *sdt_xy, struct xvimage
 	      {
 		w = 1 + Sep(s[q],
 			    u,
-			    prod(lvoxel(sdt_x,x,s[q],z),lvoxel(sdt_x,x,s[q],z)),
-			    prod(lvoxel(sdt_x,x,u,z),lvoxel(sdt_x,x,u,z)));
+			    lvoronoilabelling_prod(lvoxel(sdt_x,x,s[q],z),lvoxel(sdt_x,x,s[q],z)),
+			    lvoronoilabelling_prod(lvoxel(sdt_x,x,u,z),lvoxel(sdt_x,x,u,z)));
 
 		if (w < colsize(sdt_x))
 		  {
@@ -282,7 +282,7 @@ void phaseVoronoiY(struct xvimage *sdt_x, struct xvimage *sdt_xy, struct xvimage
 	//Backward Scan
 	for (u = colsize(sdt_x)-1; u >= 0; --u)
 	  {
-	    lvoxel(sdt_xy,x,u,z) = F(u,s[q],prod(lvoxel(sdt_x,x,s[q],z),lvoxel(sdt_x,x,s[q],z)));
+	    lvoxel(sdt_xy,x,u,z) = lvoronoilabelling_F(u,s[q],lvoronoilabelling_prod(lvoxel(sdt_x,x,s[q],z),lvoxel(sdt_x,x,s[q],z)));
 
 	    //Tricky point of the Voronoi labeling
 	    lvoxel(dx,x,u,z) =dxTemp[s[q]];
@@ -345,8 +345,8 @@ void phaseVoronoiZ(struct xvimage *sdt_xy, struct xvimage *sdt_xyz, struct xvima
 	for (u=1; u < depth(sdt_xy) ; u++)
 	  {
 	    while ((q >= 0) &&
-		   (F(t[q],s[q],lvoxel(sdt_xy,x,y,s[q])) >
-		    F(t[q],u,lvoxel(sdt_xy,x,y,u)))
+		   (lvoronoilabelling_F(t[q],s[q],lvoxel(sdt_xy,x,y,s[q])) >
+		    lvoronoilabelling_F(t[q],u,lvoxel(sdt_xy,x,y,u)))
 		   )
 	      q--;
 
@@ -378,7 +378,7 @@ void phaseVoronoiZ(struct xvimage *sdt_xy, struct xvimage *sdt_xyz, struct xvima
 	//Backward Scan
 	for (u = depth(sdt_xy)-1; u >= 0; --u)
 	  {
-	    lvoxel(sdt_xyz,x,y,u) = F(u,s[q],lvoxel(sdt_xy,x,y,s[q]));
+	    lvoxel(sdt_xyz,x,y,u) = lvoronoilabelling_F(u,s[q],lvoxel(sdt_xy,x,y,s[q]));
 
 	    //Tricky point of the Voronoi labeling
 	    lvoxel(dx,x,y,u) = dxTemp[s[q]];

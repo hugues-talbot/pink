@@ -70,7 +70,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define EN_FAH   0
 
 /* ==================================== */
-int32_t NotIn(int32_t e, int32_t *list, int32_t n)                       
+int32_t llpemeyer_NotIn(int32_t e, int32_t *list, int32_t n)                       
 /* ==================================== */
 {
 /* renvoie 1 si e n'est pas dans list, 0 sinon */
@@ -80,7 +80,7 @@ int32_t NotIn(int32_t e, int32_t *list, int32_t n)
   while (n > 0)
     if (list[--n] == e) return 0;
   return 1;
-} /* NotIn() */
+} /* llpemeyer_NotIn() */
 
 /* ==================================== */
 int32_t llpemeyer(
@@ -281,7 +281,7 @@ int32_t llpemeyer(
     for (k = 0; k < 8; k += incr_vois)
     {
       y = voisin(x, k, rs, N);
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -445,7 +445,7 @@ int32_t llpemeyer2(
     for (k = 0; k < 8; k += incr_vois)
     {
       y = voisin(x, k, rs, N);
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -600,7 +600,7 @@ int32_t llpemeyer3(
     for (k = 0; k < 8; k += incr_vois)
     {
       y = voisin(x, k, rs, N);
-      if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -813,7 +813,7 @@ int32_t llpemeyer3(
      for (k = 0; k < n; k++) /* parcourt les eventuels theta-voisins */
      {
        y = tab[k];
-       if ((M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+       if ((M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
        {
          etiqcc[ncc] = M[y];        
          ncc += 1;
@@ -1064,7 +1064,7 @@ int32_t llpemeyersansligne(
     for (k = 0; k < 8; k += incr_vois)
     {
       y = voisin(x, k, rs, N);
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -1313,7 +1313,7 @@ int32_t llpemeyer3d(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1324,7 +1324,7 @@ int32_t llpemeyer3d(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1335,7 +1335,7 @@ int32_t llpemeyer3d(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1636,7 +1636,7 @@ int32_t llpemeyer3dsansligne(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1647,7 +1647,7 @@ int32_t llpemeyer3dsansligne(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1658,7 +1658,7 @@ int32_t llpemeyer3dsansligne(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1853,7 +1853,7 @@ int32_t llpemeyer3d2(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1864,7 +1864,7 @@ int32_t llpemeyer3d2(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1875,7 +1875,7 @@ int32_t llpemeyer3d2(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2078,7 +2078,7 @@ int32_t llpemeyer3d3(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2089,7 +2089,7 @@ int32_t llpemeyer3d3(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2100,7 +2100,7 @@ int32_t llpemeyer3d3(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2352,7 +2352,7 @@ int32_t llpemeyerbiconnecte(
     for (k = 0; k < 6; k += incr_vois)
     {
       y = voisin6b(x, k, rs, N, parite);
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -2556,7 +2556,7 @@ int32_t llpemeyerbiconnecte3d(
 	printf("%s: Attention on innonde en dehors de l'image %d %d rs %d, n %d ,N %d \n", F_NAME, x,k, rs, n ,N);
 	exit(-1);
       }
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
       {
 	etiqcc[ncc] = M[y];        	
 	ncc += 1;

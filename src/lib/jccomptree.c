@@ -64,7 +64,7 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define PARANO
 
 /* ==================================== */
-void ComponentTreePrint(JCctree * CT)
+void jccomptree_ComponentTreePrint(JCctree * CT)
 /* ==================================== */
 {
   int32_t i;
@@ -84,7 +84,7 @@ void ComponentTreePrint(JCctree * CT)
     }
     printf("\n");
   }
-} // ComponentTreePrint() 
+} // jccomptree_ComponentTreePrint() 
 
 /* ==================================== */
 void ComponentTreeDotty(JCctree * CT)
@@ -118,7 +118,7 @@ void ComponentTreeDotty(JCctree * CT)
   }
   fprintf(fp, "}\n");
   fclose(fp);
-} // ComponentTreePrint() 
+} // jccomptree_ComponentTreePrint() 
 
 /* ==================================== */
 void mergeTreePrint(mtree * MT)
@@ -196,11 +196,11 @@ int32_t LowComAncSlow(
 // from lwshedtopo.c
 
 // Depth-first preprocessing
-int32_t LCApreprocessDepthFirst(JCctree *CT, int32_t node, int32_t depth, int32_t *nbr, int32_t *rep, int32_t *Euler, int32_t *Represent, int32_t *Depth, int32_t *Number)
+int32_t jccomptree_LCApreprocessDepthFirst(JCctree *CT, int32_t node, int32_t depth, int32_t *nbr, int32_t *rep, int32_t *Euler, int32_t *Represent, int32_t *Depth, int32_t *Number)
 {
   int32_t son;
   JCsoncell *sc;
-  //  printf("LCApreprocessDepthFirst\n");
+  //  printf("jccomptree_LCApreprocessDepthFirst\n");
   if (CT->tabnodes[node].nbsons > -1) {
     (*nbr)++;
     Euler[*nbr] = node;
@@ -210,21 +210,21 @@ int32_t LCApreprocessDepthFirst(JCctree *CT, int32_t node, int32_t depth, int32_
     (*rep)++;
     for (sc = CT->tabnodes[node].sonlist; sc != NULL; sc = sc->next)    {
       son = sc->son;
-      LCApreprocessDepthFirst(CT, son, depth+1, nbr, rep, Euler, Represent, Depth, Number);
+      jccomptree_LCApreprocessDepthFirst(CT, son, depth+1, nbr, rep, Euler, Represent, Depth, Number);
       Euler[++(*nbr)] = node;
     }
   }
   return *nbr;
 }
 
-int32_t ** LCApreprocess(JCctree *CT, int32_t *Euler, int32_t *Depth, int32_t *Represent, int32_t *Number, int32_t *nbR, int32_t *lognR)
+int32_t ** jccomptree_LCApreprocess(JCctree *CT, int32_t *Euler, int32_t *Depth, int32_t *Represent, int32_t *Number, int32_t *nbR, int32_t *lognR)
 {
   //O(n.log(n)) preprocessing
   int32_t nbr, rep, nbNodes;
 
   nbr = -1; // Initialization number of euler nodes
   rep = 0;
-  nbr = LCApreprocessDepthFirst(CT, CT->root, 0, &nbr, &rep, Euler, Represent, Depth, Number);
+  nbr = jccomptree_LCApreprocessDepthFirst(CT, CT->root, 0, &nbr, &rep, Euler, Represent, Depth, Number);
   nbNodes = rep;
 
   // Check that the number of nodes in the tree was correct
@@ -269,9 +269,9 @@ int32_t ** LCApreprocess(JCctree *CT, int32_t *Euler, int32_t *Depth, int32_t *R
   return Minim;
 }
 
-int32_t LowComAncFast(int32_t n1, int32_t n2, int32_t *Euler, int32_t *Number, int32_t *Depth, int32_t **Minim)
+int32_t jccomptree_LowComAncFast(int32_t n1, int32_t n2, int32_t *Euler, int32_t *Number, int32_t *Depth, int32_t **Minim)
 #undef F_NAME
-#define F_NAME "LowComAncFast"
+#define F_NAME "jccomptree_LowComAncFast"
 {
   int32_t ii, jj, kk, k;
 

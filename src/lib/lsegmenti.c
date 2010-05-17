@@ -59,7 +59,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
             en discret, une etude empirique donne les facteurs K1 ou K2 a la place de 4.PI,
             avec K1 = 256/21 pour Perim <= 16, et K2 = 13924/757 sinon.
-  18/3/98 : etude de la signature des attributs 
+  18/3/98 : etude de la lsegmenti_signature des attributs 
   20/3/98 : ajout de l'attribut "distance a la racine" (RDIST)
   28/3/98 : ajout de l'attribut "nombre de trous" (TROU)
   29/3/98 : corrige le bug de SURF
@@ -208,7 +208,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #include <unistd.h>
 /* ==================================== */
-void visualise(int32_t tabres[], char * c, int32_t x, int32_t y)
+void lsegmenti_visualise(int32_t tabres[], char * c, int32_t x, int32_t y)
 /* ==================================== */
 {
   int32_t i, lastv;
@@ -246,7 +246,7 @@ void visualise(int32_t tabres[], char * c, int32_t x, int32_t y)
   }
 
   fclose(fd);
-} /* visualise() */
+} /* lsegmenti_visualise() */
 
 #ifdef MOMENTS
 /* ==================================== */
@@ -280,7 +280,7 @@ int32_t excentricity(double mx1, double my1, double mx2, double my2,
 #endif
 
 /* ==================================== */
-int32_t circ(int32_t area, int32_t perim)
+int32_t lsegmenti_circ(int32_t area, int32_t perim)
 /* ==================================== */
 {
   int32_t val_attrib;
@@ -290,17 +290,17 @@ int32_t circ(int32_t area, int32_t perim)
     val_attrib = (int32_t)(100 * K2 * (double)area / (double)(perim * perim));
   if (val_attrib > 100) return 100;
   return val_attrib;
-} /* circ() */
+} /* lsegmenti_circ() */
 
 /* ==================================== */
-int32_t dtrou(int32_t area, int32_t trou)
+int32_t lsegmenti_dtrou(int32_t area, int32_t trou)
 /* ==================================== */
 {
   return (10000 * trou) / area;
-} /* dtrou() */
+} /* lsegmenti_dtrou() */
 
 /* ==================================== */
-void signature(int32_t mesure, int32_t X, int32_t Y, int32_t * M, cbtcell * CBT, int32_t rs, 
+void lsegmenti_signature(int32_t mesure, int32_t X, int32_t Y, int32_t * M, cbtcell * CBT, int32_t rs, 
                int32_t *SURF, int32_t *PROF, int32_t *VOL, int32_t *PER, 
                uint8_t *RDIST, int32_t *TROU, uint8_t *EXCEN)
 /* ==================================== */
@@ -314,63 +314,63 @@ void signature(int32_t mesure, int32_t X, int32_t Y, int32_t * M, cbtcell * CBT,
   {
     i = M[Y * rs + X];
     while (i != NIL) { tabres[Data(CBT,i)] = PROF[i]; i = Father(CBT, i); }
-    visualise(tabres, "prof", X, Y);
+    lsegmenti_visualise(tabres, "prof", X, Y);
   }
   if (mesure & SURFACE)
   {
     i = M[Y * rs + X];
     while (i != NIL) { tabres[Data(CBT,i)] = SURF[i]; i = Father(CBT, i); }
-    visualise(tabres, "surf", X, Y);
+    lsegmenti_visualise(tabres, "surf", X, Y);
   }
   if (mesure & VOLUME)
   {
     i = M[Y * rs + X];
     while (i != NIL) { tabres[Data(CBT,i)] = VOL[i]; i = Father(CBT, i); }
-    visualise(tabres, "vol", X, Y);
+    lsegmenti_visualise(tabres, "vol", X, Y);
   }
   if (mesure & PERIMETRE)
   {
     i = M[Y * rs + X];
     while (i != NIL) { tabres[Data(CBT,i)] = PER[i]; i = Father(CBT, i); }
-    visualise(tabres, "perim", X, Y);
+    lsegmenti_visualise(tabres, "perim", X, Y);
   }
   if (mesure & CIRCULARITE)
   {
     i = M[Y * rs + X];
-    while (i != NIL) { tabres[Data(CBT,i)]=circ(SURF[i],PER[i]); i=Father(CBT,i); }
-    visualise(tabres, "circ", X, Y);
+    while (i != NIL) { tabres[Data(CBT,i)]=lsegmenti_circ(SURF[i],PER[i]); i=Father(CBT,i); }
+    lsegmenti_visualise(tabres, "lsegmenti_circ", X, Y);
   }
   if (mesure & ROOTDIST)
   {
     i = M[Y * rs + X];
     while (i != NIL) { tabres[Data(CBT,i)]= RDIST[i]; i=Father(CBT,i); }
-    visualise(tabres, "rdist", X, Y);
+    lsegmenti_visualise(tabres, "rdist", X, Y);
   }
   if (mesure & NBTROUS)
   {
     i = M[Y * rs + X];
     while (i != NIL) { tabres[Data(CBT,i)]= TROU[i]; i=Father(CBT,i); }
-    visualise(tabres, "trou", X, Y);
+    lsegmenti_visualise(tabres, "trou", X, Y);
   }
   if (mesure & DENSTROUS)
   {
     i = M[Y * rs + X];
-    while (i != NIL) { tabres[Data(CBT,i)]= dtrou(SURF[i],TROU[i]); i=Father(CBT,i); }
-    visualise(tabres, "dtrou", X, Y);
+    while (i != NIL) { tabres[Data(CBT,i)]= lsegmenti_dtrou(SURF[i],TROU[i]); i=Father(CBT,i); }
+    lsegmenti_visualise(tabres, "lsegmenti_dtrou", X, Y);
   }
 #ifdef MOMENTS
   if (mesure & EXCENTRICITE)
   {
     i = M[Y * rs + X];
     while (i != NIL) { tabres[Data(CBT,i)]= EXCEN[i]; i=Father(CBT,i); }
-    visualise(tabres, "excen", X, Y);
+    lsegmenti_visualise(tabres, "excen", X, Y);
   }
 #endif
-} /* signature() */
+} /* lsegmenti_signature() */
 
 
 /* ==================================== */
-void printcomp(int32_t X, int32_t Y, int32_t * M, cbtcell * CBT, int32_t rs,
+void lsegmenti_printcomp(int32_t X, int32_t Y, int32_t * M, cbtcell * CBT, int32_t rs,
                int32_t *SURF, int32_t *PROF, int32_t *VOL, int32_t *PER, 
                uint8_t *RDIST, int32_t *TROU, uint8_t *EXCEN)
 /* ==================================== */
@@ -390,15 +390,15 @@ void printcomp(int32_t X, int32_t Y, int32_t * M, cbtcell * CBT, int32_t rs,
 #ifdef MOMENTS
   printf("PROF\tSURF\tVOL(K)\tPER\tCIRC\tRDIST\tTROU\tDTROU\tEXCEN\n");
   printf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", 
-          PROF[x], SURF[x], VOL[x]/1000, PER[x], circ(SURF[x],PER[x]), 
-          RDIST[x], TROU[x], dtrou(SURF[x],TROU[x]), EXCEN[x]);
+          PROF[x], SURF[x], VOL[x]/1000, PER[x], lsegmenti_circ(SURF[x],PER[x]), 
+          RDIST[x], TROU[x], lsegmenti_dtrou(SURF[x],TROU[x]), EXCEN[x]);
 #else
   printf("PROF\tSURF\tVOL(K)\tPER\tCIRC\tRDIST\tTROU\tDTROU\n");
   printf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", 
-          PROF[x], SURF[x], VOL[x]/1000, PER[x], circ(SURF[x],PER[x]), 
-          RDIST[x], TROU[x], dtrou(SURF[x],TROU[x]));
+          PROF[x], SURF[x], VOL[x]/1000, PER[x], lsegmenti_circ(SURF[x],PER[x]), 
+          RDIST[x], TROU[x], lsegmenti_dtrou(SURF[x],TROU[x]));
 #endif
-} /* printcomp() */
+} /* lsegmenti_printcomp() */
 
 /* ==================================== */
 int32_t contribperim(int32_t w, uint8_t *F, uint8_t h, int32_t rs, int32_t N)
@@ -1241,8 +1241,8 @@ ReSegment:
 #ifdef MOMENTS
             ((EXCEN[x] >= seuilexcen) || (!(mesure & EXCENTRICITE))) &&
 #endif
-            ((dtrou(SURF[x], TROU[x]) <= seuildtrou) || (!(mesure & DENSTROUS))) &&
-            ((circ(SURF[x], PER[x]) >= seuilcirc) || (!(mesure & CIRCULARITE))) &&
+            ((lsegmenti_dtrou(SURF[x], TROU[x]) <= seuildtrou) || (!(mesure & DENSTROUS))) &&
+            ((lsegmenti_circ(SURF[x], PER[x]) >= seuilcirc) || (!(mesure & CIRCULARITE))) &&
             ((VOL[x] >= seuilvol) || (!(mesure & VOLUME))))
         {
           Label(CBT,x) = PERTINENT;
@@ -1276,8 +1276,8 @@ ReSegment:
 #ifdef MOMENTS
             ((EXCEN[x] >= seuilexcen) && (!(mesure & EXCENTRICITE))) ||
 #endif
-            ((dtrou(SURF[x], TROU[x]) <= seuildtrou) && (!(mesure & DENSTROUS))) ||
-            ((circ(SURF[x], PER[x]) >= seuilcirc) && (!(mesure & CIRCULARITE))) ||
+            ((lsegmenti_dtrou(SURF[x], TROU[x]) <= seuildtrou) && (!(mesure & DENSTROUS))) ||
+            ((lsegmenti_circ(SURF[x], PER[x]) >= seuilcirc) && (!(mesure & CIRCULARITE))) ||
             ((VOL[x] >= seuilvol) && (mesure & VOLUME)))
         {
           Label(CBT,x) = PERTINENT;
@@ -1320,7 +1320,7 @@ ReSegment:
           nbfilspert++;
 #ifdef MAXCOND
       if ((nbfilspert == 1)  /* si y, le pere de x, n'a pas d'autre fils pertinent */
-          && (circ(SURF[y], PER[y]) >= seuilcirc)) /* et s'il est circulaire */
+          && (lsegmenti_circ(SURF[y], PER[y]) >= seuilcirc)) /* et s'il est circulaire */
 #else
       if (nbfilspert == 1)  /* si y, le pere de x, n'a pas d'autre fils pertinent */
 #endif
@@ -1528,11 +1528,11 @@ case 10000: FRectangle(4 * BoxWidth, ImageHeight + 2*BoxHeight, BoxWidth, BoxHei
   if ((xx < ImageWidth) && (yy < ImageHeight))
   {
 #ifdef MOMENTS
-    signature(mesure, xx, yy, M, CBT, rs, SURF, PROF, VOL, PER, RDIST, TROU, EXCEN);
-    printcomp(xx, yy, M, CBT, rs, SURF, PROF, VOL, PER, RDIST, TROU, EXCEN);
+    lsegmenti_signature(mesure, xx, yy, M, CBT, rs, SURF, PROF, VOL, PER, RDIST, TROU, EXCEN);
+    lsegmenti_printcomp(xx, yy, M, CBT, rs, SURF, PROF, VOL, PER, RDIST, TROU, EXCEN);
 #else
-    signature(mesure, xx, yy, M, CBT, rs, SURF, PROF, VOL, PER, RDIST, TROU, NULL);
-    printcomp(xx, yy, M, CBT, rs, SURF, PROF, VOL, PER, RDIST, TROU, NULL);
+    lsegmenti_signature(mesure, xx, yy, M, CBT, rs, SURF, PROF, VOL, PER, RDIST, TROU, NULL);
+    lsegmenti_printcomp(xx, yy, M, CBT, rs, SURF, PROF, VOL, PER, RDIST, TROU, NULL);
 #endif
   }
   xx /= BoxWidth;

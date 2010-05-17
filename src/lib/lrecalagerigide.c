@@ -64,9 +64,9 @@ static double distcarre(double x1, double y1, double x2, double y2)
 }
 
 /* ==================================== */
-double Delta(double *X, int32_t n, double *Y, int32_t m)
+double lrecalagerigide_Delta(double *X, int32_t n, double *Y, int32_t m)
 /* ==================================== */
-/*! \fn double Delta(double *X, int32_t n, double *Y, int32_t m)
+/*! \fn double lrecalagerigide_Delta(double *X, int32_t n, double *Y, int32_t m)
     \param X (entrée) : matrice n * 2 contenant le premier ensemble de points
     \param n (entrée) : nombre de points dans X
     \param Y (entrée) : matrice m * 2 contenant le second ensemble de points
@@ -91,12 +91,12 @@ double Delta(double *X, int32_t n, double *Y, int32_t m)
     delta += tmin;
   } // for (i = 0; i < n; i++)
   return delta;
-} // Delta()
+} // lrecalagerigide_Delta()
 
 /* ==================================== */
-void Tgamma(double *X, int32_t n, double *Gamma, double *R)
+void lrecalagerigide_Tgamma(double *X, int32_t n, double *Gamma, double *R)
 /* ==================================== */
-/*! \fn double Tgamma(double *X, int32_t n, double *Y, int32_t m)
+/*! \fn double lrecalagerigide_Tgamma(double *X, int32_t n, double *Y, int32_t m)
     \param X (entrée) : matrice n * 2 contenant un ensemble de points
     \param n (entrée) : nombre de points dans X
     \param Gamma (entrée) : paramètres d'une transformation affine linéaire
@@ -126,20 +126,20 @@ void Tgamma(double *X, int32_t n, double *Gamma, double *R)
     R[i*2 + 0] = R[i*2 + 0] + Gamma[3]; // tx
     R[i*2 + 1] = R[i*2 + 1] + Gamma[4]; // ty
   } // for (i = 0; i < n; i++)
-} // Tgamma() 
+} // lrecalagerigide_Tgamma() 
 
 /* ==================================== */
-double F(double *G, ensemble *ens)
+double lrecalagerigide_F(double *G, ensemble *ens)
 /* ==================================== */
 {
-  Tgamma(ens->X, ens->n, G, ens->Tmp);
-  return Delta(ens->Tmp, ens->n, ens->Y, ens->m);  
-} // F()
+  lrecalagerigide_Tgamma(ens->X, ens->n, G, ens->Tmp);
+  return lrecalagerigide_Delta(ens->Tmp, ens->n, ens->Y, ens->m);  
+} // lrecalagerigide_F()
 
 /* ==================================== */
-double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
+double *lrecalagerigide_lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
 /* ==================================== */
-/*! \fn double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
+/*! \fn double *lrecalagerigide_lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
     \param X (entrée/sortie) : matrice n * 2 contenant le premier ensemble de points
     \param n (entrée) : nombre de points dans X
     \param Y (entrée) : matrice m * 2 contenant le second ensemble de points
@@ -172,10 +172,10 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
   ens.X = X; ens.n = n; ens.Y = Y; ens.m = m; 
   ens.Tmp = (double *)calloc(1, 2 * max(n,m) * sizeof(double));
 
-  powell(F, &ens, G, 5, PRECISION, 0.1, MAXITER, &fmin);
+  powell(lrecalagerigide_F, &ens, G, 5, PRECISION, 0.1, MAXITER, &fmin);
 
   G[3] += BY1; G[4] += BY2;
-  Tgamma(X, n, G, ens.Tmp);
+  lrecalagerigide_Tgamma(X, n, G, ens.Tmp);
   G[3] -= BX1; G[4] -= BX2;
 
   for (i = 0; i < n+n; i++) X[i] = ens.Tmp[i]; 
@@ -184,7 +184,7 @@ double *lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
   memcpy(Gamma, G, 5 * sizeof(double));
   free(ens.Tmp);
   return Gamma;
-} // lrecalagerigide2d()
+} // lrecalagerigide_lrecalagerigide2d()
 
 /* ==================================== */
 static double distcarre3d(double x1, double y1, double z1, double x2, double y2, double z2)
@@ -194,9 +194,9 @@ static double distcarre3d(double x1, double y1, double z1, double x2, double y2,
 }
 
 /* ==================================== */
-double Delta3d(double *X, int32_t n, double *Y, int32_t m)
+double lrecalagerigide_Delta3d(double *X, int32_t n, double *Y, int32_t m)
 /* ==================================== */
-/*! \fn double Delta3d(double *X, int32_t n, double *Y, int32_t m)
+/*! \fn double lrecalagerigide_Delta3d(double *X, int32_t n, double *Y, int32_t m)
     \param X (entrée) : matrice n * 3 contenant le premier ensemble de points
     \param n (entrée) : nombre de points dans X
     \param Y (entrée) : matrice m * 3 contenant le second ensemble de points
@@ -222,12 +222,12 @@ double Delta3d(double *X, int32_t n, double *Y, int32_t m)
     delta += tmin;
   } // for (i = 0; i < n; i++)
   return delta;
-} // Delta3d()
+} // lrecalagerigide_Delta3d()
 
 /* ==================================== */
-void Tgamma3d(double *X, int32_t n, double *Gamma, double *R)
+void lrecalagerigide_Tgamma3d(double *X, int32_t n, double *Gamma, double *R)
 /* ==================================== */
-/*! \fn double Tgamma3d(double *X, int32_t n, double *Y, int32_t m)
+/*! \fn double lrecalagerigide_Tgamma3d(double *X, int32_t n, double *Y, int32_t m)
     \param X (entrée) : matrice n * 2 contenant un ensemble de points
     \param n (entrée) : nombre de points dans X
     \param Gamma (entrée) : paramètres d'une transformation affine linéaire
@@ -270,15 +270,15 @@ void Tgamma3d(double *X, int32_t n, double *Gamma, double *R)
     R[i*3 + 1] = R[i*3 + 1] + Gamma[6]; // ty
     R[i*3 + 2] = R[i*3 + 2] + Gamma[7]; // tz
   } // for (i = 0; i < n; i++)
-} // Tgamma3d() 
+} // lrecalagerigide_Tgamma3d() 
 
 /* ==================================== */
-double F3d(double *G, ensemble *ens)
+double lrecalagerigide_F3d(double *G, ensemble *ens)
 /* ==================================== */
 {
-  Tgamma3d(ens->X, ens->n, G, ens->Tmp);
-  return Delta3d(ens->Tmp, ens->n, ens->Y, ens->m);  
-} // F3d()
+  lrecalagerigide_Tgamma3d(ens->X, ens->n, G, ens->Tmp);
+  return lrecalagerigide_Delta3d(ens->Tmp, ens->n, ens->Y, ens->m);  
+} // lrecalagerigide_F3d()
 
 /* ==================================== */
 double *lrecalagerigide3d(double *X, int32_t n, double *Y, int32_t m)
@@ -317,10 +317,10 @@ double *lrecalagerigide3d(double *X, int32_t n, double *Y, int32_t m)
   ens.Tmp = (double *)calloc(1, 3 * max(n,m) * sizeof(double));
   
 
-  powell(F3d, &ens, G, 8, PRECISION, 0.1, MAXITER, &fmin);
+  powell(lrecalagerigide_F3d, &ens, G, 8, PRECISION, 0.1, MAXITER, &fmin);
 
   G[5] += BY1; G[6] += BY2; G[7] += BY3;
-  Tgamma3d(X, n, G, ens.Tmp);
+  lrecalagerigide_Tgamma3d(X, n, G, ens.Tmp);
   G[5] -= BX1; G[6] -= BX2; G[7] -= BX3;
 
   for (i = 0; i < 3*n; i++) X[i] = ens.Tmp[i]; 
@@ -340,7 +340,7 @@ double *lrecalagerigide3d(double *X, int32_t n, double *Y, int32_t m)
 static double SEUIL2;
 
 /* ==================================== */
-double F_num(double *G, struct xvimage * image1, struct xvimage * image2)
+double lrecalagerigide_F_num(double *G, struct xvimage * image1, struct xvimage * image2)
 /* ==================================== */
 // fonction de l'évaluation d'erreur pour 2 images numériques
 //
@@ -417,12 +417,12 @@ double F_num(double *G, struct xvimage * image1, struct xvimage * image2)
   } // for (i = 0; i < N; i++)
 
   return ErrorQuad;
-} // F_num()
+} // lrecalagerigide_F_num()
 
 /* ==================================== */
-int32_t lrecalagerigide2d_num(struct xvimage * image1, struct xvimage * image2, double *G, double seuil, double precision)
+int32_t lrecalagerigide_lrecalagerigide2d_num(struct xvimage * image1, struct xvimage * image2, double *G, double seuil, double precision)
 /* ==================================== */
-/*! \fn double *lrecalagerigide2d_num(struct xvimage * image1, struct xvimage * image2)
+/*! \fn double *lrecalagerigide_lrecalagerigide2d_num(struct xvimage * image1, struct xvimage * image2)
     \param image1 (entrée/sortie) : première image
     \param image2 (entrée) : seconde image
     \param G (entrée/sortie) : vecteur des paramètres de la déformation recalant image1 à image2 - en entrée : une déformation initiale
@@ -436,21 +436,21 @@ int32_t lrecalagerigide2d_num(struct xvimage * image1, struct xvimage * image2, 
        et d'une translation de vecteur (tx, ty).
 */
 #undef F_NAME
-#define F_NAME "lrecalagerigide2d_num"
+#define F_NAME "lrecalagerigide_lrecalagerigide2d_num"
 {
   double fmin;
 
 #ifdef ESSAI
-  SEUIL2 = seuil; // globale utilisée par F_num 
+  SEUIL2 = seuil; // globale utilisée par lrecalagerigide_F_num 
 #else
-  SEUIL2 = seuil * seuil; // globale utilisée par F_num - pour éliminer les outliers
+  SEUIL2 = seuil * seuil; // globale utilisée par lrecalagerigide_F_num - pour éliminer les outliers
 #endif
 
-  if (powell_num(F_num, image1, image2, G, 5, precision, 0.1, MAXITER, &fmin) == M_NOT_FOUND)
+  if (powell_num(lrecalagerigide_F_num, image1, image2, G, 5, precision, 0.1, MAXITER, &fmin) == M_NOT_FOUND)
   {
     fprintf(stderr, "%s() : powell_num failed\n", F_NAME);
     return(0);    
   }
 
   return 1;
-} // lrecalagerigide2d_num()
+} // lrecalagerigide_lrecalagerigide2d_num()
