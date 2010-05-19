@@ -91,8 +91,40 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  writeimage(image, argv[4]);
-  freeimage(image);
+  if (datatype(image) != VFF_TYP_1_BYTE)
+  {
+    struct xvimage * imagebyte;
+    int32_t *L;
+    uint8_t *B;
+    int32_t x, rs, cs, ds, N;
+    rs = rowsize(image);
+    cs = colsize(image);
+    ds = depth(image);
+    N = rs * cs * ds;
+    L = SLONGDATA(image);
+  
+    imagebyte = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+    if (imagebyte == NULL)
+    {
+      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+      exit(1);
+    }
+    razimage(imagebyte);
+    B = UCHARDATA(imagebyte);
+    imagebyte->xdim = image->xdim;
+    imagebyte->ydim = image->ydim;
+    imagebyte->zdim = image->zdim;
+    for (x = 0; x < N; x++)
+      if (L[x]) B[x] = (uint8_t)255;
+    writeimage(imagebyte, argv[argc-1]);
+    freeimage(imagebyte);
+    freeimage(image);
+  }
+  else
+  {
+    writeimage(image, argv[argc-1]);
+    freeimage(image);
+  }
 
   return 0;
 } /* main */
