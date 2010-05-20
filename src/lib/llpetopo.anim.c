@@ -211,7 +211,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <curses.h>
+//#include <curses.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcfah.h>

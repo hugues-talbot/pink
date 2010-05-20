@@ -3474,3 +3474,70 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   mctopo3d_termine_topo3d();
   return(1);
 } /* lskelDSK3() */
+
+// =======================================================================
+// =======================================================================
+//
+// Functions for detecting curves and surfaces in a symmetrical skeleton
+//
+// =======================================================================
+// =======================================================================
+
+/* ==================================== */
+int32_t lskel1Disthmuspoints(struct xvimage *image)
+/* ==================================== */
+/*
+  Detects ID isthmuses in image
+*/
+#undef F_NAME
+#define F_NAME "lskel1Disthmuspoints"
+{ 
+  int32_t i;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);   /* l'image de depart */
+  int32_t top, topb;
+  uint8_t v[27];
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+  mctopo3d_init_topo3d();
+
+  // MARQUE LES POINTS SIMPLES
+  for (i = 0; i < N; i++) 
+    if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N))
+	SET_SIMPLE(S[i]);
+  // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS DE COURBE (2)
+  for (i = 0; i < N; i++) 
+    if (IS_SIMPLE(S[i]))
+    { 
+      extract_vois(S, i, rs, ps, N, v);
+      if (match2s(v))
+	insert_vois(v, S, i, rs, ps, N);
+    }
+  // TROISIEME SOUS-ITERATION : MARQUE LES POINTS DE COURBE (1)
+  for (i = 0; i < N; i++) 
+    if (IS_SIMPLE(S[i]))
+    { 
+      extract_vois(S, i, rs, ps, N, v);
+      if (match1s(v))
+	insert_vois(v, S, i, rs, ps, N);
+    }
+  // MARQUE LES POINTS DE COURBE (3)
+  for (i = 0; i < N; i++)
+  {
+    if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
+    {    
+      mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+      if (top > 1) SET_CURVE(S[i]);
+    }
+  }
+  // RETOURNE PTS DE COURBE DANS S
+  for (i = 0; i < N; i++)
+    if (IS_CURVE(S[i])) S[i] = NDG_MAX; else S[i] = 0;
+
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lskel1Disthmuspoints() */

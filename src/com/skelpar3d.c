@@ -67,6 +67,11 @@ The possible choices are:
 In modes other than 2, if the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
 
+The following codes give access to auxiliary functions, for isthmus detection. 
+Parameter \b nsteps will not be used in this case (any value can be given).
+
+\li 100: 1D isthmus points
+
 <B>Warning:</B> The object must not have any point on the frame of the image.
 
 <B>Types supported:</B> byte 3d
@@ -134,6 +139,8 @@ int main(int argc, char **argv)
     fprintf(stderr, "  13: ultimafe, directional (DRK3)\n");
     fprintf(stderr, "  14: surfacic, directional, based on residual points (DRK3)\n");
     fprintf(stderr, "  15: surfacic, directional, based on 2D isthmuses (DSK3)\n");
+    fprintf(stderr, "\n");
+    fprintf(stderr, " 100: 1D isthmus points detection\n");
     exit(1);
   }
 
@@ -287,6 +294,12 @@ int main(int argc, char **argv)
       if (! lskelDSK3(image, nsteps, inhibit))
       {
 	fprintf(stderr, "%s: lskelDSK3 failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 100:
+      if (! lskel1Disthmuspoints(image))
+      {
+	fprintf(stderr, "%s: lskel1Disthmuspoints failed\n", argv[0]);
 	exit(1);
       } break;
     default: 

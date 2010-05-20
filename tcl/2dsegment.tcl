@@ -191,6 +191,7 @@ bind $SEG2D(can) <ButtonRelease-1> {
   my_exec seuil2 [tmpfile v] 0 1 0 $SEG2D(label) [tmpfile v]
   my_exec max [tmpfile v] [tmpfile l] [tmpfile l]
   my_exec watershedMeyer2 [tmpfile g] [tmpfile l] null $SEG2D(connex) [tmpfile t]
+  my_exec seuil [tmpfile t] 1 [tmpfile t]
   my_exec surimp [tmpfile o] [tmpfile t] [tmpfile d]
   $SEG2D(im) read [tmpfile d]
 }
@@ -216,6 +217,7 @@ proc seg2d_frame {} {
   my_exec byte2long [tmpfile 1] [tmpfile 1]
   my_exec max [tmpfile 1] [tmpfile l] [tmpfile l]
   my_exec watershedMeyer2 [tmpfile g] [tmpfile l] null $SEG2D(connex) [tmpfile t]
+  my_exec seuil [tmpfile t] 1 [tmpfile t]
   my_exec surimp [tmpfile o] [tmpfile t] [tmpfile d]
   $SEG2D(im) read [tmpfile d]
 }
@@ -224,6 +226,7 @@ proc seg2d_gradient {} {
   global SEG2D
   my_exec gradientcd [tmpfile o] $SEG2D(alpha) [tmpfile g]
   my_exec watershedMeyer2 [tmpfile g] [tmpfile l] null $SEG2D(connex) [tmpfile t]
+  my_exec seuil [tmpfile t] 1 [tmpfile t]
   my_exec surimp [tmpfile o] [tmpfile t] [tmpfile d]
   $SEG2D(im) read [tmpfile d]
 }
@@ -276,6 +279,7 @@ proc seg2d_vue_smooth {radius} {
 proc seg2d_vue_surimp {} {
   global SEG2D
   my_exec watershedMeyer2 [tmpfile g] [tmpfile l] null $SEG2D(connex) [tmpfile t]
+  my_exec seuil [tmpfile t] 1 [tmpfile t]
   my_exec surimp [tmpfile o] [tmpfile t] [tmpfile d]
   $SEG2D(im) read [tmpfile d]
 }
