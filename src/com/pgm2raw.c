@@ -102,8 +102,7 @@ int main(int argc, char **argv)
 #ifdef DOSIO
   fd = fopen(argv[argc - 1],"wb");
 #endif
-if (datatype(image) != VFF_TYP_1_BYTE)
-{
+
   if(datatype(image) == VFF_TYP_1_BYTE)
   {
 	ret = fwrite(UCHARDATA(image), sizeof(char), N, fd);
@@ -117,16 +116,6 @@ if (datatype(image) != VFF_TYP_1_BYTE)
     fprintf(stderr, "%s: only %d items written\n", argv[0], ret);
     exit(1);
   }
-}
-// else if (datatype(image) == VFF_TYP_2_BYTE)
-//   {
-// ret = fwrite(UINTDATA(image), sizeof(unsigned int), N, fd);
-//   if (ret != N)
-//   {
-//     fprintf(stderr, "%s: only %d items written\n", argv[0], ret);
-//     exit(1);
-//   }
-// }
 
   fclose(fd);
 
