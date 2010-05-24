@@ -148,7 +148,7 @@ static int32_t orientation(double mx1, double my1, double mx2, double my2, doubl
 #ifdef DEBUGORIEN
   printf("Mx2 = %g ; My2 = %g ; Mxy2 = %g ; lambda1 = %g\n", Mx2, My2, Mxy2, lambda1);
 #endif
-  if (abs(lambda1 - Mx2) < EPSILON) return 0; 
+  if (mcabs(lambda1 - Mx2) < EPSILON) return 0; 
   a = Mxy2 / (lambda1 - Mx2);
   if (a < 0) sign = -1; else sign = 1; 
   a = a * a;

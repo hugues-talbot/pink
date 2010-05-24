@@ -321,7 +321,7 @@ int32_t voisins4(int32_t i, int32_t j, int32_t rs)
   int32_t xj = j % rs;
   int32_t yi = i / rs;
   int32_t yj = j / rs;
-  if (abs(xi-xj) + abs(yi-yj) != 1) return 0;
+  if (mcabs(xi-xj) + mcabs(yi-yj) != 1) return 0;
   return 1;
 } // voisins4()
 
@@ -336,8 +336,8 @@ int32_t voisins8(int32_t i, int32_t j, int32_t rs)
   int32_t xj = j % rs;
   int32_t yi = i / rs;
   int32_t yj = j / rs;
-  if (abs(xi-xj) > 1) return 0;
-  if (abs(yi-yj) > 1) return 0;
+  if (mcabs(xi-xj) > 1) return 0;
+  if (mcabs(yi-yj) > 1) return 0;
   return 1;
 } // voisins8()
 
@@ -355,7 +355,7 @@ int32_t voisins6(int32_t i, int32_t j, int32_t rs, int32_t ps)
   int32_t yj = (j%ps) / rs;
   int32_t zi = i / ps;
   int32_t zj = j / ps;
-  if (abs(xi-xj) + abs(yi-yj) + abs(zi-zj) != 1) return 0;
+  if (mcabs(xi-xj) + mcabs(yi-yj) + mcabs(zi-zj) != 1) return 0;
   return 1;
 } // voisins6()
 
@@ -373,10 +373,10 @@ int32_t voisins18(int32_t i, int32_t j, int32_t rs, int32_t ps)
   int32_t yj = (j%ps) / rs;
   int32_t zi = i / ps;
   int32_t zj = j / ps;
-  if (abs(xi-xj) > 1) return 0;
-  if (abs(yi-yj) > 1) return 0;
-  if (abs(zi-zj) > 1) return 0;
-  if ((abs(xi-xj) == 1) && (abs(yi-yj) == 1) && (abs(zi-zj) == 1)) return 0;
+  if (mcabs(xi-xj) > 1) return 0;
+  if (mcabs(yi-yj) > 1) return 0;
+  if (mcabs(zi-zj) > 1) return 0;
+  if ((mcabs(xi-xj) == 1) && (mcabs(yi-yj) == 1) && (mcabs(zi-zj) == 1)) return 0;
   return 1;
 } // voisins18()
 
@@ -394,9 +394,9 @@ int32_t voisins26(int32_t i, int32_t j, int32_t rs, int32_t ps)
   int32_t yj = (j%ps) / rs;
   int32_t zi = i / ps;
   int32_t zj = j / ps;
-  if (abs(xi-xj) > 1) return 0;
-  if (abs(yi-yj) > 1) return 0;
-  if (abs(zi-zj) > 1) return 0;
+  if (mcabs(xi-xj) > 1) return 0;
+  if (mcabs(yi-yj) > 1) return 0;
+  if (mcabs(zi-zj) > 1) return 0;
   return 1;
 } // voisins26()
 
@@ -664,7 +664,7 @@ int32_t sont4voisins(int32_t p, int32_t q, int32_t rs)
 /* ==================================== */
 {
   int32_t xp = p % rs, xq = q % rs, yp = p / rs, yq = q / rs;
-  return ((abs(xp-xq) + abs(yp-yq)) == 1);
+  return ((mcabs(xp-xq) + mcabs(yp-yq)) == 1);
 }
 
 /* ==================================== */
@@ -672,9 +672,9 @@ int32_t sont8voisins(int32_t p, int32_t q, int32_t rs)
 /* ==================================== */
 {
   int32_t xp = p % rs, xq = q % rs, yp = p / rs, yq = q / rs;
-  int32_t ax = abs(xp-xq);
-  int32_t ay = abs(yp-yq);
-  return (max(ax,ay) == 1);
+  int32_t ax = mcabs(xp-xq);
+  int32_t ay = mcabs(yp-yq);
+  return (mcmax(ax,ay) == 1);
 }
 
 /* ==================================== */
@@ -684,7 +684,7 @@ int32_t sont6voisins(int32_t p, int32_t q, int32_t rs, int32_t ps)
   int32_t xp = p % rs, xq = q % rs; 
   int32_t yp = (p%ps) / rs, yq = (q%ps) / rs; 
   int32_t zp = p / ps, zq = q / ps;
-  return ((abs(xp-xq) + abs(yp-yq) + abs(zp-zq)) == 1);
+  return ((mcabs(xp-xq) + mcabs(yp-yq) + mcabs(zp-zq)) == 1);
 }
 
 /* ==================================== */
@@ -694,11 +694,11 @@ int32_t sont26voisins(int32_t p, int32_t q, int32_t rs, int32_t ps)
   int32_t xp = p % rs, xq = q % rs; 
   int32_t yp = (p%ps) / rs, yq = (q%ps) / rs; 
   int32_t zp = p / ps, zq = q / ps;
-  int32_t ax = abs(xp-xq);
-  int32_t ay = abs(yp-yq);
-  int32_t axy = max(ax,ay);
-  int32_t az = abs(zp-zq);
-  return (max(axy,az) == 1);
+  int32_t ax = mcabs(xp-xq);
+  int32_t ay = mcabs(yp-yq);
+  int32_t axy = mcmax(ax,ay);
+  int32_t az = mcabs(zp-zq);
+  return (mcmax(axy,az) == 1);
 }
 
 /* ==================================== */
@@ -708,9 +708,9 @@ int32_t sont18voisins(int32_t p, int32_t q, int32_t rs, int32_t ps)
   int32_t xp = p % rs, xq = q % rs; 
   int32_t yp = (p%ps) / rs, yq = (q%ps) / rs; 
   int32_t zp = p / ps, zq = q / ps;
-  int32_t ax = abs(xp-xq);
-  int32_t ay = abs(yp-yq);
-  int32_t axy = max(ax,ay);
-  int32_t az = abs(zp-zq);
-  return ((max(axy,az) == 1) && ((ax + ay + az) <= 2));
+  int32_t ax = mcabs(xp-xq);
+  int32_t ay = mcabs(yp-yq);
+  int32_t axy = mcmax(ax,ay);
+  int32_t az = mcabs(zp-zq);
+  return ((mcmax(axy,az) == 1) && ((ax + ay + az) <= 2));
 }

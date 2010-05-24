@@ -209,7 +209,7 @@ int main(int argc, char **argv)
   {
     case 0:
       for (x = 0; x < N; x++)
-        B[x] = (uint8_t)min(L[x],255);
+        B[x] = (uint8_t)mcmin(L[x],255);
       break;
     case 1:
       for (x = 0; x < N; x++)
@@ -241,7 +241,7 @@ int main(int argc, char **argv)
       TriRapideStochastique ((int32_t *)index, (int32_t *)histo, 1, nbval-1);
       newvals = histo; /* reutilisation de la place memoire allouee pour histo */
       for (i = 0; i < nbval; i++) newvals[i] = 0;
-      for (i = 1; i < min(nbval,nbnewval); i++) newvals[index[max((nbval-nbnewval),0)+i]] = i;
+      for (i = 1; i < mcmin(nbval,nbnewval); i++) newvals[index[mcmax((nbval-nbnewval),0)+i]] = i;
       for (x = 0; x < N; x++) 
         B[x] = (uint8_t)(newvals[L[x]]);
       free(histo);

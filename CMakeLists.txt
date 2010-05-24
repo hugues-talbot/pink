@@ -20,8 +20,8 @@ project(pink)
 INCLUDE (UJ_CheckIncludeFile.cmake)
 INCLUDE (UJ_CheckIncludeFileCXX.cmake)
 
-set( POTENCIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 )
-set( INCLUDES include /usr/include /usr/local/include )
+set( POTENCIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library )
+set( INCLUDES include src/python /usr/include /usr/local/include )
 
 include_directories( ${INCLUDES} )
 
@@ -70,6 +70,10 @@ if (CMAKE_HOST_UNIX)
 	    SET(PYTHON_INCLUDE "/usr/include/python" CACHE PATH "The directory of the python headers." )
 	endif(NOT PYTHON_INCLUDE)
 
+	if(NOT BOOST_INCLUDE)
+	    SET(BOOST_INCLUDE "/usr/include" CACHE PATH "The directory of the boost headers. Remember in the case of /usr/local/include/boost, you specify /usr/local/include." )
+	endif(NOT BOOST_INCLUDE)
+
 	if(NOT PYTHON_FLAG)
 	    SET(PYTHON_FLAG "-lpython2.6" CACHE STRING "The flag to use for the python library.")
 	endif(NOT PYTHON_FLAG)
@@ -77,11 +81,12 @@ if (CMAKE_HOST_UNIX)
 	find_library( BOOST_PYTHON libboost_python.${LIBEXT} ${POTENCIAL_LIBDIRS} )
 	set( LIBS ${LIBS} ${BOOST_PYTHON} )
 	find_library( BOOST_THREAD libboost_thread-mt.${LIBEXT} ${POTENCIAL_LIBDIRS} )
+	find_library( BOOST_THREAD libboost_thread.${LIBEXT} ${POTENCIAL_LIBDIRS} )
 	set( LIBS ${LIBS} ${BOOST_THREAD} )
 
 	# looking for the python library 
 	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_FLAG} ${LIBS}  )
-	set( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${INCLUDES} ${PYTHON_INCLUDE} )
+	set( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${INCLUDES} ${PYTHON_INCLUDE} ${BOOST_INCLUDE} )
 
 	find_library( GSL_LIB libgsl.${LIBEXT} ${POTENCIAL_LIBDIRS} )
 	set( LIBS ${LIBS} ${GSL_LIB} )
@@ -89,10 +94,20 @@ if (CMAKE_HOST_UNIX)
 	find_library( GSLCBLAS_LIB libgslcblas.${LIBEXT} ${POTENCIAL_LIBDIRS} )
 	set( LIBS ${LIBS} ${GSLCBLAS_LIB} )
 
+	CHECK_INCLUDE_FILE( pyconfig.h HTEST )
+	if (NOT HTEST)
+	    message( FATAL_ERROR " pyconfig.h header file failed to compile. If it is installed, than check the python flags and directories") 
+        endif(NOT HTEST)
+
 	CHECK_INCLUDE_FILE( gsl/gsl_interp.h HTEST )
 	if (NOT HTEST)
-	    message( FATAL_ERROR "gsl header files failed to compile. If it is installed, than check the python flags") 
+	    message( FATAL_ERROR "gsl header file failed to compile. If it is installed, than check the python flags") 
         endif(NOT HTEST)
+
+#	CHECK_INCLUDE_FILE( curses.h HTEST122 )
+#	if (NOT HTEST)
+#	    message( FATAL_ERROR "curses.h header file failed to compile. If it is installed, than check the python flags") 
+#        endif(NOT HTEST122)
 	 
 	CHECK_INCLUDE_FILE_CXX( boost/shared_ptr.hpp  HTEST3 )
 	if (NOT HTEST3)
@@ -168,9 +183,9 @@ endif(BASH_FRONT_END)
 # -------- Python front-end --------------------
 
 if (CMAKE_HOST_UNIX)
-    if ( HAVE_BOOST_LIBRARIES )
+    if ( PYTHON_FRONT_END )
 	add_subdirectory( src/python python )
-    endif ( HAVE_BOOST_LIBRARIES )
+    endif ( PYTHON_FRONT_END )
 endif (CMAKE_HOST_UNIX)
 
 # ----------------------------------------------

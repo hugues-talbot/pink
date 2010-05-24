@@ -112,7 +112,7 @@ void hpclosing(struct xvimage * image, int32_t nptb, int32_t * tab_es_x, int32_t
     exit(0);
   }
   // max image_cpy image_sav image_cpy
-  for (i = 0; i < N; i++) C[i] = max(C[i],S[i]);
+  for (i = 0; i < N; i++) C[i] = mcmax(C[i],S[i]);
   if (!lhthindelta(image, image_cpy, -1, connex))
   {
     fprintf(stderr, "%s: function lhthindelta failed\n", F_NAME);
@@ -173,7 +173,7 @@ void hpclosingdisc(struct xvimage * image, struct xvimage * dist, int32_t r, int
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -225,7 +225,7 @@ void hpopening(struct xvimage * image, int32_t nptb, int32_t * tab_es_x, int32_t
     exit(0);
   }
   // min image_cpy image_sav image_cpy
-  for (i = 0; i < N; i++) C[i] = min(C[i],S[i]);
+  for (i = 0; i < N; i++) C[i] = mcmin(C[i],S[i]);
   if (!lhthickdelta(image, image_cpy, -1, connex))
   {
     fprintf(stderr, "%s: function lhthickdelta failed\n", "hpopening");
@@ -285,7 +285,7 @@ void hpopeningdisc(struct xvimage * image, struct xvimage * dist, int32_t r, int
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MIN; else T[i] = NDG_MAX;
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta(image, image_tmp, -1, connex))
@@ -382,7 +382,7 @@ void condhpclosing(
   }
 
   // min image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],C[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],C[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta(image, image_tmp, -1, connex))
@@ -400,7 +400,7 @@ void condhpclosing(
   }
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -470,7 +470,7 @@ void condhpclosingdisc(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -541,7 +541,7 @@ void condhpclosingdisc2(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -588,7 +588,7 @@ void condhpopening(
   }
 
   // max image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],C[i]);    
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],C[i]);    
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -606,7 +606,7 @@ void condhpopening(
   }
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta(image, image_tmp, -1, connex))
@@ -656,7 +656,7 @@ void condhpopeningdisc(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],C[i]);    
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],C[i]);    
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -676,7 +676,7 @@ void condhpopeningdisc(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MIN; else T[i] = NDG_MAX;
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta(image, image_tmp, -1, connex))
@@ -727,7 +727,7 @@ void condhpopeningdisc2(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],C[i]);    
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],C[i]);    
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -747,7 +747,7 @@ void condhpopeningdisc2(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MIN; else T[i] = NDG_MAX;
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta(image, image_tmp, -1, connex))
@@ -1043,7 +1043,7 @@ void hpclosing3d(struct xvimage *image, int32_t nptb, int32_t *tab_es_x, int32_t
     exit(0);
   }
   // max image_cpy image_sav image_cpy
-  for (i = 0; i < N; i++) C[i] = max(C[i],S[i]);
+  for (i = 0; i < N; i++) C[i] = mcmax(C[i],S[i]);
   if (!lhthindelta3d(image, image_cpy, -1, connex))
   {
     fprintf(stderr, "%s: function lhthindelta3d failed\n", F_NAME);
@@ -1105,7 +1105,7 @@ void hpclosing3dball(struct xvimage *image, struct xvimage * dist, int32_t r, in
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   // controle topologique pour l'erosion
   if (!lhthindelta3d(image, image_tmp, -1, connex))
@@ -1183,7 +1183,7 @@ void hpopening3d(struct xvimage *image, int32_t nptb, int32_t *tab_es_x, int32_t
     exit(0);
   }
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
   if (!lhthickdelta3d(image, image_tmp, -1, connex))
   {
     fprintf(stderr, "%s: function lhthickdelta3d failed\n", F_NAME);
@@ -1245,7 +1245,7 @@ void hpopening3dball(struct xvimage *image, struct xvimage * dist, int32_t r, in
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MIN; else T[i] = NDG_MAX;
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta3d(image, image_tmp, -1, connex))
@@ -1319,7 +1319,7 @@ void condhpclosing3d(
   }
 
   // min image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],C[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],C[i]);
 
   if (!lhthickdelta3d(image, image_tmp, -1, connex))
   {
@@ -1336,7 +1336,7 @@ void condhpclosing3d(
   }
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   if (!lhthindelta3d(image, image_tmp, -1, connex))
   {
@@ -1407,7 +1407,7 @@ void condhpclosing3dball(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   // controle topologique pour l'erosion
   if (!lhthindelta3d(image, image_tmp, -1, connex))
@@ -1456,7 +1456,7 @@ void condhpopening3d(
   }
 
   // max image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],C[i]);    
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],C[i]);    
 
   if (!lhthindelta3d(image, image_tmp, -1, connex))
   {
@@ -1473,7 +1473,7 @@ void condhpopening3d(
   }
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   if (!lhthickdelta3d(image, image_tmp, -1, connex))
   {
@@ -1524,7 +1524,7 @@ void condhpopening3dball(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],C[i]);    
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],C[i]);    
 
   // controle topologique pour l'erosion
   if (!lhthindelta3d(image, image_tmp, -1, connex))
@@ -1544,7 +1544,7 @@ void condhpopening3dball(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MIN; else T[i] = NDG_MAX;
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta3d(image, image_tmp, -1, connex))

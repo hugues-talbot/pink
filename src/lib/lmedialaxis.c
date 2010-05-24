@@ -2173,44 +2173,44 @@ int32_t lmedialaxis_lbisector_talbot(struct xvimage * image, struct xvimage *ang
 	v2.y = L[i-1+j*rs].y; 
 	theta = (double)(v1.x*v2.x + v1.y*v2.y)
 	  / sqrt((double)((v1.x*v1.x + v1.y*v1.y)*(v2.x*v2.x + v2.y*v2.y)));
-	acosthetamax = max(acos(theta), acosthetamax);
+	acosthetamax = mcmax(acos(theta), acosthetamax);
 	// 0,-1
 	v2.x = L[i+(j-1)*rs].x; 
 	v2.y = L[i+(j-1)*rs].y; 
 	theta = (double)(v1.x*v2.x + v1.y*v2.y)
 	  / sqrt((double)((v1.x*v1.x + v1.y*v1.y)*(v2.x*v2.x + v2.y*v2.y)));
-	acosthetamax = max(acos(theta), acosthetamax);
+	acosthetamax = mcmax(acos(theta), acosthetamax);
 	// 0,+1
 	v2.x = L[i+(j+1)*rs].x; 
 	v2.y = L[i+(j+1)*rs].y; 
 	theta = (double)(v1.x*v2.x + v1.y*v2.y)
 	  / sqrt((double)((v1.x*v1.x + v1.y*v1.y)*(v2.x*v2.x + v2.y*v2.y)));
-	acosthetamax = max(acos(theta), acosthetamax);
+	acosthetamax = mcmax(acos(theta), acosthetamax);
 #ifdef CONNEX8
 	// 1,1
 	v2.x = L[i+1+(j+1)*rs].x; 
 	v2.y = L[i+1+(j+1)*rs].y; 
 	theta = (double)(v1.x*v2.x + v1.y*v2.y)
 	  / sqrt((double)((v1.x*v1.x + v1.y*v1.y)*(v2.x*v2.x + v2.y*v2.y)));
-	acosthetamax = max(acos(theta), acosthetamax);
+	acosthetamax = mcmax(acos(theta), acosthetamax);
 	// 1,-1
 	v2.x = L[i+1+(j-1)*rs].x; 
 	v2.y = L[i+1+(j-1)*rs].y; 
 	theta = (double)(v1.x*v2.x + v1.y*v2.y)
 	  / sqrt((double)((v1.x*v1.x + v1.y*v1.y)*(v2.x*v2.x + v2.y*v2.y)));
-	acosthetamax = max(acos(theta), acosthetamax);
+	acosthetamax = mcmax(acos(theta), acosthetamax);
 	// -1,-1
 	v2.x = L[i-1+(j-1)*rs].x; 
 	v2.y = L[i-1+(j-1)*rs].y; 
 	theta = (double)(v1.x*v2.x + v1.y*v2.y)
 	  / sqrt((double)((v1.x*v1.x + v1.y*v1.y)*(v2.x*v2.x + v2.y*v2.y)));
-	acosthetamax = max(acos(theta), acosthetamax);
+	acosthetamax = mcmax(acos(theta), acosthetamax);
 	// -1,+1
 	v2.x = L[i-1+(j+1)*rs].x; 
 	v2.y = L[i-1+(j+1)*rs].y; 
 	theta = (double)(v1.x*v2.x + v1.y*v2.y)
 	  / sqrt((double)((v1.x*v1.x + v1.y*v1.y)*(v2.x*v2.x + v2.y*v2.y)));
-	acosthetamax = max(acos(theta), acosthetamax);
+	acosthetamax = mcmax(acos(theta), acosthetamax);
 #endif
 	A[i+j*rs] = acosthetamax;
 #endif

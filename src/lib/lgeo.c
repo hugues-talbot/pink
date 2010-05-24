@@ -147,7 +147,7 @@ printf("c2 = %g,%g,%g\n", r->c2.x0, r->c2.y0, r->c2.r);
   y = (- b * c - cc * a) / det;
 
   /* verifie si le point d'intersection appartient au premier cote */
-  x1 = min(r->s1.x1,r->s1.x2); x2 = max(r->s1.x1,r->s1.x2);
+  x1 = mcmin(r->s1.x1,r->s1.x2); x2 = mcmax(r->s1.x1,r->s1.x2);
   if ((x >= x1) && (x <= x2))
   {
     dx = x - p.x;
@@ -435,7 +435,7 @@ rectanglearrondi *AjusteRectangleArrondi(int32_t *pb, int32_t npb, double xc, do
       if (cp < c) c = cp;
       else
       {
-        R->h = max((R->h-(dh+dh)),0); /* pas de valeurs negatives */
+        R->h = mcmax((R->h-(dh+dh)),0); /* pas de valeurs negatives */
         initrectanglearrondi(R);
         cm = SomCarDistRA(pb, npb, R, rs);
         if (cm < c) c = cm;
@@ -892,7 +892,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < MCGEO_EPSILON) 
+      if (mcabs(Mx2 - My2) < MCGEO_EPSILON) 
         theta = 0.0;
       else
       {
@@ -1110,7 +1110,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < MCGEO_EPSILON) 
+      if (mcabs(Mx2 - My2) < MCGEO_EPSILON) 
         theta = 0.0;
       else
       {
@@ -1309,7 +1309,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < MCGEO_EPSILON) 
+      if (mcabs(Mx2 - My2) < MCGEO_EPSILON) 
         theta = 0.0;
       else
       {
@@ -1507,7 +1507,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < MCGEO_EPSILON) 
+      if (mcabs(Mx2 - My2) < MCGEO_EPSILON) 
         theta = 0.0;
       else
       {

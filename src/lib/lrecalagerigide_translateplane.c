@@ -166,7 +166,7 @@ double *lrecalagerigide_translateplane_lrecalagerigide2d(double *X, int32_t n, d
   for (i = 0; i < n; i++) { Y[2*i] -= BY1; Y[2*i + 1] -= BY2; }
 
   ens.X = X; ens.n = n; ens.Y = Y; ens.m = m; 
-  ens.Tmp = (double *)calloc(1, 2 * max(n,m) * sizeof(double));
+  ens.Tmp = (double *)calloc(1, 2 * mcmax(n,m) * sizeof(double));
 
   powell(lrecalagerigide_transparentplane_F, &ens, G, 5, 1e-6, 0.1, MAXITER, &fmin);
 
@@ -312,7 +312,7 @@ double *lrecalagerigide3d_translateplane(double *X, int n, double *Y, int m)
   for (i = 0; i < m; i++) { Y[3*i] -= BY1; Y[3*i + 1] -= BY2; Y[3*i + 2] -= BY3;}
 
   ens.X = X; ens.n = n; ens.Y = Y; ens.m = m;
-  ens.Tmp = (double *)calloc(1, 3 * max(n,m) * sizeof(double));
+  ens.Tmp = (double *)calloc(1, 3 * mcmax(n,m) * sizeof(double));
   
 
   //  powell(lrecalagerigide_transparentplane_F3d, &ens, G, 2, 1e-6, 0.1, MAXITER, &fmin);
@@ -369,7 +369,7 @@ double *lrecalagerigide3d_translate(double *X, int n, double *Y, int m)
   for (i = 0; i < m; i++) { Y[3*i] -= BY1; Y[3*i + 1] -= BY2; Y[3*i + 2] -= BY3;}
 
   ens.X = X; ens.n = n; ens.Y = Y; ens.m = m;
-  ens.Tmp = (double *)calloc(1, 3 * max(n,m) * sizeof(double));
+  ens.Tmp = (double *)calloc(1, 3 * mcmax(n,m) * sizeof(double));
   
 
   //  powell(lrecalagerigide_transparentplane_F3d, &ens, G, 2, 1e-6, 0.1, MAXITER, &fmin);

@@ -10,14 +10,18 @@ FILE( GLOB com_src_c *.c )
 FILE( GLOB com_src_cpp *.cpp )
 FILE( GLOB com_src_cxx *.cxx ) # cpp files that compile without boost
 
+# unix defines
+add_definitions( -DUNIXIO -DPC )
+set( CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} ${PYTHON_FLAG} )
+include_directories( ${PYTHON_INCLUDE}  ${BOOST_INCLUDE} )
+
 # -------- Iteration over the executables -------- 
 
-if ( NOT HAVE_BOOST_LIBRARIES )
-   set( com_src ${com_src_c} ${com_src_cxx} )
-else ( NOT HAVE_BOOST_LIBRARIES )
-   set( com_src ${com_src_c} ${com_src_cpp} ${com_src_cxx} )
-endif ( NOT HAVE_BOOST_LIBRARIES )
-
+if ( NOT PYTHON_FRONT_END )
+    set( com_src ${com_src_c} ${com_src_cxx} )
+else ( NOT PYTHON_FRONT_END )    
+    set( com_src ${com_src_c} ${com_src_cpp} ${com_src_cxx} )
+endif ( NOT PYTHON_FRONT_END )
 
 foreach( q ${com_src} )
          string( REGEX MATCH [^/]*.c[^.]*$ filename ${q} )
@@ -25,6 +29,7 @@ foreach( q ${com_src} )
 	 add_executable( ${executable} ${q} )
 	 add_dependencies( ${executable} pink )
 	 target_link_libraries( ${executable} pink ${LIBS} )
+	 install( TARGETS ${executable} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin )
 endforeach(q)
 
 

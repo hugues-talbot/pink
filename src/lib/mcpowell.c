@@ -267,39 +267,39 @@ int32_t brent(FUNCe f, ensemble *ens, double ax, double bx, double cx, double to
     double temp;
     int32_t i, flag;
 
-    /* tol = max(tol, SQRT_DBL_EPSILON); */
+    /* tol = mcmax(tol, SQRT_DBL_EPSILON); */
 
-    a = min(ax, cx);		/* a and b must be in ascending order */
-    b = max(ax, cx);
+    a = mcmin(ax, cx);		/* a and b must be in ascending order */
+    b = mcmax(ax, cx);
     x = w = v = bx;
     d = e = 0.0;		/* e: distance moved on the step before last */
     fv = fw = fx = f(x, ens);
     for (i = 0; i < MAX_ITER; i++) {
 	xm = (a + b) / 2.0;
-	tol1 = tol * abs(x) + TINY;	/* this avoids searching for 0 */
+	tol1 = tol * mcabs(x) + TINY;	/* this avoids searching for 0 */
 	tol2 = 2 * tol1;
-	if (abs(x - xm) <= (tol2 - (b - a) / 2.0)) {
+	if (mcabs(x - xm) <= (tol2 - (b - a) / 2.0)) {
 	    *xmin = x;
 	    *fmin = fx;
 	    return M_FOUND;
 	}
 	flag = 0;
-	if (abs(e) > tol1) {	/* try parabolic fit */
+	if (mcabs(e) > tol1) {	/* try parabolic fit */
 	    r = (x - w) * (fx - fv);
 	    q = (x - v) * (fx - fw);
 	    p = (x - v) * q - (x - w) * r;
 	    q = 2 * (q - r);
 	    if (q > 0.0)
 		p = -p;
-	    q = abs(q);
+	    q = mcabs(q);
 	    temp = e;
 	    e = d;
 	    /* now check if parabolic fit is ok */
-	    if (abs(p) < abs(.5 * q * temp) || (p > q * (a - x) && p < q * (b - x))) {
+	    if (mcabs(p) < mcabs(.5 * q * temp) || (p > q * (a - x) && p < q * (b - x))) {
 		d = p / q;
 		u = x + d;
 		if (u - a < tol2 || b - u < tol2)
-		    d = tol1 * sign(xm - x);
+		    d = tol1 * mcsign(xm - x);
 		flag = 1;
 	    }
 	}
@@ -310,10 +310,10 @@ int32_t brent(FUNCe f, ensemble *ens, double ax, double bx, double cx, double to
 		e = b - x;
 	    d = CGOLD * e;
 	}
-	if (abs(d) >= tol1)
+	if (mcabs(d) >= tol1)
 	    u = x + d;
 	else
-	    u = x + tol1 * sign(d);
+	    u = x + tol1 * mcsign(d);
 
 	fu = f(u, ens);
 	if (fu <= fx) {
@@ -360,39 +360,39 @@ int32_t brent_num(FUNCn f, struct xvimage * image1, struct xvimage * image2,
     double temp;
     int32_t i, flag;
 
-    /* tol = max(tol, SQRT_DBL_EPSILON); */
+    /* tol = mcmax(tol, SQRT_DBL_EPSILON); */
 
-    a = min(ax, cx);		/* a and b must be in ascending order */
-    b = max(ax, cx);
+    a = mcmin(ax, cx);		/* a and b must be in ascending order */
+    b = mcmax(ax, cx);
     x = w = v = bx;
     d = e = 0.0;		/* e: distance moved on the step before last */
     fv = fw = fx = f(x, image1, image2);
     for (i = 0; i < MAX_ITER; i++) {
 	xm = (a + b) / 2.0;
-	tol1 = tol * abs(x) + TINY;	/* this avoids searching for 0 */
+	tol1 = tol * mcabs(x) + TINY;	/* this avoids searching for 0 */
 	tol2 = 2 * tol1;
-	if (abs(x - xm) <= (tol2 - (b - a) / 2.0)) {
+	if (mcabs(x - xm) <= (tol2 - (b - a) / 2.0)) {
 	    *xmin = x;
 	    *fmin = fx;
 	    return M_FOUND;
 	}
 	flag = 0;
-	if (abs(e) > tol1) {	/* try parabolic fit */
+	if (mcabs(e) > tol1) {	/* try parabolic fit */
 	    r = (x - w) * (fx - fv);
 	    q = (x - v) * (fx - fw);
 	    p = (x - v) * q - (x - w) * r;
 	    q = 2 * (q - r);
 	    if (q > 0.0)
 		p = -p;
-	    q = abs(q);
+	    q = mcabs(q);
 	    temp = e;
 	    e = d;
 	    /* now check if parabolic fit is ok */
-	    if (abs(p) < abs(.5 * q * temp) || (p > q * (a - x) && p < q * (b - x))) {
+	    if (mcabs(p) < mcabs(.5 * q * temp) || (p > q * (a - x) && p < q * (b - x))) {
 		d = p / q;
 		u = x + d;
 		if (u - a < tol2 || b - u < tol2)
-		    d = tol1 * sign(xm - x);
+		    d = tol1 * mcsign(xm - x);
 		flag = 1;
 	    }
 	}
@@ -403,10 +403,10 @@ int32_t brent_num(FUNCn f, struct xvimage * image1, struct xvimage * image2,
 		e = b - x;
 	    d = CGOLD * e;
 	}
-	if (abs(d) >= tol1)
+	if (mcabs(d) >= tol1)
 	    u = x + d;
 	else
-	    u = x + tol1 * sign(d);
+	    u = x + tol1 * mcsign(d);
 
 	fu = f(u, image1, image2);
 	if (fu <= fx) {
@@ -486,7 +486,7 @@ static double f1dim_num(double x, struct xvimage * image1, struct xvimage * imag
    **   int32_t from bracket() or brent()
  */
 
-int32_t linmin(PFNe f, ensemble *ens, double p[], double dirv[], int32_t n, double *fmin)
+int32_t linmcmin(PFNe f, ensemble *ens, double p[], double dirv[], int32_t n, double *fmin)
 {
     double x1, x2, x3, xmin;
     int32_t i;
@@ -511,7 +511,7 @@ int32_t linmin(PFNe f, ensemble *ens, double p[], double dirv[], int32_t n, doub
     }
 
     return M_FOUND;
-} // linmin()
+} // linmcmin()
 
 int32_t linmin_num(PFNn f, struct xvimage * image1, struct xvimage * image2, double p[], double dirv[], int32_t n, double *fmin)
 {
@@ -582,7 +582,7 @@ int32_t powell(PFNe f, ensemble * ens, double p[], int32_t n, double tol,
       {
 	for (j = 0; j < n; j++) new_dir[j] = dir[j][i];
 	prev_value = new_value;
-	flag = linmin(f, ens, p, new_dir, n, &new_value);
+	flag = linmcmin(f, ens, p, new_dir, n, &new_value);
 	if (flag != M_FOUND)
 	  // printf("dir %d ener %.13g\n", i, new_value);
 	  ;
@@ -593,7 +593,7 @@ int32_t powell(PFNe f, ensemble * ens, double p[], int32_t n, double tol,
 	}
       }
 
-      if (2 * abs(cur_value - new_value) <= tol * (abs(cur_value) + abs(new_value))) {
+      if (2 * mcabs(cur_value - new_value) <= tol * (mcabs(cur_value) + mcabs(new_value))) {
 	*fmin = new_value;
 	return M_FOUND;	/* found minimum. p[] contains the point */
       }
@@ -601,8 +601,8 @@ int32_t powell(PFNe f, ensemble * ens, double p[], int32_t n, double tol,
 	printf("***ERROR, go_down = -1\n");
 	printf("cur_value %f new_value %f max_decr %f\n", cur_value,
 	       new_value, max_decr);
-	printf("check %f <= %f\n", 2 * abs(cur_value - new_value),
-	       tol * (abs(cur_value) + abs(new_value)));
+	printf("check %f <= %f\n", 2 * mcabs(cur_value - new_value),
+	       tol * (mcabs(cur_value) + mcabs(new_value)));
 	exit(1);
       }
       /*
@@ -622,7 +622,7 @@ int32_t powell(PFNe f, ensemble * ens, double p[], int32_t n, double tol,
       tmp = tmp - max_decr *
 	(cur_value - trial_value) * (cur_value - trial_value);
       if (tmp < 0.0) {	/* good direction */
-	flag = linmin(f,ens, p, new_dir, n, &new_value);	/* move along it */
+	flag = linmcmin(f,ens, p, new_dir, n, &new_value);	/* move along it */
 	for (i = 0; i < n; i++)	/* update dir */
 	  dir[i][go_down] = new_dir[i];
       }
@@ -687,7 +687,7 @@ int32_t powell_num(PFNn f, struct xvimage * image1, struct xvimage * image2,
 	}
       }
 
-      if (2 * abs(cur_value - new_value) <= tol * (abs(cur_value) + abs(new_value))) {
+      if (2 * mcabs(cur_value - new_value) <= tol * (mcabs(cur_value) + mcabs(new_value))) {
 	*fmin = new_value;
 	return M_FOUND;	/* found minimum. p[] contains the point */
       }
@@ -700,8 +700,8 @@ int32_t powell_num(PFNn f, struct xvimage * image1, struct xvimage * image2,
 	printf("***ERROR, go_down = -1\n");
 	printf("cur_value %f new_value %f max_decr %f\n", cur_value,
 	       new_value, max_decr);
-	printf("check %f <= %f\n", 2 * abs(cur_value - new_value),
-	       tol * (abs(cur_value) + abs(new_value)));
+	printf("check %f <= %f\n", 2 * mcabs(cur_value - new_value),
+	       tol * (mcabs(cur_value) + mcabs(new_value)));
 	exit(1);
 #endif
       }
@@ -811,12 +811,12 @@ main()
     for (i = 0; i < 10; i++) {
 	d[0] = 1;
 	d[1] = 0;
-	linmin(test1, NULL, x, d, 2, &fmin);
+	linmcmin(test1, NULL, x, d, 2, &fmin);
 	printf("i %i x %.13f %.13f d %.6g %.6g f %.13f\n",
 	       i, x[0], x[1], d[0], d[1], fmin);
 	d[0] = 0;
 	d[1] = 1;
-	linmin(test1, NULL, x, d, 2, &fmin);
+	linmcmin(test1, NULL, x, d, 2, &fmin);
 	printf("i %i x %.13f %.13f d %.6g %.6g f %.13f\n",
 	       i, x[0], x[1], d[0], d[1], fmin);
     }

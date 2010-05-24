@@ -151,14 +151,14 @@ int main(int argc, char **argv)
     ImUC = UCHARDATA(image);
     for (i = 0; i < N; i++) {
       tmp = bruite((double)(ImUC[i]), n, alpha, p);
-      ImUC[i] = (uint8_t)max(NDG_MIN,min(NDG_MAX,tmp));
+      ImUC[i] = (uint8_t)mcmax(NDG_MIN,mcmin(NDG_MAX,tmp));
     }
     break;
   case VFF_TYP_4_BYTE:
     ImUL = SLONGDATA(image);
     for (i = 0; i < N; i++) {
       tmp = bruite((double)(ImUL[i]), n, alpha, p);
-      ImUL[i] = (int32_t)max(INT32_MIN,min(INT32_MAX,tmp));
+      ImUL[i] = (int32_t)mcmax(INT32_MIN,mcmin(INT32_MAX,tmp));
     }
     break;
   default:

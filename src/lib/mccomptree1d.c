@@ -304,7 +304,7 @@ printf("Pop : curnode = %d curlev = %d\n", curnode, curlev);
 #endif
       CT->tabnodes[node].end = i; 
       CT->tabnodes[curnode].height = 
-        max(CT->tabnodes[curnode].height, CT->tabnodes[node].height);
+        mcmax(CT->tabnodes[curnode].height, CT->tabnodes[node].height);
     } // while
     if (F[i] == curlev) 
     {

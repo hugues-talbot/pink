@@ -62,7 +62,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
              On repete jusqu'a stabilite:
                - choisir un point x tel que Y(x) > X(x) et T--(x,Y) = 1
-               - faire Y = max(alpha-(x,Y), X(x))
+               - faire Y = mcmax(alpha-(x,Y), X(x))
 
    Update juin 2001 : generation d'una animation (flag ANIMATE)
 
@@ -232,7 +232,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
       tbar = mctopo3d_tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((F[x] == VAL_Y_X) && ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))))
       {
-        FahpPush(FAHP, x, max(0,(FAHP_NPRIO-D[x])));
+        FahpPush(FAHP, x, mcmax(0,(FAHP_NPRIO-D[x])));
         F[x] = VAL_Y_X_M;
 #ifdef ANIMATE
         if (D[x] > anime_dist) anime_dist = D[x];
@@ -290,7 +290,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y] == VAL_Y_X))
           {
-            FahpPush(FAHP, y, max(0,(FAHP_NPRIO-D[y])));
+            FahpPush(FAHP, y, mcmax(0,(FAHP_NPRIO-D[y])));
             F[y] = VAL_Y_X_M;
           } /* if y */
         } /* for k */      
@@ -320,7 +320,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
       tbar = mctopo3d_tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((F[x] == VAL_Y_X) && ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))))
       {
-        FahpPush(FAHP, x, max(0,(FAHP_NPRIO-D[x])));
+        FahpPush(FAHP, x, mcmax(0,(FAHP_NPRIO-D[x])));
         F[x] = VAL_Y_X_M;
 #ifdef ANIMATE
         if (D[x] > anime_dist) anime_dist = D[x];
@@ -378,7 +378,7 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y] == VAL_Y_X))
           {
-            FahpPush(FAHP, y, max(0,(FAHP_NPRIO-D[y])));
+            FahpPush(FAHP, y, mcmax(0,(FAHP_NPRIO-D[y])));
             F[y] = VAL_Y_X_M;
           } /* if y */
         } /* for k */      
@@ -509,7 +509,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
       tbar = mctopo3d_tbar6h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((F[x] == VAL_Y_X) && ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))))
       {
-        FahpPush(FAHP, x, max(0,(FAHP_NPRIO-D[x])));
+        FahpPush(FAHP, x, mcmax(0,(FAHP_NPRIO-D[x])));
         F[x] = VAL_Y_X_M;
       } /* if */
     } /* for (x = 0; x < N; x++) */
@@ -531,7 +531,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y] == VAL_Y_X))
           {
-            FahpPush(FAHP, y, max(0,(FAHP_NPRIO-D[y])));
+            FahpPush(FAHP, y, mcmax(0,(FAHP_NPRIO-D[y])));
             F[y] = VAL_Y_X_M;
           } /* if y */
         } /* for k */      
@@ -550,7 +550,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
       tbar = mctopo3d_tbar26h(F, x, VAL_Y_X_M, rs, ps, N); 
       if ((F[x] == VAL_Y_X) && ((tbar == 1) || ((tbar > 1) && (D[x] > tailletrous))))
       {
-        FahpPush(FAHP, x, max(0,(FAHP_NPRIO-D[x])));
+        FahpPush(FAHP, x, mcmax(0,(FAHP_NPRIO-D[x])));
         F[x] = VAL_Y_X_M;
       } /* if */
     } /* for (x = 0; x < N; x++) */
@@ -572,7 +572,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (F[y] == VAL_Y_X))
           {
-            FahpPush(FAHP, y, max(0,(FAHP_NPRIO-D[y])));
+            FahpPush(FAHP, y, mcmax(0,(FAHP_NPRIO-D[y])));
             F[y] = VAL_Y_X_M;
           } /* if y */
         } /* for k */      
@@ -617,7 +617,7 @@ int32_t lfermetrous3d_testabaisse6(uint8_t *F, uint8_t *P, int32_t x, int32_t rs
   while ((P[x] > F[x]) && (mctopo3d_t6mm(P, x, rs, ps, N) == 1))
   { 
     modifie = 1; 
-    P[x] = max(F[x],mctopo3d_alpha26m(P, x, rs, ps, N)); /* mctopo3d_alpha26m : sic */
+    P[x] = mcmax(F[x],mctopo3d_alpha26m(P, x, rs, ps, N)); /* mctopo3d_alpha26m : sic */
   }
 
   return modifie;

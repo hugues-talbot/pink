@@ -69,8 +69,8 @@ knowledge of the CeCILL license and that you accept its terms.
 void lbresen(uint8_t *F, int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By)
 /* ================================================= */
 {
-  int32_t dX = abs(Bx - Ax);
-  int32_t dY = abs(By - Ay);
+  int32_t dX = mcabs(Bx - Ax);
+  int32_t dY = mcabs(By - Ay);
   int32_t P;
   int32_t dPp;
   int32_t dPm;
@@ -202,8 +202,8 @@ void lbresenlist(int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int32_t *lx, in
   si le segment est plus long que cette valeur, lbresenlist se termine.
 */
 {
-  int32_t dX = abs(Bx - Ax);
-  int32_t dY = abs(By - Ay);
+  int32_t dX = mcabs(Bx - Ax);
+  int32_t dY = mcabs(By - Ay);
   int32_t P;
   int32_t dPp;
   int32_t dPm;
@@ -372,7 +372,7 @@ int32_t getoctant(int32_t gx, int32_t gy)
 /* ================================================= */
 {
   /* Use gradient to identify octant. */
-  int32_t upper = abs(gx)>abs(gy);
+  int32_t upper = mcabs(gx)>mcabs(gy);
   if (gx>=0)                            /* Right-pointing */
     if (gy>=0)                          /*    Up */
       return 4 - upper;
@@ -508,7 +508,7 @@ void lconic(uint8_t *I, int32_t rs, int32_t cs, int32_t xs, int32_t ys, int32_t 
     if (DEBUG)
       fprintf(stderr,"-- %d -------------------------\n", octant); 
     
-    if (odd(octant)) {
+    if (mcodd(octant)) {
       while (2*v <= k2) {
         /* Plot this point */
         plot(I, rs, cs, x+xoffset, y+yoffset, NDG_MAX);
@@ -579,7 +579,7 @@ void lconic(uint8_t *I, int32_t rs, int32_t cs, int32_t xs, int32_t ys, int32_t 
   if (DEBUG)
     fprintf(stderr,"-- %d (final) -----------------\n", octant); 
     
-  if (odd(octant)) {
+  if (mcodd(octant)) {
     while (2*v <= k2) {
       /* Plot this point */
       plot(I, rs, cs, x+xoffset, y+yoffset, NDG_MAX);
@@ -825,7 +825,7 @@ void lconiclist(ellipse *ell, int32_t rs, int32_t cs, int32_t xs, int32_t ys, in
     if (DEBUG)
       fprintf(stderr,"-- %d -------------------------\n", octant); 
     
-    if (odd(octant)) {
+    if (mcodd(octant)) {
       while (2*v <= k2) {
         /* Plot this point */
         plotlist(ell, rs, cs, x+xoffset, y+yoffset);
@@ -896,7 +896,7 @@ void lconiclist(ellipse *ell, int32_t rs, int32_t cs, int32_t xs, int32_t ys, in
   if (DEBUG)
     fprintf(stderr,"-- %d (final) -----------------\n", octant); 
     
-  if (odd(octant)) {
+  if (mcodd(octant)) {
     while (2*v <= k2) {
       /* Plot this point */
       plotlist(ell, rs, cs, x+xoffset, y+yoffset);
@@ -1201,7 +1201,7 @@ void lconicliste(Liste *lp, int32_t rs, int32_t cs, int32_t xs, int32_t ys, int3
     if (DEBUG)
       fprintf(stderr,"-- %d -------------------------\n", octant); 
     
-    if (odd(octant)) {
+    if (mcodd(octant)) {
       while (2*v <= k2) {
         /* Plot this point */
         plotliste(lp, rs, x+xoffset, y+yoffset);
@@ -1272,7 +1272,7 @@ void lconicliste(Liste *lp, int32_t rs, int32_t cs, int32_t xs, int32_t ys, int3
   if (DEBUG)
     fprintf(stderr,"-- %d (final) -----------------\n", octant); 
     
-  if (odd(octant)) {
+  if (mcodd(octant)) {
     while (2*v <= k2) {
       /* Plot this point */
       plotliste(lp, rs, x+xoffset, y+yoffset);

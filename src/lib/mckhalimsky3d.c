@@ -379,7 +379,7 @@ void ndgmin3d(struct xvimage *b)
 	{
 	  BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
 	  Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
-	  for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[k * ps + j * rs + i]);
+	  for (u = 0; u < n; u++) BP[tab[u]] = mcmin(BP[tab[u]],B[k * ps + j * rs + i]);
 	}
     memcpy(B, BP, N*sizeof(uint8_t));
     freeimage(bp);
@@ -399,7 +399,7 @@ void ndgmin3d(struct xvimage *b)
 	{
 	  BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
 	  Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
-	  for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[k * ps + j * rs + i]);
+	  for (u = 0; u < n; u++) BP[tab[u]] = mcmin(BP[tab[u]],B[k * ps + j * rs + i]);
 	}
     memcpy(B, BP, N*sizeof(uint32_t));
     freeimage(bp);
@@ -419,7 +419,7 @@ void ndgmin3d(struct xvimage *b)
 	{
 	  BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
 	  Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
-	  for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[k * ps + j * rs + i]);
+	  for (u = 0; u < n; u++) BP[tab[u]] = mcmin(BP[tab[u]],B[k * ps + j * rs + i]);
 	}
     memcpy(B, BP, N*sizeof(float));
     freeimage(bp);
@@ -462,7 +462,7 @@ void ndgmax3d(struct xvimage *b)
 	{
 	  BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
 	  Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
-	  for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[k * ps + j * rs + i]);
+	  for (u = 0; u < n; u++) BP[tab[u]] = mcmax(BP[tab[u]],B[k * ps + j * rs + i]);
 	}
     memcpy(B, BP, N*sizeof(uint8_t));
     freeimage(bp);
@@ -482,7 +482,7 @@ void ndgmax3d(struct xvimage *b)
 	{
 	  BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
 	  Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
-	  for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[k * ps + j * rs + i]);
+	  for (u = 0; u < n; u++) BP[tab[u]] = mcmax(BP[tab[u]],B[k * ps + j * rs + i]);
 	}
     memcpy(B, BP, N*sizeof(uint32_t));
     freeimage(bp);
@@ -502,7 +502,7 @@ void ndgmax3d(struct xvimage *b)
 	{
 	  BP[k * ps + j * rs + i] = B[k * ps + j * rs + i];
 	  Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
-	  for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[k * ps + j * rs + i]);
+	  for (u = 0; u < n; u++) BP[tab[u]] = mcmax(BP[tab[u]],B[k * ps + j * rs + i]);
 	}
     memcpy(B, BP, N*sizeof(float));
     freeimage(bp);
@@ -1286,9 +1286,9 @@ void SetXBetacarre3d(uint32_t b, uint8_t *X, int32_t rs, int32_t cs, int32_t ds,
 int32_t Precede3d(int32_t i, int32_t j, int32_t k, int32_t x, int32_t y, int32_t z)
 /* ==================================== */
 {
-  if (abs(i-x)>1) return 0;
-  if (abs(j-y)>1) return 0;
-  if (abs(k-z)>1) return 0;
+  if (mcabs(i-x)>1) return 0;
+  if (mcabs(j-y)>1) return 0;
+  if (mcabs(k-z)>1) return 0;
   if ((i != x) && (i%2==1)) return 0;
   if ((j != y) && (j%2==1)) return 0;
   if ((k != z) && (k%2==1)) return 0;
@@ -1344,9 +1344,9 @@ printf("\n");
 int32_t Succede3d(int32_t i, int32_t j, int32_t k, int32_t x, int32_t y, int32_t z)
 /* ==================================== */
 {
-  if (abs(i-x)>1) return 0;
-  if (abs(j-y)>1) return 0;
-  if (abs(k-z)>1) return 0;
+  if (mcabs(i-x)>1) return 0;
+  if (mcabs(j-y)>1) return 0;
+  if (mcabs(k-z)>1) return 0;
   if ((i != x) && (i%2==0)) return 0;
   if ((j != y) && (j%2==0)) return 0;
   if ((k != z) && (k%2==0)) return 0;
@@ -1538,7 +1538,7 @@ void EffaceLiensBetaLibres3d(struct xvimage *b)
 void MaxAlpha3d(struct xvimage *k)
 /* ==================================== */
 /*
-  pour chaque element x, faire K[x] = max{K[y] | y in alpha(x)}
+  pour chaque element x, faire K[x] = mcmax{K[y] | y in alpha(x)}
  */
 #undef F_NAME
 #define F_NAME "MaxAlpha3d"
@@ -1606,7 +1606,7 @@ void MaxAlpha3d(struct xvimage *k)
 void MaxBeta3d(struct xvimage *k)
 /* ==================================== */
 /*
-  pour chaque element x, faire K[x] = max{K[y] | y in beta(x)}
+  pour chaque element x, faire K[x] = mcmax{K[y] | y in beta(x)}
  */
 #undef F_NAME
 #define F_NAME "MaxBeta3d"

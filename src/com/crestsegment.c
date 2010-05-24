@@ -184,7 +184,7 @@ int32_t lcrestsegment(struct xvimage *image, int32_t connex, int32_t nitermax, i
 
         if (pdestr4(F, x, rs, N) && !separant4(F, x, rs, N))
 	{
-          F[x] = max(delta4m(F, x, rs, N),a);
+          F[x] = mcmax(delta4m(F, x, rs, N),a);
           LifoPush(LIFO2, x);
         } /* if (pdestr4(F, x, rs, N)) */
 

@@ -373,7 +373,7 @@ if (i%1000 == 0) printf("%d MAXIMA TRAITES\n", i);
   {
     maxi = F[tabmax[i]->key];
     for (cell = tabmax[i]; cell != NULL; cell = cell->father)
-      cell->prof = max(cell->prof,maxi-F[cell->key]);
+      cell->prof = mcmax(cell->prof,maxi-F[cell->key]);
   } /* for (i = 1; i < nmaxima; i++) */
 
 #ifdef DEBUG

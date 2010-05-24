@@ -96,7 +96,7 @@ int32_t ldilat_ldilat( struct xvimage *f,
            sup = (int32_t)H[l * rs + k] + t;
       }
     } 
-    F[y * rs + x] = (uint8_t)min(sup, NDG_MAX);
+    F[y * rs + x] = (uint8_t)mcmin(sup, NDG_MAX);
   }
 
   free(H);

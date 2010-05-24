@@ -91,7 +91,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
     if( ( (u < N) && (u%rs < rs-1)) || ((u >= N) && (u < N_t - rs))){
       x = Sommetx(u,N,rs);
       y = Sommety(u,N,rs);
-      if((min(G[x],G[y]) == 0) && (max(G[x],G[y]) > 0)){
+      if((mcmin(G[x],G[y]) == 0) && (mcmax(G[x],G[y]) > 0)){
 	/* u est growing edge */
 	mcrbt_RbtInsert(&L, (TypRbtKey)F[u], u);
 	Set(u, TRUE);
@@ -110,7 +110,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
 #ifdef DEBUG
    printf("extremites de u (%d,%d);(%d,%d) \n",x%rs, x/rs, y%rs, y/rs); 
 #endif
-   if((min(G[x],G[y]) == 0) && (max(G[x],G[y]) > 0)){
+   if((mcmin(G[x],G[y]) == 0) && (mcmax(G[x],G[y]) > 0)){
      /* si u est une growing edge */
 #ifdef DEBUG
      printf("label x: %d, label y :%d\n", G[x], G[y]);
@@ -129,7 +129,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
 #ifdef DEBUG
 	 printf("extremites de v (%d), incidente à u (%d,%d);(%d,%d) \n",v, x_1%rs, x_1/rs, y_1%rs, y_1/rs);
 #endif
-	 if((min(G[x_1],G[y_1]) == 0) && (max(G[x_1],G[y_1]) > 0)){
+	 if((mcmin(G[x_1],G[y_1]) == 0) && (mcmax(G[x_1],G[y_1]) > 0)){
 	   /* v est une growing edge */
 	   mcrbt_RbtInsert(&L, (TypRbtKey)F[v], v);
 	   Set(v,TRUE);
@@ -184,7 +184,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
 	((u >= 2*N) && (((u- (2*N))/ps) < (ds-1)))){
       x = Sommetx3d(u,N,rs,ps);
       y = Sommety3d(u,N,rs,ps);
-      if((min(G[x],G[y]) == 0) && (max(G[x],G[y]) > 0)){
+      if((mcmin(G[x],G[y]) == 0) && (mcmax(G[x],G[y]) > 0)){
 	/* u est growing edge */
 	/*	printf("Initialisation: ds Rbt: (%d,%d)\n", x,y);*/
 	mcrbt_RbtInsert(&L, (TypRbtKey)F[u], u);
@@ -204,7 +204,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
 #ifdef DEBUG
     printf("extremites de u (%d,%d);(%d,%d) \n",x%rs, x/rs, y%rs, y/rs); 
 #endif
-    if((min(G[x],G[y]) == 0) && (max(G[x],G[y]) > 0)){
+    if((mcmin(G[x],G[y]) == 0) && (mcmax(G[x],G[y]) > 0)){
       /* si u est une growing edge */
 #ifdef DEBUG
       printf("label x: %d, label y :%d\n", G[x], G[y]);
@@ -223,7 +223,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
 #ifdef DEBUG
 	  printf("extremites de v (%d), incidente à u (%d,%d);(%d,%d) \n",v, x_1%rs, x_1/rs, y_1%rs, y_1/rs);
 #endif
-	  if((min(G[x_1],G[y_1]) == 0) && (max(G[x_1],G[y_1]) > 0)){
+	  if((mcmin(G[x_1],G[y_1]) == 0) && (mcmax(G[x_1],G[y_1]) > 0)){
 	    /* v est une growing edge */
 	    mcrbt_RbtInsert(&L, (TypRbtKey)F[v], v);
 	    Set(v,TRUE);
@@ -294,7 +294,7 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
       y = Sommety4d(u,N,rs,ps,vs);
       /* On pourrait faire plus rapide avec une representation memoire
 	 plus adequat des images 4d */
-      if((min(G[x/vs][x%vs],G[y/vs][y%vs]) == 0) && (max(G[x/vs][x%vs],G[y/vs][y%vs]) > 0)){
+      if((mcmin(G[x/vs][x%vs],G[y/vs][y%vs]) == 0) && (mcmax(G[x/vs][x%vs],G[y/vs][y%vs]) > 0)){
 	/* u est growing edge */
 	/*	printf("Initialisation: ds Rbt: (%d,%d)\n", x,y);*/
 	mcrbt_RbtInsert(&L, (TypRbtKey)F[u], u);
@@ -313,7 +313,7 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
 #ifdef DEBUG
     printf("extremites de u (%d,%d);(%d,%d) \n",x%rs, x/rs, y%rs, y/rs); 
 #endif
-    if((min(G[x/vs][x%vs],G[y/vs][y%vs]) == 0) && (max(G[x/vs][x%vs],G[y/vs][y%vs]) > 0)){
+    if((mcmin(G[x/vs][x%vs],G[y/vs][y%vs]) == 0) && (mcmax(G[x/vs][x%vs],G[y/vs][y%vs]) > 0)){
       /* si u est une growing edge */
 #ifdef DEBUG
       printf("Arete growing F[(%d,%d,%d,%d),%d] = %d\n", u%rs, (u%ps)/rs, (u%vs)/ps, (u%N)/vs, u/N,F[u]);
@@ -333,7 +333,7 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
 #ifdef DEBUG
 	  printf("extremites de v (%d), incidente à u (%d,%d);(%d,%d) \n",v, x_1%rs, x_1/rs, y_1%rs, y_1/rs);
 #endif
-	  if((min(G[x_1/vs][x_1%vs],G[y_1/vs][y_1%vs]) == 0) && (max(G[x_1/vs][x_1%vs],G[y_1/vs][y_1%vs]) > 0)){
+	  if((mcmin(G[x_1/vs][x_1%vs],G[y_1/vs][y_1%vs]) == 0) && (mcmax(G[x_1/vs][x_1%vs],G[y_1/vs][y_1%vs]) > 0)){
 	    /* v est une growing edge */
 #ifdef DEBUG
 	    printf("Arete pushed F[(%d,%d,%d,%d),%d] = %d\n", v%rs, (v%ps)/rs, (v%vs)/ps, (v%N)/vs, v/N,F[v]);

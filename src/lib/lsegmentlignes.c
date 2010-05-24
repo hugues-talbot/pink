@@ -234,7 +234,7 @@ printf("DEBUT ETIQUETAGE MAXIMA\n");
       if ((v3 == 2) && (voisins8(v1, v2, rs))) 
       { 
         V[v1]--; V[v2]--; M[x] = nmaxima+1;
-        F[v1] = min(F[v1], F[x]); F[v2] = min(F[v2], F[x]);
+        F[v1] = mcmin(F[v1], F[x]); F[v2] = mcmin(F[v2], F[x]);
 #ifdef DEBUG
 printf("REDUCTION 3-CYCLE %d,%d : V[%d,%d]=%d, V[%d,%d]=%d\n", 
         x%rs, x/rs, v1%rs, v1/rs, V[v1], v2%rs, v2/rs, V[v2]);
@@ -258,7 +258,7 @@ printf("REDUCTION 3-CYCLE %d,%d : V[%d,%d]=%d, V[%d,%d]=%d\n",
         y = voisin(x, k, rs, N);
         if ((y!=-1) && (V[y]==1)) 
         { 
-          v1++; F[x] = min(F[x], F[y]); M[y] = nmaxima+1; 
+          v1++; F[x] = mcmin(F[x], F[y]); M[y] = nmaxima+1; 
 #ifdef DEBUG
 printf("REDUCTION %d,%d : EXTREMITE %d,%d\n", x%rs, x/rs, y%rs, y/rs);
 #endif

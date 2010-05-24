@@ -61,7 +61,7 @@ int32_t lskew(
   for (i = 0; i < 256; i++) 
   {
     tmp = 256 * pow(((double)i)/256, skew);
-    tmp = min(tmp,255);
+    tmp = mcmin(tmp,255);
     t[i] = (uint8_t)arrondi(tmp); 
   }
   

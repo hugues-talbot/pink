@@ -308,7 +308,7 @@ int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 	  (((I != NULL) && (!I[g] && !I[f])) || 
 	   ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
       {
-	pp = (TypRbtKey)(max(P[g],P[f]));
+	pp = (TypRbtKey)(mcmax(P[g],P[f]));
 	mcrbt_RbtInsert(&RBT, pp, g);
 	Set(g, EN_RBT);
       }
@@ -379,7 +379,7 @@ int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 		      }
 		      if (!IsSet(g, EN_RBT))
 		      { // Préparation étape suivante
-			pp = (TypRbtKey)(max(P[g],P[f]));
+			pp = (TypRbtKey)(mcmax(P[g],P[f]));
 			mcrbt_RbtInsert(&RBT, pp, g);
 			Set(g, EN_RBT);
 		      }
@@ -520,7 +520,7 @@ int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 	  (((I != NULL) && (!I[g] && !I[f])) || 
 	   ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
       {
-	pp = (TypRbtKey)(max(P[g],P[f]));
+	pp = (TypRbtKey)(mcmax(P[g],P[f]));
 	mcrbt_RbtInsert(&RBT, pp, g);
 	Set(g, EN_RBT);
       }
@@ -591,7 +591,7 @@ int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 		      }
 		      if (!IsSet(g, EN_RBT))
 		      { // Préparation étape suivante
-			pp = (TypRbtKey)(max(P[g],P[f]));
+			pp = (TypRbtKey)(mcmax(P[g],P[f]));
 			mcrbt_RbtInsert(&RBT, pp, g);
 			Set(g, EN_RBT);
 		      }
@@ -992,7 +992,7 @@ graphe * l2dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 	  (((I != NULL) && (!I[g] && !I[f])) || 
 	   ((I == NULL) && (P[g] < priomax) && (P[f] < priomax)) ) )
       {
-	pp = (TypRbtKey)(max(P[g],P[f]));
+	pp = (TypRbtKey)(mcmax(P[g],P[f]));
 	mcrbt_RbtInsert(&RBT, pp, g);
 	Set(g, EN_RBT);
       }
@@ -1081,7 +1081,7 @@ graphe * l2dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 		      }
 		      if (!IsSet(gg, EN_RBT))
 		      { // Préparation étape suivante
-			pp = (TypRbtKey)(max(P[gg],P[ff]));
+			pp = (TypRbtKey)(mcmax(P[gg],P[ff]));
 			mcrbt_RbtInsert(&RBT, pp, gg);
 			Set(gg, EN_RBT);
 		      }

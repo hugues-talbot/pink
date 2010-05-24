@@ -96,7 +96,7 @@ int32_t leros_leros( struct xvimage *f,
            inf = (int32_t)H[l * rs + k] - t;
       }
     } 
-    F[y * rs + x] = (uint8_t)max(inf, NDG_MIN);
+    F[y * rs + x] = (uint8_t)mcmax(inf, NDG_MIN);
   }
 
   free(H);

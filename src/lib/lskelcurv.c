@@ -1975,7 +1975,7 @@ static int32_t compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, dou
       }
     }
 #else
-    for (i = (int32_t)delta1, j = 0; i < min(npoints,(int32_t)delta2); i++, j++)
+    for (i = (int32_t)delta1, j = 0; i < mcmin(npoints,(int32_t)delta2); i++, j++)
     {
       X[j] = (double)(listpoints[i] % rs);
       Y[j] = (double)((listpoints[i] % ps) / rs);
@@ -2032,7 +2032,7 @@ static int32_t compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, dou
       }
     }
 #else
-    for (i = (int32_t)delta1, j = 0; i < min(npoints,(int32_t)delta2); i++, j++)
+    for (i = (int32_t)delta1, j = 0; i < mcmin(npoints,(int32_t)delta2); i++, j++)
     {
       X[j] = (double)(listpoints[i] % rs);
       Y[j] = (double)((listpoints[i] % ps) / rs);

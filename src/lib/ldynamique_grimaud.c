@@ -176,7 +176,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
             jusqu'a trouver un noeud p marque (tmp) par une valeur plus forte ou egale
             ou la racine
             alors : dyn[i] = niv[i] - niv[p]
-            et (si non racine) : dyn[p] = max(dyn[p],dyn[i])
+            et (si non racine) : dyn[p] = mcmax(dyn[p],dyn[i])
                (si racine) : -1 la premiere fois, idem ensuite
 	  */
           while ((p != f) && (tmp[p] < h))
@@ -186,11 +186,11 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
             p = cpct->pere[f];
 	  } /* while ((p != f) && (tmp[p] < h)) */
           cpct->dyn[i] = h - DECODENIV(cpct->comp[p]);
-          if (p != f) cpct->dyn[p] = max(cpct->dyn[p],cpct->dyn[i]);
+          if (p != f) cpct->dyn[p] = mcmax(cpct->dyn[p],cpct->dyn[i]);
           else
 	  {
             if (cpct->dyn[p] == 0) cpct->dyn[p] = -1;
-            else cpct->dyn[p] = max(cpct->dyn[p],cpct->dyn[i]);
+            else cpct->dyn[p] = mcmax(cpct->dyn[p],cpct->dyn[i]);
 	  }
 	} /* if (NBFILS(i) == 0) */
       } /* for i */

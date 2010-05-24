@@ -119,12 +119,12 @@ Il ne restera plus qu'a decider du sort des plateaux fusionnant: quelle valeur l
   pour tout point x de Dom(F)
     y = VoisinEst(x)
     si y existe ET M[x] != M[y] alors
-      g = abs(F[y] - F[x])
+      g = mcabs(F[y] - F[x])
       FahPush(FAH, x, g)
     finsi
     y = VoisinSud(x)
     si y existe ET M[x] != M[y] alors
-      g = abs(F[y] - F[x])
+      g = mcabs(F[y] - F[x])
       FahPush(FAH, x + N, g)   ;; il faudra retirer N pour recuperer la coord. du pixel 
     finsi
   finpour
@@ -343,10 +343,10 @@ int32_t lsegmentnumi(struct xvimage *image, struct xvimage *result)
   {
     y = voisin(x, EST, rs, N);
     if ((y != -1) && (TEMP[x] != TEMP[y]))
-      FahPush(FAH, x, abs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
+      FahPush(FAH, x, mcabs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
     y = voisin(x, SUD, rs, N);
     if ((y != -1) && (TEMP[x] != TEMP[y]))
-      FahPush(FAH, N + x, abs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
+      FahPush(FAH, N + x, mcabs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
   } /* for x */
 
   x = FahPop(FAH);

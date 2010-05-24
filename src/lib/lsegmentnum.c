@@ -123,12 +123,12 @@ Il ne restera plus qu'a decider du sort des plateaux fusionnant: quelle valeur l
   pour tout point x de Dom(F)
     y = VoisinEst(x)
     si y existe ET M[x] != M[y] alors
-      g = abs(F[y] - F[x])
+      g = mcabs(F[y] - F[x])
       FahPush(FAH, x, g)
     finsi
     y = VoisinSud(x)
     si y existe ET M[x] != M[y] alors
-      g = abs(F[y] - F[x])
+      g = mcabs(F[y] - F[x])
       FahPush(FAH, x + N, g)   ;; il faudra retirer N pour recuperer la coord. du pixel 
     finsi
   finpour
@@ -279,19 +279,19 @@ int32_t lsegmentnum(
     y = voisin(x, EST, rs, N);
     if ((y != -1) && (M[x] != M[y]))
     {
-      FahPush(FAH, x, abs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
+      FahPush(FAH, x, mcabs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
 #ifdef TRACEPUSH
           if (trace) printf("%d: empile point %d (%d,%d) au niveau %d\n", 
-                             tracedate++, x, x%rs, x/rs, abs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
+                             tracedate++, x, x%rs, x/rs, mcabs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
 #endif
     } /* if y */
     y = voisin(x, SUD, rs, N);
     if ((y != -1) && (M[x] != M[y]))
     {
-      FahPush(FAH, N + x, abs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
+      FahPush(FAH, N + x, mcabs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
 #ifdef TRACEPUSH
           if (trace) printf("%d: empile point %d (%d,%d) au niveau %d\n", 
-                             tracedate++, x, x%rs, x/rs, abs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
+                             tracedate++, x, x%rs, x/rs, mcabs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
 #endif
     } /* if y */
   } /* for x */

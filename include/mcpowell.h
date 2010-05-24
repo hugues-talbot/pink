@@ -55,17 +55,23 @@ typedef struct ensemble {
 #define    M_LAST_CODE	4
 
 
-#undef abs
-#define abs(x)		((x)>=0?(x):-(x))
+#define max(a,b) error_max_function_is_ambigous_use_mcmax_instead
+#define min(a,b) error_min_function_is_ambigous_use_mcmin_instea
+#define abs(b) error_abs_function_is_ambigous_use_mcabs_instead
+#define sign(b) error_sign_function_is_ambigous_use_mcsign_instead
 
-#undef max
-#define max(a,b)        ((a)<(b)?(b):(a))	/* WARNING: side effects */
+  
+#undef mcabs
+#define mcabs(x)		((x)>=0?(x):-(x))
 
-#undef min
-#define min(a,b)        ((a)>(b)?(b):(a))
+#undef mcmax
+#define mcmax(a,b)        ((a)<(b)?(b):(a))	/* WARNING: side effects */
 
-#undef sign
-#define sign(x)		((x)>0?1.0:((x)<0?-1.0:0.0))
+#undef mcmin
+#define mcmin(a,b)        ((a)>(b)?(b):(a))
+
+#undef mcsign
+#define mcsign(x)		((x)>0?1.0:((x)<0?-1.0:0.0))
 
 typedef double (*FUNCe)(double, ensemble *);		/* f: R -> R */
 typedef double (*FUNCn)(double, struct xvimage *, struct xvimage *);      

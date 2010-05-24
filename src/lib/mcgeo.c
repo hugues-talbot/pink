@@ -151,10 +151,10 @@ double sursegment(point p1, point p2, point p3)
 /* calcule le produit en croix (p3-p1) x (p2-p1) */
 {
   return 
-    (min(p1.x,p2.x) <= p3.x) &&
-    (p3.x <= max(p1.x,p2.x)) &&
-    (min(p1.y,p2.y) <= p3.y) &&
-    (p3.y <= max(p1.y,p2.y));
+    (mcmin(p1.x,p2.x) <= p3.x) &&
+    (p3.x <= mcmax(p1.x,p2.x)) &&
+    (mcmin(p1.y,p2.y) <= p3.y) &&
+    (p3.y <= mcmax(p1.y,p2.y));
 } /* sursegment() */
 
 /* ==================================== */
@@ -214,7 +214,7 @@ double distpointsegment(point p, segment s)
   y = (- b * c - cc * a) / det;
 
   /* verifie si le point d'intersection appartient au segment */
-  x1 = min(s.x1,s.x2); x2 = max(s.x1,s.x2);
+  x1 = mcmin(s.x1,s.x2); x2 = mcmax(s.x1,s.x2);
   if ((x >= x1) && (x <= x2))
   {
     dx = x - p.x;
@@ -228,7 +228,7 @@ double distpointsegment(point p, segment s)
   dx = s.x2 - p.x;
   dy = s.y2 - p.y;
   d2 = sqrt(dx * dx + dy * dy);
-  return min(d1,d2);
+  return mcmin(d1,d2);
 } /* distpointsegment() */
 
 /* ==================================== */
@@ -254,9 +254,9 @@ double distpointrectangle(point p, rectangle *r)
   double d, dd;
 
   d =  distpointsegment(p, r->s1);
-  dd = distpointsegment(p, r->s2); d = min(d,dd);
-  dd = distpointsegment(p, r->s3); d = min(d,dd);
-  dd = distpointsegment(p, r->s4); return min(d,dd);
+  dd = distpointsegment(p, r->s2); d = mcmin(d,dd);
+  dd = distpointsegment(p, r->s3); d = mcmin(d,dd);
+  dd = distpointsegment(p, r->s4); return mcmin(d,dd);
 } /* distpointrectangle() */
 
 /* ==================================== */

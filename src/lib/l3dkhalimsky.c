@@ -226,7 +226,7 @@ int32_t l3dplane(struct xvimage * k, double a, double b, double c, double d)
   N = ps * ds;
   K = UCHARDATA(k);
 
-  A = (abs(a) + abs(b) + abs(c)) / 2;
+  A = (mcabs(a) + mcabs(b) + mcabs(c)) / 2;
 
   for (z = 0; z < (ds+1)/2; z++)
   for (y = 0; y < (cs+1)/2; y++)

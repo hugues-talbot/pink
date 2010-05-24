@@ -101,7 +101,7 @@ int32_t ldilatnum( struct xvimage *f,
            sup = (int32_t)H[l * rs + k] + t;
       }
     } 
-    F[y * rs + x] = (uint8_t)min(sup, NDG_MAX);
+    F[y * rs + x] = (uint8_t)mcmin(sup, NDG_MAX);
   }
 
   free(H);
@@ -165,7 +165,7 @@ int32_t lerosnum( struct xvimage *f,
            inf = (int32_t)H[l * rs + k] - t;
       }
     } 
-    F[y * rs + x] = (uint8_t)max(inf, NDG_MIN);
+    F[y * rs + x] = (uint8_t)mcmax(inf, NDG_MIN);
   }
 
   free(H);

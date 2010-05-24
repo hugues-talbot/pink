@@ -307,7 +307,7 @@ int32_t lhtkern(struct xvimage *image, struct xvimage *imagecond, int32_t connex
       UnSet(x, EN_FAH);
       if (testabaisse4(F, x, rs, N))         /* modifie l'image le cas echeant */
       {
-        if (imagecond != NULL) F[x] = max(F[x],G[x]);
+        if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
         for (k = 0; k < 8; k += 1) /* parcourt les voisins en 8-connexite */
         {                                      /* pour empiler les voisins */
           y = voisin(x, k, rs, N);             /* non deja empiles */
@@ -331,7 +331,7 @@ int32_t lhtkern(struct xvimage *image, struct xvimage *imagecond, int32_t connex
       UnSet(x, EN_FAH);
       if (testabaisse8(F, x, rs, N))         /* modifie l'image le cas echeant */
       {
-        if (imagecond != NULL) F[x] = max(F[x],G[x]);
+        if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
         for (k = 0; k < 8; k += 1) /* parcourt les voisins en 8-connexite */
         {                                      /* pour empiler les voisins */
           y = voisin(x, k, rs, N);             /* non deja empiles */
@@ -461,7 +461,7 @@ int32_t lhtkernu(struct xvimage *image, struct xvimage *imagecond, int32_t conne
       UnSet(x, EN_FAH);
       if (testeleve4(F, x, rs, N))         /* modifie l'image le cas echeant */
       {
-        if (imagecond != NULL) F[x] = min(F[x],G[x]);
+        if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
         for (k = 0; k < 8; k += 1) /* parcourt les voisins en 8-connexite */
         {                                      /* pour empiler les voisins */
           y = voisin(x, k, rs, N);             /* non deja empiles */
@@ -485,7 +485,7 @@ int32_t lhtkernu(struct xvimage *image, struct xvimage *imagecond, int32_t conne
       UnSet(x, EN_FAH);
       if (testeleve8(F, x, rs, N))         /* modifie l'image le cas echeant */
       {
-        if (imagecond != NULL) F[x] = min(F[x],G[x]);
+        if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
         for (k = 0; k < 8; k += 1) /* parcourt les voisins en 8-connexite */
         {                                      /* pour empiler les voisins */
           y = voisin(x, k, rs, N);             /* non deja empiles */
@@ -659,8 +659,8 @@ int32_t lhthinalpha(struct xvimage *image, struct xvimage *imagecond, int32_t ni
 #endif
         if (pdestr4(F, x, rs, N))
 	{
-          F[x] = max(alpha8m(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          F[x] = mcmax(alpha8m(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pdestr4(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -725,8 +725,8 @@ int32_t lhthinalpha(struct xvimage *image, struct xvimage *imagecond, int32_t ni
 #endif
         if (pdestr8(F, x, rs, N))
 	{
-          F[x] = max(alpha8m(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          F[x] = mcmax(alpha8m(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pdestr8(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -908,11 +908,11 @@ int32_t lhthindelta(struct xvimage *image, struct xvimage *imagecond, int32_t ni
 #endif
         if (pdestr4(F, x, rs, N))
 	{
-          F[x] = max(delta4m(F, x, rs, N),a);
+          F[x] = mcmax(delta4m(F, x, rs, N),a);
 #ifdef DEBUG
           printf("Abaisse x a %d\n", F[x]);
 #endif
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pdestr4(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -977,11 +977,11 @@ int32_t lhthindelta(struct xvimage *image, struct xvimage *imagecond, int32_t ni
 #endif
         if (pdestr8(F, x, rs, N))
 	{
-          F[x] = max(delta8m(F, x, rs, N),a);
+          F[x] = mcmax(delta8m(F, x, rs, N),a);
 #ifdef DEBUG
           printf("Abaisse x a %d\n", F[x]);
 #endif
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pdestr8(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -1153,8 +1153,8 @@ int32_t lhthickalpha(struct xvimage *image, struct xvimage *imagecond, int32_t n
 #endif
         if (pconstr4(F, x, rs, N))
 	{
-          F[x] = min(alpha8p(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = min(F[x],G[x]);
+          F[x] = mcmin(alpha8p(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pconstr4(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -1219,8 +1219,8 @@ int32_t lhthickalpha(struct xvimage *image, struct xvimage *imagecond, int32_t n
 #endif
         if (pconstr8(F, x, rs, N))
 	{
-          F[x] = min(alpha8p(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = min(F[x],G[x]);
+          F[x] = mcmin(alpha8p(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pconstr8(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -1392,8 +1392,8 @@ int32_t lhthickdelta(struct xvimage *image, struct xvimage *imagecond, int32_t n
 #endif
         if (pconstr4(F, x, rs, N))
 	{
-          F[x] = min(delta4p(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = min(F[x],G[x]);
+          F[x] = mcmin(delta4p(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pconstr4(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -1458,8 +1458,8 @@ int32_t lhthickdelta(struct xvimage *image, struct xvimage *imagecond, int32_t n
 #endif
         if (pconstr8(F, x, rs, N))
 	{
-          F[x] = min(delta8p(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = min(F[x],G[x]);
+          F[x] = mcmin(delta8p(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pconstr8(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -1713,7 +1713,7 @@ int32_t llvkern(struct xvimage *image, struct xvimage *imagecond, int32_t connex
       UnSet(x, EN_FAH);
       if (testnivabaisse4(F, x, rs, N))         /* modifie l'image le cas echeant */
       {
-        if (imagecond != NULL) F[x] = max(F[x],G[x]);
+        if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
         for (k = 0; k < 8; k += 1) /* parcourt les voisins en 8-connexite */
         {                                      /* pour empiler les voisins */
           y = voisin(x, k, rs, N);             /* non deja empiles */
@@ -1737,7 +1737,7 @@ int32_t llvkern(struct xvimage *image, struct xvimage *imagecond, int32_t connex
       UnSet(x, EN_FAH);
       if (testnivabaisse8(F, x, rs, N))         /* modifie l'image le cas echeant */
       {
-        if (imagecond != NULL) F[x] = max(F[x],G[x]);
+        if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
         for (k = 0; k < 8; k += 1) /* parcourt les voisins en 8-connexite */
         {                                      /* pour empiler les voisins */
           y = voisin(x, k, rs, N);             /* non deja empiles */
@@ -1867,7 +1867,7 @@ int32_t llvkernu(struct xvimage *image, struct xvimage *imagecond, int32_t conne
       UnSet(x, EN_FAH);
       if (testniveleve4(F, x, rs, N))         /* modifie l'image le cas echeant */
       {
-        if (imagecond != NULL) F[x] = min(F[x],G[x]);
+        if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
         for (k = 0; k < 8; k += 1) /* parcourt les voisins en 8-connexite */
         {                                      /* pour empiler les voisins */
           y = voisin(x, k, rs, N);             /* non deja empiles */
@@ -1891,7 +1891,7 @@ int32_t llvkernu(struct xvimage *image, struct xvimage *imagecond, int32_t conne
       UnSet(x, EN_FAH);
       if (testniveleve8(F, x, rs, N))         /* modifie l'image le cas echeant */
       {
-        if (imagecond != NULL) F[x] = min(F[x],G[x]);
+        if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
         for (k = 0; k < 8; k += 1) /* parcourt les voisins en 8-connexite */
         {                                      /* pour empiler les voisins */
           y = voisin(x, k, rs, N);             /* non deja empiles */
@@ -2041,7 +2041,7 @@ int32_t llthin(struct xvimage *image, struct xvimage *imagecond, int32_t niterma
         if (peakordestr4(F, x, rs, N))
 	{
           F[x] = alpha8m(F, x, rs, N);
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (peakordestr4(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -2107,7 +2107,7 @@ int32_t llthin(struct xvimage *image, struct xvimage *imagecond, int32_t niterma
         if (peakordestr8(F, x, rs, N))
 	{
           F[x] = alpha8m(F, x, rs, N);
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (peak8(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -2281,14 +2281,14 @@ int32_t llthindelta(struct xvimage *image, struct xvimage *imagecond, int32_t ni
 #endif
         if (pdestr4(F, x, rs, N))
 	{
-          F[x] = max(delta4m(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          F[x] = mcmax(delta4m(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pdestr4(F, x, rs, N)) */
         else if (peak4(F, x, rs, N))
 	{
           F[x] = alpha8m(F, x, rs, N);
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (peak4(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -2353,14 +2353,14 @@ int32_t llthindelta(struct xvimage *image, struct xvimage *imagecond, int32_t ni
 #endif
         if (pdestr8(F, x, rs, N))
 	{
-          F[x] = max(delta8m(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          F[x] = mcmax(delta8m(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pdestr8(F, x, rs, N)) */
         else if (peak8(F, x, rs, N))
 	{
           F[x] = alpha8m(F, x, rs, N);
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (peak8(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -2534,8 +2534,8 @@ int32_t llthick(struct xvimage *image, struct xvimage *imagecond, int32_t niterm
 #endif
         if (wellorconstr4(F, x, rs, N))
 	{
-          F[x] = min(alpha8p(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = min(F[x],G[x]);
+          F[x] = mcmin(alpha8p(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (wellorconstr4(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -2600,8 +2600,8 @@ int32_t llthick(struct xvimage *image, struct xvimage *imagecond, int32_t niterm
 #endif
         if (wellorconstr8(F, x, rs, N))
 	{
-          F[x] = min(alpha8p(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = min(F[x],G[x]);
+          F[x] = mcmin(alpha8p(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pconstr8(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -2775,14 +2775,14 @@ int32_t llthickdelta(struct xvimage *image, struct xvimage *imagecond, int32_t n
 #endif
         if (pconstr4(F, x, rs, N))
 	{
-          F[x] = min(delta4p(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = min(F[x],G[x]);
+          F[x] = mcmin(delta4p(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pconstr4(F, x, rs, N)) */
         else if (well4(F, x, rs, N))
 	{
           F[x] = alpha8p(F, x, rs, N);
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (well4(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -2847,14 +2847,14 @@ int32_t llthickdelta(struct xvimage *image, struct xvimage *imagecond, int32_t n
 #endif
         if (pconstr8(F, x, rs, N))
 	{
-          F[x] = min(delta8p(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = min(F[x],G[x]);
+          F[x] = mcmin(delta8p(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (pconstr8(F, x, rs, N)) */
         else if (well8(F, x, rs, N))
 	{
           F[x] = alpha8p(F, x, rs, N);
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (well8(F, x, rs, N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -3310,7 +3310,7 @@ do /* repetition de toute la procedure jusqu'a stabilite */
 #endif
         if (pconstr4(F, x, rs, N))
 	{
-          F[x] = min(delta4p(F,x,rs,N),a);
+          F[x] = mcmin(delta4p(F,x,rs,N),a);
           Set(x,COND_TRUE);
           stable = 0;
           LifoPush(LIFO2, x);
@@ -3629,7 +3629,7 @@ int32_t ldynrecons(struct xvimage *image, struct xvimage *imagecond, int32_t con
       if (modifiable4(F,G,x,rs,N)) 
         {
           Set(x, EN_FAH);
-          FahPush(FAH, x, abs(F[x]-G[x]));
+          FahPush(FAH, x, mcabs(F[x]-G[x]));
 	}
   }
   else if (connex == 8)
@@ -3638,7 +3638,7 @@ int32_t ldynrecons(struct xvimage *image, struct xvimage *imagecond, int32_t con
       if (modifiable8(F,G,x,rs,N)) 
         {
           Set(x, EN_FAH);
-          FahPush(FAH, x, abs(F[x]-G[x]));
+          FahPush(FAH, x, mcabs(F[x]-G[x]));
 	}
   }
   else

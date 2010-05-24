@@ -429,7 +429,7 @@ void alphamoinsNd(Khalimsky *K, int32_t x, int32_t *L, int32_t *nL)
   int32_t *tY = AllocNd();
   decodeNd(K, x, tX);
   for (i = 0; i < N; i++) 
-    if (odd(tX[i]))
+    if (mcodd(tX[i]))
     {
       for (j = 0; j < i; j++) tY[j] = tX[j];
       for (j = i+1; j < N; j++) tY[j] = tX[j];
@@ -455,7 +455,7 @@ void alphaplusNd(Khalimsky *K, int32_t x, int32_t *L, int32_t *nL)
   int32_t *tY = AllocNd();
   decodeNd(K, x, tX);
   for (i = 0; i < N; i++) 
-    if (even(tX[i]))
+    if (mceven(tX[i]))
     {
       for (j = 0; j < i; j++) tY[j] = tX[j];
       for (j = i+1; j < N; j++) tY[j] = tX[j];
@@ -493,7 +493,7 @@ printf("BetaMoinsBit\n");
   n = 0; 
   mask = 0; ci = 0;
   for (i = 0, b = 1;    i < N;    i++, b = b << 1) 
-    if (odd(tX[i])) { mask |= b; ci++; }
+    if (mcodd(tX[i])) { mask |= b; ci++; }
   if (ci > 0) v = D3[ci-1]; else v = 0;
   for (u = 1; u < v; u++) /* u = 0 correspond a x lui-meme */
   {
@@ -544,7 +544,7 @@ void betamoinsNd(Khalimsky *K, int32_t x, int32_t *L, int32_t *nL)
   n = 0; 
   mask = 0; ci = 0;
   for (i = 0, b = 1;    i < N;    i++, b = b << 1) 
-    if (odd(tX[i])) { mask |= b; ci++; }
+    if (mcodd(tX[i])) { mask |= b; ci++; }
   if (ci > 0) v = D3[ci-1]; else v = 0;
   for (u = 1; u < v; u++) /* u = 0 correspond a x lui-meme */
   {
@@ -597,7 +597,7 @@ printf("marquebetamoinsNd: x=%d\n", x);
   n = 0;
   mask = 0; ci = 0;
   for (i = 0, b = 1;    i < N;    i++, b = b << 1) 
-    if (odd(tX[i])) { mask |= b; ci++; }
+    if (mcodd(tX[i])) { mask |= b; ci++; }
   if (ci > 0) v = D3[ci-1]; else v = 0;
 #ifdef DEBUGMBM
 printf("mask = %x ; ci = %d ; v = %d\n", mask, ci, v);
@@ -653,7 +653,7 @@ printf("BetaPlusBit\n");
   n = 0; 
   mask = 0; ci = 0;
   for (i = 0, b = 1;    i < N;    i++, b = b << 1) 
-    if (even(tX[i])) { mask |= b; ci++; }
+    if (mceven(tX[i])) { mask |= b; ci++; }
   if (ci > 0) v = D3[ci-1]; else v = 0;
   for (u = 1; u < v; u++) /* u = 0 correspond a x lui-meme */
   {
@@ -708,7 +708,7 @@ void betaplusNd(Khalimsky *K, int32_t x, int32_t *L, int32_t *nL)
   n = 0; 
   mask = 0; ci = 0;
   for (i = 0, b = 1;    i < N;    i++, b = b << 1) 
-    if (even(tX[i])) { mask |= b; ci++; }
+    if (mceven(tX[i])) { mask |= b; ci++; }
   if (ci > 0) v = D3[ci-1]; else v = 0;
   for (u = 1; u < v; u++) /* u = 0 correspond a x lui-meme */
   {
@@ -760,7 +760,7 @@ void marquebetaplusNd(Khalimsky *K, int32_t x, int32_t bit, int32_t val)
   n = 0; 
   mask = 0; ci = 0;
   for (i = 0, b = 1;    i < N;    i++, b = b << 1) 
-    if (even(tX[i])) { mask |= b; ci++; }
+    if (mceven(tX[i])) { mask |= b; ci++; }
   if (ci > 0) v = D3[ci-1]; else v = 0;
   for (u = 1; u < v; u++) /* u = 0 correspond a x lui-meme */
   {
@@ -812,7 +812,7 @@ void marquegammamoinsNd(Khalimsky *K, int32_t x)
   decodeNd(K, x, tX);
   n1 = n2 = 0;
   for (i = 0; i < N; i++)      /* init premier niveau: alphamoins(x) */
-    if (odd(tX[i]))           /* coord. impaire du point x */
+    if (mcodd(tX[i]))           /* coord. impaire du point x */
     {
       for (j = 0; j < i; j++) tY[j] = tX[j];
       for (j = i+1; j < N; j++) tY[j] = tX[j];
@@ -820,7 +820,7 @@ void marquegammamoinsNd(Khalimsky *K, int32_t x)
       if ((tY[i]>= 0) && (tY[i]<C[i])) L1[n1++] = encodeNd(K, tY); /* y est dans alphamoins(x) */
       tY[i] = tX[i] + 1; 
       if ((tY[i]>= 0) && (tY[i]<C[i])) L1[n1++] = encodeNd(K, tY); /* y est dans alphamoins(x) */
-    } /* if (odd(tX[i])) */
+    } /* if (mcodd(tX[i])) */
 
   while (n1 > 0)      /* boucle sur les niveaux */
   {
@@ -831,7 +831,7 @@ void marquegammamoinsNd(Khalimsky *K, int32_t x)
       UnSet(S[x],BIT_MARQUE);
       if (IsSet(S[x],BIT_OBJET) && !IsSet(S[x],BIT_NONGAMMA)) Set(S[x],BIT_GAMMA);
       for (i = 0; i < N; i++)
-        if (odd(tX[i]))
+        if (mcodd(tX[i]))
         {
           for (j = 0; j < i; j++) tY[j] = tX[j];
           for (j = i+1; j < N; j++) tY[j] = tX[j];
@@ -849,7 +849,7 @@ void marquegammamoinsNd(Khalimsky *K, int32_t x)
             if (IsSet(S[x],BIT_GAMMA) || IsSet(S[x],BIT_NONGAMMA)) Set(S[y],BIT_NONGAMMA);
             if (!IsSet(S[y],BIT_MARQUE)) { L2[n2++] = encodeNd(K, tY); Set(S[y],BIT_MARQUE); }
 	  }
-        } /* if (odd(tX[i])) */
+        } /* if (mcodd(tX[i])) */
 
     } /* for (u = 0; u < n1; u++) */
 
@@ -882,7 +882,7 @@ printf("marquegammaplus x = %d\n", x);
   decodeNd(K, x, tX);
   n1 = n2 = 0;
   for (i = 0; i < N; i++)      /* init premier niveau: alphaplus(x) */
-    if (even(tX[i]))           /* coord. paire du point x */
+    if (mceven(tX[i]))           /* coord. paire du point x */
     {
       for (j = 0; j < i; j++) tY[j] = tX[j];
       for (j = i+1; j < N; j++) tY[j] = tX[j];
@@ -890,7 +890,7 @@ printf("marquegammaplus x = %d\n", x);
       if ((tY[i]>= 0) && (tY[i]<C[i])) L1[n1++] = encodeNd(K, tY); /* y est dans alphaplus(x) */
       tY[i] = tX[i] + 1; 
       if ((tY[i]>= 0) && (tY[i]<C[i])) L1[n1++] = encodeNd(K, tY); /* y est dans alphaplus(x) */
-    } /* if (even(tX[i])) */
+    } /* if (mceven(tX[i])) */
 
   while (n1 > 0)      /* boucle sur les niveaux */
   {
@@ -901,7 +901,7 @@ printf("marquegammaplus x = %d\n", x);
       UnSet(S[x],BIT_MARQUE);
       if (IsSet(S[x],BIT_OBJET) && !IsSet(S[x],BIT_NONGAMMA)) Set(S[x],BIT_GAMMA);
       for (i = 0; i < N; i++)
-        if (even(tX[i]))
+        if (mceven(tX[i]))
         {
           for (j = 0; j < i; j++) tY[j] = tX[j];
           for (j = i+1; j < N; j++) tY[j] = tX[j];
@@ -919,7 +919,7 @@ printf("marquegammaplus x = %d\n", x);
             if (IsSet(S[x],BIT_GAMMA) || IsSet(S[x],BIT_NONGAMMA)) Set(S[y],BIT_NONGAMMA);
             if (!IsSet(S[y],BIT_MARQUE)) { L2[n2++] = encodeNd(K, tY); Set(S[y],BIT_MARQUE); }
 	  }
-        } /* for i ... if (even(tX[i])) */
+        } /* for i ... if (mceven(tX[i])) */
 
     } /* for (u = 0; u < n1; u++) */
 
@@ -1073,7 +1073,7 @@ int32_t TypeNd(Khalimsky *K, int32_t x)
   int32_t i, n = 0;
   int32_t *tX = AllocNd();
   decodeNd(K, x, tX);
-  for (i = 0; i < N; i++) if (even(tX[i])) n++;
+  for (i = 0; i < N; i++) if (mceven(tX[i])) n++;
   FreeNd(tX);
   return n;
 } /* TypeNd() */

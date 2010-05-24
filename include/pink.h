@@ -32,10 +32,60 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-#include <stdio.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <stdlib.h>
+#ifndef PINK_H
+#define PINK_H
+
+#include <errno.h>
+#include "math.h"
+#include "assert.h"
+#include "stdint.h"
+#include "curses.h"
+#include "time.h"
+#include "bdd.h"
+#include "lballincl.h"
+#include "ctype.h"
+#include "stdio.h"
+#include "unistd.h"
+#include "stdlib.h"
+#include "float.h"
+#include "limits.h"
+#include "sys/types.h"
+#include <sys/time.h>
+#include <sqlite3.h>
+#include <alloca.h>
+
+//#include <sqlite3ext.h> // not yet needed
+
+#ifdef __cplusplus
+
+  #include <boost/shared_ptr.hpp>
+  #include <boost/shared_array.hpp>
+  #include <boost/python/list.hpp>
+  #include <boost/python/extract.hpp>
+  #include <boost/lexical_cast.hpp>
+  #include <boost/thread.hpp>
+  #include <boost/algorithm/minmax_element.hpp>
+  #include <boost/accumulators/accumulators.hpp>
+  #include <boost/accumulators/statistics.hpp>
+
+  #include <iostream>
+  #include <fstream>
+  #include <string>
+  #include <vector>
+
+  #include <cstdlib>
+  #include <cstring>
+  #include <cmath>
+
+
+
+#endif /* __cplusplus */
+
+#ifndef __cplusplus
+  #include "string.h"
+#endif /* __cplusplus */
+
+
 #include "mccodimage.h"
 #include "mcimage.h"
 #include "mccbt.h"
@@ -194,7 +244,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lrotate.h"
 #include "lrotations.h"
 #include "lsaliency.h"
-#include "lsegbi.h"
+//#include "lsegbi.h"
 #include "lsegment.h"
 #include "lsegment3d.h"
 #include "lsegment3di.h"
@@ -221,9 +271,50 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lsym.h"
 #include "ltmp1.h"
 #include "ltopotypes.h"
-#include "lvoronoi.h"
+//#include "lvoronoi.h"
 #include "lwarp.h"
 #include "lwshedtopo.h"
 #include "lzoom.h"
 #include "lzoomint.h"
 #include "rgbfileheader.h"
+
+// new header files
+// #include "lattrib.h"
+#include <lhello.h>
+#include <llong2byte.h>
+#include <mcrlifo.h>
+
+
+// uiFibres header files
+#ifdef __cplusplus
+// my comment
+  #include <gsl/gsl_interp.h> // for now it's only uiGradient that uses it
+  #include <uiFibreTypes.h>
+  #include <ujimage.hpp>
+  #include <uiFrame.hpp>
+  #include <uiSqhool.hpp>
+  #include <readpnm.h>
+  #include <uiGradient.hpp>
+  #include <uiFlow.hpp>
+  #include <uiBorder.h>
+  #include <uiImage.h>
+  #include <uiGradient.hpp>
+  #include <lbspline.hpp>
+  #include <lminmax.hpp>  
+  #include <uiUngerFlow.hpp>
+  #include <uiNormalize.hpp>
+  #include <uiQDistance.hpp>
+#endif /* __cplusplus */
+
+
+
+
+
+
+#define max(a,b) error_max_function_is_ambigous_use_mcmax_instead
+#define min(a,b) error_min_function_is_ambigous_use_mcmin_instead
+
+
+
+#endif
+//LuM end of file

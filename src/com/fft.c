@@ -175,7 +175,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: Input images must be of the same size\n", argv[0]);
     exit(1);
   }
-  rs2 = max(rs,cs);
+  rs2 = mcmax(rs,cs);
   cs2 = 1;
   while (cs2 < rs2) cs2 = cs2 << 1;
   rs2 = cs2;

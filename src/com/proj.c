@@ -126,7 +126,7 @@ int main(int argc, char **argv)
           t = 0;
           for (i = 0; i < rs; i++)
           {
-            t = max(t,I[k*ps+j*rs+i]);
+            t = mcmax(t,I[k*ps+j*rs+i]);
           } /* for i */
           R[k*cs + j] = t;
 	}
@@ -159,7 +159,7 @@ int main(int argc, char **argv)
           t = 0;
           for (j = 0; j < cs; j++)
           {
-            t = max(t,I[k*ps+j*rs+i]);
+            t = mcmax(t,I[k*ps+j*rs+i]);
           } /* for j */
           R[k*rs + i] = t;
 	}
@@ -192,7 +192,7 @@ int main(int argc, char **argv)
           t = 0;
           for (k = 0; k < ds; k++)
           {
-            t = max(t,I[k*ps+j*rs+i]);
+            t = mcmax(t,I[k*ps+j*rs+i]);
           } /* for k */
           R[j*rs + i] = t;
 	}

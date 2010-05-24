@@ -98,8 +98,8 @@ int32_t ldiZenzoGradient(struct xvimage *imageR, struct xvimage *imageV, struct 
   ImBy = (double *)calloc(1,N * sizeof(double));
   ImB = (double *)calloc(1,N * sizeof(double));
 
-  buf1 = (double *)calloc(1,max(rs, cs) * sizeof(double));
-  buf2 = (double *)calloc(1,max(rs, cs) * sizeof(double));
+  buf1 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
+  buf2 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
 
   if ((ImRx==NULL) || (ImRx==NULL) || (ImR==NULL) 
       ||(ImVx==NULL) || (ImVx==NULL) || (ImB==NULL) 
@@ -246,8 +246,8 @@ int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct
   ImBy = (double *)calloc(1,N * sizeof(double));
   ImB = (double *)calloc(1,N * sizeof(double));
 
-  buf1 = (double *)calloc(1,max(rs, cs) * sizeof(double));
-  buf2 = (double *)calloc(1,max(rs, cs) * sizeof(double));
+  buf1 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
+  buf2 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
 
   if ((ImRx==NULL) || (ImRx==NULL) || (ImR==NULL) 
       ||(ImVx==NULL) || (ImVx==NULL) || (ImB==NULL) 

@@ -36,14 +36,22 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
+#define max(a,b) error_max_function_is_ambigous_use_mcmax_instead
+#define min(a,b) error_min_function_is_ambigous_use_mcmin_instea
+#define abs(b) error_abs_function_is_ambigous_use_mcabs_instead
+#define sign(b) error_sign_function_is_ambigous_use_mcsign_instead
+#define odd(b) error_odd_function_is_ambigous_use_mcodd_instead
+#define even(b) error_even_function_is_ambigous_use_mceven_instea
+#define sqr(b) error_sqr_function_is_ambigous_use_mcsqr_instea
+  
 #define mcabs(X) ((X)>=0?(X):-(X))
-#define max(X,Y) ((X)>=(Y)?(X):(Y))
-#define min(X,Y) ((X)<=(Y)?(X):(Y))
-#define odd(X) ((X)&1)
-#define even(X) (((X)&1)==0)
+#define mcmax(X,Y) ((X)>=(Y)?(X):(Y))
+#define mcmin(X,Y) ((X)<=(Y)?(X):(Y))
+#define mcodd(X) ((X)&1)
+#define mceven(X) (((X)&1)==0)
 #define arrondi(z) (((z)-(double)((int32_t)(z)))<=0.5?((int32_t)(z)):((int32_t)(z+1)))
 #define signe(z) (((z)>0.0)?1.0:-1.0)
-#define sqr(x) ((x)*(x))
+#define mcsqr(x) ((x)*(x))
 
 #ifndef M_PI
 # define M_E		2.7182818284590452354	/* e */

@@ -399,11 +399,11 @@ int32_t llambdathin(
         if (lambdadestr4(F,x,lambda,rs,N))
 #endif
 	{
-          F[x] = max(alpha8m(F, x, rs, N),a);
+          F[x] = mcmax(alpha8m(F, x, rs, N),a);
 #ifdef DEBUG
           printf("Abaisse x a %d\n", F[x]);
 #endif
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (lambdadestr4(F,x,lambda,rs,N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -486,11 +486,11 @@ int32_t llambdathin(
         if (lambdadestr8(F,x,lambda,rs,N))
 #endif
 	{
-          F[x] = max(alpha8m(F, x, rs, N),a);
+          F[x] = mcmax(alpha8m(F, x, rs, N),a);
 #ifdef DEBUG
           printf("Abaisse x a %d\n", F[x]);
 #endif
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (lambdadestr8(F,x,lambda,rs,N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -685,8 +685,8 @@ int32_t llambdathick(
 #endif
         if (lambdaconstr4(F,x,lambda,rs,N))
 	{
-          F[x] = min(alpha8p(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = min(F[x],G[x]);
+          F[x] = mcmin(alpha8p(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (lambdaconstr4(F,x,lambda,rs,N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -751,8 +751,8 @@ int32_t llambdathick(
 #endif
         if (lambdaconstr8(F,x,lambda,rs,N))
 	{
-          F[x] = min(alpha8p(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = min(F[x],G[x]);
+          F[x] = mcmin(alpha8p(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (lambdaconstr8(F,x,lambda,rs,N)) */
       } /* while (!LifoVide(LIFO1)) */

@@ -412,7 +412,7 @@ int32_t lin_decomposition_LUP(double * A, int32_t * pi, int32_t n)
     p = 0;
     for (i = k; i < n; i++)
     {
-      t = abs(A[i*n+k]);
+      t = mcabs(A[i*n+k]);
       if (t > p) { p = t; kp = i; }
     }
     if (p < MCLIN_EPSILON) return 0;
@@ -426,7 +426,7 @@ int32_t lin_decomposition_LUP(double * A, int32_t * pi, int32_t n)
         A[i*n+j] -= (A[i*n+k] * A[k*n+j]);
     }    
   }
-  for (k = 0; k < n; k++) if (abs(A[k*n+k]) < MCLIN_EPSILON) return 0; 
+  for (k = 0; k < n; k++) if (mcabs(A[k*n+k]) < MCLIN_EPSILON) return 0; 
   return 1;
 } // lin_decomposition_LUP()
 
@@ -525,12 +525,12 @@ int32_t lin_inverse_gauss(double *TB, double *InvB, int32_t N)
       }
       for (k=1;k<=N;k++)
       {
-	maxpivot=abs(A[k*mA+k]);
+	maxpivot=mcabs(A[k*mA+k]);
 	npivot=k;
 	for (i=k;i<=N;i++)
-	  if (maxpivot>abs(A[i*mA+k])) // 2/3/2006 : cor. BUG ( < )
+	  if (maxpivot>mcabs(A[i*mA+k])) // 2/3/2006 : cor. BUG ( < )
 	  {
-	    maxpivot=abs(A[i*mA+k]);
+	    maxpivot=mcabs(A[i*mA+k]);
 	    npivot=i;
 	  }
 	if (maxpivot>=eps)
@@ -617,7 +617,7 @@ int32_t lin_jacobi(double * A, int32_t n, double * D, double * V, int32_t nrot)
 	  sm=0.0;
 	  for (ip=1;ip<=n-1;ip++) {
 	    for (iq=ip+1;iq<=n;iq++)
-	      sm += abs(a[ip*N+iq]);
+	      sm += mcabs(a[ip*N+iq]);
 	  }
 	  if (sm == 0.0) goto fin;
 	  if (i < 4)
@@ -626,17 +626,17 @@ int32_t lin_jacobi(double * A, int32_t n, double * D, double * V, int32_t nrot)
 	    tresh=0.0;
 	  for (ip=1;ip<=n-1;ip++) {
 	    for (iq=ip+1;iq<=n;iq++) {
-	      g=100.0*abs(a[ip*N+iq]);
-	      if (i > 4 && abs(d[ip])+g == abs(d[ip])
-		  && abs(d[iq])+g == abs(d[iq]))
+	      g=100.0*mcabs(a[ip*N+iq]);
+	      if (i > 4 && mcabs(d[ip])+g == mcabs(d[ip])
+		  && mcabs(d[iq])+g == mcabs(d[iq]))
 		a[ip*N+iq]=0.0;
-	      else if (abs(a[ip*N+iq]) > tresh) {
+	      else if (mcabs(a[ip*N+iq]) > tresh) {
 		h=d[iq]-d[ip];
-		if (abs(h)+g == abs(h))
+		if (mcabs(h)+g == mcabs(h))
 		  t=(a[ip*N+iq])/h;
 		else {
 		  theta=0.5*h/(a[ip*N+iq]);
-		  t=1.0/(abs(theta)+sqrt(1.0+theta*theta));
+		  t=1.0/(mcabs(theta)+sqrt(1.0+theta*theta));
 		  if (theta < 0.0) t = -t;
 		}
 		c=1.0/sqrt(1+t*t);

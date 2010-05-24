@@ -73,7 +73,7 @@ int32_t scn_constant(double *x, int32_t n)
 {
   int32_t i; 
   for (i = 1; i < n; i++) 
-    if (abs((x[i]-x[0])) > SCN_EPSILON) return 0;
+    if (mcabs((x[i]-x[0])) > SCN_EPSILON) return 0;
   return 1;
 } // scn_constant()
 

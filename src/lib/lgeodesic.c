@@ -139,7 +139,7 @@ int32_t lgeodilat(
         if ((y != -1) && (G[y] > sup)) sup = G[y];
       } /* for k */
 
-      sup = min(sup, F[x]);
+      sup = mcmin(sup, F[x]);
       if (G[x] != sup) /* changement: on enregistre x ainsi que ses voisins */
       {
         nbchang += 1;
@@ -291,7 +291,7 @@ int32_t lgeoeros(
         if ((y != -1) && (G[y] < inf)) inf = G[y];
       } /* for k */
 
-      inf = max(inf, F[x]);
+      inf = mcmax(inf, F[x]);
       if (G[x] != inf)           /* le point a change : on l'enregistre ainsi que ses voisins */
       {
         nbchang += 1;
@@ -706,7 +706,7 @@ int32_t lgeodilat3d(
           if ((y != -1) && (G[y] > sup)) sup = G[y];
         } /* for k */
   
-        sup = min(sup, F[x]);
+        sup = mcmin(sup, F[x]);
         if (G[x] != sup)
         {  /* changement: on enregistre x ainsi que ses voisins */
           nbchang += 1;
@@ -753,7 +753,7 @@ int32_t lgeodilat3d(
           if ((y != -1) && (G[y] > sup)) sup = G[y];
         } /* for k */
   
-        sup = min(sup, F[x]);
+        sup = mcmin(sup, F[x]);
         if (G[x] != sup)
         {  /* changement: on enregistre x ainsi que ses voisins */
           nbchang += 1;
@@ -800,7 +800,7 @@ int32_t lgeodilat3d(
           if ((y != -1) && (G[y] > sup)) sup = G[y];
         } /* for k */
   
-        sup = min(sup, F[x]);
+        sup = mcmin(sup, F[x]);
         if (G[x] != sup)
         {  /* changement: on enregistre x ainsi que ses voisins */
           nbchang += 1;
@@ -944,7 +944,7 @@ int32_t lgeoeros3d(
           if ((y != -1) && (G[y] < inf)) inf = G[y];
         } /* for k */
   
-        inf = max(inf, F[x]);
+        inf = mcmax(inf, F[x]);
         if (G[x] != inf)
         {  /* changement: on enregistre x ainsi que ses voisins */
           nbchang += 1;
@@ -991,7 +991,7 @@ int32_t lgeoeros3d(
           if ((y != -1) && (G[y] < inf)) inf = G[y];
         } /* for k */
   
-        inf = max(inf, F[x]);
+        inf = mcmax(inf, F[x]);
         if (G[x] != inf)
         {  /* changement: on enregistre x ainsi que ses voisins */
           nbchang += 1;
@@ -1038,7 +1038,7 @@ int32_t lgeoeros3d(
           if ((y != -1) && (G[y] < inf)) inf = G[y];
         } /* for k */
   
-        inf = max(inf, F[x]);
+        inf = mcmax(inf, F[x]);
         if (G[x] != inf)
         {  /* changement: on enregistre x ainsi que ses voisins */
           nbchang += 1;

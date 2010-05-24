@@ -130,9 +130,9 @@ void mctopo3d_construitcube(voxel * cube)
 
         if ((x == 1) && (y == 1) && (z == 1))  p->type = centre;
         else
-          if (abs(1-x)+abs(1-y)+abs(1-z) == 1) p->type = face;
+          if (mcabs(1-x)+mcabs(1-y)+mcabs(1-z) == 1) p->type = face;
           else
-            if (abs(1-x)+abs(1-y)+abs(1-z) <= 2) p->type = arete;
+            if (mcabs(1-x)+mcabs(1-y)+mcabs(1-z) <= 2) p->type = arete;
             else
               p->type = coin;
 
@@ -140,16 +140,16 @@ void mctopo3d_construitcube(voxel * cube)
        	  for (v = 0; v < 3; v++)
       	    for (u = 0; u < 3; u++)
       	    {
-              if (abs(u-x)+abs(v-y)+abs(w-z) == 1)
+              if (mcabs(u-x)+mcabs(v-y)+mcabs(w-z) == 1)
 	      {
                 p->v6[p->n6v++] = &(cube[encode(u,v,w)]);
                 p->v18[p->n18v++] = &(cube[encode(u,v,w)]);
                 p->v26[p->n26v++] = &(cube[encode(u,v,w)]);
 	      }
               else
-              if (max(abs(u-x), max(abs(v-y), abs(w-z))) == 1)
+              if (mcmax(mcabs(u-x), mcmax(mcabs(v-y), mcabs(w-z))) == 1)
               {
-                if (abs(u-x)+abs(v-y)+abs(w-z) <= 2)
+                if (mcabs(u-x)+mcabs(v-y)+mcabs(w-z) <= 2)
 		{
                   p->v12[p->n12v++] = &(cube[encode(u,v,w)]);
                   p->v18[p->n18v++] = &(cube[encode(u,v,w)]);

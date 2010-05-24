@@ -117,8 +117,8 @@ The distance used depends on the optional parameter \b dist (default is 0) :
 #endif
 
   if (ds == 1) connex = 4; else connex = 6; 
-  if (ds == 1) rmax = min((rs/2),(cs/2)); 
-  else         rmax = min((ds/2),min((rs/2),(cs/2)));
+  if (ds == 1) rmax = mcmin((rs/2),(cs/2)); 
+  else         rmax = mcmin((ds/2),mcmin((rs/2),(cs/2)));
 
   ori = copyimage(img); assert(ori != NULL);
   tmp = copyimage(img); assert(tmp != NULL);

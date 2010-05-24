@@ -452,7 +452,7 @@ void ndgmin2d(struct xvimage *b)
       {
 	BP[j * rs + i] = B[j * rs + i];
 	Alphacarre2d(rs, cs, i, j, tab, &n);
-	for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[j * rs + i]);
+	for (u = 0; u < n; u++) BP[tab[u]] = mcmin(BP[tab[u]],B[j * rs + i]);
       }
     memcpy(B, BP, N*sizeof(uint8_t));
     freeimage(bp);
@@ -471,7 +471,7 @@ void ndgmin2d(struct xvimage *b)
       {
 	BP[j * rs + i] = B[j * rs + i];
 	Alphacarre2d(rs, cs, i, j, tab, &n);
-	for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[j * rs + i]);
+	for (u = 0; u < n; u++) BP[tab[u]] = mcmin(BP[tab[u]],B[j * rs + i]);
       }
     memcpy(B, BP, N*sizeof(uint32_t));
     freeimage(bp);
@@ -490,7 +490,7 @@ void ndgmin2d(struct xvimage *b)
       {
 	BP[j * rs + i] = B[j * rs + i];
 	Alphacarre2d(rs, cs, i, j, tab, &n);
-	for (u = 0; u < n; u++) BP[tab[u]] = min(BP[tab[u]],B[j * rs + i]);
+	for (u = 0; u < n; u++) BP[tab[u]] = mcmin(BP[tab[u]],B[j * rs + i]);
       }
     memcpy(B, BP, N*sizeof(float));
     freeimage(bp);
@@ -531,7 +531,7 @@ void ndgmin2d_OLD(struct xvimage *k)
     {
       KP[j * rs + i] = K[j * rs + i];
       Alphacarre2d(rs, cs, i, j, tab, &n);
-      for (u = 0; u < n; u++) KP[tab[u]] = min(KP[tab[u]],K[j * rs + i]);
+      for (u = 0; u < n; u++) KP[tab[u]] = mcmin(KP[tab[u]],K[j * rs + i]);
     }
   memcpy(K, KP, rs*cs);
   freeimage(kp);
@@ -565,7 +565,7 @@ void ndgminbeta2d(struct xvimage *k)
     {
       KP[j * rs + i] = K[j * rs + i];
       Betacarre2d(rs, cs, i, j, tab, &n);
-      for (u = 0; u < n; u++) KP[tab[u]] = min(KP[tab[u]],K[j * rs + i]);
+      for (u = 0; u < n; u++) KP[tab[u]] = mcmin(KP[tab[u]],K[j * rs + i]);
     }
   memcpy(K, KP, rs*cs);
   freeimage(kp);
@@ -598,7 +598,7 @@ void ndgmax2d(struct xvimage *b)
       {
 	BP[j * rs + i] = B[j * rs + i];
 	Alphacarre2d(rs, cs, i, j, tab, &n);
-	for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[j * rs + i]);
+	for (u = 0; u < n; u++) BP[tab[u]] = mcmax(BP[tab[u]],B[j * rs + i]);
       }
     memcpy(B, BP, N*sizeof(uint8_t));
     freeimage(bp);
@@ -617,7 +617,7 @@ void ndgmax2d(struct xvimage *b)
       {
 	BP[j * rs + i] = B[j * rs + i];
 	Alphacarre2d(rs, cs, i, j, tab, &n);
-	for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[j * rs + i]);
+	for (u = 0; u < n; u++) BP[tab[u]] = mcmax(BP[tab[u]],B[j * rs + i]);
       }
     memcpy(B, BP, N*sizeof(uint32_t));
     freeimage(bp);
@@ -636,7 +636,7 @@ void ndgmax2d(struct xvimage *b)
       {
 	BP[j * rs + i] = B[j * rs + i];
 	Alphacarre2d(rs, cs, i, j, tab, &n);
-	for (u = 0; u < n; u++) BP[tab[u]] = max(BP[tab[u]],B[j * rs + i]);
+	for (u = 0; u < n; u++) BP[tab[u]] = mcmax(BP[tab[u]],B[j * rs + i]);
       }
     memcpy(B, BP, N*sizeof(float));
     freeimage(bp);
@@ -677,7 +677,7 @@ void ndgmax2d_OLD(struct xvimage *k)
     {
       KP[j * rs + i] = K[j * rs + i];
       Alphacarre2d(rs, cs, i, j, tab, &n);
-      for (u = 0; u < n; u++) KP[tab[u]] = max(KP[tab[u]],K[j * rs + i]);
+      for (u = 0; u < n; u++) KP[tab[u]] = mcmax(KP[tab[u]],K[j * rs + i]);
     }
   memcpy(K, KP, rs*cs);
   freeimage(kp);
@@ -711,7 +711,7 @@ void ndgmaxbeta2d(struct xvimage *k)
     {
       KP[j * rs + i] = K[j * rs + i];
       Betacarre2d(rs, cs, i, j, tab, &n);
-      for (u = 0; u < n; u++) KP[tab[u]] = max(KP[tab[u]],K[j * rs + i]);
+      for (u = 0; u < n; u++) KP[tab[u]] = mcmax(KP[tab[u]],K[j * rs + i]);
     }
   memcpy(K, KP, rs*cs);
   freeimage(kp);
@@ -842,14 +842,14 @@ void ndg2grad2d(struct xvimage *k)
         Betacarre2d(rs, cs, i, j, tab, &n);
         if (n == 2)
 	{
-          KP[j * rs + i] = abs(K[tab[0]]-K[tab[1]]);  
+          KP[j * rs + i] = mcabs(K[tab[0]]-K[tab[1]]);  
         }
         else if (n == 1)
 	{
           KP[j * rs + i] = K[tab[0]]; /* hyp. bord a 0 */
         }
         Alphacarre2d(rs, cs, i, j, tab, &n);
-        for (u = 0; u < n; u++) KP[tab[u]] = max(KP[tab[u]],KP[j*rs+i]);
+        for (u = 0; u < n; u++) KP[tab[u]] = mcmax(KP[tab[u]],KP[j*rs+i]);
       }
     }
   memcpy(K, KP, rs*cs);

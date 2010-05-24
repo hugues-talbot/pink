@@ -105,7 +105,7 @@ int main(int argc, char **argv)
   }
   B = UCHARDATA(imagebyte);
 
-  for (x = 0; x < N; x++) B[x] = (uint8_t)min(L[x],255);
+  for (x = 0; x < N; x++) B[x] = (uint8_t)mcmin(L[x],255);
 
   writeimage(imagebyte, argv[argc-1]);
   freeimage(image);

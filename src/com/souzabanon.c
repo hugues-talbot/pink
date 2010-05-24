@@ -98,10 +98,10 @@ int main(int argc, char **argv)
   for (y = 1; y <= cs-2; y++)
   {
     if ((g[y*rs + x] > 0) && 
-	(abs(g[y*rs + x-1]) <= g[y*rs + x]) &&
-	(abs(g[(y-1)*rs + x]) <= g[y*rs + x]) &&
-	((abs(g[y*rs + x+1]) <= g[y*rs + x]) || (g[y*rs + x-1] < 0)) &&
-	((abs(g[(y+1)*rs + x]) <= g[y*rs + x]) || (g[(y-1)*rs + x] < 0))
+	(mcabs(g[y*rs + x-1]) <= g[y*rs + x]) &&
+	(mcabs(g[(y-1)*rs + x]) <= g[y*rs + x]) &&
+	((mcabs(g[y*rs + x+1]) <= g[y*rs + x]) || (g[y*rs + x-1] < 0)) &&
+	((mcabs(g[(y+1)*rs + x]) <= g[y*rs + x]) || (g[(y-1)*rs + x] < 0))
        )
       g[y*rs + x] = -g[y*rs + x];
   }
@@ -110,8 +110,8 @@ int main(int argc, char **argv)
   for (y = cs-2; y >= 1; y--)
   {
     if ((g[y*rs + x] > 0) && 
-	(((abs(g[y*rs + x-1]) > g[y*rs + x]) && (g[y*rs + x+1] < 0)) ||
-	 ((abs(g[(y-1)*rs + x]) > g[y*rs + x]) && (g[(y+1)*rs + x] < 0)))
+	(((mcabs(g[y*rs + x-1]) > g[y*rs + x]) && (g[y*rs + x+1] < 0)) ||
+	 ((mcabs(g[(y-1)*rs + x]) > g[y*rs + x]) && (g[(y+1)*rs + x] < 0)))
        )
       g[y*rs + x] = -g[y*rs + x];    
   }

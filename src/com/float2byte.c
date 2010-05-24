@@ -142,7 +142,7 @@ int main(int argc, char **argv)
       for (x = 0; x < N; x++)
       {
         tmp = arrondi(L[x]);
-        B[x] = (uint8_t)min(tmp,255);
+        B[x] = (uint8_t)mcmin(tmp,255);
       }
       break;
     case 1:
@@ -160,7 +160,7 @@ int main(int argc, char **argv)
       {
         t = ((L[x]-Min) * 255.0) / (float)(Max-Min);
         tmp = arrondi(t);
-        B[x] = (uint8_t)min(255,tmp);
+        B[x] = (uint8_t)mcmin(255,tmp);
       }
       break;
     case 4:
@@ -168,8 +168,8 @@ int main(int argc, char **argv)
       {
         T = sqrt((double)(L[x]));
         tmp = arrondi(T);
-        tmp = min(255,tmp);
-        tmp = max(0,tmp);
+        tmp = mcmin(255,tmp);
+        tmp = mcmax(0,tmp);
         B[x] = (uint8_t)tmp;
       }
       break;
@@ -178,8 +178,8 @@ int main(int argc, char **argv)
       {
         T = log((double)(L[x]));
         tmp = arrondi(T);
-        tmp = min(255,tmp);
-        tmp = max(0,tmp);
+        tmp = mcmin(255,tmp);
+        tmp = mcmax(0,tmp);
         B[x] = (uint8_t)tmp;
       }
       break;

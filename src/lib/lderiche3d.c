@@ -67,8 +67,8 @@ void deriche3dgen(double *f,               /* image a traiter */
                 int32_t rs,                  /* taille ligne */
                 int32_t cs,                  /* taille colonne */
                 int32_t ds,                  /* nombre plans */
-                double *g1,              /* zone temporaire de taille max(rs,cs,ds) */
-                double *g2,              /* zone temporaire de taille max(rs,cs,ds) */
+                double *g1,              /* zone temporaire de taille mcmax(rs,cs,ds) */
+                double *g2,              /* zone temporaire de taille mcmax(rs,cs,ds) */
                 double *g,               /* stocke un resultat temporaire, puis le resultat final */ 
                 double a1, double a2, double a3, double a4, double b1, double b2,   /* param. dir. z */
                 double a5, double a6, double a7, double a8, double b3, double b4,   /* param. dir. y */
@@ -220,7 +220,7 @@ int32_t lderiche3d(struct xvimage *image, double alpha, int32_t function, double
       return(0);
     }
   }
-  sbuf = max((max(rs,cs)),ds);
+  sbuf = mcmax((mcmax(rs,cs)),ds);
   buf1 = (double *)calloc(1,sbuf * sizeof(double));
   buf2 = (double *)calloc(1,sbuf * sizeof(double));
   if ((buf1==NULL) || (buf2==NULL))
@@ -361,7 +361,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
         if (t2 > lmax) lmax = t2;
         if (t2 < lmin) lmin = t2;
       }        
-      lmax = max(lmax, -lmin);
+      lmax = mcmax(lmax, -lmin);
       for (i = 0; i < N; i++)      
         ima[i] = 127 + (uint8_t)(Im1[i] * 128.0 / lmax);
       */
@@ -468,8 +468,8 @@ void deriche3dgenb(uint8_t *f,     /* image a traiter */
                 int32_t rs,                  /* taille ligne */
                 int32_t cs,                  /* taille colonne */
                 int32_t ds,                  /* nombre plans */
-                double *g1,              /* zone temporaire de taille max(rs,cs,ds) */
-                double *g2,              /* zone temporaire de taille max(rs,cs,ds) */
+                double *g1,              /* zone temporaire de taille mcmax(rs,cs,ds) */
+                double *g2,              /* zone temporaire de taille mcmax(rs,cs,ds) */
                 double *g,               /* stocke un resultat temporaire, puis le resultat final */ 
                 double a1, double a2, double a3, double a4, double b1, double b2,   /* param. dir. z */
                 double a5, double a6, double a7, double a8, double b3, double b4,   /* param. dir. y */
@@ -600,8 +600,8 @@ int32_t llisseurrec3d(struct xvimage *image, double alpha)
   {   fprintf(stderr,"lderiche3d() : malloc failed\n");
       return(0);
   }
-  buf1 = (double *)calloc(1,max(max(rs,cs),ds) * sizeof(double));
-  buf2 = (double *)calloc(1,max(max(rs,cs),ds) * sizeof(double));
+  buf1 = (double *)calloc(1,mcmax(mcmax(rs,cs),ds) * sizeof(double));
+  buf2 = (double *)calloc(1,mcmax(mcmax(rs,cs),ds) * sizeof(double));
   if ((buf1==NULL) || (buf2==NULL))
   {   fprintf(stderr,"lderiche3d() : malloc failed\n");
       return(0);

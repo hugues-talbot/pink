@@ -76,7 +76,7 @@ void attributNoeud(RAG *rag, struct xvimage *label, struct xvimage *ga, struct x
   for(i = 0; i < N; i++) {
     alt = altitudePoint(ga, i);
     l = LABEL[i];
-    rag->profondeur[l] = min(alt,rag->profondeur[l]);
+    rag->profondeur[l] = mcmin(alt,rag->profondeur[l]);
     rag->surface[l] ++;
     if (annexe!=NULL)
       rag->altitude[l] = F[i];
@@ -530,7 +530,7 @@ static void mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attrib
   // arete du MST
   for(i = CT->nbnodes - (CT->nbnodes/2); i < CT->nbnodes; i++){
     MST[k] = MT->mergeEdge[i];
-    Valeur[k] = min(Attribut[CT->tabnodes[i].sonlist->son], Attribut[CT->tabnodes[i].lastson->son]);
+    Valeur[k] = mcmin(Attribut[CT->tabnodes[i].sonlist->son], Attribut[CT->tabnodes[i].lastson->son]);
     k++;
   }
 }
@@ -546,7 +546,7 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int3
   uint8_t *F = UCHARDATA(ga);   /* l'image de depart */
   int32_t u,x,y,i,j,c1;
   /* la valeur maximum de l'attribut est à la racine */
-  double facteur = max(255/(double)attribut[CT->root], 0.05); 
+  double facteur = mcmax(255/(double)attribut[CT->root], 0.05); 
   facteur = 1;
   printf("Attribut[racine] = %d et facteur %lf \n", attribut[CT->root],facteur);
 #ifdef LCAFAST 
@@ -581,7 +581,7 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int3
 #ifndef LCAFAST
 	c1 = LowComAncSlow(CT, (int32_t)label[x], (int32_t)label[y]);
 #endif
-	F[u] = (uint8_t)(min((int32_t)(facteur * (double)attribut[c1]), 255));   
+	F[u] = (uint8_t)(mcmin((int32_t)(facteur * (double)attribut[c1]), 255));   
       } 
        else F[u] =0; 
     }
@@ -605,7 +605,7 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int3
 	  printf("Erreur de lca pour %d %d retourne %d\n", (int32_t)(label[x]),  (int32_t)(label[y]), c1);
 	  exit(0);
 	} 
-	F[u] = (uint8_t)(min(255, (int32_t)(facteur * (double)attribut[c1])));  
+	F[u] = (uint8_t)(mcmin(255, (int32_t)(facteur * (double)attribut[c1])));  
       }
       else F[u] = 0;
     }
@@ -658,8 +658,8 @@ int32_t main_cascade(struct xvimage *image, struct xvimage *ga, int32_t param)
     for (k = 0; k < 4; k += 2){
       if((y = voisin(i, k, rs, N)) != -1)
 	switch(param){
-	case 0: updateArcValue(g1,i, y, (uint8_t)max(F[i],F[y])); break;
-	case 1: updateArcValue(g1,i, y, (uint8_t)abs((int32_t)F[i] - (int32_t)F[y])); break;
+	case 0: updateArcValue(g1,i, y, (uint8_t)mcmax(F[i],F[y])); break;
+	case 1: updateArcValue(g1,i, y, (uint8_t)mcabs((int32_t)F[i] - (int32_t)F[y])); break;
 	default: fprintf(stderr,"%s: Mauvais parametre \n", F_NAME); exit(0);
 	}
     }
@@ -671,7 +671,7 @@ int32_t main_cascade(struct xvimage *image, struct xvimage *ga, int32_t param)
   while(nbregions > 1){
     printf("Un etage de la hierarchie \n"); 
     
-    g2 = initGrapheValue((int32_t)nbregions, (int32_t)min(nbregions*(nbregions-1), (int32_t)(4*N - 2*rs - 2*cs)) );   
+    g2 = initGrapheValue((int32_t)nbregions, (int32_t)mcmin(nbregions*(nbregions-1), (int32_t)(4*N - 2*rs - 2*cs)) );   
     printf("2eme graphe initialise \n");
     for(i = 0; i < N; i++){
       for(k=0; k < 2; k++)
@@ -680,9 +680,9 @@ int32_t main_cascade(struct xvimage *image, struct xvimage *ga, int32_t param)
 	    // Mise a jour de la carte de saillance du waterfall
 	    G[incidente(i,k,rs,N)] ++;
 	    switch(param){
-	    case 0: updateArcValue(g2,Label2[Label1[i]], Label2[Label1[y]], max(F[i],F[y])); break;
+	    case 0: updateArcValue(g2,Label2[Label1[i]], Label2[Label1[y]], mcmax(F[i],F[y])); break;
 	    case 1: updateArcValue(g2,Label2[Label1[i]], Label2[Label1[y]], 
-	    			   (uint8_t)abs((int32_t)F[i] - (int32_t)F[y])); break;
+	    			   (uint8_t)mcabs((int32_t)F[i] - (int32_t)F[y])); break;
 	    default: fprintf(stderr,"%s: Mauvais parametre \n", F_NAME); exit(0);
 	    }
 	  }

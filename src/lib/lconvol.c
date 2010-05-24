@@ -115,7 +115,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
 
     nptb = 0;
     for (i = 0; i < Nm; i += 1)
-      if (abs(M[i]) > EPSILON)
+      if (mcabs(M[i]) > EPSILON)
         nptb += 1;
 
 #ifdef DEBUG
@@ -133,7 +133,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
     k = 0;
     for (j = 0; j < csm; j += 1)
       for (i = 0; i < rsm; i += 1)
-        if (abs(M[j * rsm + i]) > EPSILON)
+        if (mcabs(M[j * rsm + i]) > EPSILON)
         {
           tab_m_x[k] = i;
           tab_m_y[k] = j;
@@ -201,7 +201,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
     struct xvimage *mf2;  // FFT de maskpad (partie imaginaire)
     float *IF1, *IF2, *MF1, *MF2;
 
-    rs2 = max(rs+rs,cs+cs);
+    rs2 = mcmax(rs+rs,cs+cs);
     cs2 = 1;
     while (cs2 < rs2) cs2 = cs2 << 1;
     rs2 = cs2;
@@ -297,7 +297,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
   } 
   else if (mode == 3)
   {
-    int32_t n = (max(rsm,csm) + 1) / 2;
+    int32_t n = (mcmax(rsm,csm) + 1) / 2;
     struct xvimage *tmp = lexpandframe(f, n);
     if (tmp == NULL)
     {
@@ -404,9 +404,9 @@ int32_t ldirectionalfilter(
         y = j - y0;
         xr = cos(theta) * x + sin(theta) * y;
         yr = -sin(theta) * x + cos(theta) * y;
-        tmp = exp(-lambda*sqr(yr)) * exp(-sigma*sqr(xr));
+        tmp = exp(-lambda*mcsqr(yr)) * exp(-sigma*mcsqr(xr));
         t1 += tmp;
-        t2 += sqr(xr) * tmp;
+        t2 += mcsqr(xr) * tmp;
       } 
     k1 = t1 / (sigma * t2);
     // calcul de la constante de normalisation k2
@@ -418,8 +418,8 @@ int32_t ldirectionalfilter(
         y = j - y0;
         xr = cos(theta) * x + sin(theta) * y;
         yr = -sin(theta) * x + cos(theta) * y;
-        tmp = exp(-lambda*sqr(yr)) * exp(-sigma*sqr(xr));
-        t2 = 1.0 - k1 * sigma * sqr(xr); 
+        tmp = exp(-lambda*mcsqr(yr)) * exp(-sigma*mcsqr(xr));
+        t2 = 1.0 - k1 * sigma * mcsqr(xr); 
         if (t2 > 0) t1 += t2 * tmp; 
       } 
     k2 = 1.0 / t1;
@@ -435,8 +435,8 @@ int32_t ldirectionalfilter(
         y = j - y0;
         xr = cos(theta) * x + sin(theta) * y;
         yr = -sin(theta) * x + cos(theta) * y;
-        K[j * rsk + i] = (float)(k2 * exp(-lambda*sqr(yr)) *
-                         (1.0 - k1*sigma*sqr(xr)) * exp(-sigma*sqr(xr))); 
+        K[j * rsk + i] = (float)(k2 * exp(-lambda*mcsqr(yr)) *
+                         (1.0 - k1*sigma*mcsqr(xr)) * exp(-sigma*mcsqr(xr))); 
 #ifdef DEBUG
         sum += K[j * rsk + i];
         if (K[j * rsk + i] > 0) sum1 += K[j * rsk + i];
@@ -462,7 +462,7 @@ int32_t ldirectionalfilter(
     writeimage(temp, buf1);
 #endif
 
-    // result = max(result, temp)
+    // result = mcmax(result, temp)
     for (i = 0; i < N; i++) 
       if (T[i] > R[i]) R[i] = T[i];
   } // for n

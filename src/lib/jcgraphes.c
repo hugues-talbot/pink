@@ -159,7 +159,7 @@ int32_t updateArcValue(GrapheValue *gv, int32_t i, int32_t s, uint8_t val)
   for (p = g->gamma[i]; p != NULL; p = p->next)
     /* Si la region s est deja adjacente a i */
     if (p->vertex == s){
-      F[p->edge] = min(F[p->edge],val);
+      F[p->edge] = mcmin(F[p->edge],val);
       return 1;
     }
   
@@ -241,7 +241,7 @@ int32_t updateRAGArc(RAG *rag, int32_t i, int32_t s, uint8_t val)
   for (p = g->gamma[i]; p != NULL; p = p->next)
     /* Si la region s est deja adjacente a i */
     if (p->vertex == s){ 
-      F[p->edge] = min(val,F[p->edge]);
+      F[p->edge] = mcmin(val,F[p->edge]);
       return 1; 
     }    
   /* On a trouve un nouvel arc */

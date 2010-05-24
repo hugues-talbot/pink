@@ -205,8 +205,8 @@ int32_t lderiche(struct xvimage *image, double alpha, int32_t function, double l
   Im1 = (double *)calloc(1,N * sizeof(double));
   Im2 = (double *)calloc(1,N * sizeof(double));
   Imd = (double *)calloc(1,N * sizeof(double));
-  buf1 = (double *)calloc(1,max(rs, cs) * sizeof(double));
-  buf2 = (double *)calloc(1,max(rs, cs) * sizeof(double));
+  buf1 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
+  buf2 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
   if ((Im1==NULL) || (Im2==NULL) || (Imd==NULL) || (buf1==NULL) || (buf2==NULL))
   {   fprintf(stderr,"%s: malloc failed\n", F_NAME);
       return(0);
@@ -329,7 +329,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
 	for (i = 0; i < N; i++)      
 	{
 	  t1 = Im1[i]; t2 = Im2[i];
-	  if (abs(t1) >= EPSILON)
+	  if (mcabs(t1) >= EPSILON)
 	    ima[i] = (uint8_t)((DIRMAX * (atan(t2/t1) + M_PI_2)) / M_PI);
 	  else
 	    ima[i] = DIRMAX;
@@ -341,7 +341,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
 	for (i = 0; i < N; i++)      
 	{
 	  t1 = Im1[i]; t2 = Im2[i];
-	  if (abs(t1) >= EPSILON)
+	  if (mcabs(t1) >= EPSILON)
 	    ima[i] = (int32_t)((DIRMAX * (atan(t2/t1) + M_PI_2)) / M_PI);
 	  else
 	    ima[i] = DIRMAX;
@@ -353,7 +353,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
 	for (i = 0; i < N; i++)      
 	{
 	  t1 = Im1[i]; t2 = Im2[i];
-	  if (abs(t1) >= EPSILON)
+	  if (mcabs(t1) >= EPSILON)
 	    ima[i] = (float)((DIRMAX * (atan(t2/t1) + M_PI_2)) / M_PI);
 	  else
 	    ima[i] = DIRMAX;
@@ -390,7 +390,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
 	    if (t2 > lmax) lmax = t2;
 	    if (t2 < lmin) lmin = t2;
 	  }        
-	lmax = max(lmax, -lmin);
+	lmax = mcmax(lmax, -lmin);
 	for (i = 0; i < N; i++)      
 	  ima[i] = 127 + (uint8_t)(Im1[i] * 128.0 / lmax);
       }
@@ -508,7 +508,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
 	for (i = 0; i < N; i++)
 	  {
 	    t1 = Im1[i];
-	    t2 = abs(t1);
+	    t2 = mcabs(t1);
 	    if (t2 <= 255.0)
 	      ima[i] = (uint8_t)t2;
 	    else
@@ -550,7 +550,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
 	for (i = 0; i < N; i++)
 	  {
 	    t1 = Im1[i];
-	    t2 = abs(t1);
+	    t2 = mcabs(t1);
 	    if (t2 <= 255.0)
 	      ima[i] = (uint8_t)t2;
 	    else
@@ -615,8 +615,8 @@ int32_t lshencastan(struct xvimage *image, double beta)
   Im1 = (double *)calloc(1,N * sizeof(double));
   Im2 = (double *)calloc(1,N * sizeof(double));
   Imd = (double *)calloc(1,N * sizeof(double));
-  buf1 = (double *)calloc(1,max(rs, cs) * sizeof(double));
-  buf2 = (double *)calloc(1,max(rs, cs) * sizeof(double));
+  buf1 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
+  buf2 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
   if ((Im1==NULL) || (Im2==NULL) || (Imd==NULL) || (buf1==NULL) || (buf2==NULL))
   {   printf("lderiche() : malloc failed\n");
       return(0);

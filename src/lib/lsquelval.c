@@ -111,7 +111,7 @@ int32_t abaisse8(int32_t x, int32_t *DT, int32_t rs, int32_t N)
       if ((t8p == 1) && (t4mm == 1))
       {
         d = alpha8m_l(DT, x, rs, N);
-        d = min((DT[x]-1),(d+1));
+        d = mcmin((DT[x]-1),(d+1));
         DT[x] = d;
         abaisse = 1;
 #ifdef DEBUG
@@ -152,7 +152,7 @@ int32_t abaisse4(int32_t x, int32_t *DT, int32_t rs, int32_t N)
       if ((t4p == 1) && (t8mm == 1))
       {
         d = alpha8m_l(DT, x, rs, N);
-        d = min((DT[x]-1),(d+1));
+        d = mcmin((DT[x]-1),(d+1));
         DT[x] = d;
         abaisse = 1;
 #ifdef DEBUG
@@ -525,7 +525,7 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
           if ((t6p == 1) && (mctopo3d_t26mm == 1))
 	  {
             d = mctopo3d_alpha26m_l((int32_t *)DT, x, rs, ps, N);
-            d = min((DT[x]-1),(d+1));
+            d = mcmin((DT[x]-1),(d+1));
             DT[x] = d;
             abaisse = 1;
 	  }
@@ -550,7 +550,7 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
           if ((mctopo3d_t26p == 1) && (mctopo3d_t6mm == 1))
 	  {
             d = mctopo3d_alpha26m_l((int32_t *)DT, x, rs, ps, N);
-            d = min((DT[x]-1),(d+1));
+            d = mcmin((DT[x]-1),(d+1));
             DT[x] = d;
             abaisse = 1;
 	  }

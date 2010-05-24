@@ -107,7 +107,7 @@ int main(int argc, char **argv)
   /* extraction d'une ligne */
   /* ---------------------------------------------------------- */
 
-  n = max(abs(x2-x1),(y2-y1))+1;
+  n = mcmax(mcabs(x2-x1),(y2-y1))+1;
   lx = (int32_t *)calloc(n, sizeof(int32_t));
   ly = (int32_t *)calloc(n, sizeof(int32_t));
   if (image == NULL)

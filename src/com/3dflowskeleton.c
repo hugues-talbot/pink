@@ -149,7 +149,7 @@ static void Morsify(graphe * g, boolean * head, TYP_VSOM epsilon)
       y = p->som;
       if (head[y])
       {
-	M[x] = M[y] = max(M[x],M[y]);
+	M[x] = M[y] = mcmax(M[x],M[y]);
       }
       else
       {

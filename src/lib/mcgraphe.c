@@ -610,8 +610,8 @@ A weight W(P,Q) is assigned to each edge, according to the value of \b mode:
 	{
 	  switch(mode)
 	  {
-	  case SP_MIN: v = min((TYP_VARC)F[j*rs+i],(TYP_VARC)F[j*rs+i+1]); break;
-	  case SP_MAX: v = max((TYP_VARC)F[j*rs+i],(TYP_VARC)F[j*rs+i+1]); break;
+	  case SP_MIN: v = mcmin((TYP_VARC)F[j*rs+i],(TYP_VARC)F[j*rs+i+1]); break;
+	  case SP_MAX: v = mcmax((TYP_VARC)F[j*rs+i],(TYP_VARC)F[j*rs+i+1]); break;
 	  case SP_AVG: v = ((TYP_VARC)F[j*rs+i]+(TYP_VARC)F[j*rs+i+1]) / 2; break;
 	  }
 	  AjouteArcValue(g, p, p+1, v*v);
@@ -621,8 +621,8 @@ A weight W(P,Q) is assigned to each edge, according to the value of \b mode:
 	{
 	  switch(mode)
 	  {
-	  case SP_MIN: v = min((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i]); break;
-	  case SP_MAX: v = max((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i]); break;
+	  case SP_MIN: v = mcmin((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i]); break;
+	  case SP_MAX: v = mcmax((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i]); break;
 	  case SP_AVG: v = ((TYP_VARC)F[j*rs+i]+(TYP_VARC)F[(j+1)*rs+i]) / 2; break;
 	  }
 	  AjouteArcValue(g, p, p+rs, v*v);
@@ -645,8 +645,8 @@ A weight W(P,Q) is assigned to each edge, according to the value of \b mode:
 	{
 	  switch(mode)
 	  {
-	  case SP_MIN: v = min((TYP_VARC)F[j*rs+i],(TYP_VARC)F[j*rs+i+1]); break;
-	  case SP_MAX: v = max((TYP_VARC)F[j*rs+i],(TYP_VARC)F[j*rs+i+1]); break;
+	  case SP_MIN: v = mcmin((TYP_VARC)F[j*rs+i],(TYP_VARC)F[j*rs+i+1]); break;
+	  case SP_MAX: v = mcmax((TYP_VARC)F[j*rs+i],(TYP_VARC)F[j*rs+i+1]); break;
 	  case SP_AVG: v = ((TYP_VARC)F[j*rs+i]+(TYP_VARC)F[j*rs+i+1]) / 2; break;
 	  }
 	  AjouteArcValue(g, p, p+1, v);
@@ -656,8 +656,8 @@ A weight W(P,Q) is assigned to each edge, according to the value of \b mode:
 	{
 	  switch(mode)
 	  {
-	  case SP_MIN: v = min((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i]); break;
-	  case SP_MAX: v = max((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i]); break;
+	  case SP_MIN: v = mcmin((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i]); break;
+	  case SP_MAX: v = mcmax((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i]); break;
 	  case SP_AVG: v = ((TYP_VARC)F[j*rs+i]+(TYP_VARC)F[(j+1)*rs+i]) / 2; break;
 	  }
 	  AjouteArcValue(g, p, p+rs, v);
@@ -667,8 +667,8 @@ A weight W(P,Q) is assigned to each edge, according to the value of \b mode:
 	{
 	  switch(mode)
 	  {
-	  case SP_MIN: v = min((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i+1]); break;
-	  case SP_MAX: v = max((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i+1]); break;
+	  case SP_MIN: v = mcmin((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i+1]); break;
+	  case SP_MAX: v = mcmax((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j+1)*rs+i+1]); break;
 	  case SP_AVG: v = ((TYP_VARC)F[j*rs+i]+(TYP_VARC)F[(j+1)*rs+i+1]) / 2; break;
 	  }
 	  AjouteArcValue(g, p, p+rs+1, v);
@@ -678,8 +678,8 @@ A weight W(P,Q) is assigned to each edge, according to the value of \b mode:
 	{
 	  switch(mode)
 	  {
-	  case SP_MIN: v = min((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j-1)*rs+i+1]); break;
-	  case SP_MAX: v = max((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j-1)*rs+i+1]); break;
+	  case SP_MIN: v = mcmin((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j-1)*rs+i+1]); break;
+	  case SP_MAX: v = mcmax((TYP_VARC)F[j*rs+i],(TYP_VARC)F[(j-1)*rs+i+1]); break;
 	  case SP_AVG: v = ((TYP_VARC)F[j*rs+i]+(TYP_VARC)F[(j-1)*rs+i+1]) / 2; break;
 	  }
 	  AjouteArcValue(g, p, p-rs+1, v);
@@ -918,8 +918,8 @@ graphe * GrapheAleatoire(int32_t nsom, int32_t narc)
       {
         i = rand() % nsom;
         j = rand() % nsom;
-      } while ((i == j) || !EstSuccesseur(g, min(i,j), max(i,j)));
-      RetireArc(g, min(i,j), max(i,j));
+      } while ((i == j) || !EstSuccesseur(g, mcmin(i,j), mcmax(i,j)));
+      RetireArc(g, mcmin(i,j), mcmax(i,j));
     }
 
     /* rajoute la liste des arcs et les poids */
@@ -1840,7 +1840,7 @@ void Dijkstra1(graphe * g, int32_t i)
       y = p->som;
       if (!S[y])
       {
-        g->v_sommets[y] = min((g->v_sommets[y]),(g->v_sommets[x]+p->v_arc));
+        g->v_sommets[y] = mcmin((g->v_sommets[y]),(g->v_sommets[x]+p->v_arc));
       } // if (!S[y])
     } // for p
     // extraire un sommet x hors de S de valeur g->v_sommets minimale
@@ -1895,7 +1895,7 @@ void Dijkstra(graphe * g, int32_t i)
       y = p->som;
       if (!S[y])
       {
-        g->v_sommets[y] = min((g->v_sommets[y]),(g->v_sommets[x]+p->v_arc));
+        g->v_sommets[y] = mcmin((g->v_sommets[y]),(g->v_sommets[x]+p->v_arc));
         if (!TT[y]) 
 	{  
 	  TT[y] = TRUE;

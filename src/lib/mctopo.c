@@ -3346,12 +3346,12 @@ int32_t ridge(
         v6 = *(ptr+rs)  ;
         v7 = *(ptr+rs+1);
 
-        if (min(v1,val) > max(v0,v2)) return 1; 
-        if (min(v3,val) > max(v2,v4)) return 1; 
-        if (min(v5,val) > max(v4,v6)) return 1; 
-        if (min(v7,val) > max(v6,v0)) return 1; 
-        if (min(v0,min(v4,val)) > max(v2,v6)) return 1; 
-        if (min(v2,min(v6,val)) > max(v0,v4)) return 1; 
+        if (mcmin(v1,val) > mcmax(v0,v2)) return 1; 
+        if (mcmin(v3,val) > mcmax(v2,v4)) return 1; 
+        if (mcmin(v5,val) > mcmax(v4,v6)) return 1; 
+        if (mcmin(v7,val) > mcmax(v6,v0)) return 1; 
+        if (mcmin(v0,mcmin(v4,val)) > mcmax(v2,v6)) return 1; 
+        if (mcmin(v2,mcmin(v6,val)) > mcmax(v0,v4)) return 1; 
 
         return 0;
 } /* ridge() */
@@ -3522,7 +3522,7 @@ int32_t lambdadestr4( /* teste si un point est lambda-destructible - minima 4-co
         if ((mi % 2) != 0)
 	{
           q = voisin(p, k, rs, N);
-          F[q] = (uint8_t)min(((int32_t)F[q]+lambda), NDG_MAX);
+          F[q] = (uint8_t)mcmin(((int32_t)F[q]+lambda), NDG_MAX);
 	}
         mi = mi >> 1;
       } /* for (k = 0; k < 8; k++) */
@@ -3541,7 +3541,7 @@ int32_t lambdadestr4( /* teste si un point est lambda-destructible - minima 4-co
         if ((mi % 2) != 0)
 	{
           q = voisin(p, k, rs, N);
-          F[q] = (uint8_t)min(((int32_t)F[q]+lambda), NDG_MAX);
+          F[q] = (uint8_t)mcmin(((int32_t)F[q]+lambda), NDG_MAX);
 	}
         mi = mi >> 1;
       } /* for (k = 0; k < 8; k++) */

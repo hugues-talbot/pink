@@ -225,7 +225,7 @@ printf("N = %d ; cumul = %g\n", N, cumul);
   while (! FahVide(FAH))
   {
     x = FahPop(FAH);
-    SOURCE[x] = min(k,NDG_MAX);
+    SOURCE[x] = mcmin(k,NDG_MAX);
     i++;
     if (k < NDG_MAX) while ((double)i >= cumul) { k++; cumul += hd[k]; }
   } /* while (! FahVide(FAH)) */
@@ -288,7 +288,7 @@ int32_t lhistscal3(
   while (! FahVide(FAH))
   {
     x = FahPop(FAH);
-    SOURCE[x] = min(k,NDG_MAX);
+    SOURCE[x] = mcmin(k,NDG_MAX);
     i++;
     if (k < NDG_MAX) while ((double)i >= cumul) { k++; cumul += hd[k]; }
   } /* while (! FahVide(FAH)) */

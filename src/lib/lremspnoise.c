@@ -89,7 +89,7 @@ int32_t lremspnoise(
     for (v = 0; v < 8; v++)  /* 8-voisins */
       if ((j = voisin(i, v, rs, N)) != -1)
       {
-        if (abs(((int32_t)pt[i] - (int32_t)pt[j]) >= g)) n++;
+        if (mcabs(((int32_t)pt[i] - (int32_t)pt[j]) >= g)) n++;
         nv++;        /* compte les voisins */
         m += pt[j];  /* pour le calcul de la moyenne */
       }

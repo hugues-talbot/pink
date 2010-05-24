@@ -516,7 +516,7 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
   struct xvimage *im3;
   int32_t type1 = datatype(im1);
   int32_t type2 = datatype(im2);
-  int32_t type, typemax = max(type1,type2);
+  int32_t type, typemax = mcmax(type1,type2);
 
   if (type1 == type2) return type1;
   if (type1 < type2) { im1 = *f2;  im2 = *f1; } // im1 : rien a changer

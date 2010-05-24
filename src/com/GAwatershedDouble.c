@@ -159,7 +159,7 @@ int main(argc, argv)
       rprime = ((i - 60) * (i - 60))+ ((j + 152) * (j + 152)); 
       if((rprime - r) <= 0) printf("B: (i,j) = (%d,%d)",i,j);
       TB = CONSTANTE1 * (double)(CONSTANTE * (rprime + r)) / ((CONSTANTE * (double)(rprime - r)));
-      F[j*rs +i] = min(TA,TB); 
+      F[j*rs +i] = mcmin(TA,TB); 
       if( F[j*rs +i] > max) max =  F[j*rs +i];
       //      printf("val %lf \t", F[j*rs +i]);
     }

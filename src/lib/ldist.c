@@ -2031,7 +2031,7 @@ int32_t ldistquadSaito(struct xvimage *img,   /* donnee: image binaire */
 	db=db+1;
       else 
 	db=0;
-      D[j*rs+i]=min(D[j*rs+i],db*db);
+      D[j*rs+i]=mcmin(D[j*rs+i],db*db);
 
     }
   }
@@ -2050,8 +2050,8 @@ int32_t ldistquadSaito(struct xvimage *img,   /* donnee: image binaire */
 		if(d!=0)
 		{
 			rMax=(int32_t)(sqrt(d))+1;
-			rStart=min(rMax,j);
-			rEnd=min(rMax,(cs-1-j));
+			rStart=mcmin(rMax,j);
+			rEnd=mcmin(rMax,(cs-1-j));
 			
 		for (n=-rStart;n<=rEnd;n++)
 		{
@@ -2132,7 +2132,7 @@ int32_t ldistSaito(struct xvimage *img,   /* donnee: image binaire */
 	db=db+1;
       else 
 	db=0;
-      D[j*rs+i]=min(D[j*rs+i],db*db);
+      D[j*rs+i]=mcmin(D[j*rs+i],db*db);
 
     }
   }
@@ -2151,8 +2151,8 @@ int32_t ldistSaito(struct xvimage *img,   /* donnee: image binaire */
 		if(d!=0)
 		{
 			rMax=(int32_t)(sqrt(d))+1;
-			rStart=min(rMax,j);
-			rEnd=min(rMax,(cs-1-j));
+			rStart=mcmin(rMax,j);
+			rEnd=mcmin(rMax,(cs-1-j));
 			
 		for (n=-rStart;n<=rEnd;n++)
 		{

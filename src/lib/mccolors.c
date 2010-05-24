@@ -90,8 +90,8 @@ void rgb2hls(double r, double g, double b, double *h, double *l, double *s)
 */
 #define UNDEFINED 0.0
 {
-  double maxi = max(max(r,g),b); 
-  double mini = min(min(r,g),b); 
+  double maxi = mcmax(mcmax(r,g),b); 
+  double mini = mcmin(mcmin(r,g),b); 
   double delta;
 
   *l = (maxi + mini) / 2.0; /* lightness */
@@ -174,8 +174,8 @@ int32_t huedistance(int32_t h1, int32_t h2)
 /* ======================================================================== */
 {
   int32_t k, h = h1 - h2;
-  h = abs(h);
+  h = mcabs(h);
   k = 360 - h;
-  h = min(h,k);
+  h = mcmin(h,k);
   return h;
 } //huedistance()

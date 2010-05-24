@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 
   xc = rs / 2;
   yc = cs / 2;
-  r = max(xc,yc);
+  r = mcmax(xc,yc);
 
   ds = r+1;     /* nb plans */
   ps = rs * cs; /* taille plan */

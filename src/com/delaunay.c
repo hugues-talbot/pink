@@ -200,7 +200,7 @@ int main(int argc, char **argv)
   rss = mask->row_size;
   css = mask->col_size;
   N = rss * css; 
-  longlpmax=max(rss,css);
+  longlpmax=mcmax(rss,css);
   lx = (int32_t*)malloc(longlpmax*sizeof(int32_t));
   ly = (int32_t*)malloc(longlpmax*sizeof(int32_t));
   del = (int32_t*)malloc(longlpmax*sizeof(int32_t));

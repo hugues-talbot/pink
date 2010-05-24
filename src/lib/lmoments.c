@@ -127,7 +127,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
     return 0;
   }
 
-  if (abs(Mx2 - My2) < EPSILON) 
+  if (mcabs(Mx2 - My2) < EPSILON) 
     theta = 0.0;
   else
   {
@@ -293,7 +293,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < EPSILON) 
+      if (mcabs(Mx2 - My2) < EPSILON) 
         theta = 0.0;
       else
       {
@@ -464,7 +464,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < EPSILON) 
+      if (mcabs(Mx2 - My2) < EPSILON) 
         theta = 0.0;
       else
       {
@@ -584,7 +584,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
     return 0;
   }
 
-  if (abs(Mx2 - My2) < EPSILON) 
+  if (mcabs(Mx2 - My2) < EPSILON) 
     theta = 0.0;
   else
   {
@@ -665,7 +665,7 @@ int32_t ldirectionsprincipales2d(
 
   *xc = mx1 / N; *yc = my1 / N;
 
-  if (abs(D[1]) > abs(D[0])) 
+  if (mcabs(D[1]) > mcabs(D[0])) 
   { 
     *dx1 = V[0][1]; *dy1 = V[1][1];
     *dx2 = V[0][0]; *dy2 = V[1][0];
@@ -730,21 +730,21 @@ int32_t ldirectionsprincipales3d(
 
   *xc = mx1 / N; *yc = my1 / N; *zc = mz1 / N;
 
-  if (abs(D[1]) > abs(D[0])) 
+  if (mcabs(D[1]) > mcabs(D[0])) 
   { 
     tmp = D[1]; D[1] = D[0]; D[0] = tmp;
     tmp = V[0][1]; V[0][1] = V[0][0]; V[0][0] = tmp;
     tmp = V[1][1]; V[1][1] = V[1][0]; V[1][0] = tmp;
     tmp = V[2][1]; V[2][1] = V[2][0]; V[2][0] = tmp;
   }
-  if (abs(D[2]) > abs(D[1])) 
+  if (mcabs(D[2]) > mcabs(D[1])) 
   { 
     tmp = D[2]; D[2] = D[1]; D[1] = tmp;
     tmp = V[0][2]; V[0][2] = V[0][1]; V[0][1] = tmp;
     tmp = V[1][2]; V[1][2] = V[1][1]; V[1][1] = tmp;
     tmp = V[2][2]; V[2][2] = V[2][1]; V[2][1] = tmp;
   }
-  if (abs(D[1]) > abs(D[0])) 
+  if (mcabs(D[1]) > mcabs(D[0])) 
   { 
     tmp = D[1]; D[1] = D[0]; D[0] = tmp;
     tmp = V[0][1]; V[0][1] = V[0][0]; V[0][0] = tmp;

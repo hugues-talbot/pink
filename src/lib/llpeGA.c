@@ -142,8 +142,8 @@ struct xvimage *mBorderWshed2d(struct xvimage *ga)
   for(j = 0; j < cs; j++)
     for(i = 0; i < rs -1; i++){
       u = j * rs + i; x = Sommetx(u,N,rs); y = Sommety(u,N,rs);
-      if( (min(Vminima[x], Vminima[y]) == 0) && /* un des deux sommets non ds un minima */
-	  (max(Vminima[x], Vminima[y]) > 0) ) /* et l'autre dans un minima */
+      if( (mcmin(Vminima[x], Vminima[y]) == 0) && /* un des deux sommets non ds un minima */
+	  (mcmax(Vminima[x], Vminima[y]) > 0) ) /* et l'autre dans un minima */
 	LifoPush(L,u); 
     }
   /* puis les aretes verticales */
@@ -151,8 +151,8 @@ struct xvimage *mBorderWshed2d(struct xvimage *ga)
     for(i = 0; i < rs; i++)
     {
       u = N + j * rs + i; x = Sommetx(u,N,rs); y = Sommety(u,N,rs);
-      if( (min(Vminima[x], Vminima[y]) == 0) && /* un des deux sommets non ds un minima */
-	  (max(Vminima[x], Vminima[y]) > 0) ) /* et l'autre dans un minima */
+      if( (mcmin(Vminima[x], Vminima[y]) == 0) && /* un des deux sommets non ds un minima */
+	  (mcmax(Vminima[x], Vminima[y]) > 0) ) /* et l'autre dans un minima */
 	LifoPush(L,u);
     } 
    
@@ -272,8 +272,8 @@ struct xvimage *mBorderWshed2drapide(struct xvimage *ga)
   for(j = 0; j < cs; j++)
     for(i = 0; i < rs -1; i++){
       u = j * rs + i; x = Sommetx(u,N,rs); y = Sommety(u,N,rs);
-      if( (min(Vminima[x], Vminima[y]) == 0) && /* un des deux sommets non ds un minima */
-	  (max(Vminima[x], Vminima[y]) > 0) ) /* et l'autre dans un minima */
+      if( (mcmin(Vminima[x], Vminima[y]) == 0) && /* un des deux sommets non ds un minima */
+	  (mcmax(Vminima[x], Vminima[y]) > 0) ) /* et l'autre dans un minima */
 	LifoPush(L,u); 
     }
   /* puis les aretes verticales */
@@ -281,8 +281,8 @@ struct xvimage *mBorderWshed2drapide(struct xvimage *ga)
     for(i = 0; i < rs; i++)
     {
       u = N + j * rs + i; x = Sommetx(u,N,rs); y = Sommety(u,N,rs);
-      if( (min(Vminima[x], Vminima[y]) == 0) && /* un des deux sommets non ds un minima */
-	  (max(Vminima[x], Vminima[y]) > 0) ) /* et l'autre dans un minima */
+      if( (mcmin(Vminima[x], Vminima[y]) == 0) && /* un des deux sommets non ds un minima */
+	  (mcmax(Vminima[x], Vminima[y]) > 0) ) /* et l'autre dans un minima */
 	LifoPush(L,u);
     } 
    
