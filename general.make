@@ -517,8 +517,8 @@ TDIR = $(PINK)/src/tables
 
 all:	$(OBJ) $(ARITH) $(CONVERT) $(MORPHO) $(CONNECT) $(GA) $(TOPO) $(ORDRES) $(DRAW) $(GEO) $(HISTO) $(SIGNAL) $(DIVERS) $(MESH3D) $(ANDRE) doc
 
-doc:	$(PINK)/pink.dox
-	doxygen $(PINK)/pink.dox
+doc:	$(PINK)/doc/pink.dox
+	doxygen $(PINK)/doc/pink.dox
 ifeq ($(HOME),/user/coupriem)
 	cp $(PINK)/doc/html/* $(HOME)/public_html/Pink/doc/html
 endif	
@@ -544,6 +544,9 @@ cleanall:
 tgz:
 	cp -R $(PINK) /tmp/Pinktmp
 	cd /tmp/Pinktmp; make clean
+	rm -f -r .svn
+	rm -f -r */.svn
+	rm -f -r */*/.svn
 	cd /tmp/Pinktmp/Bdd ; make clean
 	cd /tmp; tar zcvf pink.tgz Pinktmp; mv pink.tgz $(HOME)/pink.tgz 
 	rm -f -r /tmp/Pinktmp

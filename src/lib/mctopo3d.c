@@ -185,7 +185,7 @@ uint32_t mctopo3d_encodecube()
 void mctopo3d_geodesic_neighborhood(voxel * cube, uint8_t connex, uint8_t s)
 /* ========================================== */
 #undef F_NAME
-#define F_NAME ""
+#define F_NAME "mctopo3d_geodesic_neighborhood("
 /* 
   met a 1 le champ lab des points appartenant au voisinage geodesique d'ordre s du point central,
   met a 0 les autres
@@ -197,13 +197,13 @@ void mctopo3d_geodesic_neighborhood(voxel * cube, uint8_t connex, uint8_t s)
   
   if ((LIFO_topo3d1 == NULL) || (LIFO_topo3d2 == NULL))
   { 
-    fprintf(stderr, "mctopo3d_geodesic_neighborhood: LIFO_topo3d1 and LIFO_topo3d2 must be allocated\n"); 
+    fprintf(stderr, "%s: LIFO_topo3d1 and LIFO_topo3d2 must be allocated\n", F_NAME); 
     exit(0); 
   }
 
   if (s < 1) 
   { 
-    fprintf(stderr, "mctopo3d_geodesic_neighborhood: order %d not allowed (must be > 0)\n", s); 
+    fprintf(stderr, "%s: order %d not allowed (must be > 0)\n", F_NAME, s); 
     exit(0); 
   }
   
