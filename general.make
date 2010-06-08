@@ -547,6 +547,7 @@ tgz:
 	rm -f -r .svn
 	rm -f -r */.svn
 	rm -f -r */*/.svn
+	rm -f -r */*/*/.svn
 	cd /tmp/Pinktmp/Bdd ; make clean
 	cd /tmp; tar zcvf pink.tgz Pinktmp; mv pink.tgz $(HOME)/pink.tgz 
 	rm -f -r /tmp/Pinktmp
