@@ -301,6 +301,7 @@ $(BDIR)/2dcolor \
 $(BDIR)/2dflowskeleton \
 $(BDIR)/2dinvariants \
 $(BDIR)/2dkhalimskize \
+$(BDIR)/2dlabel \
 $(BDIR)/2dmakecomplex \
 $(BDIR)/2dpardircollapse \
 $(BDIR)/2dseltopo \
@@ -530,8 +531,8 @@ TDIR = $(PINK)/src/tables
 
 all:	$(OBJ) $(ARITH) $(CONVERT) $(MORPHO) $(CONNECT) $(GA) $(TOPO) $(ORDRES) $(DRAW) $(GEO) $(HISTO) $(SIGNAL) $(DIVERS) $(MESH3D) $(ANDRE) doc
 
-doc:	$(PINK)/doc/pink.dox
-	doxygen $(PINK)/doc/pink.dox
+doc:	$(PINK)/pink.dox
+	doxygen $(PINK)/pink.dox
 ifeq ($(HOME),/user/coupriem)
 	cp $(PINK)/doc/html/* $(HOME)/public_html/Pink/doc/html
 endif	
@@ -557,9 +558,10 @@ cleanall:
 tgz:
 	cp -R $(PINK) /tmp/Pinktmp
 	cd /tmp/Pinktmp; make clean
-	rm -f -r .svn
-	rm -f -r */.svn
-	rm -f -r */*/.svn
+	rm -f -r /tmp/Pinktmp/.svn
+	rm -f -r /tmp/Pinktmp/*/.svn
+	rm -f -r /tmp/Pinktmp/*/*/.svn
+	rm -f -r /tmp/Pinktmp/*/*/*/.svn
 	cd /tmp/Pinktmp/Bdd ; make clean
 	cd /tmp; tar zcvf pink.tgz Pinktmp; mv pink.tgz $(HOME)/pink.tgz 
 	rm -f -r /tmp/Pinktmp
@@ -1455,6 +1457,9 @@ $(BDIR)/2dinvariants:	$(CDIR)/2dinvariants.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(I
 
 $(BDIR)/2dkhalimskize:	$(CDIR)/2dkhalimskize.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l2dkhalimsky.h $(ODIR)/l2dkhalimsky.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(ODIR)/bdd1.alphacube.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dkhalimskize.c $(OBJ_COMMON) $(ODIR)/l2dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky2d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/mcindic.o $(LIBS) -o $(BDIR)/2dkhalimskize
+
+$(BDIR)/2dlabel:	$(CDIR)/2dlabel.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l2dkhalimsky.h $(ODIR)/l2dkhalimsky.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mclifo.o $(ODIR)/bdd1.alphacube.o $(ODIR)/mcindic.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dlabel.c $(OBJ_COMMON) $(ODIR)/l2dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky2d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/mcindic.o $(LIBS) -o $(BDIR)/2dlabel
 
 $(BDIR)/2dmakecomplex:	$(CDIR)/2dmakecomplex.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l2dkhalimsky.h $(ODIR)/l2dkhalimsky.o $(IDIR)/mckhalimsky2d.h $(ODIR)/mckhalimsky2d.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(ODIR)/bdd1.alphacube.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/2dmakecomplex.c $(OBJ_COMMON) $(ODIR)/l2dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky2d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/mcindic.o $(LIBS) -o $(BDIR)/2dmakecomplex
