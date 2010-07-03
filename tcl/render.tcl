@@ -31,7 +31,6 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 #
-#ATTENTION: BUGGE avec la version NVIDIA (carte graphique)
 #sh
 # The next line is executed by /bin/sh, but not Tcl \
 exec vtk $0 $1

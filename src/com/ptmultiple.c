@@ -41,9 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Description:</B>
 Detects multiple points in the 2d or 3d binary image \b in.pgm .
 A multiple point is a white point x such that Tn[x] > 2
-(n = 4 in 2D or n = 6 in 3D, as set by the parameter \b connex).
-For the 8-connectivity in 2D, a multiple point is chacacterized by 
-a transition number > 2.
+(n = 4, 8 in 2D or n = 6, 18, 26 in 3D, as set by the parameter \b connex).
 
 <B>Types supported:</B> byte 2D, byte 3D
 
@@ -52,6 +50,7 @@ a transition number > 2.
 
 \author Michel Couprie 2002
 */
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

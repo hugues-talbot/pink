@@ -36,6 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 /* Michel Couprie - octobre 1997 */
 
 // update janvier 2008 lsimplepair
+// update juillet 2010 lptmultiple
 
 #include <stdio.h>
 #include <stdint.h>
@@ -213,8 +214,13 @@ int32_t lptmultiple(struct xvimage * image, int32_t connex)
   else if (connex == 8)
   {
     for (x = 0; x < N; x++)
+      if ((nonbord(x, rs, N)) && (typetopobin8(SOURCE, x, rs, N) == MULTIPLE))
+        RES[x] = NDG_MAX;
+/*
+  ancienne version : 
       if ((nonbord(x, rs, N)) && SOURCE[x] && (nbtrans8(SOURCE, x, rs, N) > 2))
         RES[x] = NDG_MAX;
+*/
   }
   else if (connex == 6)
   {
@@ -223,6 +229,28 @@ int32_t lptmultiple(struct xvimage * image, int32_t connex)
       if (SOURCE[x] && nonbord3d(x, rs, ps, N))
       {
         mctopo3d_top6(SOURCE, x, rs, ps, N, &t, &tb);
+        if (t > 2) RES[x] = NDG_MAX;
+      }
+    mctopo3d_termine_topo3d();
+  }
+  else if (connex == 26)
+  {
+    mctopo3d_init_topo3d();
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N))
+      {
+        mctopo3d_top26(SOURCE, x, rs, ps, N, &t, &tb);
+        if (t > 2) RES[x] = NDG_MAX;
+      }
+    mctopo3d_termine_topo3d();
+  }
+  else if (connex == 18)
+  {
+    mctopo3d_init_topo3d();
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N))
+      {
+        mctopo3d_top18(SOURCE, x, rs, ps, N, &t, &tb);
         if (t > 2) RES[x] = NDG_MAX;
       }
     mctopo3d_termine_topo3d();
