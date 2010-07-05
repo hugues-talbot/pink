@@ -357,7 +357,7 @@ $(BDIR)/boxmin \
 $(BDIR)/cadre \
 $(BDIR)/convexhull \
 $(BDIR)/crop \
-$(BDIR)/crop_on_disk \
+$(BDIR)/cropondisk \
 $(BDIR)/curvatures \
 $(BDIR)/deframe \
 $(BDIR)/delaunay \
@@ -404,7 +404,7 @@ $(BDIR)/rotatebin \
 $(BDIR)/rotse \
 $(BDIR)/section \
 $(BDIR)/selrect \
-$(BDIR)/shrink_on_disk \
+$(BDIR)/shrinkondisk \
 $(BDIR)/surrect \
 $(BDIR)/sym \
 $(BDIR)/symse \
@@ -1625,10 +1625,10 @@ $(BDIR)/convexhull:	$(CDIR)/convexhull.c $(IDIR)/lconvexhull.h $(IDIR)/mcimage.h
 $(BDIR)/crop:	$(CDIR)/crop.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/lcrop.h $(ODIR)/lcrop.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/crop.c $(OBJ_COMMON) $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/crop
 
-$(BDIR)/crop_on_disk: $(CDIR)/crop_on_disk.c $(ODIR)/libcrop.o $(ODIR)/mcimage.o $(IDIR)/mccodimage.h
+$(BDIR)/cropondisk: $(CDIR)/cropondisk.c $(ODIR)/libcrop.o $(ODIR)/mcimage.o $(IDIR)/mccodimage.h
 	$(CC) $(CCFLAGS) -I$(IDIR) -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64 $< $(ODIR)/libcrop.o $(ODIR)/mcimage.o $(LIBS) -o $@
 
-$(BDIR)/shrink_on_disk: $(CDIR)/shrink_on_disk.c $(ODIR)/libcrop.o $(ODIR)/mcimage.o $(IDIR)/mccodimage.h
+$(BDIR)/shrinkondisk: $(CDIR)/shrinkondisk.c $(ODIR)/libcrop.o $(ODIR)/mcimage.o $(IDIR)/mccodimage.h
 	$(CC) $(CCFLAGS) -I$(IDIR) -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64 $< $(ODIR)/libcrop.o $(ODIR)/mcimage.o $(LIBS) -o $@
 
 $(BDIR)/curvatures:	$(CDIR)/curvatures.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
