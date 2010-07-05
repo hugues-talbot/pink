@@ -294,6 +294,8 @@ $(BDIR)/toposhrink \
 $(BDIR)/toposhrinkgray \
 $(BDIR)/topotypes
 
+#$(BDIR)/2dtopoflow \
+
 ORDRES=\
 $(BDIR)/2dborder \
 $(BDIR)/2dcollapse \
@@ -306,7 +308,6 @@ $(BDIR)/2dmakecomplex \
 $(BDIR)/2dpardircollapse \
 $(BDIR)/2dseltopo \
 $(BDIR)/2dthin \
-$(BDIR)/2dtopoflow \
 $(BDIR)/3dalpha \
 $(BDIR)/3dbeta \
 $(BDIR)/3dborder \
@@ -356,6 +357,7 @@ $(BDIR)/boxmin \
 $(BDIR)/cadre \
 $(BDIR)/convexhull \
 $(BDIR)/crop \
+$(BDIR)/crop_on_disk \
 $(BDIR)/curvatures \
 $(BDIR)/deframe \
 $(BDIR)/delaunay \
@@ -381,7 +383,7 @@ $(BDIR)/identifyparabola2 \
 $(BDIR)/identifyparabola3 \
 $(BDIR)/identifyplane \
 $(BDIR)/insert \
-$(BDIR)/lenoir \
+$(BDIR)/isometry \
 $(BDIR)/matchellipse \
 $(BDIR)/matchrect \
 $(BDIR)/maxdiameter \
@@ -396,13 +398,13 @@ $(BDIR)/quasishear \
 $(BDIR)/recalagerigide \
 $(BDIR)/recalagerigide_num \
 $(BDIR)/recalagerigide_translateplane \
-$(BDIR)/isometry \
 $(BDIR)/rotate \
 $(BDIR)/rotate3dbin \
 $(BDIR)/rotatebin \
 $(BDIR)/rotse \
 $(BDIR)/section \
 $(BDIR)/selrect \
+$(BDIR)/shrink_on_disk \
 $(BDIR)/surrect \
 $(BDIR)/sym \
 $(BDIR)/symse \
@@ -483,6 +485,7 @@ $(BDIR)/3dsphere \
 $(BDIR)/contours \
 $(BDIR)/dynrecons \
 $(BDIR)/jones \
+$(BDIR)/lenoir \
 $(BDIR)/levialdi \
 $(BDIR)/reconsplateaux \
 $(BDIR)/regul \
@@ -1622,6 +1625,12 @@ $(BDIR)/convexhull:	$(CDIR)/convexhull.c $(IDIR)/lconvexhull.h $(IDIR)/mcimage.h
 $(BDIR)/crop:	$(CDIR)/crop.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/lcrop.h $(ODIR)/lcrop.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/crop.c $(OBJ_COMMON) $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/crop
 
+$(BDIR)/crop_on_disk: $(CDIR)/crop_on_disk.c $(ODIR)/libcrop.o $(ODIR)/mcimage.o $(IDIR)/mccodimage.h
+	$(CC) $(CCFLAGS) -I$(IDIR) -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64 $< $(ODIR)/libcrop.o $(ODIR)/mcimage.o $(LIBS) -o $@
+
+$(BDIR)/shrink_on_disk: $(CDIR)/shrink_on_disk.c $(ODIR)/libcrop.o $(ODIR)/mcimage.o $(IDIR)/mccodimage.h
+	$(CC) $(CCFLAGS) -I$(IDIR) -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64 $< $(ODIR)/libcrop.o $(ODIR)/mcimage.o $(LIBS) -o $@
+
 $(BDIR)/curvatures:	$(CDIR)/curvatures.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/curvatures.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/curvatures
 
@@ -2310,6 +2319,9 @@ $(ODIR)/lconvexhull.o:	$(LDIR)/lconvexhull.c $(IDIR)/mccodimage.h $(IDIR)/mcutil
 
 $(ODIR)/lcrop.o:	$(LDIR)/lcrop.c $(IDIR)/mccodimage.h $(IDIR)/lcrop.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lcrop.c -o $(ODIR)/lcrop.o
+
+$(ODIR)/libcrop.o: $(LDIR)/libcrop.c $(IDIR)/libcrop.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64 $< -o $@
 
 $(ODIR)/ldetectcercles.o:	$(LDIR)/ldetectcercles.c $(IDIR)/mccodimage.h $(IDIR)/lbresen.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/ldetectcercles.c -o $(ODIR)/ldetectcercles.o

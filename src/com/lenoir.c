@@ -42,8 +42,8 @@ knowledge of the CeCILL license and that you accept its terms.
 
 <B>Types supported:</B> byte 3d
 
-<B>Category:</B> Topology
-\ingroup  orders
+<B>Category:</B> 
+\ingroup  
 
 \author Massieu Julien
 \author Parly Sébastien

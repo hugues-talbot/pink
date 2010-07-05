@@ -41,7 +41,7 @@ Jean Cousty: redt 3d (reverse euclidean distance transform - algo de D. Coeurjol
 Xavier Daragon: dist, distc (distance euclidienne quadratique 3D)
 André Vital Saude: radialopening, divers scripts tcl, hma
 Nicolas Combaret: toposhrinkgray, ptselectgray
-John Chaussard: lballincl, cropondisk, shrinkondisk
+John Chaussard: lballincl, crop_on_disk, shrink_on_disk
 Christophe Doublier: zoomint
 Hildegard Koehler: lintophat
 Cédric Allène: gettree, histolisse, labeltree, nbcomp, pgm2vtk, seuilauto
