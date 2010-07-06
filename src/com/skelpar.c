@@ -1,5 +1,5 @@
 /*
-Copyright ESIEE (2009) 
+Copyright ESIEE (2009)
 
 m.couprie@esiee.fr
 
@@ -7,16 +7,16 @@ This software is an image processing library whose purpose is to be
 used primarily for research and teaching.
 
 This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software. You can  use, 
+abiding by the rules of distribution of free software. You can  use,
 modify and/ or redistribute the software under the terms of the CeCILL
 license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+"http://www.cecill.info".
 
 As a counterpart to the access to the source code and  rights to copy,
 modify and redistribute granted by the license, users are provided only
 with a limited warranty  and the software's author,  the holder of the
 economic rights,  and the successive licensors  have only  limited
-liability. 
+liability.
 
 In this respect, the user's attention is drawn to the risks associated
 with loading,  using,  modifying and/or developing or reproducing the
@@ -25,9 +25,9 @@ that may mean  that it is complicated to manipulate,  and  that  also
 therefore means  that it is reserved for developers  and  experienced
 professionals having in-depth computer knowledge. Users are therefore
 encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+requirements in conditions enabling the security of their systems and/or
+data to be ensured and,  more generally, to use and operate it in the
+same conditions as regards security.
 
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
@@ -72,14 +72,16 @@ The possible choices are:
 \li 22: Bertrand curvilinear with reconstruction, asymmetrical
 \li 23: Bertrand curvilinear with reconstruction, symmetrical
 \li 24: Rosenfeld directionnel
-\li 25: Experimental
+\li 25: Nemeth et Palagyi, 2009 (1)
+\li 26: Nemeth et Palagyi, 2009 (2)
+\li 27: Nemeth et Palagyi, 2009 (3)
 
 If the parameter \b inhibit is given and is a binary image name,
-then the points of this image will be left unchanged. 
+then the points of this image will be left unchanged.
 
 <B>Warning:</B> The object must not have any point on the frame of the image.
 
-References:<BR> 
+References:<BR>
 [COU05] M. Couprie, Note on fifteen 2D parallel thinning algorithms,
 IGM2006-01}, Universit\'e de Marne-la-Vall\'ee, 2006,
 http://igm.univ-mlv.fr/LabInfo/rapportsInternes/2006/01.pdf<BR>
@@ -149,6 +151,9 @@ int main(int argc, char **argv)
     fprintf(stderr, "  22: Bertrand curvilinear with reconstruction, asymmetrical\n");
     fprintf(stderr, "  23: Bertrand curvilinear with reconstruction, symmetrical\n");
     fprintf(stderr, "  24: Rosenfeld directionnel\n");
+    fprintf(stderr, "  25: Nemeth and Palagyi 2009 (detects endpoints type 1)\n");
+    fprintf(stderr, "  26: Nemeth and Palagyi 2009 (detects endpoints type 2)\n");
+    fprintf(stderr, "  27: Nemeth and Palagyi 2009 (detects endpoints type 3)\n");
     exit(1);
   }
 
@@ -274,7 +279,7 @@ int main(int argc, char **argv)
       {
 	fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", argv[0]);
 	exit(1);
-      }      
+      }
       if (! lskeljangrec(image, nsteps, inhibit))
       {
 	fprintf(stderr, "%s: lskeljangrec failed\n", argv[0]);
@@ -322,7 +327,7 @@ int main(int argc, char **argv)
       {
 	fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", argv[0]);
 	exit(1);
-      }      
+      }
       if (! lskelNK2(image, nsteps, inhibit))
       {
 	fprintf(stderr, "%s: lskelNK2 failed\n", argv[0]);
@@ -346,7 +351,25 @@ int main(int argc, char **argv)
 	fprintf(stderr, "%s: lskelbertrand_asym_s failed\n", argv[0]);
 	exit(1);
       } break;
-    default: 
+    case 26:
+      if (! lskelnemethpalagyi(image, nsteps, inhibit, 1))
+      {
+	fprintf(stderr, "%s: lskelnemethpalagyi failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 27:
+      if (! lskelnemethpalagyi(image, nsteps, inhibit, 2))
+      {
+	fprintf(stderr, "%s: lskelnemethpalagyi failed\n", argv[0]);
+	exit(1);
+      } break;
+	case 28:
+      if (! lskelnemethpalagyi(image, nsteps, inhibit, 3))
+      {
+	fprintf(stderr, "%s: lskelnemethpalagyi failed\n", argv[0]);
+	exit(1);
+      } break;
+    default:
       fprintf(stderr, "%s: mode %d not implemented\n", argv[0], mode);
       exit(1);
     }
