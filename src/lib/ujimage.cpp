@@ -15,6 +15,7 @@
 
 #include <pink.h>
 
+#undef error
 #define error(msg) {stringstream fullmessage; fullmessage << "in ujimage.cpp: " << msg; call_error(fullmessage.str());}
 
 namespace pink{
@@ -381,7 +382,7 @@ deep_xvimage::deep_xvimage( const xvimage & src ){
 
 deep_xvimage::~deep_xvimage(){
   delete name;
-  delete image_data;                           
+  free(image_data);                           
   /////!!!!!!! cout<< "deleting deep_xvimage" << endl;
   // the rest of the properties are destroyed automaticly
 };
@@ -408,10 +409,10 @@ void write_a_pixel<float>
   
 
 template<>
-void write_a_pixel<char>
+void write_a_pixel<unsigned char>
 (
   fstream & s, 
-  char & value
+  unsigned char & value
   ) 
 {
   s << value;

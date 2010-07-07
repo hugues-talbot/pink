@@ -4,6 +4,7 @@
 
 #include <pink_python.h>
 
+#undef error
 #define error(msg) {stringstream fullmessage; fullmessage << "in pyerosball.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;

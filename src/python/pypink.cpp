@@ -9,6 +9,7 @@ using namespace pink;
 
 // maybe I'll get away with it
 #include <pyujimage.hpp>
+#include <pyexport.hpp>
 
 // declarations
 void py_hello_export(); 
@@ -47,6 +48,12 @@ void py_maxflow_export();
 void uiSqhool_object_export();
 void py_gradient_export();
 void py_float2byte_export();
+
+void py_read_raw_image_export();
+void py_seuil_export();
+void insert_image_export();
+void merge_max_image_export();
+
 
 // for wrapping every type with one function
 template <class object_type, class pixel_type>
@@ -97,6 +104,11 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   py_gradient_export();
 
   py_float2byte_export();
+
+  py_read_raw_image_export();
+  py_seuil_export();
+  insert_image_export();
+  merge_max_image_export();
 
   // here are the image objects ( char_image, short_image, int_image, float_image, double_image )
   // there is a template in pyujimage.hpp to help them export without rewritting all the declarations

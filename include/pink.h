@@ -304,13 +304,16 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <uiUngerFlow.hpp>
   #include <uiNormalize.hpp>
   #include <uiQDistance.hpp>
+  #include <uiFileIO.hpp>
+  #include <uiInsert.hpp>
 #endif /* __cplusplus */
 
 
 
 
 
-
+#undef min
+#undef max
 #define max(a,b) error_max_function_is_ambigous_use_mcmax_instead
 #define min(a,b) error_min_function_is_ambigous_use_mcmin_instead
 

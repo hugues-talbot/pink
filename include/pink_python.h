@@ -14,7 +14,7 @@
 #include <boost/python/def.hpp>
 #include <boost/python/implicit.hpp>
 
-
+#include <pyexport.hpp>
 #include <pink.h>
 
 

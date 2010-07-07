@@ -69,7 +69,7 @@ namespace pink{
     deep_xvimage( const deep_xvimage & src ); // copy constructor. RAISES AND ERROR!
                                               // it's not yet implemented, raises an
                                               // error if called implicitly
-    ~deep_xvimage(); // default destructor
+    virtual ~deep_xvimage(); // default destructor
     string imtype(); // returns the image type
   };
   
@@ -86,7 +86,7 @@ namespace pink{
                                                     // error if called implicitly
     shallow_xvimage( const vint & dim, int int_im_type );  // construct from dimension. The data 
     // type must be specified. See mcimage.h
-    ~shallow_xvimage(); // default destructor
+    virtual ~shallow_xvimage(); // default destructor
     string imtype(); // returns the image type
   }; /* xvImage: xvimage */
 
@@ -120,7 +120,7 @@ namespace pink{
     ujoi( const ujoi< im_type > & src, string debug="" ); // deep_copy_constructor. For conversion use convert2float
     ujoi( const boost::python::list & dim, string debug="" );
     ujoi( const vint & dim, string debug="" );
-    ~ujoi(); // default destructor
+    virtual ~ujoi(); // default destructor
     ujoi( const vint & dim, ARRAY<im_type> data, string debug="" ); // used to construct from ujif.
 
     im_type & operator[]( int pos ); // index acces to the elements
@@ -310,7 +310,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     // memcpy should be parallelized with #pragma omp for
     memcpy( this->pixels.get(), src.image_data, sizeof( im_type ) * this->size.prod() ); // xvimage's type must be the same as im_type!
-  };
+  } /* ujoi::ujoi */
 
   template <class im_type >
   ujoi< im_type >::ujoi( const ujoi< im_type > & src, string debug ){ // deep_copy_constructor
@@ -331,7 +331,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     // memcpy should be parallelized with #pragma omp for
     memcpy(this->pixels.get(), src.pixels.get(), sizeof(im_type)*size.prod()); // xvimage's type must be the same as im_type!
     
-  };
+  } /* ujoi::ujoi */
 
   template <class im_type >
   ujoi<im_type >::ujoi( const vint & dim, string debug ){
@@ -355,7 +355,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     FOR(q, size.prod())
       this->pixels[q]=0;
 
-  };
+  } /* ujoi::ujoi */
 
   template <class im_type >
   ujoi<im_type >::ujoi( const boost::python::list & dim, string debug ){
@@ -379,7 +379,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     FOR(q, size.prod())
       this->pixels[q]=0;
 
-  };
+  } /* ujoi::ujoi */
 
 
   template <class im_type >
@@ -391,12 +391,13 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 // deletes 'xvImage' automaticly
     /////!!!!!!! cout<< "deleting " << old_school->imtype() << "_char"  << endl; 
-  };
+  } /* ujoi::~ujoi */
 
 
 
   template <class im_type >
-  ujoi<im_type >::ujoi( const vint & dim, ARRAY<im_type> data, string debug ){
+  ujoi<im_type >::ujoi( const vint & dim, ARRAY<im_type> data, string debug )
+  {
 
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
@@ -413,8 +414,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     };
 
     // I think copying can be done in parallel with #pragma omp for
-    memcpy( pixels.get(), data.get(), sizeof( im_type ) * size.prod( ) ); // copying the elements from the array
-  };
+    memcpy( pixels.get(), data.get(), sizeof( im_type ) * size.prod() ); // copying the elements from the array
+  } /* ujoi::ujoi */
 
 
 
@@ -442,7 +443,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   void write_a_pixel<float>( fstream & s, float & value ) ;
 
   template<> // implemented in 'ujimage.cpp'
-  void write_a_pixel<char>( fstream & s, char & value ) ;
+  void write_a_pixel<unsigned char>( fstream & s, unsigned char & value ) ;
 
 
   template <class im_type >
@@ -506,7 +507,13 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 	    curr[2]=q;
 	    
 	    
-	    write_a_pixel( s, pixels[size.position(curr)] );
+	    s.write( 
+	      reinterpret_cast<char*>(&pixels[ 
+					size.position(curr)
+					] 
+		),
+	      sizeof(pixel_type)
+	      );
 	    
 	  }; /* FOR(i, size[2]) */
 	}; /* FOR(j, size[1]) */
@@ -517,7 +524,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       s.close();
     } /* NOT this->size.size()!=3 */
     cout << "file '" << filename << "' exported in Amira format\n";
-  };
+  } /* ujoi<im_type >::_write_amira */
 
 
 
@@ -532,7 +539,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     // for backward compatibility.
     // the rest of the properties is already set.
     return old_school.get(); // you must never 'free()' or 'delete' this pointer!
-  };
+  }
 
 
 
@@ -547,7 +554,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     // for backward compatibility.
     // the rest of the properties is already set.
     return old_school.get(); // you must never 'free()' or 'delete' this pointer!
-  };
+  }
 
 
 
@@ -568,7 +575,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     
     return pixels[pos];
 
-  };
+  }
 
 
 
@@ -588,7 +595,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     return pixels[pos];
 
-  };
+  }
 
 
   template <class im_type >
@@ -628,7 +635,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     return pixels[size.position(pos)];
 
-  };
+  }
 
 
 
@@ -639,7 +646,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     return (*this)[vint_pos];
 
-  };
+  }
 
 
 
@@ -650,7 +657,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     return (*this)[vint_pos];
 
-  };
+  }
 
 
 
@@ -664,35 +671,35 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   template <class im_type >
   void ujoi<im_type >::set_operator_int( int pos, const im_type & value ){
     (*this)[pos]=value;
-  };
+  }
 
 
 
   template <class im_type >
   const im_type & ujoi<im_type >::get_operator_vint( const vint & pos ) const {
     return (*this)[pos];
-  };
+  }
 
 
 
   template <class im_type >
   void ujoi<im_type >::set_operator_vint( const vint & pos, const im_type & value ){
     (*this)[pos]=value;
-  };
+  }
 
 
 
   template <class im_type >
   const im_type & ujoi<im_type >::get_operator_list( const boost::python::list & pos ) const {
     return (*this)[pos];
-  };
+  }
 
 
 
   template <class im_type >
   void ujoi<im_type >::set_operator_list( const boost::python::list & pos, const im_type & value ){
     (*this)[pos]=value;
-  };
+  }
 
 
 
@@ -732,14 +739,14 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   template <class im_type >
   const vint & ujoi<im_type >::get_size() const{
     return size;
-  };
+  }
 
 
 
   template <class im_type >
   const vint & ujoi<im_type >::get_center() const{
     return center;
-  };
+  }
 
 
 
@@ -753,7 +760,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       else 
 
 	center = vint( new_center );
-  };
+  }
 
 
 
@@ -770,14 +777,14 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       else 
 
 	center = vint( vint_new_center );
-  };
+  }
 
 
 
   template <class im_type >
   ARRAY<im_type> ujoi<im_type >::get_pixels(){
     return pixels;
-  };
+  }
 
 
 

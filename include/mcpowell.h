@@ -54,7 +54,8 @@ typedef struct ensemble {
 #define    M_MAX_ITER	3
 #define    M_LAST_CODE	4
 
-
+#undef min
+#undef max
 #define max(a,b) error_max_function_is_ambigous_use_mcmax_instead
 #define min(a,b) error_min_function_is_ambigous_use_mcmin_instea
 #define abs(b) error_abs_function_is_ambigous_use_mcabs_instead
