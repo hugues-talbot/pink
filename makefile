@@ -25,6 +25,7 @@ $(BDIR)/div \
 $(BDIR)/dup \
 $(BDIR)/equal \
 $(BDIR)/exp \
+$(BDIR)/genfield \
 $(BDIR)/genimage \
 $(BDIR)/genkernel \
 $(BDIR)/inf \
@@ -338,9 +339,11 @@ $(BDIR)/drawline \
 $(BDIR)/drawlines \
 $(BDIR)/drawrect \
 $(BDIR)/drawspline \
+$(BDIR)/drawsplineorient \
 $(BDIR)/drawsplines \
 $(BDIR)/drawtorus \
 $(BDIR)/drawtriangulation \
+$(BDIR)/lengthspline \
 $(BDIR)/line \
 $(BDIR)/curve2spline \
 $(BDIR)/points2spline \
@@ -419,6 +422,8 @@ $(BDIR)/comphisto \
 $(BDIR)/egalise \
 $(BDIR)/histo \
 $(BDIR)/histo2 \
+$(BDIR)/histoazimuth \
+$(BDIR)/histoelevation \
 $(BDIR)/histolisse \
 $(BDIR)/histopgm \
 $(BDIR)/histscal \
@@ -606,6 +611,9 @@ $(BDIR)/equal:	$(CDIR)/equal.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) 
 
 $(BDIR)/exp:	$(CDIR)/exp.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/exp.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/exp
+
+$(BDIR)/genfield:	$(CDIR)/genfield.c $(IDIR)/mcimage.h $(OBJ_COMMON)
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/genfield.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/genfield
 
 $(BDIR)/genimage:	$(CDIR)/genimage.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/genimage.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/genimage
@@ -1570,6 +1578,9 @@ $(BDIR)/drawscene:	$(CDIR)/drawscene.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(I
 $(BDIR)/drawspline:	$(CDIR)/drawspline.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawspline.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/drawspline
 
+$(BDIR)/drawsplineorient:	$(CDIR)/drawsplineorient.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawsplineorient.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/drawsplineorient
+
 $(BDIR)/drawsplines:	$(CDIR)/drawsplines.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawsplines.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/drawsplines
 
@@ -1578,6 +1589,9 @@ $(BDIR)/drawtorus:	$(CDIR)/drawtorus.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDI
 
 $(BDIR)/drawtriangulation:	$(CDIR)/drawtriangulation.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcgeo.h $(IDIR)/lvoronoi.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mcliste.o $(ODIR)/lvoronoi.o $(ODIR)/lbresen.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawtriangulation.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/lvoronoi.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(XLIB) $(LIBS) -o $(BDIR)/drawtriangulation
+
+$(BDIR)/lengthspline:	$(CDIR)/lengthspline.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/lengthspline.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/lengthspline
 
 $(BDIR)/line:	$(CDIR)/line.c $(IDIR)/ldraw.h $(IDIR)/lbresen.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/mcliste.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/line.c $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(OBJ_COMMON) $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/line
@@ -1810,6 +1824,12 @@ $(BDIR)/histo:	$(CDIR)/histo.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto
 
 $(BDIR)/histo2:	$(CDIR)/histo2.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto.o $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/histo2.c $(ODIR)/lhisto.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/histo2
+
+$(BDIR)/histoazimuth:	$(CDIR)/histoazimuth.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto.o $(OBJ_COMMON)
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/histoazimuth.c $(ODIR)/lhisto.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/histoazimuth
+
+$(BDIR)/histoelevation:	$(CDIR)/histoelevation.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto.o $(OBJ_COMMON)
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/histoelevation.c $(ODIR)/lhisto.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/histoelevation
 
 $(BDIR)/histopgm:	$(CDIR)/histopgm.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto.o $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/histopgm.c $(ODIR)/lhisto.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/histopgm

@@ -47,6 +47,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lbresen.h>
 #include <ldraw.h>
 
+//#define DEBUG_DL3
+
 /* ==================================== */
 static double dist3(double x1, double y1, double z1, double x2, double y2, double z2)
 /* ==================================== */
@@ -100,17 +102,14 @@ void ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, in
   ds = depth(image1);
   ps = rs * cs;
   F = UCHARDATA(image1);
-  
-  if ((x1<0) || (x1>=rs) || (y1<0) || (y1>=cs) || (z1<0) || (z1>=ds) ||
-      (x2<0) || (x2>=rs) || (y2<0) || (y2>=cs) || (z2<0) || (z2>=ds))
-    return;
-  
+    
   for (i = 0; i <= NBSAMPLES; i++)
   {
     x = x1 + (i * (x2 - x1)) / NBSAMPLES;
     y = y1 + (i * (y2 - y1)) / NBSAMPLES;
     z = z1 + (i * (z2 - z1)) / NBSAMPLES;
-    F[z*ps + y*rs + x] = NDG_MAX;
+    if (!((x<0) || (x>=rs) || (y<0) || (y>=cs) || (z<0) || (z>=ds)))
+      F[z*ps + y*rs + x] = NDG_MAX;
   }
 } // ldrawline3d()
 
@@ -232,7 +231,11 @@ void ldrawcubic2(struct xvimage * image1, double *x, double *y, int32_t nseg, do
 } // ldrawcubic2()
 
 /* ==================================== */
-void ldrawcubic3d(struct xvimage * image1, double *x, double *y, double *z, int32_t nseg, double tmin, double tmax)
+void ldrawcubic3d(
+		  struct xvimage * image1,         // image (entree/sortie)  
+		  double *x, double *y, double *z, // trois polynomes de degre 3 
+		  int32_t nseg,                    // pas de discretisation 
+		  double tmin, double tmax)        // bornes pour le coeff. des polynomes
 /* ==================================== */
 /* draws a cubic line segment */
 #undef F_NAME
@@ -271,6 +274,50 @@ void ldrawcubic3d(struct xvimage * image1, double *x, double *y, double *z, int3
     x1 = x2; y1 = y2; z1 = z2;
   }
 } // ldrawcubic3d()
+
+/* ==================================== */
+void ldrawtangents3d(
+		     struct xvimage *field,           // image de sortie (le champs de vecteurs)
+		     double *x, double *y, double *z, // trois polynomes de degre 3 
+		     int32_t nseg,                    // pas de discretisation 
+		     double tmin, double tmax)        // bornes pour le coeff. des polynomes
+/* ==================================== */
+/* saves, in a vector field structure, the tangent vectors of a cubic curve */
+#undef F_NAME
+#define F_NAME "ldrawtangents3d"
+{
+  int32_t N, rs, cs, ds, ps, x1, y1, z1;
+  double X, Y, Z, r, t, t2, t3;
+  float * F;
+
+  assert(nseg > 0); assert(tmax >= tmin);
+  assert(datatype(field) == VFF_TYP_FLOAT);
+  assert(nbands(field) == 3);
+
+  r = (tmax - tmin) / nseg;
+  rs = rowsize(field);
+  cs = colsize(field);
+  ds = depth(field);
+  ps = rs * cs;
+  N = ps * ds;
+  F = FLOATDATA(field);
+
+  for (t = tmin; t <= tmax; t += r)
+  {
+    t2 = t * t; t3 = t2 * t;
+    X = x[0] + t*x[1] + t2*x[2] + t3*x[3];
+    Y = y[0] + t*y[1] + t2*y[2] + t3*y[3];
+    Z = z[0] + t*z[1] + t2*z[2] + t3*z[3];
+
+    x1 = arrondi(X);
+    y1 = arrondi(Y);
+    z1 = arrondi(Z);
+		  
+    F[z1*ps+y1*rs+x1] = x[1] + 2*t*x[2] + 3*t2*x[3];
+    F[z1*ps+y1*rs+x1+N] = y[1] + 2*t*y[2] + 3*t2*y[3];
+    F[z1*ps+y1*rs+x1+N+N] = z[1] + 2*t*z[2] + 3*t2*z[3];
+  }
+} // ldrawtangents3d()
 
 /* ==================================== */
 void ldrawball(struct xvimage * image1, double r, double xc, double yc, double zc)

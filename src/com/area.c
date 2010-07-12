@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 
   if ((argc != 3) && (argc != 2))
   {
-    fprintf(stderr, "usage: %s in.pgm out.list\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm [out.list]\n", argv[0]);
     exit(1);
   }
 

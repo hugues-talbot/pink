@@ -36,19 +36,24 @@ knowledge of the CeCILL license and that you accept its terms.
 /* histogramme bivariable */
 /* Michel Couprie - juillet 1996, novembre 1999 */
 /* update 6/4/2006 John Chaussard : cor. bug */
+/* update 11/7/2010 MC : histogrammes d'orientations */
 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <math.h>
+#include <assert.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mcimage.h>
+#include <mcutil.h>
 #include <mccodimage.h>
 #include <lhisto.h>
 
 /* ==================================== */
 int32_t lhisto(struct xvimage *image, struct xvimage *mask, uint32_t *histo)
 /* ==================================== */
+// WARNING : histo is an array [0..255] of uint32_t that must have been allocated
 {
   int32_t i;
   int32_t x;                       /* index muet de pixel */
@@ -74,6 +79,7 @@ int32_t lhisto(struct xvimage *image, struct xvimage *mask, uint32_t *histo)
 /* ==================================== */
 int32_t lhisto1(struct xvimage *image, uint32_t *histo)
 /* ==================================== */
+// WARNING : histo is an array [0..255] of uint32_t that must have been allocated
 {
   int32_t i;
   int32_t x;                       /* index muet de pixel */
@@ -414,3 +420,128 @@ int32_t lhisto2image(uint32_t *histo, int32_t size, struct xvimage **image)
 
   return(1);
 } /* lhisto2image() */
+
+/* ========================================================= */
+/* ========================================================= */
+/* ========================================================= */
+// Pour les histogrammes d'orientations
+/* ========================================================= */
+/* ========================================================= */
+/* ========================================================= */
+
+#define ORIENT_EPS 1e-20
+
+/* ==================================== */
+static double azimuth(float x, float y, float z) 
+/* ==================================== */
+// calcule l'azimuth d'un vecteur dont les coordonnées x, y, z sont en paramètres
+// résultat : angle en degrés entre 0 et 180 (ou -1 si vecteur trop petit)
+{
+  double phi, cosphi;
+	
+  if ((mcabs(x) < ORIENT_EPS) && (mcabs(z) < ORIENT_EPS))
+    return -1;
+  else
+  {
+    cosphi=(x / sqrt(x*x+z*z));
+    phi= acos (cosphi);
+    //    printf("azimmmm: %f\n", (180*phi/M_PI));
+    return (180*phi/M_PI);
+  }
+	
+}
+
+/* ==================================== */
+static double elevation(float x, float y, float z) 
+/* ==================================== */
+// calcule l'élévation d'un vecteur dont les coordonnées x, y, z sont en paramètres
+// résultat : angle en degrés entre 0 et 180 (ou -1 si vecteur trop petit)
+{
+  double theta, sintheta;
+	
+  if ((mcabs(x) < ORIENT_EPS) && (mcabs(y) < ORIENT_EPS) && (mcabs(z) < ORIENT_EPS))
+    return -1;
+  else
+  {
+    sintheta=(y / sqrt( x*x + y*y + z*z ));	
+    theta= asin(sintheta);
+  //~ printf("elevvv: %f\n", (180*theta/M_PI));
+    return (180*theta/M_PI);
+  } 
+}
+
+/* ==================================== */
+int32_t lhistoazimuth(struct xvimage * field, int32_t nbins, uint32_t **histo)
+/* ==================================== */
+/*
+A TESTER
+*/
+{
+#undef F_NAME
+#define F_NAME "lhistoazimuth"
+  int32_t rs = rowsize(field);     /* taille ligne */
+  int32_t cs = colsize(field);     /* taille colonne */
+  int32_t ds = depth(field);       /* nombre plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  float * F;
+  int32_t x, y, z, bin; 
+  double az, wbin = 180/nbins;
+
+  assert(datatype(field) == VFF_TYP_FLOAT);
+  assert(nbands(field) == 3);
+  F = FLOATDATA(field);
+
+  *histo = (uint32_t *)calloc(nbins, sizeof(uint32_t));
+  assert(*histo != NULL);
+
+  for (z=0; z<ds; z++)
+  for (y=0; y<cs; y++)
+  for (x=0; x<rs; x++)
+  {   
+    az = azimuth(F[z*ps+y*rs+x], F[z*ps+y*rs+x+N], F[z*ps+y*rs+x+N+N]);
+    if (az >= 0)
+    {
+      bin = (int32_t)floor(az/wbin);
+      *histo[bin]++;
+    }
+  }
+} // lhistoazimuth()
+
+/* ==================================== */
+int32_t lhistoelevation(struct xvimage * field, int32_t nbins, uint32_t **histo)
+/* ==================================== */
+/*
+A TESTER
+*/
+{
+#undef F_NAME
+#define F_NAME "lhistoelevation"
+  int32_t rs = rowsize(field);     /* taille ligne */
+  int32_t cs = colsize(field);     /* taille colonne */
+  int32_t ds = depth(field);       /* nombre plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  float * F;
+  int32_t x, y, z, bin; 
+  double ev, wbin = 180/nbins;
+
+  assert(datatype(field) == VFF_TYP_FLOAT);
+  assert(nbands(field) == 3);
+  F = FLOATDATA(field);
+
+  *histo = (uint32_t *)calloc(nbins, sizeof(uint32_t));
+  assert(*histo != NULL);
+
+  for (z=0; z<ds; z++)
+  for (y=0; y<cs; y++)
+  for (x=0; x<rs; x++)
+  {   
+    ev = elevation(F[z*ps+y*rs+x], F[z*ps+y*rs+x+N], F[z*ps+y*rs+x+N+N]);
+    if (ev >= 0)
+    {
+      bin = (int32_t)floor(ev/wbin);
+      *histo[bin]++;
+    }
+  }
+} // lhistoelevation()

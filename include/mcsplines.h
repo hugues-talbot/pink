@@ -57,6 +57,13 @@ extern void scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, dou
                               double *C0, double *C1, double *C2, double *C3,
                               double *D0, double *D1, double *D2, double *D3,
 			      double *E0, double *E1, double *E2, double *E3);
+extern double scn_lengthspline(double *X0, double *X1, double *X2, double *X3, 
+			       double *Y0, double *Y1, double *Y2, double *Y3, 
+			       int32_t nctrl);
+extern double scn_lengthspline3d(double *X0, double *X1, double *X2, double *X3, 
+				 double *Y0, double *Y1, double *Y2, double *Y3, 
+				 double *Z0, double *Z1, double *Z2, double *Z3,
+				 int32_t nctrl);
 #ifdef __cplusplus
 }
 #endif

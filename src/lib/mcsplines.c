@@ -782,6 +782,108 @@ void scn_samplespline3d(double *x, double *y, double *z, int32_t n, int32_t m, d
   free(Z0); free(Z1); free(Z2); free(Z3); 
 } // scn_samplespline3d()
 
+/* ==================================== */
+double scn_lengthspline(double *X0, double *X1, double *X2, double *X3, 
+			double *Y0, double *Y1, double *Y2, double *Y3, 
+			int32_t nctrl)
+/* ==================================== */
+/*! \fn double * scn_lengthspline(double *X0, double *X1, double *X2, double *X3, 
+			double *Y0, double *Y1, double *Y2, double *Y3, 
+			int32_t n)
+    \param X0 (entrée) : tableau des coef. spline de degré 0 (taille nctrl-1) 
+    \param X1 (entrée) : tableau des coef. spline de degré 1 (taille nctrl-1) 
+    \param X2 (entrée) : tableau des coef. spline de degré 2 (taille nctrl-1) 
+    \param X3 (entrée) : tableau des coef. spline de degré 3 (taille nctrl-1) 
+    \param Y0 (entrée) : tableau des coef. spline de degré 0 (taille nctrl-1) 
+    \param Y1 (entrée) : tableau des coef. spline de degré 1 (taille nctrl-1) 
+    \param Y2 (entrée) : tableau des coef. spline de degré 2 (taille nctrl-1) 
+    \param Y3 (entrée) : tableau des coef. spline de degré 3 (taille nctrl-1) 
+    \param nctrl (entrée) : nombre de points de contrôle
+    \brief calcule la longueur d'une spline 2d
+*/
+{
+#undef F_NAME
+#define F_NAME "scn_lengthspline"
+  double *t, L = 0, f[3], g[3];
+  int32_t i, p = 10000;
+  
+  t = (double *)calloc(1, nctrl * sizeof(double)); assert(t != NULL);
+
+  for(i = 0; i < nctrl; i++) t[i] = (double)i;
+
+  for (i = 0; i < nctrl-1; i++)
+  {
+    f[0] = X1[i]; f[1] = 2*X2[i]; f[2] = 3*X3[i];
+    g[0] = Y1[i]; g[1] = 2*Y2[i]; g[2] = 3*Y3[i];
+
+    /*
+printf("%s: \n", F_NAME);
+printf("f %g %g %g \n", f[0], f[1], f[2]);
+printf("g %g %g %g \n", g[0], g[1], g[2]);
+printf("i = %d t[i] = %g t[i+1] = %g\n", i, t[i], t[i+1]);
+    */
+
+    L = L + integrale2(f, g, t[i], t[i+1], p);
+  }
+  free(t);
+  return L;
+} // scn_lengthspline()
+
+/* ==================================== */
+double scn_lengthspline3d(double *X0, double *X1, double *X2, double *X3, 
+			double *Y0, double *Y1, double *Y2, double *Y3, 
+			double *Z0, double *Z1, double *Z2, double *Z3,
+			int32_t nctrl)
+/* ==================================== */
+/*! \fn double * scn_lengthspline3d(double *X0, double *X1, double *X2, double *X3, 
+			double *Y0, double *Y1, double *Y2, double *Y3, 
+			double *Z0, double *Z1, double *Z2, double *Z3,
+			int32_t n)
+    \param X0 (entrée) : tableau des coef. spline de degré 0 (taille nctrl-1) 
+    \param X1 (entrée) : tableau des coef. spline de degré 1 (taille nctrl-1) 
+    \param X2 (entrée) : tableau des coef. spline de degré 2 (taille nctrl-1) 
+    \param X3 (entrée) : tableau des coef. spline de degré 3 (taille nctrl-1) 
+    \param Y0 (entrée) : tableau des coef. spline de degré 0 (taille nctrl-1) 
+    \param Y1 (entrée) : tableau des coef. spline de degré 1 (taille nctrl-1) 
+    \param Y2 (entrée) : tableau des coef. spline de degré 2 (taille nctrl-1) 
+    \param Y3 (entrée) : tableau des coef. spline de degré 3 (taille nctrl-1) 
+    \param Z0 (entrée) : tableau des coef. spline de degré 0 (taille nctrl-1) 
+    \param Z1 (entrée) : tableau des coef. spline de degré 1 (taille nctrl-1) 
+    \param Z2 (entrée) : tableau des coef. spline de degré 2 (taille nctrl-1) 
+    \param Z3 (entrée) : tableau des coef. spline de degré 3 (taille nctrl-1) 
+    \param nctrl (entrée) : nombre de points de contrôle
+    \brief calcule la longueur d'une spline 3d
+*/
+{
+#undef F_NAME
+#define F_NAME "scn_lengthspline3d"
+  double *t, L = 0, f[3], g[3], h[3];
+  int32_t i, p = 10000;
+  
+  t = (double *)calloc(1, nctrl * sizeof(double)); assert(t != NULL);
+
+  for(i = 0; i < nctrl; i++) t[i] = (double)i;
+
+  for (i = 0; i < nctrl-1; i++)
+  {
+    f[0] = X1[i]; f[1] = 2*X2[i]; f[2] = 3*X3[i];
+    g[0] = Y1[i]; g[1] = 2*Y2[i]; g[2] = 3*Y3[i];
+    h[0] = Z1[i]; h[1] = 2*Z2[i]; h[2] = 3*Z3[i];
+
+    /*
+printf("%s: \n", F_NAME);
+printf("f %g %g %g \n", f[0], f[1], f[2]);
+printf("g %g %g %g \n", g[0], g[1], g[2]);
+printf("h %g %g %g \n", h[0], h[1], h[2]);
+printf("i = %d t[i] = %g t[i+1] = %g\n", i, t[i], t[i+1]);
+    */
+
+    L = L + integrale3(f, g, h, t[i], t[i+1], p);
+  }
+  free(t);
+  return L;
+} // scn_lengthspline3d()
+
 // =================================================
 // CALCUL DE COURBURES
 // =================================================

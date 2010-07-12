@@ -133,9 +133,9 @@ double lrecalagerigide_transparentplane_F(double *G, ensemble *ens)
 } // lrecalagerigide_transparentplane_F()
 
 /* ==================================== */
-double *lrecalagerigide_translateplane_lrecalagerigide2d(double *X, int32_t n, double *Y, int32_t m)
+double *lrecalagerigide2d_translateplane(double *X, int32_t n, double *Y, int32_t m)
 /* ==================================== */
-/*! \fn double *lrecalagerigide_translateplane_lrecalagerigide2d(double *X, int n, double *Y, int m)
+/*! \fn double *lrecalagerigide2d_translateplane(double *X, int n, double *Y, int m)
     \param X (entrée/sortie) : matrice n * 2 contenant le premier ensemble de points
     \param n (entrée) : nombre de points dans X
     \param Y (entrée) : matrice m * 2 contenant le second ensemble de points
@@ -180,7 +180,7 @@ double *lrecalagerigide_translateplane_lrecalagerigide2d(double *X, int32_t n, d
   memcpy(Gamma, G, 5 * sizeof(double));
   free(ens.Tmp);
   return Gamma;
-} // lrecalagerigide_translateplane_lrecalagerigide2d()
+} // lrecalagerigide2d_translateplane()
 
 /* ==================================== */
 static double distcarre3d(double x1, double y1, double z1, double x2, double y2, double z2)

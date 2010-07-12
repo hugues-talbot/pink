@@ -35,7 +35,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern double *lrecalagerigide2d(double *X, int n, double *Y, int m);
+extern double *lrecalagerigide2d_translateplane(double *X, int n, double *Y, int m);
 extern double *lrecalagerigide3d_translateplane(double *X, int n, double *Y, int m);
 double *lrecalagerigide3d_translate(double *X, int n, double *Y, int m);
 #ifdef __cplusplus

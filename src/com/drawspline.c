@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief draw a spline which is specified by its control points in a text file
 
-<B>Usage:</B> drawspline in.pgm spline.txt out.pgm
+<B>Usage:</B> drawspline in.pgm spline.txt [len] out.pgm
 
 <B>Description:</B>
 Draws a spline which is specified by its control points in a text file.
@@ -61,6 +61,7 @@ C0X1 C0Y1 C0Z1 C1X1 C1Y1 C1Z1 C2X1 C2Y1 C2Z1 C3X1 C3Y1 C3Z1<br>
 ...<br>
 C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn<br>
 
+If parameter \b len is given and non-zero, the spline is extended on both sides by straight line segments of length \b len. 
 
 <B>Types supported:</B> byte 2D, byte 3D
 
@@ -74,9 +75,11 @@ C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn<br>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcsplines.h>
+#include <mcutil.h>
 #include <ldraw.h>
 
 /* =============================================================== */
@@ -87,15 +90,16 @@ int main(int argc, char **argv)
   int32_t j;
   FILE *fd = NULL;
   int32_t npoints;
-  double *x, *y, *z, *t;
+  double *x, *y, *z, *t, len = 0.0;
   double xx, yy, zz;
   double Px[4], Py[4], Pz[4];
   double *X0, *X1, *X2, *X3, *Y0, *Y1, *Y2, *Y3, *Z0, *Z1, *Z2, *Z3;
+  double tx, ty, tz, tn;
   char type;
 
-  if (argc != 4)
+  if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s in.pgm spline.txt out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm spline.txt [len] out.pgm \n", argv[0]);
     exit(1);
   }
 
@@ -127,6 +131,9 @@ int main(int argc, char **argv)
     exit(1);
   }
 
+  if (argc == 5)
+    len = atof(argv[3]);
+
   if (type == 's')
   {
     double p0, p1, p2, p3, q0, q1, q2, q3;
@@ -141,6 +148,7 @@ int main(int argc, char **argv)
     Y1 = (double *)calloc(1,(npoints-1)*sizeof(double));
     Y2 = (double *)calloc(1,(npoints-1)*sizeof(double));
     Y3 = (double *)calloc(1,(npoints-1)*sizeof(double));
+
     for (j = 0; j < npoints; j++)
     {
       fscanf(fd, "%lf%lf", &xx, &yy);
@@ -159,6 +167,25 @@ int main(int argc, char **argv)
       Py[0] = Y0[j]; Py[1] = Y1[j]; Py[2] = Y2[j]; Py[3] = Y3[j];
       ldrawcubic2(image, (double *)Px, (double *)Py, 10, t[j], t[j+1]);
     }
+
+    // extension of the spline
+
+    tx = X1[0];
+    ty = Y1[0];
+    tn = sqrt(tx*tx + ty*ty);
+    //    printf("tangente en debut (%g %g) : %g %g\n", x[0], y[0], tx/tn, ty/tn);
+
+    ldrawline(image, arrondi(x[0]), arrondi(y[0]), arrondi((x[0]-(len*tx/tn))), arrondi((y[0]-(len*ty/tn))));
+
+    j = npoints-2;
+    Px[1] = X1[j]; Px[2] = X2[j]; Px[3] = X3[j];
+    Py[1] = Y1[j]; Py[2] = Y2[j]; Py[3] = Y3[j];
+    tx = Px[1] + 2*(npoints-1)*Px[2] + 3*(npoints-1)*(npoints-1)*Px[3];
+    ty = Py[1] + 2*(npoints-1)*Py[2] + 3*(npoints-1)*(npoints-1)*Py[3];
+    tn = sqrt(tx*tx + ty*ty);
+    //    printf("tangente en fin (%g %g) : %g %g\n", x[npoints-1], y[npoints-1], tx/tn, ty/tn);
+
+    ldrawline(image, arrondi(x[npoints-1]), arrondi(y[npoints-1]), arrondi((x[npoints-1]+(len*tx/tn))), arrondi((y[npoints-1]+(len*ty/tn))));
 
     free(x); free(y); free(t); 
     free(X0); free(X1); free(X2); free(X3);
@@ -203,6 +230,35 @@ int main(int argc, char **argv)
       Pz[0] = Z0[j]; Pz[1] = Z1[j]; Pz[2] = Z2[j]; Pz[3] = Z3[j];
       ldrawcubic3d(image, (double *)Px, (double *)Py, (double *)Pz, 10, t[j], t[j+1]);
     }
+
+    /*
+    {
+    double L = scn_lengthspline3d(X0, X1, X2, X3, Y0, Y1, Y2, Y3, Z0, Z1, Z2, Z3, npoints);
+    printf("longueur spline = %g\n", L);
+    }
+    */
+
+    // extension of the spline
+
+    tx = X1[0];
+    ty = Y1[0];
+    tz = Z1[0];
+    tn = sqrt(tx*tx + ty*ty + tz*tz);
+    //    printf("tangente en debut (%g %g %g) : %g %g %g\n", x[0], y[0], z[0], tx/tn, ty/tn, tz/tn);
+
+    ldrawline3d(image,arrondi(x[0]), arrondi(y[0]), arrondi(z[0]), arrondi((x[0]-(len*tx/tn))), arrondi((y[0]-(len*ty/tn))), arrondi((z[0]-(len*tz/tn))));
+
+    j = npoints-2;
+    Px[1] = X1[j]; Px[2] = X2[j]; Px[3] = X3[j];
+    Py[1] = Y1[j]; Py[2] = Y2[j]; Py[3] = Y3[j];
+    Pz[1] = Z1[j]; Pz[2] = Z2[j]; Pz[3] = Z3[j];
+    tx = Px[1] + 2*(npoints-1)*Px[2] + 3*(npoints-1)*(npoints-1)*Px[3];
+    ty = Py[1] + 2*(npoints-1)*Py[2] + 3*(npoints-1)*(npoints-1)*Py[3];
+    tz = Pz[1] + 2*(npoints-1)*Pz[2] + 3*(npoints-1)*(npoints-1)*Pz[3];
+    tn = sqrt(tx*tx + ty*ty + tz*tz);
+    //    printf("tangente en fin (%g %g %g) : %g %g %g\n", x[npoints-1], y[npoints-1], z[npoints-1], tx/tn, ty/tn, tz/tn);
+
+    ldrawline3d(image, arrondi(x[npoints-1]), arrondi(y[npoints-1]), arrondi(z[npoints-1]), arrondi((x[npoints-1]+(len*tx/tn))), arrondi((y[npoints-1]+(len*ty/tn))), arrondi((z[npoints-1]+(len*tz/tn))));
 
     free(x); free(y); free(z); free(t); 
     free(X0); free(X1); free(X2); free(X3);

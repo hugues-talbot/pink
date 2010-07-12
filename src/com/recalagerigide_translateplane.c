@@ -162,7 +162,7 @@ int main(int argc, char **argv)
     P1 = image2list(image1, &n1);
     P2 = image2list(image2, &n2);
     printf("n1 et n2 : %d %d \n", n1, n2);
-    Gamma = lrecalagerigide_translateplane_lrecalagerigide2d(P1, n1, P2, n2);
+    Gamma = lrecalagerigide2d_translateplane(P1, n1, P2, n2);
     printf("sx = %g\n", Gamma[0]);
     printf("sy = %g\n", Gamma[1]);
     printf("theta = %g = %g deg\n", Gamma[2], (Gamma[2]*180)/M_PI);
