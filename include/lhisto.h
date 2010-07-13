@@ -82,6 +82,14 @@ extern int32_t lhistsum(uint32_t *histo);
 extern void labelextr1d(int32_t *F, int32_t n, uint8_t *E);
 
 extern int32_t lhisto2image(uint32_t *histo, int32_t size, struct xvimage **image);
+
+extern int32_t lhistoazimuth(struct xvimage * field, int32_t nbins, int32_t **histo);
+extern int32_t lhistoelevation(struct xvimage * field, int32_t nbins, int32_t **histo);
+extern int32_t lhisto_distance_modulo_raw (int32_t * A, int32_t * B, int32_t n);
+extern int32_t lhisto_distance_ordinal_raw (int32_t * A, int32_t * B, int32_t n);
+extern double lhisto_distance_modulo (int32_t * A, int32_t * B, int32_t n);
+extern double lhisto_distance_ordinal (int32_t * A, int32_t * B, int32_t n);
+
 #ifdef __cplusplus
 }
 #endif

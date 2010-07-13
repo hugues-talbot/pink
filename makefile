@@ -335,6 +335,7 @@ $(BDIR)/drawball \
 $(BDIR)/drawscene \
 $(BDIR)/drawcurve \
 $(BDIR)/drawellipse \
+$(BDIR)/drawfield \
 $(BDIR)/drawline \
 $(BDIR)/drawlines \
 $(BDIR)/drawrect \
@@ -423,6 +424,7 @@ $(BDIR)/egalise \
 $(BDIR)/histo \
 $(BDIR)/histo2 \
 $(BDIR)/histoazimuth \
+$(BDIR)/histodist \
 $(BDIR)/histoelevation \
 $(BDIR)/histolisse \
 $(BDIR)/histopgm \
@@ -1560,6 +1562,9 @@ $(BDIR)/drawball:	$(CDIR)/drawball.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDIR)
 $(BDIR)/drawcurve:	$(CDIR)/drawcurve.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawcurve.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/drawcurve
 
+$(BDIR)/drawfield:	$(CDIR)/drawfield.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawfield.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/drawfield
+
 $(BDIR)/drawline:	$(CDIR)/drawline.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawline.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/drawline
 
@@ -1827,6 +1832,9 @@ $(BDIR)/histo2:	$(CDIR)/histo2.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhis
 
 $(BDIR)/histoazimuth:	$(CDIR)/histoazimuth.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto.o $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/histoazimuth.c $(ODIR)/lhisto.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/histoazimuth
+
+$(BDIR)/histodist:	$(CDIR)/histodist.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto.o $(OBJ_COMMON)
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/histodist.c $(ODIR)/lhisto.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/histodist
 
 $(BDIR)/histoelevation:	$(CDIR)/histoelevation.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto.o $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/histoelevation.c $(ODIR)/lhisto.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/histoelevation

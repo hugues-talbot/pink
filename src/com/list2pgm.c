@@ -181,7 +181,6 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: type %c is for 1D images\n", argv[0], type);
       exit(1);
     }
-printf("list2pgm: type = s\n");
     for (i = 0; i < n; i++)
     {
       fscanf(fd, "%lf %lf\n", &xx, &vv);

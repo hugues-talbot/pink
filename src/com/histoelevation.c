@@ -32,21 +32,73 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-#ifdef __cplusplus
-extern "C" {
-#endif
+/* \file histoelevation.c
 
-extern void ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int32_t y2);
-extern void ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, int32_t x2, int32_t y2, int32_t z2);
-extern void ldrawline2(struct xvimage * image1);
-extern void ldrawfilledellipse(struct xvimage * image, double R, double S, double T, double U, double V, double Z);
-extern void ldrawcubic1(struct xvimage * image1, double *x, double *y, int32_t nseg, double sx, double sy);
-extern void ldrawcubic2(struct xvimage * image1, double *x, double *y, int32_t nseg, double tmin, double tmax);
-extern void ldrawcubic3d(struct xvimage * image1, double *x, double *y, double *z, int32_t nseg, double tmin, double tmax);
-extern void ldrawball(struct xvimage * image1, double r, double xc, double yc, double zc);
-extern void ldrawdisc(struct xvimage * image1, double r, double xc, double yc);
-extern void ldrawtorus(struct xvimage * image1, double c, double a, double xc, double yc, double zc);
-extern struct xvimage *ldrawfield3d(struct xvimage *field, double len);
-#ifdef __cplusplus
-}
-#endif
+\brief 
+
+<B>Usage:</B> 
+
+<B>Description:</B>
+
+<B>Types supported:</B> 3D vector field
+
+<B>Category:</B> 
+\ingroup  
+
+\author Michel Couprie
+*/
+#include <stdio.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <mccodimage.h>
+#include <mcimage.h>
+#include <lhisto.h>
+
+/* =============================================================== */
+int main(int argc, char **argv)
+/* =============================================================== */
+{
+  struct xvimage * field;
+  uint32_t * histo;
+  int32_t i, nbins;
+  FILE *fd = NULL;
+
+  if (argc != 4)
+  {
+    fprintf(stderr, "usage: %s in.pgm nbins fileout\n", argv[0]);
+    exit(1);
+  }
+
+  field = readimage(argv[1]);
+  if (field == NULL)
+  {
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
+    exit(1);
+  }
+
+  nbins = atoi(argv[2]);
+
+  fd = fopen(argv[argc-1],"w");
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc-1]);
+    exit(1);
+  }
+
+  if (! lhistoelevation(field, nbins, &histo))
+  {
+    fprintf(stderr, "%s: function lhistoelevation failed\n", argv[0]);
+    exit(1);
+  }
+ 
+  fprintf(fd, "s %d\n", nbins);
+  for (i = 0; i < nbins; i++) 
+    fprintf(fd, "%4d %d\n", i, histo[i]);
+
+  fclose(fd);
+  free(histo);
+  freeimage(field);
+
+  return 0;
+} /* main */

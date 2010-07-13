@@ -80,7 +80,7 @@ int main(int argc, char **argv)
   image = readimage(argv[1]);
   if (image == NULL)
   {
-    fprintf(stderr, "histogram: readimage failed\n");
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
     mask = readimage(argv[2]);
     if (mask == NULL)
     {
-      fprintf(stderr, "histogram: readimage failed\n");
+      fprintf(stderr, "%s: readimage failed\n", argv[0]);
       exit(1);
     }
   }
@@ -99,13 +99,13 @@ int main(int argc, char **argv)
     histo = (uint32_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(int32_t));
     if (histo == NULL)
     {
-      fprintf(stderr, "histogram: malloc failed\n");
+      fprintf(stderr, "%s: malloc failed\n", argv[0]);
       exit(1);
     }
 
     if (! lhisto(image, mask, histo))
     {
-      fprintf(stderr, "histogram: function lhisto failed\n");
+      fprintf(stderr, "%s: function lhisto failed\n", argv[0]);
       exit(1);
     }
 
@@ -130,7 +130,7 @@ int main(int argc, char **argv)
   {
     if (! lhistolong(image, mask, &histo, &s))
     {
-      fprintf(stderr, "histogram: function lhistolong failed\n");
+      fprintf(stderr, "%s: function lhistolong failed\n", argv[0]);
       exit(1);
     }
 
@@ -155,7 +155,7 @@ int main(int argc, char **argv)
     float w, smin, smax;
     if (! lhistofloat(image, mask, &histo, &s, &w, &smin, &smax))
     {
-      fprintf(stderr, "histogram: function lhistofloat failed\n");
+      fprintf(stderr, "%s: function lhistofloat failed\n", argv[0]);
       exit(1);
     }
 

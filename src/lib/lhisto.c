@@ -41,6 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <limits.h>
 #include <math.h>
 #include <assert.h>
 #include <sys/types.h>
@@ -465,13 +466,13 @@ static double elevation(float x, float y, float z)
   {
     sintheta=(y / sqrt( x*x + y*y + z*z ));	
     theta= asin(sintheta);
-  //~ printf("elevvv: %f\n", (180*theta/M_PI));
-    return (180*theta/M_PI);
+    //printf("elevvv: %f\n", (180*theta/M_PI)+90);
+    return (180*theta/M_PI+90);
   } 
 }
 
 /* ==================================== */
-int32_t lhistoazimuth(struct xvimage * field, int32_t nbins, uint32_t **histo)
+int32_t lhistoazimuth(struct xvimage * field, int32_t nbins, int32_t **histo)
 /* ==================================== */
 /*
 A TESTER
@@ -486,13 +487,13 @@ A TESTER
   int32_t N = ps * ds;             /* taille image */
   float * F;
   int32_t x, y, z, bin; 
-  double az, wbin = 180/nbins;
+  double az, wbin = 180.0/nbins;
 
   assert(datatype(field) == VFF_TYP_FLOAT);
   assert(nbands(field) == 3);
   F = FLOATDATA(field);
 
-  *histo = (uint32_t *)calloc(nbins, sizeof(uint32_t));
+  *histo = (int32_t *)calloc(nbins, sizeof(int32_t));
   assert(*histo != NULL);
 
   for (z=0; z<ds; z++)
@@ -503,13 +504,13 @@ A TESTER
     if (az >= 0)
     {
       bin = (int32_t)floor(az/wbin);
-      *histo[bin]++;
+      (*histo)[bin] = (*histo)[bin] + 1;
     }
   }
 } // lhistoazimuth()
 
 /* ==================================== */
-int32_t lhistoelevation(struct xvimage * field, int32_t nbins, uint32_t **histo)
+int32_t lhistoelevation(struct xvimage * field, int32_t nbins, int32_t **histo)
 /* ==================================== */
 /*
 A TESTER
@@ -524,13 +525,13 @@ A TESTER
   int32_t N = ps * ds;             /* taille image */
   float * F;
   int32_t x, y, z, bin; 
-  double ev, wbin = 180/nbins;
+  double ev, wbin = 180.0/nbins;
 
   assert(datatype(field) == VFF_TYP_FLOAT);
   assert(nbands(field) == 3);
   F = FLOATDATA(field);
 
-  *histo = (uint32_t *)calloc(nbins, sizeof(uint32_t));
+  *histo = (int32_t *)calloc(nbins, sizeof(int32_t));
   assert(*histo != NULL);
 
   for (z=0; z<ds; z++)
@@ -541,7 +542,180 @@ A TESTER
     if (ev >= 0)
     {
       bin = (int32_t)floor(ev/wbin);
-      *histo[bin]++;
+      (*histo)[bin] = (*histo)[bin] + 1;
     }
   }
 } // lhistoelevation()
+
+/* ==================================== */
+int32_t lhisto_distance_modulo_raw (int32_t * A, int32_t * B, int32_t n)
+/* ==================================== */
+{ //traduit (en gros) le nombre de deplacements necessaires pour pouvoir obtenir l'histogramme B a partir de l'histogramme A
+  int32_t i, j, h_dist, h_dist2, d ;
+  int32_t prefixsum[n], temp[n];
+	
+  prefixsum[0] = A[0] - B[0];
+  h_dist = mcabs(prefixsum[0]);
+  for (i=1; i<n; i++)
+  {
+    prefixsum[i] = prefixsum[i-1] + A[i] - B[i];
+    h_dist = h_dist + mcabs(prefixsum[i]);
+  }
+  
+  for (;;)
+  {
+    d = 0;
+    for (j=0; j<n; j++)
+      if (prefixsum[j] > 0) { d = prefixsum[j]; break; }
+    for (; j<n; j++)
+      if ((prefixsum[j] > 0) && (prefixsum[j] < d))
+	d = prefixsum[j];
+    h_dist2 = 0;
+    for (j=0; j<n; j++)
+    {
+      temp[j]= prefixsum [j] - d;
+      h_dist2 = h_dist2+ mcabs(temp[j]);
+    }
+    if (h_dist2 < h_dist)
+    {
+      h_dist = h_dist2 ;
+      for(j=0; j<n; j++)
+	prefixsum[j]=temp[j];
+    }
+    else{break;}
+  }
+  
+  for (;;)
+  {
+    d = 0;
+    for (j=0; j<n; j++)
+      if (prefixsum[j] < 0) { d = prefixsum[j]; break; }
+    for (; j<n; j++)
+      if ((prefixsum[j] < 0) && (prefixsum[j] > d))
+	d= prefixsum[j];
+    h_dist2 = 0;
+    for (j=0; j<n; j++)
+    {
+      temp[j]= prefixsum [j] - d;
+      h_dist2 = h_dist2+ mcabs(temp[j]);
+    }
+    if (h_dist2 < h_dist)
+    {
+      h_dist = h_dist2 ;
+      for(j=0; j<n; j++)
+	prefixsum[j]=temp[j];
+    }
+    else{break;}
+  }
+  return h_dist;
+} // lhisto_distance_modulo_raw()
+
+/* ==================================== */
+int32_t lhisto_distance_ordinal_raw (int32_t * A, int32_t * B, int32_t n)
+/* ==================================== */
+{ //traduit (en gros) le nombre de deplacements necessaires pour pouvoir obtenir l'histogramme B a partir de l'histogramme A
+  int32_t i, h_dist;
+  int32_t prefixsum;
+	
+  prefixsum = 0;
+  h_dist = 0;
+  
+  for (i=0; i<n; i++)
+  {
+    prefixsum = prefixsum + A[i] - B[i];
+    h_dist = h_dist + mcabs(prefixsum);
+  }
+	
+  return h_dist;
+} // lhisto_distance_ordinal_raw()
+
+/* ==================================== */
+double lhisto_distance_modulo (int32_t * A, int32_t * B, int32_t n)
+/* ==================================== */
+{ 
+// traduit (en gros) le nombre de deplacements necessaires pour pouvoir obtenir l'histogramme B a partir de l'histogramme A
+// version normalisee
+  int32_t i, j;
+  double h_dist, h_dist2, d ;
+  double prefixsum[n], temp[n];
+  double nA, nB;
+
+  for (i=0, nA=nB=0; i<n; i++) { nA += A[i]; nB += B[i]; }
+
+  prefixsum[0] = nB*A[0] - nA*B[0];
+  h_dist = mcabs(prefixsum[0]);
+  for (i=1; i<n; i++)
+  {
+    prefixsum[i] = prefixsum[i-1] + nB*A[i] - nA*B[i];
+    h_dist = h_dist + mcabs(prefixsum[i]);
+  }
+  
+  for (;;)
+  {
+    d = 0;
+    for (j=0; j<n; j++)
+      if (prefixsum[j] > 0) { d = prefixsum[j]; break; }
+    for (; j<n; j++)
+      if ((prefixsum[j] > 0) && (prefixsum[j] < d))
+	d = prefixsum[j];
+    h_dist2 = 0;
+    for (j=0; j<n; j++)
+    {
+      temp[j]= prefixsum [j] - d;
+      h_dist2 = h_dist2+ mcabs(temp[j]);
+    }
+    if (h_dist2 < h_dist)
+    {
+      h_dist = h_dist2 ;
+      for(j=0; j<n; j++)
+	prefixsum[j]=temp[j];
+    }
+    else{break;}
+  }
+  
+  for (;;)
+  {
+    d = 0;
+    for (j=0; j<n; j++)
+      if (prefixsum[j] < 0) { d = prefixsum[j]; break; }
+    for (; j<n; j++)
+      if ((prefixsum[j] < 0) && (prefixsum[j] > d))
+	d= prefixsum[j];
+    h_dist2 = 0;
+    for (j=0; j<n; j++)
+    {
+      temp[j]= prefixsum [j] - d;
+      h_dist2 = h_dist2+ mcabs(temp[j]);
+    }
+    if (h_dist2 < h_dist)
+    {
+      h_dist = h_dist2 ;
+      for(j=0; j<n; j++)
+	prefixsum[j]=temp[j];
+    }
+    else{break;}
+  }
+  return h_dist / (nA * nB);
+} // lhisto_distance_modulo()
+
+/* ==================================== */
+double lhisto_distance_ordinal (int32_t * A, int32_t * B, int32_t n)
+/* ==================================== */
+{ //traduit (en gros) le nombre de deplacements necessaires pour pouvoir obtenir l'histogramme B a partir de l'histogramme A
+  int32_t i;
+  double h_dist, prefixsum;
+  double nA, nB;
+
+  for (i=0, nA=nB=0; i<n; i++) { nA += A[i]; nB += B[i]; }
+	
+  prefixsum = 0;
+  h_dist = 0;
+  
+  for (i=0; i<n; i++)
+  {
+    prefixsum = prefixsum + nB*A[i] - nA*B[i];
+    h_dist = h_dist + mcabs(prefixsum);
+  }
+	
+  return h_dist / (nA * nB);
+} // lhisto_distance_ordinal()

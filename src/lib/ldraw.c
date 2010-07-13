@@ -320,6 +320,47 @@ void ldrawtangents3d(
 } // ldrawtangents3d()
 
 /* ==================================== */
+struct xvimage *ldrawfield3d(struct xvimage *field, double len)
+/* ==================================== */
+/* draws lines in output image that represent vectors in input field */
+#undef F_NAME
+#define F_NAME "ldrawfield3d"
+{
+  struct xvimage *image;
+  int32_t N, rs, cs, ds, ps, x1, y1, z1;
+  double X, Y, Z, t;
+  float * F;
+
+#define EPS_DRAWVECT 1e-5
+
+  assert(datatype(field) == VFF_TYP_FLOAT);
+  assert(nbands(field) == 3);
+
+  rs = rowsize(field);
+  cs = colsize(field);
+  ds = depth(field);
+  ps = rs * cs;
+  N = ps * ds;
+  F = FLOATDATA(field);
+
+  image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  assert(image != NULL);
+
+  for (z1 = 0; z1 < ds; z1++)
+  for (y1 = 0; y1 < cs; y1++)
+  for (x1 = 0; x1 < rs; x1++)
+  {
+    X = F[z1*ps+y1*rs+x1];
+    Y = F[z1*ps+y1*rs+x1+N];
+    Z = F[z1*ps+y1*rs+x1+N+N];
+    t = sqrt(X*X + Y*Y + Z*Z);
+    if (t > EPS_DRAWVECT)
+      ldrawline3d(image, x1, y1, z1, arrondi((x1+(len*X))), arrondi((y1+(len*Y))), arrondi((z1+(len*Z))));
+  }
+  return image;
+} // ldrawfield3d()
+
+/* ==================================== */
 void ldrawball(struct xvimage * image1, double r, double xc, double yc, double zc)
 /* ==================================== */
 /* draws a euclidean ball */
