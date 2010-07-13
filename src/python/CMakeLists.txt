@@ -34,6 +34,7 @@ endif (NOT PYTHON_EXE)
 if (THIS_IS_LINUX)
 add_custom_command( TARGET cpp_pink POST_BUILD 
 		    COMMAND cp -r ${CMAKE_SOURCE_DIR}/python/* ${CMAKE_BINARY_DIR}/python/
+		    COMMAND rm -r -f `find ${CMAKE_BINARY_DIR}/python/ -type d -name ".svn"`
 		    COMMAND echo "\\#\\!" /bin/bash > ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "\\# UjoImro, 2010"  >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "\\# Generated automaticly on"`date --iso-8601` >> ${CMAKE_BINARY_DIR}/pink.sh

@@ -309,10 +309,12 @@ PTR<char_image> py_skeleton_ultimate( char_image * uj_image,
 
     case 3:
       if (! lsedt_meijster( image, prio ) ) error("lsedt_meijster failed");
+      break;
 
     default:
       if (! ldist( image, priocode, prio ) ) error("ldist failed");
-	
+      break;
+
     } /* switch (priocode) */
 
 

@@ -45,6 +45,16 @@
 									\
     }									
 
+#define UI_EXPORT_ONE_FUNCTION( function_name, function, args, comment ) \
+  									\
+  void function##_export()						\
+  {									\
+    def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function), \
+	 args,								\
+	 comment							\
+      );								\
+    									\
+  }									
 									
 
   

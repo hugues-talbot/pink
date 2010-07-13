@@ -30,8 +30,7 @@ PTR<image_type> frame_it(
   {
     
     vint new_size(3);
-    
-    
+        
     // calculating the new sizes (one on each side)
     new_size[0]=src->get_size()[0]+2;
     new_size[1]=src->get_size()[1]+2;
