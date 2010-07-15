@@ -92,6 +92,17 @@ void ujoi_object_export( const char* object_name, const char* object_description
 	  "writes the image from the object into amira binary mesh file 'filename'"
       )
 
+    .def( "__repr__", &object_type::repr,
+	  args("self"),
+	  "writes a short string of information about the image"
+      )
+
+    .def( "fill", &object_type::fill,
+	  args("self"),
+	  "fill's the image with the given value"
+      )
+
+
 
 /*
 ***********************************************************************************************

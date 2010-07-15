@@ -30,27 +30,31 @@ namespace pink{
   class image_type_specific{
   public:
 //#error: this image type is not defined
-    string imtype(){         			      
-      return "wrong type";			              
-    };					              
-    int int_im_type(){                                
-      return -1;				      
-    };                                                
+    string imtype() const 
+      {         			      
+	return "wrong type";			              
+      };					              
+    int int_im_type() const 
+      {                                
+	return -1;				      
+      };                                                
   };
   
-
+  
 #define CREATE_IMAGE_TYPE( _class, name, int_type )			\
   template <>								\
   class image_type_specific< _class >{					\
   public:								\
-  string imtype(){							\
-    return name;							\
-  };									\
-  int int_im_type(){							\
-    return int_type;							\
-  };									\
+  string imtype() const							\
+      {									\
+	return name;							\
+      };								\
+  int int_im_type() const						\
+      {									\
+	return int_type;						\
+      };								\
   };									
-  									
+  
   									
   // helper function for reading and writing from and to xvimage
   PTR<vint> getDimensions( const int x, const int y, const int z, const int t );
@@ -154,6 +158,10 @@ namespace pink{
 
     ARRAY<im_type> get_pixels();
     ARRAY<im_type> get_pixels() const;
+
+    string repr() const;
+    void fill( pixel_type value );
+    
 
   }; /* class ujoi */
 
@@ -794,9 +802,29 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   }
 
 
+  template <class im_type >
+  string ujoi<im_type >::repr() const
+  {
+    stringstream ss;
+    ss << this->imtype() << " image of size " << get_size().repr();
+    
+    string result;
+    
+    result = ss.str();
+    
+    return result;
+  } /* repr */
 
-
-
+  template <class im_type >
+  void ujoi<im_type >::fill( pixel_type value ) 
+  {
+    FOR(q, get_size().prod())
+    {
+      (*this)[q]=value;      
+    } /* FOR */
+    
+  } /* fill */
+  
 
 
 

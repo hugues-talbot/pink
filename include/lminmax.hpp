@@ -84,6 +84,70 @@ namespace pink {
   } /* minmaxval */
   
 
+  template <class image_type> 
+  PTR<image_type> immap( const image_type & image1,
+			 const image_type & image2,
+			 bool (*map_function)( typename image_type::pixel_type val1,  
+					       typename image_type::pixel_type val2 
+			   )
+    )
+  {
+    PTR<image_type> result (new image_type(image1.get_size()));
+    
+    FOR(q, image1.get_size().prod())
+    {
+      map_function( image1[q], image2[q]) ? (*result)[q]=image1[q] : (*result)[q]=image1[q];
+      
+    } /* FOR */
+    
+    return result;
+  } /* immap */
+  
+  namespace lminmax 
+  {
+
+    template <class pixel_type>
+    bool max_map( pixel_type val1, pixel_type val2 )
+    {
+      return (val1>=val2);
+    } /* max_map */
+
+    template <class pixel_type>
+    bool min_map( pixel_type val1, pixel_type val2 )
+    {
+      return (val1<=val2);
+    } /* min_map */
+        
+
+  } /* namespace lminmax */
+  
+
+  template <class image_type> 
+  PTR<image_type> immap_max( const image_type & image1,
+			     const image_type & image2
+    )
+  {
+
+    typedef typename image_type::pixel_type pixel_type;
+
+    return immap( image1, image2, &lminmax::max_map<pixel_type> );
+    
+  } /* immap_max */
+  
+
+
+  template <class image_type> 
+  PTR<image_type> immap_min( const image_type & image1,
+			     const image_type & image2
+    )
+  {
+
+    typedef typename image_type::pixel_type pixel_type;
+
+    return immap( image1, image2, &lminmax::min_map<pixel_type> );
+  } /* immap_min */
+    
+
 
 
 } /* end namespace pink */
