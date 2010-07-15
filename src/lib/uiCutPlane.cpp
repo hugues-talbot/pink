@@ -16,15 +16,6 @@
 #define error(msg) {stringstream fullmessage; fullmessage << "in uiCutPlane.cpp: " << msg; call_error(fullmessage.str());}
 
 
-using namespace pink;
-
-PTR<char_image> py_skeleton_im_int_int_im( 
-  const char_image & uj_image, 
-  int prio,
-  int connex,			     
-  const char_image & inhibit
-  ) ;
-
 namespace pink {
   
   typedef pair < PTR<vint>, bool > int_res;
@@ -209,55 +200,125 @@ namespace pink {
     
   }; /* cube */
     
-  PTR<char_image> draw_plane( const char_image & original, 
-			      float a, 
-			      float b, 
-			      float c, 
-			      float d )
-  {
-    PTR<char_image> inhibit(new char_image(original));
-    PTR<plane> pl( new plane(a,b,c,d) );
-    
-    cube cu( original.get_size()[0],
-	     original.get_size()[1],
-	     original.get_size()[2] );
+//   PTR<char_image> draw_plane( const char_image & original, 
+// 			      float a, 
+// 			      float b, 
+// 			      float c, 
+// 			      float d )
+//   {
 
-    PTR<vector<PTR<vint> > > points;
+//     PTR<char_image> inhibit(new char_image(original));
+
+//     PTR<plane> pl(new plane(a,b,c,d));
     
-    points = cu.intersections(pl);
+//     cube cu( original.get_size()[0],
+// 	     original.get_size()[1],
+// 	     original.get_size()[2] );
+
+//     PTR<vector<PTR<vint> > > points;
     
-    FOR(q, points->size())
-    {
-      DEBUG((*points)[q]->repr());
+//     points = cu.intersections(pl);
+
+
+//     // filling the inhibit image with white
+//     FOR(q, inhibit->get_size().prod())
+//     {
+//       (*inhibit)[q]=255;
+//     } /* FOR */
+
+//     // erasing the frame
+//     inhibit = frame( *inhibit, 0 );
+    
+//     // setting up the intersection points
+//     FOR(q, points->size())
+//     {
+//       DEBUG((*points)[q]->repr());
       
-      (*inhibit)[(*(*points)[q])]=255;
-    } /* FOR */
+//       (*inhibit)[(*(*points)[q])]=255;
+//     } /* FOR */
+
+//     _PRINTAMIRA(inhibit);
     
-    // generating blank image
-    PTR<char_image> blank( new char_image(original.get_size()) );
-    FOR(q, blank->get_size().prod())
+
+//     // generating blank image
+//     PTR<char_image> blank( new char_image(original.get_size()) );
+//     FOR(q, blank->get_size().prod())
+//     {
+//       (*blank)[q]=255;
+//     } /* FOR */
+
+//     _PRINTAMIRA(blank);
+    
+
+//     PTR<char_image> blank_around;
+//     blank_around = frame_around( *blank, 0 );
+//     PTR<char_image> inhibit_around;
+//     inhibit_around = frame_around( *inhibit, 0 );
+    
+
+//     PTR<char_image> result, result_around;
+//     result_around = py_skeleton_im_int_int_im ( 
+//       *blank_around, 
+//       3 /* exact eucledian distance */, 
+//       6 /* connexity */, 
+//       *inhibit_around
+//       );
+    
+//     _PRINTAMIRA(blank_around);
+//     _PRINTAMIRA(inhibit_around);
+    
+
+//     result = remove_frame(*result_around);
+    
+//     vint curr( result->get_size().size(), "curr"  );
+
+//     FOR(q, result->get_size().prod())
+//     {
+//       result->get_size().nextStep( q, curr );
+      
+//       if (!result->get_size().on_side( curr ))
+//       {
+//     	(*result)[q]=0;	
+//       } /* if */
+   
+//     } /* FOR */
+    
+
+//     return result;
+    
+//   } /* draw_plane */
+  
+  PTR<char_image> draw_plane( 
+    const char_image & original, 
+    float a, 
+    float b, 
+    float c, 
+    float d )
+  {
+    PTR<char_image> result(new char_image(original));
+
+    vint curr( result->get_size().size(), "curr"  );
+    
+    FOR(q, result->get_size().prod())
     {
-      (*blank)[q]=255;
+      result->get_size().nextStep( q, curr );
+      
+      if ( uiAbs(a*curr[0]+b*curr[1]+c*curr[2]+d) 
+	   / sqrt( a*a + b*b + c*c ) <= 0.5 )
+      {
+    	(*result)[q]=255;	
+      } /* if */
+      
     } /* FOR */
-
-    PTR<char_image> blank_around;
-    blank_around = frame_around( *blank, 0 );
-    PTR<char_image> inhibit_around;
-    inhibit_around = frame_around( *inhibit, 0 );
+    
     
 
-    PTR<char_image> result;
-    result = py_skeleton_im_int_int_im ( 
-      *blank_around, 
-      3 /* exact eucledian distance */, 
-      6 /* connexity */, 
-      *inhibit_around
-      );
-    
+
+
+
     return result;
-  } /* draw_plane */
-  
-  
+  }
+
   
 
  

@@ -25,14 +25,13 @@ namespace pink {
   {
 
     PTR<image_type> result( new image_type(src_image));
-    
 
-    vint curr( src_image.size() );
+    vint curr( src_image.get_size() );
     
-    FOR(q, src_image.get_size()->prod())
+    FOR(q, src_image.get_size().prod())
     {
-      src_image.get_size()->nextStep( q, curr );
-      if (src_image.get_size()->on_side( curr ))
+      src_image.get_size().nextStep( q, curr );
+      if (src_image.get_size().on_side( curr ))
       {
 	(*result)[q]=withval;	
       } /* if */

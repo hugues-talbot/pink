@@ -54,6 +54,10 @@ be size-independent
  cout << "_writing image: " << BOOST_PP_STRINGIZE(x) << " as '" << BOOST_PP_STRINGIZE(x) << ".pgm'\n"; \
  x->_writeimage(BOOST_PP_STRINGIZE(x)".pgm")
 
+#define _PRINTAMIRA(x)							\
+ cout << "_writing image: " << BOOST_PP_STRINGIZE(x) << " as '" << BOOST_PP_STRINGIZE(x) << ".am'\n"; \
+ x->_write_amira(BOOST_PP_STRINGIZE(x)".am")
+
 
  // this macro generates from 'IMAGE_TYPE(potencial)' -> 'image_type(potencial), "potencial"' 
 #define IMAGE_TYPE(x)				\
