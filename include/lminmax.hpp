@@ -96,7 +96,7 @@ namespace pink {
     
     FOR(q, image1.get_size().prod())
     {
-      map_function( image1[q], image2[q]) ? (*result)[q]=image1[q] : (*result)[q]=image1[q];
+      map_function( image1[q], image2[q]) ? (*result)[q]=image1[q] : (*result)[q]=image2[q];
       
     } /* FOR */
     

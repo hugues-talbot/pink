@@ -55,6 +55,7 @@ void insert_image_export();
 void merge_max_image_export();
 void py_3dplane_export();
 void draw_plane_export();
+void project_plane_export();
 
 // for wrapping every type with one function
 template <class object_type, class pixel_type>
@@ -112,6 +113,7 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   merge_max_image_export();
   py_3dplane_export();
   draw_plane_export();
+  project_plane_export();
 
   // here are the image objects ( char_image, short_image, int_image, float_image, double_image )
   // there is a template in pyujimage.hpp to help them export without rewritting all the declarations

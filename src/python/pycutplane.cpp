@@ -25,11 +25,19 @@ using namespace pink;
 UI_EXPORT_ONE_FUNCTION( cpp_draw_plane, 
 			draw_plane, 
 			args("image", "coefficient of x", "coefficient of y", "coefficient of z", "absolut part"),
-			"this function draws a topological plane into the image. The "
+			"this function draws a discreet plane into the image. The "
 			"equation of the plane is a*x+b*y+c*z+d==0\n"
   )
 
 
+UI_EXPORT_ONE_FUNCTION( cpp_project_plane, 
+			project_plane, 
+			args("first point of the plane", 
+			     "second point of the plane", 
+			     "center of the shift",
+			     "angle of the rotation"),
+			"this function projects the given plane to a 2D image"
+  )
 
 
 

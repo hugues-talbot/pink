@@ -315,8 +315,8 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #undef min
 #undef max
-#define max(a,b) error_max_function_is_ambigous_use_mcmax_instead
-#define min(a,b) error_min_function_is_ambigous_use_mcmin_instead
+#define max(a,b) error_max_function_is_ambigous use mcmax xinstead
+#define min(a,b) error_min_function_is_ambigous use mcmin instead
 
 
 
