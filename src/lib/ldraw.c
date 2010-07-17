@@ -43,6 +43,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdlib.h>
 #include <assert.h>
 #include <mcutil.h>
+#include <mcimage.h>
 #include <mccodimage.h>
 #include <lbresen.h>
 #include <ldraw.h>
@@ -69,7 +70,7 @@ void ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int3
   rs = rowsize(image1);
   cs = colsize(image1);
   F = UCHARDATA(image1);
-  
+
   if ((x1 < 0) || (x1 >= rs) ||  (y1 < 0) || (y1 >= cs) ||
       (x2 < 0) || (x2 >= rs) ||  (y2 < 0) || (y2 >= cs)) 
     return;
@@ -82,7 +83,6 @@ void ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, in
 /* ==================================== */
 /* draws a 3D straight line segment between two points */
 /* NAIVE ALGORITHM - TO IMPROVE !!!! */
-
 #undef F_NAME
 #define F_NAME "ldrawline3d"
 {
@@ -276,6 +276,46 @@ void ldrawcubic3d(
 } // ldrawcubic3d()
 
 /* ==================================== */
+void ldrawtangents2d(
+		     struct xvimage *field,    // image de sortie (le champs de vecteurs)
+		     double *x, double *y,     // deux polynomes de degre 3 
+		     int32_t nseg,             // pas de discretisation 
+		     double tmin, double tmax) // bornes pour le coeff. des polynomes
+/* ==================================== */
+/* saves, in a vector field structure, the tangent vectors of a cubic curve */
+#undef F_NAME
+#define F_NAME "ldrawtangents2d"
+{
+  int32_t N, rs, cs, x1, y1;
+  double X, Y, r, t, t2, t3;
+  float * F;
+
+  assert(nseg > 0); assert(tmax >= tmin);
+  assert(depth(field) == 1);
+  assert(datatype(field) == VFF_TYP_FLOAT);
+  assert(nbands(field) == 2);
+
+  r = (tmax - tmin) / nseg;
+  rs = rowsize(field);
+  cs = colsize(field);
+  N = rs * cs;
+  F = FLOATDATA(field);
+
+  for (t = tmin; t <= tmax; t += r)
+  {
+    t2 = t * t; t3 = t2 * t;
+    X = x[0] + t*x[1] + t2*x[2] + t3*x[3];
+    Y = y[0] + t*y[1] + t2*y[2] + t3*y[3];
+
+    x1 = arrondi(X);
+    y1 = arrondi(Y);
+		  
+    F[y1*rs+x1] = x[1] + 2*t*x[2] + 3*t2*x[3];
+    F[y1*rs+x1+N] = y[1] + 2*t*y[2] + 3*t2*y[3];
+  }
+} // ldrawtangents2d()
+
+/* ==================================== */
 void ldrawtangents3d(
 		     struct xvimage *field,           // image de sortie (le champs de vecteurs)
 		     double *x, double *y, double *z, // trois polynomes de degre 3 
@@ -319,6 +359,44 @@ void ldrawtangents3d(
   }
 } // ldrawtangents3d()
 
+#define EPS_DRAWVECT 1e-5
+
+/* ==================================== */
+struct xvimage *ldrawfield2d(struct xvimage *field, double len)
+/* ==================================== */
+/* draws lines in output image that represent vectors in input field */
+#undef F_NAME
+#define F_NAME "ldrawfield2d"
+{
+  struct xvimage *image;
+  int32_t N, rs, cs, x1, y1;
+  double X, Y, t;
+  float * F;
+
+  assert(datatype(field) == VFF_TYP_FLOAT);
+  assert(nbands(field) == 2);
+  assert(depth(field) == 1);
+
+  rs = rowsize(field);
+  cs = colsize(field);
+  N = rs * cs;
+  F = FLOATDATA(field);
+
+  image = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
+  assert(image != NULL);
+
+  for (y1 = 0; y1 < cs; y1++)
+  for (x1 = 0; x1 < rs; x1++)
+  {
+    X = F[y1*rs+x1];
+    Y = F[y1*rs+x1+N];
+    t = sqrt(X*X + Y*Y);
+    if (t > EPS_DRAWVECT)
+      ldrawline(image, x1, y1, arrondi((x1+(len*X))), arrondi((y1+(len*Y))));
+  }
+  return image;
+} // ldrawfield2d()
+
 /* ==================================== */
 struct xvimage *ldrawfield3d(struct xvimage *field, double len)
 /* ==================================== */
@@ -330,8 +408,6 @@ struct xvimage *ldrawfield3d(struct xvimage *field, double len)
   int32_t N, rs, cs, ds, ps, x1, y1, z1;
   double X, Y, Z, t;
   float * F;
-
-#define EPS_DRAWVECT 1e-5
 
   assert(datatype(field) == VFF_TYP_FLOAT);
   assert(nbands(field) == 3);

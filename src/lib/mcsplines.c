@@ -53,7 +53,7 @@ Michel Couprie, Sébastien Couprie, juin 2003
 
 //#define TEST
 //#define DEBUG
-#define PARANO
+//#define PARANO
 
 #define SCN_EPSILON 0.000001
 

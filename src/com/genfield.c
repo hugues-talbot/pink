@@ -59,6 +59,7 @@ The size of the result field <B>out.pgm</B> is taken from image
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 
@@ -89,7 +90,15 @@ int main(int argc, char **argv)
     cs = colsize(header);
     ds = depth(header);
   }
-  field = allocmultimage(NULL, rs, cs, ds, 1, 3, VFF_TYP_FLOAT);
+  assert(rs > 0);
+  assert(cs > 0);
+  assert(ds > 0);
+
+  if (ds > 1)
+    field = allocmultimage(NULL, rs, cs, ds, 1, 3, VFF_TYP_FLOAT);
+  else
+    field = allocmultimage(NULL, rs, cs, 1, 1, 2, VFF_TYP_FLOAT);
+
   if (field == NULL)
   {
     fprintf(stderr, "%s: allocimage failed\n", argv[0]);

@@ -134,9 +134,6 @@ int main(int argc, char **argv)
   {
     double p0, p1, p2, p3, q0, q1, q2, q3;
 
-    fprintf(stderr, "%s: not yet implemented in 2D\n", argv[0]);
-    exit(1);
-
     x = (double *)calloc(1,npoints*sizeof(double));
     y = (double *)calloc(1,npoints*sizeof(double));
     t = (double *)calloc(1,npoints*sizeof(double));
@@ -165,7 +162,7 @@ int main(int argc, char **argv)
     {
       Px[0] = X0[j]; Px[1] = X1[j]; Px[2] = X2[j]; Px[3] = X3[j];
       Py[0] = Y0[j]; Py[1] = Y1[j]; Py[2] = Y2[j]; Py[3] = Y3[j];
-//ldrawtangents2d(field, (double *)Px, (double *)Py, 10, t[j], t[j+1]);
+      ldrawtangents2d(field, (double *)Px, (double *)Py, 10, t[j], t[j+1]);
     }
 
     free(x); free(y); free(t); 

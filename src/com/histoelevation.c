@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * field;
-  uint32_t * histo;
+  int32_t * histo;
   int32_t i, nbins;
   FILE *fd = NULL;
 

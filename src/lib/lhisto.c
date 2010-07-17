@@ -433,18 +433,18 @@ int32_t lhisto2image(uint32_t *histo, int32_t size, struct xvimage **image)
 #define ORIENT_EPS 1e-20
 
 /* ==================================== */
-static double azimuth(float x, float y, float z) 
+static double azimuth(float x, float y) 
 /* ==================================== */
-// calcule l'azimuth d'un vecteur dont les coordonnées x, y, z sont en paramètres
+// calcule l'azimuth d'un vecteur dont les coordonnées x, y sont en paramètres
 // résultat : angle en degrés entre 0 et 180 (ou -1 si vecteur trop petit)
 {
   double phi, cosphi;
 	
-  if ((mcabs(x) < ORIENT_EPS) && (mcabs(z) < ORIENT_EPS))
+  if ((mcabs(x) < ORIENT_EPS) && (mcabs(y) < ORIENT_EPS))
     return -1;
   else
   {
-    cosphi=(x / sqrt(x*x+z*z));
+    cosphi=(x / sqrt(x*x+y*y));
     phi= acos (cosphi);
     //    printf("azimmmm: %f\n", (180*phi/M_PI));
     return (180*phi/M_PI);
@@ -464,7 +464,7 @@ static double elevation(float x, float y, float z)
     return -1;
   else
   {
-    sintheta=(y / sqrt( x*x + y*y + z*z ));	
+    sintheta=(z / sqrt( x*x + y*y + z*z ));	
     theta= asin(sintheta);
     //printf("elevvv: %f\n", (180*theta/M_PI)+90);
     return (180*theta/M_PI+90);
@@ -474,9 +474,6 @@ static double elevation(float x, float y, float z)
 /* ==================================== */
 int32_t lhistoazimuth(struct xvimage * field, int32_t nbins, int32_t **histo)
 /* ==================================== */
-/*
-A TESTER
-*/
 {
 #undef F_NAME
 #define F_NAME "lhistoazimuth"
@@ -489,22 +486,38 @@ A TESTER
   int32_t x, y, z, bin; 
   double az, wbin = 180.0/nbins;
 
-  assert(datatype(field) == VFF_TYP_FLOAT);
-  assert(nbands(field) == 3);
   F = FLOATDATA(field);
-
   *histo = (int32_t *)calloc(nbins, sizeof(int32_t));
   assert(*histo != NULL);
+  assert(datatype(field) == VFF_TYP_FLOAT);
 
-  for (z=0; z<ds; z++)
-  for (y=0; y<cs; y++)
-  for (x=0; x<rs; x++)
-  {   
-    az = azimuth(F[z*ps+y*rs+x], F[z*ps+y*rs+x+N], F[z*ps+y*rs+x+N+N]);
-    if (az >= 0)
-    {
-      bin = (int32_t)floor(az/wbin);
-      (*histo)[bin] = (*histo)[bin] + 1;
+  if (ds == 1)
+  {
+    assert(nbands(field) == 2);
+    for (y=0; y<cs; y++)
+    for (x=0; x<rs; x++)
+    {   
+      az = azimuth(F[y*rs+x], F[y*rs+x+N]);
+      if (az >= 0)
+      {
+	bin = (int32_t)floor(az/wbin);
+	(*histo)[bin] = (*histo)[bin] + 1;
+      }
+    }
+  }
+  else
+  {
+    assert(nbands(field) == 3);
+    for (z=0; z<ds; z++)
+    for (y=0; y<cs; y++)
+    for (x=0; x<rs; x++)
+    {   
+      az = azimuth(F[z*ps+y*rs+x], F[z*ps+y*rs+x+N]);
+      if (az >= 0)
+      {
+	bin = (int32_t)floor(az/wbin);
+	(*histo)[bin] = (*histo)[bin] + 1;
+      }
     }
   }
 } // lhistoazimuth()
@@ -512,9 +525,6 @@ A TESTER
 /* ==================================== */
 int32_t lhistoelevation(struct xvimage * field, int32_t nbins, int32_t **histo)
 /* ==================================== */
-/*
-A TESTER
-*/
 {
 #undef F_NAME
 #define F_NAME "lhistoelevation"

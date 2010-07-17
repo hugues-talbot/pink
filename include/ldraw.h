@@ -46,6 +46,9 @@ extern void ldrawcubic3d(struct xvimage * image1, double *x, double *y, double *
 extern void ldrawball(struct xvimage * image1, double r, double xc, double yc, double zc);
 extern void ldrawdisc(struct xvimage * image1, double r, double xc, double yc);
 extern void ldrawtorus(struct xvimage * image1, double c, double a, double xc, double yc, double zc);
+extern void ldrawtangents2d(struct xvimage *field, double *x, double *y, int32_t nseg, double tmin, double tmax);
+extern void ldrawtangents3d(struct xvimage *field, double *x, double *y, double *z, int32_t nseg, double tmin, double tmax);
+extern struct xvimage *ldrawfield2d(struct xvimage *field, double len);
 extern struct xvimage *ldrawfield3d(struct xvimage *field, double len);
 #ifdef __cplusplus
 }
