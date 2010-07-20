@@ -35,8 +35,9 @@ knowledge of the CeCILL license and that you accept its terms.
 /* selection de points selon des criteres topologiques locaux */
 /* Michel Couprie - octobre 1997 */
 
-// update janvier 2008 lsimplepair
-// update juillet 2010 lptmultiple
+// update janvier 2008 add lsimplepair
+// update juillet 2010 modif lptmultiple
+// update juillet 2010 add lptjunction
 
 #include <stdio.h>
 #include <stdint.h>
@@ -400,6 +401,73 @@ int32_t lptcurve(struct xvimage * image, int32_t connex)
   free(RES);
   return 1;
 } /* lptcurve() */
+
+/* ==================================== */
+int32_t lptjunction(struct xvimage * image, int32_t connex)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lptjunction"
+{
+  int32_t x;
+  uint8_t *SOURCE = UCHARDATA(image);
+  uint8_t *RES;
+  int32_t rs = rowsize(image);
+  int32_t cs = colsize(image);
+  int32_t ds = depth(image);
+  int32_t ps = rs * cs;          /* taille plan */
+  int32_t N = ps * ds;           /* taille image */
+
+  RES = (uint8_t *)calloc(N, sizeof(char));
+  if (RES == NULL)
+  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+      return 0;
+  }
+
+  /* ---------------------------------------------------------- */
+  /* calcul du resultat */
+  /* ---------------------------------------------------------- */
+
+  if (connex == 4)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord(x, rs, N)) && (nbvois4(SOURCE, x, rs, N) >= 3))
+        RES[x] = NDG_MAX;
+  }
+  else if (connex == 8)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord(x, rs, N)) && (nbvois8(SOURCE, x, rs, N) >= 3))
+        RES[x] = NDG_MAX;
+  }
+  else if (connex == 6)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (mctopo3d_nbvoiso6(SOURCE, x, rs, ps, N) >= 3))
+        RES[x] = NDG_MAX;
+  }
+  else if (connex == 18)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (mctopo3d_nbvoiso18(SOURCE, x, rs, ps, N) >= 3))
+        RES[x] = NDG_MAX;
+  }
+  else if (connex == 26)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (mctopo3d_nbvoiso26(SOURCE, x, rs, ps, N) >= 3))
+        RES[x] = NDG_MAX;
+  }
+  else
+  {   fprintf(stderr,"%s : bad connexity : %d\n", F_NAME, connex);
+      return 0;
+  }
+
+  for (x = 0; x < N; x++)
+    SOURCE[x] = RES[x];
+
+  free(RES);
+  return 1;
+} /* lptjunction() */
 
 /* ==================================== */
 int32_t lptseparatinggray(struct xvimage * image, int32_t connex)

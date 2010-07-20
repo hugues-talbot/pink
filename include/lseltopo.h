@@ -40,6 +40,7 @@ extern int32_t lptinterior(struct xvimage * image, int32_t connex);
 extern int32_t lptmultiple(struct xvimage * image, int32_t connex);
 extern int32_t lptend(struct xvimage * image, int32_t connex);
 extern int32_t lptcurve(struct xvimage * image, int32_t connex);
+extern int32_t lptjunction(struct xvimage * image, int32_t connex);
 extern int32_t lptseparating(struct xvimage * image, int32_t connex);
 extern int32_t lptseparatinggray(struct xvimage * image, int32_t connex);
 extern int32_t lptsimple(struct xvimage * image, int32_t connex);
