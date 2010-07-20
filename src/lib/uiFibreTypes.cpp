@@ -501,6 +501,32 @@ string vint::repr() const
 } /* vint::repr */
 
 
+vint & vint::operator<< ( const int & initiator )
+{
+//   #if UJIMAGE_DEBUG >=1
+//   if ( this->size()!=initiator.size())
+//   {
+//     error("you are trying to assign a vector of different size ");
+//   } /* this->size()!=initiator.size() */
+//   #endif /* UJIMAGE_DEBUG */
+
+  this->clear();
+  this->push_back(initiator);
+  return *this;  
+} /* vint::operator<< */
+
+vint & vint::operator, ( const int & next )
+{
+  this->push_back(next);
+  return *this;
+} /* vint::operator, */
+
+
+/// ------------------------------------------------
+/// end of vint
+/// ------------------------------------------------
+
+
 /**
  * Calculates the absolute value of x.
  * @param x uiVal_type (float or double)
@@ -517,6 +543,9 @@ uiVal_type uiAbs( uiVal_type x )
     return x; 
   } /* NOT x < 0 */
 } /* uiAbs */
+
+
+
 
 /**
  * Calculates the square of x.

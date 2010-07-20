@@ -158,11 +158,14 @@ public:
   void nextStep( int step, vint & result ) const;
   bool on_side( const vint & point ) const;
   bool inside( const vint & ) const;
+  //bool inside( const boost::python::list & point ) const;
   bool nextStep_it( vint & result ) const;
   bool operator==( const vint & other ) const;
   bool operator!=( const vint & other ) const;
   int position( const vint & elem ) const;
   bool addSet( const vint & other );
+  vint & operator << ( const int & initiator );
+  vint & operator,   ( const int & next );
 };
 
 template <class im_type>

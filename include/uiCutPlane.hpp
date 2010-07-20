@@ -23,9 +23,10 @@ namespace pink {
   PTR<char_image> draw_plane( const char_image & original, float a, float b, float c, float d );
 
 
-  PTR<char_image> project_plane( const boost::python::list & A,
+  PTR<char_image> project_plane( const char_image & original,
+				 const boost::python::list & A,
 				 const boost::python::list & B,
-				 const boost::python::list & shift,
+//				 const boost::python::list & shift,
 				 double alpha
     );  
 

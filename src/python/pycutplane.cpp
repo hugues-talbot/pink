@@ -32,9 +32,9 @@ UI_EXPORT_ONE_FUNCTION( cpp_draw_plane,
 
 UI_EXPORT_ONE_FUNCTION( cpp_project_plane, 
 			project_plane, 
-			args("first point of the plane", 
+			args("the 3D image",
+			     "first point of the plane", 
 			     "second point of the plane", 
-			     "center of the shift",
 			     "angle of the rotation"),
 			"this function projects the given plane to a 2D image"
   )

@@ -161,8 +161,6 @@ namespace pink{
 
     string repr() const;
     void fill( pixel_type value );
-    
-
   }; /* class ujoi */
 
   // Valid image types
@@ -747,14 +745,14 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   template <class im_type >
   const vint & ujoi<im_type >::get_size() const{
     return size;
-  }
+  } /* ujoi:: get_size */
 
 
 
   template <class im_type >
   const vint & ujoi<im_type >::get_center() const{
     return center;
-  }
+  } /* ujoi::get_center */
 
 
 
@@ -768,7 +766,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       else 
 
 	center = vint( new_center );
-  }
+  } /* ujoi::set_center_vint */
 
 
 
@@ -785,21 +783,21 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       else 
 
 	center = vint( vint_new_center );
-  }
+  } /* ujoi::set_center_list */
 
 
 
   template <class im_type >
   ARRAY<im_type> ujoi<im_type >::get_pixels(){
     return pixels;
-  }
+  } /* ujoi::get_pixels */
 
 
 
   template <class im_type >
   ARRAY<im_type> ujoi<im_type >::get_pixels() const{
     return pixels;
-  }
+  } /* ujoi::get_pixels */
 
 
   template <class im_type >
@@ -813,7 +811,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     result = ss.str();
     
     return result;
-  } /* repr */
+  } /* ujoi::repr */
 
   template <class im_type >
   void ujoi<im_type >::fill( pixel_type value ) 
@@ -823,10 +821,9 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       (*this)[q]=value;      
     } /* FOR */
     
-  } /* fill */
+  } /* ujoi::fill */
   
-
-
+  
 
 
 
