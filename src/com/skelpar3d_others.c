@@ -35,7 +35,7 @@ knowledge of the CeCILL license and that you accept its terms.
 /*! \file skelpar3d_others.c
 
 \brief parallel 3D binary skeleton
-
+DirectionalSkeletonizer
 <B>Usage:</B> skelpar3d in.pgm algorithm nsteps [inhibit] out.pgm
 
 <B>Description:</B>
@@ -72,6 +72,8 @@ then the points of this image will be left unchanged.
 #include <ldist.h>
 #include <lskelpar3d_others.h>
 #include <lmedialaxis.h>
+#include <DirectionalSkeletonizer.hpp>
+#include <FIFO.hpp>
 
 /* =============================================================== */
 int main(int32_t argc, char **argv)
@@ -88,6 +90,8 @@ int main(int32_t argc, char **argv)
     fprintf(stderr, "   1: Palagyi (curvilinear, sequential, 2006)\n");
     fprintf(stderr, "   2: Palagyi (surfacic, parallel directional, 2002)\n");
     fprintf(stderr, "   3: Palagyi (surfacic, fully parallel, 2008)\n");
+    fprintf(stderr, "   4: Raynal (curvilinear, directional, 2010)\n");
+    fprintf(stderr, "   5: Raynal (surfacic, directional, 2010)\n");
     exit(1);
   }
 
@@ -97,6 +101,8 @@ int main(int32_t argc, char **argv)
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
+
+  DirectionalSkeletonizer dskel1(image->row_size, image->col_size, image->depth_size);
 
   mode = atoi(argv[2]);
   nsteps = atoi(argv[3]);
@@ -155,6 +161,20 @@ int main(int32_t argc, char **argv)
 	fprintf(stderr, "%s: palagyi_skelpar_surf_08 failed\n", argv[0]);
 	exit(1);
       } break;
+     case 4:
+      if (nsteps==-1) nsteps=0;
+      if(inhibit!=NULL)
+      dskel1.skeletonize((unsigned char*)(image->image_data), true, nsteps, (unsigned char*)(inhibit->image_data));
+      else
+      dskel1.skeletonize((unsigned char*)(image->image_data), true, nsteps);
+      break;
+     case 5:
+      if (nsteps==-1) nsteps=0;
+      if(inhibit!=NULL)
+      dskel1.skeletonize((unsigned char*)(image->image_data), false, nsteps, (unsigned char*)(inhibit->image_data));
+      else
+      dskel1.skeletonize((unsigned char*)(image->image_data), false, nsteps);
+      break;
     default:
       fprintf(stderr, "%s: mode %d not implemented\n", argv[0], mode);
       exit(1);
@@ -166,6 +186,7 @@ int main(int32_t argc, char **argv)
     exit(1);
   }
 
+  if(inhibit!=NULL) freeimage(inhibit);
   writeimage(image, argv[argc-1]);
   freeimage(image);
 
