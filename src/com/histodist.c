@@ -153,8 +153,8 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc - 1]);
     exit(1);
   }
-  fprintf(fd, "e %d\n", 1); 
-  fprintf(fd, "%g\n", dist); 
+  fprintf(fd, "s %d\n", 1); 
+  fprintf(fd, "0 %g\n", dist); 
   fclose(fd);
 
   return 0;

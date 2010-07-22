@@ -43,7 +43,7 @@ Draws a spline which is specified by its control points in a text file.
 The parameter \b in.pgm gives an image into which the spline is to be drawn.
 The file format for \b spline.txt is the following for 2D:
 
-s n+1 (where n+1 denotes the number of control points)<br>
+c n+1 (where n+1 denotes the number of control points)<br>
 x1 y1<br>
 ...<br>
 xn+1 yn+1<br>
@@ -53,7 +53,7 @@ C0Xn C0Yn C1Xn C1Yn C2Xn C2Yn C3Xn C3Yn<br>
 
 and in the 3D case:
 
-S n+1 (where n+1 denotes the number of control points)<br>
+C n+1 (where n+1 denotes the number of control points)<br>
 x1 y1 z1<br>
 ...<br>
 xn+1 yn+1 zn+1<br>
@@ -118,9 +118,12 @@ int main(int argc, char **argv)
   }
 
   fscanf(fd, "%c", &type);
-  if ((type != 's') && (type != 'S'))
+  if ((type == 's') || (type == 'S'))
+    fprintf(stderr, "%s: WARNING: use tags c and C for single splines, not %c\n", argv[0], type);
+
+  if ((type != 'c') && (type != 'C') && (type != 's') && (type != 'S'))
   {
-    fprintf(stderr, "%s : bad file format : %c \n", argv[0], type);
+    fprintf(stderr, "%s: bad file format : %c \n", argv[0], type);
     exit(1);
   }
   fscanf(fd, "%d", &npoints);
@@ -134,7 +137,7 @@ int main(int argc, char **argv)
   if (argc == 5)
     len = atof(argv[3]);
 
-  if (type == 's')
+  if ((type == 'c') || (type == 's'))
   {
     double p0, p1, p2, p3, q0, q1, q2, q3;
     x = (double *)calloc(1,npoints*sizeof(double));
@@ -191,7 +194,7 @@ int main(int argc, char **argv)
     free(X0); free(X1); free(X2); free(X3);
     free(Y0); free(Y1); free(Y2); free(Y3);
   }
-  else if (type == 'S')
+  else // 3D
   {
     double p0, p1, p2, p3, q0, q1, q2, q3, r0, r1, r2, r3;
     x = (double *)calloc(1,npoints*sizeof(double));

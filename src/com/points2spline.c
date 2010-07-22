@@ -67,7 +67,7 @@ x3 y3 z3<br>
 
 The output file format is the following for 2D:
 
-s n+1 (where n+1 denotes the number of control points)<br>
+c n+1 (where n+1 denotes the number of control points)<br>
 x1 y1<br>
 ...<br>
 xn+1 yn+1<br>
@@ -77,7 +77,7 @@ C0Xn C0Yn C1Xn C1Yn C2Xn C2Yn C3Xn C3Yn<br>
 
 and in the 3D case:
 
-S n+1 (where n+1 denotes the number of control points)<br>
+C n+1 (where n+1 denotes the number of control points)<br>
 x1 y1 z1<br>
 ...<br>
 xn+1 yn+1 zn+1<br>
@@ -203,7 +203,7 @@ int main(int argc, char **argv)
       exit(1);
     }
   
-    fprintf(fd, "s %d\n", npoints);
+    fprintf(fd, "c %d\n", npoints);
     for (i = 0; i < npoints; i++) fprintf(fd, "%d %d\n", (int32_t)X[i], (int32_t)Y[i]);
     for (i = 0; i < npoints-1; i++) fprintf(fd, "%g %g %g %g %g %g %g %g\n", 
                                           C0[i], D0[i], C1[i], D1[i], C2[i], D2[i], C3[i], D3[i]);
@@ -283,7 +283,7 @@ int main(int argc, char **argv)
       exit(1);
     }
   
-    fprintf(fd, "S %d\n", npoints);
+    fprintf(fd, "C %d\n", npoints);
     for (i = 0; i < npoints; i++) fprintf(fd, "%d %d %d\n", (int32_t)X[i], (int32_t)Y[i], (int32_t)Z[i]);
     for (i = 0; i < npoints-1; i++) fprintf(fd, "%g %g %g %g %g %g %g %g %g %g %g %g\n", 
                                           C0[i], D0[i], E0[i], C1[i], D1[i], E1[i], C2[i], D2[i], E2[i], C3[i], D3[i], E3[i]);

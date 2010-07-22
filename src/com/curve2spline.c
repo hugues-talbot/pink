@@ -36,11 +36,11 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts a discrete open curve into a spline
 
-<B>Usage:</B> curve2spline curve.txt tolerance spline.txt
+<B>Usage:</B> curve2spline curve.list tolerance out.spline
 
 <B>Description:</B>
 
-Let C be the discrete open curve described in <B>curve.txt</B>. This program finds a approximation of C
+Let C be the discrete open curve described in <B>curve.list</B>. This program finds a approximation of C
 in the form of a parametric curve P defined by two (in 2D) or three (in 3D) splines 
 such that the maximal distance between P and C is beyond the given <B>tolerance</B>.
 
@@ -48,7 +48,7 @@ The result is given in the form of the list of control points for the splines, f
 the set of coefficients for each spline segment. 
 The file format is the following for 2D:
 
-s n+1 (where n+1 denotes the number of control points)<br>
+c n+1 (where n+1 denotes the number of control points)<br>
 x1 y1<br>
 ...<br>
 xn+1 yn+1<br>
@@ -58,7 +58,7 @@ C0Xn C0Yn C1Xn C1Yn C2Xn C2Yn C3Xn C3Yn<br>
 
 and in the 3D case:
 
-S n+1 (where n+1 denotes the number of control points)<br>
+C n+1 (where n+1 denotes the number of control points)<br>
 x1 y1 z1<br>
 ...<br>
 xn+1 yn+1 zn+1<br>
@@ -115,13 +115,13 @@ int main(int argc, char **argv)
   }
   tolerance = atof(argv[2]);
   fscanf(fd, "%c", &type);
-  if ((type != 'c') && (type != 'C'))
+  if ((type != 'b') && (type != 'B'))
   {
-    fprintf(stderr, "usage: %s : bad file format : %c \n", argv[0], type);
+    fprintf(stderr, "usage: %s: bad file format: %c \n", argv[0], type);
     exit(1);
   }
 
-  if (type == 'c') // cas 2D
+  if (type == 'b') // cas 2D
   {
     int32_t *X, *Y, *W;
     double *C0, *C1, *C2, *C3;
@@ -153,7 +153,7 @@ int main(int argc, char **argv)
       exit(1);
     }
   
-    fprintf(fd, "s %d\n", n);
+    fprintf(fd, "c %d\n", n);
     for (i = 0; i < n; i++) fprintf(fd, "%d %d\n", X[W[i]], Y[W[i]]);
     for (i = 0; i < n-1; i++) fprintf(fd, "%g %g %g %g %g %g %g %g\n", 
                                           C0[i], D0[i], C1[i], D1[i], C2[i], D2[i], C3[i], D3[i]);
@@ -163,7 +163,7 @@ int main(int argc, char **argv)
     free(C0); free(C1); free(C2); free(C3);
     free(D0); free(D1); free(D2); free(D3);
   }
-  else if (type == 'C')  // cas 3D
+  else // cas 3D
   {
     int32_t *X, *Y, *Z, *W;
     double *C0, *C1, *C2, *C3;
@@ -201,7 +201,7 @@ int main(int argc, char **argv)
       exit(1);
     }
   
-    fprintf(fd, "S %d\n", n);
+    fprintf(fd, "C %d\n", n);
     for (i = 0; i < n; i++) fprintf(fd, "%d %d %d\n", X[W[i]], Y[W[i]], Z[W[i]]);
     for (i = 0; i < n-1; i++) fprintf(fd, "%g %g %g %g %g %g %g %g %g %g %g %g\n", 
                                           C0[i], D0[i], E0[i], C1[i], D1[i], E1[i], C2[i], D2[i], E2[i], C3[i], D3[i], E3[i]);

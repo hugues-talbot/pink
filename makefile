@@ -348,6 +348,7 @@ $(BDIR)/drawsplines \
 $(BDIR)/drawtorus \
 $(BDIR)/drawtriangulation \
 $(BDIR)/lengthspline \
+$(BDIR)/lengthsplines \
 $(BDIR)/line \
 $(BDIR)/curve2spline \
 $(BDIR)/points2spline \
@@ -1606,6 +1607,9 @@ $(BDIR)/drawtriangulation:	$(CDIR)/drawtriangulation.c $(IDIR)/mcimage.h $(IDIR)
 
 $(BDIR)/lengthspline:	$(CDIR)/lengthspline.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/lengthspline.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/lengthspline
+
+$(BDIR)/lengthsplines:	$(CDIR)/lengthsplines.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/lengthsplines.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/lengthsplines
 
 $(BDIR)/line:	$(CDIR)/line.c $(IDIR)/ldraw.h $(IDIR)/lbresen.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/mcliste.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/line.c $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(OBJ_COMMON) $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/line

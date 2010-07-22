@@ -88,8 +88,8 @@ if {($m1 > $m2)} {
 }
 
 set output [open $DUBUISSON(outfilename) w]
-puts $output "e 1"
-puts $output $max
+puts $output "s 1"
+puts $output "0 $max"
 close $output
 #puts "dubuisson distance: $max"
 

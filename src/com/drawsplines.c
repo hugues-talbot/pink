@@ -44,13 +44,13 @@ The parameter \b in.pgm gives an image into which the splines are to be drawn.
 The file format for \b splines.txt is the following for 2D:
 
 The file \b splines.txt contains a list of splines under the format:<br>
-nb_splines<br>
+d nb_splines<br>
 nb_points_spline_1  x11 y11  x12 y12 ...<br>
 nb_points_spline_2  x21 y21  x22 y22 ...<br>
 nb_points_spline_3  x31 y31  x32 y32 ...<br>
 ...<br>
 or, in 3D:<br>
-nb_splines<br>
+D nb_splines<br>
 nb_points_spline_1  x11 y11 z11  x12 y12 z12 ...<br>
 nb_points_spline_2  x21 y21 z21  x22 y22 z22 ...<br>
 nb_points_spline_3  x31 y31 z31  x32 y32 z32 ...<br>
@@ -97,6 +97,7 @@ int main(int argc, char **argv)
   double Px[4], Py[4], Pz[4];
   double *X0, *X1, *X2, *X3,  *Y0, *Y1, *Y2, *Y3,  *Z0, *Z1, *Z2, *Z3;
   double tx, ty, tz, tn;
+  char type;
 
   if ((argc != 4) && (argc != 5))
   {
@@ -121,13 +122,19 @@ int main(int argc, char **argv)
   if (argc == 5)
     len = atof(argv[3]);
   
-  fscanf(fd, "%d", &nsplines);
+  fscanf(fd, "%c %d", &type, &nsplines);
+  if ((type != 'd') && (type != 'D'))
+  {
+    fprintf(stderr, "%s : bad file format : %c \n", argv[0], type);
+    exit(1);
+  }
 #ifdef VERBOSE
   printf("%s: %d splines\n", argv[0], nsplines);
 #endif
 
-  if (depth(image) == 1)
+  if (type == 'd')
   {
+    assert(depth(image) == 1);
     for (i = 0; i < nsplines; i++)
     {
       fscanf(fd, "%d", &npoints);

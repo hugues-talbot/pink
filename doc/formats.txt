@@ -48,6 +48,8 @@ DS ::= ascii_coded_integer
 VALMAX ::= ascii_coded_integer
 PIXEL ::= ascii_coded_integer32
 
+=======================================================
+
 Listes
 
 Summary of list formats:
@@ -59,13 +61,17 @@ Summary of list formats:
   xn          xn vn         xn yn         xn yn vn         xn yn z3         z3 xn yn vn
 </pre>
 
+=======================================================
+
 Courbes discrètes
+
+=======================================================
 
 Splines
 
 2D case:
 
-s n+1 (where n+1 denotes the number of control points)
+c n+1 (where n+1 denotes the number of control points)
 x1 y1
 ...
 xn+1 yn+1
@@ -75,7 +81,7 @@ C0Xn C0Yn C1Xn C1Yn C2Xn C2Yn C3Xn C3Yn
 
 3D case:
 
-S n+1 (where n+1 denotes the number of control points)
+C n+1 (where n+1 denotes the number of control points)
 x1 y1 z1
 ...
 xn+1 yn+1 zn+1
@@ -89,6 +95,28 @@ y(t) = C3Yi * t^3 + C2Yi * t^2 + C1Yi * t + C0Yi
 z(t) = C3Zi * t^3 + C2Zi * t^2 + C1Zi * t + C0Zi
 with t in [0,1]
 
+=======================================================
+
+Multiple splines in one file 
+
+2D case:
+
+d nb_splines
+nb_points_spline_1  x11 y11  x12 y12 ...
+nb_points_spline_2  x21 y21  x22 y22 ...
+nb_points_spline_3  x31 y31  x32 y32 ...
+...
+
+3D case:
+
+D nb_splines
+nb_points_spline_1  x11 y11 z11  x12 y12 z12 ...
+nb_points_spline_2  x21 y21 z21  x22 y22 z22 ...
+nb_points_spline_3  x31 y31 z31  x32 y32 z32 ...
+...
+
+=======================================================
+
 Scenes 3D
 
 FILE ::= '3Dscene' <N> <OBJ>*
@@ -100,6 +128,8 @@ CLOSEDSPLINE ::= 'closedspline' <N> <POINT>*
 POLYGON ::= 'polygon' <N> <POINT>*
 N ::= ascii_coded_integer
 POINT ::= ascii_coded_float ascii_coded_float ascii_coded_float
+
+=======================================================
 
 Squelettes curvilignes
 
