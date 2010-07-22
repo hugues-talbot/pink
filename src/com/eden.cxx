@@ -45,7 +45,7 @@ Algorithm is as follows.
 For growth:
   \li start from known set
   \li take pixels from the border into a queue
-  \li choose randomly one such pixels
+  \li choose randomly one such pixel
   \li set it to 1
   \li update queues
   \li repeat

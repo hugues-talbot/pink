@@ -36,23 +36,23 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-extern void scn_solvespline(double *x, double *y, int32_t n, 
+extern int32_t scn_solvespline(double *x, double *y, int32_t n, 
 			    double *Z0, double *Z1, double *Z2, double *Z3);
-extern void scn_solvespline_noalloc(double *x, double *y, int32_t n, 
+extern int32_t scn_solvespline_noalloc(double *x, double *y, int32_t n, 
 		        double *Z0, double *Z1, double *Z2, double *Z3,
 			double *M, double *P, double *z, double *A, double*B);
-extern void scn_solvespline1(double *y, int32_t n, 
+extern int32_t scn_solvespline1(double *y, int32_t n, 
 			     double *Z0, double *Z1, double *Z2, double *Z3);
-extern void scn_solveclosedspline(double *x, double *y, int32_t n, 
+extern int32_t scn_solveclosedspline(double *x, double *y, int32_t n, 
 			          double *Z0, double *Z1, double *Z2, double *Z3);
-extern void scn_samplespline(double *x, double *y, int32_t n, int32_t m, double *X, double *Y);
-extern void scn_samplespline3d(double *x, double *y, double *z, int32_t n, int32_t m, double *X, double *Y, double *Z);
-extern void scn_curvatures(double *x, double *y, int32_t n, int32_t m, double *sk, double *rhok);
-extern void scn_curvatures3d(double *x, double *y, double *z, int32_t n, int32_t m, double *sk, double *rhok);
-extern void scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_t *n, 
+extern int32_t scn_samplespline(double *x, double *y, int32_t n, int32_t m, double *X, double *Y);
+extern int32_t scn_samplespline3d(double *x, double *y, double *z, int32_t n, int32_t m, double *X, double *Y, double *Z);
+extern int32_t scn_curvatures(double *x, double *y, int32_t n, int32_t m, double *sk, double *rhok);
+extern int32_t scn_curvatures3d(double *x, double *y, double *z, int32_t n, int32_t m, double *sk, double *rhok);
+extern int32_t scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_t *n, 
                             double *C0, double *C1, double *C2, double *C3,
                             double *D0, double *D1, double *D2, double *D3);
-extern void scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double deltamax, 
+extern int32_t scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double deltamax, 
                               int32_t *C, int32_t *n, 
                               double *C0, double *C1, double *C2, double *C3,
                               double *D0, double *D1, double *D2, double *D3,

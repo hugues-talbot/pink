@@ -93,7 +93,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define UNSET_0M_CRUCIAL(f) (f&=~S_0M_CRUCIAL)
 #define UNSET_SELECTED(f)   (f&=~S_SELECTED)
 
-#define VERBOSE
+//#define VERBOSE
 //#define DEBUG
 #ifdef DEBUG
 int32_t trace = 1;

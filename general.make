@@ -189,6 +189,8 @@ $(BDIR)/GA2tikz \
 $(BDIR)/GAwatershed \
 $(BDIR)/GAwatershedDouble
 
+#$(BDIR)/skelpar3d_others \
+
 TOPO=\
 $(BDIR)/alpha \
 $(BDIR)/asft \
@@ -268,7 +270,6 @@ $(BDIR)/skeleucl \
 $(BDIR)/skelfindelbows \
 $(BDIR)/skelpar \
 $(BDIR)/skelpar3d \
-$(BDIR)/skelpar3d_others \
 $(BDIR)/skelsurf \
 $(BDIR)/skelvertex \
 $(BDIR)/squelval \
@@ -329,6 +330,7 @@ $(BDIR)/drawlines \
 $(BDIR)/drawrect \
 $(BDIR)/drawspline \
 $(BDIR)/drawsplineorient \
+$(BDIR)/drawsplinesorient \
 $(BDIR)/drawsplines \
 $(BDIR)/drawtorus \
 $(BDIR)/drawtriangulation \
@@ -1576,6 +1578,9 @@ $(BDIR)/drawspline:	$(CDIR)/drawspline.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $
 
 $(BDIR)/drawsplineorient:	$(CDIR)/drawsplineorient.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawsplineorient.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/drawsplineorient
+
+$(BDIR)/drawsplinesorient:	$(CDIR)/drawsplinesorient.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawsplinesorient.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/drawsplinesorient
 
 $(BDIR)/drawsplines:	$(CDIR)/drawsplines.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawsplines.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/drawsplines

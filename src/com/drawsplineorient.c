@@ -32,11 +32,11 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file drawspline.c
+/*! \file drawsplineorient.c
 
 \brief draw spline orientations in a vector field
 
-<B>Usage:</B> drawspline in.pgm in.spline out.pgm
+<B>Usage:</B> drawsplineorient in.pgm in.spline out.pgm
 
 <B>Description:</B>
 Draws spline orientations in a vector field. 
@@ -62,7 +62,7 @@ C0X1 C0Y1 C0Z1 C1X1 C1Y1 C1Z1 C2X1 C2Y1 C2Z1 C3X1 C3Y1 C3Z1<br>
 ...<br>
 C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn<br>
 
-<B>Types supported:</B> byte 2D, byte 3D
+<B>Types supported:</B> spline 2D, spline 3D
 
 <B>Category:</B> draw geo
 \ingroup  draw geo

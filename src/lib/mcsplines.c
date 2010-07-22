@@ -78,7 +78,7 @@ int32_t scn_constant(double *x, int32_t n)
 } // scn_constant()
 
 /* ==================================== */
-void scn_solvespline(double *x, double *y, int32_t n, 
+int32_t scn_solvespline(double *x, double *y, int32_t n, 
                          double *Z0, double *Z1, double *Z2, double *Z3)
 /* ==================================== */
 /*! \fn double * scn_solvespline(double *x, double *y, int32_t n, double *A, double *B)
@@ -125,7 +125,7 @@ void scn_solvespline(double *x, double *y, int32_t n,
     printf("%s: lin_solvetridiag failed\n", F_NAME);
 #ifdef DEBUG    
 #endif
-    exit(0);
+    return 0;
   }
 
   A[0] = y[0];
@@ -155,10 +155,11 @@ void scn_solvespline(double *x, double *y, int32_t n,
   free(z); 
   free(A); 
   free(B);
+  return 1;
 } // scn_solvespline()
 
 /* ==================================== */
-void scn_solvespline_noalloc(double *x, double *y, int32_t n, 
+int32_t scn_solvespline_noalloc(double *x, double *y, int32_t n, 
 			     double *Z0, double *Z1, double *Z2, double *Z3,
 			     double *M, double *P, double *z, double *A, double*B)
 /* ==================================== */
@@ -210,7 +211,7 @@ void scn_solvespline_noalloc(double *x, double *y, int32_t n,
     printf("%s: lin_solvetridiag failed\n", F_NAME);
 #ifdef DEBUG    
 #endif
-    exit(0);
+    return 0;
   }
 
   A[0] = y[0];
@@ -234,10 +235,11 @@ void scn_solvespline_noalloc(double *x, double *y, int32_t n,
     Z0[j] = ((-z[j]*x[j]*x[j]*x[j] + z[j-1]*x[j+1]*x[j+1]*x[j+1]) / 
              (6 * (x[j+1] - x[j]))) - B[j]*x[j] + A[j];
   }  
+  return 1;
 } // scn_solvespline_noalloc()
 
 /* ==================================== */
-void scn_solvespline1(double *y, int32_t n, 
+int32_t scn_solvespline1(double *y, int32_t n, 
                       double *Z0, double *Z1, double *Z2, double *Z3)
 /* ==================================== */
 /*! \fn double * scn_solvespline1(double *y, int32_t n, double *A, double *B)
@@ -282,7 +284,7 @@ void scn_solvespline1(double *y, int32_t n,
     printf("%s: lin_solvetridiag failed\n", F_NAME);
 #ifdef DEBUG    
 #endif
-    exit(0);
+    return 0;
   }
 
   A[0] = y[0];
@@ -310,10 +312,11 @@ void scn_solvespline1(double *y, int32_t n,
   free(z); 
   free(A); 
   free(B);
+  return 1;
 } // scn_solvespline()
 
 /* ==================================== */
-void scn_solveclosedspline(double *x, double *y, int32_t n, 
+int32_t scn_solveclosedspline(double *x, double *y, int32_t n, 
                            double *Z0, double *Z1, double *Z2, double *Z3)
 /* ==================================== */
 /*! \fn double * scn_solvespline(double *x, double *y, int32_t n, double *A, double *B)
@@ -336,13 +339,13 @@ void scn_solveclosedspline(double *x, double *y, int32_t n,
   if (n < 3)
   {
     fprintf(stderr, "%s: not enough points\n", F_NAME);
-    exit(0);
+    return 0;
   }
 
   if (y[0] != y[n-1])
   {
     fprintf(stderr, "%s: not a closed spline\n", F_NAME);
-    exit(0);
+    return 0;
   }
 
   nn = n + 4;
@@ -363,7 +366,8 @@ void scn_solveclosedspline(double *x, double *y, int32_t n,
   xx[n+3] = x[n-1] + x[2] - x[0];
   yy[n+3] = y[2];
 
-  scn_solvespline(xx, yy, nn, ZZ0, ZZ1, ZZ2, ZZ3);
+  if (scn_solvespline(xx, yy, nn, ZZ0, ZZ1, ZZ2, ZZ3) == 0)
+    return 0;
 
   for (i = 0; i < n-1; i++)
   {
@@ -378,7 +382,8 @@ void scn_solveclosedspline(double *x, double *y, int32_t n,
   free(ZZ0); 
   free(ZZ1); 
   free(ZZ2); 
-  free(ZZ3); 
+  free(ZZ3);
+  return 1;
 } // scn_solveclosedspline()
 
 // =================================================
@@ -520,7 +525,7 @@ retourne t
 } // dicho3()
 
 /* ==================================== */
-void scn_samplespline(double *x, double *y, int32_t n, int32_t m, double *X, double *Y)
+int32_t scn_samplespline(double *x, double *y, int32_t n, int32_t m, double *X, double *Y)
 /* ==================================== */
 /*! \fn double * scn_samplespline(double *x, double *y, int32_t n, int32_t m, double *X, double *Y)
     \param x (entrée) : tableau des abcisses des points de contrôle (taille n)
@@ -547,19 +552,19 @@ void scn_samplespline(double *x, double *y, int32_t n, int32_t m, double *X, dou
   if (n < 1)
   {
     fprintf(stderr, "%s: not enough points\n", F_NAME);
-    exit(1);
+    return 0;
   }
 
   if (m < 2)
   {
     fprintf(stderr, "%s: not enough samples\n", F_NAME);
-    exit(1);
+    return 0;
   }
 
   if (n == 1)
   {
     for(k = 0; k < m-1; k++) { X[k] = x[0]; Y[k] = y[0]; }
-    return;
+    return 1;
   }
 
   if (n == 2)
@@ -571,7 +576,7 @@ void scn_samplespline(double *x, double *y, int32_t n, int32_t m, double *X, dou
       X[k] = x[0] + k * (x[n-1] - x[0]) / (m-1); 
       Y[k] = y[0] + k * (y[n-1] - y[0]) / (m-1); 
     }
-    return;
+    return 1;
   }
   
   t = (double *)calloc(1,n * sizeof(double)); assert(t != NULL);
@@ -588,13 +593,13 @@ void scn_samplespline(double *x, double *y, int32_t n, int32_t m, double *X, dou
 
   if ((x[0] != x[n-1]) || (y[0] != y[n-1]))
   {
-    scn_solvespline(t, x, n, X0, X1, X2, X3);
-    scn_solvespline(t, y, n, Y0, Y1, Y2, Y3);
+    if (scn_solvespline(t, x, n, X0, X1, X2, X3) == 0) return 0;
+    if (scn_solvespline(t, y, n, Y0, Y1, Y2, Y3) == 0) return 0;
   }
   else
   {
-    scn_solveclosedspline(t, x, n, X0, X1, X2, X3);
-    scn_solveclosedspline(t, y, n, Y0, Y1, Y2, Y3);
+    if (scn_solveclosedspline(t, x, n, X0, X1, X2, X3) == 0) return 0;
+    if (scn_solveclosedspline(t, y, n, Y0, Y1, Y2, Y3) == 0) return 0;
   }
 
   for(i = 0; i < n-1; i++)
@@ -641,10 +646,11 @@ void scn_samplespline(double *x, double *y, int32_t n, int32_t m, double *X, dou
   free(t);
   free(X0); free(X1); free(X2); free(X3); 
   free(Y0); free(Y1); free(Y2); free(Y3); 
+  return 1;
 } // scn_samplespline()
 
 /* ==================================== */
-void scn_samplespline3d(double *x, double *y, double *z, int32_t n, int32_t m, double *X, double *Y, double *Z)
+int32_t scn_samplespline3d(double *x, double *y, double *z, int32_t n, int32_t m, double *X, double *Y, double *Z)
 /* ==================================== */
 /*! \fn double * scn_samplespline3d(double *x, double *y, double *z, int32_t n, int32_t m, double *X, double *Y, double *Z)
     \param x (entrée) : tableau des abcisses des points de contrôle (taille n)
@@ -674,19 +680,19 @@ void scn_samplespline3d(double *x, double *y, double *z, int32_t n, int32_t m, d
   if (n < 1)
   {
     fprintf(stderr, "%s: not enough points\n", F_NAME);
-    exit(1);
+    return 0;
   }
 
   if (m < 2)
   {
     fprintf(stderr, "%s: not enough samples\n", F_NAME);
-    exit(1);
+    return 0;
   }
 
   if (n == 1)
   {
     for (k = 0; k < m-1; k++) { X[k] = x[0]; Y[k] = y[0]; Z[k] = z[0]; }
-    return;
+    return 1;
   }
 
   if (n == 2)
@@ -699,7 +705,7 @@ void scn_samplespline3d(double *x, double *y, double *z, int32_t n, int32_t m, d
       Y[k] = y[0] + k * (y[n-1] - y[0]) / (m-1); 
       Z[k] = z[0] + k * (z[n-1] - z[0]) / (m-1); 
     }
-    return;
+    return 1;
   }
   
   t = (double *)calloc(1,n * sizeof(double)); assert(t != NULL);
@@ -719,15 +725,15 @@ void scn_samplespline3d(double *x, double *y, double *z, int32_t n, int32_t m, d
 
   if ((x[0] != x[n-1]) || (y[0] != y[n-1]) || (z[0] != z[n-1]))
   {
-    scn_solvespline(t, x, n, X0, X1, X2, X3);
-    scn_solvespline(t, y, n, Y0, Y1, Y2, Y3);
-    scn_solvespline(t, z, n, Z0, Z1, Z2, Z3);
+    if (scn_solvespline(t, x, n, X0, X1, X2, X3) == 0) return 0;
+    if (scn_solvespline(t, y, n, Y0, Y1, Y2, Y3) == 0) return 0;
+    if (scn_solvespline(t, z, n, Z0, Z1, Z2, Z3) == 0) return 0;
   }
   else
   {
-    scn_solveclosedspline(t, x, n, X0, X1, X2, X3);
-    scn_solveclosedspline(t, y, n, Y0, Y1, Y2, Y3);
-    scn_solveclosedspline(t, z, n, Z0, Z1, Z2, Z3);
+    if (scn_solveclosedspline(t, x, n, X0, X1, X2, X3) == 0) return 0;
+    if (scn_solveclosedspline(t, y, n, Y0, Y1, Y2, Y3) == 0) return 0;
+    if (scn_solveclosedspline(t, z, n, Z0, Z1, Z2, Z3) == 0) return 0;
   }
 
   for (i = 0; i < n-1; i++)
@@ -780,6 +786,7 @@ void scn_samplespline3d(double *x, double *y, double *z, int32_t n, int32_t m, d
   free(X0); free(X1); free(X2); free(X3); 
   free(Y0); free(Y1); free(Y2); free(Y3); 
   free(Z0); free(Z1); free(Z2); free(Z3); 
+  return 1;
 } // scn_samplespline3d()
 
 /* ==================================== */
@@ -889,7 +896,7 @@ printf("i = %d t[i] = %g t[i+1] = %g\n", i, t[i], t[i+1]);
 // =================================================
 
 /* ==================================== */
-void scn_curvatures(double *x, double *y, int32_t n, int32_t m, double *sk, double *rhok)
+int32_t scn_curvatures(double *x, double *y, int32_t n, int32_t m, double *sk, double *rhok)
 /* ==================================== */
 /*! \fn double * scn_curvatures(double *x, double *y, int32_t n, int32_t m, double *sk, double *rhok)
     \param x (entrée) : tableau des abcisses des points de contrôle (taille n)
@@ -927,8 +934,8 @@ void scn_curvatures(double *x, double *y, int32_t n, int32_t m, double *sk, doub
 
   for(i=0; i < n; i++) t[i] = (double)i;
 
-  scn_solvespline(t, x, n, X0, X1, X2, X3);
-  scn_solvespline(t, y, n, Y0, Y1, Y2, Y3);
+  if (scn_solvespline(t, x, n, X0, X1, X2, X3) == 0) return 0;
+  if (scn_solvespline(t, y, n, Y0, Y1, Y2, Y3) == 0) return 0;
 
   for(i=0; i < n-1; i++)
   {
@@ -969,10 +976,11 @@ void scn_curvatures(double *x, double *y, int32_t n, int32_t m, double *sk, doub
   free(t);
   free(X0); free(X1); free(X2); free(X3); 
   free(Y0); free(Y1); free(Y2); free(Y3); 
+  return 1;
 } // scn_curvatures()
 
 /* ==================================== */
-void scn_curvatures3d(double *x, double *y, double *z, int32_t n, int32_t m, double *sk, double *rhok)
+int32_t scn_curvatures3d(double *x, double *y, double *z, int32_t n, int32_t m, double *sk, double *rhok)
 /* ==================================== */
 /*! \fn double * scn_curvatures(double *x, double *y, double *z, int32_t n, int32_t m, double *sk, double *rhok)
     \param x (entrée) : tableau des abcisses des points de contrôle (taille n)
@@ -1017,9 +1025,9 @@ void scn_curvatures3d(double *x, double *y, double *z, int32_t n, int32_t m, dou
 
   for (i = 0; i < n; i++) t[i] = (double)i;
 
-  scn_solvespline(t, x, n, X0, X1, X2, X3);
-  scn_solvespline(t, y, n, Y0, Y1, Y2, Y3);
-  scn_solvespline(t, z, n, Z0, Z1, Z2, Z3);
+  if (scn_solvespline(t, x, n, X0, X1, X2, X3) == 0) return 0;
+  if (scn_solvespline(t, y, n, Y0, Y1, Y2, Y3) == 0) return 0;
+  if (scn_solvespline(t, z, n, Z0, Z1, Z2, Z3) == 0) return 0;
 
   for (i = 0; i < n-1; i++)
   {
@@ -1070,6 +1078,7 @@ void scn_curvatures3d(double *x, double *y, double *z, int32_t n, int32_t m, dou
   free(X0); free(X1); free(X2); free(X3); 
   free(Y0); free(Y1); free(Y2); free(Y3); 
   free(Z0); free(Z1); free(Z2); free(Z3); 
+  return 1;
 } // scn_curvatures3d()
 
 // =================================================
@@ -1355,7 +1364,7 @@ void printctrlpoints3d(int32_t *C, int32_t *X, int32_t *Y, int32_t *Z, int32_t n
 }
 
 /* ==================================== */
-void scn_approxcurve1(int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_t *n, 
+int32_t scn_approxcurve1(int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_t *n, 
                       double *C0, double *C1, double *C2, double *C3)
 /* ==================================== */
 /*! \fn double * scn_approxcurve1(double *Y, int32_t N, double *Z, int32_t *n)
@@ -1417,7 +1426,7 @@ void scn_approxcurve1(int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_
       x[i] = Z[i];
       y[i] = Y[Z[i]];
     }
-    scn_solvespline(x, y, nctrl, C0, C1, C2, C3);
+    if (scn_solvespline(x, y, nctrl, C0, C1, C2, C3) == 0) return 0;
     scn_discretisespline1(nctrl, C0, C1, C2, C3, Z, W);
 #ifdef DEBUG
     { 
@@ -1458,10 +1467,11 @@ void scn_approxcurve1(int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_
   free(x);
   free(y);
   free(W);
+  return 1;
 } // scn_approxcurve1()
 
 /* ==================================== */
-void scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *C, int32_t *n, 
+int32_t scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *C, int32_t *n, 
                      double *C0, double *C1, double *C2, double *C3,
                      double *D0, double *D1, double *D2, double *D3)
 /* ==================================== */
@@ -1504,7 +1514,7 @@ void scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t
   if ((X[0] == X[N-1]) && (Y[0] == Y[N-1]))
   {
     fprintf(stderr, "%s: this operator does not allow closed curves\n", F_NAME);
-    exit(1);
+    return 0;
   }
 
   for (i = 0; i < N; i++) t[i] = (double)i;
@@ -1547,9 +1557,9 @@ void scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t
     for (i = 0; i < nctrl; i++) x[i] = C[i];
 
     for (i = 0; i < nctrl; i++) y[i] = X[C[i]];
-    scn_solvespline(x, y, nctrl, C0, C1, C2, C3);
+    if (scn_solvespline(x, y, nctrl, C0, C1, C2, C3) == 0) return 0;
     for (i = 0; i < nctrl; i++) y[i] = Y[C[i]];
-    scn_solvespline(x, y, nctrl, D0, D1, D2, D3);
+    if (scn_solvespline(x, y, nctrl, D0, D1, D2, D3) == 0) return 0;
     scn_discretisespline(nctrl, C0, C1, C2, C3, D0, D1, D2, D3, C, V, W);
 #ifdef DEBUG_AC
     { 
@@ -1607,9 +1617,9 @@ void scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t
   // (départ à 0, incrément de 1 pour chaque point de contrôle) 
   for (i = 0; i < nctrl; i++) x[i] = i;
   for (i = 0; i < nctrl; i++) y[i] = X[C[i]];
-  scn_solvespline(x, y, nctrl, C0, C1, C2, C3);
+  if (scn_solvespline(x, y, nctrl, C0, C1, C2, C3) == 0) return 0;
   for (i = 0; i < nctrl; i++) y[i] = Y[C[i]];
-  scn_solvespline(x, y, nctrl, D0, D1, D2, D3);
+  if (scn_solvespline(x, y, nctrl, D0, D1, D2, D3) == 0) return 0;
 
   *n = nctrl;
   free(t);
@@ -1617,10 +1627,11 @@ void scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t
   free(y);
   free(W);
   free(V);
+  return 1;
 } // scn_approxcurve()
 
 /* ==================================== */
-void scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double deltamax, 
+int32_t scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double deltamax, 
                        int32_t *C, int32_t *n, 
                        double *C0, double *C1, double *C2, double *C3,
                        double *D0, double *D1, double *D2, double *D3,
@@ -1675,7 +1686,7 @@ void scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double del
   if ((X[0] == X[N-1]) && (Y[0] == Y[N-1]) && (Z[0] == Z[N-1]))
   {
     fprintf(stderr, "%s: this operator does not allow closed curves\n", F_NAME);
-    exit(1);
+    return 0;
   }
 
   for (i = 0; i < N; i++) t[i] = (double)i;
@@ -1714,11 +1725,11 @@ void scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double del
     continuer = 0;
     for (i = 0; i < nctrl; i++) x[i] = C[i];
     for (i = 0; i < nctrl; i++) y[i] = X[C[i]];
-    scn_solvespline(x, y, nctrl, C0, C1, C2, C3);
+    if (scn_solvespline(x, y, nctrl, C0, C1, C2, C3) == 0) return 0;
     for (i = 0; i < nctrl; i++) y[i] = Y[C[i]];
-    scn_solvespline(x, y, nctrl, D0, D1, D2, D3);
+    if (scn_solvespline(x, y, nctrl, D0, D1, D2, D3) == 0) return 0;
     for (i = 0; i < nctrl; i++) y[i] = Z[C[i]];
-    scn_solvespline(x, y, nctrl, E0, E1, E2, E3);
+    if (scn_solvespline(x, y, nctrl, E0, E1, E2, E3) == 0) return 0;
     scn_discretisespline3d(nctrl, C0, C1, C2, C3, D0, D1, D2, D3, E0, E1, E2, E3, C, U, V, W);
 #ifdef DEBUG
     { 
@@ -1752,18 +1763,19 @@ void scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double del
 
   if (nctrl > N)
   {
-    printf("%s: WARNING too many control points, tolerance may be too small\n", F_NAME);  
+    printf("%s: too many control points, tolerance may be too small\n", F_NAME);  
+    return 0;
   }
 
   // renormalisation de l'abcisse curviligne
   // (départ à 0, incrément de 1 pour chaque point de contrôle) 
   for (i = 0; i < nctrl; i++) x[i] = i;
   for (i = 0; i < nctrl; i++) y[i] = X[C[i]];
-  scn_solvespline(x, y, nctrl, C0, C1, C2, C3);
+  if (scn_solvespline(x, y, nctrl, C0, C1, C2, C3) == 0) return 0;
   for (i = 0; i < nctrl; i++) y[i] = Y[C[i]];
-  scn_solvespline(x, y, nctrl, D0, D1, D2, D3);
+  if (scn_solvespline(x, y, nctrl, D0, D1, D2, D3) == 0) return 0;
   for (i = 0; i < nctrl; i++) y[i] = Z[C[i]];
-  scn_solvespline(x, y, nctrl, E0, E1, E2, E3);
+  if (scn_solvespline(x, y, nctrl, E0, E1, E2, E3) == 0) return 0;
 
   *n = nctrl;
   free(t);
@@ -1772,6 +1784,7 @@ void scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double del
   free(W);
   free(V);
   free(U);
+  return 1;
 } // scn_approxcurve3d()
 
 // =================================================

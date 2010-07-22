@@ -32,16 +32,16 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file drawsplines.c
+/*! \file drawsplinesorient.c
 
-\brief draw spline segments which are specified by a text file
+\brief draw spline orientations in a vector field (multiple spline version)
 
-<B>Usage:</B> drawsplines in.pgm splines.txt [len] out.pgm
+<B>Usage:</B> drawsplinesorient in.pgm in.splines out.pgm
 
 <B>Description:</B>
-Draws splines which are specified by control points in a text file.
-The parameter \b in.pgm gives an image into which the splines are to be drawn.
-The file format for \b splines.txt is the following for 2D:
+Draws spline orientations in a vector field. 
+The spline is specified by its control points in a text file.
+The parameter \b in.pgm gives a vector field into which the spline is to be drawn.
 
 The file \b splines.txt contains a list of splines under the format:<br>
 nb_splines<br>
@@ -56,19 +56,12 @@ nb_points_spline_2  x21 y21 z21  x22 y22 z22 ...<br>
 nb_points_spline_3  x31 y31 z31  x32 y32 z32 ...<br>
 ...<br>
 
-If parameter \b len is given and non-zero, the splines are extended on both sides by straight line segments of length \b len. 
-
-<B>Types supported:</B> byte 2D, byte 3D
+<B>Types supported:</B> spline 2D, spline 3D
 
 <B>Category:</B> draw geo
 \ingroup  draw geo
 
 \author Michel Couprie
-*/
-
-/*
-%TEST drawsplines %IMAGES/2dbyte/binary/b2empty_30_40.pgm %IMAGES/2dlist/binary/l2splines1.list %RESULTS/drawsplines_l2splines1.pgm
-%TEST drawsplines %IMAGES/3dbyte/binary/b3empty_20_30_40.pgm %IMAGES/3dlist/binary/l3splines1.list %RESULTS/drawsplines_l3splines1.pgm
 */
 
 #include <stdio.h>
@@ -79,33 +72,33 @@ If parameter \b len is given and non-zero, the splines are extended on both side
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <mcutil.h>
 #include <mcsplines.h>
+#include <mcutil.h>
 #include <ldraw.h>
-
-//#define VERBOSE
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * image;
-  int32_t i, j;
+  struct xvimage * field;
+  int32_t j;
   FILE *fd = NULL;
-  int32_t nsplines, npoints;
+  int32_t npoints, nsplines, i;
   double *x, *y, *z, *t, x1, y1, z1, len = 0.0;
+  double xx, yy, zz;
   double Px[4], Py[4], Pz[4];
-  double *X0, *X1, *X2, *X3,  *Y0, *Y1, *Y2, *Y3,  *Z0, *Z1, *Z2, *Z3;
+  double *X0, *X1, *X2, *X3, *Y0, *Y1, *Y2, *Y3, *Z0, *Z1, *Z2, *Z3;
   double tx, ty, tz, tn;
+  char type;
 
-  if ((argc != 4) && (argc != 5))
+  if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in.pgm splines.txt [len] out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm splines.txt out.pgm \n", argv[0]);
     exit(1);
   }
 
-  image = readimage(argv[1]);
-  if (image == NULL)
+  field = readimage(argv[1]);
+  if (field == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
@@ -117,16 +110,13 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[2]);
     exit(1);
   }
-
-  if (argc == 5)
-    len = atof(argv[3]);
   
   fscanf(fd, "%d", &nsplines);
 #ifdef VERBOSE
   printf("%s: %d splines\n", argv[0], nsplines);
 #endif
 
-  if (depth(image) == 1)
+  if (depth(field) == 1)
   {
     for (i = 0; i < nsplines; i++)
     {
@@ -165,27 +155,8 @@ int main(int argc, char **argv)
 	Px[0] = X0[j]; Px[1] = X1[j]; Px[2] = X2[j]; Px[3] = X3[j];
 	Py[0] = Y0[j]; Py[1] = Y1[j]; Py[2] = Y2[j]; Py[3] = Y3[j];
 
-	ldrawcubic2(image, (double *)Px, (double *)Py, 10, t[j], t[j+1]);
+	ldrawtangents2d(field, (double *)Px, (double *)Py, 10, t[j], t[j+1]);
       }
-
-      // extension of the spline
-
-      tx = X1[0];
-      ty = Y1[0];
-      tn = sqrt(tx*tx + ty*ty);
-      //    printf("tangente en debut (%g %g) : %g %g\n", x[0], y[0], tx/tn, ty/tn);
-
-      ldrawline(image, arrondi(x[0]), arrondi(y[0]), arrondi((x[0]-(len*tx/tn))), arrondi((y[0]-(len*ty/tn))));
-      
-      j = npoints-2;
-      Px[1] = X1[j]; Px[2] = X2[j]; Px[3] = X3[j];
-      Py[1] = Y1[j]; Py[2] = Y2[j]; Py[3] = Y3[j];
-      tx = Px[1] + 2*(npoints-1)*Px[2] + 3*(npoints-1)*(npoints-1)*Px[3];
-      ty = Py[1] + 2*(npoints-1)*Py[2] + 3*(npoints-1)*(npoints-1)*Py[3];
-      tn = sqrt(tx*tx + ty*ty);
-      //    printf("tangente en fin (%g %g) : %g %g\n", x[npoints-1], y[npoints-1], tx/tn, ty/tn);
-
-      ldrawline(image, arrondi(x[npoints-1]), arrondi(y[npoints-1]), arrondi((x[npoints-1]+(len*tx/tn))), arrondi((y[npoints-1]+(len*ty/tn))));
 
       free(x); free(y); free(t); 
       free(X0); free(X1); free(X2); free(X3);
@@ -238,30 +209,8 @@ int main(int argc, char **argv)
 	Py[0] = Y0[j]; Py[1] = Y1[j]; Py[2] = Y2[j]; Py[3] = Y3[j];
 	Pz[0] = Z0[j]; Pz[1] = Z1[j]; Pz[2] = Z2[j]; Pz[3] = Z3[j];
 
-	ldrawcubic3d(image, (double *)Px, (double *)Py, (double *)Pz, 10, t[j], t[j+1]);
+	ldrawtangents3d(field, (double *)Px, (double *)Py, (double *)Pz, 10, t[j], t[j+1]);
       }
-
-      // extension of the spline
-
-      tx = X1[0];
-      ty = Y1[0];
-      tz = Z1[0];
-      tn = sqrt(tx*tx + ty*ty + tz*tz);
-      //    printf("tangente en debut (%g %g %g) : %g %g %g\n", x[0], y[0], z[0], tx/tn, ty/tn, tz/tn);
-
-      ldrawline3d(image,arrondi(x[0]), arrondi(y[0]), arrondi(z[0]), arrondi((x[0]-(len*tx/tn))), arrondi((y[0]-(len*ty/tn))), arrondi((z[0]-(len*tz/tn))));
-      
-      j = npoints-2;
-      Px[1] = X1[j]; Px[2] = X2[j]; Px[3] = X3[j];
-      Py[1] = Y1[j]; Py[2] = Y2[j]; Py[3] = Y3[j];
-      Pz[1] = Z1[j]; Pz[2] = Z2[j]; Pz[3] = Z3[j];
-      tx = Px[1] + 2*(npoints-1)*Px[2] + 3*(npoints-1)*(npoints-1)*Px[3];
-      ty = Py[1] + 2*(npoints-1)*Py[2] + 3*(npoints-1)*(npoints-1)*Py[3];
-      tz = Pz[1] + 2*(npoints-1)*Pz[2] + 3*(npoints-1)*(npoints-1)*Pz[3];
-      tn = sqrt(tx*tx + ty*ty + tz*tz);
-      //    printf("tangente en fin (%g %g %g) : %g %g %g\n", x[npoints-1], y[npoints-1], z[npoints-1], tx/tn, ty/tn, tz/tn);
-
-      ldrawline3d(image, arrondi(x[npoints-1]), arrondi(y[npoints-1]), arrondi(z[npoints-1]), arrondi((x[npoints-1]+(len*tx/tn))), arrondi((y[npoints-1]+(len*ty/tn))), arrondi((z[npoints-1]+(len*tz/tn))));
 
       free(x); free(y); free(z); free(t); 
       free(X0); free(X1); free(X2); free(X3);
@@ -272,10 +221,8 @@ int main(int argc, char **argv)
 
   fclose(fd);
 
-  writeimage(image, argv[argc-1]);
-  freeimage(image);
+  writeimage(field, argv[argc-1]);
+  freeimage(field);
 
   return 0;
 } /* main */
-
-
