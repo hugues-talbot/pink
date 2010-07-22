@@ -1,0 +1,37 @@
+\section{volumelignes.c File Reference}
+\label{volumelignes_8c}\index{volumelignes.c@{volumelignes.c}}
+enhances linear structures in a grayscale image 
+
+
+
+\subsection{Detailed Description}
+enhances linear structures in a grayscale image 
+
+{\bf Usage:} volumelignes skel.pgm orig.pgm connex radius out.pgm
+
+{\bf Description:} Enhances linear structures in a grayscale image. The algorithm is the following:
+
+
+
+\footnotesize\begin{verbatim}
+Let F be the original image ("orig.pgm")
+Let O be the final result ("out.pgm")
+Let r be the value of parameter "radius"
+Compute k iterations of homotopic thinning, result S ("skel.pgm")
+For each point x of S which is separating
+  O(x) = volume((F-S).Br(x)) 
+  where Br(x) is the disc centered on x with radius r
+EndFor
+\end{verbatim}
+\normalsize
+
+
+References:\par
+ \char`\"{}Topological operators for the detection of curvilinar structures in grayscale images\char`\"{}, in preparation, 2003.
+
+{\bf Types supported:} byte 2d
+
+{\bf Category:} topogray
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

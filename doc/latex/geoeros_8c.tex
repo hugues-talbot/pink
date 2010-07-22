@@ -1,0 +1,19 @@
+\section{geoeros.c File Reference}
+\label{geoeros_8c}\index{geoeros.c@{geoeros.c}}
+geodesic (grayscale or binary) erosion 
+
+
+
+\subsection{Detailed Description}
+geodesic (grayscale or binary) erosion 
+
+{\bf Usage:} geoeros g.pgm f.pgm connex niter out.pgm
+
+{\bf Description:} Geodesic erosion of {\bf g.pgm} over {\bf f.pgm}. Let G and F be the two input images. If G is not over F, then G is replaced initially by max(G,F). The structuring element is specified by the value of the parameter {\bf connex}, which can be one of the following ones: 4, 8 in 2d, or 6, 18, 26 in 3d. The parameter {\bf niter} sets the number of iterations. If {\bf niter} = -1, then the iterations continue until stability.
+
+{\bf Types supported:} byte 2d, byte 3d.
+
+{\bf Category:} connect, morpho ,
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

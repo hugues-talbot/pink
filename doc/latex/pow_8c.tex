@@ -1,0 +1,19 @@
+\section{pow.c File Reference}
+\label{pow_8c}\index{pow.c@{pow.c}}
+raises the value of each pixel to the pth power 
+
+
+
+\subsection{Detailed Description}
+raises the value of each pixel to the pth power 
+
+{\bf Usage:} pow in.pgm p out.pgm
+
+{\bf Description:} For each pixel x, out[x] = in[x]$^\wedge$p. If the image is a byte image, and if out[x] exceeds 255, then out[x] is set to 255.
+
+{\bf Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d, float 2d, float 3d
+
+{\bf Category:} arith
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

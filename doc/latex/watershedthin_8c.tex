@@ -1,0 +1,23 @@
+\section{watershedthin.c File Reference}
+\label{watershedthin_8c}\index{watershedthin.c@{watershedthin.c}}
+Thin watershed transformation (Meyer's algorithm on perfect fusion grid). 
+
+
+
+\subsection{Detailed Description}
+Thin watershed transformation (Meyer's algorithm on perfect fusion grid). 
+
+{\bf Usage:} watershedthin in mark $<$bgmark$|$null$>$ $<$roi$|$null$>$ parite out
+
+{\bf Description:}
+
+Performs the watershed transformation on the image {\bf in}, considered to be on a perfect fusion grid, taking the set of markers in {\bf mark}. Returns the divide set.
+
+If this parameter is present, {\bf bgmark} is used as a set of markers for the background. If this parameter is present, {\bf roi} indicates the region of interest on which the operation is performed. The parameter {\bf parite} (0 or 1) gives the the translation of the fusion grid.
+
+{\bf Types supported:} byte 2d
+
+{\bf Category:} connect
+
+\begin{Desc}
+\item[Author:]Jean Cousty \end{Desc}

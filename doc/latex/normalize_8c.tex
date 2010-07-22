@@ -1,0 +1,19 @@
+\section{normalize.c File Reference}
+\label{normalize_8c}\index{normalize.c@{normalize.c}}
+normalization of grayscale values 
+
+
+
+\subsection{Detailed Description}
+normalization of grayscale values 
+
+{\bf Usage:} normalize in.pgm [nmin nmax] out.pgm
+
+{\bf Description:} For byte and int32\_\-t images, grayscale values are normalized to span the range of [nmin...nmax]. The parameters {\bf nmin} and {\bf nmax} are optional. For byte and int32\_\-t images, the default values are {\bf nmin} = 0 and {\bf nmax} = 255. For float images, the default values are {\bf nmin} = 0 and {\bf nmax} = 1.
+
+{\bf Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d, float 2d, float 3d
+
+{\bf Category:} arith
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

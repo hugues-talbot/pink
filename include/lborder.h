@@ -35,7 +35,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern int32_t lborder(struct xvimage *image, int32_t connex);
+extern int32_t mctopo3d_lborder(struct xvimage *image, int32_t connex);
 #ifdef __cplusplus
 }
 #endif

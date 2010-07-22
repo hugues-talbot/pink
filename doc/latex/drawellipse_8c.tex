@@ -1,0 +1,19 @@
+\section{drawellipse.c File Reference}
+\label{drawellipse_8c}\index{drawellipse.c@{drawellipse.c}}
+Draws an ellipse. 
+
+
+
+\subsection{Detailed Description}
+Draws an ellipse. 
+
+{\bf Usage:} drawellipse in.pgm x1 y1 x2 y2 X1 Y1 X2 Y2 [filled] out.pgm
+
+{\bf Description:} Draws an ellipse specified by four points, e.g. the extremities of the small axis ({\bf x1}, {\bf y1}, {\bf x2}, {\bf y2}) and the extremities of the big axis ({\bf X1}, {\bf Y1}, {\bf X2}, {\bf Y2}). The ellipse is surimposed to the contents of {\bf in.pgm}. If the (optional) int32\_\-t parameter {\bf filled} is set (1), then the ellipse is filled. Otherwise it is empty (default).
+
+{\bf Types supported:} byte 2d
+
+{\bf Category:} draw geo
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

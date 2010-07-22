@@ -1,0 +1,39 @@
+\section{fft.c File Reference}
+\label{fft_8c}\index{fft.c@{fft.c}}
+fast Fourier transform 
+
+
+
+\subsection{Detailed Description}
+fast Fourier transform 
+
+{\bf Usage:} fft in1 in2 dir out1 out2
+
+{\bf Description:} computes the 2 dimensional Fast Fourier Transform of an image. The input image must be square and the number of rows (or columns) MUST be a power of two.
+
+This program will compute either a forward or inverse FFT, depending on the direction requested with the {\bf dir} option. A {\bf dir} value of 0 will result in a forward FFT, and a {\bf dir} value of 1 will result in an inverse FFT.
+
+The input arguments are described as follows:
+
+{\bf in1} specifies the input image, which can be of data type BYTE, LONG or FLOAT. If the input image is of data type BYTE, then the data will first be converted to FLOAT before proceeding. If the first input image is of type BYTE or FLOAT, then it is assumed that it is the real component of the complex pair, and the imaginary component may be input using the optional in2 input argument. If no imaginary component is specified when using a real input, then the imaginary component is assumed to be zero.
+
+{\bf in2} specifies the optional input image, which can be of data type BYTE, LONG or FLOAT. The keyword \char`\"{}null\char`\"{} may be used. It is assumed that this image represents the imaginary component of the complex pair.
+
+{\bf out1} specifies the real output image, which will be a single band image of data type FLOAT. This image contains only the real component of the complex pair.
+
+{\bf out2} specifies the imaginary output image, which will be a single band image of data type FLOAT. This image contains only the imaginary component of the complex pair.
+
+{\bf dir} specifies the FFT direction. A {\bf dir} of 0 will result in a forward FFT, and a {\bf dir} of 1 will result in an inverse FFT.
+
+Note that it is the users responsibility to ensure that the correct components of the image are used when requesting an FFT or Inverse FFT. Unexpected results may occur if the user requests an inverse FFT and only inputs the real component of an image. If an FFT of an image is taken, then both the real and imaginary components must be used to obtain a correct inverse FFT.
+
+For a forward FFT, the input data is multiplied by (-1)$\ast$$\ast$(x+y) where (x,y) is the pixel coordinate. This has the effect of shifting the frequency domain result so that the DC component is at (N/2,N/2) rather than (0,0). For the inverse FFT case, the data is multiplied by (-1)$\ast$$\ast$(x+y) AFTER the FFT processing, accounting for the fact that the input frequency domain data was center-shifted by the forward FFT. The center-shifted frequency domain representation is much easier to visualize and filter than it would be if not shifted. For more information on the shifting teqchnique, see R.C. Gonsalez and P. Wintz, \char`\"{}Digital Image Processing, 2nd ed, sec 3.2.2, p. 77. (1987). The center-shifting should really be an option.
+
+For the forward FFT, there is no scaling on the data. For the inverse FFT, the data is scaled by 1/(N$\ast$N). Thus, to generate a sinewave of amplitude 1.0 for a 64x64 complex image to be handed to the inverse FFT, there should be two impulses at conjugate locations (symmetric about the center of the image) each with amplitude 0.5/(64$\ast$64). Why 0.5? It's because each impulse carries half of the power! The scaling should really be an option, but it currently is not (perhaps in a future patch).
+
+{\bf Types supported:} byte 2d, int32\_\-t 2d, float 2d
+
+{\bf Category:} signal
+
+\begin{Desc}
+\item[Author:]Scott Wilson, Rick Bogart, Lyle Bacon \end{Desc}

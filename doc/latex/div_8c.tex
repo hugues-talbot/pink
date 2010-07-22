@@ -1,0 +1,19 @@
+\section{div.c File Reference}
+\label{div_8c}\index{div.c@{div.c}}
+pixelwise division of two images 
+
+
+
+\subsection{Detailed Description}
+pixelwise division of two images 
+
+{\bf Usage:} div in1.pgm in2.pgm out.pgm
+
+{\bf Description:} For each pixel x such that in2[x] != 0, out[x] = in1[x] / in2[x]. For each pixel x such that in2[x] = 0, out[x] = 0. Images must be of the same type and same dimensions.
+
+{\bf Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d, float 2d, float 3d
+
+{\bf Category:} arith
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

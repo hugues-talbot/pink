@@ -1,0 +1,23 @@
+\section{hls2rgb.c File Reference}
+\label{hls2rgb_8c}\index{hls2rgb.c@{hls2rgb.c}}
+converts from hls to rgb color representation 
+
+
+
+\subsection{Detailed Description}
+converts from hls to rgb color representation 
+
+{\bf Usage:} hls2rgb H.pgm L.pgm S.pgm out.ppm
+
+{\bf Description:}
+
+Constructs 1 ppm from 3 pgm files: {\bf H.pgm} : Hue (int32\_\-t - 0 to 359) {\bf L.pgm} : Luminance (byte) {\bf S.pgm} : Saturation (byte) Some particular values of HUE: 0 red 60 yellow 120 green 180 cyan 240 blue 300 magenta Based on Foley, Van Damm \& al: \char`\"{}Computer Graphics\char`\"{}, 2nd ed., p. 595
+
+Types supported: int32\_\-t 2D (hue), byte 2D (others)
+
+{\bf Types supported:} byte 2D
+
+{\bf Category:} convert
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

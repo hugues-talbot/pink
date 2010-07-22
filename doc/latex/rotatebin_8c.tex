@@ -1,0 +1,19 @@
+\section{rotatebin.c File Reference}
+\label{rotatebin_8c}\index{rotatebin.c@{rotatebin.c}}
+rotation of an image 
+
+
+
+\subsection{Detailed Description}
+rotation of an image 
+
+{\bf Usage:} rotatebin in.pgm theta [x y] out.pgm
+
+{\bf Description:} rotates the image {\bf in.pgm} of the angle {\bf theta} (in degrees). Method: truncated real rotation. If {\bf x} and {\bf y} are given, then the center of the rotation is the point (x,y) and the image size is left unchanged (hence parts of object may be lost). Otherwise, the center of the rotation is the point (0,0) and the resulting image size is computed such that no loss of information occur.
+
+{\bf Types supported:} byte 2d
+
+{\bf Category:} geo
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

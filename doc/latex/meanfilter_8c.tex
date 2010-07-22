@@ -1,0 +1,35 @@
+\section{meanfilter.c File Reference}
+\label{meanfilter_8c}\index{meanfilter.c@{meanfilter.c}}
+Mean filter operator. 
+
+
+
+\subsection{Detailed Description}
+Mean filter operator. 
+
+{\bf Usage:} meanfilter in.pgm roi.pgm niter [inhibit.pgm] out.pgm
+
+{\bf Description:} Let F be the function stored in image {\bf in.pgm}. Let R be the function stored in image {\bf roi.pgm} (region of interest). Let I be the function stored in image {\bf inhibit.pgm} (if any). The algorithm is the following:
+
+
+
+\footnotesize\begin{verbatim}
+Repeat niter times
+  G = F
+  For each image point x
+    If R[x] and not I[x] then
+      S = G[x]; C = 1;
+      For each neighbour y of x
+        If R[y] then S = S + G[y]; C = C + 1;
+      F[x] = S / C;
+Result: F
+\end{verbatim}
+\normalsize
+
+
+{\bf Types supported:} byte 2d, int32\_\-t 2d, float 2d, byte 3d, int32\_\-t 3d, float 3d
+
+{\bf Category:} signal
+
+\begin{Desc}
+\item[Author:]Marcin Janaszewski, Michel Couprie \end{Desc}

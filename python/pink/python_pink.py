@@ -16,10 +16,9 @@ def readimage(filename):
     elif XV.imtype()=="double":
         return pink.double_image(XV)
     else:
-        raise "Bad image type'"+XV.imtype()+"'"
+        print "error: bad image type '" + XV.imtype() + "'"
+        raise "Bad image type"
 
-
-    
 
 def skeleton(image, connex, priority=-1, inhibit=-1):
     """

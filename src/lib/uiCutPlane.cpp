@@ -138,31 +138,31 @@ namespace pink {
     float c, 
     float d )
   {
-//    PTR<char_image> plane(new char_image(original.get_size()));
+    // PTR<char_image> plane(new char_image(original.get_size()));
   
-    PTR<char_image> result;
+    PTR<char_image> result(new char_image(original));
 
-//     vint curr( plane->get_size().size(), "curr"  );
+    vint curr( result->get_size().size(), "curr"  );
     
-//     FOR(q, plane->get_size().prod())
-//     {
-//       plane->get_size().nextStep( q, curr );
+    FOR(q, result->get_size().prod())
+    {
+      result->get_size().nextStep( q, curr );
       
 //       if ( uiAbs(a*curr[0]+b*curr[1]+c*curr[2]+d) 
 // 	   / sqrt( a*a + b*b + c*c ) <= 0.5 )
 //       {
 //     	(*plane)[q]=255;	
 //       } /* if */
+
+    if ( a*curr[0]+b*curr[1]+c*curr[2]+d  > 0 )
+    {
+      (*result)[q]=0;	
+    } /* if */
+
       
-//     } /* FOR */
+    } /* FOR */
     
-//     result = immap_min( original, *plane );
-
-    v3d axe(0,0,1), orient(1,0,0), reference(0,0,0);
-    
-
-    
-
+    // result = immap_min( original, *plane );
 
     return result;
   } /* draw_plane */
@@ -267,7 +267,7 @@ namespace pink {
 
     new_base.col(2).swap(new_base.col(1));
 
-    //DVECT(new_base);
+    DVECT(new_base);
 
     new_base(0,0)+=pA(0);
     new_base(1,0)+=pA(1);
@@ -287,7 +287,7 @@ namespace pink {
     new_base(2,3)+=pA(2);
     
     //DVECT(new_base);
-
+        
 
     MatrixXd TR = new_base * image.inverse();
 

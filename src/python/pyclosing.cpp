@@ -1,7 +1,14 @@
-// UjoImro, 2009
-// This software is meant to be free
-// boost python wrapper
+/*
+  This software is licensed under 
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
+  This software comes in hope that it will be useful but 
+  without any warranty to the extent permitted by aplicable law.
+  
+  (C) UjoImro, 2009-2010
+  Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+  ujoimro@gmail.com
+*/
 #include <pink_python.h>
 
 #undef error
@@ -108,6 +115,57 @@ PTR<char_image> py_closing( const char_image & src,
   
   return result;    
 };
+
+
+PTR<char_image> py_closeball( const char_image & src, 
+			      int r, int mode=2
+  )
+{
+  if ((mode != 0) && (mode != 2) && (mode != 4) && 
+      (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
+  {
+    error("dist = [0|2|4|8|6|18|26]");
+  } /* if */
+
+  PTR<char_image> result( new char_image(src) );
+  
+
+  if (result->get_size().size()==2)
+  {
+    if (! ldilatdisc(result->get_output(), r, mode))
+    {
+      error("function ldilatdisc failed");
+    }
+    if (! lerosdisc(result->get_output(), r, mode))
+    {
+      error("function lerosdisc failed");
+    }
+  }
+  else /* NOT result->get_size().size()==2 */
+  {
+    if (! ldilatball(result->get_output(), r, mode))
+    {
+      error("function ldilatball failed");
+    }
+    if (! lerosball(result->get_output(), r, mode))
+    {
+      error("function lerosball failed");
+    }
+  } /* NOT result->get_size().size()==2 */
+
+  return result;
+} /* py_closeball */
+
+
+
+UI_EXPORT_ONE_FUNCTION( cpp_closeball, 
+			py_closeball, 
+			args("image", "the ray of the ball", "distance function (defaults to 2)"),
+			"WRITE ME!!!\n"
+  )
+
+
+
 
 
 

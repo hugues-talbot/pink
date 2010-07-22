@@ -1,0 +1,25 @@
+\section{3dsurfacecollapse.c File Reference}
+\label{3dsurfacecollapse_8c}\index{3dsurfacecollapse.c@{3dsurfacecollapse.c}}
+parallel directional constrained collapse with surface detection and preservation 
+
+
+
+\subsection{Detailed Description}
+parallel directional constrained collapse with surface detection and preservation 
+
+{\bf Usage:} 3dsurfacecollapse in.pgm mode nsteps [inhibit] out.pgm
+
+{\bf Description:} Parallel directional constrained collapse with surface detection and preservation.
+
+The parameter {\bf mode} selects the strategy used to detect surface elements. The possible choices are: \begin{itemize}
+\item 1: any 2-dimensional facet\end{itemize}
+The parameter {\bf nsteps} gives the number of \char`\"{}layers\char`\"{} to be removes, if the value is -1 then the interations continue until stability.
+
+If the parameter {\bf inhibit} is given and is a binary image name, then the points of this image will be left unchanged.
+
+{\bf Types supported:} byte 3d
+
+{\bf Category:} orders
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

@@ -1,0 +1,19 @@
+\section{ptseparating.c File Reference}
+\label{ptseparating_8c}\index{ptseparating.c@{ptseparating.c}}
+detects separating points in a 2D or 3D binary image 
+
+
+
+\subsection{Detailed Description}
+detects separating points in a 2D or 3D binary image 
+
+{\bf Usage:} ptseparating in.pgm connex out.pgm
+
+{\bf Description:} A separating point is a white point x such that Tb\_\-n[x] $>$= 2 (n = 4,8 in 2D or n = 6,18,26 in 3D, as set by the parameter {\bf connex})
+
+{\bf Types supported:} byte 2d, byte 3d
+
+{\bf Category:} topobin
+
+\begin{Desc}
+\item[Author:]Michel Couprie 2002 \end{Desc}

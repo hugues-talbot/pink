@@ -1,0 +1,21 @@
+\section{distgeo.c File Reference}
+\label{distgeo_8c}\index{distgeo.c@{distgeo.c}}
+geodesic distance 
+
+
+
+\subsection{Detailed Description}
+geodesic distance 
+
+{\bf Usage:} distgeo in.pgm mask.pgm mode out.pgm
+
+{\bf Description:} Geodesic distance to the object X defined by the binary image {\bf in.pgm} , in the object Y defined by the binary image {\bf mask.pgm} .
+
+The distance d used depends on the parameter {\bf mode} : \begin{itemize}
+\item 4: 4-distance in 2d \item 8: 8-distance in 2d \item 6: 6-distance in 3d \item 18: 18-distance in 3d \item 26: 26-distance in 3d\end{itemize}
+{\bf Types supported:} byte 2D, byte 3D
+
+{\bf Category:} morpho
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

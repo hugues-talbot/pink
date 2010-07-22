@@ -1,0 +1,28 @@
+\section{erosion.c File Reference}
+\label{erosion_8c}\index{erosion.c@{erosion.c}}
+morphological erosion by a plane structuring element 
+
+
+
+\subsection{Detailed Description}
+morphological erosion by a plane structuring element 
+
+{\bf Usage:} erosion in.pgm se.pgm out.pgm
+
+{\bf Description:} The (plane) structuring element is given by the non-null values in {\bf se.pgm}, its origin (wrt the point (0,0) of {\bf se.pgm} ) is given by a comment line in the file {\bf se.pgm}.
+
+{\bf Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d
+
+{\bf Category:} morpho
+
+\begin{Desc}
+\item[Author:]Michel Couprie 2002\end{Desc}
+{\bf Example:}
+
+erosion cells $\sim$/Pink/masks/carre5.pgm cells\_\-eros
+
+\begin{TabularC}{2}
+\hline
+ &  \\\hline
+cells &cells\_\-eros  \\\hline
+\end{TabularC}

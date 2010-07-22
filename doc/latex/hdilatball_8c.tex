@@ -1,0 +1,42 @@
+\section{hdilatball.c File Reference}
+\label{hdilatball_8c}\index{hdilatball.c@{hdilatball.c}}
+topologically controlled dilation 
+
+
+
+\subsection{Detailed Description}
+topologically controlled dilation 
+
+{\bf Usage:} hdilatball in.pgm radius dist connex out.pgm
+
+{\bf Description:} Performs a topologically controlled dilation, that is, a homotopic thickening constrained by the dilation of the input object.
+
+The parameter {\bf radius} gives the radius of the ball which is used as structuring element for the dilation.
+
+The parameter {\bf dist} is a numerical code indicating the distance which is used to compute the dilation. The possible choices are: \begin{itemize}
+\item 0: approximate euclidean distance \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 4: 4-distance in 2d \item 8: 8-distance in 2d \item 6: 6-distance in 3d \item 18: 18-distance in 3d \item 26: 26-distance in 3d\end{itemize}
+The parameter {\bf connex} indicates the connectivity of the binary object. Possible choices are 4, 8 in 2d and 6, 26 in 3d.
+
+Let X be the set corresponding to the input image {\bf in.pgm}, and let Xbar denote its complementary set. The algorithm is the following:
+
+
+
+\footnotesize\begin{verbatim}
+I = dilatball(X, dist, r)
+Repeat:
+    Select a point x in [Xbar inter I] such that dist(x,X) is minimal
+    If x is simple for X then
+        X = X union {x}
+	I = I \ {x}
+Until [Xbar inter I] = emptyset
+Result: X
+\end{verbatim}
+\normalsize
+
+
+{\bf Types supported:} byte 2d, byte 3d
+
+{\bf Category:} topobin
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

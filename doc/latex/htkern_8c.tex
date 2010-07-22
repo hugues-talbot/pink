@@ -1,0 +1,44 @@
+\section{htkern.c File Reference}
+\label{htkern_8c}\index{htkern.c@{htkern.c}}
+grayscale ultimate homotopic thinning 
+
+
+
+\subsection{Detailed Description}
+grayscale ultimate homotopic thinning 
+
+{\bf Usage:} htkern in.pgm $<$imcond.pgm$|$null$>$ connex out.pgm
+
+{\bf Description:} Grayscale ultimate homotopic thinning (refs. [BEC97, CBB01]). The parameter {\bf connex} gives the connectivity used for the minima; possible choices are 4, 8 in 2D and 6, 26 in 3D. Let F be the function corresponding to the input image {\bf in.pgm}. Let G be the function corresponding to the input image {\bf imcond.pgm}, or the null function if the keyword {\bf null} is used. The algorithm is the following:
+
+
+
+\footnotesize\begin{verbatim}
+Repeat until stability:
+    select p destructible for F such that F(p) is minimal
+    F(p) = max{ delta-(p,F), G(p) }    
+Result: F
+\end{verbatim}
+\normalsize
+
+
+References:\par
+ [BEC97] G. Bertrand, J. C. Everat and M. Couprie: {\tt \char`\"{}Image segmentation through operators based upon topology\char`\"{}}, {\em  Journal of Electronic Imaging\/}, Vol.~6, No.~4, pp.~395-405, 1997.\par
+ [CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: {\tt \char`\"{}Topological operators for grayscale image processing\char`\"{}}, {\em  Journal of Electronic Imaging\/}, Vol.~10, No.~4, pp.~1003-1015, 2001.
+
+{\bf Types supported:} byte 2D, byte 3D.
+
+{\bf Category:} topogray
+
+\begin{Desc}
+\item[Author:]Michel Couprie\end{Desc}
+{\bf Example:}
+
+htkern ur1 null 4 ur1\_\-htkern\par
+ minima ur1\_\-htkern 4 ur1\_\-htkern\_\-m
+
+\begin{TabularC}{3}
+\hline
+ & &  \\\hline
+ur1 &ur1\_\-htkern &ur1\_\-htkern\_\-m  \\\hline
+\end{TabularC}

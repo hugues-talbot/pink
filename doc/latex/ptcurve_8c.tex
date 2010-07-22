@@ -1,0 +1,19 @@
+\section{ptcurve.c File Reference}
+\label{ptcurve_8c}\index{ptcurve.c@{ptcurve.c}}
+detects curve points in a binary image 
+
+
+
+\subsection{Detailed Description}
+detects curve points in a binary image 
+
+{\bf Usage:} ptcurve in.pgm connex out.pgm
+
+{\bf Description:} An curve point is a white point, which has exactly 2 white n-neighbours that are not n-neighbours to each other. In other words, Tn = 2 and each neighboring n-connected component is made of exactly one point (n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter {\bf connex})
+
+{\bf Types supported:} byte 2d, byte 3d
+
+{\bf Category:} topobin
+
+\begin{Desc}
+\item[Author:]Michel Couprie 2002 \end{Desc}

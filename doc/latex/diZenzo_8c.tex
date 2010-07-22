@@ -1,0 +1,37 @@
+\section{diZenzo.c File Reference}
+\label{diZenzo_8c}\index{diZenzo.c@{diZenzo.c}}
+diZenzo gradient pour les images couleurs 
+
+
+
+\subsection{Detailed Description}
+diZenzo gradient pour les images couleurs 
+
+{\bf Usage:} diZenzo imageRVB.ppm alpha [mode] out.pgm
+
+{\bf Description:} Le gradient de diZenzo est défini par la donnée de p, q, et t:
+
+p = Rx$\ast$Rx + Vx$\ast$Vx + Bx$\ast$Bx
+
+q = Ry$\ast$Ry + Vy$\ast$Vy + By$\ast$By
+
+t = Rx$\ast$Ry + Vx$\ast$Vy + Bx$\ast$By
+
+(ou Rx = dérivée en x de la bande rouge, Ry est la dérivée en y de la bande rouge, etc.)
+
+et le module est donnée par
+
+G = sqrt(1/2$\ast$(p+q+sqrt((p+q)$\ast$(p+q) -4(pq-t$\ast$t))))
+
+La direction est donnée par 1/2$\ast$atan(2$\ast$t/(p-q))
+
+Si le mode est égale à 0 (valeur défaut) alors l'image de sortie est le gradient, sinon l'image de sortie est une int32\_\-t entre 0 et 360.
+
+Les gradients sont calculés par les filtres de Deriche, de paramètre alpha
+
+{\bf Types supported:} byte 2D
+
+{\bf Category:} signal
+
+\begin{Desc}
+\item[Author:]Laurent Najman \end{Desc}

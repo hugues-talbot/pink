@@ -26,13 +26,13 @@ PTR<deep_xvimage> py_readimage( string filename ){
 
   char * cstr = new char [filename.size()+1]; // converting the filename for 'readimage'
   strcpy ( cstr, filename.c_str() );
-
+  
   xvimage * tmp = readimage( cstr ); // reading the image
   
   PTR< deep_xvimage > result( new deep_xvimage( *tmp ) ); // upcast deep copying the xvimage
 
   freeimage( tmp ); // freeing xvimage
-
+  
   return result;
 };
 
@@ -70,39 +70,39 @@ PTR<vint> getDimensions( const int x, const int y, const int z, const int t ){
 
 
 void setDimensions(const vint & dim, int & x, int & y, int & z, int & t){
-	int d = dim.size();
-	bool result = true;
-	x=y=z=t=1;
-	switch (d){
-		case 1:
-			x=dim[0];
-			y=1;
-			z=1;
-			t=1;
-			break;
-		case 2:
-			x=dim[0];
-			y=dim[1];
-			z=1;
-			t=1;
-			break;
-		case 3:
-			x=dim[0];
-			y=dim[1];
-			z=dim[2];
-			t=1;
-			break;
-		case 4:
-			x=dim[0];
-			y=dim[1];
-			z=dim[2];
-			t=dim[3];
-			break;
-		default:
-			result = false;
-			error("error: the dimension is wrong or unsupported");
-			break;
-	}
+  int d = dim.size();
+  bool result = true;
+  x=y=z=t=1;
+  switch (d){
+  case 1:
+    x=dim[0];
+    y=1;
+    z=1;
+    t=1;
+    break;
+  case 2:
+    x=dim[0];
+    y=dim[1];
+    z=1;
+    t=1;
+    break;
+  case 3:
+    x=dim[0];
+    y=dim[1];
+    z=dim[2];
+    t=1;
+    break;
+  case 4:
+    x=dim[0];
+    y=dim[1];
+    z=dim[2];
+    t=dim[3];
+    break;
+  default:
+    result = false;
+    error("error: the dimension is wrong or unsupported");
+    break;
+  } /* switch */
 };
 
 string image_type( int im_type ){
@@ -117,7 +117,7 @@ string image_type( int im_type ){
     break;
     
   case VFF_TYP_4_BYTE:
-    return "int32"; /* pixels are four byte (integer) */
+    return "int32_t"; /* pixels are four byte (integer) */
     break;
     
   case VFF_TYP_FLOAT:
@@ -306,7 +306,7 @@ deep_xvimage::deep_xvimage( const xvimage & src ){
     pixel_size = sizeof(short int); 
     break;
   case VFF_TYP_4_BYTE:   
-    pixel_size = sizeof(long int); 
+    pixel_size = sizeof(int); 
     break;
   case VFF_TYP_FLOAT:    
     pixel_size = sizeof(float); 
@@ -336,6 +336,7 @@ deep_xvimage::deep_xvimage( const xvimage & src ){
   this->zmax=src.zmax;
 
   int alloc_size = pixel_size * size->prod();
+  
   DEBUG(alloc_size);
   DEBUG(pixel_size);
   DEBUG(size->prod());

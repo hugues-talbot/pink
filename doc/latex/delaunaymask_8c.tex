@@ -1,0 +1,44 @@
+\section{delaunaymask.c File Reference}
+\label{delaunaymask_8c}\index{delaunaymask.c@{delaunaymask.c}}
+delaunay triangulation 
+
+
+
+\subsection{Detailed Description}
+delaunay triangulation 
+
+{\bf Usage:} delaunaymask in.list mask.pgm out.list
+
+{\bf Description:} Reads a point list in file {\bf in.list} under the following format: \small\begin{alltt}  
+    b <n>         n <n>    
+    x1 y1         x1 y1 v1
+    x2 y2   ou    x2 y2 v2
+    ...           ...
+    xn yn         xn yn vn
+\end{alltt}
+\normalsize 
+
+
+Computes a Delaunay triangulation and stores the resulting graph
+
+into file {\bf out.graph} under the following format: \small\begin{alltt}
+    G <n>
+    x1 y1 v1 ec1 ns1 s11 s12 ... s1ns1
+    x2 y2 v2 ec2 ns2 s21 s22 ... s1ns2
+    ...
+    xn yn vn ecn nsn sn1 sn2 ... s1nsn\end{alltt}
+\normalsize 
+
+
+\small\begin{alltt}\end{alltt}
+\normalsize 
+ where xi, yi are the coordinates of the ith vertex, vi is the associated value (if given in the input file), eci is a int32\_\-t which indicates whether the vertex i belongs to the convex hull, nsi denotes the number of adjacent vertices, and si1 si2 ... sins1 is the list of the indexes of the adjacent vertices (counted from 0).
+
+{\bf Types supported:} byte 2D
+
+{\bf Category:} geo
+
+\begin{Desc}
+\item[Warning:]algorithm in O(n$^\wedge$2)\end{Desc}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

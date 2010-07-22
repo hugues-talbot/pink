@@ -1,0 +1,23 @@
+\section{skelpar3d\_\-others.c File Reference}
+\label{skelpar3d__others_8c}\index{skelpar3d\_\-others.c@{skelpar3d\_\-others.c}}
+parallel 3D binary skeleton 
+
+
+
+\subsection{Detailed Description}
+parallel 3D binary skeleton 
+
+{\bf Usage:} skelpar3d in.pgm algorithm nsteps [inhibit] out.pgm
+
+{\bf Description:} Parallel 3D binary thinning or skeleton. The parameter {\bf nsteps} gives, if positive, the number of parallel thinning steps to be processed. If the value given for {\bf nsteps} equals -1, the thinning is continued until stability.
+
+The parameter {\bf algorithm} is a numerical code indicating which method will be used for the thinning. The possible choices are: \begin{itemize}
+\item 0: Palagyi (curvilinear, directional, 1998 - 6-subiterations directional curve-thinning) \item 1: Palagyi (curvilinear, sequential, 2006) \item 2: Palagyi (surfacic, parallel directional, 2002) \item 3: Palagyi (surfacic, fully parallel, 2008)\end{itemize}
+If the parameter {\bf inhibit} is given and is a binary image name, then the points of this image will be left unchanged.
+
+{\bf Types supported:} byte 3d
+
+{\bf Category:} topobin
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

@@ -1,0 +1,21 @@
+\section{skelend.c File Reference}
+\label{skelend_8c}\index{skelend.c@{skelend.c}}
+homotopic skeleton of a 2d or 3d binary image with dynamic detection of end points 
+
+
+
+\subsection{Detailed Description}
+homotopic skeleton of a 2d or 3d binary image with dynamic detection of end points 
+
+{\bf Usage:} skelend in.pgm connex [n] out.pgm
+
+{\bf Description:} Homotopic skeletonization by iterative removal of simple, non-end points. Breadth-first strategy. During the first {\bf n} iterations (default 0), the end points are removed as well. If {\bf n} = -1, the end points are always removed.
+
+{\bf Types supported:} byte 2d, byte 3d
+
+{\bf Category:} topobin
+
+\begin{Desc}
+\item[Warning:]This operator is very sensitive to small contour irregularities. See skelcurv for a more robust operator.\end{Desc}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

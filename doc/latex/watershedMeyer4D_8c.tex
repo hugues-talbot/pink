@@ -1,0 +1,19 @@
+\section{watershedMeyer4D.c File Reference}
+\label{watershedMeyer4D_8c}\index{watershedMeyer4D.c@{watershedMeyer4D.c}}
+watershed transformation (Meyer's algorithm) 
+
+
+
+\subsection{Detailed Description}
+watershed transformation (Meyer's algorithm) 
+
+{\bf Usage:} watershedMeyer4D prefix\_\-in first last prefix\_\-mark $<$prefix\_\-bgmark$|$null$>$ $<$prefix\_\-roi$|$null$>$ connex prefix\_\-out
+
+{\bf Description:} Performs the watershed transformation on the 4D image made of the concatenation of the 3D images {\bf prefix\_\-inxxxx.pgm} (where nnnn is a four digit decimal integer and where {\bf first} and {\bf last} specify respectively the first and the last volume).The watershed is computed taking the set of markers in {\bf prefix\_\-markxxxx.pgm}. If this parameter is present, {\bf prefix\_\-bgmarkxxxx.pgm} is used as a set of markers for the background. If this parameter is present, {\bf prefix\_\-roixxxx.pgm} indicates the region of interest on which the operation is performed. The parameter {\bf connex} gives the adjacency relation (8 in 4D) for the makers.
+
+{\bf Types supported:} byte 2d, byte 3d
+
+{\bf Category:} connect
+
+\begin{Desc}
+\item[Author:]Jean Cousty - fevrier 2005 \end{Desc}

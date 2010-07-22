@@ -1,0 +1,52 @@
+\section{curve2spline.c File Reference}
+\label{curve2spline_8c}\index{curve2spline.c@{curve2spline.c}}
+converts a discrete open curve into a spline 
+
+
+
+\subsection{Detailed Description}
+converts a discrete open curve into a spline 
+
+{\bf Usage:} curve2spline curve.txt tolerance spline.txt
+
+{\bf Description:}
+
+Let C be the discrete open curve described in {\bf curve.txt}. This program finds a approximation of C in the form of a parametric curve P defined by two (in 2D) or three (in 3D) splines such that the maximal distance between P and C is beyond the given {\bf tolerance}.
+
+The result is given in the form of the list of control points for the splines, followed by the set of coefficients for each spline segment. The file format is the following for 2D:
+
+s n+1 (where n+1 denotes the number of control points)\par
+ x1 y1\par
+ ...\par
+ xn+1 yn+1\par
+ C0X1 C0Y1 C1X1 C1Y1 C2X1 C2Y1 C3X1 C3Y1\par
+ ...\par
+ C0Xn C0Yn C1Xn C1Yn C2Xn C2Yn C3Xn C3Yn\par
+
+
+and in the 3D case:
+
+S n+1 (where n+1 denotes the number of control points)\par
+ x1 y1 z1\par
+ ...\par
+ xn+1 yn+1 zn+1\par
+ C0X1 C0Y1 C0Z1 C1X1 C1Y1 C1Z1 C2X1 C2Y1 C2Z1 C3X1 C3Y1 C3Z1\par
+ ...\par
+ C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn\par
+
+
+The ith segment of the parametric curve P is then defined by:
+
+x(t) = C3Xi $\ast$ t$^\wedge$3 + C2Xi $\ast$ t$^\wedge$2 + C1Xi $\ast$ t + C0Xi\par
+ y(t) = C3Yi $\ast$ t$^\wedge$3 + C2Yi $\ast$ t$^\wedge$2 + C1Yi $\ast$ t + C0Yi\par
+ z(t) = C3Zi $\ast$ t$^\wedge$3 + C2Zi $\ast$ t$^\wedge$2 + C1Zi $\ast$ t + C0Zi\par
+ with t in [0,1]
+
+\begin{Desc}
+\item[Warning:]Closed curves are not allowed.\end{Desc}
+{\bf Types supported:} list 2D, list 3D
+
+{\bf Category:} draw geo
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

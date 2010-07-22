@@ -1,0 +1,25 @@
+\section{pgm2skel.c File Reference}
+\label{pgm2skel_8c}\index{pgm2skel.c@{pgm2skel.c}}
+decomposition of a curvilinear skeleton into isolated points, end points, curves and junctions 
+
+
+
+\subsection{Detailed Description}
+decomposition of a curvilinear skeleton into isolated points, end points, curves and junctions 
+
+{\bf Usage:} pgm2skel in.pgm connex [len] out.skel
+
+{\bf Description:} The skeleton found in {\bf in.pgm} is decomposed into isolated points, end points, curves and junctions ; and its description is stored in {\bf out.skel} . The parameter {\bf connex} sets the adjacency relation used for the object (4, 8 (2d) or 6, 18, 26 (3d)).
+
+The optional parameter  indicates the minimum length (in pixels/voxels) of a curve. If a set of curve points with less than  points, then: a) if it contains at least one end point it will be eliminated (together with its end point(s)), b) otherwise it will be considered as part of a junction. If this parameter is given, then isolated points will be eliminated.
+
+\begin{Desc}
+\item[Warning:]Points at the border of the image will be ignored.
+
+IMPORTANT LIMITATION: different junctions in the original image must not be in direct contact with each other (i.e., connected) otherwise they will be considered as a single junction. To prevent this to occur, one can increase image resolution.\end{Desc}
+{\bf Types supported:} byte 2d, byte 3d
+
+{\bf Category:} topobin
+
+\begin{Desc}
+\item[Author:]Michel Couprie 2004, 2009 \end{Desc}

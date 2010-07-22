@@ -66,21 +66,24 @@ namespace pink {
 
   
   template <class image_type>
-  void lminmaxval( const image_type & I,
-		  typename image_type::pixel_type & min, 
-		  typename image_type::pixel_type & max
-    )
+  pair<	typename image_type::pixel_type, 
+        typename image_type::pixel_type >
+  lminmaxval( const image_type & I )
   {
 
     typedef typename image_type::pixel_type pixel_type;
     
+    pair<pixel_type, pixel_type> result;
+    
+    
     pair< const pixel_type * , const pixel_type *> 
-      result = boost::minmax_element( (&I[0]), (&I[I.get_size().prod()]) ); // here the prod is the correct position because it iterates up to
+      tmp = boost::minmax_element( (&I[0]), (&I[I.get_size().prod()]) ); // here the prod is the correct position because it iterates up to
 
-    max = (*result.first);
-    min = (*result.second);
-    
-    
+    result.first = (*tmp.first);
+    result.second = (*tmp.second);
+
+
+    return result;
   } /* minmaxval */
   
 

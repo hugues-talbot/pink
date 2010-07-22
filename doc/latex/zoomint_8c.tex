@@ -1,0 +1,19 @@
+\section{zoomint.c File Reference}
+\label{zoomint_8c}\index{zoomint.c@{zoomint.c}}
+zoom by an integer factor 
+
+
+
+\subsection{Detailed Description}
+zoom by an integer factor 
+
+{\bf Usage:} zoomint in.pgm $<$f $|$ fx fy fz$>$ [nofill] out.pgm
+
+{\bf Description:} The zoom factor(s) can be unique ({\bf f} ) of there can be one zoom factor per image dimension ({\bf fx}, {\bf fy}, {\bf fz} ). In the case of a 2d image, set {\bf fz} to 1. The zoom parameter may be a positive or negative integer. If it is positive, the image is expanded in the corresponding direction. The pixels are replicated in order to fill all the space, except if the parameter {\bf nofill} is used. If it is negative, the image is shrinked the corresponding directions, by undersampling.
+
+{\bf Types supported:} byte 2d, byte 3d
+
+{\bf Category:} geo
+
+\begin{Desc}
+\item[Author:]Michel Couprie, Christophe Doublier \end{Desc}

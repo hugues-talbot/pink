@@ -1,0 +1,19 @@
+\section{correctbias.c File Reference}
+\label{correctbias_8c}\index{correctbias.c@{correctbias.c}}
+correction of a luminosity bias expressed by a linear function 
+
+
+
+\subsection{Detailed Description}
+correction of a luminosity bias expressed by a linear function 
+
+{\bf Usage:} correctbias in.pgm factor type [xc yc] out.pgm
+
+{\bf Description:} Let {\bf a} be the value of parameter {\bf factor}. The bias {\bf type} can be: \begin{itemize}
+\item 0 radial (center {\bf xc}, {\bf yc}), linear (add -ax to the value of the element of abcissa x). \item 1 radial (center {\bf xc}, {\bf yc}), parabolic (add -a$^\wedge$2 x to the value of the element of abcissa x).\end{itemize}
+{\bf Types supported:} byte 2D
+
+{\bf Category:} arith
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

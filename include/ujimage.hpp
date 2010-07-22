@@ -168,7 +168,7 @@ namespace pink{
 
   CREATE_IMAGE_TYPE( unsigned char, "uint8_t", VFF_TYP_1_BYTE );
   CREATE_IMAGE_TYPE( unsigned short int, "uint16_t", VFF_TYP_2_BYTE );
-  CREATE_IMAGE_TYPE( unsigned int, "int32", VFF_TYP_4_BYTE );
+  CREATE_IMAGE_TYPE( unsigned int, "int32_t", VFF_TYP_4_BYTE );
   CREATE_IMAGE_TYPE( float, "float", VFF_TYP_FLOAT );
   CREATE_IMAGE_TYPE( double, "double", VFF_TYP_DOUBLE );
 
@@ -292,7 +292,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     if (image_type(src.data_storage_type)!=this->imtype()){
       error("converting to ujoi from different pixel_type");
-    }; /* image_type(src.data_storage_type)!=this->imtype() */
+    } /* image_type(src.data_storage_type)!=this->imtype() */
     
     this->size = vint(
       *getDimensions( // detecting the dimensions according to row-, col-, depth- and time_size.

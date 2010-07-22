@@ -1,0 +1,21 @@
+\section{long2byte.c File Reference}
+\label{long2byte_8c}\index{long2byte.c@{long2byte.c}}
+converts a \char`\"{}int32\_\-t\char`\"{} image to a \char`\"{}byte\char`\"{} image 
+
+
+
+\subsection{Detailed Description}
+converts a \char`\"{}int32\_\-t\char`\"{} image to a \char`\"{}byte\char`\"{} image 
+
+{\bf Usage:} long2byte in.pgm [mode] [n] out.pgm
+
+{\bf Description:}
+
+Depending on the value given for the (optional) parameter {\bf mode}: \begin{itemize}
+\item {\bf mode} = 0 (default) : for all x, out[x] = min(255, in[x]). \item {\bf mode} = 1 : for all x, out[x] = in[x] modulo 256. \item {\bf mode} = 2 : scales values in the range 0-255. \item {\bf mode} = 3 : sorts the values by decreasing number of occurence in the image. Replaces the values by their order. Only the {\bf n} (default 255) first values are kept. Useful for label images. \item {\bf mode} = 4 : truncation of the square root in the range 0-255. \item {\bf mode} = 5 : truncation of the log in the range 0-255.\end{itemize}
+{\bf Types supported:} int32\_\-t 2d, int32\_\-t 3d
+
+{\bf Category:} convert
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}
