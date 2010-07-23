@@ -117,6 +117,30 @@ int32_t llpemeyer(
   uint8_t *A;
 #endif
 
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(marqueurs) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (marqueursfond && (datatype(marqueursfond) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: bgnd marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
   if (depth(image) != 1) 
   {
     fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
@@ -354,6 +378,24 @@ int32_t llpemeyer2(
   int32_t incr_vois;
   int32_t nlabels;
 
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(marqueurs) != VFF_TYP_4_BYTE) 
+  {
+    fprintf(stderr, "%s: marker type must be VFF_TYP_4_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
   if (depth(image) != 1) 
   {
     fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
@@ -513,6 +555,24 @@ int32_t llpemeyer3(
   int32_t ncc;  
   int32_t incr_vois;
 
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(marqueurs) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
   if (depth(image) != 1) 
   {
     fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
@@ -666,6 +726,30 @@ int32_t llpemeyer3(
    int32_t ncc;  
    int32_t tab[27]; 
    int32_t n;
+
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(marqueurs) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (marqueursfond && (datatype(marqueursfond) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: bgnd marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
 
    if (depth(image) != 1) 
    {
@@ -899,13 +983,37 @@ int32_t llpemeyersansligne(
 
   if (depth(image) != 1) 
   {
-    fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
+    fprintf(stderr, "%s: net yet implemented for 3D images\n", F_NAME);
     exit(0);
+  }
+
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(marqueurs) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (marqueursfond && (datatype(marqueursfond) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: bgnd marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
   }
 
   if (datatype(result) != VFF_TYP_4_BYTE) 
   {
-    fprintf(stderr, "%s: le resultat doit etre de type VFF_TYP_4_BYTE\n", F_NAME);
+    fprintf(stderr, "%s: result type must be VFF_TYP_4_BYTE\n", F_NAME);
     return 0;
   }
 
@@ -957,7 +1065,7 @@ int32_t llpemeyersansligne(
     nlabels += 1;                 /* tous les marqueurs du fond ont le meme label (1) */
     for (x = 0; x < N; x++)
     {
-      if (BF[x] && (M[x] == 0) && (!masque || MA[x]))
+      if ((M[x] == 0) && (!masque || MA[x]))
       {
         M[x] = nlabels;
         FahPush(FAH, x, 0);
@@ -967,7 +1075,7 @@ int32_t llpemeyersansligne(
           for (k = 0; k < 8; k += incr_vois)
           {
             y = voisin(w, k, rs, N);
-            if ((y != -1) &&  BF[y] && (M[y] == 0) && (!masque || MA[y]))
+            if ((y != -1) && (M[y] == 0) && (!masque || MA[y]))
             {
               M[y] = nlabels;
               FahPush(FAH, y, 0);
@@ -1096,6 +1204,163 @@ int32_t llpemeyersansligne(
 } // llpemeyersansligne()
 
 /* ==================================== */
+int32_t llpemeyersanslignelab(
+        struct xvimage *image,
+        struct xvimage *marqueurs, // marqueur initial et resultat
+        struct xvimage *masque,
+        int32_t connex
+)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "llpemeyersanslignelab"
+{
+  register int32_t x;                       /* index muet de pixel */
+  register int32_t y;                       /* index muet (generalement un voisin de x) */
+  register int32_t w;                       /* index muet (generalement un voisin de x) */
+  register int32_t k;                       /* index muet */
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t N = rs * cs;             /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  uint32_t *M = SLONGDATA(marqueurs);      /* l'image de marqueurs */
+  uint8_t *MA;                             /* l'image de masque */
+  Fah * FAH;                   /* la file d'attente hierarchique */
+  int32_t etiqcc[4];
+  int32_t ncc;  
+  int32_t incr_vois;
+
+  if (depth(image) != 1) 
+  {
+    fprintf(stderr, "%s: net yet implemented for 3D images\n", F_NAME);
+    exit(0);
+  }
+
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(marqueurs) != VFF_TYP_4_BYTE) 
+  {
+    fprintf(stderr, "%s: marker type must be VFF_TYP_4_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && ((rowsize(masque) != rs) || (colsize(masque) != cs)))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    return 0;
+  }
+  if (masque) MA = UCHARDATA(masque);
+
+  IndicsInit(N);
+  FAH = CreeFahVide(N+1);
+  if (FAH == NULL)
+  {   fprintf(stderr, "%s : CreeFah failed\n", F_NAME);
+      return(0);
+  }
+
+  switch (connex)
+  {
+    case 4: incr_vois = 2; break;
+    case 8: incr_vois = 1; break;
+    default: 
+      fprintf(stderr, "%s: mauvaise connexite: %d\n", F_NAME, connex);
+      return 0;
+  } /* switch (connex) */    
+
+  /* ================================================ */
+  /* INITIALISATION DE LA FAH                         */
+  /* ================================================ */
+
+  FahFlush(FAH);
+  FahPush(FAH, -1, 0);   /* force la creation du niveau 0 dans la Fah. */
+                         /* NECESSAIRE pour eviter la creation prematuree */
+                         /* de la file d'urgence */ 
+
+  for (x = 0; x < N; x++)
+  {
+    if (M[x] && (!masque || MA[x]))            /* on va empiler les voisins des regions marquees */
+    {
+      for (k = 0; k < 8; k += incr_vois)
+      {
+        y = voisin(x, k, rs, N);
+        if ((y != -1) && !M[y] && !IsSet(y, EN_FAH))
+        {        
+          FahPush(FAH, y, F[y]);
+          Set(y, EN_FAH);
+        }
+      } /* for (k = 0; k < 8; k += 2) */
+    } /* if (M[x]) */
+  } /* for (x = 0; x < N; x++) */
+
+  x = FahPop(FAH);
+#ifdef PARANO
+  if (x != -1)
+  {   
+     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
+     return(0);
+  }
+#endif
+
+  /* ================================================ */
+  /* INONDATION                                       */
+  /* ================================================ */
+
+  while (! FahVide(FAH))
+  {
+    x = FahPop(FAH);
+    UnSet(x, EN_FAH);
+
+    ncc = 0;
+    for (k = 0; k < 8; k += incr_vois)
+    {
+      y = voisin(x, k, rs, N);
+      if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+      {
+        etiqcc[ncc] = M[y];        
+        ncc += 1;
+      }
+    } /* for k */
+
+    /* Here is the labelling */
+    M[x] = etiqcc[0];
+    for (k = 0; k < 8; k += incr_vois)
+    {
+      y = voisin(x, k, rs, N);     
+      if ((y != -1) && (M[y] == 0) && (! IsSet(y, EN_FAH)) && (!masque || MA[y]))
+      {          
+	FahPush(FAH, y, F[y]); 
+	Set(y, EN_FAH);
+      } /* if ((y != -1) && (! IsSet(y, EN_FAH))) */
+    } /* for k */
+
+  } /* while (! FahVide(FAH)) */
+  /* FIN PROPAGATION */
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  FahTermine(FAH);
+  return(1);
+} // llpemeyersanslignelab()
+
+/* ==================================== */
 int32_t llpemeyer3d(
         struct xvimage *image,
         struct xvimage *marqueurs,
@@ -1124,6 +1389,30 @@ int32_t llpemeyer3d(
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[6];
   int32_t ncc;  
+
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(marqueurs) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (marqueursfond && (datatype(marqueursfond) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: bgnd marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
 
   if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs))
   {
@@ -1439,6 +1728,30 @@ int32_t llpemeyer3dsansligne(
   int32_t etiqcc[6];
   int32_t ncc;  
 
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(marqueurs) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (marqueursfond && (datatype(marqueursfond) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: bgnd marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
   if (depth(image) == 1) 
   {
     fprintf(stderr, "%s: cette version ne traite que les images volumiques\n", F_NAME);
@@ -1451,7 +1764,7 @@ int32_t llpemeyer3dsansligne(
     return 0;
   }
 
-  if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs))
+  if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs) || (depth(marqueurs) != d))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     return 0;
@@ -1718,6 +2031,223 @@ int32_t llpemeyer3dsansligne(
 } /* llpemeyer3dsansligne() */
 
 /* ==================================== */
+int32_t llpemeyer3dsanslignelab(
+        struct xvimage *image,
+        struct xvimage *marqueurs, // entree-sortie
+        struct xvimage *masque,
+        int32_t connex
+)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "llpemeyer3dsanslignelab"
+{
+  register int32_t x;                       /* index muet de pixel */
+  register int32_t y;                       /* index muet (generalement un voisin de x) */
+  register int32_t w;                       /* index muet (generalement un voisin de x) */
+  register int32_t k;                       /* index muet */
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t d = depth(image);        /* nb plans */
+  int32_t n = rs * cs;             /* taille plan */
+  int32_t N = n * d;               /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  uint32_t *M = SLONGDATA(marqueurs);      /* l'image de marqueurs */
+  uint8_t *MA;                             /* l'image de masque */
+  Fah * FAH;                   /* la file d'attente hierarchique */
+  int32_t etiqcc[6];
+  int32_t ncc;  
+
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(marqueurs) != VFF_TYP_4_BYTE) 
+  {
+    fprintf(stderr, "%s: marker type must be VFF_TYP_4_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (depth(image) == 1) 
+  {
+    fprintf(stderr, "%s: cette version ne traite que les images volumiques\n", F_NAME);
+    exit(0);
+  }
+
+  if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs) || (depth(marqueurs) != d))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && ((rowsize(masque) != rs) || (colsize(masque) != cs) || (depth(masque) != d)))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    return 0;
+  }
+  if (masque) MA = UCHARDATA(masque);
+
+  IndicsInit(N);
+  FAH = CreeFahVide(N+1);
+  if (FAH == NULL)
+  {   fprintf(stderr, "%s() : CreeFah failed\n", F_NAME);
+      return(0);
+  }
+
+  /* ================================================ */
+  /* INITIALISATION DE LA FAH                         */
+  /* ================================================ */
+
+  FahFlush(FAH);
+  FahPush(FAH, -1, 0);   /* force la creation du niveau 0 dans la Fah. */
+                         /* NECESSAIRE pour eviter la creation prematuree */
+                         /* de la file d'urgence */ 
+
+  for (x = 0; x < N; x++)
+  {
+    if (M[x] && (!masque || MA[x]))    /* on va empiler les voisins des regions marquees */
+    {
+      switch (connex)
+      {
+        case 6:
+          for (k = 0; k <= 10; k += 2)
+          {
+            y = voisin6(x, k, rs, n, N);
+            if ((y!=-1)&&!M[y]&&!IsSet(y,EN_FAH)){ FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+          } /* for (k = 0; k < 8; k += 2) */
+          break;
+	  case 18:
+            for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+            {
+              y = voisin18(x, k, rs, n, N);
+              if ((y!=-1)&&!M[y]&&!IsSet(y,EN_FAH)){ FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+            } /* for (k = 0; k < 18; k += 1) */
+          break;
+	  case 26:
+            for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+            {
+              y = voisin26(x, k, rs, n, N);
+              if ((y!=-1)&&!M[y]&&!IsSet(y,EN_FAH)){ FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+            } /* for (k = 0; k < 26; k += 1) */
+          break;
+      } /* switch (connex) */
+    } /* if (B[x]) */
+  } /* for (x = 0; x < N; x++) */
+
+  x = FahPop(FAH);
+#ifdef PARANO
+  if (x != -1)
+  {   
+     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
+     return(0);
+  }
+#endif
+
+  /* ================================================ */
+  /* INONDATION                                       */
+  /* ================================================ */
+
+  while (! FahVide(FAH))
+  {
+    x = FahPop(FAH);
+    UnSet(x, EN_FAH);
+
+    ncc = 0;
+    switch (connex)
+    {
+      case 6:
+        for (k = 0; k <= 10; k += 2)
+        {
+          y = voisin6(x, k, rs, n, N);
+          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          {
+            etiqcc[ncc] = M[y];        
+            ncc += 1;
+          }
+        } /* for k */
+        break;
+      case 18:
+        for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+        {
+          y = voisin18(x, k, rs, n, N);
+          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          {
+            etiqcc[ncc] = M[y];        
+            ncc += 1;
+          }
+        } /* for k */
+        break;
+      case 26:
+        for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+        {
+          y = voisin26(x, k, rs, n, N);
+          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          {
+            etiqcc[ncc] = M[y];        
+            ncc += 1;
+          }
+        } /* for k */
+        break;
+    } /* switch (connex) */
+
+    /* Label */
+      M[x] = etiqcc[0];
+      switch (connex)
+      {
+        case 6:
+          for (k = 0; k <= 10; k += 2)
+          {
+            y = voisin6(x, k, rs, n, N);     
+            if ((y != -1) && (M[y] == 0) && (! IsSet(y, EN_FAH)) && (!masque || MA[y]))
+            {
+              FahPush(FAH, y, F[y]);
+              Set(y, EN_FAH);
+            } /* if ((y != -1) && (! IsSet(y, EN_FAH))) */
+          } /* for k */
+          break;
+        case 18:
+          for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+          {
+            y = voisin18(x, k, rs, n, N);
+            if ((y != -1) && (M[y] == 0) && (! IsSet(y, EN_FAH)) && (!masque || MA[y]))
+            {
+              FahPush(FAH, y, F[y]);
+              Set(y, EN_FAH);
+            } /* if ((y != -1) && (! IsSet(y, EN_FAH))) */
+          } /* for k */
+          break;
+        case 26:
+          for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+          {
+            y = voisin26(x, k, rs, n, N);
+            if ((y != -1) && (M[y] == 0) && (! IsSet(y, EN_FAH)) && (!masque || MA[y]))
+            {
+              FahPush(FAH, y, F[y]);
+              Set(y, EN_FAH);
+            } /* if ((y != -1) && (! IsSet(y, EN_FAH))) */
+          } /* for k */
+          break;
+      } /* switch (connex) */
+  } /* while (! FahVide(FAH)) */
+  /* FIN PROPAGATION */
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  FahTermine(FAH);
+  return(1);
+} /* llpemeyer3dsanslignelab() */
+
+/* ==================================== */
 int32_t llpemeyer3d2(
         struct xvimage *image,
         struct xvimage *marqueurs,
@@ -1753,6 +2283,18 @@ int32_t llpemeyer3d2(
   {
     fprintf(stderr, "%s: 3D images only\n", F_NAME);
     exit(0);
+  }
+
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
   }
 
   if (datatype(marqueurs) != VFF_TYP_4_BYTE) 
@@ -1984,6 +2526,18 @@ int32_t llpemeyer3d3(
     exit(0);
   }
 
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
   if (datatype(marqueurs) != VFF_TYP_4_BYTE) 
   {
     fprintf(stderr, "%s: marker image must by 4 byte\n", F_NAME);
@@ -2200,6 +2754,30 @@ int32_t llpemeyerbiconnecte(
   {
     fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
     exit(0);
+  }
+
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(marqueurs) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (marqueursfond && (datatype(marqueursfond) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: bgnd marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
   }
 
   if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs))
@@ -2425,6 +3003,30 @@ int32_t llpemeyerbiconnecte3d(
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[6];
   int32_t ncc;  
+
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(marqueurs) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (marqueursfond && (datatype(marqueursfond) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: bgnd marker type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
 
   if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs))
   {

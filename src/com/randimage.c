@@ -69,7 +69,7 @@ int main(int argc, char **argv)
   int32_t i;
   int32_t rs, cs, ds, N, valmax;
 
-  if ((argc < 4) && (argc > 7))
+  if ((argc < 4) || (argc > 7))
   {
     fprintf(stderr, "usage: %s [in.pgm | rowsize colsize depth] valmax [seed] out.pgm \n", argv[0]);
     exit(1);

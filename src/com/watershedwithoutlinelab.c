@@ -32,21 +32,21 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file watershedwithoutline.c
+/*! \file watershedwithoutlinelab.c
 
-\brief watershed transformation without line of separation
+\brief watershed transformation without line of separation from labelled marker
 
-<B>Usage:</B> watershedwithoutline in mark <bgmark|null> <roi|null> connex out
+<B>Usage:</B> watershedwithoutlinelab in mark <roi|null> connex out
 
 <B>Description:</B>
 Performs the watershed transformation on the image <B>in</B>, taking the
-set of markers in <B>mark</B>. 
-If this parameter is present, <B>bgmark</B>
-is used as a set of markers for the background.
+labelled marker in <B>mark</B>. 
 If this parameter is present, <B>roi</B>
 indicates the region of interest on which the operation is performed.
 The parameter <B>connex</B> gives the adjacency relation (4,8 in 2D; 6,18,26 in 3D) 
 for the makers.
+
+The image mark is a label image (int32_t)
 
 The image out is a label image (int32_t)
 
@@ -75,14 +75,12 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * marqueurs;
-  struct xvimage * marqueursfond;
   struct xvimage * masque;
-  struct xvimage * result;
   int32_t connex;
 
-  if (argc != 7)
+  if (argc != 6)
   {
-    fprintf(stderr, "usage: %s in mark <bgmark|null> <roi|null> connex out\n", argv[0]);
+    fprintf(stderr, "usage: %s in mark <roi|null> connex out\n", argv[0]);
     exit(1);
   }
 
@@ -94,30 +92,11 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
-  if (result == NULL)
-  {   
-    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-    exit(1);
-  }
-
   if (strcmp(argv[3],"null") == 0) 
-    marqueursfond = NULL;
-  else
-  {
-    marqueursfond = readimage(argv[3]);
-    if (marqueursfond == NULL)
-    {
-      fprintf(stderr, "%s: readimage failed\n", argv[0]);
-      exit(1);
-    }
-  }
-
-  if (strcmp(argv[4],"null") == 0) 
     masque = NULL;
   else
   {
-    masque = readimage(argv[4]);
+    masque = readimage(argv[3]);
     if (masque == NULL)
     {
       fprintf(stderr, "%s: readimage failed\n", argv[0]);
@@ -125,21 +104,21 @@ int main(int argc, char **argv)
     }
   }
 
-  connex = atoi(argv[5]);
+  connex = atoi(argv[4]);
 
   if ((connex == 4) || (connex == 8))
   {
-    if (! llpemeyersansligne(image, marqueurs, marqueursfond, masque, connex, result))
+    if (! llpemeyersanslignelab(image, marqueurs, masque, connex))
     {
-      fprintf(stderr, "%s: llpemeyersansligne failed\n", argv[0]);
+      fprintf(stderr, "%s: llpemeyersanslignelab failed\n", argv[0]);
       exit(1);
     }
   }
   else if ((connex == 6) || (connex == 18) || (connex == 26))
   {
-    if (! llpemeyer3dsansligne(image, marqueurs, marqueursfond, masque, connex, result))
+    if (! llpemeyer3dsanslignelab(image, marqueurs, masque, connex))
     {
-      fprintf(stderr, "%s: llpemeyer3dsansligne failed\n", argv[0]);
+      fprintf(stderr, "%s: llpemeyer3dsanslignelab failed\n", argv[0]);
       exit(1);
     }
   }
@@ -149,12 +128,9 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-
-  writeimage(result, argv[argc - 1]);
+  writeimage(marqueurs, argv[argc - 1]);
   freeimage(image);
-  freeimage(result);
   freeimage(marqueurs);
-  if (marqueursfond) freeimage(marqueursfond);
   if (masque) freeimage(masque);
 
   return 0;
