@@ -59,10 +59,13 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #include <stdio.h>
 #include <stdint.h>
+#include <unistd.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
 
 /* keep those private */
 #include "mcutil.h"
@@ -282,7 +285,8 @@ int32_t showheader(char * name)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, nb, c;
+  struct stat fdstat;
+  int32_t rs, cs, d, nb, c, fs;
   char *read;
 #ifdef UNIXIO
   fd = fopen(name,"r");
@@ -339,14 +343,27 @@ int32_t showheader(char * name)
   } while (!isdigit(buffer[0]));
 
   c = sscanf(buffer, "%d %d %d %d", &rs, &cs, &d, &nb);
-  if (c == 2) printf("size : rowsize = %d ; colsize = %d\n", rs, cs);
-  else if (c == 3) printf("size : rowsize = %d ; colsize = %d ; depth = %d\n", rs, cs, d); 
-  else if (c == 4) printf("size : rowsize = %d ; colsize = %d ; depth = %d ; n. bands = %d\n", rs, cs, d, nb);
+  if (c == 2) 
+  {
+    printf("size : rowsize = %d ; colsize = %d\n", rs, cs);
+    d = nb = 1;
+  }
+  else if (c == 3) 
+  {
+    printf("size : rowsize = %d ; colsize = %d ; depth = %d\n", rs, cs, d); 
+    nb = 1;
+  }
+  else if (c == 4) 
+    printf("size : rowsize = %d ; colsize = %d ; depth = %d ; n. bands = %d\n", rs, cs, d, nb);
   else
   {   
     fprintf(stderr,"%s : invalid image format : cannot find image size\n", F_NAME);
     return 0;
   }
+
+  c = stat(name, &fdstat); assert(c == 0);
+  fs = (int32_t)fdstat.st_size;
+  printf("header size = %d\n", fs - (rs * cs * d * nb));
 
   fclose(fd);
   return 1;
