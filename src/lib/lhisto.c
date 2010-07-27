@@ -51,6 +51,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mccodimage.h>
 #include <lhisto.h>
 
+//#define DEBUG_lseuilhisto
+
 /* ==================================== */
 int32_t lhisto(struct xvimage *image, struct xvimage *mask, uint32_t *histo)
 /* ==================================== */
@@ -195,7 +197,7 @@ int32_t lhistofloat(struct xvimage *image, struct xvimage *mask, uint32_t **hist
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nombre plans */
   int32_t N = rs * cs * ds;        /* taille image */
-  float *F = FLOATDATA(image);      /* l'image de depart */
+  float *F = FLOATDATA(image);     /* l'image de depart */
   uint8_t *M;
   float smin, smax, s, sincr;
 
@@ -729,3 +731,52 @@ double lhisto_distance_ordinal (int32_t * A, int32_t * B, int32_t n)
 	
   return h_dist / (nA * nB);
 } // lhisto_distance_ordinal()
+
+/* ==================================== */
+int32_t lseuilhisto (struct xvimage *image, struct xvimage *masque, double p)
+/* ==================================== */
+// trouve le seuil s tel que image seuillée à s comporte (à peu près) une proportion p de pixels nuls, et applique ce seuil à image. Si le masque est non NULL, cette opération ne concerne que les points non nuls de masque. 
+{  
+#undef F_NAME
+#define F_NAME "lseuilhisto"
+  int32_t rs = rowsize(image);
+  int32_t cs = colsize(image);
+  int32_t ds = depth(image);
+  int32_t N = rs * cs * ds;
+  uint8_t *I = UCHARDATA(image);
+  uint32_t * histo;
+  int32_t i, seuil, nbpts, n;
+  uint8_t *M;
+
+#ifdef DEBUG_lseuilhisto
+  printf("%s: p=%g\n", F_NAME, p);
+#endif
+  assert(p >= 0); assert(p <= 1);
+ 
+  histo = (uint32_t *)calloc((NDG_MAX - NDG_MIN + 1), sizeof(int32_t));
+  assert(histo != NULL);
+
+  if (masque != NULL)
+  {
+    M = UCHARDATA(masque);
+    nbpts = 0;
+    for (i = 0; i < N; i++) if (M[i]) { histo[I[i]]++; nbpts++; }
+  }
+  else
+  {
+    for (i = 0; i < N; i++) histo[I[i]]++;
+    nbpts = N;
+  }
+  
+  nbpts = (int32_t)(p * nbpts);
+  n = 0;
+  for (i = NDG_MIN; i <= NDG_MAX; i++) 
+  {
+    n += histo[i];
+    if (n >= nbpts) { seuil = i; break; }
+  }
+
+  for (i = 0; i < N; i++) if (I[i] >= seuil) I[i] = NDG_MAX; else I[i] = NDG_MIN;
+  free(histo);
+  return 1;
+}

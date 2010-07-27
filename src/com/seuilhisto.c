@@ -49,7 +49,7 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /* 
   seuillage base sur l'histogramme
-  on veut obtenir une proportion p de pixels blancs
+  on veut obtenir une proportion p de pixels blancs (255)
 
   Michel Couprie - avril 1998
 */
@@ -67,11 +67,6 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * masque;
-  uint32_t * histo;
-  int32_t i, seuil, nbpts, n;
-  int32_t rs, cs, d, N;
-  uint8_t *I;
-  uint8_t *M;
   double p;
 
   if ((argc != 4) && (argc != 5))
@@ -88,19 +83,6 @@ int main(int argc, char **argv)
   }
 
   p = 1.0 - atof(argv[2]);
-  
-  rs = rowsize(image);
-  cs = colsize(image);
-  d = depth(image);
-  N = rs * cs * d;
-  I = UCHARDATA(image);
-
-  histo = (uint32_t *)calloc((NDG_MAX - NDG_MIN + 1), sizeof(int32_t));
-  if (histo == NULL)
-  {
-    fprintf(stderr, "%s: calloc failed\n", argv[0]);
-    exit(1);
-  }
 
   if (argc == 5)
   {
@@ -110,28 +92,17 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: readimage failed\n", argv[0]);
       exit(1);
     }
-    M = UCHARDATA(masque);
-    nbpts = 0;
-    for (i = 0; i < N; i++) if (M[i]) { histo[I[i]]++; nbpts++; }
   }
-  else
+  else 
+    masque = NULL;
+
+  if (! lseuilhisto(image, masque, p))
   {
-    for (i = 0; i < N; i++) histo[I[i]]++;
-    nbpts = N;
+    fprintf(stderr, "%s: function lseuilhisto failed\n", argv[0]);
+    exit(1);
   }
   
-  nbpts = (int32_t)(p * nbpts);
-  n = 0;
-  for (i = NDG_MIN; i <= NDG_MAX; i++) 
-  {
-    n += histo[i];
-    if (n >= nbpts) { seuil = i; break; }
-  }
-
-  for (i = 0; i < N; i++) if (I[i] >= seuil) I[i] = NDG_MAX; else I[i] = NDG_MIN;
-
-  if (argc == 4) writeimage(image, argv[3]); else writeimage(image, argv[4]);
-  free(histo);
+  writeimage(image, argv[argc-1]);
   freeimage(image);
   if (argc == 5) freeimage(masque);
 

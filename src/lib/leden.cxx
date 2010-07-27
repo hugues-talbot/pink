@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdint.h>
+#include <assert.h>
 #include <mcset.h>
 #include <mctopo.h>
 #include <mctopo3d.h>
@@ -85,10 +86,6 @@ int32_t ledengrowth(uint8_t *in,
 	std::deque< uint8_t* > borderqueue;
 	Set * parcouru;
 
-
-
-
-
 	ps= dimx*dimy;
 	nbpix = dimx*dimy*dimz;
 
@@ -132,12 +129,7 @@ int32_t ledengrowth(uint8_t *in,
 		for (i = 0 ; i < nbiter ; ++i)
 		{
 			size = borderqueue.size();
-			if(size==0)
-			{
-				printf("Bouh\n");
-
-				break;
-			}
+			assert(size>0);
 			chosen = static_cast<uint32_t>(static_cast<double>(random())/MAX_RANDOM * (size-1)); //Should check here that list is not empty
 			pix = borderqueue.at(chosen);
 

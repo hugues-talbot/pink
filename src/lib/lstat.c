@@ -266,17 +266,17 @@ double laverage1(struct xvimage * image1)
   if (datatype(image1) == VFF_TYP_1_BYTE)
   {
     uint8_t *F = UCHARDATA(image1);
-    for (i = 1; i < N; i++) if ((double)F[i] != 0) { av += (double)F[i]; n++; }
+    for (i = 1; i < N; i++) { av += (double)F[i]; n++; }
   }
   else if (datatype(image1) == VFF_TYP_4_BYTE)
   {
     int32_t *F = SLONGDATA(image1);
-    for (i = 1; i < N; i++) if ((double)F[i] != 0) { av += (double)F[i]; n++; }
+    for (i = 1; i < N; i++) { av += (double)F[i]; n++; }
   }
   else if (datatype(image1) == VFF_TYP_FLOAT)
   {
     float *F = FLOATDATA(image1);
-    for (i = 1; i < N; i++) if ((double)F[i] != 0) { av += (double)F[i]; n++; }
+    for (i = 1; i < N; i++) { av += (double)F[i]; n++; }
   }
   else 
   {
