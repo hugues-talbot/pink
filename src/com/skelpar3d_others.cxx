@@ -32,7 +32,7 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file skelpar3d_others.c
+/*! \file skelpar3d_others.cxx
 
 \brief parallel 3D binary skeleton
 DirectionalSkeletonizer

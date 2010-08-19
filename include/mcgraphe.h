@@ -60,8 +60,11 @@ typedef double TYP_VSOM;
 #ifndef HUGE
 #define HUGE HUGE_VAL
 #endif
-#define M_PI	 3.14159265358979323846
-
+    
+#ifndef M_PI
+#   define M_PI	 3.14159265358979323846
+#endif
+    
 #define SP_AVG 0
 #define SP_MIN 1
 #define SP_MAX 2

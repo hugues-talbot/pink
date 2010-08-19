@@ -178,6 +178,7 @@ Il ne restera plus qu'a decider du sort des plateaux fusionnant: quelle valeur l
 
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mccodimage.h>
