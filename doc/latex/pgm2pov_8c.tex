@@ -1,21 +1,23 @@
 \section{pgm2pov.c File Reference}
 \label{pgm2pov_8c}\index{pgm2pov.c@{pgm2pov.c}}
-generates a povray file from a 3D image 
+
+
+generates a povray file from a 3D image  
+
 
 
 
 \subsection{Detailed Description}
-generates a povray file from a 3D image 
+generates a povray file from a 3D image {\bfseries Usage:} pgm2pov in.pgm mode out.pov
 
-{\bf Usage:} pgm2pov in.pgm mode out.pov
+{\bfseries Description:}
 
-{\bf Description:}
+{\bfseries mode = } 0 (none) 1 (between points) 2 (everywhere) 3 (6-\/links) 4 (26-\/links) 5 (cubes) 6 (triangles) 10-\/14: idem 0-\/4, khalimsky grid 15: colored khalimsky
 
-{\bf mode = } 0 (none) 1 (between points) 2 (everywhere) 3 (6-links) 4 (26-links) 5 (cubes) 6 (triangles) 10-14: idem 0-4, khalimsky grid 15: colored khalimsky
+{\bfseries Types supported:} byte 3d
 
-{\bf Types supported:} byte 3d
+{\bfseries Category:} convert
 
-{\bf Category:} convert
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

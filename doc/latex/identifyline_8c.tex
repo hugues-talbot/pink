@@ -1,19 +1,21 @@
 \section{identifyline.c File Reference}
 \label{identifyline_8c}\index{identifyline.c@{identifyline.c}}
-identification of a best matching line from a set of 2D points 
+
+
+identification of a best matching line from a set of 2D points  
+
 
 
 
 \subsection{Detailed Description}
-identification of a best matching line from a set of 2D points 
+identification of a best matching line from a set of 2D points {\bfseries Usage:} identifyline in.list out.list
 
-{\bf Usage:} identifyline in.list out.list
+{\bfseries Description:} Identifies the parameters (a,b) of the equation of the 2D line: ax+b=y that minimizes the least square error between this line and the given points. Method: basic linear regression.
 
-{\bf Description:} Identifies the parameters (a,b) of the equation of the 2D line: ax+b=y that minimizes the least square error between this line and the given points. Method: basic linear regression.
+{\bfseries Types supported:} list 1D, list 2D
 
-{\bf Types supported:} list 1D, list 2D
+{\bfseries Category:} geo
 
-{\bf Category:} geo
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

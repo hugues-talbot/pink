@@ -1,19 +1,21 @@
 \section{ptmultiple.c File Reference}
 \label{ptmultiple_8c}\index{ptmultiple.c@{ptmultiple.c}}
-detects multiple points in 2d or 3d binary images 
+
+
+detects multiple points in 2d or 3d binary images  
+
 
 
 
 \subsection{Detailed Description}
-detects multiple points in 2d or 3d binary images 
+detects multiple points in 2d or 3d binary images {\bfseries Usage:} ptmultiple in.pgm connex out.pgm
 
-{\bf Usage:} ptmultiple in.pgm connex out.pgm
+{\bfseries Description:} Detects multiple points in the 2d or 3d binary image {\bfseries in.pgm} . A multiple point is a white point x such that Tn[x] $>$ 2 (n = 4, 8 in 2D or n = 6, 18, 26 in 3D, as set by the parameter {\bfseries connex}).
 
-{\bf Description:} Detects multiple points in the 2d or 3d binary image {\bf in.pgm} . A multiple point is a white point x such that Tn[x] $>$ 2 (n = 4, 8 in 2D or n = 6, 18, 26 in 3D, as set by the parameter {\bf connex}).
+{\bfseries Types supported:} byte 2D, byte 3D
 
-{\bf Types supported:} byte 2D, byte 3D
+{\bfseries Category:} topobin
 
-{\bf Category:} topobin
-
-\begin{Desc}
-\item[Author:]Michel Couprie 2002 \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 2002 
+\end{DoxyAuthor}

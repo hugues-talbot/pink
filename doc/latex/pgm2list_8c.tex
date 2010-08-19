@@ -1,31 +1,33 @@
 \section{pgm2list.c File Reference}
 \label{pgm2list_8c}\index{pgm2list.c@{pgm2list.c}}
-converts from pgm format to list format 
+
+
+converts from pgm format to list format  
+
 
 
 
 \subsection{Detailed Description}
-converts from pgm format to list format 
+converts from pgm format to list format {\bfseries Usage:} pgm2list image.pgm $<$e$|$s$|$b$|$n$|$B$|$N$>$ out.list
 
-{\bf Usage:} pgm2list image.pgm $<$e$|$s$|$b$|$n$|$B$|$N$>$ out.list
+{\bfseries Description:} Converts from pgm format to list format: \begin{DoxyItemize}
+\item e: set of points \item s: 1d digital signal \item b: binary 2D image \item n: grayscale 2D image \item B: binary 3D image \item N: grayscale 3D image\end{DoxyItemize}
+In formats {\bfseries e}, {\bfseries b} and {\bfseries B}, only the points with non-\/null values are considered.
 
-{\bf Description:} Converts from pgm format to list format: \begin{itemize}
-\item e: set of points \item s: 1d digital signal \item b: binary 2D image \item n: grayscale 2D image \item B: binary 3D image \item N: grayscale 3D image\end{itemize}
-In formats {\bf e}, {\bf b} and {\bf B}, only the points with non-null values are considered.
+In formats {\bfseries s}, {\bfseries n} and {\bfseries N}, all the points (even those having a null value) are considered.
 
-In formats {\bf s}, {\bf n} and {\bf N}, all the points (even those having a null value) are considered.
-
-Summary of list formats: \small\begin{alltt}  
+Summary of list formats: 
+\begin{DoxyPre}  
   e <n>       s <n>         b <n>         n <n>            B <n>            N <n>    
   x1          x1 v1         x1 y1         x1 y1 v1         x1 y1 z1         x1 y1 z1 v1
   x2    or    x2 v2   or    x2 y2   or    x2 y2 v2   or    x2 y2 z2   or    z2 x2 y2 v2
   ...         ...           ...           ...              ...              ...
   xn          xn vn         xn yn         xn yn vn         xn yn z3         z3 xn yn vn
-\end{alltt}
-\normalsize 
- {\bf Types supported:} byte 2D, byte 3D, int32\_\-t 2D, int32\_\-t 3D, float 2D, float 3D
+\end{DoxyPre}
+ {\bfseries Types supported:} byte 2D, byte 3D, int32\_\-t 2D, int32\_\-t 3D, float 2D, float 3D
 
-{\bf Category:} convert
+{\bfseries Category:} convert
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

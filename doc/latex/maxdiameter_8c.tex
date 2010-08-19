@@ -1,21 +1,23 @@
 \section{maxdiameter.c File Reference}
 \label{maxdiameter_8c}\index{maxdiameter.c@{maxdiameter.c}}
-maximal diameter of a binary image 
+
+
+maximal diameter of a binary image  
+
 
 
 
 \subsection{Detailed Description}
-maximal diameter of a binary image 
+maximal diameter of a binary image {\bfseries Usage:} maxdiameter in connex out
 
-{\bf Usage:} maxdiameter in connex out
+{\bfseries Description:}
 
-{\bf Description:}
+Find two points x, y in a set X (binary image {\bfseries in}) such that d(x,y) is less or equal to d(v,w) for any two points v, w in X. The distance d is the Euclidean distance.
 
-Find two points x, y in a set X (binary image {\bf in}) such that d(x,y) is less or equal to d(v,w) for any two points v, w in X. The distance d is the Euclidean distance.
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Category:} geo
 
-{\bf Category:} geo
-
-\begin{Desc}
-\item[Author:]Gu Jun \end{Desc}
+\begin{DoxyAuthor}{Author}
+Gu Jun 
+\end{DoxyAuthor}

@@ -6,9 +6,12 @@
 # ------------------------------------ 
 
 FILE( GLOB lib_src_c *.c )
+# we should use only one kind of extension for C++ please
 FILE( GLOB lib_src_cpp *.cpp )
-FILE( GLOB lib_src_bdd ../bdd/*.c )
+# however, for the time being, the .cxx files are those that do not depend on Boost.
 FILE( GLOB lib_src_cxx *.cxx )
+FILE( GLOB lib_src_bdd ../bdd/*.c )
+
 
 # unix defines
 add_definitions( -DUNIXIO -DPC )
@@ -21,7 +24,7 @@ if ( NOT PYTHON_FRONT_END )
 # message( info= ${lib_src_cxx} )
    add_library(pink SHARED ${lib_src_c} ${lib_src_bdd} ${lib_src_cxx} )
 else ( NOT PYTHON_FRONT_END )
-   add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_cxx} )
+   add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_cxx})
 endif ( NOT PYTHON_FRONT_END )
 
 target_link_libraries( pink ${LIBS} )

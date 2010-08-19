@@ -1,38 +1,38 @@
 \section{lthick.c File Reference}
 \label{lthick_8c}\index{lthick.c@{lthick.c}}
-grayscale leveling thickening 
+
+
+grayscale leveling thickening  
+
 
 
 
 \subsection{Detailed Description}
-grayscale leveling thickening 
+grayscale leveling thickening {\bfseries Usage:} lthick in.pgm $<$imcond.pgm$|$null$>$ connex niter out.pgm
 
-{\bf Usage:} lthick in.pgm $<$imcond.pgm$|$null$>$ connex niter out.pgm
+{\bfseries Description:} Grayscale leveling thickening (refs. [BEC97, CBB01]). The parameter {\bfseries connex} gives the connectivity used for the minima; possible choices are 4, 8 in 2D and 6, 26 in 3D. Let F be the function corresponding to the input image {\bfseries in.pgm}. Let G be the function corresponding to the input image {\bfseries imcond.pgm}, or the blanck function (constant 255) if the keyword {\bfseries null} is used. The algorithm is the following:
 
-{\bf Description:} Grayscale leveling thickening (refs. [BEC97, CBB01]). The parameter {\bf connex} gives the connectivity used for the minima; possible choices are 4, 8 in 2D and 6, 26 in 3D. Let F be the function corresponding to the input image {\bf in.pgm}. Let G be the function corresponding to the input image {\bf imcond.pgm}, or the blanck function (constant 255) if the keyword {\bf null} is used. The algorithm is the following:
-
-
-
-\footnotesize\begin{verbatim}
+\begin{DoxyVerb}
 Repeat niter times:
     L = {(p,a) such that T++(p,F) = 1 and a = alpha+(p,F)}
     While L not empty
        extract a couple (p,a) from L
        F(p) = min{ a, alpha+(p,F), G(p) }    
 Result: F
-\end{verbatim}
-\normalsize
+\end{DoxyVerb}
 
 
-If {\bf niter} is set to -1, then the operator iterates until stability.
+If {\bfseries niter} is set to -\/1, then the operator iterates until stability.
 
 References:\par
- [BEC97] G. Bertrand, J. C. Everat and M. Couprie: {\tt \char`\"{}Image segmentation through operators based upon topology\char`\"{}}, {\em  Journal of Electronic Imaging\/}, Vol.~6, No.~4, pp.~395-405, 1997.\par
- [CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: {\tt \char`\"{}Topological operators for grayscale image processing\char`\"{}}, {\em  Journal of Electronic Imaging\/}, Vol.~10, No.~4, pp.~1003-1015, 2001.
+ [BEC97] G. Bertrand, J. C. Everat and M. Couprie: {\tt \char`\"{}Image segmentation through operators based upon topology\char`\"{}}, {\itshape  Journal of Electronic Imaging\/}, Vol.~6, No.~4, pp.~395-\/405, 1997.\par
+ [CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: {\tt \char`\"{}Topological operators for
+grayscale image processing\char`\"{}}, {\itshape  Journal of Electronic Imaging\/}, Vol.~10, No.~4, pp.~1003-\/1015, 2001.
 
-{\bf Types supported:} byte 2D, byte 3D.
+{\bfseries Types supported:} byte 2D, byte 3D.
 
-{\bf Category:} topogray
+{\bfseries Category:} topogray
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

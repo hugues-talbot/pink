@@ -1,23 +1,25 @@
 \section{affine.c File Reference}
 \label{affine_8c}\index{affine.c@{affine.c}}
-affine transformation of a 2D image 
+
+
+affine transformation of a 2D image  
+
 
 
 
 \subsection{Detailed Description}
-affine transformation of a 2D image 
+affine transformation of a 2D image {\bfseries Usage:} affine in.pgm $<$trans.lst $|$ hx hy theta tx ty$>$ out.pgm
 
-{\bf Usage:} affine in.pgm $<$trans.lst $|$ hx hy theta tx ty$>$ out.pgm
+{\bfseries Description:}
 
-{\bf Description:}
-
-Applies to in.pgm an affine tranformation composed of a zoom (factors {\bf hx}, {\bf hy}), a rotation (angle {\bf theta} in degrees, center 0,0), and a translation (vector {\bf tx}, {\bf ty}). Alternatively, the transformation parameters may be given in a type \char`\"{}e\char`\"{} list file (see doc/formats.txt).
+Applies to in.pgm an affine tranformation composed of a zoom (factors {\bfseries hx}, {\bfseries hy}), a rotation (angle {\bfseries theta} in degrees, center 0,0), and a translation (vector {\bfseries tx}, {\bfseries ty}). Alternatively, the transformation parameters may be given in a type \char`\"{}e\char`\"{} list file (see doc/formats.txt).
 
 Method: interpolation.
 
-{\bf Types supported:} byte 2d
+{\bfseries Types supported:} byte 2d
 
-{\bf Category:} geo
+{\bfseries Category:} geo
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

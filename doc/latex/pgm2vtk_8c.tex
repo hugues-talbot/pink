@@ -1,19 +1,21 @@
 \section{pgm2vtk.c File Reference}
 \label{pgm2vtk_8c}\index{pgm2vtk.c@{pgm2vtk.c}}
-generates a vtk file from a 3D image 
+
+
+generates a vtk file from a 3D image  
+
 
 
 
 \subsection{Detailed Description}
-generates a vtk file from a 3D image 
+generates a vtk file from a 3D image {\bfseries Usage:} pgm2vtk in.pgm mode out.vtk
 
-{\bf Usage:} pgm2vtk in.pgm mode out.vtk
+{\bfseries Description:} Create a vtk image from a 3D pgm image. If {\bfseries mode} = \begin{DoxyItemize}
+\item 1: surfels (2-\/faces) from a binary khalimsky grid \item 2: triangulated surfels (2-\/faces) from a binary khalimsky grid \item 3: voxels (cubes) from a binary image in Z3 \item 4: minimal grid from a binary image in Z3 \item 5: voxels (octaedrons) from a binary image in Z3 \item 6: linels (1-\/faces) from a binary khalimsky grid\end{DoxyItemize}
+{\bfseries Types supported:} byte 3d
 
-{\bf Description:} Create a vtk image from a 3D pgm image. If {\bf mode} = \begin{itemize}
-\item 1: surfels (2-faces) from a binary khalimsky grid \item 2: triangulated surfels (2-faces) from a binary khalimsky grid \item 3: voxels (cubes) from a binary image in Z3 \item 4: minimal grid from a binary image in Z3 \item 5: voxels (octaedrons) from a binary image in Z3 \item 6: linels (1-faces) from a binary khalimsky grid\end{itemize}
-{\bf Types supported:} byte 3d
+{\bfseries Category:} convert
 
-{\bf Category:} convert
-
-\begin{Desc}
-\item[Author:]Michel Couprie (2005) \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie (2005) 
+\end{DoxyAuthor}

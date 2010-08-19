@@ -1,21 +1,23 @@
 \section{ellipseparams.c File Reference}
 \label{ellipseparams_8c}\index{ellipseparams.c@{ellipseparams.c}}
-ellipse identification and main parameter computation 
+
+
+ellipse identification and main parameter computation  
+
 
 
 
 \subsection{Detailed Description}
-ellipse identification and main parameter computation 
+ellipse identification and main parameter computation {\bfseries Usage:} ellipseparams pts.list out.list
 
-{\bf Usage:} ellipseparams pts.list out.list
+{\bfseries Description:} Identifies the ellipse E which minimizes the sum of the (approximate) distances between the points in {\bfseries pts.list} and E. The output is a list containing 6 numbers: a1, a2, r1, r2, r3, r4 where a1 is the half of the big axis length, a2 is the the half of the little axis length, and each ri is the mean \char`\"{}distance\char`\"{}, for quadrant i, between intput points and the computed ellipse (the expected value for points forming a perfect ellipse is 0)
 
-{\bf Description:} Identifies the ellipse E which minimizes the sum of the (approximate) distances between the points in {\bf pts.list} and E. The output is a list containing 6 numbers: a1, a2, r1, r2, r3, r4 where a1 is the half of the big axis length, a2 is the the half of the little axis length, and each ri is the mean \char`\"{}distance\char`\"{}, for quadrant i, between intput points and the computed ellipse (the expected value for points forming a perfect ellipse is 0)
+Ref: Andrew W. Fitzgibbon, Maurizio Pilu, and Robert B. Fisher Direct least-\/squares fitting of ellipses, IEEE Transactions on Pattern Analysis and Machine Intelligence, 21(5), 476-\/-\/480, May 1999
 
-Ref: Andrew W. Fitzgibbon, Maurizio Pilu, and Robert B. Fisher Direct least-squares fitting of ellipses, IEEE Transactions on Pattern Analysis and Machine Intelligence, 21(5), 476--480, May 1999
+{\bfseries Types supported:} byte 2d
 
-{\bf Types supported:} byte 2d
+{\bfseries Category:} geo
 
-{\bf Category:} geo
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

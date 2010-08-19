@@ -1,19 +1,21 @@
 \section{pgm2GA4d.c File Reference}
 \label{pgm2GA4d_8c}\index{pgm2GA4d.c@{pgm2GA4d.c}}
-converts a series of 3 
+
+
+converts a series of 3  
+
 
 
 
 \subsection{Detailed Description}
-converts a series of 3 
+converts a series of 3 {\bfseries Usage:} pgm2GA4d prefix\_\-in first last prefix\_\-mark mode GA4d\_\-out.pgm
 
-{\bf Usage:} pgm2GA4d prefix\_\-in first last prefix\_\-mark mode GA4d\_\-out.pgm
+{\bfseries Description:} Create a 4D weighted-\/edges graph from the 4D image made of the concatenation of the 3D images {\bfseries prefix\_\-inxxxx.pgm} (where nnnn is a four digit decimal integer and where {\bfseries first} and {\bfseries last} specify respectively the first and the last volume). The values of edges are computed according to the parameter mode. If mode is set to 0 then the intensity diference between the two extremities pixels of the edges is choosen for. Otherwise the maximum value is taken. The outputed GA is necessarily 4D, 8-\/connected (i.e. it corresponds to the direct adjacency in dimension 4).
 
-{\bf Description:} Create a 4D weighted-edges graph from the 4D image made of the concatenation of the 3D images {\bf prefix\_\-inxxxx.pgm} (where nnnn is a four digit decimal integer and where {\bf first} and {\bf last} specify respectively the first and the last volume). The values of edges are computed according to the parameter mode. If mode is set to 0 then the intensity diference between the two extremities pixels of the edges is choosen for. Otherwise the maximum value is taken. The outputed GA is necessarily 4D, 8-connected (i.e. it corresponds to the direct adjacency in dimension 4).
+{\bfseries Types supported:} byte 2d, byte 3d, byte 4d
 
-{\bf Types supported:} byte 2d, byte 3d, byte 4d
+{\bfseries Category:} convert
 
-{\bf Category:} convert
-
-\begin{Desc}
-\item[Author:]Jean Cousty - janvier 2006 \end{Desc}
+\begin{DoxyAuthor}{Author}
+Jean Cousty -\/ janvier 2006 
+\end{DoxyAuthor}

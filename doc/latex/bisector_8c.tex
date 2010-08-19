@@ -1,27 +1,30 @@
 \section{bisector.c File Reference}
 \label{bisector_8c}\index{bisector.c@{bisector.c}}
-compute the bisector function of a binary image 
+
+
+compute the bisector function of a binary image  
+
 
 
 
 \subsection{Detailed Description}
-compute the bisector function of a binary image 
+compute the bisector function of a binary image {\bfseries Usage:} bisector dist.pgm mask.pgm out.pgm
 
-{\bf Usage:} bisector dist.pgm mask.pgm out.pgm
+{\bfseries Description:}
 
-{\bf Description:}
+The bisector function is computed for the points which are non-\/null in the binary image {\bfseries mask.pgm} , from the exact quadratic euclidean distance map found in {\bfseries dist.pgm} .
 
-The bisector function is computed for the points which are non-null in the binary image {\bf mask.pgm} , from the exact quadratic euclidean distance map found in {\bf dist.pgm} .
-
-\begin{Desc}
-\item[Warning:]If the image {\bf dist.pgm} is not an exact quadratic euclidean distance map, then the result of this operator will make no sense.\end{Desc}
+\begin{DoxyWarning}{Warning}
+If the image {\bfseries dist.pgm} is not an exact quadratic euclidean distance map, then the result of this operator will make no sense.
+\end{DoxyWarning}
 References:\par
- [CCZ07] M. Couprie, D. Coeurjolly and R. Zrour: {\tt \char`\"{}Discrete bisector function and Euclidean skeleton in 2D and 3D\char`\"{}}, {\em Image and Vision Computing\/}, Vol.~25, No.~10, pp.~1543-1556, 2007.\par
+ [CCZ07] M. Couprie, D. Coeurjolly and R. Zrour: {\tt \char`\"{}Discrete bisector function and Euclidean skeleton in 2D and 3D\char`\"{}}, {\itshape Image and Vision Computing\/}, Vol.~25, No.~10, pp.~1543-\/1556, 2007.\par
 
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Category:} morpho
+{\bfseries Category:} morpho
 
-\begin{Desc}
-\item[Author:]Rita Zrour, Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Rita Zrour, Michel Couprie 
+\end{DoxyAuthor}

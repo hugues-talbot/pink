@@ -1,21 +1,23 @@
 \section{hitormiss.c File Reference}
 \label{hitormiss_8c}\index{hitormiss.c@{hitormiss.c}}
-morphological hit or miss transformation for binay images 
+
+
+morphological hit or miss transformation for binay images  
+
 
 
 
 \subsection{Detailed Description}
-morphological hit or miss transformation for binay images 
+morphological hit or miss transformation for binay images {\bfseries Usage:} hitormiss in.pgm e1.pgm e2.pgm out.pgm
 
-{\bf Usage:} hitormiss in.pgm e1.pgm e2.pgm out.pgm
+{\bfseries Description:} Let X be the input set, E1, E2 be the two structuring elements, the result Y is given by:\par
+ Y = (X -\/ E1) inter (Xb -\/ E2)\par
+ where '-\/' denotes the erosion operator, and 'Xb' denotes the complementary of X.
 
-{\bf Description:} Let X be the input set, E1, E2 be the two structuring elements, the result Y is given by:\par
- Y = (X - E1) inter (Xb - E2)\par
- where '-' denotes the erosion operator, and 'Xb' denotes the complementary of X.
+{\bfseries Types supported:} byte 2d, byte 3d, int32\_\-t 2d, long3d
 
-{\bf Types supported:} byte 2d, byte 3d, int32\_\-t 2d, long3d
+{\bfseries Category:} morpho
 
-{\bf Category:} morpho
-
-\begin{Desc}
-\item[Author:]Michel Couprie 2003 \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 2003 
+\end{DoxyAuthor}

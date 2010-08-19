@@ -1,21 +1,23 @@
 \section{propgeo.c File Reference}
 \label{propgeo_8c}\index{propgeo.c@{propgeo.c}}
-geodesic propagation of image values 
+
+
+geodesic propagation of image values  
+
 
 
 
 \subsection{Detailed Description}
-geodesic propagation of image values 
+geodesic propagation of image values {\bfseries Usage:} propgeo in.pgm mask.pgm connex mode out.pgm
 
-{\bf Usage:} propgeo in.pgm mask.pgm connex mode out.pgm
-
-{\bf Description:} Propagates certain values of the original image {\bf in.pgm}, geodesicaly wrt the connected components of the binary image {\bf mask.pgm}. The connexity is specified by the parameter {\bf connex}. The {\bf mode} is one of the following ones: \begin{itemize}
-\item min : propagates the minimal value of the component \item min1 : selects one point the value of which is equal to the min \item max : propagates the maximal value of the component \item max1 : selects one point the value of which is equal to the max \item moy : propagates the mean grayscale value of the component \item moy1 : selects one point the value of which is nearest to the mean \item minb : propagates the minimal value of the external border of the component \item maxb : propagates the maximal value of the external border of the component \item moyb : propagates the mean value of the external border of the component \item randb : fills the component with random values, with a normal distribution centered around the value computed as for moyb\end{itemize}
+{\bfseries Description:} Propagates certain values of the original image {\bfseries in.pgm}, geodesicaly wrt the connected components of the binary image {\bfseries mask.pgm}. The connexity is specified by the parameter {\bfseries connex}. The {\bfseries mode} is one of the following ones: \begin{DoxyItemize}
+\item min : propagates the minimal value of the component \item min1 : selects one point the value of which is equal to the min \item max : propagates the maximal value of the component \item max1 : selects one point the value of which is equal to the max \item moy : propagates the mean grayscale value of the component \item moy1 : selects one point the value of which is nearest to the mean \item minb : propagates the minimal value of the external border of the component \item maxb : propagates the maximal value of the external border of the component \item moyb : propagates the mean value of the external border of the component \item randb : fills the component with random values, with a normal distribution centered around the value computed as for moyb\end{DoxyItemize}
 Only modes min, max and moy are available for int32\_\-t images.
 
-{\bf Types supported:} byte 2d, int32\_\-t 2d
+{\bfseries Types supported:} byte 2d, int32\_\-t 2d
 
-{\bf Category:} connect
+{\bfseries Category:} connect
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

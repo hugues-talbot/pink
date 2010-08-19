@@ -1,31 +1,37 @@
 \section{drawsplines.c File Reference}
 \label{drawsplines_8c}\index{drawsplines.c@{drawsplines.c}}
-draw spline segments which are specified by a text file 
+
+
+draw spline segments which are specified by a text file  
+
 
 
 
 \subsection{Detailed Description}
-draw spline segments which are specified by a text file 
+draw spline segments which are specified by a text file {\bfseries Usage:} drawsplines in.pgm splines.txt [len] out.pgm
 
-{\bf Usage:} drawsplines in.pgm vect.txt out.pgm
+{\bfseries Description:} Draws splines which are specified by control points in a text file. The parameter {\bfseries in.pgm} gives an image into which the splines are to be drawn. The file format for {\bfseries splines.txt} is the following for 2D:
 
-{\bf Description:} The file {\bf vect.txt} contains a list of splines under the format:\par
- nb\_\-splines\par
+The file {\bfseries splines.txt} contains a list of splines under the format:\par
+ d nb\_\-splines\par
  nb\_\-points\_\-spline\_\-1 x11 y11 x12 y12 ...\par
  nb\_\-points\_\-spline\_\-2 x21 y21 x22 y22 ...\par
  nb\_\-points\_\-spline\_\-3 x31 y31 x32 y32 ...\par
  ...\par
  or, in 3D:\par
- nb\_\-splines\par
+ D nb\_\-splines\par
  nb\_\-points\_\-spline\_\-1 x11 y11 z11 x12 y12 z12 ...\par
  nb\_\-points\_\-spline\_\-2 x21 y21 z21 x22 y22 z22 ...\par
  nb\_\-points\_\-spline\_\-3 x31 y31 z31 x32 y32 z32 ...\par
  ...\par
 
 
-{\bf Types supported:} byte 2D, byte 3D
+If parameter {\bfseries len} is given and non-\/zero, the splines are extended on both sides by straight line segments of length {\bfseries len}.
 
-{\bf Category:} draw geo
+{\bfseries Types supported:} byte 2D, byte 3D
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+{\bfseries Category:} draw geo
+
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

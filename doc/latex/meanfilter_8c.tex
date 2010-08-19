@@ -1,19 +1,18 @@
 \section{meanfilter.c File Reference}
 \label{meanfilter_8c}\index{meanfilter.c@{meanfilter.c}}
-Mean filter operator. 
+
+
+Mean filter operator.  
+
 
 
 
 \subsection{Detailed Description}
-Mean filter operator. 
+Mean filter operator. {\bfseries Usage:} meanfilter in.pgm roi.pgm niter [inhibit.pgm] out.pgm
 
-{\bf Usage:} meanfilter in.pgm roi.pgm niter [inhibit.pgm] out.pgm
+{\bfseries Description:} Let F be the function stored in image {\bfseries in.pgm}. Let R be the function stored in image {\bfseries roi.pgm} (region of interest). Let I be the function stored in image {\bfseries inhibit.pgm} (if any). The algorithm is the following:
 
-{\bf Description:} Let F be the function stored in image {\bf in.pgm}. Let R be the function stored in image {\bf roi.pgm} (region of interest). Let I be the function stored in image {\bf inhibit.pgm} (if any). The algorithm is the following:
-
-
-
-\footnotesize\begin{verbatim}
+\begin{DoxyVerb}
 Repeat niter times
   G = F
   For each image point x
@@ -23,13 +22,13 @@ Repeat niter times
         If R[y] then S = S + G[y]; C = C + 1;
       F[x] = S / C;
 Result: F
-\end{verbatim}
-\normalsize
+\end{DoxyVerb}
 
 
-{\bf Types supported:} byte 2d, int32\_\-t 2d, float 2d, byte 3d, int32\_\-t 3d, float 3d
+{\bfseries Types supported:} byte 2d, int32\_\-t 2d, float 2d, byte 3d, int32\_\-t 3d, float 3d
 
-{\bf Category:} signal
+{\bfseries Category:} signal
 
-\begin{Desc}
-\item[Author:]Marcin Janaszewski, Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Marcin Janaszewski, Michel Couprie 
+\end{DoxyAuthor}

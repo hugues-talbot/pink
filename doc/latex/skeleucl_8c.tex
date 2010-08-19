@@ -1,27 +1,29 @@
 \section{skeleucl.c File Reference}
 \label{skeleucl_8c}\index{skeleucl.c@{skeleucl.c}}
-Euclidean binary skeleton. 
+
+
+Euclidean binary skeleton.  
+
 
 
 
 \subsection{Detailed Description}
-Euclidean binary skeleton. 
+Euclidean binary skeleton. {\bfseries Usage:} skeleucl in.pgm connex [inhibit] out.pgm
 
-{\bf Usage:} skeleucl in.pgm connex [inhibit] out.pgm
+{\bfseries Description:} Euclidean binary skeleton.
 
-{\bf Description:} Euclidean binary skeleton.
+The parameter {\bfseries connex} indicates the connectivity of the binary object. Possible choices are 4, 8 in 2d and 6, 26 in 3d.
 
-The parameter {\bf connex} indicates the connectivity of the binary object. Possible choices are 4, 8 in 2d and 6, 26 in 3d.
-
-If the parameter {\bf inhibit} is given and is a binary image name, then the points of this image will be left unchanged.
+If the parameter {\bfseries inhibit} is given and is a binary image name, then the points of this image will be left unchanged.
 
 References:\par
- [CCZ07] M. Couprie, D. Coeurjolly and R. Zrour: {\tt \char`\"{}Discrete bisector function and Euclidean skeleton in 2D and 3D\char`\"{}}, {\em Image and Vision Computing\/}, Vol.~25, No.~10, pp.~1543-1556, 2007.\par
+ [CCZ07] M. Couprie, D. Coeurjolly and R. Zrour: {\tt \char`\"{}Discrete bisector function and Euclidean skeleton in 2D and 3D\char`\"{}}, {\itshape Image and Vision Computing\/}, Vol.~25, No.~10, pp.~1543-\/1556, 2007.\par
 
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Category:} topobin
+{\bfseries Category:} topobin
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

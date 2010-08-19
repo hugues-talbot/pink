@@ -1,21 +1,23 @@
 \section{double2byte.c File Reference}
 \label{double2byte_8c}\index{double2byte.c@{double2byte.c}}
-converts a \char`\"{}double\char`\"{} image to a \char`\"{}byte\char`\"{} image 
+
+
+converts a \char`\"{}double\char`\"{} image to a \char`\"{}byte\char`\"{} image  
+
 
 
 
 \subsection{Detailed Description}
-converts a \char`\"{}double\char`\"{} image to a \char`\"{}byte\char`\"{} image 
+converts a \char`\"{}double\char`\"{} image to a \char`\"{}byte\char`\"{} image {\bfseries Usage:} double2byte in.pgm [mode] out.pgm
 
-{\bf Usage:} double2byte in.pgm [mode] out.pgm
+{\bfseries Description:}
 
-{\bf Description:}
+Depending on the value given for the (optional) parameter {\bfseries mode}: \begin{DoxyItemize}
+\item {\bfseries mode} = 0 (default) : for all x, out[x] = min(255, arrondi(in[x])). \item {\bfseries mode} = 1 : for all x, out[x] = arrondi(in[x]) modulo 256. \item {\bfseries mode} = 2 : scales values in the range 0-\/255. \item {\bfseries mode} = 4 : truncation of the square root in the range 0-\/255. \item {\bfseries mode} = 5 : truncation of the log in the range 0-\/255.\end{DoxyItemize}
+{\bfseries Types supported:} double 2d, double 3d
 
-Depending on the value given for the (optional) parameter {\bf mode}: \begin{itemize}
-\item {\bf mode} = 0 (default) : for all x, out[x] = min(255, arrondi(in[x])). \item {\bf mode} = 1 : for all x, out[x] = arrondi(in[x]) modulo 256. \item {\bf mode} = 2 : scales values in the range 0-255. \item {\bf mode} = 4 : truncation of the square root in the range 0-255. \item {\bf mode} = 5 : truncation of the log in the range 0-255.\end{itemize}
-{\bf Types supported:} double 2d, double 3d
+{\bfseries Category:} convert
 
-{\bf Category:} convert
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

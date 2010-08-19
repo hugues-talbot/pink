@@ -1,19 +1,21 @@
 \section{sup.c File Reference}
 \label{sup_8c}\index{sup.c@{sup.c}}
-pixelwise sup predicate 
+
+
+pixelwise sup predicate  
+
 
 
 
 \subsection{Detailed Description}
-pixelwise sup predicate 
+pixelwise sup predicate {\bfseries Usage:} sup in1.pgm in2.pgm out.pgm
 
-{\bf Usage:} sup in1.pgm in2.pgm out.pgm
+{\bfseries Description:} For each pixel x, if in1[x] $<$= in2[x] then out[x] = 255 else out[x] = 0. Images must be of the same type and same dimensions.
 
-{\bf Description:} For each pixel x, if in1[x] $<$= in2[x] then out[x] = 255 else out[x] = 0. Images must be of the same type and same dimensions.
+{\bfseries Types supported:} byte 2D, byte 3D
 
-{\bf Types supported:} byte 2D, byte 3D
+{\bfseries Category:} arith
 
-{\bf Category:} arith
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

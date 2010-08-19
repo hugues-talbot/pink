@@ -1,19 +1,21 @@
 \section{radialrankmaxopening.c File Reference}
 \label{radialrankmaxopening_8c}\index{radialrankmaxopening.c@{radialrankmaxopening.c}}
-radial rank-max opening by line 
+
+
+radial rank-\/max opening by line  
+
 
 
 
 \subsection{Detailed Description}
-radial rank-max opening by line 
+radial rank-\/max opening by line {\bfseries Usage:} radialrankmaxopening in.pgm length rank [angle in degrees] [dilatmask.pgm] out.pgm
 
-{\bf Usage:} radialrankmaxopening in.pgm length rank [angle in degrees] [dilatmask.pgm] out.pgm
+{\bfseries Description:} Radial rank-\/max opening by line (or dilated line). Max between the rank-\/max openings (with parameter {\bfseries rank}) of {\bfseries in.pgm} by a linear structuring element rotated by angle until 360 degrees and dilated by dilatmask.pgm. The angle is normalized to an exact division of 360 by an integer.
 
-{\bf Description:} Radial rank-max opening by line (or dilated line). Max between the rank-max openings (with parameter {\bf rank}) of {\bf in.pgm} by a linear structuring element rotated by angle until 360 degrees and dilated by dilatmask.pgm. The angle is normalized to an exact division of 360 by an integer.
+{\bfseries Types supported:} byte 2d
 
-{\bf Types supported:} byte 2d
+{\bfseries Category:} morpho
 
-{\bf Category:} morpho
-
-\begin{Desc}
-\item[Author:]André Vital Saude, Michel Couprie jan 2005 \end{Desc}
+\begin{DoxyAuthor}{Author}
+André Vital Saude, Michel Couprie jan 2005 
+\end{DoxyAuthor}

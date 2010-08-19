@@ -1,6 +1,12 @@
+/*
+  Who wrote this ??
+
+  Question by Hugues Talbot	18 Aug 2010
+ */
+
 #ifndef _FIFO_HPP_
 #define _FIFO_HPP_
-template<typename T>
+template <typename T>
 class FIFO{
 	private:
 		T* buffer;

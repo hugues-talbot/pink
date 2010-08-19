@@ -1,19 +1,21 @@
 \section{selndg.c File Reference}
 \label{selndg_8c}\index{selndg.c@{selndg.c}}
-selects pixels with values between two thresholds 
+
+
+selects pixels with values between two thresholds  
+
 
 
 
 \subsection{Detailed Description}
-selects pixels with values between two thresholds 
+selects pixels with values between two thresholds {\bfseries Usage:} selndg in.pgm inf sup out.ppm
 
-{\bf Usage:} selndg in.pgm inf sup out.ppm
+{\bfseries Description:} Selects pixels x such that {\bfseries inf} $<$= F[x] $<$= {\bfseries sup}. If the input image is of type byte, the output is a binary image. If the input image is of type long, the output is also a long image where all pixels whose values are not in the interval, are put to 0.
 
-{\bf Description:} Selects pixels x such that {\bf inf} $<$= F[x] $<$= {\bf sup}. If the input image is of type byte, the output is a binary image. If the input image is of type long, the output is also a long image where all pixels whose values are not in the interval, are put to 0.
+{\bfseries Types supported:} byte 2d, byte 3d, long 2d, long 3d
 
-{\bf Types supported:} byte 2d, byte 3d, long 2d, long 3d
+{\bfseries Category:} arith
 
-{\bf Category:} arith
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

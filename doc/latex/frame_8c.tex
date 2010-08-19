@@ -1,21 +1,23 @@
 \section{frame.c File Reference}
 \label{frame_8c}\index{frame.c@{frame.c}}
-generates an image with a white border and a black interior 
+
+
+generates an image with a white border and a black interior  
+
 
 
 
 \subsection{Detailed Description}
-generates an image with a white border and a black interior 
+generates an image with a white border and a black interior {\bfseries Usage:} frame in.pgm [width] out.pgm
 
-{\bf Usage:} frame in.pgm [width] out.pgm
+{\bfseries Description:} The result out.pgm has the same size as in.pgm. Its border is set to 255, all other pixels are set to 0.
 
-{\bf Description:} The result out.pgm has the same size as in.pgm. Its border is set to 255, all other pixels are set to 0.
+If the optional parameter {\bfseries width} is given, then the border has thickness 'width'.
 
-If the optional parameter {\bf width} is given, then the border has thickness 'width'.
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Category:} geo
 
-{\bf Category:} geo
-
-\begin{Desc}
-\item[Author:]Michel Couprie 2000 \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 2000 
+\end{DoxyAuthor}

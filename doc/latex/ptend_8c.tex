@@ -1,19 +1,21 @@
 \section{ptend.c File Reference}
 \label{ptend_8c}\index{ptend.c@{ptend.c}}
-detects end points in a binary image 
+
+
+detects end points in a binary image  
+
 
 
 
 \subsection{Detailed Description}
-detects end points in a binary image 
+detects end points in a binary image {\bfseries Usage:} ptend in.pgm connex out.pgm
 
-{\bf Usage:} ptend in.pgm connex out.pgm
+{\bfseries Description:} An end point is a white point, which has exactly 1 white n-\/neighbour (n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter {\bfseries connex})
 
-{\bf Description:} An end point is a white point, which has exactly 1 white n-neighbour (n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter {\bf connex})
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Category:} topobin
 
-{\bf Category:} topobin
-
-\begin{Desc}
-\item[Author:]Michel Couprie 2002 \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 2002 
+\end{DoxyAuthor}

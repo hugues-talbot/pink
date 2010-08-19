@@ -1,21 +1,23 @@
 \section{histosieve.c File Reference}
 \label{histosieve_8c}\index{histosieve.c@{histosieve.c}}
-eliminates points with values that are seldom in the histogram 
+
+
+eliminates points with values that are seldom in the histogram  
+
 
 
 
 \subsection{Detailed Description}
-eliminates points with values that are seldom in the histogram 
+eliminates points with values that are seldom in the histogram {\bfseries Usage:} histosieve in.pgm val out.pgm
 
-{\bf Usage:} histosieve in.pgm val out.pgm
+{\bfseries Description:}
 
-{\bf Description:}
+The points which value appear strictly less than {\bfseries val} times in the image are eliminated.
 
-The points which value appear strictly less than {\bf val} times in the image are eliminated.
+{\bfseries Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d
 
-{\bf Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d
+{\bfseries Category:} histo
 
-{\bf Category:} histo
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

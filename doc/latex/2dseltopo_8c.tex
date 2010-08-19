@@ -1,33 +1,35 @@
 \section{2dseltopo.c File Reference}
 \label{2dseltopo_8c}\index{2dseltopo.c@{2dseltopo.c}}
-selects points in the 2d khalimsky grid according to a local topological criterion 
+
+
+selects points in the 2d khalimsky grid according to a local topological criterion  
+
 
 
 
 \subsection{Detailed Description}
-selects points in the 2d khalimsky grid according to a local topological criterion 
+selects points in the 2d khalimsky grid according to a local topological criterion {\bfseries Usage:} 2dseltopo in d-\/ d+ a-\/ a+ b-\/ b+ out
 
-{\bf Usage:} 2dseltopo in d- d+ a- a+ b- b+ out
+{\bfseries Description:} Selects the elements x of the Khalimsky object K which satisfy the following inequalities :
 
-{\bf Description:} Selects the elements x of the Khalimsky object K which satisfy the following inequalities :
+{\bfseries d1} $<$= d(x) $<$= {\bfseries d2} 
 
-{\bf d1} $<$= d(x) $<$= {\bf d2} 
+{\bfseries a1} $<$= a(x) $<$= {\bfseries a2} 
 
-{\bf a1} $<$= a(x) $<$= {\bf a2} 
-
-{\bf b1} $<$= b(x) $<$= {\bf b2} 
+{\bfseries b1} $<$= b(x) $<$= {\bfseries b2} 
 
 where
 
 d(x) = dimension of x
 
-a(x) = number of elements under x of dimension d(x) - 1
+a(x) = number of elements under x of dimension d(x) -\/ 1
 
 b(x) = number of elements over x of dimension d(x) + 1
 
-{\bf Types supported:} byte 2d
+{\bfseries Types supported:} byte 2d
 
-{\bf Category:} orders
+{\bfseries Category:} orders
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

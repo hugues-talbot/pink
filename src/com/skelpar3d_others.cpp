@@ -62,6 +62,10 @@ then the points of this image will be left unchanged.
 
 \author Michel Couprie
 */
+
+// I'm confused, this should be a C++ file...
+// Hugues Talbot	18 Aug 2010
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

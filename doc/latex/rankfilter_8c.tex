@@ -1,21 +1,23 @@
 \section{rankfilter.c File Reference}
 \label{rankfilter_8c}\index{rankfilter.c@{rankfilter.c}}
-rank filter 
+
+
+rank filter  
+
 
 
 
 \subsection{Detailed Description}
-rank filter 
+rank filter {\bfseries Usage:} rankfilter in.pgm el.pgm r out.pgm
 
-{\bf Usage:} rankfilter in.pgm el.pgm r out.pgm
-
-{\bf Description:} Let F be the input image, G be the output image, and E the structuring element. Let n be the number of elements of E, and R be the product n.r, then for each pixel p, G[p] is the Rth element of the sorted list (by increasing order) of the pixel values in the set \{ F[q], q in E[p] \}.
+{\bfseries Description:} Let F be the input image, G be the output image, and E the structuring element. Let n be the number of elements of E, and R be the product n.r, then for each pixel p, G[p] is the Rth element of the sorted list (by increasing order) of the pixel values in the set \{ F[q], q in E[p] \}.
 
 Particular cases are the median filter (r = 0.5), the erosion (r = 0), and the dilation (r = 1).
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Category:} morpho
+{\bfseries Category:} morpho
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

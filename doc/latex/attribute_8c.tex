@@ -1,23 +1,26 @@
 \section{attribute.c File Reference}
 \label{attribute_8c}\index{attribute.c@{attribute.c}}
-labels each connected component with its attribute value 
+
+
+labels each connected component with its attribute value  
+
 
 
 
 \subsection{Detailed Description}
-labels each connected component with its attribute value 
+labels each connected component with its attribute value {\bfseries Usage:} attribute in.pgm connex seuil $<$min$|$max$|$pla$>$ $<$area$|$perim$|$circ$|$trous$|$excen$|$orien$|$vdiam$|$hdiam$>$ out.pgm
 
-{\bf Usage:} attribute in.pgm connex seuil $<$min$|$max$|$pla$>$ $<$area$|$perim$|$circ$|$trous$|$excen$|$orien$|$vdiam$|$hdiam$>$ out.pgm
-
-{\bf Description:} Labels each connected component with its attribute value. Argument {\bf connex} defines the connectivity. Argument {\bf seuil} defines a threshold: components with attribute value not higher than {\bf seuil} are filtered out.
+{\bfseries Description:} Labels each connected component with its attribute value. Argument {\bfseries connex} defines the connectivity. Argument {\bfseries seuil} defines a threshold: components with attribute value not higher than {\bfseries seuil} are filtered out.
 
 Warning: in 3D only the attribute \char`\"{}area\char`\"{} is implemented.
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Category:} geo
+{\bfseries Category:} geo
 
-\begin{Desc}
-\item[Warning:]This operator is in experimental state. Do not use in applications.\end{Desc}
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyWarning}{Warning}
+This operator is in experimental state. Do not use in applications.
+\end{DoxyWarning}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

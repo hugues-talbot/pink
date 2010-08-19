@@ -1,25 +1,28 @@
 \section{rgb2hls.c File Reference}
 \label{rgb2hls_8c}\index{rgb2hls.c@{rgb2hls.c}}
-converts a ppm color file to hls representation 
+
+
+converts a ppm color file to hls representation  
+
 
 
 
 \subsection{Detailed Description}
-converts a ppm color file to hls representation 
+converts a ppm color file to hls representation {\bfseries Usage:} in.ppm [mode] h.pgm l.pgm s.pgm
 
-{\bf Usage:} in.ppm [mode] h.pgm l.pgm s.pgm
-
-{\bf Description:} Constructs 3 pgm files from 1 ppm file: \begin{itemize}
-\item {\bf h.pgm} : Hue (int32\_\-t - 0 to 359) \item {\bf h.pgm} : Luminance (byte) \item {\bf h.pgm} : Saturation (byte)\end{itemize}
-Different modes are available [default mode is 0]: \begin{itemize}
-\item mode = 0: classical HLS coding, based on [1]. \item mode = 1: L1 norm (NYI) (see [2]) \item mode = 2: L1 norm with gamma correction (NYI) (see [2])\end{itemize}
+{\bfseries Description:} Constructs 3 pgm files from 1 ppm file: \begin{DoxyItemize}
+\item {\bfseries h.pgm} : Hue (int32\_\-t -\/ 0 to 359) \item {\bfseries h.pgm} : Luminance (byte) \item {\bfseries h.pgm} : Saturation (byte)\end{DoxyItemize}
+Different modes are available [default mode is 0]: \begin{DoxyItemize}
+\item mode = 0: classical HLS coding, based on [1]. \item mode = 1: L1 norm (NYI) (see [2]) \item mode = 2: L1 norm with gamma correction (NYI) (see [2])\end{DoxyItemize}
 [1] Foley, Van Damm \& al: \char`\"{}Computer Graphics\char`\"{}, 2nd ed., p. 595
 
-[2] J. Angulo and J. Serra. \char`\"{}Traitements des images de couleur en représentation luminance/saturation/teinte par norme L\_\-1\char`\"{} (in French). Traitement du Signal, Vol. 21, No. 6, pp 583-604, December 2004.
+[2] J. Angulo and J. Serra. \char`\"{}Traitements des images de couleur 
+en représentation luminance/saturation/teinte par norme L\_\-1\char`\"{} (in French). Traitement du Signal, Vol. 21, No. 6, pp 583-\/604, December 2004.
 
-{\bf Types supported:} byte 2d
+{\bfseries Types supported:} byte 2d
 
-{\bf Category:} convert
+{\bfseries Category:} convert
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

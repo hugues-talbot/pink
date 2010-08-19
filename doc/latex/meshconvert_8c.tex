@@ -1,21 +1,23 @@
 \section{meshconvert.c File Reference}
 \label{meshconvert_8c}\index{meshconvert.c@{meshconvert.c}}
-mesh format conversion 
+
+
+mesh format conversion  
+
 
 
 
 \subsection{Detailed Description}
-mesh format conversion 
+mesh format conversion {\bfseries Usage:} meshconvert in [resolution] out
 
-{\bf Usage:} meshconvert in [resolution] out
+{\bfseries Description:}
 
-{\bf Description:}
+Mesh format conversion. Available input formats: mcm, ifs, vtk. Available output formats: mcm, vtk, pgm (points only). If the output format is pgm, then the optional argument {\bfseries resolution} gives the resolution of the grid (homogeneous in x, y and z dimensions). The default value is 1.0.
 
-Mesh format conversion. Available input formats: mcm, ifs, vtk. Available output formats: mcm, vtk, pgm (points only). If the output format is pgm, then the optional argument {\bf resolution} gives the resolution of the grid (homogeneous in x, y and z dimensions). The default value is 1.0.
+{\bfseries Types supported:} mesh 3d
 
-{\bf Types supported:} mesh 3d
+{\bfseries Category:} mesh3d, convert ,
 
-{\bf Category:} mesh3d, convert ,
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

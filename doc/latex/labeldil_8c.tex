@@ -1,21 +1,24 @@
 \section{labeldil.c File Reference}
 \label{labeldil_8c}\index{labeldil.c@{labeldil.c}}
-labeling of the connected components of a binary image 
+
+
+labeling of the connected components of a binary image  
+
 
 
 
 \subsection{Detailed Description}
-labeling of the connected components of a binary image 
+labeling of the connected components of a binary image {\bfseries Usage:} labeldil in.pgm se.pgm out.pgm
 
-{\bf Usage:} labeldil in.pgm se.pgm out.pgm
+{\bfseries Description:} The argument {\bfseries se.pgm} is a structuring element which must be reflexive and symmetric. Connected components are defined by this structuring element. The output image {\bfseries out.pgm} has the type \char`\"{}int32\_\-t\char`\"{}.
 
-{\bf Description:} The argument {\bf se.pgm} is a structuring element which must be reflexive and symmetric. Connected components are defined by this structuring element. The output image {\bf out.pgm} has the type \char`\"{}int32\_\-t\char`\"{}.
+\begin{DoxyWarning}{Warning}
+No test is done to check properties of the structuring element.
+\end{DoxyWarning}
+{\bfseries Types supported:} byte 2d
 
-\begin{Desc}
-\item[Warning:]No test is done to check properties of the structuring element.\end{Desc}
-{\bf Types supported:} byte 2d
+{\bfseries Category:} connect
 
-{\bf Category:} connect
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

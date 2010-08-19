@@ -1,50 +1,50 @@
 \section{hthin.c File Reference}
 \label{hthin_8c}\index{hthin.c@{hthin.c}}
-grayscale homotopic thinning 
+
+
+grayscale homotopic thinning  
+
 
 
 
 \subsection{Detailed Description}
-grayscale homotopic thinning 
+grayscale homotopic thinning {\bfseries Usage:} hthin in.pgm $<$imcond.pgm$|$null$>$ connex niter out.pgm
 
-{\bf Usage:} hthin in.pgm $<$imcond.pgm$|$null$>$ connex niter out.pgm
+{\bfseries Description:} Grayscale homotopic thinning (refs. [BEC97, CBB01]). The parameter {\bfseries connex} gives the connectivity used for the minima; possible choices are 4, 8 in 2D and 6, 26 in 3D. Let F be the function corresponding to the input image {\bfseries in.pgm}. Let G be the function corresponding to the input image {\bfseries imcond.pgm}, or the null function if the keyword {\bfseries null} is used. The algorithm is the following:
 
-{\bf Description:} Grayscale homotopic thinning (refs. [BEC97, CBB01]). The parameter {\bf connex} gives the connectivity used for the minima; possible choices are 4, 8 in 2D and 6, 26 in 3D. Let F be the function corresponding to the input image {\bf in.pgm}. Let G be the function corresponding to the input image {\bf imcond.pgm}, or the null function if the keyword {\bf null} is used. The algorithm is the following:
-
-
-
-\footnotesize\begin{verbatim}
+\begin{DoxyVerb}
 Repeat niter times:
     L = {(p,d) such that p is destructible for F and d = delta-(p,F)}
     While L not empty
        extract a couple (p,d) from L
        F(p) = max{ d, delta-(p,F), G(p) }    
 Result: F
-\end{verbatim}
-\normalsize
+\end{DoxyVerb}
 
 
-If {\bf niter} is set to -1, then the operator iterates until stability.
+If {\bfseries niter} is set to -\/1, then the operator iterates until stability.
 
 References:
 
-[BEC97] G. Bertrand, J. C. Everat and M. Couprie: {\tt \char`\"{}Image segmentation through operators based upon topology\char`\"{}}, {\em  Journal of Electronic Imaging\/}, Vol.~6, No.~4, pp.~395-405, 1997.
+[BEC97] G. Bertrand, J. C. Everat and M. Couprie: {\tt \char`\"{}Image segmentation through operators based upon topology\char`\"{}}, {\itshape  Journal of Electronic Imaging\/}, Vol.~6, No.~4, pp.~395-\/405, 1997.
 
-[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: {\tt \char`\"{}Topological operators for grayscale image processing\char`\"{}}, {\em  Journal of Electronic Imaging\/}, Vol.~10, No.~4, pp.~1003-1015, 2001.
+[CBB01] M. Couprie, F.N. Bezerra, Gilles Bertrand: {\tt \char`\"{}Topological operators for
+grayscale image processing\char`\"{}}, {\itshape  Journal of Electronic Imaging\/}, Vol.~10, No.~4, pp.~1003-\/1015, 2001.
 
-{\bf Types supported:} byte 2D, byte 3D.
+{\bfseries Types supported:} byte 2D, byte 3D.
 
-{\bf Category:} topogray
+{\bfseries Category:} topogray
 
-\begin{Desc}
-\item[Author:]Michel Couprie\end{Desc}
-{\bf Example:}
+\begin{DoxyAuthor}{Author}
+Michel Couprie
+\end{DoxyAuthor}
+{\bfseries Example:}
 
 hthin ur1 null 4 10 ur1\_\-hthin\par
  minima ur1\_\-hthin 4 ur1\_\-hthin\_\-m
 
 \begin{TabularC}{3}
 \hline
- & &  \\\hline
-ur1 &ur1\_\-hthin &ur1\_\-hthin\_\-m  \\\hline
+ & &  \\\cline{1-3}
+ur1 &ur1\_\-hthin &ur1\_\-hthin\_\-m  \\\cline{1-3}
 \end{TabularC}

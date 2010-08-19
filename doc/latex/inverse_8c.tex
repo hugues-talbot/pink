@@ -1,20 +1,22 @@
 \section{inverse.c File Reference}
 \label{inverse_8c}\index{inverse.c@{inverse.c}}
-computes the pixelwise inverse of an image 
+
+
+computes the pixelwise inverse of an image  
+
 
 
 
 \subsection{Detailed Description}
-computes the pixelwise inverse of an image 
+computes the pixelwise inverse of an image {\bfseries Usage:} inverse in.pgm out.pgm
 
-{\bf Usage:} inverse in.pgm out.pgm
+{\bfseries Description:} Byte images: for each pixel x, out[x] = 255 -\/ in[x].\par
+ Long or float images: for each pixel x, out[x] = VMAX -\/ in[x], where VMAX = max\{in[x]\}.
 
-{\bf Description:} Byte images: for each pixel x, out[x] = 255 - in[x].\par
- Long or float images: for each pixel x, out[x] = VMAX - in[x], where VMAX = max\{in[x]\}.
+{\bfseries Types supported:} byte 2d, byte 3d, long 2d, long 3d, float 2d, float 3d
 
-{\bf Types supported:} byte 2d, byte 3d, long 2d, long 3d, float 2d, float 3d
+{\bfseries Category:} arith
 
-{\bf Category:} arith
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

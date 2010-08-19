@@ -1,27 +1,26 @@
 \section{skelsurf.c File Reference}
 \label{skelsurf_8c}\index{skelsurf.c@{skelsurf.c}}
-surfacic binary skeleton guided by a priority image 
+
+
+surfacic binary skeleton guided by a priority image  
+
 
 
 
 \subsection{Detailed Description}
-surfacic binary skeleton guided by a priority image 
+surfacic binary skeleton guided by a priority image {\bfseries Usage:} skelsurf in.pgm prio connex [inhibit] out.pgm
 
-{\bf Usage:} skelsurf in.pgm prio connex [inhibit] out.pgm
+{\bfseries Description:} Surfacic binary skeleton guided by a priority image. The lowest values of the priority image correspond to the highest priority.
 
-{\bf Description:} Surfacic binary skeleton guided by a priority image. The lowest values of the priority image correspond to the highest priority.
+The parameter {\bfseries prio} is either an image (byte or int32\_\-t), or a numerical code indicating that a distance map will be used as a priority image; the possible choices are: \begin{DoxyItemize}
+\item 0: approximate euclidean distance \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 6: 6-\/distance in 3d \item 18: 18-\/distance in 3d \item 26: 26-\/distance in 3d\end{DoxyItemize}
+The parameter {\bfseries connex} indicates the connectivity of the binary object. Possible choices are 6, 26.
 
-The parameter {\bf prio} is either an image (byte or int32\_\-t), or a numerical code indicating that a distance map will be used as a priority image; the possible choices are: \begin{itemize}
-\item 0: approximate euclidean distance \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 6: 6-distance in 3d \item 18: 18-distance in 3d \item 26: 26-distance in 3d\end{itemize}
-The parameter {\bf connex} indicates the connectivity of the binary object. Possible choices are 6, 26.
+If the parameter {\bfseries inhibit} is given and is a binary image name, then the points of this image will be left unchanged.
 
-If the parameter {\bf inhibit} is given and is a binary image name, then the points of this image will be left unchanged.
+Let X be the set corresponding to the input image {\bfseries in.pgm}. Let P be the function corresponding to the priority image. Let I be the set corresponding to the inhibit image, if given, or the empty set otherwise. The algorithm is the following:
 
-Let X be the set corresponding to the input image {\bf in.pgm}. Let P be the function corresponding to the priority image. Let I be the set corresponding to the inhibit image, if given, or the empty set otherwise. The algorithm is the following:
-
-
-
-\footnotesize\begin{verbatim}
+\begin{DoxyVerb}
 C = {y in F | Tb(y) > 1}
 Repeat until stability
   choose a point x in X, simple for X, such that C[x] == 0 
@@ -30,19 +29,19 @@ Repeat until stability
   for all y in gamma(x)
     if Tb(y) > 1 then C[y] = 1
 Result: X
-\end{verbatim}
-\normalsize
+\end{DoxyVerb}
 
 
 where Tb(y) refers to the second connectivity number of y, that is, (informally) the number of connected components of gamma(y) inter complement(X).
 
 References:\par
- [BC07] G. Bertrand and M. Couprie: {\tt \char`\"{}Transformations topologiques discretes\char`\"{}}, in {\em G\'{e}om\'{e}trie discr\`{e}te et images num\'{e}riques\/}, D. Coeurjolly and A. Montanvert and J.M. Chassery, pp.~187-209, Herm\`{e}s, 2007.\par
+ [BC07] G. Bertrand and M. Couprie: {\tt \char`\"{}Transformations topologiques discretes\char`\"{}}, in {\itshape G\'{e}om\'{e}trie discr\`{e}te et images num\'{e}riques\/}, D. Coeurjolly and A. Montanvert and J.M. Chassery, pp.~187-\/209, Herm\`{e}s, 2007.\par
 
 
-{\bf Types supported:} byte 3d
+{\bfseries Types supported:} byte 3d
 
-{\bf Category:} topobin
+{\bfseries Category:} topobin
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

@@ -1,19 +1,21 @@
 \section{amont.c File Reference}
 \label{amont_8c}\index{amont.c@{amont.c}}
-amont of a binary marker in a grayscale image 
+
+
+amont of a binary marker in a grayscale image  
+
 
 
 
 \subsection{Detailed Description}
-amont of a binary marker in a grayscale image 
+amont of a binary marker in a grayscale image {\bfseries Usage:} amont in.pgm mark.pgm connex [s] out.pgm
 
-{\bf Usage:} amont in.pgm mark.pgm connex [s] out.pgm
+{\bfseries Description:} Let F be the function defined by {\bfseries in.pgm}, let X be the set defined by {\bfseries mark.pgm}. The amont of X in F is defined as the set of points x such that there exists an ascending path from X to x for F with connectivity {\bfseries connex}. If the parameter {\bfseries s} is given, then only strictly ascending paths are considered.
 
-{\bf Description:} Let F be the function defined by {\bf in.pgm}, let X be the set defined by {\bf mark.pgm}. The amont of X in F is defined as the set of points x such that there exists an ascending path from X to x for F with connectivity {\bf connex}. If the parameter {\bf s} is given, then only strictly ascending paths are considered.
+{\bfseries Types supported:} byte 2d
 
-{\bf Types supported:} byte 2d
+{\bfseries Category:} connect
 
-{\bf Category:} connect
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

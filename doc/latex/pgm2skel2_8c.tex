@@ -1,25 +1,28 @@
 \section{pgm2skel2.c File Reference}
 \label{pgm2skel2_8c}\index{pgm2skel2.c@{pgm2skel2.c}}
-decomposition of a curvilinear skeleton into isolated points, end points, curves and junctions 
+
+
+decomposition of a curvilinear skeleton into isolated points, end points, curves and junctions  
+
 
 
 
 \subsection{Detailed Description}
-decomposition of a curvilinear skeleton into isolated points, end points, curves and junctions 
+decomposition of a curvilinear skeleton into isolated points, end points, curves and junctions {\bfseries Usage:} pgm2skel in.pgm junc.pgm connex out.skel
 
-{\bf Usage:} pgm2skel in.pgm junc.pgm connex out.skel
+{\bfseries Description:} The skeleton found in {\bfseries in.pgm} is decomposed into isolated points, end points, curves and junctions ; and its description is stored in {\bfseries out.skel} . The parameter {\bfseries connex} sets the adjacency relation used for the object (4, 8 (2d) or 6, 18, 26 (3d)).
 
-{\bf Description:} The skeleton found in {\bf in.pgm} is decomposed into isolated points, end points, curves and junctions ; and its description is stored in {\bf out.skel} . The parameter {\bf connex} sets the adjacency relation used for the object (4, 8 (2d) or 6, 18, 26 (3d)).
+The image given as parameter{\bfseries junc.pgm} contains curve points that will artificially considered as junction points.
 
-The image given as parameter{\bf junc.pgm} contains curve points that will artificially considered as junction points.
+\begin{DoxyWarning}{Warning}
+Points at the border of the image will be ignored.
 
-\begin{Desc}
-\item[Warning:]Points at the border of the image will be ignored.
+IMPORTANT LIMITATION: different junctions in the original image must not be in direct contact with each other (i.e., connected) otherwise they will be considered as a single junction. To prevent this to occur, one can increase image resolution.
+\end{DoxyWarning}
+{\bfseries Types supported:} byte 2d, byte 3d
 
-IMPORTANT LIMITATION: different junctions in the original image must not be in direct contact with each other (i.e., connected) otherwise they will be considered as a single junction. To prevent this to occur, one can increase image resolution.\end{Desc}
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Category:} topobin
 
-{\bf Category:} topobin
-
-\begin{Desc}
-\item[Author:]Michel Couprie 2009 \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 2009 
+\end{DoxyAuthor}

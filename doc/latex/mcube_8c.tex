@@ -1,27 +1,29 @@
 \section{mcube.c File Reference}
 \label{mcube_8c}\index{mcube.c@{mcube.c}}
-topologically correct \char`\"{}marching cubes\char`\"{}-like algorithm 
+
+
+topologically correct \char`\"{}marching cubes\char`\"{}-\/like algorithm  
+
 
 
 
 \subsection{Detailed Description}
-topologically correct \char`\"{}marching cubes\char`\"{}-like algorithm 
+topologically correct \char`\"{}marching cubes\char`\"{}-\/like algorithm {\bfseries Usage:} mcube in.pgm threshold nregul obj\_\-id format [connex] out
 
-{\bf Usage:} mcube in.pgm threshold nregul obj\_\-id format [connex] out
+{\bfseries Description:} Generates a 3d mesh from the binary or grayscale image {\bfseries in.pgm} .
 
-{\bf Description:} Generates a 3d mesh from the binary or grayscale image {\bf in.pgm} .
+The original image is first thresholded (parameter {\bfseries threshold}, values 0 and 1 both fit for a binary image). Then the method described in [Lac96] is applied to generate the 3d mesh. The resulting mesh is then smoothed by {\bfseries nregul} steps of laplacian smoothing. The parameter {\bfseries obj\_\-id} is used to tag the generated mesh.
 
-The original image is first thresholded (parameter {\bf threshold}, values 0 and 1 both fit for a binary image). Then the method described in [Lac96] is applied to generate the 3d mesh. The resulting mesh is then smoothed by {\bf nregul} steps of laplacian smoothing. The parameter {\bf obj\_\-id} is used to tag the generated mesh.
+The parameter {\bfseries format} indicate the format of the output file (choices are POV, POVB, COL, MCM, AC, GL, VTK, RAW). The keyword POVB corresponds to a bare Povray mesh: a header and a footer must be catenated in order to make a full Povray scene. The keyword RAW is the exchange format for the \char`\"{}mesh\char`\"{} software: see {\tt http://mesh.berlios.de/}
 
-The parameter {\bf format} indicate the format of the output file (choices are POV, POVB, COL, MCM, AC, GL, VTK, RAW). The keyword POVB corresponds to a bare Povray mesh: a header and a footer must be catenated in order to make a full Povray scene. The keyword RAW is the exchange format for the \char`\"{}mesh\char`\"{} software: see {\tt http://mesh.berlios.de/}
+The optional parameter {\bfseries connex} indicates the connexity used for the object. Possible values are 6 and 26 (default).
 
-The optional parameter {\bf connex} indicates the connexity used for the object. Possible values are 6 and 26 (default).
+[Lac96] J.-\/O. Lachaud, \char`\"{}Topologically defined iso-\/surfaces\char`\"{}, DGCI'96, LNCS 1176 (245-\/-\/256), Springer Verlag, 1996.
 
-[Lac96] J.-O. Lachaud, \char`\"{}Topologically defined iso-surfaces\char`\"{}, DGCI'96, LNCS 1176 (245--256), Springer Verlag, 1996.
+{\bfseries Types supported:} byte 3d
 
-{\bf Types supported:} byte 3d
+{\bfseries Category:} mesh3d
 
-{\bf Category:} mesh3d
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

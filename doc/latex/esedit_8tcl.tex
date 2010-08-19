@@ -1,29 +1,31 @@
 \section{esedit.tcl File Reference}
 \label{esedit_8tcl}\index{esedit.tcl@{esedit.tcl}}
-structuring element editor 
+
+
+structuring element editor  
+
 
 
 
 \subsection{Detailed Description}
-structuring element editor 
+structuring element editor {\bfseries Usage:} \doxyref{esedit.tcl}{p.}{esedit_8tcl} $<$width height filename $|$ filename$>$
 
-{\bf Usage:} \doxyref{esedit.tcl}{p.}{esedit_8tcl} $<$width height filename $|$ filename$>$
+{\bfseries Description:} If given alone, parameter {\bfseries filename} indicates a file which contains the structuring element to be edited.
 
-{\bf Description:} If given alone, parameter {\bf filename} indicates a file which contains the structuring element to be edited.
+Otherwise, {\bfseries width} and {\bfseries height} indicate the dimensions of the element to be created.
 
-Otherwise, {\bf width} and {\bf height} indicate the dimensions of the element to be created.
+Check {\bfseries origin} to specify the origin of the structuring element.
 
-Check {\bf origin} to specify the origin of the structuring element.
+Check {\bfseries revert} to set all blue points in the structuring element, and all red points in its complementary.
 
-Check {\bf revert} to set all blue points in the structuring element, and all red points in its complementary.
+Use the {\bfseries Abort} button to quit without saving.
 
-Use the {\bf Abort} button to quit without saving.
+Use the {\bfseries Save/Quit} button to save and quit.
 
-Use the {\bf Save/Quit} button to save and quit.
+{\bfseries Types supported:} byte 2d
 
-{\bf Types supported:} byte 2d
+{\bfseries Category:} inter
 
-{\bf Category:} inter
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

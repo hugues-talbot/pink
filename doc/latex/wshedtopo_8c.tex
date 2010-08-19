@@ -1,30 +1,32 @@
 \section{wshedtopo.c File Reference}
 \label{wshedtopo_8c}\index{wshedtopo.c@{wshedtopo.c}}
-topological grayscale watershed (Couprie-Bertrand algorithm) 
+
+
+topological grayscale watershed (Couprie-\/Bertrand algorithm)  
+
 
 
 
 \subsection{Detailed Description}
-topological grayscale watershed (Couprie-Bertrand algorithm) 
+topological grayscale watershed (Couprie-\/Bertrand algorithm) {\bfseries Usage:} wshedtopo in.pgm connex [i] out.pgm
 
-{\bf Usage:} wshedtopo in.pgm connex [i] out.pgm
+{\bfseries Description:} Topological grayscale watershed as defined in [CB97], preserves the minima -\/ connectivity {\bfseries connex} If the parameter {\bfseries i} is given, then the dual operator is applied.
 
-{\bf Description:} Topological grayscale watershed as defined in [CB97], preserves the minima - connectivity {\bf connex} If the parameter {\bf i} is given, then the dual operator is applied.
+[CB97] M. Couprie and G. Bertrand: ``Topological Grayscale Watershed Transformation'', SPIE Vision Geometry V Proceedings, 3168 (136-\/-\/146), 1997.
 
-[CB97] M. Couprie and G. Bertrand: ``Topological Grayscale Watershed Transformation'', SPIE Vision Geometry V Proceedings, 3168 (136--146), 1997.
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Category:} connect
 
-{\bf Category:} connect
-
-\begin{Desc}
-\item[Author:]Michel Couprie\end{Desc}
-{\bf Example:}
+\begin{DoxyAuthor}{Author}
+Michel Couprie
+\end{DoxyAuthor}
+{\bfseries Example:}
 
 wshedtopo ur1 4 ur1\_\-wshedtopo
 
 \begin{TabularC}{2}
 \hline
- &  \\\hline
-ur1 &ur1\_\-wshedtopo  \\\hline
+ &  \\\cline{1-2}
+ur1 &ur1\_\-wshedtopo  \\\cline{1-2}
 \end{TabularC}

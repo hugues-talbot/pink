@@ -1,19 +1,21 @@
 \section{inf.c File Reference}
 \label{inf_8c}\index{inf.c@{inf.c}}
-pixelwise inf predicate 
+
+
+pixelwise inf predicate  
+
 
 
 
 \subsection{Detailed Description}
-pixelwise inf predicate 
+pixelwise inf predicate {\bfseries Usage:} inf in1.pgm in2.pgm out.pgm
 
-{\bf Usage:} inf in1.pgm in2.pgm out.pgm
+{\bfseries Description:} For each pixel x, if in1[x] $<$= in2[x] then out[x] = 255 else out[x] = 0. Images must be of the same type and same dimensions.
 
-{\bf Description:} For each pixel x, if in1[x] $<$= in2[x] then out[x] = 255 else out[x] = 0. Images must be of the same type and same dimensions.
+{\bfseries Types supported:} byte 2D, byte 3D
 
-{\bf Types supported:} byte 2D, byte 3D
+{\bfseries Category:} arith
 
-{\bf Category:} arith
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

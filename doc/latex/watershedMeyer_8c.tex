@@ -1,19 +1,21 @@
 \section{watershedMeyer.c File Reference}
 \label{watershedMeyer_8c}\index{watershedMeyer.c@{watershedMeyer.c}}
-watershed transformation (Meyer's algorithm) 
+
+
+watershed transformation (Meyer's algorithm)  
+
 
 
 
 \subsection{Detailed Description}
-watershed transformation (Meyer's algorithm) 
+watershed transformation (Meyer's algorithm) {\bfseries Usage:} watershedMeyer in mark $<$bgmark$|$null$>$ $<$roi$|$null$>$ connex out
 
-{\bf Usage:} watershedMeyer in mark $<$bgmark$|$null$>$ $<$roi$|$null$>$ connex out
+{\bfseries Description:} Performs the watershed transformation on the image {\bfseries in}, taking the set of markers in {\bfseries mark}. If this parameter is present, {\bfseries bgmark} is used as a set of markers for the background. If this parameter is present, {\bfseries roi} indicates the region of interest on which the operation is performed. The parameter {\bfseries connex} gives the adjacency relation (4,8 in 2D; 6,18,26 in 3D) for the makers.
 
-{\bf Description:} Performs the watershed transformation on the image {\bf in}, taking the set of markers in {\bf mark}. If this parameter is present, {\bf bgmark} is used as a set of markers for the background. If this parameter is present, {\bf roi} indicates the region of interest on which the operation is performed. The parameter {\bf connex} gives the adjacency relation (4,8 in 2D; 6,18,26 in 3D) for the makers.
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Category:} connect
 
-{\bf Category:} connect
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

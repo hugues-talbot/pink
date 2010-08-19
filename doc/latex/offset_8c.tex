@@ -1,19 +1,21 @@
 \section{offset.c File Reference}
 \label{offset_8c}\index{offset.c@{offset.c}}
-image translation 
+
+
+image translation  
+
 
 
 
 \subsection{Detailed Description}
-image translation 
+image translation {\bfseries Usage:} in.pgm ox oy oz [mode] out.ppm
 
-{\bf Usage:} in.pgm ox oy oz [mode] out.ppm
+{\bfseries Description:} Translates the image by the offsets {\bfseries ox}, {\bfseries oy}, {\bfseries oz} in the directions x, y, z respectively. Offsets may be negative or positive integers. If {\bfseries mode} is 0, the points that get out of the image frame are lost. If {\bfseries mode} is 1, a torical space is simulated in all dimensions. Default mode is 0.
 
-{\bf Description:} Translates the image by the offsets {\bf ox}, {\bf oy}, {\bf oz} in the directions x, y, z respectively. Offsets may be negative or positive integers. If {\bf mode} is 0, the points that get out of the image frame are lost. If {\bf mode} is 1, a torical space is simulated in all dimensions. Default mode is 0.
+{\bfseries Types supported:} byte 2d, byte3d
 
-{\bf Types supported:} byte 2d, byte3d
+{\bfseries Category:} geo
 
-{\bf Category:} geo
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

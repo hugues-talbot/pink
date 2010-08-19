@@ -1,23 +1,25 @@
 \section{skel\_\-NK2.c File Reference}
 \label{skel__NK2_8c}\index{skel\_\-NK2.c@{skel\_\-NK2.c}}
-parallel 2D binary curvilinear skeleton 
+
+
+parallel 2D binary curvilinear skeleton  
+
 
 
 
 \subsection{Detailed Description}
-parallel 2D binary curvilinear skeleton 
+parallel 2D binary curvilinear skeleton {\bfseries Usage:} skel\_\-NK2 in.pgm nsteps [inhibit] out.pgm
 
-{\bf Usage:} skel\_\-NK2 in.pgm nsteps [inhibit] out.pgm
+{\bfseries Description:} Parallel 2D binary thinning or curvilinear skeleton. The parameter {\bfseries nsteps} gives, if positive, the number of parallel thinning steps to be processed. If the value given for {\bfseries nsteps} equals -\/1, the thinning is continued until stability.
 
-{\bf Description:} Parallel 2D binary thinning or curvilinear skeleton. The parameter {\bf nsteps} gives, if positive, the number of parallel thinning steps to be processed. If the value given for {\bf nsteps} equals -1, the thinning is continued until stability.
+If the parameter {\bfseries inhibit} is given and is a binary image name, then the points of this image will be left unchanged.
 
-If the parameter {\bf inhibit} is given and is a binary image name, then the points of this image will be left unchanged.
+{\bfseries Warning:} The object must not have any point on the frame of the image.
 
-{\bf Warning:} The object must not have any point on the frame of the image.
+{\bfseries Types supported:} byte 2d
 
-{\bf Types supported:} byte 2d
+{\bfseries Category:} topobin
 
-{\bf Category:} topobin
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

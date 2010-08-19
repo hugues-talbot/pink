@@ -1,19 +1,21 @@
 \section{equal.c File Reference}
 \label{equal_8c}\index{equal.c@{equal.c}}
-equality test 
+
+
+equality test  
+
 
 
 
 \subsection{Detailed Description}
-equality test 
+equality test {\bfseries Usage:} equal in1.pgm in2.pgm
 
-{\bf Usage:} equal in1.pgm in2.pgm
+{\bfseries Description:} This function returns 1 (no error) if for each pixel x, in1[x] == in2[x]; otherwise it returns 0. Images must be of the same dimensions.
 
-{\bf Description:} This function returns 1 (no error) if for each pixel x, in1[x] == in2[x]; otherwise it returns 0. Images must be of the same dimensions.
+{\bfseries Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d, float 2d, float 3d
 
-{\bf Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d, float 2d, float 3d
+{\bfseries Category:} arith
 
-{\bf Category:} arith
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

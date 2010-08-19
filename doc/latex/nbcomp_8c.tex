@@ -1,19 +1,21 @@
 \section{nbcomp.c File Reference}
 \label{nbcomp_8c}\index{nbcomp.c@{nbcomp.c}}
-returning number of connected components of a grayscale or a binary image 
+
+
+returning number of connected components of a grayscale or a binary image  
+
 
 
 
 \subsection{Detailed Description}
-returning number of connected components of a grayscale or a binary image 
+returning number of connected components of a grayscale or a binary image {\bfseries Usage:} nbcomp in.pgm connex $<$min$|$max$|$pla$>$
 
-{\bf Usage:} nbcomp in.pgm connex $<$min$|$max$|$pla$>$
+{\bfseries Description:} The argument {\bfseries connex} selects the connectivity (4, 8 in 2D; 6, 18, 26 in 3D). The argument {\bfseries $<$min$|$max$|$pla$>$} selects the kind of flat zone to be counted: \begin{DoxyItemize}
+\item {\bfseries fgd} selects foreground components for a binary image \item {\bfseries bgd} selects background components for a binary image \item {\bfseries min} selects regional minima \item {\bfseries max} selects regional maxima \item {\bfseries pla} selects all flat zones (plateaux). The output image {\bfseries out.pgm} has the type \char`\"{}int32\_\-t\char`\"{}.\end{DoxyItemize}
+{\bfseries Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d
 
-{\bf Description:} The argument {\bf connex} selects the connectivity (4, 8 in 2D; 6, 18, 26 in 3D). The argument {\bf $<$min$|$max$|$pla$>$} selects the kind of flat zone to be counted: \begin{itemize}
-\item {\bf fgd} selects foreground components for a binary image \item {\bf bgd} selects background components for a binary image \item {\bf min} selects regional minima \item {\bf max} selects regional maxima \item {\bf pla} selects all flat zones (plateaux). The output image {\bf out.pgm} has the type \char`\"{}int32\_\-t\char`\"{}.\end{itemize}
-{\bf Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d
+{\bfseries Category:} connect
 
-{\bf Category:} connect
-
-\begin{Desc}
-\item[Author:]Cedric Allene \end{Desc}
+\begin{DoxyAuthor}{Author}
+Cedric Allene 
+\end{DoxyAuthor}

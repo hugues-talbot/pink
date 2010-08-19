@@ -1,19 +1,21 @@
 \section{nbtopo.c File Reference}
 \label{nbtopo_8c}\index{nbtopo.c@{nbtopo.c}}
-connectivity numbers 
+
+
+connectivity numbers  
+
 
 
 
 \subsection{Detailed Description}
-connectivity numbers 
+connectivity numbers {\bfseries Usage:} nbtopo filein.pgm connex $<$PP$|$P$|$M$|$MM$>$ fileout.pgm
 
-{\bf Usage:} nbtopo filein.pgm connex $<$PP$|$P$|$M$|$MM$>$ fileout.pgm
+{\bfseries Description:} For each point p of the input grayscale image, compute the connectivity number T++, T+, T-\/ or T-\/-\/ according to the given option (resp. PP, P, M, MM). Refs: [BEC97, CBB01].
 
-{\bf Description:} For each point p of the input grayscale image, compute the connectivity number T++, T+, T- or T-- according to the given option (resp. PP, P, M, MM). Refs: [BEC97, CBB01].
+{\bfseries Types supported:} byte 2D, byte 3D
 
-{\bf Types supported:} byte 2D, byte 3D
+{\bfseries Category:} topogray
 
-{\bf Category:} topogray
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

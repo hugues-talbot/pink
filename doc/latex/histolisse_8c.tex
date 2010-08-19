@@ -1,19 +1,21 @@
 \section{histolisse.c File Reference}
 \label{histolisse_8c}\index{histolisse.c@{histolisse.c}}
-smoothed histogram of the gray values 
+
+
+smoothed histogram of the gray values  
+
 
 
 
 \subsection{Detailed Description}
-smoothed histogram of the gray values 
+smoothed histogram of the gray values {\bfseries Usage:} histolisse in.pgm L [mask.pgm] out.pgm
 
-{\bf Usage:} histolisse in.pgm L [mask.pgm] out.pgm
+{\bfseries Description:} Generates a binary image which contains the graphical representation of the smoothed histogram of {\bfseries in.pgm} (masked by the binary image {\bfseries mask.pgm}, if given). {\bfseries L} : smoothing coefficient, 0$<$L$<$255.
 
-{\bf Description:} Generates a binary image which contains the graphical representation of the smoothed histogram of {\bf in.pgm} (masked by the binary image {\bf mask.pgm}, if given). {\bf L} : smoothing coefficient, 0$<$L$<$255.
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Category:} histo
 
-{\bf Category:} histo
-
-\begin{Desc}
-\item[Author:]Cedric Allene 2003 \end{Desc}
+\begin{DoxyAuthor}{Author}
+Cedric Allene 2003 
+\end{DoxyAuthor}

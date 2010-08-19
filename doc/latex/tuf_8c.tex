@@ -1,19 +1,21 @@
 \section{tuf.c File Reference}
 \label{tuf_8c}\index{tuf.c@{tuf.c}}
-topological upper filter 
+
+
+topological upper filter  
+
 
 
 
 \subsection{Detailed Description}
-topological upper filter 
+topological upper filter {\bfseries Usage:} tuf in.pgm connexmin r out.pgm
 
-{\bf Usage:} tuf in.pgm connexmin r out.pgm
+{\bfseries Description:} Topological upper filter. Performs the homotopic thinning controlled by a radius {\bfseries r}, followed by a peak deletion, and a homotopic reconstruction under the original image.
 
-{\bf Description:} Topological upper filter. Performs the homotopic thinning controlled by a radius {\bf r}, followed by a peak deletion, and a homotopic reconstruction under the original image.
+{\bfseries Types supported:} byte 2d
 
-{\bf Types supported:} byte 2d
+{\bfseries Category:} topogray
 
-{\bf Category:} topogray
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

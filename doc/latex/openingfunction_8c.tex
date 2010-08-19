@@ -1,21 +1,24 @@
 \section{openingfunction.c File Reference}
 \label{openingfunction_8c}\index{openingfunction.c@{openingfunction.c}}
-opening function 
+
+
+opening function  
+
 
 
 
 \subsection{Detailed Description}
-opening function 
+opening function {\bfseries Usage:} openingfunction in.pgm [dist] out.pgm
 
-{\bf Usage:} openingfunction in.pgm [dist] out.pgm
+{\bfseries Description:} This operator associates, to each point x of the input object X, the radius of the biggest ball included in X that includes x. The distance used depends on the optional parameter {\bfseries dist} (default is 0) : \begin{DoxyItemize}
+\item 0: approximate euclidean distance (truncated) \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 4: 4-\/distance in 2d \item 8: 8-\/distance in 2d \item 6: 6-\/distance in 3d \item 18: 18-\/distance in 3d \item 26: 26-\/distance in 3d\end{DoxyItemize}
+\begin{DoxyWarning}{Warning}
+The input image {\bfseries in.pgm} must be a binary image. No test is done.
+\end{DoxyWarning}
+{\bfseries Types supported:} byte 2D, byte 3D
 
-{\bf Description:} This operator associates, to each point x of the input object X, the radius of the biggest ball included in X that includes x. The distance used depends on the optional parameter {\bf dist} (default is 0) : \begin{itemize}
-\item 0: approximate euclidean distance (truncated) \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 4: 4-distance in 2d \item 8: 8-distance in 2d \item 6: 6-distance in 3d \item 18: 18-distance in 3d \item 26: 26-distance in 3d\end{itemize}
-\begin{Desc}
-\item[Warning:]The input image {\bf in.pgm} must be a binary image. No test is done.\end{Desc}
-{\bf Types supported:} byte 2D, byte 3D
+{\bfseries Category:} morpho
 
-{\bf Category:} morpho
-
-\begin{Desc}
-\item[Author:]Michel Couprie 2009 \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 2009 
+\end{DoxyAuthor}

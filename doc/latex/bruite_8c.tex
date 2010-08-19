@@ -1,21 +1,23 @@
 \section{bruite.c File Reference}
 \label{bruite_8c}\index{bruite.c@{bruite.c}}
-adds noise to an image 
+
+
+adds noise to an image  
+
 
 
 
 \subsection{Detailed Description}
-adds noise to an image 
+adds noise to an image {\bfseries Usage:} bruite in.pgm n alpha p out.pgm
 
-{\bf Usage:} bruite in.pgm n alpha p out.pgm
+{\bfseries Description:} Adds a uniform or gaussian noise, of mean 0 and standard deviation {\bfseries alpha}, to a proportion {\bfseries p} of the pixels of the image in.pgm .
 
-{\bf Description:} Adds a uniform or gaussian noise, of mean 0 and standard deviation {\bf alpha}, to a proportion {\bf p} of the pixels of the image in.pgm .
+OPTIONS {\bfseries n} = 0 uniform noise {\bfseries n} = 1 gaussian noise
 
-OPTIONS {\bf n} = 0 uniform noise {\bf n} = 1 gaussian noise
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Category:} signal
 
-{\bf Category:} signal
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

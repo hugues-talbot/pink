@@ -1,21 +1,23 @@
 \section{ellipsefit.c File Reference}
 \label{ellipsefit_8c}\index{ellipsefit.c@{ellipsefit.c}}
-ellipse identification and drawing from spare points 
+
+
+ellipse identification and drawing from spare points  
+
 
 
 
 \subsection{Detailed Description}
-ellipse identification and drawing from spare points 
+ellipse identification and drawing from spare points {\bfseries Usage:} ellipsefit in.pgm pts.list filled out.pgm
 
-{\bf Usage:} ellipsefit in.pgm pts.list filled out.pgm
+{\bfseries Description:} Identifies the ellipse E which minimizes the sum of the (approximate) distances between the points in {\bfseries pts.list} and E. If {\bfseries filled} (int32\_\-t) is set, then a filled ellipse is drawn.
 
-{\bf Description:} Identifies the ellipse E which minimizes the sum of the (approximate) distances between the points in {\bf pts.list} and E. If {\bf filled} (int32\_\-t) is set, then a filled ellipse is drawn.
+Ref: Andrew W. Fitzgibbon, Maurizio Pilu, and Robert B. Fisher Direct least-\/squares fitting of ellipses, IEEE Transactions on Pattern Analysis and Machine Intelligence, 21(5), 476-\/-\/480, May 1999
 
-Ref: Andrew W. Fitzgibbon, Maurizio Pilu, and Robert B. Fisher Direct least-squares fitting of ellipses, IEEE Transactions on Pattern Analysis and Machine Intelligence, 21(5), 476--480, May 1999
+{\bfseries Types supported:} byte 2d
 
-{\bf Types supported:} byte 2d
+{\bfseries Category:} geo
 
-{\bf Category:} geo
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

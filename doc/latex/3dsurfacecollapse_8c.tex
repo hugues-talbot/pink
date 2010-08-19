@@ -1,25 +1,27 @@
 \section{3dsurfacecollapse.c File Reference}
 \label{3dsurfacecollapse_8c}\index{3dsurfacecollapse.c@{3dsurfacecollapse.c}}
-parallel directional constrained collapse with surface detection and preservation 
+
+
+parallel directional constrained collapse with surface detection and preservation  
+
 
 
 
 \subsection{Detailed Description}
-parallel directional constrained collapse with surface detection and preservation 
+parallel directional constrained collapse with surface detection and preservation {\bfseries Usage:} 3dsurfacecollapse in.pgm mode nsteps [inhibit] out.pgm
 
-{\bf Usage:} 3dsurfacecollapse in.pgm mode nsteps [inhibit] out.pgm
+{\bfseries Description:} Parallel directional constrained collapse with surface detection and preservation.
 
-{\bf Description:} Parallel directional constrained collapse with surface detection and preservation.
+The parameter {\bfseries mode} selects the strategy used to detect surface elements. The possible choices are: \begin{DoxyItemize}
+\item 1: any 2-\/dimensional facet\end{DoxyItemize}
+The parameter {\bfseries nsteps} gives the number of \char`\"{}layers\char`\"{} to be removes, if the value is -\/1 then the interations continue until stability.
 
-The parameter {\bf mode} selects the strategy used to detect surface elements. The possible choices are: \begin{itemize}
-\item 1: any 2-dimensional facet\end{itemize}
-The parameter {\bf nsteps} gives the number of \char`\"{}layers\char`\"{} to be removes, if the value is -1 then the interations continue until stability.
+If the parameter {\bfseries inhibit} is given and is a binary image name, then the points of this image will be left unchanged.
 
-If the parameter {\bf inhibit} is given and is a binary image name, then the points of this image will be left unchanged.
+{\bfseries Types supported:} byte 3d
 
-{\bf Types supported:} byte 3d
+{\bfseries Category:} orders
 
-{\bf Category:} orders
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

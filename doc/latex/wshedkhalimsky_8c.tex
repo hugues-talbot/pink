@@ -1,19 +1,21 @@
 \section{wshedkhalimsky.c File Reference}
 \label{wshedkhalimsky_8c}\index{wshedkhalimsky.c@{wshedkhalimsky.c}}
-watershed transformation in Khalimsky space (inter pixel watershed) 
+
+
+watershed transformation in Khalimsky space (inter pixel watershed)  
+
 
 
 
 \subsection{Detailed Description}
-watershed transformation in Khalimsky space (inter pixel watershed) 
+watershed transformation in Khalimsky space (inter pixel watershed) {\bfseries Usage:} watershed in mark $<$bgmark$|$null$>$ $<$roi$|$null$>$ out
 
-{\bf Usage:} watershed in mark $<$bgmark$|$null$>$ $<$roi$|$null$>$ out
+{\bfseries Description:} Performs the watershed transformation on the image {\bfseries in.pgm}, taking the set of markers in {\bfseries mark.pgm}. If this parameter is present, {\bfseries bgmark.pgm} is used as a set of markers for the background. If this parameter is present, {\bfseries roi} indicates the region of interest on which the operation is performed. All images must be previously transformed in the khalimsky space with a max strategy. The output image is in khalimsky space too.
 
-{\bf Description:} Performs the watershed transformation on the image {\bf in.pgm}, taking the set of markers in {\bf mark.pgm}. If this parameter is present, {\bf bgmark.pgm} is used as a set of markers for the background. If this parameter is present, {\bf roi} indicates the region of interest on which the operation is performed. All images must be previously transformed in the khalimsky space with a max strategy. The output image is in khalimsky space too.
+{\bfseries Types supported:} byte 2d
 
-{\bf Types supported:} byte 2d
+{\bfseries Category:} connect orders
 
-{\bf Category:} connect orders
-
-\begin{Desc}
-\item[Author:]Michel Couprie \& Christophe Doublier \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie \& Christophe Doublier 
+\end{DoxyAuthor}

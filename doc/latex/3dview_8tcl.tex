@@ -1,24 +1,26 @@
 \section{3dview.tcl File Reference}
 \label{3dview_8tcl}\index{3dview.tcl@{3dview.tcl}}
-interactive visualization / segmentation of a 3D image 
+
+
+interactive visualization / segmentation of a 3D image  
+
 
 
 
 \subsection{Detailed Description}
-interactive visualization / segmentation of a 3D image 
-
-{\bf Usage:} \doxyref{3dview.tcl}{p.}{3dview_8tcl} in.pgm out.pgm [mark.pgm]\par
+interactive visualization / segmentation of a 3D image {\bfseries Usage:} \doxyref{3dview.tcl}{p.}{3dview_8tcl} in.pgm out.pgm [mark.pgm]\par
  3dview in.pgm out.pgm [mark.pgm]
 
-{\bf Description:}
+{\bfseries Description:}
 
-Displays three cross sections of a 3D grayscale image, and allows for simple segmentation by thresholding. If given, the parameter {\bf mark.pgm} must be a binary image (to be superimposed with the input image {\bf in.pgm}). Segmentation result is saved in {\bf out.pgm}.
+Displays three cross sections of a 3D grayscale image, and allows for simple segmentation by thresholding. If given, the parameter {\bfseries mark.pgm} must be a binary image (to be superimposed with the input image {\bfseries in.pgm}). Segmentation result is saved in {\bfseries out.pgm}.
 
-Menus: \begin{itemize}
-\item File: choose {\bf Quit} to save and exit. \item Analyze: to compute the histogram of the full image (item {\bf Histogram}) or of the Region Of Interest specified by the current segmentation (item {\bf ROI} Histogram). \item Threshold: simple of double thresholding. \item Visualize: choose {\bf Revert} to inverse the gray levels, check {\bf Surimp} to superimpose the binary image to the grayscale data, check {\bf Light} for superimposition to be made with a light color, choose {\bf Render} or {\bf Rendersmooth} to launch a 3D rendering of the binary image (a smoothing of the surface is done with the last choice).\end{itemize}
-{\bf Types supported:} byte 3d
+Menus: \begin{DoxyItemize}
+\item File: choose {\bfseries Quit} to save and exit. \item Analyze: to compute the histogram of the full image (item {\bfseries Histogram}) or of the Region Of Interest specified by the current segmentation (item {\bfseries ROI} Histogram). \item Threshold: simple of double thresholding. \item Visualize: choose {\bfseries Revert} to inverse the gray levels, check {\bfseries Surimp} to superimpose the binary image to the grayscale data, check {\bfseries Light} for superimposition to be made with a light color, choose {\bfseries Render} or {\bfseries Rendersmooth} to launch a 3D rendering of the binary image (a smoothing of the surface is done with the last choice).\end{DoxyItemize}
+{\bfseries Types supported:} byte 3d
 
-{\bf Category:} inter
+{\bfseries Category:} inter
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

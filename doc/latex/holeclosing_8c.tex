@@ -1,36 +1,35 @@
 \section{holeclosing.c File Reference}
 \label{holeclosing_8c}\index{holeclosing.c@{holeclosing.c}}
-3d hole closing 
+
+
+3d hole closing  
+
 
 
 
 \subsection{Detailed Description}
-3d hole closing 
+3d hole closing {\bfseries Usage:} holeclosing in connex holesize out
 
-{\bf Usage:} holeclosing in connex holesize out
+{\bfseries Description:} Hole closing in 3d binary images. The parameter {\bfseries connex} gives the connectivity used for the object; possible choices are 6 and 26. Holes which have a \char`\"{}size\char`\"{} greater than {\bfseries holesize} are let open (where -\/1 is used as a symbol for infinity).
 
-{\bf Description:} Hole closing in 3d binary images. The parameter {\bf connex} gives the connectivity used for the object; possible choices are 6 and 26. Holes which have a \char`\"{}size\char`\"{} greater than {\bf holesize} are let open (where -1 is used as a symbol for infinity).
+Let X be the set of points of the binary image {\bfseries in}, let Y be a full enclosing box. The algorithm is the following:
 
-Let X be the set of points of the binary image {\bf in}, let Y be a full enclosing box. The algorithm is the following:
-
-
-
-\footnotesize\begin{verbatim}
+\begin{DoxyVerb}
 Repeat until stability:
     Select a point p of Y \ X such that Tb(p,Y) = 1
         or such that Tb(p,Y) = 2 and d(p,X) > holesize
         which is at the greatest distance from X
     Y := Y \ {p}
 Result: Y
-\end{verbatim}
-\normalsize
+\end{DoxyVerb}
 
 
-Reference: Z. Aktouf, G. Bertrand, L.Perroton: \char`\"{}A three-dimensional holes closing algorithm\char`\"{}, {\em Pattern Recognition Letters\/}, No.23, pp.523-531, 2002.
+Reference: Z. Aktouf, G. Bertrand, L.Perroton: \char`\"{}A three-\/dimensional holes closing algorithm\char`\"{}, {\itshape Pattern Recognition Letters\/}, No.23, pp.523-\/531, 2002.
 
-{\bf Types supported:} byte 3d
+{\bfseries Types supported:} byte 3d
 
-{\bf Category:} topobin
+{\bfseries Category:} topobin
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

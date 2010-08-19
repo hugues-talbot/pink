@@ -1,19 +1,21 @@
 \section{lintophat.c File Reference}
 \label{lintophat_8c}\index{lintophat.c@{lintophat.c}}
-max of morphological black top hats by linear structuring elements 
+
+
+max of morphological black top hats by linear structuring elements  
+
 
 
 
 \subsection{Detailed Description}
-max of morphological black top hats by linear structuring elements 
+max of morphological black top hats by linear structuring elements {\bfseries Usage:} lintophat in.pgm length out.pgm
 
-{\bf Usage:} lintophat in.pgm length out.pgm
+{\bfseries Description:} Max of morphological black top hats by linear structuring elements, in all possible discrete directions. Let F be the original image and E be a structuring element, the black top hat of F by E is defined by F -\/ closing(F, E). The closing deletes dark structures that do not match the structuring element, thus the black top hat detects those dark structures. For a linear structuring element, the detected structures are those which are orthogonal to the se. The length if the linear structuring elements is given by {\bfseries length}.
 
-{\bf Description:} Max of morphological black top hats by linear structuring elements, in all possible discrete directions. Let F be the original image and E be a structuring element, the black top hat of F by E is defined by F - closing(F, E). The closing deletes dark structures that do not match the structuring element, thus the black top hat detects those dark structures. For a linear structuring element, the detected structures are those which are orthogonal to the se. The length if the linear structuring elements is given by {\bf length}.
+{\bfseries Types supported:} byte 2d
 
-{\bf Types supported:} byte 2d
+{\bfseries Category:} morpho
 
-{\bf Category:} morpho
-
-\begin{Desc}
-\item[Author:]Hildegard Koehler 2003 \end{Desc}
+\begin{DoxyAuthor}{Author}
+Hildegard Koehler 2003 
+\end{DoxyAuthor}

@@ -1,22 +1,25 @@
 \section{ptextensible.c File Reference}
 \label{ptextensible_8c}\index{ptextensible.c@{ptextensible.c}}
-detects extensible points in a grayscale image 
+
+
+detects extensible points in a grayscale image  
+
 
 
 
 \subsection{Detailed Description}
-detects extensible points in a grayscale image 
+detects extensible points in a grayscale image {\bfseries Usage:} ptextensible im.pgm $<$imcond.pgm$|$null$>$ connex fileout.pgm
 
-{\bf Usage:} ptextensible im.pgm $<$imcond.pgm$|$null$>$ connex fileout.pgm
-
-{\bf Description:} Extensible point detection. The input image {\bf im.pgm} must be a \char`\"{}thin\char`\"{} grayscale image, as the output of the operator {\bf hthin}. The parameter {\bf connex} indicates the cconnectivity used for the minimal regions. The optional parameter {\bf imcond.pgm} is a binary image which indicates the points in the neighborhood of which the extensible points will be searched.
+{\bfseries Description:} Extensible point detection. The input image {\bfseries im.pgm} must be a \char`\"{}thin\char`\"{} grayscale image, as the output of the operator {\bfseries hthin}. The parameter {\bfseries connex} indicates the cconnectivity used for the minimal regions. The optional parameter {\bfseries imcond.pgm} is a binary image which indicates the points in the neighborhood of which the extensible points will be searched.
 
 Reference:\par
- M. Couprie, F.N. Bezerra, Gilles Bertrand: {\tt \char`\"{}Topological operators for grayscale image processing\char`\"{}}, {\em  Journal of Electronic Imaging\/}, Vol.~10, No.~4, pp.~1003-1015, 2001.
+ M. Couprie, F.N. Bezerra, Gilles Bertrand: {\tt \char`\"{}Topological operators for
+grayscale image processing\char`\"{}}, {\itshape  Journal of Electronic Imaging\/}, Vol.~10, No.~4, pp.~1003-\/1015, 2001.
 
-{\bf Types supported:} byte 2D
+{\bfseries Types supported:} byte 2D
 
-{\bf Category:} topogray
+{\bfseries Category:} topogray
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

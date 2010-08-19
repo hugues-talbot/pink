@@ -1,28 +1,30 @@
 \section{dilation.c File Reference}
 \label{dilation_8c}\index{dilation.c@{dilation.c}}
-morphological dilation by a plane structuring element 
+
+
+morphological dilation by a plane structuring element  
+
 
 
 
 \subsection{Detailed Description}
-morphological dilation by a plane structuring element 
+morphological dilation by a plane structuring element {\bfseries Usage:} dilation in.pgm se.pgm out.pgm
 
-{\bf Usage:} dilation in.pgm se.pgm out.pgm
+{\bfseries Description:} The (plane) structuring element is given by the non-\/null values in {\bfseries se.pgm}, its origin (wrt the point (0,0) of {\bfseries se.pgm} ) is given by a comment line in the file {\bfseries se.pgm}.
 
-{\bf Description:} The (plane) structuring element is given by the non-null values in {\bf se.pgm}, its origin (wrt the point (0,0) of {\bf se.pgm} ) is given by a comment line in the file {\bf se.pgm}.
+{\bfseries Types supported:} byte 2d, byte 3d, int32\_\-t 2d, long3d
 
-{\bf Types supported:} byte 2d, byte 3d, int32\_\-t 2d, long3d
+{\bfseries Category:} morpho
 
-{\bf Category:} morpho
-
-\begin{Desc}
-\item[Author:]Michel Couprie 2002\end{Desc}
-{\bf Example:}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 2002
+\end{DoxyAuthor}
+{\bfseries Example:}
 
 dilation cells $\sim$/Pink/masks/carre5.pgm cells\_\-dilat
 
 \begin{TabularC}{2}
 \hline
- &  \\\hline
-cells &cells\_\-dilat  \\\hline
+ &  \\\cline{1-2}
+cells &cells\_\-dilat  \\\cline{1-2}
 \end{TabularC}

@@ -1,19 +1,21 @@
 \section{identifyplane.c File Reference}
 \label{identifyplane_8c}\index{identifyplane.c@{identifyplane.c}}
-identification of a best matching plane from a set of 3D points 
+
+
+identification of a best matching plane from a set of 3D points  
+
 
 
 
 \subsection{Detailed Description}
-identification of a best matching plane from a set of 3D points 
+identification of a best matching plane from a set of 3D points {\bfseries Usage:} identifyplane in.list out.list
 
-{\bf Usage:} identifyplane in.list out.list
+{\bfseries Description:} Identifies the parameters (a, b, c, d) of the equation of the 3D plane: ax+by+cz+d=0 that minimizes the least square error between this plane and the given points. Method: basic linear regression.
 
-{\bf Description:} Identifies the parameters (a, b, c, d) of the equation of the 3D plane: ax+by+cz+d=0 that minimizes the least square error between this plane and the given points. Method: basic linear regression.
+{\bfseries Types supported:} list 3D
 
-{\bf Types supported:} list 3D
+{\bfseries Category:} geo
 
-{\bf Category:} geo
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

@@ -1,19 +1,21 @@
 \section{addconst.c File Reference}
 \label{addconst_8c}\index{addconst.c@{addconst.c}}
-adds a constant value to an image 
+
+
+adds a constant value to an image  
+
 
 
 
 \subsection{Detailed Description}
-adds a constant value to an image 
+adds a constant value to an image {\bfseries Usage:} addconst in.pgm const out.pgm
 
-{\bf Usage:} addconst in.pgm const out.pgm
+{\bfseries Description:} For each pixel x, out[x] = in[x] + const. If out[x] exceeds 255, then out[x] is set to 255.
 
-{\bf Description:} For each pixel x, out[x] = in[x] + const. If out[x] exceeds 255, then out[x] is set to 255.
+{\bfseries Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d
 
-{\bf Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d
+{\bfseries Category:} arith
 
-{\bf Category:} arith
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

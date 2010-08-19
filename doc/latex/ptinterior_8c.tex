@@ -1,19 +1,21 @@
 \section{ptinterior.c File Reference}
 \label{ptinterior_8c}\index{ptinterior.c@{ptinterior.c}}
-detects interior points in a binary image 
+
+
+detects interior points in a binary image  
+
 
 
 
 \subsection{Detailed Description}
-detects interior points in a binary image 
+detects interior points in a binary image {\bfseries Usage:} ptinterior in.pgm connex out.pgm
 
-{\bf Usage:} ptinterior in.pgm connex out.pgm
+{\bfseries Description:} An interior point is a white point, all the n-\/neighbours of which are white (n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter {\bfseries connex})
 
-{\bf Description:} An interior point is a white point, all the n-neighbours of which are white (n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter {\bf connex})
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Category:} topobin
 
-{\bf Category:} topobin
-
-\begin{Desc}
-\item[Author:]Michel Couprie 2005 \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 2005 
+\end{DoxyAuthor}

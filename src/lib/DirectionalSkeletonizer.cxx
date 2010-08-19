@@ -35,8 +35,9 @@ DirectionalSkeletonizer::DirectionalSkeletonizer(unsigned int maxWidth, unsigned
 	lut = loadLUTDir(filename, lutSize, 1);
 	
 	
-	//neighborhood relative positions computation 
-	oppositeNb= { 1,  0,  3,  2,  5,  4, 11, 10, 13, 12,  7,  6,  9,  8, 17, 16, 15, 14, 25, 24, 23, 22, 21, 20, 19, 18};
+	//neighborhood relative positions computation
+        unsigned int tmpopp[26] =  { 1,  0,  3,  2,  5,  4, 11, 10, 13, 12,  7,  6,  9,  8, 17, 16, 15, 14, 25, 24, 23, 22, 21, 20, 19, 18 };
+	memcpy(oppositeNb, tmpopp, 26*sizeof(unsigned int));
 	
 	//bit index computation
 	unsigned int index = 1;

@@ -1,19 +1,21 @@
 \section{deletecomp.c File Reference}
 \label{deletecomp_8c}\index{deletecomp.c@{deletecomp.c}}
-deletes a connected component 
+
+
+deletes a connected component  
+
 
 
 
 \subsection{Detailed Description}
-deletes a connected component 
+deletes a connected component {\bfseries Usage:} deletecomp in.pgm x y z out.pgm
 
-{\bf Usage:} deletecomp in.pgm x y z out.pgm
+{\bfseries Description:} The connected component of the binary image {\bfseries in.pgm} which contains the point ({\bfseries x},{\bfseries y},{\bfseries z}) is deleted.
 
-{\bf Description:} The connected component of the binary image {\bf in.pgm} which contains the point ({\bf x},{\bf y},{\bf z}) is deleted.
+{\bfseries Types supported:} byte 2d, byte 3d
 
-{\bf Types supported:} byte 2d, byte 3d
+{\bfseries Category:} connect, topobin ,
 
-{\bf Category:} connect, topobin ,
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

@@ -1,23 +1,25 @@
 \section{pgm2ppm.c File Reference}
 \label{pgm2ppm_8c}\index{pgm2ppm.c@{pgm2ppm.c}}
-constructs a ppm color image from 3 pgm grayscale image or from a pgm image and a lookup table 
+
+
+constructs a ppm color image from 3 pgm grayscale image or from a pgm image and a lookup table  
+
 
 
 
 \subsection{Detailed Description}
-constructs a ppm color image from 3 pgm grayscale image or from a pgm image and a lookup table 
+constructs a ppm color image from 3 pgm grayscale image or from a pgm image and a lookup table {\bfseries Usage:} pgm2ppm $<$r.pgm g.pgm b.pgm$|$in.pgm in.lut$>$ out.ppm
 
-{\bf Usage:} pgm2ppm $<$r.pgm g.pgm b.pgm$|$in.pgm in.lut$>$ out.ppm
+{\bfseries Description:} 1st mode (3 arguments): combines three grayscale images: {\bfseries r.pgm}, {\bfseries g.pgm} and {\bfseries b.pgm} as the red, green and blue color planes of the color image {\bfseries out.ppm}
 
-{\bf Description:} 1st mode (3 arguments): combines three grayscale images: {\bf r.pgm}, {\bf g.pgm} and {\bf b.pgm} as the red, green and blue color planes of the color image {\bf out.ppm}
-
-2nd mode (2 arguments): generates a color ppm image from the image {\bf in.pgm} and the lookup table {\bf in.lut}
+2nd mode (2 arguments): generates a color ppm image from the image {\bfseries in.pgm} and the lookup table {\bfseries in.lut}
 
 A lookup table is represented by a special ppm image with 1 row.
 
-{\bf Types supported:} byte 2d
+{\bfseries Types supported:} byte 2d
 
-{\bf Category:} convert
+{\bfseries Category:} convert
 
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

@@ -1,25 +1,28 @@
 \section{2dcollapse.c File Reference}
 \label{2dcollapse_8c}\index{2dcollapse.c@{2dcollapse.c}}
-ultimate constrained collapse guided by a priority image 
+
+
+ultimate constrained collapse guided by a priority image  
+
 
 
 
 \subsection{Detailed Description}
-ultimate constrained collapse guided by a priority image 
+ultimate constrained collapse guided by a priority image {\bfseries Usage:} 2dcollapse in.pgm prio [inhibit] out.pgm
 
-{\bf Usage:} 2dcollapse in.pgm prio [inhibit] out.pgm
+{\bfseries Description:} Ultimate constrained collapse guided by a priority image. The lowest values of the priority image correspond to the highest priority.
 
-{\bf Description:} Ultimate constrained collapse guided by a priority image. The lowest values of the priority image correspond to the highest priority.
+The parameter {\bfseries prio} is either an image (byte or int32\_\-t), or a numerical code indicating that a distance map will be used as a priority image; the possible choices are: \begin{DoxyItemize}
+\item 0: approximate euclidean distance \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 4: 4-\/distance in 2d \item 8: 8-\/distance in 2d\end{DoxyItemize}
+If the parameter {\bfseries inhibit} is given and is a binary image name, then the elements of this image will be left unchanged. If the parameter {\bfseries inhibit} is given and is a number I, then the elements with priority greater than or equal to I will be left unchanged.
 
-The parameter {\bf prio} is either an image (byte or int32\_\-t), or a numerical code indicating that a distance map will be used as a priority image; the possible choices are: \begin{itemize}
-\item 0: approximate euclidean distance \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 4: 4-distance in 2d \item 8: 8-distance in 2d\end{itemize}
-If the parameter {\bf inhibit} is given and is a binary image name, then the elements of this image will be left unchanged. If the parameter {\bf inhibit} is given and is a number I, then the elements with priority greater than or equal to I will be left unchanged.
+\begin{DoxyWarning}{Warning}
+The result makes sense only if the input image is a complex.
+\end{DoxyWarning}
+{\bfseries Types supported:} byte 2d
 
-\begin{Desc}
-\item[Warning:]The result makes sense only if the input image is a complex.\end{Desc}
-{\bf Types supported:} byte 2d
+{\bfseries Category:} orders
 
-{\bf Category:} orders
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}

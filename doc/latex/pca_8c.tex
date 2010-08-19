@@ -1,21 +1,23 @@
 \section{pca.c File Reference}
 \label{pca_8c}\index{pca.c@{pca.c}}
-principal component analysis 
+
+
+principal component analysis  
+
 
 
 
 \subsection{Detailed Description}
-principal component analysis 
+principal component analysis {\bfseries Usage:} pca in.list out.list
 
-{\bf Usage:} pca in.list out.list
+{\bfseries Description:} Computes the main directions (2D or 3D vectors) of a set of points in 2D or 3D space, by the method of Pricipal Component Analysis (PCA).
 
-{\bf Description:} Computes the main directions (2D or 3D vectors) of a set of points in 2D or 3D space, by the method of Pricipal Component Analysis (PCA).
+The output is a file in the list \char`\"{}b\char`\"{} or \char`\"{}B\char`\"{} format that contains the following information: \begin{DoxyItemize}
+\item center of mass (point) \item first principal direction (vector) \item second principal direction (vector) \item for 3D images, third principal direction (vector)\end{DoxyItemize}
+{\bfseries Types supported:} list 2D, list 3D
 
-The output is a file in the list \char`\"{}b\char`\"{} or \char`\"{}B\char`\"{} format that contains the following information: \begin{itemize}
-\item center of mass (point) \item first principal direction (vector) \item second principal direction (vector) \item for 3D images, third principal direction (vector)\end{itemize}
-{\bf Types supported:} list 2D, list 3D
+{\bfseries Category:} stats
 
-{\bf Category:} stats
-
-\begin{Desc}
-\item[Author:]Michel Couprie \end{Desc}
+\begin{DoxyAuthor}{Author}
+Michel Couprie 
+\end{DoxyAuthor}
