@@ -2854,7 +2854,7 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
 				 TabIndDec, nval, ListDecs, Aval);	  
 
 		compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
-	  imagelambda[j*rs + i] = 2*(float)c_r;
+	  imagelambda[j*rs + i] = (float)c_r;
 
 	}
       }
@@ -2931,7 +2931,7 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
 					   TabIndDec, nval, ListDecs, Aval);
 
 	    compute_min_sphere_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_z, &c_r);
-	    imagelambda[k*ps + j*rs + i] = 2*(float)c_r;
+	    imagelambda[k*ps + j*rs + i] = (float)c_r;
 
 	  }
 	}
@@ -3123,7 +3123,7 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
 	  card_aval = Extendedlmedialaxis_DownstreamLambdaPrime(i, j, imagedist, imagevor, rs, cs, Aval);	  
 
           compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
-	  imagelambda[j*rs + i] = 2*(float)c_r;
+	  imagelambda[j*rs + i] = (float)c_r;
 
 	}
       }
@@ -3149,7 +3149,7 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
 	  card_aval = Extendedlmedialaxis_Downstream3dLambdaPrime(i, j, k, imagedist, imagevor, rs, cs, ds, Aval3d);
 
           compute_min_sphere_with_border_constraint((double *)Aval3d, card_aval, NULL, 0, &c_x, &c_y, &c_z, &c_r);
-	  imagelambda[k*ps + j*rs + i] = 2*(float)c_r;
+	  imagelambda[k*ps + j*rs + i] = (float)c_r;
 
 	}
       }

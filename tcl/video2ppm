@@ -37,8 +37,8 @@
  # The next line is executed by /bin/sh, but not Tcl \
  exec tclsh $0 $1 $2 $3 
 
- if {($argc != 1) && ($argc != 2)} { 
-   puts stderr "usage: videoview sequence \[nframes\]"
+ if {($argc != 1) && ($argc != 3)} { 
+   puts stderr "usage: video2ppm sequence \[nframes step\]"
    exit 
  }
 
@@ -53,16 +53,19 @@
  global VV
  # infilename  : input file name
  # ds : depth (number of frames)
+ # step : interval (in sec.) between saved frames
 
  set VV(infilename) [lindex $argv 0]
  if ![file exists $VV(infilename)] {
    puts stderr "cannot find input file: $VV(infilename)"
    exit
  }
- if {($argc == 2)} { 
+ if {($argc == 3)} { 
    set VV(ds) [lindex $argv 1]
+   set VV(step) [lindex $argv 2]
  } else {
-   set VV(ds) 1000000000
+   set VV(ds) 0
+   set VV(step) 0
  }
  set VV(ecount) 0
 
@@ -70,8 +73,22 @@
  # VIDEO to IMAGE CONVERSION
  # ============================================================
 
- if {($argc == 2)} { 
-   my_exec_q mplayer -nosound -vo pnm -frames $VV(ds) $VV(infilename)
+ if {($argc == 3)} { 
+   if {$VV(ds) <= 0} {
+     my_exec_q mplayer -nosound -vo pnm -sstep $VV(step) $VV(infilename)
+   } else {
+     my_exec_q mplayer -nosound -vo pnm -frames $VV(ds) -sstep $VV(step) $VV(infilename)
+   }
  } else {
    my_exec_q mplayer -nosound -vo pnm $VV(infilename)
  }
+
+#option intéressante :
+#-ss <temps> (voir aussi -sb)
+#              Se place à la position temporelle indiquée.
+#              EXEMPLE:
+#                 -ss 56
+#                     se place à 56 secondes
+#                 -ss 01:10:00
+#                     se place à 1 heure 10 min
+#-vo gif89a

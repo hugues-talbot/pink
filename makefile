@@ -298,9 +298,8 @@ $(BDIR)/toposhrink \
 $(BDIR)/toposhrinkgray \
 $(BDIR)/topotypes
 
-#$(BDIR)/2dtopoflow \
-
 ORDRES=\
+$(BDIR)/2dtopoflow \
 $(BDIR)/2dborder \
 $(BDIR)/2dcollapse \
 $(BDIR)/2dcolor \

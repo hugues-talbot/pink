@@ -59,6 +59,7 @@ proc my_exec_v {command args} {
   puts "$command $args"
   eval $call
   puts $result
+  return $result
 }
 
 # external command call with fatal error test

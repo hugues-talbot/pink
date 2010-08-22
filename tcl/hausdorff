@@ -47,9 +47,9 @@ global HAUSDORFF
 set HAUSDORFF(name) "hausdorff"
 set HAUSDORFF(infilename1) [lindex $argv 0]
 set HAUSDORFF(infilename2) [lindex $argv 1]
-if {($argc == 2)} { 
-   set HAUSDORFF(codedist) 0 
-# approximate euclidean distance (truncated)
+if {($argc == 3)} { 
+   set HAUSDORFF(codedist) 5 
+# exact euclidean distance (float)
 } else {
    set HAUSDORFF(codedist) [lindex $argv 2]
 }
