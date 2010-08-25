@@ -1,27 +1,25 @@
 \section{zoom.c File Reference}
 \label{zoom_8c}\index{zoom.c@{zoom.c}}
-
-
-zoom (shrink or expand) an image  
-
+zoom (shrink or expand) an image 
 
 
 
 \subsection{Detailed Description}
-zoom (shrink or expand) an image {\bfseries Usage:} zoom in.pgm $<$f $|$ x rs $|$ y cs $|$ z ds $|$ fx fy fz$>$ out.pgm
+zoom (shrink or expand) an image 
 
-{\bfseries Description:} There are 3 modes, depending on the number of arguments.
+{\bf Usage:} zoom in.pgm $<$f $|$ x rs $|$ y cs $|$ z ds $|$ fx fy fz$>$ out.pgm
 
-1 argument: the same scale factor {\bfseries f} is applied to both dimensions x and y (and z in 3D)
+{\bf Description:} There are 3 modes, depending on the number of arguments.
 
-2 arguments: if the parameter {\bfseries x} is used, followed by an integer number {\bfseries rs}, the zoom factor {\bfseries f} is computed by dividing {\bfseries rs} by the rowsize of {\bfseries in.pgm}. If the parameter {\bfseries y} is used, followed by an integer number {\bfseries cs}, {\bfseries f} is computed by dividing {\bfseries cs} by the colsize of {\bfseries in.pgm}. If the parameter {\bfseries z} is used, followed by an integer number {\bfseries ds}, {\bfseries f} is computed by dividing {\bfseries ds} by the depth of {\bfseries in.pgm}.
+1 argument: the same scale factor {\bf f} is applied to both dimensions x and y (and z in 3D)
 
-3 arguments: different zoom factors {\bfseries fx}, {\bfseries fy}, {\bfseries fz} are given for directions x, y, z.
+2 arguments: if the parameter {\bf x} is used, followed by an integer number {\bf rs}, the zoom factor {\bf f} is computed by dividing {\bf rs} by the rowsize of {\bf in.pgm}. If the parameter {\bf y} is used, followed by an integer number {\bf cs}, {\bf f} is computed by dividing {\bf cs} by the colsize of {\bf in.pgm}. If the parameter {\bf z} is used, followed by an integer number {\bf ds}, {\bf f} is computed by dividing {\bf ds} by the depth of {\bf in.pgm}.
 
-{\bfseries Types supported:} byte 1d, byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d, float 2d, float 3d
+3 arguments: different zoom factors {\bf fx}, {\bf fy}, {\bf fz} are given for directions x, y, z.
 
-{\bfseries Category:} geo
+{\bf Types supported:} byte 1d, byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d, float 2d, float 3d
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} geo
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

@@ -1,28 +1,26 @@
 \section{ptselectgray.c File Reference}
 \label{ptselectgray_8c}\index{ptselectgray.c@{ptselectgray.c}}
-
-
-detects points in a 2D or 3D grayscale image corresponding to a given criterion  
-
+detects points in a 2D or 3D grayscale image corresponding to a given criterion 
 
 
 
 \subsection{Detailed Description}
-detects points in a 2D or 3D grayscale image corresponding to a given criterion {\bfseries Usage:} ptselectgray in.pgm connex mint+ maxt+ mint-\/-\/ maxt-\/-\/ out.pgm
+detects points in a 2D or 3D grayscale image corresponding to a given criterion 
 
-{\bfseries Description:}
+{\bf Usage:} ptselectgray in.pgm connex mint+ maxt+ mint-- maxt-- out.pgm
+
+{\bf Description:}
 
 Select all points p such that the condition:\par
- mint+ $<$= T+(p) $<$= maxt+ and mint-\/-\/ $<$= T-\/-\/(p) $<$= maxt-\/-\/\par
+ mint+ $<$= T+(p) $<$= maxt+ and mint-- $<$= T--(p) $<$= maxt--\par
  is satisfied.\par
 
 
-The parameter {\bfseries connex} gives the connectivity used for the minima; possible choices are 4, 8 in 2D and 6, 26 in 3D.
+The parameter {\bf connex} gives the connectivity used for the minima; possible choices are 4, 8 in 2D and 6, 26 in 3D.
 
-{\bfseries Types supported:} byte 2d, byte 3d
+{\bf Types supported:} byte 2d, byte 3d
 
-{\bfseries Category:} topogray
+{\bf Category:} topogray
 
-\begin{DoxyAuthor}{Author}
-Nicolas Combaret 2006 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Nicolas Combaret 2006 \end{Desc}

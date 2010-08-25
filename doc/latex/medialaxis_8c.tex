@@ -1,23 +1,21 @@
 \section{medialaxis.c File Reference}
 \label{medialaxis_8c}\index{medialaxis.c@{medialaxis.c}}
-
-
-medial axis transform  
-
+medial axis transform 
 
 
 
 \subsection{Detailed Description}
-medial axis transform {\bfseries Usage:} medialaxis in.pgm distance out.pgm
+medial axis transform 
 
-{\bfseries Description:} Medial axis of the binary image {\bfseries X}. If x is the center of a maximal ball included in X, then the result R(x) is equal to the smallest distance between x and a point outside X, otherwise it is equal to 0 . The distance is indicated by the parameter {\bfseries distance} : \begin{DoxyItemize}
-\item 0: approximate euclidean distance \item 1: exact quadratic euclidean distance (Saito-\/Toriwaki's skeleton) \item 2: exact quadratic euclidean distance (Coeurjolly's reduced axis) \item 3: exact quadratic euclidean distance (Rémy-\/Thiel) \item 4: 4-\/distance in 2d \item 6: 6-\/distance in 3d \item 8: 8-\/distance in 2d \item 26: 26-\/distance in 3d\end{DoxyItemize}
-The usual discrete distances are denoted by 4, 8 (2D) and 6, 26 (3D). For the euclidean distance, set {\bfseries distance} to 0.
+{\bf Usage:} medialaxis in.pgm distance out.pgm
 
-{\bfseries Types supported:} byte 2d, byte 3d
+{\bf Description:} Medial axis of the binary image {\bf X}. If x is the center of a maximal ball included in X, then the result R(x) is equal to the smallest distance between x and a point outside X, otherwise it is equal to 0 . The distance is indicated by the parameter {\bf distance} : \begin{itemize}
+\item 0: approximate euclidean distance \item 1: exact quadratic euclidean distance (Saito-Toriwaki's skeleton) \item 2: exact quadratic euclidean distance (Coeurjolly's reduced axis) \item 3: exact quadratic euclidean distance (R\'{e}my-Thiel) \item 4: 4-distance in 2d \item 6: 6-distance in 3d \item 8: 8-distance in 2d \item 26: 26-distance in 3d\end{itemize}
+The usual discrete distances are denoted by 4, 8 (2D) and 6, 26 (3D). For the euclidean distance, set {\bf distance} to 0.
 
-{\bfseries Category:} morpho
+{\bf Types supported:} byte 2d, byte 3d
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} morpho
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

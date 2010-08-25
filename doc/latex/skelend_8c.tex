@@ -1,24 +1,21 @@
 \section{skelend.c File Reference}
 \label{skelend_8c}\index{skelend.c@{skelend.c}}
-
-
-homotopic skeleton of a 2d or 3d binary image with dynamic detection of end points  
-
+homotopic skeleton of a 2d or 3d binary image with dynamic detection of end points 
 
 
 
 \subsection{Detailed Description}
-homotopic skeleton of a 2d or 3d binary image with dynamic detection of end points {\bfseries Usage:} skelend in.pgm connex [n] out.pgm
+homotopic skeleton of a 2d or 3d binary image with dynamic detection of end points 
 
-{\bfseries Description:} Homotopic skeletonization by iterative removal of simple, non-\/end points. Breadth-\/first strategy. During the first {\bfseries n} iterations (default 0), the end points are removed as well. If {\bfseries n} = -\/1, the end points are always removed.
+{\bf Usage:} skelend in.pgm connex [n] out.pgm
 
-{\bfseries Types supported:} byte 2d, byte 3d
+{\bf Description:} Homotopic skeletonization by iterative removal of simple, non-end points. Breadth-first strategy. During the first {\bf n} iterations (default 0), the end points are removed as well. If {\bf n} = -1, the end points are always removed.
 
-{\bfseries Category:} topobin
+{\bf Types supported:} byte 2d, byte 3d
 
-\begin{DoxyWarning}{Warning}
-This operator is very sensitive to small contour irregularities. See skelcurv for a more robust operator.
-\end{DoxyWarning}
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} topobin
+
+\begin{Desc}
+\item[Warning:]This operator is very sensitive to small contour irregularities. See skelcurv for a more robust operator.\end{Desc}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

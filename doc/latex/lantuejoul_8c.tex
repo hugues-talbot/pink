@@ -1,24 +1,21 @@
 \section{lantuejoul.c File Reference}
 \label{lantuejoul_8c}\index{lantuejoul.c@{lantuejoul.c}}
-
-
-Lantuejoul's skeleton.  
-
+Lantuejoul's skeleton. 
 
 
 
 \subsection{Detailed Description}
-Lantuejoul's skeleton. {\bfseries Usage:} lantuejoul in.pgm [dist] out.pgm
+Lantuejoul's skeleton. 
 
-{\bfseries Description:} Let X be the set in {\bfseries in.pgm} . The result is union\{Si(X), i in N\} where Si(X) = erosball(X,i) $\backslash$ openball(erosball(X,i),1). Structuring elements are balls defined after a distance. The distance used depends on the optional parameter {\bfseries dist} (default is 0) : \begin{DoxyItemize}
-\item 0: approximate euclidean distance (truncated) \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 4: 4-\/distance in 2d \item 8: 8-\/distance in 2d \item 6: 6-\/distance in 3d \item 18: 18-\/distance in 3d \item 26: 26-\/distance in 3d\end{DoxyItemize}
-\begin{DoxyWarning}{Warning}
-The input image {\bfseries in.pgm} must be a binary image. No test is done.
-\end{DoxyWarning}
-{\bfseries Types supported:} byte 2D, byte 3D
+{\bf Usage:} lantuejoul in.pgm [dist] out.pgm
 
-{\bfseries Category:} morpho
+{\bf Description:} Let X be the set in {\bf in.pgm} . The result is union\{Si(X), i in N\} where Si(X) = erosball(X,i) $\backslash$ openball(erosball(X,i),1). Structuring elements are balls defined after a distance. The distance used depends on the optional parameter {\bf dist} (default is 0) : \begin{itemize}
+\item 0: approximate euclidean distance (truncated) \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 4: 4-distance in 2d \item 8: 8-distance in 2d \item 6: 6-distance in 3d \item 18: 18-distance in 3d \item 26: 26-distance in 3d\end{itemize}
+\begin{Desc}
+\item[Warning:]The input image {\bf in.pgm} must be a binary image. No test is done.\end{Desc}
+{\bf Types supported:} byte 2D, byte 3D
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie ao√ªt 2009 
-\end{DoxyAuthor}
+{\bf Category:} morpho
+
+\begin{Desc}
+\item[Author:]Michel Couprie ao\~{A}ªt 2009 \end{Desc}

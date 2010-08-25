@@ -1,21 +1,19 @@
 \section{average.c File Reference}
 \label{average_8c}\index{average.c@{average.c}}
-
-
-pixelwise (weighted) average of two images  
-
+pixelwise (weighted) average of two images 
 
 
 
 \subsection{Detailed Description}
-pixelwise (weighted) average of two images {\bfseries Usage:} average in1.pgm in2.pgm [alpha] out.pgm
+pixelwise (weighted) average of two images 
 
-{\bfseries Description:} The default value for the optional parameter {\bfseries alpha} is 0.5 . For each pixel x, out[x] = alpha $\ast$ in1[x] + (1 -\/ alpha) $\ast$ in2[x]. If both images are byte images, and if out[x] exceeds 255, then out[x] is set to 255. Images must be of the same dimensions.
+{\bf Usage:} average in1.pgm in2.pgm [alpha] out.pgm
 
-{\bfseries Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d, float 2d, float 3d
+{\bf Description:} The default value for the optional parameter {\bf alpha} is 0.5 . For each pixel x, out[x] = alpha $\ast$ in1[x] + (1 - alpha) $\ast$ in2[x]. If both images are byte images, and if out[x] exceeds 255, then out[x] is set to 255. Images must be of the same dimensions.
 
-{\bfseries Category:} arith
+{\bf Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d, float 2d, float 3d
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} arith
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

@@ -1,25 +1,23 @@
 \section{watershedwithoutline.c File Reference}
 \label{watershedwithoutline_8c}\index{watershedwithoutline.c@{watershedwithoutline.c}}
-
-
-watershed transformation without line of separation  
-
+watershed transformation without line of separation 
 
 
 
 \subsection{Detailed Description}
-watershed transformation without line of separation {\bfseries Usage:} watershedwithoutline in mark $<$bgmark$|$null$>$ $<$roi$|$null$>$ connex out
+watershed transformation without line of separation 
 
-{\bfseries Description:} Performs the watershed transformation on the image {\bfseries in}, taking the set of markers in {\bfseries mark}. If this parameter is present, {\bfseries bgmark} is used as a set of markers for the background. If this parameter is present, {\bfseries roi} indicates the region of interest on which the operation is performed. The parameter {\bfseries connex} gives the adjacency relation (4,8 in 2D; 6,18,26 in 3D) for the makers.
+{\bf Usage:} watershedwithoutline in mark $<$bgmark$|$null$>$ $<$roi$|$null$>$ connex out
+
+{\bf Description:} Performs the watershed transformation on the image {\bf in}, taking the set of markers in {\bf mark}. If this parameter is present, {\bf bgmark} is used as a set of markers for the background. If this parameter is present, {\bf roi} indicates the region of interest on which the operation is performed. The parameter {\bf connex} gives the adjacency relation (4,8 in 2D; 6,18,26 in 3D) for the makers.
 
 The image out is a label image (int32\_\-t)
 
 This version does not create any line to separate the catchment basins.
 
-{\bfseries Types supported:} byte 2d, byte 3d
+{\bf Types supported:} byte 2d, byte 3d
 
-{\bfseries Category:} connect
+{\bf Category:} connect
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie and Laurent Najman 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie and Laurent Najman \end{Desc}

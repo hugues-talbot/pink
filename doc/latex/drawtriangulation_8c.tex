@@ -1,33 +1,30 @@
 \section{drawtriangulation.c File Reference}
 \label{drawtriangulation_8c}\index{drawtriangulation.c@{drawtriangulation.c}}
-
-
-draw a triangulation  
-
+draw a triangulation 
 
 
 
 \subsection{Detailed Description}
-draw a triangulation {\bfseries Usage:} drawtriangulation in.list in.pgm out.pgm
+draw a triangulation 
 
-{\bfseries Description:} Reads a triangulation in file {\bfseries in.list} under the following format: 
-\begin{DoxyPre}
+{\bf Usage:} drawtriangulation in.list in.pgm out.pgm
+
+{\bf Description:} Reads a triangulation in file {\bf in.list} under the following format: \small\begin{alltt}
     G <n>
     x1 y1 v1 ec1 ns1 s11 s12 ... s1ns1
     x2 y2 v2 ec2 ns2 s21 s22 ... s1ns2
     ...
     xn yn vn ecn nsn sn1 sn2 ... s1nsn
-\end{DoxyPre}
+\end{alltt}\normalsize 
  where xi, yi are the coordinates of the ith vertex, vi is the associated value (if given in the input file), eci is a int32\_\-t which indicates whether the vertex i belongs to the convex hull, nsi denotes the number of adjacent vertices, and si1 si2 ... sins1 is the list of the indexes of the adjacent vertices (counted from 0).
 
 Draws the triangulation in image in.pgm, output image is out.pgm
 
-{\bfseries Types supported:} byte 2D
+{\bf Types supported:} byte 2D
 
-{\bfseries See also:} \doxyref{delaunay.c}{p.}{delaunay_8c}
+{\bf See also:} \doxyref{delaunay.c}{p.}{delaunay_8c}
 
-{\bfseries Category:} geo, draw ,
+{\bf Category:} geo, draw ,
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

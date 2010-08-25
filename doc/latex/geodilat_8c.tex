@@ -1,21 +1,19 @@
 \section{geodilat.c File Reference}
 \label{geodilat_8c}\index{geodilat.c@{geodilat.c}}
-
-
-geodesic (grayscale or binary) dilation  
-
+geodesic (grayscale or binary) dilation 
 
 
 
 \subsection{Detailed Description}
-geodesic (grayscale or binary) dilation {\bfseries Usage:} geodilat g.pgm f.pgm connex niter out.pgm
+geodesic (grayscale or binary) dilation 
 
-{\bfseries Description:} Geodesic dilation of {\bfseries g.pgm} under {\bfseries f.pgm}. Let G and F be the two input images. If G is not under F, then G is replaced initially by min(G,F). The structuring element is specified by the value of the parameter {\bfseries connex}, which can be one of the following ones: 4, 8 in 2d, or 6, 18, 26 in 3d. The parameter {\bfseries niter} sets the number of iterations. If {\bfseries niter} = -\/1, then the iterations continue until stability.
+{\bf Usage:} geodilat g.pgm f.pgm connex niter out.pgm
 
-{\bfseries Types supported:} byte 2d, byte 3d.
+{\bf Description:} Geodesic dilation of {\bf g.pgm} under {\bf f.pgm}. Let G and F be the two input images. If G is not under F, then G is replaced initially by min(G,F). The structuring element is specified by the value of the parameter {\bf connex}, which can be one of the following ones: 4, 8 in 2d, or 6, 18, 26 in 3d. The parameter {\bf niter} sets the number of iterations. If {\bf niter} = -1, then the iterations continue until stability.
 
-{\bfseries Category:} connect, morpho ,
+{\bf Types supported:} byte 2d, byte 3d.
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} connect, morpho ,
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

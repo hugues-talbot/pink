@@ -1,23 +1,21 @@
 \section{histstretch.c File Reference}
 \label{histstretch_8c}\index{histstretch.c@{histstretch.c}}
-
-
-transforms the gray scale by stretching the histogram  
-
+transforms the gray scale by stretching the histogram 
 
 
 
 \subsection{Detailed Description}
-transforms the gray scale by stretching the histogram {\bfseries Usage:} histstretch in.pgm vmin vmax p out.pgm
+transforms the gray scale by stretching the histogram 
 
-{\bfseries Description:}
+{\bf Usage:} histstretch in.pgm vmin vmax p out.pgm
 
-Eliminates the levels of the histogram strictly less than {\bfseries vmin} or strictly greater than {\bfseries vmax}, and also the extremal levels that have strictly less than N$\ast$({\bfseries p}/100) pixels (N being the total number of pixels). If {\bfseries p} = 0, only the extremal levels with 0 pixels are eliminated. A linear histogram scaling is then performed.
+{\bf Description:}
 
-{\bfseries Types supported:} byte 2D
+Eliminates the levels of the histogram strictly less than {\bf vmin} or strictly greater than {\bf vmax}, and also the extremal levels that have strictly less than N$\ast$({\bf p}/100) pixels (N being the total number of pixels). If {\bf p} = 0, only the extremal levels with 0 pixels are eliminated. A linear histogram scaling is then performed.
 
-{\bfseries Category:} histo
+{\bf Types supported:} byte 2D
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} histo
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

@@ -1,21 +1,19 @@
 \section{seltopo.c File Reference}
 \label{seltopo_8c}\index{seltopo.c@{seltopo.c}}
-
-
-selects points according to a local topological criterion  
-
+selects points according to a local topological criterion 
 
 
 
 \subsection{Detailed Description}
-selects points according to a local topological criterion {\bfseries Usage:} seltopo in connex t-\/ t+ tb-\/ tb+ out
+selects points according to a local topological criterion 
 
-{\bfseries Description:} Let X be the set of points of the binary image {\bfseries in}, let x be a point. Let t(x) and tb(x) be the two connectivity numbers for x. The result {\bfseries out} is the set of points: \{ x in X, t-\/ $<$= t(x) $<$= t+ and tb-\/ $<$= tb(x) $<$= tb+ \}.
+{\bf Usage:} seltopo in connex t- t+ tb- tb+ out
 
-{\bfseries Types supported:} byte 2d, byte 3d
+{\bf Description:} Let X be the set of points of the binary image {\bf in}, let x be a point. Let t(x) and tb(x) be the two connectivity numbers for x. The result {\bf out} is the set of points: \{ x in X, t- $<$= t(x) $<$= t+ and tb- $<$= tb(x) $<$= tb+ \}.
 
-{\bfseries Category:} topobin
+{\bf Types supported:} byte 2d, byte 3d
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} topobin
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

@@ -1,34 +1,33 @@
 \section{lambdaskel.c File Reference}
 \label{lambdaskel_8c}\index{lambdaskel.c@{lambdaskel.c}}
-
-
-grayscale filtered topological skeleton  
-
+grayscale filtered topological skeleton 
 
 
 
 \subsection{Detailed Description}
-grayscale filtered topological skeleton {\bfseries Usage:} lambdaskel in.pgm $<$imcond.pgm$|$null$>$ connex lambda out.pgm
+grayscale filtered topological skeleton 
 
-{\bfseries Description:} Filtered topological skeleton for 2D grayscale images. The parameter {\bfseries connex} gives the connectivity used for the minima; possible choices are 4 and 8. The parameter {\bfseries lambda} is a contrast parameter (positive integer). Let F be the function corresponding to the input image {\bfseries in.pgm}. The parameter {\bfseries imcond.pgm} is a constraint function G. The algorithm is the following:
+{\bf Usage:} lambdaskel in.pgm $<$imcond.pgm$|$null$>$ connex lambda out.pgm
 
-\begin{DoxyVerb}
-Repeat until stability:
+{\bf Description:} Filtered topological skeleton for 2D grayscale images. The parameter {\bf connex} gives the connectivity used for the minima; possible choices are 4 and 8. The parameter {\bf lambda} is a contrast parameter (positive integer). Let F be the function corresponding to the input image {\bf in.pgm}. The parameter {\bf imcond.pgm} is a constraint function G. The algorithm is the following:
+
+
+
+\footnotesize\begin{verbatim}Repeat until stability:
     Select a point p which is lambda-destructible for F or a peak
         such that F(p) > G(p) and such that F(p) is minimal
     F(p) = alpha-(p,F)
 Result: F
-\end{DoxyVerb}
+\end{verbatim}
+\normalsize
 
 
 Reference:\par
- M. Couprie, F.N. Bezerra, Gilles Bertrand: {\tt \char`\"{}Topological operators for
-grayscale image processing\char`\"{}}, {\itshape  Journal of Electronic Imaging\/}, Vol.~10, No.~4, pp.~1003-\/1015, 2001.
+ M. Couprie, F.N. Bezerra, Gilles Bertrand: {\tt \char`\"{}Topological operators for grayscale image processing\char`\"{}}, {\em  Journal of Electronic Imaging\/}, Vol.~10, No.~4, pp.~1003-1015, 2001.
 
-{\bfseries Types supported:} byte 2d
+{\bf Types supported:} byte 2d
 
-{\bfseries Category:} topogray
+{\bf Category:} topogray
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

@@ -1,33 +1,30 @@
 \section{list2pgm.c File Reference}
 \label{list2pgm_8c}\index{list2pgm.c@{list2pgm.c}}
-
-
-converts from point list representation to pgm  
-
+converts from point list representation to pgm 
 
 
 
 \subsection{Detailed Description}
-converts from point list representation to pgm {\bfseries Usage:} list2pgm in.list $<$in.pgm$|$rs cs ds$>$ [scale] out.pgm
+converts from point list representation to pgm 
 
-{\bfseries Description:}
+{\bf Usage:} list2pgm in.list $<$in.pgm$|$rs cs ds$>$ [scale] out.pgm
 
-Reads the file {\bfseries in.list}. This file must have one of the following formats: 
-\begin{DoxyPre}  
+{\bf Description:}
+
+Reads the file {\bf in.list}. This file must have one of the following formats: \small\begin{alltt}  
   e <n>       s <n>         b <n>         n <n>            B <n>            N <n>    
   x1          x1 v1         x1 y1         x1 y1 v1         x1 y1 z1         x1 y1 z1 v1
   x2    or    x2 v2   or    x2 y2   or    x2 y2 v2   or    x2 y2 z2   or    z2 x2 y2 v2
   ...         ...           ...           ...              ...              ...
   xn          xn vn         xn yn         xn yn vn         xn yn zn         zn xn yn vn
-\end{DoxyPre}
- The formats {\bfseries e}, {\bfseries s}, {\bfseries b}, {\bfseries n}, {\bfseries B}, and {\bfseries N}, correspond respectively to binary 1D, graylevel 1D, binary 2D, graylevel 2D, binary 3D and graylevel 3D images. If a file name {\bfseries in.pgm} is given, then the points read in {\bfseries in.list} are inserted (if possible) into the image read in {\bfseries in.pgm}. Else, they are inserted in a new image, the dimensions of which are {\bfseries rs}, {\bfseries cs}, and {\bfseries d}.
+\end{alltt}\normalsize 
+ The formats {\bf e}, {\bf s}, {\bf b}, {\bf n}, {\bf B}, and {\bf N}, correspond respectively to binary 1D, graylevel 1D, binary 2D, graylevel 2D, binary 3D and graylevel 3D images. If a file name {\bf in.pgm} is given, then the points read in {\bf in.list} are inserted (if possible) into the image read in {\bf in.pgm}. Else, they are inserted in a new image, the dimensions of which are {\bf rs}, {\bf cs}, and {\bf d}.
 
-The optional parameter {\bfseries scale} allows to scale the coordinates.
+The optional parameter {\bf scale} allows to scale the coordinates.
 
-{\bfseries Types supported:} list 1D, 2D, 3D
+{\bf Types supported:} list 1D, 2D, 3D
 
-{\bfseries Category:} convert
+{\bf Category:} convert
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

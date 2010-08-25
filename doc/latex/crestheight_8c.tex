@@ -1,25 +1,22 @@
 \section{crestheight.c File Reference}
 \label{crestheight_8c}\index{crestheight.c@{crestheight.c}}
-
-
-measures the height of crests in a thinned grayscale image  
-
+measures the height of crests in a thinned grayscale image 
 
 
 
 \subsection{Detailed Description}
-measures the height of crests in a thinned grayscale image {\bfseries Usage:} crestheight skel.pgm connex out.pgm
+measures the height of crests in a thinned grayscale image 
 
-{\bfseries Description:} Let F be the input image (parameter {\bfseries skel.pgm}), and let R be the output image (parameter {\bfseries out.pgm}). For each point p which is separating for F (connexity given by the parameter {\bfseries connex}), the output value R(p) is equal to calpha8m(F,S,p).
+{\bf Usage:} crestheight skel.pgm connex out.pgm
+
+{\bf Description:} Let F be the input image (parameter {\bf skel.pgm}), and let R be the output image (parameter {\bf out.pgm}). For each point p which is separating for F (connexity given by the parameter {\bf connex}), the output value R(p) is equal to calpha8m(F,S,p).
 
 References:\par
- \char`\"{}Topological operators for the detection of
-curvilinar structures in grayscale images\char`\"{}, in preparation, 2003.
+ \char`\"{}Topological operators for the detection of curvilinar structures in grayscale images\char`\"{}, in preparation, 2003.
 
-{\bfseries Types supported:} byte 2d
+{\bf Types supported:} byte 2d
 
-{\bfseries Category:} topogray
+{\bf Category:} topogray
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

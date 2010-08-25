@@ -1,35 +1,33 @@
 \section{3dseltopo.c File Reference}
 \label{3dseltopo_8c}\index{3dseltopo.c@{3dseltopo.c}}
-
-
-selects points in the 3d khalimsky grid according to a local topological criterion  
-
+selects points in the 3d khalimsky grid according to a local topological criterion 
 
 
 
 \subsection{Detailed Description}
-selects points in the 3d khalimsky grid according to a local topological criterion {\bfseries Usage:} 3dseltopo in d-\/ d+ a-\/ a+ b-\/ b+ out
+selects points in the 3d khalimsky grid according to a local topological criterion 
 
-{\bfseries Description:} Selects the elements x of the Khalimsky volume K which satisfy the following inequalities :
+{\bf Usage:} 3dseltopo in d- d+ a- a+ b- b+ out
 
-{\bfseries d1} $<$= d(x) $<$= {\bfseries d2} 
+{\bf Description:} Selects the elements x of the Khalimsky volume K which satisfy the following inequalities :
 
-{\bfseries a1} $<$= a(x) $<$= {\bfseries a2} 
+{\bf d1} $<$= d(x) $<$= {\bf d2} 
 
-{\bfseries b1} $<$= b(x) $<$= {\bfseries b2} 
+{\bf a1} $<$= a(x) $<$= {\bf a2} 
+
+{\bf b1} $<$= b(x) $<$= {\bf b2} 
 
 where
 
 d(x) = dimension of x
 
-a(x) = number of elements under x of dimension d(x) -\/ 1
+a(x) = number of elements under x of dimension d(x) - 1
 
 b(x) = number of elements over x of dimension d(x) + 1
 
-{\bfseries Types supported:} byte 3d
+{\bf Types supported:} byte 3d
 
-{\bfseries Category:} orders
+{\bf Category:} orders
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

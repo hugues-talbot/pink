@@ -1,24 +1,23 @@
 \section{points2spline.c File Reference}
 \label{points2spline_8c}\index{points2spline.c@{points2spline.c}}
-
-
-converts a sequence of control points into a spline  
-
+converts a sequence of control points into a spline 
 
 
 
 \subsection{Detailed Description}
-converts a sequence of control points into a spline {\bfseries Usage:} points2spline points.txt spline.txt
+converts a sequence of control points into a spline 
 
-{\bfseries Description:}
+{\bf Usage:} points2spline points.txt spline.txt
 
-Let S be the sequence of control points in {\bfseries points.txt}. This program computes a parametric curve P defined by two (in 2D) or three (in 3D) splines that interpolates the points of the sequence S.
+{\bf Description:}
+
+Let S be the sequence of control points in {\bf points.txt}. This program computes a parametric curve P defined by two (in 2D) or three (in 3D) splines that interpolates the points of the sequence S.
 
 If the last point equals the first point, then a closed spline is generated.
 
 The result is given in the form of the list of control points, followed by the set of coefficients for each spline segment.
 
-The input file {\bfseries points.txt} contains a list of points under the format:
+The input file {\bf points.txt} contains a list of points under the format:
 
 b nbpoints\par
  x1 y1\par
@@ -65,10 +64,9 @@ x(t) = C3Xi $\ast$ t$^\wedge$3 + C2Xi $\ast$ t$^\wedge$2 + C1Xi $\ast$ t + C0Xi\
  z(t) = C3Zi $\ast$ t$^\wedge$3 + C2Zi $\ast$ t$^\wedge$2 + C1Zi $\ast$ t + C0Zi\par
  with t in [0,1]
 
-{\bfseries Types supported:} list 2D, list 3D
+{\bf Types supported:} list 2D, list 3D
 
-{\bfseries Category:} draw geo
+{\bf Category:} draw geo
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

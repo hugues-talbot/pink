@@ -1,19 +1,19 @@
 \section{directionalfilter.c File Reference}
 \label{directionalfilter_8c}\index{directionalfilter.c@{directionalfilter.c}}
-
-
-directional filter for curvilinear feature extraction  
-
+directional filter for curvilinear feature extraction 
 
 
 
 \subsection{Detailed Description}
-directional filter for curvilinear feature extraction {\bfseries Usage:} \doxyref{directionalfilter.c}{p.}{directionalfilter_8c} in.pgm width length ndir out.pgm
+directional filter for curvilinear feature extraction 
 
-{\bfseries Description:} Let F be the original image from {\bfseries in.pgm} . This operator computes the supremum of the convolutions of F by a series of kernels K0, ... Kn where n = {\bfseries ndir} -\/ 1, which are defined by, for each (x,y) and each i in [0...n]:
+{\bf Usage:} \doxyref{directionalfilter.c}{p.}{directionalfilter_8c} in.pgm width length ndir out.pgm
 
-\begin{DoxyVerb}
-sigma = 1 / (2*width*width);
+{\bf Description:} Let F be the original image from {\bf in.pgm} . This operator computes the supremum of the convolutions of F by a series of kernels K0, ... Kn where n = {\bf ndir} - 1, which are defined by, for each (x,y) and each i in [0...n]:
+
+
+
+\footnotesize\begin{verbatim}sigma = 1 / (2*width*width);
 lambda = 1 / (2*length*length);
 theta = i * PI / n;
 xr = cos(theta) * x - sin(theta) * y;
@@ -21,13 +21,13 @@ yr = sin(theta) * x + cos(theta) * y;
 Ki(x,y) = exp(-lambda*yr*yr) *
           (4*sigma*sigma*xr*xr - 2*sigma) * 
           exp(-sigma*xr*xr) 
-\end{DoxyVerb}
+\end{verbatim}
+\normalsize
 
 
-{\bfseries Types supported:} byte 2d, int32\_\-t 2d, float 2d
+{\bf Types supported:} byte 2d, int32\_\-t 2d, float 2d
 
-{\bfseries Category:} signal
+{\bf Category:} signal
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 2003 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie 2003 \end{Desc}

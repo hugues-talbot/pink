@@ -1,16 +1,15 @@
 \section{pgm2curve.c File Reference}
 \label{pgm2curve_8c}\index{pgm2curve.c@{pgm2curve.c}}
-
-
-extracts a curve from a binary image  
-
+extracts a curve from a binary image 
 
 
 
 \subsection{Detailed Description}
-extracts a curve from a binary image {\bfseries Usage:} pgm2curve image.pgm connex [x y [z]] out.curve
+extracts a curve from a binary image 
 
-{\bfseries Description:} Extracts a curve from a binary image. The parameter {\bfseries connex} is the connexity of the curve. It may be equal to 4 or 8 in 2D, and to 6, 18 or 26 in 3D. If given, the point {\bfseries (x, y, z)} (2D) or {\bfseries (x, y, z)} (3D) is the beginning of the curve, and must be an end point. The output is the text file {\bfseries out.curve}, with the following format:\par
+{\bf Usage:} pgm2curve image.pgm connex [x y [z]] out.curve
+
+{\bf Description:} Extracts a curve from a binary image. The parameter {\bf connex} is the connexity of the curve. It may be equal to 4 or 8 in 2D, and to 6, 18 or 26 in 3D. If given, the point {\bf (x, y, z)} (2D) or {\bf (x, y, z)} (3D) is the beginning of the curve, and must be an end point. The output is the text file {\bf out.curve}, with the following format:\par
  c nbpoints\par
  x1 y1\par
  x2 y2\par
@@ -21,7 +20,7 @@ extracts a curve from a binary image {\bfseries Usage:} pgm2curve image.pgm conn
  ...\par
 
 
-The points of the curve may also be valued. This is must be indicated by a value of 40, 80, 60, 180 or 260 for the parameter {\bfseries connex}, instead of 4, 8, 6, 18 or 26 respectively. In this case, the output is the text file {\bfseries out.curve}, with the following format:\par
+The points of the curve may also be valued. This is must be indicated by a value of 40, 80, 60, 180 or 260 for the parameter {\bf connex}, instead of 4, 8, 6, 18 or 26 respectively. In this case, the output is the text file {\bf out.curve}, with the following format:\par
  cv nbpoints\par
  x1 y1 v1\par
  x2 y2 v2\par
@@ -32,10 +31,9 @@ The points of the curve may also be valued. This is must be indicated by a value
  ...\par
 
 
-{\bfseries Types supported:} byte 2D, byte 3D
+{\bf Types supported:} byte 2D, byte 3D
 
-{\bfseries Category:} convert geo
+{\bf Category:} convert geo
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

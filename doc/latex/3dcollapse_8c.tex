@@ -1,28 +1,25 @@
 \section{3dcollapse.c File Reference}
 \label{3dcollapse_8c}\index{3dcollapse.c@{3dcollapse.c}}
-
-
-ultimate constrained collapse guided by a priority image  
-
+ultimate constrained collapse guided by a priority image 
 
 
 
 \subsection{Detailed Description}
-ultimate constrained collapse guided by a priority image {\bfseries Usage:} 3dcollapse in.pgm prio [inhibit] out.pgm
+ultimate constrained collapse guided by a priority image 
 
-{\bfseries Description:} Ultimate constrained collapse guided by a priority image. The lowest values of the priority image correspond to the highest priority.
+{\bf Usage:} 3dcollapse in.pgm prio [inhibit] out.pgm
 
-The parameter {\bfseries prio} is either an image (byte or int32\_\-t), or a numerical code indicating that a distance map will be used as a priority image; the possible choices are: \begin{DoxyItemize}
-\item 0: approximate euclidean distance \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 6: 6-\/distance in 3d \item 18: 18-\/distance in 3d \item 26: 26-\/distance in 3d\end{DoxyItemize}
-If the parameter {\bfseries inhibit} is given and is a binary image name, then the elements of this image will be left unchanged. If the parameter {\bfseries inhibit} is given and is a number I, then the elements with priority greater than or equal to I will be left unchanged.
+{\bf Description:} Ultimate constrained collapse guided by a priority image. The lowest values of the priority image correspond to the highest priority.
 
-\begin{DoxyWarning}{Warning}
-The result makes sense only if the input image is a complex.
-\end{DoxyWarning}
-{\bfseries Types supported:} byte 3d
+The parameter {\bf prio} is either an image (byte or int32\_\-t), or a numerical code indicating that a distance map will be used as a priority image; the possible choices are: \begin{itemize}
+\item 0: approximate euclidean distance \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 6: 6-distance in 3d \item 18: 18-distance in 3d \item 26: 26-distance in 3d\end{itemize}
+If the parameter {\bf inhibit} is given and is a binary image name, then the elements of this image will be left unchanged. If the parameter {\bf inhibit} is given and is a number I, then the elements with priority greater than or equal to I will be left unchanged.
 
-{\bfseries Category:} orders
+\begin{Desc}
+\item[Warning:]The result makes sense only if the input image is a complex.\end{Desc}
+{\bf Types supported:} byte 3d
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} orders
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

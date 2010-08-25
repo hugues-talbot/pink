@@ -1,21 +1,19 @@
 \section{zoomint.c File Reference}
 \label{zoomint_8c}\index{zoomint.c@{zoomint.c}}
-
-
-zoom by an integer factor  
-
+zoom by an integer factor 
 
 
 
 \subsection{Detailed Description}
-zoom by an integer factor {\bfseries Usage:} zoomint in.pgm $<$f $|$ fx fy fz$>$ [nofill] out.pgm
+zoom by an integer factor 
 
-{\bfseries Description:} The zoom factor(s) can be unique ({\bfseries f} ) of there can be one zoom factor per image dimension ({\bfseries fx}, {\bfseries fy}, {\bfseries fz} ). In the case of a 2d image, set {\bfseries fz} to 1. The zoom parameter may be a positive or negative integer. If it is positive, the image is expanded in the corresponding direction. The pixels are replicated in order to fill all the space, except if the parameter {\bfseries nofill} is used. If it is negative, the image is shrinked the corresponding directions, by undersampling.
+{\bf Usage:} zoomint in.pgm $<$f $|$ fx fy fz$>$ [nofill] out.pgm
 
-{\bfseries Types supported:} byte 2d, byte 3d
+{\bf Description:} The zoom factor(s) can be unique ({\bf f} ) of there can be one zoom factor per image dimension ({\bf fx}, {\bf fy}, {\bf fz} ). In the case of a 2d image, set {\bf fz} to 1. The zoom parameter may be a positive or negative integer. If it is positive, the image is expanded in the corresponding direction. The pixels are replicated in order to fill all the space, except if the parameter {\bf nofill} is used. If it is negative, the image is shrinked the corresponding directions, by undersampling.
 
-{\bfseries Category:} geo
+{\bf Types supported:} byte 2d, byte 3d
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie, Christophe Doublier 
-\end{DoxyAuthor}
+{\bf Category:} geo
+
+\begin{Desc}
+\item[Author:]Michel Couprie, Christophe Doublier \end{Desc}

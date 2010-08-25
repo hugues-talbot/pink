@@ -1,23 +1,21 @@
 \section{seuilauto.c File Reference}
 \label{seuilauto_8c}\index{seuilauto.c@{seuilauto.c}}
-
-
-automatic threshold  
-
+automatic threshold 
 
 
 
 \subsection{Detailed Description}
-automatic threshold {\bfseries Usage:} seuilauto in.pgm L $<$min$|$max$>$ [n] out.pgm
+automatic threshold 
 
-{\bfseries Description:} Determine automatically a threshold thanks to the smoothed histogram of the picture ({\bfseries L} : smoothing coefficient, 0$<$L$<$255). If n is given, it indicates the number of peaks on the histogram to be kept. If n isn't given, the threshold separates the picture in two approximatively equivalent groups of points. The argument {\bfseries $<$min$|$max$>$} selects the part of the picture to be kept:
+{\bf Usage:} seuilauto in.pgm L $<$min$|$max$>$ [n] out.pgm
 
-\begin{DoxyItemize}
-\item {\bfseries min:} Every pixel $<$ {\bfseries smin} gets value {\bfseries vmin} and every pixel $>$= {\bfseries smax} gets value {\bfseries vmax} \item {\bfseries max:} Every pixel $>$ {\bfseries smin} gets value {\bfseries vmin} and every pixel $<$= {\bfseries smax} gets value {\bfseries vmax} \end{DoxyItemize}
-{\bfseries Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d
+{\bf Description:} Determine automatically a threshold thanks to the smoothed histogram of the picture ({\bf L} : smoothing coefficient, 0$<$L$<$255). If n is given, it indicates the number of peaks on the histogram to be kept. If n isn't given, the threshold separates the picture in two approximatively equivalent groups of points. The argument {\bf $<$min$|$max$>$} selects the part of the picture to be kept:
 
-{\bfseries Category:} arith
+\begin{itemize}
+\item {\bf min:} Every pixel $<$ {\bf smin} gets value {\bf vmin} and every pixel $>$= {\bf smax} gets value {\bf vmax} \item {\bf max:} Every pixel $>$ {\bf smin} gets value {\bf vmin} and every pixel $<$= {\bf smax} gets value {\bf vmax} \end{itemize}
+{\bf Types supported:} byte 2d, byte 3d, int32\_\-t 2d, int32\_\-t 3d
 
-\begin{DoxyAuthor}{Author}
-Cedric Allene 2003 
-\end{DoxyAuthor}
+{\bf Category:} arith
+
+\begin{Desc}
+\item[Author:]Cedric Allene 2003 \end{Desc}

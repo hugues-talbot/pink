@@ -1,21 +1,19 @@
 \section{extractplane.c File Reference}
 \label{extractplane_8c}\index{extractplane.c@{extractplane.c}}
-
-
-extracts a plane normal to one of the directions x,y,z from a 3D image  
-
+extracts a plane normal to one of the directions x,y,z from a 3D image 
 
 
 
 \subsection{Detailed Description}
-extracts a plane normal to one of the directions x,y,z from a 3D image {\bfseries Usage:} extractplane in.pgm n plane out.pgm
+extracts a plane normal to one of the directions x,y,z from a 3D image 
 
-{\bfseries Description:} The original 3D image is {\bfseries in.pgm}. The parameter {\bfseries n} is an integer. The parameter {\bfseries plane} is set to {\bfseries xy}, {\bfseries yx}, {\bfseries xz}, {\bfseries zx}, {\bfseries yz}, {\bfseries zy}. The order of the letters x, y, z is meaningfull: for example, zy means that each row of the output image will correspond to a z-\/line of the original image, each column of the output image will correspond to a y-\/line of the original image. The output image {\bfseries out.pgm} contains the {\bfseries n}th plane of the given form extracted from {\bfseries in.pgm}.
+{\bf Usage:} extractplane in.pgm n plane out.pgm
 
-{\bfseries Types supported:} byte 3d
+{\bf Description:} The original 3D image is {\bf in.pgm}. The parameter {\bf n} is an integer. The parameter {\bf plane} is set to {\bf xy}, {\bf yx}, {\bf xz}, {\bf zx}, {\bf yz}, {\bf zy}. The order of the letters x, y, z is meaningfull: for example, zy means that each row of the output image will correspond to a z-line of the original image, each column of the output image will correspond to a y-line of the original image. The output image {\bf out.pgm} contains the {\bf n}th plane of the given form extracted from {\bf in.pgm}.
 
-{\bfseries Category:} geo
+{\bf Types supported:} byte 3d
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} geo
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

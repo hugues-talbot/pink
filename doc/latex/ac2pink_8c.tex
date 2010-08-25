@@ -1,25 +1,23 @@
 \section{ac2pink.c File Reference}
 \label{ac2pink_8c}\index{ac2pink.c@{ac2pink.c}}
-
-
-converts a 3D scene from AC3D format to Pink 3Dscene format  
-
+converts a 3D scene from AC3D format to Pink 3Dscene format 
 
 
 
 \subsection{Detailed Description}
-converts a 3D scene from AC3D format to Pink 3Dscene format {\bfseries Usage:} ac2pink in.ac out.3sc
+converts a 3D scene from AC3D format to Pink 3Dscene format 
 
-{\bfseries Description:}
+{\bf Usage:} ac2pink in.ac out.3sc
 
-Reads the file {\bfseries in.ac}. This file must be in the AC3D format. Generates the output file {\bfseries out.3sc} in the 3Dscene format :
+{\bf Description:}
+
+Reads the file {\bf in.ac}. This file must be in the AC3D format. Generates the output file {\bf out.3sc} in the 3Dscene format :
 
 FILE ::= '3Dscene' $<$N$>$ $<$OBJ$>$$\ast$ OBJ ::= $<$LINE$>$ $|$ $<$CLOSEDLINE$>$ $|$ $<$SPLINE$>$ $|$ $<$CLOSEDSPLINE$>$ $|$ $<$POLYGON$>$ LINE ::= 'line' $<$N$>$ $<$POINT$>$$\ast$ CLOSEDLINE ::= 'closedline' $<$N$>$ $<$POINT$>$$\ast$ SPLINE ::= 'spline' $<$N$>$ $<$POINT$>$$\ast$ CLOSEDSPLINE ::= 'closedspline' $<$N$>$ $<$POINT$>$$\ast$ POLYGON ::= 'polygon' $<$N$>$ $<$POINT$>$$\ast$ N ::= ascii\_\-coded\_\-integer POINT ::= ascii\_\-coded\_\-float ascii\_\-coded\_\-float ascii\_\-coded\_\-float
 
-{\bfseries Types supported:} AC3D
+{\bf Types supported:} AC3D
 
-{\bfseries Category:} convert
+{\bf Category:} convert
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

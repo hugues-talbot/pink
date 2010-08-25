@@ -1,25 +1,23 @@
 \section{watershedthin.c File Reference}
 \label{watershedthin_8c}\index{watershedthin.c@{watershedthin.c}}
-
-
-Thin watershed transformation (Meyer's algorithm on perfect fusion grid).  
-
+Thin watershed transformation (Meyer's algorithm on perfect fusion grid). 
 
 
 
 \subsection{Detailed Description}
-Thin watershed transformation (Meyer's algorithm on perfect fusion grid). {\bfseries Usage:} watershedthin in mark $<$bgmark$|$null$>$ $<$roi$|$null$>$ parite out
+Thin watershed transformation (Meyer's algorithm on perfect fusion grid). 
 
-{\bfseries Description:}
+{\bf Usage:} watershedthin in mark $<$bgmark$|$null$>$ $<$roi$|$null$>$ parite out
 
-Performs the watershed transformation on the image {\bfseries in}, considered to be on a perfect fusion grid, taking the set of markers in {\bfseries mark}. Returns the divide set.
+{\bf Description:}
 
-If this parameter is present, {\bfseries bgmark} is used as a set of markers for the background. If this parameter is present, {\bfseries roi} indicates the region of interest on which the operation is performed. The parameter {\bfseries parite} (0 or 1) gives the the translation of the fusion grid.
+Performs the watershed transformation on the image {\bf in}, considered to be on a perfect fusion grid, taking the set of markers in {\bf mark}. Returns the divide set.
 
-{\bfseries Types supported:} byte 2d
+If this parameter is present, {\bf bgmark} is used as a set of markers for the background. If this parameter is present, {\bf roi} indicates the region of interest on which the operation is performed. The parameter {\bf parite} (0 or 1) gives the the translation of the fusion grid.
 
-{\bfseries Category:} connect
+{\bf Types supported:} byte 2d
 
-\begin{DoxyAuthor}{Author}
-Jean Cousty 
-\end{DoxyAuthor}
+{\bf Category:} connect
+
+\begin{Desc}
+\item[Author:]Jean Cousty \end{Desc}

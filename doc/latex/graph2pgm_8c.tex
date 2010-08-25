@@ -1,23 +1,21 @@
 \section{graph2pgm.c File Reference}
 \label{graph2pgm_8c}\index{graph2pgm.c@{graph2pgm.c}}
-
-
-converts from graph representation to pgm  
-
+converts from graph representation to pgm 
 
 
 
 \subsection{Detailed Description}
-converts from graph representation to pgm {\bfseries Usage:} graph2pgm in.graph $<$in.pgm$|$rs cs ds$>$ out.pgm
+converts from graph representation to pgm 
 
-{\bfseries Description:}
+{\bf Usage:} graph2pgm in.graph $<$in.pgm$|$rs cs ds$>$ out.pgm
 
-Reads the file {\bfseries in.graph}. Each vertex of this graph must have integer coordinates, and represents a pixel/voxel of a 2D/3D image. If a file name {\bfseries in.pgm} is given, then the points read in {\bfseries in.graph} are inserted (if possible) into the image read in {\bfseries in.pgm}. Else, they are inserted in a new image, the dimensions of which are {\bfseries rs}, {\bfseries cs}, and {\bfseries ds}.
+{\bf Description:}
 
-{\bfseries Types supported:} graph
+Reads the file {\bf in.graph}. Each vertex of this graph must have integer coordinates, and represents a pixel/voxel of a 2D/3D image. If a file name {\bf in.pgm} is given, then the points read in {\bf in.graph} are inserted (if possible) into the image read in {\bf in.pgm}. Else, they are inserted in a new image, the dimensions of which are {\bf rs}, {\bf cs}, and {\bf ds}.
 
-{\bfseries Category:} convert
+{\bf Types supported:} graph
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} convert
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

@@ -1,26 +1,23 @@
 \section{raw2pgm.c File Reference}
 \label{raw2pgm_8c}\index{raw2pgm.c@{raw2pgm.c}}
-
-
-converts from raw format into pgm format  
-
+converts from raw format into pgm format 
 
 
 
 \subsection{Detailed Description}
-converts from raw format into pgm format {\bfseries Usage:} in.raw rs cs ds headersize datatype littleendian [xdim ydim zdim] out.pgm
+converts from raw format into pgm format 
 
-{\bfseries Description:} Converts from raw format into pgm format.
+{\bf Usage:} in.raw rs cs ds headersize datatype littleendian [xdim ydim zdim] out.pgm
 
-Parameters: \begin{DoxyItemize}
-\item {\bfseries in.pgm} : source file in raw format \item {\bfseries rs} (int32\_\-t): row size (number of voxels in a row) \item {\bfseries cs} (int32\_\-t): column size (number of voxels in a column) \item {\bfseries ds} (int32\_\-t): number of planes \item {\bfseries headersize} (int32\_\-t): size of the header in bytes (information in the header will be ignored) \item {\bfseries datatype} (int32\_\-t): (1 for byte, 2 for short int, 4 for long int, 5 for float) \item {\bfseries littleendian} (int32\_\-t) 1: littleendian, 0: bigendian. Usual choice is 0. \item {\bfseries xdim} (float, optional) : gap (in the real world) between two adjacent voxels in a row. \item {\bfseries ydim} (float, optional) : gap (in the real world) between two adjacent voxels in a column. \item {\bfseries zdim} (float, optional) : gap (in the real world) between two adjacent planes.\end{DoxyItemize}
-{\bfseries Types supported:} byte 3D, int16\_\-t 3D, int32\_\-t 3D
+{\bf Description:} Converts from raw format into pgm format.
 
-\begin{DoxyWarning}{Warning}
-Signed integers and floating numbers are not supported.
-\end{DoxyWarning}
-{\bfseries Category:} convert
+Parameters: \begin{itemize}
+\item {\bf in.pgm} : source file in raw format \item {\bf rs} (int32\_\-t): row size (number of voxels in a row) \item {\bf cs} (int32\_\-t): column size (number of voxels in a column) \item {\bf ds} (int32\_\-t): number of planes \item {\bf headersize} (int32\_\-t): size of the header in bytes (information in the header will be ignored) \item {\bf datatype} (int32\_\-t): (1 for byte, 2 for short int, 4 for long int, 5 for float) \item {\bf littleendian} (int32\_\-t) 1: littleendian, 0: bigendian. Usual choice is 0. \item {\bf xdim} (float, optional) : gap (in the real world) between two adjacent voxels in a row. \item {\bf ydim} (float, optional) : gap (in the real world) between two adjacent voxels in a column. \item {\bf zdim} (float, optional) : gap (in the real world) between two adjacent planes.\end{itemize}
+{\bf Types supported:} byte 3D, int16\_\-t 3D, int32\_\-t 3D
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Warning:]Signed integers and floating numbers are not supported.\end{Desc}
+{\bf Category:} convert
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

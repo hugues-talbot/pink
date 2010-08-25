@@ -1,25 +1,23 @@
 \section{distc.c File Reference}
 \label{distc_8c}\index{distc.c@{distc.c}}
-
-
-distance transform (internal)  
-
+distance transform (internal) 
 
 
 
 \subsection{Detailed Description}
-distance transform (internal) {\bfseries Usage:} distc in.pgm mode out.pgm
+distance transform (internal) 
 
-{\bfseries Description:} Distance to the complementary of the object X defined by the binary image {\bfseries in.pgm} . The result function DX(x) is defined by: DX(x) = min \{d(x,y), y not in X\}.
+{\bf Usage:} distc in.pgm mode out.pgm
 
-The distance d used depends on the parameter {\bfseries mode} : \begin{DoxyItemize}
-\item 0: approximate euclidean distance (truncated) \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 4: 4-\/distance in 2d \item 5: exact euclidean distance (float) \item 8: 8-\/distance in 2d \item 6: 6-\/distance in 3d \item 18: 18-\/distance in 3d \item 26: 26-\/distance in 3d \item 40: 4-\/distance in 2d (byte coded ouput) \item 80: 8-\/distance in 2d (byte coded ouput) \item 60: 6-\/distance in 3d (byte coded ouput) \item 180: 18-\/distance in 3d (byte coded ouput) \item 260: 26-\/distance in 3d (byte coded ouput)\end{DoxyItemize}
-The output {\bfseries out.pgm} is of type int32\_\-t for modes $<$ 40, of type byte for other modes.
+{\bf Description:} Distance to the complementary of the object X defined by the binary image {\bf in.pgm} . The result function DX(x) is defined by: DX(x) = min \{d(x,y), y not in X\}.
 
-{\bfseries Types supported:} byte 2d, byte 3d
+The distance d used depends on the parameter {\bf mode} : \begin{itemize}
+\item 0: approximate euclidean distance (truncated) \item 1: approximate quadratic euclidean distance \item 2: chamfer distance \item 3: exact quadratic euclidean distance \item 4: 4-distance in 2d \item 5: exact euclidean distance (float) \item 8: 8-distance in 2d \item 6: 6-distance in 3d \item 18: 18-distance in 3d \item 26: 26-distance in 3d \item 40: 4-distance in 2d (byte coded ouput) \item 80: 8-distance in 2d (byte coded ouput) \item 60: 6-distance in 3d (byte coded ouput) \item 180: 18-distance in 3d (byte coded ouput) \item 260: 26-distance in 3d (byte coded ouput)\end{itemize}
+The output {\bf out.pgm} is of type int32\_\-t for modes $<$ 40, of type byte for other modes.
 
-{\bfseries Category:} morpho
+{\bf Types supported:} byte 2d, byte 3d
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie, Xavier Daragon 
-\end{DoxyAuthor}
+{\bf Category:} morpho
+
+\begin{Desc}
+\item[Author:]Michel Couprie, Xavier Daragon \end{Desc}

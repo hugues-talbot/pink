@@ -1,31 +1,29 @@
 \section{skelpar3d.c File Reference}
 \label{skelpar3d_8c}\index{skelpar3d.c@{skelpar3d.c}}
-
-
-parallel 3D binary skeleton  
-
+parallel 3D binary skeleton 
 
 
 
 \subsection{Detailed Description}
-parallel 3D binary skeleton {\bfseries Usage:} skelpar3d in.pgm algorithm nsteps [inhibit] out.pgm
+parallel 3D binary skeleton 
 
-{\bfseries Description:} Parallel 3D binary thinning or skeleton. The parameter {\bfseries nsteps} gives, if positive, the number of parallel thinning steps to be processed. If the value given for {\bfseries nsteps} equals -\/1, the thinning is continued until stability.
+{\bf Usage:} skelpar3d in.pgm algorithm nsteps [inhibit] out.pgm
 
-The parameter {\bfseries algorithm} is a numerical code indicating which method will be used for the thinning. The possible choices are: \begin{DoxyItemize}
-\item 0: ultimate, without constraint (MK3a) \item 1: curvilinear, based on 1D isthmus (CK3a) \item 2: medial axis preservation (AK3) -\/ parameter inhibit represents the minimal radius of medial axis balls which are considered \item 3: ultimate (MK3) -\/ if nsteps = -\/2, returns the topological distance \item 4: curvilinear based on ends (EK3) \item 5: curvilinear based on ends, with end reconstruction (CK3b) \item 6: topological axis (not homotopic) \item 7: curvilinear, based on residual points and 2D isthmus (CK3) \item 8: ultimate, asymetric (AMK3) \item 9: curvilinear, asymetric, based on thin 1D isthmus (ACK3a) \item 10: curvilinear, asymetric, based on 3D and 2D residuals (ACK3) \item 11: surfacic, based on residual points (RK3) \item 12: surfacic, based on 2D isthmuses (SK3) \item 13: ultimate, directional, (DK3) \item 14: surfacic, directional, based on residual points (DRK3) \item 15: surfacic, directional, based on 2D isthmuses (DSK3)\end{DoxyItemize}
-In modes other than 2, if the parameter {\bfseries inhibit} is given and is a binary image name, then the points of this image will be left unchanged.
+{\bf Description:} Parallel 3D binary thinning or skeleton. The parameter {\bf nsteps} gives, if positive, the number of parallel thinning steps to be processed. If the value given for {\bf nsteps} equals -1, the thinning is continued until stability.
 
-The following codes give access to auxiliary functions, for isthmus detection. Parameter {\bfseries nsteps} will not be used in this case (any value can be given).
+The parameter {\bf algorithm} is a numerical code indicating which method will be used for the thinning. The possible choices are: \begin{itemize}
+\item 0: ultimate, without constraint (MK3a) \item 1: curvilinear, based on 1D isthmus (CK3a) \item 2: medial axis preservation (AK3) - parameter inhibit represents the minimal radius of medial axis balls which are considered \item 3: ultimate (MK3) - if nsteps = -2, returns the topological distance \item 4: curvilinear based on ends (EK3) \item 5: curvilinear based on ends, with end reconstruction (CK3b) \item 6: topological axis (not homotopic) \item 7: curvilinear, based on residual points and 2D isthmus (CK3) \item 8: ultimate, asymetric (AMK3) \item 9: curvilinear, asymetric, based on thin 1D isthmus (ACK3a) \item 10: curvilinear, asymetric, based on 3D and 2D residuals (ACK3) \item 11: surfacic, based on residual points (RK3) \item 12: surfacic, based on 2D isthmuses (SK3) \item 13: ultimate, directional, (DK3) \item 14: surfacic, directional, based on residual points (DRK3) \item 15: surfacic, directional, based on 2D isthmuses (DSK3)\end{itemize}
+In modes other than 2, if the parameter {\bf inhibit} is given and is a binary image name, then the points of this image will be left unchanged.
 
-\begin{DoxyItemize}
-\item 100: 1D isthmus points\end{DoxyItemize}
-{\bfseries Warning:} The object must not have any point on the frame of the image.
+The following codes give access to auxiliary functions, for isthmus detection. Parameter {\bf nsteps} will not be used in this case (any value can be given).
 
-{\bfseries Types supported:} byte 3d
+\begin{itemize}
+\item 100: 1D isthmus points\end{itemize}
+{\bf Warning:} The object must not have any point on the frame of the image.
 
-{\bfseries Category:} topobin
+{\bf Types supported:} byte 3d
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} topobin
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

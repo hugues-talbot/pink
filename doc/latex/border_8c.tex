@@ -1,23 +1,21 @@
 \section{border.c File Reference}
 \label{border_8c}\index{border.c@{border.c}}
-
-
-border of a binary image  
-
+border of a binary image 
 
 
 
 \subsection{Detailed Description}
-border of a binary image {\bfseries Usage:} border in connex out
+border of a binary image 
 
-{\bfseries Description:} Let X be the subset of Zn that corresponds to the input image {\bfseries in}, and let k be the value of the parameter {\bfseries connex} (that is, 4, 8 (2d) or 6, 26 (3d)), which is the connectivity chosen for X.
+{\bf Usage:} border in connex out
+
+{\bf Description:} Let X be the subset of Zn that corresponds to the input image {\bf in}, and let k be the value of the parameter {\bf connex} (that is, 4, 8 (2d) or 6, 26 (3d)), which is the connectivity chosen for X.
 
 The border B(X) of X is defined by: B(X) = \{x in X, (Gamma\_\-nk(x) inter Xbar) not empty\} where nk is the complementary connectivity for k.
 
-{\bfseries Types supported:} byte 2d, byte 3d
+{\bf Types supported:} byte 2d, byte 3d
 
-{\bfseries Category:} topobin
+{\bf Category:} topobin
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

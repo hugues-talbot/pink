@@ -1,16 +1,15 @@
 \section{drawspline.c File Reference}
 \label{drawspline_8c}\index{drawspline.c@{drawspline.c}}
-
-
-draw a spline which is specified by its control points in a text file  
-
+draw a spline which is specified by its control points in a text file 
 
 
 
 \subsection{Detailed Description}
-draw a spline which is specified by its control points in a text file {\bfseries Usage:} drawspline in.pgm spline.txt [len] out.pgm
+draw a spline which is specified by its control points in a text file 
 
-{\bfseries Description:} Draws a spline which is specified by its control points in a text file. The parameter {\bfseries in.pgm} gives an image into which the spline is to be drawn. The file format for {\bfseries spline.txt} is the following for 2D:
+{\bf Usage:} drawspline in.pgm spline.txt [len] out.pgm
+
+{\bf Description:} Draws a spline which is specified by its control points in a text file. The parameter {\bf in.pgm} gives an image into which the spline is to be drawn. The file format for {\bf spline.txt} is the following for 2D:
 
 c n+1 (where n+1 denotes the number of control points)\par
  x1 y1\par
@@ -32,12 +31,11 @@ C n+1 (where n+1 denotes the number of control points)\par
  C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn\par
 
 
-If parameter {\bfseries len} is given and non-\/zero, the spline is extended on both sides by straight line segments of length {\bfseries len}.
+If parameter {\bf len} is given and non-zero, the spline is extended on both sides by straight line segments of length {\bf len}.
 
-{\bfseries Types supported:} byte 2D, byte 3D
+{\bf Types supported:} byte 2D, byte 3D
 
-{\bfseries Category:} draw geo
+{\bf Category:} draw geo
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

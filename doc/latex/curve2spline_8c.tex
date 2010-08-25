@@ -1,18 +1,17 @@
 \section{curve2spline.c File Reference}
 \label{curve2spline_8c}\index{curve2spline.c@{curve2spline.c}}
-
-
-converts a discrete open curve into a spline  
-
+converts a discrete open curve into a spline 
 
 
 
 \subsection{Detailed Description}
-converts a discrete open curve into a spline {\bfseries Usage:} curve2spline curve.list tolerance out.spline
+converts a discrete open curve into a spline 
 
-{\bfseries Description:}
+{\bf Usage:} curve2spline curve.list tolerance out.spline
 
-Let C be the discrete open curve described in {\bfseries curve.list}. This program finds a approximation of C in the form of a parametric curve P defined by two (in 2D) or three (in 3D) splines such that the maximal distance between P and C is beyond the given {\bfseries tolerance}.
+{\bf Description:}
+
+Let C be the discrete open curve described in {\bf curve.list}. This program finds a approximation of C in the form of a parametric curve P defined by two (in 2D) or three (in 3D) splines such that the maximal distance between P and C is beyond the given {\bf tolerance}.
 
 The result is given in the form of the list of control points for the splines, followed by the set of coefficients for each spline segment. The file format is the following for 2D:
 
@@ -43,13 +42,11 @@ x(t) = C3Xi $\ast$ t$^\wedge$3 + C2Xi $\ast$ t$^\wedge$2 + C1Xi $\ast$ t + C0Xi\
  z(t) = C3Zi $\ast$ t$^\wedge$3 + C2Zi $\ast$ t$^\wedge$2 + C1Zi $\ast$ t + C0Zi\par
  with t in [0,1]
 
-\begin{DoxyWarning}{Warning}
-Closed curves are not allowed.
-\end{DoxyWarning}
-{\bfseries Types supported:} list 2D, list 3D
+\begin{Desc}
+\item[Warning:]Closed curves are not allowed.\end{Desc}
+{\bf Types supported:} list 2D, list 3D
 
-{\bfseries Category:} draw geo
+{\bf Category:} draw geo
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

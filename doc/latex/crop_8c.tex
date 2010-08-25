@@ -1,21 +1,19 @@
 \section{crop.c File Reference}
 \label{crop_8c}\index{crop.c@{crop.c}}
-
-
-extracts a rectangular (cuboidal in 3d) area from an image  
-
+extracts a rectangular (cuboidal in 3d) area from an image 
 
 
 
 \subsection{Detailed Description}
-extracts a rectangular (cuboidal in 3d) area from an image {\bfseries Usage:} crop in.pgm x y [z] w h [d] out.pgm
+extracts a rectangular (cuboidal in 3d) area from an image 
 
-{\bfseries Description:} For a 2d image, extracts the rectangle with upper left corner ({\bfseries x},{\bfseries y}), of width {\bfseries w} and height {\bfseries h} from the image in.pgm . For a 3d image, extracts the cuboid with upper left corner ({\bfseries x},{\bfseries y}, {\bfseries z}), of width {\bfseries w}, height {\bfseries h} and depth {\bfseries d} from the image in.pgm .
+{\bf Usage:} crop in.pgm x y [z] w h [d] out.pgm
 
-{\bfseries Types supported:} byte 2d, int32\_\-t 2d, float 2d, byte 3d, int32\_\-t 3d, float 3d.
+{\bf Description:} For a 2d image, extracts the rectangle with upper left corner ({\bf x},{\bf y}), of width {\bf w} and height {\bf h} from the image in.pgm . For a 3d image, extracts the cuboid with upper left corner ({\bf x},{\bf y}, {\bf z}), of width {\bf w}, height {\bf h} and depth {\bf d} from the image in.pgm .
 
-{\bfseries Category:} convert, geo ,
+{\bf Types supported:} byte 2d, int32\_\-t 2d, float 2d, byte 3d, int32\_\-t 3d, float 3d.
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} convert, geo ,
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

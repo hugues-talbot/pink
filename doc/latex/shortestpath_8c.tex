@@ -1,25 +1,23 @@
 \section{shortestpath.c File Reference}
 \label{shortestpath_8c}\index{shortestpath.c@{shortestpath.c}}
-
-
-finds a shortest path from x to y in image  
-
+finds a shortest path from x to y in image 
 
 
 
 \subsection{Detailed Description}
-finds a shortest path from x to y in image {\bfseries Usage:} shortestpath in.pgm connex mode S1 S2 [S3] D1 D2 [D3] out.lst
+finds a shortest path from x to y in image 
 
-{\bfseries Description:} A weighted graph G = (V,E) is defined with V = set of pixels of {\bfseries in.pgm} and E = \{(P,Q) in VxV ; P and Q are {\bfseries connex-\/} adjacent\}. Let F(P) be the value of pixel P in the image {\bfseries in.pgm}. A weight W(P,Q) is assigned to each edge, according to the value of {\bfseries mode:} 
+{\bf Usage:} shortestpath in.pgm connex mode S1 S2 [S3] D1 D2 [D3] out.lst
 
-\begin{DoxyItemize}
-\item max : W(P,Q) = max\{F(P),F(Q)\} \item min : W(P,Q) = min\{F(P),F(Q)\} \item avg : W(P,Q) = (F(P) + F(Q)) / 2\end{DoxyItemize}
-This operator finds a shortest path from ({\bfseries S1}, {\bfseries S2}) to ({\bfseries D1}, {\bfseries D2}) in this graph. The result is given as a list of vertices (pixels) in {\bfseries out.lst}.
+{\bf Description:} A weighted graph G = (V,E) is defined with V = set of pixels of {\bf in.pgm} and E = \{(P,Q) in Vx\-V ; P and Q are {\bf connex-} adjacent\}. Let F(P) be the value of pixel P in the image {\bf in.pgm}. A weight W(P,Q) is assigned to each edge, according to the value of {\bf mode:} 
 
-{\bfseries Types supported:} byte 2D, byte 3D
+\begin{itemize}
+\item max : W(P,Q) = max\{F(P),F(Q)\} \item min : W(P,Q) = min\{F(P),F(Q)\} \item avg : W(P,Q) = (F(P) + F(Q)) / 2\end{itemize}
+This operator finds a shortest path from ({\bf S1}, {\bf S2}) to ({\bf D1}, {\bf D2}) in this graph. The result is given as a list of vertices (pixels) in {\bf out.lst}.
 
-{\bfseries Category:} connect
+{\bf Types supported:} byte 2D, byte 3D
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} connect
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}

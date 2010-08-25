@@ -1,25 +1,23 @@
 \section{saliency.c File Reference}
 \label{saliency_8c}\index{saliency.c@{saliency.c}}
-
-
-salient watershed transformation  
-
+salient watershed transformation 
 
 
 
 \subsection{Detailed Description}
-salient watershed transformation {\bfseries Usage:} saliency in connex out
+salient watershed transformation 
 
-{\bfseries Description:} Performs the salient watershed transformation on the image {\bfseries in}, The parameter {\bfseries connex} gives the adjacency relation (4 or 6b in 2D).
+{\bf Usage:} saliency in connex out
+
+{\bf Description:} Performs the salient watershed transformation on the image {\bf in}, The parameter {\bf connex} gives the adjacency relation (4 or 6b in 2D).
 
 The image out is a int32\_\-t image (int32\_\-t)
 
 In 4 connectivity, the output image is a line graph in the khalimsky grid. In 6b connectivity, the result is on the pixels themselves, with the gammab neighborhood.
 
-{\bfseries Types supported:} byte 2d, byte 3d
+{\bf Types supported:} byte 2d, byte 3d
 
-{\bfseries Category:} connect
+{\bf Category:} connect
 
-\begin{DoxyAuthor}{Author}
-Laurent Najman 
-\end{DoxyAuthor}
+\begin{Desc}
+\item[Author:]Laurent Najman \end{Desc}

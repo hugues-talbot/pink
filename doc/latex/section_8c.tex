@@ -1,21 +1,19 @@
 \section{section.c File Reference}
 \label{section_8c}\index{section.c@{section.c}}
-
-
-computes a 2d cross section from a 3d image  
-
+computes a 2d cross section from a 3d image 
 
 
 
 \subsection{Detailed Description}
-computes a 2d cross section from a 3d image {\bfseries Usage:} section in.pgm x0 y0 z0 x1 y1 z1 x2 y2 z2 out.pgm
+computes a 2d cross section from a 3d image 
 
-{\bfseries Description:} The points P0 ( {\bfseries x0}, {\bfseries y0}, {\bfseries z0} ), P1 ( {\bfseries x1}, {\bfseries y1}, {\bfseries z1} ) and P2 ( {\bfseries x2}, {\bfseries y2}, {\bfseries z2} ) form a basis for a plane in the 3d space. The intersection of this plane with the domain of the 3d image {\bfseries in.pgm} form the domain of the 2d image {\bfseries out.pgm} . The grayscale values of {\bfseries out.pgm} are obtained by trilinear interpolation from the grayscale values of {\bfseries in.pgm} . The coordinates of the basis for the plane are expressed in \char`\"{}real world\char`\"{} dimensions.
+{\bf Usage:} section in.pgm x0 y0 z0 x1 y1 z1 x2 y2 z2 out.pgm
 
-{\bfseries Types supported:} byte 3d, int32\_\-t 3d
+{\bf Description:} The points P0 ( {\bf x0}, {\bf y0}, {\bf z0} ), P1 ( {\bf x1}, {\bf y1}, {\bf z1} ) and P2 ( {\bf x2}, {\bf y2}, {\bf z2} ) form a basis for a plane in the 3d space. The intersection of this plane with the domain of the 3d image {\bf in.pgm} form the domain of the 2d image {\bf out.pgm} . The grayscale values of {\bf out.pgm} are obtained by trilinear interpolation from the grayscale values of {\bf in.pgm} . The coordinates of the basis for the plane are expressed in \char`\"{}real world\char`\"{} dimensions.
 
-{\bfseries Category:} geo
+{\bf Types supported:} byte 3d, int32\_\-t 3d
 
-\begin{DoxyAuthor}{Author}
-Michel Couprie 
-\end{DoxyAuthor}
+{\bf Category:} geo
+
+\begin{Desc}
+\item[Author:]Michel Couprie \end{Desc}
