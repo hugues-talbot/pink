@@ -66,6 +66,7 @@ extern void SEDT3d_column(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, ui
 extern void SEDT3d_planes(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds);
 extern int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res);
 extern struct xvimage * lopeningfunction(struct xvimage *img, int32_t mode);
+extern float ldistsets(struct xvimage *img1, struct xvimage *img2, int32_t mode);
 #ifdef __cplusplus
 }
 #endif

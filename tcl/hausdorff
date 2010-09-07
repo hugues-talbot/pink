@@ -79,9 +79,9 @@ proc my_read_val {filename} {
   set input [open $filename]
   set tag [gets $input]
   set line [gets $input]
-  scan $line "%g %g" v1 v2
+  scan $line "%g" v1
   close $input
-  return $v2
+  return $v1
 }
 
 my_exec_q dist [tmpfile t1] $HAUSDORFF(codedist) [tmpfile d1]
@@ -94,6 +94,7 @@ my_exec_q max1 [tmpfile d1b2] [tmpfile m1]
 my_exec_q max1 [tmpfile d2b1] [tmpfile m2]
 set m1 [my_read_val [tmpfile m1]]
 set m2 [my_read_val [tmpfile m2]]
+
 if {($m1 > $m2)} { 
    set max $m1
 } else {

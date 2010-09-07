@@ -2491,6 +2491,252 @@ int32_t llpemeyer3d2(
 } /* llpemeyer3d2() */
 
 /* ==================================== */
+int32_t llpemeyer3d2b(
+        struct xvimage *image,
+        struct xvimage *marqueurs,
+        struct xvimage *masque,
+        int32_t connex)
+/* ==================================== */
+// marqueurs: image initiale de labels
+// le résultat du traitement se trouve dans marqueurs (image de labels)
+// et dans image (binaire)
+// LPE avec ligne de séparation
+// labels différents pour les voxels de la LPE :
+//   soit n le dernier label de l'image marqueurs, 
+//   si v est voisin de 2 labels i et j alors son label sera i*j+n
+//   s'il est voisin de plus de 2 labels alors son label sera n+1
+{
+#undef F_NAME
+#define F_NAME "llpemeyer3d2b"
+  register int32_t x, y, w, k;
+  int32_t rs = rowsize(image);       /* taille ligne */
+  int32_t cs = colsize(image);       /* taille colonne */
+  int32_t d = depth(image);          /* nb plans */
+  int32_t n = rs * cs;               /* taille plan */
+  int32_t N = n * d;                 /* taille image */
+  uint8_t *F = UCHARDATA(image);     /* l'image de depart */
+  uint8_t *MA;                       /* l'image de masque */
+  int32_t *M = SLONGDATA(marqueurs); /* l'image d'etiquettes */
+  Fah * FAH;                         /* la file d'attente hierarchique */
+  int32_t etiqcc[6];
+  int32_t ncc;  
+  int32_t nlabels;
+
+#ifdef DEBUG_llpemeyer3d3
+  printf("%s: begin\n", F_NAME);
+#endif
+
+  if (d == 1) 
+  {
+    fprintf(stderr, "%s: 3D images only\n", F_NAME);
+    exit(0);
+  }
+
+  if (datatype(image) != VFF_TYP_1_BYTE) 
+  {
+    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
+  {
+    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(marqueurs) != VFF_TYP_4_BYTE) 
+  {
+    fprintf(stderr, "%s: marker image must by 4 byte\n", F_NAME);
+    return 0;
+  }
+
+  if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs)  || (depth(marqueurs) != d))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    return 0;
+  }
+
+  if (masque && ((rowsize(masque) != rs) || (colsize(masque) != cs) || (depth(masque) != d)))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    return 0;
+  }
+  if (masque) MA = UCHARDATA(masque);
+
+  IndicsInit(N);
+  FAH = CreeFahVide(N+1);
+  if (FAH == NULL)
+  {   fprintf(stderr, "%s() : CreeFah failed\n", F_NAME);
+      return(0);
+  }
+
+  nlabels = 0;
+  for (x = 0; x < N; x++) if (M[x] > nlabels) nlabels = M[x];
+
+  /* ================================================ */
+  /* INITIALISATION DE LA FAH                         */
+  /* ================================================ */
+
+  FahFlush(FAH);
+  FahPush(FAH, -1, 0);   /* force la creation du niveau 0 dans la Fah. */
+                         /* NECESSAIRE pour eviter la creation prematuree */
+                         /* de la file d'urgence */ 
+
+  for (x = 0; x < N; x++)
+  {
+    if (M[x] && (!masque || MA[x]))    /* on va empiler les voisins des regions marquees */
+    {
+      switch (connex)
+      {
+        case 6:
+          for (k = 0; k <= 10; k += 2)
+          {
+            y = voisin6(x, k, rs, n, N);
+            if ((y!=-1) && !M[y] && !IsSet(y,EN_FAH) && (!masque || MA[y]))
+	    { FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+          } /* for (k = 0; k < 8; k += 2) */
+          break;
+	  case 18:
+            for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+            {
+              y = voisin18(x, k, rs, n, N);
+              if ((y!=-1) && !M[y] && !IsSet(y,EN_FAH) && (!masque || MA[y]))
+	      { FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+            } /* for (k = 0; k < 18; k += 1) */
+          break;
+	  case 26:
+            for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+            {
+              y = voisin26(x, k, rs, n, N);
+              if ((y!=-1) && !M[y] && !IsSet(y,EN_FAH) && (!masque || MA[y]))
+	      { FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+            } /* for (k = 0; k < 26; k += 1) */
+          break;
+      } /* switch (connex) */
+    } /* if (B[x]) */
+  } /* for (x = 0; x < N; x++) */
+
+  x = FahPop(FAH);
+#ifdef PARANO
+  if (x != -1)
+  {   
+     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
+     return(0);
+  }
+#endif
+
+  /* ================================================ */
+  /* INONDATION                                       */
+  /* ================================================ */
+
+  while (! FahVide(FAH))
+  {
+    x = FahPop(FAH);
+    UnSet(x, EN_FAH);
+
+    ncc = 0;
+    switch (connex)
+    {
+      case 6:
+        for (k = 0; k <= 10; k += 2)
+        {
+          y = voisin6(x, k, rs, n, N);
+          if ((y != -1) && (M[y] != 0) && (M[y] <= nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          {
+            etiqcc[ncc] = M[y];        
+            ncc += 1;
+          }
+        } /* for k */
+        break;
+      case 18:
+        for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+        {
+          y = voisin18(x, k, rs, n, N);
+          if ((y != -1) && (M[y] != 0) && (M[y] <= nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          {
+            etiqcc[ncc] = M[y];        
+            ncc += 1;
+          }
+        } /* for k */
+        break;
+      case 26:
+        for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+        {
+          y = voisin26(x, k, rs, n, N);
+          if ((y != -1) && (M[y] != 0) && (M[y] <= nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          {
+            etiqcc[ncc] = M[y];        
+            ncc += 1;
+          }
+        } /* for k */
+        break;
+    } /* switch (connex) */
+
+    if (ncc == 1)
+    {
+      M[x] = etiqcc[0];
+
+      switch (connex)
+      {
+      case 6:
+	for (k = 0; k <= 10; k += 2)
+	{
+	  y = voisin6(x, k, rs, n, N);     
+	  if ((y != -1) && (M[y] == 0) && (! IsSet(y, EN_FAH)) && (!masque || MA[y]))
+          {
+	    FahPush(FAH, y, F[y]);
+	    Set(y, EN_FAH);
+	  } /* if ((y != -1) && (! IsSet(y, EN_FAH))) */
+	} /* for k */
+	break;
+      case 18:
+	for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+        {
+	  y = voisin18(x, k, rs, n, N);
+	  if ((y != -1) && (M[y] == 0) && (! IsSet(y, EN_FAH)) && (!masque || MA[y]))
+          {
+	    FahPush(FAH, y, F[y]);
+	    Set(y, EN_FAH);
+	  } /* if ((y != -1) && (! IsSet(y, EN_FAH))) */
+	} /* for k */
+	break;
+      case 26:
+	for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+        {
+	  y = voisin26(x, k, rs, n, N);
+	  if ((y != -1) && (M[y] == 0) && (! IsSet(y, EN_FAH)) && (!masque || MA[y]))
+          {
+	    FahPush(FAH, y, F[y]);
+	    Set(y, EN_FAH);
+	  } /* if ((y != -1) && (! IsSet(y, EN_FAH))) */
+	} /* for k */
+	break;
+      } /* switch (connex) */
+    } // if (ncc == 1)
+    else if (ncc > 1)
+    {
+      if (ncc > 2) M[x] = nlabels + 1;
+      else M[x] = nlabels + (etiqcc[0] * etiqcc[1]);
+    }
+  } /* while (! FahVide(FAH)) */
+  /* FIN PROPAGATION */
+
+  for (x = 0; x < N; x++)
+  {
+    if ((M[x] > nlabels) || (M[x] == 0)) F[x] = 255; else F[x] = 0;
+  }
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  FahTermine(FAH);
+
+  return(1);
+} /* llpemeyer3d2b() */
+
+/* ==================================== */
 int32_t llpemeyer3d3(
         struct xvimage *image,
         struct xvimage *marqueurs,

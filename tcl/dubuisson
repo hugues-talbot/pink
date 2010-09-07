@@ -69,9 +69,9 @@ proc my_read_val {filename} {
   set input [open $filename]
   set tag [gets $input]
   set line [gets $input]
-  scan $line "%g %g" v1 v2
+  scan $line "%g" v1
   close $input
-  return $v2
+  return $v1
 }
 
 my_exec_q dist [tmpfile t1] $DUBUISSON(codedist) [tmpfile d1]

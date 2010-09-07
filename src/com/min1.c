@@ -36,11 +36,13 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief return the minimum of the pixel values of an image
 
-<B>Usage:</B> min1 in.pgm out.list
+<B>Usage:</B> min1 in.pgm [out.list]
 
 <B>Description:</B>
 This function returns (in the list <B>out.list</B>) 
 the minimum of the pixel values of the image \b in.pgm .
+
+If the parameter \b out.list is ommitted, the result is printed on the standard output.
 
 <B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
 
@@ -58,8 +60,6 @@ the minimum of the pixel values of the image \b in.pgm .
 #include <mcimage.h>
 #include <larith.h>
 
-#define VERBOSE
-
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
@@ -68,9 +68,9 @@ int main(int argc, char **argv)
   double minval;
   FILE *fd = NULL;
 
-  if (argc != 3)
+  if ((argc != 3) && (argc != 2))
   {
-    fprintf(stderr, "usage: %s in.pgm out.list\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm [out.list]\n", argv[0]);
     exit(1);
   }
 
@@ -82,20 +82,21 @@ int main(int argc, char **argv)
   }
 
   minval = lmin1(image);
-
-#ifdef VERBOSE
-    printf("minval: %g\n", minval);
-#endif
-
-  fd = fopen(argv[argc - 1],"w");
-  if (!fd)
+ 
+  if (argc == 3)
   {
-    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc - 1]);
-    exit(1);
+    fd = fopen(argv[argc - 1],"w");
+    if (!fd)
+    {
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc - 1]);
+      exit(1);
+    }
+    fprintf(fd, "e %d\n", 1); 
+    fprintf(fd, "%g\n", minval); 
+    fclose(fd);
   }
-  fprintf(fd, "s %d\n", 1); 
-  fprintf(fd, "%d %g\n", 0, minval); 
-  fclose(fd);
+  else
+    printf("%g\n", minval);
 
   freeimage(image);
 

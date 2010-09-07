@@ -32,74 +32,87 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file average1.c
+/*! \file distsets.c
 
-\brief return the average of the pixel values of an image
+\brief distance between sets
 
-<B>Usage:</B> average1 in.pgm [mask.pgm] out.list
+<B>Usage:</B> distsets in1.pgm in1.pgm mode out.list
 
 <B>Description:</B>
-This function returns (in the list <B>out.list</B>) 
-the average of the pixel values of the image \b in.pgm .
-If the optional parameter \b mask.pgm is given, then only the 
-values which correspond to non-null points of mask are averaged.
 
-<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
+Computes the distance between the object X defined by the binary image
+\b in1.pgm and the object Y defined by the binary image \b in2.pgm .
 
-<B>Category:</B> signal stats
-\ingroup  signal stats
+Stores the result (a number) in the file \b out.list .
+
+The used pointwise distance is the exact Euclidean distance (float).
+
+The definition of the set distance used depends on the parameter \b mode :
+\li 0: Hausdorff
+\li 1: Baddeley, order 1
+\li 2: Baddeley, order 2
+\li 3: Dubuisson-Jain
+
+\warning The input images \b in1.pgm and \b in2.pgm must be binary images. No test is done.
+
+<B>Types supported:</B> byte 2d,  byte 3d
+
+<B>Category:</B> morpho
+\ingroup  morpho
 
 \author Michel Couprie
 */
-
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lstat.h>
-
-#define VERBOSE
+#include <mcgeo.h>
+#include <ldist.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * image;
-  struct xvimage * mask = NULL;
-  double averageval;
+  int32_t mode;
+  struct xvimage * image1;
+  struct xvimage * image2;
+  float result;
   FILE *fd = NULL;
 
-  if ((argc != 3) && (argc != 4))
+  if (argc != 5)
   {
-    fprintf(stderr, "usage: %s in.pgm [mask.pgm] out.list\n", argv[0]);
+    fprintf(stderr, "usage: %s in1.pgm in2.pgm mode out.list\n", argv[0]);
+    fprintf(stderr, "       mode = 0 (Hausdorff), 1 (Baddeley 1), 2 (Baddeley 2),\n");
+    fprintf(stderr, "              3 (Dubuisson-Jain)\n");
     exit(1);
   }
 
-  image = readimage(argv[1]);
-  if (image == NULL)
+  image1 = readimage(argv[1]);
+  image2 = readimage(argv[2]);
+  if ((image1 == NULL) || (image2 == NULL))
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  if (argc == 4)
+  mode = atoi(argv[3]);
+  if ((mode != 0) && (mode != 1) && (mode != 2) && (mode != 3))
   {
-    mask = readimage(argv[2]);
-    if (mask == NULL)
-    {
-      fprintf(stderr, "%s: readimage failed\n", argv[0]);
-      exit(1);
-    }
-    averageval = laverage2(image, mask);
+    fprintf(stderr, "usage: %s in1.pgm in2.pgm mode out.list\n", argv[0]);
+    fprintf(stderr, "       mode = 0 (Hausdorff), 1 (Baddeley 1), 2 (Baddeley 2),\n");
+    fprintf(stderr, "              3 (Dubuisson-Jain)\n");
+    exit(1);
   }
-  else
-    averageval = laverage1(image);
 
-#ifdef VERBOSE
-    printf("averageval: %g\n", averageval);
-#endif
+  result = ldistsets(image1, image2, mode);
+  if (result < 0)
+  {
+    fprintf(stderr, "%s: ldistset failed\n", argv[0]);
+    exit(1);
+  }
 
   fd = fopen(argv[argc - 1],"w");
   if (!fd)
@@ -108,11 +121,13 @@ int main(int argc, char **argv)
     exit(1);
   }
   fprintf(fd, "e %d\n", 1); 
-  fprintf(fd, "%g\n", averageval); 
+  fprintf(fd, "%g\n", result); 
   fclose(fd);
 
-  freeimage(image);
-  if (mask) freeimage(mask);
+  freeimage(image1);
+  freeimage(image2);
 
   return 0;
 } /* main */
+
+

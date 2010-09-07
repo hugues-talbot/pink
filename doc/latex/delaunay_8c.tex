@@ -15,7 +15,8 @@ delaunay triangulation
     x2 y2   ou    x2 y2 v2
     ...           ...
     xn yn         xn yn vn
-\end{alltt}\normalsize 
+\end{alltt}
+\normalsize 
 
 
 Computes a Delaunay triangulation and stores the resulting graph into file {\bf out.graph} under the following format: \small\begin{alltt}
@@ -23,10 +24,12 @@ Computes a Delaunay triangulation and stores the resulting graph into file {\bf 
     x1 y1 v1 ec1 ns1 s11 s12 ... s1ns1
     x2 y2 v2 ec2 ns2 s21 s22 ... s1ns2
     ...
-    xn yn vn ecn nsn sn1 sn2 ... s1nsn\end{alltt}\normalsize 
+    xn yn vn ecn nsn sn1 sn2 ... s1nsn\end{alltt}
+\normalsize 
 
 
-\small\begin{alltt}\end{alltt}\normalsize 
+\small\begin{alltt}\end{alltt}
+\normalsize 
  where xi, yi are the coordinates of the ith vertex, vi is the associated value (if given in the input file), eci is a int32\_\-t which indicates whether the vertex i belongs to the convex hull, nsi denotes the number of adjacent vertices, and si1 si2 ... sins1 is the list of the indexes of the adjacent vertices (counted from 0).
 
 If the optional parameter {\bf mask.pgm} is given, then it must be a binary byte image. Any edge of the triangulation which intersects the mask will be discarded.

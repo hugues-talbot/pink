@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief watershed transformation (Meyer's algorithm) with labelled markers  
 
-<B>Usage:</B> watershedMeyer2lab in mark <roi|null> connex out
+<B>Usage:</B> watershedMeyer2lab in mark <roi|null> connex [mode] out
 
 <B>Description:</B>
 Performs the watershed transformation on the image <B>in</B>, taking the
@@ -47,7 +47,15 @@ indicates the region of interest on which the operation is performed.
 The parameter <B>connex</B> gives the adjacency relation (4,8 in 2D; 6,18,26 in 3D) 
 for the makers.
 
-The result is a label image.
+The result is a label image. If the original markers are labelled by
+numbers 1,...,n then the regions (catchment basins) of the result will
+be labelled with the same numbers.
+
+If the optional parameter \bf mode is 0 (default value), then the
+separation (watershed) will be labelled with n+1. Otherwise, a
+separating point that is neighbour of exactly two regions i and j will be
+labelled by i*j+n, and a separating point that is neighbour of more
+than two regions be labelled by n+1.
 
 <B>Types supported:</B> byte 2d, byte 3d
 
@@ -73,11 +81,11 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * marqueurs;
   struct xvimage * masque;
-  int32_t connex;
+  int32_t connex, mode;
 
-  if (argc != 6)
+  if ((argc != 6) && (argc != 7))
   {
-    fprintf(stderr, "usage: %s in mark <roi|null> connex out\n", argv[0]);
+    fprintf(stderr, "usage: %s in mark <roi|null> connex [mode] out\n", argv[0]);
     exit(1);
   }
 
@@ -103,20 +111,41 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[4]);
 
+  if (argc == 7) mode = atoi(argv[5]); else mode = 0;
+
   if ((connex == 4) || (connex == 8))
   {
-    if (! llpemeyer2(image, marqueurs, masque, connex))
+    if (mode == 0)
     {
-      fprintf(stderr, "%s: llpemeyer2 failed\n", argv[0]);
+      if (! llpemeyer2(image, marqueurs, masque, connex))
+      {
+	fprintf(stderr, "%s: llpemeyer2 failed\n", argv[0]);
+	exit(1);
+      }
+    }
+    else
+    {
+      fprintf(stderr, "%s: this mode is not yet implemented in 2D\n", argv[0]);
       exit(1);
     }
   }
   else if ((connex == 6) || (connex == 18) || (connex == 26))
   {
-    if (! llpemeyer3d2(image, marqueurs, masque, connex))
+    if (mode == 0)
     {
-      fprintf(stderr, "%s: llpemeyer3d2 failed\n", argv[0]);
-      exit(1);
+      if (! llpemeyer3d2(image, marqueurs, masque, connex))
+      {
+	fprintf(stderr, "%s: llpemeyer3d2 failed\n", argv[0]);
+	exit(1);
+      }
+    }
+    else
+    {
+      if (! llpemeyer3d2b(image, marqueurs, masque, connex))
+      {
+	fprintf(stderr, "%s: llpemeyer3d2 failed\n", argv[0]);
+	exit(1);
+      }
     }
   }
   else    

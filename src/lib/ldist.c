@@ -3003,3 +3003,120 @@ The distance used depends on the optional parameter \b dist (default is 0) :
 
   return res;
 } // lopeningfunction()
+
+/* ==================================== */
+float ldistsets(
+  struct xvimage *img1,   /* donnee: image binaire */
+  struct xvimage *img2,   /* donnee: image binaire */
+  int32_t mode
+)
+/* ==================================== */
+/* 
+Computes the distance between the object X defined by the binary image
+img1 and the object Y defined by the binary image img2.
+
+The used pointwise distance is the exact Euclidean distance (float).
+
+The definition of the set distance used depends on the parameter mode:
+\li 0: Hausdorff
+\li 1: Baddeley, order 1
+\li 2: Baddeley, order 2
+\li 3: Dubuisson-Jain
+
+\warning The input images img1 and img2 must be binary images. No test is done.
+*/
+#undef F_NAME
+#define F_NAME "ldistsets"
+{ 
+  int32_t rs = rowsize(img1);
+  int32_t cs = colsize(img1);
+  int32_t ds = depth(img1); 
+  int32_t N = rs * cs * ds;
+  uint8_t *I1 = UCHARDATA(img1);
+  uint8_t *I2 = UCHARDATA(img2);
+  struct xvimage *dist1;
+  struct xvimage *dist2;
+  float *D1, *D2;
+  float result;
+  int32_t i;
+
+  assert(datatype(img1) == VFF_TYP_1_BYTE);
+  assert(datatype(img2) == VFF_TYP_1_BYTE);
+  assert(rowsize(img2) == rs);
+  assert(colsize(img2) == cs);
+  assert(depth(img2) == ds);
+
+  dist1 = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  dist2 = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if ((dist1 == NULL) || (dist2 == NULL))
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return -1;
+  }
+
+  for (i = 0; i < N; i++) I1[i] = !I1[i];
+  for (i = 0; i < N; i++) I2[i] = !I2[i];
+  // Attention : Ik représente maintenant le complémentaire de imgk
+  if (! lsedt_meijster(img1, dist1))
+  {
+    fprintf(stderr, "%s: lsedt_meijster img1 failed\n", F_NAME);
+    return -1;
+  }
+  if (! lsedt_meijster(img2, dist2))
+  {
+    fprintf(stderr, "%s: lsedt_meijster img2 failed\n", F_NAME);
+    return -1;
+  }
+
+  convertfloat(&dist1);
+  convertfloat(&dist2);
+  D1 = FLOATDATA(dist1);
+  D2 = FLOATDATA(dist2);
+  for (i = 0; i < N; i++) D1[i] = (float)sqrt(D1[i]);
+  for (i = 0; i < N; i++) D2[i] = (float)sqrt(D2[i]);
+
+  if (mode == 0) // Hausdorff
+  {
+    float max1 = 0.0, max2 = 0.0;
+    for (i = 0; i < N; i++) if (!I1[i] && (D2[i] > max2)) max2 = D2[i];
+    for (i = 0; i < N; i++) if (!I2[i] && (D1[i] > max1)) max1 = D1[i];
+    result = mcmax(max1,max2);
+  }
+  else if (mode == 1) // Baddeley, order 1
+  {
+    float d, sum = 0.0;
+    for (i = 0; i < N; i++)
+    { 
+      d = D2[i] - D1[i];
+      sum = sum + mcabs(d);
+    }
+    result = sum / N;
+  }
+  else if (mode == 2) // Baddeley, order 2
+  {
+    float d, sum = 0.0;
+    for (i = 0; i < N; i++)
+    { 
+      d = D2[i] - D1[i];
+      sum = sum + (d * d);
+    }
+    result = (float)sqrt(sum / N);
+  }
+  else if (mode == 3) // Dubuisson-Jain
+  {
+    float av1 = 0.0, av2 = 0.0;
+    int32_t n1 = 0, n2 = 0;
+    for (i = 0; i < N; i++) if (!I1[i]) { av2 += D2[i]; n2++; }
+    for (i = 0; i < N; i++) if (!I2[i]) { av1 += D1[i]; n1++; }
+    av1 = av1 / n2;
+    av2 = av2 / n2;
+    result = mcmax(av1,av2);
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad value for mode: %d\n", F_NAME, mode);
+    return -1;
+  }
+
+  return result;
+} // ldistsets()

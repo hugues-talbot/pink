@@ -71,6 +71,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 //#define TRACECOL
 //#define TRACECONSGRAPH
+//#define DESSINECOLSEQ
 
 /* =============================================================== */
 int32_t l2dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit)

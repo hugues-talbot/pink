@@ -83,7 +83,8 @@ References:<BR>
 #include <l2dkhalimsky.h>
 #include <l2dcollapse.h>
 
-	      //#define SHOWGRAPHS
+	      //#define DESSINECOLSEQ
+#define SHOWGRAPHS
 	      //#define SHOWCONFLUENTPOINTS
 	      //#define SHOWIMAGES
 
@@ -227,7 +228,8 @@ static void ShowGraphe(graphe * g, char *filename, double s, double r, double t,
 	PSDrawcircle(fd, s*g->x[i]-xmin+MARGEX1, s*g->y[i]-ymin+MARGEY1, r);
     }
   if (v_sommets)
-    for (i = 0; i < n; i++) 
+    for (i = 0; i < n; i++)
+    { 
 #ifdef DESSINECOLSEQ
       if (K[i] && !head[i] && (g->v_sommets[i] < 0))
       { //pour dessiner une col. seq.
@@ -241,7 +243,8 @@ static void ShowGraphe(graphe * g, char *filename, double s, double r, double t,
 	PSString(fd, s*g->x[i]-xmin+MARGEX1+2*r, s*g->y[i]-ymin+MARGEY1+2*r+2, buf);
       }
 #endif
-  
+    }
+
   PSFooter(fd);
   fclose(fd);
 } // ShowGraphe()

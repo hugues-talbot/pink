@@ -10,7 +10,7 @@ medial axis transform
 {\bf Usage:} medialaxis in.pgm distance out.pgm
 
 {\bf Description:} Medial axis of the binary image {\bf X}. If x is the center of a maximal ball included in X, then the result R(x) is equal to the smallest distance between x and a point outside X, otherwise it is equal to 0 . The distance is indicated by the parameter {\bf distance} : \begin{itemize}
-\item 0: approximate euclidean distance \item 1: exact quadratic euclidean distance (Saito-Toriwaki's skeleton) \item 2: exact quadratic euclidean distance (Coeurjolly's reduced axis) \item 3: exact quadratic euclidean distance (R\'{e}my-Thiel) \item 4: 4-distance in 2d \item 6: 6-distance in 3d \item 8: 8-distance in 2d \item 26: 26-distance in 3d\end{itemize}
+\item 0: approximate euclidean distance \item 1: exact quadratic euclidean distance (Saito-Toriwaki's skeleton) \item 2: exact quadratic euclidean distance (Coeurjolly's reduced axis) \item 3: exact quadratic euclidean distance (Rémy-Thiel) \item 4: 4-distance in 2d \item 6: 6-distance in 3d \item 8: 8-distance in 2d \item 26: 26-distance in 3d\end{itemize}
 The usual discrete distances are denoted by 4, 8 (2D) and 6, 26 (3D). For the euclidean distance, set {\bf distance} to 0.
 
 {\bf Types supported:} byte 2d, byte 3d

@@ -125,6 +125,7 @@ $(BDIR)/dir \
 $(BDIR)/dist \
 $(BDIR)/distc \
 $(BDIR)/distgeo \
+$(BDIR)/distsets \
 $(BDIR)/dynamique \
 $(BDIR)/dynamiquefilter \
 $(BDIR)/eros \
@@ -923,6 +924,9 @@ $(BDIR)/distc:	$(CDIR)/distc.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ld
 
 $(BDIR)/distgeo:	$(CDIR)/distgeo.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ldistgeo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/ldistgeo.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/distgeo.c $(ODIR)/ldistgeo.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/distgeo
+
+$(BDIR)/distsets:	$(CDIR)/distsets.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/ldist.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/distsets.c $(ODIR)/ldist.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/distsets
 
 $(BDIR)/dynamique:	$(CDIR)/dynamique.c $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfahsalembier.h $(IDIR)/mccomptree.h $(IDIR)/llabelextrema.h $(IDIR)/mccodimage.h $(IDIR)/ldynamique.h $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccomptree.o $(ODIR)/mcunionfind.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/ldynamique.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/dynamique.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccomptree.o $(ODIR)/mcunionfind.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/ldynamique.o $(LIBS) -o $(BDIR)/dynamique

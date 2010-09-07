@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief returning number of connected components of a grayscale or a binary image
 
-<B>Usage:</B> nbcomp in.pgm connex <min|max|pla>
+<B>Usage:</B> nbcomp in.pgm connex <fgd|bgd|min|max|pla> [out.list]
 
 <B>Description:</B>
 The argument \b connex selects the connectivity (4, 8 in 2D; 6, 18, 26 in 3D).
@@ -47,7 +47,10 @@ to be counted:
 \li \b min selects regional minima
 \li \b max selects regional maxima
 \li \b pla selects all flat zones (plateaux).
-The output image \b out.pgm has the type "int32_t".
+
+The result is written in the list <B>out.list</B>.
+
+If the parameter \b out.list is ommitted, the result is printed on the standard output.
 
 <B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d
 
@@ -75,10 +78,11 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * result;
   int32_t function;
+  FILE *fd = NULL;
 
-  if (argc != 4)
+  if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s filein.pgm connex <fgd|bgd|min|max|pla>\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex <fgd|bgd|min|max|pla> [out.list]\n", argv[0]);
     exit(1);
   }
 
@@ -142,7 +146,19 @@ int main(int argc, char **argv)
     break;
   } // switch (function)
 
-  printf ("%d\n",nblabels - 1);   /* pour avoir le nombre exact de composantes connexes */
+  if (argc == 5)
+  {
+    fd = fopen(argv[argc - 1],"w");
+    if (!fd)
+    {
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc - 1]);
+      exit(1);
+    }
+    fprintf(fd, "e %d\n", 1); 
+    fprintf(fd, "%d\n", nblabels - 1); 
+    fclose(fd);
+  }
+  else printf("%d\n", nblabels - 1); 
 
   freeimage(result);
   freeimage(image);

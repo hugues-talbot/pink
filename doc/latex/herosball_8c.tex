@@ -21,7 +21,8 @@ Let X be the set corresponding to the input image {\bf in.pgm}, and let Xbar den
 
 
 
-\footnotesize\begin{verbatim}I = erosball(X, dist, r)
+\footnotesize\begin{verbatim}
+I = erosball(X, dist, r)
 Repeat:
     Select a point x in X \ I such that dist(x,Xbar) is minimal
     If x is simple for X then
