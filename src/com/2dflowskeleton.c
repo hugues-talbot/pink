@@ -84,7 +84,7 @@ References:<BR>
 #include <l2dcollapse.h>
 
 	      //#define DESSINECOLSEQ
-#define SHOWGRAPHS
+	      //#define SHOWGRAPHS
 	      //#define SHOWCONFLUENTPOINTS
 	      //#define SHOWIMAGES
 

@@ -32,22 +32,66 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-#ifdef __cplusplus
-extern "C" {
-#endif
-extern int32_t lptisolated(struct xvimage * image, int32_t connex);
-extern int32_t lptinterior(struct xvimage * image, int32_t connex);
-extern int32_t lptmultiple(struct xvimage * image, int32_t connex);
-extern int32_t lptend(struct xvimage * image, int32_t connex);
-extern int32_t lptcurve(struct xvimage * image, int32_t connex);
-extern int32_t lptjunction(struct xvimage * image, int32_t connex);
-extern int32_t lptseparating(struct xvimage * image, int32_t connex);
-extern int32_t lptseparatinggray(struct xvimage * image, int32_t connex);
-extern int32_t lpthseparatinggray(struct xvimage * image, int32_t connex, int32_t h);
-extern int32_t lptsimple(struct xvimage * image, int32_t connex);
-extern int32_t lseltopo(struct xvimage * image, int32_t connex, int32_t tm, int32_t tp, int32_t tbm, int32_t tbp);
-extern int32_t lsimplepair(struct xvimage * image, uint32_t onepair);
-extern int32_t lminimalsimplepair(struct xvimage * image, uint32_t onepair);
-#ifdef __cplusplus
-}
-#endif
+/*! \file pthseparatinggray.c
+
+\brief detects h-separating points in a grayscale image
+
+<B>Usage:</B> pthseparatinggray in.pgm connex h out.pgm
+
+<B>Description:</B>
+An h-separating point for an image F is a point p, 
+such that there exists c verifying F(p)-h < c <= F(p) and
+#CC(X inter N(p)) > 1, with X = {x | F(x) < c}.
+
+<B>Types supported:</B> byte 2d, byte 2d
+
+<B>Category:</B> topogray
+\ingroup  topogray
+
+\author Michel Couprie 2010
+*/
+#include <stdio.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <mccodimage.h>
+#include <mcimage.h>
+#include <lseltopo.h>
+
+/* =============================================================== */
+int main(int argc, char **argv)
+/* =============================================================== */
+{
+  struct xvimage * image;
+  int32_t connex, h;
+
+  if (argc != 5)
+  {
+    fprintf(stderr, "usage: %s filein.pgm connex h fileout.pgm\n", argv[0]);
+    exit(1);
+  }
+
+  image = readimage(argv[1]);
+  if (image == NULL)
+  {
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
+    exit(1);
+  }
+
+  connex = atoi(argv[2]);
+
+  h = atoi(argv[3]);
+
+  if (! lpthseparatinggray(image, connex, h))
+  {
+    fprintf(stderr, "%s: function lpthseparatinggray failed\n", argv[0]);
+    exit(1);
+  }
+
+  writeimage(image, argv[argc-1]);
+  freeimage(image);
+
+  return 0;
+} /* main */
+
+

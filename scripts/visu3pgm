@@ -1,11 +1,6 @@
 #!/bin/sh
 USAGE="Usage: $0 in1.pgm in2.pgm in3.pgm"
-if [ $# -gt 3 ]
-then
-	echo $USAGE
-        exit
-fi
-if [ $# -lt 3 ]
+if [ $# -ne 3 ]
 then
 	echo $USAGE
         exit

@@ -69,7 +69,7 @@ int32_t lptisolated(struct xvimage * image, int32_t connex)
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
-  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
       return 0;
   }
 
@@ -108,7 +108,7 @@ int32_t lptisolated(struct xvimage * image, int32_t connex)
         RES[x] = NDG_MAX;
   }
   else
-  {   fprintf(stderr,"%s : bad connexity : %d\n", F_NAME, connex);
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
       return 0;
   }
   for (x = 0; x < N; x++) SOURCE[x] = RES[x];
@@ -133,7 +133,7 @@ int32_t lptinterior(struct xvimage * image, int32_t connex)
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
-  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
       return 0;
   }
 
@@ -172,7 +172,7 @@ int32_t lptinterior(struct xvimage * image, int32_t connex)
         RES[x] = NDG_MAX;
   }
   else
-  {   fprintf(stderr,"%s : bad connexity : %d\n", F_NAME, connex);
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
       return 0;
   }
   for (x = 0; x < N; x++) SOURCE[x] = RES[x];
@@ -198,7 +198,7 @@ int32_t lptmultiple(struct xvimage * image, int32_t connex)
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
-  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
       return 0;
   }
 
@@ -257,7 +257,7 @@ int32_t lptmultiple(struct xvimage * image, int32_t connex)
     mctopo3d_termine_topo3d();
   }
   else
-  {   fprintf(stderr,"%s : bad connexity : %d\n", F_NAME, connex);
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
       return 0;
   }
   for (x = 0; x < N; x++) SOURCE[x] = RES[x];
@@ -282,7 +282,7 @@ int32_t lptend(struct xvimage * image, int32_t connex)
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
-  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
       return 0;
   }
 
@@ -321,7 +321,7 @@ int32_t lptend(struct xvimage * image, int32_t connex)
         RES[x] = NDG_MAX;
   }
   else
-  {   fprintf(stderr,"%s : bad connexity : %d\n", F_NAME, connex);
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
       return 0;
   }
 
@@ -349,7 +349,7 @@ int32_t lptcurve(struct xvimage * image, int32_t connex)
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
-  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
       return 0;
   }
 
@@ -394,7 +394,7 @@ int32_t lptcurve(struct xvimage * image, int32_t connex)
     mctopo3d_termine_topo3d();
   }
   else
-  {   fprintf(stderr,"%s : bad connexity : %d\n", F_NAME, connex);
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
       return 0;
   }
   for (x = 0; x < N; x++) SOURCE[x] = RES[x];
@@ -419,7 +419,7 @@ int32_t lptjunction(struct xvimage * image, int32_t connex)
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
-  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
       return 0;
   }
 
@@ -458,7 +458,7 @@ int32_t lptjunction(struct xvimage * image, int32_t connex)
         RES[x] = NDG_MAX;
   }
   else
-  {   fprintf(stderr,"%s : bad connexity : %d\n", F_NAME, connex);
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
       return 0;
   }
 
@@ -486,7 +486,7 @@ int32_t lptseparatinggray(struct xvimage * image, int32_t connex)
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
-  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
       return 0;
   }
 
@@ -507,13 +507,58 @@ int32_t lptseparatinggray(struct xvimage * image, int32_t connex)
         RES[x] = NDG_MAX;
   }
   else
-  {   fprintf(stderr,"%s : bad connexity : %d\n", F_NAME, connex);
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
       return 0;
   }
   for (x = 0; x < N; x++) SOURCE[x] = RES[x];
   free(RES);
   return 1;
 } /* lptseparatinggray() */
+
+/* ==================================== */
+int32_t lpthseparatinggray(struct xvimage * image, int32_t connex, int32_t h)
+/* ==================================== */
+/*
+An h-separating point for an image F is a point p, 
+such that there exists c verifying F(p)-h < c <= F(p) and
+#CC(X inter N(p)) > 1, with X = {x | F(x) < c}.
+ */
+#undef F_NAME
+#define F_NAME "lpthseparatinggray"
+{
+  int32_t x;
+  uint8_t *SOURCE = UCHARDATA(image);
+  uint8_t *RES;
+  int32_t rs = rowsize(image);
+  int32_t cs = colsize(image);
+  int32_t ds = depth(image);
+  int32_t ps = rs * cs;          /* taille plan */
+  int32_t N = ps * ds;           /* taille image */
+
+  RES = (uint8_t *)calloc(N, sizeof(char));
+  if (RES == NULL)
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
+      return 0;
+  }
+
+  /* ---------------------------------------------------------- */
+  /* calcul du resultat */
+  /* ---------------------------------------------------------- */
+
+  if (connex == 6)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord(x, rs, N) && mctopo3d_hfseparant6(SOURCE, x, SOURCE[x]-h, rs, ps, N))
+        RES[x] = NDG_MAX;
+  }
+  else
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
+      return 0;
+  }
+  for (x = 0; x < N; x++) SOURCE[x] = RES[x];
+  free(RES);
+  return 1;
+} /* lpthseparatinggray() */
 
 /* ==================================== */
 int32_t lptseparating(struct xvimage * image, int32_t connex)
@@ -533,7 +578,7 @@ int32_t lptseparating(struct xvimage * image, int32_t connex)
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
-  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
       return 0;
   }
 
@@ -593,7 +638,7 @@ int32_t lptseparating(struct xvimage * image, int32_t connex)
     mctopo3d_termine_topo3d();
   }
   else
-  {   fprintf(stderr,"%s : bad connexity : %d\n", F_NAME, connex);
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
       return 0;
   }
   for (x = 0; x < N; x++) SOURCE[x] = RES[x];
@@ -619,7 +664,7 @@ int32_t lptsimple(struct xvimage * image, int32_t connex)
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
-  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
       return 0;
   }
 
@@ -676,7 +721,7 @@ int32_t lptsimple(struct xvimage * image, int32_t connex)
     mctopo3d_termine_topo3d();
   }
   else
-  {   fprintf(stderr,"%s : bad connexity : %d\n", F_NAME, connex);
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
       return 0;
   }
   for (x = 0; x < N; x++) SOURCE[x] = RES[x];
@@ -702,7 +747,7 @@ int32_t lseltopo(struct xvimage * image, int32_t connex, int32_t tm, int32_t tp,
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
-  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
       return 0;
   }
 
@@ -762,7 +807,7 @@ int32_t lseltopo(struct xvimage * image, int32_t connex, int32_t tm, int32_t tp,
     mctopo3d_termine_topo3d();
   }
   else
-  {   fprintf(stderr,"%s : bad connexity : %d\n", F_NAME, connex);
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
       return 0;
   }
   for (x = 0; x < N; x++) SOURCE[x] = RES[x];
@@ -787,7 +832,7 @@ int32_t lsimplepair(struct xvimage * image, uint32_t onepair)
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
-  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
       return 0;
   }
 
@@ -859,7 +904,7 @@ int32_t lminimalsimplepair(struct xvimage * image, uint32_t onepair)
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
-  {   fprintf(stderr,"%s : malloc failed for RES\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed for RES\n", F_NAME);
       return 0;
   }
 

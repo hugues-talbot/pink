@@ -3008,7 +3008,8 @@ The distance used depends on the optional parameter \b dist (default is 0) :
 float ldistsets(
   struct xvimage *img1,   /* donnee: image binaire */
   struct xvimage *img2,   /* donnee: image binaire */
-  int32_t mode
+  int32_t mode,
+  float cut
 )
 /* ==================================== */
 /* 
@@ -3017,11 +3018,13 @@ img1 and the object Y defined by the binary image img2.
 
 The used pointwise distance is the exact Euclidean distance (float).
 
-The definition of the set distance used depends on the parameter mode:
+The definition of the set distance used depends on the parameter 'mode':
 \li 0: Hausdorff
 \li 1: Baddeley, order 1
 \li 2: Baddeley, order 2
 \li 3: Dubuisson-Jain
+
+The parameter 'cut' is required only for Baddeley distances. 
 
 \warning The input images img1 and img2 must be binary images. No test is done.
 */
@@ -3087,7 +3090,7 @@ The definition of the set distance used depends on the parameter mode:
     float d, sum = 0.0;
     for (i = 0; i < N; i++)
     { 
-      d = D2[i] - D1[i];
+      d = mcmin(D2[i],cut) - mcmin(D1[i],cut);
       sum = sum + mcabs(d);
     }
     result = sum / N;
@@ -3097,7 +3100,7 @@ The definition of the set distance used depends on the parameter mode:
     float d, sum = 0.0;
     for (i = 0; i < N; i++)
     { 
-      d = D2[i] - D1[i];
+      d = mcmin(D2[i],cut) - mcmin(D1[i],cut);
       sum = sum + (d * d);
     }
     result = (float)sqrt(sum / N);

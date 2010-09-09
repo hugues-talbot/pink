@@ -1,4 +1,4 @@
-//Librairies standardes
+//Librairies standard
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -34,14 +34,14 @@ int32_t main(int argc, char* argv[])
 
 	if(argc!=5 && argc!=10)
 	{
-		fprintf(stderr, "usage: %s.\n", USAGE);
+		fprintf(stderr, "usage: %s %s\n", argv[0], USAGE);
 		exit(1);
 	}
 
 	f=fopen(argv[1], "rb");
 	if(f==NULL)
 	{
-		fprintf(stderr, "Could not open file %s.\n", argv[1]);
+		fprintf(stderr, "%s: Could not open file %s\n", argv[0], argv[1]);
 		exit(1);
 	}
 
@@ -51,7 +51,7 @@ int32_t main(int argc, char* argv[])
 		mode=0; //raw
 	else
 	{
-		fprintf(stderr, "Chosen mode not recognised (pgm or raw)\n");
+		fprintf(stderr, "%s: Chosen mode not recognised (pgm or raw)\n", argv[0]);
 		exit(1);
 	}
 
@@ -62,7 +62,7 @@ int32_t main(int argc, char* argv[])
 	{
 		if(argc!=10)
 		{
-			fprintf(stderr, "usage: %s.\n", USAGE);
+			fprintf(stderr, "usage: %s\n", argv[0], USAGE);
 			exit(1);
 		}
 
@@ -96,7 +96,7 @@ int32_t main(int argc, char* argv[])
 		}
 		else
 		{
-			fprintf(stderr, "Image type not implemented.\n");
+			fprintf(stderr, "%s: Image type not implemented\n", argv[0]);
 			exit(1);
 		}
 	}
@@ -136,7 +136,7 @@ int32_t main(int argc, char* argv[])
 				break;
 
 			default:
-				fprintf(stderr, "Input pgm file has unsupported type.\n");
+				fprintf(stderr, "%s: Input pgm file has unsupported type\n", argv[0]);
 				exit(1);
 		}
 
@@ -150,12 +150,13 @@ int32_t main(int argc, char* argv[])
 
 
 	factor=strtod(argv[4], NULL);
-	if(factor<=0)
+	if ((factor <= 0.0) || (factor > 1.0))
 	{
-		fprintf(stderr, "Error: please give positive value as shrink factor.\n");
+		fprintf(stderr, "%s: Error: shrink factor must be between 0 and 1\n", argv[0]);
 		exit(1);
 	}
 
+	factor = 1.0 / factor;
 
 	nrs=ceil((double)rs/factor); ncs=ceil((double)cs/factor); nd=ceil((double)d/factor);
 
@@ -165,7 +166,7 @@ int32_t main(int argc, char* argv[])
 	output=allocimage(NULL, nrs, ncs, nd, type);
 	if(output==NULL)
 	{
-		fprintf(stderr, "Error, could not allocate output image into memory.\n");
+		fprintf(stderr, "%s: Error, could not allocate output image into memory\n", argv[0]);
 		exit(1);
 	}
 
@@ -190,7 +191,7 @@ int32_t main(int argc, char* argv[])
 
 		if(crop_raw_on_disk(f, crop, i_d, j_d, k_d, sid, sid, sid, rs, cs, d, h, b, 0)==0)
 		{
-			fprintf(stderr, "Error in crop_on_disk (%lld %lld %lld).\n", i_d, j_d, k_d);
+			fprintf(stderr, "%s: Error in crop_on_disk (%lld %lld %lld)\n", argv[0], i_d, j_d, k_d);
 			exit(1);
 		}
 

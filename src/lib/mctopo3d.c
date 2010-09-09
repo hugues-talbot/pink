@@ -1980,8 +1980,8 @@ uint8_t mctopo3d_delta26p(
 
 /* ==================================== */
 int32_t mctopo3d_separant6(  /* teste si un point est separant - minima 6-connexes
-	         ie- s'il est mctopo3d_separant pour une coupe <= img[p] */
-  uint8_t *img,          /* pointeur base image */
+	                     ie- s'il est separant pour une coupe <= img[p] */
+  uint8_t *img,                    /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
   int32_t ps,                      /* taille plan */
@@ -2011,8 +2011,8 @@ int32_t mctopo3d_separant6(  /* teste si un point est separant - minima 6-connex
 } /* mctopo3d_separant6() */
 
 /* ==================================== */
-int32_t mctopo3d_hseparant6(  /* teste si un point est mctopo3d_hseparant - minima 6-connexes
-	         ie- s'il est mctopo3d_separant pour la coupe h */
+int32_t mctopo3d_hseparant6(  /* teste si un point est hseparant - minima 6-connexes
+	         ie- s'il est separant pour la coupe h */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* parametre */
@@ -2032,8 +2032,8 @@ int32_t mctopo3d_hseparant6(  /* teste si un point est mctopo3d_hseparant - mini
 } /* mctopo3d_hseparant6() */
 
 /* ==================================== */
-int32_t mctopo3d_hfseparant6(  /* teste si un point est mctopo3d_hfseparant - minima 6-connexes
-	         ie- s'il est mctopo3d_separant pour une coupe c telle que h < c <= img[p] */
+int32_t mctopo3d_hfseparant6(  /* teste si un point est hfseparant - minima 6-connexes
+	         ie- s'il est separant pour une coupe c telle que h < c <= img[p] */
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t h,                       /* parametre */

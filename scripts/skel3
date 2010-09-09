@@ -1,11 +1,6 @@
 #!/bin/sh
 USAGE="Usage: $0 in seuilR (in [1..infnty[) seuilA (in [0.001..pi]) out"
-if [ $# -gt 4 ]
-then
-	echo $USAGE
-        exit
-fi
-if [ $# -lt 4 ]
+if [ $# -ne 4 ]
 then
 	echo $USAGE
         exit

@@ -1,11 +1,6 @@
 #!/bin/sh
 USAGE="Usage: $0 in1.k in2.k"
-if [ $# -gt 2 ]
-then
-	echo $USAGE
-        exit
-fi
-if [ $# -lt 2 ]
+if [ $# -ne 2 ]
 then
 	echo $USAGE
         exit

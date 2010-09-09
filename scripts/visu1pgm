@@ -1,11 +1,11 @@
 #!/bin/sh
 USAGE="Usage: $0 in.pgm [out.vtk]"
-if [ $# -gt 2 ]
+if [ $# -lt 1 ]
 then
 	echo $USAGE
         exit
 fi
-if [ $# -lt 1 ]
+if [ $# -gt 2 ]
 then
 	echo $USAGE
         exit

@@ -46,10 +46,10 @@ The parameter \b mode selects the function to be integrated in order to build th
 \li 0: uniform null function 
 \li 1: uniform unity function 
 \li 2: border indicator function
-\li 3: border indicator function and substraction of lambda from the integrated map
+\li 3: border indicator function and division of the integrated map by the square distance map
 \li 4: inverse opening function
 \li 5: bisector function
-\li 6: Euclidean distance map
+\li 6: inverse Euclidean distance map
 
 \warning The input image \b in.pgm must be a complex, otherwise the result is meaningless (no verification is done)
 
@@ -303,9 +303,10 @@ int main(int32_t argc, char **argv)
     }
   }
   else if (mode == 6)
-  { // distance map
+  { // inverted distance map
     int32_t *D = SLONGDATA(dist);
-    for (i = 0; i < N; i++) FUNC[i] = (float)sqrt(D[i]);
+    for (i = 0; i < N; i++) 
+      if (D[i]) FUNC[i] = (float)(1.0/sqrt(D[i]));
   }
   else
   {
@@ -323,9 +324,15 @@ int main(int32_t argc, char **argv)
 
   if (mode == 3)
   {
+#ifdef ANCIEN
     MaxAlpha3d(lambda); // fermeture (en ndg)
     for (i = 0; i < N; i++)
       flow->v_sommets[i] = flow->v_sommets[i] - (TYP_VSOM)LAMBDA[i];
+#endif
+    int32_t *D = SLONGDATA(dist);
+    for (i = 0; i < N; i++)
+      if (D[i]) 
+	flow->v_sommets[i] = flow->v_sommets[i] / (TYP_VSOM)D[i];
   }
 
   // -----------------------------------------------------------

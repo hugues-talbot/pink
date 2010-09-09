@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief distance between sets
 
-<B>Usage:</B> distsets in1.pgm in1.pgm mode out.list
+<B>Usage:</B> distsets in1.pgm in1.pgm mode [cut] out.list
 
 <B>Description:</B>
 
@@ -52,6 +52,8 @@ The definition of the set distance used depends on the parameter \b mode :
 \li 1: Baddeley, order 1
 \li 2: Baddeley, order 2
 \li 3: Dubuisson-Jain
+
+The optional parameter \b cut is required only for Baddeley distances. 
 
 \warning The input images \b in1.pgm and \b in2.pgm must be binary images. No test is done.
 
@@ -79,12 +81,12 @@ int main(int argc, char **argv)
   int32_t mode;
   struct xvimage * image1;
   struct xvimage * image2;
-  float result;
+  float result, cut;
   FILE *fd = NULL;
 
-  if (argc != 5)
+  if ((argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in1.pgm in2.pgm mode out.list\n", argv[0]);
+    fprintf(stderr, "usage: %s in1.pgm in2.pgm mode [cut] out.list\n", argv[0]);
     fprintf(stderr, "       mode = 0 (Hausdorff), 1 (Baddeley 1), 2 (Baddeley 2),\n");
     fprintf(stderr, "              3 (Dubuisson-Jain)\n");
     exit(1);
@@ -101,13 +103,32 @@ int main(int argc, char **argv)
   mode = atoi(argv[3]);
   if ((mode != 0) && (mode != 1) && (mode != 2) && (mode != 3))
   {
-    fprintf(stderr, "usage: %s in1.pgm in2.pgm mode out.list\n", argv[0]);
+    fprintf(stderr, "usage: %s in1.pgm in2.pgm mode [cut] out.list\n", argv[0]);
     fprintf(stderr, "       mode = 0 (Hausdorff), 1 (Baddeley 1), 2 (Baddeley 2),\n");
     fprintf(stderr, "              3 (Dubuisson-Jain)\n");
     exit(1);
   }
 
-  result = ldistsets(image1, image2, mode);
+  if ((mode == 1) || (mode == 2))
+  {
+    if (argc == 6)
+      cut = (float)atof(argv[4]);
+    else
+    {
+      fprintf(stderr, "%s: cut parameter needed for Baddeley distances\n", argv[0]);
+      exit(1);
+    }
+  }
+  else
+  {
+    if (argc == 6)
+    {
+      fprintf(stderr, "%s: cut parameter not needed\n", argv[0]);
+      exit(1);
+    }
+  }
+
+  result = ldistsets(image1, image2, mode, cut);
   if (result < 0)
   {
     fprintf(stderr, "%s: ldistset failed\n", argv[0]);
