@@ -28,6 +28,11 @@ PTR<deep_xvimage> py_readimage( string filename ){
   strcpy ( cstr, filename.c_str() );
   
   xvimage * tmp = readimage( cstr ); // reading the image
+
+  if (tmp==NULL)
+  {
+    error("file not found: " + filename );
+  }
   
   PTR< deep_xvimage > result( new deep_xvimage( *tmp ) ); // upcast deep copying the xvimage
 

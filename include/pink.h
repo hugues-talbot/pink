@@ -288,7 +288,8 @@ knowledge of the CeCILL license and that you accept its terms.
 // uiFibres header files
 #ifdef __cplusplus
 // my comment
-  #include <gsl/gsl_interp.h> // for now it's only uiGradient that uses it
+  #include <gsl/gsl_interp.h> // uiGradient is using it
+  #include <gsl/gsl_multifit_nlin.h> // uiCircle is using it
   #include <uiFibreTypes.h>
   #include <ujimage.hpp>
   #include <uiFrame.hpp>
@@ -307,6 +308,7 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <uiFileIO.hpp>
   #include <uiInsert.hpp>
   #include <uiCutPlane.hpp>
+  #include <uiCircle.hpp>
 #endif /* __cplusplus */
 
 

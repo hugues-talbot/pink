@@ -130,6 +130,12 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   py_closeball_export();
   py_minmax_export();
 
+  def( "cpp_circle_tangent", &pink::gsl::py_circle_tangent,
+       args("x coordinates", "y coordinates", "point of derivation"),
+       "This function estimates the derivativ of the function given by points. It "
+       " models a circle and returns its tangent at the given point."
+    );
+  
   // here are the image objects ( char_image, short_image, int_image, float_image, double_image )
   // there is a template in pyujimage.hpp to help them export without rewritting all the declarations
 

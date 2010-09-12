@@ -42,7 +42,7 @@ void py_generate_rgb_image( const char_image & R,
 		 c_str_filename.get()
     );
   
-  cout << "ppm image written to '" << filename << "'\n";
+///!!!  cout << "ppm image written to '" << filename << "'\n";
   
   
   /* return void */
@@ -76,7 +76,7 @@ void py_surimp( const char_image & BW,
   freeimage(tmp);
   freeimage(tmp3);
 
-  cout << "ppm image written to '" << filename << "'\n";
+/////!!!  cout << "ppm image written to '" << filename << "'\n";
 
 
   /*  return void;*/  

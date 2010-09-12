@@ -26,8 +26,8 @@ int main(int argc, char * argv[]){
   if ( argc!=2 + 1 )
   {
     cerr << "\n\nNormalized absolute measure calculated from the image.\n";
- //                        0              1                  2 
-    cerr << "usage: ./gradientabs src(float_image) result(float_image)\n\n";
+ //                        0           1                  2 
+    cerr << "usage: ./measure src(float_image) result(float_image)\n\n";
     exit(1);
   } /* if (argc!=2 + 1) */
   
@@ -46,6 +46,9 @@ int main(int argc, char * argv[]){
     error("All pixels are equal in the image.");
   } /* if */
 
+  PRINTIMAGE(src);
+  
+  
   src = lnormalize( *src );
 
   PTR<float_image> result = uiGradientAbs( *src );
@@ -64,7 +67,7 @@ int main(int argc, char * argv[]){
 
   FOR(q, result->get_size().prod())
   {
-    (*result)[q] = 1. / ( epsilon + (*result)[q] );
+    (*result)[q] =  1. / ( epsilon + (*result)[q] );
   } /* FOR */
 
   result = lnormalize( *result );

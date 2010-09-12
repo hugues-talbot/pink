@@ -58,6 +58,8 @@ be size-independent
  cout << "_writing image: " << BOOST_PP_STRINGIZE(x) << " as '" << BOOST_PP_STRINGIZE(x) << ".am'\n"; \
  x->_write_amira(BOOST_PP_STRINGIZE(x)".am")
 
+// eigen2 debug facility
+#define DVECT(x) cout << "----------------\n" << BOOST_PP_STRINGIZE(x) << " = \n" << x << "\n"
 
  // this macro generates from 'IMAGE_TYPE(potencial)' -> 'image_type(potencial), "potencial"' 
 #define IMAGE_TYPE(x)				\

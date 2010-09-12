@@ -228,6 +228,7 @@ PTR<image_type> crop_the_frame( PTR<image_type> src ){
 int main(int argc, char * argv[]){
 
   if ( (argc!=6) and (argc!=7) ){
+    //                       0              1           2     3       4           5                6
     cerr << "\n\nusage: ./maxflow number_of_iterations tau G_image src_sink stable_image [ number_of_threads ]\n\n";
     exit(1);
   }; /* if (argc!=5) */
@@ -253,12 +254,12 @@ int main(int argc, char * argv[]){
 
   // Normalization of the image
 
-  FOR(q, gg->get_size().prod()){    
-    (*gg)[q]=  (*gg)[q]/ 255.0;
-//    (*gg)[q]=1.;
-      //(*gg)[q]= 1- (*gg)[q]/ 255.0 + 0.01;
+//   FOR(q, gg->get_size().prod()){    
+//     (*gg)[q]=  (*gg)[q]/ 255.0;
+// //    (*gg)[q]=1.;
+//       //(*gg)[q]= 1- (*gg)[q]/ 255.0 + 0.01;
 
-  } /* FOR */
+//   } /* FOR */
 
 //  gg->_write_amira("test.am");
 

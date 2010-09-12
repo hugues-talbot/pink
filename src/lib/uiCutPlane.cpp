@@ -27,6 +27,13 @@ USING_PART_OF_NAMESPACE_EIGEN
 namespace pink {
 
   
+  int tmp_round(float x)
+  {
+    int result=x;
+    return x;
+    
+  } /* tmp_round */
+  
 
   class v3d : public Vector3d 
   {
@@ -267,7 +274,7 @@ namespace pink {
 
     new_base.col(2).swap(new_base.col(1));
 
-    DVECT(new_base);
+    //DVECT(new_base);
 
     new_base(0,0)+=pA(0);
     new_base(1,0)+=pA(1);
@@ -333,9 +340,9 @@ namespace pink {
 	//DVECT(point);
 	
 	curr << 
-	  round(inpoint[0]), 
-	  round(inpoint[1]),
-	  round(inpoint[2]);
+	  tmp_round(inpoint[0]), 
+	  tmp_round(inpoint[1]),
+	  tmp_round(inpoint[2]);
 
 	//_DEBUG(curr.repr());
 	
