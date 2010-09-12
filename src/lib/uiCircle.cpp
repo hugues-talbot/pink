@@ -376,10 +376,10 @@ namespace pink {
       return gsl_multifit_fdfsolver_iterate(this->solver);        
     }
 
-    int fdfsolver::iterate( int n )
+    int fdfsolver::iterate( int nval )
     {
       int it;        
-      for (int q=0; q<=n-1; q++ )
+      for (int q=0; q<=nval-1; q++ )
       {
         numb_iterations++;          
         it=gsl_multifit_fdfsolver_iterate(this->solver);
@@ -392,7 +392,7 @@ namespace pink {
       return GSL_SUCCESS;        
     }
 
-    int fdfsolver::auto_iterate( float epsilon, int n )
+    int fdfsolver::auto_iterate( float varepsilon, int nval )
     // this function iterates until epsilon precision is reached
     // n is the number of iterations between testing the convergence      
     {
@@ -401,7 +401,7 @@ namespace pink {
         
       do
       {          
-        this->iterate(n);
+        this->iterate(nval);
         before = this->position();
           
         this->iterate();

@@ -119,7 +119,7 @@ namespace pink {
 
       // this function iterates until epsilon precision is reached
       // n is the number of iterations between testing the convergence      
-      int auto_iterate( float epsilon = 0.0001, int n=10 );
+      int auto_iterate( float varepsilon = 0.0001, int nval=10 );
     
       vector position();
       int iterations();

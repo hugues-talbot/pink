@@ -77,7 +77,9 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <cstring>
   #include <cmath>
 
-
+  #include <eigen2/Eigen/Core>
+  #include <eigen2/Eigen/LU>
+  #include <eigen2/Eigen/Geometry>
 
 #endif /* __cplusplus */
 
@@ -309,6 +311,7 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <uiInsert.hpp>
   #include <uiCutPlane.hpp>
   #include <uiCircle.hpp>
+  #include <ui_fit_circle.hpp>
 #endif /* __cplusplus */
 
 

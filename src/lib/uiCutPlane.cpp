@@ -10,10 +10,6 @@
   ujoimro@gmail.com
 */
 
-#include <eigen2/Eigen/Core>
-#include <eigen2/Eigen/LU>
-#include <eigen2/Eigen/Geometry>
-
 #include <pink.h>
 
 #undef error
