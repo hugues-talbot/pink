@@ -16,7 +16,7 @@ target_link_libraries( cpp_pink pink ${LIBS} )
 add_definitions( -DUNIXIO -DPC )
 set( CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} ${PYTHON_FLAG} )
 include_directories( ${PYTHON_INCLUDE}  ${BOOST_INCLUDE} )
-
+set( CMAKE_INCLUDE_DIRS_CONFIG ${CMAKE_REQUIRED_INCLUDES} )
 
 if (NOT PYTHON_EXE)
     find_program(PYTHON_EXE ipython)

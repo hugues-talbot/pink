@@ -78,6 +78,10 @@ if (CMAKE_HOST_UNIX)
 	    SET(PYTHON_FLAG "-lpython2.6" CACHE STRING "The flag to use for the python library.")
 	endif(NOT PYTHON_FLAG)
 
+	if(NOT EIGEN_INCLUDE)
+	    SET(EIGEN_INCLUDE "/usr/include" CACHE PATH "The directory of the eigen2 headers. Remember in the case of /usr/local/include/eigen2, you specify /usr/local/include." )
+	endif(NOT EIGEN_INCLUDE)
+
 	find_library( BOOST_PYTHON libboost_python.${LIBEXT} ${POTENCIAL_LIBDIRS} )
 	set( LIBS ${LIBS} ${BOOST_PYTHON} )
 	find_library( BOOST_THREAD libboost_thread-mt.${LIBEXT} ${POTENCIAL_LIBDIRS} )
@@ -86,7 +90,8 @@ if (CMAKE_HOST_UNIX)
 
 	# looking for the python library 
 	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_FLAG} ${LIBS}  )
-	set( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${INCLUDES} ${PYTHON_INCLUDE} ${BOOST_INCLUDE} )
+	set( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${INCLUDES} ${PYTHON_INCLUDE} ${BOOST_INCLUDE} ${EIGEN_INCLUDE} )
+	include_directories( ${CMAKE_REQUIRED_INCLUDES} )
 
 	find_library( GSL_LIB libgsl.${LIBEXT} ${POTENCIAL_LIBDIRS} )
 	set( LIBS ${LIBS} ${GSL_LIB} )
@@ -153,6 +158,28 @@ if (CMAKE_HOST_UNIX)
 	if (NOT HTEST11)
 	    message( FATAL_ERROR "error boost/accumulators/statistics.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
 	endif(NOT HTEST11)
+
+	CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/Core HTEST12 )
+	if (NOT HTEST12)
+	    message( FATAL_ERROR "error eigen2/Eigen/Core does not compile. Check if its correctly installed. You may need a newer version. ")
+	endif(NOT HTEST12)
+
+	CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/LU HTEST14 )
+	if (NOT HTEST14)
+	    message( FATAL_ERROR "error eigen2/Eigen/LU does not compile. Check if its correctly installed. You may need a newer version. ")
+	endif(NOT HTEST14)
+
+	CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/Geometry HTEST15 )
+	if (NOT HTEST15)
+	    message( FATAL_ERROR "error eigen2/Eigen/Geometry does not compile. Check if its correctly installed. You may need a newer version. ")
+	endif(NOT HTEST15)
+
+
+#eigen2/Eigen/Core
+#eigen2/Eigen/LU
+#eigen2/Eigen/Geometry
+
+
     endif ( PYTHON_FRONT_END )
 
 endif (CMAKE_HOST_UNIX)
