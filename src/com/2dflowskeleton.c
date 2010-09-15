@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief computes the flow skeleton (see [Cou10]) of a 2D complex
 
-<B>Usage:</B> 2dflowskeleton in.pgm mode [prio] out.pgm
+<B>Usage:</B> 2dflowskeleton in.pgm mode [level] out.pgm
 
 <B>Description:</B>
 
@@ -46,7 +46,7 @@ The parameter \b mode selects the function to be integrated in order to build th
 \li 0: uniform null function 
 \li 1: uniform unity function 
 \li 2: border indicator function
-\li 3: border indicator function and substraction of lambda from the integrated map
+\li 3: border indicator function and division of the integrated map by the distance map
 \li 4: inverse opening function
 \li 5: bisector function
 \li 6: inverse Euclidean distance map
@@ -348,10 +348,13 @@ int main(int32_t argc, char **argv)
   boolean * head;
   TYP_VSOM vmax;
   TYP_VSOM epsilon = FS_EPSILON;
+#ifdef FOREST
+  graphe * forest;
+#endif
 
   if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s in.pgm mode [prio] out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm mode [level] out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -374,24 +377,12 @@ int main(int32_t argc, char **argv)
     exit(1);
   }
 
-  if (argc == 5)
+  lambda = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT);
+  assert(lambda != NULL);
+  if (!llambdamedialaxis(dist, lambda))
   {
-    lambda = readimage(argv[3]); 
-    assert(lambda != NULL);
-    assert(datatype(lambda) == VFF_TYP_FLOAT);
-    assert(rowsize(lambda) == rs);
-    assert(colsize(lambda) == cs);
-    assert(depth(lambda) == 1);
-  }
-  else
-  {
-    lambda = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT);
-    assert(lambda != NULL);
-    if (!llambdamedialaxis(dist, lambda))
-    {
-      fprintf(stderr, "%s: llambdamedialaxis failed\n", argv[0]);
-      exit(1);
-    }
+    fprintf(stderr, "%s: llambdamedialaxis failed\n", argv[0]);
+    exit(1);
   }
 
 #ifdef SHOWIMAGES
@@ -452,6 +443,16 @@ int main(int32_t argc, char **argv)
     TermineGraphe(flow_s);
   }
 #endif
+#endif
+
+#ifdef FOREST
+  {   
+  graphe * flow_s = Symetrique(flow);
+  graphe * forest_s = ForetPCC(flow_s);
+  forest = Symetrique(forest_s);
+  TermineGraphe(flow_s);
+  TermineGraphe(forest_s);
+  }
 #endif
   
   // -------------------------------------------------------------------
@@ -531,17 +532,28 @@ int main(int32_t argc, char **argv)
     exit(1);
   }
 
+#ifdef FOREST
+  for (i = 0; i < N; i++)
+    forest->v_sommets[i] = (TYP_VSOM)FUNC[i];
+#else
   for (i = 0; i < N; i++)
     flow->v_sommets[i] = (TYP_VSOM)FUNC[i];
-
 #ifdef SHOWGRAPHS
   ShowGraphe(flow, "_flow2", 30, 1, 3, 0, 1, 0, 1, K, rs, head);
+#endif
 #endif
 
   // -----------------------------------------------------------
   // 3EME ETAPE : INTEGRE LA FONCTION DE POIDS 
   // -----------------------------------------------------------
+
+#ifdef FOREST
+  IntegreGSC(forest);
+  for (i = 0; i < N; i++)
+    flow->v_sommets[i] = forest->v_sommets[i];
+#else
   IntegreGSC(flow);
+#endif
 
 #ifdef SHOWGRAPHS
   ShowGraphe(flow, "_flow3", 30, 1, 3, 0, 1, 0, 1, K, rs, head);
@@ -554,9 +566,25 @@ int main(int32_t argc, char **argv)
     
   if (mode == 3)
   {
-    MaxAlpha2d(lambda); // fermeture (en ndg)
+#ifdef ANCIEN1
+    MaxAlpha3d(lambda); // fermeture (en ndg)
     for (i = 0; i < N; i++)
       flow->v_sommets[i] = flow->v_sommets[i] - (TYP_VSOM)LAMBDA[i];
+#endif
+#ifdef ANCIEN2
+    struct xvimage *of = lopeningfunction(k, 0);
+    uint32_t *OF;
+    assert(of != NULL);
+    OF = ULONGDATA(of);
+    for (i = 0; i < N; i++)
+      if (OF[i]) 
+	flow->v_sommets[i] = flow->v_sommets[i] / (TYP_VSOM)OF[i];
+    freeimage(of);
+#endif
+    int32_t *D = SLONGDATA(dist);
+    for (i = 0; i < N; i++)
+      if (D[i]) 
+	flow->v_sommets[i] = flow->v_sommets[i] / (TYP_VSOM)sqrt(D[i]);
   }
 
   // -----------------------------------------------------------
@@ -577,10 +605,60 @@ int main(int32_t argc, char **argv)
   ShowGraphe(flow, "_flow4", 30, 1, 3, 0, 1, 0, 1, K, rs, head);
 #endif
   
-  for (i = 0; i < N; i++)
-    FUNC[i] = (float)flow->v_sommets[i];
+  if (argc == 5)
+  {
+    double level = atof(argv[3]);
+    for (i = 0; i < N; i++)
+      K[i] = (flow->v_sommets[i] >= level ? 255 : 0);
+    writeimage(k, argv[argc-1]);    
 
-  writeimage(func, argv[argc-1]);
+
+    // detects end points
+    if (!l2dseltype(k, 0, 0, 0, 0, 1, 1))
+    {
+      fprintf(stderr, "%s: function l2dseltype failed\n", argv[0]);
+      exit(1);
+    }
+    writeimage(k, "_endpoints");    
+
+    kk = copyimage(k); 
+    assert(kk != NULL);
+    razimage(kk);
+
+    // foreach end point, compute the upstream
+    uint8_t *KK = UCHARDATA(kk);
+#ifdef FOREST
+    graphe * forest_s = Symetrique(forest);
+    uint32_t j;
+    for (i = 0; i < N; i++)
+      if (K[i])
+      {
+	boolean *D = Descendants(forest_s, i);
+	for (j = 0; j < N; j++) if (D[j]) KK[j] = 255;
+	free(D);
+      }
+    writeimage(kk, "_upstreams");    
+    TermineGraphe(forest_s);
+#else
+    graphe * flow_s = Symetrique(flow);
+    uint32_t j;
+    for (i = 0; i < N; i++)
+      if (K[i])
+      {
+	boolean *D = Descendants(flow_s, i);
+	for (j = 0; j < N; j++) if (D[j]) KK[j] = 255;
+	free(D);
+      }
+    writeimage(kk, "_upstreams");    
+    TermineGraphe(flow_s);
+#endif
+  }
+  else
+  {
+    for (i = 0; i < N; i++)
+      FUNC[i] = (float)flow->v_sommets[i];
+    writeimage(func, argv[argc-1]);
+  }
 
   freeimage(k);
   freeimage(dist);

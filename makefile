@@ -255,6 +255,7 @@ $(BDIR)/pgm2vskel \
 $(BDIR)/ptcurve \
 $(BDIR)/ptend \
 $(BDIR)/ptextensible \
+$(BDIR)/pthseparatinggray \
 $(BDIR)/ptinterior \
 $(BDIR)/ptjunction \
 $(BDIR)/ptisolated \

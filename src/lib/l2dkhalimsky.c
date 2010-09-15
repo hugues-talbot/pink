@@ -1688,6 +1688,11 @@ int32_t l2dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8
   uint8_t * KP;
   int32_t tab[9]; int32_t n, u;
 
+//#define DEBUG_l2dseltype
+#ifdef DEBUG_l2dseltype
+  printf("call %s %d %d %d %d %d %d\n", F_NAME, d1, d2, a1, a2, b1, b2);
+#endif
+
   rs = rowsize(k);
   cs = colsize(k);
   N = rs * cs;

@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief computes the flow skeleton (see [Cou10]) of a 3D complex
 
-<B>Usage:</B> 3dflowskeleton in.pgm mode out.pgm
+<B>Usage:</B> 3dflowskeleton in.pgm mode [level] out.pgm
 
 <B>Description:</B>
 
@@ -46,7 +46,7 @@ The parameter \b mode selects the function to be integrated in order to build th
 \li 0: uniform null function 
 \li 1: uniform unity function 
 \li 2: border indicator function
-\li 3: border indicator function and division of the integrated map by the square distance map
+\li 3: border indicator function and division of the integrated map by the opening function
 \li 4: inverse opening function
 \li 5: bisector function
 \li 6: inverse Euclidean distance map
@@ -185,9 +185,9 @@ int main(int32_t argc, char **argv)
   TYP_VSOM vmax;
   TYP_VSOM epsilon = FS_EPSILON;
 
-  if (argc != 4)
+  if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s in.pgm mode out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm mode [level] out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -324,15 +324,25 @@ int main(int32_t argc, char **argv)
 
   if (mode == 3)
   {
-#ifdef ANCIEN
+#ifdef ANCIEN1
     MaxAlpha3d(lambda); // fermeture (en ndg)
     for (i = 0; i < N; i++)
       flow->v_sommets[i] = flow->v_sommets[i] - (TYP_VSOM)LAMBDA[i];
 #endif
+#ifdef ANCIEN2
     int32_t *D = SLONGDATA(dist);
     for (i = 0; i < N; i++)
       if (D[i]) 
 	flow->v_sommets[i] = flow->v_sommets[i] / (TYP_VSOM)D[i];
+#endif
+    struct xvimage *of = lopeningfunction(k, 0);
+    int32_t *OF, maxof;
+    assert(of != NULL);
+    OF = SLONGDATA(of);
+    for (i = 0; i < N; i++) 
+      if (OF[i]) 
+	flow->v_sommets[i] = flow->v_sommets[i] / (TYP_VSOM)OF[i];
+    freeimage(of);
   }
 
   // -----------------------------------------------------------
@@ -351,10 +361,66 @@ int main(int32_t argc, char **argv)
     if (perm[i])
       flow->v_sommets[i] = vmax;
   
-  for (i = 0; i < N; i++)
-    FUNC[i] = (float)flow->v_sommets[i];
+  if (argc == 5)
+  {
+    double level = atof(argv[3]);
+    for (i = 0; i < N; i++)
+      K[i] = (flow->v_sommets[i] >= level ? 255 : 0);
+    writeimage(k, argv[argc-1]);    
 
-  writeimage(func, argv[argc-1]);
+    // detects end points
+    if (!l3dseltype(k, 0, 0, 0, 0, 1, 1))
+    {
+      fprintf(stderr, "%s: function l3dseltype failed\n", argv[0]);
+      exit(1);
+    }
+    writeimage(k, "_endpoints");    
+
+    kk = copyimage(k); 
+    assert(kk != NULL);
+    razimage(kk);
+
+    // foreach end point, compute the upstream
+    uint8_t *KK = UCHARDATA(kk);
+    graphe * flow_s = Symetrique(flow);
+    uint32_t j;
+    for (i = 0; i < N; i++)
+      if (K[i])
+      {
+	boolean *D = Descendants(flow_s, i);
+	for (j = 0; j < N; j++) if (D[j]) KK[j] = 255;
+	free(D);
+      }
+    writeimage(kk, "_upstreams");    
+    TermineGraphe(flow_s);
+
+    // computes a new weighting function:
+    // identical to the previous one on upstreams,
+    // null elsewhere
+    for (i = 0; i < N; i++)
+      if (!KK[i])
+	flow->v_sommets[i] = (TYP_VSOM)0;
+    
+    // morsifies this function
+    Morsify(flow, head, epsilon);
+    vmax = flow->v_sommets[0];
+    for (i = 0; i < N; i++)
+      if (flow->v_sommets[i] > vmax) vmax = flow->v_sommets[i];
+    for (i = 0; i < N; i++)
+      if (perm[i])
+	flow->v_sommets[i] = vmax;
+
+    for (i = 0; i < N; i++)
+      FUNC[i] = (float)flow->v_sommets[i];
+    writeimage(func, "_newfs");
+  
+  }
+  else
+  {
+    for (i = 0; i < N; i++)
+      FUNC[i] = (float)flow->v_sommets[i];
+    writeimage(func, argv[argc-1]);
+  }
 
   freeimage(k);
   freeimage(dist);

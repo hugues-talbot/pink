@@ -547,9 +547,11 @@ such that there exists c verifying F(p)-h < c <= F(p) and
 
   if (connex == 6)
   {
+    mctopo3d_init_topo3d();
     for (x = 0; x < N; x++)
       if (SOURCE[x] && nonbord(x, rs, N) && mctopo3d_hfseparant6(SOURCE, x, SOURCE[x]-h, rs, ps, N))
         RES[x] = NDG_MAX;
+    mctopo3d_termine_topo3d();
   }
   else
   {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);

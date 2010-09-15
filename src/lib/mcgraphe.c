@@ -2499,15 +2499,108 @@ void PointsConfluents(graphe * g, graphe *g_1)
 
 /* ====================================================================== */
 /*! \fn graphe * ForetPCC(graphe * g)
-    \param g (entrée) : un graphe pondéré, représenté par son application successeurs,
-            et dont les sommets ont été valués par la distance à une source
+    \param g (entrée) : un graphe, représenté par son application successeurs et dont les arcs sont valués
     \return une forêt de plus courts chemins relatifs aux sources de g
-    \brief retourne une forêt de plus courts chemins relatifs aux sources de g
+    \brief retourne une forêt de plus courts chemins relatifs aux sources de g. Les longueurs des plus courts chemins sont stockés dans le champ v_sommet du graphe d'origine et de la forêt générée.
+    \warning ne s'applique qu'aux graphes sans circuit
 */
 graphe * ForetPCC(graphe * g)
 /* ====================================================================== */
 #undef F_NAME
 #define F_NAME "ForetPCC"
+{
+  int32_t x, y, miny, i, r, rmax, cumul, n = g->nsom;
+  int32_t * T;   // pour les sommets triés
+  int32_t * H;   // histogramme des rangs
+  graphe * g_1 = Symetrique(g);
+  graphe * foret = InitGraphe(n, n-1); // pour le resultat
+  TYP_VARC tmp, minv;
+  pcell p;
+
+  assert (g_1 != NULL);
+  assert (foret != NULL);
+
+  if (CircuitNiveaux(g) != 0)
+  {
+    fprintf(stderr, "%s: the graph is not acyclic\n", F_NAME);
+    exit(0);
+  }
+  rmax = 0;
+  for (x = 0; x < n; x++)
+  {
+    r = (int32_t)g->v_sommets[x];
+    if (r > rmax) rmax = r;
+  }
+  H = (int32_t *)calloc(rmax + 1, sizeof(int32_t));
+  if (H == NULL)
+  {
+    fprintf(stderr, "%s : calloc failed\n", F_NAME);
+    exit(0);
+  }
+  for (x = 0; x < n; x++) H[(int32_t)g->v_sommets[x]]++; // calcule l'histo
+  cumul = H[0];
+  H[0] = 0;
+  for (i = 1; i <= rmax; i++) // calcule l'histo cumulé
+  {
+    x = H[i];
+    H[i] = cumul;
+    cumul += x;
+  }
+  T = (int32_t *)malloc(n * sizeof(int32_t));
+  if (T == NULL)
+  {
+    fprintf(stderr, "%s : malloc failed\n", F_NAME);
+    exit(0);
+  }
+  for (x = 0; x < n; x++)  // tri des sommets par rang croissant
+  {
+    r = (int32_t)g->v_sommets[x];
+    T[H[r]] = x;
+    H[r] += 1;
+  }
+  free(H);
+
+  for (x = 0; x < n; x++)
+    g->v_sommets[x] = MAX_VSOM;
+
+  for (i = 0; i < n; i++)
+  {
+    x = T[i];
+    p = g_1->gamma[x];
+    if (p == NULL) foret->v_sommets[x] = g->v_sommets[x] = 0; // cas des sources
+    else
+    {
+      miny = p->som;
+      minv = p->v_arc + g->v_sommets[miny];
+      p = p->next; 
+      for (; p != NULL; p = p->next)
+      { /* pour tout y prédécesseur de x */
+	y = p->som;
+	tmp = p->v_arc + g->v_sommets[y];
+	if (tmp < minv) { minv = tmp; miny = y; }
+      } // for p
+      foret->v_sommets[x] = g->v_sommets[x] = minv;
+      AjouteArc(foret, miny, x);
+    }
+  }
+
+  TermineGraphe(g_1);  
+  free(T);
+  return foret;
+} /* ForetPCC() */
+
+/* ====================================================================== */
+/*! \fn graphe * ForetPCC_PoidsEntiers(graphe * g)
+    \param g (entrée) : un graphe pondéré, représenté par son application successeurs,
+            et dont les sommets ont été valués par la distance à une source
+    \return une forêt de plus courts chemins relatifs aux sources de g
+    \brief retourne une forêt de plus courts chemins relatifs aux sources de g
+    \warning convient seulement aux pondérations entières 
+*/
+graphe * ForetPCC_PoidsEntiers(graphe * g)
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "ForetPCC_PoidsEntiers"
 {
   int32_t n = g->nsom;
   graphe * fpcc = InitGraphe(n, n-1); /* pour le resultat */
@@ -2535,7 +2628,7 @@ graphe * ForetPCC(graphe * g)
     fpcc->v_sommets[i] = g->v_sommets[i];
   }
   return fpcc;
-} /* ForetPCC() */
+} /* ForetPCC_PoidsEntiers() */
 
 static TYP_VSOM IntegreForet_Aux(graphe * g, graphe * g_1, int32_t s)
 {
@@ -2997,7 +3090,6 @@ int32_t main(int32_t argc, char **argv)
 int32_t main(int32_t argc, char **argv)
 {
   graphe * g;
-  boolean *circ;
 
   if (argc != 2)
   {
@@ -3022,7 +3114,6 @@ int32_t main(int32_t argc, char **argv)
 int32_t main(int32_t argc, char **argv)
 {
   graphe * g;
-  boolean *circ;
 
   if (argc != 2)
   {
@@ -3045,7 +3136,6 @@ int32_t main(int32_t argc, char **argv)
 int32_t main(int32_t argc, char **argv)
 {
   graphe * g;
-  boolean *circ;
 
   if (argc != 2)
   {
@@ -3061,6 +3151,31 @@ int32_t main(int32_t argc, char **argv)
   AfficheValeursSommets(g);
 
   TermineGraphe(g);
+  return 0;
+} /* main() */
+#endif
+
+#ifdef TESTFORETPCC
+int32_t main(int32_t argc, char **argv)
+{
+  graphe * g;
+  graphe * f;
+
+  if (argc != 2)
+  {
+    fprintf(stderr, "usage: %s <filename>\n\n", argv[0]);
+    exit(0);
+  }
+
+  g = ReadGraphe(argv[1]);  /* lit le graphe a partir du fichier */
+  AfficheSuccesseurs(g);    /* affiche les ensembles "successeurs" a l'ecran */
+
+  f = ForetPCC(g);
+  AfficheSuccesseurs(f);
+  AfficheValeursSommets(f);
+
+  TermineGraphe(g);
+  TermineGraphe(f);
   return 0;
 } /* main() */
 #endif
