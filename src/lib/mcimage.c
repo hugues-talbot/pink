@@ -73,7 +73,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "mccodimage.h"
 
 #define BUFFERSIZE 10000
-
 /*
 #define VERBOSE
 */
@@ -1781,7 +1780,7 @@ int32_t readrgbimage(
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, nndg, N, i;
+  int32_t rs, cs, nndg, N, i, ds, np, ndgmax ;
   int32_t ascii = 0;  
   int32_t c;
   char *read;
@@ -1819,6 +1818,16 @@ int32_t readrgbimage(
       return 0;
   } /* switch */
 
+  c = sscanf(buffer+2, "%d %d %d", &rs, &cs, &ndgmax);
+
+  if (c == 3) /* format ppm MatLab : tout sur une ligne */
+  {
+    np = ds = 1;
+    goto readdata;
+  }
+
+
+
   do 
   {
     read = fgets(buffer, BUFFERSIZE, fd); /* commentaire */
@@ -1842,6 +1851,8 @@ int32_t readrgbimage(
     return 0;
   }
   sscanf(buffer, "%d", &nndg);
+
+  readdata:
   N = rs * cs;
 
   *r = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);

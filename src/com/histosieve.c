@@ -132,7 +132,6 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-
   free(histo);
   writeimage(image, argv[argc-1]);
   freeimage(image);
