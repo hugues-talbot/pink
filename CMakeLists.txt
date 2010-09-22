@@ -99,6 +99,9 @@ if (CMAKE_HOST_UNIX)
 	find_library( GSLCBLAS_LIB libgslcblas.${LIBEXT} ${POTENCIAL_LIBDIRS} )
 	set( LIBS ${LIBS} ${GSLCBLAS_LIB} )
 
+	find_library( LAPACK_LIB liblapack.${LIBEXT} ${POTENCIAL_LIBDIRS} )
+	set( LIBS ${LIBS} ${LAPACK_LIB} )
+
 	CHECK_INCLUDE_FILE( pyconfig.h HTEST )
 	if (NOT HTEST)
 	    message( FATAL_ERROR " pyconfig.h header file failed to compile. If it is installed, than check the python flags and directories") 

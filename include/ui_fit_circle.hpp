@@ -47,8 +47,23 @@ namespace pink
                               Eigen::MatrixXd&
     );
   Eigen::VectorXd fit_circle( const Eigen::VectorXd &, const Eigen::VectorXd & );
+
+  // the same as 'fit_circle' but with python conversion
+  boost::python::list py_fit_circle(
+    const boost::python::list & py_x,
+    const boost::python::list & py_y,
+    const string & filename = ""
+    );
   
 
+  boost::python::list py_circle_equation_to_coordinates(
+    const boost::python::list & equation
+    );
+  
+  boost::python::list py_circle_equation_to_coordinates(
+    const boost::python::list & equation
+    );
+  
 
 
   

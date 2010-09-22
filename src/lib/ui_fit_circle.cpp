@@ -80,8 +80,20 @@ namespace pink
   
   VectorXd fit_circle( const VectorXd & x, const VectorXd & y, const string & filename = "" )
   {
-    bool verbose = (filename == "");
+    bool verbose = (filename != "");
 
+    if (x.size()!=y.size())
+    {
+      error("fit_circle: the size of the x and y coordinate vector must match!");      
+    }
+
+    if (x.size()<=4)
+    {
+      error("fit_circle: You need at least four points to interpolate with a circle!");      
+    }
+    
+
+    
     // Build desing matrix
     MatrixXd Dmat(x.size(),4);
     Dmat << x.cwise()*x + y.cwise()*y, x, y, VectorXd(x.size()).setOnes();
@@ -105,7 +117,7 @@ namespace pink
     double max = 1000000000000; 
     double max_q = -1;    
         
-    for (int q=0; q<=geval.rows()-1; q++)
+    FOR (q, geval.rows())
     {
       if (fabs(geval(q,2)) > epsilon) // checking if the regularisation constant is good
                                       // e.g. we are not in infinity
@@ -116,14 +128,14 @@ namespace pink
           max = fabs(geval(q,0)/geval(q,2));
         } /* if geval... */
       } /* if fabs... */      
-    } /* for */
+    } /* FOR */
     
     VectorXd result(geval.rows());
 
-    for (int q=0; q<=geval.rows() -1; q++ )
+    FOR (q, geval.rows())
     {
       result[q]=gevec(q,max_q);      
-    } /* for */
+    } /* FOR */
     
     if (verbose)
     {
@@ -132,10 +144,10 @@ namespace pink
 
       mathematica << "Show[\n";  
       mathematica << "Graphics[Point[{\n";  
-      for (int q=0; q<= x.size()-1 -1; q++)
+      FOR (q, x.size()-1)
       {
         mathematica << "{" << x[q] << "," << y[q] << "},";    
-      }
+      } /* FOR */
       mathematica << "{" << x[x.size()-1] << "," << y[y.size()-1] << "}\n";
       mathematica << "}]\n]\n";  
       mathematica << ", \nContourPlot[\n" 
@@ -147,16 +159,66 @@ namespace pink
       mathematica.close();  
       
       // printing the circle candidates
-      for ( int q=0; q<=geval.rows() -1; q++)
+      FOR (q, geval.rows())
       {     
         cout << "the circle equation is "
              << "( x" << std::showpos << gevec(1,q)/(2*gevec(0,q)) << " )^2 + ( y" << std::showpos << gevec(2,q)/(2*gevec(0,q)) << " )^2"
              << std::showpos << gevec(3,q)/gevec(0,q)-ui_sqr(gevec(1,q))/(4*ui_sqr(gevec(0,q)))-ui_sqr(gevec(2,q))/(4*ui_sqr(gevec(0,q))) << " == 0\n";  
-      } /* for */
+      } /* FOR */
     } /* if */
     
     return result;    
   } /* fit_circle */
+
+  boost::python::list py_fit_circle(
+    const boost::python::list & py_x,
+    const boost::python::list & py_y,
+    const string & filename /* = "" */ // default argument specified in the header
+    )
+  {
+    VectorXd x(boost::python::len(py_x));
+    VectorXd y(boost::python::len(py_y));
+    FOR(q, boost::python::len(py_x))
+    {
+      x[q]=boost::python::extract<float>(py_x[q]);
+      y[q]=boost::python::extract<float>(py_y[q]);
+    } /* FOR */
+
+    VectorXd circle=fit_circle(x, y, filename);
+    boost::python::list result;
+
+    FOR(q, circle.size())
+    {
+      result.append(circle[q]);     
+    }
+
+    return result;
+  } /* py_fit_circle */
+
+  boost::python::list py_circle_equation_to_coordinates(
+    const boost::python::list & equation
+    )
+  {
+    boost::python::list result;
+
+    float a = boost::python::extract<float>(equation[0]);
+    float b = boost::python::extract<float>(equation[1]);
+    float c = boost::python::extract<float>(equation[2]);
+    float d = boost::python::extract<float>(equation[3]);
+      
+    
+    float center_x = b/(2*a);
+    float center_y = c/(2*a);
+    float r = d/a - (b*b) / (4*(a*a)) - (c*c)/(4*(a*a));
+
+    result.append(-center_x);
+    result.append(-center_y);
+    result.append(sqrt(-r));
+
+    return result;    
+  } /* py_circle_equation_to_coordinates */
+  
+
   
 } /* namespace pink */
 
