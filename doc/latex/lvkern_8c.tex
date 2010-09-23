@@ -1,9 +1,11 @@
 \section{lvkern.c File Reference}
 \label{lvkern_8c}\index{lvkern.c@{lvkern.c}}
-grayscale ultimate leveling thinning 
+grayscale ultimate leveling thinning  
 
 
 
+
+\label{_details}
 \subsection{Detailed Description}
 grayscale ultimate leveling thinning 
 
@@ -13,13 +15,13 @@ grayscale ultimate leveling thinning
 
 
 
-\footnotesize\begin{verbatim}
+\begin{footnotesize}\begin{verbatim}
 Repeat until stability:
     select p such that T--(p,F) = 1 and such that F(p) is minimal
     F(p) = max{ delta-(p,F), G(p) }    
 Result: F
 \end{verbatim}
-\normalsize
+\end{footnotesize}
 
 
 References:\par
@@ -38,6 +40,6 @@ lvkern ur1 null 4 ur1\_\-lvkern minima ur1\_\-lvkern 4 ur1\_\-lvkern\_\-m
 
 \begin{TabularC}{3}
 \hline
- & &  \\\hline
-ur1 &ur1\_\-lvkern &ur1\_\-lvkern\_\-m  \\\hline
+ & &  \\\cline{1-3}
+ur1 &ur1\_\-lvkern &ur1\_\-lvkern\_\-m  \\\cline{1-3}
 \end{TabularC}

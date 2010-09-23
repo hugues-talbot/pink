@@ -1,9 +1,11 @@
 \section{hthin.c File Reference}
 \label{hthin_8c}\index{hthin.c@{hthin.c}}
-grayscale homotopic thinning 
+grayscale homotopic thinning  
 
 
 
+
+\label{_details}
 \subsection{Detailed Description}
 grayscale homotopic thinning 
 
@@ -13,7 +15,7 @@ grayscale homotopic thinning
 
 
 
-\footnotesize\begin{verbatim}
+\begin{footnotesize}\begin{verbatim}
 Repeat niter times:
     L = {(p,d) such that p is destructible for F and d = delta-(p,F)}
     While L not empty
@@ -21,7 +23,7 @@ Repeat niter times:
        F(p) = max{ d, delta-(p,F), G(p) }    
 Result: F
 \end{verbatim}
-\normalsize
+\end{footnotesize}
 
 
 If {\bf niter} is set to -1, then the operator iterates until stability.
@@ -45,6 +47,6 @@ hthin ur1 null 4 10 ur1\_\-hthin\par
 
 \begin{TabularC}{3}
 \hline
- & &  \\\hline
-ur1 &ur1\_\-hthin &ur1\_\-hthin\_\-m  \\\hline
+ & &  \\\cline{1-3}
+ur1 &ur1\_\-hthin &ur1\_\-hthin\_\-m  \\\cline{1-3}
 \end{TabularC}

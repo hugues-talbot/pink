@@ -1,9 +1,11 @@
 \section{skelsurf.c File Reference}
 \label{skelsurf_8c}\index{skelsurf.c@{skelsurf.c}}
-surfacic binary skeleton guided by a priority image 
+surfacic binary skeleton guided by a priority image  
 
 
 
+
+\label{_details}
 \subsection{Detailed Description}
 surfacic binary skeleton guided by a priority image 
 
@@ -21,7 +23,7 @@ Let X be the set corresponding to the input image {\bf in.pgm}. Let P be the fun
 
 
 
-\footnotesize\begin{verbatim}
+\begin{footnotesize}\begin{verbatim}
 C = {y in F | Tb(y) > 1}
 Repeat until stability
   choose a point x in X, simple for X, such that C[x] == 0 
@@ -31,7 +33,7 @@ Repeat until stability
     if Tb(y) > 1 then C[y] = 1
 Result: X
 \end{verbatim}
-\normalsize
+\end{footnotesize}
 
 
 where Tb(y) refers to the second connectivity number of y, that is, (informally) the number of connected components of gamma(y) inter complement(X).

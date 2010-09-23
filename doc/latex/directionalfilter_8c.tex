@@ -1,9 +1,11 @@
 \section{directionalfilter.c File Reference}
 \label{directionalfilter_8c}\index{directionalfilter.c@{directionalfilter.c}}
-directional filter for curvilinear feature extraction 
+directional filter for curvilinear feature extraction  
 
 
 
+
+\label{_details}
 \subsection{Detailed Description}
 directional filter for curvilinear feature extraction 
 
@@ -13,7 +15,7 @@ directional filter for curvilinear feature extraction
 
 
 
-\footnotesize\begin{verbatim}
+\begin{footnotesize}\begin{verbatim}
 sigma = 1 / (2*width*width);
 lambda = 1 / (2*length*length);
 theta = i * PI / n;
@@ -23,7 +25,7 @@ Ki(x,y) = exp(-lambda*yr*yr) *
           (4*sigma*sigma*xr*xr - 2*sigma) * 
           exp(-sigma*xr*xr) 
 \end{verbatim}
-\normalsize
+\end{footnotesize}
 
 
 {\bf Types supported:} byte 2d, int32\_\-t 2d, float 2d

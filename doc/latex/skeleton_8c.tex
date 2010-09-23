@@ -1,9 +1,11 @@
 \section{skeleton.c File Reference}
 \label{skeleton_8c}\index{skeleton.c@{skeleton.c}}
-ultimate binary skeleton guided by a priority image (see [BC07]) 
+ultimate binary skeleton guided by a priority image (see [BC07])  
 
 
 
+
+\label{_details}
 \subsection{Detailed Description}
 ultimate binary skeleton guided by a priority image (see [BC07]) 
 
@@ -21,14 +23,14 @@ Let X be the set corresponding to the input image {\bf in.pgm}. Let P be the fun
 
 
 
-\footnotesize\begin{verbatim}
+\begin{footnotesize}\begin{verbatim}
 Repeat until stability
     Select a point x in X \ I such that P[x] is minimal
     If x is simple for X then
         X = X \ {x}
 Result: X
 \end{verbatim}
-\normalsize
+\end{footnotesize}
 
 
 Reference:\par
@@ -45,6 +47,6 @@ skeleton circuit1 8 8 circuit1\_\-skeleton
 
 \begin{TabularC}{2}
 \hline
- &  \\\hline
-circuit1 &circuit1\_\-skeleton  \\\hline
+ &  \\\cline{1-2}
+circuit1 &circuit1\_\-skeleton  \\\cline{1-2}
 \end{TabularC}

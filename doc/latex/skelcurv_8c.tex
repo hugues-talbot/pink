@@ -1,9 +1,11 @@
 \section{skelcurv.c File Reference}
 \label{skelcurv_8c}\index{skelcurv.c@{skelcurv.c}}
-curvilinear binary skeleton guided by a priority image 
+curvilinear binary skeleton guided by a priority image  
 
 
 
+
+\label{_details}
 \subsection{Detailed Description}
 curvilinear binary skeleton guided by a priority image 
 
@@ -21,7 +23,7 @@ Let X be the set corresponding to the input image {\bf in.pgm}. Let P be the fun
 
 
 
-\footnotesize\begin{verbatim}
+\begin{footnotesize}\begin{verbatim}
 C = null image
 Repeat until stability
   choose a point x in X \ I, simple for X, such that C[x] == 0 
@@ -31,7 +33,7 @@ Repeat until stability
     if T(y) > 1 then C[y] = 1
 Result: X
 \end{verbatim}
-\normalsize
+\end{footnotesize}
 
 
 where T(y) refers to the connectivity number of y, that is, (informally) the number of connected components of gamma(y) inter (X $\backslash$ \{y\}).

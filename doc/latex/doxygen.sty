@@ -2,6 +2,7 @@
 \ProvidesPackage{doxygen}
 \RequirePackage{calc}
 \RequirePackage{array}
+\RequirePackage{color}
 \pagestyle{fancyplain}
 \newcommand{\clearemptydoublepage}{\newpage{\pagestyle{empty}\cleardoublepage}}
 \renewcommand{\chaptermark}[1]{\markboth{#1}{}}
@@ -10,8 +11,8 @@
         {\fancyplain{}{\bfseries\rightmark}}
 \rhead[\fancyplain{}{\bfseries\leftmark}]
         {\fancyplain{}{\bfseries\thepage}}
-\rfoot[\fancyplain{}{\bfseries\scriptsize Generated on Fri Sep 3 09:13:12 2010 for Pink by Doxygen }]{}
-\lfoot[]{\fancyplain{}{\bfseries\scriptsize Generated on Fri Sep 3 09:13:12 2010 for Pink by Doxygen }}
+\rfoot[\fancyplain{}{\bfseries\scriptsize Generated on Thu Sep 23 13:30:28 2010 for Pink by Doxygen }]{}
+\lfoot[]{\fancyplain{}{\bfseries\scriptsize Generated on Thu Sep 23 13:30:28 2010 for Pink by Doxygen }}
 \cfoot{}
 \newenvironment{Code}
 {\footnotesize}
@@ -76,3 +77,21 @@
 \addtocounter{secnumdepth}{1}
 \sloppy
 \usepackage[T1]{fontenc}
+\makeatletter
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{0ex}%
+   {-3.25ex plus -1ex minus -0.2ex}%
+   {1.5ex plus 0.2ex}%
+   {\normalfont\normalsize\bfseries}}
+\makeatother
+\stepcounter{secnumdepth}
+\stepcounter{tocdepth}
+\definecolor{comment}{rgb}{0.5,0.0,0.0}
+\definecolor{keyword}{rgb}{0.0,0.5,0.0}
+\definecolor{keywordtype}{rgb}{0.38,0.25,0.125}
+\definecolor{keywordflow}{rgb}{0.88,0.5,0.0}
+\definecolor{preprocessor}{rgb}{0.5,0.38,0.125}
+\definecolor{stringliteral}{rgb}{0.0,0.125,0.25}
+\definecolor{charliteral}{rgb}{0.0,0.5,0.5}
+\definecolor{vhdldigit}{rgb}{1.0,0.0,1.0}
+\definecolor{vhdlkeyword}{rgb}{0.43,0.0,0.43}
+\definecolor{vhdllogic}{rgb}{1.0,0.0,0.0}

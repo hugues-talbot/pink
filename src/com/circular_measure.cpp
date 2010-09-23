@@ -44,7 +44,12 @@ int main(int argc, char * argv[]){
   
   float min, max;
 
-  lminmaxval( *src, max, min );
+  pair<float, float> mm;
+  
+  mm = lminmaxval( *src );
+  min = mm.first;
+  max = mm.second;
+  
 
   if ( min == max )
   {
@@ -59,7 +64,11 @@ int main(int argc, char * argv[]){
   PRINTIMAGE(result);
 
 
-  lminmaxval( *result, max, min );
+  mm = lminmaxval( *result );
+  min = mm.first;
+  max = mm.second;
+  
+
 
   if ( min == max )
   {

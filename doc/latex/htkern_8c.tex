@@ -1,9 +1,11 @@
 \section{htkern.c File Reference}
 \label{htkern_8c}\index{htkern.c@{htkern.c}}
-grayscale ultimate homotopic thinning 
+grayscale ultimate homotopic thinning  
 
 
 
+
+\label{_details}
 \subsection{Detailed Description}
 grayscale ultimate homotopic thinning 
 
@@ -13,13 +15,13 @@ grayscale ultimate homotopic thinning
 
 
 
-\footnotesize\begin{verbatim}
+\begin{footnotesize}\begin{verbatim}
 Repeat until stability:
     select p destructible for F such that F(p) is minimal
     F(p) = max{ delta-(p,F), G(p) }    
 Result: F
 \end{verbatim}
-\normalsize
+\end{footnotesize}
 
 
 References:\par
@@ -39,6 +41,6 @@ htkern ur1 null 4 ur1\_\-htkern\par
 
 \begin{TabularC}{3}
 \hline
- & &  \\\hline
-ur1 &ur1\_\-htkern &ur1\_\-htkern\_\-m  \\\hline
+ & &  \\\cline{1-3}
+ur1 &ur1\_\-htkern &ur1\_\-htkern\_\-m  \\\cline{1-3}
 \end{TabularC}

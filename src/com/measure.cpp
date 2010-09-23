@@ -38,9 +38,14 @@ int main(int argc, char * argv[]){
   PTR<float_image> src( new float_image(argv[1]) );
 
   float min, max;
+  pair<float, float> mm;
+  
+  
+  mm = lminmaxval( *src );
+  min = mm.first;
+  max = mm.second;
 
-  lminmaxval( *src, max, min );
-
+  
   if ( min == max )
   {
     error("All pixels are equal in the image.");
@@ -57,8 +62,11 @@ int main(int argc, char * argv[]){
   PRINTIMAGE(result);
 
 
-  lminmaxval( *result, max, min );
+  mm = lminmaxval( *result );
+  min = mm.first;
+  max = mm.second;
 
+  
   if ( min == max )
   {
     error("All pixels are equal in the image.");

@@ -1,9 +1,11 @@
 \section{herosball.c File Reference}
 \label{herosball_8c}\index{herosball.c@{herosball.c}}
-topologically controlled erosion 
+topologically controlled erosion  
 
 
 
+
+\label{_details}
 \subsection{Detailed Description}
 topologically controlled erosion 
 
@@ -21,7 +23,7 @@ Let X be the set corresponding to the input image {\bf in.pgm}, and let Xbar den
 
 
 
-\footnotesize\begin{verbatim}
+\begin{footnotesize}\begin{verbatim}
 I = erosball(X, dist, r)
 Repeat:
     Select a point x in X \ I such that dist(x,Xbar) is minimal
@@ -31,7 +33,7 @@ Repeat:
 Until X == I
 Result: X
 \end{verbatim}
-\normalsize
+\end{footnotesize}
 
 
 {\bf Types supported:} byte 2d, byte 3d

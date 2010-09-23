@@ -27,7 +27,7 @@ PTR<char_image> py_border(const char_image & src, int connex)
   PTR<char_image> result(new char_image(src));
 
   mctopo3d_lborder(result->get_output(), connex);
-  
+
   return result;
 } /* py_border */
 

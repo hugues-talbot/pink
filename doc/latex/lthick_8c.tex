@@ -1,9 +1,11 @@
 \section{lthick.c File Reference}
 \label{lthick_8c}\index{lthick.c@{lthick.c}}
-grayscale leveling thickening 
+grayscale leveling thickening  
 
 
 
+
+\label{_details}
 \subsection{Detailed Description}
 grayscale leveling thickening 
 
@@ -13,7 +15,7 @@ grayscale leveling thickening
 
 
 
-\footnotesize\begin{verbatim}
+\begin{footnotesize}\begin{verbatim}
 Repeat niter times:
     L = {(p,a) such that T++(p,F) = 1 and a = alpha+(p,F)}
     While L not empty
@@ -21,7 +23,7 @@ Repeat niter times:
        F(p) = min{ a, alpha+(p,F), G(p) }    
 Result: F
 \end{verbatim}
-\normalsize
+\end{footnotesize}
 
 
 If {\bf niter} is set to -1, then the operator iterates until stability.

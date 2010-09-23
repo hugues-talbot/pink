@@ -1,9 +1,11 @@
 \section{meanfilter.c File Reference}
 \label{meanfilter_8c}\index{meanfilter.c@{meanfilter.c}}
-Mean filter operator. 
+Mean filter operator.  
 
 
 
+
+\label{_details}
 \subsection{Detailed Description}
 Mean filter operator. 
 
@@ -13,7 +15,7 @@ Mean filter operator.
 
 
 
-\footnotesize\begin{verbatim}
+\begin{footnotesize}\begin{verbatim}
 Repeat niter times
   G = F
   For each image point x
@@ -24,7 +26,7 @@ Repeat niter times
       F[x] = S / C;
 Result: F
 \end{verbatim}
-\normalsize
+\end{footnotesize}
 
 
 {\bf Types supported:} byte 2d, int32\_\-t 2d, float 2d, byte 3d, int32\_\-t 3d, float 3d
