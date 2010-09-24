@@ -107,9 +107,15 @@ if (CMAKE_HOST_UNIX)
 	    message( FATAL_ERROR " pyconfig.h header file failed to compile. If it is installed, than check the python flags and directories") 
         endif(NOT HTEST)
 
+	CHECK_INCLUDE_FILE( curses.h HTEST )
+	if (NOT HTEST)
+	    message( FATAL_ERROR " curses.h header file failed to compile. If it is installed, than check the include directories") 
+        endif(NOT HTEST)
+
+
 	CHECK_INCLUDE_FILE( gsl/gsl_interp.h HTEST )
 	if (NOT HTEST)
-	    message( FATAL_ERROR "gsl header file failed to compile. If it is installed, than check the python flags") 
+	    message( FATAL_ERROR "gsl header file failed to compile. If it is installed, than check the gsl flags") 
         endif(NOT HTEST)
 
 #	CHECK_INCLUDE_FILE( curses.h HTEST122 )

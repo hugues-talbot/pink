@@ -1,0 +1,32 @@
+// Dependency and platform file
+
+tried platforms:
+OpenSuSE 11.2
+Ubuntu 10.4 LTS
+MacOS X snow leopard (bash front-end only)
+Windows XP (bash front-end only)
+
+// *************************************************
+// Pink-python dependenies on ubuntu 10.4
+// *************************************************
+
+libx11-dev
+python-dev 
+libgsl0-dev 
+libboost1.40-dev 
+libboost-python1.40-dev 
+//boostpythongenerator 
+libeigen2-dev 
+liblapack-dev 
+libboost-thread-dev
+libncurses5-dev
+
+and the usual gcc, g++, cmake, make
+
+// recommended:
+ipython
+// *************************************************
+// *************************************************
+// *************************************************
+
+
