@@ -180,7 +180,9 @@ $(BDIR)/wshedtopo
 
 GA=\
 $(BDIR)/pgm2GA \
+$(BDIR)/ppm2GA \
 $(BDIR)/pgm2GA4d \
+$(BDIR)/saliencyGA \
 $(BDIR)/watershedMeyer4D \
 $(BDIR)/wshedval \
 $(BDIR)/wshedkhalimsky \
@@ -523,7 +525,6 @@ $(BDIR)/profil
 TRASH=\
 $(BDIR)/erosfast \
 $(BDIR)/erosfast3d \
-$(BDIR)/saliencyGA \
 $(BDIR)/waterfall \
 
 IDIR = $(PINK)/include
@@ -825,6 +826,9 @@ $(BDIR)/rgb2ppm:	$(CDIR)/rgb2ppm.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 
 $(BDIR)/sceneconvert:	$(CDIR)/sceneconvert.c $(IDIR)/mcmesh.h $(IDIR)/mciomesh.h $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(ODIR)/mcrbtp.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o $(OBJ_COMMON)
 			$(CC) $(CCFLAGS) -I$(IDIR) -I. $(CDIR)/sceneconvert.c $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(ODIR)/mcrbtp.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o  $(OBJ_COMMON) $(LIBS) -o $(BDIR)/sceneconvert
+
+$(BDIR)/ppm2GA:         $(CDIR)/ppm2GA.c $(IDIR)/jcimage.h $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lppm2GA.h $(IDIR)/jclderiche.h $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/lppm2GA.o  $(ODIR)/lderiche.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ppm2GA.c $(ODIR)/lderiche.o $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o $(LIBS) -o $(BDIR)/ppm2GA 
 
 $(BDIR)/pgm2GA:		 $(CDIR)/pgm2GA.c $(IDIR)/jcimage.h $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lppm2GA.h $(IDIR)/jclderiche.h $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/lppm2GA.o  $(ODIR)/lderiche.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/pgm2GA.c $(ODIR)/lderiche.o $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/lppm2GA.o $(LIBS) -o $(BDIR)/pgm2GA 
