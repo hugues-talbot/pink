@@ -563,7 +563,7 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int3
     return(0);
   }
   
-  Minim = LCApreprocess(CT, Euler, Depth, Represent, Number, &nbRepresent, &logn);
+  Minim = jccomptree_LCApreprocess(CT, Euler, Depth, Represent, Number, &nbRepresent, &logn);
   printf("LCApreprocess done\n");
 #endif
   for(j = 0; j < cs; j++)
@@ -576,10 +576,10 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int3
       }   
       if(label[x] != label[y]){		
 #ifdef LCAFAST
-	c1 = Represent[LowComAncFast((int32_t)label[x], (int32_t)label[y], Euler, Number, Depth, Minim)];
+	c1 = Represent[jccomptree_LowComAncFast((int32_t)label[x], (int32_t)label[y], Euler, Number, Depth, Minim)];
 #endif
 #ifndef LCAFAST
-	c1 = LowComAncSlow(CT, (int32_t)label[x], (int32_t)label[y]);
+	c1 = jccomptree_LowComAncSlow(CT, (int32_t)label[x], (int32_t)label[y]);
 #endif
 	F[u] = (uint8_t)(mcmin((int32_t)(facteur * (double)attribut[c1]), 255));   
       } 
@@ -596,10 +596,10 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int3
       }  
       if(label[x] != label[y]){
 #ifdef LCAFAST
-	c1 = Represent[LowComAncFast((int32_t)(label[x]), (int32_t)(label[y]), Euler, Number, Depth, Minim)];
+	c1 = Represent[jccomptree_LowComAncFast((int32_t)(label[x]), (int32_t)(label[y]), Euler, Number, Depth, Minim)];
 #endif
 #ifndef LCAFAST
-	c1 = LowComAncSlow(CT, (int32_t)label[x], (int32_t)label[y]);
+	c1 = jccomptree_LowComAncSlow(CT, (int32_t)label[x], (int32_t)label[y]);
 #endif
 	if(c1 < 0){
 	  printf("Erreur de lca pour %d %d retourne %d\n", (int32_t)(label[x]),  (int32_t)(label[y]), c1);
