@@ -91,9 +91,9 @@ typedef struct
 extern JCctree * componentTreeAlloc(int32_t N);
 extern void componentTreeFree(JCctree * CT);
 extern int32_t ComponentTreeGA( uint8_t *F, int32_t rs, int32_t N, JCctree **CompTree, int32_t **CompMap);
-extern int32_t ** LCApreprocess(JCctree *CT, int32_t *Euler, int32_t *Depth, int32_t *Represent, int32_t *Number, int32_t *nbR, int32_t *lognR);
-extern int32_t LowComAncFast(int32_t n1, int32_t n2, int32_t *Euler, int32_t *Number, int32_t *Depth, int32_t **Minim);
-extern int32_t LowComAncSlow(JCctree * CT, int32_t c1, int32_t c2);
+extern int32_t ** jccomptree_LCApreprocess(JCctree *CT, int32_t *Euler, int32_t *Depth, int32_t *Represent, int32_t *Number, int32_t *nbR, int32_t *lognR);
+extern int32_t jccomptree_LowComAncFast(int32_t n1, int32_t n2, int32_t *Euler, int32_t *Number, int32_t *Depth, int32_t **Minim);
+extern int32_t jccomptree_LowComAncSlow(JCctree * CT, int32_t c1, int32_t c2);
 extern void mergeTreePrint(mtree * MT);
 extern mtree * mergeTreeAlloc(int32_t N);
 extern void mergeTreeFree(mtree * MT);
