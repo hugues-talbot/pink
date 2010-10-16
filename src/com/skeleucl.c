@@ -45,7 +45,38 @@ The parameter \b connex indicates the connectivity of the binary object.
 Possible choices are 4, 8 in 2d and 6, 26 in 3d.
 
 If the parameter \b inhibit is given and is a binary image name,
-then the points of this image will be left unchanged. 
+then the points of this image (constraint set) will be left unchanged. 
+
+This operator is usually used with a <I>constraint set</I> (parameter \b inhibit) that is a subset of the exact Euclidean medial axis (see operator <I>medialaxis</I>). 
+
+Here is an example using the whole medial axis as constraint set:
+
+\verbatim
+medialaxis test.pgm 3 _1
+threshold _1 1 _2
+skeleucl test.pgm 8 _2 result.pgm
+\endverbatim
+
+Intersesting subsets are obtained by filtering the medial axis, either based on the ball radiuses, or based on the bisector angle (see operator <I>bisector</I>). Below is a script showing how to proceed:
+
+\verbatim
+#!/bin/sh
+USAGE="Usage: $0 in seuilR (in [1..infnty[) seuilA (in [0.001..pi]) out"
+if [ $# -ne 4 ]
+then
+	echo $USAGE
+        exit
+fi
+medialaxis $1 3 /tmp/skel2_tmp_m
+threshold /tmp/skel2_tmp_m 1 /tmp/skel2_tmp_m1
+skeleucl $1 8 /tmp/skel2_tmp_m1 /tmp/skel2_tmp_s
+threshold /tmp/skel2_tmp_m $2 /tmp/skel2_tmp_ms
+distc $1 3 /tmp/skel2_tmp_d
+bisector /tmp/skel2_tmp_d /tmp/skel2_tmp_ms /tmp/skel2_tmp_a
+threshold /tmp/skel2_tmp_a $3 /tmp/skel2_tmp_i
+skeleton /tmp/skel2_tmp_s /tmp/skel2_tmp_d 8 /tmp/skel2_tmp_i $4
+rm -f /tmp/skel2_tmp_*
+\endverbatim
 
 References:<BR> 
 [CCZ07] M. Couprie, D. Coeurjolly and R. Zrour: <A HREF="http://www.esiee.fr/~coupriem/Pdf/ccz07.pdf">"Discrete bisector function and Euclidean skeleton in 2D and 3D"</A>, <I>Image and Vision Computing</I>, Vol.&nbsp;25, No.&nbsp;10, pp.&nbsp;1543-1556, 2007.<BR>

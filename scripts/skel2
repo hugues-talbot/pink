@@ -1,5 +1,5 @@
 #!/bin/sh
-USAGE="Usage: $0 in seuilR seuilA out"
+USAGE="Usage: $0 in seuilR (in [1..infnty[) seuilA (in [0.001..pi]) out"
 if [ $# -ne 4 ]
 then
 	echo $USAGE
