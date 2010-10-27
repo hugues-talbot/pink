@@ -338,8 +338,6 @@ $(BDIR)/drawsplinesorient \
 $(BDIR)/drawsplines \
 $(BDIR)/drawtorus \
 $(BDIR)/drawtriangulation \
-$(BDIR)/lengthspline \
-$(BDIR)/lengthsplines \
 $(BDIR)/line \
 $(BDIR)/curve2spline \
 $(BDIR)/points2spline \
@@ -383,6 +381,9 @@ $(BDIR)/identifyparabola3 \
 $(BDIR)/identifyplane \
 $(BDIR)/insert \
 $(BDIR)/isometry \
+$(BDIR)/lengthcurve \
+$(BDIR)/lengthspline \
+$(BDIR)/lengthsplines \
 $(BDIR)/matchellipse \
 $(BDIR)/matchrect \
 $(BDIR)/maxdiameter \
@@ -1607,6 +1608,9 @@ $(BDIR)/drawtorus:	$(CDIR)/drawtorus.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDI
 $(BDIR)/drawtriangulation:	$(CDIR)/drawtriangulation.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcgeo.h $(IDIR)/lvoronoi.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mcliste.o $(ODIR)/lvoronoi.o $(ODIR)/lbresen.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawtriangulation.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/lvoronoi.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(XLIB) $(LIBS) -o $(BDIR)/drawtriangulation
 
+$(BDIR)/lengthcurve:	$(CDIR)/lengthcurve.c $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
+	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/lengthcurve.c $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/lengthcurve
+
 $(BDIR)/lengthspline:	$(CDIR)/lengthspline.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/lengthspline.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/lengthspline
 
@@ -2347,6 +2351,12 @@ $(ODIR)/ldraw.o:	$(LDIR)/ldraw.c $(IDIR)/ldraw.h $(IDIR)/mccodimage.h $(IDIR)/mc
 # *********************************
 # GEO
 # *********************************
+
+$(ODIR)/lbdigitalline.o:	$(LDIR)/lbdigitalline.cxx $(IDIR)/lbdigitalline.h
+	$(CPP) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lbdigitalline.cxx -o $(ODIR)/lbdigitalline.o
+
+$(ODIR)/ltangents.o:	$(LDIR)/ltangents.cxx $(IDIR)/ltangents.h $(IDIR)/lbdigitalline.h
+	$(CPP) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/ltangents.cxx -o $(ODIR)/ltangents.o
 
 $(ODIR)/lattribute.o:	$(LDIR)/lattribute.c $(IDIR)/mccodimage.h $(IDIR)/mclifo.h $(IDIR)/mctopo.h $(IDIR)/lattribute.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lattribute.c -o $(ODIR)/lattribute.o
