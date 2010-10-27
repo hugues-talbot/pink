@@ -94,7 +94,7 @@ The parameter \b maxval is an integer which indicates the maximum grayscale valu
 #include <mckhalimsky2d.h>
 
 #define BOLDCIRCLES
-#define KHALIMSKY2
+#define KHALIMSKY1
 
 #ifdef KHALIMSKY1
 /* parametres pour les elements de Khalimsky: */

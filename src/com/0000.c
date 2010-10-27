@@ -59,6 +59,7 @@ CODE UNDER FREE LICENCE INCLUDED
 David Coeurjolly: lvoronoilabelling.c<br>
 Dario Bressanini: mcpowell.c<br>
 Andrew W. Fitzgibbon: lbresen.c<br>
+Lilian Buzer: lbdigitalline.cxx
 
   \section install Installation
 

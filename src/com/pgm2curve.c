@@ -45,12 +45,12 @@ It may be equal to 4 or 8 in 2D, and to 6, 18 or 26 in 3D.
 If given, the point <B>(x, y, z)</B> (2D) or <B>(x, y, z)</B> (3D) 
 is the beginning of the curve, and must be an end point. 
 The output is the text file \b out.curve, with the following format:<br>
-c nbpoints<br>
+b nbpoints<br>
 x1 y1<br>
 x2 y2<br>
 ...<br>
 or (3D): 
-C nbpoints<br>
+B nbpoints<br>
 x1 y1 z1<br>
 x2 y2 z2<br>
 ...<br>
@@ -59,12 +59,12 @@ The points of the curve may also be valued. This is must be indicated by
 a value of 40, 80, 60, 180 or 260 for the parameter \b connex, instead
 of 4, 8, 6, 18 or 26 respectively. In this case,
 the output is the text file \b out.curve, with the following format:<br>
-cv nbpoints<br>
+n nbpoints<br>
 x1 y1 v1<br>
 x2 y2 v2<br>
 ...<br>
 or (3D): 
-CV nbpoints<br>
+N nbpoints<br>
 x1 y1 z1 v1<br>
 x2 y2 z2 v2<br>
 ...<br>
@@ -76,6 +76,11 @@ x2 y2 z2 v2<br>
 
 \author Michel Couprie
 */
+
+/*
+  update Oct 27, 2010 : output formats are now b, B, n, N 
+  (list formats) instead of c, V, cv, CV
+ */
 
 #include <stdio.h>
 #include <stdint.h>
@@ -205,13 +210,13 @@ int main(int argc, char **argv)
   {
     if ((connex == 4) || (connex == 8))
     {
-      fprintf(fd, "cv %d\n", n); 
+      fprintf(fd, "n %d\n", n); 
       for (p = 0; p < n; p++)
 	fprintf(fd, "%d %d %d\n", X[p], Y[p], F[Y[p]*rs + X[p]]);
     }
     else
     {
-      fprintf(fd, "CV %d\n", n); 
+      fprintf(fd, "N %d\n", n); 
       for (p = 0; p < n; p++) 
 	fprintf(fd, "%d %d %d %d\n", X[p], Y[p], Z[p], F[Z[p]*ps + Y[p]*rs + X[p]]);
     }
@@ -220,13 +225,13 @@ int main(int argc, char **argv)
   {
     if ((connex == 4) || (connex == 8))
     {
-      fprintf(fd, "c %d\n", n); 
+      fprintf(fd, "b %d\n", n); 
       for (p = 0; p < n; p++)
 	fprintf(fd, "%d %d\n", X[p], Y[p]);
     }
     else
     {
-      fprintf(fd, "C %d\n", n); 
+      fprintf(fd, "B %d\n", n); 
       for (p = 0; p < n; p++) 
 	fprintf(fd, "%d %d %d\n", X[p], Y[p], Z[p]);
     }

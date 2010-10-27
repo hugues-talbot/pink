@@ -67,30 +67,30 @@ knowledge of the CeCILL license and that you accept its terms.
          if (F[x]=2) then
            if not T[x] then F[x] = 0 else F[x] = 1
 
-     m1 : match   A 2 B   avec origine = 1 0 et [au moins un des A et au moins un des B non nuls]
+     m1 : match   A 2 B   avec origine = (1,0) et [au moins un des A et au moins un des B non nuls]
                   A 2 B   ou [A et B tous nuls] (+ rotation 90)
 
-     m2 : match   x 0 0 x   avec origine = 1 2 et x = don't care
+     m2 : match   x 0 0 x   avec origine = (1,2) et x = don't care
                   0 2 2 0   (+ rotations 90, 180, 270)
 		  0 2 2 0
 		  x 0 0 x
 
-     m3: match   x 0 0 x   avec origine = 1 2 et x = don't care
+     m3: match   x 0 0 x   avec origine = (1,2) et x = don't care
                  0 2 2 x   (+ rotations 90, 180, 270)
 	         0 2 0 x
 		 x x x x
 
-     m4: match   x x x x   avec origine = 1 2 et x = don't care
+     m4: match   x x x x   avec origine = (1,2) et x = don't care
                  x 0 2 0   (+ rotations 90, 180, 270)
 		 x 2 2 0
 		 x 0 0 x
 
-     m5: match   x x x x   avec origine = 1 2 et x = don't care
+     m5: match   x x x x   avec origine = (1,2) et x = don't care
                  0 2 0 x   (+ rotations 90, 180, 270)
 		 0 2 2 x
 		 x 0 0 x
 
-     m6 : match   2 0      avec origine = 1 1
+     m6 : match   2 0      avec origine = (1,1)
                   0 2      (+ rotations 90, 180, 270)
 
    Couprie curviligne:
@@ -102,17 +102,17 @@ knowledge of the CeCILL license and that you accept its terms.
          if (F[x]=2) then
            if not T[x] then F[x] = 0 else F[x] = 1
 
-     end : match   0 0 x   ou    0 x 1    avec origine = 1 1 et x = don't care
+     end : match   0 0 x   ou    0 x 1    avec origine = (1,1) et x = don't care
                    0 1 1         0 1 x
                    0 0 x         0 0 0
 
      VARIANTE:
 
-     end2: match   0 0 p   ou    0 x 1    avec origine = 1 1 et x = don't care
+     end2: match   0 0 p   ou    0 x 1    avec origine = (1,1) et x = don't care
                    0 1 1         0 1 x    et not (p = 1 and q = 1)
                    0 0 q         0 0 0
 
-     end2: match   0 0 0   ou    0 x 1   ou   0 1 x   avec origine = 1 1 et x = don't care
+     end2: match   0 0 0   ou    0 x 1   ou   0 1 x   avec origine = (1,1) et x = don't care
                    0 1 1         0 1 x        0 1 1
                    0 0 0         0 0 0        0 0 0
 
@@ -139,34 +139,34 @@ knowledge of the CeCILL license and that you accept its terms.
          if (F[x]=2) then
            if not T[x] then F[x] = 0 else F[x] = 1
 
-     m1 : match   A 2 B   avec origine = 1 0 et [au moins un des A et au moins un des B non nuls]
+     m1 : match   A 2 B   avec origine = (1,0) et [au moins un des A et au moins un des B non nuls]
                   A 2 B   ou [A et B tous nuls] (+ rotation 90)
 
 		  (preuve équivalence par programme : Squel2D/ronse.c)
 
-     m2 : match   0 0 0 0   avec origine = 1 2 et x = don't care
+     m2 : match   0 0 0 0   avec origine = (1,2) et x = don't care
                   0 2 2 0   (+ rotations 90, 180, 270)
 		  0 2 2 0
 		  0 0 0 0
 
-     m3 : match   0 0 0 0   avec origine = 1 2 et x = don't care
+     m3 : match   0 0 0 0   avec origine = (1,2) et x = don't care
                   0 2 2 0   (+ rotations 90, 180, 270)
 		  0 2 0 0
 		  0 0 0 x
 
-     m4 : match   x 0 0 0   avec origine = 1 2 et x = don't care
+     m4 : match   x 0 0 0   avec origine = (1,2) et x = don't care
                   0 0 2 0   (+ rotations 90, 180, 270)
 		  0 2 2 0
 		  0 0 0 0
 
-     m5 : match   0 0 0 x   avec origine = 1 2 et x = don't care
+     m5 : match   0 0 0 x   avec origine = (1,2) et x = don't care
                   0 2 0 0   (+ rotations 90, 180, 270)
 		  0 2 2 0
 		  0 0 0 0
 
 		  (preuve suffisant papier de Ronse)
 
-     m6 : match   x 0 0 0   avec origine = 1 2 et x = don't care
+     m6 : match   x 0 0 0   avec origine = (1,2) et x = don't care
                   0 0 2 0   (+ rotations 90, 180, 270)
                   0 2 0 0
 		  0 0 0 x
@@ -339,7 +339,7 @@ void rotate90_vois2(uint8_t *vois)
 static int32_t pav_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  A A A   avec origine = 1 1 et au moins un des A et au moins un des B non nuls
+  A A A   avec origine = (1,1) et au moins un des A et au moins un des B non nuls
   0 P 0
   B B B
  */
@@ -364,7 +364,7 @@ static int32_t pav_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t pav_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  D D D     avec origine = 1 1 et valeurs des pixels D quelconques
+  D D D     avec origine = (1,1) et valeurs des pixels D quelconques
   D P 0
   D 0 2
  */
@@ -390,7 +390,7 @@ static int32_t pav_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 // condition for "tentatively multiple" points
 /*
-  A A C   avec origine = 1 1 et au moins un des A et au moins un des B
+  A A C   avec origine = (1,1) et au moins un des A et au moins un des B
   0 2 2   et au moins un des C non nuls - de plus si les deux C sont non
   B B C   nuls, alors les pixels A et B peuvent être quelconques
  */
@@ -421,7 +421,7 @@ static int32_t pav_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 // condition for "tentatively multiple" points
 /*
-  A A C   avec origine = 1 1 et au moins un des A OU au moins un des B OU au moins un des C non nuls
+  A A C   avec origine = (1,1) et au moins un des A OU au moins un des B OU au moins un des C non nuls
   0 2 2
   B B C
  */
@@ -1446,7 +1446,7 @@ int32_t lskelchinwan(struct xvimage *image,
 static int32_t jang_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  0 0 x   avec origine = 1 1 et x = don't care
+  0 0 x   avec origine = (1,1) et x = don't care
   0 1 1
   x 1 x
  */
@@ -1468,7 +1468,7 @@ static int32_t jang_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t jang_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  x 0 x   avec origine = 1 1 et x = don't care
+  x 0 x   avec origine = (1,1) et x = don't care
   1 1 1
   1 1 1
  */
@@ -1490,7 +1490,7 @@ static int32_t jang_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t jang_match9(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  0 0 0   avec origine = 1 1 et (p ou q)
+  0 0 0   avec origine = (1,1) et (p ou q)
   0 1 0
   p 1 q
  */
@@ -2075,7 +2075,7 @@ int32_t lskelmns(struct xvimage *image,
 static int32_t jangrec_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  0 0 q   avec origine = 1 1 et (p ou q)
+  0 0 q   avec origine = (1,1) et (p ou q)
   0 1 1
   p 1 0
  */
@@ -2098,7 +2098,7 @@ static int32_t jangrec_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t jangrec_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  0 0 x   avec origine = 1 1 et x = don't care
+  0 0 x   avec origine = (1,1) et x = don't care
   0 1 1
   x 1 1
  */
@@ -2120,7 +2120,7 @@ static int32_t jangrec_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t jangrec_match9(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  x 0 x   avec origine = 1 1 et x = don't care
+  x 0 x   avec origine = (1,1) et x = don't care
   1 1 1
   1 1 1
  */
@@ -2142,7 +2142,7 @@ static int32_t jangrec_match9(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t jangrec_match13(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  0 0 0   avec origine = 1 1
+  0 0 0   avec origine = (1,1)
   0 1 0
   1 1 1
  */
@@ -2236,7 +2236,7 @@ static int32_t jangrec_match22(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t jangrec_match23(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-   0 0 0 0   avec origine = 1 1
+   0 0 0 0   avec origine = (1,1)
    0 1 1 0
    0 1 1 0
    0 0 0 0
@@ -2339,7 +2339,7 @@ int32_t lskeljangrec(struct xvimage *image,
 static int32_t choy_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  0 0 x   avec origine = 1 1 et x = don't care
+  0 0 x   avec origine = (1,1) et x = don't care
   0 1 1
   x 1 x
  */
@@ -2361,7 +2361,7 @@ static int32_t choy_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t choy_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  x 0 x   avec origine = 1 1 et x = don't care
+  x 0 x   avec origine = (1,1) et x = don't care
   1 1 1
   1 1 1
  */
@@ -2383,7 +2383,7 @@ static int32_t choy_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t choy_match9(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  0 0 0   avec origine = 1 1 et (p ou q)
+  0 0 0   avec origine = (1,1) et (p ou q)
   0 1 0
   p 1 q
  */
@@ -2947,7 +2947,7 @@ int32_t lskelhall(struct xvimage *image,
 static int32_t wutsai_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  1 1 p   avec origine = 1 1 et (!p ou !q)
+  1 1 p   avec origine = (1,1) et (!p ou !q)
   1 1 0
   1 1 q
  */
@@ -2963,7 +2963,7 @@ static int32_t wutsai_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t wutsai_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  1 1 1   avec origine = 1 1 et (!p ou !q)
+  1 1 1   avec origine = (1,1) et (!p ou !q)
   1 1 1
   p 0 q
  */
@@ -2979,7 +2979,7 @@ static int32_t wutsai_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t wutsai_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  p 1 1     avec origine = 1 1 et (!p ou !q)
+  p 1 1     avec origine = (1,1) et (!p ou !q)
   0 1 1 1
   q 1 1
  */
@@ -2997,7 +2997,7 @@ static int32_t wutsai_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t wutsai_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  p 0 q     avec origine = 1 1 et (!p ou !q)
+  p 0 q     avec origine = (1,1) et (!p ou !q)
   1 1 1
   1 1 1
     1
@@ -3016,7 +3016,7 @@ static int32_t wutsai_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t wutsai_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  x 0 0   avec origine = 1 1 et x = don't care
+  x 0 0   avec origine = (1,1) et x = don't care
   1 1 0
   x 1 x
  */
@@ -3030,7 +3030,7 @@ static int32_t wutsai_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t wutsai_match6(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  x 1 1   avec origine = 1 1 et x = don't care
+  x 1 1   avec origine = (1,1) et x = don't care
   0 1 1
   0 0 x
  */
@@ -3044,7 +3044,7 @@ static int32_t wutsai_match6(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t wutsai_match7(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  0 1 0   avec origine = 1 1
+  0 1 0   avec origine = (1,1)
   0 1 1
   0 0 0
  */
@@ -3058,7 +3058,7 @@ static int32_t wutsai_match7(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t wutsai_match8(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  x 1 x   avec origine = 1 1 et x = don't care
+  x 1 x   avec origine = (1,1) et x = don't care
   1 1 0
   x 0 0
  */
@@ -3072,7 +3072,7 @@ static int32_t wutsai_match8(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t wutsai_match9(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  0 0 x   avec origine = 1 1 et x = don't care
+  0 0 x   avec origine = (1,1) et x = don't care
   0 1 1
   x 1 1
  */
@@ -3086,7 +3086,7 @@ static int32_t wutsai_match9(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t wutsai_match10(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  0 0 0   avec origine = 1 1
+  0 0 0   avec origine = (1,1)
   0 1 1
   0 1 0
  */
@@ -3100,7 +3100,7 @@ static int32_t wutsai_match10(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t wutsai_match11(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  0 0 0   avec origine = 1 1
+  0 0 0   avec origine = (1,1)
   0 1 0
   1 1 1
  */
@@ -3204,7 +3204,7 @@ int32_t lskelwutsai(struct xvimage *image,
 /* ==================================== */
 int32_t mc_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
-//      m1 : match   A 2 B   avec origine = 1 0 et [au moins un des A et au moins un des B non nuls]
+//      m1 : match   A 2 B   avec origine = (1,0) et [au moins un des A et au moins un des B non nuls]
 //                   A 2 B   ou [A et B tous nuls] (+ rotation 90)
 {
   int32_t i;
@@ -4095,7 +4095,7 @@ int32_t lskelNK2(struct xvimage *image,
 /* ==================================== */
 int32_t bertrand_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
-// A 2 B   avec origine = 1 0 et au moins un des A et au moins un des B non nuls
+// A 2 B   avec origine = (1,0) et au moins un des A et au moins un des B non nuls
 // A 2 B   (+ rotation 90)
 {
   int32_t i;
@@ -4550,7 +4550,7 @@ Répéter jusqu'à stabilité
 static int32_t ros_match(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  D D D     avec origine = 1 1 et valeurs des pixels D quelconques
+  D D D     avec origine = (1,1) et valeurs des pixels D quelconques
   D P 0
   D 0 1
  */
@@ -4574,7 +4574,7 @@ static int32_t ros_match(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t ros_north(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  D 0 D     avec origine = 1 1 et valeurs des pixels D quelconques
+  D 0 D     avec origine = (1,1) et valeurs des pixels D quelconques
   D P D
   D D D
  */
@@ -4590,7 +4590,7 @@ static int32_t ros_north(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t ros_south(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  D D D     avec origine = 1 1 et valeurs des pixels D quelconques
+  D D D     avec origine = (1,1) et valeurs des pixels D quelconques
   D P D
   D 0 D
  */
@@ -4606,7 +4606,7 @@ static int32_t ros_south(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t ros_east(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  D D D     avec origine = 1 1 et valeurs des pixels D quelconques
+  D D D     avec origine = (1,1) et valeurs des pixels D quelconques
   D P 0
   D D D
  */
@@ -4622,7 +4622,7 @@ static int32_t ros_east(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 static int32_t ros_west(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
-  D D D     avec origine = 1 1 et valeurs des pixels D quelconques
+  D D D     avec origine = (1,1) et valeurs des pixels D quelconques
   0 P D
   D D D
  */
@@ -4872,7 +4872,6 @@ int32_t is_surrounded_by_radius2_ring(struct xvimage *img, uint32_t x, uint32_t 
 	return (0);
 }
 
-
 //Detects i-square-deletable points as defined in "Parallel thinning algorithms based on Ronse's sufficient conditions for topology preservation", by Nemeth and Palagyi
 int32_t is_square_deletable(struct xvimage *img, uint32_t x, uint32_t rs, uint32_t N, uint32_t type)
 {
@@ -4937,8 +4936,6 @@ int32_t is_square_deletable(struct xvimage *img, uint32_t x, uint32_t rs, uint32
 	return 0;
 }
 
-
-
 /* ==================================== */
 int32_t lskelnemethpalagyi(struct xvimage *image,
 	     int32_t nsteps,
@@ -4994,4 +4991,4 @@ Voir "Parallel thinning algorithms based on Ronse's sufficient conditions for to
 
   freeimage(tmp);
   return(1);
-} /* lskelrosenfeld() */
+} /* lskelnemethpalagyi() */
