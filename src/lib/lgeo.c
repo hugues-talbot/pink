@@ -1890,7 +1890,7 @@ struct xvimage *lsection(struct xvimage *img,
   int32_t i, j, imin, imax, jmin, jmax, ii, jj, xi, yi, zi, xs, ys, zs;
   int32_t xmin, xmax, ymin, ymax;
 
-  assert(datatype(img)==VFF_TYP_1_BYTE);
+  assert((datatype(img)==VFF_TYP_1_BYTE) || (datatype(img)==VFF_TYP_4_BYTE));
 
   // computes the size of the resulting image
   if ((x0 < 0) || (x0 > rs-1) || (y0 < 0) || (y0 > cs-1) || (z0 < 0) || (z0 > ds-1))
