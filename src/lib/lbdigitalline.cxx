@@ -181,7 +181,20 @@ void Reco::Tangent(int & a, int & b)
   b = d.y;
 } // Tangent
 
-void Reco::GiveP(Lpoint LL, int & n,int miny,int maxy)
+void Reco::Tangent(int type, int & a, int & b)
+{
+  int aa, bb;
+  Tangent(aa, bb);
+  switch(type)
+  {
+  case 0:/*LR*/ a = aa; b = bb; break;
+  case 1:/*RL*/ a = -aa; b = bb; break;
+  case 2:/*TB*/ a = -bb; b = -aa; break;
+  case 3:/*BT*/ a = bb; b = aa; break;
+  }
+} // Tangent
+
+void Reco::GiveP(Lpoint LL, int & n, int miny, int maxy)
 {
   Rebuild(LL,n,miny,maxy);
   for (int i = 0 ; i < n ; i++)

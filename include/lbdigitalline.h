@@ -121,6 +121,7 @@ class Reco
   void Init();          // new sequence of recognition
   void Normal(int & a, int & b);
   void Tangent(int & a, int & b);
+  void Tangent(int type, int & a, int & b);
 
   // we prefer an horizontal segment of 3 pixels and thickness 1 instead of
   // a vertical segment of thickness 3

@@ -308,27 +308,13 @@ Reference:
 	MOyz[yztypemax]->Init(); curEp = 0;
 	Fori(indmax)
 	  MOyz[yztypemax]->Insert(curEp,pointsyz[pos+i]);
-	MOyz[yztypemax]->Tangent(aa,bb);
-	switch(yztypemax)
-	{
-	case 0:/*LR*/ a = aa; b = bb; break;
-	case 1:/*RL*/ a = -aa; b = bb; break;
-	case 2:/*TB*/ a = -bb; b = -aa; break;
-	case 3:/*BT*/ a = bb; b = aa; break;
-	}
+	MOyz[yztypemax]->Tangent(yztypemax,a,b);
 	yt = a; zt = b;
 
 	MOxz[xztypemax]->Init(); curEp = 0;
 	Fori(indmax)
 	  MOxz[xztypemax]->Insert(curEp,pointsxz[pos+i]);
-	MOxz[xztypemax]->Tangent(aa,bb);
-	switch(xztypemax)
-	{
-	case 0:/*LR*/ a = aa; b = bb; break;
-	case 1:/*RL*/ a = -aa; b = bb; break;
-	case 2:/*TB*/ a = -bb; b = -aa; break;
-	case 3:/*BT*/ a = bb; b = aa; break;
-	}
+	MOxz[xztypemax]->Tangent(xztypemax,a,b);
 	xp = a; zp = b;
 
 	if (xp == 0) xt = 0;
@@ -354,27 +340,13 @@ Reference:
 	MOxy[xytypemax]->Init(); curEp = 0;
 	Fori(indmax)
 	  MOxy[xytypemax]->Insert(curEp,pointsxy[pos+i]);
-	MOxy[xytypemax]->Tangent(aa,bb);
-	switch(xytypemax)
-	{
-	case 0:/*LR*/ a = aa; b = bb; break;
-	case 1:/*RL*/ a = -aa; b = bb; break;
-	case 2:/*TB*/ a = -bb; b = -aa; break;
-	case 3:/*BT*/ a = bb; b = aa; break;
-	}
+	MOxy[xytypemax]->Tangent(xytypemax,a,b);
 	xt = a; yt = b;
 
 	MOxz[xztypemax]->Init(); curEp = 0;
 	Fori(indmax)
 	  MOxz[xztypemax]->Insert(curEp,pointsxz[pos+i]);
-	MOxz[xztypemax]->Tangent(aa,bb);
-	switch(xztypemax)
-	{
-	case 0:/*LR*/ a = aa; b = bb; break;
-	case 1:/*RL*/ a = -aa; b = bb; break;
-	case 2:/*TB*/ a = -bb; b = -aa; break;
-	case 3:/*BT*/ a = bb; b = aa; break;
-	}
+	MOxz[xztypemax]->Tangent(xztypemax,a,b);
 	xp = a; zp = b;
 
 	if (zp == 0) zt = 0;
@@ -400,27 +372,13 @@ Reference:
 	MOyz[yztypemax]->Init(); curEp = 0;
 	Fori(indmax)
 	  MOyz[yztypemax]->Insert(curEp,pointsyz[pos+i]);
-	MOyz[yztypemax]->Tangent(aa,bb);
-	switch(yztypemax)
-	{
-	case 0:/*LR*/ a = aa; b = bb; break;
-	case 1:/*RL*/ a = -aa; b = bb; break;
-	case 2:/*TB*/ a = -bb; b = -aa; break;
-	case 3:/*BT*/ a = bb; b = aa; break;
-	}
+	MOyz[yztypemax]->Tangent(yztypemax,a,b);
 	yt = a; zt = b;
 
 	MOxy[xytypemax]->Init(); curEp = 0;
 	Fori(indmax)
 	  MOxy[xytypemax]->Insert(curEp,pointsxy[pos+i]);
-	MOxy[xytypemax]->Tangent(aa,bb);
-	switch(xytypemax)
-	{
-	case 0:/*LR*/ a = aa; b = bb; break;
-	case 1:/*RL*/ a = -aa; b = bb; break;
-	case 2:/*TB*/ a = -bb; b = -aa; break;
-	case 3:/*BT*/ a = bb; b = aa; break;
-	}
+	MOxy[xytypemax]->Tangent(xytypemax,a,b);
 	xp = a; yp = b;
 
 	if (xp == 0) xt = 0;
