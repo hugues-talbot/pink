@@ -538,7 +538,7 @@ void LambdaMSTD3D(int32_t npoints, int32_t *end,
 {
 #undef F_NAME
 #define F_NAME "LambdaMSTD3D"
-  double eik;
+  double eik, nt;
   double *sumeik;
   memset((double *)Xmstd, 0, npoints*sizeof(double));
   memset((double *)Ymstd, 0, npoints*sizeof(double));
@@ -581,6 +581,15 @@ void LambdaMSTD3D(int32_t npoints, int32_t *end,
   Xmstd[npoints-1] = Xmstd[npoints-2];
   Ymstd[npoints-1] = Ymstd[npoints-2];
   Zmstd[npoints-1] = Zmstd[npoints-2];
+
+  Fori(npoints)
+  {
+    nt = norm(Xmstd[i], Ymstd[i], Zmstd[i]);
+    Xmstd[i] = Xmstd[i] / nt;
+    Ymstd[i] = Ymstd[i] / nt;
+    Zmstd[i] = Zmstd[i] / nt;
+  }
+
   free(sumeik);
 } // LambdaMSTD3D()
 
