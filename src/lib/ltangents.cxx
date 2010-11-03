@@ -18,24 +18,10 @@
 #define Forj(x) for(int j=0;j<(x);j++)
 
 /* ==================================== */
-static inline double scalarprod(double x1, double y1, double z1, double x2, double y2, double z2)
-/* ==================================== */
-{
-  return (x1 * x2) + (y1 * y2) + (z1 * z2);
-}
-
-/* ==================================== */
 static inline double norm(double x, double y, double z)
 /* ==================================== */
 {
   return sqrt((x * x) + (y * y) + (z * z));
-}
-
-/* ==================================== */
-static inline double cosinesimilarity(double x1, double y1, double z1, double x2, double y2, double z2)
-/* ==================================== */
-{
-  return acos(scalarprod(x1, y1, z1, x2, y2, z2) / (norm(x1, y1, z1) * norm(x2, y2, z2)));
 }
 
 //--------------------------------------------------------------------------
