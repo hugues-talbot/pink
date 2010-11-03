@@ -38,22 +38,6 @@ static inline double cosinesimilarity(double x1, double y1, double z1, double x2
   return acos(scalarprod(x1, y1, z1, x2, y2, z2) / (norm(x1, y1, z1) * norm(x2, y2, z2)));
 }
 
-/* ==================================== */
-static double computeangle(int type, int aa, int bb)
-/* ==================================== */
-{
-  int a, b;
-  switch(type)
-  {
-  case 0:/*LR*/ a = aa; b = bb; break;
-  case 1:/*RL*/ a = -aa; b = bb; break;
-  case 2:/*TB*/ a = -bb; b = -aa; break;
-  case 3:/*BT*/ a = bb; b = aa; break;
-  }
-  if (a == 0) return M_PI_2;
-  return atan((double)b / (double)a);
-}
-
 //--------------------------------------------------------------------------
 void ExtractDSSs(int32_t npoints, int32_t *X, int32_t *Y, int32_t *end, double *angle)
 //--------------------------------------------------------------------------
@@ -140,8 +124,9 @@ Reference:
 	printf("  point %d %d\n", points[pos+i].x, points[pos+i].y);
 #endif
       }
-      M[typemax]->Tangent(aa,bb);
-      angle[pos] = computeangle(typemax, aa, bb);
+      M[typemax]->Tangent(typemax,aa,bb);
+      if (aa == 0) angle[pos] = M_PI_2;
+      else angle[pos] = atan((double)bb / (double)aa);
       lastend = end[pos] = pos + indmax -1;
     }
     else
