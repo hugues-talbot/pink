@@ -46,12 +46,12 @@ It may be equal to 4 or 8 in 2D, and to 6, 18 or 26 in 3D.
 If given, the point <B>(x, y, z)</B> (2D) or <B>(x, y, z)</B> (3D) 
 is taken as the starting point of the curve, and must be a curve point. 
 The output is the text file \b out.curve, with the following format:<br>
-c nbpoints<br>
+b nbpoints<br>
 x1 y1<br>
 x2 y2<br>
 ...<br>
 or (3D): 
-C nbpoints<br>
+B nbpoints<br>
 x1 y1 z1<br>
 x2 y2 z2<br>
 ...<br>
@@ -60,12 +60,12 @@ The points of the curve may also be valued. This is must be indicated by
 a value of 40, 80, 60, 180 or 260 for the parameter \b connex, instead
 of 4, 8, 6, 18 or 26 respectively. In this case,
 the output is the text file \b out.curve, with the following format:<br>
-cv nbpoints<br>
+n nbpoints<br>
 x1 y1 v1<br>
 x2 y2 v2<br>
 ...<br>
 or (3D): 
-CV nbpoints<br>
+N nbpoints<br>
 x1 y1 z1 v1<br>
 x2 y2 z2 v2<br>
 ...<br>
@@ -415,12 +415,12 @@ int main(int argc, char **argv)
   {
     if ((connex == 4) || (connex == 8))
     {
-      fprintf(fd, "cv %d\n", n); 
+      fprintf(fd, "n %d\n", n); 
       for (x = 0; x < n; x++) fprintf(fd, "%d %d %d\n", P[x] % rs, P[x] / rs, S[P[x]]);
     }
     else
     {
-      fprintf(fd, "CV %d\n", n); 
+      fprintf(fd, "N %d\n", n); 
       for (x = 0; x < n; x++) fprintf(fd, "%d %d %d %d\n", P[x] % rs, (P[x] % ps) / rs, P[x] / ps, S[P[x]]);
     }
   }
@@ -428,12 +428,12 @@ int main(int argc, char **argv)
   {
     if ((connex == 4) || (connex == 8))
     {
-      fprintf(fd, "c %d\n", n); 
+      fprintf(fd, "b %d\n", n); 
       for (x = 0; x < n; x++) fprintf(fd, "%d %d\n", P[x] % rs, P[x] / rs);
     }
     else
     {
-      fprintf(fd, "C %d\n", n); 
+      fprintf(fd, "B %d\n", n); 
       for (x = 0; x < n; x++) fprintf(fd, "%d %d %d\n", P[x] % rs, (P[x] % ps) / rs, P[x] / ps);
     }
   }

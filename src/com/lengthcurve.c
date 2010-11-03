@@ -36,10 +36,12 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief computes the length of a digital curve
 
-<B>Usage:</B> lengthcurve curve.list [out.list]
+<B>Usage:</B> lengthcurve curve.list closed [out.list]
 
 <B>Description:</B>
 Computes the length of a curve which is specified by the ordered list of its points.
+
+Parameter \b closed is a boolean (1 or 0) that indicates whether the curve is closed or not.
 
 <B>Types supported:</B> curve 2D, curve 3D
 
@@ -53,6 +55,7 @@ Computes the length of a curve which is specified by the ordered list of its poi
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 #include <math.h>
 #include <mccodimage.h>
@@ -68,17 +71,13 @@ int main(int argc, char **argv)
 {
   int32_t i, j;
   FILE *fd = NULL;
-  int32_t npoints;
+  int32_t npoints, closed;
   char type;
-  int32_t *X, *Y;
-  int32_t *end;
-  double *angle;
-  double *mstd;
   double L;
 
-  if ((argc != 2) && (argc != 3))
+  if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s curve.list [out.list] \n", argv[0]);
+    fprintf(stderr, "usage: %s curve.list closed [out.list] \n", argv[0]);
     exit(1);
   }
 
@@ -89,45 +88,131 @@ int main(int argc, char **argv)
     exit(1);
   }
 
+  if (strcmp(argv[2],"1") == 0)
+    closed = 1;
+  else {
+    if (strcmp(argv[2],"0") == 0)
+      closed = 0;
+    else {
+      fprintf(stderr, "%s: bad value for parameter \"closed\" (0 or 1)\n", argv[0]);
+      exit(1);
+    }
+  }
+
   fscanf(fd, "%c", &type);
-  if (type != 'b')
+  if (type == 'b')
+  {
+    int32_t *X, *Y;
+    int32_t *end;
+    double *angle;
+    double *mstd;
+
+    fscanf(fd, "%d", &npoints);
+    X = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(X != NULL);
+    Y = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(Y != NULL);
+
+    for (i = 0; i < npoints; i++)
+      fscanf(fd, "%d %d", &(X[i]), &(Y[i]));
+
+    fclose(fd);
+  
+    end = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(end != NULL);
+    angle = (double *)malloc(npoints * sizeof(double)); assert(angle != NULL);
+    mstd = (double *)malloc(npoints * sizeof(double)); assert(mstd != NULL);
+
+    ExtractDSSs(npoints, X, Y, end, angle);
+
+#ifdef DEBUG
+    printf("npoints = %d\n", npoints);
+    for (i = 0; i < npoints; i++)
+      if (end[i] != -1)
+	printf("DSS %d-%d, angle %g (%g)\n", i, end[i], angle[i], angle[i]*180/M_PI);
+#endif
+
+    LambdaMSTD(npoints, end, angle, mstd);
+
+#ifdef DEBUG
+    for (i = 0; i < npoints; i++)
+      printf("point %d, angle %g (%g)\n", i, mstd[i], mstd[i]*180/M_PI);
+#endif
+
+    if (closed) 
+      L = ComputeLength(npoints-1, mstd);
+    else
+      L = ComputeLength(npoints, mstd);
+
+    free(X);
+    free(Y);
+    free(end);
+    free(angle);
+    free(mstd);
+  }
+  else if (type == 'B')
+  {
+    int32_t *X, *Y, *Z;
+    int32_t *end;
+    double *Xtan, *Ytan, *Ztan;
+    double *Xmstd, *Ymstd, *Zmstd;
+
+    fscanf(fd, "%d", &npoints);
+    X = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(X != NULL);
+    Y = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(Y != NULL);
+    Z = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(Z != NULL);
+
+    for (i = 0; i < npoints; i++)
+      fscanf(fd, "%d %d %d", &(X[i]), &(Y[i]), &(Z[i]));
+
+    fclose(fd);
+  
+    end = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(end != NULL);
+    Xtan = (double *)malloc(npoints * sizeof(double)); assert(Xtan != NULL);
+    Ytan = (double *)malloc(npoints * sizeof(double)); assert(Ytan != NULL);
+    Ztan = (double *)malloc(npoints * sizeof(double)); assert(Ztan != NULL);
+    Xmstd = (double *)malloc(npoints * sizeof(double)); assert(Xmstd != NULL);
+    Ymstd = (double *)malloc(npoints * sizeof(double)); assert(Ymstd != NULL);
+    Zmstd = (double *)malloc(npoints * sizeof(double)); assert(Zmstd != NULL);
+
+    ExtractDSSs3D(npoints, X, Y, Z, end, Xtan, Ytan, Ztan);
+
+#ifdef DEBUG
+    printf("npoints = %d\n", npoints);
+    for (i = 0; i < npoints; i++)
+      if (end[i] != -1)
+	printf("DSS %d-%d, Xtan %g, Ytan %g, Ztan %g (%g)\n",
+	       i, end[i], Xtan[i], Ytan[i], Ztan[i], (180 * atan(Ytan[i] / Xtan[i])) / M_PI);
+#endif
+
+    LambdaMSTD3D(npoints, end, Xtan, Ytan, Ztan, Xmstd, Ymstd, Zmstd);
+
+#ifdef DEBUG
+    for (i = 0; i < npoints; i++)
+      printf("point %d, mstd %g %g %g\n", i, 
+	     Xmstd[i], Ymstd[i], Zmstd[i]);
+#endif
+
+    if (closed) 
+      L = ComputeLength3D(npoints-1, Xmstd, Ymstd, Zmstd);
+    else
+      L = ComputeLength3D(npoints, Xmstd, Ymstd, Zmstd);
+
+    free(X);
+    free(Y);
+    free(Z);
+    free(end);
+    free(Xtan);
+    free(Ytan);
+    free(Ztan);
+    free(Xmstd);
+    free(Ymstd);
+    free(Zmstd);
+  }
+  else
   {
     fprintf(stderr, "usage: %s: bad file format: %c \n", argv[0], type);
     exit(1);
   }
 
-  fscanf(fd, "%d", &npoints);
-  X = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(X != NULL);
-  Y = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(Y != NULL);
-
-  for (i = 0; i < npoints; i++)
-    fscanf(fd, "%d %d", &(X[i]), &(Y[i]));
-
-  fclose(fd);
-  
-  end = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(end != NULL);
-  angle = (double *)malloc(npoints * sizeof(double)); assert(angle != NULL);
-  mstd = (double *)malloc(npoints * sizeof(double)); assert(mstd != NULL);
-
-  ExtractDSSs(npoints, X, Y, end, angle);
-
-#ifdef DEBUG
-  printf("npoints = %d\n", npoints);
-  for (i = 0; i < npoints; i++)
-    if (end[i] != -1)
-      printf("DSS %d-%d, angle %g (%g)\n", i, end[i], angle[i], angle[i]*180/M_PI);
-#endif
-
-  LambdaMSTD(npoints, end, angle, mstd);
-
-#ifdef DEBUG
-  for (i = 0; i < npoints; i++)
-    printf("point %d, angle %g (%g)\n", i, mstd[i], mstd[i]*180/M_PI);
-#endif
-
-  L = ComputeLength(npoints, mstd);
-
-  if (argc == 3)
+  if (argc == 4)
   {
     fd = fopen(argv[argc - 1],"w");
     if (!fd)
@@ -141,11 +226,6 @@ int main(int argc, char **argv)
   }
   else printf("%g\n", L); 
 
-  free(X);
-  free(Y);
-  free(end);
-  free(angle);
-  free(mstd);
 
   return 0;
 } /* main */

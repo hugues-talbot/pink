@@ -2653,6 +2653,9 @@ $(ODIR)/mcrbtp.o:	$(LDIR)/mcrbtp.c $(IDIR)/mcrbtp.h
 $(ODIR)/mcrlifo.o:	$(LDIR)/mcrlifo.c $(IDIR)/mcrlifo.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcrlifo.c -o $(ODIR)/mcrlifo.o
 
+$(ODIR)/mcsegment.o:	$(LDIR)/mcsegment.c $(IDIR)/mcsegment.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcsegment.c -o $(ODIR)/mcsegment.o
+
 $(ODIR)/mcset.o:	$(LDIR)/mcset.c $(IDIR)/mcset.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcset.c -o $(ODIR)/mcset.o
 

@@ -59,6 +59,11 @@ typedef point vector;
 
 typedef point * Lpoint;
 
+static bool operator == (const point & a,const point & b)
+{
+  return (a.x == b.x) && (a.y == b.y);
+}
+
 static point operator - (const point & a,const point & b)
 {
   point r;

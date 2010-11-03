@@ -10,7 +10,7 @@ PINK = .
   LIBS = -lm
   OBJ_COMMON = $(ODIR)/mcimage.o $(ODIR)/mcchrono.o
 #  OBJ = $(ODIR)/mcliste.o $(ODIR)/mcset.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mckhalimskyNd.o $(ODIR)/mcchrono.o $(ODIR)/mcxbib.o $(ODIR)/mctopo3d_table.o $(ODIR)/mcdrawps.o
-  OBJ = $(ODIR)/mcliste.o $(ODIR)/mcset.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mckhalimskyNd.o $(ODIR)/mcchrono.o $(ODIR)/mctopo3d_table.o $(ODIR)/mcdrawps.o
+  OBJ = $(ODIR)/mcliste.o $(ODIR)/mcset.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mckhalimskyNd.o $(ODIR)/mcchrono.o $(ODIR)/mctopo3d_table.o $(ODIR)/mcdrawps.o $(ODIR)/mcsegment.o
 # -*- makefile -*-
 OBJMCFAH=$(ODIR)/mcfah.o $(ODIR)/mcfahpure.o $(ODIR)/mcfahsalembier.o
 
@@ -193,7 +193,9 @@ $(BDIR)/wshedtopo
 
 GA=\
 $(BDIR)/pgm2GA \
+$(BDIR)/ppm2GA \
 $(BDIR)/pgm2GA4d \
+$(BDIR)/saliencyGA \
 $(BDIR)/watershedMeyer4D \
 $(BDIR)/wshedval \
 $(BDIR)/wshedkhalimsky \
@@ -349,8 +351,6 @@ $(BDIR)/drawsplinesorient \
 $(BDIR)/drawsplines \
 $(BDIR)/drawtorus \
 $(BDIR)/drawtriangulation \
-$(BDIR)/lengthspline \
-$(BDIR)/lengthsplines \
 $(BDIR)/line \
 $(BDIR)/curve2spline \
 $(BDIR)/points2spline \
@@ -394,6 +394,9 @@ $(BDIR)/identifyparabola3 \
 $(BDIR)/identifyplane \
 $(BDIR)/insert \
 $(BDIR)/isometry \
+$(BDIR)/lengthcurve \
+$(BDIR)/lengthspline \
+$(BDIR)/lengthsplines \
 $(BDIR)/matchellipse \
 $(BDIR)/matchrect \
 $(BDIR)/maxdiameter \
@@ -536,7 +539,6 @@ $(BDIR)/profil
 TRASH=\
 $(BDIR)/erosfast \
 $(BDIR)/erosfast3d \
-$(BDIR)/saliencyGA \
 $(BDIR)/waterfall \
 
 IDIR = $(PINK)/include
@@ -838,6 +840,9 @@ $(BDIR)/rgb2ppm:	$(CDIR)/rgb2ppm.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 
 $(BDIR)/sceneconvert:	$(CDIR)/sceneconvert.c $(IDIR)/mcmesh.h $(IDIR)/mciomesh.h $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(ODIR)/mcrbtp.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o $(OBJ_COMMON)
 			$(CC) $(CCFLAGS) -I$(IDIR) -I. $(CDIR)/sceneconvert.c $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(ODIR)/mcrbtp.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o  $(OBJ_COMMON) $(LIBS) -o $(BDIR)/sceneconvert
+
+$(BDIR)/ppm2GA:         $(CDIR)/ppm2GA.c $(IDIR)/jcimage.h $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lppm2GA.h $(IDIR)/jclderiche.h $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/lppm2GA.o  $(ODIR)/lderiche.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ppm2GA.c $(ODIR)/lderiche.o $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o $(LIBS) -o $(BDIR)/ppm2GA 
 
 $(BDIR)/pgm2GA:		 $(CDIR)/pgm2GA.c $(IDIR)/jcimage.h $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lppm2GA.h $(IDIR)/jclderiche.h $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/lppm2GA.o  $(ODIR)/lderiche.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/pgm2GA.c $(ODIR)/lderiche.o $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/lppm2GA.o $(LIBS) -o $(BDIR)/pgm2GA 
@@ -1616,6 +1621,9 @@ $(BDIR)/drawtorus:	$(CDIR)/drawtorus.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDI
 $(BDIR)/drawtriangulation:	$(CDIR)/drawtriangulation.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcgeo.h $(IDIR)/lvoronoi.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mcliste.o $(ODIR)/lvoronoi.o $(ODIR)/lbresen.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawtriangulation.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/lvoronoi.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(XLIB) $(LIBS) -o $(BDIR)/drawtriangulation
 
+$(BDIR)/lengthcurve:	$(CDIR)/lengthcurve.c $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
+	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/lengthcurve.c $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/lengthcurve
+
 $(BDIR)/lengthspline:	$(CDIR)/lengthspline.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/lengthspline.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/lengthspline
 
@@ -2357,6 +2365,12 @@ $(ODIR)/ldraw.o:	$(LDIR)/ldraw.c $(IDIR)/ldraw.h $(IDIR)/mccodimage.h $(IDIR)/mc
 # GEO
 # *********************************
 
+$(ODIR)/lbdigitalline.o:	$(LDIR)/lbdigitalline.cxx $(IDIR)/lbdigitalline.h
+	$(CPP) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lbdigitalline.cxx -o $(ODIR)/lbdigitalline.o
+
+$(ODIR)/ltangents.o:	$(LDIR)/ltangents.cxx $(IDIR)/ltangents.h $(IDIR)/lbdigitalline.h
+	$(CPP) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/ltangents.cxx -o $(ODIR)/ltangents.o
+
 $(ODIR)/lattribute.o:	$(LDIR)/lattribute.c $(IDIR)/mccodimage.h $(IDIR)/mclifo.h $(IDIR)/mctopo.h $(IDIR)/lattribute.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lattribute.c -o $(ODIR)/lattribute.o
 
@@ -2652,6 +2666,9 @@ $(ODIR)/mcrbtp.o:	$(LDIR)/mcrbtp.c $(IDIR)/mcrbtp.h
 $(ODIR)/mcrlifo.o:	$(LDIR)/mcrlifo.c $(IDIR)/mcrlifo.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcrlifo.c -o $(ODIR)/mcrlifo.o
 
+$(ODIR)/mcsegment.o:	$(LDIR)/mcsegment.c $(IDIR)/mcsegment.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcsegment.c -o $(ODIR)/mcsegment.o
+
 $(ODIR)/mcset.o:	$(LDIR)/mcset.c $(IDIR)/mcset.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcset.c -o $(ODIR)/mcset.o
 
@@ -2743,3 +2760,5 @@ $(TDIR)/mhlut:	$(TDIR)/mhlut.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lh
 
 $(TDIR)/SimpleTable:	$(TDIR)/SimpleTable.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo3d.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(TDIR)/SimpleTable.c $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(LIBS) -o $(TDIR)/SimpleTable
+
+

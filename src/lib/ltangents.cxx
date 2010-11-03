@@ -11,11 +11,48 @@
 
 #include <ltangents.h>
 
-//#define DEBUG
+#define DEBUG
 #define EPSILON 1E-20
 
-#define Fori(x) for (int i = 0 ;  i < (x) ; i++)
-#define Forj(x) for (int j = 0 ;  j < (x) ; j++)
+#define Fori(x) for(int i=0;i<(x);i++)
+#define Forj(x) for(int j=0;j<(x);j++)
+
+/* ==================================== */
+static inline double scalarprod(double x1, double y1, double z1, double x2, double y2, double z2)
+/* ==================================== */
+{
+  return (x1 * x2) + (y1 * y2) + (z1 * z2);
+}
+
+/* ==================================== */
+static inline double norm(double x, double y, double z)
+/* ==================================== */
+{
+  return sqrt((x * x) + (y * y) + (z * z));
+}
+
+/* ==================================== */
+static inline double cosinesimilarity(double x1, double y1, double z1, double x2, double y2, double z2)
+/* ==================================== */
+{
+  return acos(scalarprod(x1, y1, z1, x2, y2, z2) / (norm(x1, y1, z1) * norm(x2, y2, z2)));
+}
+
+/* ==================================== */
+static double computeangle(int type, int aa, int bb)
+/* ==================================== */
+{
+  int a, b;
+  switch(type)
+  {
+  case 0:/*LR*/ a = aa; b = bb; break;
+  case 1:/*RL*/ a = -aa; b = bb; break;
+  case 2:/*TB*/ a = -bb; b = -aa; break;
+  case 3:/*BT*/ a = bb; b = aa; break;
+  }
+  if (a == 0) return M_PI_2;
+  return atan((double)b / (double)a);
+}
 
 //--------------------------------------------------------------------------
 void ExtractDSSs(int32_t npoints, int32_t *X, int32_t *Y, int32_t *end, double *angle)
@@ -51,6 +88,7 @@ Reference:
   int epp = 10;
   Q ep(epp,10);              // thickness choosen for the recognition
   point *points;
+  int aa, bb;
 
 #ifdef DEBUG
   printf("%s: begin\n", F_NAME);
@@ -68,7 +106,6 @@ Reference:
   {
     int typemax = 0;
     int indmax  = 0;
-    int a, b, aa, bb;
     Q curEp;
     Fori(4)            // look for the longuest segment
     {
@@ -95,6 +132,7 @@ Reference:
 #endif
 
       M[typemax]->Init();
+      curEp = 0;
       Fori(indmax)
       {
 	M[typemax]->Insert(curEp,points[pos+i]);
@@ -103,35 +141,315 @@ Reference:
 #endif
       }
       M[typemax]->Tangent(aa,bb);
-      switch(typemax)
-      {
-      case 0:/*LR*/ a = aa; b = bb; break;
-      case 1:/*RL*/ a = -aa; b = bb; break;
-      case 2:/*TB*/ a = -bb; b = -aa; break;
-      case 3:/*BT*/ a = bb; b = aa; break;
-      }
-
-#ifdef DEBUG
-      printf("Tangent %d %d\n", a, b);
-#endif
-
+      angle[pos] = computeangle(typemax, aa, bb);
       lastend = end[pos] = pos + indmax -1;
-      if (a == 0)
-	angle[pos] = M_PI_2;
-      else
-	angle[pos] = atan((double)b / (double)a);
     }
     else
     {
       end[pos] = -1;
     }
     pos++;
-  }
+  } // while ( pos < npoints-1 )
   end[npoints-1] = -1;
 
   delete points;
   return;
 } // ExtractDSSs()
+
+//--------------------------------------------------------------------------
+void ExtractDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, 
+	   int32_t *end, double *Xtan, double *Ytan, double *Ztan)
+//--------------------------------------------------------------------------
+/*! \fn void ExtractDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, 
+	   int32_t *end, double *Xtan, double *Ytan, double *Ztan)
+    \param npoints (input): number of points in points list
+    \param X (input): ordered list of points (1st coord)
+    \param Y (input): ordered list of points (2nd coord)
+    \param Z (input): ordered list of points (3rd coord)
+    \param end (output): index of the last point of the current DSS
+    \param Xtan (output): normalized tangent vector (1st coord)
+    \param Ytan (output): normalized tangent vector (2nd coord)
+    \param Ztan (output): normalized tangent vector (3rd coord)
+    \brief computes all the maximal DSSs starting at each position of the discrete curve in arrays X,Y,Z. For each index i in [0,npoints[, if end[i] != -1 then there is a maximal DSS starting from i and ending at end[i]. Its orientation is given by the tangent vector Xtan[i],Ytan[i],Ztan[i].
+    \warning arrays "end", "Xtan", "Ytan" and "Ztan" must have been allocated.
+
+Reference: 
+
+@Article{	  IGMI_Buz2007,
+  author	= {Lilian Buzer},
+  title		= {{A Simple Algorithm for Digital Line Recognition in the General Case}},
+  journal	= {Pattern Recognition},
+  year		= {2007},
+  volume	= {40},
+  pages		= {1675-1684},
+  number	= {6}
+}
+
+*/
+{
+#undef F_NAME
+#define F_NAME "ExtractDSSs3D"
+	
+  int pos;
+  int epp = 10;
+  Q ep(epp,10); // thickness chosen for the recognition	
+  Q curEp;	
+  Reco * MOxy[4], * MOxz[4], * MOyz[4];
+  point *pointsxy, *pointsyz, *pointsxz;
+  int lastend = -1;
+  int  xt, yt, zt, xp, yp, zp, a, b, aa, bb;
+  double nt;
+
+#ifdef DEBUG
+  printf("%s: begin\n", F_NAME);
+#endif
+	
+  pointsxy = new point[npoints]; assert(pointsxy != NULL);
+  pointsyz = new point[npoints]; assert(pointsyz != NULL);
+  pointsxz = new point[npoints]; assert(pointsxz != NULL);
+  Fori(npoints) 
+  {
+    pointsxy[i] = point (X[i], Y[i]);
+    pointsyz[i] = point (Y[i], Z[i]);
+    pointsxz[i] = point (X[i], Z[i]);
+  }
+
+  MOxy[0] = new RecoLR(); MOxz[0] = new RecoLR(); MOyz[0] = new RecoLR();
+  MOxy[1] = new RecoRL(); MOxz[1] = new RecoRL(); MOyz[1] = new RecoRL();
+  MOxy[2] = new RecoTB(); MOxz[2] = new RecoTB(); MOyz[2] = new RecoTB();
+  MOxy[3] = new RecoBT(); MOxz[3] = new RecoBT(); MOyz[3] = new RecoBT();
+	
+  pos = 0;
+
+  //main loop, detects all maximal lenght naive lines in 3D digital curve
+  while (pos < npoints-1) 
+  { 
+    int xytypemax = 0, yztypemax = 0, xztypemax = 0;
+    int indmax, xyindmax  = 0, yzindmax  = 0, xzindmax  = 0;
+		
+    Fori(4)            // look for the longuest valid segment in projection xy
+    {
+      MOxy[i]->Init(); curEp = 0;
+      for (int k = 0; (curEp < ep) && (pos+k < npoints); k++ )
+      {
+	if ((k > 0) && (pointsxy[pos+k] == pointsxy[pos+k-1]))
+	  // projection is not a bijection: invalid segment
+	  break;
+        MOxy[i]->Insert(curEp,pointsxy[pos+k]);
+        if (curEp < ep)
+        {
+          if ((xyindmax==0) && (MOxy[i]->valid())) { xyindmax = 1; xytypemax = i; }
+          if ((xyindmax >0) && (k >= xyindmax)   ) { xyindmax = k+1; xytypemax = i; }
+        }
+      }
+    }
+		
+    Fori(4)            // look for the longuest valid segment in projection yz
+    {
+      MOyz[i]->Init(); curEp = 0;
+      for (int k = 0; (curEp < ep) && (pos+k < npoints); k++ )
+      {
+	if ((k > 0) && (pointsyz[pos+k] == pointsyz[pos+k-1]))
+	  // projection is not a bijection: invalid segment
+	  break;
+        MOyz[i]->Insert(curEp,pointsyz[pos+k]);
+        if (curEp < ep)
+        {
+          if ((yzindmax==0) && (MOyz[i]->valid())) { yzindmax = 1; yztypemax = i; }
+          if ((yzindmax >0) && (k >= yzindmax)   ) { yzindmax = k+1; yztypemax = i; }
+        }
+      }
+    }
+
+    Fori(4)            // look for the longuest valid segment in projection xz
+    {
+      MOxz[i]->Init(); curEp = 0;
+      for (int k = 0; (curEp < ep) && (pos+k < npoints); k++ )
+      {
+	if ((k > 0) && (pointsxz[pos+k] == pointsxz[pos+k-1]))
+	  // projection is not a bijection: invalid segment
+	  break;
+        MOxz[i]->Insert(curEp,pointsxz[pos+k]);
+        if (curEp < ep)
+        {
+          if ((xzindmax==0) && (MOxz[i]->valid())) { xzindmax = 1; xztypemax = i; }
+          if ((xzindmax >0) && (k >= xzindmax)   ) { xzindmax = k+1; xztypemax = i; }
+        }
+      }
+    }
+
+#ifdef DEBUG
+    printf("%s: indmax xy=%d yz=%d xz=%d typemax xy=%d yz=%d xz=%d \n", F_NAME,
+	   xyindmax, yzindmax, xzindmax, xytypemax, yztypemax, xztypemax);
+#endif
+
+    // look for the longest 3D segment that has valid projections in at least 2 planes
+#define XY 1
+#define YZ 2
+#define XZ 3
+    int elim;
+
+    if ((xyindmax <= yzindmax) && (xyindmax <= xzindmax))
+      elim = XY;
+    else
+    {
+      if ((yzindmax <= xyindmax) && (yzindmax <= xzindmax))
+	elim = YZ;
+      else
+	elim = XZ;
+    }
+
+    switch (elim)
+    {
+    case XY: 
+      indmax = min(yzindmax,xzindmax);
+      if ((lastend == -1) || ((pos+indmax-1) != lastend))
+      {
+	MOyz[yztypemax]->Init(); curEp = 0;
+	Fori(indmax)
+	  MOyz[yztypemax]->Insert(curEp,pointsyz[pos+i]);
+	MOyz[yztypemax]->Tangent(aa,bb);
+	switch(yztypemax)
+	{
+	case 0:/*LR*/ a = aa; b = bb; break;
+	case 1:/*RL*/ a = -aa; b = bb; break;
+	case 2:/*TB*/ a = -bb; b = -aa; break;
+	case 3:/*BT*/ a = bb; b = aa; break;
+	}
+	yt = a; zt = b;
+
+	MOxz[xztypemax]->Init(); curEp = 0;
+	Fori(indmax)
+	  MOxz[xztypemax]->Insert(curEp,pointsxz[pos+i]);
+	MOxz[xztypemax]->Tangent(aa,bb);
+	switch(xztypemax)
+	{
+	case 0:/*LR*/ a = aa; b = bb; break;
+	case 1:/*RL*/ a = -aa; b = bb; break;
+	case 2:/*TB*/ a = -bb; b = -aa; break;
+	case 3:/*BT*/ a = bb; b = aa; break;
+	}
+	xp = a; zp = b;
+
+	if (xp == 0) xt = 0;
+	else 
+	{
+	  if (yt == 0) { xt = xp; zt = zp; }
+	  else
+	  {
+	    xt = xp*zt; yt = yt*zp; zt = zt*zp;
+	  }
+	}
+
+	lastend = end[pos] = pos + indmax -1;
+      }
+      else
+	end[pos] = -1;
+      break;
+
+    case YZ:
+      indmax = min(xyindmax,xzindmax);
+      if ((lastend == -1) || ((pos+indmax-1) != lastend))
+      {
+	MOxy[xytypemax]->Init(); curEp = 0;
+	Fori(indmax)
+	  MOxy[xytypemax]->Insert(curEp,pointsxy[pos+i]);
+	MOxy[xytypemax]->Tangent(aa,bb);
+	switch(xytypemax)
+	{
+	case 0:/*LR*/ a = aa; b = bb; break;
+	case 1:/*RL*/ a = -aa; b = bb; break;
+	case 2:/*TB*/ a = -bb; b = -aa; break;
+	case 3:/*BT*/ a = bb; b = aa; break;
+	}
+	xt = a; yt = b;
+
+	MOxz[xztypemax]->Init(); curEp = 0;
+	Fori(indmax)
+	  MOxz[xztypemax]->Insert(curEp,pointsxz[pos+i]);
+	MOxz[xztypemax]->Tangent(aa,bb);
+	switch(xztypemax)
+	{
+	case 0:/*LR*/ a = aa; b = bb; break;
+	case 1:/*RL*/ a = -aa; b = bb; break;
+	case 2:/*TB*/ a = -bb; b = -aa; break;
+	case 3:/*BT*/ a = bb; b = aa; break;
+	}
+	xp = a; zp = b;
+
+	if (zp == 0) zt = 0;
+	else 
+	{
+	  if (yt == 0) { xt = xp; zt = zp; }
+	  else
+	  {
+	    yt = yt*xp; zt = zp*xt; xt = xp*xt; 
+	  }
+	}
+
+	lastend = end[pos] = pos + indmax -1;
+      }
+      else
+	end[pos] = -1;
+      break;
+
+    case XZ:
+      indmax = min(xyindmax,yzindmax);
+      if ((lastend == -1) || ((pos+indmax-1) != lastend))
+      {
+	MOyz[yztypemax]->Init(); curEp = 0;
+	Fori(indmax)
+	  MOyz[yztypemax]->Insert(curEp,pointsyz[pos+i]);
+	MOyz[yztypemax]->Tangent(aa,bb);
+	switch(yztypemax)
+	{
+	case 0:/*LR*/ a = aa; b = bb; break;
+	case 1:/*RL*/ a = -aa; b = bb; break;
+	case 2:/*TB*/ a = -bb; b = -aa; break;
+	case 3:/*BT*/ a = bb; b = aa; break;
+	}
+	yt = a; zt = b;
+
+	MOxy[xytypemax]->Init(); curEp = 0;
+	Fori(indmax)
+	  MOxy[xytypemax]->Insert(curEp,pointsxy[pos+i]);
+	MOxy[xytypemax]->Tangent(aa,bb);
+	switch(xytypemax)
+	{
+	case 0:/*LR*/ a = aa; b = bb; break;
+	case 1:/*RL*/ a = -aa; b = bb; break;
+	case 2:/*TB*/ a = -bb; b = -aa; break;
+	case 3:/*BT*/ a = bb; b = aa; break;
+	}
+	xp = a; yp = b;
+
+	if (xp == 0) xt = 0;
+	else 
+	{
+	  if (zt == 0) { xt = xp; yt = yp; }
+	  else
+	  {
+	    xt = xp*yt; zt = zt*yp; yt = yt*yp;
+	  }
+	}
+
+	lastend = end[pos] = pos + indmax -1;
+      }
+      else
+	end[pos] = -1;
+      break;
+    default: assert(1);
+    } // switch (elim)
+    nt = norm((double)xt, (double)yt, (double)zt);
+    Xtan[pos] = (double)xt / nt;
+    Ytan[pos] = (double)yt / nt;
+    Ztan[pos] = (double)zt / nt;
+    pos++;
+  } // while (pos < npoints-1)
+  end[npoints-1] = -1;
+  delete pointsxy, pointsyz, pointsxz;
+  return;
+} // ExtractDSSs3D()
 
 //--------------------------------------------------------------------------
 static double lambda_fct(double eik)
@@ -151,7 +469,7 @@ void LambdaMSTD(int32_t npoints, int32_t *end, double *angle, double *mstd)
     \param mstd (output): maximal segment tangent direction
     \brief computes the lambda-maximal segment tangent direction at each point of the digital curve in "points"
     \warning array "mstd" must have been allocated.
-
+    \warning only an approximation when used in 3D.
 Reference: 
 
 @article{LVV07,
@@ -200,6 +518,73 @@ Reference:
 } // LambdaMSTD()
 
 //--------------------------------------------------------------------------
+void LambdaMSTD3D(int32_t npoints, int32_t *end, 
+		  double *Xtan, double *Ytan, double *Ztan, 
+		  double *Xmstd, double *Ymstd, double *Zmstd
+		 )
+//--------------------------------------------------------------------------
+/*! \fn void LambdaMSTD3D(int32_t npoints, int32_t *end, double *Xtan, double *Ytan, double *Ztan, double *Xmstd, double *Ymstd, double *Zmstd)
+    \param npoints (input): number of points in points list
+    \param end (input): index of the last point of the current DSS
+    \param Xtan (input): normalized tangent vector (1st coord)
+    \param Ytan (input): normalized tangent vector (2nd coord)
+    \param Ztan (input): normalized tangent vector (3rd coord)
+    \param Xmstd (output): normalized mstd vector (1st coord)
+    \param Ymstd (output): normalized mstd vector (2nd coord)
+    \param Zmstd (output): normalized mstd vector (3rd coord)
+    \brief computes the lambda-maximal segment tangent direction at each point of the digital curve in "points"
+    \warning arrays "?mstd" must have been allocated.
+*/
+{
+#undef F_NAME
+#define F_NAME "LambdaMSTD3D"
+  double eik;
+  double *sumeik;
+  memset((double *)Xmstd, 0, npoints*sizeof(double));
+  memset((double *)Ymstd, 0, npoints*sizeof(double));
+  memset((double *)Zmstd, 0, npoints*sizeof(double));
+  sumeik = (double *)malloc(npoints * sizeof(double)); assert(sumeik != NULL);
+
+  Fori(npoints)
+  {
+    if (end[i] != -1) // beginning of a DSS
+    {
+      for (int k = i; k <= end[i]; k++)
+      {
+	eik = (double)(k - i) / (double)(end[i] - i);
+	Xmstd[k] += lambda_fct(eik) * Xtan[i];
+	Ymstd[k] += lambda_fct(eik) * Ytan[i];
+	Zmstd[k] += lambda_fct(eik) * Ztan[i];
+	sumeik[k] += lambda_fct(eik);
+      }
+    }
+  }
+
+  for (int i = 1; i < npoints-1; i++)
+  {
+    if (sumeik[i] > EPSILON)
+    {
+      Xmstd[i] = Xmstd[i] / sumeik[i];
+      Ymstd[i] = Ymstd[i] / sumeik[i];
+      Zmstd[i] = Zmstd[i] / sumeik[i];
+    }
+    else
+    {
+      Xmstd[i] = (Xmstd[i-1] + (Xmstd[i+1] / sumeik[i+1])) / 2;
+      Ymstd[i] = (Ymstd[i-1] + (Ymstd[i+1] / sumeik[i+1])) / 2;
+      Zmstd[i] = (Zmstd[i-1] + (Zmstd[i+1] / sumeik[i+1])) / 2;
+    }
+  }
+  Xmstd[0] = Xmstd[1];
+  Ymstd[0] = Ymstd[1];
+  Zmstd[0] = Zmstd[1];
+  Xmstd[npoints-1] = Xmstd[npoints-2];
+  Ymstd[npoints-1] = Ymstd[npoints-2];
+  Zmstd[npoints-1] = Zmstd[npoints-2];
+  free(sumeik);
+} // LambdaMSTD3D()
+
+//--------------------------------------------------------------------------
 double ComputeLength(int32_t npoints, double *mstd)
 //--------------------------------------------------------------------------
 /*! \fn double ComputeLength(int32_t npoints, double *mstd)
@@ -207,32 +592,68 @@ double ComputeLength(int32_t npoints, double *mstd)
     \param mstd (input): maximal segment tangent direction
     \return the length
     \brief computes the length of the digital curve described by the list "mstd" of its orientations
-
-Reference: 
-
-@article{LVV07,
-  author = {J.-O. Lachaud and A. Vialard and F. de Vieilleville},
-  title = {Fast, Accurate and Convergent Tangent Estimation on Digital Contours},
-  journal = {Image and Vision Computing},
-  year = {2007},
-  volume = {25},
-  number = {10},
-  pages = {1572--1587},
-  month = {October}
-}
-
 */
 {
 #undef F_NAME
 #define F_NAME "ComputeLength"
 
   double L = 0.0;
+  double alpha;
+
   Fori(npoints)
   {
-    L += 1.0 / (fabs(cos(mstd[i])) + fabs(sin(mstd[i])));
+#ifdef LVV07
+    L += 1.0 / (fabs(cos(mstd[i])) + fabs(cos(mstd[i])));
+    // très mauvaise estimation - remplacée par la suivante :
+#else
+    alpha = fabs(mstd[i]);
+    if (alpha > M_PI_4) alpha = M_PI_2 - alpha;
+    L += 1.0 / fabs(cos(alpha));
+#endif
   }
   return L;
 } // ComputeLength()
+
+//--------------------------------------------------------------------------
+double ComputeLength3D(int32_t npoints, double *Xmstd, double *Ymstd, double *Zmstd)
+//--------------------------------------------------------------------------
+/*! \fn double ComputeLength3D(int32_t npoints, double *Xmstd, double *Ymstd, double *Zmstd)
+    \param npoints (input): number of points in the curve
+    \param Xmstd (input): maximal segment tangent direction (1st coord)
+    \param Ymstd (input): maximal segment tangent direction (2nd coord)
+    \param Zmstd (input): maximal segment tangent direction (3rd coord)
+    \return the length
+    \brief computes the length of the digital curve described by the lists "?mstd" its orientations
+*/
+/*
+  Suppose that the current tangent vector is (x,y,z) with 0 <= z <= y <= x.
+  Then the elementary length contribution is the norm of the vector (1,y/x,z/x).
+ */
+{
+#undef F_NAME
+#define F_NAME "ComputeLength3D"
+
+  double L = 0.0, C, x, y, z;
+
+  Fori(npoints)
+  {
+    x = fabs(Xmstd[i]); y = fabs(Ymstd[i]); z = fabs(Zmstd[i]);
+    if ((x >= y) && (x >= z))
+      C = sqrt(1.0 + ((y*y + z*z) / (x*x)));
+    else
+    {
+      if (y >= z)
+	C = sqrt(1.0 + ((x*x + z*z) / (y*y)));
+      else
+	C = sqrt(1.0 + ((x*x + y*y) / (z*z)));      
+    }  
+#ifdef DEBUG
+    printf("%s: C = %g\n", F_NAME, C);
+#endif
+    L = L + C;
+  }
+  return L;
+} // ComputeLength3D()
 
 #ifdef TESTLTANGENTS
 /* =============================================================== */
