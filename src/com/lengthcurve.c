@@ -64,6 +64,7 @@ Parameter \b closed is a boolean (1 or 0) that indicates whether the curve is cl
 #include <ltangents.h>
 
 #define DEBUG
+#define DEBUG_2
 
 /* =============================================================== */
 int main(int argc, char **argv)
@@ -131,7 +132,7 @@ int main(int argc, char **argv)
 
     LambdaMSTD(npoints, end, angle, mstd);
 
-#ifdef DEBUG
+#ifdef DEBUG_2
     for (i = 0; i < npoints; i++)
       printf("point %d, angle %g (%g)\n", i, mstd[i], mstd[i]*180/M_PI);
 #endif
@@ -178,13 +179,13 @@ int main(int argc, char **argv)
     printf("npoints = %d\n", npoints);
     for (i = 0; i < npoints; i++)
       if (end[i] != -1)
-	printf("DSS %d-%d, Xtan %g, Ytan %g, Ztan %g (%g)\n",
-	       i, end[i], Xtan[i], Ytan[i], Ztan[i], (180 * atan(Ytan[i] / Xtan[i])) / M_PI);
+	printf("DSS %d-%d, Xtan %g, Ytan %g, Ztan %g\n",
+	       i, end[i], Xtan[i], Ytan[i], Ztan[i]);
 #endif
 
     LambdaMSTD3D(npoints, end, Xtan, Ytan, Ztan, Xmstd, Ymstd, Zmstd);
 
-#ifdef DEBUG
+#ifdef DEBUG_2
     for (i = 0; i < npoints; i++)
       printf("point %d, mstd %g %g %g\n", i, 
 	     Xmstd[i], Ymstd[i], Zmstd[i]);

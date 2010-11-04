@@ -24,6 +24,20 @@ static inline double norm(double x, double y, double z)
   return sqrt((x * x) + (y * y) + (z * z));
 }
 
+/* ==================================== */
+static inline double scalarprod(double x1, double y1, double z1, double x2, double y2, double z2)
+/* ==================================== */
+{
+  return (x1 * x2) + (y1 * y2) + (z1 * z2);
+}
+
+/* ==================================== */
+static inline double cosinesimilarity(double x1, double y1, double z1, double x2, double y2, double z2)
+/* ==================================== */
+{
+  return acos(scalarprod(x1, y1, z1, x2, y2, z2) / (norm(x1, y1, z1) * norm(x2, y2, z2)));
+}
+
 //--------------------------------------------------------------------------
 void ExtractDSSs(int32_t npoints, int32_t *X, int32_t *Y, int32_t *end, double *angle)
 //--------------------------------------------------------------------------
@@ -60,7 +74,7 @@ Reference:
   point *points;
   int aa, bb;
 
-#ifdef DEBUG
+#ifdef DEBUG_ExtractDSSs
   printf("%s: begin\n", F_NAME);
 #endif
 
@@ -96,17 +110,15 @@ Reference:
 
     if ((lastend == -1) || ((pos+indmax-1) != lastend))
     {
-
-#ifdef DEBUG
+#ifdef DEBUG_ExtractDSSs
       printf("SEGMENT dir : %d [0=LR, 1=RL, 2=TB, 3=BT]\n", typemax);
 #endif
-
       M[typemax]->Init();
       curEp = 0;
       Fori(indmax)
       {
 	M[typemax]->Insert(curEp,points[pos+i]);
-#ifdef DEBUG
+#ifdef DEBUG_ExtractDSSs
 	printf("  point %d %d\n", points[pos+i].x, points[pos+i].y);
 #endif
       }
@@ -171,7 +183,7 @@ Reference:
   int  xt, yt, zt, xp, yp, zp;
   double nt;
 
-#ifdef DEBUG
+#ifdef DEBUG_ExtractDSSs3D
   printf("%s: begin\n", F_NAME);
 #endif
 	
@@ -249,7 +261,7 @@ Reference:
       }
     }
 
-#ifdef DEBUG
+#ifdef DEBUG_ExtractDSSs
     printf("%s: indmax xy=%d yz=%d xz=%d typemax xy=%d yz=%d xz=%d \n", F_NAME,
 	   xyindmax, yzindmax, xzindmax, xytypemax, yztypemax, xztypemax);
 #endif
@@ -370,6 +382,22 @@ Reference:
     pos++;
   } // while (pos < npoints-1)
   end[npoints-1] = -1;
+
+  // invert directions if necessary
+  double XP, YP, ZP, XT, YT, ZT, D;
+  XP = Xtan[0]; YP = Ytan[0]; ZP = Ztan[0];
+  for (int i = 1; i < npoints; i++)
+  {
+    if (end[i] != -1)
+    {
+      XT = Xtan[i]; YT = Ytan[i]; ZT = Ztan[i];
+      D = cosinesimilarity(XP, YP, ZP, XT, YT, ZT);
+      if (D > M_PI_2)
+	Xtan[i] = -XT; Ytan[i] = -YT; Ztan[i] = -ZT;
+      XP = XT; YP = YT; ZP = ZT; 
+    }
+  }
+
   delete pointsxy, pointsyz, pointsxz;
   return;
 } // ExtractDSSs3D()
@@ -579,7 +607,7 @@ double ComputeLength3D(int32_t npoints, double *Xmstd, double *Ymstd, double *Zm
       else
 	C = sqrt(1.0 + ((x*x + y*y) / (z*z)));      
     }  
-#ifdef DEBUG
+#ifdef DEBUG_ComputeLength3D
     printf("%s: C = %g\n", F_NAME, C);
 #endif
     L = L + C;

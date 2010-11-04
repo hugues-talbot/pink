@@ -90,6 +90,12 @@ int main(int argc, char **argv)
   float *FF;
   char type;
 
+  if ((argc != 4) && (argc != 6) && (argc != 5) && (argc != 7))
+  {
+    fprintf(stderr, "usage: %s in.list <in.pgm|rs cs ds> [scale] out.pgm\n", argv[0]);
+    exit(1);
+  }
+
   fd = fopen(argv[1],"r");
   if (!fd)
   {
@@ -105,12 +111,6 @@ int main(int argc, char **argv)
   }
 
   fscanf(fd, "%d\n", &n);
-
-  if ((argc != 4) && (argc != 6) && (argc != 5) && (argc != 7))
-  {
-    fprintf(stderr, "usage: %s in.list <in.pgm|rs cs ds> [scale] out.pgm\n", argv[0]);
-    exit(1);
-  }
 
   if ((argc == 4) || (argc == 5))
   {
