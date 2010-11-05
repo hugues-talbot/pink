@@ -381,7 +381,7 @@ $(BDIR)/identifyparabola3 \
 $(BDIR)/identifyplane \
 $(BDIR)/insert \
 $(BDIR)/isometry \
-$(BDIR)/lengthcurve \
+$(BDIR)/curvelength \
 $(BDIR)/lengthspline \
 $(BDIR)/lengthsplines \
 $(BDIR)/matchellipse \
@@ -1608,8 +1608,8 @@ $(BDIR)/drawtorus:	$(CDIR)/drawtorus.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDI
 $(BDIR)/drawtriangulation:	$(CDIR)/drawtriangulation.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcgeo.h $(IDIR)/lvoronoi.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mcliste.o $(ODIR)/lvoronoi.o $(ODIR)/lbresen.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawtriangulation.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/lvoronoi.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(XLIB) $(LIBS) -o $(BDIR)/drawtriangulation
 
-$(BDIR)/lengthcurve:	$(CDIR)/lengthcurve.c $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
-	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/lengthcurve.c $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/lengthcurve
+$(BDIR)/curvelength:	$(CDIR)/curvelength.c $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
+	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/curvelength.c $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/curvelength
 
 $(BDIR)/lengthspline:	$(CDIR)/lengthspline.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/lengthspline.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/lengthspline
