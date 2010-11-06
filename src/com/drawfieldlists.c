@@ -175,12 +175,9 @@ int main(int argc, char **argv)
     tz = (double *)calloc(1,npoints*sizeof(double)); assert(tz != NULL);
 
     for (i = 0; i < npoints; i++)
-      fscanf(fd, "%g %g %g", &(tx[i]), &(ty[i]), &(tz[i]));
+      fscanf(fd, "%lf %lf %lf", &(tx[i]), &(ty[i]), &(tz[i]));
 
     fclose(fd);
-
-for (i = 0; i < npoints; i++)
-  printf("> %g %g %g\n", tx[i], ty[i], tz[i]);
 
     ldrawfield3dlist(npoints, X, Y, Z, tx, ty, tz, image, len);
 

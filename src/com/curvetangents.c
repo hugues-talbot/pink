@@ -201,21 +201,6 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (argc == 4)
-  {
-    fd = fopen(argv[argc - 1],"w");
-    if (!fd)
-    {
-      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc - 1]);
-      exit(1);
-    }
-    fprintf(fd, "e %d\n", 1); 
-    fprintf(fd, "%g\n", L); 
-    fclose(fd);
-  }
-  else printf("%g\n", L); 
-
-
   return 0;
 } /* main */
 

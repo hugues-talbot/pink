@@ -122,7 +122,7 @@ Reference:
 	printf("  point %d %d\n", points[pos+i].x, points[pos+i].y);
 #endif
       }
-      M[typemax]->Tangent(typemax,aa,bb);
+      M[typemax]->Tangent(typemax, aa, bb);
       if (aa == 0) angle[pos] = M_PI_2;
       else angle[pos] = atan((double)bb / (double)aa);
       lastend = end[pos] = pos + indmax -1;
@@ -393,8 +393,10 @@ Reference:
       XT = Xtan[i]; YT = Ytan[i]; ZT = Ztan[i];
       D = cosinesimilarity(XP, YP, ZP, XT, YT, ZT);
       if (D > M_PI_2)
+      {
 	Xtan[i] = -XT; Ytan[i] = -YT; Ztan[i] = -ZT;
-      XP = XT; YP = YT; ZP = ZT; 
+      }
+      XP = Xtan[i]; YP = Ytan[i]; ZP = Ztan[i];
     }
   }
 
