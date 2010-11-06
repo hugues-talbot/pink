@@ -93,8 +93,11 @@ int main(int argc, char **argv)
 
   if (argc == 4) len = atof(argv[2]);
 
-  image = ldrawfield3d(field, len);
-  
+  if (ds == 1) 
+    image = ldrawfield2d(field, len);
+  else
+    image = ldrawfield3d(field, len);
+
   writeimage(image, argv[argc-1]);
   freeimage(field);
   freeimage(image);

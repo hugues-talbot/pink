@@ -48,6 +48,8 @@ extern void ldrawdisc(struct xvimage * image1, double r, double xc, double yc);
 extern void ldrawtorus(struct xvimage * image1, double c, double a, double xc, double yc, double zc);
 extern void ldrawtangents2d(struct xvimage *field, double *x, double *y, int32_t nseg, double tmin, double tmax);
 extern void ldrawtangents3d(struct xvimage *field, double *x, double *y, double *z, int32_t nseg, double tmin, double tmax);
+extern void ldrawfield2dlist(int32_t npoints, int32_t *X, int32_t *Y, double *tx, double *ty, struct xvimage *image, double len);
+extern void ldrawfield3dlist(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double *tx, double *ty, double *tz, struct xvimage *image, double len);
 extern struct xvimage *ldrawfield2d(struct xvimage *field, double len);
 extern struct xvimage *ldrawfield3d(struct xvimage *field, double len);
 #ifdef __cplusplus

@@ -32,16 +32,14 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file curvelength.c
+/*! \file curvetangents.c
 
-\brief computes the length of a digital curve
+\brief computes the tangents of a digital curve
 
-<B>Usage:</B> curvelength curve.list closed [out.list]
+<B>Usage:</B> curvetangents curve.list tangents.list
 
 <B>Description:</B>
-Computes the length of a curve which is specified by the ordered list of its points.
-
-Parameter \b closed is a boolean (1 or 0) that indicates whether the curve is closed or not.
+Computes the tangents of a curve which is specified by the ordered list of its points. The output file is a list of normalized tangent vectors, all with origin 0.
 
 <B>Types supported:</B> curve 2D, curve 3D
 
@@ -72,13 +70,13 @@ int main(int argc, char **argv)
 {
   int32_t i, j;
   FILE *fd = NULL;
-  int32_t npoints, closed;
+  int32_t npoints;
   char type;
   double L;
 
-  if ((argc != 3) && (argc != 4))
+  if (argc != 3)
   {
-    fprintf(stderr, "usage: %s curve.list closed [out.list] \n", argv[0]);
+    fprintf(stderr, "usage: %s curve.list out.list \n", argv[0]);
     exit(1);
   }
 
@@ -87,17 +85,6 @@ int main(int argc, char **argv)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[1]);
     exit(1);
-  }
-
-  if (strcmp(argv[2],"1") == 0)
-    closed = 1;
-  else {
-    if (strcmp(argv[2],"0") == 0)
-      closed = 0;
-    else {
-      fprintf(stderr, "%s: bad value for parameter \"closed\" (0 or 1)\n", argv[0]);
-      exit(1);
-    }
   }
 
   fscanf(fd, "%c", &type);
@@ -132,15 +119,16 @@ int main(int argc, char **argv)
 
     LambdaMSTD(npoints, end, angle, mstd);
 
-#ifdef DEBUG_2
+    fd = fopen(argv[2],"w");
+    if (!fd)
+    {
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[2]);
+      exit(1);
+    }
+    fprintf(fd, "b %d\n", npoints);
     for (i = 0; i < npoints; i++)
-      printf("point %d, angle %g (%g)\n", i, mstd[i], mstd[i]*180/M_PI);
-#endif
-
-    if (closed) 
-      L = ComputeLength(npoints-1, mstd);
-    else
-      L = ComputeLength(npoints, mstd);
+      fprintf(fd, "%g %g\n", sin(mstd[i]), cos(mstd[i]));
+    fclose(fd);
 
     free(X);
     free(Y);
@@ -185,16 +173,16 @@ int main(int argc, char **argv)
 
     LambdaMSTD3D(npoints, end, Xtan, Ytan, Ztan, Xmstd, Ymstd, Zmstd);
 
-#ifdef DEBUG_2
+    fd = fopen(argv[2],"w");
+    if (!fd)
+    {
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[2]);
+      exit(1);
+    }
+    fprintf(fd, "B %d\n", npoints);
     for (i = 0; i < npoints; i++)
-      printf("point %d, mstd %g %g %g\n", i, 
-	     Xmstd[i], Ymstd[i], Zmstd[i]);
-#endif
-
-    if (closed) 
-      L = ComputeLength3D(npoints-1, Xmstd, Ymstd, Zmstd);
-    else
-      L = ComputeLength3D(npoints, Xmstd, Ymstd, Zmstd);
+      fprintf(fd, "%g %g %g\n", Xmstd[i], Ymstd[i], Zmstd[i]);
+    fclose(fd);
 
     free(X);
     free(Y);

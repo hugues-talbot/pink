@@ -398,6 +398,26 @@ struct xvimage *ldrawfield2d(struct xvimage *field, double len)
 } // ldrawfield2d()
 
 /* ==================================== */
+void ldrawfield2dlist(int32_t npoints, int32_t *X, int32_t *Y, double *tx, double *ty, struct xvimage *image, double len)
+/* ==================================== */
+/* draws lines in output image that represent vectors in input field */
+#undef F_NAME
+#define F_NAME "ldrawfield2dlist"
+{
+  int32_t i;
+  double t, x, y;
+
+  for (i = 0; i < npoints; i++)
+  {
+    x = tx[i];
+    y = ty[i];
+    t = sqrt(x*x + y*y);
+    if (t > EPS_DRAWVECT)
+      ldrawline(image, X[i], Y[i], arrondi((X[i]+(len*x))), arrondi((Y[i]+(len*y))));
+  }
+} // ldrawfield2dlist()
+
+/* ==================================== */
 struct xvimage *ldrawfield3d(struct xvimage *field, double len)
 /* ==================================== */
 /* draws lines in output image that represent vectors in input field */
@@ -435,6 +455,31 @@ struct xvimage *ldrawfield3d(struct xvimage *field, double len)
   }
   return image;
 } // ldrawfield3d()
+
+/* ==================================== */
+void ldrawfield3dlist(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double *tx, double *ty, double *tz, struct xvimage *image, double len)
+/* ==================================== */
+/* draws lines in output image that represent vectors in input field */
+#undef F_NAME
+#define F_NAME "ldrawfield3dlist"
+{
+  int32_t i;
+  double t, x, y, z;
+
+  for (i = 0; i < npoints; i++)
+  {
+    x = tx[i];
+    y = ty[i];
+    z = tz[i];
+    t = sqrt(x*x + y*y + z*z);
+printf("i=%d, t=%g\n", i, t);
+    if (t > EPS_DRAWVECT)
+    {
+printf("drawing line %d %d %d - %d %d %d\n", X[i], Y[i], Z[i], arrondi((X[i]+(len*x))), arrondi((Y[i]+(len*y))), arrondi((Z[i]+(len*z))));
+      ldrawline3d(image, X[i], Y[i], Z[i], arrondi((X[i]+(len*x))), arrondi((Y[i]+(len*y))), arrondi((Z[i]+(len*z))));
+    }
+  }
+} // ldrawfield3dlist()
 
 /* ==================================== */
 void ldrawball(struct xvimage * image1, double r, double xc, double yc, double zc)

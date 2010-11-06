@@ -342,6 +342,7 @@ $(BDIR)/drawscene \
 $(BDIR)/drawcurve \
 $(BDIR)/drawellipse \
 $(BDIR)/drawfield \
+$(BDIR)/drawfieldlists \
 $(BDIR)/drawline \
 $(BDIR)/drawlines \
 $(BDIR)/drawrect \
@@ -369,6 +370,8 @@ $(BDIR)/convexhull \
 $(BDIR)/crop \
 $(BDIR)/cropondisk \
 $(BDIR)/curvatures \
+$(BDIR)/curvelength \
+$(BDIR)/curvetangents \
 $(BDIR)/deframe \
 $(BDIR)/delaunay \
 $(BDIR)/delaunaymask \
@@ -394,7 +397,6 @@ $(BDIR)/identifyparabola3 \
 $(BDIR)/identifyplane \
 $(BDIR)/insert \
 $(BDIR)/isometry \
-$(BDIR)/lengthcurve \
 $(BDIR)/lengthspline \
 $(BDIR)/lengthsplines \
 $(BDIR)/matchellipse \
@@ -1588,6 +1590,9 @@ $(BDIR)/drawcurve:	$(CDIR)/drawcurve.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDI
 $(BDIR)/drawfield:	$(CDIR)/drawfield.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawfield.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/drawfield
 
+$(BDIR)/drawfieldlists:	$(CDIR)/drawfieldlists.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawfieldlists.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/drawfieldlists
+
 $(BDIR)/drawline:	$(CDIR)/drawline.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawline.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/drawline
 
@@ -1620,9 +1625,6 @@ $(BDIR)/drawtorus:	$(CDIR)/drawtorus.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDI
 
 $(BDIR)/drawtriangulation:	$(CDIR)/drawtriangulation.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcgeo.h $(IDIR)/lvoronoi.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mcliste.o $(ODIR)/lvoronoi.o $(ODIR)/lbresen.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawtriangulation.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/lvoronoi.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(XLIB) $(LIBS) -o $(BDIR)/drawtriangulation
-
-$(BDIR)/lengthcurve:	$(CDIR)/lengthcurve.c $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
-	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/lengthcurve.c $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/lengthcurve
 
 $(BDIR)/lengthspline:	$(CDIR)/lengthspline.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/lengthspline.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/lengthspline
@@ -1684,6 +1686,12 @@ $(BDIR)/shrinkondisk: $(CDIR)/shrinkondisk.c $(ODIR)/libcrop.o $(ODIR)/mcimage.o
 
 $(BDIR)/curvatures:	$(CDIR)/curvatures.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/curvatures.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/curvatures
+
+$(BDIR)/curvelength:	$(CDIR)/curvelength.c $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
+	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/curvelength.c $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/curvelength
+
+$(BDIR)/curvetangents:	$(CDIR)/curvetangents.c $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
+	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/curvetangents.c $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/curvetangents
 
 $(BDIR)/deframe:	$(CDIR)/deframe.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/lcrop.h $(ODIR)/lcrop.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/deframe.c $(OBJ_COMMON) $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/deframe
