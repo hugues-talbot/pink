@@ -11,7 +11,8 @@
 
 #include <ltangents.h>
 
-#define DEBUG
+//#define DEBUG
+//#define DEBUG_ExtractDSSs3D
 #define EPSILON 1E-20
 
 #define Fori(x) for(int i=0;i<(x);i++)
@@ -261,9 +262,9 @@ Reference:
       }
     }
 
-#ifdef DEBUG_ExtractDSSs
-    printf("%s: indmax xy=%d yz=%d xz=%d typemax xy=%d yz=%d xz=%d \n", F_NAME,
-	   xyindmax, yzindmax, xzindmax, xytypemax, yztypemax, xztypemax);
+#ifdef DEBUG_ExtractDSSs3D
+    printf("%s: pos=%d indmax xy=%d yz=%d xz=%d typemax xy=%d yz=%d xz=%d \n", F_NAME,
+	   pos, xyindmax, yzindmax, xzindmax, xytypemax, yztypemax, xztypemax);
 #endif
 
     // look for the longest 3D segment that has valid projections in at least 2 planes
@@ -286,6 +287,9 @@ Reference:
     {
     case XY: 
       indmax = min(yzindmax,xzindmax);
+#ifdef DEBUG_ExtractDSSs3D
+      printf("%s: case XY indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
+#endif
       if ((lastend == -1) || ((pos+indmax-1) != lastend))
       {
 	MOyz[yztypemax]->Init(); curEp = 0;
@@ -304,7 +308,8 @@ Reference:
 	  if (yt == 0) { xt = xp; zt = zp; }
 	  else
 	  {
-	    xt = xp*zt; yt = yt*zp; zt = zt*zp;
+	    if ((zt == 0) && (zp == 0)) { xt = xp; }
+	    else { xt = xp*zt; yt = yt*zp; zt = zt*zp; }
 	  }
 	}
 
@@ -316,6 +321,9 @@ Reference:
 
     case YZ:
       indmax = min(xyindmax,xzindmax);
+#ifdef DEBUG_ExtractDSSs3D
+      printf("%s: case YZ indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
+#endif
       if ((lastend == -1) || ((pos+indmax-1) != lastend))
       {
 	MOxy[xytypemax]->Init(); curEp = 0;
@@ -327,14 +335,20 @@ Reference:
 	Fori(indmax)
 	  MOxz[xztypemax]->Insert(curEp,pointsxz[pos+i]);
 	MOxz[xztypemax]->Tangent(xztypemax, xp, zp);
-
+/*
+printf("point[pos]=%d,%d,%d point[pos+1]=%d,%d,%d\n", 
+       X[pos], Y[pos], Z[pos], X[pos+1], Y[pos+1], Z[pos+1]);
+printf("xt=%d yt=%d ", xt, yt);
+printf("xp=%d zp=%d\n", xp, zp);
+*/
 	if (zp == 0) zt = 0;
 	else 
 	{
 	  if (yt == 0) { xt = xp; zt = zp; }
 	  else
 	  {
-	    yt = yt*xp; zt = zp*xt; xt = xp*xt; 
+	    if ((xt == 0) && (xp == 0)) { zt = zp; }
+	    else { yt = yt*xp; zt = zp*xt; xt = xp*xt; }
 	  }
 	}
 
@@ -346,6 +360,9 @@ Reference:
 
     case XZ:
       indmax = min(xyindmax,yzindmax);
+#ifdef DEBUG_ExtractDSSs3D
+      printf("%s: case XZ indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
+#endif
       if ((lastend == -1) || ((pos+indmax-1) != lastend))
       {
 	MOyz[yztypemax]->Init(); curEp = 0;
@@ -364,7 +381,8 @@ Reference:
 	  if (zt == 0) { xt = xp; yt = yp; }
 	  else
 	  {
-	    xt = xp*yt; zt = zt*yp; yt = yt*yp;
+	    if ((yt == 0) && (yp == 0)) { xt = xp; }
+	    else { xt = xp*yt; zt = zt*yp; yt = yt*yp; }
 	  }
 	}
 
@@ -375,6 +393,9 @@ Reference:
       break;
     default: assert(1);
     } // switch (elim)
+#ifdef DEBUG_ExtractDSSs3D
+    printf("%s: xt=%d yt=%d zt=%d\n", F_NAME, xt, yt, zt);
+#endif
     nt = norm((double)xt, (double)yt, (double)zt);
     Xtan[pos] = (double)xt / nt;
     Ytan[pos] = (double)yt / nt;
