@@ -29,4 +29,40 @@ ipython
 // *************************************************
 // *************************************************
 
+// *************************************************
+// Pink-python dependenies on debian lenny (5.0, 32bit)
+// *************************************************
+
+// installed before compilation 
+subversion // for development
+cmake // for compilation 
+
+// building pink's bash front-end
+libx11-dev
+ncurses (libncurses-dev)
+doxygen (check!)
+
+// building the python front-end
+python-dev 
+libgsl0-dev 
+libboost1.40-dev 
+libboost-python1.40-dev 
+//boostpythongenerator 
+libeigen2-dev 
+liblapack-dev 
+libboost-thread-dev
+libncurses5-dev
+
+and the usual gcc, g++, cmake, make
+
+// recommended:
+ipython
+
+// some editor
+emacs, emacs-gtk
+
+// *************************************************
+// *************************************************
+// *************************************************
+
 

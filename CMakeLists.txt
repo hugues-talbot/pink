@@ -47,6 +47,11 @@ if (CMAKE_HOST_UNIX)
     if (NOT HTEST1) 
 	message( FATAL_ERROR "error X11 header file X11/Xlib.h not found") 
     endif(NOT HTEST1)
+
+    CHECK_INCLUDE_FILE( curses.h  HTEST101 ) 
+    if (NOT HTEST101) 
+	message( FATAL_ERROR "error ncurses header file curses.h not found") 
+    endif(NOT HTEST101)
 	
     CHECK_INCLUDE_FILE( X11/Xutil.h  HTEST2 )
     if (NOT HTEST2)
@@ -54,7 +59,13 @@ if (CMAKE_HOST_UNIX)
     endif(NOT HTEST2)
 
     # documentation
-    option( BUILD_DOCUMENTATION "Builds the documentation files with Doxygen" ON )
+    find_package(Doxygen)
+    if ( NOT DOXYGEN_FOUND )
+	option( BUILD_DOCUMENTATION "Builds the documentation files with Doxygen" OFF )
+    else ( NOT DOXYGEN_FOUND )
+	message( "not building documentation" )
+	option( BUILD_DOCUMENTATION "Builds the documentation files with Doxygen" ON )
+    endif ( NOT DOXYGEN_FOUND )
 
     # unix defines
     add_definitions( -DUNIXIO -DPC )
@@ -202,7 +213,7 @@ find_package( X11 REQUIRED )
 find_package( Threads REQUIRED )
 
 set( LIBS ${LIBS} ${X11_LIBRARIES} )
-set( LIBS ${LIBS} ${THREADS_LIBRARIES} )
+set( LIBS ${LIBS} ${THREADS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 
 
