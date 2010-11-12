@@ -20,6 +20,8 @@ libeigen2-dev
 liblapack-dev 
 libboost-thread-dev
 libncurses5-dev
+doxygen
+libpthread-stubs0-dev
 
 and the usual gcc, g++, cmake, make
 

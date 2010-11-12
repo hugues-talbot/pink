@@ -1687,11 +1687,11 @@ $(BDIR)/shrinkondisk: $(CDIR)/shrinkondisk.c $(ODIR)/libcrop.o $(ODIR)/mcimage.o
 $(BDIR)/curvatures:	$(CDIR)/curvatures.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/curvatures.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/curvatures
 
-$(BDIR)/curvelength:	$(CDIR)/curvelength.c $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
-	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/curvelength.c $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/curvelength
+$(BDIR)/curvelength:	$(CDIR)/curvelength.cxx $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
+	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/curvelength.cxx $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/curvelength
 
-$(BDIR)/curvetangents:	$(CDIR)/curvetangents.c $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
-	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/curvetangents.c $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/curvetangents
+$(BDIR)/curvetangents:	$(CDIR)/curvetangents.cxx $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
+	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/curvetangents.cxx $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/curvetangents
 
 $(BDIR)/deframe:	$(CDIR)/deframe.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/lcrop.h $(ODIR)/lcrop.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/deframe.c $(OBJ_COMMON) $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/deframe
