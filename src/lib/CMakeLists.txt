@@ -12,6 +12,7 @@ FILE( GLOB lib_src_cpp *.cpp )
 FILE( GLOB lib_src_cxx *.cxx )
 FILE( GLOB lib_src_bdd ../bdd/*.c )
 
+message( FATAL_ERROR "cxx files are ='" ${lib_src_cxx} "'" )
 
 # unix defines
 add_definitions( -DUNIXIO -DPC )
