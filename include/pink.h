@@ -65,8 +65,8 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <boost/lexical_cast.hpp>
   #include <boost/thread.hpp>
   #include <boost/algorithm/minmax_element.hpp>
-  #include <boost/accumulators/accumulators.hpp>
-  #include <boost/accumulators/statistics.hpp>
+  #include <boost/preprocessor.hpp>
+
 
   #include <iostream>
   #include <fstream>
@@ -77,9 +77,6 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <cstring>
   #include <cmath>
 
-  #include <eigen2/Eigen/Core>
-  #include <eigen2/Eigen/LU>
-  #include <eigen2/Eigen/Geometry>
 
 #endif /* __cplusplus */
 
@@ -290,28 +287,19 @@ knowledge of the CeCILL license and that you accept its terms.
 // uiFibres header files
 #ifdef __cplusplus
 // my comment
-  #include <gsl/gsl_interp.h> // uiGradient is using it
-  #include <gsl/gsl_multifit_nlin.h> // uiCircle is using it
   #include <uiFibreTypes.h>
   #include <ujimage.hpp>
   #include <uiFrame.hpp>
   #include <uiSqhool.hpp>
   #include <readpnm.h>
-  #include <uiGradient.hpp>
-  #include <uiFlow.hpp>
   #include <uiBorder.h>
   #include <uiImage.h>
-  #include <uiGradient.hpp>
   #include <lbspline.hpp>
   #include <lminmax.hpp>  
-  #include <uiUngerFlow.hpp>
   #include <uiNormalize.hpp>
-  #include <uiQDistance.hpp>
   #include <uiFileIO.hpp>
   #include <uiInsert.hpp>
   #include <uiCutPlane.hpp>
-  #include <uiCircle.hpp>
-  #include <ui_fit_circle.hpp>
 #endif /* __cplusplus */
 
 

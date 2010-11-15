@@ -63,7 +63,7 @@ if (CMAKE_HOST_UNIX)
     if ( NOT DOXYGEN_FOUND )
 	option( BUILD_DOCUMENTATION "Builds the documentation files with Doxygen" OFF )
     else ( NOT DOXYGEN_FOUND )
-	message( "not building documentation" )
+#	message( "not building documentation" )
 	option( BUILD_DOCUMENTATION "Builds the documentation files with Doxygen" ON )
     endif ( NOT DOXYGEN_FOUND )
 
@@ -77,44 +77,83 @@ if (CMAKE_HOST_UNIX)
 
     if ( PYTHON_FRONT_END )
 
+	find_package(PythonLibs)
+	#MESSAGE( WARNING "PYTHONLIBS_FOUND=" ${PYTHONLIBS_FOUND} )
+        #MESSAGE( WARNING "PYTHON_LIBRARIES=" ${PYTHON_LIBRARIES} )
+        #MESSAGE( WARNING "PYTHON_INCLUDE_PATH=" ${PYTHON_INCLUDE_PATH} )
+        #MESSAGE( WARNING "PYTHON_DEBUG_LIBRARIES=" ${PYTHON_DEBUG_LIBRARIES} )
+	
+	find_package(PythonInterp)
+	#MESSAGE( WARNING "PYTHONINTERP_FOUND=" ${PYTHONINTERP_FOUND} )
+        #MESSAGE( WARNING "PYTHON_EXECUTABLE=" ${PYTHON_EXECUTABLE} )
+
+
 	if(NOT PYTHON_INCLUDE)
-	    SET(PYTHON_INCLUDE "/usr/include/python" CACHE PATH "The directory of the python headers." )
+	    SET(PYTHON_INCLUDE ${PYTHON_INCLUDE_PATH} CACHE PATH "The directory of the python headers." )
 	endif(NOT PYTHON_INCLUDE)
 
 	if(NOT BOOST_INCLUDE)
 	    SET(BOOST_INCLUDE "/usr/include" CACHE PATH "The directory of the boost headers. Remember in the case of /usr/local/include/boost, you specify /usr/local/include." )
 	endif(NOT BOOST_INCLUDE)
 
-	if(NOT PYTHON_FLAG)
-	    SET(PYTHON_FLAG "-lpython2.6" CACHE STRING "The flag to use for the python library.")
-	endif(NOT PYTHON_FLAG)
+	if(NOT PYTHON_LIBRARY)
+	    SET(PYTHON_LIBRARY ${PYTHON_LIBRARIES} CACHE STRING "The flag to use for the python library.")
+	endif(NOT PYTHON_LIBRARY)
 
-	if(NOT EIGEN_INCLUDE)
-	    SET(EIGEN_INCLUDE "/usr/include" CACHE PATH "The directory of the eigen2 headers. Remember in the case of /usr/local/include/eigen2, you specify /usr/local/include." )
-	endif(NOT EIGEN_INCLUDE)
+# 	if(NOT EIGEN_INCLUDE)
+# 	    SET(EIGEN_INCLUDE "/usr/include" CACHE PATH "The directory of the eigen2 headers. Remember in the case of /usr/local/include/eigen2, you specify /usr/local/include." )
+# 	endif(NOT EIGEN_INCLUDE)
 
-	find_library( BOOST_PYTHON libboost_python.${LIBEXT} ${POTENCIAL_LIBDIRS} )
-	set( LIBS ${LIBS} ${BOOST_PYTHON} )
-	find_library( BOOST_THREAD libboost_thread-mt.${LIBEXT} ${POTENCIAL_LIBDIRS} )
-	find_library( BOOST_THREAD libboost_thread.${LIBEXT} ${POTENCIAL_LIBDIRS} )
-	set( LIBS ${LIBS} ${BOOST_THREAD} )
+	find_package(Boost COMPONENTS python thread )
+
+# 	MESSAGE( "Boost_FOUND=" ${Boost_FOUND} )
+# 	MESSAGE( "Boost_INCLUDE_DIRS=" ${Boost_INCLUDE_DIRS} )
+# 	MESSAGE( "Boost_LIBRARIES=" ${Boost_LIBRARIES} )
+# 	MESSAGE( "Boost_LIBRARY_DIRS=" ${Boost_LIBRARY_DIRS} )
+# 	MESSAGE( "Boost_VERSION=" ${Boost_VERSION} )
+# 	MESSAGE( "Boost_LIB_VERSION=" ${Boost_LIB_VERSION} )
+# 	MESSAGE( "Boost_LIB_DIAGNOSTIC_DEFINITIONS=" ${Boost_LIB_DIAGNOSTIC_DEFINITIONS} )
+# 	MESSAGE( "Boost_PYTHON_FOUND=" ${Boost_PYTHON_FOUND} )
+# 	MESSAGE( "Boost_PYTHON_LIBRARY=" ${Boost_PYTHON_LIBRARY} )
+# 	MESSAGE( "Boost_THREAD_FOUND=" ${Boost_THREAD_FOUND} )
+# 	MESSAGE( "Boost_THREAD_LIBRARY=" ${Boost_THREAD_LIBRARY} )
+# 	MESSAGE( "Boost_MAJOR_VERSION=" ${Boost_MAJOR_VERSION} )
+# 	MESSAGE( "Boost_MINOR_VERSION=" ${Boost_MINOR_VERSION} )
+
+	# required version of BOOST 1.35 or newer
+	set( Boost_MAJOR_VERSION_REQUIRED 1 )
+	set( Boost_MINOR_VERSION_REQUIRED 35 )
+
+	if ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
+	    message( FATAL_ERROR "For the core components you need a boost version at least " ${Boost_MAJOR_VERSION_REQUIRED} "." ${Boost_MINOR_VERSION_REQUIRED} )
+	elseif ( Boost_MINOR_VERSION LESS Boost_MINOR_VERSION_REQUIRED )
+	    message( FATAL_ERROR "For the core components you need a boost version at least " ${Boost_MAJOR_VERSION_REQUIRED} "." ${Boost_MINOR_VERSION_REQUIRED} )
+	endif ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
+
+
+
+
+
+
+	set( LIBS ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} )
 
 	# looking for the python library 
-	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_FLAG} ${LIBS}  )
+	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_LIBRARY} ${LIBS}  )
 	set( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${INCLUDES} ${PYTHON_INCLUDE} ${BOOST_INCLUDE} ${EIGEN_INCLUDE} )
 	include_directories( ${CMAKE_REQUIRED_INCLUDES} )
 
-	find_library( GSL_LIB libgsl.${LIBEXT} ${POTENCIAL_LIBDIRS} )
-	set( LIBS ${LIBS} ${GSL_LIB} )
+# 	find_library( GSL_LIB libgsl.${LIBEXT} ${POTENCIAL_LIBDIRS} )
+# 	set( LIBS ${LIBS} ${GSL_LIB} )
 
-	find_library( GSLCBLAS_LIB libgslcblas.${LIBEXT} ${POTENCIAL_LIBDIRS} )
-	set( LIBS ${LIBS} ${GSLCBLAS_LIB} )
+# 	find_library( GSLCBLAS_LIB libgslcblas.${LIBEXT} ${POTENCIAL_LIBDIRS} )
+# 	set( LIBS ${LIBS} ${GSLCBLAS_LIB} )
 
-	find_library( LAPACK_LIB liblapack.${LIBEXT} ${POTENCIAL_LIBDIRS} )
-	set( LIBS ${LIBS} ${LAPACK_LIB} )
+# 	find_library( LAPACK_LIB liblapack.${LIBEXT} ${POTENCIAL_LIBDIRS} )
+# 	set( LIBS ${LIBS} ${LAPACK_LIB} )
 
-	CHECK_INCLUDE_FILE( pyconfig.h HTEST )
+	CHECK_INCLUDE_FILE( ${PYTHON_INCLUDE}/pyconfig.h HTEST )
 	if (NOT HTEST)
+	    message( ${PYTHON_INCLUDE}/pyconfig.h )
 	    message( FATAL_ERROR " pyconfig.h header file failed to compile. If it is installed, than check the python flags and directories") 
         endif(NOT HTEST)
 
@@ -124,16 +163,19 @@ if (CMAKE_HOST_UNIX)
         endif(NOT HTEST)
 
 
-	CHECK_INCLUDE_FILE( gsl/gsl_interp.h HTEST )
-	if (NOT HTEST)
-	    message( FATAL_ERROR "gsl header file failed to compile. If it is installed, than check the gsl flags") 
-        endif(NOT HTEST)
+# 	CHECK_INCLUDE_FILE( gsl/gsl_interp.h HTEST )
+# 	if (NOT HTEST)
+# 	    message( FATAL_ERROR "gsl header file failed to compile. If it is installed, than check the gsl flags") 
+#         endif(NOT HTEST)
 
 #	CHECK_INCLUDE_FILE( curses.h HTEST122 )
 #	if (NOT HTEST)
 #	    message( FATAL_ERROR "curses.h header file failed to compile. If it is installed, than check the python flags") 
 #        endif(NOT HTEST122)
 	 
+
+	
+
 	CHECK_INCLUDE_FILE_CXX( boost/shared_ptr.hpp  HTEST3 )
 	if (NOT HTEST3)
 	    message( FATAL_ERROR "error boost/shared_ptr.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
@@ -144,9 +186,9 @@ if (CMAKE_HOST_UNIX)
 	    message( FATAL_ERROR "error boost/shared_array.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
         endif(NOT HTEST4)
 	 
-	CHECK_INCLUDE_FILE_CXX( boost/python/list.hpp  HTEST5 )
-	if (NOT HTEST5)
-	    message( FATAL_ERROR "error boost/python/list.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
+ 	CHECK_INCLUDE_FILE_CXX( boost/python/list.hpp  HTEST5 )
+ 	if (NOT HTEST5)
+ 	    message( FATAL_ERROR "error boost/python/list.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
         endif(NOT HTEST5)
 			
 	CHECK_INCLUDE_FILE_CXX( boost/python/extract.hpp  HTEST5 )
@@ -169,30 +211,30 @@ if (CMAKE_HOST_UNIX)
 	    message( FATAL_ERROR "error boost/algorithm/minmax_element.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
 	endif(NOT HTEST9)
 					
-	CHECK_INCLUDE_FILE_CXX( boost/accumulators/accumulators.hpp  HTEST10)
-	if (NOT HTEST10)
-	    message( FATAL_ERROR "error boost/accumulators/accumulators.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
-	endif(NOT HTEST10)
+# 	CHECK_INCLUDE_FILE_CXX( boost/accumulators/accumulators.hpp  HTEST10)
+# 	if (NOT HTEST10)
+# 	    message( FATAL_ERROR "error boost/accumulators/accumulators.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
+# 	endif(NOT HTEST10)
 
-	CHECK_INCLUDE_FILE_CXX( boost/accumulators/statistics.hpp HTEST11 )
-	if (NOT HTEST11)
-	    message( FATAL_ERROR "error boost/accumulators/statistics.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
-	endif(NOT HTEST11)
+# 	CHECK_INCLUDE_FILE_CXX( boost/accumulators/statistics.hpp HTEST11 )
+# 	if (NOT HTEST11)
+# 	    message( FATAL_ERROR "error boost/accumulators/statistics.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
+# 	endif(NOT HTEST11)
 
-	CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/Core HTEST12 )
-	if (NOT HTEST12)
-	    message( FATAL_ERROR "error eigen2/Eigen/Core does not compile. Check if its correctly installed. You may need a newer version. ")
-	endif(NOT HTEST12)
+# 	CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/Core HTEST12 )
+# 	if (NOT HTEST12)
+# 	    message( FATAL_ERROR "error eigen2/Eigen/Core does not compile. Check if its correctly installed. You may need a newer version. ")
+# 	endif(NOT HTEST12)
 
-	CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/LU HTEST14 )
-	if (NOT HTEST14)
-	    message( FATAL_ERROR "error eigen2/Eigen/LU does not compile. Check if its correctly installed. You may need a newer version. ")
-	endif(NOT HTEST14)
+# 	CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/LU HTEST14 )
+# 	if (NOT HTEST14)
+# 	    message( FATAL_ERROR "error eigen2/Eigen/LU does not compile. Check if its correctly installed. You may need a newer version. ")
+# 	endif(NOT HTEST14)
 
-	CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/Geometry HTEST15 )
-	if (NOT HTEST15)
-	    message( FATAL_ERROR "error eigen2/Eigen/Geometry does not compile. Check if its correctly installed. You may need a newer version. ")
-	endif(NOT HTEST15)
+# 	CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/Geometry HTEST15 )
+# 	if (NOT HTEST15)
+# 	    message( FATAL_ERROR "error eigen2/Eigen/Geometry does not compile. Check if its correctly installed. You may need a newer version. ")
+# 	endif(NOT HTEST15)
 
 
 #eigen2/Eigen/Core

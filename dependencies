@@ -43,19 +43,22 @@ cmake // for compilation
 libx11-dev
 ncurses (libncurses-dev)
 doxygen (check!)
+and the usual gcc, g++, cmake, make
 
 // building the python front-end
-python-dev 
+python-dev
+  
+// boost version 1.34 not enough
+libboost1.35-dev (libboost-dev) // also included libboost-python1.40-dev libboost-thread-dev
+  
+// special functions not needed for EDF
 libgsl0-dev 
-libboost1.40-dev 
-libboost-python1.40-dev 
-//boostpythongenerator 
 libeigen2-dev 
 liblapack-dev 
-libboost-thread-dev
+
 libncurses5-dev
 
-and the usual gcc, g++, cmake, make
+
 
 // recommended:
 ipython

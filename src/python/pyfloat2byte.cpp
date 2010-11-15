@@ -143,12 +143,12 @@ void py_float2byte_export(){
 // end of the documenation
     );
 
-  def( "cpp_maxflow_cami_float", &maxflow_cami,
-       args("source and sink", "boundaries", "iteration", "tau", "the number of threads"),
-       "maximal flows, returns the flow (float array of size pixels * dimension ) \n"
-       " \n"
-// end of the documenation
-    );
+//   def( "cpp_maxflow_cami_float", &maxflow_cami,
+//        args("source and sink", "boundaries", "iteration", "tau", "the number of threads"),
+//        "maximal flows, returns the flow (float array of size pixels * dimension ) \n"
+//        " \n"
+// // end of the documenation
+//     );
   
 
 };

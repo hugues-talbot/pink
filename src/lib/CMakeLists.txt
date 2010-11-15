@@ -21,7 +21,7 @@ include_directories( ${PYTHON_INCLUDE} )
 
 
 if ( NOT PYTHON_FRONT_END )
-    message( info= ${lib_src_cxx} )
+    #message( info= ${lib_src_cxx} )
     add_library(pink SHARED ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} )
     #message( FATAL_ERROR "pink=" ${pink} )
 else ( NOT PYTHON_FRONT_END )
