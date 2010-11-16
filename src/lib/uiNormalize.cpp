@@ -20,28 +20,30 @@
 namespace pink 
 {
   
-  PTR<float_image> lnormalize( const float_image & I,
-			       float_image::pixel_type vmin /* = 0.*/  ,
-			       float_image::pixel_type vmax/* = 1.*/ 
+  float_image lnormalize( const float_image & I,
+                          float_image::pixel_type vmin /* = 0.*/  ,
+                          float_image::pixel_type vmax/* = 1.*/ 
     )
   {
-    PTR<float_image> result( new float_image(I) );
+    float_image result;
+    result = I;
     
-    lnormalize( result->get_output(), vmin, vmax );
+    lnormalize( result.get_output(), vmin, vmax );
     
     return result;
     
   } /* lnormalize */
   
   
-  PTR<char_image> lnormalize( const char_image & I,
-			      char_image::pixel_type vmin /* = 0*/  ,
-			      char_image::pixel_type vmax  /*= 255 */
+  char_image lnormalize( const char_image & I,
+                         char_image::pixel_type vmin /* = 0*/  ,
+                         char_image::pixel_type vmax  /*= 255 */
     )
   {
-    PTR<char_image> result( new char_image(I) );
+    char_image result;
+    result = I;
     
-    lnormalize( result->get_output(), vmin, vmax );
+    lnormalize( result.get_output(), vmin, vmax );
     
   return result;
   

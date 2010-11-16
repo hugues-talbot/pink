@@ -5,7 +5,7 @@
   This software comes in hope that it will be useful but 
   without any warranty to the extent permitted by aplicable law.
   
-  (C) UjoImro, 2007-2009
+  (C) UjoImro, 2007-2010
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
@@ -28,14 +28,24 @@ be size-independent
 */
 #define PTR boost::shared_ptr
 #define ARRAY boost::shared_array
-#define lexical_cast boost::lexical_cast
-#define mutex boost::mutex
-#define shared_mutex boost::shared_mutex
-#define mutex_shared boost::shared_mutex
-#define THREAD boost::thread
-#define string std::string
-#define cout std::cout
-#define stringstream std::stringstream
+using boost::lexical_cast;
+using boost::mutex;
+using boost::shared_mutex;
+using boost::shared_mutex;
+using boost::thread;
+using std::string;
+using std::cout;
+using std::stringstream;
+using std::endl;
+using std::vector;
+using std::fstream;
+using std::pair;
+using std::ofstream;
+using std::ios_base;
+using std::ifstream;
+
+
+
 
 #ifdef UJIMAGE_DEBUG
   #define DEBUG(x) cout << "debug: " << BOOST_PP_STRINGIZE(x) << " = " << x << "\n"
@@ -89,8 +99,6 @@ be size-independent
 #define EPSILON 0.01
 
 #define round(z) ((z-(double)((int)z))<0.5?((int)z):((int)z+1))
-
-using namespace std;
 
 typedef char *   pchar;
 typedef char ** ppchar;

@@ -12,34 +12,37 @@ using namespace pink;
 
 
 
-PTR<char_image> py_drawcurve2D( const vint & size,
-				const vint & coordX,
-				const vint & coordY
-  ) {
+char_image py_drawcurve2D( const vint & size,
+                           const vint & coordX,
+                           const vint & coordY
+  )
+{
 
-  if (size.size()!=2){
+  if (size.size()!=2)
+  {
     error("only 2D images are supported. Nag the developer.");
-  }; /* size.size()!=2 */
+  } /* size.size()!=2 */
 
-  if (coordX.size() != coordY.size()){
+  if (coordX.size() != coordY.size())
+  {
     error("error: The number of X and Y coordinates must be equal.");
-  }; /* coordX.size() != coordy.size() */
+  } /* coordX.size() != coordy.size() */
   
 
-  PTR<char_image> result( new char_image(size) );
+  char_image result(size);
 
-
-  FOR( q, coordX.size()-1 ){
-    ldrawline( &(*result), // &(*result) == result->operator& and it returns an "xvimage*"
+  FOR( q, coordX.size()-1 )
+  {
+    ldrawline( result.get_output(),
 	       coordX[q],
 	       coordY[q],
 	       coordX[q+1],
 	       coordY[q+1]
       ); 
-  }; /* FOR coordX.size()-1 */
+  } /* FOR coordX.size()-1 */
 
   return result;
-}; /* py_drawcurve2D */
+} /* py_drawcurve2D */
 
 
 

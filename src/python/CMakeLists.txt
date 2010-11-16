@@ -7,7 +7,11 @@
 
 FILE( GLOB py_src_cpp *.cpp )
 
-add_library( cpp_pink SHARED ${py_src_cpp} )
+if (DEVELOPMENT)
+    FILE( GLOB py_src_development_cpp development/*.cpp )
+endif (DEVELOPMENT)
+
+add_library( cpp_pink SHARED ${py_src_cpp} ${py_src_development_cpp} )
 add_dependencies( cpp_pink pink  )
 
 target_link_libraries( cpp_pink pink ${LIBS} )

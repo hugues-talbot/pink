@@ -12,7 +12,7 @@
 
 // boost python wrapper
 
-#include <pink_python.h>
+#include <pink_development.h>
 
 #undef error
 #define error(msg) {stringstream fullmessage; fullmessage << "in pymaxflow.cpp: " << msg; call_error(fullmessage.str());}

@@ -23,8 +23,8 @@ using namespace pink;
 
 
 template <class image_type>
-PTR<image_type> py_read_raw_image( const string & filename,
-				   const boost::python::list & python_dim
+image_type py_read_raw_image( const string & filename,
+                              const boost::python::list & python_dim
   )
 {
   
@@ -60,9 +60,7 @@ PTR<image_type> py_read_raw_image( const string & filename,
 
   file.close();
   
-  PTR<image_type> result;
-  
-  result.reset( new image_type( dim, data ) );
+  image_type result( dim, data );
 
   return result;
   
@@ -73,7 +71,7 @@ PTR<image_type> py_read_raw_image( const string & filename,
 
 UI_EXPORT_FUNCTION( cpp_read_raw_image, 
 		    py_read_raw_image, 
-		    args("filename", "dimensions of the image"),
+		    ( arg("filename"), arg("dimensions of the image") ),
 		    "this function reads a raw image from a file the"
 		    " image type is specified by the suffix and the "
 		    "size is given in the 'dim' argument\n"

@@ -17,33 +17,65 @@
 									\
   void function##_export()						\
   {									\
-  def( BOOST_PP_STRINGIZE(function_name##_char), &BOOST_PP_EXPAND(function)<char_image>, \
+  def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<char_image>, \
        args,								\
        comment								\
     );									\
 									\
-  def( BOOST_PP_STRINGIZE(function_name##_short), &BOOST_PP_EXPAND(function)<short_image>, \
+  def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<short_image>, \
        args,								\
        comment								\
     );									\
   									\
-  def( BOOST_PP_STRINGIZE(function_name##_int), &BOOST_PP_EXPAND(function)<int_image>, \
+  def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<int_image>, \
        args,								\
        comment								\
     );									\
 									\
-  def( BOOST_PP_STRINGIZE(function_name##_float), &BOOST_PP_EXPAND(function)<float_image>, \
+  def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<float_image>, \
        args,								\
        comment								\
     );									\
 									\
-  def( BOOST_PP_STRINGIZE(function_name##_double), &BOOST_PP_EXPAND(function)<double_image>, \
+  def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<double_image>, \
        args,								\
        comment								\
     );									\
 									\
 									\
     }									
+
+
+#define UI_DEFINE_FUNCTION( function_name, function, args, comment )	\
+  {									\
+    def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<char_image>, \
+         args,								\
+         comment                                                        \
+      );                                                                \
+                                                                        \
+    def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<short_image>, \
+         args,								\
+         comment                                                        \
+      );                                                                \
+                                                                        \
+    def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<int_image>, \
+         args,								\
+         comment                                                        \
+      );                                                                \
+                                                                        \
+    def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<float_image>, \
+         args,								\
+         comment                                                        \
+      );                                                                \
+                                                                        \
+    def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<double_image>, \
+         args,								\
+         comment                                                        \
+      );                                                                \
+                                                                        \
+                                                                        \
+  }									
+
 
 #define UI_EXPORT_ONE_FUNCTION( function_name, function, args, comment ) \
   									\

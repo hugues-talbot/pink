@@ -25,12 +25,7 @@ void py_erosball_export();
 void py_medianfilter_export();
 
 // skeleton function
-void py_skeleton_im_int_int_void_export();
-void py_skeleton_im_im_int_void_export();
-void py_skeleton_im_int_int_im_export();
-void py_skeleton_im_im_int_im_export();
-void py_skeleton_im_int_int_int_export();
-void py_skeleton_im_im_int_int_export();
+void py_skeleton_export();
 
 void py_zoom_export();
 void py_long2byte_export();
@@ -88,13 +83,8 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   py_medianfilter_export();
 
   // the skeleton function
-  py_skeleton_im_int_int_void_export();
-  py_skeleton_im_im_int_void_export();
-  py_skeleton_im_int_int_im_export();
-  py_skeleton_im_im_int_im_export();
-  py_skeleton_im_int_int_int_export();
-  py_skeleton_im_im_int_int_export();
-
+  py_skeleton_export();
+  
   py_zoom_export();
   py_long2byte_export();
 
@@ -130,6 +120,14 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   py_closeball_export();
   py_minmax_export();
 
+  UI_DEFINE_FUNCTION(
+    print_image,
+    print_image,
+    (arg("image")),
+    "Prints the values in a table. Usefull for debugging small 2D images."
+    )
+  
+  
 //   def( "cpp_circle_tangent", &pink::gsl::py_circle_tangent,
 //        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),
 //        "This function estimates the derivativ of the function given by points. It "

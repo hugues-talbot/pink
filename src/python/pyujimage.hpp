@@ -213,9 +213,48 @@ operator[int]
 	  "This function accesses the pixels of the image. It is used for the 'image[pos]=a' like access model."
       )
     
+
+
+/*
+***********************************************************************************************
+  operator + - * / // the operators which make images into a vector space
+***********************************************************************************************
+ */
+
+    .def(self += self)
+    .def(self + self)
+    .def(self -= self)
+    .def(self - self)
+    .def(self == self)
+    .def(self != self)
+
+    .def(self += long())
+    //.def(self + long()) // these operators conflict with casting to xvimage*
+    //.def(long() + self) // these operators conflict with casting to xvimage*
+    .def(self -= long())
+    //.def(self - long()) // these operators conflict with casting to xvimage*
+    //.def(long() - self) // these operators conflict with casting to xvimage*
+    .def(self *= long())
+    .def(self * long())
+    .def(long() * self)
+    .def(self /= long())
+    .def(self / long())
+    //.def(long() / self) // its difficult to interpret
+
+    .def(self += float())
+    .def(self + float())
+    .def(float() + self)
+    .def(self -= float())
+    .def(self - float())
+//    .def(float() - self) // -image should be interpreted. It's simpler to use t+(-1)*image
+    .def(self *= float())
+    .def(self * float())
+    .def(float() * self)
+    .def(self /= float())
+    .def(self / float())
+    //.def(float() / self) // its difficult to interpret
     ;
-
-
+  
 }; /* ujoi_object_export */
 
 

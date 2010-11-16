@@ -18,74 +18,68 @@ using namespace pink;
 
 
 //prototype
-PTR<char_image> py_skeleton_ultimate( char_image * uj_image, 
-				      int_image * uj_prio,
-				      int priocode,
-				      int connex, 
-				      char_image * uj_inhibit,
-				      int inhibitcode,
-				      bool inhibit_image, // true if there is an inhibit image
-				      bool inhibit_value, // true if there is an inhibit value
-				      bool prio_image, // if true, than the priority is an image, 
-				      // else it's a number, which is important
-				      bool prio_value
-			   
+char_image py_skeleton_ultimate(
+  char_image * uj_image, 
+  int_image * uj_prio,
+  int priocode,
+  int connex, 
+  char_image * uj_inhibit,
+  int inhibitcode,
+  bool inhibit_image, // true if there is an inhibit image
+  bool inhibit_value, // true if there is an inhibit value
+  bool prio_image, // if true, than the priority is an image, 
+  // else it's a number, which is important
+  bool prio_value  
   );
 
 
 
 /* nc == non_const */
 
-PTR<char_image> py_skeleton_im_int_int_void( const char_image & uj_image, 
-					int priocode,
-					int connex
+char_image py_skeleton_im_int_int_void
+(
+  const char_image & uj_image, 
+  int priocode,
+  int connex
   )
 {
 
-  PTR<char_image> res( new char_image( uj_image ) );
-  PTR<char_image> result =
-    py_skeleton_ultimate( res.get(),    // char_image & uj_image, 
-			NULL,            //     char_image & uj_prio,
-			priocode,  // int priocode,
-			connex,    // int connexity  
-			NULL,      //     char_image & uj_inhibit,
-			-1,        // int inhibitcode,
-			false,     //     bool inhibit_image, // true if there is an inhibit image
-			false,     // bool inhibit_value, // true if there is an inhibit value
-			false,     //     bool prio_image, // if true, than the priority is an image, 
-             			   //     else it's a number, which is important
-			true       // bool prio_value
+  char_image res;
+  res = uj_image;
+  char_image result;
+  result =  py_skeleton_ultimate( &res,    // char_image & uj_image, 
+                          NULL,           // char_image & uj_prio,
+                          priocode,  // int priocode,
+                          connex,    // int connexity  
+                          NULL,      // char_image & uj_inhibit,
+                          -1,        // int inhibitcode,
+                          false,     // bool inhibit_image, // true if there is an inhibit image
+                          false,     // bool inhibit_value, // true if there is an inhibit value
+                          false,     // bool prio_image, // if true, than the priority is an image, 
+                          //     else it's a number, which is important
+                          true       // bool prio_value
     );
 
   return result;
-
-};
-
-
-// void _export(){
-//   def( "cpp_", &,
-//        args("", "", ""),
-//        "the help is in 'help(pink.skeleton)'"
-//     );
-// };
+} /* py_skeleton_im_int_int_void */
 
 
-
-
-
-
-PTR<char_image> py_skeleton_im_im_int_void( const char_image & uj_image, 
-					    const int_image & uj_prio,
-					    int connex
+char_image py_skeleton_im_im_int_void(
+  const char_image & uj_image, 
+  const int_image & uj_prio,
+  int connex
   ) 
 {
 
-  PTR<char_image> res( new char_image( uj_image ) );
-  PTR<int_image> nc_prio( new int_image( uj_prio ) );
+  char_image res;
+  res = uj_image;
+  int_image nc_prio;
+  nc_prio = uj_prio;
   
-  PTR<char_image> result =
-    py_skeleton_ultimate( res.get(),   // char_image & uj_image, 
-			  nc_prio.get(),  //     char_image & uj_prio,
+  char_image result;
+  result =
+    py_skeleton_ultimate( &res,   // char_image & uj_image, 
+			  &nc_prio,  //     char_image & uj_prio,
 			  -1,       // int priocode,
 			  connex,   // int connexity  
 			  NULL,     //     char_image & uj_inhibit,
@@ -98,32 +92,31 @@ PTR<char_image> py_skeleton_im_im_int_void( const char_image & uj_image,
       );
   
   return result;
-};
+} /* py_skeleton_im_im_int_void */
 
 
 
 
 
-
-
-
-PTR<char_image> py_skeleton_im_int_int_im( const char_image & uj_image, 
-					   int prio,
-					   int connex,			     
-					   const char_image & inhibit
+char_image py_skeleton_im_int_int_im( const char_image & uj_image, 
+                                      int prio,
+                                      int connex,			     
+                                      const char_image & inhibit
   ) 
 {
 
-  PTR<char_image> res( new char_image( uj_image ) );
-//  PTR<char_image> nc_prio( new char_image( uj_prio ) );
-  PTR<char_image> nc_inhibit( new char_image (inhibit) );
+  char_image res;
+  res = uj_image;
 
-  PTR<char_image> result =  
-    py_skeleton_ultimate( res.get(),    // char_image & uj_image, 
+  char_image nc_inhibit;
+  nc_inhibit = inhibit;
+
+  char_image result =  
+    py_skeleton_ultimate( &res,    // char_image & uj_image, 
 			  NULL,      //     char_image & uj_prio,
 			  prio,      // int priocode,
 			  connex,    // int connexity  
-			  nc_inhibit.get(),//     char_image & uj_inhibit,
+			  &nc_inhibit,//     char_image & uj_inhibit,
 			  -1,        // int inhibitcode,
 			  true,      //     bool inhibit_image, // true if there is an inhibit image
 			  false,     // bool inhibit_value, // true if there is an inhibit value
@@ -138,23 +131,27 @@ PTR<char_image> py_skeleton_im_int_int_im( const char_image & uj_image,
 
 
 
-PTR<char_image> py_skeleton_im_im_int_im( const char_image & uj_image, 
-					  const int_image & uj_prio,
-					  int connex,			     
-					  const char_image & inhibit
+char_image py_skeleton_im_im_int_im( const char_image & uj_image, 
+                                     const int_image & uj_prio,
+                                     int connex,			     
+                                     const char_image & inhibit
   ) 
 {
-
-  PTR<char_image> res( new char_image( uj_image ) );
-  PTR<int_image> nc_prio( new int_image( uj_prio ) );
-  PTR<char_image> nc_inhibit( new char_image (inhibit) );
   
-  PTR<char_image> result =
-    py_skeleton_ultimate( res.get(),    // char_image & uj_image, 
-			  nc_prio.get(),   //     char_image & uj_prio,
+  char_image res;
+  res = uj_image;
+  int_image nc_prio;
+  nc_prio = uj_prio;
+  char_image nc_inhibit;
+  nc_inhibit = inhibit;
+  
+  char_image result;
+  result =
+    py_skeleton_ultimate( &res,    // char_image & uj_image, 
+			  &nc_prio,   //     char_image & uj_prio,
 			  -1,        // int priocode,
 			  connex,    // int connexity  
-			  nc_inhibit.get(),//     char_image & uj_inhibit,
+			  &nc_inhibit,//     char_image & uj_inhibit,
 			  -1,        // int inhibitcode,
 			  true,      //     bool inhibit_image, // true if there is an inhibit image
 			  false,     // bool inhibit_value, // true if there is an inhibit value
@@ -173,19 +170,19 @@ PTR<char_image> py_skeleton_im_im_int_im( const char_image & uj_image,
 
 
 
-PTR<char_image> py_skeleton_im_int_int_int( const char_image & uj_image, 
+char_image py_skeleton_im_int_int_int( const char_image & uj_image, 
 					   int prio,
 					   int connex,			     
 					   int inhibit_value
   ) 
 {
 
-  PTR<char_image> res( new char_image( uj_image ) );
-//  PTR<char_image> nc_prio( new char_image( uj_prio ) );
-//  PTR<char_image> nc_inhibit( new char_image (inhibit) );
+  char_image res;
+  res = uj_image;
   
-  PTR<char_image> result =
-    py_skeleton_ultimate( res.get(),    // char_image & uj_image, 
+  char_image result;
+  result =
+    py_skeleton_ultimate( &res,    // char_image & uj_image, 
 			  NULL,      //     char_image & uj_prio,
 			  prio,      // int priocode,
 			  connex,    // int connexity  
@@ -200,34 +197,35 @@ PTR<char_image> py_skeleton_im_int_int_int( const char_image & uj_image,
   
   return result;
 
-
 };
 
 
 
-PTR<char_image> py_skeleton_im_im_int_int( const char_image & uj_image, 
-					   const int_image & uj_prio,
-					   int connex,			     
-					   int inhibit_value
+char_image py_skeleton_im_im_int_int(
+  const char_image & uj_image, 
+  const int_image & uj_prio,
+  int connex,			     
+  int inhibit_value
   ) 
 {
 
-  PTR<char_image> res( new char_image( uj_image ) );
-  PTR<int_image> nc_prio( new int_image( uj_prio ) );
-//  PTR<char_image> nc_inhibit( new char_image (inhibit) );
+  char_image res;
+  res = uj_image;
+  int_image nc_prio;
+  nc_prio = uj_prio;
   
-  PTR<char_image> result =
-    py_skeleton_ultimate( res.get(),    // char_image & uj_image, 
-			  nc_prio.get(),   //     char_image & uj_prio,
-			  -1,        // int priocode,
-			  connex,    // int connexity  
-			  NULL,      //     char_image & uj_inhibit,
-			  inhibit_value, // int inhibitcode,
-			  false,      //     bool inhibit_image, // true if there is an inhibit image
-			  true,     // bool inhibit_value, // true if there is an inhibit value
-			  true,      //     bool prio_image, // if true, than the priority is an image, 
-             			     //     else it's a number, which is important
-			  false      // bool prio_value
+  char_image result;  
+  result = py_skeleton_ultimate( &res,    // char_image & uj_image, 
+                                 &nc_prio,   //     char_image & uj_prio,
+                                 -1,        // int priocode,
+                                 connex,    // int connexity  
+                                 NULL,      //     char_image & uj_inhibit,
+                                 inhibit_value, // int inhibitcode,
+                                 false,      //     bool inhibit_image, // true if there is an inhibit image
+                                 true,     // bool inhibit_value, // true if there is an inhibit value
+                                 true,      //     bool prio_image, // if true, than the priority is an image, 
+                                 //     else it's a number, which is important
+                                 false      // bool prio_value
       );
   
   return result;
@@ -237,39 +235,40 @@ PTR<char_image> py_skeleton_im_im_int_int( const char_image & uj_image,
 
 
   
-PTR<char_image> py_skeleton_ultimate( char_image * uj_image, 
-				      int_image * uj_prio,
-				      int priocode,
-				      int connex, 
-				      char_image * uj_inhibit,
-				      int inhibitcode,
-				      bool inhibit_image, // true if there is an inhibit image
-				      bool inhibit_value, // true if there is an inhibit value
-				      bool prio_image, // if true, than the priority is an image, 
-				      // else it's a number, which is important
-				      bool prio_value
-			   
+char_image py_skeleton_ultimate( char_image * uj_image, 
+                                 int_image * uj_prio,
+                                 int priocode,
+                                 int connex, 
+                                 char_image * uj_inhibit,
+                                 int inhibitcode,
+                                 bool inhibit_image, // true if there is an inhibit image
+                                 bool inhibit_value, // true if there is an inhibit value
+                                 bool prio_image, // if true, than the priority is an image, 
+                                 // else it's a number, which is important
+                                 bool prio_value
+                                 
   )
 {
 
-  PTR<char_image> result;
+  char_image result;
 
   struct xvimage * image;
   struct xvimage * prio;
   struct xvimage * inhibimage = NULL;
   int32_t inhibvalue;
 
-  image = &(*uj_image); // xvimage* uj_image -> operator&()
+  image = uj_image->get_output(); // xvimage* uj_image -> operator&()
   if ( inhibit_image )
   {
-    inhibimage = &(*uj_inhibit);
-  };
+    inhibimage = uj_inhibit->get_output();
+  } /* inhibit_image */
 
-  if ( prio_image  ){
-
-    prio = &(*uj_prio);
-
-  } else { /* not ( prio_image ) */
+  if ( prio_image )
+  {
+    prio = uj_prio->get_output();
+  }
+  else /* not ( prio_image ) */
+  { 
 
     // the distance map has to be calculated
     int32_t i, N;
@@ -325,13 +324,14 @@ PTR<char_image> py_skeleton_ultimate( char_image * uj_image,
   } /* not if (prio_image) */
   
 
-  if ( not inhibit_value ){
+  if ( not inhibit_value )
+  {
     inhibvalue = -1;
   } /* not not inhibit_value */
   else
   {
     inhibvalue=inhibitcode;
-  };/* not not inhibit_value */
+  }/* not not inhibit_value */
   
 
   if (depth(image) == 1)
@@ -343,14 +343,14 @@ PTR<char_image> py_skeleton_ultimate( char_image * uj_image,
 	error("lskelubp2 failed");
       }
 
-      result.reset( new char_image( *image ) );
+      result = *image;
     }
     else  /* not (inhibit_image) */
     {
       if (! lskelubp( image, prio, connex, inhibvalue ) )
 	error("lskelubp failed");
       
-      result.reset( new char_image( *image ) );
+      result = *image;
     }
   } 
   else /* not  (depth(image) == 1) */ 
@@ -362,7 +362,7 @@ PTR<char_image> py_skeleton_ultimate( char_image * uj_image,
 	error("lskelubp3d2 failed");
       }
 
-      result.reset( new char_image( *image ) );
+      result = *image;
     }
     else /* not (inhibit_image) */
     {
@@ -371,7 +371,7 @@ PTR<char_image> py_skeleton_ultimate( char_image * uj_image,
 	error("lskelubp3d failed");
       }
       
-      result.reset( new char_image( *image ) );
+      result = *image;
     }
   } /* not (depth(image) == 1) */
 
@@ -393,50 +393,38 @@ PTR<char_image> py_skeleton_ultimate( char_image * uj_image,
 ***********************************************************************************************
  */
 
-
-void py_skeleton_im_int_int_void_export(){
+void py_skeleton_export()
+{
   def( "cpp_py_skeleton_im_int_int_void", &py_skeleton_im_int_int_void,
        args("image", "priority value", "connexity"),
        "the help is in 'help(pink.skeleton)'"
     );
-};
 
-
-void py_skeleton_im_im_int_void_export(){
   def( "cpp_py_skeleton_im_im_int_void", &py_skeleton_im_im_int_void,
        args("image", "priority image", "connexity"),
        "the help is in 'help(pink.skeleton)'"
     );
-};
 
-void py_skeleton_im_int_int_im_export(){
   def( "cpp_py_skeleton_im_int_int_im", &py_skeleton_im_int_int_im,
        args("image", "priority value", "connexity", "inhibited pixels"),
        "the help is in 'help(pink.skeleton)'"
     );
-};
 
-void py_skeleton_im_im_int_im_export(){
   def( "cpp_py_skeleton_im_im_int_im", &py_skeleton_im_im_int_im,
        args("image", "priority image", "connexity", "inhibited pixels"),
        "the help is in 'help(pink.skeleton)'"
     );
-};
 
-
-void py_skeleton_im_int_int_int_export(){
   def( "cpp_py_skeleton_im_int_int_int", &py_skeleton_im_int_int_int,
        args("image", "priority value", "connexity", "inhibited value"),
        "the help is in 'help(pink.skeleton)'"
     );
-};
 
-void py_skeleton_im_im_int_int_export(){
   def( "cpp_py_skeleton_im_im_int_int", &py_skeleton_im_im_int_int,
        args("image", "priority_image", "connexity", "inhibited value"),
        "the help is in 'help(pink.skeleton)'"
-    );
-};
+    );  
+} /* py_skeleton_export */
 
 
 

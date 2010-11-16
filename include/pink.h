@@ -66,6 +66,7 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <boost/thread.hpp>
   #include <boost/algorithm/minmax_element.hpp>
   #include <boost/preprocessor.hpp>
+  #include <boost/operators.hpp>
 
 
   #include <iostream>

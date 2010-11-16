@@ -19,16 +19,16 @@
 
 namespace pink { 
 
-  PTR<float_image> lnormalize( const float_image & I,
-			       float_image::pixel_type vmin = 0. ,
-			       float_image::pixel_type vmax = 1. 
+  float_image lnormalize( const float_image & I,
+                          float_image::pixel_type vmin = 0. ,
+                          float_image::pixel_type vmax = 1. 
     );
   
-  PTR<char_image> lnormalize( const char_image & I,
-			      char_image::pixel_type vmin = 0 ,
-			      char_image::pixel_type vmax = 255 
+  char_image lnormalize( const char_image & I,
+                         char_image::pixel_type vmin = 0 ,
+                         char_image::pixel_type vmax = 255 
     );
-
+  
 
 
 

@@ -1,8 +1,14 @@
-// UjoImro, 2009
-// This software is meant to be free
+/*
+  This software is licensed under 
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
-// most of the boost includes come from the pink tree
-// may be changed later
+  This software comes in hope that it will be useful but 
+  without any warranty to the extent permitted by aplicable law.
+  
+  (C) UjoImro, 2009-2010
+  Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+  ujoimro@gmail.com
+*/
 
 #ifndef PINK_PYTHON_H
 #define PINK_PYTHON_H
