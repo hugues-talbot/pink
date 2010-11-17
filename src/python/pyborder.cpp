@@ -18,24 +18,32 @@
 #undef error
 #define error(msg) {stringstream fullmessage; fullmessage << "in pyborder.cpp: " << msg; call_error(fullmessage.str());}
 
+/// !!! macros should be named upper case
+#undef border
+
 using namespace boost::python;
-using namespace pink;
+
+namespace pink {
+  namespace python {
 
 
-PTR<char_image> py_border(const char_image & src, int connex)
-{
-  PTR<char_image> result(new char_image(src));
+    char_image border(const char_image & src, int connex)
+    {
+      char_image result;
+      result = src;
 
-  mctopo3d_lborder(result->get_output(), connex);
+      mctopo3d_lborder(result.get_output(), connex);
 
-  return result;
-} /* py_border */
+      return result;
+    } /* py_border */
+
+  } /* namespace python */
+} /* namespace pink */
 
 
-
-UI_EXPORT_ONE_FUNCTION( cpp_border, 
-			py_border, 
-			args("image", "connexity"),
+UI_EXPORT_ONE_FUNCTION( border, 
+			pink::python::border, 
+			(arg("image"), arg("connexity")),
 			"\brief border of a binary image\n"
 			"\n"
 			"<B>Usage:</B> border in connex out\n"
@@ -56,7 +64,8 @@ UI_EXPORT_ONE_FUNCTION( cpp_border,
 			"\author Michel Couprie\n"
 			"*/\n"
 			"\n"
-  )
+  );
+
 
 
 

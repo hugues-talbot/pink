@@ -20,7 +20,7 @@
 
 namespace pink{
 
-PTR<deep_xvimage> py_readimage( string filename ){
+PTR<pink::deep_xvimage> py_readimage( string filename ){
   // readimage takes 'char *', while 'c_str()' gives 'const char *'. 
   // I don't want to cast unnecesserily, so I'll just copy it.
 
@@ -34,7 +34,7 @@ PTR<deep_xvimage> py_readimage( string filename ){
     error("file not found: " + filename );
   }
   
-  PTR< deep_xvimage > result( new deep_xvimage( *tmp ) ); // upcast deep copying the xvimage
+  PTR< pink::deep_xvimage > result( new deep_xvimage( *tmp ) ); // upcast deep copying the xvimage
 
   freeimage( tmp ); // freeing xvimage
   

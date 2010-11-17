@@ -19,46 +19,50 @@
 using namespace boost::python;
 using namespace pink;
 
+namespace pink {
+  namespace python {
 
-
-char_image py_dilat(
-  const char_image & src, 
-  const char_image & elem
-  )
-{
+    char_image dilat(
+      const char_image & src, 
+      const char_image & elem
+      )
+    {
   
-  if ((src.get_size().size()!=2) and (elem.get_size().size()!=2))
-  {
-    error("only 2D images are supported, both 'src' and 'elem'");
-  }
+      if ((src.get_size().size()!=2) and (elem.get_size().size()!=2))
+      {
+        error("only 2D images are supported, both 'src' and 'elem'");
+      }
   
-  if (not (elem.get_center()[0]>=0) and (elem.get_center()[1]>=0))
-  {
-    error("The center of 'elem' must be specified.");
-  }
+      if (not (elem.get_center()[0]>=0) and (elem.get_center()[1]>=0))
+      {
+        error("The center of 'elem' must be specified.");
+      }
 
-  char_image result;
-  result = src;
-  char_image elem_const_away;
-  elem_const_away =elem;
+      char_image result;
+      result = src;
+      char_image elem_const_away;
+      elem_const_away =elem;
 
-  if (! ldilateros_ldilat( result.get_output(),
-			   elem_const_away.get_output(),
-			   elem_const_away.get_center()[0],
-			   elem_const_away.get_center()[0]
-	)
-    )
-  {
-    error("function ldilat failed");
-  } /* NOT (! ldilateros_ldilat( src, elem_const_away, x, y)) */
+      if (! ldilateros_ldilat( result.get_output(),
+                               elem_const_away.get_output(),
+                               elem_const_away.get_center()[0],
+                               elem_const_away.get_center()[0]
+            )
+        )
+      {
+        error("function ldilat failed");
+      } /* NOT (! ldilateros_ldilat( src, elem_const_away, x, y)) */
 
-  return result;    
-} /* py_dilat */
+      return result;    
+    } /* dilat */
+
+  } /* namespace python */
+} /* namespace pink */
 
 
 UI_EXPORT_ONE_FUNCTION(
   dilat,
-  py_dilat,
+  pink::python::dilat,
   ( arg("src"), arg("elem") ),
   " \n"
   "<B>dilat</B> - morphological dilation by a plane structuring element \n"

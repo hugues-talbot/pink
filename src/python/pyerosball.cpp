@@ -10,49 +10,52 @@
 using namespace boost::python;
 using namespace pink;
 
+namespace pink {
+  namespace python {
 
-
-char_image py_erosball(
-  const char_image & src,
-  float r,
-  int mode
-  )
-{
-
-  char_image result;
-  result = src;
-  
-  if ( src.get_size().size() == 2 ) // the image is 2D
-  {     
-    if (! lerosdisc( result.get_output(), r, mode ) )
-    {      
-      error("erosball: lerosdisc failed");      
-    }
-  }
-  else /* NOT src.get_size().size() == 2 */
-  {    
-    if ( src.get_size().size() == 3 ) // the image is 3D
+    char_image erosball(
+      const char_image & src,
+      float r,
+      int mode
+      )
     {
-      if (! lerosball( result.get_output(), r, mode ) )
-      {        
-        error("erosball: lerosball failed");        
-      }      
-    }
-    else /* NOT src.get_size().size() == 3 */
-    {     
-      error("erosball: only 2D and 3D images are supported");    
-    }  /* NOT src.get_size().size() == 3 */
-  }  /* NOT src.get_size().size() == 2 */
+
+      char_image result;
+      result = src;
+  
+      if ( src.get_size().size() == 2 ) // the image is 2D
+      {     
+        if (! lerosdisc( result.get_output(), r, mode ) )
+        {      
+          error("erosball: lerosdisc failed");      
+        }
+      }
+      else /* NOT src.get_size().size() == 2 */
+      {    
+        if ( src.get_size().size() == 3 ) // the image is 3D
+        {
+          if (! lerosball( result.get_output(), r, mode ) )
+          {        
+            error("erosball: lerosball failed");        
+          }      
+        }
+        else /* NOT src.get_size().size() == 3 */
+        {     
+          error("erosball: only 2D and 3D images are supported");    
+        }  /* NOT src.get_size().size() == 3 */
+      }  /* NOT src.get_size().size() == 2 */
   
 
-  return result;    
-} /* py_erosball */
+      return result;    
+    } /* py_erosball */
 
+  } /* namespace python */
+} /* namespace pink */
 
 
 UI_EXPORT_ONE_FUNCTION(
   erosball,
-  py_erosball, 
+  pink::python::erosball, 
   ( arg("image"),arg("r"),arg("mode") ),
   "pink's help:\n\n"
   "morphological binary erosion by a ball\n"

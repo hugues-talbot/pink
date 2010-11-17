@@ -21,83 +21,98 @@ using namespace boost::python;
 using namespace pink;
 
 
-void py_generate_rgb_image( const char_image & R,
-			    const char_image & G,
-			    const char_image & B,
-			    string filename 
-  )
-{
 
-  ARRAY<char> c_str_filename(new char[filename.size()+1]);
-  strcpy(c_str_filename.get(), filename.c_str());
+namespace pink {
+  namespace python {
+
+
+    void generate_rgb_image(
+      const char_image & R,
+      const char_image & G,
+      const char_image & B,
+      string filename 
+      )
+    {
+
+      ARRAY<char> c_str_filename(new char[filename.size()+1]);
+      strcpy(c_str_filename.get(), filename.c_str());
   
 
-  PTR<char_image> copy_R(new char_image(R));
-  PTR<char_image> copy_G(new char_image(G));
-  PTR<char_image> copy_B(new char_image(B));
+      char_image copy_R;
+      copy_R = R;
+      char_image copy_G;
+      copy_G = G;
+      char_image copy_B;
+      copy_B = B;
   
-  writergbimage( copy_R->get_output(),
-		 copy_G->get_output(),
-		 copy_B->get_output(),
-		 c_str_filename.get()
-    );
+      writergbimage( copy_R.get_output(),
+                     copy_G.get_output(),
+                     copy_B.get_output(),
+                     c_str_filename.get()
+        );
   
 ///!!!  cout << "ppm image written to '" << filename << "'\n";
   
   
-  /* return void */
-} /* py_surimp */
+      /* return void */
+    } /* surimp */
 
-void py_surimp( const char_image & BW,
-		const char_image & red,
-		string filename
-  )
-{
+    void surimp(
+      const char_image & BW,
+      const char_image & red,
+      string filename
+      )
+    {
 
-  ARRAY<char> c_str_filename(new char[filename.size()]);
-  strcpy(c_str_filename.get(), filename.c_str());
+      ARRAY<char> c_str_filename(new char[filename.size()]);
+      strcpy(c_str_filename.get(), filename.c_str());
   
 
-  PTR<char_image> image1(new char_image(BW));
-  PTR<char_image> image2(new char_image(red));
-  struct xvimage * tmp;
-  struct xvimage * tmp3;
+      char_image image1;
+      image1=BW;
+      char_image image2;
+      image2=red;
+      struct xvimage * tmp;
+      struct xvimage * tmp3;
 
 
-  tmp = copyimage(image2->get_output());
-  linverse(tmp);
-  tmp3 = copyimage(image1->get_output());
-  lmin(tmp3,tmp);
-  copy2image(tmp,image2->get_output());
-  ladd(tmp,tmp3);
-  writergbimage(tmp, tmp3, tmp3, c_str_filename.get());
-  //freeimage(image1); this image is freed automatically by boost 
-  //freeimage(image2); this image is freed automatically by boost 
-  freeimage(tmp);
-  freeimage(tmp3);
+      tmp = copyimage(image2.get_output());
+      linverse(tmp);
+      tmp3 = copyimage(image1.get_output());
+      lmin(tmp3,tmp);
+      copy2image(tmp,image2.get_output());
+      ladd(tmp,tmp3);
+      writergbimage(tmp, tmp3, tmp3, c_str_filename.get());
+      //freeimage(image1); this image is freed automatically by boost 
+      //freeimage(image2); this image is freed automatically by boost 
+      freeimage(tmp);
+      freeimage(tmp3);
 
 /////!!!  cout << "ppm image written to '" << filename << "'\n";
 
 
-  /*  return void;*/  
-} /* py_surimp */
+      /*  return void;*/  
+    } /* surimp */
+  } /* namespace python */
+} /* namespace pink */
 
 
 
 
-
-UI_EXPORT_ONE_FUNCTION( cpp_surimp, 
-			py_surimp, 
-			args("black and white image", "the binary red marker image", "the ppm filename"),
+UI_EXPORT_ONE_FUNCTION( surimp, 
+			pink::python::surimp, 
+			( arg("black and white image"), arg("the binary red marker image"), arg("the ppm filename")),
 			"WRITE ME!!!\n"
-  )
+  );
 
 
-UI_EXPORT_ONE_FUNCTION( cpp_generate_rgb_image, 
-			py_generate_rgb_image, 
-			args("red image", "green image", "blue image", "the ppm filename"),
+
+UI_EXPORT_ONE_FUNCTION( generate_rgb_image, 
+			pink::python::generate_rgb_image, 
+			(arg("red image"), arg("green image"), arg("blue image"), arg("the ppm filename")),
 			"WRITE ME!!!\n"
-  )
+  );
+
 
 
 

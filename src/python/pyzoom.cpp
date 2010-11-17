@@ -22,33 +22,38 @@ using namespace pink;
 // note this function is too rigid (you can't choose the zoom algorithm)
 // and should definitely be replaced later
 
-template <class image_type>
-image_type py_zoom(
-  const image_type & image,
-  double fx, double fy, double fz // the zoom factors 		
-  )
-{
-  image_type copy;
-  copy = image;
+namespace pink {
+  namespace python {
+
+    template <class image_type>
+    image_type zoom(
+      const image_type & image,
+      double fx, double fy, double fz // the zoom factors 		
+      )
+    {
+      image_type copy;
+      copy = image;
   
-  xvimage * out;
+      xvimage * out;
 
-  lzoom( copy.get_output() ,
-	 &out,
-	 fx, fy, fz 
-    );
+      lzoom( copy.get_output() ,
+             &out,
+             fx, fy, fz 
+        );
     
-  image_type result(*out);
+      image_type result(*out);
 
-  freeimage(out);
+      freeimage(out);
  
-  return result;
-} /* py_zoom */
+      return result;
+    } /* zoom */
 
+  } /* namespace python */
+} /* namespace pink */
 
 UI_EXPORT_FUNCTION(
   zoom,
-  py_zoom,
+  pink::python::zoom,
   ( arg("src"),
     arg("zoom factor X"),
     arg("zoom factor Y"),
@@ -58,7 +63,8 @@ UI_EXPORT_FUNCTION(
   "More advanced parametrization through the 'pink.zoom' function."
   "Note: this function is too rigid (you can't choose the zoom algorithm) "
   " and should definitely be replaced later"
-  )
+  );
+
 
 
 

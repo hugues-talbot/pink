@@ -25,25 +25,29 @@ using namespace pink;
 
 // int32_t lwshedtopo_lwshedtopo( struct xvimage *image, int32_t connex );
 
+namespace pink {
+  namespace python {
 
-char_image py_wshedtopo( const char_image & orig, int connex )
-{
+    char_image wshedtopo( const char_image & orig, int connex )
+    {
 
-  char_image result;
-  result = orig; 
-  if (! lwshedtopo_lwshedtopo(  result.get_output(), connex ) )
-  {
-    error("lwshedtopo_lwshedtopo failed");
-  }
+      char_image result;
+      result = orig; 
+      if (! lwshedtopo_lwshedtopo(  result.get_output(), connex ) )
+      {
+        error("lwshedtopo_lwshedtopo failed");
+      }
   
-  return result;
-} /* py_wshedtopo */
+      return result;
+    } /* wshedtopo */
 
+  } /* namespace python */
+} /* namespace pink */
 
 
 UI_EXPORT_ONE_FUNCTION(
   wshedtopo,
-  py_wshedtopo, 
+  pink::python::wshedtopo, 
   ( arg("image"), arg("connex") ),
   "topological grayscale watershed (Couprie-Bertrand algorithm)\n"
   "Usage: wshedtopo in.pgm connex [i] out.pgm\n"
@@ -55,7 +59,8 @@ UI_EXPORT_ONE_FUNCTION(
   "    Michel Couprie\n"
   "Example:\n"
   "wshedtopo ur1 4 ur1_wshedtopo"
-  )
+  );
+
 
 
 

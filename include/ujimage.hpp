@@ -167,8 +167,9 @@ namespace pink{
     void _write_amira( const string & filename ); // exports the image into an amira mesh (.am) file
 
     // cast operators
-    xvimage* get_output(); // this method is not exported to python. It could not even be, as boost doesn't support pointers.
-    operator xvimage*();    
+    xvimage* get_output(); // this method is not exported to python. It could not even be, as boost doesn't support pointers.    
+    operator xvimage*();
+    operator const xvimage*() const;    
 //    string imtype(); 
     const vint & get_size() const;
     const vint & get_center() const;
@@ -568,7 +569,13 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     return this->get_output();    
   } /* ujoi::xvimage*  */
-  
+
+  template <class pixel_type>
+  ujoi<pixel_type>::operator const xvimage* () const // this method is not exported to python. It could not even be, as boost doesn't support pointers.
+  {
+    return this->get_output();    
+  } /* ujoi::xvimage*  */
+
 
   template <class pixel_type >
   xvimage* ujoi<pixel_type >::get_output(){

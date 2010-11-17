@@ -18,152 +18,157 @@ using namespace boost::python;
 using namespace pink;
 
 
+namespace pink {
+  namespace python {
 
-char_image py_closing(
-  const char_image & src, 
-  const char_image & elem
-  )
-{
-
-  if (not (elem.get_center()[0]>=0) and ((elem.get_center()[1]>=0)))
-  {
-    error("The center of 'elem' must be specified.");
-  }
-
-
-  if (src.get_size().size()!=elem.get_size().size()){
-    error("error: the dimensions of 'src' and 'elem' must be equal");
-  }
-
-  char_image result;
-  result = src;
-  char_image elem_const_away;
-  elem_const_away = elem;
-
-
-  if (result.get_size()==2)
-  {
-    int rs = result.get_size()[0];
-    int cs = result.get_size()[1];
-    int x = elem_const_away.get_center()[0];
-    int y = elem_const_away.get_center()[1];
-      
-    
-    if (! ldilateros_ldilat( result.get_output(), elem_const_away.get_output(), rs - 1 - x, cs - 1 - y))
-    {
-      error("function ldilat failed");
-    }
-    
-    if (! lsym(elem_const_away.get_output(), 'c') )
-    {
-      error("function lsym failed");
-    }
-    
-    if (! ldilateros_leros( result.get_output(), elem_const_away.get_output(), x, y))
-    {
-      error("function leros failed");
-    }
-
-  } 
-  else /* NOT result.get_size()==2 */ 
-  {
-    if (result.get_size()==3)
+    char_image closing(
+      const char_image & src, 
+      const char_image & elem
+      )
     {
 
-      // the first two center coordinates of elem have already been tested
-      if (not (elem_const_away.get_center()[2]>=0))
+      if (not (elem.get_center()[0]>=0) and ((elem.get_center()[1]>=0)))
       {
-	error("The center of 'elem' must be specified.");
-      }
-      
-      int rs = result.get_size()[0];
-      int cs = result.get_size()[1];
-      int ds = result.get_size()[2];
-      int x = elem_const_away.get_center()[0];
-      int y = elem_const_away.get_center()[1];
-      int z = elem_const_away.get_center()[2];
-      
-      if (! ldilat3d( result.get_output(), elem_const_away.get_output(), x, y, z))
-      {
-	error("function leros3d failed");
-      }
-      
-      if (! lsym( elem_const_away.get_output(), 'c'))
-      {
-	error("function lsym failed");
-      }
-      
-      if (! leros3d( result.get_output(), elem_const_away.get_output(), rs - 1 - x, cs - 1 - y, ds - 1 - z))
-      {
-	error("function leros3d failed");
+        error("The center of 'elem' must be specified.");
       }
 
-    } 
-    else /* NOT result.get_size()==3 */
-    {
-      error("pyclosing: the image must be 2D or 3D");
-    } /* NOT result.get_size()==3 */
+
+      if (src.get_size().size()!=elem.get_size().size()){
+        error("error: the dimensions of 'src' and 'elem' must be equal");
+      }
+
+      char_image result;
+      result = src;
+      char_image elem_const_away;
+      elem_const_away = elem;
+
+
+      if (result.get_size()==2)
+      {
+        int rs = result.get_size()[0];
+        int cs = result.get_size()[1];
+        int x = elem_const_away.get_center()[0];
+        int y = elem_const_away.get_center()[1];
+      
     
-  } /* NOT result.get_size()==2 */ 
+        if (! ldilateros_ldilat( result.get_output(), elem_const_away.get_output(), rs - 1 - x, cs - 1 - y))
+        {
+          error("function ldilat failed");
+        }
+    
+        if (! lsym(elem_const_away.get_output(), 'c') )
+        {
+          error("function lsym failed");
+        }
+    
+        if (! ldilateros_leros( result.get_output(), elem_const_away.get_output(), x, y))
+        {
+          error("function leros failed");
+        }
+
+      } 
+      else /* NOT result.get_size()==2 */ 
+      {
+        if (result.get_size()==3)
+        {
+
+          // the first two center coordinates of elem have already been tested
+          if (not (elem_const_away.get_center()[2]>=0))
+          {
+            error("The center of 'elem' must be specified.");
+          }
+      
+          int rs = result.get_size()[0];
+          int cs = result.get_size()[1];
+          int ds = result.get_size()[2];
+          int x = elem_const_away.get_center()[0];
+          int y = elem_const_away.get_center()[1];
+          int z = elem_const_away.get_center()[2];
+      
+          if (! ldilat3d( result.get_output(), elem_const_away.get_output(), x, y, z))
+          {
+            error("function leros3d failed");
+          }
+      
+          if (! lsym( elem_const_away.get_output(), 'c'))
+          {
+            error("function lsym failed");
+          }
+      
+          if (! leros3d( result.get_output(), elem_const_away.get_output(), rs - 1 - x, cs - 1 - y, ds - 1 - z))
+          {
+            error("function leros3d failed");
+          }
+
+        } 
+        else /* NOT result.get_size()==3 */
+        {
+          error("pyclosing: the image must be 2D or 3D");
+        } /* NOT result.get_size()==3 */
+    
+      } /* NOT result.get_size()==2 */ 
   
   
-  return result;    
-} /* py_closing */
+      return result;    
+    } /* py_closing */
 
 
-char_image py_closeball(
-  const char_image & src, 
-  int r,
-  int mode=2
-  )
-{
-  if ((mode != 0) && (mode != 2) && (mode != 4) && 
-      (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
-  {
-    error("dist = [0|2|4|8|6|18|26]");
-  } /* if */
+    char_image closeball(
+      const char_image & src, 
+      int r,
+      int mode=2
+      )
+    {
+      if ((mode != 0) && (mode != 2) && (mode != 4) && 
+          (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
+      {
+        error("dist = [0|2|4|8|6|18|26]");
+      } /* if */
 
-  char_image result;
-  result = src;
+      char_image result;
+      result = src;
   
 
-  if (result.get_size().size()==2)
-  {
-    if (! ldilatdisc(result.get_output(), r, mode))
-    {
-      error("function ldilatdisc failed");
-    }
-    if (! lerosdisc(result.get_output(), r, mode))
-    {
-      error("function lerosdisc failed");
-    }
-  }
-  else /* NOT result.get_size().size()==2 */
-  {
-    if (! ldilatball(result.get_output(), r, mode))
-    {
-      error("function ldilatball failed");
-    }
-    if (! lerosball(result.get_output(), r, mode))
-    {
-      error("function lerosball failed");
-    }
-  } /* NOT result.get_size().size()==2 */
+      if (result.get_size().size()==2)
+      {
+        if (! ldilatdisc(result.get_output(), r, mode))
+        {
+          error("function ldilatdisc failed");
+        }
+        if (! lerosdisc(result.get_output(), r, mode))
+        {
+          error("function lerosdisc failed");
+        }
+      }
+      else /* NOT result.get_size().size()==2 */
+      {
+        if (! ldilatball(result.get_output(), r, mode))
+        {
+          error("function ldilatball failed");
+        }
+        if (! lerosball(result.get_output(), r, mode))
+        {
+          error("function lerosball failed");
+        }
+      } /* NOT result.get_size().size()==2 */
 
-  return result;
-} /* py_closeball */
+      return result;
+    } /* py_closeball */
+
+  } /* namespace python */
+} /* namespace pink */
 
 
-
-UI_EXPORT_ONE_FUNCTION( cpp_closeball, 
-			py_closeball, 
+UI_EXPORT_ONE_FUNCTION( closeball, 
+			pink::python::closeball, 
 			( arg("image"), arg("the ray of the ball"), arg("distance function (defaults to 2)") ),
 			"WRITE ME!!!\n"
-  )
+  );
+
 
 
 UI_EXPORT_ONE_FUNCTION( closing, 
-			py_closing,
+			pink::python::closing,
                         ( arg("src"), arg("elem") ),
                         " \n"
                         "morphological closing by a plane structuring element \n"
@@ -180,7 +185,8 @@ UI_EXPORT_ONE_FUNCTION( closing,
                         "\author Michel Couprie 2002 \n"
                         " \n"
        // end of the documenation
-  )
+  );
+
 
 
 

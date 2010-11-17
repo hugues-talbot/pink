@@ -1,5 +1,14 @@
-// UjoImro, 2009
-// This software is meant to be free
+/*
+  This software is licensed under 
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
+
+  This software comes in hope that it will be useful but 
+  without any warranty to the extent permitted by aplicable law.
+  
+  (C) UjoImro, 2009
+  Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+  ujoimro@gmail.com
+*/
 // boost python wrapper
 
 #include <pink_python.h>
@@ -10,29 +19,33 @@
 using namespace boost::python;
 using namespace pink;
 
+namespace pink {
+  namespace python {
 
-
-char_image py_long2byte(
-  const int_image & src,
-  int mode,
-  int nbnewval
-  )
-{
-  int_image local_copy;
-  local_copy = src;
+    char_image long2byte(
+      const int_image & src,
+      int mode,
+      int nbnewval
+      )
+    {
+      int_image local_copy;
+      local_copy = src;
   
-  xvimage * res = long2byte( local_copy.get_output(), mode, nbnewval );
+      xvimage * res = long2byte( local_copy.get_output(), mode, nbnewval );
 
-  char_image result(*res);
-  freeimage(res);
+      char_image result(*res);
+      freeimage(res);
 
-  return result;    
-} /* py_long2byte */
+      return result;    
+    } /* py_long2byte */
+
+  } /* namespace python */
+} /* namespace pink */
 
 
 UI_EXPORT_ONE_FUNCTION(
-  cpp_long2byte,
-  py_long2byte, 
+  long2byte,
+  pink::python::long2byte, 
   ( arg("image"),arg("mode"),arg("nb_new_val") ),
   "converts a 'int32_t' image to a 'byte' image \n"
   "\n"
@@ -56,7 +69,8 @@ UI_EXPORT_ONE_FUNCTION(
   "Category: convert\n"
   "\n"
   "author Michel Couprie\n"
-  )
+  );
+
 
 
 

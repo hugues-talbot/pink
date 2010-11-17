@@ -18,46 +18,51 @@
 using namespace boost::python;
 using namespace pink;
 
+namespace pink {
+  namespace python {
 
 
-char_image py_eros(
-  const char_image & src, 
-  const char_image & elem
-  )
-{
+    char_image eros(
+      const char_image & src, 
+      const char_image & elem
+      )
+    {
 
-  if ((src.get_size().size()!=2) and (elem.get_size().size()!=2))
-  {
-    error("Only 2D images are supported, both 'src' and 'elem'.");
-  }
+      if ((src.get_size().size()!=2) and (elem.get_size().size()!=2))
+      {
+        error("Only 2D images are supported, both 'src' and 'elem'.");
+      }
 
-  if (not (elem.get_center()[0]>=0) and ((elem.get_center()[1]>=0)))
-  {
-    error("The center of 'elem' must be specified.");
-  }
+      if (not (elem.get_center()[0]>=0) and ((elem.get_center()[1]>=0)))
+      {
+        error("The center of 'elem' must be specified.");
+      }
 
-  char_image result;
-  result = src;
-  char_image elem_const_away;
-  elem_const_away=elem;
+      char_image result;
+      result = src;
+      char_image elem_const_away;
+      elem_const_away=elem;
 
-  if (! ldilateros_leros( result.get_output(),
-			  elem_const_away.get_output(),
-			  elem_const_away.get_center()[0],
-			  elem_const_away.get_center()[0]
-	)
-    )
-  {
-    error("function leros failed");
-  } /* NOT (! ldilateros_leros( src, elem_const_away, x, y)) */
+      if (! ldilateros_leros( result.get_output(),
+                              elem_const_away.get_output(),
+                              elem_const_away.get_center()[0],
+                              elem_const_away.get_center()[0]
+            )
+        )
+      {
+        error("function leros failed");
+      } /* NOT (! ldilateros_leros( src, elem_const_away, x, y)) */
 
-  return result;    
-} /* py_eros */
+      return result;    
+    } /* eros */
 
+  } /* namespace python */
+} /* namespace pink */
 
+    
 UI_EXPORT_ONE_FUNCTION(
   eros,
-  py_eros,
+  pink::python::eros,
   (arg("src"), arg("elem")),
   "eros - morphological erosion by a plane structuring element \n"
   " \n"

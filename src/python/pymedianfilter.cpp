@@ -18,66 +18,70 @@
 using namespace boost::python;
 using namespace pink;
 
+namespace pink {
+  namespace python {
 
-char_image py_medianfilter(
-  const char_image & image, 
-  const char_image & structuring_element				 
-  )
-{
-  
-  // testing if the center of the 'structuring_element' is set
-  if ( image.get_size()[1] == -1 )
-  {    
-    error("medianfilter: the structuring element must be set");
-  }  
-  
-  char_image result;
-  result = image;
-  char_image non_const_structuring_element;
-  non_const_structuring_element = structuring_element;
-  
-  if ( image.get_size().size() == 2 ){ // the image is 2D
-    
-    if (! lfiltreordre( result.get_output(),
-                        non_const_structuring_element,
-                        non_const_structuring_element.get_center()[0], 
-                        non_const_structuring_element.get_center()[1],
-                        0.5
-          ))
-    {      
-      error("medianfilter: lfiltreordre failed");
-    } /* if lfiltreordre */
-    
-  }
-  else /* NOT image.get_size().size() == 2 */
-  {    
-    if ( image.get_size().size() == 3 ) // the image is 3D
+    char_image medianfilter(
+      const char_image & image, 
+      const char_image & structuring_element				 
+      )
     {
+  
+      // testing if the center of the 'structuring_element' is set
+      if ( image.get_size()[1] == -1 )
+      {    
+        error("medianfilter: the structuring element must be set");
+      }  
+  
+      char_image result;
+      result = image;
+      char_image non_const_structuring_element;
+      non_const_structuring_element = structuring_element;
+  
+      if ( image.get_size().size() == 2 ){ // the image is 2D
     
-      if (! lfiltreordre3d( result.get_output(), 
-                            non_const_structuring_element.get_output(),
+        if (! lfiltreordre( result.get_output(),
+                            non_const_structuring_element,
                             non_const_structuring_element.get_center()[0], 
                             non_const_structuring_element.get_center()[1],
-                            non_const_structuring_element.get_center()[2],
                             0.5
-	   ))
-      {        
-        error("medianfilter: lfiltreordre failed");
-      } /* if lfiltreordre3d*/    
-    }
-    else  /* NOT image.get_size().size() == 3 */ // the image is 4D or bad
-    {    
-      error("erosball: only 2D and 3D images are supported");
-    } /* NOT image.get_size().size() == 3 */ 
-  } /* NOT image.get_size().size() == 2 */
+              ))
+        {      
+          error("medianfilter: lfiltreordre failed");
+        } /* if lfiltreordre */
+    
+      }
+      else /* NOT image.get_size().size() == 2 */
+      {    
+        if ( image.get_size().size() == 3 ) // the image is 3D
+        {
+    
+          if (! lfiltreordre3d( result.get_output(), 
+                                non_const_structuring_element.get_output(),
+                                non_const_structuring_element.get_center()[0], 
+                                non_const_structuring_element.get_center()[1],
+                                non_const_structuring_element.get_center()[2],
+                                0.5
+                ))
+          {        
+            error("medianfilter: lfiltreordre failed");
+          } /* if lfiltreordre3d*/    
+        }
+        else  /* NOT image.get_size().size() == 3 */ // the image is 4D or bad
+        {    
+          error("erosball: only 2D and 3D images are supported");
+        } /* NOT image.get_size().size() == 3 */ 
+      } /* NOT image.get_size().size() == 2 */
    
-  return result;
-} /* py_medianfilter */
+      return result;
+    } /* medianfilter */
 
+  } /* namespace python */
+} /* namespace pink */
 
 UI_EXPORT_ONE_FUNCTION (
   medianfilter,
-  py_medianfilter,
+  pink::python::medianfilter,
   ( arg("image"), arg("structuring_element") ),
   "pink's help: \n"
   "Detailed Description \n"

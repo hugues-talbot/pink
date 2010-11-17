@@ -19,29 +19,35 @@
 using namespace boost::python;
 using namespace pink;
 
+namespace pink {
+  namespace python {
 
-template <class image_type>
-boost::python::list
-py_minmax( const image_type & image )
-{
-  typedef typename image_type::pixel_type pixel_type;
-  boost::python::list result;
+    template <class image_type>
+    boost::python::list
+    minmax( const image_type & image )
+    {
+      typedef typename image_type::pixel_type pixel_type;
+      boost::python::list result;
   
-  pair<pixel_type, pixel_type> tmp = lminmaxval(image);
+      pair<pixel_type, pixel_type> tmp = lminmaxval(image);
 
-  result.append(tmp.first);
-  result.append(tmp.second);
+      result.append(tmp.first);
+      result.append(tmp.second);
   
-  return result;
+      return result;
   
-} /* py_minmax */
+    } /* minmax */
+
+  } /* namespace python */
+} /* namespace pink */
 
 
-UI_EXPORT_FUNCTION( cpp_minmax, 
-		    py_minmax, 
-		    args("image"),
+UI_EXPORT_FUNCTION( minmax, 
+		    pink::python::minmax, 
+		    (arg("image")),
                     "Returns the minimum and maximum values of the image"
-  )
+  );
+
 
 
 

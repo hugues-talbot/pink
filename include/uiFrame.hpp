@@ -19,12 +19,14 @@
 namespace pink { 
 
   template <class image_type>
-  PTR<image_type> frame( const image_type & src_image, 
-			 typename image_type::pixel_type withval 
+  image_type frame(
+    const image_type & src_image, 
+    typename image_type::pixel_type withval 
     )
   {
 
-    PTR<image_type> result( new image_type(src_image));
+    image_type result;
+    result = src_image;
 
     vint curr( src_image.get_size() );
     
@@ -33,18 +35,18 @@ namespace pink {
       src_image.get_size().nextStep( q, curr );
       if (src_image.get_size().on_side( curr ))
       {
-	(*result)[q]=withval;	
+	result[q]=withval;	
       } /* if */
     } /* FOR */
 
     return result;
-    
 
   } /* frame */
   
   template <class image_type>
-  PTR<image_type> frame_around( const image_type & src_image, 
-				typename image_type::pixel_type withval 
+  image_type frame_around(
+    const image_type & src_image, 
+    typename image_type::pixel_type withval 
     )
   {
 
@@ -56,7 +58,7 @@ namespace pink {
       new_size[q] = src_image.get_size()[q] + 2;      
     } /* FOR */
     
-    PTR<image_type> result( new image_type(new_size) );
+    image_type result(new_size);
 
     vint curr( src_image.get_size().size(), "curr"  );
 
@@ -69,27 +71,27 @@ namespace pink {
     	curr[w]+=1;
       } /* FOR */
       //cout << curr.repr() << "\n";
-      (*result)[curr]=src_image[q];
+      result[curr]=src_image[q];
     } /* FOR */
    
     
     // filling up the border with 'withval'
-    FOR(q, result->get_size().prod())
+    FOR(q, result.get_size().prod())
     {
-      result->get_size().nextStep( q, curr );
-      if (result->get_size().on_side( curr ))
+      result.get_size().nextStep( q, curr );
+      if (result.get_size().on_side( curr ))
       {
-    	(*result)[q]=withval;	
+    	result[q]=withval;	
       } /* if */
     } /* FOR */
-
+    
     return result;
 
   } /* frame_around */
 
 
   template <class image_type>
-  PTR<image_type> remove_frame( const image_type & src_image )
+  image_type frame_remove( const image_type & src_image )
   {
     
     vint new_size(src_image.get_size().size());
@@ -100,20 +102,19 @@ namespace pink {
       new_size[q] = src_image.get_size()[q] - 2;
     } /* FOR */
     
-    PTR<image_type> result( new image_type(new_size) );
+    image_type result(new_size);
     
     vint curr( src_image.get_size() );
-    
-    
+        
     // copying the original image into the new image
-    FOR( q, result->get_size().prod() )
+    FOR( q, result.get_size().prod() )
     {
-      result->get_size().nextStep(q, curr);
+      result.get_size().nextStep(q, curr);
       FOR( w, new_size.size() )
       {
 	curr[w]+=1;  // same as with frame around
       } /* FOR */
-      (*result)[q]=src_image[curr];
+      result[q]=src_image[curr];
     } /* FOR */
    
     return result;

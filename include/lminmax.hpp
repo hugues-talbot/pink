@@ -88,18 +88,19 @@ namespace pink {
   
 
   template <class image_type> 
-  PTR<image_type> immap( const image_type & image1,
-			 const image_type & image2,
-			 bool (*map_function)( typename image_type::pixel_type val1,  
-					       typename image_type::pixel_type val2 
+  image_type immap(
+    const image_type & image1,
+    const image_type & image2,
+    bool (*map_function)( typename image_type::pixel_type val1,  
+                          typename image_type::pixel_type val2 
 			   )
     )
   {
-    PTR<image_type> result (new image_type(image1.get_size()));
+    image_type result(image1.get_size());
     
     FOR(q, image1.get_size().prod())
     {
-      map_function( image1[q], image2[q]) ? (*result)[q]=image1[q] : (*result)[q]=image2[q];
+      map_function( image1[q], image2[q]) ? result[q]=image1[q] : result[q]=image2[q];
       
     } /* FOR */
     
@@ -126,8 +127,8 @@ namespace pink {
   
 
   template <class image_type> 
-  PTR<image_type> immap_max( const image_type & image1,
-			     const image_type & image2
+  image_type immap_max( const image_type & image1,
+                        const image_type & image2
     )
   {
 
@@ -140,8 +141,8 @@ namespace pink {
 
 
   template <class image_type> 
-  PTR<image_type> immap_min( const image_type & image1,
-			     const image_type & image2
+  image_type immap_min( const image_type & image1,
+                        const image_type & image2
     )
   {
 
@@ -151,7 +152,7 @@ namespace pink {
   } /* immap_min */
     
 
-
+  
 
 } /* end namespace pink */
 

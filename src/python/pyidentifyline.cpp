@@ -21,62 +21,66 @@
 using namespace boost::python;
 using namespace pink;
 
-
-boost::python::list
-py_identifyline( const boost::python::list & X,
-			       const boost::python::list & Y 
-  )
-{
-  boost::python::list result;
-  
-
-  int length=boost::python::len(X);
-  
-  #if UJIMAGE_DEBUG >= 1
-
-  int check=boost::python::len(Y);
-
-  if (length != check)
-  {    
-    error("identifyline: the sizes of the vectors must be equal");
-  } /* length != check */
-  
-  #endif /* UJIMAGE_DEBUG */
-
-
-  ARRAY<double> cX( new double[length] );
-  ARRAY<double> cY( new double[length] );
-
-  FOR(q, length)
-    try
+namespace pink {
+  namespace python {
+    
+    boost::python::list
+    identifyline( const boost::python::list & X,
+                     const boost::python::list & Y 
+      )
     {
-      cX[q]=boost::python::extract<double>(X[q]);
-      cY[q]=boost::python::extract<double>(Y[q]);
-    } 
-    catch (...) 
-    {
-      error("identifyline: the elements of the list must be convertible to doubles.");
-    }
-
-  double a,b;
+      boost::python::list result;
   
-  if ( !lidentifyline( cX.get(), cY.get(), length, &a, &b) )
-  {
-    error("lidentifyline failed");
-  } /* if */
+
+      int length=boost::python::len(X);
+  
+      #if UJIMAGE_DEBUG >= 1
+
+      int check=boost::python::len(Y);
+
+      if (length != check)
+      {    
+        error("identifyline: the sizes of the vectors must be equal");
+      } /* length != check */
+  
+      #endif /* UJIMAGE_DEBUG */
+
+
+      ARRAY<double> cX( new double[length] );
+      ARRAY<double> cY( new double[length] );
+
+      FOR(q, length)
+        try
+        {
+          cX[q]=boost::python::extract<double>(X[q]);
+          cY[q]=boost::python::extract<double>(Y[q]);
+        } 
+        catch (...) 
+        {
+          error("identifyline: the elements of the list must be convertible to doubles.");
+        }
+
+      double a,b;
+  
+      if ( !lidentifyline( cX.get(), cY.get(), length, &a, &b) )
+      {
+        error("lidentifyline failed");
+      } /* if */
   
   
-  result.append(a);
-  result.append(b);
+      result.append(a);
+      result.append(b);
 
-  return result;
-} /* py_border */
+      return result;
+    } /* py_border */
+
+  } /* namespace python */
+} /* namespace pink */
 
 
-
-UI_EXPORT_ONE_FUNCTION( cpp_identifyline, 
-			py_identifyline, 
-			args("list of X coordinates", "list of Y coordinates"),
+UI_EXPORT_ONE_FUNCTION( identifyline, 
+			pink::python::identifyline, 
+			( arg("list of X coordinates"), arg("list of Y coordinates") ),
 			"\brief identification of a best matching line from a set of 2D points\n"
 			"\n"
 			"<B>Usage:</B> identifyline in.list out.list\n"
@@ -92,7 +96,8 @@ UI_EXPORT_ONE_FUNCTION( cpp_identifyline,
 			"ingroup  geo\n"
 			"\n"
 			"\author Michel Couprie\n"
-  )
+  );
+
 
 
 

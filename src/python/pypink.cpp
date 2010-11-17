@@ -1,5 +1,14 @@
-// UjoImro, 2009
-// This software is meant to be free
+/*
+  This software is licensed under 
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
+
+  This software comes in hope that it will be useful but 
+  without any warranty to the extent permitted by aplicable law.
+  
+  (C) UjoImro, 2009-2010
+  Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+  ujoimro@gmail.com
+*/
 // The pink python wrapper core file
 
 #include <pink_python.h>
@@ -12,52 +21,51 @@ using namespace pink;
 #include <pyexport.hpp>
 
 // declarations
-void py_hello_export(); 
 void deep_xvimage_object_export();
 void shallow_xvimage_object_export();
 void xvimage_object_export();
-void py_readimage_export(); 
-// void py_writeimage_export();
+// void writeimage_export();
 void vint_object_export(); 
 void vector_int_object_export();
-void py_wshedtopo_export();
-void py_erosball_export();
-void py_medianfilter_export();
+void wshedtopo_export();
+void erosball_export();
+void medianfilter_export();
 
 // skeleton function
-void py_skeleton_export();
+void skeleton_export();
 
-void py_zoom_export();
-void py_long2byte_export();
+void zoom_export();
+void long2byte_export();
 
 
-void py_dilat_export();
-void py_eros_export();
-void py_geodilat_export();
-void py_geoeros_export();
-void py_geoeros_export();
-void py_opening_export();
-void py_drawcurve_export();
+void dilat_export();
+void eros_export();
+void geodilat_export();
+void geoeros_export();
+void geoeros_export();
+void opening_export();
+void drawcurve2D_export();
 
-void py_maxflow_export();
+void maxflow_export();
 void uiSqhool_object_export();
-void py_gradient_export();
-void py_float2byte_export();
+void gradient_export();
+void float2byte_export();
 
-void py_read_raw_image_export();
-void py_seuil_export();
-void insert_image_export();
-void merge_max_image_export();
-void py_3dplane_export();
+void read_raw_image_export();
+void seuil_export();
+void plane3d_export();
 void draw_plane_export();
 void project_plane_export();
-void py_border_export();
-void py_identifyline_export();
-void py_surimp_export();
-void py_generate_rgb_image_export();
-void py_closing_export();
-void py_closeball_export();
-void py_minmax_export();
+void border_export();
+void identifyline_export();
+void surimp_export();
+void generate_rgb_image_export();
+void closing_export();
+void closeball_export();
+void minmax_export();
+void dilatball_export();
+void inverse_export();
+
 
 
 // for wrapping every type with one function
@@ -70,71 +78,140 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
                               // a tree hierarchy
 {
 
-  py_hello_export(); // the test function 'greet()'
+  def("greet", greet, "Gently greets the user.");
+  
   vector_int_object_export();
   xvimage_object_export(); // self explaining
   deep_xvimage_object_export(); // self explaining
   shallow_xvimage_object_export(); // self explaining
-  py_readimage_export(); // self explaining
-//  py_writeimage_export(); // self explaining
+//  writeimage_export(); // self explaining
   vint_object_export(); // self explaining
-  py_wshedtopo_export();
-  py_erosball_export();
-  py_medianfilter_export();
+  wshedtopo_export();
+  erosball_export();
+  medianfilter_export();
 
   // the skeleton function
-  py_skeleton_export();
+  skeleton_export();
   
-  py_zoom_export();
-  py_long2byte_export();
+  zoom_export();
+  long2byte_export();
 
-  py_dilat_export();
-  py_eros_export();
-  py_geodilat_export();
-  py_geoeros_export();
-  py_geoeros_export();
-  py_opening_export();
-  py_drawcurve_export();
+  dilat_export();
+  eros_export();
+  geodilat_export();
+  geoeros_export();
+  geoeros_export();
+  opening_export();
+  drawcurve2D_export();
   
-//  py_maxflow_export();
+//  maxflow_export();
 
-//  py_specialize_export();
+//  specialize_export();
 
   uiSqhool_object_export();
-//  py_gradient_export();
+//  gradient_export();
 
-  py_float2byte_export();
+  float2byte_export();
 
-  py_read_raw_image_export();
-  py_seuil_export();
-  insert_image_export();
-  merge_max_image_export();
-  py_3dplane_export();
+  read_raw_image_export();
+  seuil_export();
+  plane3d_export();
 //  draw_plane_export();
 //  project_plane_export();
-  py_border_export();
-  py_identifyline_export();
-  py_surimp_export();
-  py_generate_rgb_image_export();
-  py_closing_export();
-  py_closeball_export();
-  py_minmax_export();
-
+  border_export();
+  identifyline_export();
+  surimp_export();
+  generate_rgb_image_export();
+  closing_export();
+  closeball_export();
+  minmax_export();
+  dilatball_export();
+  inverse_export();
+  
   UI_DEFINE_FUNCTION(
     print_image,
     print_image,
     (arg("image")),
     "Prints the values in a table. Usefull for debugging small 2D images."
-    )
+    );
   
+
+  UI_DEFINE_FUNCTION(
+    insert_image, 
+    insert_image, 
+    ( arg("big_image"), arg("small_image"), arg("shift_vector") ),
+    "this function inserts an image to another one. The "
+    "shift vector indicates the position of the lower corner "
+    "of the new image. If the image doesn't fit into the big one, "
+    "it is cropped."
+    );
   
-//   def( "cpp_circle_tangent", &pink::gsl::py_circle_tangent,
+
+  UI_DEFINE_FUNCTION(
+    merge_max_image, 
+    merge_max_image, 
+    ( arg("big_image"), arg("small_image"), arg("shift_vector") ),
+    "this function inserts an image to another one. The "
+    "shift vector indicates the position of the lower corner "
+    "of the new image. If the image doesn't fit into the big one, "
+    "it is cropped. During the insertion the pixels are compared "
+    "and the bigger value is conserved"
+    );
+    
+
+  UI_DEFINE_ONE_FUNCTION(
+    readimage,
+    py_readimage, 
+    (arg("filename") ), 
+    "Reads an image from filename and returns an 'xvimage' object."
+    );
+  
+
+  UI_DEFINE_FUNCTION(
+    frame,
+    frame,
+    ( arg("image"), arg("with value") ),
+    "This function takes an image, and in the result it set's it most outer rectangle to the given value."
+    );
+  
+  UI_DEFINE_FUNCTION(
+    frame_around,
+    frame_around,
+    ( arg("image"), arg("with value") ),
+    "This function takes an image, and in the result and adds a frame around it, with"
+    " a given value. THIS FUNCTION CHANGES THE RESULTING IMAGE'S SIZE."
+    );
+
+
+    UI_DEFINE_FUNCTION(
+    frame_remove,
+    frame_remove,
+    ( arg("image") ),
+    "This function takes an image, and in the result and removes the most outer rectangle from the result. "
+    "THIS FUNCTION CHANGES THE RESULTING IMAGE'S SIZE."
+    );
+
+    UI_DEFINE_FUNCTION(
+      max,
+      immap_max,
+      ( arg("image1"), arg("image2") ),      
+    "Generates an image result[i]:=max(image1[i],image2[i])"
+    );
+
+    UI_DEFINE_FUNCTION(
+      min,
+      immap_min,
+      ( arg("image1"), arg("image2") ),      
+      "Generates an image result[i]:=min(image1[i],image2[i])"
+    );
+  
+//   def( "cpp_circle_tangent", &pink::gsl::circle_tangent,
 //        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),
 //        "This function estimates the derivativ of the function given by points. It "
 //        " models a circle and returns its tangent at the given point."
 //     );
 
-//   def( "cpp_fit_circle", &pink::py_fit_circle,
+//   def( "cpp_fit_circle", &pink::fit_circle,
 //        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"),boost::python::arg("filename")=""),
 //        "This function fits a circle to the given points. It returns a vector for the following formula:\n"
 //        "  a*x^2 + a*y^2 + b*x + c*y + d == 0\n"
@@ -144,7 +221,7 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
 //        "Andrew Fitzgibbon, Maurizio Pilu, Robert B. Fisher, 'Direct Least Square Fitting of Ellipses', IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 21, no. 5, pp. 476-480, May 1999, doi:10.1109/34.765658\n"
 //     );
 
-//   def( "cpp_circle_equation_to_coordinates", &pink::py_circle_equation_to_coordinates,
+//   def( "cpp_circle_equation_to_coordinates", &pink::circle_equation_to_coordinates,
 //        (boost::python::arg("equation")),
 //        "This function converts the vector of equation coordinates to a vector of geometric coordinates:\n"
 //        "the input vector is [a,b,c,d], where\n"

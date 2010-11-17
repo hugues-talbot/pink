@@ -14,36 +14,34 @@
 // This macro exports a template function to all possible image types
 
 #define UI_EXPORT_FUNCTION( function_name, function, args, comment )	\
-									\
-  void function##_export()						\
+                                                                        \
+  void function_name##_export()                                         \
   {									\
-  def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<char_image>, \
-       args,								\
-       comment								\
-    );									\
-									\
-  def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<short_image>, \
-       args,								\
-       comment								\
-    );									\
-  									\
-  def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<int_image>, \
-       args,								\
-       comment								\
-    );									\
-									\
-  def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<float_image>, \
-       args,								\
-       comment								\
-    );									\
-									\
-  def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<double_image>, \
-       args,								\
-       comment								\
-    );									\
-									\
-									\
-    }									
+    def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<char_image>, \
+         args,                                                          \
+         comment                                                        \
+      );                                                                \
+                                                                        \
+    def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<short_image>, \
+         args,                                                          \
+         comment                                                        \
+      );                                                                \
+                                                                        \
+    def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<int_image>, \
+         args,                                                          \
+         comment                                                        \
+      );                                                                \
+                                                                        \
+    def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<float_image>, \
+         args,                                                          \
+         comment                                                        \
+      );                                                                \
+                                                                        \
+    def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function)<double_image>, \
+         args,                                                          \
+         comment                                                        \
+      );                                                                \
+  }									
 
 
 #define UI_DEFINE_FUNCTION( function_name, function, args, comment )	\
@@ -78,8 +76,17 @@
 
 
 #define UI_EXPORT_ONE_FUNCTION( function_name, function, args, comment ) \
-  									\
-  void function##_export()						\
+                                                                        \
+  void function_name##_export()                                         \
+  {									\
+    def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function), \
+         args,                                                          \
+         comment							\
+      );								\
+  }									
+
+#define UI_DEFINE_ONE_FUNCTION( function_name, function, args, comment ) \
+                                                                        \
   {									\
     def( BOOST_PP_STRINGIZE(function_name), &BOOST_PP_EXPAND(function), \
 	 args,								\
@@ -87,7 +94,7 @@
       );								\
     									\
   }									
-									
+
 
   
 // void py_maxflow_export(){

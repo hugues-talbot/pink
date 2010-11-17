@@ -19,39 +19,46 @@
 #define error(msg) {stringstream fullmessage; fullmessage << "in py3dplane.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;
-using namespace pink;
+//using namespace pink;
+
+namespace pink {
+  namespace python {
 
 
-PTR<char_image> py_3dplane(
-  const char_image & image, 
-  double a,
-  double b,
-  double c,
-  double d
-  )
-{
+    char_image plane3d(
+      const char_image & image, 
+      double a,
+      double b,
+      double c,
+      double d
+      )
+    {
+      
+      char_image result;
+      result = image;
+      
+      if ( !l3dplane( result.get_output(), a, b, c, d ) )
+      {
+        error("function l3dplane failed");
+      } /* if */
+      
+      
+      return result;
+      
+    } /* py_3dplane */
+    
+  } /* namespace python */
+} /* namespace pink */
 
-  PTR<char_image> result(new char_image(image));
-
-  if ( !l3dplane( result->get_output(), a, b, c, d ) )
-  {
-    error("function l3dplane failed");
-  } /* if */
-  
-
-  return result;
-  
-} /* py_3dplane */
 
 
-
-
-UI_EXPORT_ONE_FUNCTION( cpp_3dplane, 
-			py_3dplane, 
-			args("image", "coefficient of x", "coefficient of y", "coefficient of z", "absolut part"),
+UI_EXPORT_ONE_FUNCTION( plane3d, 
+			pink::python::plane3d, 
+			( arg("image"), arg("coefficient of x"), arg("coefficient of y"), arg("coefficient of z"), arg("absolut part")),
 			"this function draws a morphological plane into the image. The "
 			"equation of the plane is a*x+b*y+c*z+d==0\n"
-  )
+  );
+
 
 
 // LuM end of file
