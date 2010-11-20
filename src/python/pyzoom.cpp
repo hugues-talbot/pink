@@ -32,7 +32,7 @@ namespace pink {
       )
     {
       image_type copy;
-      copy = image;
+      copy.copy(image);
   
       xvimage * out;
 

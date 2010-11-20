@@ -21,7 +21,7 @@ namespace pink {
     {
 
       char_image result;
-      result = src;
+      result.copy(src);
   
       if ( src.get_size().size() == 2 ) // the image is 2D
       {     

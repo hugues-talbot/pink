@@ -26,7 +26,7 @@ namespace pink
     )
   {
     float_image result;
-    result = I;
+    result.copy(I);
     
     lnormalize( result.get_output(), vmin, vmax );
     
@@ -41,7 +41,7 @@ namespace pink
     )
   {
     char_image result;
-    result = I;
+    result.copy(I);
     
     lnormalize( result.get_output(), vmin, vmax );
     

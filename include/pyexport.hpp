@@ -12,6 +12,8 @@
 
 // boost python wrapper
 // This macro exports a template function to all possible image types
+#ifndef PYEXPORT_HPP
+#define PYEXPORT_HPP
 
 #define UI_EXPORT_FUNCTION( function_name, function, args, comment )	\
                                                                         \
@@ -116,13 +118,70 @@
 
 // } /* py_maxflow_export */
 
+  template < class image_type >
+  class convert_if
+  {
+  public:
+    typedef typename boost::mpl::if_< boost::is_base_of<pink::pink_image, image_type>,
+                                      xvimage*,
+                                      image_type >::type type;
+  }; /* convert_if */
+
+
+
+template < class image_type,
+           class param1_type,
+           int (*mcfunction)( typename convert_if<image_type>::type,
+                              typename convert_if<param1_type>::type )
+           >
+image_type make_function( const image_type & image,
+                          const param1_type & param1 )
+{
+  image_type result;
+  result.copy(image);
+  
+  if (!mcfunction(result, param1))
+  {
+    error("mcfunction failed");    
+  }
+  
+  return result;  
+} /* make_function */
+
+template < class image_type,
+           class param1_type,
+           class param2_type,
+           class param3_type,
+           class param4_type,           
+           int (*mcfunction)( typename convert_if<image_type>::type,
+                              typename convert_if<param1_type>::type,
+                              typename convert_if<param2_type>::type,
+                              typename convert_if<param3_type>::type,
+                              typename convert_if<param4_type>::type
+             )
+           >
+image_type make_function( const image_type & image,
+                          const param1_type & param1,
+                          const param1_type & param2,
+                          const param1_type & param3,
+                          const param1_type & param4
+  )
+{
+  image_type result;
+  result.copy(image);
+  
+  if (!mcfunction(result, param1, param2, param3, param4))
+  {
+    error("mcfunction failed");
+  }
+  
+  return result;  
+} /* make_function */
 
 
 
 
 
 
-
-
-
+#endif /* PYEXPORT_HPP */
 // LuM end of file

@@ -35,7 +35,7 @@ namespace pink {
     {
       
       char_image result;
-      result = image;
+      result.copy(image);
       
       if ( !l3dplane( result.get_output(), a, b, c, d ) )
       {

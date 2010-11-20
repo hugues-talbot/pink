@@ -26,7 +26,7 @@ namespace pink {
   {
 
     image_type result;
-    result = src_image;
+    result.copy(src_image);
 
     vint curr( src_image.get_size() );
     

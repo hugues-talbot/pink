@@ -21,51 +21,25 @@ using namespace pink;
 #include <pyexport.hpp>
 
 // declarations
-void deep_xvimage_object_export();
-void shallow_xvimage_object_export();
+void deep_xvimage_object_export();void shallow_xvimage_object_export();
 void xvimage_object_export();
 // void writeimage_export();
-void vint_object_export(); 
-void vector_int_object_export();
-void wshedtopo_export();
-void erosball_export();
-void medianfilter_export();
+void vint_object_export(); void vector_int_object_export();void wshedtopo_export();
+void erosball_export();void medianfilter_export();
 
 // skeleton function
-void skeleton_export();
+void skeleton_export();void zoom_export();void long2byte_export();
 
-void zoom_export();
-void long2byte_export();
+void dilat_export(); void eros_export(); void geodilat_export();void geoeros_export();
+void geoeros_export(); void opening_export(); void drawcurve2D_export(); void maxflow_export();
+void uiSqhool_object_export(); void gradient_export(); void float2byte_export();
 
-
-void dilat_export();
-void eros_export();
-void geodilat_export();
-void geoeros_export();
-void geoeros_export();
-void opening_export();
-void drawcurve2D_export();
-
-void maxflow_export();
-void uiSqhool_object_export();
-void gradient_export();
-void float2byte_export();
-
-void read_raw_image_export();
-void seuil_export();
-void plane3d_export();
-void draw_plane_export();
-void project_plane_export();
-void border_export();
-void identifyline_export();
-void surimp_export();
-void generate_rgb_image_export();
-void closing_export();
-void closeball_export();
-void minmax_export();
-void dilatball_export();
-void inverse_export();
-
+void read_raw_image_export(); void seuil_export(); void plane3d_export(); void draw_plane_export();
+void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
+void generate_rgb_image_export(); void closing_export(); void closeball_export(); void minmax_export();
+void dilatball_export(); void inverse_export(); void asfbin_export(); void ptcurve_export();
+void skelcurv_export(); void skelcurv2_export(); void ptend_export(); void pydistc_export();
+void readimage_export();
 
 
 // for wrapping every type with one function
@@ -127,6 +101,13 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   minmax_export();
   dilatball_export();
   inverse_export();
+  asfbin_export();
+  ptcurve_export();
+  skelcurv_export();
+  skelcurv2_export();
+  ptend_export();
+  readimage_export();
+  
   
   UI_DEFINE_FUNCTION(
     print_image,
@@ -159,12 +140,7 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
     );
     
 
-  UI_DEFINE_ONE_FUNCTION(
-    readimage,
-    py_readimage, 
-    (arg("filename") ), 
-    "Reads an image from filename and returns an 'xvimage' object."
-    );
+  
   
 
   UI_DEFINE_FUNCTION(
@@ -204,7 +180,59 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
       ( arg("image1"), arg("image2") ),      
       "Generates an image result[i]:=min(image1[i],image2[i])"
     );
-  
+
+    def( "ptisolated",
+         &make_function<char_image, int, &lptisolated>,
+         ( arg("image"), arg("connexity") ),
+         "WRITE ME!"
+      );
+
+    def( "ptjunction",
+         &make_function<char_image, int, &lptjunction>,
+         ( arg("image"), arg("connexity") ),
+         "brief detects junction points in 2d or 3d binary images"
+         ""
+         "<B>Usage:</B> ptjunction in.pgm connex out.pgm"
+         ""
+         "<B>Description:</B>"
+         "Detects junction points in the 2d or 3d binary image b in.pgm, which is supposed to contain a skeleton."
+         "A junction point is a white point x such that #(Nn[x] inter X) > 2,"
+         "where Nn[x] stands for the n-neighborhood of x (excluding x), and"
+         "n = 4, 8 in 2D or n = 6, 18, 26 in 3D, as set by the parameter b connex."
+         ""
+         "<B>Types supported:</B> byte 2D, byte 3D"
+         ""
+         "<B>Category:</B> topobin"
+         "ingroup  topobin"
+         ""
+         "author Michel Couprie 2010"
+      );
+
+    def( "selectcomp",
+         &make_function<char_image, int, int, int, int, &lselectcomp>,
+         ( arg("image"), arg("connexity"), arg("x"), arg("y"), arg("z") ),
+         "brief selects a connected component"
+         ""
+         "<B>Usage:</B> selectcomp in.pgm connex x y z out.pgm"
+         ""
+         "<B>Description:</B>"
+         "The connected component of the binary image <B>in.pgm</B>"
+         "(according to the connectivity <B>connex</B>)"
+         "which contains the point (<B>x</B>,<B>y</B>,<B>z</B>)"
+         "is preserved. All other points are deleted."
+         "Possible values for b connex are 4, 8 (2D), 6, 18, 26, 60, 260 (3D)."
+         "Values 60 and 260 correspond to restrictions of 6 and 26 connectivities to the "
+         "current xy plane."
+         ""
+         "<B>Types supported:</B> byte 2d, byte 3d"
+         ""
+         "<B>Category:</B> connect"
+         "ingroup connect"
+      );
+
+//    pydistc_export();
+    
+    
 //   def( "cpp_circle_tangent", &pink::gsl::circle_tangent,
 //        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),
 //        "This function estimates the derivativ of the function given by points. It "

@@ -29,7 +29,7 @@ namespace pink {
       )
     {
       int_image local_copy;
-      local_copy = src;
+      local_copy.copy(src);
   
       xvimage * res = long2byte( local_copy.get_output(), mode, nbnewval );
 

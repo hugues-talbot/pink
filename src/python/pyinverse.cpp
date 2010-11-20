@@ -26,7 +26,7 @@ namespace pink {
     image_type inverse( const image_type & image )
     {
       image_type result;
-      result = image;
+      result.copy(image);
       
       if (!linverse(result.get_output()))
       {

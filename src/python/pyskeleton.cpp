@@ -48,7 +48,7 @@ namespace pink {
     {
 
       char_image res;
-      res = uj_image;
+      res.copy(uj_image);
       char_image result;
       result =  skeleton_ultimate( &res,    // char_image & uj_image, 
                                       NULL,           // char_image & uj_prio,
@@ -75,9 +75,9 @@ namespace pink {
     {
 
       char_image res;
-      res = uj_image;
+      res.copy(uj_image);
       int_image nc_prio;
-      nc_prio = uj_prio;
+      nc_prio.copy(uj_prio);
   
       char_image result;
       result =
@@ -109,10 +109,10 @@ namespace pink {
     {
 
       char_image res;
-      res = uj_image;
+      res.copy(uj_image);
 
       char_image nc_inhibit;
-      nc_inhibit = inhibit;
+      nc_inhibit.copy(inhibit);
 
       char_image result =  
         skeleton_ultimate( &res,    // char_image & uj_image, 
@@ -142,11 +142,11 @@ namespace pink {
     {
   
       char_image res;
-      res = uj_image;
+      res.copy(uj_image);
       int_image nc_prio;
-      nc_prio = uj_prio;
+      nc_prio.copy(uj_prio);
       char_image nc_inhibit;
-      nc_inhibit = inhibit;
+      nc_inhibit.copy(inhibit);
   
       char_image result;
       result =
@@ -213,9 +213,9 @@ namespace pink {
     {
 
       char_image res;
-      res = uj_image;
+      res.copy(uj_image);
       int_image nc_prio;
-      nc_prio = uj_prio;
+      nc_prio.copy(uj_prio);
   
       char_image result;  
       result = skeleton_ultimate( &res,    // char_image & uj_image, 

@@ -39,9 +39,9 @@ namespace pink {
       }
 
       char_image result;
-      result = src;
+      result.copy(src);
       char_image elem_const_away;
-      elem_const_away =elem;
+      elem_const_away.copy(elem);
 
       if (! ldilateros_ldilat( result.get_output(),
                                elem_const_away.get_output(),

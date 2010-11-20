@@ -30,7 +30,7 @@ namespace pink {
     char_image border(const char_image & src, int connex)
     {
       char_image result;
-      result = src;
+      result.copy(src);
 
       mctopo3d_lborder(result.get_output(), connex);
 

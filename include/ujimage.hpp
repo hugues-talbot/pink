@@ -62,13 +62,16 @@ namespace pink{
   PTR<vint> getDimensions( const int x, const int y, const int z, const int t );
   void setDimensions(const vint & dim, int & x, int & y, int & z, int & t);
   PTR<deep_xvimage> py_readimage( string filename );
-  string image_type( int pixel_type );
+  string image_type_string( int pixel_type );
 
 
   // this class will copy it's content when upcasted (constructed from xvimage)
   // it is used, when the data is needed (in readimage for example)
   // note: image name is fake
-  class deep_xvimage: public xvimage {
+  class deep_xvimage
+  {
+  private:
+    xvimage * data;    
   public:
     deep_xvimage(); // default constructor
     deep_xvimage( const xvimage & src ); // upcast constructor
@@ -96,11 +99,16 @@ namespace pink{
     string imtype(); // returns the image type
   }; /* xvImage: xvimage */
 
-	
+  class pink_image
+  {
+  public:
+    virtual operator xvimage*();    
+  }; /* class pink_image */
 
   template <class pixel_type_> // pixel_type can be char, short, int, float and double
   // while int_pixel_type is the type's encoding into integer. See 'mccodimage.h'
   class ujoi:
+    public pink_image,
     public image_type_specific<pixel_type_>,
     private boost::equality_comparable < ujoi<pixel_type_> >,
     private boost::addable             < ujoi<pixel_type_> >,
@@ -131,11 +139,13 @@ namespace pink{
 
     ujoi( ); // creates an empty image, used in uiSqhool for determining the image type
     ujoi( string filename, string debug="" );
-    ujoi( const xvimage & src, string debug="" ); // default constructor
+    ujoi( const xvimage & src, string debug="" ); // deep constructor takes xvimage and makes a copy
+                                                  // it is not embeddable becouse readimage's using malloc/free, whereas boost's using new/delete 
     ujoi( const ujoi< pixel_type > & src, string debug="" ); // SHALLOW! copy_constructor. For conversion use convert2float
                                                              // for deep_copy use operator=
-    image_type operator=( const image_type & other );     // deep_copy constructor
-    void reset( const image_type & other );         // runtime shallow copy
+    image_type & operator=( const image_type & other );     // SHALLOW! copy constructor
+    void reset( image_type & other );         // runtime shallow copy
+    image_type & copy( const image_type & other ); // DEEP copy!!    
  
     
 
@@ -181,7 +191,7 @@ namespace pink{
 
     string repr() const;
     void fill( pixel_type value );
-    image_type operator=( const pixel_type & value ); // equivalent with function fill
+//    image_type operator=( const pixel_type & value ); // equivalent with function fill
 
 
     bool operator==( const image_type & other ) const;
@@ -275,22 +285,22 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     cout << "reading image '" << filename << "'\n";
     #endif /* UJIMAGE_DEBUG */
 
-    PTR<deep_xvimage> tmp;
+    xvimage * tmp;
 
     try
     {
-      tmp = py_readimage( filename );
+      tmp = readimage( const_cast<char*>(filename.c_str()) ); // readimage takes char* but hopefully does not change it
     }
     catch (...)
     {
       error("cannot read file '" + filename + "'");      
-    };
+    } 
     
     
     if (tmp->data_storage_type != this->int_pixel_type() )
     {
-      error("The image type of '" + filename + "' is '" + tmp->imtype()
-	    + "', but expected '" + this->imtype() + "'." );
+      error("The image type of '" + filename + "' is '" + image_type_string(tmp->data_storage_type)
+            + "', but expected '" + this->imtype() + "'." );
     } /* if */
       
     this->size.reset( new vint(
@@ -308,8 +318,13 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   
     this->pixels.reset( new pixel_type[ size->prod() ] ); // allocating the array for the pixel types
 
-    memcpy( this->pixels.get(), tmp->image_data, sizeof( pixel_type ) * this->size->prod() ); // xvimage's type must be the same as pixel_type!
+    std::copy( &(static_cast<pixel_type*>(tmp->image_data)[0]),
+               &(static_cast<pixel_type*>(tmp->image_data)[this->size->prod()-1]),
+               this->pixels.get()
+      );
 
+    freeimage(tmp);
+    
   } /* ujoi::ujoi */
   
   template <class pixel_type >
@@ -320,7 +335,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
     #endif /* UJIMAGE_DEBUG */
 
-    if (image_type(src.data_storage_type)!=this->imtype())
+    if (image_type_string(src.data_storage_type)!=this->imtype())
     {
       error("converting to ujoi from different pixel_type");
     } /* image_type(src.data_storage_type)!=this->imtype() */
@@ -341,8 +356,10 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   
     this->pixels.reset( new pixel_type[ size->prod() ] ); // allocating the array for the pixel types
 
-    // memcpy should be parallelized with #pragma omp for
-    memcpy( this->pixels.get(), src.image_data, sizeof( pixel_type ) * this->size->prod() ); // xvimage's type must be the same as pixel_type!
+    std::copy( &(static_cast<pixel_type*>(src.image_data)[0]),
+               &(static_cast<pixel_type*>(src.image_data)[this->size->prod()-1]),
+               this->pixels.get()
+      );
 
   } /* ujoi::ujoi */
 
@@ -359,22 +376,19 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class im_type>
-  ujoi<im_type> ujoi<im_type>::operator=( const image_type & other )     // deep_copy constructor
+  ujoi<im_type> & ujoi<im_type>::operator=( const image_type & other )     // SHALLOW_copy constructor
   {
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
     cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
     #endif /* UJIMAGE_DEBUG */
 
-    this->size.reset( new vint( *other.size ));
-    this->center.reset( new vint( *other.center ));
-    this->old_school.reset(new shallow_xvimage((*other.old_school))); // creating a new xvimage for the 'pink::ujoi' object
-    // the constructor will not copy the data
-  
-    this->pixels.reset(new im_type[size->prod()]); // allocating the array for the pixel types
-  
-    memcpy(this->pixels.get(), other.pixels.get(), sizeof(im_type)*size->prod()); // xvimage's type must be the same as im_type!
-    
+    // note self assignment will be tested inside boost-smart-pointer
+    this->size=other.size;
+    this->center=other.center;
+    this->old_school=other.old_school;   
+    this->pixels=other.pixels; 
+        
     return *this;
   } /* ujoi::operator= */
   
@@ -449,8 +463,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       old_school.reset( new shallow_xvimage( *size, this->int_pixel_type() ) );
     };
 
-    // I think copying can be done in parallel with #pragma omp for
-    memcpy( pixels.get(), data.get(), sizeof( pixel_type ) * size->prod() ); // copying the elements from the array
+    std::copy( (&data[0]), (&data[size->prod()-1]), pixels.get());
+
   } /* ujoi::ujoi */
 
 
@@ -857,11 +871,11 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::fill */
   
   
-  template <class pixel_type>
-  ujoi<pixel_type> ujoi<pixel_type>::operator=( const pixel_type & value ) // equivalent with function fill
-  {
-    this->fill(value);    
-  } /* ujoi::operator= */
+  // template <class pixel_type>
+  // ujoi<pixel_type> ujoi<pixel_type>::operator=( const pixel_type & value ) // equivalent with function fill
+  // {
+  //   this->fill(value);    
+  // } /* ujoi::operator= */
 
   
   template <class pixel_type >
@@ -992,8 +1006,6 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   template <class pixel_type >
   bool ujoi<pixel_type >::isnull() 
   {
-    int result=0;
-    
     FOR(q, get_size().prod())
     {
       if ((*this)[q]!=0)
@@ -1022,14 +1034,38 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   
 
   template <class pixel_type >
-  void ujoi<pixel_type >::reset( const image_type & other )
+  void ujoi<pixel_type >::reset( image_type & other )
   {
-    this->size.copy(other.get_size());
-    this->center.copy(other.get_size());
+    this->size=other.size;
+    this->center=other.center;
     this->old_school=other.old_school;
-    this->pixels=other.get_pixels();  
+    this->pixels=other.pixels;  
   } /* ujoi::reset */
 
+  template <class pixel_type>
+  ujoi<pixel_type> & ujoi<pixel_type >::copy( const image_type & other )
+  {
+    #if UJIMAGE_DEBUG >= 2
+    this->debug=debug; // representing the name of the object if debugged
+    cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    #endif /* UJIMAGE_DEBUG */
+
+    if (this==&other) // self-assignment test
+    {
+      return *this;      
+    }
+    
+    this->size.reset( new vint( *other.size ));
+    this->center.reset( new vint( *other.center ));
+    this->old_school.reset(new shallow_xvimage( *other.old_school )); // creating a new xvimage for the 'pink::ujoi' object
+    // the constructor will not copy the data
+  
+    this->pixels.reset(new pixel_type[size->prod()]); // allocating the array for the pixel types
+
+    std::copy( &other[0], &other[size->prod()-1], this->pixels.get());
+        
+    return *this;
+  } /* ujoi::copy */
 
 
 

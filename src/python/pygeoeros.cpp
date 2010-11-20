@@ -30,9 +30,9 @@ namespace pink {
 
 
       char_image result;
-      result = F;
+      result.copy(F);
       char_image G_const_away;
-      G_const_away = G;
+      G_const_away.copy(G);
 
 
       if (result.get_size().size()!=result.get_size().size()){

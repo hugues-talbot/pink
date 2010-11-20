@@ -38,9 +38,9 @@ namespace pink {
       }
 
       char_image result;
-      result = src;
+      result.copy(src);
       char_image elem_const_away;
-      elem_const_away = elem;
+      elem_const_away.copy(elem);
 
 
       if (result.get_size()==2)
@@ -126,7 +126,7 @@ namespace pink {
       } /* if */
 
       char_image result;
-      result = src;
+      result.copy(src);
   
 
       if (result.get_size().size()==2)
