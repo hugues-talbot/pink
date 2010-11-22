@@ -59,6 +59,8 @@ extern int32_t llthick3d(struct xvimage *image, struct xvimage *imagecond, int32
 
 extern int32_t lsurfacerestoration(struct xvimage *image, int32_t nitermax, int32_t connexmin);
 
+extern int32_t mctopo3d_lhtkern3d(struct xvimage *image, struct xvimage *imagecond, int32_t connexmin);
+  
 #ifdef __cplusplus
 }
 #endif

@@ -28,18 +28,19 @@ void vint_object_export(); void vector_int_object_export();void wshedtopo_export
 void erosball_export();void medianfilter_export();
 
 // skeleton function
-void skeleton_export();void zoom_export();void long2byte_export();
+void skeleton_export();void zoom_export();
 
 void dilat_export(); void eros_export(); void geodilat_export();void geoeros_export();
 void geoeros_export(); void opening_export(); void drawcurve2D_export(); void maxflow_export();
-void uiSqhool_object_export(); void gradient_export(); void float2byte_export();
+void uiSqhool_object_export(); void gradient_export();
 
 void read_raw_image_export(); void seuil_export(); void plane3d_export(); void draw_plane_export();
 void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
 void generate_rgb_image_export(); void closing_export(); void closeball_export(); void minmax_export();
 void dilatball_export(); void inverse_export(); void asfbin_export(); void ptcurve_export();
-void skelcurv_export(); void skelcurv2_export(); void ptend_export(); void pydistc_export();
-void readimage_export();
+void skelcurv_export(); void skelcurv2_export(); void ptend_export(); void distc_export();
+void readimage_export(); void skelsurf_export();
+void toposhrink_export(); void htkern_export();
 
 
 // for wrapping every type with one function
@@ -68,7 +69,6 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   skeleton_export();
   
   zoom_export();
-  long2byte_export();
 
   dilat_export();
   eros_export();
@@ -84,8 +84,6 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
 
   uiSqhool_object_export();
 //  gradient_export();
-
-  float2byte_export();
 
   read_raw_image_export();
   seuil_export();
@@ -107,6 +105,11 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   skelcurv2_export();
   ptend_export();
   readimage_export();
+  distc_export();
+  skelsurf_export();
+  toposhrink_export();
+  htkern_export();
+  
   
   
   UI_DEFINE_FUNCTION(
@@ -230,6 +233,81 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
          "ingroup connect"
       );
 
+    UI_DEFINE_ONE_FUNCTION(
+      float2byte,
+      pink::float2byte,
+      ( arg("source image"), arg("mode")=2 ),
+      "converts a 'float_image' to a 'char_image' image\n\n"
+      "Usage: float2byte( in ujoi, mode )\n"
+      "Description:\n\n"
+      "Depending on the value given for the (optional) parameter 'mode':\n"
+      "    mode = 0 : for all x, out[x] = min(255, arrondi(in[x])).\n"
+      "    mode = 1 : for all x, out[x] = arrondi(in[x]) modulo 256.\n"
+      "    mode = 2 (default): scales values in the range 0-255.\n"
+      "    mode = 4 : truncation of the square root in the range 0-255.\n"
+      "    mode = 5 : truncation of the log in the range 0-255.\n\n"
+      "Types supported: float_image\n"
+      "Category: convert\n"
+      "group convert\n"
+      "author Michel Couprie\n"
+      "adjusted Laszlo Marak 2009\n"
+      " \n"
+      // end of the documenation
+      );
+    
+    UI_DEFINE_FUNCTION(
+      convert2float,
+      pink::convert2float,
+      (arg("image")),
+      "converts an image to float type"
+      // end of the documenation
+      );
+
+    UI_DEFINE_ONE_FUNCTION(
+      long2byte,
+      pink::long2byte, 
+      ( arg("image"),arg("mode"),arg("nb_new_val") ),
+      "converts a 'int32_t' image to a 'byte' image \n"
+      "\n"
+      "Usage: long2byte in.pgm [mode] [n] out.pgm\n"
+      "\n"
+      "Description:\n"
+      "\n"
+      "Depending on the value given for the (optional) parameter mode:\n"
+      " *  mode = 0 (default) : for all x, out[x] = min(255, in[x]).\n"
+      " *  mode = 1 : for all x, out[x] = in[x] modulo 256.\n"
+      " *  mode = 2 : scales values in the range 0-255.\n"
+      " *  mode = 3 : sorts the values by decreasing number of occurence in the image.\n"
+      "Replaces the values by their order.\n"
+      "Only the n (default 255) first values are kept.\n"
+      "Useful for label images.\n"
+      " *  mode = 4 : truncation of the square root in the range 0-255.\n"
+      " *  mode = 5 : truncation of the log in the range 0-255.\n"
+      " \n"
+      "Types supported: int32_t 2d, int32_t 3d\n"
+      "\n"
+      "Category: convert\n"
+      "\n"
+      "author Michel Couprie\n"
+      // end of the documenation
+      );
+
+
+    def(
+      "holeclosing",
+      &make_function<char_image, int, int, &lfermetrous3dbin>,
+      ( arg("image"), arg("connexity"), arg("holesize") ),
+      "WRITE ME!!"
+      );
+
+    def(
+      "holeclosing",
+      &make_function<char_image, char_image, int, int, &lfermetrous3dbin2>,
+      ( arg("image"), arg("guiding image") ,arg("connexity"), arg("holesize") ),
+      "WRITE ME!!"
+      );
+
+    
 //    pydistc_export();
     
     

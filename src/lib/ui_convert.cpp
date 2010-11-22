@@ -1,0 +1,142 @@
+/*
+  This software is licensed under 
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
+
+  This software comes in hope that it will be useful but 
+  without any warranty to the extent permitted by aplicable law.
+  
+  (C) UjoImro, 2010
+  Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+  ujoimro@gmail.com
+*/
+
+#ifdef __cplusplus
+
+#include <pink.h>
+
+#undef error
+#define error(msg) {stringstream fullmessage; fullmessage << "in ui_convert.cpp: " << msg; call_error(fullmessage.str());}
+
+// you shouldn't use one character macros
+#undef N
+
+using namespace std;
+
+
+
+namespace pink {
+
+  char_image long2byte(
+    const int_image & src,
+    int mode,
+    int nbnewval
+    )
+  {
+    int_image local_copy;
+    local_copy.copy(src);
+  
+    xvimage * res = long2byte( local_copy.get_output(), mode, nbnewval );
+
+    char_image result(*res);
+    freeimage(res);
+
+    return result;    
+  } /* long2byte */
+  
+  char_image float2byte( const float_image & src, int mode )
+  {
+
+    int N = src.get_size().prod();
+    char_image result(src.get_size());
+    float_image::pixel_type t;
+    float_image::pixel_type tmp;
+    float_image::pixel_type T;
+
+    switch(mode)
+    {
+
+    case 0:
+    
+      FOR( x, N ) 
+      {
+        result[x] = static_cast<char_image::pixel_type>( mcmin( arrondi( src[x] ), 255 ) );
+      } /* FOR */
+      break;
+
+    case 1:
+
+      FOR( x, N ) 
+      {
+        result[x] = static_cast<char_image::pixel_type>( arrondi( src[x] ) %  256 );
+      } /* FOR */
+      break;
+
+    case 2:
+    
+      float_image::pixel_type max;
+      float_image::pixel_type min;
+    
+      max = lmaxval(src);
+      min = lminval(src);
+
+      FOR( x, N ) 
+      {
+        t = ( ( src[x] - min ) * 255.0 ) / static_cast<float_image::pixel_type>( max - min );
+        tmp = arrondi(t);
+        result[x] = static_cast<char_image::pixel_type>( mcmin( 255, tmp ) );
+      } /* FOR */
+      break;
+
+    case 4:
+
+      FOR( x, N ) 
+      {
+
+        T = sqrt( static_cast<double>( src[x]) );
+        tmp = arrondi( T );
+        tmp = mcmin( 255, tmp );
+        tmp = mcmax( 0, tmp );
+        result[x] = static_cast<char_image::pixel_type>(tmp);
+      } /* FOR */
+
+      break;
+
+
+
+    case 5:
+
+      FOR( x, N ) 
+      {
+
+        T = log(static_cast<double>(src[x]));
+        tmp = arrondi( T );
+        tmp = mcmin( 255, tmp );
+        tmp = mcmax( 0, tmp );
+        result[x] = static_cast<char_image::pixel_type>(tmp);
+      } /* FOR */
+
+      break;
+
+
+
+    default:
+      error( "mode must be: \nmode = 0 (trunc) \n 1 (modulo) \n 2 (scale) \n 4 (square root) \n 5 (log)\n" );
+
+    } /* switch(mode) */
+  
+
+    return result;
+
+  } /* float2byte */
+
+} /* namespace pink */
+
+
+
+
+
+
+
+
+#endif /*__cplusplus*/
+/* LuM end of file */

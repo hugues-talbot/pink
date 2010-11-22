@@ -116,8 +116,12 @@ namespace pink {
         if (mode == 5)
         {
           float *D;
-          convertfloat(&result);
-          D = FLOATDATA(result);
+          pink_image * tmp = result;
+          result = new float_image();
+          dynamic_cast<float_image*>(result)->copy(pink::convert2float(*dynamic_cast<int_image*>(tmp)));
+          delete tmp;          
+          //convertfloat(&result);
+          D = FLOATDATA(dynamic_cast<float_image*>(result)->get_output());
           for (int i = 0; i < N; i++) D[i] = (float)sqrt(D[i]);
         }
       }
@@ -140,15 +144,25 @@ namespace pink {
 
 
       boost::python::object * to_return;
-      
-      if (mode < 40)        
-        //result = new int_image(image.get_size());
-        to_return = new boost::python::object( *dynamic_cast<int_image*>(result) );      
-      else
-        //result = new char_image(image.get_size());
-        to_return = new boost::python::object( *dynamic_cast<char_image*>(result) );
-      
-      
+
+      if (mode == 5)
+      {
+        to_return = new boost::python::object( *dynamic_cast<float_image*>(result) );
+      }
+      else  /* NOT mode == 5 */
+      {
+        
+        if (mode < 40)
+        {        
+          //result = new int_image(image.get_size());
+          to_return = new boost::python::object( *dynamic_cast<int_image*>(result) );
+        }        
+        else /* NOT mode < 40 */
+        {        
+          //result = new char_image(image.get_size());
+          to_return = new boost::python::object( *dynamic_cast<char_image*>(result) );
+        }      
+      } /* NOT mode == 5 */      
       
       return *to_return;
     } /* distc */
@@ -160,45 +174,45 @@ namespace pink {
   } /* namespace python */
 } /* namespace pink */
 
-// UI_EXPORT_ONE_FUNCTION(
-//   distc,
-//   pink::python::distc,
-//   ( arg("image"), arg("mode")),
-//   "brief distance transform (internal)"
-//   ""
-//   "<B>Usage:</B> distc in.pgm mode out.pgm"
-//   ""
-//   "<B>Description:</B>"
-//   "Distance to the complementary of the object X defined by the binary "
-//   "image b in.pgm ."
-//   "The result function DX(x) is defined by: DX(x) = min {d(x,y), y not in X}."
-//   ""
-//   "The distance d used depends on the parameter b mode :"
-//   "li 0: approximate euclidean distance (truncated)"
-//   "li 1: approximate quadratic euclidean distance"
-//   "li 2: chamfer distance"
-//   "li 3: exact quadratic euclidean distance"
-//   "li 4: 4-distance in 2d"
-//   "li 5: exact euclidean distance (float)"
-//   "li 8: 8-distance in 2d"
-//   "li 6: 6-distance in 3d"
-//   "li 18: 18-distance in 3d"
-//   "li 26: 26-distance in 3d"
-//   "li 40: 4-distance in 2d (byte coded ouput)"
-//   "li 80: 8-distance in 2d (byte coded ouput)"
-//   "li 60: 6-distance in 3d (byte coded ouput)"
-//   "li 180: 18-distance in 3d (byte coded ouput)"
-//   "li 260: 26-distance in 3d (byte coded ouput)"
-//   ""
-//   "The output b out.pgm is of type int32_t for modes < 40, of type byte for other modes."
-//   ""
-//   "<B>Types supported:</B> byte 2d, byte 3d"
-//   ""
-//   "<B>Category:</B> morpho"
-//   "ingroup  morpho"
-//   ""
-//   "author Michel Couprie, Xavier Daragon"
-//   );
+UI_EXPORT_ONE_FUNCTION(
+  distc,
+  pink::python::distc,
+  ( arg("image"), arg("mode")),
+  "brief distance transform (internal)\n"
+  "\n"
+  "<B>Usage:</B> distc in.pgm mode out.pgm\n"
+  "\n"
+  "<B>Description:</B>\n"
+  "Distance to the complementary of the object X defined by the binary \n"
+  "image b in.pgm .\n"
+  "The result function DX(x) is defined by: DX(x) = min {d(x,y), y not in X}.\n"
+  "\n"
+  "The distance d used depends on the parameter b mode :\n"
+  "li 0: approximate euclidean distance (truncated)\n"
+  "li 1: approximate quadratic euclidean distance\n"
+  "li 2: chamfer distance\n"
+  "li 3: exact quadratic euclidean distance\n"
+  "li 4: 4-distance in 2d\n"
+  "li 5: exact euclidean distance (float)\n"
+  "li 8: 8-distance in 2d\n"
+  "li 6: 6-distance in 3d\n"
+  "li 18: 18-distance in 3d\n"
+  "li 26: 26-distance in 3d\n"
+  "li 40: 4-distance in 2d (byte coded ouput)\n"
+  "li 80: 8-distance in 2d (byte coded ouput)\n"
+  "li 60: 6-distance in 3d (byte coded ouput)\n"
+  "li 180: 18-distance in 3d (byte coded ouput)\n"
+  "li 260: 26-distance in 3d (byte coded ouput)\n"
+  "\n"
+  "The output b out.pgm is of type int32_t for modes < 40, of type byte for other modes.\n"
+  "\n"
+  "<B>Types supported:</B> byte 2d, byte 3d\n"
+  "\n"
+  "<B>Category:</B> morpho\n"
+  "ingroup  morpho\n"
+  "\n"
+  "author Michel Couprie, Xavier Daragon\n"
+  );
 
 
 

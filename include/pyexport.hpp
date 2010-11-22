@@ -135,7 +135,7 @@ template < class image_type,
                               typename convert_if<param1_type>::type )
            >
 image_type make_function( const image_type & image,
-                          const param1_type & param1 )
+                          param1_type & param1 )
 {
   image_type result;
   result.copy(image);
@@ -151,6 +151,59 @@ image_type make_function( const image_type & image,
 template < class image_type,
            class param1_type,
            class param2_type,
+           int (*mcfunction)( typename convert_if<image_type>::type,
+                              typename convert_if<param1_type>::type,
+                              typename convert_if<param2_type>::type
+             )
+           >
+image_type make_function( const image_type & image,
+                          param1_type & param1,
+                          param2_type & param2
+  )
+{
+  image_type result;
+  result.copy(image);
+  
+  if (!mcfunction(result, param1, param2))
+  {
+    error("mcfunction failed");
+  }
+  
+  return result;  
+} /* make_function */
+
+
+template < class image_type,
+           class param1_type,
+           class param2_type,
+           class param3_type,
+           int (*mcfunction)( typename convert_if<image_type>::type,
+                              typename convert_if<param1_type>::type,
+                              typename convert_if<param2_type>::type,
+                              typename convert_if<param3_type>::type
+             )
+           >
+image_type make_function( const image_type & image,
+                          param1_type & param1,
+                          param2_type & param2,
+                          param3_type & param3
+  )
+{
+  image_type result;
+  result.copy(image);
+  
+  if (!mcfunction(result, param1, param2, param3))
+  {
+    error("mcfunction failed");
+  }
+  
+  return result;  
+} /* make_function */
+
+
+template < class image_type,
+           class param1_type,
+           class param2_type,
            class param3_type,
            class param4_type,           
            int (*mcfunction)( typename convert_if<image_type>::type,
@@ -161,10 +214,10 @@ template < class image_type,
              )
            >
 image_type make_function( const image_type & image,
-                          const param1_type & param1,
-                          const param1_type & param2,
-                          const param1_type & param3,
-                          const param1_type & param4
+                          param1_type & param1,
+                          param2_type & param2,
+                          param3_type & param3,
+                          param4_type & param4
   )
 {
   image_type result;
@@ -179,6 +232,18 @@ image_type make_function( const image_type & image,
 } /* make_function */
 
 
+template <class image_type>
+xvimage * can_be_null( image_type & image )
+{
+  if (image.isnull())
+  {
+    return NULL;        
+  }
+  else /* NOT image.isnull() */
+  {
+    return image.get_output();        
+  }      
+} /* can_be_null */
 
 
 

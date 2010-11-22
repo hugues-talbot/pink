@@ -301,6 +301,7 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <uiFileIO.hpp>
   #include <uiInsert.hpp>
   #include <uiCutPlane.hpp>
+  #include <ui_convert.hpp>
 #endif /* __cplusplus */
 
 
