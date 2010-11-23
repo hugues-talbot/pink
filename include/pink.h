@@ -227,6 +227,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lmaxdiameter.h"
 #include "lmedialaxis.h"
 #include "lmeshwarp.h"
+#include "lminima.h"
 #include "lmoments.h"
 #include "lnbtopo.h"
 #include "lnbvois.h"

@@ -307,8 +307,51 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
       "WRITE ME!!"
       );
 
+    def(
+      "minima",
+      &make_function<int_image, char*, &lminima>,
+      ( arg("image"), arg("connexity") ),
+      "WRITE ME!!"
+      );
+
+    def(
+      "lambdaskel",
+      &make_function< only_2D<char_image>, CAN_BE_NULL<char_image>, int, int, &llambdakern >,
+      ( arg("image"), arg("imcond"), arg("connexity"), arg("lambda") ),
+      "WRITE ME!!"
+      );
     
-//    pydistc_export();
+    def(
+      "rankfilter",
+      &make_function< only_2D<char_image>, char_image, int, int, double, &lfiltreordre >,
+      ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("r") ),
+      "WRITE ME!!"
+      );
+
+    def(
+      "rankfilter",
+      &make_function< only_3D<char_image>, char_image, int, int, int, double, &lfiltreordre3d >,
+      ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("center_z"), arg("r") ),
+      "WRITE ME!!"
+      );
+
+
+    def(
+      "tuf",
+      &make_function< only_2D<char_image>, int, int, &ltuf >,
+      ( arg("image"), arg("min connex"), arg("radius") ),
+      "topological upper filter\nWRITE ME!!"
+      );
+
+    def(
+      "taf",
+      &make_function< only_2D<char_image>, int, int, int, int, &ltaflambda >,
+      ( arg("image"), arg("min connex"), arg("radius"), arg("lambdapics"), arg("lambdapuits") ),
+      "topological alternating filter\nWRITE ME!!"
+      );
+
+    
+    
     
     
 //   def( "cpp_circle_tangent", &pink::gsl::circle_tangent,

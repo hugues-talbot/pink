@@ -83,66 +83,14 @@ int main(int argc, char **argv)
     fprintf(stderr, "minima: readimage failed\n");
     exit(1);
   }
-  N = rowsize(image) * colsize(image) * depth(image);
 
-  if (argv[2][0] == 'b') {
-    connex = atoi(argv[2]+1);
-  } else 
-    connex = atoi(argv[2]);
-
-  result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
-  if (result == NULL)
-  {   
-    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+  if (!lminima(image, argv[2]))
+  {
+    fprintf(stderr, "%s: lminima failed\n", argv[0]);
     exit(1);
-  }
-  R = SLONGDATA(result);
+  } /* if ! lminima*/
 
-  if ((connex == 0) && strcmp(argv[2], "b0") && strcmp(argv[2], "b1"))
-  {
-    if (datatype(image) == VFF_TYP_1_BYTE)
-    {   
-      uint8_t absmin;
-      I = UCHARDATA(image);
-      absmin = I[0];
-      for (i = 1; i < N; i++) if (I[i] < absmin) absmin = I[i];
-      for (i = 0; i < N; i++) if (I[i] == absmin) I[i] = NDG_MAX; else I[i] = NDG_MIN;
-    }
-    else if (datatype(image) == VFF_TYP_4_BYTE) 
-    {   
-      int32_t absmin;
-      IL = SLONGDATA(image);
-      absmin = IL[0];
-      for (i = 1; i < N; i++) if (IL[i] < absmin) absmin = IL[i];
-      for (i = 0; i < N; i++) if (IL[i] == absmin) IL[i] = (int32_t)NDG_MAX; 
-                                             else IL[i] = (int32_t)NDG_MIN;
-    }
-  }
-  else
-  {
-    if (! llabelextrema(image, connex, LABMIN, result, &nblabels))
-    {
-      fprintf(stderr, "%s: llabelextrema failed\n", argv[0]);
-      exit(1);
-    }
-
-#ifdef VERBOSE
-    printf("%s : NOMBRE DE MINIMA : %d\n", argv[0], nblabels-1);
-#endif
-
-    if (datatype(image) == VFF_TYP_1_BYTE)
-    {   
-      I = UCHARDATA(image);
-      for (i = 0; i < N; i++)
-        if (R[i]) I[i] = NDG_MAX; else I[i] = NDG_MIN;
-    }
-    else if (datatype(image) == VFF_TYP_4_BYTE) 
-    {   
-      IL = SLONGDATA(image);
-      for (i = 0; i < N; i++)
-        if (R[i]) IL[i] = (int32_t)NDG_MAX; else IL[i] = (int32_t)NDG_MIN;
-    }
-  }
+  // if the image type is int, than we convert it to byte
   if (datatype(image) == VFF_TYP_4_BYTE)
   {
     struct xvimage *im2;
@@ -159,7 +107,7 @@ int main(int argc, char **argv)
   }
   else
     writeimage(image, argv[3]);
-  freeimage(result);
+
   freeimage(image);
 
   return 0;

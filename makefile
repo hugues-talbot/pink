@@ -1300,8 +1300,8 @@ $(BDIR)/lvkernu:	$(CDIR)/lvkernu.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR
 $(BDIR)/maxima:	$(CDIR)/maxima.c $(IDIR)/llabelextrema.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mccodimage.h $(ODIR)/llabelextrema.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/maxima.c $(ODIR)/llabelextrema.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/maxima
 
-$(BDIR)/minima:	$(CDIR)/minima.c $(IDIR)/llabelextrema.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mccodimage.h $(ODIR)/llabelextrema.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/minima.c $(ODIR)/llabelextrema.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/minima
+$(BDIR)/minima:	$(CDIR)/minima.c  $(IDIR)/llabelextrema.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mccodimage.h $(ODIR)/llabelextrema.o $(ODIR)/lminima.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/minima.c $(ODIR)/llabelextrema.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(ODIR)/lminima.o $(LIBS) -o $(BDIR)/minima
 
 $(BDIR)/minimalsimplepair:	$(CDIR)/minimalsimplepair.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/lseltopo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mclifo.o $(ODIR)/lseltopo.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/minimalsimplepair.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/lseltopo.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(LIBS) -o $(BDIR)/minimalsimplepair
@@ -2305,6 +2305,9 @@ $(ODIR)/llpetopo.o:	$(LDIR)/llpetopo.c $(IDIR)/mccodimage.h $(IDIR)/mcfah.h $(ID
 
 $(ODIR)/llpetoporeg.o:	$(LDIR)/llpetoporeg.c $(IDIR)/mccodimage.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mcindic.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/llpetoporeg.c -o $(ODIR)/llpetoporeg.o
+
+$(ODIR)/lminima.o:	$(LDIR)/lminima.c $(IDIR)/mccodimage.h $(IDIR)/mctopo.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lminima.c -o $(ODIR)/lminima.o
 
 $(ODIR)/lnbtopo.o:	$(LDIR)/lnbtopo.c $(IDIR)/mccodimage.h $(IDIR)/mctopo.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lnbtopo.c -o $(ODIR)/lnbtopo.o

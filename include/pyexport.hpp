@@ -231,6 +231,75 @@ image_type make_function( const image_type & image,
   return result;  
 } /* make_function */
 
+template < class image_type,
+           class param1_type,
+           class param2_type,
+           class param3_type,
+           class param4_type,
+           class param5_type,           
+           int (*mcfunction)( typename convert_if<image_type>::type,
+                              typename convert_if<param1_type>::type,
+                              typename convert_if<param2_type>::type,
+                              typename convert_if<param3_type>::type,
+                              typename convert_if<param4_type>::type,
+                              typename convert_if<param5_type>::type
+             )
+           >
+image_type make_function( const image_type & image,
+                          param1_type & param1,
+                          param2_type & param2,
+                          param3_type & param3,
+                          param4_type & param4,
+                          param5_type & param5
+  )
+{
+  image_type result;
+  result.copy(image);
+  
+  if (!mcfunction(result, param1, param2, param3, param4, param5))
+  {
+    error("mcfunction failed");
+  }
+  
+  return result;  
+} /* make_function */
+
+template < class image_type,
+           class param1_type,
+           class param2_type,
+           class param3_type,
+           class param4_type,
+           class param5_type,
+           class param6_type,           
+           int (*mcfunction)( typename convert_if<image_type>::type,
+                              typename convert_if<param1_type>::type,
+                              typename convert_if<param2_type>::type,
+                              typename convert_if<param3_type>::type,
+                              typename convert_if<param4_type>::type,
+                              typename convert_if<param5_type>::type,
+                              typename convert_if<param6_type>::type
+             )
+           >
+image_type make_function( const image_type & image,
+                          param1_type & param1,
+                          param2_type & param2,
+                          param3_type & param3,
+                          param4_type & param4,
+                          param5_type & param5,
+                          param6_type & param6
+  )
+{
+  image_type result;
+  result.copy(image);
+  
+  if (!mcfunction(result, param1, param2, param3, param4, param5, param6))
+  {
+    error("mcfunction failed");
+  }
+  
+  return result;  
+} /* make_function */
+
 
 template <class image_type>
 xvimage * can_be_null( image_type & image )
@@ -245,6 +314,80 @@ xvimage * can_be_null( image_type & image )
   }      
 } /* can_be_null */
 
+
+template <class image_type>
+class CAN_BE_NULL : public image_type
+{
+public:
+
+  virtual operator xvimage* ()
+    {
+      return this->get_output();      
+    } /* cast operator xvimage* */
+  
+  virtual xvimage* get_output()
+  {
+    if (this->isnull())
+    {
+      return NULL;      
+    }
+    else /* NOT this->isnull() */
+    {
+      return this->image_type::get_output();      
+    } /* NOT this->isnull() */    
+    
+  } /* get_output() */
+  
+}; /* class can_be_null */
+
+template <class image_type>
+class only_2D : public image_type
+{
+public:  
+  virtual operator xvimage* ()
+    {
+      return this->get_output();      
+    } /* cast operator xvimage* */
+  
+  virtual xvimage* get_output()
+  {
+    if (this->get_size().size()!=2)
+    {
+      error("This function or parametrization  only accepts 2D images");      
+    }
+    else /* NOT this->isnull() */
+    {
+      return this->image_type::get_output();      
+    } /* NOT this->isnull() */    
+    
+  } /* get_output() */  
+  
+}; /* class only_2D */
+
+
+template <class image_type>
+class only_3D : public image_type
+{
+public:  
+  virtual operator xvimage* ()
+    {
+      return this->get_output();      
+    } /* cast operator xvimage* */
+  
+  virtual xvimage* get_output()
+  {
+    if (this->get_size().size()!=3)
+    {
+      error("This function or parametrization only accepts 3D images");      
+    }
+    else /* NOT this->isnull() */
+    {
+      return this->image_type::get_output();      
+    } /* NOT this->isnull() */    
+    
+  } /* get_output() */  
+  
+}; /* class only_2D */
 
 
 
