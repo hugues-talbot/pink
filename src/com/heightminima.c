@@ -97,14 +97,22 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[2]);
   param = atoi(argv[3]);
-  
-  inverse(image);
-  if (! lheightmaxima(image, connex, param))
+
+// the inversion moved to a function  
+  /* inverse(image); */
+  /* if (! lheightmaxima(image, connex, param)) */
+  /* { */
+  /*   fprintf(stderr, "heightminima: lheightmaxima failed\n"); */
+  /*   exit(1); */
+  /* } */
+  /* inverse(image); */
+
+  if (! lheightminima(image, connex, param))
   {
-    fprintf(stderr, "heightminima: lheightmaxima failed\n");
+    fprintf(stderr, "heightminima failed\n");
     exit(1);
   }
-  inverse(image);
+
 
   writeimage(image, argv[4]);
   freeimage(image);

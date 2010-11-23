@@ -457,6 +457,19 @@ fprintf(stderr, "flood terminee\n");
 } /* lheightopening() */
 
 /* ==================================== */
+int32_t lheightminima(struct xvimage *image, int32_t connex, int32_t param)
+/* ==================================== */
+{
+  int res;
+  inverse(image);
+  res = lheightmaxima(image, connex, param);
+  inverse(image);
+
+  return res;  
+} /* lheightminima */
+
+
+/* ==================================== */
 int32_t lheightmaxima(struct xvimage *image, int32_t connex, int32_t param)
 /* ==================================== */
 {
