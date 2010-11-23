@@ -30,7 +30,7 @@ void erosball_export();void medianfilter_export();
 // skeleton function
 void skeleton_export();void zoom_export();
 
-void dilat_export(); void eros_export(); void geodilat_export();void geoeros_export();
+void dilation_export(); void erosion_export(); void geodilat_export();
 void geoeros_export(); void opening_export(); void drawcurve2D_export(); void maxflow_export();
 void uiSqhool_object_export(); void gradient_export();
 
@@ -39,8 +39,7 @@ void project_plane_export(); void border_export(); void identifyline_export(); v
 void generate_rgb_image_export(); void closing_export(); void closeball_export(); void minmax_export();
 void dilatball_export(); void inverse_export(); void asfbin_export(); void ptcurve_export();
 void skelcurv_export(); void skelcurv2_export(); void ptend_export(); void distc_export();
-void readimage_export(); void skelsurf_export();
-void toposhrink_export(); void htkern_export();
+void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
 
 
 // for wrapping every type with one function
@@ -70,10 +69,9 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   
   zoom_export();
 
-  dilat_export();
-  eros_export();
+  dilation_export();
+  erosion_export();
   geodilat_export();
-  geoeros_export();
   geoeros_export();
   opening_export();
   drawcurve2D_export();
@@ -350,7 +348,26 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
       "topological alternating filter\nWRITE ME!!"
       );
 
+    def(
+      "watershed",
+      &make_function< char_image, char_image, int, &lwshedtopobin >,
+      ( arg("image"), arg("mark"), arg("connexity") ),
+      "WRITE ME!!"
+      );
+
+    def(
+      "heightmaxima",
+      &make_function< char_image, int, int, &lheightmaxima >,
+      ( arg("image"), arg("connexity"), arg("height") ),
+      "WRITE ME!!"
+      );
     
+    def(
+      "heightminima",
+      &make_function< char_image, int, int, &lheightminima >,
+      ( arg("image"), arg("connexity"), arg("height") ),
+      "WRITE ME!!"
+      );
     
     
     
