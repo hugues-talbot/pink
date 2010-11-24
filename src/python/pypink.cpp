@@ -21,8 +21,8 @@ using namespace pink;
 #include <pyexport.hpp>
 
 // declarations
-void deep_xvimage_object_export();void shallow_xvimage_object_export();
-void xvimage_object_export();
+// void deep_xvimage_object_export();void shallow_xvimage_object_export();
+// void xvimage_object_export();
 // void writeimage_export();
 void vint_object_export(); void vector_int_object_export();void wshedtopo_export();
 void erosball_export();void medianfilter_export();
@@ -43,8 +43,8 @@ void readimage_export(); void skelsurf_export(); void toposhrink_export(); void 
 
 
 // for wrapping every type with one function
-template <class object_type, class pixel_type>
-void ujoi_object_export( const char* object_name, const char* object_description );
+// template <class image_type>
+// void ujoi_class_export( const char* object_name, const char* object_description );
 
 
 BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that will also contain
@@ -55,11 +55,17 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   def("greet", greet, "Gently greets the user.");
   
   vector_int_object_export();
-  xvimage_object_export(); // self explaining
-  deep_xvimage_object_export(); // self explaining
-  shallow_xvimage_object_export(); // self explaining
-//  writeimage_export(); // self explaining
+  
+  // obsolete 
+  // xvimage_object_export(); // self explaining
+  // deep_xvimage_object_export(); // self explaining
+  // shallow_xvimage_object_export(); // self explaining
+
+  // created as a method of the object
+  //  writeimage_export(); // self explaining
+
   vint_object_export(); // self explaining
+
   wshedtopo_export();
   erosball_export();
   medianfilter_export();
@@ -400,34 +406,34 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   // here are the image objects ( char_image, short_image, int_image, float_image, double_image )
   // there is a template in pyujimage.hpp to help them export without rewritting all the declarations
 
-  ujoi_object_export < char_image, unsigned char > (
+  ujoi_class_export < char_image > (
     "char_image",
-    "This is the image object for 1 byte 'char' images"
+    "This is the image class for 1 byte 'char' images"
     );
 
 
-  ujoi_object_export < short_image, unsigned short int > (
+  ujoi_class_export < short_image > (
     "short_image",
-    "This is the image object for 2 byte 'short int' images"
+    "This is the image class for 2 byte 'short int' images"
     );
 
 
-  ujoi_object_export < int_image, unsigned /*long*/ int > ( // LONG INT is 8 byte's on 64 bit system
+  ujoi_class_export < int_image > ( // LONG INT is 8 byte's on 64 bit system
     "int_image",
-    "This is the image object for 4 byte 'long int' images. "
+    "This is the image class for 4 byte 'long int' images. "
     "Note that on 32bit systems it's equivalent with c++ 'int'. "
     "However while 'int' can change on 64bit systems, 'long int' "
     "should remain 32bit." 
     );
 
-  ujoi_object_export < float_image, float > (
+  ujoi_class_export < float_image > (
     "float_image",
-    "This is the image object for 4 byte 'float' images"
+    "This is the image class for 4 byte 'float' images"
     );
 
-  ujoi_object_export < double_image, double > (
+  ujoi_class_export < double_image > (
     "double_image",
-    "This is the image object for 8 byte 'double' images"
+    "This is the image class for 8 byte 'double' images"
     );
 
 };

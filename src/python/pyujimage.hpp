@@ -29,13 +29,32 @@ Python class pink.image / c++ pink::ujoi
 ***************************************************************************************
 */
 
+template <class image_type>
+void ujoi_class_export( const char* object_name, const char* object_description ){
 
-template <class object_type, class pixel_type>
-void ujoi_object_export( const char* object_name, const char* object_description ){
+  typedef typename image_type::pixel_type pixel_type;
 
 
+  /// Constraints
+  class_< only_2D<image_type>, bases<image_type> >(
+    "only_2D",
+    "WRITE ME!!"
+    );
+  
+  class_< only_3D<image_type>, bases<image_type> >(
+    "only_3D",
+    "WRITE ME!!"
+    );
 
-  class_< object_type , PTR< object_type > > (
+  class_< CAN_BE_NULL<image_type>, bases<image_type> >(
+    "can_be_null",
+    "WRITE ME!!"
+    );
+  
+
+  
+
+  class_<image_type> (
     object_name,
     object_description,
     init<vint>(args("self","size"), "Default constructor. Creates an empty image of size 'dim'.")
@@ -53,7 +72,7 @@ void ujoi_object_export( const char* object_name, const char* object_description
 
 
 
-    .def( init< object_type > (
+    .def( init< image_type > (
 	    args("self", "src"), 
 	    "This is the deep copy constructor of the 'ujoi' objects. It'll copy all the data "
 	    "and all the parameters including the 'xvimage' properties "
@@ -81,7 +100,7 @@ void ujoi_object_export( const char* object_name, const char* object_description
     
     
 
-    .def( "imtype", &object_type::imtype, 
+    .def( "imtype", &image_type::imtype, 
 	  args("self"),
 	  "Returns a string with the type held in the object. Current types " 
 	  "can be: uint8_t, int16_t, int32, float, double"
@@ -89,24 +108,24 @@ void ujoi_object_export( const char* object_name, const char* object_description
 
 
 
-    .def( "writeimage", &object_type::_writeimage, 
+    .def( "writeimage", &image_type::_writeimage, 
 	  args("self", "filename"),
 	  "writes the image from the object into a 'pgm' file 'filename'"
       )
 
 
 
-    .def( "writeamira", &object_type::_write_amira,
+    .def( "writeamira", &image_type::_write_amira,
 	  args("self", "filename"),
 	  "writes the image from the object into amira binary mesh file 'filename'"
       )
 
-    .def( "__repr__", &object_type::repr,
+    .def( "__repr__", &image_type::repr,
 	  args("self"),
 	  "writes a short string of information about the image"
       )
 
-    .def( "fill", &object_type::fill,
+    .def( "fill", &image_type::fill,
 	  args("self"),
 	  "fill's the image with the given value"
       )
@@ -123,7 +142,7 @@ void ujoi_object_export( const char* object_name, const char* object_description
 
     .add_property( "size", 
 		   make_function( 
-		     &object_type::get_size, 
+		     &image_type::get_size, 
 		     return_value_policy<copy_const_reference>()
 		     ),
 		   "Returns a 'vint' vector with the dimensions of the image. "
@@ -144,16 +163,16 @@ void ujoi_object_export( const char* object_name, const char* object_description
 
     .add_property( "center", 
 		   make_function( 
-		     &object_type::get_center, return_value_policy<copy_const_reference>()
+		     &image_type::get_center, return_value_policy<copy_const_reference>()
 		     ),
-		   &object_type::set_center_list,
+		   &image_type::set_center_list,
 		   "Reads and sets the center point. If the coordinates are -1, then "
 		   "the center is undefined. When changing the center, the new center point "
 		   "must have the same dimensions as the image."
 		   
       )
 
-    .def("set_center", &object_type::set_center_vint, 
+    .def("set_center", &image_type::set_center_vint, 
 	 args("self", "new_center"),
 	 "sets up 'new_center' as the center point of the image"
 	 "the new center point "
@@ -169,7 +188,7 @@ operator[int]
 
 
     
-    .def( "__getitem__", &object_type::get_operator_int, return_value_policy<copy_const_reference>(),
+    .def( "__getitem__", &image_type::get_operator_int, return_value_policy<copy_const_reference>(),
 	  args("self", "pos"),
 	  "This function accesses the pixels of the image. It is used for the 'a=image[pos]' like access model."
 	  
@@ -177,7 +196,7 @@ operator[int]
     
     
     
-    .def( "__setitem__", &object_type::set_operator_int,
+    .def( "__setitem__", &image_type::set_operator_int,
 	  args("self", "pos", "value"),
 	  "This function accesses the pixels of the image. It is used for the 'image[pos]=a' like access model."
       )
@@ -189,7 +208,7 @@ operator[int]
  */
 
     
-    .def( "__getitem__", &object_type::get_operator_vint, return_value_policy<copy_const_reference>(),
+    .def( "__getitem__", &image_type::get_operator_vint, return_value_policy<copy_const_reference>(),
 	  args("self", "pos"),
 	  "This function accesses the pixels of the image. It is used for the 'a=image[pos]' like access model."
 	  
@@ -197,7 +216,7 @@ operator[int]
 
 
 
-    .def( "__setitem__", &object_type::set_operator_vint,
+    .def( "__setitem__", &image_type::set_operator_vint,
 	  args("self", "pos", "value"),
 	  "This function accesses the pixels of the image. It is used for the 'image[pos]=a' like access model."
       )
@@ -209,7 +228,7 @@ operator[int]
  */
 
 
-    .def( "__getitem__", &object_type::get_operator_list, return_value_policy<copy_const_reference>(),
+    .def( "__getitem__", &image_type::get_operator_list, return_value_policy<copy_const_reference>(),
 	  args("self", "pos"),
 	  "This function accesses the pixels of the image. It is used for the 'a=image[pos]' like access model."
 
@@ -217,7 +236,7 @@ operator[int]
 
 
 
-    .def( "__setitem__", &object_type::set_operator_list,
+    .def( "__setitem__", &image_type::set_operator_list,
 	  args("self", "pos", "value"),
 	  "This function accesses the pixels of the image. It is used for the 'image[pos]=a' like access model."
       )
@@ -264,7 +283,7 @@ operator[int]
     //.def(float() / self) // its difficult to interpret
     ;
   
-}; /* ujoi_object_export */
+}; /* ujoi_class_export */
 
 
 
