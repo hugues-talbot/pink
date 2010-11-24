@@ -65,15 +65,16 @@ h-minima with connexity <B>connex</B> and depth <B>height</B>.
 #include <mcimage.h>
 #include <lattribheight.h>
 
-/* ==================================== */
-static void inverse(struct xvimage * image)
-/* ==================================== */
-{
-  int32_t i, N = rowsize(image) * colsize(image) * depth(image);
-  uint8_t *pt;
-  for (pt = UCHARDATA(image), i = 0; i < N; i++, pt++)
-    *pt = NDG_MAX - *pt;
-} // inverse
+// moved to lattribheight
+/* /\* ==================================== *\/ */
+/* static void inverse(struct xvimage * image) */
+/* /\* ==================================== *\/ */
+/* { */
+/*   int32_t i, N = rowsize(image) * colsize(image) * depth(image); */
+/*   uint8_t *pt; */
+/*   for (pt = UCHARDATA(image), i = 0; i < N; i++, pt++) */
+/*     *pt = NDG_MAX - *pt; */
+/* } // inverse */
 
 /* =============================================================== */
 int main(int argc, char **argv)

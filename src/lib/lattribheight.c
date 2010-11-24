@@ -457,13 +457,24 @@ fprintf(stderr, "flood terminee\n");
 } /* lheightopening() */
 
 /* ==================================== */
+void lattribheight_inverse(struct xvimage * image)
+/* ==================================== */
+{
+  int32_t i, N = rowsize(image) * colsize(image) * depth(image);
+  uint8_t *pt;
+  for (pt = UCHARDATA(image), i = 0; i < N; i++, pt++)
+    *pt = NDG_MAX - *pt;
+} // inverse
+
+
+/* ==================================== */
 int32_t lheightminima(struct xvimage *image, int32_t connex, int32_t param)
 /* ==================================== */
 {
   int res;
-  inverse(image);
+  lattribheight_inverse(image);
   res = lheightmaxima(image, connex, param);
-  inverse(image);
+  lattribheight_inverse(image);
 
   return res;  
 } /* lheightminima */

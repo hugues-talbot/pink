@@ -1058,8 +1058,8 @@ $(BDIR)/geoeros:	$(CDIR)/geoeros.c $(IDIR)/mccodimage.h $(IDIR)/mcimage.h $(IDIR
 $(BDIR)/heightmaxima:	$(CDIR)/heightmaxima.c $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfahsalembier.h $(IDIR)/mccodimage.h $(IDIR)/lattribheight.h $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lattribheight.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/heightmaxima.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lattribheight.o $(LIBS) -o $(BDIR)/heightmaxima
 
-$(BDIR)/heightminima:	$(CDIR)/heightminima.c $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfahsalembier.h $(IDIR)/mccodimage.h $(IDIR)/lattribheight.h $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lattribheight.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/heightminima.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lattribheight.o $(LIBS) -o $(BDIR)/heightminima
+$(BDIR)/heightminima:	$(CDIR)/heightminima.c $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfahsalembier.h $(IDIR)/mccodimage.h $(IDIR)/lattribheight.h $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lattribheight.o  
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/heightminima.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lattribheight.o  $(LIBS) -o $(BDIR)/heightminima
 
 $(BDIR)/heightselnb:	$(CDIR)/heightselnb.c $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfahsalembier.h $(IDIR)/mccodimage.h $(IDIR)/lattribheight.h $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lattribheight.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/heightselnb.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lattribheight.o $(LIBS) -o $(BDIR)/heightselnb

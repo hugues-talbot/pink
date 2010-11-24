@@ -15,7 +15,13 @@
 // and here is how it's done
 
 
-/*
+
+template <class image_type>
+void ujoi_class_export( const char* object_name, const char* object_description ){
+
+  typedef typename image_type::pixel_type pixel_type;
+
+  /*
 ***************************************************************************************
 ***************************************************************************************
 ***************************************************************************************
@@ -29,31 +35,7 @@ Python class pink.image / c++ pink::ujoi
 ***************************************************************************************
 */
 
-template <class image_type>
-void ujoi_class_export( const char* object_name, const char* object_description ){
-
-  typedef typename image_type::pixel_type pixel_type;
-
-
-  /// Constraints
-  class_< only_2D<image_type>, bases<image_type> >(
-    "only_2D",
-    "WRITE ME!!"
-    );
   
-  class_< only_3D<image_type>, bases<image_type> >(
-    "only_3D",
-    "WRITE ME!!"
-    );
-
-  class_< CAN_BE_NULL<image_type>, bases<image_type> >(
-    "can_be_null",
-    "WRITE ME!!"
-    );
-  
-
-  
-
   class_<image_type> (
     object_name,
     object_description,
@@ -282,6 +264,38 @@ operator[int]
     .def(self / float())
     //.def(float() / self) // its difficult to interpret
     ;
+
+  /*
+***************************************************************************************
+***************************************************************************************
+***************************************************************************************
+
+
+UJOI CLASS CONSTRAINT EXPORTS
+
+
+***************************************************************************************
+***************************************************************************************
+***************************************************************************************
+*/
+
+  
+
+  class_< only_2D<image_type>, bases<image_type> >(
+    "only_2D",
+    "WRITE ME!!"
+    );
+  
+  class_< only_3D<image_type>, bases<image_type> >(
+    "only_3D",
+    "WRITE ME!!"
+    );
+
+  class_< CAN_BE_NULL<image_type>, bases<image_type> >(
+    "can_be_null",
+    "WRITE ME!!"
+    );
+ 
   
 }; /* ujoi_class_export */
 
