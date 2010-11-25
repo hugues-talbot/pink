@@ -41,7 +41,7 @@ add_custom_command( TARGET cpp_pink POST_BUILD
 		    COMMAND rm -r -f `find ${CMAKE_BINARY_DIR}/python/ -type d -name ".svn"`
 		    COMMAND echo "\\#\\!" /bin/bash > ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "\\# UjoImro, 2010"  >> ${CMAKE_BINARY_DIR}/pink.sh
-		    COMMAND echo "\\# Generated automaticly on"`date --iso-8601` >> ${CMAKE_BINARY_DIR}/pink.sh
+		    COMMAND echo "\\# Generated automatically on"`date --iso-8601` >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "" >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "LD_LIBRARY_PATH=\\\${LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/python:${CMAKE_BINARY_DIR}/lib" PYTHONPATH=${PYTHONPATH}:${CMAKE_BINARY_DIR}/python ${PYTHON_EXE} $$\\@  >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND chmod u+x ${CMAKE_BINARY_DIR}/pink.sh
@@ -55,7 +55,7 @@ add_custom_command( TARGET cpp_pink POST_BUILD
 		    COMMAND cp -r ${CMAKE_SOURCE_DIR}/python/* ${CMAKE_BINARY_DIR}/python/
 		    COMMAND echo "\\#\\!" /bin/bash > ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "\\# UjoImro, 2010"  >> ${CMAKE_BINARY_DIR}/pink.sh
-    		    COMMAND echo "\\# Generated automaticly on"`date` >> ${CMAKE_BINARY_DIR}/pink.sh
+    		    COMMAND echo "\\# Generated automatically on"`date` >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "" >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "DYLD_LIBRARY_PATH=\\\${LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/python:${CMAKE_BINARY_DIR}/lib" PYTHONPATH=${PYTHONPATH}:${CMAKE_BINARY_DIR}/python ${PYTHON_EXE}  >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND chmod u+x ${CMAKE_BINARY_DIR}/pink.sh
@@ -68,7 +68,7 @@ add_custom_command( TARGET cpp_pink POST_BUILD
 		    COMMAND cp -r ${CMAKE_SOURCE_DIR}/python/* ${CMAKE_BINARY_DIR}/python/
 		    COMMAND echo "\\#\\!" /bin/bash > ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "\\# UjoImro, 2010"  >> ${CMAKE_BINARY_DIR}/pink.sh
-		    COMMAND echo "\\# Generated automaticly on"`date --iso-8601` >> ${CMAKE_BINARY_DIR}/pink.sh
+		    COMMAND echo "\\# Generated automatically on"`date --iso-8601` >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "" >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "LD_LIBRARY_PATH=\\\${LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/python:${CMAKE_BINARY_DIR}/lib" PYTHONPATH=${PYTHONPATH}:${CMAKE_BINARY_DIR}/python ${PYTHON_EXE}  >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND chmod u+x ${CMAKE_BINARY_DIR}/pink.sh
