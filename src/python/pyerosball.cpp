@@ -16,7 +16,7 @@ namespace pink {
     char_image erosball(
       const char_image & src,
       float r,
-      int mode
+      int mode=0
       )
     {
 
@@ -56,7 +56,7 @@ namespace pink {
 UI_EXPORT_ONE_FUNCTION(
   erosball,
   pink::python::erosball, 
-  ( arg("image"),arg("r"),arg("mode") ),
+  ( arg("image"),arg("r"),arg("mode")=0 ),
   "pink's help:\n\n"
   "morphological binary erosion by a ball\n"
   " \n"

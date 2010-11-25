@@ -116,7 +116,7 @@ namespace pink {
     char_image closeball(
       const char_image & src, 
       int r,
-      int mode=2
+      int mode=0
       )
     {
       if ((mode != 0) && (mode != 2) && (mode != 4) && 
@@ -161,7 +161,7 @@ namespace pink {
 
 UI_EXPORT_ONE_FUNCTION( closeball, 
 			pink::python::closeball, 
-			( arg("image"), arg("the ray of the ball"), arg("distance function (defaults to 2)") ),
+			( arg("image"), arg("the ray of the ball"), arg("distance function")=0 ),
 			"WRITE ME!!!\n"
   );
 

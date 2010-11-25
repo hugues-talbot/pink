@@ -40,6 +40,7 @@ void generate_rgb_image_export(); void closing_export(); void closeball_export()
 void dilatball_export(); void inverse_export(); void asfbin_export(); void ptcurve_export();
 void skelcurv_export(); void skelcurv2_export(); void ptend_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
+void openball_export();
 
 
 // for wrapping every type with one function
@@ -113,7 +114,7 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   skelsurf_export();
   toposhrink_export();
   htkern_export();
-  
+  openball_export();  
   
   
   UI_DEFINE_FUNCTION(

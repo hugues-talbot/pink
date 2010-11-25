@@ -330,10 +330,8 @@ c++ class pink::deep_xvimage
   {
     s << value;
   } /* write_a_pixel char */
+
   
-
-
-
 
 
 

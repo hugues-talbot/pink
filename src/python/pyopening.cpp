@@ -107,6 +107,58 @@ namespace pink {
   
       return result;    
     } /* opening */
+
+
+    char_image openball(
+      const char_image & image,
+      int radius,
+      int mode = 0
+      )     
+    {
+
+      char_image result;
+      result.copy(image);      
+      
+      if ((mode != 0) && (mode != 2) && (mode != 4) && 
+          (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
+      {
+        error("dist = [0|2|4|8|6|18|26] ");
+      }
+
+      if (result.get_size().size()==2) // the result is 2D
+      {
+        if (! lerosdisc(result, radius, mode))
+        {
+          error("function ldilatdisc failed");
+        }
+        if (! ldilatdisc(result, radius, mode))
+        {
+          error("function lerosdisc failed");
+        }
+      }
+      else // NOT the result is 2D
+      {
+        if (! lerosball(result, radius, mode))
+        {
+          error("function ldilatball failed");
+        }
+        if (! ldilatball(result, radius, mode))
+        {
+          error("function lerosball failed");
+        }
+      } // NOT the result is 2D
+
+      return result;      
+    } /* openball */
+    
+
+
+
+
+
+
+
+
   } /* namespace python */
 } /* namespace pink */
 
@@ -128,8 +180,15 @@ UI_EXPORT_ONE_FUNCTION( opening,
                         "author Michel Couprie 2002 \n"
                         " \n"
                         // end of the documenation
-  )
+  );
 
+
+UI_EXPORT_ONE_FUNCTION(
+  openball,
+  pink::python::openball,
+  ( arg("image"), arg("radius"), arg("mode")=0 ),
+  "WRITE ME!!"
+  );
 
 
 

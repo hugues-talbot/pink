@@ -33,13 +33,13 @@ Python class pink.xvimage / c++ xvimage
 ***************************************************************************************
 */
 
-void xvimage_object_export(){
-  class_< xvimage, PTR<xvimage> >(
-    "xvimage"
-    "pink's 'struct xvimage'. It's included because of the inheritance "
-    "(shallow_xvimage and deep_xvimage). "
-    );
-};
+// void xvimage_object_export(){
+//   class_< xvimage, PTR<xvimage> >(
+//     "xvimage"
+//     "pink's 'struct xvimage'. It's included because of the inheritance "
+//     "(shallow_xvimage and deep_xvimage). "
+//     );
+// };
 
 /*
 ***************************************************************************************

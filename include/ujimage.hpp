@@ -34,28 +34,39 @@ namespace pink{
 //#error: this image type is not defined
     string imtype() const 
       {         			      
-	return "wrong type";			              
-      };					              
+	error("unimplemented image type specialization");
+      }
     int int_pixel_type() const 
-      {                                
-	return -1;				      
-      };                                                
+      {
+        error("unimplemented image type specialization");
+      }
+    
+    pixel_type sub( pixel_type a, pixel_type b )
+      {
+        error("unimplemented image type specialization");
+      }
+    
+    pixel_type add( pixel_type a, pixel_type b)
+      {
+        error("unimplemented image type specialization");
+      }
+    
   }; /* class image_type specific */
   
   
-#define CREATE_IMAGE_TYPE( _class, name, int_type )			\
-  template <>								\
-  class image_type_specific< _class >{					\
-  public:								\
-  string imtype() const							\
-      {									\
-	return name;							\
-      };								\
-  int int_pixel_type() const						\
-      {									\
-	return int_type;						\
-      };								\
-  };									
+// #define CREATE_IMAGE_TYPE( _class, name, int_type )			\
+//   template <>								\
+//   class image_type_specific< _class >{					\
+//   public:								\
+//   string imtype() const							\
+//       {									\
+// 	return name;							\
+//       };								\
+//   int int_pixel_type() const						\
+//       {									\
+// 	return int_type;						\
+//       };								\
+//   };									
   
   									
   // helper function for reading and writing from and to xvimage
@@ -98,27 +109,79 @@ namespace pink{
     virtual ~shallow_xvimage(); // default destructor
     string imtype(); // returns the image type
   }; /* xvImage: xvimage */
-
+ 
   class pink_image
   {
   public:
     virtual operator xvimage*();    
   }; /* class pink_image */
 
+
+  template<class image_type, class pixel_type>
+  struct ujimage_operators
+  {
+    
+    friend bool operator!=(const image_type & x, const image_type & y)
+    {
+      return !( x==y );      
+    }
+
+    friend image_type operator+( const image_type & x, const image_type & y)
+      {
+        return image_type().copy(x)+=y;        
+      }
+
+    friend image_type operator-( const image_type & x, const image_type & y)
+      {
+        return image_type().copy(x)-=y;        
+      }
+
+    friend image_type operator+( const image_type & x, pixel_type val)
+      {
+        return image_type().copy(x)+=val;        
+      }
+
+    friend image_type operator+( pixel_type val, const image_type & x)
+      {
+        return image_type().copy(x)+=val;        
+      }
+
+    friend image_type operator*( const image_type & x, pixel_type val)
+      {
+        return image_type().copy(x)*=val;        
+      }
+    
+    friend image_type operator*( pixel_type val, const image_type & x)
+      {
+        return image_type().copy(x)*=val;        
+      }
+
+
+    friend image_type operator-( const image_type & x, pixel_type val)
+      {
+        return image_type().copy(x)-=val;        
+      }
+
+    friend image_type operator/( const image_type & x, pixel_type val)
+      {
+        return image_type().copy(x)/=val;        
+      }
+
+    
+  }; /* struct ujimage_operators */
+
+  // template<>
+  // bool operator!=( )
+  
+  
+  
+  
   template <class pixel_type_> // pixel_type can be char, short, int, float and double
   // while int_pixel_type is the type's encoding into integer. See 'mccodimage.h'
   class ujoi:
     public pink_image,
     public image_type_specific<pixel_type_>,
-    private boost::equality_comparable < ujoi<pixel_type_> >,
-    private boost::addable             < ujoi<pixel_type_> >,
-    private boost::subtractable        < ujoi<pixel_type_> >,
-    private boost::addable      < ujoi<pixel_type_>, pixel_type_ >,
-    private boost::subtractable < ujoi<pixel_type_>, pixel_type_ >,
-    private boost::dividable    < ujoi<pixel_type_>, pixel_type_ >,
-    private boost::multipliable < ujoi<pixel_type_>, pixel_type_ >
-
-
+    public ujimage_operators< ujoi<pixel_type_>, pixel_type_ >
   {
   public:
     typedef pixel_type_ pixel_type;
@@ -173,8 +236,8 @@ namespace pink{
     const pixel_type & get_operator_list( const boost::python::list & pos ) const;
     void set_operator_list( const boost::python::list & pos, const pixel_type & value );
 
-    void _writeimage( const string & filename ); // exports the image into a pgm file
-    void _write_amira( const string & filename ); // exports the image into an amira mesh (.am) file
+    void _writeimage( const string & filename ) const; // exports the image into a pgm file
+    void _write_amira( const string & filename ) const; // exports the image into an amira mesh (.am) file
 
     // cast operators
     xvimage* get_output(); // this method is not exported to python. It could not even be, as boost doesn't support pointers.    
@@ -210,14 +273,196 @@ namespace pink{
      
   }; /* class ujoi */
 
+
+    /*
+***************************************************************************************
+***************************************************************************************
+***************************************************************************************
+
+
+IMAGE TYPE SPECIFICS
+
+
+***************************************************************************************
+***************************************************************************************
+***************************************************************************************
+*/
+
+/*
+***************************************************************************************
+CHAR IMAGE
+***************************************************************************************
+ */
+
+  template <>								
+  class image_type_specific<unsigned char>{
+    typedef unsigned char pixel_type;    
+  public:								
+    string imtype() const							
+      {									
+	return "uint8_t";
+      }
+    
+    int int_pixel_type() const						
+      {									
+	return VFF_TYP_1_BYTE;						
+      }
+
+    pixel_type sub( pixel_type a, pixel_type b )
+      {
+        return a-b > 0 ? a-b : 0;        
+      }
+
+    pixel_type add( pixel_type a, pixel_type b)
+      {
+        return a+b < UCHAR_MAX ? a+b : UCHAR_MAX;        
+      }
+    
+  }; /* image_type_specific char_image */								
+
+
+  /*
+***************************************************************************************
+SHORT IMAGE
+***************************************************************************************
+ */
+  
+    template <>								
+  class image_type_specific<unsigned short int>{
+    typedef unsigned short int pixel_type;    
+  public:								
+    string imtype() const							
+      {									
+	return "uint16_t";
+      }
+    
+    int int_pixel_type() const						
+      {									
+	return VFF_TYP_2_BYTE;						
+      }
+
+    pixel_type sub( pixel_type a, pixel_type b )
+      {
+        return a-b > 0 ? a-b : 0;        
+      }
+
+    pixel_type add( pixel_type a, pixel_type b)
+      {
+        return a+b < USHRT_MAX ? a+b : USHRT_MAX;        
+      }
+    
+  }; /* image_type_specific short_image */								
+
+  
+  /*
+***************************************************************************************
+INT IMAGE
+***************************************************************************************
+ */
+
+  
+  template <>								
+  class image_type_specific<int>{
+    typedef int pixel_type;    
+  public:								
+    string imtype() const							
+      {									
+	return "int32_t";
+      }
+    
+    int int_pixel_type() const						
+      {									
+	return VFF_TYP_4_BYTE;						
+      }
+
+    pixel_type sub(pixel_type a, pixel_type b )
+      {
+        return a-b > 0 ? a-b : 0;
+      }
+
+    pixel_type add(pixel_type a, pixel_type b)
+      {
+        return a+b < LONG_MAX ? a+b : LONG_MAX;
+      }
+    
+  }; /* image_type_specific int_image */								
+
+  
+  /*
+***************************************************************************************
+FLOAT IMAGE
+***************************************************************************************
+ */
+
+  
+  template <>								
+  class image_type_specific<float>{
+    typedef float pixel_type;    
+  public:								
+    string imtype() const							
+      {									
+	return "float";
+      }
+    
+    int int_pixel_type() const						
+      {									
+	return VFF_TYP_FLOAT;						
+      }
+
+    pixel_type sub( pixel_type a, pixel_type b )
+      {
+        return a-b;        
+      }
+
+    pixel_type add( pixel_type a, pixel_type b)
+      {
+        return a+b;
+      }
+    
+  }; /* image_type_specific float_image */								
+
+  
+  /*
+***************************************************************************************
+double IMAGE
+***************************************************************************************
+ */
+
+  template <>								
+  class image_type_specific<double>{
+    typedef double pixel_type;    
+  public:								
+    string imtype() const							
+      {									
+	return "double";
+      }
+    
+    int int_pixel_type() const						
+      {									
+	return VFF_TYP_DOUBLE;						
+      }
+
+    pixel_type sub( pixel_type a, pixel_type b )
+      {
+        return a-b;        
+      }
+
+    pixel_type add( pixel_type a, pixel_type b)
+      {
+        return a+b;        
+      }
+    
+  }; /* image_type_specific double_image */								
+
+  
   // Valid image types
   // integer and float will be tested first.
 
-  CREATE_IMAGE_TYPE( unsigned char, "uint8_t", VFF_TYP_1_BYTE );
-  CREATE_IMAGE_TYPE( unsigned short int, "uint16_t", VFF_TYP_2_BYTE );
-  CREATE_IMAGE_TYPE( unsigned int, "int32_t", VFF_TYP_4_BYTE );
-  CREATE_IMAGE_TYPE( float, "float", VFF_TYP_FLOAT );
-  CREATE_IMAGE_TYPE( double, "double", VFF_TYP_DOUBLE );
+  // CREATE_IMAGE_TYPE( unsigned char, "uint8_t", VFF_TYP_1_BYTE );
+  // CREATE_IMAGE_TYPE( unsigned short int, "uint16_t", VFF_TYP_2_BYTE );
+  // CREATE_IMAGE_TYPE( unsigned int, "int32_t", VFF_TYP_4_BYTE );
+  // CREATE_IMAGE_TYPE( float, "float", VFF_TYP_FLOAT );
+  // CREATE_IMAGE_TYPE( double, "double", VFF_TYP_DOUBLE );
 
 
 
@@ -470,14 +715,15 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  void ujoi<pixel_type >::_writeimage( const string & filename ){ // exports the image into a pgm file
+  void ujoi<pixel_type >::_writeimage( const string & filename ) const // exports the image into a pgm file
+  {
     // writeimage takes 'char *', while 'c_str()' gives 'const char *'. 
     // I don't want to cast unnecesserily, so I'll just copy it.
  
     char * cstr = new char [ filename.size() + 1 ]; // converting the filename for 'writeimage'
     strcpy ( cstr, filename.c_str() );
     
-    writeimage( this->get_output(), cstr );    
+    writeimage( const_cast<image_type*>(this)->get_output(), cstr );    
 
   } /* _writeimage */
 
@@ -497,7 +743,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  void ujoi<pixel_type >::_write_amira( const string & filename ){ // exports the image into an amira mesh (.am) file
+  void ujoi<pixel_type >::_write_amira( const string & filename ) const // exports the image into an amira mesh (.am) file
+  { 
   
     
     string typetext;
@@ -898,7 +1145,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     FOR(q, get_size().prod())
     {
-      (*this)[q]+=other[q];      
+      (*this)[q]=this->add((*this)[q],other[q]);
     } /* FOR */
     
     return *this;    
@@ -913,7 +1160,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     FOR(q, get_size().prod())
     {
-      (*this)[q]-=other[q];      
+      (*this)[q]=this->sub((*this)[q],other[q]);
     } /* FOR */
     
     return *this;      
@@ -1057,7 +1304,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     
     this->size.reset( new vint( *other.size ));
     this->center.reset( new vint( *other.center ));
-    this->old_school.reset(new shallow_xvimage( *other.old_school )); // creating a new xvimage for the 'pink::ujoi' object
+    this->old_school.reset(new shallow_xvimage( (*other.size), other.int_pixel_type() )); // creating a new xvimage for the 'pink::ujoi' object
     // the constructor will not copy the data
   
     this->pixels.reset(new pixel_type[size->prod()]); // allocating the array for the pixel types

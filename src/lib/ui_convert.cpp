@@ -129,6 +129,22 @@ namespace pink {
 
   } /* float2byte */
 
+
+  int_image byte2long( const char_image & image )
+  {
+    int_image result(image.get_size());
+
+    std::copy( &(image[0]), &(image[image.get_size().prod()-1]), &(result[0]) );
+    
+    return result;    
+  };
+
+
+
+
+
+
+  
 } /* namespace pink */
 
 

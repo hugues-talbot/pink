@@ -44,7 +44,8 @@ namespace pink {
   } /* convert2float */
   
   
-
+  int_image byte2long( const char_image & image );
+  
 
 
 

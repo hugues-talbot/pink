@@ -22,21 +22,29 @@ using namespace pink;
 namespace pink {
   namespace python {
 
-    xvimage* main_dilatball( xvimage * image, int r, int mode)
+    char_image dilatball(
+      char_image & image, ///!!!!!!!!!!!!!!! const here
+      int radius,
+      int mode=0
+      )
     {
-      xvimage * res;
 
+      char_image result;
+      result.copy(image);
+      xvimage * res;
+      char_image * result_res;      
+      
       if ((mode != 0) && (mode != 1) && (mode != 2) && (mode != 3) && (mode != 4) && 
           (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
       {
-        error("distance type must be one of [0|1|2|3|4|8|6|18|26]");
-      } /* if mode */
+        error("dist = [0|1|2|3|4|8|6|18|26] ");
+      }
 
-      if (depth(image) == 1) // 2D
+      if (result.get_size().size() == 2) // the image is 2D
       {
-        if (r >= 0)
+        if (radius >= 0)
         {
-          if (! ldilatdisc(image, r, mode))
+          if (! ldilatdisc(result, radius, mode))
           {
             error("function ldilatdisc failed");
           }
@@ -45,77 +53,62 @@ namespace pink {
         {
           if (mode == 3)
           {
-            if (!convertlong(&image))
-            {
-              error("function convertlong failed");
-            }
-            if (! (res = lredt2d(image)))
+            int_image tmp = byte2long(result);            
+            // if (!convertlong(&result))
+            // {
+            //   error("function convertlong failed");
+            // }
+            
+            if (! (res = lredt2d(tmp)))
             {
               error("function lredt2d failed");
             }
           }
           else
           {
-            if (! (res = ldilatdiscloc(image, mode)))
+            if (! (res = ldilatdiscloc(result, mode)))
             {
               error("function ldilatdiscloc failed");
             }
           }
         }
       }
-      else // 3D
+      else // NOT the image is 2D
       {
-        if (r >= 0)
+        if (radius >= 0)
         {
-          if (! ldilatball(image, r, mode))
+          if (! ldilatball(result, radius, mode))
           {
             error("function ldilatball failed");
           }
         }
         else
         {
-          if (! (res = ldilatballloc(image, mode)))
+          if (! (res = ldilatballloc(result, mode)))
           {
-            error("function ldilatballloc failed");        
+            error("function ldilatballloc failed");
           }
         }
-      }
+      } // NOT the image is 2D
 
-      if (r >= 0) 
-      {   
-        return image; 
-      }
-      else 
-      {
-        freeimage(image);
-        return res;
-      }
-    } /* ldilatball */
-
-
-
-    char_image dilatball(
-      char_image & image, ///!!!!!!!!!!!!!!! const here
-      int radius,
-      int mode=0
-      )
+    if (radius >= 0) 
+    { 
+      //writeresult(result, argv[argc-1]);
+      return result;      
+    }
+    else 
     {
-      xvimage * expendable;
-      xvimage * old_school_result;  
-      expendable = copyimage(image); 
+      result_res = new char_image(*res);
+      freeimage(res);
+      return *result_res;      
+      //writeresult(res, argv[argc-1]);      
+    }
 
-      old_school_result=main_dilatball(expendable, radius, mode);
-
-      char_image result(*old_school_result); 
-
-      freeimage(expendable);
-      freeimage(old_school_result);
-  
-      return result;  
-    } /* py_dilatball */
+    // results returned in the previous if-else clause
+  } /* dilatball */
 
 
-  } /* namespace python */
+} /* namespace python */
 } /* namespace pink */
 
 

@@ -62,11 +62,11 @@ using std::ifstream;
 
 #define _PRINTIMAGE(x)							\
  cout << "_writing image: " << BOOST_PP_STRINGIZE(x) << " as '" << BOOST_PP_STRINGIZE(x) << ".pgm'\n"; \
- x->_writeimage(BOOST_PP_STRINGIZE(x)".pgm")
+ x._writeimage(BOOST_PP_STRINGIZE(x)".pgm")
 
 #define _PRINTAMIRA(x)							\
  cout << "_writing image: " << BOOST_PP_STRINGIZE(x) << " as '" << BOOST_PP_STRINGIZE(x) << ".am'\n"; \
- x->_write_amira(BOOST_PP_STRINGIZE(x)".am")
+ x._write_amira(BOOST_PP_STRINGIZE(x)".am")
 
 // eigen2 debug facility
 #define DVECT(x) cout << "----------------\n" << BOOST_PP_STRINGIZE(x) << " = \n" << x << "\n"

@@ -66,6 +66,7 @@ h-minima with connexity <B>connex</B> and depth <B>height</B>.
 #include <lattribheight.h>
 
 // moved to lattribheight
+
 /* /\* ==================================== *\/ */
 /* static void inverse(struct xvimage * image) */
 /* /\* ==================================== *\/ */

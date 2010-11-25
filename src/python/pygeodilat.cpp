@@ -23,8 +23,8 @@ namespace pink {
   namespace python {
 
     char_image geodilat(
-      const char_image & F, 
       const char_image & G, 
+      const char_image & F, 
       int connex, 
       int numb_iter
       )
@@ -37,33 +37,33 @@ namespace pink {
           );
       } /* ((connex!=4)&&(connex!=8)&&(connex!=6)&&(connex!=18)&&(connex!=26)) */
 
-
       char_image result;
-      result.copy(F);
-      char_image G_const_away;
-      G_const_away.copy(G);
+      result.copy(G);
 
-      if (result.get_size().size()!=result.get_size().size()){
+      char_image fc;
+      fc.copy(F);
+      
+      if (result.get_size().size()!=fc.get_size().size()){
         error("error: the dimensions of F and G must be equal");
       }
 
 
       if (result.get_size().size()==2)
       {
-        lgeodilat( result.get_output(), G_const_away.get_output(), connex, numb_iter ); 
+        lgeodilat( result.get_output(), fc.get_output(), connex, numb_iter ); 
       } 
       else /* NOT result.get_size().size()==2 */
       { 
         if (result.get_size().size()==3)
         {      
-          lgeodilat3d( result.get_output(), G_const_away.get_output(), connex, numb_iter );
+          lgeodilat3d( result.get_output(), fc.get_output(), connex, numb_iter );
         } 
         else 
         { /* NOT result.get_size().size()==3 */
           error("error: only 2D and 3D images are supported");
-        }; /* NOT result.get_size().size()==3 */
-      }; /* NOT result.get_size().size()==2 */
-  
+        } /* NOT result.get_size().size()==3 */
+      } /* NOT result.get_size().size()==2 */
+
       return result;    
     } /* geodilat */
 
