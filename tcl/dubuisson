@@ -40,6 +40,8 @@
    exit 
  }
 
+puts "warning: obsolete - use distsets instead"
+
 set PINK "$env(PINK)"
 source "$PINK/tcl/my_exec.tcl"
 

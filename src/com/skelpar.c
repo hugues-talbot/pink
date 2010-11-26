@@ -69,12 +69,13 @@ The possible choices are:
 \li 19: Hall 1989
 \li 20: Wu and Tsai 1992 [DOES NOT PRESERVE TOPOLOGY]
 \li 21: Manzanera and Bernard (variant by GB)
-\li 22: Bertrand curvilinear with reconstruction, asymmetrical
-\li 23: Bertrand curvilinear with reconstruction, symmetrical
-\li 24: Rosenfeld directionnel
-\li 25: Nemeth et Palagyi, 2009 (1)
-\li 26: Nemeth et Palagyi, 2009 (2)
-\li 27: Nemeth et Palagyi, 2009 (3)
+\li 22: Couprie and Bertrand, ultimate with medial axis constraint (NK2)
+\li 23: Bertrand curvilinear with reconstruction, asymmetrical
+\li 24: Bertrand curvilinear with reconstruction, symmetrical
+\li 25: Rosenfeld directionnel
+\li 26: Nemeth et Palagyi, 2009 (1)
+\li 27: Nemeth et Palagyi, 2009 (2)
+\li 28: Nemeth et Palagyi, 2009 (3)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -148,12 +149,13 @@ int main(int argc, char **argv)
     fprintf(stderr, "  19: Hall 1989\n");
     fprintf(stderr, "  20: Wu and Tsai 1992 [DOES NOT PRESERVE TOPOLOGY]\n");
     fprintf(stderr, "  21: Manzanera and Bernard (variant by GB)\n");
-    fprintf(stderr, "  22: Bertrand curvilinear with reconstruction, asymmetrical\n");
-    fprintf(stderr, "  23: Bertrand curvilinear with reconstruction, symmetrical\n");
-    fprintf(stderr, "  24: Rosenfeld directionnel\n");
-    fprintf(stderr, "  25: Nemeth and Palagyi 2009 (detects endpoints type 1)\n");
-    fprintf(stderr, "  26: Nemeth and Palagyi 2009 (detects endpoints type 2)\n");
-    fprintf(stderr, "  27: Nemeth and Palagyi 2009 (detects endpoints type 3)\n");
+    fprintf(stderr, "  22: Couprie and Bertrand, ultimate with medial axis constraint(NK2)\n");
+    fprintf(stderr, "  23: Bertrand curvilinear with reconstruction, asymmetrical\n");
+    fprintf(stderr, "  24: Bertrand curvilinear with reconstruction, symmetrical\n");
+    fprintf(stderr, "  25: Rosenfeld directionnel\n");
+    fprintf(stderr, "  26: Nemeth and Palagyi 2009 (detects endpoints type 1)\n");
+    fprintf(stderr, "  27: Nemeth and Palagyi 2009 (detects endpoints type 2)\n");
+    fprintf(stderr, "  28: Nemeth and Palagyi 2009 (detects endpoints type 3)\n");
     exit(1);
   }
 
@@ -340,13 +342,13 @@ int main(int argc, char **argv)
 	exit(1);
       } break;
     case 24:
-      if (! lskelrosenfeld(image, nsteps, inhibit))
+      if (! lskelbertrand_asym_s(image, nsteps, inhibit))
       {
 	fprintf(stderr, "%s: lskelbertrand_asym_s failed\n", argv[0]);
 	exit(1);
       } break;
     case 25:
-      if (! lskelbertrand_asym_s(image, nsteps, inhibit))
+      if (! lskelrosenfeld(image, nsteps, inhibit))
       {
 	fprintf(stderr, "%s: lskelbertrand_asym_s failed\n", argv[0]);
 	exit(1);

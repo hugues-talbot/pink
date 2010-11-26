@@ -55,7 +55,7 @@ Selects the regional minima of a grayscale image with connexity <B>connex</B>.
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <llabelextrema.h>
+#include <lminima.h>
 
 //#define VERBOSE
 

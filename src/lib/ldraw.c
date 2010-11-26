@@ -472,10 +472,10 @@ void ldrawfield3dlist(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, doubl
     y = ty[i];
     z = tz[i];
     t = sqrt(x*x + y*y + z*z);
-printf("i=%d, t=%g\n", i, t);
+    //printf("i=%d, t=%g\n", i, t);
     if (t > EPS_DRAWVECT)
     {
-printf("drawing line %d %d %d - %d %d %d\n", X[i], Y[i], Z[i], arrondi((X[i]+(len*x))), arrondi((Y[i]+(len*y))), arrondi((Z[i]+(len*z))));
+      //printf("drawing line %d %d %d - %d %d %d\n", X[i], Y[i], Z[i], arrondi((X[i]+(len*x))), arrondi((Y[i]+(len*y))), arrondi((Z[i]+(len*z))));
       ldrawline3d(image, X[i], Y[i], Z[i], arrondi((X[i]+(len*x))), arrondi((Y[i]+(len*y))), arrondi((Z[i]+(len*z))));
     }
   }
