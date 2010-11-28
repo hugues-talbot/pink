@@ -376,7 +376,34 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
       "WRITE ME!!"
       );
     
+    UI_DEFINE_ONE_FUNCTION(
+      genball,
+      pink::genball,
+      ( arg("radius"), arg("dimension")=2 ),
+      "WRITE ME!!"      
+      );
+
+    def(
+      "normalize",
+      &normalize<char_image, 0, 255>,
+      ( arg("image"), arg("minval")=0, arg("maxval")=255),
+      "WRITE ME!!"
+      );
     
+    def(
+      "normalize",
+      &normalize<int_image, 0, 255>,
+      ( arg("image"), arg("minval")=0, arg("maxval")=255),
+      "WRITE ME!!"
+      );
+    
+    def(
+      "normalize",
+      &normalize<float_image, 0, 1>,
+      ( arg("image"), arg("minval")=0, arg("maxval")=1),
+      "WRITE ME!!"
+      );
+
     
 //   def( "cpp_circle_tangent", &pink::gsl::circle_tangent,
 //        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),

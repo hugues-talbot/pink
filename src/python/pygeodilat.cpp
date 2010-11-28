@@ -26,7 +26,7 @@ namespace pink {
       const char_image & G, 
       const char_image & F, 
       int connex, 
-      int numb_iter
+      int numb_iter=-1
       )
     {
   
@@ -74,7 +74,7 @@ namespace pink {
 UI_EXPORT_ONE_FUNCTION(
   geodilat,
   pink::python::geodilat,
-  ( arg("G image"), arg("F image"), arg("connexity"), arg("number of iterations")),
+  ( arg("G image"), arg("F image"), arg("connexity"), arg("number of iterations")=-1),
   "geodesic (grayscale or binary) dilation \n"
   " \n"
   "Usage: geodilat g.pgm f.pgm connex niter out.pgm \n"

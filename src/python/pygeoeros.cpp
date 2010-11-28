@@ -17,7 +17,7 @@ namespace pink {
       const char_image & F, 
       const char_image & G, 
       int connex, 
-      int numb_iter
+      int numb_iter=-1
       )
     {
 
@@ -66,7 +66,7 @@ namespace pink {
 
 UI_EXPORT_ONE_FUNCTION ( geoeros,
                          pink::python::geoeros,
-                         ( arg("G image"), arg("F image"), arg("connexity"), arg("number of iterations") ),
+                         ( arg("G image"), arg("F image"), arg("connexity"), arg("number of iterations")=-1 ),
                          "geodesic (grayscale or binary) erosion \n"
                          " \n"
                          "Usage: geoeros g.pgm f.pgm connex niter out.pgm \n"

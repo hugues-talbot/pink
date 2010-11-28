@@ -19,15 +19,31 @@
 
 namespace pink { 
 
-  float_image lnormalize( const float_image & I,
-                          float_image::pixel_type vmin = 0. ,
-                          float_image::pixel_type vmax = 1. 
-    );
+  // float_image lnormalize( const float_image & I,
+  //                         float_image::pixel_type vmin = 0. ,
+  //                         float_image::pixel_type vmax = 1. 
+  //   );
   
-  char_image lnormalize( const char_image & I,
-                         char_image::pixel_type vmin = 0 ,
-                         char_image::pixel_type vmax = 255 
-    );
+  // char_image lnormalize( const char_image & I,
+  //                        char_image::pixel_type vmin = 0 ,
+  //                        char_image::pixel_type vmax = 255 
+  //   );
+
+
+  template <class image_type, int def_vmin, int def_vmax>
+  image_type normalize(
+    const image_type & image,
+    float vmin = def_vmin,
+    float vmax = def_vmax
+    )
+  {
+    image_type result;
+    result.copy(image);
+
+    lnormalize( result.get_output(), vmin, vmax );    
+
+    return result;    
+  } /* lnormalize */
   
 
 

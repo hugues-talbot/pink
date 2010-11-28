@@ -20,34 +20,34 @@
 namespace pink 
 {
   
-  float_image lnormalize( const float_image & I,
-                          float_image::pixel_type vmin /* = 0.*/  ,
-                          float_image::pixel_type vmax/* = 1.*/ 
-    )
-  {
-    float_image result;
-    result.copy(I);
+  // float_image lnormalize( const float_image & I,
+  //                         float_image::pixel_type vmin /* = 0.*/  ,
+  //                         float_image::pixel_type vmax/* = 1.*/ 
+  //   )
+  // {
+  //   float_image result;
+  //   result.copy(I);
     
-    lnormalize( result.get_output(), vmin, vmax );
+  //   lnormalize( result.get_output(), vmin, vmax );
     
-    return result;
+  //   return result;
     
-  } /* lnormalize */
+  // } /* lnormalize */
   
   
-  char_image lnormalize( const char_image & I,
-                         char_image::pixel_type vmin /* = 0*/  ,
-                         char_image::pixel_type vmax  /*= 255 */
-    )
-  {
-    char_image result;
-    result.copy(I);
+  // char_image lnormalize( const char_image & I,
+  //                        char_image::pixel_type vmin /* = 0*/  ,
+  //                        char_image::pixel_type vmax  /*= 255 */
+  //   )
+  // {
+  //   char_image result;
+  //   result.copy(I);
     
-    lnormalize( result.get_output(), vmin, vmax );
+  //   lnormalize( result.get_output(), vmin, vmax );
     
-  return result;
+  // return result;
   
-  } /* lnormalize */
+  // } /* lnormalize */
 
 } /* namespace pink */
 

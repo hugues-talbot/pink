@@ -135,7 +135,7 @@ template < class image_type,
                               typename convert_if<param1_type>::type )
            >
 image_type make_function( const image_type & image,
-                          param1_type & param1 )
+                          param1_type param1 )
 {
   image_type result;
   result.copy(image);
@@ -157,8 +157,8 @@ template < class image_type,
              )
            >
 image_type make_function( const image_type & image,
-                          param1_type & param1,
-                          param2_type & param2
+                          param1_type param1,
+                          param2_type param2
   )
 {
   image_type result;
@@ -184,9 +184,9 @@ template < class image_type,
              )
            >
 image_type make_function( const image_type & image,
-                          param1_type & param1,
-                          param2_type & param2,
-                          param3_type & param3
+                          param1_type param1,
+                          param2_type param2,
+                          param3_type param3
   )
 {
   image_type result;
@@ -214,10 +214,10 @@ template < class image_type,
              )
            >
 image_type make_function( const image_type & image,
-                          param1_type & param1,
-                          param2_type & param2,
-                          param3_type & param3,
-                          param4_type & param4
+                          param1_type param1,
+                          param2_type param2,
+                          param3_type param3,
+                          param4_type param4
   )
 {
   image_type result;
@@ -246,11 +246,11 @@ template < class image_type,
              )
            >
 image_type make_function( const image_type & image,
-                          param1_type & param1,
-                          param2_type & param2,
-                          param3_type & param3,
-                          param4_type & param4,
-                          param5_type & param5
+                          param1_type param1,
+                          param2_type param2,
+                          param3_type param3,
+                          param4_type param4,
+                          param5_type param5
   )
 {
   image_type result;
@@ -281,12 +281,12 @@ template < class image_type,
              )
            >
 image_type make_function( const image_type & image,
-                          param1_type & param1,
-                          param2_type & param2,
-                          param3_type & param3,
-                          param4_type & param4,
-                          param5_type & param5,
-                          param6_type & param6
+                          param1_type param1,
+                          param2_type param2,
+                          param3_type param3,
+                          param4_type param4,
+                          param5_type param5,
+                          param6_type param6
   )
 {
   image_type result;

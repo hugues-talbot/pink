@@ -145,7 +145,7 @@ Python class pink.image / c++ pink::ujoi
 
     .add_property( "center", 
 		   make_function( 
-		     &image_type::get_center, return_value_policy<copy_const_reference>()
+		     &image_type::get_center_vint, return_value_policy<copy_const_reference>()
 		     ),
 		   &image_type::set_center_list,
 		   "Reads and sets the center point. If the coordinates are -1, then "
@@ -251,6 +251,9 @@ operator[int]
     .def(self / long())
     //.def(long() / self) // its difficult to interpret
 
+    // boost-python does not like this
+    // .def(self = long())
+    
     .def(self += float())
     .def(self + float())
     .def(float() + self)

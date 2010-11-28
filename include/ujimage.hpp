@@ -246,7 +246,9 @@ namespace pink{
 //    string imtype(); 
     const vint & get_size() const;
     const vint & get_center() const;
+    vint & get_center();
     void set_center_vint( const vint & new_center );
+    const vint & get_center_vint() const;
     void set_center_list( const boost::python::list & new_center );
 
     ARRAY<pixel_type> get_pixels();
@@ -254,7 +256,7 @@ namespace pink{
 
     string repr() const;
     void fill( pixel_type value );
-//    image_type operator=( const pixel_type & value ); // equivalent with function fill
+    image_type operator=( pixel_type value ); // equivalent with function fill
 
 
     bool operator==( const image_type & other ) const;
@@ -532,15 +534,12 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     xvimage * tmp;
 
-    try
-    {
-      tmp = readimage( const_cast<char*>(filename.c_str()) ); // readimage takes char* but hopefully does not change it
-    }
-    catch (...)
+    if (! (tmp = readimage(const_cast<char*>(filename.c_str()))) ) // readimage takes char* but hopefully does not change it
     {
       error("cannot read file '" + filename + "'");      
     } 
     
+    writeimage(tmp, "tmp.pgm");
     
     if (tmp->data_storage_type != this->int_pixel_type() )
     {
@@ -564,7 +563,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     this->pixels.reset( new pixel_type[ size->prod() ] ); // allocating the array for the pixel types
 
     std::copy( &(static_cast<pixel_type*>(tmp->image_data)[0]),
-               &(static_cast<pixel_type*>(tmp->image_data)[this->size->prod()-1]),
+               &(static_cast<pixel_type*>(tmp->image_data)[this->size->prod()]),
                this->pixels.get()
       );
 
@@ -602,7 +601,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     this->pixels.reset( new pixel_type[ size->prod() ] ); // allocating the array for the pixel types
 
     std::copy( &(static_cast<pixel_type*>(src.image_data)[0]),
-               &(static_cast<pixel_type*>(src.image_data)[this->size->prod()-1]),
+               &(static_cast<pixel_type*>(src.image_data)[this->size->prod()]),
                this->pixels.get()
       );
 
@@ -708,7 +707,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       old_school.reset( new shallow_xvimage( *size, this->int_pixel_type() ) );
     };
 
-    std::copy( (&data[0]), (&data[size->prod()-1]), pixels.get());
+    std::copy( (&data[0]), (&data[size->prod()]), pixels.get());
 
   } /* ujoi::ujoi */
 
@@ -1034,14 +1033,20 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  const vint & ujoi<pixel_type >::get_size() const{
+  const vint & ujoi<pixel_type >::get_size() const
+  {
     return *size;
   } /* ujoi:: get_size */
 
-
+  template <class pixel_type >
+  const vint & ujoi<pixel_type >::get_center() const
+  {
+    return *center;
+  } /* ujoi::get_center */
 
   template <class pixel_type >
-  const vint & ujoi<pixel_type >::get_center() const{
+  vint & ujoi<pixel_type >::get_center()
+  {
     return *center;
   } /* ujoi::get_center */
 
@@ -1060,6 +1065,12 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     }
     
   } /* ujoi::set_center_vint */
+
+  template <class pixel_type >
+  const vint & ujoi<pixel_type >::get_center_vint() const
+  {
+    return *center;    
+  } /* ujoi::get_center_vint */
 
 
 
@@ -1118,11 +1129,11 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::fill */
   
   
-  // template <class pixel_type>
-  // ujoi<pixel_type> ujoi<pixel_type>::operator=( const pixel_type & value ) // equivalent with function fill
-  // {
-  //   this->fill(value);    
-  // } /* ujoi::operator= */
+  template <class pixel_type>
+  ujoi<pixel_type> ujoi<pixel_type>::operator=( pixel_type value ) // equivalent with function fill
+  {
+    this->fill(value);    
+  } /* ujoi::operator= */
 
   
   template <class pixel_type >
@@ -1309,7 +1320,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   
     this->pixels.reset(new pixel_type[size->prod()]); // allocating the array for the pixel types
 
-    std::copy( &other[0], &other[size->prod()-1], this->pixels.get());
+    std::copy( &other[0], &other[size->prod()], this->pixels.get());
         
     return *this;
   } /* ujoi::copy */

@@ -22,92 +22,78 @@ namespace pink {
   namespace python {
 
     char_image closing(
-      const char_image & src, 
+      const char_image & image, 
       const char_image & elem
       )
     {
-
-      if (not (elem.get_center()[0]>=0) and ((elem.get_center()[1]>=0)))
-      {
-        error("The center of 'elem' must be specified.");
-      }
-
-
-      if (src.get_size().size()!=elem.get_size().size()){
-        error("error: the dimensions of 'src' and 'elem' must be equal");
-      }
-
       char_image result;
-      result.copy(src);
-      char_image elem_const_away;
-      elem_const_away.copy(elem);
-
-
-      if (result.get_size()==2)
-      {
-        int rs = result.get_size()[0];
-        int cs = result.get_size()[1];
-        int x = elem_const_away.get_center()[0];
-        int y = elem_const_away.get_center()[1];
+      result.copy(image);
+      char_image elem_ce; // this image is usually small so it's ok to copy it
+      elem_ce.copy(elem);
       
-    
-        if (! ldilateros_ldilat( result.get_output(), elem_const_away.get_output(), rs - 1 - x, cs - 1 - y))
+
+      if (not (elem.get_size().inside(elem.get_center())))
+      {
+        error("The center of the structuring element must be defined");        
+      }
+
+      if (not ((image.get_size().size()==2) or (image.get_size().size()==3)) )
+      {
+        error("Only 2D and 3D images are supported.");        
+      }
+      
+
+      if (image.get_size().size() == 2)
+      {
+
+        int x = elem.get_center()[0];        
+        int y = elem.get_center()[1];
+        // int z = elem.get_center()[2];
+        int rs = elem.get_size()[0];        
+        int cs = elem.get_size()[1];        
+        //int ds = elem.get_size()[2];
+
+        if (! ldilateros_ldilat(result, elem_ce, rs - 1 - x, cs - 1 - y))
         {
           error("function ldilat failed");
         }
-    
-        if (! lsym(elem_const_away.get_output(), 'c') )
+
+        if (! lsym(elem_ce, 'c'))
         {
           error("function lsym failed");
         }
-    
-        if (! ldilateros_leros( result.get_output(), elem_const_away.get_output(), x, y))
+
+        if (!ldilateros_leros(result, elem_ce, x, y))
         {
           error("function leros failed");
         }
-
-      } 
-      else /* NOT result.get_size()==2 */ 
+      }
+      else /* NOT image.get_size().size() == 2 */
       {
-        if (result.get_size()==3)
-        {
+        int x = elem.get_center()[0];        
+        int y = elem.get_center()[1];
+        int z = elem.get_center()[2];
+        int rs = elem.get_size()[0];        
+        int cs = elem.get_size()[1];        
+        int ds = elem.get_size()[2];
 
-          // the first two center coordinates of elem have already been tested
-          if (not (elem_const_away.get_center()[2]>=0))
-          {
-            error("The center of 'elem' must be specified.");
-          }
-      
-          int rs = result.get_size()[0];
-          int cs = result.get_size()[1];
-          int ds = result.get_size()[2];
-          int x = elem_const_away.get_center()[0];
-          int y = elem_const_away.get_center()[1];
-          int z = elem_const_away.get_center()[2];
-      
-          if (! ldilat3d( result.get_output(), elem_const_away.get_output(), x, y, z))
-          {
-            error("function leros3d failed");
-          }
-      
-          if (! lsym( elem_const_away.get_output(), 'c'))
-          {
-            error("function lsym failed");
-          }
-      
-          if (! leros3d( result.get_output(), elem_const_away.get_output(), rs - 1 - x, cs - 1 - y, ds - 1 - z))
-          {
-            error("function leros3d failed");
-          }
-
-        } 
-        else /* NOT result.get_size()==3 */
+        
+        if (! ldilat3d(result, elem_ce, x, y, z))
         {
-          error("pyclosing: the image must be 2D or 3D");
-        } /* NOT result.get_size()==3 */
-    
-      } /* NOT result.get_size()==2 */ 
-  
+          error("function leros3d failed");
+        }
+
+        if (! lsym(elem_ce, 'c'))
+        {
+          error("function lsym failed");
+        }
+
+        if (! leros3d(result, elem_ce, rs - 1 - x, cs - 1 - y, ds - 1 - z))
+        {
+          error("function leros3d failed");
+        }
+      }  /* NOT image.get_size().size() == 2 */
+
   
       return result;    
     } /* py_closing */
@@ -184,7 +170,7 @@ UI_EXPORT_ONE_FUNCTION( closing,
                         " \n"
                         "\author Michel Couprie 2002 \n"
                         " \n"
-       // end of the documenation
+                        // end of the documenation
   );
 
 

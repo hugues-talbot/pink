@@ -303,6 +303,7 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <uiInsert.hpp>
   #include <uiCutPlane.hpp>
   #include <ui_convert.hpp>
+  #include <ui_genball.hpp>
 #endif /* __cplusplus */
 
 
