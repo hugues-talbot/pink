@@ -24,7 +24,7 @@ namespace pink {
 
     char_image erosion(
       const char_image & src, 
-      char_image & elem
+      char_image elem
       )
     {
 

@@ -15,6 +15,8 @@
 # Modules which the function calls must be included before the function's module
 
 import cpp # the functions imported directly from c/c++
+from view3d import view3d
+
 # from python_pink import *
 # from long2byte import long2byte
 # from parallel_map import parallel_map

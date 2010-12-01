@@ -65,7 +65,7 @@ if {($argc != 1) && ($argc != 2)} {
  set RENDER(infilename) [lindex $argv 0]
 if {$argc == 2} { 
  set RENDER(infilename2) [lindex $argv 1]
- set RENDER(opacity) 1.0
+# set RENDER(opacity) 1.0
 }
 
 # create renderer and window
@@ -89,7 +89,7 @@ obj1Mapper SetInput [normals1 GetOutput]
 vtkActor obj1Actor
 obj1Actor SetMapper obj1Mapper
 if {$argc == 2} { 
- set RENDER(opacity) 0.2
+# set RENDER(opacity) 0.2
 }
 ren1 AddProp obj1Actor
 if {$argc == 2} { 
@@ -141,7 +141,7 @@ set opacity [scale .commands.opacity \
         -orient horizontal \
         -label "Opacity:" \
         -command setOpacity]
-$opacity set $RENDER(opacity)
+#$opacity set $RENDER(opacity)
 proc setOpacity {opa} {
     eval [obj1Actor GetProperty] SetOpacity $opa
     renWin Render

@@ -20,6 +20,12 @@ namespace pink {
   namespace python {
 
 
+
+    
+    
+    
+
+    
 //prototype
     char_image skeleton_ultimate(
       char_image * uj_image, 
@@ -473,4 +479,3 @@ void skeleton_export()
 
 
 // LuM end of file
-

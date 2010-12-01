@@ -206,9 +206,9 @@ namespace pink{
                                                   // it is not embeddable becouse readimage's using malloc/free, whereas boost's using new/delete 
     ujoi( const ujoi< pixel_type > & src, string debug="" ); // SHALLOW! copy_constructor. For conversion use convert2float
                                                              // for deep_copy use operator=
-    image_type & operator=( const image_type & other );     // SHALLOW! copy constructor
+    image_type operator=( const image_type & other );     // SHALLOW! copy constructor
     void reset( image_type & other );         // runtime shallow copy
-    image_type & copy( const image_type & other ); // DEEP copy!!    
+    image_type copy( const image_type & other ); // DEEP copy!!    
  
     
 
@@ -239,6 +239,8 @@ namespace pink{
     void _writeimage( const string & filename ) const; // exports the image into a pgm file
     void _write_amira( const string & filename ) const; // exports the image into an amira mesh (.am) file
 
+    PyObject * get_pixels_python();
+    
     // cast operators
     xvimage* get_output(); // this method is not exported to python. It could not even be, as boost doesn't support pointers.    
     operator xvimage*();
@@ -471,7 +473,7 @@ double IMAGE
 
   typedef ujoi<unsigned char/*,                 VFF_TYP_1_BYTE*/ >   char_image;
   typedef ujoi<unsigned short int/*,            VFF_TYP_2_BYTE*/ >  short_image;
-  typedef ujoi<unsigned/*long*/int/*,           VFF_TYP_4_BYTE*/ >    int_image; // LONG INT is 8 byte's on 64 bit system
+  typedef ujoi</*long*/int/*,                   VFF_TYP_4_BYTE*/ >    int_image; // LONG INT is 8 byte's on 64 bit system
   typedef ujoi<float/*,                         VFF_TYP_FLOAT*/  >  float_image;
   typedef ujoi<double/*,                        VFF_TYP_DOUBLE*/ > double_image;
 
@@ -520,6 +522,9 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     cout << "creating an empty image (" << static_cast<void*>(this) << ")" << endl;
     #endif /* UJIMAGE_DEBUG */
 
+    // defining the size for the isnull function
+    this->size.reset(new vint(1,0));    
+    
   } /* ujoi<pixel_type >::ujoi( const string & filename ) */
 
 
@@ -620,7 +625,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class im_type>
-  ujoi<im_type> & ujoi<im_type>::operator=( const image_type & other )     // SHALLOW_copy constructor
+  ujoi<im_type> ujoi<im_type>::operator=( const image_type & other )     // SHALLOW_copy constructor
   {
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
@@ -1091,6 +1096,18 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::set_center_list */
 
 
+  
+  template <class pixel_type >
+  PyObject* ujoi<pixel_type >::get_pixels_python()
+  {
+    return PyBuffer_FromMemory(
+      reinterpret_cast<void*>(this->pixels.get()),
+      this->size->prod()*sizeof(pixel_type)
+      );    
+//    return pixels.get();
+  } /* ujoi::get_pixels */
+
+  
 
   template <class pixel_type >
   ARRAY<pixel_type> ujoi<pixel_type >::get_pixels(){
@@ -1301,7 +1318,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::reset */
 
   template <class pixel_type>
-  ujoi<pixel_type> & ujoi<pixel_type >::copy( const image_type & other )
+  ujoi<pixel_type> ujoi<pixel_type >::copy( const image_type & other )
   {
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged

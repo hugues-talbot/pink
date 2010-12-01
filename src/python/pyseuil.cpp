@@ -56,7 +56,7 @@ namespace pink {
 
 UI_EXPORT_FUNCTION( seuil, 
 		    pink::python::seuil, 
-		    ( arg("image"), arg("threshold value"), arg("lower value"), arg("upper_value")),
+		    ( arg("image"), arg("threshold value"), arg("lower value")=0, arg("upper_value")=255),
 		    "this function takes an image, and replaces the values under 'threshold' with"
 		    " minval, and the values over or equal with the 'threshold' with 'max_val'"
   );

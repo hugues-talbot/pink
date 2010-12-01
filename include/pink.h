@@ -304,6 +304,7 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <uiCutPlane.hpp>
   #include <ui_convert.hpp>
   #include <ui_genball.hpp>
+  #include <ui_extractplane.hpp>
 #endif /* __cplusplus */
 
 

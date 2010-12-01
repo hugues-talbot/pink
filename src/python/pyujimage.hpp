@@ -96,20 +96,36 @@ Python class pink.image / c++ pink::ujoi
       )
 
 
-
+    
     .def( "writeamira", &image_type::_write_amira,
 	  args("self", "filename"),
 	  "writes the image from the object into amira binary mesh file 'filename'"
       )
 
+
+    
     .def( "__repr__", &image_type::repr,
 	  args("self"),
 	  "writes a short string of information about the image"
       )
 
+
+    
     .def( "fill", &image_type::fill,
 	  args("self"),
 	  "fill's the image with the given value"
+      )
+
+
+    
+    .def( "get_pixels", &image_type::get_pixels_python,
+          args("self"),
+          "for raw image visualisation"
+      )
+
+    .def( "copy", &image_type::copy,
+          args("self"),
+          "makes a deep copy of the image"
       )
 
 

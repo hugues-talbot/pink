@@ -97,7 +97,7 @@ namespace pink {
 
       } /* for (rayon = 1; rayon <= rayonmax; rayon++) */
 
-
+      return result;      
     } /* asfbin */
     
 

@@ -28,7 +28,7 @@ namespace pink {
     // ERROR this function changes the parameters
     // If somebody uses it again it'll have to be corrected
     int_image priority_image(
-      char_image & image,
+      char_image image,
       int priovalue
       )
     {
@@ -117,28 +117,17 @@ namespace pink {
     template <class priority_image_type>    
     char_image general_skelcurv(
       const char_image & image,
-      priority_image_type & prio,
-      char_image & inhibit,
-      int connex
+      priority_image_type prio,
+      int connex,
+      char_image inhibit
       )
     {
       char_image result;
       result.copy(image);
 
-      xvimage * xvinhibit;
-      if (inhibit.isnull())
-      {
-        xvinhibit = NULL;        
-      }
-      else /* NOT inhibit.isnull() */
-      {
-        xvinhibit = inhibit.get_output();        
-      } /* NOT inhibit.isnull() */
-      
-      
       if (image.get_size().size()==2)
       {
-        if (! lskelcurv(result, prio, xvinhibit, connex))
+        if (! lskelcurv(result, prio, can_be_null(inhibit), connex))
         {
           error("lskelcurv failed");
         }        
@@ -147,19 +136,19 @@ namespace pink {
       {
         if (image.get_size().size()==3)
         {
-          if (! lskelcurv3d(result, prio, xvinhibit, connex))
+          if (! lskelcurv3d(result, prio, can_be_null(inhibit), connex))
           {
             error("lskelcurv3d failed");
           }
         }
         else /* NOT size==3 */
         {
-          error("only 2D and 3D images are supported");          
+          error("only 2D and 3D images are supported");
         } /* NOT size==3 */
         
       } /* NOT size==2 */
 
-      return result;      
+      return result;
     } /* general_skelcurv */
     
     
@@ -168,13 +157,13 @@ namespace pink {
       const char_image & image, 
       priority_image_type & prio,
       int connex,
-      char_image inhibit=char_image()
+      char_image inhibit
       )
     {
       char_image result;
       result.copy(image);      
 
-//      result=general_skelcurv(image, prio, inhibit, connex);
+      result=general_skelcurv(image, prio, connex, inhibit);
 
       return result;      
     } /* template skelcurv */
@@ -183,41 +172,76 @@ namespace pink {
       const char_image & image, 
       int priovalue,
       int connex,
-      char_image inhibit=char_image()
+      char_image inhibit
       )
     {
       char_image result;
       result.copy(image);      
 
       int_image prio;
-//      prio = priority_image(result, priovalue);
+      prio = priority_image(result, priovalue);
       
-//      result=general_skelcurv(image, prio, inhibit, connex);
+      result = general_skelcurv(image, prio, connex, inhibit);
 
       return result;      
     } /* NO TEMPLATE skelcurv */
 
 
+    template <class priority_image_type>
+    char_image skelcurv_short(
+      const char_image & image, 
+      priority_image_type & prio,
+      int connex
+      )
+    {
+      return skelcurv(image, prio, connex, char_image());
+    } /* template skelcurv */
+
+    char_image skelcurv2_short(
+      const char_image & image, 
+      int priovalue,
+      int connex
+      )
+    {
+      return skelcurv2(image, priovalue, connex, char_image());
+    }
+    
 
   } /* namespace python */
 } /* namespace pink */
 
-UI_EXPORT_FUNCTION(
+
+void skelcurv_export()
+{
+
+  UI_DEFINE_FUNCTION(
   skelcurv,
   pink::python::skelcurv,
-  ( arg("image"),  arg("priority"), arg("connex"), arg("inhibit")="NULL" ),
+  ( arg("image"),  arg("priority"), arg("connex"), arg("inhibit") ),
   "WRITE ME!!!"
   );
-
-
-void skelcurv2_export()
-{
+  
   def("skelcurv",
       &pink::python::skelcurv2,
-      (arg("image"), arg("priority"),arg("connex"), arg("inhibit")="NULL"),
+      (arg("image"), arg("priority"),arg("connex"), arg("inhibit") ),
       "WRITE ME!!!"
-    );  
-} /* skelcurv2_export */
+    );
+
+  UI_DEFINE_FUNCTION(
+  skelcurv,
+  pink::python::skelcurv_short,
+  ( arg("image"),  arg("priority"), arg("connex") ),
+  "WRITE ME!!!"
+  );
+  
+  def("skelcurv",
+      &pink::python::skelcurv2_short,
+      (arg("image"), arg("priority"),arg("connex") ),
+      "WRITE ME!!!"
+    );
+
+  
+} /* skelcurv_export */
 
 
 

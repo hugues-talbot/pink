@@ -28,7 +28,7 @@ void vint_object_export(); void vector_int_object_export();void wshedtopo_export
 void erosball_export();void medianfilter_export();
 
 // skeleton function
-void skeleton_export();void zoom_export();
+void skeleton2_export();void zoom_export();
 
 void dilation_export(); void erosion_export(); void geodilat_export();
 void geoeros_export(); void opening_export(); void drawcurve2D_export(); void maxflow_export();
@@ -38,9 +38,10 @@ void read_raw_image_export(); void seuil_export(); void plane3d_export(); void d
 void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
 void generate_rgb_image_export(); void closing_export(); void closeball_export(); void minmax_export();
 void dilatball_export(); void inverse_export(); void asfbin_export(); void ptcurve_export();
-void skelcurv_export(); void skelcurv2_export(); void ptend_export(); void distc_export();
+void skelcurv_export(); void ptend_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
-void openball_export();
+void openball_export(); void gradmorph_export();
+
 
 
 // for wrapping every type with one function
@@ -67,21 +68,13 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
 
   vint_object_export(); // self explaining
 
-  wshedtopo_export();
-  erosball_export();
-  medianfilter_export();
+  wshedtopo_export();  erosball_export();  medianfilter_export();
 
   // the skeleton function
-  skeleton_export();
-  
-  zoom_export();
+  skeleton2_export();  zoom_export();
 
-  dilation_export();
-  erosion_export();
-  geodilat_export();
-  geoeros_export();
-  opening_export();
-  drawcurve2D_export();
+  dilation_export(); erosion_export();  geodilat_export();  geoeros_export();
+  opening_export();  drawcurve2D_export();
   
 //  maxflow_export();
 
@@ -90,32 +83,14 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   uiSqhool_object_export();
 //  gradient_export();
 
-  read_raw_image_export();
-  seuil_export();
-  plane3d_export();
+  read_raw_image_export();  seuil_export();  plane3d_export();
 //  draw_plane_export();
 //  project_plane_export();
-  border_export();
-  identifyline_export();
-  surimp_export();
-  generate_rgb_image_export();
-  closing_export();
-  closeball_export();
-  minmax_export();
-  dilatball_export();
-  inverse_export();
-  asfbin_export();
-  ptcurve_export();
-  skelcurv_export();
-  skelcurv2_export();
-  ptend_export();
-  readimage_export();
-  distc_export();
-  skelsurf_export();
-  toposhrink_export();
-  htkern_export();
-  openball_export();  
-  
+  border_export();  identifyline_export();  surimp_export();  generate_rgb_image_export();
+  closing_export();  closeball_export();  minmax_export();  dilatball_export();
+  inverse_export();  asfbin_export();  ptcurve_export();  skelcurv_export();
+  ptend_export();  readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
+  htkern_export();  openball_export();    gradmorph_export();  
   
   UI_DEFINE_FUNCTION(
     print_image,
@@ -198,44 +173,44 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
     def( "ptjunction",
          &make_function<char_image, int, &lptjunction>,
          ( arg("image"), arg("connexity") ),
-         "brief detects junction points in 2d or 3d binary images"
-         ""
-         "<B>Usage:</B> ptjunction in.pgm connex out.pgm"
-         ""
-         "<B>Description:</B>"
-         "Detects junction points in the 2d or 3d binary image b in.pgm, which is supposed to contain a skeleton."
-         "A junction point is a white point x such that #(Nn[x] inter X) > 2,"
-         "where Nn[x] stands for the n-neighborhood of x (excluding x), and"
-         "n = 4, 8 in 2D or n = 6, 18, 26 in 3D, as set by the parameter b connex."
-         ""
-         "<B>Types supported:</B> byte 2D, byte 3D"
-         ""
-         "<B>Category:</B> topobin"
-         "ingroup  topobin"
-         ""
-         "author Michel Couprie 2010"
+         "brief detects junction points in 2d or 3d binary images\n"
+         "\n"
+         "<B>Usage:</B> ptjunction in.pgm connex out.pgm\n"
+         "\n"
+         "<B>Description:</B>\n"
+         "Detects junction points in the 2d or 3d binary image b in.pgm, which is supposed to contain a skeleton.\n"
+         "A junction point is a white point x such that #(Nn[x] inter X) > 2,\n"
+         "where Nn[x] stands for the n-neighborhood of x (excluding x), and\n"
+         "n = 4, 8 in 2D or n = 6, 18, 26 in 3D, as set by the parameter b connex.\n"
+         "\n"
+         "<B>Types supported:</B> byte 2D, byte 3D\n"
+         "\n"
+         "<B>Category:</B> topobin\n"
+         "ingroup  topobin\n"
+         "\n"
+         "author Michel Couprie 2010\n"
       );
 
     def( "selectcomp",
          &make_function<char_image, int, int, int, int, &lselectcomp>,
          ( arg("image"), arg("connexity"), arg("x"), arg("y"), arg("z") ),
-         "brief selects a connected component"
-         ""
-         "<B>Usage:</B> selectcomp in.pgm connex x y z out.pgm"
-         ""
-         "<B>Description:</B>"
-         "The connected component of the binary image <B>in.pgm</B>"
-         "(according to the connectivity <B>connex</B>)"
-         "which contains the point (<B>x</B>,<B>y</B>,<B>z</B>)"
-         "is preserved. All other points are deleted."
-         "Possible values for b connex are 4, 8 (2D), 6, 18, 26, 60, 260 (3D)."
-         "Values 60 and 260 correspond to restrictions of 6 and 26 connectivities to the "
-         "current xy plane."
-         ""
-         "<B>Types supported:</B> byte 2d, byte 3d"
-         ""
-         "<B>Category:</B> connect"
-         "ingroup connect"
+         "brief selects a connected component\n"
+         "\n"
+         "<B>Usage:</B> selectcomp in.pgm connex x y z out.pgm\n"
+         "\n"
+         "<B>Description:</B>\n"
+         "The connected component of the binary image <B>in.pgm</B>\n"
+         "(according to the connectivity <B>connex</B>)\n"
+         "which contains the point (<B>x</B>,<B>y</B>,<B>z</B>)\n"
+         "is preserved. All other points are deleted.\n"
+         "Possible values for b connex are 4, 8 (2D), 6, 18, 26, 60, 260 (3D).\n"
+         "Values 60 and 260 correspond to restrictions of 6 and 26 connectivities to the \n"
+         "current xy plane.\n"
+         "\n"
+         "<B>Types supported:</B> byte 2d, byte 3d\n"
+         "\n"
+         "<B>Category:</B> connect\n"
+         "ingroup connect\n"
       );
 
     UI_DEFINE_ONE_FUNCTION(
@@ -404,6 +379,14 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
       "WRITE ME!!"
       );
 
+
+    UI_DEFINE_FUNCTION(
+      extractplane,
+      pink::extractplane,
+      ( arg("image"), arg("number of the plane"), arg("mode") ),
+      "WRITE ME!!"
+      );
+    
     
 //   def( "cpp_circle_tangent", &pink::gsl::circle_tangent,
 //        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),
@@ -448,9 +431,9 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
 
   ujoi_class_export < int_image > ( // LONG INT is 8 byte's on 64 bit system
     "int_image",
-    "This is the image class for 4 byte 'long int' images. "
-    "Note that on 32bit systems it's equivalent with c++ 'int'. "
-    "However while 'int' can change on 64bit systems, 'long int' "
+    "This is the image class for 4 byte 'long int' images. \n"
+    "Note that on 32bit systems it's equivalent with c++ 'int'. \n"
+    "However while 'int' can change on 64bit systems, 'long int' \n"
     "should remain 32bit." 
     );
 
