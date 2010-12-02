@@ -45,6 +45,16 @@ if (CMAKE_HOST_UNIX)
 
 ### **********************************************************************************************
 ### **********************************************************************************************
+### *************************** General Options **************************************************
+### **********************************************************************************************
+### **********************************************************************************************
+
+    if(NOT BOOST_INCLUDEDIR)
+	SET(BOOST_INCLUDEDIR "/usr/include" CACHE PATH "The directory of the boost headers. Remember in the case of /usr/local/include/boost, you specify /usr/local/include." )
+    endif(NOT BOOST_INCLUDEDIR)
+
+### **********************************************************************************************
+### **********************************************************************************************
 ### *************************** Functions in development *****************************************
 ### **********************************************************************************************
 ### **********************************************************************************************
@@ -184,10 +194,6 @@ if (CMAKE_HOST_UNIX)
 	if(NOT PYTHON_INCLUDE)
 	    SET(PYTHON_INCLUDE ${PYTHON_INCLUDE_PATH} CACHE PATH "The directory of the python headers." )
 	endif(NOT PYTHON_INCLUDE)
-
-	if(NOT BOOST_INCLUDEDIR)
-	    SET(BOOST_INCLUDEDIR "/usr/include" CACHE PATH "The directory of the boost headers. Remember in the case of /usr/local/include/boost, you specify /usr/local/include." )
-	endif(NOT BOOST_INCLUDEDIR)
 
 	if(NOT PYTHON_LIBRARY)
 	    SET(PYTHON_LIBRARY ${PYTHON_LIBRARIES} CACHE STRING "The python library.")
