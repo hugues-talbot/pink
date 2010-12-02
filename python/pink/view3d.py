@@ -34,6 +34,53 @@ def to_rgb_photoimage(images):
     return result
 
 
+class canvas:
+    def __init__(self, parent, side, color_x, color_y):
+        self.parent = parent
+        self.side = side
+        self.pressed = False
+        self.inside = False
+        self.color_x = color_x
+        self.color_y = color_y
+        self.pos_x = 0
+        self.pos_y = 0
+        self.size = [ extractplane(self.parent.image, 0, self.side).size[0], extractplane(self.parent.image, 0, self.side).size[1] ]        
+        self.canvas = tk.Canvas( self.parent.frame, width=self.size[0], height=self.size[1] )
+        self.canvas.bind('<Button-1>', self.on_mouse_down )
+        self.canvas.bind('<ButtonRelease-1>', self.on_mouse_up )
+        self.canvas.bind('<Motion>', self.on_mouse_move )
+        self.canvas.bind('<Enter>', self.on_mouse_enter )
+        self.canvas.bind('<Leave>', self.on_mouse_leave )
+        
+
+    def on_refresh(self, n):
+        self.tkimage = self.parent.to_photoimage(extractplane( self.parent.image, int(n), self.side ))
+        self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )
+        self.line_x = self.canvas.create_line( self.pos_x, 0, self.pos_x, self.size[1]-1, fill=self.color_x )
+        self.line_y = self.canvas.create_line( 0, self.pos_y, self.size[0]-1, self.pos_y, fill=self.color_y )
+
+    def on_mouse_down(self, n):
+        self.pressed = True
+        self.on_mouse_move(n)        
+
+    def on_mouse_up(self, n):
+        self.pressed = False        
+
+    def on_mouse_leave(self,n):
+        self.inside = False
+
+    def on_mouse_enter(self,n):
+        self.inside = True
+
+    def on_mouse_move(self, n):
+        if self.pressed and self.inside:
+            self.parent.on_mouse_move(self.side, int(n.x), int(n.y))            
+
+    def put_line(self, x, y):
+        self.pos_x=x
+        self.pos_y=y        
+        
+
 class main:
     def __init__(self, master, image):
         if len(image.size)!=3:
@@ -53,85 +100,89 @@ class main:
 
         ### Buttons
         self.quit = tk.Button(self.frame, text="Exit", command=self.frame.quit, width=10 )
-        self.quit.grid(row=10, column=10)
+        self.quit.grid(row=6, column=3)
 
-        self.canvas_x = tk.Canvas( self.frame, height=image.size[1], width=image.size[2] )
-        self.canvas_x.grid(row=0, column=1)
+        self.canvas_x = canvas(parent=self, side="zy", color_x="green", color_y="blue" )
+        self.canvas_x.canvas.grid(row=0, column=2)
 
-        self.canvas_y = tk.Canvas( self.frame, height=image.size[2], width=image.size[0] )
-        self.canvas_y.grid(row=1, column=0)
+        self.canvas_y = canvas(parent=self, side="xz", color_x="red", color_y="blue" )
+        self.canvas_y.canvas.grid(row=1, column=1)
 
-        self.canvas_z = tk.Canvas( self.frame, height=image.size[1], width=image.size[0] )
-        self.canvas_z.grid(row=0, column=0)
+        self.canvas_z = canvas(parent=self, side="xy", color_x="red", color_y="green" )
+        self.canvas_z.canvas.grid(row=0, column=1)
 
-        self.scale_x = tk.Scale( self.frame, label="X", orient=tk.HORIZONTAL, length=self.image.size[0], from_=0, to=self.image.size[0]-1, command=self.put_x )
+        self.scale_x = tk.Scale( self.frame, orient=tk.HORIZONTAL, length=self.image.size[0], from_=0, to=self.image.size[0]-1, command=self.update )
         self.scale_x.set( self.image.size[0]/2 )
-        self.scale_x.grid(row=2,column=0)
+        self.scale_x.grid(row=2,column=1)
 
-        self.scale_y = tk.Scale( self.frame, label="Y", orient=tk.HORIZONTAL, length=self.image.size[1], from_=0, to=self.image.size[1]-1, command=self.put_y )
+        self.scale_y = tk.Scale( self.frame, orient=tk.HORIZONTAL, length=self.image.size[1], from_=0, to=self.image.size[1]-1, command=self.update )
         self.scale_y.set( self.image.size[1]/2 )
-        self.scale_y.grid(row=3,column=0)
+        self.scale_y.grid(row=3,column=1)
 
-        self.scale_z = tk.Scale( self.frame, label="Z", orient=tk.HORIZONTAL, length=self.image.size[2], from_=0, to=self.image.size[2]-1, command=self.put_z )
+        self.scale_z = tk.Scale( self.frame, orient=tk.HORIZONTAL, length=self.image.size[2], from_=0, to=self.image.size[2]-1, command=self.update )
         self.scale_z.set( self.image.size[2]/2 )
-        self.scale_z.grid(row=4,column=0)
+        self.scale_z.grid(row=4,column=1)
 
         self.scale_seuil_low = tk.Scale( self.frame, label="Seuil", orient=tk.HORIZONTAL, length=256, from_=0, to=255, showvalue=1, command=self.update )
         self.scale_seuil_low.set(128)
-        self.scale_seuil_low.grid(row=5,column=0)
+        self.scale_seuil_low.grid(row=5,column=1)
 
         self.mode = tk.IntVar()
         self.mode.set(0)
 
-        self.photob = tk.Radiobutton( self.frame, text="Image", width=10, anchor="nw", command=self.on_mode_change, variable=self.mode, value=0 )
-        self.photob.grid(row=6,column=10)
-        
-        self.seuil = tk.Radiobutton( self.frame, text="Seuil (Threshold)", width=10, anchor="nw", command=self.on_mode_change, variable=self.mode, value=1 )
-        self.seuil.grid(row=8,column=10)
-
-        self.surimp = tk.Radiobutton( self.frame, text="Surimp", width=10, anchor="nw", command=self.on_mode_change, variable=self.mode, value=2 )
-        self.surimp.grid(row=7, column=10)
-
-        
         self.invertmode = False
         self.invert = tk.Checkbutton( self.frame, text="Invert", width=10, anchor="nw", command=self.on_invert_click )
-        self.invert.grid(row=5, column=10)
+        self.invert.grid(row=2, column=3)
 
+        self.photob = tk.Radiobutton( self.frame, text="Image", width=10, anchor="nw", command=self.on_mode_change, variable=self.mode, value=0 )
+        self.photob.grid(row=3,column=3)
+
+        self.surimp = tk.Radiobutton( self.frame, text="Surimp", width=10, anchor="nw", command=self.on_mode_change, variable=self.mode, value=2 )
+        self.surimp.grid(row=4, column=3)
+
+        self.seuil = tk.Radiobutton( self.frame, text="Seuil (Threshold)", width=10, anchor="nw", command=self.on_mode_change, variable=self.mode, value=1 )
+        self.seuil.grid(row=5,column=3)
+
+        self.checkbutton_x = tk.Checkbutton( self.frame, anchor='se', text="X" )
+        self.checkbutton_x.configure(selectcolor="red")
+        self.checkbutton_x.grid(row=2, column=0)
+        self.checkbutton_x.select()
+
+        self.checkbutton_y = tk.Checkbutton( self.frame, anchor='se', text="Y" )
+        self.checkbutton_y.configure(selectcolor="green")
+        self.checkbutton_y.grid(row=3, column=0)
+        self.checkbutton_y.select()
+
+        self.checkbutton_z = tk.Checkbutton( self.frame, anchor='se', text="Z" )
+        self.checkbutton_z.configure(selectcolor="blue")
+        self.checkbutton_z.grid(row=4, column=0)
+        self.checkbutton_z.select()
+
+    def canvas_x_on_mouse_up(self, n):
+        print "release me! n =", n
 
     def update(self, n=0):        
-        self.put_x(self.scale_x.get())
-        self.put_y(self.scale_y.get())
-        self.put_z(self.scale_z.get())
+        self.canvas_x.on_refresh(self.scale_x.get())
+        self.canvas_y.on_refresh(self.scale_y.get())
+        self.canvas_z.on_refresh(self.scale_z.get())
+        self.canvas_x.put_line( int(self.scale_y.get()), int(self.scale_z.get()))
+        self.canvas_y.put_line( int(self.scale_x.get()), int(self.scale_z.get()))
+        self.canvas_z.put_line( int(self.scale_x.get()), int(self.scale_y.get()))
 
+    def on_mouse_move(self, side, a, b):
+        if side == "zy":
+            self.scale_z.set(a)
+            self.scale_y.set(b)
+        elif side == "xz":
+            self.scale_x.set(a)
+            self.scale_z.set(b)
+        elif side == "xy":
+            self.scale_x.set(a)
+            self.scale_y.set(b)
+        else:
+            raise "internal error bad slice mode"
 
-    def extract_x(self, n):        
-        image = extractplane( self.image, int(n), "zy" )
-        size  = [ image.size[0], image.size[1] ]
-        return self.to_photoimage(image), size
-        
-    def put_x(self, n):
-        self.tkimage_x, size = self.extract_x(n)
-        self.gui_image_x = self.canvas_x.create_image( 1, 1, image=self.tkimage_x, anchor="nw" )
-        
-
-    def extract_y(self, n):        
-        image = extractplane( self.image, int(n), "xz" )
-        size  = [ image.size[0], image.size[1] ]
-        return self.to_photoimage(image), size
-        
-    def put_y(self, n):
-        self.tkimage_y, size = self.extract_y(n)
-        self.gui_image_y = self.canvas_y.create_image( 1, 1, image=self.tkimage_y, anchor="nw" )
-
-    def extract_z(self, n):        
-        image = extractplane( self.image, int(n), "xy" )
-        size  = [ image.size[0], image.size[1] ]
-        return self.to_photoimage(image), size
-        
-    def put_z(self, n):
-        self.tkimage_z, size = self.extract_z(n)
-        self.gui_image_z = self.canvas_z.create_image( 1, 1, image=self.tkimage_z, anchor="nw" )
-
+        self.update()
 
     def on_mode_change(self):
         self.seuilmode = self.surimpmode = False
