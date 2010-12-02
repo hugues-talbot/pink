@@ -185,9 +185,9 @@ if (CMAKE_HOST_UNIX)
 	    SET(PYTHON_INCLUDE ${PYTHON_INCLUDE_PATH} CACHE PATH "The directory of the python headers." )
 	endif(NOT PYTHON_INCLUDE)
 
-	if(NOT BOOST_INCLUDE)
-	    SET(BOOST_INCLUDE "/usr/include" CACHE PATH "The directory of the boost headers. Remember in the case of /usr/local/include/boost, you specify /usr/local/include." )
-	endif(NOT BOOST_INCLUDE)
+	if(NOT BOOST_INCLUDEDIR)
+	    SET(BOOST_INCLUDEDIR "/usr/include" CACHE PATH "The directory of the boost headers. Remember in the case of /usr/local/include/boost, you specify /usr/local/include." )
+	endif(NOT BOOST_INCLUDEDIR)
 
 	if(NOT PYTHON_LIBRARY)
 	    SET(PYTHON_LIBRARY ${PYTHON_LIBRARIES} CACHE STRING "The python library.")
@@ -209,7 +209,7 @@ if (CMAKE_HOST_UNIX)
 
 	# looking for the python library 
 	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_LIBRARY} ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} )
-	set( CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${INCLUDES} ${PYTHON_INCLUDE} ${BOOST_INCLUDE} ${EIGEN_INCLUDE} )
+	set( CMAKE_REQUIRED_INCLUDES  ${Boost_INCLUDE_DIR} ${CMAKE_REQUIRED_INCLUDES} ${INCLUDES} ${PYTHON_INCLUDE} ${EIGEN_INCLUDE} )
 	include_directories( ${CMAKE_REQUIRED_INCLUDES} )
 
 

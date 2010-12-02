@@ -23,6 +23,8 @@ libncurses5-dev
 doxygen
 libpthread-stubs0-dev
 
+python PIL, Tkinter
+
 and the usual gcc, g++, cmake, make
 
 // recommended:
