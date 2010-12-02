@@ -53,11 +53,13 @@ class canvas:
         self.canvas.bind('<Leave>', self.on_mouse_leave )
         
 
-    def on_refresh(self, n):
+    def on_refresh(self, n, draw_line_x, draw_line_y):
         self.tkimage = self.parent.to_photoimage(extractplane( self.parent.image, int(n), self.side ))
         self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )
-        self.line_x = self.canvas.create_line( self.pos_x, 0, self.pos_x, self.size[1]-1, fill=self.color_x )
-        self.line_y = self.canvas.create_line( 0, self.pos_y, self.size[0]-1, self.pos_y, fill=self.color_y )
+        if draw_line_x:
+            self.line_x = self.canvas.create_line( self.pos_x, 0, self.pos_x, self.size[1]-1, fill=self.color_x )
+        if draw_line_y:
+            self.line_y = self.canvas.create_line( 0, self.pos_y, self.size[0]-1, self.pos_y, fill=self.color_y )
 
     def on_mouse_down(self, n):
         self.pressed = True
@@ -102,7 +104,7 @@ class main:
         self.quit = tk.Button(self.frame, text="Exit", command=self.frame.quit, width=10 )
         self.quit.grid(row=6, column=3)
 
-        self.canvas_x = canvas(parent=self, side="zy", color_x="green", color_y="blue" )
+        self.canvas_x = canvas(parent=self, side="zy", color_x="blue", color_y="green" )
         self.canvas_x.canvas.grid(row=0, column=2)
 
         self.canvas_y = canvas(parent=self, side="xz", color_x="red", color_y="blue" )
@@ -143,17 +145,20 @@ class main:
         self.seuil = tk.Radiobutton( self.frame, text="Seuil (Threshold)", width=10, anchor="nw", command=self.on_mode_change, variable=self.mode, value=1 )
         self.seuil.grid(row=5,column=3)
 
-        self.checkbutton_x = tk.Checkbutton( self.frame, anchor='se', text="X" )
+        self.draw_line_x = tk.IntVar()
+        self.checkbutton_x = tk.Checkbutton( self.frame, anchor='se', text="X", command=self.update, variable=self.draw_line_x )
         self.checkbutton_x.configure(selectcolor="red")
         self.checkbutton_x.grid(row=2, column=0)
         self.checkbutton_x.select()
 
-        self.checkbutton_y = tk.Checkbutton( self.frame, anchor='se', text="Y" )
+        self.draw_line_y = tk.IntVar()
+        self.checkbutton_y = tk.Checkbutton( self.frame, anchor='se', text="Y", command=self.update, variable=self.draw_line_y )
         self.checkbutton_y.configure(selectcolor="green")
         self.checkbutton_y.grid(row=3, column=0)
         self.checkbutton_y.select()
 
-        self.checkbutton_z = tk.Checkbutton( self.frame, anchor='se', text="Z" )
+        self.draw_line_z = tk.IntVar()
+        self.checkbutton_z = tk.Checkbutton( self.frame, anchor='se', text="Z", command=self.update, variable=self.draw_line_z )
         self.checkbutton_z.configure(selectcolor="blue")
         self.checkbutton_z.grid(row=4, column=0)
         self.checkbutton_z.select()
@@ -162,10 +167,15 @@ class main:
         print "release me! n =", n
 
     def update(self, n=0):        
-        self.canvas_x.on_refresh(self.scale_x.get())
-        self.canvas_y.on_refresh(self.scale_y.get())
-        self.canvas_z.on_refresh(self.scale_z.get())
-        self.canvas_x.put_line( int(self.scale_y.get()), int(self.scale_z.get()))
+        line_x = self.draw_line_x.get()==1;
+        line_y = self.draw_line_y.get()==1;
+        line_z = self.draw_line_z.get()==1;
+
+        self.canvas_x.on_refresh(self.scale_x.get(), line_z, line_y )
+        self.canvas_y.on_refresh(self.scale_y.get(), line_x, line_z )
+        self.canvas_z.on_refresh(self.scale_z.get(), line_x, line_y )
+        
+        self.canvas_x.put_line( int(self.scale_z.get()), int(self.scale_y.get()))
         self.canvas_y.put_line( int(self.scale_x.get()), int(self.scale_z.get()))
         self.canvas_z.put_line( int(self.scale_x.get()), int(self.scale_y.get()))
 
@@ -180,7 +190,7 @@ class main:
             self.scale_x.set(a)
             self.scale_y.set(b)
         else:
-            raise "internal error bad slice mode"
+            raise "internal error: bad canvas mode"
 
         self.update()
 
