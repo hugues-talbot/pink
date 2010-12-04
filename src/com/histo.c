@@ -71,10 +71,9 @@ int main(int argc, char **argv)
   int32_t i, k, s;
   FILE *fd = NULL;
 
-
-  if ((argc != 2) && (argc != 3))
+  if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s filein.pgm [mask.pgm]\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm [mask.pgm] out.list\n", argv[0]);
     exit(1);
   }
 
@@ -85,7 +84,7 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (argc == 3)
+  if (argc == 4)
   {
     mask = readimage(argv[2]);
     if (mask == NULL)

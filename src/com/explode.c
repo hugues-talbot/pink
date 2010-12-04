@@ -81,7 +81,7 @@ int main(int argc, char **argv)
   image_in = readimage(argv[1]);
   if (image_in == NULL)
   {
-    fprintf(stderr, "%s: readimage failed: %s\n", argv[0], bufname);
+    fprintf(stderr, "%s: readimage failed: %s\n", argv[0], argv[1]);
     exit(1);
   }
   rs = rowsize(image_in);   /* taille ligne */
