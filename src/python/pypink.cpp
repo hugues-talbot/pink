@@ -42,7 +42,8 @@ void skelcurv_export(); void ptend_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
 void openball_export(); void gradmorph_export();
 
-
+// not sure this is the correct thing to do here HT
+void imview_export();
 
 // for wrapping every type with one function
 // template <class image_type>
@@ -90,7 +91,11 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   closing_export();  closeball_export();  minmax_export();  dilatball_export();
   inverse_export();  asfbin_export();  ptcurve_export();  skelcurv_export();
   ptend_export();  readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
-  htkern_export();  openball_export();    gradmorph_export();  
+  htkern_export();  openball_export();    gradmorph_export();
+
+  // is this enough HT ?
+
+  imview_export();
   
   UI_DEFINE_FUNCTION(
     print_image,
