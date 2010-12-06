@@ -94,9 +94,9 @@ void compareLUTs()
 #endif
 
 /* =============================================================== */
-void point(int32_t x, int32_t y, int32_t z, uint8_t *cube, int32_t point, 
-              double x_offset, double y_offset, double z_offset,
-              double *xp, double *yp, double *zp)
+void lmcube_point(int32_t x, int32_t y, int32_t z, uint8_t *cube, int32_t point, 
+		  double x_offset, double y_offset, double z_offset,
+		  double *xp, double *yp, double *zp)
 /* =============================================================== */
 /* pour la version "proportionnelle" des marching cubes.
    non utilisee pour le moment.
@@ -291,6 +291,10 @@ int32_t lmarchingcubes(struct xvimage * f, uint8_t v,
       genheaderVTK(fileout, (char *)"mcube output");
       SaveMeshVTK(fileout);
       break;
+    case T_VTK_PYTHON:
+      genheaderVTK_PYTHON(fileout, (char *)"mcube output to python");
+      SaveMeshVTK_PYTHON(fileout);
+      break;
     case T_RAW:
       CalculNormales();
       CalculNormalesFaces();
@@ -335,9 +339,9 @@ int32_t lmarchingcubes(struct xvimage * f, uint8_t v,
 } /* lmarchingcubes() */
 
 /* =============================================================== */
-int32_t lmarchingcubes2(struct xvimage * f,
-                    int32_t nregul, int32_t obj_id, FILE *fileout, 
-                    int32_t format)
+int32_t lmarchingcubes2( struct xvimage * f,
+			 int32_t nregul, int32_t obj_id, FILE *fileout, 
+			 int32_t format)
 /* =============================================================== */
 // version avec preservation de points fixes
 /* 
@@ -465,6 +469,10 @@ int32_t lmarchingcubes2(struct xvimage * f,
     case T_VTK:
       genheaderVTK(fileout, (char *)"mcube output");
       SaveMeshVTK(fileout);
+      break;
+    case T_VTK_PYTHON:
+      genheaderVTK_PYTHON(fileout, (char *)"mcube output to python");
+      SaveMeshVTK_PYTHON(fileout);
       break;
     case T_RAW:
       CalculNormales();

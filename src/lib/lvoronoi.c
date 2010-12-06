@@ -53,7 +53,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define ADROITE -1
 
 /* ==================================== */
-int32_t LePlusProcheVoisin(point *S, int32_t n, int32_t i)
+int32_t LePlusProcheVoisin(mcgeo_point *S, int32_t n, int32_t i)
 /* ==================================== */
 {
   int32_t j, k;
@@ -93,7 +93,7 @@ int32_t EstVoisinSym(int32_t **voisins, int32_t *nbvois, int32_t i, int32_t k)
 } /* EstVoisinSym() */
 
 /* ==================================== */
-int32_t VoisinSuivant(point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, int32_t j, int32_t cote)
+int32_t VoisinSuivant(mcgeo_point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, int32_t j, int32_t cote)
 /* ==================================== */
 /*
   On determine un triangle de Delaunay en considerant une arete Si, Sj et 
@@ -123,14 +123,14 @@ int32_t VoisinSuivant(point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, 
 } /* VoisinSuivant() */
 
 /* ==================================== */
-int32_t VoisinDroit(point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, int32_t j)
+int32_t VoisinDroit(mcgeo_point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, int32_t j)
 /* ==================================== */
 {
   return VoisinSuivant(S, n, v, nv, i, j, ADROITE);
 } /* VoisinDroit() */
 
 /* ==================================== */
-int32_t VoisinGauche(point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, int32_t j)
+int32_t VoisinGauche(mcgeo_point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, int32_t j)
 /* ==================================== */
 {
   return VoisinSuivant(S, n, v, nv, i, j, AGAUCHE);
@@ -180,7 +180,7 @@ void Retirer2(int32_t **voisins, int32_t *nbvois, int32_t k, int32_t i)
 } /* Retirer2() */
 
 /* ==================================== */
-int32_t ldelaunay(point *S, int32_t n, int32_t ***v, int32_t **nv, int32_t **ec)
+int32_t ldelaunay(mcgeo_point *S, int32_t n, int32_t ***v, int32_t **nv, int32_t **ec)
 /* ==================================== */
 /* entrees : S : le tableau des points
              n : le nombre de points
@@ -267,7 +267,7 @@ printf("\n");
 }
 
 /* ==================================== */
-int32_t ltriang_delaunay(point *S, int32_t n, int32_t **v, int32_t *nv, int32_t *ec)
+int32_t ltriang_delaunay(mcgeo_point *S, int32_t n, int32_t **v, int32_t *nv, int32_t *ec)
 /* ==================================== */
 /* 
    Modifie le graphe de Delaunay donné en entrée pour assurer qu'il s'agisse

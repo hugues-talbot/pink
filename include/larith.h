@@ -32,6 +32,32 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+#ifdef __cplusplus
+
+  #undef error
+  #define error(msg) {stringstream fullmessage; fullmessage << "in larith.h: " << msg; call_error(fullmessage.str());}
+
+  namespace pink {
+    
+    template<class image_type>
+    image_type inverse( const image_type & image )
+    {
+      image_type result;
+      result.copy(image);
+      
+      if (!linverse(result.get_output()))
+      {
+        error("function linverse failed");        
+      }       
+      
+      return result;      
+    } /* inverse */    
+  } /* namespace pink */
+  
+#endif /* __cplusplus */
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -79,7 +105,7 @@ extern int32_t linf(
 extern int32_t linverse(
         struct xvimage *image1
 );
-
+  
 extern int32_t lmax(
         struct xvimage *image1,
         struct xvimage *image2

@@ -73,6 +73,7 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <iostream>
   #include <fstream>
   #include <string>
+  #include <sstream>
   #include <vector>
 
   #include <cstdlib>
@@ -139,7 +140,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "l3dcollapse.h"
 #include "l3dkhalimsky.h"
 #include "lMSF.h"
-#include "larith.h"
+// moved #include "larith.h"
 #include "lasft.h"
 #include "lattribarea.h"
 #include "lattribheight.h"
@@ -226,7 +227,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "llpetopo.h"
 #include "llpetoporeg.h"
 #include "lmaxdiameter.h"
-#include "lmcube.h"
 #include "lmedialaxis.h"
 #include "lmeshwarp.h"
 #include "lminima.h"
@@ -286,7 +286,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lhello.h>
 #include <llong2byte.h>
 #include <mcrlifo.h>
-
+#include <lmcube.h>
+#include <ssexport.h>
 
 // uiFibres header files
 #ifdef __cplusplus
@@ -309,7 +310,8 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <ui_extractplane.hpp>
 #endif /* __cplusplus */
 
-
+// new with mixed language declarations (c/c++)
+#include "larith.h"
 
 
 

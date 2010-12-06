@@ -16,6 +16,8 @@
 
 import cpp # the functions imported directly from c/c++
 from view3d import view3d
+from render import render
+from seuilmesh import seuilmesh
 
 # from python_pink import *
 # from long2byte import long2byte

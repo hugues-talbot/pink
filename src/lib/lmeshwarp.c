@@ -140,8 +140,8 @@ int32_t warptriangle(
 /* ==================================== */
 int32_t lmeshwarp_lwarp(
   struct xvimage * in,
-  point *S, 
-  point *SD, 
+  mcgeo_point *S, 
+  mcgeo_point *SD, 
   int32_t n, 
   int32_t **v, 
   int32_t *nv, 
@@ -199,7 +199,7 @@ int32_t lmeshwarp_lwarp(
 
 /* ==================================== */
 void desmesh(
-  point *S, 
+  mcgeo_point *S, 
   int32_t n, 
   int32_t **v, 
   int32_t *nv, 
@@ -238,12 +238,12 @@ void effhot(
 }
 
 /* ==================================== */
-int32_t LePlusProche(point *S, int32_t n, double x, double y)
+int32_t LePlusProche(mcgeo_point *S, int32_t n, double x, double y)
 /* ==================================== */
 {
   int32_t j, k;
   double d, dk;
-  point p;
+  mcgeo_point p;
 
   p.x = x; p.y = y;
   j = 0; 
@@ -294,8 +294,8 @@ int32_t lmeshwarp(
   int32_t hotx, hoty;
   int32_t hotxpix, hotypix;
   int32_t **voisins = NULL, *nbvois = NULL, *envconv = NULL;
-  point *S;
-  point *SD;
+  mcgeo_point *S;
+  mcgeo_point *SD;
   int32_t nbmeshpoints = 0;
   int32_t oldnbmeshpoints;
   int32_t picked;
@@ -310,8 +310,8 @@ int32_t lmeshwarp(
     return 0;
   }
   
-  S = (point *)calloc(1,MAXSIZEMESH * sizeof(point));
-  SD = (point *)calloc(1,MAXSIZEMESH * sizeof(point));
+  S = (mcgeo_point *)calloc(1,MAXSIZEMESH * sizeof(mcgeo_point));
+  SD = (mcgeo_point *)calloc(1,MAXSIZEMESH * sizeof(mcgeo_point));
   if ((S == NULL) || (SD == NULL))
   {   fprintf(stderr, "lmeshwarp() : malloc failed for S\n");
       return(0);

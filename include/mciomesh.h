@@ -49,12 +49,16 @@ extern "C" {
 #define T_PGM   9  /* 3D pgm extension (point clouds only) */
 #define T_RAW  10  /* private format for the "mesh" software: see http://mesh.berlios.de/ */
 #define T_CGAL 11  /* CGAL output format  */
+#define T_VTK_PYTHON 12 /* VTK PolyData for the python exporter */
 
 extern void genheaderPOV(FILE *fileout, int32_t obj_id, meshbox MB);
 extern void genheaderAC(FILE *fileout, meshbox MB, double red, double green, double blue, char *name);
 extern void genheaderCOL(FILE *fileout, int32_t nbfaces);
 extern void genheaderDXF(FILE *fileout);
 extern void genheaderVTK(FILE *fileout, char *name);
+// UjoImro, 2010
+void genheaderVTK_PYTHON(void * stringstream, char *name);
+// end of LuM     
 extern void genfooterPOV(FILE *fileout);
 extern void genfooterAC(FILE *fileout);
 extern void genfooterDXF(FILE *fileout);
@@ -88,6 +92,9 @@ extern void SaveMeshSPOV(FILE *fileout);
 extern void SaveMeshCOL(FILE *fileout, int32_t obj_id);
 extern void SaveMeshMCM(FILE *fileout);
 extern void SaveMeshVTK(FILE *fileout);
+// UjoImro, 2010  
+void SaveMeshVTK_PYTHON(void * stringstream);  
+// end of LuM
 extern void SaveMeshAC(FILE *fileout);
 extern void SaveMeshGL(FILE *fileout, int32_t obj_id);
 extern void SaveMeshDXF(FILE *fileout, int32_t obj_id);

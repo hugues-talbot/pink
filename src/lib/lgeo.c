@@ -125,7 +125,7 @@ printf("c2 = %g,%g,%g\n", r->c2.x0, r->c2.y0, r->c2.r);
 } /* initrectanglearrondi() */
 
 /* ==================================== */
-double distpointrectanglearrondi(point p, rectanglearrondi *r)
+double distpointrectanglearrondi(mcgeo_point p, rectanglearrondi *r)
 /* ==================================== */
 /* 
    Calcule la distance d'un point a un rectangle arrondi.
@@ -184,7 +184,7 @@ double SomCarDist(int32_t *pb, int32_t npb, rectangle *R, int32_t rs)
 /* calcule la somme des carres des distances des points du bord au rectangle */
 {
   int32_t i; 
-  point p; 
+  mcgeo_point p; 
   double d, c1 = 0;
   for (i = 0; i < npb; i++) 
   {
@@ -202,7 +202,7 @@ double SomCarDistRA(int32_t *pb, int32_t npb, rectanglearrondi *R, int32_t rs)
 /* calcule la somme des carres des distances des points du bord au rectangle arrondi */
 {
   int32_t i; 
-  point p; 
+  mcgeo_point p; 
   double d, c1 = 0;
   for (i = 0; i < npb; i++) 
   {

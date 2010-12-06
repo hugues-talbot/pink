@@ -137,6 +137,20 @@ void genheaderVTK(FILE *fileout, char *name)
 } /* genheaderVTK() */
 
 /* =============================================================== */
+void genheaderVTK_PYTHON(void * ss/* stringstream */, char *name)
+/* =============================================================== */
+{
+  ui_mesh_export_cstring(ss, "# vtk DataFile Version 3.0\n");
+  ui_mesh_export_cstring(ss, name);
+  ui_mesh_export_cstring(ss, "\n");
+  ui_mesh_export_cstring(ss, "ASCII\n");
+  ui_mesh_export_cstring(ss, "DATASET POLYDATA\n");
+
+  /* return void */
+} /* genheaderVTK() */
+
+
+/* =============================================================== */
 void genheaderCOL(FILE *fileout, int32_t nbfaces)
 /* =============================================================== */
 {
@@ -468,6 +482,61 @@ POLYGONS %d %d    // Faces - champ obligatoire
   fprintf(fileout, "\n");
 
 } /* SaveMeshVTK() */
+
+/* ==================================== */
+void SaveMeshVTK_PYTHON(void * ss/* stringstream */)
+/* ==================================== */
+/* fileout doit avoir ete ouvert en ecriture */
+/* format: 
+POINTS %d float   // Sommets - champ obligatoire
+%g %g %g          // coord. vertex
+   ...
+POLYGONS %d %d    // Faces - champ obligatoire 
+                  // arg1: nb polygones; arg2: nb valeurs (=4*arg1 pour des triangles)
+3 %d %d %d        // face: ind. vertices
+   ...
+*/
+{
+  int32_t i;
+
+  // SOMMETS
+  ui_mesh_export_cstring( ss, "POINTS " );
+  ui_mesh_export_int( ss, Vertices->cur );
+  ui_mesh_export_cstring( ss, " float\n" );
+
+  for (i = 0; i < Vertices->cur; i++)
+  {
+    ui_mesh_export_double( ss, Vertices->v[i].x );
+    ui_mesh_export_cstring( ss, " " );
+    ui_mesh_export_double( ss, Vertices->v[i].y );
+    ui_mesh_export_cstring( ss, " " );
+    ui_mesh_export_double( ss, Vertices->v[i].z );
+    ui_mesh_export_cstring( ss, "\n" );
+  }
+  ui_mesh_export_cstring( ss, "\n" );
+
+  // FACES
+  ui_mesh_export_cstring( ss, "POLYGONS " );
+  ui_mesh_export_int( ss, Faces->cur );
+  ui_mesh_export_cstring( ss, " " );
+  ui_mesh_export_int( ss, 4*Faces->cur );
+  ui_mesh_export_cstring( ss, "\n" );
+
+  for (i = 0; i < Faces->cur; i++)
+  {
+    ui_mesh_export_cstring( ss, "3 " );
+    ui_mesh_export_int( ss, Faces->f[i].vert[0] );
+    ui_mesh_export_cstring( ss, " " );
+    ui_mesh_export_int( ss, Faces->f[i].vert[1] );
+    ui_mesh_export_cstring( ss, " " );
+    ui_mesh_export_int( ss, Faces->f[i].vert[2] );
+    ui_mesh_export_cstring( ss, "\n" );
+  }
+  ui_mesh_export_cstring( ss, "\n" );
+
+  /* return void */
+} /* SaveMeshVTK() */
+
 
 /* ==================================== */
 void MCM_SaveVTK(MCM *M, FILE *fileout)

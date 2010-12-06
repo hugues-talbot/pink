@@ -52,7 +52,7 @@ typedef struct {
 
 typedef struct {
   double x, y;
-} point;
+} mcgeo_point;
 
 typedef struct vecteur2Dint
 	{ int32_t x,y; } vect2Dint;   /* structure representant un vecteur entier */
@@ -77,14 +77,14 @@ typedef struct {
 
 typedef struct {
   segment s1, s2, s3, s4;
-  point centre;
+  mcgeo_point centre;
   double h, w, angle;
 } rectangle;
 
 typedef struct {
   segment s1, s2;
   cercle c1, c2;
-  point centre;
+  mcgeo_point centre;
   double h, w, angle;
 } rectanglearrondi;
 
@@ -108,18 +108,18 @@ typedef struct {
 /* prototypes pour mcgeo.c */
 /* ============================================= */
 
-extern double detpq_qr(point p, point q, point r);
-extern int32_t estsitue(point p, point q, point r);
-extern int32_t estagauche(point p, point q, point r);
-extern int32_t estadroite(point p, point q, point r);
-extern double carrenorme(point p);
-extern double carredistance(point p, point q);
-extern double cosangle(point p, point q, point r);
-extern int32_t sontsecants(point p1, point p2, point p3, point p4);
-extern double distpointdroite(point p, droite d);
-extern double distpointsegment(point p, segment s);
-extern double distpointcercle(point p, cercle c);
-extern double distpointrectangle(point p, rectangle *r);
+extern double detpq_qr(mcgeo_point p, mcgeo_point q, mcgeo_point r);
+extern int32_t estsitue(mcgeo_point p, mcgeo_point q, mcgeo_point r);
+extern int32_t estagauche(mcgeo_point p, mcgeo_point q, mcgeo_point r);
+extern int32_t estadroite(mcgeo_point p, mcgeo_point q, mcgeo_point r);
+extern double carrenorme(mcgeo_point p);
+extern double carredistance(mcgeo_point p, mcgeo_point q);
+extern double cosangle(mcgeo_point p, mcgeo_point q, mcgeo_point r);
+extern int32_t sontsecants(mcgeo_point p1, mcgeo_point p2, mcgeo_point p3, mcgeo_point p4);
+extern double distpointdroite(mcgeo_point p, droite d);
+extern double distpointsegment(mcgeo_point p, segment s);
+extern double distpointcercle(mcgeo_point p, cercle c);
+extern double distpointrectangle(mcgeo_point p, rectangle *r);
 extern int32_t initrectangle(rectangle *r);
 extern double distpointdroite3(point3 p, point3 p1, point3 p2);
 

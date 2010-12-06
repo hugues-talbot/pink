@@ -19,33 +19,6 @@
 using namespace boost::python;
 using namespace pink;
  
-namespace pink {
-  namespace python {
-    
-    template<class image_type>
-    image_type inverse( const image_type & image )
-    {
-      image_type result;
-      result.copy(image);
-      
-      if (!linverse(result.get_output()))
-      {
-        error("function linverse failed");        
-      }       
-      
-      return result;      
-    } /* py_inverse */
-    
-    
-  } /* namespace python */
-} /* namespace pink */
 
-UI_EXPORT_FUNCTION(
-  inverse,
-  pink::python::inverse,
-  ( arg("image") ),
-  "WRITE ME!!!"
-// end of the documenation
-  );    
 
 // LuM end of file

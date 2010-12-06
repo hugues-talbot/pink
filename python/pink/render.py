@@ -6,14 +6,15 @@ from vtk.tk.vtkTkRenderWindowInteractor import vtkTkRenderWindowInteractor
 from vtk.tk.vtkTkRenderWidget import vtkTkRenderWidget
 import Tkinter as tk
 import tkSimpleDialog
+from pink.cpp import mcube
 
-class render:
-    def __init__(self, filename1, filename2=""):
+class render_class:
+    def __init__(self, mesh1, mesh2=0):
         self.name = "render"
         self.rs = 600
         self.cs = 600
-        self.filename1 = filename1
-        self.filename2 = filename2
+        self.mesh1 = mesh1
+        self.mesh2 = mesh2
         self.ren1 = vtk.vtkRenderer()
         self.ren1.SetViewport([0, 0, 1, 1])
         self.ren1.SetBackground([0.93, 0.93, 0.97])
@@ -22,12 +23,12 @@ class render:
         
         # load geometry
         ## first object
-        self.obj1 = obj(filename1)
+        self.obj1 = obj(mesh1)        
         self.ren1.AddViewProp(self.obj1.objActor)
 
         ## optional second object
-        if filename2!="":
-            self.obj2 = obj(filename2)
+        if mesh2!=0:
+            self.obj2 = obj(mesh2)
             self.obj2.objActor.GetProperty().SetColor([1.0, 0.49, 0.25])
             self.ren1.AddViewProp(self.obj2.objActor)
 
@@ -35,9 +36,10 @@ class render:
 
 
 class obj:
-    def __init__(self, filename):
+    def __init__(self, mesh):
         self.obj = vtk.vtkPolyDataReader()
-        self.obj.SetFileName(filename)        
+        self.obj.SetInputString(mesh)
+        self.obj.ReadFromInputStringOn()
         self.normals = vtk.vtkPolyDataNormals()
         self.normals.SetInput(self.obj.GetOutput())
         self.normals.FlipNormalsOn()
@@ -57,18 +59,6 @@ class app:
         self.vtkw = vtkTkRenderWidget(self.root, width=600, height=600, rw=self.render.ren_win)
         self.vtkw.BindTkRenderWidget()
 
-
-        ## filesaveas dialog
-        self.file_opt = {}
-        self.file_opt['defaultextension'] = '' # couldn't figure out how this works
-        self.file_opt['filetypes'] = [('all files', '.*'), ('PNG files', '.png')]
-        #self.file_optoptions['initialdir'] = ''
-        self.file_opt['initialfile'] = '_sav01.png'
-        self.file_opt['parent'] = self.root
-        self.file_opt['title'] = 'Save a Snapshot as'
-
-
-        
         self.commands = tk.Frame(self.root)
         self.buttons = tk.Frame(self.root)
 
@@ -78,7 +68,7 @@ class app:
         self.savebutton = tk.Button(self.buttons, text="Save", activebackground="white", command=self.savepng)        
         self.wirebutton1 = wirebutton(frame=self.buttons, text="Wireframe1", ren_win=self.render.ren_win, obj_actor=self.render.obj1.objActor)
 
-        if render.filename2!="":
+        if render.mesh2!=0:
             self.wirebutton1 = wirebutton(frame=self.buttons, text="Wireframe2", ren_win=self.render.ren_win, obj_actor=self.render.obj2.objActor)
 
         self.opacity = tk.Scale(self.commands, from_=0.0, to=1.0, res=0.01, orient="horizontal", label="Opacity", command=self.set_opacity)
@@ -131,15 +121,26 @@ class wirebutton:
         self.ren_win.Render()
 
 
-        
 
-render = render( "/home/ujoimro/doc/projects/Tutorial-Pink/MC-TP3/solution/TP3cor/lettre_a.vtk",
-                 "/home/ujoimro/doc/projects/Tutorial-Pink/MC-TP3/solution/TP3cor/carotide_seg.vtk"
-                 )
-application = app(render)
-application.mainloop()
+# def renderfiles( filename1, filename2="" ):
+#     render_obj = render_class( filename1, filename2 )
+#     #renderer( "/home/ujoimro/doc/projects/Tutorial-Pink/MC-TP3/solution/TP3cor/lettre_a.vtk",
+#     #                     "/home/ujoimro/doc/projects/Tutorial-Pink/MC-TP3/solution/TP3cor/carotide_seg.vtk"
+#     #                     )
+#     application = app(render_obj)
+#     application.mainloop()
 
+def render( image1, image2=0 ):
+    mesh1 = mcube(image1, 93, 0, 0)
+    if image2!=0:
+        mesh2 = mcube(image2, 93, 0, 0)
+    else:
+        mesh2 = 0
 
+    render_obj=render_class(mesh1, mesh2)
+    application = app(render_obj)
+    application.mainloop()
+    #mesh2 = 
  
 
 

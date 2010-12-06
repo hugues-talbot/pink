@@ -21,7 +21,8 @@
 
 using namespace boost::python;
 using namespace pink;
-using boost::polymorphic_cast
+using boost::polymorphic_cast;
+
 
 namespace pink {
   namespace python {

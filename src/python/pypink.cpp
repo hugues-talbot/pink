@@ -37,10 +37,10 @@ void uiSqhool_object_export(); void gradient_export();
 void read_raw_image_export(); void seuil_export(); void plane3d_export(); void draw_plane_export();
 void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
 void generate_rgb_image_export(); void closing_export(); void closeball_export(); void minmax_export();
-void dilatball_export(); void inverse_export(); void asfbin_export(); void ptcurve_export();
+void dilatball_export(); void asfbin_export(); void ptcurve_export();
 void skelcurv_export(); void ptend_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
-void openball_export(); void gradmorph_export();
+void openball_export(); void gradmorph_export(); void mcube_export();
 
 // not sure this is the correct thing to do here HT
 void imview_export();
@@ -89,12 +89,22 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
 //  project_plane_export();
   border_export();  identifyline_export();  surimp_export();  generate_rgb_image_export();
   closing_export();  closeball_export();  minmax_export();  dilatball_export();
-  inverse_export();  asfbin_export();  ptcurve_export();  skelcurv_export();
+  asfbin_export();  ptcurve_export();  skelcurv_export();
   ptend_export();  readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
-  htkern_export();  openball_export();    gradmorph_export();
+  htkern_export();  openball_export();    gradmorph_export(); mcube_export();
+  
 
-  // is this enough HT ?
 
+  UI_DEFINE_FUNCTION(
+    inverse,
+    pink::inverse,
+    ( arg("image") ),
+    "WRITE ME!!!"
+// end of the documenation
+  );    
+
+  
+  // is this enough HT ?  
   imview_export();
   
   UI_DEFINE_FUNCTION(

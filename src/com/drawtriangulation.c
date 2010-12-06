@@ -84,7 +84,7 @@ int main(int argc, char **argv)
   int32_t n, i, j;
   int32_t x, y, val, e, nbvois;
   char type;
-  point * S;
+  mcgeo_point * S;
   double * V;
   int32_t **vois; /* la table des listes de voisins (reperes par leur indice dans S) */
   int32_t *nv; /* la table des nombres de voisins */
@@ -115,7 +115,7 @@ int main(int argc, char **argv)
   }
 
   fscanf(fd, "%d\n", &n);
-  S = (point *)calloc(1, n * sizeof(point));
+  S = (mcgeo_point *)calloc(1, n * sizeof(mcgeo_point));
   V = (double *)calloc(1, n * sizeof(double));
   nv = (int32_t *)calloc(n, sizeof(int32_t));
   ec = (int32_t *)calloc(n, sizeof(int32_t));

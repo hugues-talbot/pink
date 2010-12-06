@@ -61,7 +61,7 @@ Michel Couprie, mars 1997
 /* ==================================================================== */
 
 /* ==================================== */
-double detpq_qr(point p, point q, point r)
+double detpq_qr(mcgeo_point p, mcgeo_point q, mcgeo_point r)
 /* ==================================== */
 {
   double pqx, pqy, qrx, qry;
@@ -71,7 +71,7 @@ double detpq_qr(point p, point q, point r)
 } /* detpq_pr() */
 
 /* ==================================== */
-int32_t estsitue(point p, point q, point r)
+int32_t estsitue(mcgeo_point p, mcgeo_point q, mcgeo_point r)
 /* ==================================== */
 /* prend la valeur 1, 0 ou -1 selon que p est situe a gauche, sur ou a droite */
 /* de la droite orientee qr */
@@ -83,28 +83,28 @@ int32_t estsitue(point p, point q, point r)
 } /* estsitue() */
 
 /* ==================================== */
-int32_t estagauche(point p, point q, point r)
+int32_t estagauche(mcgeo_point p, mcgeo_point q, mcgeo_point r)
 /* ==================================== */
 {
   return (estsitue(p, q, r) == 1);
 } /* estagauche() */
 
 /* ==================================== */
-int32_t estadroite(point p, point q, point r)
+int32_t estadroite(mcgeo_point p, mcgeo_point q, mcgeo_point r)
 /* ==================================== */
 {
   return (estsitue(p, q, r) == -1);
 } /* estadtroite() */
 
 /* ==================================== */
-double carrenorme(point p)
+double carrenorme(mcgeo_point p)
 /* ==================================== */
 {
   return p.x * p.x + p.y * p.y;
 } /* carrenorme() */
 
 /* ==================================== */
-double carredistance(point p, point q)
+double carredistance(mcgeo_point p, mcgeo_point q)
 /* ==================================== */
 {
   double dx, dy; 
@@ -127,7 +127,7 @@ double dist3(double x1, double y1, double z1, double x2, double y2, double z2)
 }
 
 /* ==================================== */
-double cosangle(point p, point q, point r)
+double cosangle(mcgeo_point p, mcgeo_point q, mcgeo_point r)
 /* ==================================== */
 /* calcule le cos de l'angle entre les vecteurs pq et pr */
 {
@@ -138,7 +138,7 @@ double cosangle(point p, point q, point r)
 } /* cosangle() */
 
 /* ==================================== */
-double direction(point p1, point p2, point p3)
+double direction(mcgeo_point p1, mcgeo_point p2, mcgeo_point p3)
 /* ==================================== */
 /* calcule le produit en croix (p3-p1) x (p2-p1) */
 {
@@ -146,7 +146,7 @@ double direction(point p1, point p2, point p3)
 } /* direction() */
 
 /* ==================================== */
-double sursegment(point p1, point p2, point p3)
+double sursegment(mcgeo_point p1, mcgeo_point p2, mcgeo_point p3)
 /* ==================================== */
 /* calcule le produit en croix (p3-p1) x (p2-p1) */
 {
@@ -158,7 +158,7 @@ double sursegment(point p1, point p2, point p3)
 } /* sursegment() */
 
 /* ==================================== */
-int32_t sontsecants(point p1, point p2, point p3, point p4)
+int32_t sontsecants(mcgeo_point p1, mcgeo_point p2, mcgeo_point p3, mcgeo_point p4)
 /* ==================================== */
 /* retourne 1 si les segments [p1,p2] et [p3,p4] sont secants, 0 sinon */
 /* d'apres Cormen & al., "Introduction a l'algorithmique" 2e. Ed. p. 905 */
@@ -179,7 +179,7 @@ int32_t sontsecants(point p1, point p2, point p3, point p4)
 } /* sontsecants() */
 
 /* ==================================== */
-double distpointdroite(point p, droite d)
+double distpointdroite(mcgeo_point p, droite d)
 /* ==================================== */
 /* 
    Calcule la distance d'un point a une droite.
@@ -200,7 +200,7 @@ double distpointdroite(point p, droite d)
 } /* distpointdroite() */
 
 /* ==================================== */
-double distpointsegment(point p, segment s)
+double distpointsegment(mcgeo_point p, segment s)
 /* ==================================== */
 /* 
    Calcule la distance d'un point a un segment (voir distpointdroite). 
@@ -232,7 +232,7 @@ double distpointsegment(point p, segment s)
 } /* distpointsegment() */
 
 /* ==================================== */
-double distpointcercle(point p, cercle c)
+double distpointcercle(mcgeo_point p, cercle c)
 /* ==================================== */
 /* 
    Calcule la distance d'un point a un cercle.
@@ -245,7 +245,7 @@ double distpointcercle(point p, cercle c)
 } /* distpointcercle() */
 
 /* ==================================== */
-double distpointrectangle(point p, rectangle *r)
+double distpointrectangle(mcgeo_point p, rectangle *r)
 /* ==================================== */
 /* 
    Calcule la distance d'un point a un rectangle.
