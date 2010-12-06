@@ -67,6 +67,7 @@ knowledge of the CeCILL license and that you accept its terms.
   #include <boost/algorithm/minmax_element.hpp>
   #include <boost/preprocessor.hpp>
   #include <boost/operators.hpp>
+  #include <boost/cast.hpp>
 
 
   #include <iostream>
@@ -225,6 +226,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "llpetopo.h"
 #include "llpetoporeg.h"
 #include "lmaxdiameter.h"
+#include "lmcube.h"
 #include "lmedialaxis.h"
 #include "lmeshwarp.h"
 #include "lminima.h"

@@ -469,6 +469,7 @@ $(BDIR)/variance1
 
 MESH3D=\
 $(BDIR)/mcube\
+$(BDIR)/mcube_tmp\
 $(BDIR)/surfels\
 $(BDIR)/meshaddnoise\
 $(BDIR)/meshconvert\
@@ -1971,6 +1972,9 @@ $(BDIR)/variance1:	$(CDIR)/variance1.c $(IDIR)/lstat.h $(IDIR)/mcimage.h $(OBJ_C
 $(BDIR)/mcube:	$(CDIR)/mcube.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcgeo.h $(IDIR)/mcmesh.h $(IDIR)/mciomesh.h $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(IDIR)/mcrbtp.h $(ODIR)/mcrbtp.o $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/mcube.c $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(ODIR)/mcrbtp.o $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o $(LIBS) -o $(BDIR)/mcube
 
+$(BDIR)/mcube_tmp: $(CDIR)/mcube_tmp.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcgeo.h $(IDIR)/mcmesh.h $(IDIR)/mciomesh.h $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(IDIR)/mcrbtp.h $(ODIR)/mcrbtp.o $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o $(ODIR)/lmcube.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/mcube_tmp.c $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(ODIR)/mcrbtp.o $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o $(LIBS) -o $(BDIR)/mcube_tmp
+
 $(BDIR)/meshaddnoise:	$(CDIR)/meshaddnoise.c $(IDIR)/mcmesh.h $(IDIR)/mciomesh.h $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(ODIR)/mcprobas.o
 	$(CC) $(CCFLAGS) -I$(IDIR) -I. $(CDIR)/meshaddnoise.c $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(ODIR)/mcrbtp.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o $(LIBS) -o $(BDIR)/meshaddnoise
 
@@ -2571,6 +2575,9 @@ $(ODIR)/ljones.o:	$(LDIR)/ljones.c $(IDIR)/mccodimage.h $(IDIR)/mcfah.h $(IDIR)/
 
 $(ODIR)/llevialdi.o:	$(LDIR)/llevialdi.c $(IDIR)/mctopo.h $(IDIR)/mccodimage.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/llevialdi.c -o $(ODIR)/llevialdi.o
+
+$(ODIR)/lmcube.o: $(LDIR)/lmcube.c
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lmcube.c -o $(ODIR)/lmcube.o
 
 $(ODIR)/lreconsplateaux.o:	$(LDIR)/lreconsplateaux.c $(IDIR)/mccodimage.h $(IDIR)/mcutil.h $(IDIR)/mclifo.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lreconsplateaux.c -o $(ODIR)/lreconsplateaux.o

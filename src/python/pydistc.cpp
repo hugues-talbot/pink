@@ -21,6 +21,7 @@
 
 using namespace boost::python;
 using namespace pink;
+using boost::polymorphic_cast
 
 namespace pink {
   namespace python {
@@ -118,10 +119,10 @@ namespace pink {
           float *D;
           pink_image * tmp = result;
           result = new float_image();
-          dynamic_cast<float_image*>(result)->copy(pink::convert2float(*dynamic_cast<int_image*>(tmp)));
+          polymorphic_cast<float_image*>(result)->copy(pink::convert2float(*polymorphic_cast<int_image*>(tmp)));
           delete tmp;          
           //convertfloat(&result);
-          D = FLOATDATA(dynamic_cast<float_image*>(result)->get_output());
+          D = FLOATDATA(polymorphic_cast<float_image*>(result)->get_output());
           for (int i = 0; i < N; i++) D[i] = (float)sqrt(D[i]);
         }
       }
@@ -147,7 +148,7 @@ namespace pink {
 
       if (mode == 5)
       {
-        to_return = new boost::python::object( *dynamic_cast<float_image*>(result) );
+        to_return = new boost::python::object( *polymorphic_cast<float_image*>(result) );
       }
       else  /* NOT mode == 5 */
       {
@@ -155,12 +156,12 @@ namespace pink {
         if (mode < 40)
         {        
           //result = new int_image(image.get_size());
-          to_return = new boost::python::object( *dynamic_cast<int_image*>(result) );
+          to_return = new boost::python::object( *polymorphic_cast<int_image*>(result) );
         }        
         else /* NOT mode < 40 */
         {        
           //result = new char_image(image.get_size());
-          to_return = new boost::python::object( *dynamic_cast<char_image*>(result) );
+          to_return = new boost::python::object( *polymorphic_cast<char_image*>(result) );
         }      
       } /* NOT mode == 5 */      
       
