@@ -44,7 +44,7 @@ class canvas:
         self.color_y = color_y
         self.pos_x = 0
         self.pos_y = 0
-        self.size = [ extractplane(self.parent.image, 0, self.side).size[0], extractplane(self.parent.image, 0, self.side).size[1] ]        
+        self.size = [ extractplane(self.parent.image1, 0, self.side).size[0], extractplane(self.parent.image1, 0, self.side).size[1] ]        
         self.canvas = tk.Canvas( self.parent.frame, width=self.size[0], height=self.size[1] )
         self.canvas.bind('<Button-1>', self.on_mouse_down )
         self.canvas.bind('<ButtonRelease-1>', self.on_mouse_up )
@@ -54,7 +54,13 @@ class canvas:
         
 
     def on_refresh(self, n, draw_line_x, draw_line_y):
-        self.tkimage = self.parent.to_photoimage(extractplane( self.parent.image, int(n), self.side ))
+        image_to_show = extractplane( self.parent.image1, int(n), self.side )
+        if self.parent.seuiling:
+            image_to_seuil = image_to_show
+        else:
+            image_to_seuil = extractplane( self.parent.image2, int(n), self.side )
+
+        self.tkimage = self.parent.to_photoimage(image_to_show, image_to_seuil)
         self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )
         if draw_line_x:
             self.line_x = self.canvas.create_line( self.pos_x, 0, self.pos_x, self.size[1]-1, fill=self.color_x )
@@ -84,8 +90,8 @@ class canvas:
         
 
 class main:
-    def __init__(self, master, image):
-        if len(image.size)!=3:
+    def __init__(self, master, image1, image2=0):
+        if len(image1.size)!=3:
             raise "error: view3d is for 3D images only."
 
         self.master=master
@@ -98,7 +104,12 @@ class main:
         self.frame = tk.Frame(master, bg="", colormap="new")
         #self.frame.bind("<Button-1>", callback)
         self.frame.grid()
-        self.image = image
+        self.image1 = image1
+        if image2!=0:
+            self.seuiling = False
+            self.image2=image2
+        else:
+            self.seuiling = True
 
         ### Buttons
         self.quit = tk.Button(self.frame, text="Exit", command=self.frame.quit, width=10 )
@@ -113,21 +124,22 @@ class main:
         self.canvas_z = canvas(parent=self, side="xy", color_x="red", color_y="green" )
         self.canvas_z.canvas.grid(row=0, column=1)
 
-        self.scale_x = tk.Scale( self.frame, orient=tk.HORIZONTAL, length=self.image.size[0], from_=0, to=self.image.size[0]-1, command=self.update )
-        self.scale_x.set( self.image.size[0]/2 )
+        self.scale_x = tk.Scale( self.frame, orient=tk.HORIZONTAL, length=self.image1.size[0], from_=0, to=self.image1.size[0]-1, command=self.update )
+        self.scale_x.set( self.image1.size[0]/2 )
         self.scale_x.grid(row=2,column=1)
 
-        self.scale_y = tk.Scale( self.frame, orient=tk.HORIZONTAL, length=self.image.size[1], from_=0, to=self.image.size[1]-1, command=self.update )
-        self.scale_y.set( self.image.size[1]/2 )
+        self.scale_y = tk.Scale( self.frame, orient=tk.HORIZONTAL, length=self.image1.size[1], from_=0, to=self.image1.size[1]-1, command=self.update )
+        self.scale_y.set( self.image1.size[1]/2 )
         self.scale_y.grid(row=3,column=1)
 
-        self.scale_z = tk.Scale( self.frame, orient=tk.HORIZONTAL, length=self.image.size[2], from_=0, to=self.image.size[2]-1, command=self.update )
-        self.scale_z.set( self.image.size[2]/2 )
+        self.scale_z = tk.Scale( self.frame, orient=tk.HORIZONTAL, length=self.image1.size[2], from_=0, to=self.image1.size[2]-1, command=self.update )
+        self.scale_z.set( self.image1.size[2]/2 )
         self.scale_z.grid(row=4,column=1)
 
-        self.scale_seuil_low = tk.Scale( self.frame, label="Seuil", orient=tk.HORIZONTAL, length=256, from_=0, to=255, showvalue=1, command=self.update )
-        self.scale_seuil_low.set(128)
-        self.scale_seuil_low.grid(row=5,column=1)
+        if self.seuiling:
+            self.scale_seuil_low = tk.Scale( self.frame, label="Seuil", orient=tk.HORIZONTAL, length=256, from_=0, to=255, showvalue=1, command=self.update )
+            self.scale_seuil_low.set(128)
+            self.scale_seuil_low.grid(row=5,column=1)
 
         self.mode = tk.IntVar()
         self.mode.set(0)
@@ -142,7 +154,12 @@ class main:
         self.surimp = tk.Radiobutton( self.frame, text="Surimp", width=10, anchor="nw", command=self.on_mode_change, variable=self.mode, value=2 )
         self.surimp.grid(row=4, column=3)
 
-        self.seuil = tk.Radiobutton( self.frame, text="Seuil (Threshold)", width=10, anchor="nw", command=self.on_mode_change, variable=self.mode, value=1 )
+        if self.seuiling:
+            seuiltext = "Seuil (Threshold)"
+        else:
+            seuiltext = "Segmentation"
+
+        self.seuil = tk.Radiobutton( self.frame, text=seuiltext, width=10, anchor="nw", command=self.on_mode_change, variable=self.mode, value=1 )
         self.seuil.grid(row=5,column=3)
 
         self.draw_line_x = tk.IntVar()
@@ -208,31 +225,37 @@ class main:
         self.invertmode=not self.invertmode
         self.update()
 
-    def to_photoimage(self, image):
+    def to_photoimage(self, image_to_show, image_to_seuil):
+        if self.seuiling:
+            seuilvalue = int(self.scale_seuil_low.get())
+        else:
+            seuilvalue = 128
+
         if self.seuilmode:
-            image = seuil( image, int(self.scale_seuil_low.get() ))
+            image = seuil( image_to_seuil, seuilvalue )
             result = to_photoimage(image)
         elif self.surimpmode:
-            bord = border(seuil(image, int(self.scale_seuil_low.get())), 8 )
+            bord = border(seuil(image_to_seuil, seuilvalue), 8 )
+            image = image_to_show
             if self.invertmode:
-                image = inverse(image)
+                image = inverse(image_to_show)
             #inv_bord = inverse(bord)
 
             image_r = image
             image_g = pink_max( image, bord )
             image_b = pink_max( image, bord )
             result = to_rgb_photoimage([image_r, image_g, image_b ])
-
         else:
+            image = image_to_show
             if self.invertmode:
-                image = inverse(image)
+                image = inverse(image_to_show)
             result = to_photoimage(image)
 
         return  result 
 
-def view3d(image):
+def view3d(image1, image2=0):
     root = tk.Tk()
-    main_window = main(root, image)
+    main_window = main(root, image1, image2)
     root.mainloop()
 
     

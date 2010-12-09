@@ -131,9 +131,9 @@ class wirebutton:
 #     application.mainloop()
 
 def render( image1, image2=0 ):
-    mesh1 = mcube(image1, 93, 0, 0)
+    mesh1 = mcube(image1, 0, 0, 0)
     if image2!=0:
-        mesh2 = mcube(image2, 93, 0, 0)
+        mesh2 = mcube(image2, 0, 0, 0)
     else:
         mesh2 = 0
 
