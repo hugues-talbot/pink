@@ -88,6 +88,20 @@ if (modifie) printf("========> ABAISSE : %d\n", F[x]);
   return modifie;
 } /* testabaisse4() */
 
+// this is a workaround for pink::python. I will think about it
+// later ... maybe
+/* ==================================== */
+int32_t llambdakern_short(
+  struct xvimage *image, 
+  int32_t connex,
+  int32_t lambda)
+/* ==================================== */
+{
+  return llambdakern(image, NULL, connex, lambda );
+} /* llambdakern_short */
+
+
+
 /* ==================================== */
 int32_t llambdakern(
   struct xvimage *image, 

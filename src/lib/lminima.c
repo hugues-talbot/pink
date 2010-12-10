@@ -94,6 +94,11 @@ int32_t lminima(
       for (i = 0; i < N; i++) if (IL[i] == absmin) IL[i] = (int32_t)NDG_MAX; 
                                              else IL[i] = (int32_t)NDG_MIN;
     }
+    else
+    {
+      fprintf(stderr, "wrong image type\n");
+      exit(1);
+    }
   }
   else
   {
@@ -122,5 +127,5 @@ int32_t lminima(
   }
   freeimage(result);
 
-  return 0;
+  return 1;
 } /* lminima */

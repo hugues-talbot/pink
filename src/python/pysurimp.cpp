@@ -101,7 +101,7 @@ namespace pink {
 
 UI_EXPORT_ONE_FUNCTION( surimp, 
 			pink::python::surimp, 
-			( arg("black and white image"), arg("the binary red marker image"), arg("the ppm filename")),
+			( arg("greyscale image"), arg("the binary red marker image"), arg("the ppm filename")),
 			"WRITE ME!!!\n"
   );
 

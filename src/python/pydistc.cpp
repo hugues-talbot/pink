@@ -28,8 +28,10 @@ namespace pink {
   namespace python {
 
     boost::python::object
-    distc( const char_image & original_image,
-           int mode )
+    distc(
+      const char_image & original_image,
+      int mode
+      )
     {
       pink_image * result;
       char_image image;
@@ -170,54 +172,208 @@ namespace pink {
     } /* distc */
   
     
+
+    boost::python::object
+    dist(
+      const char_image & original_image,
+      int mode
+      )
+    {
+      pink_image * result;
+      char_image image;
+      image.copy(original_image);
+      int N;
+      uint8_t *F;
+
+      if ((mode != 0) && (mode != 1) && (mode != 2) && (mode != 3) && (mode != 5) &&
+          (mode != 4) && (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26) &&
+          (mode != 40) && (mode != 80) && (mode != 60) && (mode != 180) && (mode != 260))
+      {
+        error("filein.pgm mode fileout.pgm"
+              "       mode = 0 (dist. eucl. trunc), 1 (dist. eucl. quad.), 2 (chamfrein),\n"
+              "              3 (exact eucl. quad.), 5 (exact eucl.), 4, 8 (2D), 6, 18, 26 (3D)\n"
+              "                40, 80 (2D), 60, 180, 260 (3D)\n");
+      } /* if mode */
+
+      if (mode < 40)        
+        // result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
+        result = new int_image(image.get_size());      
+      else
+        // result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
+        result = new char_image(image.get_size());
+      
+      // if (result == NULL)
+      // {   
+      //   error("%s: allocimage failed");
+      // }
+
+      N = image.get_size().prod();//rowsize(image) * colsize(image) * depth(image);
+      F = UCHARDATA(image.get_output());
+
+      if (mode == 0)
+      {
+        if (depth(image.get_output()) == 1)
+        {
+          if (! ldisteuc(image, *result))
+          {
+            error("%s: ldisteuc failed");
+          }
+        }
+        else
+        {
+          if (! ldisteuc3d(image, *result))
+          {
+            error("%s: ldisteuc3d failed");
+          }
+        }
+      }
+      else if (mode == 1)
+      {
+        if (depth(image.get_output()) == 1)
+        {
+          if (! ldistquad(image, *result))
+          {
+            error("%s: ldistquad failed");
+          }
+        }
+        else
+        {
+          if (! ldistquad3d(image, *result))
+          {
+            error("%s: ldistquad3d failed");
+          }
+        }
+      }
+      else if (mode == 2)
+      {
+        if (! lchamfrein(image, *result))
+        {
+          error("%s: lchamfrein failed");
+        }
+      }
+      else if ((mode == 3) || (mode == 5))
+      {
+        for (int i = 0; i < N; i++) // inverse l'image
+          if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
+
+        if (! lsedt_meijster(image, *result))
+        {
+          error("%s: lsedt_meijster failed");
+        }
+        if (mode == 5)
+        {
+          float *D;
+          pink_image * tmp = result;
+          result = new float_image();
+          polymorphic_cast<float_image*>(result)->copy(pink::convert2float(*polymorphic_cast<int_image*>(tmp)));
+          delete tmp;          
+          //convertfloat(&result);
+          D = FLOATDATA(polymorphic_cast<float_image*>(result)->get_output());
+          for (int i = 0; i < N; i++) D[i] = (float)sqrt(D[i]);
+        }
+      }
+      else if (mode < 40)
+      {
+        if (! ldist(image, mode, *result))
+        {
+          error("%s: ldist failed");
+        }
+      }
+      else
+      {
+        if (! ldistbyte(image, mode, *result))
+        {
+          error("%s: ldist failed");
+        }
+      }
+
+
+      boost::python::object * to_return;
+
+      if (mode == 5)
+      {
+        to_return = new boost::python::object( *polymorphic_cast<float_image*>(result) );
+      }
+      else  /* NOT mode == 5 */
+      {
+        
+        if (mode < 40)
+        {        
+          //result = new int_image(image.get_size());
+          to_return = new boost::python::object( *polymorphic_cast<int_image*>(result) );
+        }        
+        else /* NOT mode < 40 */
+        {        
+          //result = new char_image(image.get_size());
+          to_return = new boost::python::object( *polymorphic_cast<char_image*>(result) );
+        }      
+      } /* NOT mode == 5 */      
+      
+      return *to_return;
+    } /* dist */
+  
+        
     
 
 
   } /* namespace python */
 } /* namespace pink */
 
-UI_EXPORT_ONE_FUNCTION(
-  distc,
-  pink::python::distc,
-  ( arg("image"), arg("mode")),
-  "brief distance transform (internal)\n"
-  "\n"
-  "<B>Usage:</B> distc in.pgm mode out.pgm\n"
-  "\n"
-  "<B>Description:</B>\n"
-  "Distance to the complementary of the object X defined by the binary \n"
-  "image b in.pgm .\n"
-  "The result function DX(x) is defined by: DX(x) = min {d(x,y), y not in X}.\n"
-  "\n"
-  "The distance d used depends on the parameter b mode :\n"
-  "li 0: approximate euclidean distance (truncated)\n"
-  "li 1: approximate quadratic euclidean distance\n"
-  "li 2: chamfer distance\n"
-  "li 3: exact quadratic euclidean distance\n"
-  "li 4: 4-distance in 2d\n"
-  "li 5: exact euclidean distance (float)\n"
-  "li 8: 8-distance in 2d\n"
-  "li 6: 6-distance in 3d\n"
-  "li 18: 18-distance in 3d\n"
-  "li 26: 26-distance in 3d\n"
-  "li 40: 4-distance in 2d (byte coded ouput)\n"
-  "li 80: 8-distance in 2d (byte coded ouput)\n"
-  "li 60: 6-distance in 3d (byte coded ouput)\n"
-  "li 180: 18-distance in 3d (byte coded ouput)\n"
-  "li 260: 26-distance in 3d (byte coded ouput)\n"
-  "\n"
-  "The output b out.pgm is of type int32_t for modes < 40, of type byte for other modes.\n"
-  "\n"
-  "<B>Types supported:</B> byte 2d, byte 3d\n"
-  "\n"
+void distc_export()
+{
+
+  UI_DEFINE_ONE_FUNCTION(
+    dist,
+    pink::python::dist,
+    ( arg("image"), arg("mode")),
+    "WRITE ME!"
+    // end of the documenation    
+    );
+  
+  
+  UI_DEFINE_ONE_FUNCTION(
+    distc,
+    pink::python::distc,
+    ( arg("image"), arg("mode")),
+    "brief distance transform (internal)\n"
+    "\n"
+    "<B>Usage:</B> distc in.pgm mode out.pgm\n"
+    "\n"
+    "<B>Description:</B>\n"
+    "Distance to the complementary of the object X defined by the binary \n"
+    "image b in.pgm .\n"
+    "The result function DX(x) is defined by: DX(x) = min {d(x,y), y not in X}.\n"
+    "\n"
+    "The distance d used depends on the parameter b mode :\n"
+    "li 0: approximate euclidean distance (truncated)\n"
+    "li 1: approximate quadratic euclidean distance\n"
+    "li 2: chamfer distance\n"
+    "li 3: exact quadratic euclidean distance\n"
+    "li 4: 4-distance in 2d\n"
+    "li 5: exact euclidean distance (float)\n"
+    "li 8: 8-distance in 2d\n"
+    "li 6: 6-distance in 3d\n"
+    "li 18: 18-distance in 3d\n"
+    "li 26: 26-distance in 3d\n"
+    "li 40: 4-distance in 2d (byte coded ouput)\n"
+    "li 80: 8-distance in 2d (byte coded ouput)\n"
+    "li 60: 6-distance in 3d (byte coded ouput)\n"
+    "li 180: 18-distance in 3d (byte coded ouput)\n"
+    "li 260: 26-distance in 3d (byte coded ouput)\n"
+    "\n"
+    "The output b out.pgm is of type int32_t for modes < 40, of type byte for other modes.\n"
+    "\n"
+    "<B>Types supported:</B> byte 2d, byte 3d\n"
+    "\n"
   "<B>Category:</B> morpho\n"
-  "ingroup  morpho\n"
-  "\n"
-  "author Michel Couprie, Xavier Daragon\n"
-  );
-
-
-
+    "ingroup  morpho\n"
+    "\n"
+    "author Michel Couprie, Xavier Daragon\n"
+    // end of the documenation
+    );
+  
+  
+} /* distc_export */
 
 
 

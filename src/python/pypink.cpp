@@ -40,7 +40,8 @@ void generate_rgb_image_export(); void closing_export(); void closeball_export()
 void dilatball_export(); void asfbin_export(); void ptcurve_export();
 void skelcurv_export(); void ptend_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
-void openball_export(); void gradmorph_export(); void mcube_export();
+void openball_export(); void gradmorph_export(); void mcube_export(); void minima_export();
+
 
 // not sure this is the correct thing to do here HT
 void imview_export();
@@ -91,7 +92,7 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
   closing_export();  closeball_export();  minmax_export();  dilatball_export();
   asfbin_export();  ptcurve_export();  skelcurv_export();
   ptend_export();  readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
-  htkern_export();  openball_export();    gradmorph_export(); mcube_export();
+  htkern_export();  openball_export();    gradmorph_export(); mcube_export(); minima_export();
   
 
 
@@ -303,29 +304,30 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
       );
 
     def(
-      "minima",
-      &make_function<int_image, char*, &lminima>,
-      ( arg("image"), arg("connexity") ),
+      "lambdaskel",
+      &make_function< char_image, char_image, int, int, &llambdakern >,
+      ( arg("image"), arg("imcond"), arg("connexity"), arg("lambda") ),
       "WRITE ME!!"
       );
 
     def(
       "lambdaskel",
-      &make_function< only_2D<char_image>, CAN_BE_NULL<char_image>, int, int, &llambdakern >,
-      ( arg("image"), arg("imcond"), arg("connexity"), arg("lambda") ),
+      &make_function< char_image, int, int, &llambdakern_short >,
+      ( arg("image"), arg("connexity"), arg("lambda") ),
       "WRITE ME!!"
       );
+
     
     def(
       "rankfilter",
-      &make_function< only_2D<char_image>, char_image, int, int, double, &lfiltreordre >,
+      &make_function< char_image, char_image, int, int, double, &lfiltreordre >,
       ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("r") ),
       "WRITE ME!!"
       );
 
     def(
       "rankfilter",
-      &make_function< only_3D<char_image>, char_image, int, int, int, double, &lfiltreordre3d >,
+      &make_function< char_image, char_image, int, int, int, double, &lfiltreordre3d >,
       ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("center_z"), arg("r") ),
       "WRITE ME!!"
       );
@@ -333,14 +335,14 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
 
     def(
       "tuf",
-      &make_function< only_2D<char_image>, int, int, &ltuf >,
+      &make_function< char_image, int, int, &ltuf >,
       ( arg("image"), arg("min connex"), arg("radius") ),
       "topological upper filter\nWRITE ME!!"
       );
 
     def(
       "taf",
-      &make_function< only_2D<char_image>, int, int, int, int, &ltaflambda >,
+      &make_function< char_image, int, int, int, int, &ltaflambda >,
       ( arg("image"), arg("min connex"), arg("radius"), arg("lambdapics"), arg("lambdapuits") ),
       "topological alternating filter\nWRITE ME!!"
       );

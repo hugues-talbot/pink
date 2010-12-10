@@ -39,6 +39,12 @@ extern "C" {
 /* prototype for llambdakern.c */
 /* ============== */
 
+// this is a workaround, see the implementation
+extern int32_t llambdakern_short(
+  struct xvimage *image, 
+  int32_t connex,
+  int32_t lambda);  
+  
 extern int32_t llambdakern(
   struct xvimage *image, 
   struct xvimage *imcon, 

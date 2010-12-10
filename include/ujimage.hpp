@@ -257,7 +257,7 @@ namespace pink{
     ARRAY<pixel_type> get_pixels() const;
 
     string repr() const;
-    void fill( pixel_type value );
+    image_type fill( pixel_type value );
     image_type operator=( pixel_type value ); // equivalent with function fill
 
 
@@ -1136,13 +1136,14 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::repr */
 
   template <class pixel_type >
-  void ujoi<pixel_type >::fill( pixel_type value ) 
+  ujoi<pixel_type> ujoi<pixel_type >::fill( pixel_type value ) 
   {
     FOR(q, get_size().prod())
     {
       (*this)[q]=value;      
     } /* FOR */
-    
+
+    return *this;    
   } /* ujoi::fill */
   
   

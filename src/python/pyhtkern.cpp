@@ -28,8 +28,8 @@ namespace pink {
 
     char_image htkern(
       const char_image & image,
-      int connexity,
-      char_image imcond = char_image()
+      char_image imcond,
+      int connexity
       )
     {
       char_image result;
@@ -59,19 +59,40 @@ namespace pink {
       return result;
       
     } /* htkern */
+
+    char_image htkern_short(
+      const char_image & image,
+      int connexity
+      )
+    {
+      char_image result = htkern(image, char_image(), connexity);      
+      return result;      
+    } /* htkern_short */
+
+
     
 
   } /* namespace python */
 } /* namespace pink */
 
 
-UI_EXPORT_ONE_FUNCTION(
-  htkern,
-  pink::python::htkern,
-  ( arg("image"), arg("connexity"),arg("image condition")="NULL" ),
-  "WRITE ME!!!"
-  );
-
+void htkern_export()
+{
+  UI_DEFINE_ONE_FUNCTION(
+    htkern,
+    pink::python::htkern,
+    ( arg("image"), arg("image condition"), arg("connexity")),
+    "WRITE ME!!!"
+    );
+  
+  UI_DEFINE_ONE_FUNCTION(
+    htkern,
+    pink::python::htkern_short,
+    ( arg("image"), arg("connexity")),
+    "WRITE ME!!!"
+    );
+  
+} /* htkern_export */
 
 
 
