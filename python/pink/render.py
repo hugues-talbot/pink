@@ -8,6 +8,8 @@ import Tkinter as tk
 import tkSimpleDialog
 from pink.cpp import mcube
 
+application = []
+
 class render_class:
     def __init__(self, mesh1, mesh2=0):
         self.name = "render"
@@ -34,6 +36,14 @@ class render_class:
 
         self.ren1.ResetCamera()
 
+    def __del__(self):
+        print "nothing 01"
+#        if self.mesh2!=0:
+#            self.obj2.__del__()
+#        self.obj1.__del__()
+        self.ren_win.InvokeEvent("DeleteAllObjects")
+#        self.ren1.destroy()
+
 
 class obj:
     def __init__(self, mesh):
@@ -48,6 +58,16 @@ class obj:
         self.objActor = vtk.vtkActor()
         self.objActor.SetMapper(self.objMapper)
 
+        #def __del__(self):
+        #self.objActor.destroy()
+        #self.objMapper.destroy()
+        #self.normals.destroy()
+        #self.obj.destroy()
+
+
+
+
+
     
 class app:
     def __init__(self, render):
@@ -56,6 +76,7 @@ class app:
         # # then binds rendering window to a tk widget
         self.root = tk.Tk()
         self.root.title("Multiple Renderer")
+
         self.vtkw = vtkTkRenderWidget(self.root, width=600, height=600, rw=self.render.ren_win)
         self.vtkw.BindTkRenderWidget()
 
@@ -77,7 +98,13 @@ class app:
         self.savebutton.pack(side="left")        
         self.vtkw.pack(side="top", fill="both", expand="yes")
         self.opacity.pack(side="top", anchor="nw", fill="both")
-        
+
+    def __del__(self):
+        print "nothing 02"
+        self.root.destroy()
+        #self.vtkw.destroy()
+#        self.vtkw.InvokeEvent("DeleteAllObjects")
+
 
     def set_opacity(self, f):
         self.render.obj1.objActor.GetProperty().SetOpacity(float(f))
@@ -87,12 +114,13 @@ class app:
         self.root.mainloop()
     
     def bye(self):
+        print "nothing 03"
     #vtkCommand DeleteAllObjects
         self.root.quit()
 
 
-    def savepng(self):
-        
+
+    def savepng(self):        
         w2i=vtk.vtkWindowToImageFilter()
         writer = vtk.vtkPNGWriter()
         w2i.SetInput(self.render.ren_win)
@@ -131,6 +159,9 @@ class wirebutton:
 #     application.mainloop()
 
 def render( image1, image2=0 ):
+
+    #global application
+
     mesh1 = mcube(image1, 0, 0, 0)
     if image2!=0:
         mesh2 = mcube(image2, 0, 0, 0)
@@ -140,9 +171,8 @@ def render( image1, image2=0 ):
     render_obj=render_class(mesh1, mesh2)
     application = app(render_obj)
     application.mainloop()
-    #mesh2 = 
- 
-
+    render_obj.__del__()
+    application.__del__()
 
 
 

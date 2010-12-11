@@ -122,41 +122,8 @@ UI_EXPORT_ONE_FUNCTION(
   dilatball,
   pink::python::dilatball,
   ( arg("image"), arg("radius"), arg("mode")=0 ),
-  "brief morphological binary dilation by a ball"
-  ""
-  "<B>Usage:</B> dilatball in.pgm r [dist] out.pgm"
-  ""
-  "<B>Description:</B>"
-  "Morphological binary dilation by a metric ball."
-  "If the parameter r is a positive integer, then"
-  "the structuring element for this dilation is a ball (or a disc) of radius r."
-  "In this case the result of the dilation is defined by Y = {x; d(x,X) <= r} where X"
-  "represents the original point set (non-null pixels in the original image)."
-  "If the parameter r is -1, then "
-  "the structuring element for each point x is a ball (or a disc) of radius F(x),"
-  "where F is the greyscale image  in.pgm ."
-  ""
-  "The dilation is computed by thresholding a distance map."
-  "The distance used depends on the optional parameter dist (default is 0) :"
-  "- 0: approximate euclidean distance"
-  "- 1: approximate quadratic euclidean distance"
-  "- 2: chamfer distance"
-  "- 3: exact quadratic euclidean distance"
-  "- 4: 4-distance in 2d"
-  "- 8: 8-distance in 2d"
-  "- 6: 6-distance in 3d"
-  "- 18: 18-distance in 3d"
-  "- 26: 26-distance in 3d"
-  ""
-  "warning The input image in.pgm must be a binary image. No test is done."
-  ""
-  "<B>Types supported:</B> byte 2d, byte 3d"
-  ""
-  "<B>Category:</B> morpho"
-  "group  morpho"
-  ""
-  "author Michel Couprie 2002"
-// end of the documenation
+  doc__dilatball__c__
+  // end of the documenation
   );
 
 

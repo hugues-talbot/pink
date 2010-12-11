@@ -102,38 +102,7 @@ void toposhrink_export()
       arg("tbmax"),
       arg("inhibit")
       ),
-    "  brief topologically controled binary shrinking guided by a priority image\n"
-    "\n"
-    "<B>Usage:</B> toposhrink in.pgm prio.pgm connex tmin tmax tbmin tbmax [inhibit] out.pgm\n"
-    "\n"
-    "<B>Description:</B>\n"
-    "Topologically controled binary shrinking guided by a priority image.\n"
-    "The lowest values of the priority image correspond to the highest priority.\n"
-    "\n"
-    "The parameter b prio is an image (byte or int32_t).\n"
-    "\n"
-    "The parameter b connex indicates the connectivity of the binary object.\n"
-    "Possible choices are 4, 8 in 2D and 6, 18, 26 in 3D.\n"
-    "\n"
-    "If the parameter b inhibit is given and is a binary image name,\n"
-    "then the points of this image (set Y) will be left unchanged. \n"
-    "\n"
-    "Let X be the set of points of the binary image b in.pgm .\n"
-    "\n"
-    "verbatim\n"
-    "Repeat until stability: \n"
-    "    select a point p of X  Y such that\n"
-    "        tmin <= T(p) <= tmax and tbmin <= Tb(p) <= tbmax \n"
-    "        and with the lowest possible priority value\n"
-    "    X := X - { p }\n"
-    "endverbatim\n"
-    "\n"
-    "<B>Types supported:</B> byte 2d, byte 3d\n"
-    "\n"
-    "<B>Category:</B> topobin\n"
-    "ingroup  topobin\n"
-    "\n"
-    "author Michel Couprie\n"
+    doc__toposhrink__c__
     //end of documentation
     );
 
@@ -148,7 +117,7 @@ void toposhrink_export()
       arg("tbmin"),
       arg("tbmax")
       ),
-    "WRITE ME!!"
+    doc__toposhrink__c__
     // end of documentation
     );
   

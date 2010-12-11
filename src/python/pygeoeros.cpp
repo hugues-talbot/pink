@@ -1,6 +1,14 @@
-// UjoImro, 2009
-// This software is meant to be free
-// boost python wrapper
+/*
+  This software is licensed under 
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
+
+  This software comes in hope that it will be useful but 
+  without any warranty to the extent permitted by aplicable law.
+  
+  (C) UjoImro, 2009
+  Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+  ujoimro@gmail.com
+*/
 
 #include <pink_python.h>
 
@@ -64,30 +72,12 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_ONE_FUNCTION ( geoeros,
-                         pink::python::geoeros,
-                         ( arg("G image"), arg("F image"), arg("connexity"), arg("number of iterations")=-1 ),
-                         "geodesic (grayscale or binary) erosion \n"
-                         " \n"
-                         "Usage: geoeros g.pgm f.pgm connex niter out.pgm \n"
-                         " \n"
-                         "Description: \n"
-                         "Geodesic erosion of g.pgm over f.pgm \n"
-                         "Let G and F be the two input images. If G is not over F, then  \n"
-                         "G is replaced initially by max(G,F). \n"
-                         "The structuring element is specified by the value of the parameter connex, \n"
-                         "which can be one of the following ones: 4, 8 in 2d, or 6, 18, 26 in 3d. \n"
-                         "The parameter \b niter sets the number of iterations. If \b niter = -1, \n"
-                         "then the iterations continue until stability. \n"
-                         " \n"
-                         "Types supported: byte 2d, byte 3d. \n"
-                         " \n"
-                         "Category: connect, morpho \n"
-                         "group  connect, morpho \n"
-                         " \n"
-                         "author Michel Couprie - juillet 1996 \n"
-                         " \n"
-                         // end of the documenation
+UI_EXPORT_ONE_FUNCTION (
+  geoeros,
+  pink::python::geoeros,
+  ( arg("G image"), arg("F image"), arg("connexity"), arg("number of iterations")=-1 ),
+  doc__geoeros__c__
+  // end of the documenation
   );
 
   

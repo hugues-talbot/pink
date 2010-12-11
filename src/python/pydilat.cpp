@@ -65,7 +65,7 @@ UI_EXPORT_ONE_FUNCTION(
   dilation,
   pink::python::dilation,
   ( arg("src"), arg("elem") ),
-  "WRITE ME!!"
+  doc__dilation__c__
 // end of the documenation
   );
 

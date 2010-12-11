@@ -218,26 +218,26 @@ void skelcurv_export()
   skelcurv,
   pink::python::skelcurv,
   ( arg("image"),  arg("priority"), arg("connex"), arg("inhibit") ),
-  "WRITE ME!!!"
+  doc__skelcurv__c__
   );
   
   def("skelcurv",
       &pink::python::skelcurv2,
       (arg("image"), arg("priority"),arg("connex"), arg("inhibit") ),
-      "WRITE ME!!!"
+      doc__skelcurv__c__
     );
 
   UI_DEFINE_FUNCTION(
   skelcurv,
   pink::python::skelcurv_short,
   ( arg("image"),  arg("priority"), arg("connex") ),
-  "WRITE ME!!!"
+  doc__skelcurv__c__
   );
   
   def("skelcurv",
       &pink::python::skelcurv2_short,
       (arg("image"), arg("priority"),arg("connex") ),
-      "WRITE ME!!!"
+      doc__skelcurv__c__
     );
 
   

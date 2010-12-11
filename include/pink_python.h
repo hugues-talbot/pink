@@ -22,7 +22,7 @@
 
 #include <pink.h>
 #include <pyexport.hpp>
-
+#include <python_doc.h>
 
 
 

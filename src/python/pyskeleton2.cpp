@@ -1,11 +1,19 @@
-// UjoImro, 2009
-// This software is meant to be free
-// boost python wrapper
+/*
+  This software is licensed under 
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
+
+  This software comes in hope that it will be useful but 
+  without any warranty to the extent permitted by aplicable law.
+  
+  (C) UjoImro, 2009-2010
+  Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+  ujoimro@gmail.com
+*/
 
 #include <pink_python.h>
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pyskeleton.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {stringstream fullmessage; fullmessage << "in pyskeleton2.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;
 using namespace pink;
@@ -218,27 +226,27 @@ void skeleton2_export()
   def( "skeleton",
        &pink::python::skeleton_im_prioint_connex_inhibimage,
        ( arg("image"), arg("prio"), arg("connexity"), arg("inhibit") ),
-       "WRITE ME!!"
+       doc__skeleton__c__
     );
 
   def( "skeleton",
        &pink::python::skeleton_im_prioint_connex_inhibval,
        ( arg("image"), arg("prio"), arg("connexity"), arg("inhibit")=-1 ),
-       "WRITE ME!!"
+       doc__skeleton__c__
     );
   
   UI_DEFINE_FUNCTION(
     skeleton,
     pink::python::skeleton_im_prioim_connex_inhibimage,
     ( arg("image"), arg("prio"), arg("connexity"), arg("inhibit") ),
-    "WRITE ME!!"
+    doc__skeleton__c__
     );
 
   UI_DEFINE_FUNCTION(
     skeleton,
     pink::python::skeleton_im_prioim_connex_inhibval,
     ( arg("image"), arg("prio"), arg("connexity"), arg("inhibit")=-1 ),
-    "WRITE ME!!"
+    doc__skeleton__c__
     );
 
   

@@ -45,7 +45,9 @@ namespace pink {
 UI_EXPORT_FUNCTION( minmax, 
 		    pink::python::minmax, 
 		    (arg("image")),
-                    "Returns the minimum and maximum values of the image"
+                    "Returns the minimum and maximum values of the image.\n"
+                    "It's using less comparisons then just looking for the maximum and"
+                    "then the minimum."
   );
 
 

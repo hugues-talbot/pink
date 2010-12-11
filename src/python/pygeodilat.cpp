@@ -75,28 +75,9 @@ UI_EXPORT_ONE_FUNCTION(
   geodilat,
   pink::python::geodilat,
   ( arg("G image"), arg("F image"), arg("connexity"), arg("number of iterations")=-1),
-  "geodesic (grayscale or binary) dilation \n"
-  " \n"
-  "Usage: geodilat g.pgm f.pgm connex niter out.pgm \n"
-  " \n"
-  "Description: \n"
-  "Geodesic erosion of g.pgm over f.pgm \n"
-  "Let G and F be the two input images. If G is not over F, then  \n"
-  "G is replaced initially by min(G,F). \n"
-  "The structuring element is specified by the value of the parameter connex, \n"
-  "which can be one of the following ones: 4, 8 in 2d, or 6, 18, 26 in 3d. \n"
-  "The parameter \b niter sets the number of iterations. If \b niter = -1, \n"
-  "then the iterations continue until stability. \n"
-  " \n"
-  "Types supported: byte 2d, byte 3d. \n"
-  " \n"
-  "Category: connect, morpho \n"
-  "group  connect, morpho \n"
-  " \n"
-  "author Michel Couprie - juillet 1996 \n"
-  " \n"
-// end of the documenation
-    );
+  doc__geodilat__c__
+  // end of the documenation
+  );
   
 
 

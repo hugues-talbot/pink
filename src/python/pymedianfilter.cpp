@@ -83,19 +83,7 @@ UI_EXPORT_ONE_FUNCTION (
   medianfilter,
   pink::python::medianfilter,
   ( arg("image"), arg("structuring_element") ),
-  "pink's help: \n"
-  "Detailed Description \n"
-  "median filter \n"
-  " \n"
-  "Usage: medianfilter in.pgm el.pgm out.pgm \n"
-  " \n"
-  "Description: Let F be the input image, G be the output image, and E the structuring element. then for each pixel p, G[p] is the median element of the sorted list (by increasing order) of the pixel values in the set { F[q], q in E[p] }. \n"
-  " \n"
-  "The median filter is a particular case of rank filter (see rankfilter.c), with rank = 0.5 . \n"
-  " \n"
-  "Types supported: byte 2d, byte 3d \n"
-  " \n"
-  "Category: morpho \n"
+  doc__medianfilter__c__
   );
 
 

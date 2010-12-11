@@ -65,7 +65,7 @@ UI_EXPORT_ONE_FUNCTION(
   erosion,
   pink::python::erosion,
   (arg("src"), arg("elem")),
-  "write me!"
+  doc__erosion__c__
   // end of the documenation
   );
 

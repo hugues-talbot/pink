@@ -19,6 +19,7 @@ using namespace pink;
 // maybe I'll get away with it
 #include <pyujimage.hpp>
 #include <pyexport.hpp>
+#include <python_doc.h>
 
 // declarations
 // void deep_xvimage_object_export();void shallow_xvimage_object_export();
@@ -100,13 +101,16 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
     inverse,
     pink::inverse,
     ( arg("image") ),
-    "WRITE ME!!!"
+    doc__inverse__c__
 // end of the documenation
   );    
 
   
   // is this enough HT ?  
   imview_export();
+
+
+
   
   UI_DEFINE_FUNCTION(
     print_image,
@@ -116,6 +120,7 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
     );
   
 
+  
   UI_DEFINE_FUNCTION(
     insert_image, 
     insert_image, 
@@ -127,6 +132,7 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
     );
   
 
+  
   UI_DEFINE_FUNCTION(
     merge_max_image, 
     merge_max_image, 
@@ -137,10 +143,8 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
     "it is cropped. During the insertion the pixels are compared "
     "and the bigger value is conserved"
     );
-    
 
-  
-  
+
 
   UI_DEFINE_FUNCTION(
     frame,
@@ -183,71 +187,26 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
     def( "ptisolated",
          &make_function<char_image, int, &lptisolated>,
          ( arg("image"), arg("connexity") ),
-         "WRITE ME!"
+         doc__ptisolated__c__
       );
 
     def( "ptjunction",
          &make_function<char_image, int, &lptjunction>,
          ( arg("image"), arg("connexity") ),
-         "brief detects junction points in 2d or 3d binary images\n"
-         "\n"
-         "<B>Usage:</B> ptjunction in.pgm connex out.pgm\n"
-         "\n"
-         "<B>Description:</B>\n"
-         "Detects junction points in the 2d or 3d binary image b in.pgm, which is supposed to contain a skeleton.\n"
-         "A junction point is a white point x such that #(Nn[x] inter X) > 2,\n"
-         "where Nn[x] stands for the n-neighborhood of x (excluding x), and\n"
-         "n = 4, 8 in 2D or n = 6, 18, 26 in 3D, as set by the parameter b connex.\n"
-         "\n"
-         "<B>Types supported:</B> byte 2D, byte 3D\n"
-         "\n"
-         "<B>Category:</B> topobin\n"
-         "ingroup  topobin\n"
-         "\n"
-         "author Michel Couprie 2010\n"
+         doc__ptjunction__c__
       );
 
     def( "selectcomp",
          &make_function<char_image, int, int, int, int, &lselectcomp>,
          ( arg("image"), arg("connexity"), arg("x"), arg("y"), arg("z") ),
-         "brief selects a connected component\n"
-         "\n"
-         "<B>Usage:</B> selectcomp in.pgm connex x y z out.pgm\n"
-         "\n"
-         "<B>Description:</B>\n"
-         "The connected component of the binary image <B>in.pgm</B>\n"
-         "(according to the connectivity <B>connex</B>)\n"
-         "which contains the point (<B>x</B>,<B>y</B>,<B>z</B>)\n"
-         "is preserved. All other points are deleted.\n"
-         "Possible values for b connex are 4, 8 (2D), 6, 18, 26, 60, 260 (3D).\n"
-         "Values 60 and 260 correspond to restrictions of 6 and 26 connectivities to the \n"
-         "current xy plane.\n"
-         "\n"
-         "<B>Types supported:</B> byte 2d, byte 3d\n"
-         "\n"
-         "<B>Category:</B> connect\n"
-         "ingroup connect\n"
+         doc__selectcomp__c__
       );
 
     UI_DEFINE_ONE_FUNCTION(
       float2byte,
       pink::float2byte,
       ( arg("source image"), arg("mode")=2 ),
-      "converts a 'float_image' to a 'char_image' image\n\n"
-      "Usage: float2byte( in ujoi, mode )\n"
-      "Description:\n\n"
-      "Depending on the value given for the (optional) parameter 'mode':\n"
-      "    mode = 0 : for all x, out[x] = min(255, arrondi(in[x])).\n"
-      "    mode = 1 : for all x, out[x] = arrondi(in[x]) modulo 256.\n"
-      "    mode = 2 (default): scales values in the range 0-255.\n"
-      "    mode = 4 : truncation of the square root in the range 0-255.\n"
-      "    mode = 5 : truncation of the log in the range 0-255.\n\n"
-      "Types supported: float_image\n"
-      "Category: convert\n"
-      "group convert\n"
-      "author Michel Couprie\n"
-      "adjusted Laszlo Marak 2009\n"
-      " \n"
+      doc__float2byte__c__
       // end of the documenation
       );
     
@@ -263,28 +222,7 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
       long2byte,
       pink::long2byte, 
       ( arg("image"),arg("mode"),arg("nb_new_val") ),
-      "converts a 'int32_t' image to a 'byte' image \n"
-      "\n"
-      "Usage: long2byte in.pgm [mode] [n] out.pgm\n"
-      "\n"
-      "Description:\n"
-      "\n"
-      "Depending on the value given for the (optional) parameter mode:\n"
-      " *  mode = 0 (default) : for all x, out[x] = min(255, in[x]).\n"
-      " *  mode = 1 : for all x, out[x] = in[x] modulo 256.\n"
-      " *  mode = 2 : scales values in the range 0-255.\n"
-      " *  mode = 3 : sorts the values by decreasing number of occurence in the image.\n"
-      "Replaces the values by their order.\n"
-      "Only the n (default 255) first values are kept.\n"
-      "Useful for label images.\n"
-      " *  mode = 4 : truncation of the square root in the range 0-255.\n"
-      " *  mode = 5 : truncation of the log in the range 0-255.\n"
-      " \n"
-      "Types supported: int32_t 2d, int32_t 3d\n"
-      "\n"
-      "Category: convert\n"
-      "\n"
-      "author Michel Couprie\n"
+      doc__long2byte__c__
       // end of the documenation
       );
 
@@ -293,28 +231,28 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
       "holeclosing",
       &make_function<char_image, int, int, &lfermetrous3dbin>,
       ( arg("image"), arg("connexity"), arg("holesize") ),
-      "WRITE ME!!"
+      doc__holeclosing__c__
       );
 
     def(
       "holeclosing",
       &make_function<char_image, char_image, int, int, &lfermetrous3dbin2>,
       ( arg("image"), arg("guiding image") ,arg("connexity"), arg("holesize") ),
-      "WRITE ME!!"
+      doc__holeclosing__c__
       );
 
     def(
       "lambdaskel",
       &make_function< char_image, char_image, int, int, &llambdakern >,
       ( arg("image"), arg("imcond"), arg("connexity"), arg("lambda") ),
-      "WRITE ME!!"
+      doc__lambdaskel__c__
       );
 
     def(
       "lambdaskel",
       &make_function< char_image, int, int, &llambdakern_short >,
       ( arg("image"), arg("connexity"), arg("lambda") ),
-      "WRITE ME!!"
+      doc__lambdaskel__c__
       );
 
     
@@ -322,14 +260,14 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
       "rankfilter",
       &make_function< char_image, char_image, int, int, double, &lfiltreordre >,
       ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("r") ),
-      "WRITE ME!!"
+      doc__rankfilter__c__
       );
 
     def(
       "rankfilter",
       &make_function< char_image, char_image, int, int, int, double, &lfiltreordre3d >,
       ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("center_z"), arg("r") ),
-      "WRITE ME!!"
+      doc__rankfilter__c__
       );
 
 
@@ -337,63 +275,63 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
       "tuf",
       &make_function< char_image, int, int, &ltuf >,
       ( arg("image"), arg("min connex"), arg("radius") ),
-      "topological upper filter\nWRITE ME!!"
+      doc__tuf__c__
       );
 
     def(
       "taf",
       &make_function< char_image, int, int, int, int, &ltaflambda >,
       ( arg("image"), arg("min connex"), arg("radius"), arg("lambdapics"), arg("lambdapuits") ),
-      "topological alternating filter\nWRITE ME!!"
+      doc__taf__c__
       );
 
     def(
       "watershed",
       &make_function< char_image, char_image, int, &lwshedtopobin >,
       ( arg("image"), arg("mark"), arg("connexity") ),
-      "WRITE ME!!"
+      doc__watershed__c__
       );
 
     def(
       "heightmaxima",
       &make_function< char_image, int, int, &lheightmaxima >,
       ( arg("image"), arg("connexity"), arg("height") ),
-      "WRITE ME!!"
+      doc__heightmaxima__c__
       );
     
     def(
       "heightminima",
       &make_function< char_image, int, int, &lheightminima >,
       ( arg("image"), arg("connexity"), arg("height") ),
-      "WRITE ME!!"
+      doc__heightminima__c__
       );
     
     UI_DEFINE_ONE_FUNCTION(
       genball,
       pink::genball,
       ( arg("radius"), arg("dimension")=2 ),
-      "WRITE ME!!"      
+      "Generates a discreet eucledian ball with given radius and dimensions."
       );
 
     def(
       "normalize",
       &normalize<char_image, 0, 255>,
       ( arg("image"), arg("minval")=0, arg("maxval")=255),
-      "WRITE ME!!"
+      doc__normalize__c__
       );
     
     def(
       "normalize",
       &normalize<int_image, 0, 255>,
       ( arg("image"), arg("minval")=0, arg("maxval")=255),
-      "WRITE ME!!"
+      doc__normalize__c__
       );
     
     def(
       "normalize",
       &normalize<float_image, 0, 1>,
       ( arg("image"), arg("minval")=0, arg("maxval")=1),
-      "WRITE ME!!"
+      doc__normalize__c__
       );
 
 
@@ -401,7 +339,7 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
       extractplane,
       pink::extractplane,
       ( arg("image"), arg("number of the plane"), arg("mode") ),
-      "WRITE ME!!"
+      doc__extractplane__c__
       );
     
     

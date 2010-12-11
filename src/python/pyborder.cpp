@@ -41,29 +41,11 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_ONE_FUNCTION( border, 
-			pink::python::border, 
-			(arg("image"), arg("connexity")),
-			"\brief border of a binary image\n"
-			"\n"
-			"<B>Usage:</B> border in connex out\n"
-			"\n"
-			"<B>Description:</B>\n"
-			"Let X be the subset of Zn that corresponds to the input image \b in, and \n"
-			"let k be the value of the parameter \b connex (that is, 4, 8 (2d) or 6, 26 (3d)), which is the connectivity chosen for X.\n"
-			"\n"
-			"The border B(X) of X is defined by:\n"
-			"B(X) = {x in X, (Gamma_nk(x) inter Xbar) not empty}\n"
-			"where nk is the complementary connectivity for k.\n"
-			"\n"
-			"<B>Types supported:</B> byte 2d, byte 3d\n"
-			"\n"
-			"<B>Category:</B> topobin\n"
-			"ingroup  topobin\n"
-			"\n"
-			"\author Michel Couprie\n"
-			"*/\n"
-			"\n"
+UI_EXPORT_ONE_FUNCTION(
+  border, 
+  pink::python::border, 
+  (arg("image"), arg("connexity")),
+  doc__border__c__
   );
 
 

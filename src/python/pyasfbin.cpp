@@ -109,11 +109,7 @@ UI_EXPORT_ONE_FUNCTION(
   asfbin,
   pink::python::asfbin,
   ( arg("image"), arg("max radius"), arg("min radius")=1),
-  "Zoom (shrink or engarle) an image. "
-  "The three arguments are the zoom factors. "
-  "More advanced parametrization through the 'pink.zoom' function."
-  "Note: this function is too rigid (you can't choose the zoom algorithm) "
-  " and should definitely be replaced later"
+  doc__asfbin__c__
   );
 
 

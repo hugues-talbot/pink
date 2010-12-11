@@ -78,24 +78,11 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_ONE_FUNCTION( identifyline, 
-			pink::python::identifyline, 
-			( arg("list of X coordinates"), arg("list of Y coordinates") ),
-			"\brief identification of a best matching line from a set of 2D points\n"
-			"\n"
-			"<B>Usage:</B> identifyline in.list out.list\n"
-			"\n"
-			"<B>Description:</B>\n"
-			"Identifies the parameters (a,b) of the equation of the 2D line:\n"
-			"ax+b=y that minimizes the least square error between this line \n"
-			"and the given points. Method: basic linear regression.\n"
-			"\n"
-			"<B>Types supported:</B> list 1D, list 2D\n"
-			"\n"
-			"<B>Category:</B> geo\n"
-			"ingroup  geo\n"
-			"\n"
-			"\author Michel Couprie\n"
+UI_EXPORT_ONE_FUNCTION(
+  identifyline, 
+  pink::python::identifyline, 
+  ( arg("list of X coordinates"), arg("list of Y coordinates") ),
+  doc__identifyline__c__
   );
 
 

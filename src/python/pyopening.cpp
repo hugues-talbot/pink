@@ -156,24 +156,12 @@ namespace pink {
   } /* namespace python */
 } /* namespace pink */
 
-UI_EXPORT_ONE_FUNCTION( opening,
-                        pink::python::opening,
-                        ( arg("image"), arg("elem") ),
-                        " \n"
-                        "morphological opening by a plane structuring element \n"
-                        " \n"
-                        "Description: \n"
-                        "Morphological opening by a plane structuring element. \n"
-                        "The (plane) structuring element is given by the non-null values in 'elem',  \n"
-                        "its origin is the 'center' of the 'elem' \n"
-                        " \n"
-                        "Types supported: byte 2d, byte 3d \n"
-                        " \n"
-                        "Category: morpho \n"
-                        " \n"
-                        "author Michel Couprie 2002 \n"
-                        " \n"
-                        // end of the documenation
+UI_EXPORT_ONE_FUNCTION(
+  opening,
+  pink::python::opening,
+  ( arg("image"), arg("elem") ),
+  doc__opening__c__
+  // end of the documenation
   );
 
 
@@ -181,7 +169,7 @@ UI_EXPORT_ONE_FUNCTION(
   openball,
   pink::python::openball,
   ( arg("image"), arg("radius"), arg("mode")=0 ),
-  "WRITE ME!!"
+  doc__openball__c__
   );
 
 

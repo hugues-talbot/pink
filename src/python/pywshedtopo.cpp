@@ -49,16 +49,7 @@ UI_EXPORT_ONE_FUNCTION(
   wshedtopo,
   pink::python::wshedtopo, 
   ( arg("image"), arg("connex") ),
-  "topological grayscale watershed (Couprie-Bertrand algorithm)\n"
-  "Usage: wshedtopo in.pgm connex [i] out.pgm\n"
-  "Description: Topological grayscale watershed as defined in [CB97], preserves the minima - connectivity connex If the parameter i is given, then the dual operator is applied.\n"
-  "    [CB97] M. Couprie and G. Bertrand: ``Topological Grayscale Watershed Transformation'', SPIE Vision Geometry V Proceedings, 3168 (136--146), 1997.\n"
-  "Types supported: byte 2d, byte 3d\n"
-  "Category: connect\n"
-  "Author:\n"
-  "    Michel Couprie\n"
-  "Example:\n"
-  "wshedtopo ur1 4 ur1_wshedtopo"
+  doc__wshedtopo__c__
   );
 
 

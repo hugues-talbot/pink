@@ -145,32 +145,21 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_ONE_FUNCTION( closeball, 
-			pink::python::closeball, 
-			( arg("image"), arg("the ray of the ball"), arg("distance function")=0 ),
-			"WRITE ME!!!\n"
+UI_EXPORT_ONE_FUNCTION(
+  closeball, 
+  pink::python::closeball, 
+  ( arg("image"), arg("the ray of the ball"), arg("distance function")=0 ),
+  doc__closeball__c__
   );
 
 
 
-UI_EXPORT_ONE_FUNCTION( closing, 
-			pink::python::closing,
-                        ( arg("src"), arg("elem") ),
-                        " \n"
-                        "morphological closing by a plane structuring element \n"
-                        " \n"
-                        "Description: \n"
-                        "Morphological closing by a plane structuring element. \n"
-                        "The (plane) structuring element is given by the non-null values in 'elem',  \n"
-                        "its origin is the 'center' of the 'elem'  \n"
-                        " \n"
-                        "Types supported: byte 2d, byte 3d \n"
-                        " \n"
-                        "Category: morpho \n"
-                        " \n"
-                        "\author Michel Couprie 2002 \n"
-                        " \n"
-                        // end of the documenation
+UI_EXPORT_ONE_FUNCTION(
+  closing, 
+  pink::python::closing,
+  ( arg("src"), arg("elem") ),
+  doc__closing__c__
+  // end of the documenation
   );
 
 

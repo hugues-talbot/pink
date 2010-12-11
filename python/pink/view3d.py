@@ -180,6 +180,9 @@ class main:
         self.checkbutton_z.grid(row=4, column=0)
         self.checkbutton_z.select()
 
+    def __del__(self):
+        self.master.destroy()
+
     def canvas_x_on_mouse_up(self, n):
         print "release me! n =", n
 
@@ -256,7 +259,9 @@ class main:
 def view3d(image1, image2=0):
     root = tk.Tk()
     main_window = main(root, image1, image2)
-    root.mainloop()
+    root.mainloop()    
+    main_window.__del__()
+
 
     
 

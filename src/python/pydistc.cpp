@@ -326,7 +326,7 @@ void distc_export()
     dist,
     pink::python::dist,
     ( arg("image"), arg("mode")),
-    "WRITE ME!"
+    doc__dist__c__
     // end of the documenation    
     );
   
@@ -335,40 +335,7 @@ void distc_export()
     distc,
     pink::python::distc,
     ( arg("image"), arg("mode")),
-    "brief distance transform (internal)\n"
-    "\n"
-    "<B>Usage:</B> distc in.pgm mode out.pgm\n"
-    "\n"
-    "<B>Description:</B>\n"
-    "Distance to the complementary of the object X defined by the binary \n"
-    "image b in.pgm .\n"
-    "The result function DX(x) is defined by: DX(x) = min {d(x,y), y not in X}.\n"
-    "\n"
-    "The distance d used depends on the parameter b mode :\n"
-    "li 0: approximate euclidean distance (truncated)\n"
-    "li 1: approximate quadratic euclidean distance\n"
-    "li 2: chamfer distance\n"
-    "li 3: exact quadratic euclidean distance\n"
-    "li 4: 4-distance in 2d\n"
-    "li 5: exact euclidean distance (float)\n"
-    "li 8: 8-distance in 2d\n"
-    "li 6: 6-distance in 3d\n"
-    "li 18: 18-distance in 3d\n"
-    "li 26: 26-distance in 3d\n"
-    "li 40: 4-distance in 2d (byte coded ouput)\n"
-    "li 80: 8-distance in 2d (byte coded ouput)\n"
-    "li 60: 6-distance in 3d (byte coded ouput)\n"
-    "li 180: 18-distance in 3d (byte coded ouput)\n"
-    "li 260: 26-distance in 3d (byte coded ouput)\n"
-    "\n"
-    "The output b out.pgm is of type int32_t for modes < 40, of type byte for other modes.\n"
-    "\n"
-    "<B>Types supported:</B> byte 2d, byte 3d\n"
-    "\n"
-  "<B>Category:</B> morpho\n"
-    "ingroup  morpho\n"
-    "\n"
-    "author Michel Couprie, Xavier Daragon\n"
+    doc__distc__c__
     // end of the documenation
     );
   

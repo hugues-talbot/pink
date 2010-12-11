@@ -54,8 +54,8 @@ UI_EXPORT_FUNCTION(
   minima,
   pink::python::minima,
   ( arg("image"), arg("mode")),
-  "WRITE ME!!"
-// end of documentation
+  doc__minima__c__
+  // end of documentation
   );
 
 

@@ -82,14 +82,14 @@ void htkern_export()
     htkern,
     pink::python::htkern,
     ( arg("image"), arg("image condition"), arg("connexity")),
-    "WRITE ME!!!"
+    doc__htkern__c__
     );
   
   UI_DEFINE_ONE_FUNCTION(
     htkern,
     pink::python::htkern_short,
     ( arg("image"), arg("connexity")),
-    "WRITE ME!!!"
+    doc__htkern__c__
     );
   
 } /* htkern_export */

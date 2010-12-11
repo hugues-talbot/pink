@@ -99,18 +99,20 @@ namespace pink {
 
 
 
-UI_EXPORT_ONE_FUNCTION( surimp, 
-			pink::python::surimp, 
-			( arg("greyscale image"), arg("the binary red marker image"), arg("the ppm filename")),
-			"WRITE ME!!!\n"
+UI_EXPORT_ONE_FUNCTION(
+  surimp, 
+  pink::python::surimp, 
+  ( arg("greyscale image"), arg("the binary red marker image"), arg("the ppm filename")),
+  doc__surimp__c__
   );
 
 
 
-UI_EXPORT_ONE_FUNCTION( generate_rgb_image, 
-			pink::python::generate_rgb_image, 
-			(arg("red image"), arg("green image"), arg("blue image"), arg("the ppm filename")),
-			"WRITE ME!!!\n"
+UI_EXPORT_ONE_FUNCTION(
+  generate_rgb_image, 
+  pink::python::generate_rgb_image, 
+  (arg("red image"), arg("green image"), arg("blue image"), arg("the ppm filename")),
+  "WRITE ME!!!\n"
   );
 
 

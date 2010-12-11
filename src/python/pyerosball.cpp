@@ -1,5 +1,15 @@
-// UjoImro, 2009
-// This software is meant to be free
+/*
+  This software is licensed under 
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
+
+  This software comes in hope that it will be useful but 
+  without any warranty to the extent permitted by aplicable law.
+  
+  (C) UjoImro, 2009
+  Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+  ujoimro@gmail.com
+*/
+
 // boost python wrapper
 
 #include <pink_python.h>
@@ -57,35 +67,8 @@ UI_EXPORT_ONE_FUNCTION(
   erosball,
   pink::python::erosball, 
   ( arg("image"),arg("r"),arg("mode")=0 ),
-  "pink's help:\n\n"
-  "morphological binary erosion by a ball\n"
-  " \n"
-  "Usage: erosball in.pgm r [dist] out.pgm \n"
-  " \n"
-  "Description: Morphological binary erosion by a metric ball. This erosion is the dual of the dilatball operator, i.e. erosball(X) = inverse(dilatball(inverse(X))). The structuring element for this erosion is a ball (or a disc) of radius r. The erosion is computed by thresholding a distance map. The distance used depends on the optional parameter dist (default is 0) : \n"
-  " \n"
-  "    * 0: approximate euclidean distance \n"
-  "    * 2: chamfer distance \n"
-  "    * 4: 4-distance in 2d \n"
-  "    * 8: 8-distance in 2d \n"
-  "    * 6: 6-distance in 3d \n"
-  "    * 18: 18-distance in 3d \n"
-  "    * 26: 26-distance in 3d \n"
-  " \n"
-  "Warning: \n"
-  "    The input image in.pgm must be a binary image. No test is done. \n"
-  " \n"
-  "Types supported: byte 2d, byte 3d \n"
-  " \n"
-  "Category: morpho \n"
-  " \n"
-  "Author: \n"
-  "    Michel Couprie 2002 \n"
-  " \n"
-  "Example: \n"
-  " \n"
-  "erosball cells 3 cells_erosball \n"
-// end of the documenation
+  doc__erosball__c__
+  // end of the documenation
   );
 
 

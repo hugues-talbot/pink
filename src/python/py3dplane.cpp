@@ -52,11 +52,11 @@ namespace pink {
 
 
 
-UI_EXPORT_ONE_FUNCTION( plane3d, 
-			pink::python::plane3d, 
-			( arg("image"), arg("coefficient of x"), arg("coefficient of y"), arg("coefficient of z"), arg("absolut part")),
-			"this function draws a morphological plane into the image. The "
-			"equation of the plane is a*x+b*y+c*z+d==0\n"
+UI_EXPORT_ONE_FUNCTION(
+  plane3d, 
+  pink::python::plane3d, 
+  ( arg("image"), arg("coefficient of x"), arg("coefficient of y"), arg("coefficient of z"), arg("absolut part")),
+  doc__3dplane__c__
   );
 
 
