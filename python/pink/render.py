@@ -113,16 +113,18 @@ class wirebutton:
         self.obj_actor = obj_actor
         self.wireframe = tk.IntVar()
         self.wireframe.set(0)
+        self.wiremode = False
         self.button = tk.Checkbutton(frame, text=text, variable=self.wireframe, activebackground="white", command=self.togglewire)        
         self.button.pack(side="left")
 
     def togglewire(self):
-        if int(self.wireframe.get())==1:
+        #if int(self.wireframe.get())==1:
+        if not self.wiremode:
             self.obj_actor.GetProperty().SetRepresentationToWireframe()
         else:
             self.obj_actor.GetProperty().SetRepresentationToSurface()
             
-        print "toggle wired"
+        self.wiremode = not self.wiremode
         self.ren_win.Render()
 
 
