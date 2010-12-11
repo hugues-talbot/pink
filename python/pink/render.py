@@ -8,6 +8,10 @@ import Tkinter as tk
 import tkSimpleDialog
 from pink.cpp import mcube
 
+root = tk.Tk()
+root.withdraw()
+
+
 class render_class:
     def __init__(self, mesh1, mesh2=0):
         self.name = "render"
@@ -50,17 +54,17 @@ class obj:
 
     
 class app:
-    def __init__(self, render):
+    def __init__(self, render, root):
         self.render = render # the vtk renderer object
 
         # # then binds rendering window to a tk widget
-        self.root = tk.Toplevel()
-        self.root.title("Multiple Renderer")
-        self.vtkw = vtkTkRenderWidget(self.root, width=600, height=600, rw=self.render.ren_win)
+        self.top = tk.Toplevel(root)
+        self.top.title("Multiple Renderer")
+        self.vtkw = vtkTkRenderWidget(self.top, width=600, height=600, rw=self.render.ren_win)
         self.vtkw.BindTkRenderWidget()
 
-        self.commands = tk.Frame(self.root)
-        self.buttons = tk.Frame(self.root)
+        self.commands = tk.Frame(self.top)
+        self.buttons = tk.Frame(self.top)
 
         self.buttons.pack( fill="both", expand=1, side="top" )
         self.commands.pack( fill="both", expand=1, side="bottom" )
@@ -69,12 +73,12 @@ class app:
         self.wirebutton1 = wirebutton(frame=self.buttons, text="Wireframe1", ren_win=self.render.ren_win, obj_actor=self.render.obj1.objActor)
 
         if render.mesh2!=0:
-            self.wirebutton1 = wirebutton(frame=self.buttons, text="Wireframe2", ren_win=self.render.ren_win, obj_actor=self.render.obj2.objActor)
+            self.wirebutton2 = wirebutton(frame=self.buttons, text="Wireframe2", ren_win=self.render.ren_win, obj_actor=self.render.obj2.objActor)
 
         self.opacity = tk.Scale(self.commands, from_=0.0, to=1.0, res=0.01, orient="horizontal", label="Opacity", command=self.set_opacity)
                 
         self.quitbutton.pack(side="right")
-        self.savebutton.pack(side="left")        
+        self.savebutton.pack(side="left")
         self.vtkw.pack(side="top", fill="both", expand="yes")
         self.opacity.pack(side="top", anchor="nw", fill="both")
         
@@ -84,11 +88,11 @@ class app:
         self.render.ren_win.Render()
 
     def mainloop(self):
-        self.root.mainloop()
+        self.top.mainloop()
     
     def bye(self):
     #vtkCommand DeleteAllObjects
-        self.root.quit()
+        self.top.quit()
 
 
     def savepng(self):
@@ -97,7 +101,7 @@ class app:
         writer = vtk.vtkPNGWriter()
         w2i.SetInput(self.render.ren_win)
         writer.SetInput(w2i.GetOutput())
-        writer.SetFileName(str(tkSimpleDialog.askstring( "Save a Snapshot", "Specify the filename to save a snapshot:", initialvalue="_sav01.png", parent=self.root)))
+        writer.SetFileName(str(tkSimpleDialog.askstring( "Save a Snapshot", "Specify the filename to save a snapshot:", initialvalue="_sav01.png", parent=self.top)))
         writer.Write()
         
 
@@ -109,7 +113,7 @@ class wirebutton:
         self.obj_actor = obj_actor
         self.wireframe = tk.IntVar()
         self.wireframe.set(0)
-        self.button = tk.Checkbutton(frame, text=text, variable=self.wireframe, activebackground="white", command=self.togglewire)
+        self.button = tk.Checkbutton(frame, text=text, variable=self.wireframe, activebackground="white", command=self.togglewire)        
         self.button.pack(side="left")
 
     def togglewire(self):
@@ -118,6 +122,7 @@ class wirebutton:
         else:
             self.obj_actor.GetProperty().SetRepresentationToSurface()
             
+        print "toggle wired"
         self.ren_win.Render()
 
 
@@ -131,15 +136,20 @@ class wirebutton:
 #     application.mainloop()
 
 def render( image1, image2=0 ):
+    global root 
+
     mesh1 = mcube(image1, 0, 0, 0)
     if image2!=0:
         mesh2 = mcube(image2, 0, 0, 0)
     else:
         mesh2 = 0
 
+
+
     render_obj=render_class(mesh1, mesh2)
-    application = app(render_obj)
+    application = app(render_obj, root)
     application.mainloop()
+    application.top.withdraw()
     #mesh2 = 
  
 

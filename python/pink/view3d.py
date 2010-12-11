@@ -14,10 +14,16 @@
 pink's 3d slice visualizer
 """
 
+
+
 import Tkinter as tk
 from PIL import Image, ImageTk
 from pink.cpp import extractplane, seuil, char_image, border, inverse
 from pink.cpp import max as pink_max
+
+root = tk.Tk()
+root.withdraw()
+
 
 def to_photoimage(image):
     size  = [ image.size[0], image.size[1] ]
@@ -89,7 +95,7 @@ class canvas:
         self.pos_y=y        
         
 
-class main:
+class app:
     def __init__(self, master, image1, image2=0):
         if len(image1.size)!=3:
             raise "error: view3d is for 3D images only."
@@ -101,7 +107,7 @@ class main:
         self.surimpmode=False
         self.invertmode=False
         
-        self.frame = tk.Frame( bg="", colormap="new")
+        self.frame = tk.Frame( self.master, bg="", colormap="new")
         #self.frame.bind("<Button-1>", callback)
         self.frame.grid()
         self.image1 = image1
@@ -180,8 +186,8 @@ class main:
         self.checkbutton_z.grid(row=4, column=0)
         self.checkbutton_z.select()
 
-    def __del__(self):
-        self.master.destroy()
+        #def __del__(self):
+        #self.master.destroy()
 
     def canvas_x_on_mouse_up(self, n):
         print "release me! n =", n
@@ -257,10 +263,13 @@ class main:
         return  result 
 
 def view3d(image1, image2=0):
-    root = tk.Toplevel()
-    main_window = main(root, image1, image2)
-    root.mainloop()    
-    main_window.__del__()
+    global root 
+
+    top = tk.Toplevel(root)
+    application = app(top, image1, image2)
+    top.mainloop()
+    top.withdraw()
+
 
 
     
