@@ -101,7 +101,7 @@ class main:
         self.surimpmode=False
         self.invertmode=False
         
-        self.frame = tk.Frame(master, bg="", colormap="new")
+        self.frame = tk.Frame(None, bg="", colormap="new")
         #self.frame.bind("<Button-1>", callback)
         self.frame.grid()
         self.image1 = image1

@@ -13,8 +13,8 @@ lettre_a = pink.readimage("../images/lettre_a.pgm")
 
 ### General skeletonization with toposhrink
 shrunk = pink.toposhrink(lettre_a, pink.distc(lettre_a,0), 26, 1, 1, 1, 1)
-#view3d(shrunk)
-#render(lettre_a, shrunk)
+view3d(shrunk)
+render(lettre_a, shrunk)
 
 
 def fill_the_hole(image, tbmin=1, tbmax=1):
@@ -26,7 +26,9 @@ def fill_the_hole(image, tbmin=1, tbmax=1):
 frame = pink.frame( pink.char_image(lettre_a.size), 255)
 dist = pink.dist(lettre_a, 0)
 shrunk = pink.toposhrink( inv(frame), inv(dist), 26, 1, 1, 1, 1, lettre_a )
-#render(lettre_a, shrunk)
+render(lettre_a, shrunk)
+
+exit(1)
 
 ### same with more holes
 tores = pink.readimage("../images/tores.pgm")
@@ -35,7 +37,9 @@ tores = pink.readimage("../images/tores.pgm")
 
 ### hint: delete the points for which tb==1
 shrunk = fill_the_hole(tores, 0, 10)
-#render(shrunk, tores)
+render(shrunk, tores)
+
+
 
 ### the distance is necessary
 chaise = pink.readimage("../images/chaise.pgm")
@@ -43,12 +47,12 @@ shrunk = fill_the_hole(chaise)
 blank = pink.char_image(chaise.size)
 bad_shrunk = pink.toposhrink( inv(pink.frame(blank,255)), pink.int_image(chaise.size), 26, 0, 10, 1, 1, chaise )
 
-#render(shrunk, chaise)
+render(shrunk, chaise)
 
 ### application vertebrae
 vertebre = pink.readimage("../images/vertebre.pgm")
 shrunk = fill_the_hole(vertebre, 0, 10)
-#render(shrunk, vertebre)
+render(shrunk, vertebre)
 
 ### introduction of the size parameter
 closed1 = pink.holeclosing(vertebre, 26, 0)
@@ -57,67 +61,67 @@ closed3 = pink.holeclosing(vertebre, 26, 6)
 render(closed1, closed3)
 
 
-### Greyscale: segmentation
+# ### Greyscale: segmentation
 
-## try a threshold
+# ## try a threshold
 
-### homotopic skeleton by shrinking
-uo = pink.readimage("../images/uo.pgm")
-htkern = pink.htkern(uo, 4)
-#htkern.writeimage("image.pgm")
-minima = pink.minima(htkern, "4")
-#minima.writeimage("image.pgm")
+# ### homotopic skeleton by shrinking
+# uo = pink.readimage("../images/uo.pgm")
+# htkern = pink.htkern(uo, 4)
+# #htkern.writeimage("image.pgm")
+# minima = pink.minima(htkern, "4")
+# #minima.writeimage("image.pgm")
 
-### lambda skeletons
-lam = pink.lambdaskel(uo, 4, 15)
-minima = pink.minima(lam, "4")
+# ### lambda skeletons
+# lam = pink.lambdaskel(uo, 4, 15)
+# minima = pink.minima(lam, "4")
 
-lam = pink.lambdaskel(uo, 4, 24)
-minima = pink.minima(lam, "4")
-pink.surimp(uo, inv(minima), "surimp.ppm")
+# lam = pink.lambdaskel(uo, 4, 24)
+# minima = pink.minima(lam, "4")
+# pink.surimp(uo, inv(minima), "surimp.ppm")
 
-### we can also try the gradient with any image
+# ### we can also try the gradient with any image
 
 
-### Greyscale filtering
+# ### Greyscale filtering
 
-### angiographie
-angio = pink.readimage("../images/angiogra.pgm")
-vois8 = pink.char_image([3,3]).fill(255)
-vois8.center=[1,1]
-rank = pink.rankfilter(angio, vois8, 1, 1, 0.5)
-rank.writeimage("image.pgm")
+# ### angiographie
+# angio = pink.readimage("../images/angiogra.pgm")
+# vois8 = pink.char_image([3,3]).fill(255)
+# vois8.center=[1,1]
+# rank = pink.rankfilter(angio, vois8, 1, 1, 0.5)
+# rank.writeimage("image.pgm")
 
-### lennab
-lennab = pink.readimage("../images/lennab.pgm")
-vois25 = pink.char_image([5,5]).fill(255)
-vois25.center=[2,2]
-rank1 = pink.rankfilter(lennab, vois25, 2, 2, 0.5)
-rank2 = pink.rankfilter(lennab, vois8, 2, 2, 0.5)
+# ### lennab
+# lennab = pink.readimage("../images/lennab.pgm")
+# vois25 = pink.char_image([5,5]).fill(255)
+# vois25.center=[2,2]
+# rank1 = pink.rankfilter(lennab, vois25, 2, 2, 0.5)
+# rank2 = pink.rankfilter(lennab, vois8, 2, 2, 0.5)
 
-### limits: cobblestones
-paves = pink.readimage("../images/paves.pgm")
-tuf = pink.tuf(paves, 8, 5)
-# (tuf + tlf)*= taf ???????
-taf = pink.taf(paves, 8, 5, 255, 255) ### !!!!!!!!!!!!!!!!!
+# ### limits: cobblestones
+# paves = pink.readimage("../images/paves.pgm")
+# tuf = pink.tuf(paves, 8, 5)
+# # (tuf + tlf)*= taf ???????
+# taf = pink.taf(paves, 8, 5, 255, 255) ### !!!!!!!!!!!!!!!!!
 
-tuf.writeimage("tuf.pgm")
-taf.writeimage("taf.pgm")
+# tuf.writeimage("tuf.pgm")
+# taf.writeimage("taf.pgm")
 
-### greyscale 
+# ### greyscale 
 
-# NIVEAUX DE GRIS: restoration de cretes
-#-----------------------------------------
+# # NIVEAUX DE GRIS: restoration de cretes
+# #-----------------------------------------
 
-# gradient
+# # gradient
 
-# amincir
+# # amincir
 
-# seuil par hysteresis
+# # seuil par hysteresis
 
-# restoration de cretes
+# # restoration de cretes
 
-### TO BE WRITTEN
+# ### TO BE WRITTEN
 
 
 
