@@ -48,7 +48,7 @@ def set_opacity(f):
 
 
 
-root = tk.Tk()
+root = tk.Toplevel()
 ren1 = vtk.vtkRenderer()
 ren_win = vtk.vtkRenderWindow()
 ren_win.AddRenderer(ren1)

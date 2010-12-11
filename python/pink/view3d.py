@@ -101,7 +101,7 @@ class main:
         self.surimpmode=False
         self.invertmode=False
         
-        self.frame = tk.Frame(None, bg="", colormap="new")
+        self.frame = tk.Frame( bg="", colormap="new")
         #self.frame.bind("<Button-1>", callback)
         self.frame.grid()
         self.image1 = image1
@@ -257,7 +257,7 @@ class main:
         return  result 
 
 def view3d(image1, image2=0):
-    root = tk.Tk()
+    root = tk.Toplevel()
     main_window = main(root, image1, image2)
     root.mainloop()    
     main_window.__del__()
