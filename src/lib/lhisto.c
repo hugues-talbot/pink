@@ -779,4 +779,43 @@ int32_t lseuilhisto (struct xvimage *image, struct xvimage *masque, double p)
   for (i = 0; i < N; i++) if (I[i] >= seuil) I[i] = NDG_MAX; else I[i] = NDG_MIN;
   free(histo);
   return 1;
-}
+} // lseuilhisto()
+
+/* ==================================== */
+int32_t lcountvalues(struct xvimage *image, struct xvimage *mask)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lcountvalues"
+{
+  int32_t count = 0;
+  uint32_t *histo;
+  int32_t i, s;
+
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    histo = (uint32_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(int32_t));
+    if (histo == NULL)
+    {
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return -1;
+    }
+    if (! lhisto(image, mask, histo))
+    {
+      fprintf(stderr, "%s: function lhisto failed\n", F_NAME);
+      return -1;
+    }
+    for (i = NDG_MIN; i <= NDG_MAX; i++) if (histo[i]) count++;
+    free(histo);
+  }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    if (! lhistolong(image, mask, &histo, &s))
+    {
+      fprintf(stderr, "%s: function lhistolong failed\n", F_NAME);
+      return -1;
+    }
+    for (i = 0; i < s; i++) if (histo[i]) count++;
+    free(histo);
+  }
+  return(count);
+} /* lcountvalues() */

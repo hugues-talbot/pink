@@ -85,7 +85,16 @@ int main(int argc, char **argv)
     g->y[i] *= scale;
   }
 
-  EPSGraphe(g, argv[argc-1], 2, 2, 2, 10, 0, 0, 0, 0) ;
+  EPSGraphe(g, argv[argc-1], 
+	    2, // facteur d'échelle à appliquer aux coordonnées des sommets
+	    2, // rayon des cercles qui représentent les sommets
+	    0, // taille (demi-longueur) des flèches pour les arcs
+	    10, // marge en x et en y
+	    0, // booléen indiquant s'il faut écrire les noms des sommets
+	    0, // booléen indiquant s'il faut écrire les valeurs des sommets
+	    0, // booléen indiquant s'il faut colorier les sommets
+	    0  // booléen indiquant s'il faut écrire les valeurs des arcs
+	   ) ;
 
   TermineGraphe(g);
 

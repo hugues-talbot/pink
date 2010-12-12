@@ -32,34 +32,32 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file histo.c
+/*! \file countvalues.c
 
-\brief computes the histogram of an image or a region
+\brief counts the number of distinct values of an image or a region
 
-<B>Usage:</B> histo in.pgm [mask.pgm] out.list
+<B>Usage:</B> countvalues in.pgm [mask.pgm] out.list
 
 <B>Description:</B>
-Calculates the histogram of \b im.pgm (masked by the binary image
+Counts the number of distinct values of \b im.pgm (masked by the binary image
 \b mask.pgm, if given) and saves it in file \b out.list .
 
-<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
+<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d
 
 <B>Category:</B> histo
 \ingroup  histo
 
 \author Michel Couprie
 */
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <lhisto.h>
-
-#define INDEX_FIRST
-/*
-*/
 
 /* =============================================================== */
 int main(int argc, char **argv)
@@ -67,8 +65,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * mask = NULL;
-  uint32_t * histo;
-  int32_t i, k, s;
+  int32_t nbdiff;
   FILE *fd = NULL;
 
   if ((argc != 3) && (argc != 4))
@@ -83,6 +80,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
+  assert((datatype(image) == VFF_TYP_1_BYTE) || (datatype(image) == VFF_TYP_4_BYTE));
 
   if (argc == 4)
   {
@@ -92,6 +90,7 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: readimage failed\n", argv[0]);
       exit(1);
     }
+    assert(datatype(mask) == VFF_TYP_1_BYTE);
   }
 
   fd = fopen(argv[argc-1],"w");
@@ -101,48 +100,10 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (datatype(image) == VFF_TYP_1_BYTE)
-  {
-    histo = (uint32_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(int32_t));
-    if (histo == NULL)
-    {
-      fprintf(stderr, "%s: malloc failed\n", argv[0]);
-      exit(1);
-    }
-
-    if (! lhisto(image, mask, histo))
-    {
-      fprintf(stderr, "%s: function lhisto failed\n", argv[0]);
-      exit(1);
-    }
-    fprintf(fd, "s %d\n", NDG_MAX-NDG_MIN+1);
-    for (i = NDG_MIN; i <= NDG_MAX; i++) fprintf(fd, "%4d %d\n", i, histo[i]);
-    free(histo);
-  }
-  else if (datatype(image) == VFF_TYP_4_BYTE)
-  {
-    if (! lhistolong(image, mask, &histo, &s))
-    {
-      fprintf(stderr, "%s: function lhistolong failed\n", argv[0]);
-      exit(1);
-    }
-    fprintf(fd, "s %d\n", s);
-    for (i = 0; i < s; i++) fprintf(fd, "%4d %d\n", i, histo[i]);
-    free(histo);
-  }
-  else if (datatype(image) == VFF_TYP_FLOAT)
-  {
-    float w, smin, smax;
-    if (! lhistofloat(image, mask, &histo, &s, &w, &smin, &smax))
-    {
-      fprintf(stderr, "%s: function lhistofloat failed\n", argv[0]);
-      exit(1);
-    }
-    fprintf(fd, "s %d\n", s);
-    for (i = 0; i < s; i++) fprintf(fd, "%4d %d\n", i, histo[i]);
-    free(histo);
-  }
-
+  nbdiff = lcountvalues(image, mask);
+  assert(nbdiff >= 0);
+  fprintf(fd, "e %d\n", 1);
+  fprintf(fd, "%d\n", nbdiff);
   freeimage(image);
   if (mask) freeimage(mask);
 

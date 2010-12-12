@@ -431,6 +431,7 @@ $(BDIR)/zoomrgb \
 
 HISTO=\
 $(BDIR)/comphisto \
+$(BDIR)/countvalues \
 $(BDIR)/egalise \
 $(BDIR)/histo \
 $(BDIR)/histo2 \
@@ -1861,6 +1862,9 @@ $(BDIR)/zoomrgb:	$(CDIR)/zoomrgb.c $(IDIR)/mcimage.h $(IDIR)/lzoom.h $(OBJ_COMMO
 # *********************************
 $(BDIR)/comphisto:	$(CDIR)/comphisto.c $(IDIR)/lcomphisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto.o $(ODIR)/lcomphisto.o $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/comphisto.c $(ODIR)/lhisto.o $(ODIR)/lcomphisto.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/comphisto
+
+$(BDIR)/countvalues:	$(CDIR)/countvalues.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto.o $(OBJ_COMMON)
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/countvalues.c $(ODIR)/lhisto.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/countvalues
 
 $(BDIR)/egalise:	$(CDIR)/egalise.c $(IDIR)/legalise.h $(IDIR)/mcfah.h $(IDIR)/mcimage.h $(ODIR)/legalise.o $(OBJMCFAH) $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/egalise.c $(ODIR)/legalise.o $(OBJMCFAH) $(OBJ_COMMON) $(LIBS) -o $(BDIR)/egalise
