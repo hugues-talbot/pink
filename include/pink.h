@@ -36,56 +36,61 @@ knowledge of the CeCILL license and that you accept its terms.
 #define PINK_H
 
 #include <errno.h>
-#include "math.h"
-#include "assert.h"
-#include "stdint.h"
-#include "curses.h"
-#include "time.h"
+#include <math.h>
+#include <assert.h>
+#include <stdint.h>
+#include <curses.h>
+#include <time.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <float.h>
+#include <limits.h>
+#include <alloca.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include "sqlite3.h"
 #include "bdd.h"
 #include "lballincl.h"
-#include "ctype.h"
-#include "stdio.h"
-#include "unistd.h"
-#include "stdlib.h"
-#include "float.h"
-#include "limits.h"
-#include "sys/types.h"
-#include <sys/time.h>
-#include <sqlite3.h>
-#include <alloca.h>
+
+
 
 //#include <sqlite3ext.h> // not yet needed
 
+#ifndef __cplusplus
+#  include <string.h>
+#  include <ctype.h>
+#endif /* __cplusplus */
+
 #ifdef __cplusplus
 
-  #include <boost/shared_ptr.hpp>
-  #include <boost/shared_array.hpp>
-  #include <boost/python/list.hpp>
-  #include <boost/python/extract.hpp>
-  #include <boost/lexical_cast.hpp>
-  #include <boost/thread.hpp>
-  #include <boost/algorithm/minmax_element.hpp>
-  #include <boost/preprocessor.hpp>
-  #include <boost/operators.hpp>
-  #include <boost/cast.hpp>
 
+#  include <iostream>
+#  include <fstream>
+#  include <string>
+#  include <sstream>
+#  include <vector>
+#  include <cstdlib>
+#  include <cstring>
+#  include <cmath>
+#  include <locale>
 
-  #include <iostream>
-  #include <fstream>
-  #include <string>
-  #include <sstream>
-  #include <vector>
+#  include <boost/shared_ptr.hpp>
+#  include <boost/shared_array.hpp>
+#  include <boost/python/list.hpp>
+#  include <boost/python/extract.hpp>
+#  include <boost/lexical_cast.hpp>
+#  include <boost/thread.hpp>
+#  include <boost/algorithm/minmax_element.hpp>
+#  include <boost/preprocessor.hpp>
+#  include <boost/operators.hpp>
+#  include <boost/cast.hpp>
 
-  #include <cstdlib>
-  #include <cstring>
-  #include <cmath>
 
 
 #endif /* __cplusplus */
 
-#ifndef __cplusplus
-  #include "string.h"
-#endif /* __cplusplus */
+
 
 
 #include "mccodimage.h"
@@ -283,31 +288,31 @@ knowledge of the CeCILL license and that you accept its terms.
 
 // new header files
 // #include "lattrib.h"
-#include <lhello.h>
-#include <llong2byte.h>
-#include <mcrlifo.h>
-#include <lmcube.h>
-#include <ssexport.h>
+#include "lhello.h"
+#include "llong2byte.h"
+#include "mcrlifo.h"
+#include "lmcube.h"
+#include "ssexport.h"
 
 // uiFibres header files
 #ifdef __cplusplus
 // my comment
-  #include <uiFibreTypes.h>
-  #include <ujimage.hpp>
-  #include <uiFrame.hpp>
-  #include <uiSqhool.hpp>
-  #include <readpnm.h>
-  #include <uiBorder.h>
-  #include <uiImage.h>
-  #include <lbspline.hpp>
-  #include <lminmax.hpp>  
-  #include <uiNormalize.hpp>
-  #include <uiFileIO.hpp>
-  #include <uiInsert.hpp>
-  #include <uiCutPlane.hpp>
-  #include <ui_convert.hpp>
-  #include <ui_genball.hpp>
-  #include <ui_extractplane.hpp>
+  #include "uiFibreTypes.h"
+  #include "ujimage.hpp"
+  #include "uiFrame.hpp"
+  #include "uiSqhool.hpp"
+  #include "readpnm.h"
+  #include "uiBorder.h"
+  #include "uiImage.h"
+  #include "lbspline.hpp"
+  #include "lminmax.hpp"  
+  #include "uiNormalize.hpp"
+  #include "uiFileIO.hpp"
+  #include "uiInsert.hpp"
+  #include "uiCutPlane.hpp"
+  #include "ui_convert.hpp"
+  #include "ui_genball.hpp"
+  #include "ui_extractplane.hpp"
 #endif /* __cplusplus */
 
 // new with mixed language declarations (c/c++)
@@ -317,10 +322,8 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #undef min
 #undef max
-#define max(a,b) error_max_function_is_ambigous use mcmax xinstead
+#define max(a,b) error_max_function_is_ambigous use mcmax instead
 #define min(a,b) error_min_function_is_ambigous use mcmin instead
-
-
 
 #endif
 //LuM end of file
