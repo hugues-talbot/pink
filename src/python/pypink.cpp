@@ -21,6 +21,92 @@ using namespace pink;
 #include <pyexport.hpp>
 #include <python_doc.h>
 
+
+/*! \file pypink.c
+  For exporting functions from pink you should make them into the following
+  format:
+
+  * In C
+  int pink_c_function( xvimage * image, type_1 var_1, type_2 var_2, ..., type_n var_n)
+
+  You may use printf and you may call exit(1) if there's an error.
+  type_k can be any type that python recognizes (int, float, ...) and xvimage*
+  The return value is 1 on success and 0 otherwise. To export this function
+  you should include a function call in pypink.cpp of the form
+
+  def( "function's name in python",
+    &make_function<char_image, type_1, type_2, ..., type_n, &pink_c_function>,
+    (arg("argument 1 name"), arg("argument 2 name"), ..., arg(argument n name) )
+    "documentation of my function"
+  )
+ 
+  make_function is a template. In the first parameter you specify the image type. If
+  you want all image types to be exported you put 'base_image' as type. Second, you
+  specify the types of the parameters and last you put the pointer to your pink function.
+  Third you may specify the names of the parameters to appear in python's help. Finally
+  you can put a string with the documentation which will appear in the python's help.
+
+  Example:
+  def( "ptisolated",
+       &make_function<char_image, int, &lptisolated>,
+       ( arg("image"), arg("connexity") ),
+       doc__ptisolated__c__
+     );
+  
+
+   * in C++
+
+   You should write your function in format
+
+   char_image cpp_function( const char_image & image, type_1 var_1, type_2 var_2, ..., type_n var_n )
+   here you can put any image type: char_image, int_image, float_image...
+
+   or
+
+   template <class image_type>
+   image_type cpp_function( const image_type & image, type_1 var_1, type_2 var_2, ..., type_n var_n )
+
+   You can call 'cout <<' as well as you can use exceptions. By convention you should never change the
+   input image. Allways make a copy of it before processing. Remember that char_image is a SHALLOW TYPE
+   char_image image2 (image1) will NOT make a copy. On the other hand you can use function(char_image I)
+   as a parameter-type without the copy penalty.
+   To export this function you should call
+
+   UI_DEFINE_ONE_FUNCTION(
+     function_name_in_python,
+     cpp_function,
+     ( arg("parameter 1 name"), ..., arg("parameter n name") ),
+     "documentation of cpp_function"
+   )
+
+   or, if you have a template function: 
+
+   UI_DEFINE_FUNCTION(
+     function_name_in_python,
+     cpp_function,
+     ( arg("parameter 1 name"), ..., arg("parameter n name") ),
+     "documentation of cpp_function"
+   )
+
+   Examples:
+  UI_DEFINE_ONE_FUNCTION(
+    float2byte,
+    pink::float2byte,
+    ( arg("source image"), arg("mode")=2 ),
+    doc__float2byte__c__
+    // end of the documenation
+    );
+    
+  UI_DEFINE_FUNCTION(
+    convert2float,
+    pink::convert2float,
+    (arg("image")),
+    "converts an image to float type"
+    // end of the documenation
+    );
+   
+
+ */
 // declarations
 // void deep_xvimage_object_export();void shallow_xvimage_object_export();
 // void xvimage_object_export();
@@ -53,8 +139,8 @@ void imview_export();
 
 
 BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that will also contain
-                              // some python functions, like readimage, so it will be created as
-                              // a tree hierarchy
+// some python functions, like readimage, so it will be created as
+// a tree hierarchy
 {
 
   def("greet", greet, "Gently greets the user.");
@@ -103,7 +189,7 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
     ( arg("image") ),
     doc__inverse__c__
 // end of the documenation
-  );    
+    );    
 
   
   // is this enough HT ?  
@@ -150,7 +236,7 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
     frame,
     frame,
     ( arg("image"), arg("with value") ),
-    "This function takes an image, and in the result it set's it most outer rectangle to the given value."
+    "This function takes an image, and in the result it sets it's most outer rectangle to the given value."
     );
   
   UI_DEFINE_FUNCTION(
@@ -162,7 +248,7 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
     );
 
 
-    UI_DEFINE_FUNCTION(
+  UI_DEFINE_FUNCTION(
     frame_remove,
     frame_remove,
     ( arg("image") ),
@@ -170,177 +256,177 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
     "THIS FUNCTION CHANGES THE RESULTING IMAGE'S SIZE."
     );
 
-    UI_DEFINE_FUNCTION(
-      max,
-      immap_max,
-      ( arg("image1"), arg("image2") ),      
+  UI_DEFINE_FUNCTION(
+    max,
+    immap_max,
+    ( arg("image1"), arg("image2") ),      
     "Generates an image result[i]:=max(image1[i],image2[i])"
     );
 
-    UI_DEFINE_FUNCTION(
-      min,
-      immap_min,
-      ( arg("image1"), arg("image2") ),      
-      "Generates an image result[i]:=min(image1[i],image2[i])"
+  UI_DEFINE_FUNCTION(
+    min,
+    immap_min,
+    ( arg("image1"), arg("image2") ),      
+    "Generates an image result[i]:=min(image1[i],image2[i])"
     );
 
-    def( "ptisolated",
-         &make_function<char_image, int, &lptisolated>,
-         ( arg("image"), arg("connexity") ),
-         doc__ptisolated__c__
-      );
+  def( "ptisolated",
+       &make_function<char_image, int, &lptisolated>,
+       ( arg("image"), arg("connexity") ),
+       doc__ptisolated__c__
+    );
 
-    def( "ptjunction",
-         &make_function<char_image, int, &lptjunction>,
-         ( arg("image"), arg("connexity") ),
-         doc__ptjunction__c__
-      );
+  def( "ptjunction",
+       &make_function<char_image, int, &lptjunction>,
+       ( arg("image"), arg("connexity") ),
+       doc__ptjunction__c__
+    );
 
-    def( "selectcomp",
-         &make_function<char_image, int, int, int, int, &lselectcomp>,
-         ( arg("image"), arg("connexity"), arg("x"), arg("y"), arg("z") ),
-         doc__selectcomp__c__
-      );
+  def( "selectcomp",
+       &make_function<char_image, int, int, int, int, &lselectcomp>,
+       ( arg("image"), arg("connexity"), arg("x"), arg("y"), arg("z") ),
+       doc__selectcomp__c__
+    );
 
-    UI_DEFINE_ONE_FUNCTION(
-      float2byte,
-      pink::float2byte,
-      ( arg("source image"), arg("mode")=2 ),
-      doc__float2byte__c__
-      // end of the documenation
-      );
+  UI_DEFINE_ONE_FUNCTION(
+    float2byte,
+    pink::float2byte,
+    ( arg("source image"), arg("mode")=2 ),
+    doc__float2byte__c__
+    // end of the documenation
+    );
     
-    UI_DEFINE_FUNCTION(
-      convert2float,
-      pink::convert2float,
-      (arg("image")),
-      "converts an image to float type"
-      // end of the documenation
-      );
+  UI_DEFINE_FUNCTION(
+    convert2float,
+    pink::convert2float,
+    (arg("image")),
+    "converts an image to float type"
+    // end of the documenation
+    );
 
-    UI_DEFINE_ONE_FUNCTION(
-      long2byte,
-      pink::long2byte, 
-      ( arg("image"),arg("mode"),arg("nb_new_val") ),
-      doc__long2byte__c__
-      // end of the documenation
-      );
+  UI_DEFINE_ONE_FUNCTION(
+    long2byte,
+    pink::long2byte, 
+    ( arg("image"),arg("mode"),arg("nb_new_val") ),
+    doc__long2byte__c__
+    // end of the documenation
+    );
 
 
-    def(
-      "holeclosing",
-      &make_function<char_image, int, int, &lfermetrous3dbin>,
-      ( arg("image"), arg("connexity"), arg("holesize") ),
-      doc__holeclosing__c__
-      );
+  def(
+    "holeclosing",
+    &make_function<char_image, int, int, &lfermetrous3dbin>,
+    ( arg("image"), arg("connexity"), arg("holesize") ),
+    doc__holeclosing__c__
+    );
 
-    def(
-      "holeclosing",
-      &make_function<char_image, char_image, int, int, &lfermetrous3dbin2>,
-      ( arg("image"), arg("guiding image") ,arg("connexity"), arg("holesize") ),
-      doc__holeclosing__c__
-      );
+  def(
+    "holeclosing",
+    &make_function<char_image, char_image, int, int, &lfermetrous3dbin2>,
+    ( arg("image"), arg("guiding image") ,arg("connexity"), arg("holesize") ),
+    doc__holeclosing__c__
+    );
 
-    def(
-      "lambdaskel",
-      &make_function< char_image, char_image, int, int, &llambdakern >,
-      ( arg("image"), arg("imcond"), arg("connexity"), arg("lambda") ),
-      doc__lambdaskel__c__
-      );
+  def(
+    "lambdaskel",
+    &make_function< char_image, char_image, int, int, &llambdakern >,
+    ( arg("image"), arg("imcond"), arg("connexity"), arg("lambda") ),
+    doc__lambdaskel__c__
+    );
 
-    def(
-      "lambdaskel",
-      &make_function< char_image, int, int, &llambdakern_short >,
-      ( arg("image"), arg("connexity"), arg("lambda") ),
-      doc__lambdaskel__c__
-      );
+  def(
+    "lambdaskel",
+    &make_function< char_image, int, int, &llambdakern_short >,
+    ( arg("image"), arg("connexity"), arg("lambda") ),
+    doc__lambdaskel__c__
+    );
 
     
-    def(
-      "rankfilter",
-      &make_function< char_image, char_image, int, int, double, &lfiltreordre >,
-      ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("r") ),
-      doc__rankfilter__c__
-      );
+  def(
+    "rankfilter",
+    &make_function< char_image, char_image, int, int, double, &lfiltreordre >,
+    ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("r") ),
+    doc__rankfilter__c__
+    );
 
-    def(
-      "rankfilter",
-      &make_function< char_image, char_image, int, int, int, double, &lfiltreordre3d >,
-      ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("center_z"), arg("r") ),
-      doc__rankfilter__c__
-      );
+  def(
+    "rankfilter",
+    &make_function< char_image, char_image, int, int, int, double, &lfiltreordre3d >,
+    ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("center_z"), arg("r") ),
+    doc__rankfilter__c__
+    );
 
 
-    def(
-      "tuf",
-      &make_function< char_image, int, int, &ltuf >,
-      ( arg("image"), arg("min connex"), arg("radius") ),
-      doc__tuf__c__
-      );
+  def(
+    "tuf",
+    &make_function< char_image, int, int, &ltuf >,
+    ( arg("image"), arg("min connex"), arg("radius") ),
+    doc__tuf__c__
+    );
 
-    def(
-      "taf",
-      &make_function< char_image, int, int, int, int, &ltaflambda >,
-      ( arg("image"), arg("min connex"), arg("radius"), arg("lambdapics"), arg("lambdapuits") ),
-      doc__taf__c__
-      );
+  def(
+    "taf",
+    &make_function< char_image, int, int, int, int, &ltaflambda >,
+    ( arg("image"), arg("min connex"), arg("radius"), arg("lambdapics"), arg("lambdapuits") ),
+    doc__taf__c__
+    );
 
-    def(
-      "watershed",
-      &make_function< char_image, char_image, int, &lwshedtopobin >,
-      ( arg("image"), arg("mark"), arg("connexity") ),
-      doc__watershed__c__
-      );
+  def(
+    "watershed",
+    &make_function< char_image, char_image, int, &lwshedtopobin >,
+    ( arg("image"), arg("mark"), arg("connexity") ),
+    doc__watershed__c__
+    );
 
-    def(
-      "heightmaxima",
-      &make_function< char_image, int, int, &lheightmaxima >,
-      ( arg("image"), arg("connexity"), arg("height") ),
-      doc__heightmaxima__c__
-      );
+  def(
+    "heightmaxima",
+    &make_function< char_image, int, int, &lheightmaxima >,
+    ( arg("image"), arg("connexity"), arg("height") ),
+    doc__heightmaxima__c__
+    );
     
-    def(
-      "heightminima",
-      &make_function< char_image, int, int, &lheightminima >,
-      ( arg("image"), arg("connexity"), arg("height") ),
-      doc__heightminima__c__
-      );
+  def(
+    "heightminima",
+    &make_function< char_image, int, int, &lheightminima >,
+    ( arg("image"), arg("connexity"), arg("height") ),
+    doc__heightminima__c__
+    );
     
-    UI_DEFINE_ONE_FUNCTION(
-      genball,
-      pink::genball,
-      ( arg("radius"), arg("dimension")=2 ),
-      "Generates a discreet eucledian ball with given radius and dimensions."
-      );
+  UI_DEFINE_ONE_FUNCTION(
+    genball,
+    pink::genball,
+    ( arg("radius"), arg("dimension")=2 ),
+    "Generates a discreet eucledian ball with given radius and dimensions."
+    );
 
-    def(
-      "normalize",
-      &normalize<char_image, 0, 255>,
-      ( arg("image"), arg("minval")=0, arg("maxval")=255),
-      doc__normalize__c__
-      );
+  def(
+    "normalize",
+    &normalize<char_image, 0, 255>,
+    ( arg("image"), arg("minval")=0, arg("maxval")=255),
+    doc__normalize__c__
+    );
     
-    def(
-      "normalize",
-      &normalize<int_image, 0, 255>,
-      ( arg("image"), arg("minval")=0, arg("maxval")=255),
-      doc__normalize__c__
-      );
+  def(
+    "normalize",
+    &normalize<int_image, 0, 255>,
+    ( arg("image"), arg("minval")=0, arg("maxval")=255),
+    doc__normalize__c__
+    );
     
-    def(
-      "normalize",
-      &normalize<float_image, 0, 1>,
-      ( arg("image"), arg("minval")=0, arg("maxval")=1),
-      doc__normalize__c__
-      );
+  def(
+    "normalize",
+    &normalize<float_image, 0, 1>,
+    ( arg("image"), arg("minval")=0, arg("maxval")=1),
+    doc__normalize__c__
+    );
 
 
-    UI_DEFINE_FUNCTION(
-      extractplane,
-      pink::extractplane,
-      ( arg("image"), arg("number of the plane"), arg("mode") ),
-      doc__extractplane__c__
-      );
+  UI_DEFINE_FUNCTION(
+    extractplane,
+    pink::extractplane,
+    ( arg("image"), arg("number of the plane"), arg("mode") ),
+    doc__extractplane__c__
+    );
     
     
 //   def( "cpp_circle_tangent", &pink::gsl::circle_tangent,

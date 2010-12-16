@@ -45,7 +45,7 @@ cmake // for compilation
 libx11-dev
 ncurses (libncurses-dev)
 doxygen (check!)
-and the usual gcc, g++, cmake, make
+and the usual gcc, g++, make
 
 // building the python front-end
 python-dev
@@ -60,7 +60,12 @@ liblapack-dev
 
 libncurses5-dev
 
+// for view3d
+python-tk
+python-imaging
 
+// for render
+python-vtk
 
 // recommended:
 ipython

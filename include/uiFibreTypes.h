@@ -29,10 +29,6 @@ be size-independent
 #define PTR boost::shared_ptr
 #define ARRAY boost::shared_array
 using boost::lexical_cast;
-using boost::mutex;
-using boost::shared_mutex;
-using boost::shared_mutex;
-using boost::thread;
 using std::string;
 using std::cout;
 using std::stringstream;
