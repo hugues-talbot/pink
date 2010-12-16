@@ -69,13 +69,14 @@ The possible choices are:
 \li 19: Hall 1989
 \li 20: Wu and Tsai 1992 [DOES NOT PRESERVE TOPOLOGY]
 \li 21: Manzanera and Bernard (variant by GB)
-\li 22: Couprie and Bertrand, ultimate with medial axis constraint (NK2)
+\li 22: Couprie and Bertrand, ultimate asymmetrical with medial axis (NK2)
 \li 23: Bertrand curvilinear with reconstruction, asymmetrical
 \li 24: Bertrand curvilinear with reconstruction, symmetrical
 \li 25: Rosenfeld directionnel
 \li 26: Nemeth et Palagyi, 2009 (1)
 \li 27: Nemeth et Palagyi, 2009 (2)
 \li 28: Nemeth et Palagyi, 2009 (3)
+\li 29: Couprie and Bertrand, ultimate, asymmetrical (NK2)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -83,6 +84,9 @@ then the points of this image will be left unchanged.
 <B>Warning:</B> The object must not have any point on the frame of the image.
 
 References:<BR>
+[BC08] Gilles Bertrand and Michel Couprie, Two-dimensional thinning algorithms based on critical kernels. Journal of Mathematical Imaging and Vision, 31(1). 2008. pp.35–56.
+http://igm.univ-mlv.fr/LIGM/internal_report/pdf/2006_02.v2.pdf
+
 [COU05] M. Couprie, Note on fifteen 2D parallel thinning algorithms,
 IGM2006-01}, Universit\'e de Marne-la-Vall\'ee, 2006,
 http://igm.univ-mlv.fr/LabInfo/rapportsInternes/2006/01.pdf<BR>
@@ -149,13 +153,14 @@ int main(int argc, char **argv)
     fprintf(stderr, "  19: Hall 1989\n");
     fprintf(stderr, "  20: Wu and Tsai 1992 [DOES NOT PRESERVE TOPOLOGY]\n");
     fprintf(stderr, "  21: Manzanera and Bernard (variant by GB)\n");
-    fprintf(stderr, "  22: Couprie and Bertrand, ultimate with medial axis constraint(NK2)\n");
+    fprintf(stderr, "  22: Couprie and Bertrand, ultimate asymmetrical with medial axis (NK2)\n");
     fprintf(stderr, "  23: Bertrand curvilinear with reconstruction, asymmetrical\n");
     fprintf(stderr, "  24: Bertrand curvilinear with reconstruction, symmetrical\n");
     fprintf(stderr, "  25: Rosenfeld directionnel\n");
     fprintf(stderr, "  26: Nemeth and Palagyi 2009 (detects endpoints type 1)\n");
     fprintf(stderr, "  27: Nemeth and Palagyi 2009 (detects endpoints type 2)\n");
     fprintf(stderr, "  28: Nemeth and Palagyi 2009 (detects endpoints type 3)\n");
+    fprintf(stderr, "  29: Couprie and Bertrand, ultimate, asymmetrical (NK2)\n");
     exit(1);
   }
 
@@ -369,6 +374,12 @@ int main(int argc, char **argv)
       if (! lskelnemethpalagyi(image, nsteps, inhibit, 3))
       {
 	fprintf(stderr, "%s: lskelnemethpalagyi failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 29:
+      if (! lskelNK2b(image, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelNK2b failed\n", argv[0]);
 	exit(1);
       } break;
     default:

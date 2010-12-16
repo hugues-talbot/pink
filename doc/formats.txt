@@ -1,4 +1,4 @@
-Formats de fichiers utilisés dans Pink
+Pink file formats
 
 /* P4: raw binary ; P1: ascii binary (2D: standard ; 3D: extension Pink) NOT YET SUPPORTED */
 /* P5: raw byte ; P2: ascii gray (2D: standard ; 3D: extension Pink) */
@@ -50,8 +50,6 @@ PIXEL ::= ascii_coded_integer32
 
 =======================================================
 
-Listes
-
 Summary of list formats:
 <pre>  
   e <n>       s <n>         b <n>         n <n>            B <n>            N <n>    
@@ -63,7 +61,7 @@ Summary of list formats:
 
 =======================================================
 
-Courbes discrètes
+Discrete curves
 
 =======================================================
 
@@ -117,7 +115,7 @@ nb_points_spline_3  x31 y31 z31  x32 y32 z32 ...
 
 =======================================================
 
-Scenes 3D
+3D Scenes
 
 FILE ::= '3Dscene' <N> <OBJ>*
 OBJ ::= <LINE> | <CLOSEDLINE> | <SPLINE> | <CLOSEDSPLINE> | <POLYGON>
@@ -131,7 +129,7 @@ POINT ::= ascii_coded_float ascii_coded_float ascii_coded_float
 
 =======================================================
 
-Squelettes curvilignes
+Curvilinear skeletons
 
 FILE ::= '2Dskel' | '3Dskel' <CONNEX> <NVERTEX> <NCELL> <RS> <CS> <DS> <ISOL> <END> <CURV> <JUNC>
 ISOL ::= 'isol' <N> <VERTEX>*
@@ -149,7 +147,7 @@ N ::= ascii_coded_integer
 I ::= ascii_coded_integer
 POINT ::= ascii_coded_integer
 
-Squelettes curvilignes valués
+Weighted curvilinear skeletons
 
 FILE ::= '2Dvskel' | '3Dvskel' <CONNEX> <NVERTEX> <NCELL> <RS> <CS> <DS> <ISOL> <END> <CURV> <JUNC>
 ISOL ::= 'isol' <N> <VERTEX>*

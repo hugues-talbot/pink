@@ -39,7 +39,7 @@ exec wish $0 $1 $2
 wm title . "Threshold"
 
 if {$argc != 2} { 
-  puts stderr "usage: seuil in out"
+  puts stderr "usage: seuil.tcl in out"
   exit 
 }
 

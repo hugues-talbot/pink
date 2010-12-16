@@ -113,6 +113,9 @@ extern int32_t lskelwutsai(struct xvimage *image,
 extern int32_t lskelNK2(struct xvimage *image,
 			      int32_t nsteps,
 			      struct xvimage *inhibit);
+extern int32_t lskelNK2b(struct xvimage *image,
+			      int32_t nsteps,
+			      struct xvimage *inhibit);
 extern int32_t lskelbertrand_sym(struct xvimage *image,
 			     int32_t nsteps,
 			     struct xvimage *inhibit);

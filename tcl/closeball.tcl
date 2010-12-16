@@ -52,7 +52,7 @@ set CLOSEBALL(param) 0
 set CLOSEBALL(name) closeball
 
 if {$argc != 2} { 
-  puts stderr "usage: closeball in out"
+  puts stderr "usage: closeball.tcl in out"
   exit 
 }
 

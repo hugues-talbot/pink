@@ -34,12 +34,12 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file skel_NK2.c
 
-\brief parallel 2D binary curvilinear skeleton
+\brief parallel 2D binary skeleton, ultimate, asymmetric
 
 <B>Usage:</B> skel_NK2 in.pgm nsteps [inhibit] out.pgm
 
 <B>Description:</B>
-Parallel 2D binary thinning or curvilinear skeleton. The parameter \b nsteps gives,
+Parallel 2D binary ultimate, asymmetric skeleton. The parameter \b nsteps gives,
 if positive, the number of parallel thinning steps to be processed.
 If the value given for \b nsteps equals -1, the thinning is continued
 until stability.
@@ -47,7 +47,13 @@ until stability.
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
 
+The algorithm used here is indeed a variant of alg. NK2 described in [BC08], which allows for an arbitrary (and even null) constraint set.
+
 <B>Warning:</B> The object must not have any point on the frame of the image.
+
+References:<BR>
+[BC08] Gilles Bertrand and Michel Couprie, Two-dimensional thinning algorithms based on critical kernels. Journal of Mathematical Imaging and Vision, 31(1). 2008. pp.35–56.
+http://igm.univ-mlv.fr/LIGM/internal_report/pdf/2006_02.v2.pdf
 
 <B>Types supported:</B> byte 2d
 
@@ -98,9 +104,9 @@ int main(int argc, char **argv)
 
   if (depth(image) == 1)
   {
-    if (! lskelNK2(image, nsteps, inhibit))
+    if (! lskelNK2b(image, nsteps, inhibit))
     {
-      fprintf(stderr, "%s: lskelNK2 failed\n", argv[0]);
+      fprintf(stderr, "%s: lskelNK2b failed\n", argv[0]);
       exit(1);
     } 
   }

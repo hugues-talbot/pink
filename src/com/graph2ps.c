@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 
   if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s filein.graph [scale] fileout.ps\n", argv[0]);
+    fprintf(stderr, "usage 1: %s filein.graph [scale] fileout.ps\n", argv[0]);
     exit(1);
   }
 
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
   for (i = 0; i < g->nsom; i++)
   {
     g->x[i] *= scale;
-    g->y[i] *= scale;
+    g->y[i] *= -scale; // - : pour suivre la convention image (y de haut en bas)
   }
 
   EPSGraphe(g, argv[argc-1], 

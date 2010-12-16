@@ -32,44 +32,23 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file pgm2skel.c
 
-\brief decomposition of a curvilinear skeleton into isolated points, end points, curves and junctions
+/*! \file pgm2graph.c
 
-<B>Usage:</B> pgm2skel in.pgm connex [len] out.skel
+\brief converts a binary image into a simple graph
+
+<B>Usage:</B> pgm2graph in.pgm connex out.graph
 
 <B>Description:</B>
-The skeleton found in \b in.pgm is decomposed into isolated points, end points, curves and junctions ;
-and its description is stored in \b out.skel .
-The parameter \b connex sets the adjacency relation used for the object
-(4, 8 (2d) or 6, 18, 26 (3d)).
 
-The optional parameter \len indicates the minimum length 
-(in pixels/voxels) of a curve. If a set of curve points with less than \len points, then: a) if it contains at least one end point it will be eliminated (together with its end point(s)), b) otherwise it will be considered as part of a junction.
-If this parameter is given, then isolated points will be eliminated. 
-
-The format of the file \out.skel is described in PINKDIR/doc/formats.txt (section: Curvilinear skeletons).
-
-\warning Points at the border of the image will be ignored.
-
-\warning IMPORTANT LIMITATION: 
-different junctions in the original image must not be in direct
-contact with each other (i.e., connected) otherwise they will be
-considered as a single junction. To prevent this to occur, one can
-increase image resolution.
+The vertices of the graph are the object pixels of the binary image \b in.pgm, and there is an edge between each pair of adjacent pixels (according to \b connex).  
 
 <B>Types supported:</B> byte 2d, byte 3d
 
 <B>Category:</B> topobin
 \ingroup  topobin
 
-\author Michel Couprie 2004, 2009
-*/
-
-/*
-%TEST pgm2skel %IMAGES/2dbyte/binary/b2skel0.pgm 8 %RESULTS/pgm2skel_b2skel0.pgm
-%TEST pgm2skel %IMAGES/2dbyte/binary/b2skel1.pgm 8 %RESULTS/pgm2skel_b2skel1.pgm
-%TEST pgm2skel %IMAGES/3dbyte/binary/b3skel0.pgm 26 %RESULTS/pgm2skel_b3skel0.pgm
+\author Michel Couprie 2010
 */
 
 #include <stdio.h>
@@ -78,22 +57,23 @@ increase image resolution.
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <mcskelcurv.h>
-#include <lskelcurv.h>
+#include <mcgraphe.h>
 
 /* =============================================================== */
-int main(int argc, char **argv)
+int main(argc, argv) 
 /* =============================================================== */
+  int32_t argc; char **argv; 
 {
   struct xvimage * image;
-  int32_t connex, len = INT32_MAX;
-  skel * S;
+  int32_t connex;
+  graphe * G;
 
-  if ((argc != 4) && (argc != 5))
+  if (argc != 4)
   {
-    fprintf(stderr, "usage: %s filein.pgm connex [len] fileout.skel\n", argv[0]);
+    fprintf(stderr, "usage: %s im.pgm connex out.graph \n", argv[0]);
     exit(1);
   }
+
 
   image = readimage(argv[1]);
   if (image == NULL)
@@ -104,20 +84,10 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[2]);
 
-  if (argc == 5)
-    len = atoi(argv[3]);
+  G = BinaryImage2Graphe(image, connex);
 
-  if (! (S = limage2skel(image, connex, len)))
-  {
-    fprintf(stderr, "%s: function limage2skel failed\n", argv[0]);
-    exit(1);
-  }
+  SaveGraphe(G, argv[argc-1]); 
 
-  //printskel(S);
-
-  writeskel(S, argv[argc-1]);
-  termineskel(S);
   freeimage(image);
-
   return 0;
-} /* main */
+}

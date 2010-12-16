@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 
   if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s filein.pgm seuil [seuil2] fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm n [n2] fileout.pgm\n", argv[0]);
     exit(1);
   }
 

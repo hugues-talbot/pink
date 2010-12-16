@@ -49,6 +49,10 @@ then the points of this image will be left unchanged.
 
 <B>Warning:</B> The object must not have any point on the frame of the image.
 
+References:<BR>
+[BC08] Gilles Bertrand and Michel Couprie, Two-dimensional thinning algorithms based on critical kernels. Journal of Mathematical Imaging and Vision, 31(1). 2008. pp.35–56.
+http://igm.univ-mlv.fr/LIGM/internal_report/pdf/2006_02.v2.pdf
+
 <B>Types supported:</B> byte 2d
 
 <B>Category:</B> topobin

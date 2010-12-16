@@ -52,7 +52,7 @@ set DILATBALL(param) 0
 set DILATBALL(name) dilatball
 
 if {$argc != 2} { 
-  puts stderr "usage: dilatball in out"
+  puts stderr "usage: dilatball.tcl in out"
   exit 
 }
 

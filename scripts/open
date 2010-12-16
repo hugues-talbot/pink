@@ -2,12 +2,7 @@
 # ATTENTION : version valable seulement pour des elements structurants
 # symetriques par rapport a l'origine
 USAGE="Usage: $0 in elstruct out"
-if [ $# -gt 3 ]
-then
-	echo $USAGE
-        exit
-fi
-if [ $# -lt 3 ]
+if [ $# -ne 3 ]
 then
 	echo $USAGE
         exit

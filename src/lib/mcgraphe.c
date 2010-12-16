@@ -32,7 +32,7 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file graph_algos.c
+/*! \file mcgraphe.c
     \brief algorithmes fondamentaux
 */
 /*
@@ -567,7 +567,7 @@ graphe * Image2Graphe(struct xvimage *image, int32_t mode, int32_t connex)
 /* ====================================================================== */
 /*
 A weighted graph G = (V,E) is built with V = set of pixels of \b image
-and E = {(P,Q) in VxV ; P and Q are directly adjacent}. 
+and E = {(P,Q) in VxV ; P and Q are adjacent}. 
 Let F(P) be the value of pixel P in \b image. 
 A weight W(P,Q) is assigned to each edge, according to the value of \b mode:
 
@@ -695,6 +695,119 @@ A weight W(P,Q) is assigned to each edge, according to the value of \b mode:
 
   return g;
 } /* Image2Graphe() */
+
+/* ====================================================================== */
+/*! \fn graphe * BinaryImage2Graphe(struct xvimage *image, int32_t connex)
+    \param image (entrée) : structure image
+    \param connex (entrée) : relation d'adjacence (4 ou 8 en 2D, 6 ou 18 ou 26 en 3D)
+    \return un graphe.
+    \brief Lit les données d'une image dans la structure image, 
+    retourne un pointeur sur la structure graphe construite. 
+*/
+graphe * BinaryImage2Graphe(struct xvimage *image, int32_t connex)
+/* ====================================================================== */
+/*
+A simple graph G = (V,E) is built with V = set of object pixels of \b image
+and E = {(P,Q) in VxV ; P and Q are adjacent}. 
+*/
+#undef F_NAME
+#define F_NAME "BinaryImage2Graphe"
+{
+  int32_t rs, cs, ds, N, M;
+  uint8_t *F;
+  graphe * g;
+  int32_t i, j, p;
+
+  if (datatype(image) != VFF_TYP_1_BYTE)
+  {
+    fprintf(stderr, "%s: bad data type (only byte is available)\n", F_NAME);
+    return NULL;
+  }
+  
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  F = UCHARDATA(image);
+
+  if ((ds == 1) && (connex == 4))
+  {
+    N = rs * cs;
+    M = 2 * ((rs-1) * cs + (cs-1) * rs); // max nb of arcs
+    g = InitGraphe(N, M);
+    for (j = 0; j < cs; j++)  
+      for (i = 0; i < rs; i++)  
+      {
+	p = j*rs + i;
+	g->x[p] = (double)i; 
+	g->y[p] = (double)j; 	// coord sommet
+	g->v_sommets[p] = 0;
+	if (F[p])
+	{
+	  g->v_sommets[p] = 1;
+	  if ((i < (rs-1)) && F[j*rs+i+1])
+	  {
+	    AjouteArc(g, p, p+1);
+	    AjouteArc(g, p+1, p);
+	  }
+	  if ((j < (cs-1)) && F[(j+1)*rs+i])
+	  {
+	    AjouteArc(g, p, p+rs);
+	    AjouteArc(g, p+rs, p);
+	  }
+	}
+      }
+  }
+  else if ((ds == 1) && (connex == 8))
+  {
+    N = rs * cs;
+    M = 4 * ((rs-1) * cs + (cs-1) * rs); 
+    g = InitGraphe(N, M);
+    for (j = 0; j < cs; j++)  
+      for (i = 0; i < rs; i++)  
+      {
+	p = j*rs + i;
+	g->x[p] = (double)i; 
+	g->y[p] = (double)j; 	// coord sommet
+	g->v_sommets[p] = 0;
+	if (F[p])
+	{
+	  g->v_sommets[p] = 1;
+	  if ((i < (rs-1)) && F[j*rs+i+1])
+	  {
+	    AjouteArc(g, p, p+1);
+	    AjouteArc(g, p+1, p);
+	  }
+	  if ((j < (cs-1)) && F[(j+1)*rs+i])
+	  {
+	    AjouteArc(g, p, p+rs);
+	    AjouteArc(g, p+rs, p);
+	  }
+	  if ((i < (rs-1)) && (j < (cs-1)) && F[(j+1)*rs+i+1])
+	  {
+	    AjouteArc(g, p, p+rs+1);
+	    AjouteArc(g, p+rs+1, p);
+	  }
+	  if ((i < (rs-1)) && (j > 0) && F[(j-1)*rs+i+1])
+	  {
+	    AjouteArc(g, p, p-rs+1);
+	    AjouteArc(g, p-rs+1, p);
+	  }
+	}
+      }
+  }
+  else if (ds == 1)
+  {
+    fprintf(stderr, "%s: bad connex %d\n", F_NAME, connex);
+    return NULL;
+  }
+  else
+  {
+    fprintf(stderr, "%s: 3D not yet implemented\n", F_NAME);
+    return NULL;
+  }
+
+  return g;
+} /* BinaryImage2Graphe() */
 
 /* ====================================================================== */
 /*! \fn struct xvimage *Graphe2Image(graphe * g, int32_t rs)

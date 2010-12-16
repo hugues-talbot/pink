@@ -284,7 +284,8 @@ extern void     IntegreForet(graphe * g);
 /* ====================================================================== */
 /* ====================================================================== */
 
-extern graphe *         Image2Graphe(struct xvimage *image, int32_t mode, int32_t connex);
+extern graphe * Image2Graphe(struct xvimage *image, int32_t mode, int32_t connex);
+extern graphe * BinaryImage2Graphe(struct xvimage *image, int32_t connex);
 extern struct xvimage * Graphe2Image(graphe * g, int32_t rs);
 #ifdef __cplusplus
 }

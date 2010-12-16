@@ -54,9 +54,15 @@ knowledge of the CeCILL license and that you accept its terms.
    - Manzanera and Bernard (variante gb)
    - Hall
    - Wu and Tsai
-   - Bertrand curviligne avec reconstruction
-   - Bertrand ultime (MK2)
-   - Bertrand avec inclusion de l'axe médian (AK2)
+   - Manzanera and Bernard (variant by GB)
+   - Couprie and Bertrand, ultimate with medial axis constraint (NK2)
+   - Bertrand curvilinear with reconstruction, asymmetrical
+   - Bertrand curvilinear with reconstruction, symmetrical
+   - Rosenfeld directionnel
+   - Nemeth et Palagyi, 2009 (1)
+   - Nemeth et Palagyi, 2009 (2)
+   - Nemeth et Palagyi, 2009 (3)
+   - Couprie and Bertrand, ultimate, asymmetrical (NK2b)
 
    Couprie ultime:
      input/output F
@@ -174,6 +180,7 @@ knowledge of the CeCILL license and that you accept its terms.
 		  (preuve suffisant par programme : Squel2D/ronse.c)
 
    Michel Couprie - juillet 2001
+   Benjamin Raynal 2010 - algos Nemeth & Palagyi
 */
 
 #include <stdio.h>
@@ -188,6 +195,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcutil.h>
 #include <lskelpar.h>
 
+//#define DEBUG_BERTRAND
 //#define DEBUG_PAV
 //#define DEBUG_MC
 //#define VERBOSE1
@@ -3224,6 +3232,25 @@ int32_t mc_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* mc_match1() */
 
 /* ==================================== */
+int32_t mc_match1b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+/* ==================================== */
+//     m1b : match   0 2 0   avec origine = (1,0) (+ rotation 90)
+//                   0 2 0
+{
+  int32_t i;
+  uint8_t v[8];
+  extract_vois(F, x, rs, N, v);
+  for (i = 0; i < 4; i++)
+  {
+    if (v[0] != 2) goto fail;
+    if ((v[1] == 0) && (v[2] == 0) && (v[6] == 0) && (v[7] == 0)) return 1;
+  fail:
+    rotate90_vois(v);
+  }
+  return 0;
+} /* mc_match1b() */
+
+/* ==================================== */
 int32_t mc_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
@@ -3266,6 +3293,27 @@ int32_t mc_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* mc_match3() */
 
 /* ==================================== */
+int32_t mc_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+/* ==================================== */
+{
+  int32_t i;
+  uint8_t v[8], v2[16];
+  extract_vois(F, x, rs, N, v);
+  if (!extract_vois2(F, x, rs, N, v2)) return 0;
+  for (i = 0; i < 4; i++)
+  {
+    if ((v[0] != 0) || (v[1] != 2) || (v[2] != 2)) goto fail;
+    if ((v2[3] != 0) || (v2[4] != 0) ||
+	(v[3] != 0) || (v[4] != 0)) goto fail;
+    return 1;
+  fail:
+    rotate90_vois(v);
+    rotate90_vois2(v2);
+  }
+  return 0;
+} /* mc_match3b() */
+
+/* ==================================== */
 int32_t mc_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
@@ -3306,27 +3354,6 @@ int32_t mc_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   }
   return 0;
 } /* mc_match5() */
-
-/* ==================================== */
-int32_t mc_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
-/* ==================================== */
-{
-  int32_t i;
-  uint8_t v[8], v2[16];
-  extract_vois(F, x, rs, N, v);
-  if (!extract_vois2(F, x, rs, N, v2)) return 0;
-  for (i = 0; i < 4; i++)
-  {
-    if ((v[0] != 0) || (v[1] != 2) || (v[2] != 2)) goto fail;
-    if ((v2[3] != 0) || (v2[4] != 0) ||
-	(v[3] != 0) || (v[4] != 0)) goto fail;
-    return 1;
-  fail:
-    rotate90_vois(v);
-    rotate90_vois2(v2);
-  }
-  return 0;
-} /* mc_match3b() */
 
 /* ==================================== */
 int32_t mc_match4b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
@@ -3979,8 +4006,8 @@ int32_t lskelNK2(struct xvimage *image,
 	      int32_t nsteps,
 	      struct xvimage *inhibit)
 /* ==================================== */
-// described in [G. Bertrand - personnal communication - 04/08/2005]
-// algo asymetrique - contient l'AM - minimal
+// algo asymetrique - ultime - minimal - avec contrainte axe median
+// ATTENTION : les résultats sont incorrects si la contrainte n'est pas l'AM
 #undef F_NAME
 #define F_NAME "lskelNK2"
 {
@@ -3988,8 +4015,8 @@ int32_t lskelNK2(struct xvimage *image,
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
-  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint8_t *I;            /* l'image d'inhibition (axe médian) */
+  uint8_t *F = UCHARDATA(image);   /* l'image de depart */
+  uint8_t *I = NULL;               /* l'image d'inhibition */
   struct xvimage *tmp = copyimage(image);
   uint8_t *T = UCHARDATA(tmp);
   int32_t step, nonstab;
@@ -4004,11 +4031,12 @@ int32_t lskelNK2(struct xvimage *image,
   char imname[128];
 #endif
 
-  if (inhibit == NULL)
+  if (inhibit == NULL) 
   {
-    fprintf(stderr, "%s: inhibit image (medial axis) must be present\n", F_NAME);
+    fprintf(stderr, "%s: inhibit image (medial axis) must be given\n", F_NAME);
     return 0;
   }
+
   I = UCHARDATA(inhibit);
 
   if (nsteps == -1) nsteps = 1000000000;
@@ -4031,7 +4059,7 @@ int32_t lskelNK2(struct xvimage *image,
     memset(T, 0, N);
 
     for (i = 0; i < N; i++)
-      if ((F[i] == 1) && simple8(F, i, rs, N)  && !I[i])
+      if ((F[i] == 1) && simple8(F, i, rs, N) && !I[i])
 	F[i] = 2;
     for (i = 0; i < N; i++)
       if (F[i] == 2)
@@ -4049,6 +4077,7 @@ int32_t lskelNK2(struct xvimage *image,
       }
 
 #ifdef DEBUG_BERTRAND
+    { int j;
     printf("\n");
     for (j = 0; j < cs; j++)
     {
@@ -4058,6 +4087,7 @@ int32_t lskelNK2(struct xvimage *image,
       printf("\n");
     }
     printf("\n");
+    }
 #endif
 
     for (i = 0; i < N; i++)
@@ -4091,6 +4121,126 @@ int32_t lskelNK2(struct xvimage *image,
   freeimage(tmp);
   return(1);
 } /* lskelNK2() */
+
+/* ==================================== */
+int32_t lskelNK2b(struct xvimage *image,
+	      int32_t nsteps,
+	      struct xvimage *inhibit)
+/* ==================================== */
+// algo asymetrique - ultime - minimal - avec contrainte quelconque
+#undef F_NAME
+#define F_NAME "lskelNK2b"
+{
+  int32_t i;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t N = rs * cs;             /* taille image */
+  uint8_t *F = UCHARDATA(image);   /* l'image de depart */
+  uint8_t *I = NULL;               /* l'image d'inhibition */
+  struct xvimage *tmp = copyimage(image);
+  uint8_t *T = UCHARDATA(tmp);
+  int32_t step, nonstab;
+  int32_t m1, m2, mc1, mc2, mc3, mc4, mc5, mc6;
+#ifdef ETUDE
+  struct xvimage *tmp2 = copyimage(image);
+  uint8_t *T2 = UCHARDATA(tmp2);
+  memset(T2, 0, N);
+#endif
+#ifdef ANIMATE
+  int32_t nimage = 1;
+  char imname[128];
+#endif
+
+  if (inhibit != NULL) I = UCHARDATA(inhibit);
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  for (i = 0; i < N; i++) if (F[i]) F[i] = 1; // normalize values
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < nsteps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+    memset(T, 0, N);
+
+    for (i = 0; i < N; i++)
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ((I == NULL) || !I[i]))
+	F[i] = 2;
+    for (i = 0; i < N; i++)
+      if (F[i] == 2)
+      {
+	m1 = bertrand_match1(F, i, rs, N);
+	m2 = bertrand_match2(F, i, rs, N);
+	mc1 = mc_match1b(F, i, rs, N);
+	mc2 = mc_match2(F, i, rs, N);
+	mc3 = mc_match3b(F, i, rs, N);
+	mc4 = mc_match4b(F, i, rs, N);
+	mc5 = mc_match5b(F, i, rs, N);
+	mc6 = mc_match6(F, i, rs, N);
+	if (m1 || m2)
+	{
+	  T[i] = 1; // preserve point
+	}
+	if (mc1 || mc2 || mc3 || mc4 || mc5 || mc6)
+	{
+	  F[i] = T[i] = 1; // preserve point and unmark as simple
+	}
+      }
+
+#ifdef DEBUG_BERTRAND
+    { int j;
+    printf("\n");
+    for (j = 0; j < cs; j++)
+    {
+      for (i = 0; i < rs; i++) printf("%d ", F[j*rs + i]);
+      printf("      ");
+      for (i = 0; i < rs; i++) printf("%d ", T[j*rs + i]);
+      printf("\n");
+    }
+    printf("\n");
+    }
+#endif
+
+    for (i = 0; i < N; i++)
+      if ((F[i] == 2) && !T[i])
+      {
+	F[i] = 0;
+	nonstab = 1;
+#ifdef ETUDE
+        T2[i] = step;
+#endif
+      }
+    for (i = 0; i < N; i++) if (F[i]) F[i] = 1;
+
+#ifdef ANIMATE
+  sprintf(imname, "anim%03d.pgm", nimage); nimage++;
+  writeimage(image, imname);
+#endif
+
+  }
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (F[i]) F[i] = 255; // normalize values
+
+#ifdef ETUDE
+  writeimage(tmp2,"_etude");
+#endif
+
+  freeimage(tmp);
+  return(1);
+} /* lskelNK2b() */
 
 /* ==================================== */
 int32_t bertrand_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
