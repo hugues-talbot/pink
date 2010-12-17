@@ -34,6 +34,7 @@ else ( NOT PYTHON_FRONT_END )
     add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_cxx})
 endif ( NOT PYTHON_FRONT_END )
 
+message( info= ${LIBS} )
 target_link_libraries( pink ${LIBS} )
 
 if (CMAKE_HOST_WIN32)
