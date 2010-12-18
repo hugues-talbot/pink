@@ -15,9 +15,20 @@
 # Modules which the function calls must be included before the function's module
 
 import cpp # the functions imported directly from c/c++
-from view3d import view3d
-from render import render
-from seuilmesh import seuilmesh
+try:
+    from view3d import view3d
+except:
+    1==1
+
+try:
+    from render import render
+except:
+    1==1
+
+try:
+    from seuilmesh import seuilmesh
+except:
+    1==1
 
 # from python_pink import *
 # from long2byte import long2byte
