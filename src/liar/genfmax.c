@@ -45,7 +45,7 @@ knowledge of the CeCILL license and that you accept its terms.
 void genfmax(PIX_TYPE *f,PIX_TYPE *g,PIX_TYPE *h,INT4_TYPE *p, unsigned int nx, unsigned int K)
 
 {
-  /* AUTHOR: Edmond J. Breen
+  /* ORIGINAL AUTHOR: Edmond J. Breen
   ** DATE: Mar 2 1993
   ** 
   ** f: input array. Where 1st member is *(f+p[0]) and 
@@ -69,13 +69,13 @@ void genfmax(PIX_TYPE *f,PIX_TYPE *g,PIX_TYPE *h,INT4_TYPE *p, unsigned int nx, 
     for(j=0;j<k;j++) {
 	*g = *(f+*p);
 	for(g++,p++,i=1;i<K;i++,g++,p++)
-	    *g = max(*(f+*p),*(g-1));
+	    *g = liarmax(*(f+*p),*(g-1));
     }
 
     if(r1) {
 	*g = *(f+*p);
 	for(g++,p++,i=1;i<r1;i++,g++,p++)
-	    *g = max(*(f+*p),*(g-1));
+	    *g = liarmax(*(f+*p),*(g-1));
     }
     p--;
     if(nx <= (K>>1)) {
@@ -91,12 +91,12 @@ void genfmax(PIX_TYPE *f,PIX_TYPE *g,PIX_TYPE *h,INT4_TYPE *p, unsigned int nx, 
     if(r1) {
 	*h = *(f+*p);
 	for(h--,p--,i=1;i<r1;i++,h--,p--)
-	    *h = max(*(f+*p),*(h+1));
+	    *h = liarmax(*(f+*p),*(h+1));
     }
     for(j=0;j<k;j++) {
 	*h = *(f+*p);
 	for(h--,p--,i=1;i<K;i++,h--,p--)
-	    *h = max(*(f+*p),*(h+1));
+	    *h = liarmax(*(f+*p),*(h+1));
     }
 
     /* reset pointers */
@@ -122,7 +122,7 @@ void genfmax(PIX_TYPE *f,PIX_TYPE *g,PIX_TYPE *h,INT4_TYPE *p, unsigned int nx, 
 
     /* do middle values */
     for(i=K-1;i<nx;i++,p++,h++,g++)
-	*(f+*p) = max(*g,*h);
+	*(f+*p) = liarmax(*g,*h);
 
     /* reset pointers to end position */
     h += (K-2);
@@ -131,7 +131,7 @@ void genfmax(PIX_TYPE *f,PIX_TYPE *g,PIX_TYPE *h,INT4_TYPE *p, unsigned int nx, 
     /* do right border */
     if(r1 && k) {
 	for(h-=r1,i=r1;i<K;i++,h--)
-	    *h = max(*(h),*(h+1));
+	    *h = liarmax(*(h),*(h+1));
 	h += K;
     }
     h -= r;
@@ -149,7 +149,7 @@ void genfmax_CHAR(PIX_TYPE *f,PIX_TYPE *g,PIX_TYPE *h,INT4_TYPE *p, unsigned int
 void genfmax_int4(INT4_TYPE *f,INT4_TYPE *g,INT4_TYPE *h,INT4_TYPE *p, unsigned int nx, unsigned int K)
 
 {
-  /* AUTHOR: Edmond J. Breen
+  /* ORIGINAL AUTHOR: Edmond J. Breen
   ** DATE: Mar 2 1993
   ** 
   ** f: input array. Where 1st member is *(f+p[0]) and 
@@ -172,13 +172,13 @@ void genfmax_int4(INT4_TYPE *f,INT4_TYPE *g,INT4_TYPE *h,INT4_TYPE *p, unsigned 
   for(j=0;j<k;j++) {
     *g = *(f+*p);
     for(g++,p++,i=1;i<K;i++,g++,p++)
-      *g = max(*(f+*p),*(g-1));
+      *g = liarmax(*(f+*p),*(g-1));
   }
   
   if(r1) {
     *g = *(f+*p);
     for(g++,p++,i=1;i<r1;i++,g++,p++)
-      *g = max(*(f+*p),*(g-1));
+      *g = liarmax(*(f+*p),*(g-1));
   }
   p--;
   if(nx <= (K>>1)) {
@@ -194,12 +194,12 @@ void genfmax_int4(INT4_TYPE *f,INT4_TYPE *g,INT4_TYPE *h,INT4_TYPE *p, unsigned 
   if(r1) {
     *h = *(f+*p);
     for(h--,p--,i=1;i<r1;i++,h--,p--)
-      *h = max(*(f+*p),*(h+1));
+      *h = liarmax(*(f+*p),*(h+1));
   }
   for(j=0;j<k;j++) {
     *h = *(f+*p);
     for(h--,p--,i=1;i<K;i++,h--,p--)
-      *h = max(*(f+*p),*(h+1));
+      *h = liarmax(*(f+*p),*(h+1));
   }
   
   
@@ -230,7 +230,7 @@ void genfmax_int4(INT4_TYPE *f,INT4_TYPE *g,INT4_TYPE *h,INT4_TYPE *p, unsigned 
   
   /* do middle values */
   for(i=K-1;i<nx;i++,p++,h++,g++)
-    *(f+*p) = max(*g,*h);
+    *(f+*p) = liarmax(*g,*h);
   
   /* reset pointers to end position */
   h += (K-2);
@@ -239,7 +239,7 @@ void genfmax_int4(INT4_TYPE *f,INT4_TYPE *g,INT4_TYPE *h,INT4_TYPE *p, unsigned 
   /* do right border */
   if(r1 && k) {
     for(h-=r1,i=r1;i<K;i++,h--)
-      *h = max(*(h),*(h+1));
+      *h = liarmax(*(h),*(h+1));
     h += K;
   }
   h -= r;
@@ -256,7 +256,7 @@ void genfmax_INT4(INT4_TYPE *f,INT4_TYPE *g,INT4_TYPE *h,INT4_TYPE *p, unsigned 
 void genfmax_dbl(DBL_TYPE *f,DBL_TYPE *g,DBL_TYPE *h,INT4_TYPE *p, unsigned int nx, unsigned int K)
 
 {
-  /* AUTHOR: Edmond J. Breen
+  /* ORIGINAL AUTHOR: Edmond J. Breen
   ** DATE: Mar 2 1993
   ** 
   ** f: input array. Where 1st member is *(f+p[0]) and 
@@ -280,13 +280,13 @@ void genfmax_dbl(DBL_TYPE *f,DBL_TYPE *g,DBL_TYPE *h,INT4_TYPE *p, unsigned int 
     for(j=0;j<k;j++) {
         *g = *(f+*p);
         for(g++,p++,i=1;i<K;i++,g++,p++)
-            *g = max(*(f+*p),*(g-1));
+            *g = liarmax(*(f+*p),*(g-1));
     }
 
     if(r1) {
         *g = *(f+*p);
         for(g++,p++,i=1;i<r1;i++,g++,p++)
-            *g = max(*(f+*p),*(g-1));
+            *g = liarmax(*(f+*p),*(g-1));
     }
     p--;
     if(nx <= (K>>1)) {
@@ -302,12 +302,12 @@ void genfmax_dbl(DBL_TYPE *f,DBL_TYPE *g,DBL_TYPE *h,INT4_TYPE *p, unsigned int 
     if(r1) {
         *h = *(f+*p);
         for(h--,p--,i=1;i<r1;i++,h--,p--)
-            *h = max(*(f+*p),*(h+1));
+            *h = liarmax(*(f+*p),*(h+1));
     }
     for(j=0;j<k;j++) {
         *h = *(f+*p);
         for(h--,p--,i=1;i<K;i++,h--,p--)
-            *h = max(*(f+*p),*(h+1));
+            *h = liarmax(*(f+*p),*(h+1));
     }
 
     /* reset pointers */
@@ -333,7 +333,7 @@ void genfmax_dbl(DBL_TYPE *f,DBL_TYPE *g,DBL_TYPE *h,INT4_TYPE *p, unsigned int 
 
     /* do middle values */
     for(i=K-1;i<nx;i++,p++,h++,g++)
-        *(f+*p) = max(*g,*h);
+        *(f+*p) = liarmax(*g,*h);
 
     /* reset pointers to end position */
     h += (K-2);
@@ -342,7 +342,7 @@ void genfmax_dbl(DBL_TYPE *f,DBL_TYPE *g,DBL_TYPE *h,INT4_TYPE *p, unsigned int 
     /* do right border */
     if(r1 && k) {
         for(h-=r1,i=r1;i<K;i++,h--)
-            *h = max(*(h),*(h+1));
+            *h = liarmax(*(h),*(h+1));
         h += K;
     }
     h -= r;

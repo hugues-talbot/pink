@@ -18,7 +18,7 @@ const char *imview_cmd = "imview -debug -sync -server -fork";
 
 int conn_id = -1;
 
-int upload_image(IMAGE *I, const char *lbl, const char *host, const ipctype method)
+static int democlient_upload_image(IMAGE *I, const char *lbl, const char *host, const ipctype method)
 {
 	const char *user;
 	int         res;
@@ -39,7 +39,7 @@ int upload_image(IMAGE *I, const char *lbl, const char *host, const ipctype meth
 	return res;
 }
 
-int load_image(const char *path, const char *host)
+static int democlient_load_image(const char *path, const char *host)
 {
     const char *user;
     int         res;
@@ -60,7 +60,7 @@ int load_image(const char *path, const char *host)
     return res;
 }
 
-int zoombox_image(void)
+static int democlient_zoombox_image(void)
 {
     /* test of zooming to a box */
     char cmd[200];
@@ -80,7 +80,7 @@ int zoombox_image(void)
     return retval;
 }
 
-int pan_image(void)
+static int democlient_pan_image(void)
 {
     /* test of image paning */
     char cmd[200];
@@ -106,7 +106,7 @@ int pan_image(void)
     return retval;
 }
 
-void usage(const char *prog)
+static void democlient_usage(const char *prog)
 {
     fprintf(stderr,
             "Usage: %s <image.tif> [-d] [-ts/-tp/-tt] [-p]\n"
@@ -119,7 +119,7 @@ void usage(const char *prog)
     exit(2);
 }
 
-int main(int argc, char *argv[])
+int democlient_main(int argc, char *argv[])
 {
     IMAGE   *A;
     ipctype  transfer = SHM_NONE;
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
     }
     
     if (argc < 2) {
-	usage(argv[0]);
+	democlient_usage(argv[0]);
     }
 
 
@@ -158,12 +158,12 @@ int main(int argc, char *argv[])
 
     if (!usepath) {
         A = imloadtiff(argv[argc -1]);
-        res = upload_image(A, argv[argc-1], "localhost", transfer);
+        res = democlient_upload_image(A, argv[argc-1], "localhost", transfer);
     } else {
-        res = load_image(argv[argc-1], "localhost");
+        res = democlient_load_image(argv[argc-1], "localhost");
     }
     if (res == 0)
-        res = pan_image();
+        res = democlient_pan_image();
 
     if (conn_id != -1)
 	imviewlogout(conn_id);

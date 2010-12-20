@@ -20,19 +20,7 @@ typedef enum {
     IM_ERROR = 6
 } imgtype;
 
-typedef enum {
-    IM_BINARY = 0,
-    IM_INT1 = 1,
-    IM_UINT1 = 2,
-    IM_INT2 = 3,
-    IM_UINT2 = 4,
-    IM_INT4 = 5,
-    IM_UINT4 = 6,
-    IM_INT8 = 7,
-    IM_UINT8 = 8,
-    IM_FLOAT = 9,
-    IM_DOUBLE = 10
-} pixtype;
+
 
 typedef struct image_ {
     int ox; /* X offset */

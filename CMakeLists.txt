@@ -22,7 +22,7 @@ project(pink)
 INCLUDE (UJ_CheckIncludeFile.cmake)
 INCLUDE (UJ_CheckIncludeFileCXX.cmake)
 
-set( POTENCIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library )
+set( POTENTIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library )
 set( INCLUDES include src/python /usr/include /usr/local/include )
 
 include_directories( ${INCLUDES} )
@@ -61,6 +61,8 @@ if (CMAKE_HOST_UNIX)
 
     option( DEVELOPMENT "Compiles additional functions which are not-yet part of the core library (Mostly because they require additional dependencies). " OFF )
 
+    option( LIAR "Compiles additional functions adapted from the Library of Image Analysis Routines," OFF)
+
 ### **********************************************************************************************
 ### **********************************************************************************************
 ### *************************** Library **********************************************************
@@ -90,7 +92,7 @@ if (CMAKE_HOST_UNIX)
     # unix defines
     add_definitions( -DUNIXIO -DPC )
 
-    find_library( MATH_LIB libm.${LIBEXT} PATHS ${POTENCIAL_LIBDIRS} )
+    find_library( MATH_LIB libm.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
     set( LIBS ${MATH_LIB} )
 
     # Libraries required to compile the pink library
@@ -99,6 +101,31 @@ if (CMAKE_HOST_UNIX)
 
     set( LIBS ${LIBS} ${X11_LIBRARIES} )
     set( LIBS ${LIBS} ${THREADS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+
+    ### 
+    ### Option LIAR
+    ###
+    
+    if (LIAR)
+	## we need POSIX semaphores to communicate with imview
+	CHECK_INCLUDE_FILE(semaphore.h SEMTEST)
+	if (NOT SEMTEST)
+	    message( FATAL_ERROR "POSIX semaphores not found")
+	else (NOT SEMTEST)
+	    add_definitions( -DHAVE_POSIX_IPC )
+        endif(NOT SEMTEST)
+
+	FIND_PACKAGE(TIFF)
+
+	if (TIFF_FOUND)
+	    message("Found libtiff headers in ${TIFF_INCLUDE_DIR}, library at ${TIFF_LIBRARIES}")
+	    ADD_DEFINITIONS(-DHAVE_TIFF_LIB)
+	    INCLUDE_DIRECTORIES(${TIFF_INCLUDE_DIR})
+	    set( LIBS ${LIBS} ${TIFF_LIBRARIES} )
+	else(TIFF_FOUND)
+	    message("Libtiff not found. TIFF support will be disabled")
+	endif(TIFF_FOUND)
+    endif (LIAR)
 
 
     ### ******************************************************
@@ -109,13 +136,13 @@ if (CMAKE_HOST_UNIX)
  	    SET(EIGEN_INCLUDE "/usr/include" CACHE PATH "The directory of the eigen2 headers. Remember in the case of /usr/local/include/eigen2, you specify /usr/local/include." )
  	endif(NOT EIGEN_INCLUDE)
 
- 	find_library( GSL_LIB libgsl.${LIBEXT} ${POTENCIAL_LIBDIRS} )
+ 	find_library( GSL_LIB libgsl.${LIBEXT} ${POTENTIAL_LIBDIRS} )
  	set( LIBS ${LIBS} ${GSL_LIB} )
 
- 	find_library( GSLCBLAS_LIB libgslcblas.${LIBEXT} ${POTENCIAL_LIBDIRS} )
+ 	find_library( GSLCBLAS_LIB libgslcblas.${LIBEXT} ${POTENTIAL_LIBDIRS} )
  	set( LIBS ${LIBS} ${GSLCBLAS_LIB} )
 
- 	find_library( LAPACK_LIB liblapack.${LIBEXT} ${POTENCIAL_LIBDIRS} )
+ 	find_library( LAPACK_LIB liblapack.${LIBEXT} ${POTENTIAL_LIBDIRS} )
  	set( LIBS ${LIBS} ${LAPACK_LIB} )
 
  	CHECK_INCLUDE_FILE( gsl/gsl_interp.h HTEST )

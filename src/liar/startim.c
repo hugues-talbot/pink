@@ -19,9 +19,9 @@
 #define PIPESTR "/tmp/toto"
 #define IMVIEWCMD  "imview -server -fork -portfile " PIPESTR
 
-#define FAIL do {perror(PROG); unlink(PIPESTR); exit(1);} while (0)
+#define FAIL do {perror(PROG); unlink(PIPESTR); return(1);} while (0)
 
-int main()
+int startim_main()
 {
   char *execstring = IMVIEWCMD;
   char buffer[5];

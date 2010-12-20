@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include "liarp.h"
 #include "liarwrap.h"
 
 char *imgtypestr_[] = {
@@ -52,6 +53,7 @@ int pixsize_[] = {
 
 static int debugIsOn = 0;
 
+#ifdef HAVE_TIFF_LIB
 IMAGE *imloadtiff(const char *path)
 {
     int            start[3], end[3];
@@ -104,6 +106,7 @@ IMAGE *imloadtiff(const char *path)
     return outimage;
     
 }
+#endif // HAVE_TIFF_LIB
 
 int LIARdebug(const char * msg,...)
 {
@@ -160,4 +163,6 @@ int imexception(const char *msg, ...)
     exit(1);
 }
 
-#include "../io/loadtiff-code.h"
+#ifdef HAVE_TIFF_LIB
+#  include "loadtiff-code.h"
+#endif // HAVE_TIFF_LIB

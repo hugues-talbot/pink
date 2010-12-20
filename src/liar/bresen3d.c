@@ -364,7 +364,7 @@ INT4_TYPE *bresenham3d_dir(int dx, int dy, int dz,
            calculated by taking projections onto the xy and xz planes */
 
         /* set vector length and alocate mem */
-        *ol = min(imwidth,length);
+        *ol = liarmin(imwidth,length);
         p = (INT4_TYPE*) calloc(*ol+1, sizeof(INT4_TYPE));
         if (p == NULL) {
             LIARerror("bresenham3d: Unable to allocate memory for line offsets");
@@ -427,7 +427,7 @@ INT4_TYPE *bresenham3d_dir(int dx, int dy, int dz,
            planes */
 
         /* set vector length and alocate mem */
-        *ol = min(imheight,length);
+        *ol = liarmin(imheight,length);
         p = (INT4_TYPE*) calloc(*ol+1, sizeof(INT4_TYPE));
         if (p == NULL) {
             LIARerror("bresenham3d: Unable to allocate memory for line offsets");
@@ -489,7 +489,7 @@ INT4_TYPE *bresenham3d_dir(int dx, int dy, int dz,
            is thus calculated by taking projections onto the zx and zy planes */
 
         /* set vector length and alocate mem */
-        *ol = min(imdepth,length);
+        *ol = liarmin(imdepth,length);
         p = (INT4_TYPE*) calloc(*ol+1, sizeof(INT4_TYPE));
         if (p == NULL) {
             LIARerror("bresenham3d: Unable to allocate memory for line offsets");

@@ -44,7 +44,7 @@ void XCAT2(genfmin, FNAME_EXT)(DATA_TYPE *f,DATA_TYPE *g,DATA_TYPE *h,INT4_TYPE 
 	     unsigned int nx, unsigned int K)
 
 {
-  /* AUTHOR: Ed Breen
+  /* ORIGINAL AUTHOR: Ed Breen
   ** DATE: May  4 1993
   **
   ** f: input array. Where 1st member is *(f+p[0]) and 
@@ -67,12 +67,12 @@ void XCAT2(genfmin, FNAME_EXT)(DATA_TYPE *f,DATA_TYPE *g,DATA_TYPE *h,INT4_TYPE 
     for(j=0;j<k;j++) {
 	*g = *(f+*p);
 	for(g++,p++,i=1;i<K;i++,g++,p++)
-	    *g = min(*(f+*p),*(g-1));
+	    *g = liarmin(*(f+*p),*(g-1));
     }
     if(r1) {
 	*g = *(f+*p);
 	for(g++,p++,i=1;i<r1;i++,g++,p++)
-	    *g = min(*(f+*p),*(g-1));
+	    *g = liarmin(*(f+*p),*(g-1));
     }
     p--;
     if(nx <= (K>>1)) {
@@ -88,12 +88,12 @@ void XCAT2(genfmin, FNAME_EXT)(DATA_TYPE *f,DATA_TYPE *g,DATA_TYPE *h,INT4_TYPE 
     if(r1) {
 	*h = *(f+*p);
 	for(h--,p--,i=1;i<r1;i++,h--,p--)
-	    *h = min(*(f+*p),*(h+1));
+	    *h = liarmin(*(f+*p),*(h+1));
     }
     for(j=0;j<k;j++) {
 	*h = *(f+*p);
 	for(h--,p--,i=1;i<K;i++,h--,p--)
-	    *h = min(*(f+*p),*(h+1));
+	    *h = liarmin(*(f+*p),*(h+1));
     }
 
     /* reset pointers */
@@ -119,7 +119,7 @@ void XCAT2(genfmin, FNAME_EXT)(DATA_TYPE *f,DATA_TYPE *g,DATA_TYPE *h,INT4_TYPE 
 
     /* do middle values */
     for(i=K-1;i<nx;i++,p++,h++,g++)
-	*(f+*p) = min(*g,*h);
+	*(f+*p) = liarmin(*g,*h);
 
     /* reset pointers to end position */
     h += (K-2);
@@ -128,7 +128,7 @@ void XCAT2(genfmin, FNAME_EXT)(DATA_TYPE *f,DATA_TYPE *g,DATA_TYPE *h,INT4_TYPE 
     /* do right border */
     if(r1 && k) {
 	for(h-=r1,i=r1;i<K;i++,h--)
-	    *h = min(*(h),*(h+1));
+	    *h = liarmin(*(h),*(h+1));
 	h += K;
     }
     h -= r;
