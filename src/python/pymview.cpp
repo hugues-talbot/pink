@@ -5,7 +5,7 @@
   This software comes in hope that it will be useful but 
   without any warranty to the extent permitted by aplicable law.
   
-  (C) Hugues Talbot, 2009-2010 Université Paris-Est, Laboratoire
+  (C) Hugues Talbot, 2009-2011 Université Paris-Est, Laboratoire
   d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy
   le Grand CEDEX
 
@@ -52,6 +52,9 @@ namespace pink {
             // show command
             std::cerr << command.str() << std::endl;
 
+            // remove FIFO
+            unlink(portfilename.str().c_str()); // this may fail but doesn't matter.
+            
             // create portfile
             int res = mkfifo(portfilename.str().c_str(), S_IRUSR | S_IWUSR);
             if (res != 0) {
