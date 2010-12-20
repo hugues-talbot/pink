@@ -380,13 +380,14 @@ INT IMAGE
       }
 
     pixel_type sub(pixel_type a, pixel_type b )
-      {
+          {
+              // HT, why clipping substractions ? 
         return a-b > 0 ? a-b : 0;
       }
 
     pixel_type add(pixel_type a, pixel_type b)
-      {
-        return a+b < LONG_MAX ? a+b : LONG_MAX;
+          {
+        return a+b < INT_MAX ? a+b : INT_MAX;
       }
     
   }; /* image_type_specific int_image */								
