@@ -15,7 +15,7 @@
 #define UI_EXTRACTPLANE_HPP_
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in ui_extractplane.hpp: " << msg; call_error(fullmessage.str());}
+#define error(msg, errarg) {stringstream fullmessage; fullmessage << "in ui_extractplane.hpp: " << msg << "; with argument:'" << errarg << "'"; call_error(fullmessage.str());}
 
 
 namespace pink {
@@ -36,7 +36,8 @@ namespace pink {
            ((mode[0] == 'y') && (mode[1] == 'z')) ||
            ((mode[0] == 'z') && (mode[1] == 'y'))))
     {
-      fprintf(stderr, "usage: %s filein.pgm n plane fileout.pgm (plane=xy|yx|xz|zx|yz|zy)");
+        // fprintf(stderr, "usage: filein.pgm n plane fileout.pgm (plane=xy|yx|xz|zx|yz|zy)");
+        error("extractplane called with incorrect mode ",mode); 
     }
 
     rs = image.get_size()[0]; //rowsize(image);
@@ -54,7 +55,7 @@ namespace pink {
       image_type result(size);
       if ((n < 0) || (n >= ds))
       {
-        error("bad plane number");
+          error("bad plane number", n);
       }
       t = rs * cs;
       offset = n * t;
@@ -69,7 +70,7 @@ namespace pink {
       image_type result(size);
       if ((n < 0) || (n >= ds))
       {
-        error("bad plane number");
+          error("bad plane number",n);
       }
       t = rs * cs;
       for (j = 0; j < cs ; j++)
@@ -86,7 +87,7 @@ namespace pink {
 
       if ((n < 0) || (n >= cs))
       {
-        error("bad plane number");
+          error("bad plane number",n);
       }
       t = rs * cs;
       for (k = 0; k < ds ; k++)
@@ -103,7 +104,7 @@ namespace pink {
       
       if ((n < 0) || (n >= cs))
       {
-        error("bad plane number");
+          error("bad plane number", n);
       }
       t = rs * cs;
       for (k = 0; k < ds ; k++)
@@ -120,7 +121,7 @@ namespace pink {
      
       if ((n < 0) || (n >= rs))
       {
-        error("bad plane number");
+          error("bad plane number",n);
       }
       t = rs * cs;
       for (k = 0; k < ds ; k++)
@@ -137,7 +138,7 @@ namespace pink {
       
       if ((n < 0) || (n >= rs))
       {
-        error("bad plane number");
+          error("bad plane number",n);
       }
       t = rs * cs;
       for (k = 0; k < ds ; k++)
@@ -148,7 +149,7 @@ namespace pink {
     }
     else
     {
-      error("Valid modes are (mode=xy|yx|xz|zx|yz|zy)");
+        error("Valid modes are (mode=xy|yx|xz|zx|yz|zy)",mode);
     }
  
   } /* extractplane */
