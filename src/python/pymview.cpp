@@ -192,7 +192,7 @@ namespace pink {
 
             // away we go
             LIAREnableDebug();
-            imview_force_socket();
+            //imview_force_socket();
             int res = imviewputimage(tbu, name, conn_id);
             
             return res;
