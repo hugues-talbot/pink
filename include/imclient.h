@@ -7,6 +7,11 @@
 #ifndef IMCLIENT_H
 #define IMCLIENT_H
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif /* __cplusplus */
+
 #include "liarwrap.h" /* need definition of IMAGE */
 
 typedef enum {SHM_NONE = 0, SHM_POSIX, SHM_SYSV} ipctype;
@@ -22,4 +27,8 @@ int imviewputimage(IMAGE *I,  const char  *name, int  conn_id);
 void imview_set_transfer_method(const ipctype method);
 void imviewlogout(int conn_id);
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+    
+#endif /* IMCLIENT_H */

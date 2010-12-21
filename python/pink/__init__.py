@@ -30,6 +30,12 @@ try:
 except:
     1==1
 
+try:
+    from imview import imview
+except:
+    print("no imview\n")
+    1==1
+
 # from python_pink import *
 # from long2byte import long2byte
 # from parallel_map import parallel_map

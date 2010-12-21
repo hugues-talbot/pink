@@ -171,36 +171,51 @@ extern              "C"
 // exact copy of the structure in wmisc.h
 // located in the c2liar
 // these codes are defined in liarlmts.h
-    typedef enum
-    {
-        IM_DEFAULT  = -1,     /* used in arith function when specifying the output type */    
-        IM_BADPIXEL = 0,      /* error flag for unknown/illegal pixel types (enum value 0)*/
+    /* typedef enum */
+    /* { */
+    /*     IM_DEFAULT  = -1,     /\* used in arith function when specifying the output type *\/     */
+    /*     IM_BADPIXEL = 0,      /\* error flag for unknown/illegal pixel types (enum value 0)*\/ */
 
-        /* 1 byte pixel types */
-        IM_BINARY   = BINARY_CODE,     /* binary (enum value 10) */ 
-        IM_CHAR     = CHAR_CODE,       /* char,int (enum value 30)*/ 
-        IM_INT1     = INT1_CODE,       /* char,int (enum value 30)*/
-        IM_UINT1    = UINT1_CODE,      /* unsigned int (enum value 31)*/
+    /*     /\* 1 byte pixel types *\/ */
+    /*     IM_BINARY   = BINARY_CODE,     /\* binary (enum value 10) *\/  */
+    /*     IM_CHAR     = CHAR_CODE,       /\* char,int (enum value 30)*\/  */
+    /*     IM_INT1     = INT1_CODE,       /\* char,int (enum value 30)*\/ */
+    /*     IM_UINT1    = UINT1_CODE,      /\* unsigned int (enum value 31)*\/ */
 
-        /* 2 byte pixel types */
-        IM_SHORT    = SHORT_CODE,      /* int (enum value 35)*/
-        IM_INT2     = INT2_CODE,       /* int (enum value 35)*/
-        IM_UINT2    = UINT2_CODE,      /* unsigned int (enum value 37)*/
+    /*     /\* 2 byte pixel types *\/ */
+    /*     IM_SHORT    = SHORT_CODE,      /\* int (enum value 35)*\/ */
+    /*     IM_INT2     = INT2_CODE,       /\* int (enum value 35)*\/ */
+    /*     IM_UINT2    = UINT2_CODE,      /\* unsigned int (enum value 37)*\/ */
 
-        /* 4 byte pixel types */
-        IM_INT      = INT_CODE,        /* int (enum value 40)*/
-        IM_INT4     = INT4_CODE,       /* int (enum value 40)*/
-        IM_UINT4    = UINT4_CODE,      /* unsigned int (enum value 42)*/
+    /*     /\* 4 byte pixel types *\/ */
+    /*     IM_INT      = INT_CODE,        /\* int (enum value 40)*\/ */
+    /*     IM_INT4     = INT4_CODE,       /\* int (enum value 40)*\/ */
+    /*     IM_UINT4    = UINT4_CODE,      /\* unsigned int (enum value 42)*\/ */
 
-        /* 8 byte pixel types */
-        IM_INT8     = INT8_CODE,       /* int (enum value 43)*/
-        IM_UINT8    = UINT8_CODE,      /* unsigned int (enum value 44)*/
+    /*     /\* 8 byte pixel types *\/ */
+    /*     IM_INT8     = INT8_CODE,       /\* int (enum value 43)*\/ */
+    /*     IM_UINT8    = UINT8_CODE,      /\* unsigned int (enum value 44)*\/ */
  
-        /* real-valued pixel types */
-        IM_FLOAT    = FLOAT_CODE,      /* float (enum value 45)*/
-        IM_DOUBLE   = DOUBLE_CODE      /* double (enum value 50)*/
-    }
-        pixtype;
+    /*     /\* real-valued pixel types *\/ */
+    /*     IM_FLOAT    = FLOAT_CODE,      /\* float (enum value 45)*\/ */
+    /*     IM_DOUBLE   = DOUBLE_CODE      /\* double (enum value 50)*\/ */
+    /* } */
+    /*     liar_pixtype; */
+
+    // extremely weird Hugues Talbot	21 Dec 2010
+    typedef enum {
+        IM_BINARY = 0,
+        IM_INT1 = 1,
+        IM_UINT1 = 2,
+        IM_INT2 = 3,
+        IM_UINT2 = 4,
+        IM_INT4 = 5,
+        IM_UINT4 = 6,
+        IM_INT8 = 7,
+        IM_UINT8 = 8,
+        IM_FLOAT = 9,
+        IM_DOUBLE = 10
+    } pixtype;
 
     // flat series (2D and 3D)
 #include "fseries.h"

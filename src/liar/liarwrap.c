@@ -160,7 +160,8 @@ int imexception(const char *msg, ...)
 
     va_end(args);
 
-    exit(1);
+    /* used to call exit().. a bit rough */
+    return(1);
 }
 
 #ifdef HAVE_TIFF_LIB

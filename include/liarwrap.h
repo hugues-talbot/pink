@@ -10,6 +10,11 @@
 #ifndef LIARWRAP_H
 #define LIARWRAP_H
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif /* __cplusplus */
+
 typedef enum {
     IM_SINGLE = 0, /* only one component */
     IM_RGB = 1,    /* exactly 3 components */
@@ -42,7 +47,7 @@ typedef unsigned int wsize_t;
 /* macros */
 #define BUFSIZE     1024
 #define DEBUGPROMPT "DEBUG> "
-#define ERRORPROMPT "**ERROR**> "
+#define ERRORPROMPT "*ERROR*> "
 #define EXCEPTPROMPT "**EXCEPTION**> "
 
 /* get */
@@ -91,6 +96,13 @@ extern int   pixsize_[];
 
 /* prototypes */
 
-IMAGE *imloadtiff(const char *path);
+    IMAGE *imloadtiff(const char *path);
 
+    void LIAREnableDebug(void);
+
+    
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+    
 #endif

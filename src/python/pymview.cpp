@@ -17,7 +17,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "liarp.h"
+#include "imclient.h"
 #include "pink_python.h"
+
+
 
 #undef error
 #define error(msg) {stringstream fullmessage; fullmessage << "in pymview.cpp: " << msg; call_error(fullmessage.str());}
@@ -28,11 +32,13 @@ using namespace pink;
 namespace pink {
     namespace python {
 
+
         // globals
         std::string imviewcmd("imview -server -fork -portfile ");
         int             imview_window = 0;
+        int             imview_connexion = -1;
         
-        template <class image_type> void imview (const image_type & image)
+        int Pimview (void)
         {
             const char *directory = getenv("TMPDIR"); // should work on most unices
             if (directory == NULL) {
@@ -59,7 +65,7 @@ namespace pink {
             int res = mkfifo(portfilename.str().c_str(), S_IRUSR | S_IWUSR);
             if (res != 0) {
                 std::cerr << "Failed to create FIFO " << portfilename.str() << endl ;
-                return;
+                return(-1);
             }
 
             /* open the pipe for reading, notice the NO DELAY  */
@@ -67,7 +73,7 @@ namespace pink {
             filenum = open(portfilename.str().c_str(), O_RDONLY | O_NDELAY, 0);
             if (filenum < 0) {
                 std::cerr << "Failed to open FIFO" <<  portfilename.str() << endl ;
-                return;
+                return(-2);
             }
 
             // call imview !
@@ -77,22 +83,156 @@ namespace pink {
 
             if (read(filenum, buffer, 4) <= 0) {
                 std::cerr << "Failed to read the portnumber" << endl;
-                return;
+                return(-3);
             }
             close(filenum);
             unlink(portfilename.str().c_str());
             
             std::cerr << "This will show an image eventually, using port " << buffer << std::endl;
+
+            // fill the port pointer as an integer
+            return(atoi(buffer));
+        }
+
+        // login onto the image server.
+        // if the imview server has died, this is the fcnt that wil first report an error.
+        int Pimviewlogin(char *user, char *hostname, int port)
+        {
+            int connid;
+
+            imview_force_socket();
+            
+            int retval = imviewlogin(user, hostname, port, &connid);
+            if (retval == 0)
+                return connid; // connexion will remain open as long a the imview server is running
+            else {
+                std::cerr << "Login failed" << std::endl;
+                return -1;
+            }
+        }
+
+        // this translates the image_type into an IMAGE *
+        // and displays it.
+        template <class image_type> int Pimviewputimage(image_type &image,
+                                                        const char *name,
+                                                        int conn_id)
+        {
+            xvimage *realdata = image.get_output(); // get the basic data
+            IMAGE *tbu = new(IMAGE); // TBU = To Be Uploaded
+
+            // hand copy...
+
+            // this could change
+            tbu->ox = tbu->oy = tbu->oz = tbu->ot = 0;
+            // straightforward I hope
+            tbu->nx = realdata->row_size;
+            tbu->ny = realdata->col_size;
+            tbu->nz = realdata->depth_size;
+            tbu->nt = realdata->time_size;
+            tbu->nc = realdata->num_data_bands;
+
+            // not very precise
+            if ((tbu->nc == 2) || (tbu->nc > 3))
+                tbu->it = IM_SPECTRUM;
+            else if (tbu->nc == 3)
+                tbu->it = IM_RGB;
+            else if (tbu->nc == 1)
+                tbu->it = IM_SINGLE;
+            else
+                tbu->it = IM_UNSPEC; // ?? in other words...
+
+            // pixel type (no one-to-one correspondance)
+            int datasize = 0;
+            switch (realdata->data_storage_type) {
+            case VFF_TYP_BIT :
+                tbu->pt = IM_BINARY; // this is incorrect actually
+                std::cerr << "Incorrect binary type" << std::endl;
+                break;
+            case VFF_TYP_1_BYTE :
+                tbu->pt = IM_UINT1;
+                datasize = 1;
+                break;
+            case VFF_TYP_2_BYTE :
+                tbu->pt = IM_UINT2;
+                datasize = 2;
+                break;
+            case VFF_TYP_4_BYTE :
+                tbu->pt = IM_INT4;
+                datasize = 4;
+                break;
+            case VFF_TYP_FLOAT:
+                tbu->pt = IM_FLOAT;
+                datasize = 4;
+                break;
+            case VFF_TYP_DOUBLE:
+                tbu->pt = IM_DOUBLE;
+                datasize = 8;
+                break;
+            default:
+                std::cerr << "Unknown input data type: " << realdata->data_storage_type << std::endl;
+                break;
+            }
+
+            if (datasize > 0) {
+                // at any rate...
+                tbu->buff = new void *[tbu->nc];
+                for (int i = 0 ; i < tbu->nc ; ++i) {
+                    // is this ugly or what ?
+                    tbu->buff[i] = ((uint8_t*)(realdata->image_data) + (datasize*tbu->nx*tbu->ny*tbu->nz*tbu->nt)*i);
+                }
+            }
+
+            std::cerr 
+                << "Uloading data, nx=" << tbu->nx 
+                << ",ny = " << tbu->ny 
+                << ", nz = " << tbu->nz
+                << ", nt = " << tbu->nt
+                << ", nc = " << tbu->nc
+                << ", datasize = " << datasize << std::endl;
+
+            // away we go
+            LIAREnableDebug();
+            imview_force_socket();
+            int res = imviewputimage(tbu, name, conn_id);
+            
+            return res;
         }
 
     } /* namespace python */
 } /* namespace pink */
 
+// template <class image_type> void Rimview (const image_type & image)
+
+// UI_EXPORT_FUNCTION(
+//     Rimview,
+//     pink::python::Rimview,
+//     (arg("src")
+//     (
+//         ),
+//     "Runs the imview viewer in server mode and returns its TCP/IP port"
+//     );
+
+// manual export function
+// reverse-engineering the UJ-Way
+// Hugues Talbot	20 Dec 2010
+void Pimview_export()
+{
+    def("Pimview",
+        pink::python::Pimview,
+        "Starts an imview instance and returns the port number");
+}
+
+void Pimviewlogin_export()
+{
+    def("Pimviewlogin",
+        pink::python::Pimviewlogin,
+        (arg("user"),arg("hostname"),arg("port")),
+        "Logs onto a running imview");
+}
 
 UI_EXPORT_FUNCTION(
-    imview,
-    pink::python::imview,
-    (arg("src")
-        ),
-    "Displays an image"
+    Pimviewputimage,
+    pink::python::Pimviewputimage,
+    (arg("image"),arg("name"),arg("connid")),
+    "Upload an image to an imview server via TCP or shared memory"
     );

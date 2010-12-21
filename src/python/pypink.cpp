@@ -131,14 +131,16 @@ void openball_export(); void gradmorph_export(); void mcube_export(); void minim
 
 
 // not sure this is the correct thing to do here HT
-void imview_export();
+// This is the prototype of the automatically generated export function
+void Pimview_export(); void Pimviewlogin_export(); void Pimviewputimage_export();
 
 // for wrapping every type with one function
 // template <class image_type>
 // void ujoi_class_export( const char* object_name, const char* object_description );
 
 
-BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that will also contain
+BOOST_PYTHON_MODULE(libcpp_pink)
+// the final module will be named pink, but that will also contain
 // some python functions, like readimage, so it will be created as
 // a tree hierarchy
 {
@@ -192,10 +194,11 @@ BOOST_PYTHON_MODULE(libcpp_pink) // the final modul will be named pink, but that
     );    
 
   
-  // is this enough HT ?  
-  imview_export();
-
-
+  // is this enough ? HT
+  // this calls the definition in the right place
+  Pimview_export();
+  Pimviewlogin_export();
+  Pimviewputimage_export();
 
   
   UI_DEFINE_FUNCTION(
