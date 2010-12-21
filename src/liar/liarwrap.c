@@ -132,6 +132,11 @@ void LIAREnableDebug(void)
     debugIsOn = 1;
 }
 
+void LIARDisableDebug(void)
+{
+    debugIsOn = 0;
+}
+
 int LIARerror(const char *msg, ...)
 {
     char strarg[BUFSIZE];

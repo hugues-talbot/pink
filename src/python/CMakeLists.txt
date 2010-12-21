@@ -51,7 +51,9 @@ add_custom_command( TARGET cpp_pink POST_BUILD
 
 elseif (CMAKE_HOST_APPLE)
 add_custom_command( TARGET cpp_pink POST_BUILD 
-                    COMMAND ln -s ${CMAKE_BINARY_DIR}/python/libcpp_pink.dylib ${CMAKE_BINARY_DIR}/python/libcpp_pink.so
+                    COMMAND ln -sf ${CMAKE_BINARY_DIR}/python/libcpp_pink.dylib ${CMAKE_BINARY_DIR}/python/libcpp_pink.so
+		    # .svn directories cause permission denied
+		    COMMAND find ${CMAKE_BINARY_DIR} -name .svn -exec rm -rf {} '\;'
 		    COMMAND cp -r ${CMAKE_SOURCE_DIR}/python/* ${CMAKE_BINARY_DIR}/python/
 		    COMMAND echo "\\#\\!" /bin/bash > ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "\\# UjoImro, 2010"  >> ${CMAKE_BINARY_DIR}/pink.sh

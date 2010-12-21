@@ -18,10 +18,9 @@
 #include <sys/stat.h>
 
 #include "liarp.h"
+#include "liarwrap.h"
 #include "imclient.h"
 #include "pink_python.h"
-
-
 
 #undef error
 #define error(msg) {stringstream fullmessage; fullmessage << "in pymview.cpp: " << msg; call_error(fullmessage.str());}
@@ -37,7 +36,7 @@ namespace pink {
         std::string imviewcmd("imview -server -fork -portfile ");
         int             imview_window = 0;
         int             imview_connexion = -1;
-        
+
         int Pimview (void)
         {
             const char *directory = getenv("TMPDIR"); // should work on most unices
@@ -56,8 +55,11 @@ namespace pink {
             command << portfilename.str();
 
             // show command
-            std::cerr << command.str() << std::endl;
-
+            std::ostringstream debugmsg;
+            debugmsg << command.str() << std::endl;
+            LIARdebug(debugmsg.str().c_str());
+            debugmsg.str(""); // reset the string
+            
             // remove FIFO
             unlink(portfilename.str().c_str()); // this may fail but doesn't matter.
             
@@ -88,8 +90,9 @@ namespace pink {
             close(filenum);
             unlink(portfilename.str().c_str());
             
-            std::cerr << "This will show an image eventually, using port " << buffer << std::endl;
-
+            debugmsg << "This will show an image eventually, using port " << buffer << std::endl;
+            LIARdebug(debugmsg.str().c_str());
+            
             // fill the port pointer as an integer
             return(atoi(buffer));
         }
@@ -100,7 +103,7 @@ namespace pink {
         {
             int connid;
 
-            imview_force_socket();
+            //imview_force_socket();
             
             int retval = imviewlogin(user, hostname, port, &connid);
             if (retval == 0)
@@ -191,11 +194,22 @@ namespace pink {
                 << ", datasize = " << datasize << std::endl;
 
             // away we go
-            LIAREnableDebug();
             //imview_force_socket();
             int res = imviewputimage(tbu, name, conn_id);
             
             return res;
+        }
+
+        int Pimview_setdebug(bool debug)
+        {
+            int retval = 0;
+            if (debug) {
+                LIAREnableDebug();
+                retval = 1;
+            }  else
+                LIARDisableDebug();
+
+            return retval;
         }
 
     } /* namespace python */
@@ -236,3 +250,18 @@ UI_EXPORT_FUNCTION(
     (arg("image"),arg("name"),arg("connid")),
     "Upload an image to an imview server via TCP or shared memory"
     );
+
+void PLiarEnableDebug_export()
+{
+    def("Pimview_setdebug",
+        pink::python::Pimview_setdebug,
+        (arg("debug")),
+        "Starts/stop LIAR library debugging messages");
+}
+
+void Pimview_force_socket_export()
+{
+    def("Pimview_force_socket",
+        imview_force_socket,
+        "Disable used of shared memory when using imview");
+}

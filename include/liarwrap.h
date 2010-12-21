@@ -99,7 +99,8 @@ extern int   pixsize_[];
     IMAGE *imloadtiff(const char *path);
 
     void LIAREnableDebug(void);
-
+    void LIARDisableDebug(void);
+    int LIARdebug(const char * msg,...);
     
 #ifdef __cplusplus
 }

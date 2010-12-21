@@ -110,10 +110,17 @@ if (CMAKE_HOST_UNIX)
 	## we need POSIX semaphores to communicate with imview
 	CHECK_INCLUDE_FILE(semaphore.h SEMTEST)
 	if (NOT SEMTEST)
-	    message( FATAL_ERROR "POSIX semaphores not found")
+	    message("POSIX semaphores not found")
 	else (NOT SEMTEST)
 	    add_definitions( -DHAVE_POSIX_IPC )
         endif(NOT SEMTEST)
+
+	CHECK_INCLUDE_FILE(sys/sem.h SYSVTEST)
+	if (NOT SYSVTEST)
+	    message("SysV IPC not found")
+	else (NOT SYSVTEST)
+	    add_definitions(-DHAVE_SYSV_IPC)
+        endif(NOT SYSVTEST)
 
 	FIND_PACKAGE(TIFF)
 

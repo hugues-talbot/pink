@@ -133,6 +133,7 @@ void openball_export(); void gradmorph_export(); void mcube_export(); void minim
 // not sure this is the correct thing to do here HT
 // This is the prototype of the automatically generated export function
 void Pimview_export(); void Pimviewlogin_export(); void Pimviewputimage_export();
+void PLiarEnableDebug_export() ; void PLiarDisableDebug_export(); void Pimview_force_socket_export();
 
 // for wrapping every type with one function
 // template <class image_type>
@@ -199,7 +200,8 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   Pimview_export();
   Pimviewlogin_export();
   Pimviewputimage_export();
-
+  PLiarEnableDebug_export();
+  Pimview_force_socket_export();
   
   UI_DEFINE_FUNCTION(
     print_image,

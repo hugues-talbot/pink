@@ -49,8 +49,8 @@ static const char *putcmd[] = {
 
 #define SHM_SIZE 400000 /* valid for all shared memory models */
 
-static ipctype use_shm_default = SHM_POSIX; /* by default we use POSIX IPC if we can */
-
+//static ipctype use_shm_default = SHM_POSIX; /* by default we use POSIX IPC if we can */
+static ipctype use_shm_default = SHM_SYSV; /* by default we use SYSV IPC, as it is better tested */
 
 /* data needed to describe a connection */
 typedef struct connection_ {
@@ -79,7 +79,7 @@ struct timezone
 {
     int tz_minuteswest;         /* Minutes west of GMT.  */
     int tz_dsttime;             /* Nonzero if DST is ever in effect.  */
-};
+}; 
 /* For now redefine gettimeofday() as timerclear()
      ie. sets timeval to zero (see <winsock.h> and/or <sys/time.h>
      Else, define a new function for WIN32 :)
@@ -97,9 +97,12 @@ struct timezone
 #include <sys/sem.h>
 #include <sys/shm.h>
 
-#if defined(__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
+/* not sure this is still needed, this is very weird
+   Hugues Talbot	21 Dec 2010*/
+#ifdef Linux
+#  if defined(__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
 /* union semun is defined by including <sys/sem.h> */
-#else
+#  else
 /* according to X/OPEN we have to define it ourselves */
 union semun {
     int val;                    /* value for SETVAL */
@@ -107,7 +110,8 @@ union semun {
     unsigned short int *array;  /* array for GETALL, SETALL */
     struct seminfo *__buf;      /* buffer for IPC_INFO */
 };
-#endif /* GNU lib, etc */
+#  endif /* GNU lib, etc */
+#endif /* Linux */
 
 #define SEM_ACS  0
 #define SEM_RD   1
@@ -1395,6 +1399,8 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
     /* send the actual command */
     LIARdebug("Shared memory type: %s", putcmd[conn_array[conn_id].use_shm] );
 
+    /* priority is SYSV > POSIX > SOCKET */
+    /* at this stage POSIX IPC is not well-tested */
     if (conn_array[conn_id].use_shm == SHM_SYSV) { /* using Shared Memory */
 	gettimeofday(&start_put, &dummy);
 	if ((imview_command_noanswer(conn_array[conn_id].fd, put_command) != NULL) 
