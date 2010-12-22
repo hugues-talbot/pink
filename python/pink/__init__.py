@@ -31,7 +31,7 @@ except:
     1==1
 
 try:
-    from imview import imview
+    from imview import *
 except:
     print("no imview\n")
     1==1
