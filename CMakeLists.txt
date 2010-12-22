@@ -95,6 +95,10 @@ if (CMAKE_HOST_UNIX)
     find_library( MATH_LIB libm.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
     set( LIBS ${MATH_LIB} )
 
+    find_library( POSIX_REALTIME_LIB librt.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
+    set( LIBS ${POSIX_REALTIME_LIB} )
+
+
     # Libraries required to compile the pink library
     find_package( X11 REQUIRED )
     find_package( Threads REQUIRED )
