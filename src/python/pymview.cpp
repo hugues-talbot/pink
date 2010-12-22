@@ -212,6 +212,19 @@ namespace pink {
             return retval;
         }
 
+        int Pimview_sendcommand(char *command, int connid)
+        {
+            int retval = 0;
+            char *result = 0;
+            if ((result=imviewsendcommand(command, connid)) == NULL) {
+                std::cerr << "Sending command: '" << command << "' failed" << std::endl;
+                retval = 1;
+            } else {
+                LIARdebug("Result of command = '%s' was '%s'", command, result);
+            }
+            return retval;
+        }
+
     } /* namespace python */
 } /* namespace pink */
 
@@ -264,4 +277,12 @@ void Pimview_force_socket_export()
     def("Pimview_force_socket",
         imview_force_socket,
         "Disable used of shared memory when using imview");
+}
+
+void Pimview_sendcommand_export()
+{
+    def("Pimview_sendcommand",
+        pink::python::Pimview_sendcommand,
+        (arg("command"), arg("connid")),
+        "Sends a command to a running imview server");
 }
