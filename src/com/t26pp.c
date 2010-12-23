@@ -84,9 +84,9 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (! lmctopo3d_t26pp(image))
+  if (! ltopotypes_t26pp(image))
   {
-    fprintf(stderr, "%s: function lt26pp failed\n", argv[0]);
+    fprintf(stderr, "%s: function ltopotypes_t26pp failed\n", argv[0]);
     exit(1);
   }
   

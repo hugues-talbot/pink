@@ -89,11 +89,10 @@ int main(int argc, char **argv)
   int32_t j;
   FILE *fd = NULL;
   int32_t npoints;
-  double *x, *y, *z, *t, len = 0.0;
+  double *x, *y, *z, *t;
   double xx, yy, zz;
   double Px[4], Py[4], Pz[4];
   double *X0, *X1, *X2, *X3, *Y0, *Y1, *Y2, *Y3, *Z0, *Z1, *Z2, *Z3;
-  double tx, ty, tz, tn;
   char type;
 
   if (argc != 4)

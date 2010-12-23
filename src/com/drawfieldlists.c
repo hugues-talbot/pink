@@ -133,7 +133,7 @@ int main(int argc, char **argv)
     ty = (double *)calloc(1,npoints*sizeof(double)); assert(ty != NULL);
 
     for (i = 0; i < npoints; i++)
-      fscanf(fd, "%g %g", &(tx[i]), &(ty[i]));
+      fscanf(fd, "%lg %lg", &(tx[i]), &(ty[i]));
 
     ldrawfield2dlist(npoints, X, Y, tx, ty, image, len);
 

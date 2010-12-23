@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 /* histogramme bivariable */
 /* Michel Couprie - juillet 1996, novembre 1999 */
 /* update 6/4/2006 John Chaussard : cor. bug */
-/* update 11/7/2010 MC : histogrammes d'orientations */
+/* update 11/7/2010 MC & Mohamed Amine Salem : histogrammes d'orientations */
 
 #include <stdio.h>
 #include <stdint.h>
@@ -52,6 +52,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lhisto.h>
 
 //#define DEBUG_lseuilhisto
+#define VERBOSE
 
 /* ==================================== */
 int32_t lhisto(struct xvimage *image, struct xvimage *mask, uint32_t *histo)
@@ -62,8 +63,9 @@ int32_t lhisto(struct xvimage *image, struct xvimage *mask, uint32_t *histo)
   int32_t x;                       /* index muet de pixel */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
-  int32_t d = depth(image);        /* nombre plans */
-  int32_t N = rs * cs * d;         /* taille image */
+  int32_t ds = depth(image);       /* nombre plans */
+  int32_t nb = nbands(image);      /* nombre bandes */
+  int32_t N = rs * cs * ds * nb;   /* taille image */
   uint8_t *SOURCE = UCHARDATA(image);      /* l'image de depart */
   uint8_t *M;
 
@@ -88,8 +90,9 @@ int32_t lhisto1(struct xvimage *image, uint32_t *histo)
   int32_t x;                       /* index muet de pixel */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
-  int32_t d = depth(image);        /* nombre plans */
-  int32_t N = rs * cs * d;         /* taille image */
+  int32_t ds = depth(image);       /* nombre plans */
+  int32_t nb = nbands(image);      /* nombre bandes */
+  int32_t N = rs * cs * ds * nb;   /* taille image */
   uint8_t *SOURCE = UCHARDATA(image);      /* l'image de depart */
 
   for (i = 0; i <= NDG_MAX; i++) histo[i] = 0;
@@ -108,8 +111,9 @@ int32_t lhisto2(struct xvimage *image1, struct xvimage *image2,
   int32_t x;                        /* index muet de pixel */
   int32_t rs = rowsize(image1);     /* taille ligne */
   int32_t cs = colsize(image1);     /* taille colonne */
-  int32_t d = depth(image1);        /* nombre plans */
-  int32_t N = rs * cs * d;          /* taille image */
+  int32_t ds = depth(image1);       /* nombre plans */
+  int32_t nb = nbands(image1);      /* nombre bandes */
+  int32_t N = rs * cs * ds * nb;    /* taille image */
   uint8_t *SOURCE1 = UCHARDATA(image1);      /* l'image de depart 1 */
   uint8_t *SOURCE2 = UCHARDATA(image2);      /* l'image de depart 2 */
   uint8_t *M;
@@ -117,7 +121,7 @@ int32_t lhisto2(struct xvimage *image1, struct xvimage *image2,
   int32_t rsh = rowsize(histo);
   int32_t nh = rsh * colsize(histo);
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     return 0;
@@ -150,8 +154,9 @@ int32_t lhistolong(struct xvimage *image, struct xvimage *mask, uint32_t **histo
   int32_t x;                       /* index muet de pixel */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
-  int32_t d = depth(image);        /* nombre plans */
-  int32_t N = rs * cs * d;         /* taille image */
+  int32_t ds = depth(image);       /* nombre plans */
+  int32_t nb = nbands(image);      /* nombre bandes */
+  int32_t N = rs * cs * ds * nb;   /* taille image */
   int32_t *F = SLONGDATA(image);      /* l'image de depart */
   uint8_t *M;
   int32_t s;
@@ -196,7 +201,8 @@ int32_t lhistofloat(struct xvimage *image, struct xvimage *mask, uint32_t **hist
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ds = depth(image);       /* nombre plans */
-  int32_t N = rs * cs * ds;        /* taille image */
+  int32_t nb = nbands(image);      /* nombre bandes */
+  int32_t N = rs * cs * ds * nb;   /* taille image */
   float *F = FLOATDATA(image);     /* l'image de depart */
   uint8_t *M;
   float smin, smax, s, sincr;
@@ -221,7 +227,11 @@ int32_t lhistofloat(struct xvimage *image, struct xvimage *mask, uint32_t **hist
 	  if (F[i] < smin) smin = F[i];
       }
   } // else mask == NULL
-  
+
+#ifdef VERBOSE
+  printf("%s: min=%g ; max=%g\n", F_NAME, smin, smax);
+#endif  
+
   *size = NBINS;
   *Sincr = sincr = (smax - smin) / NBINS;
   *Smin = smin;
@@ -474,7 +484,7 @@ static double elevation(float x, float y, float z)
 }
 
 /* ==================================== */
-int32_t lhistoazimuth(struct xvimage * field, int32_t nbins, int32_t **histo)
+int32_t lhistoazimuth(struct xvimage * field, int32_t nbins, uint32_t **histo)
 /* ==================================== */
 {
 #undef F_NAME
@@ -489,7 +499,7 @@ int32_t lhistoazimuth(struct xvimage * field, int32_t nbins, int32_t **histo)
   double az, wbin = 180.0/nbins;
 
   F = FLOATDATA(field);
-  *histo = (int32_t *)calloc(nbins, sizeof(int32_t));
+  *histo = (uint32_t *)calloc(nbins, sizeof(uint32_t));
   assert(*histo != NULL);
   assert(datatype(field) == VFF_TYP_FLOAT);
 
@@ -522,10 +532,11 @@ int32_t lhistoazimuth(struct xvimage * field, int32_t nbins, int32_t **histo)
       }
     }
   }
+  return(1);
 } // lhistoazimuth()
 
 /* ==================================== */
-int32_t lhistoelevation(struct xvimage * field, int32_t nbins, int32_t **histo)
+int32_t lhistoelevation(struct xvimage * field, int32_t nbins, uint32_t **histo)
 /* ==================================== */
 {
 #undef F_NAME
@@ -543,7 +554,7 @@ int32_t lhistoelevation(struct xvimage * field, int32_t nbins, int32_t **histo)
   assert(nbands(field) == 3);
   F = FLOATDATA(field);
 
-  *histo = (int32_t *)calloc(nbins, sizeof(int32_t));
+  *histo = (uint32_t *)calloc(nbins, sizeof(uint32_t));
   assert(*histo != NULL);
 
   for (z=0; z<ds; z++)
@@ -557,10 +568,11 @@ int32_t lhistoelevation(struct xvimage * field, int32_t nbins, int32_t **histo)
       (*histo)[bin] = (*histo)[bin] + 1;
     }
   }
+  return(1);
 } // lhistoelevation()
 
 /* ==================================== */
-int32_t lhisto_distance_modulo_raw (int32_t * A, int32_t * B, int32_t n)
+int32_t lhisto_distance_modulo_raw (uint32_t * A, uint32_t * B, int32_t n)
 /* ==================================== */
 { //traduit (en gros) le nombre de deplacements necessaires pour pouvoir obtenir l'histogramme B a partir de l'histogramme A
   int32_t i, j, h_dist, h_dist2, d ;
@@ -623,7 +635,7 @@ int32_t lhisto_distance_modulo_raw (int32_t * A, int32_t * B, int32_t n)
 } // lhisto_distance_modulo_raw()
 
 /* ==================================== */
-int32_t lhisto_distance_ordinal_raw (int32_t * A, int32_t * B, int32_t n)
+int32_t lhisto_distance_ordinal_raw (uint32_t * A, uint32_t * B, int32_t n)
 /* ==================================== */
 { //traduit (en gros) le nombre de deplacements necessaires pour pouvoir obtenir l'histogramme B a partir de l'histogramme A
   int32_t i, h_dist;
@@ -642,7 +654,7 @@ int32_t lhisto_distance_ordinal_raw (int32_t * A, int32_t * B, int32_t n)
 } // lhisto_distance_ordinal_raw()
 
 /* ==================================== */
-double lhisto_distance_modulo (int32_t * A, int32_t * B, int32_t n)
+double lhisto_distance_modulo (uint32_t * A, uint32_t * B, int32_t n)
 /* ==================================== */
 { 
 // traduit (en gros) le nombre de deplacements necessaires pour pouvoir obtenir l'histogramme B a partir de l'histogramme A
@@ -711,7 +723,7 @@ double lhisto_distance_modulo (int32_t * A, int32_t * B, int32_t n)
 } // lhisto_distance_modulo()
 
 /* ==================================== */
-double lhisto_distance_ordinal (int32_t * A, int32_t * B, int32_t n)
+double lhisto_distance_ordinal (uint32_t * A, uint32_t * B, int32_t n)
 /* ==================================== */
 { //traduit (en gros) le nombre de deplacements necessaires pour pouvoir obtenir l'histogramme B a partir de l'histogramme A
   int32_t i;

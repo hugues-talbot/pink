@@ -1110,9 +1110,9 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
         return(NULL);
       }
       dist = copyimage(medial);
-      if (! lmctopo3d_t26pp(dist))           // pour les maxima de la fonction distance
+      if (! ltopotypes_t26pp(dist))           // pour les maxima de la fonction distance
       {
-        fprintf(stderr, "%s: function lmctopo3d_t26pp failed\n", F_NAME);
+        fprintf(stderr, "%s: function ltopotypes_t26pp failed\n", F_NAME);
         return(NULL);
       }
       T1 = ULONGDATA(dist);

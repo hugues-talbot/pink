@@ -32,61 +32,82 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/* \file blob.c
+/*! \file modulus.c
 
-\brief 
+\brief pixelwise modulus of complex
 
-<B>Usage:</B> 
+<B>Usage:</B> modulus in.pgm out.pgm
 
 <B>Description:</B>
+Applies to complex images only.
+For each pixel p, out[p] = modulus(in[p]), where 
+modulus(x+iy) = sqrt(x^2 + y^2).
 
-<B>Types supported:</B> byte 2D
+<B>Types supported:</B> complex 2d, complex 3d
 
-<B>Category:</B> 
-\ingroup  
+<B>Category:</B> arith
+\ingroup  arith
 
 \author Michel Couprie
 */
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <string.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lblob.h>
+#include <larith.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * image;
-  int32_t niter;
+  struct xvimage * image1;
+  struct xvimage * image2;
+  int32_t rs, cs, ds, N, i;
+  float *I1, *I2;
 
-  if (argc != 4)
+  if (argc != 3)
   {
-    fprintf(stderr, "usage: %s filein.pgm niter fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in1.pgm out.pgm \n", argv[0]);
     exit(1);
   }
 
-  image = readimage(argv[1]);
-  if (image == NULL)
+  image1 = readimage(argv[1]);
+  if (image1 == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  niter = atoi(argv[2]);
-
-  if (! lblob(image, niter))
+  if (! lmodulus(image1))
   {
-    fprintf(stderr, "%s: blob failed\n", argv[0]);
+    fprintf(stderr, "%s: function lmodulus failed\n", argv[0]);
     exit(1);
   }
 
-  writeimage(image, argv[argc-1]);
-  freeimage(image);
+  rs = rowsize(image1);
+  cs = colsize(image1);
+  ds = depth(image1);
+
+  image2 = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT);
+  if (image2 == NULL)
+  {
+    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+    exit(1);
+  }
+  I1 = FLOATDATA(image1);
+  I2 = FLOATDATA(image2);
+  N = rs * cs * ds;
+  image2->xdim = image1->xdim;
+  image2->ydim = image1->ydim;
+  image2->zdim = image1->zdim;
+  for (i = 0; i < N; i++) I2[i] = I1[i];
+
+  writeimage(image2, argv[argc-1]);
+  freeimage(image2);
+  freeimage(image1);
 
   return 0;
 } /* main */
-

@@ -1216,13 +1216,12 @@ int32_t llpemeyersanslignelab(
 {
   register int32_t x;                       /* index muet de pixel */
   register int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *M = SLONGDATA(marqueurs);      /* l'image de marqueurs */
+  int32_t *M = SLONGDATA(marqueurs);      /* l'image de marqueurs */
   uint8_t *MA;                             /* l'image de masque */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[4];
@@ -2043,7 +2042,6 @@ int32_t llpemeyer3dsanslignelab(
 {
   register int32_t x;                       /* index muet de pixel */
   register int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -2051,7 +2049,7 @@ int32_t llpemeyer3dsanslignelab(
   int32_t n = rs * cs;             /* taille plan */
   int32_t N = n * d;               /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *M = SLONGDATA(marqueurs);      /* l'image de marqueurs */
+  int32_t *M = SLONGDATA(marqueurs);      /* l'image de marqueurs */
   uint8_t *MA;                             /* l'image de masque */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[6];
@@ -2261,7 +2259,7 @@ int32_t llpemeyer3d2(
 {
 #undef F_NAME
 #define F_NAME "llpemeyer3d2"
-  register int32_t x, y, w, k;
+  register int32_t x, y, k;
   int32_t rs = rowsize(image);       /* taille ligne */
   int32_t cs = colsize(image);       /* taille colonne */
   int32_t d = depth(image);          /* nb plans */
@@ -2508,7 +2506,7 @@ int32_t llpemeyer3d2b(
 {
 #undef F_NAME
 #define F_NAME "llpemeyer3d2b"
-  register int32_t x, y, w, k;
+  register int32_t x, y, k;
   int32_t rs = rowsize(image);       /* taille ligne */
   int32_t cs = colsize(image);       /* taille colonne */
   int32_t d = depth(image);          /* nb plans */
@@ -2749,7 +2747,7 @@ int32_t llpemeyer3d3(
 #undef F_NAME
 #define F_NAME "llpemeyer3d3"
 {
-  register int32_t x, y, w, k;
+  register int32_t x, y, k;
   int32_t rs = rowsize(image);       /* taille ligne */
   int32_t cs = colsize(image);       /* taille colonne */
   int32_t d = depth(image);          /* nb plans */

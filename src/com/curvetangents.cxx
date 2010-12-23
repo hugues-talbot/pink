@@ -68,11 +68,10 @@ Computes the tangents of a curve which is specified by the ordered list of its p
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t i, j;
+  int32_t i;
   FILE *fd = NULL;
   int32_t npoints;
   char type;
-  double L;
 
   if (argc != 3)
   {

@@ -4,7 +4,7 @@ PINK = .
   XINCL = /usr/include/X11R6
   CC = gcc
   CPP = g++
-  CCFLAGS = -g -DUNIXIO
+  CCFLAGS = -g -DUNIXIO -Wall
   ODIR = $(PINK)/linux/obj
   BDIR = $(PINK)/linux/bin
   LIBS = -lm
@@ -36,6 +36,7 @@ $(BDIR)/max \
 $(BDIR)/max1 \
 $(BDIR)/min \
 $(BDIR)/min1 \
+$(BDIR)/modulus \
 $(BDIR)/moyenne \
 $(BDIR)/mult \
 $(BDIR)/normalize \
@@ -55,6 +56,7 @@ CONVERT=\
 $(BDIR)/2elisp \
 $(BDIR)/2latex \
 $(BDIR)/ac2pink \
+$(BDIR)/any2complex \
 $(BDIR)/bmp2ppm \
 $(BDIR)/bmp2pgm \
 $(BDIR)/byte2float \
@@ -659,6 +661,9 @@ $(BDIR)/min:	$(CDIR)/min.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(OD
 $(BDIR)/min1:	$(CDIR)/min1.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/min1.c $(OBJ_COMMON) $(ODIR)/larith.o $(LIBS) -o $(BDIR)/min1
 
+$(BDIR)/modulus:	$(CDIR)/modulus.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/modulus.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/modulus
+
 $(BDIR)/moyenne:	$(CDIR)/moyenne.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/moyenne.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/moyenne
 
@@ -712,6 +717,9 @@ $(BDIR)/2latex:	$(CDIR)/2latex.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 
 $(BDIR)/ac2pink:	$(CDIR)/ac2pink.c
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ac2pink.c $(LIBS) -o $(BDIR)/ac2pink
+
+$(BDIR)/any2complex:	$(CDIR)/any2complex.c $(IDIR)/mcimage.h $(OBJ_COMMON)
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/any2complex.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/any2complex
 
 $(BDIR)/bmp2ppm:	$(CDIR)/bmp2ppm.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/bmp2ppm.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/bmp2ppm

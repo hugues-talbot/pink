@@ -62,7 +62,7 @@ int32_t main(int argc, char* argv[])
 	{
 		if(argc!=10)
 		{
-			fprintf(stderr, "usage: %s\n", argv[0], USAGE);
+			fprintf(stderr, "usage: %s %s\n", argv[0], USAGE);
 			exit(1);
 		}
 

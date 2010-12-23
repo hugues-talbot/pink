@@ -73,18 +73,18 @@ struct xvimage *allocGAimage(
   case VFF_TYP_GABYTE: if(d == 1) ts = 2; else ts = 3; break;      /* cas d'une image d'arete en 2D, chaque pixel a 2 aretes */
   case VFF_TYP_GAFLOAT: if(d == 1) ts = 2*sizeof(float); else ts = 3*sizeof(float); break;
   case VFF_TYP_GADOUBLE: if(d == 1) ts = 2*sizeof(double); else ts = 3*sizeof(float); break;
-  default: fprintf(stderr,"%s() : bad data type, ne gère que les GAs %d\n", F_NAME, t);
+  default: fprintf(stderr,"%s: bad data type, ne gère que les GAs %d\n", F_NAME, t);
     return NULL;
   } /* switch (t) */
 
   g = (struct xvimage *)malloc(sizeof(struct xvimage));
   if (g == NULL)
-  {   fprintf(stderr,"%s() : malloc failed (%lud bytes)\n", F_NAME, sizeof(struct xvimage));
+  {   fprintf(stderr,"%s: malloc failed (%d bytes)\n", F_NAME, sizeof(struct xvimage));
       return NULL;
   }
   g->image_data = malloc((N*ts-1));
   if (g->image_data == NULL) {
-    fprintf(stderr,"%s() : malloc failed (%d bytes)\n", F_NAME, ((N*ts-1)));
+    fprintf(stderr,"%s: malloc failed (%d bytes)\n", F_NAME, ((N*ts-1)));
     return NULL;
   }
 
@@ -93,7 +93,7 @@ struct xvimage *allocGAimage(
   {
     g->name = (char *)malloc(strlen(name)+1);
     if (g->name == NULL)
-    {   fprintf(stderr,"%s() : malloc failed for name\n", F_NAME);
+    {   fprintf(stderr,"%s: malloc failed for name\n", F_NAME);
         return NULL;
     }
     strcpy((char *)(g->name), name);
@@ -173,7 +173,7 @@ void writerawGAimage(struct xvimage * image, char *filename)
     }
     break;
   default:
-    fprintf(stderr,"%s() : bad datatype, ne traite que les GAs : %d\n", F_NAME, datatype(image));
+    fprintf(stderr,"%s: bad datatype, ne traite que les GAs : %d\n", F_NAME, datatype(image));
     exit(0);
   }//switch
 
@@ -530,14 +530,14 @@ struct GA4d *allocGA4d(
   struct GA4d *g;
   g = (struct GA4d *)malloc(sizeof(struct GA4d) - 1 + (N * 4));
   if (g == NULL)
-  {   fprintf(stderr,"%s() : malloc failed (%lud bytes)\n", F_NAME, sizeof(struct xvimage) - 1 + (N * 4));
+  {   fprintf(stderr,"%s: malloc failed (%d bytes)\n", F_NAME, sizeof(struct xvimage) - 1 + (N * 4));
       return NULL;
   }
   if (name != NULL)
   {
     g->name = (char *)malloc(strlen(name)+1);
     if (g->name == NULL)
-    {   fprintf(stderr,"%s() : malloc failed for name\n", F_NAME);
+    {   fprintf(stderr,"%s: malloc failed for name\n", F_NAME);
         return NULL;
     }
     strcpy((char *)(g->name), name);

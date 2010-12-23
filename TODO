@@ -7,3 +7,7 @@ mcube Has to be backported from mcube_tmp
 cadre can be replaced with functions:
 I=pink.cpp.frame(pink.cpp.char_image(size))
 
+MC operateur watershed : inversion 
+
+MC operateur segmentheight : mode
+

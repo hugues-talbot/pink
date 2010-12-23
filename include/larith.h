@@ -172,6 +172,11 @@ extern int32_t lxor(
         struct xvimage *image1,
         struct xvimage *image2
 );
+
+extern int32_t lmodulus(
+	struct xvimage * image
+);
+
 #ifdef __cplusplus
 }
 #endif

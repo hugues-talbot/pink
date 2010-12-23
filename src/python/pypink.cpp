@@ -403,7 +403,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     genball,
     pink::genball,
     ( arg("radius"), arg("dimension")=2 ),
-    "Generates a discreet eucledian ball with given radius and dimensions."
+    "Generates a discrete Euclidean ball with given radius and dimensions."
     );
 
   def(
@@ -435,7 +435,22 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     doc__extractplane__c__
     );
     
-    
+// fonctions ajoutées par Michel
+
+  def(
+    "segmentheight",
+    &make_function< char_image, int, int, int, &lsegmentheight >,
+    ( arg("image"), arg("connexity"), arg("height"), arg("mode") ),
+    doc__segmentheight__c__
+    );
+
+  def(
+    "segmentarea",
+    &make_function< char_image, int, int, int, &lsegmentarea >,
+    ( arg("image"), arg("connexity"), arg("area"), arg("mode") ),
+    doc__segmentarea__c__
+    );
+
 //   def( "cpp_circle_tangent", &pink::gsl::circle_tangent,
 //        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),
 //        "This function estimates the derivativ of the function given by points. It "

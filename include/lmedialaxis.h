@@ -40,8 +40,8 @@ extern int32_t lmedialaxis_lmedialaxisbin(struct xvimage *f, int32_t connex);
 extern int32_t lmedialaxis_lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia);
 extern int32_t lmedialaxis_lbisector_talbot(struct xvimage * image, struct xvimage *angles);
 extern int32_t lmedialaxis_lmedax_Remy_Thiel(struct xvimage *ImageDist, struct xvimage *ImageMedial);
-extern int32_t lmedialaxis_llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda);
-extern int32_t lmedialaxis_llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct xvimage *lambda);
+extern int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda);
+extern int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct xvimage *lambda);
 #ifdef __cplusplus
 }
 #endif

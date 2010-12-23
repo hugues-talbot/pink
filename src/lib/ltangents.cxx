@@ -421,7 +421,9 @@ printf("xp=%d zp=%d\n", xp, zp);
     }
   }
 
-  delete pointsxy, pointsyz, pointsxz;
+  delete pointsxy;
+  delete pointsyz;
+  delete pointsxz;
   return;
 } // ExtractDSSs3D()
 

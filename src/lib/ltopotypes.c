@@ -293,10 +293,10 @@ int32_t lt6pp(struct xvimage * image)
 } /* lt6pp() */
 
 /* ==================================== */
-int32_t lmctopo3d_t26pp(struct xvimage * image)
+int32_t ltopotypes_t26pp(struct xvimage * image)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lmctopo3d_t26pp"
+#define F_NAME "ltopotypes_t26pp"
 {
   int32_t i, j, k;
   struct xvimage * temp;
@@ -352,7 +352,7 @@ int32_t lmctopo3d_t26pp(struct xvimage * image)
   mctopo3d_termine_topo3d();
   freeimage(temp);
   return 1;
-} /* lmctopo3d_t26pp() */
+} /* ltopotypes_t26pp() */
 
 /* ==================================== */
 int32_t lalpha(struct xvimage * image, int32_t connex, char sign)

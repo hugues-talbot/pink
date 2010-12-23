@@ -1,4 +1,4 @@
-all: refman.dvi
+all: clean refman.dvi
 
 ps: refman.ps
 
@@ -36,4 +36,4 @@ refman_2on1.pdf: refman_2on1.ps
 	ps2pdf refman_2on1.ps refman_2on1.pdf
 
 clean:
-	rm -f *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out *.pdf
+	rm -f *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out refman.pdf

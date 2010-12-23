@@ -73,7 +73,7 @@ extern void RbtFlush(
 extern int32_t mcrbt_RbtVide(
   Rbt * T);
 
-extern void RbtTermine(
+extern void mcrbt_RbtTermine(
   Rbt * T);
 
 extern void RbtPrint(

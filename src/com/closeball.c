@@ -53,7 +53,7 @@ The distance used depends on the optional parameter \b dist (default is 0) :
 
 \warning The input image \b in.pgm must be a binary image. No test is done.
 
-<B>Types supported:</B> byte 2D, byte 3D
+<B>Types supported:</B> binary byte 2D, byte 3D
 
 <B>Category:</B> morpho
 \ingroup  morpho

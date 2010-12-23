@@ -107,35 +107,45 @@ int32_t lpoint(struct xvimage * image1, int32_t x, int32_t y, int32_t z, float v
   return 1;
 } // lpoint()
 
+#define DEBUG
 /* ==================================== */
 void lshowpoint(struct xvimage * image1, int32_t x, int32_t y, int32_t z)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lshowpoint"
 {
-  int32_t rs, cs, d, n;
+  int32_t rs, cs, ds, ps;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  n = rs * cs;
+  ds = depth(image1);
+  ps = rs * cs;
   
   if (datatype(image1) == VFF_TYP_1_BYTE)
   {
     uint8_t *pt1 = UCHARDATA(image1);
-    printf("%d\n", pt1[z * n + y * rs + x]);
+#ifdef DEBUG
+    printf("rs=%d cs=%d ds=%d type=byte x=%d y=%d z=%d\n", rs, cs, ds, x, y, z);
+#endif
+    printf("%d\n", pt1[z * ps + y * rs + x]);
   }
   else
   if (datatype(image1) == VFF_TYP_4_BYTE)
   {
     int32_t *pt1 = SLONGDATA(image1);
-    printf("%ld\n", (long int)pt1[z * n + y * rs + x]);
+#ifdef DEBUG
+  printf("rs=%d cs=%d ds=%d type=long x=%d y=%d z=%d\n", rs, cs, ds, x, y, z);
+#endif
+    printf("%ld\n", (long int)pt1[z * ps + y * rs + x]);
   }
   else
   if (datatype(image1) == VFF_TYP_FLOAT)
   {
     float *pt1 = FLOATDATA(image1);
-    printf("%g\n", pt1[z * n + y * rs + x]);
+#ifdef DEBUG
+  printf("rs=%d cs=%d ds=%d type=float x=%d y=%d z=%d\n", rs, cs, ds, x, y, z);
+#endif
+    printf("%g\n", pt1[z * ps + y * rs + x]);
   }
   else
   {

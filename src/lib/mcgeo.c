@@ -138,7 +138,7 @@ double cosangle(mcgeo_point p, mcgeo_point q, mcgeo_point r)
 } /* cosangle() */
 
 /* ==================================== */
-double direction(mcgeo_point p1, mcgeo_point p2, mcgeo_point p3)
+static double direction(mcgeo_point p1, mcgeo_point p2, mcgeo_point p3)
 /* ==================================== */
 /* calcule le produit en croix (p3-p1) x (p2-p1) */
 {

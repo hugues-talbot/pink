@@ -39,7 +39,7 @@ extern "C" {
 /* prototype for lwarp.c */
 /* ============== */
 
-extern int32_t lwarp(
+extern int32_t lwarp_lwarp(
   struct xvimage *in, 
   triangle *ts, 
   triangle *td, 

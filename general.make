@@ -23,6 +23,7 @@ $(BDIR)/max \
 $(BDIR)/max1 \
 $(BDIR)/min \
 $(BDIR)/min1 \
+$(BDIR)/modulus \
 $(BDIR)/moyenne \
 $(BDIR)/mult \
 $(BDIR)/normalize \
@@ -42,6 +43,7 @@ CONVERT=\
 $(BDIR)/2elisp \
 $(BDIR)/2latex \
 $(BDIR)/ac2pink \
+$(BDIR)/any2complex \
 $(BDIR)/bmp2ppm \
 $(BDIR)/bmp2pgm \
 $(BDIR)/byte2float \
@@ -512,21 +514,6 @@ TABLES=\
 $(PINK)/src/tables/SimpleTable \
 $(PINK)/src/tables/mhlut
 
-INTERACTIF=\
-$(BDIR)/segment \
-$(BDIR)/segmentc \
-$(BDIR)/segment3di \
-$(BDIR)/segment3dic \
-$(BDIR)/segmentnumi \
-$(BDIR)/segmentnumic \
-$(BDIR)/meshwarp \
-$(BDIR)/click2d \
-$(BDIR)/click3d \
-$(BDIR)/seuili \
-$(BDIR)/visu3d \
-$(BDIR)/blob \
-$(BDIR)/profil
-
 TRASH=\
 $(BDIR)/erosfast \
 $(BDIR)/erosfast3d \
@@ -646,6 +633,9 @@ $(BDIR)/min:	$(CDIR)/min.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(OD
 $(BDIR)/min1:	$(CDIR)/min1.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/min1.c $(OBJ_COMMON) $(ODIR)/larith.o $(LIBS) -o $(BDIR)/min1
 
+$(BDIR)/modulus:	$(CDIR)/modulus.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/modulus.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/modulus
+
 $(BDIR)/moyenne:	$(CDIR)/moyenne.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/moyenne.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/moyenne
 
@@ -699,6 +689,9 @@ $(BDIR)/2latex:	$(CDIR)/2latex.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 
 $(BDIR)/ac2pink:	$(CDIR)/ac2pink.c
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ac2pink.c $(LIBS) -o $(BDIR)/ac2pink
+
+$(BDIR)/any2complex:	$(CDIR)/any2complex.c $(IDIR)/mcimage.h $(OBJ_COMMON)
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/any2complex.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/any2complex
 
 $(BDIR)/bmp2ppm:	$(CDIR)/bmp2ppm.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/bmp2ppm.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/bmp2ppm
@@ -1068,20 +1061,8 @@ $(BDIR)/nbcomp:	$(CDIR)/nbcomp.c $(IDIR)/mcimage.h $(IDIR)/llabelplateaux.h $(ID
 $(BDIR)/propgeo:	$(CDIR)/propgeo.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcindic.h $(IDIR)/mclifo.h $(IDIR)/mcprobas.h $(IDIR)/lpropgeo.h  $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(ODIR)/mcprobas.o $(ODIR)/lpropgeo.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/propgeo.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lpropgeo.o $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(ODIR)/mcprobas.o $(LIBS) -o $(BDIR)/propgeo
 
-$(BDIR)/segment:	$(CDIR)/segment.c $(IDIR)/mcimage.h $(IDIR)/llabelextrema.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcxbib.h $(IDIR)/lsegment.h $(OBJ_COMMON) $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcxbib.o $(ODIR)/lsegment.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segment.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcxbib.o $(ODIR)/lsegment.o $(XLIB) $(LIBS) -o $(BDIR)/segment
-
-$(BDIR)/segmentc:	$(CDIR)/segment.c $(IDIR)/mcimage.h $(IDIR)/llabelextrema.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcxbib.h $(IDIR)/lsegment.h $(OBJ_COMMON) $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcxbib.o $(ODIR)/lsegmentc.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segment.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcxbib.o $(ODIR)/lsegmentc.o $(XLIB) $(LIBS) -o $(BDIR)/segmentc
-
 $(BDIR)/segment3d:	$(CDIR)/segment3d.c $(IDIR)/mcimage.h $(IDIR)/llabelextrema.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/lsegment3d.h $(OBJ_COMMON) $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegment3d.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segment3d.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegment3d.o $(LIBS) -o $(BDIR)/segment3d
-
-$(BDIR)/segment3di:	$(CDIR)/segment3di.c $(IDIR)/mcxbib.h $(IDIR)/mcimage.h $(IDIR)/llabelextrema.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/lsegment.h $(ODIR)/mcxbib.o $(OBJ_COMMON) $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegment3di.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segment3di.c $(ODIR)/mcxbib.o $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegment3di.o $(XLIB) $(LIBS) -o $(BDIR)/segment3di
-
-$(BDIR)/segment3dic:	$(CDIR)/segment3di.c $(IDIR)/mcxbib.h $(IDIR)/mcimage.h $(IDIR)/llabelextrema.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/lsegment.h $(ODIR)/mcxbib.o $(OBJ_COMMON) $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegment3dic.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segment3di.c $(ODIR)/mcxbib.o $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/llabelextrema.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegment3dic.o $(XLIB) $(LIBS) -o $(BDIR)/segment3dic
 
 $(BDIR)/segmentarea:	$(CDIR)/segmentarea.c $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfahsalembier.h $(IDIR)/mccodimage.h $(IDIR)/lattribarea.h $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lattribarea.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segmentarea.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lattribarea.o $(LIBS) -o $(BDIR)/segmentarea
@@ -1091,12 +1072,6 @@ $(BDIR)/segmentheight:	$(CDIR)/segmentheight.c $(IDIR)/mcimage.h $(IDIR)/mclifo.
 
 $(BDIR)/segmentnum:	$(CDIR)/segmentnum.c $(IDIR)/mcimage.h $(IDIR)/llabelplateaux.h $(IDIR)/mclifo.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/lsegmentnum.h $(OBJ_COMMON) $(ODIR)/llabelplateaux.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegmentnum.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segmentnum.c $(OBJ_COMMON) $(ODIR)/llabelplateaux.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegmentnum.o $(LIBS) -o $(BDIR)/segmentnum
-
-$(BDIR)/segmentnumi:	$(CDIR)/segmentnumi.c $(IDIR)/mcxbib.h $(IDIR)/mcimage.h $(IDIR)/llabelplateaux.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/lsegment.h $(ODIR)/mcxbib.o $(OBJ_COMMON) $(ODIR)/llabelplateaux.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegmentnumi.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segmentnumi.c $(ODIR)/mcxbib.o $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/llabelplateaux.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegmentnumi.o $(XLIB) $(LIBS) -o $(BDIR)/segmentnumi
-
-$(BDIR)/segmentnumic:	$(CDIR)/segmentnumi.c $(IDIR)/mcxbib.h $(IDIR)/mcimage.h $(IDIR)/llabelplateaux.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/lsegment.h $(ODIR)/mcxbib.o $(OBJ_COMMON) $(ODIR)/llabelplateaux.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegmentnumic.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segmentnumi.c $(ODIR)/mcxbib.o $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/llabelplateaux.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccbt.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lsegmentnumic.o $(XLIB) $(LIBS) -o $(BDIR)/segmentnumic
 
 $(BDIR)/segmentvol:	$(CDIR)/segmentvol.c $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h $(IDIR)/mcfahsalembier.h $(IDIR)/mccodimage.h $(IDIR)/lattribvol.h $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lattribvol.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/segmentvol.c $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/mccodimage.o $(ODIR)/lattribvol.o $(LIBS) -o $(BDIR)/segmentvol
@@ -1772,9 +1747,6 @@ $(BDIR)/matchrect:	$(CDIR)/matchrect.c $(IDIR)/lgeo.h $(IDIR)/mcgeo.h $(IDIR)/mc
 $(BDIR)/maxdiameter:	$(CDIR)/maxdiameter.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/lmaxdiameter.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(ODIR)/lmaxdiameter.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/maxdiameter.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(ODIR)/lmaxdiameter.o $(LIBS) -o $(BDIR)/maxdiameter
 
-$(BDIR)/meshwarp:	$(CDIR)/meshwarp.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcgeo.h $(IDIR)/mcxbib.h $(IDIR)/lmeshwarp.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcgeo.o $(ODIR)/mcxbib.o $(ODIR)/lvoronoi.o $(ODIR)/lmeshwarp.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/meshwarp.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcgeo.o $(ODIR)/mcxbib.o $(ODIR)/lvoronoi.o $(ODIR)/lmeshwarp.o $(XLIB) $(LIBS) -o $(BDIR)/meshwarp
-
 $(BDIR)/moments:	$(CDIR)/moments.c $(IDIR)/lmoments.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/llabelextrema.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mclin.o $(ODIR)/llabelextrema.o $(ODIR)/lmoments.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/moments.c $(ODIR)/lmoments.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mclin.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/moments
 
@@ -2003,12 +1975,6 @@ $(BDIR)/bruite:	$(CDIR)/bruite.c $(IDIR)/mcimage.h $(IDIR)/mcprobas.h $(OBJ_COMM
 $(BDIR)/colorize:	$(CDIR)/colorize.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/colorize.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/colorize
 
-$(BDIR)/click2d:	$(CDIR)/click2d.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcxbib.h $(IDIR)/mclifo.h $(IDIR)/lclick.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcxbib.o $(ODIR)/mclifo.o $(ODIR)/lclick.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/click2d.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcxbib.o $(ODIR)/mclifo.o $(ODIR)/lclick.o $(XLIB) $(LIBS) -o $(BDIR)/click2d
-
-$(BDIR)/click3d:	$(CDIR)/click3d.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcxbib.h $(IDIR)/mclifo.h $(IDIR)/lclick.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcxbib.o $(ODIR)/mclifo.o $(ODIR)/lclick.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/click3d.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcxbib.o $(ODIR)/mclifo.o $(ODIR)/lclick.o $(XLIB) $(LIBS) -o $(BDIR)/click3d
-
 $(BDIR)/interpolate:	$(CDIR)/interpolate.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(OBJ_COMMON) $(ODIR)/mccodimage.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/interpolate.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/interpolate
 
@@ -2045,9 +2011,6 @@ $(BDIR)/randpoints:	$(CDIR)/randpoints.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)
 $(BDIR)/randrgb:	$(CDIR)/randrgb.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/randrgb.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/randrgb
 
-$(BDIR)/seuili:	$(CDIR)/seuili.c $(IDIR)/mcimage.h $(IDIR)/mcxbib.h $(IDIR)/lseuili.h $(OBJ_COMMON) $(ODIR)/mcxbib.o $(ODIR)/lseuili.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/seuili.c $(OBJ_COMMON) $(ODIR)/mcxbib.o $(ODIR)/lseuili.o $(XLIB) $(LIBS) -o $(BDIR)/seuili
-
 $(BDIR)/shake:	$(CDIR)/shake.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/shake.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/shake
 
@@ -2060,14 +2023,9 @@ $(BDIR)/showpoint:	$(CDIR)/showpoint.c $(IDIR)/lpoint.h $(IDIR)/mcimage.h $(OBJ_
 $(BDIR)/skew:	$(CDIR)/skew.c $(IDIR)/mcimage.h $(IDIR)/mcutil.h $(IDIR)/lskew.h $(OBJ_COMMON) $(ODIR)/lskew.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skew.c $(OBJ_COMMON) $(ODIR)/lskew.o $(LIBS) -o $(BDIR)/skew
 
-$(BDIR)/visu3d:	$(CDIR)/visu3d.c $(IDIR)/mcimage.h $(IDIR)/mcxbib.h $(OBJ_COMMON) $(ODIR)/mcxbib.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/visu3d.c $(OBJ_COMMON) $(ODIR)/mcxbib.o $(XLIB) $(LIBS) -o $(BDIR)/visu3d
-
 # *********************************
 # EXPERIMENTAL
 # *********************************
-$(BDIR)/blob:	$(CDIR)/blob.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcxbib.h $(IDIR)/mclifo.h $(IDIR)/lblob.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcxbib.o $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/mcprobas.o $(ODIR)/lblob.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/blob.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcxbib.o $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/lblob.o $(ODIR)/mcprobas.o $(XLIB) $(LIBS) -o $(BDIR)/blob
 
 $(BDIR)/contours:	$(CDIR)/contours.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/llabelextrema.h $(IDIR)/lcontours.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mclifo.o $(ODIR)/llabelextrema.o $(ODIR)/lcontours.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/contours.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/lcontours.o $(ODIR)/llabelextrema.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/contours
@@ -2080,9 +2038,6 @@ $(BDIR)/jones:	$(CDIR)/jones.c $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mcindi
 
 $(BDIR)/levialdi:	$(CDIR)/levialdi.c $(IDIR)/mctopo.h $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/llevialdi.h $(ODIR)/mctopo.o $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/llevialdi.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/levialdi.c $(ODIR)/mctopo.o $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/llevialdi.o $(LIBS) -o $(BDIR)/levialdi
-
-$(BDIR)/profil:	$(CDIR)/profil.c $(IDIR)/mcimage.h $(IDIR)/mcxbib.h $(IDIR)/lprofil.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mcxbib.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(ODIR)/lprofil.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/profil.c $(OBJ_COMMON) $(ODIR)/mcxbib.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(ODIR)/lprofil.o $(XLIB) $(LIBS) -o $(BDIR)/profil
 
 $(BDIR)/reconsplateaux:	$(CDIR)/reconsplateaux.c $(IDIR)/mccodimage.h $(IDIR)/mcimage.h $(IDIR)/mcindic.h $(IDIR)/mclifo.h $(IDIR)/lreconsplateaux.h $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(ODIR)/lreconsplateaux.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/reconsplateaux.c $(ODIR)/lreconsplateaux.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/reconsplateaux
@@ -2233,12 +2188,6 @@ $(ODIR)/lsaliency.o:	$(LDIR)/lsaliency.c $(IDIR)/lsaliency.h
 
 $(ODIR)/lsegreconsheight.o:	$(LDIR)/lsegreconsheight.c $(LDIR)/lattrib.h $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mclifo.h $(IDIR)/mcfahsalembier.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lsegreconsheight.c -o $(ODIR)/lsegreconsheight.o
-
-$(ODIR)/lsegment.o:	$(LDIR)/lsegment.c $(IDIR)/mccodimage.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mcindic.h $(IDIR)/llabelextrema.h $(IDIR)/mcxbib.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lsegment.c -o $(ODIR)/lsegment.o
-
-$(ODIR)/lsegmentc.o:	$(LDIR)/lsegment.c $(IDIR)/mccodimage.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mcindic.h $(IDIR)/llabelextrema.h $(IDIR)/mcxbib.h
-	$(CC) -c $(CCFLAGS) -DCOLOR -I$(IDIR) $(LDIR)/lsegment.c -o $(ODIR)/lsegmentc.o
 
 $(ODIR)/lsegment3d.o:	$(LDIR)/lsegment3d.c $(IDIR)/mccodimage.h $(IDIR)/mcfah.h $(IDIR)/mccbt.h $(IDIR)/mcindic.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lsegment3d.c -o $(ODIR)/lsegment3d.o
@@ -2434,9 +2383,6 @@ $(ODIR)/llenoir.o:	$(LDIR)/llenoir.c $(IDIR)/mccodimage.h $(IDIR)/llenoir.h
 $(ODIR)/lmaxdiameter.o:	$(LDIR)/lmaxdiameter.c $(IDIR)/mccodimage.h $(IDIR)/mctopo.h 
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lmaxdiameter.c -o $(ODIR)/lmaxdiameter.o
 
-$(ODIR)/lmeshwarp.o:	$(LDIR)/lmeshwarp.c $(IDIR)/mccodimage.h $(IDIR)/mcimage.h $(IDIR)/mctopo.h $(IDIR)/mcgeo.h $(IDIR)/mcxbib.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) -I$(XINCL) $(LDIR)/lmeshwarp.c -o $(ODIR)/lmeshwarp.o
-
 $(ODIR)/lmoments.o:	$(LDIR)/lmoments.c $(IDIR)/mccodimage.h $(IDIR)/mclifo.h $(IDIR)/llabelextrema.h $(IDIR)/lmoments.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lmoments.c -o $(ODIR)/lmoments.o
 
@@ -2445,9 +2391,6 @@ $(ODIR)/loffset.o:	$(LDIR)/loffset.c $(IDIR)/mccodimage.h
 
 $(ODIR)/lpoint.o:	$(LDIR)/lpoint.c $(IDIR)/lpoint.h $(IDIR)/mccodimage.h $(IDIR)/mcutil.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lpoint.c -o $(ODIR)/lpoint.o
-
-$(ODIR)/lprofil.o:	$(LDIR)/lprofil.c $(IDIR)/mccodimage.h $(IDIR)/mcxbib.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lprofil.c -o $(ODIR)/lprofil.o
 
 $(ODIR)/lrotations.o:	$(LDIR)/lrotations.c $(IDIR)/mccodimage.h $(IDIR)/mcimage.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lrotations.c -o $(ODIR)/lrotations.o
@@ -2521,9 +2464,6 @@ $(ODIR)/lmeanfilter.o:	$(LDIR)/lmeanfilter.c $(IDIR)/mccodimage.h $(IDIR)/lmeanf
 # DIVERS
 # *********************************
 
-$(ODIR)/lclick.o:	$(LDIR)/lclick.c $(IDIR)/mccodimage.h $(IDIR)/mcxbib.h $(IDIR)/lclick.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) -I$(XINCL) $(LDIR)/lclick.c -o $(ODIR)/lclick.o
-
 $(ODIR)/lgradill.o:	$(LDIR)/lgradill.c $(IDIR)/mccodimage.h $(IDIR)/mcutil.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lgradill.c -o $(ODIR)/lgradill.o
 
@@ -2542,18 +2482,12 @@ $(ODIR)/lselndg.o:	$(LDIR)/lselndg.c $(IDIR)/mccodimage.h
 $(ODIR)/lseuil.o:	$(LDIR)/lseuil.c $(IDIR)/mccodimage.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lseuil.c -o $(ODIR)/lseuil.o
 
-$(ODIR)/lseuili.o:	$(LDIR)/lseuili.c $(IDIR)/mccodimage.h  $(IDIR)/mcxbib.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) -I$(XINCL) $(LDIR)/lseuili.c -o $(ODIR)/lseuili.o
-
 $(ODIR)/lskew.o:	$(LDIR)/lskew.c $(IDIR)/mccodimage.h $(IDIR)/mcutil.h $(IDIR)/lskew.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lskew.c -o $(ODIR)/lskew.o
 
 # *********************************
 # EXPERIMENTAL
 # *********************************
-
-$(ODIR)/lblob.o:	$(LDIR)/lblob.c $(IDIR)/mccodimage.h $(IDIR)/mcxbib.h $(IDIR)/mctopo.h $(IDIR)/mclifo.h $(IDIR)/lblob.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) -I$(XINCL) $(LDIR)/lblob.c -o $(ODIR)/lblob.o
 
 $(ODIR)/lcontours.o:	$(LDIR)/lcontours.c $(IDIR)/mccodimage.h $(IDIR)/mclifo.h $(IDIR)/mctopo.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lcontours.c -o $(ODIR)/lcontours.o
@@ -2701,9 +2635,6 @@ $(ODIR)/mctree.o:	$(LDIR)/mctree.c $(IDIR)/mctree.h
 
 $(ODIR)/mcunionfind.o:	$(LDIR)/mcunionfind.c $(IDIR)/mcunionfind.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcunionfind.c -o $(ODIR)/mcunionfind.o
-
-$(ODIR)/mcxbib.o:	$(LDIR)/mcxbib.c $(IDIR)/mcxbib.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) -I$(XINCL) $(LDIR)/mcxbib.c -o $(ODIR)/mcxbib.o
 
 # Andre Adds:
 # ===============================================================

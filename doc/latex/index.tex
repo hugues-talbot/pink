@@ -1,86 +1,93 @@
-\section{Avertissement}\label{warning}
+\section{Avertissement}\label{index_warning}
 Copyright ESIEE (2009)
 
 {\tt m.couprie@esiee.fr}
 
 This software is an image processing library whose purpose is to be used primarily for research and teaching.
 
-This software is governed by the Ce\-CILL license under French law and abiding by the rules of distribution of free software. You can use, modify and/ or redistribute the software under the terms of the Ce\-CILL license as circulated by CEA, CNRS and INRIA at the following URL \char`\"{}http://www.cecill.info\char`\"{}.
+This software is governed by the CeCILL license under French law and abiding by the rules of distribution of free software. You can use, modify and/ or redistribute the software under the terms of the CeCILL license as circulated by CEA, CNRS and INRIA at the following URL \char`\"{}http://www.cecill.info\char`\"{}.
 
 As a counterpart to the access to the source code and rights to copy, modify and redistribute granted by the license, users are provided only with a limited warranty and the software's author, the holder of the economic rights, and the successive licensors have only limited liability.
 
 In this respect, the user's attention is drawn to the risks associated with loading, using, modifying and/or developing or reproducing the software by the user in light of its specific status of free software, that may mean that it is complicated to manipulate, and that also therefore means that it is reserved for developers and experienced professionals having in-depth computer knowledge. Users are therefore encouraged to load and test the software's suitability as regards their requirements in conditions enabling the security of their systems and/or data to be ensured and, more generally, to use and operate it in the same conditions as regards security.
 
-The fact that you are presently reading this means that you have had knowledge of the Ce\-CILL license and that you accept its terms.\section{Contributeurs}\label{contributors}
+The fact that you are presently reading this means that you have had knowledge of the CeCILL license and that you accept its terms.\section{Contributeurs}\label{index_contributors}
 Michel Couprie\par
  Laurent Najman: localextrema, saliency\par
  Hugues Talbot: fmm \par
- Jean Cousty: redt 3d (reverse euclidean distance transform - algo de D. Coeurjolly), watershedthin, op\'{e}rateurs sur les graphes d'ar\^{e}tes (GA), for\^{e}ts de poids min (MSF), waterfall, recalagerigide\_\-translateplane\par
+ Jean Cousty: redt 3d (reverse euclidean distance transform - algo de D. Coeurjolly), watershedthin, opérateurs sur les graphes d'arêtes (GA), forêts de poids min (MSF), waterfall, recalagerigide\_\-translateplane\par
  Xavier Daragon: dist, distc (distance euclidienne quadratique 3D)\par
- Andr\'{e} Vital Saude: radialopening, divers scripts tcl, hma\par
+ André Vital Saude: radialopening, divers scripts tcl, hma\par
  Nicolas Combaret: toposhrinkgray, ptselectgray\par
  John Chaussard: lballincl, cropondisk, shrinkondisk\par
  Christophe Doublier: zoomint\par
  Hildegard Koehler: lintophat\par
- C\'{e}dric All\`{e}ne: gettree, histolisse, labeltree, nbcomp, pgm2vtk, seuilauto\par
+ Cédric Allène: gettree, histolisse, labeltree, nbcomp, pgm2vtk, seuilauto\par
  Gu Jun: maxdiameter\par
- S\'{e}bastien Couprie: mcsplines.c$<$br$>$ Rita Zrour: medialaxis (axe m\'{e}dian euclidien exact - algo de R\'{e}my-Thiel), dist, distc (distance euclidienne quadratique exacte - algo de Saito-Toriwaki)\par
+ Sébastien Couprie: mcsplines.c\par
+ Rita Zrour: medialaxis (axe médian euclidien exact - algo de Rémy-Thiel), dist, distc (distance euclidienne quadratique exacte - algo de Saito-Toriwaki)\par
  Laurent Mercier: gestion d'un masque dans delaunay\par
 
 
 CODE UNDER FREE LICENCE INCLUDED
 
-David Coeurjolly: lvoronoilabelling.c$<$br$>$ Dario Bressanini: mcpowell.c$<$br$>$ Andrew W. Fitzgibbon: lbresen.c$<$br$>$ Lilian Buzer: lbdigitalline.cxx\section{Installation}\label{install}
-\subsection{Linux}\label{linux}
-Pour installer la biblioth\`{e}que sous Linux, tapez: 
+David Coeurjolly: lvoronoilabelling.c\par
+ Dario Bressanini: mcpowell.c\par
+ Andrew W. Fitzgibbon: lbresen.c\par
+ Lilian Buzer: lbdigitalline.cxx\section{Installation}\label{index_install}
+\subsection{Linux}\label{index_linux}
+Pour installer la bibliothèque sous Linux, tapez: 
 
 \footnotesize\begin{verbatim}
 tar zxvf pink.tgz
 mv Pinktmp Pink
 cd Pink
 makelin
-\end{verbatim}\normalsize
+\end{verbatim}
+\normalsize
 
 
-Les ex\'{e}cutables se trouvent dans Pink/linux/bin, les scripts dans Pink/scripts et dans Pink/tcl Mettez \`{a} jour votre variable \$path en cons\'{e}quence. Par exemple (en csh):
+Les exécutables se trouvent dans Pink/linux/bin, les scripts dans Pink/scripts et dans Pink/tcl Mettez à jour votre variable \$path en conséquence. Par exemple (en csh):
 
 
 
 \footnotesize\begin{verbatim}
 setenv PINK ~coupriem/Pink
 set path=( $path $PINK/linux/bin $PINK/scripts $PINK/tcl )
-\end{verbatim}\normalsize
-\subsection{Windows}\label{windows}
-Installez tout d'abord {\tt Min\-GW} (Minimalist GNU For Windows), ainsi que le programme \char`\"{}make\char`\"{} de la distribution Min\-GW (installation s\'{e}par\'{e}e).
+\end{verbatim}
+\normalsize
+\subsection{Windows}\label{index_windows}
+Installez tout d'abord {\tt MinGW} (Minimalist GNU For Windows), ainsi que le programme \char`\"{}make\char`\"{} de la distribution MinGW (installation séparée).
 
-D\'{e}compressez l'archive pink.tgz (par exemple avec Win\-Zip ou Win\-Rar).
+Décompressez l'archive pink.tgz (par exemple avec WinZip ou WinRar).
 
 Modifiez selon votre configuration, les fichiers \char`\"{}mgw.make\char`\"{} et \char`\"{}makemgw.bat\char`\"{}.
 
-Ouvrez une fen\^{e}tre DOS et mettez-vous dans le r\'{e}pertoire principal de Pink.
+Ouvrez une fenêtre DOS et mettez-vous dans le répertoire principal de Pink.
 
 tapez: makemgw
 
-Les ex\'{e}cutables se trouvent dans Pink/bin, mettez \`{a} jour votre variable PATH en cons\'{e}quence. Par exemple :
+Les exécutables se trouvent dans Pink/bin, mettez à jour votre variable PATH en conséquence. Par exemple :
 
 
 
 \footnotesize\begin{verbatim}
 set PATH=c:\Pink\bin;%PATH%
-\end{verbatim}\normalsize
+\end{verbatim}
+\normalsize
 
 
 Erreurs de compilation possibles et solutions:
 
-message d'erreur contenant \char`\"{}M\_\-PI\char`\"{} cause: version Min\-GW obsolete solution rapide: recopier le contenu du fichier Pink/tools/pinkconst.h dans le fichier Min\-GW/include/math.h
+message d'erreur contenant \char`\"{}M\_\-PI\char`\"{} cause: version MinGW obsolete solution rapide: recopier le contenu du fichier Pink/tools/pinkconst.h dans le fichier MinGW/include/math.h
 
-message d'erreur contenant \char`\"{}uint8\_\-t\char`\"{}, \char`\"{}int8\_\-t\char`\"{}, \char`\"{}uint16\_\-t\char`\"{}, etc cause: version Min\-GW obsolete solution rapide: recopier le contenu du fichier Pink/tools/pinktypes.h dans le fichier Min\-GW/include/math.h
+message d'erreur contenant \char`\"{}uint8\_\-t\char`\"{}, \char`\"{}int8\_\-t\char`\"{}, \char`\"{}uint16\_\-t\char`\"{}, etc cause: version MinGW obsolete solution rapide: recopier le contenu du fichier Pink/tools/pinktypes.h dans le fichier MinGW/include/math.h
 
-message d'erreur contenant \char`\"{}chrono\char`\"{} cause: flag de mise au point oubli\'{e} solution rapide: chercher le \char`\"{}\#define CHRONO\char`\"{} dans le fichier source et le retirer\subsection{Logiciels associ\'{e}s}\label{associes}
-Pour une utilisation optimale, les logiciels suivants doivent \^{e}tre install\'{e}s:\par
+message d'erreur contenant \char`\"{}chrono\char`\"{} cause: flag de mise au point oublié solution rapide: chercher le \char`\"{}\#define CHRONO\char`\"{} dans le fichier source et le retirer\subsection{Logiciels associés}\label{index_associes}
+Pour une utilisation optimale, les logiciels suivants doivent être installés:\par
 \par
  {\tt Doxygen}\par
- {\tt Active\-Tcl 8.3}\par
+ {\tt ActiveTcl 8.3}\par
  {\tt VTK}\par
  {\tt MPlayer}\par
  {\tt Gnuplot}\par
@@ -88,4 +95,4 @@ Pour une utilisation optimale, les logiciels suivants doivent \^{e}tre install\'
 
 
 
- Michel Couprie - Professeur - ESIEE Paris Laboratoire d'Informatique Gaspard-Monge, Universit\'{e} Paris-Est ESIEE 2, Bd Blaise Pascal - B.P. 99 93162 Noisy-Le-Grand CEDEX mail: {\tt m.couprie@esiee.fr} url: {\tt http://www.esiee.fr/$\sim$coupriem} tel: 01 45 92 66 88 fax: 01 45 92 66 99 
+ Michel Couprie - Professeur - ESIEE Paris Laboratoire d'Informatique Gaspard-Monge, Université Paris-Est ESIEE 2, Bd Blaise Pascal - B.P. 99 93162 Noisy-Le-Grand CEDEX mail: {\tt m.couprie@esiee.fr} url: {\tt http://www.esiee.fr/$\sim$coupriem} tel: 01 45 92 66 88 fax: 01 45 92 66 99 

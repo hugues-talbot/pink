@@ -285,7 +285,7 @@ int32_t showheader(char * name)
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
   struct stat fdstat;
-  int32_t rs, cs, d, nb, c, fs;
+  int32_t rs, cs, ds, nb, c, fs, es;
   char *read;
 #ifdef UNIXIO
   fd = fopen(name,"r");
@@ -312,17 +312,17 @@ int32_t showheader(char * name)
   }
   switch (buffer[1])
   {
-    case '2': printf("type: P%c (ascii byte)\n", buffer[1]); break;
-    case '3': printf("type: P%c (ascii byte rgb)\n", buffer[1]); break;
-    case '5': printf("type: P%c (raw byte)\n", buffer[1]); break;
-    case '6': printf("type: P%c (raw byte rgb)\n", buffer[1]); break;
-    case '7': printf("type: P%c (raw byte 3d - ext. MC [OBSOLETE - USE P5])\n", buffer[1]); break;
-    case '8': printf("type: P%c (raw int32_t - ext. MC)\n", buffer[1]); break;
-    case '9': printf("type: P%c (raw float - ext. MC)\n", buffer[1]); break;
-    case 'A': printf("type: P%c (ascii float - ext. LN)\n", buffer[1]); break;
-    case 'B': printf("type: P%c (ascii int32_t - ext. MC)\n", buffer[1]); break;
-    case 'C': printf("type: P%c (raw double - ext. MC)\n", buffer[1]); break;
-    case 'D': printf("type: P%c (ascii double - ext. LN)\n", buffer[1]); break;
+    case '2': printf("type: P%c (ascii byte)\n", buffer[1]); es = sizeof(int8_t); break;
+    case '3': printf("type: P%c (ascii byte rgb)\n", buffer[1]); es = sizeof(int8_t); break;
+    case '5': printf("type: P%c (raw byte)\n", buffer[1]); es = sizeof(int8_t); break;
+    case '6': printf("type: P%c (raw byte rgb)\n", buffer[1]); es = sizeof(int8_t); break;
+    case '7': printf("type: P%c (raw byte 3d - ext. MC [OBSOLETE - USE P5])\n", buffer[1]); es = sizeof(int8_t); break;
+    case '8': printf("type: P%c (raw int32_t - ext. MC)\n", buffer[1]); es = sizeof(int32_t); break;
+    case '9': printf("type: P%c (raw float - ext. MC)\n", buffer[1]); es = sizeof(float); break;
+    case 'A': printf("type: P%c (ascii float - ext. LN)\n", buffer[1]); es = sizeof(float); break;
+    case 'B': printf("type: P%c (ascii int32_t - ext. MC)\n", buffer[1]); es = sizeof(int32_t); break;
+    case 'C': printf("type: P%c (raw double - ext. MC)\n", buffer[1]); es = sizeof(double); break;
+    case 'D': printf("type: P%c (ascii double - ext. LN)\n", buffer[1]); es = sizeof(double); break;
               break;
     default:
       fprintf(stderr,"%s: invalid image format: P%c\n", F_NAME, buffer[1]);
@@ -341,19 +341,19 @@ int32_t showheader(char * name)
       printf("comment: %s", buffer+1);
   } while (!isdigit(buffer[0]));
 
-  c = sscanf(buffer, "%d %d %d %d", &rs, &cs, &d, &nb);
+  c = sscanf(buffer, "%d %d %d %d", &rs, &cs, &ds, &nb);
   if (c == 2) 
   {
     printf("size: rowsize = %d ; colsize = %d\n", rs, cs);
-    d = nb = 1;
+    ds = nb = 1;
   }
   else if (c == 3) 
   {
-    printf("size: rowsize = %d ; colsize = %d ; depth = %d\n", rs, cs, d); 
+    printf("size: rowsize = %d ; colsize = %d ; depth = %d\n", rs, cs, ds); 
     nb = 1;
   }
   else if (c == 4) 
-    printf("size: rowsize = %d ; colsize = %d ; depth = %d ; n. bands = %d\n", rs, cs, d, nb);
+    printf("size: rowsize = %d ; colsize = %d ; depth = %d ; n. bands = %d\n", rs, cs, ds, nb);
   else
   {   
     fprintf(stderr,"%s: invalid image format: cannot find image size\n", F_NAME);
@@ -362,7 +362,7 @@ int32_t showheader(char * name)
 
   c = stat(name, &fdstat); assert(c == 0);
   fs = (int32_t)fdstat.st_size;
-  printf("header size = %d\n", fs - (rs * cs * d * nb));
+  printf("header size = %d\n", fs - (es * rs * cs * ds * nb));
 
   fclose(fd);
   return 1;
@@ -809,7 +809,7 @@ void writeimage(struct xvimage * image, char *filename)
   ds = depth(image);
   np = nbands(image);
 
-  if ((rs<=25) && (cs<=25) && (ds<=25) && (np==1) &&
+  if ((rs<=25) && (cs<=25) && (ds<=25) &&// (np==1) &&
       ((datatype(image) == VFF_TYP_1_BYTE) || (datatype(image) == VFF_TYP_4_BYTE) || 
        (datatype(image) == VFF_TYP_FLOAT) || (datatype(image) == VFF_TYP_DOUBLE)))
   {
@@ -1029,7 +1029,7 @@ void writeascimage(struct xvimage * image, char *filename)
 #define F_NAME "writeascimage"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, ps, d, N, i;
+  int32_t rs, cs, ps, ds, np, N, i;
 
   fd = fopen(filename,"w");
   if (!fd)
@@ -1040,16 +1040,19 @@ void writeascimage(struct xvimage * image, char *filename)
 
   rs = rowsize(image);
   cs = colsize(image);
-  d = depth(image);
+  ds = depth(image);
+  np = nbands(image);
   ps = rs * cs;
-  N = ps * d;
+  N = ps * ds * np;
 
   if (datatype(image) == VFF_TYP_1_BYTE)
   {
     fputs("P2\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if (np > 1) fprintf(fd, "%d %d %d %d\n", rs, cs, ds, np); 
+    else if (ds > 1) fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+    else fprintf(fd, "%d %d\n", rs, cs);
     fprintf(fd, "255\n");
 
     if (N > 8000) // grandes images : pas de padding (blancs)
@@ -1075,9 +1078,11 @@ void writeascimage(struct xvimage * image, char *filename)
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
     fputs("PB\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if (np > 1) fprintf(fd, "%d %d %d %d\n", rs, cs, ds, np); 
+    else if (ds > 1) fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+    else fprintf(fd, "%d %d\n", rs, cs);
     fprintf(fd, "4294967295\n");
 
     for (i = 0; i < N; i++)
@@ -1091,9 +1096,11 @@ void writeascimage(struct xvimage * image, char *filename)
   else if (datatype(image) == VFF_TYP_FLOAT)
   {
     fputs("PA\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if (np > 1) fprintf(fd, "%d %d %d %d\n", rs, cs, ds, np); 
+    else if (ds > 1) fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+    else fprintf(fd, "%d %d\n", rs, cs);
     fprintf(fd, "1\n");
 
     for (i = 0; i < N; i++)
@@ -1107,9 +1114,11 @@ void writeascimage(struct xvimage * image, char *filename)
   else if (datatype(image) == VFF_TYP_DOUBLE)
   {
     fputs("PD\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if (np > 1) fprintf(fd, "%d %d %d %d\n", rs, cs, ds, np); 
+    else if (ds > 1) fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+    else fprintf(fd, "%d %d\n", rs, cs);
     fprintf(fd, "1\n");
 
     for (i = 0; i < N; i++)
@@ -1438,6 +1447,11 @@ struct xvimage * readimage(char *filename)
         fprintf(stderr,"%s: wrong ndgmax = %d\n", F_NAME, ndgmax);
         return(NULL);
       }
+    }
+    else if (ndgmax == 65535)
+    {
+      fprintf(stderr,"%s: short int type not supported\n", F_NAME);
+      return(NULL);
     }
     else
     {

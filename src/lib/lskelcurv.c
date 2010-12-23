@@ -756,6 +756,7 @@ static int32_t tailleptliste(SKC_pt_pcell p)
   return n;
 } /* tailleptliste() */
 
+#ifdef NOTUSED
 /* ====================================================================== */
 static int32_t tailleadjliste(SKC_adj_pcell p)
 /* ====================================================================== */
@@ -764,6 +765,7 @@ static int32_t tailleadjliste(SKC_adj_pcell p)
   for (; p != NULL; p = p->next) n++;
   return n;
 } /* tailleadjliste() */
+#endif
 
 /* ========================================== */
 int32_t lskelcurv_extractcurve(

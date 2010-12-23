@@ -36,11 +36,13 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief segmentation by filtering components on an area criterion
 
-<B>Usage:</B> segmentarea in.pgm connex area out.pgm
+<B>Usage:</B> segmentarea in.pgm connex area [m] out.pgm
 
 <B>Description:</B>
 Segmentation by selection of cross-section components, based on an area criterion. 
 Connexity = <B>connex</B> ; area threshold = <B>area</B>.
+
+Segmentation is followed by a maximization if option <B>m</B> is set.
 
 <B>Types supported:</B> byte 2d, byte 3d
 

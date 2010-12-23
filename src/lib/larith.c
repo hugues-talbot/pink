@@ -59,9 +59,11 @@ knowledge of the CeCILL license and that you accept its terms.
     lsup
     lvolume
     lxor
+    lmodulus
 */
 /* Michel Couprie - juillet 1996 */
 /* Camille Couprie - octobre 2002 (xor) */
+/* Michel Couprie - décembre 2010 (modulus) */
 
 #include <stdio.h>
 #include <stdint.h>
@@ -87,13 +89,15 @@ int32_t ladd(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
+  ds = depth(image1);
+  nb = nbands(image1);
+  N = rs * cs * ds * nb;
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     exit(0);
@@ -101,17 +105,20 @@ int32_t ladd(
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
-    for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+    pt1 = UCHARDATA(image1); pt2 = UCHARDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
       *pt1 = (uint8_t)mcmin(NDG_MAX,((int32_t)*pt1+(int32_t)*pt2));
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
-    for (PT1 = SLONGDATA(image1), PT2 = SLONGDATA(image2), i = 0; i < N; i++, PT1++, PT2++)
+    PT1 = SLONGDATA(image1); PT2 = SLONGDATA(image2);
+    for (i = 0; i < N; i++, PT1++, PT2++)
       *PT1 = *PT1 + *PT2;
   }
   else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
   {
-    for (FPT1 = FLOATDATA(image1), FPT2 = FLOATDATA(image2), i = 0; i < N; i++, FPT1++, FPT2++)
+    FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
+    for (i = 0; i < N; i++, FPT1++, FPT2++)
       *FPT1 = *FPT1 + *FPT2;
   }
   else 
@@ -134,12 +141,13 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
   uint8_t *pt1;
   int32_t *lpt1;
   float *FPT1; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
+  ds = depth(image1);
+  nb = nbands(image1);
+  N = rs * cs * ds * nb;
   
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -147,26 +155,20 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
   if (datatype(image1) == VFF_TYP_1_BYTE)
   {
     pt1 = UCHARDATA(image1);
-    for (i = 0; i < N; i++)
-    {
-      pt1[i] = (uint8_t)mcmin(NDG_MAX, mcmax(NDG_MIN, (int32_t)(pt1[i]) + constante));
-    }
+    for (i = 0; i < N; i++, pt1++)
+      *pt1 = (uint8_t)mcmin(NDG_MAX, mcmax(NDG_MIN, (int32_t)(*pt1) + constante));
   }
   else if (datatype(image1) == VFF_TYP_4_BYTE)
   {
     lpt1 = SLONGDATA(image1);
-    for (i = 0; i < N; i++)
-    {
-      lpt1[i] = (int32_t)mcmin(INT32_MAX,mcmax(INT32_MIN,(int32_t)(lpt1[i])+constante));
-    }
+    for (i = 0; i < N; i++, lpt1++)
+      *lpt1 = (int32_t)mcmin(INT32_MAX,mcmax(INT32_MIN,(int32_t)(*lpt1)+constante));
   }
   else if (datatype(image1) == VFF_TYP_FLOAT)
   {
     FPT1 = FLOATDATA(image1);
-    for (i = 0; i < N; i++)
-    {
-      FPT1[i] = FPT1[i] + (float)constante;
-    }
+    for (i = 0; i < N; i++, FPT1++)
+      *FPT1 = *FPT1 + (float)constante;
   }
   else 
   {
@@ -180,39 +182,79 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
 int32_t larea(
   struct xvimage * image, 
   int32_t *area)
-/* retourne le nombre de pixels non nuls */
+/* retourne le nombre d'éléments non nuls */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "larea"
 {
-  int32_t i, a = 0;
+  int32_t i, b, a = 0;
   uint8_t *pt;
   int32_t *PT; 
   float *FPT; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image);
   cs = colsize(image);
-  d = depth(image);
-  N = rs * cs * d;
+  ds = depth(image);
+  nb = nbands(image);
+  N = rs * cs * ds;
 
-  if (datatype(image) == VFF_TYP_1_BYTE)
+  if (nb == 1)
   {
-    for (pt = UCHARDATA(image), i = 0; i < N; i++, pt++) if (*pt) a++;
+    if (datatype(image) == VFF_TYP_1_BYTE)
+    {
+      for (pt = UCHARDATA(image), i = 0; i < N; i++, pt++) if (*pt) a++;
+    }
+    else if (datatype(image) == VFF_TYP_4_BYTE)
+    {
+      for (PT = SLONGDATA(image), i = 0; i < N; i++, PT++) if (*PT) a++;
+    }
+    else if (datatype(image) == VFF_TYP_FLOAT)
+    {
+      for (FPT = FLOATDATA(image), i = 0; i < N; i++, FPT++) if (*FPT != 0.0) a++;
+    }
+    else 
+    {
+      fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+      return 0;
+    }
   }
-  else if (datatype(image) == VFF_TYP_4_BYTE)
+  else
   {
-    for (PT = SLONGDATA(image), i = 0; i < N; i++, PT++) if (*PT) a++;
+    if (datatype(image) == VFF_TYP_1_BYTE)
+    {
+      pt = UCHARDATA(image);
+      for (i = 0; i < N; i++) 
+      {
+	for (b = 0; b < nb; b++) if (pt[b*N + i]) break; 
+	if (b < nb) a++;
+      }
+    }
+    else if (datatype(image) == VFF_TYP_4_BYTE)
+    {
+      PT = SLONGDATA(image);
+      for (i = 0; i < N; i++) 
+      {
+	for (b = 0; b < nb; b++) if (PT[b*N + i]) break; 
+	if (b < nb) a++;
+      }
+    }
+    else if (datatype(image) == VFF_TYP_FLOAT)
+    {
+      FPT = FLOATDATA(image);
+      for (i = 0; i < N; i++) 
+      {
+	for (b = 0; b < nb; b++) if (FPT[b*N + i] != 0.0) break; 
+	if (b < nb) a++;
+      }
+    }
+    else 
+    {
+      fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+      return 0;
+    }
   }
-  else if (datatype(image) == VFF_TYP_FLOAT)
-  {
-    for (FPT = FLOATDATA(image), i = 0; i < N; i++, FPT++) if (*FPT != 0.0) a++;
-  }
-  else 
-  {
-    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-    return 0;
-  }
+  
   *area = a;
   return 1;
 } /* larea() */
@@ -231,13 +273,15 @@ int32_t laverage(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
+  ds = depth(image1);
+  nb = nbands(image1);
+  N = rs * cs * ds * nb;
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     exit(0);
@@ -245,17 +289,20 @@ int32_t laverage(
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
-    for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+    pt1 = UCHARDATA(image1); pt2 = UCHARDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
       *pt1 = (uint8_t)((alpha * *pt1) + ((1.0 - alpha) * *pt2));
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
-    for (PT1 = SLONGDATA(image1), PT2 = SLONGDATA(image2), i = 0; i < N; i++, PT1++, PT2++)
+    PT1 = SLONGDATA(image1); PT2 = SLONGDATA(image2);
+    for (i = 0; i < N; i++, PT1++, PT2++)
       *PT1 = (int32_t)((alpha * *PT1) + ((1.0 - alpha) * *PT2));
   }
   else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
   {
-    for (FPT1 = FLOATDATA(image1), FPT2 = FLOATDATA(image2), i = 0; i < N; i++, FPT1++, FPT2++)
+    FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
+    for (i = 0; i < N; i++, FPT1++, FPT2++)
       *FPT1 = (float)((alpha * *FPT1) + ((1.0 - alpha) * *FPT2));
   }
   else 
@@ -280,13 +327,15 @@ int32_t ldiff(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
+  ds = depth(image1);
+  nb = nbands(image1);
+  N = rs * cs * ds * nb;
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     exit(0);
@@ -294,17 +343,20 @@ int32_t ldiff(
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
-    for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+    pt1 = UCHARDATA(image1); pt2 = UCHARDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
       *pt1 = (uint8_t)mcabs((int32_t)*pt1-(int32_t)*pt2);
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
-    for (PT1 = SLONGDATA(image1), PT2 = SLONGDATA(image2), i = 0; i < N; i++, PT1++, PT2++)
+    PT1 = SLONGDATA(image1); PT2 = SLONGDATA(image2);
+    for (i = 0; i < N; i++, PT1++, PT2++)
       *PT1 = mcabs(*PT1-*PT2);
   }
   else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
   {
-    for (FPT1 = FLOATDATA(image1), FPT2 = FLOATDATA(image2), i = 0; i < N; i++, FPT1++, FPT2++)
+    FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
+    for (i = 0; i < N; i++, FPT1++, FPT2++)
       *FPT1 = (float)fabs((float)(*FPT1)-(float)(*FPT2));
   }
   else 
@@ -329,13 +381,15 @@ int32_t ldivide(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
+  ds = depth(image1);
+  nb = nbands(image1);
+  N = rs * cs * ds * nb;
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     exit(0);
@@ -343,17 +397,20 @@ int32_t ldivide(
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
-    for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+    pt1 = UCHARDATA(image1); pt2 = UCHARDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
       if (*pt2 != 0) *pt1 = *pt1 / *pt2; else *pt1 = 0;
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
-    for (PT1 = SLONGDATA(image1), PT2 = SLONGDATA(image2), i = 0; i < N; i++, PT1++, PT2++)
+    PT1 = SLONGDATA(image1); PT2 = SLONGDATA(image2);
+    for (i = 0; i < N; i++, PT1++, PT2++)
       if (*PT2 != 0) *PT1 = *PT1 / *PT2; else *PT1 = 0;
   }
   else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
   {
-    for (FPT1 = FLOATDATA(image1), FPT2 = FLOATDATA(image2), i = 0; i < N; i++, FPT1++, FPT2++)
+    FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
+    for (i = 0; i < N; i++, FPT1++, FPT2++)
       if (*FPT2 != 0.0) *FPT1 = *FPT1 / *FPT2; else *FPT1 = 0.0;
   }
   else 
@@ -378,13 +435,15 @@ int32_t lequal(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
+  ds = depth(image1);
+  nb = nbands(image1);
+  N = rs * cs * ds * nb;
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     exit(0);
@@ -392,17 +451,20 @@ int32_t lequal(
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
-    for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+    pt1 = UCHARDATA(image1); pt2 = UCHARDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
       if (*pt1 != *pt2) return 0;
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
-    for (PT1 = SLONGDATA(image1), PT2 = SLONGDATA(image2), i = 0; i < N; i++, PT1++, PT2++)
+    PT1 = SLONGDATA(image1); PT2 = SLONGDATA(image2);
+    for (i = 0; i < N; i++, PT1++, PT2++)
       if (*PT1 != *PT2) return 0;
   }
   else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
   {
-    for (FPT1 = FLOATDATA(image1), FPT2 = FLOATDATA(image2), i = 0; i < N; i++, FPT1++, FPT2++)
+    FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
+    for (i = 0; i < N; i++, FPT1++, FPT2++)
       if (*FPT1 != *FPT2) return 0;
   }
   else 
@@ -424,13 +486,21 @@ int32_t linf(
 #define F_NAME "linf"
 {
   int32_t i;
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
+  ds = depth(image1);
+  nb = nbands(image1);
+  N = rs * cs * ds;
+
+  if (nb > 1)
+  {
+    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
+    exit(0);
+  }
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     exit(0);
@@ -439,19 +509,22 @@ int32_t linf(
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
     uint8_t *pt1, *pt2;
-    for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+    pt1 = UCHARDATA(image1); pt2 = UCHARDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
       if (*pt1 <= *pt2) *pt1 = NDG_MAX; else *pt1 = NDG_MIN;
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
     int32_t *pt1, *pt2; 
-    for (pt1 = SLONGDATA(image1), pt2 = SLONGDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+    pt1 = SLONGDATA(image1); pt2 = SLONGDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
       if (*pt1 <= *pt2) *pt1 = NDG_MAX; else *pt1 = NDG_MIN;
   }
   else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
   {
     float *pt1, *pt2; 
-    for (pt1 = FLOATDATA(image1), pt2 = FLOATDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+    pt1 = FLOATDATA(image1); pt2 = FLOATDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
       if (*pt1 <= *pt2) *pt1 = NDG_MAX; else *pt1 = NDG_MIN;
   }
   else 
@@ -464,6 +537,66 @@ int32_t linf(
 } /* linf() */
 
 /* ==================================== */
+int32_t lsup(
+  struct xvimage * image1,
+  struct xvimage * image2)
+/* prédicat sup pixelwise */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lsup"
+{
+  int32_t i;
+  int32_t rs, cs, ds, nb, N;
+
+  rs = rowsize(image1);
+  cs = colsize(image1);
+  ds = depth(image1);
+  nb = nbands(image1);
+  N = rs * cs * ds;
+
+  if (nb > 1)
+  {
+    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
+    exit(0);
+  }
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    exit(0);
+  }
+
+  if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
+  {
+    uint8_t *pt1, *pt2;
+    pt1 = UCHARDATA(image1); pt2 = UCHARDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
+      if (*pt1 >= *pt2) *pt1 = NDG_MAX; else *pt1 = NDG_MIN;
+  }
+  else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
+  {
+    int32_t *pt1, *pt2; 
+    pt1 = SLONGDATA(image1); pt2 = SLONGDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
+      if (*pt1 >= *pt2) *pt1 = NDG_MAX; else *pt1 = NDG_MIN;
+  }
+  else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
+  {
+    float *pt1, *pt2; 
+    pt1 = FLOATDATA(image1); pt2 = FLOATDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
+      if (*pt1 >= *pt2) *pt1 = NDG_MAX; else *pt1 = NDG_MIN;
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return 0;
+  }
+
+  return 1;
+} /* lsup() */
+
+/* ==================================== */
 int32_t linverse(
   struct xvimage * image)
 /* inverse d' une image */
@@ -472,6 +605,12 @@ int32_t linverse(
 #define F_NAME "linverse"
 {
   int32_t i, N;
+
+  if (nbands(image) > 1)
+  {
+    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
+    exit(0);
+  }
 
   N = rowsize(image) * colsize(image) * depth(image);
 
@@ -521,13 +660,21 @@ int32_t lmax(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
+  ds = depth(image1);
+  nb = nbands(image1);
+  N = rs * cs * ds;
+
+  if (nb > 1)
+  {
+    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
+    exit(0);
+  }
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     exit(0);
@@ -535,17 +682,20 @@ int32_t lmax(
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
-    for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+    pt1 = UCHARDATA(image1); pt2 = UCHARDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
       *pt1 = mcmax(*pt1, *pt2);
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
-    for (PT1 = SLONGDATA(image1), PT2 = SLONGDATA(image2), i = 0; i < N; i++, PT1++, PT2++)
+    PT1 = SLONGDATA(image1); PT2 = SLONGDATA(image2);
+    for (i = 0; i < N; i++, PT1++, PT2++)
       *PT1 = mcmax(*PT1, *PT2);
   }
   else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
   {
-    for (FPT1 = FLOATDATA(image1), FPT2 = FLOATDATA(image2), i = 0; i < N; i++, FPT1++, FPT2++)
+    FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
+    for (i = 0; i < N; i++, FPT1++, FPT2++)
       *FPT1 = mcmax(*FPT1, *FPT2);
   }
   else 
@@ -564,13 +714,19 @@ double lmax1(struct xvimage * image1)
 #undef F_NAME
 #define F_NAME "lmax1"
 {
-  int32_t i, rs, cs, d, N;
+  int32_t i, rs, cs, ds, N;
   double maxval;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
+  ds = depth(image1);
+  N = rs * cs * ds;
+
+  if (nbands(image1) > 1)
+  {
+    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
+    exit(0);
+  }
 
   if (datatype(image1) == VFF_TYP_1_BYTE)
   {
@@ -606,13 +762,19 @@ double lmin1(struct xvimage * image1)
 #undef F_NAME
 #define F_NAME "lmin1"
 {
-  int32_t i, rs, cs, d, N;
+  int32_t i, rs, cs, ds, N;
   double minval;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
+  ds = depth(image1);
+  N = rs * cs * ds;
+
+  if (nbands(image1) > 1)
+  {
+    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
+    exit(0);
+  }
 
   if (datatype(image1) == VFF_TYP_1_BYTE)
   {
@@ -654,13 +816,21 @@ int32_t lmin(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
+  ds = depth(image1);
+  nb = nbands(image1);
+  N = rs * cs * ds;
+
+  if (nb > 1)
+  {
+    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
+    exit(0);
+  }
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     exit(0);
@@ -668,17 +838,20 @@ int32_t lmin(
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
-    for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+    pt1 = UCHARDATA(image1); pt2 = UCHARDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
       *pt1 = mcmin(*pt1, *pt2);
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
-    for (PT1 = SLONGDATA(image1), PT2 = SLONGDATA(image2), i = 0; i < N; i++, PT1++, PT2++)
+    PT1 = SLONGDATA(image1); PT2 = SLONGDATA(image2);
+    for (i = 0; i < N; i++, PT1++, PT2++)
       *PT1 = mcmin(*PT1, *PT2);
   }
   else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
   {
-    for (FPT1 = FLOATDATA(image1), FPT2 = FLOATDATA(image2), i = 0; i < N; i++, FPT1++, FPT2++)
+    FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
+    for (i = 0; i < N; i++, FPT1++, FPT2++)
       *FPT1 = mcmin(*FPT1, *FPT2);
   }
   else 
@@ -699,17 +872,34 @@ int32_t lmult(
 #undef F_NAME
 #define F_NAME "lmult"
 {
-  int32_t i;
+  int32_t i, b;
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb1, nb2, N;
+  struct xvimage * tmp;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
+  ds = depth(image1);
+  N = rs * cs * ds;
+  nb1 = nbands(image1);
+  nb2 = nbands(image2);
+
+  if ((nb1 > 1) && (nb2 > 1))
+  {
+    fprintf(stderr, "%s: only one image may have several bands\n", F_NAME);
+    exit(0);
+  }
+
+  if (nb2 > 1) // the multiband image (if any) must be image1
+  {
+    tmp = image2;
+    image2 = image1;
+    image1 = tmp;
+  }
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     exit(0);
@@ -717,18 +907,24 @@ int32_t lmult(
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
-    for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
-      *pt1 = (uint8_t)mcmin(NDG_MAX, (int32_t)*pt1 * (int32_t)*pt2);
+    pt1 = UCHARDATA(image1);
+    for (b = 0; b < nb1; b++)
+      for (pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+	*pt1 = (uint8_t)mcmin(NDG_MAX, (int32_t)*pt1 * (int32_t)*pt2);
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
-    for (PT1 = SLONGDATA(image1), PT2 = SLONGDATA(image2), i = 0; i < N; i++, PT1++, PT2++)
-      *PT1 = *PT1 * *PT2;
+    PT1 = SLONGDATA(image1);
+    for (b = 0; b < nb1; b++)
+      for (PT2 = SLONGDATA(image2), i = 0; i < N; i++, PT1++, PT2++)
+	*PT1 = *PT1 * *PT2;
   }
   else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
   {
-    for (FPT1 = FLOATDATA(image1), FPT2 = FLOATDATA(image2), i = 0; i < N; i++, FPT1++, FPT2++)
-      *FPT1 = *FPT1 * *FPT2;
+    FPT1 = FLOATDATA(image1);
+    for (b = 0; b < nb1; b++)
+      for (FPT2 = FLOATDATA(image2), i = 0; i < N; i++, FPT1++, FPT2++)
+	*FPT1 = *FPT1 * *FPT2;
   }
   else 
   {
@@ -750,6 +946,12 @@ int32_t lneg(
   int32_t i;
   uint8_t *pt;
   int32_t N;
+
+  if (nbands(image) > 1)
+  {
+    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
+    exit(0);
+  }
 
   N = rowsize(image) * colsize(image) * depth(image);
 
@@ -775,6 +977,12 @@ int32_t lnormalize(struct xvimage * image, float nmin, float nmax)
 #define EPSILON 1e-6
 {
   int32_t x, N;
+
+  if (nbands(image) > 1)
+  {
+    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
+    exit(0);
+  }
 
   if (nmin > nmax)
   {
@@ -857,26 +1065,30 @@ int32_t lnull(struct xvimage * image1)
   uint8_t *pt1;
   int32_t *PT1; 
   float *FPT1; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
+  ds = depth(image1);
+  nb = nbands(image1);
+  N = rs * cs * ds * nb;
 
   if (datatype(image1) == VFF_TYP_1_BYTE)
   {
-    for (pt1 = UCHARDATA(image1), i = 0; i < N; i++, pt1++)
+    pt1 = UCHARDATA(image1);
+    for (i = 0; i < N; i++, pt1++)
       if (*pt1) return 0;
   }
   else if (datatype(image1) == VFF_TYP_4_BYTE)
   {
-    for (PT1 = SLONGDATA(image1), i = 0; i < N; i++, PT1++)
+    PT1 = SLONGDATA(image1);
+    for (i = 0; i < N; i++, PT1++)
       if (*PT1) return 0;
   }
   else if (datatype(image1) == VFF_TYP_FLOAT)
   {
-    for (FPT1 = FLOATDATA(image1), i = 0; i < N; i++, FPT1++)
+    FPT1 = FLOATDATA(image1);
+    for (i = 0; i < N; i++, FPT1++)
       if (*FPT1 != 0.0) return 0;
   }
   else 
@@ -903,10 +1115,10 @@ int32_t lscale(
   float *FPT;
   int32_t N;
 
-  N = rowsize(image) * colsize(image) * depth(image);
+  N = rowsize(image) * colsize(image) * depth(image) * nbands(image);
 
   /* ---------------------------------------------------------- */
-  /* calcul du resultat */
+  /* calculs du resultat */
   /* ---------------------------------------------------------- */
   
   if (datatype(image) == VFF_TYP_1_BYTE)
@@ -953,7 +1165,7 @@ int32_t lpow(
   float *FPT;
   int32_t N;
 
-  N = rowsize(image) * colsize(image) * depth(image);
+  N = rowsize(image) * colsize(image) * depth(image) * nbands(image);
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -999,7 +1211,8 @@ int32_t lexp(struct xvimage * image)
   float *FPT;
   int32_t N;
 
-  N = rowsize(image) * colsize(image) * depth(image);
+  N = rowsize(image) * colsize(image) * depth(image) * nbands(image);
+
   if (datatype(image) == VFF_TYP_FLOAT)
   {
     for (FPT = FLOATDATA(image), i = 0; i < N; i++, FPT++)
@@ -1026,7 +1239,8 @@ int32_t llog(struct xvimage * image)
   float *FPT;
   int32_t N;
 
-  N = rowsize(image) * colsize(image) * depth(image);
+  N = rowsize(image) * colsize(image) * depth(image) * nbands(image);
+
   if (datatype(image) == VFF_TYP_FLOAT)
   {
     for (FPT = FLOATDATA(image), i = 0; i < N; i++, FPT++)
@@ -1055,13 +1269,15 @@ int32_t lsub(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
+  ds = depth(image1);
+  nb = nbands(image1);
+  N = rs * cs * ds * nb;
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     exit(0);
@@ -1069,17 +1285,20 @@ int32_t lsub(
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
-    for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
+    pt1 = UCHARDATA(image1); pt2 = UCHARDATA(image2);
+    for (i = 0; i < N; i++, pt1++, pt2++)
       *pt1 = (uint8_t)mcmax(NDG_MIN, (int32_t)*pt1 - (int32_t)*pt2);
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
-    for (PT1 = SLONGDATA(image1), PT2 = SLONGDATA(image2), i = 0; i < N; i++, PT1++, PT2++)
+    PT1 = SLONGDATA(image1); PT2 = SLONGDATA(image2);
+    for (i = 0; i < N; i++, PT1++, PT2++)
       *PT1 = (int32_t)mcmax(NDG_MIN, (int32_t)*PT1 - (int32_t)*PT2);
   }
   else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
   {
-    for (FPT1 = FLOATDATA(image1), FPT2 = FLOATDATA(image2), i = 0; i < N; i++, FPT1++, FPT2++)
+    FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
+    for (i = 0; i < N; i++, FPT1++, FPT2++)
       *FPT1 = *FPT1 - *FPT2;
   }
   else 
@@ -1090,55 +1309,6 @@ int32_t lsub(
 
   return 1;
 } /* lsub() */
-
-/* ==================================== */
-int32_t lsup(
-  struct xvimage * image1,
-  struct xvimage * image2)
-/* prédicat inf pixelwise */
-/* ==================================== */
-#undef F_NAME
-#define F_NAME "lsup"
-{
-  int32_t i;
-  int32_t rs, cs, d, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  d = depth(image1);
-  N = rs * cs * d;
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != d))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
-
-  if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
-  {
-    uint8_t *pt1, *pt2;
-    for (pt1 = UCHARDATA(image1), pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
-      if (*pt1 >= *pt2) *pt1 = NDG_MAX; else *pt1 = NDG_MIN;
-  }
-  else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
-  {
-    int32_t *pt1, *pt2; 
-    for (pt1 = SLONGDATA(image1), pt2 = SLONGDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
-      if (*pt1 >= *pt2) *pt1 = NDG_MAX; else *pt1 = NDG_MIN;
-  }
-  else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
-  {
-    float *pt1, *pt2; 
-    for (pt1 = FLOATDATA(image1), pt2 = FLOATDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
-      if (*pt1 >= *pt2) *pt1 = NDG_MAX; else *pt1 = NDG_MIN;
-  }
-  else 
-  {
-    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-    return 0;
-  }
-
-  return 1;
-} /* lsup() */
 
 /* ==================================== */
 int32_t lvolume(
@@ -1154,12 +1324,19 @@ int32_t lvolume(
   int32_t *PT; 
   float *FPT; 
   double fvolume = 0.0; 
-  int32_t rs, cs, d, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image);
   cs = colsize(image);
-  d = depth(image);
-  N = rs * cs * d;
+  ds = depth(image);
+  nb = nbands(image);
+  N = rs * cs * ds;
+
+  if (nb > 1)
+  {
+    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
+    exit(0);
+  }
 
   if (datatype(image) == VFF_TYP_1_BYTE)
     for (pt = UCHARDATA(image), i = 0; i < N; i++, pt++) fvolume += (double)*pt;
@@ -1189,16 +1366,17 @@ int32_t lxor(
 {
   int32_t i;
   uint8_t *F1, *F2;
-  int32_t rs, cs, ds, N;
+  int32_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
   ds = depth(image1);
-  N = rs * cs * ds;
+  nb = nbands(image1);
+  N = rs * cs * ds * nb;
   F1 = UCHARDATA(image1);
   F2 = UCHARDATA(image2);
   
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds))
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
     exit(0);
@@ -1222,3 +1400,41 @@ int32_t lxor(
 
   return 1;
 } /* lxor() */
+
+/* ==================================== */
+int32_t lmodulus(struct xvimage * image)
+/* ==================================== */
+// modulus of a complex
+// result is stored in first band
+#undef F_NAME
+#define F_NAME "lmodulus"
+{
+  int32_t i, N;
+  float *FPT;
+  double t1, t2;
+
+  N = rowsize(image) * colsize(image) * depth(image);
+  if (nbands(image) != 2)
+  {
+    fprintf(stderr, "%s: only for complex images\n", F_NAME);
+    return 0;
+  }
+
+  if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    FPT = FLOATDATA(image);
+    for (i = 0; i < N; i++)
+    {
+      t1 = (double)FPT[i];
+      t2 = (double)FPT[i+N];
+      t1 = sqrt(t1*t1 + t2*t2);
+      FPT[i] = (float)t1;
+    }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type\n", F_NAME);
+    return 0;
+  }
+  return 1;
+} /* lmodulus() */

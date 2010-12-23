@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief fast Fourier transform
 
-<B>Usage:</B> fft in1 in2 dir out1 out2
+<B>Usage:</B> fft in.pgm [dir] out.pgm
 
 <B>Description:</B>
 computes the 2 dimensional Fast Fourier Transform of an image.
@@ -50,33 +50,15 @@ in an inverse FFT.
 
 The input arguments are described as follows:
 
-\b in1
-specifies the input image, which can be of data type BYTE, LONG or FLOAT.
-If the input image is of data type BYTE, then the data will first be
-converted to FLOAT before proceeding.
-If the first input image is of type BYTE or FLOAT, then it is assumed that 
-it is the real component of the complex pair, and the imaginary component 
-may be input using the optional in2 input argument.  
-If no imaginary component is specified when
-using a real input, then the imaginary component is assumed to be zero.  
+\b in.pgm
+specifies the input image, which must be of data type FLOAT, with two 
+bands. The first band contains the real component, the second band contains the imaginary component.
 
-\b in2
-specifies the optional input image, which can be of data type BYTE, LONG
-or FLOAT. The keyword "null" may be used.
-It is assumed that this image represents the imaginary component of the
-complex pair.  
+\b out.pgm
+output image, which will be a 2-band image of data type FLOAT. The first band contains the real component, the second band contains the imaginary component.
 
-\b out1
-specifies the real output image, which will be a single band image of data
-type FLOAT.  This image contains only the real component of the complex pair.
-
-\b out2
-specifies the imaginary output image, which will be a single band image of data
-type FLOAT.  This image contains only the imaginary component of the complex
-pair.
-
-\b dir
-specifies the FFT direction.  A \b dir of 0 will result in a forward FFT, 
+\b dir (optional)
+specifies the FFT direction.  A \b dir of 0 (default) will result in a forward FFT, 
 and a \b dir of 1 will result in an inverse FFT.
 
 Note that it is the users responsibility to ensure that the correct components
@@ -104,7 +86,7 @@ each with amplitude 0.5/(64*64). Why 0.5? It's because each impulse carries
 half of the power! The scaling should really be an option, but it currently
 is not (perhaps in a future patch).
 
-<B>Types supported:</B> byte 2d, int32_t 2d, float 2d
+<B>Types supported:</B> float (complex) 2d
 
 <B>Category:</B> signal
 \ingroup signal
@@ -117,216 +99,96 @@ is not (perhaps in a future patch).
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <mcutil.h>
 #include <lfft.h>
 
 #define VERBOSE
+
+struct xvimage *pad_image(struct xvimage *image)
+{
+    struct xvimage *tmpimage;
+    float *I, *T;
+    int32_t i, j, cs, rs, N, cs2, rs2, N2;
+
+    cs = colsize(image);            /* Number of rows */
+    rs = rowsize(image);            /* Number of columns */
+    N = rs * cs;
+    I = FLOATDATA(image);
+
+    rs2 = cs2 = 1;
+    while (rs2 < rs) rs2 = rs2 << 1;
+    while (cs2 < cs) cs2 = cs2 << 1;
+
+    if ((rs2 != rs) || (cs2 != cs))
+    {
+      N2 = rs2 * cs2;
+      tmpimage = allocmultimage(NULL, rs2, cs2, 1, 1, 2, VFF_TYP_FLOAT);
+      assert(tmpimage != NULL);
+      tmpimage->xdim = image->xdim;
+      tmpimage->ydim = image->ydim;
+      tmpimage->zdim = image->zdim;
+      T = FLOATDATA(tmpimage);
+      for (j = 0; j < cs; j++) 
+	for (i = 0; i < rs; i++) 
+	  T[j*rs2 + i] = I[j*rs + i];    
+      for (j = 0; j < cs; j++) 
+	for (i = 0; i < rs; i++) 
+	  T[N2+ j*rs2 + i] = I[N + j*rs + i];    
+#ifdef VERBOSE
+      printf("rs=%d cs=%d ; after padding: rs2=%d cs2=%d\n", rs, cs, rs2, cs2);
+#endif
+      return tmpimage;
+    }
+    else
+      return NULL;
+}
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * image1;
+  struct xvimage * image;
   struct xvimage * image2;
-  int32_t dir, rs, cs, rs2, cs2, x, y;
+  int32_t dir = 0;
 
-  if (argc != 6)
+  if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s in1 in2 dir out1 out2 \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm [dir] out.pgm \n", argv[0]);
     exit(1);
   }
 
-  image1 = readimage(argv[1]);
-  if (image1 == NULL)
+  image = readimage(argv[1]);
+  if (image == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  rs = rowsize(image1);
-  cs = colsize(image1);
-
-  if (strcmp(argv[2],"null") == 0) 
+  if ((datatype(image) != VFF_TYP_FLOAT) || (depth(image) != 1) || (nbands(image) != 2))
   {
-    float *L;
-    image2 = allocimage(NULL, rs, cs, 1, VFF_TYP_FLOAT);
-    if (image2 == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(image2);
-    for (x = 0; x < rs*cs; x++) L[x] = 0.0;
-  }
-  else
-  {
-    image2 = readimage(argv[2]);
-    if (image2 == NULL)
-    {
-      fprintf(stderr, "%s: readimage failed\n", argv[0]);
-      exit(1);
-    }
-  }
-
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs))
-  {
-    fprintf(stderr, "%s: Input images must be of the same size\n", argv[0]);
-    exit(1);
-  }
-  rs2 = mcmax(rs,cs);
-  cs2 = 1;
-  while (cs2 < rs2) cs2 = cs2 << 1;
-  rs2 = cs2;
-
-#ifdef VERBOSE
-  printf("rs=%d cs=%d ; after padding: rs2=%d cs2=%d\n", rs, cs, rs2, cs2);
-#endif
-
-  if (datatype(image1) == VFF_TYP_1_BYTE)
-  {
-    uint8_t *B = UCHARDATA(image1);
-    struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
-    float *L;
-    if (imagefloat == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(imagefloat);
-    imagefloat->xdim = image1->xdim;
-    imagefloat->ydim = image1->ydim;
-    imagefloat->zdim = image1->zdim;
-    for (y = 0; y < cs; y++) 
-      for (x = 0; x < rs; x++) 
-        L[y*rs2 + x] = (float)B[y*rs + x];    
-    freeimage(image1);
-    image1 = imagefloat;
-  }
-  else if (datatype(image1) == VFF_TYP_4_BYTE)
-  {
-    int32_t *B = SLONGDATA(image1);
-    struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
-    float *L;
-    if (imagefloat == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(imagefloat);
-    imagefloat->xdim = image1->xdim;
-    imagefloat->ydim = image1->ydim;
-    imagefloat->zdim = image1->zdim;
-    for (y = 0; y < cs; y++) 
-      for (x = 0; x < rs; x++) 
-        L[y*rs2 + x] = (float)B[y*rs + x];    
-    freeimage(image1);
-    image1 = imagefloat;
-  }
-  else if (datatype(image1) == VFF_TYP_FLOAT)
-  {
-    float *B = FLOATDATA(image1);
-    struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
-    float *L;
-    if (imagefloat == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(imagefloat);
-    imagefloat->xdim = image1->xdim;
-    imagefloat->ydim = image1->ydim;
-    imagefloat->zdim = image1->zdim;
-    for (y = 0; y < cs; y++) 
-      for (x = 0; x < rs; x++) 
-        L[y*rs2 + x] = B[y*rs + x];    
-    freeimage(image1);
-    image1 = imagefloat;
-  }
-  else
-  {
-    fprintf(stderr, "%s: bad datatype for image1\n", argv[0]);
+    fprintf(stderr,"%s: input image type must be complex 2D\n", argv[0]);
     exit(1);
   }
 
-  if (datatype(image2) == VFF_TYP_1_BYTE)
+  if (argc == 4) dir = atoi(argv[2]);
+
+  image2 = pad_image(image);
+  if (image2 != NULL)
   {
-    uint8_t *B = UCHARDATA(image2);
-    struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
-    float *L;
-    if (imagefloat == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(imagefloat);
-    imagefloat->xdim = image2->xdim;
-    imagefloat->ydim = image2->ydim;
-    imagefloat->zdim = image2->zdim;
-    for (y = 0; y < cs; y++) 
-      for (x = 0; x < rs; x++) 
-        L[y*rs2 + x] = (float)B[y*rs + x];    
-    freeimage(image2);
-    image2 = imagefloat;
-  }
-  else if (datatype(image2) == VFF_TYP_4_BYTE)
-  {
-    int32_t *B = SLONGDATA(image2);
-    struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
-    float *L;
-    if (imagefloat == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(imagefloat);
-    imagefloat->xdim = image2->xdim;
-    imagefloat->ydim = image2->ydim;
-    imagefloat->zdim = image2->zdim;
-    for (y = 0; y < cs; y++) 
-      for (x = 0; x < rs; x++) 
-        L[y*rs2 + x] = (float)B[y*rs + x];    
-    freeimage(image2);
-    image2 = imagefloat;
-  }
-  else if (datatype(image2) == VFF_TYP_FLOAT)
-  {
-    float *B = FLOATDATA(image2);
-    struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
-    float *L;
-    if (imagefloat == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(imagefloat);
-    imagefloat->xdim = image2->xdim;
-    imagefloat->ydim = image2->ydim;
-    imagefloat->zdim = image2->zdim;
-    for (y = 0; y < cs; y++) 
-      for (x = 0; x < rs; x++) 
-        L[y*rs2 + x] = B[y*rs + x];    
-    freeimage(image2);
-    image2 = imagefloat;
-  }
-  else
-  {
-    fprintf(stderr, "%s: bad datatype for image2\n", argv[0]);
-    exit(1);
+    freeimage(image);
+    image = image2;
   }
 
-  dir = atoi(argv[3]);
-  if (! lfft(image1, image2, dir))
+  if (! lfft(image, dir))
   {
     fprintf(stderr, "%s: function lfft failed\n", argv[0]);
     exit(1);
   }
 
-  writeimage(image1, argv[argc-2]);
-  writeimage(image2, argv[argc-1]);
-  freeimage(image1);
-  freeimage(image2);
+  writeimage(image, argv[argc-1]);
+  freeimage(image);
 
   return 0;
 } /* main */

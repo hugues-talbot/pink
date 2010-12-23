@@ -230,7 +230,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
 #ifdef DEBUG
     writeimage(mf1, "_maskpad");
 #endif
-    if (! lfft(mf1, mf2, 0))
+    if (! lfft2(mf1, mf2, 0))
     {
       fprintf(stderr, "%s: function lfft failed\n", F_NAME);
       return 0;
@@ -249,7 +249,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
 #ifdef DEBUG
     writeimage(if1, "_imagepad");
 #endif
-    if (! lfft(if1, if2, 0))
+    if (! lfft2(if1, if2, 0))
     {
       fprintf(stderr, "%s: function lfft failed\n", F_NAME);
       return 0;
@@ -273,7 +273,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
 #endif
 
     // FFT inverse
-    if (! lfft(if1, if2, 1))
+    if (! lfft2(if1, if2, 1))
     {
       fprintf(stderr, "%s: function lfft failed\n", F_NAME);
       return 0;

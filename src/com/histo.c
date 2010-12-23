@@ -68,7 +68,7 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * mask = NULL;
   uint32_t * histo;
-  int32_t i, k, s;
+  int32_t i, s;
   FILE *fd = NULL;
 
   if ((argc != 3) && (argc != 4))

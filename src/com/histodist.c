@@ -50,7 +50,7 @@ Parameter \b type (default 0) indicates whether the histogram must be interprete
 <B>Category:</B> histo
 \ingroup  histo
 
-\author Michel Couprie
+\author Michel Couprie, Mohamed Amine Salem
 */
 #include <stdio.h>
 #include <stdint.h>

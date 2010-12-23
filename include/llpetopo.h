@@ -39,7 +39,7 @@ extern "C" {
 /* prototype for llpetopo.c */
 /* ============== */
 
-extern int32_t llpetopo(
+extern int32_t llpetopo_llpetopo(
         struct xvimage *image,
         struct xvimage *marqueurs,
         int32_t trace

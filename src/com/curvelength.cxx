@@ -70,7 +70,7 @@ Parameter \b closed is a boolean (1 or 0) that indicates whether the curve is cl
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t i, j;
+  int32_t i;
   FILE *fd = NULL;
   int32_t npoints, closed;
   char type;

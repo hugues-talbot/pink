@@ -94,7 +94,7 @@ int main(int argc, char **argv)
   int32_t mode = 0;
   float Min, Max, t;
   double T;
-  int32_t rs, cs, d, N, tmp;
+  int32_t rs, cs, ds, N, tmp;
 
   if ((argc < 3) || (argc > 4))
   {
@@ -121,11 +121,11 @@ int main(int argc, char **argv)
 
   rs = rowsize(imagefloat);
   cs = colsize(imagefloat);
-  d = depth(imagefloat);
-  N = rs * cs * d;
+  ds = depth(imagefloat);
+  N = rs * cs * ds;
   L = FLOATDATA(imagefloat);
   
-  imagebyte = allocimage(NULL, rs, cs, d, VFF_TYP_1_BYTE);
+  imagebyte = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
   if (imagebyte == NULL)
   {
     fprintf(stderr, "%s: allocimage failed\n", argv[0]);
