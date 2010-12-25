@@ -64,7 +64,6 @@ Reference:
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <lderiche.h>
-#include <lderiche3d.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
@@ -72,7 +71,6 @@ int main(int argc, char **argv)
 {
   struct xvimage * image1;
   double alpha;
-  double dummy;
 
   if (argc != 4)
   {
@@ -89,21 +87,10 @@ int main(int argc, char **argv)
   }
   alpha = atof(argv[2]);
 
-  if (depth(image1) == 1)
+  if (! lgradientcd(image1, alpha))
   {
-    if (! lderiche(image1, alpha, 0, dummy))
-    {
-      fprintf(stderr, "%s: function lderiche failed\n", argv[0]);
-      exit(1);
-    }
-  }
-  else
-  {
-    if (! lderiche3d(image1, alpha, 0, dummy))
-    {
-      fprintf(stderr, "%s: function lderiche3d failed\n", argv[0]);
-      exit(1);
-    }
+    fprintf(stderr, "%s: function lgradientcd failed\n", argv[0]);
+    exit(1);
   }
 
   writeimage(image1, argv[argc-1]);

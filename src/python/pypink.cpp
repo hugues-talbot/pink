@@ -451,6 +451,34 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     doc__segmentarea__c__
     );
 
+  def(
+    "segmentvol",
+    &make_function< char_image, int, int, int, &lsegmentvol >,
+    ( arg("image"), arg("connexity"), arg("vol"), arg("mode") ),
+    doc__segmentvol__c__
+    );
+
+  def(
+    "heightselnb",
+    &make_function< char_image, int, int, int, &lheightselnb >,
+    ( arg("image"), arg("connexity"), arg("height"), arg("mode") ),
+    doc__heightselnb__c__
+    );
+
+  def(
+    "areaselnb",
+    &make_function< char_image, int, int, &lareaselnb >,
+    ( arg("image"), arg("connexity"), arg("area") ),
+    doc__areaselnb__c__
+    );
+
+  def(
+    "volselnb",
+    &make_function< char_image, int, int, &lvolselnb >,
+    ( arg("image"), arg("connexity"), arg("area") ),
+    doc__volselnb__c__
+    );
+
 //   def( "cpp_circle_tangent", &pink::gsl::circle_tangent,
 //        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),
 //        "This function estimates the derivativ of the function given by points. It "

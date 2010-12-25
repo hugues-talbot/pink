@@ -55,7 +55,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lderiche3d.h>
+#include <lderiche.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)

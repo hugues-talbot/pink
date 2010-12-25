@@ -17,7 +17,7 @@
 TARGET=nbvoisc6
 #for FILENAME in lcurves lgettree llabeltree lseltopo lskelcurv lskelpar3d ;
 #for FILENAME in lfermetrous3d lfiltrestopo lhtkern3d lnbtopo lseltopo lskelcurv lskeletons lskelpar3d lsquelval ltopotypes ;
-for FILENAME in l2dcollapse larith lasft lclick lconvol lderiche3d lderiche ldilateros ldiZenzo ldynamique_grimaud leros lfermetrous3d lgeo lgeodesic lhierarchie lhtkern3d lhtkern  llambdakern llpeGA lmedialaxis lMSF lppm2GA lrecalagerigide lrecalagerigide_translateplane mccodimage mcgeo mcgraphe mcimage mckhalimsky2d mckhalimsky3d mcpowell mctopo3d mctopo ;
+for FILENAME in l2dcollapse larith lasft lclick lconvol lderiche ldilateros ldiZenzo ldynamique_grimaud leros lfermetrous3d lgeo lgeodesic lhierarchie lhtkern3d lhtkern  llambdakern llpeGA lmedialaxis lMSF lppm2GA lrecalagerigide lrecalagerigide_translateplane mccodimage mcgeo mcgraphe mcimage mckhalimsky2d mckhalimsky3d mcpowell mctopo3d mctopo ;
 #for FILENAME in lmedialaxis lMSF lppm2GA lrecalagerigide lrecalagerigide_translateplane mccodimage mcgeo mcgraphe mcimage mckhalimsky2d mckhalimsky3d mcpowell mctopo3d mctopo  ;
 do
     sed s/min\(/mcmin\(/g < $FILENAME.c > $FILENAME.c_

@@ -58,6 +58,21 @@ extern int32_t lderiche(
 
 extern int32_t lshencastan(struct xvimage *image, double beta);
 
+extern int32_t lderiche3d(
+        struct xvimage *image1,
+        double alpha,
+        int32_t function,
+        double l
+);
+
+extern int32_t llisseurrec3d(
+        struct xvimage *image1,
+        double alpha
+);
+
+extern int32_t lgradientcd(struct xvimage *image, double alpha);
+extern int32_t lgaussianfilter(struct xvimage *image, double alpha);
+
 #ifdef __cplusplus
 }
 #endif

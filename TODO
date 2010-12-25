@@ -11,3 +11,12 @@ MC operateur watershed : inversion
 
 MC operateur segmentheight : mode
 
+MC genball : double radius
+
+MC bug : /usr/lib/libtiff.so manque dans le link de libcpp_pink.so
+
+MC surimp : à voir (semble planter, devrait retourner l'image
+résultat)
+
+MC threshold remplace seuil
+
