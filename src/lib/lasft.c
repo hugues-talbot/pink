@@ -760,6 +760,51 @@ void condhpopeningdisc2(
   freeimage(image_sav);
 } // condhpopeningdisc2()
 
+
+/* =============================================================== */
+int32_t lasft_2D3D(struct xvimage * image, struct xvimage * imagec, struct xvimage * imagecc, 
+                   int32_t connex, int32_t rayonmax)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "lasft_2D3D" 
+{
+  if (depth(image) == 1)
+  {
+    if (! lasft(image, imagec, imagecc, connex, rayonmax))
+    {
+      fprintf(stderr, "%s: lasft failed\n", F_NAME);
+      exit(1);
+    }
+  }
+  else
+  {
+    if (! lasft3d(image, imagec, imagecc, connex, rayonmax))
+    {
+      fprintf(stderr, "%s: lasft3d failed\n", F_NAME);
+      exit(1);
+    }
+  }
+
+  return 1;
+} /* lasft_2D3D */
+
+/* =============================================================== */
+int32_t lasft_2D3D_null(struct xvimage * image,  
+                   int32_t connex, int32_t rayonmax)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "lasft_2D3D_null" 
+{
+  if (!lasft_2D3D(image, NULL, NULL, connex, rayonmax))
+  {
+    fprintf(stderr, "%s: lasft_2D3D failed\n", F_NAME);
+    exit(1);
+  }
+  
+  return 1;
+} /* lasft_2D3D */
+
+
 /* =============================================================== */
 int32_t lasft(struct xvimage * image, struct xvimage * imagec, struct xvimage * imagecc, 
           int32_t connex, int32_t rayonmax)

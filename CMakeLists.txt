@@ -126,7 +126,7 @@ if (CMAKE_HOST_UNIX)
 	FIND_PACKAGE(TIFF)
 
 	if (TIFF_FOUND)
-	    message("Found libtiff headers in ${TIFF_INCLUDE_DIR}, library at ${TIFF_LIBRARIES}")
+	    #message("Found libtiff headers in ${TIFF_INCLUDE_DIR}, library at ${TIFF_LIBRARIES}")
 	    ADD_DEFINITIONS(-DHAVE_TIFF_LIB)
 	    INCLUDE_DIRECTORIES(${TIFF_INCLUDE_DIR})
 	    set( LIBS ${LIBS} ${TIFF_LIBRARIES} )
@@ -136,7 +136,7 @@ if (CMAKE_HOST_UNIX)
   
 	if (THIS_IS_LINUX)
 		find_library( POSIX_REALTIME_LIB librt.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
-		set( LIBS ${POSIX_REALTIME_LIB} )
+		set( LIBS ${LIBS} ${POSIX_REALTIME_LIB} )
 	endif (THIS_IS_LINUX)
 
   endif (LIAR)

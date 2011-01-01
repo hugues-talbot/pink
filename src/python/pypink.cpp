@@ -18,8 +18,6 @@ using namespace pink;
 
 // maybe I'll get away with it
 #include <pyujimage.hpp>
-#include <pyexport.hpp>
-#include <python_doc.h>
 
 
 /*! \file pypink.c
@@ -479,6 +477,66 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     doc__volselnb__c__
     );
 
+  def(
+    "distgeo",
+    &make_result< char_image, char_image, int, &ldistgeo >,
+    ( arg("image"), arg("mask"), arg("mode") ),
+    doc__distgeo__c__
+    );
+
+  def(
+    "affine",
+    &make_result< char_image, double, double, double, double, double, &laffinetransformation >,
+    ( arg("image"), arg("hx"), arg("hy"), arg("theta"), arg("tx"), arg("ty")),
+    doc__affine__c__
+    );
+  
+
+  def(
+    "asft",
+    &make_function< char_image, char_image, char_image, int, int, lasft_2D3D>,
+    ( arg("image"), arg("constraint image"), arg("complementary constraint image"), arg("connexity"), arg("radius max") ),
+    doc__asft__c__
+    );
+  
+
+  def(
+    "asft",
+    &make_function< char_image, int, int, lasft_2D3D_null>,
+    ( arg("image"), arg("connexity"), arg("radius max") ),
+    doc__asft__c__
+    );
+
+  def(
+    "gaussianfilter",
+    &make_function< char_image, double, &lgaussianfilter>,
+    ( arg("image"), arg("alpha") ),
+    doc__gaussianfilter__c__
+    );
+
+  def(
+    "gaussianfilter",
+    &make_function< int_image, double, &lgaussianfilter>,
+    ( arg("image"), arg("alpha") ),
+    doc__gaussianfilter__c__
+    );
+  
+  def(
+    "gaussianfilter",
+    &make_function< float_image, double, &lgaussianfilter>,
+    ( arg("image"), arg("alpha") ),
+    doc__gaussianfilter__c__
+    );
+
+  def(
+    "exp",
+    &make_function< float_image, &lexp >,
+    (arg("image")),
+    doc__exp__c__
+    );
+  
+
+  
 //   def( "cpp_circle_tangent", &pink::gsl::circle_tangent,
 //        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),
 //        "This function estimates the derivativ of the function given by points. It "

@@ -63,6 +63,7 @@ libncurses5-dev
 // for view3d
 python-tk
 python-imaging
+python-imaging-tk
 
 // for render
 python-vtk

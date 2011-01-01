@@ -42,7 +42,7 @@ extern struct xvimage * lrotationRT3Dx(struct xvimage * image, double theta, dou
 extern struct xvimage * lrotationRT3Dy(struct xvimage * image, double theta, double xc, double zc, double *newxc, double *newzc, uint8_t resize);
 extern struct xvimage * lrotationRT3Dz(struct xvimage * image, double theta, double xc, double yc, double *newxc, double *newyc, uint8_t resize);
 extern struct xvimage * lrotationInter(struct xvimage * image, double theta, double xc, double yc, uint8_t resize);
-extern int32_t laffinetransformation(struct xvimage * image, double theta, double hx, double hy, double tx, double ty, struct xvimage * image2);
+extern int32_t laffinetransformation(struct xvimage * image, double hx, double hy, double theta, double tx, double ty, struct xvimage * image2);
 #ifdef __cplusplus
 }
 #endif

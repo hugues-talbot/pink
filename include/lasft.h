@@ -49,6 +49,20 @@ extern int32_t lhpclosingdisc(struct xvimage * image, int32_t connex, int32_t ra
 extern int32_t lhpopeningdisc(struct xvimage * image, int32_t connex, int32_t rayon);
 extern int32_t lhpclosing3dball(struct xvimage * image, int32_t connex, int32_t rayon);
 extern int32_t lhpopening3dball(struct xvimage * image, int32_t connex, int32_t rayon);
+
+// UjoImro, 2010
+// these are wrapper functions
+
+
+int32_t lasft_2D3D_null(struct xvimage * image,  
+                        int32_t connex, int32_t rayonmax);
+  
+
+int32_t lasft_2D3D(struct xvimage * image, struct xvimage * imagec, struct xvimage * imagecc, 
+                   int32_t connex, int32_t rayonmax);
+  
+
+// end of LuM
 #ifdef __cplusplus
 }
 #endif

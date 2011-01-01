@@ -127,178 +127,109 @@
                                       image_type >::type type;
   }; /* convert_if */
 
+// **********************************************************
+// **********************************************************
+// **********************************************************
+// ***** THIS IS REPLACED WITH THE PREPROCESSING MACRO ******
+// **********************************************************
+// **********************************************************
+// **********************************************************
 
 
-template < class image_type,
-           class param1_type,
-           int (*mcfunction)( typename convert_if<image_type>::type,
-                              typename convert_if<param1_type>::type )
-           >
-image_type make_function( const image_type & image,
-                          param1_type param1 )
-{
-  image_type result;
-  result.copy(image);
+// template < class image_type,
+//            class param1_type,
+//            int (*mcfunction)( typename convert_if<image_type>::type,
+//                               typename convert_if<param1_type>::type )
+//            >
+// image_type make_function( const image_type & image,
+//                           param1_type param1 )
+// {
+//   image_type result;
+//   result.copy(image);
   
-  if (!mcfunction(result, param1))
-  {
-    error("mcfunction failed");    
+//   if (!mcfunction(result, param1))
+//   {
+//     error("mcfunction failed");    
+//   }
+  
+//   return result;  
+// } /* make_function */
+
+
+// Defines the longest pink function to wrap. Can be increased
+#define MAX_PARAMETERS 10
+
+#define                                         \
+  PARAM(z, n, text)                             \
+  param_type##n param##n
+
+#define                                         \
+  CONVERT_IF(z, n, text)                        \
+  typename convert_if<param_type##n>::type
+
+//BOOST_PP_ENUM_PARAMS( MAX_PARAMETERS, class param_type)
+
+#define                                                                 \
+  MAKE_FUNCTION(z, n, text)                                             \
+  template < class image_type,                                          \
+  BOOST_PP_ENUM_PARAMS(n, class param_type ) BOOST_PP_COMMA_IF(n)       \
+  int (*mcfunction) (                                                   \
+    typename convert_if<image_type>::type BOOST_PP_COMMA_IF(n)          \
+    BOOST_PP_ENUM(n, CONVERT_IF, ~)                                     \
+    )                                                                   \
+  >                                                                     \
+  image_type make_function( const image_type & image BOOST_PP_COMMA_IF(n) \
+                            BOOST_PP_ENUM(n, PARAM, ~)                  \
+    )                                                                   \
+  {                                                                     \
+  image_type result;                                                    \
+  result.copy(image);                                                   \
+                                                                        \
+  if (!mcfunction(result BOOST_PP_COMMA_IF(n) BOOST_PP_ENUM_PARAMS(n, param))) \
+  {                                                                     \
+  error("mcfunction failed");                                           \
+  }                                                                     \
+                                                                        \
+  return result;                                                        \
   }
-  
-  return result;  
-} /* make_function */
 
-template < class image_type,
-           class param1_type,
-           class param2_type,
-           int (*mcfunction)( typename convert_if<image_type>::type,
-                              typename convert_if<param1_type>::type,
-                              typename convert_if<param2_type>::type
-             )
-           >
-image_type make_function( const image_type & image,
-                          param1_type param1,
-                          param2_type param2
-  )
-{
-  image_type result;
-  result.copy(image);
-  
-  if (!mcfunction(result, param1, param2))
-  {
-    error("mcfunction failed");
+#define                                                                 \
+  MAKE_RESULT(z, n, text)                                               \
+  template < class image_type,                                          \
+  BOOST_PP_ENUM_PARAMS(n, class param_type ) BOOST_PP_COMMA_IF(n)       \
+  int (*mcfunction) (                                                   \
+    typename convert_if<image_type>::type,                              \
+    BOOST_PP_ENUM(n, CONVERT_IF, ~) BOOST_PP_COMMA_IF(n)                \
+    typename convert_if<image_type>::type                               \
+    )                                                                   \
+  >                                                                     \
+  image_type make_result( image_type image BOOST_PP_COMMA_IF(n)         \
+                          BOOST_PP_ENUM(n, PARAM, ~)                    \
+    )                                                                   \
+  {                                                                     \
+  image_type result;                                                    \
+  result.copy(image);                                                   \
+                                                                        \
+  if (!mcfunction(image, BOOST_PP_ENUM_PARAMS(n, param) BOOST_PP_COMMA_IF(n) result)) \
+  {                                                                     \
+  error("mcfunction failed");                                           \
+  }                                                                     \
+                                                                        \
+  return result;                                                        \
   }
-  
-  return result;  
-} /* make_function */
+
+// this macro is for classical pink functions
+// like
+// int mcfunction( image, param1, ... )
+BOOST_PP_REPEAT(MAX_PARAMETERS, MAKE_FUNCTION, ~)
 
 
-template < class image_type,
-           class param1_type,
-           class param2_type,
-           class param3_type,
-           int (*mcfunction)( typename convert_if<image_type>::type,
-                              typename convert_if<param1_type>::type,
-                              typename convert_if<param2_type>::type,
-                              typename convert_if<param3_type>::type
-             )
-           >
-image_type make_function( const image_type & image,
-                          param1_type param1,
-                          param2_type param2,
-                          param3_type param3
-  )
-{
-  image_type result;
-  result.copy(image);
-  
-  if (!mcfunction(result, param1, param2, param3))
-  {
-    error("mcfunction failed");
-  }
-  
-  return result;  
-} /* make_function */
+// this function is for pink functions which supply the result in a different
+// image like
+// int mcfunction( image, param1, ..., paramn, result )
+BOOST_PP_REPEAT(MAX_PARAMETERS, MAKE_RESULT, ~)
 
 
-template < class image_type,
-           class param1_type,
-           class param2_type,
-           class param3_type,
-           class param4_type,           
-           int (*mcfunction)( typename convert_if<image_type>::type,
-                              typename convert_if<param1_type>::type,
-                              typename convert_if<param2_type>::type,
-                              typename convert_if<param3_type>::type,
-                              typename convert_if<param4_type>::type
-             )
-           >
-image_type make_function( const image_type & image,
-                          param1_type param1,
-                          param2_type param2,
-                          param3_type param3,
-                          param4_type param4
-  )
-{
-  image_type result;
-  result.copy(image);
-  
-  if (!mcfunction(result, param1, param2, param3, param4))
-  {
-    error("mcfunction failed");
-  }
-  
-  return result;  
-} /* make_function */
-
-template < class image_type,
-           class param1_type,
-           class param2_type,
-           class param3_type,
-           class param4_type,
-           class param5_type,           
-           int (*mcfunction)( typename convert_if<image_type>::type,
-                              typename convert_if<param1_type>::type,
-                              typename convert_if<param2_type>::type,
-                              typename convert_if<param3_type>::type,
-                              typename convert_if<param4_type>::type,
-                              typename convert_if<param5_type>::type
-             )
-           >
-image_type make_function( const image_type & image,
-                          param1_type param1,
-                          param2_type param2,
-                          param3_type param3,
-                          param4_type param4,
-                          param5_type param5
-  )
-{
-  image_type result;
-  result.copy(image);
-  
-  if (!mcfunction(result, param1, param2, param3, param4, param5))
-  {
-    error("mcfunction failed");
-  }
-  
-  return result;  
-} /* make_function */
-
-template < class image_type,
-           class param1_type,
-           class param2_type,
-           class param3_type,
-           class param4_type,
-           class param5_type,
-           class param6_type,           
-           int (*mcfunction)( typename convert_if<image_type>::type,
-                              typename convert_if<param1_type>::type,
-                              typename convert_if<param2_type>::type,
-                              typename convert_if<param3_type>::type,
-                              typename convert_if<param4_type>::type,
-                              typename convert_if<param5_type>::type,
-                              typename convert_if<param6_type>::type
-             )
-           >
-image_type make_function( const image_type & image,
-                          param1_type param1,
-                          param2_type param2,
-                          param3_type param3,
-                          param4_type param4,
-                          param5_type param5,
-                          param6_type param6
-  )
-{
-  image_type result;
-  result.copy(image);
-  
-  if (!mcfunction(result, param1, param2, param3, param4, param5, param6))
-  {
-    error("mcfunction failed");
-  }
-  
-  return result;  
-} /* make_function */
 
 
 template <class image_type>
