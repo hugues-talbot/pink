@@ -29,7 +29,6 @@ namespace pink {
     int nbnewval
     );
   
-  
   template<class image_type>
   float_image convert2float( const image_type & image )
   {
@@ -43,13 +42,29 @@ namespace pink {
     return result;      
   } /* convert2float */
   
+#ifdef MCNEW
+  template<class image_type>
+  float_image convert2complex( const image_type & image )
+  {
+    float_image result(image.get_size());
+    int N = src.get_size().prod();
+    
+    FOR(q, N)
+    {
+      result[q] = image[q];        
+    } /* FOR */
+    
+    FOR(q, N)
+    {
+      result[N+q] = 0;        
+    } /* FOR */
+    
+    return result;      
+  } /* convert2complex */
+#endif
   
   int_image byte2long( const char_image & image );
   
-
-
-
-
 } /* namespace pink */
 #endif /* UI_CONVERT_HPP_ */
 #endif /*__cplusplus*/

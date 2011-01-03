@@ -50,6 +50,9 @@ The parameter \b mode selects the function to be integrated in order to build th
 \li 4: inverse opening function
 \li 5: bisector function
 \li 6: inverse Euclidean distance map
+\li 7: lambda function
+\li 8: uniform unity function on facets 
+\li 9: border indicator function on facets 
 
 \warning The input image \b in.pgm must be a complex, otherwise the result is meaningless (no verification is done)
 
@@ -176,7 +179,7 @@ int main(int32_t argc, char **argv)
   struct xvimage * func;
   int32_t mode;
   uint8_t *K;
-  int32_t rs, cs, ds, ps, N, i;
+  int32_t rs, cs, ds, ps, N, i, x, y, z;
   float * FUNC;
   float * LAMBDA;
   graphe * flow;
@@ -308,6 +311,47 @@ int main(int32_t argc, char **argv)
     for (i = 0; i < N; i++) 
       if (D[i]) FUNC[i] = (float)(1.0/sqrt(D[i]));
   }
+  else if (mode == 7)
+  { // lambda function
+    copy2image(func, lambda);
+    MaxAlpha3d(func); // fermeture (en ndg)
+  }
+  else if (mode == 8)
+  { // fonction uniforme (unité) sur les facettes
+    for (z = 0; z < ds; z++) 
+    for (y = 0; y < cs; y++) 
+    for (x = 0; x < rs; x++)
+    {
+      i = z*ps + y*rs + x;
+      if (K[i] && CUBE3D(x,y,z))
+	FUNC[i] = (float)1;
+      else
+	FUNC[i] = (float)0;
+    }
+  }
+  else if (mode == 9)
+  { // fonction uniforme sur les facettes de la frontière
+    struct xvimage * border = copyimage(k);
+    uint8_t *B;
+    assert(border != NULL);
+    if (! l3dborder(border))
+    {
+      fprintf(stderr, "%s: function l2dborder failed\n", argv[0]);
+      exit(1);
+    }
+    B = UCHARDATA(border);
+    for (z = 0; z < ds; z++) 
+    for (y = 0; y < cs; y++) 
+    for (x = 0; x < rs; x++)
+    {
+      i = z*ps + y*rs + x;
+      if (B[i] && CARRE3D(x,y,z)) 
+	FUNC[i] = (float)1;
+      else
+	FUNC[i] = (float)0;
+    }
+    freeimage(border);
+  }
   else
   {
     fprintf(stderr, "%s: bad mode: %d\n", argv[0], mode);
@@ -336,7 +380,7 @@ int main(int32_t argc, char **argv)
 	flow->v_sommets[i] = flow->v_sommets[i] / (TYP_VSOM)D[i];
 #endif
     struct xvimage *of = lopeningfunction(k, 0);
-    int32_t *OF, maxof;
+    int32_t *OF;
     assert(of != NULL);
     OF = SLONGDATA(of);
     for (i = 0; i < N; i++) 

@@ -45,7 +45,7 @@ The parameter <B>dir</B> is set to <B>x</B>, <B>y</B>, or <B>z</B>.
 The parameter <B>n</B> is an integer.
 The output binary image <B>out.pgm</B> contains the plane defined by <B>dir=n</B>.
 
-<B>Types supported:</B> byte 3d
+<B>Types supported:</B> byte 2d, byte 3d
 
 <B>Category:</B> geo
 \ingroup  geo
@@ -74,7 +74,6 @@ int main(int argc, char **argv)
   struct xvimage * image;
   uint8_t *Im;
   int32_t rs, cs, ds, ps, N;
-  char name[128];
   int32_t x, y, z, n;
   char axe;
 
@@ -91,11 +90,10 @@ int main(int argc, char **argv)
   N = ps * ds;
   axe = argv[4][0];
   n = atoi(argv[5]);
-  sprintf(name, "genplan(%c=%d)", axe, n);
-  image = allocimage(name, rs, cs, ds, VFF_TYP_1_BYTE);
+  image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
   if (image == NULL)
   {
-    fprintf(stderr, "genplan: allocimage failed\n");
+    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
   Im = UCHARDATA(image);

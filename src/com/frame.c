@@ -70,7 +70,7 @@ int main(int argc, char **argv)
  
   if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s filein.pgm fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm [width] fileout.pgm\n", argv[0]);
     exit(1);
   }
 

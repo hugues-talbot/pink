@@ -46,11 +46,13 @@ The parameter \b mode selects the function to be integrated in order to build th
 \li 0: uniform null function 
 \li 1: uniform unity function 
 \li 2: border indicator function
-\li 3: border indicator function and division of the integrated map by the distance map
+\li 3: border indicator function and division of the integrated map by the opening function
 \li 4: inverse opening function
 \li 5: bisector function
 \li 6: inverse Euclidean distance map
 \li 7: lambda function
+\li 8: uniform unity function on facets 
+\li 9: border indicator function on facets 
 
 \warning The input image \b in.pgm must be a complex, otherwise the result is meaningless (no verification is done)
 
@@ -83,10 +85,10 @@ References:<BR>
 #include <l2dkhalimsky.h>
 #include <l2dcollapse.h>
 
-	      //#define DESSINECOLSEQ
-	      //#define SHOWGRAPHS
-	      //#define SHOWCONFLUENTPOINTS
-	      //#define SHOWIMAGES
+//#define DESSINECOLSEQ
+#define SHOWGRAPHS
+//#define SHOWCONFLUENTPOINTS
+//#define SHOWIMAGES
 
 #define FS_EPSILON 0.1
 #define MARGEX1 5
@@ -96,7 +98,7 @@ References:<BR>
 #define FONTSIZE 12
 
 #ifdef SHOWGRAPHS
-static void ShowGraphe(graphe * g, char *filename, double s, double r, double t, int noms_sommets, int v_sommets, int col_sommets, int all_arcs, uint8_t *K, int rs, uint8_t *head) 
+static void ShowGraphe(graphe * g, char *filename, double s, double r, double t, int noms_sommets, int v_sommets, int col_sommets, int all_arcs, uint8_t *K, int rs, boolean *head) 
 /* ====================================================================== */
 #undef F_NAME
 #define F_NAME "ShowGraphe"
@@ -340,7 +342,7 @@ int main(int32_t argc, char **argv)
   struct xvimage * func;
   int32_t mode;
   uint8_t *K;
-  int32_t rs, cs, ds=1, N, i;
+  int32_t rs, cs, ds=1, N, i, j;
   float * FUNC;
   float * LAMBDA;
   graphe * flow;
@@ -526,6 +528,34 @@ int main(int32_t argc, char **argv)
     copy2image(func, lambda);
     MaxAlpha2d(func); // fermeture (en ndg)
   }
+  else if (mode == 8)
+  { // fonction uniforme (unité) sur les facettes
+    for (j = 0; j < cs; j++) 
+    for (i = 0; i < rs; i++) 
+      if (K[j* rs + i] && CARRE(i,j))
+	FUNC[j* rs + i] = (float)1;
+      else
+	FUNC[j* rs + i] = (float)0;
+  }
+  else if (mode == 9)
+  { // fonction uniforme sur les facettes de la frontière
+    struct xvimage * border = copyimage(k);
+    uint8_t *B;
+    assert(border != NULL);
+    if (! l2dborder(border))
+    {
+      fprintf(stderr, "%s: function l2dborder failed\n", argv[0]);
+      exit(1);
+    }
+    B = UCHARDATA(border);
+    for (j = 0; j < cs; j++) 
+    for (i = 0; i < rs; i++) 
+      if (B[j* rs + i] && INTER(i,j)) 
+	FUNC[j* rs + i] = (float)1;
+      else
+	FUNC[j* rs + i] = (float)0;
+    freeimage(border);
+  }
   else
   {
     fprintf(stderr, "%s: bad mode: %d\n", argv[0], mode);
@@ -572,6 +602,11 @@ int main(int32_t argc, char **argv)
       flow->v_sommets[i] = flow->v_sommets[i] - (TYP_VSOM)LAMBDA[i];
 #endif
 #ifdef ANCIEN2
+    int32_t *D = SLONGDATA(dist);
+    for (i = 0; i < N; i++)
+      if (D[i]) 
+	flow->v_sommets[i] = flow->v_sommets[i] / (TYP_VSOM)sqrt(D[i]);
+#endif
     struct xvimage *of = lopeningfunction(k, 0);
     uint32_t *OF;
     assert(of != NULL);
@@ -580,11 +615,6 @@ int main(int32_t argc, char **argv)
       if (OF[i]) 
 	flow->v_sommets[i] = flow->v_sommets[i] / (TYP_VSOM)OF[i];
     freeimage(of);
-#endif
-    int32_t *D = SLONGDATA(dist);
-    for (i = 0; i < N; i++)
-      if (D[i]) 
-	flow->v_sommets[i] = flow->v_sommets[i] / (TYP_VSOM)sqrt(D[i]);
   }
 
   // -----------------------------------------------------------

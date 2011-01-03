@@ -529,6 +529,13 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     );
 
   def(
+    "gradientcd",
+    &make_function< char_image, double, &lgradientcd >,
+    ( arg("image"), arg("alpha") ),
+    doc__gradientcd__c__
+    );
+
+  def(
     "exp",
     &make_function< float_image, &lexp >,
     (arg("image")),

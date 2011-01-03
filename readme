@@ -51,8 +51,8 @@ ccmake ${PINK}
 
 then there is an interactive configuration screen. Type 'c' to configure the defaults ; 'c' again (that's the way it is), and then 'g' to generate the makefiles.
 For the batch interface (default), the variable 'BASH_FRONT_END' should be 'ON'.
-For the python interface, the variable 'PYTHON_FRONT_END' and the
-variable 'LIAR' should be both 'ON'.
+For the python interface, the variable 'PYTHON_FRONT_END' and the variable 'LIAR' should be both 'ON'.
+IMPORTANT: do not select both bash and python interfaces at once, even if you want to install both. In this case, perform the installation twice.
 
 then type 
 

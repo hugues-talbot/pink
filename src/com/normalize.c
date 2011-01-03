@@ -39,8 +39,7 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> normalize in.pgm [nmin nmax] out.pgm
 
 <B>Description:</B>
-For byte and int32_t images, grayscale values are normalized to span the range of 
-[nmin...nmax].
+Grayscale of \b in.pgm values are normalized to span the range of [nmin...nmax].
 The parameters \b nmin and \b nmax are optional.
 For byte and int32_t images, the default values are \b nmin = 0 and \b nmax = 255.
 For float images, the default values are \b nmin = 0 and \b nmax = 1.

@@ -149,7 +149,6 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-
   writeimage(result, argv[argc - 1]);
   freeimage(image);
   freeimage(result);

@@ -37,7 +37,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief rigid registration of two grayscale images
 
-<B>Usage:</B> recalagerigide_num in1 in2 xmin ymin xmax ymax seuil [init] out
+<B>Usage:</B> recalagerigide_num in1 in2 seuil [init] out
 
 <B>Description:</B>
 
@@ -48,9 +48,6 @@ the "distance" between R(X) and Y is a local minimum.
 The distance D(Z,Y) between two images Z and Y is defined by:
 
 D(Z,Y) = sum { (Z[i] - Y[i])^2 ; for all i in support(Y) }
-
-where support(Y) is a rectangular zone specified by arguments 
-<B>xmin ymin xmax ymax</B>.
 
 The rigid deformation R is defined as the composition (in this order) 
 of a zoom, a rotation, and a translation. 
@@ -107,9 +104,9 @@ int main(int argc, char **argv)
   double seuil; 
   FILE *fd = NULL;
 
-  if ((argc != 9) && (argc != 10))
+  if ((argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in1.pgm in2.pgm x y w h seuil [init] out.lst \n", argv[0]);
+    fprintf(stderr, "usage: %s in1.pgm in2.pgm seuil [init] out.lst \n", argv[0]);
     exit(1);
   }
 
@@ -135,35 +132,31 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  image2->xmin = (uint32_t)atoi(argv[3]);
-  image2->ymin = (uint32_t)atoi(argv[4]);
-  image2->xmax = (uint32_t)atoi(argv[5]);
-  image2->ymax = (uint32_t)atoi(argv[6]);
-  seuil = atof(argv[7]);
+  seuil = atof(argv[3]);
 
-  if (argc == 10)
+  if (argc == 6)
   {
     char type;
     int32_t n;
 
-    fd = fopen(argv[8],"r");
+    fd = fopen(argv[4],"r");
     if (!fd)
     {
-      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[8]);
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[4]);
       exit(1);
     }
 
     fscanf(fd, "%c", &type);
     if (type != 'e')
     {
-      fprintf(stderr, "usage: %s: bad file format for %s: %c \n", argv[0], argv[8], type);
+      fprintf(stderr, "usage: %s: bad file format for %s: %c \n", argv[0], argv[4], type);
       exit(1);
     }
 
     fscanf(fd, "%d\n", &n);
     if (n != 5)
     {
-      fprintf(stderr, "usage: %s: wrong number of parameters in %s: %d \n", argv[0], argv[8], n);
+      fprintf(stderr, "usage: %s: wrong number of parameters in %s: %d \n", argv[0], argv[4], n);
       exit(1);
     }
 

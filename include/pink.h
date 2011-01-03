@@ -164,7 +164,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lconvol3.h"
 #include "lcrop.h"
 #include "lderiche.h"
-//#include "lderiche3d.h"
 #include "ldetectcercles.h"
 #include "ldiZenzo.h"
 #include "ldilat.h"

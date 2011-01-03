@@ -22,8 +22,6 @@
 
 using namespace std;
 
-
-
 namespace pink {
 
   char_image long2byte(
@@ -139,11 +137,68 @@ namespace pink {
     return result;    
   };
 
+#ifdef MCNEW
+  
+  float_image byte2complex( const byte_image & src )
+  {
 
+    int N = src.get_size().prod();
+    float_image result(2*src.get_size());
+    
+    FOR( x, N ) 
+    {
+        result[x] = static_cast<float_image::pixel_type>(src[x]);
+    } /* FOR */
+    
+    FOR( x, N ) 
+    {
+        result[N+x] = static_cast<float_image::pixel_type>0;
+    } /* FOR */
 
+    return result;
 
+  } /* byte2complex */
+  
+  float_image long2complex( const int_image & src )
+  {
 
+    int N = src.get_size().prod();
+    float_image result(2*src.get_size());
+    
+    FOR( x, N ) 
+    {
+        result[x] = static_cast<float_image::pixel_type>(src[x]);
+    } /* FOR */
+    
+    FOR( x, N ) 
+    {
+        result[N+x] = static_cast<float_image::pixel_type>0;
+    } /* FOR */
 
+    return result;
+
+  } /* float2complex */
+  
+  float_image float2complex( const float_image & src )
+  {
+
+    int N = src.get_size().prod();
+    float_image result(2*src.get_size());
+    
+    FOR( x, N ) 
+    {
+        result[x] = static_cast<float_image::pixel_type>(src[x]);
+    } /* FOR */
+    
+    FOR( x, N ) 
+    {
+        result[N+x] = static_cast<float_image::pixel_type>0;
+    } /* FOR */
+
+    return result;
+
+  } /* float2complex */
+#endif
   
 } /* namespace pink */
 
