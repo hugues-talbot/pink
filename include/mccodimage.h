@@ -39,6 +39,9 @@ extern "C" {
 #define NDG_MAX 255            /* niveau de gris max */
 #define NDG_MIN 0              /* niveau de gris min */
 
+typedef struct {float re; float im;} complex;
+typedef struct {double re; double im;} dcomplex;
+
 /* definitions for data storage type,
    uint32_t data_storage_type; */
 #define	VFF_TYP_BIT		0	/* pixels are on or off (binary image)*/
@@ -49,7 +52,9 @@ extern "C" {
 #define	VFF_TYP_2_BYTE		2	/* pixels are two byte (int16_t) */
 #define	VFF_TYP_4_BYTE		4	/* pixels are four byte (integer) */
 #define	VFF_TYP_FLOAT		5	/* pixels are float (single precision)*/
-#define VFF_TYP_DOUBLE		9	/* pixels are float (double precision)*/
+#define VFF_TYP_DOUBLE		6	/* pixels are float (double precision)*/
+#define VFF_TYP_COMPLEX		7	/* pixels are complex (single precision)*/
+#define VFF_TYP_DCOMPLEX	8	/* pixels are complex (double precision)*/
 
 struct xvimage {
   char *name;
@@ -57,16 +62,16 @@ struct xvimage {
   int32_t col_size;                    /* Size of a column (number of rows) */
   int32_t depth_size;                  /* Number of planes (for 3d images) */
   int32_t time_size;                   /* Number of (2d or 3d) images */
-  int32_t num_data_bands;	        /* Number of bands per data pixel,
+  int32_t num_data_bands;	       /* Number of bands per data pixel,
 					   or number of bands per image, or
 					   dimension of vector data, or
 					   number of elements in a vector */
   int32_t data_storage_type;           /* storage type for disk data */
-  double xdim, ydim, zdim;              /* voxel dimensions in real world */
+  double xdim, ydim, zdim;             /* voxel dimensions in real world */
   int32_t xmin, xmax;                  /* region of interest: x coordinates */
   int32_t ymin, ymax;                  /* region of interest: y coordinates */
   int32_t zmin, zmax;                  /* region of interest: z coordinates */
-  void * image_data;                    /* pointer on raw data */
+  void * image_data;                   /* pointer on raw data */
 };
 
 #define SCHARDATA(I)   ((int8_t*)((I)->image_data))
@@ -77,6 +82,8 @@ struct xvimage {
 #define ULONGDATA(I)   ((uint32_t*)((I)->image_data))
 #define FLOATDATA(I)   ((float*)((I)->image_data))
 #define DOUBLEDATA(I)  ((double*)((I)->image_data))
+#define COMPLEXDATA(I) ((complex*)((I)->image_data))
+#define DCOMPLEXDATA(I)((dcomplex*)((I)->image_data))
 #define colsize(I)     ((I)->col_size)
 #define rowsize(I)     ((I)->row_size)
 #define depth(I)       ((I)->depth_size)

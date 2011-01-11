@@ -45,8 +45,8 @@ extern "C" {
  *
  **************************************************************/
 
-typedef struct {float re; float im;} COMPLEX;
-typedef struct {double re; double im;} DCOMPLEX;
+typedef complex COMPLEX;
+typedef dcomplex DCOMPLEX;
 
 #ifndef ERROR
 #define ERROR -1

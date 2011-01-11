@@ -9,6 +9,8 @@ Pink file formats
 /* PB: ascii long 2d-3d (extension Pink) */
 /* PC: raw double 2d-3d (extension Pink) */
 /* PD: ascii double 2d-3d (extension Pink) */
+/* PE: raw single precision complex 2d-3d (extension Pink) */
+/* PF: ascii single precision complex 2d-3d (extension Pink) */
 
 Images
 
@@ -36,8 +38,26 @@ DIMENSIONS ::= <RS> <CS> | <RS> <CS> <DS>
 RS ::= ascii_coded_integer
 CS ::= ascii_coded_integer
 DS ::= ascii_coded_integer
-VALMAX ::= ascii_coded_integer
+VALMAX ::= ascii_coded_integer [unused]
 PIXEL ::= binary_coded_integer32
+
+FILE ::= 'P9' <COMMENT>* <DIMENSIONS> <VALMAX> <PIXEL>*
+COMMENT ::= '#' char* newline 
+DIMENSIONS ::= <RS> <CS> | <RS> <CS> <DS>
+RS ::= ascii_coded_integer
+CS ::= ascii_coded_integer
+DS ::= ascii_coded_integer
+VALMAX ::= ascii_coded_integer [unused]
+PIXEL ::= binary_coded_float
+
+FILE ::= 'PA' <COMMENT>* <DIMENSIONS> <VALMAX> <PIXEL>*
+COMMENT ::= '#' char* newline 
+DIMENSIONS ::= <RS> <CS> | <RS> <CS> <DS>
+RS ::= ascii_coded_integer
+CS ::= ascii_coded_integer
+DS ::= ascii_coded_integer
+VALMAX ::= ascii_coded_integer [unused]
+PIXEL ::= ascii_coded_float
 
 FILE ::= PB <COMMENT>* <DIMENSIONS> <VALMAX> <PIXEL>*
 COMMENT ::= '#' char* newline 
@@ -45,8 +65,46 @@ DIMENSIONS ::= <RS> <CS> | <RS> <CS> <DS>
 RS ::= ascii_coded_integer
 CS ::= ascii_coded_integer
 DS ::= ascii_coded_integer
-VALMAX ::= ascii_coded_integer
+VALMAX ::= ascii_coded_integer [unused]
 PIXEL ::= ascii_coded_integer32
+
+FILE ::= 'PC' <COMMENT>* <DIMENSIONS> <VALMAX> <PIXEL>*
+COMMENT ::= '#' char* newline 
+DIMENSIONS ::= <RS> <CS> | <RS> <CS> <DS>
+RS ::= ascii_coded_integer
+CS ::= ascii_coded_integer
+DS ::= ascii_coded_integer
+VALMAX ::= ascii_coded_integer [unused]
+PIXEL ::= binary_coded_double
+
+FILE ::= 'PD' <COMMENT>* <DIMENSIONS> <VALMAX> <PIXEL>*
+COMMENT ::= '#' char* newline 
+DIMENSIONS ::= <RS> <CS> | <RS> <CS> <DS>
+RS ::= ascii_coded_integer
+CS ::= ascii_coded_integer
+DS ::= ascii_coded_integer
+VALMAX ::= ascii_coded_integer [unused]
+PIXEL ::= ascii_coded_double
+
+FILE ::= 'PE' <COMMENT>* <DIMENSIONS> <VALMAX> (<RE> <IM>)*
+COMMENT ::= '#' char* newline 
+DIMENSIONS ::= <RS> <CS> | <RS> <CS> <DS>
+RS ::= ascii_coded_integer
+CS ::= ascii_coded_integer
+DS ::= ascii_coded_integer
+VALMAX ::= ascii_coded_integer [unused]
+RE ::= binary_coded_float
+IM ::= binary_coded_float
+
+FILE ::= 'PF' <COMMENT>* <DIMENSIONS> <VALMAX> (<RE> <IM>)*
+COMMENT ::= '#' char* newline 
+DIMENSIONS ::= <RS> <CS> | <RS> <CS> <DS>
+RS ::= ascii_coded_integer
+CS ::= ascii_coded_integer
+DS ::= ascii_coded_integer
+VALMAX ::= ascii_coded_integer [unused]
+RE ::= ascii_coded_float
+IM ::= ascii_coded_float
 
 =======================================================
 

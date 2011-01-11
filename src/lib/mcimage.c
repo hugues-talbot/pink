@@ -100,6 +100,8 @@ struct xvimage *allocimage(
     case VFF_TYP_4_BYTE:   es = 4; break;
     case VFF_TYP_FLOAT:    es = sizeof(float); break;
     case VFF_TYP_DOUBLE:   es = sizeof(double); break;
+    case VFF_TYP_COMPLEX:  es = 2*sizeof(float); break;
+    case VFF_TYP_DCOMPLEX: es = 2*sizeof(double); break;
     default: fprintf(stderr,"%s: bad data type %d\n", F_NAME, dt);
              return NULL;
   } /* switch (t) */
@@ -166,6 +168,8 @@ struct xvimage *allocmultimage(
     case VFF_TYP_4_BYTE:   es = 4; break;
     case VFF_TYP_FLOAT:    es = sizeof(float); break;
     case VFF_TYP_DOUBLE:   es = sizeof(double); break;
+    case VFF_TYP_COMPLEX:  es = 2*sizeof(float); break;
+    case VFF_TYP_DCOMPLEX: es = 2*sizeof(double); break;
     default: fprintf(stderr,"%s: bad data type %d\n", F_NAME, dt);
              return NULL;
   } /* switch (t) */
@@ -230,6 +234,8 @@ void razimage(struct xvimage *f)
     case VFF_TYP_4_BYTE:   es = 4; break;
     case VFF_TYP_FLOAT:    es = sizeof(float); break;
     case VFF_TYP_DOUBLE:   es = sizeof(double); break;
+    case VFF_TYP_COMPLEX:  es = 2*sizeof(float); break;
+    case VFF_TYP_DCOMPLEX: es = 2*sizeof(double); break;
     default: fprintf(stderr,"%s: bad data type %d\n", F_NAME, datatype(f));
              return;
   } /* switch (t) */
@@ -405,6 +411,8 @@ struct xvimage *copyimage(struct xvimage *f)
     case VFF_TYP_4_BYTE: memcpy(g->image_data, f->image_data, (N*sizeof(int32_t))); break;
     case VFF_TYP_FLOAT:  memcpy(g->image_data, f->image_data, (N*sizeof(float))); break;
     case VFF_TYP_DOUBLE: memcpy(g->image_data, f->image_data, (N*sizeof(double))); break;
+    case VFF_TYP_COMPLEX:  memcpy(g->image_data, f->image_data, (2*N*sizeof(float))); break;
+    case VFF_TYP_DCOMPLEX: memcpy(g->image_data, f->image_data, (2*N*sizeof(double))); break;
     default:
       fprintf(stderr,"%s: bad data type %d\n", F_NAME, type);
       return NULL;
@@ -474,6 +482,20 @@ int32_t copy2image(struct xvimage *dest, struct xvimage *source)
         memcpy(D, S, N*sizeof(double));
         break;
       }
+    case VFF_TYP_COMPLEX:
+      {
+        float *S = FLOATDATA(source);
+        float *D = FLOATDATA(dest);
+        memcpy(D, S, 2*N*sizeof(float));
+        break;
+      }
+    case VFF_TYP_DCOMPLEX:
+      {
+        double *S = DOUBLEDATA(source);
+        double *D = DOUBLEDATA(dest);
+        memcpy(D, S, 2*N*sizeof(double));
+        break;
+      }
     default:
       fprintf(stderr,"%s: bad data type %d\n", F_NAME, datatype(source));
       return 0;
@@ -525,6 +547,20 @@ int32_t equalimages(struct xvimage *im1, struct xvimage *im2)
         double *I1 = DOUBLEDATA(im1);
         double *I2 = DOUBLEDATA(im2);
         if (memcmp(I1, I2, N*sizeof(double)) != 0) return 0;
+        break;
+      }
+    case VFF_TYP_COMPLEX:
+      {
+        float *I1 = FLOATDATA(im1);
+        float *I2 = FLOATDATA(im2);
+        if (memcmp(I1, I2, 2*N*sizeof(float)) != 0) return 0;
+        break;
+      }
+    case VFF_TYP_DCOMPLEX:
+      {
+        double *I1 = DOUBLEDATA(im1);
+        double *I2 = DOUBLEDATA(im2);
+        if (memcmp(I1, I2, 2*N*sizeof(double)) != 0) return 0;
         break;
       }
   } /* switch(f->datatype) */
@@ -811,7 +847,8 @@ void writeimage(struct xvimage * image, char *filename)
 
   if ((rs<=25) && (cs<=25) && (ds<=25) &&// (np==1) &&
       ((datatype(image) == VFF_TYP_1_BYTE) || (datatype(image) == VFF_TYP_4_BYTE) || 
-       (datatype(image) == VFF_TYP_FLOAT) || (datatype(image) == VFF_TYP_DOUBLE)))
+       (datatype(image) == VFF_TYP_FLOAT) || (datatype(image) == VFF_TYP_DOUBLE) ||
+       (datatype(image) == VFF_TYP_COMPLEX) || (datatype(image) == VFF_TYP_DCOMPLEX)))
   {
     fprintf(stderr,"%s: writing image in ASCII mode\n", F_NAME);
     writeascimage(image, filename); 
@@ -938,6 +975,25 @@ void writerawimage(struct xvimage * image, char *filename)
 
     ret = fwrite(DOUBLEDATA(image), sizeof(double), N, fd);
     if (ret != N)
+    {
+      fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
+      exit(0);
+    }
+  }
+  else if (datatype(image) == VFF_TYP_COMPLEX)
+  {
+    fputs("PE\n", fd);
+    if ((image->xdim != 0.0) && (d > 1))
+      fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
+    if ((image->xdim != 0.0) && (d == 1))
+      fprintf(fd, "#xdim %g\n#ydim %g\n", image->xdim, image->ydim);
+    if (np > 1) fprintf(fd, "%d %d %d %d\n", rs, cs, d, np); 
+    else if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); 
+    else fprintf(fd, "%d %d\n", rs, cs);
+    fprintf(fd, "0\n");
+
+    ret = fwrite(FLOATDATA(image), sizeof(float), N+N, fd);
+    if (ret != N+N)
     {
       fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
       exit(0);
@@ -1129,6 +1185,28 @@ void writeascimage(struct xvimage * image, char *filename)
     } /* for i */
     fprintf(fd, "\n");
   }
+  else if (datatype(image) == VFF_TYP_COMPLEX)
+  {
+    fputs("PF\n", fd);
+    if ((image->xdim != 0.0) && (ds > 1))
+      fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
+    if (np > 1) fprintf(fd, "%d %d %d %d\n", rs, cs, ds, np); 
+    else if (ds > 1) fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+    else fprintf(fd, "%d %d\n", rs, cs);
+    fprintf(fd, "1\n");
+
+    for (i = 0; i < N; i++)
+    {
+      if (i % rs == 0) fprintf(fd, "\n");
+      if (i % ps == 0) fprintf(fd, "\n");
+      fprintf(fd, "%8g %8g  ", FLOATDATA(image)[i+i], FLOATDATA(image)[i+i+1]);
+    } /* for i */
+    fprintf(fd, "\n");
+  }
+  else
+  {   fprintf(stderr,"%s: bad datatype: %d\n", F_NAME, datatype(image));
+      exit(0);
+  }
   fclose(fd);
 }
 
@@ -1146,13 +1224,20 @@ void printimage(struct xvimage * image)
   ps = rs * cs;
   N = ps * d;
 
-  for (i = 0; i < N; i++)
+  if (datatype(image) == VFF_TYP_1_BYTE)
   {
-    if (i % rs == 0) printf("\n");
-    if (i % ps == 0) printf("\n");
-    printf("%3d ", (int32_t)(UCHARDATA(image)[i]));
-  } /* for i */
-  printf("\n");
+    for (i = 0; i < N; i++)
+    {
+      if (i % rs == 0) printf("\n");
+      if (i % ps == 0) printf("\n");
+      printf("%3d ", (int32_t)(UCHARDATA(image)[i]));
+    } /* for i */
+    printf("\n");
+  }
+  else
+  {   fprintf(stderr,"%s: bad datatype: %d\n", F_NAME, datatype(image));
+      exit(0);
+  }
 }
 
 /* ==================================== */
@@ -1348,6 +1433,8 @@ struct xvimage * readimage(char *filename)
     /* PC: raw double 2d-3d...  ==  extension MC */
     /* PD: ascii double 2d-3d...  ==  extension LN */
     /* P7: raw byte 3d : OBSOLETE - left for compatibility */
+    /* PE: raw single precision complex 2d-3d...  ==  extension MC */
+    /* PF: ascii single precision complex 2d-3d...  ==  extension MC */
   if (!read)
   {
     fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
@@ -1369,6 +1456,8 @@ struct xvimage * readimage(char *filename)
     case 'B': ascii = 1; typepixel = VFF_TYP_4_BYTE; break;
     case 'C': ascii = 0; typepixel = VFF_TYP_DOUBLE; break;
     case 'D': ascii = 1; typepixel = VFF_TYP_DOUBLE; break;
+    case 'E': ascii = 0; typepixel = VFF_TYP_COMPLEX; break;
+    case 'F': ascii = 1; typepixel = VFF_TYP_COMPLEX; break;
     default:
       fprintf(stderr,"%s: invalid image format: P%c\n", F_NAME, buffer[1]);
       return NULL;
@@ -1524,6 +1613,26 @@ struct xvimage * readimage(char *filename)
       }
     }
   } /* if (typepixel == VFF_TYP_DOUBLE) */
+  else
+  if (typepixel == VFF_TYP_COMPLEX)
+  {
+    if (ascii)
+    {
+      for (i = 0; i < N+N; i++)
+      {
+        fscanf(fd, "%f", &(FLOATDATA(image)[i]));
+      } /* for i */
+    }
+    else 
+    {
+      int32_t ret = fread(FLOATDATA(image), sizeof(float), N+N, fd);
+      if (ret != N+N)
+      {
+        fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N+N, ret);
+        return(NULL);
+      }
+    }
+  } /* if (typepixel == VFF_TYP_COMPLEX) */
 
   fclose(fd);
 
@@ -1580,6 +1689,8 @@ struct xvimage * readheader(char *filename)
     case 'B': ascii = 1; typepixel = VFF_TYP_4_BYTE; break;
     case 'C': ascii = 0; typepixel = VFF_TYP_DOUBLE; break;
     case 'D': ascii = 1; typepixel = VFF_TYP_DOUBLE; break;
+    case 'E': ascii = 0; typepixel = VFF_TYP_COMPLEX; break;
+    case 'F': ascii = 1; typepixel = VFF_TYP_COMPLEX; break;
     default:
       fprintf(stderr,"%s: invalid image format: %c%c\n", F_NAME, buffer[0], buffer[1]);
       return NULL;

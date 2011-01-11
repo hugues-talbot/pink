@@ -39,11 +39,12 @@ $(BDIR)/threshold \
 $(BDIR)/volume \
 $(BDIR)/xor
 
+#$(BDIR)/any2complex \
+
 CONVERT=\
 $(BDIR)/2elisp \
 $(BDIR)/2latex \
 $(BDIR)/ac2pink \
-$(BDIR)/any2complex \
 $(BDIR)/bmp2ppm \
 $(BDIR)/bmp2pgm \
 $(BDIR)/byte2float \
