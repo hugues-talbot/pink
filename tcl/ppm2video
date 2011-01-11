@@ -36,7 +36,7 @@
 exec tclsh $0 $1 $2 $3
 
 if {$argc != 3} { 
-  puts stderr "usage: ppm2video prefix frequency outfilename"
+  puts stderr "usage: ppm2video prefix frequency(fps) outfilename"
   exit 
 }
 # reads a pgm image header
@@ -78,6 +78,6 @@ puts $PPM2VIDEO(cs)
 
 catch { exec mencoder mf://*.jpg -mf w=$PPM2VIDEO(rs):h=$PPM2VIDEO(cs):fps=$PPM2VIDEO(fr):type=jpg -ovc lavc -lavcopts vcodec=mpeg4 -oac copy -o $PPM2VIDEO(outfilename) } mes
 
-#puts $mes
+puts $mes
 
 #catch { exec png2avi $PPM2VIDEO(infilename) $PPM2VIDEO(rs) $PPM2VIDEO(cs) $PPM2VIDEO(fr) $PPM2VIDEO(outfilename) } mes

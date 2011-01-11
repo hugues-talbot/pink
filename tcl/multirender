@@ -75,12 +75,12 @@ source "$PINK/tcl/my_dialog.tcl"
 
 # white
  set RENDER_COL(0) "1.0 1.0 1.0"
-# orange
- set RENDER_COL(1) "1.0 0.49 0.25"
+# red
+ set RENDER_COL(1) "1.0 0.0 0.0"
 # indigo
  set RENDER_COL(2) "0.49 0.25 1.0"
-# red
- set RENDER_COL(3) "1.0 0.0 0.0"
+# orange
+ set RENDER_COL(3) "1.0 0.49 0.25"
 # green
  set RENDER_COL(4) "0.49 1.0 0.25"
 #
@@ -111,7 +111,9 @@ source "$PINK/tcl/my_dialog.tcl"
 vtkRenderer ren1
     ren1 SetViewport 0 0 1 1
 # fond gris clair:
-    ren1 SetBackground 0.8 0.8 0.8
+#    ren1 SetBackground 0.8 0.8 0.8
+# fond gris blanc:
+    ren1 SetBackground 1.0 1.0 1.0
 # pour un gradient: nouvelle version VTK ?
 #    ren1 SetBackground2 1 1 1
 # fond blanc:

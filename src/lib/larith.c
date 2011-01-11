@@ -121,6 +121,12 @@ int32_t ladd(
     for (i = 0; i < N; i++, FPT1++, FPT2++)
       *FPT1 = *FPT1 + *FPT2;
   }
+  else if ((datatype(image1) == VFF_TYP_COMPLEX) && (datatype(image2) == VFF_TYP_COMPLEX))
+  {
+    FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
+    for (i = 0; i < N+N; i++, FPT1++, FPT2++)
+      *FPT1 = *FPT1 + *FPT2;
+  }
   else 
   {
     fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
@@ -359,6 +365,12 @@ int32_t ldiff(
     for (i = 0; i < N; i++, FPT1++, FPT2++)
       *FPT1 = (float)fabs((float)(*FPT1)-(float)(*FPT2));
   }
+  else if ((datatype(image1) == VFF_TYP_COMPLEX) && (datatype(image2) == VFF_TYP_COMPLEX))
+  {
+    FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
+    for (i = 0; i < N+N; i++, FPT1++, FPT2++)
+      *FPT1 = (float)fabs((float)(*FPT1)-(float)(*FPT2));
+  }
   else 
   {
     fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
@@ -465,6 +477,12 @@ int32_t lequal(
   {
     FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
     for (i = 0; i < N; i++, FPT1++, FPT2++)
+      if (*FPT1 != *FPT2) return 0;
+  }
+  else if ((datatype(image1) == VFF_TYP_COMPLEX) && (datatype(image2) == VFF_TYP_COMPLEX))
+  {
+    FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
+    for (i = 0; i < N+N; i++, FPT1++, FPT2++)
       if (*FPT1 != *FPT2) return 0;
   }
   else 
@@ -1091,6 +1109,12 @@ int32_t lnull(struct xvimage * image1)
     for (i = 0; i < N; i++, FPT1++)
       if (*FPT1 != 0.0) return 0;
   }
+  else if (datatype(image1) == VFF_TYP_COMPLEX)
+  {
+    FPT1 = FLOATDATA(image1);
+    for (i = 0; i < N+N; i++, FPT1++)
+      if (*FPT1 != 0.0) return 0;
+  }
   else 
   {
     fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
@@ -1138,6 +1162,13 @@ int32_t lscale(
   else if (datatype(image) == VFF_TYP_FLOAT)
   {
     for (FPT = FLOATDATA(image), i = 0; i < N; i++, FPT++)
+    {
+      *FPT = (float)(*FPT * scale);
+    }
+  }
+  else if (datatype(image) == VFF_TYP_COMPLEX)
+  {
+    for (FPT = FLOATDATA(image), i = 0; i < N+N; i++, FPT++)
     {
       *FPT = (float)(*FPT * scale);
     }
@@ -1301,6 +1332,12 @@ int32_t lsub(
     for (i = 0; i < N; i++, FPT1++, FPT2++)
       *FPT1 = *FPT1 - *FPT2;
   }
+  else if ((datatype(image1) == VFF_TYP_COMPLEX) && (datatype(image2) == VFF_TYP_COMPLEX))
+  {
+    FPT1 = FLOATDATA(image1); FPT2 = FLOATDATA(image2);
+    for (i = 0; i < N+N; i++, FPT1++, FPT2++)
+      *FPT1 = *FPT1 - *FPT2;
+  }
   else 
   {
     fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
@@ -1401,40 +1438,84 @@ int32_t lxor(
   return 1;
 } /* lxor() */
 
+//===================================================
+//===================================================
+// COMPLEX TYPE IMAGES
+//===================================================
+//===================================================
+
 /* ==================================== */
-int32_t lmodulus(struct xvimage * image)
+int32_t lmodulus(struct xvimage * image, struct xvimage * result)
 /* ==================================== */
 // modulus of a complex
-// result is stored in first band
+// result image must have been allocated before calling
 #undef F_NAME
 #define F_NAME "lmodulus"
 {
   int32_t i, N;
-  float *FPT;
+  float *F, *R;
   double t1, t2;
-
+  assert(result != NULL);
+  assert(rowsize(image) == rowsize(result));
+  assert(colsize(image) == colsize(result));
+  assert(depth(image) == depth(result));
+  assert(datatype(result) == VFF_TYP_FLOAT);
+  assert(datatype(image) == VFF_TYP_COMPLEX);
   N = rowsize(image) * colsize(image) * depth(image);
-  if (nbands(image) != 2)
+  F = FLOATDATA(image);
+  R = FLOATDATA(result);
+  for (i = 0; i < N; i++)
   {
-    fprintf(stderr, "%s: only for complex images\n", F_NAME);
-    return 0;
-  }
-
-  if (datatype(image) == VFF_TYP_FLOAT)
-  {
-    FPT = FLOATDATA(image);
-    for (i = 0; i < N; i++)
-    {
-      t1 = (double)FPT[i];
-      t2 = (double)FPT[i+N];
-      t1 = sqrt(t1*t1 + t2*t2);
-      FPT[i] = (float)t1;
-    }
-  }
-  else 
-  {
-    fprintf(stderr, "%s: bad image type\n", F_NAME);
-    return 0;
+    t1 = (double)F[i+i];
+    t2 = (double)F[i+i+1];
+    t1 = sqrt(t1*t1 + t2*t2);
+    R[i] = (float)t1;
   }
   return 1;
 } /* lmodulus() */
+
+/* ==================================== */
+int32_t lreal(struct xvimage * image, struct xvimage * result)
+/* ==================================== */
+// real part of a complex
+// result image must have been allocated before calling
+#undef F_NAME
+#define F_NAME "lreal"
+{
+  int32_t i, N;
+  float *F, *R;
+  assert(result != NULL);
+  assert(rowsize(image) == rowsize(result));
+  assert(colsize(image) == colsize(result));
+  assert(depth(image) == depth(result));
+  assert(datatype(result) == VFF_TYP_FLOAT);
+  assert(datatype(image) == VFF_TYP_COMPLEX);
+  N = rowsize(image) * colsize(image) * depth(image);
+  F = FLOATDATA(image);
+  R = FLOATDATA(result);
+  for (i = 0; i < N; i++) R[i] = F[i+i];
+  return 1;
+} /* lreal() */
+
+/* ==================================== */
+int32_t limaginary(struct xvimage * image, struct xvimage * result)
+/* ==================================== */
+// imaginary part of a complex
+// result image must have been allocated before calling
+#undef F_NAME
+#define F_NAME "limaginary"
+{
+  int32_t i, N;
+  float *F, *R;
+  assert(result != NULL);
+  assert(rowsize(image) == rowsize(result));
+  assert(colsize(image) == colsize(result));
+  assert(depth(image) == depth(result));
+  assert(datatype(result) == VFF_TYP_FLOAT);
+  assert(datatype(image) == VFF_TYP_COMPLEX);
+  N = rowsize(image) * colsize(image) * depth(image);
+  F = FLOATDATA(image);
+  R = FLOATDATA(result);
+  for (i = 0; i < N; i++) R[i] = F[i+i+1];
+  return 1;
+} /* limaginary() */
