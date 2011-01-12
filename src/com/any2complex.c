@@ -34,9 +34,9 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file any2complex.c
 
-\brief converts a "byte", "long" of "float" image to a "complex" image
+\brief converts a "byte", "long" of "float" image (or couple of images) to a "complex" image
 
-<B>Usage:</B> any2complex in out
+<B>Usage:</B> any2complex re.pgm [im.pgm] out.pgm
 
 <B>Description:</B> 
 
@@ -55,6 +55,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mcimage.h>
 #include <mccodimage.h>
 
@@ -62,75 +63,128 @@ knowledge of the CeCILL license and that you accept its terms.
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * imagecomplex;
-  struct xvimage * image;
+  struct xvimage * im_complex;
+  struct xvimage * im_real;
+  struct xvimage * im_imaginary = NULL;
   int32_t x, rs, cs, ds, N;
-  float *C;
+  complex *C;
   
-  if (argc != 3)
+  if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s in1.pgm out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s re.pgm [im.pgm] out.pgm \n", argv[0]);
     exit(1);
   }
 
-  image = readimage(argv[1]); 
-  if (image == NULL)
+  im_real = readimage(argv[1]); 
+  if (im_real == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  rs = rowsize(image);
-  cs = colsize(image);
-  ds = depth(image);
+  rs = rowsize(im_real);
+  cs = colsize(im_real);
+  ds = depth(im_real);
   N = rs * cs * ds;
-  imagecomplex = allocmultimage(NULL, rs, cs, ds, 1, 2, VFF_TYP_FLOAT);
-  if (imagecomplex == NULL)
+
+  if (argc == 4)
+  {
+    im_imaginary = readimage(argv[1]); 
+    if (im_imaginary == NULL)
+    {
+      fprintf(stderr, "%s: readimage failed\n", argv[0]);
+      exit(1);
+    }
+    assert(rowsize(im_imaginary) == rs);
+    assert(colsize(im_imaginary) == cs);
+    assert(depth(im_imaginary) == ds);
+  }
+
+  im_complex = allocimage(NULL, rs, cs, ds, VFF_TYP_COMPLEX);
+  if (im_complex == NULL)
   {
     fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
-  C = FLOATDATA(imagecomplex);
-  razimage(imagecomplex);
+  C = COMPLEXDATA(im_complex);
+  if (argc == 3) razimage(im_complex);
 
-  if (datatype(image) == VFF_TYP_1_BYTE)
+  if (datatype(im_real) == VFF_TYP_1_BYTE)
   {
-    uint8_t *I = UCHARDATA(image);
-    for (x = 0; x < N; x++) 
-      C[x] = 
-	(float)(I[x]);
+    uint8_t *I = UCHARDATA(im_real);
+    for (x = 0; x < N; x++) C[x].re = (float)(I[x]);
   }
   else
-  if (datatype(image) == VFF_TYP_4_BYTE)
+  if (datatype(im_real) == VFF_TYP_4_BYTE)
   {
-    int32_t *I = SLONGDATA(image);
-    for (x = 0; x < N; x++) C[x] = (float)I[x];
+    int32_t *I = SLONGDATA(im_real);
+    for (x = 0; x < N; x++) C[x].re = (float)I[x];
   }
   else
-  if (datatype(image) == VFF_TYP_FLOAT)
+  if (datatype(im_real) == VFF_TYP_FLOAT)
   {
-    float *I = FLOATDATA(image);
-    for (x = 0; x < N; x++) C[x] = (float)I[x];
+    float *I = FLOATDATA(im_real);
+    for (x = 0; x < N; x++) C[x].re = (float)I[x];
   }
   else
-  if (datatype(image) == VFF_TYP_DOUBLE)
+  if (datatype(im_real) == VFF_TYP_DOUBLE)
   {
-    double *I = DOUBLEDATA(image);
-    for (x = 0; x < N; x++) C[x] = (float)I[x];
+    double *I = DOUBLEDATA(im_real);
+    for (x = 0; x < N; x++) C[x].re = (float)I[x];
+  }
+  else
+  if (datatype(im_real) == VFF_TYP_COMPLEX)
+  {
+    assert(im_imaginary == NULL);
+    copy2image(im_complex, im_real);
   }
   else
   {
-    fprintf(stderr, "%s: bad data type: %d\n", argv[0], datatype(image));
+    fprintf(stderr, "%s: bad data type: %d\n", argv[0], datatype(im_real));
     exit(1);
   }
-  
-  imagecomplex->xdim = image->xdim;
-  imagecomplex->ydim = image->ydim;
-  imagecomplex->zdim = image->zdim;
 
-  writeimage(imagecomplex, argv[argc-1]);
-  freeimage(imagecomplex);
-  freeimage(image);
+  if (im_imaginary != NULL)
+  {
+
+    if (datatype(im_imaginary) == VFF_TYP_1_BYTE)
+    {
+      uint8_t *I = UCHARDATA(im_imaginary);
+      for (x = 0; x < N; x++) C[x].im = (float)(I[x]);
+    }
+    else
+    if (datatype(im_imaginary) == VFF_TYP_4_BYTE)
+    {
+      int32_t *I = SLONGDATA(im_imaginary);
+      for (x = 0; x < N; x++) C[x].im = (float)I[x];
+    }
+    else
+    if (datatype(im_imaginary) == VFF_TYP_FLOAT)
+    {
+      float *I = FLOATDATA(im_imaginary);
+      for (x = 0; x < N; x++) C[x].im = (float)I[x];
+    }
+    else
+    if (datatype(im_imaginary) == VFF_TYP_DOUBLE)
+    {
+      double *I = DOUBLEDATA(im_imaginary);
+      for (x = 0; x < N; x++) C[x].im = (float)I[x];
+    }
+    else
+    {
+      fprintf(stderr, "%s: bad data type: %d\n", argv[0], datatype(im_imaginary));
+      exit(1);
+    }
+  } // if (im_imaginary != NULL)
+
+  im_complex->xdim = im_real->xdim;
+  im_complex->ydim = im_real->ydim;
+  im_complex->zdim = im_real->zdim;
+
+  writeimage(im_complex, argv[argc-1]);
+  freeimage(im_complex);
+  freeimage(im_real);
+  if (im_imaginary != NULL) freeimage(im_imaginary);
 
   return 0;
 } /* main */

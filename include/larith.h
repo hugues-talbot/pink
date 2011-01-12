@@ -173,9 +173,9 @@ extern int32_t lxor(
         struct xvimage *image2
 );
 
-extern int32_t lmodulus(
-	struct xvimage * image
-);
+extern int32_t lmodulus(struct xvimage * image, struct xvimage * result);
+extern int32_t lreal(struct xvimage * image, struct xvimage * result);
+extern int32_t limaginary(struct xvimage * image, struct xvimage * result);
 
 #ifdef __cplusplus
 }

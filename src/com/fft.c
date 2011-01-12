@@ -39,59 +39,56 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> fft in.pgm [dir] out.pgm
 
 <B>Description:</B>
-computes the 2 dimensional Fast Fourier Transform of an image.
-The input image must be square and the number of rows (or columns)
-MUST be a power of two.
+Computes the 2 dimensional Fast Fourier Transform of an image.
 
 This program will compute either a forward or inverse FFT, depending on
 the direction requested with the \b dir option.  A \b dir value of 0
 will result in a forward FFT, and a \b dir value of 1 will result
 in an inverse FFT. 
 
-The input arguments are described as follows:
+The arguments are described as follows:
 
-\b in.pgm
-specifies the input image, which must be of data type FLOAT, with two 
-bands. The first band contains the real component, the second band contains the imaginary component.
+\b in.pgm specifies the input image, which must be of data type COMPLEX.
 
-\b out.pgm
-output image, which will be a 2-band image of data type FLOAT. The first band contains the real component, the second band contains the imaginary component.
+\b out.pgm output image, which will be an image of data type COMPLEX. 
+If row size or column size of in.pgm is not an integral power of 2, then input data is padded and dimensions of out.pgm may be different from those of in.pgm . 
 
 \b dir (optional)
 specifies the FFT direction.  A \b dir of 0 (default) will result in a forward FFT, 
 and a \b dir of 1 will result in an inverse FFT.
 
-Note that it is the users responsibility to ensure that the correct components
-of the image are used when requesting an FFT or Inverse FFT.  Unexpected 
-results may occur if the user requests an inverse FFT and only inputs the real 
-component of an image.  If an FFT of an image is taken, then both the real and 
-imaginary components must be used to obtain a correct inverse FFT.
+This particular implementation of the DFT uses the transform pair defined as follows:
 
-For a forward FFT, the input data is multiplied by (-1)**(x+y) where (x,y) is
-the pixel coordinate. This has the effect of shifting the frequency domain
-result so that the DC component is at (N/2,N/2) rather than (0,0). For the
-inverse FFT case, the data is multiplied by (-1)**(x+y) AFTER the
-FFT processing, accounting for the fact that the input frequency domain data
-was center-shifted by the forward FFT. The center-shifted frequency domain
-representation is much easier to visualize and filter than it would be
-if not shifted. For more information on the shifting teqchnique, see
-R.C. Gonsalez and P. Wintz, "Digital Image Processing, 2nd ed, sec 3.2.2,
-p. 77. (1987). The center-shifting should really be an option.
+Let there be two complex arrays each with n rows and m columns.
 
-For the forward FFT, there is no scaling on the data. For the inverse FFT,
-the data is scaled by 1/(N*N). Thus, to generate a sinewave of amplitude
-1.0 for a 64x64 complex image to be handed to the inverse FFT, there should
-be two impulses at conjugate locations (symmetric about the center of the image)
-each with amplitude 0.5/(64*64). Why 0.5? It's because each impulse carries
-half of the power! The scaling should really be an option, but it currently
-is not (perhaps in a future patch).
+Index them as 
 
-<B>Types supported:</B> float (complex) 2d
+f(x,y):    0 <= x <= m - 1,  0 <= y <= n - 1
+
+F(u,v):    -m/2 <= u <= m/2 - 1,  -n/2 <= v <= n/2 - 1
+
+Then the forward and inverse transforms are related as follows.
+
+Forward:
+
+F(u,v) = \sum_{x=0}^{m-1} \sum_{y=0}^{n-1} f(x,y) \exp{-2\pi i (ux/m + vy/n)}
+
+Inverse:
+
+f(x,y) = 1/(mn) \sum_{u=-m/2}^{m/2-1} \sum_{v=-n/2}^{n/2-1} F(u,v) \exp{2\pi i (ux/m + vy/n)}
+
+Therefore, the transforms have these properties:
+
+1.  \sum_x \sum_y  f(x,y) = F(0,0)
+
+2.  m n \sum_x \sum_y |f(x,y)|^2 = \sum_u \sum_v |F(u,v)|^2
+
+<B>Types supported:</B> complex 2d
 
 <B>Category:</B> signal
 \ingroup signal
 
-\author Scott Wilson, Rick Bogart, Lyle Bacon
+\author Stefan Gustavson (stegu@itn.liu.se) 2003-10-20
 */
 
 #include <stdio.h>
@@ -102,48 +99,10 @@ is not (perhaps in a future patch).
 #include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <lcrop.h>
 #include <lfft.h>
 
 #define VERBOSE
-
-struct xvimage *pad_image(struct xvimage *image)
-{
-    struct xvimage *tmpimage;
-    float *I, *T;
-    int32_t i, j, cs, rs, N, cs2, rs2, N2;
-
-    cs = colsize(image);            /* Number of rows */
-    rs = rowsize(image);            /* Number of columns */
-    N = rs * cs;
-    I = FLOATDATA(image);
-
-    rs2 = cs2 = 1;
-    while (rs2 < rs) rs2 = rs2 << 1;
-    while (cs2 < cs) cs2 = cs2 << 1;
-
-    if ((rs2 != rs) || (cs2 != cs))
-    {
-      N2 = rs2 * cs2;
-      tmpimage = allocmultimage(NULL, rs2, cs2, 1, 1, 2, VFF_TYP_FLOAT);
-      assert(tmpimage != NULL);
-      tmpimage->xdim = image->xdim;
-      tmpimage->ydim = image->ydim;
-      tmpimage->zdim = image->zdim;
-      T = FLOATDATA(tmpimage);
-      for (j = 0; j < cs; j++) 
-	for (i = 0; i < rs; i++) 
-	  T[j*rs2 + i] = I[j*rs + i];    
-      for (j = 0; j < cs; j++) 
-	for (i = 0; i < rs; i++) 
-	  T[N2+ j*rs2 + i] = I[N + j*rs + i];    
-#ifdef VERBOSE
-      printf("rs=%d cs=%d ; after padding: rs2=%d cs2=%d\n", rs, cs, rs2, cs2);
-#endif
-      return tmpimage;
-    }
-    else
-      return NULL;
-}
 
 /* =============================================================== */
 int main(int argc, char **argv)
@@ -152,6 +111,7 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * image2;
   int32_t dir = 0;
+  int32_t rs, cs, cs2, rs2;
 
   if ((argc != 3) && (argc != 4))
   {
@@ -165,8 +125,10 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
+  rs = rowsize(image);
+  cs = colsize(image);
 
-  if ((datatype(image) != VFF_TYP_FLOAT) || (depth(image) != 1) || (nbands(image) != 2))
+  if ((datatype(image) != VFF_TYP_COMPLEX) || (depth(image) != 1))
   {
     fprintf(stderr,"%s: input image type must be complex 2D\n", argv[0]);
     exit(1);
@@ -174,9 +136,22 @@ int main(int argc, char **argv)
 
   if (argc == 4) dir = atoi(argv[2]);
 
-  image2 = pad_image(image);
-  if (image2 != NULL)
+  rs2 = cs2 = 1;
+  while (rs2 < rs) rs2 = rs2 << 1;
+  while (cs2 < cs) cs2 = cs2 << 1;
+  if ((rs2 != rs) || (cs2 != cs))
   {
+    image2 = allocimage(NULL, rs2, cs2, 1, VFF_TYP_COMPLEX);
+    assert(image2 != NULL);
+    image2->xdim = image->xdim;
+    image2->ydim = image->ydim;
+    image2->zdim = image->zdim;
+    razimage(image2);
+    if (!linsert(image, image2, 0, 0, 0))
+    {
+      fprintf(stderr, "%s: function linsert failed\n", argv[0]);
+      exit(1);
+    }
     freeimage(image);
     image = image2;
   }

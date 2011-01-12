@@ -18,6 +18,9 @@ $(BDIR)/add \
 $(BDIR)/addconst \
 $(BDIR)/area \
 $(BDIR)/average \
+$(BDIR)/complex_modulus \
+$(BDIR)/complex_real \
+$(BDIR)/complex_imaginary \
 $(BDIR)/correctbias \
 $(BDIR)/diffimages \
 $(BDIR)/div \
@@ -35,7 +38,6 @@ $(BDIR)/max \
 $(BDIR)/max1 \
 $(BDIR)/min \
 $(BDIR)/min1 \
-$(BDIR)/modulus \
 $(BDIR)/moyenne \
 $(BDIR)/mult \
 $(BDIR)/normalize \
@@ -51,12 +53,11 @@ $(BDIR)/threshold \
 $(BDIR)/volume \
 $(BDIR)/xor
 
-#$(BDIR)/any2complex \
-
 CONVERT=\
 $(BDIR)/2elisp \
 $(BDIR)/2latex \
 $(BDIR)/ac2pink \
+$(BDIR)/any2complex \
 $(BDIR)/bmp2ppm \
 $(BDIR)/bmp2pgm \
 $(BDIR)/byte2float \
@@ -595,6 +596,15 @@ $(BDIR)/area:	$(CDIR)/area.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(
 $(BDIR)/average:	$(CDIR)/average.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/average.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/average
 
+$(BDIR)/complex_modulus:	$(CDIR)/complex_modulus.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/complex_modulus.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/complex_modulus
+
+$(BDIR)/complex_real:	$(CDIR)/complex_real.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/complex_real.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/complex_real
+
+$(BDIR)/complex_imaginary:	$(CDIR)/complex_imaginary.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/complex_imaginary.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/complex_imaginary
+
 $(BDIR)/correctbias:	$(CDIR)/correctbias.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/correctbias.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/correctbias
 
@@ -645,9 +655,6 @@ $(BDIR)/min:	$(CDIR)/min.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(OD
 
 $(BDIR)/min1:	$(CDIR)/min1.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/min1.c $(OBJ_COMMON) $(ODIR)/larith.o $(LIBS) -o $(BDIR)/min1
-
-$(BDIR)/modulus:	$(CDIR)/modulus.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/modulus.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/modulus
 
 $(BDIR)/moyenne:	$(CDIR)/moyenne.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/moyenne.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/moyenne
@@ -1917,8 +1924,8 @@ $(BDIR)/directionalfilter:	$(CDIR)/directionalfilter.c $(IDIR)/mcimage.h $(IDIR)
 $(BDIR)/ecarttype:	$(CDIR)/ecarttype.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lstat.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lstat.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ecarttype.c $(ODIR)/lstat.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/ecarttype
 
-$(BDIR)/fft:	$(CDIR)/fft.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lfft.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lfft.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/fft.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lfft.o $(LIBS) -o $(BDIR)/fft
+$(BDIR)/fft:	$(CDIR)/fft.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lcrop.h $(IDIR)/lfft.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lcrop.o $(ODIR)/lfft.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/fft.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lcrop.o $(ODIR)/lfft.o $(LIBS) -o $(BDIR)/fft
 
 $(BDIR)/gradientcd:	$(CDIR)/gradientcd.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lderiche.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lderiche.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/gradientcd.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lderiche.o $(LIBS) -o $(BDIR)/gradientcd

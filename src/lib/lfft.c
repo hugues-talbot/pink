@@ -649,14 +649,13 @@ int32_t lfft(struct xvimage *image, int32_t dir)
 {
 #undef F_NAME
 #define F_NAME "lfft"
-  int32_t i, j, cs, rs, N;    /* Indexes and sizes of rows and columns */
-  COMPLEX *array;
-  float *I;
+  int32_t cs, rs;    /* Indexes and sizes of rows and columns */
+  complex *array;
 
   assert((dir == 0) || (dir == 1));
 
   /* Check to make sure input image is of correct type */
-  if ((datatype(image) != VFF_TYP_FLOAT) || (depth(image) != 1) || (nbands(image) != 2))
+  if ((datatype(image) != VFF_TYP_COMPLEX) || (depth(image) != 1))
   {
     fprintf(stderr,"%s: input image type must be complex 2D\n", F_NAME);
     return(0);
@@ -664,8 +663,7 @@ int32_t lfft(struct xvimage *image, int32_t dir)
 
   cs = colsize(image);            /* Number of rows */
   rs = rowsize(image);            /* Number of columns */
-  N = rs * cs;
-  I = FLOATDATA(image);
+  array = COMPLEXDATA(image);
 
   /* Make sure size is legal for an FFT (otherwise pad it) */
   if((!power_of_2(rs)) || (!power_of_2(cs)))
@@ -674,30 +672,12 @@ int32_t lfft(struct xvimage *image, int32_t dir)
     return(0);
   }
 
-  /* Get space for the intermediate complex arrays */
-  array = (COMPLEX *)malloc(N * sizeof(COMPLEX));
-  assert(array != NULL);
-  for (j = 0; j < cs; j++) 
-    for (i = 0; i < rs; i++)
-    { 
-      array[j*rs + i].re = I[j*rs + i];
-      array[j*rs + i].im = I[N + j*rs + i];
-    }
-
-  if (fft2f(array, rs, cs, dir) == ERROR)
+  if (fft2f((COMPLEX *)array, rs, cs, dir) == ERROR)
   {
     fprintf(stderr,"%s: function fft2f failed\n", F_NAME);
     return(0);
   }
 
-  for (j = 0; j < cs; j++) 
-    for (i = 0; i < rs; i++)
-    { 
-      I[j*rs + i] = array[j*rs + i].re;
-      I[N + j*rs + i] = array[j*rs + i].im;
-    }  
-
-  free(array);
   return(1);
 }  /* lfft() */
 

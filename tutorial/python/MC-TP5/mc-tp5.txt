@@ -1,0 +1,9 @@
+Image : images/joints.pgm
+But : extraire les joints et mesurer la corrosion (parties noires) le
+long des joints
+
+Images : images/pex?.pgm
+But : corriger le gradient d'illumination
+
+Image : images/trois003.pgm
+But : corriger l'effet de "drappé"

@@ -119,6 +119,17 @@ struct xvimage * lcrop(struct xvimage *in, int32_t x, int32_t y, int32_t w, int3
         T1F[(j * i1) + i] = IF[(yy * rs) + xx];
       }
   }
+  else if (datatype(in) == VFF_TYP_COMPLEX)
+  {
+    complex *T1C = COMPLEXDATA(temp1);
+    complex *IC = COMPLEXDATA(in);
+    for (j = j0, yy = y0; j < j1; j++, yy++)
+      for (i = i0, xx = x0; i < i1; i++, xx++)
+      {
+        T1C[(j * i1) + i].re = IC[(yy * rs) + xx].re;
+        T1C[(j * i1) + i].im = IC[(yy * rs) + xx].im;
+      }
+  }
   else
   {
     fprintf(stderr, "%s : bad data type\n", F_NAME);
@@ -201,6 +212,18 @@ struct xvimage * lcrop3d(struct xvimage *in, int32_t x, int32_t y, int32_t z, in
         for (i = i0, xx = x0; i < i1; i++, xx++)
         {
           T1F[(k * p1) + (j * i1) + i] = IF[(zz * ps) + (yy * rs) + xx];
+        }
+  }
+  else if (datatype(in) == VFF_TYP_COMPLEX)
+  {
+    complex *T1C = COMPLEXDATA(temp1);
+    complex *IC = COMPLEXDATA(in);
+    for (k = k0, zz = z0; k < k1; k++, zz++)
+      for (j = j0, yy = y0; j < j1; j++, yy++)
+        for (i = i0, xx = x0; i < i1; i++, xx++)
+        {
+          T1C[(k * p1) + (j * i1) + i].re = IC[(zz * ps) + (yy * rs) + xx].re;
+          T1C[(k * p1) + (j * i1) + i].im = IC[(zz * ps) + (yy * rs) + xx].im;
         }
   }
   else
@@ -552,6 +575,7 @@ struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width)
 /* =============================================================== */
 int32_t linsert(struct xvimage *a, struct xvimage *b, int32_t x, int32_t y, int32_t z) 
 /* =============================================================== */
+// inserts a into b at position (x,y,z)
 #undef F_NAME
 #define F_NAME "linsert"
 {
@@ -611,6 +635,21 @@ int32_t linsert(struct xvimage *a, struct xvimage *b, int32_t x, int32_t y, int3
               (z + k >= 0) && (y + j >= 0) && (x + i >= 0)) 
             B[((z + k) * psb) + ((y + j) * rsb) + x + i] = 
               A[(k * psa) + (j * rsa) + i]; 
+  }
+  else if (datatype(a) == VFF_TYP_COMPLEX)
+  {
+    complex *A = COMPLEXDATA(a);
+    complex *B = COMPLEXDATA(b);
+
+    for (k = 0; k < dsa; k++)
+    for (j = 0; j < csa; j++)
+    for (i = 0; i < rsa; i++)
+    if ((z + k < dsb) && (y + j < csb) && (x + i < rsb) && 
+        (z + k >= 0) && (y + j >= 0) && (x + i >= 0)) 
+    {
+      B[((z + k) * psb) + ((y + j) * rsb) + x + i].re = A[(k * psa) + (j * rsa) + i].re; 
+      B[((z + k) * psb) + ((y + j) * rsb) + x + i].im = A[(k * psa) + (j * rsa) + i].im; 
+    }
   }
   else
   {

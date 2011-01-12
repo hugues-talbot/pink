@@ -55,6 +55,7 @@ knowledge of the CeCILL license and that you accept its terms.
 			 P7 (raw 3d) est conservé pour la compatibilité
    Update mars 2008 : fixe bug perte mémoire dans convertXXXX
    Update aout 2008 : nouveaux formats pgm étendus PC, PD pour les "double"
+   Update janvier 2010 : types COMPLEX DCOMPLEX
 */
 
 #include <stdio.h>
@@ -329,6 +330,8 @@ int32_t showheader(char * name)
     case 'B': printf("type: P%c (ascii int32_t - ext. MC)\n", buffer[1]); es = sizeof(int32_t); break;
     case 'C': printf("type: P%c (raw double - ext. MC)\n", buffer[1]); es = sizeof(double); break;
     case 'D': printf("type: P%c (ascii double - ext. LN)\n", buffer[1]); es = sizeof(double); break;
+    case 'E': printf("type: P%c (raw single precision complex - ext. MC)\n", buffer[1]); es = sizeof(complex); break;
+    case 'F': printf("type: P%c (ascii single precision complex - ext. MC)\n", buffer[1]); es = sizeof(complex); break;
               break;
     default:
       fprintf(stderr,"%s: invalid image format: P%c\n", F_NAME, buffer[1]);
@@ -606,6 +609,12 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
       float *FL = FLOATDATA(im3);
       for (i = 0; i < N; i++) FL[i] = (float)F[i];
     }
+    else if (typemax == VFF_TYP_COMPLEX)
+    {
+      complex *CL = COMPLEXDATA(im3);
+      razimage(im3);
+      for (i = 0; i < N; i++) CL[i].re = (float)F[i];
+    }
     else
     {
       fprintf(stderr,"%s: bad data type\n", F_NAME);
@@ -626,6 +635,35 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
     {
       float *FL = FLOATDATA(im3);
       for (i = 0; i < N; i++) FL[i] = (float)L[i];
+    }
+    else
+    if (typemax == VFF_TYP_COMPLEX)
+    {
+      complex *CL = COMPLEXDATA(im3);
+      razimage(im3);
+      for (i = 0; i < N; i++) CL[i].re = (float)L[i];
+    }
+    else
+    {
+      fprintf(stderr,"%s: bad data type\n", F_NAME);
+      return 0;
+    }
+  }
+  else if (type == VFF_TYP_FLOAT)
+  {
+    int32_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
+    float *FL = FLOATDATA(im2);
+    im3 = allocimage(NULL, rs, cs, ds, typemax);
+    if (im3 == NULL)
+    {
+      fprintf(stderr,"%s: allocimage failed\n", F_NAME);
+      return 0;
+    }
+    if (typemax == VFF_TYP_COMPLEX)
+    {
+      complex *CL = COMPLEXDATA(im3);
+      razimage(im3);
+      for (i = 0; i < N; i++) CL[i].re = (float)FL[i];
     }
     else
     {

@@ -1,0 +1,19 @@
+derniers ajouts à Pink :
+
+12/01/2011
+
+- images de complexes
+  - formats "pgm etendu" PE et PF (voir doc/formats.txt)
+  - typedef complex (dans mcimage)
+  - tags VFF_TYP_COMPLEX et VFF_TYP_DCOMPLEX pour xvimage
+  - macros COMPLEXDATA et DCOMPLEXDATA
+  - extension des opérations arithmétiques usuelles ainsi que crop, insert...
+  - operateur any2complex
+  - opérateurs complex_real, complex_imaginary, complex_modulus
+  - fft utilise maintenant les images de type complexe
+
+- nouveau TP: MC-TP5 
+  - analyse de corrosion des joints, image EDF
+    script python mc-tp5-1.py testé
+  - correction de gradient d'illumination
+    script python mc-tp5-2.py testé

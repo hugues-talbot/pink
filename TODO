@@ -11,10 +11,8 @@ MC operateur watershed : inversion
 
 MC operateur segmentheight : mode
 
-MC genball : double radius
-
 MC threshold remplace seuil
 
-MC any2complex
-
 MC implémenter nbands
+
+MC complex type images

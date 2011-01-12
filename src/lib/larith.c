@@ -71,6 +71,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdlib.h>
 #include <math.h>
 #include <limits.h>
+#include <assert.h>
 #include <mcutil.h>
 #include <mcimage.h>
 #include <mccodimage.h>
@@ -891,9 +892,6 @@ int32_t lmult(
 #define F_NAME "lmult"
 {
   int32_t i, b;
-  uint8_t *pt1, *pt2;
-  int32_t *PT1, *PT2; 
-  float *FPT1, *FPT2; 
   int32_t rs, cs, ds, nb1, nb2, N;
   struct xvimage * tmp;
 
@@ -925,6 +923,7 @@ int32_t lmult(
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
+    uint8_t *pt1, *pt2;
     pt1 = UCHARDATA(image1);
     for (b = 0; b < nb1; b++)
       for (pt2 = UCHARDATA(image2), i = 0; i < N; i++, pt1++, pt2++)
@@ -932,6 +931,7 @@ int32_t lmult(
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {
+    int32_t *PT1, *PT2; 
     PT1 = SLONGDATA(image1);
     for (b = 0; b < nb1; b++)
       for (PT2 = SLONGDATA(image2), i = 0; i < N; i++, PT1++, PT2++)
@@ -939,10 +939,22 @@ int32_t lmult(
   }
   else if ((datatype(image1) == VFF_TYP_FLOAT) && (datatype(image2) == VFF_TYP_FLOAT))
   {
+    float *FPT1, *FPT2; 
     FPT1 = FLOATDATA(image1);
     for (b = 0; b < nb1; b++)
       for (FPT2 = FLOATDATA(image2), i = 0; i < N; i++, FPT1++, FPT2++)
 	*FPT1 = *FPT1 * *FPT2;
+  }
+  else if ((datatype(image1) == VFF_TYP_COMPLEX) && (datatype(image2) == VFF_TYP_COMPLEX))
+  {
+    complex *CPT1, *CPT2; 
+    CPT1 = COMPLEXDATA(image1);
+    for (b = 0; b < nb1; b++)
+      for (CPT2 = COMPLEXDATA(image2), i = 0; i < N; i++, CPT1++, CPT2++)
+      {
+	(*CPT1).re = ((*CPT1).re * (*CPT2).re) - ((*CPT1).im * (*CPT2).im);
+	(*CPT1).im = ((*CPT1).re * (*CPT2).im) + ((*CPT1).im * (*CPT2).re);
+      }
   }
   else 
   {

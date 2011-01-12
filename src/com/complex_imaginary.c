@@ -32,16 +32,16 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file modulus.c
+/*! \file complex_imaginary.c
 
-\brief pixelwise modulus of complex
+\brief pixelwise imaginary part of complex
 
-<B>Usage:</B> modulus in.pgm out.pgm
+<B>Usage:</B> complex_imaginary in.pgm out.pgm
 
 <B>Description:</B>
 Applies to complex images only.
-For each pixel p, out[p] = modulus(in[p]), where 
-modulus(x+iy) = sqrt(x^2 + y^2).
+For each pixel p, out[p] = imaginary(in[p]), where 
+imaginary(x+iy) = y
 
 <B>Types supported:</B> complex 2d, complex 3d
 
@@ -65,8 +65,6 @@ int main(int argc, char **argv)
 {
   struct xvimage * image1;
   struct xvimage * image2;
-  int32_t rs, cs, ds, N, i;
-  float *I1, *I2;
 
   if (argc != 3)
   {
@@ -81,29 +79,18 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (! lmodulus(image1))
-  {
-    fprintf(stderr, "%s: function lmodulus failed\n", argv[0]);
-    exit(1);
-  }
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-
-  image2 = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT);
+  image2 = allocimage(NULL, rowsize(image1), colsize(image1), depth(image1), VFF_TYP_FLOAT);
   if (image2 == NULL)
   {
     fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
-  I1 = FLOATDATA(image1);
-  I2 = FLOATDATA(image2);
-  N = rs * cs * ds;
+
+  (void)limaginary(image1, image2);
+
   image2->xdim = image1->xdim;
   image2->ydim = image1->ydim;
   image2->zdim = image1->zdim;
-  for (i = 0; i < N; i++) I2[i] = I1[i];
 
   writeimage(image2, argv[argc-1]);
   freeimage(image2);
