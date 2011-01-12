@@ -26,7 +26,7 @@ using namespace std;
 
 namespace pink {
 
-  char_image genball( int radius, int dim )
+  char_image genball( double radius, int dim )
   {
     char_image result;
     
@@ -70,7 +70,7 @@ namespace pink {
               curr << radius-q,radius-w, radius-e;
               if (curr.fabs()<=radius)
               {
-                tmp << q,w;            
+                tmp << q,w,e;            
                 result[tmp]=255;            
               }
             } /* FOR */            

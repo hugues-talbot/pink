@@ -21,7 +21,7 @@
 namespace pink {
 
 
-  char_image genball( int radius, int dim );
+  char_image genball( double radius, int dim );
   
 
 
