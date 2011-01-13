@@ -1,0 +1,7 @@
+MC 11/01/2011
+compil sous linux mandriva 
+PB: install fltk 1.1.9: erreur compil
+SOL: install fltk 1.1.10: OK
+PB: install imview: pbs avec ImageMagick
+SOL: ./configure --without-magick
+
