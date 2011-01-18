@@ -91,7 +91,7 @@ int main(int argc, char **argv)
   {
     if (! lselectcomp(image, connex, x, y, z))
     {
-      fprintf(stderr, "selectcomp: function ldeletecomp failed\n");
+      fprintf(stderr, "selectcomp: function lselectcomp failed\n");
       exit(1);
     }
   }

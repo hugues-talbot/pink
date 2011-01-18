@@ -48,7 +48,7 @@ extern int32_t ltopotypes(
 extern int32_t lt4pp(struct xvimage * image);
 extern int32_t lt8pp(struct xvimage * image);
 extern int32_t lt6pp(struct xvimage * image);
-extern int32_t ltopotypes_lt26pp(struct xvimage * image);
+extern int32_t ltopotypes_t26pp(struct xvimage * image);
 extern int32_t lalpha(struct xvimage * image, int32_t connex, char sign);
 #ifdef __cplusplus
 }

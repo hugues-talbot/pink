@@ -236,14 +236,14 @@ void skeleton2_export()
     );
   
   UI_DEFINE_FUNCTION(
-    skeleton,
+    "skeleton",
     pink::python::skeleton_im_prioim_connex_inhibimage,
     ( arg("image"), arg("prio"), arg("connexity"), arg("inhibit") ),
     doc__skeleton__c__
     );
 
   UI_DEFINE_FUNCTION(
-    skeleton,
+    "skeleton",
     pink::python::skeleton_im_prioim_connex_inhibval,
     ( arg("image"), arg("prio"), arg("connexity"), arg("inhibit")=-1 ),
     doc__skeleton__c__

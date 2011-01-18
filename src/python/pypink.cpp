@@ -17,7 +17,18 @@ using namespace boost::python;
 using namespace pink;
 
 // maybe I'll get away with it
-#include <pyujimage.hpp>
+#include "pyujimage.hpp"
+#include "pyexport.hpp"
+#include "ui_wrap_function.hpp"
+#include "ui_wrap_result.hpp"
+#include "ui_wrap_value.hpp"
+//#include "ui_wrap_value.hpp"
+#include "ui_make_function.hpp"
+#include "ui_make_result.hpp"
+#include "ui_make_value.hpp"
+
+//#include <boost/preprocessor.hpp>
+//#include <pyexport.hpp>
 
 
 /*! \file pypink.c
@@ -33,9 +44,9 @@ using namespace pink;
   you should include a function call in pypink.cpp of the form
 
   def( "function's name in python",
-    &make_function<char_image, type_1, type_2, ..., type_n, &pink_c_function>,
-    (arg("argument 1 name"), arg("argument 2 name"), ..., arg(argument n name) )
-    "documentation of my function"
+  &make_function<char_image, type_1, type_2, ..., type_n, &pink_c_function>,
+  (arg("argument 1 name"), arg("argument 2 name"), ..., arg(argument n name) )
+  "documentation of my function"
   )
  
   make_function is a template. In the first parameter you specify the image type. If
@@ -46,65 +57,65 @@ using namespace pink;
 
   Example:
   def( "ptisolated",
-       &make_function<char_image, int, &lptisolated>,
-       ( arg("image"), arg("connexity") ),
-       doc__ptisolated__c__
-     );
+  &make_function<char_image, int, &lptisolated>,
+  ( arg("image"), arg("connexity") ),
+  doc__ptisolated__c__
+  );
   
 
-   * in C++
+  * in C++
 
-   You should write your function in format
+  You should write your function in format
 
-   char_image cpp_function( const char_image & image, type_1 var_1, type_2 var_2, ..., type_n var_n )
-   here you can put any image type: char_image, int_image, float_image...
+  char_image cpp_function( const char_image & image, type_1 var_1, type_2 var_2, ..., type_n var_n )
+  here you can put any image type: char_image, int_image, float_image...
 
-   or
+  or
 
-   template <class image_type>
-   image_type cpp_function( const image_type & image, type_1 var_1, type_2 var_2, ..., type_n var_n )
+  template <class image_type>
+  image_type cpp_function( const image_type & image, type_1 var_1, type_2 var_2, ..., type_n var_n )
 
-   You can call 'cout <<' as well as you can use exceptions. By convention you should never change the
-   input image. Allways make a copy of it before processing. Remember that char_image is a SHALLOW TYPE
-   char_image image2 (image1) will NOT make a copy. On the other hand you can use function(char_image I)
-   as a parameter-type without the copy penalty.
-   To export this function you should call
+  You can call 'cout <<' as well as you can use exceptions. By convention you should never change the
+  input image. Allways make a copy of it before processing. Remember that char_image is a SHALLOW TYPE
+  char_image image2 (image1) will NOT make a copy. On the other hand you can use function(char_image I)
+  as a parameter-type without the copy penalty.
+  To export this function you should call
 
-   UI_DEFINE_ONE_FUNCTION(
-     function_name_in_python,
-     cpp_function,
-     ( arg("parameter 1 name"), ..., arg("parameter n name") ),
-     "documentation of cpp_function"
-   )
-
-   or, if you have a template function: 
-
-   UI_DEFINE_FUNCTION(
-     function_name_in_python,
-     cpp_function,
-     ( arg("parameter 1 name"), ..., arg("parameter n name") ),
-     "documentation of cpp_function"
-   )
-
-   Examples:
   UI_DEFINE_ONE_FUNCTION(
-    float2byte,
-    pink::float2byte,
-    ( arg("source image"), arg("mode")=2 ),
-    doc__float2byte__c__
-    // end of the documenation
-    );
+  function_name_in_python,
+  cpp_function,
+  ( arg("parameter 1 name"), ..., arg("parameter n name") ),
+  "documentation of cpp_function"
+  )
+
+  or, if you have a template function: 
+
+  UI_DEFINE_FUNCTION(
+  function_name_in_python,
+  cpp_function,
+  ( arg("parameter 1 name"), ..., arg("parameter n name") ),
+  "documentation of cpp_function"
+  )
+
+  Examples:
+  UI_DEFINE_ONE_FUNCTION(
+  float2byte,
+  pink::float2byte,
+  ( arg("source image"), arg("mode")=2 ),
+  doc__float2byte__c__
+  // end of the documenation
+  );
     
   UI_DEFINE_FUNCTION(
-    convert2float,
-    pink::convert2float,
-    (arg("image")),
-    "converts an image to float type"
-    // end of the documenation
-    );
+  convert2float,
+  pink::convert2float,
+  (arg("image")),
+  "converts an image to float type"
+  // end of the documenation
+  );
    
 
- */
+*/
 // declarations
 // void deep_xvimage_object_export();void shallow_xvimage_object_export();
 // void xvimage_object_export();
@@ -138,6 +149,1357 @@ void Pimview_sendcommand_export();
 // template <class image_type>
 // void ujoi_class_export( const char* object_name, const char* object_description );
 
+/// ********************************************************************************************
+/// ********************************************************************************************
+/// ********************************************************************************************
+/// *****                                                                                  *****
+/// *****                          ALTERNATIVE 2011 WRAPPING                               *****
+/// *****                                                                                  *****
+/// ********************************************************************************************
+/// ********************************************************************************************
+/// ********************************************************************************************
+
+
+#include <boost/preprocessor/slot/counter.hpp>
+
+
+UI_WRAP_FUNCTION(
+  "ptisolated",
+  lptisolated,
+  ( arg("image"), arg("connexity") ),
+  doc__ptisolated__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "ptjunction",
+  lptjunction,
+  ( arg("image"), arg("connexity") ),
+  doc__ptjunction__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "selectcomp",
+  lselectcomp,
+  ( arg("image"), arg("connexity"), arg("x"), arg("y"), arg("z") ),
+  doc__selectcomp__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "holeclosing",
+  lfermetrous3dbin,
+  ( arg("image"), arg("connexity"), arg("holesize") ),
+  doc__holeclosing__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "holeclosing",
+  lfermetrous3dbin2,
+  ( arg("image"), arg("guiding image") ,arg("connexity"), arg("holesize") ),
+  doc__holeclosing__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "lambdaskel",
+  llambdakern,
+  ( arg("image"), arg("imcond"), arg("connexity"), arg("lambda") ),
+  doc__lambdaskel__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "lambdaskel",
+  llambdakern_short,
+  ( arg("image"), arg("connexity"), arg("lambda") ),
+  doc__lambdaskel__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "rankfilter",
+  lfiltreordre,
+  ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("r") ),
+  doc__rankfilter__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "rankfilter",
+  lfiltreordre3d,
+  ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("center_z"), arg("r") ),
+  doc__rankfilter__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "tuf",
+  ltuf,
+  ( arg("image"), arg("min connex"), arg("radius") ),
+  doc__tuf__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "taf",
+  ltaflambda,
+  ( arg("image"), arg("min connex"), arg("radius"), arg("lambdapics"), arg("lambdapuits") ),
+  doc__taf__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "watershed",
+  lwshedtopobin,
+  ( arg("image"), arg("mark"), arg("connexity") ),
+  doc__watershed__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "heightmaxima",
+  lheightmaxima,
+  ( arg("image"), arg("connexity"), arg("height") ),
+  doc__heightmaxima__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "heightminima",
+  lheightminima,
+  ( arg("image"), arg("connexity"), arg("height") ),
+  doc__heightminima__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+// functions added by Michel
+
+UI_WRAP_FUNCTION(
+  "segmentheight",
+  lsegmentheight,
+  ( arg("image"), arg("connexity"), arg("height"), arg("mode") ),
+  doc__segmentheight__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "segmentarea",
+  lsegmentarea,
+  ( arg("image"), arg("connexity"), arg("area"), arg("mode") ),
+  doc__segmentarea__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "segmentvol",
+  lsegmentvol,
+  ( arg("image"), arg("connexity"), arg("vol"), arg("mode") ),
+  doc__segmentvol__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "heightselnb",
+  lheightselnb,
+  ( arg("image"), arg("connexity"), arg("height"), arg("mode") ),
+  doc__heightselnb__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "areaselnb",
+  lareaselnb,
+  ( arg("image"), arg("connexity"), arg("area") ),
+  doc__areaselnb__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "volselnb",
+  lvolselnb,
+  ( arg("image"), arg("connexity"), arg("area") ),
+  doc__volselnb__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_RESULT(
+  "distgeo",
+  ldistgeo,
+  ( arg("image"), arg("mask"), arg("mode") ),
+  doc__distgeo__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_RESULT(
+  "affine",
+  laffinetransformation,
+  ( arg("image"), arg("hx"), arg("hy"), arg("theta"), arg("tx"), arg("ty")),
+  doc__affine__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "asft",
+  lasft_2D3D,
+  ( arg("image"), arg("constraint image"), arg("complementary constraint image"), arg("connexity"), arg("radius max") ),
+  doc__asft__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "asft",
+  lasft_2D3D_null,
+  ( arg("image"), arg("connexity"), arg("radius max") ),
+  doc__asft__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "gaussianfilter",
+  lgaussianfilter,
+  ( arg("image"), arg("alpha") ),
+  doc__gaussianfilter__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "gaussianfilter",
+  lgaussianfilter,
+  ( arg("image"), arg("alpha") ),
+  doc__gaussianfilter__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "gradientcd",
+  lgradientcd,
+  ( arg("image"), arg("alpha") ),
+  doc__gradientcd__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "exp",
+  lexp,
+  (arg("image")),
+  doc__exp__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_CPP(
+  "print_image",
+  print_image,
+  (arg("image")),
+  "Prints the values in a table. Usefull for debugging small 2D images."
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+  
+UI_WRAP_CPP(
+  "insert_image",
+  insert_image, 
+  ( arg("big_image"), arg("small_image"), arg("shift_vector") ),
+  "this function inserts an image to another one. The "
+  "shift vector indicates the position of the lower corner "
+  "of the new image. If the image doesn't fit into the big one, "
+  "it is cropped."
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+  
+UI_WRAP_CPP(
+  "merge_max_image", 
+  merge_max_image, 
+  ( arg("big_image"), arg("small_image"), arg("shift_vector") ),
+  "this function inserts an image to another one. The "
+  "shift vector indicates the position of the lower corner "
+  "of the new image. If the image doesn't fit into the big one, "
+  "it is cropped. During the insertion the pixels are compared "
+  "and the bigger value is conserved"
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_CPP(
+  "frame",
+  frame,
+  ( arg("image"), arg("with value") ),
+  "This function takes an image, and in the result it sets it's most outer rectangle to the given value."
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+  
+UI_WRAP_CPP(
+  "frame_around",
+  frame_around,
+  ( arg("image"), arg("with value") ),
+  "This function takes an image, and in the result and adds a frame around it, with"
+  " a given value. THIS FUNCTION CHANGES THE RESULTING IMAGE'S SIZE."
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_CPP(
+  "frame_remove",
+  frame_remove,
+  ( arg("image") ),
+  "This function takes an image, and in the result and removes the most outer rectangle from the result. "
+  "THIS FUNCTION CHANGES THE RESULTING IMAGE'S SIZE."
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_CPP(
+  "max",
+  immap_max,
+  ( arg("image1"), arg("image2") ),      
+  "Generates an image result[i]:=max(image1[i],image2[i])"
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_CPP(
+  "min",
+  immap_min,
+  ( arg("image1"), arg("image2") ),      
+  "Generates an image result[i]:=min(image1[i],image2[i])"
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_CPP(
+  "inverse",
+  pink::inverse,
+  ( arg("image") ),
+  doc__inverse__c__
+// end of the documenation
+  );    
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_CPP(
+  "convert2float",
+  pink::convert2float,
+  (arg("image")),
+  "converts an image to float type"
+  // end of the documenation
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_CPP(
+  "extractplane",
+  pink::extractplane,
+  ( arg("image"), arg("number of the plane"), arg("mode") ),
+  doc__extractplane__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_VALUE(
+  "area",
+  larea,
+  ( arg("image") ),
+  doc__area__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_VALUE(
+  "average",
+  laverage1,
+  ( arg("image") ),
+  doc__average__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_VALUE(
+  "average",
+  laverage2,
+  ( arg("image"), arg("mask") ),
+  doc__average__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
+// UI_WRAP_VALUE(
+//   "l2dinvariants",
+//   l2dinvariants,
+//   ( arg("image") ),
+//   doc__2dinvariants__c__
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
+
+
+// UI_WRAP_VALUE(
+//   "countvalues",
+//   lcountvalues,
+//   ( arg("image"), arg("make") ),
+//   "WRITE ME!!"//doc__countvalues__c__
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
+
+// UI_WRAP_VALUE(
+//   "invariants3d",
+//   l3dinvariants,
+//   ( arg("image"), arg("make") ),
+//   "WRITE ME!!"//doc__countvalues__c__
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
+
+
+UI_WRAP_FUNCTION(
+  "barycentre",
+  lbarycentre,
+  (arg("image"), arg("connvex")),
+  doc__barycentre__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
+UI_WRAP_RESULT(
+  "lmedialaxis_lbisector",
+  lmedialaxis_lbisector,
+  (arg("image"), arg("mask")),
+  doc__bisector__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "drawline",
+  ldrawline,
+  (arg("image"), arg("x1"), arg("y1"), arg("x2"), arg("y2")),
+  doc__drawline__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "drawline",
+  ldrawline3d,
+  (arg("image"), arg("x1"), arg("y1"), arg("z1"), arg("x2"), arg("y2"), arg("z2")),
+  doc__drawline__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "border2d",
+  l2dborder,
+  (arg("image") ),
+  doc__2dborder__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "color2d",
+  l2dcolor,
+  (arg("image") ),
+  doc__2dcolor__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "color2d",
+  l2dcolor,
+  (arg("image") ),
+  doc__2dcolor__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "makecomplex2d",
+  l2dmakecomplex,
+  (arg("image") ),
+  doc__2dmakecomplex__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "closebeta2d",
+  l2dclosebeta,
+  (arg("image") ),
+  doc__2dmakecomplex__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "pardircollapse2d",
+  l2dpardircollapse,
+  (arg("image"), arg("nsteps"), arg("inhibit") ),
+  doc__2dpardircollapse__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "pardircollapse2d",
+  l2dpardircollapse_short,
+  (arg("image"), arg("nsteps") ),
+  doc__2dpardircollapse__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "seltype2d",
+  l2dseltype,
+  (arg("image"), arg("d-"), arg("d+"),arg("a-"),arg("a+"),arg("b-"),arg("b+")),
+  doc__2dseltopo__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "2dthin",
+  l2dthin,
+  (arg("image") ),
+  doc__2dthin__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "alpha3d",
+  l3dalpha,
+  (arg("image") ),
+  doc__3dalpha__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "beta3d",
+  l3dbeta,
+  (arg("image") ),
+  doc__3dbeta__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "color3d",
+  l3dcolor,
+  (arg("image") ),
+  doc__3dcolor__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "isthmus3d",
+  l3disthmus,
+  (arg("image") ),
+  doc__3disthmus__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "makecomplex3d",
+  l3dmakecomplex,
+  (arg("image") ),
+  doc__3dmakecomplex__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "pardircollapse3d",
+  l3dpardircollapse,
+  (arg("image"), arg("nsteps"), arg("inhibit") ),
+  doc__3dpardircollapse__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "pardircollapse3d",
+  l3dpardircollapse_short,
+  (arg("image"), arg("nsteps") ),
+  doc__3dpardircollapse__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "plane3d",
+  l3dplane,
+  ( arg("image"), arg("a"), arg("b"), arg("c"), arg("d") ),
+  doc__3dplane__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "seltype3d",
+  l3dseltype,
+  (arg("image"), arg("d-"), arg("d+"),arg("a-"),arg("a+"),arg("b-"),arg("b+")),
+  doc__3dseltopo__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "skelsurf3d",
+  l3dskelsurf,
+  (arg("image"), arg("nsteps") ), 
+  doc__3dskelsurf__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "sphere3d",
+  l3dsphere,
+  (arg("image"), arg("x0"), arg("y0"), arg("z0"), arg("radius")),
+  doc__3dsphere__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "3dthin",
+  l3dthin,
+  (arg("image"), arg("nsteps") ),
+  doc__3dthin__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "alpha",
+  lalpha,
+  ( arg("image"), arg("connexity"), arg("sign") ),
+  doc__alpha__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "amont",
+  lamont,
+  ( arg("image"), arg("connexity"), arg("sign") ),
+  doc__amont__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
+// NOTE: 3dlabel input byte 3d output int 3d
+
+// UI_WRAP_FUNCTION(
+//   "",
+//   l,
+//   (arg("image") ),
+//   doc____c__
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "areaclosing",
+  lareaclosing,
+  (arg("image"),arg("connexity"), arg("area")),
+  doc__areaclosing__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "areaopening",
+  lareaopening,
+  (arg("image"),arg("connexity"), arg("area")),
+  doc__areaopening__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "areaselnb",
+  lareaselnb,
+  (arg("image"),arg("connexity"), arg("nb")),
+  doc__areaselnb__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "asftmed",
+  lasftmed_2D3D,
+  (arg("image"),arg("connexity"), arg("max radius")),
+  doc__asftmed__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "boxmin",
+  lboxmin,
+  (arg("image")),
+  doc__boxmin__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "ccv",
+  lccv,
+  (arg("image"), arg("elem")),
+  doc__ccv__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "contours",
+  lcontours,
+  (arg("image"), arg("higher threshold"), arg("lower threshold")),
+  doc__contours__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "convol3",
+  lconvol3,
+  (arg("image"), arg("mask"), arg("")),
+  doc__convol3__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "deletecomp",
+  ldeletecomp,
+  (arg("image"), arg("connex"), arg("x"), arg("y"), arg("z")),
+  doc__deletecomp__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+// NOTE: lderiche the question of l parameter
+UI_WRAP_FUNCTION(
+  "deriche",
+  lderiche,
+  (arg("image"), arg("alpha"), arg("function"), arg("l") ),
+  doc__deriche__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "detectcercles",
+  ldetectcercles,
+  (arg("image"), arg("radius")),
+  doc__detectcercles__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "dilatbin",
+  ldilateros_ldilatbin,
+  (arg("image"), arg("elem"), arg("x"), arg("y")),
+  doc__dilatbin__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "dilatbin",
+  ldilatbin3d,
+  (arg("image"), arg("elem"), arg("x"), arg("y"), arg("z")),
+  doc__dilatbin__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "dilatnum",
+  ldilatnum,
+  (arg("image"), arg("elem"), arg("x"), arg("y")),
+  doc__dilatnum__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
+//NOTE: consider directionalfilter because of the converfloat
+
+UI_WRAP_FUNCTION(
+  "dir",
+  ldir,
+  (arg("image"), arg("dir")),
+  doc__dir__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "directions",
+  ldirections,
+  (arg("image"), arg("connex"), arg("nbpoints"), arg("normale")),
+  doc__directions__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "drawball",
+  ldrawball,
+  (arg("image"), arg("radius"), arg("xc"), arg("yc"), arg("zc")),
+  doc__drawball__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "drawtorus",
+  ldrawtorus,
+  (arg("image"), arg("r1"), arg("r2"), arg("xc"), arg("yc"), arg("zc")),
+  doc__drawtorus__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "dynrecons",
+  ldynrecons,
+  (arg("image"), arg("cond image"), arg("connexity")),
+  doc__dynrecons__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "ecarttype",
+  lecarttype,
+  (arg("image"), arg("elem")),
+  doc__ecarttype__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "egalise",
+  legalise,
+  (arg("image"), arg("n")),
+  doc__egalise__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "ellipticite",
+  lellipticite,
+  (arg("image"), arg("connex")),
+  doc__ellipticite__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "lerosbin",
+  ldilateros_lerosbin,
+  (arg("image"), arg("elem"), arg("x"), arg("y")),
+  doc__erosbin__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "lerosbin",
+  ldilateros3d_lerosbin3d,
+  (arg("image"), arg("elem"), arg("x"), arg("y"), arg("z")),
+  doc__erosbin3d__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "erosnum",
+  lerosnum,
+  (arg("image"), arg("elem"), arg("x"), arg("y")),
+  doc__erosnum__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "erosplan",
+  lerosplan,
+  (arg("image"), arg("elem"), arg("x"), arg("y")),
+  doc__erosplan__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+// UI_WRAP_FUNCTION(
+//   "fermetrous3d",
+//   lfermetrous3dbin,
+//   (arg("image"), arg("connex"), arg("hole size")),
+//   doc__fermetrous3d__c__
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
+
+
+// NOTE: fft up for discussion
+// NOTE: gettree return value type
+
+UI_WRAP_FUNCTION(
+  "gradill",
+  lgradill,
+  ( arg("image"), arg("alpha") ),
+  doc__gradill__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "gradinf",
+  lgradinf,
+  (arg("image")),
+  doc__gradinf__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "gradinf3d",
+  lgradinf3d,
+  (arg("image")),
+  doc__gradinf3d__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "gradsup",
+  lgradsup,
+  (arg("image")),
+  doc__gradsup__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "grayskel",
+  lgrayskel,
+  (arg("image"), arg("cond image"), arg("connex"), arg("lambda")),
+  doc__grayskel__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "grayskel",
+  lgrayskel_short,
+  (arg("image"), arg("connex"), arg("lambda")),
+  doc__grayskel__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "histscal",
+  lhistscal3,
+  (arg("image"), arg("a"), arg("A"), arg("b"), arg("B"), arg("c"), arg("C")),
+  doc__histscal__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "histscal",
+  lhistscal,
+  (arg("image"), arg("a"), arg("A"), arg("b"), arg("B")),
+  doc__histscal__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_RESULT(
+  "houghcircles",
+  lhoughcercles,
+  (arg("image"), arg("min radius"), arg("pas radius"), arg("nb pas")),
+  doc__houghcercles__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "hthiniso",
+  lhthiniso,
+  (arg("image"), arg("dmax"), arg("connex"), arg("pixwhratio")),
+  doc__hthiniso__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "jones",
+  ljones,
+  (arg("image"), arg("connex")),
+  doc__jones__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "kern",
+  lkern,
+  (arg("image"), arg("connex")),
+  doc__kern__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
+// optionally lrao instead of lleviandi
+UI_WRAP_FUNCTION(
+  "levialdi",
+  llevialdi,
+  (arg("image"), arg("connex"), arg("n")),
+  doc__levialdi__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
+UI_WRAP_FUNCTION(
+  "line",
+  ldrawline2,
+  (arg("image")),
+  doc__line__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_RESULT(
+  "localextrema",
+  llocalextrema,
+  (arg("image"), arg("connex"), arg("minim")),
+  doc__localextrema__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "log",
+  llog,
+  (arg("image")),
+  doc__log__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "matchellipse",
+  lmatchellipse,
+  (arg("image"), arg("connex")),
+  doc__matchellipse__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "matchrect",
+  lmatchrect,
+  (arg("image"), arg("connex"), arg("mode")),
+  doc__matchrect__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "maxdiameter",
+  lmaxdiameter,
+  (arg("image"), arg("connex")),
+  doc__maxdiameter__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
+UI_WRAP_FUNCTION(
+  "nbvois",
+  lnbvois,
+  (arg("image"), arg("connex")),
+  doc__nbvois__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "pow",
+  lpow,
+  (arg("image"), arg("p")),
+  doc__pow__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "pthseparatinggray",
+  lpthseparatinggray,
+  (arg("image"), arg("connex"), arg("h")),
+  doc__pthseparatinggray__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "ptinterior",
+  lptinterior,
+  (arg("image"), arg("connex")),
+  doc__ptinterior__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "ptjunction",
+  lptjunction,
+  (arg("image"), arg("connex")),
+  doc__ptjunction__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "ptmultiple",
+  lptmultiple,
+  (arg("image"), arg("connex")),
+  doc__ptmultiple__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "ptseparating",
+  lptseparating,
+  (arg("image"), arg("connex")),
+  doc__ptseparating__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "ptseparatinggray",
+  lptseparatinggray,
+  (arg("image"), arg("connex")),
+  doc__ptseparatinggray__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "ptsimple",
+  lptsimple,
+  (arg("image"), arg("connex")),
+  doc__ptsimple__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "quasishear",
+  lquasishear,
+  (arg("image"), arg("theta"), arg("x"), arg("y")),
+  doc__quasishear__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
+// NOTE: this function returns a pointer
+// UI_WRAP_FUNCTION(
+//   "quasishear",
+//   lquasishear2,
+//   (arg("image"), arg("theta")),
+//   doc__quasishear__c__
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
+
+
+// NOTE: recalagerigide returns a list
+
+UI_WRAP_FUNCTION(
+  "reconsplateaux",
+  lreconsplateaux,
+  (arg("image1"), arg("image2"), arg("connexity")),
+  doc__reconsplateaux__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "remspnoise",
+  lremspnoise,
+  (arg("image"), arg("g"), arg("k")),
+  doc__remspnoise__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+// NOTE: think about image resizing
+// UI_WRAP_FUNCTION(
+//   "rotate",
+//   lrotationInner1,
+//   (arg("image"), arg("theta")),
+//   doc__rotate__c__
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
+
+// UI_WRAP_FUNCTION(
+//   "rotate",
+//   lrotationInner2,
+//   (arg("image"), arg("theta"), arg("x"), arg("y")),
+//   doc__rotate__c__
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "segmentarea",
+  lsegmentarea,
+  (arg("image"), arg("connexity"), arg("area"), arg("m")),
+  doc__segmentarea__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
+// NOTE: the implementation not found
+// UI_WRAP_FUNCTION(
+//   "segmenti",
+//   lsegmenti,
+//   (arg("image"), arg("connexity")),
+//   doc__segmenti__c__
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "segmentlines",
+  lsegmentlignes,
+  (arg("image"), arg("connexity"), arg("lower threshold"), arg("higher threshold")),
+  doc__segmentlignes__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "segmentvol",
+  lsegmentvol,
+  (arg("image"), arg("connexity"), arg("param"), arg("m")),
+  doc__segmentvol__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "selectcomp",
+  lselectcomp,
+  (arg("image"), arg("connex"), arg("x"), arg("y"), arg("z")),
+  doc__selectcomp__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "selrect",
+  lselrect,
+  (arg("image"), arg("x"), arg("y"), arg("w"), arg("h")),
+  doc__selrect__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "seltopo",
+  lseltopo,
+  (arg("image"), arg("connexity"), arg("t-"), arg("t+"), arg("tb-"), arg("tb+")),
+  doc__seltopo__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "shencastan",
+  lshencastan,
+  (arg("image"), arg("beta")),
+  doc__shencastan__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "simplepair",
+  lsimplepair,
+  (arg("image"), arg("all")),
+  doc__simplepair__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "skew",
+  lskew,
+  (arg("image"), arg("skew")),
+  doc__skew__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "squel",
+  lsquel,
+  (arg("image"), arg("threshold"), arg("ni threshold")),
+  doc__squel__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "squelbin",
+  lsquelbin,
+  (arg("image"), arg("connexity"), arg("ni threshold")),
+  doc__squelbin__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "stretch",
+  lstretch,
+  (arg("image")),
+  doc__stretch__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "surfacerestoration",
+  lsurfacerestoration,
+  (arg("image"), arg("number of maximal iterations"), arg("connexity")),
+  doc__surfacerestoration__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "surrect",
+  lrectangleincluant,
+  (arg("image"), arg("connexity")),
+  doc__surrect__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "sym",
+  lsym,
+  (arg("image"), arg("mode")),
+  doc__sym__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "t26pp",
+  ltopotypes_t26pp, 
+  (arg("image")),
+  doc__t26pp__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "t4pp",
+  lt4pp,
+  (arg("image")),
+  doc__t4pp__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "t8pp",
+  lt8pp,
+  (arg("image")),
+  doc__t8pp__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "tlf",
+  ltlf,
+  (arg("image"), arg("connexmin"), arg("radius")),
+  doc__tlf__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "translate",
+  loffset,
+  (arg("image"), arg("ox"), arg("oy"), arg("oz"), arg("mode")=0),
+  doc__translate__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_VALUE(
+  "variance",
+  lvariance1,
+  (arg("image")),
+  doc__variance1__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_VALUE(
+  "variance",
+  lvariance2,
+  (arg("image"), arg("mask")),
+  doc__variance1__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "volmaxima",
+  lvolmaxima,
+  (arg("image"), arg("connex"), arg("param")),
+  doc__volmaxima__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "volselnb",
+  lvolselnb,
+  (arg("image"), arg("connex"), arg("param")),
+  doc__volselnb__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+// NOTE: volume's using &vol
+
+UI_WRAP_FUNCTION(
+  "wshedval",
+  lwshedval,
+  (arg("image"), arg("connex")),
+  doc__wshedval__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "xor",
+  lxor,
+  (arg("image1"), arg("image2")),
+  doc__xor__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+// // UI_WRAP_FUNCTION(
+// //   "ccv",
+// //   lccv,
+// //   (arg("image"), arg("elem")),
+// //   doc__ccv__c__
+// //   );
+// // #include BOOST_PP_UPDATE_COUNTER()
 
 BOOST_PYTHON_MODULE(libcpp_pink)
 // the final module will be named pink, but that will also contain
@@ -145,8 +1507,9 @@ BOOST_PYTHON_MODULE(libcpp_pink)
 // a tree hierarchy
 {
 
-  def("greet", greet, "Gently greets the user.");
+  CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
   
+  def("greet", greet, "Gently greets the user.");  
   vector_int_object_export();
   
   // obsolete 
@@ -185,13 +1548,6 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   
 
 
-  UI_DEFINE_FUNCTION(
-    inverse,
-    pink::inverse,
-    ( arg("image") ),
-    doc__inverse__c__
-// end of the documenation
-    );    
 
   
   // is this enough ? HT
@@ -202,203 +1558,26 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   PLiarEnableDebug_export();
   Pimview_force_socket_export();
   Pimview_sendcommand_export();
-  
-  UI_DEFINE_FUNCTION(
-    print_image,
-    print_image,
-    (arg("image")),
-    "Prints the values in a table. Usefull for debugging small 2D images."
-    );
-  
 
-  
-  UI_DEFINE_FUNCTION(
-    insert_image, 
-    insert_image, 
-    ( arg("big_image"), arg("small_image"), arg("shift_vector") ),
-    "this function inserts an image to another one. The "
-    "shift vector indicates the position of the lower corner "
-    "of the new image. If the image doesn't fit into the big one, "
-    "it is cropped."
-    );
-  
-
-  
-  UI_DEFINE_FUNCTION(
-    merge_max_image, 
-    merge_max_image, 
-    ( arg("big_image"), arg("small_image"), arg("shift_vector") ),
-    "this function inserts an image to another one. The "
-    "shift vector indicates the position of the lower corner "
-    "of the new image. If the image doesn't fit into the big one, "
-    "it is cropped. During the insertion the pixels are compared "
-    "and the bigger value is conserved"
-    );
-
-
-
-  UI_DEFINE_FUNCTION(
-    frame,
-    frame,
-    ( arg("image"), arg("with value") ),
-    "This function takes an image, and in the result it sets it's most outer rectangle to the given value."
-    );
-  
-  UI_DEFINE_FUNCTION(
-    frame_around,
-    frame_around,
-    ( arg("image"), arg("with value") ),
-    "This function takes an image, and in the result and adds a frame around it, with"
-    " a given value. THIS FUNCTION CHANGES THE RESULTING IMAGE'S SIZE."
-    );
-
-
-  UI_DEFINE_FUNCTION(
-    frame_remove,
-    frame_remove,
-    ( arg("image") ),
-    "This function takes an image, and in the result and removes the most outer rectangle from the result. "
-    "THIS FUNCTION CHANGES THE RESULTING IMAGE'S SIZE."
-    );
-
-  UI_DEFINE_FUNCTION(
-    max,
-    immap_max,
-    ( arg("image1"), arg("image2") ),      
-    "Generates an image result[i]:=max(image1[i],image2[i])"
-    );
-
-  UI_DEFINE_FUNCTION(
-    min,
-    immap_min,
-    ( arg("image1"), arg("image2") ),      
-    "Generates an image result[i]:=min(image1[i],image2[i])"
-    );
-
-  def( "ptisolated",
-       &make_function<char_image, int, &lptisolated>,
-       ( arg("image"), arg("connexity") ),
-       doc__ptisolated__c__
-    );
-
-  def( "ptjunction",
-       &make_function<char_image, int, &lptjunction>,
-       ( arg("image"), arg("connexity") ),
-       doc__ptjunction__c__
-    );
-
-  def( "selectcomp",
-       &make_function<char_image, int, int, int, int, &lselectcomp>,
-       ( arg("image"), arg("connexity"), arg("x"), arg("y"), arg("z") ),
-       doc__selectcomp__c__
-    );
-
-  UI_DEFINE_ONE_FUNCTION(
-    float2byte,
+  def(
+    "float2byte",
     pink::float2byte,
     ( arg("source image"), arg("mode")=2 ),
     doc__float2byte__c__
     // end of the documenation
     );
-    
-  UI_DEFINE_FUNCTION(
-    convert2float,
-    pink::convert2float,
-    (arg("image")),
-    "converts an image to float type"
-    // end of the documenation
-    );
+   
 
-  UI_DEFINE_ONE_FUNCTION(
-    long2byte,
+  def(
+    "long2byte",
     pink::long2byte, 
     ( arg("image"),arg("mode"),arg("nb_new_val") ),
     doc__long2byte__c__
     // end of the documenation
     );
-
-
-  def(
-    "holeclosing",
-    &make_function<char_image, int, int, &lfermetrous3dbin>,
-    ( arg("image"), arg("connexity"), arg("holesize") ),
-    doc__holeclosing__c__
-    );
-
-  def(
-    "holeclosing",
-    &make_function<char_image, char_image, int, int, &lfermetrous3dbin2>,
-    ( arg("image"), arg("guiding image") ,arg("connexity"), arg("holesize") ),
-    doc__holeclosing__c__
-    );
-
-  def(
-    "lambdaskel",
-    &make_function< char_image, char_image, int, int, &llambdakern >,
-    ( arg("image"), arg("imcond"), arg("connexity"), arg("lambda") ),
-    doc__lambdaskel__c__
-    );
-
-  def(
-    "lambdaskel",
-    &make_function< char_image, int, int, &llambdakern_short >,
-    ( arg("image"), arg("connexity"), arg("lambda") ),
-    doc__lambdaskel__c__
-    );
-
     
   def(
-    "rankfilter",
-    &make_function< char_image, char_image, int, int, double, &lfiltreordre >,
-    ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("r") ),
-    doc__rankfilter__c__
-    );
-
-  def(
-    "rankfilter",
-    &make_function< char_image, char_image, int, int, int, double, &lfiltreordre3d >,
-    ( arg("image"), arg("structuring element"), arg("center_x"), arg("center_y"), arg("center_z"), arg("r") ),
-    doc__rankfilter__c__
-    );
-
-
-  def(
-    "tuf",
-    &make_function< char_image, int, int, &ltuf >,
-    ( arg("image"), arg("min connex"), arg("radius") ),
-    doc__tuf__c__
-    );
-
-  def(
-    "taf",
-    &make_function< char_image, int, int, int, int, &ltaflambda >,
-    ( arg("image"), arg("min connex"), arg("radius"), arg("lambdapics"), arg("lambdapuits") ),
-    doc__taf__c__
-    );
-
-  def(
-    "watershed",
-    &make_function< char_image, char_image, int, &lwshedtopobin >,
-    ( arg("image"), arg("mark"), arg("connexity") ),
-    doc__watershed__c__
-    );
-
-  def(
-    "heightmaxima",
-    &make_function< char_image, int, int, &lheightmaxima >,
-    ( arg("image"), arg("connexity"), arg("height") ),
-    doc__heightmaxima__c__
-    );
-    
-  def(
-    "heightminima",
-    &make_function< char_image, int, int, &lheightminima >,
-    ( arg("image"), arg("connexity"), arg("height") ),
-    doc__heightminima__c__
-    );
-    
-  UI_DEFINE_ONE_FUNCTION(
-    genball,
+    "genball",
     pink::genball,
     ( arg("radius"), arg("dimension")=2 ),
     "Generates a discrete Euclidean ball with given radius and dimensions."
@@ -425,125 +1604,6 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     doc__normalize__c__
     );
 
-
-  UI_DEFINE_FUNCTION(
-    extractplane,
-    pink::extractplane,
-    ( arg("image"), arg("number of the plane"), arg("mode") ),
-    doc__extractplane__c__
-    );
-    
-// fonctions ajoutées par Michel
-
-  def(
-    "segmentheight",
-    &make_function< char_image, int, int, int, &lsegmentheight >,
-    ( arg("image"), arg("connexity"), arg("height"), arg("mode") ),
-    doc__segmentheight__c__
-    );
-
-  def(
-    "segmentarea",
-    &make_function< char_image, int, int, int, &lsegmentarea >,
-    ( arg("image"), arg("connexity"), arg("area"), arg("mode") ),
-    doc__segmentarea__c__
-    );
-
-  def(
-    "segmentvol",
-    &make_function< char_image, int, int, int, &lsegmentvol >,
-    ( arg("image"), arg("connexity"), arg("vol"), arg("mode") ),
-    doc__segmentvol__c__
-    );
-
-  def(
-    "heightselnb",
-    &make_function< char_image, int, int, int, &lheightselnb >,
-    ( arg("image"), arg("connexity"), arg("height"), arg("mode") ),
-    doc__heightselnb__c__
-    );
-
-  def(
-    "areaselnb",
-    &make_function< char_image, int, int, &lareaselnb >,
-    ( arg("image"), arg("connexity"), arg("area") ),
-    doc__areaselnb__c__
-    );
-
-  def(
-    "volselnb",
-    &make_function< char_image, int, int, &lvolselnb >,
-    ( arg("image"), arg("connexity"), arg("area") ),
-    doc__volselnb__c__
-    );
-
-  def(
-    "distgeo",
-    &make_result< char_image, char_image, int, &ldistgeo >,
-    ( arg("image"), arg("mask"), arg("mode") ),
-    doc__distgeo__c__
-    );
-
-  def(
-    "affine",
-    &make_result< char_image, double, double, double, double, double, &laffinetransformation >,
-    ( arg("image"), arg("hx"), arg("hy"), arg("theta"), arg("tx"), arg("ty")),
-    doc__affine__c__
-    );
-  
-
-  def(
-    "asft",
-    &make_function< char_image, char_image, char_image, int, int, lasft_2D3D>,
-    ( arg("image"), arg("constraint image"), arg("complementary constraint image"), arg("connexity"), arg("radius max") ),
-    doc__asft__c__
-    );
-  
-
-  def(
-    "asft",
-    &make_function< char_image, int, int, lasft_2D3D_null>,
-    ( arg("image"), arg("connexity"), arg("radius max") ),
-    doc__asft__c__
-    );
-
-  def(
-    "gaussianfilter",
-    &make_function< char_image, double, &lgaussianfilter>,
-    ( arg("image"), arg("alpha") ),
-    doc__gaussianfilter__c__
-    );
-
-  def(
-    "gaussianfilter",
-    &make_function< int_image, double, &lgaussianfilter>,
-    ( arg("image"), arg("alpha") ),
-    doc__gaussianfilter__c__
-    );
-  
-  def(
-    "gaussianfilter",
-    &make_function< float_image, double, &lgaussianfilter>,
-    ( arg("image"), arg("alpha") ),
-    doc__gaussianfilter__c__
-    );
-
-  def(
-    "gradientcd",
-    &make_function< char_image, double, &lgradientcd >,
-    ( arg("image"), arg("alpha") ),
-    doc__gradientcd__c__
-    );
-
-  def(
-    "exp",
-    &make_function< float_image, &lexp >,
-    (arg("image")),
-    doc__exp__c__
-    );
-  
-
-  
 //   def( "cpp_circle_tangent", &pink::gsl::circle_tangent,
 //        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),
 //        "This function estimates the derivativ of the function given by points. It "
@@ -573,11 +1633,13 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   // here are the image objects ( char_image, short_image, int_image, float_image, double_image )
   // there is a template in pyujimage.hpp to help them export without rewritting all the declarations
 
+  // exposing the base image function
+  class_<pink_image_wrap, boost::noncopyable> ("any_image");
+  
   ujoi_class_export < char_image > (
     "char_image",
     "This is the image class for 1 byte 'char' images"
     );
-
 
   ujoi_class_export < short_image > (
     "short_image",
@@ -603,7 +1665,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     "This is the image class for 8 byte 'double' images"
     );
 
-};
+} /* BOOST_PYTHON_MODULE */
 
 
 

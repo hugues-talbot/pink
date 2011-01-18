@@ -83,11 +83,7 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (!larea(image, &area))
-  {
-    fprintf(stderr, "%s: larea failed\n", argv[0]);
-    exit(1);
-  }  
+  area = larea(image);
 
   if (argc == 3)
   {

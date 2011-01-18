@@ -58,7 +58,7 @@ static double dist3(double x1, double y1, double z1, double x2, double y2, doubl
 }
 
 /* ==================================== */
-void ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+int ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 /* ==================================== */
 /* draws a straight line segment between two points */
 #undef F_NAME
@@ -76,10 +76,12 @@ void ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int3
     return;
 
   lbresen(F, rs, x1, y1, x2, y2);
+
+  return 1;
 } // ldrawline()
 
 /* ==================================== */
-void ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, int32_t x2, int32_t y2, int32_t z2)
+int ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, int32_t x2, int32_t y2, int32_t z2)
 /* ==================================== */
 /* draws a 3D straight line segment between two points */
 /* NAIVE ALGORITHM - TO IMPROVE !!!! */
@@ -111,10 +113,12 @@ void ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, in
     if (!((x<0) || (x>=rs) || (y<0) || (y>=cs) || (z<0) || (z>=ds)))
       F[z*ps + y*rs + x] = NDG_MAX;
   }
+
+  return 1;
 } // ldrawline3d()
 
 /* ==================================== */
-void ldrawline2(struct xvimage * image1)
+int ldrawline2(struct xvimage * image1)
 /* ==================================== */
 /* draws a straight line segment between the two first points found in image */
 #undef F_NAME
@@ -138,6 +142,8 @@ void ldrawline2(struct xvimage * image1)
     }
   }
   lbresen(F, rs, first%rs, first/rs, last%rs, last/rs);
+
+  return 1;
 } // ldrawline2()
 
 /* =============================================================== */
@@ -482,7 +488,7 @@ void ldrawfield3dlist(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, doubl
 } // ldrawfield3dlist()
 
 /* ==================================== */
-void ldrawball(struct xvimage * image1, double r, double xc, double yc, double zc)
+int32_t ldrawball(struct xvimage * image1, double r, double xc, double yc, double zc)
 /* ==================================== */
 /* draws a euclidean ball */
 #undef F_NAME
@@ -509,6 +515,8 @@ void ldrawball(struct xvimage * image1, double r, double xc, double yc, double z
     if (x * x + y * y + z * z <= r2)
       F[k * ps + j * rs + i] = NDG_MAX;
   }
+
+  return 1;
 } // ldrawball()
 
 /* ==================================== */
@@ -538,7 +546,7 @@ void ldrawdisc(struct xvimage * image1, double r, double xc, double yc)
 } // ldrawdisc()
 
 /* ==================================== */
-void ldrawtorus(struct xvimage * image1, double c, double a, double xc, double yc, double zc)
+int32_t ldrawtorus(struct xvimage * image1, double c, double a, double xc, double yc, double zc)
 /* ==================================== */
 /* draws a torus of equation (c-sqrt((xc-x)^2+(yc-y)^2))^2+(zc-z)^2 <= a^2 */
 #undef F_NAME
@@ -566,4 +574,6 @@ void ldrawtorus(struct xvimage * image1, double c, double a, double xc, double y
     if (t*t + z*z <= a2)
       F[k * ps + j * rs + i] = NDG_MAX;
   }
+
+  return 1;
 } // ldrawtorus()

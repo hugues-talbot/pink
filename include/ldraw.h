@@ -36,16 +36,16 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-extern void ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int32_t y2);
-extern void ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, int32_t x2, int32_t y2, int32_t z2);
-extern void ldrawline2(struct xvimage * image1);
+extern int ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int32_t y2);
+extern int ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, int32_t x2, int32_t y2, int32_t z2);
+extern int32_t ldrawline2(struct xvimage * image1);
 extern void ldrawfilledellipse(struct xvimage * image, double R, double S, double T, double U, double V, double Z);
 extern void ldrawcubic1(struct xvimage * image1, double *x, double *y, int32_t nseg, double sx, double sy);
 extern void ldrawcubic2(struct xvimage * image1, double *x, double *y, int32_t nseg, double tmin, double tmax);
 extern void ldrawcubic3d(struct xvimage * image1, double *x, double *y, double *z, int32_t nseg, double tmin, double tmax);
-extern void ldrawball(struct xvimage * image1, double r, double xc, double yc, double zc);
+extern int32_t ldrawball(struct xvimage * image1, double r, double xc, double yc, double zc);
 extern void ldrawdisc(struct xvimage * image1, double r, double xc, double yc);
-extern void ldrawtorus(struct xvimage * image1, double c, double a, double xc, double yc, double zc);
+extern int32_t ldrawtorus(struct xvimage * image1, double c, double a, double xc, double yc, double zc);
 extern void ldrawtangents2d(struct xvimage *field, double *x, double *y, int32_t nseg, double tmin, double tmax);
 extern void ldrawtangents3d(struct xvimage *field, double *x, double *y, double *z, int32_t nseg, double tmin, double tmax);
 extern void ldrawfield2dlist(int32_t npoints, int32_t *X, int32_t *Y, double *tx, double *ty, struct xvimage *image, double len);

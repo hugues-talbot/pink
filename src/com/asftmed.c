@@ -95,22 +95,29 @@ int main(int argc, char **argv)
   connex = atoi(argv[2]);
   rayonmax = atoi(argv[3]);
 
-  if (depth(image) == 1)
-  {
-    if (! lasftmed(image, connex, rayonmax))
+//  LuM 
+  if (! lasftmed_2D3D(image, connex, rayonmax)) 
     {
-      fprintf(stderr, "%s: lasftmed failed\n", argv[0]);
+      fprintf(stderr, "%s: lasftmed_2D3D failed\n", argv[0]);
       exit(1);
     }
-  }
-  else
-  {
-    if (! lasftmed3d(image, connex, rayonmax))
-    {
-      fprintf(stderr, "%s: lasftmed3d failed\n", argv[0]);
-      exit(1);
-    }
-  }
+
+  /* if (depth(image) == 1) */
+  /* { */
+  /*   if (! lasftmed(image, connex, rayonmax)) */
+  /*   { */
+  /*     fprintf(stderr, "%s: lasftmed failed\n", argv[0]); */
+  /*     exit(1); */
+  /*   } */
+  /* } */
+  /* else */
+  /* { */
+  /*   if (! lasftmed3d(image, connex, rayonmax)) */
+  /*   { */
+  /*     fprintf(stderr, "%s: lasftmed3d failed\n", argv[0]); */
+  /*     exit(1); */
+  /*   } */
+  /* } */
 
   writeimage(image, argv[argc-1]);
   freeimage(image);

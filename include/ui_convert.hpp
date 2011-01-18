@@ -17,7 +17,6 @@
 #undef error
 #define error(msg) {stringstream fullmessage; fullmessage << "in ui_convert.hpp: " << msg; call_error(fullmessage.str());}
 
-
 namespace pink {
 
 

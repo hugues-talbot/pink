@@ -826,6 +826,21 @@ int32_t llambdathick(
 /* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */
 
 /* ==================================== */
+int32_t lgrayskel_short(
+  struct xvimage *image, 
+  int32_t connex,
+  int32_t lambda)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lgrayskel_short"
+{
+  int result;
+  result = lgrayskel(image, NULL, connex, lambda);
+  return result;
+} /* lgrayskel_short */
+
+
+/* ==================================== */
 int32_t lgrayskel(
   struct xvimage *image, 
   struct xvimage *imcon, 

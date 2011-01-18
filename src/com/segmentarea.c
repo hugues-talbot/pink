@@ -38,6 +38,9 @@ knowledge of the CeCILL license and that you accept its terms.
 
 <B>Usage:</B> segmentarea in.pgm connex area [m] out.pgm
 
+<B>Note:</B> in the python front-end 'm' is mandatory, set 0 without maximization
+and 1 with maximization.
+
 <B>Description:</B>
 Segmentation by selection of cross-section components, based on an area criterion. 
 Connexity = <B>connex</B> ; area threshold = <B>area</B>.

@@ -85,7 +85,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #  include <boost/preprocessor.hpp>
 #  include <boost/operators.hpp>
 #  include <boost/cast.hpp>
-
+#  include <boost/type_traits/function_traits.hpp>
 
 
 #endif /* __cplusplus */
@@ -142,6 +142,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "jclabelextrema.h"
 #include "jclderiche.h"
 #include "l2dkhalimsky.h"
+#include "l2dcollapse.h"
 #include "l3dcollapse.h"
 #include "l3dkhalimsky.h"
 #include "lMSF.h"
@@ -274,6 +275,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lsquel.h"
 #include "lsquelbin.h"
 #include "lsquelval.h"
+#include "lstat.h"
 #include "lstretch.h"
 #include "lsym.h"
 #include "ltmp1.h"

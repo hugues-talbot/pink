@@ -95,6 +95,9 @@ if (CMAKE_HOST_UNIX)
     find_library( MATH_LIB libm.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
     set( LIBS ${MATH_LIB} )
 
+    #find_library( STDCPP_LIB libstdc++.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
+    #set( LIBS ${STDCPP_LIB} )
+
    
     # Libraries required to compile the pink library
     find_package( X11 REQUIRED )

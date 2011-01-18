@@ -632,6 +632,22 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 } /* l3dpardircollapse_f() */
 
 /* =============================================================== */
+int32_t l3dpardircollapse_short(struct xvimage * k, int32_t nsteps)
+/* =============================================================== */
+/* 
+  collapse parallÅËle directionnel
+  sans fonction de prioritÅÈ
+*/
+#undef F_NAME
+#define F_NAME "l3dpardircollapse_short"
+{
+  int result;
+  result = l3dpardircollapse(k, nsteps, NULL);
+  return result;
+} /* l3dpardircollapse_short */
+
+
+/* =============================================================== */
 int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * inhibit)
 /* =============================================================== */
 /* 

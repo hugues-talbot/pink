@@ -36,7 +36,9 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief makes a cellular complex from the given set
 
-<B>Usage:</B> 2dmakecomplex in.pgm out.pgm
+<B>Usage:</B> 2dmakecomplex in.pgm [i] out.pgm
+
+<B>Note: </B> in python for the i option use function 'l2dclosebeta'
 
 <B>Description:</B>
 Makes a cellular complex from the given set, 

@@ -38,6 +38,9 @@ knowledge of the CeCILL license and that you accept its terms.
 
 <B>Usage:</B> areaclosing in.pgm connex area out.pgm
 
+<B>Note: </B> in C main passes an argument 'area+1', whereas python passes the 'area'
+as argument (LuM)
+
 <B>Description:</B>
 Area closing with connexity <B>connex</B> and area <B>area</B>.
 Deletes the components of the lower cross-sections 

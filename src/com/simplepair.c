@@ -38,6 +38,9 @@ knowledge of the CeCILL license and that you accept its terms.
 
 <B>Usage:</B> simplepair in.pgm [all] out.pgm
 
+<B>Note: </B> in the python front-end the parameter 'all' is mandatory, if 0 at most 
+one simple pair is found, if it's 1 all simple pairs are looked for
+
 <B>Description:</B>
 Detects simple pairs in a 3D binary image. 
 If the optional parameter \b all is used, then all simple pairs are searched. 

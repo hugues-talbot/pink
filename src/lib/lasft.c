@@ -1005,6 +1005,34 @@ int32_t lhpopeningdisc(struct xvimage * image, int32_t connex, int32_t rayon)
   return 1;
 } // lhpopeningdisc()
 
+
+/* =============================================================== */
+int32_t lasftmed_2D3D(struct xvimage * image, int32_t connex, int32_t rayonmax)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "lasftmed_2D3D" 
+{
+
+  if (depth(image) == 1)
+  {
+    if (! lasftmed(image, connex, rayonmax))
+    {
+      fprintf(stderr, "lasftmed failed\n");
+      exit(1);
+    }
+  }
+  else
+  {
+    if (! lasftmed3d(image, connex, rayonmax))
+    {
+      fprintf(stderr, "lasftmed3d failed\n");
+      exit(1);
+    }
+  }
+  return 1;
+
+} /* asftmed_2D3D */
+
 /* =============================================================== */
 int32_t lasftmed(struct xvimage * image, int32_t connex, int32_t rayonmax)
 /* =============================================================== */

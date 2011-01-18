@@ -40,7 +40,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 <B>Description:</B>
 
-<B>Types supported:</B> byte 2D
+<B>Types supported:</B> byte 3D
 
 <B>Category:</B> 
 \ingroup  

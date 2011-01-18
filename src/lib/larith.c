@@ -187,8 +187,11 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
 
 /* ==================================== */
 int32_t larea(
-  struct xvimage * image, 
-  int32_t *area)
+  struct xvimage * image
+// LuM 
+//,  int32_t *area
+// end of LuM
+)
 /* retourne le nombre d'éléments non nuls */
 /* ==================================== */
 #undef F_NAME
@@ -223,7 +226,7 @@ int32_t larea(
     else 
     {
       fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-      return 0;
+      exit(1);
     }
   }
   else
@@ -258,12 +261,12 @@ int32_t larea(
     else 
     {
       fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-      return 0;
+      exit(1);
     }
   }
   
-  *area = a;
-  return 1;
+  //*area = a;
+  return a;
 } /* larea() */
 
 /* ==================================== */

@@ -14,10 +14,39 @@
 // so in the mean time I'll just use c++'s define directive
 // and here is how it's done
 
+#ifndef PYUJIMAGE_HPP
+#define PYUJIMAGE_HPP
 
+#include <boost/python.hpp>
+#include "ujimage.hpp"
+
+#undef error
+#define error(msg) {stringstream fullmessage; fullmessage << "in pyujimage.hpp: " << msg; call_error(fullmessage.str());}
+
+
+namespace pink
+{
+  namespace python
+  {
+    class pink_image_wrap : public pink::pink_image,
+                            public boost::python::wrapper<pink_image>
+    {
+    public:
+      operator xvimage*()
+        {
+          error("you shouldn't be calling me");      
+        }
+    }; /* pink_image_wrap */
+  }; /* python */  
+}; /* pink */
+
+
+ 
+  
 
 template <class image_type>
-void ujoi_class_export( const char* object_name, const char* object_description ){
+void ujoi_class_export( const char* object_name, const char* object_description )
+{
 
   typedef typename image_type::pixel_type pixel_type;
 
@@ -36,16 +65,16 @@ Python class pink.image / c++ pink::ujoi
 */
 
   
-  class_<image_type> (
+  boost::python::class_<image_type, boost::python::bases<pink::pink_image> > (
     object_name,
     object_description,
-    init<vint>(args("self","size"), "Default constructor. Creates an empty image of size 'dim'.")
+    boost::python::init<vint>(boost::python::args("self","size"), "Default constructor. Creates an empty image of size 'dim'.")
     )
     
     
     
-    .def( init< xvimage > (
-	    args("self", "src"), 
+    .def( boost::python::init< xvimage > (
+	    boost::python::args("self", "src"), 
 	    "This constructor creates an 'image' object from a pink 'xvimage' structure. "
 	    "It is used mainly by pink's readimage function and as the image object of "
 	    "pink's C functions. "
@@ -54,8 +83,8 @@ Python class pink.image / c++ pink::ujoi
 
 
 
-    .def( init< image_type > (
-	    args("self", "src"), 
+    .def( boost::python::init< image_type > (
+	    boost::python::args("self", "src"), 
 	    "This is the deep copy constructor of the 'ujoi' objects. It'll copy all the data "
 	    "and all the parameters including the 'xvimage' properties "
 	    )
@@ -63,8 +92,8 @@ Python class pink.image / c++ pink::ujoi
     
 
     
-    .def( init< vint, ARRAY< pixel_type > > (
-	    args("self", "dim", "data"),
+    .def( boost::python::init< vint, ARRAY< pixel_type > > (
+	    boost::python::args("self", "dim", "data"),
 	    "This constructor creates an 'image' object from a data 'ARRAY' and the "
 	    "corresponding 'dim' dimension. It is used by the 'uiSqhool' objects "
 	    "which extracts the images from 'ujif' files in this format."
@@ -73,8 +102,8 @@ Python class pink.image / c++ pink::ujoi
     
     
     
-    .def( init < boost::python::list >(
-	    args("self", "dim"),
+    .def( boost::python::init < boost::python::list >(
+	    boost::python::args("self", "dim"),
 	    "This constructor creates an empty image of dimension 'dim'. "
 	    "It uses a python list, so it can be called directly from python. "
 	    )
@@ -83,7 +112,7 @@ Python class pink.image / c++ pink::ujoi
     
 
     .def( "imtype", &image_type::imtype, 
-	  args("self"),
+	  boost::python::args("self"),
 	  "Returns a string with the type held in the object. Current types " 
 	  "can be: uint8_t, int16_t, int32, float, double"
       )
@@ -91,40 +120,40 @@ Python class pink.image / c++ pink::ujoi
 
 
     .def( "writeimage", &image_type::_writeimage, 
-	  args("self", "filename"),
+	  boost::python::args("self", "filename"),
 	  "writes the image from the object into a 'pgm' file 'filename'"
       )
 
 
     
     .def( "writeamira", &image_type::_write_amira,
-	  args("self", "filename"),
+	  boost::python::args("self", "filename"),
 	  "writes the image from the object into amira binary mesh file 'filename'"
       )
 
 
     
     .def( "__repr__", &image_type::repr,
-	  args("self"),
+	  boost::python::args("self"),
 	  "writes a short string of information about the image"
       )
 
 
     
     .def( "fill", &image_type::fill,
-	  args("self"),
+	  boost::python::args("self"),
 	  "fill's the image with the given value"
       )
 
 
     
     .def( "get_pixels", &image_type::get_pixels_python,
-          args("self"),
+          boost::python::args("self"),
           "for raw image visualisation"
       )
 
     .def( "copy", &image_type::copy,
-          args("self"),
+          boost::python::args("self"),
           "makes a deep copy of the image"
       )
 
@@ -139,9 +168,9 @@ Python class pink.image / c++ pink::ujoi
 
 
     .add_property( "size", 
-		   make_function( 
+		   boost::python::make_function( 
 		     &image_type::get_size, 
-		     return_value_policy<copy_const_reference>()
+		     boost::python::return_value_policy<boost::python::copy_const_reference>()
 		     ),
 		   "Returns a 'vint' vector with the dimensions of the image. "
 		   "The 'vint' is read-only, but it would be no point in changing it "
@@ -160,8 +189,8 @@ Python class pink.image / c++ pink::ujoi
 
 
     .add_property( "center", 
-		   make_function( 
-		     &image_type::get_center_vint, return_value_policy<copy_const_reference>()
+		   boost::python::make_function( 
+		     &image_type::get_center_vint, boost::python::return_value_policy<boost::python::copy_const_reference>()
 		     ),
 		   &image_type::set_center_list,
 		   "Reads and sets the center point. If the coordinates are -1, then "
@@ -171,7 +200,7 @@ Python class pink.image / c++ pink::ujoi
       )
 
     .def("set_center", &image_type::set_center_vint, 
-	 args("self", "new_center"),
+	 boost::python::args("self", "new_center"),
 	 "sets up 'new_center' as the center point of the image"
 	 "the new center point "
 	 "must have the same dimensions as the image."
@@ -186,8 +215,8 @@ operator[int]
 
 
     
-    .def( "__getitem__", &image_type::get_operator_int, return_value_policy<copy_const_reference>(),
-	  args("self", "pos"),
+    .def( "__getitem__", &image_type::get_operator_int, boost::python::return_value_policy<boost::python::copy_const_reference>(),
+	  boost::python::args("self", "pos"),
 	  "This function accesses the pixels of the image. It is used for the 'a=image[pos]' like access model."
 	  
       )
@@ -195,7 +224,7 @@ operator[int]
     
     
     .def( "__setitem__", &image_type::set_operator_int,
-	  args("self", "pos", "value"),
+	  boost::python::args("self", "pos", "value"),
 	  "This function accesses the pixels of the image. It is used for the 'image[pos]=a' like access model."
       )
 
@@ -206,8 +235,8 @@ operator[int]
  */
 
     
-    .def( "__getitem__", &image_type::get_operator_vint, return_value_policy<copy_const_reference>(),
-	  args("self", "pos"),
+    .def( "__getitem__", &image_type::get_operator_vint, boost::python::return_value_policy<boost::python::copy_const_reference>(),
+	  boost::python::args("self", "pos"),
 	  "This function accesses the pixels of the image. It is used for the 'a=image[pos]' like access model."
 	  
       )
@@ -215,7 +244,7 @@ operator[int]
 
 
     .def( "__setitem__", &image_type::set_operator_vint,
-	  args("self", "pos", "value"),
+	  boost::python::args("self", "pos", "value"),
 	  "This function accesses the pixels of the image. It is used for the 'image[pos]=a' like access model."
       )
     
@@ -226,8 +255,8 @@ operator[int]
  */
 
 
-    .def( "__getitem__", &image_type::get_operator_list, return_value_policy<copy_const_reference>(),
-	  args("self", "pos"),
+    .def( "__getitem__", &image_type::get_operator_list, boost::python::return_value_policy<boost::python::copy_const_reference>(),
+	  boost::python::args("self", "pos"),
 	  "This function accesses the pixels of the image. It is used for the 'a=image[pos]' like access model."
 
       )
@@ -235,7 +264,7 @@ operator[int]
 
 
     .def( "__setitem__", &image_type::set_operator_list,
-	  args("self", "pos", "value"),
+	  boost::python::args("self", "pos", "value"),
 	  "This function accesses the pixels of the image. It is used for the 'image[pos]=a' like access model."
       )
     
@@ -247,42 +276,42 @@ operator[int]
 ***********************************************************************************************
  */
 
-    .def(self += self)
-    .def(self + self)
-    .def(self -= self)
-    .def(self - self)
-    .def(self == self)
-    .def(self != self)
+    .def(boost::python::self += boost::python::self)
+    .def(boost::python::self + boost::python::self)
+    .def(boost::python::self -= boost::python::self)
+    .def(boost::python::self - boost::python::self)
+    .def(boost::python::self == boost::python::self)
+    .def(boost::python::self != boost::python::self)
 
-    .def(self += long())
-    //.def(self + long()) // these operators conflict with casting to xvimage*
-    //.def(long() + self) // these operators conflict with casting to xvimage*
-    .def(self -= long())
-    //.def(self - long()) // these operators conflict with casting to xvimage*
-    //.def(long() - self) // these operators conflict with casting to xvimage*
-    .def(self *= long())
-    .def(self * long())
-    .def(long() * self)
-    .def(self /= long())
-    .def(self / long())
-    //.def(long() / self) // its difficult to interpret
+    //.def(boost::python::self += boost::python::long())
+    // //.def(boost::python::self + long()) // these operators conflict with casting to xvimage*
+    // //.def(long() + boost::python::self) // these operators conflict with casting to xvimage*
+    // .def(boost::python::self -= boost::python::long())
+    // //.def(boost::python::self - long()) // these operators conflict with casting to xvimage*
+    // //.def(long() - boost::python::self) // these operators conflict with casting to xvimage*
+    // .def(boost::python::self *= boost::python::long())
+    // .def(boost::python::self * boost::python::long())
+    // .def(long() * boost::python::self)
+    // .def(boost::python::self /= boost::python::long())
+    // .def(boost::python::self / boost::python::long())
+    // //.def(long() / boost::python::self) // its difficult to interpret
 
-    // boost-python does not like this
-    // .def(self = long())
+//     // boost-python does not like this
+//     // .def(boost::python::self = long())
     
-    .def(self += float())
-    .def(self + float())
-    .def(float() + self)
-    .def(self -= float())
-    .def(self - float())
-//    .def(float() - self) // -image should be interpreted. It's simpler to use t+(-1)*image
-    .def(self *= float())
-    .def(self * float())
-    .def(float() * self)
-    .def(self /= float())
-    .def(self / float())
-    //.def(float() / self) // its difficult to interpret
-    ;
+//     .def(boost::python::self += boost::python::float())
+//     .def(boost::python::self + boost::python::float())
+//     .def(float() + boost::python::self)
+//     .def(boost::python::self -= boost::python::float())
+//     .def(boost::python::self - boost::python::float())
+// //    .def(float() - boost::python::self) // -image should be interpreted. It's simpler to use t+(-1)*image
+//     .def(boost::python::self *= boost::python::float())
+//     .def(boost::python::self * boost::python::float())
+//     .def(float() * boost::python::self)
+//     .def(boost::python::self /= boost::python::float())
+//     .def(boost::python::self / boost::python::float())
+//     //.def(float() / self) // its difficult to interpret
+     ;
 
   /*
 ***************************************************************************************
@@ -300,29 +329,28 @@ UJOI CLASS CONSTRAINT EXPORTS
 
   
 
-  class_< only_2D<image_type>, bases<image_type> >(
-    "only_2D",
-    "WRITE ME!!"
-    );
+  // class_< only_2D<image_type>, bases<image_type> >(
+  //   "only_2D",
+  //   "WRITE ME!!"
+  //   );
   
-  class_< only_3D<image_type>, bases<image_type> >(
-    "only_3D",
-    "WRITE ME!!"
-    );
+  // class_< only_3D<image_type>, bases<image_type> >(
+  //   "only_3D",
+  //   "WRITE ME!!"
+  //   );
 
-  class_< CAN_BE_NULL<image_type>, bases<image_type> >(
-    "can_be_null",
-    "WRITE ME!!"
-    );
+  // class_< CAN_BE_NULL<image_type>, bases<image_type> >(
+  //   "can_be_null",
+  //   "WRITE ME!!"
+  //   );
  
   
 }; /* ujoi_class_export */
 
 
 
-
-
-
+#undef error
+#endif /* PYUJIMAGE_HPP */
 
 
 

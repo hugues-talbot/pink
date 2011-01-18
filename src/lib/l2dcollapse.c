@@ -628,6 +628,18 @@ int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 } /* l2dpardircollapse_f() */
 
 /* =============================================================== */
+int32_t l2dpardircollapse_short(struct xvimage * k, int32_t nsteps)
+/* =============================================================== */
+{
+#undef F_NAME
+#define F_NAME "l2dpardircollapse_short"
+
+  int result;
+  result = l2dpardircollapse(k, nsteps, NULL);
+  return result;
+} /* l2dpardircollapse_short */
+
+/* =============================================================== */
 int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * inhibit)
 /* =============================================================== */
 /* 

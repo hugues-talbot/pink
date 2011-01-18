@@ -13,7 +13,7 @@
 #include <pink_python.h>
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pyptcurve.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {stringstream fullmessage; fullmessage << "in pyskelcurv.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;
 using namespace pink;
@@ -215,7 +215,7 @@ void skelcurv_export()
 {
 
   UI_DEFINE_FUNCTION(
-  skelcurv,
+  "skelcurv",
   pink::python::skelcurv,
   ( arg("image"),  arg("priority"), arg("connex"), arg("inhibit") ),
   doc__skelcurv__c__
@@ -228,7 +228,7 @@ void skelcurv_export()
     );
 
   UI_DEFINE_FUNCTION(
-  skelcurv,
+  "skelcurv",
   pink::python::skelcurv_short,
   ( arg("image"),  arg("priority"), arg("connex") ),
   doc__skelcurv__c__

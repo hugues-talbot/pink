@@ -72,8 +72,10 @@ extern int32_t laddconst(
 );
 
 extern int32_t larea(
-  struct xvimage * image, 
-  int32_t *area
+  struct xvimage * image
+  // LuM
+  // , int32_t *area
+  // end of LuM
 );
 
 extern int32_t laverage(

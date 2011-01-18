@@ -113,7 +113,8 @@ namespace pink{
   class pink_image
   {
   public:
-    virtual operator xvimage*();    
+    virtual operator xvimage*()=0;
+    //virtual operator const xvimage*() const = 0;
   }; /* class pink_image */
 
 

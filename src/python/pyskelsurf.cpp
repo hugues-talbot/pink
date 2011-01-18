@@ -65,7 +65,7 @@ void skelsurf_export()
 {
 
 UI_DEFINE_FUNCTION(
-  skelsurf,
+  "skelsurf",
   pink::python::skelsurf,
   ( arg("image"), arg("priority_image"), arg("inhibit"), arg("connexity")),
   doc__skelsurf__c__
@@ -73,7 +73,7 @@ UI_DEFINE_FUNCTION(
    );
 
 UI_DEFINE_FUNCTION(
-  skelsurf,
+  "skelsurf",
   pink::python::skelsurf_short,
   ( arg("image"), arg("priority_image"), arg("connexity")),
   doc__skelsurf__c__

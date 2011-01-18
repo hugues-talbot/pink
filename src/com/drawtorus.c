@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
   if (argc != 8)
   {
-    fprintf(stderr, "usage: %s <in.pgm|null> r1 r2 xc yx zc out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s <in.pgm|null> r1 r2 xc yc zc out.pgm \n", argv[0]);
     exit(1);
   }
 

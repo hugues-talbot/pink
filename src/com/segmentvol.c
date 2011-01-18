@@ -36,6 +36,9 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief segmentation by filtering components on a volume criterion
 
+<B>Note:</B> in the python front-end 'm' is mandatory, set 0 without maximization
+and 1 with maximization.
+
 <B>Usage:</B> segmentvol in.pgm connex vol out.pgm
 
 <B>Description:</B>

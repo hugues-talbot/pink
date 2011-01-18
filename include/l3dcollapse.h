@@ -39,14 +39,14 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit);
-extern int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * inhibit);
-extern int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, int32_t priomax);
-extern int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);
-extern graphe * l3dtopoflow_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);
-extern graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);
-extern int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * inhibit);
-
+  extern int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit);
+  extern int32_t l3dpardircollapse_short(struct xvimage * k, int32_t nsteps);
+  extern int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * inhibit);
+  extern int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, int32_t priomax);
+  extern int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);
+  extern graphe * l3dtopoflow_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);
+  extern graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);
+  extern int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * inhibit);  
 #ifdef __cplusplus
 }
 #endif

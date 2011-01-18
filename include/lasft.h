@@ -45,6 +45,8 @@ extern int32_t lasft_ndg3d(struct xvimage * image, struct xvimage * imagec, stru
 		   int32_t connex, int32_t rayonmax);
 extern int32_t lasftmed(struct xvimage * image, int32_t connex, int32_t rayonmax);
 extern int32_t lasftmed3d(struct xvimage * image, int32_t connex, int32_t rayonmax);
+extern int32_t lasftmed_2D3D(struct xvimage * image, int32_t connex, int32_t rayonmax);
+  
 extern int32_t lhpclosingdisc(struct xvimage * image, int32_t connex, int32_t rayon);
 extern int32_t lhpopeningdisc(struct xvimage * image, int32_t connex, int32_t rayon);
 extern int32_t lhpclosing3dball(struct xvimage * image, int32_t connex, int32_t rayon);

@@ -71,6 +71,12 @@ extern int32_t lgrayskel(
   int32_t connex,
   int32_t lambda);
 
+extern int32_t lgrayskel_short(
+  struct xvimage *image, 
+  int32_t connex,
+  int32_t lambda);
+
+  
 #ifdef __cplusplus
 }
 #endif
