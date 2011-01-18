@@ -34,7 +34,7 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file line.c
 
-\brief draws a straight line between the two first points found in image
+\brief Draws a straight line between the two first points found in image.
 
 <B>Usage:</B> line in.pgm out.pgm
 

@@ -20,10 +20,9 @@
 #include <boost/python/def.hpp>
 #include <boost/python/implicit.hpp>
 
-#include <pink.h>
-#include <pyexport.hpp>
-#include <python_doc.h>
-
+#include "pink.h"
+#include "pyexport.hpp"
+#include "python_doc.h"
 
 
 

@@ -26,6 +26,8 @@ using namespace pink;
 #include "ui_make_function.hpp"
 #include "ui_make_result.hpp"
 #include "ui_make_value.hpp"
+#include "python_doc.h"
+
 
 //#include <boost/preprocessor.hpp>
 //#include <pyexport.hpp>

@@ -4,6 +4,7 @@
 # ------------------------------------
 # -------- The Python front-end ------
 # ------------------------------------ 
+SET( py_documentation ${CMAKE_SOURCE_DIR}/include/python_doc.h )
 
 FILE( GLOB py_src_cpp *.cpp )
 
@@ -11,7 +12,7 @@ if (DEVELOPMENT)
     FILE( GLOB py_src_development_cpp development/*.cpp )
 endif (DEVELOPMENT)
 
-add_library( cpp_pink SHARED ${py_src_cpp} ${py_src_development_cpp} )
+add_library( cpp_pink SHARED ${py_src_cpp} ${py_src_development_cpp} ${py_documentation} )
 add_dependencies( cpp_pink pink  )
 
 target_link_libraries( cpp_pink pink ${LIBS} )
@@ -29,10 +30,46 @@ if (NOT PYTHON_EXE)
     endif (NOT PYTHON_EXE)
 endif (NOT PYTHON_EXE)
 
+if (NOT PYTHON_DOCUMENTATION_EXE )
+    find_program( PYTHON_DOCUMENTATION_EXE python )
+endif (NOT PYTHON_DOCUMENTATION_EXE )
+
 if (NOT PYTHON_EXE)
     message( WARNING "python executable not found. If you have it installed than adjust the PYTHON_EXE variable. You still may be able to compile, but the python front-end will not work." )
 endif (NOT PYTHON_EXE)
 
+### **********************************************************************************************
+### **********************************************************************************************
+### ********************************* PYTHON Documentation ***************************************
+### **********************************************************************************************
+### **********************************************************************************************
+
+FILE( GLOB pink_commands ${CMAKE_SOURCE_DIR}/src/com/* )
+
+#MESSAGE( "custom command = " ${CMAKE_SOURCE_DIR}/include/python_doc.h  )
+#MESSAGE(" pink_commands =" ${pink_commands})
+#MESSAGE(" output =" ${CMAKE_SOURCE_DIR}/include/python_doc.h  )
+#MESSAGE(" command =" COMMAND ${PYTHON_DOCUMENTATION_EXE} ${CMAKE_SOURCE_DIR}/src/com ${CMAKE_SOURCE_DIR}/include/python_doc.h  )
+
+add_custom_command( OUTPUT ${py_documentation}
+                    COMMAND seq 100
+                    COMMAND ${PYTHON_DOCUMENTATION_EXE} ${CMAKE_SOURCE_DIR}/python_documenter.py ${CMAKE_SOURCE_DIR}/src/com ${CMAKE_SOURCE_DIR}/include/python_doc.h
+		    DEPENDS ${pink_commands}
+                    )
+
+# add_custom_command( TARGET pink PRE_LINK 
+#                     COMMAND seq 100
+#                     COMMAND ${PYTHON_DOCUMENTATION_EXE} ${CMAKE_SOURCE_DIR}/python_documenter.py ${CMAKE_SOURCE_DIR}/src/com ${CMAKE_SOURCE_DIR}/include/python_doc.h
+#                     )
+
+
+add_dependencies( cpp_pink ${py_documentation} )
+
+### **********************************************************************************************
+### **********************************************************************************************
+### ******************************** Pink.sh Documentation ***************************************
+### **********************************************************************************************
+### **********************************************************************************************
 
 
 if (THIS_IS_LINUX)
