@@ -69,7 +69,7 @@ static voxel cube_topo3d[27];
 static voxel cubec_topo3d[27];
 
 
-static inline int32_t is_on_frame(int32_t p, int32_t rs, int32_t ps, int32_t N)
+static inline int32_t is_on_frame(index_t p, index_t rs, index_t ps, index_t N)
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
       (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
@@ -405,10 +405,10 @@ uint8_t mctopo3d_nbvois26(voxel * cube)
 /* ========================================== */
 int32_t mctopo3d_nbvoisc6(
   uint8_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ========================================== */
 /*
   retourne le nombre de 6-voisins du point central de niveau nul
@@ -427,10 +427,10 @@ int32_t mctopo3d_nbvoisc6(
 /* ========================================== */
 int32_t mctopo3d_nbvoisc18(
   uint8_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ========================================== */
 /*
   retourne le nombre de 18-voisins du point central de niveau nul
@@ -461,10 +461,10 @@ int32_t mctopo3d_nbvoisc18(
 /* ========================================== */
 int32_t mctopo3d_nbvoisc26(
   uint8_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ========================================== */
 /*
   retourne le nombre de 26-voisins du point central de niveau nul
@@ -503,10 +503,10 @@ int32_t mctopo3d_nbvoisc26(
 /* ========================================== */
 int32_t mctopo3d_nbvoiso6(
   uint8_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ========================================== */
 /*
   retourne le nombre de 6-voisins du point central de niveau NON nul
@@ -525,10 +525,10 @@ int32_t mctopo3d_nbvoiso6(
 /* ========================================== */
 int32_t mctopo3d_nbvoiso18(
   uint8_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ========================================== */
 /*
   retourne le nombre de 18-voisins du point central de niveau NON nul
@@ -559,10 +559,10 @@ int32_t mctopo3d_nbvoiso18(
 /* ========================================== */
 int32_t mctopo3d_nbvoiso26(
   uint8_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ========================================== */
 /*
   retourne le nombre de 26-voisins du point central de niveau NON nul
@@ -601,10 +601,10 @@ int32_t mctopo3d_nbvoiso26(
 /* ========================================== */
 int32_t mctopo3d_nbvoislab6(
   int32_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ========================================== */
 /*
   retourne le nombre de 6-voisins du point central de même label
@@ -624,10 +624,10 @@ int32_t mctopo3d_nbvoislab6(
 /* ========================================== */
 int32_t mctopo3d_nbvoislab18(
   int32_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ========================================== */
 /*
   retourne le nombre de 18-voisins du point central de même label
@@ -659,10 +659,10 @@ int32_t mctopo3d_nbvoislab18(
 /* ========================================== */
 int32_t mctopo3d_nbvoislab26(
   int32_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ========================================== */
 /*
   retourne le nombre de 26-voisins du point central de même label
@@ -702,10 +702,10 @@ int32_t mctopo3d_nbvoislab26(
 /* ========================================== */
 int32_t mctopo3d_nbvoislabc6(
   int32_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ========================================== */
 /*
   retourne le nombre de 6-voisins du point central de label différent et non nul
@@ -725,10 +725,10 @@ int32_t mctopo3d_nbvoislabc6(
 /* ========================================== */
 int32_t mctopo3d_nbvoislabc18(
   int32_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ========================================== */
 /*
   retourne le nombre de 18-voisins du point central de label différent et non nul
@@ -760,10 +760,10 @@ int32_t mctopo3d_nbvoislabc18(
 /* ========================================== */
 int32_t mctopo3d_nbvoislabc26(
   int32_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ========================================== */
 /*
   retourne le nombre de 26-voisins du point central de label différent et non nul
@@ -855,10 +855,10 @@ static uint8_t simple(voxel * cube, voxel * cubec, uint8_t connex)
 /* ==================================== */
 static void preparecubes(
   uint8_t *B,            /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 /*
   Transfere le voisinage de i pour l'image 3d img dans les 
@@ -905,11 +905,11 @@ static void preparecubes(
 /* ==================================== */
 static void preparecubesh(
   uint8_t *img,          /* pointeur base image */
-  int32_t i,                       /* index du point */
+  index_t i,                       /* index du point */
   int32_t h,                       /* seuil */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 /*
   Transfere le voisinage de i pour l'image 3d img seuillee au niveau h dans les 
@@ -955,11 +955,11 @@ static void preparecubesh(
 /* ==================================== */
 static void preparecubesh_l(
   int32_t *img,          /* pointeur base image */
-  int32_t i,                       /* index du point */
+  index_t i,                       /* index du point */
   int32_t h,                      /* seuil */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 /*
   Transfere le voisinage de i pour l'image 3d img seuillee au niveau h dans les 
@@ -1005,10 +1005,10 @@ static void preparecubesh_l(
 /* ==================================== */
 static void preparecubeslab(
   int32_t *img,                    /* pointeur base image */
-  int32_t i,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t i,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 /*
   Transfere le voisinage de i pour l'image 3d img dans les 
@@ -1063,10 +1063,10 @@ static void preparecubeslab(
 /* ==================================== */
 void mctopo3d_top6(                   /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N,                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
   int32_t *t,
   int32_t *tb)                     /* resultats */
 /* ==================================== */
@@ -1080,10 +1080,10 @@ void mctopo3d_top6(                   /* pour un objet en 6-connexite */
 /* ==================================== */
 void mctopo3d_top18(                   /* pour un objet en 18-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N,                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
   int32_t *t,
   int32_t *tb)                     /* resultats */
 /* ==================================== */
@@ -1097,10 +1097,10 @@ void mctopo3d_top18(                   /* pour un objet en 18-connexite */
 /* ==================================== */
 void mctopo3d_top26(                   /* pour un objet en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N,                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
   int32_t *t,
   int32_t *tb)                     /* resultats */
 /* ==================================== */
@@ -1114,10 +1114,10 @@ void mctopo3d_top26(                   /* pour un objet en 26-connexite */
 /* ==================================== */
 int32_t mctopo3d_simple6(                   /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "mctopo3d_simple6"
@@ -1133,10 +1133,10 @@ int32_t mctopo3d_simple6(                   /* pour un objet en 6-connexite */
 /* ==================================== */
 int32_t mctopo3d_simple18(                  /* pour un objet en 18-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "mctopo3d_simple18"
@@ -1152,10 +1152,10 @@ int32_t mctopo3d_simple18(                  /* pour un objet en 18-connexite */
 /* ==================================== */
 int32_t mctopo3d_simple26(                  /* pour un objet en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "mctopo3d_simple26"
@@ -1171,11 +1171,11 @@ int32_t mctopo3d_simple26(                  /* pour un objet en 26-connexite */
 /* ==================================== */
 int32_t mctopo3d_simple6h(                   /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t h,                       /* seuil */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "mctopo3d_simple6h"
@@ -1191,11 +1191,11 @@ int32_t mctopo3d_simple6h(                   /* pour un objet en 6-connexite */
 /* ==================================== */
 int32_t mctopo3d_simple18h(                  /* pour un objet en 18-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t h,                       /* seuil */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "mctopo3d_simple18h"
@@ -1211,11 +1211,11 @@ int32_t mctopo3d_simple18h(                  /* pour un objet en 18-connexite */
 /* ==================================== */
 int32_t mctopo3d_simple26h(                  /* pour un objet en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t h,                       /* seuil */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "mctopo3d_simple26h"
@@ -1231,10 +1231,10 @@ int32_t mctopo3d_simple26h(                  /* pour un objet en 26-connexite */
 /* ==================================== */
 int32_t mctopo3d_simple6lab(                   /* pour un objet en 6-connexite */
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "mctopo3d_simple6lab"
@@ -1250,10 +1250,10 @@ int32_t mctopo3d_simple6lab(                   /* pour un objet en 6-connexite *
 /* ==================================== */
 int32_t mctopo3d_simple18lab(                  /* pour un objet en 18-connexite */
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "mctopo3d_simple18lab"
@@ -1269,10 +1269,10 @@ int32_t mctopo3d_simple18lab(                  /* pour un objet en 18-connexite 
 /* ==================================== */
 int32_t mctopo3d_simple26lab(                  /* pour un objet en 26-connexite */
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "mctopo3d_simple26lab"
@@ -1288,11 +1288,11 @@ int32_t mctopo3d_simple26lab(                  /* pour un objet en 26-connexite 
 /* ==================================== */
 int32_t mctopo3d_tbar6h(               /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t h,                       /* seuil */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1306,11 +1306,11 @@ int32_t mctopo3d_tbar6h(               /* pour un objet en 6-connexite */
 /* ==================================== */
 int32_t mctopo3d_tbar26h(              /* pour un objet en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t h,                       /* seuil */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1501,10 +1501,10 @@ uint8_t mctopo3d_P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t co
 /* ==================================== */
 int32_t mctopo3d_pdestr6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1518,10 +1518,10 @@ int32_t mctopo3d_pdestr6(                   /* pour des minima en 6-connexite */
 /* ==================================== */
 int32_t mctopo3d_pdestr18(                  /* pour des minima en 18-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1535,10 +1535,10 @@ int32_t mctopo3d_pdestr18(                  /* pour des minima en 18-connexite *
 /* ==================================== */
 int32_t mctopo3d_pdestr26(                  /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1552,10 +1552,10 @@ int32_t mctopo3d_pdestr26(                  /* pour des minima en 26-connexite *
 /* ==================================== */
 int32_t mctopo3d_plevdestr6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1569,10 +1569,10 @@ int32_t mctopo3d_plevdestr6(                   /* pour des minima en 6-connexite
 /* ==================================== */
 int32_t mctopo3d_plevdestr18(                  /* pour des minima en 18-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1586,10 +1586,10 @@ int32_t mctopo3d_plevdestr18(                  /* pour des minima en 18-connexit
 /* ==================================== */
 int32_t mctopo3d_plevdestr26(                  /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1603,10 +1603,10 @@ int32_t mctopo3d_plevdestr26(                  /* pour des minima en 26-connexit
 /* ==================================== */
 int32_t mctopo3d_pconstr6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1620,10 +1620,10 @@ int32_t mctopo3d_pconstr6(                   /* pour des minima en 6-connexite *
 /* ==================================== */
 int32_t mctopo3d_pconstr18(                  /* pour des minima en 18-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1637,10 +1637,10 @@ int32_t mctopo3d_pconstr18(                  /* pour des minima en 18-connexite 
 /* ==================================== */
 int32_t mctopo3d_pconstr26(                  /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1654,10 +1654,10 @@ int32_t mctopo3d_pconstr26(                  /* pour des minima en 26-connexite 
 /* ==================================== */
 int32_t mctopo3d_plevconstr6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1671,10 +1671,10 @@ int32_t mctopo3d_plevconstr6(                   /* pour des minima en 6-connexit
 /* ==================================== */
 int32_t mctopo3d_plevconstr18(                  /* pour des minima en 18-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1688,10 +1688,10 @@ int32_t mctopo3d_plevconstr18(                  /* pour des minima en 18-connexi
 /* ==================================== */
 int32_t mctopo3d_plevconstr26(                  /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1705,10 +1705,10 @@ int32_t mctopo3d_plevconstr26(                  /* pour des minima en 26-connexi
 /* ==================================== */
 int32_t mctopo3d_peak6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1722,10 +1722,10 @@ int32_t mctopo3d_peak6(                   /* pour des minima en 6-connexite */
 /* ==================================== */
 int32_t mctopo3d_peak26(                    /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1739,10 +1739,10 @@ int32_t mctopo3d_peak26(                    /* pour des minima en 26-connexite *
 /* ==================================== */
 int32_t mctopo3d_well6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1756,10 +1756,10 @@ int32_t mctopo3d_well6(                   /* pour des minima en 6-connexite */
 /* ==================================== */
 int32_t mctopo3d_well26(                    /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -1773,16 +1773,16 @@ int32_t mctopo3d_well26(                    /* pour des minima en 26-connexite *
 /* ==================================== */
 uint8_t mctopo3d_alpha26m(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs < img[x] dans le 26-voisinage de x, */
 /* ou img[x] si pas de telles valeurs */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
-	register int32_t q;
+	register index_t q;
 	register uint8_t v;
 	register int32_t mctopo3d_alpha = NDG_MIN - 1;
         register int32_t k;
@@ -1801,16 +1801,16 @@ uint8_t mctopo3d_alpha26m(
 /* ==================================== */
 int32_t mctopo3d_alpha26m_l(
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs < img[x] dans le 26-voisinage de x, */
 /* ou img[x] si pas de telles valeurs */
 /* ==================================== */
 {
 	register int32_t val = *(img+p);
-	register int32_t q;
+	register index_t q;
 	register int32_t v;
 	register int32_t mctopo3d_alpha = NDG_MIN - 1;
         register int32_t k;
@@ -1829,16 +1829,16 @@ int32_t mctopo3d_alpha26m_l(
 /* ==================================== */
 uint8_t mctopo3d_alpha6m(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs < img[x] dans le 6-voisinage de x, */
 /* ou img[x] si pas de telles valeurs */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
-	register int32_t q;
+	register index_t q;
 	register uint8_t v;
 	register int32_t mctopo3d_alpha = NDG_MIN - 1;
         register int32_t k;
@@ -1857,16 +1857,16 @@ uint8_t mctopo3d_alpha6m(
 /* ==================================== */
 uint8_t mctopo3d_alpha26p(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* retourne le inf des valeurs > img[x] dans le 26-voisinage de x, */
 /* ou img[x] si pas de telles valeurs */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
-	register int32_t q;
+	register index_t q;
 	register uint8_t v;
 	register int32_t mctopo3d_alpha = NDG_MAX + 1;
         register int32_t k;
@@ -1885,16 +1885,16 @@ uint8_t mctopo3d_alpha26p(
 /* ==================================== */
 uint8_t mctopo3d_alpha6p(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* retourne le inf des valeurs > img[x] dans le 6-voisinage de x, */
 /* ou img[x] si pas de telles valeurs */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
-	register int32_t q;
+	register index_t q;
 	register uint8_t v;
 	register int32_t mctopo3d_alpha = NDG_MAX + 1;
         register int32_t k;
@@ -1914,10 +1914,10 @@ uint8_t mctopo3d_alpha6p(
 uint8_t mctopo3d_delta6m( 
 /* retourne la valeur max. a laquelle p est destructible - minima 6-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
   uint8_t ret, sav = img[p];
@@ -1931,10 +1931,10 @@ uint8_t mctopo3d_delta6m(
 uint8_t mctopo3d_delta26m( 
 /* retourne la valeur max. a laquelle p est destructible - minima 26-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
   uint8_t ret, sav = img[p];
@@ -1948,10 +1948,10 @@ uint8_t mctopo3d_delta26m(
 uint8_t mctopo3d_delta6p( 
 /* retourne la valeur min. a laquelle p est constructible - minima 6-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
   uint8_t ret, sav = img[p];
@@ -1965,10 +1965,10 @@ uint8_t mctopo3d_delta6p(
 uint8_t mctopo3d_delta26p( 
 /* retourne la valeur min. a laquelle p est constructible - minima 26-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
   uint8_t ret, sav = img[p];
@@ -1982,13 +1982,13 @@ uint8_t mctopo3d_delta26p(
 int32_t mctopo3d_separant6(  /* teste si un point est separant - minima 6-connexes
 	                     ie- s'il est separant pour une coupe <= img[p] */
   uint8_t *img,                    /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
-  int32_t k, q;
+  index_t k, q;
 
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
       (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
@@ -2014,11 +2014,11 @@ int32_t mctopo3d_separant6(  /* teste si un point est separant - minima 6-connex
 int32_t mctopo3d_hseparant6(  /* teste si un point est hseparant - minima 6-connexes
 	         ie- s'il est separant pour la coupe h */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t h,                       /* parametre */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -2035,14 +2035,14 @@ int32_t mctopo3d_hseparant6(  /* teste si un point est hseparant - minima 6-conn
 int32_t mctopo3d_hfseparant6(  /* teste si un point est hfseparant - minima 6-connexes
 	         ie- s'il est separant pour une coupe c telle que h < c <= img[p] */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t h,                       /* parametre */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
-  int32_t k, q;
+  index_t k, q;
 
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
       (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
@@ -2067,10 +2067,10 @@ int32_t mctopo3d_hfseparant6(  /* teste si un point est hfseparant - minima 6-co
 /* ==================================== */
 int32_t mctopo3d_filsombre6(                /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 /*
    pour la coupe K (>img[p]), le point doit etre
@@ -2099,10 +2099,10 @@ int32_t mctopo3d_filsombre6(                /* pour des minima en 6-connexite */
 /* ==================================== */
 int32_t mctopo3d_filsombre26(               /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 /*
    pour la coupe K (>img[p]), le point doit etre
@@ -2131,10 +2131,10 @@ int32_t mctopo3d_filsombre26(               /* pour des minima en 26-connexite *
 /* ==================================== */
 int32_t mctopo3d_filclair6(                /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 /*
    pour la coupe K (>=img[p]), le point doit etre
@@ -2162,10 +2162,10 @@ int32_t mctopo3d_filclair6(                /* pour des minima en 6-connexite */
 /* ==================================== */
 int32_t mctopo3d_filclair26(                /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 /*
    pour la coupe K (>=img[p]), le point doit etre
@@ -2193,10 +2193,10 @@ int32_t mctopo3d_filclair26(                /* pour des minima en 26-connexite *
 /* ==================================== */
 int32_t mctopo3d_t6mm(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -2210,10 +2210,10 @@ int32_t mctopo3d_t6mm(                   /* pour des minima en 6-connexite */
 /* ==================================== */
 int32_t mctopo3d_t6m(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -2227,10 +2227,10 @@ int32_t mctopo3d_t6m(                   /* pour des minima en 6-connexite */
 /* ==================================== */
 int32_t mctopo3d_t26mm(                   /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -2244,10 +2244,10 @@ int32_t mctopo3d_t26mm(                   /* pour des minima en 26-connexite */
 /* ==================================== */
 int32_t mctopo3d_t26m(                   /* pour des minima en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -2261,10 +2261,10 @@ int32_t mctopo3d_t26m(                   /* pour des minima en 26-connexite */
 /* ==================================== */
 int32_t mctopo3d_t6pp(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -2278,10 +2278,10 @@ int32_t mctopo3d_t6pp(
 /* ==================================== */
 int32_t mctopo3d_t6p(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -2295,10 +2295,10 @@ int32_t mctopo3d_t6p(
 /* ==================================== */
 int32_t mctopo3d_t26pp(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -2312,10 +2312,10 @@ int32_t mctopo3d_t26pp(
 /* ==================================== */
 int32_t mctopo3d_t26p(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -2329,10 +2329,10 @@ int32_t mctopo3d_t26p(
 /* ==================================== */
 int32_t mctopo3d_t26pp_l(
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -2346,10 +2346,10 @@ int32_t mctopo3d_t26pp_l(
 /* ==================================== */
 int32_t mctopo3d_t6pp_l(
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -2363,11 +2363,11 @@ int32_t mctopo3d_t6pp_l(
 /* ==================================== */
 void mctopo3d_nbtopoh3d26_l( /* pour les minima en 26-connexite */ 
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t h,
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N,                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
   int32_t *mctopo3d_t6p,
   int32_t *mctopo3d_t26mm)
 /* ==================================== */
@@ -2381,11 +2381,11 @@ void mctopo3d_nbtopoh3d26_l( /* pour les minima en 26-connexite */
 /* ==================================== */
 void mctopo3d_nbtopoh3d6_l( /* pour les minima en 6-connexite */ 
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t h,
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N,                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
   int32_t *mctopo3d_t26p,
   int32_t *mctopo3d_t6mm)
 /* ==================================== */
@@ -2397,11 +2397,11 @@ void mctopo3d_nbtopoh3d6_l( /* pour les minima en 6-connexite */
 } /* mctopo3d_nbtopoh3d6_l() */
 
 /* ==================================== */
-int32_t mctopo3d_bordext6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+int32_t mctopo3d_bordext6(uint8_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 /* teste si x a un 6-voisin a 0 */
 {
-  int32_t k, y;
+  index_t k, y;
   for (k = 0; k <= 10; k += 2) /* parcourt les voisins en 6-connexite */
   {
     y = voisin6(x, k, rs, ps, N);
@@ -2411,11 +2411,11 @@ int32_t mctopo3d_bordext6(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t
 } /* mctopo3d_bordext6() */
 
 /* ==================================== */
-int32_t mctopo3d_bordext26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+int32_t mctopo3d_bordext26(uint8_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 /* teste si x a un 26-voisin a 0 */
 {
-  int32_t k, y;
+  index_t k, y;
   for (k = 0; k < 26; k += 1) /* parcourt les voisins en 26-connexite */
   {
     y = voisin26(x, k, rs, ps, N);
@@ -2427,10 +2427,10 @@ int32_t mctopo3d_bordext26(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_
 /* ==================================== */
 int32_t mctopo3d_curve6( /* point de courbe en 6-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   assert(!is_on_frame(p, rs, ps, N));
@@ -2443,10 +2443,10 @@ int32_t mctopo3d_curve6( /* point de courbe en 6-connexite */
 /* ==================================== */
 int32_t mctopo3d_curve18( /* point de courbe en 18-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   assert(!is_on_frame(p, rs, ps, N));
@@ -2459,10 +2459,10 @@ int32_t mctopo3d_curve18( /* point de courbe en 18-connexite */
 /* ==================================== */
 int32_t mctopo3d_curve26( /* point de courbe en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   assert(!is_on_frame(p, rs, ps, N));

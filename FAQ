@@ -1,7 +1,19 @@
 MC 11/01/2011
-compil sous linux mandriva 
+system: linux mandriva 2010.2
 PB: install fltk 1.1.9: erreur compil
 SOL: install fltk 1.1.10: OK
 PB: install imview: pbs avec ImageMagick
 SOL: ./configure --without-magick
+
+MC 13/01/2011
+system: linux mandriva 2008.1
+PB: PYTHON_INCLUDE_DIR-NOTFOUND when running ccmake
+SOL: install package libpythonXXX-devel
+
+MC 17/01/2011
+system: ubuntu/wubi 10.10
+PB: (generic) missing XXX
+SOL: apt-file search XXX
+       YYY
+     sudo apt-get install YYY
 

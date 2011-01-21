@@ -64,7 +64,7 @@ typedef struct RBTELT {
 } RbtElt;
 
   Le classement des elements s'opere selon la valeur du champ "key", qui est par defaut 
-  un entier int32_t mais peut facilement etre change en tout type scalaire (double, etc): 
+  un entier index_t mais peut facilement etre change en tout type scalaire (double, etc): 
   il suffit de changer la declaration de "TypRbtKey".
 
   Un champ "auxdata" est prevu pour contenir une donnee quelconque utile pour l'application,
@@ -76,7 +76,7 @@ typedef struct RBTELT {
 
   L'utilisateur manipule la structure RBT exclusivement a travers les fonctions suivantes:
 
-  Rbt * mcrbt_CreeRbtVide(int32_t taillemax) : 
+  Rbt * mcrbt_CreeRbtVide(index_t taillemax) : 
      alloue l'espace memoire necessaire pour un RBT dont la taille n'excedera pas taillemax
      (cette taille est indicative, le RBT est realloue en cas de depassement)
 
@@ -144,10 +144,10 @@ typedef struct RBTELT {
 
 /* ==================================== */
 Rbt * mcrbt_CreeRbtVide(
-  int32_t taillemax)
+  index_t taillemax)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   Rbt * T = (Rbt *)calloc(1,sizeof(Rbt) + taillemax*sizeof(RbtElt));
   /* le tableau Elts du Rbt peut stocker taillemax+1 elements, dont 1 pour nil */
   /* l'element 0 du tableau est reserve pour representer nil */
@@ -185,7 +185,7 @@ void RbtTransRec(
 void RbtReAlloc(Rbt **A)
 /* ==================================== */
 {
-  int32_t taillemax;
+  index_t taillemax;
   Rbt * T, *Tmp;
 
 #ifdef VERBOSE
@@ -204,7 +204,7 @@ void RbtFlush(
   Rbt * T)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   T->util = 0;
   for (i = 0; i < T->max - 1; i++) T->elts[i].right = &(T->elts[i+1]);
   T->elts[T->max - 1].right = NULL;
@@ -232,10 +232,10 @@ void mcrbt_RbtTermine(
 
 /* ==================================== */
 void RbtPrintRec(
-  Rbt * T, RbtElt * x, int32_t niv)
+  Rbt * T, RbtElt * x, index_t niv)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   if (x == T->nil) return;
   RbtPrintRec(T, x->left, niv+1);
   for (i = 0; i < niv; i++) printf("    ");

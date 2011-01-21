@@ -40,7 +40,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 <B>Description:</B> suppress the header from a pgm file
 
-<B>Types supported:</B> byte 2d, byte 3d
+<B>Types supported:</B> byte 2d, byte 3d, long 2d, long 3d, float 2d, float 3d
 
 <B>Category:</B> convert
 \ingroup  convert
@@ -81,9 +81,9 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if ( (datatype(image) != VFF_TYP_1_BYTE) && (datatype(image) != VFF_TYP_4_BYTE))
+  if ( (datatype(image) != VFF_TYP_1_BYTE) && (datatype(image) != VFF_TYP_4_BYTE) && (datatype(image) != VFF_TYP_FLOAT))
   {
-    fprintf(stderr, "%s: only byte|int images supported\n", argv[0]);
+    fprintf(stderr, "%s: only byte|long|float images supported\n", argv[0]);
     exit(1);
   }
 
@@ -105,11 +105,15 @@ int main(int argc, char **argv)
 
   if(datatype(image) == VFF_TYP_1_BYTE)
   {
-	ret = fwrite(UCHARDATA(image), sizeof(char), N, fd);
+	ret = fwrite(UCHARDATA(image), sizeof(uint8_t), N, fd);
   }
   else if(datatype(image) == VFF_TYP_4_BYTE)
   {
-  	ret = fwrite(ULONGDATA(image), sizeof(unsigned int), N, fd);
+  	ret = fwrite(ULONGDATA(image), sizeof(int32_t), N, fd);
+  }
+  else if(datatype(image) == VFF_TYP_FLOAT)
+  {
+  	ret = fwrite(FLOATDATA(image), sizeof(float), N, fd);
   }
   if (ret != N)
   {

@@ -35,11 +35,16 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifndef _MCIMAGE_H
+#include <mcimage.h>
+#endif
+
 #define RBT_Black 0
 #define RBT_Red   1
 
 typedef double TypRbtKey;
-typedef int32_t TypRbtAuxData;
+typedef index_t TypRbtAuxData;
 
 typedef struct RBTELT {
   TypRbtAuxData auxdata;
@@ -51,9 +56,9 @@ typedef struct RBTELT {
 } RbtElt;
 
 typedef struct {
-  int32_t max;             /* taille max du rbt (en nombre de points) */
-  int32_t util;            /* nombre de points courant dans le rbt */
-  int32_t maxutil;         /* nombre de points utilises max (au cours du temps) */
+  index_t max;             /* taille max du rbt (en nombre de points) */
+  index_t util;            /* nombre de points courant dans le rbt */
+  index_t maxutil;         /* nombre de points utilises max (au cours du temps) */
   RbtElt *root;        /* racine de l'arbre */
   RbtElt *nil;         /* sentinelle et element dont l'adresse joue le role de NIL */
   RbtElt *libre;       /* pile des cellules libres */
@@ -65,7 +70,7 @@ typedef struct {
 /* ============== */
 
 extern Rbt * mcrbt_CreeRbtVide(
-  int32_t taillemax);
+  index_t taillemax);
 
 extern void RbtFlush(
   Rbt * T);

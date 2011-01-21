@@ -13,6 +13,13 @@ MC operateur segmentheight : mode
 
 MC threshold remplace seuil
 
-MC implémenter nbands
-
-MC complex type images
+MC changer les types des rs, cs, ..., N, i, x... de int32_t en index_t
+déjà faits:
+mcimage
+mccodimage
+mctopo
+mctopo3d
+mcrbt
+lseuil
+lskeletons
+ldist

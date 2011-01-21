@@ -40,6 +40,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mcutil.h>
+#include <mcimage.h>
 #include <mccodimage.h>
 #include <lseuil.h>
 
@@ -50,11 +51,11 @@ int32_t lseuil(
 /* ==================================== */
 /* tous les pixels < seuil sont mis a 0, les autres a 255 */
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb. plans */
-  int32_t N = rs * cs * ds;        /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb. plans */
+  index_t N = rs * cs * ds;        /* taille image */
 
   if (datatype(f) == VFF_TYP_1_BYTE)
   {
@@ -89,11 +90,11 @@ int32_t lseuil2(
 /* tous les pixels < seuilmin sont mis a valmin */
 /* tous les pixels >= seuilmax sont mis a valmax */
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t d = depth(f);            /* nb. plans */
-  int32_t N = rs * cs * d;         /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t d = depth(f);            /* nb. plans */
+  index_t N = rs * cs * d;         /* taille image */
 
   if (datatype(f) == VFF_TYP_1_BYTE)
   {
@@ -132,11 +133,11 @@ int32_t lseuil3(
 /* ==================================== */
 /* tous les seuil <= pixels < seuil2 sont mis a 255, les autres a 0 */
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb. plans */
-  int32_t N = rs * cs * ds;        /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb. plans */
+  index_t N = rs * cs * ds;        /* taille image */
 
   if (datatype(f) == VFF_TYP_1_BYTE)
   {

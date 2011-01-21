@@ -12,8 +12,10 @@ derniers ajouts à Pink :
   - opérateurs complex_real, complex_imaginary, complex_modulus
   - fft utilise maintenant les images de type complexe
 
-- nouveau TP: MC-TP5 
-  - analyse de corrosion des joints, image EDF
+- nouveau TP: MC-TP5, images EDF
+  - analyse de corrosion des joints
     script python mc-tp5-1.py testé
   - correction de gradient d'illumination
     script python mc-tp5-2.py testé
+  - correction d'un "effet de drappé" (utilisant la fft)
+    script bash mc-tp5-3.sh testé

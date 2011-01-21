@@ -81,17 +81,17 @@ knowledge of the CeCILL license and that you accept its terms.
 /* ==================================== */
 struct xvimage *allocimage(
   char * name,
-  int32_t rs,   /* row size */
-  int32_t cs,   /* col size */
-  int32_t ds,   /* depth */
+  index_t rs,   /* row size */
+  index_t cs,   /* col size */
+  index_t ds,   /* depth */
   int32_t dt)   /* data type */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "allocimage"
 {
-  int32_t N = rs * cs * ds;             /* taille image */
+  index_t N = rs * cs * ds;             /* taille image */
   struct xvimage *g;
-  int32_t es;                          /* type size */
+  index_t es;                          /* type size */
 
   switch (dt)
   {
@@ -117,7 +117,7 @@ struct xvimage *allocimage(
   g->image_data = (void *)calloc(1, N * es);
   if (g == NULL)
   {   
-    fprintf(stderr,"%s: calloc failed (%d bytes)\n", F_NAME, N * es);
+    fprintf(stderr,"%s: calloc failed (%ld bytes)\n", F_NAME, (long int)(N * es));
     return NULL;
   }
 
@@ -147,19 +147,19 @@ struct xvimage *allocimage(
 /* ==================================== */
 struct xvimage *allocmultimage(
   char * name,
-  int32_t rs,   /* row size */
-  int32_t cs,   /* col size */
-  int32_t ds,   /* depth */
-  int32_t ts,   /* time size */
-  int32_t nb,   /* nb of bands */
+  index_t rs,   /* row size */
+  index_t cs,   /* col size */
+  index_t ds,   /* depth */
+  index_t ts,   /* time size */
+  index_t nb,   /* nb of bands */
   int32_t dt)   /* data type */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "allocmultimage"
 {
-  int32_t N = rs * cs * ds * ts * nb; /* taille image */
+  index_t N = rs * cs * ds * ts * nb; /* taille image */
   struct xvimage *g;
-  int32_t es;                    /* type size */
+  index_t es;                    /* type size */
 
   switch (dt)
   {
@@ -185,7 +185,7 @@ struct xvimage *allocmultimage(
   g->image_data = (void *)calloc(1, N * es);
   if (g == NULL)
   {   
-    fprintf(stderr,"%s: calloc failed (%d bytes)\n", F_NAME, N * es);
+    fprintf(stderr,"%s: calloc failed (%ld bytes)\n", F_NAME, (long int)(N * es));
     return NULL;
   }
 
@@ -218,13 +218,13 @@ void razimage(struct xvimage *f)
 #undef F_NAME
 #define F_NAME "razimage"
 {
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t ts = tsize(f);           /* time size */
-  int32_t nb = nbands(f);          /* nb of bands */
-  int32_t N = rs * cs * ds * ts * nb;   /* taille image */
-  int32_t es; 
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb plans */
+  index_t ts = tsize(f);           /* time size */
+  index_t nb = nbands(f);          /* nb of bands */
+  index_t N = rs * cs * ds * ts * nb;   /* taille image */
+  index_t es; 
   uint8_t *F = UCHARDATA(f);
 
   switch(datatype(f))
@@ -246,9 +246,9 @@ void razimage(struct xvimage *f)
 /* ==================================== */
 struct xvimage *allocheader(
   char * name,
-  int32_t rs,   /* row size */
-  int32_t cs,   /* col size */
-  int32_t d,    /* depth */
+  index_t rs,   /* row size */
+  index_t cs,   /* col size */
+  index_t d,    /* depth */
   int32_t t)    /* data type */
 /* ==================================== */
 #undef F_NAME
@@ -292,7 +292,7 @@ int32_t showheader(char * name)
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
   struct stat fdstat;
-  int32_t rs, cs, ds, nb, c, fs, es;
+  index_t rs, cs, ds, nb, c, fs, es;
   char *read;
 #ifdef UNIXIO
   fd = fopen(name,"r");
@@ -370,7 +370,7 @@ int32_t showheader(char * name)
   }
 
   c = stat(name, &fdstat); assert(c == 0);
-  fs = (int32_t)fdstat.st_size;
+  fs = (index_t)fdstat.st_size;
   printf("header size = %d\n", fs - (es * rs * cs * ds * nb));
 
   fclose(fd);
@@ -392,12 +392,12 @@ struct xvimage *copyimage(struct xvimage *f)
 #undef F_NAME
 #define F_NAME "copyimage"
 {
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t ts = tsize(f);           /* time size */
-  int32_t nb = nbands(f);          /* nb of bands */
-  int32_t N = rs * cs * ds * ts * nb;        /* taille image */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb plans */
+  index_t ts = tsize(f);           /* time size */
+  index_t nb = nbands(f);          /* nb of bands */
+  index_t N = rs * cs * ds * ts * nb;        /* taille image */
   int32_t type = datatype(f);
   struct xvimage *g;
 
@@ -439,12 +439,12 @@ int32_t copy2image(struct xvimage *dest, struct xvimage *source)
 #undef F_NAME
 #define F_NAME "copy2image"
 {
-  int32_t rs = rowsize(source);         /* taille ligne */
-  int32_t cs = colsize(source);         /* taille colonne */
-  int32_t ds = depth(source);           /* nb plans */
-  int32_t ts = tsize(source);           /* time size */
-  int32_t nb = nbands(source);          /* nb of bands */
-  int32_t N = rs * cs * ds * ts * nb;   /* taille image */
+  index_t rs = rowsize(source);         /* taille ligne */
+  index_t cs = colsize(source);         /* taille colonne */
+  index_t ds = depth(source);           /* nb plans */
+  index_t ts = tsize(source);           /* time size */
+  index_t nb = nbands(source);          /* nb of bands */
+  index_t N = rs * cs * ds * ts * nb;   /* taille image */
   if ((rowsize(dest) != rs) || (colsize(dest) != cs) || (depth(dest) != ds))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
@@ -513,12 +513,13 @@ int32_t equalimages(struct xvimage *im1, struct xvimage *im2)
 #undef F_NAME
 #define F_NAME "equalimages"
 {
-  int32_t rs = rowsize(im1);          /* taille ligne */
-  int32_t cs = colsize(im1);          /* taille colonne */
-  int32_t ds = depth(im1);            /* nb plans */
-  int32_t ts = tsize(im1);            /* time size */
-  int32_t nb = nbands(im1);           /* nb of bands */
-  int32_t N = rs * cs * ds * ts * nb; /* taille image */
+  index_t rs = rowsize(im1);          /* taille ligne */
+  index_t cs = colsize(im1);          /* taille colonne */
+  index_t ds = depth(im1);            /* nb plans */
+  index_t ts = tsize(im1);            /* time size */
+  index_t nb = nbands(im1);           /* nb of bands */
+  index_t N = rs * cs * ds * ts * nb; /* taille image */
+
   if ((rowsize(im2) != rs) || (colsize(im2) != cs) || (depth(im2) != ds) ||
       (tsize(im2) != ts) || (nbands(im2) != nb)) return 0;
   if (datatype(im2) != datatype(im1)) return 0;
@@ -591,7 +592,7 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
   type = datatype(im2);
   if (type == VFF_TYP_1_BYTE)
   {
-    int32_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
+    index_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
     uint8_t *F = UCHARDATA(im2);
     im3 = allocimage(NULL, rs, cs, ds, typemax);
     if (im3 == NULL)
@@ -623,7 +624,7 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
   }
   else if (type == VFF_TYP_4_BYTE)
   {
-    int32_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
+    index_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
     int32_t *L = SLONGDATA(im2);
     im3 = allocimage(NULL, rs, cs, ds, typemax);
     if (im3 == NULL)
@@ -651,7 +652,7 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
   }
   else if (type == VFF_TYP_FLOAT)
   {
-    int32_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
+    index_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
     float *FL = FLOATDATA(im2);
     im3 = allocimage(NULL, rs, cs, ds, typemax);
     if (im3 == NULL)
@@ -700,7 +701,8 @@ int32_t convertlong(struct xvimage **f1)
   struct xvimage *im1 = *f1;
   struct xvimage *im3;
   int32_t type = datatype(im1);
-  int32_t i, rs=rowsize(im1), cs=colsize(im1), ds=depth(im1), N=rs*cs*ds;
+  index_t i, rs=rowsize(im1), cs=colsize(im1), ds=depth(im1);
+  index_t N=rs*cs*ds;
   int32_t *FL;
 
   if (type == VFF_TYP_4_BYTE) return 1;
@@ -744,7 +746,8 @@ int32_t convertfloat(struct xvimage **f1)
   struct xvimage *im1 = *f1;
   struct xvimage *im3;
   int32_t type = datatype(im1);
-  int32_t i, rs=rowsize(im1), cs=colsize(im1), ds=depth(im1), N=rs*cs*ds;
+  index_t i, rs=rowsize(im1), cs=colsize(im1), ds=depth(im1); 
+  index_t N=rs*cs*ds;
   float *FL;
 
   if (type == VFF_TYP_FLOAT) return 1;
@@ -779,12 +782,13 @@ int32_t convertfloat(struct xvimage **f1)
 } // convertfloat()
 
 /* ==================================== */
-void list2image(struct xvimage * image, double *P, int32_t n)
+void list2image(struct xvimage * image, double *P, index_t n)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "list2image"
 {
-  int32_t rs, cs, ds, ps, N, x, y, z, i;
+  index_t rs, cs, ds, ps, x, y, z, i;
+  index_t N;
   uint8_t *F;
 
   rs = rowsize(image);
@@ -816,14 +820,15 @@ void list2image(struct xvimage * image, double *P, int32_t n)
 } // list2image()
 
 /* ==================================== */
-double * image2list(struct xvimage * image, int32_t *n)
+double * image2list(struct xvimage * image, index_t *n)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "image2list"
 {
-  int32_t rs, cs, ds, ps, N, x, y, z;
+  index_t rs, cs, ds, ps, x, y, z;
+  index_t N;
   uint8_t *F;
-  int32_t n1;
+  index_t n1;
   double * P1;
 
   rs = rowsize(image);
@@ -877,7 +882,7 @@ void writeimage(struct xvimage * image, char *filename)
 #undef F_NAME
 #define F_NAME "writeimage"
 {
-  int32_t rs, cs, ds, np;
+  index_t rs, cs, ds, np;
   rs = rowsize(image);
   cs = colsize(image);
   ds = depth(image);
@@ -902,7 +907,8 @@ void writerawimage(struct xvimage * image, char *filename)
 #define F_NAME "writerawimage"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, d, np, N, ret;
+  index_t rs, cs, d, np;
+  index_t N, ret;
 
   rs = rowsize(image);
   cs = colsize(image);
@@ -1046,13 +1052,14 @@ void writerawimage(struct xvimage * image, char *filename)
 } /* writerawimage() */
 
 /* ==================================== */
-void writese(struct xvimage * image, char *filename, int32_t x, int32_t y, int32_t z)
+void writese(struct xvimage * image, char *filename, index_t x, index_t y, index_t z)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writese"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, d, ps, N, i, ret;
+  index_t rs, cs, d, ps, i;
+  index_t N, ret;
 
   rs = rowsize(image);
   cs = colsize(image);
@@ -1123,7 +1130,8 @@ void writeascimage(struct xvimage * image, char *filename)
 #define F_NAME "writeascimage"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, ps, ds, np, N, i;
+  index_t rs, cs, ps, ds, np, i;
+  index_t N;
 
   fd = fopen(filename,"w");
   if (!fd)
@@ -1254,7 +1262,8 @@ void printimage(struct xvimage * image)
 #undef F_NAME
 #define F_NAME "printimage"
 {
-  int32_t rs, cs, d, ps, N, i;
+  index_t rs, cs, d, ps, i;
+  index_t N;
 
   rs = rowsize(image);
   cs = colsize(image);
@@ -1289,7 +1298,9 @@ void writergbimage(
 #define F_NAME "writergbimage"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, nndg, N, i;
+  index_t rs, cs, i;
+  index_t N;
+  int32_t nndg;
 
 #ifdef UNIXIO
   fd = fopen(filename,"w");
@@ -1342,7 +1353,9 @@ void writergbascimage(
 #define F_NAME "writergbascimage"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, nndg, N, i, j;
+  index_t rs, cs, i, j;
+  index_t N;
+  int32_t nndg;
 
 #ifdef UNIXIO
   fd = fopen(filename,"w");
@@ -1397,8 +1410,9 @@ void writelongimage(struct xvimage * image,  char *filename)
 */
 {
   FILE *fd = NULL;
-  int32_t rs, cs, d, nndg, N;
-  int32_t ret;
+  index_t rs, cs, d;
+  index_t N, ret;
+  int32_t nndg;
 
 #ifdef UNIXIO
   fd = fopen(filename,"w");
@@ -1441,11 +1455,12 @@ struct xvimage * readimage(char *filename)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, ds, np, ndgmax, N, i;
+  index_t rs, cs, ds, np, i;
+  index_t N;
   struct xvimage * image;
   int32_t ascii;  
   int32_t typepixel;
-  int32_t c;
+  int32_t c, ndgmax;
   double xdim=1.0, ydim=1.0, zdim=1.0;
   char *read;
 
@@ -1582,7 +1597,7 @@ struct xvimage * readimage(char *filename)
     }
     else
     {
-      int32_t ret = fread(UCHARDATA(image), sizeof(char), N, fd);
+      index_t ret = fread(UCHARDATA(image), sizeof(char), N, fd);
       if (ret != N)
       {
         fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
@@ -1603,7 +1618,7 @@ struct xvimage * readimage(char *filename)
     }
     else 
     {
-      int32_t ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
+      index_t ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
       if (ret != N)
       {
         fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
@@ -1623,7 +1638,7 @@ struct xvimage * readimage(char *filename)
     }
     else 
     {
-      int32_t ret = fread(FLOATDATA(image), sizeof(float), N, fd);
+      index_t ret = fread(FLOATDATA(image), sizeof(float), N, fd);
       if (ret != N)
       {
         fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
@@ -1643,7 +1658,7 @@ struct xvimage * readimage(char *filename)
     }
     else 
     {
-      int32_t ret = fread(DOUBLEDATA(image), sizeof(double), N, fd);
+      index_t ret = fread(DOUBLEDATA(image), sizeof(double), N, fd);
       if (ret != N)
       {
         fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
@@ -1663,7 +1678,7 @@ struct xvimage * readimage(char *filename)
     }
     else 
     {
-      int32_t ret = fread(FLOATDATA(image), sizeof(float), N+N, fd);
+      index_t ret = fread(FLOATDATA(image), sizeof(float), N+N, fd);
       if (ret != N+N)
       {
         fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N+N, ret);
@@ -1685,11 +1700,11 @@ struct xvimage * readheader(char *filename)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, ndgmax;
+  index_t rs, cs, d;
   struct xvimage * image;
   int32_t ascii;  
   int32_t typepixel;
-  int32_t c;
+  int32_t c, ndgmax;
   double xdim=1.0, ydim=1.0, zdim=1.0;
   char *read;
 
@@ -1781,7 +1796,7 @@ struct xvimage * readheader(char *filename)
 } /* readheader() */
 
 /* ==================================== */
-struct xvimage * readse(char *filename, int32_t *x, int32_t *y, int32_t*z)
+struct xvimage * readse(char *filename, index_t *x, index_t *y, index_t*z)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "readse"
@@ -1794,11 +1809,12 @@ de la forme :
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, ndgmax, N, i;
+  index_t rs, cs, d, i;
+  index_t N;
   struct xvimage * image;
   int32_t ascii;  
   int32_t typepixel;
-  int32_t c;
+  int32_t c, ndgmax;
   int32_t dimorigin = 0;
   char *read;
 
@@ -1910,7 +1926,7 @@ de la forme :
     }
     else
     {
-      int32_t ret = fread(UCHARDATA(image), sizeof(char), N, fd);
+      index_t ret = fread(UCHARDATA(image), sizeof(char), N, fd);
       if (ret != N)
       {
         fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
@@ -1921,7 +1937,7 @@ de la forme :
   else
   if (typepixel == VFF_TYP_4_BYTE)
   {
-    int32_t ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
+    index_t ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
     if (ret != N)
     {
       fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
@@ -1946,10 +1962,12 @@ int32_t readrgbimage(
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, nndg, N, i, ds, np, ndgmax ;
+  index_t rs, cs, i, ds, np;
+  index_t N;
   int32_t ascii = 0;  
   int32_t c;
   char *read;
+  int32_t nndg, ndgmax;
 
 #ifdef UNIXIO
   fd = fopen(filename,"r");
@@ -2062,9 +2080,10 @@ struct xvimage * readlongimage(char *filename)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, nndg, N;
+  index_t rs, cs, d, ret;
+  index_t N;
   struct xvimage * image;
-  int32_t c, ret;
+  int32_t c, nndg;
   char *read;
 
 #ifdef UNIXIO
@@ -2614,7 +2633,8 @@ int32_t readrgb(char *filename, struct xvimage ** r, struct xvimage ** g, struct
   FILE *fd = NULL;
   struct RGBFILEHEADER FileHeader;
   uint8_t *R, *G, *B;
-  int32_t i, j, rs, cs, N;
+  index_t i, j, rs, cs;
+  index_t N;
 
 #ifdef DOSIO
   fd = fopen(filename,"rb");

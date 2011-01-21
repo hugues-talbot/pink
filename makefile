@@ -98,6 +98,7 @@ $(BDIR)/ppm2bmp \
 $(BDIR)/ppm2pgm \
 $(BDIR)/ppmascmode \
 $(BDIR)/raw2pgm \
+$(BDIR)/rawthreshold \
 $(BDIR)/readgif \
 $(BDIR)/reformat \
 $(BDIR)/rgb2hls \
@@ -491,9 +492,6 @@ $(BDIR)/genbicol \
 $(BDIR)/genbini \
 $(BDIR)/genlut \
 $(BDIR)/gradill \
-$(BDIR)/gradinf \
-$(BDIR)/gradinf3d \
-$(BDIR)/gradsup \
 $(BDIR)/grid \
 $(BDIR)/randimage \
 $(BDIR)/randpoints \
@@ -832,6 +830,9 @@ $(BDIR)/ppmascmode:	$(CDIR)/ppmascmode.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 
 $(BDIR)/raw2pgm:	$(CDIR)/raw2pgm.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(OBJ_COMMON) $(ODIR)/mccodimage.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/raw2pgm.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/raw2pgm
+
+$(BDIR)/rawthreshold:	$(CDIR)/rawthreshold.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(OBJ_COMMON) $(ODIR)/mccodimage.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/rawthreshold.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/rawthreshold
 
 $(BDIR)/readgif:	$(CDIR)/readgif.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/readgif.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/readgif
@@ -2010,15 +2011,6 @@ $(BDIR)/genlut:	$(CDIR)/genlut.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/
 $(BDIR)/gradill:	$(CDIR)/gradill.c $(IDIR)/lgradill.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/lgradill.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/gradill.c $(ODIR)/lgradill.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/gradill
 
-$(BDIR)/gradinf:	$(CDIR)/gradinf.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/lgradinf.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lgradinf.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/gradinf.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lgradinf.o $(LIBS) -o $(BDIR)/gradinf
-
-$(BDIR)/gradinf3d:	$(CDIR)/gradinf3d.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/lgradinf3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lgradinf3d.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/gradinf3d.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lgradinf3d.o $(LIBS) -o $(BDIR)/gradinf3d
-
-$(BDIR)/gradsup:	$(CDIR)/gradsup.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/lgradsup.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lgradsup.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/gradsup.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lgradsup.o $(LIBS) -o $(BDIR)/gradsup
-
 $(BDIR)/grid:	$(CDIR)/grid.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/grid.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/grid
 
@@ -2483,15 +2475,6 @@ $(ODIR)/lmeanfilter.o:	$(LDIR)/lmeanfilter.c $(IDIR)/mccodimage.h $(IDIR)/lmeanf
 
 $(ODIR)/lgradill.o:	$(LDIR)/lgradill.c $(IDIR)/mccodimage.h $(IDIR)/mcutil.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lgradill.c -o $(ODIR)/lgradill.o
-
-$(ODIR)/lgradinf.o:	$(LDIR)/lgradinf.c $(IDIR)/mccodimage.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lgradinf.c -o $(ODIR)/lgradinf.o
-
-$(ODIR)/lgradinf3d.o:	$(LDIR)/lgradinf3d.c $(IDIR)/mccodimage.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lgradinf3d.c -o $(ODIR)/lgradinf3d.o
-
-$(ODIR)/lgradsup.o:	$(LDIR)/lgradsup.c $(IDIR)/mccodimage.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lgradsup.c -o $(ODIR)/lgradsup.o
 
 $(ODIR)/lselndg.o:	$(LDIR)/lselndg.c $(IDIR)/mccodimage.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lselndg.c -o $(ODIR)/lselndg.o

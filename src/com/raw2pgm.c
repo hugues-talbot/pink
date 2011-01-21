@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts from raw format into pgm format
 
-<B>Usage:</B> in.raw rs cs ds headersize datatype littleendian [xdim ydim zdim] out.pgm
+<B>Usage:</B> raw2pgm in.raw rs cs ds headersize datatype littleendian [xdim ydim zdim] out.pgm
 
 <B>Description:</B> Converts from raw format into pgm format. 
 
@@ -52,9 +52,9 @@ Parameters:
 \li \b ydim (float, optional) : gap (in the real world) between two adjacent voxels in a column.  
 \li \b zdim (float, optional) : gap (in the real world) between two adjacent planes.  
 
-<B>Types supported:</B> byte 3D, int16_t 3D, int32_t 3D
+<B>Types supported:</B> byte 2D-3D, int16_t 2D-3D, int32_t 2D-3D, float 2D-3D
 
-\warning Signed integers and floating numbers are not supported.
+\warning Signed integers are not supported.
 
 <B>Category:</B> convert
 \ingroup convert
@@ -68,6 +68,7 @@ Parameters:
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mcimage.h>
 #include <mccodimage.h>
 #include <mcutil.h>
@@ -79,16 +80,14 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   FILE *fd = NULL;
-  int32_t rs, cs, ds, N, nbytesperpix, headersize, littleendian;
+  index_t rs, cs, ds, N, headersize, i;
+  int32_t littleendian, datatype;
   struct xvimage * image;
-  uint16_t tmp;
-  uint8_t tmp1;
-  int32_t * I;
-  int32_t i;
 
   if ((argc != 9) && (argc != 12))
   {
-    fprintf(stderr, "usage: %s in.raw rs cs ds headersize nbytespervox littleendian [xdim ydim zdim] out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.raw rs cs ds headersize datatype littleendian [xdim ydim zdim] out.pgm \n", argv[0]);
+    fprintf(stderr, "       datatype: 1 for byte, 2 for short int, 4 for long int, 5 for float\n");
     exit(1);
   }
 
@@ -110,37 +109,38 @@ int main(int argc, char **argv)
   ds = atoi(argv[4]);
   N = rs * cs * ds;
   headersize = atoi(argv[5]);
-  nbytesperpix = atoi(argv[6]);
+  datatype = atoi(argv[6]);
   littleendian = atoi(argv[7]);
 
-  if ((nbytesperpix != 1) && (nbytesperpix != 2) && (nbytesperpix != 4))
+  if ((datatype != 1) && (datatype != 2) && (datatype != 4) && (datatype != 5))
   {
-    fprintf(stderr, "%s: bad value for pix size: %d\n", argv[0], nbytesperpix);
+    fprintf(stderr, "%s: bad value for pix size: %d\n", argv[0], datatype);
+    fprintf(stderr, "usage: %s in.raw rs cs ds headersize datatype littleendian [xdim ydim zdim] out.pgm \n", argv[0]);
+    fprintf(stderr, "       datatype: 1 for byte, 2 for short int, 4 for long int, 5 for float\n");
     exit(1);
   }
 
-  if (nbytesperpix == 1)
+  if (datatype == 1)
   {
     image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
     if (image == NULL)
     {   fprintf(stderr,"%s : allocimage failed\n", argv[0]);
         exit(1);
     }
-    fread(UCHARDATA(image), sizeof(char), headersize, fd);
-    // sera ecrase par la suite - attention: plante si la taille image est
-    // < headersize
+    fseek(fd, headersize, SEEK_CUR);
     fread(UCHARDATA(image), sizeof(char), N, fd);
   }
-  else if (nbytesperpix == 2)
+  else if (datatype == 2)
   {
+    int32_t * I;
+    uint16_t tmp;
+    uint8_t tmp1;
     image = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
     if (image == NULL)
     {   fprintf(stderr,"%s : allocimage failed\n", argv[0]);
         exit(1);
     }
-    fread(UCHARDATA(image), sizeof(char), headersize, fd);
-    // sera ecrase par la suite - attention: plante si la taille image est
-    // < headersize
+    fseek(fd, headersize, SEEK_CUR);
     I = SLONGDATA(image);
     for (i = 0; i < N; i++) 
     { 
@@ -154,17 +154,68 @@ int main(int argc, char **argv)
       I[i] = (int32_t)tmp; 
     }
   }
-  else if (nbytesperpix == 4)
+  else if (datatype == 4)
   {
     image = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
     if (image == NULL)
     {   fprintf(stderr,"%s : allocimage failed\n", argv[0]);
         exit(1);
     }
-    fread(UCHARDATA(image), sizeof(char), headersize, fd);
-    // sera ecrase par la suite - attention: plante si la taille image est
-    // < headersize
-    fread(SLONGDATA(image), 4 * sizeof(char), N, fd);
+    fseek(fd, headersize, SEEK_CUR);
+    if (littleendian)
+    {
+      int32_t * I;
+      uint32_t tmp;
+      uint8_t tmp1, tmp2, tmp3;
+      I = SLONGDATA(image);
+      for (i = 0; i < N; i++) 
+      { 
+	fread(&tmp, 4 * sizeof(char), 1, fd);
+        tmp1 = tmp & 0xff; tmp = tmp >> 8;
+        tmp2 = tmp & 0xff; tmp = tmp >> 8;
+        tmp3 = tmp & 0xff; tmp = tmp >> 8;
+        tmp = tmp | (((uint32_t)tmp3) << 8);
+        tmp = tmp | (((uint32_t)tmp2) << 16);
+        tmp = tmp | (((uint32_t)tmp1) << 24);      
+      }
+      I[i] = (int32_t)tmp; 
+    }
+    else
+    {
+      fread(SLONGDATA(image), sizeof(float), N, fd);
+    }
+  }
+  else if (datatype == 5)
+  {
+    image = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT);
+    if (image == NULL)
+    {   fprintf(stderr,"%s : allocimage failed\n", argv[0]);
+        exit(1);
+    }
+    fseek(fd, headersize, SEEK_CUR);
+    if (littleendian)
+    {
+      float *I;
+      uint32_t tmp;
+      uint8_t tmp1, tmp2, tmp3;
+      I = FLOATDATA(image);
+      assert(sizeof(uint32_t) == sizeof(float));
+      for (i = 0; i < N; i++) 
+      { 
+	fread(&tmp, sizeof(uint32_t), 1, fd);
+        tmp1 = tmp & 0xff; tmp = tmp >> 8;
+        tmp2 = tmp & 0xff; tmp = tmp >> 8;
+        tmp3 = tmp & 0xff; tmp = tmp >> 8;
+        tmp = tmp | (((uint32_t)tmp3) << 8);
+        tmp = tmp | (((uint32_t)tmp2) << 16);
+        tmp = tmp | (((uint32_t)tmp1) << 24);      
+        I[i] = *((float *)(&tmp)); 
+      }
+    }
+    else
+    {
+      fread(FLOATDATA(image), sizeof(float), N, fd);
+    }
   }
 
   if (argc == 12)

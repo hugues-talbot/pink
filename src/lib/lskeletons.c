@@ -71,10 +71,11 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define TEST_SIMPLE_PAR_COLLAPSE
 
 /* ==================================== */
-static int32_t typedir3d(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+static int32_t typedir3d(uint8_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
-  int32_t y, n, s, e, o, a, d, sum;
+  index_t y;
+  int32_t n, s, e, o, a, d, sum;
   n = s = e = o = a = d = 0;
   y = voisin6(x, NORD, rs, ps, N); if ((y!=-1) && (F[y]==0)) n = 1;
   y = voisin6(x, SUD, rs, ps, N); if ((y!=-1) && (F[y]==0)) s = 1;
@@ -122,10 +123,11 @@ static int32_t typedir3d(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t 
 } /* typedir3d() */
 
 /* ==================================== */
-static int32_t typedir3dlab(int32_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+static int32_t typedir3dlab(int32_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
-  int32_t y, n, s, e, o, a, d, sum;
+  index_t y;
+  int32_t n, s, e, o, a, d, sum;
   n = s = e = o = a = d = 0;
   y = voisin6(x, NORD, rs, ps, N); if ((y!=-1) && (F[y]!=F[x])) n = 1;
   y = voisin6(x, SUD, rs, ps, N); if ((y!=-1) && (F[y]!=F[x])) s = 1;
@@ -173,7 +175,7 @@ static int32_t typedir3dlab(int32_t *F, int32_t x, int32_t rs, int32_t ps, int32
 } /* typedir3d() */
 
 /* ==================================== */
-static int32_t testabaisse4bin(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t testabaisse4bin(uint8_t *F, index_t x, index_t rs, index_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -182,7 +184,7 @@ static int32_t testabaisse4bin(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* testabaisse4bin() */
 
 /* ==================================== */
-static int32_t testabaisse8bin(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t testabaisse8bin(uint8_t *F, index_t x, index_t rs, index_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -191,7 +193,7 @@ static int32_t testabaisse8bin(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* testabaisse8bin() */
 
 /* ==================================== */
-static int32_t lskeletons_testabaisse6bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+static int32_t lskeletons_testabaisse6bin(uint8_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -200,7 +202,7 @@ static int32_t lskeletons_testabaisse6bin(uint8_t *F, int32_t x, int32_t rs, int
 } /* lskeletons_testabaisse6bin() */
 
 /* ==================================== */
-static int32_t testabaisse18bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+static int32_t testabaisse18bin(uint8_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -209,7 +211,7 @@ static int32_t testabaisse18bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, i
 } /* testabaisse18bin() */
 
 /* ==================================== */
-static int32_t testabaisse26bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+static int32_t testabaisse26bin(uint8_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -222,7 +224,7 @@ static int32_t testabaisse26bin(uint8_t *F, int32_t x, int32_t rs, int32_t ps, i
 } /* testabaisse26bin() */
 
 /* ==================================== */
-static int32_t lskeletons_testabaisse6lab(int32_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+static int32_t lskeletons_testabaisse6lab(int32_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -231,7 +233,7 @@ static int32_t lskeletons_testabaisse6lab(int32_t *F, int32_t x, int32_t rs, int
 } /* lskeletons_testabaisse6lab() */
 
 /* ==================================== */
-static int32_t testabaisse18lab(int32_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+static int32_t testabaisse18lab(int32_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -240,7 +242,7 @@ static int32_t testabaisse18lab(int32_t *F, int32_t x, int32_t rs, int32_t ps, i
 } /* testabaisse18lab() */
 
 /* ==================================== */
-static int32_t testabaisse26lab(int32_t *F, int32_t x, int32_t rs, int32_t ps, int32_t N)
+static int32_t testabaisse26lab(int32_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -281,15 +283,15 @@ resultat: F
 #define F_NAME "lskelubp"
 { 
   int32_t k;
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t *P = NULL;     /* l'image de priorites (ndg) */
   Rbt * RBT;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
 
   IndicsInit(N);
 
@@ -409,11 +411,11 @@ int32_t lskelubp2(struct xvimage *image,
 #define F_NAME "lskelubp2"
 { 
   int32_t k;
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *I = NULL; /* l'image d'inhibition */
   int32_t *P = NULL;  /* l'image de priorites (cas int32) */
@@ -421,7 +423,7 @@ int32_t lskelubp2(struct xvimage *image,
   float   *PF = NULL;  /* l'image de priorites (cas float) */
   double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
 
   IndicsInit(N);
 
@@ -586,17 +588,17 @@ resultat: F
 #define F_NAME "lskelubp3d"
 { 
   int32_t k;
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t d = depth(image);
-  int32_t N = d * ps;              /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t d = depth(image);
+  index_t N = d * ps;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t *P = NULL;  /* l'image de priorites (ndg) */
   Rbt * RBT;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
 
   IndicsInit(N);
 
@@ -718,13 +720,13 @@ int32_t lskelubp3d2(struct xvimage *image,
 #define F_NAME "lskelubp3d2"
 { 
   int32_t k;
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t d = depth(image);
-  int32_t N = d * ps;              /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t d = depth(image);
+  index_t N = d * ps;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *I = NULL; /* l'image d'inhibition */
   int32_t *P = NULL;  /* l'image de priorites (cas int32) */
@@ -732,7 +734,7 @@ int32_t lskelubp3d2(struct xvimage *image,
   float   *PF = NULL;  /* l'image de priorites (cas float) */
   double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
 
   IndicsInit(N);
 
@@ -893,11 +895,11 @@ resultat: F
 #define F_NAME "lskelcurv"
 { 
   int32_t k, t, tb;
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t *P = NULL;  /* l'image de priorites (cas int32) */
   uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
@@ -907,7 +909,7 @@ resultat: F
   Fifo * FIFO1;
   Fifo * FIFO2;
   int32_t prio, oldprio;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
 
   IndicsInit(N);
 
@@ -1255,13 +1257,13 @@ resultat: F
 #define F_NAME "lskelcurv3d"
 { 
   int32_t k, t, tb;
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t *P = NULL;  /* l'image de priorites (cas int32) */
   uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
@@ -1269,7 +1271,7 @@ resultat: F
   double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
   int32_t prio, oldprio;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
 
   IndicsInit(N);
   mctopo3d_init_topo3d();
@@ -1593,13 +1595,13 @@ resultat: F
 #define F_NAME "lskelsurf3d"
 { 
   int32_t k, t, tb;
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t *P = NULL;  /* l'image de priorites (cas int32) */
   uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
@@ -1607,7 +1609,7 @@ resultat: F
   double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
   int32_t prio, oldprio;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
 
   IndicsInit(N);
   mctopo3d_init_topo3d();
@@ -1938,18 +1940,18 @@ resultat: F
 #define F_NAME "ltoposhrink"
 { 
   int32_t k;
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t *P = NULL;  /* l'image de priorites (cas int32) */
   uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
   float   *PF = NULL;  /* l'image de priorites (cas float) */
   double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
   int32_t t, tb;
 
   IndicsInit(N);
@@ -2137,20 +2139,20 @@ resultat: F
 #define F_NAME "ltoposhrink3d"
 { 
   int32_t k;
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t d = depth(image);
-  int32_t N = d * ps;              /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t d = depth(image);
+  index_t N = d * ps;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t *P = NULL;  /* l'image de priorites (cas int32) */
   uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
   float   *PF = NULL;  /* l'image de priorites (cas float) */
   double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
   int32_t t, tb;
 
   IndicsInit(N);
@@ -2347,12 +2349,12 @@ int32_t lskeleucl(struct xvimage *image,
 #define F_NAME "lskeleucl"
 { 
   int32_t k;
-  int32_t x, y;                 /* index muet de pixel */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t N = ds * ps;             /* taille image */
+  index_t x, y;                 /* index muet de pixel */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(image);       /* nb plans */
+  index_t N = ds * ps;             /* taille image */
   struct xvimage *imageprio;
   struct xvimage *imagedist;
   double *P = NULL;     /* l'image de priorites */
@@ -2360,7 +2362,7 @@ int32_t lskeleucl(struct xvimage *image,
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *I = NULL; /* l'image d'inhibition */
   Rbt *RBT;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
   double prio;
 
   IndicsInit(N);
@@ -2588,7 +2590,7 @@ y  0  0  0  1  1  1  2  2  2  0  0  0  1  1  1  2  2  2  0  0  0  1  1  1  2  2 
 x  0  1  2  0  1  2  0  1  2  0  1  2  0  1  2  0  1  2  0  1  2  0  1  2  0  1  2 */ 
 
 /* ========================================== */
-uint32_t encodevois(int32_t p, uint8_t *F, int32_t rs, int32_t ps, int32_t N)
+uint32_t encodevois(index_t p, uint8_t *F, index_t rs, index_t ps, index_t N)
 /* ========================================== */
 #undef F_NAME
 #define F_NAME "encodevois"
@@ -2661,17 +2663,17 @@ resultat: F
 #define F_NAME "lskelend3d"
 { 
   int32_t k;
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t *P = NULL;     /* l'image de priorites (ndg) */
   Rbt * RBT;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
   uint32_t config;
 
 //#define VERIF
@@ -2807,15 +2809,15 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
 #undef F_NAME
 #define F_NAME "lskelend3d"
 { 
-  int32_t x;                       /* index muet de pixel */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   Rbt * RBT;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
   uint32_t config;
 
 //#define VERIF
@@ -2978,15 +2980,15 @@ Algo par passes directionnelles.
 #undef F_NAME
 #define F_NAME "lskelendcurvlab3d"
 { 
-  int32_t x;                       /* index muet de pixel */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   int32_t *F = SLONGDATA(image);      /* l'image de depart */
   Rbt * RBT;
-  int32_t taillemaxrbt;
+  index_t taillemaxrbt;
 
 #ifdef DEBUG_lskelendcurvlab3d
  printf("%s: begin niseuil=%d\n", F_NAME, niseuil);

@@ -56,6 +56,7 @@ Update sep. 2009 : ajout des tests is_on_frame()
 #include <stdlib.h>
 #include <assert.h>
 #include <mctopo.h>
+#include <mcimage.h>
 #include <mccodimage.h>
 #include <mcutil.h>
 
@@ -264,7 +265,7 @@ static int32_t Comp8Tab[256][4] =
   {0xfc,0x0,0x0,0x0}, {0xfd,0x0,0x0,0x0}, {0xfe,0x0,0x0,0x0}, {0xff,0x0,0x0,0x0}
 };
 
-static inline int32_t is_on_frame(int32_t p, int32_t rs, int32_t N)
+static inline int32_t is_on_frame(index_t p, index_t rs, index_t N)
 {
   if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
     return 1;
@@ -276,7 +277,7 @@ static inline int32_t is_on_frame(int32_t p, int32_t rs, int32_t N)
 void veriftopo()
 /* ==================================== */
 {
-  int32_t i, j, n, m;
+  index_t i, j, n, m;
   for (i = 0; i < 256; i++)
   {
     m = ~i & 0xff;  /* complementaire de i */
@@ -298,9 +299,9 @@ void veriftopo()
 /* ==================================== */
 uint8_t mask(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* 
   retourne un masque binaire representant le voisinage de p
 */
@@ -323,9 +324,9 @@ uint8_t mask(
 /* ==================================== */
 uint8_t maskmm(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* 
   retourne un masque binaire representant la coupe < au voisinage de p dans F
 */
@@ -369,9 +370,9 @@ uint8_t maskmm(
 /* ==================================== */
 uint8_t maskpp(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* 
   retourne un masque binaire representant la coupe > au voisinage de p dans F
 */
@@ -415,10 +416,10 @@ uint8_t maskpp(
 /* ==================================== */
 uint8_t maskmmh(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   uint8_t h,             /* hauteur de la coupe */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* 
   retourne un masque binaire representant la coupe <h au voisinage de p dans F
 */
@@ -462,10 +463,10 @@ uint8_t maskmmh(
 /* ==================================== */
 uint8_t maskpph(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   uint8_t h,             /* hauteur de la coupe */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* 
   retourne un masque binaire representant la coupe >h au voisinage de p dans F
 */
@@ -509,9 +510,9 @@ uint8_t maskpph(
 /* ==================================== */
 void nbtopo(        /* nombres topologiques pour minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N,                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N,                       /* taille image */
   int32_t *t4mm,
   int32_t *t4m,
   int32_t *t8p,
@@ -569,9 +570,9 @@ void nbtopo(        /* nombres topologiques pour minima 4-connexes */
 /* ==================================== */
 int32_t t4mm(        /* nombre topologique mm pour minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
@@ -612,9 +613,9 @@ int32_t t4mm(        /* nombre topologique mm pour minima 4-connexes */
 /* ==================================== */
 int32_t t4m(        /* nombre topologique m pour minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
@@ -655,9 +656,9 @@ int32_t t4m(        /* nombre topologique m pour minima 4-connexes */
 /* ==================================== */
 int32_t t8p(        /* nombre topologique p pour minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
@@ -698,9 +699,9 @@ int32_t t8p(        /* nombre topologique p pour minima 4-connexes */
 /* ==================================== */
 int32_t t8pp(        /* nombre topologique pp pour minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
@@ -741,9 +742,9 @@ int32_t t8pp(        /* nombre topologique pp pour minima 4-connexes */
 /* ==================================== */
 int32_t t8pp_l(        /* nombre topologique pp pour minima 4-connexes (images type int32_t) */
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	register int32_t val = *(img+p);
@@ -784,9 +785,9 @@ int32_t t8pp_l(        /* nombre topologique pp pour minima 4-connexes (images t
 /* ==================================== */
 void nbtopo2(        /* nombres topologiques pour minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N,                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N,                       /* taille image */
   int32_t *t8mm,
   int32_t *t8m,
   int32_t *t4p,
@@ -844,9 +845,9 @@ void nbtopo2(        /* nombres topologiques pour minima 8-connexes */
 /* ==================================== */
 int32_t t8mm(        /* nombre topologique mm pour minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
@@ -887,9 +888,9 @@ int32_t t8mm(        /* nombre topologique mm pour minima 8-connexes */
 /* ==================================== */
 int32_t t8m(        /* nombre topologique m pour minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
@@ -930,9 +931,9 @@ int32_t t8m(        /* nombre topologique m pour minima 8-connexes */
 /* ==================================== */
 int32_t t4p(        /* nombre topologique p pour minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
@@ -973,9 +974,9 @@ int32_t t4p(        /* nombre topologique p pour minima 8-connexes */
 /* ==================================== */
 int32_t t4pp(        /* nombre topologique pp pour minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	register uint8_t val = *(img+p);
@@ -1016,9 +1017,9 @@ int32_t t4pp(        /* nombre topologique pp pour minima 8-connexes */
 /* ==================================== */
 int32_t t4pp_l(        /* nombre topologique pp pour minima 8-connexes (images type int32_t) */
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	register int32_t val = *(img+p);
@@ -1059,10 +1060,10 @@ int32_t t4pp_l(        /* nombre topologique pp pour minima 8-connexes (images t
 /* ==================================== */
 void nbtopoh(    /* minima 4-connexes - version avec hauteur de la coupe variable */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   uint8_t h,             /* hauteur de la coupe */
-  int32_t rs,                      /* taille rangee */
-  int32_t N,                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N,                       /* taille image */
   int32_t *t4mm,
   int32_t *t4m,
   int32_t *t8p,
@@ -1120,10 +1121,10 @@ void nbtopoh(    /* minima 4-connexes - version avec hauteur de la coupe variabl
 /* ==================================== */
 void nbtopoh2(        /* minima 8-connexes - version avec hauteur de la coupe variable */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   uint8_t h,             /* hauteur de la coupe */
-  int32_t rs,                      /* taille rangee */
-  int32_t N,                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N,                       /* taille image */
   int32_t *t8mm,
   int32_t *t8m,
   int32_t *t4p,
@@ -1181,10 +1182,10 @@ void nbtopoh2(        /* minima 8-connexes - version avec hauteur de la coupe va
 /* ==================================== */
 void nbtopoh_l(    /* minima 4-connexes - version avec hauteur de la coupe variable */
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t h,             /* hauteur de la coupe */
-  int32_t rs,                      /* taille rangee */
-  int32_t N,                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N,                       /* taille image */
   int32_t *t4mm,
   int32_t *t4m,
   int32_t *t8p,
@@ -1242,10 +1243,10 @@ void nbtopoh_l(    /* minima 4-connexes - version avec hauteur de la coupe varia
 /* ==================================== */
 void nbtopoh2_l(        /* minima 8-connexes - version avec hauteur de la coupe variable */
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t h,             /* hauteur de la coupe */
-  int32_t rs,                      /* taille rangee */
-  int32_t N,                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N,                       /* taille image */
   int32_t *t8mm,
   int32_t *t8m,
   int32_t *t4p,
@@ -1303,10 +1304,10 @@ void nbtopoh2_l(        /* minima 8-connexes - version avec hauteur de la coupe 
 /* ==================================== */
 int32_t t8ph(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   uint8_t h,             /* hauteur de la coupe */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le T8plus de p a la coupe h */
 /* ==================================== */
 {
@@ -1348,9 +1349,9 @@ int32_t t8ph(
 /* ==================================== */
 uint8_t alpha8m(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs < img[p] dans le 8-voisinage de p, */
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
@@ -1385,9 +1386,9 @@ uint8_t alpha8m(
 /* ==================================== */
 uint8_t alpha4m(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs < img[p] dans le 4-voisinage de p, */
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
@@ -1415,9 +1416,9 @@ uint8_t alpha4m(
 /* ==================================== */
 uint8_t alpha8p(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne l'inf des valeurs > img[p] dans le 8-voisinage de p, */
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
@@ -1452,9 +1453,9 @@ uint8_t alpha8p(
 /* ==================================== */
 uint8_t alpha4p(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne l'inf des valeurs > img[p] dans le 4-voisinage de p, */
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
@@ -1482,9 +1483,9 @@ uint8_t alpha4p(
 uint8_t calpha8m(
   uint8_t *img,          /* pointeur base image */
   uint8_t *cnd,          /* pointeur base image condition */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs img[q] < img[p] dans le 8-voisinage de p, */
 /* telles que cnd[q] == 0, */  
 /* ou img[p] si pas de telles valeurs */
@@ -1522,9 +1523,9 @@ uint8_t calpha8m(
 uint8_t calpha4m(
   uint8_t *img,          /* pointeur base image */
   uint8_t *cnd,          /* pointeur base image condition */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs < img[p] dans le 4-voisinage de p, */
 /* telles que cnd[q] == 0, */  
 /* ou img[p] si pas de telles valeurs */
@@ -1555,9 +1556,9 @@ uint8_t calpha4m(
 uint8_t calpha8p(
   uint8_t *img,          /* pointeur base image */
   uint8_t *cnd,          /* pointeur base image condition */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne l'inf des valeurs > img[p] dans le 8-voisinage de p, */
 /* telles que cnd[q] == 0, */  
 /* ou img[p] si pas de telles valeurs */
@@ -1595,9 +1596,9 @@ uint8_t calpha8p(
 uint8_t calpha4p(
   uint8_t *img,          /* pointeur base image */
   uint8_t *cnd,          /* pointeur base image condition */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne l'inf des valeurs > img[p] dans le 4-voisinage de p, */
 /* telles que cnd[q] == 0, */  
 /* ou img[p] si pas de telles valeurs */
@@ -1626,10 +1627,10 @@ uint8_t calpha4p(
 /* ==================================== */
 uint8_t halpha8m(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   uint8_t h,             /* valeur de seuil */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs < h dans le 8-voisinage de p, */
 /* ou h si pas de telles valeurs */
 /* ==================================== */
@@ -1664,10 +1665,10 @@ uint8_t halpha8m(
 /* ==================================== */
 uint8_t halpha4m(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   uint8_t h,             /* valeur de seuil */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs < img[p] dans le 4-voisinage de p, */
 /* ou h si pas de telles valeurs */
 /* ==================================== */
@@ -1695,10 +1696,10 @@ uint8_t halpha4m(
 /* ==================================== */
 uint8_t halpha8p(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   uint8_t h,             /* valeur de seuil */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne l'inf des valeurs > img[p] dans le 8-voisinage de p, */
 /* ou h si pas de telles valeurs */
 /* ==================================== */
@@ -1733,10 +1734,10 @@ uint8_t halpha8p(
 /* ==================================== */
 uint8_t halpha4p(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   uint8_t h,             /* valeur de seuil */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne l'inf des valeurs > img[p] dans le 4-voisinage de p, */
 /* ou h si pas de telles valeurs */
 /* ==================================== */
@@ -1763,9 +1764,9 @@ uint8_t halpha4p(
 /* ==================================== */
 int32_t alpha8m_l(
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs < img[p] dans le 8-voisinage de p, */
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
@@ -1800,9 +1801,9 @@ int32_t alpha8m_l(
 /* ==================================== */
 int32_t alpha4m_l(
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs < img[p] dans le 4-voisinage de p, */
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
@@ -1830,9 +1831,9 @@ int32_t alpha4m_l(
 /* ==================================== */
 int32_t alpha8p_l(
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne l'inf des valeurs > img[p] dans le 8-voisinage de p, */
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
@@ -1867,9 +1868,9 @@ int32_t alpha8p_l(
 /* ==================================== */
 int32_t alpha4p_l(
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne l'inf des valeurs > img[p] dans le 4-voisinage de p, */
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
@@ -1896,9 +1897,9 @@ int32_t alpha4p_l(
 /* ==================================== */
 uint8_t beta8m(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne l'inf des valeurs du (8-voisinage de p) U p */
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
@@ -1930,9 +1931,9 @@ uint8_t beta8m(
 /* ==================================== */
 uint8_t beta8p(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs du (8-voisinage de p) U p */
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
@@ -1964,9 +1965,9 @@ uint8_t beta8p(
 /* ==================================== */
 uint8_t beta4m(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne l'inf des valeurs du (4-voisinage de p) U p */
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
@@ -1990,9 +1991,9 @@ uint8_t beta4m(
 /* ==================================== */
 uint8_t beta4p(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le sup des valeurs du (4-voisinage de p) U p */
 /* ou img[p] si pas de telles valeurs */
 /* ==================================== */
@@ -2014,33 +2015,11 @@ uint8_t beta4p(
 } /* beta4p() */
 
 /* ==================================== */
-uint8_t beta26m(
-  uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t n,                       /* taille plan */
-  int32_t N)                       /* taille image */
-/* retourne l'inf des valeurs du (26-voisinage de p) U p */
-/* ==================================== */
-{
-  register uint8_t val = *(img+p);
-  register uint8_t beta = val;
-  register int32_t y, k;
-        
-  for (k = 0; k < 26; k += 1)
-  {
-    y = voisin26(p, k, rs, n, N);
-    if ((y != -1) && (img[y] < beta)) beta = img[y];
-  }
-  return beta;
-} /* beta26m() */
-
-/* ==================================== */
 int32_t typetopo(                  /* types topologiques avec la 4-connexite pour les minima */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	int32_t t4mm,t4m,t8p,t8pp;
@@ -2076,9 +2055,9 @@ int32_t typetopo(                  /* types topologiques avec la 4-connexite pou
 /* ==================================== */
 int32_t typetopo8(  /* types topologiques avec la 8-connexite pour les minima */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	int32_t t8mm,t8m,t4p,t4pp;
@@ -2115,9 +2094,9 @@ int32_t typetopo8(  /* types topologiques avec la 8-connexite pour les minima */
 int32_t pdestr( /* teste si un point est destructible - minima 4-connexes */
             /* ancienne version - utiliser maintenant pdestr4() */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t4mm,t8p,b,n;
@@ -2134,9 +2113,9 @@ int32_t pdestr( /* teste si un point est destructible - minima 4-connexes */
 /* ==================================== */
 int32_t pdestr4( /* teste si un point est destructible - minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t4mm,t8p,b,n;
@@ -2153,9 +2132,9 @@ int32_t pdestr4( /* teste si un point est destructible - minima 4-connexes */
 /* ==================================== */
 int32_t pdestr8( /* teste si un point est destructible - minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t8mm,t4p,b,n;
@@ -2173,9 +2152,9 @@ int32_t pdestr8( /* teste si un point est destructible - minima 8-connexes */
 int32_t pconstr(   /* teste si un point est constructible - minima 4-connexes */
                /* ancienne version - utiliser maintenant pconstr4() */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t4m,t8pp,b,n;
@@ -2192,9 +2171,9 @@ int32_t pconstr(   /* teste si un point est constructible - minima 4-connexes */
 /* ==================================== */
 int32_t pconstr4(  /* teste si un point est constructible - minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t4m,t8pp,b,n;
@@ -2211,9 +2190,9 @@ int32_t pconstr4(  /* teste si un point est constructible - minima 4-connexes */
 /* ==================================== */
 int32_t pconstr8(   /* teste si un point est constructible - minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t8m,t4pp,b,n;
@@ -2230,9 +2209,9 @@ int32_t pconstr8(   /* teste si un point est constructible - minima 8-connexes *
 /* ==================================== */
 int32_t peakordestr4( /* teste si un point est pic ou destructible - minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t4mm,t8p,b,n;
@@ -2248,9 +2227,9 @@ int32_t peakordestr4( /* teste si un point est pic ou destructible - minima 4-co
 /* ==================================== */
 int32_t peakordestr8( /* teste si un point est pic ou destructible - minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t8mm,t4p,b,n;
@@ -2266,9 +2245,9 @@ int32_t peakordestr8( /* teste si un point est pic ou destructible - minima 8-co
 /* ==================================== */
 int32_t wellorconstr4(  /* teste si un point est puits ou constructible - minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t4m,t8pp,b,n;
@@ -2284,9 +2263,9 @@ int32_t wellorconstr4(  /* teste si un point est puits ou constructible - minima
 /* ==================================== */
 int32_t wellorconstr8(   /* teste si un point est puits ou constructible - minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t8m,t4pp,b,n;
@@ -2302,9 +2281,9 @@ int32_t wellorconstr8(   /* teste si un point est puits ou constructible - minim
 /* ==================================== */
 int32_t peak4( /* teste si un point est pic - minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t4mm,t8p,b,n;
@@ -2320,9 +2299,9 @@ int32_t peak4( /* teste si un point est pic - minima 4-connexes */
 /* ==================================== */
 int32_t peak8( /* teste si un point est pic - minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t8mm,t4p,b,n;
@@ -2338,9 +2317,9 @@ int32_t peak8( /* teste si un point est pic - minima 8-connexes */
 /* ==================================== */
 int32_t well4(  /* teste si un point est puits - minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t4m,t8pp,b,n;
@@ -2356,9 +2335,9 @@ int32_t well4(  /* teste si un point est puits - minima 4-connexes */
 /* ==================================== */
 int32_t well8(   /* teste si un point est puits - minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t8m,t4pp,b,n;
@@ -2374,9 +2353,9 @@ int32_t well8(   /* teste si un point est puits - minima 8-connexes */
 /* ==================================== */
 uint8_t delta4m( /* retourne la valeur max. a laquelle p est destructible - minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
   uint8_t ret, sav = img[p];
@@ -2389,9 +2368,9 @@ uint8_t delta4m( /* retourne la valeur max. a laquelle p est destructible - mini
 /* ==================================== */
 uint8_t delta8m( /* retourne la valeur max. a laquelle p est destructible - minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
   uint8_t ret, sav = img[p];
@@ -2404,9 +2383,9 @@ uint8_t delta8m( /* retourne la valeur max. a laquelle p est destructible - mini
 /* ==================================== */
 uint8_t delta4p( /* retourne la valeur max. a laquelle p est constructible - minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
   uint8_t ret, sav = img[p];
@@ -2419,9 +2398,9 @@ uint8_t delta4p( /* retourne la valeur max. a laquelle p est constructible - min
 /* ==================================== */
 uint8_t delta8p( /* retourne la valeur max. a laquelle p est constructible - minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
   uint8_t ret, sav = img[p];
@@ -2434,9 +2413,9 @@ uint8_t delta8p( /* retourne la valeur max. a laquelle p est constructible - min
 /* ==================================== */
 int32_t pconv4(  /* teste si un point est convergent - minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t4mm, t4m, t8p, t8pp;
@@ -2453,9 +2432,9 @@ int32_t pconv4(  /* teste si un point est convergent - minima 4-connexes */
 /* ==================================== */
 int32_t pconv8(   /* teste si un point est convergent - minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t8mm, t8m, t4p, t4pp;
@@ -2472,9 +2451,9 @@ int32_t pconv8(   /* teste si un point est convergent - minima 8-connexes */
 /* ==================================== */
 int32_t pdiv4(  /* teste si un point est divergent - minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t4mm, t4m, t8p, t8pp;
@@ -2491,9 +2470,9 @@ int32_t pdiv4(  /* teste si un point est divergent - minima 4-connexes */
 /* ==================================== */
 int32_t pdiv8(   /* teste si un point est divergent - minima 8-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
 	int32_t t8mm, t8m, t4p, t4pp;
@@ -2510,9 +2489,9 @@ int32_t pdiv8(   /* teste si un point est divergent - minima 8-connexes */
 /* ==================================== */
 int32_t saddle4(                   /* point selle avec la 4-connexite pour les minima */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	int32_t t4mm,t4m,t8p,t8pp;
@@ -2528,9 +2507,9 @@ int32_t saddle4(                   /* point selle avec la 4-connexite pour les m
 /* ==================================== */
 int32_t saddle8(                   /* point selle avec la 8-connexite pour les minima */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
 	int32_t t8mm,t8m,t4p,t4pp;
@@ -2546,10 +2525,10 @@ int32_t saddle8(                   /* point selle avec la 8-connexite pour les m
 /* ==================================== */
 int32_t lambdadestr4( /* teste si un point est lambda-destructible - minima 4-connexes */
   uint8_t *F,            /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t lambda,                  /* elevation admissible */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 /* 
   un point p est lambda-destructible si
@@ -2601,10 +2580,10 @@ int32_t lambdadestr4( /* teste si un point est lambda-destructible - minima 4-co
 /* ==================================== */
 int32_t lambdaconstr4( /* teste si un point est lambda-constructible - minima 4-connexes */
   uint8_t *F,            /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t lambda,                  /* elevation admissible */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 /* 
   un point p est lambda-constructible si
@@ -2656,10 +2635,10 @@ int32_t lambdaconstr4( /* teste si un point est lambda-constructible - minima 4-
 /* ==================================== */
 int32_t lambdadestr8( /* teste si un point est lambda-destructible - minima 8-connexes */
   uint8_t *F,            /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t lambda,                  /* elevation admissible */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 /* 
   un point p est lambda-destructible si
@@ -2710,10 +2689,10 @@ int32_t lambdadestr8( /* teste si un point est lambda-destructible - minima 8-co
 /* ==================================== */
 int32_t lambdaconstr8( /* teste si un point est lambda-constructible - minima 8-connexes */
   uint8_t *F,            /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t lambda,                  /* elevation admissible */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 /* 
   un point p est lambda-constructible si
@@ -2768,9 +2747,9 @@ int32_t lambdaconstr8( /* teste si un point est lambda-constructible - minima 8-
 /* ==================================== */
 void top8(                     /* pour un objet en 8-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N,                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N,                       /* taille image */
   int32_t *t,
   int32_t *tb)                     /* resultats */
 /* ==================================== */
@@ -2796,9 +2775,9 @@ void top8(                     /* pour un objet en 8-connexite */
 /* ==================================== */
 void top4(                     /* pour un objet en 4-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N,                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N,                       /* taille image */
   int32_t *t,
   int32_t *tb)                     /* resultats */
 /* ==================================== */
@@ -2825,9 +2804,9 @@ void top4(                     /* pour un objet en 4-connexite */
 /* ==================================== */
 void top8_l(                   /* pour un objet en 8-connexite */
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N,                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N,                       /* taille image */
   int32_t *t,
   int32_t *tb)                     /* resultats */
 /* ==================================== */
@@ -2853,9 +2832,9 @@ void top8_l(                   /* pour un objet en 8-connexite */
 /* ==================================== */
 void top4_l(                   /* pour un objet en 4-connexite */
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N,                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N,                       /* taille image */
   int32_t *t,
   int32_t *tb)                     /* resultats */
 /* ==================================== */
@@ -2882,9 +2861,9 @@ void top4_l(                   /* pour un objet en 4-connexite */
 /* ==================================== */
 int32_t simple8(                   /* pour un objet en 8-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
         int32_t t, tb;
@@ -2896,9 +2875,9 @@ int32_t simple8(                   /* pour un objet en 8-connexite */
 /* ==================================== */
 int32_t simple4(                   /* pour un objet en 4-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
         int32_t t, tb;
@@ -2910,9 +2889,9 @@ int32_t simple4(                   /* pour un objet en 4-connexite */
 /* ==================================== */
 int32_t typetopobin( /* types topo. en binaire et en 4-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   int32_t t, tb;
@@ -2930,9 +2909,9 @@ int32_t typetopobin( /* types topo. en binaire et en 4-connexite */
 /* ==================================== */
 int32_t typetopobin8( /* types topo. en binaire et en 8-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   int32_t t, tb;
@@ -2980,9 +2959,9 @@ int32_t t4b(int32_t v) /* pour un objet en 4-connexite - v est le masque binaire
 /* ==================================== */
 int32_t nbvois8(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le nombre de 8-voisins de niveau non nul */
 /* ==================================== */
 {
@@ -3003,9 +2982,9 @@ int32_t nbvois8(
 /* ==================================== */
 int32_t nbvois4(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le nombre de 4-voisins de niveau non nul */
 /* ==================================== */
 {
@@ -3022,9 +3001,9 @@ int32_t nbvois4(
 /* ==================================== */
 int32_t nbvoisc8(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le nombre de 8-voisins de niveau nul */
 /* ==================================== */
 {
@@ -3045,9 +3024,9 @@ int32_t nbvoisc8(
 /* ==================================== */
 int32_t nbvoisc4(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le nombre de 4-voisins de niveau nul */
 /* ==================================== */
 {
@@ -3064,9 +3043,9 @@ int32_t nbvoisc4(
 /* ==================================== */
 int32_t nbvois8neq(
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le nombre de 8-voisins de niveau different de celui du point p */
 /* ==================================== */
 {
@@ -3088,9 +3067,9 @@ int32_t nbvois8neq(
 /* ==================================== */
 int32_t nbvois4neq(
   int32_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le nombre de 4-voisins de niveau different de celui du point p */
 /* ==================================== */
 {
@@ -3108,9 +3087,9 @@ int32_t nbvois4neq(
 /* ==================================== */
 int32_t nbvoisp8(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le nb de 8-voisins de niveau superieur ou egal a celui du point p */
 /* ==================================== */
 {
@@ -3132,9 +3111,9 @@ int32_t nbvoisp8(
 /* ==================================== */
 int32_t nbvoisp4(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le nb de 4-voisins de niveau superieur ou egal a celui du point p */
 /* ==================================== */
 {
@@ -3152,9 +3131,9 @@ int32_t nbvoisp4(
 /* ==================================== */
 int32_t nbvoism8(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le nb de 8-voisins de niveau inferieur ou egal a celui du point p */
 /* ==================================== */
 {
@@ -3176,9 +3155,9 @@ int32_t nbvoism8(
 /* ==================================== */
 int32_t nbvoism4(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne le nb de 4-voisins de niveau inferieur ou egal a celui du point p */
 /* ==================================== */
 {
@@ -3196,9 +3175,9 @@ int32_t nbvoism4(
 /* ==================================== */
 int32_t extremite8(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne 1 si le point p est un point extremite de 8-courbe, 0 sinon */
 /* un point extremite de 8-courbe est un point p qui a extactement */
 /* un 8-voisin de niveau superieur ou egal a celui du point p */
@@ -3230,9 +3209,9 @@ int32_t extremite8(
 /* ==================================== */
 int32_t extremite4(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne 1 si le point p est un point extremite de 4-courbe, 0 sinon */
 /* un point extremite de 4-courbe est un point p qui a extactement */
 /* un 4-voisin de niveau superieur ou egal a celui du point p */
@@ -3256,9 +3235,9 @@ int32_t extremite4(
 /* ==================================== */
 int32_t extremite8m(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne 1 si le point p est un point extremite de 8-courbe, 0 sinon */
 /* un point extremite de 8-courbe est un point p qui a extactement */
 /* un 8-voisin de niveau inferieur ou egal a celui du point p */
@@ -3290,9 +3269,9 @@ int32_t extremite8m(
 /* ==================================== */
 int32_t extremite4m(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* retourne 1 si le point p est un point extremite de 4-courbe, 0 sinon */
 /* un point extremite de 4-courbe est un point p qui a extactement */
 /* un 4-voisin de niveau inferieur ou egal a celui du point p */
@@ -3316,9 +3295,9 @@ int32_t extremite4m(
 /* ==================================== */
 int32_t ridge(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* 
   detection des points "ridge" (d'apres Arcelli)  
 */
@@ -3357,11 +3336,11 @@ int32_t ridge(
 } /* ridge() */
 
 /* ==================================== */
-int32_t bordext4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+int32_t bordext4(uint8_t *F, index_t x, index_t rs, index_t N)
 /* ==================================== */
 /* teste si x a un 4-voisin a 0 */
 {
-  int32_t k, y;
+  index_t k, y;
   for (k = 0; k < 8; k += 2) /* parcourt les voisins en 4-connexite */
   {
     y = voisin(x, k, rs, N);
@@ -3371,11 +3350,11 @@ int32_t bordext4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* bordext4() */
 
 /* ==================================== */
-int32_t bordext8(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+int32_t bordext8(uint8_t *F, index_t x, index_t rs, index_t N)
 /* ==================================== */
 /* teste si x a un 8-voisin a 0 */
 {
-  int32_t k, y;
+  index_t k, y;
   for (k = 0; k < 8; k += 1) /* parcourt les voisins en 8-connexite */
   {
     y = voisin(x, k, rs, N);
@@ -3387,9 +3366,9 @@ int32_t bordext8(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 int32_t curve4( /* point de courbe en 4-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   int32_t t, tb;
@@ -3403,9 +3382,9 @@ int32_t curve4( /* point de courbe en 4-connexite */
 /* ==================================== */
 int32_t curve8( /* point de courbe en 8-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   int32_t t, tb;
@@ -3474,204 +3453,18 @@ uint8_t P_simple4(uint8_t *X, uint8_t *P)
 } /* P_simple4() */
 #endif
 
-#ifdef OLDDEF1
-/* ==================================== */
-int32_t lambdadestr4( /* teste si un point est lambda-destructible - minima 4-connexes */
-  uint8_t *F,            /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t lambda,                  /* elevation admissible */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
-/* ==================================== */
-/* 
-  un point p est lambda-destructible si
-    p est destructible OU
-    p est un pic ET F(p)-alpha8-(F,p) <= lambda OU
-    ( p est d-divergent (ie- t4mm(p) = d >=2) ET
-      il existe d-1 CC (numeros i.. entre 0 et d-1) de gamma--(p,F) tq
-        #Cnb[p,gamma--(p,F^lambdaCi..) = 1] et
-        #Cn[p,gamma+(p,F^lambdaCi..) = 1] 
-    )
-*/
-{	
-  int32_t t4mm, t4mmb, t8p, b, n, i, k, m, mi, q, destr;
-  uint8_t sav[8];   /* pour sauver le voisinage original */
-
-  if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* bord */
-    return 0;
-
-  nbtopo(F, p, rs, N, &t4mm, &b, &t8p, &n);
-  if ((t4mm == 1) && (t8p == 1)) return 1;
-
-#define DETRUIT_LAMBDA_PICS 
-#ifdef DETRUIT_LAMBDA_PICS 
-  if ((t4mm == 1) && (t8p == 0)) return ((F[p] - alpha8m(F,p,rs,N)) <= lambda);
-#endif
-  destr = 0;
-  if (t4mm >= 2)
-  {
-    for (k = 0; k < 8; k++) sav[k] = F[voisin(p, k, rs, N)];
-    m = maskmm(F, p, rs, N);
-    for (i = 0; i < (t4mm - 1); i++) /* remonte les d-1 premieres composantes */
-    { 
-      /* remonte la composante Ci */
-      mi = Comp4Tab[m][i];
-      if (mi == 0) break;
-      for (k = 0; k < 8; k++)
-      {
-        if ((mi % 2) != 0)
-	{
-          q = voisin(p, k, rs, N);
-          F[q] = (uint8_t)mcmin(((int32_t)F[q]+lambda), NDG_MAX);
-	}
-        mi = mi >> 1;
-      } /* for (k = 0; k < 8; k++) */
-    } /* for (i = 0; i < (t4mm - 1); i++) */
-
-    nbtopo(F, p, rs, N, &t4mmb, &b, &t8p, &n);
-    if ((t4mmb == 1) && (t8p == 1)) destr = 1;
-
-    for (i = t4mm - 1; i > 0; i--)
-    {
-      /* remonte la composante Ci */
-      mi = Comp4Tab[m][i];
-      if (mi == 0) break;
-      for (k = 0; k < 8; k++)
-      {
-        if ((mi % 2) != 0)
-	{
-          q = voisin(p, k, rs, N);
-          F[q] = (uint8_t)mcmin(((int32_t)F[q]+lambda), NDG_MAX);
-	}
-        mi = mi >> 1;
-      } /* for (k = 0; k < 8; k++) */
-
-      /* restaure la composante Ci-1 */
-      mi = Comp4Tab[m][i-1];
-      for (k = 0; k < 8; k++)
-      {
-        if ((mi % 2) != 0)
-	{
-          q = voisin(p, k, rs, N);
-          F[q] = sav[k];
-	}
-        mi = mi >> 1;
-      } /* for (k = 0; k < 8; k++) */
-
-      nbtopo(F, p, rs, N, &t4mmb, &b, &t8p, &n);
-      if ((t4mmb == 1) && (t8p == 1)) destr = 1;
-    }
-
-    for (i = 1; i < t4mm; i++) /* redescend les d-1 dernieres composantes */
-    { 
-      /* redescend la composante Ci */
-      mi = Comp4Tab[m][i];
-      for (k = 0; k < 8; k++)
-      {
-        if ((mi % 2) != 0)
-	{
-          q = voisin(p, k, rs, N);
-          F[q] = sav[k];
-	}
-        mi = mi >> 1;
-      } /* for (k = 0; k < 8; k++) */
-    } /* for (i = 0; i < (t4mm - 1); i++) */
-
-    if (destr) return 1;
-
-  } /* if (t4mm >= 2) */
-  return 0;
-} /* lambdadestr4() */
-#endif
-
-#ifdef OLDDEF
-/* ==================================== */
-int32_t lambdadestr4( /* teste si un point est lambda-destructible - minima 4-connexes */
-  uint8_t *F,            /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t lambda,                  /* elevation admissible */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
-/* ==================================== */
-/* 
-  un point p est lambda-destructible si
-    p est destructible OU
-    p est un pic ET F(p)-alpha8-(F,p) <= lambda OU
-    ( p est k-divergent (ie- t4mm(p) = k >=2) ET
-      il existe une CC (numero i entre 0 et k-1) de gamma--(p,F) tq
-        #Cnb[p,gamma--(p,F^lambdaCi) = 1] et
-        #Cn[p,gamma+(p,F^lambdaCi) = 1] 
-    )
-*/
-{	
-  int32_t t4mm, t4mmb, t8p, b, n, i, k, m, mi, q, destr;
-  uint8_t sav[8];   /* pour sauver le voisinage original */
-
-  if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* bord */
-    return 0;
-
-  nbtopo(F, p, rs, N, &t4mm, &b, &t8p, &n);
-  if ((t4mm == 1) && (t8p == 1)) return 1;
-
-#define DETRUIT_LAMBDA_PICS 
-#ifdef DETRUIT_LAMBDA_PICS 
-  if ((t4mm == 1) && (t8p == 0)) return ((F[p] - alpha8m(F,p,rs,N)) <= lambda);
-#endif
-  destr = 0;
-  if (t4mm >= 2)
-  {
-    m = maskmm(F, p, rs, N);
-    for (i = 0; i < t4mm; i++) 
-    { /*
-         pour chaque composante Ci de gamma--, il faut relever celle-ci
-         d'une hauteur de lambda, et calculer de nouveau les nombres 
-         topologiques
-      */
-      mi = Comp4Tab[m][i];
-      if (mi == 0) break;
-      for (k = 0; k < 8; k++)
-      {
-        if ((mi % 2) != 0)
-	{
-          q = voisin(p, k, rs, N);
-          F[q] += lambda;
-	}
-        mi = mi >> 1;
-      } /* for (k = 0; k < 8; k++) */
-
-      nbtopo(F, p, rs, N, &t4mmb, &b, &t8p, &n);
-      if ((t4mmb == 1) && (t8p == 1)) destr = 1;
-
-      /* redescend la composante Ci */
-      mi = Comp4Tab[m][i];
-      for (k = 0; k < 8; k++)
-      {
-        if ((mi % 2) != 0)
-	{
-          q = voisin(p, k, rs, N);
-          F[q] -= lambda;
-	}
-        mi = mi >> 1;
-      } /* for (k = 0; k < 8; k++) */
-      if (destr) return 1;
-    } /* for (i = 0; i < t4mm; i++) */
-  } /* if (t4mm >= 2) */
-  return 0;
-} /* lambdadestr4() */
-#endif
-
 /* ==================================== */
 int32_t separant4(  /* teste si un point est separant - minima 4-connexes
       ie- s'il est separant pour une coupe c telle que 0 < c <= img[p] 
       retourne c, ou 0 si le point n'est pas separant */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
   int32_t t4mm, t4m, t8p, t8pp;
-  int32_t k, q;
+  index_t k, q;
 
   if ((p%rs==rs-1)||(p<rs)||(p%rs==0)||(p>=N-rs)) /* point de bord */
      return 0;
@@ -3692,10 +3485,10 @@ int32_t separant4(  /* teste si un point est separant - minima 4-connexes
 /* ==================================== */
 int32_t separant4h(  /* teste si un point est separant pour la coupe h - minima 4-connexes */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   uint8_t h,             /* hauteur de la coupe */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
   int32_t t4mm, t4m, t8p, t8pp;
@@ -3711,14 +3504,14 @@ int32_t separant4h(  /* teste si un point est separant pour la coupe h - minima 
 int32_t hseparant4(  /* teste si un point est h-separant - minima 4-connexes
 	         ie- s'il est separant pour une coupe c telle que h < c <= img[p] */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
+  index_t p,                       /* index du point */
   int32_t h,                       /* parametre */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {	
   int32_t t4mm, t4m, t8p, t8pp;
-  int32_t k, q;
+  index_t k, q;
 
   if ((p%rs==rs-1)||(p<rs)||(p%rs==0)||(p>=N-rs)) /* point de bord */
      return 0;
@@ -3742,13 +3535,13 @@ int32_t separant8(  /* teste si un point est separant - minima 8-connexes
       ie- s'il est separant pour une coupe c telle que 0 < c <= img[p] 
       retourne c, ou 0 si le point n'est pas separant */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */
 /* ==================================== */
 {
   int32_t t8mm, t8m, t4p, t4pp;
-  int32_t k, q;
+  index_t k, q;
 
   if ((p%rs==rs-1)||(p<rs)||(p%rs==0)||(p>=N-rs)) /* point de bord */
      return 0;
@@ -3769,9 +3562,9 @@ int32_t separant8(  /* teste si un point est separant - minima 8-connexes
 /* ==================================== */
 int32_t museparant4(  
   uint8_t *F,            /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N,                       /* taille image */ 
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N,                       /* taille image */ 
   int32_t mu)
 /* ==================================== */
 /* 
@@ -3782,7 +3575,8 @@ int32_t museparant4(
 */
 {	
   int32_t t4mm, t4m, t8p, t8pp;
-  int32_t i, k, q, c, m, mi, d, dmax, n;
+  int32_t i, k, c, m, mi, d, dmax, n;
+  index_t q;
 
   if ((p%rs==rs-1)||(p<rs)||(p%rs==0)||(p>=N-rs)) /* point de bord */
      return 0;
@@ -3827,16 +3621,17 @@ step2:
 /* ==================================== */
 int32_t nbtrans8(  
   uint8_t *F,            /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t N)                       /* taille image */ 
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t N)                       /* taille image */ 
 /* ==================================== */
 /* 
   compte le nombre de transitions noir-blanc en parcourant les 8 voisins de p
   retourne -1 en cas de point de bord
 */
 {
-  int32_t k, q, r, n = 0;
+  int32_t k, r, n = 0;
+  index_t q;
   q = voisin(p, 0, rs, N);
   if (q == -1) return -1;
   for (k = 1; k < 8; k += 1)

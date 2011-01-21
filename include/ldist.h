@@ -35,10 +35,15 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifndef _MCIMAGE_H
+#include <mcimage.h>
+#endif
+
 extern int32_t ldist(struct xvimage *img, int32_t connex, struct xvimage *res);
 extern int32_t ldistbyte(struct xvimage *img, int32_t connex, struct xvimage *res);
 extern int32_t ldistquad(struct xvimage *img, struct xvimage *res);
-extern int32_t ldistvect(uint8_t *F, vect2Dint *L, int32_t rs, int32_t cs);
+extern int32_t ldistvect(uint8_t *F, vect2Dint *L, index_t rs, index_t cs);
 extern int32_t ldisteuc(struct xvimage *img, struct xvimage *res);
 extern int32_t ldilatdisc(struct xvimage* ob, int32_t r, int32_t mode);
 extern int32_t lerosdisc(struct xvimage* ob, int32_t r, int32_t mode);
@@ -59,11 +64,11 @@ extern int32_t ldistMeijster(struct xvimage *img, struct xvimage *res);
 extern struct xvimage* lredt2d(struct xvimage* f);
 extern struct xvimage* lredt3d(struct xvimage* f);
 extern int32_t lsedt_meijster(struct xvimage *img, struct xvimage *res);
-extern void SEDT_line(uint8_t *f, uint32_t *g, uint32_t rs, uint32_t cs);
-extern void SEDT_column(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs);
-extern void SEDT3d_line(uint8_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds);
-extern void SEDT3d_column(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds);
-extern void SEDT3d_planes(uint32_t *f, uint32_t *g, uint32_t rs, uint32_t cs, uint32_t ds);
+extern void SEDT_line(uint8_t *f, uint32_t *g, index_t rs, index_t cs);
+extern void SEDT_column(uint32_t *f, uint32_t *g, index_t rs, index_t cs);
+extern void SEDT3d_line(uint8_t *f, uint32_t *g, index_t rs, index_t cs, index_t ds);
+extern void SEDT3d_column(uint32_t *f, uint32_t *g, index_t rs, index_t cs, index_t ds);
+extern void SEDT3d_planes(uint32_t *f, uint32_t *g, index_t rs, index_t cs, index_t ds);
 extern int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res);
 extern struct xvimage * lopeningfunction(struct xvimage *img, int32_t mode);
   extern float ldistsets(struct xvimage *img1, struct xvimage *img2, int32_t mode, float cut);
