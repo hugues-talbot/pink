@@ -1275,7 +1275,7 @@ int32_t lexp(struct xvimage * image)
 } /* lexp() */
 
 /* ==================================== */
-index_t llog(struct xvimage * image)
+int32_t llog(struct xvimage * image)
 /* logarithme */
 /* ==================================== */
 #undef F_NAME
