@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 
   if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    int32_t rs, cs, ds, N, x;
+    index_t rs, cs, ds, N, x;
     uint8_t *F;
     int32_t *FL;
     rs = rowsize(image); cs = colsize(image); ds = depth(image); N = rs * cs * ds; 
@@ -128,7 +128,7 @@ int main(int argc, char **argv)
   }
   else if (datatype(image) == VFF_TYP_FLOAT)
   {
-    int32_t rs, cs, ds, N, x;
+    index_t rs, cs, ds, N, x;
     uint8_t *F;
     float *FF;
     rs = rowsize(image); cs = colsize(image); ds = depth(image); N = rs * cs * ds; 

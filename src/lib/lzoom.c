@@ -388,7 +388,7 @@ int32_t lzoomoutfloat(
           tmp += d * ptin[yy * rs + xx];
           sigmad += d;
 	}
-      ptout[y * rs2 + x] = (uint8_t)(tmp / sigmad);
+      ptout[y * rs2 + x] = (float)(tmp / sigmad);
     }
   } /* if (ds == 1) */
   else
@@ -417,7 +417,7 @@ int32_t lzoomoutfloat(
         tmp += d * ptin[zz*ps + yy*rs + xx];
         sigmad += d;
       }
-      ptout[z*ps2 + y*rs2 + x] = (uint8_t)(tmp / sigmad);
+      ptout[z*ps2 + y*rs2 + x] = (float)(tmp / sigmad);
     }
   } /* if (ds != 1) */
 
@@ -739,7 +739,7 @@ int32_t lzoominfloat(
           f1 = (x - xi) * ptin[yi*rs + xs] + (xs - x) * ptin[yi*rs + xi];
           f2 = (x - xi) * ptin[ys*rs + xs] + (xs - x) * ptin[ys*rs + xi];
           f = (y - yi) * f2 + (ys - y) * f1;
-          ptout[y2*rs2 + x2] = arrondi(f);
+          ptout[y2*rs2 + x2] = (float)f;
         }
       } // for x2
     } // for y2
@@ -769,7 +769,7 @@ int32_t lzoominfloat(
             fzi = (y - yi) * fziys + (ys - y) * fziyi;
             fzs = (y - yi) * fzsys + (ys - y) * fzsyi;
             f = (z - zi) * fzs + (zs - z) * fzi;
-            ptout[z2*ps2 + y2*rs2 + x2] = arrondi(f);
+            ptout[z2*ps2 + y2*rs2 + x2] = (float)f;
           }
         } // for x2
       } // for y2

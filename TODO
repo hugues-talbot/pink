@@ -20,7 +20,18 @@ déjà faits:
   mctopo
   mctopo3d
   mcrbt
+  mcgeo
   lseuil
+  lzoom
   lskeletons
+  lfermetrous3d
   ldist
   larith
+  ldilateros
+  ldilateros3d
+  seuil
+  threshold
+
+
+MC 64 bits: larea() retourne un int32
+

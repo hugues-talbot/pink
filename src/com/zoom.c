@@ -79,9 +79,9 @@ int main(int argc, char **argv)
 {
   struct xvimage * in;
   struct xvimage * out;
-  int32_t rs, cs;
+  index_t rs, cs;
   double z, fx, fy, fz;
-  int32_t newdim;
+  index_t newdim;
 
   if ((argc != 4) && (argc != 5) && (argc != 6))
   {

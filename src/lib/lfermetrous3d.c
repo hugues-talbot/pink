@@ -103,9 +103,9 @@ knowledge of the CeCILL license and that you accept its terms.
 #define EN_FAHP      0
 
 #ifdef ANIMATE
-void dump_anime(uint8_t *F, uint8_t *A, int32_t N, int32_t rs, int32_t ps)
+void dump_anime(uint8_t *F, uint8_t *A, index_t N, index_t rs, index_t ps)
 {
-  int32_t x, k, j, n;
+  index_t x, k, j, n;
 
   for (x = 0; x < N; x++)
   {
@@ -136,15 +136,15 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
 #define F_NAME "lfermetrous3dbin"
 { 
   struct xvimage *image = lenframe(in, 0, 1); // ajoute un cadre nul
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t ds = depth(image);       /* nombre plans */
-  int32_t N = ds * ps;             /* taille image */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(image);       /* nombre plans */
+  index_t N = ds * ps;             /* taille image */
   struct xvimage *dist;        /* pour la fonction distance */
   uint8_t *F = UCHARDATA(image);
   uint32_t *D;
@@ -424,15 +424,15 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
 { 
   struct xvimage *image = lenframe(in, 0, 1); // ajoute un cadre nul
   struct xvimage *guide = lenframe(g, 0, 1); // ajoute un cadre nul
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t ds = depth(image);       /* nombre plans */
-  int32_t N = ds * ps;             /* taille image */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(image);       /* nombre plans */
+  index_t N = ds * ps;             /* taille image */
   struct xvimage *dist;        /* pour la fonction distance */
   uint8_t *F = UCHARDATA(image);
   uint32_t *D;
@@ -609,7 +609,7 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
 } /* lfermetrous3dbin2() */
 
 /* ==================================== */
-int32_t lfermetrous3d_testabaisse6(uint8_t *F, uint8_t *P, int32_t x, int32_t rs, int32_t ps, int32_t N)
+int32_t lfermetrous3d_testabaisse6(uint8_t *F, uint8_t *P, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
@@ -629,21 +629,21 @@ int32_t lfermetrous3d(struct xvimage *image, int32_t connex, int32_t tailletrous
 #undef F_NAME
 #define F_NAME "lfermetrous3d"
 { 
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t ds = depth(image);       /* nombre plans */
-  int32_t N = ds * ps;             /* taille image */
-  struct xvimage *p;           /* pour l'image englobante */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(image);       /* nombre plans */
+  index_t N = ds * ps;             /* taille image */
+  struct xvimage *p;               /* pour l'image englobante */
   uint8_t *P;
-  struct xvimage *l;           /* pour l'image de labels */
+  struct xvimage *l;               /* pour l'image de labels */
   int32_t *L;
   uint8_t *F = UCHARDATA(image);
-  Fahp * FAHP;                   /* fahp pour le controle de l'ordre de traitement des points */
+  Fahp * FAHP;                     /* fahp pour le controle de l'ordre de traitement des points */
   int32_t tbar;
   int32_t nminima;
   uint8_t *dejavu;

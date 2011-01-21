@@ -59,12 +59,12 @@ int32_t ldilatbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc
 #undef F_NAME
 #define F_NAME "ldilatbin3d"
 {
-  register int32_t i, j, k, l;     /* index muet */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t dsm = depth(m);          /* nb plans masque */
-  int32_t psm = rsm * csm;         /* taille plan masque */
-  int32_t Nm = psm * dsm;          /* taille masque */
+  register index_t i, j, k, l;     /* index muet */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t dsm = depth(m);          /* nb plans masque */
+  index_t psm = rsm * csm;         /* taille plan masque */
+  index_t Nm = psm * dsm;          /* taille masque */
   uint8_t *M = UCHARDATA(m);
   int32_t nptb;                    /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
@@ -128,13 +128,13 @@ int32_t ldilatbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t
 #undef F_NAME
 #define F_NAME "ldilatbin3d2"
 {
-  int32_t x, y, z, v, w;           /* index muet */
-  register int32_t l, n, o;        /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t x, y, z, v, w;           /* index muet */
+  register index_t l, n, o;        /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
   int32_t c;
@@ -203,12 +203,12 @@ int32_t ldilateros3d_lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc
 #undef F_NAME
 #define F_NAME "ldilateros3d_lerosbin3d"
 {
-  register int32_t i, j, k, l;     /* index muet */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t dsm = depth(m);          /* nb plans masque */
-  int32_t psm = rsm * csm;         /* taille plan masque */
-  int32_t Nm = psm * dsm;          /* taille masque */
+  register index_t i, j, k, l;     /* index muet */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t dsm = depth(m);          /* nb plans masque */
+  index_t psm = rsm * csm;         /* taille plan masque */
+  index_t Nm = psm * dsm;          /* taille masque */
   uint8_t *M = UCHARDATA(m);
   int32_t nptb;                    /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
@@ -274,13 +274,13 @@ int32_t ldilateros3d_lerosbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_e
 #undef F_NAME
 #define F_NAME "ldilateros3d_lerosbin3d2"
 {
-  int32_t x, y, z, v, w;           /* index muet */
-  register int32_t l, n, o;        /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t x, y, z, v, w;           /* index muet */
+  register index_t l, n, o;        /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
   int32_t c;
@@ -342,14 +342,14 @@ int32_t ldilateros3d_ldilatfast3d(struct xvimage *f, uint8_t *mask)
 #undef F_NAME
 #define F_NAME "ldilateros3d_ldilatfast3d"
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t k;                       /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t d = depth(f);            /* nb plans */
-  int32_t n = rs * cs;             /* taille plan */
-  int32_t N = n * d;               /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t k;                       /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t d = depth(f);            /* nb plans */
+  index_t n = rs * cs;             /* taille plan */
+  index_t N = n * d;               /* taille image */
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                     /* image de travail */
   uint8_t sup;
@@ -388,14 +388,14 @@ int32_t ldilateros3d_lerosfast3d(struct xvimage *f, uint8_t *mask)
 #undef F_NAME
 #define F_NAME "ldilateros3d_lerosfast3d"
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t k;                       /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t d = depth(f);            /* nb plans */
-  int32_t n = rs * cs;             /* taille plan */
-  int32_t N = n * d;               /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t k;                       /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t d = depth(f);            /* nb plans */
+  index_t n = rs * cs;             /* taille plan */
+  index_t N = n * d;               /* taille image */
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                     /* image de travail */
   uint8_t inf;
@@ -435,18 +435,18 @@ int32_t ldilatlong3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t y
 #undef F_NAME
 #define F_NAME "ldilatlong3d"
 {
-  register int32_t x, y, z;        /* index muet */
-  register int32_t i, j, k, h;     /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t dsm = depth(m);          /* nb plans masque */
-  int32_t psm = rsm * csm;
-  int32_t Nm = psm * dsm;
+  register index_t x, y, z;        /* index muet */
+  register index_t i, j, k, h;     /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t dsm = depth(m);          /* nb plans masque */
+  index_t psm = rsm * csm;
+  index_t Nm = psm * dsm;
   uint8_t *M = UCHARDATA(m);
   int32_t *F = SLONGDATA(f);
   int32_t *H;                    /* image de travail */
@@ -527,18 +527,18 @@ int32_t leroslong3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc
 #undef F_NAME
 #define F_NAME "leroslong3d"
 {
-  register int32_t x, y, z;        /* index muet */
-  register int32_t i, j, k, h;     /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t dsm = depth(m);          /* nb plans masque */
-  int32_t psm = rsm * csm;
-  int32_t Nm = psm * dsm;
+  register index_t x, y, z;        /* index muet */
+  register index_t i, j, k, h;     /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t dsm = depth(m);          /* nb plans masque */
+  index_t psm = rsm * csm;
+  index_t Nm = psm * dsm;
   uint8_t *M = UCHARDATA(m);
   int32_t *F = SLONGDATA(f);
   int32_t *H;                    /* image de travail */
@@ -619,18 +619,18 @@ int32_t ldilatbyte3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t y
 #undef F_NAME
 #define F_NAME "ldilatbyte3d"
 {
-  register int32_t x, y, z;        /* index muet */
-  register int32_t i, j, k, h;     /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t dsm = depth(m);          /* nb plans masque */
-  int32_t psm = rsm * csm;
-  int32_t Nm = psm * dsm;
+  register index_t x, y, z;        /* index muet */
+  register index_t i, j, k, h;     /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t dsm = depth(m);          /* nb plans masque */
+  index_t psm = rsm * csm;
+  index_t Nm = psm * dsm;
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
@@ -711,18 +711,18 @@ int32_t lerosbyte3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc
 #undef F_NAME
 #define F_NAME "lerosbyte3d"
 {
-  register int32_t x, y, z;        /* index muet */
-  register int32_t i, j, k, h;     /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t dsm = depth(m);          /* nb plans masque */
-  int32_t psm = rsm * csm;
-  int32_t Nm = psm * dsm;
+  register index_t x, y, z;        /* index muet */
+  register index_t i, j, k, h;     /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t dsm = depth(m);          /* nb plans masque */
+  index_t psm = rsm * csm;
+  index_t Nm = psm * dsm;
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
