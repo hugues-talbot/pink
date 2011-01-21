@@ -15,11 +15,12 @@ MC threshold remplace seuil
 
 MC changer les types des rs, cs, ..., N, i, x... de int32_t en index_t
 déjà faits:
-mcimage
-mccodimage
-mctopo
-mctopo3d
-mcrbt
-lseuil
-lskeletons
-ldist
+  mcimage
+  mccodimage
+  mctopo
+  mctopo3d
+  mcrbt
+  lseuil
+  lskeletons
+  ldist
+  larith

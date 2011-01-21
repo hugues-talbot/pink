@@ -86,11 +86,11 @@ int32_t ladd(
 #undef F_NAME
 #define F_NAME "ladd"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -144,11 +144,11 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
 #undef F_NAME
 #define F_NAME "laddconst"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt1;
   int32_t *lpt1;
   float *FPT1; 
-  int32_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -197,11 +197,11 @@ int32_t larea(
 #undef F_NAME
 #define F_NAME "larea"
 {
-  int32_t i, b, a = 0;
+  int32_t b, a = 0;
   uint8_t *pt;
   int32_t *PT; 
   float *FPT; 
-  int32_t rs, cs, ds, nb, N;
+  index_t i, rs, cs, ds, nb, N;
 
   rs = rowsize(image);
   cs = colsize(image);
@@ -279,11 +279,11 @@ int32_t laverage(
 #undef F_NAME
 #define F_NAME "laverage"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -333,11 +333,11 @@ int32_t ldiff(
 #undef F_NAME
 #define F_NAME "ldiff"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -393,11 +393,11 @@ int32_t ldivide(
 #undef F_NAME
 #define F_NAME "ldivide"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -447,11 +447,11 @@ int32_t lequal(
 #undef F_NAME
 #define F_NAME "lequal"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -507,8 +507,8 @@ int32_t linf(
 #undef F_NAME
 #define F_NAME "linf"
 {
-  int32_t i;
-  int32_t rs, cs, ds, nb, N;
+  index_t i;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -567,8 +567,8 @@ int32_t lsup(
 #undef F_NAME
 #define F_NAME "lsup"
 {
-  int32_t i;
-  int32_t rs, cs, ds, nb, N;
+  index_t i;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -626,7 +626,7 @@ int32_t linverse(
 #undef F_NAME
 #define F_NAME "linverse"
 {
-  int32_t i, N;
+  index_t i, N;
 
   if (nbands(image) > 1)
   {
@@ -678,11 +678,11 @@ int32_t lmax(
 #undef F_NAME
 #define F_NAME "lmax"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -736,7 +736,7 @@ double lmax1(struct xvimage * image1)
 #undef F_NAME
 #define F_NAME "lmax1"
 {
-  int32_t i, rs, cs, ds, N;
+  index_t i, rs, cs, ds, N;
   double maxval;
 
   rs = rowsize(image1);
@@ -784,7 +784,7 @@ double lmin1(struct xvimage * image1)
 #undef F_NAME
 #define F_NAME "lmin1"
 {
-  int32_t i, rs, cs, ds, N;
+  index_t i, rs, cs, ds, N;
   double minval;
 
   rs = rowsize(image1);
@@ -834,11 +834,11 @@ int32_t lmin(
 #undef F_NAME
 #define F_NAME "lmin"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -894,8 +894,8 @@ int32_t lmult(
 #undef F_NAME
 #define F_NAME "lmult"
 {
-  int32_t i, b;
-  int32_t rs, cs, ds, nb1, nb2, N;
+  index_t i, b;
+  index_t rs, cs, ds, nb1, nb2, N;
   struct xvimage * tmp;
 
   rs = rowsize(image1);
@@ -976,9 +976,9 @@ int32_t lneg(
 #undef F_NAME
 #define F_NAME "lneg"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt;
-  int32_t N;
+  index_t N;
 
   if (nbands(image) > 1)
   {
@@ -1009,7 +1009,7 @@ int32_t lnormalize(struct xvimage * image, float nmin, float nmax)
 #define F_NAME "lnormalize"
 #define EPSILON 1e-6
 {
-  int32_t x, N;
+  index_t x, N;
 
   if (nbands(image) > 1)
   {
@@ -1094,11 +1094,11 @@ int32_t lnull(struct xvimage * image1)
 #undef F_NAME
 #define F_NAME "lnull"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt1;
   int32_t *PT1; 
   float *FPT1; 
-  int32_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -1148,11 +1148,11 @@ int32_t lscale(
 #undef F_NAME
 #define F_NAME "lscale"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt;
   int32_t *PT;
   float *FPT;
-  int32_t N;
+  index_t N;
 
   N = rowsize(image) * colsize(image) * depth(image) * nbands(image);
 
@@ -1205,11 +1205,11 @@ int32_t lpow(
 #undef F_NAME
 #define F_NAME "lpow"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt;
   int32_t *PT;
   float *FPT;
-  int32_t N;
+  index_t N;
 
   N = rowsize(image) * colsize(image) * depth(image) * nbands(image);
 
@@ -1253,7 +1253,7 @@ int32_t lexp(struct xvimage * image)
 #undef F_NAME
 #define F_NAME "lexp"
 {
-  int32_t i;
+  index_t i;
   float *FPT;
   int32_t N;
 
@@ -1275,15 +1275,15 @@ int32_t lexp(struct xvimage * image)
 } /* lexp() */
 
 /* ==================================== */
-int32_t llog(struct xvimage * image)
+index_t llog(struct xvimage * image)
 /* logarithme */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "llog"
 {
-  int32_t i;
+  index_t i;
   float *FPT;
-  int32_t N;
+  index_t N;
 
   N = rowsize(image) * colsize(image) * depth(image) * nbands(image);
 
@@ -1311,11 +1311,11 @@ int32_t lsub(
 #undef F_NAME
 #define F_NAME "lsub"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  int32_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -1371,12 +1371,12 @@ int32_t lvolume(
 #undef F_NAME
 #define F_NAME "lvolume"
 {
-  int32_t i;
+  index_t i;
   uint8_t *pt;
   int32_t *PT; 
   float *FPT; 
   double fvolume = 0.0; 
-  int32_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image);
   cs = colsize(image);
@@ -1416,9 +1416,9 @@ int32_t lxor(
 #undef F_NAME
 #define F_NAME "lxor"
 {
-  int32_t i;
+  index_t i;
   uint8_t *F1, *F2;
-  int32_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, nb, N;
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -1467,7 +1467,7 @@ int32_t lmodulus(struct xvimage * image, struct xvimage * result)
 #undef F_NAME
 #define F_NAME "lmodulus"
 {
-  int32_t i, N;
+  index_t i, N;
   float *F, *R;
   double t1, t2;
   assert(result != NULL);
@@ -1497,7 +1497,7 @@ int32_t lreal(struct xvimage * image, struct xvimage * result)
 #undef F_NAME
 #define F_NAME "lreal"
 {
-  int32_t i, N;
+  index_t i, N;
   float *F, *R;
   assert(result != NULL);
   assert(rowsize(image) == rowsize(result));
@@ -1520,7 +1520,7 @@ int32_t limaginary(struct xvimage * image, struct xvimage * result)
 #undef F_NAME
 #define F_NAME "limaginary"
 {
-  int32_t i, N;
+  index_t i, N;
   float *F, *R;
   assert(result != NULL);
   assert(rowsize(image) == rowsize(result));
