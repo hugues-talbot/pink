@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * in;
   struct xvimage * out;
-  int32_t x, y, z, w, h, d;
+  index_t x, y, z, w, h, d;
 
   if ((argc != 7) && (argc != 9))
   {

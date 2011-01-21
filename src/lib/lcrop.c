@@ -60,8 +60,8 @@ struct xvimage * lcrop(struct xvimage *in, int32_t x, int32_t y, int32_t w, int3
 #undef F_NAME
 #define F_NAME "lcrop"
 {
-  int32_t i, j, i0, j0, i1, j1, x0, y0, x1, y1, xx, yy;
-  int32_t rs, cs;
+  index_t i, j, i0, j0, i1, j1, x0, y0, x1, y1, xx, yy;
+  index_t rs, cs;
   struct xvimage * temp1;
 
   rs = in->row_size;
@@ -144,8 +144,8 @@ struct xvimage * lcrop3d(struct xvimage *in, int32_t x, int32_t y, int32_t z, in
 #undef F_NAME
 #define F_NAME "lcrop3d"
 {
-  int32_t i, j, k, i0, j0, k0, i1, j1, k1, x0, y0, z0, x1, y1, z1, xx, yy, zz;
-  int32_t rs, cs, ds, ps, p1;
+  index_t i, j, k, i0, j0, k0, i1, j1, k1, x0, y0, z0, x1, y1, z1, xx, yy, zz;
+  index_t rs, cs, ds, ps, p1;
   struct xvimage *temp1;
 
   rs = rowsize(in);     /* taille rangee image originale */
@@ -241,7 +241,7 @@ void lsetframe(struct xvimage *image, int32_t grayval)
 #undef F_NAME
 #define F_NAME "lsetframe"
 {
-  int32_t rs, cs, ds, ps, x, y, z;
+  index_t rs, cs, ds, ps, x, y, z;
   uint8_t * Im;
 
   assert(datatype(image) == VFF_TYP_1_BYTE);
@@ -292,7 +292,7 @@ void lsetthickframe(struct xvimage *image, int32_t width, int32_t grayval)
 #undef F_NAME
 #define F_NAME "lsetthickframe"
 {
-  int32_t rs, cs, ds, ps, x, y, z, w;
+  index_t rs, cs, ds, ps, x, y, z, w;
   uint8_t * Im;
 
   assert(datatype(image) == VFF_TYP_1_BYTE);
@@ -354,8 +354,8 @@ struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width)
 #undef F_NAME
 #define F_NAME "lenframe"
 {
-  int32_t rs, cs, ds, ps, x, y, z;
-  int32_t rs2, cs2, ds2, ps2;
+  index_t rs, cs, ds, ps, x, y, z;
+  index_t rs2, cs2, ds2, ps2;
   struct xvimage * imageout;
 
   rs = rowsize(image);
@@ -579,8 +579,8 @@ int32_t linsert(struct xvimage *a, struct xvimage *b, int32_t x, int32_t y, int3
 #undef F_NAME
 #define F_NAME "linsert"
 {
-  int32_t i, j, k;
-  int32_t rsa, csa, dsa, psa, rsb, csb, dsb, psb;
+  index_t i, j, k;
+  index_t rsa, csa, dsa, psa, rsb, csb, dsb, psb;
 
   rsa = rowsize(a);
   rsb = rowsize(b);
@@ -666,10 +666,10 @@ struct xvimage * lexpandframe(struct xvimage *in, int32_t n)
 #undef F_NAME
 #define F_NAME "lexpandframe"
 {
-  int32_t ds1 = depth(in);
-  int32_t rs1 = rowsize(in);
-  int32_t cs1 = colsize(in);
-  int32_t rs2, cs2, x, y;
+  index_t ds1 = depth(in);
+  index_t rs1 = rowsize(in);
+  index_t cs1 = colsize(in);
+  index_t rs2, cs2, x, y;
   struct xvimage *temp1;
 
   if (ds1 > 1)

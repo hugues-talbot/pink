@@ -29,9 +29,11 @@ déjà faits:
   larith
   ldilateros
   ldilateros3d
+  lcrop
   seuil
   threshold
-
+  crop
 
 MC 64 bits: larea() retourne un int32
 
+MC extractplane pour les types float, long...
