@@ -73,7 +73,7 @@ int main(int argc, char **argv)
   FILE *fileout = NULL;
   int32_t i, n;
   int32_t formatin, formatout;
-  double *pbx, *pby, *pbz, a, b, c, d, A, B, C, D;
+  double *pbx, *pby, *pbz, a, b, c, d, A, B, C, D, err;
 
   if (argc != 3)
   {
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
     pbz[i] = Vertices->v[i].z;
   }
 
-  if (!lidentifyplane(pbx, pby, pbz, n, &a, &b, &c, &d))
+  if (!lidentifyplane(pbx, pby, pbz, n, &a, &b, &c, &d, &err))
   {
     fprintf(stderr, "%s: lidentifyplane failed\n", argv[0]);
     exit(1);

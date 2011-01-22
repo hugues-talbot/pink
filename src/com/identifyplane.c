@@ -43,6 +43,8 @@ Identifies the parameters (a, b, c, d) of the equation of the 3D plane:
 ax+by+cz+d=0 that minimizes the least square error between this plane 
 and the given points. Method: basic linear regression.
 
+The result is given as a file that contains a list of 5 numbers: <B>a, b, c, d</B> the parameters of the equation, and <B>e</B> the least square error.
+
 <B>Types supported:</B> list 3D
 
 <B>Category:</B> geo
@@ -71,7 +73,7 @@ int main(int argc, char **argv)
   FILE *fd = NULL;
   int32_t n, i;
   char type;
-  double *pbx, *pby, *pbz, a, b, c, d;
+  double *pbx, *pby, *pbz, a, b, c, d, err;
 
   if (argc != 3)
   {
@@ -110,14 +112,14 @@ int main(int argc, char **argv)
 
   fclose(fd);
 
-  if (!lidentifyplane(pbx, pby, pbz, n, &a, &b, &c, &d))
+  if (!lidentifyplane(pbx, pby, pbz, n, &a, &b, &c, &d, &err))
   {
     fprintf(stderr, "%s: lidentifyplane failed\n", argv[0]);
     exit(1);
   }
 
 #ifdef VERBOSE
-  printf("a = %g, b = %g, c = %g, d = %g\n", a, b, c, d);
+  printf("a = %g, b = %g, c = %g, d = %g, err = %g\n", a, b, c, d, err);
 #endif
 
   fd = fopen(argv[argc - 1],"w");
@@ -126,8 +128,8 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc - 1]);
     exit(1);
   }
-  fprintf(fd, "e %d\n", 4); 
-  fprintf(fd, "%g %g %g %g\n", a, b, c, d); 
+  fprintf(fd, "e %d\n", 5);
+  fprintf(fd, "%g %g %g %g %g\n", a, b, c, d, err); 
   fclose(fd);
 
   free(pbx);

@@ -36,21 +36,25 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
+#ifndef _MCIMAGE_H
+#include <mcimage.h>
+#endif
+
 typedef struct {
-  int32_t Max;          /* taille max de la Lifo */
-  int32_t Sp;           /* index de pile (pointe la 1ere case libre) */
-  int32_t Pts[1];
+  index_t Max;          /* taille max de la Lifo */
+  index_t Sp;           /* index de pile (pointe la 1ere case libre) */
+  index_t Pts[1];
 } Lifo;
 
 /* ============== */
 /* prototypes     */
 /* ============== */
-extern Lifo * CreeLifoVide(int32_t taillemax);
+extern Lifo * CreeLifoVide(index_t taillemax);
 extern void LifoFlush(Lifo * L);
-extern int32_t LifoVide(Lifo * L);
-extern int32_t LifoPop(Lifo * L);
-extern int32_t LifoHead(Lifo * L);
-extern void LifoPush(Lifo * L, int32_t V);
+extern index_t LifoVide(Lifo * L);
+extern index_t LifoPop(Lifo * L);
+extern index_t LifoHead(Lifo * L);
+extern void LifoPush(Lifo * L, index_t V);
 extern void LifoPrint(Lifo * L);
 extern void LifoPrintLine(Lifo * L);
 extern void LifoTermine(Lifo * L);

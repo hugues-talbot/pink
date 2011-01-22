@@ -398,6 +398,7 @@ $(BDIR)/maxdiameter \
 $(BDIR)/moments \
 $(BDIR)/offset \
 $(BDIR)/pca \
+$(BDIR)/planarity \
 $(BDIR)/point \
 $(BDIR)/proj \
 $(BDIR)/proj3d \
@@ -1630,8 +1631,8 @@ $(BDIR)/worms:	$(CDIR)/worms.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/mcp
 $(BDIR)/affine:	$(CDIR)/affine.c $(IDIR)/mcimage.h $(IDIR)/mclin.h $(IDIR)/mcgeo.h $(IDIR)/lrotations.h $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/lrotations.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/affine.c $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/lrotations.o $(LIBS) -o $(BDIR)/affine
 
-$(BDIR)/attribute:	$(CDIR)/attribute.c $(IDIR)/lattribute.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/lattribute.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/attribute.c $(ODIR)/lattribute.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/attribute
+$(BDIR)/attribute:	$(CDIR)/attribute.c $(IDIR)/lattribute.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/lattribute.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/attribute.c $(ODIR)/lattribute.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/mclin.o $(LIBS) -o $(BDIR)/attribute
 
 $(BDIR)/autocrop:	$(CDIR)/autocrop.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/autocrop.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/autocrop
@@ -1764,6 +1765,9 @@ $(BDIR)/offset:	$(CDIR)/offset.c $(IDIR)/mcimage.h $(IDIR)/loffset.h $(OBJ_COMMO
 
 $(BDIR)/pca:	$(CDIR)/pca.c $(IDIR)/lmoments.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(IDIR)/mclin.h $(IDIR)/llabelextrema.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mclin.o $(ODIR)/llabelextrema.o $(ODIR)/lmoments.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/pca.c $(ODIR)/lmoments.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mclin.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(LIBS) -o $(BDIR)/pca
+
+$(BDIR)/planarity:	$(CDIR)/planarity.c $(IDIR)/lattribute.h $(IDIR)/mcimage.h $(IDIR)/mclifo.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/lattribute.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/planarity.c $(ODIR)/lattribute.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/mclin.o $(LIBS) -o $(BDIR)/planarity
 
 $(BDIR)/point:	$(CDIR)/point.c $(IDIR)/lpoint.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/lpoint.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/point.c $(ODIR)/lpoint.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/point

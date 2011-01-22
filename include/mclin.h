@@ -35,6 +35,11 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifndef _MCIMAGE_H
+#include <mcimage.h>
+#endif
+
 #define MCLIN_EPSILON 1E-10
 
 extern double * lin_zeros(int32_t n, int32_t m);
@@ -77,7 +82,7 @@ extern int32_t lin_trouvemin(double * x, double * d, double (*F)(double *, int32
 extern int32_t lidentifyline(double *pbx, double *pby, int32_t npb, double *a, double *b);
 extern int32_t lidentifyparabola2(double *pbx, double *pby, int32_t npb, double *a, double *b);
 extern int32_t lidentifyparabola3(double *pbx, double *pby, int32_t npb, double *a, double *b, double *c);
-extern int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, double *a, double *b, double *c, double *d);
+extern int32_t lidentifyplane(double *pbx, double *pby, double *pbz, index_t npb, double *a, double *b, double *c, double *d, double *error);
 
 #ifdef __cplusplus
 }

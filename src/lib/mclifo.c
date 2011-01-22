@@ -48,14 +48,14 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mclifo.h>
 
 /* ==================================== */
-Lifo * CreeLifoVide(int32_t taillemax)
+Lifo * CreeLifoVide(index_t taillemax)
 /* ==================================== */
 {
-  Lifo * L = (Lifo *)calloc(1,sizeof(Lifo) + sizeof(int32_t) * (taillemax-1));
+  Lifo * L = (Lifo *)calloc(1,sizeof(Lifo) + sizeof(index_t) * (taillemax-1));
   if (L == NULL)
   {   
     fprintf(stderr, "CreeLifoVide() : malloc failed : %d bytes\n", 
-            sizeof(Lifo) + sizeof(int32_t) * (taillemax-1));
+            sizeof(Lifo) + sizeof(index_t) * (taillemax-1));
     return NULL;
   }
   L->Max = taillemax;
@@ -71,14 +71,14 @@ void LifoFlush(Lifo * L)
 }
 
 /* ==================================== */
-int32_t LifoVide(Lifo * L)
+index_t LifoVide(Lifo * L)
 /* ==================================== */
 {
   return (L->Sp == 0);
 }
 
 /* ==================================== */
-int32_t LifoPop(Lifo * L)
+index_t LifoPop(Lifo * L)
 /* ==================================== */
 {
   if (L->Sp == 0)
@@ -91,7 +91,7 @@ int32_t LifoPop(Lifo * L)
 }
 
 /* ==================================== */
-int32_t LifoHead(Lifo * L)
+index_t LifoHead(Lifo * L)
 /* ==================================== */
 {
   if (L->Sp == 0)
@@ -103,7 +103,7 @@ int32_t LifoHead(Lifo * L)
 }
   
 /* ==================================== */
-void LifoPush(Lifo * L, int32_t V)
+void LifoPush(Lifo * L, index_t V)
 /* ==================================== */
 {
   if (L->Sp > L->Max - 1)
@@ -119,7 +119,7 @@ void LifoPush(Lifo * L, int32_t V)
 void LifoPrint(Lifo * L)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   if (LifoVide(L)) {printf("[]"); return;}
   printf("[ ");
   for (i = 0; i < L->Sp; i++)
@@ -131,7 +131,7 @@ void LifoPrint(Lifo * L)
 void LifoPrintLine(Lifo * L)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   if (LifoVide(L)) {printf("[]\n"); return;}
 /*
   printf("Max = %d ; Sp = %d \n", L->Max, L->Sp);

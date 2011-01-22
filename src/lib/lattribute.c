@@ -36,14 +36,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#ifdef HP
-#define _INCLUDE_XOPEN_SOURCE
-#endif
+#include <assert.h>
 #include <math.h>
 #include <mccodimage.h>
 #include <mclifo.h>
 #include <mctopo.h>
 #include <mcutil.h>
+#include <mclin.h>
 #include <lattribute.h>
 
 /****************************************************************
@@ -176,13 +175,13 @@ int32_t lattribute(
 #define F_NAME "lattribute"
 {
   int32_t k, l;
-  int32_t w, x, y, z;
+  index_t w, x, y, z;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t *LABEL = SLONGDATA(lab);
-  int32_t rs = rowsize(img);
-  int32_t cs = colsize(img);
-  int32_t d = depth(img);
-  int32_t N = rs * cs;          /* taille image */
+  index_t rs = rowsize(img);
+  index_t cs = colsize(img);
+  index_t d = depth(img);
+  index_t N = rs * cs;          /* taille image */
   Lifo * LIFO;
   int32_t label;
   int32_t area;
@@ -527,22 +526,18 @@ int32_t lattribute3d(
 #undef F_NAME
 #define F_NAME "lattribute3d"
 {
-  int32_t k, i;
-  int32_t w, x, y;
+  int32_t k;
+  index_t w, x, y;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t *LABEL = SLONGDATA(lab);
-  int32_t rs = rowsize(img);
-  int32_t cs = colsize(img);
-  int32_t ds = depth(img);
-  int32_t ps = rs * cs;
-  int32_t N = ps * ds;
+  index_t rs = rowsize(img);
+  index_t cs = colsize(img);
+  index_t ds = depth(img);
+  index_t ps = rs * cs;
+  index_t N = ps * ds;
   Lifo * LIFO;
   int32_t label;
   int32_t val_attrib;
-  int32_t area;
-  double mx1, my1, mz1; // cumuls des variables x, y et z
-  double mx2, my2, mz2; // cumuls des x^2, y^2 et z^2
-  double mxy2, myz2, mxz2; // cumuls des xy, yz et xz
 
   if (datatype(lab) != VFF_TYP_4_BYTE) 
   {
@@ -578,11 +573,6 @@ if ((typregion == LABMIN) || (typregion == LABMAX))
       switch (attrib)            /* on initialise les attributs de cette composante */
       {
 	case AREA: val_attrib = 0; break;
-	case EXCEN: 
-	case ORIEN: 
-	  area = 0; 
-	  mx1 = my1 = mz1 = mx2 = my2 = mz2 = mxy2 = myz2 = mxz2 = 0.0; 
-	  break;
         default: 
           fprintf(stderr, "%s: bad attribute: %d\n", F_NAME, attrib);
           return 0;
@@ -597,18 +587,6 @@ if ((typregion == LABMIN) || (typregion == LABMAX))
           switch (attrib)
           {
   	    case AREA: val_attrib++; break;
-	    case EXCEN: 
-	    case ORIEN: 
-	    {
-	      double x = (double)(i % rs);
-	      double y = (double)((i % ps) / rs);
-	      double z = (double)(i / ps);
-	      area++; 
-	      mx1 += x; my1 += y; mz1 += z; 
-	      mx2 += x * x; my2 += y * y; 
-	      mxy2 += x * y; mxz2 += x * z; myz2 += y * z;
-	    }
-	    break;
 	  } /* switch (attrib) */
 	  switch (connex)
 	  {
@@ -904,4 +882,217 @@ else
   *nlabels += 1; /* pour le niveau 0 */
   return(1);
 } // lattribute3d()
+
+#define LP_MARK0 -1
+#define LP_MARK1 -2
+#define LP_MARK2 -3
+
+/* ==================================== */
+int32_t lplanarity(
+        struct xvimage *img,     /* image de depart */
+        int32_t connex,          /* 6, 18, 26  */
+        struct xvimage *res,     /* resultat: image d'attributs */
+        int32_t *nlabels)        /* resultat: nombre de regions traitees */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lplanarity"
+{
+  int32_t k;
+  index_t w, x, y, areacomp;
+  uint8_t *SOURCE = UCHARDATA(img);
+  float *RES = FLOATDATA(res);
+  index_t rs = rowsize(img);
+  index_t cs = colsize(img);
+  index_t ds = depth(img);
+  index_t ps = rs * cs;
+  index_t N = ps * ds;
+  Lifo * LIFO;
+  float planar;
+  double a, b, c, d, error, *px, *py, *pz;
+
+  if (datatype(res) != VFF_TYP_FLOAT) 
+  {
+    fprintf(stderr, "%s: result image must be of type VFF_TYP_FLOAT\n", F_NAME);
+    return 0;
+  }
+
+  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    return 0;
+  }
+
+  /* le RES initialement est mis a LP_MARK0 */
+  for (x = 0; x < N; x++) RES[x] = LP_MARK0;
+
+  LIFO = CreeLifoVide(N);
+  if (LIFO == NULL)
+    {   fprintf(stderr, "%s: CreeLifoVide failed\n", F_NAME);
+      return(0);
+  }
+
+  *nlabels = 0;
+  for (x = 0; x < N; x++)
+  {
+    if (SOURCE[x] && (RES[x] == LP_MARK0))
+    {
+      *nlabels += 1;
+      RES[x] = LP_MARK1;
+      areacomp = 0;
+      LifoPush(LIFO, x);
+      while (! LifoVide(LIFO)) // 1er parcours de la composante - compte les points (areacomp)
+      {
+        w = LifoPop(LIFO);
+	areacomp++;
+	switch (connex)
+	  {
+	  case 6:
+            for (k = 0; k <= 10; k += 2) /* parcourt les 6 voisins */
+            {
+              y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (RES[y] == LP_MARK0) && SOURCE[y])
+	      {
+		RES[y] = LP_MARK1;
+		LifoPush(LIFO, y);
+	      } /* if y ... */
+	    } // for k
+	    break;
+	  case 18:
+            for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+            {
+              y = voisin18(w, k, rs, ps, N);
+	      if ((y != -1) && (RES[y] == LP_MARK0) && SOURCE[y])
+	      {
+		RES[y] = LP_MARK1;
+		LifoPush(LIFO, y);
+	      } /* if y ... */
+	    } // for k
+	    break;
+	  case 26:
+            for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+            {
+              y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (RES[y] == LP_MARK0) && SOURCE[y])
+	      {
+		RES[y] = LP_MARK1;
+		LifoPush(LIFO, y);
+	      } /* if y ... */
+	    } // for k
+	    break;
+	  } // switch (connex)
+      } /* while (! LifoVide(LIFO)) */
+
+      // init 2eme passe
+      px = (double *)malloc(areacomp*sizeof(double)); assert(px != NULL);
+      py = (double *)malloc(areacomp*sizeof(double)); assert(py != NULL);
+      pz = (double *)malloc(areacomp*sizeof(double)); assert(pz != NULL);
+
+      LifoPush(LIFO, x);     /* on parcourt le plateau une 2eme fois pour collecter les points */
+      RES[x] = LP_MARK2;
+      areacomp = 0;
+      while (! LifoVide(LIFO))
+      {
+        w = LifoPop(LIFO);
+	px[areacomp] = (double)(w % rs);
+	py[areacomp] = (double)((w % ps) / rs);
+	pz[areacomp] = (double)(w / ps);
+	areacomp++;
+
+	switch (connex)
+	  {
+	  case 6:
+            for (k = 0; k <= 10; k += 2) /* parcourt les 6 voisins */
+            {
+              y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (RES[y] == LP_MARK1)) 
+	      {
+		RES[y] = LP_MARK2;
+		LifoPush(LIFO, y);
+	      }
+	    } // for k
+	    break;
+	  case 18:
+            for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+            {
+              y = voisin18(w, k, rs, ps, N);
+	      if ((y != -1) && (RES[y] == LP_MARK1)) 
+	      {
+		RES[y] = LP_MARK2;
+		LifoPush(LIFO, y);
+	      }
+	    } // for k
+	    break;
+	  case 26:
+            for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+            {
+              y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (RES[y] == LP_MARK1)) 
+	      {
+		RES[y] = LP_MARK2;
+		LifoPush(LIFO, y);
+	      }
+	    } // for k
+	    break;
+	  } // switch (connex)
+      } /* while (! LifoVide(LIFO)) */
+
+      // init 3eme passe - calcul attribut planar
+      if (!lidentifyplane(px, py, pz, areacomp, &a, &b, &c, &d, &error))
+      {
+	fprintf(stderr, "%s: lidentifyplane failed\n", F_NAME);
+	return 0;
+      }
+      free(px); free(py); free(pz);
+      planar = (float)(error / areacomp);
+
+      LifoPush(LIFO, x);     /* on parcourt le plateau une 3eme fois pour propager la valeur */
+      RES[x] = planar;
+      while (! LifoVide(LIFO))
+      {
+        w = LifoPop(LIFO);
+
+	switch (connex)
+	  {
+	  case 6:
+            for (k = 0; k <= 10; k += 2) /* parcourt les 6 voisins */
+            {
+              y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (RES[y] == LP_MARK2)) 
+	      {
+		RES[y] = planar;
+		LifoPush(LIFO, y);
+	      }
+	    } // for k
+	    break;
+	  case 18:
+            for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
+            {
+              y = voisin18(w, k, rs, ps, N);
+	      if ((y != -1) && (RES[y] == LP_MARK2)) 
+	      {
+		RES[y] = planar;
+		LifoPush(LIFO, y);
+	      }
+	    } // for k
+	    break;
+	  case 26:
+            for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
+            {
+              y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (RES[y] == LP_MARK2)) 
+	      {
+		RES[y] = planar;
+		LifoPush(LIFO, y);
+	      }
+	    } // for k
+	    break;
+	  } // switch (connex)
+      } /* while (! LifoVide(LIFO)) */
+
+    } /* if (SOURCE[x] && (RES[x] == LP_MARK0)) */
+  } /* for (x = 0; x < N; x++) */
+
+  LifoTermine(LIFO);
+  return(1);
+} // lplanarity()
 

@@ -1047,7 +1047,7 @@ int32_t lchamfrein(struct xvimage *img,   /* donnee: image binaire */
       D[i] = d;
     }
     /* parcours retro */
-    for (i = N-1; i != MAX_INDEX_T; i--) // attention: test >= interdit car i non signé
+    for (i = N-1; i >= 0; i--)
     if (!F[i])
     {
       d = D[i]; 
@@ -1088,7 +1088,7 @@ int32_t lchamfrein(struct xvimage *img,   /* donnee: image binaire */
       D[i] = d;
     }
     /* parcours retro */
-    for (i = N-1; i != MAX_INDEX_T; i--) // attention: test >= interdit car i non signé
+    for (i = N-1; i >= 0; i--)
     if (!F[i])
     {
       d = D[i]; 

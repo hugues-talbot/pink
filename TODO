@@ -21,6 +21,7 @@ déjà faits:
   mctopo3d
   mcrbt
   mcgeo
+  mclifo
   lseuil
   lzoom
   lskeletons
@@ -30,6 +31,7 @@ déjà faits:
   ldilateros
   ldilateros3d
   lcrop
+  lattribute
   seuil
   threshold
   crop

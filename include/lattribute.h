@@ -47,6 +47,8 @@ extern "C" {
 #define ORIEN 5
 #define VDIAM 6
 #define HDIAM 7
+#define LINEA 8
+#define PLANA 9
 
 /* ============== */
 /* prototype for lattribute.c */
@@ -71,7 +73,12 @@ extern int32_t lattribute3d(
         struct xvimage *lab, /* resultat: image d'attributs */
         int32_t *nlabels         /* resultat: nombre d'extrema traites */
 );
-
+extern int32_t lplanarity(
+        struct xvimage *img,     /* image de depart */
+        int32_t connex,          /* 6, 18, 26  */
+        struct xvimage *res,     /* resultat: image d'attributs */
+        int32_t *nlabels        /* resultat: nombre de regions traitees */
+);
 #ifdef __cplusplus
 }
 #endif

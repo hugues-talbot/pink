@@ -73,7 +73,6 @@ int main(int argc, char **argv)
   int32_t nblabels, connex, attrib, typregion, seuil;
   struct xvimage * image;
   struct xvimage * result;
-  uint8_t * I;
 
   if (argc != 7)
   {
@@ -84,10 +83,9 @@ int main(int argc, char **argv)
   image = readimage(argv[1]);
   if (image == NULL)
   {
-    fprintf(stderr, "attribute: readimage failed\n");
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
-  I = UCHARDATA(image);
 
   connex = atoi(argv[2]);
   seuil = atoi(argv[3]);
@@ -143,7 +141,7 @@ int main(int argc, char **argv)
   printf("%s : NOMBRE DE COMPOSANTES : %d\n", argv[0], nblabels-1);
 #endif
 
-  writelongimage(result, argv[6]);
+  writelongimage(result, argv[argc-1]);
 
   freeimage(result);
   freeimage(image);

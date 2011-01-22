@@ -58,6 +58,7 @@ conventions :
 #include <math.h>
 #include <float.h>
 #include <mcutil.h>
+#include <mcimage.h>
 #include <mclin.h>
 
 /*
@@ -1178,7 +1179,7 @@ int32_t lidentifyparabola2(double *pbx, double *pby, int32_t npb, double *a, dou
 } /* lidentifyparabola() */
 
 /* ==================================== */
-int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, double *a, double *b, double *c, double *d)
+int32_t lidentifyplane(double *pbx, double *pby, double *pbz, index_t npb, double *a, double *b, double *c, double *d, double *error)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lidentifyplane"
@@ -1189,7 +1190,8 @@ int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, doubl
  Régression linéaire (voir http://en.wikipedia.org/wiki/Linear_regression ).
  */
 {
-  int32_t i, ret, noresult = 1;
+  index_t i;
+  int32_t ret, noresult = 1;
   double *X, *Y, *XtX, *XtXi, *XtY, *RtXtY, *YtY, *R;
   double err;
 
@@ -1288,12 +1290,14 @@ int32_t lidentifyplane(double *pbx, double *pby, double *pbz, int32_t npb, doubl
     //    printf("cas 3 : erreur %g\n", *YtY - *RtXtY);
     if (*YtY - *RtXtY < err)
     {
+      err = *YtY - *RtXtY;
       *a = -1;
       *b = R[1];
       *c = R[2];
       *d = R[0];
     }
   }
+  *error = err;
 
   free(X);
   free(Y);

@@ -38,8 +38,8 @@ extern "C" {
 
 #ifndef _MCIMAGE_H
 
-typedef uint32_t index_t;
-#define MAX_INDEX_T UINT32_MAX
+// attention : les index doivent être signés (pour les parcours rétro : for(i = N-1; i >=0; i--))
+typedef int32_t index_t;
 
 /* ============== */
 /* prototypes for mcimage.c    */
