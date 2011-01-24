@@ -39,7 +39,7 @@ extern "C" {
 #ifndef _MCIMAGE_H
 
 // attention : les index doivent être signés (pour les parcours rétro : for(i = N-1; i >=0; i--))
-#define MC_64_BITS
+//#define MC_64_BITS
 #ifdef MC_64_BITS
 typedef int64_t index_t;
 #else
