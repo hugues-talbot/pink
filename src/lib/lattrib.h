@@ -41,6 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 
 //#define DEBUG
+#define VERBOSE
 
 #include <string.h>
 
@@ -363,11 +364,17 @@ static CompactTree * CompTree2CompactTree(CompTree *ct, uint32_t *number_nodes)
 /* ATTENTION EFFET DE BORD : DETRUIT LA RELATION number_nodes 
    (number_nodes represente le nombre de composantes par niveau, calcule par flood())
 */
+#undef F_NAME
+#define F_NAME "CompTree2CompactTree"
 {
   CompactTree *cpct;
   uint32_t i, n, h, t, th, tn, q, qh, qn;
   uint32_t nbcomp = ct->nbarcs + 1;
   uint32_t *nfils;
+
+#ifdef VERBOSE
+  printf("%s: nbcomp = %d\n", F_NAME, nbcomp);
+#endif
 
   cpct = (CompactTree *)malloc(sizeof(CompactTree));
   if (cpct == NULL) return NULL;
