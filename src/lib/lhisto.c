@@ -150,7 +150,6 @@ int32_t lhistolong(struct xvimage *image, struct xvimage *mask, index_t **histo,
 {
 #undef F_NAME
 #define F_NAME "lhistolong"
-  int32_t i;
   index_t x;                       /* index muet de pixel */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
@@ -162,9 +161,9 @@ int32_t lhistolong(struct xvimage *image, struct xvimage *mask, index_t **histo,
   int32_t s;
 
   s = F[0];
-  for (i = 1; i < N; i++) 
-    if ((int32_t)(F[i]) > s) 
-      s = (int32_t)(F[i]);
+  for (x = 1; x < N; x++) 
+    if ((int32_t)(F[x]) > s) 
+      s = (int32_t)(F[x]);
   s += 1;      /* pour la valeur 0 */
   *size = s;
 
@@ -210,21 +209,21 @@ int32_t lhistofloat(struct xvimage *image, struct xvimage *mask, index_t **histo
   if (mask == NULL)
   {
     smin = smax = F[0];
-    for (i = 1; i < N; i++) 
-      if (F[i] > smax) smax = F[i]; else
-	if (F[i] < smin) smin = F[i];
+    for (x = 1; x < N; x++) 
+      if (F[x] > smax) smax = F[x]; else
+	if (F[x] < smin) smin = F[x];
   }
   else
   {
     M = UCHARDATA(mask);
-    for (i = 0; i < N; i++) 
-      if (M[i])
-      { smin = smax = F[i]; break; }
-    for (; i < N; i++) 
-      if (M[i])
+    for (x = 0; x < N; x++) 
+      if (M[x])
+      { smin = smax = F[x]; break; }
+    for (; x < N; x++) 
+      if (M[x])
       {
-	if (F[i] > smax) smax = F[i]; else
-	  if (F[i] < smin) smin = F[i];
+	if (F[x] > smax) smax = F[x]; else
+	  if (F[x] < smin) smin = F[x];
       }
   } // else mask == NULL
 
