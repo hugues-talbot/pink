@@ -107,7 +107,12 @@ extern int32_t linf(
 extern int32_t linverse(
         struct xvimage *image1
 );
-  
+
+extern int32_t lmask(
+  struct xvimage * image,
+  struct xvimage * mask
+);
+
 extern int32_t lmax(
         struct xvimage *image1,
         struct xvimage *image2

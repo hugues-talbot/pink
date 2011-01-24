@@ -45,6 +45,7 @@ knowledge of the CeCILL license and that you accept its terms.
     ldivide
     linf
     llog
+    lmask
     lmax
     lmax1
     lmin
@@ -668,6 +669,81 @@ int32_t linverse(
 
   return 1;
 } /* linverse() */
+
+/* ==================================== */
+int32_t lmask(
+  struct xvimage * image,
+  struct xvimage * mask)
+/* applique un masque binaire */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lmask"
+{
+  index_t i;
+  index_t rs, cs, ds, nb, N;
+  uint8_t *pt2;
+
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  nb = nbands(image);
+  N = rs * cs * ds;
+
+  if (nb > 1)
+  {
+    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
+    exit(0);
+  }
+
+  if ((rowsize(mask) != rs) || (colsize(mask) != cs) || (depth(mask) != ds) || (nbands(mask) != nb))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    exit(0);
+  }
+
+  if (datatype(mask) != VFF_TYP_1_BYTE)
+  {
+    fprintf(stderr, "%s: mask must be a binary (byte) image\n", F_NAME);
+    exit(0);
+  }
+  pt2 = UCHARDATA(mask);
+
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *pt1;
+    pt1 = UCHARDATA(image);
+    for (i = 0; i < N; i++, pt1++, pt2++)
+      if (*pt2 == 0) *pt1 = 0;
+  }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    int32_t *PT1;
+    PT1 = SLONGDATA(image);
+    for (i = 0; i < N; i++, PT1++, pt2++)
+      if (*pt2 == 0) *PT1 = 0;
+  }
+  else if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    float *FPT1;
+    FPT1 = FLOATDATA(image);
+    for (i = 0; i < N; i++, FPT1++, pt2++)
+      if (*pt2 == 0) *FPT1 = 0;
+  }
+  else if (datatype(image) == VFF_TYP_COMPLEX)
+  {
+    complex *CPT1;
+    CPT1 = COMPLEXDATA(image);
+    for (i = 0; i < N; i++, CPT1++, pt2++)
+      if (*pt2 == 0) (*CPT1).re = (*CPT1).im = 0;
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return 0;
+  }
+
+  return 1;
+} /* lmask() */
 
 /* ==================================== */
 int32_t lmax(

@@ -4,7 +4,7 @@ PINK = .
   XINCL = /usr/include/X11R6
   CC = gcc
   CPP = g++
-  CCFLAGS = -g -DUNIXIO -Wall
+  CCFLAGS = -g -DUNIXIO -DMC_64_BITS -Wall
   ODIR = $(PINK)/linux/obj
   BDIR = $(PINK)/linux/bin
   LIBS = -lm
@@ -34,6 +34,7 @@ $(BDIR)/inf \
 $(BDIR)/inverse \
 $(BDIR)/isnull \
 $(BDIR)/log \
+$(BDIR)/mask \
 $(BDIR)/max \
 $(BDIR)/max1 \
 $(BDIR)/min \
@@ -642,6 +643,9 @@ $(BDIR)/isnull:	$(CDIR)/isnull.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON
 
 $(BDIR)/log:	$(CDIR)/log.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/log.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/log
+
+$(BDIR)/mask:	$(CDIR)/mask.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/mask.c $(OBJ_COMMON) $(ODIR)/larith.o $(LIBS) -o $(BDIR)/mask
 
 $(BDIR)/max:	$(CDIR)/max.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/max.c $(OBJ_COMMON) $(ODIR)/larith.o $(LIBS) -o $(BDIR)/max
