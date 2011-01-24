@@ -83,14 +83,14 @@ int32_t l2dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
 #undef F_NAME
 #define F_NAME "l2dcollapse"
 {
-  int32_t i, u, v, n, x, y, xv, yv;
-  int32_t rs, cs, N;
+  int32_t u, v, n, x, y, xv, yv;
+  index_t i, rs, cs, N;
   uint8_t * K;
   int32_t * P;
   uint8_t * I = NULL;
   Rbt * RBT;
-  int32_t taillemaxrbt;
-  int32_t tab[GRS2D*GCS2D];
+  index_t taillemaxrbt;
+  index_t tab[GRS2D*GCS2D];
 
   rs = rowsize(k);
   cs = colsize(k);
@@ -214,8 +214,8 @@ int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 #undef F_NAME
 #define F_NAME "l2dpardircollapse_l"
 {
-  int32_t i, g, f, u, n, xf, yf, xg, yg;
-  int32_t rs, cs, N;
+  int32_t g, f, u, n, xf, yf, xg, yg;
+  index_t i, rs, cs, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   int32_t * P;
@@ -223,8 +223,8 @@ int32_t l2dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
   Rbt * RBT;
   Rlifo * RLIFO;
   Rlifo * RLIFOb;
-  int32_t taillemaxrbt;
-  int32_t tab[GRS2D*GCS2D];
+  index_t taillemaxrbt;
+  index_t tab[GRS2D*GCS2D];
   TypRbtKey p, pp;
 
   rs = rowsize(k);
@@ -426,8 +426,8 @@ int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 #undef F_NAME
 #define F_NAME "l2dpardircollapse_f"
 {
-  int32_t i, g, f, u, n, xf, yf, xg, yg;
-  int32_t rs, cs, N;
+  int32_t g, f, u, n, xf, yf, xg, yg;
+  index_t i, rs, cs, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   float * P;
@@ -435,8 +435,8 @@ int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
   Rbt * RBT;
   Rlifo * RLIFO;
   Rlifo * RLIFOb;
-  int32_t taillemaxrbt;
-  int32_t tab[GRS2D*GCS2D];
+  index_t taillemaxrbt;
+  index_t tab[GRS2D*GCS2D];
   TypRbtKey p, pp;
 
   rs = rowsize(k);
@@ -649,16 +649,16 @@ int32_t l2dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
 #undef F_NAME
 #define F_NAME "l2dpardircollapse"
 {
-  int32_t i, g, f, u, n, xf, yf, xg, yg;
-  int32_t rs, cs, N;
+  int32_t g, f, u, n, xf, yf, xg, yg;
+  index_t i, rs, cs, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   uint8_t * I = NULL;
   Rlifo * RLIFO;
   Rlifo * RLIFOb;
   Rlifo * RLIFOt;
-  int32_t taillemax;
-  int32_t tab[GRS2D*GCS2D];
+  index_t taillemax;
+  index_t tab[GRS2D*GCS2D];
 
   rs = rowsize(k);
   cs = colsize(k);
@@ -879,8 +879,8 @@ graphe * l2dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 #undef F_NAME
 #define F_NAME "l2dtopoflow_f"
 {
-  int32_t i, g, gg, f, ff, u, n, xf, yf, xg, yg;
-  int32_t rs, cs, N;
+  int32_t g, gg, f, ff, u, n, xf, yf, xg, yg;
+  index_t i, rs, cs, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   float * P;
@@ -888,11 +888,11 @@ graphe * l2dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
   Rbt * RBT;
   Rlifo * RLIFO;
   Rlifo * RLIFOb;
-  int32_t taillemaxrbt;
-  int32_t tab[GRS2D*GCS2D];
+  index_t taillemaxrbt;
+  index_t tab[GRS2D*GCS2D];
   TypRbtKey p, pp;
   graphe * flow = NULL;
-  int32_t narcs, ncoll = 0;
+  index_t narcs, ncoll = 0;
 
   rs = rowsize(k);
   cs = colsize(k);

@@ -36,21 +36,25 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
+#ifndef _MCIMAGE_H
+#include <mcimage.h>
+#endif
+
 typedef struct {
-  int32_t Max;          /* taille max de la Rlifo */
-  int32_t Sp;           /* index de pile (pointe la 1ere case libre) */
-  int32_t Pts[1];
+  index_t Max;          /* taille max de la Rlifo */
+  index_t Sp;           /* index de pile (pointe la 1ere case libre) */
+  index_t Pts[1];
 } Rlifo;
 
 /* ============== */
 /* prototypes     */
 /* ============== */
-extern Rlifo * CreeRlifoVide(int32_t taillemax);
+extern Rlifo * CreeRlifoVide(index_t taillemax);
 extern void RlifoFlush(Rlifo * L);
 extern int32_t RlifoVide(Rlifo * L);
-extern int32_t RlifoPop(Rlifo * L);
-extern int32_t RlifoHead(Rlifo * L);
-extern void RlifoPush(Rlifo ** L, int32_t V);
+extern index_t RlifoPop(Rlifo * L);
+extern index_t RlifoHead(Rlifo * L);
+extern void RlifoPush(Rlifo ** L, index_t V);
 extern void RlifoPrint(Rlifo * L);
 extern void RlifoPrintLine(Rlifo * L);
 extern void RlifoTermine(Rlifo * L);

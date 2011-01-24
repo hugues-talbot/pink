@@ -245,15 +245,15 @@ struct xvimage * Khalimskize3d(struct xvimage *o)
    b: resultat - chaque pixel de o est devenu un beta-terminal de b
 */
 {
-  int32_t ors = rowsize(o);
-  int32_t ocs = colsize(o);
-  int32_t ods = depth(o);
-  int32_t ops = ors * ocs;
+  index_t ors = rowsize(o);
+  index_t ocs = colsize(o);
+  index_t ods = depth(o);
+  index_t ops = ors * ocs;
   uint8_t *O = UCHARDATA(o);
   struct xvimage *b;
-  int32_t brs, bcs, bds, bps, bN;
+  index_t brs, bcs, bds, bps, bN;
   uint8_t *B;
-  int32_t i, j, k;
+  index_t i, j, k;
 
   brs = 2 * ors + 1;
   bcs = 2 * ocs + 1;
@@ -291,13 +291,13 @@ struct xvimage * KhalimskizeNDG3d(struct xvimage *o)
 {
 #undef F_NAME
 #define F_NAME "KhalimskizeNDG3d"
-  int32_t ors = rowsize(o);
-  int32_t ocs = colsize(o);
-  int32_t ods = depth(o);
-  int32_t ops = ors * ocs;
+  index_t ors = rowsize(o);
+  index_t ocs = colsize(o);
+  index_t ods = depth(o);
+  index_t ops = ors * ocs;
   struct xvimage *b;
-  int32_t brs, bcs, bds, bps, bN;
-  int32_t i, j, k;
+  index_t brs, bcs, bds, bps, bN;
+  index_t i, j, k;
 
   brs = 2 * ors + 1;
   bcs = 2 * ocs + 1;
@@ -355,14 +355,15 @@ void ndgmin3d(struct xvimage *b)
 {
 #undef F_NAME
 #define F_NAME "ndgmin3d"
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
-  int32_t ps = rs * cs;
-  int32_t N = ps * ds;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
+  index_t ps = rs * cs;
+  index_t N = ps * ds;
   struct xvimage *bp;
-  int32_t i, j, k, u, n;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t i, j, k;
+  int32_t u, n;
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   if (datatype(b) == VFF_TYP_1_BYTE)
   {
@@ -438,14 +439,15 @@ void ndgmax3d(struct xvimage *b)
 {
 #undef F_NAME
 #define F_NAME "ndgmax3d"
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
-  int32_t ps = rs * cs;
-  int32_t N = ps * ds;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
+  index_t ps = rs * cs;
+  index_t N = ps * ds;
   struct xvimage *bp;
-  int32_t i, j, k, u, n;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t i, j, k;
+  int32_t u, n;
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   if (datatype(b) == VFF_TYP_1_BYTE)
   {
@@ -527,12 +529,13 @@ void ndgmoy3d(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "ndgmoy3d"
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
-  int32_t ds = depth(k);
-  int32_t ps = rs * cs;
-  int32_t x, y, z, u, n;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
+  index_t ds = depth(k);
+  index_t ps = rs * cs;
+  index_t x, y, z;
+  int32_t u, n;
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   if (datatype(k) == VFF_TYP_1_BYTE)
   {
@@ -616,15 +619,15 @@ struct xvimage * DeKhalimskize3d(struct xvimage *o)
    r: resultat - chaque beta-terminal de k devient un voxel de r
 */
 {
-  int32_t ors = rowsize(o);
-  int32_t ocs = colsize(o);
-  int32_t ods = depth(o);
-  int32_t ops = ors * ocs;
+  index_t ors = rowsize(o);
+  index_t ocs = colsize(o);
+  index_t ods = depth(o);
+  index_t ops = ors * ocs;
   uint8_t *O = UCHARDATA(o);
   struct xvimage *r;
-  int32_t rrs, rcs, rds, rps, rN;
+  index_t rrs, rcs, rds, rps, rN;
   uint8_t *R;
-  int32_t i, j, k;  
+  index_t i, j, k;  
 
   rrs = ors / 2;
   rcs = ocs / 2;
@@ -662,18 +665,18 @@ void DeKhalimskize3dOLD(struct xvimage *b, struct xvimage * r)
    (cubes, 3 coord. impaires)
 */
 {
-  int32_t brs = rowsize(b);
-  int32_t bcs = colsize(b);
-  int32_t bds = depth(b);
-  int32_t bps = brs * bcs;
-  int32_t rrs = rowsize(r);
-  int32_t rcs = colsize(r);
-  int32_t rds = depth(r);
-  int32_t rps = rrs * rcs;
-  int32_t rN = rps * rds;
+  index_t brs = rowsize(b);
+  index_t bcs = colsize(b);
+  index_t bds = depth(b);
+  index_t bps = brs * bcs;
+  index_t rrs = rowsize(r);
+  index_t rcs = colsize(r);
+  index_t rds = depth(r);
+  index_t rps = rrs * rcs;
+  index_t rN = rps * rds;
   uint8_t *B = UCHARDATA(b);
   uint8_t *R = UCHARDATA(r);
-  int32_t i, j, k;
+  index_t i, j, k;
 
   if ((rrs != brs / 2) || (rcs != bcs / 2) || (rds != bds / 2))
   {
@@ -702,15 +705,15 @@ void Dual3d(struct xvimage *bd, struct xvimage *b)
    bd: resultat - dual de b
 */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
-  int32_t ps = rs * cs;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
+  index_t ps = rs * cs;
   uint8_t *B = UCHARDATA(b);
   uint8_t *BD = UCHARDATA(bd);
-  int32_t bdrs = rs+1;
-  int32_t bdps = bdrs * (cs+1);
-  int32_t i, j, k;
+  index_t bdrs = rs+1;
+  index_t bdps = bdrs * (cs+1);
+  index_t i, j, k;
 
   if ((rowsize(bd) != rs + 1) || (rowsize(bd) != rs + 1) || (rowsize(bd) != rs + 1))
   {   fprintf(stderr,"Dual3d() : incompatible sizes\n");
@@ -733,13 +736,14 @@ void InitKhalimsky3d(struct xvimage *b, uint32_t c)
    k: resultat - chaque pixel de c est devenu un beta-terminal de k
 */
 {
-  int32_t brs = rowsize(b);
-  int32_t bcs = colsize(b);
-  int32_t bds = depth(b);
-  int32_t bps = brs * bcs;
-  int32_t bN = bps * bds;
+  index_t brs = rowsize(b);
+  index_t bcs = colsize(b);
+  index_t bds = depth(b);
+  index_t bps = brs * bcs;
+  index_t bN = bps * bds;
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k, ii, jj, kk, n;
+  index_t i, j, k, ii, jj, kk;
+  int32_t n;
 
   memset(B, VAL_NULLE, bN); /* init a VAL_NULLE */
 
@@ -757,7 +761,7 @@ void InitKhalimsky3d(struct xvimage *b, uint32_t c)
 } /* InitKhalimsky3d() */
 
 /* ==================================== */
-void Alphacarre3d(int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k, int32_t *tab, int32_t *n)
+void Alphacarre3d(index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k, index_t *tab, int32_t *n)
 /* ==================================== */
 /* 
   retourne dans tab l'alpha-adherence de (i,j,k) privee de (i,j,k), dans H3.
@@ -765,7 +769,7 @@ void Alphacarre3d(int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int3
   tab doit etre alloue a l'avance
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
 #ifdef DEBUG
 printf("Alphacarre3d\n");
 #endif
@@ -820,7 +824,7 @@ printf("Alphacarre3d\n");
 } /* Alphacarre3d() */
 
 /* ==================================== */
-void Betacarre3d(int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k, int32_t *tab, int32_t *n)
+void Betacarre3d(index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k, index_t *tab, int32_t *n)
 /* ==================================== */
 /* 
   retourne dans tab la beta-adherence de (i,j,k) privee de (i,j,k), dans H3.
@@ -828,7 +832,7 @@ void Betacarre3d(int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32
   tab doit etre alloue a l'avance
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
 #ifdef DEBUG
 printf("Betacarre3d\n");
 #endif
@@ -883,7 +887,7 @@ printf("Betacarre3d\n");
 } /* Betacarre3d() */
 
 /* ==================================== */
-void Thetacarre3d(int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k, int32_t *tab, int32_t *n)
+void Thetacarre3d(index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k, index_t *tab, int32_t *n)
 /* ==================================== */
 /* 
   retourne dans tab la theta-adherence de (i,j,k) privee de (i,j,k), dans H3.
@@ -891,7 +895,7 @@ void Thetacarre3d(int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int3
   tab doit etre alloue a l'avance
 */
 {
-  int32_t tab2[26]; int32_t n2, l;
+  index_t tab2[26]; int32_t n2, l;
   Alphacarre3d(rs, cs, ds, i, j, k, tab, n);
   Betacarre3d(rs, cs, ds, i, j, k, tab2, &n2);
   for (l = 0; l < n2; l++) tab[*n+l] = tab2[l];
@@ -899,7 +903,7 @@ void Thetacarre3d(int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int3
 } /* Thetacarre3d() */
 
 /* ==================================== */
-uint32_t XAlphacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+uint32_t XAlphacarre3d(uint8_t *X, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 /* 
   retourne l'alpha-adherence de (i,j) privee de (i,j), dans l'objet X,
@@ -910,7 +914,7 @@ uint32_t XAlphacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t i
   cube : 26 bits
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
   uint32_t b = 0; /* accumulateur pour les bits */
   int32_t b1 = 1;         /* un bit a decaler */
 
@@ -965,7 +969,7 @@ uint32_t XAlphacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t i
 } /* XAlphacarre3d() */
 
 /* ==================================== */
-uint32_t XBetacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+uint32_t XBetacarre3d(uint8_t *X, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 /* 
   retourne la beta-adherence de (i,j) privee de (i,j), dans l'objet X,
@@ -976,7 +980,7 @@ uint32_t XBetacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t i,
   singl: 26 bits
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
   uint32_t b = 0; /* accumulateur pour les bits */
   int32_t b1 = 1;         /* un bit a decaler */
 
@@ -1031,7 +1035,7 @@ uint32_t XBetacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t i,
 } /* XBetacarre3d() */
 
 /* ==================================== */
-uint32_t XhAlphacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k, int32_t h)
+uint32_t XhAlphacarre3d(uint8_t *X, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k, int32_t h)
 /* ==================================== */
 /* 
   retourne l'alpha-adherence de (i,j) privee de (i,j), dans l'objet X (coupe niveau h),
@@ -1042,7 +1046,7 @@ uint32_t XhAlphacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t 
   cube : 26 bits
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
   uint32_t b = 0; /* accumulateur pour les bits */
   int32_t b1 = 1;         /* un bit a decaler */
 
@@ -1097,7 +1101,7 @@ uint32_t XhAlphacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t 
 } /* XhAlphacarre3d() */
 
 /* ==================================== */
-uint32_t XhBetacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k, int32_t h)
+uint32_t XhBetacarre3d(uint8_t *X, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k, int32_t h)
 /* ==================================== */
 /* 
   retourne l'alpha-adherence de (i,j) privee de (i,j), dans l'objet X (coupe niveau h),
@@ -1108,7 +1112,7 @@ uint32_t XhBetacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t i
   singl: 26 bits
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
   uint32_t b = 0; /* accumulateur pour les bits */
   int32_t b1 = 1;         /* un bit a decaler */
 
@@ -1163,7 +1167,7 @@ uint32_t XhBetacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t i
 } /* XhBetacarre3d() */
 
 /* ==================================== */
-void SetXAlphacarre3d(uint32_t b, uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+void SetXAlphacarre3d(uint32_t b, uint8_t *X, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 /* 
   X est une grille de K de taille 3x3x3, (i,j,k) les coord. d'un point dans X, 
@@ -1171,7 +1175,7 @@ void SetXAlphacarre3d(uint32_t b, uint8_t *X, int32_t rs, int32_t cs, int32_t ds
   La fonction remplit la grille X conformement a ces informations.
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
 
   if (i % 2)
   {
@@ -1223,7 +1227,7 @@ void SetXAlphacarre3d(uint32_t b, uint8_t *X, int32_t rs, int32_t cs, int32_t ds
 } /* SetXAlphacarre3d() */
 
 /* ==================================== */
-void SetXBetacarre3d(uint32_t b, uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+void SetXBetacarre3d(uint32_t b, uint8_t *X, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 /* 
   X est une grille de K de taille 3x3x3, (i,j,k) les coord. d'un point dans X, 
@@ -1231,7 +1235,7 @@ void SetXBetacarre3d(uint32_t b, uint8_t *X, int32_t rs, int32_t cs, int32_t ds,
   La fonction remplit la grille X conformement a ces informations.
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
 
   if (i % 2 == 0)
   {
@@ -1283,7 +1287,7 @@ void SetXBetacarre3d(uint32_t b, uint8_t *X, int32_t rs, int32_t cs, int32_t ds,
 } /* SetXBetacarre3d() */
 
 /* ==================================== */
-int32_t Precede3d(int32_t i, int32_t j, int32_t k, int32_t x, int32_t y, int32_t z)
+int32_t Precede3d(index_t i, index_t j, index_t k, index_t x, index_t y, index_t z)
 /* ==================================== */
 {
   if (mcabs(i-x)>1) return 0;
@@ -1296,15 +1300,15 @@ int32_t Precede3d(int32_t i, int32_t j, int32_t k, int32_t x, int32_t y, int32_t
 } /* Precede3d() */
 
 /* ==================================== */
-int32_t NbPred3d(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+int32_t NbPred3d(uint8_t *B, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 /*
   cette fonction compte les predecesseurs minimaux dans l'objet B (le cardinal de betapoint).
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
   int32_t u, v, tu, tv, n, nn;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   Betacarre3d(rs, cs, ds, i, j, k, tab, &n);
   nn = n;
@@ -1341,7 +1345,7 @@ printf("\n");
 } /* NbPred3d() */
 
 /* ==================================== */
-int32_t Succede3d(int32_t i, int32_t j, int32_t k, int32_t x, int32_t y, int32_t z)
+int32_t Succede3d(index_t i, index_t j, index_t k, index_t x, index_t y, index_t z)
 /* ==================================== */
 {
   if (mcabs(i-x)>1) return 0;
@@ -1354,15 +1358,15 @@ int32_t Succede3d(int32_t i, int32_t j, int32_t k, int32_t x, int32_t y, int32_t
 } /* Succede3d() */
 
 /* ==================================== */
-int32_t NbSucc3d(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+int32_t NbSucc3d(uint8_t *B, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 /*
   cette fonction compte les successeurs maximaux dans l'objet B (le cardinal de alphapoint).
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
   int32_t u, v, tu, tv, n, nn;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
   nn = n;
@@ -1391,11 +1395,11 @@ printf("NbSucc3d (%d %d %d) n = %d ; nn = %d\n",i,j,k,n,nn);
 } /* NbPred3d() */
 
 /* ==================================== */
-int32_t BetaTerminal3d(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+int32_t BetaTerminal3d(uint8_t *B, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
   int32_t u, n;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   if (!B[k*rs*cs + j*rs + i]) return 0;
   Betacarre3d(rs, cs, ds, i, j, k, tab, &n);
@@ -1404,11 +1408,11 @@ int32_t BetaTerminal3d(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i
 } /* BetaTerminal3d() */
 
 /* ==================================== */
-int32_t AlphaTerminal3d(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+int32_t AlphaTerminal3d(uint8_t *B, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
   int32_t u, n;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   if (!B[k*rs*cs + j*rs + i]) return 0;
   Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
@@ -1417,10 +1421,11 @@ int32_t AlphaTerminal3d(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t 
 } /* AlphaTerminal3d() */
 
 /* ==================================== */
-int32_t ExactementUnBetaTerminal3d(uint8_t *B, int32_t rs, int32_t cs, int32_t ds)
+int32_t ExactementUnBetaTerminal3d(uint8_t *B, index_t rs, index_t cs, index_t ds)
 /* ==================================== */
 {
-  int32_t i, ps = rs * cs, N = ps * ds, n = 0;
+  index_t i, ps = rs * cs, N = ps * ds;
+  int32_t n = 0;
 
   for (i = 0; i < N; i++)
     if ((B[i]) && BetaTerminal3d(B, rs, cs, ds, i%rs, (i%ps)/rs, i/ps))
@@ -1437,13 +1442,14 @@ void SatureAlphacarre3d(struct xvimage *b)
   Cette fonction met a VAL_OBJET l'alpha-adherence de ces points. 
 */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k, u, n;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t i, j, k;
+  int32_t u, n;
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
 #ifdef DEBUGSD
 printf("SatureAlphacarre3d \n");
@@ -1465,13 +1471,14 @@ void AjouteAlphacarre3d(struct xvimage *b)
   retourne dans b l'ensemble des points de l'alphacarre de tous les éléments de b
  */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k, u, n;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t i, j, k;
+  int32_t u, n;
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   for (k = 0; k < ds; k += 1)
     for (j = 0; j < cs; j += 1)
@@ -1490,13 +1497,14 @@ void AjouteBetacarre3d(struct xvimage *b)
   retourne dans b l'ensemble des points de l'alphacarre de tous les éléments de b
  */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k, u, n;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t i, j, k;
+  int32_t u, n;
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   for (k = 0; k < ds; k += 1)
     for (j = 0; j < cs; j += 1)
@@ -1512,13 +1520,13 @@ void AjouteBetacarre3d(struct xvimage *b)
 void EffaceLiensBetaLibres3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
-  int32_t n;
+  index_t i, j, k;
+  index_t n;
 
   do 
   {
@@ -1543,12 +1551,13 @@ void MaxAlpha3d(struct xvimage *k)
 #undef F_NAME
 #define F_NAME "MaxAlpha3d"
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
-  int32_t ds = depth(k);
-  int32_t ps = rs * cs;
-  int32_t x, y, z, u, n;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
+  index_t ds = depth(k);
+  index_t ps = rs * cs;
+  index_t x, y, z;
+  int32_t u, n;
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   if (datatype(k) == VFF_TYP_1_BYTE)
   {
@@ -1611,12 +1620,13 @@ void MaxBeta3d(struct xvimage *k)
 #undef F_NAME
 #define F_NAME "MaxBeta3d"
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
-  int32_t ds = depth(k);
-  int32_t ps = rs * cs;
-  int32_t x, y, z, u, n;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
+  index_t ds = depth(k);
+  index_t ps = rs * cs;
+  index_t x, y, z;
+  int32_t u, n;
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   if (datatype(k) == VFF_TYP_1_BYTE)
   {
@@ -1674,13 +1684,13 @@ void MaxBeta3d(struct xvimage *k)
 void EffaceLiensAlphaLibres3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
-  int32_t n;
+  index_t i, j, k;
+  index_t n;
 
   do 
   {
@@ -1700,13 +1710,13 @@ void EffaceLiensAlphaLibres3d(struct xvimage *b)
 void EffaceLiensBiLibres3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
-  int32_t n;
+  index_t i, j, k;
+  index_t n;
 
   do 
   {
@@ -1727,16 +1737,16 @@ void EffaceLiensBiLibres3d(struct xvimage *b)
 } /* EffaceLiensBiLibres3d() */
 
 /* ==================================== */
-int32_t EffaceLiensBetaLibresNonMarques3d(struct xvimage *b)
+index_t EffaceLiensBetaLibresNonMarques3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
-  int32_t n, m;
+  index_t i, j, k;
+  index_t n, m;
 
   m = 0;
   do 
@@ -1756,16 +1766,16 @@ int32_t EffaceLiensBetaLibresNonMarques3d(struct xvimage *b)
 } /* EffaceLiensBetaLibresNonMarques3d() */
 
 /* ==================================== */
-int32_t EffaceLiensAlphaLibresNonMarques3d(struct xvimage *b)
+index_t EffaceLiensAlphaLibresNonMarques3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
-  int32_t n, m;
+  index_t i, j, k;
+  index_t n, m;
 
   m = 0;
   do 
@@ -1788,7 +1798,7 @@ int32_t EffaceLiensAlphaLibresNonMarques3d(struct xvimage *b)
 void EffaceLiensBiLibresNonMarques3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t n;
+  index_t n;
   do 
   {
     n = 0;
@@ -1809,13 +1819,14 @@ void Connex26Obj3d(struct xvimage *b)
 void Connex6Obj3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k, x, y, z, u, n;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t i, j, k, x, y, z;
+  int32_t u, n;
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   for (k = 0; k < ds; k++)
     for (j = 0; j < cs; j++)
@@ -1839,12 +1850,12 @@ skip: ;
 void ColorieKh3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
+  index_t i, j, k;
 
   for (k = 0; k < ds; k += 1)
     for (j = 0; j < cs; j += 1)
@@ -1863,16 +1874,16 @@ void ColorieKh3d(struct xvimage *b)
 } /* ColorieKh3d() */
 
 /* ==================================== */
-int32_t EulerKh3d(struct xvimage *b)
+index_t EulerKh3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
-  int32_t n3=0, n2=0, n1=0, n0=0;
+  index_t i, j, k;
+  index_t n3=0, n2=0, n1=0, n0=0;
 
   for (k = 0; k < ds; k += 1)
     for (j = 0; j < cs; j += 1)
@@ -1888,16 +1899,16 @@ int32_t EulerKh3d(struct xvimage *b)
 } /* EulerKh3d() */
 
 /* ==================================== */
-int32_t EulerKh3dVal(struct xvimage *b, uint8_t Val)
+index_t EulerKh3dVal(struct xvimage *b, uint8_t Val)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
-  int32_t n3=0, n2=0, n1=0, n0=0;
+  index_t i, j, k;
+  index_t n3=0, n2=0, n1=0, n0=0;
 
   for (k = 0; k < ds; k += 1)
     for (j = 0; j < cs; j += 1)
@@ -1914,13 +1925,13 @@ int32_t EulerKh3dVal(struct xvimage *b, uint8_t Val)
 
 /* ==================================== */
 void CopieAlphacarre3d(uint8_t *G, uint8_t *B, 
-                        int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+                        index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
-  int32_t ps = rs * cs;
-  int32_t x = i % 2;
-  int32_t y = j % 2;
-  int32_t z = k % 2;
+  index_t ps = rs * cs;
+  index_t x = i % 2;
+  index_t y = j % 2;
+  index_t z = k % 2;
   int32_t gps = GRS3D*GCS3D;
   int32_t grs = GRS3D;
 
@@ -1979,17 +1990,17 @@ printf("CopieAlphacarre3d\n");
 
 /* ==================================== */
 void CopieThetacarre3d(uint8_t *G, uint8_t *B, 
-                        int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+                        index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 /* 
   Copie le thetacarre du point i,j,k de B dans l'image G.
   G doit etre de taille 7x7x7.
 */    
 {
-  int32_t ps = rs * cs;
-  int32_t x = GRS3D+(i%2);
-  int32_t y = GCS3D+(j%2);
-  int32_t z = GDS3D+(k%2);
+  index_t ps = rs * cs;
+  index_t x = GRS3D+(i%2);
+  index_t y = GCS3D+(j%2);
+  index_t z = GDS3D+(k%2);
   int32_t grs = 2 * GRS3D + 1;
   int32_t gps = grs * (2 * GCS3D + 1);
   int32_t gN = gps * (2 * GDS3D + 1);
@@ -2100,17 +2111,17 @@ printf("CopieThetacarre3d(rs=%d cs=%d ds=%d i=%d j=%d k=%d)\n", rs, cs, ds, i, j
 
 /* ==================================== */
 void CopieThetacarreCompl3d(uint8_t *G, uint8_t *B, 
-                        int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+                        index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 /* 
   Copie le thetacarre du point i,j,k du complementaire de B dans l'image G.
   G doit etre de taille 7x7x7.
 */    
 {
-  int32_t ps = rs * cs;
-  int32_t x = GRS3D+(i%2);
-  int32_t y = GCS3D+(j%2);
-  int32_t z = GDS3D+(k%2);
+  index_t ps = rs * cs;
+  index_t x = GRS3D+(i%2);
+  index_t y = GCS3D+(j%2);
+  index_t z = GDS3D+(k%2);
   int32_t grs = 2 * GRS3D + 1;
   int32_t gps = grs * (2 * GCS3D + 1);
   int32_t gN = gps * (2 * GDS3D + 1);
@@ -2221,13 +2232,13 @@ printf("CopieThetacarre3d(rs=%d cs=%d ds=%d i=%d j=%d k=%d)\n", rs, cs, ds, i, j
 
 /* ==================================== */
 void CopieBetacarreDual3d(uint8_t *G, uint8_t *B, 
-                           int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+                           index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
-  int32_t ps = rs * cs;
-  int32_t x = (i+1) % 2;
-  int32_t y = (j+1) % 2;
-  int32_t z = (k+1) % 2;
+  index_t ps = rs * cs;
+  index_t x = (i+1) % 2;
+  index_t y = (j+1) % 2;
+  index_t z = (k+1) % 2;
   int32_t gps = GRS3D*GCS3D;
   int32_t grs = GRS3D;
 
@@ -2286,13 +2297,13 @@ printf("CopieBetacarreDual3d\n");
 
 /* ==================================== */
 void MarqueThetacarre3d(uint8_t *B, 
-                        int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+                        index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 /* 
   Marque (met a la valeur VAL_MARQUE) le thetacarre du point i,j,k de B.
 */    
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
 
   /* marque le Alphacarre */
   if (i % 2)
@@ -2395,14 +2406,14 @@ void MarqueThetacarre3d(uint8_t *B,
 
 /* ==================================== */
 int32_t CardThetacarre3d(uint8_t *B, 
-                        int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+                        index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 /* 
   retourne le cardinal du thetacarre du point i,j,k de B.
   OBSOLETE - utiliser CardThetaCarre3d
 */    
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
   int32_t n = 0;
 
   /* Alphacarre */
@@ -2507,7 +2518,7 @@ int32_t CardThetacarre3d(uint8_t *B,
 
 /* ==================================== */
 int32_t CardThetaCarre3d(uint8_t *B, 
-                     int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k,
+                     index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k,
                      uint8_t v)
 /* ==================================== */
 /* 
@@ -2515,7 +2526,7 @@ int32_t CardThetaCarre3d(uint8_t *B,
    dont la valeur est egale a v
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
   int32_t n = 0;
 
   /* Alphacarre */
@@ -2625,18 +2636,18 @@ int32_t CardThetaCarre3d(uint8_t *B,
 /* ========================================================================== */
 
 /* ==================================== */
-int32_t EffaceBetaTerminauxSimples3d(struct xvimage *b)
+index_t EffaceBetaTerminauxSimples3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
+  index_t i, j, k;
   struct xvimage *g;
   uint8_t *G;  
-  int32_t n = 0;
+  index_t n = 0;
 
   g = AllocGrille3d();
   G = UCHARDATA(g);  
@@ -2686,13 +2697,13 @@ printimage(b);
 } /* EnsembleSimple3d() */
 
 /* ==================================== */
-int32_t BetaTerminalSimple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t BetaTerminalSimple3d(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
   uint8_t *G;  
@@ -2719,23 +2730,23 @@ int32_t BetaTerminalSimple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 int32_t ContientUnSeulElement3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t N = rowsize(b) * colsize(b) * depth(b);
+  index_t N = rowsize(b) * colsize(b) * depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, n = 0;
+  index_t i, n = 0;
   for (i = 0; i < N; i++) if (B[i]) { n++; if (n > 1) return 0; }
   return (n == 1);
 } /* ContientUnSeulElement3d() */
 
 /* ==================================== */
-int32_t Alpha1Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t Alpha1Simple3d(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t tab[GRS3D*GCS3D*GDS3D];
   int32_t u, n, nn = 0;
 
 #ifdef DEBUGNEW
@@ -2755,15 +2766,15 @@ printf("Alpha1Simple3d : nn = %d\n\n", n);
 } /* Alpha1Simple3d() */
 
 /* ==================================== */
-int32_t Beta1Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t Beta1Simple3d(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t tab[GRS3D*GCS3D*GDS3D];
   int32_t u, n, nn = 0;
 
 #ifdef DEBUGNEW
@@ -2783,16 +2794,16 @@ printf("Beta1Simple3d : nn = %d\n\n", n);
 } /* Beta1Simple3d() */
 
 /* ==================================== */
-int32_t EffaceAlpha1Simples3d(struct xvimage *b)
+index_t EffaceAlpha1Simples3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
-  int32_t N = ps * ds;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
+  index_t N = ps * ds;
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k, nbsimples = 0;
+  index_t i, j, k, nbsimples = 0;
 
   for (k = 0; k < ds; k++)
     for (j = 0; j < cs; j++)
@@ -2804,16 +2815,16 @@ int32_t EffaceAlpha1Simples3d(struct xvimage *b)
 } /* EffaceAlpha1Simples3d() */
 
 /* ==================================== */
-int32_t EffaceBeta1Simples3d(struct xvimage *b)
+index_t EffaceBeta1Simples3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
-  int32_t N = ps * ds;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
+  index_t N = ps * ds;
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k, nbsimples = 0;
+  index_t i, j, k, nbsimples = 0;
 
   for (k = 0; k < ds; k++)
     for (j = 0; j < cs; j++)
@@ -2851,17 +2862,17 @@ if (rowsize(b) == 3) printimage(b);
 } /* Ensemble1Contractile3d() */
 
 /* ==================================== */
-int32_t Alpha2Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t Alpha2Simple3d(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
   uint8_t *G;  
-  int32_t tab;  /* resultats des tests */
+  index_t tab;  /* resultats des tests */
 
 #ifndef TEST_SIMPLICITE_RECURSIF
 #ifndef TEST_SIMPLICITE_TABULE
@@ -2970,17 +2981,17 @@ printf("Alpha2Simple3d : retourne %d\n\n", rec);
 } /* Alpha2Simple3d() */
 
 /* ==================================== */
-int32_t Beta2Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t Beta2Simple3d(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
   uint8_t *G;  
-  int32_t tab;  /* resultats des tests */
+  index_t tab;  /* resultats des tests */
 
 #ifndef TEST_SIMPLICITE_RECURSIF
 #ifndef TEST_SIMPLICITE_TABULE
@@ -3090,16 +3101,16 @@ printf("Beta2Simple3d : retourne %d\n\n", rec);
 } /* Beta2Simple3d() */
 
 /* ==================================== */
-int32_t EffaceAlpha2Simples3d(struct xvimage *b)
+index_t EffaceAlpha2Simples3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
-  int32_t N = ps * ds;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
+  index_t N = ps * ds;
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k, nbsimples = 0;
+  index_t i, j, k, nbsimples = 0;
 
   for (k = 0; k < ds; k++)
     for (j = 0; j < cs; j++)
@@ -3111,16 +3122,16 @@ int32_t EffaceAlpha2Simples3d(struct xvimage *b)
 } /* EffaceAlpha2Simples3d() */
 
 /* ==================================== */
-int32_t EffaceBeta2Simples3d(struct xvimage *b)
+index_t EffaceBeta2Simples3d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
-  int32_t N = ps * ds;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
+  index_t N = ps * ds;
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k, nbsimples = 0;
+  index_t i, j, k, nbsimples = 0;
 
   for (k = 0; k < ds; k++)
     for (j = 0; j < cs; j++)
@@ -3158,7 +3169,7 @@ if (rowsize(b) == 3) printimage(b);
 } /* Ensemble2Contractile3d() */
 
 /* ==================================== */
-int32_t Alpha3Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t Alpha3Simple3d(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 /* 
     Renvoie VRAI si e point (i,j,k) est alpha-simple pour l'ordre b,
@@ -3167,9 +3178,9 @@ int32_t Alpha3Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
     Version efficace (BDD)
 */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   int32_t ret;
   uint32_t d;
@@ -3243,7 +3254,7 @@ int32_t Alpha3Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 } /* Alpha3Simple3d() */
 
 /* ==================================== */
-int32_t Beta3Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t Beta3Simple3d(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 /* 
     Renvoie VRAI si e point (i,j,k) est beta-simple pour l'ordre b,
@@ -3252,9 +3263,9 @@ int32_t Beta3Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
     Version efficace (BDD)
 */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   int32_t ret;
   uint32_t d;
@@ -3329,12 +3340,12 @@ int32_t Beta3Simple3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 } /* Beta3Simple3d() */
 
 /* ==================================== */
-int32_t Alpha3Simpleh3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, int32_t h)
+int32_t Alpha3Simpleh3d(struct xvimage *b, index_t i, index_t j, index_t k, int32_t h)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   int32_t ret;
   uint32_t d;
@@ -3408,12 +3419,12 @@ int32_t Alpha3Simpleh3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, int3
 } /* Alpha3Simpleh3d() */
 
 /* ==================================== */
-int32_t Beta3Simpleh3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, int32_t h)
+int32_t Beta3Simpleh3d(struct xvimage *b, index_t i, index_t j, index_t k, int32_t h)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   int32_t ret;
   uint32_t d;
@@ -3488,19 +3499,19 @@ int32_t Beta3Simpleh3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, int32
 } /* Beta3Simpleh3d() */
 
 /* ==================================== */
-int32_t Simpleh3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, int32_t h)
+int32_t Simpleh3d(struct xvimage *b, index_t i, index_t j, index_t k, int32_t h)
 /* ==================================== */
 {
   return Beta3Simpleh3d(b, i, j, k, h) || Alpha3Simpleh3d(b, i, j, k, h);
 } /* Simpleh3d() */
 
 /* ==================================== */
-int32_t Alpha3Simple3dDefinitionRecursive(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t Alpha3Simple3dDefinitionRecursive(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
   uint8_t *G;  
@@ -3529,12 +3540,12 @@ printf("Alpha3Simple3d : retourne %d\n", ret);
 } /* Alpha3Simple3dDefinitionRecursive() */
 
 /* ==================================== */
-int32_t Beta3Simple3dDefinitionRecursive(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t Beta3Simple3dDefinitionRecursive(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
   uint8_t *G;  
@@ -3569,11 +3580,12 @@ printf("Beta3Simple3d : retourne %d\n", ret);
 /* ========================================================================== */
 
 /* ==================================== */
-static void PropageRec(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+static void PropageRec(uint8_t *B, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
-  int32_t tab[GRS3D*GCS3D*GDS3D]; 
-  int32_t u, n, ps = rs*cs;
+  index_t tab[GRS3D*GCS3D*GDS3D]; 
+  int32_t u, n;
+  index_t ps = rs*cs;
 
   B[k * rs * cs + j * rs + i] = VAL_MARQUE;
   Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
@@ -3600,13 +3612,13 @@ int32_t Connexe3d(struct xvimage *b)
 */
 
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
-  int32_t N = ds * ps;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
+  index_t N = ds * ps;
   uint8_t *B = UCHARDATA(b);
-  int32_t i;
+  index_t i;
 
   for (i = 0; i < N; i++)
     if (B[i] == VAL_OBJET)
@@ -3622,11 +3634,12 @@ int32_t Connexe3d(struct xvimage *b)
 } /* Connexe3d() */
 
 /* ==================================== */
-static void PropageRecVal(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k, uint8_t Val)
+static void PropageRecVal(uint8_t *B, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k, uint8_t Val)
 /* ==================================== */
 {
-  int32_t tab[GRS3D*GCS3D*GDS3D]; 
-  int32_t u, n, ps = rs*cs;
+  index_t tab[GRS3D*GCS3D*GDS3D]; 
+  int32_t u, n;
+  index_t ps = rs*cs;
 
   B[k * rs * cs + j * rs + i] = VAL_MARQUE;
   Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
@@ -3653,13 +3666,13 @@ int32_t Connexe3dVal(struct xvimage *b, uint8_t Val)
 */
 
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
-  int32_t N = ds * ps;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
+  index_t N = ds * ps;
   uint8_t *B = UCHARDATA(b);
-  int32_t i;
+  index_t i;
 
   for (i = 0; i < N; i++)
     if (B[i] == Val)
@@ -3675,16 +3688,16 @@ int32_t Connexe3dVal(struct xvimage *b, uint8_t Val)
 } /* Connexe3dVal() */
 
 /* ==================================== */
-int32_t Prop0CycleBetaTerminal3d(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+int32_t Prop0CycleBetaTerminal3d(uint8_t *B, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 /*
   cette fonction verifie que l'ensemble des successeurs de i,j,k est compose d'exactement 
   deux alpha-terminaux
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
   int32_t u, v, tu, tv, n, nn;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   Alphacarre3d(rs, cs, ds, i, j, k, tab, &n);
   if (n < 2) return 0;
@@ -3718,16 +3731,16 @@ int32_t Prop0CycleBetaTerminal3d(uint8_t *B, int32_t rs, int32_t cs, int32_t ds,
 } /* Prop0CycleBetaTerminal3d() */
 
 /* ==================================== */
-int32_t Prop0CycleAlphaTerminal3d(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+int32_t Prop0CycleAlphaTerminal3d(uint8_t *B, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 /*
   cette fonction verifie que l'ensemble des predecesseurs de i,j,k est compose d'exactement 
   deux cliques
 */
 {
-  int32_t ps = rs * cs;
+  index_t ps = rs * cs;
   int32_t u, v, tu, tv, n, nn;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   Betacarre3d(rs, cs, ds, i, j, k, tab, &n);
 #ifdef DEBUGP0CA
@@ -3774,13 +3787,13 @@ printf("\n");
 int32_t CourbeSimple3dOld(struct xvimage *b)   /* obsolete */
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
-  int32_t n = 0;
+  index_t i, j, k;
+  index_t n = 0;
 
   if (!Connexe3d(b)) return 0;
 
@@ -3809,13 +3822,13 @@ int32_t CourbeSimple3d(struct xvimage *b)
     non theta-voisins entre eux.
 */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
-  int32_t n = 0;
+  index_t i, j, k;
+  index_t n = 0;
 
 #ifdef DEBUGCS
 printf("CourbeSimple3d :\n");
@@ -3852,14 +3865,14 @@ int32_t CourbeSimpleOuverte3d(struct xvimage *b)
     non theta-voisins entre eux.
 */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
-  int32_t n = 0;    /* nombre total de points */
-  int32_t nend = 0; /* nombre total de points extremites */
+  index_t i, j, k;
+  index_t n = 0;    /* nombre total de points */
+  index_t nend = 0; /* nombre total de points extremites */
   int32_t ctc;
 
 #ifdef DEBUGCS
@@ -3899,12 +3912,12 @@ int32_t Arbre3d(struct xvimage *b)
   ATTENTION: detruit les donnees de b.
 */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, k;
+  index_t i, j, k;
   int32_t stabilite;
 
   do
@@ -3943,11 +3956,11 @@ int32_t NbCompConnexe3d(struct xvimage *b)
 */
 
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
-  int32_t N = ds * ps;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
+  index_t N = ds * ps;
   uint8_t *B = UCHARDATA(b);
   int32_t i, nbcomp = 0;
 
@@ -3961,7 +3974,7 @@ int32_t NbCompConnexe3d(struct xvimage *b)
 } /* NbCompConnexe3d() */
 
 /* ==================================== */
-int32_t T3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvimage *g)
+int32_t T3d(struct xvimage *b, index_t i, index_t j, index_t k, struct xvimage *g)
 /* ==================================== */
 /* 
   Retourne le nombre de composantes connexes du
@@ -3969,9 +3982,9 @@ int32_t T3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvimage *
   g (image temporaire) doit etre allouee de taille 7x7x7.
 */    
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   uint8_t *G = UCHARDATA(g);
 
@@ -3980,7 +3993,7 @@ int32_t T3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvimage *
 } /* T3D() */
 
 /* ==================================== */
-int32_t Tbar3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvimage *g)
+int32_t Tbar3d(struct xvimage *b, index_t i, index_t j, index_t k, struct xvimage *g)
 /* ==================================== */
 /* 
   Retourne le nombre de composantes connexes du
@@ -3988,9 +4001,9 @@ int32_t Tbar3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvimag
   g (image temporaire) doit etre allouee de taille 7x7x7.
 */    
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   uint8_t *G = UCHARDATA(g);
 
@@ -4005,12 +4018,12 @@ int32_t Tbar3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvimag
 /* ========================================================================== */
 
 /* ==================================== */
-int32_t Surfend3d_SANSBDD(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t Surfend3d_SANSBDD(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
   uint8_t *G;
@@ -4022,16 +4035,16 @@ int32_t Surfend3d_SANSBDD(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 }
 
 /* ==================================== */
-int32_t Surfend3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t Surfend3d(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 /* 
     Renvoie VRAI si e point (i,j,k) est un bord de surface dans l'ordre b,
             FAUX sinon
 */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   int32_t ret;
   uint32_t d, e;
@@ -4132,17 +4145,17 @@ int32_t Surfend3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 /* ========================================================================== */
 
 /* ==================================== */
-int32_t FaceLibre3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t FaceLibre3d(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 // Détermine si la face (i,j,k) est libre dans le complexe b, c'est-a-dire si 
 // elle est strictement incluse dans exactement une face de b.
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t tab[GRS3D*GCS3D*GDS3D];
   int32_t u, n, nn = 0;
 
   if (!B[k*ps+j*rs+i]) return 0;
@@ -4153,19 +4166,19 @@ int32_t FaceLibre3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 } /* FaceLibre3d() */
 
 /* ==================================== */
-int32_t PaireLibre3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t PaireLibre3d(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 // Détermine si la face (i,j,k) est libre dans le complexe b, c'est-a-dire si 
 // elle est strictement incluse dans exactement une face de b.
 // Si non, retourne -1.
 // Si oui, retourne la face contenant (i,j,k).
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t tab[GRS3D*GCS3D*GDS3D];
   int32_t u, uu, n, nn = 0;
 
   if (!B[k*ps+j*rs+i]) return -1;
@@ -4176,7 +4189,7 @@ int32_t PaireLibre3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 } /* PaireLibre3d() */
 
 /* ==================================== */
-int32_t Collapse3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
+int32_t Collapse3d(struct xvimage *b, index_t i, index_t j, index_t k)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "Collapse3d"
@@ -4185,12 +4198,12 @@ int32_t Collapse3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 // If it is, it forms a free pair with a face f which contains it. 
 // These two faces are removed from b, and the face f is returned.
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ps = rs * cs;
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ps = rs * cs;
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t tab[GRS3D*GCS3D*GDS3D];
   int32_t u, uu, n, nn = 0;
 
   if (!B[k*ps+j*rs+i]) return -1;
@@ -4202,13 +4215,13 @@ int32_t Collapse3d(struct xvimage *b, int32_t i, int32_t j, int32_t k)
 } /* Collapse3d() */
 
 /* ==================================== */
-int32_t FaceLibre3d_1(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+int32_t FaceLibre3d_1(uint8_t *B, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 // Détermine si la face (i,j,k) est libre dans le complexe B, c'est-a-dire si 
 // elle est strictement incluse dans exactement une face de B.
 {
-  int32_t ps = rs * cs;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t ps = rs * cs;
+  index_t tab[GRS3D*GCS3D*GDS3D];
   int32_t u, n, nn = 0;
 
   if (!B[k*ps+j*rs+i]) return 0;
@@ -4219,13 +4232,13 @@ int32_t FaceLibre3d_1(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i,
 } /* FaceLibre3d_1() */
 
 /* ==================================== */
-int32_t Collapse3d_1(uint8_t *B, int32_t rs, int32_t cs, int32_t ds, int32_t i, int32_t j, int32_t k)
+int32_t Collapse3d_1(uint8_t *B, index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "Collapse3d_1"
 {
-  int32_t ps = rs * cs;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t ps = rs * cs;
+  index_t tab[GRS3D*GCS3D*GDS3D];
   int32_t u, uu, n, nn = 0;
 
   if (!B[k*ps+j*rs+i]) return -1;
@@ -4245,10 +4258,10 @@ static uint8_t BB[NN];
 /* ==================================== */
 int32_t simple_26_att(   /* pour un objet en 26-connexite */
   uint8_t *img,          /* pointeur base image */
-  int32_t p,             /* index du point */
-  int32_t rs,            /* taille rangee */
-  int32_t ps,            /* taille plan */
-  int32_t N)             /* taille image */
+  index_t p,             /* index du point */
+  index_t rs,            /* taille rangee */
+  index_t ps,            /* taille plan */
+  index_t N)             /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "simple_26_att"
@@ -4257,8 +4270,8 @@ int32_t simple_26_att(   /* pour un objet en 26-connexite */
 #define DS 7
 #define PS 49
 {
-  int32_t i, j, k, ii, jj, kk, iu, ju, ku;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t i, j, k, ii, jj, kk, iu, ju, ku;
+  index_t tab[GRS3D*GCS3D*GDS3D];
   int32_t u, n, eu, x, xx, na;
   int32_t lifo[GRS3D*GCS3D*GDS3D];
   int32_t lp;
@@ -4339,15 +4352,15 @@ int32_t simple_26_att(   /* pour un objet en 26-connexite */
 #undef NN
 #define NN 441
 static uint8_t B[NN];
-static int32_t tab[NN];
+static index_t tab[NN];
 
 /* ==================================== */
 int32_t pairesimple_26_x(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,             /* index du point (l'autre element de la paire est son voisin x+1) */
-  int32_t rs,            /* taille rangee */
-  int32_t ps,            /* taille plan */
-  int32_t N)             /* taille image */
+  index_t p,             /* index du point (l'autre element de la paire est son voisin x+1) */
+  index_t rs,            /* taille rangee */
+  index_t ps,            /* taille plan */
+  index_t N)             /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "pairesimple_26_x"
@@ -4360,8 +4373,8 @@ int32_t pairesimple_26_x(
 #define DS 7
 #define PS 63
 {
-  int32_t i, j, k, ii, jj, kk, iu, ju, ku;
-  int32_t u, n, eu, x, xx, na;
+  index_t i, j, k, ii, jj, kk, iu, ju, ku, eu, x, xx;
+  int32_t u, n, na;
   int32_t lifo[GRS3D*GCS3D*5];
   int32_t lp;
 
@@ -4447,10 +4460,10 @@ int32_t pairesimple_26_x(
 /* ==================================== */
 int32_t pairesimple_26_y(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,             /* index du point (l'autre element de la paire est son voisin y+1) */
-  int32_t rs,            /* taille rangee */
-  int32_t ps,            /* taille plan */
-  int32_t N)             /* taille image */
+  index_t p,             /* index du point (l'autre element de la paire est son voisin y+1) */
+  index_t rs,            /* taille rangee */
+  index_t ps,            /* taille plan */
+  index_t N)             /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "pairesimple_26_y"
@@ -4459,8 +4472,8 @@ int32_t pairesimple_26_y(
 #define RS 7
 #define CS 9
 {
-  int32_t i, j, k, ii, jj, kk, iu, ju, ku;
-  int32_t u, n, eu, x, xx, na;
+  index_t i, j, k, ii, jj, kk, iu, ju, ku, eu, x, xx;
+  int32_t u, n, na;
   int32_t lifo[GRS3D*GCS3D*5];
   int32_t lp;
 
@@ -4546,10 +4559,10 @@ int32_t pairesimple_26_y(
 /* ==================================== */
 int32_t pairesimple_26_z(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,             /* index du point (l'autre element de la paire est son voisin z+1) */
-  int32_t rs,            /* taille rangee */
-  int32_t ps,            /* taille plan */
-  int32_t N)             /* taille image */
+  index_t p,             /* index du point (l'autre element de la paire est son voisin z+1) */
+  index_t rs,            /* taille rangee */
+  index_t ps,            /* taille plan */
+  index_t N)             /* taille image */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "pairesimple_26_z"
@@ -4560,8 +4573,8 @@ int32_t pairesimple_26_z(
 #define DS 9
 #define PS 49
 {
-  int32_t i, j, k, ii, jj, kk, iu, ju, ku;
-  int32_t u, n, eu, x, xx, na;
+  index_t i, j, k, ii, jj, kk, iu, ju, ku, eu, x, xx;
+  int32_t u, n, na;
   int32_t lifo[GRS3D*GCS3D*5];
   int32_t lp;
 

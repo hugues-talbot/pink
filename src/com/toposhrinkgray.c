@@ -94,7 +94,7 @@ int32_t ltoposhrinkgray(struct xvimage *image,
                         int32_t tpmax, 
                         int32_t tmmmin, 
                         int32_t tmmmax,
-                        uint8_t(*ThinningMethod)(uint8_t*, int32_t, int32_t, int32_t));
+                        uint8_t(*ThinningMethod)(uint8_t*, index_t, index_t, index_t));
                        
 int32_t ltoposhrinkgray3d(struct xvimage *image,
                           struct xvimage * imageinhibit,
@@ -103,7 +103,7 @@ int32_t ltoposhrinkgray3d(struct xvimage *image,
                           int32_t tpmax, 
                           int32_t tmmmin, 
                           int32_t tmmmax,
-                          uint8_t(*ThinningMethod)(uint8_t*, int32_t, int32_t, int32_t, int32_t));
+                          uint8_t(*ThinningMethod)(uint8_t*, index_t, index_t, index_t, index_t));
                      
 
 
@@ -113,8 +113,8 @@ int main(int argc, char** argv)
     int32_t connex;
     struct xvimage * inhibimage = NULL;
     int32_t tpmin, tpmax, tmmmin, tmmmax;
-    uint8_t(*pValAb)(uint8_t*, int32_t, int32_t, int32_t);
-    uint8_t(*pValAb3d)(uint8_t*, int32_t, int32_t, int32_t, int32_t);
+    uint8_t(*pValAb)(uint8_t*, index_t, index_t, index_t);
+    uint8_t(*pValAb3d)(uint8_t*, index_t, index_t, index_t, index_t);
 
     if ((argc != 9) && (argc != 10))
     {
@@ -209,9 +209,9 @@ int main(int argc, char** argv)
 
 /* ==================================== */
 int32_t largepdestr4(uint8_t *img,          /* pointeur base image */
-                     int32_t p,                       /* index du point */
-                     int32_t rs,                      /* taille rangee */
-                     int32_t N,                       /* taille de l'image */
+                     index_t p,                       /* index du point */
+                     index_t rs,                      /* taille rangee */
+                     index_t N,                       /* taille de l'image */
                      int32_t t8pmin,
                      int32_t t8pmax,
                      int32_t t4mmmin,
@@ -234,9 +234,9 @@ int32_t largepdestr4(uint8_t *img,          /* pointeur base image */
 
 /* ==================================== */
 int32_t largepdestr8(uint8_t *img,          /* pointeur base image */
-                     int32_t p,                       /* index du point */
-                     int32_t rs,                      /* taille rangee */
-                     int32_t N,                       /* taille image */
+                     index_t p,                       /* index du point */
+                     index_t rs,                      /* taille rangee */
+                     index_t N,                       /* taille image */
                      int32_t t4pmin,
                      int32_t t4pmax,
                      int32_t t8mmmin,
@@ -262,15 +262,15 @@ int32_t ltoposhrinkgray(struct xvimage *image,
                         int32_t tpmax, 
                         int32_t tmmmin, 
                         int32_t tmmmax,
-                        uint8_t(*ThinningMethod)(uint8_t*, int32_t, int32_t, int32_t))
+                        uint8_t(*ThinningMethod)(uint8_t*, index_t, index_t, index_t))
         /* ==================================== */
 #undef F_NAME
 #define F_NAME "ltoposhrinkgray"
 { 
-    int32_t x;                       /* index muet de pixel */
-    int32_t rs = rowsize(image);     /* taille ligne */
-    int32_t cs = colsize(image);     /* taille colonne */
-    int32_t N = rs * cs;             /* taille image */
+    index_t x;                       /* index muet de pixel */
+    index_t rs = rowsize(image);     /* taille ligne */
+    index_t cs = colsize(image);     /* taille colonne */
+    index_t N = rs * cs;             /* taille image */
     uint8_t *F = UCHARDATA(image);      /* l'image de depart */
     struct xvimage *travail = copyimage(image);
     uint8_t *G = UCHARDATA(travail);/* l'image de travail */
@@ -334,10 +334,10 @@ int32_t ltoposhrinkgray(struct xvimage *image,
 
 /* ==================================== */
 int32_t largepdestr6(uint8_t *img,          /* pointeur base image */
-                     int32_t p,                       /* index du point */
-                     int32_t rs,                      /* taille rangee */
-                     int32_t ps,                      /* taille plan */
-                     int32_t N,                       /* taille de l'image */
+                     index_t p,                       /* index du point */
+                     index_t rs,                      /* taille rangee */
+                     index_t ps,                      /* taille plan */
+                     index_t N,                       /* taille de l'image */
                      int32_t t26pmin,
                      int32_t t26pmax,
                      int32_t t6mmmin,
@@ -356,10 +356,10 @@ int32_t largepdestr6(uint8_t *img,          /* pointeur base image */
 
 /* ==================================== */
 int32_t largepdestr26(uint8_t *img,          /* pointeur base image */
-                        int32_t p,                       /* index du point */
-                        int32_t rs,                      /* taille rangee */
-                        int32_t ps,                      /* taille plan */
-                        int32_t N,                       /* taille image */
+                        index_t p,                       /* index du point */
+                        index_t rs,                      /* taille rangee */
+                        index_t ps,                      /* taille plan */
+                        index_t N,                       /* taille image */
                         int32_t t6pmin,
                         int32_t t6pmax,
                         int32_t t26mmmin,
@@ -383,17 +383,17 @@ int32_t ltoposhrinkgray3d(struct xvimage *image,
                           int32_t tpmax, 
                           int32_t tmmmin, 
                           int32_t tmmmax,
-                          uint8_t(*ThinningMethod)(uint8_t*, int32_t, int32_t, int32_t, int32_t))
+                          uint8_t(*ThinningMethod)(uint8_t*, index_t, index_t, index_t, index_t))
         /* ==================================== */
 #undef F_NAME
 #define F_NAME "ltoposhrinkgray3d"
 { 
-    int32_t x;                       /* index muet de pixel */
-    int32_t rs = rowsize(image);     /* taille ligne */
-    int32_t cs = colsize(image);     /* taille colonne */
-    int32_t ps = rs * cs;            /* taille plan */
-    int32_t ds = depth(image);       /* nombre plans */
-    int32_t N = ds * ps;             /* taille image */
+    index_t x;                       /* index muet de pixel */
+    index_t rs = rowsize(image);     /* taille ligne */
+    index_t cs = colsize(image);     /* taille colonne */
+    index_t ps = rs * cs;            /* taille plan */
+    index_t ds = depth(image);       /* nombre plans */
+    index_t N = ds * ps;             /* taille image */
     uint8_t *F = UCHARDATA(image);  /* l'image de depart */
     struct xvimage *travail = copyimage(image);
     uint8_t *G = UCHARDATA(travail);/* l'image de travail */

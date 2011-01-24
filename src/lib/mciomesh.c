@@ -40,6 +40,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcrbtp.h>
 #include <mcmesh.h>
 #include <mciomesh.h>
+#include <ssexport.h>
 
 #define VERBOSE
 

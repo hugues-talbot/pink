@@ -93,48 +93,13 @@ In 3d, the parameters are:
 #include <mcgeo.h>
 #include <lrecalagerigide_translateplane.h>
 
-
-/* ==================================== */
-double * image2list3D(struct xvimage * image, int *n)
-/* ==================================== */
-#undef F_NAME
-#define F_NAME "image2list3D"
-{
-  int rs, cs, ds, ps, N, x, y, z;
-  unsigned char *F;
-  int n1;
-  double * P1;
-
-  rs = rowsize(image);
-  cs = colsize(image);
-  ds = depth(image);
-  ps = rs * cs;
-  N = ps * ds;
-  F = UCHARDATA(image);
-  n1 = 0;                     /* compte le nombre de points non nuls pour image1 */ 
-  for (x = 0; x < N; x++) if (F[x]) n1++;
-  P1 = (double *)malloc(n1 * 3 * sizeof(double));
-  if (P1 == NULL) 
-  {   fprintf(stderr,"%s() : malloc failed for P1\n", F_NAME);
-      return NULL;
-  }
-  n1 = 0;
-  for (y = 0; y < cs; y++)
-    for (x = 0; x < rs; x++)
-      for(z = 0; z < ds; z++ )
-	if (F[z * ps + y * rs + x]) { P1[3*n1] = (double)x; P1[3*n1 + 1] = (double)y; P1[3*n1 + 2] = (double)z; n1++; }
-  
-  *n = n1;
-  return P1;
-} // image2list()
-
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image1;
   struct xvimage * image2;
-  int n1, n2;
+  index_t n1, n2;
   double * P1, * P2, *Gamma;
   FILE* fd;
   if (argc != 4)
@@ -157,11 +122,12 @@ int main(int argc, char **argv)
     exit(1);
   }
 
+  P1 = image2list(image1, &n1);
+  P2 = image2list(image2, &n2);
+  //  printf("n1 et n2 : %d %d \n", n1, n2);
+
   if (depth(image1) == 1) // 2D
   {
-    P1 = image2list(image1, &n1);
-    P2 = image2list(image2, &n2);
-    printf("n1 et n2 : %d %d \n", n1, n2);
     Gamma = lrecalagerigide2d_translateplane(P1, n1, P2, n2);
     printf("sx = %g\n", Gamma[0]);
     printf("sy = %g\n", Gamma[1]);
@@ -174,9 +140,6 @@ int main(int argc, char **argv)
   }
   else // 3D
   {
-    P1 = image2list3D(image1, &n1);
-    P2 = image2list3D(image2, &n2);
-    printf("n1 et n2 : %d %d \n", n1, n2);
     Gamma = lrecalagerigide3d_translateplane(P1, n1, P2, n2);
     fd = fopen(argv[argc-1],"w");
     fprintf(fd, "Parametre de translation\n");

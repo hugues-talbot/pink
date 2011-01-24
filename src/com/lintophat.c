@@ -98,28 +98,20 @@ void drawLine(uint8_t * mask, int32_t length, int32_t x2, int32_t y2, int32_t qu
 
  while (x <= x2) {                              // fuer jede x-Koordinate
    if (quater == 1){
-	    setMask(mask, length, length/2+x , length/2+y);                          // setze Pixel    
- 		//printf("setMask: %i %i\n", length/2+x , length/2+y);
-	    setMask(mask, length, length/2-x , length/2-y);                          // setze Pixel
- 		//printf("setMask: %i %i\n", length/2-x , length/2-y);
+	    setMask(mask, length, length/2+x , length/2+y);
+	    setMask(mask, length, length/2-x , length/2-y);
  	}
    else if (quater == 2){
-	    setMask(mask, length , length/2+y, length/2+x);                          // setze Pixel    
- 		//printf("setMask: %i %i\n", length/2+y, length/2+x);
-	    setMask(mask, length , length/2-y, length/2-x);                          // setze Pixel
- 		//printf("setMask: %i %i\n", length/2-y, length/2-x);
+	    setMask(mask, length , length/2+y, length/2+x);
+	    setMask(mask, length , length/2-y, length/2-x);
  	}
    else if (quater == 3){
-	    setMask(mask, length , length/2+(-1*y), length/2+x);                          // setze Pixel    
- 		//printf("setMask: %i %i\n", length/2+(-1*y), length/2+x);
-	    setMask(mask, length , length/2-(-1*y), length/2-x);                          // setze Pixel
- 		//printf("setMask: %i %i\n",  length/2-(-1*y), length/2-x);
+	    setMask(mask, length , length/2+(-1*y), length/2+x);
+	    setMask(mask, length , length/2-(-1*y), length/2-x);
  	}
    else if (quater == 4){
-	    setMask(mask, length, length/2+x , length/2+(-1*y));                          // setze Pixel    
- 		//printf("setMask: %i %i\n", length/2+x , length/2+(-1*y));
-	    setMask(mask, length, length/2-x , length/2-(-1*y));                          // setze Pixel
- 		//printf("setMask: %i %i\n", length/2-x , length/2-(-1*y));
+	    setMask(mask, length, length/2+x , length/2+(-1*y));
+	    setMask(mask, length, length/2-x , length/2-(-1*y));
  	}
    x++;                                         // naechste x-Koordinate
    error += delta;                              // Fehler aktualisieren
@@ -138,12 +130,17 @@ void drawLine(uint8_t * mask, int32_t length, int32_t x2, int32_t y2, int32_t qu
 void max(struct xvimage * img1, struct xvimage * img2) 
 /* =============================================================== */
 {
-	int32_t i, N;
+	index_t i, N;
 	uint8_t * img1_data;
 	uint8_t * img2_data;
 	if(rowsize(img1)!=rowsize(img2) || colsize(img1)!=colsize(img2)){
-		printf ("Image1: %i x %i\n", rowsize(img1), colsize(img1));
-		printf ("Image1: %i x %i\n", rowsize(img2), colsize(img2));
+#ifdef MC_64_BITS
+		printf ("Image1: %lld x %lld\n", rowsize(img1), colsize(img1));
+		printf ("Image2: %lld x %lld\n", rowsize(img2), colsize(img2));
+#else
+		printf ("Image1: %d x %d\n", rowsize(img1), colsize(img1));
+		printf ("Image2: %d x %d\n", rowsize(img2), colsize(img2));
+#endif
 		printf ("Can't get max!\n");
 		exit(1);
 	}
@@ -164,12 +161,17 @@ void max(struct xvimage * img1, struct xvimage * img2)
 void sub(struct xvimage * img1, struct xvimage * img2) 
 /* =============================================================== */
 {
-	int32_t i, help, N;
+	index_t i, help, N;
 	uint8_t * img1_data;
 	uint8_t * img2_data;
 	if(rowsize(img1)!=rowsize(img2) || colsize(img1)!=colsize(img2)){
-		printf ("Image1: %i x %i\n", rowsize(img1), colsize(img1));
-		printf ("Image2: %i x %i\n", rowsize(img2), colsize(img2));
+#ifdef MC_64_BITS
+		printf ("Image1: %lld x %lld\n", rowsize(img1), colsize(img1));
+		printf ("Image2: %lld x %lld\n", rowsize(img2), colsize(img2));
+#else
+		printf ("Image1: %d x %d\n", rowsize(img1), colsize(img1));
+		printf ("Image2: %d x %d\n", rowsize(img2), colsize(img2));
+#endif
 		printf ("Can't get sub!\n");
 		exit(1);
 	}
@@ -198,8 +200,8 @@ void sub(struct xvimage * img1, struct xvimage * img2)
 void close_image(struct xvimage * img, struct xvimage * org_img, struct xvimage * mask, int32_t ce_x, int32_t ce_y ) 
 /* =============================================================== */
 {	
-	int32_t i=0; 
-	int32_t N=rowsize(img)*colsize(img);
+	index_t i=0; 
+	index_t N=rowsize(img)*colsize(img);
 	uint8_t * img_data = UCHARDATA(img);
 	uint8_t * org_img_data = UCHARDATA(org_img);
 	
@@ -221,11 +223,11 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
  struct xvimage * image; // Pointer fr das Bild
- int32_t rs;    // row_size ^= width, erhlt man mit(s.u.): rowsize(image)
- int32_t cs;    // col_size ^= height, erhlt man mit(s.u.): colsize(image)
- int32_t d;     // dimesion, erhlt man mit(s.u.): depth(image)
- int32_t N;	 // number of pixels ^= rs*cs*d
- int32_t length, i, j, k; 
+ index_t rs;    // row_size ^= width, erhlt man mit(s.u.): rowsize(image)
+ index_t cs;    // col_size ^= height, erhlt man mit(s.u.): colsize(image)
+ index_t d;     // dimesion, erhlt man mit(s.u.): depth(image)
+ index_t N;	 // number of pixels ^= rs*cs*d
+ index_t length, i, j, k; 
  struct xvimage * mask;
  uint8_t * mask_data;
  struct xvimage * closed_image;
@@ -254,7 +256,11 @@ int main(int argc, char **argv)
  N = rs * cs * d;         /* taille image */
  length = atoi(argv[2]);	// length of structuring element
  length = (length/2) * 2 +1; 	// has to be 2*x+1 (ungerade)
- printf("Length is: %i\n", length);
+#ifdef MC_64_BITS
+ printf("Length is: %lld\n", length);
+#else
+ printf("Length is: %d\n", length);
+#endif
  i=0; j=0; k=0;
  
  mask = allocimage(NULL, length, length, d, (*image).data_storage_type);

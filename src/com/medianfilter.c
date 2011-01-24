@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * elem;
-  int32_t x, y, z;
+  index_t x, y, z;
 
   if (argc != 4)
   {

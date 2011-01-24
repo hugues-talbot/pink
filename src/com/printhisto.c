@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * mask = NULL;
-  uint32_t * histo;
+  index_t * histo;
   int32_t i, k, s;
 
 
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 
   if (datatype(image) == VFF_TYP_1_BYTE)
   {
-    histo = (uint32_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(int32_t));
+    histo = (index_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(index_t));
     if (histo == NULL)
     {
       fprintf(stderr, "%s: malloc failed\n", argv[0]);
@@ -118,9 +118,17 @@ int main(int argc, char **argv)
 #endif
         k += 1;
 #ifdef INDEX_FIRST
+#ifdef MC_64_BITS
+        printf("%3d:%lld ", i, histo[i]);
+#else
         printf("%3d:%4d ", i, histo[i]);
+#endif
+#else
+#ifdef MC_64_BITS
+        printf("%lld %d\n", histo[i], i);
 #else
         printf("%d %d\n", histo[i], i);
+#endif
 #endif
       }
     printf("\nNombre de niveaux differents = %d\n", k);
@@ -143,9 +151,17 @@ int main(int argc, char **argv)
 #endif
         k += 1;
 #ifdef INDEX_FIRST
+#ifdef MC_64_BITS
+        printf("%3d:%lld ", i, histo[i]);
+#else
         printf("%3d:%4d ", i, histo[i]);
+#endif
+#else
+#ifdef MC_64_BITS
+        printf("%lld %d\n", histo[i], i);
 #else
         printf("%d %d\n", histo[i], i);
+#endif
 #endif
       }
     printf("\nNombre de niveaux differents = %d\n", k);
@@ -169,9 +185,17 @@ int main(int argc, char **argv)
 #endif
         k += 1;
 #ifdef INDEX_FIRST
+#ifdef MC_64_BITS
+        printf("%3d:%lld ", i, histo[i]);
+#else
         printf("%3d:%4d ", i, histo[i]);
+#endif
+#else
+#ifdef MC_64_BITS
+        printf("%lld %d\n", histo[i], i);
 #else
         printf("%d %d\n", histo[i], i);
+#endif
 #endif
       }
     printf("\nNombre de niveaux differents = %d\n", k);

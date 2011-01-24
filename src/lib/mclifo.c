@@ -54,8 +54,11 @@ Lifo * CreeLifoVide(index_t taillemax)
   Lifo * L = (Lifo *)calloc(1,sizeof(Lifo) + sizeof(index_t) * (taillemax-1));
   if (L == NULL)
   {   
-    fprintf(stderr, "CreeLifoVide() : malloc failed : %d bytes\n", 
-            sizeof(Lifo) + sizeof(index_t) * (taillemax-1));
+#ifdef MC_64_BITS
+    fprintf(stderr, "CreeLifoVide() : malloc failed : %lld bytes\n",  sizeof(Lifo) + sizeof(index_t) * (taillemax-1));
+#else
+    fprintf(stderr, "CreeLifoVide() : malloc failed : %d bytes\n",  sizeof(Lifo) + sizeof(index_t) * (taillemax-1));
+#endif
     return NULL;
   }
   L->Max = taillemax;
@@ -123,7 +126,11 @@ void LifoPrint(Lifo * L)
   if (LifoVide(L)) {printf("[]"); return;}
   printf("[ ");
   for (i = 0; i < L->Sp; i++)
+#ifdef MC_64_BITS
+    printf("%lld ", L->Pts[i]);
+#else
     printf("%d ", L->Pts[i]);
+#endif
   printf("]");
 }
 
@@ -133,12 +140,13 @@ void LifoPrintLine(Lifo * L)
 {
   index_t i;
   if (LifoVide(L)) {printf("[]\n"); return;}
-/*
-  printf("Max = %d ; Sp = %d \n", L->Max, L->Sp);
-*/
   printf("[ ");
   for (i = 0; i < L->Sp; i++)
+#ifdef MC_64_BITS
+    printf("%lld ", L->Pts[i]);
+#else
     printf("%d ", L->Pts[i]);
+#endif
   printf("]\n");
 }
 

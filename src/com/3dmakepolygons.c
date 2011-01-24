@@ -73,9 +73,10 @@ pmerge: TODO
 #include <l3dkhalimsky.h>
 #include <assert.h>
 
-int32_t degrepoint(struct xvimage * b, int32_t i, int32_t j, int32_t k)
+int32_t degrepoint(struct xvimage * b, index_t i, index_t j, index_t k)
 {
-  int32_t a, u, n, tab[27];
+  int32_t a, u, n;
+  index_t tab[27];
   uint8_t *B = UCHARDATA(b);
   Betacarre3d(rowsize(b), colsize(b), depth(b), i, j, k, tab, &n);
   for (a = u = 0; u < n; u++) // parcourt les eventuels beta-voisins
@@ -84,16 +85,17 @@ int32_t degrepoint(struct xvimage * b, int32_t i, int32_t j, int32_t k)
 }
 
 void getlabels(struct xvimage * lab, 
-		  int32_t ip, int32_t jp, int32_t kp,
+		  index_t ip, index_t jp, index_t kp,
 		  Liste * Labels
 		 )
 {
-  int32_t rs = rowsize(lab);
-  int32_t cs = colsize(lab);
-  int32_t ds = depth(lab);
-  int32_t ps = rs * cs;
+  index_t rs = rowsize(lab);
+  index_t cs = colsize(lab);
+  index_t ds = depth(lab);
+  index_t ps = rs * cs;
   int32_t *L = SLONGDATA(lab);
-  int32_t u, n, tab[27];
+  int32_t u, n;
+  index_t tab[27];
 
   ListeFlush(Labels);
   Betacarre3d(rs, cs, ds, ip, jp, kp, tab, &n);
@@ -105,18 +107,19 @@ void getlabels(struct xvimage * lab,
 
 void pointsegnextpoint(struct xvimage * lab, struct xvimage * b, 
 		       int32_t label, 
-		       int32_t ip, int32_t jp, int32_t kp,
-		       int32_t is, int32_t js, int32_t ks,
-		       int32_t *i, int32_t *j, int32_t *k
+		       index_t ip, index_t jp, index_t kp,
+		       index_t is, index_t js, index_t ks,
+		       index_t *i, index_t *j, index_t *k
 		      )
 // retourne le point contenu dans le segment is,js,ks de l'image b 
 // qui n'est pas le point ip,jp,kp
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
-  int32_t ps = rs * cs;
-  int32_t u, n, tab[27];
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
+  index_t ps = rs * cs;
+  int32_t u, n;
+  index_t tab[27];
 
   Alphacarre3d(rs, cs, ds, is, js, ks, tab, &n);
   assert(n == 2);
@@ -129,20 +132,24 @@ void pointsegnextpoint(struct xvimage * lab, struct xvimage * b,
 
 int32_t segpointnextseg(struct xvimage * lab, struct xvimage * b, 
 			int32_t label, 
-			int32_t is, int32_t js, int32_t ks,
-			int32_t ip, int32_t jp, int32_t kp,
-			int32_t *it, int32_t *jt, int32_t *kt
+			index_t is, index_t js, index_t ks,
+			index_t ip, index_t jp, index_t kp,
+			index_t *it, index_t *jt, index_t *kt
 		       )
 // retourne (si possible) le segment de l'image b qui contient le point 
 // ip,jp,kp, est adjacent à un carré marqué label, et n'est pas is,js,ks
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
   uint8_t *B = UCHARDATA(b);
   int32_t *L = SLONGDATA(lab);
-  int32_t ps = rs * cs;
-  int32_t u, n, tab[27], ii, jj, kk, u1, n1, tab1[27], ns;
+  index_t ps = rs * cs;
+  int32_t u, n;
+  index_t tab[27];
+  index_t ii, jj, kk;
+  int32_t u1, n1, ns;
+  index_t tab1[27];
 
   ns = 0;
   Betacarre3d(rs, cs, ds, ip, jp, kp, tab, &n);
@@ -171,20 +178,22 @@ int32_t segpointnextseg(struct xvimage * lab, struct xvimage * b,
 } // segpointnextseg()
 
 int32_t point2segs(struct xvimage * lab, struct xvimage * b, int32_t label, 
-		int32_t i, int32_t j, int32_t k,
-		int32_t *i1, int32_t *j1, int32_t *k1,
-		int32_t *i2, int32_t *j2, int32_t *k2
+		index_t i, index_t j, index_t k,
+		index_t *i1, index_t *j1, index_t *k1,
+		index_t *i2, index_t *j2, index_t *k2
 	       )
 // retourne deux (si possible) segments de l'image b qui contiennent le point 
 // i,j,k et sont adjacents à un carré marqué label
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t ds = depth(b);
-  int32_t ps = rs * cs;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t ds = depth(b);
+  index_t ps = rs * cs;
   uint8_t *B = UCHARDATA(b);
   int32_t *L = SLONGDATA(lab);
-  int32_t u, n, tab[27], ii, jj, kk, u1, n1, tab1[27], ns;
+  int32_t u, n, u1, n1, ns;
+  index_t tab[27], tab1[27];
+  index_t ii, jj, kk;
 
   ns = 0;
   Betacarre3d(rs, cs, ds, i, j, k, tab, &n);
@@ -217,14 +226,15 @@ int32_t point2segs(struct xvimage * lab, struct xvimage * b, int32_t label,
 } // point2segs()
 
 int32_t scanpolygon(struct xvimage * lab, struct xvimage * b, 
-		 int32_t label, int32_t i, int32_t j, int32_t k,
+		 int32_t label, index_t i, index_t j, index_t k,
 		 Liste *poly
 		)
 {
-  int32_t rs = rowsize(b);
-  int32_t ps = rs * colsize(b);
-  int32_t i1, j1, k1, i2, j2, k2, n, d, npoints = 0;
-  int32_t ip, jp, kp, iq, jq, kq, is, js, ks, it, jt, kt;
+  index_t rs = rowsize(b);
+  index_t ps = rs * colsize(b);
+  index_t i1, j1, k1, i2, j2, k2;
+  int32_t n, d, npoints = 0;
+  index_t ip, jp, kp, iq, jq, kq, is, js, ks, it, jt, kt;
 
   ListeFlush(poly);
 
@@ -292,7 +302,8 @@ int main(int argc, char **argv)
 {
   struct xvimage * lab;
   struct xvimage * bor;
-  int32_t rs, cs, ds, ps, N, i, j, k, a, b, x, indx;
+  index_t rs, cs, ds, ps, N, i, j, k;
+  int32_t a, b, x, indx;
   int32_t *L;
   uint8_t *B;
   int32_t u, v, nl, spol, maxlab, label;

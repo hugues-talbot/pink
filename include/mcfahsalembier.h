@@ -35,8 +35,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifndef _MCIMAGE_H
+#include <mcimage.h>
+#endif
+
 typedef struct FAHSELT {
-  int32_t Point;
+  index_t Point;
   struct FAHSELT * Next;
   struct FAHSELT * Prev;
 } FahsElt;
@@ -45,10 +50,10 @@ typedef struct FAHSELT {
 #define FAHS_NPRIO 65536
 
 typedef struct {
-  int32_t Max;             /* taille max de la fah (en nombre de points) */
+  index_t Max;             /* taille max de la fah (en nombre de points) */
   int32_t Niv;             /* niveau a partir duquel des listes existent */
-  int32_t Util;            /* nombre de points courant dans la fah */
-  int32_t Maxutil;         /* nombre de points utilises max (au cours du temps) */
+  index_t Util;            /* nombre de points courant dans la fah */
+  index_t Maxutil;         /* nombre de points utilises max (au cours du temps) */
   FahsElt *Tete[FAHS_NPRIO]; /* tableau des tetes de liste (la ou l'on insere) */
   FahsElt *Queue[FAHS_NPRIO];/* tableau des queues de liste (la ou l'on preleve) */
   FahsElt *Libre;       /* pile des cellules libres */
@@ -60,7 +65,7 @@ typedef struct {
 /* ============== */
 
 extern Fahs * CreeFahsVide(
-  int32_t taillemax
+  index_t taillemax
 );
 
 extern void FahsFlush(
@@ -76,18 +81,18 @@ extern int32_t FahsVideNiveau(
   int32_t niv
 );
 
-extern int32_t FahsPop(
+extern index_t FahsPop(
   Fahs * L
 );
 
-extern int32_t FahsPopNiveau(
+extern index_t FahsPopNiveau(
   Fahs * L,
   int32_t niv
 );
 
 extern void FahsPush(
   Fahs * L,
-  int32_t Po,
+  index_t Po,
   int32_t Ni
 );
 

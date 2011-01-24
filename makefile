@@ -2535,9 +2535,6 @@ $(ODIR)/mccolors.o:	$(LDIR)/mccolors.c $(IDIR)/mccolors.h
 $(ODIR)/mccomptree.o:	$(LDIR)/mccomptree.c $(IDIR)/mccomptree.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mccomptree.c -o $(ODIR)/mccomptree.o
 
-$(ODIR)/mcconvert.o:	$(LDIR)/mcconvert.c $(IDIR)/mcconvert.h
-	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcconvert.c -o $(ODIR)/mcconvert.o
-
 $(ODIR)/mcdrawps.o:	$(LDIR)/mcdrawps.c $(IDIR)/mcdrawps.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcdrawps.c -o $(ODIR)/mcdrawps.o
 

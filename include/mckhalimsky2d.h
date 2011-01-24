@@ -35,6 +35,11 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifndef _MCIMAGE_H
+#include <mcimage.h>
+#endif
+
 #define CARRE(i,j) ((i%2)+(j%2)==2)
 #define INTER(i,j) ((i%2)+(j%2)==1)
 #define INTERH(i,j) ((i%2)&&(!(j%2)))
@@ -68,15 +73,15 @@ extern void ndg2grad2d(struct xvimage *k);
 extern void ndg4grad2d(struct xvimage *k);
 extern void Connex8Obj2d(struct xvimage *o);
 extern void Connex4Obj2d(struct xvimage *o);
-extern void Betapoint2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n);
-extern void Alphapoint2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n);
-extern void Betacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n);
-extern void Alphacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n);
-extern void Thetacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n);
-extern int32_t CardBetapoint2d(uint8_t *K, int32_t rs, int32_t cs, int32_t i, int32_t j);
-extern int32_t CardThetaCarre2d(struct xvimage *k, int32_t i, int32_t j, uint8_t val);
-extern int32_t BetaTerminal2d(uint8_t *K, int32_t rs, int32_t cs, int32_t i, int32_t j);
-extern int32_t ExactementUnBetaTerminal2d(uint8_t *K, int32_t rs, int32_t cs);
+extern void Betapoint2d(index_t rs, index_t cs, index_t i, index_t j, index_t *tab, int32_t *n);
+extern void Alphapoint2d(index_t rs, index_t cs, index_t i, index_t j, index_t *tab, int32_t *n);
+extern void Betacarre2d(index_t rs, index_t cs, index_t i, index_t j, index_t *tab, int32_t *n);
+extern void Alphacarre2d(index_t rs, index_t cs, index_t i, index_t j, index_t *tab, int32_t *n);
+extern void Thetacarre2d(index_t rs, index_t cs, index_t i, index_t j, index_t *tab, int32_t *n);
+extern int32_t CardBetapoint2d(uint8_t *K, index_t rs, index_t cs, index_t i, index_t j);
+extern int32_t CardThetaCarre2d(struct xvimage *k, index_t i, index_t j, uint8_t val);
+extern int32_t BetaTerminal2d(uint8_t *K, index_t rs, index_t cs, index_t i, index_t j);
+extern int32_t ExactementUnBetaTerminal2d(uint8_t *K, index_t rs, index_t cs);
 extern void SatureAlphacarre2d(struct xvimage *k);
 extern void AjouteAlphacarre2d(struct xvimage *k);
 extern void AjouteBetacarre2d(struct xvimage *k);
@@ -84,19 +89,19 @@ extern void MaxAlpha2d(struct xvimage *k);
 extern void MaxBeta2d(struct xvimage *k);
 extern void ColorieKh2d(struct xvimage *k);
 extern void EffaceLiensLibres2d(struct xvimage *k);
-extern void CopieAlphacarre2d(uint8_t *G,uint8_t *K,int32_t rs,int32_t cs,int32_t i,int32_t j);
-extern int32_t EffaceBetaTerminauxSimples2d(struct xvimage *k);
+extern void CopieAlphacarre2d(uint8_t *G,uint8_t *K,index_t rs,index_t cs,index_t i,index_t j);
+extern index_t EffaceBetaTerminauxSimples2d(struct xvimage *k);
 extern int32_t EnsembleSimple2d(struct xvimage *k);
 extern int32_t Ensemble2Contractile2d(struct xvimage *b);
 extern void Htkern2d(struct xvimage *b, int32_t n);
-extern int32_t AlphaSimple2d(struct xvimage *b, int32_t i, int32_t j);
-extern int32_t BetaSimple2d(struct xvimage *b, int32_t i, int32_t j);
-extern int32_t Alpha2Simple2d(struct xvimage *b, int32_t i, int32_t j);
-extern int32_t Beta2Simple2d(struct xvimage *b, int32_t i, int32_t j);
-extern int32_t EulerKh2d(struct xvimage *b);
-extern int32_t FaceLibre2d(struct xvimage *b, int32_t i, int32_t j);
-extern int32_t PaireLibre2d(struct xvimage *b, int32_t i, int32_t j);
-extern int32_t Collapse2d(struct xvimage *b, int32_t i, int32_t j);
+extern int32_t AlphaSimple2d(struct xvimage *b, index_t i, index_t j);
+extern int32_t BetaSimple2d(struct xvimage *b, index_t i, index_t j);
+extern int32_t Alpha2Simple2d(struct xvimage *b, index_t i, index_t j);
+extern int32_t Beta2Simple2d(struct xvimage *b, index_t i, index_t j);
+extern index_t EulerKh2d(struct xvimage *b);
+extern int32_t FaceLibre2d(struct xvimage *b, index_t i, index_t j);
+extern int32_t PaireLibre2d(struct xvimage *b, index_t i, index_t j);
+extern int32_t Collapse2d(struct xvimage *b, index_t i, index_t j);
 #ifdef __cplusplus
 }
 #endif

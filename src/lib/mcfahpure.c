@@ -56,11 +56,11 @@ knowledge of the CeCILL license and that you accept its terms.
 
 /* ==================================== */
 Fahp * CreeFahpVide(
-  int32_t taillemax)
+  index_t taillemax)
 /* ==================================== */
 {
-  int32_t i;
-  Fahp * L = (Fahp *)calloc(1,4 * sizeof(int32_t) + 
+  index_t i;
+  Fahp * L = (Fahp *)calloc(1,4 * sizeof(index_t) + 
                           (FAHP_NPRIO+4)*sizeof(FahpElt *) + 
                           taillemax*sizeof(FahpElt));
   if (L == NULL)
@@ -87,7 +87,7 @@ void FahpFlush(
   Fahp * L)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   L->Niv = 0;
   L->Util = 0;
   for (i = 0; i < L->Max - 1; i++)
@@ -132,11 +132,11 @@ int32_t FahpNiveau(
 } /* FahpNiveau() */
 
 /* ==================================== */
-int32_t FahpPop(
+index_t FahpPop(
   Fahp * L)
 /* ==================================== */
 {
-  int32_t V;
+  index_t V;
   FahpElt * FE;
   if (L->Queue == NULL)
   {
@@ -162,7 +162,7 @@ int32_t FahpPop(
 } /* FahpPop() */
   
 /* ==================================== */
-int32_t FahpFirst(
+index_t FahpFirst(
   Fahp * L)
 /* ==================================== */
 {
@@ -177,7 +177,7 @@ int32_t FahpFirst(
 /* ==================================== */
 void FahpPush(
   Fahp * L,
-  int32_t Po,
+  index_t Po,
   int32_t Ni)
 /* ==================================== */
 {
@@ -264,8 +264,16 @@ void FahpPrint(
     {
       printf("%d [ ", i);
       for (;FE != L->Tete[i]; FE = FE->Next)
+#ifdef MC_64_BITS
+        printf("%lld ", FE->Point);
+#else
         printf("%d ", FE->Point);
+#endif
+#ifdef MC_64_BITS
+      printf("%lld ]\n", FE->Point);
+#else
       printf("%d ]\n", FE->Point);
+#endif
       FE = FE->Next;
     }
 } /* FahpPrint() */

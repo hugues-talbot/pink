@@ -42,12 +42,12 @@ extern "C" {
 extern int32_t lhisto(
         struct xvimage *image,
         struct xvimage *mask,
-        uint32_t *histo
+        index_t *histo
 );
 
 extern int32_t lhisto1(
         struct xvimage *image,
-        uint32_t *histo
+        index_t *histo
 );
 
 extern int32_t lhisto2(
@@ -60,16 +60,16 @@ extern int32_t lhisto2(
 extern int32_t lhistolong(
         struct xvimage *image, 
         struct xvimage *mask,
-        uint32_t **histo, 
+        index_t **histo, 
         int32_t *size
 );
 
-extern int32_t lhistofloat(struct xvimage *image, struct xvimage *mask, uint32_t **histo, int32_t *size, 
+extern int32_t lhistofloat(struct xvimage *image, struct xvimage *mask, index_t **histo, int32_t *size, 
 		       float *Sincr, float *Smin, float *Smax);
 
-extern void lhistcompact(uint32_t *histo, int32_t n);
+extern void lhistcompact(index_t *histo, int32_t n);
 
-extern int32_t lhistsum(uint32_t *histo);
+extern int32_t lhistsum(index_t *histo);
 
 #define NONMIN 1
 #define NONMAX 2
@@ -81,14 +81,14 @@ extern int32_t lhistsum(uint32_t *histo);
 
 extern void labelextr1d(int32_t *F, int32_t n, uint8_t *E);
 
-extern int32_t lhisto2image(uint32_t *histo, int32_t size, struct xvimage **image);
+extern int32_t lhisto2image(index_t *histo, int32_t size, struct xvimage **image);
 
-extern int32_t lhistoazimuth(struct xvimage * field, int32_t nbins, uint32_t **histo);
-extern int32_t lhistoelevation(struct xvimage * field, int32_t nbins, uint32_t **histo);
-extern int32_t lhisto_distance_modulo_raw (uint32_t * A, uint32_t * B, int32_t n);
-extern int32_t lhisto_distance_ordinal_raw (uint32_t * A, uint32_t * B, int32_t n);
-extern double lhisto_distance_modulo (uint32_t * A, uint32_t * B, int32_t n);
-extern double lhisto_distance_ordinal (uint32_t * A, uint32_t * B, int32_t n);
+extern int32_t lhistoazimuth(struct xvimage * field, int32_t nbins, index_t **histo);
+extern int32_t lhistoelevation(struct xvimage * field, int32_t nbins, index_t **histo);
+extern int32_t lhisto_distance_modulo_raw (index_t * A, index_t * B, int32_t n);
+extern int32_t lhisto_distance_ordinal_raw (index_t * A, index_t * B, int32_t n);
+extern double lhisto_distance_modulo (index_t * A, index_t * B, int32_t n);
+extern double lhisto_distance_ordinal (index_t * A, index_t * B, int32_t n);
 extern int32_t lseuilhisto (struct xvimage *image, struct xvimage *masque, double p);
 extern int32_t lcountvalues(struct xvimage *image, struct xvimage *mask);
 #ifdef __cplusplus

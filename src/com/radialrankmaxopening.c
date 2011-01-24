@@ -145,9 +145,9 @@ int main(int argc, char **argv)
   struct xvimage * mask;
   struct xvimage * dilatmask=NULL;
 
-  int32_t rs, cs, ds, N, Nmask;
-  int32_t sex, sey, sez;
-  int32_t length, i, nangles; 
+  index_t i, rs, cs, ds, N, Nmask;
+  index_t sex, sey, sez;
+  int32_t length, nangles; 
   uint8_t * mask_data;
   double rank;
 

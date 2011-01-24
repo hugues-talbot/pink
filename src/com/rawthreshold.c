@@ -146,8 +146,18 @@ int main(int argc, char **argv)
   if ((xdim != 0.0) && (ds == 1))
     fprintf(fdo, "#xdim %g\n#ydim %g\n", xdim, ydim);
   
-  if (ds > 1) fprintf(fdo, "%d %d %d\n", rs, cs, ds); 
-  else fprintf(fdo, "%d %d\n", rs, cs);
+  if (ds > 1) 
+#ifdef MC_64_BITS
+    fprintf(fdo, "%lld %lld %lld\n", rs, cs, ds); 
+#else
+    fprintf(fdo, "%d %d %d\n", rs, cs, ds); 
+#endif
+  else 
+#ifdef MC_64_BITS
+    fprintf(fdo, "%lld %lld\n", rs, cs);
+#else
+    fprintf(fdo, "%d %d\n", rs, cs);
+#endif
   fprintf(fdo, "255\n");
 
   if (littleendian)
@@ -161,7 +171,12 @@ int main(int argc, char **argv)
     for (i = 0; i < N; i++) 
     { 
 #ifdef VERBOSE
-      if ((i % 100000000) == 0) printf("%ld written elements\n", (long int)i);
+      if ((i % 100000000) == 0) 
+#ifdef MC_64_BITS
+	printf("%lld written elements\n", i);
+#else
+	printf("%d written elements\n", i);
+#endif
 #endif
       fread(&tmp, sizeof(uint32_t), 1, fdi);
       tmp1 = tmp & 0xff; tmp = tmp >> 8;

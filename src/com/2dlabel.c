@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * k;
   struct xvimage * lab;
-  int32_t nlabels;
+  index_t nlabels;
 
   if (argc != 3)
   {

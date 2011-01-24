@@ -87,7 +87,8 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * image2;
   double theta, c1, c2, newc1, newc2;
-  int32_t x, y, z, se, resize;
+  index_t x, y, z;
+  int32_t se, resize;
   char axis;
 
   if ((argc != 5) && (argc != 7))
@@ -157,9 +158,9 @@ int main(int argc, char **argv)
   if (se) 
     switch(axis)
     {
-    case 'x': writese(image2, argv[argc-1], x, (int32_t)newc1, (int32_t)newc2); break;
-    case 'y': writese(image2, argv[argc-1], (int32_t)newc1, y, (int32_t)newc2); break;
-    case 'z': writese(image2, argv[argc-1], (int32_t)newc1, (int32_t)newc2, z); break;
+    case 'x': writese(image2, argv[argc-1], x, (index_t)newc1, (index_t)newc2); break;
+    case 'y': writese(image2, argv[argc-1], (index_t)newc1, y, (index_t)newc2); break;
+    case 'z': writese(image2, argv[argc-1], (index_t)newc1, (index_t)newc2, z); break;
     }
   else
     writeimage(image2, argv[argc-1]);

@@ -70,8 +70,8 @@ int main(int argc, char **argv)
   struct xvimage * tmp;
   struct xvimage * elem1;
   struct xvimage * elem2;
-  int32_t x1, y1, z1;
-  int32_t x2, y2, z2;
+  index_t x1, y1, z1;
+  index_t x2, y2, z2;
 
   if (argc != 5)
   {

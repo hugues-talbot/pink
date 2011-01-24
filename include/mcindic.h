@@ -36,6 +36,10 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
+#ifndef _MCIMAGE_H
+#include <mcimage.h>
+#endif
+
 typedef uint8_t Indicstype;
 
 extern Indicstype *Indics;       /* en global pour etre efficace */
@@ -54,9 +58,9 @@ extern Indicstype *Indics;       /* en global pour etre efficace */
 /* prototypes     */
 /* ============== */
 
-extern void IndicsInit(int32_t Size); 
+extern void IndicsInit(index_t Size); 
 
-extern void Indics1bitInit(int32_t Size); 
+extern void Indics1bitInit(index_t Size); 
 
 extern void IndicsTermine();
 

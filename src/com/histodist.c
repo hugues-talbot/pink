@@ -69,7 +69,7 @@ Parameter \b type (default 0) indicates whether the histogram must be interprete
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  uint32_t *histo1, *histo2;
+  index_t *histo1, *histo2;
   char tag;
   int32_t i, x, y, n1, n2, type = 0;
   double dist;
@@ -96,8 +96,8 @@ int main(int argc, char **argv)
   }
 
   fscanf(fd, "%d\n", &n1);
-  histo1 = (uint32_t *)calloc(n1, sizeof(uint32_t)); assert(histo1 != NULL);
-  histo2 = (uint32_t *)calloc(n1, sizeof(uint32_t)); assert(histo2 != NULL);
+  histo1 = (index_t *)calloc(n1, sizeof(index_t)); assert(histo1 != NULL);
+  histo2 = (index_t *)calloc(n1, sizeof(index_t)); assert(histo2 != NULL);
 
   for (i = 0; i < n1; i++)
   {

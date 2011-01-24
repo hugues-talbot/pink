@@ -15,13 +15,6 @@ MC threshold remplace seuil
 
 MC changer les types des rs, cs, ..., N, i, x... de int32_t en index_t
 déjà faits:
-  mcimage
-  mccodimage
-  mctopo
-  mctopo3d
-  mcrbt
-  mcgeo
-  mclifo
   lseuil
   lzoom
   lskeletons
@@ -32,9 +25,66 @@ déjà faits:
   ldilateros3d
   lcrop
   lattribute
+  lhisto
+  l2dcollapse
+  l3dcollapse
+  l2dkhalimsky
+  l3dkhalimsky
+
   seuil
   threshold
   crop
+  seuilauto
+  long2byte
+  *histo*
+  setorigin
+  dilation
+  erosion
+  hitormiss
+  lintophat
+  medianfilter
+  opening
+  closing
+  radialopening
+  radialrankmaxopening
+  rankmaxopening
+  rankfilter
+  labeldil
+  toposhrinkgray
+  worms
+  recalagerigide
+  recalagerigide_translateplane
+  recalagerigide_num
+  rotate3dbin
+  symse
+  3drecons
+  3dmakepolygons
+  3dinvariants
+  2dinvariants
+
+reste à faire dans les mcXXX: 
+mccbt.o
+mcchrono.o
+mccolors.o
+mccomptree.o
+mcdrawps.o
+mcfusion.o
+mcgraphe.o
+mciomesh.o
+mckhalimskyNd.o
+mcliste.o
+mcmesh.o
+mcpowell.o
+mcprobas.o
+mcrbtp.o
+mcrlifo.o
+mcsegment.o
+mcskelcurv.o
+mcsplines.o
+mcsort.o
+mctopo3d_table
+mctree.o
+mcunionfind.o
 
 MC 64 bits: larea() retourne un int32
 

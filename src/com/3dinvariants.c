@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * k;
-  int32_t nbcc, nbcav, nbtun, euler; 
+  index_t nbcc, nbcav, nbtun, euler; 
 
   if (argc != 2)
   {
@@ -88,10 +88,17 @@ int main(int argc, char **argv)
     exit(1);
   }
 
+#ifdef MC_64_BITS
+  printf("car. Euler = %lld\n", euler);
+  printf("%lld composantes connexes, ", nbcc);
+  printf("%lld cavites, ", nbcav);
+  printf("%lld tunnels\n", nbtun);
+#else
   printf("car. Euler = %d\n", euler);
   printf("%d composantes connexes, ", nbcc);
   printf("%d cavites, ", nbcav);
   printf("%d tunnels\n", nbtun);
+#endif
   
   freeimage(k);
 

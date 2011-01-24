@@ -53,7 +53,7 @@ knowledge of the CeCILL license and that you accept its terms.
 Indicstype *Indics = NULL;       /* en global pour etre efficace */
 
 /* ==================================== */
-void IndicsInit(int32_t Size)
+void IndicsInit(index_t Size)
 /* ==================================== */
 {
   Indics = (Indicstype *)calloc(Size, sizeof(Indicstype));
@@ -65,7 +65,7 @@ void IndicsInit(int32_t Size)
 }
 
 /* ==================================== */
-void Indics1bitInit(int32_t Size)
+void Indics1bitInit(index_t Size)
 /* ==================================== */
 {
   Indics = (Indicstype *)calloc((Size-1)/8 + 1, sizeof(Indicstype));
@@ -77,7 +77,7 @@ void Indics1bitInit(int32_t Size)
 }
 
 /* ==================================== */
-void Indics1bitReInit(int32_t Size)
+void Indics1bitReInit(index_t Size)
 /* ==================================== */
 {
   memset(Indics, 0, ((Size-1)/8 + 1) * sizeof(Indicstype));

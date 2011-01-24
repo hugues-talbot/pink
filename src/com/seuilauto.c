@@ -74,15 +74,15 @@ int main(int argc, char **argv)
   int32_t seuil;
   struct xvimage * image;
   struct xvimage * imagebin;
-  int32_t rs;          /* taille ligne */
-  int32_t cs;          /* taille colonne */
-  int32_t d;           /* nb. plans */
-  int32_t N;           /* taille image */
+  index_t rs;          /* taille ligne */
+  index_t cs;          /* taille colonne */
+  index_t d;           /* nb. plans */
+  index_t N;           /* taille image */
   uint8_t *F;
   int32_t *FL;
-  uint32_t * histo;
-  uint32_t * histolisse;
-  int32_t x, y, somme, diff, compteur, lissage;
+  index_t * histo;
+  index_t * histolisse, somme;
+  int32_t x, y, diff, compteur, lissage;
 
   if ((argc != 5) && (argc != 6))
   {
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 
 
 /* Initialisation de l'histogramme */
-  histo = (uint32_t *)calloc((NDG_MAX - NDG_MIN + 1) * sizeof(int32_t), 1);
+  histo = (index_t *)calloc((NDG_MAX - NDG_MIN + 1) * sizeof(index_t), 1);
   if (histo == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", argv[0]);
@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 
   
 /* Initialisation de l'histogramme lisse*/
-  histolisse = (uint32_t *)calloc((NDG_MAX - NDG_MIN + 1) * sizeof(int32_t), 1);
+  histolisse = (index_t *)calloc((NDG_MAX - NDG_MIN + 1) * sizeof(index_t), 1);
   if (histolisse == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", argv[0]);
@@ -141,8 +141,8 @@ int main(int argc, char **argv)
   {
     somme = 0;
     for (y=-lissage/2; y<=lissage/2; y++)
-      if ((x-y)>=0) somme = somme + (int32_t)histo[x-y];
-    histolisse [x]=(uint32_t)(somme/(lissage+1));
+      if ((x-y)>=0) somme = somme + histo[x-y];
+    histolisse [x]=(index_t)(somme/(lissage+1));
   }
 
 

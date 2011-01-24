@@ -67,12 +67,11 @@ int main(int argc, char **argv)
 {
   struct xvimage * k;
   FILE *fd;
-  int32_t n;
-  int32_t *tab;  
+  int32_t i, n;
+  index_t *tab;  
   double xx, yy, zz;
-  int32_t x, y, z;
-  int32_t rs, cs, ds, ps, N;
-  int32_t i;
+  index_t x, y, z;
+  index_t rs, cs, ds, ps, N;
   char type;
 
   if (argc != 4)
@@ -109,7 +108,7 @@ int main(int argc, char **argv)
 
   fscanf(fd, "%d\n", &n);
 
-  tab = (int32_t *)calloc(1,n * sizeof(int32_t));
+  tab = (index_t *)calloc(1,n * sizeof(index_t));
   if (tab == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", argv[0]);
@@ -126,7 +125,11 @@ int main(int argc, char **argv)
       tab[i] = x + y * rs + z * ps;
     else
     {      
+#ifdef MC_64_BITS
+      fprintf(stderr, "%s: point outside image: %lld %lld %lld\n", argv[0], x, y, z);
+#else
       fprintf(stderr, "%s: point outside image: %d %d %d\n", argv[0], x, y, z);
+#endif
       exit(1);
     }
   }

@@ -133,12 +133,12 @@ typedef struct RBTELT {
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdio.h>
+#include <assert.h>
 #include <mcrbt.h>
 
 /* #define TESTRBT */
 /* #define VERBOSE */
 
-#define PARANO
 //#define DEBUGDELETE
 //#define DEBUGINSERT
 
@@ -189,7 +189,11 @@ void RbtReAlloc(Rbt **A)
   Rbt * T, *Tmp;
 
 #ifdef VERBOSE
+#ifdef MC_64_BITS
+  printf("RbtReAlloc: ancienne taille %lld nouvelle taille %lld\n", (*A)->max, 2 * (*A)->max);
+#else
   printf("RbtReAlloc: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
+#endif
 #endif
   taillemax = 2 * (*A)->max;  /* alloue le double de l'ancienne taille */ 
   T = mcrbt_CreeRbtVide(taillemax);
@@ -239,7 +243,11 @@ void RbtPrintRec(
   if (x == T->nil) return;
   RbtPrintRec(T, x->left, niv+1);
   for (i = 0; i < niv; i++) printf("    ");
+#ifdef MC_64_BITS
+  printf("%g [%lld] (", x->key, x->auxdata);
+#else
   printf("%g [%d] (", x->key, x->auxdata);
+#endif
   if (x->color == RBT_Red) printf("r"); else  printf("b");
   printf(")\n");
   RbtPrintRec(T, x->right, niv+1);
@@ -477,9 +485,7 @@ printf("mcrbt_RbtInsert: data = %d ; key = %g\n", d, k);
 printf("FIN mcrbt_RbtInsert xc->data = %d ; xc->key = %g\n", xc->auxdata, xc->key);
 #endif
 
-#ifdef PARANO
-  if (xc->auxdata != d) printf("BUG mcrbt_RbtInsert xc->auxdata = %d ; d = %d\n", xc->auxdata, d);
-#endif
+  assert(xc->auxdata == d);
 
   return xc;                      /* modif mc: retourne xc plutot que x (sinon: BUG) */
 } /* mcrbt_RbtInsert() */

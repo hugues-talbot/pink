@@ -283,7 +283,12 @@ void veriftopo()
     m = ~i & 0xff;  /* complementaire de i */
     n = 0;          /* compte de nb de CC */
     for (j = 0; j < 4; j++) if (Comp4Tab[m][j]) n++;
-    if (n != TopoTab[i][0]) printf("ERREUR pour %d\n", i);
+    if (n != TopoTab[i][0]) 
+#ifdef MC_64_BITS
+      printf("ERREUR pour %lld\n", i);
+#else
+      printf("ERREUR pour %d\n", i);
+#endif
   }
   printf("FIN TEST 4\n");
 
@@ -291,7 +296,12 @@ void veriftopo()
   { 
     n = 0;          /* compte de nb de CC */
     for (j = 0; j < 4; j++) if (Comp8Tab[i][j]) n++;
-    if (n != TopoTab[i][1]) printf("ERREUR pour %d\n", i);
+    if (n != TopoTab[i][1]) 
+#ifdef MC_64_BITS
+      printf("ERREUR pour %lld\n", i);
+#else
+      printf("ERREUR pour %d\n", i);
+#endif
   }
   printf("FIN TEST 8\n");
 } /* veriftopo() */

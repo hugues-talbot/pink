@@ -53,18 +53,18 @@ int32_t lcomphisto(struct xvimage *image, int32_t n)
   int32_t i;
   int32_t j;
   int32_t k;
-  int32_t x;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t d = depth(image);        /* nb plans */
-  int32_t N = rs * cs * d;         /* taille image */
+  index_t x;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t d = depth(image);        /* nb plans */
+  index_t N = rs * cs * d;         /* taille image */
   uint8_t *SOURCE = UCHARDATA(image);      /* l'image de depart */
-  uint32_t * histo;
+  index_t * histo;
   uint8_t * tabcor;
   int32_t nndg;
   double p, np;
 
-  histo = (uint32_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(int32_t));
+  histo = (index_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(index_t));
   if (histo == NULL)
   {
     fprintf(stderr, "%s: malloc failed for histo\n", F_NAME);

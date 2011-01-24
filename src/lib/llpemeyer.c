@@ -60,6 +60,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcfah.h>
@@ -93,19 +94,19 @@ int32_t llpemeyer(
 #undef F_NAME
 #define F_NAME "llpemeyer"
 {
-  register int32_t x;                       /* index muet de pixel */
-  register int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t w;                       /* index muet (generalement un voisin de x) */
+  register index_t x;                       /* index muet de pixel */
+  register index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   uint8_t *BF;                             /* l'image de marqueurs du fond */
   uint8_t *MA;                             /* l'image de masque */
   int32_t *M;             /* l'image d'etiquettes */
-  int32_t nlabels;                 /* nombre de labels differents */
+  index_t nlabels;                 /* nombre de labels differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[4];
   int32_t ncc;  
@@ -363,12 +364,12 @@ int32_t llpemeyer2(
 #undef F_NAME
 #define F_NAME "llpemeyer2"
 {
-  register int32_t x;                       /* index muet de pixel */
-  register int32_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t x;                       /* index muet de pixel */
+  register index_t y;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);  /* l'image de depart */
   int32_t *M = SLONGDATA(marqueurs);   /* l'image de marqueurs */
   uint8_t *MA;                         /* l'image de masque */
@@ -376,7 +377,7 @@ int32_t llpemeyer2(
   int32_t etiqcc[4];
   int32_t ncc;  
   int32_t incr_vois;
-  int32_t nlabels;
+  index_t nlabels;
 
   if (datatype(image) != VFF_TYP_1_BYTE) 
   {
@@ -541,12 +542,12 @@ int32_t llpemeyer3(
 #undef F_NAME
 #define F_NAME "llpemeyer3"
 {
-  register int32_t x;                       /* index muet de pixel */
-  register int32_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t x;                       /* index muet de pixel */
+  register index_t y;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);  /* l'image de depart */
   int32_t *M = SLONGDATA(marqueurs);   /* l'image de marqueurs */
   uint8_t *MA;                         /* l'image de masque */
@@ -708,23 +709,23 @@ int32_t llpemeyer3(
  */
 
  {
-   register int32_t x;                       /* index muet de pixel */
-   register int32_t y;                       /* index muet (generalement un voisin de x) */
-   register int32_t w;                       /* index muet (generalement un voisin de x) */
+   register index_t x;                       /* index muet de pixel */
+   register index_t y;                       /* index muet (generalement un voisin de x) */
+   register index_t w;                       /* index muet (generalement un voisin de x) */
    register int32_t k;                       /* index muet */
-   int32_t rs = rowsize(image);     /* taille ligne */
-   int32_t cs = colsize(image);     /* taille colonne */
-   int32_t N = rs * cs;             /* taille image */
+   index_t rs = rowsize(image);     /* taille ligne */
+   index_t cs = colsize(image);     /* taille colonne */
+   index_t N = rs * cs;             /* taille image */
    uint8_t *F = UCHARDATA(image);      /* l'image de depart */
    uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
    uint8_t *BF;                             /* l'image de marqueurs du fond */
    uint8_t *MA;                             /* l'image de masque */
    int32_t *M;             /* l'image d'etiquettes */
-   int32_t nlabels;                 /* nombre de labels differents */
+   index_t nlabels;                 /* nombre de labels differents */
    Fah * FAH;                   /* la file d'attente hierarchique */
    int32_t etiqcc[4];
    int32_t ncc;  
-   int32_t tab[27]; 
+   index_t tab[27]; 
    int32_t n;
 
   if (datatype(image) != VFF_TYP_1_BYTE) 
@@ -957,19 +958,19 @@ int32_t llpemeyersansligne(
 #undef F_NAME
 #define F_NAME "llpemeyersansligne"
 {
-  register int32_t x;                       /* index muet de pixel */
-  register int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t w;                       /* index muet (generalement un voisin de x) */
+  register index_t x;                       /* index muet de pixel */
+  register index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   uint8_t *BF;                             /* l'image de marqueurs du fond */
   uint8_t *MA;                             /* l'image de masque */
   int32_t *M;             /* l'image d'etiquettes */
-  int32_t nlabels;                 /* nombre de labels differents */
+  index_t nlabels;                 /* nombre de labels differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[4];
   int32_t ncc;  
@@ -1214,12 +1215,12 @@ int32_t llpemeyersanslignelab(
 #undef F_NAME
 #define F_NAME "llpemeyersanslignelab"
 {
-  register int32_t x;                       /* index muet de pixel */
-  register int32_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t x;                       /* index muet de pixel */
+  register index_t y;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t *M = SLONGDATA(marqueurs);      /* l'image de marqueurs */
   uint8_t *MA;                             /* l'image de masque */
@@ -1370,21 +1371,21 @@ int32_t llpemeyer3d(
 #undef F_NAME
 #define F_NAME "llpemeyer3d"
 {
-  register int32_t x;                       /* index muet de pixel */
-  register int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t w;                       /* index muet (generalement un voisin de x) */
+  register index_t x;                       /* index muet de pixel */
+  register index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t d = depth(image);        /* nb plans */
-  int32_t n = rs * cs;             /* taille plan */
-  int32_t N = n * d;               /* taille image */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t d = depth(image);        /* nb plans */
+  index_t n = rs * cs;             /* taille plan */
+  index_t N = n * d;               /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   uint8_t *BF;                             /* l'image de marqueurs du fond */
   uint8_t *MA;                             /* l'image de masque */
   int32_t *M;             /* l'image d'etiquettes */
-  int32_t nlabels;                 /* nombre de labels differents */
+  index_t nlabels;                 /* nombre de labels differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[6];
   int32_t ncc;  
@@ -1708,21 +1709,21 @@ int32_t llpemeyer3dsansligne(
 #undef F_NAME
 #define F_NAME "llpemeyer3dsansligne"
 {
-  register int32_t x;                       /* index muet de pixel */
-  register int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t w;                       /* index muet (generalement un voisin de x) */
+  register index_t x;                       /* index muet de pixel */
+  register index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t d = depth(image);        /* nb plans */
-  int32_t n = rs * cs;             /* taille plan */
-  int32_t N = n * d;               /* taille image */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t d = depth(image);        /* nb plans */
+  index_t n = rs * cs;             /* taille plan */
+  index_t N = n * d;               /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   uint8_t *BF;                             /* l'image de marqueurs du fond */
   uint8_t *MA;                             /* l'image de masque */
   int32_t *M;             /* l'image d'etiquettes */
-  int32_t nlabels;                 /* nombre de labels differents */
+  index_t nlabels;                 /* nombre de labels differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[6];
   int32_t ncc;  
@@ -2040,14 +2041,14 @@ int32_t llpemeyer3dsanslignelab(
 #undef F_NAME
 #define F_NAME "llpemeyer3dsanslignelab"
 {
-  register int32_t x;                       /* index muet de pixel */
-  register int32_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t x;                       /* index muet de pixel */
+  register index_t y;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t d = depth(image);        /* nb plans */
-  int32_t n = rs * cs;             /* taille plan */
-  int32_t N = n * d;               /* taille image */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t d = depth(image);        /* nb plans */
+  index_t n = rs * cs;             /* taille plan */
+  index_t N = n * d;               /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t *M = SLONGDATA(marqueurs);      /* l'image de marqueurs */
   uint8_t *MA;                             /* l'image de masque */
@@ -2259,19 +2260,19 @@ int32_t llpemeyer3d2(
 {
 #undef F_NAME
 #define F_NAME "llpemeyer3d2"
-  register int32_t x, y, k;
-  int32_t rs = rowsize(image);       /* taille ligne */
-  int32_t cs = colsize(image);       /* taille colonne */
-  int32_t d = depth(image);          /* nb plans */
-  int32_t n = rs * cs;               /* taille plan */
-  int32_t N = n * d;                 /* taille image */
+  register index_t x, y, k;
+  index_t rs = rowsize(image);       /* taille ligne */
+  index_t cs = colsize(image);       /* taille colonne */
+  index_t d = depth(image);          /* nb plans */
+  index_t n = rs * cs;               /* taille plan */
+  index_t N = n * d;                 /* taille image */
   uint8_t *F = UCHARDATA(image);     /* l'image de depart */
   uint8_t *MA;                       /* l'image de masque */
   int32_t *M = SLONGDATA(marqueurs); /* l'image d'etiquettes */
   Fah * FAH;                         /* la file d'attente hierarchique */
   int32_t etiqcc[6];
   int32_t ncc;  
-  int32_t nlabels;
+  index_t nlabels;
 
 #ifdef DEBUG_llpemeyer3d3
   printf("%s: begin\n", F_NAME);
@@ -2506,19 +2507,20 @@ int32_t llpemeyer3d2b(
 {
 #undef F_NAME
 #define F_NAME "llpemeyer3d2b"
-  register int32_t x, y, k;
-  int32_t rs = rowsize(image);       /* taille ligne */
-  int32_t cs = colsize(image);       /* taille colonne */
-  int32_t d = depth(image);          /* nb plans */
-  int32_t n = rs * cs;               /* taille plan */
-  int32_t N = n * d;                 /* taille image */
+  register int32_t k;
+  register index_t x, y;
+  index_t rs = rowsize(image);       /* taille ligne */
+  index_t cs = colsize(image);       /* taille colonne */
+  index_t d = depth(image);          /* nb plans */
+  index_t n = rs * cs;               /* taille plan */
+  index_t N = n * d;                 /* taille image */
   uint8_t *F = UCHARDATA(image);     /* l'image de depart */
   uint8_t *MA;                       /* l'image de masque */
   int32_t *M = SLONGDATA(marqueurs); /* l'image d'etiquettes */
   Fah * FAH;                         /* la file d'attente hierarchique */
   int32_t etiqcc[6];
   int32_t ncc;  
-  int32_t nlabels;
+  index_t nlabels;
 
 #ifdef DEBUG_llpemeyer3d3
   printf("%s: begin\n", F_NAME);
@@ -2747,12 +2749,13 @@ int32_t llpemeyer3d3(
 #undef F_NAME
 #define F_NAME "llpemeyer3d3"
 {
-  register int32_t x, y, k;
-  int32_t rs = rowsize(image);       /* taille ligne */
-  int32_t cs = colsize(image);       /* taille colonne */
-  int32_t d = depth(image);          /* nb plans */
-  int32_t n = rs * cs;               /* taille plan */
-  int32_t N = n * d;                 /* taille image */
+  register int32_t k;
+  register index_t x, y;
+  index_t rs = rowsize(image);       /* taille ligne */
+  index_t cs = colsize(image);       /* taille colonne */
+  index_t d = depth(image);          /* nb plans */
+  index_t n = rs * cs;               /* taille plan */
+  index_t N = n * d;                 /* taille image */
   uint8_t *F = UCHARDATA(image);     /* l'image de depart */
   uint8_t *MA;                       /* l'image de masque */
   int32_t *M = SLONGDATA(marqueurs); /* l'image d'etiquettes */
@@ -2971,19 +2974,19 @@ int32_t llpemeyerbiconnecte(
 #undef F_NAME
 #define F_NAME "llpemeyerbiconnecte"
 {
-  register int32_t x;                       /* index muet de pixel */
-  register int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t w;                       /* index muet (generalement un voisin de x) */
+  register index_t x;                       /* index muet de pixel */
+  register index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   uint8_t *BF;                             /* l'image de marqueurs du fond */
   uint8_t *MA;                             /* l'image de masque */
   int32_t *M;             /* l'image d'etiquettes */
-  int32_t nlabels;                 /* nombre de labels differents */
+  index_t nlabels;                 /* nombre de labels differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[4];
   int32_t ncc;  
@@ -3229,21 +3232,21 @@ int32_t llpemeyerbiconnecte3d(
 #undef F_NAME
 #define F_NAME "llpemeyerbiconnecte3d"
 {
-  register int32_t x;                       /* index muet de pixel */
-  register int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t w;                       /* index muet (generalement un voisin de x) */
+  register index_t x;                       /* index muet de pixel */
+  register index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t w;                       /* index muet (generalement un voisin de x) */
   register int32_t k;                       /* index muet */
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t d = depth(image);        /* nb plans */
-  int32_t n = rs * cs;             /* taille plan */
-  int32_t N = n * d;               /* taille image */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t d = depth(image);        /* nb plans */
+  index_t n = rs * cs;             /* taille plan */
+  index_t N = n * d;               /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   uint8_t *BF;                             /* l'image de marqueurs du fond */
   uint8_t *MA;                             /* l'image de masque */
   int32_t *M;             /* l'image d'etiquettes */
-  int32_t nlabels;                 /* nombre de labels differents */
+  index_t nlabels;                 /* nombre de labels differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
   int32_t etiqcc[6];
   int32_t ncc;  
@@ -3397,11 +3400,7 @@ int32_t llpemeyerbiconnecte3d(
     for (k = 0; k < 14; k ++)
     {
       y = voisin14b(x, k, rs, n, N);
-      if(y >= N)
-      {
-	printf("%s: Attention on innonde en dehors de l'image %d %d rs %d, n %d ,N %d \n", F_NAME, x,k, rs, n ,N);
-	exit(-1);
-      }
+      assert(y < N);     // sinon on innonde en dehors de l'image
       if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
       {
 	etiqcc[ncc] = M[y];        	

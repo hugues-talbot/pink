@@ -36,8 +36,12 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
+#ifndef _MCIMAGE_H
+#include <mcimage.h>
+#endif
+
 typedef struct FAHELT {
-  int32_t Point;
+  index_t Point;
   struct FAHELT * Next;
 } FahElt;
 
@@ -46,10 +50,10 @@ typedef struct FAHELT {
 #endif
 
 typedef struct {
-  int32_t Max;             /* taille max de la fah (en nombre de points) */
+  index_t Max;             /* taille max de la fah (en nombre de points) */
   int32_t Niv;             /* niveau a partir duquel des listes existent */
-  int32_t Util;            /* nombre de points courant dans la fah */
-  int32_t Maxutil;         /* nombre de points utilises max (au cours du temps) */
+  index_t Util;            /* nombre de points courant dans la fah */
+  index_t Maxutil;         /* nombre de points utilises max (au cours du temps) */
   FahElt *Tete[NPRIO]; /* tableau des tetes de liste */
   FahElt *Queue;       /* queue de liste (la ou l'on preleve) */
   FahElt *QueueUrg;    /* queue de liste d'urgence (la ou l'on preleve) */
@@ -63,7 +67,7 @@ typedef struct {
 /* ============== */
 
 extern Fah * CreeFahVide(
-  int32_t taillemax
+  index_t taillemax
 );
 
 extern void FahFlush(
@@ -87,17 +91,17 @@ extern int32_t FahNiveau(
   Fah * L
 );
 
-extern int32_t FahPop(
+extern index_t FahPop(
   Fah * L
 );
 
-extern int32_t FahFirst(
+extern index_t FahFirst(
   Fah * L
 );
 
 extern void FahPush(
   Fah * L,
-  int32_t Po,
+  index_t Po,
   int32_t Ni
 );
 

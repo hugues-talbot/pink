@@ -36,8 +36,8 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-extern int ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int32_t y2);
-extern int ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, int32_t x2, int32_t y2, int32_t z2);
+extern int32_t ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int32_t y2);
+extern int32_t ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, int32_t x2, int32_t y2, int32_t z2);
 extern int32_t ldrawline2(struct xvimage * image1);
 extern void ldrawfilledellipse(struct xvimage * image, double R, double S, double T, double U, double V, double Z);
 extern void ldrawcubic1(struct xvimage * image1, double *x, double *y, int32_t nseg, double sx, double sy);

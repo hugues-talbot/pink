@@ -274,7 +274,7 @@ int32_t surfaceOpenningRec(JCctree *CT, int32_t *SurfaceCompo, int32_t *SurfaceM
 } 
 
 // Si meme altitude, meme attribut
-propagate1(JCctree *CT, int32_t root, int32_t *omegaCompo)
+void propagate1(JCctree *CT, int32_t root, int32_t *omegaCompo)
 {
   JCsoncell *s;
   // 
@@ -297,7 +297,7 @@ propagate1(JCctree *CT, int32_t root, int32_t *omegaCompo)
 }
 
 // Valeurs extinctions
-propagate2(JCctree *CT, int32_t root, int32_t *omegaCompo, int32_t valeur)
+void propagate2(JCctree *CT, int32_t root, int32_t *omegaCompo, int32_t valeur)
 {
   JCsoncell *s;
   // 

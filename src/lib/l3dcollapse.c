@@ -80,14 +80,15 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
 #undef F_NAME
 #define F_NAME "l3dcollapse"
 {
-  int32_t i, u, v, n, x, y, z, xv, yv, zv;
-  int32_t rs, cs, ps, ds, N;
+  int32_t n;
+  index_t u, v, x, y, z, xv, yv, zv;
+  index_t i, rs, cs, ps, ds, N;
   uint8_t * K;
   int32_t * P;
   uint8_t * I = NULL;
   Rbt * RBT;
-  int32_t taillemaxrbt;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t taillemaxrbt;
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   rs = rowsize(k);
   cs = colsize(k);
@@ -214,8 +215,9 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 #undef F_NAME
 #define F_NAME "l3dpardircollapse_l"
 {
-  int32_t i, g, f, u, n, xf, yf, zf, xg, yg, zg;
-  int32_t rs, cs, ps, ds, N;
+  int32_t u, n;
+  index_t g, f, xf, yf, zf, xg, yg, zg;
+  index_t i, rs, cs, ps, ds, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   int32_t * P;
@@ -223,8 +225,8 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
   Rbt * RBT;
   Rlifo * RLIFO;
   Rlifo * RLIFOb;
-  int32_t taillemaxrbt;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t taillemaxrbt;
+  index_t tab[GRS3D*GCS3D*GDS3D];
   TypRbtKey p, pp;
 
   rs = rowsize(k);
@@ -428,8 +430,9 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 #undef F_NAME
 #define F_NAME "l3dpardircollapse_f"
 {
-  int32_t i, g, f, u, n, xf, yf, zf, xg, yg, zg;
-  int32_t rs, cs, ps, ds, N;
+  int32_t u, n;
+  index_t g, f, xf, yf, zf, xg, yg, zg;
+  index_t i, rs, cs, ps, ds, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   float * P;
@@ -437,8 +440,8 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
   Rbt * RBT;
   Rlifo * RLIFO;
   Rlifo * RLIFOb;
-  int32_t taillemaxrbt;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t taillemaxrbt;
+  index_t tab[GRS3D*GCS3D*GDS3D];
   TypRbtKey p, pp;
 
   rs = rowsize(k);
@@ -657,16 +660,17 @@ int32_t l3dpardircollapse(struct xvimage * k, int32_t nsteps, struct xvimage * i
 #undef F_NAME
 #define F_NAME "l3dpardircollapse"
 {
-  int32_t i, g, f, u, n, xf, yf, zf, xg, yg, zg;
-  int32_t rs, cs, ps, ds, N;
+  int32_t u, n;
+  index_t g, f, xf, yf, zf, xg, yg, zg;
+  index_t i, rs, cs, ps, ds, N;
   int32_t dim, ori, dir, direc, orien, ncol;
   uint8_t * K;
   uint8_t * I = NULL;
   Rlifo * RLIFO;
   Rlifo * RLIFOb;
   Rlifo * RLIFOt;
-  int32_t taillemax;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t taillemax;
+  index_t tab[GRS3D*GCS3D*GDS3D];
 
   rs = rowsize(k);
   cs = colsize(k);
@@ -875,16 +879,17 @@ int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * 
 #undef F_NAME
 #define F_NAME "l3dsurfacecollapse"
 {
-  int32_t i, g, f, u, n, xf, yf, zf, xg, yg, zg;
-  int32_t rs, cs, ps, ds, N;
+  int32_t u, n;
+  index_t g, f, xf, yf, zf, xg, yg, zg;
+  index_t i, rs, cs, ps, ds, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   uint8_t * I = NULL;
   Rlifo * RLIFO;
   Rlifo * RLIFOb;
   Rlifo * RLIFOt;
-  int32_t taillemax;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t taillemax;
+  index_t tab[GRS3D*GCS3D*GDS3D];
   uint32_t nbcol;
 
   rs = rowsize(k);
@@ -1120,8 +1125,9 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 #undef F_NAME
 #define F_NAME "l3dtopoflow_f"
 {
-  int32_t i, g, gg, f, ff, u, n, xf, yf, zf, xg, yg, zg;
-  int32_t rs, cs, ds, ps, N;
+  int32_t u, n;
+  index_t g, gg, f, ff, xf, yf, zf, xg, yg, zg;
+  index_t i, rs, cs, ds, ps, N;
   int32_t dim, ori, dir, direc, orien;
   uint8_t * K;
   float * P;
@@ -1129,8 +1135,8 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
   Rbt * RBT;
   Rlifo * RLIFO;
   Rlifo * RLIFOb;
-  int32_t taillemaxrbt;
-  int32_t tab[GRS3D*GCS3D*GDS3D];
+  index_t taillemaxrbt;
+  index_t tab[GRS3D*GCS3D*GDS3D];
   TypRbtKey p, pp;
   graphe * flow = NULL;
   int32_t narcs, ncoll = 0;

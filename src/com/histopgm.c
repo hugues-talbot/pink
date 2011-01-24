@@ -65,7 +65,7 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * imhist;
   struct xvimage * mask = NULL;
-  uint32_t * histo;
+  index_t * histo;
   int32_t size;
 
   if ((argc != 3) && (argc != 4))
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 
   if (datatype(image) == VFF_TYP_1_BYTE)
   {
-    histo = (uint32_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(int32_t));
+    histo = (index_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(index_t));
     if (histo == NULL)
     {
       fprintf(stderr, "%s: malloc failed\n", argv[0]);

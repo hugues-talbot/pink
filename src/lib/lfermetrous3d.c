@@ -85,9 +85,9 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <llabelextrema.h>
 #include <lfermetrous3d.h>
 
-#define PARANO
 /*
 #define DEBUG
+#define DEBUG_MARCIN
 */
 
 #define VERBOSE
@@ -577,7 +577,6 @@ int32_t lfermetrous3dbin2(struct xvimage *in,struct xvimage *g, int32_t connex, 
           } /* if y */
         } /* for k */      
       } /* if (tbareqone26h(F, x, VAL_Y_X_M, rs, ps, N)) */
-#define DEBUG_MARCIN
 #ifdef DEBUG_MARCIN
       else
       {

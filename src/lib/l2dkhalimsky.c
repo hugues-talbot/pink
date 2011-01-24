@@ -294,8 +294,8 @@ int32_t l2dthin(struct xvimage * k, int32_t nsteps)
 {
   struct xvimage * kp;
   int32_t stablealpha, stablebeta;
-  int32_t i, x, y;
-  int32_t rs, cs, N;
+  int32_t i;
+  index_t rs, cs, N, x, y;
   uint8_t * K;
   uint8_t * KP;
 
@@ -359,7 +359,7 @@ int32_t l2dthin(struct xvimage * k, int32_t nsteps)
 } /* l2dthin() */
 
 /* =============================================================== */
-int32_t l2dlabel(struct xvimage * f, struct xvimage * lab, int32_t *nlabels)
+int32_t l2dlabel(struct xvimage * f, struct xvimage * lab, index_t *nlabels)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "l2dlabel"
@@ -368,12 +368,12 @@ int32_t l2dlabel(struct xvimage * f, struct xvimage * lab, int32_t *nlabels)
   Resultat dans lab (image "longint", allouee a l'avance)
 */
 {
-  int32_t rs, cs, N;
+  index_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *F;
   int32_t *LAB;
   Lifo * LIFO;
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k;
 
   if (depth(f) != 1) 
@@ -449,7 +449,7 @@ int32_t l2dlabelextrema(
       struct xvimage * f,   /* ordre value' original */
       int32_t minimum,          /* booleen */
       struct xvimage * lab, /* resultat: image de labels */
-      int32_t *nlabels)         /* resultat: nombre d'extrema traites + 1 (0 = non extremum) */
+      index_t *nlabels)         /* resultat: nombre d'extrema traites + 1 (0 = non extremum) */
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "l2dlabelextrema"
@@ -458,12 +458,12 @@ int32_t l2dlabelextrema(
   Resultat dans lab (image "longint", allouee a l'avance)
 */
 {
-  int32_t rs, cs, N;
+  index_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *F;
   int32_t *LAB, label;
   Lifo * LIFO;
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k;
 
   if (depth(f) != 1) 
@@ -574,7 +574,7 @@ int32_t l2dlabelextrema(
 } /* l2dlabelextrema() */
 
 /* =============================================================== */
-static int32_t simple(int32_t w, int32_t *LAB, int32_t rs, int32_t cs)
+static int32_t simple(index_t w, int32_t *LAB, index_t rs, index_t cs)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "simple"
@@ -583,7 +583,7 @@ static int32_t simple(int32_t w, int32_t *LAB, int32_t rs, int32_t cs)
    sinon retourne 0
 */
 {
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k, y;
   int32_t val = 0;
 
@@ -629,14 +629,14 @@ int32_t l2dtopotess(struct xvimage * lab, struct xvimage * mask)
   Attention : on suppose que lab est nulle en dehors de mask
 */
 {
-  int32_t rs, cs, N;
+  index_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *MASK;
   int32_t *LAB;
   Lifo * LIFO;
   Lifo * LIFOAUX;
   Lifo * LIFOVAL;
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k;
   int32_t val;
 
@@ -748,12 +748,8 @@ if (mask == NULL)
 
 #ifdef PARANO  
   for (x = 0; x < N; x++)
-  {
-    if (!LAB[x] && (val = simple(x, LAB, rs, cs))) 
-    {
-      fprintf(stderr, "PARANO: il reste des points simples : %d,%d\n", x%rs, x/rs);
-    }
-  }
+    assert(LAB[x] || (val != simple(x, LAB, rs, cs)));
+    // il reste des points simples
 #endif
 
 } /* if (mask == NULL) */
@@ -825,7 +821,7 @@ else
 } /* l2dtopotess() */
 
 /* =============================================================== */
-int32_t testlocal(int32_t w, int32_t *LAB, int32_t rs, int32_t cs)
+int32_t testlocal(index_t w, int32_t *LAB, index_t rs, index_t cs)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "testlocal"
@@ -836,7 +832,7 @@ int32_t testlocal(int32_t w, int32_t *LAB, int32_t rs, int32_t cs)
    sinon retourne -1
 */
 {
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k, y;
   int32_t val = -1;
 
@@ -870,7 +866,7 @@ int32_t testlocal(int32_t w, int32_t *LAB, int32_t rs, int32_t cs)
 } /* testlocal() */
 
 /* =============================================================== */
-int32_t testlocalmask(int32_t w, int32_t *LAB, uint8_t *MASK, int32_t rs, int32_t cs)
+int32_t testlocalmask(index_t w, int32_t *LAB, uint8_t *MASK, index_t rs, index_t cs)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "testlocalmask"
@@ -881,7 +877,7 @@ int32_t testlocalmask(int32_t w, int32_t *LAB, uint8_t *MASK, int32_t rs, int32_
    sinon retourne -1
 */
 {
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k, y;
   int32_t val = -1;
 
@@ -927,14 +923,14 @@ int32_t l2dvoronoi(struct xvimage * lab, struct xvimage * mask)
   Attention : on suppose que lab est nulle en dehors de mask
 */
 {
-  int32_t rs, cs, N;
+  index_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *MASK;
   int32_t *LAB;
   Lifo * LIFO;
   Lifo * LIFOAUX;
   Lifo * LIFOVAL;
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k;
   int32_t val;
 
@@ -1132,8 +1128,8 @@ int32_t l2dtopotessndg(struct xvimage * f)
   Implementation naive d'apres la definition
 */
 {
-  int32_t rs, cs, N;
-  int32_t x;
+  index_t rs, cs, N;
+  index_t x;
   struct xvimage * fk;  /* seuil de F au niveau k */ 
   struct xvimage * fkp; /* seuil de F au niveau k+1 */
   struct xvimage * lab; /* pour les labels des CC de fkp */ 
@@ -1142,8 +1138,8 @@ int32_t l2dtopotessndg(struct xvimage * f)
   uint8_t *Fkp;
   int32_t *LAB;
   int32_t kp;
-  int32_t nlabels;
-  int32_t histo[NDG_MAX+1];
+  index_t nlabels;
+  index_t histo[NDG_MAX+1];
 
   if (depth(f) != 1) 
   {
@@ -1181,7 +1177,7 @@ int32_t l2dtopotessndg(struct xvimage * f)
   LAB = SLONGDATA(lab);
 
   /* calcule histo */  
-  memset(histo, 0, (NDG_MAX+1) * sizeof(int32_t));
+  memset(histo, 0, (NDG_MAX+1) * sizeof(index_t));
   for (x = 0; x < N; x++) histo[F[x]] += 1;
 
   /* monte au second niveau non vide */
@@ -1245,8 +1241,8 @@ int32_t l2dtopotessndg_inverse(struct xvimage * f)
   Implementation naive d'apres la definition
 */
 {
-  int32_t rs, cs, N;
-  int32_t x;
+  index_t rs, cs, N;
+  index_t x;
   struct xvimage * fk;  /* seuil de F au niveau k */ 
   struct xvimage * fkp; /* seuil de F au niveau k+1 */
   struct xvimage * lab; /* pour les labels des CC de fkp */ 
@@ -1255,8 +1251,8 @@ int32_t l2dtopotessndg_inverse(struct xvimage * f)
   uint8_t *Fkp;
   int32_t *LAB;
   int32_t k, kp;
-  int32_t nlabels;
-  int32_t histo[NDG_MAX+1];
+  index_t nlabels;
+  index_t histo[NDG_MAX+1];
 
   if (depth(f) != 1) 
   {
@@ -1293,7 +1289,7 @@ int32_t l2dtopotessndg_inverse(struct xvimage * f)
   LAB = SLONGDATA(lab);
 
   /* calcule histo */  
-  memset(histo, 0, (NDG_MAX+1) * sizeof(int32_t));
+  memset(histo, 0, (NDG_MAX+1) * sizeof(index_t));
   for (x = 0; x < N; x++) histo[F[x]] += 1;
 
   /* cherche niveau max */
@@ -1363,8 +1359,8 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
   Implementation naive d'apres la definition de Vincent et Soille
 */
 {
-  int32_t rs, cs, N;
-  int32_t x;
+  index_t rs, cs, N;
+  index_t x;
   struct xvimage * fk;  /* seuil de F au niveau k */ 
   struct xvimage * fkp; /* seuil de F au niveau k+1 */
   struct xvimage * lab; /* pour les labels des CC de fkp */ 
@@ -1375,8 +1371,8 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
   int32_t *LAB;
   int32_t *MAXI;
   int32_t kp;
-  int32_t nlabels;
-  int32_t histo[NDG_MAX+1];
+  index_t nlabels;
+  index_t histo[NDG_MAX+1];
 
   if (depth(f) != 1) 
   {
@@ -1428,7 +1424,7 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
   }
 
   /* calcule histo */  
-  memset(histo, 0, (NDG_MAX+1) * sizeof(int32_t));
+  memset(histo, 0, (NDG_MAX+1) * sizeof(index_t));
   for (x = 0; x < N; x++) histo[F[x]] += 1;
 
   /* cherche niveau max */
@@ -1484,7 +1480,7 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
 } /* l2dtopotessndgVS() */
 
 /* =============================================================== */
-int32_t l2dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbtrous, int32_t *euler)
+int32_t l2dinvariants(struct xvimage *f, index_t *nbcc, index_t *nbtrous, index_t *euler)
 /* =============================================================== */
 /*
   Calculs des nombres de composantes connexes et trous.
@@ -1492,14 +1488,14 @@ int32_t l2dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbtrous, int32_
 #undef F_NAME
 #define F_NAME "l2dinvariants"
 {
-  int32_t rs, cs, N;
-  int32_t x, y, w;
+  index_t rs, cs, N;
+  index_t x, y, w;
   uint8_t *F;
   struct xvimage * lab;
   int32_t *LAB;
   int32_t nlabels;
   Lifo * LIFO;
-  int32_t tab[9]; int32_t n, k;
+  index_t tab[9]; int32_t n, k;
 
   if (depth(f) != 1) 
   {
@@ -1594,11 +1590,12 @@ int32_t l2dboundary(struct xvimage * f)
 #undef F_NAME
 #define F_NAME "l2dboundary"
   struct xvimage * g;
-  int32_t rs, cs;
-  int32_t x, y;
+  index_t rs, cs;
+  index_t x, y;
   uint8_t *F;
   uint8_t *G;
-  int32_t tab[8], n, u;
+  index_t tab[8];
+  int32_t n, u;
 
   rs = rowsize(f);
   cs = colsize(f);
@@ -1640,8 +1637,8 @@ int32_t l2dborder(struct xvimage * f)
 #undef F_NAME
 #define F_NAME "l2dborder"
   struct xvimage * g;
-  int32_t rs, cs;
-  int32_t x, y;
+  index_t rs, cs;
+  index_t x, y;
   uint8_t *F;
   uint8_t *G;
 
@@ -1682,11 +1679,12 @@ int32_t l2dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8
 #undef F_NAME
 #define F_NAME "l2dseltype"
 {
-  int32_t rs, cs, N, i1, j1, i2, j2, x, y, a, b, d;
+  index_t rs, cs, N, i1, j1, i2, j2, x, y;
+  int32_t a, b, d;
   uint8_t * K;
   struct xvimage * kp;
   uint8_t * KP;
-  int32_t tab[9]; int32_t n, u;
+  index_t tab[9]; int32_t n, u;
 
 //#define DEBUG_l2dseltype
 #ifdef DEBUG_l2dseltype

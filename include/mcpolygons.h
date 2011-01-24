@@ -36,6 +36,10 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
+#ifndef _MCIMAGE_H
+#include <mcimage.h>
+#endif
+
 // nombre maximum de sommets par face (polygone)
 #define MCP_MAXVERTFACE 50
 
@@ -48,19 +52,19 @@ extern "C" {
 typedef struct {
   double x, y, z;    /* coordonnees */
   int32_t nfaces;
-  int32_t face[MCP_MAXADJFACES]; /* indices des faces adjacentes (pas plus de MCP_MAXADJFACES) */
+  index_t face[MCP_MAXADJFACES]; /* indices des faces adjacentes (pas plus de MCP_MAXADJFACES) */
 } mcpvertex;
 
 typedef struct {
   int32_t n;         /* nombre de sommets adjacents */
   int32_t na;         /* nombre de sommets auxiliaires adjacents */
-  int32_t vert[MCP_MAXVERTFACE];   /* indices des sommets adjacents */
+  index_t vert[MCP_MAXVERTFACE];   /* indices des sommets adjacents */
 } mcpface;
 
 typedef struct {
-  int32_t v1, v2;    /* indices des sommets adjacents */
+  index_t v1, v2;    /* indices des sommets adjacents */
   int32_t n;         /* nombre de sommets dans la subdivision */
-  int32_t vert[MCP_MAXVERTEDGE];   /* indices des sommets de la subdivision */
+  index_t vert[MCP_MAXVERTEDGE];   /* indices des sommets de la subdivision */
 } mcpedge;
 
 typedef struct {

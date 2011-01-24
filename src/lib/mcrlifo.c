@@ -49,16 +49,19 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcrlifo.h>
 
 /* ==================================== */
-Rlifo * CreeRlifoVide(int32_t taillemax)
+Rlifo * CreeRlifoVide(index_t taillemax)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "CreeRlifoVide" 
 {
-  Rlifo * L = (Rlifo *)calloc(1,sizeof(Rlifo) + sizeof(int32_t) * (taillemax-1));
+  Rlifo * L = (Rlifo *)calloc(1,sizeof(Rlifo) + sizeof(index_t) * (taillemax-1));
   if (L == NULL)
   {   
-    fprintf(stderr, "%s: malloc failed : %d bytes\n", F_NAME, 
-            sizeof(Rlifo) + sizeof(int32_t) * (taillemax-1));
+#ifdef MC_64_BITS
+    fprintf(stderr, "%s: malloc failed : %lld bytes\n", F_NAME, sizeof(Rlifo) + sizeof(index_t) * (taillemax-1));
+#else
+    fprintf(stderr, "%s: malloc failed : %d bytes\n", F_NAME, sizeof(Rlifo) + sizeof(index_t) * (taillemax-1));
+#endif
     return NULL;
   }
   L->Max = taillemax;
@@ -81,7 +84,7 @@ int32_t RlifoVide(Rlifo * L)
 }
 
 /* ==================================== */
-int32_t RlifoPop(Rlifo * L)
+index_t RlifoPop(Rlifo * L)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "RlifoPop" 
@@ -96,7 +99,7 @@ int32_t RlifoPop(Rlifo * L)
 }
 
 /* ==================================== */
-int32_t RlifoHead(Rlifo * L)
+index_t RlifoHead(Rlifo * L)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "RlifoHead" 
@@ -110,20 +113,23 @@ int32_t RlifoHead(Rlifo * L)
 }
 
 /* ==================================== */
-void RlifoPush(Rlifo ** L, int32_t V)
+void RlifoPush(Rlifo ** L, index_t V)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "RlifoPush" 
 {
   if ((*L)->Sp > (*L)->Max - 1)
   {
-    int32_t newsize = (*L)->Max + (*L)->Max;
+    index_t newsize = (*L)->Max + (*L)->Max;
     (*L)->Max = newsize;
-    (*L) = (Rlifo *)realloc((*L), sizeof(Rlifo) + sizeof(int32_t) * (newsize - 1));
+    (*L) = (Rlifo *)realloc((*L), sizeof(Rlifo) + sizeof(index_t) * (newsize - 1));
     if ((*L) == NULL)
     {
-      fprintf(stderr, "%s: realloc failed : %d bytes\n", F_NAME, 
-	      sizeof(Rlifo) + sizeof(int32_t) * (newsize-1));
+#ifdef MC_64_BITS
+      fprintf(stderr, "%s: realloc failed : %lld bytes\n", F_NAME, sizeof(Rlifo) + sizeof(index_t) * (newsize-1));
+#else
+      fprintf(stderr, "%s: realloc failed : %d bytes\n", F_NAME, sizeof(Rlifo) + sizeof(index_t) * (newsize-1));
+#endif
       exit(1);
     }
   }
@@ -135,11 +141,15 @@ void RlifoPush(Rlifo ** L, int32_t V)
 void RlifoPrint(Rlifo * L)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   if (RlifoVide(L)) {printf("[]"); return;}
   printf("[ ");
   for (i = 0; i < L->Sp; i++)
+#ifdef MC_64_BITS
+    printf("%lld ", L->Pts[i]);
+#else
     printf("%d ", L->Pts[i]);
+#endif
   printf("]");
 }
 
@@ -147,11 +157,15 @@ void RlifoPrint(Rlifo * L)
 void RlifoPrintLine(Rlifo * L)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   if (RlifoVide(L)) {printf("[]\n"); return;}
   printf("[ ");
   for (i = 0; i < L->Sp; i++)
+#ifdef MC_64_BITS
+    printf("%lld ", L->Pts[i]);
+#else
     printf("%d ", L->Pts[i]);
+#endif
   printf("]\n");
 }
 

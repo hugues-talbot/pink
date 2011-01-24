@@ -130,13 +130,13 @@ struct xvimage * Khalimskize2d(struct xvimage *o)
    k: resultat - chaque pixel de o est devenu un beta-terminal de k
 */
 {
-  int32_t ors = rowsize(o);
-  int32_t ocs = colsize(o);
+  index_t ors = rowsize(o);
+  index_t ocs = colsize(o);
   uint8_t *O = UCHARDATA(o);
   struct xvimage *k;
-  int32_t krs, kcs, kN;
+  index_t krs, kcs, kN;
   uint8_t *K;
-  int32_t i, j;  
+  index_t i, j;  
 
   assert(datatype(o) == VFF_TYP_1_BYTE);
 
@@ -173,11 +173,11 @@ struct xvimage * KhalimskizeNDG2d(struct xvimage *o)
 {
 #undef F_NAME
 #define F_NAME "KhalimskizeNDG2d"
-  int32_t ors = rowsize(o);
-  int32_t ocs = colsize(o);
+  index_t ors = rowsize(o);
+  index_t ocs = colsize(o);
   struct xvimage *b;
-  int32_t brs, bcs, bN;
-  int32_t i, j;
+  index_t brs, bcs, bN;
+  index_t i, j;
 
   brs = 2 * ors + 1;
   bcs = 2 * ocs + 1;
@@ -234,13 +234,13 @@ struct xvimage * KhalimskizeNDG2d_OLD(struct xvimage *o)
                  autres points sont a 0.
 */
 {
-  int32_t ors = rowsize(o);
-  int32_t ocs = colsize(o);
+  index_t ors = rowsize(o);
+  index_t ocs = colsize(o);
   uint8_t *O = UCHARDATA(o);
   struct xvimage *k;
-  int32_t krs, kcs, kN;
+  index_t krs, kcs, kN;
   uint8_t *K;
-  int32_t i, j;  
+  index_t i, j;  
 
   krs = 2 * ors + 1;
   kcs = 2 * ocs + 1;
@@ -270,13 +270,13 @@ struct xvimage * DeKhalimskize2d(struct xvimage *o)
    r: resultat - chaque beta-terminal de k devient un pixel de r
 */
 {
-  int32_t ors = rowsize(o);
-  int32_t ocs = colsize(o);
+  index_t ors = rowsize(o);
+  index_t ocs = colsize(o);
   uint8_t *O = UCHARDATA(o);
   struct xvimage *r;
-  int32_t rrs, rcs, rN;
+  index_t rrs, rcs, rN;
   uint8_t *R;
-  int32_t i, j;  
+  index_t i, j;  
 
   rrs = ors / 2;
   rcs = ocs / 2;
@@ -310,12 +310,12 @@ void Khalimskize2d_noalloc(struct xvimage *o, struct xvimage * k)
    \warning pas de vérification de taille
 */
 {
-  int32_t ors = rowsize(o);
-  int32_t ocs = colsize(o);
+  index_t ors = rowsize(o);
+  index_t ocs = colsize(o);
   uint8_t *O = UCHARDATA(o);
-  int32_t krs, kcs, kN;
+  index_t krs, kcs, kN;
   uint8_t *K;
-  int32_t i, j;  
+  index_t i, j;  
 
   krs = 2 * ors + 1;
   kcs = 2 * ocs + 1;
@@ -341,12 +341,12 @@ void KhalimskizeNDG2d_noalloc(struct xvimage *o, struct xvimage * k)
    \warning pas de vérification de taille
 */
 {
-  int32_t ors = rowsize(o);
-  int32_t ocs = colsize(o);
+  index_t ors = rowsize(o);
+  index_t ocs = colsize(o);
   uint8_t *O = UCHARDATA(o);
-  int32_t krs, kcs, kN;
+  index_t krs, kcs, kN;
   uint8_t *K;
-  int32_t i, j;  
+  index_t i, j;  
 
   krs = 2 * ors + 1;
   kcs = 2 * ocs + 1;
@@ -369,12 +369,12 @@ void DeKhalimskize2d_noalloc(struct xvimage *o, struct xvimage * r)
    \warning pas de vérification de taille
 */
 {
-  int32_t ors = rowsize(o);
-  int32_t ocs = colsize(o);
+  index_t ors = rowsize(o);
+  index_t ocs = colsize(o);
   uint8_t *O = UCHARDATA(o);
-  int32_t rrs, rcs, rN;
+  index_t rrs, rcs, rN;
   uint8_t *R;
-  int32_t i, j;  
+  index_t i, j;  
 
   rrs = ors / 2;
   rcs = ocs / 2;
@@ -403,11 +403,12 @@ void Connex8Obj2d(struct xvimage *k)
 void Connex4Obj2d(struct xvimage *k)
 /* ==================================== */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
-  int32_t i, j, x, y, u, n;
-  int32_t tab[GRS2D*GCS2D];
+  index_t i, j, x, y, u;
+  int32_t n;
+  index_t tab[GRS2D*GCS2D];
 
   for (j = 1; j < cs-1; j++)
     for (i = 1; i < rs-1; i++)
@@ -431,12 +432,13 @@ void ndgmin2d(struct xvimage *b)
 {
 #undef F_NAME
 #define F_NAME "ndgmin2d"
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t N = rs * cs;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t N = rs * cs;
   struct xvimage *bp;
-  int32_t i, j, u, n;
-  int32_t tab[GRS2D*GCS2D];
+  index_t i, j, u;
+  int32_t n;
+  index_t tab[GRS2D*GCS2D];
 
   if (datatype(b) == VFF_TYP_1_BYTE)
   {
@@ -514,13 +516,14 @@ void ndgmin2d_OLD(struct xvimage *k)
           ont recu la valeur min{k[y], y beta-terminal dans betacarre[x]}
 */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
   struct xvimage *kp;
   uint8_t *KP;
-  int32_t i, j, u, n;
-  int32_t tab[9];
+  index_t i, j, u;
+  int32_t n;
+  index_t tab[9];
 
   kp = copyimage(k);
   KP = UCHARDATA(kp);
@@ -548,13 +551,14 @@ void ndgminbeta2d(struct xvimage *k)
           ont recu la valeur min{k[y], y alpha-terminal dans alphacarre[x]}
 */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
   struct xvimage *kp;
   uint8_t *KP;
-  int32_t i, j, u, n;
-  int32_t tab[9];
+  index_t i, j, u;
+  int32_t n;
+  index_t tab[9];
 
   kp = copyimage(k);
   KP = UCHARDATA(kp);
@@ -577,12 +581,13 @@ void ndgmax2d(struct xvimage *b)
 {
 #undef F_NAME
 #define F_NAME "ndgmax2d"
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t N = rs * cs;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t N = rs * cs;
   struct xvimage *bp;
-  int32_t i, j, u, n;
-  int32_t tab[GRS2D*GCS2D];
+  index_t i, j, u;
+  int32_t n;
+  index_t tab[GRS2D*GCS2D];
 
   if (datatype(b) == VFF_TYP_1_BYTE)
   {
@@ -660,13 +665,14 @@ void ndgmax2d_OLD(struct xvimage *k)
           ont recu la valeur max{k[y], y beta-terminal dans betacarre[x]}
 */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
   struct xvimage *kp;
   uint8_t *KP;
-  int32_t i, j, u, n;
-  int32_t tab[9];
+  index_t i, j, u;
+  int32_t n;
+  index_t tab[9];
 
   kp = copyimage(k);
   KP = UCHARDATA(kp);
@@ -694,13 +700,14 @@ void ndgmaxbeta2d(struct xvimage *k)
           ont recu la valeur max{k[y], y alpha-terminal dans alphacarre[x]}
 */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
   struct xvimage *kp;
   uint8_t *KP;
-  int32_t i, j, u, n;
-  int32_t tab[9];
+  index_t i, j, u;
+  int32_t n;
+  index_t tab[9];
 
   kp = copyimage(k);
   KP = UCHARDATA(kp);
@@ -730,10 +737,11 @@ void ndgmoy2d(struct xvimage *b)
 {
 #undef F_NAME
 #define F_NAME "ndgmoy2d"
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t i, j, u, n, nb;
-  int32_t tab[GRS2D*GCS2D];
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t i, j, u;
+  int32_t n, nb;
+  index_t tab[GRS2D*GCS2D];
 
   if (datatype(b) == VFF_TYP_1_BYTE)
   {
@@ -818,13 +826,14 @@ void ndg2grad2d(struct xvimage *k)
           Si x singleton, alors kp[x] = max des valeurs de kp pour les intervalles dans beta(x).
 */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
   struct xvimage *kp;
   uint8_t *KP;
-  int32_t i, j, u, n;
-  int32_t tab[9];
+  index_t i, j, u;
+  int32_t n;
+  index_t tab[9];
 
   kp = copyimage(k);
   KP = UCHARDATA(kp);
@@ -868,13 +877,14 @@ void ndg4grad2d(struct xvimage *k)
           Si x singleton, alors kp[x] = difference entre le sup et le inf des k des carres dans beta(x).
 */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
   struct xvimage *kp;
   uint8_t *KP;
-  int32_t i, j, u, ui, uj, n;
-  int32_t tab[9];
+  index_t i, j;
+  int32_t u, ui, uj, n;
+  index_t tab[9];
   int32_t sup, inf, tmp;
 
   kp = copyimage(k);
@@ -908,7 +918,7 @@ void ndg4grad2d(struct xvimage *k)
 } /* ndg4grad2d() */
 
 /* ==================================== */
-void Betapoint2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n)
+void Betapoint2d(index_t rs, index_t cs, index_t i, index_t j, index_t *tab, int32_t *n)
 /* ==================================== */
 /* 
   retourne dans tab la beta-proximite de (i,j).
@@ -946,7 +956,7 @@ void Betapoint2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int
 } /* Betapoint2d() */
 
 /* ==================================== */
-void Alphapoint2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n)
+void Alphapoint2d(index_t rs, index_t cs, index_t i, index_t j, index_t *tab, int32_t *n)
 /* ==================================== */
 /* 
   retourne dans tab l'alpha-proximite de (i,j).
@@ -984,7 +994,7 @@ void Alphapoint2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, in
 } /* Alphapoint2d() */
 
 /* ==================================== */
-void Betacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n)
+void Betacarre2d(index_t rs, index_t cs, index_t i, index_t j, index_t *tab, int32_t *n)
 /* ==================================== */
 /* 
   retourne dans tab la beta-adherence de (i,j) privee de (i,j) DANS LA GRILLE.
@@ -1026,7 +1036,7 @@ void Betacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int
 } /* Betacarre2d() */
 
 /* ==================================== */
-void Alphacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n)
+void Alphacarre2d(index_t rs, index_t cs, index_t i, index_t j, index_t *tab, int32_t *n)
 /* ==================================== */
 /* 
   retourne dans tab l'alpha-adherence de (i,j) privee de (i,j) DANS LA GRILLE.
@@ -1068,7 +1078,7 @@ void Alphacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, in
 } /* Alphacarre2d() */
 
 /* ==================================== */
-void Thetacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, int32_t *n)
+void Thetacarre2d(index_t rs, index_t cs, index_t i, index_t j, index_t *tab, int32_t *n)
 /* ==================================== */
 /* 
   retourne dans tab la Theta-adherence de (i,j) privee de (i,j) DANS LA GRILLE.
@@ -1141,7 +1151,7 @@ void Thetacarre2d(int32_t rs, int32_t cs, int32_t i, int32_t j, int32_t *tab, in
 } /* Thetacarre2d() */
 
 /* ==================================== */
-int32_t CardBetapoint2d(uint8_t *K, int32_t rs, int32_t cs, int32_t i, int32_t j)
+int32_t CardBetapoint2d(uint8_t *K, index_t rs, index_t cs, index_t i, index_t j)
 /* ==================================== */
 {
   int32_t n = 0;
@@ -1180,15 +1190,15 @@ int32_t CardBetapoint2d(uint8_t *K, int32_t rs, int32_t cs, int32_t i, int32_t j
 } /* CardBetapoint() */
 
 /* ==================================== */
-int32_t CardThetacarre2d(struct xvimage *k, int32_t i, int32_t j)
+int32_t CardThetacarre2d(struct xvimage *k, index_t i, index_t j)
 /* ==================================== */
 /*  OBSOLETE - utiliser CardThetaCarre2d */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
   int32_t u, n;
-  int32_t tab[GRS2D*GCS2D];
+  index_t tab[GRS2D*GCS2D];
   int32_t card = 0;
 
   if (K[j * rs + i])
@@ -1202,18 +1212,18 @@ int32_t CardThetacarre2d(struct xvimage *k, int32_t i, int32_t j)
 } /* CardThetacarre2d() */
 
 /* ==================================== */
-int32_t CardThetaCarre2d(struct xvimage *k, int32_t i, int32_t j, uint8_t val)
+int32_t CardThetaCarre2d(struct xvimage *k, index_t i, index_t j, uint8_t val)
 /* ==================================== */
 /* 
    retourne le nombre d'elements dans le thetacarre de (i,j) 
    dont la valeur est egale a val
 */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
   int32_t u, n;
-  int32_t tab[GRS2D*GCS2D];
+  index_t tab[GRS2D*GCS2D];
   int32_t card = 0;
 
   if (K[j * rs + i])
@@ -1227,7 +1237,7 @@ int32_t CardThetaCarre2d(struct xvimage *k, int32_t i, int32_t j, uint8_t val)
 } /* CardThetaCarre2d() */
 
 /* ==================================== */
-int32_t BetaTerminal2d(uint8_t *K, int32_t rs, int32_t cs, int32_t i, int32_t j)
+int32_t BetaTerminal2d(uint8_t *K, index_t rs, index_t cs, index_t i, index_t j)
 /* ==================================== */
 {
   if (i % 2)
@@ -1265,10 +1275,11 @@ int32_t BetaTerminal2d(uint8_t *K, int32_t rs, int32_t cs, int32_t i, int32_t j)
 } /* BetaTerminal2d() */
 
 /* ==================================== */
-int32_t ExactementUnBetaTerminal2d(uint8_t *K, int32_t rs, int32_t cs)
+int32_t ExactementUnBetaTerminal2d(uint8_t *K, index_t rs, index_t cs)
 /* ==================================== */
 {
-  int32_t i, N = rs * cs, n = 0;
+  index_t i, N = rs * cs;
+  int32_t n = 0;
 
   for (i = 0; i < N; i++)
     if ((K[i]) && BetaTerminal2d(K, rs, cs, i % rs, i / rs))
@@ -1284,11 +1295,12 @@ void SatureAlphacarre2d(struct xvimage *k)
   (et seulement des 2-éléments !)
  */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
-  int32_t i, j, u, n;
-  int32_t tab[GRS2D*GCS2D];
+  index_t i, j;
+  int32_t u, n;
+  index_t tab[GRS2D*GCS2D];
 
   for (j = 1; j < cs; j += 2)
     for (i = 1; i < rs; i += 2)
@@ -1306,11 +1318,12 @@ void AjouteAlphacarre2d(struct xvimage *k)
   retourne dans k l'ensemble des points de l'alpha de tous les éléments de k
  */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
-  int32_t i, j, u, n;
-  int32_t tab[GRS2D*GCS2D];
+  index_t i, j;
+  int32_t u, n;
+  index_t tab[GRS2D*GCS2D];
 
   for (j = 0; j < cs; j += 1)
     for (i = 0; i < rs; i += 1)
@@ -1328,11 +1341,12 @@ void AjouteBetacarre2d(struct xvimage *k)
   retourne dans k l'ensemble des points du beta de tous les éléments de k
  */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
-  int32_t i, j, u, n;
-  int32_t tab[GRS2D*GCS2D];
+  index_t i, j;
+  int32_t u, n;
+  index_t tab[GRS2D*GCS2D];
 
   for (j = 0; j < cs; j += 1)
     for (i = 0; i < rs; i += 1)
@@ -1352,10 +1366,11 @@ void MaxAlpha2d(struct xvimage *k)
 #undef F_NAME
 #define F_NAME "MaxAlpha2d"
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
-  int32_t i, j, u, n;
-  int32_t tab[GRS2D*GCS2D];
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
+  index_t i, j;
+  int32_t u, n;
+  index_t tab[GRS2D*GCS2D];
 
   if (datatype(k) == VFF_TYP_1_BYTE)
   {
@@ -1415,10 +1430,11 @@ void MaxBeta2d(struct xvimage *k)
 #undef F_NAME
 #define F_NAME "MaxBeta2d"
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
-  int32_t i, j, u, n;
-  int32_t tab[GRS2D*GCS2D];
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
+  index_t i, j;
+  int32_t u, n;
+  index_t tab[GRS2D*GCS2D];
 
   if (datatype(k) == VFF_TYP_1_BYTE)
   {
@@ -1473,10 +1489,10 @@ void MaxBeta2d(struct xvimage *k)
 void EffaceLiensLibres2d(struct xvimage *k)
 /* ==================================== */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
-  int32_t i, j;
+  index_t i, j;
 
   for (j = 0; j < cs; j += 1)
     for (i = 0; i < rs; i += 1)
@@ -1490,10 +1506,10 @@ void EffaceLiensLibres2d(struct xvimage *k)
 void ColorieKh2d(struct xvimage *k)
 /* ==================================== */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
-  int32_t i, j;
+  index_t i, j;
   for (j = 0; j < cs; j += 1)
     for (i = 0; i < rs; i += 1)
       if (K[j * rs + i])
@@ -1511,11 +1527,11 @@ void ColorieKh2d(struct xvimage *k)
 /* ========================================================================== */
 
 /* ==================================== */
-void CopieAlphacarre2d(uint8_t *G, uint8_t *K, int32_t rs, int32_t cs, int32_t i, int32_t j)
+void CopieAlphacarre2d(uint8_t *G, uint8_t *K, index_t rs, index_t cs, index_t i, index_t j)
 /* ==================================== */
 {
-  int32_t x = i % 2;
-  int32_t y = j % 2;
+  index_t x = i % 2;
+  index_t y = j % 2;
 
   memset(G, VAL_NULLE, GRS2D*GCS2D); /* init a VAL_NULLE */
   if (i % 2)
@@ -1551,11 +1567,11 @@ void CopieAlphacarre2d(uint8_t *G, uint8_t *K, int32_t rs, int32_t cs, int32_t i
 } /* CopieAlphacarre2d() */
 
 /* ==================================== */
-void CopieBetacarreDual2d(uint8_t *G, uint8_t *K, int32_t rs, int32_t cs, int32_t i, int32_t j)
+void CopieBetacarreDual2d(uint8_t *G, uint8_t *K, index_t rs, index_t cs, index_t i, index_t j)
 /* ==================================== */
 {
-  int32_t x = (i+1) % 2;
-  int32_t y = (j+1) % 2;
+  index_t x = (i+1) % 2;
+  index_t y = (j+1) % 2;
 
   memset(G, VAL_NULLE, GRS2D*GCS2D); /* init a VAL_NULLE */
   if ((i+1) % 2)
@@ -1591,16 +1607,17 @@ void CopieBetacarreDual2d(uint8_t *G, uint8_t *K, int32_t rs, int32_t cs, int32_
 } /* CopieBetacarreDual2d() */
 
 /* ==================================== */
-int32_t EffaceBetaTerminauxSimples2d(struct xvimage *k)
+index_t EffaceBetaTerminauxSimples2d(struct xvimage *k)
 /* ==================================== */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
-  //KLLL  int32_t N = rs * cs;
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
+  //KLLL  index_t N = rs * cs;
   uint8_t *K = UCHARDATA(k);
   struct xvimage *g;
   uint8_t *G;  
-  int32_t i, j, n = 0;
+  index_t i, j;
+  int32_t n = 0;
 
   g = AllocGrille2d();
   G = UCHARDATA(g);  
@@ -1652,21 +1669,22 @@ printimage(k);
 int32_t ContientUnSeulElement2d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t N = rowsize(b) * colsize(b);
+  index_t N = rowsize(b) * colsize(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, n = 0;
+  index_t i;
+  int32_t n = 0;
   for (i = 0; i < N; i++) if (B[i]) { n++; if (n > 1) return 0; }
   return (n == 1);
 } /* ContientUnSeulElement() */
 
 /* ==================================== */
-int32_t Alpha1Simple2d(struct xvimage *b, int32_t i, int32_t j)
+int32_t Alpha1Simple2d(struct xvimage *b, index_t i, index_t j)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t tab[GRS2D*GCS2D];
+  index_t tab[GRS2D*GCS2D];
   int32_t u, n, nn = 0;
 
 #ifdef DEBUGNEW
@@ -1686,13 +1704,13 @@ printf("Alpha1Simple2d : nn = %d\n\n", n);
 } /* Alpha1Simple2d() */
 
 /* ==================================== */
-int32_t Beta1Simple2d(struct xvimage *b, int32_t i, int32_t j)
+int32_t Beta1Simple2d(struct xvimage *b, index_t i, index_t j)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t tab[GRS2D*GCS2D];
+  index_t tab[GRS2D*GCS2D];
   int32_t u, n, nn = 0;
 
 #ifdef DEBUGNEW
@@ -1712,14 +1730,14 @@ printf("Beta1Simple2d : nn = %d\n\n", n);
 } /* Beta1Simple2d() */
 
 /* ==================================== */
-int32_t EffaceAlpha1Simples2d(struct xvimage *b)
+index_t EffaceAlpha1Simples2d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t N = rs * cs;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t N = rs * cs;
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, nbsimples = 0;
+  index_t i, j, nbsimples = 0;
 
   for (j = 0; j < cs; j++)
     for (i = 0; i < rs; i++)
@@ -1730,14 +1748,14 @@ int32_t EffaceAlpha1Simples2d(struct xvimage *b)
 } /* EffaceAlpha1Simples2d() */
 
 /* ==================================== */
-int32_t EffaceBeta1Simples2d(struct xvimage *b)
+index_t EffaceBeta1Simples2d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t N = rs * cs;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t N = rs * cs;
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, nbsimples = 0;
+  index_t i, j, nbsimples = 0;
 
   for (j = 0; j < cs; j++)
     for (i = 0; i < rs; i++)
@@ -1779,11 +1797,11 @@ printimage(b);
 } /* Ensemble1Contractile2d() */
 
 /* ==================================== */
-int32_t Alpha2Simple2d(struct xvimage *b, int32_t i, int32_t j)
+int32_t Alpha2Simple2d(struct xvimage *b, index_t i, index_t j)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
   uint8_t *G;  
@@ -1809,11 +1827,11 @@ printf("Alpha2Simple2d : retourne %d\n\n", ret);
 } /* Alpha2Simple2d() */
 
 /* ==================================== */
-int32_t Beta2Simple2d(struct xvimage *b, int32_t i, int32_t j)
+int32_t Beta2Simple2d(struct xvimage *b, index_t i, index_t j)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
   uint8_t *B = UCHARDATA(b);
   struct xvimage *g;
   uint8_t *G;  
@@ -1839,14 +1857,14 @@ printf("Beta2Simple2d : retourne %d\n\n", ret);
 } /* Beta2Simple2d() */
 
 /* ==================================== */
-int32_t EffaceAlpha2Simples2d(struct xvimage *b)
+index_t EffaceAlpha2Simples2d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t N = rs * cs;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t N = rs * cs;
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, nbsimples = 0;
+  index_t i, j, nbsimples = 0;
 
   for (j = 0; j < cs; j++)
     for (i = 0; i < rs; i++)
@@ -1857,14 +1875,14 @@ int32_t EffaceAlpha2Simples2d(struct xvimage *b)
 } /* EffaceAlpha2Simples2d() */
 
 /* ==================================== */
-int32_t EffaceAlpha2SimplesNonExtr2d(struct xvimage *b)
+index_t EffaceAlpha2SimplesNonExtr2d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t N = rs * cs;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t N = rs * cs;
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, nbsimples = 0;
+  index_t i, j, nbsimples = 0;
 
   for (j = 0; j < cs; j++)
     for (i = 0; i < rs; i++)
@@ -1876,14 +1894,14 @@ int32_t EffaceAlpha2SimplesNonExtr2d(struct xvimage *b)
 } /* EffaceAlpha2SimplesNonExtr2d() */
 
 /* ==================================== */
-int32_t EffaceBeta2Simples2d(struct xvimage *b)
+index_t EffaceBeta2Simples2d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t N = rs * cs;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t N = rs * cs;
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, nbsimples = 0;
+  index_t i, j, nbsimples = 0;
 
   for (j = 0; j < cs; j++)
     for (i = 0; i < rs; i++)
@@ -1894,14 +1912,14 @@ int32_t EffaceBeta2Simples2d(struct xvimage *b)
 } /* EffaceBeta2Simples2d() */
 
 /* ==================================== */
-int32_t EffaceBeta2SimplesNonExtr2d(struct xvimage *b)
+index_t EffaceBeta2SimplesNonExtr2d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
-  int32_t N = rs * cs;
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
+  index_t N = rs * cs;
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j, nbsimples = 0;
+  index_t i, j, nbsimples = 0;
 
   for (j = 0; j < cs; j++)
     for (i = 0; i < rs; i++)
@@ -1986,14 +2004,14 @@ void Htkern2d(struct xvimage *b, int32_t n)
 } /* Htkern2d() */
 
 /* ==================================== */
-int32_t AlphaSimple2d(struct xvimage *b, int32_t i, int32_t j)
+int32_t AlphaSimple2d(struct xvimage *b, index_t i, index_t j)
 /* ==================================== */
 /* 
    test d'alpha-simplicite specifique pour la 2D, plus rapide qu'Alpha2Simple2d 
    le point (i,j) ne doit pas etre un point de bord (ATTENTION: ca peut planter sinon)
 */
 {
-  int32_t rs = rowsize(b);
+  index_t rs = rowsize(b);
   uint8_t *B = UCHARDATA(b);
   int32_t n; /* pour compter les transitions dans l'alpha d'un carre */
 
@@ -2013,14 +2031,14 @@ int32_t AlphaSimple2d(struct xvimage *b, int32_t i, int32_t j)
 } /* AlphaSimple2d() */
 
 /* ==================================== */
-int32_t BetaSimple2d(struct xvimage *b, int32_t i, int32_t j)
+int32_t BetaSimple2d(struct xvimage *b, index_t i, index_t j)
 /* ==================================== */
 /* 
    test de beta-simplicite specifique pour la 2D, plus rapide que Beta2Simple2d 
    le point (i,j) ne doit pas etre un point de bord (ATTENTION: ca peut planter sinon)
 */
 {
-  int32_t rs = rowsize(b);
+  index_t rs = rowsize(b);
   uint8_t *B = UCHARDATA(b);
   int32_t n; /* pour compter les transitions dans le beta d'un singleton */
 
@@ -2040,14 +2058,14 @@ int32_t BetaSimple2d(struct xvimage *b, int32_t i, int32_t j)
 } /* BetaSimple2d() */
 
 /* ==================================== */
-int32_t EulerKh2d(struct xvimage *b)
+index_t EulerKh2d(struct xvimage *b)
 /* ==================================== */
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t i, j;
-  int32_t n2=0, n1=0, n0=0;
+  index_t i, j;
+  index_t n2=0, n1=0, n0=0;
 
     for (j = 0; j < cs; j += 1)
       for (i = 0; i < rs; i += 1)
@@ -2067,15 +2085,15 @@ int32_t EulerKh2d(struct xvimage *b)
 /* ========================================================================== */
 
 /* ==================================== */
-int32_t FaceLibre2d(struct xvimage *b, int32_t i, int32_t j)
+int32_t FaceLibre2d(struct xvimage *b, index_t i, index_t j)
 /* ==================================== */
 // Détermine si la face (i,j) est libre dans le complexe b, c'est-a-dire si 
 // elle est strictement incluse dans exactement une face de b.
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t tab[GCS2D*GRS2D];
+  index_t tab[GCS2D*GRS2D];
   int32_t u, n, nn = 0;
 
   if (!B[j*rs+i]) return 0;
@@ -2086,17 +2104,17 @@ int32_t FaceLibre2d(struct xvimage *b, int32_t i, int32_t j)
 } /* FaceLibre2d() */
 
 /* ==================================== */
-int32_t PaireLibre2d(struct xvimage *b, int32_t i, int32_t j)
+int32_t PaireLibre2d(struct xvimage *b, index_t i, index_t j)
 /* ==================================== */
 // Détermine si la face (i,j) est libre dans le complexe b, c'est-a-dire si 
 // elle est strictement incluse dans exactement une face de b.
 // Si non, retourne -1.
 // Si oui, retourne la face contenant (i,j).
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t tab[GCS2D*GRS2D];
+  index_t tab[GCS2D*GRS2D];
   int32_t u, uu, n, nn = 0;
 
   if (!B[j*rs+i]) return -1;
@@ -2107,7 +2125,7 @@ int32_t PaireLibre2d(struct xvimage *b, int32_t i, int32_t j)
 } /* PaireLibre2d() */
 
 /* ==================================== */
-int32_t Collapse2d(struct xvimage *b, int32_t i, int32_t j)
+int32_t Collapse2d(struct xvimage *b, index_t i, index_t j)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "Collapse2d"
@@ -2116,10 +2134,10 @@ int32_t Collapse2d(struct xvimage *b, int32_t i, int32_t j)
 // If it is, it forms a free pair with a face f which contains it. 
 // These two faces are removed from b, and the face f is returned.
 {
-  int32_t rs = rowsize(b);
-  int32_t cs = colsize(b);
+  index_t rs = rowsize(b);
+  index_t cs = colsize(b);
   uint8_t *B = UCHARDATA(b);
-  int32_t tab[GCS2D*GRS2D];
+  index_t tab[GCS2D*GRS2D];
   int32_t u, uu, n, nn = 0;
 
   if (!B[j*rs+i]) return -1;
@@ -2202,14 +2220,18 @@ void DrawPsKh2d(struct xvimage *k, int32_t m, int32_t p, int32_t re, int32_t ri,
   rx: rayon (e = element, i = intervalle, c = carre)
 */
 {
-  int32_t rs = rowsize(k);
-  int32_t cs = colsize(k);
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
   uint8_t *K = UCHARDATA(k);
-  int32_t i, j;
+  index_t i, j;
 
   printf("%%!PS-Adobe-2.0 EPSF-2.0\n");
   printf("%%%%Creator: cube2ps by MC - 1998\n");
+#ifdef MC_64_BITS
+  printf("%%%%BoundingBox: 0 0 %lld %lld\n", m+m+p*rs, m+m+p*cs);
+#else
   printf("%%%%BoundingBox: 0 0 %d %d\n", m+m+p*rs, m+m+p*cs);
+#endif
   /* printf("2 setlinewidth\n"); */
 
 #ifdef TRACELIGNES

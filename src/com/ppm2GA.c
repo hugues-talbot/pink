@@ -14,7 +14,6 @@ int32_t main(argc, argv)
 /* =============================================================== */
   int32_t argc; char **argv; 
 {
-  double alpha;
   struct xvimage * r;
   struct xvimage * v;
   struct xvimage * b;

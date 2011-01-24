@@ -152,16 +152,16 @@ int main(int argc, char **argv)
   struct xvimage * imagebyte;
   int32_t *L;
   uint8_t *B;
-  int32_t x, i;
+  int32_t i;
   int32_t mode = 0;
   int32_t Max;
-  uint32_t *histo;
-  uint32_t *newvals;
+  index_t *histo;
+  index_t *newvals;
   int32_t nbval, nbnewval;
   uint32_t *index;
   double t;
 
-  int32_t rs, cs, d, N;
+  index_t x, rs, cs, d, N;
 
   if ((argc < 3) || (argc > 5))
   {
@@ -231,7 +231,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "%s: function lhistolong failed\n", argv[0]);
         exit(1);
       }
-      index = (uint32_t *)calloc(1,nbval * sizeof(int32_t));
+      index = (uint32_t *)calloc(1,nbval * sizeof(uint32_t));
       if (index == NULL)
       {
         fprintf(stderr, "%s: malloc failed\n", argv[0]);

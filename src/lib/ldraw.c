@@ -58,7 +58,7 @@ static double dist3(double x1, double y1, double z1, double x2, double y2, doubl
 }
 
 /* ==================================== */
-int ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+int32_t ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 /* ==================================== */
 /* draws a straight line segment between two points */
 #undef F_NAME
@@ -73,7 +73,7 @@ int ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int32
 
   if ((x1 < 0) || (x1 >= rs) ||  (y1 < 0) || (y1 >= cs) ||
       (x2 < 0) || (x2 >= rs) ||  (y2 < 0) || (y2 >= cs)) 
-    return;
+    return 1; // do nothing
 
   lbresen(F, rs, x1, y1, x2, y2);
 
@@ -81,7 +81,7 @@ int ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, int32
 } // ldrawline()
 
 /* ==================================== */
-int ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, int32_t x2, int32_t y2, int32_t z2)
+int32_t ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, int32_t x2, int32_t y2, int32_t z2)
 /* ==================================== */
 /* draws a 3D straight line segment between two points */
 /* NAIVE ALGORITHM - TO IMPROVE !!!! */
@@ -93,7 +93,7 @@ int ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, int
 
   double len =  dist3(x1, y1, z1, x2, y2, z2);
   int32_t NBSAMPLES = (int32_t)(10 * len);
-  if (NBSAMPLES == 0) return;
+  if (NBSAMPLES == 0) return 1; // do nothing
 
 #ifdef DEBUG_DL3
   printf("%s: %d %d %d   %d %d %d\n", F_NAME, x1, y1, z1, x2, y2, z2);
@@ -118,7 +118,7 @@ int ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, int
 } // ldrawline3d()
 
 /* ==================================== */
-int ldrawline2(struct xvimage * image1)
+int32_t ldrawline2(struct xvimage * image1)
 /* ==================================== */
 /* draws a straight line segment between the two first points found in image */
 #undef F_NAME

@@ -112,7 +112,8 @@ int main(int argc, char **argv)
   struct xvimage * dse;
   uint8_t *I, *T, *L;
   uint32_t *D;
-  int32_t i, j, rs, cs, ds, N, n, nmax, nt, ntmax, radius, ret;
+  index_t i, j, rs, cs, ds, N;
+  int32_t n, nmax, nt, ntmax, radius, ret;
   const int32_t npoints = 3;
   double x[npoints], y[npoints], z[npoints], t[npoints];
   double x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, xc, yc, zc;
@@ -159,7 +160,7 @@ int main(int argc, char **argv)
   ret = sscanf(argv[10], "%d", &radius);
   if (ret == 0) // structuring element : image 
   {
-    int32_t x, y, z;
+    index_t x, y, z;
     dse = readse(argv[10], &x, &y, &z); 
     assert(dse != NULL); 
     xc = (double)x; yc = (double)y; zc = (double)z;

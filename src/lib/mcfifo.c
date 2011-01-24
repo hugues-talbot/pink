@@ -49,14 +49,17 @@ knowledge of the CeCILL license and that you accept its terms.
 
 /* ==================================== */
 Fifo * CreeFifoVide(
-  int32_t taillemax)
+  index_t taillemax)
 /* ==================================== */
 {
-  Fifo * L = (Fifo *)calloc(1,sizeof(Fifo) + sizeof(int32_t) * taillemax); /* sic (+1) */
+  Fifo * L = (Fifo *)calloc(1,sizeof(Fifo) + sizeof(index_t) * taillemax); /* sic (+1) */
   if (L == NULL)
   {   
-    fprintf(stderr, "CreeFifoVide() : malloc failed : %d bytes\n", 
-            sizeof(Fifo) + sizeof(int32_t) * taillemax);
+#ifdef MC_64_BITS
+    fprintf(stderr, "CreeFifoVide() : malloc failed : %lld bytes\n", sizeof(Fifo) + sizeof(index_t) * taillemax);
+#else
+    fprintf(stderr, "CreeFifoVide() : malloc failed : %d bytes\n", sizeof(Fifo) + sizeof(index_t) * taillemax);
+#endif
     return NULL;
   }
   L->Max = taillemax+1;
@@ -83,11 +86,11 @@ int32_t FifoVide(
 }
 
 /* ==================================== */
-int32_t FifoPop(
+index_t FifoPop(
   Fifo * L)
 /* ==================================== */
 {
-  int32_t V;
+  index_t V;
   if (L->In == L->Out)
   {
     fprintf(stderr, "erreur fifo vide\n");
@@ -101,7 +104,7 @@ int32_t FifoPop(
 /* ==================================== */
 void FifoPushFirst(
   Fifo * L,
-  int32_t V)
+  index_t V)
 /* ==================================== */
 {
   L->Out = (L->Out - 1) % L->Max;
@@ -116,7 +119,7 @@ void FifoPushFirst(
 /* ==================================== */
 void FifoPush(
   Fifo * L,
-  int32_t V)
+  index_t V)
 /* ==================================== */
 {
   L->Pts[L->In] = V;
@@ -133,13 +136,25 @@ void FifoPrint(
   Fifo * L)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   if (FifoVide(L)) {printf("[]\n"); return;}
+#ifdef MC_64_BITS
+  printf("Taille Fifo: %lld \n",FifoTaille(L));
+#else
   printf("Taille Fifo: %d \n",FifoTaille(L));
+#endif
+#ifdef MC_64_BITS
+  printf("Max = %lld ; Out = %lld ; In = %lld\n", L->Max, L->Out, L->In);
+#else
   printf("Max = %d ; Out = %d ; In = %d\n", L->Max, L->Out, L->In);
+#endif
   printf("[ ");
   for (i = L->Out; i != L->In; i = (i+1) % L->Max)
+#ifdef MC_64_BITS
+  printf("%lld ", L->Pts[i]);
+#else
   printf("%d ", L->Pts[i]);
+#endif
   printf("]\n");
 }
 
@@ -152,7 +167,7 @@ void FifoTermine(
 }
 
 /* ==================================== */
-int32_t FifoTaille(
+index_t FifoTaille(
   Fifo * L)
 /* ==================================== */
 {

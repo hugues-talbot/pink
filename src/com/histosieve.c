@@ -69,10 +69,10 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int32_t x;
-  uint32_t *histo;
+  index_t x;
+  index_t *histo;
   int32_t val, nbval;
-  int32_t rs, cs, d, N;
+  index_t rs, cs, d, N;
 
   if (argc != 4)
   {
@@ -98,7 +98,7 @@ int main(int argc, char **argv)
   {
     uint8_t *F = UCHARDATA(image);
 
-    histo = (uint32_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(int32_t));
+    histo = (index_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(index_t));
     if (histo == NULL)
     {
       fprintf(stderr, "%s: malloc failed\n", argv[0]);

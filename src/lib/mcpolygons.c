@@ -189,7 +189,7 @@ int32_t MCP_AddVertex(MCP *P, double x, double y, double z)
 #undef F_NAME
 #define F_NAME "MCP_AddVertex"
 {
-  int32_t i;
+  index_t i;
   if (P->Vertices->cur >= P->Vertices->max) MCP_ReAllocVertices(&P->Vertices);
   i = P->Vertices->cur;
   P->Vertices->nsp += 1;
@@ -209,7 +209,7 @@ int32_t MCP_AddAuxVertex(MCP *P, double x, double y, double z)
 #undef F_NAME
 #define F_NAME "MCP_AddAuxVertex"
 {
-  int32_t i;
+  index_t i;
   if (P->Vertices->cur >= P->Vertices->max) MCP_ReAllocVertices(&P->Vertices);
   i = P->Vertices->cur;
   P->Vertices->cur += 1;
@@ -224,7 +224,8 @@ int32_t MCP_AddFace(MCP *P, Liste *Face)
 /* ==================================== */
 /* modifie la var. globale MCP_Faces */
 {
-  int32_t i, n, indface;
+  int32_t i, n;
+  index_t indface;
   if (P->Faces->cur >= P->Faces->max) MCP_ReAllocFaces(&P->Faces);
   indface = P->Faces->cur;
   P->Faces->cur += 1;
@@ -271,7 +272,7 @@ void MCP_ComputeFaces(MCP *P)
 } /* MCP_ComputeFaces() */
 
 /* ==================================== */
-int32_t MCP_AddEdge(MCP *P, int32_t v1, int32_t v2)
+int32_t MCP_AddEdge(MCP *P, index_t v1, index_t v2)
 /* ==================================== */
 /* modifie la var. globale MCP_Edges */
 {
@@ -407,7 +408,8 @@ POLYGONS %d %d    // Faces - champ obligatoire
    ...
 */
 {
-  int32_t i, j, k, a, b, N, nsp;
+  int32_t i, j, k, N, nsp;
+  index_t a, b;
   RbtElt * re;
   mcpface F;
   mcpedge E;
@@ -452,7 +454,11 @@ POLYGONS %d %d    // Faces - champ obligatoire
       for (j = 0; j < F.n; j++)
       {
 	a = F.vert[j]; 
+#ifdef MC_64_BITS
+	fprintf(fileout, "%lld ", a);
+#else
 	fprintf(fileout, "%d ", a);
+#endif
 	b = F.vert[(j+1)%F.n];
 	re = RbtSearch(P->RBT, (TypRbtKey)(a*nsp+b));
 	if (re != P->RBT->nil)
@@ -461,12 +467,20 @@ POLYGONS %d %d    // Faces - champ obligatoire
 	  if (a == E.v1)
 	  {
 	    for (k = 0; k < E.n; k++)
+#ifdef MC_64_BITS
+	      fprintf(fileout, "%lld ", E.vert[k]);
+#else
 	      fprintf(fileout, "%d ", E.vert[k]);
+#endif
 	  } 
 	  else
 	  {
 	    for (k = E.n - 1; k >= 0; k--)
+#ifdef MC_64_BITS
+	      fprintf(fileout, "%lld ", E.vert[k]);
+#else
 	      fprintf(fileout, "%d ", E.vert[k]);
+#endif
 	  } /* for k */ 
 	} /* if (re != P->RBT->nil) */
       } /* for j */ 
@@ -624,7 +638,11 @@ void MCP_Print(MCP *P)
            P->Vertices->v[i].x, P->Vertices->v[i].y, P->Vertices->v[i].z);
     printf("  faces "); 
     for (j = 0; j < P->Vertices->v[i].nfaces; j++)
+#ifdef MC_64_BITS
+      printf("%lld  ", P->Vertices->v[i].face[j]);
+#else
       printf("%d  ", P->Vertices->v[i].face[j]);
+#endif
     printf("\n");
   }
   printf(" ============ FACES ===========\n");
@@ -632,7 +650,11 @@ void MCP_Print(MCP *P)
   {
     printf("f[%d]: [ ", i);
     for (j = 0; j < P->Faces->f[i].n; j++)
+#ifdef MC_64_BITS
+      printf("%lld ", P->Faces->f[i].vert[j]);
+#else
       printf("%d ", P->Faces->f[i].vert[j]);
+#endif
     printf("]\n");
   }
   if (P->Edges)
@@ -642,12 +664,20 @@ void MCP_Print(MCP *P)
     for (i = 0; i < P->Edges->cur; i++)
     {
       E = P->Edges->e[i];
+#ifdef MC_64_BITS
+      printf("e[%d]: %lld, %lld (subd: %d)\n", i, E.v1, E.v2, E.n);
+#else
       printf("e[%d]: %d, %d (subd: %d)\n", i, E.v1, E.v2, E.n);
+#endif
       if (E.n)
       {
 	printf("  subdiv: ");
 	for (j = 0; j < E.n; j++)	
+#ifdef MC_64_BITS
+	  printf("%lld ", E.vert[j]);
+#else
 	  printf("%d ", E.vert[j]);
+#endif
 	printf("\n");
       }
     }

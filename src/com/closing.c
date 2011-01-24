@@ -69,8 +69,8 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * elem;
-  int32_t x, y, z;
-  int32_t rs, cs, ds;
+  index_t x, y, z;
+  index_t rs, cs, ds;
 
   if (argc != 4)
   {

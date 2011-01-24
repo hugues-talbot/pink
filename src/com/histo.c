@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 {
   struct xvimage * image;
   struct xvimage * mask = NULL;
-  uint32_t * histo;
+  index_t * histo;
   int32_t i, s;
   FILE *fd = NULL;
 
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 
   if (datatype(image) == VFF_TYP_1_BYTE)
   {
-    histo = (uint32_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(int32_t));
+    histo = (index_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(index_t));
     if (histo == NULL)
     {
       fprintf(stderr, "%s: malloc failed\n", argv[0]);
@@ -116,7 +116,12 @@ int main(int argc, char **argv)
       exit(1);
     }
     fprintf(fd, "s %d\n", NDG_MAX-NDG_MIN+1);
-    for (i = NDG_MIN; i <= NDG_MAX; i++) fprintf(fd, "%4d %d\n", i, histo[i]);
+    for (i = NDG_MIN; i <= NDG_MAX; i++) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%4d %lld\n", i, histo[i]);
+#else
+      fprintf(fd, "%4d %d\n", i, histo[i]);
+#endif
     free(histo);
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
@@ -127,7 +132,12 @@ int main(int argc, char **argv)
       exit(1);
     }
     fprintf(fd, "s %d\n", s);
-    for (i = 0; i < s; i++) fprintf(fd, "%4d %d\n", i, histo[i]);
+    for (i = 0; i < s; i++) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%4d %lld\n", i, histo[i]);
+#else
+      fprintf(fd, "%4d %d\n", i, histo[i]);
+#endif
     free(histo);
   }
   else if (datatype(image) == VFF_TYP_FLOAT)
@@ -139,7 +149,12 @@ int main(int argc, char **argv)
       exit(1);
     }
     fprintf(fd, "s %d\n", s);
-    for (i = 0; i < s; i++) fprintf(fd, "%4d %d\n", i, histo[i]);
+    for (i = 0; i < s; i++) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%4d %lld\n", i, histo[i]);
+#else
+      fprintf(fd, "%4d %d\n", i, histo[i]);
+#endif
     free(histo);
   }
 

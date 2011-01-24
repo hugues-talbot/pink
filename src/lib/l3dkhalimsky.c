@@ -201,10 +201,10 @@ int32_t l3dplane(struct xvimage * k, double a, double b, double c, double d)
 #undef F_NAME
 #define F_NAME "l3dplane"
 {
-  int32_t rs, cs, ps, ds, N;
+  index_t rs, cs, ps, ds, N;
   uint8_t * K;
-  int32_t x, y, z;             // coordinates in the continuous space
-  int32_t xx, yy, zz;          // coordinates in the khalimsky space
+  index_t x, y, z;             // coordinates in the continuous space
+  index_t xx, yy, zz;          // coordinates in the khalimsky space
   double A, X, X1, X2, X3, X4;
 
   if (a * b * c == 0)
@@ -287,7 +287,7 @@ int32_t l3dplane(struct xvimage * k, double a, double b, double c, double d)
 } /* l3dplane() */
 
 /* =============================================================== */
-int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double r)
+int32_t l3dsphere(struct xvimage * k, index_t x0, index_t y0, index_t z0, double r)
 /* =============================================================== */
 /* 
   Draws into the Khalimsky volume \b k, the discretized sphere of center 
@@ -296,13 +296,13 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
 #undef F_NAME
 #define F_NAME "l3dsphere"
 {
-  int32_t rs, cs, ps, ds, N;
+  index_t rs, cs, ps, ds, N;
   uint8_t * K;
-  int32_t x, y, z;             // coordinates in the continuous plane
-  int32_t xmin, ymin, zmin, xmax, ymax, zmax;
-  int32_t xx, yy, zz, x00, y00, z00; // coord. in the khalimsky space
+  index_t x, y, z;             // coordinates in the continuous plane
+  index_t xmin, ymin, zmin, xmax, ymax, zmax;
+  index_t xx, yy, zz, x00, y00, z00; // coord. in the khalimsky space
   double t, t_, r2 = r*r;
-  int32_t tab[27]; int32_t i, n;
+  index_t tab[27]; int32_t i, n;
 
   rs = rowsize(k);
   cs = colsize(k);
@@ -314,8 +314,8 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
   x00 = x0 * 2;
   y00 = y0 * 2;
   z00 = z0 * 2;
-  zmin = ymin = xmin = -((int32_t)r+1);
-  zmax = ymax = xmax = (int32_t)r+1;
+  zmin = ymin = xmin = -((index_t)r+1);
+  zmax = ymax = xmax = (index_t)r+1;
 
 #define D2(x,y,z) (double)((x)*(x)+(y)*(y)+(z)*(z))
 
@@ -331,13 +331,11 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
       t = D2((x+1),y,z);
       if (t_ == r2) 
       {
-        printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
       }
       if ((t_ > r2) && (t < r2)) 
       {
-        printf("ecrit seg %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx+1 >= 0) && (xx+1 < rs))
           K[zz*ps + yy*rs + xx+1] = NDG_INTER3DX;
         Betacarre3d(rs, cs, ds, xx+1, yy, zz, tab, &n);
@@ -352,13 +350,11 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
       t = D2((x+1),y,z);
       if (t_ == r2) 
       {
-        printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
       }
       if ((t_ < r2) && (t > r2)) 
       {
-        printf("ecrit seg %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx+1 >= 0) && (xx+1 < rs))
           K[zz*ps + yy*rs + xx+1] = NDG_INTER3DX;
         Betacarre3d(rs, cs, ds, xx+1, yy, zz, tab, &n);
@@ -370,7 +366,6 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
     if (t == r2) 
     {
       xx = xmax * 2 + x00;
-      printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
       if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
         K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
     }
@@ -389,13 +384,11 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
       t = D2(x,y,(z+1));
       if (t_ == r2) 
       {
-        printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
       }
       if ((t_ > r2) && (t < r2)) 
       {
-        printf("ecrit seg %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz+1 >= 0) && (zz+1 < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[(zz+1)*ps + yy*rs + xx] = NDG_INTER3DZ;
         Betacarre3d(rs, cs, ds, xx, yy, zz+1, tab, &n);
@@ -410,13 +403,11 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
       t = D2(x,y,(z+1));
       if (t_ == r2) 
       {
-        printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
       }
       if ((t_ < r2) && (t > r2)) 
       {
-        printf("ecrit seg %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz+1 >= 0) && (zz+1 < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[(zz+1)*ps + yy*rs + xx] = NDG_INTER3DZ;
         Betacarre3d(rs, cs, ds, xx, yy, zz+1, tab, &n);
@@ -428,7 +419,6 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
     if (t == r2) 
     {
       zz = zmax * 2 + z00;
-      printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
       if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
         K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
     }
@@ -447,13 +437,11 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
       t = D2(x,(y+1),z);
       if (t_ == r2) 
       {
-        printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
       }
       if ((t_ > r2) && (t < r2)) 
       {
-        printf("ecrit seg %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy+1 >= 0) && (yy+1 < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + (yy+1)*rs + xx] = NDG_INTER3DY;
         Betacarre3d(rs, cs, ds, xx, yy+1, zz, tab, &n);
@@ -468,13 +456,11 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
       t = D2(x,(y+1),z);
       if (t_ == r2) 
       {
-        printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
       }
       if ((t_ < r2) && (t > r2)) 
       {
-        printf("ecrit seg %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy+1 >= 0) && (yy+1 < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + (yy+1)*rs + xx] = NDG_INTER3DY;
         Betacarre3d(rs, cs, ds, xx, yy+1, zz, tab, &n);
@@ -486,7 +472,6 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
     if (t == r2) 
     {
       yy = ymax * 2 + y00;
-      printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
       if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
         K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
     }
@@ -505,9 +490,9 @@ int32_t l3dthin(struct xvimage * k, int32_t nsteps)
 #define F_NAME "l3dthin"
 {
   struct xvimage * kp;
-  int32_t stablealpha, stablebeta;
-  int32_t i, x, y, z;
-  int32_t rs, cs, ps, d, N;
+  int32_t stablealpha, stablebeta, i;
+  index_t x, y, z;
+  index_t rs, cs, ps, d, N;
   uint8_t * K;
   uint8_t * KP;
 
@@ -577,9 +562,9 @@ int32_t l3dskelsurf(struct xvimage * k, int32_t nsteps)
 #define F_NAME "l3dskelsurf"
 {
   struct xvimage * kp;
-  int32_t stablealpha, stablebeta;
-  int32_t i, x, y, z;
-  int32_t rs, cs, ps, d, N;
+  int32_t stablealpha, stablebeta, i;
+  index_t x, y, z;
+  index_t rs, cs, ps, d, N;
   uint8_t * K;
   uint8_t * KP;
 
@@ -651,8 +636,8 @@ int32_t l3disthmus(struct xvimage * f)
 {
   struct xvimage * g;
   struct xvimage * fp;
-  int32_t rs, cs, ds, ps, N;
-  int32_t x;
+  index_t rs, cs, ds, ps, N;
+  index_t x;
   uint8_t *F;
   uint8_t *FP;
 
@@ -714,13 +699,13 @@ int32_t l3dlabel(struct xvimage * f, struct xvimage * lab)
 #undef F_NAME
 #define F_NAME "l3dlabel"
 {
-  int32_t rs, cs, ds, ps, N;
-  int32_t x, y, w;
+  index_t rs, cs, ds, ps, N;
+  index_t x, y, w;
   uint8_t *F;
   int32_t *LAB;
-  int32_t nlabels = 0;
+  index_t nlabels = 0;
   Lifo * LIFO;
-  int32_t tab[27]; int32_t n, k;
+  index_t tab[27]; int32_t n, k;
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -796,7 +781,7 @@ int32_t l3dlabel(struct xvimage * f, struct xvimage * lab)
 } /* l3dlabel() */
 
 /* =============================================================== */
-int32_t l3drecons(struct xvimage * f, int32_t *tab, int32_t n)
+int32_t l3drecons(struct xvimage * f, index_t *tab, int32_t n)
 /* =============================================================== */
 /* 
   Reconstruction geodesique (au sens du theta-voisinage) de l'ensemble
@@ -807,15 +792,15 @@ int32_t l3drecons(struct xvimage * f, int32_t *tab, int32_t n)
 #define F_NAME "l3drecons"
 {
   struct xvimage * fp;
-  int32_t rs, cs, ds, ps, N;
-  int32_t x, y, i;
+  index_t rs, cs, ds, ps, N;
+  index_t x, y;
   uint8_t *F;
   uint8_t *FP;
   Lifo * LIFO1;
   Lifo * LIFO2;
   Lifo * LIFO3;
-  int32_t vois[27];
-  int32_t nv;
+  index_t vois[27];
+  int32_t nv, i;
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -898,7 +883,7 @@ int32_t l3drecons(struct xvimage * f, int32_t *tab, int32_t n)
 
 
 /* =============================================================== */
-int32_t l3dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbcav, int32_t *nbtun, int32_t *euler)
+int32_t l3dinvariants(struct xvimage *f, index_t *nbcc, index_t *nbcav, index_t *nbtun, index_t *euler)
 /* =============================================================== */
 /*
   Calculs des nombres de composantes connexes, cavites et tunnels.
@@ -906,14 +891,14 @@ int32_t l3dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbcav, int32_t 
 #undef F_NAME
 #define F_NAME "l3dinvariants"
 {
-  int32_t rs, cs, ds, ps, N;
-  int32_t x, y, w;
+  index_t rs, cs, ds, ps, N;
+  index_t x, y, w;
   uint8_t *F;
   struct xvimage * lab;
   int32_t *LAB;
-  int32_t nlabels;
+  index_t nlabels;
   Lifo * LIFO;
-  int32_t tab[27]; int32_t n, k;
+  index_t tab[27]; int32_t n, k;
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -1047,11 +1032,12 @@ int32_t l3dboundary(struct xvimage * f)
 #undef F_NAME
 #define F_NAME "l3dboundary"
   struct xvimage * g;
-  int32_t rs, cs, ds, ps, N;
-  int32_t x, y, z;
+  index_t rs, cs, ds, ps, N;
+  index_t x, y, z;
   uint8_t *F;
   uint8_t *G;
-  int32_t tab[26], n, u;
+  index_t tab[26];
+  int32_t n, u;
 
   rs = rowsize(f);
   cs = colsize(f);
@@ -1098,8 +1084,8 @@ int32_t l3dborder(struct xvimage * f)
 #undef F_NAME
 #define F_NAME "l3dborder"
   struct xvimage * g;
-  int32_t rs, cs, ds, ps;
-  int32_t x, y, z;
+  index_t rs, cs, ds, ps;
+  index_t x, y, z;
   uint8_t *F;
   uint8_t *G;
 
@@ -1143,11 +1129,11 @@ int32_t l3dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8
 #undef F_NAME
 #define F_NAME "l3dseltype"
 {
-  int32_t rs, cs, ps, ds, N, i1, j1, k1, i2, j2, k2, x, y, a, b, d;
+  index_t rs, cs, ps, ds, N, i1, j1, k1, i2, j2, k2, x, y;
   uint8_t * K;
   struct xvimage * kp;
   uint8_t * KP;
-  int32_t tab[27]; int32_t n, u;
+  index_t tab[27]; int32_t n, u, a, b, d;
 
   rs = rowsize(k);
   cs = colsize(k);

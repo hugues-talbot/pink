@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * field;
-  int32_t * histo;
+  index_t * histo;
   int32_t i, nbins;
   FILE *fd = NULL;
 
@@ -94,7 +94,11 @@ int main(int argc, char **argv)
  
   fprintf(fd, "s %d\n", nbins);
   for (i = 0; i < nbins; i++) 
+#ifdef MC_64_BITS
+    fprintf(fd, "%4d %lld\n", i, histo[i]);
+#else
     fprintf(fd, "%4d %d\n", i, histo[i]);
+#endif
 
   fclose(fd);
   free(histo);

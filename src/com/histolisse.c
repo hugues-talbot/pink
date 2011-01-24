@@ -65,8 +65,8 @@ int main(int argc, char **argv)
   struct xvimage * image;
   struct xvimage * imhist;
   struct xvimage * mask = NULL;
-  uint32_t * histo;
-  int32_t x, y, z, somme, lissage;
+  index_t * histo, somme;
+  int32_t x, y, z, lissage;
 
   if ((argc != 4) && (argc != 5))
   {
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  histo = (uint32_t *)calloc((NDG_MAX - NDG_MIN + 1) * sizeof(int32_t), 1);
+  histo = (index_t *)calloc((NDG_MAX - NDG_MIN + 1) * sizeof(index_t), 1);
   if (histo == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", argv[0]);
@@ -120,9 +120,9 @@ int main(int argc, char **argv)
     for (y=-lissage/2; y<=lissage/2; y++)
     {
       z++;
-      if ((x-y)>=0) somme = somme + (int32_t)histo[x-y];
+      if ((x-y)>=0) somme = somme + histo[x-y];
     }
-    histo [x]=(uint32_t)(somme/z);
+    histo [x]=(index_t)(somme/z);
   }
 
 
