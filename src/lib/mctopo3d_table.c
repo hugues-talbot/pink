@@ -39,6 +39,8 @@ Calcul des nombres topologiques en 3D
 
 Version utilisant les nombres de connexité T et Tb précalculés
 et stockés dans:
+TabCN26.dat
+et les configurations de points 26-simples dans:
 TabSimple26.dat
 
 Les nombres de connexité sont définis dans [Ber94].
@@ -48,6 +50,8 @@ neighborhoods in cubic grids", Pattern Recognition Letters,
 Vol. 15, pp. 1003-1011, 1994.
 
 Michel Couprie 2006
+
+MC update jan. 2011: connectivity numbers
 */
 
 #include <stdint.h>
@@ -59,15 +63,20 @@ Michel Couprie 2006
 #include <mccodimage.h>
 #include <mctopo3d.h>
 
-#define VERBOSE
+//#define VERBOSE
+
 #define TABSIMP26NAME "TabSimple26.dat"
+#define TABCN26NAME "TabCN26.dat"
 
 static voxel cube_topo3d[27];
 static voxel cubec_topo3d[27];
 
 static uint8_t *table_mctopo3d_table_simple26 = NULL;
-#define SetSimple26(x) table_mctopo3d_table_simple26[x/8]|=(1<<(x%8))
 #define IsSimple26(x) (table_mctopo3d_table_simple26[x/8]&(1<<(x%8)))
+
+static uint8_t *table_mctopo3d_table_CN26 = NULL;
+#define CN26(x) (table_mctopo3d_table_CN26[x]>>4)
+#define CN6b(x) (table_mctopo3d_table_CN26[x]&0xf)
   
 /* ========================================== */
 void mctopo3d_table_init_topo3d()
@@ -117,6 +126,55 @@ void mctopo3d_table_termine_topo3d()
   free(table_mctopo3d_table_simple26);
   table_mctopo3d_table_simple26 = NULL;
 } /* mctopo3d_table_termine_topo3d() */
+  
+/* ========================================== */
+void mctopo3d_table_init_topoCN3d()
+/* ========================================== */
+#undef F_NAME
+#define F_NAME "mctopo3d_table_init_topoCN3d"
+{
+  char tablefilename[128];
+  int32_t tablesize, ret;
+  FILE *fd;
+
+  if (table_mctopo3d_table_CN26 != NULL)
+  {
+    fprintf(stderr, "%s: table_mctopo3d_table_CN26 already loaded\n", F_NAME);
+    exit(1);
+  }
+  tablesize = 1<<26;
+  table_mctopo3d_table_CN26 = (uint8_t *)malloc(tablesize);
+  if (table_mctopo3d_table_CN26 == NULL)
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    exit(1);
+  }
+  sprintf(tablefilename, "%s/src/tables/%s", getenv("PINK"), TABCN26NAME);
+  fd = fopen (tablefilename, "r");
+  if (fd == NULL) 
+  {   
+    fprintf(stderr, "%s: error while opening table\n", F_NAME);
+    exit(1);
+  }
+  ret = fread(table_mctopo3d_table_CN26, sizeof(uint8_t), tablesize, fd);
+  if (ret != tablesize)
+  {
+    fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, tablesize, ret);
+    exit(1);
+  }
+  fclose(fd);
+#ifdef VERBOSE
+  printf("%s: %s loaded\n", F_NAME, TABCN26NAME);
+#endif
+} /* mctopo3d_table_init_topo3d() */
+
+/* ========================================== */
+void mctopo3d_table_termine_topoCN3d()
+/* ========================================== */
+{
+  free(table_mctopo3d_table_simple26);
+  table_mctopo3d_table_simple26 = NULL;
+} /* mctopo3d_table_termine_topo3d() */
 
 /* ========================================== */
 void mctopo3d_table_construitcube(voxel * cube)
@@ -150,28 +208,32 @@ void mctopo3d_table_geodesic_neighborhood(voxel * cube, uint8_t connex, uint8_t 
 void mctopo3d_table_G6(voxel * cube)
 /* ========================================== */
 {
-  mctopo3d_table_geodesic_neighborhood(cube, 6, 2);	
+  fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
+  exit(1);
 } /* mctopo3d_table_G6() */
 
 /* ========================================== */
 void mctopo3d_table_G6p(voxel * cube)
 /* ========================================== */
 {
-  mctopo3d_table_geodesic_neighborhood(cube, 6, 3);	
+  fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
+  exit(1);
 } /* mctopo3d_table_G6p() */
 
 /* ========================================== */
 void mctopo3d_table_G18(voxel * cube)
 /* ========================================== */
 {
-  mctopo3d_table_geodesic_neighborhood(cube, 18, 2);	
+  fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
+  exit(1);
 } /* mctopo3d_table_G18() */
 
 /* ========================================== */
 void mctopo3d_table_G26(voxel * cube)
 /* ========================================== */
 {
-  mctopo3d_table_geodesic_neighborhood(cube, 26, 1);	
+  fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
+  exit(1);
 } /* mctopo3d_table_G26() */
 
 /* ========================================== */
@@ -407,32 +469,32 @@ int32_t mctopo3d_table_nbvoiso26(
 uint8_t mctopo3d_table_T6(voxel * cube)
 /* ========================================== */
 {
-  mctopo3d_table_G6(cube);
-  return mctopo3d_table_nbcomp(cube, 6);
+  fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
+  exit(1);
 } /* mctopo3d_table_T6() */
 
 /* ========================================== */
 uint8_t mctopo3d_table_T6p(voxel * cube)
 /* ========================================== */
 {
-  mctopo3d_table_G6p(cube);
-  return mctopo3d_table_nbcomp(cube, 6);
+  fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
+  exit(1);
 } /* mctopo3d_table_T6p() */
 
 /* ========================================== */
 uint8_t mctopo3d_table_T18(voxel * cube)
 /* ========================================== */
 {
-  mctopo3d_table_G18(cube);
-  return mctopo3d_table_nbcomp(cube, 18);
+  fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
+  exit(1);
 } /* mctopo3d_table_T18() */
 
 /* ========================================== */
 uint8_t mctopo3d_table_T26(voxel * cube)
 /* ========================================== */
 {
-  mctopo3d_table_G26(cube);
-  return mctopo3d_table_nbcomp(cube, 26);
+  fprintf(stderr,"NOT AVAILABLE WITH TABULATED VERSION (see mctopo3d.c)\n");
+  exit(1);
 } /* mctopo3d_table_T26() */
 
 /* ==================================== */
@@ -511,9 +573,8 @@ void mctopo3d_table_top6(                   /* pour un objet en 6-connexite */
   ATTENTION: p ne doit pas etre un point de bord (test a faire avant).
 */
 {
-  preparecubes(img, p, rs, ps, N);
-  *t = mctopo3d_table_T6(cube_topo3d);
-  *tb = mctopo3d_table_T26(cubec_topo3d);
+  fprintf(stderr, "%s: tabulated version not implemented\n", F_NAME);
+  exit(1);
 } /* mctopo3d_table_top6() */
 
 /* ==================================== */
@@ -530,9 +591,8 @@ void mctopo3d_table_top18(                   /* pour un objet en 18-connexite */
   ATTENTION: p ne doit pas etre un point de bord (test a faire avant).
 */
 {
-  preparecubes(img, p, rs, ps, N);
-  *t = mctopo3d_table_T18(cube_topo3d);
-  *tb = mctopo3d_table_T6p(cubec_topo3d);
+  fprintf(stderr, "%s: tabulated version not implemented\n", F_NAME);
+  exit(1);
 } /* mctopo3d_table_top18() */
 
 /* ==================================== */
@@ -549,9 +609,14 @@ void mctopo3d_table_top26(                   /* pour un objet en 26-connexite */
   ATTENTION: p ne doit pas etre un point de bord (test a faire avant).
 */
 {
-  preparecubes(img, p, rs, ps, N);
-  *t = mctopo3d_table_T26(cube_topo3d);
-  *tb = mctopo3d_table_T6(cubec_topo3d);
+  uint32_t mask = 0, v, k;
+  for (k = 0; k < 26; k++)
+  {    
+    v = voisin26(p, k, rs, ps, N);
+    if (img[v]) mask = mask | (1 << k);
+  }
+  *t = (int32_t)CN26(mask);
+  *tb = (int32_t)CN6b(mask);
 } /* mctopo3d_table_top26() */
 
 /* ==================================== */
@@ -565,7 +630,7 @@ int32_t mctopo3d_table_simple6(                   /* pour un objet en 6-connexit
 #undef F_NAME
 #define F_NAME "mctopo3d_table_simple6"
 {
-  fprintf(stderr, "%s: tabulated version not implrmented\n", F_NAME);
+  fprintf(stderr, "%s: tabulated version not implemented\n", F_NAME);
   exit(1);
 } /* mctopo3d_table_simple6() */
 
@@ -580,7 +645,7 @@ int32_t mctopo3d_table_simple18(                  /* pour un objet en 18-connexi
 #undef F_NAME
 #define F_NAME "mctopo3d_table_simple18"
 {
-  fprintf(stderr, "%s: tabulated version not implrmented\n", F_NAME);
+  fprintf(stderr, "%s: tabulated version not implemented\n", F_NAME);
   exit(1);
 } /* mctopo3d_table_simple18() */
 
@@ -592,6 +657,9 @@ int32_t mctopo3d_table_simple26(                  /* pour un objet en 26-connexi
   int32_t ps,                      /* taille plan */
   int32_t N)                       /* taille image */
 /* ==================================== */
+/*
+  ATTENTION: p ne doit pas etre un point de bord (test a faire avant).
+*/
 #undef F_NAME
 #define F_NAME "mctopo3d_table_simple26"
 {
@@ -600,9 +668,7 @@ int32_t mctopo3d_table_simple26(                  /* pour un objet en 26-connexi
   {    
     v = voisin26(p, k, rs, ps, N);
     if (img[v]) mask = mask | (1 << k);
-//if (img[v]) printf("1"); else printf("0");
   }
-//printf("\nmask = %x\n\n", mask);
   if (IsSimple26(mask)) return 1;
   return 0;
 } /* mctopo3d_table_simple26() */
@@ -611,6 +677,9 @@ int32_t mctopo3d_table_simple26(                  /* pour un objet en 26-connexi
 int32_t mctopo3d_table_simple26mask(              /* pour un objet en 26-connexite */
   uint32_t mask)
 /* ==================================== */
+/*
+  ATTENTION: p ne doit pas etre un point de bord (test a faire avant).
+*/
 #undef F_NAME
 #define F_NAME "mctopo3d_table_simple26mask"
 {
@@ -630,7 +699,7 @@ int32_t mctopo3d_table_simple6h(                   /* pour un objet en 6-connexi
 #undef F_NAME
 #define F_NAME "mctopo3d_table_simple6h"
 {
-  fprintf(stderr, "%s: tabulated version not implrmented\n", F_NAME);
+  fprintf(stderr, "%s: tabulated version not implemented\n", F_NAME);
   exit(1);
 } /* mctopo3d_table_simple6h() */
 
@@ -646,7 +715,7 @@ int32_t mctopo3d_table_simple18h(                  /* pour un objet en 18-connex
 #undef F_NAME
 #define F_NAME "mctopo3d_table_simple18h"
 {
-  fprintf(stderr, "%s: tabulated version not implrmented\n", F_NAME);
+  fprintf(stderr, "%s: tabulated version not implemented\n", F_NAME);
   exit(1);
 } /* mctopo3d_table_simple18h() */
 
@@ -662,7 +731,7 @@ int32_t mctopo3d_table_simple26h(                  /* pour un objet en 26-connex
 #undef F_NAME
 #define F_NAME "mctopo3d_table_simple26h"
 {
-  fprintf(stderr, "%s: tabulated version not implrmented\n", F_NAME);
+  fprintf(stderr, "%s: tabulated version not implemented\n", F_NAME);
   exit(1);
 } /* mctopo3d_table_simple26h() */
 
@@ -676,12 +745,8 @@ int32_t mctopo3d_table_tbar6h(               /* pour un objet en 6-connexite */
   int32_t N)                       /* taille image */
 /* ==================================== */
 {
-  if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
-      (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
-      (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
-    return -1;
-  preparecubesh(img, p, h, rs, ps, N);
-  return mctopo3d_table_T26(cubec_topo3d);
+  fprintf(stderr, "%s: tabulated version not implemented\n", F_NAME);
+  exit(1);
 } /* mctopo3d_table_tbar6h() */
 
 /* ==================================== */
@@ -693,13 +758,17 @@ int32_t mctopo3d_table_tbar26h(              /* pour un objet en 26-connexite */
   int32_t ps,                      /* taille plan */
   int32_t N)                       /* taille image */
 /* ==================================== */
+/*
+  ATTENTION: p ne doit pas etre un point de bord (test a faire avant).
+*/
 {
-  if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
-      (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */
-      (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
-    return -1;
-  preparecubesh(img, p, h, rs, ps, N);
-  return mctopo3d_table_T6(cubec_topo3d);
+  uint32_t mask = 0, v, k;
+  for (k = 0; k < 26; k++)
+  {    
+    v = voisin26(p, k, rs, ps, N);
+    if (img[v] >= h) mask = mask | (1 << k);
+  }
+  return (int32_t)CN6b(mask);
 } /* mctopo3d_table_tbar26h() */
 
 /* ========================================== */
@@ -707,170 +776,10 @@ uint8_t mctopo3d_table_P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint
 /* ========================================== */
 #undef F_NAME
 #define F_NAME "mctopo3d_table_P_simple"
-/*
-  cube contient X
-  cubep contient P
-  cubec (auxiliaire) n'a pas besoin d'etre initialise
-  d'apres: "Some topological properties of surfaces in Z3", G. Bertrand & R. Malgouyres
-           Theoreme 6
-*/
 {
-  uint8_t n;
-  uint8_t v;
-  pvoxel x;  /* point central de cube */
-  pvoxel y;  /* point de cube */
-  pvoxel xc; /* point central de cubec */
-  pvoxel yc; /* point de cubec */
-  pvoxel xp; /* point central de cubep */
-  pvoxel yp; /* point de cubep */
-
-  for (n = 0; n < 27; n++) if (cube[n].val == 1) cubec[n].val = 0; else cubec[n].val = 1;
-
-  switch (connex) /* teste la condition 2 (theoreme 6) */
-  {
-    case 6:  
-      if (mctopo3d_table_T26(cubec) != 1) return 0; 
-      break;
-    case 18: 
-      if (mctopo3d_table_T6p(cubec) != 1) return 0; 
-      break;
-    case 26: 
-      if (mctopo3d_table_T6(cubec) != 1) return 0; 
-      break;
-    default: 
-      fprintf(stderr, "mctopo3d_table_P_simple: mauvaise connexite : %d\n", connex); 
-      exit(0); 
-  } /* switch (connex) */
-  
-  x = &(cube[13]);
-  xc = &(cubec[13]);
-  xp = &(cubep[13]);
-  switch (connex) /* teste la condition 4 (theoreme 6) */
-  {
-    case 6: 
-      for (n = 0; n < x->n26v; n++)
-      {
-        yp = xp->v26[n];
-        if (yp->val)
-        {
-          yc = xc->v26[n];
-          v = yc->val;
-          yc->val = 1;
-          if (mctopo3d_table_T26(cubec) != 1) return 0;
-          yc->val = v;
-        } /* if (yp->val) */
-      } /* for (n = 0; n < x->n26v; n++) */
-      break;
-    case 18: 
-      for (n = 0; n < x->n6v; n++)
-      {
-        yp = xp->v6[n];
-        if (yp->val)
-        {
-          yc = xc->v6[n];
-          v = yc->val;
-          yc->val = 1;
-          if (mctopo3d_table_T6p(cubec) != 1) return 0;
-          yc->val = v;
-        } /* if (yp->val) */
-      } /* for (n = 0; n < x->n6v; n++) */
-      break;
-    case 26: 
-      for (n = 0; n < x->n6v; n++)
-      {
-        yp = xp->v6[n];
-        if (yp->val)
-        {
-          yc = xc->v6[n];
-          v = yc->val;
-          yc->val = 1;
-          if (mctopo3d_table_T6(cubec) != 1) return 0;
-          yc->val = v;
-        } /* if (yp->val) */
-      } /* for (n = 0; n < x->n6v; n++) */
-      break;
-    default: 
-      fprintf(stderr, "mctopo3d_table_P_simple: mauvaise connexite : %d\n", connex); 
-      exit(0); 
-  } /* switch (connex) */
-  
-  for (n = 0; n < 27; n++) /* calcule et range dans cubec l'ensemble R = X - P  */
-  {
-    y = &(cube[n]);
-    yp = &(cubep[n]);
-    yc = &(cubec[n]);
-    if (y->val && !yp->val) yc->val = 1; else yc->val = 0;
-  } /* for (n = 0; n < 27; n++) */
-
-  switch (connex) /* teste la condition 1 (theoreme 6) */
-  {
-    case 6:  
-      if (mctopo3d_table_T6(cubec) != 1) return 0;
-      break;
-    case 18: 
-      if (mctopo3d_table_T18(cubec) != 1) return 0;
-      break;
-    case 26: 
-      if (mctopo3d_table_T26(cubec) != 1) return 0;
-      break;
-    default: 
-      fprintf(stderr, "mctopo3d_table_P_simple: mauvaise connexite : %d\n", connex); 
-      exit(0); 
-  } /* switch (connex) */
-  
-  switch (connex) /* teste la condition 3 (theoreme 6) */
-  {
-    case 6: 
-      for (n = 0; n < x->n6v; n++)
-      {
-        yp = xp->v6[n];
-        if (yp->val)
-        {
-          yc = xc->v6[n];
-          v = yc->val;
-          yc->val = 1;
-          if (mctopo3d_table_T6(cubec) != 1) return 0;
-          yc->val = v;
-        } /* if (yp->val) */
-      } /* for (n = 0; n < x->n6v; n++) */
-      break;
-    case 18: 
-      for (n = 0; n < x->n18v; n++)
-      {
-        yp = xp->v18[n];
-        if (yp->val)
-        {
-          yc = xc->v18[n];
-          v = yc->val;
-          yc->val = 1;
-          if (mctopo3d_table_T18(cubec) != 1) return 0;
-          yc->val = v;
-        } /* if (yp->val) */
-      } /* for (n = 0; n < x->n18v; n++) */
-      break;
-    case 26: 
-      for (n = 0; n < x->n26v; n++)
-      {
-        yp = xp->v26[n];
-        if (yp->val)
-        {
-          yc = xc->v26[n];
-          v = yc->val;
-          yc->val = 1;
-          if (mctopo3d_table_T26(cubec) != 1) return 0;
-          yc->val = v;
-        } /* if (yp->val) */
-      } /* for (n = 0; n < x->n26v; n++) */
-      break;
-    default: 
-      fprintf(stderr, "mctopo3d_table_P_simple: mauvaise connexite : %d\n", connex); 
-      exit(0); 
-  } /* switch (connex) */
-  return 1;
+  fprintf(stderr, "%s: tabulated version not implemented\n", F_NAME);
+  exit(1);
 } /* mctopo3d_table_P_simple() */
-
-
-
 
 
 /* ******************************************************************************* */

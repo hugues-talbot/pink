@@ -43,10 +43,10 @@ Distance to the object X defined by the binary image \b in.pgm .
 The result function DX(x) is defined by: DX(x) = min {d(x,y), y in X}.
 
 The distance d used depends on the parameter \b mode :
-\li 0: approximate euclidean distance (truncated)
-\li 1: approximate quadratic euclidean distance
+\li 0: euclidean distance (rounded to the nearest int32)
+\li 1: approximate quadratic euclidean distance (Danielsson)
 \li 2: chamfer distance ([5,7] in 2D; [4,5,6] in 3D)
-\li 3: exact quadratic euclidean distance
+\li 3: exact quadratic euclidean distance (int32)
 \li 4: 4-distance in 2d
 \li 5: exact euclidean distance (float)
 \li 8: 8-distance in 2d
@@ -76,6 +76,7 @@ The output \b out.pgm is of type int32_t for modes < 40, of type byte for other 
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcgeo.h>
+#include <mcutil.h>
 #include <ldist.h>
 
 /* =============================================================== */
@@ -85,7 +86,7 @@ int main(int argc, char **argv)
   int32_t mode;
   struct xvimage * image;
   struct xvimage * result;
-  int32_t N, i;
+  index_t N, i;
   uint8_t *F;
 
   if (argc != 4)
@@ -129,26 +130,7 @@ int main(int argc, char **argv)
   N = rowsize(image) * colsize(image) * depth(image);
   F = UCHARDATA(image);;
 
-  if (mode == 0)
-  {
-    if (depth(image) == 1)
-    {
-      if (! ldisteuc(image, result))
-      {
-        fprintf(stderr, "%s: ldisteuc failed\n", argv[0]);
-        exit(1);
-      }
-    }
-    else
-    {
-      if (! ldisteuc3d(image, result))
-      {
-        fprintf(stderr, "%s: ldisteuc3d failed\n", argv[0]);
-        exit(1);
-      }
-    }
-  }
-  else if (mode == 1)
+  if (mode == 1)
   {
     if (depth(image) == 1)
     {
@@ -175,7 +157,7 @@ int main(int argc, char **argv)
       exit(1);
     }
   }
-  else if ((mode == 3) || (mode == 5))
+  else if ((mode == 0) || (mode == 3) || (mode == 5))
   {
     for (i = 0; i < N; i++) // inverse l'image
       if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
@@ -184,7 +166,18 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: lsedt_meijster failed\n", argv[0]);
       exit(1);
     }
-    if (mode == 5)
+    if (mode == 0)
+    {
+      double d;
+      uint32_t *R = ULONGDATA(result);
+      for (i = 0; i < N; i++) 
+      {
+	
+	d = sqrt((double)(R[i]));
+	R[i] = (uint32_t)arrondi(d);
+      }
+    }
+    else if (mode == 5)
     {
       float *D;
       convertfloat(&result);

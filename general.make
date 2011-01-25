@@ -1242,8 +1242,8 @@ $(BDIR)/htkernu:	$(CDIR)/htkernu.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR
 $(BDIR)/htkernu3d:	$(CDIR)/htkernu3d.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo3d.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mclifo.h $(IDIR)/lhisto.h $(IDIR)/llabelextrema.h $(IDIR)/lhtkern3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo3d.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mclifo.o $(ODIR)/lhisto.o $(ODIR)/llabelextrema.o $(ODIR)/lhtkern3d.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/htkernu3d.c $(OBJ_COMMON) $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/lhisto.o $(ODIR)/lhtkern3d.o $(ODIR)/llabelextrema.o $(ODIR)/mcindic.o $(OBJMCFAH) $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/htkernu3d
 
-$(BDIR)/holeclosing:	$(CDIR)/holeclosing.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo3d.h $(IDIR)/mcfahpure.h $(IDIR)/mcindic.h $(IDIR)/ldist.h $(IDIR)/llabelextrema.h $(IDIR)/lfermetrous3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/ldist.o $(ODIR)/llabelextrema.o $(ODIR)/mcindic.o $(ODIR)/lfermetrous3d.o $(ODIR)/lcrop.o 
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/holeclosing.c $(OBJ_COMMON) $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/ldist.o $(ODIR)/lfermetrous3d.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/llabelextrema.o $(ODIR)/mcindic.o $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/holeclosing
+$(BDIR)/holeclosing:	$(CDIR)/holeclosing.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo3d.h $(IDIR)/mcfahpure.h $(IDIR)/mcindic.h $(IDIR)/ldist.h $(IDIR)/llabelextrema.h $(IDIR)/lfermetrous3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo3d_table.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/ldist.o $(ODIR)/llabelextrema.o $(ODIR)/mcindic.o $(ODIR)/lfermetrous3d.o $(ODIR)/lcrop.o 
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/holeclosing.c $(OBJ_COMMON) $(ODIR)/mctopo3d.o $(ODIR)/mctopo3d_table.o $(ODIR)/mccodimage.o $(ODIR)/ldist.o $(ODIR)/lfermetrous3d.o $(ODIR)/mclifo.o $(OBJMCFAH) $(ODIR)/llabelextrema.o $(ODIR)/mcindic.o $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/holeclosing
 
 $(BDIR)/labeltree:	$(CDIR)/labeltree.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/llabeltree.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/llabeltree.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/labeltree.c $(ODIR)/llabeltree.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(LIBS) -o $(BDIR)/labeltree
@@ -2231,7 +2231,7 @@ $(ODIR)/lcurves.o:	$(LDIR)/lcurves.c $(IDIR)/lcurves.h
 $(ODIR)/lfiltrestopo.o:	$(LDIR)/lfiltrestopo.c $(IDIR)/mccodimage.h $(IDIR)/mcutil.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/mclifo.h $(IDIR)/mcindic.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lfiltrestopo.c -o $(ODIR)/lfiltrestopo.o
 
-$(ODIR)/lfermetrous3d.o:	$(LDIR)/lfermetrous3d.c $(IDIR)/mccodimage.h $(IDIR)/mcfahpure.h $(IDIR)/mctopo3d.h $(IDIR)/ldist.h
+$(ODIR)/lfermetrous3d.o:	$(LDIR)/lfermetrous3d.c $(IDIR)/mccodimage.h $(IDIR)/mcfahpure.h $(IDIR)/mctopo3d.h $(IDIR)/mctopo3d_table.h $(IDIR)/ldist.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lfermetrous3d.c -o $(ODIR)/lfermetrous3d.o
 
 $(ODIR)/lhthiniso.o:	$(LDIR)/lhthiniso.c $(IDIR)/mccodimage.h $(IDIR)/mcimage.h $(IDIR)/mctopo.h

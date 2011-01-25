@@ -9,6 +9,8 @@ Michel Couprie, août 2006
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <assert.h>
 #include <math.h>
 #include <mcutil.h>
 #include <mcimage.h>
@@ -20,18 +22,16 @@ Michel Couprie, août 2006
 
 #define VERBOSE
 
-typedef unsigned long ulong;
-
 /* =============================================================== */
 int main(argc, argv) 
 /* =============================================================== */
   int argc; char **argv; 
 {
-  unsigned char *simplepoint;
-  int k, u, nbconfig, tablesize, ret;
-  ulong config, mask;
+  uint8_t *simplepoint;
+  int32_t k, u, nbconfig, tablesize, ret;
+  uint32_t config, mask;
   FILE *fd;
-  unsigned char F[27];
+  uint8_t F[27];
 
   if (argc != 2)
   {
@@ -43,17 +43,14 @@ int main(argc, argv)
 
   nbconfig = 1<<26;
   tablesize = nbconfig / 8;
-  simplepoint = calloc(tablesize, 1);
-
-  if (simplepoint == NULL)
-  {
-    fprintf(stderr, "%s: malloc failed\n", argv[0]);
-    exit(1);
-  }
+  simplepoint = (uint8_t *)calloc(tablesize, sizeof(uint8_t));
+  assert(simplepoint != NULL);
 
   for (config = 0; config < nbconfig; config++)
   {
+#ifdef VERBOSE
     if ((config % 100000) == 0) printf("computing config %d\n", config);
+#endif
     mask = config;
     for (u = 0; u < 13; u++)
     {

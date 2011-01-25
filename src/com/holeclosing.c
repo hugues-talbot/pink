@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief 3d hole closing
 
-<B>Usage:</B> holeclosing in connex holesize out
+<B>Usage:</B> holeclosing in connex holesize [guide] out
 
 <B>Description:</B> 
 Hole closing in 3d binary images. 
@@ -45,8 +45,7 @@ possible choices are 6 and 26.
 Holes which have a "size" greater than \b holesize are let open 
 (where -1 is used as a symbol for infinity).
 
-Let X be the set of points of the binary image \b in, 
-let Y be a full enclosing box. 
+Let X be the set of points of the binary image \b in, let Y be a full enclosing box. 
 The algorithm is the following:
 
 \verbatim
@@ -57,6 +56,11 @@ Repeat until stability:
     Y := Y \ {p}
 Result: Y
 \endverbatim
+
+If the optional parameter \b guide is given, then replace 'greatest distance from X' by 
+'greatest distance from Y' in the algorithm, Y being the set of non-null points of image \b guide.
+
+\warning There must be no object point on the border of the image (a test is done).
 
 Reference: 
 Z. Aktouf, G. Bertrand, L.Perroton: 
