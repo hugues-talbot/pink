@@ -13,44 +13,47 @@
 #ifndef UIIMAGE_H_
 #define UIIMAGE_H_
 
+#include "uiFibreTypes.h"
+#include "ujimage.hpp"
+
 namespace pink
 {
   
   const int longestline = 100;
   
-  void uiWriteImage ( const pink::ujoi<float> & image, const string & filename );
-  void uiWriteFloatImage3D( const pink::ujoi<float> & image, const string & filename );
+  void uiWriteImage ( const pink::ujoi<float> & image, const std::string & filename );
+  void uiWriteFloatImage3D( const pink::ujoi<float> & image, const std::string & filename );
   
 //// in fact next two functions should not be exported
-  void uiWriteImage2D ( const pink::ujoi<float> & image, const string & filename );
-  void uiWriteImage3D ( const pink::ujoi<float> & image, const string & filename );
+  void uiWriteImage2D ( const pink::ujoi<float> & image, const std::string & filename );
+  void uiWriteImage3D ( const pink::ujoi<float> & image, const std::string & filename );
 
 
   template <class image_type>
   void print_image( const image_type & image )
   {
-    stringstream result;
+    std::stringstream result;
         
     
     if ((image.get_size().prod()>1000) or (image.get_size().size()>2))
     {
-      cout << "the image is too big\n";      
+      std::cout << "the image is too big\n";      
     }
     else /* NOT (image.get_size().prod()>1000) or (image.get_size().size()>2) */
     {
       vint curr;
-      int tmp; // for converting the references. Apparently cout does not like them.      
+      int tmp; // for converting the references. Apparently std::cout does not like them.      
       result << "[\n";      
       FOR(q, image.get_size()[0])
       {        
         FOR(w, image.get_size()[1])
         {
           tmp = image[curr << q,w];          
-          cout << tmp << ", ";          
+          std::cout << tmp << ", ";          
         } /* FOR w */
-        cout << "\n";        
+        std::cout << "\n";        
       } /* FOR q */
-      cout << "]\n";      
+      std::cout << "]\n";      
     } /* NOT (image.get_size().prod()>1000) or (image.get_size().size()>2) */
 
   } /* print_image */

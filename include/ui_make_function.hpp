@@ -21,7 +21,7 @@ using namespace pink::python;
 
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in ui_make_function.hpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in ui_make_function.hpp: " << msg; call_error(fullmessage.str());}
 
 #ifndef MAX_PARAMETERS
 #  define MAX_PARAMETERS 15

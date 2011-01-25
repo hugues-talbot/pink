@@ -32,6 +32,9 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+#ifndef MCIMAGE__H__
+#define MCIMAGE__H__
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -155,5 +158,7 @@ extern int32_t convertfloat(struct xvimage **f1);
 #endif
 
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif
+
+#endif /* MCIMAGE__H__ */

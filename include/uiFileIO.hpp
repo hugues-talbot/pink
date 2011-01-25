@@ -17,7 +17,7 @@
 namespace pink {
 
 
-  int file_size( const string & filename );
+  int file_size( const std::string & filename );
 
 
 

@@ -26,29 +26,40 @@ declaration of special types. The purpose of the type
 declaration is the universality. I want the program to 
 be size-independent
 */
-#define PTR boost::shared_ptr
-#define ARRAY boost::shared_array
-using boost::lexical_cast;
-using std::string;
-using std::cout;
-using std::stringstream;
-using std::endl;
-using std::vector;
-using std::fstream;
-using std::pair;
-using std::ofstream;
-using std::ios_base;
-using std::ifstream;
-using std::stringstream;
+//#define PTR boost::shared_ptr
+//#define ARRAY boost::shared_array
+
+#include <vector>
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <boost/python.hpp>
+#include <boost/smart_ptr.hpp>
+
+
+#include "sqlite3.h"
+
+// using boost::lexical_cast;
+// using std::string;
+// using std::cout;
+// using std::stringstream;
+// using std::endl;
+// using std::vector;
+// using std::fstream;
+// using std::pair;
+// using std::ofstream;
+// using std::ios_base;
+// using std::ifstream;
+// using std::stringstream;
 
 
 
 
 
 #ifdef UJIMAGE_DEBUG
-  #define DEBUG(x) cout << "debug: " << BOOST_PP_STRINGIZE(x) << " = " << x << "\n"
+  #define DEBUG(x) std::cout << "debug: " << BOOST_PP_STRINGIZE(x) << " = " << x << "\n"
   #define PRINTIMAGE(x)							\
-    cout << "writing image: " << BOOST_PP_STRINGIZE(x) << " as '" << BOOST_PP_STRINGIZE(x) << ".pgm'\n"; \
+    std::cout << "writing image: " << BOOST_PP_STRINGIZE(x) << " as '" << BOOST_PP_STRINGIZE(x) << ".pgm'\n"; \
     x->_writeimage(BOOST_PP_STRINGIZE(x)".pgm")
 
 #else
@@ -56,18 +67,18 @@ using std::stringstream;
   #define PRINTIMAGE(x)
 #endif /* UJIMAGE_DEBUG */
 
-#define _DEBUG(x) cout << "_debug: " << BOOST_PP_STRINGIZE(x) << " = " << x << "\n"
+#define _DEBUG(x) std::cout << "_debug: " << BOOST_PP_STRINGIZE(x) << " = " << x << "\n"
 
 #define _PRINTIMAGE(x)							\
- cout << "_writing image: " << BOOST_PP_STRINGIZE(x) << " as '" << BOOST_PP_STRINGIZE(x) << ".pgm'\n"; \
+ std::cout << "_writing image: " << BOOST_PP_STRINGIZE(x) << " as '" << BOOST_PP_STRINGIZE(x) << ".pgm'\n"; \
  x._writeimage(BOOST_PP_STRINGIZE(x)".pgm")
 
 #define _PRINTAMIRA(x)							\
- cout << "_writing image: " << BOOST_PP_STRINGIZE(x) << " as '" << BOOST_PP_STRINGIZE(x) << ".am'\n"; \
+ std::cout << "_writing image: " << BOOST_PP_STRINGIZE(x) << " as '" << BOOST_PP_STRINGIZE(x) << ".am'\n"; \
  x._write_amira(BOOST_PP_STRINGIZE(x)".am")
 
 // eigen2 debug facility
-#define DVECT(x) cout << "----------------\n" << BOOST_PP_STRINGIZE(x) << " = \n" << x << "\n"
+#define DVECT(x) std::cout << "----------------\n" << BOOST_PP_STRINGIZE(x) << " = \n" << x << "\n"
 
  // this macro generates from 'IMAGE_TYPE(potencial)' -> 'image_type(potencial), "potencial"' 
 #define IMAGE_TYPE(x)				\
@@ -133,7 +144,7 @@ inline pixel_type _min( pixel_type a, pixel_type b )
 
 
 
-class vval_type: public vector<uiVal_type> {
+class vval_type: public std::vector<uiVal_type> {
 public:
   vval_type();
 
@@ -144,17 +155,17 @@ public:
   void normate(); //sets it up the same direction but 1. length.
 };
 
-class vint: public vector<int> {
+class vint: public std::vector<int> {
 #ifdef UJIMAGE_DEBUG
 private:
-  string debug;
+  std::string debug;
 #endif /* UJIMAGE_DEBUG */
 
 public:
   vint();
   vint( const vint & src ); //copy constructor
-  vint(const vint & src, string debug); // copy constructor with debugging
-  vint( int size, string debug="" );
+  vint(const vint & src, std::string debug); // copy constructor with debugging
+  vint( int size, std::string debug="" );
   vint( int size, int defvalue );
   vint( const boost::python::list & src );
   ~vint();
@@ -162,7 +173,7 @@ public:
   int prod() const;
   int prodExcept( int p ) const;
   uiVal_type fabs() const;
-  string repr() const;
+  std::string repr() const;
   void nextStep( int step, vint & result ) const;
   bool on_side( const vint & point ) const;
   bool inside( const vint & ) const;
@@ -179,10 +190,10 @@ public:
 template <class im_type>
 class uiVector{
 public:
-  ARRAY<im_type> values;
+  boost::shared_array<im_type> values;
   int length;
   uiVector(int length);
-  uiVector(const vector<im_type> & src); // copy constructor
+  uiVector(const std::vector<im_type> & src); // copy constructor
   ~uiVector();
 };
 
@@ -204,7 +215,7 @@ uiVector<im_type>::~uiVector(){
 
 
 template <class im_type>
-uiVector<im_type>::uiVector(const vector<im_type> & src){
+uiVector<im_type>::uiVector(const std::vector<im_type> & src){
   length = src.size();
   values.reset(new im_type[length]);
   FOR(q, length)
@@ -235,7 +246,7 @@ private:
   bool started;
   time_t begin, finish;
   time_t last_report;
-  string time2string(time_t seconds);
+  std::string time2string(time_t seconds);
 //  start_time
 public:
   progressBar();
@@ -246,11 +257,11 @@ public:
   void maxPos(int maxPos);
   void minPos(int minPos);
   void setPos(int currPos);
-  string operator << (int currPos);
-  string percent();
-  string elapsedTime();
+  std::string operator << (int currPos);
+  std::string percent();
+  std::string elapsedTime();
   
-  string remainingTime();
+  std::string remainingTime();
   
 };
 
@@ -259,7 +270,7 @@ private:
   int size;
   int length;
 public:
-  ARRAY<uiDibble> values;
+  boost::shared_array<uiDibble> values;
   uiDibbles(int n);
   uiDibbles();
   ~uiDibbles();
@@ -267,7 +278,7 @@ public:
   int get_length();
 };
 
-void call_error(const string message);
+void call_error(const std::string message);
 
 uiVal_type uiAbs( uiVal_type x );
 
@@ -283,16 +294,16 @@ uiVal_type uiSqr( uiVal_type x );
 /* class uiScalarField{ */
 /* public: */
 /*   vint size; */
-/*   PTR< uiVector<uiVal_type> > values; */
+/*   boost::shared_ptr< uiVector<uiVal_type> > values; */
 /* private: */
 /*   int position ( const vint & elem ); */
 /*   uiVal_type r( int a, int b, int c, uiVal_type x, uiVal_type y, uiVal_type z); */
 /*   uiVal_type r( int a, int b, uiVal_type x, uiVal_type y ); */
 /* public: */
-/*   uiScalarField( PTR<vint> pdim ); */
+/*   uiScalarField( boost::shared_ptr<vint> pdim ); */
 /*   uiScalarField( const vint & dim ); */
-/*   uiScalarField( const vint & dim, ARRAY<float> data ); */
-/*   uiScalarField( const vint & dim, ARRAY<unsigned char> data ); */
+/*   uiScalarField( const vint & dim, boost::shared_array<float> data ); */
+/*   uiScalarField( const vint & dim, boost::shared_array<unsigned char> data ); */
 /*   uiScalarField( const vint & dim, uiScalarField & src, int xmin, int ymin );////just 2D */
 /*   ~uiScalarField( void ); */
 /*   //void clear(void); */
@@ -301,7 +312,7 @@ uiVal_type uiSqr( uiVal_type x );
 /*   vint dimensionVect( void ); */
 /* //  uiVal_type & operator [] ( vint * n ); */
 /*   uiVal_type & operator [] ( const vint & n ); */
-/*   uiVal_type & operator [] ( const PTR<vint> & n ); */
+/*   uiVal_type & operator [] ( const boost::shared_ptr<vint> & n ); */
 /*   uiVal_type & operator [] ( int n ); */
 /*   uiVal_type max( void ); */
 /*   uiVal_type min( void ); */
@@ -318,14 +329,14 @@ uiVal_type uiSqr( uiVal_type x );
 /*   vint giveSrcPoint( void ); */
 /*   void setSrc( uiScalarField & image ); */
 /*   void setSink( uiScalarField & image ); */
-/*   ARRAY<unsigned char> getCharRepresentation(); // I use pointers here because sqlite3, the pointers must be deleted after */
-/* //  ARRAY<unsigned char> getCharRepresentation( const vint & pos, const vint & size ); */
-/*   ARRAY<float> getFloatRepresentation(); // I use pointers here because sqlite3, the pointers must be deleted after */
-/* //  ARRAY<float> getFloatRepresentation( const vint & pos, const vint & size ); */
+/*   boost::shared_array<unsigned char> getCharRepresentation(); // I use pointers here because sqlite3, the pointers must be deleted after */
+/* //  boost::shared_array<unsigned char> getCharRepresentation( const vint & pos, const vint & size ); */
+/*   boost::shared_array<float> getFloatRepresentation(); // I use pointers here because sqlite3, the pointers must be deleted after */
+/* //  boost::shared_array<float> getFloatRepresentation( const vint & pos, const vint & size ); */
 /*   void apply( uiScalarField & src, const vint & pos);   */
 /* }; */
 
-/* typedef PTR<uiScalarField> puiScalarField; */
+/* typedef boost::shared_ptr<uiScalarField> puiScalarField; */
 
 
 

@@ -16,7 +16,7 @@
 #include <pink_python.h>
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pyborder.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyborder.cpp: " << msg; call_error(fullmessage.str());}
 
 /// !!! macros should be named upper case
 #undef border

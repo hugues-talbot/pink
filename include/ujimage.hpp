@@ -15,8 +15,14 @@
 #ifndef __UJIMAGE_HPP
 #define __UJIMAGE_HPP
 
+#include <fstream>
+
+#include "uiFibreTypes.h"
+#include "mccodimage.h"
+#include "mcimage.h"
+
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in ujimage.hpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in ujimage.hpp: " << msg; call_error(fullmessage.str());}
 
 //#define UJIMAGE_DEBUG
 
@@ -32,7 +38,7 @@ namespace pink{
   public:
     
 //#error: this image type is not defined
-    string imtype() const 
+    std::string imtype() const 
       {         			      
 	error("unimplemented image type specialization");
       }
@@ -70,10 +76,10 @@ namespace pink{
   
   									
   // helper function for reading and writing from and to xvimage
-  PTR<vint> getDimensions( const int x, const int y, const int z, const int t );
+  boost::shared_ptr<vint> getDimensions( const int x, const int y, const int z, const int t );
   void setDimensions(const vint & dim, int & x, int & y, int & z, int & t);
-  PTR<deep_xvimage> py_readimage( string filename );
-  string image_type_string( int pixel_type );
+  boost::shared_ptr<deep_xvimage> py_readimage( std::string filename );
+  std::string image_type_string( int pixel_type );
 
 
   // this class will copy it's content when upcasted (constructed from xvimage)
@@ -90,7 +96,7 @@ namespace pink{
                                               // it's not yet implemented, raises an
                                               // error if called implicitly
     virtual ~deep_xvimage(); // default destructor
-    string imtype(); // returns the image type
+    std::string imtype(); // returns the image type
   };
   
 
@@ -107,7 +113,7 @@ namespace pink{
     shallow_xvimage( const vint & dim, int int_pixel_type );  // construct from dimension. The data 
     // type must be specified. See mcimage.h
     virtual ~shallow_xvimage(); // default destructor
-    string imtype(); // returns the image type
+    std::string imtype(); // returns the image type
   }; /* xvImage: xvimage */
  
   class pink_image
@@ -190,22 +196,22 @@ namespace pink{
         
   private:
 
-    PTR<shallow_xvimage> old_school;
-    PTR<vint> size;
-    PTR<vint> center;
-    ARRAY<pixel_type> pixels;
+    boost::shared_ptr<shallow_xvimage> old_school;
+    boost::shared_ptr<vint> size;
+    boost::shared_ptr<vint> center;
+    boost::shared_array<pixel_type> pixels;
 
     #ifdef UJIMAGE_DEBUG
-    string debug; // representing the name of the object if debugged
+    std::string debug; // representing the name of the object if debugged
     #endif /* UJIMAGE_DEBUG */
  
   public:
 
     ujoi( ); // creates an empty image, used in uiSqhool for determining the image type
-    ujoi( string filename, string debug="" );
-    ujoi( const xvimage & src, string debug="" ); // deep constructor takes xvimage and makes a copy
+    ujoi( std::string filename, std::string debug="" );
+    ujoi( const xvimage & src, std::string debug="" ); // deep constructor takes xvimage and makes a copy
                                                   // it is not embeddable becouse readimage's using malloc/free, whereas boost's using new/delete 
-    ujoi( const ujoi< pixel_type > & src, string debug="" ); // SHALLOW! copy_constructor. For conversion use convert2float
+    ujoi( const ujoi< pixel_type > & src, std::string debug="" ); // SHALLOW! copy_constructor. For conversion use convert2float
                                                              // for deep_copy use operator=
     image_type operator=( const image_type & other );     // SHALLOW! copy constructor
     void reset( image_type & other );         // runtime shallow copy
@@ -213,10 +219,10 @@ namespace pink{
  
     
 
-    ujoi( const boost::python::list & dim, string debug="" );
-    ujoi( const vint & dim, string debug="" );
+    ujoi( const boost::python::list & dim, std::string debug="" );
+    ujoi( const vint & dim, std::string debug="" );
     virtual ~ujoi(); // default destructor
-    ujoi( const vint & dim, ARRAY<pixel_type> data, string debug="" ); // used to construct from ujif.
+    ujoi( const vint & dim, boost::shared_array<pixel_type> data, std::string debug="" ); // used to construct from ujif.
 
     pixel_type & operator[]( int pos ); // index acces to the elements
     const pixel_type & operator[]( int pos ) const; // const index acces to the elements
@@ -237,8 +243,8 @@ namespace pink{
     const pixel_type & get_operator_list( const boost::python::list & pos ) const;
     void set_operator_list( const boost::python::list & pos, const pixel_type & value );
 
-    void _writeimage( const string & filename ) const; // exports the image into a pgm file
-    void _write_amira( const string & filename ) const; // exports the image into an amira mesh (.am) file
+    void _writeimage( const std::string & filename ) const; // exports the image into a pgm file
+    void _write_amira( const std::string & filename ) const; // exports the image into an amira mesh (.am) file
 
     PyObject * get_pixels_python();
     
@@ -246,7 +252,7 @@ namespace pink{
     xvimage* get_output(); // this method is not exported to python. It could not even be, as boost doesn't support pointers.    
     operator xvimage*();
     operator const xvimage*() const;    
-//    string imtype(); 
+//    std::string imtype(); 
     const vint & get_size() const;
     const vint & get_center() const;
     vint & get_center();
@@ -254,10 +260,10 @@ namespace pink{
     const vint & get_center_vint() const;
     void set_center_list( const boost::python::list & new_center );
 
-    ARRAY<pixel_type> get_pixels();
-    ARRAY<pixel_type> get_pixels() const;
+    boost::shared_array<pixel_type> get_pixels();
+    boost::shared_array<pixel_type> get_pixels() const;
 
-    string repr() const;
+    std::string repr() const;
     image_type fill( pixel_type value );
     image_type operator=( pixel_type value ); // equivalent with function fill
 
@@ -303,7 +309,7 @@ CHAR IMAGE
   class image_type_specific<unsigned char>{
     typedef unsigned char pixel_type;    
   public:								
-    string imtype() const							
+    std::string imtype() const							
       {									
 	return "uint8_t";
       }
@@ -336,7 +342,7 @@ SHORT IMAGE
   class image_type_specific<unsigned short int>{
     typedef unsigned short int pixel_type;    
   public:								
-    string imtype() const							
+    std::string imtype() const							
       {									
 	return "uint16_t";
       }
@@ -370,7 +376,7 @@ INT IMAGE
   class image_type_specific<int>{
     typedef int pixel_type;    
   public:								
-    string imtype() const							
+    std::string imtype() const							
       {									
 	return "int32_t";
       }
@@ -405,7 +411,7 @@ FLOAT IMAGE
   class image_type_specific<float>{
     typedef float pixel_type;    
   public:								
-    string imtype() const							
+    std::string imtype() const							
       {									
 	return "float";
       }
@@ -438,7 +444,7 @@ double IMAGE
   class image_type_specific<double>{
     typedef double pixel_type;    
   public:								
-    string imtype() const							
+    std::string imtype() const							
       {									
 	return "double";
       }
@@ -518,25 +524,25 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 */
   
   template <class pixel_type >
-  ujoi<pixel_type >::ujoi( /* string debug="" */ ) {
+  ujoi<pixel_type >::ujoi( /* std::string debug="" */ ) {
     
     #if UJIMAGE_DEBUG >= 2
-    cout << "creating an empty image (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating an empty image (" << static_cast<void*>(this) << ")" << endl;
     #endif /* UJIMAGE_DEBUG */
 
     // defining the size for the isnull function
     this->size.reset(new vint(1,0));    
     
-  } /* ujoi<pixel_type >::ujoi( const string & filename ) */
+  } /* ujoi<pixel_type >::ujoi( const std::string & filename ) */
 
 
   template <class pixel_type>
-  ujoi<pixel_type>::ujoi( string filename, string debug )
+  ujoi<pixel_type>::ujoi( std::string filename, std::string debug )
   {
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
-    cout << "reading image '" << filename << "'\n";
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "reading image '" << filename << "'\n";
     #endif /* UJIMAGE_DEBUG */
 
     xvimage * tmp;
@@ -579,11 +585,11 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::ujoi */
   
   template <class pixel_type >
-  ujoi<pixel_type >::ujoi( const struct xvimage & src, string debug ) {
+  ujoi<pixel_type >::ujoi( const struct xvimage & src, std::string debug ) {
     
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
     #endif /* UJIMAGE_DEBUG */
 
     if (image_type_string(src.data_storage_type)!=this->imtype())
@@ -615,13 +621,13 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::ujoi */
 
   template <class im_type >
-  ujoi<im_type>::ujoi( const ujoi< im_type > & src, string debug ) // SHALLOW_copy_constructor
+  ujoi<im_type>::ujoi( const ujoi< im_type > & src, std::string debug ) // SHALLOW_copy_constructor
     : size(src.size), center(src.center), old_school(src.old_school), pixels(src.pixels)
   {
     #if UJIMAGE_DEBUG >= 2
-    cout << "WARNING!: copy constructors only constructs shallow copies!\n"
+    std::cout << "WARNING!: copy constructors only constructs shallow copies!\n"
     this->debug=debug; // representing the name of the object if debugged
-    cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
     #endif /* UJIMAGE_DEBUG */
   } /* ujoi::ujoi */
 
@@ -631,7 +637,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
     #endif /* UJIMAGE_DEBUG */
 
     // note self assignment will be tested inside boost-smart-pointer
@@ -646,11 +652,11 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
   
   template <class pixel_type >
-  ujoi<pixel_type >::ujoi( const vint & dim, string debug ){
+  ujoi<pixel_type >::ujoi( const vint & dim, std::string debug ){
 
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
     #endif /* UJIMAGE_DEBUG */
 
 
@@ -665,11 +671,11 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::ujoi */
 
   template <class pixel_type >
-  ujoi<pixel_type >::ujoi( const boost::python::list & dim, string debug ){
+  ujoi<pixel_type >::ujoi( const boost::python::list & dim, std::string debug ){
 
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
     #endif /* UJIMAGE_DEBUG */
 
     this->size.reset( new vint(dim)); // creating a copy of the size
@@ -688,22 +694,22 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   ujoi<pixel_type >::~ujoi( ){
 
     #if UJIMAGE_DEBUG >= 2
-    cout << "deleting image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "deleting image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
     #endif /* UJIMAGE_DEBUG */
 
 // deletes 'xvImage' automaticly
-    /////!!!!!!! cout<< "deleting " << old_school->imtype() << "_char"  << endl; 
+    /////!!!!!!! std::cout<< "deleting " << old_school->imtype() << "_char"  << endl; 
   } /* ujoi::~ujoi */
 
 
 
   template <class pixel_type >
-  ujoi<pixel_type >::ujoi( const vint & dim, ARRAY<pixel_type> data, string debug )
+  ujoi<pixel_type >::ujoi( const vint & dim, boost::shared_array<pixel_type> data, std::string debug )
   {
 
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    cout << "creating image " << debug << endl;
+    std::cout << "creating image " << debug << endl;
     #endif /* UJIMAGE_DEBUG */
 
     size.reset(new vint( dim )); // creating a copy of the size
@@ -721,7 +727,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  void ujoi<pixel_type >::_writeimage( const string & filename ) const // exports the image into a pgm file
+  void ujoi<pixel_type >::_writeimage( const std::string & filename ) const // exports the image into a pgm file
   {
     // writeimage takes 'char *', while 'c_str()' gives 'const char *'. 
     // I don't want to cast unnecesserily, so I'll just copy it.
@@ -736,24 +742,24 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template<class pixel_type>
-  void write_a_pixel( fstream & s, pixel_type & value ) 
+  void write_a_pixel( std::fstream & s, pixel_type & value ) 
   {
     error("write_a_pixel called with a wrong pixel type");
   } /* write_a_pixel default */
 
   template<> // implemented in 'ujimage.cpp'
-  void write_a_pixel<float>( fstream & s, float & value ) ;
+  void write_a_pixel<float>( std::fstream & s, float & value ) ;
 
   template<> // implemented in 'ujimage.cpp'
-  void write_a_pixel<unsigned char>( fstream & s, unsigned char & value ) ;
+  void write_a_pixel<unsigned char>( std::fstream & s, unsigned char & value ) ;
 
 
   template <class pixel_type >
-  void ujoi<pixel_type >::_write_amira( const string & filename ) const // exports the image into an amira mesh (.am) file
+  void ujoi<pixel_type >::_write_amira( const std::string & filename ) const // exports the image into an amira mesh (.am) file
   { 
   
     
-    string typetext;
+    std::string typetext;
   
     switch (this->int_pixel_type())  { 
       
@@ -766,19 +772,19 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       break;
       
     default:
-      cout << "\nfile: " << filename; 
+      std::cout << "\nfile: " << filename; 
       error("you can export only 'char' and 'float' images at this point");	
     } /* switch */
         
     if (this->size->size()!=3)
     {
-      cout << "file: " << filename; 
+      std::cout << "file: " << filename; 
       error("you can export only 3D images at this point");
     } 
     else /* NOT this->size.size()!=3 */
     {
-      fstream s;
-      s.open ( filename.c_str(), fstream::out );
+      std::fstream s;
+      s.open ( filename.c_str(), std::fstream::out );
       s << "# UjoImro PInK Amira export, 2009-2010\n\n"
 	<< "# AmiraMesh BINARY-LITTLE-ENDIAN 2.1\n\n\n"
 	<< "define Lattice " << " " << (*this->size)[0] << " " << (*this->size)[1] << " " << (*this->size)[2] << "\n\n"
@@ -826,7 +832,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       s << "\n";
       s.close();
     } /* NOT this->size.size()!=3 */
-    cout << "file '" << filename << "' exported in Amira format\n";
+    std::cout << "file '" << filename << "' exported in Amira format\n";
   } /* ujoi<pixel_type >::_write_amira */
 
 
@@ -1007,7 +1013,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
 // template <class pixel_type >
-// string ujoi<pixel_type >::imtype(){
+// std::string ujoi<pixel_type >::imtype(){
 //   switch (int_pixel_type){
 
 //   case VFF_TYP_1_BYTE:
@@ -1112,25 +1118,25 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   
 
   template <class pixel_type >
-  ARRAY<pixel_type> ujoi<pixel_type >::get_pixels(){
+  boost::shared_array<pixel_type> ujoi<pixel_type >::get_pixels(){
     return pixels;
   } /* ujoi::get_pixels */
 
 
 
   template <class pixel_type >
-  ARRAY<pixel_type> ujoi<pixel_type >::get_pixels() const{
+  boost::shared_array<pixel_type> ujoi<pixel_type >::get_pixels() const{
     return pixels;
   } /* ujoi::get_pixels */
 
 
   template <class pixel_type >
-  string ujoi<pixel_type >::repr() const
+  std::string ujoi<pixel_type >::repr() const
   {
-    stringstream ss;
+    std::stringstream ss;
     ss << this->imtype() << " image of size " << get_size().repr();
     
-    string result;
+    std::string result;
     
     result = ss.str();
     
@@ -1325,7 +1331,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
     #endif /* UJIMAGE_DEBUG */
 
     if (this==&other) // self-assignment test

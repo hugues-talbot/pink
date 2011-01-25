@@ -22,15 +22,15 @@
 
 // my includes
 
-#include <pink.h>
+#include "uiFibreTypes.h"
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiFibreTypes.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiFibreTypes.cpp: " << msg; call_error(fullmessage.str());}
 
 //Exception handling
 
-void call_error(const string message){
-  cout << endl << "error: " << message << endl << endl;
+void call_error(const std::string message){
+  std::cout << std::endl << "error: " << message << std::endl << std::endl;
   throw message;
 };
 
@@ -54,8 +54,8 @@ bool progressBar::timeToReport(){
   return ( time(NULL) - last_report ) >= PBAR_REPORT_INTERVALL;
 } /* timeToReport */
 
-//converting a time in seconds to string. It converts up to days
-string progressBar::time2string(time_t seconds){
+//converting a time in seconds to std::string. It converts up to days
+std::string progressBar::time2string(time_t seconds){
   time_t day = seconds / 86400;
   seconds = seconds % 86400;
   time_t hour = seconds / 3600;
@@ -64,7 +64,7 @@ string progressBar::time2string(time_t seconds){
   minute = minute % 60;
   seconds = seconds % 60;
 
-  stringstream ss;
+  std::stringstream ss;
   if (day == 1){
     ss << "1 day ";
   } else if (day>1){
@@ -109,7 +109,7 @@ void progressBar::minPos(int minPos){
 }
 
 
-string progressBar::elapsedTime(){
+std::string progressBar::elapsedTime(){
   if (started) {
     if (measure){
       return time2string(time(NULL) - begin);
@@ -121,7 +121,7 @@ string progressBar::elapsedTime(){
   }  
 }
 
-string progressBar::remainingTime(){
+std::string progressBar::remainingTime(){
   if (started) {
     if (measure) {
       int currtime = time(NULL);
@@ -141,7 +141,7 @@ string progressBar::remainingTime(){
   }
 }
 
-string progressBar::operator << (int currPos){
+std::string progressBar::operator << (int currPos){
   pos = currPos;
   last_report = time(NULL);
   return remainingTime();
@@ -151,11 +151,11 @@ void progressBar::setPos(int currPos){
   pos = currPos;
 }
 
-string progressBar::percent(){
+std::string progressBar::percent(){
   if ((max - min) == 0){
     return "undeterminable max==min";
   } else {
-    stringstream ss;
+    std::stringstream ss;
     ss << int(100.*float(pos-min)/float(max - min));
     ss << "%";
     return ss.str();
@@ -168,16 +168,16 @@ vval_type::vval_type(){
 //intentionally empty
 }
 
-vval_type::vval_type( const vval_type & src ): vector<uiVal_type>(src) {  //copy constructor
-  /////!!!!!!! cout<< "copying vval_type object unnecessarily" << endl;
+vval_type::vval_type( const vval_type & src ): std::vector<uiVal_type>(src) {  //copy constructor
+  /////!!!!!!! std::cout<< "copying vval_type object unnecessarily" << endl;
 }
 
-vval_type::vval_type( int size ): vector<uiVal_type>(size) {
+vval_type::vval_type( int size ): std::vector<uiVal_type>(size) {
 //intentionally empty
 }
 
 
-vval_type::vval_type( int size, int defvalue ): vector<uiVal_type>(size, defvalue){
+vval_type::vval_type( int size, int defvalue ): std::vector<uiVal_type>(size, defvalue){
 //intentionally empty
 }
 
@@ -197,44 +197,44 @@ void vval_type::normate(){ //sets it up the same direction but 1. length.
 
 // vint object---------------------------------------------------------------
 
-vint::vint():vector<int>()  //default constructor
+vint::vint():std::vector<int>()  //default constructor
 {
   //intentionally left empty
 } /* vint::vint */
 
-vint::vint(const vint & src):vector<int>(src)  //copy constructor
+vint::vint(const vint & src):std::vector<int>(src)  //copy constructor
 {
   //intentionally left empty
 } /* vint::vint */
 
-vint::vint(const vint & src, string debug ):vector<int>(src)  //copy constructor
+vint::vint(const vint & src, std::string debug ):std::vector<int>(src)  //copy constructor
 {
   #ifdef UJIMAGE_DEBUG
   this->debug=debug; // representing the name of the object if debugged
-  cout << "creating vint '" << debug << "' with address " << static_cast<void*>(this) <<"; with the copy constructor"<< endl;
+  std::cout << "creating vint '" << debug << "' with address " << static_cast<void*>(this) <<"; with the copy constructor"<< endl;
   #endif /* UJIMAGE_DEBUG */
 } /* vint::vint */
 
 
-// vint::vint(int size):vector<int>(size)
+// vint::vint(int size):std::vector<int>(size)
 // {
 //   //intentionally left empty
 // } /* vint::vint */
 
-vint::vint( int size, string debug /*=""*/ ):vector<int>(size)
+vint::vint( int size, std::string debug /*=""*/ ):std::vector<int>(size)
 {
   #if UJIMAGE_DEBUG >= 3
   this->debug=debug; // representing the name of the object if debugged
-  cout << "creating vint '" << debug << "' with address " << static_cast<void*>(this) << endl;
+  std::cout << "creating vint '" << debug << "' with address " << static_cast<void*>(this) << endl;
   #endif /* UJIMAGE_DEBUG */
 } /* vint::vint */
 
-vint::vint(int size, int defvalue):vector<int>(size, defvalue)
+vint::vint(int size, int defvalue):std::vector<int>(size, defvalue)
 {
   // intentionally left empty
 } /* vint::vint */
 
-vint::vint( const boost::python::list & src ): vector<int>(boost::python::len(src),0) 
+vint::vint( const boost::python::list & src ): std::vector<int>(boost::python::len(src),0) 
 {
   int length=boost::python::len(src);
 //  boost::python::object A = src[1];
@@ -253,7 +253,7 @@ vint::vint( const boost::python::list & src ): vector<int>(boost::python::len(sr
 vint::~vint()
 {
   #if UJIMAGE_DEBUG >= 3
-  cout << "destroying vint '" << debug << "' with address " << static_cast<void*>(this) << endl;
+  std::cout << "destroying vint '" << debug << "' with address " << static_cast<void*>(this) << endl;
   #endif /* UJIMAGE_DEBUG >= 3 */
 } /* vint::~vint */
 
@@ -453,7 +453,7 @@ bool vint::addSet( const vint & other )
 //   a[2]=3;
 //   a[3]=4;
 
-//   cout  << "a=" << a.print() << endl;
+//   std::cout  << "a=" << a.print() << endl;
 
 //   vint b(6);
 //   b[0]=5;
@@ -463,17 +463,17 @@ bool vint::addSet( const vint & other )
 //   b[4]=1;
 //   b[5]=3;
 
-//   cout << "b=" << b.print() << endl;
+//   std::cout << "b=" << b.print() << endl;
 
 //   a.addSet(b);
 
-//   cout  << "a.addSet(b)=" << a.print() << endl;
+//   std::cout  << "a.addSet(b)=" << a.print() << endl;
 
 } /* vint::addSet */
 
 
 // does the exact same thing as print, but in python it's called "__repr__"
-string vint::repr() const
+std::string vint::repr() const
 {
   if (size()==0)
   {
@@ -485,7 +485,7 @@ string vint::repr() const
   }
   else /* NOT size()==0 */
   {
-    stringstream ss;
+    std::stringstream ss;
     #ifdef UJIMAGE_DEBUG
     ss << "'" << debug << "' = ";
     #endif /* UJIMAGE_DEBUG */
@@ -595,7 +595,7 @@ void uiDibbles::addElement(int start, int end){
   
   if (length==size) {
     size += jump;
-    ARRAY<uiDibble> tmp(new uiDibble[size]);
+    boost::shared_array<uiDibble> tmp(new uiDibble[size]);
     FOR(q, length) tmp[q]=values[q];
     values.swap(tmp); // tmp will be destroyed at the end of the "if"
   };

@@ -11,10 +11,10 @@
 */
 
 
-#include <pink_python.h>
+#include "pink_python.h"
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pyminmax.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyminmax.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;
 using namespace pink;
@@ -29,7 +29,7 @@ namespace pink {
       typedef typename image_type::pixel_type pixel_type;
       boost::python::list result;
   
-      pair<pixel_type, pixel_type> tmp = lminmaxval(image);
+      std::pair<pixel_type, pixel_type> tmp = lminmaxval(image);
 
       result.append(tmp.first);
       result.append(tmp.second);

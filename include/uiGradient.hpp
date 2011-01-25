@@ -31,7 +31,7 @@
 
 namespace pink {
 
-  PTR<float_image> uiGradientAbs( float_image & f );
+  float_image uiGradientAbs( float_image f );
 
 };
 

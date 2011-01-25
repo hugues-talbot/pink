@@ -5,7 +5,7 @@
   This software comes in hope that it will be useful but 
   without any warranty to the extent permitted by aplicable law.
   
-  (C) UjoImro, 2010
+  (C) UjoImro, 2010-2011
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
@@ -13,9 +13,11 @@
 #ifndef UIFLOW_HPP_
 #define UIFLOW_HPP_
 
+#include <boost/thread.hpp>
+#include "pyujimage.hpp"
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiFlow.hpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiFlow.hpp: " << msg; call_error(fullmessage.str());}
 
 namespace pink { 
 
@@ -33,18 +35,18 @@ namespace pink {
   parent->global_lock->unlock();
   
 
-  PTR<float_image> maxflow_float( 
-    char_image & SS,  /* image of the source and of the sink (not the original image) */
-    float_image & gg, /* Boundaries */
+  float_image maxflow_float( 
+    char_image SS,  /* image of the source and of the sink (not the original image) */
+    float_image gg, /* Boundaries */
     int iteration,     /* number of iterations */
     float glob_tau,		 /* timestep */
     int number_of_threads /* the number of threads to execute if in parallel mode */
     );
   
   
-  PTR<float_image> maxflow_cami(
-    char_image & SS,  /* image of the source and of the sink (not the original image) */
-    float_image & gg, /* Boundaries */
+  float_image maxflow_cami(
+    char_image SS,  /* image of the source and of the sink (not the original image) */
+    float_image gg, /* Boundaries */
     int iteration,     /* number of iterations */
     float glob_tau,		 /* timestep */
     int number_of_threads /* the number of threads to execute if in parallel mode */
@@ -85,8 +87,8 @@ namespace pink {
   private:
 
     // variables for threading
-    PTR<mutex> global_lock;
-    PTR<shared_mutex> shared_lock;
+    boost::shared_ptr<boost::mutex> global_lock;
+    boost::shared_ptr<boost::shared_mutex> shared_lock;
 
     friend class packet<image_type>;
 
@@ -94,12 +96,12 @@ namespace pink {
 
 
     // the result will be put in this image
-    PTR<image_type> gg;
-    PTR<char_image> src_sink;
+    image_type gg;
+    char_image src_sink;
 
-//    ARRAY<pixel_type> pot_glob;
-    ARRAY<pixel_type> flow_glob;
-    ARRAY<pixel_type> g_glob;
+//    boost::shared_array<pixel_type> pot_glob;
+    boost::shared_array<pixel_type> flow_glob;
+    boost::shared_array<pixel_type> g_glob;
 
 
     int starttime;
@@ -107,16 +109,15 @@ namespace pink {
     bool flow_calculated;  // this variable hold if start function has already been called, 
                            // if it hasn't than pot_glob and flow_flob are not yet allocated
    
-    // functions for threading
-    
-    PTR<packet<image_type> > reference;
+    // functions for threading    
+    boost::shared_ptr<packet<image_type> > reference;
     bool conductor( packet<image_type> & thread );
     
   protected:
 
     int d;
     int length_glob;
-    PTR<vint> dim;
+    boost::shared_ptr<vint> dim;
 
     progressBar sentinel;    
     float tau;
@@ -130,20 +131,20 @@ namespace pink {
     void upDateSrcSink();
     int uiCreateDibbles( );
 
-    PTR<uiDibbles> dibConstrain;
-    PTR<uiDibbles> dibPotencial;
+    boost::shared_ptr<uiDibbles> dibConstrain;
+    boost::shared_ptr<uiDibbles> dibPotencial;
 
-    PTR<image_type> potencial;
+    image_type potencial;
 
 
     // this way when the smart pointer destroyes the array it will
     // destroy all the elements as well
-    ARRAY< PTR<uiDibbles> > dibFlow; 
+    boost::shared_array< boost::shared_ptr<uiDibbles> > dibFlow; 
 
 
   public:
 
-    ARRAY<pixel_type> get_flow(); // returns the calculated flow in raw format (the length 
+    boost::shared_array<pixel_type> get_flow(); // returns the calculated flow in raw format (the length 
                                // of the array is dimension * pixels, and the vectors are grouped by direction)
     
      maxflow(
@@ -154,11 +155,11 @@ namespace pink {
       int number_of_threads /* the number of threads to execute if in parallel mode */
       );
 
-    virtual PTR<image_type> start();
+    virtual image_type start();
 
     virtual ~maxflow(){      
       #ifdef UJIMAGE_DEBUG      
-      cout << "destroying the maxflow object (" << static_cast<void*>(this) << ")\n";
+      std::cout << "destroying the maxflow object (" << static_cast<void*>(this) << ")\n";
       #endif /* UJIMAGE_DEBUG */        
     }
   }; /* maxflow */
@@ -205,17 +206,17 @@ namespace pink {
       {
       case __ETAP_POT:
 	parent -> upDatePotencial( start_dibble, end_dibble );
-	//cout << "__ETAP_POT " << start_dibble << " " << end_dibble << " this = " << this << "\n";
+	//std::cout << "__ETAP_POT " << start_dibble << " " << end_dibble << " this = " << this << "\n";
 	break;
 	
       case __ETAP_FLOW:
 	parent -> upDateFlow( start_dibble, end_dibble, direction );
-	//cout << "__ETAP_FLOW " << start_dibble << " " << end_dibble <<  " this = " << this <<  "\n";
+	//std::cout << "__ETAP_FLOW " << start_dibble << " " << end_dibble <<  " this = " << this <<  "\n";
 	break;
 	
       case __ETAP_CONSTR:
 	parent -> upDateConstrain( start_dibble, end_dibble );
-	//cout << "__ETAP_CONSTR " << start_dibble << " " << end_dibble <<  " this = " << this <<  "\n";
+	//std::cout << "__ETAP_CONSTR " << start_dibble << " " << end_dibble <<  " this = " << this <<  "\n";
 	break;
 	
       default:
@@ -254,7 +255,7 @@ namespace pink {
 	start=dibPotencial->values[e].start;
 	end=dibPotencial->values[e].end;
 	
-	p_c=&((*potencial)[start]);
+	p_c=&(potencial[start]);
 	f_out=&(flow_glob[w*length_glob+start]);
 	f_in=&(flow_glob[w*length_glob+start-fm1]);
 	length = end - start;
@@ -282,8 +283,8 @@ namespace pink {
       start=dibFlow[w]->values[e].start;
       end=dibFlow[w]->values[e].end;
       f=&(flow_glob[w*length_glob+start]);
-      p=&((*potencial)[start]);
-      pp1=&((*potencial)[start+pp1_pos]);
+      p=&(potencial[start]);
+      pp1=&(potencial[start+pp1_pos]);
       length=end-start;
       FORR(q, length){
 	f[q] -= tau*(pp1[q]-p[q]);
@@ -352,15 +353,15 @@ namespace pink {
 
     FOR( q, length_glob ) 
     {
-      if ( (*src_sink)[q] == 1 ) 
+      if ( src_sink[q] == 1 ) 
       {
-	(*potencial)[q]=1.; 
+	potencial[q]=1.; 
       }
       else /* NOT  (*srcsink) == 1. */
       {
-	if ( (*src_sink)[q]==255 )
+	if ( src_sink[q]==255 )
 	{ 
-	  (*potencial)[q]=0.;	
+	  potencial[q]=0.;	
 	} /* if (*srcsink) == -1. */
       } /* NOT (*srcsink) == 1.  */
     } /* FOR */
@@ -389,15 +390,15 @@ namespace pink {
 	  bool started = false;
 	  int start=0, end=0;
 	  int currlength=0;
-	  ARRAY<unsigned char> curr;
-	  curr = src_sink->get_pixels();
+	  boost::shared_array<unsigned char> curr;
+	  curr = src_sink.get_pixels();
 	  FOR(q, length_glob) {
 	    if (started) {
 	      currlength++;
 	      if (curr[q]!=0) {
 		end=q;
 		dibPotencial->addElement(start, end);
-		///!!! cout << "dibPotencial->addElement(" << start << ", " << end << ");\n";  //////
+		///!!! std::cout << "dibPotencial->addElement(" << start << ", " << end << ");\n";  //////
 		start=0;
 		end=0;
 		started=false;
@@ -405,7 +406,7 @@ namespace pink {
 		if (currlength>=MaxDibble) {
 		  end=q+1;
 		  dibPotencial->addElement(start, end);
-		  ///!!! cout << "maxdibble dibPotencial->addElement(" << start << ", " << end << ");\n";  //////
+		  ///!!! std::cout << "maxdibble dibPotencial->addElement(" << start << ", " << end << ");\n";  //////
 		  start=0;
 		  end=0;
 		  started=false;
@@ -430,7 +431,7 @@ namespace pink {
 	  bool started=false;
 	  int start=0, end=0;
 	  unsigned char *pp1[d];
-	  ARRAY<unsigned char> p;
+	  boost::shared_array<unsigned char> p;
 	  vint pp1_vec(d);
 	  int currlength=0;
 	  vint pp1_pos(d);
@@ -439,11 +440,11 @@ namespace pink {
 	    pp1_vec.reset();
 	    pp1_vec[w]=1;
 	    int currpos = dim->position(pp1_vec);
-///!!!	cout << "currpos=" << currpos << "\n";
+///!!!	std::cout << "currpos=" << currpos << "\n";
 	    pp1_pos[w]=currpos;
-	    pp1[w]=&((*src_sink)[currpos]);
+	    pp1[w]=&(src_sink[currpos]);
 	  } /* FOR(w, d) */
-	  p=src_sink->get_pixels();
+	  p=src_sink.get_pixels();
 	  FOR(w, d) {
 	    FOR(q, length_glob - pp1_pos[w] /* - 1 */ ) { /////////
 	      if (started){
@@ -451,7 +452,7 @@ namespace pink {
 		if ((p[q]!=0) and (pp1[w][q]!=0)){
 		  end=q;
 		  dibFlow[w]->addElement(start, end);
-		  ///!!! cout << "dibFlow[" << w << "]->addElement(" << start << "," << end << ")\n";
+		  ///!!! std::cout << "dibFlow[" << w << "]->addElement(" << start << "," << end << ")\n";
 		  start=0;
 		  end=0;
 		  started=false;
@@ -481,7 +482,7 @@ namespace pink {
 	  bool started=false;
 	  int start=0, end=0;
 	  unsigned char *pp1[d], *pm1[d];
-	  ARRAY<unsigned char> p;
+	  boost::shared_array<unsigned char> p;
 	  vint pp1_vec(d);
 	  int currlength=0;
 	  int max=0;
@@ -490,10 +491,10 @@ namespace pink {
 	    pp1_vec[w]=1;
 	    int currpos = dim->position(pp1_vec);
 	    max = max > currpos ? max : currpos;
-	    pp1[w]=&( (*src_sink)[currpos] );
-	    pm1[w]=&( (*src_sink)[0]) - currpos;// risky, we always read far enough from the beginning
+	    pp1[w]=&( src_sink[currpos] );
+	    pm1[w]=&( src_sink[0] ) - currpos;// risky, we always read far enough from the beginning
 	  } /* FOR(w, d) */
-	  p=src_sink->get_pixels();
+	  p=src_sink.get_pixels();
 	  FOR( q, length_glob - max /*-1*/ ){ ///////////
 	    bool i_am_a_regular_point = (p[q]==0.);
 	    bool i_am_a_source = (p[q]==1.);
@@ -509,7 +510,7 @@ namespace pink {
 	      if (not i_want_to_be_in_a_dibble){
 		end=q;
 		dibConstrain->addElement(start, end);
-		///!!! cout << "dibConstrain->addElement(" << start << ", " << end << ")\n";
+		///!!! std::cout << "dibConstrain->addElement(" << start << ", " << end << ")\n";
 		start=0;
 		end=0;
 		started=false;
@@ -557,19 +558,21 @@ namespace pink {
     ) {
 
     #ifdef UJIMAGE_DEBUG
-    cout << "creating the maxflow object (" << static_cast<void*>(this) << ")\n";	
+    std::cout << "creating the maxflow object (" << static_cast<void*>(this) << ")\n";	
     #endif /* UJIMAGE_DEBUG */        
    
-    potencial.reset(new image_type(gg.get_size(), "potencial"));
+    potencial.copy(gg); // "potencial";
+    potencial.fill(0.);
+    
 
     // creating a local copy of image, srcsink potencial and flows ---------------------------
-    d = potencial->get_size().size();
+    d = potencial.get_size().size();
 
-    cout << "dimension = " << d << "D\n";
+    std::cout << "dimension = " << d << "D\n";
 
-    length_glob = potencial->get_size().prod();
+    length_glob = potencial.get_size().prod();
 
-    cout << "length_glob=" << this->length_glob << "\n";
+    std::cout << "length_glob=" << this->length_glob << "\n";
 
     if (number_of_threads!=0){      
       this->number_of_threads = number_of_threads;
@@ -586,19 +589,19 @@ namespace pink {
     }/* NOT (number_of_threads!=0) */
 
     #ifdef __OPENMP
-    cout << "Using " << this->number_of_threads << " threads from " <<  omp_get_num_procs() << " available.\n";
+    std::cout << "Using " << this->number_of_threads << " threads from " <<  omp_get_num_procs() << " available.\n";
     #else /* __OPENMP */
-    cout << "maxflow compiled WITHOUT OPENMP support.\n";
+    std::cout << "maxflow compiled WITHOUT OPENMP support.\n";
     #endif /* __OPENMP */
 
     // setting up the lock
-    global_lock.reset( new mutex );
-    shared_lock.reset( new shared_mutex );
+    global_lock.reset( new boost::mutex );
+    shared_lock.reset( new boost::shared_mutex );
 
     // Now we copy the pointers to global variables, so the threads can see them.
-    // PTR is boost's 'shared_array' smart pointer.
-    this->gg.reset(new IMAGE_TYPE(gg));
-    g_glob = this->gg->get_pixels();
+    // boost::shared_ptr is boost's 'shared_array' smart pointer.
+    this->gg.copy(gg);
+    g_glob = this->gg.get_pixels();
     
     flow_glob.reset(new pixel_type[d*length_glob]);
 
@@ -611,29 +614,30 @@ namespace pink {
 
 
     // making 
-    src_sink.reset(new char_image(SS, "maxflow::src_sink"));
-
+    ///!!!! src_sink.reset(new char_image(SS, "maxflow::src_sink"));
+    src_sink.copy(SS);
+    
     this->tau = tau;
-    cout << "tau=" << this->tau << "\n";
+    std::cout << "tau=" << this->tau << "\n";
 
     this->iteration = iteration;
-    cout << "iteration=" << this->iteration << "\n";
+    std::cout << "iteration=" << this->iteration << "\n";
 
     
     this->flow_calculated = false; 
 	
     //int dim [d];
-    dim.reset(new vint(potencial->get_size()));
+    dim.reset(new vint(potencial.get_size()));
 
 	
     //// --------------------- setting up source -------------------------------------------
 	
-    cout << "setting up source\n";
+    std::cout << "setting up source\n";
     pixel_type *ps;
     unsigned char *ss;
 		
-    ss = &((*src_sink)[0]);
-    ps = &((*potencial)[0]);
+    ss = &( src_sink[0] );
+    ps = &( potencial[0]);
 
 
     
@@ -654,10 +658,10 @@ namespace pink {
   
     //// --------------------- breaking the fields into dibbles ----------------------------
 	
-    cout << "breaking up the field into dibbles\n";
+    std::cout << "breaking up the field into dibbles\n";
     dibPotencial.reset( new uiDibbles() );
     dibConstrain.reset( new uiDibbles() );
-    dibFlow.reset( new PTR<uiDibbles>[d+3] ); // we adding here 3 becaus of the parallelization later
+    dibFlow.reset( new boost::shared_ptr<uiDibbles>[d+3] ); // we adding here 3 becaus of the parallelization later
     FOR(q,d+3) dibFlow[q].reset(new uiDibbles()); // we adding here 3 becaus of the parallelization later
 	
     uiCreateDibbles( );
@@ -666,7 +670,7 @@ namespace pink {
 
 
   template <class image_type>
-  ARRAY<typename image_type::pixel_type> maxflow<image_type>::get_flow(){
+  boost::shared_array<typename image_type::pixel_type> maxflow<image_type>::get_flow(){
     if (not flow_calculated){
       error("The flow has not yet been calculated. You can only call get_flow after at least 1 iteration."
 	    " For the courious souls after the 0th iteration the flow is zero everywhere");
@@ -681,13 +685,13 @@ namespace pink {
 
 
   template <class image_type>
-  PTR< image_type > maxflow<image_type>::start(){
+  image_type maxflow<image_type>::start(){
     //// --------------------- initializing the time measure -------------------------------
     sentinel.maxPos(iteration);
     sentinel.minPos(0);
     sentinel << 0;
     sentinel.start();
-    cout << "starting the iteration\n";
+    std::cout << "starting the iteration\n";
 
 
     #ifdef __OPENMP    
@@ -697,7 +701,7 @@ namespace pink {
       {
 	if ( sentinel.timeToReport() )
 	{
-	  cout << "Estimated time remaining: " << (sentinel << e) << endl;
+	  std::cout << "Estimated time remaining: " << (sentinel << e) << std::endl;
 	} /* timeToReport() */
       } /* if iterations ... */
       
@@ -732,9 +736,9 @@ namespace pink {
 
     int nbt = this -> number_of_threads;
 
-    ARRAY< PTR<THREAD> > threads(new PTR<THREAD>[nbt]);
+    boost::shared_array< boost::shared_ptr<boost::thread> > threads(new boost::shared_ptr<boost::thread>[nbt]);
 
-    ARRAY< PTR< packet<image_type> > > packets(new PTR<packet<image_type> >[nbt]);
+    boost::shared_array< boost::shared_ptr< packet<image_type> > > packets(new boost::shared_ptr<packet<image_type> >[nbt]);
 
     // Thread attributes
 
@@ -744,7 +748,7 @@ namespace pink {
     FOR( q, nbt )
     {
       packets[q].reset( new packet<image_type>() );
-      threads[q].reset( new THREAD( (*packets[q]), q, this ) );
+      threads[q].reset( new boost::thread( (*packets[q]), q, this ) );
     } /* FOR(q, nbt) */
 
 
@@ -761,7 +765,7 @@ namespace pink {
 
     //// --------------------- printing out the measured time ------------------------------
     sentinel.stop();
-    cout << "total time of iteration: " << sentinel.elapsedTime() << endl;
+    std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
 	
     this->flow_calculated = true; 
 
@@ -880,7 +884,7 @@ namespace pink {
 	  {
 	    if ( sentinel.timeToReport() )
 	    {
-	      cout << "Estimated time remaining: " << (sentinel << reference -> current_iteration) << endl;
+	      std::cout << "Estimated time remaining: " << (sentinel << reference -> current_iteration) << std::endl;
 	    } /* timeToReport() */
 	  } /* if iterations ... */
 
@@ -925,6 +929,15 @@ namespace pink {
   } /* maxflow::conductor */
 
 } /* end namespace pink */
+
+
+// cleaning up after us
+#undef REPORT_INTERVAL
+#undef PACKET_SIZE
+#undef __ETAP_POT
+#undef __ETAP_FLOW
+#undef __ETAP_CONSTR
+#undef ATOMIC
 
 
 #endif /*UIFLOW_HPP_*/

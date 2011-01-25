@@ -23,7 +23,7 @@
 #include "pink_python.h"
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pymview.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in pymview.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;
 using namespace pink;
@@ -66,7 +66,7 @@ namespace pink {
             // create portfile
             int res = mkfifo(portfilename.str().c_str(), S_IRUSR | S_IWUSR);
             if (res != 0) {
-                std::cerr << "Failed to create FIFO " << portfilename.str() << endl ;
+                std::cerr << "Failed to create FIFO " << portfilename.str() << std::endl ;
                 return(-1);
             }
 
@@ -74,7 +74,7 @@ namespace pink {
             int filenum = -1;
             filenum = open(portfilename.str().c_str(), O_RDONLY | O_NDELAY, 0);
             if (filenum < 0) {
-                std::cerr << "Failed to open FIFO" <<  portfilename.str() << endl ;
+                std::cerr << "Failed to open FIFO" <<  portfilename.str() << std::endl ;
                 return(-2);
             }
 
@@ -84,7 +84,7 @@ namespace pink {
             char buffer[5] = {0};
 
             if (read(filenum, buffer, 4) <= 0) {
-                std::cerr << "Failed to read the portnumber" << endl;
+                std::cerr << "Failed to read the portnumber" << std::endl;
                 return(-3);
             }
             close(filenum);

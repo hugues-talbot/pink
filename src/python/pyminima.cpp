@@ -13,7 +13,7 @@
 #include <pink_python.h>
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pyminima.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyminima.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;
 using namespace pink;
@@ -25,7 +25,7 @@ namespace pink {
     template<class image_type>
     char_image minima(
       image_type image,
-      string mode
+      std::string mode
       )
     {
       char_image result(image.get_size());

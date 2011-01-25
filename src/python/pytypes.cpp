@@ -16,7 +16,7 @@ using namespace boost::python;
 using namespace pink;
 
 
-typedef vector<int> vector_int;
+typedef std::vector<int> vector_int;
 
 
 /*
@@ -34,7 +34,7 @@ Python class pink.xvimage / c++ xvimage
 */
 
 // void xvimage_object_export(){
-//   class_< xvimage, PTR<xvimage> >(
+//   class_< xvimage, boost::shared_ptr<xvimage> >(
 //     "xvimage"
 //     "pink's 'struct xvimage'. It's included because of the inheritance "
 //     "(shallow_xvimage and deep_xvimage). "
@@ -57,7 +57,7 @@ Python class pink.vector_int / c++ std::vector<int>
 
 void vector_int_object_export(){
   class_< vector_int >("vector_int", "c++'s standard library integer vector")
-    .def( vector_indexing_suite< vector<int> >())
+    .def( vector_indexing_suite< vector_int >())
     ;
 };
 
@@ -79,8 +79,8 @@ Python class pink.vint / c++ pink::vint
 void vint_object_export(){
 
   class_< vint, 
-    PTR<vint>, 
-    bases<vector<int> > >
+    boost::shared_ptr<vint>, 
+    bases<vector_int> >
   ( "vint", 
     "This class is an extended 'vector_int' "
     "which is used as the dimension of the images "

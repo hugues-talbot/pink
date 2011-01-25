@@ -10,10 +10,20 @@
   ujoimro@gmail.com
 */
 
-#include <pink.h>
+
+#include <gsl/gsl_interp.h>
+#include <gsl/gsl_multifit_nlin.h>
+
+#include <eigen2/Eigen/Core>
+#include <eigen2/Eigen/LU>
+#include <eigen2/Eigen/Geometry>
+
+#include "pink.h"
+
+
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiCutPlane.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiCutPlane.cpp: " << msg; call_error(fullmessage.str());}
 
 USING_PART_OF_NAMESPACE_EIGEN
 
@@ -134,7 +144,7 @@ namespace pink {
   
     
 
-  PTR<char_image> draw_plane( 
+  char_image draw_plane( 
     const char_image & original, 
     float a, 
     float b, 
@@ -142,14 +152,15 @@ namespace pink {
     float d )
   {
     // PTR<char_image> plane(new char_image(original.get_size()));
-  
-    PTR<char_image> result(new char_image(original));
-
-    vint curr( result->get_size().size(), "curr"  );
     
-    FOR(q, result->get_size().prod())
+    char_image result;
+    result.copy(original);
+
+    vint curr( result.get_size().size(), "curr"  );
+    
+    FOR(q, result.get_size().prod())
     {
-      result->get_size().nextStep( q, curr );
+      result.get_size().nextStep( q, curr );
       
 //       if ( uiAbs(a*curr[0]+b*curr[1]+c*curr[2]+d) 
 // 	   / sqrt( a*a + b*b + c*c ) <= 0.5 )
@@ -159,7 +170,7 @@ namespace pink {
 
     if ( a*curr[0]+b*curr[1]+c*curr[2]+d  > 0 )
     {
-      (*result)[q]=0;	
+      result[q]=0;	
     } /* if */
 
       
@@ -171,18 +182,19 @@ namespace pink {
   } /* draw_plane */
 
   
-  PTR<char_image> project_plane( const char_image & src,
-				 const boost::python::list & A,
-				 const boost::python::list & B,
-//				 const boost::python::list & shift,
-				 double alpha
+  char_image project_plane( const char_image & src,
+                            const boost::python::list & A,
+                            const boost::python::list & B,
+//			    const boost::python::list & shift,
+                            double alpha
     )
   {
 
     vint size2D;
     size2D << src.get_size()[0], src.get_size()[1];
     
-    PTR<char_image> result(new char_image(size2D));
+    char_image result;
+    result.copy(size2D);
     
     v3d pA(A);
     v3d pB(B);
@@ -327,9 +339,9 @@ namespace pink {
     vint curr;
     vint pcurr;
     
-    FOR(q, result->get_size()[0])
+    FOR(q, result.get_size()[0])
     {
-      FOR(w, result->get_size()[1])
+      FOR(w, result.get_size()[1])
       {
 	point << q, w, 0, 1;
 	inpoint = TR*point;
@@ -347,7 +359,7 @@ namespace pink {
 	  pcurr << q,w;
 	  // _DEBUG(pcurr.repr());
 	  
-	  (*result)[pcurr]=src[curr];
+	  result[pcurr]=src[curr];
 	} /* src.inside(curr) */
 	
 

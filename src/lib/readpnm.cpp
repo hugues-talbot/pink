@@ -56,7 +56,9 @@
 #include <sys/types.h>
 #include <cstring>
 
-#include <pink.h>
+//#include <pink.h>
+#include "readpnm.h"
+#include "ujimage.hpp"
 //#include "imview.hxx"
 //#include "imSystem.hxx"
 //#include "../imageIO.hxx"
@@ -83,7 +85,7 @@ typedef enum { IM_ERROR=0, IM_UNSPEC=1, IM_SINGLE=2, IM_SPECTRUM=3, IM_RGB=4, IM
 
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in readpnm.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in readpnm.cpp: " << msg; call_error(fullmessage.str());}
 
 //can't hurt that much, can it?
 #define HAVE_PINK_PGM_EXTENSIONS
@@ -151,7 +153,7 @@ static int getint(FILE *fp, toberead optional=IV_MANDATORY);
 static bool garbage;
 static long numgot;
 
-PTR<pink::float_image > readPNMImage(const string & filename)
+pink::float_image readPNMImage(const std::string & filename)
 {
   void      *p=0;
   int       start[3], end[3], nbsamples = 0;
@@ -162,7 +164,7 @@ PTR<pink::float_image > readPNMImage(const string & filename)
   int   retval = 0;
   
   if ((fp = fopen(filename.c_str(),"rb")) == NULL){
-    cout << "problems with reading file '" << filename << "'" << endl;
+    std::cout << "problems with reading file '" << filename << "'" << std::endl;
     error("couldn't open the file");
   };
 
@@ -206,14 +208,14 @@ PTR<pink::float_image > readPNMImage(const string & filename)
     break;
         
   case '8':
-    cout << "Michel Couprie's raw long PGM\n";
+    std::cout << "Michel Couprie's raw long PGM\n";
     retval = load_MC_long_ppm_raw(fp, start, end, &thepixtype, &theimgtype, &p);
     nbsamples = 1;
     break;       // raw long 2D-3D
         
   case '9':
     // raw float 2D-3D
-    cout << "Michel Couprie's raw float format PGM\n";
+    std::cout << "Michel Couprie's raw float format PGM\n";
     retval = load_MC_float_ppm_raw(fp, start, end, &thepixtype, &theimgtype, &p);
     nbsamples = 1;
     break; // raw float format 2D-3D
@@ -256,7 +258,7 @@ PTR<pink::float_image > readPNMImage(const string & filename)
 //     }
 
   if (( theimgtype != IM_SPECTRUM ) and (theimgtype != IM_SINGLE)) {
-    cout << "theimgtype =" << theimgtype << endl;
+    std::cout << "theimgtype =" << theimgtype << std::endl;
     error("color images are out of question.");    
   };
 
@@ -270,7 +272,7 @@ PTR<pink::float_image > readPNMImage(const string & filename)
     FOR(w,3) dim[w] = end[w]-start[w]+1;
   };  
 
-  PTR<pink::float_image> presult(new pink::float_image(dim));
+  pink::float_image presult(dim);
 
   if ((end[2]-start[2]+1)==1) { // the image is 2D
     vint curr(2,-1);
@@ -280,19 +282,19 @@ PTR<pink::float_image > readPNMImage(const string & filename)
       curr[1]=q / dim[0];
       switch (thepixtype){
       case (IM_UINT1):
-	(*presult)[curr]=uiVal_type(((unsigned char*)((void**)p)[0])[q]);
+	presult[curr]=uiVal_type(((unsigned char*)((void**)p)[0])[q]);
 	break;
       case (IM_SHORT):
-	(*presult)[curr]=uiVal_type(((unsigned short*)((void**)p)[0])[q]);
+	presult[curr]=uiVal_type(((unsigned short*)((void**)p)[0])[q]);
 	break;
       case (IM_INT4):
-	(*presult)[curr]=uiVal_type(((unsigned int*)((void**)p)[0])[q]);
+	presult[curr]=uiVal_type(((unsigned int*)((void**)p)[0])[q]);
 	break;
       case (IM_FLOAT):
-	(*presult)[curr]=uiVal_type(((float*)((void**)p)[0])[q]);
+	presult[curr]=uiVal_type(((float*)((void**)p)[0])[q]);
 	break;
       default:
-	cout << "image type= "<< thepixtype << endl;
+	std::cout << "image type= "<< thepixtype << std::endl;
 	error("3D, This imagetype is not implemented (only tested on char and short, int4 and float, exiting...)");
 	break;
       };
@@ -307,19 +309,19 @@ PTR<pink::float_image > readPNMImage(const string & filename)
 
       switch (thepixtype){
       case (IM_UINT1):
-	(*presult)[curr]=float(((unsigned char*)((void**)p)[0])[q]);
+	presult[curr]=float(((unsigned char*)((void**)p)[0])[q]);
 	break;
       case (IM_SHORT):
-	(*presult)[curr]=float(((unsigned short*)((void**)p)[0])[q]);
+	presult[curr]=float(((unsigned short*)((void**)p)[0])[q]);
 	break;
       case (IM_INT4):
-	(*presult)[curr]=float(((unsigned int*)((void**)p)[0])[q]);
+	presult[curr]=float(((unsigned int*)((void**)p)[0])[q]);
 	break;
       case (IM_FLOAT):
-	(*presult)[curr]=uiVal_type(((float*)((void**)p)[0])[q]);
+	presult[curr]=uiVal_type(((float*)((void**)p)[0])[q]);
 	break;
       default:
-	cout << "image type= "<< thepixtype << endl;
+	std::cout << "image type= "<< thepixtype << std::endl;
 	error("3D, This imagetype is not implemented (only tested on char and short, int4 and float, exiting...)");
 	break;
       };
@@ -344,7 +346,7 @@ static int getint(FILE *fp, toberead optional)
   int c, i, firstchar;
 
   /* note:  if it sees a '#' character, all characters from there to end of
-     line are appended to the comment string */
+     line are appended to the comment std::string */
 
   /* skip forward to start of next number */
   c = getc(fp);
@@ -353,7 +355,7 @@ static int getint(FILE *fp, toberead optional)
     if (c=='#') {   /* if we're at a comment, read to end of line */
       char cmt[256], *sp;
 
-      // put the commment in the comment string. Probably useless
+      // put the commment in the comment std::string. Probably useless
       sp = cmt;  firstchar = 1;
       while (1) {
 	c=getc(fp);
@@ -374,7 +376,7 @@ static int getint(FILE *fp, toberead optional)
 
     if ((optional==IV_OPTIONAL) &&
 	((c == '\n') || (c == '\r'))) {
-      cout << "getint: carriage return read instead of optional char\n";
+      std::cout << "getint: carriage return read instead of optional char\n";
       return 0; /* we found an end-of-line instead of a number but that's OK, we didn't really want it :-) */
     }
       
@@ -432,7 +434,7 @@ static int load_pgm_ascii(FILE *fp,
               
   maxgrey = getint(fp, IV_FINAL);
 
-  cout << "load_pgm_ascii: ( << " << ncol << "x" << nrow << "x" << nslice << ")," << maxgrey << "grey-levels\n";
+  std::cout << "load_pgm_ascii: ( << " << ncol << "x" << nrow << "x" << nslice << ")," << maxgrey << "grey-levels\n";
 
   if (maxgrey <= 1)
     *pixtype = IM_BINARY;
@@ -557,7 +559,7 @@ static int load_pgm_raw(FILE *fp,
     
   maxgrey = getint(fp, IV_FINAL);
 
-  cout << "load_pgm_raw: (" << ncol << "x" << nrow << "x" << nslice << "), " << maxgrey << " grey-levels\n";
+  std::cout << "load_pgm_raw: (" << ncol << "x" << nrow << "x" << nslice << "), " << maxgrey << " grey-levels\n";
 
   if (maxgrey <= 1)
     *pixtype = IM_BINARY;
@@ -913,7 +915,7 @@ static int load_MC_float_ppm_raw(FILE *fp,
 
   maxgrey = getint(fp, IV_FINAL); // should be a zero
 
-  cout << "Got a maxgrey value of " << maxgrey << ", expected zero\n";
+  std::cout << "Got a maxgrey value of " << maxgrey << ", expected zero\n";
   *pixtype = IM_FLOAT;    
   *imgtype = IM_SINGLE;
     
@@ -922,7 +924,7 @@ static int load_MC_float_ppm_raw(FILE *fp,
   buffp[0] = (void*) malloc(ncol*nrow*nslice*sizeof(float));
   numread = fread(buffp[0], sizeof(float), ncol*nrow*nslice, fp);
   if (numread < ncol*nrow*nslice) {
-    cout << "fread insufficient : got " << numread << " pixels, expected " << ncol*nrow*nslice << endl;
+    std::cout << "fread insufficient : got " << numread << " pixels, expected " << ncol*nrow*nslice << std::endl;
     garbage = true;
     retval = -1;   
   } else {
@@ -958,7 +960,7 @@ static int load_ppm_raw(FILE *fp,
     nslice = 1; // we do have one slice
   maxgrey = getint(fp, IV_FINAL);
 
-  cout << "load_ppm_raw: ( << " << ncol << "x" << nrow << "x" << nslice << ")," << maxgrey << "grey-levels\n";
+  std::cout << "load_ppm_raw: ( << " << ncol << "x" << nrow << "x" << nslice << ")," << maxgrey << "grey-levels\n";
 
   if (maxgrey <= 1)
     *pixtype = IM_BINARY;

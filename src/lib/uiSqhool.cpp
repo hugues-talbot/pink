@@ -12,23 +12,23 @@
 
 
 
-#include  <pink.h>
+#include  "pink.h"
 
 using namespace pink;
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiSqhool.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiSqhool.cpp: " << msg; call_error(fullmessage.str());}
 
 #define sqlite3(command, errormessage)				      \
  if (SQLITE_OK!=command){                                             \
-   cout << "sqlite says: " << sqlite3_errmsg(database) << endl;       \
+   std::cout << "sqlite says: " << sqlite3_errmsg(database) << std::endl;       \
    error(errormessage);                                               \
  };
 
 
-int atoi( const string & src ){
+int atoi( const std::string & src ){
   int result;
-  stringstream ss;
+  std::stringstream ss;
   ss << src;
   ss >> result;
   return result;
@@ -36,7 +36,7 @@ int atoi( const string & src ){
 
 int atoi( char * src ){
   int result;
-  stringstream ss;
+  std::stringstream ss;
   ss << src;
   ss >> result;
   return result;
@@ -60,21 +60,21 @@ uiSqhool::uiSqhool ( ){
 uiSqhool::~uiSqhool ( ){
   sqlite3(sqlite3_close(database), "couldn't close the database.")
 
-  cout << "Database closed" << endl;
+  std::cout << "Database closed" << std::endl;
 };
 
-uiSqhool::uiSqhool ( const string & filename, const string & creator, const string & description, bool create){
+uiSqhool::uiSqhool ( const std::string & filename, const std::string & creator, const std::string & description, bool create){
   init(filename, creator, description, create);
 };
 
-void uiSqhool::init ( const string & filename, const string & creator, const string & description, bool create ){
+void uiSqhool::init ( const std::string & filename, const std::string & creator, const std::string & description, bool create ){
   //TODO: error checking and handling
 
   ppchar error_message=NULL;
 
   // opening the database
   if (create){
-    cout << "Creating new file" << endl;
+    std::cout << "Creating new file" << std::endl;
     try{
       remove(filename.c_str());
     } 
@@ -97,7 +97,7 @@ void uiSqhool::init ( const string & filename, const string & creator, const str
 // "  current_image INTEGER  "
 
     ///// TIME GENERATION ----------------------------------
-    stringstream currtime;
+    std::stringstream currtime;
 
     {
       time_t rawtime;
@@ -111,7 +111,7 @@ void uiSqhool::init ( const string & filename, const string & creator, const str
     };
     
 
-    stringstream ss;
+    std::stringstream ss;
     ss << "insert into fileinfo(creation_date, description, creator, file_id) values ("
        << "'" << currtime.str().c_str()  << "',"
        << "'" << description.c_str()     << "',"
@@ -121,18 +121,18 @@ void uiSqhool::init ( const string & filename, const string & creator, const str
     sql_execute(ss);
 
   } else {
-    cout << "Opening for read" << endl;
+    std::cout << "Opening for read" << std::endl;
     sqlite3( sqlite3_open_v2(filename.c_str(), &database, SQLITE_OPEN_READWRITE, NULL ) , 
 	     "couldn't open the file"
       );
   };
 
-  cout << "file:\"" << filename << "\" opened" << endl;
+  std::cout << "file:\"" << filename << "\" opened" << std::endl;
 
 };
 
 // // to be optimized!!!
-// PTR<uiScalarField> uiSqhool::getImage( int ID ){
+// boost::shared_ptr<uiScalarField> uiSqhool::getImage( int ID ){
 //   progressBar sentinel;
 //   sentinel.start();
 
@@ -142,7 +142,7 @@ void uiSqhool::init ( const string & filename, const string & creator, const str
 //   char * errmsg;
 
 //   // reading the dimensions of the image from the file
-//   stringstream ss;
+//   std::stringstream ss;
 //   ss << "select size_x,size_y,size_z,size_t,data_type from images where id=" << ID << ";";
 
 //   sqlite3_get_table(
@@ -155,7 +155,7 @@ void uiSqhool::init ( const string & filename, const string & creator, const str
 //     );
 
 //   int x,y,z,t;
-//   stringstream sstype;
+//   std::stringstream sstype;
 //   x=atoi(results[5+0]);
 //   y=atoi(results[5+1]);
 //   z=atoi(results[5+2]);
@@ -163,30 +163,30 @@ void uiSqhool::init ( const string & filename, const string & creator, const str
 //   sstype << results[5+4];
 //   sqlite3_free_table(results);
 
-//   PTR<vint> dim = getDimensions(x,y,z,t);
+//   boost::shared_ptr<vint> dim = getDimensions(x,y,z,t);
 //   int d = dim->size();
 // //   FOR (q,int(dim.size())){
-// //     cout << "dim[" << q << "]=" << dim[q] << endl;
+// //     std::cout << "dim[" << q << "]=" << dim[q] << std::endl;
 // //   };
 
-//   cout << "getting a '" << sstype.str() << "' image, dimension is " << d << "D (x=" << x << ", y=" << y << ", z=" << z << ", t=" << t << ")" << endl;
+//   std::cout << "getting a '" << sstype.str() << "' image, dimension is " << d << "D (x=" << x << ", y=" << y << ", z=" << z << ", t=" << t << ")" << std::endl;
 
-//   PTR<uiScalarField> presult(new uiScalarField(dim));
+//   boost::shared_ptr<uiScalarField> presult(new uiScalarField(dim));
 //   uiScalarField & result = *presult;
 
 //   // getting the rowid's of the lines, that contain the image
   
-//   stringstream ss2;
+//   std::stringstream ss2;
 //   ss2 << "select rowid,pos_x,pos_y,pos_z,pos_t,size_x,size_y,size_z,size_t from datas where id=" << ID << ";";
 //   sqlite3 (sqlite3_get_table( database, ss2.str().c_str(), &results, &row, &column, &errmsg), 
 // 	   "couldn't get the list of rowid s which containt the blobs");
 
 //   FOR(q, row){ // the ids are from 1 to row, that is q+1
 //     sqlite3_int64 iRow;
-//     PTR<vint> pos  = readDataDetails( results, 9*(q+1)+1, d );
-//     PTR<vint> size = readDataDetails( results, 9*(q+1)+5, d );
+//     boost::shared_ptr<vint> pos  = readDataDetails( results, 9*(q+1)+1, d );
+//     boost::shared_ptr<vint> size = readDataDetails( results, 9*(q+1)+5, d );
 
-//     FOR(w,int(size->size())) cout << "(*size)[" << w << "]=" << (*size)[w] << endl;
+//     FOR(w,int(size->size())) std::cout << "(*size)[" << w << "]=" << (*size)[w] << std::endl;
 
 //     iRow = atoi(results[9*(q+1)+0]);
     
@@ -196,7 +196,7 @@ void uiSqhool::init ( const string & filename, const string & creator, const str
 // 	     "couldn't open the blob from the datas table in the image file");
 
 //     if (sstype.str()=="BYTE") {
-//       ARRAY<unsigned char> data (new unsigned char[size->prod()]);
+//       boost::shared_array<unsigned char> data (new unsigned char[size->prod()]);
       
 //       if (sqlite3_blob_bytes(blob) != int(sizeof(unsigned char)*size->prod()))
 // 	error("the size of the data is not corresponding with the size defined by the tags");
@@ -221,7 +221,7 @@ void uiSqhool::init ( const string & filename, const string & creator, const str
 //     } else if (sstype.str()=="FLOAT32") {
 //       if (sizeof(float)!=4){ error("the float is not 32 bit on this system, the image reading would not work"); };
 
-//       ARRAY<float> data(new float[size->prod()]);
+//       boost::shared_array<float> data(new float[size->prod()]);
       
 //       if (sqlite3_blob_bytes(blob) != int(sizeof(unsigned char)*size->prod()))
 // 	error("the size of the data is not corresponding with the size defined by the tags");
@@ -234,7 +234,7 @@ void uiSqhool::init ( const string & filename, const string & creator, const str
 //       result.apply(tmp, *pos);
 
 //     } else {
-//       cout << "datatype= '" << sstype.str() << "'" << endl;
+//       std::cout << "datatype= '" << sstype.str() << "'" << std::endl;
 //       error("unknown data_type. Note: valid types are BYTE and FLOAT32");
 //     };
 
@@ -244,12 +244,12 @@ void uiSqhool::init ( const string & filename, const string & creator, const str
 
 //   sqlite3_free_table(results);
 
-//   cout << "Image read in " << sentinel.elapsedTime() << endl;
+//   std::cout << "Image read in " << sentinel.elapsedTime() << std::endl;
 //   return presult;
 // };
 
-PTR<vint> uiSqhool::read_data_details( char ** results, int pos , int d ){
-  PTR<vint> presult (new vint(d,-1));
+boost::shared_ptr<vint> uiSqhool::read_data_details( char ** results, int pos , int d ){
+  boost::shared_ptr<vint> presult (new vint(d,-1));
   vint & result = *presult;
 
   if ((d<=1) or (d>=4)) {error("read error: dimension wrong or unsupported");}
@@ -260,7 +260,7 @@ PTR<vint> uiSqhool::read_data_details( char ** results, int pos , int d ){
   return presult;
 };
 
-int uiSqhool::get_SQL_value(const stringstream & command){
+int uiSqhool::get_SQL_value(const std::stringstream & command){
   char ** results;
   int row;
   int column;
@@ -276,14 +276,14 @@ int uiSqhool::get_SQL_value(const stringstream & command){
     &errmsg           // char **pzErrmsg       /* Error msg written here */
     );
 
-  stringstream atoi(results[1]); 
+  std::stringstream atoi(results[1]); 
   atoi >> res;
   sqlite3_free_table(results);
 
   return res;
 };
 
-void uiSqhool::sql_execute(const stringstream & command, string error_message){
+void uiSqhool::sql_execute(const std::stringstream & command, std::string error_message){
   char ** results;
   int row;
   int column;
@@ -296,28 +296,28 @@ void uiSqhool::sql_execute(const stringstream & command, string error_message){
 };
 
 
-PTR<vint> pink::get_dimensions( const int x, const int y, const int z, const int t ){
-  PTR<vint> presult;
+boost::shared_ptr<vint> pink::get_dimensions( const int x, const int y, const int z, const int t ){
+  boost::shared_ptr<vint> presult;
   if (t>1) {
-    /////!!!!!!! cout<< "I've desided for 4D." << endl;
+    /////!!!!!!! std::cout<< "I've desided for 4D." << std::endl;
     presult.reset(new vint(4,-1));
     (*presult)[0]=x;
     (*presult)[1]=y;
     (*presult)[2]=z;
     (*presult)[3]=t;
   } else if (z>1){
-    /////!!!!!!! cout<< "I've desided for 3D." << endl;
+    /////!!!!!!! std::cout<< "I've desided for 3D." << std::endl;
     presult.reset(new vint(3,-1));
     (*presult)[0]=x;
     (*presult)[1]=y;
     (*presult)[2]=z;
   } else if (y>1){
-    /////!!!!!!! cout<< "I've desided for 2D." << endl;
+    /////!!!!!!! std::cout<< "I've desided for 2D." << std::endl;
     presult.reset(new vint(2,-1));
     (*presult)[0]=x;
     (*presult)[1]=y;
   } else if (x>1){
-    /////!!!!!!! cout<< "I've desided for 1D or less." << endl;
+    /////!!!!!!! std::cout<< "I've desided for 1D or less." << std::endl;
     error("an image should have at least 2 dimensions");
   };
   
@@ -364,27 +364,27 @@ void pink::set_dimensions(const vint & dim, int & x, int & y, int & z, int & t){
   }
 };
 
-// void uiSqhool::set_image ( uiScalarField & image, const string & type, const string & data_type, const string & relative_path, string full_path=""){
+// void uiSqhool::set_image ( uiScalarField & image, const std::string & type, const std::string & data_type, const std::string & relative_path, std::string full_path=""){
 //   //In a later time an image can be broken up in order to respect the 10E6 byte blob limit.
 
 //   progressBar sentinel;
 //   sentinel.start();
-//   cout << "image.size.size()=" << image.size.size() << endl;
+//   std::cout << "image.size.size()=" << image.size.size() << std::endl;
 //   int x,y,z,t;
 //   //setting up dimensions
 //   setDimensions(image.size, x, y, z, t); // as 4 dimensions are supported
   
-//   cout << "inserting image with size: (x=" << x << ", y=" << y << ", z=" << z << ", t=" << t << ")" << endl;
+//   std::cout << "inserting image with size: (x=" << x << ", y=" << y << ", z=" << z << ", t=" << t << ")" << std::endl;
 
 //   int new_id;
 
 //   {
-//     stringstream command;
+//     std::stringstream command;
 //     command << "select count(id) from images;";
   
 //     new_id=1+getSQLValue(command);
 
-//     stringstream ss;     
+//     std::stringstream ss;     
 //     ss << 
 //       "insert into images (ID, size_x, size_y, size_z, size_t, type, full_path, relative_path, data_type) values (" 
 //        << new_id << "," 
@@ -405,7 +405,7 @@ void pink::set_dimensions(const vint & dim, int & x, int & y, int & z, int & t){
 
 //   {
 
-//     stringstream ss; 
+//     std::stringstream ss; 
 //     ss << "insert into datas (ID, data, pos_x, pos_y, pos_z, pos_t, size_x, size_y, size_z, size_t) values ("
 //        << new_id 
 //        << ","
@@ -417,10 +417,10 @@ void pink::set_dimensions(const vint & dim, int & x, int & y, int & z, int & t){
 //        << t << ");";
 
 //     if (data_type=="BYTE"){
-//       ARRAY<unsigned char> data = image.getCharRepresentation(); //boost's shared array will delete itself
+//       boost::shared_array<unsigned char> data = image.getCharRepresentation(); //boost's shared array will delete itself
 //       insertBlob((void*)data.get(), image.size.prod()*sizeof(char), ss);
 //     } else if (data_type=="FLOAT32"){
-//       ARRAY<float> data = image.getFloatRepresentation();
+//       boost::shared_array<float> data = image.getFloatRepresentation();
 //       insertBlob((void*)data.get(), image.size.prod()*sizeof(float), ss);
 //     } else {
 //       error("wrong type of the image to insert. Note valid types are BYTE and FLOAT32");
@@ -428,17 +428,17 @@ void pink::set_dimensions(const vint & dim, int & x, int & y, int & z, int & t){
 
 //   };
   
-//   cout << "image inserted in " << sentinel.elapsedTime() << " with id = " << new_id << endl;
+//   std::cout << "image inserted in " << sentinel.elapsedTime() << " with id = " << new_id << std::endl;
 //   touch();
 // };
 
-void uiSqhool::insert_blob(void * data, const int size, const stringstream & ss){
+void uiSqhool::insert_blob(void * data, const int size, const std::stringstream & ss){
   //this function should be parametrized later as we cut the images up
 
   psqlite3_stmt statement;
   char const * tail;
 
-  cout << " size is: " << size << endl;
+  std::cout << " size is: " << size << std::endl;
 
   sqlite3_prepare_v2(
     database,         // sqlite3 *db,            /* Database handle */
@@ -463,24 +463,24 @@ void uiSqhool::insert_blob(void * data, const int size, const stringstream & ss)
 };
 
 
-void uiSqhool::set_comment ( int ID, const string & comment ){
+void uiSqhool::set_comment ( int ID, const std::string & comment ){
   error("setComment: this function is not implemented yet");
 };
 
-void uiSqhool::set_log ( int ID, const string & log ){
+void uiSqhool::set_log ( int ID, const std::string & log ){
   error("setLog: this function is not implemented yet");
 };
 
-void uiSqhool::set_command ( int ID, const string & command ){
-  stringstream ss;
+void uiSqhool::set_command ( int ID, const std::string & command ){
+  std::stringstream ss;
   ss << "insert into commands(id, command, language) values ("
      << ID << "," << command
      << ");";
   sql_execute(ss, "can't insert the command into the commands table");
 };
 
-void uiSqhool::set_substitution ( int ID_final_image, int ID_source_image, const string & name_source_in_command ){
-  stringstream ss;
+void uiSqhool::set_substitution ( int ID_final_image, int ID_source_image, const std::string & name_source_in_command ){
+  std::stringstream ss;
   ss << "insert into substitutions( ID_final_image, ID_source_image, name_source_in_command ) values ( "
      << ID_final_image << "," << ID_source_image << "," << name_source_in_command 
      << ");";
@@ -488,38 +488,38 @@ void uiSqhool::set_substitution ( int ID_final_image, int ID_source_image, const
   sql_execute(ss, "can't insert the substitution");
 };
 
-PTR<string> uiSqhool::get_command( int ID ){
+boost::shared_ptr<std::string> uiSqhool::get_command( int ID ){
   char ** results;
   int row;
   int column;
   char * errmsg;
   
-  PTR<string> presult;
+  boost::shared_ptr<std::string> presult;
 
-  stringstream ss;
+  std::stringstream ss;
   ss << "select command from commands where id=" << ID << ";";
 
   sqlite3(sqlite3_get_table(database, ss.str().c_str(), &results, &row, &column, &errmsg ), 
 	  "couldn't get the command correspondent with that id.");
 
   if (row==0) 
-    presult.reset(new string(""));
+    presult.reset(new std::string(""));
   else {
-    presult.reset(new string(results[1]));
+    presult.reset(new std::string(results[1]));
   };
 
   sqlite3_free_table(results);
   return presult;
 };
 
-PTR<vint> uiSqhool::get_dependencies( const vint & IDs ){
+boost::shared_ptr<vint> uiSqhool::get_dependencies( const vint & IDs ){
   char ** results;
   int row;
   int column;
   char * errmsg;
 
 
-  stringstream ss;
+  std::stringstream ss;
   ss << "select ID_source_image from substitutions where ID_final_image in (" ;
   FOR(q, int(IDs.size())-1){
     ss << IDs[q] << ",";
@@ -527,12 +527,12 @@ PTR<vint> uiSqhool::get_dependencies( const vint & IDs ){
   ss << IDs[IDs.size()-1];
   ss << ");";
 
-  cout << "ss is: '" << ss.str() << "'" << endl;
+  std::cout << "ss is: '" << ss.str() << "'" << std::endl;
   
   sqlite3(sqlite3_get_table(database, ss.str().c_str(), &results, &row, &column, &errmsg ), 
 	  "couldn't get the list of dependencies.");
 
-  PTR<vint> presult(new vint(row));
+  boost::shared_ptr<vint> presult(new vint(row));
   FOR (q, row)
     (*presult)[q]=atoi(results[q+1]);
   
@@ -541,52 +541,52 @@ PTR<vint> uiSqhool::get_dependencies( const vint & IDs ){
   return presult;
 };
 
-PTR<vector<string> > uiSqhool::get_commands ( int ID ){
-  PTR<vint> dependencies(new vint(1));
+boost::shared_ptr<std::vector<std::string> > uiSqhool::get_commands ( int ID ){
+  boost::shared_ptr<vint> dependencies(new vint(1));
   (*dependencies)[0]=ID;
   
-  PTR<vint> dep = get_dependencies(*dependencies);
+  boost::shared_ptr<vint> dep = get_dependencies(*dependencies);
   
   while (dependencies->addSet(*dep)) { // Here I iterate over the set of know dependencies (starting with a set {ID}).
     dep = get_dependencies(*dependencies);
   };// In the end I should have all the images that where used to create image 1;
 
-  PTR<vector<string> > result(new vector<string>(0));
+  boost::shared_ptr<std::vector<std::string> > result(new std::vector<std::string>(0));
   FOR( q, int(dependencies->size()) ) {
-    PTR<string> currcommand = get_command((*dependencies)[q]);
+    boost::shared_ptr<std::string> currcommand = get_command((*dependencies)[q]);
     if ( (*currcommand) != "") result->push_back( *currcommand );
   };
   
   return result;
 
 // EXAMPLE:
-//   PTR<uiSqhool> ujif(new uiSqhool("/home/ujoimro/tmp/ujif/test.ujif", "", "", false));
+//   boost::shared_ptr<uiSqhool> ujif(new uiSqhool("/home/ujoimro/tmp/ujif/test.ujif", "", "", false));
 
-//   PTR<vector<string> > commands = ujif->getCommands(1);
+//   boost::shared_ptr<std::vector<std::string> > commands = ujif->getCommands(1);
 
-//   cout << "my commands are:" << endl;
+//   std::cout << "my commands are:" << std::endl;
 
 //   FOR(q, int(commands->size()))
-//     cout << (*commands)[q] << endl;
+//     std::cout << (*commands)[q] << std::endl;
 
 
 };
 
-PTR<vint> uiSqhool::list_images ( ) {
+boost::shared_ptr<vint> uiSqhool::list_images ( ) {
   char ** results;
   int row;
   int column;
   char * errmsg;
 
-  stringstream ss;
+  std::stringstream ss;
   ss << "select id from images;";  
   
   if (SQLITE_OK!=sqlite3_get_table(database, ss.str().c_str(), &results, &row, &column, &errmsg )){
-    cout << "sqlite says: " << sqlite3_errmsg(database) << endl;
+    std::cout << "sqlite says: " << sqlite3_errmsg(database) << std::endl;
     error("couldn't get the list of the images.");    
   };
   
-  PTR<vint> result(new vint(row,-1));
+  boost::shared_ptr<vint> result(new vint(row,-1));
   
   FOR(q, row) {
     (*result)[q]=atoi(results[q+1]);
@@ -599,7 +599,7 @@ PTR<vint> uiSqhool::list_images ( ) {
 
 void uiSqhool::touch() {
   ///// TIME GENERATION ----------------------------------
-  stringstream currtime;
+  std::stringstream currtime;
   
   {
     time_t rawtime;
@@ -613,7 +613,7 @@ void uiSqhool::touch() {
     currtime << ctime; //asctime(timeinfo);
   };
   
-  stringstream ss;
+  std::stringstream ss;
   
   ss << "update fileinfo set last_modified="
      << "'" << currtime.str().c_str()  << "' where file_id=1;";
@@ -634,7 +634,7 @@ int uiSqhool::callback (void * NotUsed, int argc, ppchar argv, ppchar azColName 
 };
 
 
-string uiSqhool::get_image_type( int ID  ){
+std::string uiSqhool::get_image_type( int ID  ){
   if (ID==-1){
     error("cannot yet choose the image automaticly");
   } 
@@ -649,7 +649,7 @@ string uiSqhool::get_image_type( int ID  ){
 namespace pink {
 //File format 4.1.1.0
 
-string uiCreateFile=""
+std::string uiCreateFile=""
 "CREATE TABLE comments (  "
 " "
 "  ID INTEGER references images(ID), "

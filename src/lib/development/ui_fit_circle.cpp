@@ -12,13 +12,21 @@
 // This is an implementation of optimal ellipse fitting algorithm
 // PoSh
 
-#include <pink.h>
+#include <eigen2/Eigen/Core>
+#include <eigen2/Eigen/LU>
+#include <eigen2/Eigen/Geometry>
+
+#include <fstream>
+
+#include "uiFibreTypes.h"
+#include "ui_fit_circle.hpp"
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in ui_fit_circle.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in ui_fit_circle.cpp: " << msg; call_error(fullmessage.str());}
 
 
 USING_PART_OF_NAMESPACE_EIGEN
+
 
 
 namespace pink
@@ -78,7 +86,7 @@ namespace pink
     return INFO==0;
   } /* generalized_eigenvalue */
   
-  VectorXd fit_circle( const VectorXd & x, const VectorXd & y, const string & filename = "" )
+  VectorXd fit_circle( const VectorXd & x, const VectorXd & y, const std::string & filename = "" )
   {
     bool verbose = (filename != "");
 
@@ -161,7 +169,7 @@ namespace pink
       // printing the circle candidates
       FOR (q, geval.rows())
       {     
-        cout << "the circle equation is "
+        std::cout << "the circle equation is "
              << "( x" << std::showpos << gevec(1,q)/(2*gevec(0,q)) << " )^2 + ( y" << std::showpos << gevec(2,q)/(2*gevec(0,q)) << " )^2"
              << std::showpos << gevec(3,q)/gevec(0,q)-ui_sqr(gevec(1,q))/(4*ui_sqr(gevec(0,q)))-ui_sqr(gevec(2,q))/(4*ui_sqr(gevec(0,q))) << " == 0\n";  
       } /* FOR */
@@ -173,7 +181,7 @@ namespace pink
   boost::python::list py_fit_circle(
     const boost::python::list & py_x,
     const boost::python::list & py_y,
-    const string & filename /* = "" */ // default argument specified in the header
+    const std::string & filename /* = "" */ // default argument specified in the header
     )
   {
     VectorXd x(boost::python::len(py_x));

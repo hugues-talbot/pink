@@ -22,13 +22,14 @@ namespace pink {
 
 
   template <class image_type >
-  PTR<image_type> insert_image( 
+  image_type insert_image( 
     const image_type & big_image,
     const image_type & small_image,
     const boost::python::list & shift
     )
   {
-    PTR<image_type> result( new image_type(big_image) );
+    image_type result;
+    result.copy(big_image);
     int d = big_image.get_size().size();
     vint shift_vec(shift);
 
@@ -52,7 +53,7 @@ namespace pink {
       
       if (big_image.get_size().inside(new_pos))
       {
-	(*result)[new_pos]=small_image[curr];
+	result[new_pos]=small_image[curr];
       } /* if */
 
     } /* FOR */
@@ -62,13 +63,14 @@ namespace pink {
   } /* insert_image */
 
   template <class image_type >
-  PTR<image_type> merge_max_image( 
+  image_type merge_max_image( 
     const image_type & big_image,
     const image_type & small_image,
     const boost::python::list & shift
     )
   {
-    PTR<image_type> result( new image_type(big_image) );
+    image_type result;
+    result.copy(big_image);
     int d = big_image.get_size().size();
     vint shift_vec(shift);
 
@@ -92,9 +94,9 @@ namespace pink {
       
       if (big_image.get_size().inside(new_pos))
       {
-	(*result)[new_pos]=
-	  (*result)[new_pos]>small_image[curr]?
-	  (*result)[new_pos]:small_image[curr];
+	result[new_pos]=
+	  result[new_pos]>small_image[curr]?
+	  result[new_pos]:small_image[curr];
       } /* if */
 
     } /* FOR */

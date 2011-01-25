@@ -2,15 +2,15 @@
 // This software is meant to be free
 
 
-#include <pink.h>
+#include "pink.h"
 
 
-string greet()
+std::string greet()
 {
    return "PInK: (P)ink (I)s (not) (K)inky. Or is it? ";
 }
 
-string drink()
+std::string drink()
 {
    return "There's ain't no nothing to drink! ";
 }

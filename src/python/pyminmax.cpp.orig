@@ -13,7 +13,7 @@
 
 #include <pink_python.h>
 
-#define error(msg) {stringstream fullmessage; fullmessage << "in pyminmax.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyminmax.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;
 

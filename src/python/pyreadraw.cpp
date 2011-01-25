@@ -13,10 +13,15 @@
 // boost python wrapper
 // this file opens a file with raw image data as an image of given type
 
-#include <pink_python.h>
+#include <fstream>
+#include <iostream>
+
+#include "pink_python.h"
+
+
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pyreadraw.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyreadraw.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;
 using namespace pink;
@@ -26,7 +31,7 @@ namespace pink {
 
     template <class image_type>
     image_type read_raw_image(
-      const string & filename,
+      const std::string & filename,
       const boost::python::list & python_dim
       )
     {
@@ -35,18 +40,18 @@ namespace pink {
 
       vint dim(python_dim);
   
-      ifstream file;
+      std::ifstream file;
   
       if ( file_size(filename) != sizeof(pixel_type) * dim.prod() )
       {
-        cout << "requested file size = " << sizeof(pixel_type) * dim.prod() << "\n";
-        cout << "but '" << filename << "' is only " << file_size(filename) << " byte-long\n"; 
+        std::cout << "requested file size = " << sizeof(pixel_type) * dim.prod() << "\n";
+        std::cout << "but '" << filename << "' is only " << file_size(filename) << " byte-long\n"; 
         error( "the file size does not equal with the image size");
       } /* if */
 
-      file.open( filename.c_str(), ios_base::binary );
+      file.open( filename.c_str(), std::ios_base::binary );
   
-      ARRAY<pixel_type> data(new pixel_type[dim.prod()]);
+      boost::shared_array<pixel_type> data(new pixel_type[dim.prod()]);
     
       try 
       {    

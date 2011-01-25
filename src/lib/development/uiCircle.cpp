@@ -5,18 +5,20 @@
   This software comes in hope that it will be useful but 
   without any warranty to the extent permitted by aplicable law.
   
-  (C) UjoImro, 2010
+  (C) UjoImro, 2010-2011
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
 
 
-
+#include <gsl/gsl_vector.h>
 // my includes
-#include <pink.h>
+#include "pink_development.h"
+#include "uiCircle.hpp"
+
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiCircle.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiCircle.cpp: " << msg; call_error(fullmessage.str());}
 
 namespace pink { 
 
@@ -38,13 +40,13 @@ namespace pink {
 
 
     
-    vector::vector(int n) // initializes a vector of size n
+    pink::gsl::vector::vector(int n) // initializes a vector of size n
     {
       wrapper=false;      
       self=gsl_vector_alloc(n);
     }
     
-    vector::vector(const vector & other) // copy constructor
+    pink::gsl::vector::vector(const vector & other) // copy constructor
     {
       wrapper=false;
       self=gsl_vector_alloc(other.size());
@@ -56,13 +58,13 @@ namespace pink {
         
     }
     
-    vector::vector( const gsl_vector * shallow ) // this initializes vector in wrapper mode
+    pink::gsl::vector::vector( const gsl_vector * shallow ) // this initializes vector in wrapper mode
     {
       wrapper=true;
       self=const_cast<gsl_vector *>(shallow);
     }
     
-    vector & vector::operator=(const vector & other) // copy constructor
+    pink::gsl::vector & pink::gsl::vector::operator=(const vector & other) // copy constructor
     {
       if (self)
       {
@@ -76,37 +78,37 @@ namespace pink {
       return *this;      
     }
     
-    vector::vector() // empty constructor    
+    pink::gsl::vector::vector() // empty constructor    
     {
       wrapper=false;
       self=NULL;      
     }
     
     
-    int vector::size() const
+    int pink::gsl::vector::size() const
     {
       return self->size;      
     }
     
-    void vector::set_all(double val) // sets all elements of the vector the given value
+    void pink::gsl::vector::set_all(double val) // sets all elements of the vector the given value
     {
       gsl_vector_set_all(self, val);
         
     }
     
-    double & vector::operator[](int pos) // vector element access
+    double & pink::gsl::vector::operator[](int pos) // vector element access
     {
       return *gsl_vector_ptr(this->self, pos);
         
     }
     
-    const double & vector::operator[](int pos) const // vector element access
+    const double & pink::gsl::vector::operator[](int pos) const // vector element access
     {
       return *gsl_vector_ptr(this->self, pos);
     }
     
     
-    vector::~vector() // default destructor
+    pink::gsl::vector::~vector() // default destructor
     {
       if (not wrapper) // we do not delete pointers in wrapper mode
       {  
@@ -118,28 +120,28 @@ namespace pink {
       }
     }
     
-    vector::operator gsl_vector*() // type casting operator
+    pink::gsl::vector::operator gsl_vector*() // type casting operator
     {
       return this->self;      
     }
     
-    vector & vector::operator << ( double first_value )
+    pink::gsl::vector & pink::gsl::vector::operator << ( double first_value )
     {
       tag=0;
       (*this)[tag]=first_value;
       return *this;      
     }
     
-    vector & vector::operator, (double next)
+    pink::gsl::vector & pink::gsl::vector::operator, (double next)
     {
       tag++;
       (*this)[tag]=next;
       return *this;
     }
 
-    string vector::repr() const
+    std::string pink::gsl::vector::repr() const
     {
-      stringstream result;
+      std::stringstream result;
       result << "[ ";
       for (int q=0; q<=this->size()-1  -1; q++)
       {
@@ -254,9 +256,9 @@ namespace pink {
       return this->self;      
     }
 
-    string matrix::repr() const
+    std::string matrix::repr() const
     {
-      stringstream result;
+      std::stringstream result;
       result << "[ ";
       for (int q=0; q<=this->rows() - 1; q++)
       {
@@ -342,9 +344,9 @@ namespace pink {
       gsl_multifit_fdfsolver_free(solver);        
     }
     
-    string fdfsolver::repr() const
+    std::string fdfsolver::repr() const
     {
-      string result(gsl_multifit_fdfsolver_name(solver));
+      std::string result(gsl_multifit_fdfsolver_name(solver));
       return result;        
     }   
     
@@ -446,7 +448,7 @@ namespace pink {
     }
 
   
-    typedef pair<pink::gsl::vector, pink::gsl::vector> point_type;
+    typedef std::pair<pink::gsl::vector, pink::gsl::vector> point_type;
 
 
     int find_circle::f( const gsl::vector & x, gsl::vector & f )

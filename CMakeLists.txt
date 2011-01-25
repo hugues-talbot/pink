@@ -195,7 +195,7 @@ if (CMAKE_HOST_UNIX)
 ### **********************************************************************************************
 ### **********************************************************************************************
 
-    option( BASH_FRONT_END "Compiles the executable files if you switch this of you can still compile the Python front-end and the shared library." ON )
+    option( BASH_FRONT_END "Compiles the executable files if you switch this of you can still compile the Python front-end and the shared library." OFF )
 
     if (BASH_FRONT_END)
 	add_subdirectory( src/com bash )
@@ -213,7 +213,7 @@ if (CMAKE_HOST_UNIX)
 	option( BUILD_DOCUMENTATION "Builds the documentation files with Doxygen" OFF )
     else ( NOT DOXYGEN_FOUND )
         #message( "not building documentation" )
-	option( BUILD_DOCUMENTATION "Builds the documentation files with Doxygen" ON )
+	option( BUILD_DOCUMENTATION "Builds the documentation files with Doxygen" OFF )
     endif ( NOT DOXYGEN_FOUND )
 
     if (BUILD_DOCUMENTATION)

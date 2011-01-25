@@ -35,8 +35,10 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #ifdef __cplusplus
 
-  #undef error
-  #define error(msg) {stringstream fullmessage; fullmessage << "in larith.h: " << msg; call_error(fullmessage.str());}
+#include "uiFibreTypes.h"
+
+#undef error
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in larith.h: " << msg; call_error(fullmessage.str());}
 
   namespace pink {
     

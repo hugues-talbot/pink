@@ -45,6 +45,8 @@
 #ifndef READPNM_H
 #define READPNM_H
 
+#include "ujimage.hpp"
+
 typedef enum {
     IV_MANDATORY =  0,
     IV_OPTIONAL ,
@@ -53,7 +55,7 @@ typedef enum {
 
 
 
-PTR<pink::ujoi <float> > readPNMImage(const string & filename);
+pink::float_image readPNMImage(const std::string & filename);
 //int pnmnbsubfiles(const char *);
 
 #endif

@@ -18,7 +18,7 @@
 #include "uiFibreTypes.h"
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in ui_make_result.hpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in ui_make_result.hpp: " << msg; call_error(fullmessage.str());}
 
 
 #ifndef MAX_PARAMETERS
@@ -74,20 +74,19 @@
 
 #define                                                                 \
   MAKE_RESULT(z, n, text)                                               \
-  template < class image_type,                                          \
+  template < class result_type, class image_type,                       \
   BOOST_PP_ENUM_PARAMS(n, class param_type ) BOOST_PP_COMMA_IF(n)       \
   int (*mcfunction) (                                                   \
     typename convert_if<image_type>::type,                              \
     BOOST_PP_ENUM(n, CONVERT_IF, ~) BOOST_PP_COMMA_IF(n)                \
-    typename convert_if<image_type>::type                               \
+    typename convert_if<result_type>::type                              \
     )                                                                   \
   >                                                                     \
-  image_type make_result( image_type image BOOST_PP_COMMA_IF(n)         \
-                          BOOST_PP_ENUM(n, PARAM, ~)                    \
+  result_type make_result( image_type image BOOST_PP_COMMA_IF(n)        \
+                           BOOST_PP_ENUM(n, PARAM, ~)                   \
     )                                                                   \
   {                                                                     \
-  image_type result;                                                    \
-  result.copy(image);                                                   \
+  result_type result(image.get_size());                                 \
                                                                         \
   if (!mcfunction(image, BOOST_PP_ENUM_PARAMS(n, param) BOOST_PP_COMMA_IF(n) result)) \
   {                                                                     \
@@ -117,42 +116,74 @@ namespace pink
 
 // the generated code is:
 
-// template <
-//   class image_type,
-//   int (*mcfunction) (
-//     typename convert_if<image_type>::type,
-//     typename convert_if<image_type>::type ) >
-// image_type make_result( image_type image )
+// template < class result_type,
+//            class image_type,
+//            int (*mcfunction) ( typename convert_if<image_type>::type,
+//                                typename convert_if<result_type>::type )
+//            >
+// result_type
+// make_result( image_type image )
 // {
-//   image_type result;
-//   result.copy(image);
-//   if (!mcfunction(image, result)) {
-//     error("mcfunction failed");
+//   result_type result(image.get_size());
+//   if (!mcfunction(image, result))
+//   {
+//     {
+//       std::stringstream fullmessage;
+//       fullmessage << "in ui_make_result.hpp: " << "mcfunction failed";
+//       call_error(fullmessage.str());
+//     };
 //   }
 //   return result;
 // }
 
-// template <
-//   class image_type,
-//   class param_type0 ,
-//   int (*mcfunction) (
-//     typename convert_if<image_type>::type,
-//     typename convert_if<param_type0>::type ,
-//     typename convert_if<image_type>::type ) >
-// image_type make_result(
-//   image_type image ,
-//   param_type0 param0
-//   )
+// template < class result_type,
+//            class image_type,
+//            class param_type0 ,
+//            int (*mcfunction) ( typename convert_if<image_type>::type,
+//                                typename convert_if<param_type0>::type ,
+//                                typename convert_if<result_type>::type )
+//            >
+// result_type
+// make_result( image_type image ,
+//              param_type0 param0 )
 // {
-//   image_type result;
-//   result.copy(image);
-//   if (!mcfunction(image, param0 , result)) {
-//     error("mcfunction failed");
+//   result_type result(image.get_size());
+//   if (!mcfunction(image, param0 , result))
+//   {
+//     {
+//       std::stringstream fullmessage;
+//       fullmessage << "in ui_make_result.hpp: " << "mcfunction failed";
+//       call_error(fullmessage.str());
+//     };
 //   }
 //   return result;
 // }
 
-
+// template < class result_type,
+//            class image_type,
+//            class param_type0 ,
+//            class param_type1 ,
+//            int (*mcfunction) ( typename convert_if<image_type>::type,
+//                                typename convert_if<param_type0>::type,
+//                                typename convert_if<param_type1>::type,
+//                                typename convert_if<result_type>::type )
+//            >
+// result_type
+// make_result( image_type image ,
+//              param_type0 param0 ,
+//              param_type1 param1 )
+// {
+//   result_type result(image.get_size());
+//   if (!mcfunction(image, param0 , param1 , result))
+//   {
+//     {
+//       std::stringstream fullmessage;
+//       fullmessage << "in ui_make_result.hpp: " << "mcfunction failed";
+//       call_error(fullmessage.str());
+//     };
+//   }
+//   return result;
+// }
 
 
 

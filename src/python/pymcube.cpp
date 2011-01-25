@@ -13,7 +13,7 @@
 #include <pink_python.h>
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pymcube.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in pymcube.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;
 using namespace pink;
@@ -21,7 +21,7 @@ using namespace pink;
 namespace pink {
   namespace python {
 
-    string mcube(
+    std::string mcube(
       char_image image,
       int seuil,
       int nregul,
@@ -49,7 +49,7 @@ namespace pink {
       InitLUT();
       InitMesh(1000); /* automatically reallocated if needed */
 
-      stringstream result;
+      std::stringstream result;
             
       if (seuil == 255)
       { // with fix-point preservation

@@ -5,7 +5,7 @@
   This software comes in hope that it will be useful but 
   without any warranty to the extent permitted by aplicable law.
   
-  (C) UjoImro, 2007-2009
+  (C) UjoImro, 2007-2011
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
@@ -17,47 +17,59 @@
  * \author UjoImro, 2007.
  */
 
+#include <gsl/gsl_interp.h>
+#include <boost/smart_ptr.hpp>
 
-#include <pink.h>
+#include "ujimage.hpp"
+#include "uiFibreTypes.h"
 
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiGradient.cpp: " << msg; call_error(fullmessage.str());}
+//#undef error
+//#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiGradient.cpp: " << msg; call_error(fullmessage.str());}
+
+
 // general gradient ---------------------------------------------------------------------------------
-namespace pink { 
+
+namespace pink
+{ 
 
 // this function is used to iterate over a fields sides. That is to say you give it the "step" and the "coord"inate 
 // to ignore, and the result is point by point a variation of the remaining coordinates. there are prodExcept(coord) 
 // coordinates on the lower side.
-PTR<vint> uiStep( const vint & dim, int step, int coord ){
-  int d = dim.size();
+  boost::shared_ptr<vint> uiStep( const vint & dim, int step, int coord )
+  {
+    int d = dim.size();
   
-  PTR<vint> result (new vint(d,0));
-  vint slist  (d-1,0);
-  vint partres(d-1,0);
+    boost::shared_ptr<vint> result (new vint(d,0));
+    vint slist  (d-1,0);
+    vint partres(d-1,0);
 
-  FOR( q, coord ){ 
-    slist[q]=dim[q];
-  } /* FOR */
+    FOR( q, coord )
+    { 
+      slist[q]=dim[q];
+    } /* FOR */
 
-  for ( int q = coord + 1; q <= d - 1; q++ ) {
-    slist[q-1] = dim[q];
-  } /* for */
+    for ( int q = coord + 1; q <= d - 1; q++ )
+    {
+      slist[q-1] = dim[q];
+    } /* for */
   
-  slist.nextStep( step, partres ) ;
+    slist.nextStep( step, partres ) ;
   
-  FOR(q, coord) {
-    (*result)[q]=partres[q];
-  } /* FOR */
+    FOR(q, coord)
+    {
+      (*result)[q]=partres[q];
+    } /* FOR */
 
-  (*result)[coord]=0;
+    (*result)[coord]=0;
 
-  for ( int q = coord + 1; q <= d - 1; q++ ) {
-    (*result)[q] = partres[q - 1];
-  } /* FOR */
+    for ( int q = coord + 1; q <= d - 1; q++ )
+    {
+      (*result)[q] = partres[q - 1];
+    } /* FOR */
   
-  return result;
-}; /* uiStep */
+    return result;
+  } /* uiStep */
 
 
 /**
@@ -65,7 +77,8 @@ PTR<vint> uiStep( const vint & dim, int step, int coord ){
  * @param values input vector
  * @param result result vector
  */
-PTR<vval_type> uiDerivateVect( vval_type & values ){
+  boost::shared_ptr<vval_type> uiDerivateVect( vval_type & values )
+  {
 //solved
 // if the size of the vector is odd for some strange reason I don't know
 // gnu gsl does not want to derivate it, so if odd lenght is detected, one additional
@@ -74,65 +87,71 @@ PTR<vval_type> uiDerivateVect( vval_type & values ){
 // 	for large images it should not cause any algorithmical (formal) problems.
 
   
-  int d = values.size();
-  PTR<vval_type> result(new vval_type(d));
+    int d = values.size();
+    boost::shared_ptr<vval_type> result(new vval_type(d));
   
-  ARRAY<double> x(new double[ d ]);
-  ARRAY<double> y(new double[ d ]);
-  FOR(q, d){
-    x[q] = q;
-    y[q] = values[q];
-  };
+    boost::shared_array<double> x(new double[ d ]);
+    boost::shared_array<double> y(new double[ d ]);
+    FOR(q, d){
+      x[q] = q;
+      y[q] = values[q];
+    }
   
-  gsl_interp * interp = gsl_interp_alloc( gsl_interp_cspline, d );//gsl_interp_akima, d );//gsl_interp_cspline, d );
-  gsl_interp_init( interp, x.get(), y.get(), d );
-  gsl_interp_accel * accel = gsl_interp_accel_alloc();
-  result->clear();
-  FOR(q,d) {
-    (*result)[q]=/*pow(*/ gsl_interp_eval_deriv(interp, x.get(), y.get(), q, accel /* ),2));*/);
-  } /* FOR */
-  gsl_interp_free( interp );
-  gsl_interp_accel_free( accel );
-  return result;
-} /* uiDerivateVect */
+    gsl_interp * interp = gsl_interp_alloc( gsl_interp_cspline, d );//gsl_interp_akima, d );//gsl_interp_cspline, d );
+    gsl_interp_init( interp, x.get(), y.get(), d );
+    gsl_interp_accel * accel = gsl_interp_accel_alloc();
+    result->clear();
+    FOR(q,d) {
+      (*result)[q]=/*pow(*/ gsl_interp_eval_deriv(interp, x.get(), y.get(), q, accel /* ),2));*/);
+    } /* FOR */
+    gsl_interp_free( interp );
+    gsl_interp_accel_free( accel );
+    return result;
+  } /* uiDerivateVect */
 
 /**
  * Calculates the absolute value of the directional derivates.
  * @param f input image
  * @return a new scalar field with the derivates.
  */
-PTR<float_image> uiGradientAbs( float_image & f ){
+  float_image uiGradientAbs( float_image f )
+  {
 #ifdef UJIMAGE_DEBUG
-  cout << "Calculating general gradient\n";
+    std::cout << "Calculating general gradient\n";
 #endif /* UJIMAGE_DEBUG */
-  int d = f.get_size().size();  
+    int d = f.get_size().size();
   
-  PTR<float_image> result(new float_image( f.get_size() ));
+    float_image result(f.get_size());
   
-  FOR( q, d ){
-    FOR(w, f.get_size().prodExcept(q) ) {
+    FOR( q, d )
+    {
+      FOR(w, f.get_size().prodExcept(q) )
+      {      
+        boost::shared_ptr<vint> coord( uiStep( f.get_size(), w, q ) );
       
-      PTR<vint> coord( uiStep( f.get_size(), w, q ) );
+        boost::shared_ptr<vval_type> vect( new vval_type( f.get_size()[q] ) );
       
-      PTR<vval_type> vect( new vval_type( f.get_size()[q] ) );
-      
-      FOR( e, f.get_size()[q] ){
-	(*coord)[q] = e;
-	(*vect)[e]  = f[*coord];
-      };
-      //	printf("q=%d\n",q);
-      PTR<vval_type> der = uiDerivateVect( *vect );
-      //		der=vect; // just for testing
-      //vect->clear(); //deleted later
-      FOR( e, f.get_size()[q] ){
-	(*coord)[q]=e;
-	(*result)[*coord] += uiSqr((*der)[e]); // needed to be added because square is not square any more
-      } /* FOR( e, f.get_size()[q] ) */;
-    } /* FOR(w, f.get_size().prodExcept(q) ) */;
-  }; /*   FOR( q, d ) */
+        FOR( e, f.get_size()[q] )
+        {
+          (*coord)[q] = e;
+          (*vect)[e]  = f[*coord];
+        }
+        
+        //	printf("q=%d\n",q);
+        boost::shared_ptr<vval_type> der = uiDerivateVect( *vect );
+        //		der=vect; // just for testing
+        //vect->clear(); //deleted later
+        FOR( e, f.get_size()[q] )
+        {
+          (*coord)[q]=e;
+          result[*coord] += uiSqr((*der)[e]); // needed to be added because square is not square any more
+        } /* FOR( e, f.get_size()[q] ) */;
+        
+      } /* FOR(w, f.get_size().prodExcept(q) ) */;
+    } /*   FOR( q, d ) */
 //  result->_sqrt();
-  return result;
-} /* uiGradientAbs */
+    return result;
+  } /* uiGradientAbs */
 
 // // directional gradient ------------------------------------------------------------------------------------------------
 
@@ -263,8 +282,8 @@ PTR<float_image> uiGradientAbs( float_image & f ){
 //  * @param f The input image
 //  * @return The gradient image
 //  */
-// PTR<uiScalarField> uiDirectionalGrad( uiScalarField & image ){
-//   cout << "Calculating directional gradient\n";
+// boost::shared_ptr<uiScalarField> uiDirectionalGrad( uiScalarField & image ){
+//   std::cout << "Calculating directional gradient\n";
 //   // creating a local copy;
 //   uiScalarField f(image);
 //   int d = f.size.size();
@@ -275,7 +294,7 @@ PTR<float_image> uiGradientAbs( float_image & f ){
 //   if (uiSqr(dim[0]-dim[1])+uiSqr(dim[0]-dim[2])!=0){
 //     error("prepared only for cubes (not rectangloids), exiting...\n");
 //   };
-//   PTR<uiScalarField> presult( new uiScalarField( dim ));
+//   boost::shared_ptr<uiScalarField> presult( new uiScalarField( dim ));
 //   int dif=5;
 //   vint mask_dim(3);
 //   vint center(3);
@@ -313,30 +332,30 @@ PTR<float_image> uiGradientAbs( float_image & f ){
 // // uiDirGradSpecial --------------------------------------------------------------------------------------------------------------------
 
 
-// PTR<uiScalarField> uiDirGradSpecial( uiScalarField & f ) {
-//   cout << "Calculating special directional gradient\n";
+// boost::shared_ptr<uiScalarField> uiDirGradSpecial( uiScalarField & f ) {
+//   std::cout << "Calculating special directional gradient\n";
 //   int d = f.size.size();
 //   if (d!=3) {printf("Special purpose function, prepared only for 3D.\n exiting...\n"); exit(1);};
 //   vint dim (f.size);
 //   vint coord;
 // // 	uiScalarField result;
-//   PTR<uiScalarField> presult(new uiScalarField(dim));
+//   boost::shared_ptr<uiScalarField> presult(new uiScalarField(dim));
 //   uiScalarField result_x(dim);
 //   uiScalarField result_y(dim);
 //   uiScalarField result_z(dim);
 //   int q;
   
 //   // direction x --------------------------------------------------------------
-//   cout << "epoch direction x (1/4)\n";
+//   std::cout << "epoch direction x (1/4)\n";
 //   q = 0;
 //   FOR( w, dim.prodExcept(q)){
-//     PTR<vint> coord = uiStep( dim, w, q );
+//     boost::shared_ptr<vint> coord = uiStep( dim, w, q );
 //     vval_type vect(dim[q]);
 //     FOR(e, dim[q]){
 //       (*coord)[q]=e;
 //       vect[e]=f[coord];
 //     };
-//     PTR<vval_type> der = uiDerivateVect(vect);
+//     boost::shared_ptr<vval_type> der = uiDerivateVect(vect);
 
 //     FOR(e, dim[q]){
 //       (*coord)[q]=e;
@@ -345,16 +364,16 @@ PTR<float_image> uiGradientAbs( float_image & f ){
 //   };
   
 //   // direction y --------------------------------------------------------------
-//   cout << "epoch direction y (2/4)\n";
+//   std::cout << "epoch direction y (2/4)\n";
 //   q = 1;
 //   FOR( w, dim.prodExcept(q)){
-//     PTR<vint> coord = uiStep( dim, w, q );
+//     boost::shared_ptr<vint> coord = uiStep( dim, w, q );
 //     vval_type vect(dim[q]);
 //     FOR(e, dim[q]){
 //       (*coord)[q]=e;
 //       vect[e]=f[coord];
 //     };
-//     PTR<vval_type> der = uiDerivateVect(vect);
+//     boost::shared_ptr<vval_type> der = uiDerivateVect(vect);
 
 //     FOR(e, dim[q]){
 //       (*coord)[q]=e;
@@ -364,17 +383,17 @@ PTR<float_image> uiGradientAbs( float_image & f ){
 
   
 //   // direction z --------------------------------------------------------------
-//   cout << "epoch direction z (3/4)\n";
+//   std::cout << "epoch direction z (3/4)\n";
 //   q = 2;
 
 //   FOR( w, dim.prodExcept(q)) {
-//     PTR<vint> coord = uiStep( dim, w, q );
+//     boost::shared_ptr<vint> coord = uiStep( dim, w, q );
 //     vval_type vect(dim[q]);
 //     FOR(e, dim[q]){
 //       (*coord)[q]=e;
 //       vect[e]=f[coord];
 //     };
-//     PTR<vval_type> der = uiDerivateVect(vect);
+//     boost::shared_ptr<vval_type> der = uiDerivateVect(vect);
 
 //     FOR(e, dim[q]){
 //       (*coord)[q]=e;
@@ -399,7 +418,7 @@ PTR<float_image> uiGradientAbs( float_image & f ){
 //   center[2]=f.size[2]/2;
   
   
-//   cout << "epoch final (4/4)\n";
+//   std::cout << "epoch final (4/4)\n";
 //   FOR(q, dim[0]){
 //     FOR(w, dim[1]){
 //       FOR(e, dim[2]){

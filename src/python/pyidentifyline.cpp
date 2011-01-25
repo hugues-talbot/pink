@@ -16,7 +16,7 @@
 #include <pink_python.h>
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pyidentifyline.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyidentifyline.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;
 using namespace pink;
@@ -46,8 +46,8 @@ namespace pink {
       #endif /* UJIMAGE_DEBUG */
 
 
-      ARRAY<double> cX( new double[length] );
-      ARRAY<double> cY( new double[length] );
+      boost::shared_array<double> cX( new double[length] );
+      boost::shared_array<double> cY( new double[length] );
 
       FOR(q, length)
         try

@@ -5,7 +5,7 @@
   This software comes in hope that it will be useful but 
   without any warranty to the extent permitted by aplicable law.
   
-  (C) UjoImro, 2010
+  (C) UjoImro, 2010-2011
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
@@ -13,8 +13,12 @@
 #ifndef UI_UNGERFLOW__
 #define UI_UNGERFLOW__
 
+#include "uiFlow.hpp"
+
 #undef error
 #define error(msg) {stringstream fullmessage; fullmessage << "in uiUngerFlow.hpp: " << msg; call_error(fullmessage.str());}
+
+#define REPORT_INTERVAL 10
 
 namespace pink { 
 
@@ -37,24 +41,24 @@ namespace pink {
     ~ungerflow()
       {
         #ifdef UJIMAGE_DEBUG
-	cout << "destroying the ungerflow object (" << static_cast<void*>(this) << ")\n";	
+	std::cout << "destroying the ungerflow object (" << static_cast<void*>(this) << ")\n";	
         #endif /* UJIMAGE_DEBUG */        
       };
     
-    PTR<image_type> start();    
+    image_type start();    
     void upDateThreshold();
     
   private:
     float theta;
-    PTR<image_type> dual_potencial;
-    PTR<image_type> lambda;
-    PTR<image_type> guidence_f;
+    image_type dual_potencial;
+    image_type lambda;
+    image_type guidence_f;
 
   }; /* ungerflow */
 
    
   template <class image_type>
-  PTR<image_type> lungerflow(
+  image_type lungerflow(
     const char_image & src_sink, // the source (1) and the sink (-1). It must be -1 around
     const image_type & gg, // the gradient image
     const image_type & lambda, 
@@ -64,11 +68,11 @@ namespace pink {
     float theta
     )
   {
-    PTR<ungerflow<image_type> > ungerflow_obj;
+    boost::shared_array<ungerflow<image_type> > ungerflow_obj;
     
     ungerflow_obj.reset( new ungerflow<image_type>( src_sink, gg, lambda, guidence_f, iteration, tau, theta ) );
     
-    PTR<image_type> result = ungerflow_obj -> start();
+    image_type result = ungerflow_obj -> start();
 
     return result;
   } /* ungerflow */
@@ -88,7 +92,7 @@ namespace pink {
     ) : maxflow<image_type>( src_sink, gg, iteration, tau/* /theta */ , 1)
   {
     #ifdef UJIMAGE_DEBUG
-    cout << "creating the ungerflow object (" << static_cast<void*>(this) << ")\n";	
+    std::cout << "creating the ungerflow object (" << static_cast<void*>(this) << ")\n";	
     #endif /* UJIMAGE_DEBUG */        
 
     this->theta = theta;
@@ -100,13 +104,13 @@ namespace pink {
   
   
   template<class image_type>
-  PTR<image_type> ungerflow<image_type>::start()
+  image_type ungerflow<image_type>::start()
   {
     this->sentinel.maxPos(this->iteration);
     this->sentinel.minPos(0);
     this->sentinel << 0;
     this->sentinel.start();
-    cout << "starting the iteration\n";
+    std::cout << "starting the iteration\n";
     
 
     FOR( e, this->iteration ) {    
@@ -115,7 +119,7 @@ namespace pink {
       {
       	if ( this->sentinel.timeToReport() )
       	{
-      	  cout << "Estimated time remaining: " << (this->sentinel << e) << endl;
+      	  std::cout << "Estimated time remaining: " << (this->sentinel << e) << std::endl;
       	} /* timeToReport() */
       } /* if iterations ... */
 //      _DEBUG(e);
@@ -157,7 +161,7 @@ namespace pink {
     } /* FOR(e, iteration) */
 
     this->sentinel.stop();
-    cout << "total time of iteration: " << this->sentinel.elapsedTime() << endl;
+    std::cout << "total time of iteration: " << this->sentinel.elapsedTime() << std::endl;
 
 
     return this->potencial;
@@ -190,43 +194,10 @@ namespace pink {
     } /* FOR */
     
   } /* ungerflow::upDateThreshold */
+} /* namespace pink */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  } /* namespace pink */
+// cleaning up after us
+#undef REPORT_INTERVAL
 
 
 #endif /* UI_UNGERFLOW__ */

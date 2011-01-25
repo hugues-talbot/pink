@@ -21,7 +21,7 @@
 #include "ujimage.hpp"
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pyujimage.hpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyujimage.hpp: " << msg; call_error(fullmessage.str());}
 
 
 namespace pink
@@ -92,7 +92,7 @@ Python class pink.image / c++ pink::ujoi
     
 
     
-    .def( boost::python::init< vint, ARRAY< pixel_type > > (
+    .def( boost::python::init< vint, boost::shared_array< pixel_type > > (
 	    boost::python::args("self", "dim", "data"),
 	    "This constructor creates an 'image' object from a data 'ARRAY' and the "
 	    "corresponding 'dim' dimension. It is used by the 'uiSqhool' objects "

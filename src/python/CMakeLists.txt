@@ -10,6 +10,7 @@ FILE( GLOB py_src_cpp *.cpp )
 
 if (DEVELOPMENT)
     FILE( GLOB py_src_development_cpp development/*.cpp )
+    add_definitions( -DPINK_DEVELOPMENT )
 endif (DEVELOPMENT)
 
 add_library( cpp_pink SHARED ${py_src_cpp} ${py_src_development_cpp} ${py_documentation} )

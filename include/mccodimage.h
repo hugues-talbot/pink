@@ -32,6 +32,10 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+#ifndef MCCODIMAGE__HPP__
+#define MCCODIMAGE__HPP__
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -78,6 +82,9 @@ struct xvimage {
   void * image_data;                   /* pointer on raw data */
 };
 
+typedef struct xvimage xvimage; // LuM
+  
+  
 #define SCHARDATA(I)   ((int8_t*)((I)->image_data))
 #define UCHARDATA(I)   ((uint8_t*)((I)->image_data))
 #define SSHORTDATA(I)  ((int16_t*)((I)->image_data))
@@ -154,5 +161,7 @@ extern int32_t sont18voisins(index_t p, index_t q, index_t rs, index_t ps);
 extern int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps);
  
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif
+
+#endif /* MCCODIMAGE__HPP__ */

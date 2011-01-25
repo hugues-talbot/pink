@@ -52,7 +52,7 @@ namespace pink
   boost::python::list py_fit_circle(
     const boost::python::list & py_x,
     const boost::python::list & py_y,
-    const string & filename = ""
+    const std::string & filename = ""
     );
   
 

@@ -35,10 +35,11 @@ include_directories( ${PYTHON_INCLUDE} )
 
 if ( NOT PYTHON_FRONT_END )
     #message( info= ${lib_src_cxx} )
+    #message( info= ${lib_src_cpp} )
     add_library(pink SHARED ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} ${lib_src_liar} ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     #message( FATAL_ERROR "pink=" ${pink} )
 else ( NOT PYTHON_FRONT_END )
-    add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar} ${lib_src_cxx} )
+    add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     set( LIBS ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${PYTHON_LIBRARY} )
 endif ( NOT PYTHON_FRONT_END )
 

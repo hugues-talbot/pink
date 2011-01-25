@@ -14,8 +14,10 @@
 #ifndef UI_EXTRACTPLANE_HPP_
 #define UI_EXTRACTPLANE_HPP_
 
+#include "uiFibreTypes.h"
+
 #undef error
-#define error(msg, errarg) {stringstream fullmessage; fullmessage << "in ui_extractplane.hpp: " << msg << "; with argument:'" << errarg << "'"; call_error(fullmessage.str());}
+#define error(msg, errarg) {std::stringstream fullmessage; fullmessage << "in ui_extractplane.hpp: " << msg << "; with argument:'" << errarg << "'"; call_error(fullmessage.str());}
 
 
 namespace pink {
@@ -24,7 +26,7 @@ namespace pink {
   image_type extractplane(
     const image_type & image,
     int n, /*the number of the plane*/
-    string mode
+    std::string mode
     )
   {
     int32_t i, j, k, t, offset, rs, cs, ds;

@@ -15,7 +15,7 @@
 #include <pink_python.h>
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pyreadimage.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyreadimage.cpp: " << msg; call_error(fullmessage.str());}
 
 /// !!! macros should be named upper case
 #undef border
@@ -26,7 +26,7 @@ namespace pink {
   namespace python {
 
     
-    boost::python::object py_readimage( string filename )
+    boost::python::object py_readimage( std::string filename )
     {
       boost::python::object * result;
       

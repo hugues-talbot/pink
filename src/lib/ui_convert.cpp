@@ -12,10 +12,17 @@
 
 #ifdef __cplusplus
 
-#include <pink.h>
+#include "uiFibreTypes.h"
+#include "ujimage.hpp"
+#include "mcutil.h"
+#include "lminmax.hpp"
+#include "llong2byte.h"
+
+
+
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in ui_convert.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in ui_convert.cpp: " << msg; call_error(fullmessage.str());}
 
 // you shouldn't use one character macros
 #undef N

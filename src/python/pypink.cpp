@@ -11,7 +11,11 @@
 */
 // The pink python wrapper core file
 
-#include <pink_python.h>
+#ifndef PINK_DEVELOPMENT
+#  include <pink_python.h>
+#else /* PINK_DEVELOPMENT */
+#  include <pink_development.h>
+#endif /* PINK_DEVELOPMENT */
 
 using namespace boost::python;
 using namespace pink;
@@ -129,14 +133,14 @@ void erosball_export();void medianfilter_export();
 void skeleton2_export();void zoom_export();
 
 void dilation_export(); void erosion_export(); void geodilat_export();
-void geoeros_export(); void opening_export(); void drawcurve2D_export(); void maxflow_export();
+void geoeros_export(); void opening_export(); void drawcurve2D_export();
 void uiSqhool_object_export(); void gradient_export();
 
 void read_raw_image_export(); void seuil_export(); void plane3d_export(); void draw_plane_export();
 void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
 void generate_rgb_image_export(); void closing_export(); void closeball_export(); void minmax_export();
-void dilatball_export(); void asfbin_export(); void ptcurve_export();
-void skelcurv_export(); void ptend_export(); void distc_export();
+void dilatball_export(); void asfbin_export(); 
+void skelcurv_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
 void openball_export(); void gradmorph_export(); void mcube_export(); void minima_export();
 
@@ -172,6 +176,23 @@ UI_WRAP_FUNCTION(
   doc__ptisolated__c__
   );
 #include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "ptend",
+  lptend,
+  ( arg("image"), arg("connexity") ),
+  doc__ptend__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "ptcurve",
+  lptcurve,
+  ( arg("image"), arg("connexity") ),
+  doc__ptcurve__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
 
 UI_WRAP_FUNCTION(
   "ptjunction",
@@ -328,6 +349,7 @@ UI_WRAP_FUNCTION(
 #include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_RESULT(
+  int_image,
   "distgeo",
   ldistgeo,
   ( arg("image"), arg("mask"), arg("mode") ),
@@ -335,13 +357,14 @@ UI_WRAP_RESULT(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
-UI_WRAP_RESULT(
-  "affine",
-  laffinetransformation,
-  ( arg("image"), arg("hx"), arg("hy"), arg("theta"), arg("tx"), arg("ty")),
-  doc__affine__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
+// // NOTE: affine's using copyimage
+// UI_WRAP_RESULT(  
+//   "affine",
+//   laffinetransformation,
+//   ( arg("image"), arg("hx"), arg("hy"), arg("theta"), arg("tx"), arg("ty")),
+//   doc__affine__c__
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_FUNCTION(
   "asft",
@@ -549,8 +572,8 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
-
 UI_WRAP_RESULT(
+  float_image,
   "lmedialaxis_lbisector",
   lmedialaxis_lbisector,
   (arg("image"), arg("mask")),
@@ -1058,6 +1081,7 @@ UI_WRAP_FUNCTION(
 #include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_RESULT(
+  char_image,
   "houghcircles",
   lhoughcercles,
   (arg("image"), arg("min radius"), arg("pas radius"), arg("nb pas")),
@@ -1108,13 +1132,14 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
-UI_WRAP_RESULT(
-  "localextrema",
-  llocalextrema,
-  (arg("image"), arg("connex"), arg("minim")),
-  doc__localextrema__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
+// // NOTE: localextrema's allocating the same type
+// UI_WRAP_RESULT(
+//   "localextrema",
+//   llocalextrema,
+//   (arg("image"), arg("connex"), arg("minim")),
+//   doc__localextrema__c__
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_FUNCTION(
   "log",
@@ -1532,8 +1557,6 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   dilation_export(); erosion_export();  geodilat_export();  geoeros_export();
   opening_export();  drawcurve2D_export();
   
-//  maxflow_export();
-
 //  specialize_export();
 
   uiSqhool_object_export();
@@ -1544,8 +1567,8 @@ BOOST_PYTHON_MODULE(libcpp_pink)
 //  project_plane_export();
   border_export();  identifyline_export();  surimp_export();  generate_rgb_image_export();
   closing_export();  closeball_export();  minmax_export();  dilatball_export();
-  asfbin_export();  ptcurve_export();  skelcurv_export();
-  ptend_export();  readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
+  asfbin_export();  skelcurv_export();
+  readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
   htkern_export();  openball_export();    gradmorph_export(); mcube_export(); minima_export();
   
 
@@ -1606,31 +1629,54 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     doc__normalize__c__
     );
 
-//   def( "cpp_circle_tangent", &pink::gsl::circle_tangent,
-//        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),
-//        "This function estimates the derivativ of the function given by points. It "
-//        " models a circle and returns its tangent at the given point."
-//     );
 
-//   def( "cpp_fit_circle", &pink::fit_circle,
-//        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"),boost::python::arg("filename")=""),
-//        "This function fits a circle to the given points. It returns a vector for the following formula:\n"
-//        "  a*x^2 + a*y^2 + b*x + c*y + d == 0\n"
-//        "If the argument filename is given, than the function will generate an example Mathematica\n"
-//        "code with the circle and the points."
-//        "The algorithm is a modified version of that in:\n"
-//        "Andrew Fitzgibbon, Maurizio Pilu, Robert B. Fisher, 'Direct Least Square Fitting of Ellipses', IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 21, no. 5, pp. 476-480, May 1999, doi:10.1109/34.765658\n"
-//     );
+#ifdef PINK_DEVELOPMENT
+  
+  
+  def( "circle_tangent", &pink::gsl::circle_tangent,
+       (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),
+       "This function estimates the derivativ of the function given by points. It "
+       " models a circle and returns its tangent at the given point."
+    );
 
-//   def( "cpp_circle_equation_to_coordinates", &pink::circle_equation_to_coordinates,
-//        (boost::python::arg("equation")),
-//        "This function converts the vector of equation coordinates to a vector of geometric coordinates:\n"
-//        "the input vector is [a,b,c,d], where\n"
-//        "  a*x^2 + a*y^2 + b*x + c*y + d == 0\n"
-//        "the output vector is [center_x, center_y, r], where\n"
-//        "  (x-center_x)^2 + (y-center_y)^2 == r^2 "
-//     );
+  def( "fit_circle", &pink::py_fit_circle,
+       (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"),boost::python::arg("filename")=""),
+       "This function fits a circle to the given points. It returns a vector for the following formula:\n"
+       "  a*x^2 + a*y^2 + b*x + c*y + d == 0\n"
+       "If the argument filename is given, than the function will generate an example Mathematica\n"
+       "code with the circle and the points."
+       "The algorithm is a modified version of that in:\n"
+       "Andrew Fitzgibbon, Maurizio Pilu, Robert B. Fisher, 'Direct Least Square Fitting of Ellipses', IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 21, no. 5, pp. 476-480, May 1999, doi:10.1109/34.765658\n"
+    );
 
+  def( "circle_equation_to_coordinates", &pink::py_circle_equation_to_coordinates,
+       (boost::python::arg("equation")),
+       "This function converts the vector of equation coordinates to a vector of geometric coordinates:\n"
+       "the input vector is [a,b,c,d], where\n"
+       "  a*x^2 + a*y^2 + b*x + c*y + d == 0\n"
+       "the output vector is [center_x, center_y, r], where\n"
+       "  (x-center_x)^2 + (y-center_y)^2 == r^2 "
+    );
+
+  def(
+    "maxflow",
+    pink::maxflow_float,
+    (arg("source and sink"), arg("constraint image"), arg("iterations"), arg("tau"), arg("number of threads")=0),
+    "WRITE ME!"
+    );
+
+  
+  def(
+    "gradient_abs",
+    pink::uiGradientAbs,
+    (arg("image")),
+    "WRITE ME!"
+    );
+
+
+//  def( ""
+  
+#endif /* PINK_DEVELOPMENT */
   
   // here are the image objects ( char_image, short_image, int_image, float_image, double_image )
   // there is a template in pyujimage.hpp to help them export without rewritting all the declarations

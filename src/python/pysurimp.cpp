@@ -15,7 +15,7 @@
 #include <pink_python.h>
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pysurimp.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in pysurimp.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;
 using namespace pink;
@@ -30,11 +30,11 @@ namespace pink {
       const char_image & R,
       const char_image & G,
       const char_image & B,
-      string filename 
+      std::string filename 
       )
     {
 
-      ARRAY<char> c_str_filename(new char[filename.size()+1]);
+      boost::shared_array<char> c_str_filename(new char[filename.size()+1]);
       strcpy(c_str_filename.get(), filename.c_str());
   
 
@@ -60,11 +60,11 @@ namespace pink {
     void surimp(
       const char_image & BW,
       const char_image & red,
-      string filename
+      std::string filename
       )
     {
 
-      ARRAY<char> c_str_filename(new char[filename.size()]);
+      boost::shared_array<char> c_str_filename(new char[filename.size()]);
       strcpy(c_str_filename.get(), filename.c_str());
   
 

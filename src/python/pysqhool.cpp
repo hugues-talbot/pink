@@ -9,7 +9,7 @@
 #include <pink_python.h>
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pysqhool.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in pysqhool.cpp: " << msg; call_error(fullmessage.str());}
 
 using namespace boost::python;
 using namespace pink;
@@ -29,11 +29,11 @@ Python class pink.uiSqhool / c++ pink::uiSqhool
 ***************************************************************************************
 */
 
-//void (uiSqhool::*char_insert_image)(const char_image &, const string &, string ) = &uiSqhool::template insert_image<char_image>;
+//void (uiSqhool::*char_insert_image)(const char_image &, const std::string &, std::string ) = &uiSqhool::template insert_image<char_image>;
 
 void uiSqhool_object_export() {
 
-  class_< uiSqhool, PTR< uiSqhool > > (
+  class_< uiSqhool, boost::shared_ptr< uiSqhool > > (
     "cpp_uiSqhool",
     "This class provides an interface for the ujif (UJoimro Image File) file type.",
     init<>(args("self"), "Default constructor. Creates an empty unattached 'uiSqhool' object.")
@@ -41,7 +41,7 @@ void uiSqhool_object_export() {
     
     
     
-    .def( init< const string &, const string &, const string &, bool > (
+    .def( init< const std::string &, const std::string &, const std::string &, bool > (
 	    args( "filename", "creator = ''", "description = ''", "create = false" ),
 	    "Creation of a sqhool object and attaching it to a file. If the file does not \n"
 	    "exist it will be created, if the file exists then it will be rewritten or reused \n"

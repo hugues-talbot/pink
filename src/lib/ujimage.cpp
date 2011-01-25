@@ -16,7 +16,7 @@
 #include <pink.h>
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in ujimage.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in ujimage.cpp: " << msg; call_error(fullmessage.str());}
 
 namespace pink{
 
@@ -26,11 +26,11 @@ namespace pink{
   } /* pink_image cast xvimage* */
   
 
-  PTR<vint> getDimensions( const int x, const int y, const int z, const int t )
+  boost::shared_ptr<vint> getDimensions( const int x, const int y, const int z, const int t )
   {
-    PTR<vint> presult;
+    boost::shared_ptr<vint> presult;
     if (t>1) {
-      /////!!!!!!! cout<< "I've desided for 4D." << endl;
+      /////!!!!!!! cout<< "I've desided for 4D." << std::endl;
       presult.reset(new vint(4,-1));
       (*presult)[0]=x;
       (*presult)[1]=y;
@@ -38,20 +38,20 @@ namespace pink{
       (*presult)[3]=t;
     } else if (z>1)
     {
-      /////!!!!!!! cout<< "I've desided for 3D." << endl;
+      /////!!!!!!! cout<< "I've desided for 3D." << std::endl;
       presult.reset(new vint(3,-1));
       (*presult)[0]=x;
       (*presult)[1]=y;
       (*presult)[2]=z;
     } else if (y>1)
     {
-      /////!!!!!!! cout<< "I've desided for 2D." << endl;
+      /////!!!!!!! cout<< "I've desided for 2D." << std::endl;
       presult.reset(new vint(2,-1));
       (*presult)[0]=x;
       (*presult)[1]=y;
     } else if (x>1)
     {
-      /////!!!!!!! cout<< "I've desided for 1D or less." << endl;
+      /////!!!!!!! cout<< "I've desided for 1D or less." << std::endl;
       error("an image should have at least 2 dimensions");
     };
 	
@@ -101,7 +101,7 @@ namespace pink{
     } /* switch */
   } /* setDimensions */
 
-  string image_type_string( int im_type )
+  std::string image_type_string( int im_type )
   {
     switch (im_type)
     {
@@ -246,11 +246,11 @@ c++ class shallow_xvimage
     delete name;
     ////// /// !!!!!!!!!! delete image->image_data; // this is a shallow container 
     // image data is not to be deleted!
-    /////!!!!!!! cout<< "deleting shallow_xvimage" << endl;
+    /////!!!!!!! cout<< "deleting shallow_xvimage" << std::endl;
     // the rest of the properties are destroyed automaticly
   } /* shallow_xvimage::~shallow_xvimage */
 
-  string shallow_xvimage::imtype()
+  std::string shallow_xvimage::imtype()
   {
     return image_type_string(this->data_storage_type);
   } /* shallow_xvimage::imtype */
@@ -298,11 +298,11 @@ c++ class pink::deep_xvimage
   deep_xvimage::~deep_xvimage()
   {
 //!!!!!    freeimage(this->data);                           
-    /////!!!!!!! cout<< "deleting deep_xvimage" << endl;
+    /////!!!!!!! cout<< "deleting deep_xvimage" << std::endl;
     // the rest of the properties are destroyed automaticly
   } /* deep_xvimage::~deep_xvimage */
   
-  string deep_xvimage::imtype()
+  std::string deep_xvimage::imtype()
   {
     return image_type_string(this->data->data_storage_type);
   } /* deep_xvimage::imtyp */
@@ -312,7 +312,7 @@ c++ class pink::deep_xvimage
   template<>
   void write_a_pixel<float>
   (
-    fstream & s, 
+    std::fstream & s, 
     float & value
     ) 
   {
@@ -324,7 +324,7 @@ c++ class pink::deep_xvimage
   template<>
   void write_a_pixel<unsigned char>
   (
-    fstream & s, 
+    std::fstream & s, 
     unsigned char & value
     ) 
   {

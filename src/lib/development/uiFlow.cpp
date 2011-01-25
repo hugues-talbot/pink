@@ -5,7 +5,7 @@
   This software comes in hope that it will be useful but 
   without any warranty to the extent permitted by aplicable law.
   
-  (C) UjoImro, 2007-2010
+  (C) UjoImro, 2007-2011
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
@@ -22,60 +22,65 @@
 
 
 // my includes
-#include <pink.h>
+#include "uiFlow.hpp"
+#include "pink.h"
+
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiFlow.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiFlow.cpp: " << msg; call_error(fullmessage.str());}
 
 namespace pink { 
 
 
 
 
-  PTR<float_image> maxflow_cami(
-    char_image & SS,       /* image of the source and of the sink (not the original image) */
-    float_image & gg,     /* Boundaries */
+  float_image maxflow_cami(
+    char_image SS,       /* image of the source and of the sink (not the original image) */
+    float_image gg,     /* Boundaries */
     int iteration,        /* number of iterations */
     float glob_tau,	  /* timestep */
     int number_of_threads /* the number of threads to execute if in parallel mode */
-    ){
+    )
+  {
+
+    error("not compiled, uncomment the code.");
     
-    PTR<maxflow<float_image> > maxflow_obj;
+//     boost::shared_ptr<maxflow<float_image> > maxflow_obj;
     
-    maxflow_obj.reset( new maxflow<float_image>(SS, gg, iteration, glob_tau, number_of_threads ) );
+//     maxflow_obj.reset( new maxflow<float_image>(SS, gg, iteration, glob_tau, number_of_threads ) );
     
-    PTR<float_image> result_image = maxflow_obj->start();
+//     float_image result_image = maxflow_obj->start();
     
     
-    // creating the n+1D flow_image
+//     // creating the n+1D flow_image
     
-    vint dim(3,0);
-    dim[0]=SS.get_size()[0];
-    dim[1]=SS.get_size()[1];
-    dim[2]=SS.get_size().size();
+//     vint dim(3,0);
+//     dim[0]=SS.get_size()[0];
+//     dim[1]=SS.get_size()[1];
+//     dim[2]=SS.get_size().size();
     
-    PTR<float_image> result_flow(new float_image(dim, maxflow_obj->get_flow(), "result_flow"));
+//     float_image result_flow(maxflow_obj->get_flow(), "result_flow");
     
-//    ARRAY<float> flow = maxflow_obj->get_flow();
+// //    ARRAY<float> flow = maxflow_obj->get_flow();
     
-    return result_flow;
+//     return result_flow;
     
   }/* maxflow_cami */
   
   
   
-  PTR<float_image> maxflow_float( 
-    char_image & SS,         /* image of the source and of the sink (not the original image) */
-    float_image & gg,       /* Boundaries */
-    int iteration,          /* number of iterations */
-    float glob_tau,	    /* timestep */
-    int number_of_threads=0 /* the number of threads to execute if in parallel mode */
+  float_image maxflow_float( 
+    char_image SS,         /* image of the source and of the sink (not the original image) */
+    float_image gg,        /* Boundaries */
+    int iteration,         /* number of iterations */
+    float glob_tau,	   /* timestep */
+    int number_of_threads  /* the number of threads to execute if in parallel mode */
     )
   {
     
 //    cout << "DEBUG VERSION 16\n";
     
-    PTR<maxflow<float_image> > maxflow_obj;
+    boost::shared_ptr< maxflow<float_image> > maxflow_obj;
     
     //cout << "maxflow object\n";
     
@@ -83,7 +88,7 @@ namespace pink {
     
     //cout << "start()ing\n";
     
-    PTR<float_image> result = maxflow_obj->start();
+    float_image result = maxflow_obj->start();
     
     //cout << "returning result\n";
     

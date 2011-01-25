@@ -13,9 +13,12 @@
 #ifndef UI_CIRCLE_HPP_
 #define UI_CIRCLE_HPP_
 
+#include <string>
+#include <iostream>
+#include <sstream>
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiCircle.hpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiCircle.hpp: " << msg; call_error(fullmessage.str());}
 
 namespace pink { 
 
@@ -43,11 +46,11 @@ namespace pink {
       operator gsl_vector*(); // type casting operator
       vector & operator << ( double first_value );
       vector & operator, (double next);
-      string repr() const;
+      std::string repr() const;
       
     }; /* class vector */
     
-    typedef pair<vector, vector> point_type;
+    typedef std::pair<vector, vector> point_type;
     float dist(const vector & A, const vector & B);
     
   
@@ -71,7 +74,7 @@ namespace pink {
       const double & operator()(int row, int column) const; // matrix element access
       virtual ~matrix(); // default destructor
       operator gsl_matrix*(); // type casting operator
-      string repr() const;    
+      std::string repr() const;    
     }; /* class matrix */
    
     // this is an abstract class. You will have to define your own f and df functions
@@ -110,7 +113,7 @@ namespace pink {
                  int p /* number of parameters */
         );
       virtual ~fdfsolver();
-      string repr() const;      
+      std::string repr() const;      
       virtual int f( const vector & x, vector & f ) = 0;
       virtual int df( const vector & x, matrix & J ) = 0;
       virtual int fdf( const vector & x, vector & f, matrix & J);

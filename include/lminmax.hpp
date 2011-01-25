@@ -1,10 +1,25 @@
+/*
+  This software is licensed under 
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
+
+  This software comes in hope that it will be useful but 
+  without any warranty to the extent permitted by aplicable law.
+  
+  (C) UjoImro, 2009-2011
+  Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+  ujoimro@gmail.com
+*/
+
+
+
 #ifndef LMINMAX_H_
 #define LMINMAX_H_
-/*
-This software is ment to be free.
-(C) UjoImro, 2009-2010
-ujoimro@gmail.com
-*/
+
+#include <boost/algorithm/minmax_element.hpp>
+
+#include "ujimage.hpp"
+#include "uiFibreTypes.h"
+
 
 #undef error
 #define error(msg) {stringstream fullmessage; fullmessage << "in lminmax.hpp: " << msg; call_error(fullmessage.str());}
@@ -32,7 +47,7 @@ namespace pink {
 	max = I[q];
       }; /* if (I[q] > max) */
 	
-    }; /* FOR */
+    } /* FOR */
 
     return max;
   } /* image::pixel_type maxval */
@@ -57,26 +72,26 @@ namespace pink {
       if (I[q] < min)
       {
 	min = I[q];
-      }; /* if (I[q] > min) */
+      } /* if (I[q] > min) */
 	
-    }; /* FOR */
+    } /* FOR */
 
     return min;
   } /* image::pixel_type minval */
 
   
   template <class image_type>
-  pair<	typename image_type::pixel_type, 
-        typename image_type::pixel_type >
+  std::pair< typename image_type::pixel_type, 
+             typename image_type::pixel_type >
   lminmaxval( const image_type & I )
   {
 
     typedef typename image_type::pixel_type pixel_type;
     
-    pair<pixel_type, pixel_type> result;
+    std::pair<pixel_type, pixel_type> result;
     
     
-    pair< const pixel_type * , const pixel_type *> 
+    std::pair< const pixel_type * , const pixel_type *> 
       tmp = boost::minmax_element( (&I[0]), (&I[I.get_size().prod()]) ); // here the prod is the correct position because it iterates up to
 
     result.first = (*tmp.first);

@@ -10,10 +10,10 @@
   ujoimro@gmail.com
 */
 
-#include <pink.h>
+#include "pink.h"
 
 #undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiNormalize.cpp: " << msg; call_error(fullmessage.str());}
+#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiNormalize.cpp: " << msg; call_error(fullmessage.str());}
 
 
 

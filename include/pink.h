@@ -49,11 +49,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <alloca.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include "sqlite3.h"
-#include "bdd.h"
-#include "lballincl.h"
-
-
 
 //#include <sqlite3ext.h> // not yet needed
 
@@ -63,28 +58,28 @@ knowledge of the CeCILL license and that you accept its terms.
 #endif /* __cplusplus */
 
 #ifdef __cplusplus
+#undef error
 
-
-#  include <iostream>
-#  include <fstream>
-#  include <string>
-#  include <sstream>
+#  include <cmath>
 #  include <vector>
+#  include <string>
+#  include <locale>
+#  include <sstream>
+#  include <fstream>
 #  include <cstdlib>
 #  include <cstring>
-#  include <cmath>
-#  include <locale>
+#  include <iostream>
 
-#  include <boost/shared_ptr.hpp>
-#  include <boost/shared_array.hpp>
-#  include <boost/python/list.hpp>
-#  include <boost/python/extract.hpp>
-#  include <boost/lexical_cast.hpp>
-#  include <boost/thread.hpp>
-#  include <boost/algorithm/minmax_element.hpp>
-#  include <boost/preprocessor.hpp>
-#  include <boost/operators.hpp>
 #  include <boost/cast.hpp>
+#  include <boost/thread.hpp>
+#  include <boost/python.hpp>
+#  include <boost/operators.hpp>
+#  include <boost/smart_ptr.hpp>
+#  include <boost/preprocessor.hpp>
+#  include <boost/shared_array.hpp>
+#  include <boost/lexical_cast.hpp>
+#  include <boost/python/extract.hpp>
+#  include <boost/algorithm/minmax_element.hpp>
 #  include <boost/type_traits/function_traits.hpp>
 
 
@@ -92,7 +87,9 @@ knowledge of the CeCILL license and that you accept its terms.
 
 
 
-
+#include "sqlite3.h"
+#include "bdd.h"
+#include "lballincl.h"
 #include "mccodimage.h"
 #include "mcimage.h"
 #include "mccbt.h"
@@ -295,6 +292,9 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lmcube.h"
 #include "ssexport.h"
 
+#undef encode
+#undef d
+
 // uiFibres header files
 #ifdef __cplusplus
 // my comment
@@ -316,7 +316,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #  include "ui_extractplane.hpp"
 #endif /* __cplusplus */
 
-// new with mixed language declarations (c/c++)
+// // new with mixed language declarations (c/c++)
 #include "larith.h"
 
 
