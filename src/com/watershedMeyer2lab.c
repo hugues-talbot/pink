@@ -51,7 +51,7 @@ The result is a label image. If the original markers are labelled by
 numbers 1,...,n then the regions (catchment basins) of the result will
 be labelled with the same numbers.
 
-If the optional parameter \bf mode is 0 (default value), then the
+If the optional parameter <B>mode</B> is 0 (default value), then the
 separation (watershed) will be labelled with n+1. Otherwise, a
 separating point that is neighbour of exactly two regions i and j will be
 labelled by i*j+n, and a separating point that is neighbour of more

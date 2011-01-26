@@ -85,7 +85,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define INFINI 1000000000
 
 /* ==================================== */
-void inverse(struct xvimage * image)
+static void inverse(struct xvimage * image)
 /* ==================================== */
 {
   index_t i, N; uint8_t *pt;
@@ -807,21 +807,36 @@ int32_t ldilatdisc(struct xvimage* ob, int32_t r, int32_t mode)
   }
   D = ULONGDATA(dist);
 
-  if (mode == 0) r2 = r * r; else r2 = r;
   switch (mode)
   {
     case 0:
-    case 1: if (!ldistquad(ob, dist)) return 0; break;
-    case 2: if (!lchamfrein(ob, dist)) return 0; break;
-    case 3: inverse(ob); if (!lsedt_meijster(ob, dist)) return 0; break;
+      r2 = r*r;
+      inverse(ob); 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 1: 
+      if (!ldistquad(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 2: 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 3: 
+      inverse(ob); 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
     case 4:
-    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    case 8: 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
   }
-
-  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
 
   freeimage(dist);    
   return 1;
@@ -844,8 +859,6 @@ int32_t lerosdisc(struct xvimage* ob, int32_t r, int32_t mode)
   index_t i;
   int32_t r2;
 
-  for(i=0; i<N; i++) if (O[i]) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-
   dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
   if (dist == NULL)
   {   
@@ -854,21 +867,37 @@ int32_t lerosdisc(struct xvimage* ob, int32_t r, int32_t mode)
   }
   D = ULONGDATA(dist);
  
-  if (mode == 0) r2 = r * r; else r2 = r;
   switch (mode)
   {
     case 0:
-    case 1: if (!ldistquad(ob, dist)) return 0; break;
-    case 2: if (!lchamfrein(ob, dist)) return 0; break;
-    case 3: inverse(ob); if (!lsedt_meijster(ob, dist)) return 0; break;
+      r2 = r * r; 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 1: 
+      inverse(ob); 
+      if (!ldistquad(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 2: 
+      inverse(ob); 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 3: 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
     case 4:
-    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    case 8: 
+      inverse(ob); 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
   }
-
-  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
 
   freeimage(dist);    
   return 1;
@@ -899,38 +928,69 @@ int32_t lopendisc(struct xvimage* ob, int32_t r, int32_t mode)
   }
   D = ULONGDATA(dist);
  
-  if (mode == 0) r2 = r * r; else r2 = r;
-
   // inverse + dilate + inverse
-  for(i=0; i<N; i++) if (O[i]) O[i] = NDG_MIN; else O[i] = NDG_MAX;
   switch (mode)
   {
     case 0:
-    case 1: if (!ldistquad(ob, dist)) return 0; break;
-    case 2: if (!lchamfrein(ob, dist)) return 0; break;
-    case 3: inverse(ob); if (!lsedt_meijster(ob, dist)) return 0; break;
+      r2 = r * r; 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 1: 
+      inverse(ob); 
+      if (!ldistquad(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 2: 
+      inverse(ob); 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 3: 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
     case 4:
-    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    case 8: 
+      inverse(ob); 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
   }
-  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
 
   // dilate
   switch (mode)
   {
     case 0:
-    case 1: if (!ldistquad(ob, dist)) return 0; break;
-    case 2: if (!lchamfrein(ob, dist)) return 0; break;
-    case 3: inverse(ob); if (!lsedt_meijster(ob, dist)) return 0; break;
+      // inversion cancelled in previous operation
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 1: 
+      if (!ldistquad(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 2: 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 3: 
+      // inversion cancelled in previous operation
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
     case 4:
-    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    case 8: 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
   }
-  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
 
   freeimage(dist);    
   return 1;
@@ -960,38 +1020,69 @@ int32_t lclosedisc(struct xvimage* ob, int32_t r, int32_t mode)
     return 0;
   }
   D = ULONGDATA(dist);
- 
-  if (mode == 0) r2 = r * r; else r2 = r;
 
   // dilate + inverse
   switch (mode)
   {
     case 0:
-    case 1: if (!ldistquad(ob, dist)) return 0; break;
-    case 2: if (!lchamfrein(ob, dist)) return 0; break;
-    case 3: inverse(ob); if (!lsedt_meijster(ob, dist)) return 0; break;
+      r2 = r*r;
+      inverse(ob); 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 1: 
+      if (!ldistquad(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 2: 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 3: 
+      inverse(ob); 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
     case 4:
-    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    case 8: 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
   }
-  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
 
   // dilate + inverse
   switch (mode)
   {
     case 0:
-    case 1: if (!ldistquad(ob, dist)) return 0; break;
-    case 2: if (!lchamfrein(ob, dist)) return 0; break;
-    case 3: inverse(ob); if (!lsedt_meijster(ob, dist)) return 0; break;
+      // inversion cancelled in previous operation
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 1: 
+      if (!ldistquad(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 2: 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 3: 
+      // inversion cancelled in previous operation
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
     case 4:
-    case 8: if (!ldist(ob, mode, dist)) return 0; break;
+    case 8: 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
   }
-  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
 
   freeimage(dist);    
   return 1;
@@ -1645,24 +1736,39 @@ int32_t ldilatball(struct xvimage* ob, int32_t r, int32_t mode)
   }
   D = ULONGDATA(dist);
  
-  if (mode == 0) r2 = r * r; else r2 = r;
   switch (mode)
   {
     case 0:
-    case 1: if (!ldistquad3d(ob, dist)) return 0; break;
-    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+      r2 = r*r;
+      inverse(ob); 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 1: 
+      if (!ldistquad3d(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 2: 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 3: 
+      inverse(ob); 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
     case 4:
     case 6:
     case 8: 
     case 18: 
     case 26: 
-      if (!ldist(ob, mode, dist)) return 0; break;
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
   }
-
-  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
 
   freeimage(dist);    
   return 1;
@@ -1696,23 +1802,40 @@ int32_t lerosball(struct xvimage* ob, int32_t r, int32_t mode)
   }
   D = ULONGDATA(dist);
 
-  if (mode == 0) r2 = r * r; else r2 = r;
   switch (mode)
   {
     case 0:
-    case 1: if (!ldistquad3d(ob, dist)) return 0; break;
-    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+      r2 = r * r; 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 1: 
+      inverse(ob); 
+      if (!ldistquad3d(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 2: 
+      inverse(ob); 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 3: 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
     case 4:
     case 8:
     case 6:
     case 18:
-    case 26: if (!ldist(ob, mode, dist)) return 0; break;
+    case 26: 
+      inverse(ob); 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
   }
-
-  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
 
   freeimage(dist);    
   return 1;
@@ -1741,42 +1864,75 @@ int32_t lopenball(struct xvimage* ob, int32_t r, int32_t mode)
   }
   D = ULONGDATA(dist);
 
-  if (mode == 0) r2 = r * r; else r2 = r;
-
   // inverse + dilate + inverse
-  for(i=0; i<N; i++) if (O[i]) O[i] = NDG_MIN; else O[i] = NDG_MAX;
   switch (mode)
   {
     case 0:
-    case 1: if (!ldistquad3d(ob, dist)) return 0; break;
-    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+      r2 = r * r; 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 1: 
+      inverse(ob); 
+      if (!ldistquad3d(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 2: 
+      inverse(ob); 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 3: 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
     case 4:
     case 8:
     case 6:
     case 18:
-    case 26: if (!ldist(ob, mode, dist)) return 0; break;
+    case 26: 
+      inverse(ob); 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
   }
-  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
 
   //dilate
   switch (mode)
   {
     case 0:
-    case 1: if (!ldistquad3d(ob, dist)) return 0; break;
-    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+      // inversion cancelled in previous operation
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 1: 
+      if (!ldistquad3d(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 2: 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 3: 
+      // inversion cancelled in previous operation
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
     case 4:
     case 8:
     case 6:
     case 18:
-    case 26: if (!ldist(ob, mode, dist)) return 0; break;
+    case 26: 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
   }
-  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
 
   freeimage(dist);    
   return 1;
@@ -1804,41 +1960,74 @@ int32_t lcloseball(struct xvimage* ob, int32_t r, int32_t mode)
   }
   D = ULONGDATA(dist);
 
-  if (mode == 0) r2 = r * r; else r2 = r;
+  // dilate + inverse
+  switch (mode)
+  {
+    case 0:
+      r2 = r*r;
+      inverse(ob); 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 1: 
+      if (!ldistquad3d(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 2: 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 3: 
+      inverse(ob); 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 4:
+    case 8:
+    case 6:
+    case 18:
+    case 26: 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
 
   // dilate + inverse
   switch (mode)
   {
     case 0:
-    case 1: if (!ldistquad3d(ob, dist)) return 0; break;
-    case 2: if (!lchamfrein(ob, dist)) return 0; break;
+      // inversion cancelled in previous operation
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 1: 
+      if (!ldistquad3d(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 2: 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 3: 
+      // inversion cancelled in previous operation
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
     case 4:
     case 8:
     case 6:
     case 18:
-    case 26: if (!ldist(ob, mode, dist)) return 0; break;
+    case 26: 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
     default: 
       fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
       return 0;
   }
-  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-
-  // dilate + inverse
-  switch (mode)
-  {
-    case 0:
-    case 1: if (!ldistquad3d(ob, dist)) return 0; break;
-    case 2: if (!lchamfrein(ob, dist)) return 0; break;
-    case 4:
-    case 8:
-    case 6:
-    case 18:
-    case 26: if (!ldist(ob, mode, dist)) return 0; break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-  for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
 
   freeimage(dist);    
   return 1;

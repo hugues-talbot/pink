@@ -68,13 +68,9 @@ typedef uint32_t indexcomp_t;
 typedef uint8_t level_t;
 #define NBLEVELS 256
 
-
-#define NOT_ANALYZED 2000000000
-#define IN_THE_QUEUE 2000000001
-
-//#define NBMAXCOMP (indexcomp_t)(((uint64_t)1 << sizeof(indexcomp_t)) - 1)
-//static const indexcomp_t NOT_ANALYZED = NBMAXCOMP - 1;
-//static const indexcomp_t IN_THE_QUEUE = NBMAXCOMP;
+#define NBMAXCOMP (indexcomp_t)(((uint64_t)1 << 8*sizeof(indexcomp_t)) - 1)
+static const indexcomp_t NOT_ANALYZED = NBMAXCOMP - 1;
+static const indexcomp_t IN_THE_QUEUE = NBMAXCOMP;
 
 typedef int32_t attrsurf_t;
 typedef int32_t attrheight_t;
@@ -353,29 +349,60 @@ static void i_TriRapideStochastique (int32_t * A, int32_t *T, int32_t p, int32_t
 /* ==================================== */
 static CompTree * InitCompTree(indexcomp_t nbmaxarcs)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "InitCompTree"
 {
   CompTree *ct;
+
   ct = (CompTree *)malloc(sizeof(CompTree));
-  if (ct == NULL) return NULL;
+  if (ct == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
   ct->tete = (component_t *)malloc(nbmaxarcs * sizeof(component_t));
-  if (ct->tete == NULL) return NULL;
+  if (ct->tete == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
   ct->queue = (component_t *)malloc(nbmaxarcs * sizeof(component_t));
-  if (ct->queue == NULL) return NULL;
+  if (ct->queue == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #ifdef ATTR_SURF
   ct->surf = (attrsurf_t *)malloc(nbmaxarcs * sizeof(attrsurf_t));
-  if (ct->surf == NULL) return NULL;
+  if (ct->surf == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #endif
 #ifdef ATTR_PERIM
   ct->perim = (attrperim_t *)malloc(nbmaxarcs * sizeof(attrperim_t));
-  if (ct->perim == NULL) return NULL;
+  if (ct->perim == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #endif
 #ifdef ATTR_HBORD
   ct->hbord = (attrhbord_t *)malloc(nbmaxarcs * sizeof(attrhbord_t));
-  if (ct->hbord == NULL) return NULL;
+  if (ct->hbord == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #endif
 #ifdef ATTR_VOL
   ct->vol = (attrvol_t *)malloc(nbmaxarcs * sizeof(attrvol_t));
-  if (ct->vol == NULL) return NULL;
+  if (ct->vol == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #endif
   ct->nbmaxarcs = nbmaxarcs;
   ct->nbarcs = 0;
@@ -425,48 +452,104 @@ static CompactTree * CompTree2CompactTree(CompTree *ct, indexcomp_t *number_node
 #endif
 
   cpct = (CompactTree *)malloc(sizeof(CompactTree));
-  if (cpct == NULL) return NULL;
+  if (cpct == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
   cpct->nbcomp = nbcomp;
   cpct->comp = (component_t *)malloc(nbcomp * sizeof(component_t));
-  if (cpct->comp == NULL) return NULL;
+  if (cpct->comp == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
   cpct->pere = (indexcomp_t *)malloc(nbcomp * sizeof(indexcomp_t));
-  if (cpct->pere == NULL) return NULL;
+  if (cpct->pere == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
   cpct->dfils = (indexcomp_t *)malloc(nbcomp * sizeof(indexcomp_t));
-  if (cpct->dfils == NULL) return NULL;
+  if (cpct->dfils == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
   cpct->fils = (indexcomp_t *)malloc(nbcomp * sizeof(indexcomp_t));
-  if (cpct->fils == NULL) return NULL;
+  if (cpct->fils == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
   cpct->hc = (indexcomp_t *)malloc(NBLEVELS * sizeof(indexcomp_t));
-  if (cpct->hc == NULL) return NULL;
+  if (cpct->hc == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #ifdef ATTR_SURF
   cpct->surf = (attrsurf_t *)malloc(nbcomp * sizeof(attrsurf_t));
-  if (cpct->surf == NULL) return NULL;
+  if (cpct->surf == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #endif
 #ifdef ATTR_HEIGHT
   cpct->height = (attrheight_t *)malloc(nbcomp * sizeof(attrheight_t));
-  if (cpct->height == NULL) return NULL;
+  if (cpct->height == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #endif
 #ifdef ATTR_PERIM
   cpct->perim = (attrperim_t *)malloc(nbcomp * sizeof(attrperim_t));
-  if (cpct->perim == NULL) return NULL;
+  if (cpct->perim == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #endif
 #ifdef ATTR_HBORD
   cpct->hbord = (attrhbord_t *)malloc(nbcomp * sizeof(attrhbord_t));
-  if (cpct->hbord == NULL) return NULL;
+  if (cpct->hbord == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #endif
 #ifdef ATTR_CONTRAST
   cpct->contrast = (attrcontrast_t *)malloc(nbcomp * sizeof(attrcontrast_t));
-  if (cpct->contrast == NULL) return NULL;
+  if (cpct->contrast == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #endif
 #ifdef ATTR_VOL
   cpct->vol = (attrvol_t *)malloc(nbcomp * sizeof(attrvol_t));
-  if (cpct->vol == NULL) return NULL;
+  if (cpct->vol == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #endif
 #ifdef ATTR_DYN
   cpct->dyn = (attrdyn_t *)malloc(nbcomp * sizeof(attrdyn_t));
-  if (cpct->dyn == NULL) return NULL;
+  if (cpct->dyn == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 #endif
   cpct->flags = (char *)calloc(nbcomp, sizeof(char));
-  if (cpct->flags == NULL) return NULL;
+  if (cpct->flags == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
 
   /* calcule l'histogramme cumule hc */
   n = cpct->hc[0] = number_nodes[0]; 
@@ -494,7 +577,11 @@ static CompactTree * CompTree2CompactTree(CompTree *ct, indexcomp_t *number_node
 
   /* construit la relation dfils et fils */
   nfils = (indexcomp_t *)calloc(nbcomp, sizeof(indexcomp_t));
-  if (nfils == NULL) return NULL;
+  if (nfils == NULL) 
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    return NULL;
+  }
   for (i = 1; i < nbcomp; i++) nfils[cpct->pere[i]] += 1;
     /* exception : la racine (0) est fille d'elle-meme, cette relation n'est pas comptee */ 
   cpct->dfils[CPCT_ROOT] = nfils[CPCT_ROOT];
@@ -691,6 +778,8 @@ static void CalculeAttributs(CompactTree * cpct) __attribute__ ((unused));
 /* ==================================== */
 static void CalculeAttributs(CompactTree * cpct)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "CalculeAttributs"
 {
   int32_t *na1, *na2;
   indexcomp_t nbcomp = cpct->nbcomp;
@@ -708,7 +797,7 @@ static void CalculeAttributs(CompactTree * cpct)
   assert(sizeof(attrvol_t) == sizeof(int32_t));
   if (cpct->surf == NULL)
   {
-    fprintf(stderr, "CalculeAttributs: VOL ne peut etre calcule dans SURF\n");
+    fprintf(stderr, "%s: VOL ne peut etre calcule dans SURF\n", F_NAME);
     exit(0);
   }
   (void)volrec(cpct, 0, na1);
@@ -889,6 +978,8 @@ static void Reconstruction(CompactTree * cpct, indexcomp_t som)
     - selectionne un sommet M maximum (si plusieurs, ...),
     - a partir de M, on "redescend" en demarquant les sommets
 */
+#undef F_NAME
+#define F_NAME "Reconstruction"
 {
   indexcomp_t i, n, m, j, k, M;
   double contrast[NBLEVELS];
@@ -923,7 +1014,7 @@ static void Reconstruction(CompactTree * cpct, indexcomp_t som)
       }
       k = j;
 #ifdef PARANO
-      if (i >= n) fprintf(stderr, "Reconstruction : ERREUR INATTENDUE\n");
+      if (i >= n) fprintf(stderr, "%s: ERREUR INATTENDUE\n", F_NAME);
 #endif
     }
     contrast[m] = cpct->contrast[k];
@@ -1025,6 +1116,8 @@ static void RecupereSegmentation(CompactTree * cpct,
        level_t *ORI            /* informations sur l'image originale */
 )
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "RecupereSegmentation"
 {
   index_t i;
   level_t h;
@@ -1038,7 +1131,7 @@ static void RecupereSegmentation(CompactTree * cpct,
     {
 #ifdef PARANO
       if (comp == cpct->pere[comp])       
-        fprintf(stderr, "RecupereSegmentation: la racine a ete eliminee\n");
+        fprintf(stderr, "%s: la racine a ete eliminee\n", F_NAME);
 #endif
       comp = cpct->pere[comp];
     }
@@ -1178,6 +1271,8 @@ static void WriteCompactTree(CompactTree *cpct, char * filename) __attribute__ (
 /* ==================================== */
 static void WriteCompactTree(CompactTree *cpct, char * filename)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "WriteCompactTree"
 {
   indexcomp_t i;
   FILE * fd = NULL;
@@ -1186,7 +1281,7 @@ static void WriteCompactTree(CompactTree *cpct, char * filename)
   fd = fopen(filename,"w");
   if (!fd)
   {
-    fprintf(stderr, "WriteCompactTree: cannot open file: %s\n", filename);
+    fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
     exit(0);
   }
 
@@ -1266,10 +1361,17 @@ static void AjouteArc(CompTree *ct, indexcomp_t i, indexcomp_t j
 #endif
               )
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "AjouteArc"
 {
   if (ct->nbarcs >= ct->nbmaxarcs)
   {
-    fprintf(stderr, "AjouteArc : structure CompTree saturee (%d arcs)\n", ct->nbarcs);
+    fprintf(stderr, "%s: structure CompTree is full (%d arcs)\n", F_NAME, ct->nbarcs);
+    exit(0);
+  }
+  if (ct->nbarcs >= NBMAXCOMP)
+  {
+    fprintf(stderr, "%s: too many components (limit is %d)\n", F_NAME, NBMAXCOMP);
     exit(0);
   }
   ct->tete[ct->nbarcs] = i;
@@ -1427,6 +1529,7 @@ static int32_t flood(int32_t h,        /* niveau a inonder */
 #ifdef DEBUGFLOOD
   printf("retour flood niveau %d\n", h);
 #endif
+  assert(number_nodes[h] < NBMAXCOMP);
   number_nodes[h] += 1;
 
   m = h - 1;                                    /* second step : define the father */
@@ -1544,6 +1647,7 @@ static int32_t floodb(int32_t h,     /* niveau a inonder */
 #ifdef DEBUGFLOOD
   printf("retour flood niveau %d\n", h);
 #endif
+  assert(number_nodes[h] < NBMAXCOMP);
   number_nodes[h] += 1;
 
   m = h - 1;                                    /* second step : define the father */
@@ -1603,6 +1707,8 @@ static int32_t flood3d(
           level_t *ORI               /* informations sur l'image originale */
 )
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "flood3d"
 {
   index_t p, q;
   int32_t k;
@@ -1694,7 +1800,7 @@ static int32_t flood3d(
         } /* for (...) */
         break;
       default:
-        fprintf(stderr, "flood3d: mauvaise connexite: %d\n", connex);
+        fprintf(stderr, "%s: mauvaise connexite: %d\n", F_NAME, connex);
         exit(0);
     } /* switch (connex) */
 
@@ -1705,6 +1811,7 @@ static int32_t flood3d(
 #ifdef DEBUGFLOOD
   printf("retour flood3d niveau %d\n", h);
 #endif
+  assert(number_nodes[h] < NBMAXCOMP);
   number_nodes[h] += 1;
 
   m = h - 1;                                    /* second step : define the father */
