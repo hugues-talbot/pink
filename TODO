@@ -30,12 +30,17 @@ déjà faits:
   l3dcollapse
   l2dkhalimsky
   l3dkhalimsky
+  lattrib.h
+  lattribarea
+  lattribheight
+  ldynamique_grimaud
 
   seuil
   threshold
   crop
   seuilauto
   long2byte
+  float2byte
   *histo*
   setorigin
   dilation
@@ -91,7 +96,5 @@ MC 64 bits: larea() retourne un int32
 MC extractplane pour les types float, long...
 
 MC génération de pages "man" à partir du code doxygen
-
-MC debug leden (plante sur "eden fish1.pgm 10000 1 0 1 _1")
 
 

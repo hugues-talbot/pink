@@ -160,7 +160,6 @@ int main(int argc, char **argv)
   int32_t nbval, nbnewval;
   uint32_t *index;
   double t;
-
   index_t x, rs, cs, d, N;
 
   if ((argc < 3) || (argc > 5))

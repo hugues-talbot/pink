@@ -90,11 +90,10 @@ int main(int argc, char **argv)
   struct xvimage * imagebyte;
   float *L;
   uint8_t *B;
-  int32_t x;
-  int32_t mode = 0;
+  int32_t tmp, mode = 0;
   float Min, Max, t;
   double T;
-  int32_t rs, cs, ds, N, tmp;
+  index_t x, rs, cs, ds, N;
 
   if ((argc < 3) || (argc > 4))
   {

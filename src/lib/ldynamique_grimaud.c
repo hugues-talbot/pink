@@ -106,7 +106,7 @@ Definition Grimaud : obligation d'atteindre un maximum de niveau strictement sup
     {
       for (i = cpct->hc[h] - 1; i > cpct->hc[h] - 1 - ncompnivh; i--)
       {
-        if (NBFILS(i) == 0) /* feuille */
+        if (NBFILS(cpct, i) == 0) /* feuille */
         {
           f = i;
           p = cpct->pere[f];
@@ -124,7 +124,7 @@ Definition Grimaud : obligation d'atteindre un maximum de niveau strictement sup
             p = cpct->pere[f];
 	  } /* while ((p != f) && (tmp[p] <= h)) */
           cpct->dyn[i] = h - DECODENIV(cpct->comp[p]);
-	} /* if (NBFILS(i) == 0) */
+	} /* if (NBFILS(cpct, i) == 0) */
       } /* for i */
     } /* if (ncompnivh > 0) */
   } /* for h */
@@ -166,7 +166,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
     {
       for (i = cpct->hc[h] - 1; i > cpct->hc[h] - 1 - ncompnivh; i--)
       {
-        if (NBFILS(i) == 0) /* feuille */
+        if (NBFILS(cpct, i) == 0) /* feuille */
         {
           f = i;
           p = cpct->pere[f];
@@ -192,7 +192,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
             if (cpct->dyn[p] == 0) cpct->dyn[p] = -1;
             else cpct->dyn[p] = mcmax(cpct->dyn[p],cpct->dyn[i]);
 	  }
-	} /* if (NBFILS(i) == 0) */
+	} /* if (NBFILS(cpct, i) == 0) */
       } /* for i */
     } /* if (ncompnivh > 0) */
   } /* for h */
@@ -213,7 +213,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
     {
       for (i = cpct->hc[h] - 1; i > cpct->hc[h] - 1 - ncompnivh; i--)
       {
-        if (NBFILS(i) > 0) /* non feuille */
+        if (NBFILS(cpct, i) > 0) /* non feuille */
         {
           v = cpct->dyn[i];
           f = i;
@@ -225,7 +225,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
             f = p;
             p = cpct->pere[f];
 	  } /* while (p != f) */
-	} /* if (NBFILS(i) > 0) */
+	} /* if (NBFILS(cpct, i) > 0) */
       } /* for i */
     } /* if (ncompnivh > 0) */
   } /* for h */
@@ -252,7 +252,7 @@ static void RecupereDynamique(CompactTree * cpct,
   {
     h = ORI[i];
     c = STATUS[i];
-    comp = INDEXCOMP(h,c);
+    comp = INDEXCOMP(cpct, h,c);
     ORI[i] = cpct->dyn[comp];
   }  
 } /* RecupereDynamique() */
@@ -446,7 +446,7 @@ static int32_t TrouveComposantes(int32_t x, uint8_t *F, int32_t rs, int32_t N, i
       y = voisin(x, k, rs, N);
       if ((y != -1) && (F[y] > F[x]))
       {
-        tabcomp[ncomp] = INDEXCOMP(F[y],STATUS[y]);
+        tabcomp[ncomp] = INDEXCOMP(cpct, F[y],STATUS[y]);
         ncomp++;
       }
     } /* for (k = 0; k < 8; k += incr_vois) */
@@ -488,8 +488,8 @@ static int32_t TrouveComposantes2(int32_t x, uint8_t *F, int32_t rs, int32_t N, 
     y = voisin(x, k, rs, N);
     if ((y != -1) && (F[y] > F[x]))
     {
-      if (first && (F[y] == maxval)) { tabcomp[0] = INDEXCOMP(F[y],STATUS[y]); first = 0; }
-      else                           { tabcomp[n] = INDEXCOMP(F[y],STATUS[y]); n++; }
+      if (first && (F[y] == maxval)) { tabcomp[0] = INDEXCOMP(cpct, F[y],STATUS[y]); first = 0; }
+      else                           { tabcomp[n] = INDEXCOMP(cpct, F[y],STATUS[y]); n++; }
     }
   } /* for (k = 0; k < 8; k += incr_vois) */
 #ifdef DEBUG
@@ -536,8 +536,8 @@ void Watershed(
   // etiquetage des c-maxima (doit pouvoir se faire au vol lors de la construction de l'arbre)
   for (i = 0; i < N; i++)
   {
-    c = INDEXCOMP(F[i],STATUS[i]);
-    if (NBFILS(c) == 0) Set(i,MASSIF);
+    c = INDEXCOMP(cpct, F[i],STATUS[i]);
+    if (NBFILS(cpct, c) == 0) Set(i,MASSIF);
   } // for (i = 0; i < N; i++)
 
   // empile les c-voisins des c-maxima
@@ -588,7 +588,7 @@ void Watershed(
 
     if (c != -1)
     {
-      if (NBFILS(c) == 0) // feuille
+      if (NBFILS(cpct, c) == 0) // feuille
       {
         nbelev++;
         F[x] = DECODENIV(cpct->comp[c]);      // eleve le niveau du point x
@@ -670,7 +670,7 @@ void Watershed(
       Set(x,MODIFIE);
 
 #ifdef PARANO
-      if (NBFILS(c) == 0) // feuille
+      if (NBFILS(cpct, c) == 0) // feuille
         printf("ERREUR: POINT MASSIF TROUVE EN PASSE 2!!!!\n");
 #endif
 
@@ -768,7 +768,7 @@ static void Watershed1(struct xvimage *image, int32_t incr_vois,
       F[x] = DECODENIV(cpct->comp[c]);      // eleve le niveau du point x
       STATUS[x] = DECODENUM(cpct->comp[c]); // maj pointeur image -> composantes 
       Set(x,MODIFIE);
-      if (NBFILS(c) == 0) // feuille
+      if (NBFILS(cpct, c) == 0) // feuille
       {
         Set(x,MASSIF);
 #ifdef DEBUG
@@ -776,7 +776,7 @@ static void Watershed1(struct xvimage *image, int32_t incr_vois,
 #endif
       } // if feuille
       else
-      if (NBFILS(c) > 1) // noeud
+      if (NBFILS(cpct, c) > 1) // noeud
       {
         Set(x,WATERSHED);
 #ifdef DEBUG
@@ -837,8 +837,8 @@ static void Watershed2(struct xvimage *image, int32_t incr_vois,
   // etiquetage des c-maxima (doit pouvoir se faire au vol lors de la construction de l'arbre)
   for (i = 0; i < N; i++)
   {
-    c = INDEXCOMP(F[i],STATUS[i]);
-    if (NBFILS(c) == 0) Set(i,MASSIF);
+    c = INDEXCOMP(cpct, F[i],STATUS[i]);
+    if (NBFILS(cpct, c) == 0) Set(i,MASSIF);
   } // for (i = 0; i < N; i++)
 
   // empile les c-voisins des c-maxima
@@ -901,7 +901,7 @@ static void Watershed2(struct xvimage *image, int32_t incr_vois,
       F[x] = DECODENIV(cpct->comp[c]);      // eleve le niveau du point x
       STATUS[x] = DECODENUM(cpct->comp[c]); // maj pointeur image -> composantes 
       Set(x,MODIFIE);
-      if (NBFILS(c) == 0) // feuille
+      if (NBFILS(cpct, c) == 0) // feuille
       {
         Set(x,MASSIF);
 #ifdef DEBUG
@@ -909,7 +909,7 @@ static void Watershed2(struct xvimage *image, int32_t incr_vois,
 #endif
       } // if feuille
       else
-      if (NBFILS(c) > 1) // noeud
+      if (NBFILS(cpct, c) > 1) // noeud
       {
         Set(x,WATERSHED);
 #ifdef DEBUG
@@ -970,8 +970,8 @@ static void Watershed3(struct xvimage *image, int32_t incr_vois,
   // etiquetage des c-maxima (doit pouvoir se faire au vol lors de la construction de l'arbre)
   for (i = 0; i < N; i++)
   {
-    c = INDEXCOMP(F[i],STATUS[i]);
-    if (NBFILS(c) == 0) Set(i,MASSIF);
+    c = INDEXCOMP(cpct, F[i],STATUS[i]);
+    if (NBFILS(cpct, c) == 0) Set(i,MASSIF);
   } // for (i = 0; i < N; i++)
 
   // empile les c-voisins des c-maxima
@@ -1034,7 +1034,7 @@ static void Watershed3(struct xvimage *image, int32_t incr_vois,
       F[x] = DECODENIV(cpct->comp[c]);      // eleve le niveau du point x
       STATUS[x] = DECODENUM(cpct->comp[c]); // maj pointeur image -> composantes 
       Set(x,MODIFIE);
-      if (NBFILS(c) == 0) // feuille
+      if (NBFILS(cpct, c) == 0) // feuille
       {
         Set(x,MASSIF);
 #ifdef DEBUG
@@ -1042,7 +1042,7 @@ static void Watershed3(struct xvimage *image, int32_t incr_vois,
 #endif
       } // if feuille
       else
-      if (NBFILS(c) > 1) // noeud
+      if (NBFILS(cpct, c) > 1) // noeud
       {
         Set(x,WATERSHED);
 #ifdef DEBUG
@@ -1101,8 +1101,8 @@ static void Watershed4(struct xvimage *image, int32_t incr_vois,
   // etiquetage des c-maxima (doit pouvoir se faire au vol lors de la construction de l'arbre)
   for (i = 0; i < N; i++)
   {
-    c = INDEXCOMP(F[i],STATUS[i]);
-    if (NBFILS(c) == 0) Set(i,MASSIF);
+    c = INDEXCOMP(cpct, F[i],STATUS[i]);
+    if (NBFILS(cpct, c) == 0) Set(i,MASSIF);
   } // for (i = 0; i < N; i++)
 
   // empile les c-voisins des c-maxima
@@ -1159,7 +1159,7 @@ printf("    LCA: %d ; level: %d\n", c, lcalevel);
         F[x] = lcalevel;      // eleve le niveau du point x
         STATUS[x] = DECODENUM(cpct->comp[c]); // maj pointeur image -> composantes 
         Set(x,MODIFIE);
-        if (NBFILS(c) == 0) // feuille
+        if (NBFILS(cpct, c) == 0) // feuille
         {
           Set(x,MASSIF);
 #ifdef DEBUG
@@ -1167,7 +1167,7 @@ printf("    Eleve au niveau: %d ; MASSIF\n", F[x]);
 #endif
         } // if feuille
         else
-        if (NBFILS(c) > 1) // noeud
+        if (NBFILS(cpct, c) > 1) // noeud
         {
 #ifdef DEBUG
 printf("    Eleve au niveau: %d ; LPE\n", F[x]);
@@ -1208,7 +1208,7 @@ static int32_t trouvefeuillerec(CompactTree * cpct, int32_t p, int32_t v)
 */ 
 {
   int32_t i, n, j, f;
-  n = NBFILS(p);
+  n = NBFILS(cpct, p);
   if (n == 0) 
   {
     if (cpct->dyn[p] == v) return p;
@@ -1216,7 +1216,7 @@ static int32_t trouvefeuillerec(CompactTree * cpct, int32_t p, int32_t v)
   }
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(p, i);
+    j = INDEXFILS(cpct, p, i);
     j = cpct->fils[j];
     f = trouvefeuillerec(cpct, j, v);
     if (f != -1) return f;
@@ -1397,7 +1397,7 @@ printf("f = %d ; dyn = %d ; ndg = %d ; hcf = %d\n", f, cpct->dyn[f], hcf+df, hcf
     {
       h = F[x];
       c = STATUS[x];
-      comp = INDEXCOMP(h,c);
+      comp = INDEXCOMP(cpct, h,c);
       while ((comp != cpct->pere[comp]) && (cpct->flags[cpct->pere[comp]] & FILTERED_OUT)) 
         comp = cpct->pere[comp]; // remonte branche morte
       if ((comp != f) && (h == hcf))
@@ -1409,7 +1409,7 @@ printf("f = %d ; dyn = %d ; ndg = %d ; hcf = %d\n", f, cpct->dyn[f], hcf+df, hcf
 	  {
             h = F[y];
             c = STATUS[y];
-            comp = INDEXCOMP(h,c);
+            comp = INDEXCOMP(cpct, h,c);
             while ((comp != cpct->pere[comp]) && (cpct->flags[cpct->pere[comp]] & FILTERED_OUT)) 
               comp = cpct->pere[comp]; // remonte branche morte
             if (comp == f)
@@ -1435,7 +1435,7 @@ printf("ptcol = %d,%d\n", ptcol%rs, ptcol/rs);
       {
         h = F[y];
         c = STATUS[y];
-        comp = INDEXCOMP(h,c);
+        comp = INDEXCOMP(cpct, h,c);
         // while ((comp != cpct->pere[comp]) && (cpct->flags[cpct->pere[comp]] & FILTERED_OUT)) 
         //  comp = cpct->pere[comp]; // remonte branche morte
         if ((comp != f) && !(cpct->flags[comp] & FILTERED_OUT) && (NbFilsNonFiltres(cpct,comp) == 0))
@@ -1463,7 +1463,7 @@ printf("vf = %d, nvf = %d\n", vf, nvf);
         {
           h = F[y];
           c = STATUS[y];
-          comp = INDEXCOMP(h,c);
+          comp = INDEXCOMP(cpct, h,c);
 	  //          while ((comp != cpct->pere[comp]) && (cpct->flags[cpct->pere[comp]] & FILTERED_OUT)) 
           //  comp = cpct->pere[comp]; // remonte branche morte
           if (comp == f) { voisinf = 1; printf("x = %d,%d ; y = %d,%d ; voisin de f =  %d\n", x % rs, x / rs, y % rs, y / rs, f); }
@@ -1490,7 +1490,7 @@ printf("supprime %d ; nbcomp = %d\n", f, nbcomp);
     {
       h = F[x];
       c = STATUS[x];
-      comp = INDEXCOMP(h,c);
+      comp = INDEXCOMP(cpct, h,c);
       if (comp == f)
       {
         F[x] = nvf;

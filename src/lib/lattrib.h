@@ -41,9 +41,11 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 
 //#define DEBUG
+
 #define VERBOSE
 
 #include <string.h>
+#include <assert.h>
 
 #define FILTERED_OUT 0x01
 #define LEAFMIN      0x02
@@ -53,9 +55,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #define LCA2         0x10
 #define LCA          (LCA1|LCA2)
 
-#define NOT_ANALYZED 2000000000
-#define IN_THE_QUEUE 2000000001
-
 /*
    principe de l'encodage des composantes: 
    le niveau est code dans les bits 24 a 31
@@ -64,18 +63,41 @@ knowledge of the CeCILL license and that you accept its terms.
    soit 2   = 16 megacomposantes par niveau.
 */
 
-#define ENCODE(y,h) (y|(h<<24))
-#define DECODENUM(y) (y&0x00ffffff)
-#define DECODENIV(y) (y>>24)
+typedef uint32_t component_t;
+typedef uint32_t indexcomp_t;
+typedef uint8_t level_t;
+#define NBLEVELS 256
 
-/* 
-   macros pour l'acces aux donnees de la structure CompactTree
-*/
 
-#define NBCOMP(h) ((h==0)?(cpct->hc[0]):(cpct->hc[h]-cpct->hc[h-1]))
-#define INDEXCOMP(h,j) ((h==0)?(j):(cpct->hc[h-1]+j))
-#define NBFILS(c) ((c==0)?(cpct->dfils[0]):(cpct->dfils[c]-cpct->dfils[c-1]))
-#define INDEXFILS(c,j) ((c==0)?(j):(cpct->dfils[c-1]+j))
+#define NOT_ANALYZED 2000000000
+#define IN_THE_QUEUE 2000000001
+
+//#define NBMAXCOMP (indexcomp_t)(((uint64_t)1 << sizeof(indexcomp_t)) - 1)
+//static const indexcomp_t NOT_ANALYZED = NBMAXCOMP - 1;
+//static const indexcomp_t IN_THE_QUEUE = NBMAXCOMP;
+
+typedef int32_t attrsurf_t;
+typedef int32_t attrheight_t;
+typedef int32_t attrperim_t;
+typedef int32_t attrhbord_t;
+typedef double attrcontrast_t;
+typedef int32_t attrvol_t;
+typedef int32_t attrdyn_t;
+
+// ATTENTION: la fonction CalculeAttribut pour le moment n'accepte que les attributs de type int32_t
+
+static inline component_t ENCODE(indexcomp_t y, level_t h)
+{ 
+  return (component_t)(y|(h<<24));
+}
+static inline indexcomp_t DECODENUM(component_t y)
+{ 
+  return (indexcomp_t)(y&0x00ffffff);
+}
+static inline level_t DECODENIV(component_t y) 
+{ 
+  return (level_t)(y>>24);
+}
 
 /* ============================================================================== */
 /* 
@@ -93,24 +115,25 @@ knowledge of the CeCILL license and that you accept its terms.
   une liste d'arcs (tableaux tete et queue), fleches de la racine vers les feuilles.
 */
 /* ============================================================================== */
+
 typedef struct {
-  uint32_t nbmaxarcs;          /* nombre maximum d'arcs */
-  uint32_t nbarcs;             /* nombre effectif d'arcs */
-  uint32_t racine;             /* racine de l'arbre */
-  uint32_t *tete;              /* sommets initiaux des arcs de l'arbre */
-  uint32_t *queue;             /* sommets terminaux des arcs de l'arbre */  
+  indexcomp_t nbmaxarcs;          /* nombre maximum d'arcs */
+  indexcomp_t nbarcs;             /* nombre effectif d'arcs */
+  component_t racine;             /* racine de l'arbre */
+  component_t *tete;              /* sommets initiaux des arcs de l'arbre */
+  component_t *queue;             /* sommets terminaux des arcs de l'arbre */  
 #ifdef ATTR_SURF
-  int32_t surf_racine;                 /* attribut surface pour la racine */
-  int32_t *surf;                       /* attributs des sommets terminaux des arcs */
+  attrsurf_t surf_racine;                 /* attribut surface pour la racine */
+  attrsurf_t *surf;                       /* attributs des sommets terminaux des arcs */
 #endif
 #ifdef ATTR_PERIM
-  int32_t *perim;
+  attrperim_t *perim;
 #endif 
 #ifdef ATTR_HBORD
-  int32_t *hbord;
+  attrhbord_t *hbord;
 #endif
 #ifdef ATTR_VOL
-  int32_t *vol;
+  attrvol_t *vol;
 #endif
 } CompTree;
 /* ============================================================================== */
@@ -131,41 +154,64 @@ typedef struct {
     (sauf pour la racine qui a pour index 0 et a laquelle est associee 0)
   - le tableau 'dfils' qui, a l'index i d'une composante, associe l'index(+1) 
     du dernier fils de i (sauf pour les feuilles)
-  - le tableau 'fils' qui contient les listes de fils
+  - le tableau 'fils' qui contient les listes d'index de fils
 */
 /* ============================================================================== */
+
 #define CPCT_ROOT 0
+
 typedef struct {
-  uint32_t nbcomp;  /* nombre de composantes */
-  uint32_t *comp;   /* tableau des composantes */
-  uint32_t *pere;   /* tableau representant la relation 'pere' */  
-  uint32_t *dfils;  /* tableau donnant l'index+1 du dernier fils dans le tableau 'fils' */
-  uint32_t *fils;   /* tableau representant, avec le precedent, la relation 'fils' */  
-  uint32_t *hc;     /* histogramme cumule des composantes */
+  indexcomp_t nbcomp;  /* nombre de composantes */
+  component_t *comp;   /* tableau des composantes */
+  indexcomp_t *pere;   /* tableau representant la relation 'pere' */  
+  indexcomp_t *dfils;  /* tableau donnant l'index+1 du dernier fils dans le tableau 'fils' */
+  indexcomp_t *fils;   /* tableau representant, avec le precedent, la relation 'fils' */  
+  indexcomp_t *hc;     /* histogramme cumule des composantes */
 #ifdef ATTR_SURF
-  int32_t *surf;
+  attrsurf_t *surf;
 #endif
 #ifdef ATTR_HEIGHT
-  int32_t *height;
+  attrheight_t *height;
 #endif
 #ifdef ATTR_PERIM
-  int32_t *perim; 
+  attrperim_t *perim; 
 #endif
 #ifdef ATTR_HBORD
-  int32_t *hbord;
+  attrhbord_t *hbord;
 #endif
 #ifdef ATTR_CONTRAST
-  double *contrast;           /* attribut flottant */
+  attrcontrast_t *contrast;           /* attribut flottant */
 #endif
 #ifdef ATTR_VOL
-  int32_t *vol;
+  attrvol_t *vol;
 #endif
 #ifdef ATTR_DYN
-  int32_t *dyn;
+  attrdyn_t *dyn;
 #endif
   char *flags;          /* 8 booleens pour des usages divers */
 } CompactTree;
 /* ============================================================================== */
+
+/* 
+   macros pour l'acces aux donnees de la structure CompactTree
+*/
+
+static inline indexcomp_t NBCOMP(CompactTree * cpct, level_t h) 
+{
+  return (h==0)?(cpct->hc[0]):(cpct->hc[h]-cpct->hc[h-1]);
+}
+static inline indexcomp_t INDEXCOMP(CompactTree * cpct, level_t h, indexcomp_t j) 
+{
+  return (h==0)?(j):(cpct->hc[h-1]+j);
+}
+static inline int32_t NBFILS(CompactTree * cpct, indexcomp_t c) 
+{
+  return (c==0)?(cpct->dfils[0]):(cpct->dfils[c]-cpct->dfils[c-1]);
+}
+static inline indexcomp_t INDEXFILS(CompactTree * cpct, indexcomp_t c, indexcomp_t j) 
+{
+  return (c==0)?(j):(cpct->dfils[c-1]+j);
+}
 
 /* ======================================================================== */
 /* ======================================================================== */
@@ -305,30 +351,30 @@ static void i_TriRapideStochastique (int32_t * A, int32_t *T, int32_t p, int32_t
 /* ======================================================================== */
 
 /* ==================================== */
-static CompTree * InitCompTree(int32_t nbmaxarcs)
+static CompTree * InitCompTree(indexcomp_t nbmaxarcs)
 /* ==================================== */
 {
   CompTree *ct;
   ct = (CompTree *)malloc(sizeof(CompTree));
   if (ct == NULL) return NULL;
-  ct->tete = (uint32_t *)malloc(nbmaxarcs * sizeof(int32_t));
+  ct->tete = (component_t *)malloc(nbmaxarcs * sizeof(component_t));
   if (ct->tete == NULL) return NULL;
-  ct->queue = (uint32_t *)malloc(nbmaxarcs * sizeof(int32_t));
+  ct->queue = (component_t *)malloc(nbmaxarcs * sizeof(component_t));
   if (ct->queue == NULL) return NULL;
 #ifdef ATTR_SURF
-  ct->surf = (int32_t *)malloc(nbmaxarcs * sizeof(int32_t));
+  ct->surf = (attrsurf_t *)malloc(nbmaxarcs * sizeof(attrsurf_t));
   if (ct->surf == NULL) return NULL;
 #endif
 #ifdef ATTR_PERIM
-  ct->perim = (int32_t *)malloc(nbmaxarcs * sizeof(int32_t));
+  ct->perim = (attrperim_t *)malloc(nbmaxarcs * sizeof(attrperim_t));
   if (ct->perim == NULL) return NULL;
 #endif
 #ifdef ATTR_HBORD
-  ct->hbord = (int32_t *)malloc(nbmaxarcs * sizeof(int32_t));
+  ct->hbord = (attrhbord_t *)malloc(nbmaxarcs * sizeof(attrhbord_t));
   if (ct->hbord == NULL) return NULL;
 #endif
 #ifdef ATTR_VOL
-  ct->vol = (int32_t *)malloc(nbmaxarcs * sizeof(int32_t));
+  ct->vol = (attrvol_t *)malloc(nbmaxarcs * sizeof(attrvol_t));
   if (ct->vol == NULL) return NULL;
 #endif
   ct->nbmaxarcs = nbmaxarcs;
@@ -359,7 +405,7 @@ static void TermineCompTree(CompTree *ct)
 } /* TermineCompTree() */
 
 /* ==================================== */
-static CompactTree * CompTree2CompactTree(CompTree *ct, uint32_t *number_nodes)
+static CompactTree * CompTree2CompactTree(CompTree *ct, indexcomp_t *number_nodes)
 /* ==================================== */
 /* ATTENTION EFFET DE BORD : DETRUIT LA RELATION number_nodes 
    (number_nodes represente le nombre de composantes par niveau, calcule par flood())
@@ -368,9 +414,11 @@ static CompactTree * CompTree2CompactTree(CompTree *ct, uint32_t *number_nodes)
 #define F_NAME "CompTree2CompactTree"
 {
   CompactTree *cpct;
-  uint32_t i, n, h, t, th, tn, q, qh, qn;
-  uint32_t nbcomp = ct->nbarcs + 1;
-  uint32_t *nfils;
+  component_t t, q;
+  int32_t h, th, qh;
+  indexcomp_t i, n, tn, qn;
+  indexcomp_t nbcomp = ct->nbarcs + 1;
+  indexcomp_t *nfils;
 
 #ifdef VERBOSE
   printf("%s: nbcomp = %d\n", F_NAME, nbcomp);
@@ -379,42 +427,42 @@ static CompactTree * CompTree2CompactTree(CompTree *ct, uint32_t *number_nodes)
   cpct = (CompactTree *)malloc(sizeof(CompactTree));
   if (cpct == NULL) return NULL;
   cpct->nbcomp = nbcomp;
-  cpct->comp = (uint32_t *)malloc(nbcomp * sizeof(int32_t));
+  cpct->comp = (component_t *)malloc(nbcomp * sizeof(component_t));
   if (cpct->comp == NULL) return NULL;
-  cpct->pere = (uint32_t *)malloc(nbcomp * sizeof(int32_t));
+  cpct->pere = (indexcomp_t *)malloc(nbcomp * sizeof(indexcomp_t));
   if (cpct->pere == NULL) return NULL;
-  cpct->dfils = (uint32_t *)malloc(nbcomp * sizeof(int32_t));
+  cpct->dfils = (indexcomp_t *)malloc(nbcomp * sizeof(indexcomp_t));
   if (cpct->dfils == NULL) return NULL;
-  cpct->fils = (uint32_t *)malloc(nbcomp * sizeof(int32_t));
+  cpct->fils = (indexcomp_t *)malloc(nbcomp * sizeof(indexcomp_t));
   if (cpct->fils == NULL) return NULL;
-  cpct->hc = (uint32_t *)malloc(256 * sizeof(int32_t));
+  cpct->hc = (indexcomp_t *)malloc(NBLEVELS * sizeof(indexcomp_t));
   if (cpct->hc == NULL) return NULL;
 #ifdef ATTR_SURF
-  cpct->surf = (int32_t *)malloc(nbcomp * sizeof(int32_t));
+  cpct->surf = (attrsurf_t *)malloc(nbcomp * sizeof(attrsurf_t));
   if (cpct->surf == NULL) return NULL;
 #endif
 #ifdef ATTR_HEIGHT
-  cpct->height = (int32_t *)malloc(nbcomp * sizeof(int32_t));
+  cpct->height = (attrheight_t *)malloc(nbcomp * sizeof(attrheight_t));
   if (cpct->height == NULL) return NULL;
 #endif
 #ifdef ATTR_PERIM
-  cpct->perim = (int32_t *)malloc(nbcomp * sizeof(int32_t));
+  cpct->perim = (attrperim_t *)malloc(nbcomp * sizeof(attrperim_t));
   if (cpct->perim == NULL) return NULL;
 #endif
 #ifdef ATTR_HBORD
-  cpct->hbord = (int32_t *)malloc(nbcomp * sizeof(int32_t));
+  cpct->hbord = (attrhbord_t *)malloc(nbcomp * sizeof(attrhbord_t));
   if (cpct->hbord == NULL) return NULL;
 #endif
 #ifdef ATTR_CONTRAST
-  cpct->contrast = (double *)malloc(nbcomp * sizeof(double));
+  cpct->contrast = (attrcontrast_t *)malloc(nbcomp * sizeof(attrcontrast_t));
   if (cpct->contrast == NULL) return NULL;
 #endif
 #ifdef ATTR_VOL
-  cpct->vol = (int32_t *)malloc(nbcomp * sizeof(int32_t));
+  cpct->vol = (attrvol_t *)malloc(nbcomp * sizeof(attrvol_t));
   if (cpct->vol == NULL) return NULL;
 #endif
 #ifdef ATTR_DYN
-  cpct->dyn = (int32_t *)malloc(nbcomp * sizeof(int32_t));
+  cpct->dyn = (attrdyn_t *)malloc(nbcomp * sizeof(attrdyn_t));
   if (cpct->dyn == NULL) return NULL;
 #endif
   cpct->flags = (char *)calloc(nbcomp, sizeof(char));
@@ -422,7 +470,7 @@ static CompactTree * CompTree2CompactTree(CompTree *ct, uint32_t *number_nodes)
 
   /* calcule l'histogramme cumule hc */
   n = cpct->hc[0] = number_nodes[0]; 
-  for (i = 1; i < 256; i++) { n += number_nodes[i]; cpct->hc[i] = n; }
+  for (i = 1; i < NBLEVELS; i++) { n += number_nodes[i]; cpct->hc[i] = n; }
 
   /* construit le tableau des composantes comp */
   n = 0; h = 0; while (!number_nodes[h]) h++; /* ATTENTION CODE FRAGILE */
@@ -439,13 +487,13 @@ static CompactTree * CompTree2CompactTree(CompTree *ct, uint32_t *number_nodes)
     t = ct->tete[i]; q = ct->queue[i];
     th = DECODENIV(t); tn = DECODENUM(t);
     qh = DECODENIV(q); qn = DECODENUM(q);
-    cpct->pere[INDEXCOMP(qh,qn)] = INDEXCOMP(th,tn);
+    cpct->pere[INDEXCOMP(cpct, qh,qn)] = INDEXCOMP(cpct, th,tn);
   }
   q = ct->racine; qh = DECODENIV(q); qn = DECODENUM(q);
-  cpct->pere[INDEXCOMP(qh,qn)] = INDEXCOMP(qh,qn);
+  cpct->pere[INDEXCOMP(cpct, qh,qn)] = INDEXCOMP(cpct, qh,qn);
 
   /* construit la relation dfils et fils */
-  nfils = (uint32_t *)calloc(nbcomp, sizeof(int32_t));
+  nfils = (indexcomp_t *)calloc(nbcomp, sizeof(indexcomp_t));
   if (nfils == NULL) return NULL;
   for (i = 1; i < nbcomp; i++) nfils[cpct->pere[i]] += 1;
     /* exception : la racine (0) est fille d'elle-meme, cette relation n'est pas comptee */ 
@@ -455,7 +503,7 @@ static CompactTree * CompTree2CompactTree(CompTree *ct, uint32_t *number_nodes)
   {
     t = cpct->pere[i]; /* i est fils de t */
     nfils[t] -= 1;
-    cpct->fils[INDEXFILS(t,nfils[t])] = i;
+    cpct->fils[INDEXFILS(cpct, t,nfils[t])] = i;
   }
   free(nfils);
 
@@ -464,16 +512,16 @@ static CompactTree * CompTree2CompactTree(CompTree *ct, uint32_t *number_nodes)
   {
     q = ct->queue[i]; qh = DECODENIV(q); qn = DECODENUM(q);
 #ifdef ATTR_SURF
-    cpct->surf[INDEXCOMP(qh,qn)] = ct->surf[i];
+    cpct->surf[INDEXCOMP(cpct, qh,qn)] = ct->surf[i];
 #endif
 #ifdef ATTR_PERIM
-    cpct->perim[INDEXCOMP(qh,qn)] = ct->perim[i];
+    cpct->perim[INDEXCOMP(cpct, qh,qn)] = ct->perim[i];
 #endif
 #ifdef ATTR_HBORD
-    cpct->hbord[INDEXCOMP(qh,qn)] = ct->hbord[i];
+    cpct->hbord[INDEXCOMP(cpct, qh,qn)] = ct->hbord[i];
 #endif
 #ifdef ATTR_VOL
-    cpct->vol[INDEXCOMP(qh,qn)] = ct->vol[i];
+    cpct->vol[INDEXCOMP(cpct, qh,qn)] = ct->vol[i];
 #endif
   }
 #ifdef ATTR_SURF
@@ -498,13 +546,13 @@ static void ReInitFlags(CompactTree * cpct) __attribute__ ((unused));
 static void ReInitFlags(CompactTree * cpct)
 /* ==================================== */
 {
-  uint32_t nbcomp = cpct->nbcomp;
+  indexcomp_t nbcomp = cpct->nbcomp;
   memset(cpct->flags,0,nbcomp);
 } /* ReInitFlags() */
 
 #ifdef ATTR_SURF
 /* ==================================== */
-static int32_t surfrec(CompactTree * cpct, uint32_t som, int32_t *na1)
+static int32_t surfrec(CompactTree * cpct, indexcomp_t som, int32_t *na1)
 /* ==================================== */
 /*
    Calcule la surface de chacune des composantes, a partir de 
@@ -515,12 +563,12 @@ static int32_t surfrec(CompactTree * cpct, uint32_t som, int32_t *na1)
 */ 
 {
   int32_t i, n, j;
-  n = NBFILS(som);
+  n = NBFILS(cpct, som);
   if (n == 0) return na1[som] = cpct->surf[som];
   na1[som] = cpct->surf[som];
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(som, i);
+    j = INDEXFILS(cpct, som, i);
     j = cpct->fils[j];
     na1[som] += surfrec(cpct, j, na1);
   }
@@ -530,7 +578,7 @@ static int32_t surfrec(CompactTree * cpct, uint32_t som, int32_t *na1)
 
 #ifdef ATTR_VOL
 /* ==================================== */
-static int32_t volrec(CompactTree * cpct, uint32_t som, int32_t *na1)
+static int32_t volrec(CompactTree * cpct, indexcomp_t som, int32_t *na1)
 /* ==================================== */
 /*
    Attention: pour utiliser cette fonction, il faut avoir 
@@ -545,12 +593,12 @@ static int32_t volrec(CompactTree * cpct, uint32_t som, int32_t *na1)
 */ 
 {
   int32_t i, n, j, nb_coupes_eq;
-  n = NBFILS(som);
+  n = NBFILS(cpct, som);
   if (n == 0) return na1[som] = cpct->surf[som];
   na1[som] = cpct->surf[som];
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(som, i);
+    j = INDEXFILS(cpct, som, i);
     j = cpct->fils[j];
     nb_coupes_eq = DECODENIV(cpct->comp[j]) - DECODENIV(cpct->comp[som]) - 1;
     na1[som] += volrec(cpct, j, na1) + (cpct->surf[j] * nb_coupes_eq);
@@ -560,16 +608,16 @@ static int32_t volrec(CompactTree * cpct, uint32_t som, int32_t *na1)
 
 #ifdef OLD
 /* ==================================== */
-static int32_t volrec_old(CompactTree * cpct, uint32_t som, int32_t *na1)
+static int32_t volrec_old(CompactTree * cpct, indexcomp_t som, int32_t *na1)
 /* ==================================== */
 {
   int32_t i, n, j;
-  n = NBFILS(som);
+  n = NBFILS(cpct, som);
   if (n == 0) return na1[som] = cpct->surf[som];
   na1[som] = cpct->surf[som];
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(som, i);
+    j = INDEXFILS(cpct, som, i);
     j = cpct->fils[j];
     na1[som] += volrec_old(cpct, j, na1);
   }
@@ -580,17 +628,17 @@ static int32_t volrec_old(CompactTree * cpct, uint32_t som, int32_t *na1)
 
 #ifdef ATTR_HEIGHT
 /* ==================================== */
-static int32_t heightrec(CompactTree * cpct, uint32_t som, int32_t *na1)
+static int32_t heightrec(CompactTree * cpct, indexcomp_t som, int32_t *na1)
 /* ==================================== */
 /* retourne le niveau max des descendants de som (ou le niveau de som pour une feuille) */ 
 {
   int32_t i, n, j, h;
-  n = NBFILS(som);
+  n = NBFILS(cpct, som);
   if (n == 0) return na1[som] = DECODENIV(cpct->comp[som]);
   na1[som] = 0;
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(som, i);
+    j = INDEXFILS(cpct, som, i);
     j = cpct->fils[j];
     h = heightrec(cpct, j, na1);
     na1[som] = mcmax(na1[som], h);
@@ -601,16 +649,16 @@ static int32_t heightrec(CompactTree * cpct, uint32_t som, int32_t *na1)
 
 #ifdef ATTR_PERIM
 /* ==================================== */
-static int32_t perimrec(CompactTree * cpct, uint32_t som, int32_t *nperim)
+static int32_t perimrec(CompactTree * cpct, indexcomp_t som, int32_t *nperim)
 /* ==================================== */
 {
   int32_t i, n, j;
-  n = NBFILS(som);
+  n = NBFILS(cpct, som);
   if (n == 0) return nperim[som] = cpct->perim[som];
   nperim[som] = cpct->perim[som];
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(som, i);
+    j = INDEXFILS(cpct, som, i);
     j = cpct->fils[j];
     nperim[som] += perimrec(cpct, j, nperim);
   }
@@ -620,16 +668,16 @@ static int32_t perimrec(CompactTree * cpct, uint32_t som, int32_t *nperim)
 
 #ifdef ATTR_HBORD
 /* ==================================== */
-static int32_t hbordrec(CompactTree * cpct, uint32_t som, int32_t *nhbord)
+static int32_t hbordrec(CompactTree * cpct, indexcomp_t som, int32_t *nhbord)
 /* ==================================== */
 {
   int32_t i, n, j;
-  n = NBFILS(som);
+  n = NBFILS(cpct, som);
   if (n == 0) return nhbord[som] = cpct->hbord[som];
   nhbord[som] = cpct->hbord[som];
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(som, i);
+    j = INDEXFILS(cpct, som, i);
     j = cpct->fils[j];
     nhbord[som] += hbordrec(cpct, j, nhbord);
   }
@@ -645,60 +693,49 @@ static void CalculeAttributs(CompactTree * cpct)
 /* ==================================== */
 {
   int32_t *na1, *na2;
-  uint32_t nbcomp = cpct->nbcomp;
+  indexcomp_t nbcomp = cpct->nbcomp;
+  indexcomp_t i;
 
+  i = 0; // just to avoid 'unused' warning
   na1 = (int32_t *)malloc(nbcomp * sizeof(int32_t));
   na2 = (int32_t *)malloc(nbcomp * sizeof(int32_t));
 #ifdef ATTR_SURF
+  assert(sizeof(attrsurf_t) == sizeof(int32_t));
   (void)surfrec(cpct, 0, na1);
-  {
-    int32_t i;
-    for (i = 0; i < nbcomp; i++) cpct->surf[i] = na1[i];
-  }
+  for (i = 0; i < nbcomp; i++) cpct->surf[i] = na1[i];
 #endif
 #ifdef ATTR_VOL
+  assert(sizeof(attrvol_t) == sizeof(int32_t));
   if (cpct->surf == NULL)
   {
     fprintf(stderr, "CalculeAttributs: VOL ne peut etre calcule dans SURF\n");
     exit(0);
   }
   (void)volrec(cpct, 0, na1);
-  {
-    int32_t i;
-    for (i = 0; i < nbcomp; i++) cpct->vol[i] = na1[i];
-  }
+  for (i = 0; i < nbcomp; i++) cpct->vol[i] = na1[i];
 #endif
 #ifdef ATTR_HEIGHT
-
+  assert(sizeof(attrheight_t) == sizeof(int32_t));
   (void)heightrec(cpct, 0, na1);
   /* pour la mesure de la hauteur, il faut rajouter la difference de niveau avec le pere */
-  {
-    int32_t i;
-    for (i = 1; i < nbcomp; i++) cpct->height[i] = na1[i] 
+  for (i = 1; i < nbcomp; i++) cpct->height[i] = na1[i] 
 	     /* - DECODENIV(cpct->comp[i]) + DECODENIV(cpct->comp[i]) */ /* inutile */
                                                - DECODENIV(cpct->comp[cpct->pere[i]]) - 1;
-  }
   cpct->height[0] = NDG_MAX - NDG_MIN;
 #endif
 #ifdef ATTR_PERIM
+  assert(sizeof(attrperim_t) == sizeof(int32_t));
   (void)perimrec(cpct, 0, na1);
-  {
-    int32_t i;
-    for (i = 0; i < nbcomp; i++) cpct->perim[i] = na1[i]; 
-  }
+  for (i = 0; i < nbcomp; i++) cpct->perim[i] = na1[i]; 
 #endif
 #ifdef ATTR_HBORD
+  assert(sizeof(attrhbord_t) == sizeof(int32_t));
   (void)hbordrec(cpct, 0, na2);
-  {
-    int32_t i;
-    for (i = 0; i < nbcomp; i++) cpct->hbord[i] = na2[i];  
-  }
+  for (i = 0; i < nbcomp; i++) cpct->hbord[i] = na2[i];  
 #endif
 #ifdef ATTR_CONTRAST
-  {
-    int32_t i;
-    for (i = 0; i < nbcomp; i++) cpct->contrast[i] = ((double)(na2[i]))/na1[i];  
-  }
+  assert(sizeof(attrcontrast_t) == sizeof(double));
+  for (i = 0; i < nbcomp; i++) cpct->contrast[i] = ((double)(na2[i]))/na1[i];  
 #endif
   free(na1);
   free(na2);
@@ -706,7 +743,7 @@ static void CalculeAttributs(CompactTree * cpct)
 
 #ifdef ATTR_HEIGHT
 /* ==================================== */
-static int32_t FiltreHeightRec(CompactTree * cpct, int32_t som, int32_t h)
+static indexcomp_t FiltreHeightRec(CompactTree * cpct, indexcomp_t som, level_t h)
 /* ==================================== */
 /*
   Filtre les sommets de l'arbre selon un critere de hauteur : 
@@ -719,12 +756,12 @@ static int32_t FiltreHeightRec(CompactTree * cpct, int32_t som, int32_t h)
   Un sommet non filtre et dont le NNM de la descendance vaut 0 est marque LEAFMIN. 
 */
 {
-  int32_t i, n, j, NNM = 0;
-  n = NBFILS(som);
+  indexcomp_t i, n, j, NNM = 0;
+  n = NBFILS(cpct, som);
   if (cpct->height[som] < h) cpct->flags[som] |= FILTERED_OUT;
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(som, i);
+    j = INDEXFILS(cpct, som, i);
     j = cpct->fils[j];
     NNM += FiltreHeightRec(cpct, j, h);
   }
@@ -740,10 +777,10 @@ static int32_t FiltreHeightRec(CompactTree * cpct, int32_t som, int32_t h)
 #ifdef ATTR_SURF
 
 #ifdef __GNUC__
-static int32_t FiltreSurfRec(CompactTree * cpct, int32_t som, int32_t h) __attribute__ ((unused));
+static indexcomp_t FiltreSurfRec(CompactTree * cpct, indexcomp_t som, level_t h) __attribute__ ((unused));
 #endif
 /* ==================================== */
-static int32_t FiltreSurfRec(CompactTree * cpct, int32_t som, int32_t h)
+static indexcomp_t FiltreSurfRec(CompactTree * cpct, indexcomp_t som, level_t h)
 /* ==================================== */
 /*
   Filtre les sommets de l'arbre selon un critere de surface : 
@@ -756,12 +793,12 @@ static int32_t FiltreSurfRec(CompactTree * cpct, int32_t som, int32_t h)
   Un sommet non filtre et dont le NNM de la descendance vaut 0 est marque LEAFMIN. 
 */
 {
-  int32_t i, n, j, NNM = 0;
-  n = NBFILS(som);
+  indexcomp_t i, n, j, NNM = 0;
+  n = NBFILS(cpct, som);
   if (cpct->surf[som] < h) cpct->flags[som] |= FILTERED_OUT;
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(som, i);
+    j = INDEXFILS(cpct, som, i);
     j = cpct->fils[j];
     NNM += FiltreSurfRec(cpct, j, h);
   }
@@ -776,7 +813,7 @@ static int32_t FiltreSurfRec(CompactTree * cpct, int32_t som, int32_t h)
 
 #ifdef ATTR_VOL
 /* ==================================== */
-static int32_t FiltreVolRec(CompactTree * cpct, int32_t som, int32_t h)
+static indexcomp_t FiltreVolRec(CompactTree * cpct, indexcomp_t som, level_t h)
 /* ==================================== */
 /*
   Filtre les sommets de l'arbre selon un critere de volume : 
@@ -789,12 +826,12 @@ static int32_t FiltreVolRec(CompactTree * cpct, int32_t som, int32_t h)
   Un sommet non filtre et dont le NNM de la descendance vaut 0 est marque LEAFMIN. 
 */
 {
-  int32_t i, n, j, NNM = 0;
-  n = NBFILS(som);
+  indexcomp_t i, n, j, NNM = 0;
+  n = NBFILS(cpct, som);
   if (cpct->vol[som] < h) cpct->flags[som] |= FILTERED_OUT;
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(som, i);
+    j = INDEXFILS(cpct, som, i);
     j = cpct->fils[j];
     NNM += FiltreVolRec(cpct, j, h);
   }
@@ -809,22 +846,22 @@ static int32_t FiltreVolRec(CompactTree * cpct, int32_t som, int32_t h)
 
 
 #ifdef __GNUC__
-static int32_t MaximiseSegmentation(CompactTree * cpct, int32_t som) __attribute__ ((unused));
+static indexcomp_t MaximiseSegmentation(CompactTree * cpct, indexcomp_t som) __attribute__ ((unused));
 #endif
 /* ==================================== */
-static int32_t MaximiseSegmentation(CompactTree * cpct, int32_t som)
+static indexcomp_t MaximiseSegmentation(CompactTree * cpct, indexcomp_t som)
 /* ==================================== */
 /*
   
 */
 {
-  int32_t i, n, j, f, nf, NF = 0;
+  indexcomp_t i, n, j, f, nf, NF = 0;
   if (cpct->flags[som] & FILTERED_OUT) return 0;
-  n = NBFILS(som);
+  n = NBFILS(cpct, som);
   if (n == 0) return 1;
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(som, i);
+    j = INDEXFILS(cpct, som, i);
     j = cpct->fils[j];
     if ((nf = MaximiseSegmentation(cpct, j))) { f = j; NF += nf; }
   }
@@ -840,7 +877,7 @@ static int32_t MaximiseSegmentation(CompactTree * cpct, int32_t som)
 
 #ifdef ATTR_CONTRAST
 /* ==================================== */
-static void Reconstruction(CompactTree * cpct, int32_t som)
+static void Reconstruction(CompactTree * cpct, indexcomp_t som)
 /* ==================================== */
 /*
   Recherche a partir de la racine, les sommets marques LEAF.
@@ -853,17 +890,17 @@ static void Reconstruction(CompactTree * cpct, int32_t som)
     - a partir de M, on "redescend" en demarquant les sommets
 */
 {
-  int32_t i, n, m, j, k, M;
-  double contrast[256];
-  int32_t branche[256];
-  int32_t index[256];
+  indexcomp_t i, n, m, j, k, M;
+  double contrast[NBLEVELS];
+  indexcomp_t branche[NBLEVELS];
+  indexcomp_t index[NBLEVELS];
 
   if (!(cpct->flags[som] & LEAF)) /* remonte l'arbre pour trouver une LEAF */ 
   {
-    n = NBFILS(som);
+    n = NBFILS(cpct, som);
     for (i = 0; i < n; i++) 
     {
-      j = INDEXFILS(som, i);
+      j = INDEXFILS(cpct, som, i);
       j = cpct->fils[j];
       Reconstruction(cpct, j);
     }
@@ -877,10 +914,10 @@ static void Reconstruction(CompactTree * cpct, int32_t som)
       contrast[m] = cpct->contrast[k];
       branche[m] = k;
       m++;
-      n = NBFILS(k); /* on va chercher le fils qui est marque LEAF */
+      n = NBFILS(cpct, k); /* on va chercher le fils qui est marque LEAF */
       for (i = 0; i < n; i++) 
       {
-        j = INDEXFILS(k, i);
+        j = INDEXFILS(cpct, k, i);
         j = cpct->fils[j];
         if (cpct->flags[j] & LEAF) break;
       }
@@ -900,7 +937,7 @@ static void Reconstruction(CompactTree * cpct, int32_t som)
 
     /* trie le tableau index sur la cle contraste */
     for (i = 0; i < m; i++) index[i] = i;
-    d_TriRapideStochastique (index, contrast, 0, m-1);
+    d_TriRapideStochastique ((int32_t *)index, contrast, 0, m-1);
 
 #ifdef DEBUGRECONS
     printf("Apres tri : \n");
@@ -925,25 +962,25 @@ static void Reconstruction(CompactTree * cpct, int32_t som)
 #endif
 
 #ifdef __GNUC__
-static int32_t NbLeafs(CompactTree * cpct, int32_t som) __attribute__ ((unused));
+static indexcomp_t NbLeafs(CompactTree * cpct, indexcomp_t som) __attribute__ ((unused));
 #endif
 /* ==================================== */
-static int32_t NbLeafs(CompactTree * cpct, int32_t som)
+static indexcomp_t NbLeafs(CompactTree * cpct, indexcomp_t som)
 /* ==================================== */
 /*
   Recherche a partir du sommet som, les sommets marques LEAF.
   Retourne le nombre de ces sommets.
 */
 {
-  int32_t i, j, k, n;
+  indexcomp_t i, j, k, n;
 
   if (!(cpct->flags[som] & LEAF)) /* remonte l'arbre pour trouver une LEAF */ 
   {
-    n = NBFILS(som);
+    n = NBFILS(cpct, som);
     k = 0; 
     for (i = 0; i < n; i++) 
     {
-      j = INDEXFILS(som, i);
+      j = INDEXFILS(cpct, som, i);
       j = cpct->fils[j];
       k += NbLeafs(cpct, j);
     }
@@ -954,46 +991,49 @@ static int32_t NbLeafs(CompactTree * cpct, int32_t som)
 } /* NbLeafs() */
 
 #ifdef __GNUC__
-static void RecupereImageFiltree(CompactTree * cpct, uint32_t *STATUS, int32_t rs, int32_t N, uint8_t *ORI) __attribute__ ((unused));
+static void RecupereImageFiltree(CompactTree * cpct, indexcomp_t *STATUS, index_t rs, index_t N, level_t *ORI) __attribute__ ((unused));
 #endif
 /* ==================================== */
 static void RecupereImageFiltree(CompactTree * cpct,           
-       uint32_t *STATUS,
-       int32_t rs, int32_t N, 
-       uint8_t *ORI            /* informations sur l'image originale */
+       indexcomp_t *STATUS,
+       index_t rs, index_t N, 
+       level_t *ORI            /* informations sur l'image originale */
 )
 /* ==================================== */
 {
-  int32_t i, h;
-  uint32_t c, comp;
+  index_t i;
+  level_t h;
+  indexcomp_t c;
+  component_t comp;
   for (i = 0; i < N; i++) 
   {
     h = ORI[i];
     c = STATUS[i];
-    comp = INDEXCOMP(h,c);
+    comp = INDEXCOMP(cpct, h,c);
     while (cpct->flags[comp] == FILTERED_OUT) comp = cpct->pere[comp];
     ORI[i] = DECODENIV(cpct->comp[comp]);
   }  
 } /* RecupereImageFiltree() */
 
 #ifdef __GNUC__
-static void RecupereSegmentation(CompactTree * cpct, uint32_t *STATUS, int32_t rs, int32_t N, uint8_t *ORI) __attribute__ ((unused));
+static void RecupereSegmentation(CompactTree * cpct, indexcomp_t *STATUS, index_t rs, index_t N, level_t *ORI) __attribute__ ((unused));
 #endif
 /* ==================================== */
 static void RecupereSegmentation(CompactTree * cpct,           
-       uint32_t *STATUS,
-       int32_t rs, int32_t N, 
-       uint8_t *ORI            /* informations sur l'image originale */
+       indexcomp_t *STATUS,
+       index_t rs, index_t N, 
+       level_t *ORI            /* informations sur l'image originale */
 )
 /* ==================================== */
 {
-  int32_t i, h;
-  uint32_t c, comp;
+  index_t i;
+  level_t h;
+  indexcomp_t c, comp;
   for (i = 0; i < N; i++) 
   {
     h = ORI[i];
     c = STATUS[i];
-    comp = INDEXCOMP(h,c);
+    comp = INDEXCOMP(cpct, h,c);
     while (cpct->flags[comp] & FILTERED_OUT) 
     {
 #ifdef PARANO
@@ -1046,7 +1086,7 @@ static void TermineCompactTree(CompactTree *cpct)
 static void AfficheCompTree(CompTree *ct)
 /* ==================================== */
 {
-  int32_t i;
+  indexcomp_t i;
   printf("===========================\n");
   printf("nombre max arcs = %d\n", ct->nbmaxarcs);
   printf("nombre arcs = %d\n", ct->nbarcs);
@@ -1063,7 +1103,7 @@ static void AfficheCompTree(CompTree *ct)
 static void AfficheCompactTree(CompactTree *cpct)
 /* ==================================== */
 {
-  uint32_t i, j, n, f;
+  indexcomp_t i, j, n, f;
   printf("===========================\n");
   printf("nombre composantes = %d\n", cpct->nbcomp);
   printf("===========================\n");
@@ -1092,10 +1132,10 @@ static void AfficheCompactTree(CompactTree *cpct)
     printf("dynamique = %d ",cpct->dyn[i]);
 #endif
     printf("fils = [ ");
-    n = NBFILS(i);
+    n = NBFILS(cpct, i);
     for (j = 0; j < n; j++)
     {
-      f = INDEXFILS(i,j);
+      f = INDEXFILS(cpct, i,j);
       f = cpct->fils[f];
       printf("C%d,%d ", DECODENIV(cpct->comp[f]), DECODENUM(cpct->comp[f]));
     }
@@ -1113,14 +1153,15 @@ static void AfficheCompactTree(CompactTree *cpct)
 
 /* ==================================== */
 static void AfficheImaComp(CompactTree * cpct,           
-       uint32_t *STATUS,
-       int32_t rs, int32_t N, 
-       uint8_t *ORI            /* informations sur l'image originale */
+       indexcomp_t *STATUS,
+       index_t rs, index_t N, 
+       level_t *ORI            /* informations sur l'image originale */
 )
 /* ==================================== */
 {
-  int32_t i, h;
-  uint32_t c;
+  index_t i;
+  level_t h;
+  indexcomp_t c;
   for (i = 0; i < N; i++) 
   {
     h = ORI[i];
@@ -1138,7 +1179,7 @@ static void WriteCompactTree(CompactTree *cpct, char * filename) __attribute__ (
 static void WriteCompactTree(CompactTree *cpct, char * filename)
 /* ==================================== */
 {
-  uint32_t i;
+  indexcomp_t i;
   FILE * fd = NULL;
   char buf[256];
 
@@ -1163,48 +1204,48 @@ static void WriteCompactTree(CompactTree *cpct, char * filename)
 } /* WriteCompactTree() */
 
 #ifdef __GNUC__
-static int32_t LeafCount(CompactTree *cpct) __attribute__ ((unused));
+static indexcomp_t LeafCount(CompactTree *cpct) __attribute__ ((unused));
 #endif
 /* ==================================== */
-static int32_t LeafCount(CompactTree *cpct)
+static indexcomp_t LeafCount(CompactTree *cpct)
 /* ==================================== */
 {
-  uint32_t i, f = 0;
+  indexcomp_t i, f = 0;
   for (i = 0; i < cpct->nbcomp; i++)
-    if ((NBFILS(i)) == 0) f++;
+    if ((NBFILS(cpct, i)) == 0) f++;
   return f;
 } /* LeafCount() */
 
 #ifdef __GNUC__
-static int32_t LeafMark(CompactTree *cpct) __attribute__ ((unused));
+static indexcomp_t LeafMark(CompactTree *cpct) __attribute__ ((unused));
 #endif
 /* ==================================== */
-static int32_t LeafMark(CompactTree *cpct)
+static indexcomp_t LeafMark(CompactTree *cpct)
 /* ==================================== */
 {
-  uint32_t i, f = 0;
+  indexcomp_t i, f = 0;
   for (i = 0; i < cpct->nbcomp; i++)
-    if ((NBFILS(i)) == 0) { f++; cpct->flags[i] |= LEAF; }
+    if ((NBFILS(cpct, i)) == 0) { f++; cpct->flags[i] |= LEAF; }
   return f;
 } /* LeafMark() */
 
 #ifdef __GNUC__
-static int32_t NbFilsNonFiltres(CompactTree * cpct, int32_t som) __attribute__ ((unused));
+static indexcomp_t NbFilsNonFiltres(CompactTree * cpct, indexcomp_t som) __attribute__ ((unused));
 #endif
 /* ==================================== */
-static int32_t NbFilsNonFiltres(CompactTree * cpct, int32_t som)
+static indexcomp_t NbFilsNonFiltres(CompactTree * cpct, indexcomp_t som)
 /* ==================================== */
 /*
   retourne le nombre de fils de 'som' non marques FILTERED_OUT.
 */
 {
-  int32_t i, n, j, NNM = 0;
-  n = NBFILS(som);
+  indexcomp_t i, n, j, NNM = 0;
+  n = NBFILS(cpct, som);
   if (n == 0) 
     return 0;
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(som, i);
+    j = INDEXFILS(cpct, som, i);
     j = cpct->fils[j];
     if (!(cpct->flags[j] & FILTERED_OUT)) NNM++;
     else if (NbFilsNonFiltres(cpct, j)>=1) NNM++;
@@ -1213,15 +1254,15 @@ static int32_t NbFilsNonFiltres(CompactTree * cpct, int32_t som)
 } /* NbFilsNonFiltres() */
 
 /* ==================================== */
-static void AjouteArc(CompTree *ct, uint32_t i, uint32_t j 
+static void AjouteArc(CompTree *ct, indexcomp_t i, indexcomp_t j 
 #ifdef ATTR_SURF
-               , int32_t surf
+               , attrsurf_t surf
 #endif
 #ifdef ATTR_PERIM
-               , int32_t perim
+               , attrperim_t perim
 #endif
 #ifdef ATTR_HBORD
-               , int32_t hbord
+               , attrhbord_t hbord
 #endif
               )
 /* ==================================== */
@@ -1247,10 +1288,11 @@ static void AjouteArc(CompTree *ct, uint32_t i, uint32_t j
 
 #ifdef ATTR_PERIM
 /* ==================================== */
-static int32_t contrib_perim(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t rs, int32_t N, int32_t incr_vois)
+static int32_t contrib_perim(index_t p, level_t *ORI, indexcomp_t *STATUS, index_t rs, index_t N, int32_t incr_vois)
 /* ==================================== */
 { /* calcule la contribution du point p au perimetre de la composante */
-  int32_t q, k, nv = 0;
+  index_t q;
+  int32_t k, nv = 0;
 
   for (k = 0; k < 8; k += incr_vois) /* compte le nombre nv de voisins deja traites */
   {
@@ -1262,10 +1304,11 @@ static int32_t contrib_perim(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t 
 }
 
 /* ==================================== */
-static int32_t contrib_perimb(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t rs, int32_t N, int32_t connex)
+static int32_t contrib_perimb(index_t p, level_t *ORI, indexcomp_t *STATUS, index_t rs, index_t N, int32_t connex)
 /* ==================================== */
 { /* calcule la contribution du point p au perimetre de la composante */
-  int32_t q, k, nv = 0;
+  index_t q;
+  int32_t k, nv = 0;
 
   for (k = 0; k < 6; k ++) /* compte le nombre nv de voisins deja traites */
   {
@@ -1279,10 +1322,11 @@ static int32_t contrib_perimb(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t
 
 #ifdef ATTR_HBORD
 /* ==================================== */
-static int32_t contrib_hbord(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t rs, int32_t N, int32_t incr_vois)
+static int32_t contrib_hbord(index_t p, level_t *ORI, indexcomp_t *STATUS, index_t rs, index_t N, int32_t incr_vois)
 /* ==================================== */
 { /* calcule la contribution du point p au hbord de la composante */
-  int32_t q, k, h = 0;
+  index_t q;
+  int32_t k, h = 0;
 
   for (k = 0; k < 8; k += incr_vois)
   {
@@ -1294,10 +1338,11 @@ static int32_t contrib_hbord(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t 
 }
 
 /* ==================================== */
-static int32_t contrib_hbordb(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t rs, int32_t N, int32_t connex)
+static int32_t contrib_hbordb(index_t p, level_t *ORI, indexcomp_t *STATUS, index_t rs, index_t N, int32_t connex)
 /* ==================================== */
 { /* calcule la contribution du point p au hbord de la composante */
-  int32_t q, k, h = 0;
+  index_t q;
+  int32_t k, h = 0;
 
   for (k = 0; k < 6; k ++)
   {
@@ -1309,32 +1354,34 @@ static int32_t contrib_hbordb(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t
 }
 #endif
 
-
 /* ==================================== */
-static int32_t flood(int32_t h,                 /* niveau a inonder */
+static int32_t flood(int32_t h,        /* niveau a inonder */
           Fahs *FAHS, 
-          uint32_t *STATUS,         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
-	                                /* en sortie, contient le numero de la comp. de niveau h */
-                                        /* qui contient le pixel */
-          uint32_t *number_nodes,   /* nombre de composantes par niveau */
-          uint8_t *node_at_level, /* tableau de booleens */
-          CompTree * tree,              /* l'arbre en construction */
-          int32_t incr_vois,                /* = 1 pour la 8-connexite, 
-                                           = 2 pour la 4-connexite */ 
-          int32_t rs, int32_t N, 
-          uint8_t *ORI            /* informations sur l'image originale */
+          indexcomp_t *STATUS,         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
+	                               /* en sortie, contient le numero de la comp. de niveau h */
+                                       /* qui contient le pixel */
+          indexcomp_t *number_nodes,   /* nombre de composantes par niveau */
+          uint8_t *node_at_level,      /* tableau de booleens */
+          CompTree * tree,             /* l'arbre en construction */
+          int32_t incr_vois,           /* = 1 pour la 8-connexite, 
+                                          = 2 pour la 4-connexite */ 
+          index_t rs, index_t N, 
+          level_t *ORI                 /* informations sur l'image originale */
 )
 /* ==================================== */
 {
-  int32_t p, q, k, m, i, j;
+  index_t p, q;
+  int32_t k;
+  int32_t m; // attention : ne doit pas être unsigned car test >= 0
+  indexcomp_t i, j;
 #ifdef ATTR_SURF
-  int32_t surf = 0;
+  attrsurf_t surf = 0;
 #endif
 #ifdef ATTR_PERIM
-  int32_t perim = 0;
+  attrperim_t perim = 0;
 #endif
 #ifdef ATTR_HBORD
-  int32_t hbord = 0;
+  attrhbord_t hbord = 0;
 #endif
 
 #ifdef DEBUGFLOOD
@@ -1362,13 +1409,6 @@ static int32_t flood(int32_t h,                 /* niveau a inonder */
           m = ORI[q];
           do 
           {
-#ifdef PARANO
-            if ((m < 0) || (m > 255))
-            {
-              fprintf(stderr, "flood: mauvais niveau : %d ; ORI[q] = %d\n", m, ORI[q]);
-              exit(0);
-            }
-#endif
             m = flood(m, FAHS, STATUS, number_nodes, node_at_level, tree, incr_vois, rs, N, ORI); 
           } while ((m != h) && (m >= 0));
 	} /* if (ORI[q] > ORI[p]) */
@@ -1429,33 +1469,36 @@ static int32_t flood(int32_t h,                 /* niveau a inonder */
 } /* flood() */
 
 #ifdef __GNUC__
-static int32_t floodb(int32_t h, Fahs *FAHS, uint32_t *STATUS, uint32_t *number_nodes, uint8_t *node_at_level, CompTree * tree, int32_t connex, int32_t rs, int32_t N, uint8_t *ORI) __attribute__ ((unused));
+static int32_t floodb(int32_t h, Fahs *FAHS, indexcomp_t *STATUS, indexcomp_t *number_nodes, uint8_t *node_at_level, CompTree * tree, int32_t connex, index_t rs, index_t N, level_t *ORI) __attribute__ ((unused));
 #endif
 /* ==================================== */
-static int32_t floodb(int32_t h,                 /* niveau a inonder */
+static int32_t floodb(int32_t h,     /* niveau a inonder */
           Fahs *FAHS, 
-          uint32_t *STATUS,         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
-	                                /* en sortie, contient le numero de la comp. de niveau h */
-                                        /* qui contient le pixel */
-          uint32_t *number_nodes,   /* nombre de composantes par niveau */
-          uint8_t *node_at_level, /* tableau de booleens */
-          CompTree * tree,              /* l'arbre en construction */
-          int32_t connex,                   /* = 0 pour première case vide, 
-                                           = 1 pour la translation */ 
-          int32_t rs, int32_t N, 
-          uint8_t *ORI            /* informations sur l'image originale */
+          indexcomp_t *STATUS,       /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
+	                             /* en sortie, contient le numero de la comp. de niveau h */
+                                     /* qui contient le pixel */
+          indexcomp_t *number_nodes, /* nombre de composantes par niveau */
+          uint8_t *node_at_level,    /* tableau de booleens */
+          CompTree * tree,           /* l'arbre en construction */
+          int32_t connex,            /* = 0 pour première case vide, 
+                                        = 1 pour la translation */ 
+          index_t rs, index_t N, 
+          level_t *ORI               /* informations sur l'image originale */
 )
 /* ==================================== */
 {
-  int32_t p, q, k, m, i, j;
+  index_t p, q;
+  int32_t k;
+  int32_t m; // attention : ne doit pas être unsigned car test >= 0
+  indexcomp_t i, j;
 #ifdef ATTR_SURF
-  int32_t surf = 0;
+  attrsurf_t surf = 0;
 #endif
 #ifdef ATTR_PERIM
-  int32_t perim = 0;
+  attrperim_t perim = 0;
 #endif
 #ifdef ATTR_HBORD
-  int32_t hbord = 0;
+  attrhbord_t hbord = 0;
 #endif
 
 #ifdef DEBUGFLOOD
@@ -1483,13 +1526,6 @@ static int32_t floodb(int32_t h,                 /* niveau a inonder */
           m = ORI[q];
           do 
           {
-#ifdef PARANO
-            if ((m < 0) || (m > 255))
-            {
-              fprintf(stderr, "flood: mauvais niveau : %d ; ORI[q] = %d\n", m, ORI[q]);
-              exit(0);
-            }
-#endif
             m = floodb(m, FAHS, STATUS, number_nodes, node_at_level, tree, connex, rs, N, ORI); 
           } while ((m != h) && (m >= 0));
 	} /* if (ORI[q] > ORI[p]) */
@@ -1550,33 +1586,36 @@ static int32_t floodb(int32_t h,                 /* niveau a inonder */
 } /* floodb() */
 
 #ifdef __GNUC__
-static int32_t flood3d(int32_t h, Fahs *FAHS, uint32_t *STATUS, uint32_t *number_nodes, uint8_t *node_at_level, CompTree * tree, int32_t connex, int32_t rs, int32_t ps, int32_t N, uint8_t *ORI) __attribute__ ((unused));
+static int32_t flood3d(int32_t h, Fahs *FAHS, indexcomp_t *STATUS, indexcomp_t *number_nodes, uint8_t *node_at_level, CompTree * tree, int32_t connex, index_t rs, index_t ps, index_t N, level_t *ORI) __attribute__ ((unused));
 #endif
 /* ==================================== */
 static int32_t flood3d(
-          int32_t h,                        /* niveau a inonder */
+          int32_t h,                 /* niveau a inonder */
           Fahs *FAHS, 
-          uint32_t *STATUS,         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
-	                                /* en sortie, contient le numero de la comp. de niveau h */
-                                        /* qui contient le pixel */
-          uint32_t *number_nodes,   /* nombre de composantes par niveau */
-          uint8_t *node_at_level, /* tableau de booleens */
-          CompTree * tree,              /* l'arbre en construction */
+          indexcomp_t *STATUS,       /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
+	                             /* en sortie, contient le numero de la comp. de niveau h */
+                                     /* qui contient le pixel */
+          indexcomp_t *number_nodes, /* nombre de composantes par niveau */
+          uint8_t *node_at_level,    /* tableau de booleens */
+          CompTree * tree,           /* l'arbre en construction */
           int32_t connex,
-          int32_t rs, int32_t ps, int32_t N, 
-          uint8_t *ORI            /* informations sur l'image originale */
+          index_t rs, index_t ps, index_t N, 
+          level_t *ORI               /* informations sur l'image originale */
 )
 /* ==================================== */
 {
-  int32_t p, q, k, m, i, j;
+  index_t p, q;
+  int32_t k;
+  int32_t m; // attention : ne doit pas être unsigned car test >= 0
+  indexcomp_t i, j;
 #ifdef ATTR_SURF
-  int32_t surf = 0;
+  attrsurf_t surf = 0;
 #endif
 #ifdef ATTR_PERIM
-  int32_t perim = 0;
+  attrperim_t perim = 0;
 #endif
 #ifdef ATTR_HBORD
-  int32_t hbord = 0;
+  attrhbord_t hbord = 0;
 #endif
 
 #ifdef DEBUGFLOOD
@@ -1608,13 +1647,6 @@ static int32_t flood3d(
               m = ORI[q];
               do 
               {
-#ifdef PARANO
-                if ((m < 0) || (m > 255))
-                {
-                  fprintf(stderr, "flood3d: mauvais niveau : %d ; ORI[q] = %d\n", m, ORI[q]);
-                  exit(0);
-                }
-#endif
                 m = flood3d(m, FAHS, STATUS, number_nodes, node_at_level, tree, connex, rs, ps, N, ORI); 
               } while ((m != h) && (m >= 0));
 	    } /* if (ORI[q] > ORI[p]) */
@@ -1635,13 +1667,6 @@ static int32_t flood3d(
               m = ORI[q];
               do 
               {
-#ifdef PARANO
-                if ((m < 0) || (m > 255))
-                {
-                  fprintf(stderr, "flood3d: mauvais niveau : %d ; ORI[q] = %d\n", m, ORI[q]);
-                  exit(0);
-                }
-#endif
                 m = flood3d(m, FAHS, STATUS, number_nodes, node_at_level, tree, connex, rs, ps, N, ORI); 
               } while ((m != h) && (m >= 0));
 	    } /* if (ORI[q] > ORI[p]) */
@@ -1662,13 +1687,6 @@ static int32_t flood3d(
               m = ORI[q];
               do 
               {
-#ifdef PARANO
-                if ((m < 0) || (m > 255))
-                {
-                  fprintf(stderr, "flood3d: mauvais niveau : %d ; ORI[q] = %d\n", m, ORI[q]);
-                  exit(0);
-                }
-#endif
                 m = flood3d(m, FAHS, STATUS, number_nodes, node_at_level, tree, connex, rs, ps, N, ORI); 
               } while ((m != h) && (m >= 0));
 	    } /* if (ORI[q] > ORI[p]) */
@@ -1728,14 +1746,14 @@ static int32_t flood3d(
 } /* flood3d() */
 
 #ifdef __GNUC__
-static int32_t LowestCommonAncestor(CompactTree *, int32_t, int32_t *, uint8_t) __attribute__ ((unused));
+static int32_t LowestCommonAncestor(CompactTree *, int32_t, int32_t *, level_t) __attribute__ ((unused));
 #endif
 /* ==================================== */
 static int32_t LowestCommonAncestor(
   CompactTree * cpct,
   int32_t argc,
   int32_t *argv,
-  uint8_t d)
+  level_t d)
 /* Retourne le plus proche commun ancetre des cellules de la liste (argc, argv)
    dont le niveau est > d, ou -1 s'il n'existe pas. 
    Utilise le champ "flags". 
@@ -1745,7 +1763,8 @@ static int32_t LowestCommonAncestor(
 #undef F_NAME
 #define F_NAME "LowestCommonAncestor"
 {
-  int32_t x, i, lca, NoComAnc;
+  indexcomp_t x, lca;
+  int32_t i, NoComAnc;
   if (argc <= 0) return -1;
   if (argc == 1) return argv[0];
 
@@ -1805,13 +1824,13 @@ if (NoComAnc) printf("NIL\n"); else printf("%d\n", lca);
 } /* LowestCommonAncestor() */
 
 #ifdef __GNUC__
-static int32_t LowComAnc(CompactTree *, int32_t, int32_t) __attribute__ ((unused));
+static indexcomp_t LowComAnc(CompactTree *, indexcomp_t, indexcomp_t) __attribute__ ((unused));
 #endif
 /* ==================================== */
-static int32_t LowComAnc(
+static indexcomp_t LowComAnc(
   CompactTree * cpct,
-  int32_t c1,
-  int32_t c2)
+  indexcomp_t c1,
+  indexcomp_t c2)
 /* Retourne le plus proche commun ancetre des cellules c1,c2
    Utilise le champ "flags". 
 */
@@ -1819,7 +1838,7 @@ static int32_t LowComAnc(
 #undef F_NAME
 #define F_NAME "LowComAnc"
 {
-  int32_t x, lca = -1;
+  indexcomp_t x, lca = -1;
 
   x = c1; do
   {
@@ -1841,21 +1860,15 @@ static int32_t LowComAnc(
     x = cpct->pere[x];
   }  while (x != CPCT_ROOT);
   cpct->flags[x] &= ~LCA1;       /* demarque aussi la racine */
-#ifdef PARANO
-  if (lca == -1)
-  {
-    fprintf(stderr, "%s: lca not found\n", F_NAME);
-    exit(0);
-  }
-#endif
+  assert(lca != -1);
   return lca;
 } /* LowComAnc() */
 
 #ifdef __GNUC__
-static int32_t Ancestor(CompactTree * cpct, int32_t c1, int32_t c2) __attribute__ ((unused));
+static int32_t Ancestor(CompactTree * cpct, indexcomp_t c1, indexcomp_t c2) __attribute__ ((unused));
 #endif
 /* ==================================== */
-static int32_t Ancestor(CompactTree * cpct, int32_t c1, int32_t c2)
+static int32_t Ancestor(CompactTree * cpct, indexcomp_t c1, indexcomp_t c2)
 /* Teste si la composante c1 est ancetre de la composante c2
 */
 /* ==================================== */

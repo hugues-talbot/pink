@@ -80,19 +80,19 @@ knowledge of the CeCILL license and that you accept its terms.
 int32_t lsegmentheight(struct xvimage *image, int32_t connex, int32_t param, int32_t maximise)
 /* ==================================== */
 {
-  register int32_t i, k;         /* index muet */
-  int32_t rs = rowsize(image);      /* taille ligne */
-  int32_t cs = colsize(image);      /* taille colonne */
-  int32_t ds = depth(image);        /* nb plans */
-  int32_t ps = rs * cs;             /* taille plan */
-  int32_t N = ps * ds;              /* taille image */
+  register index_t i, k;         /* index muet */
+  index_t rs = rowsize(image);      /* taille ligne */
+  index_t cs = colsize(image);      /* taille colonne */
+  index_t ds = depth(image);        /* nb plans */
+  index_t ps = rs * cs;             /* taille plan */
+  index_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
-  uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
+  indexcomp_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
                                 /* en sortie, contient le numero de la composante de niveau h */
                                 /* qui contient le pixel (avec h = valeur du pixel) */
-  uint32_t *number_nodes;   /* nombre de composantes par niveau */
+  indexcomp_t *number_nodes;   /* nombre de composantes par niveau */
   uint8_t *node_at_level; /* tableau de booleens */
   CompTree * TREE;              /* resultat : l'arbre des composantes */
   CompactTree * CTREE;          /* resultat : l'arbre des composantes compacte' */
@@ -105,13 +105,13 @@ int32_t lsegmentheight(struct xvimage *image, int32_t connex, int32_t param, int
 
   FAHS = CreeFahsVide(N);
 
-  STATUS = (uint32_t *)malloc(N * sizeof(int32_t));
+  STATUS = (indexcomp_t *)malloc(N * sizeof(indexcomp_t));
   if (STATUS == NULL)
   {   fprintf(stderr, "lsegmentheight() : malloc failed for STATUS\n");
       return(0);
   }
 
-  number_nodes = (uint32_t *)calloc(256, sizeof(int32_t));
+  number_nodes = (indexcomp_t *)calloc(256, sizeof(indexcomp_t));
   if (number_nodes == NULL)
   {   fprintf(stderr, "lsegmentheight() : calloc failed for number_nodes\n");
       return(0);
@@ -230,10 +230,10 @@ static void ProcessLeafMins(CompactTree * cpct, int32_t som)
 
   if (!(cpct->flags[som] & LEAFMIN))
   {
-    n = NBFILS(som);           /* remonte l'arbre pour trouver une LEAFMIN */ 
+    n = NBFILS(cpct, som);           /* remonte l'arbre pour trouver une LEAFMIN */ 
     for (i = 0; i < n; i++) 
     {
-      j = INDEXFILS(som, i);
+      j = INDEXFILS(cpct, som, i);
       j = cpct->fils[j];
       ProcessLeafMins(cpct, j);
     }
@@ -241,9 +241,9 @@ static void ProcessLeafMins(CompactTree * cpct, int32_t som)
   else /* (on a trouve une LEAFMIN) */
   {
     cpct->flags[som] &= ~LEAFMIN; /* demarque som */
-    while (NBFILS(som) == 1)      /* remonte jusqu'au premier noeud ou feuille */
+    while (NBFILS(cpct, som) == 1)      /* remonte jusqu'au premier noeud ou feuille */
     {
-      som = INDEXFILS(som, 0);
+      som = INDEXFILS(cpct, som, 0);
       som = cpct->fils[som];
       cpct->flags[som] &= ~FILTERED_OUT;
     }
@@ -264,10 +264,10 @@ static void ProcessLeafMinsOp(CompactTree * cpct, int32_t som)
 
   if (!(cpct->flags[som] & LEAFMIN))
   {
-    n = NBFILS(som);           /* remonte l'arbre pour trouver une LEAFMIN */ 
+    n = NBFILS(cpct, som);           /* remonte l'arbre pour trouver une LEAFMIN */ 
     for (i = 0; i < n; i++) 
     {
-      j = INDEXFILS(som, i);
+      j = INDEXFILS(cpct, som, i);
       j = cpct->fils[j];
       ProcessLeafMinsOp(cpct, j);
     }
@@ -275,14 +275,14 @@ static void ProcessLeafMinsOp(CompactTree * cpct, int32_t som)
   else /* (on a trouve une LEAFMIN) */
   {
     cpct->flags[som] &= ~LEAFMIN; /* demarque som */
-    while (NBFILS(som) > 0)       /* remonte jusqu'a une (vraie) feuille */
+    while (NBFILS(cpct, som) > 0)       /* remonte jusqu'a une (vraie) feuille */
     {
       /* recherche l'indice im du fils de hauteur maxi */
-      n = NBFILS(som);
+      n = NBFILS(cpct, som);
       m = -1;
       for (i = 0; i < n; i++) 
       {
-        j = INDEXFILS(som, i);
+        j = INDEXFILS(cpct, som, i);
         j = cpct->fils[j];
         h = DECODENIV(cpct->comp[j]) + cpct->height[j];
         if (h > m) { m = h; jm = j; } 
@@ -296,23 +296,23 @@ static void ProcessLeafMinsOp(CompactTree * cpct, int32_t som)
 } /* ProcessLeafMinsOp() */
 
 #ifdef __GNUC__
-static void RecupereImageFiltreeH(CompactTree * cpct, uint32_t *STATUS, int32_t rs, int32_t N, uint8_t *ORI) __attribute__ ((unused));
+static void RecupereImageFiltreeH(CompactTree * cpct, indexcomp_t *STATUS, index_t rs, index_t N, uint8_t *ORI) __attribute__ ((unused));
 #endif
 /* ==================================== */
 static void RecupereImageFiltreeH(CompactTree * cpct,           
-       uint32_t *STATUS,
-       int32_t rs, int32_t N, 
+       indexcomp_t *STATUS,
+       index_t rs, index_t N, 
        uint8_t *ORI            /* informations sur l'image originale */
 )
 /* ==================================== */
 {
-  int32_t i, h;
-  uint32_t c, comp;
+  index_t i, h;
+  indexcomp_t c, comp;
   for (i = 0; i < N; i++) 
   {
     h = ORI[i];
     c = STATUS[i];
-    comp = INDEXCOMP(h,c);
+    comp = INDEXCOMP(cpct, h,c);
     while (cpct->flags[comp] == FILTERED_OUT) comp = cpct->pere[comp];
     if (cpct->flags[comp] & LEAFMIN)
       ORI[i] = DECODENIV(cpct->comp[comp]) + cpct->height[comp];
@@ -325,19 +325,19 @@ static void RecupereImageFiltreeH(CompactTree * cpct,
 int32_t lheightmaxima_variante(struct xvimage *image, int32_t connex, int32_t param)
 /* ==================================== */
 {
-  register int32_t i, k;         /* index muet */
-  int32_t rs = rowsize(image);      /* taille ligne */
-  int32_t cs = colsize(image);      /* taille colonne */
-  int32_t ds = depth(image);        /* nb plans */
-  int32_t ps = rs * cs;             /* taille plan */
-  int32_t N = ps * ds;              /* taille image */
+  register index_t i, k;         /* index muet */
+  index_t rs = rowsize(image);      /* taille ligne */
+  index_t cs = colsize(image);      /* taille colonne */
+  index_t ds = depth(image);        /* nb plans */
+  index_t ps = rs * cs;             /* taille plan */
+  index_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
-  uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
+  indexcomp_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
                                 /* en sortie, contient le numero de la composante de niveau h */
                                 /* qui contient le pixel (avec h = valeur du pixel) */
-  uint32_t *number_nodes;   /* nombre de composantes par niveau */
+  indexcomp_t *number_nodes;   /* nombre de composantes par niveau */
   uint8_t *node_at_level; /* tableau de booleens */
   CompTree * TREE;              /* resultat : l'arbre des composantes */
   CompactTree * CTREE;          /* resultat : l'arbre des composantes compacte' */
@@ -350,13 +350,13 @@ int32_t lheightmaxima_variante(struct xvimage *image, int32_t connex, int32_t pa
 
   FAHS = CreeFahsVide(N);
 
-  STATUS = (uint32_t *)malloc(N * sizeof(int32_t));
+  STATUS = (indexcomp_t *)malloc(N * sizeof(indexcomp_t));
   if (STATUS == NULL)
   {   fprintf(stderr, "lheightopening() : malloc failed for STATUS\n");
       return(0);
   }
 
-  number_nodes = (uint32_t *)calloc(256, sizeof(int32_t));
+  number_nodes = (indexcomp_t *)calloc(256, sizeof(indexcomp_t));
   if (number_nodes == NULL)
   {   fprintf(stderr, "lheightopening() : calloc failed for number_nodes\n");
       return(0);
@@ -460,7 +460,7 @@ fprintf(stderr, "flood terminee\n");
 void lattribheight_inverse(struct xvimage * image)
 /* ==================================== */
 {
-  int32_t i, N = rowsize(image) * colsize(image) * depth(image);
+  index_t i, N = rowsize(image) * colsize(image) * depth(image);
   uint8_t *pt;
   for (pt = UCHARDATA(image), i = 0; i < N; i++, pt++)
     *pt = NDG_MAX - *pt;
@@ -484,19 +484,19 @@ int32_t lheightminima(struct xvimage *image, int32_t connex, int32_t param)
 int32_t lheightmaxima(struct xvimage *image, int32_t connex, int32_t param)
 /* ==================================== */
 {
-  register int32_t i, k;         /* index muet */
-  int32_t rs = rowsize(image);      /* taille ligne */
-  int32_t cs = colsize(image);      /* taille colonne */
-  int32_t ds = depth(image);        /* nb plans */
-  int32_t ps = rs * cs;             /* taille plan */
-  int32_t N = ps * ds;              /* taille image */
+  register index_t i, k;         /* index muet */
+  index_t rs = rowsize(image);      /* taille ligne */
+  index_t cs = colsize(image);      /* taille colonne */
+  index_t ds = depth(image);        /* nb plans */
+  index_t ps = rs * cs;             /* taille plan */
+  index_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
-  uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
+  indexcomp_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
                                 /* en sortie, contient le numero de la composante de niveau h */
                                 /* qui contient le pixel (avec h = valeur du pixel) */
-  uint32_t *number_nodes;   /* nombre de composantes par niveau */
+  indexcomp_t *number_nodes;   /* nombre de composantes par niveau */
   uint8_t *node_at_level; /* tableau de booleens */
   CompTree * TREE;              /* resultat : l'arbre des composantes */
   CompactTree * CTREE;          /* resultat : l'arbre des composantes compacte' */
@@ -509,13 +509,13 @@ int32_t lheightmaxima(struct xvimage *image, int32_t connex, int32_t param)
 
   FAHS = CreeFahsVide(N);
 
-  STATUS = (uint32_t *)malloc(N * sizeof(int32_t));
+  STATUS = (indexcomp_t *)malloc(N * sizeof(indexcomp_t));
   if (STATUS == NULL)
   {   fprintf(stderr, "lheightmaxima() : malloc failed for STATUS\n");
       return(0);
   }
 
-  number_nodes = (uint32_t *)calloc(256, sizeof(int32_t));
+  number_nodes = (indexcomp_t *)calloc(256, sizeof(indexcomp_t));
   if (number_nodes == NULL)
   {   fprintf(stderr, "lheightmaxima() : calloc failed for number_nodes\n");
       return(0);
@@ -620,19 +620,19 @@ int32_t lheightselnb(struct xvimage *image, int32_t connex, int32_t param, int32
   mode: parametre obsolete
 */
 {
-  register int32_t i, k;         /* index muet */
-  int32_t rs = rowsize(image);      /* taille ligne */
-  int32_t cs = colsize(image);      /* taille colonne */
-  int32_t ds = depth(image);        /* nb plans */
-  int32_t ps = rs * cs;             /* taille plan */
-  int32_t N = ps * ds;              /* taille image */
+  register index_t i, k;         /* index muet */
+  index_t rs = rowsize(image);      /* taille ligne */
+  index_t cs = colsize(image);      /* taille colonne */
+  index_t ds = depth(image);        /* nb plans */
+  index_t ps = rs * cs;             /* taille plan */
+  index_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
-  uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
+  indexcomp_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
                                 /* en sortie, contient le numero de la composante de niveau h */
                                 /* qui contient le pixel (avec h = valeur du pixel) */
-  uint32_t *number_nodes;   /* nombre de composantes par niveau */
+  indexcomp_t *number_nodes;   /* nombre de composantes par niveau */
   uint8_t *node_at_level; /* tableau de booleens */
   CompTree * TREE;              /* resultat : l'arbre des composantes */
   CompactTree * cpct;          /* resultat : l'arbre des composantes compacte' */
@@ -647,13 +647,13 @@ int32_t lheightselnb(struct xvimage *image, int32_t connex, int32_t param, int32
 
   FAHS = CreeFahsVide(N);
 
-  STATUS = (uint32_t *)malloc(N * sizeof(int32_t));
+  STATUS = (indexcomp_t *)malloc(N * sizeof(indexcomp_t));
   if (STATUS == NULL)
   {   fprintf(stderr, "lheightselnb() : malloc failed for STATUS\n");
       return(0);
   }
 
-  number_nodes = (uint32_t *)calloc(256, sizeof(int32_t));
+  number_nodes = (indexcomp_t *)calloc(256, sizeof(indexcomp_t));
   if (number_nodes == NULL)
   {   fprintf(stderr, "lheightselnb() : calloc failed for number_nodes\n");
       return(0);

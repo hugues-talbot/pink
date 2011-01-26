@@ -80,17 +80,17 @@ knowledge of the CeCILL license and that you accept its terms.
 int32_t lsegreconsheight(struct xvimage *image, int32_t connex, int32_t param)
 /* ==================================== */
 {
-  register int32_t i, k;         /* index muet */
-  int32_t rs = rowsize(image);      /* taille ligne */
-  int32_t cs = colsize(image);      /* taille colonne */
-  int32_t N = rs * cs;              /* taille image */
+  register index_t i, k;         /* index muet */
+  index_t rs = rowsize(image);      /* taille ligne */
+  index_t cs = colsize(image);      /* taille colonne */
+  index_t N = rs * cs;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
-  uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
+  indexcomp_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
                                 /* en sortie, contient le numero de la composante de niveau h */
                                 /* qui contient le pixel (avec h = valeur du pixel) */
-  uint32_t *number_nodes;   /* nombre de composantes par niveau */
+  indexcomp_t *number_nodes;   /* nombre de composantes par niveau */
   uint8_t *node_at_level; /* tableau de booleens */
   CompTree * TREE;              /* resultat : l'arbre des composantes */
   CompactTree * CTREE;          /* resultat : l'arbre des composantes compacte' */
@@ -112,13 +112,13 @@ int32_t lsegreconsheight(struct xvimage *image, int32_t connex, int32_t param)
 
   FAHS = CreeFahsVide(N);
 
-  STATUS = (uint32_t *)calloc(1,N * sizeof(int32_t));
+  STATUS = (indexcomp_t *)calloc(1,N * sizeof(indexcomp_t));
   if (STATUS == NULL)
   {   fprintf(stderr, "lsegreconsheight() : malloc failed for STATUS\n");
       return(0);
   }
 
-  number_nodes = (uint32_t *)calloc(256, sizeof(int32_t));
+  number_nodes = (indexcomp_t *)calloc(256, sizeof(indexcomp_t));
   if (number_nodes == NULL)
   {   fprintf(stderr, "lsegreconsheight() : calloc failed for number_nodes\n");
       return(0);
