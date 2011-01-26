@@ -80,11 +80,24 @@ int32_t ledengrowth(uint8_t *in,
                     int32_t shrink,
                     int32_t topo)
 {
+#undef F_NAME
+#define F_NAME "ledengrowth"
 	int32_t i, ps, nbpix, dx, dy, dz, chosen;
 	long delta, size;
 	uint8_t *p, *end, *pix;
 	std::deque< uint8_t* > borderqueue;
 	Set * parcouru;
+
+	if ((dimz == 1) && (topo != 4) && (topo != 8))
+	{
+	  fprintf(stderr, "%s: parameter topo must be 4 or 8 in 2D\n", F_NAME);
+	  return 0;
+	}
+	else if ((topo != 6) && (topo != 26))
+	{
+	  fprintf(stderr, "%s: parameter topo must be 6 or 26 in 3D\n", F_NAME);
+	  return 0;
+	}
 
 	ps= dimx*dimy;
 	nbpix = dimx*dimy*dimz;
@@ -101,8 +114,8 @@ int32_t ledengrowth(uint8_t *in,
 	parcouru=CreateEmptySet((nbpix/32)+1);
 	if(parcouru == NULL)
 	{
-		fprintf(stderr, "ledengrowth() : Memory allocation error.\n");
-		return 0;
+	  fprintf(stderr, "%s: Memory allocation error\n", F_NAME);
+	  return 0;
 	}
 
 
@@ -156,31 +169,31 @@ int32_t ledengrowth(uint8_t *in,
 
 					// if pixels are enqueue already they won't be selected again
 					if( (dx > 0) &&
-						(*(pix-1) == 0) &&
-						!InSet(parcouru, (int32_t)(pix-in-1)) && 
-						((dimz==1 && bord((uint32_t)(pix-in-1), dimx, ps)==0) || (dimz>1 && bord3d((uint32_t)(pix-in-1), dimx, ps, nbpix)==0)) )
-						{
-							borderqueue.push_back(pix-1);
-							SetElement(parcouru, (int32_t)(pix-in-1));
-						}
+					    (*(pix-1) == 0) &&
+					    !InSet(parcouru, (int32_t)(pix-in-1)) && 
+					    ((dimz==1 && bord((uint32_t)(pix-in-1), dimx, ps)==0) || (dimz>1 && bord3d((uint32_t)(pix-in-1), dimx, ps, nbpix)==0)) )
+					    {
+						borderqueue.push_back(pix-1);
+						SetElement(parcouru, (int32_t)(pix-in-1));
+					    }
 
 					if( (dx < (dimx-1)) &&
-						(*(pix+1) == 0) &&
-						!InSet(parcouru, (int32_t)(pix-in+1)) &&
-						((dimz==1 && bord((uint32_t)(pix-in+1), dimx, ps)==0) || (dimz>1 && bord3d((uint32_t)(pix-in+1), dimx, ps, nbpix)==0)) )
-						{
-							borderqueue.push_back(pix-1);
-							SetElement(parcouru, (int32_t)(pix-in+1));
-						}
+					    (*(pix+1) == 0) &&
+					    !InSet(parcouru, (int32_t)(pix-in+1)) &&
+					    ((dimz==1 && bord((uint32_t)(pix-in+1), dimx, ps)==0) || (dimz>1 && bord3d((uint32_t)(pix-in+1), dimx, ps, nbpix)==0)) )
+					    {
+					      borderqueue.push_back(pix-1);
+					      SetElement(parcouru, (int32_t)(pix-in+1));
+					    }
 
 					if( (dy > 0) &&
-						(*(pix-dimx) == 0) &&
-						!InSet(parcouru, (int32_t)(pix-in-dimx)) &&
-						((dimz==1 && bord((uint32_t)(pix-in-dimx), dimx, ps)==0) || (dimz>1 && bord3d((uint32_t)(pix-in-dimx), dimx, ps, nbpix)==0)) )
-						{
-							borderqueue.push_back(pix-dimx);
-							SetElement(parcouru, (int32_t)(pix-in-dimx));
-						}
+					    (*(pix-dimx) == 0) &&
+					    !InSet(parcouru, (int32_t)(pix-in-dimx)) &&
+					    ((dimz==1 && bord((uint32_t)(pix-in-dimx), dimx, ps)==0) || (dimz>1 && bord3d((uint32_t)(pix-in-dimx), dimx, ps, nbpix)==0)) )
+					    {
+						borderqueue.push_back(pix-dimx);
+						SetElement(parcouru, (int32_t)(pix-in-dimx));
+					    }
 
 					if( (dy < (dimy-1)) &&
 						(*(pix+dimx) == 0) &&
@@ -208,15 +221,13 @@ int32_t ledengrowth(uint8_t *in,
 							borderqueue.push_back(pix+ps);
 							SetElement(parcouru, (int32_t)(pix-in+ps));
 						}
-				}
-		}
-
-				
+				} // if(	(topo == 0) ||...
+		} // for (i = 0 ; i < nbiter ; ++i)
 
 		/* clean out the queue */
 		borderqueue.clear();
 		SetEmpty(parcouru);
-	}
+	} // if (grow)
 
 
 

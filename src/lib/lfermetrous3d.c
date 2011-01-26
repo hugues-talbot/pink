@@ -146,8 +146,10 @@ int32_t lfermetrous3dbin2_table(struct xvimage *in, struct xvimage *g, int32_t c
 int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous)
 /* ==================================== */
 {
-  if (connex == 26) return lfermetrous3dbin_table(in, connex, tailletrous); 
-  else              return lfermetrous3dbin_notable(in, connex, tailletrous); 
+  if (connex == 26) 
+    return lfermetrous3dbin_table(in, connex, tailletrous); 
+  else
+    return lfermetrous3dbin_notable(in, connex, tailletrous); 
 }
 
 // public
@@ -155,8 +157,11 @@ int32_t lfermetrous3dbin(struct xvimage *in, int32_t connex, int32_t tailletrous
 int32_t lfermetrous3dbin2(struct xvimage *in, struct xvimage *g, int32_t connex, int32_t tailletrous)
 /* ==================================== */
 {
-  if (connex == 26) return lfermetrous3dbin2_table(in, g, connex, tailletrous); 
-  else              return lfermetrous3dbin2_notable(in, g, connex, tailletrous); 
+
+  if (connex == 26) 
+    return lfermetrous3dbin2_table(in, g, connex, tailletrous); 
+  else
+    return lfermetrous3dbin2_notable(in, g, connex, tailletrous); 
 }
 
 /* ==================================== */
