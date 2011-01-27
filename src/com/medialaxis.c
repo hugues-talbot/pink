@@ -43,7 +43,7 @@ Medial axis of the binary image \b X. If x is the center of a maximal ball
 included in X, then the result R(x) is equal to the smallest distance between x 
 and a point outside X, otherwise it is equal to 0 .
 The distance is indicated by the parameter <B>distance</B> :
-\li 0: approximate euclidean distance
+\li 0: approximate euclidean distance (Meyer's algorithm)
 \li 1: exact quadratic euclidean distance (Saito-Toriwaki's skeleton)
 \li 2: exact quadratic euclidean distance (Coeurjolly's reduced axis)
 \li 3: exact quadratic euclidean distance (Rémy-Thiel)
@@ -52,15 +52,23 @@ The distance is indicated by the parameter <B>distance</B> :
 \li 8: 8-distance in 2d
 \li 26: 26-distance in 3d
 
-The usual discrete distances are denoted by 4, 8 (2D) and 6, 26 (3D).
-For the euclidean distance, set <B>distance</B> to 0.
-
 <B>Types supported:</B> byte 2d, byte 3d
 
 <B>Category:</B> morpho
 \ingroup  morpho
 
 \author Michel Couprie
+*/
+
+/*
+%TEST medialaxis %IMAGES/2dbyte/binary/b2hebreu.pgm 0 %RESULTS/medialaxis_b2hebreu_0.pgm
+%TEST medialaxis %IMAGES/2dbyte/binary/b2hebreu.pgm 3 %RESULTS/medialaxis_b2hebreu_3.pgm
+%TEST medialaxis %IMAGES/2dbyte/binary/b2hebreu.pgm 4 %RESULTS/medialaxis_b2hebreu_4.pgm
+%TEST medialaxis %IMAGES/2dbyte/binary/b2hebreu.pgm 8 %RESULTS/medialaxis_b2hebreu_8.pgm
+%TEST medialaxis %IMAGES/3dbyte/binary/b3a.pgm 0 %RESULTS/medialaxis_b3a_0.pgm
+%TEST medialaxis %IMAGES/3dbyte/binary/b3a.pgm 3 %RESULTS/medialaxis_b3a_3.pgm
+%TEST medialaxis %IMAGES/3dbyte/binary/b3a.pgm 6 %RESULTS/medialaxis_b3a_6.pgm
+%TEST medialaxis %IMAGES/3dbyte/binary/b3a.pgm 26 %RESULTS/medialaxis_b3a_26.pgm
 */
 
 #include <stdio.h>

@@ -832,7 +832,7 @@ static void CalculeAttributs(CompactTree * cpct)
 
 #ifdef ATTR_HEIGHT
 /* ==================================== */
-static indexcomp_t FiltreHeightRec(CompactTree * cpct, indexcomp_t som, level_t h)
+static indexcomp_t FiltreHeightRec(CompactTree * cpct, indexcomp_t som, attrheight_t h)
 /* ==================================== */
 /*
   Filtre les sommets de l'arbre selon un critere de hauteur : 
@@ -866,10 +866,10 @@ static indexcomp_t FiltreHeightRec(CompactTree * cpct, indexcomp_t som, level_t 
 #ifdef ATTR_SURF
 
 #ifdef __GNUC__
-static indexcomp_t FiltreSurfRec(CompactTree * cpct, indexcomp_t som, level_t h) __attribute__ ((unused));
+static indexcomp_t FiltreSurfRec(CompactTree * cpct, indexcomp_t som, attrsurf_t h) __attribute__ ((unused));
 #endif
 /* ==================================== */
-static indexcomp_t FiltreSurfRec(CompactTree * cpct, indexcomp_t som, level_t h)
+static indexcomp_t FiltreSurfRec(CompactTree * cpct, indexcomp_t som, attrsurf_t h)
 /* ==================================== */
 /*
   Filtre les sommets de l'arbre selon un critere de surface : 
@@ -902,7 +902,7 @@ static indexcomp_t FiltreSurfRec(CompactTree * cpct, indexcomp_t som, level_t h)
 
 #ifdef ATTR_VOL
 /* ==================================== */
-static indexcomp_t FiltreVolRec(CompactTree * cpct, indexcomp_t som, level_t h)
+static indexcomp_t FiltreVolRec(CompactTree * cpct, indexcomp_t som, attrvol_t h)
 /* ==================================== */
 /*
   Filtre les sommets de l'arbre selon un critere de volume : 

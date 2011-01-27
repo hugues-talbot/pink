@@ -57,6 +57,11 @@ IEEE Transactions on PAMI, 12(1), 78-87, 1990.<BR>
 \author Michel Couprie
 */
 
+/*
+%TEST gaussianfilter %IMAGES/2dbyte/gray/g2gel.pgm 1 %RESULTS/gaussianfilter_g2gel_1.pgm
+%TEST gaussianfilter %IMAGES/3dbyte/gray/g3a.pgm 1 %RESULTS/gaussianfilter_g3a_1.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

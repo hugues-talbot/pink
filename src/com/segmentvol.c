@@ -54,6 +54,14 @@ Connexity = <B>connex</B> ; volume threshold = <B>vol</B>.
 \author Michel Couprie
 */
 
+/*
+%TEST segmentvol %IMAGES/2dbyte/gray/g2gel.pgm 4 200 %RESULTS/segmentvol_g2gel_4_200.pgm
+%TEST segmentvol %IMAGES/2dbyte/gray/g2gel.pgm 8 200 %RESULTS/segmentvol_g2gel_8_200.pgm
+%TEST segmentvol %IMAGES/3dbyte/gray/g3a.pgm 6 200 %RESULTS/segmentvol_g3a_6_200.pgm
+%TEST segmentvol %IMAGES/3dbyte/gray/g3a.pgm 18 200 %RESULTS/segmentvol_g3a_18_200.pgm
+%TEST segmentvol %IMAGES/3dbyte/gray/g3a.pgm 26 200 %RESULTS/segmentvol_g3a_26_200.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

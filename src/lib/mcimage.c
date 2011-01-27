@@ -78,6 +78,9 @@ knowledge of the CeCILL license and that you accept its terms.
 #define VERBOSE
 */
 
+// define the following to print a warning when allocating huge image (>=2Gb)
+#define WARN_HUGE
+
 /* ==================================== */
 struct xvimage *allocimage(
   char * name,
@@ -92,6 +95,13 @@ struct xvimage *allocimage(
   index_t N = rs * cs * ds;             /* taille image */
   struct xvimage *g;
   index_t es;                          /* type size */
+
+#ifdef WARN_HUGE
+  if (((int64_t)rs * (int64_t)cs * (int64_t)ds) >= HUGE_IMAGE_SIZE)
+  {
+    fprintf(stderr, "%s: WARNING huge image\n", F_NAME);
+  }
+#endif
 
   switch (dt)
   {
@@ -160,6 +170,13 @@ struct xvimage *allocmultimage(
   index_t N = rs * cs * ds * ts * nb; /* taille image */
   struct xvimage *g;
   index_t es;                    /* type size */
+
+#ifdef WARN_HUGE
+  if (((int64_t)rs * (int64_t)cs * (int64_t)ds * (int64_t)ts * (int64_t)nb) >= HUGE_IMAGE_SIZE)
+  {
+    fprintf(stderr, "%s: WARNING huge image\n", F_NAME);
+  }
+#endif
 
   switch (dt)
   {
@@ -1810,6 +1827,13 @@ struct xvimage * readimage(char *filename)
   {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
       return NULL;
   }
+
+#ifdef WARN_HUGE
+  if (((int64_t)rs * (int64_t)cs * (int64_t)ds * (int64_t)np) >= HUGE_IMAGE_SIZE)
+  {
+    fprintf(stderr, "%s: WARNING huge image\n", F_NAME);
+  }
+#endif
 
   read = fgets(buffer, BUFFERSIZE, fd);
   if (!read)

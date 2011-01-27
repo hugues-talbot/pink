@@ -14,7 +14,7 @@ segmentarea _5 4 100 _6
 watershed _1 _6 4 _7
 
 # extraction de la porosité "mince"
-close image_to_analyse.pgm $PINK/masks/disque7.pgm _8
+closing image_to_analyse.pgm $PINK/masks/disque7.pgm _8
 sub _8 image_to_analyse.pgm _9
 seuil _9 17 _10
 

@@ -40,8 +40,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 <B>Description:</B>
 Geodesic dilation of <B>g.pgm</B> under <B>f.pgm</B>.
-Let G and F be the two input images. If G is not under F, then 
-G is replaced initially by min(G,F).
+Let G and F be the two input images. If G is not under F, then G is replaced initially by min(G,F).
 The structuring element is specified by the value of the parameter <B>connex</B>, 
 which can be one of the following ones: 4, 8 in 2d, or 6, 18, 26 in 3d.
 The parameter \b niter sets the number of iterations. If \b niter = -1,
@@ -56,6 +55,13 @@ then the iterations continue until stability.
 */
 
 /* Michel Couprie - juillet 1996 */
+
+/*
+%TEST geodilat %IMAGES/2dbyte/binary/b2hebreu_er.pgm %IMAGES/2dbyte/binary/b2hebreu.pgm 4 -1 %RESULTS/geodilat_b2hebreu_er_b2hebreu_4__1.pgm
+%TEST geodilat %IMAGES/2dbyte/binary/b2hebreu_er.pgm %IMAGES/2dbyte/binary/b2hebreu.pgm 8 -1 %RESULTS/geodilat_b2hebreu_er_b2hebreu_8__1.pgm
+%TEST geodilat %IMAGES/3dbyte/binary/b3mortier_er.pgm %IMAGES/3dbyte/binary/b3mortier.pgm 6 -1 %RESULTS/geodilat_b3mortier_er_b3mortier_6__1.pgm
+%TEST geodilat %IMAGES/3dbyte/binary/b3mortier_er.pgm %IMAGES/3dbyte/binary/b3mortier.pgm 26 -1 %RESULTS/geodilat_b3mortier_er_b3mortier_26__1.pgm
+*/
 
 #include <stdio.h>
 #include <stdint.h>

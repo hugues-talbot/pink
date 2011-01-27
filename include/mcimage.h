@@ -47,6 +47,7 @@ typedef int64_t index_t;
 #else
 typedef int32_t index_t;
 #endif
+#define HUGE_IMAGE_SIZE INT32_MAX
 
 /* ============== */
 /* prototypes for mcimage.c    */

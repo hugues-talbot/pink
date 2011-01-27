@@ -55,6 +55,11 @@ References:<BR>
 \author Michel Couprie
 */
 
+/*
+%TEST lambdamedialaxis %IMAGES/2dbyte/binary/b2hebreu.pgm %RESULTS/lambdamedialaxis_b2hebreu.pgm
+%TEST lambdamedialaxis %IMAGES/3dbyte/binary/b3a.pgm %RESULTS/lambdamedialaxis_b3a.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

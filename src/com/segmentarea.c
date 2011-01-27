@@ -55,6 +55,14 @@ Segmentation is followed by a maximization if option <B>m</B> is set.
 \author Michel Couprie
 */
 
+/*
+%TEST segmentarea %IMAGES/2dbyte/gray/g2gel.pgm 4 100 %RESULTS/segmentarea_g2gel_4_100.pgm
+%TEST segmentarea %IMAGES/2dbyte/gray/g2gel.pgm 8 100 %RESULTS/segmentarea_g2gel_8_100.pgm
+%TEST segmentarea %IMAGES/3dbyte/gray/g3a.pgm 6 100 %RESULTS/segmentarea_g3a_6_100.pgm
+%TEST segmentarea %IMAGES/3dbyte/gray/g3a.pgm 18 100 %RESULTS/segmentarea_g3a_18_100.pgm
+%TEST segmentarea %IMAGES/3dbyte/gray/g3a.pgm 26 100 %RESULTS/segmentarea_g3a_26_100.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

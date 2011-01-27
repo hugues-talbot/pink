@@ -57,6 +57,11 @@ Reference:
 \author Michel Couprie
 */
 
+/*
+%TEST gradientcd %IMAGES/2dbyte/gray/g2gel.pgm 1 %RESULTS/gradientcd_g2gel_1.pgm
+%TEST gradientcd %IMAGES/3dbyte/gray/g3a.pgm 1 %RESULTS/gradientcd_g3a_1.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

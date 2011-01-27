@@ -113,24 +113,23 @@ int32_t lfiltreordre(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t y
 /* ==================================== */
 {
   int32_t rang;
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t i, j;                    /* index muet */
-  register int32_t k, l;                    /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t Nm = rsm * csm;
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t i, j;                    /* index muet */
+  register index_t k, l;                    /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t Nm = rsm * csm;
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
-  int32_t nptb;                    /* nombre de points de l'e.s. */
+  int32_t c, nptb;                 /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   uint8_t *tab_es_val;   /* liste des valeurs des points de l'e.s. */
-  int32_t c;
 
   if (depth(f) != 1) 
   {
@@ -205,28 +204,27 @@ int32_t lfiltreordre3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t
 /* ==================================== */
 {
   int32_t rang;
-  int32_t x,y,z;
-  register int32_t i, j, k;                 /* index muet */
-  register int32_t n, o, p;                 /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t dsm = depth(m);          /* nb plans masque */
-  int32_t psm = rsm * csm;         /* taille plan masque */
-  int32_t Nm = psm * dsm;          /* taille masque */
+  index_t x, y, z;
+  register index_t i, j, k;                 /* index muet */
+  register index_t n, o, p;                 /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t dsm = depth(m);          /* nb plans masque */
+  index_t psm = rsm * csm;         /* taille plan masque */
+  index_t Nm = psm * dsm;          /* taille masque */
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
-  int32_t nptb;                    /* nombre de points de l'e.s. */
+  int32_t c, nptb;                 /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t *tab_es_z;               /* liste des coord. z des points de l'e.s. */
   uint8_t *tab_es_val;   /* liste des valeurs des points de l'e.s. */
-  int32_t c;
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)

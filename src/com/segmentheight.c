@@ -51,6 +51,14 @@ or a maximization if option <B>m</B> is set.
 \author Michel Couprie
 */
 
+/*
+%TEST segmentheight %IMAGES/2dbyte/gray/g2gel.pgm 4 20 %RESULTS/segmentheight_g2gel_4_20.pgm
+%TEST segmentheight %IMAGES/2dbyte/gray/g2gel.pgm 8 20 %RESULTS/segmentheight_g2gel_8_20.pgm
+%TEST segmentheight %IMAGES/3dbyte/gray/g3a.pgm 6 20 %RESULTS/segmentheight_g3a_6_20.pgm
+%TEST segmentheight %IMAGES/3dbyte/gray/g3a.pgm 18 20 %RESULTS/segmentheight_g3a_18_20.pgm
+%TEST segmentheight %IMAGES/3dbyte/gray/g3a.pgm 26 20 %RESULTS/segmentheight_g3a_26_20.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

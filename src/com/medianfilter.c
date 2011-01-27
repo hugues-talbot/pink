@@ -56,6 +56,11 @@ with rank = 0.5 .
 */
 /* Michel Couprie - decembre 1997 */
 
+/*
+%TEST medianfilter %IMAGES/2dbyte/gray/g2gel.pgm %IMAGES/2dbyte/binary/b2_se_5_7.pgm %RESULTS/medianfilter_g2gel_b2_se_5_7.pgm
+%TEST medianfilter %IMAGES/3dbyte/gray/g3a.pgm %IMAGES/3dbyte/binary/b3_se_5_5_7.pgm %RESULTS/medianfilter_g3a_b3_se_5_5_7.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

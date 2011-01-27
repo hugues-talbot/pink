@@ -126,13 +126,13 @@ int32_t lmedialaxis_lmedax_talbot(struct xvimage *img,   /* donnee: image binair
 #undef F_NAME
 #define F_NAME "lmedialaxis_lmedax_talbot"
 { 
-  int32_t rs = img->row_size;
-  int32_t cs = img->col_size;
-  int32_t N= rs * cs;            /* taille de l'image */
+  index_t rs = img->row_size;
+  index_t cs = img->col_size;
+  index_t N= rs * cs;            /* taille de l'image */
   uint8_t *F;          /* pointeur sur l'image */
   uint32_t *M;          /* donnees de l'image resultat */
   vect2Dint *L;              /* tableau de vecteur associe a un point de l'image */
-  int32_t h, i, j, k;
+  index_t h, i, j, k;
   vect2Dint v1;
   double cosmax, tmp, norm_i, norm_j, dij, sqrt_2 = sqrt(2), cosB = cos(M_PI/8);
 
@@ -213,16 +213,16 @@ int32_t lmedialaxis_lmedax_meyer(struct xvimage *img,   /* donnee: image binaire
 #undef F_NAME
 #define F_NAME "lmedialaxis_lmedax_meyer"
 { 
-  int32_t rs = img->row_size;
-  int32_t cs = img->col_size;
-  int32_t N= rs * cs;            /* taille de l'image */
+  index_t rs = img->row_size;
+  index_t cs = img->col_size;
+  index_t N= rs * cs;            /* taille de l'image */
   uint8_t *F = UCHARDATA(img);          /* pointeur sur l'image */
   uint32_t *M = ULONGDATA(res);          /* donnees de l'image resultat */
   uint32_t *D;          /* distance */
   uint32_t *H;          /* tampon */
   struct xvimage *inv;
   uint8_t *I;          /* image inverse */
-  int32_t x, y, k;
+  index_t x, y, k;
   uint32_t inf, sup;
   int32_t incr_vois = 2;
 
@@ -239,20 +239,20 @@ int32_t lmedialaxis_lmedax_meyer(struct xvimage *img,   /* donnee: image binaire
     return(0);
   }
   freeimage(inv);
-  H = (uint32_t *)calloc(1,N*sizeof(int32_t));
+  H = (uint32_t *)calloc(1,N*sizeof(uint32_t));
   if (H == NULL)
   { fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
     return(0);
   }
-  D = (uint32_t *)calloc(1,N*sizeof(int32_t));
+  D = (uint32_t *)calloc(1,N*sizeof(uint32_t));
   if (D == NULL)
   { fprintf(stderr,"%s() : malloc failed for D\n", F_NAME);
     return(0);
   }
-  memcpy(D, M, N*sizeof(int32_t));
+  memcpy(D, M, N*sizeof(uint32_t));
 
   // erosion unitaire
-  memcpy(H, M, N*sizeof(int32_t));
+  memcpy(H, M, N*sizeof(uint32_t));
   for (x = 0; x < N; x++)
   {
     inf = H[x]; /* l'ES est reflexif */
@@ -264,7 +264,7 @@ int32_t lmedialaxis_lmedax_meyer(struct xvimage *img,   /* donnee: image binaire
     M[x] = inf;
   }
   // dilatation unitaire
-  memcpy(H, M, N*sizeof(int32_t));
+  memcpy(H, M, N*sizeof(uint32_t));
   for (x = 0; x < N; x++)
   {
     sup = H[x]; /* l'ES est reflexif */
@@ -294,18 +294,18 @@ int32_t lmedialaxis_lmedax_meyer3d(struct xvimage *img,   /* donnee: image binai
 #undef F_NAME
 #define F_NAME "lmedialaxis_lmedax_meyer3d"
 { 
-  int32_t rs = rowsize(img);
-  int32_t cs = colsize(img);
-  int32_t ds = depth(img);
-  int32_t ps = rs * cs;
-  int32_t N = ps * ds;                            /* taille de l'image */
+  index_t rs = rowsize(img);
+  index_t cs = colsize(img);
+  index_t ds = depth(img);
+  index_t ps = rs * cs;
+  index_t N = ps * ds;                            /* taille de l'image */
   uint8_t *F = UCHARDATA(img);          /* pointeur sur l'image */
   uint32_t *M = ULONGDATA(res);          /* donnees de l'image resultat */
   uint32_t *D;          /* distance */
   uint32_t *H;          /* tampon */
   struct xvimage *inv;
   uint8_t *I;          /* image inverse */
-  int32_t x, y, k;
+  index_t x, y, k;
   uint32_t inf, sup;
 
   inv = copyimage(img);
@@ -317,20 +317,20 @@ int32_t lmedialaxis_lmedax_meyer3d(struct xvimage *img,   /* donnee: image binai
     return(0);
   }
   freeimage(inv);
-  H = (uint32_t *)calloc(1,N*sizeof(int32_t));
+  H = (uint32_t *)calloc(1,N*sizeof(uint32_t));
   if (H == NULL)
   { fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
     return(0);
   }
-  D = (uint32_t *)calloc(1,N*sizeof(int32_t));
+  D = (uint32_t *)calloc(1,N*sizeof(uint32_t));
   if (D == NULL)
   { fprintf(stderr,"%s() : malloc failed for D\n", F_NAME);
     return(0);
   }
-  memcpy(D, M, N*sizeof(int32_t));
+  memcpy(D, M, N*sizeof(uint32_t));
 
   // erosion unitaire
-  memcpy(H, M, N*sizeof(int32_t));
+  memcpy(H, M, N*sizeof(uint32_t));
   for (x = 0; x < N; x++)
   {
     inf = H[x]; /* l'ES est reflexif */
@@ -342,7 +342,7 @@ int32_t lmedialaxis_lmedax_meyer3d(struct xvimage *img,   /* donnee: image binai
     M[x] = inf;
   }
   // dilatation unitaire
-  memcpy(H, M, N*sizeof(int32_t));
+  memcpy(H, M, N*sizeof(uint32_t));
   for (x = 0; x < N; x++)
   {
     sup = H[x]; /* l'ES est reflexif */
@@ -367,12 +367,12 @@ int32_t lmedialaxis_lmedax_mc(struct xvimage *f)
 #undef F_NAME
 #define F_NAME "lmedialaxis_lmedax_mc"
 {
-  int32_t i;
-  int32_t rs = rowsize(f);        /* taille ligne f */
-  int32_t cs = colsize(f);        /* taille colonne f */
-  int32_t ds = depth(f);
-  int32_t ps = rs * cs;
-  int32_t N = ps * ds;            /* taille image f */
+  index_t i;
+  index_t rs = rowsize(f);        /* taille ligne f */
+  index_t cs = colsize(f);        /* taille colonne f */
+  index_t ds = depth(f);
+  index_t ps = rs * cs;
+  index_t N = ps * ds;            /* taille image f */
   uint8_t *F = UCHARDATA(f);
   struct xvimage *tmp1 = copyimage(f);
   struct xvimage *tmp2 = copyimage(f);
@@ -759,6 +759,18 @@ from the article: " Exact Medial Axis With Euclidean Distance"
   start_chrono(&Chrono1);
 #endif
 
+  if (((int64_t)rs * (int64_t)cs * (int64_t)ds) >= HUGE_IMAGE_SIZE)
+  {
+    fprintf(stderr, "%s: does not handle huge images\n", F_NAME);
+    return(0);
+  }
+
+  if ((datatype(ImageDist) != VFF_TYP_4_BYTE) || (datatype(ImageMedial) != VFF_TYP_4_BYTE))
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return(0);
+  }
+
   if ((datatype(ImageDist) != VFF_TYP_4_BYTE) || (datatype(ImageMedial) != VFF_TYP_4_BYTE))
   {
     fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
@@ -943,12 +955,12 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
 {
 #undef F_NAME
 #define F_NAME "lmedialaxis_lmedialaxis"
-  int32_t i;
-  int32_t rs = rowsize(f);        /* taille ligne f */
-  int32_t cs = colsize(f);        /* taille colonne f */
-  int32_t ds = depth(f);
-  int32_t ps = rs * cs;
-  int32_t N = ps * ds;            /* taille image f */
+  index_t i;
+  index_t rs = rowsize(f);        /* taille ligne f */
+  index_t cs = colsize(f);        /* taille colonne f */
+  index_t ds = depth(f);
+  index_t ps = rs * cs;
+  index_t N = ps * ds;            /* taille image f */
   uint8_t *F = UCHARDATA(f);
   struct xvimage *medial;
   uint32_t *D;
@@ -1133,7 +1145,7 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
     }
     else
     {
-      int32_t x, y, z;
+      index_t x, y, z;
       for (x = 0; x < rs; x++)
       for (y = 0; y < cs; y++) 
         D[0 * ps + y * rs + x] = 0;          /* plan z = 0 */
@@ -1165,8 +1177,8 @@ int32_t lmedialaxis_lmedialaxisbin(struct xvimage *f, int32_t mode)
 {
 #undef F_NAME
 #define F_NAME "lmedialaxisbin"
-  int32_t i;
-  int32_t N = rowsize(f) * colsize(f) * depth(f);
+  index_t i;
+  index_t N = rowsize(f) * colsize(f) * depth(f);
   uint8_t *F = UCHARDATA(f);
   struct xvimage *dist;
   uint32_t *D;
@@ -1670,12 +1682,13 @@ int32_t lmedialaxis_lbisector(struct xvimage *id, struct xvimage *im, struct xvi
 {
 #undef F_NAME
 #define F_NAME "lmedialaxis_lbisector"
-  int32_t i, j, k, nval, npoints, npointsmax;
-  int32_t rs = rowsize(id);
-  int32_t cs = colsize(id);
-  int32_t ds = depth(id);
-  int32_t ps = rs * cs;
-  int32_t N = ps * ds;
+  index_t i, j, k;
+  index_t rs = rowsize(id);
+  index_t cs = colsize(id);
+  index_t ds = depth(id);
+  index_t ps = rs * cs;
+  index_t N = ps * ds;
+  int32_t nval, npoints, npointsmax;
   double angle;	
   int32_t *TabIndDec;
   Coordinates *ListDecs;
@@ -1685,6 +1698,12 @@ int32_t lmedialaxis_lbisector(struct xvimage *id, struct xvimage *im, struct xvi
   float *imageangle = FLOATDATA(ia);
   char tablefilename[512];
   int32_t distmax; 
+
+  if (((int64_t)rs * (int64_t)cs * (int64_t)ds) >= HUGE_IMAGE_SIZE)
+  {
+    fprintf(stderr, "%s: does not handle huge images\n", F_NAME);
+    return(0);
+  }
 
 #ifdef HISTVOR
   for (i = 0; i < sizevorhisto; i++) vorhisto[i] = extvorhisto[i] = 0;
@@ -1997,6 +2016,12 @@ int32_t lmedialaxis_lbisector_Rita(struct xvimage *id, struct xvimage *im, struc
   float *imageangle;
   char tablefilename[512];
 
+  if (((int64_t)rs * (int64_t)cs) >= HUGE_IMAGE_SIZE)
+  {
+    fprintf(stderr, "%s: does not handle huge images\n", F_NAME);
+    return(0);
+  }
+
   if (depth(id) != 1)
   {
     fprintf(stderr, "%s: only for 2D images\n", F_NAME);
@@ -2084,6 +2109,12 @@ int32_t lmedialaxis_lbisector_talbot(struct xvimage * image, struct xvimage *ang
   vect2Dint *L;              /* tableau de vecteur associe a un point de l'image */
   double theta;
   struct Point2D LPoints[5];
+
+  if (((int64_t)rs * (int64_t)cs) >= HUGE_IMAGE_SIZE)
+  {
+    fprintf(stderr, "%s: does not handle huge images\n", F_NAME);
+    return(0);
+  }
 
   if (depth(image) != 1)
   {
@@ -2237,6 +2268,12 @@ int32_t lmedialaxis_Downstream(int32_t x, int32_t y, uint32_t *image,
   Neighbors MgN1;
   int32_t xnew, ynew;
 
+  if (((int64_t)rs * (int64_t)cs) >= HUGE_IMAGE_SIZE)
+  {
+    fprintf(stderr, "%s: does not handle huge images\n", F_NAME);
+    return(0);
+  }
+
   counter=0;
 
   i = (int32_t)(image[y*rs + x]);
@@ -2286,6 +2323,12 @@ int32_t lmedialaxis_Downstream3d(int32_t x, int32_t y, int32_t z, uint32_t *imag
   int32_t ps = rs*cs;
   Neighbors MgN1;
   int32_t xnew, ynew, znew;
+
+  if (((int64_t)rs * (int64_t)cs * (int64_t)ds) >= HUGE_IMAGE_SIZE)
+  {
+    fprintf(stderr, "%s: does not handle huge images\n", F_NAME);
+    return(0);
+  }
 
   counter=0;
 
@@ -2573,7 +2616,7 @@ double MaximumDiameter3d(ListDPoint3D LPoints, int32_t count)
 
 /* ==================================== */
 int32_t Extendedlmedialaxis_Downstream(int32_t x, int32_t y, uint32_t *image,
-		    int32_t rs, int32_t cs, 
+		    index_t rs, index_t cs, 
 		    int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		    ListDPoint2D Aval)
 /* ==================================== */
@@ -2646,7 +2689,7 @@ int32_t Extendedlmedialaxis_Downstream(int32_t x, int32_t y, uint32_t *image,
 
 /* ==================================== */
 int32_t Extendedlmedialaxis_Downstream3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
-		       int32_t rs, int32_t cs, int32_t ds, 
+		       index_t rs, index_t cs, index_t ds, 
 		       int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		       ListDPoint3D Aval)
 /* ==================================== */
@@ -2739,11 +2782,11 @@ int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda)
 #undef F_NAME
 #define F_NAME "llambdamedialaxis"
   int32_t i, j, k, nval, npoints, npointsmax;
-  int32_t rs = rowsize(dist);
-  int32_t cs = colsize(dist);
-  int32_t ds = depth(dist);
-  int32_t ps = rs * cs;
-  int32_t N = ps * ds;
+  index_t rs = rowsize(dist);
+  index_t cs = colsize(dist);
+  index_t ds = depth(dist);
+  index_t ps = rs * cs;
+  index_t N = ps * ds;
   int32_t *TabIndDec;
   Coordinates *ListDecs;
   FILE *fd=NULL;
@@ -2945,7 +2988,7 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
 int32_t Extendedlmedialaxis_DownstreamLambdaPrime(
   int32_t x, int32_t y, 
   uint32_t *image, uint32_t *vor,
-  int32_t rs, int32_t cs, 
+  index_t rs, index_t cs, 
   ListDPoint2D Aval)
 /* ==================================== */
 // Calcule l'aval étendu du point (x,y)
@@ -2994,7 +3037,7 @@ int32_t Extendedlmedialaxis_DownstreamLambdaPrime(
 int32_t Extendedlmedialaxis_Downstream3dLambdaPrime(
   int32_t x, int32_t y, int32_t z,
   uint32_t *image, uint32_t *vor,
-  int32_t rs, int32_t cs, int32_t ds,
+  index_t rs, index_t cs, index_t ds,
   ListDPoint3D Aval)
 /* ==================================== */
 // Calcule l'aval étendu du point (x,y)
@@ -3056,11 +3099,11 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
 #undef F_NAME
 #define F_NAME "llambdaprimemedialaxis"
   int32_t i, j, k;
-  int32_t rs = rowsize(dist);
-  int32_t cs = colsize(dist);
-  int32_t ds = depth(dist);
-  int32_t ps = rs * cs;
-  int32_t N = ps * ds;
+  index_t rs = rowsize(dist);
+  index_t cs = colsize(dist);
+  index_t ds = depth(dist);
+  index_t ps = rs * cs;
+  index_t N = ps * ds;
   int32_t card_aval;
   uint32_t *imagedist;
   uint32_t *imagevor;
