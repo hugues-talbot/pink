@@ -47,7 +47,6 @@ knowledge of the CeCILL license and that you accept its terms.
 *                a voir: reiteration peut-etre superflue - lire Borgefors
 *              Michel Couprie Juin 00 (distances 3D chamfrein)
 *              Xavier Daragon Mai 02 (distance euclidienne quadratique approx. 3D)
-*              Michel Couprie Mai 02 (ldilatdisc, lerosdisc, ldistquad)
 *              Rita Zrour Avril 04 (SEDT exacte Saito-Toriwaki)
 *              Michel Couprie Juillet 04 (REDT exacte Coeurjolly)
 *              Michel Couprie Août 04 (SEDT exacte lineaire Meijster et al.)
@@ -100,6 +99,7 @@ int32_t ldist(struct xvimage *img,   /* donnee: image binaire */
           struct xvimage *res    /* resultat: distances (image deja allouee) */
 )
 /* ==================================== */
+// Computes the external distance (distance to nearest object point) 
 #undef F_NAME
 #define F_NAME "ldist"
 { 
@@ -329,6 +329,7 @@ int32_t ldistbyte(struct xvimage *img,   /* donnee: image binaire */
           struct xvimage *res    /* resultat: distances (image deja allouee) */
 )
 /* ==================================== */
+// Computes the external distance (distance to nearest object point) 
 #undef F_NAME
 #define F_NAME "ldistbyte"
 // le resultat est code sur 8 bits. 
@@ -606,6 +607,7 @@ int32_t ldistquad(struct xvimage *img,   /* donnee: image binaire */
 /* 
   Call the Danielsson 4SED algorithm (with mc-modification)
 */
+// Computes the external distance (distance to nearest object point) 
 #undef F_NAME
 #define F_NAME "ldistquad"
 { 
@@ -763,6 +765,7 @@ int32_t ldistvect(uint8_t *F, vect2Dint *L, index_t rs, index_t cs)
 /* ======================================================== */
 int32_t ldisteuc(struct xvimage* ob, struct xvimage* res)
 /* ======================================================== */
+// Computes the external distance (distance to nearest object point) 
 #undef F_NAME
 #define F_NAME "ldisteuc"
 {
@@ -782,313 +785,6 @@ int32_t ldisteuc(struct xvimage* ob, struct xvimage* res)
  return 1;
 } // ldisteuc()
 
-/* ======================================================== */
-int32_t ldilatdisc(struct xvimage* ob, int32_t r, int32_t mode)
-/* ======================================================== */
-// dilation by a disc of radius r
-#undef F_NAME
-#define F_NAME "ldilatdisc"
-{
-  index_t rs = rowsize(ob);
-  index_t cs = colsize(ob);
-  index_t ds = depth(ob); 
-  index_t N = rs*cs*ds;
-  struct xvimage *dist;
-  uint32_t *D;
-  uint8_t *O = UCHARDATA(ob);
-  index_t i;
-  int32_t r2;
-
-  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (dist == NULL)
-  {   
-    fprintf(stderr, "%s(): allocimage failed\n", F_NAME);
-    return 0;
-  }
-  D = ULONGDATA(dist);
-
-  switch (mode)
-  {
-    case 0:
-      r2 = r*r;
-      inverse(ob); 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 1: 
-      if (!ldistquad(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 2: 
-      if (!lchamfrein(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 3: 
-      inverse(ob); 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 4:
-    case 8: 
-      if (!ldist(ob, mode, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-
-  freeimage(dist);    
-  return 1;
-} // ldilatdisc()
-
-/* ======================================================== */
-int32_t lerosdisc(struct xvimage* ob, int32_t r, int32_t mode)
-/* ======================================================== */
-// erosion by a disc of radius r
-#undef F_NAME
-#define F_NAME "lerosdisc"
-{
-  index_t rs = rowsize(ob);
-  index_t cs = colsize(ob);
-  index_t ds = depth(ob); 
-  index_t N = rs*cs*ds;
-  struct xvimage *dist;
-  uint32_t *D;
-  uint8_t *O = UCHARDATA(ob);
-  index_t i;
-  int32_t r2;
-
-  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (dist == NULL)
-  {   
-    fprintf(stderr, "%s(): allocimage failed\n", F_NAME);
-    return 0;
-  }
-  D = ULONGDATA(dist);
- 
-  switch (mode)
-  {
-    case 0:
-      r2 = r * r; 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 1: 
-      inverse(ob); 
-      if (!ldistquad(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 2: 
-      inverse(ob); 
-      if (!lchamfrein(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 3: 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 4:
-    case 8: 
-      inverse(ob); 
-      if (!ldist(ob, mode, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-
-  freeimage(dist);    
-  return 1;
-} // lerosdisc()
-
-/* ======================================================== */
-int32_t lopendisc(struct xvimage* ob, int32_t r, int32_t mode)
-/* ======================================================== */
-// opening by a disc of radius r
-#undef F_NAME
-#define F_NAME "lopendisc"
-{
-  index_t rs = rowsize(ob);
-  index_t cs = colsize(ob);
-  index_t ds = depth(ob); 
-  index_t N = rs*cs*ds;
-  struct xvimage *dist;
-  uint32_t *D;
-  uint8_t *O = UCHARDATA(ob);
-  index_t i;
-  int32_t r2;
-
-  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (dist == NULL)
-  {   
-    fprintf(stderr, "%s(): allocimage failed\n", F_NAME);
-    return 0;
-  }
-  D = ULONGDATA(dist);
- 
-  // inverse + dilate + inverse
-  switch (mode)
-  {
-    case 0:
-      r2 = r * r; 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 1: 
-      inverse(ob); 
-      if (!ldistquad(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 2: 
-      inverse(ob); 
-      if (!lchamfrein(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 3: 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 4:
-    case 8: 
-      inverse(ob); 
-      if (!ldist(ob, mode, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-
-  // dilate
-  switch (mode)
-  {
-    case 0:
-      // inversion cancelled in previous operation
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 1: 
-      if (!ldistquad(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 2: 
-      if (!lchamfrein(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 3: 
-      // inversion cancelled in previous operation
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 4:
-    case 8: 
-      if (!ldist(ob, mode, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-
-  freeimage(dist);    
-  return 1;
-} // lopendisc()
-
-/* ======================================================== */
-int32_t lclosedisc(struct xvimage* ob, int32_t r, int32_t mode)
-/* ======================================================== */
-// closing by a disc of radius r
-#undef F_NAME
-#define F_NAME "lclosedisc"
-{
-  index_t rs = rowsize(ob);
-  index_t cs = colsize(ob);
-  index_t ds = depth(ob); 
-  index_t N = rs*cs*ds;
-  struct xvimage *dist;
-  uint32_t *D;
-  uint8_t *O = UCHARDATA(ob);
-  index_t i;
-  int32_t r2;
-
-  dist = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
-  if (dist == NULL)
-  {   
-    fprintf(stderr, "%s(): allocimage failed\n", F_NAME);
-    return 0;
-  }
-  D = ULONGDATA(dist);
-
-  // dilate + inverse
-  switch (mode)
-  {
-    case 0:
-      r2 = r*r;
-      inverse(ob); 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 1: 
-      if (!ldistquad(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 2: 
-      if (!lchamfrein(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 3: 
-      inverse(ob); 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 4:
-    case 8: 
-      if (!ldist(ob, mode, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-
-  // dilate + inverse
-  switch (mode)
-  {
-    case 0:
-      // inversion cancelled in previous operation
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 1: 
-      if (!ldistquad(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 2: 
-      if (!lchamfrein(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 3: 
-      // inversion cancelled in previous operation
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 4:
-    case 8: 
-      if (!ldist(ob, mode, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-
-  freeimage(dist);    
-  return 1;
-} // lclosedisc()
-
-
 #define CHAM_4 5
 #define CHAM_8 7
 
@@ -1101,6 +797,7 @@ int32_t lchamfrein(struct xvimage *img,   /* donnee: image binaire */
                struct xvimage *res    /* resultat: distances (image deja allouee) */
 )
 /* ==================================== */
+// Computes the external distance (distance to nearest object point) 
 #undef F_NAME
 #define F_NAME "lchamfrein"
 { 
@@ -1434,6 +1131,7 @@ void testAndAdd(Drow* r, struct xvimage* o,Dcell* t, int32_t d)
 /* ======================================================== */
 int32_t ldistquad3d(struct xvimage* ob, struct xvimage* res)
 /* ======================================================== */
+// Computes the external distance (distance to nearest object point) 
 {
  index_t rs=rowsize(ob),cs=colsize(ob),ds=depth(ob);
  index_t max=((rs-1)+(cs-1)+(ds-1))*((rs-1)+(cs-1)+(ds-1));
@@ -1697,6 +1395,7 @@ int32_t ldistquad3d_rl(struct xvimage* imgin, struct xvimage* imgout)
 /* ======================================================== */
 int32_t ldisteuc3d(struct xvimage* ob, struct xvimage* res)
 /* ======================================================== */
+// Computes the external distance (distance to nearest object point) 
 {
  index_t rs=rowsize(ob),cs=colsize(ob),ds=depth(ob);
  uint32_t *O = ULONGDATA(res);
@@ -1713,462 +1412,6 @@ int32_t ldisteuc3d(struct xvimage* ob, struct xvimage* res)
     
  return 1;
 } // ldisteuc3d()
-
-/* ======================================================== */
-int32_t ldilatball(struct xvimage* ob, int32_t r, int32_t mode)
-/* ======================================================== */
-// dilation by a ball of radius r
-#undef F_NAME
-#define F_NAME "ldilatball"
-{
-  index_t rs=rowsize(ob), cs=colsize(ob), ds=depth(ob), N=rs*cs*ds;
-  struct xvimage *dist;
-  uint32_t *D;
-  uint8_t *O = UCHARDATA(ob);
-  index_t i;
-  int32_t r2;
-
-  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (dist == NULL)
-  {   
-    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return 0;
-  }
-  D = ULONGDATA(dist);
- 
-  switch (mode)
-  {
-    case 0:
-      r2 = r*r;
-      inverse(ob); 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 1: 
-      if (!ldistquad3d(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 2: 
-      if (!lchamfrein(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 3: 
-      inverse(ob); 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 4:
-    case 6:
-    case 8: 
-    case 18: 
-    case 26: 
-      if (!ldist(ob, mode, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-
-  freeimage(dist);    
-  return 1;
-} // ldilatball()
-
-/* ======================================================== */
-int32_t lerosball(struct xvimage* ob, int32_t r, int32_t mode)
-/* ======================================================== */
-// erosion by a ball of radius r
-#undef F_NAME
-#define F_NAME "lerosball"
-{
-  index_t rs=rowsize(ob), cs=colsize(ob), ds=depth(ob), N=rs*cs*ds;
-  struct xvimage *dist;
-  uint32_t *D;
-  uint8_t *O = UCHARDATA(ob);
-  index_t i;
-  int32_t r2;
-
-#ifdef VERBOSE
-  printf("%s: mode = %d, r = %d\n", F_NAME, mode, r);
-#endif
-
-  for(i=0; i<N; i++) if (O[i]) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-
-  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (dist == NULL)
-  {   
-    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return 0;
-  }
-  D = ULONGDATA(dist);
-
-  switch (mode)
-  {
-    case 0:
-      r2 = r * r; 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 1: 
-      inverse(ob); 
-      if (!ldistquad3d(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 2: 
-      inverse(ob); 
-      if (!lchamfrein(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 3: 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 4:
-    case 8:
-    case 6:
-    case 18:
-    case 26: 
-      inverse(ob); 
-      if (!ldist(ob, mode, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-
-  freeimage(dist);    
-  return 1;
-} // lerosball()
-
-/* ======================================================== */
-int32_t lopenball(struct xvimage* ob, int32_t r, int32_t mode)
-/* ======================================================== */
-// opening by a ball of radius r
-#undef F_NAME
-#define F_NAME "lopenball"
-{
-  index_t rs=rowsize(ob), cs=colsize(ob), ds=depth(ob), N=rs*cs*ds;
-  struct xvimage *dist;
-  uint32_t *D;
-  uint8_t *O = UCHARDATA(ob);
-  index_t i;
-  int32_t r2;
-
-
-  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (dist == NULL)
-  {   
-    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return 0;
-  }
-  D = ULONGDATA(dist);
-
-  // inverse + dilate + inverse
-  switch (mode)
-  {
-    case 0:
-      r2 = r * r; 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 1: 
-      inverse(ob); 
-      if (!ldistquad3d(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 2: 
-      inverse(ob); 
-      if (!lchamfrein(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 3: 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 4:
-    case 8:
-    case 6:
-    case 18:
-    case 26: 
-      inverse(ob); 
-      if (!ldist(ob, mode, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-
-  //dilate
-  switch (mode)
-  {
-    case 0:
-      // inversion cancelled in previous operation
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 1: 
-      if (!ldistquad3d(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 2: 
-      if (!lchamfrein(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 3: 
-      // inversion cancelled in previous operation
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 4:
-    case 8:
-    case 6:
-    case 18:
-    case 26: 
-      if (!ldist(ob, mode, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-
-  freeimage(dist);    
-  return 1;
-} // lopenball()
-
-/* ======================================================== */
-int32_t lcloseball(struct xvimage* ob, int32_t r, int32_t mode)
-/* ======================================================== */
-// closing by a ball of radius r
-#undef F_NAME
-#define F_NAME "lcloseball"
-{
-  index_t rs=rowsize(ob), cs=colsize(ob), ds=depth(ob), N=rs*cs*ds;
-  struct xvimage *dist;
-  uint32_t *D;
-  uint8_t *O = UCHARDATA(ob);
-  index_t i;
-  int32_t r2;
-
-  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (dist == NULL)
-  {   
-    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return 0;
-  }
-  D = ULONGDATA(dist);
-
-  // dilate + inverse
-  switch (mode)
-  {
-    case 0:
-      r2 = r*r;
-      inverse(ob); 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 1: 
-      if (!ldistquad3d(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 2: 
-      if (!lchamfrein(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 3: 
-      inverse(ob); 
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
-      break;
-    case 4:
-    case 8:
-    case 6:
-    case 18:
-    case 26: 
-      if (!ldist(ob, mode, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-
-  // dilate + inverse
-  switch (mode)
-  {
-    case 0:
-      // inversion cancelled in previous operation
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 1: 
-      if (!ldistquad3d(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 2: 
-      if (!lchamfrein(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 3: 
-      // inversion cancelled in previous operation
-      if (!lsedt_meijster(ob, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    case 4:
-    case 8:
-    case 6:
-    case 18:
-    case 26: 
-      if (!ldist(ob, mode, dist)) return 0; 
-      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
-      break;
-    default: 
-      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
-      return 0;
-  }
-
-  freeimage(dist);    
-  return 1;
-} // lcloseball()
-
-/* ======================================================== */
-struct xvimage* ldilatdiscloc(struct xvimage* f, int32_t mode)
-/* ======================================================== */
-// local dilation by a disc of radius f(x)
-#undef F_NAME
-#define F_NAME "ldilatdiscloc"
-{
-  struct xvimage *tmp1;
-  struct xvimage *res;
-  uint8_t *T1;
-  uint8_t *R;
-  index_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds, i;
-  int32_t vmax, v;
-  int32_t go;
-  tmp1 = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-  res = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-  if ((tmp1 == NULL) || (res == NULL))
-  {
-    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return(NULL);
-  }
-  T1 = UCHARDATA(tmp1);
-  R = UCHARDATA(res);
-  memset(R, 0, N);
-  if (datatype(f) == VFF_TYP_1_BYTE)
-  {
-    uint8_t *F = UCHARDATA(f);
-    vmax = F[0];
-    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
-    for (v = 1; v <= vmax; v++)
-    {
-      memset(T1, 0, N);
-      go = 0;
-      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
-      if (go) 
-      { 
-        ldilatdisc(tmp1, v-1, mode);
-        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
-      }
-    } // for (v = 1; v <= vmax; v++)
-  }
-  else if (datatype(f) == VFF_TYP_4_BYTE)
-  {
-    uint32_t *F = ULONGDATA(f);
-    vmax = F[0];
-    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
-    for (v = 1; v <= vmax; v++)
-    {
-      memset(T1, 0, N);
-      go = 0;
-      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
-      if (go) 
-      { 
-        ldilatdisc(tmp1, v-1, mode);
-        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
-      }
-    } // for (v = 1; v <= vmax; v++)
-  }
-  else
-  {
-    fprintf(stderr, "%s: bad image type\n", F_NAME);
-    return(NULL);
-  }
-
-  freeimage(tmp1);
-  return(res);
-} // ldilatdiscloc()
-
-/* ======================================================== */
-struct xvimage* ldilatballloc(struct xvimage* f, int32_t mode)
-/* ======================================================== */
-// local dilation by a ball of radius f(x)
-// OBSOLETE - see REDT (lredt2d)
-#undef F_NAME
-#define F_NAME "ldilatballloc"
-{
-  struct xvimage *tmp1;
-  struct xvimage *res;
-  uint8_t *T1;
-  uint8_t *R;
-  index_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds, i;
-  int32_t vmax, v;
-  int32_t go;
-  tmp1 = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-  res = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-  if ((tmp1 == NULL) || (res == NULL))
-  {
-    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return(NULL);
-  }
-  T1 = UCHARDATA(tmp1);
-  R = UCHARDATA(res);
-  memset(R, 0, N);
-  if (datatype(f) == VFF_TYP_1_BYTE)
-  {
-    uint8_t *F = UCHARDATA(f);
-    vmax = F[0];
-    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
-    for (v = 1; v <= vmax; v++)
-    {
-      memset(T1, 0, N);
-      go = 0;
-      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
-      if (go) 
-      { 
-        ldilatball(tmp1, v-1, mode);
-        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
-      }
-    } // for (v = 1; v <= vmax; v++)
-  }
-  else if (datatype(f) == VFF_TYP_4_BYTE)
-  {
-    uint32_t *F = ULONGDATA(f);
-    vmax = F[0];
-    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
-    for (v = 1; v <= vmax; v++)
-    {
-      memset(T1, 0, N);
-      go = 0;
-      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
-      if (go) 
-      { 
-        ldilatball(tmp1, v-1, mode);
-        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
-      }
-    } // for (v = 1; v <= vmax; v++)
-  }
-  else
-  {
-    fprintf(stderr, "%s: bad image type\n", F_NAME);
-    return(NULL);
-  }
-
-  freeimage(tmp1);
-  return(res);
-} // ldilatballloc()
 
 /* ==================================== */
 int32_t ldistquadSaito(struct xvimage *img,   /* donnee: image binaire */       
@@ -3149,28 +2392,8 @@ The distance used depends on the optional parameter \b dist (default is 0) :
   R = ULONGDATA(res);
   razimage(res);
 
-  if (ds == 1)
-  {
-    r = 1;
-    do
-    {
-#ifdef VERBOSE
-      printf("%s: r = %d\n", F_NAME, r);
-#endif
-      vide = 1;
-      tmp = copyimage(img); assert(tmp != NULL);
-      T = UCHARDATA(tmp);
-      lopendisc(tmp, r, mode);
-      for (i = 0; i < N; i++)
-	if (T[i]) { R[i] = r; vide = 0; }
-      freeimage(tmp);
-      r++;
-    } while (!vide && r < 150);
-  }
-  else
-  {
-    r = 1;
-    do
+  r = 1;
+  do
     {
 #ifdef VERBOSE
       printf("%s: r = %d\n", F_NAME, r);
@@ -3184,7 +2407,6 @@ The distance used depends on the optional parameter \b dist (default is 0) :
       freeimage(tmp);
       r++;
     } while (!vide);
-  }
 
   return res;
 } // lopeningfunction()
@@ -3308,3 +2530,495 @@ The parameter 'cut' is required only for Baddeley distances.
 
   return result;
 } // ldistsets()
+
+// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+// OPERATEURS MORPHO
+
+// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+/* ======================================================== */
+int32_t ldilatball(struct xvimage* ob, int32_t r, int32_t mode)
+/* ======================================================== */
+// dilation by a ball of radius r
+#undef F_NAME
+#define F_NAME "ldilatball"
+{
+  index_t rs=rowsize(ob), cs=colsize(ob), ds=depth(ob), N=rs*cs*ds;
+  struct xvimage *dist;
+  uint32_t *D;
+  uint8_t *O = UCHARDATA(ob);
+  index_t i;
+  int32_t r2;
+  int32_t ret;
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  D = ULONGDATA(dist);
+ 
+  switch (mode)
+  {
+    case 0:
+      r2 = r*r;
+      inverse(ob); 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 1: 
+      if (ds == 1)
+	ret = ldistquad(ob, dist);
+      else
+	ret = ldistquad3d(ob, dist);
+      if (!ret) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 2: 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 3: 
+      inverse(ob); 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 4:
+    case 6:
+    case 8: 
+    case 18: 
+    case 26: 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+
+  freeimage(dist);    
+  return 1;
+} // ldilatball()
+
+/* ======================================================== */
+int32_t lerosball(struct xvimage* ob, int32_t r, int32_t mode)
+/* ======================================================== */
+// erosion by a ball of radius r
+#undef F_NAME
+#define F_NAME "lerosball"
+{
+  index_t rs=rowsize(ob), cs=colsize(ob), ds=depth(ob), N=rs*cs*ds;
+  struct xvimage *dist;
+  uint32_t *D;
+  uint8_t *O = UCHARDATA(ob);
+  index_t i;
+  int32_t r2;
+  int32_t ret;
+
+#ifdef VERBOSE
+  printf("%s: mode = %d, r = %d\n", F_NAME, mode, r);
+#endif
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  D = ULONGDATA(dist);
+
+  switch (mode)
+  {
+    case 0:
+      r2 = r * r; 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 1: 
+      inverse(ob); 
+      if (ds == 1)
+	ret = ldistquad(ob, dist);
+      else
+	ret = ldistquad3d(ob, dist);
+      if (!ret) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 2: 
+      inverse(ob); 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 3: 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 4:
+    case 8:
+    case 6:
+    case 18:
+    case 26: 
+      inverse(ob); 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+
+  freeimage(dist);    
+  return 1;
+} // lerosball()
+
+/* ======================================================== */
+int32_t lopenball(struct xvimage* ob, int32_t r, int32_t mode)
+/* ======================================================== */
+// opening by a ball of radius r
+#undef F_NAME
+#define F_NAME "lopenball"
+{
+  index_t rs=rowsize(ob), cs=colsize(ob), ds=depth(ob), N=rs*cs*ds;
+  struct xvimage *dist;
+  uint32_t *D;
+  uint8_t *O = UCHARDATA(ob);
+  index_t i;
+  int32_t r2;
+  int32_t ret;
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  D = ULONGDATA(dist);
+
+  // inverse + dilate + inverse
+  switch (mode)
+  {
+    case 0:
+      r2 = r * r; 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 1: 
+      inverse(ob); 
+      if (ds == 1)
+	ret = ldistquad(ob, dist);
+      else
+	ret = ldistquad3d(ob, dist);
+      if (!ret) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 2: 
+      inverse(ob); 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 3: 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 4:
+    case 8:
+    case 6:
+    case 18:
+    case 26: 
+      inverse(ob); 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+
+  //dilate
+  switch (mode)
+  {
+    case 0:
+      // inversion cancelled in previous operation
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 1: 
+      if (ds == 1)
+	ret = ldistquad(ob, dist);
+      else
+	ret = ldistquad3d(ob, dist);
+      if (!ret) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 2: 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 3: 
+      // inversion cancelled in previous operation
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 4:
+    case 8:
+    case 6:
+    case 18:
+    case 26: 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+
+  freeimage(dist);    
+  return 1;
+} // lopenball()
+
+/* ======================================================== */
+int32_t lcloseball(struct xvimage* ob, int32_t r, int32_t mode)
+/* ======================================================== */
+// closing by a ball of radius r
+#undef F_NAME
+#define F_NAME "lcloseball"
+{
+  index_t rs=rowsize(ob), cs=colsize(ob), ds=depth(ob), N=rs*cs*ds;
+  struct xvimage *dist;
+  uint32_t *D;
+  uint8_t *O = UCHARDATA(ob);
+  index_t i;
+  int32_t r2;
+  int32_t ret;
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (dist == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  D = ULONGDATA(dist);
+
+  // dilate + inverse
+  switch (mode)
+  {
+    case 0:
+      r2 = r*r;
+      inverse(ob); 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 1: 
+      if (ds == 1)
+	ret = ldistquad(ob, dist);
+      else
+	ret = ldistquad3d(ob, dist);
+      if (!ret) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 2: 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 3: 
+      inverse(ob); 
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MIN; else O[i] = NDG_MAX;
+      break;
+    case 4:
+    case 8:
+    case 6:
+    case 18:
+    case 26: 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+
+  // dilate + inverse
+  switch (mode)
+  {
+    case 0:
+      // inversion cancelled in previous operation
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r2) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 1: 
+      if (ds == 1)
+	ret = ldistquad(ob, dist);
+      else
+	ret = ldistquad3d(ob, dist);
+      if (!ret) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 2: 
+      if (!lchamfrein(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 3: 
+      // inversion cancelled in previous operation
+      if (!lsedt_meijster(ob, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    case 4:
+    case 8:
+    case 6:
+    case 18:
+    case 26: 
+      if (!ldist(ob, mode, dist)) return 0; 
+      for(i=0; i<N; i++) if (D[i] > r) O[i] = NDG_MAX; else O[i] = NDG_MIN;
+      break;
+    default: 
+      fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+      return 0;
+  }
+
+  freeimage(dist);    
+  return 1;
+} // lcloseball()
+
+/* ======================================================== */
+struct xvimage* ldilatdiscloc(struct xvimage* f, int32_t mode)
+/* ======================================================== */
+// local dilation by a disc of radius f(x)
+#undef F_NAME
+#define F_NAME "ldilatdiscloc"
+{
+  struct xvimage *tmp1;
+  struct xvimage *res;
+  uint8_t *T1;
+  uint8_t *R;
+  index_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds, i;
+  int32_t vmax, v;
+  int32_t go;
+  tmp1 = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  res = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  if ((tmp1 == NULL) || (res == NULL))
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return(NULL);
+  }
+  T1 = UCHARDATA(tmp1);
+  R = UCHARDATA(res);
+  memset(R, 0, N);
+  if (datatype(f) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(f);
+    vmax = F[0];
+    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
+    for (v = 1; v <= vmax; v++)
+    {
+      memset(T1, 0, N);
+      go = 0;
+      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
+      if (go) 
+      { 
+        ldilatball(tmp1, v-1, mode);
+        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
+      }
+    } // for (v = 1; v <= vmax; v++)
+  }
+  else if (datatype(f) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *F = ULONGDATA(f);
+    vmax = F[0];
+    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
+    for (v = 1; v <= vmax; v++)
+    {
+      memset(T1, 0, N);
+      go = 0;
+      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
+      if (go) 
+      { 
+        ldilatball(tmp1, v-1, mode);
+        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
+      }
+    } // for (v = 1; v <= vmax; v++)
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad image type\n", F_NAME);
+    return(NULL);
+  }
+
+  freeimage(tmp1);
+  return(res);
+} // ldilatdiscloc()
+
+/* ======================================================== */
+struct xvimage* ldilatballloc(struct xvimage* f, int32_t mode)
+/* ======================================================== */
+// local dilation by a ball of radius f(x)
+// OBSOLETE - see REDT (lredt2d)
+#undef F_NAME
+#define F_NAME "ldilatballloc"
+{
+  struct xvimage *tmp1;
+  struct xvimage *res;
+  uint8_t *T1;
+  uint8_t *R;
+  index_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds, i;
+  int32_t vmax, v;
+  int32_t go;
+  tmp1 = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  res = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  if ((tmp1 == NULL) || (res == NULL))
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return(NULL);
+  }
+  T1 = UCHARDATA(tmp1);
+  R = UCHARDATA(res);
+  memset(R, 0, N);
+  if (datatype(f) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(f);
+    vmax = F[0];
+    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
+    for (v = 1; v <= vmax; v++)
+    {
+      memset(T1, 0, N);
+      go = 0;
+      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
+      if (go) 
+      { 
+        ldilatball(tmp1, v-1, mode);
+        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
+      }
+    } // for (v = 1; v <= vmax; v++)
+  }
+  else if (datatype(f) == VFF_TYP_4_BYTE)
+  {
+    uint32_t *F = ULONGDATA(f);
+    vmax = F[0];
+    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
+    for (v = 1; v <= vmax; v++)
+    {
+      memset(T1, 0, N);
+      go = 0;
+      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
+      if (go) 
+      { 
+        ldilatball(tmp1, v-1, mode);
+        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
+      }
+    } // for (v = 1; v <= vmax; v++)
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad image type\n", F_NAME);
+    return(NULL);
+  }
+
+  freeimage(tmp1);
+  return(res);
+} // ldilatballloc()
+
+

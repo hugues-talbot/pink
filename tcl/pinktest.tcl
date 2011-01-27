@@ -86,7 +86,7 @@ while {[gets $PINKTEST(input) comexec] >= 0} {
 #  puts "$comexec"
   set res [my_exec_q $comexec]
   if {$res != ""} {
-    puts "EXECUTION ERROR: $comexec"
+    puts "EXECUTION ERROR/WARNING: $comexec"
     puts $res
   }
   set tag "results/"

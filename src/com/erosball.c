@@ -45,8 +45,9 @@ i.e. erosball(X) = inverse(dilatball(inverse(X))).
 The structuring element for this erosion is a ball (or a disc) of radius \b r.
 The erosion is computed by thresholding a distance map.
 The distance used depends on the optional parameter \b dist (default is 0) :
-\li 0: approximate euclidean distance
+\li 0: rounded euclidean distance
 \li 2: chamfer distance
+\li 3: exact quadratic euclidean distance
 \li 4: 4-distance in 2d
 \li 8: 8-distance in 2d
 \li 6: 6-distance in 3d
@@ -79,11 +80,13 @@ erosball cells 3 cells_erosball
 
 /*
 %TEST erosball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 0 %RESULTS/erosball_b2hebreu_3_0.pgm
-%TEST erosball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 2 %RESULTS/erosball_b2hebreu_3_2.pgm
+%TEST erosball %IMAGES/2dbyte/binary/b2hebreu.pgm 15 2 %RESULTS/erosball_b2hebreu_15_2.pgm
+%TEST erosball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 3 %RESULTS/erosball_b2hebreu_3_3.pgm
 %TEST erosball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 4 %RESULTS/erosball_b2hebreu_3_4.pgm
 %TEST erosball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 8 %RESULTS/erosball_b2hebreu_3_8.pgm
 %TEST erosball %IMAGES/3dbyte/binary/b3a.pgm 3 0 %RESULTS/erosball_b3a_3_0.pgm
-%TEST erosball %IMAGES/3dbyte/binary/b3a.pgm 3 2 %RESULTS/erosball_b3a_3_2.pgm
+%TEST erosball %IMAGES/3dbyte/binary/b3a.pgm 15 2 %RESULTS/erosball_b3a_15_2.pgm
+%TEST erosball %IMAGES/3dbyte/binary/b3a.pgm 3 3 %RESULTS/erosball_b3a_3_3.pgm
 %TEST erosball %IMAGES/3dbyte/binary/b3a.pgm 3 6 %RESULTS/erosball_b3a_3_6.pgm
 %TEST erosball %IMAGES/3dbyte/binary/b3a.pgm 3 18 %RESULTS/erosball_b3a_3_18.pgm
 %TEST erosball %IMAGES/3dbyte/binary/b3a.pgm 3 26 %RESULTS/erosball_b3a_3_26.pgm
@@ -121,10 +124,10 @@ int main(int argc, char **argv)
   r = atoi(argv[2]);
 
   if (argc == 5) mode = atoi(argv[3]); else mode = 0;
-  if ((mode != 0) && (mode != 2) && (mode != 4) && 
+  if ((mode != 0) && (mode != 2) && (mode != 3) && (mode != 4) && 
       (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
   {
-    fprintf(stderr, "%s: dist = [0|2|4|8|6|18|26] \n", argv[0]);
+    fprintf(stderr, "%s: dist = [0|2|3|4|8|6|18|26] \n", argv[0]);
     exit(1);
   }
 

@@ -61,9 +61,6 @@ Michel Couprie - novembre 2008 - lambda medial axis
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef HP
-#define _INCLUDE_XOPEN_SOURCE
-#endif
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
@@ -423,20 +420,20 @@ int32_t lmedialaxis_lmedax_mc(struct xvimage *f)
         for (k = 1; k <= rmax; k++)
 	{
           copy2image(tmp2, f);
-          lopendisc(tmp2, r+k, 0);
+          lopenball(tmp2, r+k, 0);
           for (i = 0; i < N; i++) if (T2[i]) T2[i] = NDG_MIN; else T2[i] = NDG_MAX; // inverse
-          ldilatdisc(tmp2, r, 0);
+          ldilatball(tmp2, r, 0);
           for (i = 0; i < N; i++) T1[i] = T1[i] && T2[i];
 	}
         for (i = 0; i < N; i++) T2[i] = T1[i];
 #else
         copy2image(tmp2, f);
-        lopendisc(tmp2, r+1, 0);
+        lopenball(tmp2, r+1, 0);
         for (i = 0; i < N; i++) if (T2[i]) T2[i] = NDG_MIN; else T2[i] = NDG_MAX; // inverse
-        ldilatdisc(tmp2, r, 0);
+        ldilatball(tmp2, r, 0);
 #endif
         copy2image(tmp1, f);
-        lerosdisc(tmp1, r, 0);
+        lerosball(tmp1, r, 0);
         for (i = 0; i < N; i++) 
           if (T1[i] && T2[i]) // intersection
             R[i] = r+1;

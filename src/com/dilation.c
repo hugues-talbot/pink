@@ -64,6 +64,13 @@ dilation cells ~/Pink/masks/carre5.pgm cells_dilat
 
 */
 
+/*
+%TEST dilation %IMAGES/2dbyte/binary/b2hebreu.pgm %IMAGES/2dbyte/binary/b2_se_5_7.pgm %RESULTS/dilation_b2hebreu_b2_se_5_7.pgm
+%TEST dilation %IMAGES/2dbyte/gray/g2fish1.pgm %IMAGES/2dbyte/binary/b2_se_5_7.pgm %RESULTS/dilation_g2fish1_b2_se_5_7.pgm
+%TEST dilation %IMAGES/3dbyte/binary/b3a.pgm %IMAGES/3dbyte/binary/b3_se_5_5_7.pgm %RESULTS/dilation_b3a_b3_se_5_5_7.pgm
+%TEST dilation %IMAGES/3dbyte/gray/g3a.pgm %IMAGES/3dbyte/binary/b3_se_5_5_7.pgm %RESULTS/dilation_g3a_b3_se_5_5_7.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

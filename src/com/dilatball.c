@@ -50,7 +50,7 @@ where F is the greyscale image  \b in.pgm .
 
 The dilation is computed by thresholding a distance map.
 The distance used depends on the optional parameter \b dist (default is 0) :
-\li 0: approximate euclidean distance
+\li 0: rounded euclidean distance
 \li 1: approximate quadratic euclidean distance
 \li 2: chamfer distance
 \li 3: exact quadratic euclidean distance
@@ -86,11 +86,13 @@ dilatball cells 4 cells_dilatball
 
 /*
 %TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 0 %RESULTS/dilatball_b2hebreu_3_0.pgm
-%TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 2 %RESULTS/dilatball_b2hebreu_3_2.pgm
+%TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 15 2 %RESULTS/dilatball_b2hebreu_15_2.pgm
+%TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 3 %RESULTS/dilatball_b2hebreu_3_3.pgm
 %TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 4 %RESULTS/dilatball_b2hebreu_3_4.pgm
 %TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 8 %RESULTS/dilatball_b2hebreu_3_8.pgm
 %TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 0 %RESULTS/dilatball_b3a_3_0.pgm
-%TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 2 %RESULTS/dilatball_b3a_3_2.pgm
+%TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 15 2 %RESULTS/dilatball_b3a_15_2.pgm
+%TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 3 %RESULTS/dilatball_b3a_3_3.pgm
 %TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 6 %RESULTS/dilatball_b3a_3_6.pgm
 %TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 18 %RESULTS/dilatball_b3a_3_18.pgm
 %TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 26 %RESULTS/dilatball_b3a_3_26.pgm
@@ -141,9 +143,9 @@ int main(int argc, char **argv)
   {
     if (r >= 0)
     {
-      if (! ldilatdisc(image, r, mode))
+      if (! ldilatball(image, r, mode))
       {
-        fprintf(stderr, "%s: function ldilatdisc failed\n", argv[0]);
+        fprintf(stderr, "%s: function ldilatball failed\n", argv[0]);
         exit(1);
       }
     }

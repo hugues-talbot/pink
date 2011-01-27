@@ -83,13 +83,10 @@ Useful for label images.
 #include <mccodimage.h>
 #include <mcutil.h>
 #include <lhisto.h>
-#ifdef HP
-#define _INCLUDE_XOPEN_SOURCE
-#endif
 #include <math.h>
 
 /* =============================================================== */
-static int32_t Partitionner(int32_t *A, int32_t *T, int32_t p, int32_t r)
+static int32_t Partitionner(int32_t *A, index_t *T, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -97,7 +94,7 @@ static int32_t Partitionner(int32_t *A, int32_t *T, int32_t p, int32_t r)
 */
 {
   int32_t t;
-  int32_t x = T[A[p]];
+  index_t x = T[A[p]];
   int32_t i = p - 1;
   int32_t j = r + 1;
   while (1)
@@ -110,7 +107,7 @@ static int32_t Partitionner(int32_t *A, int32_t *T, int32_t p, int32_t r)
 } /* Partitionner() */
 
 /* =============================================================== */
-static int32_t PartitionStochastique(int32_t *A, int32_t *T, int32_t p, int32_t r)
+static int32_t PartitionStochastique(int32_t *A, index_t *T, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -128,7 +125,7 @@ static int32_t PartitionStochastique(int32_t *A, int32_t *T, int32_t p, int32_t 
 } /* PartitionStochastique() */
 
 /* =============================================================== */
-static void TriRapideStochastique (int32_t * A, int32_t *T, int32_t p, int32_t r)
+static void TriRapideStochastique (int32_t * A, index_t *T, int32_t p, int32_t r)
 /* =============================================================== */
 /* 
   trie les valeurs du tableau A de l'indice p (compris) a l'indice r (compris) 
@@ -158,7 +155,7 @@ int main(int argc, char **argv)
   index_t *histo;
   index_t *newvals;
   int32_t nbval, nbnewval;
-  uint32_t *index;
+  int32_t *index;
   double t;
   index_t x, rs, cs, d, N;
 
@@ -180,6 +177,7 @@ int main(int argc, char **argv)
   if (datatype(imagelong) != VFF_TYP_4_BYTE)
   {
     fprintf(stderr, "%s: image type must be int32_t\n", argv[0]);
+    fprintf(stderr, "type found: %d\n", datatype(imagelong));
     exit(1);
   }
 
@@ -230,17 +228,18 @@ int main(int argc, char **argv)
         fprintf(stderr, "%s: function lhistolong failed\n", argv[0]);
         exit(1);
       }
-      index = (uint32_t *)calloc(1,nbval * sizeof(uint32_t));
+      index = (int32_t *)calloc(1, nbval * sizeof(int32_t));
       if (index == NULL)
       {
         fprintf(stderr, "%s: malloc failed\n", argv[0]);
         exit(1);
       }
       for (i = 0; i < nbval; i++) index[i] = i;
-      TriRapideStochastique ((int32_t *)index, (int32_t *)histo, 1, nbval-1);
+      TriRapideStochastique (index, histo, 1, nbval-1);
       newvals = histo; /* reutilisation de la place memoire allouee pour histo */
       for (i = 0; i < nbval; i++) newvals[i] = 0;
-      for (i = 1; i < mcmin(nbval,nbnewval); i++) newvals[index[mcmax((nbval-nbnewval),0)+i]] = i;
+      for (i = 1; i < mcmin(nbval,nbnewval); i++) 
+	newvals[index[i]] = i;
       for (x = 0; x < N; x++) 
         B[x] = (uint8_t)(newvals[L[x]]);
       free(histo);

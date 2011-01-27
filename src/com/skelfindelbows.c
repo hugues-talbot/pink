@@ -34,7 +34,7 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file skelfindelbows.c
 
-\brief selection of "junction branches" in a curvilinear skeleton
+\brief detection of "elbows" in a curvilinear skeleton
 
 <B>Usage:</B> skelfindelbows in.skel len sharp out.pgm
 

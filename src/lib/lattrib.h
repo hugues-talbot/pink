@@ -42,7 +42,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 //#define DEBUG
 
-#define VERBOSE
+//#define VERBOSE
 
 #include <string.h>
 #include <assert.h>

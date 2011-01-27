@@ -77,6 +77,13 @@ Z. Aktouf, G. Bertrand, L.Perroton:
 /* Operateur de fermeture de trous en 3d */
 /* Michel Couprie - decembre 1999 */
 
+/*
+%TEST holeclosing %IMAGES/3dbyte/binary/b3tores.pgm 26 -1 %RESULTS/holeclosing_b3tores_26__1.pgm
+%TEST holeclosing %IMAGES/3dbyte/binary/b3tores.pgm 26 2 %RESULTS/holeclosing_b3tores_26_2.pgm
+%TEST holeclosing %IMAGES/3dbyte/binary/b3tores.pgm 6 -1 %RESULTS/holeclosing_b3tores_6__1.pgm
+%TEST holeclosing %IMAGES/3dbyte/binary/b3tores.pgm 6 2 %RESULTS/holeclosing_b3tores_6_2.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

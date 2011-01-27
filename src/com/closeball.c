@@ -43,8 +43,9 @@ The closing consists in a dilation (dilatball) followed by an erosion (erosball)
 The structuring element for this closing is a ball (or a disc) of radius \b r.
 The erosion and dilation are computed by thresholding a distance map.
 The distance used depends on the optional parameter \b dist (default is 0) :
-\li 0: approximate euclidean distance
+\li 0: rounded euclidean distance
 \li 2: chamfer distance
+\li 3: exact quadratic euclidean distance
 \li 4: 4-distance in 2d
 \li 8: 8-distance in 2d
 \li 6: 6-distance in 3d
@@ -73,6 +74,20 @@ closeball cells 3 cells_closeball
   </tr>
 </table>
 
+*/
+
+/*
+%TEST closeball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 0 %RESULTS/closeball_b2hebreu_3_0.pgm
+%TEST closeball %IMAGES/2dbyte/binary/b2hebreu.pgm 15 2 %RESULTS/closeball_b2hebreu_15_2.pgm
+%TEST closeball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 3 %RESULTS/closeball_b2hebreu_3_3.pgm
+%TEST closeball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 4 %RESULTS/closeball_b2hebreu_3_4.pgm
+%TEST closeball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 8 %RESULTS/closeball_b2hebreu_3_8.pgm
+%TEST closeball %IMAGES/3dbyte/binary/b3a.pgm 3 0 %RESULTS/closeball_b3a_3_0.pgm
+%TEST closeball %IMAGES/3dbyte/binary/b3a.pgm 15 2 %RESULTS/closeball_b3a_15_2.pgm
+%TEST closeball %IMAGES/3dbyte/binary/b3a.pgm 3 3 %RESULTS/closeball_b3a_3_3.pgm
+%TEST closeball %IMAGES/3dbyte/binary/b3a.pgm 3 6 %RESULTS/closeball_b3a_3_6.pgm
+%TEST closeball %IMAGES/3dbyte/binary/b3a.pgm 3 18 %RESULTS/closeball_b3a_3_18.pgm
+%TEST closeball %IMAGES/3dbyte/binary/b3a.pgm 3 26 %RESULTS/closeball_b3a_3_26.pgm
 */
 
 #include <stdio.h>
@@ -107,38 +122,17 @@ int main(int argc, char **argv)
   r = atoi(argv[2]);
 
   if (argc == 5) mode = atoi(argv[3]); else mode = 0;
-  if ((mode != 0) && (mode != 2) && (mode != 4) && 
+  if ((mode != 0) && (mode != 2) && (mode != 3) && (mode != 4) && 
       (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
   {
-    fprintf(stderr, "%s: dist = [0|2|4|8|6|18|26] \n", argv[0]);
+    fprintf(stderr, "%s: dist = [0|2|3|4|8|6|18|26] \n", argv[0]);
     exit(1);
   }
 
-  if (depth(image) == 1)
+  if (! lcloseball(image, r, mode))
   {
-    if (! ldilatdisc(image, r, mode))
-    {
-      fprintf(stderr, "%s: function ldilatdisc failed\n", argv[0]);
-      exit(1);
-    }
-    if (! lerosdisc(image, r, mode))
-    {
-      fprintf(stderr, "%s: function lerosdisc failed\n", argv[0]);
-      exit(1);
-    }
-  }
-  else
-  {
-    if (! ldilatball(image, r, mode))
-    {
-      fprintf(stderr, "%s: function ldilatball failed\n", argv[0]);
-      exit(1);
-    }
-    if (! lerosball(image, r, mode))
-    {
-      fprintf(stderr, "%s: function lerosball failed\n", argv[0]);
-      exit(1);
-    }
+    fprintf(stderr, "%s: function lcloseball failed\n", argv[0]);
+    exit(1);
   }
 
   writeimage(image, argv[argc-1]);

@@ -56,8 +56,8 @@ SPIE Vision Geometry V Proceedings, 3168 (136--146), 1997.
 */
 
 /*
-%TEST watershed %IMAGES/2dbyte/gray/b2relief.pgm %IMAGES/2dbyte/binary/b2marqueur.pgm 4 %RESULTS/watershed_b2relief_b2marqueur_4.pgm
-%TEST watershed %IMAGES/2dbyte/gray/b2relief.pgm %IMAGES/2dbyte/binary/b2marqueur.pgm 8 %RESULTS/watershed_b2relief_b2marqueur_8.pgm
+%TEST watershed %IMAGES/2dbyte/gray/g2relief.pgm %IMAGES/2dbyte/binary/b2marqueur.pgm 4 %RESULTS/watershed_g2relief_b2marqueur_4.pgm
+%TEST watershed %IMAGES/2dbyte/gray/g2relief.pgm %IMAGES/2dbyte/binary/b2marqueur.pgm 8 %RESULTS/watershed_g2relief_b2marqueur_8.pgm
 */
 
 #include <stdio.h>

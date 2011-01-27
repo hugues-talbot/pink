@@ -59,11 +59,6 @@ Parameters:
 \author Michel Couprie
 */
 
-/*
-%TEST worms 20 30 40 25 20 70 0.0 0.2 8 6 %RESULTS/worms_20_30_40_25_20_70_0_02_8_6.pgm
-%TEST worms 20 30 40 25 20 70 0.0 0.2 8 %IMAGES/3dbyte/binary/b3_se_5_5_7.pgm %RESULTS/worms_20_30_40_25_20_70_0_02_8_b3_se_5_5_7.pgm
-*/
-
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

@@ -19,3 +19,11 @@ derniers ajouts à Pink :
     script python mc-tp5-2.py testé
   - correction d'un "effet de drappé" (utilisant la fft)
     script bash mc-tp5-3.sh testé
+
+27/01/2011
+
+- nouveaux tests dans zoom, openball, closeball, holeclosing...
+- suppression de dilatdisc, erosdisc, opendisc, closedisc (ldist.c)
+  et remplacement par XXXXXball
+- le code 0 pour les calculs de distance correspond maintenant à une
+  distance euclidienne exacte arrondie

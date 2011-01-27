@@ -65,6 +65,17 @@ There are 3 modes, depending on the number of arguments.
 
 /* Michel Couprie - decembre 1996 */
 
+/*
+%TEST zoom %IMAGES/2dbyte/binary/b2hebreu.pgm 0.7 %RESULTS/zoom_b2hebreu_07.pgm
+%TEST zoom %IMAGES/2dbyte/binary/b2hebreu.pgm 1.7 %RESULTS/zoom_b2hebreu_17.pgm
+%TEST zoom %IMAGES/2dbyte/binary/b2hebreu.pgm x 100 %RESULTS/zoom_b2hebreu_x_100.pgm
+%TEST zoom %IMAGES/2dbyte/binary/b2hebreu.pgm 0.5 0.25 1 %RESULTS/zoom_b2hebreu_05_025_1.pgm
+%TEST zoom %IMAGES/3dbyte/binary/b3a.pgm 0.7 %RESULTS/zoom_b3a_07.pgm
+%TEST zoom %IMAGES/3dbyte/binary/b3a.pgm 1.7 %RESULTS/zoom_b3a_17.pgm
+%TEST zoom %IMAGES/3dbyte/binary/b3a.pgm x 100 %RESULTS/zoom_b3a_x_100.pgm
+%TEST zoom %IMAGES/3dbyte/binary/b3a.pgm 0.5 0.25 0.9 %RESULTS/zoom_b3a_05_025_09.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
