@@ -285,7 +285,7 @@ void veriftopo()
     for (j = 0; j < 4; j++) if (Comp4Tab[m][j]) n++;
     if (n != TopoTab[i][0]) 
 #ifdef MC_64_BITS
-      printf("ERREUR pour %lld\n", i);
+      printf("ERREUR pour %lld\n", (long long int)i);
 #else
       printf("ERREUR pour %d\n", i);
 #endif
@@ -298,7 +298,7 @@ void veriftopo()
     for (j = 0; j < 4; j++) if (Comp8Tab[i][j]) n++;
     if (n != TopoTab[i][1]) 
 #ifdef MC_64_BITS
-      printf("ERREUR pour %lld\n", i);
+      printf("ERREUR pour %lld\n", (long long int)i);
 #else
       printf("ERREUR pour %d\n", i);
 #endif

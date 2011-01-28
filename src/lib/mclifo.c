@@ -50,15 +50,13 @@ knowledge of the CeCILL license and that you accept its terms.
 /* ==================================== */
 Lifo * CreeLifoVide(index_t taillemax)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "CreeLifoVide"
 {
   Lifo * L = (Lifo *)calloc(1,sizeof(Lifo) + sizeof(index_t) * (taillemax-1));
   if (L == NULL)
   {   
-#ifdef MC_64_BITS
-    fprintf(stderr, "CreeLifoVide() : malloc failed : %lld bytes\n",  sizeof(Lifo) + sizeof(index_t) * (taillemax-1));
-#else
-    fprintf(stderr, "CreeLifoVide() : malloc failed : %d bytes\n",  sizeof(Lifo) + sizeof(index_t) * (taillemax-1));
-#endif
+    fprintf(stderr, "%s: calloc failed\n", F_NAME);
     return NULL;
   }
   L->Max = taillemax;
@@ -83,10 +81,12 @@ index_t LifoVide(Lifo * L)
 /* ==================================== */
 index_t LifoPop(Lifo * L)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LifoPop"
 {
   if (L->Sp == 0)
   {
-    fprintf(stderr, "erreur Lifo vide\n");
+    fprintf(stderr, "%s: empty Lifo\n", F_NAME);
     exit(1);
   }
   L->Sp -= 1;
@@ -96,10 +96,12 @@ index_t LifoPop(Lifo * L)
 /* ==================================== */
 index_t LifoHead(Lifo * L)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LifoHead"
 {
   if (L->Sp == 0)
   {
-    fprintf(stderr, "erreur Lifo vide\n");
+    fprintf(stderr, "%s: empty Lifo\n", F_NAME);
     exit(1);
   }
   return L->Pts[L->Sp-1];
@@ -108,10 +110,12 @@ index_t LifoHead(Lifo * L)
 /* ==================================== */
 void LifoPush(Lifo * L, index_t V)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LifoPush"
 {
   if (L->Sp > L->Max - 1)
   {
-    fprintf(stderr, "erreur Lifo pleine\n");
+    fprintf(stderr, "%s: full Lifo\n", F_NAME);
     exit(1);
   }
   L->Pts[L->Sp] = V;

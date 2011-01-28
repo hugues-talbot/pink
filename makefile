@@ -2,9 +2,10 @@ PINK = .
 # Version LINUX
 #  XLIB = -L/usr/X11R6/lib -lX11 -lXext
   XINCL = /usr/include/X11R6
-  CC = gcc
+#  CC = gcc
+  CC = icc
   CPP = g++
-  CCFLAGS = -g -DUNIXIO -Wall
+  CCFLAGS = -g -DUNIXIO -DMC_64_BITS -Wall
   ODIR = $(PINK)/linux/obj
   BDIR = $(PINK)/linux/bin
   LIBS = -lm

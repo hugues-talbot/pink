@@ -2227,11 +2227,8 @@ void DrawPsKh2d(struct xvimage *k, int32_t m, int32_t p, int32_t re, int32_t ri,
 
   printf("%%!PS-Adobe-2.0 EPSF-2.0\n");
   printf("%%%%Creator: cube2ps by MC - 1998\n");
-#ifdef MC_64_BITS
-  printf("%%%%BoundingBox: 0 0 %lld %lld\n", m+m+p*rs, m+m+p*cs);
-#else
-  printf("%%%%BoundingBox: 0 0 %d %d\n", m+m+p*rs, m+m+p*cs);
-#endif
+  printf("%%%%BoundingBox: 0 0 %d %d\n", (int)(m+m+p*rs), (int)(m+m+p*cs));
+
   /* printf("2 setlinewidth\n"); */
 
 #ifdef TRACELIGNES
