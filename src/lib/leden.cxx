@@ -42,6 +42,8 @@
 #define MAX_RANDOM INT_MAX
 #define INQUEUE    128 // in queue marker
 
+//#define VERBOSE
+
 /* this is not very efficient but quite readable */
 /* count the number of neighbours exactly equal to val */
 static int nb1vois(uint8_t *image, long p, int dimx, int dimy, int dimz, int val)
@@ -72,9 +74,9 @@ static int nb1vois(uint8_t *image, long p, int dimx, int dimy, int dimz, int val
 }
 
 int32_t ledengrowth(uint8_t *in,
-       	            int32_t dimx,
-                    int32_t dimy,
-                    int32_t dimz,
+       	            index_t dimx,
+                    index_t dimy,
+                    index_t dimz,
                     int32_t nbiter,
                     int32_t grow,
                     int32_t shrink,
@@ -82,18 +84,20 @@ int32_t ledengrowth(uint8_t *in,
 {
 #undef F_NAME
 #define F_NAME "ledengrowth"
-	int32_t i, ps, nbpix, dx, dy, dz, chosen;
+	index_t i, ps, nbpix, dx, dy, dz, chosen;
 	long delta, size;
 	uint8_t *p, *end, *pix;
 	std::deque< uint8_t* > borderqueue;
 	Set * parcouru;
-
+#ifdef VERBOSE
+	printf("%s: dx=%d, dy=%d, dz=%d, topo=%d\n", F_NAME, dimx, dimy, dimz, topo);
+#endif
 	if ((dimz == 1) && (topo != 4) && (topo != 8))
 	{
 	  fprintf(stderr, "%s: parameter topo must be 4 or 8 in 2D\n", F_NAME);
 	  return 0;
 	}
-	else if ((topo != 6) && (topo != 26))
+	else if ((dimz > 1) && (topo != 6) && (topo != 26))
 	{
 	  fprintf(stderr, "%s: parameter topo must be 6 or 26 in 3D\n", F_NAME);
 	  return 0;

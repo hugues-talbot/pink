@@ -86,7 +86,8 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image1;
-  int32_t niter, grow, shrink, topo, rs, cs, ds;
+  index_t rs, cs, ds;
+  int32_t niter, grow, shrink, topo;
   uint8_t *In;
 
   if (argc != 7)
