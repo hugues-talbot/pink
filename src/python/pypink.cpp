@@ -1016,37 +1016,37 @@ UI_WRAP_FUNCTION(
 // NOTE: fft up for discussion
 // NOTE: gettree return value type
 
-UI_WRAP_FUNCTION(
-  "gradill",
-  lgradill,
-  ( arg("image"), arg("alpha") ),
-  doc__gradill__c__
-  );
-#include BOOST_PP_UPDATE_COUNTER()
+// UI_WRAP_FUNCTION(
+//   "gradill",
+//   lgradill,
+//   ( arg("image"), arg("alpha") ),
+//   doc__gradill__c__
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
 
-UI_WRAP_FUNCTION(
-  "gradinf",
-  lgradinf,
-  (arg("image")),
-/*  doc__gradinf__c__*/ "WRITE ME!!!"
-  );
-#include BOOST_PP_UPDATE_COUNTER()
+// UI_WRAP_FUNCTION(
+//   "gradinf",
+//   lgradinf,
+//   (arg("image")),
+// /*  doc__gradinf__c__*/ "WRITE ME!!!"
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
 
-UI_WRAP_FUNCTION(
-  "gradinf3d",
-  lgradinf3d,
-  (arg("image")),
-  /* doc__gradinf3d__c__ */ "WRITE ME!!!"
-  );
-#include BOOST_PP_UPDATE_COUNTER()
+// UI_WRAP_FUNCTION(
+//   "gradinf3d",
+//   lgradinf3d,
+//   (arg("image")),
+//   /* doc__gradinf3d__c__ */ "WRITE ME!!!"
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
 
-UI_WRAP_FUNCTION(
-  "gradsup",
-  lgradsup,
-  (arg("image")),
-  /*doc__gradsup__c__*/ "WRITE ME!!!"
-  );
-#include BOOST_PP_UPDATE_COUNTER()
+// UI_WRAP_FUNCTION(
+//   "gradsup",
+//   lgradsup,
+//   (arg("image")),
+//   /*doc__gradsup__c__*/ "WRITE ME!!!"
+//   );
+// #include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_FUNCTION(
   "grayskel",

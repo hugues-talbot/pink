@@ -1,8 +1,9 @@
+// -*- mode: C; coding: utf-8 -*-
 /*! \mainpage
- 
-  \section warning Avertissement
 
-Copyright ESIEE (2009) 
+  \section notice Notice 
+
+Copyright ESIEE (2009-2011) 
 
 m.couprie@esiee.fr
 
@@ -33,107 +34,68 @@ data to be ensured and,  more generally, to use and operate it in the
 same conditions as regards security. 
 
 The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
+knowledge of the CeCILL license. You don't have to accept the License,
+but note that nothing other than this License grants you permission 
+to use, propagate or modify any covered work.
 
-  \section contributors Contributeurs
+\section credits Credits
 
-Michel Couprie<br>
-Laurent Najman: localextrema, saliency<br>
-Hugues Talbot: fmm <br>
-Jean Cousty: redt 3d (reverse euclidean distance transform - algo de D. Coeurjolly), watershedthin, opérateurs sur les graphes d'arêtes (GA), forêts de poids min (MSF), waterfall, recalagerigide_translateplane<br>
-Xavier Daragon: dist, distc (distance euclidienne quadratique 3D)<br>
-André Vital Saude: radialopening, divers scripts tcl, hma<br>
-Nicolas Combaret: toposhrinkgray, ptselectgray<br>
-John Chaussard: lballincl, cropondisk, shrinkondisk<br>
-Christophe Doublier: zoomint<br>
-Hildegard Koehler: lintophat<br>
-Cédric Allène: gettree, histolisse, labeltree, nbcomp, pgm2vtk, seuilauto<br>
-Gu Jun: maxdiameter<br>
-Sébastien Couprie: mcsplines.c<br>
-Rita Zrour: medialaxis (axe médian euclidien exact - algo de Rémy-Thiel),
-dist, distc (distance euclidienne quadratique exacte - algo de Saito-Toriwaki)<br>
-Laurent Mercier: gestion d'un masque dans delaunay<br>
+<ul>
+  <li> Code licensed under CeCILL license
+  <ul> 
+    <li> <b>Michel Couprie</b>
+    <li> <b>Laurent Najman</b>: localextrema, saliency
+    <li> <b>Hugues Talbot</b>: fmm 
+    <li> <b>Jean Cousty</b>: redt 3d (reverse euclidean distance transform - algo de D. Coeurjolly), watershedthin, opÃ©rateurs sur les graphes d'arÃªtes (GA), forÃªts de poids min (MSF), waterfall, recalagerigide_translateplane
+    <li> <b>Xavier Daragon</b>: dist, distc (distance euclidienne quadratique 3D)
+    <li> <b>AndrÃ© Vital Saude</b>: radialopening, divers scripts tcl, hma
+    <li> <b>Nicolas Combaret</b>: toposhrinkgray, ptselectgray
+    <li> <b>John Chaussard</b>: lballincl, cropondisk, shrinkondisk
+    <li> <b>Christophe Doublier</b>: zoomint
+    <li> <b>Hildegard Koehler</b>: lintophat
+    <li> <b>CÃ©dric AllÃ¨ne</b>: gettree, histolisse, labeltree, nbcomp, pgm2vtk, seuilauto
+    <li> <b>Gu Jun</b>: maxdiameter
+    <li> <b>SÃ©bastien Couprie</b>: mcsplines.c
+    <li> <b>Rita Zrour</b>: medialaxis (axe mÃ©dian euclidien exact - algo de RÃ©my-Thiel),
+      dist, distc (distance euclidienne quadratique exacte - algo de Saito-Toriwaki)
+    <li> <b>Laurent Mercier</b>: gestion d'un masque dans delaunay
+    <li> <b>Laszlo Marak (ujoimro)</b>: continuous maximum flows, Unger flows, Python front-end
+   </ul>
+  <li> Code under different free software licenses
+    <ul>
+      <li> <b>David Coeurjolly</b>: lvoronoilabelling.c
+      <li> <b>Dario Bressanini</b>: mcpowell.c
+      <li> <b>Andrew W. Fitzgibbon</b>: lbresen.c
+      <li> <b>Lilian Buzer</b>: lbdigitalline.cxx
+   </ul>
+</ul>
+\section compiling Compiling
 
-CODE UNDER FREE LICENCE INCLUDED
+Pink can be compiled with two sets of tools. For the compilation with
+dependency checking and Python front-end, visit the page \ref
+compiling_cmake. For the classical compilation look at \ref
+compiling_make. 
 
-David Coeurjolly: lvoronoilabelling.c<br>
-Dario Bressanini: mcpowell.c<br>
-Andrew W. Fitzgibbon: lbresen.c<br>
-Lilian Buzer: lbdigitalline.cxx
+\section development Development
+For developing Pink look at the \ref dev_conventions page. For
+exporting functions in Python look at the \ref python_export page. 
 
-  \section install Installation
-
-\subsection linux Linux
-
-Pour installer la bibliothèque sous Linux, tapez:
-\verbatim
-tar zxvf pink.tgz
-mv Pinktmp Pink
-cd Pink
-makelin
-\endverbatim
-
-Les exécutables se trouvent dans Pink/linux/bin,
-les scripts dans Pink/scripts et dans Pink/tcl
-Mettez à jour votre variable $path en conséquence.
-Par exemple (en csh): 
-
-\verbatim
-setenv PINK ~coupriem/Pink
-set path=( $path $PINK/linux/bin $PINK/scripts $PINK/tcl )
-\endverbatim
-
-\subsection windows Windows
-
-Installez tout d'abord <A HREF="http://www.mingw.org/">MinGW</A> (Minimalist GNU For Windows), 
-ainsi que le programme "make" de la distribution MinGW (installation séparée).
-
-Décompressez l'archive pink.tgz (par exemple avec WinZip ou WinRar).
-
-Modifiez selon votre configuration, les fichiers "mgw.make" et "makemgw.bat".
-
-Ouvrez une fenêtre DOS et mettez-vous dans le répertoire principal de Pink.
-
-tapez: makemgw
-
-Les exécutables se trouvent dans Pink/bin,
-mettez à jour votre variable PATH en conséquence.
-Par exemple :
-
-\verbatim
-set PATH=c:\Pink\bin;%PATH%
-\endverbatim
-
-Erreurs de compilation possibles et solutions:
-
-message d'erreur contenant "M_PI"
-cause: version MinGW obsolete
-solution rapide: recopier le contenu du fichier Pink/tools/pinkconst.h
-dans le fichier MinGW/include/math.h
-
-message d'erreur contenant "uint8_t", "int8_t", "uint16_t", etc 
-cause: version MinGW obsolete
-solution rapide: recopier le contenu du fichier Pink/tools/pinktypes.h
-dans le fichier MinGW/include/math.h
-
-message d'erreur contenant "chrono"
-cause: flag de mise au point oublié
-solution rapide: chercher le "#define CHRONO" dans le fichier source et le retirer
-
-\subsection associes Logiciels associés
-
-Pour une utilisation optimale, les logiciels suivants doivent être
-installés:<br><br>
+\section dependencies Dependencies
+For optimal use, the following packages should be installed:
+<br><br>
+<A HREF="http://www.python.org">Python</A><br>
 <A HREF="http://www.doxygen.org">Doxygen</A><br>
 <A HREF="http://dev.scriptics.com/">ActiveTcl 8.3</A><br>
 <A HREF="http://public.kitware.com/VTK/">VTK</A><br>
 <A HREF="http://www.mplayerhq.hu/design7/news.html">MPlayer</A><br>
 <A HREF="http://www.gnuplot.info/">Gnuplot</A><br>
 
+Note,
+that the detailed dependencies can be found in file 'dependencies'.
 
 <HR>
 Michel Couprie  -  Professeur  -  ESIEE Paris
-Laboratoire d'Informatique Gaspard-Monge, Université Paris-Est
+Laboratoire d'Informatique Gaspard-Monge, UniversitÃ© Paris-Est
 ESIEE 2, Bd Blaise Pascal - B.P. 99
 93162 Noisy-Le-Grand CEDEX
 mail: m.couprie@esiee.fr 
@@ -198,3 +160,4 @@ tel:  01 45 92 66 88          fax:  01 45 92 66 99
 \defgroup mesh3d Three-dimensional meshing
 */
 
+// LuM end of file
