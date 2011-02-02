@@ -99,58 +99,58 @@ namespace pink {
     } /* py_closing */
 
 
-    char_image closeball(
-      const char_image & src, 
-      int r,
-      int mode=0
-      )
-    {
-      if ((mode != 0) && (mode != 2) && (mode != 4) && 
-          (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
-      {
-        error("dist = [0|2|4|8|6|18|26]");
-      } /* if */
+    // char_image closeball(
+    //   const char_image & src, 
+    //   int r,
+    //   int mode=0
+    //   )
+    // {
+    //   if ((mode != 0) && (mode != 2) && (mode != 4) && 
+    //       (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
+    //   {
+    //     error("dist = [0|2|4|8|6|18|26]");
+    //   } /* if */
 
-      char_image result;
-      result.copy(src);
+    //   char_image result;
+    //   result.copy(src);
   
 
-      if (result.get_size().size()==2)
-      {
-        if (! ldilatdisc(result.get_output(), r, mode))
-        {
-          error("function ldilatdisc failed");
-        }
-        if (! lerosdisc(result.get_output(), r, mode))
-        {
-          error("function lerosdisc failed");
-        }
-      }
-      else /* NOT result.get_size().size()==2 */
-      {
-        if (! ldilatball(result.get_output(), r, mode))
-        {
-          error("function ldilatball failed");
-        }
-        if (! lerosball(result.get_output(), r, mode))
-        {
-          error("function lerosball failed");
-        }
-      } /* NOT result.get_size().size()==2 */
+    //   if (result.get_size().size()==2)
+    //   {
+    //     if (! ldilatdisc(result.get_output(), r, mode))
+    //     {
+    //       error("function ldilatdisc failed");
+    //     }
+    //     if (! lerosdisc(result.get_output(), r, mode))
+    //     {
+    //       error("function lerosdisc failed");
+    //     }
+    //   }
+    //   else /* NOT result.get_size().size()==2 */
+    //   {
+    //     if (! ldilatball(result.get_output(), r, mode))
+    //     {
+    //       error("function ldilatball failed");
+    //     }
+    //     if (! lerosball(result.get_output(), r, mode))
+    //     {
+    //       error("function lerosball failed");
+    //     }
+    //   } /* NOT result.get_size().size()==2 */
 
-      return result;
-    } /* py_closeball */
+    //   return result;
+    // } /* py_closeball */
 
   } /* namespace python */
 } /* namespace pink */
 
 
-UI_EXPORT_ONE_FUNCTION(
-  closeball, 
-  pink::python::closeball, 
-  ( arg("image"), arg("the ray of the ball"), arg("distance function")=0 ),
-  doc__closeball__c__
-  );
+// UI_EXPORT_ONE_FUNCTION(
+//   closeball, 
+//   pink::python::closeball, 
+//   ( arg("image"), arg("the ray of the ball"), arg("distance function")=0 ),
+//   doc__closeball__c__
+//   );
 
 
 

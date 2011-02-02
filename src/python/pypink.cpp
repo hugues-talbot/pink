@@ -127,7 +127,7 @@ using namespace pink;
 // void xvimage_object_export();
 // void writeimage_export();
 void vint_object_export(); void vector_int_object_export();void wshedtopo_export();
-void erosball_export();void medianfilter_export();
+/*void erosball_export()*/;void medianfilter_export();
 
 // skeleton function
 void skeleton2_export();void zoom_export();
@@ -139,10 +139,10 @@ void uiSqhool_object_export(); void gradient_export();
 void read_raw_image_export(); void seuil_export(); void plane3d_export(); void draw_plane_export();
 void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
 void generate_rgb_image_export(); void closing_export(); void closeball_export(); void minmax_export();
-void dilatball_export(); void asfbin_export(); 
+/*void dilatball_export();*/ void asfbin_export(); 
 void skelcurv_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
-void openball_export(); void gradmorph_export(); void mcube_export(); void minima_export();
+/*void openball_export();*/ void gradmorph_export(); void mcube_export(); void minima_export();
 
 
 // not sure this is the correct thing to do here HT
@@ -1549,7 +1549,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
 
   vint_object_export(); // self explaining
 
-  wshedtopo_export();  erosball_export();  medianfilter_export();
+  wshedtopo_export(); /* erosball_export();*/  medianfilter_export();
 
   // the skeleton function
   skeleton2_export();  zoom_export();
@@ -1566,10 +1566,10 @@ BOOST_PYTHON_MODULE(libcpp_pink)
 //  draw_plane_export();
 //  project_plane_export();
   border_export();  identifyline_export();  surimp_export();  generate_rgb_image_export();
-  closing_export();  closeball_export();  minmax_export();  dilatball_export();
+  closing_export(); /* closeball_export();*/  minmax_export();  /* dilatball_export();*/
   asfbin_export();  skelcurv_export();
   readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
-  htkern_export();  openball_export();    gradmorph_export(); mcube_export(); minima_export();
+  htkern_export();  /*openball_export();*/    gradmorph_export(); mcube_export(); minima_export();
   
 
 
