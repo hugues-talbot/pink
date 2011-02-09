@@ -55,10 +55,7 @@
 
   make_function is a template. In the first parameter you specify the
   image type.  Second, you specify the types of the parameters and
-  last you put the pointer to your Pink function.  Third you
-  specify the names of the parameters to appear in Python's
-  help. Finally you put a string with the documentation which will
-  appear in Python's help.
+  last you put the pointer to your Pink function. 
 
   Example:
 

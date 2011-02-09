@@ -32,6 +32,20 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+/** Pink
+
+ \brief This file holds the basic image allocation functions. 
+    
+ \ingroup development
+
+ \file   mcimage.h
+
+ \author Michel Couprie, 2009
+
+*/
+
+
 #ifndef MCIMAGE__H__
 #define MCIMAGE__H__
 
@@ -53,11 +67,28 @@ typedef int32_t index_t;
 /* prototypes for mcimage.c    */
 /* ============== */
 
+/**
+\brief Allocates an image object with the given size and type
+
+\param name Not used
+\param rs x-size
+\param cs y-size
+\param ds z-size
+\param t t-size
+\return The pointer to the image.
+*/
 extern struct xvimage *allocimage(char * name, index_t rs, index_t cs, index_t ds, int32_t t);
+
 extern struct xvimage *allocmultimage(char * name, index_t rs, index_t cs, index_t ds, index_t ts, index_t nb, int32_t t);
 extern void razimage(struct xvimage *f);
 extern struct xvimage *allocheader(char * name, index_t rs, index_t cs, index_t d, int32_t t);
 extern int32_t showheader(char * name);
+
+/**
+\brief Frees an image object
+
+\param image The pointer to the image
+*/
 extern void freeimage(struct xvimage *image);
 extern struct xvimage *copyimage(struct xvimage *f);
 extern int32_t copy2image(struct xvimage *dest, struct xvimage *source);
@@ -65,6 +96,12 @@ extern int32_t equalimages(struct xvimage *im1, struct xvimage *im2);
 extern void list2image(struct xvimage * image, double *P, index_t n);
 extern double * image2list(struct xvimage * image, index_t *n);
 
+/**
+\brief Writes an image to disk.
+
+\param image The pointer to the image
+\param filename The file to write the image at. 
+*/  
 extern void writeimage(
   struct xvimage * image,
   char *filename
@@ -109,6 +146,12 @@ extern void writergbascimage(
   char *filename
 );
 
+/**
+\brief Reads an image from a file
+
+\param filename The name of the image file. 
+\return A Pointer to a newly allocated image. 
+*/
 extern struct xvimage * readimage(
   char *filename
 );

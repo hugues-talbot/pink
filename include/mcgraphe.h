@@ -1,3 +1,4 @@
+// -*- mode: C; coding: utf-8 -*-
 /*
 Copyright ESIEE (2009) 
 
@@ -74,12 +75,12 @@ typedef double TYP_VSOM;
 /* ================================================ */
 
 /*! \struct cell
-    \brief structure de cellule pour les listes chaînees de successeurs.
+    \brief structure de cellule pour les listes chaÃ®nees de successeurs.
 */
 typedef struct cell {
 //! index du sommet
   int32_t som;
-//! poids de l'arc pour les graphes pondérés 
+//! poids de l'arc pour les graphes pondÃ©rÃ©s 
   TYP_VARC v_arc; 
 //! suite de la liste ou pointeur NULL
   struct cell * next; 
@@ -107,29 +108,29 @@ typedef struct graphe {
 
   /* representation par listes chainees de successeurs (application gamma) */
 
-//!  tableau des cellules en réserve 
+//!  tableau des cellules en rÃ©serve 
   pcell reserve;    
-//!  liste des cellules libres gérée en pile lifo 
+//!  liste des cellules libres gÃ©rÃ©e en pile lifo 
   pcell libre;      
-//!  tableau des listes de successeurs indexé par les sommets 
+//!  tableau des listes de successeurs indexÃ© par les sommets 
   pcell * gamma;    
 
   /* representation par liste d'arcs 
      (vecteurs tete (sommet initial), queue (sommet final)) */
 
-//!  tableau des extremités initiales d'arcs 
+//!  tableau des extremitÃ©s initiales d'arcs 
   int32_t *tete;        
-//!  tableau des extremités finales d'arcs 
+//!  tableau des extremitÃ©s finales d'arcs 
   int32_t *queue;       
 
   /* informations additionelles ajoutees aux arcs */
 
-//!  tableau des valeurs associées aux arcs
+//!  tableau des valeurs associÃ©es aux arcs
   TYP_VARC *v_arcs;
 
   /* informations additionelles ajoutees aux sommets */
 
-//!  tableau des valeurs associées aux sommets
+//!  tableau des valeurs associÃ©es aux sommets
   TYP_VSOM *v_sommets;
 
 //!  abcisses des sommets 

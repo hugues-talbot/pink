@@ -33,6 +33,19 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
+/** Pink
+
+ \ingroup development 
+ \brief This file hold the basic type declarations used in the C
+ functions of Pink. 
+
+ \file   mccodimage.h
+
+ \author Michel Couprie
+
+*/
+
+
 #ifndef MCCODIMAGE__HPP__
 #define MCCODIMAGE__HPP__
 
@@ -47,9 +60,38 @@ extern "C" {
 #define NDG_MAX 255            /* niveau de gris max */
 #define NDG_MIN 0              /* niveau de gris min */
 
-typedef struct {float re; float im;} complex;
-typedef struct {double re; double im;} dcomplex;
+  /**
+     \brief Complex number, represented by floats.
+  */  
+  typedef struct {
 
+    /**
+       \brief real part
+     */
+    float re;
+
+    /**
+       \brief imaginary part
+     */
+    float im;
+  } complex;
+
+  /**
+     \brief Complex number, represented by doubles.
+  */  
+  typedef struct {
+    /**
+       \brief real part
+    */
+    double re;
+
+    /**
+       \brief imaginary part
+     */
+    double im;
+  } dcomplex;
+
+  
 /* definitions for data storage type,
    uint32_t data_storage_type; */
 #define	VFF_TYP_BIT		0	/* pixels are on or off (binary image)*/
@@ -64,22 +106,74 @@ typedef struct {double re; double im;} dcomplex;
 #define VFF_TYP_COMPLEX		7	/* pixels are complex (single precision)*/
 #define VFF_TYP_DCOMPLEX	8	/* pixels are complex (double precision)*/
 
-struct xvimage {
-  char *name;                          /* dummy - not used anymore */
-  index_t row_size;                    /* Size of a row (number of columns) */
-  index_t col_size;                    /* Size of a column (number of rows) */
-  index_t depth_size;                  /* Number of planes (for 3d images) */
-  index_t time_size;                   /* Number of (2d or 3d) images */
-  index_t num_data_bands;	       /* Number of bands per data pixel,
-					   or number of bands per image, or
-					   dimension of vector data, or
-					   number of elements in a vector */
-  int32_t data_storage_type;           /* storage type for disk data */
-  double xdim, ydim, zdim;             /* voxel dimensions in real world */
-  index_t xmin, xmax;                  /* region of interest: x coordinates */
-  index_t ymin, ymax;                  /* region of interest: y coordinates */
-  index_t zmin, zmax;                  /* region of interest: z coordinates */
-  void * image_data;                   /* pointer on raw data */
+/**
+   \brief The image class for the C functions.
+
+   This class holds the image data for the C functions of Pink.
+*/  
+  struct xvimage {
+
+    /**
+       \brief Dummy - not used anymore.
+    */
+    char *name;  
+
+    /**
+       \brief Size of a row (number of columns)
+    */
+    index_t row_size;                    
+
+    /**
+       \brief Size of a column (number of rows)
+    */
+    index_t col_size;
+
+    /**
+       \brief Number of planes (for 3d images)
+    */
+    index_t depth_size;                  
+
+    /**
+       \brief Number of (2d or 3d) images
+    */
+    index_t time_size;                  
+
+    /**
+       \brief Number of bands per data pixel, or number of bands per
+       image, or dimension of vector data, or number of elements in a
+       vector.
+    */
+    index_t num_data_bands;
+    
+    /**
+       \brief Storage type for disk data.
+    */
+    int32_t data_storage_type;           
+
+    /**
+       \brief Voxel dimensions in real world
+    */
+    double xdim, ydim, zdim;             
+
+    /**
+       \brief Region of interest: x coordinates
+    */
+    index_t xmin, xmax;
+
+    /**
+       \brief Region of interest: y coordinates
+    */
+    index_t ymin, ymax;                  
+
+    /**
+       \brief Region of interest: z coordinates
+    */
+    index_t zmin, zmax;                  
+
+    /**
+       \brief Pointer on raw data
+    */
+    void * image_data;                   
 };
 
 typedef struct xvimage xvimage; // LuM

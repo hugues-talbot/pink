@@ -10,8 +10,20 @@
   ujoimro@gmail.com
 */
 
+/**
 
-#ifdef __cplusplus
+ \brief This file contains the C++ image class declarations
+
+ \ingroup development
+ 
+ \file   ujimage.hpp
+
+ \author UjoImro, 2009-2011
+
+*/
+
+
+// #ifdef __cplusplus // doxygen does not like it 
 #ifndef __UJIMAGE_HPP
 #define __UJIMAGE_HPP
 
@@ -75,16 +87,27 @@ namespace pink{
 //   };									
   
   									
-  // helper function for reading and writing from and to xvimage
+  /**
+     helper function for reading and writing from and to xvimage
+  */
   boost::shared_ptr<vint> getDimensions( const int x, const int y, const int z, const int t );
+  
   void setDimensions(const vint & dim, int & x, int & y, int & z, int & t);
+
+  /**
+     This function is a wrap around readimage. It returns a C++ class
+     which is then converted into ujoi<>
+   */
   boost::shared_ptr<deep_xvimage> py_readimage( std::string filename );
+
   std::string image_type_string( int pixel_type );
 
 
-  // this class will copy it's content when upcasted (constructed from xvimage)
-  // it is used, when the data is needed (in readimage for example)
-  // note: image name is fake
+  /**
+    This class will copy it's content when upcasted (constructed from xvimage).
+    It is used, when the data is needed (in readimage for example)
+    \note image name is fake
+  */
   class deep_xvimage
   {
   private:
@@ -116,6 +139,13 @@ namespace pink{
     std::string imtype(); // returns the image type
   }; /* xvImage: xvimage */
  
+  /**
+  \brief This class forms the base of all image classes.
+  
+  It is used in template metaprogramming. As all the image types are
+  derived from this type, you can test for an arbitrary type if it's
+  an image. See \ref pink::python::convert_if .
+  */
   class pink_image
   {
   public:
@@ -181,10 +211,13 @@ namespace pink{
   // bool operator!=( )
   
   
-  
-  
-  template <class pixel_type_> // pixel_type can be char, short, int, float and double
-  // while int_pixel_type is the type's encoding into integer. See 'mccodimage.h'
+  /**
+     \brief This class represents the image types used in Pink-C++ and Pink-Python.
+
+     \tparam pixel_type_ can be 'char', 'short', 'int', 'float' and 'double'
+     while int_pixel_type is the type's encoding into integer. See 'mccodimage.h'     
+  */
+  template <class pixel_type_> 
   class ujoi:
     public pink_image,
     public image_type_specific<pixel_type_>,
@@ -207,29 +240,183 @@ namespace pink{
  
   public:
 
-    ujoi( ); // creates an empty image, used in uiSqhool for determining the image type
+    /**
+      Creates an empty image, used in uiSqhool for determining the image type.
+    */
+    ujoi( ); 
+
+    /**
+    \brief Reads an empty image from a file
+    \note You have to know the image type prior to reading.
+
+    \param filename The image file
+    \param debug Holds an optional name for debug purposes. Never
+    really catched on.
+    */    
     ujoi( std::string filename, std::string debug="" );
-    ujoi( const xvimage & src, std::string debug="" ); // deep constructor takes xvimage and makes a copy
-                                                  // it is not embeddable becouse readimage's using malloc/free, whereas boost's using new/delete 
-    ujoi( const ujoi< pixel_type > & src, std::string debug="" ); // SHALLOW! copy_constructor. For conversion use convert2float
-                                                             // for deep_copy use operator=
-    image_type operator=( const image_type & other );     // SHALLOW! copy constructor
-    void reset( image_type & other );         // runtime shallow copy
-    image_type copy( const image_type & other ); // DEEP copy!!    
- 
+
+    /**
+    \brief Deep constructor. 
+    Takes 'xvimage' and makes a copy. It is not embeddable becouse
+    readimage's using malloc/free, whereas boost's using new/delete 
+    \param src Source object.
+    \param debug Holds an optional name for debug purposes. Never
+    really catched on.
+    */    
+    ujoi( const xvimage & src, std::string debug="" ); 
+
+    /**
+    \brief SHALLOW! copy_constructor. 
+    \note For conversion use convert2float
+    \param src Source object
+    \param debug Holds an optional name for debug purposes. Never
+    really catched on.
+    */    
+    ujoi( const ujoi< pixel_type > & src, std::string debug="" ); 
+
+    /**
+    \brief SHALLOW! copy constructor
+
+    This operator takes an object, and copies it's data pointers. If
+    you create an object in a function it assures the return of the
+    object without copying it's data. 
+
+    Example:
+    \code
+    char_image function( ... )
+    {
+      vint size(3);
+      size << 1000, 1000, 1000;
+      char_image result(size);
+      
+      return result;
+    }
+    \endcode
+
+    Normally at the end of this function the compiler calls the copy
+    constructor. Here, however as the data is held in smart pointers,
+    only the pointers will be copied. For this reason the above
+    example returns the 'result' in constant time.
+
+    \param other The object to copy
+    \return It supports multiple attribution
+    */    
+    image_type operator=( const image_type & other );     
+
+    /**
+      runtime shallow copy
+    */
+    void reset( image_type & other );         
+
     
+    /**
+    \brief DEEP copy
+    This method is used, if you need a runtime deep-copy of the
+    object. The other object needs to have the same type but NOT the
+    same size. The old data is reset; that is deleted this was the
+    last shallow copy and kept if there are other shallow objects
+    using it. 
+    \param other The image to copy
+    \return It supports multiple copies. 
+    */    
+    image_type copy( const image_type & other );
+     
+    /**
+    \brief Creates an empty image of the given size. 
+    This constructor is mostly used from python, as it takes a python
+    vector. 
 
+    \param dim The dimensions of the image
+    \param debug
+    */    
     ujoi( const boost::python::list & dim, std::string debug="" );
+
+
+    /**
+    \brief Creates an empty image of the given size. 
+
+    \param dim The dimensions of the image
+    \param debug
+    */        
     ujoi( const vint & dim, std::string debug="" );
+
+
+    /**
+    The default destructor
+    */
     virtual ~ujoi(); // default destructor
-    ujoi( const vint & dim, boost::shared_array<pixel_type> data, std::string debug="" ); // used to construct from ujif.
 
-    pixel_type & operator[]( int pos ); // index acces to the elements
-    const pixel_type & operator[]( int pos ) const; // const index acces to the elements
+    /**
+      Used to construct from ujif.
+    */
+    ujoi( const vint & dim, boost::shared_array<pixel_type> data, std::string debug="" );
 
+    /**
+    \brief Index access to the pixels
+    With this operator you can access the pixels, as the image was a
+    vector; regardless of its dimensions.
+    \param pos The number of the pixel in the linear array.
+    \return Reference to the pixel.
+
+    Example:
+    \code
+    vint size(3);
+    size << 10,20,30;
+    char_image I(size);
+    std::cout << I[100];
+    I[200]=3;
+    \endcode
+    */    
+    pixel_type & operator[]( int pos );
+    const pixel_type & operator[]( int pos ) const;
+
+    /**
+    \brief 'vint' access to the pixels
+    With this operator you can access the pixels, by specifying the
+    position of the pixel with a 'vint' vector. 
+    \param pos A vector pointing somewhere in the image. 
+    \return Reference to the pixel.
+    
+    \note The method tests if the vector is inside the image in DEBUG
+    mode. In RELEASE mode, for performance reasons it accepts
+    anything. If the code fail in the line where you access the image
+    elements, you should consider recompiling in debug mode.
+
+    Example:
+    \code
+    vint size(3);
+    size << 10,20,30;
+
+    vint position(3);
+    position << 3,4,2;
+
+    char_image I(size);
+    std::cout << I[position];
+    position << 4,4,4;
+    I[position]=3;
+    \endcode
+    */    
     pixel_type & operator[]( const vint & pos ); // vint acces to the elements
     const pixel_type & operator[]( const vint & pos ) const;  // const vint acces to the elements
 
+    /**
+    \brief Python vector access to the pixels.
+
+    This method let's you access the pixels using a Python vector. It
+    is mainly used from python 
+    Example (in the Python interpreter):
+    \code
+    I=pink.cpp.char_image([10,20,30])
+    print I[[0,3,2]]
+    \endcode
+
+    \param pos The vector with the position. 
+
+    \note The position is always checked, so the vector must point
+    somewhere in the image. 
+
+    \return A reference to the pixel
+    */    
     pixel_type & operator[]( const boost::python::list & pos ); // python list acces to the elements
     const pixel_type & operator[]( const boost::python::list & pos ) const; // const python list acces to the elements
 
@@ -249,22 +436,78 @@ namespace pink{
     PyObject * get_pixels_python();
     
     // cast operators
+
+    /**
+    \brief Cast operator. 
+    Casts the ujoi<> object to 'xvimage*' in constant time.
+    */    
     xvimage* get_output(); // this method is not exported to python. It could not even be, as boost doesn't support pointers.    
+
+    /**
+    \brief Cast operator. 
+    Casts the ujoi<> object to 'xvimage*' in constant time.
+    */    
     operator xvimage*();
+
+    /**
+    \brief Cast operator. 
+    Casts the ujoi<> object to 'xvimage*' in constant time.
+    */    
     operator const xvimage*() const;    
+
 //    std::string imtype(); 
+
+    /**
+    \brief Returns a vector with the size of the image object
+    */
     const vint & get_size() const;
+
+    /**
+    \brief Returns a vector with the center of the image object
+    */
     const vint & get_center() const;
     vint & get_center();
-    void set_center_vint( const vint & new_center );
     const vint & get_center_vint() const;
+
+    /**
+    \brief Sets the center of the image. 
+
+    The image center is mainly used in masks. For example the opening
+    operator applies the image relative to it's center. 
+    */    
+    void set_center_vint( const vint & new_center );
+
+    /**
+    \brief Sets the center of the image. This method is called from Python
+
+    The image center is mainly used in masks. For example the opening
+    operator applies the image relative to it's center. 
+    */    
     void set_center_list( const boost::python::list & new_center );
 
+    /**
+    \brief Returns a smart pointer to the array of the pixels. 
+    */    
     boost::shared_array<pixel_type> get_pixels();
     boost::shared_array<pixel_type> get_pixels() const;
 
+    /**
+    \brief Returns a string with some informations about the
+    image. Generally it's size and pixel type.
+    */
     std::string repr() const;
+
+    /**
+    \brief Fills the image with the given value. That is sets every
+    element of the image to the given value. 
+    */
     image_type fill( pixel_type value );
+
+    /**
+    \brief Fills the image with the given value. That is sets every
+    element of the image to the given value. Same as fill, but in
+    operator form.
+    */
     image_type operator=( pixel_type value ); // equivalent with function fill
 
 
@@ -277,11 +520,25 @@ namespace pink{
     image_type operator/=( const pixel_type & value );
     image_type operator*=( const pixel_type & value );
     
+    /**
+    \brief Counts the non zero pixels.
+    */
     int area();
+
+    /**
+    \brief Counts the image average value. 
+    */
     double average();
+
+    /**
+    \brief Tests if every pixel is null in the image.
+    */
     bool isnull();
-    double volume();
-     
+
+    /**
+    \brief Calculates the volume of the image (the sum of every pixel). 
+    */
+    double volume();     
   }; /* class ujoi */
 
 
@@ -478,11 +735,29 @@ double IMAGE
 
 
 
-
+  /**
+  \brief The char_image specialization.
+  */
   typedef ujoi<unsigned char/*,                 VFF_TYP_1_BYTE*/ >   char_image;
+
+  /**
+  \brief The short_image specialization.
+  */
   typedef ujoi<unsigned short int/*,            VFF_TYP_2_BYTE*/ >  short_image;
+
+  /**
+  \brief The int_image specialization.
+  */
   typedef ujoi</*long*/int/*,                   VFF_TYP_4_BYTE*/ >    int_image; // LONG INT is 8 byte's on 64 bit system
+
+  /**
+  \brief The float_image specialization.
+  */
   typedef ujoi<float/*,                         VFF_TYP_FLOAT*/  >  float_image;
+
+  /**
+  \brief The double_image specialization.
+  */
   typedef ujoi<double/*,                        VFF_TYP_DOUBLE*/ > double_image;
 
 
@@ -1394,5 +1669,5 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 }; /* namespace pink */
 #endif /* __UJIMAGE_HPP */
-#endif /* __cplusplus */
+// #endif /* __cplusplus */
 // LuM end of file

@@ -61,6 +61,7 @@ of the object points which have at least one neighboring background point.
 #include <mckhalimsky3d.h>
 #include <l3dkhalimsky.h>
 
+
 /* =============================================================== */
 int main(int argc, char **argv) 
 /* =============================================================== */

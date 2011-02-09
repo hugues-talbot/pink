@@ -10,7 +10,7 @@
   ujoimro@gmail.com
 */
 
-// this header defines a function wrapper make_function
+// this header defines a function wrapper make_result
 /** \file ui_make_result.hpp
   \ingroup development
 
@@ -31,7 +31,7 @@
   astyle -A3 -z2 -k1 -s2 -j file_pp.cpp 
   \endverbatim
 
-  Indents the preprocessed code and inserts lot's of newlines, which
+  indents the preprocessed code and inserts lot's of newlines, which
   improoves very much the readability of the code. 
 
   \section export Exporting functions from C
@@ -47,24 +47,22 @@
   \code
   def( 
     "function's name in python",
-    &make_result<image_type, T1, T2, ..., Tn, result_type, &pink_c_function>,
+    &make_result<result_type, image_type, T1, T2, ..., Tn, &pink_c_function>,
     (arg("argument 1 name"), arg("argument 2 name"), ..., arg(argument n name) )
     doc__my_c_function__c__
   )
   \endcode
 
   make_result is a template. In the first parameter you specify the
-  image type.  Second, you specify the types of the parameters and
-  last you put the pointer to your Pink function. Third you specify
-  the result_type. Fourth you specify the names of the parameters
-  to appear in Python's help. Finally you put a string with the
-  documentation which will appear in Python's help.
+  result image type. Second, you specify the input image type. Thirds
+  you specify the types of the parameters and last you put the pointer
+  to your Pink function. 
 
   Example:
 
   \code
   def( "ptisolated",
-       &make_result<char_image, int, int_image ,&lptisolated>,
+       &make_result<int_image, char_image, int, &lptisolated>,
        ( arg("image"), arg("connexity") ),
        doc__ptisolated__c__
      );
@@ -77,63 +75,68 @@
   preprocessor. The generated code looks like this:
 
   \code
-  template < class image_type,
+  template < class result_type,
+             class image_type,
              int (*mcfunction) (
-               typename convert_if<image_type>::type
+               typename convert_if<image_type>::type,
+               typename convert_if<result_type>::type
                )
              >
-  image_type make_function( const image_type& image )
+  result_type make_result( image_type image )
   {
-    image_type result;
-    result.copy(image);
-    if (!mcfunction(result )) { {
+    result_type result(image.get_size());
+    if (!mcfunction(image, result)) { {
         std::stringstream fullmessage;
-        fullmessage << "in ui_make_function.hpp: " << "mcfunction failed";
+        fullmessage << "in ui_make_result.hpp: " << "mcfunction failed";
         call_error(fullmessage.str());
       };
     }
-    return result;
-  };
-  
-  template < class image_type,
+    return result;    
+  }
+
+  template < class result_type,
+             class image_type,
              class T0 ,
              int (*mcfunction) (
-               typename convert_if<image_type>::type ,
-               typename convert_if<T0>::type )
-             >
-  image_type make_function( const image_type& image , T0 t0 )
-  {
-    image_type result;
-    result.copy(image);
-    if (!mcfunction(result , t0)) { {
-        std::stringstream fullmessage;
-        fullmessage << "in ui_make_function.hpp: " << "mcfunction failed";
-        call_error(fullmessage.str());
-      };
-    }
-    return result;
-  };
-  
-  template < class image_type,
-             class T0 ,
-             class T1 ,
-             int (*mcfunction) (
-               typename convert_if<image_type>::type ,
+               typename convert_if<image_type>::type,
                typename convert_if<T0>::type ,
-               typename convert_if<T1>::type )
+               typename convert_if<result_type>::type )
              >
-  image_type make_function( const image_type& image , T0 t0 , T1 t1 )
+  result_type make_result( image_type image , T0 t0 )
   {
-    image_type result;
-    result.copy(image);
-    if (!mcfunction(result , t0 , t1)) { {
+    result_type result(image.get_size());
+    if (!mcfunction(image, t0 , result)) { {
         std::stringstream fullmessage;
-        fullmessage << "in ui_make_function.hpp: " << "mcfunction failed";
+        fullmessage << "in ui_make_result.hpp: " << "mcfunction failed";
         call_error(fullmessage.str());
       };
     }
     return result;
-  };
+  }
+
+  template <
+    class result_type,
+    class image_type,
+    class T0 ,
+    class T1 ,
+    int (*mcfunction) (
+      typename convert_if<image_type>::type,
+      typename convert_if<T0>::type ,
+      typename convert_if<T1>::type ,
+      typename convert_if<result_type>::type
+      )
+    >
+  result_type make_result( image_type image , T0 t0 , T1 t1 )
+  {
+    result_type result(image.get_size());
+    if (!mcfunction(image, t0 , t1 , result)) { {
+        std::stringstream fullmessage;
+        fullmessage << "in ui_make_result.hpp: " << "mcfunction failed";
+        call_error(fullmessage.str());
+      };
+    }
+    return result;
+  }
   \endcode
 
   The macro generates the make_function template for each number of
@@ -162,11 +165,11 @@
 
 #define                                         \
   PARAM(z, n, text)                             \
-  param_type##n param##n
+  T##n t##n
 
 #define                                         \
   CONVERT_IF(z, n, text)                        \
-  typename convert_if<param_type##n>::type
+  typename convert_if<T##n>::type
 
 //BOOST_PP_ENUM_PARAMS( MAX_PARAMETERS, class param_type)
 
@@ -174,7 +177,7 @@
 #define                                                                 \
   MAKE_RESULT(z, n, text)                                               \
   template < class result_type, class image_type,                       \
-  BOOST_PP_ENUM_PARAMS(n, class param_type ) BOOST_PP_COMMA_IF(n)       \
+  BOOST_PP_ENUM_PARAMS(n, class T ) BOOST_PP_COMMA_IF(n)                \
   int (*mcfunction) (                                                   \
     typename convert_if<image_type>::type,                              \
     BOOST_PP_ENUM(n, CONVERT_IF, ~) BOOST_PP_COMMA_IF(n)                \
@@ -187,7 +190,7 @@
   {                                                                     \
   result_type result(image.get_size());                                 \
                                                                         \
-  if (!mcfunction(image, BOOST_PP_ENUM_PARAMS(n, param) BOOST_PP_COMMA_IF(n) result)) \
+  if (!mcfunction(image, BOOST_PP_ENUM_PARAMS(n, t) BOOST_PP_COMMA_IF(n) result)) \
   {                                                                     \
   error("mcfunction failed");                                           \
   }                                                                     \
