@@ -252,7 +252,7 @@ boost::shared_ptr<vint> uiSqhool::read_data_details( char ** results, int pos , 
   boost::shared_ptr<vint> presult (new vint(d,-1));
   vint & result = *presult;
 
-  if ((d<=1) or (d>=4)) {error("read error: dimension wrong or unsupported");}
+  if ((d<=1) || (d>=4)) {error("read error: dimension wrong or unsupported");}
 
   FOR(q,d)
     result[q]=atoi(results[q+pos]);
@@ -321,7 +321,7 @@ boost::shared_ptr<vint> pink::get_dimensions( const int x, const int y, const in
     error("an image should have at least 2 dimensions");
   };
   
-  if ((t>1) and (z==1)){
+  if ((t>1) && (z==1)){
     error("two dimensional time series are probably not handled well");
   };
   return presult;
@@ -642,6 +642,7 @@ std::string uiSqhool::get_image_type( int ID  ){
   {
     error("cannot yet find the image type at all");
   }; /* NOT if (ID==-1) */
+  return "error";
 };
 
 

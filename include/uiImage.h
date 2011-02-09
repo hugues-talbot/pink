@@ -35,7 +35,7 @@ namespace pink
     std::stringstream result;
         
     
-    if ((image.get_size().prod()>1000) or (image.get_size().size()>2))
+    if ((image.get_size().prod()>1000) || (image.get_size().size()>2))
     {
       std::cout << "the image is too big\n";      
     }

@@ -39,16 +39,28 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <math.h>
 #include <assert.h>
 #include <stdint.h>
-#include <curses.h>
+// hopefully not needed
+// #include <curses.h>
 #include <time.h>
-#include <unistd.h>
+
+// #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
+#ifdef UNIXIO
+#  include <unistd.h>
+#  include <sys/time.h>
+#else /* NOT UNIXIO */
+#  include <stdlib.h>
+#  include <io.h>
+#  include <time.h>
+#endif /* NOT UNIXIO */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>
 #include <limits.h>
-#include <alloca.h>
+// hopefully not needed 
+// #include <alloca.h>
 #include <sys/types.h>
-#include <sys/time.h>
+
 
 //#include <sqlite3ext.h> // not yet needed
 

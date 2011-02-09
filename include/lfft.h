@@ -45,7 +45,6 @@ extern "C" {
  *
  **************************************************************/
 
-typedef complex COMPLEX;
 typedef dcomplex DCOMPLEX;
 
 #ifndef ERROR
@@ -63,11 +62,11 @@ typedef dcomplex DCOMPLEX;
 #define RT2 	1.4142135623731  /* sqrt(2.0) */
 #define IRT2 	0.707106781186548  /* 1.0/sqrt(2.0) */
 
-/* Perform forward 2D transform on a COMPLEX array. */
-extern int forward_fft2f(COMPLEX *array, int rows, int cols);
+/* Perform forward 2D transform on a fcomplex array. */
+extern int forward_fft2f(fcomplex *array, int rows, int cols);
 
-/* Perform inverse 2D transform on a COMPLEX array. */
-extern int inverse_fft2f(COMPLEX *array, int rows, int cols);
+/* Perform inverse 2D transform on a fcomplex array. */
+extern int inverse_fft2f(fcomplex *array, int rows, int cols);
 
 /* Perform forward 2D transform on a DCOMPLEX array. */
 extern int forward_fft2d(DCOMPLEX *array, int rows, int cols);

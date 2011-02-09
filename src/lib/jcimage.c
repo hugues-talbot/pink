@@ -265,8 +265,9 @@ struct xvimage * readGAimage(char *filename)
   image->zdim = zdim;
   if (typepixel == VFF_TYP_GABYTE)
   {
+    int32_t ret;
     if(d == 1) ts=2; else ts = 3;
-    int32_t ret = fread(UCHARDATA(image), sizeof(char), ts*N, fd);
+    ret = fread(UCHARDATA(image), sizeof(char), ts*N, fd);
     if (ret != ts*N)
     {
       fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
@@ -277,8 +278,9 @@ struct xvimage * readGAimage(char *filename)
 
   if (typepixel == VFF_TYP_GAFLOAT)
   {
+    int32_t ret;
     if(d == 1) ts=2; else ts = 3;
-    int32_t ret = fread(UCHARDATA(image), sizeof(float), ts*N, fd);
+    ret = fread(UCHARDATA(image), sizeof(float), ts*N, fd);
     if (ret != ts*N)
     {
       fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);

@@ -103,6 +103,50 @@
  \brief Generates a Python wrapper function for a C++ function using
  all image types.
 
+ This macro generates a block with function calls for all image functions.
+You can call it from BOOST_PYTHON_MODULE.
+
+ \param FNAME The function name in Python (a string)
+ \param FN The C++ template function to wrap
+ \param ARGS The description of the arguments (see \ref python_export)
+ \param DOC The documentation string. This string appears in Python if
+ the help function is called. 
+ */
+#define UI_DEFINE_FUNCTION( FNAME, FN, ARGS, DOC )                      \
+  {                                                                     \
+    def( FNAME, BOOST_PP_EXPAND(FN)<char_image>,                        \
+         ARGS,                                                          \
+         DOC                                                            \
+      );                                                                \
+                                                                        \
+    def( FNAME, BOOST_PP_EXPAND(FN)<short_image>,                       \
+         ARGS,                                                          \
+         DOC                                                            \
+      );                                                                \
+                                                                        \
+    def( FNAME, BOOST_PP_EXPAND(FN)<int_image>,                         \
+         ARGS,                                                          \
+         DOC                                                            \
+      );                                                                \
+                                                                        \
+    def( FNAME, BOOST_PP_EXPAND(FN)<float_image>,                       \
+         ARGS,                                                          \
+         DOC                                                            \
+      );                                                                \
+                                                                        \
+    def( FNAME, BOOST_PP_EXPAND(FN)<double_image>,                      \
+         ARGS,                                                          \
+         DOC                                                            \
+      );                                                                \
+                                                                        \
+                                                                        \
+  }
+
+
+ /**
+ \brief Generates a Python wrapper function for a C++ function using
+ all image types.
+
  You can use this function to export a template function from within
  'pypink.cpp'. It takes an image type as template parameter and it
  substitutes all the image types in it. 
@@ -173,15 +217,15 @@
       );								\
   }									
 
-// #define UI_DEFINE_ONE_FUNCTION( FNAME, FN, ARGS, DOC )                  \
-//                                                                         \
-//   {									\
-//     def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN),               \
-// 	 ARGS,								\
-// 	 DOC                                                            \
-//       );								\
-//     									\
-//   }									
+#define UI_DEFINE_ONE_FUNCTION( FNAME, FN, ARGS, DOC )                  \
+                                                                        \
+  {									\
+    def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN),               \
+	 ARGS,								\
+	 DOC                                                            \
+      );								\
+    									\
+  }									
 
 
   

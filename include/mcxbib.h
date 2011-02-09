@@ -39,8 +39,12 @@ extern "C" {
 #include <stdint.h>
 #endif
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
+#ifdef UNIXIO
+#  include <X11/Xlib.h>
+#  include <X11/Xutil.h>
+#else /* NOT UNIXIO */
+#endif /* NOT UNIXIO */
+
 
 #define MC_LEFTBUTTON     1
 #define MC_MIDDLEBUTTON   2

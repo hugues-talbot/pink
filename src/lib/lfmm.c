@@ -64,9 +64,15 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "pde_toolbox.h"
 #include "lfmm.h"
 
-#ifndef FLT_MAX
+#ifdef UNIXIO
+#  ifndef FLT_MAX
 #    define FLT_MAX 3.40282347e+38F
-#endif
+#  endif
+#else /* UNIXIO */
+#  ifndef FLT_MAX
+#    define FLT_MAX 3.40282347e+36F
+#  endif
+#endif /* UNIXIO */
 
 /***************************************** FUNCTIONS *****************************************/
 /* HEAPSTRUCT_constructor:

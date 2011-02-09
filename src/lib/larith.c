@@ -731,7 +731,7 @@ int32_t lmask(
   }
   else if (datatype(image) == VFF_TYP_COMPLEX)
   {
-    complex *CPT1;
+    fcomplex *CPT1;
     CPT1 = COMPLEXDATA(image);
     for (i = 0; i < N; i++, CPT1++, pt2++)
       if (*pt2 == 0) (*CPT1).re = (*CPT1).im = 0;
@@ -1026,7 +1026,7 @@ int32_t lmult(
   }
   else if ((datatype(image1) == VFF_TYP_COMPLEX) && (datatype(image2) == VFF_TYP_COMPLEX))
   {
-    complex *CPT1, *CPT2; 
+    fcomplex *CPT1, *CPT2; 
     CPT1 = COMPLEXDATA(image1);
     for (b = 0; b < nb1; b++)
       for (CPT2 = COMPLEXDATA(image2), i = 0; i < N; i++, CPT1++, CPT2++)

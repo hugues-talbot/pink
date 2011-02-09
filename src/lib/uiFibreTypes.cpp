@@ -334,12 +334,12 @@ bool vint::nextStep_it( vint & result ) const {
   int d = this->size();
   int q = 0;
     
-  while ( ( result[q] >= (*this)[q] - 1) and ( q < d-1 ) ) 
+  while ( ( result[q] >= (*this)[q] - 1) && ( q < d-1 ) ) 
   {
     q++;
   }
   
-  if ( (q == d-1) and (result[q] >= (*this)[q] - 1) )
+  if ( (q == d-1) && (result[q] >= (*this)[q] - 1) )
   {
     return false;
   }
@@ -364,7 +364,7 @@ bool vint::on_side( const vint & point ) const
   
   FOR(q, this->size())
   {
-    if ( (point[q]==0) or (point[q]==(*this)[q]-1) )
+    if ( (point[q]==0) || (point[q]==(*this)[q]-1) )
     {
       return true;	
     } /* if */	
@@ -377,7 +377,7 @@ bool vint::inside( const vint & point ) const
 {
   FOR(q, this->size())
   {
-    if ( (point[q]<0) or (point[q]>=(*this)[q]) )
+    if ( (point[q]<0) || (point[q]>=(*this)[q]) )
     {
       return false;	
     } /* if */	
@@ -400,7 +400,7 @@ bool vint::operator==( const vint & other ) const
 
 bool vint::operator!=(const vint & other) const 
 {
-  return (not ((*this)==other));  
+  return (!((*this)==other));  
 } /* vint::operator!= */
 
 
@@ -437,7 +437,7 @@ bool vint::addSet( const vint & other )
     FOR(w, int(this->size()))
       if ((*this)[w]==other[q]) is_in=true;
 
-    if (not is_in) {
+    if (!is_in) {
       this->push_back(other[q]);
       result=true;
     }

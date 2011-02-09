@@ -49,6 +49,38 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifndef MCCODIMAGE__HPP__
 #define MCCODIMAGE__HPP__
 
+// ********************************************************************************************************
+// ********************************************************************************************************
+// ********************************************************************************************************
+//                                    PLATFORM DEPENDENT CONFIGURATION
+// ********************************************************************************************************
+// ********************************************************************************************************
+// ********************************************************************************************************
+
+#ifdef UNIXIO
+#  define __pink__inline inline
+#else /* NOT UNIXIO */
+#  define __pink__inline
+typedef unsigned char u_int8_t;
+typedef unsigned int  u_int32_t;
+typedef unsigned char uint8_t;
+typedef int           int32_t;
+typedef unsigned int  uint32_t;
+#endif /* UNIXIO */
+
+
+// ********************************************************************************************************
+// ********************************************************************************************************
+// ********************************************************************************************************
+//                            end of  PLATFORM DEPENDENT CONFIGURATION
+// ********************************************************************************************************
+// ********************************************************************************************************
+// ********************************************************************************************************
+
+
+
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -61,7 +93,8 @@ extern "C" {
 #define NDG_MIN 0              /* niveau de gris min */
 
   /**
-     \brief Complex number, represented by floats.
+     \brief Complex number, represented by floats. 
+     \note 'fcomplex' is necessary because of msvc
   */  
   typedef struct {
 
@@ -74,7 +107,7 @@ extern "C" {
        \brief imaginary part
      */
     float im;
-  } complex;
+  } fcomplex;
 
   /**
      \brief Complex number, represented by doubles.
@@ -187,7 +220,7 @@ typedef struct xvimage xvimage; // LuM
 #define ULONGDATA(I)   ((uint32_t*)((I)->image_data))
 #define FLOATDATA(I)   ((float*)((I)->image_data))
 #define DOUBLEDATA(I)  ((double*)((I)->image_data))
-#define COMPLEXDATA(I) ((complex*)((I)->image_data))
+#define COMPLEXDATA(I) ((fcomplex*)((I)->image_data))
 #define DCOMPLEXDATA(I)((dcomplex*)((I)->image_data))
 #define colsize(I)     ((I)->col_size)
 #define rowsize(I)     ((I)->row_size)

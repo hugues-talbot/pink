@@ -60,7 +60,15 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #include <stdio.h>
 #include <stdint.h>
-#include <unistd.h>
+
+// #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
+#ifdef UNIXIO
+#  include <unistd.h>
+#else /* NOT UNIXIO */
+#  include <stdlib.h>
+#  include <io.h>
+#endif /* NOT UNIXIO */
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdlib.h>
@@ -355,8 +363,8 @@ int32_t showheader(char * name)
     case 'B': printf("type: P%c (ascii int32_t - ext. MC)\n", buffer[1]); es = sizeof(int32_t); break;
     case 'C': printf("type: P%c (raw double - ext. MC)\n", buffer[1]); es = sizeof(double); break;
     case 'D': printf("type: P%c (ascii double - ext. LN)\n", buffer[1]); es = sizeof(double); break;
-    case 'E': printf("type: P%c (raw single precision complex - ext. MC)\n", buffer[1]); es = sizeof(complex); break;
-    case 'F': printf("type: P%c (ascii single precision complex - ext. MC)\n", buffer[1]); es = sizeof(complex); break;
+    case 'E': printf("type: P%c (raw single precision complex - ext. MC)\n", buffer[1]); es = sizeof(fcomplex); break;
+    case 'F': printf("type: P%c (ascii single precision complex - ext. MC)\n", buffer[1]); es = sizeof(fcomplex); break;
               break;
     default:
       fprintf(stderr,"%s: invalid image format: P%c\n", F_NAME, buffer[1]);
@@ -657,7 +665,7 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
     }
     else if (typemax == VFF_TYP_COMPLEX)
     {
-      complex *CL = COMPLEXDATA(im3);
+      fcomplex *CL = COMPLEXDATA(im3);
       razimage(im3);
       for (i = 0; i < N; i++) CL[i].re = (float)F[i];
     }
@@ -685,7 +693,7 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
     else
     if (typemax == VFF_TYP_COMPLEX)
     {
-      complex *CL = COMPLEXDATA(im3);
+      fcomplex *CL = COMPLEXDATA(im3);
       razimage(im3);
       for (i = 0; i < N; i++) CL[i].re = (float)L[i];
     }
@@ -707,7 +715,7 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
     }
     if (typemax == VFF_TYP_COMPLEX)
     {
-      complex *CL = COMPLEXDATA(im3);
+      fcomplex *CL = COMPLEXDATA(im3);
       razimage(im3);
       for (i = 0; i < N; i++) CL[i].re = (float)FL[i];
     }

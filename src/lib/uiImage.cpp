@@ -172,7 +172,7 @@ void uiWriteImage2D( float_image& image, const std::string& filename )
       pix = int ( ( piq - min ) * 255 / ( max - min ) );
     }
 
-    if ((pix<0) or (pix>255)) {
+    if ((pix<0) || (pix>255)) {
       std::cout << "uiWarning: garbage at the image "
                 << filename << "[" << dim[0] << "," << dim[1] << "](" << q << ")=" << pix << std::endl;
       pix=150;

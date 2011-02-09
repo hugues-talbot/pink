@@ -69,16 +69,16 @@ knowledge of the CeCILL license and that you accept its terms.
  *
  **************************************************************
  *
- * int forward_fft2f(COMPLEX *array, int rows, int cols)
- * int inverse_fft2f(COMPLEX *array, int rows, int cols)
+ * int forward_fft2f(fcomplex *array, int rows, int cols)
+ * int inverse_fft2f(fcomplex *array, int rows, int cols)
  * int forward_fft2d(DCOMPLEX *array, int rows, int cols)
  * int inverse_fft2d(DCOMPLEX *array, int rows, int cols)
  *
  * These functions compute the forward and inverse DFT's, respectively, 
- * of a single-precision COMPLEX or DCOMPLEX array by means of an
+ * of a single-precision fcomplex or DCOMPLEX array by means of an
  * FFT algorithm.
  *
- * The result is a COMPLEX/DCOMPLEX array of the same size, returned
+ * The result is a fcomplex/DCOMPLEX array of the same size, returned
  * in the same space as the input array.  That is, the original array
  * is overwritten and destroyed.
  *
@@ -156,7 +156,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define handle_error(msg) fprintf(stderr,msg)
 
 DCOMPLEX *stageBuff;  /* buffer to hold a row or column at a time */
-COMPLEX 	*bigBuff;    /* a pointer to a float input array */
+fcomplex *bigBuff;    /* a pointer to a float input array */
 DCOMPLEX *bigBuffd;   /* a pointer to a double input array */
 
 /* Allocate space for stageBuff */
@@ -538,7 +538,7 @@ void FFT842(int direction, int n, DCOMPLEX *b)
  * forward if direction==FFT_FORWARD,
  * inverse if direction==FFT_INVERSE.
  */
-int fft2f(COMPLEX *array, int rows, int cols, int direction)
+int fft2f(fcomplex *array, int rows, int cols, int direction)
 {
   int i, maxsize, errflag;
   
@@ -619,14 +619,14 @@ int fft2d(DCOMPLEX *array, int rows, int cols, int direction)
 
 /* Finally, the entry points we announce in kube_fft.h */
 
-/* Perform forward 2D transform on a COMPLEX array. */
-int forward_fft2f(COMPLEX *array, int rows, int cols)
+/* Perform forward 2D transform on a fcomplex array. */
+int forward_fft2f(fcomplex *array, int rows, int cols)
 {
 	return(fft2f(array, rows, cols, FFT_FORWARD));
 }
 
-/* Perform inverse 2D transform on a COMPLEX array. */
-int inverse_fft2f(COMPLEX *array, int rows, int cols)
+/* Perform inverse 2D transform on a fcomplex array. */
+int inverse_fft2f(fcomplex *array, int rows, int cols)
 {
 	return(fft2f(array, rows, cols, FFT_INVERSE));
 }
@@ -650,7 +650,7 @@ int32_t lfft(struct xvimage *image, int32_t dir)
 #undef F_NAME
 #define F_NAME "lfft"
   int32_t cs, rs;    /* Indexes and sizes of rows and columns */
-  complex *array;
+  fcomplex *array;
 
   assert((dir == 0) || (dir == 1));
 
@@ -672,7 +672,7 @@ int32_t lfft(struct xvimage *image, int32_t dir)
     return(0);
   }
 
-  if (fft2f((COMPLEX *)array, rs, cs, dir) == ERROR)
+  if (fft2f((fcomplex *)array, rs, cs, dir) == ERROR)
   {
     fprintf(stderr,"%s: function fft2f failed\n", F_NAME);
     return(0);
@@ -688,7 +688,7 @@ int32_t lfft2(struct xvimage *image1, struct xvimage *image2, int32_t dir)
 #undef F_NAME
 #define F_NAME "lfft2"
   int32_t i, j, cs, rs, N;    /* Indexes and sizes of rows and columns */
-  COMPLEX *array;
+  fcomplex *array;
   float *I1, *I2;
 
   assert((dir == 0) || (dir == 1));
@@ -722,7 +722,7 @@ int32_t lfft2(struct xvimage *image1, struct xvimage *image2, int32_t dir)
   }
 
   /* Get space for the intermediate complex arrays */
-  array = (COMPLEX *)malloc(N * sizeof(COMPLEX));
+  array = (fcomplex *)malloc(N * sizeof(fcomplex));
   assert(array != NULL);
   for (j = 0; j < cs; j++) 
     for (i = 0; i < rs; i++)

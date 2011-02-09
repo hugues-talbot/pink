@@ -5,11 +5,17 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
-#include <mccodimage.h>
-#include <mcimage.h>
 #include <assert.h>
 
+#ifndef UNIXIO
+#  include "pinkconst.h"
+#endif /* UNIXIO */
+
+#include <mccodimage.h>
+#include <mcimage.h>
 #include <ltangents.h>
+
+
 
 //#define DEBUG
 //#define DEBUG_ExtractDSSs3D

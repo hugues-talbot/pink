@@ -106,6 +106,9 @@ uint32_t mcsegment_extendsFront(mcsegment * ms, uint32_t code)
   // Memorizes C'_n and state.
   Vector2i old_cp_n;
   uint8_t state = ms->m_state_cp_n;
+  int c;
+  int lower_bound;
+  int upper_bound;
   
   old_cp_n.x = ms->m_cp_n.x;
   old_cp_n.y = ms->m_cp_n.y;
@@ -148,9 +151,9 @@ uint32_t mcsegment_extendsFront(mcsegment * ms, uint32_t code)
   if ( code == 0 ) return 1;
 
   // compute new ax-by.
-  int c = ms->m_a * ms->m_cp_n.x - ms->m_b * ms->m_cp_n.y;
-  int lower_bound = ms->m_mu - 1;
-  int upper_bound = ms->m_mu + ( ms->m_a >= 0 ? ms->m_a : -ms->m_a ) + ms->m_b;
+  c = ms->m_a * ms->m_cp_n.x - ms->m_b * ms->m_cp_n.y;
+  lower_bound = ms->m_mu - 1;
+  upper_bound = ms->m_mu + ( ms->m_a >= 0 ? ms->m_a : -ms->m_a ) + ms->m_b;
   // start recognition.
   if ( ( c < lower_bound ) || ( c > upper_bound ) )
     { // not a digital line
@@ -210,6 +213,9 @@ uint32_t mcsegment_extendsBack(mcsegment * ms, uint32_t code)
   // Memorizes C_n and state.
   Vector2i old_c_n;
   uint8_t state = ms->m_state_c_n;
+  int c;
+  int lower_bound;
+  int upper_bound;
 
   old_c_n.x = ms->m_c_n.x;
   old_c_n.y = ms->m_c_n.y;
@@ -250,9 +256,9 @@ uint32_t mcsegment_extendsBack(mcsegment * ms, uint32_t code)
   if ( code == 0 ) return 1;
 
   // compute new ax-by.
-  int c = ms->m_a * ms->m_c_n.x - ms->m_b * ms->m_c_n.y;
-  int lower_bound = ms->m_mu - 1;
-  int upper_bound = ms->m_mu + ( ms->m_a >= 0 ? ms->m_a : -ms->m_a ) + ms->m_b;
+  c = ms->m_a * ms->m_c_n.x - ms->m_b * ms->m_c_n.y;
+  lower_bound = ms->m_mu - 1;
+  upper_bound = ms->m_mu + ( ms->m_a >= 0 ? ms->m_a : -ms->m_a ) + ms->m_b;
   // start recognition.
   if ( ( c < lower_bound ) || ( c > upper_bound ) )
     { // not a digital line
@@ -310,10 +316,12 @@ uint32_t mcsegment_retractsBack(mcsegment * ms, uint32_t code )
 {
 #undef F_NAME
 #define F_NAME "mcsegment_retractsBack"
-  // Cannot retract if reference frame is in the retraction.
-  assert( ( ms->m_c_n.x != 0 ) || ( ms->m_c_n.y != 0 ) );
   
   Vector2i m;
+  // Cannot retract if reference frame is in the retraction.
+  assert( ( ms->m_c_n.x != 0 ) || ( ms->m_c_n.y != 0 ) );
+
+
   m.x = ms->m_c_n.x;
   m.y = ms->m_c_n.y;
 
@@ -412,14 +420,16 @@ uint32_t mcsegment_retractsBack(mcsegment * ms, uint32_t code )
 	    }
 	  else if ( ms->m_a > 0 )
 	    {
+	      int l; 
+	      int k;
 	      // We recompute U from U' and the length of the discrete segment.
-	      int k = ( ms->m_up.x - ms->m_c_n.x ) / ms->m_b;
+	      k = ( ms->m_up.x - ms->m_c_n.x ) / ms->m_b;
 	      ms->m_u.x = ms->m_up.x - k * ms->m_b;
 	      ms->m_u.y = ms->m_up.y - k * ms->m_a;
 	      
 	      // We recompute L' from L and the length of the discrete segment.
 	      // JOL 2004/09/07 : int l = ( ms->m_cp_n.x - p.x ) / ms->m_b;
-	      int l = ( ms->m_cp_n.x - ms->m_c_n.x ) / ms->m_b;
+	      l = ( ms->m_cp_n.x - ms->m_c_n.x ) / ms->m_b;
 	      ms->m_lp.x = ms->m_l.x + ( l - 1 ) * ms->m_b;
 	      ms->m_lp.y = ms->m_l.y + ( l - 1 ) * ms->m_a;
 	      
@@ -427,14 +437,16 @@ uint32_t mcsegment_retractsBack(mcsegment * ms, uint32_t code )
 	    }
 	  else // case ( ms->m_a < 0 )
 	    {
+	      int l;
+	      int k;
 	      // We recompute U from U' and the length of the discrete segment.
-	      int k = ( ms->m_up.y - ms->m_c_n.y ) / ms->m_a;
+	      k = ( ms->m_up.y - ms->m_c_n.y ) / ms->m_a;
 	      ms->m_u.x = ms->m_up.x - k * ms->m_b;
 	      ms->m_u.y = ms->m_up.y - k * ms->m_a;
 	      
 	      // We recompute L' from L and the length of the discrete segment.
 	      // JOL 2004/09/07 : int l = ( ms->m_cp_n.x - p.x ) / ms->m_b;
-	      int l = ( ms->m_cp_n.y - ms->m_c_n.y ) / ms->m_a;
+	      l = ( ms->m_cp_n.y - ms->m_c_n.y ) / ms->m_a;
 	      ms->m_lp.x = ms->m_l.x + ( l - 1 ) * ms->m_b;
 	      ms->m_lp.y = ms->m_l.y + ( l - 1 ) * ms->m_a;
 	      
@@ -491,14 +503,16 @@ uint32_t mcsegment_retractsBack(mcsegment * ms, uint32_t code )
 	    }
 	  else if ( ms->m_a > 0 )
 	    {
+	      int l;
+	      int k;
 	      // We recompute L from L' and the length of the discrete segment.
-	      int k = ( ms->m_lp.y - ms->m_c_n.y ) / ms->m_a;
+	      k = ( ms->m_lp.y - ms->m_c_n.y ) / ms->m_a;
 	      ms->m_l.x = ms->m_lp.x - k * ms->m_b;
 	      ms->m_l.y = ms->m_lp.y - k * ms->m_a;
 	      
 	      // We recompute U' from U and the length of the discrete segment.
 	      // JOL 2004/09/07 : int l = ( ms->m_cp_n.x - p.x ) / ms->m_b;
-	      int l = ( ms->m_cp_n.y - ms->m_c_n.y ) / ms->m_a;
+	      l = ( ms->m_cp_n.y - ms->m_c_n.y ) / ms->m_a;
 	      ms->m_up.x = ms->m_u.x + ( l - 1 ) * ms->m_b;
 	      ms->m_up.y = ms->m_u.y + ( l - 1 ) * ms->m_a;
 	      
@@ -506,14 +520,16 @@ uint32_t mcsegment_retractsBack(mcsegment * ms, uint32_t code )
 	    }
 	  else // case ( ms->m_a < 0 )
 	    {
+	      int l;
+	      int k;
 	      // We recompute L from L' and the length of the discrete segment.
-	      int k = ( ms->m_lp.x - ms->m_c_n.x ) / ms->m_b;
+	      k = ( ms->m_lp.x - ms->m_c_n.x ) / ms->m_b;
 	      ms->m_l.x = ms->m_lp.x - k * ms->m_b;
 	      ms->m_l.y = ms->m_lp.y - k * ms->m_a;
 	      
 	      // We recompute U' from U and the length of the discrete segment.
 	      // JOL 2004/09/07 : int l = ( ms->m_cp_n.x - p.x ) / ms->m_b;
-	      int l = ( ms->m_cp_n.x - ms->m_c_n.x ) / ms->m_b;
+	      l = ( ms->m_cp_n.x - ms->m_c_n.x ) / ms->m_b;
 	      ms->m_up.x = ms->m_u.x + ( l - 1 ) * ms->m_b;
 	      ms->m_up.y = ms->m_u.y + ( l - 1 ) * ms->m_a;
 	      

@@ -34,7 +34,15 @@
 #include <mctopo3d.h>
 #include <limits.h>
 #include <sys/types.h>
-#include <unistd.h>
+
+// #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
+#ifdef UNIXIO
+#  include <unistd.h>
+#else /* NOT UNIXIO */
+#  include <stdlib.h>
+#  include <io.h>
+#endif /* NOT UNIXIO */
+
 #include <time.h>
 #include <leden.h>
 #include <mccodimage.h>
@@ -107,7 +115,11 @@ int32_t ledengrowth(uint8_t *in,
 	nbpix = dimx*dimy*dimz;
 
 	// initiate random number generator
+#       ifdef UNIXIO
 	srandom(time(0) * getpid());
+#       else /* NOT UNIXIO */
+	srand(time(0));
+#       endif /* NOT UNIXIO */
 
 	// Init topo 3d
 	if (dimz>1)
@@ -147,7 +159,13 @@ int32_t ledengrowth(uint8_t *in,
 		{
 			size = borderqueue.size();
 			assert(size>0);
+
+#                       ifdef UNIXIO
 			chosen = static_cast<uint32_t>(static_cast<double>(random())/MAX_RANDOM * (size-1)); //Should check here that list is not empty
+#                       else /* NOT UNIXIO */
+			chosen = static_cast<uint32_t>(static_cast<double>(rand())/MAX_RANDOM * (size-1)); //Should check here that list is not empty		
+#                       endif /* NOT UNIXIO */
+
 			pix = borderqueue.at(chosen);
 
 			// remove that pixel from the queue
@@ -257,7 +275,13 @@ int32_t ledengrowth(uint8_t *in,
 		for (i = 0 ; i < nbiter ; ++i)
 		{
 			size = borderqueue.size();
+#                       ifdef UNIXIO
 			chosen = static_cast<int>(static_cast<double>(random())/MAX_RANDOM * (size-1));
+#                       else /* NOT UNIXIO */
+			chosen = static_cast<int>(static_cast<double>(rand())/MAX_RANDOM * (size-1));
+#                       endif /* NOT UNIXIO */
+
+
 			pix = borderqueue.at(chosen);
 
             // remove that pixel from the queue

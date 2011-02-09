@@ -44,8 +44,11 @@ knowledge of the CeCILL license and that you accept its terms.
 
 //#define VERBOSE
 
+
 #include <string.h>
 #include <assert.h>
+
+#include "mccodimage.h"
 
 #define FILTERED_OUT 0x01
 #define LEAFMIN      0x02
@@ -82,15 +85,15 @@ typedef int32_t attrdyn_t;
 
 // ATTENTION: la fonction CalculeAttribut pour le moment n'accepte que les attributs de type int32_t
 
-static inline component_t ENCODE(indexcomp_t y, level_t h)
+static __pink__inline component_t ENCODE(indexcomp_t y, level_t h)
 { 
   return (component_t)(y|(h<<24));
 }
-static inline indexcomp_t DECODENUM(component_t y)
+static __pink__inline indexcomp_t DECODENUM(component_t y)
 { 
   return (indexcomp_t)(y&0x00ffffff);
 }
-static inline level_t DECODENIV(component_t y) 
+static __pink__inline level_t DECODENIV(component_t y) 
 { 
   return (level_t)(y>>24);
 }
@@ -192,19 +195,19 @@ typedef struct {
    macros pour l'acces aux donnees de la structure CompactTree
 */
 
-static inline indexcomp_t NBCOMP(CompactTree * cpct, level_t h) 
+static __pink__inline indexcomp_t NBCOMP(CompactTree * cpct, level_t h) 
 {
   return (h==0)?(cpct->hc[0]):(cpct->hc[h]-cpct->hc[h-1]);
 }
-static inline indexcomp_t INDEXCOMP(CompactTree * cpct, level_t h, indexcomp_t j) 
+static __pink__inline indexcomp_t INDEXCOMP(CompactTree * cpct, level_t h, indexcomp_t j) 
 {
   return (h==0)?(j):(cpct->hc[h-1]+j);
 }
-static inline int32_t NBFILS(CompactTree * cpct, indexcomp_t c) 
+static __pink__inline int32_t NBFILS(CompactTree * cpct, indexcomp_t c) 
 {
   return (c==0)?(cpct->dfils[0]):(cpct->dfils[c]-cpct->dfils[c-1]);
 }
-static inline indexcomp_t INDEXFILS(CompactTree * cpct, indexcomp_t c, indexcomp_t j) 
+static __pink__inline indexcomp_t INDEXFILS(CompactTree * cpct, indexcomp_t c, indexcomp_t j) 
 {
   return (c==0)?(j):(cpct->dfils[c-1]+j);
 }

@@ -41,7 +41,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdint.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <sys/types.h>
 #include <mccodimage.h>
 #include <jccodimage.h>
 #include <mcimage.h>
@@ -523,8 +522,9 @@ static void mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attrib
 
   int32_t i;
   int32_t k;
-  k = 0;
   JCctree *CT = MT->CT;
+  k = 0;
+
   // les aretes du mst sont stokées ds MT. A chaque noeud de merge
   // (i.e., les noeuds qui ne sont pas des feuilles) correspond une
   // arete du MST
@@ -540,6 +540,10 @@ static void mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attrib
    d'origine et du flow mapping (label) du ga */
 int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int32_t *attribut)
 {
+  // Note: declarations moved forward because of msvc
+  int32_t logn, nbRepresent;
+  int32_t *Euler, *Depth, *Represent, *Number, **Minim;
+
   int32_t rs = rowsize(ga);      /* taille ligne */
   int32_t cs = colsize(ga);      /* taille colonne */
   int32_t N = rs * cs;           /* taille image */
@@ -551,8 +555,6 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int3
   printf("Attribut[racine] = %d et facteur %lf \n", attribut[CT->root],facteur);
 #ifdef LCAFAST 
   /* Structure de donnée pour lca fast */
-  int32_t logn, nbRepresent;
-  int32_t *Euler, *Depth, *Represent, *Number, **Minim;
   Euler = (int32_t *)calloc(2*CT->nbnodes-1, sizeof(int32_t));
   Represent = (int32_t *)calloc(2*CT->nbnodes-1, sizeof(int32_t));
   Depth = (int32_t *)calloc(CT->nbnodes, sizeof(int32_t));

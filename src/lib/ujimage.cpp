@@ -23,6 +23,7 @@ namespace pink{
   pink_image::operator xvimage*()
   {
     error("You can only cast complete image objects. This is just the base class");    
+    return NULL;
   } /* pink_image cast xvimage* */
   
 
@@ -55,7 +56,7 @@ namespace pink{
       error("an image should have at least 2 dimensions");
     };
 	
-    if ((t>1) and (z==1))
+    if ((t>1) && (z==1))
     {
       error("two dimensional time series are probably not handled well");
     };

@@ -27,7 +27,7 @@ namespace pink {
       )
     {
 
-      if (not elem.get_size().inside(elem.get_center()))
+      if (!elem.get_size().inside(elem.get_center()))
       {
         error("The center of 'elem' must be specified.");
       }

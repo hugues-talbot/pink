@@ -69,7 +69,7 @@ static voxel cube_topo3d[27];
 static voxel cubec_topo3d[27];
 
 
-static inline int32_t is_on_frame(index_t p, index_t rs, index_t ps, index_t N)
+static __pink__inline int32_t is_on_frame(index_t p, index_t rs, index_t ps, index_t N)
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
       (p%ps < rs) || (p%ps >= ps-rs) ||  /* premiere ou derniere colonne */

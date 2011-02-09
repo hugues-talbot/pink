@@ -51,11 +51,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdint.h>
 #include <math.h>
 
+#include "mccodimage.h"
+
 //#include <patch_types.h>
 
 #include <lballincl.h>
 
-inline double det_matrice_4(double a, double b, double c, double d, double e, double f, double g, double h, double i, double j, double k, double l, double m, double n, double o, double p)
+__pink__inline double det_matrice_4(double a, double b, double c, double d, double e, double f, double g, double h, double i, double j, double k, double l, double m, double n, double o, double p)
 {
 	return(	 a*(f*(k*p-o*l)+j*(o*h-g*p)+n*(g*l-k*h))
 			-e*(j*(o*d-c*p)+n*(c*l-k*d)+b*(k*p-o*l))

@@ -221,6 +221,11 @@ int32_t ** jccomptree_LCApreprocess(JCctree *CT, int32_t *Euler, int32_t *Depth,
 {
   //O(n.log(n)) preprocessing
   int32_t nbr, rep, nbNodes;
+  int32_t nbRepresent;
+  int32_t logn;
+  int32_t i,j,k1,k2;
+  int32_t *minim; 
+  int32_t **Minim;
 
   nbr = -1; // Initialization number of euler nodes
   rep = 0;
@@ -230,14 +235,14 @@ int32_t ** jccomptree_LCApreprocess(JCctree *CT, int32_t *Euler, int32_t *Depth,
   // Check that the number of nodes in the tree was correct
   assert((nbr+1) == (2*nbNodes-1));
 
-  int32_t nbRepresent = 2*nbNodes-1;
-  int32_t logn = (int32_t)(ceil(log((double)(nbRepresent))/log(2.0)));
+  nbRepresent = 2*nbNodes-1;
+  logn = (int32_t)(ceil(log((double)(nbRepresent))/log(2.0)));
   *nbR = nbRepresent;
   *lognR = logn;
 
-  int32_t i,j,k1,k2;
-  int32_t *minim = (int32_t *)calloc(logn*nbRepresent, sizeof(int32_t));
-  int32_t **Minim = (int32_t **)calloc(logn, sizeof(int32_t*));
+  minim = (int32_t *)calloc(logn*nbRepresent, sizeof(int32_t));
+  Minim = (int32_t **)calloc(logn, sizeof(int32_t*));
+
   Minim[0] = minim;
 
   for (i=0; i<nbRepresent-1; i++) {

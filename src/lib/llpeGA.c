@@ -318,11 +318,12 @@ int32_t lpeGrapheAreteValuee(GrapheValue *gv, int32_t* Label)
   int32_t i,som, alt, nb_labs, labstream;
   GrapheBasic *g = gv->g;
   int32_t nb_som = g->nsom;
-  Lifo *FIFO;  
-  FIFO = CreeLifoVide(nb_som);
+  Lifo *FIFO;   
   PBasicCell p;
   uint8_t *G;
   uint8_t min_som ;
+
+  FIFO = CreeLifoVide(nb_som);
 
   if( (G = malloc(sizeof(uint8_t) * nb_som)) == NULL){
     fprintf(stderr,"%s: erreur de malloc \n", F_NAME);
@@ -401,12 +402,13 @@ struct xvimage *SeparatingEdge(struct xvimage *labels)
   int32_t cs = colsize(labels);     /* taille colonne */
   int32_t N = rs * cs;              /* taille image */
   int32_t i,j,u,x,y;
+  uint8_t *F;
 
   if( (ga = allocGAimage(NULL, rs, cs, 1, VFF_TYP_GABYTE)) == NULL) {
     fprintf(stderr,"%s: ne peut allouer de GA \n", F_NAME);
       exit(1);
   }
-  uint8_t *F = UCHARDATA(ga);      /* le resultat */
+  F = UCHARDATA(ga);      /* le resultat */
   memset(F,0,2*N);
   /* les aretes horizontales */ 
   for(j = 0; j < cs; j++)

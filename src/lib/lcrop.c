@@ -121,8 +121,8 @@ struct xvimage * lcrop(struct xvimage *in, int32_t x, int32_t y, int32_t w, int3
   }
   else if (datatype(in) == VFF_TYP_COMPLEX)
   {
-    complex *T1C = COMPLEXDATA(temp1);
-    complex *IC = COMPLEXDATA(in);
+    fcomplex *T1C = COMPLEXDATA(temp1);
+    fcomplex *IC = COMPLEXDATA(in);
     for (j = j0, yy = y0; j < j1; j++, yy++)
       for (i = i0, xx = x0; i < i1; i++, xx++)
       {
@@ -216,8 +216,8 @@ struct xvimage * lcrop3d(struct xvimage *in, int32_t x, int32_t y, int32_t z, in
   }
   else if (datatype(in) == VFF_TYP_COMPLEX)
   {
-    complex *T1C = COMPLEXDATA(temp1);
-    complex *IC = COMPLEXDATA(in);
+    fcomplex *T1C = COMPLEXDATA(temp1);
+    fcomplex *IC = COMPLEXDATA(in);
     for (k = k0, zz = z0; k < k1; k++, zz++)
       for (j = j0, yy = y0; j < j1; j++, yy++)
         for (i = i0, xx = x0; i < i1; i++, xx++)
@@ -638,8 +638,8 @@ int32_t linsert(struct xvimage *a, struct xvimage *b, int32_t x, int32_t y, int3
   }
   else if (datatype(a) == VFF_TYP_COMPLEX)
   {
-    complex *A = COMPLEXDATA(a);
-    complex *B = COMPLEXDATA(b);
+    fcomplex *A = COMPLEXDATA(a);
+    fcomplex *B = COMPLEXDATA(b);
 
     for (k = 0; k < dsa; k++)
     for (j = 0; j < csa; j++)

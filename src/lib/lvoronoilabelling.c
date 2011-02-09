@@ -54,14 +54,14 @@ knowledge of the CeCILL license and that you accept its terms.
 
 
 /* ==================================== */
-inline double dist_2(double x1, double y1, double x2, double y2)
+__pink__inline double dist_2(double x1, double y1, double x2, double y2)
 /* ==================================== */
 {
   return ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
 /* ==================================== */
-inline double dist_3(double x1, double y1, double z1, double x2, double y2, double z2)
+__pink__inline double dist_3(double x1, double y1, double z1, double x2, double y2, double z2)
 /* ==================================== */
 {
   return ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1));
@@ -139,7 +139,7 @@ int32_t intdivint (int32_t divid, int32_t divis) {
  * @param gi2
  * @return Definition of a parabola
  **************************************************/
-inline int32_t lvoronoilabelling_F(int32_t x, int32_t i, int32_t gi2)
+__pink__inline int32_t lvoronoilabelling_F(int32_t x, int32_t i, int32_t gi2)
 {
   return sum((x-i)*(x-i), gi2);
 }
@@ -153,7 +153,7 @@ inline int32_t lvoronoilabelling_F(int32_t x, int32_t i, int32_t gi2)
  * @param gu2
  * @return The abscissa of the intersection point between two parabolas
  **************************************************/
-inline int32_t Sep(int32_t i, int32_t u, int32_t gi2, int32_t gu2) {
+__pink__inline int32_t Sep(int32_t i, int32_t u, int32_t gi2, int32_t gu2) {
   return intdivint(sum( sum((int32_t) (u*u - i*i),gu2), opp(gi2) ), 2*(u-i));
 }
 /////////

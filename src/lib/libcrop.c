@@ -5,7 +5,14 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/types.h>
-#include <unistd.h>
+
+// #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
+#ifdef UNIXIO
+#  include <unistd.h>
+#else /* NOT UNIXIO */
+#  include <stdlib.h>
+#  include <io.h>
+#endif /* NOT UNIXIO */
 
 #include <mcimage.h>
 #include <mccodimage.h>

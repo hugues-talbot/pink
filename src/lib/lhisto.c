@@ -577,8 +577,13 @@ int32_t lhisto_distance_modulo_raw (index_t * A, index_t * B, int32_t n)
 /* ==================================== */
 { //traduit (en gros) le nombre de deplacements necessaires pour pouvoir obtenir l'histogramme B a partir de l'histogramme A
   int32_t i, j, h_dist, h_dist2, d ;
-  int32_t prefixsum[n], temp[n];
-	
+  // note: not supported in msvc
+  // int32_t prefixsum[n], temp[n];
+  
+  int32_t *prefixsum, *temp;
+  prefixsum = (int32_t*)malloc(n*sizeof(int32_t));
+  temp = (int32_t*)malloc(n*sizeof(int32_t));
+
   prefixsum[0] = A[0] - B[0];
   h_dist = mcabs(prefixsum[0]);
   for (i=1; i<n; i++)
@@ -632,6 +637,8 @@ int32_t lhisto_distance_modulo_raw (index_t * A, index_t * B, int32_t n)
     }
     else{break;}
   }
+  free(temp);
+  free(prefixsum);
   return h_dist;
 } // lhisto_distance_modulo_raw()
 
@@ -662,8 +669,14 @@ double lhisto_distance_modulo (index_t * A, index_t * B, int32_t n)
 // version normalisee
   int32_t i, j;
   double h_dist, h_dist2, d ;
-  double prefixsum[n], temp[n];
   double nA, nB;
+  // note: not supported in msvc
+  // double prefixsum[n], temp[n];
+  double *prefixsum, *temp;
+  prefixsum = (double*)malloc(n*sizeof(double));
+  temp = (double*)malloc(n*sizeof(double));
+
+
 
   for (i=0, nA=nB=0; i<n; i++) { nA += A[i]; nB += B[i]; }
 
@@ -720,6 +733,8 @@ double lhisto_distance_modulo (index_t * A, index_t * B, int32_t n)
     }
     else{break;}
   }
+  free(temp);
+  free(prefixsum);
   return h_dist / (nA * nB);
 } // lhisto_distance_modulo()
 

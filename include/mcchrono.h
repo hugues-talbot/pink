@@ -39,10 +39,24 @@ extern "C" {
 #include <string.h>
 #include <errno.h>
 #include <sys/types.h>
-#include <unistd.h>
+
+// #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
+// time.h is on different place
+#ifdef UNIXIO
+#  include <unistd.h>
+#  include <sys/time.h>
+#else /* NOT UNIXIO */
+#  include <stdlib.h>
+#  include <io.h>
+#  include <time.h>
+#endif /* NOT UNIXIO */
+
 #include <stdlib.h>
+
+#include "mccodimage.h"
+
 /* #include <time.h> */
-#include <sys/time.h>
+
 
 #ifdef HP
 struct timeval {
@@ -54,7 +68,21 @@ struct timezone {
   int32_t	tz_minuteswest;	/* minutes west of Greenwich */
   int32_t	tz_dsttime;	/* type of dst correction */
 };
-#endif
+#else /* NOT HP */
+
+#  ifndef UNIXIO
+struct timeval {
+  uint32_t	tv_sec;		/* seconds */
+  int32_t		tv_usec;	/* and microseconds */
+};
+
+struct timezone {
+  int32_t	tz_minuteswest;	/* minutes west of Greenwich */
+  int32_t	tz_dsttime;	/* type of dst correction */
+};
+#  endif  /* UNIXIO */
+
+#endif /* NOT HP */
 
 typedef struct timeval chrono;
 

@@ -257,7 +257,7 @@ pink::float_image readPNMImage(const std::string & filename)
 // 		IOBlackBox->setImgDesc("PNM");
 //     }
 
-  if (( theimgtype != IM_SPECTRUM ) and (theimgtype != IM_SINGLE)) {
+  if (( theimgtype != IM_SPECTRUM ) && (theimgtype != IM_SINGLE)) {
     std::cout << "theimgtype =" << theimgtype << std::endl;
     error("color images are out of question.");    
   };

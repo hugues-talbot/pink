@@ -265,7 +265,7 @@ static int32_t Comp8Tab[256][4] =
   {0xfc,0x0,0x0,0x0}, {0xfd,0x0,0x0,0x0}, {0xfe,0x0,0x0,0x0}, {0xff,0x0,0x0,0x0}
 };
 
-static inline int32_t is_on_frame(index_t p, index_t rs, index_t N)
+static __pink__inline int32_t is_on_frame(index_t p, index_t rs, index_t N)
 {
   if ((p%rs==rs-1) || (p<rs) || (p%rs==0) || (p>=N-rs)) /* point de bord */
     return 1;

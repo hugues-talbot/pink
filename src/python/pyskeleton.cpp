@@ -333,7 +333,7 @@ namespace pink {
       } /* not if (prio_image) */
   
 
-      if ( not inhibit_value )
+      if (!inhibit_value )
       {
         inhibvalue = -1;
       } /* not not inhibit_value */
@@ -385,7 +385,7 @@ namespace pink {
       } /* not (depth(image) == 1) */
 
 
-      if ( not prio_image ) freeimage(prio);
+      if (!prio_image ) freeimage(prio);
       return result;
     };
 
