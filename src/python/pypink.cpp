@@ -282,6 +282,24 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
+// by HT for Claire
+UI_WRAP_FUNCTION(
+  "watershedMeyer2",
+  llpemeyer2,
+  ( arg("image"), arg("markers"), arg("mask"), arg("connexity") ),
+  doc__watershedMeyer2__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+    "labelextrema",
+  llabelextrema,
+    ( arg("image"), arg("connex"), arg("function"), arg("result"), arg("nblabels") ),
+  doc__label__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
 UI_WRAP_FUNCTION(
   "heightmaxima",
   lheightmaxima,

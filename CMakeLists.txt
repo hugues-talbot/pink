@@ -246,14 +246,14 @@ if (CMAKE_HOST_UNIX)
 	find_package(Boost COMPONENTS python thread )
 
 	# required version of BOOST 1.35 or newer
-	set( Boost_MAJOR_VERSION_REQUIRED 1 )
-	set( Boost_MINOR_VERSION_REQUIRED 35 )
+#	set( Boost_MAJOR_VERSION_REQUIRED 1 )
+#	set( Boost_MINOR_VERSION_REQUIRED 35 )
 
-	if ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
-	    message( FATAL_ERROR "For the core components you need a boost version at least " ${Boost_MAJOR_VERSION_REQUIRED} "." ${Boost_MINOR_VERSION_REQUIRED} )
-	elseif ( Boost_MINOR_VERSION LESS Boost_MINOR_VERSION_REQUIRED )
-	    message( FATAL_ERROR "For the core components you need a boost version at least " ${Boost_MAJOR_VERSION_REQUIRED} "." ${Boost_MINOR_VERSION_REQUIRED} )
-	endif ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
+#	if ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
+#	    message( FATAL_ERROR "For the core components you need a boost version at least " ${Boost_MAJOR_VERSION_REQUIRED} "." ${Boost_MINOR_VERSION_REQUIRED} )
+#	elseif ( Boost_MINOR_VERSION LESS Boost_MINOR_VERSION_REQUIRED )
+#	    message( FATAL_ERROR "For the core components you need a boost version at least " ${Boost_MAJOR_VERSION_REQUIRED} "." ${Boost_MINOR_VERSION_REQUIRED} )
+#	endif ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
 
 	set( LIBS ${LIBS} ${Boost_LIBRARIES} )
 
