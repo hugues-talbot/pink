@@ -35,6 +35,7 @@ namespace pink
       operator xvimage*()
         {
           error("you shouldn't be calling me");      
+	  return NULL;
         }
     }; /* pink_image_wrap */
   }; /* python */  

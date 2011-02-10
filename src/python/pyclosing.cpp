@@ -32,12 +32,12 @@ namespace pink {
       elem_ce.copy(elem);
       
 
-      if (not (elem.get_size().inside(elem.get_center())))
+      if (! (elem.get_size().inside(elem.get_center())))
       {
         error("The center of the structuring element must be defined");        
       }
 
-      if (not ((image.get_size().size()==2) or (image.get_size().size()==3)) )
+      if (! ((image.get_size().size()==2) || (image.get_size().size()==3)) )
       {
         error("Only 2D and 3D images are supported.");        
       }

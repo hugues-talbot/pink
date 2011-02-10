@@ -6,10 +6,27 @@
 #include <string.h>
 #include <sys/types.h>
 
+// ********************************************************************************************
+// ********************************************************************************************
+// ********************************************************************************************
+// consider this
+
+/* #if /\* linux *\/ */
+/* #define _FILE_OFFSET_BITS 64 */
+/* #endif */
+/* #include <stdio.h> */
+
+// ********************************************************************************************
+// ********************************************************************************************
+// ********************************************************************************************
+
 // #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
 #ifdef UNIXIO
 #  include <unistd.h>
+#  define __pink__fseeko fseeko
 #else /* NOT UNIXIO */
+#  define __pink__fseeko _fseeki64
+#  define __pink__ftello _ftelli64
 #  include <stdlib.h>
 #  include <io.h>
 #endif /* NOT UNIXIO */
@@ -354,7 +371,7 @@ uint32_t crop_raw_on_disk(FILE *fd, struct xvimage* image_decoupee, uint64_t cx,
 	/* Puis on parcours les lignes. Au bout d'un ligne on met le pointeur au debut de la prochaine ligne */
 	/* Quand on a finis un plan on met le pointeur au debut de la premier ligne du plan suivant */
 
-	fseeko(fd, (off_t)(header_size+premierpoint), SEEK_SET);
+	__pink__fseeko(fd, (off_t)(header_size+premierpoint), SEEK_SET);
 
 	for (profondeur=0;profondeur<profondeur_max;profondeur++)
 	{
@@ -373,7 +390,7 @@ uint32_t crop_raw_on_disk(FILE *fd, struct xvimage* image_decoupee, uint64_t cx,
 
 			if(hauteur<hauteur_max-1)
 			{
-				fseeko(fd, jump_ligne, SEEK_CUR);
+				__pink__fseeko(fd, jump_ligne, SEEK_CUR);
 			}
 
 			//fin ligne
@@ -388,7 +405,7 @@ uint32_t crop_raw_on_disk(FILE *fd, struct xvimage* image_decoupee, uint64_t cx,
 
 		if(profondeur<profondeur_max-1)
 		{
-			fseeko(fd, jump_plan, SEEK_CUR);
+			__pink__fseeko(fd, jump_plan, SEEK_CUR);
 		}
 
 		//fin plan
@@ -482,7 +499,7 @@ uint32_t crop_raw_on_disk_to_disk(FILE *fd, FILE *image_decoupee, uint64_t cx, u
 	/* Puis on parcours les lignes. Au bout d'un ligne on met le pointeur au debut de la prochaine ligne */
 	/* Quand on a finis un plan on met le pointeur au debut de la premier ligne du plan suivant */
 
-	fseeko(fd, (off_t)(header_size+premierpoint), SEEK_SET);
+	__pink__fseeko(fd, (off_t)(header_size+premierpoint), SEEK_SET);
 
 	for (profondeur=0;profondeur<profondeur_max;profondeur++)
 	{
@@ -502,7 +519,7 @@ uint32_t crop_raw_on_disk_to_disk(FILE *fd, FILE *image_decoupee, uint64_t cx, u
 
 			if(hauteur<hauteur_max-1)
 			{
-				fseeko(fd, jump_ligne, SEEK_CUR);
+				__pink__fseeko(fd, jump_ligne, SEEK_CUR);
 			}
 
 			//fin ligne
@@ -518,7 +535,7 @@ uint32_t crop_raw_on_disk_to_disk(FILE *fd, FILE *image_decoupee, uint64_t cx, u
 
 		if(profondeur<profondeur_max-1)
 		{
-			fseeko(fd, jump_plan, SEEK_CUR);
+			__pink__fseeko(fd, jump_plan, SEEK_CUR);
 		}
 
 		//fin plan

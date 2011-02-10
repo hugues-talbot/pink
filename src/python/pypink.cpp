@@ -145,11 +145,14 @@ void readimage_export(); void skelsurf_export(); void toposhrink_export(); void 
 /*void openball_export();*/ void gradmorph_export(); void mcube_export(); void minima_export();
 
 
+// this part is not yet ready for windows
+#ifdef UNIXIO
 // not sure this is the correct thing to do here HT
 // This is the prototype of the automatically generated export function
 void Pimview_export(); void Pimviewlogin_export(); void Pimviewputimage_export();
 void PLiarEnableDebug_export() ; void PLiarDisableDebug_export(); void Pimview_force_socket_export();
 void Pimview_sendcommand_export();
+#endif /* UNIXIO */
 
 // for wrapping every type with one function
 // template <class image_type>
@@ -1591,8 +1594,8 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   
 
 
-
-  
+  // this part is not yet ready for windows
+# ifdef UNIXIO
   // is this enough ? HT
   // this calls the definition in the right place
   Pimview_export();
@@ -1601,6 +1604,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   PLiarEnableDebug_export();
   Pimview_force_socket_export();
   Pimview_sendcommand_export();
+# endif /* UNIXIO */
 
   def(
     "float2byte",

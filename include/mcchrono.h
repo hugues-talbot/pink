@@ -56,8 +56,6 @@ extern "C" {
 #include "mccodimage.h"
 
 /* #include <time.h> */
-
-
 #ifdef HP
 struct timeval {
   uint32_t	tv_sec;		/* seconds */
@@ -68,21 +66,20 @@ struct timezone {
   int32_t	tz_minuteswest;	/* minutes west of Greenwich */
   int32_t	tz_dsttime;	/* type of dst correction */
 };
-#else /* NOT HP */
+#endif /* HP */
 
-#  ifndef UNIXIO
-struct timeval {
-  uint32_t	tv_sec;		/* seconds */
-  int32_t		tv_usec;	/* and microseconds */
-};
+#ifndef UNIXIO
+#  include <time.h>
 
-struct timezone {
-  int32_t	tz_minuteswest;	/* minutes west of Greenwich */
-  int32_t	tz_dsttime;	/* type of dst correction */
-};
-#  endif  /* UNIXIO */
+  struct timezone
+  {
+    int  tz_minuteswest; /* minutes W of Greenwich */
+    int  tz_dsttime;     /* type of dst correction */
+  };  /* timezone */
 
-#endif /* NOT HP */
+
+  int gettimeofday(struct timeval *tv, struct timezone *tz);
+#endif /* NOT UNIXIO */
 
 typedef struct timeval chrono;
 
