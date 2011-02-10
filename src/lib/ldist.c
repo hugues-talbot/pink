@@ -1435,11 +1435,13 @@ int32_t ldistquadSaito(struct xvimage *img,   /* donnee: image binaire */
   uint32_t *D;                   /* pointeur sur les distances */
   int32_t * buff = (int32_t *)calloc(1,cs * sizeof(int32_t));
 
-  if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE))
-  {
-    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-    return(0);
-  }
+  ACCEPTED_TYPES2(img, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE);
+
+  /* if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE)) */
+  /* { */
+  /*   fprintf(stderr, "%s: bad image type(s)\n", F_NAME); */
+  /*   return(0); */
+  /* } */
 
   D = ULONGDATA(res);
   F = UCHARDATA(img);  
@@ -1531,11 +1533,13 @@ int32_t ldistSaito(struct xvimage *img,   /* donnee: image binaire */
   double * R = DOUBLEDATA(res);
   F = UCHARDATA(img);
 
-  if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_DOUBLE))
-  {
-    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-    return(0);
-  }
+  ACCEPTED_TYPES2(img, VFF_TYP_1_BYTE, VFF_TYP_DOUBLE);
+
+  /* if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_DOUBLE)) */
+  /* { */
+  /*   fprintf(stderr, "%s: bad image type(s)\n", F_NAME); */
+  /*   return(0); */
+  /* } */
 
   D = (uint32_t *)calloc(1,N * sizeof(uint32_t));
   if (D == NULL)
@@ -2032,23 +2036,30 @@ int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res)
   uint32_t *R = ULONGDATA(res);
   uint8_t *T;
 
-  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }    
+  COMPARE_SIZE(res, f);
 
-  if ((datatype(f) != VFF_TYP_4_BYTE) || (datatype(res) != VFF_TYP_4_BYTE))
-  {
-    fprintf(stderr, "%s: bad image type\n", F_NAME);
-    return 0;
-  }
+  /* if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   return 0; */
+  /* }     */
 
-  if (ds != 1)
-  {
-    fprintf(stderr, "%s: only for 2D images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_4_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_4_BYTE);
+
+  /* if ((datatype(f) != VFF_TYP_4_BYTE) || (datatype(res) != VFF_TYP_4_BYTE)) */
+  /* { */
+  /*   fprintf(stderr, "%s: bad image type\n", F_NAME); */
+  /*   return 0; */
+  /* } */
+
+  ONLY_2D(f);
+
+  /* if (ds != 1) */
+  /* { */
+  /*   fprintf(stderr, "%s: only for 2D images\n", F_NAME); */
+  /*   return 0; */
+  /* } */
 
   tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
   if (tmp == NULL)
@@ -2268,17 +2279,22 @@ int32_t lsedt_meijster(struct xvimage *img,   /* donnee: image binaire */
   printf("lsedt_meijster : begin\n");
 #endif
 
-  if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE))
-  {
-    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-    return(0);
-  }
+  ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_1_BYTE);
 
-  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }    
+  /* if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE)) */
+  /* { */
+  /*   fprintf(stderr, "%s: bad image type(s)\n", F_NAME); */
+  /*   return(0); */
+  /* } */
+
+  COMPARE_SIZE(res, img);
+
+  /* if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   return 0; */
+  /* }     */
 
   tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
   if (tmp == NULL)
@@ -2325,11 +2341,14 @@ int32_t ldistMeijster(struct xvimage *img,   /* donnee: image binaire */
   struct xvimage *dist;
   uint32_t *D;
 
-  if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_DOUBLE))
-  {
-    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-    return(0);
-  }
+  ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_DOUBLE);
+
+  /* if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_DOUBLE)) */
+  /* { */
+  /*   fprintf(stderr, "%s: bad image type(s)\n", F_NAME); */
+  /*   return(0); */
+  /* } */
 
   dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
   if (dist == NULL)

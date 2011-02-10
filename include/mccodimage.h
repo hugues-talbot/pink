@@ -80,9 +80,6 @@ typedef unsigned int  uint32_t;
 // ********************************************************************************************************
 
 
-
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -100,29 +97,19 @@ extern "C" {
   */  
   typedef struct {
 
-    /**
-       \brief real part
-     */
+    /** \brief real part */
     float re;
 
-    /**
-       \brief imaginary part
-     */
+    /** \brief imaginary part */
     float im;
   } fcomplex;
 
-  /**
-     \brief Complex number, represented by doubles.
-  */  
+  /** \brief Complex number, represented by doubles. */  
   typedef struct {
-    /**
-       \brief real part
-    */
+    /** \brief real part */
     double re;
 
-    /**
-       \brief imaginary part
-     */
+    /** \brief imaginary part */
     double im;
   } dcomplex;
 
@@ -148,29 +135,19 @@ extern "C" {
 */  
   struct xvimage {
 
-    /**
-       \brief Dummy - not used anymore.
-    */
+    /** \brief Dummy - not used anymore. */
     char *name;  
 
-    /**
-       \brief Size of a row (number of columns)
-    */
+    /** \brief Size of a row (number of columns) */
     index_t row_size;                    
 
-    /**
-       \brief Size of a column (number of rows)
-    */
+    /** \brief Size of a column (number of rows) */
     index_t col_size;
 
-    /**
-       \brief Number of planes (for 3d images)
-    */
+    /** \brief Number of planes (for 3d images) */
     index_t depth_size;                  
 
-    /**
-       \brief Number of (2d or 3d) images
-    */
+    /** \brief Number of (2d or 3d) images */
     index_t time_size;                  
 
     /**
@@ -180,34 +157,22 @@ extern "C" {
     */
     index_t num_data_bands;
     
-    /**
-       \brief Storage type for disk data.
-    */
+    /** \brief Storage type for disk data. */
     int32_t data_storage_type;           
 
-    /**
-       \brief Voxel dimensions in real world
-    */
+    /** \brief Voxel dimensions in real world */
     double xdim, ydim, zdim;             
 
-    /**
-       \brief Region of interest: x coordinates
-    */
+    /** \brief Region of interest: x coordinates */
     index_t xmin, xmax;
 
-    /**
-       \brief Region of interest: y coordinates
-    */
+    /** \brief Region of interest: y coordinates */
     index_t ymin, ymax;                  
 
-    /**
-       \brief Region of interest: z coordinates
-    */
+    /** \brief Region of interest: z coordinates */
     index_t zmin, zmax;                  
 
-    /**
-       \brief Pointer on raw data
-    */
+    /** \brief Pointer on raw data */
     void * image_data;                   
 };
 
@@ -288,7 +253,95 @@ extern int32_t sont8voisins(index_t p, index_t q, index_t rs);
 extern int32_t sont6voisins(index_t p, index_t q, index_t rs, index_t ps);
 extern int32_t sont18voisins(index_t p, index_t q, index_t rs, index_t ps);
 extern int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps);
- 
+
+
+#  define                                               \
+  ACCEPTED_TYPES1(I, T0)                                \
+  if (datatype(I)!=T0)                                  \
+  {                                                     \
+  fprintf(stderr, "%s: bad image type\n", F_NAME);      \
+  return 0;                                             \
+  }                                   
+
+#  define                                               \
+  ACCEPTED_TYPES2(I, T0, T1)                            \
+  if ( (datatype(I)!=T0) || (datatype(I)!=T1) )         \
+  {                                                     \
+  fprintf(stderr, "%s: bad image type\n", F_NAME);      \
+  return 0;                                             \
+  }                                   
+  
+#  define                                                               \
+  ACCEPTED_TYPES3(I, T0, T1, T2)                                        \
+  if ( (datatype(I)!=T0) || (datatype(I)!=T1) || (datatype(I)!=T2) )    \
+  {                                                                     \
+  fprintf(stderr, "%s: bad image type\n", F_NAME);                      \
+  return 0;                                                             \
+  }                                   
+  
+#  define                                                               \
+  ACCEPTED_TYPES4(I, T0, T1, T2, T3)                                    \
+  if ( (datatype(I)!=T0) || (datatype(I)!=T1) || (datatype(I)!=T2)      \
+       || (datatype(I)!=T3) )                                           \
+  {                                                                     \
+  fprintf(stderr, "%s: bad image type\n", F_NAME);                      \
+  return 0;                                                             \
+  }                                   
+  
+#  define                                                               \
+  ACCEPTED_TYPES5(I, T0, T1, T2, T3, T4)                                \
+  if ( (datatype(I)!=T0) || (datatype(I)!=T1) || (datatype(I)!=T2)      \
+       || (datatype(I)!=T3) || (datatype(I)!=T4) )                      \
+  {                                                                     \
+  fprintf(stderr, "%s: bad image type\n", F_NAME);                      \
+  return 0;                                                             \
+  }                                   
+  
+#  define                                                               \
+  ACCEPTED_TYPES6(I, T0, T1, T2, T3, T4, T5)                            \
+  if ( (datatype(I)!=T0) || (datatype(I)!=T1) || (datatype(I)!=T2)      \
+       || (datatype(I)!=T3) || (datatype(I)!=T4)  || (datatype(I)!=T5)) \
+  {                                                                     \
+  fprintf(stderr, "%s: bad image type\n", F_NAME);                      \
+  return 0;                                                             \
+  }
+  
+#  define                                                               \
+  ACCEPTED_TYPES7(I, T0, T1, T2, T3, T4, T5, T6)                        \
+  if ( (datatype(I)!=T0) || (datatype(I)!=T1) || (datatype(I)!=T2)      \
+       || (datatype(I)!=T3) || (datatype(I)!=T4)  || (datatype(I)!=T5)  \
+       || (datatype(I)!=T6) )                                           \
+  {                                                                     \
+  fprintf(stderr, "%s: bad image type\n", F_NAME);                      \
+  return 0;                                                             \
+  }                                   
+  
+#  define                                                               \
+  COMPARE_SIZE(I0, I1)                                                  \
+  if (rowsize(I0)!=rowsize(I1) || rowsize(I0)!=rowsize(I1) || depth(I0)!=depth(I1) \
+      || (nbands(I0) != nbands(I1) ) )                                  \
+  {                                                                     \
+  fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);            \
+  return 0;                                                             \
+  }
+  
+#  define                                                       \
+  ONLY_2D(I)                                                    \
+  if (depth(I)!=1)                                              \
+  {                                                             \
+  fprintf(stderr, "%s: only for 2D images\n", F_NAME);          \
+  return 0;                                                     \
+  }
+  
+#  define                                                       \
+  ONLY_3D(I)                                                    \
+  if (depth(I)==1)                                              \
+  {                                                             \
+  fprintf(stderr, "%s: only for 3D images\n", F_NAME);          \
+  return 0;                                                     \
+  }
+  
+  
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

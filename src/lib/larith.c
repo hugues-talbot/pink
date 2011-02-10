@@ -99,11 +99,13 @@ int32_t ladd(
   nb = nbands(image1);
   N = rs * cs * ds * nb;
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+  COMPARE_SIZE(image1, image2);
+
+  /* if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
@@ -292,11 +294,12 @@ int32_t laverage(
   nb = nbands(image1);
   N = rs * cs * ds * nb;
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+  COMPARE_SIZE(image1, image2);
+  /* if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
@@ -346,11 +349,13 @@ int32_t ldiff(
   nb = nbands(image1);
   N = rs * cs * ds * nb;
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+  COMPARE_SIZE(image1, image2);
+
+  /* if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
@@ -406,11 +411,13 @@ int32_t ldivide(
   nb = nbands(image1);
   N = rs * cs * ds * nb;
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+  COMPARE_SIZE(image1, image2);
+
+  /* if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
@@ -460,11 +467,13 @@ int32_t lequal(
   nb = nbands(image1);
   N = rs * cs * ds * nb;
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+  COMPARE_SIZE(image1, image2);
+
+  /* if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
@@ -523,11 +532,13 @@ int32_t linf(
     exit(0);
   }
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+  COMPARE_SIZE(image1, image2);
+
+  /* if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
@@ -583,11 +594,13 @@ int32_t lsup(
     exit(0);
   }
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+  COMPARE_SIZE(image1, image2);
+
+  /* if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
@@ -695,17 +708,21 @@ int32_t lmask(
     exit(0);
   }
 
-  if ((rowsize(mask) != rs) || (colsize(mask) != cs) || (depth(mask) != ds) || (nbands(mask) != nb))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+  COMPARE_SIZE(image, mask);
 
-  if (datatype(mask) != VFF_TYP_1_BYTE)
-  {
-    fprintf(stderr, "%s: mask must be a binary (byte) image\n", F_NAME);
-    exit(0);
-  }
+  /* if ((rowsize(mask) != rs) || (colsize(mask) != cs) || (depth(mask) != ds) || (nbands(mask) != nb)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
+
+  ACCEPTED_TYPE1(mask, VFF_TYP_1_BYTE);
+
+  /* if (datatype(mask) != VFF_TYP_1_BYTE) */
+  /* { */
+  /*   fprintf(stderr, "%s: mask must be a binary (byte) image\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
   pt2 = UCHARDATA(mask);
 
   if (datatype(image) == VFF_TYP_1_BYTE)
@@ -772,11 +789,13 @@ int32_t lmax(
     exit(0);
   }
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+  COMPARE_SIZE(image1, image2);
+
+  /* if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
@@ -928,11 +947,13 @@ int32_t lmin(
     exit(0);
   }
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+  COMPARE_SIZE(image1, image2);
+
+  /* if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
@@ -994,11 +1015,13 @@ int32_t lmult(
     image1 = tmp;
   }
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+  COMPARE_SIZE(image1, image2);
+
+  /* if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
@@ -1399,11 +1422,13 @@ int32_t lsub(
   nb = nbands(image1);
   N = rs * cs * ds * nb;
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+  COMPARE_SIZE(image1, image2);
+
+  /* if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
@@ -1503,12 +1528,14 @@ int32_t lxor(
   N = rs * cs * ds * nb;
   F1 = UCHARDATA(image1);
   F2 = UCHARDATA(image2);
-  
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
+
+  COMPARE_SIZE(image1, image2);
+
+  /* if ((rowsize(image2) != rs) || (colsize(image2) != cs) || (depth(image2) != ds) || (nbands(image2) != nb)) */
+  /* { */
+  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
+  /*   exit(0); */
+  /* } */
 
   if ((datatype(image1) == VFF_TYP_1_BYTE) && (datatype(image2) == VFF_TYP_1_BYTE))
   {
@@ -1547,11 +1574,17 @@ int32_t lmodulus(struct xvimage * image, struct xvimage * result)
   float *F, *R;
   double t1, t2;
   assert(result != NULL);
-  assert(rowsize(image) == rowsize(result));
-  assert(colsize(image) == colsize(result));
-  assert(depth(image) == depth(result));
-  assert(datatype(result) == VFF_TYP_FLOAT);
-  assert(datatype(image) == VFF_TYP_COMPLEX);
+
+  COMPARE_SIZE(image, result);
+  ACCEPTED_TYPES1(result, VFF_TYP_FLOAT);
+  ACCEPTED_TYPES1(image, VFF_TYP_COMPLEX);
+
+  /* assert(rowsize(image) == rowsize(result)); */
+  /* assert(colsize(image) == colsize(result)); */
+  /* assert(depth(image) == depth(result)); */
+  /* assert(datatype(result) == VFF_TYP_FLOAT); */
+  /* assert(datatype(image) == VFF_TYP_COMPLEX); */
+
   N = rowsize(image) * colsize(image) * depth(image);
   F = FLOATDATA(image);
   R = FLOATDATA(result);
@@ -1576,11 +1609,15 @@ int32_t lreal(struct xvimage * image, struct xvimage * result)
   index_t i, N;
   float *F, *R;
   assert(result != NULL);
-  assert(rowsize(image) == rowsize(result));
-  assert(colsize(image) == colsize(result));
-  assert(depth(image) == depth(result));
-  assert(datatype(result) == VFF_TYP_FLOAT);
-  assert(datatype(image) == VFF_TYP_COMPLEX);
+  COMPARE_SIZE(image, result);
+  ACCEPTED_TYPES1(result, VFF_TYP_FLOAT);
+  ACCEPTED_TYPES1(image, VFF_TYP_COMPLEX);
+
+  /* assert(rowsize(image) == rowsize(result)); */
+  /* assert(colsize(image) == colsize(result)); */
+  /* assert(depth(image) == depth(result)); */
+  /* assert(datatype(result) == VFF_TYP_FLOAT); */
+  /* assert(datatype(image) == VFF_TYP_COMPLEX); */
   N = rowsize(image) * colsize(image) * depth(image);
   F = FLOATDATA(image);
   R = FLOATDATA(result);
@@ -1598,12 +1635,17 @@ int32_t limaginary(struct xvimage * image, struct xvimage * result)
 {
   index_t i, N;
   float *F, *R;
-  assert(result != NULL);
-  assert(rowsize(image) == rowsize(result));
-  assert(colsize(image) == colsize(result));
-  assert(depth(image) == depth(result));
-  assert(datatype(result) == VFF_TYP_FLOAT);
-  assert(datatype(image) == VFF_TYP_COMPLEX);
+  COMPARE_SIZE(image, result);
+  ACCEPTED_TYPES1(result, VFF_TYP_FLOAT);
+  ACCEPTED_TYPES1(image, VFF_TYP_COMPLEX);
+
+  /* assert(result != NULL); */
+  /* assert(rowsize(image) == rowsize(result)); */
+  /* assert(colsize(image) == colsize(result)); */
+  /* assert(depth(image) == depth(result)); */
+  /* assert(datatype(result) == VFF_TYP_FLOAT); */
+  /* assert(datatype(image) == VFF_TYP_COMPLEX); */
+
   N = rowsize(image) * colsize(image) * depth(image);
   F = FLOATDATA(image);
   R = FLOATDATA(result);
