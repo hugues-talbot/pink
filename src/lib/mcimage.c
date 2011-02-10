@@ -89,6 +89,22 @@ knowledge of the CeCILL license and that you accept its terms.
 // define the following to print a warning when allocating huge image (>=2Gb)
 #define WARN_HUGE
 
+// Fopen strategy
+FILE* __pink__inline pink_fopen( char * filename )
+{
+# ifdef UNIXIO
+  return fopen( filename, "r" );
+# else /* NOT UNIXIO */
+#   ifdef DOSIO
+    return fopen( filename, "rb" );
+#   else /* NOT DOSIO */
+    //#     warning: FALLING BACK ON DEFAULT
+      return fopen( filename, "rb" );
+#   endif /* NOT DOSIO */
+# endif /* NOT UNIXIO */
+} /* pink_fopen */
+
+
 /* ==================================== */
 struct xvimage *allocimage(
   char * name,
@@ -327,12 +343,9 @@ int32_t showheader(char * name)
   struct stat fdstat;
   index_t rs, cs, ds, nb, c, fs, es;
   char *read;
-#ifdef UNIXIO
-  fd = fopen(name,"r");
-#endif
-#ifdef DOSIO
-  fd = fopen(name,"rb");
-#endif
+
+  fd = pink_fopen(name);
+
   if (!fd)
   {
     fprintf(stderr, "%s: file not found: %s\n", F_NAME, name);
@@ -969,12 +982,8 @@ void writerawimage(struct xvimage * image, char *filename)
   np = nbands(image);
   N = rs * cs * d * np;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"w");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"wb");
-#endif
+  fd = pink_fopen(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -1234,12 +1243,8 @@ void writese(struct xvimage * image, char *filename, index_t x, index_t y, index
   ps = rs * cs;
   N = ps * d;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"w");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"wb");
-#endif
+  fd = pink_fopen(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -1567,12 +1572,8 @@ void writergbimage(
   index_t N;
   int32_t nndg;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"w");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"wb");
-#endif
+  fd = pink_fopen(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -1626,12 +1627,8 @@ void writergbascimage(
   index_t N;
   int32_t nndg;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"w");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"wb");
-#endif
+  fd = pink_fopen(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -1687,12 +1684,8 @@ void writelongimage(struct xvimage * image,  char *filename)
   index_t N, ret;
   int32_t nndg;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"w");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"wb");
-#endif
+  fd = pink_fopen(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -1752,12 +1745,8 @@ struct xvimage * readimage(char *filename)
   double xdim=1.0, ydim=1.0, zdim=1.0;
   char *read;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
+  fd = pink_fopen(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: file not found: %s\n", F_NAME, filename);
@@ -2031,12 +2020,8 @@ struct xvimage * readheader(char *filename)
   double xdim=1.0, ydim=1.0, zdim=1.0;
   char *read;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
+  fd = pink_fopen(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: file not found: %s\n", F_NAME, filename);
@@ -2145,12 +2130,8 @@ de la forme :
   int32_t dimorigin = 0;
   char *read;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
+  fd = pink_fopen(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: file not found: %s\n", F_NAME, filename);
@@ -2320,12 +2301,8 @@ int32_t readrgbimage(
   char *read;
   int32_t nndg, ndgmax;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
+  fd = pink_fopen(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: file not found: %s\n", F_NAME, filename);
@@ -2445,12 +2422,8 @@ struct xvimage * readlongimage(char *filename)
   int32_t c, nndg;
   char *read;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
+  fd = pink_fopen(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: file not found: %s\n", F_NAME, filename);
@@ -2803,12 +2776,8 @@ int32_t readbmp(char *filename, struct xvimage ** r, struct xvimage ** g, struct
   uint8_t *R, *G, *B;
   int32_t i, j, rs, cs;
 
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
+  fd = pink_fopen(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -2925,12 +2894,8 @@ void writebmp(
   G = UCHARDATA(greenimage);
   B = UCHARDATA(blueimage);
 
-#ifdef DOSIO
-  fd = fopen(filename,"wb");
-#endif
-#ifdef UNIXIO
-  fd = fopen(filename,"w");
-#endif
+  fd = pink_fopen(filename);
+ 
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -3003,12 +2968,8 @@ int32_t readrgb(char *filename, struct xvimage ** r, struct xvimage ** g, struct
   index_t i, j, rs, cs;
   index_t N;
 
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
+  fd = pink_fopen(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
