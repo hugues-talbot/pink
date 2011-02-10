@@ -716,7 +716,7 @@ int32_t lmask(
   /*   exit(0); */
   /* } */
 
-  ACCEPTED_TYPE1(mask, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(mask, VFF_TYP_1_BYTE);
 
   /* if (datatype(mask) != VFF_TYP_1_BYTE) */
   /* { */

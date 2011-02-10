@@ -46,7 +46,7 @@ python-extension libcpp_pink :
 			       [ glob src/python/*.c ]
                                [ glob src/bdd/*.cpp ]
                                [ glob src/lib/*.cpp ]
-			       [ glob src/python/*.cpp ]
+			       [ glob src/python/*.cpp : excluded_files src/python/pymview.cpp ]
                                [ glob src/bdd/*.cxx ]
                                [ glob src/lib/*.cxx ]
 			       [ glob src/python/*.cxx ]
