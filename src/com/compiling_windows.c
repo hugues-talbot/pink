@@ -9,8 +9,8 @@ For a successfull compilation on Microsoft Windows you need at least
 the following tools:
 <ul>
 <li> Microsoft Visual Studio Express C++ (tested with 2010)
-<li> Python for Microsoft Windows (tested with version 2.7; installer available)
-<li> Boost Libraries (sources available)
+<li> Python for Microsoft Windows (tested with version 2.7; installer available on <A HREF="http://www.python.org">www.python.org</A>)
+<li> Boost Libraries (sources available on <A HREF="http://www.boost.org">boost.org</A>)
 </ul>
 
 \section configuration Configuration
