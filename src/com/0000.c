@@ -59,7 +59,8 @@ to use, propagate or modify any covered work.
     <li> <b>Rita Zrour</b>: medialaxis (axe médian euclidien exact - algo de Rémy-Thiel),
       dist, distc (distance euclidienne quadratique exacte - algo de Saito-Toriwaki)
     <li> <b>Laurent Mercier</b>: gestion d'un masque dans delaunay
-    <li> <b>Laszlo Marak (ujoimro)</b>: continuous maximum flows, Unger flows, Python front-end
+    <li> <b>Laszlo Marak (ujoimro)</b>: continuous maximum flows,
+    Unger flows, Python front-end, native Microsoft Windows port
    </ul>
   <li> Code under different free software licenses
     <ul>
@@ -74,7 +75,10 @@ to use, propagate or modify any covered work.
 Pink can be compiled with two sets of tools. For the compilation with
 dependency checking and Python front-end, visit the page \ref
 compiling_cmake. For the classical compilation look at \ref
-compiling_make. 
+compiling_make. You can also compile Pink on windows (including the
+Python front-end). For details on compiling on windows look at \ref
+compiling_windows. 
+
 
 \section development Development
 For developing Pink look at the \ref dev_conventions page. For

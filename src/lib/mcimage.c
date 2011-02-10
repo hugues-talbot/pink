@@ -90,7 +90,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define WARN_HUGE
 
 // Fopen strategy
-__pink__inline FILE* pink_fopen( char * filename )
+__pink__inline FILE* pink_fopen_read( char * filename )
 {
 # ifdef UNIXIO
   return fopen( filename, "r" );
@@ -102,7 +102,21 @@ __pink__inline FILE* pink_fopen( char * filename )
       return fopen( filename, "rb" );
 #   endif /* NOT DOSIO */
 # endif /* NOT UNIXIO */
-} /* pink_fopen */
+} /* pink_fopen_read */
+
+__pink__inline FILE* pink_fopen_write( char * filename )
+{
+# ifdef UNIXIO
+  return fopen( filename, "r" );
+# else /* NOT UNIXIO */
+#   ifdef DOSIO
+    return fopen( filename, "rb" );
+#   else /* NOT DOSIO */
+    //#     warning: FALLING BACK ON DEFAULT
+      return fopen( filename, "rb" );
+#   endif /* NOT DOSIO */
+# endif /* NOT UNIXIO */
+} /* pink_fopen_write */
 
 
 /* ==================================== */
@@ -344,7 +358,7 @@ int32_t showheader(char * name)
   index_t rs, cs, ds, nb, c, fs, es;
   char *read;
 
-  fd = pink_fopen(name);
+  fd = pink_fopen_read(name);
 
   if (!fd)
   {
@@ -982,7 +996,7 @@ void writerawimage(struct xvimage * image, char *filename)
   np = nbands(image);
   N = rs * cs * d * np;
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_write(filename);
 
   if (!fd)
   {
@@ -1243,7 +1257,7 @@ void writese(struct xvimage * image, char *filename, index_t x, index_t y, index
   ps = rs * cs;
   N = ps * d;
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_write(filename);
 
   if (!fd)
   {
@@ -1572,7 +1586,7 @@ void writergbimage(
   index_t N;
   int32_t nndg;
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_write(filename);
 
   if (!fd)
   {
@@ -1627,7 +1641,7 @@ void writergbascimage(
   index_t N;
   int32_t nndg;
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_write(filename);
 
   if (!fd)
   {
@@ -1684,7 +1698,7 @@ void writelongimage(struct xvimage * image,  char *filename)
   index_t N, ret;
   int32_t nndg;
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_write(filename);
 
   if (!fd)
   {
@@ -1745,7 +1759,7 @@ struct xvimage * readimage(char *filename)
   double xdim=1.0, ydim=1.0, zdim=1.0;
   char *read;
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_read(filename);
 
   if (!fd)
   {
@@ -2020,7 +2034,7 @@ struct xvimage * readheader(char *filename)
   double xdim=1.0, ydim=1.0, zdim=1.0;
   char *read;
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_read(filename);
 
   if (!fd)
   {
@@ -2130,7 +2144,7 @@ de la forme :
   int32_t dimorigin = 0;
   char *read;
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_read(filename);
 
   if (!fd)
   {
@@ -2301,7 +2315,7 @@ int32_t readrgbimage(
   char *read;
   int32_t nndg, ndgmax;
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_read(filename);
 
   if (!fd)
   {
@@ -2422,7 +2436,7 @@ struct xvimage * readlongimage(char *filename)
   int32_t c, nndg;
   char *read;
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_read(filename);
 
   if (!fd)
   {
@@ -2776,7 +2790,7 @@ int32_t readbmp(char *filename, struct xvimage ** r, struct xvimage ** g, struct
   uint8_t *R, *G, *B;
   int32_t i, j, rs, cs;
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_read(filename);
 
   if (!fd)
   {
@@ -2894,7 +2908,7 @@ void writebmp(
   G = UCHARDATA(greenimage);
   B = UCHARDATA(blueimage);
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_write(filename);
  
   if (!fd)
   {
@@ -2968,7 +2982,7 @@ int32_t readrgb(char *filename, struct xvimage ** r, struct xvimage ** g, struct
   index_t i, j, rs, cs;
   index_t N;
 
-  fd = pink_fopen(filename);
+  fd = pink_fopen_read(filename);
 
   if (!fd)
   {
