@@ -90,7 +90,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define WARN_HUGE
 
 // Fopen strategy
-FILE* __pink__inline pink_fopen( char * filename )
+__pink__inline FILE* pink_fopen( char * filename )
 {
 # ifdef UNIXIO
   return fopen( filename, "r" );
