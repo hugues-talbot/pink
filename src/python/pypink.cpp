@@ -294,6 +294,16 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
+// by HT for Claire
+UI_WRAP_FUNCTION(
+  "watershedMeyer2NM",
+  llpemeyer2_nomask,
+  ( arg("image"), arg("markers"), arg("connexity") ),
+  doc__watershedMeyer2__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
 UI_WRAP_FUNCTION(
     "labelextrema",
   llabelextrema,

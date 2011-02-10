@@ -1361,6 +1361,22 @@ int32_t llpemeyersanslignelab(
 } // llpemeyersanslignelab()
 
 /* ==================================== */
+int32_t llpemeyer2_nomask(
+        struct xvimage *image,
+        struct xvimage *marqueurs,
+        int32_t connex)
+/* ====================================
+   Same as above, except no mask.
+   We need this to simplify writing wrappers
+   for Python.
+   H. Talbot  2011/02/10
+   ====================================*/
+{
+    return llpemeyer2(image, marqueurs, NULL, connex);
+}
+   
+
+/* ==================================== */
 int32_t llpemeyer3d(
         struct xvimage *image,
         struct xvimage *marqueurs,
