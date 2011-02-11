@@ -23,6 +23,56 @@ using namespace pink;
 // typedef std::vector<int> vector_int;
 
 
+void complex_export()
+{
+  class_< fcomplex >("fcomplex")
+
+    // .add_property("re",
+    //               boost::python::make_function( 
+    //                 &get_re,
+    //                 boost::python::return_value_policy < boost::python::reference_existing_object >()
+    //                 ),
+    //               &set_re )
+  
+    .def_readwrite( "re", &fcomplex::re)    
+    .def_readwrite( "im", &fcomplex::im)
+    .def("__repr__", &repr_fcomplex)
+    
+    .def(boost::python::self == boost::python::self)
+    .def(boost::python::self != boost::python::self)
+    
+    .def(boost::python::self + boost::python::self)
+    .def(boost::python::self - boost::python::self)
+    .def(boost::python::self * boost::python::self)
+    .def(boost::python::self / boost::python::self)
+    
+    .def(boost::python::self += boost::python::self)
+    .def(boost::python::self -= boost::python::self)
+    .def(boost::python::self *= boost::python::self)
+    .def(boost::python::self /= boost::python::self)
+    ;
+  
+  class_< dcomplex >("dcomplex")
+    
+    .def_readwrite( "re", &dcomplex::re)
+    .def_readwrite( "im", &dcomplex::im)
+    .def("__repr__", &repr_dcomplex)
+    
+    .def(boost::python::self == boost::python::self)
+    .def(boost::python::self != boost::python::self)
+    
+    .def(boost::python::self + boost::python::self)
+    .def(boost::python::self - boost::python::self)
+    .def(boost::python::self * boost::python::self)
+    .def(boost::python::self / boost::python::self)
+    
+    .def(boost::python::self += boost::python::self)
+    .def(boost::python::self -= boost::python::self)
+    .def(boost::python::self *= boost::python::self)
+    .def(boost::python::self /= boost::python::self)
+    ;
+  
+} /* fcomplex_export */
 
 
 // void xvimage_object_export(){

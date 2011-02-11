@@ -28,6 +28,7 @@
 #define __UJIMAGE_HPP
 
 #include <fstream>
+#include <string>
 
 #include "uiFibreTypes.h"
 #include "mccodimage.h"
@@ -38,10 +39,54 @@
 
 //#define UJIMAGE_DEBUG
 
+
+
+// ***************************************************************************************
+// ***************************************************************************************
+// ***************************************************************************************
+
+// COMPLEX OPERATORS in C++
+
+// ***************************************************************************************
+// ***************************************************************************************
+// ***************************************************************************************
+
+bool operator==(const fcomplex & x, const fcomplex & y);
+fcomplex & operator+=(fcomplex & x, const fcomplex & y);
+fcomplex & operator-=(fcomplex & x, const fcomplex & y);
+fcomplex & operator*=(fcomplex & x, const fcomplex & y);
+fcomplex & operator/=(fcomplex & x, const fcomplex & y);
+bool operator!=(const fcomplex & x, const fcomplex & y);
+fcomplex & operator+( const fcomplex & x, const fcomplex & y);
+fcomplex & operator-( const fcomplex & x, const fcomplex & y);
+fcomplex & operator*( const fcomplex & x, const fcomplex & y);
+fcomplex & operator/( const fcomplex & x, const fcomplex & y);
+bool operator>=( const fcomplex & x, const fcomplex & y);
+bool operator<=( const fcomplex & x, const fcomplex & y);
+bool operator>( const fcomplex & x, const fcomplex & y);
+bool operator<( const fcomplex & x, const fcomplex & y);
+std::string repr_fcomplex(const fcomplex & x);
+
+bool operator==(const dcomplex & x, const dcomplex & y);
+dcomplex & operator+=(dcomplex & x, const dcomplex & y);
+dcomplex & operator-=(dcomplex & x, const dcomplex & y);
+dcomplex & operator*=(dcomplex & x, const dcomplex & y);
+dcomplex & operator/=(dcomplex & x, const dcomplex & y);
+bool operator!=(const dcomplex & x, const dcomplex & y);
+dcomplex & operator+( const dcomplex & x, const dcomplex & y);
+dcomplex & operator-( const dcomplex & x, const dcomplex & y);
+dcomplex & operator*( const dcomplex & x, const dcomplex & y);
+dcomplex & operator/( const dcomplex & x, const dcomplex & y);
+bool operator>=( const dcomplex & x, const dcomplex & y);
+bool operator<=( const dcomplex & x, const dcomplex & y);
+bool operator>( const dcomplex & x, const dcomplex & y);
+bool operator<( const dcomplex & x, const dcomplex & y);
+std::string repr_dcomplex(const dcomplex & x);
+
 namespace pink{
 
-  class deep_xvimage;
-
+  class deep_xvimage;  
+  
 //  string image_type( int pixel_type ); // returns the corresponding image types
 
   template <class pixel_type>
@@ -68,6 +113,12 @@ namespace pink{
       {
         error("unimplemented image type specialization");
       }
+
+    void init_pixel( pixel_type & a )
+      {
+        error("unimplemented image type specialization");
+      }
+    
     
   }; /* class image_type specific */
   
@@ -541,7 +592,7 @@ namespace pink{
     double volume();     
   }; /* class ujoi */
 
-
+ 
     /*
 ***************************************************************************************
 ***************************************************************************************
@@ -585,7 +636,12 @@ CHAR IMAGE
       {
         return a+b < UCHAR_MAX ? a+b : UCHAR_MAX;        
       }
-    
+
+    void init_pixel( pixel_type & a )
+      {
+        a=0;
+      }
+
   }; /* image_type_specific char_image */								
 
 
@@ -595,7 +651,7 @@ SHORT IMAGE
 ***************************************************************************************
  */
   
-    template <>								
+  template <>								
   class image_type_specific<unsigned short int>{
     typedef unsigned short int pixel_type;    
   public:								
@@ -608,17 +664,22 @@ SHORT IMAGE
       {									
 	return VFF_TYP_2_BYTE;						
       }
-
+    
     pixel_type sub( pixel_type a, pixel_type b )
       {
         return a-b > 0 ? a-b : 0;        
       }
-
+    
     pixel_type add( pixel_type a, pixel_type b)
       {
         return a+b < USHRT_MAX ? a+b : USHRT_MAX;        
       }
     
+    void init_pixel( pixel_type & a )
+      {
+        a=0;
+      }
+      
   }; /* image_type_specific short_image */								
 
   
@@ -652,6 +713,11 @@ INT IMAGE
     pixel_type add(pixel_type a, pixel_type b)
           {
         return a+b < INT_MAX ? a+b : INT_MAX;
+      }
+
+    void init_pixel( pixel_type & a )
+      {
+        a=0;
       }
     
   }; /* image_type_specific int_image */								
@@ -687,7 +753,12 @@ FLOAT IMAGE
       {
         return a+b;
       }
-    
+
+    void init_pixel( pixel_type & a )
+      {
+        a=0.;
+      }
+
   }; /* image_type_specific float_image */								
 
   
@@ -720,9 +791,89 @@ double IMAGE
       {
         return a+b;        
       }
-    
+
+    void init_pixel( pixel_type & a )
+      {
+        a=0.;
+      }
+
   }; /* image_type_specific double_image */								
 
+  /*
+***************************************************************************************
+fcomplex IMAGE
+***************************************************************************************
+ */
+
+  template <>								
+  class image_type_specific<fcomplex>{
+    typedef fcomplex pixel_type;    
+  public:								
+    std::string imtype() const							
+      {									
+	return "fcomplex";
+      }
+    
+    int int_pixel_type() const						
+      {									
+	return VFF_TYP_COMPLEX;						
+      }
+
+    pixel_type sub( pixel_type a, pixel_type b )
+      {
+        return a-b;        
+      }
+
+    pixel_type add( pixel_type a, pixel_type b )
+      {
+        return a+b;        
+      }
+
+    void init_pixel( pixel_type & a )
+      {
+        a.re=0.;
+        a.im=0.;        
+      }    
+  }; /* image_type_specific fcomplex_image */
+  
+    /*
+***************************************************************************************
+dcomplex IMAGE
+***************************************************************************************
+ */
+
+  template <>								
+  class image_type_specific<dcomplex>{
+    typedef dcomplex pixel_type;    
+  public:								
+    std::string imtype() const							
+      {									
+	return "dcomplex";
+      }
+    
+    int int_pixel_type() const						
+      {									
+	return VFF_TYP_DCOMPLEX;						
+      }
+
+    pixel_type sub( pixel_type a, pixel_type b )
+      {
+        return a-b;        
+      }
+
+    pixel_type add( pixel_type a, pixel_type b )
+      {
+        return a+b;        
+      }
+
+    void init_pixel( pixel_type & a )
+      {
+        a.re=0.;
+        a.im=0.;        
+      }
+    
+  }; /* image_type_specific dcomplex_image */
+  
   
   // Valid image types
   // integer and float will be tested first.
@@ -759,6 +910,16 @@ double IMAGE
   \brief The double_image specialization.
   */
   typedef ujoi<double/*,                        VFF_TYP_DOUBLE*/ > double_image;
+
+    /**
+  \brief The double_image specialization.
+  */
+  typedef ujoi<fcomplex/*,                        VFF_TYP_COMPLEX*/ > fcomplex_image;
+
+    /**
+  \brief The double_image specialization.
+  */
+  typedef ujoi<dcomplex/*,                        VFF_TYP_DCOMPLEX*/ > dcomplex_image;
 
 
 
@@ -941,7 +1102,10 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     // setting up elements zero
     FOR(q, size->prod())
-      this->pixels[q]=0;
+    {      
+      this->init_pixel(this->pixels[q]);      
+    };
+    
 
   } /* ujoi::ujoi */
 
@@ -960,7 +1124,9 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     // setting up elements zero
     FOR(q, size->prod())
-      this->pixels[q]=0;
+    {      
+      this->init_pixel(this->pixels[q]);      
+    };
 
   } /* ujoi::ujoi */
 
@@ -1626,48 +1792,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     return *this;
   } /* ujoi::copy */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }; /* namespace pink */
+
 #endif /* __UJIMAGE_HPP */
 // #endif /* __cplusplus */
 // LuM end of file

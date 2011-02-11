@@ -50,13 +50,19 @@ namespace pink {
   } /* namespace python */
 } /* namespace pink */
 
-UI_EXPORT_FUNCTION(
-  minima,
-  pink::python::minima,
-  ( arg("image"), arg("mode")),
-  doc__minima__c__
-  // end of documentation
-  );
+
+/** Note: this is a special function, as we use implicit std::copy-conversion
+    
+ */
+void minima_export()
+{
+  def("minima", pink::python::minima<char_image>,( arg("image"), arg("mode")), doc__minima__c__);
+  def("minima", pink::python::minima<short_image>,( arg("image"), arg("mode")), doc__minima__c__);
+  def("minima", pink::python::minima<int_image>,( arg("image"), arg("mode")), doc__minima__c__);
+  def("minima", pink::python::minima<float_image>,( arg("image"), arg("mode")), doc__minima__c__);
+  def("minima", pink::python::minima<double_image>,( arg("image"), arg("mode")), doc__minima__c__);  
+} /* minima_export */
+
 
 
 

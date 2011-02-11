@@ -79,6 +79,8 @@ using boost::is_same;
       UI_WRAP_RESULT_DEF_FOR_TYPE(int_image    , n, text);              \
       UI_WRAP_RESULT_DEF_FOR_TYPE(float_image  , n, text);              \
       UI_WRAP_RESULT_DEF_FOR_TYPE(double_image , n, text);              \
+      UI_WRAP_RESULT_DEF_FOR_TYPE(fcomplex_image , n, text);            \
+      UI_WRAP_RESULT_DEF_FOR_TYPE(dcomplex_image , n, text);            \
                                                                         \
     }                                                                   \
                                                                         \
@@ -97,14 +99,7 @@ using boost::is_same;
   {                                                                     \
   };                                                                    \
                                                                         \
-  UI_WRAP_RESULT_MAKE_INSTANCE(                                         \
-    MAX_PARAMETERS,                                                     \
-    1,                                                                  \
-    (pink::python::ui_cheat<typename FT::result_type, xvimage*,         \
-     FN>)                                                               \
-    )                                                                   \
-                                                                        \
-  BOOST_PP_REPEAT_FROM_TO(2, MAX_PARAMETERS, UI_WRAP_RESULT_MAKE_INSTANCE, FN) \
+  BOOST_PP_REPEAT_FROM_TO(1, MAX_PARAMETERS, UI_WRAP_RESULT_MAKE_INSTANCE, FN) \
                                                                         \
   template <class Fn, class Args>                                       \
   void BOOST_PP_CAT(call,BOOST_PP_COUNTER)(const char* fname, Fn fn, Args args, const char* doc) \

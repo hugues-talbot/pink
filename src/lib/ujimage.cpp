@@ -5,7 +5,7 @@
   This software comes in hope that it will be useful but 
   without any warranty to the extent permitted by aplicable law.
   
-  (C) UjoImro, 2009-2010
+  (C) UjoImro, 2009-2011
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
@@ -13,7 +13,8 @@
 
 
 
-#include <pink.h>
+#include "pink.h"
+#include "mccodimage.h"
 
 #undef error
 #define error(msg) {std::stringstream fullmessage; fullmessage << "in ujimage.cpp: " << msg; call_error(fullmessage.str());}
@@ -130,9 +131,10 @@ namespace pink{
     default:
       error("bad image type or not specified.");
     };
-  
+
   } /* image_type */
 
+  
 /*
 ***************************************************************************************
 ***************************************************************************************
@@ -341,6 +343,239 @@ c++ class pink::deep_xvimage
 
 
 
+/*
+***************************************************************************************
+***************************************************************************************
+***************************************************************************************
+
+COMPLEX OPERATOR IMPLEMENTATIONS
+
+***************************************************************************************
+***************************************************************************************
+***************************************************************************************
+*/
+  
+
+bool operator==(const fcomplex & x, const fcomplex & y)
+{
+  return ( (x.re == y.re) && (x.im == y.im) );
+}
+
+fcomplex & operator+=(fcomplex & x, const fcomplex & y)
+{
+  x.re += y.re;
+  x.im += y.im;
+  return x;      
+}
+
+fcomplex & operator-=(fcomplex & x, const fcomplex & y)
+{
+  x.re -= y.re;
+  x.im -= y.im;
+  return x;      
+}
+
+fcomplex & operator*=(fcomplex & x, const fcomplex & y)
+{
+  x.re = x.re * y.re - x.im * y.im;      
+  x.im = x.im * y.re + x.re * y.im;      
+  return x;      
+}
+
+fcomplex & operator/=(fcomplex & x, const fcomplex & y)
+{
+  float abs = y.re * y.re + y.im * y.im;
+      
+  if (abs < 0.00001)
+  {
+    error("division by zero");        
+  }
+  
+  x.re = (x.re * y.re + x.im * y.im) / (abs);
+  x.im = (x.im * y.re + x.re * y.im) / (abs);      
+  return x;      
+}
+
+
+bool operator!=(const fcomplex & x, const fcomplex & y)
+{
+  return !( x==y );      
+}
+
+fcomplex & operator+( const fcomplex & x, const fcomplex & y)
+{
+  fcomplex result(x);
+  return result+=y;
+}
+
+fcomplex & operator-( const fcomplex & x, const fcomplex & y)
+{
+  fcomplex result(x);  
+  return result-=y;        
+}
+
+fcomplex & operator*( const fcomplex & x, const fcomplex & y)
+{
+  fcomplex result(x);  
+  return result*=y;        
+}
+
+fcomplex & operator/( const fcomplex & x, const fcomplex & y)
+{
+  fcomplex result(x);  
+  return result/=y;        
+}
+
+bool operator>=( const fcomplex & x, const fcomplex & y)
+{
+  error("There is no ordering on complex numbers.");
+  return false;
+}
+
+bool operator<=( const fcomplex & x, const fcomplex & y)
+{
+  error("There is no ordering on complex numbers.");
+  return false;
+}
+
+bool operator>( const fcomplex & x, const fcomplex & y)
+{
+  error("There is no ordering on complex numbers.");
+  return false;
+}
+
+bool operator<( const fcomplex & x, const fcomplex & y)
+{
+  error("There is no ordering on complex numbers.");
+  return false;
+}
+
+
+
+std::string repr_fcomplex(const fcomplex & x)
+{
+  std::stringstream ss;
+  if (x.im>=0)
+  {        
+    ss << x.re << " + i*" << x.im;        
+  }
+  else /* NOT x.im>0 */
+  {
+    ss << x.re << " - i*" << -x.im;
+  } /* NOT x.im>0 */     
+  
+  return ss.str();      
+} /* fcomplex::fcomplex */
+
+
+bool operator==(const dcomplex & x, const dcomplex & y)
+{
+  return ( (x.re == y.re) && (x.im == y.im) );
+}
+
+dcomplex & operator+=(dcomplex & x, const dcomplex & y)
+{
+  x.re += y.re;
+  x.im += y.im;
+  return x;      
+}
+
+dcomplex & operator-=(dcomplex & x, const dcomplex & y)
+{
+  x.re -= y.re;
+  x.im -= y.im;
+  return x;      
+}
+
+dcomplex & operator*=(dcomplex & x, const dcomplex & y)
+{
+  x.re = x.re * y.re - x.im * y.im;      
+  x.im = x.im * y.re + x.re * y.im;      
+  return x;      
+}
+
+dcomplex & operator/=(dcomplex & x, const dcomplex & y)
+{
+  float abs = y.re * y.re + y.im * y.im;
+      
+  if (abs < 0.00001)
+  {
+    error("division by zero");        
+  }
+  
+  x.re = (x.re * y.re + x.im * y.im) / (abs);
+  x.im = (x.im * y.re + x.re * y.im) / (abs);      
+  return x;      
+}
+
+
+bool operator!=(const dcomplex & x, const dcomplex & y)
+{
+  return !( x==y );      
+}
+
+dcomplex & operator+( const dcomplex & x, const dcomplex & y)
+{
+  dcomplex result(x);
+  return result+=y;
+}
+
+dcomplex & operator-( const dcomplex & x, const dcomplex & y)
+{
+  dcomplex result(x);  
+  return result-=y;        
+}
+
+dcomplex & operator*( const dcomplex & x, const dcomplex & y)
+{
+  dcomplex result(x);  
+  return result*=y;        
+}
+
+dcomplex & operator/( const dcomplex & x, const dcomplex & y)
+{
+  dcomplex result(x);  
+  return result/=y;        
+}
+
+bool operator>=( const dcomplex & x, const dcomplex & y)
+{
+  error("There is no ordering on complex numbers.");
+  return false;
+}
+
+bool operator<=( const dcomplex & x, const dcomplex & y)
+{
+  error("There is no ordering on complex numbers.");
+  return false;
+}
+
+bool operator>( const dcomplex & x, const dcomplex & y)
+{
+  error("There is no ordering on complex numbers.");
+  return false;
+}
+
+bool operator<( const dcomplex & x, const dcomplex & y)
+{
+  error("There is no ordering on complex numbers.");
+  return false;
+}
+
+std::string repr_dcomplex(const dcomplex & x)
+{
+  std::stringstream ss;
+  if (x.im>=0)
+  {        
+    ss << x.re << " + i*" << x.im;        
+  }
+  else /* NOT x.im>0 */
+  {
+    ss << x.re << " - i*" << -x.im;
+  } /* NOT x.im>0 */     
+  
+  return ss.str();      
+} /* dcomplex::dcomplex */
 
 
 

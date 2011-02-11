@@ -97,6 +97,17 @@
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
+                                                                        \
+    def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<fcomplex_image>, \
+         ARGS,                                                          \
+         DOC                                                            \
+      );                                                                \
+                                                                        \
+    def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<dcomplex_image>, \
+         ARGS,                                                          \
+         DOC                                                            \
+      );                                                                \
+                                                                        \
   }									
 
  /**
@@ -135,6 +146,16 @@ You can call it from BOOST_PYTHON_MODULE.
       );                                                                \
                                                                         \
     def( FNAME, BOOST_PP_EXPAND(FN)<double_image>,                      \
+         ARGS,                                                          \
+         DOC                                                            \
+      );                                                                \
+                                                                        \
+    def( FNAME, BOOST_PP_EXPAND(FN)<fcomplex_image>,                    \
+         ARGS,                                                          \
+         DOC                                                            \
+      );                                                                \
+                                                                        \
+    def( FNAME, BOOST_PP_EXPAND(FN)<dcomplex_image>,                    \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \

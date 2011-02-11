@@ -217,6 +217,7 @@ operator[int]
 
     
     .def( "__getitem__", &image_type::get_operator_int, boost::python::return_value_policy<boost::python::copy_const_reference>(),
+          // reference_existing_object copy_const_reference
 	  boost::python::args("self", "pos"),
 	  "This function accesses the pixels of the image. It is used for the 'a=image[pos]' like access model."
 	  

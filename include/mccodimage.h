@@ -82,7 +82,7 @@ typedef unsigned int  uint32_t;
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
 #ifndef _MCIMAGE_H
 #include <mcimage.h>
@@ -96,7 +96,6 @@ extern "C" {
      \note 'fcomplex' is necessary because of msvc
   */  
   typedef struct {
-
     /** \brief real part */
     float re;
 
@@ -344,6 +343,6 @@ extern int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps);
   
 #ifdef __cplusplus
 } /* extern "C" */
-#endif
+#endif /* __cplusplus */
 
 #endif /* MCCODIMAGE__HPP__ */

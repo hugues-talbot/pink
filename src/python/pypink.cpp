@@ -143,6 +143,7 @@ void generate_rgb_image_export(); void closing_export(); void closeball_export()
 void skelcurv_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
 /*void openball_export();*/ void gradmorph_export(); void mcube_export(); void minima_export();
+void complex_export();
 
 
 // this part is not yet ready for windows
@@ -1559,6 +1560,34 @@ UI_WRAP_FUNCTION(
 // //   );
 // // #include BOOST_PP_UPDATE_COUNTER()
 
+UI_WRAP_RESULT(
+  float_image,
+  "modulus",
+  lmodulus,
+  (arg("image")),
+  "WRITE ME!!!"
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_RESULT(
+  float_image,
+  "real",
+  lreal,
+  (arg("image")),
+  "WRITE ME!!!"
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_RESULT(
+  float_image,
+  "imaginary",
+  limaginary,
+  (arg("image")),
+  "WRITE ME!!!"
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
 BOOST_PYTHON_MODULE(libcpp_pink)
 // the final module will be named pink, but that will also contain
 // some python functions, like readimage, so it will be created as
@@ -1601,6 +1630,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   asfbin_export();  skelcurv_export();
   readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
   htkern_export();  /*openball_export();*/    gradmorph_export(); mcube_export(); minima_export();
+  complex_export();
   
 
 
@@ -1745,6 +1775,17 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     "This is the image class for 8 byte 'double' images"
     );
 
+  ujoi_class_export < fcomplex_image > (
+    "fcomplex_image",
+    "This is the image class for 4+4 byte 'fcomplex' images"
+    );
+  
+  ujoi_class_export < dcomplex_image > (
+    "dcomplex_image",
+    "This is the image class for 8+8 byte 'dcomplex' images"
+    );
+
+  
 } /* BOOST_PYTHON_MODULE */
 
 
