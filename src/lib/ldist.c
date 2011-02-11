@@ -2280,7 +2280,7 @@ int32_t lsedt_meijster(struct xvimage *img,   /* donnee: image binaire */
 #endif
 
   ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
-  ACCEPTED_TYPES1(res, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_4_BYTE);
 
   /* if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE)) */
   /* { */

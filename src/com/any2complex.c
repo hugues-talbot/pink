@@ -34,7 +34,7 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file any2complex.c
 
-\brief converts a "byte", "long" of "float" image (or couple of images) to a "complex" image
+\brief converts a "byte", "long" of "float" image (or couple of images) to a "fcomplex" image
 
 <B>Usage:</B> any2complex re.pgm [im.pgm] out.pgm
 
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
   struct xvimage * im_real;
   struct xvimage * im_imaginary = NULL;
   int32_t x, rs, cs, ds, N;
-  complex *C;
+  fcomplex *C;
   
   if ((argc != 3) && (argc != 4))
   {

@@ -107,13 +107,13 @@ __pink__inline FILE* pink_fopen_read( char * filename )
 __pink__inline FILE* pink_fopen_write( char * filename )
 {
 # ifdef UNIXIO
-  return fopen( filename, "r" );
+  return fopen( filename, "w" );
 # else /* NOT UNIXIO */
 #   ifdef DOSIO
-    return fopen( filename, "rb" );
+    return fopen( filename, "wb" );
 #   else /* NOT DOSIO */
     //#     warning: FALLING BACK ON DEFAULT
-      return fopen( filename, "rb" );
+      return fopen( filename, "wb" );
 #   endif /* NOT DOSIO */
 # endif /* NOT UNIXIO */
 } /* pink_fopen_write */
