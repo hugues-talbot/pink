@@ -59,6 +59,8 @@ Images must be of the same dimensions.
 #include <mcimage.h>
 #include <larith.h>
 
+#define VERBOSE
+ 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
@@ -88,6 +90,13 @@ int main(int argc, char **argv)
   }
   
   ret = lequal(image1, image2);
+
+#ifdef VERBOSE
+  if (ret)
+    printf("%s: the images are equal\n", argv[0]);
+  else
+    printf("%s: the images are different\n", argv[0]);
+#endif
 
   freeimage(image1);
   freeimage(image2);

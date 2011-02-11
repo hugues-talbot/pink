@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * result;
+  struct xvimage * res;
   int32_t mode;
 
   if ((argc != 3) && (argc != 4))
@@ -101,16 +101,22 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  result = lopeningfunction(image, mode);
-  if (result == NULL)
+  res = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
+  if (res == NULL)
+  {
+    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+    exit(1);
+  }
+
+  if (!lopeningfunction(image, res, mode))
   {
     fprintf(stderr, "%s: function lopeningfunction failed\n", argv[0]);
     exit(1);
   }
 
-  writeimage(result, argv[argc-1]);
+  writeimage(res, argv[argc-1]);
   freeimage(image);
-  freeimage(result);
+  freeimage(res);
 
   return 0;
 } /* main */

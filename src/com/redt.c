@@ -93,7 +93,13 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: function convertlong failed\n", argv[0]);
       exit(1);
     }
-    if (! (res = lredt2d(image)))
+    res = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
+    if (res == NULL)
+    {
+      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+      exit(1);
+    }
+    if (!lredt2d(image, res))
     {
       fprintf(stderr, "%s: function lredt2d failed\n", argv[0]);
       exit(1);
@@ -102,18 +108,21 @@ int main(int argc, char **argv)
   else // 3D
   {
     if (!convertlong(&image))
-      {
-	fprintf(stderr, "%s: function convertlong failed\n", argv[0]);
-	exit(1);
-      }
-    if (! (res = lredt3d(image)))
-      {
-	fprintf(stderr, "%s: function lredt2d failed\n", argv[0]);
-	exit(1);
-      }
-    
-    //   fprintf(stderr, "%s: 3d yet implemented\n", argv[0]);
-    //   exit(1);
+    {
+      fprintf(stderr, "%s: function convertlong failed\n", argv[0]);
+      exit(1);
+    }
+    res = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
+    if (res == NULL)
+    {
+      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+      exit(1);
+    }
+    if (!lredt3d(image, res))
+    {
+      fprintf(stderr, "%s: function lredt2d failed\n", argv[0]);
+      exit(1);
+    }
   }
 
   writeimage(res, argv[argc-1]);

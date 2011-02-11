@@ -265,7 +265,7 @@ extern int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps);
 
 #  define                                               \
   ACCEPTED_TYPES2(I, T0, T1)                            \
-  if ( (datatype(I)!=T0) || (datatype(I)!=T1) )         \
+  if ( (datatype(I)!=T0) && (datatype(I)!=T1) )         \
   {                                                     \
   fprintf(stderr, "%s: bad image type\n", F_NAME);      \
   return 0;                                             \
@@ -273,7 +273,7 @@ extern int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps);
   
 #  define                                                               \
   ACCEPTED_TYPES3(I, T0, T1, T2)                                        \
-  if ( (datatype(I)!=T0) || (datatype(I)!=T1) || (datatype(I)!=T2) )    \
+  if ( (datatype(I)!=T0) && (datatype(I)!=T1) && (datatype(I)!=T2) )    \
   {                                                                     \
   fprintf(stderr, "%s: bad image type\n", F_NAME);                      \
   return 0;                                                             \
@@ -281,8 +281,8 @@ extern int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps);
   
 #  define                                                               \
   ACCEPTED_TYPES4(I, T0, T1, T2, T3)                                    \
-  if ( (datatype(I)!=T0) || (datatype(I)!=T1) || (datatype(I)!=T2)      \
-       || (datatype(I)!=T3) )                                           \
+  if ( (datatype(I)!=T0) && (datatype(I)!=T1) && (datatype(I)!=T2)      \
+       && (datatype(I)!=T3) )                                           \
   {                                                                     \
   fprintf(stderr, "%s: bad image type\n", F_NAME);                      \
   return 0;                                                             \
@@ -290,8 +290,8 @@ extern int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps);
   
 #  define                                                               \
   ACCEPTED_TYPES5(I, T0, T1, T2, T3, T4)                                \
-  if ( (datatype(I)!=T0) || (datatype(I)!=T1) || (datatype(I)!=T2)      \
-       || (datatype(I)!=T3) || (datatype(I)!=T4) )                      \
+  if ( (datatype(I)!=T0) && (datatype(I)!=T1) && (datatype(I)!=T2)      \
+       && (datatype(I)!=T3) && (datatype(I)!=T4) )                      \
   {                                                                     \
   fprintf(stderr, "%s: bad image type\n", F_NAME);                      \
   return 0;                                                             \
@@ -299,8 +299,8 @@ extern int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps);
   
 #  define                                                               \
   ACCEPTED_TYPES6(I, T0, T1, T2, T3, T4, T5)                            \
-  if ( (datatype(I)!=T0) || (datatype(I)!=T1) || (datatype(I)!=T2)      \
-       || (datatype(I)!=T3) || (datatype(I)!=T4)  || (datatype(I)!=T5)) \
+  if ( (datatype(I)!=T0) && (datatype(I)!=T1) && (datatype(I)!=T2)      \
+       && (datatype(I)!=T3) && (datatype(I)!=T4)  && (datatype(I)!=T5)) \
   {                                                                     \
   fprintf(stderr, "%s: bad image type\n", F_NAME);                      \
   return 0;                                                             \
@@ -308,9 +308,9 @@ extern int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps);
   
 #  define                                                               \
   ACCEPTED_TYPES7(I, T0, T1, T2, T3, T4, T5, T6)                        \
-  if ( (datatype(I)!=T0) || (datatype(I)!=T1) || (datatype(I)!=T2)      \
-       || (datatype(I)!=T3) || (datatype(I)!=T4)  || (datatype(I)!=T5)  \
-       || (datatype(I)!=T6) )                                           \
+  if ( (datatype(I)!=T0) && (datatype(I)!=T1) && (datatype(I)!=T2)      \
+       && (datatype(I)!=T3) && (datatype(I)!=T4)  && (datatype(I)!=T5)  \
+       && (datatype(I)!=T6) )                                           \
   {                                                                     \
   fprintf(stderr, "%s: bad image type\n", F_NAME);                      \
   return 0;                                                             \
@@ -318,8 +318,8 @@ extern int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps);
   
 #  define                                                               \
   COMPARE_SIZE(I0, I1)                                                  \
-  if (rowsize(I0)!=rowsize(I1) || rowsize(I0)!=rowsize(I1) || depth(I0)!=depth(I1) \
-      || (nbands(I0) != nbands(I1) ) )                                  \
+  if (rowsize(I0)!=rowsize(I1) && rowsize(I0)!=rowsize(I1) && depth(I0)!=depth(I1) \
+      && (nbands(I0) != nbands(I1) ) )                                  \
   {                                                                     \
   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);            \
   return 0;                                                             \

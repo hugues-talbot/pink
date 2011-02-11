@@ -500,9 +500,11 @@ int main(int32_t argc, char **argv)
   }
   else if (mode == 4)
   { // fonction d'ouverture inversée
-    struct xvimage *of = lopeningfunction(k, 0);
+    int32_t ret;
     uint32_t *OF, maxof;
+    struct xvimage *of = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
     assert(of != NULL);
+    ret = lopeningfunction(k, of, 0); assert(ret == 1);
     OF = ULONGDATA(of);
     maxof = OF[0];
     for (i = 0; i < N; i++) if (OF[i] > maxof) maxof = OF[i];
@@ -607,9 +609,11 @@ int main(int32_t argc, char **argv)
       if (D[i]) 
 	flow->v_sommets[i] = flow->v_sommets[i] / (TYP_VSOM)sqrt(D[i]);
 #endif
-    struct xvimage *of = lopeningfunction(k, 0);
+    int32_t ret;
     uint32_t *OF;
+    struct xvimage *of = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
     assert(of != NULL);
+    ret = lopeningfunction(k, of, 0); assert(ret == 1);
     OF = ULONGDATA(of);
     for (i = 0; i < N; i++)
       if (OF[i]) 

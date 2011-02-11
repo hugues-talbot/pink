@@ -52,13 +52,12 @@ extern int32_t ldilatball(struct xvimage* ob, int32_t r, int32_t mode);
 extern int32_t lerosball(struct xvimage* ob, int32_t r, int32_t mode);
 extern int32_t lopenball(struct xvimage* ob, int32_t r, int32_t mode);
 extern int32_t lcloseball(struct xvimage* ob, int32_t r, int32_t mode);
-extern struct xvimage* ldilatdiscloc(struct xvimage* f, int32_t mode);
-extern struct xvimage* ldilatballloc(struct xvimage* f, int32_t mode);
+extern int32_t ldilatballloc(struct xvimage* f, struct xvimage* res, int32_t mode);
 extern int32_t ldistquadSaito(struct xvimage *img, struct xvimage *res);
 extern int32_t ldistSaito(struct xvimage *img, struct xvimage *res);
 extern int32_t ldistMeijster(struct xvimage *img, struct xvimage *res);
-extern struct xvimage* lredt2d(struct xvimage* f);
-extern struct xvimage* lredt3d(struct xvimage* f);
+extern int32_t lredt2d(struct xvimage* f, struct xvimage* res);
+extern int32_t lredt3d(struct xvimage* f, struct xvimage* res);
 extern int32_t lsedt_meijster(struct xvimage *img, struct xvimage *res);
 extern void SEDT_line(uint8_t *f, uint32_t *g, index_t rs, index_t cs);
 extern void SEDT_column(uint32_t *f, uint32_t *g, index_t rs, index_t cs);
@@ -66,7 +65,7 @@ extern void SEDT3d_line(uint8_t *f, uint32_t *g, index_t rs, index_t cs, index_t
 extern void SEDT3d_column(uint32_t *f, uint32_t *g, index_t rs, index_t cs, index_t ds);
 extern void SEDT3d_planes(uint32_t *f, uint32_t *g, index_t rs, index_t cs, index_t ds);
 extern int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res);
-extern struct xvimage * lopeningfunction(struct xvimage *img, int32_t mode);
+extern int32_t lopeningfunction(struct xvimage *img, struct xvimage *res, int32_t mode);
   extern float ldistsets(struct xvimage *img1, struct xvimage *img2, int32_t mode, float cut);
 #ifdef __cplusplus
 }

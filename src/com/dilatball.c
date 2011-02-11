@@ -90,12 +90,20 @@ dilatball cells 4 cells_dilatball
 %TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 3 %RESULTS/dilatball_b2hebreu_3_3.pgm
 %TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 4 %RESULTS/dilatball_b2hebreu_3_4.pgm
 %TEST dilatball %IMAGES/2dbyte/binary/b2hebreu.pgm 3 8 %RESULTS/dilatball_b2hebreu_3_8.pgm
+%TEST dilatball %IMAGES/2dlong/l2fish1ma3.pgm -1 3 %RESULTS/dilatball_l2fish1ma3__1_3.pgm
+%TEST dilatball %IMAGES/2dlong/l2fish1ma4.pgm -1 4 %RESULTS/dilatball_l2fish1ma4__1_4.pgm
+%TEST dilatball %IMAGES/2dlong/l2fish1ma8.pgm -1 8 %RESULTS/dilatball_l2fish1ma8__1_8.pgm
+
 %TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 0 %RESULTS/dilatball_b3a_3_0.pgm
 %TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 15 2 %RESULTS/dilatball_b3a_15_2.pgm
 %TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 3 %RESULTS/dilatball_b3a_3_3.pgm
 %TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 6 %RESULTS/dilatball_b3a_3_6.pgm
 %TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 18 %RESULTS/dilatball_b3a_3_18.pgm
 %TEST dilatball %IMAGES/3dbyte/binary/b3a.pgm 3 26 %RESULTS/dilatball_b3a_3_26.pgm
+%TEST dilatball %IMAGES/3dlong/l3mortierma3.pgm -1 3 %RESULTS/dilatball_l3mortierma3__1_3.pgm
+%TEST dilatball %IMAGES/3dlong/l3mortierma6.pgm -1 6 %RESULTS/dilatball_l3mortierma6__1_6.pgm
+%TEST dilatball %IMAGES/3dlong/l3mortierma26.pgm -1 26 %RESULTS/dilatball_l3mortierma26__1_26.pgm
+
 */
 
 #include <stdio.h>
@@ -139,57 +147,52 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (depth(image) == 1) // 2D
+  if (r >= 0)
   {
-    if (r >= 0)
+    if (! ldilatball(image, r, mode))
     {
-      if (! ldilatball(image, r, mode))
-      {
-        fprintf(stderr, "%s: function ldilatball failed\n", argv[0]);
-        exit(1);
-      }
+      fprintf(stderr, "%s: function ldilatball failed\n", argv[0]);
+      exit(1);
     }
-    else
+  }
+  else
+  {
+    res = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
+    if (res == NULL)
     {
-      if (mode == 3)
+      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+      exit(1);
+    }
+    if (mode == 3)
+    {
+      if (!convertlong(&image))
       {
-      	if (!convertlong(&image))
-        {
-	  fprintf(stderr, "%s: function convertlong failed\n", argv[0]);
-	  exit(1);
-	}
-	if (! (res = lredt2d(image)))
-        {
+	fprintf(stderr, "%s: function convertlong failed\n", argv[0]);
+	exit(1);
+      }
+      if (depth(image) == 1)
+      {
+	if (!lredt2d(image, res))
+	{
 	  fprintf(stderr, "%s: function lredt2d failed\n", argv[0]);
 	  exit(1);
 	}
       }
       else
       {
-	if (! (res = ldilatdiscloc(image, mode)))
-        {
-	  fprintf(stderr, "%s: function ldilatdiscloc failed\n", argv[0]);
+	if (!lredt3d(image, res))
+	{
+	  fprintf(stderr, "%s: function lredt3d failed\n", argv[0]);
 	  exit(1);
 	}
       }
     }
-  }
-  else // 3D
-  {
-    if (r >= 0)
-    {
-      if (! ldilatball(image, r, mode))
-      {
-        fprintf(stderr, "%s: function ldilatball failed\n", argv[0]);
-        exit(1);
-      }
-    }
     else
     {
-      if (! (res = ldilatballloc(image, mode)))
+      if (!ldilatballloc(image, res, mode))
       {
-        fprintf(stderr, "%s: function ldilatballloc failed\n", argv[0]);
-        exit(1);
+	fprintf(stderr, "%s: function ldilatballloc failed\n", argv[0]);
+	exit(1);
       }
     }
   }

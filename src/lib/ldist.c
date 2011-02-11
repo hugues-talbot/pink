@@ -115,21 +115,9 @@ int32_t ldist(struct xvimage *img,   /* donnee: image binaire */
   Lifo * LIFO2;
   Lifo * LIFOtmp;
 
-  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
-  }
-  if (datatype(img) != VFF_TYP_1_BYTE)
-  {
-    fprintf(stderr, "%s: image type must be uint8_t\n", F_NAME);
-    return(0);
-  }
-  if (datatype(res) != VFF_TYP_4_BYTE)
-  {
-    fprintf(stderr, "%s: result type must be uint32_t\n", F_NAME);
-    return(0);
-  }
+  COMPARE_SIZE(res, img);
+  ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_4_BYTE);
 
   F = UCHARDATA(img);
   D = ULONGDATA(res);
@@ -349,16 +337,9 @@ int32_t ldistbyte(struct xvimage *img,   /* donnee: image binaire */
   Lifo * LIFO2;
   Lifo * LIFOtmp;
 
-  if (datatype(img) != VFF_TYP_1_BYTE)
-  {
-    fprintf(stderr, "%s: image type must be uint8_t\n", F_NAME);
-    return(0);
-  }
-  if (datatype(res) != VFF_TYP_1_BYTE)
-  {
-    fprintf(stderr, "%s: result type must be uint8_t\n", F_NAME);
-    return(0);
-  }
+  COMPARE_SIZE(res, img);
+  ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_1_BYTE);
 
   F = UCHARDATA(img);
   D = UCHARDATA(res);
@@ -619,11 +600,10 @@ int32_t ldistquad(struct xvimage *img,   /* donnee: image binaire */
   vect2Dint *L;              /* tableau de vecteur associe a un point de l'image */
   index_t i;
 
-  if (depth(img) != 1)
-  {
-    fprintf(stderr, "%s(): only for 2D images\n", F_NAME);
-    return 0;
-  }
+  COMPARE_SIZE(res, img);
+  ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_4_BYTE);
+  ONLY_2D(img);
 
   L = (vect2Dint *)calloc(1,N*sizeof(vect2Dint));
   F = UCHARDATA(img);
@@ -810,6 +790,10 @@ int32_t lchamfrein(struct xvimage *img,   /* donnee: image binaire */
   uint32_t *D;            /* pointeur sur les distances */
   index_t i;
   int32_t st, d;
+
+  COMPARE_SIZE(res, img);
+  ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_4_BYTE);
 
   F = UCHARDATA(img);
   D = ULONGDATA(res);
@@ -1435,13 +1419,9 @@ int32_t ldistquadSaito(struct xvimage *img,   /* donnee: image binaire */
   uint32_t *D;                   /* pointeur sur les distances */
   int32_t * buff = (int32_t *)calloc(1,cs * sizeof(int32_t));
 
-  ACCEPTED_TYPES2(img, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE);
-
-  /* if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE)) */
-  /* { */
-  /*   fprintf(stderr, "%s: bad image type(s)\n", F_NAME); */
-  /*   return(0); */
-  /* } */
+  COMPARE_SIZE(res, img);
+  ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_4_BYTE);
 
   D = ULONGDATA(res);
   F = UCHARDATA(img);  
@@ -1527,19 +1507,14 @@ int32_t ldistSaito(struct xvimage *img,   /* donnee: image binaire */
   index_t rs = img->row_size;
   index_t cs = img->col_size;
   index_t N= rs * cs;            /* taille de l'image */
-  uint8_t *F;                    /* pointeur sur l'image */
+  uint8_t *F = UCHARDATA(img);   /* pointeur sur l'image */
   uint32_t *D;                   /* pointeur sur les distances */
   int32_t * buff = (int32_t *)calloc(1,cs * sizeof(int32_t));
   double * R = DOUBLEDATA(res);
-  F = UCHARDATA(img);
 
-  ACCEPTED_TYPES2(img, VFF_TYP_1_BYTE, VFF_TYP_DOUBLE);
-
-  /* if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_DOUBLE)) */
-  /* { */
-  /*   fprintf(stderr, "%s: bad image type(s)\n", F_NAME); */
-  /*   return(0); */
-  /* } */
+  COMPARE_SIZE(res, img);
+  ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_DOUBLE);
 
   D = (uint32_t *)calloc(1,N * sizeof(uint32_t));
   if (D == NULL)
@@ -1714,7 +1689,7 @@ static void REDT_column(int32_t *f, int32_t *g, index_t rs, index_t cs)
 } //  REDT_column()
 
 /* ======================================================== */
-struct xvimage* lredt2d(struct xvimage* f)
+int32_t lredt2d(struct xvimage* f, struct xvimage* res)
 /* ======================================================== */
 // reverse euclidean distance transform
 // from: "d-Dimensional Reverse Euclidean Distance Transformation and Euclidean Medial Axis 
@@ -1723,43 +1698,30 @@ struct xvimage* lredt2d(struct xvimage* f)
 #undef F_NAME
 #define F_NAME "lredt2d"
 {
-  struct xvimage *tmp;
-  struct xvimage *res;
-  uint8_t *R;
+  uint8_t *R = UCHARDATA(res);
+  int32_t *F = SLONGDATA(f);
   index_t i, rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
+  struct xvimage *tmp;
+  int32_t *T;
 
-  if (ds != 1)
-  {
-    fprintf(stderr, "%s: only for 2D images\n", F_NAME);
-    return(NULL);
-  }
+  COMPARE_SIZE(res, f);
+  ACCEPTED_TYPES1(res, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(f, VFF_TYP_4_BYTE);
+  ONLY_2D(f);
 
-  res = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
   tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if ((res == NULL) || (tmp == NULL))
+  if (tmp == NULL)
   {
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return(NULL);
+    return(0);
   }
-  R = UCHARDATA(res);
-
-  if (datatype(f) == VFF_TYP_4_BYTE)
-  {
-    int32_t *F = SLONGDATA(f);
-    int32_t *T = SLONGDATA(tmp);
-    REDT_line(F, T, rs, cs);
-    copy2image(f, tmp);
-    REDT_column(F, T, rs, cs);
-    for (i = 0; i < N; i++) if (T[i]) R[i] = NDG_MAX; else R[i] = 0;
-  }
-  else
-  {
-    fprintf(stderr, "%s: bad image type\n", F_NAME);
-    return(NULL);
-  }
-
+  T = SLONGDATA(tmp);
+  REDT_line(F, T, rs, cs);
+  copy2image(f, tmp);
+  REDT_column(F, T, rs, cs);
+  for (i = 0; i < N; i++) if (T[i]) R[i] = NDG_MAX; else R[i] = 0;
   freeimage(tmp);
-  return(res);
+  return(1);
 } // lredt2d()
 
 /* ======================================================== */
@@ -1890,7 +1852,7 @@ static void REDT_zaxis_3d(int32_t *f, int32_t *g, index_t rs, index_t cs, index_
 } //  REDT_zaxis_3d()
 
 /* ======================================================== */
-struct xvimage* lredt3d(struct xvimage* f)
+int32_t lredt3d(struct xvimage* f, struct xvimage* res)
 /* ======================================================== */
 // reverse euclidean distance transform
 // from: "d-Dimensional Reverse Euclidean Distance Transformation and Euclidean Medial Axis 
@@ -1899,45 +1861,32 @@ struct xvimage* lredt3d(struct xvimage* f)
 #undef F_NAME
 #define F_NAME "lredt3d"
 {
-  struct xvimage *tmp;
-  struct xvimage *res;
-  uint8_t *R;
+  uint8_t *R = UCHARDATA(res);
+  int32_t *F = SLONGDATA(f);
   index_t i, rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds;
+  struct xvimage *tmp;
+  int32_t *T;
 
-  if (ds <= 1)
-    {
-      fprintf(stderr, "%s: only for 3D images\n", F_NAME);
-      return(NULL);
-    }
+  COMPARE_SIZE(res, f);
+  ACCEPTED_TYPES1(res, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(f, VFF_TYP_4_BYTE);
+  ONLY_3D(f);
 
-  res = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
   tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if ((res == NULL) || (tmp == NULL))
-    {
-      fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-      return(NULL);
-    }
-  R = UCHARDATA(res);
-  
-  if (datatype(f) == VFF_TYP_4_BYTE)
-    {
-      int32_t *F = SLONGDATA(f);
-      int32_t *T = SLONGDATA(tmp);
-      REDT_line_3d(F, T, rs, cs, ds);
-      copy2image(f, tmp);
-      REDT_column_3d(F, T, rs, cs, ds);
-      copy2image(f, tmp);
-      REDT_zaxis_3d(F, T, rs, cs, ds);
-      for (i = 0; i < N; i++) if (T[i]) R[i] = NDG_MAX; else R[i] = 0;
-    }
-  else
-    {
-      fprintf(stderr, "%s: bad image type\n", F_NAME);
-      return(NULL);
-    }
-
+  if (tmp == NULL)
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return(0);
+  }
+  T = SLONGDATA(tmp);
+  REDT_line_3d(F, T, rs, cs, ds);
+  copy2image(f, tmp);
+  REDT_column_3d(F, T, rs, cs, ds);
+  copy2image(f, tmp);
+  REDT_zaxis_3d(F, T, rs, cs, ds);
+  for (i = 0; i < N; i++) if (T[i]) R[i] = NDG_MAX; else R[i] = 0;
   freeimage(tmp);
-  return(res);
+  return(1);
 } // lredt3d()
 
 /* ======================================================== */
@@ -2037,29 +1986,9 @@ int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res)
   uint8_t *T;
 
   COMPARE_SIZE(res, f);
-
-  /* if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds)) */
-  /* { */
-  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
-  /*   return 0; */
-  /* }     */
-
   ACCEPTED_TYPES1(f, VFF_TYP_4_BYTE);
   ACCEPTED_TYPES1(res, VFF_TYP_4_BYTE);
-
-  /* if ((datatype(f) != VFF_TYP_4_BYTE) || (datatype(res) != VFF_TYP_4_BYTE)) */
-  /* { */
-  /*   fprintf(stderr, "%s: bad image type\n", F_NAME); */
-  /*   return 0; */
-  /* } */
-
   ONLY_2D(f);
-
-  /* if (ds != 1) */
-  /* { */
-  /*   fprintf(stderr, "%s: only for 2D images\n", F_NAME); */
-  /*   return 0; */
-  /* } */
 
   tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
   if (tmp == NULL)
@@ -2281,20 +2210,7 @@ int32_t lsedt_meijster(struct xvimage *img,   /* donnee: image binaire */
 
   ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
   ACCEPTED_TYPES1(res, VFF_TYP_4_BYTE);
-
-  /* if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_4_BYTE)) */
-  /* { */
-  /*   fprintf(stderr, "%s: bad image type(s)\n", F_NAME); */
-  /*   return(0); */
-  /* } */
-
   COMPARE_SIZE(res, img);
-
-  /* if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds)) */
-  /* { */
-  /*   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME); */
-  /*   return 0; */
-  /* }     */
 
   tmp = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
   if (tmp == NULL)
@@ -2343,12 +2259,7 @@ int32_t ldistMeijster(struct xvimage *img,   /* donnee: image binaire */
 
   ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
   ACCEPTED_TYPES1(res, VFF_TYP_DOUBLE);
-
-  /* if ((datatype(img) != VFF_TYP_1_BYTE) || (datatype(res) != VFF_TYP_DOUBLE)) */
-  /* { */
-  /*   fprintf(stderr, "%s: bad image type(s)\n", F_NAME); */
-  /*   return(0); */
-  /* } */
+  COMPARE_SIZE(res, img);
 
   dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
   if (dist == NULL)
@@ -2371,8 +2282,9 @@ int32_t ldistMeijster(struct xvimage *img,   /* donnee: image binaire */
 } // ldistMeijster()
 
 /* ==================================== */
-struct xvimage * lopeningfunction(
+int32_t lopeningfunction(
   struct xvimage *img,   /* donnee: image binaire */
+  struct xvimage *res,   /* resultat */
   int32_t mode
 )
 /* ==================================== */
@@ -2397,17 +2309,14 @@ The distance used depends on the optional parameter \b dist (default is 0) :
   index_t cs = colsize(img);
   index_t ds = depth(img); 
   index_t i, N = rs*cs*ds;
-  struct xvimage *res;
   struct xvimage *tmp;
   uint8_t *T;
   uint32_t *R, r, vide;
 
-  res = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (res == NULL)
-  {   
-    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return NULL;
-  }
+  ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_DOUBLE);
+  COMPARE_SIZE(res, img);
+
   R = ULONGDATA(res);
   razimage(res);
 
@@ -2427,7 +2336,7 @@ The distance used depends on the optional parameter \b dist (default is 0) :
       r++;
     } while (!vide);
 
-  return res;
+  return 1;
 } // lopeningfunction()
 
 /* ==================================== */
@@ -2469,11 +2378,9 @@ The parameter 'cut' is required only for Baddeley distances.
   float result;
   index_t i;
 
-  assert(datatype(img1) == VFF_TYP_1_BYTE);
-  assert(datatype(img2) == VFF_TYP_1_BYTE);
-  assert(rowsize(img2) == rs);
-  assert(colsize(img2) == cs);
-  assert(depth(img2) == ds);
+  ACCEPTED_TYPES1(img1, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(img2, VFF_TYP_1_BYTE);
+  COMPARE_SIZE(img1, img2);
 
   dist1 = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
   dist2 = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
@@ -2904,94 +2811,28 @@ int32_t lcloseball(struct xvimage* ob, int32_t r, int32_t mode)
 } // lcloseball()
 
 /* ======================================================== */
-struct xvimage* ldilatdiscloc(struct xvimage* f, int32_t mode)
-/* ======================================================== */
-// local dilation by a disc of radius f(x)
-#undef F_NAME
-#define F_NAME "ldilatdiscloc"
-{
-  struct xvimage *tmp1;
-  struct xvimage *res;
-  uint8_t *T1;
-  uint8_t *R;
-  index_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds, i;
-  int32_t vmax, v;
-  int32_t go;
-  tmp1 = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-  res = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-  if ((tmp1 == NULL) || (res == NULL))
-  {
-    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return(NULL);
-  }
-  T1 = UCHARDATA(tmp1);
-  R = UCHARDATA(res);
-  memset(R, 0, N);
-  if (datatype(f) == VFF_TYP_1_BYTE)
-  {
-    uint8_t *F = UCHARDATA(f);
-    vmax = F[0];
-    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
-    for (v = 1; v <= vmax; v++)
-    {
-      memset(T1, 0, N);
-      go = 0;
-      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
-      if (go) 
-      { 
-        ldilatball(tmp1, v-1, mode);
-        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
-      }
-    } // for (v = 1; v <= vmax; v++)
-  }
-  else if (datatype(f) == VFF_TYP_4_BYTE)
-  {
-    uint32_t *F = ULONGDATA(f);
-    vmax = F[0];
-    for (i = 0; i < N; i++) if (F[i] > vmax) vmax = F[i];
-    for (v = 1; v <= vmax; v++)
-    {
-      memset(T1, 0, N);
-      go = 0;
-      for (i = 0; i < N; i++) if (F[i] == v) { go = 1; T1[i] = NDG_MAX; }
-      if (go) 
-      { 
-        ldilatball(tmp1, v-1, mode);
-        for (i = 0; i < N; i++) if (T1[i]) R[i] = NDG_MAX;
-      }
-    } // for (v = 1; v <= vmax; v++)
-  }
-  else
-  {
-    fprintf(stderr, "%s: bad image type\n", F_NAME);
-    return(NULL);
-  }
-
-  freeimage(tmp1);
-  return(res);
-} // ldilatdiscloc()
-
-/* ======================================================== */
-struct xvimage* ldilatballloc(struct xvimage* f, int32_t mode)
+int32_t ldilatballloc(struct xvimage* f, struct xvimage* res, int32_t mode)
 /* ======================================================== */
 // local dilation by a ball of radius f(x)
-// OBSOLETE - see REDT (lredt2d)
 #undef F_NAME
 #define F_NAME "ldilatballloc"
 {
   struct xvimage *tmp1;
-  struct xvimage *res;
   uint8_t *T1;
   uint8_t *R;
   index_t rs = rowsize(f), cs = colsize(f), ds = depth(f), N = rs * cs * ds, i;
   int32_t vmax, v;
   int32_t go;
+
+  ACCEPTED_TYPES2(f, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_1_BYTE);
+  COMPARE_SIZE(res, f);
+
   tmp1 = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-  res = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-  if ((tmp1 == NULL) || (res == NULL))
+  if (tmp1 == NULL)
   {
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return(NULL);
+    return(0);
   }
   T1 = UCHARDATA(tmp1);
   R = UCHARDATA(res);
@@ -3013,7 +2854,7 @@ struct xvimage* ldilatballloc(struct xvimage* f, int32_t mode)
       }
     } // for (v = 1; v <= vmax; v++)
   }
-  else if (datatype(f) == VFF_TYP_4_BYTE)
+  else //if (datatype(f) == VFF_TYP_4_BYTE)
   {
     uint32_t *F = ULONGDATA(f);
     vmax = F[0];
@@ -3030,14 +2871,7 @@ struct xvimage* ldilatballloc(struct xvimage* f, int32_t mode)
       }
     } // for (v = 1; v <= vmax; v++)
   }
-  else
-  {
-    fprintf(stderr, "%s: bad image type\n", F_NAME);
-    return(NULL);
-  }
 
   freeimage(tmp1);
-  return(res);
+  return(1);
 } // ldilatballloc()
-
-
