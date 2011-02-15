@@ -76,6 +76,7 @@ int main(int argc, char **argv)
   if (argc != 5)
   {
     fprintf(stderr, "usage: %s in.pgm mask.pgm mode out.pgm\n", argv[0]);
+    fprintf(stderr, "       mode=<4|8|6|18|26>\n", argv[0]);
     exit(1);
   }
 

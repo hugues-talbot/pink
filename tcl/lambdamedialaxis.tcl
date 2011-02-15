@@ -100,9 +100,10 @@ checkbutton .top.topo -text topo -variable LAMBDAMEDIALAXIS(topo) -command lambd
 pack .top.topo -side right
 
 # create the radius button
+label .top.radiuslabel -text "lambda"
 scale .top.radius -from 0 -to 100 -length 400 -variable LAMBDAMEDIALAXIS(param) \
   -orient horizontal -tickinterval 10 -showvalue true -command lambdamedialaxis_run
-pack .top.radius -side left
+pack .top.radiuslabel .top.radius -side left
 
 # create an image and load contents from file 
 set LAMBDAMEDIALAXIS(im) [image create photo imname -file "$LAMBDAMEDIALAXIS(infilename)"]

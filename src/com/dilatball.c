@@ -50,10 +50,10 @@ where F is the greyscale image  \b in.pgm .
 
 The dilation is computed by thresholding a distance map.
 The distance used depends on the optional parameter \b dist (default is 0) :
-\li 0: rounded euclidean distance
-\li 1: approximate quadratic euclidean distance
+\li 0: rounded Euclidean distance
+\li 1: approximate quadratic Euclidean distance
 \li 2: chamfer distance
-\li 3: exact quadratic euclidean distance
+\li 3: exact quadratic Euclidean distance
 \li 4: 4-distance in 2d
 \li 8: 8-distance in 2d
 \li 6: 6-distance in 3d

@@ -146,6 +146,7 @@ $(BDIR)/granulometry \
 $(BDIR)/hitormiss \
 $(BDIR)/integermedialaxis \
 $(BDIR)/lambdamedialaxis \
+$(BDIR)/lambdamedialaxis2 \
 $(BDIR)/lambdapmedialaxis \
 $(BDIR)/lantuejoul \
 $(BDIR)/lintophat \
@@ -1007,6 +1008,9 @@ $(BDIR)/integermedialaxis:	$(CDIR)/integermedialaxis.c $(IDIR)/mcimage.h $(IDIR)
 $(BDIR)/lambdamedialaxis:	$(CDIR)/lambdamedialaxis.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lmedialaxis.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/lambdamedialaxis.c $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/lambdamedialaxis
 
+$(BDIR)/lambdamedialaxis2:	$(CDIR)/lambdamedialaxis2.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lmedialaxis.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/lambdamedialaxis2.c $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/lambdamedialaxis2
+
 $(BDIR)/lambdapmedialaxis:	$(CDIR)/lambdapmedialaxis.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lmedialaxis.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/lvoronoilabelling.o $(ODIR)/mclifo.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/lambdapmedialaxis.c $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ldist.o $(ODIR)/ltopotypes.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(ODIR)/lvoronoilabelling.o $(LIBS) -o $(BDIR)/lambdapmedialaxis
 
@@ -1019,8 +1023,8 @@ $(BDIR)/openball:	$(CDIR)/openball.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(ID
 $(BDIR)/opening:	$(CDIR)/opening.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ldilateros.h $(IDIR)/ldilateros3d.h $(IDIR)/lsym.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lsym.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/opening.c $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/lsym.o $(LIBS) -o $(BDIR)/opening
 
-$(BDIR)/openingfunction:	$(CDIR)/openingfunction.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/ldist.o
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/openingfunction.c $(ODIR)/ldist.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/openingfunction
+$(BDIR)/openingfunction:	$(CDIR)/openingfunction.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lmedialaxis.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/lmedialaxis.o $(ODIR)/lballincl.o $(ODIR)/mctopo3d.o $(ODIR)/mctopo.o $(ODIR)/ltopotypes.o $(ODIR)/ldist.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/openingfunction.c $(ODIR)/ldist.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/lmedialaxis.o $(ODIR)/lballincl.o $(ODIR)/mctopo3d.o $(ODIR)/mctopo.o $(ODIR)/ltopotypes.o $(LIBS) -o $(BDIR)/openingfunction
 
 $(BDIR)/radialopening:	 $(CDIR)/radialopening.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/larith.h $(IDIR)/lsym.h $(IDIR)/ldilateros.h $(IDIR)/ldilateros3d.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/larith.o $(ODIR)/lsym.o $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o
 	 $(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/radialopening.c $(ODIR)/larith.o $(ODIR)/lsym.o $(ODIR)/ldilateros.o $(ODIR)/ldilateros3d.o $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/radialopening

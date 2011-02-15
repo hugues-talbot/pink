@@ -42,10 +42,10 @@ knowledge of the CeCILL license and that you accept its terms.
 This operator associates, to each point x of the input object X, 
 the radius of the biggest ball included in X that includes x.
 The distance used depends on the optional parameter \b dist (default is 0) :
-\li 0: approximate euclidean distance (truncated)
-\li 1: approximate quadratic euclidean distance
+\li 0: Euclidean distance (truncated)
+\li 1: approximate quadratic Euclidean distance
 \li 2: chamfer distance
-\li 3: exact quadratic euclidean distance
+\li 3: exact quadratic Euclidean distance
 \li 4: 4-distance in 2d
 \li 8: 8-distance in 2d
 \li 6: 6-distance in 3d
@@ -69,15 +69,14 @@ The distance used depends on the optional parameter \b dist (default is 0) :
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <mcgeo.h>
-#include <ldist.h>
+#include <lmedialaxis.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * res;
+  struct xvimage * result;
   int32_t mode;
 
   if ((argc != 3) && (argc != 4))
@@ -94,29 +93,29 @@ int main(int argc, char **argv)
   }
 
   if (argc == 4) mode = atoi(argv[2]); else mode = 0;
-  if ((mode != 0) && (mode != 2) && (mode != 4) && 
+  if ((mode != 0) && (mode != 2) && (mode != 3) &&  (mode != 4) && 
       (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
   {
-    fprintf(stderr, "%s: dist = [0|2|4|8|6|18|26] \n", argv[0]);
+    fprintf(stderr, "%s: dist = [0|2|3|4|8|6|18|26] \n", argv[0]);
     exit(1);
   }
 
-  res = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
-  if (res == NULL)
+  result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
+  if (result == NULL)
   {
     fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
 
-  if (!lopeningfunction(image, res, mode))
+  if (!lmedialaxis_openingfunction(image, mode, result))
   {
-    fprintf(stderr, "%s: function lopeningfunction failed\n", argv[0]);
+    fprintf(stderr, "%s: function lmedialaxis_openingfunction failed\n", argv[0]);
     exit(1);
   }
 
-  writeimage(res, argv[argc-1]);
+  writeimage(result, argv[argc-1]);
   freeimage(image);
-  freeimage(res);
+  freeimage(result);
 
   return 0;
 } /* main */

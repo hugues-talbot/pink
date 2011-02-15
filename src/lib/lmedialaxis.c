@@ -61,6 +61,7 @@ Michel Couprie - novembre 2008 - lambda medial axis
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
@@ -950,7 +951,7 @@ from the article: " Exact Medial Axis With Euclidean Distance"
 } // lmedialaxis_lmedax_Remy_Thiel()
 
 /* ==================================== */
-struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
+int32_t lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode, struct xvimage *medial)
 /* ==================================== */
 {
 #undef F_NAME
@@ -962,15 +963,13 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
   index_t ps = rs * cs;
   index_t N = ps * ds;            /* taille image f */
   uint8_t *F = UCHARDATA(f);
-  struct xvimage *medial;
   uint32_t *D;
 
-  medial = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (medial == NULL)
-  {   
-    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-    return(NULL);
-  }
+  assert(medial != NULL);
+  assert(datatype(medial) == VFF_TYP_4_BYTE);
+  assert(rowsize(medial) == rs);
+  assert(colsize(medial) == cs);
+  assert(depth(medial) == ds);
   D = ULONGDATA(medial);
 
     if ((mode == 0) && (ds == 1))
@@ -979,7 +978,7 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
 	//if (! lmedialaxis_lmedax_talbot(f, medial))
       {
         fprintf(stderr, "%s: lmedialaxis_lmedax_meyer failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
     }
     else
@@ -988,7 +987,7 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
       if (! lmedialaxis_lmedax_meyer3d(f, medial))
       {
         fprintf(stderr, "%s: lmedialaxis_lmedax_meyer3d failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
     }
     else
@@ -1002,17 +1001,17 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
       if (dist == NULL)
       {   
 	fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-	return(NULL);
+	return(0);
       }
       if (! lsedt_meijster(f, dist)) // calcule la fonction distance
       {
         fprintf(stderr, "%s: lsedt_meijster failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
       if (! lskeleton_ST(dist, medial))
       {
         fprintf(stderr, "%s: lskeleton_ST failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
       freeimage(dist);
     }
@@ -1024,17 +1023,17 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
       if (dist == NULL)
       {   
 	fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-	return(NULL);
+	return(0);
       }
       if (! lsedt_meijster(f, dist)) // calcule la fonction distance
       {
         fprintf(stderr, "%s: lsedt_meijster failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
       if (! lmedialaxis_lmedax_Remy_Thiel(dist, medial))
       {
         fprintf(stderr, "%s: lmedialaxis_lmedax_Remy_Thiel failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
       freeimage(dist);
     }
@@ -1047,13 +1046,13 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
       if (! ldist(f, 4, medial)) // calcule la fonction distance
       {
         fprintf(stderr, "%s: ldist failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
       dist = copyimage(medial);
       if (! lt4pp(dist))           // pour les maxima de la fonction distance
       {
         fprintf(stderr, "%s: function lt4pp failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
       T1 = ULONGDATA(dist);
       for (i = 0; i < N; i++) 
@@ -1070,13 +1069,13 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
       if (! ldist(f, 8, medial)) // calcule la fonction distance
       {
         fprintf(stderr, "%s: ldist failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
       dist = copyimage(medial);
       if (! lt8pp(dist))           // pour les maxima de la fonction distance
       {
         fprintf(stderr, "%s: function lt8pp failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
       T1 = ULONGDATA(dist);
       for (i = 0; i < N; i++) 
@@ -1093,13 +1092,13 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
       if (! ldist(f, 6, medial)) // calcule la fonction distance
       {
         fprintf(stderr, "%s: ldist failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
       dist = copyimage(medial);
       if (! lt6pp(dist))           // pour les maxima de la fonction distance
       {
         fprintf(stderr, "%s: function lt6pp failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
       T1 = ULONGDATA(dist);
       for (i = 0; i < N; i++) 
@@ -1116,13 +1115,13 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
       if (! ldist(f, 26, medial)) // calcule la fonction distance
       {
         fprintf(stderr, "%s: ldist failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
       dist = copyimage(medial);
       if (! ltopotypes_t26pp(dist))           // pour les maxima de la fonction distance
       {
         fprintf(stderr, "%s: function ltopotypes_t26pp failed\n", F_NAME);
-        return(NULL);
+        return(0);
       }
       T1 = ULONGDATA(dist);
       for (i = 0; i < N; i++) 
@@ -1133,7 +1132,7 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
     else
     {
       fprintf(stderr, "%s: mode %d not yet implemented\n", F_NAME, mode);
-      return(NULL);
+      return(0);
     }
 #ifdef RETIRE_BORDS
     if (depth(f) == 1)  // cas des bords: pas d'AM (inconnu)
@@ -1168,7 +1167,7 @@ struct xvimage *lmedialaxis_lmedialaxis(struct xvimage *f, int32_t mode)
         D[z * ps + y * rs + (rs-1)] = 0;     /* plan x = rs-1 */
     }
 #endif
-  return medial;
+  return 1;
 } // lmedialaxis_lmedialaxis()
 
 /* ==================================== */
@@ -1180,17 +1179,26 @@ int32_t lmedialaxis_lmedialaxisbin(struct xvimage *f, int32_t mode)
   index_t i;
   index_t N = rowsize(f) * colsize(f) * depth(f);
   uint8_t *F = UCHARDATA(f);
-  struct xvimage *dist;
+  struct xvimage *medial;
   uint32_t *D;
 
-  dist = lmedialaxis_lmedialaxis(f, mode);
-  if (dist == NULL)
+  medial = allocimage(NULL, rowsize(f), colsize(f), depth(f), VFF_TYP_4_BYTE);
+  if (medial == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return(0);
+  }
+  D = ULONGDATA(medial);
+
+  if (!lmedialaxis_lmedialaxis(f, mode, medial))
   {   
     fprintf(stderr, "%s: lmedialaxis failed\n", F_NAME);
     return(0);
   }
-  D = ULONGDATA(dist);
+
   for (i = 0; i < N; i++) if (D[i]) F[i] = NDG_MAX; else F[i] = NDG_MIN;
+
+  freeimage(medial);
   return 1;
 } // lmedialaxis_lmedialaxisbin()
 
@@ -3198,3 +3206,165 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
 
   return 1;
 } // llambdaprimemedialaxis()
+
+/* ==================================== */
+int32_t lmedialaxis_openingfunction(struct xvimage *image, int32_t mode, struct xvimage *result)
+/* ==================================== */
+/*
+   Calcule la fonction d'ouverture de l'objet dans 'image' pour la distance indiquée par 'mode'
+   L'image 'result' (type VFF_TYP_4_BYTE) doit être allouée à l'avance. 
+ 
+*/
+{
+#undef F_NAME
+#define F_NAME "lmedialaxis_openingfunction"
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;
+  index_t N = ps * ds;
+  struct xvimage *radius;
+  uint32_t *R;
+  uint32_t *OF;
+  uint8_t *I;
+  index_t i, p, npoints, x, y, z;
+  int32_t *X, *Y, *Z;
+  int32_t maxr, dist, rball;
+#define FEATURE
+#ifdef FEATURE
+  index_t cen, *ptrc; // location(s) of the center of the covering ball
+  index_t xc, yc, zc;
+  int32_t mind;
+  double scale = 1.3;
+#endif
+  assert(datatype(image) == VFF_TYP_1_BYTE);
+  assert(datatype(result) == VFF_TYP_4_BYTE);
+  assert(rowsize(result) == rs);
+  assert(colsize(result) == cs);
+  assert(depth(result) == ds);
+
+  radius = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
+  if (radius == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return(0);
+  }
+
+  if (!lmedialaxis_lmedialaxis(image, mode, radius))
+  {
+    fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", F_NAME);
+    return 0;
+  }
+  R = ULONGDATA(radius);
+
+  //1. Look for all balls center and generate data structure with priority (bigger Radius first)
+	
+  npoints=0;
+  for (i = 0; i < N; i++) if (R[i]) npoints++; 
+
+  X = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(X != NULL);
+  Y = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(Y != NULL);
+  Z = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(Z != NULL);
+	
+  i=0;
+  for(z = 0; z < ds; z++)
+    for(y = 0; y < cs; y++)
+      for(x = 0; x < rs; x++)
+	if (R[z*ps+rs*y+x]) 
+	{
+	  X[i] = x; Y[i] = y; Z[i] = z; i++;
+	}
+	
+  I= UCHARDATA(image);
+  OF = ULONGDATA(result);
+  razimage(result);
+	
+  //2. Scan all object points and calc distance to all B, select the biggest B which covers analyzed point
+
+  if (mode == 3)
+  {
+
+#ifdef FEATURE
+    ptrc = (index_t *)malloc(N* sizeof(index_t)); assert(ptrc != NULL);
+#endif
+
+    for(z = 0; z < ds; z++)
+    for(y = 0; y < cs; y++)
+    for(x = 0; x < rs; x++)
+    {
+      i = z*ps+rs*y+x;
+      if (I[i]) 
+      {
+	maxr = 0;
+#ifdef FEATURE
+	mind = INT32_MAX;
+#endif
+	for(p = 0; p < npoints; p++)
+	{
+	  rball = R[Z[p]*ps+rs*Y[p]+X[p]];
+	  dist = (X[p]-x)*(X[p]-x) + (Y[p]-y)*(Y[p]-y) + (Z[p]-z)*(Z[p]-z);
+	  if (dist <= rball)
+	  {
+	    if (rball > maxr)
+	    { 
+	      maxr = rball;
+#ifdef FEATURE
+	      cen = Z[p]*ps+rs*Y[p]+X[p];
+#endif
+	    } 
+#ifdef FEATURE
+	    else if ((rball == maxr) && (dist < mind))
+	      cen = Z[p]*ps+rs*Y[p]+X[p];
+#endif	    
+	  }
+	}
+	OF[i] = maxr;
+#ifdef FEATURE
+	ptrc[i] = cen;
+#endif
+      }
+    }	
+
+#ifdef FEATURE
+    if (! lsedt_meijster(image, radius)) // calcule la fonction distance
+    {
+      fprintf(stderr, "%s: lsedt_meijster failed\n", F_NAME);
+      return(0);
+    }
+
+    for(z = 0; z < ds; z++)
+    for(y = 0; y < cs; y++)
+    for(x = 0; x < rs; x++)
+    {
+      i = z*ps+rs*y+x;
+      if (R[i])
+      {
+	rball = R[i];
+	xc = ptrc[i] % rs;
+	yc = (ptrc[i] % ps) / rs;
+	zc = ptrc[i] / ps;
+	dist = (xc-x)*(xc-x) + (yc-y)*(yc-y) + (zc-z)*(zc-z);
+	if (scale*sqrt(OF[i]) >= sqrt(dist) + sqrt(rball)) R[i] = 0; 
+      }
+    }
+
+    writeimage(radius, "_radius");
+
+    free(ptrc);
+#endif  
+
+  }
+  else
+  {
+    fprintf(stderr, "%s: mode %d not implemented\n", F_NAME, mode);
+    return 0;
+  }
+
+
+
+  freeimage(radius);
+  free(X);
+  free(Y);
+  free(Z);
+  return(1);
+} // lmedialaxis_openingfunction()

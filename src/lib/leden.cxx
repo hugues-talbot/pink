@@ -100,14 +100,14 @@ int32_t ledengrowth(uint8_t *in,
 #ifdef VERBOSE
 	printf("%s: dx=%d, dy=%d, dz=%d, topo=%d\n", F_NAME, dimx, dimy, dimz, topo);
 #endif
-	if ((dimz == 1) && (topo != 4) && (topo != 8))
+	if ((dimz == 1) && (topo != 0) && (topo != 4) && (topo != 8))
 	{
-	  fprintf(stderr, "%s: parameter topo must be 4 or 8 in 2D\n", F_NAME);
+	  fprintf(stderr, "%s: parameter topo must be 0, 4 or 8 in 2D\n", F_NAME);
 	  return 0;
 	}
-	else if ((dimz > 1) && (topo != 6) && (topo != 26))
+	else if ((dimz > 1) && (topo != 0) && (topo != 6) && (topo != 26))
 	{
-	  fprintf(stderr, "%s: parameter topo must be 6 or 26 in 3D\n", F_NAME);
+	  fprintf(stderr, "%s: parameter topo must be 0, 6 or 26 in 3D\n", F_NAME);
 	  return 0;
 	}
 

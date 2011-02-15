@@ -27,3 +27,8 @@ derniers ajouts à Pink :
   et remplacement par XXXXXball
 - le code 0 pour les calculs de distance correspond maintenant à une
   distance euclidienne exacte arrondie
+
+02/02/2011
+
+- allocation à l'extérieur pour lmedialaxis_lmedialaxis()
+- ajout de lmedialaxis_openingfunction()

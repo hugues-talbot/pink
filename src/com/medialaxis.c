@@ -101,8 +101,15 @@ int main(int argc, char **argv)
   }
 
   distance = atoi(argv[2]);
-  
-  if (! (res = lmedialaxis_lmedialaxis(image, distance)))
+
+  res = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
+  if (res == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+    exit(1);
+  }
+
+  if (!lmedialaxis_lmedialaxis(image, distance, res))
   {
     fprintf(stderr, "%s: lmedialaxis_lmedialaxis failed\n", argv[0]);
     exit(1);

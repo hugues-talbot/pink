@@ -35,13 +35,14 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern struct xvimage * lmedialaxis_lmedialaxis(struct xvimage *f, int32_t connex);
+extern int32_t lmedialaxis_lmedialaxis(struct xvimage *f, int32_t connex, struct xvimage *medial);
 extern int32_t lmedialaxis_lmedialaxisbin(struct xvimage *f, int32_t connex);
 extern int32_t lmedialaxis_lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia);
 extern int32_t lmedialaxis_lbisector_talbot(struct xvimage * image, struct xvimage *angles);
 extern int32_t lmedialaxis_lmedax_Remy_Thiel(struct xvimage *ImageDist, struct xvimage *ImageMedial);
 extern int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda);
 extern int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct xvimage *lambda);
+extern int32_t lmedialaxis_openingfunction(struct xvimage *image, int32_t mode, struct xvimage *result);
 #ifdef __cplusplus
 }
 #endif

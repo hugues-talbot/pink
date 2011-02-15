@@ -2292,8 +2292,9 @@ int32_t lopeningfunction(
 This operator associates, to each point x of the input object X, 
 the radius of the biggest ball included in X that includes x.
 The distance used depends on the optional parameter \b dist (default is 0) :
-\li 0: approximate euclidean distance
+\li 0: truncated Euclidean distance
 \li 2: chamfer distance
+\li 3: exact squared Euclidean distance
 \li 4: 4-distance in 2d
 \li 8: 8-distance in 2d
 \li 6: 6-distance in 3d
