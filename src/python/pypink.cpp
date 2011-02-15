@@ -323,6 +323,14 @@ UI_WRAP_FUNCTION(
 #include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_FUNCTION(
+    "crop2d",
+    lpycrop,
+    ( arg("in"), arg("out"), arg("x"), arg("y"), arg("w"), arg("h") ),
+    doc__crop__c__ 
+    );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
   "heightminima",
   lheightminima,
   ( arg("image"), arg("connexity"), arg("height") ),
