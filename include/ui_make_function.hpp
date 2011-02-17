@@ -46,7 +46,7 @@
 
   \code
   def( 
-    "function's name in python",
+    "function's name in Python",
     &make_function<char_image, T1, T2, ..., Tn, &pink_c_function>,
     (arg("argument 1 name"), arg("argument 2 name"), ..., arg(argument n name) )
     doc__my_c_function__c__

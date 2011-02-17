@@ -36,12 +36,13 @@ types. At the time of writing the following image types exist in Pink:
 \code
 struct xvimage; // represents all the supported image types in C format
 
-class ujoi<unsigned byte>  <=> char_image    // represents a byte image
-class ujoi<unsigned short> <=> short_image   // represents a short image
-class ujoi<int>            <=> int_image     // represents a int image
-class ujoi<float>          <=> float_image   // represents a float image
-class ujoi<double>         <=> double_image  // represents a double image
-class ujoi<std::complex>   <=> complex_image // represents a complex image
+class ujoi<unsigned byte>  <=> char_image     // represents a byte image
+class ujoi<unsigned short> <=> short_image    // represents a short image
+class ujoi<int>            <=> int_image      // represents a int image
+class ujoi<float>          <=> float_image    // represents a float image
+class ujoi<double>         <=> double_image   // represents a double image
+class ujoi<fcomplex>       <=> fcomplex_image // represents a complex image
+class ujoi<dcomplex>       <=> dcomplex_image // represents a complex image
 \endcode
 
 \section general_conventions General conventions
