@@ -17,3 +17,27 @@ SOL: apt-file search XXX
        YYY
      sudo apt-get install YYY
 
+MC 11/02/2011
+system: ubuntu
+Liste des installations nécessaires :
+
+Pour vtk-tcl :
+sudo apt-get install doxygen
+sudo apt-get install tcl-dev
+sudo apt-get install tk-dev
+sudo apt-get install cmake-curses-gui
+sudo apt-get install libgl1-mesa-dev
+sudo apt-get install libosmesa6-dev
+
+Pour vtk-python :
+sudo apt-get install python-dev
+sudo apt-get install libboost-dev
+sudo apt-get install libncurses-dev
+
+Pour imview :
+apt-get install libxext-dev
+apt-get install libjpeg-dev
+apt-get install libtiff-dev
+apt-get install libmagick-dev
+apt-get install libxpm-dev
+apt-get install autoconf
