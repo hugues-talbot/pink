@@ -40,7 +40,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 <B>Description:</B>
 The argument \b connex selects the connectivity (4, 8 in 2D; 6, 18, 26 in 3D).
-The argument <B><min|max|pla></B> selects the kind of flat zone
+The argument <B><fgd|bgd|min|max|pla></B> selects the kind of flat zone
 to be labeled:
 \li \b fgd selects foreground components for a binary image
 \li \b bgd selects background components for a binary image

@@ -70,6 +70,19 @@ extern int32_t llpemeyer2(
         int32_t connex
 );
 
+extern int32_t llpemeyer2lab(
+        struct xvimage *marqueurs,
+        struct xvimage *image,
+        struct xvimage *masque,
+        int32_t connex
+);
+
+extern int32_t llpemeyer2lab_nomask(
+        struct xvimage *marqueurs,
+        struct xvimage *image,
+        int32_t connex
+);
+
 extern int32_t llpemeyer2_nomask(
         struct xvimage *image,
         struct xvimage *marqueurs,

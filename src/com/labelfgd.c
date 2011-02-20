@@ -32,29 +32,28 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file watershedMeyer2.c
+/*! \file labelfgd.c
 
-\brief watershed transformation (Meyer's algorithm) with labelled markers  
+\brief labeling of the foreground components of a binary image
 
-<B>Usage:</B> watershedMeyer2 in mark <roi|null> connex out
+<B>Usage:</B> labelfgd in.pgm connex out.pgm
 
 <B>Description:</B>
-Performs the watershed transformation on the image <B>in</B>, taking the
-set of markers in <B>mark</B>, in the form of a label image where all the pixels
-sharing the same label (even if not connected) belong to the same marker.
-If this parameter is present, <B>roi</B>
-indicates the region of interest on which the operation is performed.
-The parameter <B>connex</B> gives the adjacency relation (4,8 in 2D; 6,18,26 in 3D) 
-for the makers.
+Each connected component of \b in.pgm is labeled with a unique integer, starting from 1. The background points are labeled by 0.
+The argument \b connex selects the connectivity (4, 8 in 2D; 6, 18, 26 in 3D).
+The output image \b out.pgm has the type "int32_t".
 
-The result is a binary image.
-
-<B>Types supported:</B> byte 2d, byte 3d
+<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d
 
 <B>Category:</B> connect
-\ingroup connect
+\ingroup  connect
 
 \author Michel Couprie
+*/
+
+/*
+%TEST labelfgd %IMAGES/2dbyte/binary/b2hebreu.pgm 8 %RESULTS/labelfgd_b2hebreu_8.pgm
+%TEST labelfgd %IMAGES/2dbyte/binary/b2hebreu.pgm 4 %RESULTS/labelfgd_b2hebreu_4.pgm
 */
 
 #include <stdio.h>
@@ -64,55 +63,50 @@ The result is a binary image.
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <llpemeyer.h>
+#include <larith.h>
+#include <llabelextrema.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * image;
-  struct xvimage * marqueurs;
-  struct xvimage * masque;
   int32_t connex;
+  struct xvimage * image;
+  struct xvimage * result;
 
-  if (argc != 6)
+  if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in mark <roi|null> connex out\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex fileout.pgm\n", argv[0]);
     exit(1);
   }
 
   image = readimage(argv[1]);
-  marqueurs = readimage(argv[2]);
-  if ((image == NULL) || (marqueurs == NULL))
+  if (image == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  if (strcmp(argv[3],"null") == 0) 
-    masque = NULL;
-  else
-  {
-    masque = readimage(argv[3]);
-    if (masque == NULL)
-    {
-      fprintf(stderr, "%s: readimage failed\n", argv[0]);
-      exit(1);
-    }
-  }
+  connex = atoi(argv[2]);
 
-  connex = atoi(argv[4]);
-
-  if (! llpemeyer2(image, marqueurs, masque, connex))
-  {
-    fprintf(stderr, "%s: llpemeyer2 failed\n", argv[0]);
+  result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
+  if (result == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
 
-  writeimage(image, argv[argc - 1]);
+  if (! llabelfgd(image, connex, result))
+  {
+    fprintf(stderr, "%s: llabelfgd failed\n", argv[0]);
+    exit(1);
+  }    
+
+  writeimage(result, argv[argc-1]);
+  freeimage(result);
   freeimage(image);
-  freeimage(marqueurs);
-  if (masque) freeimage(masque);
 
   return 0;
 } /* main */
+
+

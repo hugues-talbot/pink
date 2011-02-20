@@ -36,11 +36,11 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief watershed transformation (Meyer's algorithm) with labelled markers  
 
-<B>Usage:</B> watershedMeyer2lab in mark <roi|null> connex [mode] out
+<B>Usage:</B> watershedMeyer2lab marker image <roi|null> connex [mode] out
 
 <B>Description:</B>
-Performs the watershed transformation on the image <B>in</B>, taking the
-set of markers in <B>mark</B>, in the form of a label image where all the pixels
+Performs the watershed transformation on the image <B>image</B>, taking the
+set of markers in <B>marker</B>, in the form of a label image where all the pixels
 sharing the same label (even if not connected) belong to the same marker.
 If this parameter is present, <B>roi</B>
 indicates the region of interest on which the operation is performed.
@@ -85,12 +85,12 @@ int main(int argc, char **argv)
 
   if ((argc != 6) && (argc != 7))
   {
-    fprintf(stderr, "usage: %s in mark <roi|null> connex [mode] out\n", argv[0]);
+    fprintf(stderr, "usage: %s marker image <roi|null> connex [mode] out\n", argv[0]);
     exit(1);
   }
 
-  image = readimage(argv[1]);
-  marqueurs = readimage(argv[2]);
+  marqueurs = readimage(argv[1]);
+  image = readimage(argv[2]);
   if ((image == NULL) || (marqueurs == NULL))
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);

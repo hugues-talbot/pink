@@ -62,6 +62,9 @@ extern int32_t llabelbin(struct xvimage *f,
 		     int32_t connex,
 		     struct xvimage *lab, 
 		     int32_t *nlabels);
+extern int32_t llabelfgd(struct xvimage *f, 
+		     int32_t connex,
+		     struct xvimage *lab);
 
 #ifdef __cplusplus
 }

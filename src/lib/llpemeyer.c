@@ -52,7 +52,10 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 //#define ANIMATE
 
-#define PARANO                 /* even paranoid people have ennemies */
+#define DEBUG_llpemeyer2
+#define DEBUG_llpemeyer2lab
+#define DEBUG_llpemeyer2lab_nomask
+
 #define VERBOSE
 
 #include <stdio.h>
@@ -118,52 +121,17 @@ int32_t llpemeyer(
   uint8_t *A;
 #endif
 
-  if (datatype(image) != VFF_TYP_1_BYTE) 
-  {
-    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
-    return 0;
-  }
-
-  if (datatype(marqueurs) != VFF_TYP_1_BYTE) 
-  {
-    fprintf(stderr, "%s: marker type must be VFF_TYP_1_BYTE\n", F_NAME);
-    return 0;
-  }
-
-  if (marqueursfond && (datatype(marqueursfond) != VFF_TYP_1_BYTE))
-  {
-    fprintf(stderr, "%s: bgnd marker type must be VFF_TYP_1_BYTE\n", F_NAME);
-    return 0;
-  }
-
-  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
-  {
-    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
-    return 0;
-  }
-
   if (depth(image) != 1) 
-  {
-    fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
-    exit(0);
-  }
+    return llpemeyer3d(image, marqueurs, marqueursfond, masque, connex);
 
-  if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(marqueurs, VFF_TYP_1_BYTE);
+  COMPARE_SIZE(image, marqueurs);
+  if (masque) ACCEPTED_TYPES1(masque, VFF_TYP_1_BYTE);
+  if (masque) COMPARE_SIZE(image, masque);
+  if (marqueursfond) ACCEPTED_TYPES1(marqueursfond, VFF_TYP_1_BYTE);
+  if (marqueursfond) COMPARE_SIZE(image, marqueursfond);
 
-  if (marqueursfond && ((rowsize(marqueursfond) != rs) || (colsize(marqueursfond) != cs)))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
-  if (masque && ((rowsize(masque) != rs) || (colsize(masque) != cs)))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
   if (masque) MA = UCHARDATA(masque);
   if (marqueursfond) BF = UCHARDATA(marqueursfond);
 
@@ -269,13 +237,7 @@ int32_t llpemeyer(
   } /* for (x = 0; x < N; x++) */
 
   x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-     return(0);
-  }
-#endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
   /* ================================================ */
   /* INONDATION                                       */
@@ -379,47 +341,19 @@ int32_t llpemeyer2(
   int32_t incr_vois;
   index_t nlabels;
 
-  if (datatype(image) != VFF_TYP_1_BYTE) 
-  {
-    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
-    return 0;
-  }
-
-  if (datatype(marqueurs) != VFF_TYP_4_BYTE) 
-  {
-    fprintf(stderr, "%s: marker type must be VFF_TYP_4_BYTE\n", F_NAME);
-    return 0;
-  }
-
-  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
-  {
-    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
-    return 0;
-  }
+#ifdef DEBUG_llpemeyer2
+  printf("%s: types %d %d %d\n", F_NAME, datatype(marqueurs), datatype(image), datatype(masque));
+#endif
 
   if (depth(image) != 1) 
-  {
-    fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
-    exit(0);
-  }
+    return llpemeyer3d2(image, marqueurs, masque, connex);
 
-  if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
-  if (masque && ((rowsize(masque) != rs) || (colsize(masque) != cs)))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(marqueurs, VFF_TYP_4_BYTE);
+  if (masque) ACCEPTED_TYPES1(masque, VFF_TYP_1_BYTE);
+  COMPARE_SIZE(image, marqueurs);
+  if (masque) COMPARE_SIZE(image, masque);
   if (masque) MA = UCHARDATA(masque);
-
-  if (datatype(marqueurs) != VFF_TYP_4_BYTE)
-  {
-    fprintf(stderr, "%s: marker image must be int32_t\n", F_NAME);
-    return 0;
-  }
 
   IndicsInit(N);
   FAH = CreeFahVide(N+1);
@@ -465,14 +399,8 @@ int32_t llpemeyer2(
     } /* if (M[x]) */
   } /* for (x = 0; x < N; x++) */
 
-  x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-     return(0);
-  }
-#endif
+  x = FahPop(FAH); 
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
   /* ================================================ */
   /* INONDATION                                       */
@@ -529,6 +457,45 @@ int32_t llpemeyer2(
   FahTermine(FAH);
   return(1);
 } // llpemeyer2()
+
+/* ==================================== */
+int32_t llpemeyer2lab(
+        struct xvimage *marqueurs,
+        struct xvimage *image,
+        struct xvimage *masque,
+        int32_t connex)
+/* ==================================== */
+// marqueurs: image initiale de labels
+// le résultat du traitement se trouve dans marqueurs (image de labels)
+// et dans image (binaire)
+// LPE avec ligne de séparation
+#undef F_NAME
+#define F_NAME "llpemeyer2lab"
+{
+#ifdef DEBUG_llpemeyer2lab
+  printf("%s: types %d %d %d\n", F_NAME, datatype(marqueurs), datatype(image), datatype(masque));
+#endif
+  return llpemeyer2(image, marqueurs, masque, connex);
+} // llpemeyer2lab()
+
+/* ==================================== */
+int32_t llpemeyer2lab_nomask(
+        struct xvimage *marqueurs,
+        struct xvimage *image,
+        int32_t connex)
+/* ==================================== */
+// marqueurs: image initiale de labels
+// le résultat du traitement se trouve dans marqueurs (image de labels)
+// et dans image (binaire)
+// LPE avec ligne de séparation
+#undef F_NAME
+#define F_NAME "llpemeyer2lab_nomask"
+{
+#ifdef DEBUG_llpemeyer2lab_nomask
+  printf("%s: types %d %d\n", F_NAME, datatype(marqueurs), datatype(image));
+#endif
+  return llpemeyer2(image, marqueurs, NULL, connex);
+} // llpemeyer2lab_nomask()
 
 /* ==================================== */
 int32_t llpemeyer3(
@@ -640,13 +607,7 @@ int32_t llpemeyer3(
   } /* for (x = 0; x < N; x++) */
 
   x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-     return(0);
-  }
-#endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
   /* ================================================ */
   /* INONDATION                                       */
@@ -875,13 +836,7 @@ int32_t llpemeyer3(
    } /* for (x = 0; x < N; x++) */
 
    x = FahPop(FAH);
- #ifdef PARANO
-   if (x != -1)
-   {   
-      fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-      return(0);
-   }
- #endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
    /* ================================================ */
    /* INONDATION                                       */
@@ -1136,13 +1091,7 @@ int32_t llpemeyersansligne(
   } /* for (x = 0; x < N; x++) */
 
   x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-     return(0);
-  }
-#endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
   /* ================================================ */
   /* INONDATION                                       */
@@ -1308,13 +1257,7 @@ int32_t llpemeyersanslignelab(
   } /* for (x = 0; x < N; x++) */
 
   x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-     return(0);
-  }
-#endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
   /* ================================================ */
   /* INONDATION                                       */
@@ -1406,47 +1349,16 @@ int32_t llpemeyer3d(
   int32_t etiqcc[6];
   int32_t ncc;  
 
-  if (datatype(image) != VFF_TYP_1_BYTE) 
-  {
-    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
-    return 0;
-  }
+  ONLY_3D(image);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(marqueurs, VFF_TYP_1_BYTE);
+  COMPARE_SIZE(image, marqueurs);
+  if (masque) ACCEPTED_TYPES1(masque, VFF_TYP_1_BYTE);
+  if (masque) COMPARE_SIZE(image, masque);
+  if (marqueursfond) ACCEPTED_TYPES1(marqueursfond, VFF_TYP_1_BYTE);
+  if (marqueursfond) COMPARE_SIZE(image, marqueursfond);
 
-  if (datatype(marqueurs) != VFF_TYP_1_BYTE) 
-  {
-    fprintf(stderr, "%s: marker type must be VFF_TYP_1_BYTE\n", F_NAME);
-    return 0;
-  }
-
-  if (marqueursfond && (datatype(marqueursfond) != VFF_TYP_1_BYTE))
-  {
-    fprintf(stderr, "%s: bgnd marker type must be VFF_TYP_1_BYTE\n", F_NAME);
-    return 0;
-  }
-
-  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
-  {
-    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
-    return 0;
-  }
-
-  if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
-
-  if (marqueursfond && ((rowsize(marqueursfond) != rs) || (colsize(marqueursfond) != cs) || (depth(marqueursfond) != d)))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
   if (marqueursfond) BF = UCHARDATA(marqueursfond);
-  if (masque && ((rowsize(masque) != rs) || (colsize(masque) != cs) || (depth(masque) != d)))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
   if (masque) MA = UCHARDATA(masque);
 
   IndicsInit(N);
@@ -1593,13 +1505,7 @@ int32_t llpemeyer3d(
   } /* for (x = 0; x < N; x++) */
 
   x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-     return(0);
-  }
-#endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
   /* ================================================ */
   /* INONDATION                                       */
@@ -1940,13 +1846,7 @@ int32_t llpemeyer3dsansligne(
   } /* for (x = 0; x < N; x++) */
 
   x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-     return(0);
-  }
-#endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
   /* ================================================ */
   /* INONDATION                                       */
@@ -2157,13 +2057,7 @@ int32_t llpemeyer3dsanslignelab(
   } /* for (x = 0; x < N; x++) */
 
   x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-     return(0);
-  }
-#endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
   /* ================================================ */
   /* INONDATION                                       */
@@ -2294,41 +2188,12 @@ int32_t llpemeyer3d2(
   printf("%s: begin\n", F_NAME);
 #endif
 
-  if (d == 1) 
-  {
-    fprintf(stderr, "%s: 3D images only\n", F_NAME);
-    exit(0);
-  }
-
-  if (datatype(image) != VFF_TYP_1_BYTE) 
-  {
-    fprintf(stderr, "%s: image type must be VFF_TYP_1_BYTE\n", F_NAME);
-    return 0;
-  }
-
-  if (masque && (datatype(masque) != VFF_TYP_1_BYTE))
-  {
-    fprintf(stderr, "%s: mask type must be VFF_TYP_1_BYTE\n", F_NAME);
-    return 0;
-  }
-
-  if (datatype(marqueurs) != VFF_TYP_4_BYTE) 
-  {
-    fprintf(stderr, "%s: marker image must by 4 byte\n", F_NAME);
-    return 0;
-  }
-
-  if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs)  || (depth(marqueurs) != d))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
-
-  if (masque && ((rowsize(masque) != rs) || (colsize(masque) != cs) || (depth(masque) != d)))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
+  ONLY_3D(image);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(marqueurs, VFF_TYP_4_BYTE);
+  if (masque) ACCEPTED_TYPES1(masque, VFF_TYP_1_BYTE);
+  COMPARE_SIZE(image, marqueurs);
+  if (masque) COMPARE_SIZE(image, masque);
   if (masque) MA = UCHARDATA(masque);
 
   IndicsInit(N);
@@ -2385,13 +2250,7 @@ int32_t llpemeyer3d2(
   } /* for (x = 0; x < N; x++) */
 
   x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-     return(0);
-  }
-#endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
   /* ================================================ */
   /* INONDATION                                       */
@@ -2633,13 +2492,7 @@ int32_t llpemeyer3d2b(
   } /* for (x = 0; x < N; x++) */
 
   x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-     return(0);
-  }
-#endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
   /* ================================================ */
   /* INONDATION                                       */
@@ -2871,13 +2724,7 @@ int32_t llpemeyer3d3(
   } /* for (x = 0; x < N; x++) */
 
   x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-     return(0);
-  }
-#endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
   /* ================================================ */
   /* INONDATION                                       */
@@ -3156,13 +3003,7 @@ int32_t llpemeyerbiconnecte(
   } /* for (x = 0; x < N; x++) */
 
   x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-     fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-     return(0);
-  }
-#endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
 
   /* ================================================ */
   /* INONDATION                                       */
@@ -3393,13 +3234,7 @@ int32_t llpemeyerbiconnecte3d(
     } /* if (B[x]) */
   } /* for (x = 0; x < N; x++) */  
   x = FahPop(FAH);
-#ifdef PARANO
-  if (x != -1)
-  {   
-    fprintf(stderr,"%s : ORDRE FIFO NON RESPECTE PAR LA FAH !!!\n", F_NAME);
-    return(0);
-  }
-#endif
+  assert(x == -1); // autrement: ordre fifo non respecte par la fah
   
   /* ================================================ */
   /* INONDATION                                       */

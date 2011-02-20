@@ -32,27 +32,20 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file watershedMeyer2.c
+/*! \file lambdamedialaxis2.c
 
-\brief watershed transformation (Meyer's algorithm) with labelled markers  
+\brief discrete lambda-medial axis transform
 
-<B>Usage:</B> watershedMeyer2 in mark <roi|null> connex out
+<B>Usage:</B> lambdamedialaxis2 in.pgm auxlambda lambda out.pgm
 
 <B>Description:</B>
-Performs the watershed transformation on the image <B>in</B>, taking the
-set of markers in <B>mark</B>, in the form of a label image where all the pixels
-sharing the same label (even if not connected) belong to the same marker.
-If this parameter is present, <B>roi</B>
-indicates the region of interest on which the operation is performed.
-The parameter <B>connex</B> gives the adjacency relation (4,8 in 2D; 6,18,26 in 3D) 
-for the makers.
 
-The result is a binary image.
+Experimental
 
 <B>Types supported:</B> byte 2d, byte 3d
 
-<B>Category:</B> connect
-\ingroup connect
+<B>Category:</B> morpho
+\ingroup  morpho
 
 \author Michel Couprie
 */
@@ -60,59 +53,105 @@ The result is a binary image.
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
-#include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <llpemeyer.h>
+#include <mcgeo.h>
+#include <ldist.h>
+#include <lmedialaxis.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * marqueurs;
-  struct xvimage * masque;
-  int32_t connex;
+  struct xvimage * distimage;
+  struct xvimage * lambdaimage;
+  struct xvimage * opening;	
+  double lambda, lowlambda;
+  uint32_t rs, cs, ds, N, i;
+  float max, *L, *O;;
+  uint8_t *I;
 
   if (argc != 6)
   {
-    fprintf(stderr, "usage: %s in mark <roi|null> connex out\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm lowlambda lambda opening.pgm fileout.pgm\n", argv[0]);
     exit(1);
   }
 
   image = readimage(argv[1]);
-  marqueurs = readimage(argv[2]);
-  if ((image == NULL) || (marqueurs == NULL))
+  opening = readimage(argv[4]);
+	
+  if (image == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  N = rs * cs * ds;
 
-  if (strcmp(argv[3],"null") == 0) 
-    masque = NULL;
-  else
-  {
-    masque = readimage(argv[3]);
-    if (masque == NULL)
-    {
-      fprintf(stderr, "%s: readimage failed\n", argv[0]);
-      exit(1);
-    }
-  }
-
-  connex = atoi(argv[4]);
-
-  if (! llpemeyer2(image, marqueurs, masque, connex))
-  {
-    fprintf(stderr, "%s: llpemeyer2 failed\n", argv[0]);
+  lambdaimage = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT);
+  if (lambdaimage == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
 
-  writeimage(image, argv[argc - 1]);
+  distimage = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  if (distimage == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+    exit(1);
+  }
+
+  if (! lsedt_meijster(image, distimage))
+  {
+    fprintf(stderr, "%s: lsedt_meijster failed\n", argv[0]);
+    exit(1);
+  }
+
+  if (!llambdamedialaxis(distimage, lambdaimage))
+  {
+    fprintf(stderr, "%s: llambdamedialaxis failed\n", argv[0]);
+    exit(1);
+  }
+
+  I = UCHARDATA(image);
+  L = FLOATDATA(lambdaimage);
+  O = FLOATDATA(opening);
+  max=0;
+  for (i = 0; i < N; i++)
+  {
+    if (sqrt(O[i]) > max) max=sqrt(O[i]);	  
+  }
+  lambda = atof(argv[3]);
+  lowlambda = atof(argv[2]);
+	  
+  for (i = 0; i < N; i++)
+  {
+    //    if (L[i] <= lowlambda/L[i]+O[i]/max)
+    if (L[i]*L[i] <= (sqrt(O[i])*lambda)/max)
+    {
+      I[i] = NDG_MIN;
+    }
+  }
+
+  if(lowlambda>-1)
+  {
+    writeimage(image, argv[argc - 1]);
+  }
+  else
+    writeimage(lambdaimage, argv[argc - 1]);
+
+  freeimage(lambdaimage);
+  freeimage(distimage);
   freeimage(image);
-  freeimage(marqueurs);
-  if (masque) freeimage(masque);
+  freeimage(opening);
 
   return 0;
 } /* main */
+
+

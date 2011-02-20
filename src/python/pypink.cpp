@@ -295,6 +295,24 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
+// by MC
+UI_WRAP_FUNCTION(
+  "watershedMeyer2lab",
+  llpemeyer2lab,
+  ( arg("markers"), arg("image"), arg("mask"), arg("connexity") ),
+  doc__watershedMeyer2lab__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+// by MC
+UI_WRAP_FUNCTION(
+  "watershedMeyer2lab",
+  llpemeyer2lab_nomask,
+  ( arg("markers"), arg("image"), arg("connexity") ),
+  doc__watershedMeyer2lab__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
 // by HT for Claire
 UI_WRAP_FUNCTION(
   "watershedMeyer2NM",
@@ -313,6 +331,14 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
+UI_WRAP_RESULT(
+  int_image,
+  "labelfgd",
+  llabelfgd,
+  ( arg("image"), arg("connex") ),
+  doc__labelfgd__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_FUNCTION(
   "heightmaxima",

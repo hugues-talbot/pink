@@ -3230,7 +3230,7 @@ int32_t lmedialaxis_openingfunction(struct xvimage *image, int32_t mode, struct 
   index_t i, p, npoints, x, y, z;
   int32_t *X, *Y, *Z;
   int32_t maxr, dist, rball;
-#define FEATURE
+  //#define FEATURE
 #ifdef FEATURE
   index_t cen, *ptrc; // location(s) of the center of the covering ball
   index_t xc, yc, zc;

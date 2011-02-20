@@ -115,28 +115,11 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[5]);
 
-  if ((connex == 4) || (connex == 8))
+  if (! llpemeyer(image, marqueurs, marqueursfond, masque, connex))
   {
-    if (! llpemeyer(image, marqueurs, marqueursfond, masque, connex))
-    {
-      fprintf(stderr, "%s: llpemeyer failed\n", argv[0]);
-      exit(1);
-    }
-  }
-  else if ((connex == 6) || (connex == 18) || (connex == 26))
-  {
-    if (! llpemeyer3d(image, marqueurs, marqueursfond, masque, connex))
-    {
-      fprintf(stderr, "%s: llpemeyer3d failed\n", argv[0]);
-      exit(1);
-    }
-  }
-  else    
-  {
-    fprintf(stderr, "%s: bad connexity: %d\n", argv[0], connex);
+    fprintf(stderr, "%s: llpemeyer failed\n", argv[0]);
     exit(1);
   }
-
 
   writeimage(image, argv[argc - 1]);
   freeimage(image);

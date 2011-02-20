@@ -839,10 +839,8 @@ int32_t llabeldil(struct xvimage *f,
 int32_t llabelbin(struct xvimage *f, 
 	      int32_t connex,
 	      struct xvimage *lab, /* resultat: image de labels */
-	      int32_t *nlabels)        /* resultat: nombre de composantes + 1 */
-/* labels the connected components according to adjacency relation connex.
-   lab : 
-*/
+	      int32_t *nlabels)    /* resultat: nombre de composantes + 1 */
+/* labels the connected components according to adjacency relation connex.*/
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "llabelbin"
@@ -963,3 +961,17 @@ int32_t llabelbin(struct xvimage *f,
   LifoTermine(LIFO);
   return 1;
 } /* llabelbin() */
+
+/* ==================================== */
+int32_t llabelfgd(struct xvimage *f, 
+		  int32_t connex,
+		  struct xvimage *lab /* resultat: image de labels */
+		  )
+/* labels the connected components according to adjacency relation connex.*/
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "llabelfgd"
+{
+  int32_t *nlabels;
+  return llabelbin(f, connex, lab, &nlabels);
+} // llabelfgd()

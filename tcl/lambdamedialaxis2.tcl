@@ -84,7 +84,7 @@ set LAMBDAMEDIALAXIS2(outfilename) [lindex $argv 1]
 # compute the opening - store in medial 5
 my_exec $PINK/linux/bin/openingfunction $LAMBDAMEDIALAXIS2(infilename) 3 [tmpfile 5]
 my_exec $PINK/linux/bin/long2float [tmpfile 5] [tmpfile 5]
-my_exec $PINK/linux/bin/pow [tmpfile 5] 0.5 [tmpfile 5]
+#my_exec $PINK/linux/bin/pow [tmpfile 5] 0.5 [tmpfile 5]
 
 # compute the lambda map - store in tmpfile 0
 my_exec $PINK/linux/bin/lambdamedialaxis2 $LAMBDAMEDIALAXIS2(infilename) -1 0 [tmpfile 5] [tmpfile 0]

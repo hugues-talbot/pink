@@ -177,6 +177,7 @@ $(BDIR)/heightminima \
 $(BDIR)/heightselnb \
 $(BDIR)/label \
 $(BDIR)/labeldil \
+$(BDIR)/labelfgd \
 $(BDIR)/nbcomp \
 $(BDIR)/propgeo \
 $(BDIR)/saliency \
@@ -1084,6 +1085,9 @@ $(BDIR)/label:	$(CDIR)/label.c $(IDIR)/mcimage.h $(IDIR)/llabelplateaux.h $(IDIR
 
 $(BDIR)/labeldil:	$(CDIR)/labeldil.c $(IDIR)/mcimage.h $(IDIR)/llabelplateaux.h $(IDIR)/llabelextrema.h $(OBJ_COMMON) $(ODIR)/llabelplateaux.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/labeldil.c $(ODIR)/mclifo.o $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/llabelplateaux.o $(ODIR)/llabelextrema.o $(LIBS) -o $(BDIR)/labeldil
+
+$(BDIR)/labelfgd:	$(CDIR)/labelfgd.c $(IDIR)/mcimage.h $(IDIR)/llabelplateaux.h $(IDIR)/llabelextrema.h $(OBJ_COMMON) $(ODIR)/llabelplateaux.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/larith.o $(ODIR)/mclifo.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/labelfgd.c $(ODIR)/mclifo.o $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/llabelplateaux.o $(ODIR)/llabelextrema.o $(ODIR)/larith.o $(LIBS) -o $(BDIR)/labelfgd
 
 $(BDIR)/nbcomp:	$(CDIR)/nbcomp.c $(IDIR)/mcimage.h $(IDIR)/llabelplateaux.h $(IDIR)/llabelextrema.h $(OBJ_COMMON) $(ODIR)/llabelplateaux.o $(ODIR)/llabelextrema.o $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/nbcomp.c $(ODIR)/mclifo.o $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/llabelplateaux.o $(ODIR)/llabelextrema.o $(ODIR)/larith.o $(LIBS) -o	$(BDIR)/nbcomp
