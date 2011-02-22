@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief labeling of some flat zones of a grayscale or a binary image
 
-<B>Usage:</B> label in.pgm connex <fgd|bgd|min|max|pla> out.pgm
+<B>Usage:</B> label in.pgm connex {fgd|bgd|min|max|pla} out.pgm
 
 <B>Description:</B>
 The argument \b connex selects the connectivity (4, 8 in 2D; 6, 18, 26 in 3D).

@@ -138,7 +138,7 @@ void uiSqhool_object_export(); void gradient_export();
 
 void read_raw_image_export(); void seuil_export(); void plane3d_export(); void draw_plane_export();
 void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
-void generate_rgb_image_export(); void closing_export(); void closeball_export(); void minmax_export();
+void generate_rgb_image_export(); void closing_export(); /*void closeball_export();*/ void minmax_export();
 /*void dilatball_export();*/ void asfbin_export(); 
 void skelcurv_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
@@ -1374,16 +1374,6 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
-
-// NOTE: the implementation not found
-// UI_WRAP_FUNCTION(
-//   "segmenti",
-//   lsegmenti,
-//   (arg("image"), arg("connexity")),
-//   doc__segmenti__c__
-//   );
-// #include BOOST_PP_UPDATE_COUNTER()
-
 UI_WRAP_FUNCTION(
   "segmentlines",
   lsegmentlignes,
@@ -1586,6 +1576,38 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
+UI_WRAP_FUNCTION(
+  "dilatball",
+  ldilatball,
+  (arg("image"), arg("radius"), arg("mode")),
+  doc__dilatball__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "erosball",
+  lerosball,
+  (arg("image"), arg("radius"), arg("mode")),
+  doc__erosball__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "openball",
+  lopenball,
+  (arg("image"), arg("radius"), arg("mode")),
+  doc__openball__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "closeball",
+  lcloseball,
+  (arg("image"), arg("radius"), arg("mode")),
+  doc__closeball__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
 // // UI_WRAP_FUNCTION(
 // //   "ccv",
 // //   lccv,
@@ -1688,7 +1710,6 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     // end of the documenation
     );
    
-
   def(
     "long2byte",
     pink::long2byte, 

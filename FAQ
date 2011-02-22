@@ -31,7 +31,7 @@ sudo apt-get install libosmesa6-dev
 
 Pour vtk-python :
 sudo apt-get install python-dev
-sudo apt-get install libboost-dev
+sudo apt-get install libboost-python-dev
 sudo apt-get install libncurses-dev
 
 Pour imview :

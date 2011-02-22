@@ -20,7 +20,7 @@ def segment(im, height):
 
     # watershed
     blank = pink.char_image(im.size)
-    wshed1 = pink.watershedMeyer2lab(mark1, inv(im), inv(blank), 4)
+    wshed1 = pink.watershedMeyer2lab(lab1, inv(im), inv(blank), 4)
     if DEBUG:
         wshed1.writeimage("_wshed1")
 

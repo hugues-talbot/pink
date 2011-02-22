@@ -972,6 +972,6 @@ int32_t llabelfgd(struct xvimage *f,
 #undef F_NAME
 #define F_NAME "llabelfgd"
 {
-  int32_t *nlabels;
+  int32_t nlabels;
   return llabelbin(f, connex, lab, &nlabels);
 } // llabelfgd()

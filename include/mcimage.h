@@ -53,7 +53,26 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-#ifndef _MCIMAGE_H
+
+// ********************************************************************************************************
+// ********************************************************************************************************
+// ********************************************************************************************************
+//                                    PLATFORM DEPENDENT CONFIGURATION
+// ********************************************************************************************************
+// ********************************************************************************************************
+// ********************************************************************************************************
+
+#ifdef UNIXIO
+#  define __pink__inline inline
+#else /* NOT UNIXIO */
+#  define __pink__inline
+typedef unsigned char u_int8_t;
+typedef unsigned int  u_int32_t;
+typedef unsigned char uint8_t;
+typedef int           int32_t;
+typedef unsigned int  uint32_t;
+#endif /* UNIXIO */
+
 
 // attention : les index doivent être signés (pour les parcours rétro : for(i = N-1; i >=0; i--))
 #ifdef MC_64_BITS
@@ -62,6 +81,14 @@ typedef int64_t index_t;
 typedef int32_t index_t;
 #endif
 #define HUGE_IMAGE_SIZE INT32_MAX
+
+// ********************************************************************************************************
+// ********************************************************************************************************
+// ********************************************************************************************************
+//                            end of  PLATFORM DEPENDENT CONFIGURATION
+// ********************************************************************************************************
+// ********************************************************************************************************
+// ********************************************************************************************************
 
 /* ============== */
 /* prototypes for mcimage.c    */
@@ -197,9 +224,6 @@ extern int32_t readrgb(
 extern int32_t convertgen(struct xvimage **f1, struct xvimage **f2);
 extern int32_t convertlong(struct xvimage **f1);
 extern int32_t convertfloat(struct xvimage **f1);
-
-#define _MCIMAGE_H
-#endif
 
 #ifdef __cplusplus
 } /* extern "C" */

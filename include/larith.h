@@ -34,33 +34,6 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 
 #ifdef __cplusplus
-
-#include "uiFibreTypes.h"
-
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in larith.h: " << msg; call_error(fullmessage.str());}
-
-  namespace pink {
-    
-    template<class image_type>
-    image_type inverse( const image_type & image )
-    {
-      image_type result;
-      result.copy(image);
-      
-      if (!linverse(result.get_output()))
-      {
-        error("function linverse failed");        
-      }       
-      
-      return result;      
-    } /* inverse */    
-  } /* namespace pink */
-  
-#endif /* __cplusplus */
-
-
-#ifdef __cplusplus
 extern "C" {
 #endif
 extern int32_t ladd(
