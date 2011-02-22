@@ -341,8 +341,10 @@ int32_t llpemeyer2(
   int32_t incr_vois;
   index_t nlabels;
 
+// DANGEROUS 'llpemeyer' accepts NULL as 'masque' image. If you try to 'printf' NULL as 
+// integer it causes a segmentation fault.
 #ifdef DEBUG_llpemeyer2
-  printf("%s: types %d %d %d\n", F_NAME, datatype(marqueurs), datatype(image), datatype(masque));
+//  printf("%s: types %d %d %d\n", F_NAME, datatype(marqueurs), datatype(image), datatype(masque));
 #endif
 
   if (depth(image) != 1) 
