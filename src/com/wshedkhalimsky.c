@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief watershed transformation in Khalimsky space (inter pixel watershed)
 
-<B>Usage:</B> watershed in mark <bgmark|null> <roi|null> out
+<B>Usage:</B> watershed in mark {bgmark|null} {roi|null} out
 
 <B>Description:</B>
 Performs the watershed transformation on the image <B>in.pgm</B>, taking the
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 
   if (argc != 6)
   {
-    fprintf(stderr, "usage: %s in mark <bgmark|null> <roi|null> out\n", argv[0]);
+    fprintf(stderr, "usage: %s in mark {bgmark|null} {roi|null} out\n", argv[0]);
     exit(1);
   }
 

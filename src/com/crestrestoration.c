@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief crest restoration algorithm 
 
-<B>Usage:</B> crestrestoration im.pgm <imcond.pgm|null> connex niter fileout.pgm [condout.pgm]
+<B>Usage:</B> crestrestoration im.pgm {imcond.pgm|null} connex niter fileout.pgm [condout.pgm]
 
 <B>Description:</B>
 Crest restoration algorithm, as described in ref. CBB01.
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 
   if ((argc != 6) && (argc != 7))
   {
-    fprintf(stderr, "usage: %s im.pgm <imcond.pgm|null> connex niter fileout.pgm [condout.pgm]\n", argv[0]);
+    fprintf(stderr, "usage: %s im.pgm {imcond.pgm|null} connex niter fileout.pgm [condout.pgm]\n", argv[0]);
     exit(1);
   }
 

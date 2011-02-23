@@ -52,10 +52,6 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 //#define ANIMATE
 
-#define DEBUG_llpemeyer2
-#define DEBUG_llpemeyer2lab
-#define DEBUG_llpemeyer2lab_nomask
-
 #define VERBOSE
 
 #include <stdio.h>
@@ -341,12 +337,6 @@ int32_t llpemeyer2(
   int32_t incr_vois;
   index_t nlabels;
 
-// DANGEROUS 'llpemeyer' accepts NULL as 'masque' image. If you try to 'printf' NULL as 
-// integer it causes a segmentation fault.
-#ifdef DEBUG_llpemeyer2
-//  printf("%s: types %d %d %d\n", F_NAME, datatype(marqueurs), datatype(image), datatype(masque));
-#endif
-
   if (depth(image) != 1) 
     return llpemeyer3d2(image, marqueurs, masque, connex);
 
@@ -474,9 +464,6 @@ int32_t llpemeyer2lab(
 #undef F_NAME
 #define F_NAME "llpemeyer2lab"
 {
-#ifdef DEBUG_llpemeyer2lab
-  printf("%s: types %d %d %d\n", F_NAME, datatype(marqueurs), datatype(image), datatype(masque));
-#endif
   return llpemeyer2(image, marqueurs, masque, connex);
 } // llpemeyer2lab()
 
@@ -493,9 +480,6 @@ int32_t llpemeyer2lab_nomask(
 #undef F_NAME
 #define F_NAME "llpemeyer2lab_nomask"
 {
-#ifdef DEBUG_llpemeyer2lab_nomask
-  printf("%s: types %d %d\n", F_NAME, datatype(marqueurs), datatype(image));
-#endif
   return llpemeyer2(image, marqueurs, NULL, connex);
 } // llpemeyer2lab_nomask()
 

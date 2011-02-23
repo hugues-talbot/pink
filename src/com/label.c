@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 
   if (argc != 5)
   {
-    fprintf(stderr, "usage: %s filein.pgm connex <fgd|bgd|min|max|pla> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex {fgd|bgd|min|max|pla} fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
   if (strcmp(argv[3], "max") == 0) function = LABMAX; else
   if (strcmp(argv[3], "pla") == 0) function = LABPLA; else
   {
-    fprintf(stderr, "usage: %s filein.pgm connex <fgd|bgd|min|max|pla> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex {fgd|bgd|min|max|pla} fileout.pgm\n", argv[0]);
     exit(1);
   }
 

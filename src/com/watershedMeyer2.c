@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief watershed transformation (Meyer's algorithm) with labelled markers  
 
-<B>Usage:</B> watershedMeyer2 in mark <roi|null> connex out
+<B>Usage:</B> watershedMeyer2 in mark {roi|null} connex out
 
 <B>Description:</B>
 Performs the watershed transformation on the image <B>in</B>, taking the
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 
   if (argc != 6)
   {
-    fprintf(stderr, "usage: %s in mark <roi|null> connex out\n", argv[0]);
+    fprintf(stderr, "usage: %s in mark {roi|null} connex out\n", argv[0]);
     exit(1);
   }
 

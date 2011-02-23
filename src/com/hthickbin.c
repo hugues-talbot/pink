@@ -38,7 +38,7 @@ OBSOLETE - see skeleton, skelcurv
 
 \brief homotopic skeleton of a 2d binary image
 
-<B>Usage:</B> hthickbin in <constr|null> connex ne ni out
+<B>Usage:</B> hthickbin in {constr|null} connex ne ni out
 
 <B>Description:</B>
 Homotopic curvilinear thickening by iterative addition of simple,
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
   if (argc != 7)
   {
-    fprintf(stderr, "usage: %s in <constr|null> connex ne ni out\n", 
+    fprintf(stderr, "usage: %s in {constr|null} connex ne ni out\n", 
                     argv[0]);
     exit(1);
   }

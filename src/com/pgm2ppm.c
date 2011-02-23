@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief constructs a ppm color image from 3 pgm grayscale image or from a pgm image and a lookup table
 
-<B>Usage:</B> pgm2ppm <r.pgm g.pgm b.pgm|in.pgm in.lut> out.ppm
+<B>Usage:</B> pgm2ppm {r.pgm g.pgm b.pgm|in.pgm in.lut} out.ppm
 
 <B>Description:</B>
 1st mode (3 arguments): combines three grayscale images: <B>r.pgm</B>, <B>g.pgm</B> and
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 
   if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s <r.pgm g.pgm b.pgm|in.pgm in.lut> out.ppm \n", argv[0]);
+    fprintf(stderr, "usage: %s {r.pgm g.pgm b.pgm|in.pgm in.lut} out.ppm \n", argv[0]);
     exit(1);
   }
 

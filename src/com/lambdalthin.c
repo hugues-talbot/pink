@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief grayscale filtered leveling
 
-<B>Usage:</B> lambdalthin in.pgm <imcond.pgm|null> connex niter h out.pgm
+<B>Usage:</B> lambdalthin in.pgm {imcond.pgm|null} connex niter h out.pgm
 
 <B>Description:</B>
 Filtered leveling for 2D grayscale images. 
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 
   if (argc != 7)
   {
-    fprintf(stderr, "usage: %s in.pgm <imcond.pgm|null> niter connex h out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {imcond.pgm|null} niter connex h out.pgm\n", argv[0]);
     exit(1);
   }
 

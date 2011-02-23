@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts a 3D image into a 3D Khalimsky order
 
-<B>Usage:</B> 3dkhalimskize in.pgm <6|26|h|m|M|a> out.pgm
+<B>Usage:</B> 3dkhalimskize in.pgm {6|26|h|m|M|a} out.pgm
 
 <B>Description:</B>
 Converts a 3D image into a 3D Khalimsky order.
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
   
   if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in.pgm <6|26|h|m|M|a|R> out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {6|26|h|m|M|a|R} out.pgm \n", argv[0]);
     exit(1);
   }
 
@@ -107,12 +107,12 @@ int main(int argc, char **argv)
   mode = argv[2][0];
   if ((mode != '6') && (mode != '2') && (mode != 'h') && (mode != 'm') && (mode != 'M') && (mode != 'a') && (mode != 'R'))
   {
-    fprintf(stderr, "usage: %s in.pgm <6|26|h|m|M|a|R> out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {6|26|h|m|M|a|R} out.pgm \n", argv[0]);
     exit(1);
   }
   if ((mode == '2') && (argv[2][1] != '6'))
   {
-    fprintf(stderr, "usage: %s in.pgm <6|26|h|m|M|a> out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {6|26|h|m|M|a|R} out.pgm \n", argv[0]);
     exit(1);
   }
   if (mode == 'h') mode = 0; else 

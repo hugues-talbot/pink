@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief generates a null vector field of given size
 
-<B>Usage:</B> genfield <in.pgm|rs cs ds> out.pgm
+<B>Usage:</B> genfield {in.pgm|rs cs ds} out.pgm
 
 <B>Description:</B>
 The size of the result field <B>out.pgm</B> is taken from image
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 
   if ((argc != 3) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s <in.pgm|rowsize colsize depth> out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s {in.pgm|rowsize colsize depth} out.pgm \n", argv[0]);
     exit(1);
   }
 

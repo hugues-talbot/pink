@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts from pgm format to list format
 
-<B>Usage:</B> pgm2list image.pgm <e|s|b|n|B|N> out.list
+<B>Usage:</B> pgm2list image.pgm {e|s|b|n|B|N} out.list
 
 <B>Description:</B>
 Converts from pgm format to list format:
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 
   if (argc != 4)
   {
-    fprintf(stderr, "usage: %s image.pgm <e|s|b|n|B|N> out.list \n", argv[0]);
+    fprintf(stderr, "usage: %s image.pgm {e|s|b|n|B|N} out.list \n", argv[0]);
     exit(1);
   }
 
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
   type = argv[2][0];
   if ((type != 'e') && (type != 's') && (type != 'b') && (type != 'n') && (type != 'B') && (type != 'N'))
   {
-    fprintf(stderr, "usage: %s image.pgm <e|s|b|n|B|N> out.list \n", argv[0]);
+    fprintf(stderr, "usage: %s image.pgm {e|s|b|n|B|N} out.list \n", argv[0]);
     exit(1);
   }
 

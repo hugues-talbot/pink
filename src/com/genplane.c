@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
   if (argc != 7)
   {
-    fprintf(stderr, "usage: %s rs cs ds <x|y|z> n out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s rs cs ds {x|y|z} n out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -132,7 +132,7 @@ int main(int argc, char **argv)
           Im[n * ps + y * rs + x] = NDG_MAX;
       break;
     default:
-      fprintf(stderr, "usage: %s rs cs ds <x|y|z> n out.pgm\n", argv[0]);
+      fprintf(stderr, "usage: %s rs cs ds {x|y|z} n out.pgm\n", argv[0]);
       exit(1);
   } /* switch */
 

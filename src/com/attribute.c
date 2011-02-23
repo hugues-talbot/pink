@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief labels each connected component with its attribute value 
 
-<B>Usage:</B> attribute in.pgm connex seuil <min|max|pla> <area|perim|circ|trous|excen|orien|vdiam|hdiam> out.pgm
+<B>Usage:</B> attribute in.pgm connex seuil {min|max|pla} {area|perim|circ|trous|excen|orien|vdiam|hdiam} out.pgm
 
 <B>Description:</B>
 Labels each connected component with its attribute value.
@@ -64,7 +64,7 @@ Warning: in 3D only the attribute "area" is implemented.
 #include <lattribute.h>
 
 //#define VERBOSE
-#define USAGE "usage: %s filein.pgm connex seuil <min|max|pla> <area|perim|circ|trous|excen|orien|vdiam|hdiam> fileout.pgm\n"
+#define USAGE "usage: %s filein.pgm connex seuil {min|max|pla} {area|perim|circ|trous|excen|orien|vdiam|hdiam} fileout.pgm\n"
 
 /* =============================================================== */
 int main(int argc, char **argv)

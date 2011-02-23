@@ -37,7 +37,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief grayscale leveling thinning
 
-<B>Usage:</B> lthin in.pgm <imcond.pgm|null> connex niter out.pgm
+<B>Usage:</B> lthin in.pgm {imcond.pgm|null} connex niter out.pgm
 
 <B>Description:</B>
 Grayscale leveling thinning (refs. [BEC97, CBB01]).
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 
   if (argc != 6)
   {
-    fprintf(stderr, "usage: %s im.pgm <imcond.pgm|null> connex niter fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s im.pgm {imcond.pgm|null} connex niter fileout.pgm\n", argv[0]);
     exit(1);
   }
 

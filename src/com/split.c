@@ -81,7 +81,7 @@ int main(int argc, char **argv)
   
   if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in.pgm <4|8|6|18|26> out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {4|8|6|18|26} out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
   mode = atoi(argv[2]);
   if ((mode != 4) && (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
   {
-    fprintf(stderr, "usage: %s in.pgm <4|8|6|18|26> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {4|8|6|18|26} fileout.pgm\n", argv[0]);
     exit(1);
   }
 

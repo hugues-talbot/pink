@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief alternate sequential filter controled by topology
 
-<B>Usage:</B> asft in.pgm <c.pgm cc.pgm|null null> connex rmax out.pgm
+<B>Usage:</B> asft in.pgm {c.pgm cc.pgm|null null} connex rmax out.pgm
 
 <B>Description:</B>
 Alternate sequential filter controled by topology (see [CB04]).
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 
   if (argc != 7)
   {
-    fprintf(stderr, "usage: %s in.pgm <c.pgm cc.pgm|null null> connex rmax out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {c.pgm cc.pgm|null null} connex rmax out.pgm \n", argv[0]);
     exit(1);
   }
 

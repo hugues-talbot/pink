@@ -68,14 +68,14 @@ int main(int argc, char **argv)
 
   if (argc != 7)
   {
-    fprintf(stderr, "usage: %s im.pgm <imcond.pgm|null> connex niter <alpha|delta> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s im.pgm {imcond.pgm|null} connex niter {alpha|delta} fileout.pgm\n", argv[0]);
     exit(1);
   }
 
   connex = atoi(argv[3]);
   if ((connex != 26) && (connex != 6))
   {
-    fprintf(stderr, "%s : connex = <6|26>\n", argv[0]);
+    fprintf(stderr, "%s : connex = {6|26}\n", argv[0]);
     exit(1);
   }
 
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
   else
   if (strcmp(argv[5],"delta") != 0) 
   {
-    fprintf(stderr, "usage: %s im.pgm <imcond.pgm|null> connex niter <alpha|delta> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s im.pgm {imcond.pgm|null} connex niter {alpha|delta} fileout.pgm\n", argv[0]);
     exit(1);
   }
 

@@ -97,7 +97,7 @@ int main(int argc, char **argv)
   mode = atoi(argv[3]);
   if ((mode != 4) && (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
   {
-    fprintf(stderr, "usage: %s in.pgm mask.pgm <4|8|6|18|26> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm mask.pgm {4|8|6|18|26} fileout.pgm\n", argv[0]);
     exit(1);
   }
 

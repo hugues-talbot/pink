@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts a 2D image into a 2D Khalimsky order
 
-<B>Usage:</B> 2dkhalimskize in.pgm <0|4|8|h|m|M|g|G|a> out.pgm
+<B>Usage:</B> 2dkhalimskize in.pgm {0|4|8|h|m|M|g|G|a} out.pgm
 
 <B>Description:</B>
 Converts a 2D image into a 2D Khalimsky order, or conversely.
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
   
   if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in.pgm <0|4|8|h|m|M|g|G|a|R> out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {0|4|8|h|m|M|g|G|a|R} out.pgm \n", argv[0]);
     exit(1);
   }
 
@@ -118,7 +118,7 @@ int main(int argc, char **argv)
   if ((mode != '0') && (mode != '4') && (mode != '8') && (mode != 'h') && (mode != 'm') &&
       (mode != 'M') && (mode != 'g') && (mode != 'G') && (mode != 'a') && (mode != 'R'))
   {
-    fprintf(stderr, "usage: %s in.pgm <0|4|8|h|m|M|g|G|a|R> out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {0|4|8|h|m|M|g|G|a|R} out.pgm \n", argv[0]);
     exit(1);
   }
   if (mode == 'h') mode = 10; else 

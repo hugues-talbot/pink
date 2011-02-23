@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts from graph representation to pgm
 
-<B>Usage:</B> graph2pgm in.graph <in.pgm|rs cs ds> out.pgm
+<B>Usage:</B> graph2pgm in.graph {in.pgm|rs cs ds} out.pgm
 
 <B>Description:</B>
 
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
   if ((argc != 4) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in.graph <in.pgm|rs cs ds> out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.graph {in.pgm|rs cs ds} out.pgm\n", argv[0]);
     exit(1);
   }
 

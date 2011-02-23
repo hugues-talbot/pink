@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 
   if ((connexmin != 4) && (connexmin != 8))
   {
-    fprintf(stderr, "usage: %s filein.pgm [mask] <4|8> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm [mask] {4|8} fileout.pgm\n", argv[0]);
     exit(1);
   }
 

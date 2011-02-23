@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 
   if ((argc < 5) || (argc > 6) || ((argc == 6) && (strcmp(argv[4], "trace") != 0)))
   {
-    fprintf(stderr, "usage: %s filein.pgm <surf|prof|vol> seuil [trace] fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm {surf|prof|vol} seuil [trace] fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
   else if (strcmp(argv[2], "vol") == 0) mesure = VOLUME;
   else 
   {
-    fprintf(stderr, "usage: %s filein.pgm <surf|prof|vol> seuil [trace] fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm {surf|prof|vol} seuil [trace] fileout.pgm\n", argv[0]);
     exit(1);
   }
 

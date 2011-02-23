@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief watershed transformation (Meyer's algorithm) with labelled markers  
 
-<B>Usage:</B> watershedMeyer2lab marker image <roi|null> connex [mode] out
+<B>Usage:</B> watershedMeyer2lab marker image {roi|null} connex [mode] out
 
 <B>Description:</B>
 Performs the watershed transformation on the image <B>image</B>, taking the
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 
   if ((argc != 6) && (argc != 7))
   {
-    fprintf(stderr, "usage: %s marker image <roi|null> connex [mode] out\n", argv[0]);
+    fprintf(stderr, "usage: %s marker image {roi|null} connex [mode] out\n", argv[0]);
     exit(1);
   }
 

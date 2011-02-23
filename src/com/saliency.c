@@ -78,8 +78,7 @@ int main(int argc, char **argv)
   //if (argc != 5)
   if (argc != 4)
   {
-    //fprintf(stderr, "usage: %s in <roi|null> connex out\n", argv[0]);
-    fprintf(stderr, "usage: %s in con out\n", argv[0]);
+    fprintf(stderr, "usage: %s in connex out\n", argv[0]);
     exit(1);
   }
 

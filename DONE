@@ -1,6 +1,6 @@
-derniers ajouts à Pink :
+derniers ajouts / modifications :
 
-12/01/2011
+12/01/2011 MC
 
 - images de complexes
   - formats "pgm etendu" PE et PF (voir doc/formats.txt)
@@ -20,7 +20,7 @@ derniers ajouts à Pink :
   - correction d'un "effet de drappé" (utilisant la fft)
     script bash mc-tp5-3.sh testé
 
-27/01/2011
+27/01/2011 MC
 
 - nouveaux tests dans zoom, openball, closeball, holeclosing...
 - suppression de dilatdisc, erosdisc, opendisc, closedisc (ldist.c)
@@ -28,7 +28,11 @@ derniers ajouts à Pink :
 - le code 0 pour les calculs de distance correspond maintenant à une
   distance euclidienne exacte arrondie
 
-02/02/2011
+02/02/2011 MC
 
 - allocation à l'extérieur pour lmedialaxis_lmedialaxis()
 - ajout de lmedialaxis_openingfunction()
+
+23/02/2011 MC
+
+- remplacement des <x|y> par des {x|y} dans les docs (facilite le parsing)

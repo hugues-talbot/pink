@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief watershed transformation without line of separation
 
-<B>Usage:</B> watershedwithoutline in mark <bgmark|null> <roi|null> connex out
+<B>Usage:</B> watershedwithoutline in mark {bgmark|null} {roi|null} connex out
 
 <B>Description:</B>
 Performs the watershed transformation on the image <B>in</B>, taking the
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 
   if (argc != 7)
   {
-    fprintf(stderr, "usage: %s in mark <bgmark|null> <roi|null> connex out\n", argv[0]);
+    fprintf(stderr, "usage: %s in mark {bgmark|null} {roi|null} connex out\n", argv[0]);
     exit(1);
   }
 

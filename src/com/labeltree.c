@@ -93,7 +93,7 @@ int main(int argc, char **argv)
   connex = atoi(argv[2]);
   if ((connex != 4) && (connex != 8) && (connex != 6) && (connex != 18) && (connex != 26))
   {
-    fprintf(stderr, "usage: %s in.pgm <4|8|6|18|26> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {4|8|6|18|26} fileout.pgm\n", argv[0]);
     exit(1);
   }
 

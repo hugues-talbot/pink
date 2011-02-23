@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts from pgm to ps for illustrating small image configurations
 
-<B>Usage:</B> pgm2ps in.pgm mode <label.pgm|null> <marker.pgm|null> coord maxval out.ps
+<B>Usage:</B> pgm2ps in.pgm mode {label.pgm|null} {marker.pgm|null} coord maxval out.ps
 
 <B>Description:</B>
 Produces a Postscript file from a binary or grayscale image.
@@ -456,7 +456,7 @@ int main(int argc, char **argv)
 
   if (argc != 8) 
   {
-    fprintf(stderr, "usage: %s in.pgm <b|c|n|d|i|a|p|g|v|B|N|G|C|M|H> <label.pgm|null> <marker.pgm|null> coord maxval out.ps\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {b|c|n|d|i|a|p|g|v|B|N|G|C|M|H} {label.pgm|null} {marker.pgm|null} coord maxval out.ps\n", argv[0]);
     exit(1);
   }
 
@@ -516,7 +516,7 @@ int main(int argc, char **argv)
       (type != 'g') && (type != 'B') && (type != 'N') && (type != 'G') && (type != 'd') && (type != 'v') && 
       (type != 'C') && (type != 'M') && (type != 'H'))
   {
-    fprintf(stderr, "usage: %s in.pgm <b|c|n|m|d|i|a|p|g|v|B|N|G|C|M|H> <label.pgm|null> <marker.pgm|null> coord maxval out.ps\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {b|c|n|m|d|i|a|p|g|v|B|N|G|C|M|H} {label.pgm|null} {marker.pgm|null} coord maxval out.ps\n", argv[0]);
     exit(1);
   }
 

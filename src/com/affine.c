@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief affine transformation of a 2D image
 
-<B>Usage:</B> affine in.pgm <trans.lst | hx hy theta tx ty> out.pgm
+<B>Usage:</B> affine in.pgm {trans.lst | hx hy theta tx ty} out.pgm
 
 <B>Description:</B>
 
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 
   if ((argc != 4) && (argc != 8))
   {
-    fprintf(stderr, "usage: %s in.pgm <trans.lst | hx hy theta tx ty> out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {trans.lst | hx hy theta tx ty} out.pgm \n", argv[0]);
     exit(1);
   }
 

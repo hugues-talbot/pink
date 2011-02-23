@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief Thin watershed transformation (Meyer's algorithm on  perfect fusion grid)
 
-<B>Usage:</B> watershedthin in mark <bgmark|null> <roi|null> parite out
+<B>Usage:</B> watershedthin in mark {bgmark|null} {roi|null} parite out
 
 <B>Description:</B>
 
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
   if (argc != 7)
   {
-    fprintf(stderr, "usage: %s in mark <bgmark|null> <roi|null> parite out\n", argv[0]);
+    fprintf(stderr, "usage: %s in mark {bgmark|null} {roi|null} parite out\n", argv[0]);
     exit(1);
   }
 

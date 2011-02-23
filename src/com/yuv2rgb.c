@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 	FILE *vf, *uf, *yf;
 	int32_t rows, cols, row;
 	register int32_t col;
-	char *usage=(char *)"<basename> <width> <height> [-split]";
+	char *usage=(char *)"basename width height [-split]";
 	int32_t u, v, y0, y1, y2, y3, u0, u1, u2, u3, v0, v1, v2, v3;
 	uint8_t *y1buf, *y2buf, *ubuf, *vbuf;
 	char ufname[256], vfname[256], yfname[256];

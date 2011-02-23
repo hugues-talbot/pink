@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief watershed transformation (Meyer's algorithm)
 
-<B>Usage:</B> watershedMeyer4D prefix_in first last prefix_mark <prefix_bgmark|null> <prefix_roi|null> connex prefix_out
+<B>Usage:</B> watershedMeyer4D prefix_in first last prefix_mark {prefix_bgmark|null} {prefix_roi|null} connex prefix_out
 
 <B>Description:</B>
 Performs the watershed transformation on the 4D image made of the concatenation of the 3D images <B>prefix_inxxxx.pgm</B> (where nnnn is a four digit decimal integer and where <B>first</B> and <B>last</B> specify respectively the first and the last volume).The watershed is computed taking the
@@ -79,7 +79,7 @@ int main(int32_t argc, char **argv)
 
   if (argc != 9)
   {
-    fprintf(stderr, "usage: %s prefix_in first last prefix_mark <prefix_bgmark|null> <roi|null> connex out\n", argv[0]);
+    fprintf(stderr, "usage: %s prefix_in first last prefix_mark {prefix_bgmark|null} {roi|null} connex out\n", argv[0]);
     exit(1);
   }
   image = readimage4D(argv[1], atoi(argv[2]), atoi(argv[3]));

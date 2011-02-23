@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief detects extensible points in a grayscale image
 
-<B>Usage:</B> ptextensible im.pgm <imcond.pgm|null> connex fileout.pgm
+<B>Usage:</B> ptextensible im.pgm {imcond.pgm|null} connex fileout.pgm
 
 <B>Description:</B>
 Extensible point detection.
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 
   if (argc != 5)
   {
-    fprintf(stderr, "usage: %s im.pgm <imcond.pgm|null> connex fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s im.pgm {imcond.pgm|null} connex fileout.pgm\n", argv[0]);
     exit(1);
   }
 

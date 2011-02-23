@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief returning number of connected components of a grayscale or a binary image
 
-<B>Usage:</B> nbcomp in.pgm connex <fgd|bgd|min|max|pla> [out.list]
+<B>Usage:</B> nbcomp in.pgm connex {fgd|bgd|min|max|pla} [out.list]
 
 <B>Description:</B>
 The argument \b connex selects the connectivity (4, 8 in 2D; 6, 18, 26 in 3D).
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 
   if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s filein.pgm connex <fgd|bgd|min|max|pla> [out.list]\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex {fgd|bgd|min|max|pla} [out.list]\n", argv[0]);
     exit(1);
   }
 
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
   if (strcmp(argv[3], "max") == 0) function = LABMAX; else
   if (strcmp(argv[3], "pla") == 0) function = LABPLA; else
   {
-    fprintf(stderr, "usage: %s filein.pgm connex <fgd|bgd|min|max|pla> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex {fgd|bgd|min|max|pla} fileout.pgm\n", argv[0]);
     exit(1);
   }
 

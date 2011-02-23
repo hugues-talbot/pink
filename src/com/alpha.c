@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 
   if (argc != 5)
   {
-    fprintf(stderr, "usage: %s in.pgm connex <m|p> out.ppm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm connex {m|p} out.ppm \n", argv[0]);
     exit(1);
   }
 

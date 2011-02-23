@@ -37,7 +37,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief generates a binary torus
 
-<B>Usage:</B> drawtorus <in.pgm|null> r1 r2 xc yc zc out.pgm
+<B>Usage:</B> drawtorus {in.pgm|null} r1 r2 xc yc zc out.pgm
 
 <B>Description:</B>
 Draws a binary torus in the image \b in.pgm.
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
   if (argc != 8)
   {
-    fprintf(stderr, "usage: %s <in.pgm|null> r1 r2 xc yc zc out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s {in.pgm|null} r1 r2 xc yc zc out.pgm \n", argv[0]);
     exit(1);
   }
 

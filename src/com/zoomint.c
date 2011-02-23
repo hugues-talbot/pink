@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief zoom by an integer factor
 
-<B>Usage:</B> zoomint in.pgm  <f | fx fy fz> [nofill] out.pgm
+<B>Usage:</B> zoomint in.pgm  {f | fx fy fz} [nofill] out.pgm
 
 <B>Description:</B> 
 The zoom factor(s) can be unique (\b f ) of there can be one zoom factor
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
   if ((argc != 4) && (argc != 5) && (argc != 6) && (argc != 7))
   {
-    fprintf(stderr, "usage: %s in.pgm <f | fx fy fz> [nofill] out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {f | fx fy fz} [nofill] out.pgm \n", argv[0]);
     exit(1);
   }
 
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
   {
     if (strcmp(argv[3], "nofill") == 0) fill = 0; else 
     {
-      fprintf(stderr, "usage: %s in.pgm <f | fx fy fz> [nofill] out.pgm \n", argv[0]);
+      fprintf(stderr, "usage: %s in.pgm {f | fx fy fz} [nofill] out.pgm \n", argv[0]);
       exit(1);
     }
   }
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
   {
     if (strcmp(argv[5], "nofill") == 0) fill = 0; else 
     {
-      fprintf(stderr, "usage: %s in.pgm <f | fx fy fz> [nofill] out.pgm \n", argv[0]);
+      fprintf(stderr, "usage: %s in.pgm {f | fx fy fz} [nofill] out.pgm \n", argv[0]);
       exit(1);
     }
   }

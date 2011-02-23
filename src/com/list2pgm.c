@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts from point list representation to pgm
 
-<B>Usage:</B> list2pgm in.list <in.pgm|rs cs ds> [scale] out.pgm
+<B>Usage:</B> list2pgm in.list {in.pgm|rs cs ds} [scale] out.pgm
 
 <B>Description:</B>
 
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 
   if ((argc != 4) && (argc != 6) && (argc != 5) && (argc != 7))
   {
-    fprintf(stderr, "usage: %s in.list <in.pgm|rs cs ds> [scale] out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.list {in.pgm|rs cs ds} [scale] out.pgm\n", argv[0]);
     exit(1);
   }
 

@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 
   if (argc != 6)
   {
-    fprintf(stderr, "usage: %s filein.pgm mask.pgm connex <min1|min|minb|max1|max|maxb|moy1|moy|moyb|randb> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm mask.pgm connex {min1|min|minb|max1|max|maxb|moy1|moy|moyb|randb} fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
   if (strcmp(argv[4], "moyb") == 0) function = MOYB; else
   if (strcmp(argv[4], "randb") == 0) function = RANDB; else
   {
-    fprintf(stderr, "usage: %s filein.pgm mask.pgm connex <min1|min|minb|max1|max|maxb|moy1|moy|moyb|randb> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm mask.pgm connex {min1|min|minb|max1|max|maxb|moy1|moy|moyb|randb} fileout.pgm\n", argv[0]);
     exit(1);
   }
 

@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief topologically controled grayscale shrinking (one step)
 
-<B>Usage:</B> toposhrinkgray in.pgm connex t+min t+max t--min t--max <0|a|d> [inhibit] out.pgm
+<B>Usage:</B> toposhrinkgray in.pgm connex t+min t+max t--min t--max {0|a|d} [inhibit] out.pgm
 
 <B>Description:</B>
 Topologically controled grayscale shrinking (one step).
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 
     if ((argc != 9) && (argc != 10))
     {
-        fprintf(stderr, "usage: %s in.pgm connex t+min t+max t--min t--max <0|a|d> [inhibit] out.pgm\n", argv[0]);
+        fprintf(stderr, "usage: %s in.pgm connex t+min t+max t--min t--max {0|a|d} [inhibit] out.pgm\n", argv[0]);
         exit(1);
     }
 

@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 
   if ((connexmin != 6) && (connexmin != 26))
   {
-    fprintf(stderr, "usage: %s filein.pgm [mask] <6|26> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm [mask] {6|26} fileout.pgm\n", argv[0]);
     exit(1);
   }
 

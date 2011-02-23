@@ -21,7 +21,4 @@ MC extractplane pour les types float, long...
 
 MC génération de pages "man" à partir du code doxygen
 
-MC remplacer les <x|y> par des {x|y} dans les docs (facilite le parsing)
-
-MC voir avec Lazlo: patch pour inverse dans larith.h
 

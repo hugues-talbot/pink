@@ -37,7 +37,7 @@ knowledge of the CeCILL license and that you accept its terms.
 \brief converts single 2D pgm file into a series of 2D pgm files,
   where each file of the series contains one component of the original image
 
-<B>Usage:</B> explodecomp in.pgm connex <min|max|pla> name_prefix
+<B>Usage:</B> explodecomp in.pgm connex {min|max|pla} name_prefix
 
 <B>Description:</B>
 Generated file names are of the form: <B>name_prefix</B>nnnn.pgm, 
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 
   if (argc != 5)
   {
-    fprintf(stderr, "usage: %s in.pgm connex <min|max|pla> name_prefix\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm connex {min|max|pla} name_prefix\n", argv[0]);
     exit(1);
   }
 
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
   if (strcmp(argv[3], "max") == 0) function = LABMAX; else
   if (strcmp(argv[3], "pla") == 0) function = LABPLA; else
   {
-    fprintf(stderr, "usage: %s in.pgm connex <min|max|pla> name_prefix\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm connex {min|max|pla} name_prefix\n", argv[0]);
     exit(1);
   }
 

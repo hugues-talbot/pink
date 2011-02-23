@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief zoom (shrink or expand) an image
 
-<B>Usage:</B> zoom in.pgm <f | x rs | y cs | z ds | fx fy fz> out.pgm
+<B>Usage:</B> zoom in.pgm {f | x rs | y cs | z ds | fx fy fz} out.pgm
 
 <B>Description:</B> 
 There are 3 modes, depending on the number of arguments.
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 
   if ((argc != 4) && (argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in.pgm <f | x rs | y cs | z ds | fx fy fz> out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {f | x rs | y cs | z ds | fx fy fz} out.pgm \n", argv[0]);
     exit(1);
   }
 

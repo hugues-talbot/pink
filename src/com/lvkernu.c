@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief grayscale ultimate leveling thickening
 
-<B>Usage:</B> lvkernu in.pgm <imcond.pgm|null> connex out.pgm
+<B>Usage:</B> lvkernu in.pgm {imcond.pgm|null} connex out.pgm
 
 <B>Description:</B>
 Grayscale ultimate leveling thickening (refs. [BEC97, CBB01]).
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 
   if (argc != 5)
   {
-    fprintf(stderr, "usage: %s im.pgm <imcond.pgm|null> connex fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s im.pgm {imcond.pgm|null} connex fileout.pgm\n", argv[0]);
     exit(1);
   }
 

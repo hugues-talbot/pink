@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief generates a monocolor image of given size
 
-<B>Usage:</B> genimage <in.pgm|rs cs ds> col out.pgm
+<B>Usage:</B> genimage {in.pgm|rs cs ds} col out.pgm
 
 <B>Description:</B>
 The size of the result image <B>out.pgm</B> is taken from image
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 
   if ((argc != 4) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s <in.pgm|rowsize colsize depth> color out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s {in.pgm|rowsize colsize depth} color out.pgm \n", argv[0]);
     exit(1);
   }
 

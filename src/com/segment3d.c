@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 
   if ((argc < 7) || (argc > 8) || ((argc == 8) && (strcmp(argv[6], "trace") != 0)))
   {
-    fprintf(stderr, "usage: %s filein.pgm connex <surf|prof|vol> seuil <max|min> [trace] fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex {surf|prof|vol} seuil {max|min} [trace] fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
   else if (strcmp(argv[3], "vol") == 0) mesure = VOLUME;
   else 
   {
-    fprintf(stderr, "usage: %s filein.pgm connex <surf|prof|vol> seuil <max|min> [trace] fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex {surf|prof|vol} seuil {max|min} [trace] fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -115,7 +115,7 @@ int main(int argc, char **argv)
   else if (strcmp(argv[5], "min") == 0) maximise = 0;
   else 
   {
-    fprintf(stderr, "usage: %s filein.pgm connex <surf|prof|vol> seuil <max|min> [trace] fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex {surf|prof|vol} seuil {max|min} [trace] fileout.pgm\n", argv[0]);
     exit(1);
   }
 

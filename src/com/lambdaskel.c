@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief grayscale filtered topological skeleton
 
-<B>Usage:</B> lambdaskel in.pgm <imcond.pgm|null> connex lambda out.pgm
+<B>Usage:</B> lambdaskel in.pgm {imcond.pgm|null} connex lambda out.pgm
 
 <B>Description:</B>
 Filtered topological skeleton for 2D grayscale images. 
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 
   if (argc != 6)
   {
-    fprintf(stderr, "usage: %s filein.pgm <imcond.pgm|null> connex lambda fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm {imcond.pgm|null} connex lambda fileout.pgm\n", argv[0]);
     exit(1);
   }
 

@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief automatic threshold
 
-<B>Usage:</B> seuilauto in.pgm L <min|max> [n] out.pgm
+<B>Usage:</B> seuilauto in.pgm L {min|max} [n] out.pgm
 
 <B>Description:</B>
 Determine automatically a threshold thanks to the smoothed histogram
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 
   if ((argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s filein.pgm L <min|max> [n] fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm L {min|max} [n] fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
   }
   else
   {
-    fprintf(stderr, "usage: %s filein.pgm L <min|max> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm L {min|max} fileout.pgm\n", argv[0]);
     exit(1);
   }
 

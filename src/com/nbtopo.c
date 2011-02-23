@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief connectivity numbers
 
-<B>Usage:</B> nbtopo filein.pgm connex <PP|P|M|MM> fileout.pgm
+<B>Usage:</B> nbtopo filein.pgm connex {PP|P|M|MM} fileout.pgm
 
 <B>Description:</B>
 For each point p of the input grayscale image, compute the connectivity number T++,
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 
   if (argc != 5)
   {
-    fprintf(stderr, "usage: %s filein.pgm connex <PP|P|M|MM> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex {PP|P|M|MM} fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
   if (strcmp(argv[3], "M") == 0) function = M; else
   if (strcmp(argv[3], "MM") == 0) function = MM; else
   {
-    fprintf(stderr, "usage: %s filein.pgm connex <PP|P|M|MM> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex {PP|P|M|MM} fileout.pgm\n", argv[0]);
     exit(1);
   }
 

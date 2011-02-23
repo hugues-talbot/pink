@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief alternate sequential filter by linear structuring elements
 
-<B>Usage:</B> asflin in.pgm <x|y|z> [rmin] rmax out.pgm
+<B>Usage:</B> asflin in.pgm {x|y|z} [rmin] rmax out.pgm
 
 <B>Description:</B>
 Alternate sequential filter by linear structuring elements for grayscale images.
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 
   if ((argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in.pgm <x|y|z> [rayonmin] rayonmax out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {x|y|z} [rayonmin] rayonmax out.pgm \n", argv[0]);
     exit(1);
   }
 
