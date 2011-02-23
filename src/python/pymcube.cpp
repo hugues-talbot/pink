@@ -20,7 +20,22 @@ using namespace pink;
 
 namespace pink {
   namespace python {
+    
+    template<class image_type>
+    image_type inverse( const image_type & image )
+    {
+      image_type result;
+      result.copy(image);
+      
+      if (!linverse(result.get_output()))
+      {
+        error("function linverse failed");
+      }
+      
+      return result;
+    } /* inverse */
 
+  
     std::string mcube(
       char_image image,
       int seuil,
@@ -45,12 +60,12 @@ namespace pink {
           error("bad connexity");
         } /* NOT connex== 26 */
       } /* NOT connex== 6 */
-
+    
       InitLUT();
       InitMesh(1000); /* automatically reallocated if needed */
-
+    
       std::stringstream result;
-            
+    
       if (seuil == 255)
       { // with fix-point preservation
         if (! lmarchingcubes2(tmp.get_output(), nregul, obj_id, reinterpret_cast<FILE*>(&result), T_VTK_PYTHON))

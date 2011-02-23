@@ -61,7 +61,7 @@ if (CMAKE_HOST_UNIX)
 
     option( DEVELOPMENT "Compiles additional functions which are not-yet part of the core library (Mostly because they require additional dependencies). " OFF )
 
-    option( LIAR "Compiles additional functions adapted from the Library of Image Analysis Routines," OFF)
+    option( LIAR "Compiles additional functions adapted from the Library of Image Analysis Routines," ON )
 
 ### **********************************************************************************************
 ### **********************************************************************************************
@@ -228,7 +228,7 @@ if (CMAKE_HOST_UNIX)
 ### **********************************************************************************************
 
 
-    option( PYTHON_FRONT_END "Compile the python front-end and the cpp functions" OFF )
+    option( PYTHON_FRONT_END "Compile the python front-end and the cpp functions" ON )
 
     if ( PYTHON_FRONT_END )
 

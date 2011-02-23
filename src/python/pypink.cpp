@@ -553,9 +553,9 @@ UI_WRAP_CPP(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
-UI_WRAP_CPP(
+UI_WRAP_FUNCTION(
   "inverse",
-  pink::inverse,
+  linverse,
   ( arg("image") ),
   doc__inverse__c__
 // end of the documenation
