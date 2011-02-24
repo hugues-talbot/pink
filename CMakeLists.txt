@@ -247,7 +247,7 @@ if (CMAKE_HOST_UNIX)
 
 	# required version of BOOST 1.35 or newer
 #	set( Boost_MAJOR_VERSION_REQUIRED 1 )
-#	set( Boost_MINOR_VERSION_REQUIRED 35 )
+#	set( Boost_MINOR_VERSION_REQUIRED 37 )
 
 #	if ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
 #	    message( FATAL_ERROR "For the core components you need a boost version at least " ${Boost_MAJOR_VERSION_REQUIRED} "." ${Boost_MINOR_VERSION_REQUIRED} )
@@ -286,7 +286,7 @@ if (CMAKE_HOST_UNIX)
 	 
  	CHECK_INCLUDE_FILE_CXX( boost/python/list.hpp  HTEST5 )
  	if (NOT HTEST5)
- 	    message( FATAL_ERROR "error boost/python/list.hpp does not compile. Check if its correctly installed. There is a known issue. If "
+ 	    message( FATAL_ERROR "error boost/python/list.hpp does not compile. You need at least version 1.37 or newer. Check if its correctly installed. There is a known issue. If "
  		"PYTHON_LIBRARY='" ${PYTHON_LIBRARY} "' does not point to the correct location of python's libraries, please specify them manually"
 		" or delete the file in question. (seen on OpenSuSE 11.2)" )
         endif(NOT HTEST5)

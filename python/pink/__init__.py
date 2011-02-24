@@ -15,26 +15,41 @@
 # Modules which the function calls must be included before the function's module
 
 import cpp # the functions imported directly from c/c++
+
+try:
+    from pil_photoimage import to_photoimage, to_rgb_photoimage
+except:
+    pass
+
 try:
     from view3d import view3d
 except:
-    1==1
+    print "cannot import view3d"
+    pass
 
 try:
     from render import render
 except:
-    1==1
+    pass
 
 try:
     from seuilmesh import seuilmesh
 except:
-    1==1
+    pass
 
 try:
     from imview import *
 except:
+    #pass
     print("no imview\n")
-    1==1
+
+
+#try:
+from manipulate import manipulate
+#except:
+#    pass
+
+
 
 # from python_pink import *
 # from long2byte import long2byte
