@@ -155,7 +155,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "l3dcollapse.h"
 #include "l3dkhalimsky.h"
 #include "lMSF.h"
-// moved #include "larith.h"
+#include "larith.h"
 #include "lasft.h"
 #include "lattribarea.h"
 #include "lattribheight.h"
@@ -329,7 +329,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #endif /* __cplusplus */
 
 // // new with mixed language declarations (c/c++)
-#include "larith.h"
+//#include "larith.h"
 
 
 

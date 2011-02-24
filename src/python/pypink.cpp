@@ -553,15 +553,6 @@ UI_WRAP_CPP(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
-UI_WRAP_FUNCTION(
-  "inverse",
-  linverse,
-  ( arg("image") ),
-  doc__inverse__c__
-// end of the documenation
-  );    
-#include BOOST_PP_UPDATE_COUNTER()
-
 UI_WRAP_CPP(
   "convert2float",
   pink::convert2float,
@@ -629,6 +620,21 @@ UI_WRAP_VALUE(
 //   );
 // #include BOOST_PP_UPDATE_COUNTER()
 
+UI_WRAP_FUNCTION(
+  "inverse",
+  linverse,
+  (arg("image")),
+  doc__inverse__c__
+  );    
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "invert",
+  linverse,
+  (arg("image")),
+  doc__inverse__c__
+  );    
+#include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_FUNCTION(
   "barycentre",

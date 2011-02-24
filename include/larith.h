@@ -46,11 +46,8 @@ extern int32_t laddconst(
         int32_t constante
 );
 
-extern int32_t larea(
+extern index_t larea(
   struct xvimage * image
-  // LuM
-  // , int32_t *area
-  // end of LuM
 );
 
 extern int32_t laverage(

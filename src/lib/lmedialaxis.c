@@ -3214,6 +3214,7 @@ int32_t lmedialaxis_openingfunction(struct xvimage *image, int32_t mode, struct 
    Calcule la fonction d'ouverture de l'objet dans 'image' pour la distance indiquée par 'mode'
    L'image 'result' (type VFF_TYP_4_BYTE) doit être allouée à l'avance. 
  
+   Auteur : Michal Postolski
 */
 {
 #undef F_NAME

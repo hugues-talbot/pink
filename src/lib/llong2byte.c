@@ -103,16 +103,16 @@ struct xvimage * long2byte( struct xvimage * imagelong, int mode, int nbnewval )
   struct xvimage * imagebyte;
   uint32_t *L;
   uint8_t *B;
-  uint32_t x, i;
+  int32_t i;
 //  int32_t mode = 0;
   uint32_t Max;
-  uint32_t *histo;
+  index_t *histo;
   uint32_t *newvals;
   int32_t nbval;//, nbnewval;
   uint32_t *index;
   double t;
 
-  int32_t rs, cs, d, N;
+  index_t x, rs, cs, d, N;
 
   rs = rowsize(imagelong);
   cs = colsize(imagelong);
