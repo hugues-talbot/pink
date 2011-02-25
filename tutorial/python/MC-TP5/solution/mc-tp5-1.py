@@ -67,13 +67,13 @@ def analyzejoints(image, seg):
     corojoint = pink.min(pink.dilation(thinpores, pink.genball(1)), joint)
     if DEBUG:
         corojoint.writeimage("_corojoint")
-        surimp(joint, corojoint, "_res")
+        pink.surimp(joint, corojoint, "_res")
     corojointlen = area(corojoint)
     print "longueur des joints corrodes : "+repr(corojointlen)
 
     return
 
-joints = pink.readimage("joints.pgm")
+joints = pink.readimage("../images/joints.pgm")
 seg = segment(joints, 6)
 #imview(seg)
 analyzejoints(joints, seg)

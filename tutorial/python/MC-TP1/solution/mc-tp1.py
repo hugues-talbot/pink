@@ -3,6 +3,7 @@
 
 # Michel's TP-1
 
+from pink import imview
 from pink import cpp as pink
 
 
@@ -43,6 +44,7 @@ def fill_the_holes(image):
 
 noholes = fill_the_holes(inside)
 noholes.writeimage("noholes.pgm")
+imview(noholes)
 
 # exo1_4
 # extraction of object with at least one hole

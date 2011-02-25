@@ -29,7 +29,7 @@ def correctbias(image, alpha):
         res.writeimage("_res")
     return res
 
-img = pink.readimage("pex1.pgm")
+img = pink.readimage("../images/pex1.pgm")
 res = correctbias(img, 0.005)
 imview(res)
 

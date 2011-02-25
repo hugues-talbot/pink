@@ -51,12 +51,16 @@ vertebre = pink.readimage("../images/vertebre.pgm")
 shrunk = fill_the_hole(vertebre, 0, 10)
 render(shrunk, vertebre)
 
-### introduction of the size parameter
-closed1 = pink.holeclosing(vertebre, 26, 0)
-closed2 = pink.holeclosing(vertebre, 26, 10000)
-closed3 = pink.holeclosing(vertebre, 26, 6)
-render(closed1, closed3)
 
+# #### REVISION REQUIRED
+
+# ### introduction of the size parameter
+# closed1 = pink.holeclosing(vertebre, 26, 0)
+# closed2 = pink.holeclosing(vertebre, 26, 10000)
+# closed3 = pink.holeclosing(vertebre, 26, 6)
+# render(closed1, closed3)
+
+# #### end of REVISION REQUIRED
 
 ### Greyscale: segmentation
 
@@ -80,7 +84,7 @@ pink.surimp(uo, inv(minima), "surimp.ppm")
 ### we can also try the gradient with any image
 
 
-### Greyscale filtering
+# # ### Greyscale filtering
 
 ### angiographie
 angio = pink.readimage("../images/angiogra.pgm")

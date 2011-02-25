@@ -88,5 +88,4 @@ dilated.writeimage("dil.pgm")
 
 
 
-exit()
 # LuM end of file

@@ -25,7 +25,7 @@ def segment(im, height):
 
     return wshed1
 
-im = pink.readimage("uo.pgm")
+im = pink.readimage("../images/uo.pgm")
 seg = segment(im, 20)
 
 # LuM end of file

@@ -1585,7 +1585,7 @@ UI_WRAP_FUNCTION(
 UI_WRAP_FUNCTION(
   "dilatball",
   ldilatball,
-  (arg("image"), arg("radius"), arg("mode")),
+  (arg("image"), arg("radius"), arg("mode")=0),
   doc__dilatball__c__
   );
 #include BOOST_PP_UPDATE_COUNTER()
@@ -1593,7 +1593,7 @@ UI_WRAP_FUNCTION(
 UI_WRAP_FUNCTION(
   "erosball",
   lerosball,
-  (arg("image"), arg("radius"), arg("mode")),
+  (arg("image"), arg("radius"), arg("mode")=0),
   doc__erosball__c__
   );
 #include BOOST_PP_UPDATE_COUNTER()
@@ -1601,7 +1601,7 @@ UI_WRAP_FUNCTION(
 UI_WRAP_FUNCTION(
   "openball",
   lopenball,
-  (arg("image"), arg("radius"), arg("mode")),
+  (arg("image"), arg("radius"), arg("mode")=0),
   doc__openball__c__
   );
 #include BOOST_PP_UPDATE_COUNTER()
@@ -1609,7 +1609,7 @@ UI_WRAP_FUNCTION(
 UI_WRAP_FUNCTION(
   "closeball",
   lcloseball,
-  (arg("image"), arg("radius"), arg("mode")),
+  (arg("image"), arg("radius"), arg("mode")=0),
   doc__closeball__c__
   );
 #include BOOST_PP_UPDATE_COUNTER()

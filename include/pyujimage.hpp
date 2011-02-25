@@ -285,34 +285,21 @@ operator[int]
     .def(boost::python::self == boost::python::self)
     .def(boost::python::self != boost::python::self)
 
-    //.def(boost::python::self += boost::python::long())
-    // //.def(boost::python::self + long()) // these operators conflict with casting to xvimage*
-    // //.def(long() + boost::python::self) // these operators conflict with casting to xvimage*
-    // .def(boost::python::self -= boost::python::long())
-    // //.def(boost::python::self - long()) // these operators conflict with casting to xvimage*
-    // //.def(long() - boost::python::self) // these operators conflict with casting to xvimage*
-    // .def(boost::python::self *= boost::python::long())
-    // .def(boost::python::self * boost::python::long())
-    // .def(long() * boost::python::self)
-    // .def(boost::python::self /= boost::python::long())
-    // .def(boost::python::self / boost::python::long())
-    // //.def(long() / boost::python::self) // its difficult to interpret
-
-//     // boost-python does not like this
-//     // .def(boost::python::self = long())
+    // couldn't overload
+    //.def(boost::python::self = pixel_type())
     
-//     .def(boost::python::self += boost::python::float())
-//     .def(boost::python::self + boost::python::float())
-//     .def(float() + boost::python::self)
-//     .def(boost::python::self -= boost::python::float())
-//     .def(boost::python::self - boost::python::float())
-// //    .def(float() - boost::python::self) // -image should be interpreted. It's simpler to use t+(-1)*image
-//     .def(boost::python::self *= boost::python::float())
-//     .def(boost::python::self * boost::python::float())
-//     .def(float() * boost::python::self)
-//     .def(boost::python::self /= boost::python::float())
-//     .def(boost::python::self / boost::python::float())
-//     //.def(float() / self) // its difficult to interpret
+    .def(boost::python::self += pixel_type())
+    .def(boost::python::self + pixel_type())
+    .def(pixel_type() + boost::python::self)
+    .def(boost::python::self -= pixel_type())
+    .def(boost::python::self - pixel_type())
+// //    .def(pixel_type() - boost::python::self) // -image should be interpreted. It's simpler to use t+(-1)*image
+    .def(boost::python::self *= pixel_type())
+    .def(boost::python::self * pixel_type())
+    .def(pixel_type() * boost::python::self)
+    .def(boost::python::self /= pixel_type())
+    .def(boost::python::self / pixel_type())
+    //.def(pixel_type() / self) // its difficult to interpret
      ;
 
   /*
