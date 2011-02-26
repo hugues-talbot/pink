@@ -20,10 +20,14 @@ download page.
 <ul>
   <li> Code licensed under CeCILL license
   <ul> 
-    <li> <b>Michel Couprie</b>
-    <li> <b>Laurent Najman</b>: localextrema, saliency
-    <li> <b>Hugues Talbot</b>: fmm 
-    <li> <b>Jean Cousty</b>: redt 3d (reverse euclidean distance transform - algo de D. Coeurjolly), watershedthin, opérateurs sur les graphes d'arêtes (GA), forêts de poids min (MSF), waterfall, recalagerigide_translateplane
+    <li> <a href="http://www.esiee.fr/~coupriem"><b>Michel Couprie</b> </a>
+    <li> <a href="http://www.laurentnajman.org"> <b>Laurent Najman</b> </a>: localextrema, saliency
+    <li> <a href="http://hugues.zahlt.info">     <b>Hugues Talbot </b> </a>: fmm 
+    <li> <a href="http://www.esiee.fr/~coustyj"> <b>Jean
+    Cousty</b> </a>: redt 3d (reverse euclidean distance transform -
+    algo de D. Coeurjolly), watershedthin, opérateurs sur les graphes
+    d'arêtes (GA), forêts de poids min (MSF), waterfall,
+    recalagerigide_translateplane
     <li> <b>Xavier Daragon</b>: dist, distc (distance euclidienne quadratique 3D)
     <li> <b>André Vital Saude</b>: radialopening, divers scripts tcl, hma
     <li> <b>Nicolas Combaret</b>: toposhrinkgray, ptselectgray
@@ -36,7 +40,7 @@ download page.
     <li> <b>Rita Zrour</b>: medialaxis (axe médian euclidien exact - algo de Rémy-Thiel),
       dist, distc (distance euclidienne quadratique exacte - algo de Saito-Toriwaki)
     <li> <b>Laurent Mercier</b>: gestion d'un masque dans delaunay
-    <li> <b>Laszlo Marak (ujoimro)</b>: continuous maximum flows,
+    <li> <a href="http://www.ujoimro.com"> <b>Laszlo Marak (ujoimro)</b> </a>: continuous maximum flows,
     Unger flows, Python front-end, native Microsoft Windows port
    </ul>
   <li> Code under different free software licenses
@@ -64,6 +68,7 @@ exporting functions in Python look at the \ref python_export page.
 \section dependencies Dependencies
 For optimal use, the following packages should be installed:
 <br><br>
+<A HREF="http://hugues.zahlt.info/Imview.html">imview</A><br>
 <A HREF="http://www.python.org">Python</A><br>
 <A HREF="http://www.doxygen.org">Doxygen</A><br>
 <A HREF="http://dev.scriptics.com/">ActiveTcl 8.3</A><br>
