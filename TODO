@@ -21,4 +21,6 @@ MC extractplane pour les types float, long...
 
 MC génération de pages "man" à partir du code doxygen
 
-
+UJ use 
+ncftpput -R -u u50446271 -p ******** ftp.ujoimro.com pinkhtml html/*
+for uploading

@@ -46,9 +46,9 @@ copy bin\msvc-10.0\debug\link-static\threading-multi\libcpp_pink.pyd c:\Python27
 \endverbatim
 
 Now the library should work the same way as in linux:
-\verbatime
+\verbatim
 import libcpp_pink
-\endverbatime
+\endverbatim
 
 If you want to use the rest of the interface, you should copy the
 'Pink-svn/python/pink' directory among the Python modules, or you

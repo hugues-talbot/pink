@@ -18,13 +18,13 @@
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded 
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = Pink
+PROJECT_NAME           = Pinkimage
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. 
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 0.1
+PROJECT_NUMBER         = r369
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -820,4 +820,14 @@ DOT_CLEANUP            = YES
 # The SEARCHENGINE tag specifies whether or not a search engine should be 
 # used. If set to NO the values of all tags below this one will be ignored.
 
-SEARCHENGINE           = NO
+SEARCHENGINE           = YES
+
+#### UJOIMRO, 2011 (for the home page)
+
+HTML_TIMESTAMP = YES
+LAYOUT_FILE =      ${CMAKE_CURRENT_SOURCE_DIR}/DoxygenLayout.xml
+HTML_HEADER      = ${CMAKE_CURRENT_SOURCE_DIR}/header.html
+HTML_FOOTER      = ${CMAKE_CURRENT_SOURCE_DIR}/footer.html
+HTML_STYLESHEET  = ${CMAKE_CURRENT_SOURCE_DIR}/customdoxygen.css
+
+# LuM end of file
