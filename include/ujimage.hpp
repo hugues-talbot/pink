@@ -963,7 +963,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   ujoi<pixel_type >::ujoi( /* std::string debug="" */ ) {
     
     #if UJIMAGE_DEBUG >= 2
-    std::cout << "creating an empty image (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating an empty image (" << static_cast<void*>(this) << ")" << std::endl;
     #endif /* UJIMAGE_DEBUG */
 
     // defining the size for the isnull function
@@ -977,7 +977,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << std::endl;
     std::cout << "reading image '" << filename << "'\n";
     #endif /* UJIMAGE_DEBUG */
 
@@ -1025,7 +1025,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << std::endl;
     #endif /* UJIMAGE_DEBUG */
 
     if (image_type_string(src.data_storage_type)!=this->imtype())
@@ -1061,9 +1061,9 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     : size(src.size), center(src.center), old_school(src.old_school), pixels(src.pixels)
   {
     #if UJIMAGE_DEBUG >= 2
-    std::cout << "WARNING!: copy constructors only constructs shallow copies!\n"
+    std::cout << "WARNING!: copy constructors only constructs shallow copies!\n";    
     this->debug=debug; // representing the name of the object if debugged
-    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << std::endl;
     #endif /* UJIMAGE_DEBUG */
   } /* ujoi::ujoi */
 
@@ -1073,7 +1073,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << std::endl;
     #endif /* UJIMAGE_DEBUG */
 
     // note self assignment will be tested inside boost-smart-pointer
@@ -1092,7 +1092,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << std::endl;
     #endif /* UJIMAGE_DEBUG */
 
 
@@ -1114,7 +1114,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << std::endl;
     #endif /* UJIMAGE_DEBUG */
 
     this->size.reset( new vint(dim)); // creating a copy of the size
@@ -1135,11 +1135,11 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   ujoi<pixel_type >::~ujoi( ){
 
     #if UJIMAGE_DEBUG >= 2
-    std::cout << "deleting image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "deleting image '" << debug << "' (" << static_cast<void*>(this) << ")" << std::endl;
     #endif /* UJIMAGE_DEBUG */
 
 // deletes 'xvImage' automaticly
-    /////!!!!!!! std::cout<< "deleting " << old_school->imtype() << "_char"  << endl; 
+    /////!!!!!!! std::cout<< "deleting " << old_school->imtype() << "_char"  << std::endl; 
   } /* ujoi::~ujoi */
 
 
@@ -1150,7 +1150,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    std::cout << "creating image " << debug << endl;
+    std::cout << "creating image " << debug << std::endl;
     #endif /* UJIMAGE_DEBUG */
 
     size.reset(new vint( dim )); // creating a copy of the size
@@ -1316,9 +1316,9 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     // this is a test which would be slow in an everyday situation,
     // but can save ages while debugging
     #ifdef UJIMAGE_DEBUG
-    if ( ( pos < 0 ) or (pos >= this->size.prod()) )
+    if ( ( pos < 0 ) or (pos >= this->size->prod()) )
     {
-      cerr << "error: number of elements is " << this->size.prod() << " while pos = " << pos << endl;
+      std::cerr << "error: number of elements is " << this->size->prod() << " while pos = " << pos << std::endl;
       error("You are trying to access elements otside of the image\n");
     } /* if */
     #endif /* UJIMAGE_DEBUG */
@@ -1337,9 +1337,9 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     // this is a test which would be slow in an everyday situation,
     // but can save ages while debugging
     #ifdef UJIMAGE_DEBUG
-    if ( ( pos < 0 ) or (pos >= this->size.prod()) )
+    if ( ( pos < 0 ) or (pos >= this->size->prod()) )
     {
-      cerr << "error: number of elements is " << this->size.prod() << " while pos = " << pos << endl;
+      std::cerr << "error: number of elements is " << this->size->prod() << " while pos = " << pos << std::endl;
       error("You are trying to access elements otside of the image\n");
     } /* if */
     #endif /* UJIMAGE_DEBUG */
@@ -1356,9 +1356,9 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     // this is a test which would be slow in an everyday situation,
     // but can save ages while debugging
     #ifdef UJIMAGE_DEBUG
-    if ( not size.inside(pos) )
+    if ( not size->inside(pos) )
     {
-      cerr << "error: image dimensions are " << this->size.repr() << " while pos = " << pos.repr() << "\n";
+      std::cerr << "error: image dimensions are " << this->size->repr() << " while pos = " << pos.repr() << "\n";
       error("You are trying to access elements otside of the image\n");
     } /* if */
     #endif /* UJIMAGE_DEBUG */
@@ -1376,9 +1376,9 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     // this is a test which would be slow in an everyday situation,
     // but can save ages while debugging
     #ifdef UJIMAGE_DEBUG
-    if ( not size.inside(pos) )
+    if ( not size->inside(pos) )
     {
-      cerr << "error: image dimensions are " << this->size.repr() << " while pos = " << pos.repr() << "\n";
+      std::cerr << "error: image dimensions are " << this->size->repr() << " while pos = " << pos.repr() << "\n";
       error("You are trying to access elements otside of the image\n");
     } /* if */
     #endif /* UJIMAGE_DEBUG */
@@ -1772,7 +1772,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     #if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
-    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << endl;
+    std::cout << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << std::endl;
     #endif /* UJIMAGE_DEBUG */
 
     if (this==&other) // self-assignment test

@@ -38,7 +38,7 @@ namespace pink {
 
     DEBUG(shift_vec.repr());
     DEBUG(big_image.get_size().repr());
-    DEBUG(result->get_size().repr());
+    DEBUG(result.get_size().repr());
     DEBUG(small_image.get_size().repr());
     
 
@@ -79,7 +79,7 @@ namespace pink {
 
     DEBUG(shift_vec.repr());
     DEBUG(big_image.get_size().repr());
-    DEBUG(result->get_size().repr());
+    DEBUG(result.get_size().repr());
     DEBUG(small_image.get_size().repr());
     
 

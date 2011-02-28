@@ -1656,6 +1656,10 @@ BOOST_PYTHON_MODULE(libcpp_pink)
 // a tree hierarchy
 {
 
+# ifdef UJIMAGE_DEBUG
+  std::cerr << "Pink was compiled in debug level " << UJIMAGE_DEBUG << ". You will see various debug messages.\n" <<  std::endl;
+# endif /* UJIMAGE_DEBUG */
+
   CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
   
   def("greet", greet, "Gently greets the user.");  

@@ -211,7 +211,7 @@ vint::vint(const vint & src, std::string debug ):std::vector<int>(src)  //copy c
 {
   #ifdef UJIMAGE_DEBUG
   this->debug=debug; // representing the name of the object if debugged
-  std::cout << "creating vint '" << debug << "' with address " << static_cast<void*>(this) <<"; with the copy constructor"<< endl;
+  std::cout << "creating vint '" << debug << "' with address " << static_cast<void*>(this) <<"; with the copy constructor"<< std::endl;
   #endif /* UJIMAGE_DEBUG */
 } /* vint::vint */
 
@@ -225,7 +225,7 @@ vint::vint( int size, std::string debug /*=""*/ ):std::vector<int>(size)
 {
   #if UJIMAGE_DEBUG >= 3
   this->debug=debug; // representing the name of the object if debugged
-  std::cout << "creating vint '" << debug << "' with address " << static_cast<void*>(this) << endl;
+  std::cout << "creating vint '" << debug << "' with address " << static_cast<void*>(this) << std::endl;
   #endif /* UJIMAGE_DEBUG */
 } /* vint::vint */
 
@@ -253,7 +253,7 @@ vint::vint( const boost::python::list & src ): std::vector<int>(boost::python::l
 vint::~vint()
 {
   #if UJIMAGE_DEBUG >= 3
-  std::cout << "destroying vint '" << debug << "' with address " << static_cast<void*>(this) << endl;
+  std::cout << "destroying vint '" << debug << "' with address " << static_cast<void*>(this) << std::endl;
   #endif /* UJIMAGE_DEBUG >= 3 */
 } /* vint::~vint */
 
