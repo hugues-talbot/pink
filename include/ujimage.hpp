@@ -1315,13 +1315,13 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     // CAPABILITY TEST IN DEBUG MODE
     // this is a test which would be slow in an everyday situation,
     // but can save ages while debugging
-    #ifdef UJIMAGE_DEBUG
-    if ( ( pos < 0 ) or (pos >= this->size->prod()) )
+#   ifdef UJIMAGE_DEBUG
+    if ( ( pos < 0 ) or (pos > this->size->prod()) ) // note pos == size->prod intentionally left in for std::copy
     {
       std::cerr << "error: number of elements is " << this->size->prod() << " while pos = " << pos << std::endl;
       error("You are trying to access elements otside of the image\n");
     } /* if */
-    #endif /* UJIMAGE_DEBUG */
+#   endif /* UJIMAGE_DEBUG */
 
     
     return pixels[pos];
@@ -1337,7 +1337,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     // this is a test which would be slow in an everyday situation,
     // but can save ages while debugging
     #ifdef UJIMAGE_DEBUG
-    if ( ( pos < 0 ) or (pos >= this->size->prod()) )
+    if ( ( pos < 0 ) or (pos > this->size->prod()) ) // note pos == size->prod intentionally left in for std::copy
     {
       std::cerr << "error: number of elements is " << this->size->prod() << " while pos = " << pos << std::endl;
       error("You are trying to access elements otside of the image\n");
