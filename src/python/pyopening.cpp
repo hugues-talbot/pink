@@ -12,9 +12,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyopening.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -29,11 +26,11 @@ namespace pink {
 
       if (!elem.get_size().inside(elem.get_center()))
       {
-        error("The center of 'elem' must be specified.");
+        pink_error("The center of 'elem' must be specified.");
       }
 
       if (image.get_size().size()!=elem.get_size().size()){
-        error("error: the dimensions of 'image' and 'elem' must be equal");
+        pink_error("error: the dimensions of 'image' and 'elem' must be equal");
       }
 
       char_image result;
@@ -50,17 +47,17 @@ namespace pink {
 
         if (! ldilateros_leros( result.get_output(), elem_ca.get_output(), x, y))
         {
-          error("function leros failed");
+          pink_error("function leros failed");
         }              
         
         if (! lsym( elem_ca.get_output(), 'c'))
         {
-          error("function lsym failed");
+          pink_error("function lsym failed");
         }
         
         if (! ldilateros_ldilat( result.get_output(), elem_ca.get_output(), rs - 1 - x, cs - 1 - y))
         {
-          error("function ldilat failed");
+          pink_error("function ldilat failed");
         }
       }
       else /* NOT result.get_size()==2 */ 
@@ -77,23 +74,23 @@ namespace pink {
 
           if (! leros3d( result.get_output(), elem_ca.get_output(), rs - 1 - x, cs - 1 - y, ds - 1 - z))
           {
-            error("function leros3d failed");
+            pink_error("function leros3d failed");
           }
       
           if (! lsym(elem_ca.get_output(), 'c'))
           {
-            error("function lsym failed");
+            pink_error("function lsym failed");
           }
       
           if (! ldilat3d( result.get_output(), elem_ca.get_output() , x, y, z))
           {
-            error("function leros3d failed");
+            pink_error("function leros3d failed");
           }
 
         } 
         else /* NOT result.get_size()==3 */
         {
-          error("pyopening: the image must be 2D or 3D");
+          pink_error("pyopening: the image must be 2D or 3D");
         } /* NOT result.get_size()==3 */
     
       } /* NOT result.get_size()==2 */ 
@@ -116,29 +113,29 @@ namespace pink {
     //   if ((mode != 0) && (mode != 2) && (mode != 4) && 
     //       (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
     //   {
-    //     error("dist = [0|2|4|8|6|18|26] ");
+    //     pink_error("dist = [0|2|4|8|6|18|26] ");
     //   }
 
     //   if (result.get_size().size()==2) // the result is 2D
     //   {
     //     if (! lerosdisc(result, radius, mode))
     //     {
-    //       error("function ldilatdisc failed");
+    //       pink_error("function ldilatdisc failed");
     //     }
     //     if (! ldilatdisc(result, radius, mode))
     //     {
-    //       error("function lerosdisc failed");
+    //       pink_error("function lerosdisc failed");
     //     }
     //   }
     //   else // NOT the result is 2D
     //   {
     //     if (! lerosball(result, radius, mode))
     //     {
-    //       error("function ldilatball failed");
+    //       pink_error("function ldilatball failed");
     //     }
     //     if (! ldilatball(result, radius, mode))
     //     {
-    //       error("function lerosball failed");
+    //       pink_error("function lerosball failed");
     //     }
     //   } // NOT the result is 2D
 

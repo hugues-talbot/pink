@@ -17,10 +17,6 @@
 #ifndef UI_QDISTANCE_HPP_
 #define UI_QDISTANCE_HPP_
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiQDistance.hpp: " << msg; call_error(fullmessage.str());}
-
-
 #define MEAN boost::accumulators::tag::mean
 #define VARIANCE boost::accumulators::tag::variance
 #define COVARIANCE boost::accumulators::tag::covariance<pixel_type, boost::accumulators::tag::covariate1>

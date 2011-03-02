@@ -13,9 +13,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pylong2byte.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 

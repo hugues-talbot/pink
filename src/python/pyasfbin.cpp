@@ -12,9 +12,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyasfbin.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -50,22 +47,22 @@ namespace pink {
           /* fermeture par l'element structurant */
           if (! ldilatball(result, rayon, 0))
           {
-            error("function ldilatball failed");
+            pink_error("function ldilatball failed");
           }
           if (! lerosball(result, rayon, 0))
           {
-            error("function lerosball failed");
+            pink_error("function lerosball failed");
             
           }
           /* ouverture par l'element structurant */
           if (! lerosball(result, rayon, 0))
           {
-            error("function lerosball failed");
+            pink_error("function lerosball failed");
             
           }
           if (! ldilatball(result, rayon, 0))
           {
-            error("function ldilatball failed");
+            pink_error("function ldilatball failed");
             
           }
         }
@@ -74,23 +71,23 @@ namespace pink {
           /* ouverture par l'element structurant */
           if (! lerosball(result, rayon, 0))
           {
-            error("function lerosball failed");
+            pink_error("function lerosball failed");
             
           }
           if (! ldilatball(result, rayon, 0))
           {
-            error("function ldilatball failed");
+            pink_error("function ldilatball failed");
             
           }
           /* fermeture par l'element structurant */
           if (! ldilatball(result, rayon, 0))
           {
-            error("function ldilatball failed");
+            pink_error("function ldilatball failed");
             
           }
           if (! lerosball(result, rayon, 0))
           {
-            error("function lerosball failed");
+            pink_error("function lerosball failed");
             
           }
         }

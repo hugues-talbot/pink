@@ -12,9 +12,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pygeodilat.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -32,7 +29,7 @@ namespace pink {
   
       if ((connex!=4)&&(connex!=8)&&(connex!=6)&&(connex!=18)&&(connex!=26))
       {
-        error("error: bad connexity - use one of the following:\n"
+        pink_error("error: bad connexity - use one of the following:\n"
               "4, 8 (in 2d), 6, 18, 26 (in 3d)\n"
           );
       } /* ((connex!=4)&&(connex!=8)&&(connex!=6)&&(connex!=18)&&(connex!=26)) */
@@ -44,7 +41,7 @@ namespace pink {
       fc.copy(F);
       
       if (result.get_size().size()!=fc.get_size().size()){
-        error("error: the dimensions of F and G must be equal");
+        pink_error("error: the dimensions of F and G must be equal");
       }
 
 
@@ -60,7 +57,7 @@ namespace pink {
         } 
         else 
         { /* NOT result.get_size().size()==3 */
-          error("error: only 2D and 3D images are supported");
+          pink_error("error: only 2D and 3D images are supported");
         } /* NOT result.get_size().size()==3 */
       } /* NOT result.get_size().size()==2 */
 

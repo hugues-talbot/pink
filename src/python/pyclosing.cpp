@@ -11,9 +11,6 @@
 */
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyclosing.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -34,12 +31,12 @@ namespace pink {
 
       if (! (elem.get_size().inside(elem.get_center())))
       {
-        error("The center of the structuring element must be defined");        
+        pink_error("The center of the structuring element must be defined");        
       }
 
       if (! ((image.get_size().size()==2) || (image.get_size().size()==3)) )
       {
-        error("Only 2D and 3D images are supported.");        
+        pink_error("Only 2D and 3D images are supported.");        
       }
       
 
@@ -55,17 +52,17 @@ namespace pink {
 
         if (! ldilateros_ldilat(result, elem_ce, rs - 1 - x, cs - 1 - y))
         {
-          error("function ldilat failed");
+          pink_error("function ldilat failed");
         }
 
         if (! lsym(elem_ce, 'c'))
         {
-          error("function lsym failed");
+          pink_error("function lsym failed");
         }
 
         if (!ldilateros_leros(result, elem_ce, x, y))
         {
-          error("function leros failed");
+          pink_error("function leros failed");
         }
       }
       else /* NOT image.get_size().size() == 2 */
@@ -80,17 +77,17 @@ namespace pink {
         
         if (! ldilat3d(result, elem_ce, x, y, z))
         {
-          error("function leros3d failed");
+          pink_error("function leros3d failed");
         }
 
         if (! lsym(elem_ce, 'c'))
         {
-          error("function lsym failed");
+          pink_error("function lsym failed");
         }
 
         if (! leros3d(result, elem_ce, rs - 1 - x, cs - 1 - y, ds - 1 - z))
         {
-          error("function leros3d failed");
+          pink_error("function leros3d failed");
         }
       }  /* NOT image.get_size().size() == 2 */
 
@@ -108,7 +105,7 @@ namespace pink {
     //   if ((mode != 0) && (mode != 2) && (mode != 4) && 
     //       (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
     //   {
-    //     error("dist = [0|2|4|8|6|18|26]");
+    //     pink_error("dist = [0|2|4|8|6|18|26]");
     //   } /* if */
 
     //   char_image result;
@@ -119,22 +116,22 @@ namespace pink {
     //   {
     //     if (! ldilatdisc(result.get_output(), r, mode))
     //     {
-    //       error("function ldilatdisc failed");
+    //       pink_error("function ldilatdisc failed");
     //     }
     //     if (! lerosdisc(result.get_output(), r, mode))
     //     {
-    //       error("function lerosdisc failed");
+    //       pink_error("function lerosdisc failed");
     //     }
     //   }
     //   else /* NOT result.get_size().size()==2 */
     //   {
     //     if (! ldilatball(result.get_output(), r, mode))
     //     {
-    //       error("function ldilatball failed");
+    //       pink_error("function ldilatball failed");
     //     }
     //     if (! lerosball(result.get_output(), r, mode))
     //     {
-    //       error("function lerosball failed");
+    //       pink_error("function lerosball failed");
     //     }
     //   } /* NOT result.get_size().size()==2 */
 

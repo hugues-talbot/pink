@@ -14,14 +14,8 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pytoposhrink.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
-
-
-
 
 namespace pink {
   namespace python {
@@ -52,14 +46,14 @@ namespace pink {
       {
         if (! ltoposhrink(result, priority_image, connexity, tmin, tmax, tbmin, tbmax, can_be_null(inhibit)))
         {
-          error("ltoposhrink failed");
+          pink_error("ltoposhrink failed");
         }
       }
       else /* NOT image.get_size().size()==2 */
       {
         if (! ltoposhrink3d(result, priority_image, connexity, tmin, tmax, tbmin, tbmax, can_be_null(inhibit)))
         {
-          error("ltoposhrink3d failed");
+          pink_error("ltoposhrink3d failed");
         }
       }  /* NOT image.get_size().size()==2 */
 

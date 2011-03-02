@@ -15,9 +15,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyborder.cpp: " << msg; call_error(fullmessage.str());}
-
 /// !!! macros should be named upper case
 #undef border
 
@@ -32,7 +29,10 @@ namespace pink {
       char_image result;
       result.copy(src);
 
-      mctopo3d_lborder(result.get_output(), connex);
+      if (!mctopo3d_lborder(result.get_output(), connex))
+      {
+        pink_error("mctopo3d_lborder failed");        
+      }
 
       return result;
     } /* py_border */

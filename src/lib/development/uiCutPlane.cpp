@@ -20,11 +20,6 @@
 
 #include "pink.h"
 
-
-
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiCutPlane.cpp: " << msg; call_error(fullmessage.str());}
-
 USING_PART_OF_NAMESPACE_EIGEN
 
 #define DVECT(x) cout << "----------------\n" << BOOST_PP_STRINGIZE(x) << " = \n" << x << "\n"
@@ -64,7 +59,7 @@ namespace pink {
       {
 	if ( boost::python::len(src) < 3 )
 	{
-	  error("the list is too short for 3D vector");
+	  pink_error("the list is too short for 3D vector");
 	} /* if */
 	FOR(q, 3)
 	{
@@ -74,7 +69,7 @@ namespace pink {
 	  } 
 	  catch (...) 
 	  {
-	    error("the elements of the list must be convertible to doubles.");
+	    pink_error("the elements of the list must be convertible to doubles.");
 	  }
 	} /* FOR */
       } /* v3d */

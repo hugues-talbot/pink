@@ -8,13 +8,10 @@
 #include "uiFibreTypes.h"
 
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiSqhool.hpp: " << msg; call_error(fullmessage.str());}
-
 #define sqlite3(command, errormessage)				      \
  if (SQLITE_OK!=command){                                             \
    std::cout << "sqlite says: " << sqlite3_errmsg(database) << std::endl;       \
-   error(errormessage);                                               \
+   pink_error(errormessage);                                               \
  };
 
 
@@ -151,7 +148,7 @@ namespace pink{
 
       if (result->imtype()!=sstype.str()) 
       {
-	error("you are trying to read an image to an object of different type.");
+	pink_error("you are trying to read an image to an object of different type.");
       }; /* if */
 
       // this is the type of the image to read
@@ -161,7 +158,7 @@ namespace pink{
       boost::shared_array<pixel_type> data (new pixel_type[size->prod()]);
       
       if (sqlite3_blob_bytes(blob) != int(sizeof(pixel_type)*size->prod()))
-	error("the size of the data is not corresponding with the size defined by the tags");
+	pink_error("the size of the data is not corresponding with the size defined by the tags");
       
       
       sqlite3( sqlite3_blob_read(blob, (void*)data.get(), sizeof(pixel_type)*size->prod(), 0), 

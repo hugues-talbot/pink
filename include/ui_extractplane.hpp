@@ -16,10 +16,6 @@
 
 #include "uiFibreTypes.h"
 
-#undef error
-#define error(msg, errarg) {std::stringstream fullmessage; fullmessage << "in ui_extractplane.hpp: " << msg << "; with argument:'" << errarg << "'"; call_error(fullmessage.str());}
-
-
 namespace pink {
 
   template<class image_type>
@@ -39,7 +35,7 @@ namespace pink {
            ((mode[0] == 'z') && (mode[1] == 'y'))))
     {
         // fprintf(stderr, "usage: filein.pgm n plane fileout.pgm (plane=xy|yx|xz|zx|yz|zy)");
-        error("extractplane called with incorrect mode ",mode); 
+      pink_error("extractplane called with incorrect mode " << mode );
     }
 
     rs = image.get_size()[0]; //rowsize(image);
@@ -57,7 +53,7 @@ namespace pink {
       image_type result(size);
       if ((n < 0) || (n >= ds))
       {
-          error("bad plane number", n);
+        pink_error("bad plane number " << n);
       }
       t = rs * cs;
       offset = n * t;
@@ -72,7 +68,7 @@ namespace pink {
       image_type result(size);
       if ((n < 0) || (n >= ds))
       {
-          error("bad plane number",n);
+        pink_error("bad plane number " << n);
       }
       t = rs * cs;
       for (j = 0; j < cs ; j++)
@@ -89,7 +85,7 @@ namespace pink {
 
       if ((n < 0) || (n >= cs))
       {
-          error("bad plane number",n);
+        pink_error("bad plane number " << n);
       }
       t = rs * cs;
       for (k = 0; k < ds ; k++)
@@ -106,7 +102,7 @@ namespace pink {
       
       if ((n < 0) || (n >= cs))
       {
-          error("bad plane number", n);
+        pink_error("bad plane number " << n ); //,n
       }
       t = rs * cs;
       for (k = 0; k < ds ; k++)
@@ -123,7 +119,7 @@ namespace pink {
      
       if ((n < 0) || (n >= rs))
       {
-          error("bad plane number",n);
+        pink_error("bad plane number " << n);
       }
       t = rs * cs;
       for (k = 0; k < ds ; k++)
@@ -140,7 +136,7 @@ namespace pink {
       
       if ((n < 0) || (n >= rs))
       {
-          error("bad plane number",n);
+        pink_error("bad plane number " << n);
       }
       t = rs * cs;
       for (k = 0; k < ds ; k++)
@@ -151,7 +147,7 @@ namespace pink {
     }
     else
     {
-        error("Valid modes are (mode=xy|yx|xz|zx|yz|zy)",mode);
+      pink_error("Valid modes are (mode=xy|yx|xz|zx|yz|zy) " << mode);
     }
  
   } /* extractplane */

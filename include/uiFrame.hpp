@@ -13,9 +13,6 @@
 #ifndef UI_FRAME__
 #define UI_FRAME__
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiFrame.hpp: " << msg; call_error(fullmessage.str());}
-
 namespace pink { 
 
   template <class image_type>

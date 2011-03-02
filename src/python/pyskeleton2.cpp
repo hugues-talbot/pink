@@ -12,9 +12,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyskeleton2.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -50,14 +47,14 @@ namespace pink {
         {
           if (! ldisteuc(image.get_output(), prio))
           {
-            error("ldisteuc failed");
+            pink_error("ldisteuc failed");
           }
         }
         else
         {
           if (! ldisteuc3d(image.get_output(), prio))
           {
-            error("ldisteuc3d failed");
+            pink_error("ldisteuc3d failed");
           }
         }
       }
@@ -68,14 +65,14 @@ namespace pink {
           {
             if (! ldistquad(image.get_output(), prio))
             {
-              error("ldistquad failed");
+              pink_error("ldistquad failed");
             }
           }
           else
           {
             if (! ldistquad3d(image.get_output(), prio))
             {
-              error("ldistquad3d failed");
+              pink_error("ldistquad3d failed");
             }
           }
         }
@@ -84,7 +81,7 @@ namespace pink {
           {
             if (! lchamfrein(image.get_output(), prio))
             {
-              error("lchamfrein failed");
+              pink_error("lchamfrein failed");
             }
           }
           else
@@ -92,14 +89,14 @@ namespace pink {
             {
               if (! lsedt_meijster(image.get_output(), prio))
               {
-                error("lsedt_meijster failed");
+                pink_error("lsedt_meijster failed");
               }
             }
             else
             {
               if (! ldist(image.get_output(), priocode, prio))
               {
-                error("ldist failed");
+                pink_error("ldist failed");
               }
             }
       for (i = 0; i < N; i++) // re-inverse l'image
@@ -132,14 +129,14 @@ namespace pink {
       {
         if (! lskelubp(result.get_output(), prioimage, connex, inhibval))
         {
-          error("lskelubp failed");
+          pink_error("lskelubp failed");
         }
       }
       else  // the image is 3D
       {
         if (! lskelubp3d(result.get_output(), prioimage, connex, inhibval))
         {
-          error("lskelubp3d failed");
+          pink_error("lskelubp3d failed");
         }
       }  // the image is 3D
 
@@ -163,11 +160,11 @@ namespace pink {
 
       if (depth(result.get_output()) == 1) // the image is 2D
       {
-        if (! lskelubp2(result.get_output(), prio, connex, can_be_null(inhibimage))) { error("lskelubp2 failed"); }
+        if (! lskelubp2(result.get_output(), prio, connex, can_be_null(inhibimage))) { pink_error("lskelubp2 failed"); }
       }
       else // the image is 3D
       {
-        if (! lskelubp3d2(result.get_output(), prio, connex, can_be_null(inhibimage))) { error("lskelubp3d2 failed"); }
+        if (! lskelubp3d2(result.get_output(), prio, connex, can_be_null(inhibimage))) { pink_error("lskelubp3d2 failed"); }
       } // the image is 3D
 
       return result;
@@ -207,11 +204,11 @@ namespace pink {
       
       if (depth(result.get_output()) == 1) // the image is 2D
       {
-        if (! lskelubp2(result, prioimage, connex, can_be_null(inhibimage))) { error("lskelubp2 failed"); }
+        if (! lskelubp2(result, prioimage, connex, can_be_null(inhibimage))) { pink_error("lskelubp2 failed"); }
       }
       else // the image is 3D
       {
-        if (! lskelubp3d2(result, prioimage, connex, can_be_null(inhibimage))) { error("lskelubp3d2 failed"); }
+        if (! lskelubp3d2(result, prioimage, connex, can_be_null(inhibimage))) { pink_error("lskelubp3d2 failed"); }
       } // the image is 3D
 
       return result;

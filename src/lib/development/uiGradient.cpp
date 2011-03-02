@@ -24,10 +24,6 @@
 #include "uiFibreTypes.h"
 
 
-//#undef error
-//#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiGradient.cpp: " << msg; call_error(fullmessage.str());}
-
-
 // general gradient ---------------------------------------------------------------------------------
 
 namespace pink
@@ -288,11 +284,11 @@ namespace pink
 //   uiScalarField f(image);
 //   int d = f.size.size();
 //   if (d != 3) { 
-//     error("prepared only for 3D, exiting...\n");
+//     pink_error("prepared only for 3D, exiting...\n");
 //   };
 //   vint dim(f.size);
 //   if (uiSqr(dim[0]-dim[1])+uiSqr(dim[0]-dim[2])!=0){
-//     error("prepared only for cubes (not rectangloids), exiting...\n");
+//     pink_error("prepared only for cubes (not rectangloids), exiting...\n");
 //   };
 //   boost::shared_ptr<uiScalarField> presult( new uiScalarField( dim ));
 //   int dif=5;

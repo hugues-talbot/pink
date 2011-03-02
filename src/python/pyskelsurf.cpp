@@ -12,9 +12,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyskelsurf.cpp: " << msg; call_error(fullmessage.str());}
-
 // you should not use one-letter macro names!
 #undef N
 #undef D
@@ -38,7 +35,7 @@ namespace pink {
      
       if (! lskelsurf3d(result.get_output(), priority_image.get_output(), /*can_be_null(inhibit)*/ NULL, connexity))
       {
-        error("lskelsurf3d failed");        
+        pink_error("lskelsurf3d failed");        
       } /* if */
 
 

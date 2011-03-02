@@ -21,10 +21,6 @@
 #include "uiFibreTypes.h"
 #include "ui_fit_circle.hpp"
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in ui_fit_circle.cpp: " << msg; call_error(fullmessage.str());}
-
-
 USING_PART_OF_NAMESPACE_EIGEN
 
 
@@ -92,12 +88,12 @@ namespace pink
 
     if (x.size()!=y.size())
     {
-      error("fit_circle: the size of the x and y coordinate vector must match!");      
+      pink_error("fit_circle: the size of the x and y coordinate vector must match!");      
     }
 
     if (x.size()<=4)
     {
-      error("fit_circle: You need at least four points to interpolate with a circle!");      
+      pink_error("fit_circle: You need at least four points to interpolate with a circle!");      
     }
     
 

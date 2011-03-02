@@ -12,9 +12,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyskelcurv.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -39,7 +36,7 @@ namespace pink {
       prio = allocimage(NULL, rowsize(image.get_output()), colsize(image.get_output()), depth(image.get_output()), VFF_TYP_4_BYTE);
       if (prio == NULL)
       {   
-        error("allocimage failed");
+        pink_error("allocimage failed");
       }
       N = rowsize(image.get_output()) * colsize(image.get_output()) * depth(image.get_output());
       F = UCHARDATA(image.get_output());
@@ -52,14 +49,14 @@ namespace pink {
         {
           if (! ldisteuc(image.get_output(), prio))
           {
-            error("ldisteuc failed");
+            pink_error("ldisteuc failed");
           }
         }
         else
         {
           if (! ldisteuc3d(image.get_output(), prio))
           {
-            error("ldisteuc3d failed");
+            pink_error("ldisteuc3d failed");
           }
         }
       }
@@ -70,14 +67,14 @@ namespace pink {
           {
             if (! ldistquad(image.get_output(), prio))
             {
-              error("ldistquad failed");
+              pink_error("ldistquad failed");
             }
           }
           else
           {
             if (! ldistquad3d(image.get_output(), prio))
             {
-              error("ldistquad3d failed");
+              pink_error("ldistquad3d failed");
             }
           }
         }
@@ -86,7 +83,7 @@ namespace pink {
           {
             if (! lchamfrein(image.get_output(), prio))
             {
-              error("lchamfrein failed");
+              pink_error("lchamfrein failed");
             }
           }
           else
@@ -94,14 +91,14 @@ namespace pink {
             {
               if (! lsedt_meijster(image.get_output(), prio))
               {
-                error("lsedt_meijster failed");
+                pink_error("lsedt_meijster failed");
               }
             }
             else
             {
               if (! ldist(image.get_output(), priovalue, prio))
               {
-                error("ldist failed");
+                pink_error("ldist failed");
               }
             }
       for (i = 0; i < N; i++) // re-inverse l'image
@@ -129,7 +126,7 @@ namespace pink {
       {
         if (! lskelcurv(result, prio, can_be_null(inhibit), connex))
         {
-          error("lskelcurv failed");
+          pink_error("lskelcurv failed");
         }        
       }
       else /* NOT size==2 */
@@ -138,12 +135,12 @@ namespace pink {
         {
           if (! lskelcurv3d(result, prio, can_be_null(inhibit), connex))
           {
-            error("lskelcurv3d failed");
+            pink_error("lskelcurv3d failed");
           }
         }
         else /* NOT size==3 */
         {
-          error("only 2D and 3D images are supported");
+          pink_error("only 2D and 3D images are supported");
         } /* NOT size==3 */
         
       } /* NOT size==2 */

@@ -146,9 +146,6 @@
 using namespace pink::python;
 
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in ui_make_value.hpp: " << msg; call_error(fullmessage.str());}
-
 //#define MAX_PARAMETERS 3
 
 #ifndef MAX_PARAMETERS

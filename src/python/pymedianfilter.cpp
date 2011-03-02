@@ -12,9 +12,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pymedianfilter.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -30,7 +27,7 @@ namespace pink {
       // testing if the center of the 'structuring_element' is set
       if ( image.get_size()[1] == -1 )
       {    
-        error("medianfilter: the structuring element must be set");
+        pink_error("medianfilter: the structuring element must be set");
       }  
   
       char_image result;
@@ -47,7 +44,7 @@ namespace pink {
                             0.5
               ))
         {      
-          error("medianfilter: lfiltreordre failed");
+          pink_error("medianfilter: lfiltreordre failed");
         } /* if lfiltreordre */
     
       }
@@ -64,12 +61,12 @@ namespace pink {
                                 0.5
                 ))
           {        
-            error("medianfilter: lfiltreordre failed");
+            pink_error("medianfilter: lfiltreordre failed");
           } /* if lfiltreordre3d*/    
         }
         else  /* NOT image.get_size().size() == 3 */ // the image is 4D or bad
         {    
-          error("erosball: only 2D and 3D images are supported");
+          pink_error("erosball: only 2D and 3D images are supported");
         } /* NOT image.get_size().size() == 3 */ 
       } /* NOT image.get_size().size() == 2 */
    

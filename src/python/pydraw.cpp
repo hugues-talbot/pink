@@ -15,9 +15,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pydraw.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -33,12 +30,12 @@ namespace pink {
     {
       if (size.size()!=2)
       {
-        error("only 2D images are supported. Nag the developer.");
+        pink_error("only 2D images are supported. Nag the developer.");
       } /* size.size()!=2 */
 
       if (coordX.size() != coordY.size())
       {
-        error("error: The number of X and Y coordinates must be equal.");
+        pink_error("error: The number of X and Y coordinates must be equal.");
       } /* coordX.size() != coordy.size() */
   
 

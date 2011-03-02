@@ -12,9 +12,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pydistc.cpp: " << msg; call_error(fullmessage.str());}
-
 // you should not use one-letter macro names!
 #undef N
 #undef D
@@ -43,7 +40,7 @@ namespace pink {
           (mode != 4) && (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26) &&
           (mode != 40) && (mode != 80) && (mode != 60) && (mode != 180) && (mode != 260))
       {
-        error("filein.pgm mode fileout.pgm"
+        pink_error("filein.pgm mode fileout.pgm"
               "       mode = 0 (dist. eucl. trunc), 1 (dist. eucl. quad.), 2 (chamfrein),\n"
               "              3 (exact eucl. quad.), 5 (exact eucl.), 4, 8 (2D), 6, 18, 26 (3D)\n"
               "                40, 80 (2D), 60, 180, 260 (3D)\n");
@@ -58,7 +55,7 @@ namespace pink {
       
       // if (result == NULL)
       // {   
-      //   error("%s: allocimage failed");
+      //   pink_error("%s: allocimage failed");
       // }
 
       N = image.get_size().prod();//rowsize(image) * colsize(image) * depth(image);
@@ -72,14 +69,14 @@ namespace pink {
         {
           if (! ldisteuc(image, *result))
           {
-            error("%s: ldisteuc failed");
+            pink_error("%s: ldisteuc failed");
           }
         }
         else
         {
           if (! ldisteuc3d(image, *result))
           {
-            error("%s: ldisteuc3d failed");
+            pink_error("%s: ldisteuc3d failed");
           }
         }
       }
@@ -91,14 +88,14 @@ namespace pink {
         {
           if (! ldistquad(image, *result))
           {
-            error("%s: ldistquad failed");
+            pink_error("%s: ldistquad failed");
           }
         }
         else
         {
           if (! ldistquad3d(image, *result))
           {
-            error("%s: ldistquad3d failed");
+            pink_error("%s: ldistquad3d failed");
           }
         }
       }
@@ -108,14 +105,14 @@ namespace pink {
           if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
         if (! lchamfrein(image, *result))
         {
-          error("%s: lchamfrein failed");
+          pink_error("%s: lchamfrein failed");
         }
       }
       else if ((mode == 3) || (mode == 5))
       {
         if (! lsedt_meijster(image, *result))
         {
-          error("%s: lsedt_meijster failed");
+          pink_error("%s: lsedt_meijster failed");
         }
         if (mode == 5)
         {
@@ -135,14 +132,14 @@ namespace pink {
           if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
         if (! ldist(image, mode, *result))
         {
-          error("%s: ldist failed");
+          pink_error("%s: ldist failed");
         }
       }
       else
       {
         if (! ldistbyte(image, mode, *result))
         {
-          error("%s: ldist failed");
+          pink_error("%s: ldist failed");
         }
       }
 
@@ -189,7 +186,7 @@ namespace pink {
           (mode != 4) && (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26) &&
           (mode != 40) && (mode != 80) && (mode != 60) && (mode != 180) && (mode != 260))
       {
-        error("filein.pgm mode fileout.pgm"
+        pink_error("filein.pgm mode fileout.pgm"
               "       mode = 0 (dist. eucl. trunc), 1 (dist. eucl. quad.), 2 (chamfrein),\n"
               "              3 (exact eucl. quad.), 5 (exact eucl.), 4, 8 (2D), 6, 18, 26 (3D)\n"
               "                40, 80 (2D), 60, 180, 260 (3D)\n");
@@ -204,7 +201,7 @@ namespace pink {
       
       // if (result == NULL)
       // {   
-      //   error("%s: allocimage failed");
+      //   pink_error("%s: allocimage failed");
       // }
 
       N = image.get_size().prod();//rowsize(image) * colsize(image) * depth(image);
@@ -216,14 +213,14 @@ namespace pink {
         {
           if (! ldisteuc(image, *result))
           {
-            error("%s: ldisteuc failed");
+            pink_error("%s: ldisteuc failed");
           }
         }
         else
         {
           if (! ldisteuc3d(image, *result))
           {
-            error("%s: ldisteuc3d failed");
+            pink_error("%s: ldisteuc3d failed");
           }
         }
       }
@@ -233,14 +230,14 @@ namespace pink {
         {
           if (! ldistquad(image, *result))
           {
-            error("%s: ldistquad failed");
+            pink_error("%s: ldistquad failed");
           }
         }
         else
         {
           if (! ldistquad3d(image, *result))
           {
-            error("%s: ldistquad3d failed");
+            pink_error("%s: ldistquad3d failed");
           }
         }
       }
@@ -248,7 +245,7 @@ namespace pink {
       {
         if (! lchamfrein(image, *result))
         {
-          error("%s: lchamfrein failed");
+          pink_error("%s: lchamfrein failed");
         }
       }
       else if ((mode == 3) || (mode == 5))
@@ -258,7 +255,7 @@ namespace pink {
 
         if (! lsedt_meijster(image, *result))
         {
-          error("%s: lsedt_meijster failed");
+          pink_error("%s: lsedt_meijster failed");
         }
         if (mode == 5)
         {
@@ -276,14 +273,14 @@ namespace pink {
       {
         if (! ldist(image, mode, *result))
         {
-          error("%s: ldist failed");
+          pink_error("%s: ldist failed");
         }
       }
       else
       {
         if (! ldistbyte(image, mode, *result))
         {
-          error("%s: ldist failed");
+          pink_error("%s: ldist failed");
         }
       }
 

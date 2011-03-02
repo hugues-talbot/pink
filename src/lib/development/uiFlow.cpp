@@ -25,10 +25,6 @@
 #include "uiFlow.hpp"
 #include "pink.h"
 
-
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiFlow.cpp: " << msg; call_error(fullmessage.str());}
-
 namespace pink { 
 
 
@@ -43,7 +39,7 @@ namespace pink {
     )
   {
 
-    error("not compiled, uncomment the code.");
+    pink_error("not compiled, uncomment the code.");
     
 //     boost::shared_ptr<maxflow<float_image> > maxflow_obj;
     

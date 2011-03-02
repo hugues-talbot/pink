@@ -14,10 +14,6 @@
 #ifndef UI_GENBALL_HPP_
 #define UI_GENBALL_HPP_
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in ui_genball.hpp: " << msg; call_error(fullmessage.str());}
-
-
 namespace pink {
 
 

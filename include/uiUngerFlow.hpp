@@ -15,9 +15,6 @@
 
 #include "uiFlow.hpp"
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiUngerFlow.hpp: " << msg; call_error(fullmessage.str());}
-
 #define REPORT_INTERVAL 10
 
 namespace pink { 

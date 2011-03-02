@@ -15,9 +15,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in py3dplane.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 //using namespace pink;
 
@@ -39,7 +36,7 @@ namespace pink {
       
       if ( !l3dplane( result.get_output(), a, b, c, d ) )
       {
-        error("function l3dplane failed");
+        pink_error("function l3dplane failed");
       } /* if */
       
       

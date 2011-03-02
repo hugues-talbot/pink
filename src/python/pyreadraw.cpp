@@ -18,11 +18,6 @@
 
 #include "pink_python.h"
 
-
-
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyreadraw.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -46,7 +41,7 @@ namespace pink {
       {
         std::cout << "requested file size = " << sizeof(pixel_type) * dim.prod() << "\n";
         std::cout << "but '" << filename << "' is only " << file_size(filename) << " byte-long\n"; 
-        error( "the file size does not equal with the image size");
+        pink_error( "the file size does not equal with the image size");
       } /* if */
 
       file.open( filename.c_str(), std::ios_base::binary );
@@ -62,7 +57,7 @@ namespace pink {
       }
       catch (...)
       {
-        error("the raw data couldn't be read from the file");
+        pink_error("the raw data couldn't be read from the file");
       }
   
 
@@ -74,18 +69,96 @@ namespace pink {
   
     } /* read_raw_image */
 
+
+
+    boost::python::object py_read_raw_image (
+      const std::string & filename,
+      const boost::python::list & python_dim,
+      const int inttype
+      )
+    {
+      boost::python::object * result;
+
+      // determining the image type and creating
+      // the appropriate python object
+      switch (inttype)
+      {        
+      case VFF_TYP_1_BYTE: /* pixels are byte (uint8_t) */
+      {
+        char_image a = read_raw_image<char_image>(filename, python_dim);
+        result = new boost::python::object(a);
+      }      
+      break;
+        
+      case VFF_TYP_2_BYTE: /* pixels are two byte (int16_t) */
+      {
+        short_image a = read_raw_image<short_image>(filename, python_dim);
+        result = new boost::python::object(a);                
+      }      
+      break;
+        
+      case VFF_TYP_4_BYTE: /* pixels are four byte (integer) */
+      {        
+        int_image a = read_raw_image<int_image>(filename, python_dim);
+        result = new boost::python::object(a);
+      }
+      break;
+        
+      case VFF_TYP_FLOAT: /* pixels are float (single precision) */
+      {
+        float_image a = read_raw_image<float_image>(filename, python_dim);
+        result = new boost::python::object(a);
+
+      }
+      break;
+        
+      case VFF_TYP_DOUBLE: /* pixels are float (double precision)*/
+      {
+        double_image a = read_raw_image<double_image>(filename, python_dim);
+        result = new boost::python::object(a);
+      }
+      break;
+
+      case VFF_TYP_COMPLEX: /* pixels are float (single precision) */
+      {
+        fcomplex_image a = read_raw_image<fcomplex_image>(filename, python_dim);
+        result = new boost::python::object(a);        
+      }
+      break;
+        
+      case VFF_TYP_DCOMPLEX: /* pixels are float (double precision)*/
+      {
+        dcomplex_image a = read_raw_image<dcomplex_image>(filename, python_dim);
+        result = new boost::python::object(a);
+      }
+      break;
+      
+      default:
+        pink_error("c_readimage returned bad image type");
+      } /* switch im_type */
+      
+      return *result;      
+    } /* py_read_raw_image */
+    
+
+
+
   } /* namespace python */
 } /* namespace pink */
 
 
+void read_raw_image_export()
+{
+  boost::python::def(
+    "read_raw_image",
+    pink::python::py_read_raw_image, 
+    ( arg("filename"), arg("dimensions of the image"), arg("image mode") = VFF_TYP_1_BYTE),
+    "this function reads a raw image from a file the"
+    " image type is specified by the suffix and the "
+    "size is given in the 'dim' argument\n" );
+  
+}
 
-UI_EXPORT_FUNCTION( read_raw_image, 
-                    pink::python::read_raw_image, 
-		    ( arg("filename"), arg("dimensions of the image") ),
-		    "this function reads a raw image from a file the"
-		    " image type is specified by the suffix and the "
-		    "size is given in the 'dim' argument\n"
-  );
 
 
 

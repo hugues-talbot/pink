@@ -14,9 +14,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyreadimage.cpp: " << msg; call_error(fullmessage.str());}
-
 /// !!! macros should be named upper case
 #undef border
 
@@ -36,7 +33,7 @@ namespace pink {
       
       if (tmp==NULL)
       {
-        error("error reading file: '" + filename + "'" );
+        pink_error("error reading file: '" + filename + "'" );
       }
 
       // determining the image type and creating
@@ -77,9 +74,23 @@ namespace pink {
         result = new boost::python::object(a);
       }
       break;
+
+      case VFF_TYP_COMPLEX: /* pixels are float (single precision) */
+      {        
+        fcomplex_image a(*tmp);        
+        result = new boost::python::object(a);
+      }
+      break;
         
+      case VFF_TYP_DCOMPLEX: /* pixels are float (double precision)*/
+      {        
+        dcomplex_image a(*tmp);        
+        result = new boost::python::object(a);
+      }
+      break;
+      
       default:
-        error("c_readimage returned bad image type");
+        pink_error("c_readimage returned bad image type");
       } /* switch im_type */
       
       // freeimage( tmp ); // tmp had become result, so we don't free it. it will be freed by smart ptr      

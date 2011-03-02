@@ -13,10 +13,6 @@
 #ifndef UI_FIT_CIRCLE_HPP_
 #define UI_FIT_CIRCLE_HPP_
 
-
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in ui_fit_circle.hpp: " << msg; call_error(fullmessage.str());}
-
 #define epsilon 0.001
 
 extern "C"

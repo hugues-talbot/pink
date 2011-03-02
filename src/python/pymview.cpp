@@ -22,8 +22,7 @@
 #include "imclient.h"
 #include "pink_python.h"
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pymview.cpp: " << msg; call_error(fullmessage.str());}
+// 'error' replaced with global macro 'pink_error'
 
 using namespace boost::python;
 using namespace pink;

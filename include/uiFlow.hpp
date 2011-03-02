@@ -16,9 +16,6 @@
 #include <boost/thread.hpp>
 #include "pyujimage.hpp"
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiFlow.hpp: " << msg; call_error(fullmessage.str());}
-
 namespace pink { 
 
 #define REPORT_INTERVAL 10
@@ -220,7 +217,7 @@ namespace pink {
 	break;
 	
       default:
-	  error("Packet is not properly set up.");
+	  pink_error("Packet is not properly set up.");
       } /* switch */
 
       parent->shared_lock->unlock_shared();
@@ -672,7 +669,7 @@ namespace pink {
   template <class image_type>
   boost::shared_array<typename image_type::pixel_type> maxflow<image_type>::get_flow(){
     if (not flow_calculated){
-      error("The flow has not yet been calculated. You can only call get_flow after at least 1 iteration."
+      pink_error("The flow has not yet been calculated. You can only call get_flow after at least 1 iteration."
 	    " For the courious souls after the 0th iteration the flow is zero everywhere");
     }
     else /* (flow_calculated) */
@@ -922,7 +919,7 @@ namespace pink {
       break;
       
     default:
-      error("Packet error.");
+      pink_error("Packet error.");
     } /* switch */
       
    

@@ -16,10 +16,6 @@
 #include "pink_development.h"
 #include "uiCircle.hpp"
 
-
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiCircle.cpp: " << msg; call_error(fullmessage.str());}
-
 namespace pink { 
 
 // inline double fabs( double x )
@@ -53,7 +49,7 @@ namespace pink {
         
       if (GSL_SUCCESS != gsl_vector_memcpy(this->self, other.self))
       {
-        error("vector_memcpy failed!");          
+        pink_error("vector_memcpy failed!");          
       }
         
     }
@@ -533,7 +529,7 @@ namespace pink {
 
       if (len_x!=len_y)
       {
-        error("py_circle_tangent: the number of 'x' and 'y' coordinates must be equal.");        
+        pink_error("py_circle_tangent: the number of 'x' and 'y' coordinates must be equal.");        
       }
       
       

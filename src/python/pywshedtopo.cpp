@@ -14,9 +14,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pywshedtopo.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -35,7 +32,7 @@ namespace pink {
       result.copy(orig);
       if (! lwshedtopo_lwshedtopo(  result.get_output(), connex ) )
       {
-        error("lwshedtopo_lwshedtopo failed");
+        pink_error("lwshedtopo_lwshedtopo failed");
       }
   
       return result;

@@ -12,9 +12,6 @@
 
 #include <pink.h>
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiUngerFlow.cpp: " << msg; call_error(fullmessage.str());}
-
 namespace pink { 
 
 

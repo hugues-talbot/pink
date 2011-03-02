@@ -154,10 +154,6 @@
 #include "ui_convert_if.hpp"
 #include "uiFibreTypes.h"
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in ui_make_result.hpp: " << msg; call_error(fullmessage.str());}
-
-
 #ifndef MAX_PARAMETERS
 #  define MAX_PARAMETERS 15
 #  define CLEAN_UP_MAX_PARAMETERS
@@ -192,7 +188,7 @@
                                                                         \
   if (!mcfunction(image, BOOST_PP_ENUM_PARAMS(n, t) BOOST_PP_COMMA_IF(n) result)) \
   {                                                                     \
-  error("mcfunction failed");                                           \
+  pink_error("mcfunction failed");                                      \
   }                                                                     \
                                                                         \
   return result;                                                        \

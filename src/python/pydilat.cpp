@@ -13,9 +13,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pydilat.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -30,7 +27,7 @@ namespace pink {
   
       if (! elem.get_size().inside(elem.get_center()) )
       {
-        error("The center of 'elem' must be specified.");
+        pink_error("The center of 'elem' must be specified.");
       } /* if center not inside*/
       
       char_image result;
@@ -42,7 +39,7 @@ namespace pink {
         if (! ldilateros_ldilat( result.get_output(), elem.get_output(),
                                 elem.get_center()[0], elem.get_center()[1]))
         {
-          error("function ldilateros_ldilat failed");
+          pink_error("function ldilateros_ldilat failed");
         } /* (! ldilateros_ldilat( src, elem_const_away, x, y)) */
       }
       else  // NOT the image is 2D
@@ -50,7 +47,7 @@ namespace pink {
         if (! ldilat3d( result.get_output(), elem.get_output(),
                        elem.get_center()[0], elem.get_center()[1], elem.get_center()[2]))          
         {
-          error("function ldilat3d failed");
+          pink_error("function ldilat3d failed");
         } /* (! ldilat3d( src, elem_const_away, x, y)) */        
       } // NOT the image is 2D
 

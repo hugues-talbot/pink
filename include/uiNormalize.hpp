@@ -14,9 +14,6 @@
 #ifndef UINORMALIZE_HPP_
 #define UINORMALIZE_HPP_
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiNormalize.hpp: " << msg; call_error(fullmessage.str());}
-
 namespace pink { 
 
   // float_image lnormalize( const float_image & I,

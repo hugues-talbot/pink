@@ -14,10 +14,6 @@
 #ifndef UICUTPLANE_HPP_
 #define UICUTPLANE_HPP_
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiCutPlane.hpp: " << msg; call_error(fullmessage.str());}
-
-
 namespace pink {
 
   char_image draw_plane( const char_image & original, float a, float b, float c, float d );

@@ -4,9 +4,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyskeleton.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -19,13 +16,6 @@ using namespace pink;
 namespace pink {
   namespace python {
 
-
-
-    
-    
-    
-
-    
 //prototype
     char_image skeleton_ultimate(
       char_image * uj_image, 
@@ -283,7 +273,7 @@ namespace pink {
         int32_t i, N;
         uint8_t *F;
         prio = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
-        if (prio == NULL) error("allocimage failed");
+        if (prio == NULL) pink_error("allocimage failed");
     
         N = rowsize(image) * colsize(image) * depth(image);
     
@@ -299,28 +289,28 @@ namespace pink {
       
         case 0:
           if ( depth( image ) == 1 )
-            if (! ldisteuc(image, prio ) ) error("ldisteuc failed")
+            if (! ldisteuc(image, prio ) ) pink_error("ldisteuc failed")
               else
-                if (! ldisteuc3d( image, prio ) ) error("ldisteuc3d failed");
+                if (! ldisteuc3d( image, prio ) ) pink_error("ldisteuc3d failed");
           break;
     
         case 1:      
           if ( depth( image ) == 1 )
-            if (! ldistquad( image, prio ) ) error("ldistquad failed")
+            if (! ldistquad( image, prio ) ) pink_error("ldistquad failed")
               else
-                if (! ldistquad3d(image, prio ) ) error("ldistquad3d failed")
+                if (! ldistquad3d(image, prio ) ) pink_error("ldistquad3d failed")
                                                     break;
 
         case 2:
-          if (! lchamfrein( image, prio ) ) error("lchamfrein failed");
+          if (! lchamfrein( image, prio ) ) pink_error("lchamfrein failed");
           break;
 
         case 3:
-          if (! lsedt_meijster( image, prio ) ) error("lsedt_meijster failed");
+          if (! lsedt_meijster( image, prio ) ) pink_error("lsedt_meijster failed");
           break;
 
         default:
-          if (! ldist( image, priocode, prio ) ) error("ldist failed");
+          if (! ldist( image, priocode, prio ) ) pink_error("ldist failed");
           break;
 
         } /* switch (priocode) */
@@ -349,7 +339,7 @@ namespace pink {
         {
           if (! lskelubp2( image, prio, connex, inhibimage ) )
           {
-            error("lskelubp2 failed");
+            pink_error("lskelubp2 failed");
           }
 
           result = *image;
@@ -357,7 +347,7 @@ namespace pink {
         else  /* not (inhibit_image) */
         {
           if (! lskelubp( image, prio, connex, inhibvalue ) )
-            error("lskelubp failed");
+            pink_error("lskelubp failed");
       
           result = *image;
         }
@@ -368,7 +358,7 @@ namespace pink {
         {
           if (! lskelubp3d2( image, prio, connex, inhibimage ) ) 
           {
-            error("lskelubp3d2 failed");
+            pink_error("lskelubp3d2 failed");
           }
 
           result = *image;
@@ -377,7 +367,7 @@ namespace pink {
         {
           if (! lskelubp3d( image, prio, connex, inhibvalue ) )
           {
-            error("lskelubp3d failed");
+            pink_error("lskelubp3d failed");
           }
       
           result = *image;

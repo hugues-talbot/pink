@@ -12,9 +12,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pymcube.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -29,7 +26,7 @@ namespace pink {
       
       if (!linverse(result.get_output()))
       {
-        error("function linverse failed");
+        pink_error("function linverse failed");
       }
       
       return result;
@@ -57,7 +54,7 @@ namespace pink {
         }
         else /* NOT connex== 26 */
         {
-          error("bad connexity");
+          pink_error("bad connexity");
         } /* NOT connex== 26 */
       } /* NOT connex== 6 */
     
@@ -70,14 +67,14 @@ namespace pink {
       { // with fix-point preservation
         if (! lmarchingcubes2(tmp.get_output(), nregul, obj_id, reinterpret_cast<FILE*>(&result), T_VTK_PYTHON))
         {
-          error("function lmarchingcubes2 failed");
+          pink_error("function lmarchingcubes2 failed");
         }
       }
       else
       {
         if (! lmarchingcubes(tmp.get_output(), seuil, nregul, obj_id, reinterpret_cast<FILE*>(&result), T_VTK_PYTHON))
         {
-          error("function lmarchingcubes failed");
+          pink_error("function lmarchingcubes failed");
         }
       }
       

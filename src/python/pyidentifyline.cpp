@@ -15,9 +15,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyidentifyline.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -40,7 +37,7 @@ namespace pink {
 
       if (length != check)
       {    
-        error("identifyline: the sizes of the vectors must be equal");
+        pink_error("identifyline: the sizes of the vectors must be equal");
       } /* length != check */
   
       #endif /* UJIMAGE_DEBUG */
@@ -57,14 +54,14 @@ namespace pink {
         } 
         catch (...) 
         {
-          error("identifyline: the elements of the list must be convertible to doubles.");
+          pink_error("identifyline: the elements of the list must be convertible to doubles.");
         }
 
       double a,b;
   
       if ( !lidentifyline( cX.get(), cY.get(), length, &a, &b) )
       {
-        error("lidentifyline failed");
+        pink_error("lidentifyline failed");
       } /* if */
   
   

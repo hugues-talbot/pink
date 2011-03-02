@@ -280,6 +280,12 @@ public:
 
 void call_error(const std::string message);
 
+#define pink_error(message)                                             \
+  {                                                                     \
+    std::cout << std::endl << "Pink error!" << std::endl << "in '" << __FILE__<< "' (line " << __LINE__ << "): " << message << std::endl << std::endl; \
+  }
+
+
 uiVal_type uiAbs( uiVal_type x );
 
 //uiVal_type vAbs(vector<uiVal_type> & v);

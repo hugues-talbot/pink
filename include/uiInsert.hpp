@@ -14,10 +14,6 @@
 #ifndef UIINSERT_HPP_
 #define UIINSERT_HPP_
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiInsert.hpp: " << msg; call_error(fullmessage.str());}
-
-
 namespace pink {
 
 

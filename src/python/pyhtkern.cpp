@@ -14,9 +14,6 @@
 
 #include <pink_python.h>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyhtkern.cpp: " << msg; call_error(fullmessage.str());}
-
 using namespace boost::python;
 using namespace pink;
 
@@ -38,21 +35,21 @@ namespace pink {
       
       if ((connexity != 4) && (connexity != 8) && (connexity != 6) && (connexity != 26))
       {
-        error("connexity = <4|8|6|26>");
+        pink_error("connexity = {4|8|6|26}");
       }
       
       if ((connexity == 4) || (connexity == 8)) // the image is 2D
       {
         if (! lhtkern(result, can_be_null(imcond), connexity))
         {
-          error("lhtkern failed");
+          pink_error("lhtkern failed");
         }
       }
       else // NOT the image is 2D
       {
         if (! mctopo3d_lhtkern3d(result, can_be_null(imcond), connexity))
         {
-          error("lhtkern3d failed");
+          pink_error("lhtkern3d failed");
         }
       } // NOT the image is 2D
       

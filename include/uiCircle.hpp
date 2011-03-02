@@ -17,9 +17,6 @@
 #include <iostream>
 #include <sstream>
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiCircle.hpp: " << msg; call_error(fullmessage.str());}
-
 namespace pink { 
 
   namespace gsl
