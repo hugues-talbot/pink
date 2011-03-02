@@ -77,7 +77,8 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[2]);
   
-  if (! lsegmenti(image, connex))
+  //if (! lsegmenti(image, connex))
+  // lsegmenti is missing from the library
   {
     fprintf(stderr, "segmenti: lsegmenti failed\n");
     exit(1);
