@@ -63,6 +63,9 @@ Parameters:
 
 
 
+
+#define BUFFSIZE 1024    /* buffer size when reading from fits file */
+
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
@@ -70,61 +73,124 @@ int main(int argc, char **argv)
 #ifdef HAVE_FITS_LIB
 {
 
- struct xvimage *image;
- fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
- int status, anynul;
- char *filename;
- long nelements, firstelem, exposure, naxes[2], group ;
- short *rawdata;
+    struct xvimage *image;
+    fitsfile *fptr; /* pointer to the FITS file; defined in fitsio.h */
+    int status, anynul, i, A;
+    char *filename;
+    //char comment[FLEN_COMMENT];
+    long nelements, firstelem, naxis1, naxis2, naxes[2], nbuffer;
+    short *rawdata;
+    const ShortPixel;
+    
+    int   kwvBITPIX, numAxis;
 
- if (argc != 3)
-  {
-    fprintf(stderr, "usage: %s in.fits out.pgm \n", argv[0]);
-    exit(1);
-  }
+
+    if (argc != 3) {
+        fprintf(stderr, "usage: %s in.fits out.pgm \n", argv[0]);
+        exit(1);
+    }
+
+    filename=argv[1];
+    status=0;  /* initialize status before calling fitsio routines */
+    firstelem=1;
+    anynul=0;
+    
+
 
  
- filename=argv[1];
- status=0;  /* initialize status before calling fitsio routines */
- firstelem=1;
- anynul=0;
- //short array[naxes[1]][naxes[0]];
 
- fits_open_file (&fptr, filename, READONLY, &status);
- fits_get_img_size(fptr, 2, naxes, &status);
+    fits_open_file (&fptr, filename, READONLY, &status);
+    fits_report_error(stderr,status);
 
- nelements=naxes[0]*naxes[1]; /* number of pixels to read */
+  	/* Display the data type in the image. */
+  	fits_get_img_type(fptr, &kwvBITPIX, &status);
+  	fits_report_error(stderr,status);
+  	switch(kwvBITPIX) {
+    	case BYTE_IMG   : fprintf(stderr, "Image Type:  8-bit byte pixels, 0 - 255\n");  break;
+    	case SHORT_IMG  : fprintf(stderr, "Image Type: 16 bit integer pixels\n");        break;
+    	case LONG_IMG   : fprintf(stderr, "Image Type: 32-bit integer pixels\n");        break;
+    	case FLOAT_IMG  : fprintf(stderr, "Image Type: 32-bit floating point pixels\n"); break;
+    	case DOUBLE_IMG : fprintf(stderr, "Image Type: 64-bit floating point pixels\n"); break;
+    	default         : fprintf(stderr, "Image Type: UNKNOWN\n");                      break;
+  	}
+    
+    fits_get_img_dim(fptr, &numAxis,  &status);
+	fprintf(stderr, "Number of axis: %d\n", numAxis);
 
- image = allocimage(NULL, naxes[0], naxes[1], 1, VFF_TYP_2_BYTE);
- rawdata = SSHORTDATA(image);
- /*rawdata = (short *)malloc(nelements*sizeof(short));*/
- fits_read_img(fptr, SHORT_IMG,  firstelem,  nelements, 0, rawdata, &anynul, &status);
+	/* Find the x/y-axis dimensions and the color dimension if it exists. */
+  	if(numAxis < 2) {
+    	fprintf(stderr, "Too few axes to be a real image!\n");
+    	exit(1);
+  	} else if(numAxis > 3) {
+    	fprintf(stderr, "Too many axes to be a real image!\n");
+    	exit(2);
+  	}
 
- printf("%sd", rawdata);
+    
+    fits_get_img_size(fptr, 3, naxes, &status);
 
+ //fits_read_key_lng(fptr,"NAXIS1",&naxis1,&comment,&status);
+ //fits_read_key_lng(fptr,"NAXIS2",&naxis2,&comment,&status);
 
- fits_close_file(fptr, &status);    /* close the file */
+ //naxes[0]=naxis1;
+ //naxes[1]=naxis2;
 
- if (status == 0)
- {
-   /*image->xdim = naxes[0];
-   image->ydim = naxes[1];
-   image->zdim = 1;*/
-   writeimage(image, argv[argc - 1]);
-   freeimage(image);
- }
- else
- {
-   fits_report_error(stderr, status); /* print out any error messages */
-   exit(1);
- }
  
-  return 0;
+    nelements=naxes[0]*naxes[1]; /* number of pixels to read */
+
+    fprintf(stderr, "naxes[0]=%ld, naxes[1]=%ld\n",naxes[0],naxes[1]);
+ 
+
+    image = allocimage(NULL, naxes[0], naxes[1], 1, VFF_TYP_2_BYTE);
+ 
+    //rawdata = (short *)malloc(nelements*sizeof(short));
+
+
+    //while (nelements>0) {
+        //nbuffer = nelements;
+        //if (nbuffer>BUFFSIZE) nbuffer = BUFFSIZE;
+
+      /* read in a buffer full of data from the image array */
+      
+        fits_read_img(fptr, TDOUBLE,  firstelem,  nelements, 0, image->image_data, &anynul, &status);
+
+      /*for (i=0; i<nelements; ++i)
+
+
+      {
+          A=floor(i/naxes[1]);
+          image[A][i-A*naxes[1]-1]=rawdata[i];
+      } */	
+             
+        //nelements -= nbuffer;
+        //firstelem += nbuffer;
+    //}
+
+   
+    
+
+    if (status == 0) {
+        //image->xdim = naxes[0];
+        //image->ydim = naxes[1];
+        //image->zdim = 1;
+        //image->image_data=rawdata;
+        //SSHORTDATA(image) = rawdata;
+        writeimage(image, argv[argc - 1]);
+        freeimage(image);
+    } else {
+        fits_report_error(stderr, status); /* print out any error messages */
+        exit(1);
+    }
+ 
+ 	fits_close_file(fptr, &status);    /* close the file */
+  
+    return 0;
 } // main
+
 #else
 {
-  fprintf(stderr,"FITS library not found at compile time\n");
-  return 1;
+    fprintf(stderr,"FITS library not found at compile time\n");
+    return 1;
 }
 #endif // HAVE_FITS_LIB
 
