@@ -1316,4 +1316,79 @@ void compute_homogeneitysb(uint8_t ** image, double *feature_mean, uint8_t *x_af
 }
 
 
+/* param == 1, dilatation (max) ; param == 2, erosion (min) */
+int32_t lga2pgm(struct xvimage *im, struct xvimage *ga, int32_t param)
+{
+  int32_t i,k,u;                                /* index muet */
+  int32_t rs = rowsize(ga);                   /* taille ligne */ 
+  int32_t cs = colsize(ga);                   /* taille colone */
+  int32_t N = rs * cs;                        /* taille image */
+  uint8_t *F = UCHARDATA(im);        /* composante rouge */
+  uint8_t *GA = UCHARDATA(ga);       /* graphe d'arete est suppose deja allouer */ 
+  /* vérifier que les tailles des diférentes images sont cohérentes */
+  switch(param)
+  {
+  case 1:
+    for(i = 0; i < N; i++){
+      F[i] = 0;
+      for(k = 0; k < 4; k++){
+	if( (u = incidente(i,k,rs,N)) != -1){
+	  if(GA[u] > F[i]) F[i] = GA[u];
+	}
+      }
+    }
+    
+    break;
+  case 2:
+    for(i = 0; i < N; i++){
+      F[i] = 255;
+      for(k = 0; k < 4; k++){
+	if( (u = incidente(i,k,rs,N)) != -1){
+	  if(GA[u] < F[i]) F[i] = GA[u];
+	}
+      }
+    }
+    break;
+  }
+  return 1;  
+}
+ 
+/* param == 1, dilatation (max) ; param == 2, erosion (min) */
+int32_t lga2pgm3d(struct xvimage *im, struct xvimage *ga, int32_t param)
+{
+  int32_t i,k,u;                              /* index muet */
+  int32_t rs = rowsize(ga);                   /* taille ligne */ 
+  int32_t cs = colsize(ga);                   /* taille colone */
+  int32_t ps = rs *cs;                        /* taille d'un plan */
+  int32_t ds = depth(ga);                     /* nombre de plans */ 
+  int32_t N = ps*ds;                          /* taille image */
+  uint8_t *F = UCHARDATA(im);        /* composante rouge */
+  uint8_t *GA = UCHARDATA(ga);       /* graphe d'arete est suppose deja allouer */ 
+  /* vérifier que les tailles des diférentes images sont cohérentes */
+  switch(param)
+  {
+  case 1:
+    for(i = 0; i < N; i++){
+      F[i] = 0;
+      for(k = 0; k < 6; k++){
+	if( (u = incidente3d(i,k,rs,N,ps)) != -1){
+	  if(GA[u] > F[i]) F[i] = GA[u];
+	}
+      }
+    }
+    
+    break;
+  case 2:
+    for(i = 0; i < N; i++){
+      F[i] = 255;
+      for(k = 0; k < 6; k++){
+	if( (u = incidente3d(i,k,rs,N,ps)) != -1){
+	  if(GA[u] < F[i]) F[i] = GA[u];
+	}
+      }
+    }
+    break;
+  }
+  return 1;  
+}
 

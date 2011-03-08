@@ -191,6 +191,7 @@ GA=\
 $(BDIR)/pgm2GA \
 $(BDIR)/ppm2GA \
 $(BDIR)/pgm2GA4d \
+$(BDIR)/GA2pgm \
 $(BDIR)/saliencyGA \
 $(BDIR)/watershedMeyer4D \
 $(BDIR)/wshedval \
@@ -844,14 +845,17 @@ $(BDIR)/rgb2ppm:	$(CDIR)/rgb2ppm.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 $(BDIR)/sceneconvert:	$(CDIR)/sceneconvert.c $(IDIR)/mcmesh.h $(IDIR)/mciomesh.h $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(ODIR)/ssexport.o $(ODIR)/mcrbtp.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o $(OBJ_COMMON)
 			$(CPP) $(CCFLAGS) -I$(IDIR) -I. $(CDIR)/sceneconvert.c $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(ODIR)/ssexport.o $(ODIR)/mcrbtp.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/sceneconvert
 
-$(BDIR)/ppm2GA:         $(CDIR)/ppm2GA.c $(IDIR)/jcimage.h $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lppm2GA.h $(IDIR)/jclderiche.h $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o $(ODIR)/lderiche.o
+$(BDIR)/ppm2GA:         $(CDIR)/ppm2GA.c $(IDIR)/jcimage.h $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lppm2GA.h $(IDIR)/jclderiche.h $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o $(ODIR)/lderiche.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ppm2GA.c $(ODIR)/lderiche.o $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o $(LIBS) -o $(BDIR)/ppm2GA 
 
-$(BDIR)/pgm2GA:		 $(CDIR)/pgm2GA.c $(IDIR)/jcimage.h $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lppm2GA.h $(IDIR)/jclderiche.h $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/lppm2GA.o $(ODIR)/lderiche.o 
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/pgm2GA.c $(ODIR)/lderiche.o $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/lppm2GA.o $(LIBS) -o $(BDIR)/pgm2GA 
+$(BDIR)/pgm2GA:		 $(CDIR)/pgm2GA.c $(IDIR)/jcimage.h $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lppm2GA.h $(IDIR)/jclderiche.h $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/lppm2GA.o $(ODIR)/lderiche.o $(ODIR)/jccodimage.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/pgm2GA.c $(ODIR)/lderiche.o $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o $(LIBS) -o $(BDIR)/pgm2GA 
 
 $(BDIR)/pgm2GA4d:	$(CDIR)/pgm2GA4d.c $(IDIR)/mcimage.h $(IDIR)/jcimage.h $(IDIR)/mccodimage.h $(IDIR)/jccodimage.h $(IDIR)/lppm2GA.h $(ODIR)/mcimage.o $(ODIR)/jcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o 
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/pgm2GA4d.c $(ODIR)/lderiche.o $(ODIR)/mcimage.o $(ODIR)/jcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o $(LIBS) -o $(BDIR)/pgm2GA4d 
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/pgm2GA4d.c $(ODIR)/lderiche.o $(ODIR)/mcimage.o $(ODIR)/jcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o  $(LIBS) -o $(BDIR)/pgm2GA4d 
+
+$(BDIR)/GA2pgm:	$(CDIR)/GA2pgm.c $(IDIR)/mcimage.h $(IDIR)/jcimage.h $(IDIR)/mccodimage.h $(IDIR)/jccodimage.h $(IDIR)/lppm2GA.h $(ODIR)/mcimage.o $(ODIR)/jcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o 
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/GA2pgm.c $(ODIR)/lderiche.o $(ODIR)/mcimage.o $(ODIR)/jcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o  $(LIBS) -o $(BDIR)/pgm2GA4d 
 
 $(BDIR)/GA2khalimsky:	 $(CDIR)/GA2khalimsky.c $(IDIR)/mcimage.h $(IDIR)/jcimage.h $(IDIR)/mccodimage.h $(IDIR)/lga2khalimsky.h $(ODIR)/mcimage.o $(ODIR)/jcimage.o $(ODIR)/mccodimage.o $(ODIR)/lga2khalimsky.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/GA2khalimsky.c $(ODIR)/mcimage.o $(ODIR)/jcimage.o $(ODIR)/mccodimage.o $(ODIR)/lga2khalimsky.o $(LIBS) -o $(BDIR)/GA2khalimsky
