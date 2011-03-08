@@ -49,7 +49,7 @@ parameter <B>param</B>.
 
 If param = 1, then max is used, and if param = 2, min is used.
 
-<B>Types supported:</B> ga 2d, ga 3d
+<B>Types supported:</B> ga 2d, ga 3d
 
 <B>Category:</B> GA
 \ingroup GA
@@ -73,7 +73,6 @@ int32_t main(argc, argv)
 /* =============================================================== */
   int32_t argc; char **argv; 
 {
-  double alpha;
   struct xvimage * im;
   struct xvimage * ga;
   int32_t param;
