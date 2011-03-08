@@ -119,6 +119,8 @@ int main(argc, argv)
     writerawGAimage(ga, argv[4]);
   else
     writerawGAimage(ga, argv[3]); 
-  freeimage(im); freeimage(ga);
+
+  freeimage(im); 
+  freeimage(ga);
   return 0;
 }

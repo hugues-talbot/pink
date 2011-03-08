@@ -265,7 +265,20 @@ int32_t lpgm2ga(struct xvimage *im, struct xvimage *ga, int32_t param, double al
       GA[N + j * rs + i] =(uint8_t)(mcmax((int32_t)(F[j*rs+i]),(int32_t)(F[j*rs+i+rs]))) ;
     }
    break;
-  case 2: /* Cas du Deriche, ce n'est pas tout a fait la meilleure */
+  case 2:
+    for(j = 0; j < cs; j++)
+      for(i = 0; i < rs - 1; i++)
+      {
+	GA[j * rs + i] = (uint8_t) (mcmin( (int32_t)(F[j*rs+i]), (int32_t)(F[j*rs+i+1]) ));
+      }
+    for(j = 0; j < cs-1; j++)
+      for(i = 0; i < rs; i++)
+      {      
+	GA[N + j * rs + i] =(uint8_t)(mcmin((int32_t)(F[j*rs+i]),(int32_t)(F[j*rs+i+rs]))) ;
+      }
+    break;
+
+  case 3: /* Cas du Deriche, ce n'est pas tout a fait la meilleure */
     /* implementation il faudrait proposer un Deriche specifique   */
     /* aux aretes */ 
     dericheDerivateurGA(im, ga, alpha);
@@ -500,6 +513,32 @@ int32_t lpgm2ga3d(struct xvimage *im, struct xvimage *ga, int32_t param)
 	  GA[2*N + k*ps + j * rs + i] =(uint8_t)(mcmax((int32_t)(F[k*ps + j*rs+i]) , (int32_t)(F[k*ps+j*rs+i+ps]))) ;
 	  // printf("GA[%d] = %d \n",2*N+ k*ps + j*rs + i,GA[2*N+k*ps + j*rs + i]);
 	}
+    break;
+      case 2:
+    for(k = 0; k < ds; k++)
+      for(j = 0; j < cs; j++)
+	for(i = 0; i < rs - 1; i++)
+	{
+	  GA[k*ps + j*rs + i] = (uint8_t)(mcmin( (int32_t)(F[k*ps+j*rs+i]), (int32_t)(F[k*ps+j*rs+i+1]) ));
+	  // printf("GA[%d] = %d \n",k*ps + j*rs + i,GA[k*ps + j*rs + i]); 
+	}
+    for(k =0; k < ds; k++)
+      for(j = 0; j < cs-1; j++)
+	for(i = 0; i < rs; i++)
+	{
+	  GA[N + k*ps + j * rs + i] =(uint8_t)(mcmin((int32_t)(F[k*ps + j*rs+i]) , (int32_t)(F[k*ps + j*rs+i+rs]))) ;
+	  // printf("GA[%d] = %d \n",N+ k*ps + j*rs + i,GA[N+k*ps + j*rs + i]);
+	}
+    for(k =0; k < ds-1; k++)
+      for(j = 0; j < cs; j++)
+	for(i = 0; i < rs; i++)
+	{
+	  GA[2*N + k*ps + j * rs + i] =(uint8_t)(mcmin((int32_t)(F[k*ps + j*rs+i]) , (int32_t)(F[k*ps+j*rs+i+ps]))) ;
+	  // printf("GA[%d] = %d \n",2*N+ k*ps + j*rs + i,GA[2*N+k*ps + j*rs + i]);
+	}
+    break;
+  default : printf("lpgm2ga3d: Bad parameter (%d is not valid)\n",param);
+
   }
   return 1;  
 }

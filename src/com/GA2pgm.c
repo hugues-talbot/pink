@@ -111,7 +111,9 @@ int32_t main(argc, argv)
       exit(1);
     }
   }
+  
   writerawimage(im, argv[3]); 
-  freeimage(im); freeimage(ga);
+  freeimage(im); 
+  freeimage(ga);
   return 0;
 }
