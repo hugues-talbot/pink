@@ -21,12 +21,21 @@ cmake_minimum_required (VERSION 2.6)
 project(pink)
 INCLUDE (UJ_CheckIncludeFile.cmake)
 INCLUDE (UJ_CheckIncludeFileCXX.cmake)
+#INCLUDE (FindCFITSIO.cmake)
 
 set( POTENTIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library )
 set( INCLUDES include src/python /usr/include /usr/local/include )
 
 include_directories( ${INCLUDES} )
 
+## This does not work
+### I didn't think of this myself (HT)
+##set(CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules")
+###message("1- CMAKE module path = " ${CMAKE_MODULE_PATH})
+##set(EXTRA_MODULES "${pink_SOURCE_DIR}")
+###message("2- EXTRA_MODULES = " ${EXTRA_MODULES})
+##set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}  "${EXTRA_MODULES}" )
+##message("3- new CMAKE module path = " ${CMAKE_MODULE_PATH})
 
 # --- Library extention (.so, .dylib, .a) ---
 
@@ -96,19 +105,27 @@ if (CMAKE_HOST_UNIX)
     set( LIBS ${MATH_LIB} )
 
     # FITS library
-    find_library( FITS_LIB libcfitsio.a PATHS ${POTENTIAL_LIBDIRS} )
-    set( LIBS ${FITS_LIB} )
-
-    set(FITS_LIB_FOUND TRUE)
-
-    if ( NOT FITS_LIB )
-       set(FITS_LIB_FOUND FALSE)
+    #find_library( FITS_LIB libcfitsio.a PATHS ${POTENTIAL_LIBDIRS} )
+    #set( LIBS ${FITS_LIB} )
+    #set(FITS_LIB_FOUND TRUE)
+    #if ( NOT FITS_LIB )
+    #   set(FITS_LIB_FOUND FALSE)
 	#message("FITS LIB NOT found")
-    else ( NOT FITS_LIB )
-	add_definitions( -DHAVE_FITS_LIB )
+    #else ( NOT FITS_LIB )
+    #  add_definitions( -DHAVE_FITS_LIB )
 	#message("FITS LIB found")
-    endif ( NOT FITS_LIB )
-
+    #endif ( NOT FITS_LIB )
+    
+    ##
+    ## this is a right nightmare (HT)
+    ##
+    find_package(CFITSIO)
+    if (CFITSIO_FOUND)
+	message("cfitsio found")
+	add_definitions(-DHAVE_FITS_LIB)
+    else (CFITSIO_FOUND)
+	message("cfitsio library not found, FITS handling disabled")
+    endif (CFITSIO_FOUND)
 
 
     #find_library( STDCPP_LIB libstdc++.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
