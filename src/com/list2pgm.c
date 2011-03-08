@@ -36,7 +36,10 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts from point list representation to pgm
 
-<B>Usage:</B> list2pgm in.list {in.pgm|rs cs ds} [scale] out.pgm
+<B>Usage:</B> list2pgm in.list {in.pgm|r
+
+
+s cs ds} [scale] out.pgm
 
 <B>Description:</B>
 
