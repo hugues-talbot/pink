@@ -37,6 +37,9 @@ include_directories( ${INCLUDES} )
 ##set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}  "${EXTRA_MODULES}" )
 ##message("3- new CMAKE module path = " ${CMAKE_MODULE_PATH})
 
+set(CFITSIO_DIR "${pink_SOURCE_DIR}")
+
+
 # --- Library extention (.so, .dylib, .a) ---
 
 string( COMPARE EQUAL ${CMAKE_HOST_SYSTEM_NAME} Linux THIS_IS_LINUX )
@@ -120,12 +123,14 @@ if (CMAKE_HOST_UNIX)
     ## this is a right nightmare (HT)
     ##
     find_package(CFITSIO)
-    if (CFITSIO_FOUND)
-	message("cfitsio found")
+
+    if (HT_CFITSIO_FOUND)
+	message("CFITSIO_FOUND = " ${CFITSIO_FOUND})
+	message("cfitsio found, library= " ${CFITSIO_LIBRARY})
 	add_definitions(-DHAVE_FITS_LIB)
-    else (CFITSIO_FOUND)
+    else (HT_CFITSIO_FOUND)
 	message("cfitsio library not found, FITS handling disabled")
-    endif (CFITSIO_FOUND)
+    endif (HT_CFITSIO_FOUND)
 
 
     #find_library( STDCPP_LIB libstdc++.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
