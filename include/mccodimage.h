@@ -90,7 +90,7 @@ extern "C" {
 					   padded to a byte */
 #define	VFF_TYP_1_BYTE		1	/* pixels are byte (uint8_t) */
 #define	VFF_TYP_2_BYTE		2	/* pixels are two byte (int16_t) */
-#define	VFF_TYP_4_BYTE		4	/* pixels are four byte (integer) */
+#define	VFF_TYP_4_BYTE		4	/* pixels are four byte (int32_t) */
 #define	VFF_TYP_FLOAT		5	/* pixels are float (single precision)*/
 #define VFF_TYP_DOUBLE		6	/* pixels are float (double precision)*/
 #define VFF_TYP_COMPLEX		7	/* pixels are complex (single precision)*/
@@ -287,7 +287,7 @@ extern int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps);
 #  define                                                               \
   COMPARE_SIZE(I0, I1)                                                  \
   if (rowsize(I0)!=rowsize(I1) && rowsize(I0)!=rowsize(I1) && depth(I0)!=depth(I1) \
-      && (nbands(I0) != nbands(I1) ) )                                  \
+      && (tsize(I0) != tsize(I1) ) && (nbands(I0) != nbands(I1) ) )                                  \
   {                                                                     \
   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);            \
   return 0;                                                             \

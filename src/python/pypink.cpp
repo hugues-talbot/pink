@@ -622,7 +622,7 @@ UI_WRAP_FUNCTION(
 
 UI_WRAP_FUNCTION(
   "invert",
-  linverse,
+  linvert,
   (arg("image")),
   doc__inverse__c__
   );    
@@ -1251,6 +1251,14 @@ UI_WRAP_FUNCTION(
   lpow,
   (arg("image"), arg("p")),
   doc__pow__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "gammacor",
+  lgammacor,
+  (arg("image"), arg("gamma")),
+  doc__gammacor__c__
   );
 #include BOOST_PP_UPDATE_COUNTER()
 

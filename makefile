@@ -30,6 +30,7 @@ $(BDIR)/exp \
 $(BDIR)/genfield \
 $(BDIR)/genimage \
 $(BDIR)/genkernel \
+$(BDIR)/gammacor \
 $(BDIR)/inf \
 $(BDIR)/inverse \
 $(BDIR)/isnull \
@@ -104,11 +105,13 @@ $(BDIR)/readgif \
 $(BDIR)/reformat \
 $(BDIR)/rgb2hls \
 $(BDIR)/rgb2ppm \
+$(BDIR)/sceneconvert \
 $(BDIR)/setorigin \
 $(BDIR)/setvoxdim \
+$(BDIR)/short2float \
+$(BDIR)/short2long \
 $(BDIR)/surimp \
-$(BDIR)/yuv2rgb \
-$(BDIR)/sceneconvert
+$(BDIR)/yuv2rgb
 
 MORPHO=\
 $(BDIR)/asf \
@@ -626,6 +629,9 @@ $(BDIR)/equal:	$(CDIR)/equal.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) 
 $(BDIR)/exp:	$(CDIR)/exp.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/exp.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/exp
 
+$(BDIR)/gammacor:	$(CDIR)/gammacor.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/gammacor.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/gammacor
+
 $(BDIR)/genfield:	$(CDIR)/genfield.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/genfield.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/genfield
 
@@ -856,6 +862,12 @@ $(BDIR)/rgb2ppm:	$(CDIR)/rgb2ppm.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 
 $(BDIR)/sceneconvert:	$(CDIR)/sceneconvert.c $(IDIR)/mcmesh.h $(IDIR)/mciomesh.h $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(ODIR)/ssexport.o $(ODIR)/mcrbtp.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o $(OBJ_COMMON)
 			$(CPP) $(CCFLAGS) -I$(IDIR) -I. $(CDIR)/sceneconvert.c $(ODIR)/mcmesh.o $(ODIR)/mciomesh.o $(ODIR)/ssexport.o $(ODIR)/mcrbtp.o $(ODIR)/mcgeo.o $(ODIR)/mcprobas.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/sceneconvert
+
+$(BDIR)/short2long:	$(CDIR)/short2long.c $(IDIR)/mcimage.h $(OBJ_COMMON)
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/short2long.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/short2long
+
+$(BDIR)/short2float:	$(CDIR)/short2float.c $(IDIR)/mcimage.h $(OBJ_COMMON)
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/short2float.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/short2float
 
 $(BDIR)/ppm2GA:         $(CDIR)/ppm2GA.c $(IDIR)/jcimage.h $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lppm2GA.h $(IDIR)/jclderiche.h $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o $(ODIR)/lderiche.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ppm2GA.c $(ODIR)/lderiche.o $(ODIR)/jcimage.o $(ODIR)/mcimage.o $(ODIR)/mccodimage.o $(ODIR)/jccodimage.o $(ODIR)/lppm2GA.o $(LIBS) -o $(BDIR)/ppm2GA 

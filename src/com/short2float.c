@@ -32,11 +32,11 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file byte2float.c
+/*! \file short2float.c
 
-\brief converts a "byte" image to a "float" image
+\brief converts a "short" image to a "float" image
 
-<B>Usage:</B> byte2float in [out]
+<B>Usage:</B> short2float in [out]
 
 <B>Description:</B> 
 
@@ -44,7 +44,7 @@ For each pixel x, out[x] = (float)in[x]
 
 If the last argument \b out is omitted, then out = in.
 
-<B>Types supported:</B> byte 2d, byte 3d.
+<B>Types supported:</B> short 2d, short 3d.
 
 <B>Category:</B> convert
 \ingroup convert
@@ -66,9 +66,9 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * imagefloat;
-  struct xvimage * imagebyte;
+  struct xvimage * imageshort;
   float *F;
-  uint8_t *B;
+  uint16_t *S;
   index_t x, rs, cs, ds, N;
 
   if ((argc != 2) && (argc != 3))
@@ -77,24 +77,24 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  imagebyte = readimage(argv[1]); 
-  if (imagebyte == NULL)
+  imageshort = readimage(argv[1]); 
+  if (imageshort == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  if (datatype(imagebyte) != VFF_TYP_1_BYTE)
+  if (datatype(imageshort) != VFF_TYP_2_BYTE)
   {
-    fprintf(stderr, "%s: image type must be uint8_t\n", argv[0]);
+    fprintf(stderr, "%s: image type must be uint16_t\n", argv[0]);
     exit(1);
   }
 
-  rs = rowsize(imagebyte);
-  cs = colsize(imagebyte);
-  ds = depth(imagebyte);
+  rs = rowsize(imageshort);
+  cs = colsize(imageshort);
+  ds = depth(imageshort);
   N = rs * cs * ds;
-  B = UCHARDATA(imagebyte);
+  S = USHORTDATA(imageshort);
   
   imagefloat = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT);
   if (imagefloat == NULL)
@@ -103,15 +103,15 @@ int main(int argc, char **argv)
     exit(1);
   }
   F = FLOATDATA(imagefloat);
-  imagefloat->xdim = imagebyte->xdim;
-  imagefloat->ydim = imagebyte->ydim;
-  imagefloat->zdim = imagebyte->zdim;
+  imagefloat->xdim = imageshort->xdim;
+  imagefloat->ydim = imageshort->ydim;
+  imagefloat->zdim = imageshort->zdim;
 
-  for (x = 0; x < N; x++) F[x] = (float)B[x];
+  for (x = 0; x < N; x++) F[x] = (float)S[x];
 
   writeimage(imagefloat, argv[argc-1]);
   freeimage(imagefloat);
-  freeimage(imagebyte);
+  freeimage(imageshort);
 
   return 0;
 } /* main */

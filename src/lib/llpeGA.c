@@ -93,7 +93,7 @@ struct xvimage *mBorderWshed2d(struct xvimage *ga)
 {
   int32_t i,j,k,x,y,z,u, nlabels;
   struct xvimage *res;
-  int32_t *Eminima;
+  uint32_t *Eminima;
   int32_t *Vminima; 
   int32_t rs = rowsize(ga);               /* taille ligne */
   int32_t cs = colsize(ga);               /* taille colonne */

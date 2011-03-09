@@ -11,14 +11,14 @@ PB: PYTHON_INCLUDE_DIR-NOTFOUND when running ccmake
 SOL: install package libpythonXXX-devel
 
 MC 17/01/2011
-system: ubuntu/wubi 10.10
+system: linux ubuntu/wubi 10.10
 PB: (generic) missing XXX
 SOL: apt-file search XXX
        YYY
      sudo apt-get install YYY
 
 MC 11/02/2011
-system: ubuntu
+system: linux ubuntu
 Liste des installations nécessaires :
 
 Pour vtk-tcl :
@@ -41,3 +41,8 @@ apt-get install libtiff-dev
 apt-get install libmagick-dev
 apt-get install libxpm-dev
 apt-get install autoconf
+
+MC 25/02/2011
+system:  linux mandriva 2010.2
+PB: lost operators (compiled ok but not accessible under Python)
+SOL: install boost 1.40 instead of 1.36

@@ -40,22 +40,20 @@ knowledge of the CeCILL license and that you accept its terms.
 
    Michel Couprie 1996
 
-   Avertissement: la lecture des fichiers PGM en 65535 ndg (ascii) provoque un sous-echantillonage
-   a 256 ndg. A MODIFIER.
-
-   Update septembre 2000 : lecture de fichiers BMP truecolor
-   Update octobre 2000 : ecriture de fichiers BMP truecolor
-   Update janvier 2002 : lecture d'elements structurants (readse)
-   Update mars 2002 : nettoie la gestion des noms
-   Update decembre 2002 : type FLOAT
-   Update decembre 2002 : convertgen
-   Update avril 2003 : convertfloat, convertlong
-   Update janvier 2006 : adoption des nouveaux "magic numbers" pour
-                         les formats byte 3d, idem 2d (P2 et P5)
-			 P7 (raw 3d) est conservé pour la compatibilité
-   Update mars 2008 : fixe bug perte mémoire dans convertXXXX
-   Update aout 2008 : nouveaux formats pgm étendus PC, PD pour les "double"
-   Update janvier 2010 : types COMPLEX DCOMPLEX
+   MC Update septembre 2000 : lecture de fichiers BMP truecolor
+   MC Update octobre 2000 : ecriture de fichiers BMP truecolor
+   MC Update janvier 2002 : lecture d'elements structurants (readse)
+   MC Update mars 2002 : nettoie la gestion des noms
+   MC Update decembre 2002 : type FLOAT
+   MC Update decembre 2002 : convertgen
+   MC Update avril 2003 : convertfloat, convertlong
+   MC Update janvier 2006 : adoption des nouveaux "magic numbers" pour
+                            les formats byte 3d, idem 2d (P2 et P5)
+		            P7 (raw 3d) est conservé pour la compatibilité
+   MC Update mars 2008 : fixe bug perte mémoire dans convertXXXX
+   MC Update aout 2008 : nouveaux formats pgm étendus PC, PD pour les "double"
+   MC Update janvier 2011 : types COMPLEX DCOMPLEX
+   MC Update mars 2011 : lecture/écriture des images 'short'
 */
 
 #include <stdio.h>
@@ -1045,6 +1043,10 @@ void writerawimage(struct xvimage * image, char *filename)
   }
   else if (datatype(image) == VFF_TYP_2_BYTE)
   {
+    uint16_t tmp;
+    uint8_t tmp1;
+    index_t i;
+
     fputs("P5\n", fd);
     if ((image->xdim != 0.0) && (d > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
@@ -1070,15 +1072,16 @@ void writerawimage(struct xvimage * image, char *filename)
 #endif
     fprintf(fd, "65535\n");
 
-    ret = fwrite(USHORTDATA(image), 2*sizeof(char), N, fd);
-    if (ret != N)
-    {
-#ifdef MC_64_BITS
-      fprintf(stderr, "%s: only %lld items written\n", F_NAME, (long long int)ret);
-#else
-      fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
-#endif
-      exit(0);
+    // Standard PGM format imposes big-endian for 2-byte images, but
+    // standard PC architectures are little-endian
+    for (i = 0; i < N; i++) 
+    { 
+      tmp = USHORTDATA(image)[i];
+      // conversion little-endian -> big-endian
+      tmp1 = tmp & 0x00ff;
+      tmp = tmp >> 8;
+      tmp = tmp | (((uint16_t)tmp1) << 8);      
+      (void)fwrite(&tmp, sizeof(uint16_t), 1, fd);
     }
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
@@ -1399,6 +1402,39 @@ void writeascimage(struct xvimage * image, char *filename)
         fprintf(fd, "%3d ", (int32_t)(UCHARDATA(image)[i]));
       } /* for i */
     }
+    fprintf(fd, "\n");
+  }
+  else if (datatype(image) == VFF_TYP_2_BYTE)
+  {
+    fputs("P2\n", fd);
+    if ((image->xdim != 0.0) && (ds > 1))
+      fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
+    if (np > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)np); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, np); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
+    fprintf(fd, "65535\n");
+
+    for (i = 0; i < N; i++)
+    {
+      if (i % rs == 0) fprintf(fd, "\n");
+      if (i % ps == 0) fprintf(fd, "\n");
+      fprintf(fd, "%d ", (int16_t)(USHORTDATA(image)[i]));
+    } /* for i */
     fprintf(fd, "\n");
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
@@ -1758,6 +1794,7 @@ struct xvimage * readimage(char *filename)
   int32_t c, ndgmax;
   double xdim=1.0, ydim=1.0, zdim=1.0;
   char *read;
+  char tag;
 
   fd = pink_fopen_read(filename);
 
@@ -1768,7 +1805,7 @@ struct xvimage * readimage(char *filename)
   }
 
   read = fgets(buffer, BUFFERSIZE, fd); 
-    /* P5: raw byte bw  ; P2: ascii bw */
+    /* P5: raw byte or short bw  ; P2: ascii byte or short bw */
     /* P6: raw byte rgb ; P3: ascii rgb */
     /* P8: raw int32_t 2d-3d...  ==  extension MC */
     /* P9: raw float 2d-3d...  ==  extension MC */
@@ -1789,23 +1826,7 @@ struct xvimage * readimage(char *filename)
   {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
       return NULL;
   }
-  switch (buffer[1])
-  {
-    case '2': ascii = 1; typepixel = VFF_TYP_1_BYTE; break;
-    case '5':
-    case '7': ascii = 0; typepixel = VFF_TYP_1_BYTE; break;
-    case '8': ascii = 0; typepixel = VFF_TYP_4_BYTE; break;
-    case '9': ascii = 0; typepixel = VFF_TYP_FLOAT; break;
-    case 'A': ascii = 1; typepixel = VFF_TYP_FLOAT; break;
-    case 'B': ascii = 1; typepixel = VFF_TYP_4_BYTE; break;
-    case 'C': ascii = 0; typepixel = VFF_TYP_DOUBLE; break;
-    case 'D': ascii = 1; typepixel = VFF_TYP_DOUBLE; break;
-    case 'E': ascii = 0; typepixel = VFF_TYP_COMPLEX; break;
-    case 'F': ascii = 1; typepixel = VFF_TYP_COMPLEX; break;
-    default:
-      fprintf(stderr,"%s: invalid image format: P%c\n", F_NAME, buffer[1]);
-      return NULL;
-  } /* switch */
+  tag = buffer[1];
 
 #ifdef MC_64_BITS
   c = sscanf(buffer+2, "%lld %lld %d", (long long int *)&rs, (long long int *)&cs, (int *)&ndgmax);
@@ -1863,6 +1884,42 @@ struct xvimage * readimage(char *filename)
 
   sscanf(buffer, "%d", (int *)&ndgmax);
 
+  switch (tag)
+  {
+    case '2': 
+      ascii = 1; 
+      if (ndgmax <= 255) typepixel = VFF_TYP_1_BYTE; 
+      else if (ndgmax <= 65535) typepixel = VFF_TYP_2_BYTE; 
+      else 
+      {
+        fprintf(stderr,"%s: wrong ndgmax = %d\n", F_NAME, ndgmax);
+        return(NULL);
+      }
+      break;
+    case '5':
+    case '7': 
+      ascii = 0; 
+      if (ndgmax <= 255) typepixel = VFF_TYP_1_BYTE; 
+      else if (ndgmax <= 65535) typepixel = VFF_TYP_2_BYTE; 
+      else 
+      {
+        fprintf(stderr,"%s: wrong ndgmax = %d\n", F_NAME, ndgmax);
+        return(NULL);
+      }
+      break;
+    case '8': ascii = 0; typepixel = VFF_TYP_4_BYTE; break;
+    case '9': ascii = 0; typepixel = VFF_TYP_FLOAT; break;
+    case 'A': ascii = 1; typepixel = VFF_TYP_FLOAT; break;
+    case 'B': ascii = 1; typepixel = VFF_TYP_4_BYTE; break;
+    case 'C': ascii = 0; typepixel = VFF_TYP_DOUBLE; break;
+    case 'D': ascii = 1; typepixel = VFF_TYP_DOUBLE; break;
+    case 'E': ascii = 0; typepixel = VFF_TYP_COMPLEX; break;
+    case 'F': ascii = 1; typepixel = VFF_TYP_COMPLEX; break;
+    default:
+      fprintf(stderr,"%s: invalid image format: P%c\n", F_NAME, buffer[1]);
+      return NULL;
+  } /* switch */
+
  readdata:
   N = rs * cs * ds * np;
   image = allocmultimage(NULL, rs, cs, ds, 1, np, typepixel);
@@ -1878,28 +1935,11 @@ struct xvimage * readimage(char *filename)
   {
     if (ascii)
     {
-      if (ndgmax == 255)
-        for (i = 0; i < N; i++)
-        {
-          fscanf(fd, "%d", &c);
-          UCHARDATA(image)[i] = (uint8_t)c;
-        } /* for i */
-      else if (ndgmax == 65535)
-        for (i = 0; i < N; i++)
-        {
-          fscanf(fd, "%d", &c);
-          UCHARDATA(image)[i] = (uint8_t)(c/256);
-        } /* for i */
-      else
+      for (i = 0; i < N; i++)
       {
-        fprintf(stderr,"%s: wrong ndgmax = %d\n", F_NAME, ndgmax);
-        return(NULL);
-      }
-    }
-    else if (ndgmax == 65535)
-    {
-      fprintf(stderr,"%s: short int type not supported\n", F_NAME);
-      return(NULL);
+	fscanf(fd, "%d", &c);
+	UCHARDATA(image)[i] = (uint8_t)c;
+      } /* for i */
     }
     else
     {
@@ -1915,6 +1955,32 @@ struct xvimage * readimage(char *filename)
       }
     }
   } /* if (typepixel == VFF_TYP_1_BYTE) */
+  else
+  if (typepixel == VFF_TYP_2_BYTE)
+  {
+    if (ascii)
+    {
+      uint16_t tmp;
+      for (i = 0; i < N; i++)
+      {
+        fscanf(fd, "%hd", &tmp); (SSHORTDATA(image)[i]) = tmp;
+      } /* for i */
+    }
+    else // Standard PGM format imposes big-endian for 2-byte images, but
+    {    // standard PC architectures are little-endian
+      uint16_t tmp;
+      uint8_t tmp1;
+      for (i = 0; i < N; i++) 
+      { 
+	(void)fread(&tmp, sizeof(uint16_t), 1, fd);
+	// conversion big-endian -> little-endian
+        tmp1 = tmp & 0x00ff;
+        tmp = tmp >> 8;
+        tmp = tmp | (((uint16_t)tmp1) << 8);      
+	(SSHORTDATA(image)[i]) = (int16_t)tmp;
+      }
+    }
+  } /* if (typepixel == VFF_TYP_2_BYTE) */
   else
   if (typepixel == VFF_TYP_4_BYTE)
   {

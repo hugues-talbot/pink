@@ -36,9 +36,13 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts a "byte" image to a "int32_t" image
 
-<B>Usage:</B> byte2long in out
+<B>Usage:</B> byte2long in [out]
 
-<B>Description:</B> For each pixel x, out[x] = (int32_t)in[x]
+<B>Description:</B> 
+
+For each pixel x, out[x] = (int32_t)in[x].
+
+If the last argument \b out is omitted, then out = in.
 
 <B>Types supported:</B> byte 2d, byte 3d.
 
@@ -65,33 +69,31 @@ int main(int argc, char **argv)
   struct xvimage * imagebyte;
   int32_t *L;
   uint8_t *B;
-  uint32_t x;
+  index_t x, rs, cs, ds, N;
 
-  int32_t rs, cs, d, N;
-
-  if (argc != 3)
+  if ((argc != 2) && (argc != 3))
   {
-    fprintf(stderr, "usage: %s in1.pgm out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in1.pgm [out.pgm] \n", argv[0]);
     exit(1);
   }
 
   imagebyte = readimage(argv[1]); 
   if (imagebyte == NULL)
   {
-    fprintf(stderr, "byte2long: readimage failed\n");
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
   rs = rowsize(imagebyte);
   cs = colsize(imagebyte);
-  d = depth(imagebyte);
-  N = rs * cs * d;
+  ds = depth(imagebyte);
+  N = rs * cs * ds;
   B = UCHARDATA(imagebyte);
   
-  imagelong = allocimage(imagebyte->name, rs, cs, d, VFF_TYP_4_BYTE);
+  imagelong = allocimage(imagebyte->name, rs, cs, ds, VFF_TYP_4_BYTE);
   if (imagelong == NULL)
   {
-    fprintf(stderr, "byte2long: allocimage failed\n");
+    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
   L = SLONGDATA(imagelong);
@@ -99,10 +101,9 @@ int main(int argc, char **argv)
   imagelong->ydim = imagebyte->ydim;
   imagelong->zdim = imagebyte->zdim;
 
-  for (x = 0; x < N; x++)
-    L[x] = (int32_t)B[x];
+  for (x = 0; x < N; x++) L[x] = (int32_t)B[x];
 
-  writeimage(imagelong, argv[2]);
+  writeimage(imagelong, argv[argc-1]);
   freeimage(imagelong);
   freeimage(imagebyte);
 

@@ -39,10 +39,11 @@ knowledge of the CeCILL license and that you accept its terms.
     larea
     laverage
     linverse
-    lequal
-    lexp
     ldiff
     ldivide
+    lequal
+    lexp
+    lgamma
     linf
     llog
     lmask
@@ -65,6 +66,7 @@ knowledge of the CeCILL license and that you accept its terms.
 /* Michel Couprie - juillet 1996 */
 /* Camille Couprie - octobre 2002 (xor) */
 /* Michel Couprie - décembre 2010 (modulus) */
+/* Michel Couprie - février 2011 (gamma) */
 
 #include <stdio.h>
 #include <stdint.h>
@@ -77,6 +79,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcimage.h>
 #include <mccodimage.h>
 #include <larith.h>
+
+#define EPSILON 1e-6
 
 /* ==================================== */
 int32_t ladd(
@@ -91,13 +95,7 @@ int32_t ladd(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds * nb;
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
 
@@ -145,13 +143,7 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
   uint8_t *pt1;
   int32_t *lpt1;
   float *FPT1; 
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds * nb;
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
   
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -198,13 +190,7 @@ int32_t larea(
   uint8_t *pt;
   int32_t *PT; 
   float *FPT; 
-  index_t i, rs, cs, ds, nb, N;
-
-  rs = rowsize(image);
-  cs = colsize(image);
-  ds = depth(image);
-  nb = nbands(image);
-  N = rs * cs * ds;
+  index_t i, nb = nbands(image), N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nb;
 
   if (nb == 1)
   {
@@ -280,13 +266,7 @@ int32_t laverage(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds * nb;
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
 
@@ -330,13 +310,7 @@ int32_t ldiff(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds * nb;
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
 
@@ -386,13 +360,7 @@ int32_t ldivide(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds * nb;
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
 
@@ -436,13 +404,7 @@ int32_t lequal(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds * nb;
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
 
@@ -480,6 +442,109 @@ int32_t lequal(
 } /* lequal() */
 
 /* ==================================== */
+int32_t lgammacor(
+  struct xvimage * image,
+  double gamma)
+/* 
+   correction gamma :
+   - normalisation entre 0 et 1
+   - elevation à la puissance gamma
+   - inverse la normalisation
+*/
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lgammacor"
+{
+  struct xvimage * flimage;
+  float * Fl;
+  index_t x, N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nbands(image);
+
+  flimage = allocmultimage(NULL, rowsize(image), colsize(image), depth(image), tsize(image), nbands(image), VFF_TYP_FLOAT); 
+  assert(flimage != NULL);
+  Fl = FLOATDATA(flimage);
+
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *Im;
+    uint8_t ndgmin, ndgmax;
+    Im = UCHARDATA(image);
+    ndgmin = ndgmax = Im[0];
+    for (x = 0; x < N; x++)
+    {
+      if (Im[x] < ndgmin) ndgmin = Im[x];
+      else if (Im[x] > ndgmax) ndgmax = Im[x];
+    }
+    ndgmax = ndgmax - ndgmin;
+    if (ndgmax == 0) ndgmax = 1;
+
+    for (x = 0; x < N; x++)
+      Fl[x] = (float)(Im[x] - ndgmin) / (float)ndgmax;
+
+    for (x = 0; x < N; x++)
+      Fl[x] = (float)pow((double)(Fl[x]), gamma);
+
+    for (x = 0; x < N; x++)
+      Im[x] = (uint8_t)(Fl[x]*(ndgmax-ndgmin)) + ndgmin;
+
+  }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    int32_t *Im;
+    int32_t ndgmin, ndgmax;
+    Im = SLONGDATA(image);
+    ndgmin = ndgmax = Im[0];
+    for (x = 0; x < N; x++)
+    {
+      if (Im[x] < ndgmin) ndgmin = Im[x];
+      else if (Im[x] > ndgmax) ndgmax = Im[x];
+    }
+    ndgmax = ndgmax - ndgmin;
+    if (ndgmax == 0) ndgmax = 1;
+
+    for (x = 0; x < N; x++)
+      Fl[x] = (float)(Im[x] - ndgmin) / (float)ndgmax;
+
+    for (x = 0; x < N; x++)
+      Fl[x] = (float)pow((double)(Fl[x]), gamma);
+
+    for (x = 0; x < N; x++)
+      Im[x] = (int32_t)(Fl[x]*(ndgmax-ndgmin)) + ndgmin;
+  }
+  else if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    float *Im;
+    float ndgmin, ndgmax;
+    Im = FLOATDATA(image);
+    ndgmin = ndgmax = Im[0];
+    for (x = 0; x < N; x++)
+    {
+      if (Im[x] < ndgmin) ndgmin = Im[x];
+      else if (Im[x] > ndgmax) ndgmax = Im[x];
+    }
+    ndgmax = ndgmax - ndgmin;
+    if (ndgmax < EPSILON) ndgmax = 1.0;
+
+    for (x = 0; x < N; x++)
+      Fl[x] = (Im[x] - ndgmin) / ndgmax;
+
+    for (x = 0; x < N; x++)
+      Fl[x] = (float)pow((double)(Fl[x]), gamma);
+
+    for (x = 0; x < N; x++)
+      Im[x] = (Fl[x]*(ndgmax-ndgmin)) + ndgmin;
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return 0;
+  }
+
+  freeimage(flimage);
+
+  return 1;
+} /* lgammacor() */
+
+/* ==================================== */
 int32_t linf(
   struct xvimage * image1,
   struct xvimage * image2)
@@ -489,19 +554,7 @@ int32_t linf(
 #define F_NAME "linf"
 {
   index_t i;
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds;
-
-  if (nb > 1)
-  {
-    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
-    return(0);
-  }
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
 
@@ -545,19 +598,7 @@ int32_t lsup(
 #define F_NAME "lsup"
 {
   index_t i;
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds;
-
-  if (nb > 1)
-  {
-    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
-    return(0);
-  }
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
 
@@ -594,20 +635,21 @@ int32_t lsup(
 /* ==================================== */
 int32_t linverse(
   struct xvimage * image)
-/* inverse d' une image */
+/* obsolete - use linvert - left for compatibility */
+/* ==================================== */
+{
+  return linvert(image);
+} /* linverse() */
+
+/* ==================================== */
+int32_t linvert(
+  struct xvimage * image)
+/* invert an image */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "linverse"
+#define F_NAME "linvert"
 {
-  index_t i, N;
-
-  if (nbands(image) > 1)
-  {
-    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
-    return(0);
-  }
-
-  N = rowsize(image) * colsize(image) * depth(image);
+  index_t i, N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nbands(image);
 
   if (datatype(image) == VFF_TYP_1_BYTE)
   {
@@ -640,7 +682,7 @@ int32_t linverse(
   }
 
   return 1;
-} /* linverse() */
+} /* linvert() */
 
 /* ==================================== */
 int32_t lmask(
@@ -652,18 +694,23 @@ int32_t lmask(
 #define F_NAME "lmask"
 {
   index_t i;
-  index_t rs, cs, ds, nb, N;
+  index_t rs, cs, ds, N;
   uint8_t *pt2;
 
   rs = rowsize(image);
   cs = colsize(image);
   ds = depth(image);
-  nb = nbands(image);
   N = rs * cs * ds;
 
-  if (nb > 1)
+  if (nbands(image) > 1)
   {
     fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
+    return(0);
+  }
+
+  if (tsize(image) > 1)
+  {
+    fprintf(stderr, "%s: time sequences not allowed\n", F_NAME);
     return(0);
   }
 
@@ -721,19 +768,7 @@ int32_t lmax(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds;
-
-  if (nb > 1)
-  {
-    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
-    return(0);
-  }
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
 
@@ -771,19 +806,8 @@ double lmax1(struct xvimage * image1)
 #undef F_NAME
 #define F_NAME "lmax1"
 {
-  index_t i, rs, cs, ds, N;
+  index_t i, N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
   double maxval;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  N = rs * cs * ds;
-
-  if (nbands(image1) > 1)
-  {
-    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
-    return(0);
-  }
 
   if (datatype(image1) == VFF_TYP_1_BYTE)
   {
@@ -819,19 +843,8 @@ double lmin1(struct xvimage * image1)
 #undef F_NAME
 #define F_NAME "lmin1"
 {
-  index_t i, rs, cs, ds, N;
+  index_t i, N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
   double minval;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  N = rs * cs * ds;
-
-  if (nbands(image1) > 1)
-  {
-    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
-    return(0);
-  }
 
   if (datatype(image1) == VFF_TYP_1_BYTE)
   {
@@ -873,19 +886,7 @@ int32_t lmin(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds;
-
-  if (nb > 1)
-  {
-    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
-    return(0);
-  }
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
 
@@ -935,6 +936,12 @@ int32_t lmult(
   N = rs * cs * ds;
   nb1 = nbands(image1);
   nb2 = nbands(image2);
+
+  if ((tsize(image1) != 1) || (tsize(image1) != 1))
+  {
+    fprintf(stderr, "%s: time sequences not allowed\n", F_NAME);
+    return(0);
+  }
 
   if ((nb1 > 1) && (nb2 > 1))
   {
@@ -1005,15 +1012,7 @@ int32_t lneg(
 {
   index_t i;
   uint8_t *pt;
-  index_t N;
-
-  if (nbands(image) > 1)
-  {
-    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
-    return(0);
-  }
-
-  N = rowsize(image) * colsize(image) * depth(image);
+  index_t N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nbands(image);
 
   if (datatype(image) == VFF_TYP_1_BYTE)
   {
@@ -1034,15 +1033,9 @@ int32_t lnormalize(struct xvimage * image, float nmin, float nmax)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lnormalize"
-#define EPSILON 1e-6
 {
-  index_t x, N;
-
-  if (nbands(image) > 1)
-  {
-    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
-    return(0);
-  }
+  index_t x;
+  index_t N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nbands(image);
 
   if (nmin > nmax)
   {
@@ -1056,7 +1049,6 @@ int32_t lnormalize(struct xvimage * image, float nmin, float nmax)
     uint8_t ndgmin, ndgmax;
     uint8_t Nmin = arrondi(nmin);
     uint8_t Nmax = arrondi(nmax);
-    N = rowsize(image) * colsize(image) * depth(image);
     Im = UCHARDATA(image);
     ndgmin = ndgmax = Im[0];
     for (x = 0; x < N; x++)
@@ -1075,7 +1067,6 @@ int32_t lnormalize(struct xvimage * image, float nmin, float nmax)
     int32_t ndgmin, ndgmax;
     int32_t Nmin = arrondi(nmin);
     int32_t Nmax = arrondi(nmax);
-    N = rowsize(image) * colsize(image) * depth(image);
     Im = SLONGDATA(image);
     ndgmin = ndgmax = Im[0];
     for (x = 0; x < N; x++)
@@ -1092,7 +1083,6 @@ int32_t lnormalize(struct xvimage * image, float nmin, float nmax)
   {
     float *Im;
     float ndgmin, ndgmax;
-    N = rowsize(image) * colsize(image) * depth(image);
     Im = FLOATDATA(image);
     ndgmin = ndgmax = Im[0];
     for (x = 0; x < N; x++)
@@ -1125,13 +1115,7 @@ int32_t lnull(struct xvimage * image1)
   uint8_t *pt1;
   int32_t *PT1; 
   float *FPT1; 
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds * nb;
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   if (datatype(image1) == VFF_TYP_1_BYTE)
   {
@@ -1179,9 +1163,7 @@ int32_t lscale(
   uint8_t *pt;
   int32_t *PT;
   float *FPT;
-  index_t N;
-
-  N = rowsize(image) * colsize(image) * depth(image) * nbands(image);
+  index_t N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nbands(image);
 
   /* ---------------------------------------------------------- */
   /* calculs du resultat */
@@ -1236,9 +1218,7 @@ int32_t lpow(
   uint8_t *pt;
   int32_t *PT;
   float *FPT;
-  index_t N;
-
-  N = rowsize(image) * colsize(image) * depth(image) * nbands(image);
+  index_t N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nbands(image);
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -1282,9 +1262,7 @@ int32_t lexp(struct xvimage * image)
 {
   index_t i;
   float *FPT;
-  int32_t N;
-
-  N = rowsize(image) * colsize(image) * depth(image) * nbands(image);
+  index_t N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nbands(image);
 
   if (datatype(image) == VFF_TYP_FLOAT)
   {
@@ -1310,9 +1288,7 @@ int32_t llog(struct xvimage * image)
 {
   index_t i;
   float *FPT;
-  index_t N;
-
-  N = rowsize(image) * colsize(image) * depth(image) * nbands(image);
+  index_t N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nbands(image);
 
   if (datatype(image) == VFF_TYP_FLOAT)
   {
@@ -1342,13 +1318,7 @@ int32_t lsub(
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds * nb;
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
   COMPARE_SIZE(image1, image2);
 
@@ -1399,19 +1369,7 @@ int32_t lvolume(
   int32_t *PT; 
   float *FPT; 
   double fvolume = 0.0; 
-  index_t rs, cs, ds, nb, N;
-
-  rs = rowsize(image);
-  cs = colsize(image);
-  ds = depth(image);
-  nb = nbands(image);
-  N = rs * cs * ds;
-
-  if (nb > 1)
-  {
-    fprintf(stderr, "%s: multiband images not allowed\n", F_NAME);
-    return(0);
-  }
+  index_t N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nbands(image);
 
   if (datatype(image) == VFF_TYP_1_BYTE)
     for (pt = UCHARDATA(image), i = 0; i < N; i++, pt++) fvolume += (double)*pt;
@@ -1441,13 +1399,8 @@ int32_t lxor(
 {
   index_t i;
   uint8_t *F1, *F2;
-  index_t rs, cs, ds, nb, N;
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  nb = nbands(image1);
-  N = rs * cs * ds * nb;
   F1 = UCHARDATA(image1);
   F2 = UCHARDATA(image2);
 
@@ -1486,22 +1439,23 @@ int32_t lmodulus(struct xvimage * image, struct xvimage * result)
 #undef F_NAME
 #define F_NAME "lmodulus"
 {
-  index_t i, N;
-  float *F, *R;
+  index_t i;
+  index_t N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nbands(image);
+  fcomplex *F;
+  float *R;
   double t1, t2;
-  assert(result != NULL);
 
+  assert(result != NULL);
   COMPARE_SIZE(image, result);
   ACCEPTED_TYPES1(result, VFF_TYP_FLOAT);
   ACCEPTED_TYPES1(image, VFF_TYP_COMPLEX);
 
-  N = rowsize(image) * colsize(image) * depth(image);
-  F = FLOATDATA(image);
+  F = COMPLEXDATA(image);
   R = FLOATDATA(result);
   for (i = 0; i < N; i++)
   {
-    t1 = (double)F[i+i];
-    t2 = (double)F[i+i+1];
+    t1 = (double)F[i].re;
+    t2 = (double)F[i].im;
     t1 = sqrt(t1*t1 + t2*t2);
     R[i] = (float)t1;
   }
@@ -1516,17 +1470,20 @@ int32_t lreal(struct xvimage * image, struct xvimage * result)
 #undef F_NAME
 #define F_NAME "lreal"
 {
-  index_t i, N;
-  float *F, *R;
+  index_t i;
+  index_t N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nbands(image);
+  fcomplex *F;
+  float *R;
+
   assert(result != NULL);
   COMPARE_SIZE(image, result);
   ACCEPTED_TYPES1(result, VFF_TYP_FLOAT);
   ACCEPTED_TYPES1(image, VFF_TYP_COMPLEX);
 
   N = rowsize(image) * colsize(image) * depth(image);
-  F = FLOATDATA(image);
+  F = COMPLEXDATA(image);
   R = FLOATDATA(result);
-  for (i = 0; i < N; i++) R[i] = F[i+i];
+  for (i = 0; i < N; i++) R[i] = F[i].re;
   return 1;
 } /* lreal() */
 
@@ -1538,15 +1495,19 @@ int32_t limaginary(struct xvimage * image, struct xvimage * result)
 #undef F_NAME
 #define F_NAME "limaginary"
 {
-  index_t i, N;
-  float *F, *R;
+  index_t i;
+  index_t N = rowsize(image) * colsize(image) * depth(image) * tsize(image) * nbands(image);
+  fcomplex *F;
+  float *R;
+
+  assert(result != NULL);
   COMPARE_SIZE(image, result);
   ACCEPTED_TYPES1(result, VFF_TYP_FLOAT);
   ACCEPTED_TYPES1(image, VFF_TYP_COMPLEX);
 
   N = rowsize(image) * colsize(image) * depth(image);
-  F = FLOATDATA(image);
+  F = COMPLEXDATA(image);
   R = FLOATDATA(result);
-  for (i = 0; i < N; i++) R[i] = F[i+i+1];
+  for (i = 0; i < N; i++) R[i] = F[i].im;
   return 1;
 } /* limaginary() */

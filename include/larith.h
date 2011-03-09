@@ -71,12 +71,21 @@ extern int32_t lequal(
         struct xvimage * image2
 );
 
+extern int32_t lgammacor(
+	struct xvimage * image,
+	double gamma
+);
+
 extern int32_t linf(
         struct xvimage *image1,
         struct xvimage *image2
 );
 
 extern int32_t linverse(
+        struct xvimage *image1
+);
+
+extern int32_t linvert(
         struct xvimage *image1
 );
 
