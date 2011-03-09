@@ -52,25 +52,25 @@ Parameters:
 /* Michel Couprie - janvier 2000 */
 
 #include <stdio.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <mcimage.h>
-#include <mccodimage.h>
-#include <mcutil.h>
-#include "fitsio.h"
 
+#ifdef HAVE_FITS_LIB
 
+#  include <stdint.h>
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  include <fcntl.h>
+#  include <stdlib.h>
+#  include <assert.h>
+#  include <mcimage.h>
+#  include <mccodimage.h>
+#  include <mcutil.h>
+#  include "fitsio.h"
 
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 
-#ifdef HAVE_FITS_LIB
 {
 
     struct xvimage *image;
@@ -209,9 +209,11 @@ int main(int argc, char **argv)
     return 0;
 } // main
 
-#else
+#else  // HAVE_FITS_LIB
+
+int main()
 {
-    fprintf(stderr,"FITS library not found at compile time\n");
+    fprintf(stderr,"Sorry, FITS library not found at compile time\n");
     return 1;
 }
 #endif // HAVE_FITS_LIB
