@@ -107,25 +107,16 @@ if (CMAKE_HOST_UNIX)
     find_library( MATH_LIB libm.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
     set( LIBS ${MATH_LIB} )
 
-    # FITS library
-    #find_library( FITS_LIB libcfitsio.a PATHS ${POTENTIAL_LIBDIRS} )
-    #set( LIBS ${FITS_LIB} )
-    #set(FITS_LIB_FOUND TRUE)
-    #if ( NOT FITS_LIB )
-    #   set(FITS_LIB_FOUND FALSE)
-	#message("FITS LIB NOT found")
-    #else ( NOT FITS_LIB )
-    #  add_definitions( -DHAVE_FITS_LIB )
-	#message("FITS LIB found")
-    #endif ( NOT FITS_LIB )
+
     
     ##
-    ## this is a right nightmare (HT)
+    ## We need the optional CFITSIO library for reading the 
+    ## FITS image format, widely use in astronomy
+    ## Hugues Talbot	 9 Mar 2011
     ##
     find_package(CFITSIO)
 
     if (HT_CFITSIO_FOUND)
-	message("CFITSIO_FOUND = " ${CFITSIO_FOUND})
 	message("cfitsio found, library= " ${CFITSIO_LIBRARY})
 	add_definitions(-DHAVE_FITS_LIB)
     else (HT_CFITSIO_FOUND)
