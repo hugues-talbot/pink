@@ -39,6 +39,22 @@ if (NOT PYTHON_EXE)
     message( WARNING "python executable not found. If you have it installed than adjust the PYTHON_EXE variable. You still may be able to compile, but the python front-end will not work." )
 endif (NOT PYTHON_EXE)
 
+#python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"
+if (NOT PYTHON_MODULE_INSTALL_PATH )
+    if ( NOT PYTHON_DOCUMENTATION_EXE )
+	set( PYTHON_MODULE_INSTALL_PATH "UNKNOWN" CACHE STRING "The place to put the modules after the installation" )
+    else ( NOT PYTHON_DOCUMENTATION_EXE )
+	execute_process ( COMMAND python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE )
+	#message( "PYTHON_SITE_PACKAGES = '" ${PYTHON_SITE_PACKAGES} "'" )
+	set( PYTHON_MODULE_INSTALL_PATH ${PYTHON_SITE_PACKAGES} CACHE STRING "The place to put the modules after the installation" )
+    endif ( NOT PYTHON_DOCUMENTATION_EXE )
+
+endif (NOT PYTHON_MODULE_INSTALL_PATH )
+
+if ( NOT CMAKE_INSTALL_PREFIX )
+    set( CMAKE_INSTALL_PREFIX "/usr/local" CACHE STRING "The place to put the Pink shared library after the installation" )
+endif ( NOT CMAKE_INSTALL_PREFIX )
+
 ### **********************************************************************************************
 ### **********************************************************************************************
 ### ********************************* PYTHON Documentation ***************************************
@@ -68,8 +84,8 @@ add_dependencies( cpp_pink ${py_documentation} )
 
 ### **********************************************************************************************
 ### **********************************************************************************************
-### ******************************** Pink.sh Documentation ***************************************
-### **********************************************************************************************
+### ******************************** Pink.sh Generation for **************************************
+### ******************************** local testing ***********************************************
 ### **********************************************************************************************
 
 
@@ -118,9 +134,22 @@ add_custom_command( TARGET cpp_pink POST_BUILD
 
 endif (THIS_IS_LINUX)
 
+### **********************************************************************************************
+### **********************************************************************************************
+### ******************************** PYTHON Module Install ***************************************
+### **********************************************************************************************
+### **********************************************************************************************
+
+INSTALL(TARGETS cpp_pink
+        DESTINATION ${PYTHON_MODULE_INSTALL_PATH}
+        PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
 
-
+### The scripts written in Python
+INSTALL(
+    DIRECTORY ${CMAKE_BINARY_DIR}/python/pink 
+    DESTINATION ${PYTHON_MODULE_INSTALL_PATH}
+)
 
 
 
