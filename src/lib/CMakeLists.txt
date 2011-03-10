@@ -1,6 +1,8 @@
 # -*- sh -*-
 # UjoImro, 2010
 
+INCLUDE(CheckTypeSize)
+
 # ------------------------------------
 # -------- The shared library --------
 # ------------------------------------ 
@@ -51,7 +53,22 @@ if (CMAKE_HOST_WIN32)
 	COMMAND cp ${CMAKE_BINARY_DIR}/lib/cygpink.dll ${CMAKE_BINARY_DIR}/bash/cygpink.dll
     )
 endif (CMAKE_HOST_WIN32)
-install( TARGETS pink LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib )
+
+### build type (32 or 64bit)
+CHECK_TYPE_SIZE (void* POINTER_SIZE) #4 if 32bit, 8 if 64bit.
+
+string( COMPARE EQUAL ${POINTER_SIZE} "8" THIS_IS_64bit )
+
+if ( THIS_IS_64bit )
+    set(PINK_LIBDIR "lib64" )
+else ( THIS_IS_64bit )
+    set(PINK_LIBDIR "lib" )
+endif ( THIS_IS_64bit )
+
+install( 
+    TARGETS pink LIBRARY 
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/${PINK_LIBDIR}
+)
 
 
 
