@@ -140,7 +140,11 @@ endif (THIS_IS_LINUX)
 ### **********************************************************************************************
 ### **********************************************************************************************
 
-INSTALL(TARGETS cpp_pink pink
+INSTALL(TARGETS cpp_pink
+        DESTINATION ${PYTHON_MODULE_INSTALL_PATH}
+        PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+
+INSTALL(TARGETS pink
         DESTINATION ${PYTHON_MODULE_INSTALL_PATH}
         PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
