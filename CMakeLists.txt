@@ -163,7 +163,7 @@ if (CMAKE_HOST_UNIX)
 	    INCLUDE_DIRECTORIES(${TIFF_INCLUDE_DIR})
 	    set( LIBS ${LIBS} ${TIFF_LIBRARIES} )
 	else(TIFF_FOUND)
-	    message("Libtiff not found. TIFF support will be disabled")
+	    message( FATAL_ERROR "Libtiff not found. TIFF support will be disabled")
 	endif(TIFF_FOUND)
   
 	if (THIS_IS_LINUX)
