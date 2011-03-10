@@ -1258,7 +1258,7 @@ UI_WRAP_FUNCTION(
   "gammacor",
   lgammacor,
   (arg("image"), arg("gamma")),
-  doc__gammacor__c__
+  "WRITE ME!!! doc__gammacor__c__"
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
