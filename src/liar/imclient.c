@@ -20,7 +20,7 @@
 #define BIN_MAX_SIZE    8192
 #define HNDSHK_SIZE     300
 #define DEFAULTPORT     7600
-#define DEFAULTHOST     "localhost"
+#define DEFAULTHOST     "127.0.0.1"
 #define EOC             "\r\n"
 #define HANDSHAKE       "Imview >"
 #define TIMEOUT_SEC     10
