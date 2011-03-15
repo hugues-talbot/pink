@@ -44,10 +44,10 @@ except:
     print("no imview\n")
 
 
-#try:
-from manipulate import manipulate
-#except:
-#    pass
+try:
+    from manipulate import manipulate
+except:
+    pass
 
 
 
