@@ -21,10 +21,18 @@ namespace pink {
 #define REPORT_INTERVAL 10
   
 #define PACKET_SIZE 1000
+
+  namespace maxflow_types
+  {
+
+    enum etap { pot, flow, constr, unknown };
+
+  } /* namespace maxflow_types */
   
-#define __ETAP_POT 1717
-#define __ETAP_FLOW 1232
-#define __ETAP_CONSTR 9120
+// // obsolete, replaced by enum  
+// #define __ETAP_POT 1717
+// #define __ETAP_FLOW 1232
+// #define __ETAP_CONSTR 9120
   
 #define ATOMIC( code )						\
   parent->global_lock->lock();					\
@@ -71,7 +79,9 @@ namespace pink {
     
     parent_type * parent;
     
-    int ID, etap, start_dibble, end_dibble, direction, current_iteration;    
+    int ID, start_dibble, end_dibble, direction, current_iteration;
+    maxflow_types::etap etap; // this is the current state of iteration
+    
     
   }; /* packet */
 
@@ -165,7 +175,9 @@ namespace pink {
   template<class image_type>
   packet<image_type>::packet( )
   {
-    etap = start_dibble = end_dibble = direction = current_iteration = 0;
+    start_dibble = end_dibble = direction = current_iteration = 0;
+    etap = maxflow_types::unknown;
+    
   } /* packet::packet */
   
   template<class image_type>
@@ -201,19 +213,25 @@ namespace pink {
 
       switch ( this->etap )
       {
-      case __ETAP_POT:
+      case maxflow_types::pot:
 	parent -> upDatePotencial( start_dibble, end_dibble );
-	//std::cout << "__ETAP_POT " << start_dibble << " " << end_dibble << " this = " << this << "\n";
+#       if UJIMAGE_DEBUG >= 3
+	std::cerr << "pot " << start_dibble << " " << end_dibble << " this = " << this << "\n";
+#       endif /* UJIMAGE_DEBUG >= 3 */
 	break;
 	
-      case __ETAP_FLOW:
+      case maxflow_types::flow:
 	parent -> upDateFlow( start_dibble, end_dibble, direction );
-	//std::cout << "__ETAP_FLOW " << start_dibble << " " << end_dibble <<  " this = " << this <<  "\n";
+#       if UJIMAGE_DEBUG >= 3
+	std::cerr << "flow " << start_dibble << " " << end_dibble << " this = " << this << "\n";
+#       endif /* UJIMAGE_DEBUG >= 3 */
 	break;
 	
-      case __ETAP_CONSTR:
+      case maxflow_types::constr:
 	parent -> upDateConstrain( start_dibble, end_dibble );
-	//std::cout << "__ETAP_CONSTR " << start_dibble << " " << end_dibble <<  " this = " << this <<  "\n";
+#       if UJIMAGE_DEBUG >= 3
+	std::cerr << "constr " << start_dibble << " " << end_dibble << " this = " << this << "\n";
+#       endif /* UJIMAGE_DEBUG >= 3 */
 	break;
 	
       default:
@@ -362,7 +380,7 @@ namespace pink {
 	} /* if (*srcsink) == -1. */
       } /* NOT (*srcsink) == 1.  */
     } /* FOR */
-  } /* maxflow::upDateSrcSink */
+  } /* maxmaxflow::upDateSrcSink */
   
 
 
@@ -740,7 +758,7 @@ namespace pink {
     // Thread attributes
 
     reference.reset(new packet<image_type>());
-    reference->etap = __ETAP_POT;
+    reference->etap = maxflow_types::pot;
 
     FOR( q, nbt )
     {
@@ -782,11 +800,11 @@ namespace pink {
 
     switch ( reference->etap )
     {
-    case __ETAP_POT:
+    case maxflow_types::pot:
       if (reference->end_dibble >= dibPotencial->get_length()) // the case, when the last iteration has been assigned and now we begin the next part
       {
 	shared_lock->lock(); // we wait for the threads to finish the calculation
-	reference->etap = __ETAP_FLOW;
+	reference->etap = maxflow_types::flow;
 	reference->start_dibble = 0;
 	reference->end_dibble = _min( PACKET_SIZE, dibFlow[0]->get_length() );
 	reference->direction = 0;
@@ -811,7 +829,7 @@ namespace pink {
       return true;
       break;
       
-    case __ETAP_FLOW:
+    case maxflow_types::flow:
 
       if (reference->end_dibble >= dibFlow[reference->direction]->get_length()) // the case, when the last iteration has been assigned and now we begin the next part
       {
@@ -819,7 +837,7 @@ namespace pink {
 	if ( reference->direction >= d - 1 )
 	{	  
 	  shared_lock->lock(); // we wait for all threads to finish the calculation	  
-	  reference->etap = __ETAP_CONSTR;
+	  reference->etap = maxflow_types::constr;
 	  reference->start_dibble = 0;
 	  reference->end_dibble = _min( PACKET_SIZE, dibConstrain->get_length());
 	  
@@ -861,7 +879,7 @@ namespace pink {
       return true;
       break;
       
-    case __ETAP_CONSTR:
+    case maxflow_types::constr:
       
       if (reference->end_dibble >= dibConstrain->get_length()) // the case, when the last iteration has been assigned and now we begin the next part
       {
@@ -890,7 +908,7 @@ namespace pink {
 	  reference->current_iteration++;
 	  
 
-	  reference->etap = __ETAP_POT;
+	  reference->etap = maxflow_types::pot;
 	  reference->start_dibble = 0;
 	  reference->end_dibble = _min(PACKET_SIZE, dibPotencial->get_length());
 
@@ -931,9 +949,12 @@ namespace pink {
 // cleaning up after us
 #undef REPORT_INTERVAL
 #undef PACKET_SIZE
-#undef __ETAP_POT
-#undef __ETAP_FLOW
-#undef __ETAP_CONSTR
+
+// // obsolete, replaced by enum
+// #undef __ETAP_POT
+// #undef __ETAP_FLOW
+// #undef __ETAP_CONSTR
+
 #undef ATOMIC
 
 

@@ -11,6 +11,48 @@
 */
 // This file is the bash front-end of the ungerflow function
 
+/*!
+   \file ungerflow.cpp
+
+   \brief Noise filtering with the Ungerflow algorithm [1].
+   
+   <B>Usage:</B> ungerflow( (char_image)source and sink, (float_image)gradient image, (float_image)lambda image, (float_image)guidence image, (int)number of iterations, (float)tau, (float)theta) -> float_image 
+   
+   <B>Description:</B> 
+
+   The input image is noise filtered according to the following
+   relation:
+   \f[
+     \min\limits_{u, v}\left\{
+       \int\limits_\Omega g(x)|\nabla u|d\Omega + 
+       \frac{1}{\theta}\int\limits_\Omega(u-v)^2d\Omega + 
+       \int\limits_\Omega \lambda(x)|v-f|d\Omega
+       \right\}
+     \f]
+   
+   <B>Types supported:</B> float 2d, float 3d, float 4d, ..., float xd
+   
+   <B>Category:</B> signal, development
+   \ingroup  signal, development
+
+   <b>References:</b>
+   <br>[1] Horst Bischof Markus Unger, Thomas Pock. Interactive
+   globally optimal image segmentation. Technical Report ICGTR08/02,
+   Institute for Computer Graphics and Vision Graz University of
+   Technology, Austria, July 2008. 
+   <br>[2] M. Unger, T. Pock, and H. Bischof. Continuous
+   globally optimal image segmentation with local constraints. In
+   Computer Vision Winter Workshop 2008, Moravske Toplice, Slovenija,
+   February 2008.
+
+   <b>Examples:</b> can be found in 'tutorial/python/ungerflow'
+
+   \author Laszlo Marak, 2009-2010
+
+
+ */
+
+
 #include <pink.h>
 
 #undef error

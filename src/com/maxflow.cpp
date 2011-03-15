@@ -11,6 +11,44 @@
 */
 // This file is the bash front-end of the maxflow function
 
+/*!
+   \file maxflow.cpp
+
+   \brief Calculates the optimal surface segmentation with the maximum
+   flow algorithm [1].
+   
+   <B>Usage:</B> maxflow( (char_image)source and sink, (float_image)constraint image, (int)iterations, (float)tau [, (int)number of threads=0]) -> float_image
+   
+   <B>Description:</B> In the input, you specify the constraint image
+   'g' and two subsets of the image 'S'==1 and 'P'==-1. The operator
+   will return a binary flow 'result', which is 0 or 1 almost
+   everywhere. The surface around the volume with value 1 will be the
+   optimum in the sense, that it will contain 'S', not contain 'P' and
+   and it's integral will be the smallest possible.
+
+   Generally, we choose the inverse of the gradient for 'g'. Sometimes
+   the inverse is weighted circularly, so gaps in the border are
+   interpolated with circles. 
+
+   Usually the values, that are known to be in the object (which you
+   want to segment) are set to sink (value 1). You can set sink (value
+   -1) the points, which you know to be outside the object, but
+   generally the border is sufficient.
+   
+   <B>Types supported:</B> float 2d, float 3d, float 4d, ..., float xd
+   
+   <B>Category:</B> signal, development
+   \ingroup  signal, development
+   
+   <b>References:</b> [1] Appleton, B. and Talbot, H. (2006). Globally minimal
+   surfaces by continuous maximal ﬂows. IEEE Transactions on Pattern
+   Analysis and Machine Intelligence, 28(1):106–118.
+
+   \author Laszlo Marak, 2009-2010
+
+
+ */
+
 #include <pink.h>
 
 #undef error

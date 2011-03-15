@@ -9,12 +9,30 @@
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
-// This file is the bash front-end of the lmeasure function
 
-#include <pink.h>
+/*!
+   \file measure.cpp
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in measure.cpp: " << msg; call_error(fullmessage.str());}
+   \brief Normalized absolute measure calculated from the image.
+   
+   <B>Usage:</B> measure( (float_image)image) -> float_image
+   
+   <B>Description:</B> 
+
+   <B>Types supported:</B> float 2d, float 3d
+   
+   <B>Category:</B> signal, development
+   \ingroup signal, development
+
+   <b>References:</b>
+   <br>[1] <href url="http://www.gnu.org/software/gsl"> GNU Scientific Library </href>
+   \author Laszlo Marak, 2009-2010
+
+ */
+
+
+
+#include "pink.h"
 
 using namespace std;
 using namespace pink;
@@ -48,7 +66,7 @@ int main(int argc, char * argv[]){
   
   if ( min == max )
   {
-    error("All pixels are equal in the image.");
+    pink_error("All pixels are equal in the image.");
   } /* if */
 
   PRINTIMAGE(src);
@@ -69,7 +87,7 @@ int main(int argc, char * argv[]){
   
   if ( min == max )
   {
-    error("All pixels are equal in the image.");
+    pink_error("All pixels are equal in the image.");
   } /* if */
 
 

@@ -37,9 +37,9 @@ namespace pink {
 
     ~ungerflow()
       {
-        #ifdef UJIMAGE_DEBUG
-	std::cout << "destroying the ungerflow object (" << static_cast<void*>(this) << ")\n";	
-        #endif /* UJIMAGE_DEBUG */        
+#       ifdef UJIMAGE_DEBUG
+	std::cerr << "destroying the ungerflow object (" << static_cast<void*>(this) << ")\n";	
+#       endif /* UJIMAGE_DEBUG */        
       };
     
     image_type start();    
@@ -65,11 +65,17 @@ namespace pink {
     float theta
     )
   {
-    boost::shared_array<ungerflow<image_type> > ungerflow_obj;
+    ungerflow<image_type> ungerflow_obj(
+      frame_around(src_sink, -1),
+      frame_around(gg, 0),
+      frame_around(lambda, 0),
+      frame_around(guidence_f, 0),
+      iteration,
+      tau,
+      theta
+      );
     
-    ungerflow_obj.reset( new ungerflow<image_type>( src_sink, gg, lambda, guidence_f, iteration, tau, theta ) );
-    
-    image_type result = ungerflow_obj -> start();
+    image_type result = frame_remove(ungerflow_obj.start());
 
     return result;
   } /* ungerflow */
@@ -88,14 +94,14 @@ namespace pink {
     float theta
     ) : maxflow<image_type>( src_sink, gg, iteration, tau/* /theta */ , 1)
   {
-    #ifdef UJIMAGE_DEBUG
-    std::cout << "creating the ungerflow object (" << static_cast<void*>(this) << ")\n";	
-    #endif /* UJIMAGE_DEBUG */        
+#   ifdef UJIMAGE_DEBUG
+    std::cerr << "creating the ungerflow object (" << static_cast<void*>(this) << ")\n";	
+#   endif /* UJIMAGE_DEBUG */        
 
     this->theta = theta;
-    this->guidence_f.reset( new IMAGE_TYPE(guidence_f) );
-    this->lambda.reset( new IMAGE_TYPE(lambda));
-    this->dual_potencial.reset(new image_type(gg.get_size(), "dual_potencial"));    
+    this->guidence_f.copy(guidence_f);
+    this->lambda.copy(lambda);
+    this->dual_potencial.copy(gg); //"dual_potencial";
   } /* ungerflow::ungerflow */
   
   
@@ -153,7 +159,7 @@ namespace pink {
       
       this->upDateThreshold();
       
-      this->potencial.swap(dual_potencial);
+      this->potencial.swap(dual_potencial); /// !!!!
 
     } /* FOR(e, iteration) */
 
@@ -173,19 +179,19 @@ namespace pink {
   {
     FOR(q, this->length_glob)
     {
-      if ( (*this->potencial)[q] - (*guidence_f)[q] > (*lambda)[q] * theta )
+      if ( this->potencial[q] - guidence_f[q] > lambda[q] * theta )
       {
-	(*dual_potencial)[q] = (*this->potencial)[q] - (*lambda)[q] * theta;	
+	dual_potencial[q] = this->potencial[q] - lambda[q] * theta;	
       }
       else /* NOT (*potencial)[q] - (*guidence_f)[q] > (*lambda)[q] * theta */
       {
-	if ( (*this->potencial)[q] - (*guidence_f)[q] < - (*lambda)[q] * theta )
+	if ( this->potencial[q] - guidence_f[q] < - lambda[q] * theta )
 	{
-	  (*dual_potencial)[q] = (*this->potencial)[q] + (*lambda)[q] * theta;
+	  dual_potencial[q] = this->potencial[q] + lambda[q] * theta;
 	}
 	else /* NOT (*potencial)[q] - (*guidence_f)[q] < - (*lambda)[q] * theta => |u-f| < lambda * theta */	
 	{
-	  (*dual_potencial)[q] = (*guidence_f)[q];
+	  dual_potencial[q] = guidence_f[q];
 	} /* NOT (*potencial)[q] - (*guidence_f)[q] < - (*lambda)[q] * theta */
       } /* NOT (*potencial)[q] - (*guidence_f)[q] > (*lambda)[q] * theta */
     } /* FOR */

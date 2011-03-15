@@ -1789,15 +1789,36 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     "maxflow",
     pink::maxflow_float,
     (arg("source and sink"), arg("constraint image"), arg("iterations"), arg("tau"), arg("number of threads")=0),
-    "WRITE ME!"
+    doc__maxflow__cpp__
     );
 
+  def(
+    "ungerflow",
+    pink::lungerflow<float_image>,
+    (arg("source and sink"),
+     arg("gradient image"),
+     arg("lambda image"),
+     arg("guidence image"),
+     arg("number of iterations"),
+     arg("tau"),
+     arg("theta") /*,
+                    arg("number of threads")=0*/
+      ),
+    doc__ungerflow__cpp__
+    );
   
   def(
     "gradient_abs",
     pink::uiGradientAbs,
     (arg("image")),
-    "WRITE ME!"
+    doc__gradient_abs__cpp__
+    );
+
+  def(
+    "measure",
+    pink::lmeasure<float_image>,
+    (arg("image")),
+    doc__measure__cpp__
     );
 
 

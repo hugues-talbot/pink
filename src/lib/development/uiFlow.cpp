@@ -80,11 +80,18 @@ namespace pink {
     
     //cout << "maxflow object\n";
     
-    maxflow_obj.reset( new maxflow<float_image>(SS, gg, iteration, glob_tau, number_of_threads ) );
+    maxflow_obj.reset( new maxflow<float_image>(
+                         frame_around(SS, -1),
+                         frame_around(gg, 0.),
+                         iteration,
+                         glob_tau,
+                         number_of_threads
+                         )
+      );
     
     //cout << "start()ing\n";
     
-    float_image result = maxflow_obj->start();
+    float_image result = frame_remove(maxflow_obj->start());
     
     //cout << "returning result\n";
     
