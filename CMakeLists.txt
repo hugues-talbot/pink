@@ -117,7 +117,7 @@ if (CMAKE_HOST_UNIX)
     find_package(CFITSIO)
 
     if (HT_CFITSIO_FOUND)
-	message("cfitsio found, library= " ${CFITSIO_LIBRARY})
+	#message("cfitsio found, library= " ${CFITSIO_LIBRARY})
 	add_definitions(-DHAVE_FITS_LIB)
     else (HT_CFITSIO_FOUND)
 	#message("cfitsio library not found, FITS handling disabled")
