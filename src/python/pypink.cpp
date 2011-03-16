@@ -1832,10 +1832,10 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   // exposing the base image function
   class_<pink_image_wrap, boost::noncopyable> ("any_image");
   
-  ujoi_class_export < char_image > (
-    "char_image",
-    "This is the image class for 1 byte 'char' images"
-    );
+//   ujoi_class_export < char_image > (
+//     "char_image",
+//     "This is the image class for 1 byte 'char' images"
+//     );
 
   ujoi_class_export < short_image > (
     "short_image",

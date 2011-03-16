@@ -59,6 +59,10 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdio.h>
 #include <stdint.h>
 
+#ifndef INT32_MAX
+# define INT32_MAX		(2147483647)
+#endif
+
 // #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
 #ifdef UNIXIO
 #  include <unistd.h>
