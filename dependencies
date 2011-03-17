@@ -34,7 +34,7 @@ ipython
 // *************************************************
 
 // *************************************************
-// Pink-python dependenies on debian lenny (5.0, 32bit)
+// Pink-python dependencies on debian lenny (5.0, 32bit)
 // *************************************************
 
 // installed before compilation 
@@ -79,3 +79,12 @@ emacs, emacs-gtk
 // *************************************************
 
 
+// *************************************************
+// Pink-python dependencies on debian squeeze (6.0, 64bit)
+// *************************************************
+
+// mandatory 
+sudo apt-get install imview libboost-dev libncurses-dev cmake python-imaging-tk python-vtk ipython python-dev libx11-dev g++ gcc make libtiff-dev
+
+// optional
+sudo apt-get install cmake-gui
