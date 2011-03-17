@@ -14,6 +14,13 @@ invoke the Python interpreter by typing
 ./pink.sh
 \endverbatim
 
+If you have also installed Pink after the compilation, you can get the
+same environment by launching the Python interpreter
+
+\verbatim
+ipython
+\endverbatim
+
 you should get the following prompt:
 
 \verbatim
@@ -30,7 +37,7 @@ In [1]:
 \endverbatim
 
 This is a standard Python interpreter. The script sets up the
-necessery directories so that the interpreter would find the Pink
+necessary directories so that the interpreter would find the Pink
 library. The ultimate test of a successfull compilation is the
 importing of the library in Python:
 

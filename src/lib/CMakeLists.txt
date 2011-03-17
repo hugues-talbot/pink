@@ -15,11 +15,11 @@ FILE( GLOB lib_src_cxx *.cxx )
 #message( FATAL_ERROR "lib_src_cxx = '" ${lib_src_cxx} "'" )
 FILE( GLOB lib_src_bdd ../bdd/*.c )
 #message(info="LIAR components"
-if (LIAR)
+if (PYTHON_FRONT_END) # LIAR obsolete
     FILE( GLOB lib_src_liar ../liar/*.c )
     # for generic programming in C
     include_directories( ../liar )
-endif (LIAR)
+endif(PYTHON_FRONT_END) # LIAR obsolete
 #message(info="DEVEL components")
 if (DEVELOPMENT)
     FILE( GLOB lib_development_c development/*.c )

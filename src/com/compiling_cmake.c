@@ -38,18 +38,15 @@ major options you can choose from:
 BASH_FRONT_END                   OFF
 BUILD_DOCUMENTATION              OFF
 DEVELOPMENT                      OFF
-LIAR                             OFF
 PYTHON_FRONT_END                 OFF
 \endverbatim
 
-For a standard compilation you have to set at LIAR and
-PYTHON_FRONT_END to YES:
+For a standard compilation you have to set PYTHON_FRONT_END to ON:
 
 \verbatim
 BASH_FRONT_END                   OFF
 BUILD_DOCUMENTATION              OFF
 DEVELOPMENT                      OFF
-LIAR                             ON
 PYTHON_FRONT_END                 ON
 \endverbatim
 
@@ -58,17 +55,44 @@ and a third configuration.
 
 \section generation Generation
 If the configuration succeeds each time you are ready to generate the
-build code. Type 'g' and the necessery makefiles will be generated.
+build code. Type 'g' and the necessary makefiles will be generated.
 
 Note: If there's an error during one of these configurations, then an
 appropriate error message is presented. Try to update your system
 according to these error messages. 
 
 \section compilation Compilation
-Type make to carry out necessery compilation, building and script
+Type 
+
+\verbatim
+make
+\endverbatim
+
+to carry out necessary compilation, building and script
 generation. If the compilation succeeds without and error message, you
 can consult the page \ref using_python.
 
+\section installation Installation The configuration is capable of
+installing the Pink-Python library on your system. For the
+installation you need to check two variables:
+
+\verbatim
+CMAKE_INSTALL_PREFIX             /usr/local
+PYTHON_MODULE_INSTALL_PATH       /usr/lib/python2.6/site-packages
+\endverbatim
+
+The 'PYTHON_MODULE_INSTALL_PATH' variable is detected automatically,
+so you shouldn't have any problems. The 'CMAKE_INSTALL_PREFIX' is the
+GNU standard '/usr/local', you probably want to change it to
+'/usr'. Alternatively, you can specify different directories depending
+your system. If you are content with the configuration, type
+
+\verbatim
+sudo make install
+\endverbatim
+
+and the Pink-Python library will be installed on your system. After
+the installation you can consult the page \ref using_python.
 
 \author UjoImro, 2011
 
