@@ -13,18 +13,30 @@ import pink
 def namestr(obj, namespace):
 	return [name for name in namespace if namespace[name] is obj]
 
-def imview(image,debug=False):
-	"""A function to display an image in Pink/Python"""
-	if (debug):
-		PLiarEnableDebug()
-	# start an imview
-	port = pink.cpp.Pimview()
-	# login to imview
-	conn = pink.cpp.Pimviewlogin("","",port)
-	# upload the data
-	imagename = namestr(image,locals())[0]
-	up = pink.cpp.Pimviewputimage(image,imagename,conn)
-	return
+def imview(images,debug=False):
+	"""A function to display an image in Pink/Python. It works on
+	images and lists of images:
+	pink.imview(I)
+	pink.imview([I,J])
+	"""
+
+	if not isinstance(images, list):
+		if (debug):
+			PLiarEnableDebug()
+		# start an imview
+		port = pink.cpp.Pimview()
+		# login to imview
+		conn = pink.cpp.Pimviewlogin("","",port)
+		# upload the data
+		imagename = namestr(images,locals())[0]
+		up = pink.cpp.Pimviewputimage(images,imagename,conn)
+		return
+	else: # isinstance(image, list)
+		num = 0
+		viewer = pink.Imview(images[0])
+		for q in range(1, len(images)):
+			viewer.show(images[q], str(q))
+
 
 class Imview:
 	"""A class to display images in Pink/Python"""
