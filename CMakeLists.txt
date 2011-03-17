@@ -73,7 +73,10 @@ if (CMAKE_HOST_UNIX)
 
     option( DEVELOPMENT "Compiles additional functions which are not-yet part of the core library (Mostly because they require additional dependencies). " OFF )
 
-    option( LIAR "Compiles additional functions adapted from the Library of Image Analysis Routines," OFF)
+    ## LIAR is incomporated in the PYTHON_FRONT_END
+    # option( LIAR "Compiles additional functions adapted from the Library of Image Analysis Routines," OFF)
+
+    option( PYTHON_FRONT_END "Compile the python front-end and the cpp functions" OFF )
 
 ### **********************************************************************************************
 ### **********************************************************************************************
@@ -139,7 +142,7 @@ if (CMAKE_HOST_UNIX)
     ### Option LIAR
     ###
     
-    if (LIAR)
+    if (PYTHON_FRONT_END) # LIAR obsolete
 	## we need POSIX semaphores to communicate with imview
 	CHECK_INCLUDE_FILE(semaphore.h SEMTEST)
 	if (NOT SEMTEST)
@@ -171,7 +174,7 @@ if (CMAKE_HOST_UNIX)
 		set( LIBS ${LIBS} ${POSIX_REALTIME_LIB} )
 	endif (THIS_IS_LINUX)
 
-  endif (LIAR)
+    endif (PYTHON_FRONT_END) # end of LIAR
 
 
     ### ******************************************************
@@ -257,7 +260,7 @@ if (CMAKE_HOST_UNIX)
 ### **********************************************************************************************
 
 
-    option( PYTHON_FRONT_END "Compile the python front-end and the cpp functions" OFF )
+
 
     if ( PYTHON_FRONT_END )
 
@@ -269,10 +272,17 @@ if (CMAKE_HOST_UNIX)
 	endif(NOT PYTHON_INCLUDE)
 
 	if(NOT PYTHON_LIBRARY)
-	    SET(PYTHON_LIBRARY ${PYTHON_LIBRARIES} CACHE STRING "The python library.")
+	    SET(PYTHON_LIBRARY ${PYTHON_LIBRARIES} CACHE FILEPATH "The python library.")
 	endif(NOT PYTHON_LIBRARY)
 
 	find_package(Boost COMPONENTS python thread )
+
+	if( (NOT Boost_FOUND) AND ( (NOT Boost_PYTHON) OR (NOT Boost_THREAD) ) )
+	    #${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY}
+	    SET( Boost_PYTHON "NOT FOUND" CACHE FILEPATH "The boost.python library.")
+	    SET( Boost_THREAD "NOT FOUND" CACHE FILEPATH "The boost.thread library.")
+	    message( FATAL_ERROR "Boost libraries where not found. If they are installed, please set the Boost_PYTHON and the Boost_THREAD variables.")
+	endif( (NOT Boost_FOUND) AND ( (NOT Boost_PYTHON) OR (NOT Boost_THREAD) ) )
 
 	# required version of BOOST 1.35 or newer
 #	set( Boost_MAJOR_VERSION_REQUIRED 1 )
@@ -284,10 +294,10 @@ if (CMAKE_HOST_UNIX)
 #	    message( FATAL_ERROR "For the core components you need a boost version at least " ${Boost_MAJOR_VERSION_REQUIRED} "." ${Boost_MINOR_VERSION_REQUIRED} )
 #	endif ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
 
-	set( LIBS ${LIBS} ${Boost_LIBRARIES} )
+	set( LIBS ${LIBS} ${Boost_LIBRARIES} ${Boost_PYTHON} ${Boost_THREAD} )
 
 	# looking for the python library 
-	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_LIBRARY} ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} )
+	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_LIBRARY} ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_PYTHON} ${Boost_THREAD} )
 	set( CMAKE_REQUIRED_INCLUDES  ${Boost_INCLUDE_DIR} ${CMAKE_REQUIRED_INCLUDES} ${INCLUDES} ${PYTHON_INCLUDE} ${EIGEN_INCLUDE} )
 	include_directories( ${CMAKE_REQUIRED_INCLUDES} )
 
