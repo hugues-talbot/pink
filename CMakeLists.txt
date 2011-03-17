@@ -166,7 +166,7 @@ if (CMAKE_HOST_UNIX)
 	    INCLUDE_DIRECTORIES(${TIFF_INCLUDE_DIR})
 	    set( LIBS ${LIBS} ${TIFF_LIBRARIES} )
 	else(TIFF_FOUND)
-	    message( "Libtiff not found. Check your installation")
+	    message( FATAL_ERROR "Libtiff not found. Check your installation")
 	endif(TIFF_FOUND)
   
 	if (THIS_IS_LINUX)
