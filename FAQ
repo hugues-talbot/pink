@@ -46,3 +46,7 @@ MC 25/02/2011
 system:  linux mandriva 2010.2
 PB: lost operators (compiled ok but not accessible under Python)
 SOL: install boost 1.40 instead of 1.36
+download version from http://www.boost.org/users/history/
+cmake .
+make
+make install
