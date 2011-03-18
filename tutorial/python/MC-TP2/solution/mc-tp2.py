@@ -3,6 +3,7 @@
 
 # Michel's TP-2
 
+from pink import imview
 from pink import cpp as pink
 
 #sol_outils1
@@ -55,6 +56,7 @@ airport = pink.readimage("../images/airport.pgm")
 runways = extract_runways(airport)
 runways.writeimage("runways.pgm")
 pink.surimp(airport, runways, "supimp.ppm")
+imview([airport, runways])
 
 # sol_muscle
 # extract the cells of a musle-fiber-cut image

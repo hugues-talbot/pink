@@ -24,3 +24,10 @@ MC génération de pages "man" à partir du code doxygen
 UJ use 
 ncftpput -R -u u50446271 -p ******** ftp.ujoimro.com pinkhtml html/*
 for uploading
+
+
+For cde package
+
+help pink
+imview colormap; 
+imview surimp

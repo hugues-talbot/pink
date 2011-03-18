@@ -41,7 +41,7 @@ imview(img)
 
 grain_size = pink.area(img)
 lab = pink.labelfgd(img, 8)
-nb_grains = max1(lab)        
+nb_grains = pink.minmax(lab)[1]
 
 print "grain_size = " + repr(grain_size)
 print "nb_grains = " + repr(nb_grains)

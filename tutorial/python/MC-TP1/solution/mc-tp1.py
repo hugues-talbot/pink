@@ -18,6 +18,7 @@ def filter(image, radius_opening, radius_closing):
 
 cell = pink.readimage("../images/cell.pgm")
 filtered = filter(cell,2,2)
+imview([cell, filtered])
 filtered.writeimage("cell_filtered.pgm")
 
 
@@ -30,7 +31,7 @@ def remove_objects(image):
     return result
 
 inside = remove_objects(filtered)
-inside.writeimage("inside.pgm")
+#inside.writeimage("inside.pgm")
 
 
 # exo1_3
@@ -44,7 +45,7 @@ def fill_the_holes(image):
 
 noholes = fill_the_holes(inside)
 noholes.writeimage("noholes.pgm")
-imview(noholes)
+#imview(noholes)
 
 # exo1_4
 # extraction of object with at least one hole
@@ -56,7 +57,7 @@ def find_perforated(image):
     return result
 
 perforated = find_perforated(inside)
-perforated.writeimage("perforated.pgm")
+#perforated.writeimage("perforated.pgm")
 
 # exo1_5
 # extraction of the wires from a circuit
@@ -85,7 +86,7 @@ def find_the_wires(image):
 
 circuit = pink.readimage("../images/circuit.pgm")
 wires = find_the_wires(circuit)
-wires.writeimage("wires.pgm")
+#wires.writeimage("wires.pgm")
 
 
 # exo1_6

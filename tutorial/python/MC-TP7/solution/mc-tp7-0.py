@@ -19,8 +19,7 @@ t0 = crop(big, 0, 0, rs, cs)
 t1 = crop(big, rs, 0, rs, cs)
 t2 = crop(big, 0, cs, rs, cs)
 t3 = crop(big, rs, cs, rs, cs)
-imview big
-imview t0
-imview t1
-imview t2
-imview t3
+
+
+imview([big, t0, t1, t2, t3])
+

@@ -7,12 +7,17 @@ from pink import view3d, render, seuilmesh
 from pink import cpp as pink
 inv = pink.inverse
 
+debug = False
+
 lettre_a = pink.readimage("../images/lettre_a.pgm")
-view3d(lettre_a)
+if debug:
+    view3d(lettre_a)
 
 ### General skeletonization with toposhrink
 shrunk = pink.toposhrink(lettre_a, pink.distc(lettre_a,0), 26, 1, 1, 1, 1)
+#if debug: # for package generation
 view3d(shrunk)
+# if debug: # for package generation
 render(lettre_a, shrunk)
 
 
@@ -25,16 +30,19 @@ def fill_the_hole(image, tbmin=1, tbmax=1):
 frame = pink.frame( pink.char_image(lettre_a.size), 255)
 dist = pink.dist(lettre_a, 0)
 shrunk = pink.toposhrink( inv(frame), inv(dist), 26, 1, 1, 1, 1, lettre_a )
-render(lettre_a, shrunk)
+if debug:
+    render(lettre_a, shrunk)
 
 ### same with more holes
 tores = pink.readimage("../images/tores.pgm")
 shrunk = fill_the_hole(tores)
-render(shrunk, tores)
+if debug:
+    render(shrunk, tores)
 
 ### hint: delete the points for which tb==1
 shrunk = fill_the_hole(tores, 0, 10)
-render(shrunk, tores)
+if debug:
+    render(shrunk, tores)
 
 
 
@@ -44,12 +52,14 @@ shrunk = fill_the_hole(chaise)
 blank = pink.char_image(chaise.size)
 bad_shrunk = pink.toposhrink( inv(pink.frame(blank,255)), pink.int_image(chaise.size), 26, 0, 10, 1, 1, chaise )
 
-render(shrunk, chaise)
+if debug:
+    render(shrunk, chaise)
 
 ### application vertebrae
 vertebre = pink.readimage("../images/vertebre.pgm")
 shrunk = fill_the_hole(vertebre, 0, 10)
-render(shrunk, vertebre)
+if debug:
+    render(shrunk, vertebre)
 
 
 # #### REVISION REQUIRED
@@ -58,7 +68,8 @@ render(shrunk, vertebre)
 # closed1 = pink.holeclosing(vertebre, 26, 0)
 # closed2 = pink.holeclosing(vertebre, 26, 10000)
 # closed3 = pink.holeclosing(vertebre, 26, 6)
-# render(closed1, closed3)
+if debug:
+    render(closed1, closed3)
 
 # #### end of REVISION REQUIRED
 

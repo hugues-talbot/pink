@@ -75,7 +75,7 @@ def analyzejoints(image, seg):
 
 joints = pink.readimage("../images/joints.pgm")
 seg = segment(joints, 6)
-#imview(seg)
+imview(seg)
 analyzejoints(joints, seg)
 
 # LuM end of file
