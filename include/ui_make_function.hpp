@@ -199,6 +199,26 @@ namespace pink
   namespace python
   {
 
+    // the special case with one parameter for ui_make_funcion
+
+    template < class image_type,
+               class result_type,
+               result_type (*mcfunction) (
+                 typename convert_if<image_type>::type
+                 )
+               >
+    image_type make_function_one( const image_type& image)
+    {
+      image_type result;
+      result.copy(image);
+      if (!mcfunction(result))
+      {
+        pink_error("mcfunction failed!\n");        
+      }
+      return result;
+    };
+       
+    
     BOOST_PP_REPEAT(MAX_PARAMETERS, MAKE_FUNCTION, ~)
 
   } /* namespace python */

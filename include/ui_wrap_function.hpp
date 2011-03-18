@@ -234,6 +234,27 @@ using boost::is_same;
                                                                         \
   };                                                                    
 
+// the function with one parameter is handled specially
+#define UI_MAKE_FIRST_INSTANCE(FN)                                      \
+  template <class FA>                                                   \
+  struct BOOST_PP_CAT(instance,BOOST_PP_COUNTER)< FA, typename enable_if< is_same<FA, int_<1> > >::type > \
+  {                                                                     \
+    template <class Fn, class Args>                                     \
+      void define(const char* fname, Fn fn, Args args, const char* doc) \
+    {                                                                   \
+      typedef struct decompose<Fn> FT;                                  \
+                                                                        \
+      def(fname, make_function_one< char_image, typename FT::result_type, FN >, args, doc); \
+      def(fname, make_function_one< short_image, typename FT::result_type, FN >, args, doc); \
+      def(fname, make_function_one< int_image, typename FT::result_type, FN >, args, doc); \
+      def(fname, make_function_one< float_image, typename FT::result_type, FN >, args, doc); \
+      def(fname, make_function_one< double_image, typename FT::result_type, FN >, args, doc); \
+      def(fname, make_function_one< fcomplex_image, typename FT::result_type, FN >, args, doc); \
+      def(fname, make_function_one< dcomplex_image, typename FT::result_type, FN >, args, doc); \
+    }                                                                   \
+  };
+
+
 
 // // checking for the proper usage
 // #ifndef BOOST_PP_COUNTER
@@ -246,12 +267,7 @@ using boost::is_same;
   {                                                                     \
   };                                                                    \
                                                                         \
-  UI_WRAP_FUNCTION_MAKE_INSTANCE(                                       \
-    MAX_PARAMETERS,                                                     \
-    1,                                                                  \
-    (pink::python::ui_cheat<typename FT::result_type, xvimage*,         \
-     FN>)                                                               \
-    )                                                                   \
+  UI_MAKE_FIRST_INSTANCE(FN);                                           \
                                                                         \
   BOOST_PP_REPEAT_FROM_TO(2, MAX_PARAMETERS, UI_WRAP_FUNCTION_MAKE_INSTANCE, FN) \
                                                                         \

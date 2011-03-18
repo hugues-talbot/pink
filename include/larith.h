@@ -82,11 +82,11 @@ extern int32_t linf(
 );
 
 extern int32_t linverse(
-        struct xvimage *image1
+        struct xvimage *image
 );
 
 extern int32_t linvert(
-        struct xvimage *image1
+        struct xvimage *image
 );
 
 extern int32_t lmask(
