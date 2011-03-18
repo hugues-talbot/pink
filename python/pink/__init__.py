@@ -19,34 +19,38 @@ import cpp # the functions imported directly from c/c++
 try:
     from pil_photoimage import to_photoimage, to_rgb_photoimage
 except:
+    print("warning: cannot import to_photoimage or to_rgb_photoimage")
     pass
 
 try:
     from view3d import view3d
 except:
-    print "cannot import view3d"
+    print("warning: cannot import view3d")
     pass
 
 try:
     from render import render
 except:
+    print("warning: cannot import render")
     pass
 
 try:
     from seuilmesh import seuilmesh
 except:
+    print("warning: cannot import seuilmesh")
     pass
 
 try:
     from imview import *
 except:
+    print("warning: cannot import view3d")
     #pass
-    print("no imview\n")
 
 
 try:
     from manipulate import manipulate
 except:
+    print("cannot import view3d")
     pass
 
 
