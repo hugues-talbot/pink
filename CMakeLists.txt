@@ -277,12 +277,12 @@ if (CMAKE_HOST_UNIX)
 
 	find_package(Boost COMPONENTS python thread )
 
-	if (NOT Boost_FOUND) 
+	if( (NOT Boost_FOUND) AND ( (NOT Boost_PYTHON) OR (NOT Boost_THREAD) ) )
 	    #${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY}
 	    SET( Boost_PYTHON "NOT FOUND" CACHE FILEPATH "The boost.python library.")
 	    SET( Boost_THREAD "NOT FOUND" CACHE FILEPATH "The boost.thread library.")
 	    message( FATAL_ERROR "Boost libraries where not found. If they are installed, please set the Boost_PYTHON and the Boost_THREAD variables.")
-	endif (NOT Boost_FOUND)
+	endif( (NOT Boost_FOUND) AND ( (NOT Boost_PYTHON) OR (NOT Boost_THREAD) ) )
 
 	# required version of BOOST 1.35 or newer
 #	set( Boost_MAJOR_VERSION_REQUIRED 1 )
