@@ -163,16 +163,33 @@ static int32_t orientation(double mx1, double my1, double mx2, double my2, doubl
 /* ==================================== */
 int32_t lattribute(
         struct xvimage *img, /* image de depart */
-        int32_t connex,          /* 4, 8  */
-        int32_t typregion,       /* = <LABMIN | LABMAX | LABPLATEAU> */
-        int32_t attrib,          /* 0: surface, 1: perimetre, 2: circularite, 3: nb. trous, 
-                                4: excentricite, 5: orientation, 6: diamètre vertical, 7: diamètre horizontal */
-        int32_t seuil,           /* en dessous (<=) de seuil, l'attribut est mis a 0 */
-        struct xvimage *lab, /* resultat: image d'attributs */
-        int32_t *nlabels)        /* resultat: nombre de regions traitees */
+        int32_t connex,
+        int32_t typregion,
+        int32_t attrib,
+        int32_t seuil, 
+        struct xvimage *lab)     /* resultat: image d'attributs */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lattribute"
+{
+  if (depth(img) == 1) 
+    return lattribute2d(img, connex, typregion, attrib, seuil, lab);
+  else
+    return lattribute3d(img, connex, typregion, attrib, seuil, lab);
+} // lattribute()
+
+/* ==================================== */
+int32_t lattribute2d(
+        struct xvimage *img, /* image de depart */
+        int32_t connex,      /* 4, 8  */
+        int32_t typregion,   /* = <LABMIN | LABMAX | LABPLATEAU> */
+        int32_t attrib,      /* 0: surface, 1: perimetre, 2: circularite, 3: nb. trous, 
+                                4: excentricite, 5: orientation, 6: diamètre vertical, 7: diamètre horizontal */
+        int32_t seuil,        /* en dessous (<=) de seuil, l'attribut est mis a 0 */
+        struct xvimage *lab)  /* resultat: image d'attributs */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lattribute2d"
 {
   int32_t k, l;
   index_t w, x, y, z;
@@ -180,7 +197,6 @@ int32_t lattribute(
   int32_t *LABEL = SLONGDATA(lab);
   index_t rs = rowsize(img);
   index_t cs = colsize(img);
-  index_t d = depth(img);
   index_t N = rs * cs;          /* taille image */
   Lifo * LIFO;
   int32_t label;
@@ -191,24 +207,12 @@ int32_t lattribute(
   double mx1, my1; // cumuls des variables x et y
   double mx2, my2, mxy2; // cumuls des x^2, y^2 et xy
   int32_t incr_vois;
+  int32_t nlabels;
 
-  if (datatype(lab) != VFF_TYP_4_BYTE) 
-  {
-    fprintf(stderr, "%s: le resultat doit etre de type VFF_TYP_4_BYTE\n", F_NAME);
-    return 0;
-  }
-
-  if ((rowsize(lab) != rs) || (colsize(lab) != cs) || (depth(lab) != d))
-  {
-    fprintf(stderr, "%s: tailles images incompatibles\n", F_NAME);
-    return 0;
-  }
-
-  if (depth(img) != 1) 
-  {
-    fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
-    exit(0);
-  }
+  ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(lab, VFF_TYP_4_BYTE);
+  ONLY_2D(img);
+  COMPARE_SIZE(img, lab);
 
   switch (connex)
   {
@@ -228,7 +232,7 @@ int32_t lattribute(
       return(0);
   }
 
-  *nlabels = 0;
+  nlabels = 0;
 
 if ((typregion == LABMIN) || (typregion == LABMAX))
 {
@@ -236,7 +240,7 @@ if ((typregion == LABMIN) || (typregion == LABMAX))
   {
     if (LABEL[x] == NONMARQUE)   /* on trouve un point x non etiquete */
     {
-      *nlabels += 1;
+      nlabels += 1;
       LABEL[x] = MARQUE;
 #ifdef DEBUGTROU
 printf("AMORCE p=%d,%d h=%d set LABEL = %d\n", x%rs, x/rs, SOURCE[x], LABEL[x]);
@@ -305,7 +309,7 @@ printf("AMORCE p=%d,%d h=%d set LABEL = %d\n", x%rs, x/rs, SOURCE[x], LABEL[x]);
                 if (label == MARQUE)
 		{
                   label = NONEXTREM;
-                  *nlabels -= 1;
+                  nlabels -= 1;
                   LABEL[w] = label;
                   LifoPush(LIFO, w);
 		}
@@ -409,8 +413,8 @@ else
   {
     if (LABEL[x] == NONMARQUE)
     {
-      *nlabels += 1;
-      LABEL[x] = *nlabels;
+      nlabels += 1;
+      LABEL[x] = nlabels;
       switch (attrib)            /* on initialise les attributs de cette composante */
       {
 	case AREA: val_attrib = 0; break;
@@ -509,9 +513,9 @@ else
 
   LifoTermine(LIFO);
 
-  *nlabels += 1; /* pour le niveau 0 */
+  nlabels += 1; /* pour le niveau 0 */
   return(1);
-} // lattribute()
+} // lattribute2d()
 
 /* ==================================== */
 int32_t lattribute3d(
@@ -520,8 +524,7 @@ int32_t lattribute3d(
         int32_t typregion,       /* = <LABMIN | LABMAX | LABPLATEAU> */
         int32_t attrib,          /* 0: surface */
         int32_t seuil,           /* en dessous (<=) de seuil, l'attribut est mis a 0 */
-        struct xvimage *lab,     /* resultat: image d'attributs */
-        int32_t *nlabels)        /* resultat: nombre de regions traitees */
+        struct xvimage *lab)     /* resultat: image d'attributs */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lattribute3d"
@@ -538,18 +541,12 @@ int32_t lattribute3d(
   Lifo * LIFO;
   int32_t label;
   int32_t val_attrib;
+  int32_t nlabels;
 
-  if (datatype(lab) != VFF_TYP_4_BYTE) 
-  {
-    fprintf(stderr, "%s: le resultat doit etre de type VFF_TYP_4_BYTE\n", F_NAME);
-    return 0;
-  }
-
-  if ((rowsize(lab) != rs) || (colsize(lab) != cs) || (depth(lab) != ds))
-  {
-    fprintf(stderr, "%s: tailles images incompatibles\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(lab, VFF_TYP_4_BYTE);
+  ONLY_3D(img);
+  COMPARE_SIZE(img, lab);
 
   /* le LABEL initialement est mis a NONMARQUE */
   for (x = 0; x < N; x++) LABEL[x] = NONMARQUE;
@@ -560,7 +557,7 @@ int32_t lattribute3d(
       return(0);
   }
 
-  *nlabels = 0;
+  nlabels = 0;
 
 if ((typregion == LABMIN) || (typregion == LABMAX))
 {
@@ -568,7 +565,7 @@ if ((typregion == LABMIN) || (typregion == LABMAX))
   {
     if (LABEL[x] == NONMARQUE)   /* on trouve un point x non etiquete */
     {
-      *nlabels += 1;
+      nlabels += 1;
       LABEL[x] = MARQUE;
       switch (attrib)            /* on initialise les attributs de cette composante */
       {
@@ -602,7 +599,7 @@ if ((typregion == LABMIN) || (typregion == LABMAX))
                 if (label == MARQUE)
 		{
                   label = NONEXTREM;
-                  *nlabels -= 1;
+                  nlabels -= 1;
                   LABEL[w] = label;
                   LifoPush(LIFO, w);
 		}
@@ -627,7 +624,7 @@ if ((typregion == LABMIN) || (typregion == LABMAX))
                 if (label == MARQUE)
 		{
                   label = NONEXTREM;
-                  *nlabels -= 1;
+                  nlabels -= 1;
                   LABEL[w] = label;
                   LifoPush(LIFO, w);
 		}
@@ -652,7 +649,7 @@ if ((typregion == LABMIN) || (typregion == LABMAX))
                 if (label == MARQUE)
 		{
                   label = NONEXTREM;
-                  *nlabels -= 1;
+                  nlabels -= 1;
                   LABEL[w] = label;
                   LifoPush(LIFO, w);
 		}
@@ -774,8 +771,8 @@ else
   {
     if (LABEL[x] == NONMARQUE)
     {
-      *nlabels += 1;
-      LABEL[x] = *nlabels;
+      nlabels += 1;
+      LABEL[x] = nlabels;
       switch (attrib)            /* on initialise les attributs de cette composante */
       {
 	case AREA: val_attrib = 0; break;
@@ -879,7 +876,7 @@ else
 
   LifoTermine(LIFO);
 
-  *nlabels += 1; /* pour le niveau 0 */
+  nlabels += 1; /* pour le niveau 0 */
   return(1);
 } // lattribute3d()
 
@@ -891,8 +888,7 @@ else
 int32_t lplanarity(
         struct xvimage *img,     /* image de depart */
         int32_t connex,          /* 6, 18, 26  */
-        struct xvimage *res,     /* resultat: image d'attributs */
-        int32_t *nlabels)        /* resultat: nombre de regions traitees */
+        struct xvimage *res)     /* resultat: image d'attributs */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lplanarity"
@@ -910,17 +906,10 @@ int32_t lplanarity(
   float planar;
   double a, b, c, d, error, *px, *py, *pz;
 
-  if (datatype(res) != VFF_TYP_FLOAT) 
-  {
-    fprintf(stderr, "%s: result image must be of type VFF_TYP_FLOAT\n", F_NAME);
-    return 0;
-  }
-
-  if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_FLOAT);
+  ONLY_3D(img);
+  COMPARE_SIZE(img, res);
 
   /* le RES initialement est mis a LP_MARK0 */
   for (x = 0; x < N; x++) RES[x] = LP_MARK0;
@@ -931,12 +920,10 @@ int32_t lplanarity(
       return(0);
   }
 
-  *nlabels = 0;
   for (x = 0; x < N; x++)
   {
     if (SOURCE[x] && (RES[x] == LP_MARK0))
     {
-      *nlabels += 1;
       RES[x] = LP_MARK1;
       areacomp = 0;
       LifoPush(LIFO, x);

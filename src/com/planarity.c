@@ -48,8 +48,6 @@ The result is a floating point image.
 <B>Category:</B> geo
 \ingroup  geo
 
-\warning This operator is in experimental state. Do not use in applications. 
-
 \author Michel Couprie
 */
 #include <stdio.h>
@@ -68,7 +66,7 @@ The result is a floating point image.
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t nblabels, connex;
+  int32_t connex;
   struct xvimage * image;
   struct xvimage * result;
 
@@ -101,16 +99,12 @@ int main(int argc, char **argv)
   }
   else
   {
-    if (! lplanarity(image, connex, result, &nblabels))
+    if (! lplanarity(image, connex, result))
     {
       fprintf(stderr, "%s: lplanarity failed\n", argv[0]);
       exit(1);
     }
   }
-
-#ifdef VERBOSE
-  printf("%s : NOMBRE DE COMPOSANTES : %d\n", argv[0], nblabels-1);
-#endif
 
   writeimage(result, argv[argc-1]);
 

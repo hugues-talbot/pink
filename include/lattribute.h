@@ -56,12 +56,20 @@ extern "C" {
 
 extern int32_t lattribute(
         struct xvimage *img, /* image de depart */
-        int32_t connex,          /* 4, 8  */
-        int32_t minimum,         /* booleen */
-        int32_t attrib,          /* 0: surface, 1: perimetre, 2: circularite ... */
-        int32_t seuil,           /* en dessous de seuil, l'attribut est mis a 0 */
-        struct xvimage *lab, /* resultat: image d'attributs */
-        int32_t *nlabels         /* resultat: nombre d'extrema traites */
+        int32_t connex, 
+        int32_t minimum,
+        int32_t attrib, 
+        int32_t seuil,  
+        struct xvimage *lab  /* resultat: image d'attributs */
+);
+
+extern int32_t lattribute2d(
+        struct xvimage *img, /* image de depart */
+        int32_t connex,      /* 4, 8  */
+        int32_t minimum,     /* booleen */
+        int32_t attrib,      /* 0: surface, 1: perimetre, 2: circularite ... */
+        int32_t seuil,       /* en dessous de seuil, l'attribut est mis a 0 */
+        struct xvimage *lab  /* resultat: image d'attributs */
 );
 
 extern int32_t lattribute3d(
@@ -70,14 +78,12 @@ extern int32_t lattribute3d(
         int32_t minimum,         /* booleen */
         int32_t attrib,          /* 0: surface, 1: perimetre, 2: circularite ... */
         int32_t seuil,           /* en dessous de seuil, l'attribut est mis a 0 */
-        struct xvimage *lab, /* resultat: image d'attributs */
-        int32_t *nlabels         /* resultat: nombre d'extrema traites */
+        struct xvimage *lab      /* resultat: image d'attributs */
 );
 extern int32_t lplanarity(
         struct xvimage *img,     /* image de depart */
         int32_t connex,          /* 6, 18, 26  */
-        struct xvimage *res,     /* resultat: image d'attributs */
-        int32_t *nlabels        /* resultat: nombre de regions traitees */
+        struct xvimage *res      /* resultat: image d'attributs */
 );
 #ifdef __cplusplus
 }

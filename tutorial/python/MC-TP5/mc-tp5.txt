@@ -7,3 +7,7 @@ But : corriger le gradient d'illumination
 
 Image : images/trois003.pgm
 But : corriger l'effet de "drappé"
+
+Image : images/carbures.pgm
+But : segmenter les carbures et mesurer les tailles des amas
+

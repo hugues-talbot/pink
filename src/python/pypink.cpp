@@ -415,6 +415,24 @@ UI_WRAP_RESULT(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
+UI_WRAP_RESULT(
+  int_image,
+  "attribute",
+  lattribute,
+  ( arg("image"), arg("connex"), arg("typregion"), arg("attrib"), arg("seuil") ),
+  doc__attribute__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_RESULT(
+  int_image,
+  "planarity",
+  lplanarity,
+  ( arg("image"), arg("connex") ),
+  doc__planarity__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
 // // NOTE: affine's using copyimage
 // UI_WRAP_RESULT(  
 //   "affine",

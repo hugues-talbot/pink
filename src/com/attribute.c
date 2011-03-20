@@ -36,21 +36,39 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief labels each connected component with its attribute value 
 
-<B>Usage:</B> attribute in.pgm connex seuil {min|max|pla} {area|perim|circ|trous|excen|orien|vdiam|hdiam} out.pgm
+<B>Usage:</B> attribute in.pgm connex seuil typregion attrib out.pgm
 
 <B>Description:</B>
+
 Labels each connected component with its attribute value.
+
 Argument \b connex defines the connectivity.
+
 Argument \b seuil defines a threshold: components with attribute value not higher than \b seuil are filtered out.
 
-Warning: in 3D only the attribute "area" is implemented.
+Argument \b typregion defines the type of regions:
+\li 0: regional maxima
+\li 1: regional minima
+\li 2: plateaus
+
+Argument \b attrib defines the considered attribute:
+\li 0: area
+\li 1: perimeter
+\li 2: circularity
+\li 3: number of holes
+\li 4: excentricity
+\li 5: orientation
+\li 6: vertical diameter
+\li 7: horizontal diameter
+\li 8: linearity
+\li 9: planarity
+
+\warning In 3D only the attribute "area" is implemented.
 
 <B>Types supported:</B> byte 2d, byte 3d
 
 <B>Category:</B> geo
 \ingroup  geo
-
-\warning This operator is in experimental state. Do not use in applications. 
 
 \author Michel Couprie
 */
@@ -64,13 +82,14 @@ Warning: in 3D only the attribute "area" is implemented.
 #include <lattribute.h>
 
 //#define VERBOSE
+
 #define USAGE "usage: %s filein.pgm connex seuil {min|max|pla} {area|perim|circ|trous|excen|orien|vdiam|hdiam} fileout.pgm\n"
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t nblabels, connex, attrib, typregion, seuil;
+  int32_t connex, attrib, typregion, seuil;
   struct xvimage * image;
   struct xvimage * result;
 
@@ -89,29 +108,8 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[2]);
   seuil = atoi(argv[3]);
-
-  if (strcmp(argv[4], "min") == 0) typregion = LABMIN;
-  else if (strcmp(argv[4], "max") == 0) typregion = LABMAX;
-  else if (strcmp(argv[4], "pla") == 0) typregion = LABPLATEAU;
-  else 
-  {
-    fprintf(stderr, USAGE, argv[0]);
-    exit(1);
-  }
-
-  if (strcmp(argv[5], "area") == 0) attrib = AREA;
-  else if (strcmp(argv[5], "perim") == 0) attrib = PERIM;
-  else if (strcmp(argv[5], "trous") == 0) attrib = TROUS;
-  else if (strcmp(argv[5], "circ") == 0) attrib = CIRC;
-  else if (strcmp(argv[5], "excen") == 0) attrib = EXCEN;
-  else if (strcmp(argv[5], "orien") == 0) attrib = ORIEN;
-  else if (strcmp(argv[5], "vdiam") == 0) attrib = VDIAM;
-  else if (strcmp(argv[5], "hdiam") == 0) attrib = HDIAM;
-  else 
-  {
-    fprintf(stderr, USAGE, argv[0]);
-    exit(1);
-  }
+  typregion = atoi(argv[4]);
+  attrib = atoi(argv[5]);
 
   result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
   if (result == NULL)
@@ -120,26 +118,11 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (depth(image) == 1)
+  if (! lattribute(image, connex, typregion, attrib, seuil, result))
   {
-    if (! lattribute(image, connex, typregion, attrib, seuil, result, &nblabels))
-    {
-      fprintf(stderr, "%s: lattribute failed\n", argv[0]);
-      exit(1);
-    }
+    fprintf(stderr, "%s: lattribute failed\n", argv[0]);
+    exit(1);
   }
-  else
-  {
-    if (! lattribute3d(image, connex, typregion, attrib, seuil, result, &nblabels))
-    {
-      fprintf(stderr, "%s: lattribute failed\n", argv[0]);
-      exit(1);
-    }
-  }
-
-#ifdef VERBOSE
-  printf("%s : NOMBRE DE COMPOSANTES : %d\n", argv[0], nblabels-1);
-#endif
 
   writelongimage(result, argv[argc-1]);
 
