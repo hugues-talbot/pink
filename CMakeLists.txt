@@ -395,6 +395,26 @@ if (CMAKE_HOST_UNIX)
 
 
     endif ( PYTHON_FRONT_END )
+
+### **********************************************************************************************
+### **********************************************************************************************
+### *************************** Package Generation ***********************************************
+### **********************************************************************************************
+### **********************************************************************************************
+
+
+    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Pink image")
+    SET(CPACK_PACKAGE_VENDOR "Esiee Engineering")
+    SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/readme")
+    SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/CeCill_header.txt")
+    SET(CPACK_PACKAGE_VERSION_MAJOR "0") 
+    SET(CPACK_PACKAGE_VERSION_MINOR "9")
+    SET(CPACK_PACKAGE_VERSION_PATCH "0")
+
+    INCLUDE(CPack)
+
+
+
 endif (CMAKE_HOST_UNIX)
 
 
