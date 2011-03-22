@@ -402,49 +402,8 @@ if (CMAKE_HOST_UNIX)
 ### **********************************************************************************************
 ### **********************************************************************************************
 
-    ### Getting the revision number ---------------
-    FIND_PROGRAM(SVN_EXECUTABLE svn
-	DOC "subversion command line client")
+    INCLUDE(UJ_GenerateRPM.cmake)
 
-    if (SVN_EXECUTABLE)
-
-	MACRO(Subversion_GET_REVISION dir variable)
-	EXECUTE_PROCESS(COMMAND ${SVN_EXECUTABLE} info ${dir}
-	    OUTPUT_VARIABLE ${variable}
-	    OUTPUT_STRIP_TRAILING_WHITESPACE
-	)
-	STRING(REGEX REPLACE "^(.*\n)?Revision: ([^\n]+).*"
-	    "\\2" ${variable} "${${variable}}"
-	)
-	ENDMACRO(Subversion_GET_REVISION)
-
-	Subversion_GET_REVISION(${CMAKE_CURRENT_SOURCE_DIR} PINK_SVN_REVISION)
-        #MESSAGE(STATUS "Source dir is ${CMAKE_CURRENT_SOURCE_DIR}")
-	#MESSAGE(STATUS "Revision is ${PINK_SVN_REVISION}")
-    else (SVN_EXECUTABLE)
-	SET(PINK_SVN_REVISION "_unknown")
-    endif(SVN_EXECUTABLE)
-	
-    ### Getting the revision number ---------------
-
-    SET(CPACK_GENERATOR "TBZ2")
-    SET(CPACK_SOURCE_GENERATOR "TBZ2")
-    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Pink image")
-    SET(CPACK_PACKAGE_VENDOR "Esiee Engineering")
-    #SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/readme")
-    SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/CeCill_header.txt")
-    SET(CPACK_PACKAGE_VERSION_MAJOR "0") 
-    SET(CPACK_PACKAGE_VERSION_MINOR "9")
-    SET(CPACK_PACKAGE_VERSION_PATCH r${PINK_SVN_REVISION})
-
-
-    ### For RPM-s only ---------------------------
-
-    SET(CPACK_RPM_PACKAGE_LICENSE "CeCILL")
-
-    ### end of For RPM-s only --------------------
-
-    INCLUDE(CPack)
 
 
 
