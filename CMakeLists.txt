@@ -302,9 +302,9 @@ if (CMAKE_HOST_UNIX)
 
 	set( LIBS ${LIBS} ${Boost_LIBRARIES} ${Boost_PYTHON} ${Boost_THREAD} ${PYTHON_LIBRARY} )
 
-	message( STATUS "Boost_LIBRARIES=" ${Boost_LIBRARIES} )
-	message( STATUS "Boost_LIBRARIES=" ${Boost_LIBRARIES} )
-	message( STATUS "Boost_PYTHON_LIBRARY=" ${Boost_PYTHON_LIBRARY} )
+	#message( STATUS "Boost_LIBRARIES=" ${Boost_LIBRARIES} )
+	#message( STATUS "Boost_LIBRARIES=" ${Boost_LIBRARIES} )
+	#message( STATUS "Boost_PYTHON_LIBRARY=" ${Boost_PYTHON_LIBRARY} )
 
 	# looking for the python library 
 	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_LIBRARY} ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_PYTHON} ${Boost_THREAD} )
