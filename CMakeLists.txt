@@ -264,16 +264,18 @@ if (CMAKE_HOST_UNIX)
 
     if ( PYTHON_FRONT_END )
 
-	find_package(PythonLibs)
 	find_package(PythonInterp)
 
+	if(NOT PYTHON_LIBRARY)
+	    find_package(PythonLibs)
+	    SET(PYTHON_LIBRARY ${PYTHON_LIBRARIES} CACHE FILEPATH "The python library.")
+	endif(NOT PYTHON_LIBRARY)
+
 	if(NOT PYTHON_INCLUDE)
+	    find_package(PythonLibs)
 	    SET(PYTHON_INCLUDE ${PYTHON_INCLUDE_PATH} CACHE PATH "The directory of the python headers." )
 	endif(NOT PYTHON_INCLUDE)
 
-	if(NOT PYTHON_LIBRARY)
-	    SET(PYTHON_LIBRARY ${PYTHON_LIBRARIES} CACHE FILEPATH "The python library.")
-	endif(NOT PYTHON_LIBRARY)
 
 	find_package(Boost COMPONENTS python thread )
 
@@ -298,7 +300,11 @@ if (CMAKE_HOST_UNIX)
 #	    message( FATAL_ERROR "For the core components you need a boost version at least " ${Boost_MAJOR_VERSION_REQUIRED} "." ${Boost_MINOR_VERSION_REQUIRED} )
 #	endif ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
 
-	set( LIBS ${LIBS} ${Boost_LIBRARIES} ${Boost_PYTHON} ${Boost_THREAD} )
+	set( LIBS ${LIBS} ${Boost_LIBRARIES} ${Boost_PYTHON} ${Boost_THREAD} ${PYTHON_LIBRARY} )
+
+	message( STATUS "Boost_LIBRARIES=" ${Boost_LIBRARIES} )
+	message( STATUS "Boost_LIBRARIES=" ${Boost_LIBRARIES} )
+	message( STATUS "Boost_PYTHON_LIBRARY=" ${Boost_PYTHON_LIBRARY} )
 
 	# looking for the python library 
 	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_LIBRARY} ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_PYTHON} ${Boost_THREAD} )
@@ -327,17 +333,23 @@ if (CMAKE_HOST_UNIX)
 	    message( FATAL_ERROR "error boost/shared_array.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
         endif(NOT HTEST4)
 	 
- 	CHECK_INCLUDE_FILE_CXX( boost/python/list.hpp  HTEST5 )
+ 	if (NOT HTEST5)
+ 	    CHECK_INCLUDE_FILE_CXX( boost/python/list.hpp  HTEST5 )
+ 	endif (NOT HTEST5)
+
  	if (NOT HTEST5)
  	    message( FATAL_ERROR "error boost/python/list.hpp does not compile. You need at least version 1.37 or newer. Check if its correctly installed. There is a known issue. If "
  		"PYTHON_LIBRARY='" ${PYTHON_LIBRARY} "' does not point to the correct location of python's libraries, please specify them manually"
 		" or delete the file in question. (seen on OpenSuSE 11.2)" )
         endif(NOT HTEST5)
-			
-	CHECK_INCLUDE_FILE_CXX( boost/python/extract.hpp  HTEST5 )
-	if (NOT HTEST5)
+
+	if (NOT HTEST6)
+	    CHECK_INCLUDE_FILE_CXX( boost/python/extract.hpp  HTEST6 )
+	endif(NOT HTEST6)
+
+	if (NOT HTEST6)
 	    message( FATAL_ERROR "error boost/python/extract.hpp does not compile. Check if its correctly installed. You may need a newer version or set up python paths correctly.")
-	endif(NOT HTEST5)
+	endif(NOT HTEST6)
 			    
 	CHECK_INCLUDE_FILE_CXX( boost/lexical_cast.hpp  HTEST7 )
 	if (NOT HTEST7)

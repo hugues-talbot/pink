@@ -88,3 +88,13 @@ sudo apt-get install imview libboost-dev libncurses-dev cmake python-imaging-tk 
 
 // optional
 sudo apt-get install cmake-gui
+
+// *************************************************
+// Pink-Python dependencies on openSUSE (11.2, 64bit)
+// *************************************************
+
+BuildRequires:  boost-devel ncurses-devel cmake python-imaging python-tk ipython python-devel xorg-x11-devel gcc-c++ gcc make libtiff-devel
+
+
+
+
