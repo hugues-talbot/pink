@@ -45,8 +45,18 @@ Pink-bin_2011-03-18_CDE_r412.tar.bz2
 http://dl.free.fr/nofEgH5jA
 to delete: http://dl.free.fr/rm.pl?h=nofEgH5jA&i=29118892&s=MPsFLYc0B4zAgVJfgCvfNBytgGDFhNwD
 #----------------------------------------
+debian review
+http://dl.free.fr/k91sBhfTg
+to delete: http://dl.free.fr/rm.pl?h=k91sBhfTg&i=29301800&s=PM65He65pK85mlX3AjYKomTBxcQsW3TH
+#----------------------------------------
 
 MC question: why is svn asked for cmake compilation? (generates strange error messages) 
+UJ There are new features
+make package
+make package_source
+and these generate an compressed package with the name 
+0.9.r${SVN_REVISION_NUMBER}
+it has to be discussed
 
 MC operateur asf
 

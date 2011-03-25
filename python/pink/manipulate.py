@@ -20,7 +20,7 @@ Note: part of this file has been generated with Rapyd-TK
 
 from Tkinter import *
 from pink.cpp import max as pink_max
-from pink import to_photoimage, to_rgb_photoimage, imview
+from pink import to_photoimage, to_rgb_photoimage
 
 root = Tk()
 root.withdraw()

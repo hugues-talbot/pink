@@ -32,7 +32,7 @@ endif(SVN_EXECUTABLE)
 
 ### Setting up CPack for the source package generation --------
 SET(CPACK_GENERATOR                    "TBZ2")
-SET(CPACK_SOURCE_GENERATOR             "TBZ2")
+SET(CPACK_SOURCE_GENERATOR             "TBZ2;TGZ")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY  "Pink image")
 SET(CPACK_PACKAGE_VENDOR               "Esiee Engineering")
 #SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/readme")
