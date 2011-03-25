@@ -4,33 +4,36 @@
 # Correction of global bias in image
 
 from pink import imview as imview
+from pink import manipulate as manipulate
 from pink import cpp as pink
 inv=pink.inverse
 global DEBUG
 DEBUG=1
 
-# returns the minimum value in image
-def min1(image):
-    res = image[0]
-    for i in range(image.size.prod()):
-        if image[i] < res:
-            res = image[i]
+# bias correction
+def correctbias(img, alpha):
+    smooth = pink.gaussianfilter(img, alpha)
+    mm = pink.minmax(smooth)
+    s = smooth - mm[0]
+    res1 = img - s
+    minmax = pink.minmax(img)
+    res = pink.normalize(res1, minmax[0], minmax[1])
     return res
 
-# segmentation
-def correctbias(image, alpha):
-    smooth = pink.gaussianfilter(image, alpha)
-    if DEBUG:
-        smooth.writeimage("_smooth")
-    m = min1(smooth)
-    s = smooth - m
-    res = image - s
-    if DEBUG:
-        res.writeimage("_res")
+global image
+#image = pink.readimage("../images/uo.pgm")
+image = pink.readimage("../images/pex2.pgm")
+
+# try gaussian filtering (acts on global 'image' - for use by 'manipulate')
+def gaussian(alpha_int):
+    alpha = alpha_int / 100.0
+    res = pink.gaussianfilter(image, alpha)
     return res
 
-img = pink.readimage("../images/pex1.pgm")
-res = correctbias(img, 0.005)
+a_int = manipulate(gaussian, 1, 100) # let the user choose parameter value
+a = a_int / 100.0
+
+res = correctbias(image, a)
 imview(res)
 
 # LuM end of file

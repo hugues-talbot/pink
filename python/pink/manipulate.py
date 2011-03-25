@@ -22,11 +22,11 @@ from Tkinter import *
 from pink.cpp import max as pink_max
 from pink import to_photoimage, to_rgb_photoimage, imview
 
-
 root = Tk()
 root.withdraw()
 
 class app(Frame):
+    parameter_value = -1
     def __init__(self, Master, function_name, minval, maxval):
         self.function_name = function_name
         self.minval = minval
@@ -61,37 +61,19 @@ class app(Frame):
         pass
 
     def on_valuescale_command(self,Event=None):
-        value = self.valuescale.get()
-        tmpimage = self.function_name(value)
+        self.parameter_value = self.valuescale.get()
+        tmpimage = self.function_name(self.parameter_value)
         self.tkimage = to_photoimage(tmpimage, master=self.__Frame2 )
         self.gui_image = self.image.create_image( 1, 1, image=self.tkimage, anchor="nw" )
         
 
-
 def manipulate(function_name, minval=0, maxval=100):
     global root 
-
     top = Toplevel(root)
     application = app(top, function_name, minval, maxval)
     application.pack(expand='yes',fill='both')
     top.mainloop()
     top.withdraw()
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return application.parameter_value
 
 # LuM end of file

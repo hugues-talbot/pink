@@ -43,14 +43,14 @@ except:
 try:
     from imview import *
 except:
-    print("warning: cannot import view3d")
+    print("warning: cannot import imview")
     #pass
 
 
 try:
     from manipulate import manipulate
 except:
-    print("cannot import view3d")
+    print("cannot import manipulate")
     pass
 
 
