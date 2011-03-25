@@ -592,7 +592,7 @@ UI_WRAP_VALUE(
   "average",
   laverage1,
   ( arg("image") ),
-  doc__average__c__
+  doc__average1__c__
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
@@ -600,7 +600,7 @@ UI_WRAP_VALUE(
   "average",
   laverage2,
   ( arg("image"), arg("mask") ),
-  doc__average__c__
+  doc__average1__c__
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
