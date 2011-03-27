@@ -30,7 +30,7 @@ def find_bias(image, xc, yc):
         
     X = range(len(Y))
     res = pink.identifyline(X, Y)
-    # output : coefficients a,b of the equation of the line y = ax+b
+    # output : coefficient a of the equation of the line y = ax+b
     # matching the data 
     return res[0]
 

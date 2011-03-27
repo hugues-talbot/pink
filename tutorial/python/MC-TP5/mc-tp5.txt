@@ -19,6 +19,8 @@ But : segmenter les carbures et mesurer les tailles des amas
 Image : images/mortier_2d.pgm
 But : corriger le gradient radial d'illumination
 
-
+6.
+Image : images/mortier_3d.pgm
+But : corriger le gradient radial d'illumination et segmenter 
 
 
