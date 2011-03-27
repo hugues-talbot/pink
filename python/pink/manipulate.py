@@ -6,9 +6,9 @@
 # This software comes in hope that it will be useful but 
 # without any warranty to the extent permitted by aplicable law.
   
-# (C) UjoImro, 2011
+# (C) UjoImro, M. Couprie 2011
 # Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
-# ujoimro@gmail.com
+# ujoimro@gmail.com coupriem@esiee.fr
 
 """
 This module contains a function for finding optimal parameters of 
@@ -19,11 +19,16 @@ Note: part of this file has been generated with Rapyd-TK
 """
 
 from Tkinter import *
-from pink.cpp import max as pink_max
-from pink import to_photoimage, to_rgb_photoimage
+from pink import to_photoimage
+import tkMessageBox #MC
+
+def callback(): #MC
+    if tkMessageBox.askokcancel("Quit", "Do you really wish to quit?"):
+        root.destroy()
 
 root = Tk()
 root.withdraw()
+root.protocol("WM_DELETE_WINDOW", callback) #MC
 
 class app(Frame):
     parameter_value = -1
@@ -36,8 +41,46 @@ class app(Frame):
         apply(Frame.__init__,(self,Master))
         self.__Frame2 = Frame(self)
         self.__Frame2.pack(side='top')
-        self.image = Canvas(self.__Frame2, width=self.size[0], height=self.size[1])
-        self.image.pack(expand='yes',fill='both',side='top')
+        self.canvas = Canvas(self.__Frame2, width=self.size[0], height=self.size[1])
+        self.canvas.pack(expand='yes',fill='both',side='top')
+        self.__Frame1 = Frame(self)
+        self.__Frame1.pack(side='top')
+        self.__Frame4 = Frame(self.__Frame1)
+        self.__Frame4.pack(side='left')
+        self.valuescale = Scale(self.__Frame4,command=self.on_valuescale_command
+            ,orient='horizontal', from_=minval, to=maxval)
+        self.valuescale.pack(side='top')
+        self.__Frame3 = Frame(self.__Frame1)
+        self.__Frame3.pack(side='left')
+        self.exitbutton = Button(self.__Frame3
+            ,command=self.on_exitbutton_command,text='Exit')
+        self.exitbutton.pack(anchor='w',side='top')
+
+    def on_exitbutton_command(self,Event=None):
+        self.quit()
+    
+    def on_valuescale_command(self,Event=None):
+        self.parameter_value = self.valuescale.get()
+        self.tmpimage = self.function_name(self.parameter_value)
+        self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
+        self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )
+
+class app2(Frame):
+    parameter_value = -1
+    def __init__(self, Master, function_name, image_in, minval, maxval):
+        self.function_name = function_name
+        self.minval = minval
+        self.maxval = maxval
+        self.image_in = image_in / 2
+        self.tmpimage = image_in
+        self.size = image_in.size
+        self.surimp = 0
+        
+        apply(Frame.__init__,(self,Master))
+        self.__Frame2 = Frame(self)
+        self.__Frame2.pack(side='top')
+        self.canvas = Canvas(self.__Frame2, width=self.size[0], height=self.size[1])
+        self.canvas.pack(expand='yes',fill='both',side='top')
         self.__Frame1 = Frame(self)
         self.__Frame1.pack(side='top')
         self.__Frame4 = Frame(self.__Frame1)
@@ -58,19 +101,41 @@ class app(Frame):
         self.quit()
 
     def on_seuilcheck_command(self,Event=None):
-        pass
-
+        if self.surimp == 0:
+            self.surimp = 1
+            self.parameter_value = self.valuescale.get()
+            self.tmpimage = self.function_name(self.parameter_value)
+            self.tmpimage = self.tmpimage / 2 + self.image_in
+            self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
+            self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )            
+        else:
+            self.surimp = 0
+            self.parameter_value = self.valuescale.get()
+            self.tmpimage = self.function_name(self.parameter_value)
+            self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
+            self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )
+    
     def on_valuescale_command(self,Event=None):
-        self.parameter_value = self.valuescale.get()
-        tmpimage = self.function_name(self.parameter_value)
-        self.tkimage = to_photoimage(tmpimage, master=self.__Frame2 )
-        self.gui_image = self.image.create_image( 1, 1, image=self.tkimage, anchor="nw" )
-        
+        if self.surimp == 0:
+            self.parameter_value = self.valuescale.get()
+            self.tmpimage = self.function_name(self.parameter_value)
+            self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
+            self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )
+        else:
+            self.parameter_value = self.valuescale.get()
+            self.tmpimage = self.function_name(self.parameter_value)
+            self.tmpimage = self.tmpimage / 2 + self.image_in
+            self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
+            self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )
 
-def manipulate(function_name, minval=0, maxval=100):
+def manipulate(function_name, minval=0, maxval=100, image_in=None):
     global root 
     top = Toplevel(root)
-    application = app(top, function_name, minval, maxval)
+    top.protocol("WM_DELETE_WINDOW", top.destroy)
+    if image_in is None:
+        application = app(top, function_name, minval, maxval)
+    else:
+        application = app2(top, function_name, image_in, minval, maxval)
     application.pack(expand='yes',fill='both')
     top.mainloop()
     top.withdraw()

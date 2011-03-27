@@ -175,7 +175,7 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
 } /* laddconst() */
 
 /* ==================================== */
-int32_t larea(
+index_t larea(
   struct xvimage * image
 // LuM 
 //,  int32_t *area
@@ -186,7 +186,7 @@ int32_t larea(
 #undef F_NAME
 #define F_NAME "larea"
 {
-  int32_t b, a = 0;
+  index_t b, a = 0;
   uint8_t *pt;
   int32_t *PT; 
   float *FPT; 

@@ -15,8 +15,6 @@ MC threshold remplace seuil
 
 MC finir de changer les types des rs, cs, ..., N, i, x... de int32_t en index_t
 
-MC 64 bits: larea() retourne un int32
-
 MC extractplane pour les types float, long...
 
 MC génération de pages "man" à partir du code doxygen
@@ -82,6 +80,7 @@ to delete: http://dl.free.fr/rm.pl?h=k91sBhfTg&i=29301800&s=PM65He65pK85mlX3AjYK
 #----------------------------------------
 
 MC question: why is svn asked for cmake compilation? (generates strange error messages) 
+
 UJ There are new features
 make package
 make package_source
@@ -89,6 +88,9 @@ and these generate an compressed package with the name
 0.9.r${SVN_REVISION_NUMBER}
 it has to be discussed
 
-MC operateur asf
+MC->MC operateur asf
+
+MC manipulate : blocage si l'on quitte la fenetre interface autrement
+   que par le bouton exit - à résoudre
 
 # LuM end of file

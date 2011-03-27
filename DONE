@@ -36,3 +36,11 @@ derniers ajouts / modifications :
 23/02/2011 MC
 
 - remplacement des <x|y> par des {x|y} dans les docs (facilite le parsing)
+
+26/03/2011 MC
+
+- manipulate renvoie maintenant une valeur (la dernière valeur du paramètre)
+- 64 bits: larea() retourne un (index_t)
+- manipulate : action 'superimpose' implémentée
+- démonstration des opérateurs morpho de base dans 
+  tutorials/python/MC-TP1/solution/mc-demo-morph1.py
