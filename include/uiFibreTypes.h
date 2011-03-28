@@ -282,7 +282,8 @@ void call_error(const std::string message);
 
 #define pink_error(message)                                             \
   {                                                                     \
-    std::cout << std::endl << "Pink error!" << std::endl << "in '" << __FILE__<< "' (line " << __LINE__ << "): " << message << std::endl << std::endl; \
+  std::cerr << std::endl << "Pink error!" << std::endl << "in '" << __FILE__<< "' (line " << __LINE__ << "): " << message << std::endl << std::endl; \
+  throw "Pink error!\n";                                                \
   }
 
 
