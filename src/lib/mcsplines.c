@@ -38,6 +38,7 @@ Librairie mcsplines :
 fonctions pour les splines cubiques naturelles
 
 Michel Couprie, Sébastien Couprie, juin 2003
+
 */
 
 #include <stdio.h>

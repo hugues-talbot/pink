@@ -34,12 +34,13 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file drawspline.c
 
-\brief draw a spline which is specified by its control points in a text file
+\brief draw a spline which is specified by its control points
 
 <B>Usage:</B> drawspline in.pgm spline.txt [len] out.pgm
 
 <B>Description:</B>
-Draws a spline which is specified by its control points in a text file.
+Draws a spline which is specified by its control points.
+The control points are read in the text file \b spline.txt .
 The parameter \b in.pgm gives an image into which the spline is to be drawn.
 The file format for \b spline.txt is the following for 2D:
 
