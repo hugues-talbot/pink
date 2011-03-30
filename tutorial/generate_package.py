@@ -17,7 +17,7 @@ def find_files(directory, pattern):
     for root, dirnames, filenames in os.walk(directory):
         for filename in fnmatch.filter(filenames, '*.py'):
             matches.append(os.path.join(root, filename))
-    return matches
+    return(matches)
 
 
 # getting the current working directory
@@ -35,7 +35,7 @@ for q in tutorials:
         os.chdir(CWD + "/" + os.path.dirname(q))
 
         # launching the filename
-        print "Launching " + filename
+        print("Launching " + filename)
         execfile(filename)
 
 

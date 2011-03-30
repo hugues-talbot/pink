@@ -6,17 +6,21 @@
 # This software comes in hope that it will be useful but 
 # without any warranty to the extent permitted by aplicable law.
   
-# (C) UjoImro, 2009-2011
+# (C) UjoImro <ujoimro@gmail.com>, 2009-2011
 # Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
-# ujoimro@gmail.com
-
 
 """
 This module contains the conversion functions for 
 Python Tkinter visualisation
 """
 
-from PIL import Image, ImageTk
+from pink import python_component_missing
+
+try:
+    from PIL import Image, ImageTk
+except:
+    print("error: could not import PIL.Image or PIL.ImageTk, try to install python-imaging and python-imaging-tk")
+    raise python_component_missing
 
 
 def to_photoimage(image, master=0):

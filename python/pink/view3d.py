@@ -1,29 +1,34 @@
 # -*- coding: utf-8 -*-
 #
-# This software is licensed under 
+# This software is licensed under the
 # CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
 # This software comes in hope that it will be useful but 
 # without any warranty to the extent permitted by aplicable law.
   
-# (C) UjoImro, 2009-2011
+# (C) UjoImro <ujoimro@gmail.com>, 2009-2011
 # Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
-# ujoimro@gmail.com
 
 """
 pink's 3d slice visualizer
 """
 
+try:
+    import Tkinter as tk
+except:
+    print("error: python-tk or tkinter is not installed")
+    raise python_component_missing
+
+try:
+    from pink import to_photoimage, to_rgb_photoimage
+except:
+    print("error: python-imagin-tk is not installed")
+    raise python_component_missing
 
 
-import Tkinter as tk
 from pink.cpp import extractplane, seuil, char_image, border, inverse
 from pink.cpp import max as pink_max
-from pink import to_photoimage, to_rgb_photoimage
-
-root = tk.Tk()
-root.withdraw()
-
+import pink.windowing
 
 class canvas:
     def __init__(self, parent, side, color_x, color_y):
@@ -103,8 +108,8 @@ class app:
             self.seuiling = True
 
         ### Buttons
-        self.quit = tk.Button(self.frame, text="Exit", command=self.frame.quit, width=10 )
-        self.quit.grid(row=6, column=3)
+        self.exitbutton = tk.Button(self.frame, text="Exit", command=self.frame.quit, width=10 )
+        self.exitbutton.grid(row=6, column=3)
 
         self.canvas_x = canvas(parent=self, side="zy", color_x="blue", color_y="green" )
         self.canvas_x.canvas.grid(row=0, column=2)
@@ -247,11 +252,15 @@ class app:
 
         return  result 
 
-def view3d(image1, image2=0):
-    global root 
+    def on_exitbutton_command(self):
+        self.frame.quit()
 
-    top = tk.Toplevel(root)
+## end of class app
+
+def view3d(image1, image2=0):
+    top = tk.Toplevel(pink.windowing.root)
     application = app(top, image1, image2)
+    top.protocol('WM_DELETE_WINDOW', application.on_exitbutton_command)
     top.mainloop()
     top.withdraw()
 

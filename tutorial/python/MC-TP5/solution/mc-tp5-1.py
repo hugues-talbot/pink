@@ -6,6 +6,7 @@
 from pink import imview as imview
 from pink import cpp as pink
 inv=pink.inverse
+
 global DEBUG
 DEBUG=1
 
@@ -15,7 +16,7 @@ def area(image):
     for i in range(image.size.prod()):
         if image[i] != 0:
             res = res + 1
-    return res
+    return(res)
 
 # segmentation
 def segment(image, height):
@@ -39,7 +40,7 @@ def segment(image, height):
     wshed2 = pink.watershed(inv(grad), mark2, 4)
     if DEBUG:
         wshed2.writeimage("_wshed2")
-    return inv(wshed2)
+    return(inv(wshed2))
 
 # detect joints
 def analyzejoints(image, seg):
@@ -62,20 +63,33 @@ def analyzejoints(image, seg):
     if DEBUG:
         joint.writeimage("_joint")
     jointlen = area(joint)
-    print "longueur totale des joints : "+repr(jointlen)
+    print("longueur totale des joints : "+str(jointlen))
     # extracts coroded parts of joints
     corojoint = pink.min(pink.dilation(thinpores, pink.genball(1)), joint)
     if DEBUG:
         corojoint.writeimage("_corojoint")
         pink.surimp(joint, corojoint, "_res")
     corojointlen = area(corojoint)
-    print "longueur des joints corrodes : "+repr(corojointlen)
+    print("longueur des joints corrodes : "+str(corojointlen))
 
-    return
+    return()
 
 joints = pink.readimage("../images/joints.pgm")
 seg = segment(joints, 6)
 imview(seg)
 analyzejoints(joints, seg)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # LuM end of file

@@ -1,11 +1,35 @@
-# -*- python -*-
-# UjoImro, 2010
+# -*- coding: utf-8 -*-
+#
+# This software is licensed under 
+# CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
-import vtk
-from vtk.tk.vtkTkRenderWindowInteractor import vtkTkRenderWindowInteractor
-from vtk.tk.vtkTkRenderWidget import vtkTkRenderWidget
-import Tkinter as tk
-import tkSimpleDialog
+# This software comes in hope that it will be useful but 
+# without any warranty to the extent permitted by aplicable law.
+  
+# (C) UjoImro <ujoimro@gmail.com>, 2010
+# Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+
+try:
+    import vtk
+except:
+    print("error: python-vtk is not installed")
+    raise python_component_missing
+
+try:
+    from vtk.tk.vtkTkRenderWindowInteractor import vtkTkRenderWindowInteractor
+    from vtk.tk.vtkTkRenderWidget import vtkTkRenderWidget
+except:
+    print("error: python-vtk is not installed")
+    raise python_component_missing
+    
+
+try:
+    import Tkinter as tk
+    import tkSimpleDialog
+except:
+    print("error: python-tk or tkinter is not installed")
+    raise python_component_missing
+
 from pink.cpp import mcube
 
 class slide_render_class:
@@ -136,6 +160,7 @@ class wirebutton:
 def seuilmesh(image):
     render_obj=slide_render_class(image)
     application = app(render_obj)
+    top.protocol('WM_DELETE_WINDOW', application.on_exitbutton_command)        
     application.mainloop()
 
 

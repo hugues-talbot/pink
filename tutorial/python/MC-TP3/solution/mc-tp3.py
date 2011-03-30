@@ -1,13 +1,28 @@
-# UjoImro, 2010
-# CeCILL free-software license
+# -*- coding: utf-8 -*-
+#
+# This software is licensed under 
+# CeCILL FREE SOFTWARE LICENSE AGREEMENT
+
+# This software comes in hope that it will be useful but 
+# without any warranty to the extent permitted by aplicable law.
+  
+# (C) UjoImro <ujoimro@gmail.com>, 2010
+# Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
 
 # Michel's TP-3 for 3D images
 
 from pink import view3d, render, seuilmesh
 from pink import cpp as pink
+import pink.windowing as wd
+
 inv = pink.inverse
 
-debug = False
+# ## uncomment to ask before quitting dialogs
+# wd.options.silent=False
+
+debug=False
+# ## uncomment to perform the debug operations
+# debug=True
 
 lettre_a = pink.readimage("../images/lettre_a.pgm")
 carotide = pink.readimage("../images/carotide.pgm")
@@ -93,6 +108,7 @@ if debug:
 closed = pink.closeball(carotide_seg, 1)
 skelcurv = pink.skelcurv(closed, 0, 26)
 #if debug: # cde package generation
+
 render(skelcurv)
 # now we eliminate the border points
 skelcurv = skelcurv - pink.frame(pink.char_image(skelcurv.size),255)

@@ -2,6 +2,8 @@
 
 import pink
 
+## #from pink import windowing
+## #windowing.options.silent=False
 
 I=pink.cpp.readimage("circuit2.pgm")
 

@@ -41,27 +41,27 @@ def try_opening(radius):
 def try_closing(radius):
     res = pink.closeball(image, radius)
     return res
-print "Demonstration des operateurs morphologiques de base"
-print "Activer l'option 'Superimpose' dans l'interface"
-print "Cliquer sur 'Exit' pour passer au suivant"
-print "             -----------"
-print "demonstration de l'erosion"
-print "  - es = boule de la 4-distance"
+print("Demonstration des operateurs morphologiques de base")
+print("Activer l'option 'Superimpose' dans l'interface")
+print("Cliquer sur 'Exit' pour passer au suivant")
+print("             -----------")
+print("demonstration de l'erosion")
+print("  - es = boule de la 4-distance")
 manipulate(try_erosion4, 0, 40, image)
-print "  - es = boule de la 8-distance"
+print("  - es = boule de la 8-distance")
 manipulate(try_erosion8, 0, 40, image)
-print "  - es = boule euclidienne"
+print("  - es = boule euclidienne")
 manipulate(try_erosion, 0, 40, image)
-print "demonstration de la dilatation"
-print "  - es = boule de la 4-distance"
+print("demonstration de la dilatation")
+print("  - es = boule de la 4-distance")
 manipulate(try_dilation4, 0, 100, image)
-print "  - es = boule de la 8-distance"
+print("  - es = boule de la 8-distance")
 manipulate(try_dilation8, 0, 100, image)
-print "  - es = boule euclidienne"
+print("  - es = boule euclidienne")
 manipulate(try_dilation, 0, 100, image)
-print "demonstration de l'ouverture"
+print("demonstration de l'ouverture")
 manipulate(try_opening, 0, 40, image)
-print "demonstration de la fermeture"
+print("demonstration de la fermeture")
 manipulate(try_closing, 0, 100, image)
 
 global image2
@@ -75,10 +75,10 @@ def try_geodilat8(n):
     res = pink.geodilat(image2, image, 8, n)
     return res
 
-print "demonstration de la dilatation geodesique"
-print "  - es = 4-voisinage"
+print("demonstration de la dilatation geodesique")
+print("  - es = 4-voisinage")
 manipulate(try_geodilat4, 0, 250, image)
-print "  - es = 8-voisinage"
+print("  - es = 8-voisinage")
 manipulate(try_geodilat8, 0, 250, image)
 
 # LuM end of file

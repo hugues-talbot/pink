@@ -1,15 +1,43 @@
-# -*- python -*-
-# UjoImro, 2010
+# -*- coding: utf-8 -*-
+#
+# This software is licensed under 
+# CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
-import vtk
-from vtk.tk.vtkTkRenderWindowInteractor import vtkTkRenderWindowInteractor
-from vtk.tk.vtkTkRenderWidget import vtkTkRenderWidget
-import Tkinter as tk
-import tkSimpleDialog
+# This software comes in hope that it will be useful but 
+# without any warranty to the extent permitted by aplicable law.
+  
+# (C) UjoImro <ujoimro@gmail.com>, 2010
+# Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+
+from pink import python_component_missing
+import pink.windowing
 from pink.cpp import mcube
 
-root = tk.Tk()
-root.withdraw()
+try:
+    import vtk
+except:
+    print("error: could not import vtk, try to install python-vtk")
+    raise python_component_missing
+
+try:
+    from vtk.tk.vtkTkRenderWindowInteractor import vtkTkRenderWindowInteractor
+    from vtk.tk.vtkTkRenderWidget import vtkTkRenderWidget
+except:
+    print("error: could not import vtk.tk, try to install python-tk or tkinter")
+    raise python_component_missing
+
+try:
+    import Tkinter as tk
+    import tkSimpleDialog
+    import tkMessageBox
+except:
+    print("error: could not import Tkinter, try to install python-tk or tkinter")
+    raise python_component_missing
+
+
+# ## these objects are moved in __init__
+# root = tk.Tk()
+# root.withdraw()
 
 
 class render_class:
@@ -62,13 +90,14 @@ class app:
         self.top.title("Multiple Renderer")
         self.vtkw = vtkTkRenderWidget(self.top, width=600, height=600, rw=self.render.ren_win)
         self.vtkw.BindTkRenderWidget()
+        self.top.protocol('WM_DELETE_WINDOW', self.on_exitbutton_command)
 
         self.commands = tk.Frame(self.top)
         self.buttons = tk.Frame(self.top)
 
         self.buttons.pack( fill="both", expand=1, side="top" )
         self.commands.pack( fill="both", expand=1, side="bottom" )
-        self.quitbutton = tk.Button(self.buttons, text="Exit", activebackground="white", command=self.bye)
+        self.exitbutton = tk.Button(self.buttons, text="Exit", activebackground="white", command=self.on_exitbutton_command)
         self.savebutton = tk.Button(self.buttons, text="Save", activebackground="white", command=self.savepng)        
         self.wirebutton1 = wirebutton(frame=self.buttons, text="Wireframe1", ren_win=self.render.ren_win, obj_actor=self.render.obj1.objActor)
 
@@ -77,7 +106,7 @@ class app:
 
         self.opacity = tk.Scale(self.commands, from_=0.0, to=1.0, res=0.01, orient="horizontal", label="Opacity", command=self.set_opacity)
                 
-        self.quitbutton.pack(side="right")
+        self.exitbutton.pack(side="right")
         self.savebutton.pack(side="left")
         self.vtkw.pack(side="top", fill="both", expand="yes")
         self.opacity.pack(side="top", anchor="nw", fill="both")
@@ -90,10 +119,14 @@ class app:
     def mainloop(self):
         self.top.mainloop()
     
-    def bye(self):
-    #vtkCommand DeleteAllObjects
-        self.top.quit()
-
+    def on_exitbutton_command(self):
+        #vtkCommand DeleteAllObjects
+        #print("properly exiting")
+        if pink.windowing.options.silent:
+            self.top.quit()
+        else:
+            if tkMessageBox.askokcancel("Quit", "Do you really wish to quit?"):
+                self.top.quit()
 
     def savepng(self):
         
@@ -138,18 +171,19 @@ class wirebutton:
 #     application.mainloop()
 
 def render( image1, image2=0 ):
-    global root 
-
     mesh1 = mcube(image1, 0, 0, 0)
     if image2!=0:
         mesh2 = mcube(image2, 0, 0, 0)
     else:
         mesh2 = 0
 
-
+    top = tk.Toplevel(pink.windowing.root)
 
     render_obj=render_class(mesh1, mesh2)
-    application = app(render_obj, root)
+    application = app(render_obj, pink.windowing.root)
+    top.withdraw()
+
+
     application.mainloop()
     application.top.withdraw()
     #mesh2 = 

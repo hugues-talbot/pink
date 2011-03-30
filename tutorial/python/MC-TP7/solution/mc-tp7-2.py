@@ -15,13 +15,13 @@ def max1(image):
     for i in range(image.size.prod()):
         if image[i] > res:
             res = image[i]
-    return res
+    return(res)
 
 # extracts subimage from image
 def crop(image, x, y, w, h):
     res = pink.char_image([w,h])
     res = pink.insert_image(res, image, [-x,-y])
-    return res
+    return(res)
 
 RS = 4 # numbers of tiles in a row
 CS = 4 # numbers of tiles in a column
@@ -44,7 +44,7 @@ for J in range(CS):
         lab = pink.labelfgd(interior_objects, 8)
         nb_grains = nb_grains + max1(lab)
         if DEBUG:
-            print "I,J,s,n: " + repr(I) + " " + repr(J) + " " + repr(grain_size) + " " + repr(nb_grains)
+            print("I,J,s,n: " + str(I) + " " + str(J) + " " + str(grain_size) + " " + str(nb_grains))
         # deal with border objects
         if (I < RS-1) and (J < CS-1): 
             filename_r = 'tile%02d.pgm'%(J*CS+I+1)
@@ -78,7 +78,7 @@ for J in range(CS):
             n = max1(lab)
             nb_grains = nb_grains + n
             if DEBUG and (n > 0):
-                print "grains on border: " + repr(n) 
+                print "grains on border: " + str(n) 
             grain_size = grain_size + pink.area(border_grains)	
         elif (I < RS-1): 
             filename_r = 'tile%02d.pgm'%(J*CS+I+1)
@@ -100,7 +100,7 @@ for J in range(CS):
             n = max1(lab)
             nb_grains = nb_grains + n
             if DEBUG and (n > 0):
-                print "grains on border: " + repr(n) 
+                print "grains on border: " + str(n) 
             grain_size = grain_size + pink.area(border_grains)
         elif (J < CS-1): 
             filename_d = 'tile%02d.pgm'%((J+1)*CS+I)
@@ -122,8 +122,8 @@ for J in range(CS):
             n = max1(lab)
             nb_grains = nb_grains + n
             if DEBUG and (n > 0):
-                print "grains on border: " + repr(n) 
+                print "grains on border: " + str(n) 
             grain_size = grain_size + pink.area(border_grains)
             
-print "grain size = " + repr(grain_size)
-print "number of grains = " + repr(nb_grains)
+print "grain size = " + str(grain_size)
+print "number of grains = " + str(nb_grains)

@@ -43,8 +43,8 @@ grain_size = pink.area(img)
 lab = pink.labelfgd(img, 8)
 nb_grains = pink.minmax(lab)[1]
 
-print "grain_size = " + repr(grain_size)
-print "nb_grains = " + repr(nb_grains)
+print("grain_size = " + str(grain_size))
+print("nb_grains = " + str(nb_grains))
 
 img = pink.readimage("wholeimage.pgm")
 tile = pink.char_image([rs,cs])

@@ -32,7 +32,7 @@ def find_bias(image, xc, yc):
     res = pink.identifyline(X, Y)
     # output : coefficient a of the equation of the line y = ax+b
     # matching the data 
-    return res[0]
+    return(res[0])
 
 # correction of the bias
 def correct_bias(image, xc, yc, alpha):
@@ -47,7 +47,7 @@ def correct_bias(image, xc, yc, alpha):
             if T < 0:
                 T = 0
             image[[x,y]] = int(round(T))
-    return image
+    return(image)
 
 img = pink.readimage("../images/mortier_2d.pgm")
 xc = 144 # the center is supposed to be known -

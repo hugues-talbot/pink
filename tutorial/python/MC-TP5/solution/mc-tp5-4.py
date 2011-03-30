@@ -11,12 +11,12 @@ DEBUG=1
 # black top hat transformation (residue of the closing)
 def black_top_hat(image, es):
     res = pink.closing(image, es) - image
-    return res
+    return(res)
 
 # white top hat transformation (residue of the opening)
 def white_top_hat(image, es):
     res = image - pink.opening(image, es)
-    return res
+    return(res)
 
 # build disk-shaped structuring element
 def disk_structuring_element(radius):
@@ -26,7 +26,7 @@ def disk_structuring_element(radius):
     res.center=[radius,radius]
     res[[radius,radius]] = 255
     res = pink.dilatball(res, radius)
-    return res
+    return(res)
 
 # carbide detection
 def carbide_detection(image, rad_bth, seuil, rad_op):

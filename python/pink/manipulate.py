@@ -5,10 +5,11 @@
 
 # This software comes in hope that it will be useful but 
 # without any warranty to the extent permitted by aplicable law.
-  
-# (C) UjoImro, M. Couprie 2011
+
+# (C) UjoImro <ujoimro@gmail.com>, 2011 
+# (C) M. Couprie <coupriem@esiee.fr>, 2011
 # Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
-# ujoimro@gmail.com coupriem@esiee.fr
+
 
 """
 This module contains a function for finding optimal parameters of 
@@ -18,17 +19,20 @@ scalebar. The idea comes from Mathematica's Manipulate function.
 Note: part of this file has been generated with Rapyd-TK
 """
 
-from Tkinter import *
-from pink import to_photoimage
-import tkMessageBox #MC
+from pink import to_photoimage, python_component_missing
+import pink.windowing
 
-def callback(): #MC
-    if tkMessageBox.askokcancel("Quit", "Do you really wish to quit?"):
-        root.destroy()
+try:
+    from Tkinter import *
+except: 
+    print("error: could not import Tkinter, try to install python-imaging-tk")
+    raise python_component_missing
 
-root = Tk()
-root.withdraw()
-root.protocol("WM_DELETE_WINDOW", callback) #MC
+try:
+    import tkMessageBox #MC
+except: 
+    print("error: could not import tkMessageBox, try to install python-imaging-tk")
+    raise python_component_missing
 
 class app(Frame):
     parameter_value = -1
@@ -57,7 +61,12 @@ class app(Frame):
         self.exitbutton.pack(anchor='w',side='top')
 
     def on_exitbutton_command(self,Event=None):
-        self.quit()
+        if pink.windowing.options.silent:
+            self.quit()
+        else:
+            if tkMessageBox.askokcancel("Quit", "Do you really wish to quit?"):
+                self.quit()
+          
     
     def on_valuescale_command(self,Event=None):
         self.parameter_value = self.valuescale.get()
@@ -129,16 +138,20 @@ class app2(Frame):
             self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )
 
 def manipulate(function_name, minval=0, maxval=100, image_in=None):
-    global root 
-    top = Toplevel(root)
-    top.protocol("WM_DELETE_WINDOW", top.destroy)
+
+    top = Toplevel(pink.windowing.root)
+
     if image_in is None:
         application = app(top, function_name, minval, maxval)
     else:
         application = app2(top, function_name, image_in, minval, maxval)
+
+    top.protocol('WM_DELETE_WINDOW', application.on_exitbutton_command)
+
     application.pack(expand='yes',fill='both')
     top.mainloop()
     top.withdraw()
+
     return application.parameter_value
 
 # LuM end of file

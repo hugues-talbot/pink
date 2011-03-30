@@ -1,15 +1,35 @@
-# Michel Couprie, 2011
-# CeCILL free-software license
+# -*- coding: utf-8 -*-
+#
+# This software is licensed under 
+# CeCILL FREE SOFTWARE LICENSE AGREEMENT
+
+# This software comes in hope that it will be useful but 
+# without any warranty to the extent permitted by aplicable law.
+
+# (C) M. Couprie <coupriem@esiee.fr>, 2011
+# Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
 
 # histograms 
 
+from pink import python_component_missing # this is an exception class
 from pink import imview as imview
 from pink import cpp as pink
-import numpy as np
-import matplotlib.pyplot as plt
+import pink.windowing as wd
 
-global DEBUG
-DEBUG=1
+try:
+    import numpy as np
+except:
+    print("error: could not import numpy, try to install python-numpy")
+    raise python_component_missing
+
+try:
+    import matplotlib.pyplot as plt
+except:
+    print("error: could not import matplotlib, try to install python-matplotlib and python-matplotlib")
+    raise python_component_missing
+
+# ## Uncomment for debugging
+# wd.options.debug=True
 
 # conversion : from Pink image to numpy array
 # MC: to be replaced by faster built-in procedure
@@ -35,7 +55,7 @@ def array_2_image(arr):
 # histogram
 def histogram(img,mask=None):
     if img.imtype() != 'uint8_t':
-        print "histogram: error"
+        print("histogram: error")
         return
     h = np.zeros(256)    
     N = img.size.prod()
@@ -62,6 +82,17 @@ def show_histo(img):
 im = pink.readimage("../images/uo.pgm")
 #ar = image_2_array(im)
 #im2 = array_2_image(ar)
+
 show_histo(im)
+
+
+
+
+
+
+
+
+
+
 
 # LuM end of file

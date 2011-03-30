@@ -91,6 +91,39 @@ it has to be discussed
 MC->MC operateur asf
 
 MC manipulate : blocage si l'on quitte la fenetre interface autrement
-   que par le bouton exit - à résoudre
+   que par le bouton exit - à résoudre this issue has been resolved in
+   r431. Now x behaves as exit button.  Also global options added as
+   pink.windowing
+
+UJ matplotlib does not quit by itself. It works with 'ipython -pylab'
+but not with 'python -pylab'. 
+http://matplotlib.sourceforge.net/faq/howto_faq.html
+http://matplotlib.sourceforge.net/users/shell.html#mpl-shell
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # LuM end of file
