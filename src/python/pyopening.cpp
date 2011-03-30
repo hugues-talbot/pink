@@ -65,14 +65,14 @@ namespace pink {
         if (result.get_size().size()==3)
         {
 
-          int rs = result.get_size()[0];
-          int cs = result.get_size()[1];
-          int ds = result.get_size()[2];
+          int rs = elem_ca.get_size()[0];
+          int cs = elem_ca.get_size()[1];
+          int ds = elem_ca.get_size()[2];
           int x = elem_ca.get_center()[0];
           int y = elem_ca.get_center()[1];
           int z = elem_ca.get_center()[2];
 
-          if (! leros3d( result.get_output(), elem_ca.get_output(), rs - 1 - x, cs - 1 - y, ds - 1 - z))
+          if (! leros3d( result.get_output(), elem_ca.get_output(), x, y, z))
           {
             pink_error("function leros3d failed");
           }
@@ -82,7 +82,7 @@ namespace pink {
             pink_error("function lsym failed");
           }
       
-          if (! ldilat3d( result.get_output(), elem_ca.get_output() , x, y, z))
+          if (! ldilat3d( result.get_output(), elem_ca.get_output(), rs - 1 - x, cs - 1 - y, ds - 1 - z))
           {
             pink_error("function leros3d failed");
           }
