@@ -50,7 +50,10 @@ try:
 except:
     print("warning: cannot import manipulate")
 
-
+try:
+    from histo import *
+except:
+    print("warning: cannot import histo")
 
 # from python_pink import *
 # from long2byte import long2byte

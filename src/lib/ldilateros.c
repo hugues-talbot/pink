@@ -40,9 +40,12 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcutil.h>
 #include <ldilateros.h>
+
+//#define VERBOSE
 
 /* ==================================== */
 int32_t ldilatnum( struct xvimage *f, 
@@ -72,11 +75,8 @@ int32_t ldilatnum( struct xvimage *f,
   int32_t sup;
   int32_t t;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -136,11 +136,8 @@ int32_t lerosnum( struct xvimage *f,
   int32_t inf;
   int32_t t;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -201,11 +198,8 @@ int32_t ldilateros_ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, i
   int32_t c;
   int32_t frontiere;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   if (!M[yc * rsm + xc]) /* l'element structurant N'est PAS reflexif */
   {
@@ -309,11 +303,8 @@ int32_t ldilateros_lerosbin(struct xvimage *f, struct xvimage *m, int32_t xc, in
   int32_t c;
   int32_t frontiere;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   if (!M[yc * rsm + xc]) /* l'element structurant N'est PAS reflexif */
   {
@@ -408,11 +399,8 @@ int32_t ldilateros_ldilatfast(struct xvimage *f, uint8_t *mask)
   uint8_t *H;                     /* image de travail */
   uint8_t sup;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -463,11 +451,8 @@ int32_t ldilateros_lerosfast(struct xvimage *f, uint8_t *mask)
   uint8_t *H;                     /* image de travail */
   uint8_t inf;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -526,11 +511,8 @@ int32_t ldilatbyte(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t c;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -615,11 +597,8 @@ int32_t ldilatlong(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t c;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (int32_t *)calloc(1,N*sizeof(int32_t));
   if (H == NULL)
@@ -696,11 +675,8 @@ int32_t ldilat2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab
   uint8_t sup;
   int32_t c;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -752,6 +728,9 @@ int32_t ldilat3(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab
   uint8_t *H;            /* image de travail */
   uint8_t sup;
   int32_t c;
+
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_3D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -816,11 +795,8 @@ int32_t lerosbyte(
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t c;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -909,11 +885,8 @@ int32_t leroslong(
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t c;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (int32_t *)calloc(1,N*sizeof(int32_t));
   if (H == NULL)
@@ -990,11 +963,8 @@ int32_t leros2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_
   uint8_t inf;
   int32_t c;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -1045,6 +1015,9 @@ int32_t leros3(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_
   uint8_t *H;            /* image de travail */
   uint8_t inf;
   int32_t c;
+
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_3D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -1117,3 +1090,225 @@ int32_t ldilateros_leros(struct xvimage *f, struct xvimage *m, int32_t xc, int32
     return 0;
   }
 } // ldilateros_leros()
+
+
+/* ==================================== */
+int32_t ldilateros_lasf(struct xvimage *image, int32_t rayonmax, int32_t rayonmin)
+/* 
+Alternate sequential filter for grayscale images.
+
+Disc-shaped structuring elements of increasing radius, ranging from 1
+(or <B>rmin</B> if this parameter is specified) to <B>rmax</B>, are
+generated.
+
+Let D1...Dn be these structuring elements, sorted by increasing radius.
+
+Let I0 = <B>in.pgm</B>, the ith intermediate result Ii is obtained by
+the closing of the opening of Ii-1 by the structuring element Di.
+
+The result <B>out.pgm</B> contains the final result In.
+
+Giving a value 0 for the optional parameter <B>rmin</B> has the effect
+of beginning by a closing instead of an opening.
+ */
+/* Michel Couprie */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "ldilateros_lasf"
+{
+  int32_t rayon, d, xc, yc, zc, x, y, z, nptb;
+  int32_t *tab_es_x, *tab_es_y, *tab_es_z;
+  int32_t FERMETURE_EN_1 = 0;
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+
+  if (rayonmin == 0) 
+  {
+    rayonmin = 1;
+    FERMETURE_EN_1 = 1;
+  }
+
+  assert(rayonmin >= 0);
+  assert(rayonmax >= rayonmin);
+
+  if (depth(image) == 1)
+  {
+    d = 2 * rayonmax + 1;
+    tab_es_x = (int32_t *)calloc(1,d * d * sizeof(int32_t));
+    tab_es_y = (int32_t *)calloc(1,d * d * sizeof(int32_t));
+    if ((tab_es_x == NULL) || (tab_es_y == NULL))
+    {
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return(1);
+    }
+  
+    for (rayon = rayonmin; rayon <= rayonmax; rayon++)
+    {
+#ifdef VERBOSE
+      fprintf(stderr, "%s: rayon = %d\n", F_NAME, rayon);
+#endif
+      /* genere l'element structurant circulaire sous forme de liste des coord. des points */
+      yc = xc = rayon; 
+      d = 2 * rayon + 1;
+      nptb = 0;
+      for (x = 0; x < d; x++)
+        for (y = 0; y < d; y++)
+          if (((x - xc) * (x - xc) + (y - yc) * (y - yc)) <= (rayon * rayon))
+	  {
+            tab_es_x[nptb] = x;
+            tab_es_y[nptb] = y;
+            nptb++;
+	  }
+  
+      if (FERMETURE_EN_1)
+      {
+        /* fermeture par l'element structurant */
+        if (! ldilat2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function ldilat2 failed\n", F_NAME);
+          return(1);
+        }
+  
+        if (! leros2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function leros2 failed\n", F_NAME);
+          return(1);
+        }
+        /* ouverture par l'element structurant */
+        if (! leros2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function leros2 failed\n", F_NAME);
+          return(1);
+        }
+  
+        if (! ldilat2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function ldilat2 failed\n", F_NAME);
+          return(1);
+        }
+      } 
+      else 
+      {
+        /* ouverture par l'element structurant */
+        if (! leros2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function leros2 failed\n", F_NAME);
+          return(1);
+        }
+  
+        if (! ldilat2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function ldilat2 failed\n", F_NAME);
+          return(1);
+        }
+        /* fermeture par l'element structurant */
+        if (! ldilat2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function ldilat2 failed\n", F_NAME);
+          return(1);
+        }
+  
+        if (! leros2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function leros2 failed\n", F_NAME);
+          return(1);
+        }
+      }  
+    } /* for (rayon = 1; rayon <= rayonmax; rayon++) */
+    free(tab_es_x);
+    free(tab_es_y);
+  }
+  else
+  {
+    d = 2 * rayonmax + 1;
+    tab_es_x = (int32_t *)calloc(1,d * d * d * sizeof(int32_t));
+    tab_es_y = (int32_t *)calloc(1,d * d * d * sizeof(int32_t));
+    tab_es_z = (int32_t *)calloc(1,d * d * d * sizeof(int32_t));
+    if ((tab_es_x == NULL) || (tab_es_y == NULL) || (tab_es_z == NULL))
+    {
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return(1);
+    }
+  
+    for (rayon = rayonmin; rayon <= rayonmax; rayon++)
+    {
+#ifdef VERBOSE
+      fprintf(stderr, "%s: rayon = %d\n", F_NAME, rayon);
+#endif
+      /* genere l'element structurant circulaire sous forme de liste des coord. des points */
+      zc = yc = xc = rayon; 
+      d = 2 * rayon + 1;
+      nptb = 0;
+      for (x = 0; x < d; x++)
+        for (y = 0; y < d; y++)
+          for (z = 0; z < d; z++)
+          if (((x - xc) * (x - xc) + (y - yc) * (y - yc) + (z - zc) * (z - zc)) <= (rayon * rayon))
+	  {
+            tab_es_x[nptb] = x;
+            tab_es_y[nptb] = y;
+            tab_es_z[nptb] = z;
+            nptb++;
+	  }
+  
+      if (FERMETURE_EN_1)
+      {
+        /* fermeture par l'element structurant */
+        if (! ldilat3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function ldilat3 failed\n", F_NAME);
+          return(1);
+        }
+  
+        if (! leros3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function leros3 failed\n", F_NAME);
+          return(1);
+        }
+        /* ouverture par l'element structurant */
+        if (! leros3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function leros3 failed\n", F_NAME);
+          return(1);
+        }
+  
+        if (! ldilat3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function ldilat3 failed\n", F_NAME);
+          return(1);
+        }
+      } 
+      else 
+      {
+        /* ouverture par l'element structurant */
+        if (! leros3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function leros3 failed\n", F_NAME);
+          return(1);
+        }
+  
+        if (! ldilat3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function ldilat3 failed\n", F_NAME);
+          return(1);
+        }
+        /* fermeture par l'element structurant */
+        if (! ldilat3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function ldilat3 failed\n", F_NAME);
+          return(1);
+        }
+  
+        if (! leros3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function leros3 failed\n", F_NAME);
+          return(1);
+        }
+      }
+    } /* for (rayon = 1; rayon <= rayonmax; rayon++) */
+    free(tab_es_x);
+    free(tab_es_y);
+    free(tab_es_z);
+  }
+
+  return 1;
+} //ldilateros_lasf()

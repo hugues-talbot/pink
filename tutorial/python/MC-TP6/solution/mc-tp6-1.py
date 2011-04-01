@@ -5,6 +5,7 @@
 
 from pink import imview as imview
 from pink import cpp as pink
+from pink import show_histo
 inv=pink.inverse
 global DEBUG
 DEBUG=1
@@ -26,6 +27,7 @@ def segment(im, height):
     return wshed1
 
 im = pink.readimage("../images/uo.pgm")
+show_histo(im)
 seg = segment(im, 20)
 
 # LuM end of file

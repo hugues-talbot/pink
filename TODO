@@ -79,21 +79,12 @@ http://dl.free.fr/k91sBhfTg
 to delete: http://dl.free.fr/rm.pl?h=k91sBhfTg&i=29301800&s=PM65He65pK85mlX3AjYKomTBxcQsW3TH
 #----------------------------------------
 
-MC question: why is svn asked for cmake compilation? (generates strange error messages) 
-
 UJ There are new features
 make package
 make package_source
 and these generate an compressed package with the name 
 0.9.r${SVN_REVISION_NUMBER}
 it has to be discussed
-
-MC->MC operateur asf
-
-MC manipulate : blocage si l'on quitte la fenetre interface autrement
-   que par le bouton exit - à résoudre this issue has been resolved in
-   r431. Now x behaves as exit button.  Also global options added as
-   pink.windowing
 
 UJ matplotlib does not quit by itself. It works with 'ipython -pylab'
 but not with 'python -pylab'. 

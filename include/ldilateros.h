@@ -47,6 +47,7 @@ extern int32_t ldilat2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32
 extern int32_t ldilat3(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_es_y, int32_t *tab_es_z, int32_t xc, int32_t yc, int32_t zc);
 extern int32_t leros2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_es_y, int32_t xc, int32_t yc);
 extern int32_t leros3(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_es_y, int32_t *tab_es_z, int32_t xc, int32_t yc, int32_t zc);
+extern int32_t ldilateros_lasf(struct xvimage *f, int32_t rayonmax, int32_t rayonmin);
 #ifdef __cplusplus
 }
 #endif

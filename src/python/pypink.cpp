@@ -443,6 +443,14 @@ UI_WRAP_RESULT(
 // #include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_FUNCTION(
+  "asf",
+  ldilateros_lasf,
+  (arg("image"), arg("radius max"), arg("radius min")=1),
+  doc__asf__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
   "asft",
   lasft_2D3D,
   ( arg("image"), arg("constraint image"), arg("complementary constraint image"), arg("connexity"), arg("radius max") ),

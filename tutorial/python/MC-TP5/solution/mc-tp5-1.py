@@ -10,14 +10,6 @@ inv=pink.inverse
 global DEBUG
 DEBUG=1
 
-# counts the number of non-null elements
-def area(image):
-    res = 0
-    for i in range(image.size.prod()):
-        if image[i] != 0:
-            res = res + 1
-    return(res)
-
 # segmentation
 def segment(image, height):
     # gradient
@@ -62,14 +54,14 @@ def analyzejoints(image, seg):
     joint = seg - thickpores
     if DEBUG:
         joint.writeimage("_joint")
-    jointlen = area(joint)
+    jointlen = pink.area(joint)
     print("longueur totale des joints : "+str(jointlen))
     # extracts coroded parts of joints
     corojoint = pink.min(pink.dilation(thinpores, pink.genball(1)), joint)
     if DEBUG:
         corojoint.writeimage("_corojoint")
         pink.surimp(joint, corojoint, "_res")
-    corojointlen = area(corojoint)
+    corojointlen = pink.area(corojoint)
     print("longueur des joints corrodes : "+str(corojointlen))
 
     return()
