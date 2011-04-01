@@ -1245,7 +1245,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
         << "\tBoundingBox 0 " << (*this->size)[0]-1 << " 0 " << (*this->size)[1]-1 << " 0 " << (*this->size)[2]-1 << ",\n"
 	<< "\tCoordType \"uniform\"\n"
 	<< "}\n\n"
-	<< "Lattice { " << typetext << " Data } 1\n\n"
+	<< "Lattice { " << typetext << " Data } @1\n\n"
 	<< "# Data section follows\n"
 	<< "@1\n";
       
