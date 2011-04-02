@@ -91,6 +91,7 @@ int main(int argc, char **argv)
     exit(1);
   }
 
+#ifdef MODE_OBSOLETE_CONVERT_TYPE
   if (datatype(image) != VFF_TYP_1_BYTE)
   {
     struct xvimage * imagebyte;
@@ -121,6 +122,7 @@ int main(int argc, char **argv)
     freeimage(image);
   }
   else
+#endif
   {
     writeimage(image, argv[argc-1]);
     freeimage(image);

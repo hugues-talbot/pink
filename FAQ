@@ -31,6 +31,9 @@ sudo apt-get install libosmesa6-dev
 
 Pour vtk-python :
 sudo apt-get install python-dev
+sudo apt-get install python-vtk
+sudo apt-get install python-numpy
+sudo apt-get install python-matplotlib
 sudo apt-get install libboost-python-dev
 sudo apt-get install libncurses-dev
 

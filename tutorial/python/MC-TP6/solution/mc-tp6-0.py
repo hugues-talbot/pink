@@ -25,14 +25,13 @@ except:
 try:
     import matplotlib.pyplot as plt
 except:
-    print("error: could not import matplotlib, try to install python-matplotlib and python-matplotlib")
+    print("error: could not import matplotlib, try to install python-numpy and python-matplotlib")
 #    raise python_component_missing
 
-# ## Uncomment for debugging
-# wd.options.debug=True
+## Uncomment for debugging
+wd.options.debug=True
 
 # conversion : from Pink image to numpy array
-# MC: to be replaced by faster built-in procedure
 def image_2_array(img):
     N = img.size.prod()
     a = np.empty(N)    
@@ -41,7 +40,6 @@ def image_2_array(img):
     return a
 
 # conversion : from numpy array to Pink image 
-# MC: to be replaced by faster built-in procedure
 # A CORRIGER - RENVOIE UNE IMAGE VIDE
 def array_2_image(arr):
     S = list(arr.shape)

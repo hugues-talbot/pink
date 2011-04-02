@@ -21,6 +21,7 @@ But : corriger le gradient radial d'illumination
 
 6.
 Image : images/mortier_3d.pgm
-But : corriger le gradient radial d'illumination et segmenter 
+But : segmenter les quatre phases (cavités, matrice, inclusions sombres, inclusions claires)
+
 
 

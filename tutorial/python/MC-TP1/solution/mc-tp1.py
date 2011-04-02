@@ -4,8 +4,8 @@
 # Michel's TP-1
 
 from pink import imview
+from pink import manipulate as manipulate
 from pink import cpp as pink
-
 
 # exo1_1
 # filter the image from noise
@@ -61,7 +61,7 @@ perforated = find_perforated(inside)
 
 # exo1_5
 # extraction of the wires from a circuit
-def find_the_wires(image):
+def find_the_wires(image, seuil):
     # binarize 
     binary = pink.seuil(image, 80, 0, 255)
     inv = pink.inverse(binary)
@@ -84,10 +84,15 @@ def find_the_wires(image):
     return result
 
 
-circuit = pink.readimage("../images/circuit.pgm")
-wires = find_the_wires(circuit)
-#wires.writeimage("wires.pgm")
+def try_seuil(s):
+    res = pink.seuil(image, s, 0, 255)
+    return res
 
+circuit = pink.readimage("../images/circuit.pgm")
+seuil = manipulate(try_seuil, 0, 255, circuit)
+wires = find_the_wires(circuit, seuil)
+#wires.writeimage("wires.pgm")
+pink.surimp(circuit, wires, "wires.ppm")
 
 # exo1_6
 # extraction of the "corne" from the image 'meb.pgm'
