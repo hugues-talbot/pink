@@ -7,6 +7,8 @@ from pink import imview
 from pink import manipulate as manipulate
 from pink import cpp as pink
 
+debug = True
+
 # exo1_1
 # filter the image from noise
 def filter(image, radius_opening, radius_closing):
@@ -18,8 +20,12 @@ def filter(image, radius_opening, radius_closing):
 
 cell = pink.readimage("../images/cell.pgm")
 filtered = filter(cell,2,2)
+
+print("imview listview test")
 imview([cell, filtered])
-filtered.writeimage("cell_filtered.pgm")
+
+if debug: imview(filtered)
+#filtered.writeimage("cell_filtered.pgm")
 
 
 # exo1_2
@@ -31,6 +37,7 @@ def remove_objects(image):
     return result
 
 inside = remove_objects(filtered)
+if debug: imview(inside)
 #inside.writeimage("inside.pgm")
 
 
@@ -45,6 +52,7 @@ def fill_the_holes(image):
 
 noholes = fill_the_holes(inside)
 noholes.writeimage("noholes.pgm")
+if debug: imview(noholes)
 #imview(noholes)
 
 # exo1_4
@@ -57,16 +65,18 @@ def find_perforated(image):
     return result
 
 perforated = find_perforated(inside)
+if debug: imview(perforated)
 #perforated.writeimage("perforated.pgm")
 
 # exo1_5
 # extraction of the wires from a circuit
 def find_the_wires(image, seuil):
     # binarize 
-    binary = pink.seuil(image, 80, 0, 255)
+    binary = pink.seuil(image, seuil, 0, 255)
     inv = pink.inverse(binary)
 
     # eliminate the little objects
+    #filtered = filter(inv, 2, 8)
     eros = pink.erosball(inv, 2)
     filtered = pink.geodilat(eros, inv, 8)
 
@@ -85,13 +95,15 @@ def find_the_wires(image, seuil):
 
 
 def try_seuil(s):
-    res = pink.seuil(image, s, 0, 255)
-    return res
+    return pink.seuil(circuit, s, 0, 255)
 
 circuit = pink.readimage("../images/circuit.pgm")
 seuil = manipulate(try_seuil, 0, 255, circuit)
 wires = find_the_wires(circuit, seuil)
+if debug: imview([circuit, wires])
 #wires.writeimage("wires.pgm")
+
+print("calling surimp for package generation")
 pink.surimp(circuit, wires, "wires.ppm")
 
 # exo1_6
@@ -110,7 +122,15 @@ def extract_corne(image, threshold):
 
 meb = pink.readimage("../images/meb.pgm")
 cornes = extract_corne(meb, 65)
-pink.surimp(meb, cornes, "cornes.ppm")
+if debug: imview([meb, cornes])
+
+def fcornes(q): return extract_corne(meb, q)
+
+if debug:
+    manipulate(fcornes, 0, 255, meb)
+    
+
+#pink.surimp(meb, cornes, "cornes.ppm")
 
 
 

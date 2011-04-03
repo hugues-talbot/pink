@@ -19,7 +19,7 @@ scalebar. The idea comes from Mathematica's Manipulate function.
 Note: part of this file has been generated with Rapyd-TK
 """
 
-from pink import to_photoimage, python_component_missing
+from pink import to_photoimage, python_component_missing, to_rgb_photoimage
 import pink.windowing
 
 try:
@@ -115,26 +115,30 @@ class app2(Frame):
             self.parameter_value = self.valuescale.get()
             self.tmpimage = self.function_name(self.parameter_value)
             self.tmpimage = self.tmpimage / 2 + self.image_in
-            self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
+            self.tkimage = to_rgb_photoimage([self.tmpimage, self.image_in, self.image_in], master=self.__Frame2 )
+            #self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
             self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )            
         else:
             self.surimp = 0
             self.parameter_value = self.valuescale.get()
             self.tmpimage = self.function_name(self.parameter_value)
-            self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
+            #self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
+            self.tkimage = to_rgb_photoimage([self.tmpimage, self.tmpimage, self.tmpimage], master=self.__Frame2 )
             self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )
     
     def on_valuescale_command(self,Event=None):
         if self.surimp == 0:
             self.parameter_value = self.valuescale.get()
             self.tmpimage = self.function_name(self.parameter_value)
-            self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
+            #self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
+            self.tkimage = to_rgb_photoimage([self.tmpimage, self.tmpimage, self.tmpimage], master=self.__Frame2 )
             self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )
         else:
             self.parameter_value = self.valuescale.get()
             self.tmpimage = self.function_name(self.parameter_value)
             self.tmpimage = self.tmpimage / 2 + self.image_in
-            self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
+            #self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
+            self.tkimage = to_rgb_photoimage([self.tmpimage, self.image_in, self.image_in], master=self.__Frame2 )
             self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )
 
 def manipulate(function_name, minval=0, maxval=100, image_in=None):

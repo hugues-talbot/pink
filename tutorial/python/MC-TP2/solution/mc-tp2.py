@@ -6,6 +6,8 @@
 from pink import imview
 from pink import cpp as pink
 
+debug = True
+
 #sol_outils1
 # extraction of thick simple objects
 
@@ -31,12 +33,16 @@ pink.surimp( outils, thin, "thin.ppm" )
 # extraction of object with more than one holes
 junctions = pink.ptjunction( skeleton, 8 )
 holes = pink.geodilat(junctions, outils, 8)
-pink.surimp( outils, holes, "holes.ppm" )
+if debug:
+    imview([outils, holes])
+    pink.surimp( outils, holes, "holes.ppm" )
 
 # sol_outils4
 # objects with one hole
 single_hole = outils - ( thick + thin + holes )
-pink.surimp( outils, single_hole, "single_hole.ppm" )
+if debug:
+    imview([outils, single_hole])
+    pink.surimp( outils, single_hole, "single_hole.ppm" )
 
 
 # sol_airport
@@ -54,9 +60,13 @@ def extract_runways( image, brightness_threshold=23, beed_filter_radius=3 ):
     
 airport = pink.readimage("../images/airport.pgm")
 runways = extract_runways(airport)
-runways.writeimage("runways.pgm")
-pink.surimp(airport, runways, "supimp.ppm")
-imview([airport, runways])
+
+if debug: 
+    runways.writeimage("runways.pgm")
+    pink.surimp(airport, runways, "surimp.ppm")
+
+if debug:
+    imview([airport, runways])
 
 # sol_muscle
 # extract the cells of a musle-fiber-cut image
@@ -81,13 +91,16 @@ def extract_cells(image, threshold=24):
 
 muscle = pink.readimage("../images/muscle.pgm")
 cells = extract_cells(muscle)
-pink.surimp(muscle, cells, "cells.pgm")
+
+if debug: 
+    imview([muscle, cells])
+    pink.surimp(muscle, cells, "cells.pgm")
 
 
 # sol_fractures
 # extract the fractures from an "Write me !!!!!!!!" image
 def extract_fractures(image):
-    seuil = pink.seuil( image, 123 )
+    seuil = pink.seuil(image, 123 )
     inv = pink.inverse(seuil)
     skeleton1 = pink.skelcurv( inv, 0, 8 )
     endpoints = pink.ptend( skeleton1, 8 )
@@ -104,7 +117,9 @@ def extract_fractures(image):
 eutel = pink.readimage("../images/eutel.pgm")
 fractures = extract_fractures(eutel)
 #fractures.writeimage("fractures.pgm")
-pink.surimp(eutel, fractures, "fractures.ppm")
+if debug:
+    imview([eutel, fractures])
+    pink.surimp(eutel, fractures, "fractures.ppm")
 
 
 
