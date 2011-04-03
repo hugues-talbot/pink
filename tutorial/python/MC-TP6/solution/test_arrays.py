@@ -9,24 +9,24 @@
 # (C) M. Couprie <coupriem@esiee.fr>, 2011
 # Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
 
-# histograms 
+# arrays, histograms 
 
-#from pink import python_component_missing # this is an exception class
+from pink import python_component_missing # this is an exception class
 from pink import imview as imview
 from pink import cpp as pink
-#import pink.windowing as wd
+import pink.windowing as wd
 
 try:
     import numpy as np
 except:
     print("error: could not import numpy, try to install python-numpy")
-#    raise python_component_missing
+    raise python_component_missing
 
 try:
     import matplotlib.pyplot as plt
 except:
     print("error: could not import matplotlib, try to install python-numpy and python-matplotlib")
-#    raise python_component_missing
+    raise python_component_missing
 
 ## Uncomment for debugging
 wd.options.debug=True

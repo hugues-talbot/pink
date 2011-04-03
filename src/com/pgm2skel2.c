@@ -34,17 +34,21 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file pgm2skel2.c
 
-\brief decomposition of a curvilinear skeleton into isolated points, end points, curves and junctions
+\brief decomposition of a curvilinear skeleton into isolated points,
+end points, curves and junctions
 
 <B>Usage:</B> pgm2skel in.pgm junc.pgm connex out.skel
 
-<B>Description:</B>
-The skeleton found in \b in.pgm is decomposed into isolated points, end points, curves and junctions ;
-and its description is stored in \b out.skel .
+<B>Description:</B> 
+The skeleton found in \b in.pgm is decomposed into isolated points,
+end points, curves and junctions ; and its description is stored in 
+\b out.skel .
+
 The parameter \b connex sets the adjacency relation used for the object
 (4, 8 (2d) or 6, 18, 26 (3d)).
 
-The image given as parameter\b junc.pgm contains curve points that will artificially considered as junction points. 
+The image given as parameter\b junc.pgm contains curve points that
+will artificially considered as junction points.
 
 \warning Points at the border of the image will be ignored.
 

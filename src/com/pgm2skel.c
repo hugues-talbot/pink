@@ -45,10 +45,19 @@ The parameter \b connex sets the adjacency relation used for the object
 (4, 8 (2d) or 6, 18, 26 (3d)).
 
 The optional parameter \len indicates the minimum length 
-(in pixels/voxels) of a curve. If a set of curve points with less than \len points, then: a) if it contains at least one end point it will be eliminated (together with its end point(s)), b) otherwise it will be considered as part of a junction.
-If this parameter is given, then isolated points will be eliminated. 
+(in pixels/voxels) of a curve. 
 
-The format of the file \out.skel is described in PINKDIR/doc/formats.txt (section: Curvilinear skeletons).
+If a set of curve points with less than \len points, then: 
+
+a) if it contains at least one end point it will be eliminated
+(together with its end point(s)),
+
+b) otherwise it will be considered as part of a junction.  
+
+If this parameter is given, then isolated points will be eliminated.
+
+The format of the file \out.skel is described in
+PINKDIR/doc/formats.txt (section: Curvilinear skeletons).
 
 \warning Points at the border of the image will be ignored.
 
