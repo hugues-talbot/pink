@@ -40,21 +40,20 @@ def image_2_array(img):
     return a
 
 # conversion : from numpy array to Pink image 
-# A CORRIGER - RENVOIE UNE IMAGE VIDE
 def array_2_image(arr):
     S = list(arr.shape)
     N = arr.size
     img = pink.char_image(S)
-    a.resize(N)
+    arr.resize(N)
     for i in range(N):
-        img[i] = int(a[i])
+        img[i] = int(arr[i])
     return img
 
 # histogram
-def histogram(img,mask=None):
+def pink_histogram(img,mask=None):
     if img.imtype() != 'uint8_t':
         print("histogram: error")
-        return
+        raise BaseException
     h = np.zeros(256)    
     N = img.size.prod()
     if mask == None:
@@ -66,7 +65,9 @@ def histogram(img,mask=None):
 
 # show histogram
 def show_histo(img):
-    h = histogram(img)
+    print("ici01")
+    h = pink_histogram(img)
+    print("ici02")
     x = np.array(range(256))
     y = np.zeros(256)
     fig = plt.figure()
@@ -78,8 +79,16 @@ def show_histo(img):
     return
 
 im = pink.readimage("../images/uo.pgm")
-#ar = image_2_array(im)
-#im2 = array_2_image(ar)
+imview(im)
+
+ar = image_2_array(im)
+
+im2 = array_2_image(ar)
+
+imview(im2)
+
+if im==im2:
+    print("Test succeded; the two files are equal")
 
 show_histo(im)
 

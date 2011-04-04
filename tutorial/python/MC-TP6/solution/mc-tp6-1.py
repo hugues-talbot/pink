@@ -17,6 +17,8 @@ def segment(image, height):
     if DEBUG:
         mark1.writeimage("_mark1")
     # watershed
+    return mark1
+
     wshed1 = pink.watershed(image, mark1, 4)
     if DEBUG:
         wshed1.writeimage("_wshed1")

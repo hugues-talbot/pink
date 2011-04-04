@@ -10,12 +10,14 @@ global DEBUG
 DEBUG=1
 
 # returns the maximum value in image
-def max1(image):
-    res = image[0]
-    for i in range(image.size.prod()):
-        if image[i] > res:
-            res = image[i]
-    return(res)
+## for this problem, there is a function in pink
+# def max1(image):
+#     res = image[0]
+#     for i in range(image.size.prod()):
+#         if image[i] > res:
+#             res = image[i]
+#     return(res)
+
 
 # extracts subimage from image
 def crop(image, x, y, w, h):
@@ -42,7 +44,7 @@ for J in range(CS):
         # measure interior objects
         grain_size = grain_size + pink.area(interior_objects)
         lab = pink.labelfgd(interior_objects, 8)
-        nb_grains = nb_grains + max1(lab)
+        nb_grains = nb_grains + pink.minmax(lab)[1]
         if DEBUG:
             print("I,J,s,n: " + str(I) + " " + str(J) + " " + str(grain_size) + " " + str(nb_grains))
         # deal with border objects
@@ -75,7 +77,7 @@ for J in range(CS):
             tile_rd.writeimage(filename_rd)
             # measure border objects
             lab = pink.labelfgd(border_grains, 8)
-            n = max1(lab)
+            n = pink.minmax(lab)[1]
             nb_grains = nb_grains + n
             if DEBUG and (n > 0):
                 print "grains on border: " + str(n) 
@@ -97,7 +99,7 @@ for J in range(CS):
             tile_r.writeimage(filename_r)
             # measure border objects
             lab = pink.labelfgd(border_grains, 8)
-            n = max1(lab)
+            n = pink.minmax(lab)[1]
             nb_grains = nb_grains + n
             if DEBUG and (n > 0):
                 print "grains on border: " + str(n) 
@@ -119,7 +121,7 @@ for J in range(CS):
             tile_d.writeimage(filename_d)
             # measure border objects
             lab = pink.labelfgd(border_grains, 8)
-            n = max1(lab)
+            n = pink.minmax(lab)[1]
             nb_grains = nb_grains + n
             if DEBUG and (n > 0):
                 print "grains on border: " + str(n) 
