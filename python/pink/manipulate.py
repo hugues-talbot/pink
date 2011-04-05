@@ -52,7 +52,7 @@ class app(Frame):
         self.__Frame4 = Frame(self.__Frame1)
         self.__Frame4.pack(side='left')
         self.valuescale = Scale(self.__Frame4,command=self.on_valuescale_command
-            ,orient='horizontal', from_=minval, to=maxval)
+            ,orient='horizontal', from_=minval, to=maxval, length=max(100, maxval-minval))
         self.valuescale.pack(side='top')
         self.__Frame3 = Frame(self.__Frame1)
         self.__Frame3.pack(side='left')
@@ -114,7 +114,7 @@ class app2(Frame):
             self.surimp = 1
             self.parameter_value = self.valuescale.get()
             self.tmpimage = self.function_name(self.parameter_value)
-            self.tmpimage = self.tmpimage / 2 + self.image_in
+            self.tmpimage = self.tmpimage / 1 + self.image_in
             self.tkimage = to_rgb_photoimage([self.tmpimage, self.image_in, self.image_in], master=self.__Frame2 )
             #self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
             self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )            
@@ -136,7 +136,7 @@ class app2(Frame):
         else:
             self.parameter_value = self.valuescale.get()
             self.tmpimage = self.function_name(self.parameter_value)
-            self.tmpimage = self.tmpimage / 2 + self.image_in
+            self.tmpimage = self.tmpimage / 1 + self.image_in
             #self.tkimage = to_photoimage(self.tmpimage, master=self.__Frame2 )
             self.tkimage = to_rgb_photoimage([self.tmpimage, self.image_in, self.image_in], master=self.__Frame2 )
             self.gui_image = self.canvas.create_image( 1, 1, image=self.tkimage, anchor="nw" )

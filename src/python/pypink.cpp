@@ -1676,6 +1676,32 @@ UI_WRAP_RESULT(
 #include BOOST_PP_UPDATE_COUNTER()
 
 
+// ***********************************************************************
+// ***********************************************************************
+// ***********************************************************************
+// ************** FUNCTIONS DEALING WITH COMPLEX IMAGES ******************
+// ***********************************************************************
+// ***********************************************************************
+// ***********************************************************************
+
+UI_WRAP_CPP(
+  "any2complex",
+  pink::lany2complex,
+  (arg("real part"), arg("imaginary part")),
+  doc__ui_any_to_complex__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_FUNCTION(
+  "fft",
+  lfft,
+  (arg("image"), arg("direction")),
+  doc__fft__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+
+
 BOOST_PYTHON_MODULE(libcpp_pink)
 // the final module will be named pink, but that will also contain
 // some python functions, like readimage, so it will be created as

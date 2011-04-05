@@ -327,6 +327,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #  include "ui_genball.hpp"
 #  include "ui_extractplane.hpp"
 #  include "ui_measure.hpp"
+#  include "ui_any_to_complex.hpp"
 #endif /* __cplusplus */
 
 // // new with mixed language declarations (c/c++)

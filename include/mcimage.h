@@ -106,7 +106,15 @@ typedef int32_t index_t;
 */
 extern struct xvimage *allocimage(char * name, index_t rs, index_t cs, index_t ds, int32_t t);
 
-extern struct xvimage *allocmultimage(char * name, index_t rs, index_t cs, index_t ds, index_t ts, index_t nb, int32_t t);
+  extern struct xvimage *allocmultimage(char * name, index_t rs, index_t cs, index_t ds, index_t ts, index_t nb, int32_t t);
+
+/**
+\brief fills the image with zeros
+description Sets every pixel of the image to binary zero.
+
+\param f the input image
+\return no return value
+*/
 extern void razimage(struct xvimage *f);
 extern struct xvimage *allocheader(char * name, index_t rs, index_t cs, index_t d, int32_t t);
 extern int32_t showheader(char * name);

@@ -12,7 +12,7 @@ DEBUG=1
 
 # bias correction
 def correctbias(img, alpha):
-    smooth = pink.gaussianfilter(img, alpha)
+    smooth = pink.gaussianfilter(img, alpha/200.)
     mm = pink.minmax(smooth)
     s = smooth - mm[0]
     res1 = img - s
@@ -26,14 +26,27 @@ image = pink.readimage("../images/pex2.pgm")
 
 # try gaussian filtering (acts on global 'image' - for use by 'manipulate')
 def gaussian(alpha_int):
-    alpha = alpha_int / 100.0
+    alpha = alpha_int / 200.0
     res = pink.gaussianfilter(image, alpha)
     return res
 
-a_int = manipulate(gaussian, 1, 100) # let the user choose parameter value
-a = a_int / 100.0
+def ss(q): return pink.seuil(image, q)
 
-res = correctbias(image, a)
+if debug: 
+    manipulate(ss, 0, 255)
+
+#a_int = manipulate(gaussian, 1, 200) # let the user choose parameter value
+
+def cb(q): return correctbias(image, q)
+
+a_int = manipulate(cb, 0, 255)
+
+res = correctbias(image, a_int)
+
+def s2(q): return pink.seuil(res, q)
+
+manipulate(s2, 0, 255)
+
 imview(res)
 
 # LuM end of file
