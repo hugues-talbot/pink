@@ -6,7 +6,7 @@
 from pink import imview as imview
 from pink import cpp as pink
 global DEBUG
-DEBUG=1
+DEBUG=False
 
 # black top hat transformation (residue of the closing)
 def black_top_hat(image, es):

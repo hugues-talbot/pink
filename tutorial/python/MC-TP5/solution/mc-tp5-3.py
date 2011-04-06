@@ -42,7 +42,7 @@ if debug:
 
 #convert and smooth mask
 mask = pink.normalize(inv(mask))
-mask_filt = pink.gaussianfilter( pink.convert2float(mask), 0.7)
+mask_filt = pink.gaussianfilter(pink.convert2float(mask), 0.7)
 
 if debug:
     imview(mask_filt)

@@ -44,7 +44,7 @@ if debug: imview(inside)
 # exo1_3
 # fill in the holes
 def fill_the_holes(image):
-    frame = pink.frame( pink.char_image(image.size), 255)
+    frame = pink.frame(pink.char_image(image.size), 255)
     inv = pink.inverse(image)
     dilated = pink.geodilat(frame, inv, 8)
     result = pink.inverse(dilated)
@@ -122,7 +122,7 @@ def extract_corne(image, threshold):
 
 meb = pink.readimage("../images/meb.pgm")
 cornes = extract_corne(meb, 65)
-if debug: imview([meb, cornes])
+if debug: imview([cornes, meb])
 
 def fcornes(q): return extract_corne(meb, q)
 

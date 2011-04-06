@@ -10,13 +10,13 @@ from pink import cpp as pink
 from pink import show_histo
 inv=pink.inverse
 
-global DEBUG
-DEBUG=1
+global debug
+debug=False
 
 # image smoothing
 def filtering(image, rad_es):
     es = pink.genball(rad_es,3)
-    if DEBUG:
+    if debug:
         es.writeimage("_es")
     res = pink.medianfilter(image, es)
     return(res)
@@ -54,19 +54,19 @@ show_histo(img)
 imgf = filtering(img, 2)
 
 white = seg_white(imgf, 197, 80, 80)
-if DEBUG:
+if debug:
     view3d(img, white)
 
 black = seg_black(imgf, 128)
-if DEBUG:
+if debug:
     view3d(img, black)
 
 gray = seg_gray(imgf, 128, 152)
-if DEBUG:
+if debug:
     view3d(img, gray)
 
 labels = combine(black, gray, white)
-if DEBUG:
+if debug:
     view3d(pink.normalize(labels))
 
 # LuM end of file
