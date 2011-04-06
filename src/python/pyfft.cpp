@@ -5,7 +5,7 @@
   This software comes in hope that it will be useful but 
   without any warranty to the extent permitted by aplicable law.
   
-  (C) UjoImro, 2010
+  (C) UjoImro, 2011
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
@@ -19,11 +19,9 @@ using namespace pink;
 namespace pink {
   namespace python {
 
-    
-
     fcomplex_image
     py_fft(
-      const fcomplex_image & image,
+      fcomplex_image image,
       int32_t dir
       )
     {
@@ -33,7 +31,7 @@ namespace pink {
       } /* if */
 
       int32_t rs, cs, cs2, rs2;
-      float_image * result;
+      fcomplex_image * result;
       
       cs = image.get_size()[0];            /* Number of rows */
       rs = image.get_size()[1];            /* Number of columns */
@@ -42,49 +40,55 @@ namespace pink {
 
       // We are looking for the smallest power of two greater or equal
       // then the image
-      while (rs2 <= rs) rs2 = rs2 << 1;
-      while (cs2 <= cs) cs2 = cs2 << 1;
+      while (rs2 < rs) rs2 = rs2 << 1;
+      while (cs2 < cs) cs2 = cs2 << 1;
 
       if ((rs2 != rs) || (cs2 != cs))
       {
         vint new_size(2);
         new_size << rs2, cs2;
         
-        result = new float_image(new_size);
+        result = new fcomplex_image(new_size);
+
+        result->get_output()->xdim = image.get_output()->xdim;
+        result->get_output()->ydim = image.get_output()->ydim;
+        result->get_output()->zdim = image.get_output()->zdim;
         
-        result->get_output()->xdim = image->get_output()->xdim;
-        result->get_output()->ydim = image->get_output()->ydim;
-        result->get_output()->zdim = image->get_output()->zdim;
-        
-        razimage(image2);
-        if (!linsert(image, image2, 0, 0, 0))
+        razimage(result->get_output());
+        if (!linsert(image.get_output(), result->get_output(), 0, 0, 0))
         {
-          fprintf(stderr, "%s: function linsert failed\n", argv[0]);
-          exit(1);
+          pink_error("function linsert failed");
         }
-        freeimage(image);
-        image = image2;
-      } /* if rs2!=rs or cs2!=cs */
+        
+        // NOTE: these commands are not necessary in C++
+        ///freeimage(image);
+        //image = image2;
+      }
+      else /* NOT rs2!=rs or cs2!=cs */
+      {
+        result = new fcomplex_image();
+        result->copy(image);
+      } /* NOT rs2!=rs or cs2!=cs */
+      
   
       /* if (! lfft(image, dir)) */
       /* { */
       /*   fprintf(stderr, "%s: function lfft failed\n", argv[0]); */
       /*   exit(1); */
       /* } */
-    
-      return lfft(image, dir);
+      lfft(result->get_output(), dir);
+
+      return *result;      
     } /* py_fft */
 
   } /* namespace python */
 } /* namespace pink */
 
 
-UI_EXPORT_FUNCTION( minmax, 
-		    pink::python::minmax, 
-		    (arg("image")),
-                    "Returns the minimum and maximum values of the image.\n"
-                    "It's using less comparisons then just looking for the maximum and"
-                    "then the minimum."
+UI_EXPORT_ONE_FUNCTION( fft, 
+                        pink::python::py_fft, 
+                        (arg("image"), arg("direction")=0),
+                        doc__fft__c__
   );
 
 

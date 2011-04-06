@@ -20,10 +20,6 @@
 #include <boost/python.hpp>
 #include "ujimage.hpp"
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in pyujimage.hpp: " << msg; call_error(fullmessage.str());}
-
-
 namespace pink
 {
   namespace python
@@ -34,7 +30,11 @@ namespace pink
     public:
       operator xvimage*()
         {
-          error("you shouldn't be calling me");      
+          pink_error("you shouldn't be calling me");
+          
+          // Here we need to return because some compilers ask for a
+          // return value. return will never be called as pink_error
+          // will raise an exception.
 	  return NULL;
         }
     }; /* pink_image_wrap */
@@ -338,7 +338,6 @@ UJOI CLASS CONSTRAINT EXPORTS
 
 
 
-#undef error
 #endif /* PYUJIMAGE_HPP */
 
 

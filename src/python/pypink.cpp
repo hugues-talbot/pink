@@ -143,7 +143,8 @@ void generate_rgb_image_export(); void closing_export(); /*void closeball_export
 void skelcurv_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
 /*void openball_export();*/ void gradmorph_export(); void mcube_export(); void minima_export();
-void complex_export();
+void complex_export(); void fft_export(); void mult_export();
+
 
 
 // this part is not yet ready for windows
@@ -1700,6 +1701,15 @@ UI_WRAP_FUNCTION(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
+UI_WRAP_RESULT(
+  float_image,
+  "complex_modulus",
+  lmodulus,
+  (arg("image")),
+  doc__complex_modulus__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
 
 
 BOOST_PYTHON_MODULE(libcpp_pink)
@@ -1748,8 +1758,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   asfbin_export();  skelcurv_export();
   readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
   htkern_export();  /*openball_export();*/    gradmorph_export(); mcube_export(); minima_export();
-  complex_export();
-  
+  complex_export(); fft_export();  mult_export();  
 
 
   // this part is not yet ready for windows

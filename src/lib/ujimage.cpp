@@ -382,6 +382,12 @@ fcomplex & operator*=(fcomplex & x, const fcomplex & y)
   return x;      
 }
 
+fcomplex & operator*=(fcomplex & x, const float & y)
+{
+  x.re = x.re * y;
+  x.im = x.im * y;
+}
+
 fcomplex & operator/=(fcomplex & x, const fcomplex & y)
 {
   float abs = y.re * y.re + y.im * y.im;
@@ -418,6 +424,18 @@ fcomplex & operator*( const fcomplex & x, const fcomplex & y)
 {
   fcomplex result(x);  
   return result*=y;        
+}
+
+fcomplex & operator*( const fcomplex & x, const float & y)
+{
+  fcomplex result(x);
+  return result*=y;  
+}
+
+fcomplex & operator*( const float & x, const fcomplex & y)
+{
+  fcomplex result(y);
+  return result*=x;  
 }
 
 fcomplex & operator/( const fcomplex & x, const fcomplex & y)
@@ -494,6 +512,12 @@ dcomplex & operator*=(dcomplex & x, const dcomplex & y)
   return x;      
 }
 
+dcomplex & operator*=(dcomplex & x, const double & y)
+{
+  x.re = x.re * y;
+  x.im = x.im * y;
+}
+
 dcomplex & operator/=(dcomplex & x, const dcomplex & y)
 {
   float abs = y.re * y.re + y.im * y.im;
@@ -531,6 +555,19 @@ dcomplex & operator*( const dcomplex & x, const dcomplex & y)
   dcomplex result(x);  
   return result*=y;        
 }
+
+dcomplex & operator*( const dcomplex & x, const double & y)
+{
+  dcomplex result(x);
+  return result*=y;  
+}
+
+dcomplex & operator*( const double & x, const dcomplex & y)
+{
+  dcomplex result(y);
+  return result*=x;  
+}
+
 
 dcomplex & operator/( const dcomplex & x, const dcomplex & y)
 {
