@@ -7,20 +7,20 @@ from pink import imview as imview
 from pink import manipulate as manipulate
 from pink import cpp as pink
 inv=pink.inverse
-global DEBUG
-DEBUG=1
+global debug
+debug=1
 
 # segmentation
 def segment(image, height):
     # obtain markers
     mark1 = pink.segmentheight(image, 4, height, 0)
-    if DEBUG:
+    if debug:
         mark1.writeimage("_mark1")
     # watershed
     return mark1
 
     wshed1 = pink.watershed(image, mark1, 4)
-    if DEBUG:
+    if debug:
         wshed1.writeimage("_wshed1")
     return inv(wshed1)
 

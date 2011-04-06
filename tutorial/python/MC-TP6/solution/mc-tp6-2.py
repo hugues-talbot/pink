@@ -20,6 +20,8 @@ im = pink.readimage("../images/uo_w.pgm")
 imf = pink.frame(im, 255)       # adds a white frame inside the image
 imf = pink.frame_around(imf, 0) # adds a black frame outside the image
 s = pink.skeleton(imf, 0, 8)    # get rid of simple points
+imview(s)
+
 s.writeimage("_s")
 run("pgm2skel _s 8 _s.skel")    # conversion into "skelcurv" format
 run("skel2graph _s.skel 1 _s.graph") # conversion into "graph" format

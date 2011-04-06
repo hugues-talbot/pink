@@ -10,6 +10,21 @@
   ujoimro@gmail.com
 */
 
+int main()
+{
+  return 0;  
+}
+
+
+//*******************************************************************************
+//*******************************************************************************
+//*******************************************************************************
+//******************** THIS FILE NEEDS MINOR REVISION OR REMOVAL ****************
+//*******************************************************************************
+//*******************************************************************************
+//*******************************************************************************
+
+
 /*!
    \file measure.cpp
 
@@ -32,75 +47,75 @@
 
 
 
-#include "pink.h"
+// #include "pink.h"
 
-using namespace std;
-using namespace pink;
+// using namespace std;
+// using namespace pink;
 
-#define epsilon 0.00001
+// #define epsilon 0.00001
 
-int main(int argc, char * argv[]){
+// int main(int argc, char * argv[]){
 
-  if ( argc!=2 + 1 )
-  {
-    cerr << "\n\nNormalized absolute measure calculated from the image.\n";
- //                        0           1                  2 
-    cerr << "usage: ./measure src(float_image) result(float_image)\n\n";
-    exit(1);
-  } /* if (argc!=2 + 1) */
+//   if ( argc!=2 + 1 )
+//   {
+//     cerr << "\n\nNormalized absolute measure calculated from the image.\n";
+//  //                        0           1                  2 
+//     cerr << "usage: ./measure src(float_image) result(float_image)\n\n";
+//     exit(1);
+//   } /* if (argc!=2 + 1) */
   
 
   
 
 
-  PTR<float_image> src( new float_image(argv[1]) );
+//   PTR<float_image> src( new float_image(argv[1]) );
 
-  float min, max;
-  pair<float, float> mm;
+//   float min, max;
+//   pair<float, float> mm;
   
   
-  mm = lminmaxval( *src );
-  min = mm.first;
-  max = mm.second;
+//   mm = lminmaxval( *src );
+//   min = mm.first;
+//   max = mm.second;
 
   
-  if ( min == max )
-  {
-    pink_error("All pixels are equal in the image.");
-  } /* if */
+//   if ( min == max )
+//   {
+//     pink_error("All pixels are equal in the image.");
+//   } /* if */
 
-  PRINTIMAGE(src);
+//   PRINTIMAGE(src);
   
   
-  src = lnormalize( *src );
+//   src = lnormalize( *src );
 
-  PTR<float_image> result = uiGradientAbs( *src );
-
-
-  PRINTIMAGE(result);
+//   PTR<float_image> result = uiGradientAbs( *src );
 
 
-  mm = lminmaxval( *result );
-  min = mm.first;
-  max = mm.second;
+//   PRINTIMAGE(result);
+
+
+//   mm = lminmaxval( *result );
+//   min = mm.first;
+//   max = mm.second;
 
   
-  if ( min == max )
-  {
-    pink_error("All pixels are equal in the image.");
-  } /* if */
+//   if ( min == max )
+//   {
+//     pink_error("All pixels are equal in the image.");
+//   } /* if */
 
 
-  FOR(q, result->get_size().prod())
-  {
-    (*result)[q] =  1. / ( epsilon + (*result)[q] );
-  } /* FOR */
+//   FOR(q, result->get_size().prod())
+//   {
+//     (*result)[q] =  1. / ( epsilon + (*result)[q] );
+//   } /* FOR */
 
-  result = lnormalize( *result );
+//   result = lnormalize( *result );
 
-  result->_writeimage(argv[2]);
+//   result->_writeimage(argv[2]);
 
-} /* main */
+// } /* main */
 
 
 
