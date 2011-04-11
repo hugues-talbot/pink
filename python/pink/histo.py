@@ -23,7 +23,7 @@ except:
 try:
     import matplotlib.pyplot as plt
 except:
-    print("error: could not import matplotlib, try to install python-matplotlib and python-matplotlib")
+    print("error: could not import matplotlib, try to install python-numpy and python-matplotlib")
     raise python_component_missing
 
 # ## Uncomment for debugging
