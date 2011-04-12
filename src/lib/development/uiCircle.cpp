@@ -27,7 +27,7 @@ namespace pink {
   namespace gsl
   {
 
-    const double pi = M_PIl;    
+    const double pi = M_PI;    
     
     inline double SQR( double x )
     {

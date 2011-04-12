@@ -69,7 +69,6 @@ FILE( GLOB pink_commands ${CMAKE_SOURCE_DIR}/src/com/* )
 #MESSAGE(" command =" COMMAND ${PYTHON_DOCUMENTATION_EXE} ${CMAKE_SOURCE_DIR}/src/com ${CMAKE_SOURCE_DIR}/include/python_doc.h  )
 
 add_custom_command( OUTPUT ${py_documentation}
-                    COMMAND seq 100
                     COMMAND ${PYTHON_DOCUMENTATION_EXE} ${CMAKE_SOURCE_DIR}/python_documenter.py ${CMAKE_SOURCE_DIR}/src/com ${CMAKE_SOURCE_DIR}/include/python_doc.h
 		    DEPENDS ${pink_commands}
                     )
