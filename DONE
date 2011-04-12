@@ -44,3 +44,9 @@ derniers ajouts / modifications :
 - manipulate : action 'superimpose' implémentée
 - démonstration des opérateurs morpho de base dans 
   tutorials/python/MC-TP1/solution/mc-demo-morph1.py
+
+05-08/04/2011 MC
+
+- operateur lambdamedialaxis pour python
+- initialise nouveau tutorial python MC-TP8 (squelettes euclidiens)
+- skel_CKG, lskelpar3d2 : algo 3D // guidé (init)

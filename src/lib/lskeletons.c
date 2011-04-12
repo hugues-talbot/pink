@@ -48,6 +48,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mctopo3d.h>
 #include <mckhalimsky3d.h>
 #include <mcfifo.h>
+#include <mcrlifo.h>
 #include <mcutil.h>
 #include <mcgeo.h>
 #include <ldist.h>
@@ -283,8 +284,8 @@ resultat: F
 #define F_NAME "lskelubp"
 { 
   int32_t k;
-  index_t x;                       /* index muet de pixel */
-  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t x;                       /* index de pixel */
+  index_t y;                       /* index (generalement un voisin de x) */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t N = rs * cs;             /* taille image */
@@ -411,8 +412,8 @@ int32_t lskelubp2(struct xvimage *image,
 #define F_NAME "lskelubp2"
 { 
   int32_t k;
-  index_t x;                       /* index muet de pixel */
-  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t x;                       /* index de pixel */
+  index_t y;                       /* index (generalement un voisin de x) */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t N = rs * cs;             /* taille image */
@@ -588,8 +589,8 @@ resultat: F
 #define F_NAME "lskelubp3d"
 { 
   int32_t k;
-  index_t x;                       /* index muet de pixel */
-  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t x;                       /* index de pixel */
+  index_t y;                       /* index (generalement un voisin de x) */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t ps = rs * cs;            /* taille plan */
@@ -720,8 +721,8 @@ int32_t lskelubp3d2(struct xvimage *image,
 #define F_NAME "lskelubp3d2"
 { 
   int32_t k;
-  index_t x;                       /* index muet de pixel */
-  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t x;                       /* index de pixel */
+  index_t y;                       /* index (generalement un voisin de x) */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t ps = rs * cs;            /* taille plan */
@@ -895,8 +896,8 @@ resultat: F
 #define F_NAME "lskelcurv"
 { 
   int32_t k, t, tb;
-  index_t x;                       /* index muet de pixel */
-  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t x;                       /* index de pixel */
+  index_t y;                       /* index (generalement un voisin de x) */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t N = rs * cs;             /* taille image */
@@ -1257,8 +1258,8 @@ resultat: F
 #define F_NAME "lskelcurv3d"
 { 
   int32_t k, t, tb;
-  index_t x;                       /* index muet de pixel */
-  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t x;                       /* index de pixel */
+  index_t y;                       /* index (generalement un voisin de x) */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t ds = depth(image);       /* nb plans */
@@ -1595,8 +1596,8 @@ resultat: F
 #define F_NAME "lskelsurf3d"
 { 
   int32_t k, t, tb;
-  index_t x;                       /* index muet de pixel */
-  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t x;                       /* index de pixel */
+  index_t y;                       /* index (generalement un voisin de x) */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t ds = depth(image);       /* nb plans */
@@ -1940,8 +1941,8 @@ resultat: F
 #define F_NAME "ltoposhrink"
 { 
   int32_t k;
-  index_t x;                       /* index muet de pixel */
-  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t x;                       /* index de pixel */
+  index_t y;                       /* index (generalement un voisin de x) */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t N = rs * cs;             /* taille image */
@@ -2139,8 +2140,8 @@ resultat: F
 #define F_NAME "ltoposhrink3d"
 { 
   int32_t k;
-  index_t x;                       /* index muet de pixel */
-  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t x;                       /* index de pixel */
+  index_t y;                       /* index (generalement un voisin de x) */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t ps = rs * cs;            /* taille plan */
@@ -2349,7 +2350,7 @@ int32_t lskeleucl(struct xvimage *image,
 #define F_NAME "lskeleucl"
 { 
   int32_t k;
-  index_t x, y;                 /* index muet de pixel */
+  index_t x, y;                 /* index de pixel */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t ps = rs * cs;            /* taille plan */
@@ -2663,8 +2664,8 @@ resultat: F
 #define F_NAME "lskelend3d"
 { 
   int32_t k;
-  index_t x;                       /* index muet de pixel */
-  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t x;                       /* index de pixel */
+  index_t y;                       /* index (generalement un voisin de x) */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t ds = depth(image);       /* nb plans */
@@ -2809,7 +2810,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
 #undef F_NAME
 #define F_NAME "lskelend3d"
 { 
-  index_t x;                       /* index muet de pixel */
+  index_t x;                       /* index de pixel */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t ds = depth(image);       /* nb plans */
@@ -2980,7 +2981,7 @@ Algo par passes directionnelles.
 #undef F_NAME
 #define F_NAME "lskelendcurvlab3d"
 { 
-  index_t x;                       /* index muet de pixel */
+  index_t x;                       /* index de pixel */
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t ds = depth(image);       /* nb plans */
@@ -3115,3 +3116,389 @@ Algo par passes directionnelles.
   mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelendcurvlab3d() */
+
+/* ==================================== */
+int32_t lskelPSG(struct xvimage *imageprio, 
+	     double val)
+/* ==================================== */
+/*
+Squelette symétrique guidé ultime basé sur les points P-simples
+Algo PSG2 données: P, val
+S = {x | P[x] > 0}
+Répéter jusqu'à stabilité
+  V := min{P[x], x in S}
+  Si V > = val
+
+A FINIR
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+*/
+{ 
+  if (depth(imageprio) == 1)
+    return lskelPSG2(imageprio, val);
+  else
+    return lskelPSG3(imageprio, val);
+} // lskelPSG()
+
+/* ==================================== */
+int32_t lskelPSG2(struct xvimage *imageprio, 
+	     double val)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lskelPSG2"
+#define PSIMPLE      1
+{ 
+  int32_t i, k;
+  index_t x, y;                    /* index de pixel */
+  index_t rs = rowsize(imageprio); /* taille ligne */
+  index_t cs = colsize(imageprio); /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  int32_t *P = NULL;   /* l'image de priorites (cas int32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
+  Rbt * RBT;
+  index_t taillemaxrbt;
+  struct xvimage *image;
+  struct xvimage *candidats;
+  uint8_t *F;          /* objet */
+  uint8_t *C;          /* candidats */
+  Rlifo * RLIFO;
+  double curprio;
+
+  ONLY_2D(imageprio);
+  ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
+
+  IndicsInit(N);
+
+  image = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
+  if (image == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  F = UCHARDATA(image);
+  razimage(image);
+
+  candidats = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
+  if (candidats == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  C = UCHARDATA(candidats);
+  razimage(candidats);
+
+  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
+    P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
+  else 
+  {
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
+    return(0);
+  }
+
+  taillemaxrbt = 2 * cs +  2 * rs;
+  /* cette taille est indicative, le RBT est realloue en cas de depassement */
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
+  if (RBT == NULL)
+  {
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
+    return(0);
+  }
+  RLIFO = CreeRlifoVide(taillemaxrbt);
+  if (RLIFO == NULL)
+  {
+    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
+    return(0);
+  }
+
+  switch(datatype(imageprio))
+  {
+  case VFF_TYP_4_BYTE: for (x = 0; x < N; x++) if (P[x]>0)  F[x] = NDG_MAX; break;
+  case VFF_TYP_1_BYTE: for (x = 0; x < N; x++) if (PB[x]>0) F[x] = NDG_MAX; break;
+  case VFF_TYP_FLOAT : for (x = 0; x < N; x++) if (PF[x]>0) F[x] = NDG_MAX; break;
+  case VFF_TYP_DOUBLE: for (x = 0; x < N; x++) if (PD[x]>0) F[x] = NDG_MAX; break;
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  /* ========================================================= */
+  /*   INITIALISATION DU RBT */
+  /* ========================================================= */
+
+  for (x = 0; x < N; x++)
+  {
+    if (F[x] && bordext8(F, x, rs, N))
+    {
+      switch(datatype(imageprio))
+      {
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
+      }
+      Set(x, EN_RBT);
+    }
+  }
+
+  /* ================================================ */
+  /*                  DEBUT SATURATION                */
+  /* ================================================ */
+
+  while (!mcrbt_RbtVide(RBT))
+  {
+    curprio = RbtMinLevel(RBT);
+    if (curprio >= val) break;
+    do
+    {
+      x = RbtPopMin(RBT);
+      UnSet(x, EN_RBT);
+      RlifoPush(&RLIFO, x);
+      C[x] = 1;
+    } while (RbtMinLevel(RBT) == curprio);
+
+    for (i = 0; i < RLIFO->Sp; i++)
+    {
+      x = RLIFO->Pts[i];
+      if (P_simple8(F, C, x, rs, N))
+      {
+	Set(x, PSIMPLE); // marque le point
+        for (k = 0; k < 8; k += 1)        /* parcourt les voisins en 26-connexite */
+        {                                              /* pour empiler les voisins */
+          y = voisin(x, k, rs, N);                       /* non deja empiles */
+          if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
+          {
+	    switch(datatype(imageprio))
+	    {
+	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
+	    }
+            Set(y, EN_RBT);
+          } // if y
+        } // for k
+      } // if (P_simple26(F, C, x, rs, ps, N)
+    } // for (i = 0; i < RLIFO->Sp; i++)
+
+    for (i = 0; i < RLIFO->Sp; i++)
+    {
+      x = RLIFO->Pts[i];
+      if (IsSet(x, PSIMPLE)) F[x] = 0;
+      C[x] = 0;
+    }
+
+  } // while (!mcrbt_RbtVide(RBT))
+
+  razimage(imageprio);
+  switch(datatype(imageprio))
+  {
+  case VFF_TYP_4_BYTE: for (x = 0; x < N; x++) if (F[x]) P[x] = 1; break;
+  case VFF_TYP_1_BYTE: for (x = 0; x < N; x++) if (F[x]) PB[x] = 1; break;
+  case VFF_TYP_FLOAT : for (x = 0; x < N; x++) if (F[x]) PF[x] = 1; break;
+  case VFF_TYP_DOUBLE: for (x = 0; x < N; x++) if (F[x]) PD[x] = 1; break;
+  }
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  mcrbt_RbtTermine(RBT);
+  RlifoTermine(RLIFO);
+  freeimage(image);
+  freeimage(candidats);
+  return(1);
+} /* lskelPSG2() */
+
+/* ==================================== */
+int32_t lskelPSG3(struct xvimage *imageprio, 
+	     double val)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lskelPSG3"
+{ 
+  int32_t i, k;
+  index_t x, y;                    /* index de pixel */
+  index_t rs = rowsize(imageprio); /* taille ligne */
+  index_t cs = colsize(imageprio); /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(imageprio);
+  index_t N = ds * ps;             /* taille image */
+  int32_t *P = NULL;   /* l'image de priorites (cas int32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
+  Rbt * RBT;
+  index_t taillemaxrbt;
+  struct xvimage *image;
+  struct xvimage *candidats;
+  uint8_t *F;          /* objet */
+  uint8_t *C;          /* candidats */
+  Rlifo * RLIFO;
+  double curprio;
+
+  ONLY_3D(imageprio);
+  ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
+
+  IndicsInit(N);
+
+  image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  if (image == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  F = UCHARDATA(image);
+  razimage(image);
+
+  candidats = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  if (candidats == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+  C = UCHARDATA(candidats);
+  razimage(candidats);
+  for (x = 0; x < N; x++)
+
+  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
+    P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
+  else 
+  {
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
+    return(0);
+  }
+
+  mctopo3d_init_topo3d();
+
+  taillemaxrbt = 2 * rs * cs +  2 * rs * ds +  2 * ds * cs;
+  /* cette taille est indicative, le RBT est realloue en cas de depassement */
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
+  if (RBT == NULL)
+  {
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
+    return(0);
+  }
+  RLIFO = CreeRlifoVide(taillemaxrbt);
+  if (RLIFO == NULL)
+  {
+    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
+    return(0);
+  }
+
+  switch(datatype(imageprio))
+  {
+  case VFF_TYP_4_BYTE: for (x = 0; x < N; x++) if (P[x]>0)  F[x] = NDG_MAX; break;
+  case VFF_TYP_1_BYTE: for (x = 0; x < N; x++) if (PB[x]>0) F[x] = NDG_MAX; break;
+  case VFF_TYP_FLOAT : for (x = 0; x < N; x++) if (PF[x]>0) F[x] = NDG_MAX; break;
+  case VFF_TYP_DOUBLE: for (x = 0; x < N; x++) if (PD[x]>0) F[x] = NDG_MAX; break;
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  /* ========================================================= */
+  /*   INITIALISATION DU RBT */
+  /* ========================================================= */
+
+  for (x = 0; x < N; x++)
+  {
+    if (F[x] && mctopo3d_bordext26(F, x, rs, ps, N))
+    {
+      switch(datatype(imageprio))
+      {
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
+      }
+      Set(x, EN_RBT);
+    }
+  }
+
+  /* ================================================ */
+  /*                  DEBUT SATURATION                */
+  /* ================================================ */
+
+  while (!mcrbt_RbtVide(RBT))
+  {
+    curprio = RbtMinLevel(RBT);
+    if (curprio >= val) break;
+    do
+    {
+      x = RbtPopMin(RBT);
+      UnSet(x, EN_RBT);
+      RlifoPush(&RLIFO, x);
+      C[x] = 1;
+    } while (RbtMinLevel(RBT) == curprio);
+
+    for (i = 0; i < RLIFO->Sp; i++)
+    {
+      x = RLIFO->Pts[i];
+      if (P_simple26(F, C, x, rs, ps, N))
+      {
+	Set(x, PSIMPLE); // marque le point
+        for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
+        {                                              /* pour empiler les voisins */
+          y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
+          if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
+          {
+	    switch(datatype(imageprio))
+	    {
+	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
+	    }
+            Set(y, EN_RBT);
+          } // if y
+        } // for k
+      } // if (P_simple26(F, C, x, rs, ps, N)
+    } // for (i = 0; i < RLIFO->Sp; i++)
+
+    for (i = 0; i < RLIFO->Sp; i++)
+    {
+      x = RLIFO->Pts[i];
+      if (IsSet(x, PSIMPLE)) F[x] = 0;
+      C[x] = 0;
+    }
+
+  } // while (!mcrbt_RbtVide(RBT))
+
+  razimage(imageprio);
+  switch(datatype(imageprio))
+  {
+  case VFF_TYP_4_BYTE: for (x = 0; x < N; x++) if (F[x]) P[x] = 1; break;
+  case VFF_TYP_1_BYTE: for (x = 0; x < N; x++) if (F[x]) PB[x] = 1; break;
+  case VFF_TYP_FLOAT : for (x = 0; x < N; x++) if (F[x]) PF[x] = 1; break;
+  case VFF_TYP_DOUBLE: for (x = 0; x < N; x++) if (F[x]) PD[x] = 1; break;
+  }
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  mctopo3d_termine_topo3d();
+  IndicsTermine();
+  mcrbt_RbtTermine(RBT);
+  RlifoTermine(RLIFO);
+  freeimage(image);
+  freeimage(candidats);
+  return(1);
+} /* lskelPSG3() */

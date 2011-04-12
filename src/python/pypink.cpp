@@ -672,6 +672,15 @@ UI_WRAP_RESULT(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
+UI_WRAP_RESULT(
+  float_image,
+  "lambdamedialaxis",
+  lmedialaxis_lambdamedialaxis,
+  (arg("image")),
+  doc__lambdamedialaxis__c__
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
 UI_WRAP_FUNCTION(
   "drawline",
   ldrawline,

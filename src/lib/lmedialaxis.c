@@ -2024,12 +2024,6 @@ int32_t lmedialaxis_lbisector_Rita(struct xvimage *id, struct xvimage *im, struc
   float *imageangle;
   char tablefilename[512];
 
-  if (((int64_t)rs * (int64_t)cs) >= HUGE_IMAGE_SIZE)
-  {
-    fprintf(stderr, "%s: does not handle huge images\n", F_NAME);
-    return(0);
-  }
-
   if (depth(id) != 1)
   {
     fprintf(stderr, "%s: only for 2D images\n", F_NAME);
@@ -2044,6 +2038,12 @@ int32_t lmedialaxis_lbisector_Rita(struct xvimage *id, struct xvimage *im, struc
   rs = rowsize(id);
   cs = colsize(id);
   N = rs * cs;
+
+  if (((int64_t)rs * (int64_t)cs) >= HUGE_IMAGE_SIZE)
+  {
+    fprintf(stderr, "%s: does not handle huge images\n", F_NAME);
+    return(0);
+  }
 
   if ((rowsize(im) != rs) || (colsize(im) != cs) || (depth(im) != 1) ||
       (rowsize(im) != rs) || (colsize(im) != cs) || (depth(im) != 1))
@@ -2118,12 +2118,6 @@ int32_t lmedialaxis_lbisector_talbot(struct xvimage * image, struct xvimage *ang
   double theta;
   struct Point2D LPoints[5];
 
-  if (((int64_t)rs * (int64_t)cs) >= HUGE_IMAGE_SIZE)
-  {
-    fprintf(stderr, "%s: does not handle huge images\n", F_NAME);
-    return(0);
-  }
-
   if (depth(image) != 1)
   {
     fprintf(stderr, "%s: Only 2D images supported\n", F_NAME);
@@ -2145,6 +2139,12 @@ int32_t lmedialaxis_lbisector_talbot(struct xvimage * image, struct xvimage *ang
   N = rowsize(image) * colsize(image);
   F = UCHARDATA(image);
   A = FLOATDATA(angles);
+
+  if (((int64_t)rs * (int64_t)cs) >= HUGE_IMAGE_SIZE)
+  {
+    fprintf(stderr, "%s: does not handle huge images\n", F_NAME);
+    return(0);
+  }
 
   if ((rowsize(angles) != rs) || (colsize(angles) != cs) || (depth(angles) != 1))
   {
@@ -2991,6 +2991,48 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
   free(ListDecs);
   return 1;
 } // llambdamedialaxis()
+
+ 
+/* ==================================== */
+int32_t lmedialaxis_lambdamedialaxis(struct xvimage *image, struct xvimage *lambdaimage)
+/* ==================================== */
+/*
+   Calcule la fonction "lambda-axe médian discret" de l'objet 
+   dans l'image 'image'.
+   L'image 'lambda' (type float) doit être allouée à l'avance. 
+*/
+{
+#undef F_NAME
+#define F_NAME "lmedialaxis_lambdamedialaxis"
+  struct xvimage * distimage;
+
+  assert(lambdaimage != NULL);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(lambdaimage, VFF_TYP_FLOAT);
+  COMPARE_SIZE(image, lambdaimage);
+
+  distimage = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
+  if (distimage == NULL)
+  {   
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return 0;
+  }
+
+  if (! lsedt_meijster(image, distimage))
+  {
+    fprintf(stderr, "%s: lsedt_meijster failed\n", F_NAME);
+    return 0;
+  }
+
+  if (!llambdamedialaxis(distimage, lambdaimage))
+  {
+    fprintf(stderr, "%s: llambdamedialaxis failed\n", F_NAME);
+    return 0;
+  }
+
+  freeimage(distimage);
+  return 1;
+} //lmedialaxis_lambdamedialaxis()
 
 /* ==================================== */
 int32_t Extendedlmedialaxis_DownstreamLambdaPrime(

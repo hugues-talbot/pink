@@ -279,7 +279,7 @@ static void isometrieYZ_vois(uint8_t *vois)
 } /* isometrieYZ_vois() */
 
 /* ==================================== */
-int32_t match_end(uint8_t *v)
+static int32_t match_end(uint8_t *v)
 /* ==================================== */
 /*
                12      11      10
@@ -358,7 +358,7 @@ Teste si au moins un des points 12, 11, 13, 8, 3, 2, 4 est objet et tous les aut
 } // match_end()
 
 /* ==================================== */
-int32_t match_vois2(uint8_t *v)
+static int32_t match_vois2(uint8_t *v)
 /* ==================================== */
 /*
                12      11      10       
@@ -402,7 +402,7 @@ Si le test réussit, les points 8, 26 sont marqués 2M_CRUCIAL
 } // match_vois2()
 
 /* ==================================== */
-int32_t match_vois2s(uint8_t *v)
+static int32_t match_vois2s(uint8_t *v)
 /* ==================================== */
 /*
                12      11      10       
@@ -455,7 +455,7 @@ Si le test réussit, alors les points 8, 26 sont marqués 2M_CRUCIAL, de plus:
 } // match_vois2s()
 
 /* ==================================== */
-int32_t match_vois1(uint8_t *v)
+static int32_t match_vois1(uint8_t *v)
 /* ==================================== */
 // A A  P1 P2  B B
 // A A  P3 P4  B B
@@ -516,7 +516,7 @@ int32_t match_vois1(uint8_t *v)
 } // match_vois1()
 
 /* ==================================== */
-int32_t match_vois1s(uint8_t *v)
+static int32_t match_vois1s(uint8_t *v)
 /* ==================================== */
 // A A  P1 P2  B B
 // A A  P3 P4  B B
@@ -576,7 +576,7 @@ int32_t match_vois1s(uint8_t *v)
 } // match_vois1s()
 
 /* ==================================== */
-int32_t match_vois0(uint8_t *v)
+static int32_t match_vois0(uint8_t *v)
 /* ==================================== */
 /*
                12      11
@@ -625,7 +625,7 @@ Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 } // match_vois0()
 
 /* ==================================== */
-int32_t match2(uint8_t *v)
+static int32_t match2(uint8_t *v)
 /* ==================================== */
 {
   int32_t ret = 0;
@@ -640,7 +640,7 @@ int32_t match2(uint8_t *v)
 } /* match2() */
 
 /* ==================================== */
-int32_t match2s(uint8_t *v)
+static int32_t match2s(uint8_t *v)
 /* ==================================== */
 {
   int32_t ret = 0;
@@ -655,7 +655,7 @@ int32_t match2s(uint8_t *v)
 } /* match2s() */
 
 /* ==================================== */
-int32_t match1(uint8_t *v)
+static int32_t match1(uint8_t *v)
 /* ==================================== */
 {
   int32_t ret = 0;
@@ -670,7 +670,7 @@ int32_t match1(uint8_t *v)
 } /* match1() */
 
 /* ==================================== */
-int32_t match1s(uint8_t *v)
+static int32_t match1s(uint8_t *v)
 /* ==================================== */
 {
   int32_t ret = 0;
@@ -685,7 +685,7 @@ int32_t match1s(uint8_t *v)
 } /* match1s() */
 
 /* ==================================== */
-int32_t match0(uint8_t *v)
+static int32_t match0(uint8_t *v)
 /* ==================================== */
 {
   int32_t ret = 0;

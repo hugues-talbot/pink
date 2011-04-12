@@ -32,18 +32,67 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-#ifdef __cplusplus
-extern "C" {
-#endif
-extern int32_t lmedialaxis_lmedialaxis(struct xvimage *f, int32_t connex, struct xvimage *medial);
-extern int32_t lmedialaxis_lmedialaxisbin(struct xvimage *f, int32_t connex);
-extern int32_t lmedialaxis_lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia);
-extern int32_t lmedialaxis_lbisector_talbot(struct xvimage * image, struct xvimage *angles);
-extern int32_t lmedialaxis_lmedax_Remy_Thiel(struct xvimage *ImageDist, struct xvimage *ImageMedial);
-extern int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda);
-extern int32_t lmedialaxis_lambdamedialaxis(struct xvimage *image, struct xvimage *lambdaimage);
-extern int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct xvimage *lambda);
-extern int32_t lmedialaxis_openingfunction(struct xvimage *image, int32_t mode, struct xvimage *result);
-#ifdef __cplusplus
-}
-#endif
+/*! \file skel_PSG.c
+
+\brief parallel 2D and 3D binary guided thinning
+
+<B>Usage:</B> skel_PSG in.pgm val out.pgm
+
+<B>Description:</B> Parallel 2D and 3D binary guided thinning based on
+P-simple points. The parameter \b in.pgm specifies both the set
+(object) to be thinned (the non-null pixels), and the priority
+function (values of pixels). The parameter \b val is a threshold: any
+pixel having a value greater than or equal to \b val will be preserved
+from deletion.  If \b val equals -1, then all points will be
+considered for deletion.
+
+<B>Warning:</B> The object must not have any point on the frame of the image.
+
+<B>Types supported:</B> byte 2d, byte 3d
+
+<B>Category:</B> topobin
+\ingroup  topobin
+
+\author Michel Couprie
+*/
+#include <stdio.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <mccodimage.h>
+#include <mcimage.h>
+#include <lskeletons.h>
+
+/* =============================================================== */
+int main(int argc, char **argv)
+/* =============================================================== */
+{
+  struct xvimage * image;
+  double val;
+
+  if (argc != 4)
+  {
+    fprintf(stderr, "usage: %s in.pgm val out.pgm\n", argv[0]);
+    exit(1);
+  }
+
+  image = readimage(argv[1]);
+  if (image == NULL)
+  {
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
+    exit(1);
+  }
+
+  val = atof(argv[2]);
+
+  if (! lskelPSG(image, val))
+  {
+    fprintf(stderr, "%s: lskelPSG failed\n", argv[0]);
+    exit(1);
+  } 
+
+  writeimage(image, argv[argc-1]);
+  freeimage(image);
+
+  return 0;
+} /* main */

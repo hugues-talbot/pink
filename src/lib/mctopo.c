@@ -308,10 +308,10 @@ void veriftopo()
 
 /* ==================================== */
 uint8_t mask(
-  uint8_t *img,          /* pointeur base image */
-  index_t p,                       /* index du point */
-  index_t rs,                      /* taille rangee */
-  index_t N)                       /* taille image */
+  uint8_t *img, /* pointeur base image */
+  index_t p,    /* index du point */
+  index_t rs,   /* taille rangee */
+  index_t N)    /* taille image */
 /* 
   retourne un masque binaire representant le voisinage de p
 */
@@ -3405,63 +3405,56 @@ int32_t curve8( /* point de courbe en 8-connexite */
   return 0;
 } /* curve8() */
 
-#ifdef PSIMPLE
-/* ========================================== */
-uint8_t P_simple4(uint8_t *X, uint8_t *P)
-/* ========================================== */
+/* ==================================== */
+int32_t P_simple8( /* pour un objet en 8-connexite */
+  uint8_t *X,      /* pointeur base image */
+  uint8_t *P,      /* pointeur base image P */
+  index_t p,       /* index du point */
+  index_t rs,      /* taille rangee */
+  index_t N)       /* taille image */
+/* ==================================== */
 /*
-  d'apres: "Some topological properties of surfaces in Z3", G. Bertrand & R. Malgouyres
-           Theoreme 6
+d'apres : [BC08], Prop. 45
+
+[BC08] Gilles Bertrand and Michel Couprie, Two-dimensional thinning algorithms based on critical kernels. Journal of Mathematical Imaging and Vision, 31(1). 2008. pp.35–56.
+http://igm.univ-mlv.fr/LIGM/internal_report/pdf/2006_02.v2.pdf
 */
 {
-  int32_t n;
   uint8_t R[9];
+  index_t q;
+  int32_t k, m;
 
-  /* teste la condition 2 (theoreme 6) */
-  m = mask(X, 4, 3, 9);
-  if (t8b(m) != 1) return 0; 
+  if (!simple8(X, p, rs, N)) return 0; // p must be simple
+  if (!P[p]) return 0; // p must be in P
 
-  /* teste la condition 4 (theoreme 6) */
-      for (n = 0; n < x->n26v; n++)
-      {
-        yp = xp->v26[n];
-        if (yp->val)
-        {
-          yc = xc->v26[n];
-          v = yc->val;
-          yc->val = 1;
-          if (T26(cubec) != 1) return 0;
-          yc->val = v;
-        } /* if (yp->val) */
-      } /* for (n = 0; n < x->n26v; n++) */
-  
-  for (n = 0; n < 27; n++) /* calcule et range dans cubec l'ensemble R = X - P  */
+  // R = X \ P
+  R[0] = X[p - rs - 1] && !P[p - rs - 1];
+  R[1] = X[p - rs    ] && !P[p - rs    ];
+  R[2] = X[p - rs + 1] && !P[p - rs + 1];
+  R[3] = X[p      - 1] && !P[p      - 1];
+  R[5] = X[p      + 1] && !P[p      + 1];
+  R[6] = X[p + rs - 1] && !P[p + rs - 1];
+  R[7] = X[p + rs    ] && !P[p + rs    ];
+  R[8] = X[p + rs + 1] && !P[p + rs + 1];
+
+  // N8*(p) inter R must be non-empty and connected
+  m = mask(R, 4, 3, 9);
+  if (t8(m) != 1) return 0; 
+
+  // each q in N8*(p) inter P must be adjacent to N8*(p) inter R
+  for (k = 0; k < 8; k++)
   {
-    y = &(cube[n]);
-    yp = &(cubep[n]);
-    yc = &(cubec[n]);
-    if (y->val && !yp->val) yc->val = 1; else yc->val = 0;
-  } /* for (n = 0; n < 27; n++) */
-
-  /* teste la condition 1 (theoreme 6) */
-  if (T6(cubec) != 1) return 0;
-  
-  /* teste la condition 3 (theoreme 6) */
-      for (n = 0; n < x->n6v; n++)
-      {
-        yp = xp->v6[n];
-        if (yp->val)
-        {
-          yc = xc->v6[n];
-          v = yc->val;
-          yc->val = 1;
-          if (T6(cubec) != 1) return 0;
-          yc->val = v;
-        } /* if (yp->val) */
-      } /* for (n = 0; n < x->n6v; n++) */
+    q = voisin(p, k, rs, N);
+    if (P[q])
+    {
+      R[4 + q - p] = 1;
+      m = mask(R, 4, 3, 9);
+      if (t8(m) != 1) return 0; 
+      R[4 + q - p] = 0;
+    }
+  }
   return 1;
-} /* P_simple4() */
-#endif
+} // P_simple8()
 
 /* ==================================== */
 int32_t separant4(  /* teste si un point est separant - minima 4-connexes

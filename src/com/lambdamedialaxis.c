@@ -41,8 +41,10 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Description:</B>
 Discrete lambda-medial axis, as defined in [CCT09], 
 of the binary image \b X contained in \b in.pgm.
-If the parameter \b lambda is given, the output is a binary image. Otherwise, 
-it is a float image representing the function x->lambda(x).
+
+By default, the output is a float image representing the function x->lambda(x).
+
+If the parameter \b lambda is given (bash interface only, not python), the output is a binary image obtained by thresholding the aforementioned function at the value \b lambda .
 
 References:<BR> 
 [CCT09] John Chaussard, Michel Couprie, and Hugues Talbot. A discrete lambda-medial axis. 15th Discrete Geometry for Computer Imagery (DGCI'09). Lecture Notes in Computer Science.   2009.  pp. 1–12. To appear.
@@ -66,8 +68,6 @@ References:<BR>
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <mcgeo.h>
-#include <ldist.h>
 #include <lmedialaxis.h>
 
 /* =============================================================== */
@@ -75,7 +75,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * distimage;
   struct xvimage * lambdaimage;
   double lambda;
   uint32_t rs, cs, ds, N, i;
@@ -106,22 +105,9 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  distimage = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (distimage == NULL)
-  {   
-    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-    exit(1);
-  }
-
-  if (! lsedt_meijster(image, distimage))
+  if (!lmedialaxis_lambdamedialaxis(image, lambdaimage))
   {
-    fprintf(stderr, "%s: lsedt_meijster failed\n", argv[0]);
-    exit(1);
-  }
-
-  if (!llambdamedialaxis(distimage, lambdaimage))
-  {
-    fprintf(stderr, "%s: llambdamedialaxis failed\n", argv[0]);
+    fprintf(stderr, "%s: lmedialaxis_lambdamedialaxis failed\n", argv[0]);
     exit(1);
   }
 
@@ -139,7 +125,6 @@ int main(int argc, char **argv)
     writeimage(lambdaimage, argv[argc - 1]);
 
   freeimage(lambdaimage);
-  freeimage(distimage);
   freeimage(image);
 
   return 0;

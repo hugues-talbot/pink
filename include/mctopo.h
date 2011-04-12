@@ -209,6 +209,12 @@ extern int32_t nbtrans8(
   index_t p,                       /* index du point */
   index_t rs,                      /* taille rangee */
   index_t N);                      /* taille image */ 
+extern int32_t P_simple8( /* pour un objet en 8-connexite */
+  uint8_t *X,      /* pointeur base image */
+  uint8_t *P,      /* pointeur base image P */
+  index_t p,       /* index du point */
+  index_t rs,      /* taille rangee */
+  index_t N);      /* taille image */
 #ifdef __cplusplus
 }
 #endif

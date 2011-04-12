@@ -54,6 +54,8 @@ where all pixels whose values are not in the interval, are put to 0.
 /* selection de pixels ayant un niveau de gris compris entre 2 bornes */
 /* Michel Couprie - juillet 1996 */
 
+// MC modif avril 2011 : préserve le type de l'image d'entrée
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

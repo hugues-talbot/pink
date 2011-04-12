@@ -172,8 +172,13 @@ extern int32_t mctopo3d_tbar26h(              /* pour un objet en 26-connexite *
   index_t ps,                      /* taille plan */
   index_t N);                      /* taille image */
 extern uint8_t mctopo3d_P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex);
-
-
+extern int32_t P_simple26( /* pour un objet en 26-connexite */
+  uint8_t *X,      /* pointeur base image */
+  uint8_t *P,      /* pointeur base image P */
+  index_t p,       /* index du point */
+  index_t rs,      /* taille rangee */
+  index_t ps,      /* taille plan */
+  index_t N);      /* taille image */
 
 
 extern int32_t mctopo3d_pdestr6(                   /* pour des minima en 6-connexite */
