@@ -208,7 +208,7 @@ static int32_t jang_match28b(uint8_t *F, int32_t x, int32_t rs, int32_t N);
 
 
 /* ==================================== */
-void extract_vois(
+static void extract_vois(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -242,8 +242,9 @@ void extract_vois(
   vois[7] = *(ptr+rs+1);
 } /* extract_vois() */
 
+#ifdef DEBUG
 /* ==================================== */
-void print_vois(uint8_t *vois)
+static void print_vois(uint8_t *vois)
 /*
    affiche vois (debug)
 */
@@ -252,9 +253,11 @@ void print_vois(uint8_t *vois)
   printf("vois = %d %d %d %d %d %d %d %d\n",
 	 vois[0], vois[1], vois[2], vois[3], vois[4], vois[5], vois[6], vois[7]);
 } /* print_vois() */
+#endif
 
+#ifdef NOT_USED
 /* ==================================== */
-void rotate45_vois(uint8_t *vois)
+static void rotate45_vois(uint8_t *vois)
 /*
    effectue une rotation du voisinage "vois" de 45 degres dans le sens
    trigonométrique
@@ -265,20 +268,23 @@ void rotate45_vois(uint8_t *vois)
   vois[0] = vois[7]; vois[7] = vois[6]; vois[6] = vois[5]; vois[5] = vois[4];
   vois[4] = vois[3]; vois[3] = vois[2]; vois[2] = vois[1]; vois[1] = tmp;
 } /* rotate45_vois() */
+#endif
 
 /* ==================================== */
-void rotate90_vois(uint8_t *vois)
+static void rotate90_vois(uint8_t *vois)
 /*
    effectue une rotation du voisinage "vois" de 90 degres dans le sens
    trigonométrique
 */
 /* ==================================== */
 {
-  rotate45_vois(vois); rotate45_vois(vois);
+  uint8_t tmp;
+  tmp = vois[0]; vois[0] = vois[6]; vois[6] = vois[4]; vois[4] = vois[2]; vois[2] = tmp;
+  tmp = vois[7]; vois[7] = vois[5]; vois[5] = vois[3]; vois[3] = vois[1]; vois[1] = tmp;
 } /* rotate90_vois() */
 
 /* ==================================== */
-int32_t extract_vois2(
+static int32_t extract_vois2(
   uint8_t *img,          /* pointeur base image */
   int32_t p,                       /* index du point */
   int32_t rs,                      /* taille rangee */
@@ -329,7 +335,7 @@ int32_t extract_vois2(
 } /* extract_vois2() */
 
 /* ==================================== */
-void rotate90_vois2(uint8_t *vois)
+static void rotate90_vois2(uint8_t *vois)
 /*
    effectue une rotation du voisinage d'ordre 2 "vois" de 90 degres dans le sens
    trigonométrique
@@ -3210,7 +3216,7 @@ int32_t lskelwutsai(struct xvimage *image,
 } /* lskelwutsai() */
 
 /* ==================================== */
-int32_t mc_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 //      m1 : match   A 2 B   avec origine = (1,0) et [au moins un des A et au moins un des B non nuls]
 //                   A 2 B   ou [A et B tous nuls] (+ rotation 90)
@@ -3232,7 +3238,7 @@ int32_t mc_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* mc_match1() */
 
 /* ==================================== */
-int32_t mc_match1b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_match1b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 //     m1b : match   0 2 0   avec origine = (1,0) (+ rotation 90)
 //                   0 2 0
@@ -3251,7 +3257,7 @@ int32_t mc_match1b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* mc_match1b() */
 
 /* ==================================== */
-int32_t mc_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3271,8 +3277,9 @@ int32_t mc_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   return 0;
 } /* mc_match2() */
 
+#ifdef NOT_USED
 /* ==================================== */
-int32_t mc_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3291,9 +3298,10 @@ int32_t mc_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   }
   return 0;
 } /* mc_match3() */
+#endif
 
 /* ==================================== */
-int32_t mc_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3313,8 +3321,9 @@ int32_t mc_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   return 0;
 } /* mc_match3b() */
 
+#ifdef NOT_USED
 /* ==================================== */
-int32_t mc_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3333,9 +3342,11 @@ int32_t mc_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   }
   return 0;
 } /* mc_match4() */
+#endif
 
+#ifdef NOT_USED
 /* ==================================== */
-int32_t mc_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3354,9 +3365,10 @@ int32_t mc_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   }
   return 0;
 } /* mc_match5() */
+#endif
 
 /* ==================================== */
-int32_t mc_match4b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_match4b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3377,7 +3389,7 @@ int32_t mc_match4b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* mc_match4b() */
 
 /* ==================================== */
-int32_t mc_match5b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_match5b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3391,13 +3403,11 @@ int32_t mc_match5b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   fail:
     rotate90_vois(v);
   }
-//printf("mc_match5b : %d %d fail\n", x % rs, x / rs);
-//print_vois(v);
   return 0;
 } /* mc_match5b() */
 
 /* ==================================== */
-int32_t mc_match6(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_match6(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3413,8 +3423,9 @@ int32_t mc_match6(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   return 0;
 } /* mc_match6() */
 
+#ifdef NOT_USED
 /* ==================================== */
-int32_t mc_end(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_end(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3430,9 +3441,10 @@ int32_t mc_end(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   }
   return 0;
 } /* mc_end() */
+#endif
 
 /* ==================================== */
-int32_t mc_maskend1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_maskend1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3452,7 +3464,7 @@ int32_t mc_maskend1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* mc_maskend1() */
 
 /* ==================================== */
-int32_t mc_maskend2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_maskend2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3471,7 +3483,7 @@ int32_t mc_maskend2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* mc_maskend2() */
 
 /* ==================================== */
-int32_t mc_maskend3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_maskend3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3490,7 +3502,7 @@ int32_t mc_maskend3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* mc_maskend3() */
 
 /* ==================================== */
-int32_t mc_end2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_end2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   return mc_maskend1(F, x, rs, N) || mc_maskend2(F, x, rs, N) || mc_maskend3(F, x, rs, N);

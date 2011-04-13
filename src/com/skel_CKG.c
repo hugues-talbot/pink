@@ -32,46 +32,48 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file enframe.c
+/*! \file skel_CKG.c
 
-\brief adds a border with a given gray value to an image
+\brief parallel 2D and 3D binary guided thinning
 
-<B>Usage:</B> enframe in.pgm [grayvalue [width [out.pgm]]]
+<B>Usage:</B> skel_CKG in.pgm prio.pgm val out.pgm
 
-<B>Description:</B>
-Adds a border to the input image, filled with the value \b grayvalue (default 0). 
-The width of the border may be given as parameter \b width, 
-otherwise its value is 1.
-If \b out.pgm is not specified, then out.pgm = in.pgm.
+<B>Description:</B> Parallel 2D and 3D binary guided thinning based on
+critical kernels. The parameter \b in.pgm specifies the set
+(object) to be thinned. The parameter \b prio.pgm specifies the priority
+function. The parameter \b val is a threshold: any
+pixel having a priority greater than or equal to \b val will be preserved
+from deletion.  If \b val equals -1, then all points will be
+considered for deletion.
 
-<B>Types supported:</B> byte 2d, int32_t 2d, float 2d, byte 3d, int32_t 3d, float 3d.
+<B>Warning:</B> The object must not have any point on the frame of the image.
 
-<B>Category:</B> convert, geo
-\ingroup  convert, geo
+<B>Types supported:</B> byte 2d, byte 3d
+
+<B>Category:</B> topobin
+\ingroup  topobin
 
 \author Michel Couprie
 */
-
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lcrop.h>
+#include <lskeletons.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * imageout;
-  int32_t grayval;
-  int32_t width;  
+  struct xvimage * prio;
+  double val;
 
-  if ((argc != 2) && (argc != 3) && (argc != 4) && (argc != 5))
+  if (argc != 5)
   {
-    fprintf(stderr, "usage: %s in.pgm [grayvalue [width [out.pgm]]]\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm prio.pgm val out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -81,25 +83,25 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
-  
-  if (argc > 2) grayval = atoi(argv[2]); else grayval = 0;
-  if (argc > 3) width = atoi(argv[3]); else width = 1;
-  imageout = lenframe(image, grayval, width);
-  if (imageout == NULL)
+
+  prio = readimage(argv[2]);
+  if (prio == NULL)
   {
-    fprintf(stderr, "%s: lenframe failed\n", argv[0]);
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  if (argc > 4)  
-    writeimage(imageout, argv[argc-1]);
-  else
-    writeimage(imageout, argv[1]);
-  freeimage(imageout);
+  val = atof(argv[3]);
+
+  if (! lskelCKG(image, prio, val))
+  {
+    fprintf(stderr, "%s: lskelCKG failed\n", argv[0]);
+    exit(1);
+  } 
+
+  writeimage(image, argv[argc-1]);
   freeimage(image);
+  freeimage(prio);
 
   return 0;
 } /* main */
-
-
-

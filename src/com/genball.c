@@ -32,22 +32,23 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file enframe.c
 
-\brief adds a border with a given gray value to an image
+/*! \file genball.c
 
-<B>Usage:</B> enframe in.pgm [grayvalue [width [out.pgm]]]
+\brief generates a binary euclidean ball
+
+<B>Usage:</B> genball radius [dim] out.pgm
 
 <B>Description:</B>
-Adds a border to the input image, filled with the value \b grayvalue (default 0). 
-The width of the border may be given as parameter \b width, 
-otherwise its value is 1.
-If \b out.pgm is not specified, then out.pgm = in.pgm.
+Draws a binary euclidean ball in the new image \b out.pgm.
+The parameter <B>radius</B> specifies the radius of the ball. 
+The parameter <B>dim</B> specifies the dimension: 2 (default) or 3.
+The center of the ball is designated as the origin (for use as structuring element).
 
-<B>Types supported:</B> byte 2d, int32_t 2d, float 2d, byte 3d, int32_t 3d, float 3d.
+<B>Types supported:</B> byte 2d, byte 3d
 
-<B>Category:</B> convert, geo
-\ingroup  convert, geo
+<B>Category:</B> draw
+\ingroup  draw
 
 \author Michel Couprie
 */
@@ -56,50 +57,51 @@ If \b out.pgm is not specified, then out.pgm = in.pgm.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <math.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lcrop.h>
+#include <ldraw.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * imageout;
-  int32_t grayval;
-  int32_t width;  
-
-  if ((argc != 2) && (argc != 3) && (argc != 4) && (argc != 5))
-  {
-    fprintf(stderr, "usage: %s in.pgm [grayvalue [width [out.pgm]]]\n", argv[0]);
-    exit(1);
-  }
-
-  image = readimage(argv[1]);
-  if (image == NULL)
-  {
-    fprintf(stderr, "%s: readimage failed\n", argv[0]);
-    exit(1);
-  }
+  double radius;
+  int32_t cen, dim=2;
+  index_t size;
   
-  if (argc > 2) grayval = atoi(argv[2]); else grayval = 0;
-  if (argc > 3) width = atoi(argv[3]); else width = 1;
-  imageout = lenframe(image, grayval, width);
-  if (imageout == NULL)
+  if ((argc != 4) && (argc != 3))
   {
-    fprintf(stderr, "%s: lenframe failed\n", argv[0]);
+    fprintf(stderr, "usage: %s radius [dim] out.pgm \n", argv[0]);
     exit(1);
   }
 
-  if (argc > 4)  
-    writeimage(imageout, argv[argc-1]);
-  else
-    writeimage(imageout, argv[1]);
-  freeimage(imageout);
-  freeimage(image);
+  radius = atof(argv[1]);
+  cen = (int32_t)ceil(radius);
+  size = 2* cen + 1;
 
+  if (argc == 4) dim = atoi(argv[2]);
+
+  if (dim == 3)
+  {
+    image = allocimage(NULL, size, size, size, VFF_TYP_1_BYTE); assert(image != NULL);
+    ldrawball(image, radius, cen, cen, cen);
+  }
+  else if (dim == 2)
+  {
+    image = allocimage(NULL, size, size, 1, VFF_TYP_1_BYTE); assert(image != NULL);
+    ldrawdisc(image, radius, cen, cen);
+  }
+  else
+  {
+    fprintf(stderr, "usage: %s radius {2|3} out.pgm \n", argv[0]);
+    exit(1);
+  }
+
+  writese(image, argv[argc-1], cen, cen, cen);
+  freeimage(image);
   return 0;
 } /* main */
-
-
 

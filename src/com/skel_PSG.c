@@ -36,13 +36,13 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief parallel 2D and 3D binary guided thinning
 
-<B>Usage:</B> skel_PSG in.pgm val out.pgm
+<B>Usage:</B> skel_PSG in.pgm prio.pgm val out.pgm
 
 <B>Description:</B> Parallel 2D and 3D binary guided thinning based on
-P-simple points. The parameter \b in.pgm specifies both the set
-(object) to be thinned (the non-null pixels), and the priority
-function (values of pixels). The parameter \b val is a threshold: any
-pixel having a value greater than or equal to \b val will be preserved
+P-simple points. The parameter \b in.pgm specifies the set
+(object) to be thinned. The parameter \b prio.pgm specifies the priority
+function. The parameter \b val is a threshold: any
+pixel having a priority greater than or equal to \b val will be preserved
 from deletion.  If \b val equals -1, then all points will be
 considered for deletion.
 
@@ -68,11 +68,12 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
+  struct xvimage * prio;
   double val;
 
-  if (argc != 4)
+  if (argc != 5)
   {
-    fprintf(stderr, "usage: %s in.pgm val out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm prio.pgm val out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -83,9 +84,16 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  val = atof(argv[2]);
+  prio = readimage(argv[2]);
+  if (prio == NULL)
+  {
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
+    exit(1);
+  }
 
-  if (! lskelPSG(image, val))
+  val = atof(argv[3]);
+
+  if (! lskelPSG(image, prio, val))
   {
     fprintf(stderr, "%s: lskelPSG failed\n", argv[0]);
     exit(1);

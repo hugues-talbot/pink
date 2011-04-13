@@ -3422,7 +3422,7 @@ http://igm.univ-mlv.fr/LIGM/internal_report/pdf/2006_02.v2.pdf
 {
   uint8_t R[9];
   index_t q;
-  int32_t k, m;
+  int32_t i, j, m;
 
   if (!simple8(X, p, rs, N)) return 0; // p must be simple
   if (!P[p]) return 0; // p must be in P
@@ -3442,15 +3442,17 @@ http://igm.univ-mlv.fr/LIGM/internal_report/pdf/2006_02.v2.pdf
   if (t8(m) != 1) return 0; 
 
   // each q in N8*(p) inter P must be adjacent to N8*(p) inter R
-  for (k = 0; k < 8; k++)
+  for (j = 0; j < 3; j++)
+  for (i = 0; i < 3; i++)
+  if (i != j)
   {
-    q = voisin(p, k, rs, N);
+    q = p + (j-1)*rs + i-1; assert(q >= 0); assert(q < N); 
     if (P[q])
     {
-      R[4 + q - p] = 1;
+      R[j*3 + i] = 1;
       m = mask(R, 4, 3, 9);
       if (t8(m) != 1) return 0; 
-      R[4 + q - p] = 0;
+      R[j*3 + i] = 0;
     }
   }
   return 1;

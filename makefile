@@ -290,6 +290,8 @@ $(BDIR)/skel_ACK3a \
 $(BDIR)/skel_AK2 \
 $(BDIR)/skel_AMK \
 $(BDIR)/skel_CK3 \
+$(BDIR)/skel_CKG \
+$(BDIR)/skel_CKG_map \
 $(BDIR)/skel_EK3 \
 $(BDIR)/skel_MK2 \
 $(BDIR)/skel_MK3 \
@@ -366,6 +368,7 @@ $(BDIR)/drawsplinesorient \
 $(BDIR)/drawsplines \
 $(BDIR)/drawtorus \
 $(BDIR)/drawtriangulation \
+$(BDIR)/genball \
 $(BDIR)/line \
 $(BDIR)/curve2spline \
 $(BDIR)/points2spline \
@@ -1415,6 +1418,12 @@ $(BDIR)/skel_AMK:	$(CDIR)/skel_AMK.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(ID
 $(BDIR)/skel_CK3:	$(CDIR)/skel_CK3.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lskelpar3d.h $(IDIR)/mctopo3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mctopo3d.o $(ODIR)/mctopo.o $(ODIR)/lskelpar3d.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_CK3.c $(OBJ_COMMON) $(ODIR)/mctopo3d.o $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/lskelpar3d.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/skel_CK3
 
+$(BDIR)/skel_CKG:	$(CDIR)/skel_CKG.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/mckhalimsky3d.h $(IDIR)/mcindic.h $(IDIR)/lskeletons.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_CKG.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(ODIR)/mccodimage.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(LIBS) -o $(BDIR)/skel_CKG
+
+$(BDIR)/skel_CKG_map:	$(CDIR)/skel_CKG_map.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/mckhalimsky3d.h $(IDIR)/mcindic.h $(IDIR)/lskeletons.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_CKG_map.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(ODIR)/mccodimage.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(LIBS) -o $(BDIR)/skel_CKG_map
+
 $(BDIR)/skel_EK3:	$(CDIR)/skel_EK3.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lskelpar3d.h $(IDIR)/mctopo3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mctopo3d.o $(ODIR)/mctopo.o $(ODIR)/lskelpar3d.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_EK3.c $(OBJ_COMMON) $(ODIR)/mctopo3d.o $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/lskelpar3d.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/skel_EK3
 
@@ -1650,6 +1659,9 @@ $(BDIR)/drawtorus:	$(CDIR)/drawtorus.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDI
 
 $(BDIR)/drawtriangulation:	$(CDIR)/drawtriangulation.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcgeo.h $(IDIR)/lvoronoi.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/mcliste.o $(ODIR)/lvoronoi.o $(ODIR)/lbresen.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/drawtriangulation.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcgeo.o $(ODIR)/lvoronoi.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(XLIB) $(LIBS) -o $(BDIR)/drawtriangulation
+
+$(BDIR)/genball:	$(CDIR)/genball.c $(IDIR)/mcimage.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/genball.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(LIBS) -o $(BDIR)/genball
 
 $(BDIR)/lengthspline:	$(CDIR)/lengthspline.c $(IDIR)/mcimage.h $(IDIR)/mcsplines.h $(IDIR)/lbresen.h $(IDIR)/ldraw.h $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/lengthspline.c $(OBJ_COMMON) $(ODIR)/lbresen.o $(ODIR)/ldraw.o $(ODIR)/mcliste.o $(ODIR)/mclin.o $(ODIR)/mcsplines.o $(LIBS) -o $(BDIR)/lengthspline

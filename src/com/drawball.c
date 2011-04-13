@@ -56,9 +56,6 @@ The parameters <B>xc, yc, zc</B> specify the center of the ball.
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#ifdef HP
-#define _INCLUDE_XOPEN_SOURCE
-#endif
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>

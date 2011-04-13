@@ -117,16 +117,46 @@ extern int32_t lskelendcurvlab3d(
 	int32_t niseuil
 );
 extern int32_t lskelPSG(
+	struct xvimage *image, 
 	struct xvimage *imageprio, 
 	double val
 );
 extern int32_t lskelPSG2(
+	struct xvimage *image, 
 	struct xvimage *imageprio, 
 	double val
 );
 extern int32_t lskelPSG3(
+	struct xvimage *image, 
 	struct xvimage *imageprio, 
 	double val
+);
+extern int32_t lskelCKG(
+	struct xvimage *image,
+	struct xvimage *imageprio, 
+	double val
+);
+extern int32_t lskelCKG2(
+	struct xvimage *image,
+	struct xvimage *imageprio, 
+	double val
+);
+extern int32_t lskelCKG3(
+	struct xvimage *image,
+	struct xvimage *imageprio, 
+	double val
+);
+extern int32_t lskelCKGmap(
+	struct xvimage *imageprio,
+	struct xvimage *image
+);
+extern int32_t lskelCKG2map(
+	struct xvimage *imageprio,
+	struct xvimage *image
+);
+extern int32_t lskelCKG3map(
+	struct xvimage *imageprio,
+	struct xvimage *image
 );
 #ifdef __cplusplus
 }
