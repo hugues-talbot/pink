@@ -50,3 +50,7 @@ derniers ajouts / modifications :
 - operateur lambdamedialaxis pour python
 - initialise nouveau tutorial python MC-TP8 (squelettes euclidiens)
 - skel_CKG, lskelpar3d2 : algo 3D // guidé (init)
+
+Hugues Talbot	14 Apr 2011
+
+- lecture transparente des images TIFF

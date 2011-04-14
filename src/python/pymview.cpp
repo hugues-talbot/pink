@@ -141,7 +141,7 @@ namespace pink {
             else if (tbu->nc == 1)
                 tbu->it = IM_SINGLE;
             else
-                tbu->it = IM_UNSPEC; // ?? in other words...
+                tbu->it = IM_UNSPEC; // means "we don't know" in other words...
 
             // pixel type (no one-to-one correspondance)
             int datasize = 0;

@@ -78,6 +78,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <ctype.h>
 #include <assert.h>
 
+
+#ifdef HAVE_TIFF_LIB
+#  include "liarp.h"
+#  include "liarwrap.h"
+#endif /* HAVE_TIFF_LIB */
+
+
 /* keep those private */
 #include "mcutil.h"
 #include "mcimage.h"
@@ -1782,6 +1789,90 @@ void writelongimage(struct xvimage * image,  char *filename)
   fclose(fd);
 } /* writelongimage() */
 
+#ifdef HAVE_TIFF_LIB
+struct xvimage *readtiffimage(char *filename)
+{
+    struct xvimage *image=NULL;
+    IMAGE *tiffimage = NULL;
+    int datasize = 0;
+
+    tiffimage = imloadtiff(filename);
+
+    /* convert tiffimage into image */
+    image = (struct xvimage *)malloc(sizeof(struct xvimage));
+    /* fairly straightforward */
+    image->row_size             = tiffimage->nx;
+    image->col_size              = tiffimage->ny;
+    image->depth_size          = tiffimage->nz;
+    image->time_size            = tiffimage->nt;
+    image->num_data_bands = tiffimage->nc; /* number of components */
+
+    fprintf(stderr, "dimensions: nx=%d, ny=%d, nz=%d, nt=%d, nc=%d\n",
+            tiffimage->nx, tiffimage->ny,tiffimage->nz, tiffimage->nt, tiffimage->nc
+        );
+
+    /* this may be a bit dicey */
+    switch (tiffimage->pt) { /* pixel type */
+    case IM_BINARY:
+        image->data_storage_type = VFF_TYP_BIT; /* probably incorrect */
+        datasize = 1;
+        break;
+    case IM_UINT1:
+        image->data_storage_type = VFF_TYP_1_BYTE;
+        datasize = 1;
+        break;
+    case IM_UINT2:
+        image->data_storage_type = VFF_TYP_2_BYTE;
+        datasize = 2;
+        break;
+    case IM_INT4:
+        image->data_storage_type = VFF_TYP_4_BYTE;
+        datasize =4;
+        break;
+    case IM_FLOAT:
+        image->data_storage_type = VFF_TYP_FLOAT;
+        datasize = 4;
+        break;
+    case IM_DOUBLE:
+        image->data_storage_type = VFF_TYP_DOUBLE;
+        datasize = 8;
+        break;
+    default:
+        fprintf(stderr, "Unhandled data type %d\n", tiffimage->pt);
+        break;
+    }
+
+    if (datasize > 0) {
+        int i;
+        long componentsize , totalsize;
+        /* allocate memory for image */
+        componentsize = datasize* \
+            tiffimage->nx *                                     \
+            tiffimage->ny *                                     \
+            tiffimage->nz *                                     \
+            tiffimage->nt;
+        totalsize = componentsize *  tiffimage->nc;
+        image->image_data = (void *)malloc(totalsize * sizeof(char));
+        if (image->image_data != NULL) {
+            for (i = 0 ; i < tiffimage->nc ; ++i) {
+                memcpy(image->image_data + i*componentsize, tiffimage->buff[i], componentsize);
+            }
+        } else {
+            fprintf(stderr, "Not enough memory, requested=%ld bytes\n", totalsize);
+        }
+    }
+
+    /* error conditions */
+    if ((datasize == 0) || (image->image_data == NULL)) {
+        fprintf(stderr, "Reading TIFF image failed\n");
+        free(image);
+        image=NULL;
+    }
+    
+    return image;
+}
+#endif HAVE_TIFF_LIB
+
 /* ==================================== */
 struct xvimage * readimage(char *filename)
 /* ==================================== */
@@ -1826,263 +1917,273 @@ struct xvimage * readimage(char *filename)
     return 0;
   }
 
-  if (buffer[0] != 'P')
-  {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
-      return NULL;
-  }
-  tag = buffer[1];
+  /* HT: TIFF */
+  if ((strncmp(buffer, "II", 2) == 0) || (strncmp(buffer, "MM", 2) ==0)) {
+      fprintf(stderr, "TIFF image\n");
+      image = NULL;
+#ifdef HAVE_TIFF_LIB
+      image=readtiffimage(filename);
+#endif
+      /*otherwise, return NULL */
+  } else { /* extended PGM/PNM format */
+
+      if (buffer[0] != 'P')
+      {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
+          return NULL;
+      }
+      tag = buffer[1];
 
 #ifdef MC_64_BITS
-  c = sscanf(buffer+2, "%lld %lld %d", (long long int *)&rs, (long long int *)&cs, (int *)&ndgmax);
+      c = sscanf(buffer+2, "%lld %lld %d", (long long int *)&rs, (long long int *)&cs, (int *)&ndgmax);
 #else
-  c = sscanf(buffer+2, "%d %d %d", (int *)&rs, (int *)&cs, (int *)&ndgmax);
+      c = sscanf(buffer+2, "%d %d %d", (int *)&rs, (int *)&cs, (int *)&ndgmax);
 #endif
 
-  if (c == 3) /* format pgm MatLab : tout sur une ligne */
-  {
-    np = ds = 1;
-    goto readdata;
-  }
+      if (c == 3) /* format pgm MatLab : tout sur une ligne */
+      {
+          np = ds = 1;
+          goto readdata;
+      }
 
-  do
-  {
-    read = fgets(buffer, BUFFERSIZE, fd); /* commentaire */
-    if (!read)
-    {
-      fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
-      return 0;
-    }
-    if (strncmp(buffer, "#xdim", 5) == 0)
-      sscanf(buffer+5, "%lf", &xdim);
-    else if (strncmp(buffer, "#ydim", 5) == 0)
-      sscanf(buffer+5, "%lf", &ydim);
-    else if (strncmp(buffer, "#zdim", 5) == 0)
-      sscanf(buffer+5, "%lf", &zdim);
-  } while (!isdigit(buffer[0]));
+      do
+      {
+          read = fgets(buffer, BUFFERSIZE, fd); /* commentaire */
+          if (!read)
+          {
+              fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
+              return 0;
+          }
+          if (strncmp(buffer, "#xdim", 5) == 0)
+              sscanf(buffer+5, "%lf", &xdim);
+          else if (strncmp(buffer, "#ydim", 5) == 0)
+              sscanf(buffer+5, "%lf", &ydim);
+          else if (strncmp(buffer, "#zdim", 5) == 0)
+              sscanf(buffer+5, "%lf", &zdim);
+      } while (!isdigit(buffer[0]));
 
 #ifdef MC_64_BITS
-  c = sscanf(buffer, "%lld %lld %lld %lld", (long long int *)&rs, (long long int *)&cs, (long long int *)&ds, (long long int *)&np);
+      c = sscanf(buffer, "%lld %lld %lld %lld", (long long int *)&rs, (long long int *)&cs, (long long int *)&ds, (long long int *)&np);
 #else
-  c = sscanf(buffer, "%d %d %d %d", (int *)&rs, (int *)&cs, (int *)&ds, (int *)&np);
+      c = sscanf(buffer, "%d %d %d %d", (int *)&rs, (int *)&cs, (int *)&ds, (int *)&np);
 #endif
-  if (c == 2) np = ds = 1;
-  else if (c == 3) np = 1;
-  else if (c != 4)
-  {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
-      return NULL;
-  }
+      if (c == 2) np = ds = 1;
+      else if (c == 3) np = 1;
+      else if (c != 4)
+      {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
+          return NULL;
+      }
 
 #ifdef WARN_HUGE
-  if (((int64_t)rs * (int64_t)cs * (int64_t)ds * (int64_t)np) >= HUGE_IMAGE_SIZE)
-  {
-    fprintf(stderr, "%s: WARNING huge image\n", F_NAME);
-  }
+      if (((int64_t)rs * (int64_t)cs * (int64_t)ds * (int64_t)np) >= HUGE_IMAGE_SIZE)
+      {
+          fprintf(stderr, "%s: WARNING huge image\n", F_NAME);
+      }
 #endif
 
-  read = fgets(buffer, BUFFERSIZE, fd);
-  if (!read)
-  {
-    fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
-    return 0;
-  }
-
-  sscanf(buffer, "%d", (int *)&ndgmax);
-
-  switch (tag)
-  {
-    case '2': 
-      ascii = 1; 
-      if (ndgmax <= 255) typepixel = VFF_TYP_1_BYTE; 
-      else if (ndgmax <= 65535) typepixel = VFF_TYP_2_BYTE; 
-      else 
+      read = fgets(buffer, BUFFERSIZE, fd);
+      if (!read)
       {
-        fprintf(stderr,"%s: wrong ndgmax = %d\n", F_NAME, ndgmax);
-        return(NULL);
+          fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
+          return 0;
       }
-      break;
-    case '5':
-    case '7': 
-      ascii = 0; 
-      if (ndgmax <= 255) typepixel = VFF_TYP_1_BYTE; 
-      else if (ndgmax <= 65535) typepixel = VFF_TYP_2_BYTE; 
-      else 
+      
+      sscanf(buffer, "%d", (int *)&ndgmax);
+
+      switch (tag)
       {
-        fprintf(stderr,"%s: wrong ndgmax = %d\n", F_NAME, ndgmax);
-        return(NULL);
-      }
-      break;
-    case '8': ascii = 0; typepixel = VFF_TYP_4_BYTE; break;
-    case '9': ascii = 0; typepixel = VFF_TYP_FLOAT; break;
-    case 'A': ascii = 1; typepixel = VFF_TYP_FLOAT; break;
-    case 'B': ascii = 1; typepixel = VFF_TYP_4_BYTE; break;
-    case 'C': ascii = 0; typepixel = VFF_TYP_DOUBLE; break;
-    case 'D': ascii = 1; typepixel = VFF_TYP_DOUBLE; break;
-    case 'E': ascii = 0; typepixel = VFF_TYP_COMPLEX; break;
-    case 'F': ascii = 1; typepixel = VFF_TYP_COMPLEX; break;
-    default:
-      fprintf(stderr,"%s: invalid image format: P%c\n", F_NAME, buffer[1]);
-      return NULL;
-  } /* switch */
+      case '2': 
+          ascii = 1; 
+          if (ndgmax <= 255) typepixel = VFF_TYP_1_BYTE; 
+          else if (ndgmax <= 65535) typepixel = VFF_TYP_2_BYTE; 
+          else 
+          {
+              fprintf(stderr,"%s: wrong ndgmax = %d\n", F_NAME, ndgmax);
+              return(NULL);
+          }
+          break;
+      case '5':
+      case '7': 
+          ascii = 0; 
+          if (ndgmax <= 255) typepixel = VFF_TYP_1_BYTE; 
+          else if (ndgmax <= 65535) typepixel = VFF_TYP_2_BYTE; 
+          else 
+          {
+              fprintf(stderr,"%s: wrong ndgmax = %d\n", F_NAME, ndgmax);
+              return(NULL);
+          }
+          break;
+      case '8': ascii = 0; typepixel = VFF_TYP_4_BYTE; break;
+      case '9': ascii = 0; typepixel = VFF_TYP_FLOAT; break;
+      case 'A': ascii = 1; typepixel = VFF_TYP_FLOAT; break;
+      case 'B': ascii = 1; typepixel = VFF_TYP_4_BYTE; break;
+      case 'C': ascii = 0; typepixel = VFF_TYP_DOUBLE; break;
+      case 'D': ascii = 1; typepixel = VFF_TYP_DOUBLE; break;
+      case 'E': ascii = 0; typepixel = VFF_TYP_COMPLEX; break;
+      case 'F': ascii = 1; typepixel = VFF_TYP_COMPLEX; break;
+      default:
+          fprintf(stderr,"%s: invalid image format: P%c\n", F_NAME, buffer[1]);
+          return NULL;
+      } /* switch */
 
  readdata:
-  N = rs * cs * ds * np;
-  image = allocmultimage(NULL, rs, cs, ds, 1, np, typepixel);
-  if (image == NULL)
-  {   fprintf(stderr,"%s: alloc failed\n", F_NAME);
-      return(NULL);
-  }
-  image->xdim = xdim;
-  image->ydim = ydim;
-  image->zdim = zdim;
-
-  if (typepixel == VFF_TYP_1_BYTE)
-  {
-    if (ascii)
-    {
-      for (i = 0; i < N; i++)
+      N = rs * cs * ds * np;
+      image = allocmultimage(NULL, rs, cs, ds, 1, np, typepixel);
+      if (image == NULL)
+      {   fprintf(stderr,"%s: alloc failed\n", F_NAME);
+          return(NULL);
+      }
+      image->xdim = xdim;
+      image->ydim = ydim;
+      image->zdim = zdim;
+      
+      if (typepixel == VFF_TYP_1_BYTE)
       {
-	fscanf(fd, "%d", &c);
-	UCHARDATA(image)[i] = (uint8_t)c;
-      } /* for i */
-    }
-    else
-    {
-      index_t ret = fread(UCHARDATA(image), sizeof(char), N, fd);
-      if (ret != N)
-      {
+          if (ascii)
+          {
+              for (i = 0; i < N; i++)
+              {
+                  fscanf(fd, "%d", &c);
+                  UCHARDATA(image)[i] = (uint8_t)c;
+              } /* for i */
+          }
+          else
+          {
+              index_t ret = fread(UCHARDATA(image), sizeof(char), N, fd);
+              if (ret != N)
+              {
 #ifdef MC_64_BITS
-        fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
+                  fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
 #else
-        fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
+                  fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
 #endif
-        return(NULL);
-      }
-    }
-  } /* if (typepixel == VFF_TYP_1_BYTE) */
-  else
-  if (typepixel == VFF_TYP_2_BYTE)
-  {
-    if (ascii)
-    {
-      uint16_t tmp;
-      for (i = 0; i < N; i++)
-      {
-        fscanf(fd, "%hd", &tmp); (SSHORTDATA(image)[i]) = tmp;
-      } /* for i */
-    }
-    else // Standard PGM format imposes big-endian for 2-byte images, but
-    {    // standard PC architectures are little-endian
-      uint16_t tmp;
-      uint8_t tmp1;
-      for (i = 0; i < N; i++) 
-      { 
-	(void)fread(&tmp, sizeof(uint16_t), 1, fd);
-	// conversion big-endian -> little-endian
-        tmp1 = tmp & 0x00ff;
-        tmp = tmp >> 8;
-        tmp = tmp | (((uint16_t)tmp1) << 8);      
-	(SSHORTDATA(image)[i]) = (int16_t)tmp;
-      }
-    }
-  } /* if (typepixel == VFF_TYP_2_BYTE) */
-  else
-  if (typepixel == VFF_TYP_4_BYTE)
-  {
-    if (ascii)
-    {
-      long int tmp;
-      for (i = 0; i < N; i++)
-      {
-        fscanf(fd, "%ld", &tmp); (SLONGDATA(image)[i]) = (int32_t)tmp;
-      } /* for i */
-    }
-    else 
-    {
-      index_t ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
-      if (ret != N)
-      {
+                  return(NULL);
+              }
+          }
+      } /* if (typepixel == VFF_TYP_1_BYTE) */
+      else
+          if (typepixel == VFF_TYP_2_BYTE)
+          {
+              if (ascii)
+              {
+                  uint16_t tmp;
+                  for (i = 0; i < N; i++)
+                  {
+                      fscanf(fd, "%hd", &tmp); (SSHORTDATA(image)[i]) = tmp;
+                  } /* for i */
+              }
+              else // Standard PGM format imposes big-endian for 2-byte images, but
+              {    // standard PC architectures are little-endian
+                  uint16_t tmp;
+                  uint8_t tmp1;
+                  for (i = 0; i < N; i++) 
+                  { 
+                      (void)fread(&tmp, sizeof(uint16_t), 1, fd);
+                      // conversion big-endian -> little-endian
+                      tmp1 = tmp & 0x00ff;
+                      tmp = tmp >> 8;
+                      tmp = tmp | (((uint16_t)tmp1) << 8);      
+                      (SSHORTDATA(image)[i]) = (int16_t)tmp;
+                  }
+              }
+          } /* if (typepixel == VFF_TYP_2_BYTE) */
+          else
+              if (typepixel == VFF_TYP_4_BYTE)
+              {
+                  if (ascii)
+                  {
+                      long int tmp;
+                      for (i = 0; i < N; i++)
+                      {
+                          fscanf(fd, "%ld", &tmp); (SLONGDATA(image)[i]) = (int32_t)tmp;
+                      } /* for i */
+                  }
+                  else 
+                  {
+                      index_t ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
+                      if (ret != N)
+                      {
 #ifdef MC_64_BITS
-        fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
+                          fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
 #else
-        fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
+                          fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
 #endif
-        return(NULL);
-      }
-    }
-  } /* if (typepixel == VFF_TYP_4_BYTE) */
-  else
-  if (typepixel == VFF_TYP_FLOAT)
-  {
-    if (ascii)
-    {
-      for (i = 0; i < N; i++)
-      {
-        fscanf(fd, "%f", &(FLOATDATA(image)[i]));
-      } /* for i */
-    }
-    else 
-    {
-      index_t ret = fread(FLOATDATA(image), sizeof(float), N, fd);
-      if (ret != N)
-      {
+                          return(NULL);
+                      }
+                  }
+              } /* if (typepixel == VFF_TYP_4_BYTE) */
+              else
+                  if (typepixel == VFF_TYP_FLOAT)
+                  {
+                      if (ascii)
+                      {
+                          for (i = 0; i < N; i++)
+                          {
+                              fscanf(fd, "%f", &(FLOATDATA(image)[i]));
+                          } /* for i */
+                      }
+                      else 
+                      {
+                          index_t ret = fread(FLOATDATA(image), sizeof(float), N, fd);
+                          if (ret != N)
+                          {
 #ifdef MC_64_BITS
-        fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
+                              fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
 #else
-        fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
+                              fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
 #endif
-        return(NULL);
-      }
-    }
-  } /* if (typepixel == VFF_TYP_FLOAT) */
-  else
-  if (typepixel == VFF_TYP_DOUBLE)
-  {
-    if (ascii)
-    {
-      for (i = 0; i < N; i++)
-      {
-        fscanf(fd, "%lf", &(DOUBLEDATA(image)[i]));
-      } /* for i */
-    }
-    else 
-    {
-      index_t ret = fread(DOUBLEDATA(image), sizeof(double), N, fd);
-      if (ret != N)
-      {
+                              return(NULL);
+                          }
+                      }
+                  } /* if (typepixel == VFF_TYP_FLOAT) */
+                  else
+                      if (typepixel == VFF_TYP_DOUBLE)
+                      {
+                          if (ascii)
+                          {
+                              for (i = 0; i < N; i++)
+                              {
+                                  fscanf(fd, "%lf", &(DOUBLEDATA(image)[i]));
+                              } /* for i */
+                          }
+                          else 
+                          {
+                              index_t ret = fread(DOUBLEDATA(image), sizeof(double), N, fd);
+                              if (ret != N)
+                              {
 #ifdef MC_64_BITS
-        fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
+                                  fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
 #else
-        fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
+                                  fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
 #endif
-        return(NULL);
-      }
-    }
-  } /* if (typepixel == VFF_TYP_DOUBLE) */
-  else
-  if (typepixel == VFF_TYP_COMPLEX)
-  {
-    if (ascii)
-    {
-      for (i = 0; i < N+N; i++)
-      {
-        fscanf(fd, "%f", &(FLOATDATA(image)[i]));
-      } /* for i */
-    }
-    else 
-    {
-      index_t ret = fread(FLOATDATA(image), sizeof(float), N+N, fd);
-      if (ret != N+N)
-      {
+                                  return(NULL);
+                              }
+                          }
+                      } /* if (typepixel == VFF_TYP_DOUBLE) */
+                      else
+                          if (typepixel == VFF_TYP_COMPLEX)
+                          {
+                              if (ascii)
+                              {
+                                  for (i = 0; i < N+N; i++)
+                                  {
+                                      fscanf(fd, "%f", &(FLOATDATA(image)[i]));
+                                  } /* for i */
+                              }
+                              else 
+                              {
+                                  index_t ret = fread(FLOATDATA(image), sizeof(float), N+N, fd);
+                                  if (ret != N+N)
+                                  {
 #ifdef MC_64_BITS
-        fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)(N+N), (long long int)ret);
+                                      fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)(N+N), (long long int)ret);
 #else
-        fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N+N, ret);
+                                      fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N+N, ret);
 #endif
-        return(NULL);
-      }
-    }
-  } /* if (typepixel == VFF_TYP_COMPLEX) */
-
+                                      return(NULL);
+                                  }
+                              }
+                          } /* if (typepixel == VFF_TYP_COMPLEX) */
+  } /* if TIFF */
   fclose(fd);
 
   return image;
