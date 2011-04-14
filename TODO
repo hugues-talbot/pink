@@ -102,18 +102,51 @@ http://matplotlib.sourceforge.net/users/shell.html#mpl-shell
 
 MC change pink.cpp.lmedialaxis_lbisector to pink.cpp.bisector
 
+UJ bug: mention the 'execfile' on the excercise sheets
 
+UJ bug: copy image should work as:
+   copied_image = original_image.copy() 
+   or
+   copied_image = original_image.dup() 
 
+UJ solution: for MC-TP1-3 finding the holes: skeletonize the inverse
+   and the holes become isolated points
 
+UJ bug: imview: if you open multiple images, after zooming out of the
+   screen the only the first image will be visible in the loop
 
+UJ solution: MC-TP5-2 you have to pass to float images to normalize
+   the background.
 
+UJ bug: tk windows do not work if the images are too big!
 
+UJ solution: mention the 'zoom' operators
 
+UJ bug (blind faith): 'drawline' does not complain if the image is not
+   'char_image'.
 
+UJ bug: imview: imview crashes on complex images. It should complain
+   insteed.
 
+UJ feature request: manipulate should be able to detach from the console!
 
+UJ feature request: imview: it would be usefull to show the
+   look-up-table as a bar in imview
 
+UJ feature request: histogram should be developed. It could be a list
+   or a dictionary. It would also be usefull on 3D images. Look at the
+   'attribute' command
 
+UJ convention: 'inverse' and 'invert' are two names for the same
+   function. One of them must be removed.
+
+UJ bug: image.size returns a 'vint' in python, whereas it should
+   return a 'boost::python::list'
+
+UJ bug: watershed shanges one of it's parameters (the image with the
+   markers)
+
+UJ note: I don't like the way readimage is patched for tiff images.
 
 
 

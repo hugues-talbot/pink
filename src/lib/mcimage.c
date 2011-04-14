@@ -1870,7 +1870,7 @@ struct xvimage *readtiffimage(char *filename)
     
     return image;
 }
-#endif HAVE_TIFF_LIB
+#endif /* HAVE_TIFF_LIB */
 
 /* ==================================== */
 struct xvimage * readimage(char *filename)

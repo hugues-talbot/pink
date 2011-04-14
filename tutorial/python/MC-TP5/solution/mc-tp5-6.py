@@ -11,7 +11,7 @@ from pink import show_histo
 inv=pink.inverse
 
 global debug
-debug=False
+debug=True
 
 # image smoothing
 def filtering(image, rad_es):
@@ -56,14 +56,17 @@ imgf = filtering(img, 2)
 white = seg_white(imgf, 197, 80, 80)
 if debug:
     view3d(img, white)
+    white.writeamira("_white")
 
 black = seg_black(imgf, 128)
 if debug:
     view3d(img, black)
+    black.writeamira("_black")
 
 gray = seg_gray(imgf, 128, 152)
 if debug:
     view3d(img, gray)
+    gray.writeamira("_gray")
 
 labels = combine(black, gray, white)
 if debug:

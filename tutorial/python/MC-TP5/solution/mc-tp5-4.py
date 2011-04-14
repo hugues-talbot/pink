@@ -32,15 +32,23 @@ def disk_structuring_element(radius):
 def carbide_detection(image, rad_bth, seuil, rad_op):
     es = disk_structuring_element(rad_bth)
     if DEBUG:
+        imview(es)
+        raw_input("press enter to continue...")
         es.writeimage("_es")
     bth = black_top_hat(image, es)
     if DEBUG:
+        imview(bth)
+        raw_input("press enter to continue...")
         bth.writeimage("_bth")
     thr = pink.seuil(bth, seuil)
     if DEBUG:
+        imview(thr)
+        raw_input("press enter to continue...")
         thr.writeimage("_thr")
     opb = pink.openball(thr, rad_op)
     if DEBUG:
+        imview(opb)
+        raw_input("press enter to continue...")
         opb.writeimage("_opb")
     res = pink.attribute(opb, 8, 0, 0, 0)
     return res
