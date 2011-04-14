@@ -1808,8 +1808,7 @@ struct xvimage *readtiffimage(char *filename)
     image->num_data_bands = tiffimage->nc; /* number of components */
 
     fprintf(stderr, "dimensions: nx=%d, ny=%d, nz=%d, nt=%d, nc=%d\n",
-            tiffimage->nx, tiffimage->ny,tiffimage->nz, tiffimage->nt, tiffimage->nc
-        );
+            tiffimage->nx, tiffimage->ny,tiffimage->nz, tiffimage->nt, tiffimage->nc);
 
     /* this may be a bit dicey */
     switch (tiffimage->pt) { /* pixel type */
@@ -1919,10 +1918,11 @@ struct xvimage * readimage(char *filename)
 
   /* HT: TIFF */
   if ((strncmp(buffer, "II", 2) == 0) || (strncmp(buffer, "MM", 2) ==0)) {
-      fprintf(stderr, "TIFF image\n");
       image = NULL;
-#ifdef HAVE_TIFF_LIB
+# ifdef HAVE_TIFF_LIB
       image=readtiffimage(filename);
+# else
+      fprintf(stderr, "TIFF image not supported at this time\n");
 #endif
       /*otherwise, return NULL */
   } else { /* extended PGM/PNM format */

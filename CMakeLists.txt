@@ -138,6 +138,7 @@ if (CMAKE_HOST_UNIX)
     set( LIBS ${LIBS} ${X11_LIBRARIES} )
     set( LIBS ${LIBS} ${THREADS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
+
     ### 
     ### Option LIAR
     ###
@@ -157,6 +158,11 @@ if (CMAKE_HOST_UNIX)
 	else (NOT SYSVTEST)
 	    add_definitions(-DHAVE_SYSV_IPC)
         endif(NOT SYSVTEST)
+  
+	if (THIS_IS_LINUX)
+		find_library( POSIX_REALTIME_LIB librt.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
+		set( LIBS ${LIBS} ${POSIX_REALTIME_LIB} )
+	endif (THIS_IS_LINUX)
 
 	FIND_PACKAGE(TIFF)
 
@@ -166,13 +172,9 @@ if (CMAKE_HOST_UNIX)
 	    INCLUDE_DIRECTORIES(${TIFF_INCLUDE_DIR})
 	    set( LIBS ${LIBS} ${TIFF_LIBRARIES} )
 	else(TIFF_FOUND)
-	    message( FATAL_ERROR "Libtiff not found. Check your installation")
+	    message( "Libtiff not found. Please check your installation")
 	endif(TIFF_FOUND)
-  
-	if (THIS_IS_LINUX)
-		find_library( POSIX_REALTIME_LIB librt.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
-		set( LIBS ${LIBS} ${POSIX_REALTIME_LIB} )
-	endif (THIS_IS_LINUX)
+
 
     endif (PYTHON_FRONT_END) # end of LIAR
 
