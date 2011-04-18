@@ -43,6 +43,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 /* 
   Michel Couprie - aout 2000
+  update MC avril 2011 - multiband images
 */
 
 #include <stdio.h>
@@ -60,12 +61,17 @@ struct xvimage * lcrop(struct xvimage *in, int32_t x, int32_t y, int32_t w, int3
 #undef F_NAME
 #define F_NAME "lcrop"
 {
-  index_t i, j, i0, j0, i1, j1, x0, y0, x1, y1, xx, yy;
-  index_t rs, cs;
+  index_t i, j, i0, j0, i1, j1, x0, y0, x1, y1, xx, yy, n;
+  index_t rs, cs, N, N1, nb;
   struct xvimage * temp1;
 
-  rs = in->row_size;
-  cs = in->col_size;
+  ONLY_2D(in);
+  assert(tsize(in) == 1);
+
+  rs = rowsize(in);
+  cs = colsize(in);
+  nb = nbands(in);
+  N = rs * cs;
   i0 = 0; i1 = w;
   j0 = 0; j1 = h;
   x0 = x; y0 = y;
@@ -82,53 +88,59 @@ struct xvimage * lcrop(struct xvimage *in, int32_t x, int32_t y, int32_t w, int3
   if (x1 > rs) { i1 -= (x1-rs); x1 = rs; }
   if (y1 > cs) { j1 -= (y1-cs); y1 = cs; }
 
-  temp1 = allocimage(NULL, i1, j1, 1, datatype(in));
+
+  temp1 = allocmultimage(NULL, i1, j1, 1, 1, nb, datatype(in));
   if (temp1 == NULL)
   {
     fprintf(stderr, "%s : allocimage failed\n", F_NAME);
     return NULL;
   }
+  N1 = i1 * j1;          /* taille bande image finale */
 
   if (datatype(in) == VFF_TYP_1_BYTE)
   {
     uint8_t *T1 = UCHARDATA(temp1);
     uint8_t *I = UCHARDATA(in);
-    for (j = j0, yy = y0; j < j1; j++, yy++)
-      for (i = i0, xx = x0; i < i1; i++, xx++)
-      {
-        T1[(j * i1) + i] = I[(yy * rs) + xx];
-      }
+    for (n = 0; n < nb; n++)
+      for (j = j0, yy = y0; j < j1; j++, yy++)
+	for (i = i0, xx = x0; i < i1; i++, xx++)
+	{
+	  T1[(n*N1) + (j*i1) + i] = I[(n*N) + (yy*rs) + xx];
+	}
   }
   else if (datatype(in) == VFF_TYP_4_BYTE)
   {
     int32_t *T1L = SLONGDATA(temp1);
     int32_t *IL = SLONGDATA(in);
-    for (j = j0, yy = y0; j < j1; j++, yy++)
-      for (i = i0, xx = x0; i < i1; i++, xx++)
-      {
-        T1L[(j * i1) + i] = IL[(yy * rs) + xx];
-      }
+    for (n = 0; n < nb; n++)
+      for (j = j0, yy = y0; j < j1; j++, yy++)
+	for (i = i0, xx = x0; i < i1; i++, xx++)
+	{
+	  T1L[(n*N1) + (j*i1) + i] = IL[(n*N) + (yy*rs) + xx];
+	}
   }
   else if (datatype(in) == VFF_TYP_FLOAT)
   {
     float *T1F = FLOATDATA(temp1);
     float *IF = FLOATDATA(in);
-    for (j = j0, yy = y0; j < j1; j++, yy++)
-      for (i = i0, xx = x0; i < i1; i++, xx++)
-      {
-        T1F[(j * i1) + i] = IF[(yy * rs) + xx];
-      }
+    for (n = 0; n < nb; n++)
+      for (j = j0, yy = y0; j < j1; j++, yy++)
+	for (i = i0, xx = x0; i < i1; i++, xx++)
+	{
+	  T1F[(n*N1) + (j*i1) + i] = IF[(n*N) + (yy*rs) + xx];
+	}
   }
   else if (datatype(in) == VFF_TYP_COMPLEX)
   {
     fcomplex *T1C = COMPLEXDATA(temp1);
     fcomplex *IC = COMPLEXDATA(in);
-    for (j = j0, yy = y0; j < j1; j++, yy++)
-      for (i = i0, xx = x0; i < i1; i++, xx++)
-      {
-        T1C[(j * i1) + i].re = IC[(yy * rs) + xx].re;
-        T1C[(j * i1) + i].im = IC[(yy * rs) + xx].im;
-      }
+    for (n = 0; n < nb; n++)
+      for (j = j0, yy = y0; j < j1; j++, yy++)
+	for (i = i0, xx = x0; i < i1; i++, xx++)
+	{
+	  T1C[(n*N1) + (j*i1) + i].re = IC[(n*N) + (yy*rs) + xx].re;
+	  T1C[(n*N1) + (j*i1) + i].im = IC[(n*N) + (yy*rs) + xx].im;
+	}
   }
   else
   {
@@ -163,14 +175,19 @@ struct xvimage * lcrop3d(struct xvimage *in, int32_t x, int32_t y, int32_t z, in
 #undef F_NAME
 #define F_NAME "lcrop3d"
 {
-  index_t i, j, k, i0, j0, k0, i1, j1, k1, x0, y0, z0, x1, y1, z1, xx, yy, zz;
-  index_t rs, cs, ds, ps, p1;
+  index_t i, j, k, i0, j0, k0, i1, j1, k1, x0, y0, z0, x1, y1, z1, xx, yy, zz, n;
+  index_t rs, cs, ds, ps, p1, N, N1, nb;
   struct xvimage *temp1;
+
+  ONLY_3D(in);
+  assert(tsize(in) == 1);
 
   rs = rowsize(in);     /* taille rangee image originale */
   cs = colsize(in);     /* taille colonne image originale */
   ds = depth(in);       /* nb. plans image originale */
   ps = rs * cs;         /* taille plan image originale */
+  nb = nbands(in);
+  N = ps * ds;
 
   i0 = 0; i1 = w;
   j0 = 0; j1 = h;
@@ -192,8 +209,9 @@ struct xvimage * lcrop3d(struct xvimage *in, int32_t x, int32_t y, int32_t z, in
   if (z1 > ds) { k1 -= (z1-ds); z1 = ds; }
 
   p1 = i1 * j1;          /* taille plan image finale */
+  N1 = p1 * k1;          /* taille bande image finale */
 
-  temp1 = allocimage(NULL, i1, j1, k1, datatype(in));
+  temp1 = allocmultimage(NULL, i1, j1, k1, 1, nb, datatype(in));
   if (temp1 == NULL)
   {
     fprintf(stderr, "%s : allocimage failed\n", F_NAME);
@@ -204,46 +222,50 @@ struct xvimage * lcrop3d(struct xvimage *in, int32_t x, int32_t y, int32_t z, in
   {
     uint8_t *T1 = UCHARDATA(temp1);
     uint8_t *I = UCHARDATA(in);
+    for (n = 0; n < nb; n++)
     for (k = k0, zz = z0; k < k1; k++, zz++)
-      for (j = j0, yy = y0; j < j1; j++, yy++)
-        for (i = i0, xx = x0; i < i1; i++, xx++)
-        {
-          T1[(k * p1) + (j * i1) + i] = I[(zz * ps) + (yy * rs) + xx];
-        }
+    for (j = j0, yy = y0; j < j1; j++, yy++)
+    for (i = i0, xx = x0; i < i1; i++, xx++)
+    {
+      T1[(n*N1) + (k*p1) + (j*i1) + i] = I[(n*N) + (zz*ps) + (yy*rs) + xx];
+    }
   }
   else if (datatype(in) == VFF_TYP_4_BYTE)
   {
     int32_t *T1L = SLONGDATA(temp1);
     int32_t *IL = SLONGDATA(in);
+    for (n = 0; n < nb; n++)
     for (k = k0, zz = z0; k < k1; k++, zz++)
-      for (j = j0, yy = y0; j < j1; j++, yy++)
-        for (i = i0, xx = x0; i < i1; i++, xx++)
-        {
-          T1L[(k * p1) + (j * i1) + i] = IL[(zz * ps) + (yy * rs) + xx];
-        }
+    for (j = j0, yy = y0; j < j1; j++, yy++)
+    for (i = i0, xx = x0; i < i1; i++, xx++)
+    {
+      T1L[(n*N1) + (k*p1) + (j*i1) + i] = IL[(n*N) + (zz*ps) + (yy*rs) + xx];
+    }
   }
   else if (datatype(in) == VFF_TYP_FLOAT)
   {
     float *T1F = FLOATDATA(temp1);
     float *IF = FLOATDATA(in);
+    for (n = 0; n < nb; n++)
     for (k = k0, zz = z0; k < k1; k++, zz++)
-      for (j = j0, yy = y0; j < j1; j++, yy++)
-        for (i = i0, xx = x0; i < i1; i++, xx++)
-        {
-          T1F[(k * p1) + (j * i1) + i] = IF[(zz * ps) + (yy * rs) + xx];
-        }
+    for (j = j0, yy = y0; j < j1; j++, yy++)
+    for (i = i0, xx = x0; i < i1; i++, xx++)
+    {
+      T1F[(n*N1) + (k*p1) + (j*i1) + i] = IF[(n*N) + (zz*ps) + (yy*rs) + xx];
+    }
   }
   else if (datatype(in) == VFF_TYP_COMPLEX)
   {
     fcomplex *T1C = COMPLEXDATA(temp1);
     fcomplex *IC = COMPLEXDATA(in);
+    for (n = 0; n < nb; n++)
     for (k = k0, zz = z0; k < k1; k++, zz++)
-      for (j = j0, yy = y0; j < j1; j++, yy++)
-        for (i = i0, xx = x0; i < i1; i++, xx++)
-        {
-          T1C[(k * p1) + (j * i1) + i].re = IC[(zz * ps) + (yy * rs) + xx].re;
-          T1C[(k * p1) + (j * i1) + i].im = IC[(zz * ps) + (yy * rs) + xx].im;
-        }
+    for (j = j0, yy = y0; j < j1; j++, yy++)
+    for (i = i0, xx = x0; i < i1; i++, xx++)
+    {
+      T1C[(n*N1)+(k*p1)+(j*i1)+i].re = IC[(n*N)+(zz*ps)+(yy*rs)+xx].re;
+      T1C[(n*N1)+(k*p1)+(j*i1)+i].im = IC[(n*N)+(zz*ps)+(yy*rs)+xx].im;
+    }
   }
   else
   {

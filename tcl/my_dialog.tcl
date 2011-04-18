@@ -127,3 +127,22 @@ proc Dialog_Prompt { string defaultval} {
 		return {}
 	}
 }
+
+proc Dialog_Prompt_OK_NOK { string } {
+        global prompt
+	set f .prompt
+	if [Dialog_Create $f "Prompt" -borderwidth 10] {
+		message $f.msg -text $string -aspect 1000
+		set b [frame $f.buttons]
+		pack $f.msg $f.buttons -side top -fill x
+		button $b.ok -text OK -command {set prompt(ok) 1}
+		button $b.cancel -text Cancel \
+			-command {set prompt(ok) 0}
+		pack $b.ok -side left
+		pack $b.cancel -side right
+	}
+	set prompt(ok) 0
+	Dialog_Wait $f prompt(ok)
+	Dialog_Dismiss $f
+	return $prompt(ok)
+}

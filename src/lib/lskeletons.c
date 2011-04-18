@@ -3568,11 +3568,90 @@ static void rotate90_vois(uint8_t *vois)
 // Tout point candidat (donc simple) a une étiquette >= CAN
 #define OBJ 1
 #define CAN 2
+#define CR1 3
+#define CR0 4
+
 #define CA1 3
 #define CA2 4
 #define CA3 5
 #define CA4 6
 
+/* ==================================== */
+static void CrucialPass1( /* pour un objet en 8-connexite */
+  uint8_t *X,      /* pointeur base image */
+  index_t p,       /* index du point */
+  index_t rs,      /* taille rangee */
+  index_t N)       /* taille image */
+/*
+  Repère et marque CR1 les cliques 1-cruciales pour <X,C> contenant le point p.
+  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
+  Il est supposé que X[p] == CAN (pas de test).
+*/
+/* ==================================== */
+{
+  int32_t i;
+  uint8_t v[8];
+
+  extract_vois(X, p, rs, N, v);
+
+/*
+x a a
+x C C  avec au moins un des a et au moins un des b non nuls
+x b b  ou : tous les a et tous les b nuls
+*/
+  for (i = 0; i < 4; i++)
+  {
+    if (v[0] < CAN) goto fail1;
+    if ((v[1] == 0) && (v[2] == 0) && (v[6] == 0) && (v[7] == 0)) 
+    { X[p] = CR1; return; }
+    if ((v[1] == 0) && (v[2] == 0)) goto fail1;
+    if ((v[6] == 0) && (v[7] == 0)) goto fail1;
+    X[p] = CR1; 
+    return;
+  fail1:
+    if (i < 3) rotate90_vois(v);
+  }
+} // CrucialPass1()
+
+/* ==================================== */
+static void CrucialPass2( /* pour un objet en 8-connexite */
+  uint8_t *X,      /* pointeur base image */
+  index_t p,       /* index du point */
+  index_t rs,      /* taille rangee */
+  index_t N)       /* taille image */
+/*
+  Repère et marque CR0 les cliques 0-cruciales pour <X,C> contenant le point p.
+  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
+  Il est supposé que X[p] == CAN (pas de test).
+  Les cliques 1-cruciales doivent avoir préalablement été étiquetées CR1 (voir CrucialPass1).
+*/
+/* ==================================== */
+{
+  int32_t i;
+  uint8_t v[8];
+
+  extract_vois(X, p, rs, N, v);
+
+/*
+x b a  on doit avoir le point 'a' ou les 2 points 'b' dans X (ou les deux), 
+x C b  et tous les points 'a,b' de X marqués CAN,
+x x x  pour que le point central soit étiqueté CR0
+*/
+  for (i = 0; i < 4; i++)
+  {
+    if ((v[1] == 0) && ((v[0] == 0) || (v[2] == 0))) goto fail1;
+    if (v[0] && (v[0] < CAN)) goto fail1;
+    if (v[1] && (v[1] < CAN)) goto fail1;
+    if (v[2] && (v[2] < CAN)) goto fail1;
+    X[p] = CR0;
+    return;
+  fail1:
+    if (i < 3) rotate90_vois(v);
+  }
+} // CrucialPass2()
+
+//#define OLD
+#ifdef OLD
 /* ==================================== */
 static void NonCrucialPass1( /* pour un objet en 8-connexite */
   uint8_t *X,      /* pointeur base image */
@@ -3768,6 +3847,7 @@ x 0 0
   assert(1); // this should never happen
   return 1;
 } // NonCrucial()
+#endif
 
 #define NONCRUCIAL 1
 
@@ -3881,16 +3961,23 @@ int32_t lskelCKG2(struct xvimage *image,
       }
     } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
 
-    for (i = 0; i < RLIFO->Sp; i++)
-    {
-      x = RLIFO->Pts[i];
-      NonCrucialPass1(F, x, rs, N);
-    }
+#ifndef OLD
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass1(F, x, rs, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass2(F, x, rs, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+#else
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; NonCrucialPass1(F, x, rs, N); }
+#endif
 
     for (i = 0; i < RLIFO->Sp; i++)
     {
       x = RLIFO->Pts[i];
+#ifndef OLD
+      if (F[x] == CAN)
+#else
       if (NonCrucial(F, x, rs, N))
+#endif
       {
 #ifdef DEBUG_lskelCKG2
 	printf("Non Crucial: %d\n", x);
@@ -4050,16 +4137,23 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
       }
     } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
 
-    for (i = 0; i < RLIFO->Sp; i++)
-    {
-      x = RLIFO->Pts[i];
-      NonCrucialPass1(F, x, rs, N);
-    }
+#ifndef OLD
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass1(F, x, rs, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass2(F, x, rs, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+#else
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; NonCrucialPass1(F, x, rs, N); }
+#endif
 
     for (i = 0; i < RLIFO->Sp; i++)
     {
       x = RLIFO->Pts[i];
+#ifndef OLD
+      if (F[x] == CAN)
+#else
       if (NonCrucial(F, x, rs, N))
+#endif
       {
 #ifdef DEBUG_lskelCKG2
 	printf("Non Crucial: %d\n", x);
@@ -4145,139 +4239,5 @@ int32_t lskelCKG3(struct xvimage *image,
   ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
   COMPARE_SIZE(image, imageprio);
 
-  IndicsInit(N);
-
-  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = SLONGDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
-    PB = UCHARDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
-    PF = FLOATDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
-    PD = DOUBLEDATA(imageprio); 
-  else 
-  {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
-    return(0);
-  }
-
-  taillemaxrbt = 2 * cs +  2 * rs;
-  /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
-  if (RBT == NULL)
-  {
-    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
-    return(0);
-  }
-  RLIFO = CreeRlifoVide(taillemaxrbt);
-  if (RLIFO == NULL)
-  {
-    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
-    return(0);
-  }
-
-  /* ================================================ */
-  /*               DEBUT ALGO                         */
-  /* ================================================ */
-
-  /* ========================================================= */
-  /*   INITIALISATION DU RBT */
-  /* ========================================================= */
-
-  for (x = 0; x < N; x++)
-  {
-    if (F[x]) F[x] = OBJ;
-    if (F[x] && bordext8(F, x, rs, N))
-    {
-      switch(datatype(imageprio))
-      {
-        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
-      }
-      Set(x, EN_RBT);
-    }
-  }
-
-  /* ================================================ */
-  /*                  DEBUT SATURATION                */
-  /* ================================================ */
-
-  while (!mcrbt_RbtVide(RBT))
-  {
-    curprio = RbtMinLevel(RBT);
-#define DEBUG_lskelCKG3
-#ifdef DEBUG_lskelCKG3
-      printf("entering loop, curprio: %g\n", curprio);
-#endif
-    if (curprio >= val) break;
-    do
-    {
-      x = RbtPopMin(RBT);
-#ifdef DEBUG_lskelCKG3
-      printf("pop: %d\n", x);
-#endif
-      UnSet(x, EN_RBT);
-      if (simple8(F, x, rs, N))
-      {
-	RlifoPush(&RLIFO, x);
-	F[x] = CAN;
-      }
-    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
-
-    for (i = 0; i < RLIFO->Sp; i++)
-    {
-      x = RLIFO->Pts[i];
-      NonCrucialPass1(F, x, rs, N);
-    }
-
-    for (i = 0; i < RLIFO->Sp; i++)
-    {
-      x = RLIFO->Pts[i];
-      if (NonCrucial(F, x, rs, N))
-      {
-#ifdef DEBUG_lskelCKG3
-	printf("Non Crucial: %d\n", x);
-#endif
-	Set(x, NONCRUCIAL); // marque le point pour effacement ulterieur
-        for (k = 0; k < 8; k += 1) // parcourt les voisins en 8-connexite
-        {                          // pour empiler les voisins non deja empiles
-          y = voisin(x, k, rs, N);
-          if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
-          {
-	    switch(datatype(imageprio))
-	    {
-	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
-	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
-	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
-	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
-	    }
-#ifdef DEBUG_lskelCKG3
-	    printf("push: %d\n", y);
-#endif
-            Set(y, EN_RBT);
-          } // if y
-        } // for k
-      } // if (NonCrucial(F, C, x, rs, N)
-    } // for (i = 0; i < RLIFO->Sp; i++)
-
-    for (i = 0; i < RLIFO->Sp; i++)
-    {
-      x = RLIFO->Pts[i];
-      if (IsSet(x, NONCRUCIAL)) F[x] = 0;
-    }
-
-    RlifoFlush(RLIFO);
-
-  } // while (!mcrbt_RbtVide(RBT))
-
-  /* ================================================ */
-  /* UN PEU DE MENAGE                                 */
-  /* ================================================ */
-
-  IndicsTermine();
-  mcrbt_RbtTermine(RBT);
-  RlifoTermine(RLIFO);
   return(1);
 } /* lskelCKG3() */

@@ -32,7 +32,7 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file skel_PSG.c
+/* \file skel_PSG.c
 
 \brief parallel 2D and 3D binary guided thinning
 
@@ -47,6 +47,8 @@ from deletion.  If \b val equals -1, then all points will be
 considered for deletion.
 
 <B>Warning:</B> The object must not have any point on the frame of the image.
+
+EXPERIMENTAL - DO NOT USE IN APPLICATION
 
 <B>Types supported:</B> byte 2d, byte 3d
 
