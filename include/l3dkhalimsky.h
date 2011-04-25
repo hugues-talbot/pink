@@ -54,6 +54,7 @@ extern int32_t l3dboundary(struct xvimage * f);
 extern int32_t l3dborder(struct xvimage * f);
 extern int32_t l3dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8_t a2, uint8_t b1, uint8_t b2);
 extern int32_t l3dmakecomplex(struct xvimage * i);
+extern int32_t l3d_is_complex(struct xvimage * k);
 extern int32_t l3dalpha(struct xvimage * i);
 extern int32_t l3dbeta(struct xvimage * i);
 #ifdef __cplusplus

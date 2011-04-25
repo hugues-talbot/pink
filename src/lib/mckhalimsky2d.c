@@ -41,6 +41,19 @@ knowledge of the CeCILL license and that you accept its terms.
    dont les deux coordonnees sont impaires, les alpha-terminaux (singletons)
    par les points dont les deux coordonnees sont paires.
 
+   la grille de khalimsky est un ordre partiel : les cotés d'un carré
+   sont inférieurs au carré, les extrémités d'un côté sont inférieures
+   au côté...
+
+   explication des noms alpha, beta, theta : 
+
+   alpha(x) = {y | y <= x}
+   alphacarre(x) = {y | y < x}
+   beta(x) = {y | y >= x}
+   betacarre(x) = {y | y > x}
+   theta(x) = alpha(x) union beta(x)
+   thetacarre(x) = alphacarre(x) union betacarre(x)
+
 */
 #include <stdio.h>
 #include <stdint.h>

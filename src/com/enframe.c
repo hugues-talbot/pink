@@ -42,6 +42,7 @@ knowledge of the CeCILL license and that you accept its terms.
 Adds a border to the input image, filled with the value \b grayvalue (default 0). 
 The width of the border may be given as parameter \b width, 
 otherwise its value is 1.
+
 If \b out.pgm is not specified, then out.pgm = in.pgm.
 
 <B>Types supported:</B> byte 2d, int32_t 2d, float 2d, byte 3d, int32_t 3d, float 3d.

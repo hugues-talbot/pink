@@ -54,6 +54,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <math.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcrlifo.h>
@@ -62,6 +64,9 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcutil.h>
 #include <mcgraphe.h>
 #include <mckhalimsky3d.h>
+#include <mcgeo.h>
+#include <ldist.h>
+#include <lmedialaxis.h>
 #include <l3dkhalimsky.h>
 #include <l3dcollapse.h>
 
@@ -1403,3 +1408,290 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
   return(flow);
 
 } // l3dtopoflow_f()
+
+#define FS_ALPHA 0.1
+
+/* =============================================================== */
+int32_t l3dflowskeleton(struct xvimage * k, int32_t mode, double level, struct xvimage * func) 
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "l3dflowskeleton"
+{
+  struct xvimage * kk;
+  struct xvimage * dist;
+  struct xvimage * lambda;
+  uint8_t *K;
+  index_t rs, cs, ds, ps, N, i, x, y, z;
+  float * FUNC;
+  float * LAMBDA;
+  graphe * flow;
+  boolean * perm;
+  boolean * head;
+  TYP_VSOM vmax;
+  TYP_VSOM alpha = FS_ALPHA;
+
+  ONLY_3D(k);
+  COMPARE_SIZE(k, func);
+  ACCEPTED_TYPES1(k, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(func, VFF_TYP_FLOAT);
+
+  rs = rowsize(k);
+  cs = colsize(k);
+  ds = depth(k);
+  ps = rs * cs;
+  N = ps * ds;
+  K = UCHARDATA(k);
+
+  dist = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  assert(dist != NULL);
+  if (! lsedt_meijster(k, dist))
+  {
+    fprintf(stderr, "%s: lsedt_meijster failed\n", F_NAME);
+    return 0;
+  }
+
+  lambda = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT);
+  assert(lambda != NULL);
+  if (!llambdamedialaxis(dist, lambda))
+  {
+    fprintf(stderr, "%s: llambdamedialaxis failed\n", F_NAME);
+    return 0;
+  }
+
+  // -----------------------------------------------------------
+  // 1ERE ETAPE : CALCULE LE FLOW GRAPH
+  // -----------------------------------------------------------
+  kk = copyimage(k); // sauve k car l3dtopoflow modifie le complexe
+  assert(kk != NULL);
+  if (! (flow = l3dtopoflow_f(kk, lambda, NULL, FLT_MAX)))
+  {
+    fprintf(stderr, "%s: function l3dtopoflow_f failed\n", F_NAME);
+    return 0;
+  }
+  freeimage(kk);
+
+  perm = (boolean *)calloc(N, sizeof(boolean)); assert(perm != NULL);
+  head = (boolean *)calloc(N, sizeof(boolean)); assert(head != NULL);
+  for (i = 0; i < N; i++)
+    if (flow->v_sommets[i] == TF_PERMANENT)
+      perm[i] = TRUE;
+    else if (flow->v_sommets[i] == TF_HEAD)
+      head[i] = TRUE;
+  
+  // -------------------------------------------------------------------
+  // 2EME ETAPE : CALCULE LA FONCTION DE POIDS INITIALE POUR LES SOMMETS
+  // -------------------------------------------------------------------
+  LAMBDA = FLOATDATA(lambda);
+  FUNC = FLOATDATA(func);
+
+  if (mode == 0)
+  { // fonction uniformÅÈment nulle 
+    razimage(func);
+  }
+  else if (mode == 1)
+  { // fonction uniforme (unitÅÈ)
+    for (i = 0; i < N; i++) 
+      if (K[i])
+	FUNC[i] = (float)1;
+      else
+	FUNC[i] = (float)0;
+  }
+  else if ((mode == 2) || (mode == 3))
+  { // fonction uniforme sur la frontiÅËre, nulle Å‡ l'intÅÈrieur 
+    struct xvimage * border = copyimage(k);
+    uint8_t *B;
+    assert(border != NULL);
+    if (! l3dborder(border))
+    {
+      fprintf(stderr, "%s: function l3dborder failed\n", F_NAME);
+      return 0;
+    }
+    B = UCHARDATA(border);
+    for (i = 0; i < N; i++) 
+      if (B[i]) 
+	FUNC[i] = (float)1;
+      else
+	FUNC[i] = (float)0;
+    freeimage(border);
+  }
+  else if (mode == 4)
+  { // fonction d'ouverture inversÅÈe
+    int32_t ret;
+    uint32_t *OF, maxof;
+    struct xvimage *of = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+    assert(of != NULL);
+    ret = lopeningfunction(k, of, 0); assert(ret == 1);
+    OF = ULONGDATA(of);
+    maxof = OF[0];
+    for (i = 0; i < N; i++) if (OF[i] > maxof) maxof = OF[i];
+    for (i = 0; i < N; i++) FUNC[i] = (float)(maxof - OF[i]) + 0.1;
+    freeimage(of);
+  }
+  else if (mode == 5)
+  { // fonction bisectrice
+    if (! lmedialaxis_lbisector(dist, k, func))
+    {
+      fprintf(stderr, "%s: lmedialaxis_lbisector failed\n", F_NAME);
+      return 0;
+    }
+    MaxAlpha3d(func); // fermeture (en ndg)
+  }
+  else if (mode == 6)
+  { // distance map
+    uint32_t *D = ULONGDATA(dist);
+    for (i = 0; i < N; i++) FUNC[i] = (float)(1.0/sqrt(D[i]));
+  }
+  else if (mode == 7)
+  { // lambda function
+    copy2image(func, lambda);
+    MaxAlpha3d(func); // fermeture (en ndg)
+  }
+  else if (mode == 8)
+  { // fonction uniforme (unitÅÈ) sur les facettes
+    for (z = 0; z < ds; z++) 
+    for (y = 0; y < cs; y++) 
+    for (x = 0; x < rs; x++)
+    {
+      i = z*ps + y*rs + x;
+      if (K[i] && CUBE3D(x,y,z))
+	FUNC[i] = (float)1;
+      else
+	FUNC[i] = (float)0;
+    }
+  }
+  else if (mode == 9)
+  { // fonction uniforme sur les facettes de la frontiÅËre
+    struct xvimage * border = copyimage(k);
+    uint8_t *B;
+    assert(border != NULL);
+    if (! l3dborder(border))
+    {
+      fprintf(stderr, "%s: function l3dborder failed\n", F_NAME);
+      return 0;
+    }
+    B = UCHARDATA(border);
+    for (z = 0; z < ds; z++) 
+    for (y = 0; y < cs; y++) 
+    for (x = 0; x < rs; x++)
+    {
+      i = z*ps + y*rs + x;
+      if (B[i] && CARRE3D(x,y,z)) 
+	FUNC[i] = (float)1;
+      else
+	FUNC[i] = (float)0;
+    }
+    freeimage(border);
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad mode: %d\n", F_NAME, mode);
+    return 0;
+  }
+
+  for (i = 0; i < N; i++)
+    flow->v_sommets[i] = (TYP_VSOM)FUNC[i];
+
+  // -----------------------------------------------------------
+  // 3EME ETAPE : INTEGRE LA FONCTION DE POIDS 
+  // -----------------------------------------------------------
+  IntegreGSC(flow);
+    
+  if (mode == 3)
+  {
+#ifdef ANCIEN1
+    MaxAlpha3d(lambda); // fermeture (en ndg)
+    for (i = 0; i < N; i++)
+      flow->v_sommets[i] = flow->v_sommets[i] - (TYP_VSOM)LAMBDA[i];
+#endif
+#ifdef ANCIEN2
+    int32_t *D = SLONGDATA(dist);
+    for (i = 0; i < N; i++)
+      if (D[i]) 
+	flow->v_sommets[i] = flow->v_sommets[i] / (TYP_VSOM)sqrt(D[i]);
+#endif
+    int32_t ret;
+    uint32_t *OF;
+    struct xvimage *of = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+    assert(of != NULL);
+    ret = lopeningfunction(k, of, 0); assert(ret == 1);
+    OF = ULONGDATA(of);
+    for (i = 0; i < N; i++)
+      if (OF[i]) 
+	flow->v_sommets[i] = flow->v_sommets[i] / (TYP_VSOM)OF[i];
+    freeimage(of);
+  }
+
+  // -----------------------------------------------------------
+  // 4EME ETAPE : TRANSFORME LA FONCTION SUR LES SOMMETS EN 
+  // FONCTION DE MORSE (INVERSÅ…E) SUR LE COMPLEXE
+  // -----------------------------------------------------------  
+  AlphaTopologicalMap(flow, head, alpha);
+
+  // met Å‡ vmax (infini) les sommets "permanents" (non collapsÅÈs)
+  vmax = flow->v_sommets[0];
+  for (i = 0; i < N; i++)
+    if (flow->v_sommets[i] > vmax) vmax = flow->v_sommets[i];
+  for (i = 0; i < N; i++)
+    if (perm[i])
+      flow->v_sommets[i] = vmax;
+  
+  if (level >= 0)
+  {
+    for (i = 0; i < N; i++)
+      K[i] = (flow->v_sommets[i] >= level ? 255 : 0);
+    writeimage(k, "_seuil_level");
+
+    // detects end points
+    if (!l3dseltype(k, 0, 0, 0, 0, 1, 1))
+    {
+      fprintf(stderr, "%s: function l3dseltype failed\n", F_NAME);
+      return 0;
+    }
+    writeimage(k, "_endpoints");    
+
+    kk = copyimage(k); 
+    assert(kk != NULL);
+    razimage(kk);
+
+    // foreach end point, compute the upstream
+    uint8_t *KK = UCHARDATA(kk);
+    graphe * flow_s = Symetrique(flow);
+    uint32_t j;
+    for (i = 0; i < N; i++)
+      if (K[i])
+      {
+	boolean *D = Descendants(flow_s, i);
+	for (j = 0; j < N; j++) if (D[j]) KK[j] = 255;
+	free(D);
+      }
+    writeimage(kk, "_upstreams");    
+    TermineGraphe(flow_s);
+
+    // computes a new weighting function:
+    // identical to the previous one on upstreams,
+    // null elsewhere
+    for (i = 0; i < N; i++)
+      if (!KK[i])
+	flow->v_sommets[i] = (TYP_VSOM)0;
+    
+    // "morsifies" this function
+    AlphaTopologicalMap(flow, head, alpha);
+    vmax = flow->v_sommets[0];
+    for (i = 0; i < N; i++)
+      if (flow->v_sommets[i] > vmax) vmax = flow->v_sommets[i];
+    for (i = 0; i < N; i++)
+      if (perm[i])
+	flow->v_sommets[i] = vmax;
+  }
+   
+  for (i = 0; i < N; i++)
+    FUNC[i] = (float)flow->v_sommets[i];
+
+  freeimage(dist);
+  freeimage(lambda);
+  free(perm);
+  free(head);
+  TermineGraphe(flow);
+
+  return 1;
+} // l3dflowskeleton()

@@ -36,6 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define TF_HEAD      1
 #define TF_TAIL      2
 #define TF_PERMANENT 3
+#include <mcgraphe.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -47,6 +48,7 @@ extern "C" {
   extern graphe * l3dtopoflow_l(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);
   extern graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage * inhibit, float priomax);
   extern int32_t l3dsurfacecollapse(struct xvimage * k, int32_t nsteps, struct xvimage * inhibit);  
+  extern int32_t l3dflowskeleton(struct xvimage * k, int32_t mode, double level, struct xvimage * func) ;
 #ifdef __cplusplus
 }
 #endif

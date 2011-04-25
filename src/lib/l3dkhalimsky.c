@@ -98,6 +98,10 @@ int32_t l3dkhalimskize(struct xvimage * i, struct xvimage **k, int32_t mode)
 #undef F_NAME
 #define F_NAME "l3dkhalimskize"
 {
+
+  ACCEPTED_TYPES1(i, VFF_TYP_1_BYTE);
+  ONLY_3D(i);
+
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
 #endif
@@ -144,9 +148,42 @@ int32_t l3dmakecomplex(struct xvimage * i)
    effectue la fermeture par inclusion de l'ensemble i
 */
 {
+  ACCEPTED_TYPES1(i, VFF_TYP_1_BYTE);
+  ONLY_3D(i);
   AjouteAlphacarre3d(i);
   return 1;
 } /* l3dmakecomplex() */
+
+/* =============================================================== */
+int32_t l3d_is_complex(struct xvimage * k)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "l3d_is_complex"
+/* 
+   teste si k est un complexe
+*/
+{
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
+  index_t ds = depth(k);
+  index_t ps = rs * cs;
+  uint8_t *K = UCHARDATA(k);
+  int32_t u, n;
+  index_t x, y, z, tab[GRS3D*GCS3D*GDS3D];
+
+  ACCEPTED_TYPES1(k, VFF_TYP_1_BYTE);
+  ONLY_3D(k);
+
+  for (z = 0; z < ds; z++)
+  for (y = 0; y < cs; y++)
+  for (x = 0; x < rs; x++)
+  if (K[z*ps + y*rs + x])
+  {
+    Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
+    for (u = 0; u < n; u++) if (!K[tab[u]]) return 0;
+  }
+  return 1;
+} /* l3d_is_complex() */
 
 /* =============================================================== */
 int32_t l3dalpha(struct xvimage * i)
@@ -157,6 +194,9 @@ int32_t l3dalpha(struct xvimage * i)
    alpha-dilatation (idem fermeture par inclusion) 
 */
 {
+  ACCEPTED_TYPES1(i, VFF_TYP_1_BYTE);
+  ONLY_3D(i);
+
   AjouteAlphacarre3d(i);
   return 1;
 } /* l3dalpha() */
@@ -170,6 +210,9 @@ int32_t l3dbeta(struct xvimage * i)
    beta-dilatation
 */
 {
+  ACCEPTED_TYPES1(i, VFF_TYP_1_BYTE);
+  ONLY_3D(i);
+
   AjouteBetacarre3d(i);
   return 1;
 } /* l3dbeta() */
@@ -183,6 +226,9 @@ int32_t l3dcolor(struct xvimage * k)
 #undef F_NAME
 #define F_NAME "l3dcolor"
 {
+  ACCEPTED_TYPES1(k, VFF_TYP_1_BYTE);
+  ONLY_3D(k);
+
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
 #endif

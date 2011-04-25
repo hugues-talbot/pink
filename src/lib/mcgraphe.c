@@ -1196,7 +1196,7 @@ boolean * Descendants(graphe * g, int32_t a)
   {
     i = LifoPop(T);
     for (p = g->gamma[i]; p != NULL; p = p->next) 
-    { /* pour tout s prédécesseur de i */
+    { /* pour tout s successeur de i */
       s = p->som;
       if (!D[s]) 
       {
@@ -2478,7 +2478,93 @@ void BellmanSC1(graphe * g, int32_t dep)
   free(T);
 } /* BellmanSC1() */
 
+/* ====================================================================== */
+// pour ?dflowskeleton.c / l?dcollapse.c
+/* ====================================================================== */
+
+/* ====================================================================== */
+/*! \fn void AlphaTopologicalMap(graphe * g, boolean * Vh, TYP_VSOM alpha)
+    \param g (entrée) : un graphe pondéré sur les sommets.
+    \brief TODO
+    \warning ne s'applique qu'aux graphes sans circuit
+*/
+void AlphaTopologicalMap(graphe * g, boolean * head, TYP_VSOM alpha)
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "AlphaTopologicalMap"
+{
+  int32_t x, y, i, r, rmax, cumul, n = g->nsom;
+  int32_t * T;   // pour les sommets triés
+  int32_t * H;   // histogramme des rangs
+  TYP_VSOM * M;   // sauvegarde fonction sommets
+  graphe * g_1 = Symetrique(g);
+  pcell p;
+
+  M = (TYP_VSOM *)malloc(n * sizeof(TYP_VSOM)); assert(M != NULL);
+  for (x = 0; x < n; x++) M[x] = g->v_sommets[x];
+  if (CircuitNiveaux(g))
+  {
+    fprintf(stderr, "%s: the graph is not acyclic\n", F_NAME);
+    exit(0);
+  }
+  rmax = 0;
+  for (x = 0; x < n; x++)
+  {
+    r = (int32_t)g->v_sommets[x];
+    if (r > rmax) rmax = r;
+  }
+  H = (int32_t *)calloc(rmax + 1, sizeof(int32_t)); assert(H != NULL);
+  for (x = 0; x < n; x++) H[(int32_t)g->v_sommets[x]]++; // calcule l'histo
+  cumul = H[0];
+  H[0] = 0;
+  for (i = 1; i <= rmax; i++) // calcule l'histo cumulé
+  {
+    x = H[i];
+    H[i] = cumul;
+    cumul += x;
+  }
+  T = (int32_t *)malloc(n * sizeof(int32_t));
+  if (T == NULL)
+  {
+    fprintf(stderr, "%s : malloc failed\n", F_NAME);
+    exit(0);
+  }
+  for (x = 0; x < n; x++)  // tri des sommets par rang croissant
+  {
+    r = (int32_t)g->v_sommets[x];
+    T[H[r]] = x;
+    H[r] += 1;
+  }
+  free(H);
+
+  for (i = 0; i < n; i++)
+  {
+    x = T[i];
+    for (p = g_1->gamma[x]; p != NULL; p = p->next)
+    { /* pour tout y prédécesseur de x */
+      y = p->som;
+      if (head[y])
+      {
+	M[x] = M[y] = mcmax(M[x],M[y]);
+      }
+      else
+      {
+	if (M[x] < (M[y] + alpha))
+	  M[x] = M[y] + alpha;
+      }
+    }
+  }
+
+  for (x = 0; x < n; x++) g->v_sommets[x] = M[x];
+  free(M);
+  TermineGraphe(g_1);  
+  free(T);
+} /* AlphaTopologicalMap() */
+
+/* ====================================================================== */
 static TYP_VSOM IntegreGSC_Aux(graphe * g, graphe * g_1, int32_t s)
+/* ====================================================================== */
+// fonction recursive auxiliaire pour IntegreGSC()
 {
   pcell p;
   int32_t t;
@@ -2583,6 +2669,40 @@ boolean EstConfluent(graphe * g, graphe *g_1, int32_t a)
   LifoTermine(T);
   return ret;
 } // EstConfluent()
+
+/* ====================================================================== */
+/*! \fn boolean *LeastDecreasingPath(graphe *g, int32_t a)
+    \param g (entrée) : le graphe valué
+    \param a (entrée) : un sommet du graphe g
+    \brief retourne l'ensemble des sommets descendants de a dans le graphe g
+    (le sommet a est inclus) formant un chemin de moins forte pente
+*/
+boolean * LeastDecreasingPath(graphe * g, int32_t a)
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "LeastDecreasingPath"
+{
+  boolean * D;   /* pour les "descendants" (successeurs a N niveaux) */
+  int32_t s, t;
+  pcell p;
+  TYP_VSOM vmax;
+  D = EnsembleVide(g->nsom);
+  D[a] = TRUE;
+  while (1)
+  {
+    p = g->gamma[a];
+    if (p == NULL) break;
+    vmax = VSOM_HUGE_NEGATIVE;
+    for (; p != NULL; p = p->next) 
+    { /* pour tout s successeur de a */
+      s = p->som;
+      if (g->v_sommets[s] > vmax) { vmax = g->v_sommets[s]; t = s; }
+    } // for p
+    D[t] = TRUE;
+    a = t;
+  } // while (1)
+  return D;
+} // LeastDecreasingPath()
 
 /* ====================================================================== */
 /*! \fn void PointsConfluents(graphe * g, graphe *g_1)

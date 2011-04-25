@@ -70,8 +70,8 @@ Michel Couprie - novembre 2008 - lambda medial axis
 #include <mcutil.h>
 #include <mcgeo.h>
 #include <ldist.h>
-#include <lmedialaxis.h>
 #include <lballincl.h>
+#include <lmedialaxis.h>
 
 #ifdef CHRONO
 #include <mcchrono.h>
@@ -515,24 +515,6 @@ from the article: " Exact Medial Axis With Euclidean Distance"
   created: 05/04/2004
   last modified: 29/07/2004
 */
-
-typedef int32_t * LookUpTable;
-typedef int32_t * Tabuff;
-typedef int32_t * TabDTg;
-
-typedef struct  Weighting{
-    int32_t x, y, z, RR;
-}  Weighting;
-
-typedef Weighting *MaskG;	      	//used to store Mglut
-
-typedef struct{
-    int32_t x, y, z;
-} Coordinates;
-
-typedef struct {		//used to store all possible neighbors of (1/8) Z2 or (1/48) Z3
-    Coordinates neig[48];
-} Neighbors;
 
 ////////////// Function definitions
 
@@ -1201,29 +1183,6 @@ int32_t lmedialaxis_lmedialaxisbin(struct xvimage *f, int32_t mode)
   freeimage(medial);
   return 1;
 } // lmedialaxis_lmedialaxisbin()
-
-/* ==================================== */
-/* ==================================== */
-/* ==================================== */
-
-// Data structures and functions for the bisector
-
-/* ==================================== */
-/* ==================================== */
-/* ==================================== */
-
-typedef double * ImageAngle;
-
-struct  Point2D{
-    int32_t xCoor, yCoor;
-};
-struct  Point3D{
-    int32_t xCoor, yCoor, zCoor;
-};
-typedef struct Point2D * ListPoint2D;
-typedef struct Point3D * ListPoint3D;
-
-typedef int32_t *tabulateCTg;
 
 /* Function that returns the cosine of the maximum angle */
 /* ==================================== */
@@ -2553,20 +2512,11 @@ int32_t lmedialaxis_lprintdownstream(struct xvimage *id)
 /* ==================================== */
 /* ==================================== */
 
-// Data structures and functions for the lambda-medial axis
+// Functions for the lambda-medial axis
 
 /* ==================================== */
 /* ==================================== */
 /* ==================================== */
-
-struct  DPoint2D{
-    double xCoor, yCoor;
-};
-struct  DPoint3D{
-    double xCoor, yCoor, zCoor;
-};
-typedef struct DPoint2D * ListDPoint2D;
-typedef struct DPoint3D * ListDPoint3D;
 
 /* Function that returns the maximum diameter of the point set */
 /* ==================================== */
@@ -2623,7 +2573,7 @@ double MaximumDiameter3d(ListDPoint3D LPoints, int32_t count)
 } // MaximumDiameter3d()
 
 /* ==================================== */
-int32_t Extendedlmedialaxis_Downstream(int32_t x, int32_t y, uint32_t *image,
+int32_t lmedialaxis_ExtendedDownstream(int32_t x, int32_t y, uint32_t *image,
 		    index_t rs, index_t cs, 
 		    int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		    ListDPoint2D Aval)
@@ -2636,7 +2586,7 @@ int32_t Extendedlmedialaxis_Downstream(int32_t x, int32_t y, uint32_t *image,
 // Retourne le nombre de points de l'aval étendu
 {
 #undef F_NAME
-#define F_NAME "Extendedlmedialaxis_Downstream"
+#define F_NAME "lmedialaxis_ExtendedDownstream"
   int32_t nb, i, j, xx, yy, rr, counter, k, c, ti, d, nbdec;
   Neighbors MgN1;
   int32_t xnew, ynew;
@@ -2693,10 +2643,10 @@ int32_t Extendedlmedialaxis_Downstream(int32_t x, int32_t y, uint32_t *image,
 #endif
 
   return counter;
-} // Extendedlmedialaxis_Downstream()
+} // lmedialaxis_ExtendedDownstream()
 
 /* ==================================== */
-int32_t Extendedlmedialaxis_Downstream3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
+int32_t lmedialaxis_ExtendedDownstream3d (int32_t x, int32_t y, int32_t z, uint32_t *image,
 		       index_t rs, index_t cs, index_t ds, 
 		       int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		       ListDPoint3D Aval)
@@ -2709,7 +2659,7 @@ int32_t Extendedlmedialaxis_Downstream3d (int32_t x, int32_t y, int32_t z, uint3
 // Retourne le nombre de points de l'aval étendu
 {
 #undef F_NAME
-#define F_NAME "Extendedlmedialaxis_Downstream3d"
+#define F_NAME "lmedialaxis_ExtendedDownstream3d"
   int32_t nb, i, j, xx, yy, zz, rr, counter, k, c, ti, d, nbdec, ps = rs*cs;
   Neighbors MgN1;
   int32_t xnew, ynew, znew;
@@ -2775,7 +2725,7 @@ int32_t Extendedlmedialaxis_Downstream3d (int32_t x, int32_t y, int32_t z, uint3
 #endif
 
   return counter;
-} // Extendedlmedialaxis_Downstream3d()
+} // lmedialaxis_ExtendedDownstream3d()
  
 /* ==================================== */
 int32_t llambdamedialaxis(struct xvimage *dist, struct xvimage *lambda)
@@ -2898,12 +2848,10 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
       {
 	if (imagedist[j*rs + i] != 0)
         {
-	  card_aval = Extendedlmedialaxis_Downstream(i, j, imagedist, rs, cs, 
+	  card_aval = lmedialaxis_ExtendedDownstream(i, j, imagedist, rs, cs, 
 				 TabIndDec, nval, ListDecs, Aval);	  
-
-		compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
+	  compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
 	  imagelambda[j*rs + i] = (float)c_r;
-
 	}
       }
     free(Aval);
@@ -2975,7 +2923,7 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
 	{
 	  if (imagedist[k*ps + j*rs + i] != 0)
 	  {
-	    card_aval = Extendedlmedialaxis_Downstream3d(i, j, k, imagedist, rs, cs, ds, 
+	    card_aval = lmedialaxis_ExtendedDownstream3d(i, j, k, imagedist, rs, cs, ds, 
 					   TabIndDec, nval, ListDecs, Aval);
 
 	    compute_min_sphere_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_z, &c_r);
@@ -3035,7 +2983,7 @@ int32_t lmedialaxis_lambdamedialaxis(struct xvimage *image, struct xvimage *lamb
 } //lmedialaxis_lambdamedialaxis()
 
 /* ==================================== */
-int32_t Extendedlmedialaxis_DownstreamLambdaPrime(
+int32_t lmedialaxis_ExtendedDownstreamLambdaPrime(
   int32_t x, int32_t y, 
   uint32_t *image, uint32_t *vor,
   index_t rs, index_t cs, 
@@ -3049,7 +2997,7 @@ int32_t Extendedlmedialaxis_DownstreamLambdaPrime(
 // Retourne le nombre de points de l'aval étendu
 {
 #undef F_NAME
-#define F_NAME "Extendedlmedialaxis_DownstreamLambdaPrime"
+#define F_NAME "lmedialaxis_ExtendedDownstreamLambdaPrime"
   int32_t i, j, k, xx, yy;
   int32_t X[5] = {x, x-1, x+1, x, x};
   int32_t Y[5] = {y, y, y, y-1, y+1};
@@ -3081,10 +3029,10 @@ int32_t Extendedlmedialaxis_DownstreamLambdaPrime(
 #endif
 
   return counter;
-} // Extendedlmedialaxis_DownstreamLambdaPrime()
+} // lmedialaxis_ExtendedDownstreamLambdaPrime()
  
 /* ==================================== */
-int32_t Extendedlmedialaxis_Downstream3dLambdaPrime(
+int32_t lmedialaxis_ExtendedDownstream3dLambdaPrime(
   int32_t x, int32_t y, int32_t z,
   uint32_t *image, uint32_t *vor,
   index_t rs, index_t cs, index_t ds,
@@ -3098,7 +3046,7 @@ int32_t Extendedlmedialaxis_Downstream3dLambdaPrime(
 // Retourne le nombre de points de l'aval étendu
 {
 #undef F_NAME
-#define F_NAME "Extendedlmedialaxis_Downstream3dLambdaPrime"
+#define F_NAME "lmedialaxis_ExtendedDownstream3dLambdaPrime"
   int32_t i, j, k, xx, yy, zz, ps = rs*cs;
   int32_t X[7] = {x, x-1, x+1, x,   x,   x,   x};
   int32_t Y[7] = {y, y,   y,   y-1, y+1, y,   y};
@@ -3133,7 +3081,7 @@ int32_t Extendedlmedialaxis_Downstream3dLambdaPrime(
 #endif
 
   return counter;
-} // Extendedlmedialaxis_Downstream3dLambdaPrime()
+} // lmedialaxis_ExtendedDownstream3dLambdaPrime()
 
 /* ==================================== */
 int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct xvimage *lambda)
@@ -3210,7 +3158,7 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
       {
 	if (imagedist[j*rs + i] != 0)
         {
-	  card_aval = Extendedlmedialaxis_DownstreamLambdaPrime(i, j, imagedist, imagevor, rs, cs, Aval);	  
+	  card_aval = lmedialaxis_ExtendedDownstreamLambdaPrime(i, j, imagedist, imagevor, rs, cs, Aval);	  
 
           compute_min_disk_with_border_constraint((double *)Aval, card_aval, NULL, 0, &c_x, &c_y, &c_r);
 	  imagelambda[j*rs + i] = (float)c_r;
@@ -3236,7 +3184,7 @@ int32_t llambdaprimemedialaxis(struct xvimage *dist, struct xvimage *vor, struct
       {
 	if (imagedist[k*ps + j*rs + i] != 0)
         {
-	  card_aval = Extendedlmedialaxis_Downstream3dLambdaPrime(i, j, k, imagedist, imagevor, rs, cs, ds, Aval3d);
+	  card_aval = lmedialaxis_ExtendedDownstream3dLambdaPrime(i, j, k, imagedist, imagevor, rs, cs, ds, Aval3d);
 
           compute_min_sphere_with_border_constraint((double *)Aval3d, card_aval, NULL, 0, &c_x, &c_y, &c_z, &c_r);
 	  imagelambda[k*ps + j*rs + i] = (float)c_r;

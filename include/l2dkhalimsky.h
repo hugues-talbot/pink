@@ -41,6 +41,7 @@ extern "C" {
 #endif
 
 extern int32_t l2dmakecomplex(struct xvimage * i);
+extern int32_t l2d_is_complex(struct xvimage * k);
 extern int32_t l2dclosebeta(struct xvimage * i);
 extern int32_t l2dkhalimskize(struct xvimage * i, struct xvimage **k, int32_t mode);
 extern int32_t l2dkhalimskize_noalloc(struct xvimage * i, struct xvimage *k, int32_t mode);

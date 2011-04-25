@@ -71,6 +71,19 @@ knowledge of the CeCILL license and that you accept its terms.
 
   update janvier 2008 - simple_26_att pairesimple_26_*
 
+   la grille de khalimsky est un ordre partiel : les cotés d'un carré
+   sont inférieurs au carré, les extrémités d'un côté sont inférieures
+   au côté...
+
+   explication des noms alpha, beta, theta : 
+
+   alpha(x) = {y | y <= x}
+   alphacarre(x) = {y | y < x}
+   beta(x) = {y | y >= x}
+   betacarre(x) = {y | y > x}
+   theta(x) = alpha(x) union beta(x)
+   thetacarre(x) = alphacarre(x) union betacarre(x)
+
 */
 #include <stdio.h>
 #include <stdint.h>

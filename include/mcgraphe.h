@@ -33,6 +33,9 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+#ifndef MCGRAPHE__H__
+#define MCGRAPHE__H__
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -54,6 +57,7 @@ typedef double TYP_VARC;
 typedef double TYP_VSOM;
 #define MAX_VSOM DBL_MAX
 #define MIN_VSOM DBL_MIN
+#define VSOM_HUGE_NEGATIVE -DBL_MAX
 
 #define TRUE 1
 #define FALSE 0
@@ -225,6 +229,7 @@ extern int32_t   Degre(graphe * g, int32_t s);
 extern graphe *  Symetrique(graphe * g);
 extern graphe *  FermetureSymetrique(graphe * g);
 extern boolean * Descendants(graphe * g, int32_t a);
+extern boolean * LeastDecreasingPath(graphe * g, int32_t a);
 extern void      CompFortConnexe(graphe * g, graphe *g_1, int32_t a, boolean * Ca);
 extern boolean   ExisteCircuit(graphe * g, int32_t a);
 extern void      CompConnexe(graphe * g, graphe *g_1, int32_t a, boolean * Ca);
@@ -269,6 +274,7 @@ extern void    BellmanSCmax(graphe * g);
 extern void    BellmanSC1(graphe * g, int32_t dep);
 extern void    PointsConfluents(graphe * g, graphe *g_1);
 extern void    IntegreGSC(graphe * g);
+extern void    AlphaTopologicalMap(graphe * g, boolean * head, TYP_VSOM alpha);
 
 /* ====================================================================== */
 /* ====================================================================== */
@@ -291,3 +297,5 @@ extern struct xvimage * Graphe2Image(graphe * g, int32_t rs);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* MCGRAPHE__H__ */
