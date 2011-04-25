@@ -102,7 +102,7 @@ http://matplotlib.sourceforge.net/users/shell.html#mpl-shell
 
 MC change pink.cpp.lmedialaxis_lbisector to pink.cpp.bisector
 
-UJ bug: mention the 'execfile' on the excercise sheets
+UJ bug: mention the 'execfile' on the exercise sheets
 
 UJ bug: copy image should work as:
    copied_image = original_image.copy() 
@@ -126,7 +126,7 @@ UJ bug (blind faith): 'drawline' does not complain if the image is not
    'char_image'.
 
 UJ bug: imview: imview crashes on complex images. It should complain
-   insteed.
+   instead.
 
 UJ feature request: manipulate should be able to detach from the console!
 
