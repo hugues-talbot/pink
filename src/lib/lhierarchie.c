@@ -535,10 +535,29 @@ static void mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attrib
   }
 }
 
+inline uint8_t salScale(int32_t input, int32_t maxim, int32_t param)
+{
+  int32_t result;
+  switch(param) {
+  case DYNAMIC:
+  case OMEGA:
+    result = (uint8_t)(mcmin((int32_t)arrondi(255.*(double)input/(double)maxim), 255));   
+    break;
+  case SURFACE:
+    result = (uint8_t)(mcmin((int32_t)arrondi(sqrt((double)input)/sqrt((double)maxim)*255.), 255));
+    break;
+  case VOLUME:
+    result = (uint8_t)(mcmin((int32_t)arrondi(pow((double)input,1./3.)/pow((double)maxim,1./3.)*255.), 255));
+	  break;
+  default: fprintf(stderr, "%s #1: Parametre incorecte \n",F_NAME); exit(0);
+  }
+  return result;
+}
+
 #define LCAFAST
 /* Calcul la carte de saillance à partir du CT de saillance du ga
    d'origine et du flow mapping (label) du ga */
-int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int32_t *attribut)
+int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int32_t *attribut, int32_t param)
 {
   // Note: declarations moved forward because of msvc
   int32_t logn, nbRepresent;
@@ -550,9 +569,10 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int3
   uint8_t *F = UCHARDATA(ga);   /* l'image de depart */
   int32_t u,x,y,i,j,c1;
   /* la valeur maximum de l'attribut est à la racine */
-  double facteur = mcmax(255/(double)attribut[CT->root], 0.05); 
-  facteur = 1;
-  printf("Attribut[racine] = %d et facteur %lf \n", attribut[CT->root],facteur);
+  //double facteur = mcmax(255/(double)attribut[CT->root], 0.05); 
+  //facteur = 1;
+  //printf("Attribut[racine] = %d et facteur %lf \n", attribut[CT->root],facteur);
+  printf("Attribut[racine] = %d\n", attribut[CT->root]);
 #ifdef LCAFAST 
   /* Structure de donnée pour lca fast */
   Euler = (int32_t *)calloc(2*CT->nbnodes-1, sizeof(int32_t));
@@ -583,7 +603,7 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int3
 #ifndef LCAFAST
 	c1 = jccomptree_LowComAncSlow(CT, (int32_t)label[x], (int32_t)label[y]);
 #endif
-	F[u] = (uint8_t)(mcmin((int32_t)(facteur * (double)attribut[c1]), 255));   
+	F[u] = salScale(attribut[c1], attribut[CT->root], param);
       } 
        else F[u] =0; 
     }
@@ -607,7 +627,7 @@ int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int3
 	  printf("Erreur de lca pour %d %d retourne %d\n", (int32_t)(label[x]),  (int32_t)(label[y]), c1);
 	  exit(0);
 	} 
-	F[u] = (uint8_t)(mcmin(255, (int32_t)(facteur * (double)attribut[c1])));  
+	F[u] = salScale(attribut[c1], attribut[CT->root], param);
       }
       else F[u] = 0;
     }
@@ -765,7 +785,7 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param, struct xvimage *annexe)
     exit(0);
   }
   jcSaliencyTree_b(&ST, MST, Valeur, rag, STaltitude);
-  computeSaliencyMap(ST, ga, LABEL, STaltitude);  
+  computeSaliencyMap(ST, ga, LABEL, STaltitude, param);  
   mergeTreeFree(MT);
   componentTreeFree(ST);
   termineRAG(rag);
