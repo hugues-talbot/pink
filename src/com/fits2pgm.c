@@ -52,6 +52,9 @@ Parameters:
 /* Michel Couprie - janvier 2000 */
 
 #  include <stdio.h>
+
+#ifdef HAVE_FITS_LIB
+
 #  include <stdint.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
@@ -102,6 +105,15 @@ int main(int argc, char **argv)
     return 0;
 } // main
 
+#else // HAVE_FITS_LIB
+
+int main()
+{
+    fprintf(stderr, "The FITSIO library was not available when this program was compiled\n");
+    return (1);
+}
+
+#endif HAVE_FITS_LIB
 
 
 
