@@ -120,7 +120,7 @@ int32_t lread_SQDLut(SQDLut *SQDn, int32_t maxdist, int32_t ds) {
 #endif
 
   SQDn->npoints = SQDn->TabIndDec[SQDn->maxdist + 1];
-  SQDn->ListDecs = (Coordinates *)malloc(SQDn->npoints * sizeof(Coordinates));
+  SQDn->ListDecs = (AVS_Coordinates *)malloc(SQDn->npoints * sizeof(AVS_Coordinates));
   if (SQDn->ListDecs == NULL) 
   {   
     fprintf(stderr, "%s: malloc failed\n", F_NAME);
@@ -245,7 +245,7 @@ int32_t lread_MLut(MLut *mlut, int32_t maxdist, int32_t ds, FILE *fd)
   fscanf(fd, "%d", &mlut->numd);
 
   //The vectors and their radii
-  mlut->vec = (Coordinates *)malloc( mlut->numd * sizeof(struct Coordinates));
+  mlut->vec = (AVS_Coordinates *)malloc( mlut->numd * sizeof(struct AVS_Coordinates));
   mlut->RR = (int32_t *)malloc( mlut->numd * sizeof(int32_t));
   mlut->indmap = (int32_t *)malloc( mlut->numd * sizeof(int32_t));
   if ((mlut->vec == NULL) || (mlut->RR == NULL) || (mlut->indmap == NULL)) {   
@@ -305,7 +305,7 @@ int32_t lcopy_MLut(MLut *dest, const MLut *orig)
     }
 
     *dest = *orig;
-    dest->vec = (Coordinates *)malloc( dest->numd * sizeof(Coordinates) );
+    dest->vec = (AVS_Coordinates *)malloc( dest->numd * sizeof(AVS_Coordinates) );
     dest->RR = (int *)malloc( dest->numd * sizeof(int32_t) );
     dest->indmap = (int *)malloc( dest->numd * sizeof(int32_t));
 
@@ -442,7 +442,7 @@ int32_t lread_rtlut(MLut *mlut, RTLutCol *Lut, int32_t maxdist, int32_t ds)
   fscanf(fd,"%d",&mlut->numd);
   
   //The vectors and their radii
-  mlut->vec = (Coordinates *)malloc( mlut->numd * sizeof(struct Coordinates));
+  mlut->vec = (AVS_Coordinates *)malloc( mlut->numd * sizeof(struct AVS_Coordinates));
   mlut->RR = (int32_t *)malloc( mlut->numd * sizeof(int32_t));
   mlut->indmap = (int32_t *)malloc( mlut->numd * sizeof(int32_t));
   if ((mlut->vec == NULL) || (mlut->RR == NULL)) {   

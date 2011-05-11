@@ -63,7 +63,7 @@ typedef struct  Weighting{
 
 typedef Weighting *MaskG;	      	//used to store Mglut
 
-typedef struct{
+typedef struct Coordinates {
     int32_t x, y, z;
 } Coordinates;
 

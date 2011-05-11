@@ -42,10 +42,11 @@ extern "C" {
 */
 
 //Datatypes
-typedef struct Coordinates {
+typedef struct AVS_Coordinates {
     int32_t x, y, z;
-} Coordinates;
-typedef Coordinates AVS_Point;
+} AVS_Coordinates;
+    
+typedef AVS_Coordinates AVS_Point;
 
 typedef struct AVS_PointSet {
   int32_t size;

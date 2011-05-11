@@ -137,7 +137,7 @@ The sufficient vectors Lut associated to the HMA.
 #define posIntLess(SQDn,  d, dless)  posIntUnder(SQDn,d-1,dless)
 
 //Square Decompositions
-#define SQDn_get(SQDn, R) ((Coordinates *)(SQDn.ListDecs + SQDn.TabIndDec[R]))
+#define SQDn_get(SQDn, R) ((AVS_Coordinates *)(SQDn.ListDecs + SQDn.TabIndDec[R]))
 #define SQDn_size(SQDn, R) (SQDn.TabIndDec[R + 1] - SQDn.TabIndDec[R])
 
 //RTLut operations
@@ -149,7 +149,7 @@ typedef struct SQDLut {
   int32_t maxdist;            //maximal distance value in TabIndDec
   int32_t npoints;            //number of points in ListDecs
   int32_t *TabIndDec;         //Indices for ListDecs
-  Coordinates *ListDecs;      //Squares decompositions table
+  AVS_Coordinates *ListDecs;      //Squares decompositions table
 } SQDLut;
 
 typedef struct MLut {
@@ -157,7 +157,7 @@ typedef struct MLut {
   int32_t rknown;       // known radius
   int32_t ds;           // third dimension of the image (1 if image is 2d)
   int32_t sqdnReqDist;  // required SQDLut.maxdist
-  Coordinates *vec;     // the vectors
+  AVS_Coordinates *vec;     // the vectors
   int32_t *RR;          // the radii where vectors become necessary
   int32_t *indmap;      // maps the index of vector to its index in the Lut table
 } MLut;

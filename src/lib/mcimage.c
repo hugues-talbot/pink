@@ -504,13 +504,14 @@ struct xvimage *copyimage(struct xvimage *f)
 
   switch(type)
   {
-    case VFF_TYP_1_BYTE: memcpy(g->image_data, f->image_data, (N*sizeof(int8_t))); break;
-    case VFF_TYP_4_BYTE: memcpy(g->image_data, f->image_data, (N*sizeof(int32_t))); break;
-    case VFF_TYP_FLOAT:  memcpy(g->image_data, f->image_data, (N*sizeof(float))); break;
-    case VFF_TYP_DOUBLE: memcpy(g->image_data, f->image_data, (N*sizeof(double))); break;
-    case VFF_TYP_COMPLEX:  memcpy(g->image_data, f->image_data, (2*N*sizeof(float))); break;
-    case VFF_TYP_DCOMPLEX: memcpy(g->image_data, f->image_data, (2*N*sizeof(double))); break;
-    default:
+  case VFF_TYP_1_BYTE: memcpy(g->image_data, f->image_data, (N*sizeof(int8_t))); break;
+  case VFF_TYP_2_BYTE: memcpy(g->image_data, f->image_data,  (N*sizeof(int16_t))); break;
+  case VFF_TYP_4_BYTE: memcpy(g->image_data, f->image_data, (N*sizeof(int32_t))); break;
+  case VFF_TYP_FLOAT:  memcpy(g->image_data, f->image_data, (N*sizeof(float))); break;
+  case VFF_TYP_DOUBLE: memcpy(g->image_data, f->image_data, (N*sizeof(double))); break;
+  case VFF_TYP_COMPLEX:  memcpy(g->image_data, f->image_data, (2*N*sizeof(float))); break;
+  case VFF_TYP_DCOMPLEX: memcpy(g->image_data, f->image_data, (2*N*sizeof(double))); break;
+  default:
       fprintf(stderr,"%s: bad data type %d\n", F_NAME, type);
       return NULL;
   } /* switch(f->datatype) */
