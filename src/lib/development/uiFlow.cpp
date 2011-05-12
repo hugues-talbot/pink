@@ -27,9 +27,6 @@
 
 namespace pink { 
 
-
-
-
   float_image maxflow_cami(
     char_image SS,       /* image of the source and of the sink (not the original image) */
     float_image gg,     /* Boundaries */

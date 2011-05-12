@@ -85,7 +85,6 @@ namespace pink {
     
   }; /* packet */
 
-
   
 
   template <class image_type>
@@ -136,18 +135,22 @@ namespace pink {
     void upDatePotencial(int startDibble, int endDibble);
     void upDateFlow(int startDibble, int endDibble, int w /*direction*/);
     void upDateSrcSink();
-    int uiCreateDibbles( );
+    int uiCreateDibbles();
 
+    // these are the dibbles which are exclusively held in the memory of
+    // a single thread.
     boost::shared_ptr<uiDibbles> dibConstrain;
     boost::shared_ptr<uiDibbles> dibPotencial;
 
+
+    // these are the dibbles which are tainted, that is to s
+    
     image_type potencial;
 
 
     // this way when the smart pointer destroyes the array it will
     // destroy all the elements as well
     boost::shared_array< boost::shared_ptr<uiDibbles> > dibFlow; 
-
 
   public:
 
@@ -165,12 +168,13 @@ namespace pink {
     virtual image_type start();
 
     virtual ~maxflow(){      
-      #ifdef UJIMAGE_DEBUG      
-      std::cout << "destroying the maxflow object (" << static_cast<void*>(this) << ")\n";
-      #endif /* UJIMAGE_DEBUG */        
+#     ifdef UJIMAGE_DEBUG      
+      std::cout << "destroying the maxflow object (" << static_cast<void*>(this) << ")" << std::endl;
+#     endif /* UJIMAGE_DEBUG */        
     }
   }; /* maxflow */
 
+  
 
   template<class image_type>
   packet<image_type>::packet( )
@@ -193,8 +197,6 @@ namespace pink {
     )
   {
 
-
-
     this->ID = ID;
     this->parent = parent;
 
@@ -205,9 +207,6 @@ namespace pink {
       parent->shared_lock->lock_shared();
       );
 
-
-   
-
     while ( _continue )
     {
 
@@ -216,21 +215,21 @@ namespace pink {
       case maxflow_types::pot:
 	parent -> upDatePotencial( start_dibble, end_dibble );
 #       if UJIMAGE_DEBUG >= 3
-	std::cerr << "pot " << start_dibble << " " << end_dibble << " this = " << this << "\n";
+	std::cerr << "pot " << start_dibble << " " << end_dibble << " this = " << this << "" << std::endl;
 #       endif /* UJIMAGE_DEBUG >= 3 */
 	break;
 	
       case maxflow_types::flow:
 	parent -> upDateFlow( start_dibble, end_dibble, direction );
 #       if UJIMAGE_DEBUG >= 3
-	std::cerr << "flow " << start_dibble << " " << end_dibble << " this = " << this << "\n";
+	std::cerr << "flow " << start_dibble << " " << end_dibble << " this = " << this << "" << std::endl;
 #       endif /* UJIMAGE_DEBUG >= 3 */
 	break;
 	
       case maxflow_types::constr:
 	parent -> upDateConstrain( start_dibble, end_dibble );
 #       if UJIMAGE_DEBUG >= 3
-	std::cerr << "constr " << start_dibble << " " << end_dibble << " this = " << this << "\n";
+	std::cerr << "constr " << start_dibble << " " << end_dibble << " this = " << this << "" << std::endl;
 #       endif /* UJIMAGE_DEBUG >= 3 */
 	break;
 	
@@ -239,7 +238,6 @@ namespace pink {
       } /* switch */
 
       parent->shared_lock->unlock_shared();
-      
 
       ATOMIC(
 	_continue = parent->conductor( *this );
@@ -248,14 +246,14 @@ namespace pink {
     }
 
     parent->shared_lock->unlock_shared();
-      
     
   } /* packet::operator() */
 
 
   
   template <class image_type>
-  void maxflow<image_type>::upDatePotencial(int startDibble, int endDibble){
+  void maxflow<image_type>::upDatePotencial(int startDibble, int endDibble)
+  {
     pixel_type * p_c;
     pixel_type * f_out;
     pixel_type * f_in;
@@ -310,7 +308,8 @@ namespace pink {
 
 
   template <class image_type>
-  void maxflow<image_type>::upDateConstrain(int startDibble, int endDibble){
+  void maxflow<image_type>::upDateConstrain(int startDibble, int endDibble)
+  {
 //     //local copies
     pixel_type dFabs[d/*compileDim*/];
     pixel_type * locInFlow[d/*compileDim*/];
@@ -386,7 +385,8 @@ namespace pink {
 
   template <class image_type>
   int maxflow<image_type>::uiCreateDibbles( 
-    ){
+    )
+  {
     // it is demanded that all the fragments on the border of the image are sink
     // for every dibble, the higher end is NOT included
 
@@ -413,7 +413,7 @@ namespace pink {
 	      if (curr[q]!=0) {
 		end=q;
 		dibPotencial->addElement(start, end);
-		///!!! std::cout << "dibPotencial->addElement(" << start << ", " << end << ");\n";  //////
+		///!!! std::cout << "dibPotencial->addElement(" << start << ", " << end << ");" << std::endl;  //////
 		start=0;
 		end=0;
 		started=false;
@@ -421,7 +421,7 @@ namespace pink {
 		if (currlength>=MaxDibble) {
 		  end=q+1;
 		  dibPotencial->addElement(start, end);
-		  ///!!! std::cout << "maxdibble dibPotencial->addElement(" << start << ", " << end << ");\n";  //////
+		  ///!!! std::cout << "maxdibble dibPotencial->addElement(" << start << ", " << end << ");" << std::endl;  //////
 		  start=0;
 		  end=0;
 		  started=false;
@@ -455,7 +455,7 @@ namespace pink {
 	    pp1_vec.reset();
 	    pp1_vec[w]=1;
 	    int currpos = dim->position(pp1_vec);
-///!!!	std::cout << "currpos=" << currpos << "\n";
+///!!!	std::cout << "currpos=" << currpos << "" << std::endl;
 	    pp1_pos[w]=currpos;
 	    pp1[w]=&(src_sink[currpos]);
 	  } /* FOR(w, d) */
@@ -467,7 +467,7 @@ namespace pink {
 		if ((p[q]!=0) and (pp1[w][q]!=0)){
 		  end=q;
 		  dibFlow[w]->addElement(start, end);
-		  ///!!! std::cout << "dibFlow[" << w << "]->addElement(" << start << "," << end << ")\n";
+		  ///!!! std::cout << "dibFlow[" << w << "]->addElement(" << start << "," << end << ")" << std::endl;
 		  start=0;
 		  end=0;
 		  started=false;
@@ -525,12 +525,12 @@ namespace pink {
 	      if (not i_want_to_be_in_a_dibble){
 		end=q;
 		dibConstrain->addElement(start, end);
-		///!!! std::cout << "dibConstrain->addElement(" << start << ", " << end << ")\n";
+		///!!! std::cout << "dibConstrain->addElement(" << start << ", " << end << ")" << std::endl;
 		start=0;
 		end=0;
 		started=false;
 	      } else if (too_long){
-		//printf("uiNotice: breaking because of the MaxDibble\n");
+		//printf("uiNotice: breaking because of the MaxDibble" << std::endl);
 		end=q+1;///////!!!!!!
 		dibConstrain->addElement(start, end);
 		start=0;
@@ -564,50 +564,42 @@ namespace pink {
  * @return returns the final (hopefully yet convergent image)
  */
   template <class image_type>
-  maxflow<image_type>::maxflow(
+  maxflow<image_type>::maxflow
+  (
     const char_image & SS,  /* image of the source and of the sink (not the original image) */
     const image_type & gg, /* Boundaries */
     int iteration,     /* number of iterations */
     float tau,		 /* timestep */
     int number_of_threads=0 /* the number of threads to execute if in parallel mode */
-    ) {
+    )
+  {
 
-    #ifdef UJIMAGE_DEBUG
-    std::cout << "creating the maxflow object (" << static_cast<void*>(this) << ")\n";	
-    #endif /* UJIMAGE_DEBUG */        
+#   ifdef UJIMAGE_DEBUG
+    std::cout << "creating the maxflow object (" << static_cast<void*>(this) << ")" << std::endl;	
+#   endif /* UJIMAGE_DEBUG */        
    
     potencial.copy(gg); // "potencial";
     potencial.fill(0.);
-    
 
     // creating a local copy of image, srcsink potencial and flows ---------------------------
     d = potencial.get_size().size();
 
-    std::cout << "dimension = " << d << "D\n";
+    std::cout << "dimension = " << d << "D" << std::endl;
 
     length_glob = potencial.get_size().prod();
 
-    std::cout << "length_glob=" << this->length_glob << "\n";
+    std::cout << "length_glob=" << this->length_glob << "" << std::endl;
 
-    if (number_of_threads!=0){      
+    if (number_of_threads!=0)
+    {      
       this->number_of_threads = number_of_threads;
     }
     else /* NOT (number_of_threads!=0) */
     {
-
-      #ifdef __OPENMP
-      this->number_of_threads = omp_get_num_procs();
-      #else /* __OPENMP */
       this->number_of_threads = 1;
-      #endif /* __OPENMP */
-
     }/* NOT (number_of_threads!=0) */
 
-    #ifdef __OPENMP
-    std::cout << "Using " << this->number_of_threads << " threads from " <<  omp_get_num_procs() << " available.\n";
-    #else /* __OPENMP */
-    std::cout << "maxflow compiled WITHOUT OPENMP support.\n";
-    #endif /* __OPENMP */
+    std::cout << "Using " << this->number_of_threads << " threads" << std::endl;
 
     // setting up the lock
     global_lock.reset( new boost::mutex );
@@ -621,42 +613,35 @@ namespace pink {
     flow_glob.reset(new pixel_type[d*length_glob]);
 
     //cleaning the flow
-    //#pragma omp parallel for schedule(guided) num_threads(this->number_of_threads)
-    FOR(q, d*length_glob){
+    FOR(q, d*length_glob)
+    {
       flow_glob[q]=0.;
     } /* end of parallel FOR */
-
-
 
     // making 
     ///!!!! src_sink.reset(new char_image(SS, "maxflow::src_sink"));
     src_sink.copy(SS);
     
     this->tau = tau;
-    std::cout << "tau=" << this->tau << "\n";
+    std::cout << "tau=" << this->tau << "" << std::endl;
 
     this->iteration = iteration;
-    std::cout << "iteration=" << this->iteration << "\n";
-
+    std::cout << "iteration=" << this->iteration << "" << std::endl;
     
     this->flow_calculated = false; 
 	
     //int dim [d];
     dim.reset(new vint(potencial.get_size()));
-
 	
     //// --------------------- setting up source -------------------------------------------
 	
-    std::cout << "setting up source\n";
+    std::cout << "setting up source" << std::endl;
     pixel_type *ps;
     unsigned char *ss;
 		
     ss = &( src_sink[0] );
     ps = &( potencial[0]);
 
-
-    
-    //#pragma omp parallel for schedule(guided) num_threads(this->number_of_threads)
     FOR(q, length_glob) {
       if ( ss[q] == 1 ) 
       {
@@ -673,20 +658,33 @@ namespace pink {
   
     //// --------------------- breaking the fields into dibbles ----------------------------
 	
-    std::cout << "breaking up the field into dibbles\n";
+    std::cout << "breaking up the field into dibbles" << std::endl;
     dibPotencial.reset( new uiDibbles() );
     dibConstrain.reset( new uiDibbles() );
     dibFlow.reset( new boost::shared_ptr<uiDibbles>[d+3] ); // we adding here 3 becaus of the parallelization later
     FOR(q,d+3) dibFlow[q].reset(new uiDibbles()); // we adding here 3 becaus of the parallelization later
 	
-    uiCreateDibbles( );
+    uiCreateDibbles();
   } /*   maxflow<image_type>::maxflow */	
 
 
 
+  /**
+     \brief Gets the flow from the object.
+     
+     description The function returns the 'flow' object after the
+     maxflow iteration. The flow is sometimes examined for the
+     algorithm analysis.
+
+  \return Returns the corresponding flow, or raises an error if the
+  flow has not yet been calculated.
+  */  
   template <class image_type>
-  boost::shared_array<typename image_type::pixel_type> maxflow<image_type>::get_flow(){
-    if (not flow_calculated){
+  boost::shared_array<typename image_type::pixel_type>
+  maxflow<image_type>::get_flow()
+  {
+    if (not flow_calculated)
+    {
       pink_error("The flow has not yet been calculated. You can only call get_flow after at least 1 iteration."
 	    " For the courious souls after the 0th iteration the flow is zero everywhere");
     }
@@ -699,61 +697,31 @@ namespace pink {
 
 
 
+  /**
+     \brief This method starts the maxflow calculation.
+     
+     description This method creates 'number_of_thread' threads and
+     iterates over the flow 'iteration' times.
+
+  \return It returns the 'potencial' after the given number of iterations.
+  */  
   template <class image_type>
-  image_type maxflow<image_type>::start(){
+  image_type maxflow<image_type>::start()
+  {
     //// --------------------- initializing the time measure -------------------------------
     sentinel.maxPos(iteration);
     sentinel.minPos(0);
     sentinel << 0;
     sentinel.start();
-    std::cout << "starting the iteration\n";
-
-
-    #ifdef __OPENMP    
-    FOR( e, iteration ) {    
-
-      if ( e % REPORT_INTERVAL == 0 ) 
-      {
-	if ( sentinel.timeToReport() )
-	{
-	  std::cout << "Estimated time remaining: " << (sentinel << e) << std::endl;
-	} /* timeToReport() */
-      } /* if iterations ... */
-      
-      
-      //#pragma omp parallel for schedule(static, 100) num_threads(this->number_of_threads)    
-      FOR( par, dibPotencial->get_length() ) {
-	upDatePotencial( par, par + 1 ); /// for all the dibbles update the potencial on dible par 
-	                                 /// (from par to par+1 not included)
-      } /* FOR */
-      
-      
-      
-      FOR( w, d ){
-        //#pragma omp parallel for schedule(static, 100) num_threads(this->number_of_threads)    
-	FOR( par, dibFlow[w]->get_length() ){
-	  upDateFlow( par, par + 1, w );
-	} /* FOR */
-      } /* FOR(w,d) */ 
-      
-      
-      //#pragma omp parallel for schedule(static, 100) num_threads(this->number_of_threads)    
-      FOR( par, dibConstrain->get_length() ){
-	upDateConstrain( par, par + 1 );
-      } /* FOR */
-    } /* FOR(e, iteration) */
-
-
-    #else /* __OPENMP */
-      // Posix threading
-
-
+    std::cout << "starting the iteration" << std::endl;
 
     int nbt = this -> number_of_threads;
 
-    boost::shared_array< boost::shared_ptr<boost::thread> > threads(new boost::shared_ptr<boost::thread>[nbt]);
+    boost::shared_array< boost::shared_ptr<boost::thread> >
+      threads(new boost::shared_ptr<boost::thread>[nbt]);
 
-    boost::shared_array< boost::shared_ptr< packet<image_type> > > packets(new boost::shared_ptr<packet<image_type> >[nbt]);
+    boost::shared_array< boost::shared_ptr< packet<image_type> > >
+      packets(new boost::shared_ptr<packet<image_type> >[nbt]);
 
     // Thread attributes
 
@@ -772,12 +740,6 @@ namespace pink {
       threads[q]->join();
     } /* FOR(q, nbt) */
 
-    #endif /* __OPENMP */
-
-
-      
-
-
     //// --------------------- printing out the measured time ------------------------------
     sentinel.stop();
     std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
@@ -789,9 +751,23 @@ namespace pink {
   } /*    maxflow<image_type>::start() */
 
 
+  /**
+     \brief The conductor synchronizes the calculation within the
+     threads. 
+     
+  description The conductor is called after a thread has finished with
+  the packet attributed to it. The conductor determines the next
+  packet to attribute. If there are no more packet in a given etap,
+  then the conductor waits for the threads to finish their remaining
+  calculations. Afterwards it moves to the next etap, and begins to
+  distribute the packet from the next etap.
 
-
-
+  \param thread The thread which has finished it's calculation.
+  
+  \return Returns 'true', if there are still packets to work on. If the
+  last packet from the last iteration had been distributed, then the
+  conductor shuts down the threads returning 'false'.
+  */
   template <class image_type>
   bool maxflow<image_type>::conductor( 
     packet<image_type> & thread 
@@ -906,7 +882,6 @@ namespace pink {
 	  
 	  shared_lock->lock(); // we wait for all threads to finish the calculation
 	  reference->current_iteration++;
-	  
 
 	  reference->etap = maxflow_types::pot;
 	  reference->start_dibble = 0;
