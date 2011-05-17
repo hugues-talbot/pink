@@ -42,7 +42,7 @@ knowledge of the CeCILL license and that you accept its terms.
 Hole closing in 3d binary images. 
 The parameter \b connex gives the connectivity used for the object;
 possible choices are 6 and 26.
-Holes which have a "size" greater than \b holesize are let open 
+Holes which have a "size" greater (strictly) than \b holesize are let open 
 (where -1 is used as a symbol for infinity).
 
 Let X be the set of points of the binary image \b in, let Y be a full enclosing box. 

@@ -1944,7 +1944,17 @@ static void list_points_at_tail(skel *S, int32_t Ai, double delta, int32_t *list
 } // list_points_at_tail()
 
 /* ====================================================================== */
-static int32_t compute_vector(skel *S, int32_t Ai, int32_t J, double delta1, double delta2, int32_t *listpoints, int32_t nmaxpoints, double *X, double *Y, double *Z, double *VVx, double *VVy, double *VVz)
+static int32_t compute_vector(
+   skel *S,                // structure squelette
+   int32_t Ai,             // index de l'arc considéré
+   int32_t J,              // index de la jonction
+   double delta1,          // rayon de la petite boule
+   double delta2,          // rayon de la grande boule
+   int32_t *listpoints,    // variable temporaire : points de courbe
+   int32_t nmaxpoints,     // taille max de la liste listpoints
+   double *X, double *Y, double *Z,      // origine du vecteur tangent (sortie)
+   double *VVx, double *VVy, double *VVz // direction du vecteur tangent (sortie)
+)
 /* ====================================================================== */
 #undef F_NAME
 #define F_NAME "compute_vector"

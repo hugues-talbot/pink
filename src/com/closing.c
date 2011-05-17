@@ -44,7 +44,7 @@ The (plane) structuring element is given by the non-null values in \b se.pgm,
 its origin (wrt the point (0,0) of \b se.pgm ) 
 is given by a comment line in the file <B>se.pgm</B>. 
 
-<B>Types supported:</B> byte 2d, byte 3d
+<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
 
 <B>Category:</B> morpho
 \ingroup  morpho
