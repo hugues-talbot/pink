@@ -85,7 +85,7 @@ distributions (both 32bit and 64bit versions):
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/openSUSE_11.4">OpenSuSE 11.4 </A>
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/openSUSE_Factory">OpenSuSE Factory </A>
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/Debian_6.0">
-  Debian 6.0</A>
+  Debian 6.0 / Ubuntu 10.4 / Ubuntu 11.4 / Ubuntu 11.10 </A>
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/Fedora_12">
   Fedora 12 </A>
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/Fedora_13"> Fedora_13 </A>
