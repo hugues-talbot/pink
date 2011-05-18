@@ -77,30 +77,55 @@ int main(int argc, char **argv)
     struct xvimage *image;
     char *filename;
 
-    if (argc != 3) {
-        fprintf(stderr, "usage: %s in.fits out.pgm \n", argv[0]);
+
+    if (argc < 3) {
+        fprintf(stderr, "usage: %s in.fits out.pgm [minidx maxidx] \n", argv[0]);
+        fprintf(stderr, "    FITS images are sometime composed of many subimages\n"
+                        "    if given, mindix is the index of the first image to be extracted\n"
+                        "    maxidx is the index of the last subimage\n");
         exit(1);
     }
 
     filename=argv[1];
     if (filename == NULL)
-  {
-    fprintf(stderr, "%s: readimage failed\n", argv[0]);
-    exit(1);
-  }
+    {
+        fprintf(stderr, "%s: readimage failed\n", argv[0]);
+        exit(1);
+    }
+
+    if (argc > 3) {
+        int minidx = atoi(argv[3]);
+        int maxidx = atoi(argv[4]);
+        int i;
+        char  infile[1024];
+        char  outfile[1024];
+
+        for (i = minidx ; i < maxidx ; ++i) {
+            sprintf(infile, "%s[%d]", argv[1],i);
+            sprintf(outfile, "%s[%d]", argv[2],i);
+            fprintf(stderr, "Reading image %s\n", infile);
+            image = lfits2pgm(infile);
+            if (!image) {
+                fprintf(stderr, "%s: function lfits2pgm failed on reading subimage %s\n", argv[0], infile);
+                exit(1);
+            }
+            writeimage(image, outfile);
+            freeimage(image);
+        }
+    } else {
+        /* extraction based on filename only */
+        image=lfits2pgm(filename);
 
 
-    image=lfits2pgm(filename);
+        if (! image)
+        {
+            fprintf(stderr, "%s: function lfits2pgm failed\n", argv[0]);
+            exit(1);
+        }
 
-    if (! image)
-  {
-    fprintf(stderr, "%s: function lfits2pgm failed\n", argv[0]);
-    exit(1);
-  }
-
-    writeimage(image, argv[argc-1]);
-  	freeimage(image);
-
+        writeimage(image, argv[argc-1]);
+        freeimage(image);
+    }
 
     return 0;
 } // main
@@ -113,7 +138,7 @@ int main()
     return (1);
 }
 
-#endif HAVE_FITS_LIB
+#endif // HAVE_FITS_LIB
 
 
 
