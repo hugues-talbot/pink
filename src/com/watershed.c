@@ -73,7 +73,7 @@ SPIE Vision Geometry V Proceedings, 3168 (136--146), 1997.
 static void inverse(struct xvimage * image)
 /* ==================================== */
 {
-  int32_t i, N = rowsize(image) * colsize(image) * depth(image);
+  index_t i, N = rowsize(image) * colsize(image) * depth(image);
   uint8_t *pt;
   for (pt = UCHARDATA(image), i = 0; i < N; i++, pt++)
     *pt = NDG_MAX - *pt;

@@ -1,3 +1,43 @@
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
+
+/*
+Functions for computing discrete derivatives of discrete curves / surfaces
+Michel Couprie, 2011
+*/
+
 #include <lbdigitalline.h>
 
 #include <stdio.h>
@@ -15,11 +55,21 @@
 #include <mcimage.h>
 #include <ltangents.h>
 
-
-
 //#define DEBUG
 //#define DEBUG_ExtractDSSs3D
 #define EPSILON 1E-20
+
+/*************************************************************/
+/*************************************************************/
+/*         FUNCTIONS BASED ON DISCRETE CONVOLUTIONS          */
+/*************************************************************/
+/*************************************************************/
+
+/*************************************************************/
+/*************************************************************/
+/*    FUNCTIONS BASED ON MAXIMAL STRAIGHT LINE SEGMENTS      */
+/*************************************************************/
+/*************************************************************/
 
 #define Fori(x) for(int i=0;i<(x);i++)
 #define Forj(x) for(int j=0;j<(x);j++)
@@ -645,6 +695,98 @@ double ComputeLength3D(int32_t npoints, double *Xmstd, double *Ymstd, double *Zm
   }
   return L;
 } // ComputeLength3D()
+
+//--------------------------------------------------------------------------
+int32_t lcurvetangents2D(int32_t mode, int32_t npoints, int32_t *X, int32_t *Y, double *Xdir, double *Ydir)
+//--------------------------------------------------------------------------
+/*! \fn int32_t lcurvetangents2D(int32_t npoints, int32_t *X, int32_t *Y, double *Xdir, double *Ydir)
+    \param mode (input): code of the method used
+    \param npoints (input): number of points in points list
+    \param X (input): ordered list of points (1st coord)
+    \param Y (input): ordered list of points (2nd coord)
+    \param Xdir (output): normalized tangent vector (1st coord)
+    \param Ydir (output): normalized tangent vector (2nd coord)
+    \brief TODO
+    \warning arrays "?dir" must have been allocated.
+*/
+{
+#undef F_NAME
+#define F_NAME "lcurvetangents2D"
+
+  /*  
+  if (mode == 1)
+  {
+    int32_t *end;
+    double *Xtan, *Ytan;
+    
+    end = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(end != NULL);
+    Xtan = (double *)malloc(npoints * sizeof(double)); assert(Xtan != NULL);
+    Ytan = (double *)malloc(npoints * sizeof(double)); assert(Ytan != NULL);
+  
+    ExtractDSSs2D(npoints, X, Y, end, Xtan, Ytan);
+    LambdaMSTD2D(npoints, end, Xtan, Ytan, Xdir, Ydir,);
+    
+    free(end);
+    free(Xtan);
+    free(Ytan);
+  }
+  else
+  */
+  {
+    //fprintf(stderr, "%s: bad mode %d\n", F_NAME, mode);
+    fprintf(stderr, "%s: 2D not implemented\n", F_NAME);
+    return 0;
+  }
+
+  return 1;
+} // lcurvetangents2D()
+
+//--------------------------------------------------------------------------
+int32_t lcurvetangents3D(int32_t mode, int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double *Xdir, double *Ydir, double *Zdir)
+//--------------------------------------------------------------------------
+/*! \fn int32_t lcurvetangents3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double *Xdir, double *Ydir, double *Zdir)
+    \param mode (input): code of the method used
+    \param npoints (input): number of points in points list
+    \param X (input): ordered list of points (1st coord)
+    \param Y (input): ordered list of points (2nd coord)
+    \param Z (input): ordered list of points (3rd coord)
+    \param Xdir (output): normalized tangent vector (1st coord)
+    \param Ydir (output): normalized tangent vector (2nd coord)
+    \param Zdir (output): normalized tangent vector (3rd coord)
+    \brief TODO
+    \warning arrays "?dir" must have been allocated.
+
+*/
+{
+#undef F_NAME
+#define F_NAME "lcurvetangents3D"
+  
+  if (mode == 1)
+  {
+    int32_t *end;
+    double *Xtan, *Ytan, *Ztan;
+    
+    end = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(end != NULL);
+    Xtan = (double *)malloc(npoints * sizeof(double)); assert(Xtan != NULL);
+    Ytan = (double *)malloc(npoints * sizeof(double)); assert(Ytan != NULL);
+    Ztan = (double *)malloc(npoints * sizeof(double)); assert(Ztan != NULL);
+  
+    ExtractDSSs3D(npoints, X, Y, Z, end, Xtan, Ytan, Ztan);
+    LambdaMSTD3D(npoints, end, Xtan, Ytan, Ztan, Xdir, Ydir, Zdir);
+    
+    free(end);
+    free(Xtan);
+    free(Ytan);
+    free(Ztan);
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad mode %d\n", F_NAME, mode);
+    return 0;
+  }
+
+  return 1;
+} // lcurvetangents3D()
 
 #ifdef TESTLTANGENTS
 /* =============================================================== */

@@ -36,9 +36,10 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief computes the tangents of a digital curve
 
-<B>Usage:</B> curvetangents curve.list tangents.list
+<B>Usage:</B> curvetangents curve.list [mode] tangents.list
 
 <B>Description:</B>
+
 Computes the tangents of a curve which is specified by the ordered list of its points. The output file is a list of normalized tangent vectors, all with origin 0.
 
 <B>Types supported:</B> curve 2D, curve 3D
@@ -70,12 +71,12 @@ int main(int argc, char **argv)
 {
   int32_t i;
   FILE *fd = NULL;
-  int32_t npoints;
+  int32_t npoints, mode;
   char type;
 
-  if (argc != 3)
+  if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s curve.list out.list \n", argv[0]);
+    fprintf(stderr, "usage: %s curve.list [mode] out.list \n", argv[0]);
     exit(1);
   }
 
@@ -86,9 +87,15 @@ int main(int argc, char **argv)
     exit(1);
   }
 
+  if (argc == 3) mode = 1;
+  else mode = atoi(argv[2]);
+
   fscanf(fd, "%c", &type);
   if (type == 'b')
   {
+
+    // TODO : call lcurvetangents2D instead (MC)
+
     int32_t *X, *Y;
     int32_t *end;
     double *angle;
@@ -118,10 +125,10 @@ int main(int argc, char **argv)
 
     LambdaMSTD(npoints, end, angle, mstd);
 
-    fd = fopen(argv[2],"w");
+    fd = fopen(argv[argc-1],"w");
     if (!fd)
     {
-      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[2]);
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc-1]);
       exit(1);
     }
     fprintf(fd, "b %d\n", npoints);
@@ -138,44 +145,30 @@ int main(int argc, char **argv)
   else if (type == 'B')
   {
     int32_t *X, *Y, *Z;
-    int32_t *end;
-    double *Xtan, *Ytan, *Ztan;
     double *Xmstd, *Ymstd, *Zmstd;
 
     fscanf(fd, "%d", &npoints);
     X = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(X != NULL);
     Y = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(Y != NULL);
     Z = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(Z != NULL);
-
-    for (i = 0; i < npoints; i++)
-      fscanf(fd, "%d %d %d", &(X[i]), &(Y[i]), &(Z[i]));
-
-    fclose(fd);
-  
-    end = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(end != NULL);
-    Xtan = (double *)malloc(npoints * sizeof(double)); assert(Xtan != NULL);
-    Ytan = (double *)malloc(npoints * sizeof(double)); assert(Ytan != NULL);
-    Ztan = (double *)malloc(npoints * sizeof(double)); assert(Ztan != NULL);
     Xmstd = (double *)malloc(npoints * sizeof(double)); assert(Xmstd != NULL);
     Ymstd = (double *)malloc(npoints * sizeof(double)); assert(Ymstd != NULL);
     Zmstd = (double *)malloc(npoints * sizeof(double)); assert(Zmstd != NULL);
 
-    ExtractDSSs3D(npoints, X, Y, Z, end, Xtan, Ytan, Ztan);
-
-#ifdef DEBUG
-    printf("npoints = %d\n", npoints);
     for (i = 0; i < npoints; i++)
-      if (end[i] != -1)
-	printf("DSS %d-%d, Xtan %g, Ytan %g, Ztan %g\n",
-	       i, end[i], Xtan[i], Ytan[i], Ztan[i]);
-#endif
+      fscanf(fd, "%d %d %d", &(X[i]), &(Y[i]), &(Z[i]));
+    fclose(fd);
+  
+    if (!lcurvetangents3D(mode, npoints, X, Y, Z, Xmstd, Ymstd, Zmstd))
+    {
+      fprintf(stderr, "%s: procedure lcurvetangents3D failed\n", argv[0]);
+      exit(1);
+    }
 
-    LambdaMSTD3D(npoints, end, Xtan, Ytan, Ztan, Xmstd, Ymstd, Zmstd);
-
-    fd = fopen(argv[2],"w");
+    fd = fopen(argv[argc-1],"w");
     if (!fd)
     {
-      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[2]);
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc-1]);
       exit(1);
     }
     fprintf(fd, "B %d\n", npoints);
@@ -186,10 +179,6 @@ int main(int argc, char **argv)
     free(X);
     free(Y);
     free(Z);
-    free(end);
-    free(Xtan);
-    free(Ytan);
-    free(Ztan);
     free(Xmstd);
     free(Ymstd);
     free(Zmstd);

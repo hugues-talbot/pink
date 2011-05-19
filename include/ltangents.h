@@ -39,5 +39,5 @@ extern void LambdaMSTD(int32_t npoints, int32_t *end, double *angle, double *mst
 extern void LambdaMSTD3D(int32_t npoints, int32_t *end, double *Xtan, double *Ytan, double *Ztan, double *Xmstd, double *Ymstd, double *Zmstd);
 extern double ComputeLength(int32_t npoints, double *mstd);
 extern double ComputeLength3D(int32_t npoints, double *mstdxy, double *mstdyz, double *mstdxz);
-
-
+extern int32_t lcurvetangents2D(int32_t mode, int32_t npoints, int32_t *X, int32_t *Y, double *Xdir, double *Ydir);
+extern int32_t lcurvetangents3D(int32_t mode, int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double *Xdir, double *Ydir, double *Zdir);

@@ -32,7 +32,9 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file skel_NK2.c
+/* \file skel_NK2.c
+
+OBSOLETE - use skel_AMK.c
 
 \brief parallel 2D binary skeleton, ultimate, asymmetric
 
@@ -47,7 +49,8 @@ until stability.
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
 
-The algorithm used here is indeed a variant of alg. NK2 described in [BC08], which allows for an arbitrary (and even null) constraint set.
+The algorithm used here is indeed a variant of alg. NK2 described in
+[BC08], which allows for an arbitrary (and even null) constraint set.
 
 <B>Warning:</B> The object must not have any point on the frame of the image.
 
@@ -104,6 +107,7 @@ int main(int argc, char **argv)
 
   if (depth(image) == 1)
   {
+    fprintf(stderr, "%s will not be supported anymore - use skel_AMK\n", argv[0]);
     if (! lskelNK2b(image, nsteps, inhibit))
     {
       fprintf(stderr, "%s: lskelNK2b failed\n", argv[0]);
