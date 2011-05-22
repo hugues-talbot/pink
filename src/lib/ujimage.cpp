@@ -16,20 +16,18 @@
 #include "pink.h"
 #include "mccodimage.h"
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in ujimage.cpp: " << msg; call_error(fullmessage.str());}
-
 namespace pink{
 
   pink_image::operator xvimage*()
   {
-    error("You can only cast complete image objects. This is just the base class");    
+    pink_error("You can only cast complete image objects. This is just the base class");    
     return NULL;
   } /* pink_image cast xvimage* */
   
 
   boost::shared_ptr<vint> getDimensions( const int x, const int y, const int z, const int t )
   {
+
     boost::shared_ptr<vint> presult;
     if (t>1) {
       /////!!!!!!! cout<< "I've desided for 4D." << std::endl;
@@ -38,28 +36,36 @@ namespace pink{
       (*presult)[1]=y;
       (*presult)[2]=z;
       (*presult)[3]=t;
-    } else if (z>1)
+    }
+    else if (z>1)
     {
       /////!!!!!!! cout<< "I've desided for 3D." << std::endl;
       presult.reset(new vint(3,-1));
       (*presult)[0]=x;
       (*presult)[1]=y;
       (*presult)[2]=z;
-    } else if (y>1)
+    }
+    else if (y>1)
     {
       /////!!!!!!! cout<< "I've desided for 2D." << std::endl;
       presult.reset(new vint(2,-1));
       (*presult)[0]=x;
       (*presult)[1]=y;
-    } else if (x>1)
+    }
+    else if (x>1)
     {
       /////!!!!!!! cout<< "I've desided for 1D or less." << std::endl;
-      error("an image should have at least 2 dimensions");
-    };
+#     ifdef UJIMAGE_DEBUG
+      std::cout << "x>1 and y==1; Here I assume 2D image of size [" << x << ", 1]" << std::endl;
+#     endif /* UJIMAGE_DEBUG */
+      presult.reset(new vint(2,-1));
+      (*presult)[0]=x;
+      (*presult)[1]=1;      
+    }
 	
     if ((t>1) && (z==1))
     {
-      error("two dimensional time series are probably not handled well");
+      pink_error("two dimensional time series are probably not handled well");
     };
     return presult;
   } /* getDimensions */
@@ -98,7 +104,7 @@ namespace pink{
       break;
     default:
       result = false;
-      error("error: the dimension is wrong or unsupported");
+      pink_error("error: the dimension is wrong or unsupported");
       break;
     } /* switch */
   } /* setDimensions */
@@ -129,7 +135,7 @@ namespace pink{
       break;
 
     default:
-      error("bad image type or not specified.");
+      pink_error("bad image type or not specified.");
     };
 
   } /* image_type */
@@ -281,7 +287,7 @@ c++ class pink::deep_xvimage
 
   deep_xvimage::deep_xvimage( const deep_xvimage & src )
   { 
-    error(
+    pink_error(
       "The 'deep_xvimage' copy constructor is not implemented. If you want to use it, "
       "you have to implement it. If it's called implicitly (that is to say not by you) "
       "then it's a bug and has to be corrected,"
@@ -394,7 +400,7 @@ fcomplex & operator/=(fcomplex & x, const fcomplex & y)
       
   if (abs < 0.00001)
   {
-    error("division by zero");        
+    pink_error("division by zero");        
   }
   
   x.re = (x.re * y.re + x.im * y.im) / (abs);
@@ -446,25 +452,25 @@ fcomplex & operator/( const fcomplex & x, const fcomplex & y)
 
 bool operator>=( const fcomplex & x, const fcomplex & y)
 {
-  error("There is no ordering on complex numbers.");
+  pink_error("There is no ordering on complex numbers.");
   return false;
 }
 
 bool operator<=( const fcomplex & x, const fcomplex & y)
 {
-  error("There is no ordering on complex numbers.");
+  pink_error("There is no ordering on complex numbers.");
   return false;
 }
 
 bool operator>( const fcomplex & x, const fcomplex & y)
 {
-  error("There is no ordering on complex numbers.");
+  pink_error("There is no ordering on complex numbers.");
   return false;
 }
 
 bool operator<( const fcomplex & x, const fcomplex & y)
 {
-  error("There is no ordering on complex numbers.");
+  pink_error("There is no ordering on complex numbers.");
   return false;
 }
 
@@ -524,7 +530,7 @@ dcomplex & operator/=(dcomplex & x, const dcomplex & y)
       
   if (abs < 0.00001)
   {
-    error("division by zero");        
+    pink_error("division by zero");        
   }
   
   x.re = (x.re * y.re + x.im * y.im) / (abs);
@@ -577,25 +583,25 @@ dcomplex & operator/( const dcomplex & x, const dcomplex & y)
 
 bool operator>=( const dcomplex & x, const dcomplex & y)
 {
-  error("There is no ordering on complex numbers.");
+  pink_error("There is no ordering on complex numbers.");
   return false;
 }
 
 bool operator<=( const dcomplex & x, const dcomplex & y)
 {
-  error("There is no ordering on complex numbers.");
+  pink_error("There is no ordering on complex numbers.");
   return false;
 }
 
 bool operator>( const dcomplex & x, const dcomplex & y)
 {
-  error("There is no ordering on complex numbers.");
+  pink_error("There is no ordering on complex numbers.");
   return false;
 }
 
 bool operator<( const dcomplex & x, const dcomplex & y)
 {
-  error("There is no ordering on complex numbers.");
+  pink_error("There is no ordering on complex numbers.");
   return false;
 }
 

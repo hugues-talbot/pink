@@ -891,8 +891,41 @@ static void compressTree(ctree *CT, int32_t *CM, int32_t *newCM, int32_t N)
   }
 }
 
+// this function conforms the functional convention
 /* ==================================== */
 int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t connex)
+/* ==================================== */
+{
+#undef F_NAME
+#define F_NAME "lwshedtopobin"
+
+  struct xvimage * marqueur_local = NULL;
+  
+  marqueur_local = copyimage(marqueur);
+  
+  if (!marqueur_local)
+  {
+    fprintf(stderr, "%s: couldn't copy the container image\n", F_NAME);
+    exit(1);
+  }
+
+  int32_t result;
+  result = lwshedtopobin_classic(image, marqueur_local, connex);
+
+  freeimage(marqueur_local);
+  
+  return result;
+
+} /* lwshedtopobin */
+
+
+
+
+
+// this function changes the marqueur image, which contradicts the functional convention, 
+// the lwshedtopobin creates the container image and calls the classic function.
+/* ==================================== */
+int32_t lwshedtopobin_classic(struct xvimage *image, struct xvimage *marqueur, int32_t connex)
 /* ==================================== */
 /*! \fn int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t connex)
     \param image (entrée/sortie) : une image ndg
@@ -902,7 +935,7 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
     \brief ligne de partage des eaux "topologique" binaire (algo MC, GB, LN)
 */
 #undef F_NAME
-#define F_NAME "lwshedtopobin"
+#define F_NAME "lwshedtopobin_classic"
 {
   register int32_t i, x;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
@@ -1045,4 +1078,4 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
   free(newCM);
 #endif
   return(1);
-} /* lwshedtopobin() */
+} /* lwshedtopobin_classic() */

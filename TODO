@@ -143,12 +143,12 @@ UJ convention: 'inverse' and 'invert' are two names for the same
 UJ bug: image.size returns a 'vint' in python, whereas it should
    return a 'boost::python::list'
 
-UJ bug: watershed shanges one of it's parameters (the image with the
+THIS BUG WAS CORRECTED! UJ bug: watershed shanges one of it's parameters (the image with the
    markers)
 
 UJ note: I don't like the way readimage is patched for tiff images.
 
-
+UJ bug: readimage in python refuses the horizontal images of type 1xN
 
 
 

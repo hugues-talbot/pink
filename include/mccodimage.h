@@ -118,6 +118,9 @@ extern "C" {
     /** \brief Number of (2d or 3d) images */
     index_t time_size;                  
 
+    /** \brief The dimension of the image */
+    index_t d; 
+        
     /**
        \brief Number of bands per data pixel, or number of bands per
        image, or dimension of vector data, or number of elements in a

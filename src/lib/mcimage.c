@@ -1970,11 +1970,11 @@ struct xvimage * readimage(char *filename)
   /* HT: TIFF */
   if ((strncmp(buffer, "II", 2) == 0) || (strncmp(buffer, "MM", 2) ==0)) {
       image = NULL;
-# ifdef HAVE_TIFF_LIB
+#     ifdef HAVE_TIFF_LIB
       image=readtiffimage(filename);
-# else
+#     else /* NOT HAVE_TIFF_LIB */
       fprintf(stderr, "TIFF image not supported at this time\n");
-#endif
+#     endif /* NOT HAVE_TIFF_LIB */
       /*otherwise, return NULL */
   } else { /* extended PGM/PNM format */
 
@@ -1984,11 +1984,11 @@ struct xvimage * readimage(char *filename)
       }
       tag = buffer[1];
 
-#ifdef MC_64_BITS
+#     ifdef MC_64_BITS
       c = sscanf(buffer+2, "%lld %lld %d", (long long int *)&rs, (long long int *)&cs, (int *)&ndgmax);
-#else
+#     else /* NOT MC_64_BITS */
       c = sscanf(buffer+2, "%d %d %d", (int *)&rs, (int *)&cs, (int *)&ndgmax);
-#endif
+#     endif /* NOT MC_64_BITS */
 
       if (c == 3) /* format pgm MatLab : tout sur une ligne */
       {
@@ -2012,11 +2012,11 @@ struct xvimage * readimage(char *filename)
               sscanf(buffer+5, "%lf", &zdim);
       } while (!isdigit(buffer[0]));
 
-#ifdef MC_64_BITS
+#     ifdef MC_64_BITS
       c = sscanf(buffer, "%lld %lld %lld %lld", (long long int *)&rs, (long long int *)&cs, (long long int *)&ds, (long long int *)&nb);
-#else
+#     else /* NOT MC_64_BITS */
       c = sscanf(buffer, "%d %d %d %d", (int *)&rs, (int *)&cs, (int *)&ds, (int *)&nb);
-#endif
+#     endif /* NOT MC_64_BITS */
       if (c == 2) nb = ds = 1;
       else if (c == 3) nb = 1;
       else if (c != 4)
@@ -2024,12 +2024,12 @@ struct xvimage * readimage(char *filename)
           return NULL;
       }
 
-#ifdef WARN_HUGE
+#     ifdef WARN_HUGE
       if (((int64_t)rs * (int64_t)cs * (int64_t)ds * (int64_t)nb) >= HUGE_IMAGE_SIZE)
       {
           fprintf(stderr, "%s: WARNING huge image\n", F_NAME);
       }
-#endif
+#     endif
 
       read = fgets(buffer, BUFFERSIZE, fd);
       if (!read)
@@ -2144,11 +2144,11 @@ struct xvimage * readimage(char *filename)
               index_t ret = fread(UCHARDATA(image), sizeof(char), N, fd);
               if (ret != N)
               {
-#ifdef MC_64_BITS
+#                 ifdef MC_64_BITS
                   fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
-#else
+#                 else /* NOT MC_64_BITS */
                   fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
-#endif
+#                 endif /* NOT MC_64_BITS */
                   return(NULL);
               }
 	    }
@@ -2203,11 +2203,11 @@ struct xvimage * readimage(char *filename)
                       index_t ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
                       if (ret != N)
                       {
-#ifdef MC_64_BITS
+#                         ifdef MC_64_BITS
                           fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
-#else
+#                         else /* NOT MC_64_BITS */
                           fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
-#endif
+#                         endif /* NOT MC_64_BITS */
                           return(NULL);
                       }
                   }
@@ -2227,11 +2227,11 @@ struct xvimage * readimage(char *filename)
                           index_t ret = fread(FLOATDATA(image), sizeof(float), N, fd);
                           if (ret != N)
                           {
-#ifdef MC_64_BITS
+#                             ifdef MC_64_BITS
                               fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
-#else
+#                             else /* NOT MC_64_BITS */
                               fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
-#endif
+#                             endif /* NOT MC_64_BITS */
                               return(NULL);
                           }
                       }
@@ -2251,11 +2251,11 @@ struct xvimage * readimage(char *filename)
                               index_t ret = fread(DOUBLEDATA(image), sizeof(double), N, fd);
                               if (ret != N)
                               {
-#ifdef MC_64_BITS
+#                                 ifdef MC_64_BITS
                                   fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
-#else
+#                                 else /* NOT MC_64_BITS */
                                   fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
-#endif
+#                                 endif /* NOT MC_64_BITS */
                                   return(NULL);
                               }
                           }
@@ -2275,11 +2275,11 @@ struct xvimage * readimage(char *filename)
                                   index_t ret = fread(FLOATDATA(image), sizeof(float), N+N, fd);
                                   if (ret != N+N)
                                   {
-#ifdef MC_64_BITS
+#                                     ifdef MC_64_BITS
                                       fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)(N+N), (long long int)ret);
-#else
+#                                     else /* NOT MC_64_BITS */
                                       fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N+N, ret);
-#endif
+#                                     endif /* NOT MC_64_BITS */
                                       return(NULL);
                                   }
                               }
@@ -2360,11 +2360,11 @@ struct xvimage * readheader(char *filename)
       sscanf(buffer+5, "%lf", &zdim);
   } while (!isdigit(buffer[0]));
 
-#ifdef MC_64_BITS
+# ifdef MC_64_BITS
   c = sscanf(buffer, "%lld %lld %lld", (long long int *)&rs, (long long int *)&cs, (long long int *)&d);
-#else
+# else /* NOT MC_64_BITS */
   c = sscanf(buffer, "%d %d %d", (int *)&rs, (int *)&cs, (int *)&d);
-#endif
+# endif /* NOT MC_64_BITS */
   if (c == 2) d = 1;
   else if (c != 3)
   {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
