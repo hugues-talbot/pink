@@ -79,8 +79,8 @@ their content. Only use these packages if You trust the OpenSuSE build
 service. You can download binary packages for the following
 distributions (both 32bit and 64bit versions): 
 <ul> 
-  <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/openSUSE_11.2">
-  OpenSuSE 11.2</A>
+  <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/openSUSE_Tumbleweed">
+  openSUSE Tumbleweed (this is a rolling distribution)</A>
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/openSUSE_11.3">OpenSuSE 11.3 </A>
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/openSUSE_11.4">OpenSuSE 11.4 </A>
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/openSUSE_Factory">OpenSuSE Factory </A>
@@ -102,6 +102,8 @@ distributions (both 32bit and 64bit versions):
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/SLE_11_SP1">
   SuSE Linux Enterprise 11 SP1</A>
 </ul>
+
+Note: openSuSE 11.2 has reached its end of life.
 
 \author UjoImro, 2011
 
