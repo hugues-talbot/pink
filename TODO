@@ -148,8 +148,13 @@ THIS BUG WAS CORRECTED! UJ bug: watershed shanges one of it's parameters (the im
 
 UJ note: I don't like the way readimage is patched for tiff images.
 
-UJ bug: readimage in python refuses the horizontal images of type 1xN
-
+THIS BUG WAS CORRECTED! UJ bug: readimage in python refuses the
+horizontal images of type 1xN The problem is, that the dimension is
+determined by the non-1 sizes. For example 3x1x1x1 is assumed to be a
+1D image. There is no method in Pink to distinquish this from 3x1,
+3x1x1 or 3x1x1x1. I added a value to xvimage called d, but readimage
+does not respect it yet. For the time being 3x1x1x1 is assumed to be a
+2D image of size 3x1.
 
 
 
