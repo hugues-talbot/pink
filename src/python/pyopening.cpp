@@ -18,8 +18,9 @@ using namespace pink;
 namespace pink {
   namespace python {
 
-    char_image opening(
-      const char_image & image, 
+    template <class image_t>
+    image_t opening(
+      const image_t    & image, 
       const char_image & elem
       )
     {
@@ -33,7 +34,7 @@ namespace pink {
         pink_error("error: the dimensions of 'image' and 'elem' must be equal");
       }
 
-      char_image result;
+      image_t result;
       result.copy(image);
       char_image elem_ca;
       elem_ca.copy(elem);
@@ -153,7 +154,7 @@ namespace pink {
   } /* namespace python */
 } /* namespace pink */
 
-UI_EXPORT_ONE_FUNCTION(
+UI_EXPORT_FUNCTION(
   opening,
   pink::python::opening,
   ( arg("image"), arg("elem") ),

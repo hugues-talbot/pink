@@ -18,12 +18,14 @@ using namespace pink;
 namespace pink {
   namespace python {
 
-    char_image closing(
-      const char_image & image, 
+    template <class image_t>
+    image_t closing
+    (
+      const image_t & image, 
       const char_image & elem
       )
     {
-      char_image result;
+      image_t result;
       result.copy(image);
       char_image elem_ce; // this image is usually small so it's ok to copy it
       elem_ce.copy(elem);
@@ -151,7 +153,7 @@ namespace pink {
 
 
 
-UI_EXPORT_ONE_FUNCTION(
+UI_EXPORT_FUNCTION(
   closing, 
   pink::python::closing,
   ( arg("src"), arg("elem") ),

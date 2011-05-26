@@ -19,8 +19,9 @@ namespace pink {
   namespace python {
 
 
-    char_image erosion(
-      const char_image & src, 
+    template <class image_t>
+    image_t erosion(
+      const image_t & src, 
       char_image elem
       )
     {
@@ -30,7 +31,7 @@ namespace pink {
         pink_error("The center of 'elem' must be specified.");
       } /* if center not inside*/
 
-      char_image result;
+      image_t result;
       result.copy(src);
 
 
@@ -58,7 +59,7 @@ namespace pink {
 } /* namespace pink */
 
     
-UI_EXPORT_ONE_FUNCTION(
+UI_EXPORT_FUNCTION(
   erosion,
   pink::python::erosion,
   (arg("src"), arg("elem")),
