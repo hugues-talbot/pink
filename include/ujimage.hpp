@@ -1047,7 +1047,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     if (image_type_string(src.data_storage_type)!=this->imtype())
     {
-      error("converting to ujoi from different pixel_type");
+      error("The image type is '" + image_type_string(src.data_storage_type)
+            + "', but expected '" + this->imtype() + "'." );
     } /* image_type(src.data_storage_type)!=this->imtype() */
     
     this->size.reset(

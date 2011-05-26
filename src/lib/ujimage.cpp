@@ -119,7 +119,7 @@ namespace pink{
       break;
     
     case VFF_TYP_2_BYTE:
-      return "int16_t"; /* pixels are two byte (int16_t) */
+      return "uint16_t"; /* pixels are two byte (int16_t) */
       break;
     
     case VFF_TYP_4_BYTE:
