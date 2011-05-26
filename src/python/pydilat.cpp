@@ -61,11 +61,11 @@ namespace pink {
 
 
 UI_EXPORT_FUNCTION(
+ 
   dilation,
   pink::python::dilation,
   ( arg("src"), arg("elem") ),
   doc__dilation__c__
-// end of the documenation
   );
 
 

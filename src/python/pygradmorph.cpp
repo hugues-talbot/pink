@@ -23,15 +23,20 @@ namespace pink {
     // if there will be many scripts, than i will need to
     // move these functions into the library
 
-    char_image dilation(
-      const char_image & src, 
+    template <class image_t>
+    image_t dilation
+    (
+      const image_t & src, 
       char_image elem
       );
     
-    char_image erosion(
-      const char_image & src, 
+    template <class image_t>
+    image_t erosion
+    (
+      const image_t & src, 
       char_image elem
       );
+
     
 
     
