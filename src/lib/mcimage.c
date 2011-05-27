@@ -177,7 +177,7 @@ struct xvimage *allocimage(
   }
 
   g->image_data = (void *)calloc(1, N * es);
-  if (g == NULL)
+  if (g->image_data == NULL)
   {   
 #ifdef MC_64_BITS
     fprintf(stderr,"%s: calloc failed (%lld bytes)\n", F_NAME, (long long int)(N * es));
