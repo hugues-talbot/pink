@@ -3,17 +3,30 @@
 
 Pink is an image processing library developed
 at <A HREF="http://www.esiee.fr">ESIEE Engineering</A> for research
-and teaching purposes. It contains implementations of
-over 200 algorithms for image segmentation and filtering. Most of the
-operators come from mathematical morphology, but it contains operators
-from different fields. It is a free software licensed under the 
+and teaching purposes. It contains implementations of over 200
+algorithms for image segmentation and filtering. Most of the operators
+come from mathematical morphology, but it contains operators from
+different fields. It is a free software licensed under the
 <A HREF="http://www.cecill.info/index.en.html"> CeCILL </A>
 license. 
 
-\section Download
+\section download Download
 
 The source code and the binary packages can be accessed from the \ref
 download page.
+
+\section mailing Mailing list 
+
+If you are interested in the daily life of Pink, please subscribe to
+the <a href="https://lists.berlios.de/mailman/listinfo/pink-image-devel">
+Pink Developer mailing list </a>. You can also post questions
+concerning the usage or raise issues. 
+
+\section bughunt Bug-hunt!
+
+If you have discovered a bug, please report it at
+the <a href="https://developer.berlios.de/bugs/?group_id=12429" >
+bug tracker</a>.
 
 \section credits Credits
 
@@ -76,8 +89,11 @@ For optimal use, the following packages should be installed:
 <A HREF="http://www.mplayerhq.hu/design7/news.html">MPlayer</A><br>
 <A HREF="http://www.gnuplot.info/">Gnuplot</A><br>
 
-Note,
-that the detailed dependencies can be found in file 'dependencies'.
+Note, that the detailed dependencies can be found in file
+'dependencies'.
+
+The project management is alpha-hosted at <a href="http://developer.berlios.de">
+<img src="http://developer.berlios.de/bslogo.php?group_id=12429" width="124" height="32" border="0" alt="BerliOS Logo" /></a>.
 
 <HR>
 Michel Couprie  -  Professeur  -  ESIEE Paris
