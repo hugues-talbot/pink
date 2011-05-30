@@ -117,9 +117,6 @@ extern "C" {
 
     /** \brief Number of (2d or 3d) images */
     index_t time_size;                  
-
-    /** \brief The dimension of the image */
-    index_t d; 
         
     /**
        \brief Number of bands per data pixel, or number of bands per
@@ -127,6 +124,9 @@ extern "C" {
        vector.
     */
     index_t num_data_bands;
+
+    /** \brief The dimension of the image */
+    index_t d; 
     
     /** \brief Storage type for disk data. */
     int32_t data_storage_type;           

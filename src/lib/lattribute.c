@@ -184,7 +184,7 @@ int32_t lattribute2d(
         int32_t connex,      /* 4, 8  */
         int32_t typregion,   /* = <LABMIN | LABMAX | LABPLATEAU> */
         int32_t attrib,      /* 0: surface, 1: perimetre, 2: circularite, 3: nb. trous, 
-                                4: excentricite, 5: orientation, 6: diamètre vertical, 7: diamètre horizontal */
+                                4: excentricite, 5: orientation, 6: taille verticals, 7: taille horizontale */
         int32_t seuil,        /* en dessous (<=) de seuil, l'attribut est mis a 0 */
         struct xvimage *lab)  /* resultat: image d'attributs */
 /* ==================================== */
@@ -202,7 +202,8 @@ int32_t lattribute2d(
   int32_t label;
   int32_t area;
   int32_t perim;
-  int32_t min, max;
+  int32_t xmin, xmax, ymin, ymax;
+  int32_t wx, wy;
   int32_t val_attrib;
   double mx1, my1; // cumuls des variables x et y
   double mx2, my2, mxy2; // cumuls des x^2, y^2 et xy
@@ -253,8 +254,10 @@ printf("AMORCE p=%d,%d h=%d set LABEL = %d\n", x%rs, x/rs, SOURCE[x], LABEL[x]);
 	case CIRC: area = perim = 0; break;
 	case EXCEN: 
 	case ORIEN: area = 0; mx1 = my1 = mx2 = my2 = mxy2 = 0.0; break;
-        case VDIAM: min = cs-1; max = 0; break;
-        case HDIAM: min = rs-1; max = 0; break;
+        case VDIAM: ymin = cs-1; ymax = 0; break;
+        case HDIAM: xmin = rs-1; xmax = 0; break;
+        case DIAM: xmin = rs-1; xmax = 0; ymin = cs-1; ymax = 0; break;
+	  
         default: 
           fprintf(stderr, "%s: mauvais attribut: %d\n", F_NAME, attrib);
           return 0;
@@ -263,21 +266,24 @@ printf("AMORCE p=%d,%d h=%d set LABEL = %d\n", x%rs, x/rs, SOURCE[x], LABEL[x]);
       while (! LifoVide(LIFO))
       {
         w = LifoPop(LIFO);
+	wx = w%rs; wy = w/rs;
         label = LABEL[w];
         if (label == MARQUE)     /* c'est une propagation de "marquage" : pour l'instant, */
 	{                        /* on croit qu'on est dans un extremum */         
           switch (attrib)
           {
   	    case AREA: val_attrib++; break;
-  	    case VDIAM: if (w/rs < min) min = w/rs; else if (w/rs > max) max = w/rs; break;
-  	    case HDIAM: if (w%rs < min) min = w%rs; else if (w%rs > max) max = w%rs; break;
+  	    case VDIAM: if (wy < ymin) ymin = wy; if (wy > ymax) ymax = wy; break;
+  	    case HDIAM: if (wx < xmin) xmin = wx; if (wx > xmax) xmax = wx; break;
+  	    case DIAM: if (wy < ymin) ymin = wy; if (wy > ymax) ymax = wy;
+	               if (wx < xmin) xmin = wx; if (wx > xmax) xmax = wx; break;
   	    case EXCEN:
-  	    case ORIEN: area++; mx1 += w%rs; my1 += w/rs; mxy2 += (w%rs) * (w/rs);
-                        mx2 += (w%rs) * (w%rs); my2 += (w/rs) * (w/rs); break;
+  	    case ORIEN: area++; mx1 += wx; my1 += wy; mxy2 += wx * wy;
+                        mx2 += wx * wx; my2 += wy * wy; break;
   	    case PERIM: 
-              if (w%rs==rs-1) val_attrib++; /* point de bord */
+              if (wx==rs-1) val_attrib++; /* point de bord */
               if (w<rs)       val_attrib++; /* point de bord */
-              if (w%rs==0)    val_attrib++; /* point de bord */
+              if (wx==0)    val_attrib++; /* point de bord */
               if (w>=N-rs)    val_attrib++; /* point de bord */
               for (k = 0; k < 8; k += 2) /* 4-connexite obligatoire */
               {
@@ -287,9 +293,9 @@ printf("AMORCE p=%d,%d h=%d set LABEL = %d\n", x%rs, x/rs, SOURCE[x], LABEL[x]);
             break;
             case CIRC:
               area++;
-              if (w%rs==rs-1) perim++; /* point de bord */
+              if (wx==rs-1) perim++; /* point de bord */
               if (w<rs)       perim++; /* point de bord */
-              if (w%rs==0)    perim++; /* point de bord */
+              if (wx==0)    perim++; /* point de bord */
               if (w>=N-rs)    perim++; /* point de bord */
               for (k = 0; k < 8; k += 2) /* 4-connexite obligatoire */
               {
@@ -376,8 +382,13 @@ printf(" p=%d,%d h=%d masque=%x t4m=%d t8b=%d\n", y%rs, y/rs, SOURCE[y], masque,
 	}
         if (attrib == EXCEN) val_attrib = excentricity(mx1, my1, mx2, my2, mxy2, area);
         if (attrib == ORIEN) val_attrib = orientation(mx1, my1, mx2, my2, mxy2, area);
-        if (attrib == VDIAM) val_attrib = max - min + 1;
-        if (attrib == HDIAM) val_attrib = max - min + 1;
+        if (attrib == VDIAM) val_attrib = ymax - ymin + 1;
+        if (attrib == HDIAM) val_attrib = xmax - xmin + 1;
+        if (attrib == DIAM) 
+	{
+	  val_attrib = xmax - xmin + 1;
+	  if (val_attrib < ymax - ymin + 1) val_attrib = ymax - ymin + 1;
+	}
         if (val_attrib <= seuil) val_attrib = 0;
 #ifdef VERBOSE
 printf("valeur attribut = %d\n", val_attrib);
@@ -418,8 +429,9 @@ else
       switch (attrib)            /* on initialise les attributs de cette composante */
       {
 	case AREA: val_attrib = 0; break;
-        case VDIAM: min = cs-1; max = 0; break;
-        case HDIAM: min = rs-1; max = 0; break;
+        case VDIAM: ymin = cs-1; ymax = 0; break;
+        case HDIAM: xmin = rs-1; xmax = 0; break;
+        case DIAM: xmin = rs-1; xmax = 0; ymin = cs-1; ymax = 0; break;
 	case PERIM: val_attrib = 0; break;
 	case CIRC: area = perim = 0; break;
 	case EXCEN: 
@@ -432,18 +444,21 @@ else
       while (! LifoVide(LIFO))
       {
         w = LifoPop(LIFO);
+	wx = w%rs; wy = w/rs;
         switch (attrib)
         {
 	  case AREA: val_attrib++; break;
-  	  case VDIAM: if (w/rs < min) min = w/rs; else if (w/rs > max) max = w/rs; break;
-  	  case HDIAM: if (w%rs < min) min = w%rs; else if (w%rs > max) max = w%rs; break;
+  	  case VDIAM: if (wy < ymin) ymin = wy; if (wy > ymax) ymax = wy; break;
+  	  case HDIAM: if (wx < xmin) xmin = wx; if (wx > xmax) xmax = wx; break;
+  	  case DIAM: if (wy < ymin) ymin = wy; if (wy > ymax) ymax = wy;
+                     if (wx < xmin) xmin = wx; if (wx > xmax) xmax = wx; break;
 	  case EXCEN:
-	  case ORIEN: area++; mx1 += w%rs; my1 += w/rs; mxy2 += (w%rs) * (w/rs);
-                      mx2 += (w%rs) * (w%rs); my2 += (w/rs) * (w/rs); break;
+	  case ORIEN: area++; mx1 += wx; my1 += wy; mxy2 += wx * wy;
+                      mx2 += wx * wx; my2 += wy * wy; break;
   	  case PERIM: 
-            if (w%rs==rs-1) val_attrib++; /* point de bord */
+            if (wx==rs-1) val_attrib++; /* point de bord */
             if (w<rs)       val_attrib++; /* point de bord */
-            if (w%rs==0)    val_attrib++; /* point de bord */
+            if (wx==0)    val_attrib++; /* point de bord */
             if (w>=N-rs)    val_attrib++; /* point de bord */
             for (k = 0; k < 8; k += 2) /* 4-connexite obligatoire */
             {
@@ -453,9 +468,9 @@ else
           break;
           case CIRC:
             area++;
-            if (w%rs==rs-1) perim++; /* point de bord */
+            if (wx==rs-1) perim++; /* point de bord */
             if (w<rs)       perim++; /* point de bord */
-            if (w%rs==0)    perim++; /* point de bord */
+            if (wx==0)    perim++; /* point de bord */
             if (w>=N-rs)    perim++; /* point de bord */
             for (k = 0; k < 8; k += 2) /* 4-connexite obligatoire */
             {
@@ -488,8 +503,13 @@ else
       }
       if (attrib == EXCEN) val_attrib = excentricity(mx1, my1, mx2, my2, mxy2, area);
       if (attrib == ORIEN) val_attrib = orientation(mx1, my1, mx2, my2, mxy2, area);
-      if (attrib == VDIAM) val_attrib = max - min + 1;
-      if (attrib == HDIAM) val_attrib = max - min + 1;
+      if (attrib == VDIAM) val_attrib = ymax - ymin + 1;
+      if (attrib == HDIAM) val_attrib = xmax - xmin + 1;
+      if (attrib == DIAM) 
+      {
+	val_attrib = xmax - xmin + 1;
+	if (val_attrib < ymax - ymin + 1) val_attrib = ymax - ymin + 1;
+      }
       if (val_attrib <= seuil) val_attrib = 0;
 
       LifoPush(LIFO, x);         /* on re-parcourt le plateau pour propager l'attribut */
@@ -522,7 +542,7 @@ int32_t lattribute3d(
         struct xvimage *img, /* image de depart */
         int32_t connex,          /* 6, 18, 26  */
         int32_t typregion,       /* = <LABMIN | LABMAX | LABPLATEAU> */
-        int32_t attrib,          /* 0: surface */
+        int32_t attrib,          /* 0: surface, 6: taille verticale, 7: taille horizontale, 8: taille en profondeur, 9: max des 3 derniers */
         int32_t seuil,           /* en dessous (<=) de seuil, l'attribut est mis a 0 */
         struct xvimage *lab)     /* resultat: image d'attributs */
 /* ==================================== */
@@ -542,6 +562,8 @@ int32_t lattribute3d(
   int32_t label;
   int32_t val_attrib;
   int32_t nlabels;
+  int32_t xmin, xmax, ymin, ymax, zmin, zmax;
+  int32_t wx, wy, wz;
 
   ACCEPTED_TYPES1(img, VFF_TYP_1_BYTE);
   ACCEPTED_TYPES1(lab, VFF_TYP_4_BYTE);
@@ -570,6 +592,10 @@ if ((typregion == LABMIN) || (typregion == LABMAX))
       switch (attrib)            /* on initialise les attributs de cette composante */
       {
 	case AREA: val_attrib = 0; break;
+        case HDIAM: xmin = rs-1; xmax = 0; break;
+        case VDIAM: ymin = cs-1; ymax = 0; break;
+        case PDIAM: zmin = ds-1; zmax = 0; break;
+        case DIAM: xmin = rs-1; xmax = 0; ymin = cs-1; ymax = 0; zmin = ds-1; zmax = 0; break;
         default: 
           fprintf(stderr, "%s: bad attribute: %d\n", F_NAME, attrib);
           return 0;
@@ -578,12 +604,21 @@ if ((typregion == LABMIN) || (typregion == LABMAX))
       while (! LifoVide(LIFO))
       {
         w = LifoPop(LIFO);
+	wx = w%rs; wy = (w%ps)/rs; wz = w/ps;
         label = LABEL[w];
         if (label == MARQUE)     /* c'est une propagation de "marquage" : pour l'instant, */
 	{                        /* on croit qu'on est dans un extremum */     
           switch (attrib)
           {
   	    case AREA: val_attrib++; break;
+  	    case PDIAM: if (wz < zmin) zmin = wz; if (wz > zmax) zmax = wz; break;
+  	    case VDIAM: if (wy < ymin) ymin = wy; if (wy > ymax) ymax = wy; break;
+  	    case HDIAM: if (wx < xmin) xmin = wx; if (wx > xmax) xmax = wx; break;
+  	    case DIAM: 
+  	      if (wz < zmin) zmin = wz; if (wz > zmax) zmax = wz;
+  	      if (wy < ymin) ymin = wy; if (wy > ymax) ymax = wy;
+  	      if (wx < xmin) xmin = wx; if (wx > xmax) xmax = wx; 
+	      break;
 	  } /* switch (attrib) */
 	  switch (connex)
 	  {
@@ -716,6 +751,16 @@ if ((typregion == LABMIN) || (typregion == LABMAX))
 
       if (label == MARQUE)
       {
+
+	if (attrib == PDIAM) val_attrib = zmax - zmin + 1;
+	if (attrib == VDIAM) val_attrib = ymax - ymin + 1;
+	if (attrib == HDIAM) val_attrib = xmax - xmin + 1;
+	if (attrib == DIAM) 
+	{
+	  val_attrib = xmax - xmin + 1;
+	  if (val_attrib < ymax - ymin + 1) val_attrib = ymax - ymin + 1;
+	  if (val_attrib < zmax - zmin + 1) val_attrib = zmax - zmin + 1;
+	}
         if (val_attrib <= seuil) val_attrib = 0;
         LifoPush(LIFO, x);         /* on re-parcourt le plateau pour propager l'attribut */
         LABEL[x] = val_attrib;
@@ -776,6 +821,10 @@ else
       switch (attrib)            /* on initialise les attributs de cette composante */
       {
 	case AREA: val_attrib = 0; break;
+        case VDIAM: ymin = cs-1; ymax = 0; break;
+        case HDIAM: xmin = rs-1; xmax = 0; break;
+        case PDIAM: zmin = ds-1; zmax = 0; break;
+        case DIAM: xmin = rs-1; xmax = 0; ymin = cs-1; ymax = 0; zmin = ds-1; zmax = 0; break;	
         default: 
           fprintf(stderr, "%s: bad attribute: %d\n", F_NAME, attrib);
           return 0;
@@ -784,9 +833,18 @@ else
       while (! LifoVide(LIFO))
       {
         w = LifoPop(LIFO);
+	wx = w%rs; wy = (w%ps)/rs; wz = w/ps;
         switch (attrib)
         {
 	  case AREA: val_attrib++; break;
+	  case PDIAM: if (wz < zmin) zmin = wz; if (wz > zmax) zmax = wz; break;
+  	  case VDIAM: if (wy < ymin) ymin = wy; if (wy > ymax) ymax = wy; break;
+  	  case HDIAM: if (wx < xmin) xmin = wx; if (wx > xmax) xmax = wx; break;
+  	  case DIAM: 
+  	      if (wz < zmin) zmin = wz; if (wz > zmax) zmax = wz;
+  	      if (wy < ymin) ymin = wy; if (wy > ymax) ymax = wy;
+  	      if (wx < xmin) xmin = wx; if (wx > xmax) xmax = wx; 
+	      break;
 	} /* switch (attrib) */
 
 	switch (connex)
@@ -826,6 +884,15 @@ else
 	    break;
 	  } // switch (connex)
       } /* while (! LifoVide(LIFO)) */
+      if (attrib == PDIAM) val_attrib = zmax - zmin + 1;
+      if (attrib == VDIAM) val_attrib = ymax - ymin + 1;
+      if (attrib == HDIAM) val_attrib = xmax - xmin + 1;
+      if (attrib == DIAM) 
+      {
+	val_attrib = xmax - xmin + 1;
+	if (val_attrib < ymax - ymin + 1) val_attrib = ymax - ymin + 1;
+	if (val_attrib < zmax - zmin + 1) val_attrib = zmax - zmin + 1;
+      }
       if (val_attrib <= seuil) val_attrib = 0;
       LifoPush(LIFO, x);         /* on re-parcourt le plateau pour propager l'attribut */
       LABEL[x] = val_attrib;

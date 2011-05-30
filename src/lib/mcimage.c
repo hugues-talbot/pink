@@ -206,6 +206,8 @@ struct xvimage *allocimage(
   tsize(g) = 1;
   nbands(g) = 1;
   g->xdim = g->ydim = g->zdim = 0.0;
+  g->xmin = g->ymin = g->zmin = 0;
+  g->xmax = g->ymax = g->zmax = 0;
 
   return g;
 } /* allocimage() */
@@ -256,7 +258,7 @@ struct xvimage *allocmultimage(
   }
 
   g->image_data = (void *)calloc(1, N * es);
-  if (g == NULL)
+  if (g->image_data == NULL)
   {   
 #ifdef MC_64_BITS
     fprintf(stderr,"%s: calloc failed (%lld bytes)\n", F_NAME, (long long int)(N * es));
@@ -285,6 +287,8 @@ struct xvimage *allocmultimage(
   nbands(g) = nb;
   datatype(g) = dt;
   g->xdim = g->ydim = g->zdim = 0.0;
+  g->xmin = g->ymin = g->zmin = 0;
+  g->xmax = g->ymax = g->zmax = 0;
 
   return g;
 } /* allocmultimage() */

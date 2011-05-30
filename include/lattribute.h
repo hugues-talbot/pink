@@ -45,11 +45,14 @@ extern "C" {
 #define TROUS 3
 #define EXCEN 4
 #define ORIEN 5
-#define VDIAM 6
-#define HDIAM 7
-#define LINEA 8
-#define PLANA 9
-
+#define HDIAM 6
+#define VDIAM 7
+#define PDIAM 8
+#define DIAM  9
+  /* NOT USED YET
+#define LINEA 10
+#define PLANA 11
+  */
 /* ============== */
 /* prototype for lattribute.c */
 /* ============== */

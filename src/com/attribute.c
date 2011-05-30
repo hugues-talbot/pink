@@ -58,12 +58,12 @@ Argument \b attrib defines the considered attribute:
 \li 3: number of holes
 \li 4: excentricity
 \li 5: orientation
-\li 6: vertical diameter
-\li 7: horizontal diameter
-\li 8: linearity
-\li 9: planarity
+\li 6: horizontal size (of bounding box)
+\li 7: vertical size (of bounding box)
+\li 8: depth size (of bounding box)
+\li 9: max of horizontal, vertical [and depth] sizes (of bounding box)
 
-\warning In 3D only the attribute "area" is implemented.
+\warning In 3D only the attributes 0 and 6-9 are implemented.
 
 <B>Types supported:</B> byte 2d, byte 3d
 
@@ -83,7 +83,7 @@ Argument \b attrib defines the considered attribute:
 
 //#define VERBOSE
 
-#define USAGE "usage: %s filein.pgm connex seuil {min|max|pla} {area|perim|circ|trous|excen|orien|vdiam|hdiam} fileout.pgm\n"
+#define USAGE "usage: %s filein.pgm connex seuil {0=max|1=min|2=pla} {0=area|1=perim|2=circ|3=trous|4=excen|5=orien|6=hdiam|7=vdiam|8=pdiam|9=diam} fileout.pgm\n"
 
 /* =============================================================== */
 int main(int argc, char **argv)
