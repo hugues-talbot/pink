@@ -1,10 +1,10 @@
 /*
-  This software is licensed under 
+  This software is licensed under
   CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
-  This software comes in hope that it will be useful but 
+  This software comes in hope that it will be useful but
   without any warranty to the extent permitted by aplicable law.
-  
+
   (C) UjoImro, 2009-2010
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
@@ -54,7 +54,7 @@ using namespace pink;
   (arg("argument 1 name"), arg("argument 2 name"), ..., arg(argument n name) )
   "documentation of my function"
   )
- 
+
   make_function is a template. In the first parameter you specify the image type. If
   you want all image types to be exported you put 'base_image' as type. Second, you
   specify the types of the parameters and last you put the pointer to your pink function.
@@ -67,7 +67,7 @@ using namespace pink;
   ( arg("image"), arg("connexity") ),
   doc__ptisolated__c__
   );
-  
+
 
   * in C++
 
@@ -94,7 +94,7 @@ using namespace pink;
   "documentation of cpp_function"
   )
 
-  or, if you have a template function: 
+  or, if you have a template function:
 
   UI_DEFINE_FUNCTION(
   function_name_in_python,
@@ -111,7 +111,7 @@ using namespace pink;
   doc__float2byte__c__
   // end of the documenation
   );
-    
+
   UI_DEFINE_FUNCTION(
   convert2float,
   pink::convert2float,
@@ -119,7 +119,7 @@ using namespace pink;
   "converts an image to float type"
   // end of the documenation
   );
-   
+
 
 */
 // declarations
@@ -139,13 +139,15 @@ void uiSqhool_object_export(); void gradient_export();
 void read_raw_image_export(); void seuil_export(); void plane3d_export(); void draw_plane_export();
 void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
 void generate_rgb_image_export(); void closing_export(); /*void closeball_export();*/ void minmax_export();
-/*void dilatball_export();*/ void asfbin_export(); 
+/*void dilatball_export();*/ void asfbin_export();
 void skelcurv_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
 /*void openball_export();*/ void gradmorph_export(); void mcube_export(); void minima_export();
 void complex_export(); void fft_export(); void mult_export();
 
-
+// juliette
+int short2long(xvimage *image, xvimage *result);
+int long2short(xvimage *image, xvimage *result);
 
 // this part is not yet ready for windows
 #ifdef UNIXIO
@@ -435,7 +437,7 @@ UI_WRAP_RESULT(
 #include BOOST_PP_UPDATE_COUNTER()
 
 // // NOTE: affine's using copyimage
-// UI_WRAP_RESULT(  
+// UI_WRAP_RESULT(
 //   "affine",
 //   laffinetransformation,
 //   ( arg("image"), arg("hx"), arg("hy"), arg("theta"), arg("tx"), arg("ty")),
@@ -506,10 +508,10 @@ UI_WRAP_CPP(
   "Prints the values in a table. Usefull for debugging small 2D images."
   );
 #include BOOST_PP_UPDATE_COUNTER()
-  
+
 UI_WRAP_CPP(
   "insert_image",
-  insert_image, 
+  insert_image,
   ( arg("big_image"), arg("small_image"), arg("shift_vector") ),
   "this function inserts an image to another one. The "
   "shift vector indicates the position of the lower corner "
@@ -517,10 +519,10 @@ UI_WRAP_CPP(
   "it is cropped."
   );
 #include BOOST_PP_UPDATE_COUNTER()
-  
+
 UI_WRAP_CPP(
-  "merge_max_image", 
-  merge_max_image, 
+  "merge_max_image",
+  merge_max_image,
   ( arg("big_image"), arg("small_image"), arg("shift_vector") ),
   "this function inserts an image to another one. The "
   "shift vector indicates the position of the lower corner "
@@ -537,7 +539,7 @@ UI_WRAP_CPP(
   "This function takes an image, and in the result it sets it's most outer rectangle to the given value."
   );
 #include BOOST_PP_UPDATE_COUNTER()
-  
+
 UI_WRAP_CPP(
   "frame_around",
   frame_around,
@@ -559,7 +561,7 @@ UI_WRAP_CPP(
 UI_WRAP_CPP(
   "max",
   immap_max,
-  ( arg("image1"), arg("image2") ),      
+  ( arg("image1"), arg("image2") ),
   "Generates an image result[i]:=max(image1[i],image2[i])"
   );
 #include BOOST_PP_UPDATE_COUNTER()
@@ -567,7 +569,7 @@ UI_WRAP_CPP(
 UI_WRAP_CPP(
   "min",
   immap_min,
-  ( arg("image1"), arg("image2") ),      
+  ( arg("image1"), arg("image2") ),
   "Generates an image result[i]:=min(image1[i],image2[i])"
   );
 #include BOOST_PP_UPDATE_COUNTER()
@@ -644,7 +646,7 @@ UI_WRAP_FUNCTION(
   linverse,
   (arg("image")),
   doc__inverse__c__
-  );    
+  );
 #include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_FUNCTION(
@@ -652,7 +654,7 @@ UI_WRAP_FUNCTION(
   linvert,
   (arg("image")),
   doc__inverse__c__
-  );    
+  );
 #include BOOST_PP_UPDATE_COUNTER()
 
 UI_WRAP_FUNCTION(
@@ -844,7 +846,7 @@ UI_WRAP_FUNCTION(
 UI_WRAP_FUNCTION(
   "skelsurf3d",
   l3dskelsurf,
-  (arg("image"), arg("nsteps") ), 
+  (arg("image"), arg("nsteps") ),
   doc__3dskelsurf__c__
   );
 #include BOOST_PP_UPDATE_COUNTER()
@@ -1530,7 +1532,7 @@ UI_WRAP_FUNCTION(
 
 UI_WRAP_FUNCTION(
   "t26pp",
-  ltopotypes_t26pp, 
+  ltopotypes_t26pp,
   (arg("image")),
   doc__t26pp__c__
   );
@@ -1685,6 +1687,25 @@ UI_WRAP_RESULT(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
+// juliette
+UI_WRAP_RESULT(
+  int_image,
+  "short2long",
+  short2long,
+  (arg("image")),
+  "This operator converts the short images to long."
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
+UI_WRAP_RESULT(
+  int_image,
+  "long2short",
+  long2short,
+  (arg("image")),
+  "This operator converts the long images to short."
+  );
+#include BOOST_PP_UPDATE_COUNTER()
+
 
 // ***********************************************************************
 // ***********************************************************************
@@ -1732,11 +1753,11 @@ BOOST_PYTHON_MODULE(libcpp_pink)
 # endif /* UJIMAGE_DEBUG */
 
   CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
-  
-  def("greet", greet, "Gently greets the user.");  
+
+  def("greet", greet, "Gently greets the user.");
   vector_int_object_export();
-  
-  // obsolete 
+
+  // obsolete
   // xvimage_object_export(); // self explaining
   // deep_xvimage_object_export(); // self explaining
   // shallow_xvimage_object_export(); // self explaining
@@ -1753,7 +1774,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
 
   dilation_export(); erosion_export();  geodilat_export();  geoeros_export();
   opening_export();  drawcurve2D_export();
-  
+
 //  specialize_export();
 
   uiSqhool_object_export();
@@ -1767,7 +1788,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   asfbin_export();  skelcurv_export();
   readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
   htkern_export();  /*openball_export();*/    gradmorph_export(); mcube_export(); minima_export();
-  complex_export(); fft_export();  mult_export();  
+  complex_export(); fft_export();  mult_export();
 
 
   // this part is not yet ready for windows
@@ -1789,15 +1810,15 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     doc__float2byte__c__
     // end of the documenation
     );
-   
+
   def(
     "long2byte",
-    pink::long2byte, 
+    pink::long2byte,
     ( arg("image"),arg("mode"),arg("nb_new_val") ),
     doc__long2byte__c__
     // end of the documenation
     );
-    
+
   def(
     "genball",
     pink::genball,
@@ -1811,14 +1832,14 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     ( arg("image"), arg("minval")=0, arg("maxval")=255),
     doc__normalize__c__
     );
-    
+
   def(
     "normalize",
     &normalize<int_image, 0, 255>,
     ( arg("image"), arg("minval")=0, arg("maxval")=255),
     doc__normalize__c__
     );
-    
+
   def(
     "normalize",
     &normalize<float_image, 0, 1>,
@@ -1828,8 +1849,8 @@ BOOST_PYTHON_MODULE(libcpp_pink)
 
 
 #ifdef PINK_DEVELOPMENT
-  
-  
+
+
   def( "circle_tangent", &pink::gsl::circle_tangent,
        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),
        "This function estimates the derivativ of the function given by points. It "
@@ -1876,7 +1897,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
       ),
     doc__ungerflow__cpp__
     );
-  
+
   def(
     "gradient_abs",
     pink::uiGradientAbs,
@@ -1893,15 +1914,15 @@ BOOST_PYTHON_MODULE(libcpp_pink)
 
 
 //  def( ""
-  
+
 #endif /* PINK_DEVELOPMENT */
-  
+
   // here are the image objects ( char_image, short_image, int_image, float_image, double_image )
   // there is a template in pyujimage.hpp to help them export without rewritting all the declarations
 
   // exposing the base image function
   class_<pink_image_wrap, boost::noncopyable> ("any_image");
-  
+
   ujoi_class_export < char_image > (
     "char_image",
     "This is the image class for 1 byte 'char' images"
@@ -1918,7 +1939,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     "This is the image class for 4 byte 'long int' images. \n"
     "Note that on 32bit systems it's equivalent with c++ 'int'. \n"
     "However while 'int' can change on 64bit systems, 'long int' \n"
-    "should remain 32bit." 
+    "should remain 32bit."
     );
 
   ujoi_class_export < float_image > (
@@ -1935,13 +1956,13 @@ BOOST_PYTHON_MODULE(libcpp_pink)
     "fcomplex_image",
     "This is the image class for 4+4 byte 'fcomplex' images"
     );
-  
+
   ujoi_class_export < dcomplex_image > (
     "dcomplex_image",
     "This is the image class for 8+8 byte 'dcomplex' images"
     );
 
-  
+
 } /* BOOST_PYTHON_MODULE */
 
 
