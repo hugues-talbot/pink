@@ -62,7 +62,7 @@ int lfdilate3d_rect(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
     memcpy(outbuf, inbuf, ncol*nrow*nslice);
 
   /* set each voxel (in outbuf) to max within 3d rect (ie dilate) */
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, genfmax);
+  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, genfmax_char);
 
   return(0);
 
@@ -86,11 +86,11 @@ int lfdilate3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
   /* dilate by either a bresenham or periodic line */
   if (type != PERIODIC) {
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz, 
-		  genfmax, bresenham3d);
+		  genfmax_char, bresenham3d);
   } /* end if */
   else {
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz, 
-		  genfmax, periodic3d);
+		  genfmax_char, periodic3d);
   } /* end else */
     
   return LIARerr;

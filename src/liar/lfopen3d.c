@@ -62,7 +62,7 @@ int lfopen3d_rect(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
 
   /* erode then dilate */
   rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, genfmin_char);
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, genfmax);
+  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, genfmax_char);
 
   /* all done */
   return(0);
@@ -87,13 +87,13 @@ int lfopen3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf,
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz, 
 		  genfmin_char, bresenham3d);
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz, 
-		  genfmax, bresenham3d);
+		  genfmax_char, bresenham3d);
   } 
   else {
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz, 
 		  genfmin_char, periodic3d);
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz, 
-		  genfmax, periodic3d);
+		  genfmax_char, periodic3d);
   }
 
   return(LIARerr);

@@ -1,7 +1,7 @@
 /*
  * File:		genfmax.c
  *
-  Hugues Talbot	 7 Dec 2010
+ Hugues Talbot	 7 Dec 2010
  
 This software is an image processing library whose purpose is to be
 used primarily for research and teaching.
@@ -35,330 +35,30 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 
 /* Ed Breen wrote a first version of this
- * converted into a stand-alone C file by Hugues Talbot	13 Mar 1995
+ * converted into a stand-alone, generic C file by Hugues Talbot	13 Mar 1995
  */
 
 #include <stdio.h>
 #include <math.h>
 #include "liarp.h"
 
-void genfmax(PIX_TYPE *f,PIX_TYPE *g,PIX_TYPE *h,INT4_TYPE *p, unsigned int nx, unsigned int K)
+#undef DATA_TYPE
+#undef FNAME_EXT 
+#define DATA_TYPE PIX_TYPE
+#define FNAME_EXT _char
+#include "genfmax_generic.h"
 
-{
-  /* ORIGINAL AUTHOR: Edmond J. Breen
-  ** DATE: Mar 2 1993
-  ** 
-  ** f: input array. Where 1st member is *(f+p[0]) and 
-                           2nd member is *(f+p[1]) etc.
-  ** g: forward array
-  ** h: backward array
-  ** p: array of offsets
-  ** nx: the number of elements in each array
-  ** K: the extent of mask 
-  */
+#undef DATA_TYPE
+#undef FNAME_EXT 
+#define DATA_TYPE INT4_TYPE
+#define FNAME_EXT _int4 
+#include "genfmax_generic.h"
 
-    unsigned int  i,j,k,r,r1;
+#undef DATA_TYPE
+#undef FNAME_EXT 
+#define DATA_TYPE DBL_TYPE
+#define FNAME_EXT _dbl 
+#include "genfmax_generic.h"
 
-    if (!(K%2))   /* enforce the odd extent */
-	K++;
-    k = nx/K;
-    r1 = nx%K;
-
-    /* do forward array */
-
-    for(j=0;j<k;j++) {
-	*g = *(f+*p);
-	for(g++,p++,i=1;i<K;i++,g++,p++)
-	    *g = liarmax(*(f+*p),*(g-1));
-    }
-
-    if(r1) {
-	*g = *(f+*p);
-	for(g++,p++,i=1;i<r1;i++,g++,p++)
-	    *g = liarmax(*(f+*p),*(g-1));
-    }
-    p--;
-    if(nx <= (K>>1)) {
-	g--;
-	for(i=0;i<nx;i++,p--)
-	    *(f+*p) = *g;
-	return;
-    }
-    h += nx - 1;
-    g -= nx;
-
-    /* do backward array */
-    if(r1) {
-	*h = *(f+*p);
-	for(h--,p--,i=1;i<r1;i++,h--,p--)
-	    *h = liarmax(*(f+*p),*(h+1));
-    }
-    for(j=0;j<k;j++) {
-	*h = *(f+*p);
-	for(h--,p--,i=1;i<K;i++,h--,p--)
-	    *h = liarmax(*(f+*p),*(h+1));
-    }
-
-    /* reset pointers */
-    p++;
-    h++;
-    r=K>>1;
-    g+=r;
-    if(nx <= K) {
-	r1 = nx - r - 1;
-	for(i=0;i<r1;i++,p++,g++)
-	    *(f+*p) = *g;
-	r1 +=  K - nx + 1;
-	for(;i<r1;i++,p++)
-	    *(f+*p) = *g;
-	for(h++;i<nx;i++,h++,p++)
-	    *(f+*p) = *h;
-	return;
-    }
-
-    /* do left border */
-    for(i=0;i<r;i++,p++,g++)
-	*(f+*p) = *g;
-
-    /* do middle values */
-    for(i=K-1;i<nx;i++,p++,h++,g++)
-	*(f+*p) = liarmax(*g,*h);
-
-    /* reset pointers to end position */
-    h += (K-2);
-    p += (r-1);
-
-    /* do right border */
-    if(r1 && k) {
-	for(h-=r1,i=r1;i<K;i++,h--)
-	    *h = liarmax(*(h),*(h+1));
-	h += K;
-    }
-    h -= r;
-    for(i=0;i<r;i++,h--,p--)
-	*(f+*p) = *(h);
-
-}
-
-void genfmax_CHAR(PIX_TYPE *f,PIX_TYPE *g,PIX_TYPE *h,INT4_TYPE *p, unsigned int nx, unsigned int K)
-{
-    genfmax(f,g,h,p,nx,K);
-}
-
-
-void genfmax_int4(INT4_TYPE *f,INT4_TYPE *g,INT4_TYPE *h,INT4_TYPE *p, unsigned int nx, unsigned int K)
-
-{
-  /* ORIGINAL AUTHOR: Edmond J. Breen
-  ** DATE: Mar 2 1993
-  ** 
-  ** f: input array. Where 1st member is *(f+p[0]) and 
-                           2nd member is *(f+p[1]) etc.
-  ** g: forward array
-  ** h: backward array
-  ** p: array of offsets
-  ** nx: the number of elements in each array
-  ** K: the extent of mask 
-  */
-  
-  unsigned int i,j,k,r,r1;
-  if (!(K%2))   /* enforce the odd extent */
-        K++;
-  k = nx/K;
-  r1 = nx%K;
-  
-  /* do forward array */
-  
-  for(j=0;j<k;j++) {
-    *g = *(f+*p);
-    for(g++,p++,i=1;i<K;i++,g++,p++)
-      *g = liarmax(*(f+*p),*(g-1));
-  }
-  
-  if(r1) {
-    *g = *(f+*p);
-    for(g++,p++,i=1;i<r1;i++,g++,p++)
-      *g = liarmax(*(f+*p),*(g-1));
-  }
-  p--;
-  if(nx <= (K>>1)) {
-    g--;
-    for(i=0;i<nx;i++,p--)
-      *(f+*p) = *g;
-    return;
-  }
-  h += nx - 1;
-  g -= nx;
-  
-  /* do backward array */
-  if(r1) {
-    *h = *(f+*p);
-    for(h--,p--,i=1;i<r1;i++,h--,p--)
-      *h = liarmax(*(f+*p),*(h+1));
-  }
-  for(j=0;j<k;j++) {
-    *h = *(f+*p);
-    for(h--,p--,i=1;i<K;i++,h--,p--)
-      *h = liarmax(*(f+*p),*(h+1));
-  }
-  
-  
-  /* reset pointers */
-  p++;
-  h++;
-  r=K>>1;
-  g+=r;
-  
-  
-  
-  
-  if(nx <= K) {
-    r1 = nx - r - 1;
-    for(i=0;i<r1;i++,p++,g++)
-      *(f+*p) = *g;
-    r1 +=  K - nx + 1;
-    for(;i<r1;i++,p++)
-      *(f+*p) = *g;
-    for(h++;i<nx;i++,h++,p++)
-      *(f+*p) = *h;
-    return;
-  }
-  
-  /* do left border */
-  for(i=0;i<r;i++,p++,g++)
-    *(f+*p) = *g;
-  
-  /* do middle values */
-  for(i=K-1;i<nx;i++,p++,h++,g++)
-    *(f+*p) = liarmax(*g,*h);
-  
-  /* reset pointers to end position */
-  h += (K-2);
-  p += (r-1);
-  
-  /* do right border */
-  if(r1 && k) {
-    for(h-=r1,i=r1;i<K;i++,h--)
-      *h = liarmax(*(h),*(h+1));
-    h += K;
-  }
-  h -= r;
-  for(i=0;i<r;i++,h--,p--)
-    *(f+*p) = *(h);
-  
-}
-
-void genfmax_INT4(INT4_TYPE *f,INT4_TYPE *g,INT4_TYPE *h,INT4_TYPE *p, unsigned int nx, unsigned int K)
-{
-    genfmax_int4(f,g,h,p,nx,K);
-}
-
-void genfmax_dbl(DBL_TYPE *f,DBL_TYPE *g,DBL_TYPE *h,INT4_TYPE *p, unsigned int nx, unsigned int K)
-
-{
-  /* ORIGINAL AUTHOR: Edmond J. Breen
-  ** DATE: Mar 2 1993
-  ** 
-  ** f: input array. Where 1st member is *(f+p[0]) and 
-                           2nd member is *(f+p[1]) etc.
-  ** g: forward array
-  ** h: backward array
-  ** p: array of offsets
-  ** nx: the number of elements in each array
-  ** K: the extent of mask 
-  */
-
-    unsigned int i,j,k,r,r1;
-    
-    if (!(K%2))   /* enforce the odd extent */
-        K++;
-    k = nx/K;
-    r1 = nx%K;
-    
-    /* do forward array */
-
-    for(j=0;j<k;j++) {
-        *g = *(f+*p);
-        for(g++,p++,i=1;i<K;i++,g++,p++)
-            *g = liarmax(*(f+*p),*(g-1));
-    }
-
-    if(r1) {
-        *g = *(f+*p);
-        for(g++,p++,i=1;i<r1;i++,g++,p++)
-            *g = liarmax(*(f+*p),*(g-1));
-    }
-    p--;
-    if(nx <= (K>>1)) {
-        g--;
-        for(i=0;i<nx;i++,p--)
-            *(f+*p) = *g;
-        return;
-    }
-    h += nx - 1;
-    g -= nx;
-
-    /* do backward array */
-    if(r1) {
-        *h = *(f+*p);
-        for(h--,p--,i=1;i<r1;i++,h--,p--)
-            *h = liarmax(*(f+*p),*(h+1));
-    }
-    for(j=0;j<k;j++) {
-        *h = *(f+*p);
-        for(h--,p--,i=1;i<K;i++,h--,p--)
-            *h = liarmax(*(f+*p),*(h+1));
-    }
-
-    /* reset pointers */
-    p++;
-    h++;
-    r=K>>1;
-    g+=r;
-    if(nx <= K) {
-        r1 = nx - r - 1;
-        for(i=0;i<r1;i++,p++,g++)
-            *(f+*p) = *g;
-        r1 +=  K - nx + 1;
-        for(;i<r1;i++,p++)
-            *(f+*p) = *g;
-        for(h++;i<nx;i++,h++,p++)
-            *(f+*p) = *h;
-        return;
-    }
-
-    /* do left border */
-    for(i=0;i<r;i++,p++,g++)
-        *(f+*p) = *g;
-
-    /* do middle values */
-    for(i=K-1;i<nx;i++,p++,h++,g++)
-        *(f+*p) = liarmax(*g,*h);
-
-    /* reset pointers to end position */
-    h += (K-2);
-    p += (r-1);
-
-    /* do right border */
-    if(r1 && k) {
-        for(h-=r1,i=r1;i<K;i++,h--)
-            *h = liarmax(*(h),*(h+1));
-        h += K;
-    }
-    h -= r;
-    for(i=0;i<r;i++,h--,p--)
-        *(f+*p) = *(h);
-
-}
-
-void genfmax_DBL(DBL_TYPE *f,DBL_TYPE *g,DBL_TYPE *h,INT4_TYPE *p, unsigned int nx, unsigned int K)
-{
-  genfmax_dbl(f,g,h,p,nx,K);
-}
-
-
-
-
-
-
-
+#undef DATA_TYPE
+#undef FNAME_EXT 

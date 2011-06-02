@@ -48,11 +48,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define FNAME_EXT _char
 #include "genfmin_generic.h"
 
-#undef DATA_TYPE
-#undef FNAME_EXT 
-#define DATA_TYPE PIX_TYPE
-#define FNAME_EXT _CHAR 
-#include "genfmin_generic.h"
+
 
 #undef DATA_TYPE
 #undef FNAME_EXT 
@@ -60,17 +56,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #define FNAME_EXT _int4 
 #include "genfmin_generic.h"
 
-#undef DATA_TYPE
-#undef FNAME_EXT 
-#define DATA_TYPE INT4_TYPE
-#define FNAME_EXT _INT4 
-#include "genfmin_generic.h"
-
-#undef DATA_TYPE
-#undef FNAME_EXT 
-#define DATA_TYPE LONG_TYPE
-#define FNAME_EXT _long 
-#include "genfmin_generic.h"
 
 #undef DATA_TYPE
 #undef FNAME_EXT 
@@ -78,11 +63,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #define FNAME_EXT _dbl 
 #include "genfmin_generic.h"
 
-#undef DATA_TYPE
-#undef FNAME_EXT 
-#define DATA_TYPE DBL_TYPE
-#define FNAME_EXT _DBL 
-#include "genfmin_generic.h"
 
 #undef DATA_TYPE
 #undef FNAME_EXT 

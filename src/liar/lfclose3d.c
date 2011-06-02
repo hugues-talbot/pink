@@ -59,7 +59,7 @@ int lfclose3d_rect(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
     memcpy(outbuf, inbuf, ncol*nrow*nslice);
 
   /* dilate image */
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, genfmax);
+  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, genfmax_char);
   /* erode image */
   rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, genfmin_char);
 
@@ -84,13 +84,13 @@ int lfclose3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf,
 
   if (type != PERIODIC) {
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz, 
-		  genfmax, bresenham3d);
+		  genfmax_char, bresenham3d);
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz, 
 		  genfmin_char, bresenham3d);
   } 
   else {
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz, 
-		  genfmax, periodic3d);
+		  genfmax_char, periodic3d);
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz, 
 		  genfmin_char, periodic3d);
   }
