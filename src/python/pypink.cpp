@@ -1687,6 +1687,7 @@ UI_WRAP_RESULT(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
+#ifdef JULIETTE
 // juliette
 UI_WRAP_RESULT(
   int_image,
@@ -1706,6 +1707,18 @@ UI_WRAP_RESULT(
   );
 #include BOOST_PP_UPDATE_COUNTER()
 
+#endif // JULIETTE
+
+
+UI_WRAP_RESULT(
+  char_image,
+  "ferode3drect",
+  imferode3D_rect,
+  (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
+  "This performs a fast erosion by a parallelepiped."
+  );
+
+#include BOOST_PP_UPDATE_COUNTER()
 
 // ***********************************************************************
 // ***********************************************************************
