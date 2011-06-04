@@ -16,7 +16,9 @@
 #include <fstream>
 #include <iostream>
 
+#include "uiFileIO.hpp"
 #include "pink_python.h"
+
 
 using namespace boost::python;
 using namespace pink;

@@ -32,6 +32,10 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+#ifndef LLPEMEYER__H__
+#define LLPEMEYER__H__
+
+#include "mccodimage.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -162,3 +166,5 @@ int32_t llpemeyerbiconnecte3d(
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* LLPEMEYER__H__ */

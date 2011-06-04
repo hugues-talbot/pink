@@ -14,6 +14,10 @@
 #ifndef UINORMALIZE_HPP_
 #define UINORMALIZE_HPP_
 
+#include "larith.h"
+#include "ujimage.hpp"
+
+
 namespace pink { 
 
   // float_image lnormalize( const float_image & I,

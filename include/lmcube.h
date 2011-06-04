@@ -4,6 +4,19 @@
 #ifndef LMCUBE_H_
 #define LMCUBE_H_
 
+#include <stdio.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "mccodimage.h"
+#include "mcimage.h"
+#include "mcrbtp.h"
+#include "mcmesh.h"
+#include "mciomesh.h"
+#include "lmcube.h"
+
 
 #ifdef __cplusplus
 extern "C" {

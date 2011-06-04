@@ -17,12 +17,7 @@
 #include "mcutil.h"
 #include "lminmax.hpp"
 #include "llong2byte.h"
-
-
-
-
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in ui_convert.cpp: " << msg; call_error(fullmessage.str());}
+#include "ui_convert.hpp"
 
 // you shouldn't use one character macros
 #undef N
@@ -50,99 +45,19 @@ namespace pink {
   
   char_image float2byte( const float_image & src, int mode )
   {
-
-    int N = src.get_size().prod();
-    char_image result(src.get_size());
-    float_image::pixel_type t;
-    float_image::pixel_type tmp;
-    float_image::pixel_type T;
-
-    switch(mode)
-    {
-
-    case 0:
-    
-      FOR( x, N ) 
-      {
-        result[x] = static_cast<char_image::pixel_type>( mcmin( arrondi( src[x] ), 255 ) );
-      } /* FOR */
-      break;
-
-    case 1:
-
-      FOR( x, N ) 
-      {
-        result[x] = static_cast<char_image::pixel_type>( arrondi( src[x] ) %  256 );
-      } /* FOR */
-      break;
-
-    case 2:
-    
-      float_image::pixel_type max;
-      float_image::pixel_type min;
-    
-      max = lmaxval(src);
-      min = lminval(src);
-
-      FOR( x, N ) 
-      {
-        t = ( ( src[x] - min ) * 255.0 ) / static_cast<float_image::pixel_type>( max - min );
-        tmp = arrondi(t);
-        result[x] = static_cast<char_image::pixel_type>( mcmin( 255, tmp ) );
-      } /* FOR */
-      break;
-
-    case 4:
-
-      FOR( x, N ) 
-      {
-
-        T = sqrt( static_cast<double>( src[x]) );
-        tmp = arrondi( T );
-        tmp = mcmin( 255, tmp );
-        tmp = mcmax( 0, tmp );
-        result[x] = static_cast<char_image::pixel_type>(tmp);
-      } /* FOR */
-
-      break;
-
-
-
-    case 5:
-
-      FOR( x, N ) 
-      {
-
-        T = log(static_cast<double>(src[x]));
-        tmp = arrondi( T );
-        tmp = mcmin( 255, tmp );
-        tmp = mcmax( 0, tmp );
-        result[x] = static_cast<char_image::pixel_type>(tmp);
-      } /* FOR */
-
-      break;
-
-
-
-    default:
-      error( "mode must be: \nmode = 0 (trunc) \n 1 (modulo) \n 2 (scale) \n 4 (square root) \n 5 (log)\n" );
-
-    } /* switch(mode) */
-  
-
-    return result;
-
+    return convert_image<float_image, char_image>(src, mode);
   } /* float2byte */
 
-
-  int_image byte2long( const char_image & image )
+  short_image long2short( const int_image & src, int mode )
   {
-    int_image result(image.get_size());
+    return convert_image<int_image, short_image>(src, mode);
+  } /* long2short */
+  
+  char_image short2byte( const short_image & src, int mode )
+  {
+    return convert_image<short_image, char_image>(src, mode);
+  } /* short2byte */
 
-    std::copy( &(image[0]), &(image[image.get_size().prod()-1]), &(result[0]) );
-    
-    return result;    
-  };
 
 #ifdef MCNEW
   

@@ -12,7 +12,7 @@
 
 #ifdef __cplusplus
 
-#include <pink.h>
+#include "ujimage.hpp"
 
 #undef error
 #define error(msg) {stringstream fullmessage; fullmessage << "in ui_genball.cpp: " << msg; call_error(fullmessage.str());}

@@ -10,7 +10,10 @@
   ujoimro@gmail.com
 */
 
-#include <pink_python.h>
+#include "ldist.h"
+#include "lskeletons.h"
+#include "pink_python.h"
+
 
 using namespace boost::python;
 using namespace pink;

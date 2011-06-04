@@ -19,10 +19,15 @@
 // not my include
 /* Line 12+1 */
 
-// my includes
-#include "pink.h"
 #include <fstream>
 #include <iostream>
+
+
+//#include "pink.h"
+#include "uiImage.h"
+#include "lminmax.hpp"
+#include "ujimage.hpp"
+
 
 #undef error
 #define error(msg) std::stringstream fullmessage; fullmessage << "in uiImage.cpp: " << msg; call_error(fullmessage.str());

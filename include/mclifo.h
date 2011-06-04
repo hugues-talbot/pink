@@ -32,6 +32,10 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+#ifndef MCLIFO__H__
+#define MCLIFO__H__
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -61,3 +65,5 @@ extern void LifoTermine(Lifo * L);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* MCLIFO__H__ */

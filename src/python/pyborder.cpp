@@ -13,7 +13,10 @@
 // boost python wrapper
 // this file opens a file with raw image data as an image of given type
 
-#include <pink_python.h>
+
+#include "pink_python.h"
+#include "lborder.h"
+#include "mctopo3d.h"
 
 /// !!! macros should be named upper case
 #undef border

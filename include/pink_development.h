@@ -34,8 +34,6 @@
 
 #endif /* __cplusplus */
 
-#include <pink.h>
-
 #ifdef __cplusplus
 
   #include <uiGradient.hpp>

@@ -32,6 +32,12 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+#ifndef LSKELETONS__H__
+#define LSKELETONS__H__
+
+#include "ldist.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -161,3 +167,5 @@ extern int32_t lskelCKG3map(
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* LSKELETONS__H__ */

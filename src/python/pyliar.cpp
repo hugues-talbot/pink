@@ -13,48 +13,48 @@
 // Wrapper file for ex-LIAR stuff.
 // pypink.cpp was beginning to be too big
 
-#ifndef PINK_DEVELOPMENT
-#  include <pink_python.h>
-#else /* PINK_DEVELOPMENT */
-#  include <pink_development.h>
-#endif /* PINK_DEVELOPMENT */
+#include "pink_python.h"
+#include "liar_fseries.h"
+#include <boost/preprocessor/slot/counter.hpp>
 
-using namespace boost::python;
 using namespace pink;
-
-// maybe I'll get away with it
-#include "pyujimage.hpp"
-#include "pyexport.hpp"
-#include "ui_wrap_function.hpp"
-#include "ui_wrap_result.hpp"
-#include "ui_wrap_value.hpp"
-//#include "ui_wrap_value.hpp"
-#include "ui_make_function.hpp"
-#include "ui_make_result.hpp"
-#include "ui_make_value.hpp"
-
-//#include "python_doc.h"
-
-
-//#include <boost/preprocessor.hpp>
-//#include <pyexport.hpp>
-
-
-
+using namespace boost::python;
 
 // using "modern" wrapping
 
+// here we use namespaces, so the export_functions
+// would not interfere with each other.
+// c++ is a cool language, ain't it?
 
-// #include <boost/preprocessor/slot/counter.hpp>
+namespace liar
+{
+  
 
-// #define BOOST_PP_COUNTER 1000
 
-// UI_WRAP_RESULT(
-//   char_image,
-//   "imferode3d_rect",
-//   imferode3D_rect,
-//   (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
-//   "This performs a fast erosion by a parallelepiped."
-//   );
-// #include BOOST_PP_UPDATE_COUNTER()
+  UI_WRAP_RESULT(
+    char_image,
+    "imferode3d_rect",
+    imferode3D_rect,
+    (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
+    "This performs a fast erosion by a parallelepiped."
+    );
+# include BOOST_PP_UPDATE_COUNTER()
+  
+  
+  UI_WRAP_RESULT(
+    char_image,
+    "ferode3drect",
+    imferode3D_rect,
+    (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
+    "This performs a fast erosion by a parallelepiped."
+    );
+  
+# include BOOST_PP_UPDATE_COUNTER()
+} /* namespace liar */
 
+using namespace liar;
+
+void pyliar()
+{
+  CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
+}

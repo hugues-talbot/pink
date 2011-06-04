@@ -10,7 +10,13 @@
   ujoimro@gmail.com
 */
 
-#include <pink_python.h>
+#include "lsym.h"
+#include "lgeodesic.h"
+#include "ldilateros.h"
+#include "pink_python.h"
+#include "ldilateros3d.h"
+
+
 
 using namespace boost::python;
 using namespace pink;

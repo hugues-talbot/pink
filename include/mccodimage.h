@@ -55,7 +55,7 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif /* __cplusplus */
 
-#include <mcimage.h>
+#include "mcimage.h"
 
 #define NDG_MAX 255            /* niveau de gris max */
 #define NDG_MIN 0              /* niveau de gris min */

@@ -49,16 +49,17 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
-#include <mcimage.h>
-#include <mccodimage.h>
-#include <mctopo.h>
-#include <mctopo3d.h>
-#include <mclifo.h>
-#include <mcutil.h>
-#include <mcskelcurv.h>
-#include <llabelextrema.h>
-#include <lseltopo.h>
-#include <lmoments.h>
+
+#include "mcimage.h"
+#include "mccodimage.h"
+#include "mctopo.h"
+#include "mctopo3d.h"
+#include "mclifo.h"
+#include "mcutil.h"
+#include "mcskelcurv.h"
+#include "llabelextrema.h"
+#include "lseltopo.h"
+#include "lmoments.h"
 
 //#define VERBOSE
 //#define DEBUG_lskelfilter3

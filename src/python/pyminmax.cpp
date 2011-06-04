@@ -10,8 +10,9 @@
   ujoimro@gmail.com
 */
 
-
+#include "lminmax.hpp"
 #include "pink_python.h"
+
 
 using namespace boost::python;
 using namespace pink;

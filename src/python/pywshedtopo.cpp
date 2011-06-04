@@ -12,7 +12,8 @@
 
 // boost python wrapper
 
-#include <pink_python.h>
+#include "lwshedtopo.h"
+#include "pink_python.h"
 
 using namespace boost::python;
 using namespace pink;

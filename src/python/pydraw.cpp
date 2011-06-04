@@ -13,7 +13,8 @@
 // This software is meant to be free
 // boost python wrapper
 
-#include <pink_python.h>
+#include "pink_python.h"
+#include "ldraw.h"
 
 using namespace boost::python;
 using namespace pink;

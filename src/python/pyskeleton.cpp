@@ -1,8 +1,18 @@
-// UjoImro, 2009
-// This software is meant to be free
-// boost python wrapper
+/*
+  This software is licensed under 
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
-#include <pink_python.h>
+  This software comes in hope that it will be useful but 
+  without any warranty to the extent permitted by aplicable law.
+  
+  (C) UjoImro, 2009
+  Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+  ujoimro@gmail.com
+*/
+
+#include "ldist.h"
+#include "lskeletons.h"
+#include "pink_python.h"
 
 using namespace boost::python;
 using namespace pink;

@@ -32,6 +32,12 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+#ifndef LHTKERN__H__
+#define LHTKERN__H__
+
+#include "mccodimage.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -145,3 +151,5 @@ extern int32_t ldynrecons(struct xvimage *image, struct xvimage *imagecond, int3
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* LHTKERN__H__*/

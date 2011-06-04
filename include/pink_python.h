@@ -13,16 +13,20 @@
 #ifndef PINK_PYTHON_H
 #define PINK_PYTHON_H
 
-
 #include <boost/python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/python/module.hpp>
-#include <boost/python/def.hpp>
-#include <boost/python/implicit.hpp>
 
-#include "pink.h"
-#include "pyexport.hpp"
+#include "ujimage.hpp"
 #include "python_doc.h"
+#include "pyexport.hpp"
+#include "pyujimage.hpp"
+#include "ui_wrap_value.hpp"
+#include "ui_make_value.hpp"
+#include "ui_wrap_result.hpp"
+#include "ui_make_result.hpp"
+#include "ui_wrap_function.hpp"
+#include "ui_make_function.hpp"
+
+
 
 
 

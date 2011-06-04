@@ -9,7 +9,10 @@
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
-#include <pink_python.h>
+#include "lsym.h"
+#include "ldilateros.h"
+#include "pink_python.h"
+#include "ldilateros3d.h"
 
 using namespace boost::python;
 using namespace pink;

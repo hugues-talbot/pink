@@ -10,7 +10,8 @@
   ujoimro@gmail.com
 */
 
-#include <pink_python.h>
+#include "lskeletons.h"
+#include "pink_python.h"
 
 // you should not use one-letter macro names!
 #undef N

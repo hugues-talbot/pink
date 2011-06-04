@@ -6,7 +6,9 @@
 // and here is how it's done
 
 
-#include <pink_python.h>
+#include "uiSqhool.hpp"
+#include "pink_python.h"
+
 
 using namespace boost::python;
 using namespace pink;

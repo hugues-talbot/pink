@@ -10,7 +10,18 @@
   ujoimro@gmail.com
 */
 
-#include <pink_python.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "larith.h"
+#include "mcrbtp.h"
+#include "mcmesh.h"
+#include "mciomesh.h"
+#include "lmcube.h"
+#include "pink_python.h"
 
 using namespace boost::python;
 using namespace pink;

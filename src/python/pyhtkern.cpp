@@ -12,7 +12,9 @@
 
 // boost python wrapper
 
-#include <pink_python.h>
+#include "lhtkern.h"
+#include "lhtkern3d.h"
+#include "pink_python.h"
 
 using namespace boost::python;
 using namespace pink;

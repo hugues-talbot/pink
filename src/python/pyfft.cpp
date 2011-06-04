@@ -10,7 +10,8 @@
   ujoimro@gmail.com
 */
 
-
+#include "lfft.h"
+#include "lcrop.h"
 #include "pink_python.h"
 
 using namespace boost::python;

@@ -10,7 +10,8 @@
   ujoimro@gmail.com
 */
 
-#include <pink_python.h>
+#include "pink_python.h"
+#include "lfiltreordre.h"
 
 using namespace boost::python;
 using namespace pink;

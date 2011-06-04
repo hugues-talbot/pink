@@ -32,17 +32,20 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+#ifndef MCUTIL__H__
+#define MCUTIL__H__
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define max(a,b) error_max_function_is_ambigous_use_mcmax_instead
-#define min(a,b) error_min_function_is_ambigous_use_mcmin_instead
-#define abs(b) error_abs_function_is_ambigous_use_mcabs_instead
-#define sign(b) error_sign_function_is_ambigous_use_mcsign_instead
-#define odd(b) error_odd_function_is_ambigous_use_mcodd_instead
-#define even(b) error_even_function_is_ambigous_use_mceven_instead
-#define sqr(b) error_sqr_function_is_ambigous_use_mcsqr_instead
+// #define max(a,b) error_max_function_is_ambigous_use_mcmax_instead
+// #define min(a,b) error_min_function_is_ambigous_use_mcmin_instead
+// #define abs(b) error_abs_function_is_ambigous_use_mcabs_instead
+// #define sign(b) error_sign_function_is_ambigous_use_mcsign_instead
+// #define odd(b) error_odd_function_is_ambigous_use_mcodd_instead
+// #define even(b) error_even_function_is_ambigous_use_mceven_instead
+// #define sqr(b) error_sqr_function_is_ambigous_use_mcsqr_instead
   
 #define mcabs(X) ((X)>=0?(X):-(X))
 #define mcmax(X,Y) ((X)>=(Y)?(X):(Y))
@@ -71,3 +74,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* MCUTIL__H__ */

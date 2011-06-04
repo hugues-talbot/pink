@@ -32,6 +32,11 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+#ifndef LFFTT__H__
+#define LFFTT__H__
+
+#include "mccodimage.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -79,3 +84,5 @@ extern int32_t lfft2(struct xvimage *image1, struct xvimage *image2, int32_t dir
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* LFFTT__H__ */

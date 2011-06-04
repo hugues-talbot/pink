@@ -32,6 +32,10 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+#ifndef MCMESH__H__
+#define MCMESH__H__
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -219,3 +223,5 @@ extern void ComputeCurvatures();
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* MCMESH__H__ */

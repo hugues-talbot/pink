@@ -32,6 +32,8 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+#ifndef MCPOWELL__H__
+#define MCPOWELL__H__
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -54,12 +56,12 @@ typedef struct ensemble {
 #define    M_MAX_ITER	3
 #define    M_LAST_CODE	4
 
-#undef min
-#undef max
-#define max(a,b) error_max_function_is_ambigous_use_mcmax_instead
-#define min(a,b) error_min_function_is_ambigous_use_mcmin_instea
-#define abs(b) error_abs_function_is_ambigous_use_mcabs_instead
-#define sign(b) error_sign_function_is_ambigous_use_mcsign_instead
+// #undef min
+// #undef max
+// #define max(a,b) error_max_function_is_ambigous_use_mcmax_instead
+// #define min(a,b) error_min_function_is_ambigous_use_mcmin_instea
+// #define abs(b) error_abs_function_is_ambigous_use_mcabs_instead
+// #define sign(b) error_sign_function_is_ambigous_use_mcsign_instead
 
   
 #undef mcabs
@@ -93,3 +95,5 @@ extern int32_t powell_num(PFNn f, struct xvimage * image1,
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* MCPOWELL__H__ */

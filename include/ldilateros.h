@@ -32,6 +32,11 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+#ifndef LDILATEROS__H__
+#define LDILATEROS__H__
+
+#include "mccodimage.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -53,3 +58,7 @@ extern int32_t ldilateros_lasf(struct xvimage *f, int32_t rayonmax, int32_t rayo
 #ifdef __cplusplus
 }
 #endif
+
+
+#endif /* LDILATEROS__H__ */
+

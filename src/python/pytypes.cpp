@@ -10,7 +10,10 @@
   ujoimro@gmail.com
 */
 
-#include <pink_python.h>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+
+#include "pink_python.h"
+
 
 using namespace boost::python;
 using namespace pink;

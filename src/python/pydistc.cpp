@@ -10,7 +10,13 @@
   ujoimro@gmail.com
 */
 
-#include <pink_python.h>
+
+
+#include "ldist.h"
+#include "pink_python.h"
+#include "ui_convert.hpp"
+
+#include <boost/cast.hpp>
 
 // you should not use one-letter macro names!
 #undef N

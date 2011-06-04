@@ -32,6 +32,13 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+#include "mccodimage.h"
+
+#ifndef LZOOM__H__
+#define LZOOM__H__
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -54,3 +61,5 @@ extern int32_t lzoom2(
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* LZOOM__H__ */

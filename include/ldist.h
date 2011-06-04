@@ -32,6 +32,24 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+#ifndef LDIST__H__
+#define LDIST__H__
+
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <math.h>
+
+#include "mcimage.h"
+#include "mccodimage.h"
+#include "mclifo.h"
+#include "mcutil.h"
+#include "mcgeo.h"
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -39,7 +57,7 @@ extern "C" {
 #ifndef _MCIMAGE_H
 #include <mcimage.h>
 #endif
-
+  
 extern int32_t ldist(struct xvimage *img, int32_t connex, struct xvimage *res);
 extern int32_t ldistbyte(struct xvimage *img, int32_t connex, struct xvimage *res);
 extern int32_t ldistquad(struct xvimage *img, struct xvimage *res);
@@ -70,3 +88,5 @@ extern int32_t lopeningfunction(struct xvimage *img, struct xvimage *res, int32_
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* LDIST__H__ */

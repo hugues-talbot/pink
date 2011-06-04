@@ -32,6 +32,12 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+#ifndef LGEODESIC__H__
+#define LGEODESIC__H__
+
+#include "mccodimage.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -94,3 +100,6 @@ extern int32_t lamont(
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* LGEODESIC__H__ */
+
