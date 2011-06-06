@@ -61,3 +61,37 @@ int imferode3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct
                            depth(input),
                            SEnx, SEny, SEnz));
 }
+
+/* dilatation by a flat square structuring element */
+int imfdilat3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
+{
+    return( lfdilate3d_rect(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+}
+
+/* openning by a flat square structuring element */
+int imfopen3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
+{
+    return( lfopen3d_rect(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+}
+
+/* closing by a flat square structuring element */
+int imfclose3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
+{
+    return( lfclose3d_rect(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+}
+

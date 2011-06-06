@@ -144,7 +144,9 @@ if (CMAKE_HOST_UNIX)
     ### Option LIAR
     ###
     
-    if (PYTHON_FRONT_END) # LIAR obsolete
+## no longer an option
+##    if (PYTHON_FRONT_END) # LIAR obsolete
+	
 	## we need POSIX semaphores to communicate with imview
 	CHECK_INCLUDE_FILE(semaphore.h SEMTEST)
 	if (NOT SEMTEST)
@@ -177,7 +179,8 @@ if (CMAKE_HOST_UNIX)
 	endif(TIFF_FOUND)
 
 
-    endif (PYTHON_FRONT_END) # end of LIAR
+### the LIAR is no longer an optin
+### endif (PYTHON_FRONT_END) # end of LIAR
 
 
     ### ******************************************************
