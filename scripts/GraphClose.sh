@@ -32,8 +32,8 @@ PAR=`expr $2 % 2`
 
 if(test $PAR -eq 1 ) then
     echo "Impair"
-    pgm2GA /tmp/_e 1 /tmp/_e
-    GA2pgm /tmp/_e 2 /tmp/_d
+    pgm2GA /tmp/_e 2 /tmp/_e
+    GA2pgm /tmp/_e 1 /tmp/_d
 else
     echo "Pair"
     cp /tmp/_e /tmp/_d

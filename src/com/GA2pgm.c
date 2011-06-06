@@ -35,16 +35,16 @@ knowledge of the CeCILL license and that you accept its terms.
 
 /*! \file GA2pgm.c
 
-\brief Convert a 4-connected graph (a GA) into a pgm image 
+\brief Convert a 4-connected edge-weighted graph (a GA) into a pgm image 
 
 <B>Usage:</B> GA2pgm graph.ga param out.pgm \n
 
 <B>Description:</B>
 
-Convert a 4-connected graph (<B>graph.ga</B>) into a pgm image
-(<B>out.pgm</B>) where each pixel represents a vertex of the input
-graph and the gray level of a pixel is obtained from the values of its
-incident edge in the graph by means of an operation depending of the
+Convert a 4-connected edge-weighted graph (<B>graph.ga</B>) into a pgm
+image (<B>out.pgm</B>) where each pixel represents a vertex of the
+input graph and the gray level of a pixel is obtained from the values
+of its incident edges by means of an operation depending of the
 parameter <B>param</B>.
 
 If param = 1, then max is used, and if param = 2, min is used.

@@ -32,6 +32,38 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+/*! \file GA2khalimsky.c
+
+\brief Convert a 4-connected edge-weighted graph (a GA) into its
+representation in the Khalimsky grid
+
+<B>Usage:</B> GA2khalimsky GA.pgm type out.pgm \n
+
+<B>Description:</B>
+
+Convert a 4-connected (6-connected, in 3D) edge-weighted graph
+(<B>graph.ga</B>) into its representation (depending on the parameter
+<B>type</B>) in the Khalimsky grid, stored as a pgm image
+(<B>out.pgm</B>). The vertices of the graph are associated to the
+square of the Khalimsky grid, and the edges of the graphs are
+associated to the line segments.
+
+If type = 0, then the closure of the set of weighted-edges is used
+(usefull for representing contours).  
+
+If type = 1, then the star of the closure of the set of weighted edges
+is used (usefull for representing regions).
+
+
+<B>Types supported:</B> ga 2d, ga 3d
+
+<B>Category:</B> GA
+\ingroup GA
+
+\author Jean Cousty
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

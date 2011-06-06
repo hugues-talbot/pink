@@ -32,37 +32,22 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/* \file GAwatershed.c
 
-\brief 
+/*! \file GAwatershed.c
 
-<B>Usage:</B> 
+\brief Compute the watershed of a 4-connected edge-weighted graph (a GA)
+
+<B>Usage:</B> GAwatershed in.ga out.pgm [type]
 
 <B>Description:</B>
 
-<B>Types supported:</B> GA byte 2D 
-
-<B>Category:</B> 
-\ingroup  
-
-\author Jean Cousty
-*/
-/* 
-NAME
-
-<B>GAwatershed</B> - watershed of a 4-connected edge-weighted graph
-
-SYNOPSIS
-
-<B>GAwatershed</B> GAin.pgm out.pgm [type]
-
-DESCRIPTION
+Compute the watershed of a 4-connected edge-weighted graph (a GA).
 
 If type = 0, then outputs a watershed by an M-border algorithm. The
 file out.pgm is a GA.
 
 If type = 1, then outputs a watershed by a non-recursive algorithm
-based on streams. The file out.pgm is a GA.
+based on streams. The file out.pgm is a GA (this is the default).
 
 If type = 2 outputs a watershed by a recursive algorithm based on
 streams (generally the most efficient one). The file out.pgm is a GA.
@@ -72,14 +57,50 @@ If type = 3 outputs an M-border watershed. The file out.pgm is a GA.
 If type = 4 outputs a flow mapping. The file out.pgm is a long integer
 image.
 
-Types supported: GA byte 2D.
 
-CLASS 
 
-connect
+<B>Types supported:</B> GA byte 2D 
 
+<B>Category:</B> GA
+\ingroup  GA
+
+\author Jean Cousty
 */
-//#define TIME_WATERSHED_TEST 1
+
+
+/* /\*   */
+/* NAME */
+
+/* <B>GAwatershed</B> - watershed of a 4-connected edge-weighted graph */
+
+/* SYNOPSIS */
+
+/* <B>GAwatershed</B> GAin.pgm out.pgm [type] */
+
+/* DESCRIPTION */
+
+/* If type = 0, then outputs a watershed by an M-border algorithm. The */
+/* file out.pgm is a GA. */
+
+/* If type = 1, then outputs a watershed by a non-recursive algorithm */
+/* based on streams. The file out.pgm is a GA. */
+
+/* If type = 2 outputs a watershed by a recursive algorithm based on */
+/* streams (generally the most efficient one). The file out.pgm is a GA. */
+
+/* If type = 3 outputs an M-border watershed. The file out.pgm is a GA. */
+
+/* If type = 4 outputs a flow mapping. The file out.pgm is a long integer */
+/* image. */
+
+/* Types supported: GA byte 2D. */
+
+/* CLASS  */
+
+/* connect */
+
+/* *\/ */
+/* //#define TIME_WATERSHED_TEST 1 */
 
 #include <stdio.h>
 #include <stdint.h>
@@ -119,7 +140,7 @@ int main(argc, argv)
 
   if ( (argc != 3) && (argc != 4) )
   {
-            fprintf(stderr, "usage: %s GAin.pgm out.pgm [type] \n\tif type = 0, then produces a watershed by M-border algorithm;\n\tif type = 1, then outputs a watershed by a non-recursive algorithm based on stream;\n\tif type = 2 outputs a watershed by a recursive algorithm based on streams;\n\tif type = 3 outputs an M-border watershed;\n\tif type = 4 outputs a flow mapping, out.pgm is a long integer image;\n\tdefault type = 2.\n", argv[0]); 
+            fprintf(stderr, "usage: %s GAin.pgm out.pgm [type] \n\tif type = 0, then produces a watershed by M-border algorithm;\n\tif type = 1, then outputs a watershed by a non-recursive algorithm based on stream;\n\tif type = 2 outputs a watershed by a recursive algorithm based on streams;\n\tif type = 3 outputs an M-border watershed;\n\tif type = 4 outputs a flow mapping, out.pgm is a long integer image;\n\tdefault type = 1.\n", argv[0]); 
 	    exit(1);
   }
   ga = readGAimage(argv[1]);
@@ -131,9 +152,9 @@ int main(argc, argv)
   if(argc == 4)
     type = atoi(argv[3]);
   else
-    type = 2;
+    type = 1;
   if( (type > 4) || (type < 0)){
-    fprintf(stderr, "usage: %s GAin.pgm out.pgm [type] \n\tif type = 0, then produces a watershed by M-border algorithm;\n\tif type = 1, then outputs a watershed by a non-recursive algorithm based on stream;\n\tif type = 2 outputs a watershed by a recursive algorithm based on streams;\n\tif type = 3 outputs an M-border watershed;\n\tif type = 4 outputs a flow mapping, out.pgm is a long integer image;\n\tdefault type = 2.\n", argv[0]); 
+    fprintf(stderr, "usage: %s GAin.pgm out.pgm [type] \n\tif type = 0, then produces a watershed by M-border algorithm;\n\tif type = 1, then outputs a watershed by a non-recursive algorithm based on stream;\n\tif type = 2 outputs a watershed by a recursive algorithm based on streams;\n\tif type = 3 outputs an M-border watershed;\n\tif type = 4 outputs a flow mapping, out.pgm is a long integer image;\n\tdefault type = 1.\n", argv[0]); 
   }
   switch(datatype(ga)){
   case VFF_TYP_GABYTE:

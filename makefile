@@ -4,9 +4,9 @@ PINK = .
   CPP = g++
 
 #### use next line for NO tiff interface
-#  CCFLAGS = -g -DUNIXIO -Wall
+  CCFLAGS = -g -DUNIXIO -Wall
 #### use next line for TIFF interface
-  CCFLAGS = -g -DUNIXIO -DHAVE_TIFF_LIB -Wall
+#  CCFLAGS = -g -DUNIXIO -DHAVE_TIFF_LIB -Wall
 
   ODIR = $(PINK)/linux/obj
   BDIR = $(PINK)/linux/bin
@@ -18,11 +18,11 @@ PINK = .
   TDIR = $(PINK)/src/tables
 
 #### use next 2 lines for NO tiff interface
-#  LIBS = -lm
-#  OBJ_COMMON = $(ODIR)/mcimage.o $(ODIR)/mcchrono.o
+  LIBS = -lm
+  OBJ_COMMON = $(ODIR)/mcimage.o $(ODIR)/mcchrono.o
 #### use next 2 lines for TIFF interface
-  LIBS = -lm -ltiff
-  OBJ_COMMON = $(ODIR)/mcimage.o $(ODIR)/liarwrap.o $(ODIR)/mcchrono.o
+#  LIBS = -lm -ltiff
+#  OBJ_COMMON = $(ODIR)/mcimage.o $(ODIR)/liarwrap.o $(ODIR)/mcchrono.o
 
   OBJ = $(ODIR)/mcliste.o $(ODIR)/mcset.o $(ODIR)/mckhalimsky2d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mckhalimskyNd.o $(ODIR)/mcchrono.o $(ODIR)/mctopo3d_table.o $(ODIR)/mcdrawps.o $(ODIR)/mcsegment.o
 # -*- makefile -*-
