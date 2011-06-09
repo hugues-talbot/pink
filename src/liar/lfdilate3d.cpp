@@ -92,7 +92,7 @@ int lfdilate3d_rect_int4(INT4_TYPE *inbuf, INT4_TYPE *outbuf, int ncol, int nrow
 
 
 
-
+#if 0
 
 
 /* lfdilate3d_line
@@ -123,3 +123,5 @@ int lfdilate3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
   return LIARerr;
 
 }
+
+#endif

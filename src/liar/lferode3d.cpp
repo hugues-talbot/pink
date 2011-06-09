@@ -71,7 +71,7 @@ int lferode3d_rect_char(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
 
 } /* end lferode3d_rect */
 
-int lferode3d_rect_int4(INT4_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
+int lferode3d_rect_int4(INT4_TYPE *inbuf, INT4_TYPE *outbuf, int ncol, int nrow,
 		    int nslice, int dimx, int dimy, int dimz)
 {
   char LIARstrbuf[1024];
@@ -92,7 +92,7 @@ int lferode3d_rect_int4(INT4_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
 
 
 
-
+#if 0
 
 /**
  * \brief erode a 3d image by a 3d line
@@ -122,3 +122,5 @@ int lferode3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
   return LIARerr;
 
 }
+
+#endif
