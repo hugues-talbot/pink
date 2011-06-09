@@ -55,71 +55,73 @@ Running time in independent of the size of the SE.
 #include "fseries.hpp"
 #include "liar_fseries.h"
 
+/* square morphological operation*/
+
 /* erosion by a flat square structuring element */
 int imferode3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
 {
-//    switch (input->data_storage_type) {
-//     case    VFF_TYP_1_BYTE:
-//    	return( lferode3d_rect_char(UCHARDATA(input),
-//                           UCHARDATA(output),
-//                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
-//                           colsize(input),
-//                           depth(input),
-//                           SEnx, SEny, SEnz));
-//     break;
-//
-//    //case  VFF_TYP_2_BYTE:
-//    //	return( lferode3d_rect_short(USHORTDATA(input),
-//    //                       USHORTDATA(output),
-//    //                       rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
-//    //                       colsize(input),
-//    //                       depth(input),
-//    //                       SEnx, SEny, SEnz));
-//    //break;
-//
-//    case  VFF_TYP_4_BYTE:
-//    	return( lferode3d_rect_int4(SLONGDATA(input),
-//                           SLONGDATA(output),
-//                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
-//                           colsize(input),
-//                           depth(input),
-//                           SEnx, SEny, SEnz));
-//    break;
-//    }
+    switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lferode3d_rect<PIX_TYPE>(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lferode3d_rect< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lferode3d_rect< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+    break;
+    }
     return 0;
 }
 
 /* dilatation by a flat square structuring element */
 int imfdilat3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
 {
-//	switch (input->data_storage_type) {
-//     case    VFF_TYP_1_BYTE:
-//    	return( lfdilate3d_rect_char(UCHARDATA(input),
-//                           UCHARDATA(output),
-//                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
-//                           colsize(input),
-//                           depth(input),
-//                           SEnx, SEny, SEnz));
-//     break;
-//
-//    //case  VFF_TYP_2_BYTE:
-//    //	return( lfdilate3d_rect_short(USHORTDATA(input),
-//    //                       USHORTDATA(output),
-//    //                       rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
-//    //                       colsize(input),
-//    //                       depth(input),
-//    //                       SEnx, SEny, SEnz));
-//    //break;
-//
-//    case  VFF_TYP_4_BYTE:
-//    	return( lfdilate3d_rect_int4(SLONGDATA(input),
-//                           SLONGDATA(output),
-//                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
-//                           colsize(input),
-//                           depth(input),
-//                           SEnx, SEny, SEnz));
-//    break;
-//    }
+	switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lfdilate3d_rect<PIX_TYPE>(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lfdilate3d_rect< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lfdilate3d_rect< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+    break;
+    }
 
     return 0;
 }
@@ -138,14 +140,14 @@ int imfopen3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct 
                            SEnx, SEny, SEnz));
      break;
 
-    //case  VFF_TYP_2_BYTE:
-    //	return( lfopen3d_rect_short(USHORTDATA(input),
-    //                       USHORTDATA(output),
-    //                       rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
-    //                       colsize(input),
-    //                       depth(input),
-    //                       SEnx, SEny, SEnz));
-    //break;
+    case  VFF_TYP_2_BYTE:
+    	return( lfopen3d_rect< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+    break;
 
     case  VFF_TYP_4_BYTE:
     	return( lfopen3d_rect< INT4_TYPE >(SLONGDATA(input),
@@ -161,35 +163,191 @@ int imfopen3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct 
 /* closing by a flat square structuring element */
 int imfclose3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
 {
-//   switch (input->data_storage_type) {
-//     case    VFF_TYP_1_BYTE:
-//    	return( lfclose3d_rect_char(UCHARDATA(input),
-//                           UCHARDATA(output),
-//                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
-//                           colsize(input),
-//                           depth(input),
-//                           SEnx, SEny, SEnz));
-//     break;
-//
-//    //case  VFF_TYP_2_BYTE:
-//    //	return( lfclose3d_rect_short(USHORTDATA(input),
-//    //                       USHORTDATA(output),
-//    //                       rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
-//    //                       colsize(input),
-//    //                       depth(input),
-//    //                       SEnx, SEny, SEnz));
-//    //break;
-//
-//    case  VFF_TYP_4_BYTE:
-//    	return( lfclose3d_rect_int4(SLONGDATA(input),
-//                           SLONGDATA(output),
-//                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
-//                           colsize(input),
-//                           depth(input),
-//                           SEnx, SEny, SEnz));
-//    break;
+   switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lfclose3d_rect<PIX_TYPE>(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lfclose3d_rect< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lfclose3d_rect< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           SEnx, SEny, SEnz));
+    break;
 //    }
 
     return 0;
 }
+}
+
+/*-------------------------------------------------------------------------------------------------*/
+/* Line morphological operation*/
+
+/* erosion by a line structuring element */
+int imferode3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz,int length, struct xvimage *output)
+{
+    switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lferode3d_line<PIX_TYPE>(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           length,
+                           SEnx, SEny, SEnz, 0));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lferode3d_line< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           length,
+                           SEnx, SEny, SEnz, 0));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lferode3d_line< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           length,
+                           SEnx, SEny, SEnz,0));
+    break;
+    }
+    return 0;
+}
+
+/* dilatation by a line structuring element */
+int imfdilat3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz, int length,struct xvimage *output)
+{
+	switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lfdilate3d_line<PIX_TYPE>(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           length,
+                           SEnx, SEny, SEnz, 0));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lfdilate3d_line< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           length,
+                           SEnx, SEny, SEnz, 0));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lfdilate3d_line< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           length,
+                           SEnx, SEny, SEnz, 0));
+    break;
+    }
+
+    return 0;
+}
+
+
+/* openning by a line structuring element */
+int imfopen3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz,int length, struct xvimage *output)
+{
+    switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lfopen3d_line< PIX_TYPE >(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           length,
+                           SEnx, SEny, SEnz, 0));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lfopen3d_line< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           length,
+                           SEnx, SEny, SEnz, 0));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lfopen3d_line< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           length,
+                           SEnx, SEny, SEnz, 0));
+    break;
+    }
+}
+
+/* closing by a line structuring element */
+int imfclose3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz, int length,struct xvimage *output)
+{
+   switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lfclose3d_line<PIX_TYPE>(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           length,
+                           SEnx, SEny, SEnz, 0));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lfclose3d_line< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           length,
+                           SEnx, SEny, SEnz, 0));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lfclose3d_line< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           depth(input),
+                           length,
+                           SEnx, SEny, SEnz, 0));
+    break;
+//    }
+
+    return 0;
+}
+}
+
 

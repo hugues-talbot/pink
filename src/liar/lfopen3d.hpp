@@ -44,7 +44,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <iostream.h>
 
 #include "liarp.h"
 #include "fseries.hpp"
@@ -72,64 +71,8 @@ int lfopen3d_rect(Type *inbuf, Type *outbuf, int ncol, int nrow,int nslice, int 
 } /* end lfopen3d_rect_char */
 
 
-/*
-* old, non templated code, not to be used ever again
-*/
-
-#if 0
-
-/**
- * \brief open a 3d image using a 3d rectangular SE
-*/
-int lfopen3d_rect_char(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
-		    int nslice, int dimx, int dimy, int dimz)
-{
-  char LIARstrbuf[1024];
-
-  sprintf(LIARstrbuf, "Opening by a 3d rect (char version), %d x %d x %d", dimx, dimy, dimz);
-  LIARdebug(LIARstrbuf);
-
-  /* if not writing to same buffer then copy contents of original */
-  if (outbuf != inbuf)
-    memcpy(outbuf, inbuf, ncol*nrow*nslice);
-
-  /* erode then dilate */
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemin);
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemax);
-
-  /* all done */
-  return(0);
-
-} /* end lfopen3d_rect_char */
-
-
-
-//int lfopen3d_rect_int4(INT4_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
-//		    int nslice, int dimx, int dimy, int dimz)
-//{
-//  char LIARstrbuf[1024];
-//
-//  sprintf(LIARstrbuf, "Opening by a 3d rect (int4 version), %d x %d x %d", dimx, dimy, dimz);
-//  LIARdebug(LIARstrbuf);
-//
-//  /* if not writing to same buffer then copy contents of original */
-//  if (outbuf != inbuf)
-//    memcpy(outbuf, inbuf, ncol*nrow*nslice*sizeof(INT4_TYPE));
-//
-//  /* erode then dilate */
-//  rect3dminmax_int4(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, genfmin_int4);
-//  rect3dminmax_int4(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, genfmax_int4);
-//
-//  /* all done */
-//  return(0);
-//
-//} /* end lfopen3d_rect_int4 */
-
-
-
-
-
-int lfopen3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf,
+template <typename Type>
+int lfopen3d_line(Type *inbuf, Type *outbuf,
 		   int ncol, int nrow, int nslice, int length,
 		   int dx, int dy, int dz, int type)
 {
@@ -144,22 +87,21 @@ int lfopen3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf,
 
   if (type != PERIODIC) {
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
-		  genfmin_char, bresenham3d);
+		  computemin, computebresen);
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
-		  genfmax_char, bresenham3d);
+		  computemax, computebresen);
   }
   else {
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
-		  genfmin_char, periodic3d);
+		  computemin, computeperiod);
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
-		  genfmax_char, periodic3d);
+		  computemax, computeperiod);
   }
 
   return(LIARerr);
 
 } /* end lfopen3d_line */
 
-#endif // 0
 
 
 #endif // LFLOPEN3D_HPP

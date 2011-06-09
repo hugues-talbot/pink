@@ -220,6 +220,12 @@ extern "C" {
 
     int LIARdebug(const char *fmt, ...);
     int LIARerror(const char *msg, ...);
+    long *bresenham3d(int dx, int dy, int dz,
+		       int imwidth, int imheight, int imdepth,
+		       int *ol, int *period);
+    long *periodic3d(int dx, int dy, int dz,
+		      int imwidth, int imheight, int imdepth,
+		      int *ol, int *period);
 
 #ifdef __cplusplus
 }

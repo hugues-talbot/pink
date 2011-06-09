@@ -58,7 +58,7 @@ SYNOPSIS
 
 DESCRIPTION
 
-The rectangle structuring element is given by the non-null values x and y, which are the size of the rectangle
+The rectangle structuring element is given by the non-null values x, y and z, which are the size of the 3d rectangle
 <B>x</B> and <B>y</B>.
 
 Types supported: all type
@@ -85,11 +85,11 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  int dimx=0, dimy=0;
+  int dimx=0, dimy=0, dimz=0;
 
-  if (argc != 5)
+  if (argc != 6)
   {
-    fprintf(stderr, "usage: %s f.pgm px py out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s f.pgm px py pz out.pgm \n", argv[0]);
     exit(1);
   }
 
@@ -102,14 +102,15 @@ int main(int argc, char **argv)
 
   dimx=atof(argv[2]);
   dimy=atof(argv[3]);
-  if ( (dimx==0) ||(dimy==0) )
+  dimz=atof(argv[4]);
+  if ( (dimx==0) ||(dimy==0) ||(dimz==0))
   {
     fprintf(stderr, "%s wrong dimension for the rectangle \n", argv[0]);
     exit(1);
   }
 
 
-  if (imferode3D_rect(image, dimx, dimy,1, image)!=0 )
+  if (imferode3D_rect(image, dimx, dimy,dimz, image)!=0 )
   {
       fprintf(stderr, "%s: function imferode3D_rect failed\n", argv[0]);
       exit(1);

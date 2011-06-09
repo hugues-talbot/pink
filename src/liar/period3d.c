@@ -2,21 +2,21 @@
  * File:		period3d.c
  *
  Hugues Talbot	 7 Dec 2010
- 
+
 This software is an image processing library whose purpose is to be
 used primarily for research and teaching.
 
 This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software. You can  use, 
+abiding by the rules of distribution of free software. You can  use,
 modify and/ or redistribute the software under the terms of the CeCILL
 license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+"http://www.cecill.info".
 
 As a counterpart to the access to the source code and  rights to copy,
 modify and redistribute granted by the license, users are provided only
 with a limited warranty  and the software's author,  the holder of the
 economic rights,  and the successive licensors  have only  limited
-liability. 
+liability.
 
 In this respect, the user's attention is drawn to the risks associated
 with loading,  using,  modifying and/or developing or reproducing the
@@ -25,9 +25,9 @@ that may mean  that it is complicated to manipulate,  and  that  also
 therefore means  that it is reserved for developers  and  experienced
 professionals having in-depth computer knowledge. Users are therefore
 encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+requirements in conditions enabling the security of their systems and/or
+data to be ensured and,  more generally, to use and operate it in the
+same conditions as regards security.
 
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
@@ -46,10 +46,10 @@ knowledge of the CeCILL license and that you accept its terms.
  * \brief generates a 3 dimensional periodic line
 
     This function creates a periodic line with an aspect ratio as specified
-    by the x, y and z dimensions (dx, dy and dz).  The line returned is of 
+    by the x, y and z dimensions (dx, dy and dz).  The line returned is of
     length 'ol' equal to the number of periods required to cover the image in
-    the dominant dimension of the direction vector.  All values within the 
-    returned line vector are in the form of offsets for the original image, 
+    the dominant dimension of the direction vector.  All values within the
+    returned line vector are in the form of offsets for the original image,
     with the first such offset being set to 0.  All lines are returned heading
     right from the origin.
     Note that the vector 2 2 2 will not return the same result as 1 1 1 since
@@ -71,15 +71,15 @@ knowledge of the CeCILL license and that you accept its terms.
     even though the operation is not performed for that value of end.
  * \date 7 Jan 1997
 */
-INT4_TYPE *periodic3d(int dx, int dy, int dz, 
-		      int imwidth, int imheight, int imdepth, 
+long *periodic3d(int dx, int dy, int dz,
+		      int imwidth, int imheight, int imdepth,
 		      int *ol, int *period)
 {
-  INT4_TYPE *p, offset;
+  long      *p, offset;
   int       i;
   int       absdx, absdy, absdz;
   int       nshift;
-  
+
   /* set absolute values */
   absdx = abs(dx);
   absdy = abs(dy);

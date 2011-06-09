@@ -2,21 +2,21 @@
  * File:		glinemm3d.c
  *
 Hugues Talbot	 7 Dec 2010
- 
+
 This software is an image processing library whose purpose is to be
 used primarily for research and teaching.
 
 This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software. You can  use, 
+abiding by the rules of distribution of free software. You can  use,
 modify and/ or redistribute the software under the terms of the CeCILL
 license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+"http://www.cecill.info".
 
 As a counterpart to the access to the source code and  rights to copy,
 modify and redistribute granted by the license, users are provided only
 with a limited warranty  and the software's author,  the holder of the
 economic rights,  and the successive licensors  have only  limited
-liability. 
+liability.
 
 In this respect, the user's attention is drawn to the risks associated
 with loading,  using,  modifying and/or developing or reproducing the
@@ -25,15 +25,20 @@ that may mean  that it is complicated to manipulate,  and  that  also
 therefore means  that it is reserved for developers  and  experienced
 professionals having in-depth computer knowledge. Users are therefore
 encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+requirements in conditions enabling the security of their systems and/or
+data to be ensured and,  more generally, to use and operate it in the
+same conditions as regards security.
 
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-/* glinemm3d.c */
+/* glinemm3d.hpp */
+
+
+#ifndef GLINEMM3D_HPP
+#define GLINEMM3D_HPP
+
 
 
 #include <stdlib.h>
@@ -47,10 +52,10 @@ knowledge of the CeCILL license and that you accept its terms.
 
     This function performs erosion or dilation along a line parallel to a given
     direction vector (dx,dy,dz).  Whether an erosion or a dilation is performed
-    is specified by the (*operation)() argument, this being either genfmin for 
+    is specified by the (*operation)() argument, this being either genfmin for
     erosion or genfmax for dilation.  The *(*lineop)() argument is then used to
-    specify whether this operation uses a periodic or a bresenham line (by 
-    passing either periodic3d or bresenham3d).  As with the two dimensional 
+    specify whether this operation uses a periodic or a bresenham line (by
+    passing either periodic3d or bresenham3d).  As with the two dimensional
     case, cascading this function can be used to generate other erosions and
     dilations.
 
@@ -68,30 +73,31 @@ knowledge of the CeCILL license and that you accept its terms.
  * \param *(*lineop)():   line operation to use (bresenham3d or periodic3d)
 
  * \return 0 	indicates success
-   <br>    1 	failure because SE vector does not fit inside input image, 
-				that is (nx<dx) or (ny<dy) or (nz<dz) 
+   <br>    1 	failure because SE vector does not fit inside input image,
+				that is (nx<dx) or (ny<dy) or (nz<dz)
  * \author Ian Sowden
  * <br> 7 Jan 1998: Modified by Ian Sowden to incorporate periodic lines
  * \date 5 Jan 1998
 */
-int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k, 
-		   int dx, int dy, int dz, 
-		   void (*operation)(), INT4_TYPE *(*lineop)() )
+template <typename Type>
+int glineminmax3d(Type *f, int nx, int ny, int nz, int k,
+		   int dx, int dy, int dz,
+		   bool usemin, bool lineop )
 {
 
-  PIX_TYPE    *g, *h;                    /* forwards and backwards arrays */
+  Type        *g, *h;                    /* forwards and backwards arrays */
   int         totpix, slicepix;          /* pixel counts                  */
-  INT4_TYPE   *line;                     /* the line to perform operation */
+  long   *line;                     /* the line to perform operation */
   int         ol;                        /* length of the line            */
-  int         start, end;                /* start and end of line segs    */
-  int         offset;                    /* image offset                  */
+  long        start, end;                /* start and end of line segs    */
+  Type        offset;                    /* image offset                  */
   int         row_current, row_prev;     /* current and previous rows     */
   int         col_current, col_prev;     /* current and previous cols     */
   int         upper_limit, lower_limit;  /* image limits (with offset)    */
   int         maindir_cutoff;            /* cutoff for value of end       */
   int         dir_y, dir_z;              /* direction of the line +-1     */
   int         i, j, l;                   /* indexing vars                 */
-  int         badx, bady, badz, good_previous; /* has x/y/z violation occurred in 
+  int         badx, bady, badz, good_previous; /* has x/y/z violation occurred in
 					    this loop? in the previous loop ? */
   int         period;                    /* the period of the line        */
   int         nshift;
@@ -102,15 +108,19 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
   totpix = slicepix*nz;
 
   /* generate line */
-  line = lineop(dx,dy,dz, nx,ny,nz, &ol, &period);
-
+  if (lineop){
+    line = bresenham3d(dx,dy,dz, nx,ny,nz, &ol, &period);
+  }
+  else {
+     line = periodic3d(dx,dy,dz, nx,ny,nz, &ol, &period);
+  }
   /* unable to allocate line  */
   /* this happens when  */
   if (line == NULL) return 1;
 
   /* allocate memory for forward and backward min/max arrays */
-  g = (PIX_TYPE *)calloc(ol, sizeof(PIX_TYPE));
-  h = (PIX_TYPE *)calloc(ol, sizeof(PIX_TYPE));
+  g = (Type *)calloc(ol, sizeof(Type));
+  h = (Type *)calloc(ol, sizeof(Type));
 
   /* reflect -dx vectors (makes things easier later) */
   if (dx<0) {
@@ -133,7 +143,7 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
 
     if (period > 1)
       yinc = dir_y*(abs(dy) - 0.5);
-    else 
+    else
       yinc = dir_y*(0.5);
 
     /*    nshift = (nx-period+1)/period;*/
@@ -149,7 +159,7 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
 	  /* start from the left of each row and from the front(back) of  */
 	  /* each slice depending on whether dz is pos(neg)               */
 	  start = end = 0;
-	  offset = i*slicepix*dir_z + j*nx*dir_y + l 
+	  offset = i*slicepix*dir_z + j*nx*dir_y + l
 	    + ((1-dir_z)/2)*slicepix*(nz-1)
 	    + ((1-dir_y)/2)*nx*(ny-1);
 
@@ -184,9 +194,9 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
 		if ( row_current < ((bady*dir_y)+(2*ny)) )
 		  badz=1;
 	      } /* end else dir_z == -1 */
-		
+
 	      /* also check whether the point is within x range*/
-	      if  ((!bady) && (!badz) && (end*period<(maindir_cutoff-l)) ) 
+	      if  ((!bady) && (!badz) && (end*period<(maindir_cutoff-l)) )
 		good_previous=1;
 	    } while  ((!bady) && (!badz) && (end*period<(maindir_cutoff-l)) );
 
@@ -195,8 +205,11 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
 	    /* perform the actual min/max operation */
 	    /* but only if this value of end is acceptable */
 	    if (good_previous)
-	      (*operation)(f+offset, g, h, line+start, end-start+1, 
-			 (k-period+1)/period);
+            if (usemin) {
+                genfmin(f+offset, g, h, line+start, end-start+1,(k-period+1)/period);
+        } else {
+               genfmax(f+offset, g, h, line+start, end-start+1,(k-period+1)/period);
+        }
 
 	    /* set the start (and end) to the next point */
 	    start = ++end;
@@ -205,9 +218,9 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
 	    offset -= (bady*dir_y*slicepix) + (badz*dir_z*totpix);
 
 	  } /* end while start<nx */
-	
+
 	} /* end for each col in period */
- 
+
       } /* end for each row */
 
     } /* end for each slice */
@@ -221,7 +234,7 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
 
     if (period > 1)
       xinc = (abs(dx) - 0.5);
-    else 
+    else
       xinc = 0.5;
 
     nshift= ny/period-1;
@@ -236,7 +249,7 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
 	  /* start from the top(bottom) of each column for pos(neg) y slopes */
 	  /* and the front(back) for pos(neg) z slopes */
 	  start=end=0;
-	  offset = i*slicepix*dir_z + j + l*nx*(dir_y) 
+	  offset = i*slicepix*dir_z + j + l*nx*(dir_y)
 	    + nx*(ny-1)*((1-dir_y)/2) + slicepix*(nz-1)*((1-dir_z)/2);
 
 	  while (start<=nshift) {
@@ -277,8 +290,14 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
 	    /* perform the actual min/max operation */
 	    /* but only if this value of end is acceptable */
 	    if (good_previous)
-	      (*operation)(f+offset, g, h, line+start, end-start+1, 
-			 (k-period+1)/period);
+            if (usemin) {
+                genfmin(f+offset, g, h, line+start, end-start+1,
+                        (k-period+1)/period);
+            } else {
+               genfmax(f+offset, g, h, line+start, end-start+1,
+                        (k-period+1)/period);
+            }
+
 
 	    /* set the next start (and end) to the next point along */
 	    start = ++end;
@@ -302,12 +321,12 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
 
     if (period > 1)
       xinc = abs(dx) - 0.5;
-    else 
+    else
       xinc = 0.5;
 
     if (period > 1)
       yinc = dir_y*(abs(dy) - 0.5);
-    else 
+    else
       yinc = dir_y*(0.5);
 
     nshift = nz/period-1;
@@ -345,7 +364,7 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
 	      col_current=(line[end]+offset+2*slicepix)%nx;
 	      row_prev=row_current;
 	      row_current=((line[end]+offset+2*slicepix)/nx)%ny;
-	    
+
 	      /* find any x violations - should find all */
 	      if ((int)(col_current-col_prev-(xinc))!=0)
 		badx=1;
@@ -370,8 +389,14 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
 	    /* perform the actual op */
 	    /* but only if this value of end is acceptable */
 	    if (good_previous)
-	      (*operation)(f+offset, g, h, line+start, end-start+1, 
-			 (k-period+1)/period);
+            if (usemin) {
+                genfmin(f+offset, g, h, line+start, end-start+1,
+                            (k-period+1)/period);
+            } else {
+                genfmax(f+offset, g, h, line+start, end-start+1,
+                            (k-period+1)/period);
+            }
+
 
 	    /* update start and end positions */
 	    start = ++end;
@@ -394,7 +419,7 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
   free(g);
   free(h);
   free(line);
-  
+
   return 0;
 
 } /* end of glineminmax3d */
@@ -402,7 +427,7 @@ int glineminmax3d(PIX_TYPE *f, int nx, int ny, int nz, int k,
 
 
 
-
+#endif // GLINEMM3D_HPP
 
 
 

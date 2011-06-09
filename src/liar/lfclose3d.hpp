@@ -1,7 +1,7 @@
 /*
- * File:		lfdilate3d.c
+ * File:		lfclose3d.c
  *
-  Hugues Talbot	 7 Dec 2010
+Hugues Talbot	 7 Dec 2010
 
 This software is an image processing library whose purpose is to be
 used primarily for research and teaching.
@@ -31,97 +31,85 @@ same conditions as regards security.
 
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
-
  *
 */
 
-/* lfdilate3d.c */
+/* lfclose3d.c */
+/* closing by 3 dimensional structuring elements */
+
+#ifndef LFCLOSE3D_HPP
+#define LFCLOSE3D_HPP
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
+
 #include "liarp.h"
 #include "fseries.hpp"
 
-
 /**
- * \brief dilate a 3d image by a 3d rectangle
-
-   NOTE: change the name
+ * \brief close a 3d image using a 3d rectangular SE
 */
-int lfdilate3d_rect_char(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
+
+template <typename Type>
+int lfclose3d_rect(Type *inbuf, Type *outbuf, int ncol, int nrow,
 		    int nslice, int dimx, int dimy, int dimz)
 {
   char LIARstrbuf[1024];
 
-  sprintf(LIARstrbuf, "Dilation by a 3d rect (version char), %d x %d x %d", dimx, dimy, dimz);
+  sprintf(LIARstrbuf, "Opening by a 3d rect, %d x %d x %d", dimx, dimy, dimz);
   LIARdebug(LIARstrbuf);
 
-  /* if out buffer is different to in buffer then copy contents */
-  if (inbuf != outbuf)
+  /* if not writing to same buffer then copy contents of original */
+  if (outbuf != inbuf)
     memcpy(outbuf, inbuf, ncol*nrow*nslice);
 
-  /* set each voxel (in outbuf) to max within 3d rect (ie dilate) */
+  /* dilate image */
   rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemax);
+  /* erode image */
+  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemin);
 
+  /* all done */
   return(0);
 
-} /* end lfdilate3d_rect_char */
+} /* end lfclose3d_rect */
 
 
 
-int lfdilate3d_rect_int4(INT4_TYPE *inbuf, INT4_TYPE *outbuf, int ncol, int nrow,
-		    int nslice, int dimx, int dimy, int dimz)
+template <typename Type>
+int lfclose3d_line(Type *inbuf, Type *outbuf,
+		   int ncol, int nrow, int nslice, int length,
+		   int dx, int dy, int dz, int type)
 {
   char LIARstrbuf[1024];
+  char LIARerr;
 
-  sprintf(LIARstrbuf, "Dilation by a 3d rect (version int4), %d x %d x %d", dimx, dimy, dimz);
-  LIARdebug(LIARstrbuf);
-
-  /* if out buffer is different to in buffer then copy contents */
-  if (inbuf != outbuf)
-    memcpy(outbuf, inbuf, ncol*nrow*nslice*sizeof(INT4_TYPE));
-
-  /* set each voxel (in outbuf) to max within 3d rect (ie dilate) */
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemax);
-
-  return(0);
-
-} /* end lfdilate3d_rect_int4 */
-
-
-
-#if 0
-
-
-/* lfdilate3d_line
- * dilate a 3d image by a 3d line
- */
-int lfdilate3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
-		   int nslice, int length, int dx, int dy, int dz, int type)
-{
-  char LIARstrbuf[1024];
-  int LIARerr;
-
-  sprintf(LIARstrbuf, "Dilation by a line, length: %d, dx: %d, dy: %d, dz: %d, type: %d", length, dx, dy, dz, type);
+  sprintf(LIARstrbuf, "Closing by a line, length: %d, dx: %d, dy: %d, dz: %d, type: %d", length, dx, dy, dz, type);
   LIARdebug(LIARstrbuf);
 
   if (outbuf != inbuf)
     memcpy(outbuf, inbuf, ncol*nrow*nslice);
 
-  /* dilate by either a bresenham or periodic line */
   if (type != PERIODIC) {
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
-		  genfmax_char, bresenham3d);
-  } /* end if */
+		  computemax, computebresen);
+    LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
+		  computemin, computebresen);
+  }
   else {
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
-		  genfmax_char, periodic3d);
-  } /* end else */
+		  computemax, computeperiod);
+    LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
+		  computemin, computeperiod);
+  }
 
-  return LIARerr;
+  return(LIARerr);
 
-}
+} /* end lfclose3d_line */
 
-#endif
+
+#endif // LFLCLOSE3D_HPP
+
+
+

@@ -44,6 +44,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
  #include "liarp.h"
 
+
 template <typename Type>
 void genfmax(Type *f,
             Type *g,

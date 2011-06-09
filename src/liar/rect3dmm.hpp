@@ -1,5 +1,5 @@
 /*
- * File:		rect3dmm.c
+ * File:		rect3dmm.hpp
  *
 
  Hugues Talbot	 7 Dec 2010

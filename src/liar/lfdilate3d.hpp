@@ -1,8 +1,7 @@
 /*
- * File:		lferode3d.c
+ * File:		lfdilate3d.c
  *
-
- Hugues Talbot	 7 Dec 2010
+  Hugues Talbot	 7 Dec 2010
 
 This software is an image processing library whose purpose is to be
 used primarily for research and teaching.
@@ -32,95 +31,79 @@ same conditions as regards security.
 
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
+
  *
 */
 
-/* lferode3d.c */
+/* lfdilate3d.c */
 
-#  include <stdio.h>
-#  include <string.h>
-#  include <stdlib.h>
+#ifndef LFDILATE3D_HPP
+#define LFDILATE3D_HPP
 
-#  include "liarp.h"
-#  include "fseries.hpp"
-//#  include "lliar.hxx"
-//#  include "lferode3d.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
+#include "liarp.h"
+#include "fseries.hpp"
 
 /**
- * \brief erode a 3d image by a 3d rectangle
+ * \brief dilate a 3d image by a 3d rectangle
 
    NOTE: change the name
 */
-int lferode3d_rect_char(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
+
+template <typename Type>
+int lfdilate3d_rect(Type *inbuf, Type *outbuf, int ncol, int nrow,
 		    int nslice, int dimx, int dimy, int dimz)
 {
   char LIARstrbuf[1024];
 
-  sprintf(LIARstrbuf, "Erosion by a 3d rect (version char), %d x %d x %d", dimx, dimy, dimz);
+  sprintf(LIARstrbuf, "Dilation by a 3d rect (version char), %d x %d x %d", dimx, dimy, dimz);
   LIARdebug(LIARstrbuf);
 
   /* if out buffer is different to in buffer then copy contents */
   if (inbuf != outbuf)
     memcpy(outbuf, inbuf, ncol*nrow*nslice);
 
-  /* set each voxel (in outbuf) to min within 3d rect (ie erode) */
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemin);
+  /* set each voxel (in outbuf) to max within 3d rect (ie dilate) */
+  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemax);
 
   return(0);
 
-} /* end lferode3d_rect */
-
-int lferode3d_rect_int4(INT4_TYPE *inbuf, INT4_TYPE *outbuf, int ncol, int nrow,
-		    int nslice, int dimx, int dimy, int dimz)
-{
-  char LIARstrbuf[1024];
-
-  sprintf(LIARstrbuf, "Erosion by a 3d rect (version int4), %d x %d x %d", dimx, dimy, dimz);
-  LIARdebug(LIARstrbuf);
-
-  /* if out buffer is different to in buffer then copy contents */
-  if (inbuf != outbuf)
-    memcpy(outbuf, inbuf, ncol*nrow*nslice*sizeof(INT4_TYPE));
-
-  /* set each voxel (in outbuf) to min within 3d rect (ie erode) */
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemin);
-
-  return(0);
-
-} /* end lferode3d_rect_int4 */
+} /* end lfdilate3d_rect_char */
 
 
 
-#if 0
-
-/**
- * \brief erode a 3d image by a 3d line
-*/
-int lferode3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
+/* lfdilate3d_line
+ * dilate a 3d image by a 3d line
+ */
+template <typename Type>
+int lfdilate3d_line(Type *inbuf, Type *outbuf, int ncol, int nrow,
 		   int nslice, int length, int dx, int dy, int dz, int type)
 {
   char LIARstrbuf[1024];
-  int LIARerr=0;
+  int LIARerr;
 
-  sprintf(LIARstrbuf, "Erosion by a line, length: %d, dx: %d, dy: %d, dz: %d, type: %d", length, dx, dy, dz, type);
+  sprintf(LIARstrbuf, "Dilation by a line, length: %d, dx: %d, dy: %d, dz: %d, type: %d", length, dx, dy, dz, type);
   LIARdebug(LIARstrbuf);
 
   if (outbuf != inbuf)
     memcpy(outbuf, inbuf, ncol*nrow*nslice);
 
-  /* erode by a bresenham or periodic line */
+  /* dilate by either a bresenham or periodic line */
   if (type != PERIODIC) {
-    LIARerr= glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
-		  genfmin_char, bresenham3d);
+    LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
+		  computemax, computebresen);
   } /* end if */
   else {
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
-		  genfmin_char, periodic3d);
+		  computemax, computeperiod);
   } /* end else */
 
   return LIARerr;
 
 }
 
-#endif
+
+#endif // LFLDILATE3D_HPP

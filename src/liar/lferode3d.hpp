@@ -1,7 +1,8 @@
 /*
- * File:		lfclose3d.c
+ * File:		lferode3d.c
  *
-Hugues Talbot	 7 Dec 2010
+
+ Hugues Talbot	 7 Dec 2010
 
 This software is an image processing library whose purpose is to be
 used primarily for research and teaching.
@@ -34,8 +35,10 @@ knowledge of the CeCILL license and that you accept its terms.
  *
 */
 
-/* lfclose3d.c */
-/* closing by 3 dimensional structuring elements */
+/* lferode3d.hpp */
+
+#ifndef LFERODE3D_HPP
+#define LFERODE3D_HPP
 
 #include <stdio.h>
 #include <string.h>
@@ -44,87 +47,64 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "liarp.h"
 #include "fseries.hpp"
 
+
 /**
- * \brief close a 3d image using a 3d rectangular SE
+ * \brief erode a 3d image by a 3d rectangle
+
+   NOTE: change the name
 */
-int lfclose3d_rect_char(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
+template <typename Type>
+int lferode3d_rect(Type *inbuf, Type *outbuf, int ncol, int nrow,
 		    int nslice, int dimx, int dimy, int dimz)
 {
   char LIARstrbuf[1024];
 
-  sprintf(LIARstrbuf, "Opening by a 3d rect, %d x %d x %d", dimx, dimy, dimz);
+  sprintf(LIARstrbuf, "Erosion by a 3d rect (version char), %d x %d x %d", dimx, dimy, dimz);
   LIARdebug(LIARstrbuf);
 
-  /* if not writing to same buffer then copy contents of original */
-  if (outbuf != inbuf)
+  /* if out buffer is different to in buffer then copy contents */
+  if (inbuf != outbuf)
     memcpy(outbuf, inbuf, ncol*nrow*nslice);
 
-  /* dilate image */
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemax);
-  /* erode image */
+  /* set each voxel (in outbuf) to min within 3d rect (ie erode) */
   rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemin);
 
-  /* all done */
   return(0);
 
-} /* end lfclose3d_rect */
+} /* end lferode3d_rect */
 
 
-int lfclose3d_rect_int4(INT4_TYPE *inbuf, INT4_TYPE *outbuf, int ncol, int nrow,
-		    int nslice, int dimx, int dimy, int dimz)
+
+
+/**
+ * \brief erode a 3d image by a 3d line
+*/
+template <typename Type>
+int lferode3d_line(Type *inbuf, Type *outbuf, int ncol, int nrow,
+		   int nslice, int length, int dx, int dy, int dz, int type)
 {
   char LIARstrbuf[1024];
+  int LIARerr=0;
 
-  sprintf(LIARstrbuf, "Opening by a 3d rect (int4 version), %d x %d x %d", dimx, dimy, dimz);
-  LIARdebug(LIARstrbuf);
-
-  /* if not writing to same buffer then copy contents of original */
-  if (outbuf != inbuf)
-    memcpy(outbuf, inbuf, ncol*nrow*nslice*sizeof(INT4_TYPE));
-
-  /* dilate image */
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemax);
-  /* erode image */
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemin);
-
-  /* all done */
-  return(0);
-
-} /* end lfclose3d_rect_int4 */
-
-
-#if 0
-int lfclose3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf,
-		   int ncol, int nrow, int nslice, int length,
-		   int dx, int dy, int dz, int type)
-{
-  char LIARstrbuf[1024];
-  char LIARerr;
-
-  sprintf(LIARstrbuf, "Closing by a line, length: %d, dx: %d, dy: %d, dz: %d, type: %d", length, dx, dy, dz, type);
+  sprintf(LIARstrbuf, "Erosion by a line, length: %d, dx: %d, dy: %d, dz: %d, type: %d", length, dx, dy, dz, type);
   LIARdebug(LIARstrbuf);
 
   if (outbuf != inbuf)
     memcpy(outbuf, inbuf, ncol*nrow*nslice);
 
+  /* erode by a bresenham or periodic line */
   if (type != PERIODIC) {
-    LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
-		  genfmax_char, bresenham3d);
-    LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
-		  genfmin_char, bresenham3d);
-  }
+    LIARerr= glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
+		  computemin, computebresen);
+  } /* end if */
   else {
     LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
-		  genfmax_char, periodic3d);
-    LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
-		  genfmin_char, periodic3d);
-  }
+		  computemin, computeperiod);
+  } /* end else */
 
-  return(LIARerr);
+  return LIARerr;
 
-} /* end lfclose3d_line */
-
-#endif
+}
 
 
-
+#endif // LFLERODE3D_HPP

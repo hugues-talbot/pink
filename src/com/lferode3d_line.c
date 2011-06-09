@@ -32,15 +32,15 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/* \file lfopen3d.c
+/* \file lferode3d.c
 
 \brief
 
-<B>Usage: in.pgm x y out.pgm </B>
+<B>Usage:</B>
 
-<B>Description:morphological closing by a rectangle structuring element </B>
+<B>Description:</B>
 
-<B>Types supported: all type </B>
+<B>Types supported:</B>
 
 <B>Category:</B>
 \ingroup
@@ -50,15 +50,15 @@ knowledge of the CeCILL license and that you accept its terms.
 /*
 NAME
 
-<B>dilat</B> - morphological closing by a rectangle structuring element
+<B>dilat</B> - morphological erosion by a rectangle structuring element
 
 SYNOPSIS
 
-<B>dilat</B> in.pgm x y out.pgm
+<B>dilat</B> in.pgm el.pgm x y out.pgm
 
 DESCRIPTION
 
-The rectangle structuring element is given by the non-null values x and y, which are the size of the rectangle
+The rectangle structuring element is given by the non-null values x, y and z, which are the size of the 3d rectangle
 <B>x</B> and <B>y</B>.
 
 Types supported: all type
@@ -71,26 +71,26 @@ morph
 
 /* Hugues Talbot, June 2011 */
 
-#include <stdio.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <mccodimage.h>
-#include <mcimage.h>
-#include <liarp.h>
-
+# include <stdio.h>
+# include <stdint.h>
+# include <sys/types.h>
+# include <stdlib.h>
+# include <mccodimage.h>
+# include <mcimage.h>
+# include <liarp.h>
 
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * image;
-  int dimx=0, dimy=0;
+    struct xvimage * image;
+  int dimx=0, dimy=0, dimz=0;
+  int length=0;
 
-  if (argc != 5)
+  if (argc != 7)
   {
-    fprintf(stderr, "usage: %s f.pgm px py out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s f.pgm px py pz out.pgm \n", argv[0]);
     exit(1);
   }
 
@@ -103,19 +103,25 @@ int main(int argc, char **argv)
 
   dimx=atof(argv[2]);
   dimy=atof(argv[3]);
-  if ( (dimx==0) ||(dimy==0) )
+  dimz=atof(argv[4]);
+  length==atof(argv[5]);
+  if ( (dimx==0) && (dimy==0) && (dimz==0))
   {
-    fprintf(stderr, "%s wrong dimension for the rectangle \n", argv[0]);
+    fprintf(stderr, "%s wrong direction for the line \n", argv[0]);
+    exit(1);
+  }
+  if ( length==0)
+  {
+    fprintf(stderr, "%s wrong length for the line \n", argv[0]);
     exit(1);
   }
 
 
-  if (imfopen3D_rect(image, dimx, dimy,1, image)!=0 )
+  if (imferode3D_line(image, dimx, dimy,dimz,length, image)!=0 )
   {
-      fprintf(stderr, "%s: function imfopen3D_rect failed\n", argv[0]);
+      fprintf(stderr, "%s: function imfclose3D_rect failed\n", argv[0]);
       exit(1);
   }
-
 
   writeimage(image, argv[argc-1]);
   freeimage(image);
