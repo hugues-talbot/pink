@@ -51,12 +51,12 @@ knowledge of the CeCILL license and that you accept its terms.
 
    NOTE: change the name
 */
-int lferode3d_rect(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
+int lferode3d_rect_char(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
 		    int nslice, int dimx, int dimy, int dimz)
 {
   char LIARstrbuf[1024];
 
-  sprintf(LIARstrbuf, "Erosion by a 3d rect, %d x %d x %d", dimx, dimy, dimz);
+  sprintf(LIARstrbuf, "Erosion by a 3d rect (version char), %d x %d x %d", dimx, dimy, dimz);
   LIARdebug(LIARstrbuf);
 
   /* if out buffer is different to in buffer then copy contents */
@@ -64,11 +64,33 @@ int lferode3d_rect(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
     memcpy(outbuf, inbuf, ncol*nrow*nslice);
 
   /* set each voxel (in outbuf) to min within 3d rect (ie erode) */
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, genfmin_char);
+  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemin);
 
   return(0);
 
 } /* end lferode3d_rect */
+
+int lferode3d_rect_int4(INT4_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
+		    int nslice, int dimx, int dimy, int dimz)
+{
+  char LIARstrbuf[1024];
+
+  sprintf(LIARstrbuf, "Erosion by a 3d rect (version int4), %d x %d x %d", dimx, dimy, dimz);
+  LIARdebug(LIARstrbuf);
+
+  /* if out buffer is different to in buffer then copy contents */
+  if (inbuf != outbuf)
+    memcpy(outbuf, inbuf, ncol*nrow*nslice*sizeof(INT4_TYPE));
+
+  /* set each voxel (in outbuf) to min within 3d rect (ie erode) */
+  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemin);
+
+  return(0);
+
+} /* end lferode3d_rect_int4 */
+
+
+
 
 
 /**

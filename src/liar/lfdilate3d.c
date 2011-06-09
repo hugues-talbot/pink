@@ -2,21 +2,21 @@
  * File:		lfdilate3d.c
  *
   Hugues Talbot	 7 Dec 2010
- 
+
 This software is an image processing library whose purpose is to be
 used primarily for research and teaching.
 
 This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software. You can  use, 
+abiding by the rules of distribution of free software. You can  use,
 modify and/ or redistribute the software under the terms of the CeCILL
 license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+"http://www.cecill.info".
 
 As a counterpart to the access to the source code and  rights to copy,
 modify and redistribute granted by the license, users are provided only
 with a limited warranty  and the software's author,  the holder of the
 economic rights,  and the successive licensors  have only  limited
-liability. 
+liability.
 
 In this respect, the user's attention is drawn to the risks associated
 with loading,  using,  modifying and/or developing or reproducing the
@@ -25,9 +25,9 @@ that may mean  that it is complicated to manipulate,  and  that  also
 therefore means  that it is reserved for developers  and  experienced
 professionals having in-depth computer knowledge. Users are therefore
 encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+requirements in conditions enabling the security of their systems and/or
+data to be ensured and,  more generally, to use and operate it in the
+same conditions as regards security.
 
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
@@ -46,15 +46,15 @@ knowledge of the CeCILL license and that you accept its terms.
 
 /**
  * \brief dilate a 3d image by a 3d rectangle
-   
+
    NOTE: change the name
 */
-int lfdilate3d_rect(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
+int lfdilate3d_rect_char(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
 		    int nslice, int dimx, int dimy, int dimz)
 {
   char LIARstrbuf[1024];
 
-  sprintf(LIARstrbuf, "Dilation by a 3d rect, %d x %d x %d", dimx, dimy, dimz);
+  sprintf(LIARstrbuf, "Dilation by a 3d rect (version char), %d x %d x %d", dimx, dimy, dimz);
   LIARdebug(LIARstrbuf);
 
   /* if out buffer is different to in buffer then copy contents */
@@ -62,16 +62,42 @@ int lfdilate3d_rect(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
     memcpy(outbuf, inbuf, ncol*nrow*nslice);
 
   /* set each voxel (in outbuf) to max within 3d rect (ie dilate) */
-  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, genfmax_char);
+  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemax);
 
   return(0);
 
-} /* end lfdilate3d_rect */
+} /* end lfdilate3d_rect_char */
+
+
+
+int lfdilate3d_rect_int4(INT4_TYPE *inbuf, INT4_TYPE *outbuf, int ncol, int nrow,
+		    int nslice, int dimx, int dimy, int dimz)
+{
+  char LIARstrbuf[1024];
+
+  sprintf(LIARstrbuf, "Dilation by a 3d rect (version int4), %d x %d x %d", dimx, dimy, dimz);
+  LIARdebug(LIARstrbuf);
+
+  /* if out buffer is different to in buffer then copy contents */
+  if (inbuf != outbuf)
+    memcpy(outbuf, inbuf, ncol*nrow*nslice*sizeof(INT4_TYPE));
+
+  /* set each voxel (in outbuf) to max within 3d rect (ie dilate) */
+  rect3dminmax(outbuf, ncol, nrow, nslice, dimx, dimy, dimz, computemax);
+
+  return(0);
+
+} /* end lfdilate3d_rect_int4 */
+
+
+
+
+
 
 /* lfdilate3d_line
  * dilate a 3d image by a 3d line
  */
-int lfdilate3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow, 
+int lfdilate3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
 		   int nslice, int length, int dx, int dy, int dz, int type)
 {
   char LIARstrbuf[1024];
@@ -85,14 +111,14 @@ int lfdilate3d_line(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol, int nrow,
 
   /* dilate by either a bresenham or periodic line */
   if (type != PERIODIC) {
-    LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz, 
+    LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
 		  genfmax_char, bresenham3d);
   } /* end if */
   else {
-    LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz, 
+    LIARerr = glineminmax3d(outbuf, ncol, nrow, nslice, length, dx, dy, dz,
 		  genfmax_char, periodic3d);
   } /* end else */
-    
+
   return LIARerr;
 
 }
