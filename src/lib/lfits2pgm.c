@@ -217,14 +217,15 @@ struct xvimage * lfits2pgm(char *filename)
     return (image);
 } // main
 
-#else  // HAVE_FITS_LIB
+#else  // NOT HAVE_FITS_LIB
 
-int main()
+struct xvimage * lfits2pgm(char *filename)
 {
     fprintf(stderr,"Sorry, FITS library not found at compile time\n");
-    return 1;
+
+    return 0;
 }
-#endif // HAVE_FITS_LIB
+#endif // NOT HAVE_FITS_LIB
 
 
 
