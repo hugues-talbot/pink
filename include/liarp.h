@@ -12,12 +12,8 @@
 #ifndef LIARP_
 #define LIARP_
 
-#ifdef __cplusplus
-extern              "C"
-{
-#endif                          /* __cplusplus */
+// pure definition of macros,
 
-#ifndef __cplusplus
 
 #if !defined(liarmax) && !defined(HAS_MINMAX)
 #define liarmax(a,b) ((a)<(b)?(b):(a))
@@ -27,10 +23,6 @@ extern              "C"
 #define liarmin(a,b) ((a)>(b)?(b):(a))
 #endif
 
-#endif
-
-    int LIARdebug(const char *fmt, ...);
-    int LIARerror(const char *msg, ...);
 
 #include "generic_macros.h"
 
@@ -221,9 +213,17 @@ extern              "C"
 //#include "fseries.h"
 //#include "fseries3d.h"
 
+// pure C function declarations
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    int LIARdebug(const char *fmt, ...);
+    int LIARerror(const char *msg, ...);
+
 #ifdef __cplusplus
 }
-#endif                          /* __cplusplus */
+#endif
 
 
 #endif /* LIARP_ */
