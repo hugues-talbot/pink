@@ -5,7 +5,7 @@ INCLUDE(CheckTypeSize)
 
 # ------------------------------------
 # -------- The shared library --------
-# ------------------------------------ 
+# ------------------------------------
 
 FILE( GLOB lib_src_c *.c )
 # we should use only one kind of extension for C++ please
@@ -16,7 +16,8 @@ FILE( GLOB lib_src_cxx *.cxx )
 FILE( GLOB lib_src_bdd ../bdd/*.c )
 #message(info="LIAR components"
 ## LIAR is no longer an option ## if (PYTHON_FRONT_END) # LIAR obsolete
-FILE( GLOB lib_src_liar ../liar/*.c )
+FILE( GLOB lib_src_liar_c ../liar/*.c)
+FILE( GLOB lib_src_liar_cpp ../liar/*.cpp)
     # for generic programming in C
 include_directories( ../liar )
 ## LIAR is no longer an option ## endif(PYTHON_FRONT_END) # LIAR obsolete
@@ -38,10 +39,10 @@ include_directories( ${PYTHON_INCLUDE} )
 if ( NOT PYTHON_FRONT_END )
     #message( info= ${lib_src_cxx} )
     #message( info= ${lib_src_cpp} )
-    add_library(pink SHARED ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} ${lib_src_liar} ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
+    add_library(pink SHARED ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     #message( FATAL_ERROR "pink=" ${pink} )
 else ( NOT PYTHON_FRONT_END )
-    add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
+    add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     set( LIBS ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${PYTHON_LIBRARY} )
 endif ( NOT PYTHON_FRONT_END )
 
@@ -49,7 +50,7 @@ endif ( NOT PYTHON_FRONT_END )
 target_link_libraries( pink ${LIBS} )
 
 if (CMAKE_HOST_WIN32)
-    add_custom_command( TARGET pink POST_BUILD 
+    add_custom_command( TARGET pink POST_BUILD
 	COMMAND cp ${CMAKE_BINARY_DIR}/lib/cygpink.dll ${CMAKE_BINARY_DIR}/bash/cygpink.dll
     )
 endif (CMAKE_HOST_WIN32)
@@ -65,8 +66,8 @@ else ( THIS_IS_64bit )
     set(PINK_LIBDIR "lib" )
 endif ( THIS_IS_64bit )
 
-install( 
-    TARGETS pink LIBRARY 
+install(
+    TARGETS pink LIBRARY
     DESTINATION ${CMAKE_INSTALL_PREFIX}/${PINK_LIBDIR}
 )
 
