@@ -1,15 +1,15 @@
 /*
  * File:		fseries.h
  *
- 
+
  *
 */
 
 /**********************************************************
  fseries.h
  -----------
- 
-**********************************************************/  
+
+**********************************************************/
 
 #ifndef LIAR_FSERIES_H
 #define LIAR_FSERIES_H
@@ -18,27 +18,42 @@
 #define PERIODIC	0
 #define BRESENHAM	1
 
+enum {computemin=true, computemax=false};
 
-/* prototypes from genfmin.c, function in lfdilate.c etc */
-extern void genfmin_char(PIX_TYPE *f,PIX_TYPE *g,PIX_TYPE *h,INT4_TYPE *p,
-		    unsigned int nx, unsigned int K);
+template <typename Type>
+void genfmin(Type *f,
+            Type *g,
+            Type *h,
+            long *p,
+            unsigned int nx, unsigned int K);
 
-extern void genfmin_int4(INT4_TYPE *f,INT4_TYPE *g,INT4_TYPE *h,INT4_TYPE *p,
-			 unsigned int nx,unsigned int K);
+template <typename Type>
+void genfmax(Type *f,
+            Type *g,
+            Type *h,
+            long *p,
+            unsigned int nx, unsigned int K);
 
-extern void genfmin_dbl(DBL_TYPE *f,DBL_TYPE *g,DBL_TYPE *h,INT4_TYPE *p,
-			unsigned int nx,unsigned int K);
-
-
-/* prototypes from genfmax.c, function in lfdilate.c etc */
-extern void genfmax_char(PIX_TYPE *f,PIX_TYPE *g,PIX_TYPE *h,INT4_TYPE *p,
-		    unsigned int nx, unsigned int K); 
-
-extern void genfmax_int4(INT4_TYPE *f,INT4_TYPE *g,INT4_TYPE *h,INT4_TYPE *p,
-			 unsigned int nx, unsigned int K);
-
-extern void genfmax_dbl(DBL_TYPE *f,DBL_TYPE *g,DBL_TYPE *h,INT4_TYPE *p,
-			unsigned int nx,unsigned int K);
+///* prototypes from genfmin.c, function in lfdilate.c etc */
+//extern void genfmin_char(PIX_TYPE *f,PIX_TYPE *g,PIX_TYPE *h,INT4_TYPE *p,
+//		    unsigned int nx, unsigned int K);
+//
+//extern void genfmin_int4(INT4_TYPE *f,INT4_TYPE *g,INT4_TYPE *h,INT4_TYPE *p,
+//			 unsigned int nx,unsigned int K);
+//
+//extern void genfmin_dbl(DBL_TYPE *f,DBL_TYPE *g,DBL_TYPE *h,INT4_TYPE *p,
+//			unsigned int nx,unsigned int K);
+//
+//
+///* prototypes from genfmax.c, function in lfdilate.c etc */
+//extern void genfmax_char(PIX_TYPE *f,PIX_TYPE *g,PIX_TYPE *h,INT4_TYPE *p,
+//		    unsigned int nx, unsigned int K);
+//
+//extern void genfmax_int4(INT4_TYPE *f,INT4_TYPE *g,INT4_TYPE *h,INT4_TYPE *p,
+//			 unsigned int nx, unsigned int K);
+//
+//extern void genfmax_dbl(DBL_TYPE *f,DBL_TYPE *g,DBL_TYPE *h,INT4_TYPE *p,
+//			unsigned int nx,unsigned int K);
 
 #endif // LIAR_FSERIES_H
 

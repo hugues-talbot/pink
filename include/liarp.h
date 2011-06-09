@@ -218,8 +218,8 @@ extern              "C"
     } pixtype;
 
     // flat series (2D and 3D)
-#include "fseries.h"
-#include "fseries3d.h"
+//#include "fseries.h"
+//#include "fseries3d.h"
 
 #ifdef __cplusplus
 }

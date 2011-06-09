@@ -12,6 +12,11 @@ extern "C" {
 
 int imferode3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output);
 
+int imfdilat3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output);
+
+int imfopen3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output);
+
+int imfclose3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output);
 
 #ifdef __cplusplus
 }

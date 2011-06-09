@@ -18,6 +18,8 @@ extern              "C"
 #endif                          /* __cplusplus */
 
 
+
+
     /* 3d rectangular morphological operations */
 /* prototypes from lfdilate3d.c - from Z-IMAGE function fdilate3D */
 extern int lfdilate3d_rect(PIX_TYPE *inbuf, PIX_TYPE *outbuf, int ncol,
