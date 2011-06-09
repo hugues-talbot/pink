@@ -42,6 +42,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdlib.h>
 
 #include "liarp.h"
+#include "fseries.hpp"
 
 /**
  * \brief close a 3d image using a 3d rectangular SE
