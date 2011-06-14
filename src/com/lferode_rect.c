@@ -87,9 +87,9 @@ int main(int argc, char **argv)
   struct xvimage * image;
   int dimx=0, dimy=0;
 
-  if (argc != 4)
+  if (argc != 5)
   {
-    fprintf(stderr, "usage: %s f.pgm px py pz out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s f.pgm px py out.pgm \n", argv[0]);
     exit(1);
   }
 
@@ -108,12 +108,12 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-
-  if (imferode_rect(image, dimx, dimy, image)!=0 )
-  {
-      fprintf(stderr, "%s: function imferode_rect failed\n", argv[0]);
-      exit(1);
-  }
+  imferode_rect(image, dimx, dimy, image);
+//  if (imferode_rect(image, dimx, dimy, image)!=0 )
+//  {
+//      fprintf(stderr, "%s: function imferode_rect failed\n", argv[0]);
+//      exit(1);
+//  }
 
 
   writeimage(image, argv[argc-1]);

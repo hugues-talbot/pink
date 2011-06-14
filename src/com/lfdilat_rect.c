@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 
   if (argc != 5)
   {
-    fprintf(stderr, "usage: %s f.pgm px py pz out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s f.pgm px py out.pgm \n", argv[0]);
     exit(1);
   }
 
@@ -109,12 +109,12 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-
-  if (imfdilat_rect(image, dimx, dimy,image)!=0 )
-  {
-      fprintf(stderr, "%s: function imfdilat3D_rect failed\n", argv[0]);
-      exit(1);
-  }
+  imfdilat_rect(image, dimx, dimy,image);
+//  if (imfdilat_rect(image, dimx, dimy,image)!=0 )
+//  {
+//      fprintf(stderr, "%s: function imfdilat_rect failed\n", argv[0]);
+//      exit(1);
+//  }
 
 
   writeimage(image, argv[argc-1]);

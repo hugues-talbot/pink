@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 
   if (argc != 5)
   {
-    fprintf(stderr, "usage: %s f.pgm px py pz out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s f.pgm px py out.pgm \n", argv[0]);
     exit(1);
   }
 
