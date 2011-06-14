@@ -110,7 +110,7 @@ long *bresenham3d(int dx, int dy, int dz,
 
     /* set vector length and alocate mem */
     *ol = imwidth + 1;
-    p = (INT4_TYPE*) calloc(*ol, sizeof(INT4_TYPE));
+    p = (long*) calloc(*ol, sizeof(long));
     if (p == NULL) {
       LIARerror("bresenham3d: Unable to allocate memory for line offsets");
       return(NULL);
@@ -173,7 +173,7 @@ long *bresenham3d(int dx, int dy, int dz,
 
     /* set vector length and alocate mem */
     *ol = imheight + 1;
-    p = (INT4_TYPE*) calloc(*ol, sizeof(INT4_TYPE));
+    p = (long*) calloc(*ol, sizeof(long));
     if (p == NULL) {
       LIARerror("bresenham3d: Unable to allocate memory for line offsets");
       return(NULL);
@@ -235,7 +235,7 @@ long *bresenham3d(int dx, int dy, int dz,
 
     /* set vector length and alocate mem */
     *ol = imdepth + 1;
-    p = (INT4_TYPE*) calloc(*ol, sizeof(INT4_TYPE));
+    p = (long*) calloc(*ol, sizeof(long));
     if (p == NULL) {
       LIARerror("bresenham3d: Unable to allocate memory for line offsets");
       return(NULL);

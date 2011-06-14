@@ -87,7 +87,7 @@ int glineminmax3d(Type *f, int nx, int ny, int nz, int k,
 
   Type        *g, *h;                    /* forwards and backwards arrays */
   int         totpix, slicepix;          /* pixel counts                  */
-  long   *line;                     /* the line to perform operation */
+  long        *line;                     /* the line to perform operation */
   int         ol;                        /* length of the line            */
   long        start, end;                /* start and end of line segs    */
   Type        offset;                    /* image offset                  */
@@ -204,13 +204,13 @@ int glineminmax3d(Type *f, int nx, int ny, int nz, int k,
 
 	    /* perform the actual min/max operation */
 	    /* but only if this value of end is acceptable */
-	    if (good_previous)
+	    if (good_previous){
             if (usemin) {
                 genfmin(f+offset, g, h, line+start, end-start+1,(k-period+1)/period);
-        } else {
+            } else {
                genfmax(f+offset, g, h, line+start, end-start+1,(k-period+1)/period);
-        }
-
+            }
+	    }
 	    /* set the start (and end) to the next point */
 	    start = ++end;
 
