@@ -13,6 +13,10 @@
 #ifndef UI__MEASURE_HPP_
 #define UI__MEASURE_HPP_
 
+#include "larith.h"
+#include "lminmax.hpp"
+#include "uiNormalize.hpp"
+
 namespace pink {
 
   const double epsilon=0.00001;  
@@ -43,7 +47,7 @@ namespace pink {
 
     FOR(q, result.get_size().prod())
     {
-      result[q] =  1. / ( epsilon + result[q] );
+      result(q) =  1. / ( epsilon + result(q) );
     } /* FOR */
 
     result = normalize<image_type, 0, 1>(result);
@@ -51,6 +55,23 @@ namespace pink {
     return result;    
   } /* lmeasure*/ 
 
+
+
+  template <class image_type>
+  image_type analytical_inverse( const image_type & image, typename image_type::pixel_type epsilon )
+  {
+    image_type result;
+    result.copy(image);
+
+    FOR(q, result.get_size().prod())
+    {
+      result[q] =  1. / ( epsilon + result[q] );
+    } /* FOR */
+    
+    return result;    
+  }
+  
+  
 }; /* namespace pink */
 
 

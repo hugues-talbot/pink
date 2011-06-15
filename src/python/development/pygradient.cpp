@@ -10,10 +10,9 @@
   ujoimro@gmail.com
 */
 
-#include <pink_development.h>
+#include "pink_development.h"
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pygradient.cpp: " << msg; call_error(fullmessage.str());}
+#include "uiGradient.hpp"
 
 using namespace boost::python;
 using namespace pink;

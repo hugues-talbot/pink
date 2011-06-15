@@ -36,7 +36,7 @@ be size-independent
 #include <boost/python.hpp>
 #include <boost/smart_ptr.hpp>
 
-
+#include "mcimage.h"
 #include "sqlite3.h"
 
 // using boost::lexical_cast;
@@ -94,8 +94,9 @@ be size-independent
 #define PBAR_REPORT_INTERVALL 1
 
 // General Macros
-#define FOR(i,st) for (int i = 0; i<=st-1; i++)
-#define FORR(i,st) for (i = 0; i<=st-1; i++)
+// if st is an unsigned int and 0, than st-1 will result an enormous number
+#define FOR(i,st) for (index_t i = 0; i<st; i++)
+#define FORR(i,st) for (i = 0; i<st; i++)
 
 #define ClassDef(Type)                          \
   class T##Type;                                \
@@ -130,16 +131,16 @@ typedef sqlite3_stmt ** ppsqlite3_stmt;
 //#define UVT_image double_image
 
 
-template <class pixel_type> 
-inline pixel_type _max( pixel_type a, pixel_type b )
+template <class T0, class T1> 
+inline T0 _max( T0 t0, T1 t1 )
 {
-  return a > b ? a : b;
+  return t0 > t1 ? t0 : t1;
 } /* _max */
 
-template <class pixel_type> 
-inline pixel_type _min( pixel_type a, pixel_type b )
+template <class T0, class T1> 
+inline T0 _min( T0 t0, T1 t1 )
 {
-  return a < b ? a : b;
+  return t0 < t1 ? t0 : t1;
 } /* _min */
 
 
@@ -149,13 +150,14 @@ public:
   vval_type();
 
   vval_type( const vval_type & src ); //copy constructor
-  vval_type( int size );
-  vval_type( int size, int defvalue );
+  vval_type( index_t size );
+  vval_type( index_t size, index_t defvalue );
   ~vval_type();
   void normate(); //sets it up the same direction but 1. length.
 };
 
-class vint: public std::vector<int> {
+class vint: public std::vector<index_t>
+{
 #ifdef UJIMAGE_DEBUG
 private:
   std::string debug;
@@ -165,42 +167,43 @@ public:
   vint();
   vint( const vint & src ); //copy constructor
   vint(const vint & src, std::string debug); // copy constructor with debugging
-  vint( int size, std::string debug="" );
-  vint( int size, int defvalue );
+  vint( index_t size, std::string debug="" );
+  vint( index_t size, index_t defvalue );
   vint( const boost::python::list & src );
   ~vint();
   void reset();
-  int prod() const;
-  int prodExcept( int p ) const;
+  index_t prod() const;
+  index_t prodExcept( index_t p ) const;
   uiVal_type fabs() const;
   std::string repr() const;
-  void nextStep( int step, vint & result ) const;
+  void nextStep( index_t step, vint & result ) const;
   bool on_side( const vint & point ) const;
   bool inside( const vint & ) const;
   //bool inside( const boost::python::list & point ) const;
   bool nextStep_it( vint & result ) const;
   bool operator==( const vint & other ) const;
   bool operator!=( const vint & other ) const;
-  int position( const vint & elem ) const;
+  index_t position( const vint & elem ) const;
   bool addSet( const vint & other );
-  vint & operator << ( const int & initiator );
-  vint & operator,   ( const int & next );
-};
+  vint & operator << ( const index_t & initiator );
+  vint & operator,   ( const index_t & next );
+}; /* vint */
 
 template <class im_type>
-class uiVector{
+class uiVector
+{
 public:
   boost::shared_array<im_type> values;
-  int length;
-  uiVector(int length);
+  index_t length;
+  uiVector(index_t length);
   uiVector(const std::vector<im_type> & src); // copy constructor
   ~uiVector();
-};
+}; /* uiVector */
 
 
 
 template <class im_type>
-uiVector<im_type>::uiVector(int len){
+uiVector<im_type>::uiVector(index_t len){
   values.reset(new im_type[len]);
 };
 
@@ -224,12 +227,12 @@ uiVector<im_type>::uiVector(const std::vector<im_type> & src){
 
 
 typedef struct {
-  int start;
-  int end;
+  index_t start;
+  index_t end;
 } uiDibble;
 
 // jump is for reducing the number of allocation in the dibbling. about to be tuned
-#define jump 10
+#define jump 10000
 // maxdibble is the size allocation for the constrain. It should never depass L1-data-10%
 // on core2 duo it is about 7000 for v + g + 3 * dimension * f
 #define MaxDibble 500
@@ -241,7 +244,7 @@ typedef struct {
 
 class progressBar {
 private:
-  int max, min, pos;
+  index_t max, min, pos;
   bool measure;
   bool started;
   time_t begin, finish;
@@ -254,12 +257,13 @@ public:
   bool timeToReport();
   void start();
   void stop();
-  void maxPos(int maxPos);
-  void minPos(int minPos);
-  void setPos(int currPos);
-  std::string operator << (int currPos);
+  void maxPos(index_t maxPos);
+  void minPos(index_t minPos);
+  void setPos(index_t currPos);
+  std::string operator << (index_t currPos);
   std::string percent();
   std::string elapsedTime();
+  index_t elapsedSeconds();  
   
   std::string remainingTime();
   
@@ -267,15 +271,15 @@ public:
 
 class uiDibbles {
 private:
-  int size;
-  int length;
+  index_t size;
+  index_t length;
 public:
   boost::shared_array<uiDibble> values;
-  uiDibbles(int n);
+  uiDibbles(index_t n);
   uiDibbles();
   ~uiDibbles();
-  void addElement(int start, int end);
-  int get_length();
+  void addElement(index_t start, index_t end);
+  index_t get_length();
 };
 
 void call_error(const std::string message);

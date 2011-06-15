@@ -14,6 +14,7 @@
 #define UI_UNGERFLOW__
 
 #include "uiFlow.hpp"
+#include "uiFrame.hpp"
 
 #define REPORT_INTERVAL 10
 
@@ -179,21 +180,21 @@ namespace pink {
   {
     FOR(q, this->length_glob)
     {
-      if ( this->potencial[q] - guidence_f[q] > lambda[q] * theta )
+      if ( this->potencial(q) - guidence_f(q) > lambda(q) * theta )
       {
-	dual_potencial[q] = this->potencial[q] - lambda[q] * theta;	
+	dual_potencial(q) = this->potencial(q) - lambda(q) * theta;	
       }
-      else /* NOT (*potencial)[q] - (*guidence_f)[q] > (*lambda)[q] * theta */
+      else /* NOT (*potencial)(q) - (*guidence_f)(q) > (*lambda)(q) * theta */
       {
-	if ( this->potencial[q] - guidence_f[q] < - lambda[q] * theta )
+	if ( this->potencial(q) - guidence_f(q) < - lambda(q) * theta )
 	{
-	  dual_potencial[q] = this->potencial[q] + lambda[q] * theta;
+	  dual_potencial(q) = this->potencial(q) + lambda(q) * theta;
 	}
-	else /* NOT (*potencial)[q] - (*guidence_f)[q] < - (*lambda)[q] * theta => |u-f| < lambda * theta */	
+	else /* NOT (*potencial)(q) - (*guidence_f)(q) < - (*lambda)(q) * theta => |u-f| < lambda * theta */	
 	{
-	  dual_potencial[q] = guidence_f[q];
-	} /* NOT (*potencial)[q] - (*guidence_f)[q] < - (*lambda)[q] * theta */
-      } /* NOT (*potencial)[q] - (*guidence_f)[q] > (*lambda)[q] * theta */
+	  dual_potencial(q) = guidence_f(q);
+	} /* NOT (*potencial)(q) - (*guidence_f)(q) < - (*lambda)(q) * theta */
+      } /* NOT (*potencial)(q) - (*guidence_f)(q) > (*lambda)(q) * theta */
     } /* FOR */
     
   } /* ungerflow::upDateThreshold */

@@ -8,7 +8,7 @@
 #include "uiFibreTypes.h"
 
 
-#define sqlite3(command, errormessage)				      \
+#define sqlite3com(command, errormessage)				      \
  if (SQLITE_OK!=command){                                             \
    std::cout << "sqlite says: " << sqlite3_errmsg(database) << std::endl;       \
    pink_error(errormessage);                                               \
@@ -121,7 +121,7 @@ namespace pink{
     
     std::stringstream ss2;
     ss2 << "select rowid,pos_x,pos_y,pos_z,pos_t,size_x,size_y,size_z,size_t from datas where id=" << ID << ";";
-    sqlite3 (sqlite3_get_table( database, ss2.str().c_str(), &results, &row, &column, &errmsg), 
+    sqlite3com (sqlite3_get_table( database, ss2.str().c_str(), &results, &row, &column, &errmsg), 
 	     "couldn't get the list of rowid s which containt the blobs");
     
     FOR(q, row){ // the ids are from 1 to row, that is q+1
@@ -137,7 +137,7 @@ namespace pink{
       
       psqlite3_blob blob;
       
-      sqlite3( 
+      sqlite3com( 
 	sqlite3_blob_open( database, "main", "datas", "data", iRow, OPEN_BLOB_RO, &blob ),
 	"couldn't open the blob from the datas table in the image file"
 	);
@@ -161,12 +161,12 @@ namespace pink{
 	pink_error("the size of the data is not corresponding with the size defined by the tags");
       
       
-      sqlite3( sqlite3_blob_read(blob, (void*)data.get(), sizeof(pixel_type)*size->prod(), 0), 
+      sqlite3com( sqlite3_blob_read(blob, (void*)data.get(), sizeof(pixel_type)*size->prod(), 0), 
 	       "the data is not read");
       
       result.reset( new image_type( *size, data ) );
       
-      sqlite3( sqlite3_blob_close(blob) , "couldn't close the blob");
+      sqlite3com( sqlite3_blob_close(blob) , "couldn't close the blob");
       
     };
     

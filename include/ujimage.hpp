@@ -89,7 +89,8 @@ bool operator>( const dcomplex & x, const dcomplex & y);
 bool operator<( const dcomplex & x, const dcomplex & y);
 std::string repr_dcomplex(const dcomplex & x);
 
-namespace pink{
+namespace pink
+{
 
   class deep_xvimage;  
   
@@ -105,7 +106,7 @@ namespace pink{
       {         			      
 	error("unimplemented image type specialization");
       }
-    int int_pixel_type() const 
+    index_t int_pixel_type() const 
       {
         error("unimplemented image type specialization");
       }
@@ -147,9 +148,9 @@ namespace pink{
   /**
      helper function for reading and writing from and to xvimage
   */
-  boost::shared_ptr<vint> getDimensions( const int x, const int y, const int z, const int t );
+  boost::shared_ptr<vint> getDimensions( const index_t x, const index_t y, const index_t z, const index_t t );
   
-  void setDimensions(const vint & dim, int & x, int & y, int & z, int & t);
+  void setDimensions(const vint & dim, index_t & x, index_t & y, index_t & z, index_t & t);
 
   /**
      This function is a wrap around readimage. It returns a C++ class
@@ -157,7 +158,7 @@ namespace pink{
    */
   boost::shared_ptr<deep_xvimage> py_readimage( std::string filename );
 
-  std::string image_type_string( int pixel_type );
+  std::string image_type_string( index_t pixel_type );
 
 
   /**
@@ -190,7 +191,7 @@ namespace pink{
     shallow_xvimage( const shallow_xvimage & src ); // copy constructor. RAISES AND ERROR!
                                                     // it's not yet implemented, raises an
                                                     // error if called implicitly
-    shallow_xvimage( const vint & dim, int int_pixel_type );  // construct from dimension. The data 
+    shallow_xvimage( const vint & dim, index_t int_pixel_type );  // construct from dimension. The data 
     // type must be specified. See mcimage.h
     virtual ~shallow_xvimage(); // default destructor
     std::string imtype(); // returns the image type
@@ -435,8 +436,14 @@ namespace pink{
     I[200]=3;
     \endcode
     */    
-    pixel_type & operator[]( int pos );
-    const pixel_type & operator[]( int pos ) const;
+    pixel_type & operator[]( index_t pos );
+    const pixel_type & operator[]( index_t pos ) const;
+
+    /**
+    \brief Same as operator[]. Included to avoid ambiguity.
+    */    
+    pixel_type & operator()( index_t pos );
+    const pixel_type & operator()( index_t pos ) const;
 
     /**
     \brief 'vint' access to the pixels
@@ -489,8 +496,8 @@ namespace pink{
     const pixel_type & operator[]( const boost::python::list & pos ) const; // const python list acces to the elements
 
     // these methods are the operators renamed so they could be wrapped by boost
-    const pixel_type & get_operator_int( int pos ) const;
-    void set_operator_int( int pos, const pixel_type & value );
+    const pixel_type & get_operator_int( index_t pos ) const;
+    void set_operator_int( index_t pos, const pixel_type & value );
 
     const pixel_type & get_operator_vint( const vint& pos ) const;
     void set_operator_vint( const vint & pos, const pixel_type & value );
@@ -591,7 +598,7 @@ namespace pink{
     /**
     \brief Counts the non zero pixels.
     */
-    int area();
+    index_t area();
 
     /**
     \brief Counts the image average value. 
@@ -639,7 +646,7 @@ CHAR IMAGE
 	return "uint8_t";
       }
     
-    int int_pixel_type() const						
+    index_t int_pixel_type() const						
       {									
 	return VFF_TYP_1_BYTE;						
       }
@@ -677,7 +684,7 @@ SHORT IMAGE
 	return "uint16_t";
       }
     
-    int int_pixel_type() const						
+    index_t int_pixel_type() const						
       {									
 	return VFF_TYP_2_BYTE;						
       }
@@ -716,7 +723,7 @@ INT IMAGE
 	return "int32_t";
       }
     
-    int int_pixel_type() const						
+    index_t int_pixel_type() const						
       {									
 	return VFF_TYP_4_BYTE;						
       }
@@ -756,7 +763,7 @@ FLOAT IMAGE
 	return "float";
       }
     
-    int int_pixel_type() const						
+    index_t int_pixel_type() const						
       {									
 	return VFF_TYP_FLOAT;						
       }
@@ -794,7 +801,7 @@ double IMAGE
 	return "double";
       }
     
-    int int_pixel_type() const						
+    index_t int_pixel_type() const						
       {									
 	return VFF_TYP_DOUBLE;						
       }
@@ -831,7 +838,7 @@ fcomplex IMAGE
 	return "fcomplex";
       }
     
-    int int_pixel_type() const						
+    index_t int_pixel_type() const						
       {									
 	return VFF_TYP_COMPLEX;						
       }
@@ -868,7 +875,7 @@ dcomplex IMAGE
 	return "dcomplex";
       }
     
-    int int_pixel_type() const						
+    index_t int_pixel_type() const						
       {									
 	return VFF_TYP_DCOMPLEX;						
       }
@@ -1328,7 +1335,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  pixel_type & ujoi<pixel_type >::operator[](int pos){ // index acces to the elements
+  pixel_type & ujoi<pixel_type >::operator[](index_t pos){ // index acces to the elements
 
     // CAPABILITY TEST IN DEBUG MODE
     // this is a test which would be slow in an everyday situation,
@@ -1337,7 +1344,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     if ( ( pos < 0 ) or (pos > this->size->prod()) ) // note pos == size->prod intentionally left in for std::copy
     {
       std::cerr << "error: number of elements is " << this->size->prod() << " while pos = " << pos << std::endl;
-      error("You are trying to access elements otside of the image\n");
+      error("You are trying to access elements outside of the image\n");
     } /* if */
 #   endif /* UJIMAGE_DEBUG */
 
@@ -1349,7 +1356,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  const pixel_type & ujoi<pixel_type >::operator[](int pos) const { // const index acces to the elements
+  const pixel_type & ujoi<pixel_type >::operator[](index_t pos) const { // const index acces to the elements
 
     // CAPABILITY TEST IN DEBUG MODE
     // this is a test which would be slow in an everyday situation,
@@ -1358,13 +1365,30 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     if ( ( pos < 0 ) or (pos > this->size->prod()) ) // note pos == size->prod intentionally left in for std::copy
     {
       std::cerr << "error: number of elements is " << this->size->prod() << " while pos = " << pos << std::endl;
-      error("You are trying to access elements otside of the image\n");
+      error("You are trying to access elements outside of the image\n");
     } /* if */
 #   endif /* UJIMAGE_DEBUG */
 
     return pixels[pos];
 
   } /* ujoi::operator[] */
+
+
+
+  template <class pixel_type >
+  pixel_type & ujoi<pixel_type >::operator()( index_t pos )
+  {
+    return pixels[pos];    
+  }
+  
+
+
+  template <class pixel_type >
+  const pixel_type & ujoi<pixel_type >::operator()( index_t pos ) const
+  {
+    return pixels[pos];    
+  }
+  
 
 
   template <class pixel_type >
@@ -1377,7 +1401,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     if ( not size->inside(pos) )
     {
       std::cerr << "error: image dimensions are " << this->size->repr() << " while pos = " << pos.repr() << "\n";
-      error("You are trying to access elements otside of the image\n");
+      error("You are trying to access elements outside of the image\n");
     } /* if */
 #   endif /* UJIMAGE_DEBUG */
 
@@ -1397,7 +1421,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     if ( not size->inside(pos) )
     {
       std::cerr << "error: image dimensions are " << this->size->repr() << " while pos = " << pos.repr() << "\n";
-      error("You are trying to access elements otside of the image\n");
+      error("You are trying to access elements outside of the image\n");
     } /* if */
 #   endif /* UJIMAGE_DEBUG */
 
@@ -1430,14 +1454,14 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  const pixel_type & ujoi<pixel_type >::get_operator_int( int pos ) const {
+  const pixel_type & ujoi<pixel_type >::get_operator_int( index_t pos ) const {
     return (*this)[pos]; 
   };
 
 
 
   template <class pixel_type >
-  void ujoi<pixel_type >::set_operator_int( int pos, const pixel_type & value ){
+  void ujoi<pixel_type >::set_operator_int( index_t pos, const pixel_type & value ){
     (*this)[pos]=value;
   }
 
@@ -1607,7 +1631,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     FOR(q, get_size().prod())
     {
-      (*this)[q]=value;      
+      (*this)(q)=value;      
     } /* FOR */
 
     return *this;    
@@ -1626,7 +1650,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     FOR(q, get_size().prod())
     {
-      if ((*this)[q]!=other[q])
+      if ((*this)(q)!=other(q))
       {
         return false;
       } /* (*this)[q]!=other[q] */      
@@ -1641,7 +1665,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     FOR(q, get_size().prod())
     {
-      (*this)[q]=this->add((*this)[q],other[q]);
+      (*this)(q)=this->add((*this)(q),other(q));
     } /* FOR */
     
     return *this;    
@@ -1656,7 +1680,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     FOR(q, get_size().prod())
     {
-      (*this)[q]=this->sub((*this)[q],other[q]);
+      (*this)(q)=this->sub((*this)(q),other(q));
     } /* FOR */
     
     return *this;      
@@ -1670,7 +1694,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     FOR(q, get_size().prod())
     {
-      (*this)[q]-=value;      
+      (*this)(q)-=value;      
     } /* FOR */
     
     return *this;      
@@ -1684,7 +1708,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     FOR(q, get_size().prod())
     {
-      (*this)[q]+=value;      
+      (*this)(q)+=value;      
     } /* FOR */
     
     return *this;    
@@ -1698,7 +1722,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     FOR(q, get_size().prod())
     {
-      (*this)[q]/=value;      
+      (*this)(q)/=value;      
     } /* FOR */
     
     return *this;    
@@ -1712,7 +1736,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     FOR(q, get_size().prod())
     {
-      (*this)[q]*=value;      
+      (*this)(q)*=value;      
     } /* FOR */
     
     return *this;    
@@ -1721,16 +1745,16 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
   
   template <class pixel_type >
-  int ujoi<pixel_type >::area() // number of non zero pixels
+  index_t ujoi<pixel_type >::area() // number of non zero pixels
   {
-    int result=0;
+    index_t result=0;
     
     FOR(q, get_size().prod())
     {
-      if ((*this)[q]!=0)
+      if ((*this)(q)!=0)
       {
         result++;        
-      } /* (*this)[q]!=0 */
+      } /* (*this)(q)!=0 */
     } /* FOR */
   } /* ujoi::area */
 
@@ -1751,10 +1775,10 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
     FOR(q, get_size().prod())
     {
-      if ((*this)[q]!=0)
+      if ((*this)(q)!=0)
       {
         return false;        
-      } /* (*this)[q]!=0 */
+      } /* (*this)(q)!=0 */
     } /* FOR */
 
     return true;    
@@ -1769,7 +1793,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     
     FOR(q, get_size().prod())
     {
-      result+=(*this)[q];
+      result+=(*this)(q);
     } /* FOR */
 
     return result;
@@ -1854,7 +1878,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   
-}; /* namespace pink */
+} /* namespace pink */
 
 #endif /* __UJIMAGE_HPP */
 // #endif /* __cplusplus */

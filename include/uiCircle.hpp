@@ -14,8 +14,15 @@
 #define UI_CIRCLE_HPP_
 
 #include <string>
-#include <iostream>
 #include <sstream>
+#include <iostream>
+#include <boost/python.hpp>
+#include <gsl/gsl_vector.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_interp.h> // uiGradient is using it
+#include <gsl/gsl_multifit_nlin.h> // uiCircle is using it
+
+#include "uiFibreTypes.h"
 
 namespace pink { 
 

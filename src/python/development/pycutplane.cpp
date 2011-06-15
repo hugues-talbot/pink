@@ -13,14 +13,12 @@
 // boost python wrapper
 // this file opens a file with raw image data as an image of given type
 
-#include <pink_python.h>
-
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in pycutplane.cpp: " << msg; call_error(fullmessage.str());}
+#include "pink_python.h"
 
 using namespace boost::python;
 using namespace pink;
 
+#include "uiCutPlane.hpp"
 
 UI_EXPORT_ONE_FUNCTION( cpp_draw_plane, 
 			draw_plane, 

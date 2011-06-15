@@ -22,7 +22,7 @@
 
 USING_PART_OF_NAMESPACE_EIGEN
 
-#define DVECT(x) cout << "----------------\n" << BOOST_PP_STRINGIZE(x) << " = \n" << x << "\n"
+// #define DVECT(x) cout << "----------------\n" << BOOST_PP_STRINGIZE(x) << " = \n" << x << "\n"
 
 
 namespace pink {

@@ -17,33 +17,30 @@
 
 #ifdef __cplusplus
 
-  #include <boost/accumulators/accumulators.hpp>
-  #include <boost/accumulators/statistics.hpp>
-  #include <boost/python.hpp>
-  #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-  #include <boost/python/module.hpp>
-  #include <boost/python/def.hpp>
-  #include <boost/python/implicit.hpp>
+#  include <boost/python.hpp>
+#  include <boost/python/def.hpp>
+#  include <boost/python/module.hpp>
+#  include <boost/python/implicit.hpp>
+#  include <boost/accumulators/statistics.hpp>
+#  include <boost/accumulators/accumulators.hpp>
+#  include <boost/function_types/result_type.hpp>
+#  include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
-  #include <eigen2/Eigen/Core>
-  #include <eigen2/Eigen/LU>
-  #include <eigen2/Eigen/Geometry>
+#  include <eigen2/Eigen/LU>
+#  include <eigen2/Eigen/Core>
+#  include <eigen2/Eigen/Geometry>
 
-  #include <gsl/gsl_interp.h> // uiGradient is using it
-  #include <gsl/gsl_multifit_nlin.h> // uiCircle is using it
+#  include <gsl/gsl_interp.h> // uiGradient is using it
+#  include <gsl/gsl_multifit_nlin.h> // uiCircle is using it
 
 #endif /* __cplusplus */
 
 #ifdef __cplusplus
 
-  #include <uiGradient.hpp>
-  #include <uiFlow.hpp>
-  #include <uiUngerFlow.hpp>
-  #include <uiQDistance.hpp>
-  #include <uiCircle.hpp>
-  #include <ui_fit_circle.hpp>
+#  include "python_doc.h"
+#  include "pyexport.hpp"
+#  include "uiQDistance.hpp"
 
-  #include <pyexport.hpp>
 #endif /* __cplusplus */
 
 

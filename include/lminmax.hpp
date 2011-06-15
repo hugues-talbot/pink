@@ -42,10 +42,10 @@ namespace pink {
 
     FOR(q, length_glob)
     {
-      if (I[q] > max)
+      if (I(q) > max)
       {
-	max = I[q];
-      }; /* if (I[q] > max) */
+	max = I(q);
+      } /* if (I[q] > max) */
 	
     } /* FOR */
 
@@ -69,9 +69,9 @@ namespace pink {
 
     FOR(q, length_glob)
     {
-      if (I[q] < min)
+      if (I(q) < min)
       {
-	min = I[q];
+	min = I(q);
       } /* if (I[q] > min) */
 	
     } /* FOR */

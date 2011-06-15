@@ -29,6 +29,8 @@
  //PTR<uiScalarField> uiDirectionalGrad( PTR<uiScalarField> & f );
  //PTR<uiScalarField> uiDirGradSpecial( PTR<uiScalarField> & f );
 
+#include "ujimage.hpp"
+
 namespace pink {
 
   float_image uiGradientAbs( float_image f );

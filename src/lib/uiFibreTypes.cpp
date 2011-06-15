@@ -99,12 +99,12 @@ void progressBar::stop(){
 }
 
 
-void progressBar::maxPos(int maxPos){
+void progressBar::maxPos(index_t maxPos){
   max = maxPos;
 }
 
 
-void progressBar::minPos(int minPos){
+void progressBar::minPos(index_t minPos){
   min = minPos;
 }
 
@@ -121,14 +121,26 @@ std::string progressBar::elapsedTime(){
   }  
 }
 
+index_t progressBar::elapsedSeconds(){
+  if (started) {
+    if (measure){
+      return time(NULL) - begin;
+    } else {
+      return finish - begin;
+    }
+  } else {
+    return -1;
+  }  
+}
+
 std::string progressBar::remainingTime(){
   if (started) {
     if (measure) {
-      int currtime = time(NULL);
+      index_t currtime = time(NULL);
 
       if (pos==min) return "undetermined";
 	else {
-	  int est_rem = int( 
+	  index_t est_rem = index_t( 
 	    float( max - pos ) * float( currtime - begin ) / float( pos - min )
 	    );
 	  return time2string(est_rem);
@@ -141,13 +153,13 @@ std::string progressBar::remainingTime(){
   }
 }
 
-std::string progressBar::operator << (int currPos){
+std::string progressBar::operator << (index_t currPos){
   pos = currPos;
   last_report = time(NULL);
   return remainingTime();
 }
 
-void progressBar::setPos(int currPos){
+void progressBar::setPos(index_t currPos){
   pos = currPos;
 }
 
@@ -156,7 +168,7 @@ std::string progressBar::percent(){
     return "undeterminable max==min";
   } else {
     std::stringstream ss;
-    ss << int(100.*float(pos-min)/float(max - min));
+    ss << index_t(100.*float(pos-min)/float(max - min));
     ss << "%";
     return ss.str();
   }
@@ -172,12 +184,12 @@ vval_type::vval_type( const vval_type & src ): std::vector<uiVal_type>(src) {  /
   /////!!!!!!! std::cout<< "copying vval_type object unnecessarily" << endl;
 }
 
-vval_type::vval_type( int size ): std::vector<uiVal_type>(size) {
+vval_type::vval_type( index_t size ): std::vector<uiVal_type>(size) {
 //intentionally empty
 }
 
 
-vval_type::vval_type( int size, int defvalue ): std::vector<uiVal_type>(size, defvalue){
+vval_type::vval_type( index_t size, index_t defvalue ): std::vector<uiVal_type>(size, defvalue){
 //intentionally empty
 }
 
@@ -186,7 +198,7 @@ vval_type::~vval_type(){
 }
 
 void vval_type::normate(){ //sets it up the same direction but 1. length.
-  int d = size();
+  index_t d = size();
   uiVal_type sum = 0.;
   FOR(q,d) sum+=uiSqr( (*this)[q] );
   sum = sqrt(sum);
@@ -195,24 +207,24 @@ void vval_type::normate(){ //sets it up the same direction but 1. length.
 
 
 
-// vint object---------------------------------------------------------------
+// vindex_t object---------------------------------------------------------------
 
-vint::vint():std::vector<int>()  //default constructor
+vint::vint():std::vector<index_t>()  //default constructor
 {
   //intentionally left empty
 } /* vint::vint */
 
-vint::vint(const vint & src):std::vector<int>(src)  //copy constructor
+vint::vint(const vint & src):std::vector<index_t>(src)  //copy constructor
 {
   //intentionally left empty
 } /* vint::vint */
 
-vint::vint(const vint & src, std::string debug ):std::vector<int>(src)  //copy constructor
+vint::vint(const vint & src, std::string debug ):std::vector<index_t>(src)  //copy constructor
 {
-  #ifdef UJIMAGE_DEBUG
+# if UJIMAGE_DEBUG >= 6
   this->debug=debug; // representing the name of the object if debugged
   std::cout << "creating vint '" << debug << "' with address " << static_cast<void*>(this) <<"; with the copy constructor"<< std::endl;
-  #endif /* UJIMAGE_DEBUG */
+# endif /* UJIMAGE_DEBUG */
 } /* vint::vint */
 
 
@@ -221,28 +233,28 @@ vint::vint(const vint & src, std::string debug ):std::vector<int>(src)  //copy c
 //   //intentionally left empty
 // } /* vint::vint */
 
-vint::vint( int size, std::string debug /*=""*/ ):std::vector<int>(size)
+vint::vint( index_t size, std::string debug /*=""*/ ):std::vector<index_t>(size)
 {
-  #if UJIMAGE_DEBUG >= 3
+# if UJIMAGE_DEBUG >= 6
   this->debug=debug; // representing the name of the object if debugged
   std::cout << "creating vint '" << debug << "' with address " << static_cast<void*>(this) << std::endl;
-  #endif /* UJIMAGE_DEBUG */
+# endif /* UJIMAGE_DEBUG */
 } /* vint::vint */
 
-vint::vint(int size, int defvalue):std::vector<int>(size, defvalue)
+vint::vint(index_t size, index_t defvalue):std::vector<index_t>(size, defvalue)
 {
   // intentionally left empty
 } /* vint::vint */
 
-vint::vint( const boost::python::list & src ): std::vector<int>(boost::python::len(src),0) 
+vint::vint( const boost::python::list & src ): std::vector<index_t>(boost::python::len(src),0) 
 {
-  int length=boost::python::len(src);
+  index_t length=boost::python::len(src);
 //  boost::python::object A = src[1];
 //  int a = boost::python::extract<int>(A);
   FOR(q, length)
     try
     {
-      (*this)[q]=boost::python::extract<int>(src[q]);
+      (*this)[q]=boost::python::extract<index_t>(src[q]);
     } 
     catch (...) 
     {
@@ -252,14 +264,14 @@ vint::vint( const boost::python::list & src ): std::vector<int>(boost::python::l
 
 vint::~vint()
 {
-  #if UJIMAGE_DEBUG >= 3
+# if UJIMAGE_DEBUG >= 6
   std::cout << "destroying vint '" << debug << "' with address " << static_cast<void*>(this) << std::endl;
-  #endif /* UJIMAGE_DEBUG >= 3 */
+# endif /* UJIMAGE_DEBUG >= 3 */
 } /* vint::~vint */
 
 void vint::reset()
 {
-  int q = size()-1;
+  index_t q = size()-1;
   do 
   { 
     (*this)[q--]=0; 
@@ -267,10 +279,10 @@ void vint::reset()
   while (q>=0);
 } /* vint::reset */
 
-int vint::prod() const
+index_t vint::prod() const
 {
-  int prod = 1;
-  int q = size()-1;
+  index_t prod = 1;
+  index_t q = size()-1;
   do 
   {
     prod*=(*this)[q--];
@@ -279,10 +291,10 @@ int vint::prod() const
   return prod;
 } /* vint::prod */
 
-int vint::prodExcept(int p) const
+index_t vint::prodExcept(index_t p) const
 {
-  int prod = 1;
-  int q = size()-1;
+  index_t prod = 1;
+  index_t q = size()-1;
   do { prod*=(*this)[q--]; } while (q>=0);
   return prod/(*this)[p];
 } /* vint::prodExcept */
@@ -290,7 +302,7 @@ int vint::prodExcept(int p) const
 uiVal_type vint::fabs() const
 {
   uiVal_type sum = 0;
-  int q = this->size()-1;
+  index_t q = this->size()-1;
   do 
   { 
     sum+=uiSqr((*this)[q--]); 
@@ -299,15 +311,15 @@ uiVal_type vint::fabs() const
   return sqrt(sum);
 } /* vint::abs */
 
-void vint::nextStep( int step, vint & result ) const { 
+void vint::nextStep( index_t step, vint & result ) const { 
   //tested in harmony with uiNextStep_it, uiNextStep_fast and Positions
   // ATTENITON !!!!!!!! New version, now the X is the fastest
   // also note, that the size should be the parameter and the object should change
   // to comply with the no parameter change paradigm
 
-  int d = this->size();
-  int prod = step;
-  int q = 0;
+  index_t d = this->size();
+  index_t prod = step;
+  index_t q = 0;
     
   while ( q <= d - 1 ){
             
@@ -331,8 +343,8 @@ bool vint::nextStep_it( vint & result ) const {
   // also note, that the size should be the parameter and the object should change
   // to comply with the no parameter change paradigm
 
-  int d = this->size();
-  int q = 0;
+  index_t d = this->size();
+  index_t q = 0;
     
   while ( ( result[q] >= (*this)[q] - 1) && ( q < d-1 ) ) 
   {
@@ -389,7 +401,7 @@ bool vint::inside( const vint & point ) const
 bool vint::operator==( const vint & other ) const 
 {
   bool result=true;
-  int n=size();
+  index_t n=size();
   FOR(q, n)
     if ((*this)[q]!=other[q]){
       result=false;
@@ -404,17 +416,17 @@ bool vint::operator!=(const vint & other) const
 } /* vint::operator!= */
 
 
-int vint::position( const vint & elem ) const 
+index_t vint::position( const vint & elem ) const 
 {
   // tested in harmony with uiNextStep_it, uiNextStep_fast and Positions
   // ATTENITON !!!!!!!! New version, now the X is the fastest
   // also note, that the size should be the parameter and the object should change
   // to comply with the no parameter change paradigm
 
-  int d = this->size();
-  int pos = 0;
-  int t = 1;
-  int q = 0;
+  index_t d = this->size();
+  index_t pos = 0;
+  index_t t = 1;
+  index_t q = 0;
 
   while ( q <= d - 1 ) {
     pos += elem[q] * t;
@@ -430,11 +442,11 @@ bool vint::addSet( const vint & other )
 
   bool result=false;
 
-  FOR(q, int(other.size())) 
+  FOR(q, index_t(other.size())) 
   {
     bool is_in = false;
 
-    FOR(w, int(this->size()))
+    FOR(w, index_t(this->size()))
       if ((*this)[w]==other[q]) is_in=true;
 
     if (!is_in) {
@@ -477,21 +489,21 @@ std::string vint::repr() const
 {
   if (size()==0)
   {
-    #if UJIMAGE_DEBUG >= 1
+#   if UJIMAGE_DEBUG >= 1
     return "'" + this->debug + "' = []";
-    #else /* NOT UJIMAGE_DEBUG >= 1 */
+#   else /* NOT UJIMAGE_DEBUG >= 1 */
     return "[]";
-    #endif /* NOT UJIMAGE_DEBUG >= 1 */    
+#   endif /* NOT UJIMAGE_DEBUG >= 1 */    
   }
   else /* NOT size()==0 */
   {
     std::stringstream ss;
-    #ifdef UJIMAGE_DEBUG
+#   ifdef UJIMAGE_DEBUG
     ss << "'" << debug << "' = ";
-    #endif /* UJIMAGE_DEBUG */
+#   endif /* UJIMAGE_DEBUG */
     ss << "[ ";
     
-    FOR(q, int(size()-1))
+    FOR(q, index_t(size()-1))
       ss << (*this)[q] << ", ";
     
     ss << (*this)[size()-1] << " ]";
@@ -501,7 +513,7 @@ std::string vint::repr() const
 } /* vint::repr */
 
 
-vint & vint::operator<< ( const int & initiator )
+vint & vint::operator<< ( const index_t & initiator )
 {
 //   #if UJIMAGE_DEBUG >=1
 //   if ( this->size()!=initiator.size())
@@ -515,7 +527,7 @@ vint & vint::operator<< ( const int & initiator )
   return *this;  
 } /* vint::operator<< */
 
-vint & vint::operator, ( const int & next )
+vint & vint::operator, ( const index_t & next )
 {
   this->push_back(next);
   return *this;
@@ -559,7 +571,7 @@ uiVal_type uiSqr( uiVal_type x )
 
 // ---------------------- uiDibble -----------------------------------
 
-uiDibbles::uiDibbles(int n){
+uiDibbles::uiDibbles(index_t n){
   length=0;
   if (n<jump) size=jump; else size=n;
   values.reset(new uiDibble[size]);
@@ -585,13 +597,13 @@ uiDibbles::~uiDibbles(void){
 
 
 
-int uiDibbles::get_length(void){
+index_t uiDibbles::get_length(void){
   return length;
 }
 
 
 
-void uiDibbles::addElement(int start, int end){
+void uiDibbles::addElement(index_t start, index_t end){
   
   if (length==size) {
     size += jump;

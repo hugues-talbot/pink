@@ -20,13 +20,11 @@ namespace pink {
 
 #define REPORT_INTERVAL 10
   
-#define PACKET_SIZE 1000
-
   namespace maxflow_types
   {
-
+    
     enum etap { pot, flow, constr, unknown };
-
+    
   } /* namespace maxflow_types */
   
 // // obsolete, replaced by enum  
@@ -34,27 +32,28 @@ namespace pink {
 // #define __ETAP_FLOW 1232
 // #define __ETAP_CONSTR 9120
   
-#define ATOMIC( code )						\
+#  define ATOMIC( code )                                        \
   parent->global_lock->lock();					\
   code								\
   parent->global_lock->unlock();
   
-
+  
   float_image maxflow_float( 
     char_image SS,  /* image of the source and of the sink (not the original image) */
     float_image gg, /* Boundaries */
-    int iteration,     /* number of iterations */
+    index_t iteration,     /* number of iterations */
     float glob_tau,		 /* timestep */
-    int number_of_threads /* the number of threads to execute if in parallel mode */
+    index_t number_of_threads, /* the number of threads to execute if in parallel mode */
+    index_t packet_size = 1000 /* the packet size */
     );
   
   
   float_image maxflow_cami(
     char_image SS,  /* image of the source and of the sink (not the original image) */
     float_image gg, /* Boundaries */
-    int iteration,     /* number of iterations */
+    index_t iteration,     /* number of iterations */
     float glob_tau,		 /* timestep */
-    int number_of_threads /* the number of threads to execute if in parallel mode */
+    index_t number_of_threads /* the number of threads to execute if in parallel mode */
     );
   
   
@@ -69,7 +68,7 @@ namespace pink {
   public:
 
     typedef maxflow<image_type> parent_type;
-    void operator( )( int ID, parent_type * parent );    
+    void operator( )( index_t ID, parent_type * parent );    
     packet();
     ~packet();
     
@@ -79,11 +78,12 @@ namespace pink {
     
     parent_type * parent;
     
-    int ID, start_dibble, end_dibble, direction, current_iteration;
+    index_t ID, start_dibble, end_dibble, direction, current_iteration;
     maxflow_types::etap etap; // this is the current state of iteration
     
     
-  }; /* packet */
+  }; /* class packet */
+
 
   
 
@@ -100,7 +100,6 @@ namespace pink {
 
     typedef typename image_type::pixel_type pixel_type;
 
-
     // the result will be put in this image
     image_type gg;
     char_image src_sink;
@@ -110,41 +109,42 @@ namespace pink {
     boost::shared_array<pixel_type> g_glob;
 
 
-    int starttime;
-    int number_of_threads;
+    index_t starttime;
+    index_t number_of_threads;
     bool flow_calculated;  // this variable hold if start function has already been called, 
                            // if it hasn't than pot_glob and flow_flob are not yet allocated
    
     // functions for threading    
     boost::shared_ptr<packet<image_type> > reference;
     bool conductor( packet<image_type> & thread );
+    index_t packet_size; // this variable holds the number of consecutive
+                     // dibbles to be processed by the same thread. If
+                     // packet_size==n then each thread processes n
+                     // dibbles for on one charge. n dibbles is called
+                     // a packet.
+    
     
   protected:
 
-    int d;
-    int length_glob;
+    index_t d;
+    index_t length_glob;
     boost::shared_ptr<vint> dim;
 
     progressBar sentinel;    
     float tau;
     // the number of desired iterations
-    int iteration;
+    index_t iteration;
 
     // functions for calculation 
-    void upDateConstrain(int startDibble, int endDibble);
-    void upDatePotencial(int startDibble, int endDibble);
-    void upDateFlow(int startDibble, int endDibble, int w /*direction*/);
+    void upDateConstrain(index_t startDibble, index_t endDibble);
+    void upDatePotencial(index_t startDibble, index_t endDibble);
+    void upDateFlow(index_t startDibble, index_t endDibble, index_t w /*direction*/);
     void upDateSrcSink();
-    int uiCreateDibbles();
+    index_t uiCreateDibbles( );
 
-    // these are the dibbles which are exclusively held in the memory of
-    // a single thread.
     boost::shared_ptr<uiDibbles> dibConstrain;
     boost::shared_ptr<uiDibbles> dibPotencial;
 
-
-    // these are the dibbles which are tainted, that is to s
-    
     image_type potencial;
 
 
@@ -160,9 +160,10 @@ namespace pink {
      maxflow(
       const char_image & SS,  /* image of the source and of the sink (not the original image) */
       const image_type & gg, /* Boundaries */
-      int iteration,     /* number of iterations */
+      index_t iteration,     /* number of iterations */
       float tau,		 /* timestep */
-      int number_of_threads /* the number of threads to execute if in parallel mode */
+      index_t number_of_threads, /* the number of threads to execute if in parallel mode */
+      index_t packet_size /* the size of the packet to process */
       );
 
     virtual image_type start();
@@ -172,8 +173,7 @@ namespace pink {
       std::cout << "destroying the maxflow object (" << static_cast<void*>(this) << ")" << std::endl;
 #     endif /* UJIMAGE_DEBUG */        
     }
-  }; /* maxflow */
-
+  }; /* class maxflow */
   
 
   template<class image_type>
@@ -192,7 +192,7 @@ namespace pink {
   
   template<class image_type>
   void packet<image_type>::operator()( 
-    int ID, 
+    index_t ID, 
     maxflow<image_type> * parent 
     )
   {
@@ -252,12 +252,11 @@ namespace pink {
 
   
   template <class image_type>
-  void maxflow<image_type>::upDatePotencial(int startDibble, int endDibble)
-  {
+  void maxflow<image_type>::upDatePotencial(index_t startDibble, index_t endDibble){
     pixel_type * p_c;
     pixel_type * f_out;
     pixel_type * f_in;
-    int fm1 /*fm1_vec[d]*/, start, end, length, q, w, e;
+    index_t fm1 /*fm1_vec[d]*/, start, end, length, q, w, e;
     vint fm1_vec(d);
     
     FORR(w, d){
@@ -283,9 +282,9 @@ namespace pink {
 
   
   template <class image_type>  
-  void maxflow<image_type>::upDateFlow(int startDibble, int endDibble, int w /*direction*/){
+  void maxflow<image_type>::upDateFlow(index_t startDibble, index_t endDibble, index_t w /*direction*/){
     pixel_type *p, *pp1, *f;
-    int start, end, length, pp1_pos, q, e;
+    index_t start, end, length, pp1_pos, q, e;
     vint pp1_vec(d);
 
     pp1_vec.reset();
@@ -308,8 +307,7 @@ namespace pink {
 
 
   template <class image_type>
-  void maxflow<image_type>::upDateConstrain(int startDibble, int endDibble)
-  {
+  void maxflow<image_type>::upDateConstrain(index_t startDibble, index_t endDibble){
 //     //local copies
     pixel_type dFabs[d/*compileDim*/];
     pixel_type * locInFlow[d/*compileDim*/];
@@ -319,7 +317,7 @@ namespace pink {
 	
     //locals
     vint fm1s(d), fm1_vec(d);
-    int start, end, length, q, w, e;
+    index_t start, end, length, q, w, e;
 	
     // calculating differences between the flow and the point
     FORR( w, d ) {
@@ -367,15 +365,15 @@ namespace pink {
 
     FOR( q, length_glob ) 
     {
-      if ( src_sink[q] == 1 ) 
+      if ( src_sink(q) == 1 ) 
       {
-	potencial[q]=1.; 
+	potencial(q)=1.; 
       }
       else /* NOT  (*srcsink) == 1. */
       {
-	if ( src_sink[q]==255 )
+	if ( src_sink(q)==255 )
 	{ 
-	  potencial[q]=0.;	
+	  potencial(q)=0.;	
 	} /* if (*srcsink) == -1. */
       } /* NOT (*srcsink) == 1.  */
     } /* FOR */
@@ -384,7 +382,7 @@ namespace pink {
 
 
   template <class image_type>
-  int maxflow<image_type>::uiCreateDibbles( 
+  index_t maxflow<image_type>::uiCreateDibbles( 
     )
   {
     // it is demanded that all the fragments on the border of the image are sink
@@ -397,14 +395,15 @@ namespace pink {
 
       //#pragma omp sections
       {
+        //!!! std::cout << "creating the dibbles from the potencial" << std::endl;
   
 	//  -------- potencial -------
 	// all the fragments different from source and sink are to be exclusively among the dibbles
         //#pragma omp section
 	{
 	  bool started = false;
-	  int start=0, end=0;
-	  int currlength=0;
+	  index_t start=0, end=0;
+	  index_t currlength=0;
 	  boost::shared_array<unsigned char> curr;
 	  curr = src_sink.get_pixels();
 	  FOR(q, length_glob) {
@@ -439,16 +438,17 @@ namespace pink {
 	} /* end pragma omp section */
   
   
+        //!!! std::cout << "creating the dibbles from the flow" << std::endl;
 	//  -------- flow ------------
 	// all the arrows with at least one end not in src or sink are to be exclusively among the dibbles
         //#pragma omp section
 	{
 	  bool started=false;
-	  int start=0, end=0;
+	  index_t start=0, end=0;
 	  unsigned char *pp1[d];
 	  boost::shared_array<unsigned char> p;
 	  vint pp1_vec(d);
-	  int currlength=0;
+	  index_t currlength=0;
 	  vint pp1_pos(d);
 	  // Calculating the shift of the neighbourh elements
 	  FOR(w, d) {
@@ -462,12 +462,13 @@ namespace pink {
 	  p=src_sink.get_pixels();
 	  FOR(w, d) {
 	    FOR(q, length_glob - pp1_pos[w] /* - 1 */ ) { /////////
+              // std::cout << " dim " << w << " and position " << q << std::endl;              
 	      if (started){
 		currlength++;
 		if ((p[q]!=0) and (pp1[w][q]!=0)){
 		  end=q;
 		  dibFlow[w]->addElement(start, end);
-		  ///!!! std::cout << "dibFlow[" << w << "]->addElement(" << start << "," << end << ")" << std::endl;
+		  ///!!! std::cout << "dibFlow[" << w << "]->addElement(" << start << "," << end << ")\n";
 		  start=0;
 		  end=0;
 		  started=false;
@@ -490,32 +491,36 @@ namespace pink {
 	  } /* FOR(w, d) */
 	} /* pragma omp section */
   
+        std::cout << "creating the dibbles from the constrain" << std::endl;
 	//  -------- constrain -------
 	// all the regular points and sources with at least one regular neighbour
         //#pragma omp section
 	{
 	  bool started=false;
-	  int start=0, end=0;
+	  index_t start=0, end=0;
 	  unsigned char *pp1[d], *pm1[d];
 	  boost::shared_array<unsigned char> p;
 	  vint pp1_vec(d);
-	  int currlength=0;
-	  int max=0;
+	  index_t currlength=0;
+	  index_t max=0;
+          _DEBUG(src_sink.get_size().repr());          
 	  FOR(w, d) {
 	    pp1_vec.reset();
 	    pp1_vec[w]=1;
-	    int currpos = dim->position(pp1_vec);
+	    index_t currpos = dim->position(pp1_vec);
 	    max = max > currpos ? max : currpos;
-	    pp1[w]=&( src_sink[currpos] );
-	    pm1[w]=&( src_sink[0] ) - currpos;// risky, we always read far enough from the beginning
+	    pp1[w]=&( src_sink(currpos) );
+	    pm1[w]=&( src_sink(0) ) - currpos;// risky, we always read far enough from the beginning
 	  } /* FOR(w, d) */
 	  p=src_sink.get_pixels();
-	  FOR( q, length_glob - max /*-1*/ ){ ///////////
+          for( index_t q = max; q <= length_glob - max - 1; q++ )
+//	  FOR( q, length_glob - max /*-1*/ ){ ///////////
+          {            
 	    bool i_am_a_regular_point = (p[q]==0.);
-	    bool i_am_a_source = (p[q]==1.);
-	    bool there_is_a_regular_point_near = false;
-	    FOR(w, d) {
-	      if ((pp1[w][q]==0.) or (pm1[w][q]==0.)) there_is_a_regular_point_near=true;
+            bool i_am_a_source = (p[q]==1.);
+            bool there_is_a_regular_point_near = false;
+            FOR(w, d) {
+              if ((pp1[w][q]==0.) or (pm1[w][q]==0.)) there_is_a_regular_point_near=true;
 	    }
 	    bool i_want_to_be_in_a_dibble = (i_am_a_regular_point or (i_am_a_source and there_is_a_regular_point_near));
 	    //bool i_want_to_be_in_a_dibble = (i_am_a_regular_point or i_am_a_source);
@@ -568,16 +573,18 @@ namespace pink {
   (
     const char_image & SS,  /* image of the source and of the sink (not the original image) */
     const image_type & gg, /* Boundaries */
-    int iteration,     /* number of iterations */
+    index_t iteration,     /* number of iterations */
     float tau,		 /* timestep */
-    int number_of_threads=0 /* the number of threads to execute if in parallel mode */
-    )
-  {
+    index_t number_of_threads=0, /* the number of threads to execute if in parallel mode */
+    index_t packet_size = 1000
+    ) {
 
 #   ifdef UJIMAGE_DEBUG
     std::cout << "creating the maxflow object (" << static_cast<void*>(this) << ")" << std::endl;	
 #   endif /* UJIMAGE_DEBUG */        
    
+    this->packet_size = packet_size;    
+    
     potencial.copy(gg); // "potencial";
     potencial.fill(0.);
 
@@ -665,8 +672,9 @@ namespace pink {
     FOR(q,d+3) dibFlow[q].reset(new uiDibbles()); // we adding here 3 becaus of the parallelization later
 	
     uiCreateDibbles();
-  } /*   maxflow<image_type>::maxflow */	
+    std::cout << "the initialization is finished" << std::endl;
 
+  } /*   maxflow<image_type>::maxflow */	
 
 
   /**
@@ -782,7 +790,7 @@ namespace pink {
 	shared_lock->lock(); // we wait for the threads to finish the calculation
 	reference->etap = maxflow_types::flow;
 	reference->start_dibble = 0;
-	reference->end_dibble = _min( PACKET_SIZE, dibFlow[0]->get_length() );
+	reference->end_dibble = _min( this->packet_size, dibFlow[0]->get_length() );
 	reference->direction = 0;
 
 	thread.start_dibble = reference->start_dibble;
@@ -795,7 +803,7 @@ namespace pink {
       else /* NOT reference->end_dibble >= dibPotencial->get_length() */
       {
 	reference->start_dibble = reference->end_dibble;
-	reference->end_dibble = _min( reference->end_dibble + PACKET_SIZE, dibPotencial->get_length() );
+	reference->end_dibble = _min( reference->end_dibble + this->packet_size, dibPotencial->get_length() );
 
 	thread.etap = reference->etap;
 	thread.start_dibble = reference->start_dibble;
@@ -815,7 +823,7 @@ namespace pink {
 	  shared_lock->lock(); // we wait for all threads to finish the calculation	  
 	  reference->etap = maxflow_types::constr;
 	  reference->start_dibble = 0;
-	  reference->end_dibble = _min( PACKET_SIZE, dibConstrain->get_length());
+	  reference->end_dibble = _min( this->packet_size, dibConstrain->get_length());
 	  
 	  thread.start_dibble = reference->start_dibble;
 	  thread.end_dibble = reference->end_dibble;
@@ -829,7 +837,7 @@ namespace pink {
 
 	  reference->direction += 1;
 	  reference->start_dibble = 0;
-	  reference->end_dibble = _min( PACKET_SIZE, 
+	  reference->end_dibble = _min( this->packet_size, 
 					dibFlow[reference->direction] -> get_length());
 	  
 	  thread.start_dibble = reference->start_dibble;
@@ -844,7 +852,7 @@ namespace pink {
       else /* NOT reference->end_dibble >= dibFlow->get_length() */
       {
 	reference->start_dibble = reference->end_dibble;
-	reference->end_dibble = _min( reference->end_dibble + PACKET_SIZE, dibFlow[reference->direction]->get_length());
+	reference->end_dibble = _min( reference->end_dibble + this->packet_size, dibFlow[reference->direction]->get_length());
 
 	thread.start_dibble = reference->start_dibble;
 	thread.end_dibble = reference->end_dibble;
@@ -885,7 +893,7 @@ namespace pink {
 
 	  reference->etap = maxflow_types::pot;
 	  reference->start_dibble = 0;
-	  reference->end_dibble = _min(PACKET_SIZE, dibPotencial->get_length());
+	  reference->end_dibble = _min(this->packet_size, dibPotencial->get_length());
 
 	  thread.start_dibble = reference->start_dibble;
 	  thread.end_dibble = reference->end_dibble;
@@ -899,7 +907,7 @@ namespace pink {
       else /* NOT reference->end_dibble 1 >= dibConstraint->get_length() */
       {
 	reference->start_dibble = reference->end_dibble;
-	reference->end_dibble = _min( reference->end_dibble + PACKET_SIZE, dibConstrain->get_length());
+	reference->end_dibble = _min( reference->end_dibble + this->packet_size, dibConstrain->get_length());
 
 	thread.start_dibble = reference->start_dibble;
 	thread.end_dibble = reference->end_dibble;
@@ -923,7 +931,6 @@ namespace pink {
 
 // cleaning up after us
 #undef REPORT_INTERVAL
-#undef PACKET_SIZE
 
 // // obsolete, replaced by enum
 // #undef __ETAP_POT

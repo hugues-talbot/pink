@@ -28,11 +28,11 @@
 namespace pink { 
 
   float_image maxflow_cami(
-    char_image SS,       /* image of the source and of the sink (not the original image) */
+    char_image  SS,       /* image of the source and of the sink (not the original image) */
     float_image gg,     /* Boundaries */
-    int iteration,        /* number of iterations */
-    float glob_tau,	  /* timestep */
-    int number_of_threads /* the number of threads to execute if in parallel mode */
+    index_t     iteration,        /* number of iterations */
+    float       glob_tau,	  /* timestep */
+    index_t     number_of_threads /* the number of threads to execute if in parallel mode */
     )
   {
 
@@ -63,11 +63,12 @@ namespace pink {
   
   
   float_image maxflow_float( 
-    char_image SS,         /* image of the source and of the sink (not the original image) */
+    char_image  SS,         /* image of the source and of the sink (not the original image) */
     float_image gg,        /* Boundaries */
-    int iteration,         /* number of iterations */
-    float glob_tau,	   /* timestep */
-    int number_of_threads  /* the number of threads to execute if in parallel mode */
+    index_t     iteration,         /* number of iterations */
+    float       glob_tau,	   /* timestep */
+    index_t     number_of_threads,  /* the number of threads to execute if in parallel mode */
+    index_t     packet_size
     )
   {
     
@@ -82,7 +83,8 @@ namespace pink {
                          frame_around(gg, 0.),
                          iteration,
                          glob_tau,
-                         number_of_threads
+                         number_of_threads,
+                         packet_size
                          )
       );
     
@@ -109,7 +111,7 @@ namespace pink {
 
 
 
-  } /* namespace pink */
+} /* namespace pink */
 
 
 /* LuM end of file */

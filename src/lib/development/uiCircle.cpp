@@ -13,10 +13,11 @@
 
 #include <gsl/gsl_vector.h>
 // my includes
-#include "pink_development.h"
 #include "uiCircle.hpp"
 
-namespace pink { 
+
+namespace pink
+{ 
 
 // inline double fabs( double x )
 // {
@@ -27,6 +28,7 @@ namespace pink {
   namespace gsl
   {
 
+    const float epsilon = 0.0001;
     const double pi = M_PI;    
     
     inline double SQR( double x )
@@ -586,28 +588,28 @@ namespace pink {
 
     
 
-    point_type generate_circle( double c_x, double c_y, double r)
-    {
+    // point_type generate_circle( double c_x, double c_y, double r)
+    // {
 
-      point_type result;  
+    //   point_type result;  
   
-      // x = c_x + r * sin(alpha)
-      // y = c_y + r * cos(alpha)
+    //   // x = c_x + r * sin(alpha)
+    //   // y = c_y + r * cos(alpha)
   
-      gsl::vector x(N);
-      gsl::vector y(N);
+    //   gsl::vector x(N);
+    //   gsl::vector y(N);
     
-      for (int alpha=0; alpha<=N-1; alpha++ )
-      {
-        x[alpha]=c_x + r * sin(4*alpha*pi/180);    
-        y[alpha]=c_y + r * cos(4*alpha*pi/180);
-      }
+    //   for (int alpha=0; alpha<=N-1; alpha++ )
+    //   {
+    //     x[alpha]=c_x + r * sin(4*alpha*pi/180);    
+    //     y[alpha]=c_y + r * cos(4*alpha*pi/180);
+    //   }
   
-      result.first=x;
-      result.second=y;
+    //   result.first=x;
+    //   result.second=y;
 
-      return result;  
-    } /* generate_circle */
+    //   return result;  
+    // } /* generate_circle */
 
 
   } /* namespace gsl */

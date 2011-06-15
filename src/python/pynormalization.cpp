@@ -38,21 +38,21 @@ void pynormalization()
     );
 
   def(
-    "pink::normalize",
+    "normalize",
     &pink::normalize<char_image, 0, 255>,
     ( arg("image"), arg("minval")=0, arg("maxval")=255),
     doc__normalize__c__
     );
 
   def(
-    "pink::normalize",
+    "normalize",
     &pink::normalize<int_image, 0, 255>,
     ( arg("image"), arg("minval")=0, arg("maxval")=255),
     doc__normalize__c__
     );
 
   def(
-    "pink::normalize",
+    "normalize",
     &pink::normalize<float_image, 0, 1>,
     ( arg("image"), arg("minval")=0, arg("maxval")=1),
     doc__normalize__c__    

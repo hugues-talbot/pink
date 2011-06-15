@@ -139,7 +139,6 @@ if (CMAKE_HOST_UNIX)
     set( LIBS ${LIBS} ${X11_LIBRARIES} )
     set( LIBS ${LIBS} ${THREADS_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
-
     ### 
     ### Option LIAR
     ###
@@ -161,7 +160,7 @@ if (CMAKE_HOST_UNIX)
 	else (NOT SYSVTEST)
 	    add_definitions(-DHAVE_SYSV_IPC)
         endif(NOT SYSVTEST)
-  
+
 	if (THIS_IS_LINUX)
 		find_library( POSIX_REALTIME_LIB librt.${LIBEXT} PATHS ${POTENTIAL_LIBDIRS} )
 		set( LIBS ${LIBS} ${POSIX_REALTIME_LIB} )
@@ -199,6 +198,9 @@ if (CMAKE_HOST_UNIX)
 
  	find_library( LAPACK_LIB liblapack.${LIBEXT} ${POTENTIAL_LIBDIRS} )
  	set( LIBS ${LIBS} ${LAPACK_LIB} )
+
+ 	find_library( NUMA_LIB libnuma.${LIBEXT} ${POTENTIAL_LIBDIRS} )
+ 	set( LIBS ${LIBS} ${NUMA_LIB} )
 
  	CHECK_INCLUDE_FILE( gsl/gsl_interp.h HTEST )
  	if (NOT HTEST)

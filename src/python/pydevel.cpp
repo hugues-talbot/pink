@@ -17,11 +17,23 @@
 #  include <pink_development.h>
 #endif /* PINK_DEVELOPMENT */
 
+using boost::python::arg;
+using boost::python::def;
+
+#include "uiFlow.hpp"
+#include "uiCircle.hpp"
+#include "uiGradient.hpp"
+#include "ui_measure.hpp"
+#include "uiUngerFlow.hpp"
+#include "ui_polythread.hpp"
+#include "ui_fit_circle.hpp"
+#include "ui_flow_distributed.hpp"
+
 void pydevel()
 {
   //CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
 
-  #ifdef PINK_DEVELOPMENT
+# ifdef PINK_DEVELOPMENT
 
   def( "circle_tangent", &pink::gsl::circle_tangent,
        (boost::python::arg("x coordinates"), boost::python::arg("y coordinates"), boost::python::arg("point of derivation")),
@@ -51,13 +63,30 @@ void pydevel()
   def(
     "maxflow",
     pink::maxflow_float,
-    (arg("source and sink"), arg("constraint image"), arg("iterations"), arg("tau"), arg("number of threads")=0),
+    (arg("source and sink"),
+     arg("constraint image"),
+     arg("iterations"),
+     arg("tau"),
+     arg("number of threads")=0),
     doc__maxflow__cpp__
     );
 
+    def(
+    "distflow",
+    pink::numa::distflow<pink::float_image>,
+    (arg("source and sink"),
+     arg("constraint image"),
+     arg("iterations"),
+     arg("tau"),
+     arg("number of threads")=1,
+     arg("resolution")=0),
+    doc__maxflow__cpp__
+    );
+
+  
   def(
     "ungerflow",
-    pink::lungerflow<float_image>,
+    pink::lungerflow<pink::float_image>,
     (arg("source and sink"),
      arg("gradient image"),
      arg("lambda image"),
@@ -79,12 +108,12 @@ void pydevel()
 
   def(
     "measure",
-    pink::lmeasure<float_image>,
+    pink::lmeasure<pink::float_image>,
     (arg("image")),
     doc__measure__cpp__
     );
 
-#endif /* PINK_DEVELOPMENT */
+# endif /* PINK_DEVELOPMENT */
 
   
 }
