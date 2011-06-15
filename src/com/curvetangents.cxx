@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief computes the tangents of a digital curve
 
-<B>Usage:</B> curvetangents curve.list [mode] tangents.list
+<B>Usage:</B> curvetangents curve.list [mode masksize] tangents.list
 
 <B>Description:</B>
 
@@ -48,6 +48,7 @@ Computes the tangents of a curve which is specified by the ordered list of its p
 \ingroup geo
 
 \author Michel Couprie
+\author Paulin Sanselme
 */
 
 #include <stdio.h>
@@ -69,14 +70,14 @@ Computes the tangents of a curve which is specified by the ordered list of its p
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  int32_t i;
+  int32_t i,j;
   FILE *fd = NULL;
   int32_t npoints, mode;
   char type;
 
-  if ((argc != 3) && (argc != 4))
+  if ((argc != 3) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s curve.list [mode] out.list \n", argv[0]);
+    fprintf(stderr, "usage: %s curve.list [mode [masksize]] out.list \n", argv[0]);
     exit(1);
   }
 
@@ -89,7 +90,7 @@ int main(int argc, char **argv)
 
   if (argc == 3) mode = 1;
   else mode = atoi(argv[2]);
-
+  
   fscanf(fd, "%c", &type);
   if (type == 'b')
   {
@@ -107,9 +108,11 @@ int main(int argc, char **argv)
 
     for (i = 0; i < npoints; i++)
       fscanf(fd, "%d %d", &(X[i]), &(Y[i]));
-
     fclose(fd);
   
+    if (mode == 1)
+    {
+
     end = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(end != NULL);
     angle = (double *)malloc(npoints * sizeof(double)); assert(angle != NULL);
     mstd = (double *)malloc(npoints * sizeof(double)); assert(mstd != NULL);
@@ -136,11 +139,96 @@ int main(int argc, char **argv)
       fprintf(fd, "%g %g\n", sin(mstd[i]), cos(mstd[i]));
     fclose(fd);
 
-    free(X);
-    free(Y);
     free(end);
     free(angle);
     free(mstd);
+    }
+
+    else if (mode == 2)
+      {
+	char tablefilename[512];
+	int32_t n, nbis;
+	int32_t decalage;
+	uint64_t *tab_combi;
+        char buf[25];
+	double coef, normalisateur;
+	double *dX, *dY;
+	int32_t *deltaX, *deltaY;
+
+	n = atoi(argv[3]);
+	nbis = 2*n-1;
+
+	dX = (double *)malloc(npoints * sizeof(double)); assert(dX != NULL);
+	dY = (double *)malloc(npoints * sizeof(double)); assert(dY != NULL);
+	deltaX = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(deltaX != NULL);
+	deltaY = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(deltaY != NULL);
+	tab_combi = (uint64_t*)malloc( (nbis+1)*sizeof( uint64_t ));
+
+	deltaX[0] = 0;
+	deltaY[0] = 0;
+	for (i = 1; i < npoints; i++)
+	  {
+	    deltaX[i] = X[i]-X[i-1];
+	    deltaY[i] = Y[i]-Y[i-1];
+	  }
+
+	sprintf(tablefilename, "%s/src/tables/TabTriPascal.txt", getenv("PINK"));
+	fd = fopen (tablefilename, "r");
+	if (fd == NULL) 
+	  {
+	    fprintf(stderr, "%s : table not found\n", argv[0]);
+	    exit(1);
+	  }
+
+	decalage = 21*(nbis*(nbis+1))/2+nbis+3;
+	fseek(fd, decalage, SEEK_SET);
+
+	for (i = 0; i < nbis+1 ; i++)
+	  {
+ 	    fread( buf, 21, 1, fd);
+	    tab_combi[i] = atol(buf);
+	  }
+
+
+	coef = pow(2,-nbis);
+
+	for (i = 0; i < npoints; i++)
+	  {
+	    dX[i] = 0;
+	    dY[i] = 0;
+	    for (j = mcmax(0,n-i); j < mcmin(nbis+1,npoints+n-i-1); j++)
+	      {
+		dX[i] += (int64_t)(tab_combi[j]*deltaX[i+j-n+1]);
+		dY[i] += (int64_t)(tab_combi[j]*deltaY[i+j-n+1]);
+	      }
+	    dX[i] = dX[i]*coef;
+	    dY[i] = dY[i]*coef;
+	    normalisateur = pow(pow(dX[i],2)+pow(dY[i],2),0.5);
+	    dX[i] = dX[i]/normalisateur;
+	    dY[i] = dY[i]/normalisateur;    
+	  }
+
+
+	fd = fopen(argv[argc-1],"w");
+	if (!fd)
+	  {
+	    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc-1]);
+	    exit(1);
+	  }
+	fprintf(fd, "b %d\n", npoints);
+	for (i = 0; i < npoints; i++)
+	  fprintf(fd, "%10g %10g\n", dX[i], dY[i]);
+	fclose(fd);
+
+	free(tab_combi);
+	free(dX);
+	free(dY);
+	free(deltaX);
+	free(deltaY);
+      }
+
+    free(X);
+    free(Y);
   }
   else if (type == 'B')
   {
@@ -151,15 +239,18 @@ int main(int argc, char **argv)
     X = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(X != NULL);
     Y = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(Y != NULL);
     Z = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(Z != NULL);
+    for (i = 0; i < npoints; i++)
+      fscanf(fd, "%d %d %d", &(X[i]), &(Y[i]), &(Z[i]));
+    fclose(fd);
+
+    if (mode ==1)
+      {
     Xmstd = (double *)malloc(npoints * sizeof(double)); assert(Xmstd != NULL);
     Ymstd = (double *)malloc(npoints * sizeof(double)); assert(Ymstd != NULL);
     Zmstd = (double *)malloc(npoints * sizeof(double)); assert(Zmstd != NULL);
 
-    for (i = 0; i < npoints; i++)
-      fscanf(fd, "%d %d %d", &(X[i]), &(Y[i]), &(Z[i]));
-    fclose(fd);
   
-    if (!lcurvetangents3D(mode, npoints, X, Y, Z, Xmstd, Ymstd, Zmstd))
+    if (!lcurvetangents3D(mode, 0, NULL, npoints, X, Y, Z, Xmstd, Ymstd, Zmstd))
     {
       fprintf(stderr, "%s: procedure lcurvetangents3D failed\n", argv[0]);
       exit(1);
@@ -176,12 +267,106 @@ int main(int argc, char **argv)
       fprintf(fd, "%g %g %g\n", Xmstd[i], Ymstd[i], Zmstd[i]);
     fclose(fd);
 
-    free(X);
-    free(Y);
-    free(Z);
     free(Xmstd);
     free(Ymstd);
     free(Zmstd);
+      }
+    else
+      {
+	char tablefilename[512];
+	int32_t n, nbis;
+	int32_t decalage;
+	uint64_t *tab_combi;
+        char buf[25];
+	double coef, normalisateur;
+	double *dX, *dY, *dZ;
+	int32_t *deltaX, *deltaY, *deltaZ;
+
+	n = atoi(argv[3]);
+	nbis = 2*n-1;
+
+	dX = (double *)malloc(npoints * sizeof(double)); assert(dX != NULL);
+	dY = (double *)malloc(npoints * sizeof(double)); assert(dY != NULL);
+	dZ = (double *)malloc(npoints * sizeof(double)); assert(dZ != NULL);
+	deltaX = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(deltaX != NULL);
+	deltaY = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(deltaY != NULL);
+	deltaZ = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(deltaZ != NULL);
+	tab_combi = (uint64_t*)malloc( (nbis+1)*sizeof( uint64_t ));
+
+	deltaX[0] = 0;
+	deltaY[0] = 0;
+	deltaZ[0] = 0;
+	for (i = 1; i < npoints; i++)
+	  {
+	    deltaX[i] = X[i]-X[i-1];
+	    deltaY[i] = Y[i]-Y[i-1];
+	    deltaZ[i] = Z[i]-Z[i-1];
+	  }
+
+	sprintf(tablefilename, "%s/src/tables/TabTriPascal.txt", getenv("PINK"));
+	fd = fopen (tablefilename, "r");
+	if (fd == NULL) 
+	  {
+	    fprintf(stderr, "%s : table not found\n", argv[0]);
+	    exit(1);
+	  }
+
+	decalage = 21*(nbis*(nbis+1))/2+nbis+3;
+	fseek(fd, decalage, SEEK_SET);
+
+	for (i = 0; i < nbis+1 ; i++)
+	  {
+ 	    fread( buf, 21, 1, fd);
+	    tab_combi[i] = atol(buf);
+	  }
+	fclose(fd);
+
+	coef = pow(2,-nbis);
+
+	for (i = 0; i < npoints; i++)
+	  {
+	    dX[i] = 0;
+	    dY[i] = 0;
+	    dZ[i] = 0;
+	    for (j = mcmax(0,n-i); j < mcmin(nbis+1,npoints+n-i-1); j++)
+	      {
+		dX[i] += (int64_t)(tab_combi[j]*deltaX[i+j-n+1]);
+		dY[i] += (int64_t)(tab_combi[j]*deltaY[i+j-n+1]);
+		dZ[i] += (int64_t)(tab_combi[j]*deltaZ[i+j-n+1]);
+	      }
+	    dX[i] = dX[i]*coef;
+	    dY[i] = dY[i]*coef;
+	    dZ[i] = dZ[i]*coef;
+	    normalisateur = pow(pow(dX[i],2)+pow(dY[i],2)+pow(dZ[i],2),0.5);
+	    dX[i] = dX[i]/normalisateur;
+	    dY[i] = dY[i]/normalisateur;
+	    dZ[i] = dZ[i]/normalisateur;
+	  }
+
+
+	fd = fopen(argv[argc-1],"w");
+	if (!fd)
+	  {
+	    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc-1]);
+	    exit(1);
+	  }
+	fprintf(fd, "B %d\n", npoints);
+	for (i = 0; i < npoints; i++)
+	  fprintf(fd, "%10g %10g %10g\n", dX[i], dY[i], dZ[i]);
+	fclose(fd);
+
+    free(tab_combi);
+    free(dX);
+    free(dY);
+    free(dZ);
+    free(deltaX);
+    free(deltaY);
+    free(deltaZ);
+    }
+
+    free(X);
+    free(Y);
+    free(Z);
   }
   else
   {
@@ -191,5 +376,3 @@ int main(int argc, char **argv)
 
   return 0;
 } /* main */
-
-

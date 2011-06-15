@@ -36,6 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 /*
 Functions for computing discrete derivatives of discrete curves / surfaces
 Michel Couprie, 2011
+Paulin Sanselme, 2011
 */
 
 #include <lbdigitalline.h>
@@ -54,6 +55,7 @@ Michel Couprie, 2011
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <ltangents.h>
+//#include <mcutil.h>
 
 //#define DEBUG
 //#define DEBUG_ExtractDSSs3D
@@ -64,6 +66,98 @@ Michel Couprie, 2011
 /*         FUNCTIONS BASED ON DISCRETE CONVOLUTIONS          */
 /*************************************************************/
 /*************************************************************/
+
+/*==================================== */
+void calc_tangents2D(int32_t npoints, int32_t mask, uint64_t *tab_combi, int32_t *X, int32_t *Y, double *Xdir, double *Ydir)
+/*==================================== */
+{
+  int32_t i, j;
+  int32_t *deltaX, *deltaY;
+  double coef, normalisateur;
+  int32_t tmp;
+
+  deltaX = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(deltaX != NULL);
+  deltaY = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(deltaY != NULL);
+  deltaX[0] = 0;
+  deltaY[0] = 0;
+  for (i = 1; i < npoints; i++)
+  {
+    deltaX[i] = X[i]-X[i-1];
+    deltaY[i] = Y[i]-Y[i-1];
+  }
+
+  coef = pow(2,1-2*mask);
+
+  for (i = 0; i < npoints; i++)
+  {
+    Xdir[i] = 0;
+    Ydir[i] = 0;
+    for (j = max(0,mask-i); j < min(2*mask,npoints+mask-i-1); j++)
+      {
+	tmp = i+j-mask+1;
+	Xdir[i] += (int64_t)(tab_combi[j]*deltaX[tmp]);
+	Ydir[i] += (int64_t)(tab_combi[j]*deltaY[tmp]);
+      }
+    Xdir[i] = Xdir[i]*coef;
+    Ydir[i] = Ydir[i]*coef;
+    normalisateur = pow(pow(Xdir[i],2)+pow(Ydir[i],2),0.5);
+    Xdir[i] = Xdir[i]/normalisateur;
+    Ydir[i] = Ydir[i]/normalisateur;
+  }
+
+  free(deltaX);
+  free(deltaY);
+}
+
+/*==================================== */
+void calc_tangents3D(int32_t npoints, int32_t mask, uint64_t *tab_combi, int32_t *X, int32_t *Y, int32_t *Z, double *Xdir, double *Ydir, double *Zdir)
+/*==================================== */
+{
+  int32_t i, j;
+  int32_t *deltaX, *deltaY, *deltaZ;
+  double coef, normalisateur;
+  int32_t tmp;
+
+  deltaX = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(deltaX != NULL);
+  deltaY = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(deltaY != NULL);
+  deltaZ = (int32_t *)malloc(npoints * sizeof(int32_t)); assert(deltaZ != NULL);
+  deltaX[0] = 0;
+  deltaY[0] = 0;
+  deltaZ[0] = 0;
+  for (i = 1; i < npoints; i++)
+  {
+    deltaX[i] = X[i]-X[i-1];
+    deltaY[i] = Y[i]-Y[i-1];
+    deltaZ[i] = Z[i]-Z[i-1];
+  }
+
+  coef = pow(2,1-2*mask);
+
+  for (i = 0; i < npoints; i++)
+  {
+    Xdir[i] = 0;
+    Ydir[i] = 0;
+    Zdir[i] = 0;
+    for (j = max(0,mask-i); j < min(2*mask,npoints+mask-i-1); j++)
+      {
+	tmp = i+j-mask+1;
+	Xdir[i] += (int64_t)(tab_combi[j]*deltaX[tmp]);
+	Ydir[i] += (int64_t)(tab_combi[j]*deltaY[tmp]);
+	Zdir[i] += (int64_t)(tab_combi[j]*deltaZ[tmp]);
+      }
+    Xdir[i] = Xdir[i]*coef;
+    Ydir[i] = Ydir[i]*coef;
+    Zdir[i] = Zdir[i]*coef;
+    normalisateur = pow(pow(Xdir[i],2)+pow(Ydir[i],2)+pow(Zdir[i],2),0.5);
+    Xdir[i] = Xdir[i]/normalisateur;
+    Ydir[i] = Ydir[i]/normalisateur;
+    Zdir[i] = Zdir[i]/normalisateur;
+  }
+
+  free(deltaX);
+  free(deltaY);
+  free(deltaZ);
+}
 
 /*************************************************************/
 /*************************************************************/
@@ -697,10 +791,12 @@ double ComputeLength3D(int32_t npoints, double *Xmstd, double *Ymstd, double *Zm
 } // ComputeLength3D()
 
 //--------------------------------------------------------------------------
-int32_t lcurvetangents2D(int32_t mode, int32_t npoints, int32_t *X, int32_t *Y, double *Xdir, double *Ydir)
+int32_t lcurvetangents2D(int32_t mode, int32_t mask, int64_t *tab_combi, int32_t npoints, int32_t *X, int32_t *Y, double *Xdir, double *Ydir)
 //--------------------------------------------------------------------------
 /*! \fn int32_t lcurvetangents2D(int32_t npoints, int32_t *X, int32_t *Y, double *Xdir, double *Ydir)
     \param mode (input): code of the method used
+    \param mask (input): size of the mask for the method based on convolution (mode==2)
+    \param tab_combi (input): tableau contenant la ligne utile du triangle de pascal (mode==2)
     \param npoints (input): number of points in points list
     \param X (input): ordered list of points (1st coord)
     \param Y (input): ordered list of points (2nd coord)
@@ -730,6 +826,10 @@ int32_t lcurvetangents2D(int32_t mode, int32_t npoints, int32_t *X, int32_t *Y, 
     free(Xtan);
     free(Ytan);
   }
+  else if (mode == 2)
+  {
+    calc_tangents2D(npoints, mask, tab_combi, X, Y, Xdir, Ydir);
+  }
   else
   */
   {
@@ -742,10 +842,12 @@ int32_t lcurvetangents2D(int32_t mode, int32_t npoints, int32_t *X, int32_t *Y, 
 } // lcurvetangents2D()
 
 //--------------------------------------------------------------------------
-int32_t lcurvetangents3D(int32_t mode, int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double *Xdir, double *Ydir, double *Zdir)
+int32_t lcurvetangents3D(int32_t mode, int32_t mask, uint64_t *tab_combi, int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double *Xdir, double *Ydir, double *Zdir)
 //--------------------------------------------------------------------------
-/*! \fn int32_t lcurvetangents3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double *Xdir, double *Ydir, double *Zdir)
+/*! \fn int32_t lcurvetangents3D(int32_t mode, int32_t mask, int64_t *tab_combi, int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double *Xdir, double *Ydir, double *Zdir)
     \param mode (input): code of the method used
+    \param mask (input): size of the mask for the method based on convolution (mode==2)
+    \param tab_combi (input): tableau contenant la (2*mask-1) ème ligne du triangle de pascal (mode==2)
     \param npoints (input): number of points in points list
     \param X (input): ordered list of points (1st coord)
     \param Y (input): ordered list of points (2nd coord)
@@ -778,6 +880,10 @@ int32_t lcurvetangents3D(int32_t mode, int32_t npoints, int32_t *X, int32_t *Y, 
     free(Xtan);
     free(Ytan);
     free(Ztan);
+  }
+  else if (mode == 2)
+  {
+    calc_tangents3D(npoints, mask, tab_combi, X, Y, Z, Xdir, Ydir, Zdir);
   }
   else
   {

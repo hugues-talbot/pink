@@ -33,11 +33,25 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+#ifndef LTANGENTS_H
+#define LTANGENTS_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void ExtractDSSs(int32_t npoints, int32_t *X, int32_t *Y, int32_t *end, double *angle);
 extern void ExtractDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, int32_t *end, double *anglexy, double *angleyz, double *anglexz);
 extern void LambdaMSTD(int32_t npoints, int32_t *end, double *angle, double *mstd);
 extern void LambdaMSTD3D(int32_t npoints, int32_t *end, double *Xtan, double *Ytan, double *Ztan, double *Xmstd, double *Ymstd, double *Zmstd);
 extern double ComputeLength(int32_t npoints, double *mstd);
 extern double ComputeLength3D(int32_t npoints, double *mstdxy, double *mstdyz, double *mstdxz);
-extern int32_t lcurvetangents2D(int32_t mode, int32_t npoints, int32_t *X, int32_t *Y, double *Xdir, double *Ydir);
-extern int32_t lcurvetangents3D(int32_t mode, int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double *Xdir, double *Ydir, double *Zdir);
+extern int32_t lcurvetangents2D(int32_t mode, int32_t mask, uint64_t *tab_combi, int32_t npoints, int32_t *X, int32_t *Y, double *Xdir, double *Ydir);
+extern int32_t lcurvetangents3D(int32_t mode, int32_t mask, uint64_t *tab_combi, int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double *Xdir, double *Ydir, double *Zdir);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // LTANGENTS_H

@@ -89,6 +89,7 @@ increase image resolution.
 #include <mcimage.h>
 #include <mcskelcurv.h>
 #include <lskelcurv.h>
+#include <pinktypes.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
