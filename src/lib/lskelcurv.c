@@ -3365,7 +3365,7 @@ struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double max
 	    na++;
 	    if (tailleptliste(S->tskel[p->val].pts) <= maxbridgelength) 
 	    { 
-	      skeldelete(S, p->val); nd++; 	     
+	      skeldelete(S, p->val); nd++;
 #ifdef DEBUG_lskelfilter5
 	      printf("%s: arc %d deleted\n", F_NAME, p->val);
 #endif

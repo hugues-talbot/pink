@@ -1112,6 +1112,57 @@ void mctopo3d_top26(                   /* pour un objet en 26-connexite */
 } /* mctopo3d_top26() */
 
 /* ==================================== */
+void mctopo3d_top6lab(                   /* pour un objet en 6-connexite */
+  int32_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
+  int32_t *t,
+  int32_t *tb)                     /* resultats */
+/* ==================================== */
+{
+  assert(!is_on_frame(p, rs, ps, N));
+  preparecubeslab(img, p, rs, ps, N);
+  *t = mctopo3d_T6(cube_topo3d);
+  *tb = mctopo3d_T26(cubec_topo3d);
+} /* mctopo3d_top6lab() */
+
+/* ==================================== */
+void mctopo3d_top18lab(                   /* pour un objet en 18-connexite */
+  int32_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
+  int32_t *t,
+  int32_t *tb)                     /* resultats */
+/* ==================================== */
+{
+  assert(!is_on_frame(p, rs, ps, N));
+  preparecubeslab(img, p, rs, ps, N);
+  *t = mctopo3d_T18(cube_topo3d);
+  *tb = mctopo3d_T6p(cubec_topo3d);
+} /* mctopo3d_top18lab() */
+
+/* ==================================== */
+void mctopo3d_top26lab(                   /* pour un objet en 26-connexite */
+  int32_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
+  int32_t *t,
+  int32_t *tb)                     /* resultats */
+/* ==================================== */
+{
+  assert(!is_on_frame(p, rs, ps, N));
+  preparecubeslab(img, p, rs, ps, N);
+  *t = mctopo3d_T26(cube_topo3d);
+  *tb = mctopo3d_T6(cubec_topo3d);
+} /* mctopo3d_top26lab() */
+
+/* ==================================== */
 int32_t mctopo3d_simple6(                   /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   index_t p,                       /* index du point */

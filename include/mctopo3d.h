@@ -101,6 +101,30 @@ extern void mctopo3d_top26(
   index_t N,                       /* taille image */
   int32_t *t,
   int32_t *tb);                    /* resultats */
+extern void mctopo3d_top6lab(
+  int32_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
+  int32_t *t,
+  int32_t *tb);                    /* resultats */
+extern void mctopo3d_top18lab(
+  int32_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
+  int32_t *t,
+  int32_t *tb);                    /* resultats */
+extern void mctopo3d_top26lab(
+  int32_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
+  int32_t *t,
+  int32_t *tb);                    /* resultats */
 extern int32_t mctopo3d_simple6(               /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   index_t p,                       /* index du point */
