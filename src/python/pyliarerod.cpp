@@ -34,20 +34,22 @@ namespace pink {
       image_t result;
       result.copy(src);
 
-      if ( src.get_size().size()==2) // the image is 2D
-      {
-        if (! imferode_rect( result.get_output(), SEnx, SEny, result.get_output()) )
-        {
-          pink_error("function imferode_rect failed");
-        }
-      }
-      else  // NOT the image is 2D
-      {
-        if (! imferode3D_rect( result.get_output(), SEnx, SEny, SEnz, result.get_output()) )
-        {
-          pink_error("function imferode3D_rect failed");
-        }
-      } // NOT the image is 2D
+      pink_error("This function has been switched off!!!! You forgot to add some files!");
+      
+      // if ( src.get_size().size()==2) // the image is 2D
+      // {
+      //   if (! imferode_rect( result.get_output(), SEnx, SEny, result.get_output()) )
+      //   {
+      //     pink_error("function imferode_rect failed");
+      //   }
+      // }
+      // else  // NOT the image is 2D
+      // {
+      //   if (! imferode3D_rect( result.get_output(), SEnx, SEny, SEnz, result.get_output()) )
+      //   {
+      //     pink_error("function imferode3D_rect failed");
+      //   }
+      // } // NOT the image is 2D
 
       return result;
     } /* liarerod */

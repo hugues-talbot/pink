@@ -31,26 +31,29 @@ namespace pink {
       image_t result;
       result.copy(image);
 
-      if (! ((image.get_size().size()==2) || (image.get_size().size()==3)) )
-      {
-        pink_error("Only 2D and 3D images are supported.");
-      }
+      pink_error("This function has been switched off!!!! You forgot to add some files!");
+      
+      
+      // if (! ((image.get_size().size()==2) || (image.get_size().size()==3)) )
+      // {
+      //   pink_error("Only 2D and 3D images are supported.");
+      // }
 
 
-      if (image.get_size().size() == 2) /* 2Dimage */
-      {
-       if (! imfclose_rect( result.get_output(), SEnx, SEny, result.get_output()) )
-        {
-          pink_error("function imfclose_rect failed");
-        }
-      }
-      else /* 3D image  */
-      {
-        if (! imfclose3D_rect( result.get_output(), SEnx, SEny, SEnz, result.get_output()) )
-        {
-          pink_error("function imfdilat3D_rect failed");
-        }
-      }  /* NOT image.get_size().size() == 2 */
+      // if (image.get_size().size() == 2) /* 2Dimage */
+      // {
+      //  if (! imfclose_rect( result.get_output(), SEnx, SEny, result.get_output()) )
+      //   {
+      //     pink_error("function imfclose_rect failed");
+      //   }
+      // }
+      // else /* 3D image  */
+      // {
+      //   if (! imfclose3D_rect( result.get_output(), SEnx, SEny, SEnz, result.get_output()) )
+      //   {
+      //     pink_error("function imfdilat3D_rect failed");
+      //   }
+      // }  /* NOT image.get_size().size() == 2 */
 
 
       return result;

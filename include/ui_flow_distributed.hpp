@@ -850,16 +850,16 @@ namespace pink {
                 } /* for e,d */
               } // check the pixels of the flow
               
-              // if ((pot_is_in_good_node) and (flow_is_in_good_node))
-              // {
-              //   // std::cout << "dibble " << q << " is pure to " << nodes_of_this_thread << std::endl;                  
+              if ((pot_is_in_good_node) and (flow_is_in_good_node))
+              {
+                // std::cout << "dibble " << q << " is pure to " << nodes_of_this_thread << std::endl;                  
                 pure_pot[q]=reference_node;
                 pure_dibbles++;
                 pures_per_node[reference_node]++;                
-              // }
-              // else /* NOT ((pot_is_in_good_nodes) and (flow_is_in_good_nodes) */
-              // {
-              // } /* NOT ((pot_is_in_good_nodes) and (flow_is_in_good_nodes) */
+              }
+              else /* NOT ((pot_is_in_good_nodes) and (flow_is_in_good_nodes) */
+              {
+              } /* NOT ((pot_is_in_good_nodes) and (flow_is_in_good_nodes) */
               
               
             } /* FOR q, dib_potencial->size */                            
@@ -924,17 +924,17 @@ namespace pink {
                   pot_is_in_good_node = false;                  
                 }
                 
-                // if ((pot_is_in_good_node) and (flow_is_in_good_node))
-                // {
-                //   // std::cout << "dibble " << q << " is pure to " << nodes_of_this_thread << std::endl;                  
+                if ((pot_is_in_good_node) and (flow_is_in_good_node))
+                {
+                  // std::cout << "dibble " << q << " is pure to " << nodes_of_this_thread << std::endl;                  
                   pure_flow[w][q] = reference_node;
                   pure_dibbles++;
                   pures_per_node[reference_node]++;                
-                // }
-                // else /* NOT ((pot_is_in_good_nodes) and (flow_is_in_good_nodes) */
-                // {
-                //   // std::cout << "dibble " << q << " is NOT pure" << std::endl;                  
-                // } /* NOT ((pot_is_in_good_nodes) and (flow_is_in_good_nodes) */
+                }
+                else /* NOT ((pot_is_in_good_nodes) and (flow_is_in_good_nodes) */
+                {
+                  // std::cout << "dibble " << q << " is NOT pure" << std::endl;                  
+                } /* NOT ((pot_is_in_good_nodes) and (flow_is_in_good_nodes) */
 
                 
               } /* FOR(q, dib_flow->size()) */
@@ -998,12 +998,12 @@ namespace pink {
                 
               } /* FOR w, d */
               
-              // if (the_dibble_is_pure)
-              // {
+              if (the_dibble_is_pure)
+              {
                 pure_cons[q]=reference_node;
                 pure_dibbles++;
                 pures_per_node[reference_node]++;                
-              // } /* the_dibble_is_pure */
+              } /* the_dibble_is_pure */
                             
             } /* FOR q dibContrain->size() */
 
