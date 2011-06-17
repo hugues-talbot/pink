@@ -135,7 +135,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "mcsort.h"
 #include "mcsplines.h"
 #include "mctopo.h"
-#include "mctopo.h.minimal"
+// !!!! #include "mctopo.h.minimal"
 #include "mctopo3d.h"
 #include "mctree.h"
 #include "mcunionfind.h"

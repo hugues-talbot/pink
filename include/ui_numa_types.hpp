@@ -268,9 +268,10 @@ namespace pink {
 
     private:
       array_t array;           
-      volatile index_t * pos;
+      boost::shared_ptr<index_t> pos;
+      //volatile index_t * pos;      
       index_t size;
-//      boost::shared_ptr<boost::mutex> mutex;
+      boost::shared_ptr<boost::mutex> mutex;
       
 
     public:
@@ -281,8 +282,8 @@ namespace pink {
       dealer_t( array_t array )
         : array(array),
           pos(new index_t),
-          size(array.size())//,
-//          mutex(new boost::mutex)      
+          size(array.size()),
+          mutex(new boost::mutex)      
         {
           *pos=0;          
         }
@@ -290,9 +291,9 @@ namespace pink {
 
       void reset()
         {
-//          mutex->lock();          
+          mutex->lock();          
           *pos=0;
-//          mutex->unlock();          
+          mutex->unlock();          
         }
 
 
@@ -303,9 +304,11 @@ namespace pink {
        */
       packet_t operator()()
         {
-          //mutex->lock();          
+          mutex->lock();          
           index_t rpos = (*pos)++;
-          //mutex->unlock();          
+//          index_t rpos = *pos;
+//          (*pos)++;
+          mutex->unlock();          
 
           if ( rpos >= size )
           {

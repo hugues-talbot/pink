@@ -25,7 +25,7 @@ namespace pink{
   } /* pink_image cast xvimage* */
   
 
-  boost::shared_ptr<vint> getDimensions( const int x, const int y, const int z, const int t )
+  boost::shared_ptr<vint> getDimensions( const index_t x, const index_t y, const index_t z, const index_t t )
   {
 
     boost::shared_ptr<vint> presult;
@@ -71,9 +71,9 @@ namespace pink{
   } /* getDimensions */
 
 
-  void setDimensions(const vint & dim, int & x, int & y, int & z, int & t)
+  void setDimensions(const vint & dim, index_t & x, index_t & y, index_t & z, index_t & t)
   {
-    int d = dim.size();
+    index_t d = dim.size();
     bool result = true;
     x=y=z=t=1;
     switch (d)
@@ -109,7 +109,7 @@ namespace pink{
     } /* switch */
   } /* setDimensions */
 
-  std::string image_type_string( int im_type )
+  std::string image_type_string( index_t im_type )
   {
     switch (im_type)
     {
@@ -215,7 +215,7 @@ c++ class shallow_xvimage
     this->zmax=src.zmax;
   } /* shallow_xvimage::shallow_xvimage */
 
-  shallow_xvimage::shallow_xvimage( const vint & dim, int int_im_type )
+  shallow_xvimage::shallow_xvimage( const vint & dim, index_t int_im_type )
   { 
     // // Carefully, the image data  
     // will be created by 'ujoi::operator&'
@@ -225,7 +225,7 @@ c++ class shallow_xvimage
     image_data=NULL;   // the image data is never allocated and therefore destroyed !
     // it is only used for 'ujoi::operator&'
 
-    int x,y,z,t;
+    index_t x,y,z,t;
     setDimensions( dim, x, y, z, t );
 
   

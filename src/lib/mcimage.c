@@ -1136,13 +1136,13 @@ void writerawimage(struct xvimage * image, char *filename)
       fprintf(fd, "#xdim %g\n#ydim %g\n", image->xdim, image->ydim);
     if (nb > 1) 
 #ifdef MC_64_BITS
-      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)d, (long long int)nb); 
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
 #else
       fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
 #endif
     else if (ds > 1) 
 #ifdef MC_64_BITS
-      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)d); 
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
 #else
       fprintf(fd, "%d %d %d\n", rs, cs, ds); 
 #endif
@@ -1174,13 +1174,13 @@ void writerawimage(struct xvimage * image, char *filename)
       fprintf(fd, "#xdim %g\n#ydim %g\n", image->xdim, image->ydim);
     if (nb > 1) 
 #ifdef MC_64_BITS
-      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)d, (long long int)nb); 
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
 #else
       fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
 #endif
     else if (ds > 1) 
 #ifdef MC_64_BITS
-      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)d); 
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
 #else
       fprintf(fd, "%d %d %d\n", rs, cs, ds); 
 #endif
@@ -1218,7 +1218,7 @@ void writerawimage(struct xvimage * image, char *filename)
 #endif
     else if (ds > 1) 
 #ifdef MC_64_BITS
-      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)d); 
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
 #else
       fprintf(fd, "%d %d %d\n", rs, cs, ds); 
 #endif

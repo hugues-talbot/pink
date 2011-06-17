@@ -146,7 +146,7 @@ namespace pink
         {
           if ((size < number_of_nodes) or (size == 0))
           {
-            pink_error("Distributed polymorhic array size is too small. "
+            pink_error("Distributed polymorphic array size is too small. "
                        "Either 0 or less then the number of threads.");            
           }
 
@@ -309,9 +309,10 @@ namespace pink
           
           current_segment = reinterpret_cast<value_type*>(
             numa_alloc_onnode( segment_size(q) * sizeof(value_type),
-                               node(q)
+                               q
               )
-          );
+            );
+          
           
           // testing if the allocation had succeeded. Numa allocation
           // is much more risky then malloc or new, because the system

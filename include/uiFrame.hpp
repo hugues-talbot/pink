@@ -16,6 +16,7 @@
 #include "mcimage.h"
 #include "ujimage.hpp"
 #include <boost/thread.hpp>
+#include <boost/smart_ptr.hpp>
 
 // This is more of a curiosity question than something that needs
 // actual solving, but is there a way to determine how many cores a
@@ -117,7 +118,7 @@ namespace pink {
     )
   {
     vint size(result.get_size());
-    int d=size.size();
+    index_t d=size.size();
     vint curr(d);
 
     for (index_t q = from; q < to; q++)
@@ -145,16 +146,14 @@ namespace pink {
   } /* frame_around_copy */
   
 
-
+  
   template <class image_type>
   image_type frame_around(
     const image_type & src_image, 
     typename image_type::pixel_type withval 
     )
   {
-    int num_cpu = sysconf( _SC_NPROCESSORS_ONLN );
-    
-    boost::shared_ptr<boost::thread> threads[num_cpu];
+    index_t num_cpu = sysconf( _SC_NPROCESSORS_ONLN );
     
 #   if UJIMAGE_DEBUG > 1
     std::cout << "Framing; I have detected " << num_cpu << " cpu cores" << std::endl;
@@ -177,14 +176,15 @@ namespace pink {
     
     vint curr( src_image.get_size().size(), "curr"  );
 
-
-    if (nbp > 10000000)
+    if (nbp > 1000000)
     {
 #     ifdef UJIMAGE_DEBUG
       std::cout <<
         "Parallelizing during framing because the size of the image is big enough; "
         "I have detected " << num_cpu << " cpu cores" << std::endl;
 #     endif /* UJIMAGE_DEBUG */      
+
+      std::vector< boost::shared_ptr<boost::thread> > threads(num_cpu);
     
       // launching the threads
       FOR(q, num_cpu)
@@ -207,22 +207,22 @@ namespace pink {
       } /* FOR, q, num_cpu */
       
     } /* end of the parallel code */    
-    else /* NOT nbp > 10000000*/
+    else /* NOT nbp > 1000000*/
     {
       frame_around_copy(src_image, result, 0, nbp, withval);      
-    } /* NOT nbp > 10000000*/
+    } /* NOT nbp > 1000000*/
     
     return result;
 
   } /* frame_around */
 
+
+  
   template <class image_type>
   image_type frame_remove( const image_type & src_image )
   {
     
     vint new_size(src_image.get_size().size());
-
-
     
     // calculating the size of the framed image
     FOR( q, new_size.size() )

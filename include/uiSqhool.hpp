@@ -17,8 +17,8 @@
 
 namespace pink{
 
-  void set_dimensions(const vint & dim, int & x, int & y, int & z, int & t);
-  boost::shared_ptr<vint> get_dimensions(const int x, const int y, const int z, const int t);
+  void set_dimensions(const vint & dim, index_t & x, index_t & y, index_t & z, index_t & t);
+  boost::shared_ptr<vint> get_dimensions(const index_t x, const index_t y, const index_t z, const index_t t);
 
   
 /**
@@ -196,7 +196,7 @@ namespace pink{
 
 
     std::cout << "image.get_size().size()=" << image.get_size().size() << std::endl;
-    int x,y,z,t;
+    index_t x,y,z,t;
     //setting up dimensions
     setDimensions(image.get_size(), x, y, z, t); // as 4 dimensions are supported
     

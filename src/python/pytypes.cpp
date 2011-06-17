@@ -19,7 +19,7 @@ using namespace boost::python;
 using namespace pink;
 
 
-typedef std::vector<int> vector_int;
+typedef std::vector<index_t> vector_int;
 
 
 /*

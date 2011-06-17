@@ -16,14 +16,11 @@
 
 using namespace pink;
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in uiSqhool.cpp: " << msg; call_error(fullmessage.str());}
-
-#define sqlite3(command, errormessage)				      \
- if (SQLITE_OK!=command){                                             \
-   std::cout << "sqlite says: " << sqlite3_errmsg(database) << std::endl;       \
-   error(errormessage);                                               \
- };
+#define sqlite3(command, errormessage)                                  \
+  if (SQLITE_OK!=command){                                              \
+    std::cout << "sqlite says: " << sqlite3_errmsg(database) << std::endl; \
+    pink_error(errormessage);                                           \
+  };
 
 
 int atoi( const std::string & src ){
@@ -252,7 +249,7 @@ boost::shared_ptr<vint> uiSqhool::read_data_details( char ** results, int pos , 
   boost::shared_ptr<vint> presult (new vint(d,-1));
   vint & result = *presult;
 
-  if ((d<=1) || (d>=4)) {error("read error: dimension wrong or unsupported");}
+  if ((d<=1) || (d>=4)) {pink_error("read error: dimension wrong or unsupported");}
 
   FOR(q,d)
     result[q]=atoi(results[q+pos]);
@@ -296,7 +293,7 @@ void uiSqhool::sql_execute(const std::stringstream & command, std::string error_
 };
 
 
-boost::shared_ptr<vint> pink::get_dimensions( const int x, const int y, const int z, const int t ){
+boost::shared_ptr<vint> pink::get_dimensions( const index_t x, const index_t y, const index_t z, const index_t t ){
   boost::shared_ptr<vint> presult;
   if (t>1) {
     /////!!!!!!! std::cout<< "I've desided for 4D." << std::endl;
@@ -318,17 +315,17 @@ boost::shared_ptr<vint> pink::get_dimensions( const int x, const int y, const in
     (*presult)[1]=y;
   } else if (x>1){
     /////!!!!!!! std::cout<< "I've desided for 1D or less." << std::endl;
-    error("an image should have at least 2 dimensions");
+    pink_error("an image should have at least 2 dimensions");
   };
   
   if ((t>1) && (z==1)){
-    error("two dimensional time series are probably not handled well");
+    pink_error("two dimensional time series are probably not handled well");
   };
   return presult;
 }
 
 
-void pink::set_dimensions(const vint & dim, int & x, int & y, int & z, int & t){
+void pink::set_dimensions(const vint & dim, index_t & x, index_t & y, index_t & z, index_t & t){
   int d = dim.size();
   bool result = true;
   x=y=z=t=1;
@@ -359,7 +356,7 @@ void pink::set_dimensions(const vint & dim, int & x, int & y, int & z, int & t){
     break;
   default:
     result = false;
-    error("error: the dimension is wrong or unsupported");
+    pink_error("error: the dimension is wrong or unsupported");
     break;
   }
 };
@@ -464,11 +461,11 @@ void uiSqhool::insert_blob(void * data, const int size, const std::stringstream 
 
 
 void uiSqhool::set_comment ( int ID, const std::string & comment ){
-  error("setComment: this function is not implemented yet");
+  pink_error("setComment: this function is not implemented yet");
 };
 
 void uiSqhool::set_log ( int ID, const std::string & log ){
-  error("setLog: this function is not implemented yet");
+  pink_error("setLog: this function is not implemented yet");
 };
 
 void uiSqhool::set_command ( int ID, const std::string & command ){
@@ -583,7 +580,7 @@ boost::shared_ptr<vint> uiSqhool::list_images ( ) {
   
   if (SQLITE_OK!=sqlite3_get_table(database, ss.str().c_str(), &results, &row, &column, &errmsg )){
     std::cout << "sqlite says: " << sqlite3_errmsg(database) << std::endl;
-    error("couldn't get the list of the images.");    
+    pink_error("couldn't get the list of the images.");    
   };
   
   boost::shared_ptr<vint> result(new vint(row,-1));
@@ -636,11 +633,11 @@ int uiSqhool::callback (void * NotUsed, int argc, ppchar argv, ppchar azColName 
 
 std::string uiSqhool::get_image_type( int ID  ){
   if (ID==-1){
-    error("cannot yet choose the image automaticly");
+    pink_error("cannot yet choose the image automaticly");
   } 
   else /* NOT if (ID==-1) */
   {
-    error("cannot yet find the image type at all");
+    pink_error("cannot yet find the image type at all");
   }; /* NOT if (ID==-1) */
   return "error";
 };
