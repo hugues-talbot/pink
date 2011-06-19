@@ -42,8 +42,11 @@ knowledge of the CeCILL license and that you accept its terms.
 Compute the center of gravity of each labeled region.
 Labels should be consecutive integers. 
 Only strictly positive labels are considered. 
+The result is an image that contains labelled points. 
+More precisely, each barycentre is represented by the nearest grid
+point that is given the same label as the region.
 
-<B>Types supported:</B> byte 2d
+<B>Types supported:</B> long 2d, long 3d
 
 <B>Category:</B> geo
 \ingroup  geo
@@ -66,11 +69,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * imagebyte;
-  int32_t *L;
-  uint8_t *B;
-  int32_t x;
-  int32_t rs, cs, d, N;
 
   if (argc != 3)
   {
@@ -91,25 +89,8 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  rs = rowsize(image);
-  cs = colsize(image);
-  d = depth(image);
-  N = rs * cs * d;
-  L = SLONGDATA(image);
-  
-  imagebyte = allocimage(image->name, rs, cs, d, VFF_TYP_1_BYTE);
-  if (imagebyte == NULL)
-  {
-    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-    exit(1);
-  }
-  B = UCHARDATA(imagebyte);
-
-  for (x = 0; x < N; x++) B[x] = (uint8_t)mcmin(L[x],255);
-
-  writeimage(imagebyte, argv[argc-1]);
+  writeimage(image, argv[argc-1]);
   freeimage(image);
-  freeimage(imagebyte);
 
   return 0;
 } /* main */

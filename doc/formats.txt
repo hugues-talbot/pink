@@ -145,11 +145,13 @@ C0X1 C0Y1 C0Z1 C1X1 C1Y1 C1Z1 C2X1 C2Y1 C2Z1 C3X1 C3Y1 C3Z1
 ...
 C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn
 
-The ith segment of the parametric curve P is then defined by:
+The xi yi zi are the coordinates of the control points.
+The C?Xi C?Yi C?Zi are the coefficient of the polynoms of the ith cubic spline.
+The ith segment (starting with i=0) of the parametric curve P is then defined by:
 x(t) = C3Xi * t^3 + C2Xi * t^2 + C1Xi * t + C0Xi
 y(t) = C3Yi * t^3 + C2Yi * t^2 + C1Yi * t + C0Yi
 z(t) = C3Zi * t^3 + C2Zi * t^2 + C1Zi * t + C0Zi
-with t in [0,1]
+with t in [i,i+1]
 
 =======================================================
 

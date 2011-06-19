@@ -85,12 +85,12 @@ C0X1 C0Y1 C0Z1 C1X1 C1Y1 C1Z1 C2X1 C2Y1 C2Z1 C3X1 C3Y1 C3Z1<br>
 ...<br>
 C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn<br>
 
-The ith segment of the parametric curve P is then defined by:
+The ith segment (starting from i=0) of the parametric curve P is then defined by:
 
 x(t) = C3Xi * t^3 + C2Xi * t^2 + C1Xi * t + C0Xi<br>
 y(t) = C3Yi * t^3 + C2Yi * t^2 + C1Yi * t + C0Yi<br>
 z(t) = C3Zi * t^3 + C2Zi * t^2 + C1Zi * t + C0Zi<br>
-with t in [0,1]
+with t in [i,i+1]
 
 <B>Types supported:</B> list 2D, list 3D
 

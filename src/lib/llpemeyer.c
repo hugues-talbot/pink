@@ -2363,12 +2363,12 @@ int32_t llpemeyer3d2b(
 // LPE avec ligne de séparation
 // labels différents pour les voxels de la LPE :
 //   soit n le dernier label de l'image marqueurs, 
-//   si v est voisin de 2 labels i et j alors son label sera i*j+n
+//   si v est voisin de 2 labels i et j alors son label sera j*(n+1)+i, avec i<j
 //   s'il est voisin de plus de 2 labels alors son label sera n+1
 {
 #undef F_NAME
 #define F_NAME "llpemeyer3d2b"
-  register int32_t k;
+  register int32_t i, j, k;
   register index_t x, y;
   index_t rs = rowsize(image);       /* taille ligne */
   index_t cs = colsize(image);       /* taille colonne */
@@ -2571,7 +2571,12 @@ int32_t llpemeyer3d2b(
     else if (ncc > 1)
     {
       if (ncc > 2) M[x] = nlabels + 1;
-      else M[x] = nlabels + (etiqcc[0] * etiqcc[1]);
+      else 
+      {
+	if (etiqcc[0] < etiqcc[1]) { i = etiqcc[0]; j = etiqcc[1]; }
+	else                       { j = etiqcc[0]; i = etiqcc[1]; }
+	M[x] = j * (nlabels+1) + i;
+      }
     }
   } /* while (! FahVide(FAH)) */
   /* FIN PROPAGATION */

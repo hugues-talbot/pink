@@ -54,8 +54,10 @@ be labelled with the same numbers.
 If the optional parameter <B>mode</B> is 0 (default value), then the
 separation (watershed) will be labelled with n+1. Otherwise, a
 separating point that is neighbour of exactly two regions i and j will be
-labelled by i*j+n, and a separating point that is neighbour of more
-than two regions be labelled by n+1.
+labelled by j*(n+1)+i, with i<j, and a separating point that is neighbour 
+of more than two regions be labelled by n+1.
+Thus, from any label L > n+1, one can recover the labels of the two
+regions i,j in contact by doing: i = L%(n+1); j = L/(n+1).
 
 <B>Types supported:</B> byte 2d, byte 3d
 
@@ -143,7 +145,7 @@ int main(int argc, char **argv)
     {
       if (! llpemeyer3d2b(image, marqueurs, masque, connex))
       {
-	fprintf(stderr, "%s: llpemeyer3d2 failed\n", argv[0]);
+	fprintf(stderr, "%s: llpemeyer3d2b failed\n", argv[0]);
 	exit(1);
       }
     }
