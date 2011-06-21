@@ -20,14 +20,16 @@
 using boost::python::arg;
 using boost::python::def;
 
-#include "uiFlow.hpp"
-#include "uiCircle.hpp"
-#include "uiGradient.hpp"
-#include "ui_measure.hpp"
-#include "uiUngerFlow.hpp"
-#include "ui_polythread.hpp"
-#include "ui_fit_circle.hpp"
-#include "ui_flow_distributed.hpp"
+#ifdef PINK_DEVELOPMENT
+# include "uiFlow.hpp"
+# include "uiCircle.hpp"
+# include "uiGradient.hpp"
+# include "ui_measure.hpp"
+# include "uiUngerFlow.hpp"
+# include "ui_polythread.hpp"
+# include "ui_fit_circle.hpp"
+# include "ui_flow_distributed.hpp"
+#endif /* PINK_DEVELOPMENT */
 
 void pydevel()
 {
