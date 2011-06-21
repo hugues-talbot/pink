@@ -178,7 +178,7 @@ if (CMAKE_HOST_UNIX)
 	endif(TIFF_FOUND)
 
 
-### the LIAR is no longer an optin
+### the LIAR is no longer an option
 ### endif (PYTHON_FRONT_END) # end of LIAR
 
 
@@ -202,6 +202,9 @@ if (CMAKE_HOST_UNIX)
  	find_library( NUMA_LIB libnuma.${LIBEXT} ${POTENTIAL_LIBDIRS} )
  	set( LIBS ${LIBS} ${NUMA_LIB} )
 
+ 	find_library( OPENCL_LIB libOpenCL.${LIBEXT} ${POTENTIAL_LIBDIRS} )
+ 	set( LIBS ${LIBS} ${OPENCL_LIB} )
+
  	CHECK_INCLUDE_FILE( gsl/gsl_interp.h HTEST )
  	if (NOT HTEST)
  	    message( FATAL_ERROR "gsl header file failed to compile. If it is installed, than check the gsl flags") 
@@ -217,10 +220,15 @@ if (CMAKE_HOST_UNIX)
  	    message( FATAL_ERROR "error eigen2/Eigen/LU does not compile. Check if its correctly installed. You may need a newer version. ")
  	endif(NOT HTEST14)
 
- 	CHECK_INCLUDE_FILE_CXX( eigen2/Eigen/Geometry HTEST15 )
- 	if (NOT HTEST15)
- 	    message( FATAL_ERROR "error eigen2/Eigen/Geometry does not compile. Check if its correctly installed. You may need a newer version. ")
- 	endif(NOT HTEST15)
+ 	CHECK_INCLUDE_FILE_CXX( numa.h HTEST16 )
+ 	if (NOT HTEST16)
+ 	    message( FATAL_ERROR "error numa.h does not compile. Check if its correctly installed. You may need a newer version. ")
+ 	endif(NOT HTEST16)
+
+ 	CHECK_INCLUDE_FILE_CXX( CL/cl.h HTEST17 )
+ 	if (NOT HTEST17)
+ 	    message( FATAL_ERROR "error CL/cl.h does not compile. Check if its correctly installed. You may need a newer version. ")
+ 	endif(NOT HTEST17)
 
     endif (DEVELOPMENT)
 

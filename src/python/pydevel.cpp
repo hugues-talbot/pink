@@ -28,6 +28,7 @@ using boost::python::def;
 # include "uiUngerFlow.hpp"
 # include "ui_polythread.hpp"
 # include "ui_fit_circle.hpp"
+# include "ui_flow_opencl.hpp"
 # include "ui_flow_distributed.hpp"
 #endif /* PINK_DEVELOPMENT */
 
@@ -73,7 +74,7 @@ void pydevel()
     doc__maxflow__cpp__
     );
 
-    def(
+  def(
     "distflow",
     pink::numa::distflow<pink::float_image>,
     (arg("source and sink"),
@@ -84,7 +85,18 @@ void pydevel()
      arg("resolution")=0),
     doc__maxflow__cpp__
     );
-
+  
+  def(
+    "clflow",
+    pink::opencl::clflow<pink::float_image>,
+    (arg("source and sink"),
+     arg("constraint image"),
+     arg("iterations"),
+     arg("tau"),
+     arg("number of threads")=1,
+     arg("resolution")=0),
+    doc__maxflow__cpp__
+    );
   
   def(
     "ungerflow",

@@ -30,141 +30,148 @@ namespace pink {
     typedef std::pair<index_t, index_t> dibble_t;    
 
 
-    // template <class T0>
-    // class shared_vector
-    // {
-    // public:
-    //   typedef T0 value_type;
+    template <class T0>
+    class shared_vector
+    {
+    public:
+      typedef T0 value_type;
       
-    // private:
-    //   index_t size_;
-    //   index_t alloc_size;      
-    //   boost::shared_array<value_type> data;
+    private:
+      index_t size_;
+      index_t alloc_size;      
+      boost::shared_array<value_type> data;
 
-    //   void grow()
-    //     {
-    //       alloc_size <<= 1;          
-    //       boost::shared_array<value_type> tmp( new value_type[alloc_size] );
-    //       if (size_>0)
-    //       {            
-    //         std::copy( &(data[0]), &(data[size_-1]) + 1, &(tmp[0]) );
-    //       }
+      void grow()
+        {
+          alloc_size <<= 1;          
+          boost::shared_array<value_type> tmp( new value_type[alloc_size] );
+          if (size_>0)
+          {            
+            std::copy( &(data[0]), &(data[size_-1]) + 1, &(tmp[0]) );
+          }
           
-    //       data = tmp;            
-    //     }
+          data = tmp;            
+        }
       
             
-    // public:
-    //   shared_vector(): size_(0), alloc_size(1), data(new value_type[1])
-    //     {          
-    //     }
+    public:
+      shared_vector(): size_(0), alloc_size(1), data(new value_type[1])
+        {          
+        }
 
 
       
-    //   shared_vector(index_t size): size_(size)
-    //     {
-    //       alloc_size = 1;
-    //       while (alloc_size<size) alloc_size <<= 1;
+      shared_vector(index_t size): size_(size)
+        {
+          alloc_size = 1;
+          while (alloc_size<size) alloc_size <<= 1;
           
-    //       data.reset(new value_type[alloc_size]);
-    //       return;          
-    //     }
+          data.reset(new value_type[alloc_size]);
+          return;          
+        }
 
 
       
-    //   shared_vector(index_t size, value_type defval): size_(size)
-    //     {          
-    //       alloc_size = 1;
-    //       while (alloc_size<size) alloc_size <<= 1;          
-    //       data.reset( new value_type[alloc_size] );
+      shared_vector(index_t size, value_type defval): size_(size)
+        {          
+          alloc_size = 1;
+          while (alloc_size<size) alloc_size <<= 1;          
+          data.reset( new value_type[alloc_size] );
 
-    //       if (size>0)
-    //       {
-    //         std::fill( &(data[0]), &(data[size-1]) + 1, defval);
-    //       }
+          if (size>0)
+          {
+            std::fill( &(data[0]), &(data[size-1]) + 1, defval);
+          }
           
-    //       return;          
-    //     }
+          return;          
+        }
 
 
       
-    //   shared_vector( const shared_vector & other )
-    //     : size_(other.size_), alloc_size(other.alloc_size)
-    //     {
-    //       data = other.data;
-    //     }
+      shared_vector( const shared_vector & other )
+        : size_(other.size_), alloc_size(other.alloc_size)
+        {
+          data = other.data;
+        }
 
 
       
-    //   virtual ~shared_vector() { }
+      virtual ~shared_vector() { }
 
-
-      
-    //   index_t size() const
-    //     {
-    //       return size_;          
-    //     }
-
-
-      
-    //   value_type & operator[](index_t pos)
-    //     {
-    //       return data[pos];          
-    //     }
-
-
-      
-    //   const value_type & operator[](index_t pos) const
-    //     {
-    //       return data[pos];          
-    //     }
-
-
-      
-    //   void push_back( value_type value )
-    //     {
-    //       if ( size_ < alloc_size )
-    //       {
-    //         size_++;
-    //       }
-    //       else /* NOT size_<alloc_size */
-    //       {
-    //         grow();
-    //         size_++;            
-    //       } /* NOT size_<alloc_size */
-          
-    //       data[ size_ - 1 ] = value;          
-
-    //       return;          
-    //     }
-
-
-      
-    //   void resize(index_t size)
-    //     {
-    //       if ( size <= alloc_size )
-    //       {
-    //         size_=size;            
-    //       }
-    //       else /* NOT size < size_ */
-    //       {
-    //         while ( alloc_size < size ) alloc_size <<= 1;
-    //         boost::shared_array<value_type> tmp( new value_type[alloc_size] );
-    //         if (size_>0)
-    //         {              
-    //           std::copy( &(data[0]), &(data[size_-1]) + 1, &(tmp[0]) );
-    //         }
-
-    //         size_= size;
-    //         data = tmp;                          
             
-    //       } /* NOT size < size_ */
 
-    //       return;
-          
-    //     } /* vector2D::resize  */
+      value_type * get()
+        {
+          return data.get();          
+        }
       
-    // }; /* class shared_vector */
+
+      
+      index_t size() const
+        {
+          return size_;          
+        }
+
+
+      
+      value_type & operator[](index_t pos)
+        {
+          return data[pos];          
+        }
+
+
+      
+      const value_type & operator[](index_t pos) const
+        {
+          return data[pos];          
+        }
+
+
+      
+      void push_back( value_type value )
+        {
+          if ( size_ < alloc_size )
+          {
+            size_++;
+          }
+          else /* NOT size_<alloc_size */
+          {
+            grow();
+            size_++;            
+          } /* NOT size_<alloc_size */
+          
+          data[ size_ - 1 ] = value;          
+
+          return;          
+        }
+
+
+      
+      void resize(index_t size)
+        {
+          if ( size <= alloc_size )
+          {
+            size_=size;            
+          }
+          else /* NOT size < size_ */
+          {
+            while ( alloc_size < size ) alloc_size <<= 1;
+            boost::shared_array<value_type> tmp( new value_type[alloc_size] );
+            if (size_>0)
+            {              
+              std::copy( &(data[0]), &(data[size_-1]) + 1, &(tmp[0]) );
+            }
+
+            size_= size;
+            data = tmp;                          
+            
+          } /* NOT size < size_ */
+
+          return;
+          
+        } /* vector2D::resize  */
+      
+    }; /* class shared_vector */
     
       
     // template <class value_type>    
