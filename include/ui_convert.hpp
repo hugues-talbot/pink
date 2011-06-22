@@ -19,42 +19,18 @@
 
 namespace pink {
 
-
   template <class T>
   index_t
   maxint()
   {
     pink_error("could not determine the type's maximum value");    
   }
-
-  template <short_image::pixel_type>
-  index_t
-  maxint()
-  {
-    return USHRT_MAX;    
-  }
-
-  template <char_image::pixel_type>
-  index_t
-  maxint()
-  {
-    return UCHAR_MAX;    
-  }
-
-  template <int_image::pixel_type>
-  index_t
-  maxint()
-  {
-    return INT_MAX;    
-  }
-
   
   template <class T0>
   int64_t uiround(T0 val)
   {
     return floor(val + 0.5);
   }
-
 
   char_image  float2byte(  const float_image & src, int mode=0 );
   short_image long2short( const int_image &   src, int mode=0 );

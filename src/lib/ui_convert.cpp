@@ -26,6 +26,28 @@ using namespace std;
 
 namespace pink {
 
+
+  template <>
+  index_t
+  maxint<short_image::pixel_type>()
+  {
+    return USHRT_MAX;    
+  }
+
+  template <>
+  index_t
+  maxint<char_image::pixel_type>()
+  {
+    return UCHAR_MAX;    
+  }
+
+  template <>
+  index_t
+  maxint<int_image::pixel_type>()
+  {
+    return INT_MAX;    
+  }
+
   char_image long2byte(
     const int_image & src,
     int mode,
