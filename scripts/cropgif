@@ -1,11 +1,6 @@
 #!/bin/sh
 USAGE="Usage: $0 in.gif x y w h out.gif"
-if [ $# -gt 6 ]
-then
-	echo $USAGE
-        exit
-fi
-if [ $# -lt 6 ]
+if [ $# -ne 6 ]
 then
 	echo $USAGE
         exit

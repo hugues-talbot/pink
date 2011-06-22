@@ -2195,7 +2195,7 @@ static int32_t compute_vectors_from_junction(
   int32_t rs = S->rs, ps = rs * S->cs;
   int32_t i, j, n1, n2, npoints, ntemp;
   SKC_adj_pcell adj;
-  SKC_pt_pcell pts;
+  //  SKC_pt_pcell pts;
   int32_t c[3]; 		// les courbes adjacentes à la jonction
   double angle[3]; for (i=0; i<3; i++) angle[i]=1;
 
@@ -3241,6 +3241,36 @@ struct xvimage * lskelfilter3(skel *S, double delta1, double delta2, double maxb
   return result;
 } /* lskelfilter3() */
 
+/*===================================================*/
+static uint64_t * LigneTrianglePascal (int32_t n)
+/*===================================================*/
+/* Calcule la ligne n du triangle de Pascal
+
+  Entree : 
+    n, le noméro de la ligne
+  Retourne :
+    le tableau contenant la ligne du triangle
+*/
+{
+  uint64_t* t;
+  int32_t i, j, old, c;
+  assert(n/2 < 34); // dernier entier n tel que C_n^(n/2) <= 2^64 
+  t = (uint64_t*)malloc(n*sizeof(uint64_t)); assert(t != NULL);
+  t[0] = t[1] = 1;
+  for (i = 3; i <= n; i++)
+  {
+    old = t[0];
+    for (j = 1; j < i-1; j++)
+    {
+      c = t[j] + old;
+      old = t[j];
+      t[j] = c;
+    }
+    t[i-1] = 1;
+  }
+  return t;
+} // LigneTrianglePascal()
+
 /* ---------------------------------------------------------------------- */
 struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double maxbridgelength, double maxelbowangle)
 /* ---------------------------------------------------------------------- */
@@ -3260,7 +3290,7 @@ struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double max
 {
 #undef F_NAME
 #define F_NAME "lskelfilter5"
-  int32_t ret, i, j, nmaxpoints, *listpoints, nfiber, na, nd, n, decalage, nbis;
+  int32_t ret, i, j, nmaxpoints, *listpoints, nfiber, na, nd, n;
   SKC_adj_pcell p;
   SKC_pt_pcell pp;
   double *VVx, *VVy, *VVz;
@@ -3288,30 +3318,7 @@ struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double max
   VVz = (double *)malloc(nmaxpoints * sizeof(double)); assert(Z != NULL);
 
   // Charge la ligne 2*mask du triangle de pascal dans tab_combi
-  FILE *fd=NULL;
-  char tablefilename[512], buf[25];
-  tab_combi = (uint64_t*)malloc( (2*mask)*sizeof( uint64_t ));
-
-  sprintf(tablefilename, "%s/src/tables/TabTriPascal.txt", getenv("PINK"));
-  fd = fopen (tablefilename, "r");
-  if (fd == NULL) 
-  {
-#ifdef DEBUG_lskelfilter5
-    fprintf(stderr, "%s : table not found\n", F_NAME);
-#endif
-    exit(1);
-  }
-
-  nbis = 2*mask-1;
-  decalage = 21*(nbis*(nbis+1))/2+nbis+3;
-  fseek(fd, decalage, SEEK_SET);
-
-  for (i = 0; i < nbis+1 ; i++)
-  {
-    fread( buf, 21, 1, fd);
-    tab_combi[i] = atol(buf);
-  }
-  fclose(fd);
+  tab_combi = LigneTrianglePascal(2*mask);
 
   // mark all arcs undeleted
   for (i = S->e_end; i < S->e_curv; i++) SK_UNREMOVE(i);
@@ -3326,7 +3333,6 @@ struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double max
   free(X); free(Y); free(Z);
   free(VVx); free(VVy); free(VVz);
   free(tab_combi);
-
 
   nfiber = 0;
   // repeat
