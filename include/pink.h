@@ -331,8 +331,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #  include "ui_extractplane.hpp"
 #  include "ui_measure.hpp"
 #  include "ui_any_to_complex.hpp"
-#  include "ui_compactor.hpp"
-#  include "ui_numa_types.hpp"
 #endif /* __cplusplus */
 
 // // new with mixed language declarations (c/c++)

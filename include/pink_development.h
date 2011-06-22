@@ -40,6 +40,8 @@
 #  include "python_doc.h"
 #  include "pyexport.hpp"
 #  include "uiQDistance.hpp"
+#  include "ui_compactor.hpp"
+#  include "ui_numa_types.hpp"
 
 #endif /* __cplusplus */
 
