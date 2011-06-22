@@ -2203,7 +2203,12 @@ static int32_t compute_vectors_from_junction(
   c[0] = adj->val;
   adj = adj->next;
   c[1] = adj->val;
-  if ( (adj=adj->next)==NULL) { fprintf(stderr,"appel : nbr arc = 2\n"); return 0; } // la jonction est un coude
+  if ( (adj=adj->next)==NULL) { fprintf(stderr,"appel : nbr arc = 2\n"); 
+	  adj = (S->tskel[J]).adj;
+	  adj->vx = -1; adj->vy = 0; adj->vz = 0;
+	  adj = adj->next;
+	  adj->vx = 0; adj->vy = 1; adj->vz = 0;
+	return 0; } // la jonction est un coude
   c[2] = adj->val;
   if ( adj->next != NULL ) { fprintf(stderr,"appel : nbr arc = 4+\n"); return 0; } // plus de trois arcs
 
