@@ -65,6 +65,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #define DEBUG 0
 #define DEBUGLIST
 
+// commentaire inutile
+
 /* ================================================= */
 void lbresen(uint8_t *F, int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By)
 /* ================================================= */
