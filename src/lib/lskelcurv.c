@@ -2193,29 +2193,46 @@ static int32_t compute_vectors_from_junction(
 // ----------------------------------------------------------------------
 {
   int32_t rs = S->rs, ps = rs * S->cs;
-  int32_t i, j, n1, n2, npoints, ntemp;
+  int32_t i, j, n1, n2, npoints, ntemp, narc, ajust=0;
   SKC_adj_pcell adj;
   //  SKC_pt_pcell pts;
-  int32_t c[3]; 		// les courbes adjacentes à la jonction
-  double angle[3]; for (i=0; i<3; i++) angle[i]=1;
+  int32_t c[4]; 		// les courbes adjacentes à la jonction
+  double angle[6]; for (i=0; i<6; i++) angle[i]=1;
+  double max;
 
   adj = (S->tskel[J]).adj;
   c[0] = adj->val;
   adj = adj->next;
   c[1] = adj->val;
-  if ( (adj=adj->next)==NULL) { fprintf(stderr,"appel : nbr arc = 2\n"); 
+  narc = 2;
+  if ( (adj=adj->next)==NULL) { fprintf(stderr,"appel : nbr arc = %d\n",narc); 
 	  adj = (S->tskel[J]).adj;
 	  adj->vx = -1; adj->vy = 0; adj->vz = 0;
 	  adj = adj->next;
 	  adj->vx = 0; adj->vy = 1; adj->vz = 0;
 	return 0; } // la jonction est un coude
   c[2] = adj->val;
-  if ( adj->next != NULL ) { fprintf(stderr,"appel : nbr arc = 4+\n"); return 0; } // plus de trois arcs
+  narc++;
+  if ( (adj=adj->next) != NULL ) { 
+    c[3] = adj->val; 
+    narc++;
+  while ( (adj=adj->next) != NULL ) { // plus de 4 arcs
+    narc++; }
+  }
 
-{ fprintf(stderr,"appel : nbr arc = 3\n");}
+  fprintf(stderr,"appel : nbr arc = %d\n",narc);
+  if (narc>4) {
+    adj = (S->tskel[J]).adj;
+    while (adj != NULL) {
+      adj->vx = 0; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+    }
+    return 0;
+  }
 
-  for (i=0; i<2; i++)
-  for (j=i+1; j<3; j++)
+  for (i=0; i<narc-1; i++)
+  {
+  for (j=i+1; j<narc; j++)
   {
     // calcul de la première courbe : c[i]-barycentre-c[j]
     // On place c[i]
@@ -2294,15 +2311,25 @@ static int32_t compute_vectors_from_junction(
       for(n2=n1+1; n2< mcmin(npoints,ntemp+l+1); n2++)
       {
   	// mise à jour de angle[i+j-1]
-  	angle[i+j-1]=mcmin(angle[i+j-1],VVx[n1]*VVx[n2]+VVy[n1]*VVy[n2]+VVz[n1]*VVz[n2]);
+  	angle[i+j-1+ajust]=mcmin(angle[i+j-1+ajust],VVx[n1]*VVx[n2]+VVy[n1]*VVy[n2]+VVz[n1]*VVz[n2]);
       }
+  } // fin for j
+  ajust = narc-3;
+  } // fin for i
 
-  } // fin for i,j
 
-  if (angle[0] > angle[1])
+  // j=argmax(angle)
+  max = angle[0]; j=0;
+  if (narc==3) ntemp=3;
+  else ntemp=6;
+  for (i=1;i<ntemp;i++)
+    if (angle[i]>max) { max=angle[i]; j=i; }
+
+  if (narc==3)
   {
-    if (angle[0] > angle[2])
+    switch(j)
     {
+    case '0' :
       // c[0]-c[1]
       adj = (S->tskel[J]).adj;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
@@ -2310,9 +2337,17 @@ static int32_t compute_vectors_from_junction(
       adj->vx = 1; adj->vy = 0; adj->vz = 0;
       adj = adj->next;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
-    }
-    else
-    {
+      break;
+    case '1' :
+      // c[0]-c[2]
+      adj = (S->tskel[J]).adj;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      break;
+    case '2' :
       // c[1]-c[2]
       adj = (S->tskel[J]).adj;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
@@ -2324,8 +2359,20 @@ static int32_t compute_vectors_from_junction(
   }
   else
   {
-    if (angle[1] > angle[2])
+    switch (j)
     {
+    case '0' :
+      // c[0]-c[1]
+      adj = (S->tskel[J]).adj;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 0; adj->vz = 1;
+      break;
+    case '1' :
       // c[0]-c[2]
       adj = (S->tskel[J]).adj;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
@@ -2333,12 +2380,48 @@ static int32_t compute_vectors_from_junction(
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
       adj = adj->next;
       adj->vx = 1; adj->vy = 0; adj->vz = 0;
-    }
-    else
-    {
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 0; adj->vz = 1;
+      break;
+    case '2' :
+      // c[0]-c[3]
+      adj = (S->tskel[J]).adj;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 0; adj->vz = 1;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      break;
+    case '3' :
       // c[1]-c[2]
       adj = (S->tskel[J]).adj;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 0; adj->vz = 1;
+      break;
+    case '4' :
+      // c[1]-c[3]
+      adj = (S->tskel[J]).adj;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 0; adj->vz = 1;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      break;
+    case '5' :
+      // c[2]-c[3]
+      adj = (S->tskel[J]).adj;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 0; adj->vz = 1;
       adj = adj->next;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
       adj = adj->next;
@@ -3030,6 +3113,7 @@ int32_t lskelfilter2b(skel *S)
 	printf("\n");
 #endif	  
 	if (nadj <= 2) break; // end or elbow: stop tracking
+        if (Vx[0]==0 && Vy[0]==0 && Vz[0]==0) break; // end
 
 //      Let m be such that the angle <V0,-Vm> is minimal
 	angle = 4.0; // greater than any angle
