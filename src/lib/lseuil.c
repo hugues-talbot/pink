@@ -62,6 +62,11 @@ int32_t lseuil(
     uint8_t *F = UCHARDATA(f);
     for (x = 0; x < N; x++) if (F[x] < seuil) F[x] = NDG_MIN; else F[x] = NDG_MAX;  
   }
+  else if (datatype(f) == VFF_TYP_2_BYTE)
+  {
+    int16_t *FS = SSHORTDATA(f);
+    for (x = 0; x < N; x++) if (FS[x] < seuil) FS[x] = NDG_MIN; else FS[x] = NDG_MAX;  
+  }
   else if (datatype(f) == VFF_TYP_4_BYTE)
   {
     int32_t *FL = SLONGDATA(f);
@@ -71,6 +76,11 @@ int32_t lseuil(
   {
     float *FF = FLOATDATA(f);
     for (x = 0; x < N; x++) if (FF[x] < seuil) FF[x] = 0.0; else FF[x] = 1.0;  
+  }
+  else if (datatype(f) == VFF_TYP_DOUBLE)
+  {
+    double *FD = DOUBLEDATA(f);
+    for (x = 0; x < N; x++) if (FD[x] < seuil) FD[x] = 0.0; else FD[x] = 1.0;  
   }
   else
   {   fprintf(stderr,"lseuil() : bad datatype : %d\n", datatype(f));

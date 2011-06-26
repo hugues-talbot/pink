@@ -72,7 +72,7 @@ To install:
 tar zxvf pink.tgz
 mv Pinktmp <main_pink_directory>
 cd <main_pink_directory>
-makelin
+./makelin
 
 Executable files are in '<main_pink_directory>/linux/bin',
 scripts are in '<main_pink_directory>/scripts' and in '<main_pink_directory>/tcl'
