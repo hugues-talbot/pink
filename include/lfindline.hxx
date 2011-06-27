@@ -11,7 +11,9 @@ using namespace std;
 #  include "mccodimage.h"
 
 
-int32_t mean2(uint16_t  *Image, int colsize, int rowsize);
+void mean2(uint16_t  *Image, int colsize, int rowsize);
+
+void control(uint16_t *Image, int colsize, int rowsize);
 
 int32_t mean3(uint16_t *Image, int colsize, int rowsize);
 
@@ -35,6 +37,8 @@ void long2short(xvimage **image);
 
 void binning(xvimage **image);
 
+xvimage *tophat(xvimage *original);
+
 int32_t mean_long(int32_t *Image, int colsize, int rowsize);
 
 void clean_long(int32_t *Image, int colsize, int rowsize);
@@ -54,8 +58,8 @@ int32_t query_long(int32_t *Image,int32_t x,int32_t y,int w,int rowsize, int col
 uint16_t *get_edge(uint16_t *Image,uint16_t *Image2, vector<int32_t> *Bord1, vector<int32_t> *Bord2, vector<int32_t> *Bord3,
                 vector<int32_t> *Bord4,int rowsize, int colsize);
 
-void get_best_line(uint16_t *I,uint16_t *I2, vector<int32_t> Bord2, vector<int32_t> Bord3, vector<int32_t> Bord1,
-                    vector<int32_t> Bord4,int rowsize, int colsize, int w);
+void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, vector<int32_t> Bord1,
+                    vector<int32_t> Bord4,int rowsize, int colsize, int w, double nb_max);
 
 int32_t query(uint16_t *Image,int32_t x,int32_t y,int w,int rowsize, int colsize);
 

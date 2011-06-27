@@ -1,10 +1,10 @@
 /*
-  This software is licensed under 
+  This software is licensed under
   CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
-  This software comes in hope that it will be useful but 
+  This software comes in hope that it will be useful but
   without any warranty to the extent permitted by aplicable law.
-  
+
   (C) UjoImro, 2010
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
@@ -33,37 +33,37 @@ extern "C"
 } /* extern "C" */
 
 
-namespace pink
-{
-  
-  int outer_stride( const Eigen::MatrixXd & );
-  bool generalized_eigenvalue(const Eigen::MatrixXd&,
-                              const Eigen::MatrixXd&,
-                              Eigen::MatrixXd&,
-                              Eigen::MatrixXd&
-    );
-  Eigen::VectorXd fit_circle( const Eigen::VectorXd &, const Eigen::VectorXd & );
-
-  // the same as 'fit_circle' but with python conversion
-  boost::python::list py_fit_circle(
-    const boost::python::list & py_x,
-    const boost::python::list & py_y,
-    const std::string & filename = ""
-    );
-  
-
-  boost::python::list py_circle_equation_to_coordinates(
-    const boost::python::list & equation
-    );
-  
-  boost::python::list py_circle_equation_to_coordinates(
-    const boost::python::list & equation
-    );
-  
-
-
-  
-} /* end namespace pink */
+//namespace pink
+//{
+//
+//  int outer_stride( const Eigen::MatrixXd & );
+//  bool generalized_eigenvalue(const Eigen::MatrixXd&,
+//                              const Eigen::MatrixXd&,
+//                              Eigen::MatrixXd&,
+//                              Eigen::MatrixXd&
+//    );
+//  Eigen::VectorXd fit_circle( const Eigen::VectorXd &, const Eigen::VectorXd & );
+//
+//  // the same as 'fit_circle' but with python conversion
+//  boost::python::list py_fit_circle(
+//    const boost::python::list & py_x,
+//    const boost::python::list & py_y,
+//    const std::string & filename = ""
+//    );
+//
+//
+//  boost::python::list py_circle_equation_to_coordinates(
+//    const boost::python::list & equation
+//    );
+//
+//  boost::python::list py_circle_equation_to_coordinates(
+//    const boost::python::list & equation
+//    );
+//
+//
+//
+//
+//} /* end namespace pink */
 
 
 #endif /*UI_FIT_CIRCLE_HPP_*/

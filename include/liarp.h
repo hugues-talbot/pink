@@ -226,6 +226,8 @@ extern "C" {
     long *periodic3d(int dx, int dy, int dz,
 		      int imwidth, int imheight, int imdepth,
 		      int *ol, int *period);
+	long *bresenham(int xin,int yin,int angle,int width,int *period);
+	long *periodic(int x, int y, int angle, int width, int *period);
 
 #ifdef __cplusplus
 }
