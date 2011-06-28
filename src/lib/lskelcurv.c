@@ -2178,6 +2178,106 @@ static int32_t compute_vector(
 } // compute_vector()
 
 // ----------------------------------------------------------------------
+int32_t lien(
+skel *S,
+int32_t J,
+int32_t p1,
+int32_t p2,
+int32_t *cube, // tableau de 6*6*6 cases
+int32_t *listpoints
+)
+// ----------------------------------------------------------------------
+{
+  int32_t i, j, k, x, y, z, p1_, p2_, indice;
+  int32_t list[20];
+  int32_t rs = S->rs, ps = rs*S->cs;
+
+  struct SKC_pt_cell * pts;
+
+  int32_t xmin = mcmin(p1%rs,p2%rs), ymin = mcmin((p1%ps)/rs,(p2%ps)/rs), zmin = mcmin(p1/ps,p2/ps);
+  int32_t xmax = mcmax(p1%rs,p2%rs), ymax = mcmax((p1%ps)/rs,(p2%ps)/rs), zmax = mcmax(p1/ps,p2/ps);
+  assert(xmax-xmin<6);   assert(ymax-ymin<6);   assert(zmax-zmin<6);
+
+  pts = (S->tskel)[J].pts;
+  while ( pts != NULL )
+  {
+    x = pts->val%rs; y = (pts->val%ps)/rs; z = pts->val/ps;
+    xmin = mcmin(xmin,x), ymin = mcmin(ymin,y), zmin = mcmin(zmin,z);
+    xmax = mcmax(xmax,x), ymax = mcmax(ymax,y), zmax = mcmax(zmax,z);
+    pts = pts->next;
+  }
+  assert(xmax-xmin<6);   assert(ymax-ymin<6);   assert(zmax-zmin<6);
+/*if ( ((xmax-xmin)>5) | ((ymax-ymin)>5) | ((zmax-zmin)>5) ) {
+	  fprintf(stderr,"%d %d %d %d %d %d\n",xmax,xmin,ymax,ymin,zmax,zmin);
+	  fprintf(stderr,"pts d'arc : %d ; %d\n",p1, p2);
+	  pts = (S->tskel[J]).pts;
+	  for (;pts!=NULL;pts=pts->next) fprintf(stderr,"point : %d\n",pts->val);
+exit(0);
+}*/
+
+  for(i=0;i<216;i++) cube[i]=0;
+  p1_ = (p1/ps-zmin)*36+((p1%ps)/rs-ymin)*6+(p1%rs-xmin); 
+  p2_ = (p2/ps-zmin)*36+((p2%ps)/rs-ymin)*6+(p2%rs-xmin);
+  cube[p1_]=1;
+  cube[p2_]=-1;
+  pts = (S->tskel)[J].pts;
+  while ( pts != NULL )
+  {
+    x = pts->val%rs; y = (pts->val%ps)/rs; z = pts->val/ps;
+    cube[(z-zmin)*36+(y-ymin)*6+(x-xmin)]=-1;
+    pts = pts->next;
+  }
+
+  // calc distance de p1 à p2
+  list[0] = p1_;
+  i = 0; // etat courant
+  j = 1; // etat pour remplir
+  while( cube[p2_] == -1 )
+  {
+  // pour tous voisins non marqués de list[i]
+  // marquer le voisin
+  // ajouter le voisin à list
+  for(k=0;k<26;k++) {
+    indice = voisin26(list[i],k,6,36,216);
+    if ( indice != -1 && cube[indice] == -1 ) { cube[indice]=cube[list[i]]+1; list[j]=indice; j++; assert(j<20); }
+  }  
+  i++;
+  }  
+
+/*
+//affichage du cube
+fprintf(stderr,"cube :\n");
+for(i=0;i<6;i++)
+{  for(j=0;j<6;j++)
+   {  for(k=0;k<6;k++)
+        fprintf(stderr,"%d ",cube[i*36+j*6+k]);
+   fprintf(stderr,"\n");}
+fprintf(stderr,"\n");
+}*/
+
+  // extraire chemin de p1 à p2
+  i = cube[p2_]-2;
+  assert(i<5); // on conjecture qu'il n'y a jamais plus de 4 points pour faire la jonction
+  j = p2_;
+  while( j != p1_ ){
+    for(k=0;k<26;k++){
+      indice = voisin26(j,k,6,36,216);
+      if ( indice != -1 && cube[indice] == cube[j]-1 ) { 
+		j=indice;
+		i--;
+		x = j%6+xmin;
+		y = (j%36)/6+ymin;
+		z = j/36+zmin;
+		listpoints[i]= z*ps+y*rs+x;
+		k=26;
+      }
+    }    
+  }
+
+  return cube[p2_]-2;
+} // lien()
+
+// ----------------------------------------------------------------------
 static int32_t compute_vectors_from_junction(
    skel *S,                // structure squelette
    int32_t J,		   // index de la jonction
@@ -2185,6 +2285,7 @@ static int32_t compute_vectors_from_junction(
    int32_t l,		   // demi-taille de la fenetre 
    uint64_t *tab_combi,	   // 2*mask-1 ème ligne du triangle de pascal
 
+   int32_t *cube,	   // variable temporaire : tableau de 216 int32_t
    int32_t *listpoints,    // variable temporaire : points de courbe
    int32_t nmaxpoints,     // taille max de la liste listpoints (nmaxpoints >> nbr de points d'une courbe)
    int32_t *X, int32_t *Y, int32_t *Z,	 // variable temporaire : tableau des points de courbe (coordonnées)
@@ -2192,10 +2293,9 @@ static int32_t compute_vectors_from_junction(
 )
 // ----------------------------------------------------------------------
 {
-  int32_t rs = S->rs, ps = rs * S->cs;
-  int32_t i, j, n1, n2, npoints, ntemp, narc, ajust=0;
+//  int32_t rs = S->rs, ps = rs * S->cs;
+  int32_t i, j, n1, n2, npoints, ntemp, narc, n, ajust=0;
   SKC_adj_pcell adj;
-  //  SKC_pt_pcell pts;
   int32_t c[4]; 		// les courbes adjacentes à la jonction
   double angle[6]; for (i=0; i<6; i++) angle[i]=1;
   double max;
@@ -2245,9 +2345,10 @@ static int32_t compute_vectors_from_junction(
       npoints = nmaxpoints;
       list_points_at_tail2(S, c[i], listpoints, &npoints);
     }
-
-    // on place le point de jonction entre c[i] et J
     ntemp = npoints;
+
+//v1
+/*  // on place le point de jonction entre c[i] et J
     listpoints[ntemp] = adj_point_junc2( S, listpoints[ntemp-1], J);
 
     // on laisse une place pour le point de jonction entre J et c[j]
@@ -2292,16 +2393,44 @@ static int32_t compute_vectors_from_junction(
       break;
       case 26:
 	assert(sont26voisins(listpoints[ntemp], listpoints[ntemp+1], rs, ps));
-/*	if (!sont26voisins(listpoints[ntemp], listpoints[ntemp+1], rs, ps)) 
-	{
-	  fprintf(stderr,"non voisins : %d ; %d ; rs=%d ; ps=%d\n",listpoints[ntemp], listpoints[ntemp+1],rs,ps);
-	  fprintf(stderr,"pts d'arc : %d ; %d\n",listpoints[ntemp-1], listpoints[ntemp+2]);
-	  pts = (S->tskel[J]).pts;
-	  for (;pts!=NULL;pts=pts->next) fprintf(stderr,"point : %d\n",pts->val);
-	}*/
+//	if (!sont26voisins(listpoints[ntemp], listpoints[ntemp+1], rs, ps)) 
+//	{
+//	  fprintf(stderr,"non voisins : %d ; %d ; rs=%d ; ps=%d\n",listpoints[ntemp], listpoints[ntemp+1],rs,ps);
+//	  fprintf(stderr,"pts d'arc : %d ; %d\n",listpoints[ntemp-1], listpoints[ntemp+2]);
+//	  pts = (S->tskel[J]).pts;
+//	  for (;pts!=NULL;pts=pts->next) fprintf(stderr,"point : %d\n",pts->val);
+//	}
       break;
     }
     }
+*/
+//fin v1
+
+//v2
+    // on laisse 4 places pour la jonction
+    npoints = nmaxpoints-ntemp-4;
+
+    // on place c[j]
+    list_points_at_head2(S, c[j], listpoints+ntemp+4, &npoints);
+    assert(npoints > 0);
+
+    if (!adj_point_junc(S, listpoints[ntemp+4], J))
+    { // arc c[j] arrivant à la jonction , retourner c[j]
+      npoints = nmaxpoints - ntemp -4;
+      list_points_at_tail2(S, c[j], listpoints+ntemp+4, &npoints);
+      assert(npoints > 0);
+    }
+
+    // on place la jonction
+    n = lien(S,J,listpoints[ntemp-1],listpoints[ntemp+4],cube,listpoints+ntemp);
+
+    // on repositionne le second arc si nécessaire
+    if ( n<4 )
+	for(n1=0;n1<npoints;n1++) listpoints[ntemp+n+n1] = listpoints[ntemp+4+n1];
+
+    npoints = npoints + ntemp + n;
+//fin v2
+
 
     // calcul des tangentes
     lcurvetangents3D( 2, mask, tab_combi, npoints, X, Y, Z, VVx, VVy, VVz);
@@ -2316,7 +2445,6 @@ static int32_t compute_vectors_from_junction(
   } // fin for j
   ajust = narc-3;
   } // fin for i
-
 
   // j=argmax(angle)
   max = angle[0]; j=0;
@@ -3387,6 +3515,7 @@ struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double max
   struct xvimage * result;
   int32_t *R;
   uint64_t *tab_combi;
+  int32_t cube[216];
 
 #ifdef DEBUG_lskelfilter5
   printf("%s: begin e_isol=%d e_end=%d e_curv=%d e_junc=%d \n", F_NAME, S->e_isol, S->e_end, S->e_curv, S->e_junc);
@@ -3415,7 +3544,7 @@ struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double max
   // compute all tangent vectors
   for (j = S->e_curv; j < S->e_junc; j++) // scan all junctions
   {
-    ret = compute_vectors_from_junction( S, j, mask, fenetre, tab_combi, listpoints, nmaxpoints, X, Y, Z, VVx, VVy, VVz);
+    ret = compute_vectors_from_junction( S, j, mask, fenetre, tab_combi, cube, listpoints, nmaxpoints, X, Y, Z, VVx, VVy, VVz);
   }
 
   free(listpoints);
