@@ -1208,8 +1208,10 @@ namespace pink {
           }
           else if (number_of_threads==0)
           {
-            this->number_of_threads = sysconf( _SC_NPROCESSORS_ONLN );            
-          }          
+            // getting the number of cpu-s on the system
+            this->number_of_threads = boost::thread::hardware_concurrency();
+            this->number_of_threads = std::max( 1, this->number_of_threads );            
+          } /* number_of_threads == 0 */
 
           std::cout << "Using " << this->number_of_threads << " threads from " << sysconf( _SC_NPROCESSORS_ONLN ) << std::endl;
           
