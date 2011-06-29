@@ -145,8 +145,14 @@ int LIARerror(const char *msg, ...)
 
     im_va_start(args,msg);
 
+#   ifdef WIN32
+    _snprintf(strarg, BUFSIZE, ERRORPROMPT "%s", msg);
+#   else /* NOT WIN32 */
     snprintf(strarg, BUFSIZE, ERRORPROMPT "%s", msg);
+#   endif /* NOT WIN32 */
+
     ret = vfprintf(stderr, strarg, args);
+
 
     va_end(args);
     
