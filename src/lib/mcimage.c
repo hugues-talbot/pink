@@ -2144,8 +2144,9 @@ struct xvimage * readimage(char *filename)
 	    } // if (color)
 	    else 
 	    {
-	      N = rs * cs * ds * nb;
-              index_t ret = fread(UCHARDATA(image), sizeof(char), N, fd);
+	      index_t ret;
+	      N   = rs * cs * ds * nb;
+              ret = fread(UCHARDATA(image), sizeof(char), N, fd);
               if (ret != N)
               {
 #                 ifdef MC_64_BITS
