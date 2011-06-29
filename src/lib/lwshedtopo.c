@@ -900,6 +900,7 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
 #define F_NAME "lwshedtopobin"
 
   struct xvimage * marqueur_local = NULL;
+  int32_t result;
   
   marqueur_local = copyimage(marqueur);
   
@@ -909,7 +910,7 @@ int32_t lwshedtopobin(struct xvimage *image, struct xvimage *marqueur, int32_t c
     exit(1);
   }
 
-  int32_t result;
+  
   result = lwshedtopobin_classic(image, marqueur_local, connex);
 
   freeimage(marqueur_local);
