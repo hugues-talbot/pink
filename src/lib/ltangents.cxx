@@ -124,6 +124,7 @@ void calc_tangents3D(int32_t npoints, int32_t mask, uint64_t *tab_combi, int32_t
   deltaX[0] = 0;
   deltaY[0] = 0;
   deltaZ[0] = 0;
+  deltaX[2] = 0;
   for (i = 1; i < npoints; i++)
   {
     deltaX[i] = X[i]-X[i-1];
@@ -141,14 +142,17 @@ void calc_tangents3D(int32_t npoints, int32_t mask, uint64_t *tab_combi, int32_t
     for (j = max(0,mask-i); j < min(2*mask,npoints+mask-i-1); j++)
       {
 	tmp = i+j-mask+1;
-	Xdir[i] += (int64_t)(tab_combi[j]*deltaX[tmp]);
-	Ydir[i] += (int64_t)(tab_combi[j]*deltaY[tmp]);
-	Zdir[i] += (int64_t)(tab_combi[j]*deltaZ[tmp]);
+	assert(tmp>=0 && tmp<npoints);
+	
+	Xdir[i] += (double)(tab_combi[j]*(int64_t)deltaX[tmp]);
+	Ydir[i] += (double)(tab_combi[j]*(int64_t)deltaY[tmp]);
+	Zdir[i] += (double)(tab_combi[j]*(int64_t)deltaZ[tmp]);
       }
     Xdir[i] = Xdir[i]*coef;
     Ydir[i] = Ydir[i]*coef;
     Zdir[i] = Zdir[i]*coef;
-    normalisateur = pow(pow(Xdir[i],2)+pow(Ydir[i],2)+pow(Zdir[i],2),0.5);
+    normalisateur = Xdir[i]*Xdir[i]+Ydir[i]*Ydir[i]+Zdir[i]*Zdir[i];
+    normalisateur = sqrt(normalisateur);
     Xdir[i] = Xdir[i]/normalisateur;
     Ydir[i] = Ydir[i]/normalisateur;
     Zdir[i] = Zdir[i]/normalisateur;

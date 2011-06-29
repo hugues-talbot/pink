@@ -2293,7 +2293,7 @@ static int32_t compute_vectors_from_junction(
 )
 // ----------------------------------------------------------------------
 {
-//  int32_t rs = S->rs, ps = rs * S->cs;
+  int32_t rs = S->rs, ps = rs * S->cs;
   int32_t i, j, n1, n2, npoints, ntemp, narc, n, ajust=0;
   SKC_adj_pcell adj;
   int32_t c[4]; 		// les courbes adjacentes à la jonction
@@ -2306,7 +2306,7 @@ static int32_t compute_vectors_from_junction(
   adj = adj->next;
   c[1] = adj->val;
   narc = 2;
-  if ( (adj=adj->next)==NULL) { fprintf(stderr,"appel : nbr arc = %d\n",narc); 
+  if ( (adj=adj->next)==NULL) { //fprintf(stderr,"appel : nbr arc = %d\n",narc); 
 	  adj = (S->tskel[J]).adj;
 	  adj->vx = -1; adj->vy = 0; adj->vz = 0;
 	  adj = adj->next;
@@ -2321,7 +2321,7 @@ static int32_t compute_vectors_from_junction(
     narc++; }
   }
 
-  fprintf(stderr,"appel : nbr arc = %d\n",narc);
+//  fprintf(stderr,"appel : nbr arc = %d\n",narc);
   if (narc>4) {
     adj = (S->tskel[J]).adj;
     while (adj != NULL) {
@@ -2432,13 +2432,19 @@ static int32_t compute_vectors_from_junction(
     npoints = npoints + ntemp + n;
 //fin v2
 
+    // calcul des coordonnées
+    for(n1=0;n1<npoints;n1++){
+      X[n1] = listpoints[n1]%rs;
+      Y[n1] = (listpoints[n1]%ps)/rs;
+      Z[n1] = listpoints[n1]/ps;
+    }
 
     // calcul des tangentes
     lcurvetangents3D( 2, mask, tab_combi, npoints, X, Y, Z, VVx, VVy, VVz);
 
-    // calcul de l'angle max
-    for (n1= mcmax(0,ntemp-l+1); n1< mcmin(npoints-1,ntemp+l); n1++)
-      for(n2=n1+1; n2< mcmin(npoints,ntemp+l+1); n2++)
+    // calcul de l'angle min (ie le produit scalaire max)
+    for (n1= mcmax(0,ntemp-l); n1< mcmin(npoints-1,ntemp+n+l-1); n1++)
+      for(n2=n1+1; n2< mcmin(npoints,ntemp+n+l); n2++)
       {
   	// mise à jour de angle[i+j-1]
   	angle[i+j-1+ajust]=mcmin(angle[i+j-1+ajust],VVx[n1]*VVx[n2]+VVy[n1]*VVy[n2]+VVz[n1]*VVz[n2]);
