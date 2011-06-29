@@ -52,7 +52,7 @@ python-extension libcpp_pink :
                                [ glob src/lib/*.cxx ]
 			       [ glob src/python/*.cxx ]
 			       : <variant>release
-			       : <link>static 
+			       : <link>shared 
 			       ;
 
 
