@@ -37,7 +37,8 @@ project
                  <include>include 
 		 <include>src/liar
                  <library>/boost/thread//boost_thread 
-		 <library>/boost//date_time ;
+		 <library>/boost//date_time 
+		 <define>WIN32 ;
 
 # Declare the three extension modules.  You can specify multiple
 # source files after the colon separated by spaces.
