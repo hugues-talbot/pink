@@ -2297,8 +2297,9 @@ static int32_t compute_vectors_from_junction(
   int32_t i, j, n1, n2, npoints, ntemp, narc, n, ajust=0;
   SKC_adj_pcell adj;
   int32_t c[4]; 		// les courbes adjacentes à la jonction
-  double angle[6]; for (i=0; i<6; i++) angle[i]=1;
+  double angle[6]; 
   double max;
+  for (i=0; i<6; i++) angle[i]=1;
 
   adj = (S->tskel[J]).adj;
   c[0] = adj->val;
