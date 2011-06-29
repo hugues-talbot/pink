@@ -86,7 +86,7 @@ void calc_tangents2D(int32_t npoints, int32_t mask, uint64_t *tab_combi, int32_t
     deltaY[i] = Y[i]-Y[i-1];
   }
 
-  coef = pow(2,1-2*mask);
+  coef = pow(static_cast<double>(2),1-2*mask);
 
   for (i = 0; i < npoints; i++)
   {
@@ -131,7 +131,7 @@ void calc_tangents3D(int32_t npoints, int32_t mask, uint64_t *tab_combi, int32_t
     deltaZ[i] = Z[i]-Z[i-1];
   }
 
-  coef = pow(2,1-2*mask);
+  coef = pow(static_cast<double>(2),1-2*mask);
 
   for (i = 0; i < npoints; i++)
   {
