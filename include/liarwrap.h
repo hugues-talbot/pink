@@ -100,7 +100,7 @@ extern int   pixsize_[];
 
     void LIAREnableDebug(void);
     void LIARDisableDebug(void);
-    int LIARdebug(const char * msg,...);
+    // int LIARdebug(const char * msg,...);
     
 #ifdef __cplusplus
 }
