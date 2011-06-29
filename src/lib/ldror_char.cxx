@@ -756,6 +756,7 @@ int32_t count14(tree *T,int x1,int x2, int rowsize, int colsize)
 //
 //         return(p);
 //    }
+  return 0;  
 }
 
 
