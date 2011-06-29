@@ -1772,7 +1772,7 @@ void writergbascimage(
 #endif
   fprintf(fd, "%d\n", nndg);
 
-  for (j = 0; i < cs; i++)
+  for (j = 0; j < cs; j++)
   {
     for (i = 0; i < rs; i++)
     {
