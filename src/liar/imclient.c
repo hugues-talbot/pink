@@ -8,7 +8,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+
+// #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
+// time.h is on different place
+#ifdef UNIXIO
+#  include <unistd.h>
+#  include <sys/time.h>
+#else /* NOT UNIXIO */
+#  include <stdlib.h>
+#  include <io.h>
+#  include <time.h>
+#endif /* NOT UNIXIO */
+
 #include <errno.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -128,7 +139,18 @@ static  char     *sysv_shm_data;
 #ifdef HAVE_POSIX_IPC
 #include <semaphore.h>
 #include <sys/mman.h>
-#include <unistd.h>
+
+// #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
+// time.h is on different place
+#ifdef UNIXIO
+#  include <unistd.h>
+#  include <sys/time.h>
+#else /* NOT UNIXIO */
+#  include <stdlib.h>
+#  include <io.h>
+#  include <time.h>
+#endif /* NOT UNIXIO */
+
 #include <errno.h>
 #include <fcntl.h>
 
