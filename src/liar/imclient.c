@@ -136,8 +136,8 @@ static  char     *sysv_shm_data;
 
 /* POSIX IPC */
 #ifdef HAVE_POSIX_IPC
-#include <semaphore.h>
-#include <sys/mman.h>
+#  include <semaphore.h>
+#  include <sys/mman.h>
 
 // #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
 // time.h is on different place
@@ -150,20 +150,20 @@ static  char     *sysv_shm_data;
 #  include <time.h>
 #endif /* NOT UNIXIO */
 
-#include <errno.h>
-#include <fcntl.h>
+#  include <errno.h>
+#  include <fcntl.h>
 
-#define STR_ACCESS   "_ACCESS"
-#define STR_READ     "_READ"
-#define STR_WRITE    "_WRITE"
-#define STR_SHM      "_SHM"
+#  define STR_ACCESS   "_ACCESS"
+#  define STR_READ     "_READ"
+#  define STR_WRITE    "_WRITE"
+#  define STR_SHM      "_SHM"
 
 
-#define SEM_ACCESS   0
-#define SEM_READ     1
-#define SEM_WRITE    2
+#  define SEM_ACCESS   0
+#  define SEM_READ     1
+#  define SEM_WRITE    2
 
-#define IPC_FILE_MODE 0600 // rw for creator only, must be Octal!
+#  define IPC_FILE_MODE 0600 // rw for creator only, must be Octal!
 
 /* convenience static global */
 static  char       *posix_shm_data;
