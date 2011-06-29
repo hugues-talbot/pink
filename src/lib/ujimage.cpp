@@ -392,6 +392,7 @@ fcomplex & operator*=(fcomplex & x, const float & y)
 {
   x.re = x.re * y;
   x.im = x.im * y;
+  return x;  
 }
 
 fcomplex & operator/=(fcomplex & x, const fcomplex & y)
@@ -522,6 +523,7 @@ dcomplex & operator*=(dcomplex & x, const double & y)
 {
   x.re = x.re * y;
   x.im = x.im * y;
+  return x;  
 }
 
 dcomplex & operator/=(dcomplex & x, const dcomplex & y)
