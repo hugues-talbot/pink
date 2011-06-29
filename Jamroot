@@ -35,6 +35,7 @@ use-project boost
 project
   : requirements <library>/boost/python//boost_python 
                  <include>include 
+		 <include>src/liar
                  <library>/boost/thread//boost_thread 
 		 <library>/boost//date_time ;
 
