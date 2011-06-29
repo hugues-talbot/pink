@@ -1,6 +1,11 @@
 # -*- sh -*-
 # UjoImro, 2011
 
+project
+  : requirements <variant>release
+  : <link>static ;
+
+
 using msvc ;
 using python : 2.7 : C:\\Python27 ;
 
@@ -38,6 +43,7 @@ project
 		 <include>src/liar
                  <library>/boost/thread//boost_thread 
 		 <library>/boost//date_time 
+		 <find-library> 
 		 <define>WIN32 ;
 
 # Declare the three extension modules.  You can specify multiple
@@ -55,8 +61,6 @@ python-extension libcpp_pink :
                                [ glob src/lib/*.cxx ]
 			       [ glob src/python/*.cxx ]
 			       [ glob src/liar/*.cxx ]
-			       : <variant>debug
-			       : <link>static
 			       ;
 
 
