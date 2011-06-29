@@ -21,7 +21,6 @@
 #endif /* NOT UNIXIO */
 
 #include <errno.h>
-#include <sys/time.h>
 #include <sys/types.h>
 #include "liarp.h"
 #include "liarwrap.h"
