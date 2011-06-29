@@ -1637,6 +1637,10 @@ int32_t l3dflowskeleton(struct xvimage * k, int32_t mode, double level, struct x
   
   if (level >= 0)
   {
+    uint8_t *KK;
+    graphe * flow_s;
+    uint32_t j;
+
     for (i = 0; i < N; i++)
       K[i] = (flow->v_sommets[i] >= level ? 255 : 0);
     writeimage(k, "_seuil_level");
@@ -1654,9 +1658,9 @@ int32_t l3dflowskeleton(struct xvimage * k, int32_t mode, double level, struct x
     razimage(kk);
 
     // foreach end point, compute the upstream
-    uint8_t *KK = UCHARDATA(kk);
-    graphe * flow_s = Symetrique(flow);
-    uint32_t j;
+    KK     = UCHARDATA(kk);
+    flow_s = Symetrique(flow);
+
     for (i = 0; i < N; i++)
       if (K[i])
       {
