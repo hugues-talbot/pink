@@ -50,7 +50,7 @@ python-extension libcpp_pink :
                                [ glob src/bdd/*.cxx ]
                                [ glob src/lib/*.cxx ]
 			       [ glob src/python/*.cxx ]
-			       : <variant>debug
+			       : <variant>release
 			       : <link>static 
 			       ;
 

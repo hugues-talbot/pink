@@ -1779,6 +1779,7 @@ int32_t l2dflowskeleton(struct xvimage * k, int32_t mode, double level, struct x
     int32_t a, b, ib, jb, xg, yg, g;
     pcell p;
     struct CheckPropRes res;
+    uint8_t *KK;
   
     FILE *fd=NULL;
     int32_t nval, npoints, npointsmax;
@@ -1787,6 +1788,7 @@ int32_t l2dflowskeleton(struct xvimage * k, int32_t mode, double level, struct x
     ListDPoint2D Aval;
     char tablefilename[512];
     uint32_t distmax, *D; 
+    uint32_t nsom_H, nsour_H;
     
     D = ULONGDATA(dist);
     distmax = 0;  // calcule la distance max dans l'image de distance
@@ -1812,7 +1814,7 @@ int32_t l2dflowskeleton(struct xvimage * k, int32_t mode, double level, struct x
     fclose (fd);
 
     kk = copyimage(k); assert(kk != NULL); razimage(kk);
-    uint8_t *KK = UCHARDATA(kk); // pour reperer les sources
+    KK = UCHARDATA(kk); // pour reperer les sources
 
     for (yg = 0; yg < cs; yg++) // coordonnées des sommets
     for (xg = 0; xg < rs; xg++)
@@ -1823,8 +1825,8 @@ int32_t l2dflowskeleton(struct xvimage * k, int32_t mode, double level, struct x
       if (!K[g]) H->v_sommets[g] = TF_NOT_IN_I;
     }
 
-    uint32_t nsom_H = 0;
-    uint32_t nsour_H = 0;
+    nsom_H  = 0;
+    nsour_H = 0;
     for (j = 0; j < cs; j++)
     for (i = 0; i < rs; i++)
     {
@@ -2059,6 +2061,10 @@ int32_t l2dflowskeleton(struct xvimage * k, int32_t mode, double level, struct x
   
   if (level >= 0)
   {
+    uint8_t *KK;
+    graphe * flow_s;
+    uint32_t j;
+
     for (i = 0; i < N; i++)
       K[i] = (flow->v_sommets[i] >= level ? 255 : 0);
     writeimage(k, "_seuil_level");
@@ -2076,9 +2082,9 @@ int32_t l2dflowskeleton(struct xvimage * k, int32_t mode, double level, struct x
     razimage(kk);
 
     // foreach end point, compute the upstream
-    uint8_t *KK = UCHARDATA(kk);
-    graphe * flow_s = Symetrique(flow);
-    uint32_t j;
+    KK     = UCHARDATA(kk);
+    flow_s = Symetrique(flow);
+    
     for (i = 0; i < N; i++)
       if (K[i])
       {
