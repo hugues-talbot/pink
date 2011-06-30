@@ -92,8 +92,12 @@ For optimal use, the following packages should be installed:
 Note, that the detailed dependencies can be found in file
 'dependencies'.
 
-The project management is alpha-hosted at <a href="http://developer.berlios.de">
-<img src="http://developer.berlios.de/bslogo.php?group_id=12429" width="124" height="32" border="0" alt="BerliOS Logo" />BerliOs</a>.
+The Python front-end has been financially supported
+by <a href="http://www.edf.fr"> EDF </a>.  The
+project management is alpha-hosted
+at <a href="http://developer.berlios.de">
+<img src="http://developer.berlios.de/bslogo.php?group_id=12429"
+width="124" height="32" border="0" alt="BerliOS Logo" />BerliOs</a>.
 
 <HR>
 Michel Couprie  -  Professeur  -  ESIEE Paris

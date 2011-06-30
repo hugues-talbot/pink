@@ -40,10 +40,13 @@ use, propagate or modify any covered work.
 \section download Download
 
 The download is available either in source form or in binary packages
-for the most popular Linux distributions. Microsoft Windows version is
-available, but it's not compiled on regular basis. Note that neither
-the source codes nor the binary packages are signed and so You have to
-be cautious using them in a production environment.
+for the most popular Linux distributions. Microsoft Windows installer
+is also available, but it's compiled less frequently. Note that
+neither the source codes nor the binary packages are signed and so You
+have to be cautious using them in a production environment. Also there
+are numerous Python packages used by certain Pink operators. For
+example PIL, Tkinter, vtk, etc. You CAN import Pink even ff these packages
+are not present on the system. You will receive several messages. 
 
 \section nomenclature Nomenclature
 
@@ -85,12 +88,11 @@ distributions (both 32bit and 64bit versions):
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/openSUSE_11.4">OpenSuSE 11.4 </A>
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/openSUSE_Factory">OpenSuSE Factory </A>
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/Debian_6.0">
-  Debian 6.0 / Ubuntu 10.4 / Ubuntu 11.4 / Ubuntu 11.10 </A>
-  <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/Fedora_12">
-  Fedora 12 </A>
-  <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/Fedora_13"> Fedora_13 </A>
+  Debian 6.0 / Ubuntu 11.4 / Ubuntu 11.10 </A>
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/Fedora_14">
   Fedora_14 </A>
+  <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/Fedora_15">
+  Fedora_15 </A>
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/Mandriva_2010">
   Mandriva 2010 </A>
   <li> <A HREF="http://download.opensuse.org/repositories/home:/bRbw8Q1roHyo/Mandriva_2010.1">
@@ -103,7 +105,18 @@ distributions (both 32bit and 64bit versions):
   SuSE Linux Enterprise 11 SP1</A>
 </ul>
 
-Note: openSuSE 11.2 has reached its end of life.
+Note: openSuSE 11.2, Fedora 12 and Fedora 13 has reached its end of life.
+
+\section msvc Microsoft Windows installer
+
+The Microsoft Windows version is compiled using Microsoft Visual
+Studio 10. To be able to install it, first you need to install
+the <A HREF="http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=5555">
+Microsoft Visual C++ 2010 Redistributable Package (x86) </A>. The
+installer can be found
+at <A HREF="https://sourceforge.net/projects/pinkimage/files/Microsoft%20Windows/">
+SourceForge </A>.
+
 
 \author UjoImro, 2011
 
