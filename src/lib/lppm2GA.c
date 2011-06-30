@@ -239,6 +239,7 @@ int32_t lpgm2ga(struct xvimage *im, struct xvimage *ga, int32_t param, double al
   uint8_t *GA = UCHARDATA(ga);      /* graphe d'arete est suppose deja allouer */ 
   
   /* vérifier que les tailles des diférentes images sont cohérentes */
+
   switch(param)
   {
   case 0:
@@ -284,6 +285,8 @@ int32_t lpgm2ga(struct xvimage *im, struct xvimage *ga, int32_t param, double al
     dericheDerivateurGA(im, ga, alpha);
     break;
   }
+  
+  
   return 1;  
 }
 
@@ -341,6 +344,10 @@ int32_t lpgm2gafloat(struct xvimage *im, struct xvimage *ga, int32_t param, doub
     /* aux aretes */ 
     //  fprintf(stderr,"Deriche float: not yet implemented\n");
     //exit(0);
+    break;
+  case 3:
+    fprintf(stderr,"Deriche float: not yet implemented\n");
+    exit(0);
     break;
   }
   return 1;  
@@ -537,7 +544,7 @@ int32_t lpgm2ga3d(struct xvimage *im, struct xvimage *ga, int32_t param)
 	  // printf("GA[%d] = %d \n",2*N+ k*ps + j*rs + i,GA[2*N+k*ps + j*rs + i]);
 	}
     break;
-  default : printf("lpgm2ga3d: Bad parameter (%d is not valid)\n",param);
+  default : printf("lpgm2ga3d: Bad parameter (%d is not valid or not yet implemented)\n",param);
 
   }
   return 1;  

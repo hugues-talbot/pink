@@ -77,6 +77,7 @@ struct xvimage *allocGAimage(
     return NULL;
   } /* switch (t) */
 
+
   g = (struct xvimage *)malloc(sizeof(struct xvimage));
   if (g == NULL)
   {   fprintf(stderr,"%s: malloc failed (%d bytes)\n", F_NAME, sizeof(struct xvimage));
@@ -107,7 +108,6 @@ struct xvimage *allocGAimage(
   depth(g) = d;
   datatype(g) = t;
   g->xdim = g->ydim = g->zdim = 0.0;
-
     
   return g;
 } /* allocGAimage() */

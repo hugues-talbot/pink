@@ -785,6 +785,8 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param, struct xvimage *annexe)
     exit(0);
   }
   jcSaliencyTree_b(&ST, MST, Valeur, rag, STaltitude);
+
+
   computeSaliencyMap(ST, ga, LABEL, STaltitude, param);  
   mergeTreeFree(MT);
   componentTreeFree(ST);

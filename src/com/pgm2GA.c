@@ -32,6 +32,43 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+/*! \file pgm2GA.c
+
+\brief Computes an edge-weighted graph from an image
+
+<B>Usage:</B> pgm2GA im.pgm param [alpha] out.ga \n
+
+<B>Description:</B>
+
+Computes a GA (an edge-weighted graph) from an image. The values of an
+edge linking two pixels {x,y} is computed according to the parameter
+<B>param</B>.
+
+If param = 0, the absolute difference of intensity between x and y is used.
+
+If param = 1, the maximum between the intensities of x and y is used.
+
+If param = 2, the minimum between the intensities of x and y is used.
+
+If param = 3, a Deriche-like gradient is used, the optional parameter
+alpha specifies the spatial extention of the filter (by default alpha
+is set to  1]),
+
+If im.pgm is a 2D (resp. 3D) image, then <B>out.ga</B> is a 2D (resp
+3D GA), that is a 2D 4-connected edge-weighted graph (resp. a 2D
+6-connected edge-weighted graph).
+
+
+
+<B>Types supported:</B> GA byte 2D, GA byte 3D, GA float 2D
+
+<B>Category:</B> 
+\ingroup  GA
+
+\author Jean Cousty
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -54,7 +91,9 @@ int main(argc, argv)
   int32_t param;
   if ( (argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s im.pgm param [alpha] out.ppm \nparam = 0 difference entre pixel extremite, param = 1 max entre pixel extremite, param = 2 Deriche default for alpha is 1,\n", 
+    fprintf(stderr, "usage: %s im.pgm param [alpha] out.ppm \nparam = 0 difference entre \
+pixel extremite, param = 1 max entre pixel extremite, param = 2 min \
+entre pixel extremite, param = 3 Deriche default for alpha is 1,\n", 
             argv[0]);
     exit(1);
   }
@@ -94,6 +133,7 @@ int main(argc, argv)
     {
       switch(datatype(im)){
       case VFF_TYP_1_BYTE:
+	//fprintf(stderr,"Type de l'image vaut 1\n");
 	if( lpgm2ga(im, ga, param, alpha) != 1 )
 	{
 	  fprintf(stderr, "%s: erreur de lppm2ga \n", argv[0]);

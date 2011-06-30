@@ -47,19 +47,22 @@ If type = 0, then outputs a watershed by an M-border algorithm. The
 file out.pgm is a GA.
 
 If type = 1, then outputs a watershed by a non-recursive algorithm
-based on streams. The file out.pgm is a GA (this is the default).
+based on streams. The file out.pgm is a GA (this is the default) (not
+available for floats).
 
 If type = 2 outputs a watershed by a recursive algorithm based on
-streams (generally the most efficient one). The file out.pgm is a GA.
+streams. The file out.pgm is a GA (not available for floats).
 
-If type = 3 outputs an M-border watershed. The file out.pgm is a GA.
+If type = 3 outputs an M-border watershed. The file out.pgm is a GA
+(not available for floats).
 
 If type = 4 outputs a flow mapping. The file out.pgm is a long integer
-image.
+image that represents a labeled partition induced by a watershed cut
+of the input GA (not available for floats).
 
 
 
-<B>Types supported:</B> GA byte 2D 
+<B>Types supported:</B> GA byte 2D, GA float 2D
 
 <B>Category:</B> GA
 \ingroup  GA
@@ -68,38 +71,6 @@ image.
 */
 
 
-/* /\*   */
-/* NAME */
-
-/* <B>GAwatershed</B> - watershed of a 4-connected edge-weighted graph */
-
-/* SYNOPSIS */
-
-/* <B>GAwatershed</B> GAin.pgm out.pgm [type] */
-
-/* DESCRIPTION */
-
-/* If type = 0, then outputs a watershed by an M-border algorithm. The */
-/* file out.pgm is a GA. */
-
-/* If type = 1, then outputs a watershed by a non-recursive algorithm */
-/* based on streams. The file out.pgm is a GA. */
-
-/* If type = 2 outputs a watershed by a recursive algorithm based on */
-/* streams (generally the most efficient one). The file out.pgm is a GA. */
-
-/* If type = 3 outputs an M-border watershed. The file out.pgm is a GA. */
-
-/* If type = 4 outputs a flow mapping. The file out.pgm is a long integer */
-/* image. */
-
-/* Types supported: GA byte 2D. */
-
-/* CLASS  */
-
-/* connect */
-
-/* *\/ */
 /* //#define TIME_WATERSHED_TEST 1 */
 
 #include <stdio.h>

@@ -103,7 +103,7 @@ int main(argc, argv)
   if ((argc != 4) && (argc != 5))
   {
     fprintf(stderr, "usage: %s GAin.pgm type[0 surface, 1 dynamic, 2 volumeSimple, 3 alphaOmega] GAOut.pgm [annexe.pgm]\n", argv[0]);
-    exit(1);
+    exit(1); 
   }
   ga = readGAimage(argv[1]);
   if (ga == NULL)
@@ -111,6 +111,9 @@ int main(argc, argv)
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
+
+  fprintf(stderr,"Avant le calcul de la saillance\n");
+
   switch(atoi(argv[2]))
   {
   case 0: param = SURFACE; break;
@@ -133,6 +136,7 @@ int main(argc, argv)
     fprintf(stderr, "%s: flowLPEAttributOpenning failed\n", argv[0]);
     exit(1);
   }
+  fprintf(stderr,"Aprèes le calcul de la saillance\n");
   writerawGAimage(ga, argv[3]);
   freeimage(ga);  
   return 0;

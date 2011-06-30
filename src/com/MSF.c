@@ -32,41 +32,35 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/* \file MSE.c
+
+/*! \file MSF.c
 
 \brief 
+Compute a minimum spanning forest of a GA from a set of markers
 
-<B>Usage:</B> 
+<B>Usage:</B> MSF GAin.ga marqueurs.pgm typeResul Result.?? \n
+
 
 <B>Description:</B>
 
-<B>Types supported:</B> byte 2D
+Compute a minimum spanning forest of <B>GAin.ga</B> (a 4-connected 2D
+or 6-connected 3D edge-weighted graph) relative to the connected
+components of the non-zero pixels of <B>marqueurs.pgm</B>. If
+TypeResult = 0, then Result.?? is a GA whose non-zero edges form the
+induced MSF cut, otherwise Result.?? is a label image that represents
+the vertex partition induced by the MSF (the connected components of
+the MSF are marked with distinct labels).
+
+See [COUSTYetAl-PAMI2009] and [COUSTYetAl-PAMI2010] for more details.
+
+<B>Types supported:</B> GA byte 2D, GA byte 3D
 
 <B>Category:</B> 
-\ingroup  
+\ingroup  GA
 
 \author Jean Cousty
 */
-/* 
-NAME
 
-<B>MSE</B> - Compute a minimum spanning extension of an image from a set of markers
-
-SYNOPSIS
-
-<B>MSE</B> GAin.pgm ImageMarqueur.pgm ImageSpanning.pgm
-
-DESCRIPTION
-
-Compute a minimum spanning extension of a weighted edges graph <B>GAin.pgm</B>, taking the
-set of markers (vertices) in <B>ImageMarqueur</B> as defined in ?? . 
-Types supported: byte 2D, byte 3D.
-
-CLASS 
-
-morph
-
-*/
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

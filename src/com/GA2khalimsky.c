@@ -43,8 +43,8 @@ representation in the Khalimsky grid
 <B>Description:</B>
 
 Convert a 4-connected (6-connected, in 3D) edge-weighted graph
-(<B>graph.ga</B>) into its representation (depending on the parameter
-<B>type</B>) in the Khalimsky grid, stored as a pgm image
+(<B>graph.ga</B>) into its Khalimsky grid representation (depending on
+the parameter <B>type</B>), stored as a pgm image
 (<B>out.pgm</B>). The vertices of the graph are associated to the
 square of the Khalimsky grid, and the edges of the graphs are
 associated to the line segments.
@@ -52,7 +52,7 @@ associated to the line segments.
 If type = 0, then the closure of the set of weighted-edges is used
 (usefull for representing contours).  
 
-If type = 1, then the star of the closure of the set of weighted edges
+If type = 1, then the dual of the closure of the set of weighted edges
 is used (usefull for representing regions).
 
 

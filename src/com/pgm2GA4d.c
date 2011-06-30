@@ -34,20 +34,22 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file pgm2GA4d.c
 
-\brief converts a series of 3
+\brief Create a 4D edge-weighted graph from a series of 3D images
 
-<B>Usage:</B> pgm2GA4d prefix_in first last prefix_mark mode GA4d_out.pgm
 
-<B>Description:</B> 
-Create a 4D weighted-edges graph from the 4D image made of the
-concatenation of the 3D images <B>prefix_inxxxx.pgm</B> (where nnnn is
-a four digit decimal integer and where <B>first</B> and <B>last</B>
-specify respectively the first and the last volume). The values of
-edges are computed according to the parameter mode. If mode is set to
-0 then the intensity diference between the two extremities pixels of
-the edges is choosen for. Otherwise the maximum value is taken. The
-outputed GA is necessarily 4D, 8-connected (i.e. it corresponds to the
-direct adjacency in dimension 4).
+<B>Usage:</B> pgm2GA4d prefix_in first last mode GA4d_out.ga
+
+<B>Description:</B> Create a 4D GA (edge-weighted graph) from the 4D
+image obtained by concatenation of the series of 3D images \<
+<B>prefix_inxxxx.pgm</B> | xxxx is a four digit decimal integer of the
+interval [ <B>first</B> , <B>last</B>] \> . The values of the edges
+are computed according to the parameter <B>mode</B>. If <B>mode</B> is
+set to 0, then the value of an edge { x,y } is the absolute diference
+of intensity between the pixels x and y and if <B>mode</B> is set to 1
+the maximum of intensity between x and y is used. The output
+<B>GA4d_out.ga</B> is a 4D GA, that is a 4D, 8-connected,
+edge-weighted grah, (i.e. the adjacency is the direct adjacency in
+dimension 4).
 
 <B>Types supported:</B> byte 2d, byte 3d, byte 4d
 
