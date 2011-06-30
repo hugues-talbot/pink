@@ -60,7 +60,6 @@ If im.pgm is a 2D (resp. 3D) image, then <B>out.ga</B> is a 2D (resp
 6-connected edge-weighted graph).
 
 
-
 <B>Types supported:</B> GA byte 2D, GA byte 3D, GA float 2D
 
 <B>Category:</B> 
