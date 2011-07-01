@@ -10,6 +10,10 @@ different fields. It is a free software licensed under the
 <A HREF="http://www.cecill.info/index.en.html"> CeCILL </A>
 license. 
 
+\section screenshots Screenshots
+<A HREF="http://developer.berlios.de/screenshots/?group_id=12429"> The
+screenshots can be found here </A>.
+
 \section download Download
 
 The source code and the binary packages can be accessed from the \ref

@@ -163,7 +163,7 @@ namespace connect
 # include BOOST_PP_UPDATE_COUNTER()
 
   UI_WRAP_FUNCTION(
-    "2dthin",
+    "thin2d",
     l2dthin,
     (arg("image") ),
     doc__2dthin__c__
@@ -259,7 +259,7 @@ namespace connect
 # include BOOST_PP_UPDATE_COUNTER()
 
   UI_WRAP_FUNCTION(
-    "3dthin",
+    "thin3d",
     l3dthin,
     (arg("image"), arg("nsteps") ),
     doc__3dthin__c__
