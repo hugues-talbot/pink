@@ -78,7 +78,7 @@ set sedcom1 "s|%TEST||g"
 set sedcom2 "s|%IMAGES|$PINKTEST(testdir)/images|g"
 set sedcom3 "s|%RESULTS|$PINKTEST(testdir)/results|g"
 
-my_exec_v sed -e $sedcom1 -e $sedcom2 -e $sedcom3 [tmpfile file1] > [tmpfile file2]
+my_exec_q sed -e $sedcom1 -e $sedcom2 -e $sedcom3 [tmpfile file1] > [tmpfile file2]
 
 set PINKTEST(input) [open [tmpfile file2]]
 

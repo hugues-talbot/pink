@@ -81,7 +81,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 //#define FOREST
 
-#define VERBOSE
+//#define VERBOSE
 
 //#define TRACECOL
 //#define TRACECONSGRAPH

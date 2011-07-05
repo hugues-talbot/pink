@@ -72,6 +72,11 @@ If parameter \b len is given and non-zero, the spline is extended on both sides 
 \author Michel Couprie
 */
 
+/*
+%TEST drawspline %IMAGES/2dbyte/binary/b2empty_30_40.pgm %IMAGES/2dlist/binary/l2spline1.spline %RESULTS/drawspline_spline_l2spline1.pgm
+%TEST drawspline %IMAGES/3dbyte/binary/b3empty_20_30_40.pgm %IMAGES/3dlist/binary/l3spline1.spline %RESULTS/drawspline_spline_l3spline1.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

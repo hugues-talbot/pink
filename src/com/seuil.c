@@ -134,12 +134,12 @@ int main(int argc, char **argv)
     else if (datatype(image) == VFF_TYP_FLOAT)
     {
       float *FL = FLOATDATA(image);
-      for (x = 0; x < N; x++) F[x] = (uint8_t)FL[x];
+      for (x = 0; x < N; x++) if (FL[x] == 0.0) F[x] = NDG_MIN; else F[x] = NDG_MAX;
     }
     else if (datatype(image) == VFF_TYP_DOUBLE)
     {
       double *FL = DOUBLEDATA(image);
-      for (x = 0; x < N; x++) F[x] = (uint8_t)FL[x];
+      for (x = 0; x < N; x++) if (FL[x] == 0.0) F[x] = NDG_MIN; else F[x] = NDG_MAX;
     }
     else
     {

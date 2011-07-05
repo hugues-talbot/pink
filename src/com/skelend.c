@@ -51,7 +51,7 @@ If \b n = -1, the end points are always removed.
 \ingroup  topobin
 
 \warning This operator is very sensitive to small contour irregularities. 
-See skelcurv for a more robust operator.
+See skelcurv for a more robust operator. Useful for reducing quasi-curvilinear objects.
 
 \author Michel Couprie
 */

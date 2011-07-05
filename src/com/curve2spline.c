@@ -36,13 +36,14 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts a discrete open curve into a spline
 
-<B>Usage:</B> curve2spline curve.list tolerance out.spline
+<B>Usage:</B> curve2spline curve.list [tolerance] out.spline
 
 <B>Description:</B>
 
 Let C be the discrete open curve described in <B>curve.list</B>. This program finds a approximation of C
 in the form of a parametric curve P defined by two (in 2D) or three (in 3D) splines 
 such that the maximal distance between P and C is beyond the given <B>tolerance</B>.
+The default value for <B>tolerance</B> is 2.
 
 The result is given in the form of the list of control points for the splines, followed by
 the set of coefficients for each spline segment. 
@@ -86,6 +87,11 @@ Reference:<BR>
 \author Michel Couprie
 */
 
+/*
+%TEST curve2spline %IMAGES/2dlist/binary/l2curve1.list %RESULTS/curve2spline_l2curve1.spline
+%TEST curve2spline %IMAGES/3dlist/binary/l3curve1.list %RESULTS/curve2spline_l3curve1.spline
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -93,6 +99,8 @@ Reference:<BR>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcsplines.h>
+
+#define DEFAULT_TOLERANCE 2
 
 /* =============================================================== */
 int main(int argc, char **argv)
@@ -104,9 +112,9 @@ int main(int argc, char **argv)
   double tolerance;
   char type;
 
-  if (argc != 4)
+  if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s curve.txt tolerance spline.txt \n", argv[0]);
+    fprintf(stderr, "usage: %s curve.txt [tolerance] spline.txt \n", argv[0]);
     exit(1);
   }
 
@@ -116,7 +124,11 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[1]);
     exit(1);
   }
-  tolerance = atof(argv[2]);
+  if (argc == 4)
+    tolerance = atof(argv[2]);
+  else
+    tolerance = DEFAULT_TOLERANCE;
+
   fscanf(fd, "%c", &type);
   if ((type != 'b') && (type != 'B'))
   {

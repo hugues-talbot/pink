@@ -100,6 +100,11 @@ with t in [i,i+1]
 \author Michel Couprie
 */
 
+/*
+%TEST points2spline %IMAGES/2dlist/binary/l2points1.list %RESULTS/points2spline_l2points1.spline
+%TEST points2spline %IMAGES/3dlist/binary/l3points1.list %RESULTS/points2spline_l3points1.spline
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>

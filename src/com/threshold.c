@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 
   if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s filein.pgm n [n2] fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm seuil [seuil2] fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -107,11 +107,10 @@ int main(int argc, char **argv)
       }
   }
 
-  if (datatype(image) == VFF_TYP_4_BYTE)
+  if (datatype(image) != VFF_TYP_1_BYTE)
   {
     index_t rs, cs, ds, N, x;
     uint8_t *F;
-    int32_t *FL;
     rs = rowsize(image); cs = colsize(image); ds = depth(image); N = rs * cs * ds; 
     imagebin = allocimage(image->name, rs, cs, ds, VFF_TYP_1_BYTE);
     if (imagebin == NULL)
@@ -119,34 +118,41 @@ int main(int argc, char **argv)
       fprintf(stderr, "%s: allocimage failed\n", argv[0]);
       exit(1);
     }
-    F = UCHARDATA(imagebin); FL = SLONGDATA(image);
-    for (x = 0; x < N; x++) F[x] = (uint8_t)FL[x];
-    writeimage(imagebin, argv[argc-1]);
-    freeimage(imagebin);
-    freeimage(image);
-  }
-  else if (datatype(image) == VFF_TYP_FLOAT)
-  {
-    index_t rs, cs, ds, N, x;
-    uint8_t *F;
-    float *FF;
-    rs = rowsize(image); cs = colsize(image); ds = depth(image); N = rs * cs * ds; 
-    imagebin = allocimage(image->name, rs, cs, ds, VFF_TYP_1_BYTE);
-    if (imagebin == NULL)
+    F = UCHARDATA(imagebin); 
+
+    if (datatype(image) == VFF_TYP_4_BYTE)
     {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+      int32_t *FL = SLONGDATA(image);
+      for (x = 0; x < N; x++) F[x] = (uint8_t)FL[x];
+    }
+    else if (datatype(image) == VFF_TYP_2_BYTE)
+    {
+      int16_t *FL = SSHORTDATA(image);
+      for (x = 0; x < N; x++) F[x] = (uint8_t)FL[x];
+    }
+    else if (datatype(image) == VFF_TYP_FLOAT)
+    {
+      float *FL = FLOATDATA(image);
+      for (x = 0; x < N; x++) if (FL[x] == 0.0) F[x] = NDG_MIN; else F[x] = NDG_MAX;
+    }
+    else if (datatype(image) == VFF_TYP_DOUBLE)
+    {
+      double *FL = DOUBLEDATA(image);
+      for (x = 0; x < N; x++) if (FL[x] == 0.0) F[x] = NDG_MIN; else F[x] = NDG_MAX;
+    }
+    else
+    {
+      fprintf(stderr, "%s: bad data type %d\n", argv[0], datatype(image));
       exit(1);
     }
-    F = UCHARDATA(imagebin); FF = FLOATDATA(image);
-    for (x = 0; x < N; x++) if (FF[x] == 0.0) F[x] = NDG_MIN; else F[x] = NDG_MAX;
     writeimage(imagebin, argv[argc-1]);
     freeimage(imagebin);
-    freeimage(image);
   }
   else
   {
     writeimage(image, argv[argc-1]);
-    freeimage(image);
   }
+
+  freeimage(image);
   return 0;
 } /* main */

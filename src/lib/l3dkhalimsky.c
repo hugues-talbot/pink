@@ -99,7 +99,7 @@ int32_t l3dkhalimskize(struct xvimage * i, struct xvimage **k, int32_t mode)
 #define F_NAME "l3dkhalimskize"
 {
 
-  ACCEPTED_TYPES1(i, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES3(i, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT);
   ONLY_3D(i);
 
 #ifdef VERBOSE

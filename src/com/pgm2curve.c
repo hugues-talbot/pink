@@ -82,6 +82,11 @@ x2 y2 z2 v2<br>
   (list formats) instead of c, V, cv, CV
  */
 
+/*
+%TEST pgm2curve %IMAGES/2dbyte/binary/b2curve1.pgm 8 %RESULTS/pgm2curve_b2curve1.list
+%TEST pgm2curve %IMAGES/3dbyte/binary/b3curve1.pgm 26 %RESULTS/pgm2curve_b3curve1.list
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
