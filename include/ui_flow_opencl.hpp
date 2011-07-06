@@ -212,19 +212,27 @@ namespace pink {
             char cBuffer[1024];
             clGetPlatformInfo(platform_ids[i], CL_PLATFORM_NAME, 1024, cBuffer, NULL);
             std::cout << "platform [" << i << "]: " << cBuffer << std::endl;
-            if(strstr(cBuffer, "NVIDIA") != NULL)
-            {
+            // if(strstr(cBuffer, "NVIDIA") != NULL)
+            // {
               choosen_platform = i;              
-            }
+              //}
           }
 
+          std::cout << "Choosen device = " << choosen_platform << std::endl;
+          
           // retreive OpenCL device CPU or GPU
           // try to get a supported GPU device
-          if (clGetDeviceIDs(platform_ids[choosen_platform], CL_DEVICE_TYPE_GPU, 1, device_ids, &num_of_devices) != CL_SUCCESS)
+          if (clGetDeviceIDs(platform_ids[choosen_platform], CL_DEVICE_TYPE_ALL, 10, device_ids, &num_of_devices) != CL_SUCCESS)
           {
             pink_error("Unable to get device_id");
           }
 
+          if (num_of_devices > 10)
+          {
+            pink_error("You have more than 10 OpenCL enabled devices. You need to make an adjustment in the source for this to succeed");            
+          }
+          
+          
           FOR (q, num_of_devices)
           {
             clGetDeviceInfo(device_ids[q], CL_DEVICE_NAME, 500, dname, &namesize);

@@ -13,12 +13,14 @@
 
 #include "pink_python.h"
 
+#include "lskelpar3d.h"
 #include "l2dcollapse.h"
 #include "l3dcollapse.h"
 #include "lmedialaxis.h"
 #include "lbarycentre.h"
 #include "l2dkhalimsky.h"
 #include "l3dkhalimsky.h"
+
 #include "ui_extractplane.hpp"
 
 #include <boost/preprocessor/slot/counter.hpp>
@@ -263,6 +265,14 @@ namespace connect
     l3dthin,
     (arg("image"), arg("nsteps") ),
     doc__3dthin__c__
+    );
+# include BOOST_PP_UPDATE_COUNTER()
+
+  UI_WRAP_FUNCTION(
+    "skel_ACK3",
+    lskelACK3,
+    (arg("image"), arg("nsteps"), arg("inhibit")),
+    doc__skel_ACK3__c__
     );
 # include BOOST_PP_UPDATE_COUNTER()
 
