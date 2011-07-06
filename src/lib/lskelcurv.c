@@ -3616,6 +3616,7 @@ struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double max
   return result;
 } /* lskelfilter5() */
 
+#ifdef A_NE_PAS_COMPILER
 // ----------------------------------------------------------------------
 static int32_t compute_vectors_from_junction6(
    skel *S,                // structure squelette
@@ -3647,7 +3648,7 @@ static int32_t compute_vectors_from_junction6(
   c[1] = adj->val; // 2eme arc adjacent
   narc = 2;
 
-  adj = adj->next
+  adj = adj->next;
   if (adj == NULL) // la jonction est un coude
   { 
     //fprintf(stderr,"appel : nbr arc = %d\n",narc); 
@@ -3661,7 +3662,7 @@ static int32_t compute_vectors_from_junction6(
   // la jonction a au moins 3 arcs
   c[2] = adj->val;  // 3eme arc adjacent
   narc++;
-  adj = adj->next
+  adj = adj->next;
   if (adj != NULL ) // la jonction a au moins 4 arcs
   { 
     c[3] = adj->val; // 4eme arc adjacent
@@ -3734,7 +3735,7 @@ static int32_t compute_vectors_from_junction6(
 
 
 
-
+A FINIR
 
     // calcul des tangentes
     lcurvetangents3D( 2, mask, tab_combi, npoints, X, Y, Z, VVx, VVy, VVz);
@@ -3981,3 +3982,6 @@ struct xvimage * lskelfilter6(skel *S, int32_t fenetre, double maxbridgelength, 
 
   return result;
 } /* lskelfilter6() */
+
+#endif
+//A_NE_PAS_COMPILER
