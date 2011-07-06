@@ -3,7 +3,10 @@
 # This file is used to generate a Python installer
 # executable on Microsoft Windows
 
-# run it on windows as c:\python27\python.exe build bdist --format=wininst
+# on windows
+# copy libcpp_pink.pyd to Pink-svn/python
+# cd Pink-svn/python
+# c:\python27\python.exe ..\setup.py bdist --format=wininst
 
 from distutils.core import setup
 
