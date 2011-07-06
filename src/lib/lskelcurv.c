@@ -3616,3 +3616,368 @@ struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double max
   return result;
 } /* lskelfilter5() */
 
+// ----------------------------------------------------------------------
+static int32_t compute_vectors_from_junction6(
+   skel *S,                // structure squelette
+   int32_t J,		   // index de la jonction
+   int32_t l,		   // demi-taille de la fenetre 
+   int32_t *cube,	   // variable temporaire : tableau de 216 int32_t
+   int32_t *listpoints,    // variable temporaire : points de courbe
+   int32_t nmaxpoints,     // taille max de la liste listpoints (nmaxpoints >> nbr de points d'une courbe)
+   int32_t *X, int32_t *Y, int32_t *Z,	 // variable temporaire : tableau des points de courbe (coordonnées)
+   double *VVx, double *VVy, double *VVz // variable temporaire : tableau des vecteurs tangents
+)
+// ----------------------------------------------------------------------
+{
+  int32_t rs = S->rs, ps = rs * S->cs;
+  int32_t i, j, n1, n2, npoints, ntemp, narc, n, ajust=0;
+  SKC_adj_pcell adj;
+  int32_t c[4]; 		// les courbes adjacentes à la jonction
+  double angle[6]; 
+  double max;
+
+  for (i=0; i<6; i++) angle[i]=1;
+
+  adj = (S->tskel[J]).adj;
+  assert(adj != NULL);
+  c[0] = adj->val; // 1er arc adjacent
+
+  adj = adj->next;
+  assert(adj != NULL);
+  c[1] = adj->val; // 2eme arc adjacent
+  narc = 2;
+
+  adj = adj->next
+  if (adj == NULL) // la jonction est un coude
+  { 
+    //fprintf(stderr,"appel : nbr arc = %d\n",narc); 
+    adj = (S->tskel[J]).adj;
+    adj->vx = -1; adj->vy = 0; adj->vz = 0;
+    adj = adj->next;
+    adj->vx = 0; adj->vy = 1; adj->vz = 0;
+    return 0; 
+  } 
+
+  // la jonction a au moins 3 arcs
+  c[2] = adj->val;  // 3eme arc adjacent
+  narc++;
+  adj = adj->next
+  if (adj != NULL ) // la jonction a au moins 4 arcs
+  { 
+    c[3] = adj->val; // 4eme arc adjacent
+    narc++;
+    while ( (adj=adj->next) != NULL ) // plus de 4 arcs
+      narc++;
+  }
+
+  //  fprintf(stderr,"appel : nbr arc = %d\n",narc);
+  if (narc > 4) // plus de 4 arcs : on retourne avec des vecteurs nuls
+  {
+    adj = (S->tskel[J]).adj;
+    while (adj != NULL) 
+    {
+      adj->vx = 0; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+    }
+    return 0;
+  }
+
+  for (i=0; i < narc-1; i++)
+  {
+  for (j=i+1; j < narc; j++)
+  {
+    // calcul de la courbe : c[i]---jonction---c[j]
+    // utilise les variables listpoints, npoints
+    // résultat dans X, Y, Z, npoints sous forme de listes de coordonnées
+
+    // On place c[i]
+    npoints = nmaxpoints;
+    list_points_at_head2(S, c[i], listpoints, &npoints);
+    assert(npoints > 0);
+
+    if (adj_point_junc(S, listpoints[0], J))
+    { // arc c[i] partant de la jonction, retourner c[i]
+      npoints = nmaxpoints;
+      list_points_at_tail2(S, c[i], listpoints, &npoints);
+    }
+    ntemp = npoints;
+
+    // on laisse 4 places pour la jonction
+    npoints = nmaxpoints-ntemp-4;
+
+    // on place c[j]
+    list_points_at_head2(S, c[j], listpoints+ntemp+4, &npoints);
+    assert(npoints > 0);
+
+    if (!adj_point_junc(S, listpoints[ntemp+4], J))
+    { // arc c[j] arrivant à la jonction , retourner c[j]
+      npoints = nmaxpoints - ntemp -4;
+      list_points_at_tail2(S, c[j], listpoints+ntemp+4, &npoints);
+      assert(npoints > 0);
+    }
+
+    // on place la jonction
+    n = lien(S,J,listpoints[ntemp-1],listpoints[ntemp+4],cube,listpoints+ntemp);
+
+    // on repositionne le second arc si nécessaire
+    if ( n<4 )
+      for(n1=0;n1<npoints;n1++) listpoints[ntemp+n+n1] = listpoints[ntemp+4+n1];
+
+    npoints = npoints + ntemp + n;
+
+    // calcul des coordonnées
+    for(n1=0;n1<npoints;n1++){
+      X[n1] = listpoints[n1]%rs;
+      Y[n1] = (listpoints[n1]%ps)/rs;
+      Z[n1] = listpoints[n1]/ps;
+    }
+
+
+
+
+
+    // calcul des tangentes
+    lcurvetangents3D( 2, mask, tab_combi, npoints, X, Y, Z, VVx, VVy, VVz);
+
+    // calcul de l'angle min (ie le produit scalaire max)
+    for (n1= mcmax(0,ntemp-l); n1< mcmin(npoints-1,ntemp+n+l-1); n1++)
+      for(n2=n1+1; n2< mcmin(npoints,ntemp+n+l); n2++)
+      {
+  	// mise à jour de angle[i+j-1]
+  	angle[i+j-1+ajust]=mcmin(angle[i+j-1+ajust],VVx[n1]*VVx[n2]+VVy[n1]*VVy[n2]+VVz[n1]*VVz[n2]);
+      }
+  } // fin for j
+  ajust = narc-3;
+  } // fin for i
+
+  // j=argmax(angle)
+  max = angle[0]; j=0;
+  if (narc==3) ntemp=3;
+  else ntemp=6;
+  for (i=1;i<ntemp;i++)
+    if (angle[i]>max) { max=angle[i]; j=i; }
+
+  if (narc==3)
+  {
+    switch(j)
+    {
+    case '0' :
+      // c[0]-c[1]
+      adj = (S->tskel[J]).adj;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      break;
+    case '1' :
+      // c[0]-c[2]
+      adj = (S->tskel[J]).adj;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      break;
+    case '2' :
+      // c[1]-c[2]
+      adj = (S->tskel[J]).adj;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+    }
+  }
+  else
+  {
+    switch (j)
+    {
+    case '0' :
+      // c[0]-c[1]
+      adj = (S->tskel[J]).adj;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 0; adj->vz = 1;
+      break;
+    case '1' :
+      // c[0]-c[2]
+      adj = (S->tskel[J]).adj;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 0; adj->vz = 1;
+      break;
+    case '2' :
+      // c[0]-c[3]
+      adj = (S->tskel[J]).adj;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 0; adj->vz = 1;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      break;
+    case '3' :
+      // c[1]-c[2]
+      adj = (S->tskel[J]).adj;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 0; adj->vz = 1;
+      break;
+    case '4' :
+      // c[1]-c[3]
+      adj = (S->tskel[J]).adj;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 0; adj->vz = 1;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      break;
+    case '5' :
+      // c[2]-c[3]
+      adj = (S->tskel[J]).adj;
+      adj->vx = 0; adj->vy = 1; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 0; adj->vy = 0; adj->vz = 1;
+      adj = adj->next;
+      adj->vx = -1; adj->vy = 0; adj->vz = 0;
+      adj = adj->next;
+      adj->vx = 1; adj->vy = 0; adj->vz = 0;
+    }
+  }
+
+  return 1;
+} // compute_vectors_from_junction6()
+
+/* ---------------------------------------------------------------------- */
+struct xvimage * lskelfilter6(skel *S, int32_t fenetre, double maxbridgelength, double maxelbowangle)
+/* ---------------------------------------------------------------------- */
+/*
+  "Mikado game" algorithm
+
+  compute all tangent vectors
+
+  repeat forever
+    1. select a fiber (call to lskelfilter2b)
+    2. if no fiber is found, then stop
+    3. output fiber (write voxels in output image) and delete arcs
+    4. mark (MARK2) branches adjacent to F and not longer than maxbridgelength
+    5. remove all marked branches and
+       update skeleton (merge branches at 2-junctions that are not elbows)
+
+
+*/
+{
+#undef F_NAME
+#define F_NAME "lskelfilter6"
+  int32_t ret, i, j, nmaxpoints, *listpoints, nfiber, na, nd, n;
+  SKC_adj_pcell p;
+  SKC_pt_pcell pp;
+  double *VVx, *VVy, *VVz;
+  int32_t *X, *Y, *Z;
+  struct xvimage * result;
+  int32_t *R;
+  int32_t cube[216];
+
+#ifdef DEBUG_lskelfilter6
+  printf("%s: begin e_isol=%d e_end=%d e_curv=%d e_junc=%d \n", F_NAME, S->e_isol, S->e_end, S->e_curv, S->e_junc);
+#endif
+  
+  result = allocimage(NULL, S->rs, S->cs, S->ds, VFF_TYP_4_BYTE); 
+  assert(result != NULL);
+  razimage(result);
+  R = SLONGDATA(result);
+  
+  nmaxpoints = S->rs * 10;
+  listpoints = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(listpoints != NULL);
+  X = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(X != NULL);
+  Y = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(Y != NULL);
+  Z = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(Z != NULL);
+  VVx = (double *)malloc(nmaxpoints * sizeof(double)); assert(X != NULL);
+  VVy = (double *)malloc(nmaxpoints * sizeof(double)); assert(Y != NULL);
+  VVz = (double *)malloc(nmaxpoints * sizeof(double)); assert(Z != NULL);
+
+  // mark all arcs undeleted
+  for (i = S->e_end; i < S->e_curv; i++) SK_UNREMOVE(i);
+
+  // compute all tangent vectors
+  for (j = S->e_curv; j < S->e_junc; j++) // scan all junctions
+  {
+    ret = compute_vectors_from_junction6( S, j, fenetre, cube, listpoints, nmaxpoints, X, Y, Z, VVx, VVy, VVz);
+  }
+
+  free(listpoints);
+  free(X); free(Y); free(Z);
+  free(VVx); free(VVy); free(VVz);
+
+  nfiber = 0;
+  // repeat
+  while (lskelfilter2b(S))
+  { // select a fiber (call to lskelfilter2b)
+    // if no fiber is found, then stop
+    // otherwise the selected fiber F is marked in the skel structure
+    // (MARK1 for arcs and end junction, MARK2 for internal junctions)
+    nfiber++;
+
+#ifdef DEBUG_lskelfilter6
+    printf("%s: fiber detected\n", F_NAME);
+#endif
+
+    // output fiber (write labeled voxels in output image) and delete arcs
+    for (i = S->e_end, n=0; i < S->e_junc; i++) // scan arcs and junctions
+      if (!SK_DELETED(i) && (SK_MARKED1(i) || SK_MARKED2(i)))
+      {
+	for (pp = S->tskel[i].pts; pp != NULL; pp = pp->next)
+        {  R[pp->val] = nfiber; n++; }       // output
+	if (IS_CURV(i)) skeldelete(S, i); // delete arcs only
+      }
+
+#ifdef DEBUG_lskelfilter6
+    printf("%s: fiber written (%d points)\n", F_NAME, n);
+#endif
+
+    // remove branches adjacent to F and not longer than maxbridgelength
+    for (j = S->e_curv; j < S->e_junc; j++) // scan all junctions
+      if (!SK_DELETED(j) && (SK_MARKED1(j) || SK_MARKED2(j)))
+      {
+	na = nd = 0; // for counting remaining adjacent arcs
+	for (p = S->tskel[j].adj; p != NULL; p = p->next)
+	  if (IS_CURV(p->val) && !SK_DELETED(p->val))
+	  {
+	    na++;
+	    if (tailleptliste(S->tskel[p->val].pts) <= maxbridgelength) 
+	    { 
+	      skeldelete(S, p->val); nd++;
+#ifdef DEBUG_lskelfilter6
+	      printf("%s: arc %d deleted\n", F_NAME, p->val);
+#endif
+	    }
+	  }
+	// and unmark 
+	SK_UNMARK1(j); SK_UNMARK2(j);
+      } // scan junctions
+
+    // update skeleton (merge branches at 2-junctions that are not elbows)
+    for (j = S->e_curv; j < S->e_junc; j++) // scan all junctions
+      if (!SK_DELETED(j) && (nb_adjacent_elts(S, j) == 2) && (!is_elbow(S, j, maxelbowangle)))
+	skeldelete(S, j);
+
+  } // while (lskelfilter2b(S))
+
+  return result;
+} /* lskelfilter6() */

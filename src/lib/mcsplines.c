@@ -39,6 +39,52 @@ fonctions pour les splines cubiques naturelles
 
 Michel Couprie, Sébastien Couprie, juin 2003
 
+scn_solvespline(
+  double *x, double *y, int32_t n, 
+  double *Z0, double *Z1, double *Z2, double *Z3);
+scn_solvespline_noalloc(
+  double *x, double *y, int32_t n, 
+  double *Z0, double *Z1, double *Z2, double *Z3,
+  double *M, double *P, double *z, double *A, double*B);
+scn_solvespline1(
+  double *y, int32_t n, 
+  double *Z0, double *Z1, double *Z2, double *Z3);
+scn_solveclosedspline(
+  double *x, double *y, int32_t n, 
+  double *Z0, double *Z1, double *Z2, double *Z3);
+scn_samplespline(
+  double *x, double *y, int32_t n, 
+  int32_t m, double *X, double *Y);
+scn_samplespline3d(
+  double *x, double *y, double *z, int32_t n, 
+  int32_t m, double *X, double *Y, double *Z);
+scn_curvatures(
+  double *x, double *y, int32_t n, 
+  int32_t m, double *sk, double *rhok);
+scn_curvatures3d(
+  double *x, double *y, double *z, int32_t n, 
+  int32_t m, double *sk, double *rhok);
+scn_approxcurve(
+  int32_t *X, int32_t *Y, int32_t N, 
+  double deltamax, int32_t *Z, int32_t *n, 
+  double *C0, double *C1, double *C2, double *C3,
+  double *D0, double *D1, double *D2, double *D3);
+scn_approxcurve3d(
+  int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double deltamax, 
+  int32_t *C, int32_t *n, 
+  double *C0, double *C1, double *C2, double *C3,
+  double *D0, double *D1, double *D2, double *D3,
+  double *E0, double *E1, double *E2, double *E3);
+scn_lengthspline(
+  double *X0, double *X1, double *X2, double *X3, 
+  double *Y0, double *Y1, double *Y2, double *Y3, 
+  int32_t nctrl);
+scn_lengthspline3d(
+  double *X0, double *X1, double *X2, double *X3, 
+  double *Y0, double *Y1, double *Y2, double *Y3, 
+  double *Z0, double *Z1, double *Z2, double *Z3,
+  int32_t nctrl);
+
 */
 
 #include <stdio.h>
@@ -314,7 +360,7 @@ int32_t scn_solvespline1(double *y, int32_t n,
   free(A); 
   free(B);
   return 1;
-} // scn_solvespline()
+} // scn_solvespline1()
 
 /* ==================================== */
 int32_t scn_solveclosedspline(double *x, double *y, int32_t n, 
@@ -1787,6 +1833,137 @@ int32_t scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double 
   free(U);
   return 1;
 } // scn_approxcurve3d()
+
+/* ==================================== */
+int32_t scn_approxcurve3d_with_initial_control_points(
+  int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double deltamax, 
+  int32_t *C, int32_t *n, 
+  double *C0, double *C1, double *C2, double *C3,
+  double *D0, double *D1, double *D2, double *D3,
+  double *E0, double *E1, double *E2, double *E3)
+/* ==================================== */
+/*! \fn double * scn_approxcurve3d_with_initial_control_points(
+  int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double deltamax, 
+  int32_t *C, int32_t *n, 
+  double *C0, double *C1, double *C2, double *C3,
+  double *D0, double *D1, double *D2, double *D3,
+  double *E0, double *E1, double *E2, double *E3)
+    \param X (entrée) : tableau des abscisses des points de la courbe (taille N)
+    \param Y (entrée) : tableau des ordonnées des points de la courbe (taille N)
+    \param Z (entrée) : tableau des cotes des points de la courbe (taille N)
+    \param N (entrée) : nombre de points de la courbe
+    \param deltamax (entrée) : tolérance sur l'approximation
+    \param C (entrée/sortie) : tableau des index des points de contrôle (taille N)
+    \param n (entrée/sortie) : nombre de points de contrôle
+    \param C0 (sortie) : tableau des coef. spline X de degré 0 (taille N-1) 
+    \param C1 (sortie) : tableau des coef. spline X de degré 1 (taille N-1) 
+    \param C2 (sortie) : tableau des coef. spline X de degré 2 (taille N-1) 
+    \param C3 (sortie) : tableau des coef. spline X de degré 3 (taille N-1) 
+    \param D0 (sortie) : tableau des coef. spline Y de degré 0 (taille N-1) 
+    \param D1 (sortie) : tableau des coef. spline Y de degré 1 (taille N-1) 
+    \param D2 (sortie) : tableau des coef. spline Y de degré 2 (taille N-1) 
+    \param D3 (sortie) : tableau des coef. spline Y de degré 3 (taille N-1) 
+    \param E0 (sortie) : tableau des coef. spline Z de degré 0 (taille N-1) 
+    \param E1 (sortie) : tableau des coef. spline Z de degré 1 (taille N-1) 
+    \param E2 (sortie) : tableau des coef. spline Z de degré 2 (taille N-1) 
+    \param E3 (sortie) : tableau des coef. spline Z de degré 3 (taille N-1) 
+    \brief trouve une approximation par trois splines cubiques de la courbe discrete 
+           définie par X, Y, Z
+    \warning la mémoire pour stocker les résultats C, C0..C3, D0..D3, E0..E3 doit avoir été allouée
+*/
+#undef F_NAME
+#define F_NAME "scn_approxcurve3d_with_initial_control_points"
+{
+  int32_t i, j, continuer;
+  double *t, *x, *y;
+  int32_t *U, *V, *W;
+  double delta; 
+  int32_t arg;
+  int32_t nctrl;
+  int32_t niter = 0;
+
+  t = (double *)calloc(1,N * sizeof(double)); assert(t != NULL);
+  x = (double *)calloc(1,N * sizeof(double)); assert(x != NULL);
+  y = (double *)calloc(1,N * sizeof(double)); assert(y != NULL);
+  U = (int32_t *)calloc(1,N * sizeof(int32_t)); assert(U != NULL);
+  V = (int32_t *)calloc(1,N * sizeof(int32_t)); assert(V != NULL);
+  W = (int32_t *)calloc(1,N * sizeof(int32_t)); assert(W != NULL);
+
+  if ((X[0] == X[N-1]) && (Y[0] == Y[N-1]) && (Z[0] == Z[N-1]))
+  {
+    fprintf(stderr, "%s: this operator does not allow closed curves\n", F_NAME);
+    return 0;
+  }
+
+  for (i = 0; i < N; i++) t[i] = (double)i;
+
+  do
+  {
+    niter++;
+    continuer = 0;
+    for (i = 0; i < nctrl; i++) x[i] = C[i];
+    for (i = 0; i < nctrl; i++) y[i] = X[C[i]];
+    if (scn_solvespline(x, y, nctrl, C0, C1, C2, C3) == 0) return 0;
+    for (i = 0; i < nctrl; i++) y[i] = Y[C[i]];
+    if (scn_solvespline(x, y, nctrl, D0, D1, D2, D3) == 0) return 0;
+    for (i = 0; i < nctrl; i++) y[i] = Z[C[i]];
+    if (scn_solvespline(x, y, nctrl, E0, E1, E2, E3) == 0) return 0;
+    scn_discretisespline3d(nctrl, C0, C1, C2, C3, D0, D1, D2, D3, E0, E1, E2, E3, C, U, V, W);
+#ifdef DEBUG
+    { 
+    char b[100]; 
+    sprintf(b, "_C%02d", niter);
+    printctrlpoints3d(C, X, Y, Z, nctrl, b);
+    sprintf(b, "_W%02d", niter);
+    printcurve3d(U, V, W, N, b);
+    }
+#endif
+    i = 0;
+    while (i < nctrl-1)
+    {
+      distancesegments3d(X, Y, Z, U, V, W, C[i], C[i+1], &delta, &arg);
+      if (delta > deltamax)
+      { // insere le point arg dans C à la position i+1 
+        continuer = 1;
+        nctrl++;
+        for (j = nctrl-1; j > i+1; j--) C[j] = C[j-1];
+        C[i+1] = (C[i]+C[i+2])/2;
+        i++;
+      }
+      i++;
+
+#ifdef DEBUG
+      printf("%s: nctrl=%d ; \n", F_NAME, nctrl);  
+#endif
+      
+    }
+  } while(continuer && (nctrl <= N));
+
+  if (nctrl > N)
+  {
+    printf("%s: too many control points, tolerance may be too small\n", F_NAME);  
+    return 0;
+  }
+
+  // renormalisation de l'abcisse curviligne
+  // (départ à 0, incrément de 1 pour chaque point de contrôle) 
+  for (i = 0; i < nctrl; i++) x[i] = i;
+  for (i = 0; i < nctrl; i++) y[i] = X[C[i]];
+  if (scn_solvespline(x, y, nctrl, C0, C1, C2, C3) == 0) return 0;
+  for (i = 0; i < nctrl; i++) y[i] = Y[C[i]];
+  if (scn_solvespline(x, y, nctrl, D0, D1, D2, D3) == 0) return 0;
+  for (i = 0; i < nctrl; i++) y[i] = Z[C[i]];
+  if (scn_solvespline(x, y, nctrl, E0, E1, E2, E3) == 0) return 0;
+
+  *n = nctrl;
+  free(t);
+  free(x);
+  free(y);
+  free(W);
+  free(V);
+  free(U);
+  return 1;
+} // scn_approxcurve3d_with_initial_control_points()
 
 // =================================================
 // TESTS
