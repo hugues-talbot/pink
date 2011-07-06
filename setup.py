@@ -3,11 +3,12 @@
 # This file is used to generate a Python installer
 # executable on Microsoft Windows
 
+# run it on windows as c:\python27\python.exe build bdist --format=wininst
 
 from distutils.core import setup
 
 setup( name         = 'pink-image',
-       version      = '0.9.r557',
+       version      = '0.9.r566',
        description  = 'Pink Image Processing Library',
        author       = 'Michel Couprie et al.',
        author_email = 'pink-image-devel@lists.berlios.de',
