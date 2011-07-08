@@ -52,7 +52,16 @@ extern int32_t scn_curvatures3d(double *x, double *y, double *z, int32_t n, int3
 extern int32_t scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_t *n, 
                             double *C0, double *C1, double *C2, double *C3,
                             double *D0, double *D1, double *D2, double *D3);
+extern int32_t scn_approxcurve_with_initial_control_points(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_t *n, 
+                            double *C0, double *C1, double *C2, double *C3,
+                            double *D0, double *D1, double *D2, double *D3);
 extern int32_t scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double deltamax, 
+                              int32_t *C, int32_t *n, 
+                              double *C0, double *C1, double *C2, double *C3,
+                              double *D0, double *D1, double *D2, double *D3,
+			      double *E0, double *E1, double *E2, double *E3);
+extern int32_t scn_approxcurve3d_with_initial_control_points(
+                              int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double deltamax, 
                               int32_t *C, int32_t *n, 
                               double *C0, double *C1, double *C2, double *C3,
                               double *D0, double *D1, double *D2, double *D3,
