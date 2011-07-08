@@ -233,6 +233,9 @@ extern int32_t convertgen(struct xvimage **f1, struct xvimage **f2);
 extern int32_t convertlong(struct xvimage **f1);
 extern int32_t convertfloat(struct xvimage **f1);
 
+extern void writelist2(char *filename, int32_t *x, int32_t *y, int32_t npoints);
+extern void writelist3(char *filename, int32_t *x, int32_t *y, int32_t *z, int32_t npoints);
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

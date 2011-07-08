@@ -59,6 +59,7 @@ knowledge of the CeCILL license and that you accept its terms.
                           par readimage comme 'multiband'
 			  les images 2D à 3 bandes sont traitées 
 			  par writeimage comme des images couleurs 
+   MC Update juillet 2011 : fonctions writelist2, writelist3
 */
 
 #include <stdio.h>
@@ -1389,7 +1390,7 @@ void writeascimage(struct xvimage * image, char *filename)
   index_t N;
   int32_t color = 0;
 
-  fd = fopen(filename,"w");
+  fd = pink_fopen_write(filename);
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -3318,17 +3319,48 @@ int32_t readrgb(char *filename, struct xvimage ** r, struct xvimage ** g, struct
   return 1;
 } /* readrgb() */
 
-#ifdef TEST
-int main()
+/* =============================================================== */
+void writelist2(char *filename, int32_t *x, int32_t *y, int32_t npoints)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "writelist2"
 {
-  struct xvimage *im = readimage("test1.pgm");
-  struct xvimage *am;
-  if (!im) exit(1);
-  am = copyimage(im);
-  printimage(am);
-  writeimage(am, "test2.pgm");
-  razimage(am);
-  copy2image(im, am);
-  writeimage(am, "test3.pgm");
-}
-#endif
+  FILE *fd = NULL;
+  int32_t i;
+
+  fd = pink_fopen_write(filename);
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
+    exit(1);
+  }
+
+  fprintf(fd, "b %d\n", npoints); 
+  for (i = 0; i < npoints; i++)
+    fprintf(fd, "%d %d\n", x[i], y[i]); 
+
+  fclose(fd);
+} // writelist2()
+
+/* =============================================================== */
+void writelist3(char *filename, int32_t *x, int32_t *y, int32_t *z, int32_t npoints)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "writelist3"
+{
+  FILE *fd = NULL;
+  int32_t i;
+
+  fd = pink_fopen_write(filename);
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
+    exit(1);
+  }
+
+  fprintf(fd, "B %d\n", npoints); 
+  for (i = 0; i < npoints; i++)
+    fprintf(fd, "%d %d %d\n", x[i], y[i], z[i]); 
+
+  fclose(fd);
+} // writelist3()

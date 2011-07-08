@@ -103,6 +103,7 @@ scn_lengthspline3d(
 //#define PARANO
 
 #define SCN_EPSILON 0.000001
+#define SCN_EPSILON2 1E-30
 
 #ifndef HUGE_VAL
 #define HUGE_VAL 1E+100
@@ -1919,13 +1920,14 @@ double scn_splinequerypoint3d(double x, double y, double z, double p, int32_t n,
 } // scn_splinequerypoint3d()
 
 /* ==================================== */
-double scn_splinequerycurvature3d(int32_t i,
+double scn_splinequerycurvature3d(double s, int32_t n,
 			       double *C0, double *C1, double *C2, double *C3,
 			       double *D0, double *D1, double *D2, double *D3,
 			       double *E0, double *E1, double *E2, double *E3)
 /* ==================================== */
 /*! \fn 
-    \param i (entrée) : index d'un point de contrôle de la spline
+    \param s (entrée) : abcisse curviligne d'un point de la spline
+    \param n (entrée) : nombre de points de contrôle de la spline
     \param C0 (entrée) : tableau des coef. spline X de degré 0 (taille n-1) 
     \param C1 (entrée) : tableau des coef. spline X de degré 1 (taille n-1) 
     \param C2 (entrée) : tableau des coef. spline X de degré 2 (taille n-1) 
@@ -1938,13 +1940,43 @@ double scn_splinequerycurvature3d(int32_t i,
     \param E1 (entrée) : tableau des coef. spline Z de degré 1 (taille n-1) 
     \param E2 (entrée) : tableau des coef. spline Z de degré 2 (taille n-1) 
     \param E3 (entrée) : tableau des coef. spline Z de degré 3 (taille n-1) 
-    \brief retourne la courbure de la spline au point de contrôle donné
+    \brief retourne la courbure de la spline au point d'abcisse s
 */
 #undef F_NAME
 #define F_NAME "scn_splinequerycurvature3d"
 {
-  double rho;
-  return rho;
+  double xp, yp, zp; // dérivées premières
+  double xs, ys, zs; // dérivées secondes
+  double f[3], tmp1, tmp2;
+  int32_t j;
+  
+  if (s < n-1) j = (int32_t)floor(s); else j = n-2;
+  
+  f[0] = C1[j]; f[1] = 2*C2[j]; f[2] = 3*C3[j];
+  xp = evalpoly(3, (double *)f, s);
+  f[0] = D1[j]; f[1] = 2*D2[j]; f[2] = 3*D3[j];
+  yp = evalpoly(3, (double *)f, s);
+  f[0] = E1[j]; f[1] = 2*E2[j]; f[2] = 3*E3[j];
+  zp = evalpoly(3, (double *)f, s);
+
+  f[0] = 2*C2[j]; f[1] = 6*C3[j]; f[2] = 0;
+  xs = evalpoly(3, (double *)f, s);
+  f[0] = 2*D2[j]; f[1] = 6*D3[j]; f[2] = 0;
+  ys = evalpoly(3, (double *)f, s);
+  f[0] = 2*E2[j]; f[1] = 6*E3[j]; f[2] = 0;
+  zs = evalpoly(3, (double *)f, s);
+
+  tmp1 = sqrt(xp*xp + yp*yp + zp*zp);
+  tmp1 = tmp1 * tmp1 * tmp1;
+  tmp2 = (zs*yp - ys*zp) * (zs*yp - ys*zp);
+  tmp2 = tmp2 + (xs*zp - zs*xp) * (xs*zp - zs*xp);
+  tmp2 = tmp2 + (ys*xp - xs*yp) * (ys*xp - xs*yp);
+  tmp2 = sqrt(tmp2);
+
+  //  printf("%s : %g / %g\n", F_NAME, tmp2, tmp1);
+  
+  if (tmp2 < SCN_EPSILON2) return 0.0;
+  return tmp2 / tmp1;
 } // scn_splinequerycurvature3d()
 
 // =================================================
@@ -1983,6 +2015,7 @@ int32_t main()
   double *C0, *C1, *C2, *C3;
   double *D0, *D1, *D2, *D3;
   double *E0, *E1, *E2, *E3;
+  double s;
 
   t = (double *)calloc(1,n*sizeof(double));
   C0 = (double *)calloc(1,(n-1)*sizeof(double));
@@ -2006,9 +2039,53 @@ int32_t main()
 
   for (i = 0; i < n; i++) 
   {
-    
+    s = scn_splinequerypoint3d(X[i]+0.5, Y[i]+1.5, Z[i]+0.5, 0.1, n, 
+			       C0, C1, C2, C3,
+			       D0, D1, D2, D3,
+			       E0, E1, E2, E3);
+    printf("%d %g\n", i, s);
   }
 
+  return 0;
+}
+#endif
+
+#ifdef TEST3
+int32_t main()
+{
+  const int32_t n = 7;
+  int32_t i;
+  double X[7] = {1, 1, 1, 10, 2, 2, 2};
+  double Y[7] = {1, 1, 1, 10, 2, 2, 2};
+  double Z[7] = {1, 2, 3, 4, 3, 2, 1};
+  double *t;
+  double *C0, *C1, *C2, *C3;
+  double *D0, *D1, *D2, *D3;
+  double *E0, *E1, *E2, *E3;
+  double c;
+
+  t = (double *)malloc(n * sizeof(double));
+  C0 = (double *)malloc(12 * (n-1) * sizeof(double));
+  C1 = C0 + n - 1; C2 = C1 + n - 1; C3 = C2 + n - 1;
+  D0 = C3 + n - 1; D1 = D0 + n - 1; D2 = D1 + n - 1; D3 = D2 + n - 1;
+  E0 = D3 + n - 1; E1 = E0 + n - 1; E2 = E1 + n - 1; E3 = E2 + n - 1;
+
+  for (i = 0; i < n; i++) t[i] = (double)i; 
+
+  scn_solvespline(t, X, n, C0, C1, C2, C3);
+  scn_solvespline(t, Y, n, D0, D1, D2, D3);
+  scn_solvespline(t, Z, n, E0, E1, E2, E3);
+
+  for (i = 0; i < n; i++) 
+  {
+    c = scn_splinequerycurvature3d((double)i, n, 
+			       C0, C1, C2, C3,
+			       D0, D1, D2, D3,
+			       E0, E1, E2, E3);
+    printf("%d %g\n", i, c);
+  }
+
+  free(C0);
   return 0;
 }
 #endif

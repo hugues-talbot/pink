@@ -60,6 +60,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mclifo.h>
 #include <mcutil.h>
 #include <mcskelcurv.h>
+#include <mcsplines.h>
 #include <llabelextrema.h>
 #include <lseltopo.h>
 #include <lmoments.h>
@@ -68,6 +69,7 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define VERBOSE
 //#define DEBUG_lskelfilter3
 //#define DEBUG_lskelfilter2b
+#define DEBUG_lskelfilter6
 //#define DEBUGCOMPVECT
 //#define DEBUGCURV
 //#define DEBUGADJ
@@ -2179,12 +2181,12 @@ static int32_t compute_vector(
 
 // ----------------------------------------------------------------------
 int32_t lien(
-skel *S,
-int32_t J,
-int32_t p1,
-int32_t p2,
-int32_t *cube, // tableau de 6*6*6 cases
-int32_t *listpoints
+	     skel *S,
+	     int32_t J,
+	     int32_t p1,
+	     int32_t p2,
+	     int32_t *cube, // tableau de 6*6*6 cases
+	     int32_t *listpoints
 )
 // ----------------------------------------------------------------------
 {
@@ -3616,28 +3618,71 @@ struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double max
   return result;
 } /* lskelfilter5() */
 
-#ifdef A_NE_PAS_COMPILER
+// ----------------------------------------------------------------------
+static double calc_courbure(int32_t *X, int32_t *Y, int32_t *Z, int32_t n, int32_t i)
+// ----------------------------------------------------------------------
+{
+#define DELTAMAX 2
+  double *C0, *C1, *C2, *C3;
+  double *D0, *D1, *D2, *D3;
+  double *E0, *E1, *E2, *E3;
+  double courbure;
+  int32_t *CP;
+  int32_t nctrlpoints, j;
+
+  C0 = (double *)malloc(12 * (n-1) * sizeof(double));
+  C1 = C0 + n - 1; C2 = C1 + n - 1; C3 = C2 + n - 1;
+  D0 = C3 + n - 1; D1 = D0 + n - 1; D2 = D1 + n - 1; D3 = D2 + n - 1;
+  E0 = D3 + n - 1; E1 = E0 + n - 1; E2 = E1 + n - 1; E3 = E2 + n - 1;
+  CP = (int32_t *)malloc(n * sizeof(int32_t));
+
+  CP[0] = 0;
+  CP[1] = i;
+  CP[2] = n-1;
+  nctrlpoints = 3;
+
+  (void)scn_approxcurve3d_with_initial_control_points(
+    X, Y, Z, n, DELTAMAX, CP, &nctrlpoints, 
+    C0, C1, C2, C3, D0, D1, D2, D3, E0, E1, E2, E3);
+
+  // retrouve l'index j du point de contrôle correspondant au point de la
+  // courbe discrete d'indice i
+  for (j = 0; j < nctrlpoints; j++) if (CP[j] == i) break;
+  assert(j < nctrlpoints);
+
+  courbure = scn_splinequerycurvature3d((double)j, n,
+    C0, C1, C2, C3, D0, D1, D2, D3, E0, E1, E2, E3);
+
+  free(CP);
+  free(C0);
+  return courbure;
+} // calc_courbure()
+
 // ----------------------------------------------------------------------
 static int32_t compute_vectors_from_junction6(
    skel *S,                // structure squelette
    int32_t J,		   // index de la jonction
-   int32_t l,		   // demi-taille de la fenetre 
    int32_t *cube,	   // variable temporaire : tableau de 216 int32_t
    int32_t *listpoints,    // variable temporaire : points de courbe
    int32_t nmaxpoints,     // taille max de la liste listpoints (nmaxpoints >> nbr de points d'une courbe)
-   int32_t *X, int32_t *Y, int32_t *Z,	 // variable temporaire : tableau des points de courbe (coordonnées)
-   double *VVx, double *VVy, double *VVz // variable temporaire : tableau des vecteurs tangents
+   int32_t *X, int32_t *Y, int32_t *Z	 // variable temporaire : tableau des points de courbe (coordonnées)
 )
 // ----------------------------------------------------------------------
+#undef F_NAME
+#define F_NAME "compute_vectors_from_junction6"
 {
   int32_t rs = S->rs, ps = rs * S->cs;
-  int32_t i, j, n1, n2, npoints, ntemp, narc, n, ajust=0;
+  int32_t i, j, n1, npoints, ntemp, ijunc, narc, n, ajust=0;
   SKC_adj_pcell adj;
   int32_t c[4]; 		// les courbes adjacentes à la jonction
-  double angle[6]; 
-  double max;
+  double curv[6]; 
+  double min;
 
-  for (i=0; i<6; i++) angle[i]=1;
+#ifdef DEBUG_lskelfilter6
+  printf("%s: begin id junc=%d \n", F_NAME, J);
+#endif
+
+  for (i=0; i<6; i++) curv[i]=1;
 
   adj = (S->tskel[J]).adj;
   assert(adj != NULL);
@@ -3720,43 +3765,45 @@ static int32_t compute_vectors_from_junction6(
     // on place la jonction
     n = lien(S,J,listpoints[ntemp-1],listpoints[ntemp+4],cube,listpoints+ntemp);
 
+    // choix d'un point de contrôle dans la jonction
+    ijunc = ntemp + (n/2);
+
     // on repositionne le second arc si nécessaire
-    if ( n<4 )
-      for(n1=0;n1<npoints;n1++) listpoints[ntemp+n+n1] = listpoints[ntemp+4+n1];
+    if (n < 4)
+      for(n1 = 0; n1 < npoints; n1++) 
+	listpoints[ntemp+n+n1] = listpoints[ntemp+4+n1];
 
     npoints = npoints + ntemp + n;
 
     // calcul des coordonnées
-    for(n1=0;n1<npoints;n1++){
+    for(n1 = 0; n1 < npoints; n1++) {
       X[n1] = listpoints[n1]%rs;
       Y[n1] = (listpoints[n1]%ps)/rs;
       Z[n1] = listpoints[n1]/ps;
     }
 
+    // calcul de la courbure au point ijunc
+    curv[i+j-1+ajust] = calc_courbure(X, Y, Z, npoints, ijunc);
 
+#ifdef DEBUG_lskelfilter6
+    printf("%s: courbure[%d] at %d = %g \n", F_NAME, i+j-1+ajust, ijunc, curv[i+j-1+ajust]);
+    //    writelist3("_curv", X, Y, Z, npoints);
+    //    exit(0);
+#endif
 
-A FINIR
-
-    // calcul des tangentes
-    lcurvetangents3D( 2, mask, tab_combi, npoints, X, Y, Z, VVx, VVy, VVz);
-
-    // calcul de l'angle min (ie le produit scalaire max)
-    for (n1= mcmax(0,ntemp-l); n1< mcmin(npoints-1,ntemp+n+l-1); n1++)
-      for(n2=n1+1; n2< mcmin(npoints,ntemp+n+l); n2++)
-      {
-  	// mise à jour de angle[i+j-1]
-  	angle[i+j-1+ajust]=mcmin(angle[i+j-1+ajust],VVx[n1]*VVx[n2]+VVy[n1]*VVy[n2]+VVz[n1]*VVz[n2]);
-      }
   } // fin for j
   ajust = narc-3;
   } // fin for i
 
-  // j=argmax(angle)
-  max = angle[0]; j=0;
-  if (narc==3) ntemp=3;
-  else ntemp=6;
-  for (i=1;i<ntemp;i++)
-    if (angle[i]>max) { max=angle[i]; j=i; }
+  // j=argmin(curv)
+  min = curv[0]; j = 0;
+  if (narc == 3) ntemp = 3; else ntemp=6;
+  for (i = 1; i < ntemp; i++)
+    if (curv[i] < min) { min = curv[i]; j = i; }
+
+#ifdef DEBUG_lskelfilter6
+    printf("%s: courbure[%d] min = %g \n", F_NAME, j, curv[j]);
+#endif
 
   if (narc==3)
   {
@@ -3866,7 +3913,7 @@ A FINIR
 } // compute_vectors_from_junction6()
 
 /* ---------------------------------------------------------------------- */
-struct xvimage * lskelfilter6(skel *S, int32_t fenetre, double maxbridgelength, double maxelbowangle)
+struct xvimage * lskelfilter6(skel *S, double maxbridgelength, double maxelbowangle)
 /* ---------------------------------------------------------------------- */
 /*
   "Mikado game" algorithm
@@ -3889,7 +3936,6 @@ struct xvimage * lskelfilter6(skel *S, int32_t fenetre, double maxbridgelength, 
   int32_t ret, i, j, nmaxpoints, *listpoints, nfiber, na, nd, n;
   SKC_adj_pcell p;
   SKC_pt_pcell pp;
-  double *VVx, *VVy, *VVz;
   int32_t *X, *Y, *Z;
   struct xvimage * result;
   int32_t *R;
@@ -3909,9 +3955,6 @@ struct xvimage * lskelfilter6(skel *S, int32_t fenetre, double maxbridgelength, 
   X = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(X != NULL);
   Y = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(Y != NULL);
   Z = (int32_t *)malloc(nmaxpoints * sizeof(int32_t)); assert(Z != NULL);
-  VVx = (double *)malloc(nmaxpoints * sizeof(double)); assert(X != NULL);
-  VVy = (double *)malloc(nmaxpoints * sizeof(double)); assert(Y != NULL);
-  VVz = (double *)malloc(nmaxpoints * sizeof(double)); assert(Z != NULL);
 
   // mark all arcs undeleted
   for (i = S->e_end; i < S->e_curv; i++) SK_UNREMOVE(i);
@@ -3919,12 +3962,11 @@ struct xvimage * lskelfilter6(skel *S, int32_t fenetre, double maxbridgelength, 
   // compute all tangent vectors
   for (j = S->e_curv; j < S->e_junc; j++) // scan all junctions
   {
-    ret = compute_vectors_from_junction6( S, j, fenetre, cube, listpoints, nmaxpoints, X, Y, Z, VVx, VVy, VVz);
+    ret = compute_vectors_from_junction6( S, j, cube, listpoints, nmaxpoints, X, Y, Z);
   }
 
   free(listpoints);
   free(X); free(Y); free(Z);
-  free(VVx); free(VVy); free(VVz);
 
   nfiber = 0;
   // repeat
@@ -3983,5 +4025,3 @@ struct xvimage * lskelfilter6(skel *S, int32_t fenetre, double maxbridgelength, 
   return result;
 } /* lskelfilter6() */
 
-#endif
-//A_NE_PAS_COMPILER

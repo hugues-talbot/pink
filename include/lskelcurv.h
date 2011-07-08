@@ -50,6 +50,7 @@ extern int32_t lskelfilter2(skel *S, double delta1, double delta2);
 extern int32_t lskelfilter2b(skel *S, double delta1, double delta2);
 extern struct xvimage * lskelfilter3(skel *S, double delta1, double delta2, double maxbridgelength, double maxelbowangle);
 extern struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double maxbridgelength, double maxelbowangle);
+extern struct xvimage * lskelfilter6(skel *S, double maxbridgelength, double maxelbowangle);
 extern struct xvimage * lskelfindelbows(skel *S, double length, double angle);
 #ifdef __cplusplus
 }
