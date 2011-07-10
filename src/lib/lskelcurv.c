@@ -2466,7 +2466,7 @@ static int32_t compute_vectors_from_junction(
   {
     switch(j)
     {
-    case '0' :
+    case 0 :
       // c[0]-c[1]
       adj = (S->tskel[J]).adj;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
@@ -2475,7 +2475,7 @@ static int32_t compute_vectors_from_junction(
       adj = adj->next;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
       break;
-    case '1' :
+    case 1 :
       // c[0]-c[2]
       adj = (S->tskel[J]).adj;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
@@ -2484,7 +2484,7 @@ static int32_t compute_vectors_from_junction(
       adj = adj->next;
       adj->vx = 1; adj->vy = 0; adj->vz = 0;
       break;
-    case '2' :
+    case 2 :
       // c[1]-c[2]
       adj = (S->tskel[J]).adj;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
@@ -2498,7 +2498,7 @@ static int32_t compute_vectors_from_junction(
   {
     switch (j)
     {
-    case '0' :
+    case 0 :
       // c[0]-c[1]
       adj = (S->tskel[J]).adj;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
@@ -2509,7 +2509,7 @@ static int32_t compute_vectors_from_junction(
       adj = adj->next;
       adj->vx = 0; adj->vy = 0; adj->vz = 1;
       break;
-    case '1' :
+    case 1 :
       // c[0]-c[2]
       adj = (S->tskel[J]).adj;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
@@ -2520,7 +2520,7 @@ static int32_t compute_vectors_from_junction(
       adj = adj->next;
       adj->vx = 0; adj->vy = 0; adj->vz = 1;
       break;
-    case '2' :
+    case 2 :
       // c[0]-c[3]
       adj = (S->tskel[J]).adj;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
@@ -2531,7 +2531,7 @@ static int32_t compute_vectors_from_junction(
       adj = adj->next;
       adj->vx = 1; adj->vy = 0; adj->vz = 0;
       break;
-    case '3' :
+    case 3 :
       // c[1]-c[2]
       adj = (S->tskel[J]).adj;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
@@ -2542,7 +2542,7 @@ static int32_t compute_vectors_from_junction(
       adj = adj->next;
       adj->vx = 0; adj->vy = 0; adj->vz = 1;
       break;
-    case '4' :
+    case 4 :
       // c[1]-c[3]
       adj = (S->tskel[J]).adj;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
@@ -2553,7 +2553,7 @@ static int32_t compute_vectors_from_junction(
       adj = adj->next;
       adj->vx = 1; adj->vy = 0; adj->vz = 0;
       break;
-    case '5' :
+    case 5 :
       // c[2]-c[3]
       adj = (S->tskel[J]).adj;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
@@ -3786,7 +3786,8 @@ static int32_t compute_vectors_from_junction6(
     curv[i+j-1+ajust] = calc_courbure(X, Y, Z, npoints, ijunc);
 
 #ifdef DEBUG_lskelfilter6
-    printf("%s: courbure[%d] at %d = %g \n", F_NAME, i+j-1+ajust, ijunc, curv[i+j-1+ajust]);
+    printf("%s: courbe %d - %d   ", F_NAME, i, j);
+    printf(" courbure[%d] at %d = %g \n", i+j-1+ajust, ijunc, curv[i+j-1+ajust]);
     //    writelist3("_curv", X, Y, Z, npoints);
     //    exit(0);
 #endif
@@ -3809,8 +3810,11 @@ static int32_t compute_vectors_from_junction6(
   {
     switch(j)
     {
-    case '0' :
+    case 0 :
       // c[0]-c[1]
+#ifdef DEBUG_lskelfilter6
+    printf("%s: courbe 0 - 1\n", F_NAME);
+#endif
       adj = (S->tskel[J]).adj;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
       adj = adj->next;
@@ -3818,8 +3822,11 @@ static int32_t compute_vectors_from_junction6(
       adj = adj->next;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
       break;
-    case '1' :
+    case 1 :
       // c[0]-c[2]
+#ifdef DEBUG_lskelfilter6
+    printf("%s: courbe 0 - 2\n", F_NAME);
+#endif
       adj = (S->tskel[J]).adj;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
       adj = adj->next;
@@ -3827,8 +3834,11 @@ static int32_t compute_vectors_from_junction6(
       adj = adj->next;
       adj->vx = 1; adj->vy = 0; adj->vz = 0;
       break;
-    case '2' :
+    case 2 :
       // c[1]-c[2]
+#ifdef DEBUG_lskelfilter6
+    printf("%s: courbe 1 - 2\n", F_NAME);
+#endif
       adj = (S->tskel[J]).adj;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
       adj = adj->next;
@@ -3841,7 +3851,7 @@ static int32_t compute_vectors_from_junction6(
   {
     switch (j)
     {
-    case '0' :
+    case 0 :
       // c[0]-c[1]
       adj = (S->tskel[J]).adj;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
@@ -3852,7 +3862,7 @@ static int32_t compute_vectors_from_junction6(
       adj = adj->next;
       adj->vx = 0; adj->vy = 0; adj->vz = 1;
       break;
-    case '1' :
+    case 1 :
       // c[0]-c[2]
       adj = (S->tskel[J]).adj;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
@@ -3863,7 +3873,7 @@ static int32_t compute_vectors_from_junction6(
       adj = adj->next;
       adj->vx = 0; adj->vy = 0; adj->vz = 1;
       break;
-    case '2' :
+    case 2 :
       // c[0]-c[3]
       adj = (S->tskel[J]).adj;
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
@@ -3874,7 +3884,7 @@ static int32_t compute_vectors_from_junction6(
       adj = adj->next;
       adj->vx = 1; adj->vy = 0; adj->vz = 0;
       break;
-    case '3' :
+    case 3 :
       // c[1]-c[2]
       adj = (S->tskel[J]).adj;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
@@ -3885,7 +3895,7 @@ static int32_t compute_vectors_from_junction6(
       adj = adj->next;
       adj->vx = 0; adj->vy = 0; adj->vz = 1;
       break;
-    case '4' :
+    case 4 :
       // c[1]-c[3]
       adj = (S->tskel[J]).adj;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
@@ -3896,7 +3906,7 @@ static int32_t compute_vectors_from_junction6(
       adj = adj->next;
       adj->vx = 1; adj->vy = 0; adj->vz = 0;
       break;
-    case '5' :
+    case 5 :
       // c[2]-c[3]
       adj = (S->tskel[J]).adj;
       adj->vx = 0; adj->vy = 1; adj->vz = 0;
