@@ -60,6 +60,7 @@ Paulin Sanselme, 2011
 //#define DEBUG
 //#define DEBUG_ExtractDSSs3D
 #define EPSILON 1E-20
+#define PRECISION 1000
 
 /*************************************************************/
 /*************************************************************/
@@ -194,12 +195,13 @@ static inline double cosinesimilarity(double x1, double y1, double z1, double x2
 }
 
 //--------------------------------------------------------------------------
-void ExtractDSSs(int32_t npoints, int32_t *X, int32_t *Y, int32_t *end, double *angle)
+void ExtractDSSs(int32_t npoints, int32_t *X, int32_t *Y, double thickness, int32_t *end, double *angle)
 //--------------------------------------------------------------------------
 /*! \fn void ExtractDSSs(int32_t npoints, int32_t *X, int32_t *Y, int32_t *fin, double angle)
     \param npoints (input): number of points in points list
     \param X (input): ordered list of points (1st coord)
     \param Y (input): ordered list of points (2nd coord)
+    \param thickness (input): thickness choosen for the recognition
     \param end (output): index of the last point of the current DSS
     \param angle (output): angle of the current DSS
     \brief computes all the maximal DSSs starting at each position of the discrete curve in arrays X,Y. For each index i in [0,npoints[, if end[i] != -1 then there is a maximal DSS starting from i and ending at end[i]. Its orientation (relative to the horizontal axis) is given by angle[i].
@@ -224,8 +226,7 @@ Reference:
   Reco * M[4];
   int pos = 0;
   int lastend = -1;
-  int epp = 10;
-  Q ep(epp,10);              // thickness choosen for the recognition
+  Q ep((int)floor(thickness*PRECISION),PRECISION); // thickness choosen for the recognition
   point *points;
   int aa, bb;
 
@@ -295,15 +296,114 @@ Reference:
 } // ExtractDSSs()
 
 //--------------------------------------------------------------------------
-void ExtractDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, 
+void CoverByDSSs(int32_t npoints, int32_t *X, int32_t *Y, double thickness, int32_t *nseg, int32_t *Xs, int32_t *Ys)
+//--------------------------------------------------------------------------
+/*! \fn void CoverByDSSs(int32_t npoints, int32_t *X, int32_t *Y, int32_t *fin, double angle)
+    \param npoints (input): number of points in points list
+    \param X (input): ordered list of points (1st coord)
+    \param Y (input): ordered list of points (2nd coord)
+    \param thickness (input): thickness choosen for the recognition
+    \param nseg (output): number of covering segments
+    \param Xs (output): ordered list of points (1st coord)
+    \param Ys (output): ordered list of points (2nd coord)
+    \brief computes a covering of the discrete curve in arrays X,Y.
+    \warning arrays "Xs" and "Ys" must have been allocated with size npoints.
+
+Reference: 
+
+@Article{	  IGMI_Buz2007,
+  author	= {Lilian Buzer},
+  title		= {{A Simple Algorithm for Digital Line Recognition in the General Case}},
+  journal	= {Pattern Recognition},
+  year		= {2007},
+  volume	= {40},
+  pages		= {1675-1684},
+  number	= {6}
+}
+
+*/
+{
+#undef F_NAME
+#define F_NAME "CoverByDSSs"
+  Reco * M[4];
+  int pos = 0;
+  int n;
+  Q ep((int)floor(thickness*PRECISION),PRECISION); // thickness choosen for the recognition
+  point *points;
+
+#ifdef DEBUG_CoverByDSSs
+  printf("%s: begin\n", F_NAME);
+#endif
+
+  points = new point[npoints]; assert(points != NULL);
+  Fori(npoints) points[i] = point (X[i], Y[i]);
+
+  M[0] = new RecoLR();
+  M[1] = new RecoRL();
+  M[2] = new RecoTB();
+  M[3] = new RecoBT();
+
+  Xs[0] = X[0];
+  Ys[0] = Y[0];
+  n = 1;
+
+  while ( pos < npoints-1 )
+  {
+    int typemax = 0;
+    int indmax  = 0;
+    Q curEp;
+    Fori(4)            // look for the longuest segment
+    {
+      M[i]->Init();
+      curEp = 0;
+      int k =  0;
+      while( (curEp < ep) && (pos+k < npoints) )
+      {
+        M[i]->Insert(curEp,points[pos+k]);
+        if (curEp < ep)
+        {
+          if ( (indmax==0) && (M[i]->valid()) )  { indmax = 1; typemax = i; }
+          if ( (indmax >0) && (k >= indmax)    )  { indmax = k+1; typemax = i; }
+          k++;
+        }
+      }
+    }
+
+#ifdef DEBUG_CoverByDSSs
+    printf("SEGMENT dir : %d [0=LR, 1=RL, 2=TB, 3=BT]\n", typemax);
+#endif
+    M[typemax]->Init();
+    curEp = 0;
+    Fori(indmax)
+    {
+      M[typemax]->Insert(curEp,points[pos+i]);
+#ifdef DEBUG_CoverByDSSs
+      printf("  point %d %d\n", points[pos+i].x, points[pos+i].y);
+#endif
+    }
+
+    pos = pos+indmax-1;
+    Xs[n] = X[pos];
+    Ys[n] = Y[pos];
+    n++;
+  } // while ( pos < npoints-1 )
+
+  delete points;
+  *nseg = n;
+  return;
+} // CoverByDSSs()
+
+//--------------------------------------------------------------------------
+void ExtractDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness, 
 	   int32_t *end, double *Xtan, double *Ytan, double *Ztan)
 //--------------------------------------------------------------------------
-/*! \fn void ExtractDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, 
+/*! \fn void ExtractDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness, 
 	   int32_t *end, double *Xtan, double *Ytan, double *Ztan)
     \param npoints (input): number of points in points list
     \param X (input): ordered list of points (1st coord)
     \param Y (input): ordered list of points (2nd coord)
     \param Z (input): ordered list of points (3rd coord)
+    \param thickness (input): thickness choosen for the recognition
     \param end (output): index of the last point of the current DSS
     \param Xtan (output): normalized tangent vector (1st coord)
     \param Ytan (output): normalized tangent vector (2nd coord)
@@ -329,8 +429,7 @@ Reference:
 #define F_NAME "ExtractDSSs3D"
 	
   int pos;
-  int epp = 10;
-  Q ep(epp,10); // thickness chosen for the recognition	
+  Q ep((int)floor(thickness*PRECISION),PRECISION); // thickness choosen for the recognition
   Q curEp;	
   Reco * MOxy[4], * MOxz[4], * MOyz[4];
   point *pointsxy, *pointsyz, *pointsxz;
@@ -580,6 +679,210 @@ printf("xp=%d zp=%d\n", xp, zp);
   delete pointsxz;
   return;
 } // ExtractDSSs3D()
+
+//--------------------------------------------------------------------------
+void CoverByDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness, int32_t *nseg, int32_t *Xs, int32_t *Ys, int32_t *Zs)
+//--------------------------------------------------------------------------
+/*! \fn void CoverByDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness, int32_t *nseg, int32_t *Xs, int32_t *Ys, int32_t *Zs)
+    \param npoints (input): number of points in points list
+    \param X (input): ordered list of points (1st coord)
+    \param Y (input): ordered list of points (2nd coord)
+    \param Z (input): ordered list of points (3rd coord)
+    \param thickness (input): thickness choosen for the recognition
+    \param nseg (output): number of covering segments
+    \param Xs (output): ordered list of points (1st coord)
+    \param Ys (output): ordered list of points (2nd coord)
+    \param Zs (output): ordered list of points (3rd coord)
+    \brief computes a covering of the discrete curve in arrays X,Y,Z.
+    \warning arrays "Xs", "Ys" and "Zs" must have been allocated with size npoints.
+
+Reference: 
+
+@Article{	  IGMI_Buz2007,
+  author	= {Lilian Buzer},
+  title		= {{A Simple Algorithm for Digital Line Recognition in the General Case}},
+  journal	= {Pattern Recognition},
+  year		= {2007},
+  volume	= {40},
+  pages		= {1675-1684},
+  number	= {6}
+}
+
+*/
+{
+#undef F_NAME
+#define F_NAME "CoverByDSSs3D"
+	
+  int pos;
+  Q ep((int)floor(thickness*PRECISION),PRECISION); // thickness choosen for the recognition
+  Q curEp;	
+  Reco * MOxy[4], * MOxz[4], * MOyz[4];
+  point *pointsxy, *pointsyz, *pointsxz;
+  int n;
+
+#ifdef DEBUG_CoverByDSSs3D
+  printf("%s: begin\n", F_NAME);
+#endif
+	
+  pointsxy = new point[npoints]; assert(pointsxy != NULL);
+  pointsyz = new point[npoints]; assert(pointsyz != NULL);
+  pointsxz = new point[npoints]; assert(pointsxz != NULL);
+  Fori(npoints) 
+  {
+    pointsxy[i] = point (X[i], Y[i]);
+    pointsyz[i] = point (Y[i], Z[i]);
+    pointsxz[i] = point (X[i], Z[i]);
+  }
+
+  MOxy[0] = new RecoLR(); MOxz[0] = new RecoLR(); MOyz[0] = new RecoLR();
+  MOxy[1] = new RecoRL(); MOxz[1] = new RecoRL(); MOyz[1] = new RecoRL();
+  MOxy[2] = new RecoTB(); MOxz[2] = new RecoTB(); MOyz[2] = new RecoTB();
+  MOxy[3] = new RecoBT(); MOxz[3] = new RecoBT(); MOyz[3] = new RecoBT();
+	
+  pos = 0;
+
+  Xs[0] = X[0];
+  Ys[0] = Y[0];
+  Zs[0] = Z[0];
+  n = 1;
+
+  //main loop
+  while (pos < npoints-1) 
+  { 
+    int xytypemax = 0, yztypemax = 0, xztypemax = 0;
+    int indmax, xyindmax  = 0, yzindmax  = 0, xzindmax  = 0;
+		
+    Fori(4)            // look for the longuest valid segment in projection xy
+    {
+      MOxy[i]->Init(); curEp = 0;
+      for (int k = 0; (curEp < ep) && (pos+k < npoints); k++ )
+      {
+	if ((k > 0) && (pointsxy[pos+k] == pointsxy[pos+k-1]))
+	  // projection is not a bijection: invalid segment
+	  break;
+        MOxy[i]->Insert(curEp,pointsxy[pos+k]);
+        if (curEp < ep)
+        {
+          if ((xyindmax==0) && (MOxy[i]->valid())) { xyindmax = 1; xytypemax = i; }
+          if ((xyindmax >0) && (k >= xyindmax)   ) { xyindmax = k+1; xytypemax = i; }
+        }
+      }
+    }
+		
+    Fori(4)            // look for the longuest valid segment in projection yz
+    {
+      MOyz[i]->Init(); curEp = 0;
+      for (int k = 0; (curEp < ep) && (pos+k < npoints); k++ )
+      {
+	if ((k > 0) && (pointsyz[pos+k] == pointsyz[pos+k-1]))
+	  // projection is not a bijection: invalid segment
+	  break;
+        MOyz[i]->Insert(curEp,pointsyz[pos+k]);
+        if (curEp < ep)
+        {
+          if ((yzindmax==0) && (MOyz[i]->valid())) { yzindmax = 1; yztypemax = i; }
+          if ((yzindmax >0) && (k >= yzindmax)   ) { yzindmax = k+1; yztypemax = i; }
+        }
+      }
+    }
+
+    Fori(4)            // look for the longuest valid segment in projection xz
+    {
+      MOxz[i]->Init(); curEp = 0;
+      for (int k = 0; (curEp < ep) && (pos+k < npoints); k++ )
+      {
+	if ((k > 0) && (pointsxz[pos+k] == pointsxz[pos+k-1]))
+	  // projection is not a bijection: invalid segment
+	  break;
+        MOxz[i]->Insert(curEp,pointsxz[pos+k]);
+        if (curEp < ep)
+        {
+          if ((xzindmax==0) && (MOxz[i]->valid())) { xzindmax = 1; xztypemax = i; }
+          if ((xzindmax >0) && (k >= xzindmax)   ) { xzindmax = k+1; xztypemax = i; }
+        }
+      }
+    }
+
+#ifdef DEBUG_CoverByDSSs3D
+    printf("%s: pos=%d indmax xy=%d yz=%d xz=%d typemax xy=%d yz=%d xz=%d \n", F_NAME,
+	   pos, xyindmax, yzindmax, xzindmax, xytypemax, yztypemax, xztypemax);
+#endif
+
+    // look for the longest 3D segment that has valid projections in at least 2 planes
+#define XY 1
+#define YZ 2
+#define XZ 3
+    int elim;
+
+    if ((xyindmax <= yzindmax) && (xyindmax <= xzindmax))
+      elim = XY;
+    else
+    {
+      if ((yzindmax <= xyindmax) && (yzindmax <= xzindmax))
+	elim = YZ;
+      else
+	elim = XZ;
+    }
+
+    switch (elim)
+    {
+    case XY: 
+      indmax = min(yzindmax,xzindmax);
+#ifdef DEBUG_CoverByDSSs3D
+      printf("%s: case XY indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
+#endif
+      MOyz[yztypemax]->Init(); curEp = 0;
+      Fori(indmax)
+	MOyz[yztypemax]->Insert(curEp,pointsyz[pos+i]);
+      MOxz[xztypemax]->Init(); curEp = 0;
+      Fori(indmax)
+	MOxz[xztypemax]->Insert(curEp,pointsxz[pos+i]);
+      break;
+
+    case YZ:
+      indmax = min(xyindmax,xzindmax);
+#ifdef DEBUG_CoverByDSSs3D
+      printf("%s: case YZ indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
+#endif
+      MOxy[xytypemax]->Init(); curEp = 0;
+      Fori(indmax)
+	MOxy[xytypemax]->Insert(curEp,pointsxy[pos+i]);
+      MOxz[xztypemax]->Init(); curEp = 0;
+      Fori(indmax)
+	MOxz[xztypemax]->Insert(curEp,pointsxz[pos+i]);
+      break;
+
+    case XZ:
+      indmax = min(xyindmax,yzindmax);
+#ifdef DEBUG_CoverByDSSs3D
+      printf("%s: case XZ indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
+#endif
+      MOyz[yztypemax]->Init(); curEp = 0;
+      Fori(indmax)
+	MOyz[yztypemax]->Insert(curEp,pointsyz[pos+i]);
+      MOxy[xytypemax]->Init(); curEp = 0;
+      Fori(indmax)
+	MOxy[xytypemax]->Insert(curEp,pointsxy[pos+i]);
+      break;
+    default: assert(1);
+    } // switch (elim)
+#ifdef DEBUG_CoverByDSSs3D
+    printf("%s: xt=%d yt=%d zt=%d\n", F_NAME, xt, yt, zt);
+#endif
+
+    pos = pos+indmax-1;
+    Xs[n] = X[pos];
+    Ys[n] = Y[pos];
+    Zs[n] = Z[pos];
+    n++;
+  } // while (pos < npoints-1)
+
+  delete pointsxy;
+  delete pointsyz;
+  delete pointsxz;
+  *nseg = n;
+  return;
+} // CoverByDSSs3D()
 
 //--------------------------------------------------------------------------
 static double lambda_fct(double eik)
@@ -877,7 +1180,7 @@ int32_t lcurvetangents3D(int32_t mode, int32_t mask, uint64_t *tab_combi, int32_
     Ytan = (double *)malloc(npoints * sizeof(double)); assert(Ytan != NULL);
     Ztan = (double *)malloc(npoints * sizeof(double)); assert(Ztan != NULL);
   
-    ExtractDSSs3D(npoints, X, Y, Z, end, Xtan, Ytan, Ztan);
+    ExtractDSSs3D(npoints, X, Y, Z, 1, end, Xtan, Ytan, Ztan);
     LambdaMSTD3D(npoints, end, Xtan, Ytan, Ztan, Xdir, Ydir, Zdir);
     
     free(end);

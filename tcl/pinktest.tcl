@@ -57,10 +57,10 @@ set PINKTEST(testdir)  [file join "$env(HOME)" "Pinktest"]
 set PINKTEST(comdir)   [file join "$PINK" "src" "com"]
 if {($argc == 1)} { 
   set PINKTEST(operator)     [lindex $argv 0]
-  set PINKTEST(filelist) [glob "$PINKTEST(comdir)/$PINKTEST(operator).c"]
+  set PINKTEST(filelist) [glob "$PINKTEST(comdir)/$PINKTEST(operator).c*"]
 } else {
   set PINKTEST(operator)     ""
-  set PINKTEST(filelist) [glob "$PINKTEST(comdir)/*.c"]
+  set PINKTEST(filelist) [glob "$PINKTEST(comdir)/*.c*"]
 }
 
 proc tmpfile {tmpname} {

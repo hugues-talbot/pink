@@ -377,6 +377,7 @@ $(BDIR)/cropondisk \
 $(BDIR)/curvatures \
 $(BDIR)/curvelength \
 $(BDIR)/curvetangents \
+$(BDIR)/curve2segments \
 $(BDIR)/deframe \
 $(BDIR)/delaunay \
 $(BDIR)/delaunaymask \
@@ -1711,6 +1712,9 @@ $(BDIR)/curvelength:	$(CDIR)/curvelength.cxx $(IDIR)/ltangents.h $(OBJ_COMMON) $
 
 $(BDIR)/curvetangents:	$(CDIR)/curvetangents.cxx $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
 	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/curvetangents.cxx $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/curvetangents
+
+$(BDIR)/curve2segments:	$(CDIR)/curve2segments.cxx $(IDIR)/ltangents.h $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o
+	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/curve2segments.cxx $(OBJ_COMMON) $(ODIR)/lbdigitalline.o $(ODIR)/ltangents.o $(LIBS) -o $(BDIR)/curve2segments
 
 $(BDIR)/deframe:	$(CDIR)/deframe.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/lcrop.h $(ODIR)/lcrop.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/deframe.c $(OBJ_COMMON) $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/deframe

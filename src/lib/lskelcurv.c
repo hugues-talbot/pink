@@ -69,7 +69,7 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define VERBOSE
 //#define DEBUG_lskelfilter3
 //#define DEBUG_lskelfilter2b
-#define DEBUG_lskelfilter6
+//#define DEBUG_lskelfilter6
 //#define DEBUGCOMPVECT
 //#define DEBUGCURV
 //#define DEBUGADJ

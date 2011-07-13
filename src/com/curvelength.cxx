@@ -121,7 +121,7 @@ int main(int argc, char **argv)
     angle = (double *)malloc(npoints * sizeof(double)); assert(angle != NULL);
     mstd = (double *)malloc(npoints * sizeof(double)); assert(mstd != NULL);
 
-    ExtractDSSs(npoints, X, Y, end, angle);
+    ExtractDSSs(npoints, X, Y, 1, end, angle);
 
 #ifdef DEBUG
     printf("npoints = %d\n", npoints);
@@ -173,7 +173,7 @@ int main(int argc, char **argv)
     Ymstd = (double *)malloc(npoints * sizeof(double)); assert(Ymstd != NULL);
     Zmstd = (double *)malloc(npoints * sizeof(double)); assert(Zmstd != NULL);
 
-    ExtractDSSs3D(npoints, X, Y, Z, end, Xtan, Ytan, Ztan);
+    ExtractDSSs3D(npoints, X, Y, Z, 1, end, Xtan, Ytan, Ztan);
 
 #ifdef DEBUG
     printf("npoints = %d\n", npoints);

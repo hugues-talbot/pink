@@ -41,8 +41,10 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 
-extern void ExtractDSSs(int32_t npoints, int32_t *X, int32_t *Y, int32_t *end, double *angle);
-extern void ExtractDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, int32_t *end, double *anglexy, double *angleyz, double *anglexz);
+extern void ExtractDSSs(int32_t npoints, int32_t *X, int32_t *Y, double thickness, int32_t *end, double *angle);
+extern void ExtractDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness, int32_t *end, double *anglexy, double *angleyz, double *anglexz);
+extern void CoverByDSSs(int32_t npoints, int32_t *X, int32_t *Y, double thickness, int32_t *nseg, int32_t *Xs, int32_t *Ys);
+extern void CoverByDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness, int32_t *nseg, int32_t *Xs, int32_t *Ys, int32_t *Zs);
 extern void LambdaMSTD(int32_t npoints, int32_t *end, double *angle, double *mstd);
 extern void LambdaMSTD3D(int32_t npoints, int32_t *end, double *Xtan, double *Ytan, double *Ztan, double *Xmstd, double *Ymstd, double *Zmstd);
 extern double ComputeLength(int32_t npoints, double *mstd);
