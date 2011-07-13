@@ -85,7 +85,8 @@ void pydevel()
      arg("resolution")=0),
     doc__maxflow__cpp__
     );
-  
+
+# ifdef PINK_HAVE_OPENCL
   def(
     "clflow",
     pink::opencl::clflow<pink::float_image>,
@@ -97,6 +98,7 @@ void pydevel()
      arg("resolution")=0),
     doc__maxflow__cpp__
     );
+# endif /* PINK_HAVE_OPENCL */
   
   def(
     "ungerflow",

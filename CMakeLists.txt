@@ -72,6 +72,7 @@ if (CMAKE_HOST_UNIX)
 ### **********************************************************************************************
 
     option( DEVELOPMENT "Compiles additional functions which are not-yet part of the core library (Mostly because they require additional dependencies). " OFF )
+    option( OPENCL "Compiles the functions which use OpenCL if in DEVELOPMENT mode. " OFF )
 
     ## LIAR is incomporated in the PYTHON_FRONT_END
     # option( LIAR "Compiles additional functions adapted from the Library of Image Analysis Routines," OFF)
@@ -202,9 +203,6 @@ if (CMAKE_HOST_UNIX)
  	find_library( NUMA_LIB libnuma.${LIBEXT} ${POTENTIAL_LIBDIRS} )
  	set( LIBS ${LIBS} ${NUMA_LIB} )
 
- 	find_library( OPENCL_LIB libOpenCL.${LIBEXT} ${POTENTIAL_LIBDIRS} )
- 	set( LIBS ${LIBS} ${OPENCL_LIB} )
-
  	CHECK_INCLUDE_FILE( gsl/gsl_interp.h HTEST )
  	if (NOT HTEST)
  	    message( FATAL_ERROR "gsl header file failed to compile. If it is installed, than check the gsl flags") 
@@ -225,10 +223,20 @@ if (CMAKE_HOST_UNIX)
  	    message( FATAL_ERROR "error numa.h does not compile. Check if its correctly installed. You may need a newer version. ")
  	endif(NOT HTEST16)
 
- 	CHECK_INCLUDE_FILE_CXX( CL/cl.h HTEST17 )
- 	if (NOT HTEST17)
- 	    message( FATAL_ERROR "error CL/cl.h does not compile. Check if its correctly installed. You may need a newer version. ")
- 	endif(NOT HTEST17)
+	if (OPENCL)
+	    # header
+ 	    CHECK_INCLUDE_FILE_CXX( CL/cl.h HTEST17 )
+ 	    if (NOT HTEST17)
+ 		message( FATAL_ERROR "error CL/cl.h does not compile. Check if its correctly installed. You may need a newer version. ")
+ 	    endif(NOT HTEST17)
+
+	    # library 
+ 	    find_library( OPENCL_LIB libOpenCL.${LIBEXT} ${POTENTIAL_LIBDIRS} )
+ 	    set( LIBS ${LIBS} ${OPENCL_LIB} )
+	    
+	    # signalling the compilation that we desire the opencl functions
+	    ADD_DEFINITIONS(-DPINK_HAVE_OPENCL)
+	endif(OPENCL)
 
     endif (DEVELOPMENT)
 
