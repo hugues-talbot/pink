@@ -34,7 +34,7 @@ use-project boost
 #  : requirements <variant>release <link>static ;
 
 project
-  : requirements <link>static ;
+  : requirements <variant>debug <link>static ;
 
 # Set up the project-wide requirements that everything uses the
 # boost_python library from the project whose global ID is
@@ -43,7 +43,7 @@ project
   : requirements <library>/boost/python//boost_python 
                  <include>include 
 		 <include>src/liar
-                 <library>/boost/thread//boost_thread <variant>release
+                 <library>/boost/thread//boost_thread
 		 <library>/boost//date_time 
 		 <define>WIN32 ;
 
