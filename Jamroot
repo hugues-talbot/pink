@@ -1,6 +1,9 @@
 # -*- sh -*-
 # UjoImro, 2011
 
+project
+  : requirements <variant>release <link>shared ;
+
 
 using msvc ;
 using python : 2.7 : C:\\Python27 ;
@@ -17,9 +20,6 @@ if ! [ python.configured ]
 # Specify the path to the Boost project.  If you move this project,
 # adjust this path to refer to the Boost root directory.
 
-project
-  : requirements <variant>release
-  : <link>static ;
 
 use-project boost
   : "C:/boost_1_45_0" ;
@@ -41,9 +41,8 @@ project
   : requirements <library>/boost/python//boost_python 
                  <include>include 
 		 <include>src/liar
-                 <library>/boost/thread//boost_thread 
+                 <library>/boost/thread//boost_thread <variant>release
 		 <library>/boost//date_time 
-		 <find-library> 
 		 <define>WIN32 ;
 
 # Declare the three extension modules.  You can specify multiple
