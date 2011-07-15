@@ -157,7 +157,7 @@ namespace pink {
 
     // getting the number of cpu-s on the system
     num_cpu = boost::thread::hardware_concurrency();
-    num_cpu = std::max(1, num_cpu);
+    num_cpu = std::max<index_t>(1, num_cpu);
     
 #   if UJIMAGE_DEBUG > 1
     std::cout << "Framing; I have detected " << num_cpu << " cpu cores" << std::endl;

@@ -158,8 +158,6 @@ namespace pink
             pink_error("poly_array called in numa mode, but your system does not support the NUMA API");
           } /* if numa_available */
 
-
-
           FOR(q, number_of_nodes)
           {
             init(q);

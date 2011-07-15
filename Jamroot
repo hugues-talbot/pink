@@ -19,8 +19,6 @@ if ! [ python.configured ]
 
 # Specify the path to the Boost project.  If you move this project,
 # adjust this path to refer to the Boost root directory.
-
-
 use-project boost
   : "C:/boost_1_45_0" ;
 
@@ -32,6 +30,8 @@ use-project boost
 ### ***********************************************************************************************
 ### ***********************************************************************************************
 
+project
+  : requirements <variant>release <link>static ;
 
 
 # Set up the project-wide requirements that everything uses the
