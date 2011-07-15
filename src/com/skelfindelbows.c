@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief detection of "elbows" in a curvilinear skeleton
 
-<B>Usage:</B> skelfindelbows in.skel len sharp out.pgm
+<B>Usage:</B> skelfindelbows in.skel thickness sharp out.pgm
 
 <B>Description:</B>
 
@@ -44,27 +44,26 @@ Find "elbows" (points making sharp angles) in the curves of skeleton \b in.skel.
 Matching points are written as voxels in the returned image \b out.pgm.
 
 \verbatim
-Let <C[0], ... C[n-1]> be the points of the curve C. 
-Let j be an index between len and n-1-len, 
-let i = j - len, let k = j + len.
-If angle(C[j]-C[i], C[j]-C[k]) <= sharp then output C[j].
+Let <S[0], ... S[n-1]> be the points of a cover of the curve C by digital straight line segments (DSSs). 
+Let j be an index between 1 and n-2, if angle(S[j-1]S[j], S[j]S[j+1]) <= sharp then output S[j].
 \endverbatim
 
-Parameter \b len is given in pixels, parameter \b sharp in degrees.
+Parameter \b thick (thickness for DSS recognition) is given in pixels, parameter \b sharp in degrees.
 
 <B>Types supported:</B> skel 2d, skel 3d
 
 <B>Category:</B> topobin
 \ingroup  topobin
 
-\author Michel Couprie 2009
+\author Michel Couprie 2011
 */
 
 /*
-%TEST skelfindelbows %IMAGES/2dskel/s2skel4.skel 7 110 %RESULTS/skelfindelbows_s2skel4.skel
-%TEST skelfindelbows %IMAGES/2dskel/s2skel8.skel 7 110 %RESULTS/skelfindelbows_s2skel8.skel
-%TEST skelfindelbows %IMAGES/3dskel/s3skel6.skel 7 110 %RESULTS/skelfindelbows_s3skel6.skel
-%TEST skelfindelbows %IMAGES/3dskel/s3skel26.skel 7 110 %RESULTS/skelfindelbows_s3skel26.skel
+%TEST skelfindelbows %IMAGES/2dskel/s2skel4.skel 1.5 110 %RESULTS/skelfindelbows_s2skel4.pgm
+%TEST skelfindelbows %IMAGES/2dskel/s2skel8.skel 1.5 110 %RESULTS/skelfindelbows_s2skel8.pgm
+%TEST skelfindelbows %IMAGES/3dskel/s3skel6.skel 1.5 110 %RESULTS/skelfindelbows_s3skel6.pgm
+%TEST skelfindelbows %IMAGES/3dskel/s3skel26.skel 1.5 110 %RESULTS/skelfindelbows_s3skel26.pgm
+%TEST skelfindelbows %IMAGES/3dskel/s3skel26_1.skel 1.5 110 %RESULTS/skelfindelbows_s3skel26_1.pgm
 */
 
 #include <stdio.h>
@@ -83,11 +82,11 @@ int main(int argc, char **argv)
 {
   struct xvimage * res;
   skel * S;
-  double length, angle;
+  double thick, angle;
 
   if (argc != 5)
   {
-    fprintf(stderr, "usage: %s in.skel len sharp out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.skel thickness sharp out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -98,13 +97,13 @@ int main(int argc, char **argv)
     exit(1);
   }
   
-  length = atof(argv[2]);
+  thick = atof(argv[2]);
   angle = atof(argv[3]);
 
   //  printskel(S);
 
   angle = (angle * M_PI) / 180;
-  if (! (res = lskelfindelbows(S, length, angle)))
+  if (! (res = lskelfindelbows(S, thick, angle)))
   {
     fprintf(stderr, "%s: function lskelfindelbows failed\n", argv[0]);
     exit(1);

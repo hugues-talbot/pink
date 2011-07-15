@@ -2664,9 +2664,11 @@ int32_t lskelfilter1a(skel *S, double delta1, double delta2, double theta, int32
 } /* lskelfilter1a() */
 
 /* ====================================================================== */
-void mark_sharp_angles(skel *S, int32_t len, double sharp, struct xvimage *image, int32_t *lp, int32_t nmax)
+void mark_sharp_angles1(skel *S, int32_t len, double sharp, struct xvimage *image, int32_t *lp, int32_t nmax)
 /* ====================================================================== */
 /*
+Version naïve
+
 The curves of skeleton S are searched for "sharp" angles.
 Let <C[0], ... C[n-1]> be the points of the curve C. 
 Let j be an index between len and n-1-len, 
@@ -2678,7 +2680,7 @@ En entrée, nmax contient la taille du tableau lp.
 */
 {
 #undef F_NAME
-#define F_NAME "mark_sharp_angles"
+#define F_NAME "mark_sharp_angles1"
   int32_t C, i, j, k, n, rs = S->rs, ps = rs * S->cs;
   SKC_pt_pcell p;
   double xi, yi, zi, xj, yj, zj, xk, yk, zk, angle;
@@ -2720,22 +2722,24 @@ En entrée, nmax contient la taille du tableau lp.
 		   (norm(xj-xi, yj-yi, zj-zi) * norm(xj-xk, yj-yk, zj-zk)));
       if (angle <= sharp) F[lp[j]] = 255;
     }
-  } // for (i = S->e_end; i < S->e_curv; i++)
+  } // for (C = S->e_end; C < S->e_curv; C++)
 #ifdef DEBUG
   printf("%s: leaving\n", F_NAME);
 #endif	   
-} /* mark_sharp_angles() */
+} /* mark_sharp_angles1() */
 
 /* ====================================================================== */
-struct xvimage * lskelfindelbows(skel *S, double length, double angle)
+struct xvimage * lskelfindelbows1(skel *S, double length, double angle)
 /* ====================================================================== */
 /*
+Version naïve
+
 Find "elbows" (points making sharp angles) in the curves of skeleton S.
 Matching points are written as voxels in the returned image.  
 */
 {
 #undef F_NAME
-#define F_NAME "lskelfindelbows"
+#define F_NAME "lskelfindelbows1"
   int32_t nmaxpoints, *listpoints;
   struct xvimage *sharppoints;
 
@@ -2745,9 +2749,102 @@ Matching points are written as voxels in the returned image.
   listpoints = (int32_t *)malloc(nmaxpoints * sizeof(int32_t));
   assert(listpoints != NULL);
 
-  mark_sharp_angles(S, length, angle, sharppoints, listpoints, nmaxpoints);
+  mark_sharp_angles1(S, length, angle, sharppoints, listpoints, nmaxpoints);
 
   free(listpoints);
+  return sharppoints;
+} /* lskelfindelbows1() */
+
+/* ====================================================================== */
+void mark_sharp_angles(skel *S, double thickness, double sharp, struct xvimage *image, int32_t *X, int32_t *Y, int32_t *Z, int32_t nmax)
+/* ====================================================================== */
+/*
+Let <S[0], ... S[n-1]> be the points of a cover of the curve C by digital straight line segments (DSSs). 
+Let j be an index between 1 and n-2, if angle(S[j-1]S[j], S[j]S[j+1]) <= sharp then output S[j].
+
+Param thickness is in pixels, param angle is in radians.
+
+Les tableaux X, Y, Z doivent avoir été alloués.
+En entrée, nmax contient la taille des tableaux X, Y, Z.
+*/
+{
+#undef F_NAME
+#define F_NAME "mark_sharp_angles"
+  int32_t C, i, j, k, n, rs = S->rs, ps = rs * S->cs;
+  SKC_pt_pcell p;
+  double xi, yi, zi, xj, yj, zj, xk, yk, zk, angle;
+  uint8_t *F;
+
+#ifdef DEBUG
+  printf("%s: length = %d, sharp %g\n", F_NAME, len, sharp);
+#endif	   
+  assert(image != NULL);
+  assert(datatype(image) == VFF_TYP_1_BYTE);
+  assert(rowsize(image)==rs);
+  assert(colsize(image)==S->cs);
+  assert(depth(image)==S->ds);
+  razimage(image);
+  F = UCHARDATA(image);
+
+  for (C = S->e_end; C < S->e_curv; C++) // scan all curves C
+  {
+    n = 0;
+    for (p = S->tskel[C].pts; p != NULL; p = p->next)
+    { // copy points of curve C into X, Y, Z 
+      assert(n < nmax);
+      X[n] = p->val % rs;
+      Y[n] = (p->val % ps) / rs;
+      Z[n] = p->val / ps;
+      n++;
+    }
+
+    n = CoverByDSSs3D(n, X, Y, Z, thickness);
+
+    for (i = 0, j = 1, k = 2; k < n; i++, j++, k++)
+    { 
+      xi = (double)X[i];
+      yi = (double)Y[i];
+      zi = (double)Z[i];
+      xj = (double)X[j];
+      yj = (double)Y[j];
+      zj = (double)Z[j];
+      xk = (double)X[k];
+      yk = (double)Y[k];
+      zk = (double)Z[k];
+      // If angle(S[j]-S[i], S[j]-S[k]) <= sharp then mark S[j]
+      angle = acos(scalarprod(xj-xi, yj-yi, zj-zi, xj-xk, yj-yk, zj-zk) / 
+		   (norm(xj-xi, yj-yi, zj-zi) * norm(xj-xk, yj-yk, zj-zk)));
+      if (angle <= sharp) F[Z[j]*ps + Y[j]* rs + X[j]] = 255;
+    }
+  } // for (C = S->e_end; C < S->e_curv; C++)
+
+#ifdef DEBUG
+  printf("%s: leaving\n", F_NAME);
+#endif	   
+} /* mark_sharp_angles() */
+
+/* ====================================================================== */
+struct xvimage * lskelfindelbows(skel *S, double thickness, double angle)
+/* ====================================================================== */
+/*
+Find "elbows" (points making sharp angles) in the curves of skeleton S.
+Matching points are written as voxels in the returned image.  
+*/
+{
+#undef F_NAME
+#define F_NAME "lskelfindelbows"
+  int32_t nmaxpoints, *X, *Y, *Z;
+  struct xvimage *sharppoints;
+
+  sharppoints = allocimage(NULL, S->rs, S->cs, S->ds, VFF_TYP_1_BYTE); 
+  assert(sharppoints != NULL);
+  nmaxpoints = S->rs + S->rs + S->cs + S->cs + S->ds + S->ds;
+  X = (int32_t *)malloc(nmaxpoints*sizeof(int32_t)); assert(X != NULL);
+  Y = (int32_t *)malloc(nmaxpoints*sizeof(int32_t)); assert(Y != NULL);
+  Z = (int32_t *)malloc(nmaxpoints*sizeof(int32_t)); assert(Y != NULL);
+  mark_sharp_angles(S, thickness, angle, sharppoints, X, Y, Z, nmaxpoints);
+  free(X); free(Y); free(Z);
+
 #ifdef DEBUG
   printf("%s: leaving\n", F_NAME);
 #endif	   

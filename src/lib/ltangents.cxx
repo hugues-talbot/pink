@@ -296,18 +296,15 @@ Reference:
 } // ExtractDSSs()
 
 //--------------------------------------------------------------------------
-void CoverByDSSs(int32_t npoints, int32_t *X, int32_t *Y, double thickness, int32_t *nseg, int32_t *Xs, int32_t *Ys)
+int32_t CoverByDSSs(int32_t npoints, int32_t *X, int32_t *Y, double thickness)
 //--------------------------------------------------------------------------
-/*! \fn void CoverByDSSs(int32_t npoints, int32_t *X, int32_t *Y, int32_t *fin, double angle)
+/*! \fn void CoverByDSSs(int32_t npoints, int32_t *X, int32_t *Y, double thickness)
     \param npoints (input): number of points in points list
-    \param X (input): ordered list of points (1st coord)
-    \param Y (input): ordered list of points (2nd coord)
+    \param X (input/output): ordered list of points (1st coord)
+    \param Y (input/output): ordered list of points (2nd coord)
     \param thickness (input): thickness choosen for the recognition
-    \param nseg (output): number of covering segments
-    \param Xs (output): ordered list of points (1st coord)
-    \param Ys (output): ordered list of points (2nd coord)
-    \brief computes a covering of the discrete curve in arrays X,Y.
-    \warning arrays "Xs" and "Ys" must have been allocated with size npoints.
+    \return number of covering segments
+    \brief computes a covering of the discrete curve in arrays X,Y. The ordered list of segment extremities is put in arrays X, Y (original data is lost). The number of segment extremities is returned.
 
 Reference: 
 
@@ -327,7 +324,7 @@ Reference:
 #define F_NAME "CoverByDSSs"
   Reco * M[4];
   int pos = 0;
-  int n;
+  int32_t n;
   Q ep((int)floor(thickness*PRECISION),PRECISION); // thickness choosen for the recognition
   point *points;
 
@@ -343,8 +340,6 @@ Reference:
   M[2] = new RecoTB();
   M[3] = new RecoBT();
 
-  Xs[0] = X[0];
-  Ys[0] = Y[0];
   n = 1;
 
   while ( pos < npoints-1 )
@@ -383,14 +378,13 @@ Reference:
     }
 
     pos = pos+indmax-1;
-    Xs[n] = X[pos];
-    Ys[n] = Y[pos];
+    X[n] = X[pos];
+    Y[n] = Y[pos];
     n++;
   } // while ( pos < npoints-1 )
 
   delete points;
-  *nseg = n;
-  return;
+  return n;
 } // CoverByDSSs()
 
 //--------------------------------------------------------------------------
@@ -681,20 +675,16 @@ printf("xp=%d zp=%d\n", xp, zp);
 } // ExtractDSSs3D()
 
 //--------------------------------------------------------------------------
-void CoverByDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness, int32_t *nseg, int32_t *Xs, int32_t *Ys, int32_t *Zs)
+int32_t CoverByDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness)
 //--------------------------------------------------------------------------
-/*! \fn void CoverByDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness, int32_t *nseg, int32_t *Xs, int32_t *Ys, int32_t *Zs)
+/*! \fn void CoverByDSSs(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness)
     \param npoints (input): number of points in points list
-    \param X (input): ordered list of points (1st coord)
-    \param Y (input): ordered list of points (2nd coord)
-    \param Z (input): ordered list of points (3rd coord)
+    \param X (input/output): ordered list of points (1st coord)
+    \param Y (input/output): ordered list of points (2nd coord)
+    \param Z (input/output): ordered list of points (3rd coord)
     \param thickness (input): thickness choosen for the recognition
-    \param nseg (output): number of covering segments
-    \param Xs (output): ordered list of points (1st coord)
-    \param Ys (output): ordered list of points (2nd coord)
-    \param Zs (output): ordered list of points (3rd coord)
-    \brief computes a covering of the discrete curve in arrays X,Y,Z.
-    \warning arrays "Xs", "Ys" and "Zs" must have been allocated with size npoints.
+    \return number of covering segments
+    \brief computes a covering of the discrete curve in arrays X,Y,Z. The ordered list of segment extremities is put in arrays X,Y,Z (original data is lost). The number of segment extremities is returned.
 
 Reference: 
 
@@ -718,7 +708,7 @@ Reference:
   Q curEp;	
   Reco * MOxy[4], * MOxz[4], * MOyz[4];
   point *pointsxy, *pointsyz, *pointsxz;
-  int n;
+  int32_t n;
 
 #ifdef DEBUG_CoverByDSSs3D
   printf("%s: begin\n", F_NAME);
@@ -741,9 +731,6 @@ Reference:
 	
   pos = 0;
 
-  Xs[0] = X[0];
-  Ys[0] = Y[0];
-  Zs[0] = Z[0];
   n = 1;
 
   //main loop
@@ -871,17 +858,16 @@ Reference:
 #endif
 
     pos = pos+indmax-1;
-    Xs[n] = X[pos];
-    Ys[n] = Y[pos];
-    Zs[n] = Z[pos];
+    X[n] = X[pos];
+    Y[n] = Y[pos];
+    Z[n] = Z[pos];
     n++;
   } // while (pos < npoints-1)
 
   delete pointsxy;
   delete pointsyz;
   delete pointsxz;
-  *nseg = n;
-  return;
+  return n;
 } // CoverByDSSs3D()
 
 //--------------------------------------------------------------------------
