@@ -30,9 +30,11 @@ use-project boost
 ### ***********************************************************************************************
 ### ***********************************************************************************************
 
-project
-  : requirements <variant>release <link>static ;
+#project
+#  : requirements <variant>release <link>static ;
 
+project
+  : requirements <link>static ;
 
 # Set up the project-wide requirements that everything uses the
 # boost_python library from the project whose global ID is
