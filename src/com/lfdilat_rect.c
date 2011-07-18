@@ -109,12 +109,11 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  imfdilat_rect(image, dimx, dimy,image);
-//  if (imfdilat_rect(image, dimx, dimy,image)!=0 )
-//  {
-//      fprintf(stderr, "%s: function imfdilat_rect failed\n", argv[0]);
-//      exit(1);
-//  }
+  if (imfdilat_rect(image, dimx, dimy,image)!=0 )
+  {
+      fprintf(stderr, "%s: function imfdilat_rect failed\n", argv[0]);
+      exit(1);
+  }
 
 
   writeimage(image, argv[argc-1]);

@@ -114,6 +114,7 @@ int main(int argc, char **argv)
     int32_t imheight, imwidth;
     int rowsize, colsize;
     int w;
+    int b1, b2, b3, b4;
     tree *T;
     T=(tree*)calloc(1,sizeof(tree));
 
@@ -158,13 +159,22 @@ int main(int argc, char **argv)
         I1=USHORTDATA(image);
         I2=USHORTDATA(image2);
         I3=USHORTDATA(image3);
+        
+//        b1= new_edge1(I1, colsize, rowsize);
+//        b2= new_edge2(I1, colsize, rowsize);
+//        b3= new_edge3(I1, colsize, rowsize);
+//        b4= new_edge4(I1, colsize, rowsize);
+        b1= 10;
+        b2= 45;
+        b3= 35;
+        b4= 45;
 
         end=clock();
         elapsed=((double)end-start)/CLOCKS_PER_SEC;
         printf("%.2f secondes pour lire l'image. \n",elapsed);
         start = clock();
 
-        I2=get_edge(I2,I3, &Bord1,&Bord2,&Bord3,&Bord4, rowsize, colsize);
+        get_edge(I2,&Bord1,&Bord2,&Bord3,&Bord4, rowsize, colsize, b1, b2, b3, b4);
 
         end=clock();
         elapsed=((double)end-start)/CLOCKS_PER_SEC;

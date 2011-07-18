@@ -55,10 +55,10 @@ Parameters:
 \li \b in.fits : source file in fits format
 
 
-\author Michel Couprie
+\author Juliette Charpentier
 */
 
-/* Michel Couprie - janvier 2000 */
+/* Juliette Charpentier, mai 2011 */
 
 #  include <stdio.h>
 #  include <stdint.h>
@@ -73,7 +73,9 @@ Parameters:
 
 #  include "mcimage.h"
 #  include "mccodimage.h"
-#  include "lbresen.h"
+#  include "liarp.h"
+#  include "liar_fseries.h"
+#  include "larith.h"
 #  include "lfits2pgm.h"
 #  include "lfindline.hxx"
 #  include "lfindline_char.hxx"
@@ -94,30 +96,28 @@ int main(int argc, char **argv)
 /* =============================================================== */
 
 {
-    clock_t start, end;
-    double elapsed;
-    start = clock();
+//    clock_t start, end;
+//    double elapsed;
+//    start = clock();
 
 
-    struct xvimage *image;
-    struct xvimage *image2, *image3;
+    struct xvimage *image, *image2;
     char *filename;
     vector<int32_t> Bord1, Bord2, Bord3, Bord4;
-    vector<int32_t> Bord;
     int32_t rowsize, colsize;
     int w;
-    int32_t *best_lx, *best_ly;
+    int b1, b2, b3, b4;
 
 
     if ((argc != 2) && (argc != 3))
     {
-        fprintf(stderr, "usage: %s in.fits {w} out.pgm \n", argv[0]);
+        fprintf(stderr, "usage: %s in.fits \n", argv[0]);
         exit(1);
     }
 
     if (argc = 2)
     {
-        w=6;
+        w=3;
     }
     else
     {
@@ -142,44 +142,46 @@ int main(int argc, char **argv)
 
     switch (image->data_storage_type) {
      case    VFF_TYP_2_BYTE		:
+        //std::cerr << "short image"  <<std::endl;
 
-//        binning(&image);
-//        binning(&image);
-//        rowsize=rowsize(image);
-//        colsize=colsize(image);
-//        image2=copyimage(image);
-//        image3=copyimage(image);
-        I1=USHORTDATA(image);
-//        I2=USHORTDATA(image2);
-//        I3=USHORTDATA(image3);
+        image2= tophat(image, w);
+        I1=USHORTDATA(image2);
+//        b1= new_edge1(I1, colsize, rowsize);
+//        b2= new_edge2(I1, colsize, rowsize);
+//        b3= new_edge3(I1, colsize, rowsize);
+//        b4= new_edge4(I1, colsize, rowsize);
+        b1= 10;
+        b2= 45;
+        b3= 35;
+        b4= 55;
 
-        end=clock();
-        elapsed=((double)end-start)/CLOCKS_PER_SEC;
-        printf("%.2f secondes pour lire l'image. \n",elapsed);
-        start = clock();
 
-        //clean1(I1, rowsize, colsize);
-        //clean3(I1, rowsize, colsize);
 
-        I1=get_edge(I1,I1, &Bord1,&Bord2,&Bord3,&Bord4, rowsize, colsize);
+//        end=clock();
+//        elapsed=((double)end-start)/CLOCKS_PER_SEC;
+//        printf("%.2f secondes pour lire l'image et faire le tophat. \n",elapsed);
+//        start = clock();
 
-        end=clock();
-        elapsed=((double)end-start)/CLOCKS_PER_SEC;
-        printf("%.2f secondes pour filtrer l'image et obtenir les points sur les bords. \n",elapsed);
-        start = clock();
+        get_edge(I1,&Bord1,&Bord2,&Bord3,&Bord4, rowsize, colsize, b1, b2, b3, b4);
 
-        get_best_line(I1,I1, Bord2, Bord3,Bord1,Bord4,rowsize,colsize, w);
+//        end=clock();
+//        elapsed=((double)end-start)/CLOCKS_PER_SEC;
+//        printf("%.2f secondes pour filtrer l'image et obtenir les points sur les bords. \n",elapsed);
+//        start = clock();
 
-        end=clock();
-        elapsed=((double)end-start)/CLOCKS_PER_SEC;
-        printf("%.2f secondes pour bresenham. \n",elapsed);
-        start = clock();
+        get_best_line(I1, Bord2, Bord3,Bord1,Bord4,rowsize,colsize, w, b1, b2, b3, b4);
+
+//        end=clock();
+//        elapsed=((double)end-start)/CLOCKS_PER_SEC;
+//        printf("%.2f secondes pour bresenham. \n",elapsed);
+//        start = clock();
         break;
 
      case    VFF_TYP_1_BYTE		:
+        std::cerr << "Char image "  <<std::endl;
         I=UCHARDATA(image);
-        clean1_char(I, colsize, rowsize);
-        clean4_char(I, colsize, rowsize);
+        //clean1_char(I, colsize, rowsize);
+        //clean4_char(I, colsize, rowsize);
 
         get_edge_char(I, &Bord1,&Bord2,&Bord3,&Bord4, rowsize, colsize);
         get_best_line_char(I, Bord2, Bord3,Bord1,Bord4,rowsize,colsize, w);
@@ -193,12 +195,13 @@ int main(int argc, char **argv)
 
 
 
-    writeimage(image,argv[2]);
+    writeimage(image2,argv[2]);
     freeimage(image);
-
-    end=clock();
-    elapsed=((double)end-start)/CLOCKS_PER_SEC;
-    printf("%.2f secondes pour fermer l'image. \n",elapsed);
+    freeimage(image2);
+//
+//    end=clock();
+//    elapsed=((double)end-start)/CLOCKS_PER_SEC;
+//    printf("%.2f secondes pour fermer l'image. \n",elapsed);
 
     return(0);
 
