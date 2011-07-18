@@ -1316,6 +1316,7 @@ int32_t lsub(
 {
   index_t i;
   uint8_t *pt1, *pt2;
+  uint16_t *pt3, *pt4;
   int32_t *PT1, *PT2; 
   float *FPT1, *FPT2; 
   index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
@@ -1327,6 +1328,12 @@ int32_t lsub(
     pt1 = UCHARDATA(image1); pt2 = UCHARDATA(image2);
     for (i = 0; i < N; i++, pt1++, pt2++)
       *pt1 = (uint8_t)mcmax(NDG_MIN, (int32_t)*pt1 - (int32_t)*pt2);
+  }
+  else if ((datatype(image1) == VFF_TYP_2_BYTE) && (datatype(image2) == VFF_TYP_2_BYTE))
+  {
+    pt3 = USHORTDATA(image1); pt4 = USHORTDATA(image2);
+    for (i = 0; i < N; i++, pt3++, pt4++)
+      *pt3 = (uint16_t)mcmax(NDG_MIN, (uint16_t)*pt3 - (uint16_t)*pt4);
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {

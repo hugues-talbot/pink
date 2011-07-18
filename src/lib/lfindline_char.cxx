@@ -223,7 +223,7 @@ void get_edge_char(uint8_t *Image, vector<int32_t> *Bord1, vector<int32_t> *Bord
     // we look for a lit pixel on the first column
     for (c=0, q=0; c<m*n; c=c+n,q++)
      {
-         if ( (Image[c]>0) && (Image[c-n]>0) && (Image[c+n]>0) && (Image[c-2*n]>0) && (Image[c+2*n]>0))
+         if ( (Image[c]>0) /*&& (Image[c-n]>0) && (Image[c+n]>0) && (Image[c-2*n]>0) && (Image[c+2*n]>0)*/)
          //if (Image[c]>0)
          {
              cout << "point sur la  premiere colonne "<< q << endl;
@@ -234,7 +234,7 @@ void get_edge_char(uint8_t *Image, vector<int32_t> *Bord1, vector<int32_t> *Bord
     // we look for a lit pixel on the last colum
     for (d=n-1, r=0; d<n*m; d=d+n,r++)
      {
-         if ( (Image[d]>0) && (Image[d-n]>0) && (Image[d+n]>0) && (Image[d-2*n]>0) && (Image[d+2*n]>0) )
+         if ( (Image[d]>0) /*&& (Image[d-n]>0) && (Image[d+n]>0) && (Image[d-2*n]>0) && (Image[d+2*n]>0)*/ )
          //if (Image[d]>0)
          {
              cout << "point sur la derniere colonne "<< r << endl;
@@ -330,9 +330,9 @@ int32_t query_char(uint8_t *Image,int32_t x,int32_t y,int w,int rowsize, int col
 
     for (i=-w; i<=w; i++)
     {
-       if (y*rowsize+x+i<rowsize*colsize)
+       if ((y+i)*rowsize+x<rowsize*colsize)
         {
-            if (Image[y*rowsize+x+i]>0)
+            if (Image[(y+i)*rowsize+x]>0)
             {
                 nb=nb+1;
             }
@@ -369,12 +369,14 @@ TESTS:
 **/
 
     int32_t       dx, dy;
-    int32_t       i, e, nb=0, dist=0;
+    int32_t       i, e, nb=0;
+    double        dist=0;
     int32_t       incx, incy, inc1, inc2;
     int32_t       x, y;  /* the actual positions */
 
     dx = abs(x1 - x2);
     dy = abs(y1 - y2);
+    dist= sqrt(dx*dx+dy*dy);
 
     incx = 1;
     if (x2 < x1) incx = -1;
@@ -404,17 +406,17 @@ TESTS:
         for (i = 0 ; i < dx ; i++) {
             if (e >= 0) {
                 nb+= query_char(Image,x,y,w,rowsize,colsize);
-                dist++;
                 y += incy;
                 e += inc1;
             }
             else
             {
                 nb+= query_char(Image,x,y,w,rowsize,colsize);
-                dist++;
                 e += inc2;
+
             }
-             x += incx;
+            x += incx;
+
         }
     }
     else
@@ -428,16 +430,15 @@ TESTS:
             {
                 nb+= query_char(Image,x,y,w,rowsize,colsize);
                 x += incx;
-                dist++;
                 e += inc1;
             }
             else
             {
                 nb+= query_char(Image,x,y,w,rowsize,colsize);
                 e += inc2;
-                dist++;
             }
-            y += incy;
+                y += incy;
+
         }
 
 	}

@@ -9,61 +9,64 @@
 
 #  include "mcimage.h"
 #  include "mccodimage.h"
+#  include "liarp.h"
+#  include "liar_fseries.h"
+#  include "larith.h"
 #  include "lfindline.hxx"
+#  include <lseuil.h>
 
 using std::cout;
 using std::endl;
 
 
 /* =============================================================== */
-    int32_t mean2(uint16_t *Image, int colsize, int rowsize)
+    double mean2(uint16_t *Image, int colsize, int rowsize)
 /* =============================================================== */
  {
-  int i, l;
-  int64_t p=0, n=0;
-  l=  colsize*rowsize-34*rowsize;
+  int i, l, q=0;
+  double p=0;
+  l=  colsize*rowsize;
 
 
   for (i=rowsize ; i<l; i++)
    {
-       if (Image[i]>98)
-       {
-           p+=abs(Image[i]);
-           n++;
-       }
-   }
-
-   if (n > 0) p=p/n;
-   return(p);
- }
-
-
-/* =============================================================== */
-    int32_t mean3(uint16_t *Image, int colsize, int rowsize)
-/* =============================================================== */
- {
-  int i, l, m, n;
-  int64_t p=0, q=0;
-  l=  colsize*rowsize-34*rowsize;
-  n= rowsize;
-
-  for (i=n+1 ; i<l; i++)
-   {
        if (Image[i]>0)
        {
-           m=(Image[i-n-1]!=0)+(Image[i-n]!=0)+(Image[i-n+1]!=0)+(Image[i-1]!=0)+(Image[i+1]!=0)
-                +(Image[i+n-1]!=0)+(Image[i+n]!=0)+(Image[i+n+1]!=0);
-           p+=abs(Image[i])*m;
-           q+=m;
+           p+=Image[i];
+           q++;
        }
+
    }
 
-   if (q > 0) p=p/q;
+   p=(double)p/q;
+   cout << "moyenne de toute l'image "<< p << endl;
    return(p);
  }
 
 
 /* =============================================================== */
+    void control(uint16_t *Image, int colsize, int rowsize)
+/* =============================================================== */
+ {
+  int i, l;
+  double p=0;
+  l=  colsize*rowsize;
+
+
+  for (i=rowsize ; i<l; i++)
+   {
+       if ( (Image[i]>30) && (Image[i]<200) )
+       {
+           p+=1;
+       }
+   }
+
+   p=(double)p;
+   cout << p << endl;
+ }
+
+
+ /* =============================================================== */
     int32_t mean4(uint16_t *Image, int colsize, int rowsize)
 /* =============================================================== */
  {
@@ -87,61 +90,6 @@ using std::endl;
    return(p);
  }
 
-
-/* =============================================================== */
-    void clean1(uint16_t *Image, int colsize, int rowsize)
-/* =============================================================== */
- {
-  int i;
-  size_t l;
-  int32_t p;
-  p=mean2(Image, colsize, rowsize);
-  //p=5000;
-  l=colsize*rowsize;
-
-
- for (i=1 ; i<l; i++)
-   {
-        if (Image[i]-p>=0)
-        {
-            Image[i]=Image[i]-p;
-        }
-        else
-        {
-            Image[i]=0;
-        }
-   }
-
-
- }
-
-
-/* =============================================================== */
-void clean2(uint16_t *Image, int colsize, int rowsize)
-/* =============================================================== */
- {
-  int i;
-  size_t l;
-  int32_t p;
-  //uint16_t *Image2;
-  p=mean3(Image, colsize, rowsize);
-  l=colsize*rowsize;
-  //Image2=Image;
-
- for (i=1 ; i<l; i++)
-   {
-        if (Image[i]-p>=0)
-        {
-            Image[i]=Image[i]-p;
-        }
-        else
-        {
-            Image[i]=0;
-        }
-   }
-
-    //return(Image2);
- }
 
  /* =============================================================== */
   void  clean3(uint16_t *Image, int colsize, int rowsize)
@@ -174,200 +122,23 @@ void clean2(uint16_t *Image, int colsize, int rowsize)
  {
   int i, j;
   size_t l;
-  int32_t m, y, p;
-  p=mean3(Image, colsize, rowsize);
+  int32_t y, p;
+  double  m;
 
+  // causal, non recursive averaging filter.
   for (i=0 ; i<colsize-1; i++)
   {
       for (j=0; j<rowsize-1; j++)
       {
           y= i*rowsize+j;
-          if ( (y<colsize*rowsize) && Image[y]>0)
+          if ( Image[y] > 0 )
           {
 //              m=Image[y-rowsize-1]+Image[y-rowsize]+Image[y-rowsize+1]+Image[y]+Image[y+1]+Image[y-1]
 //                +Image[y+rowsize-1]+Image[y+rowsize]+Image[y+rowsize+1];
+             // we use only pixels that have not been filtered yet.
               m=Image[y]+Image[y+1]+Image[y+rowsize]+Image[y+rowsize+1];
-              m=m/9;
-              Image[y]=m;
-          }
-          else
-          {
-              Image[y]=0;
-          }
-
-       }
-  }
-
-
- }
-
-
-/* =============================================================== */
-    int short2long(xvimage *image, xvimage *result)
-/* =============================================================== */
- {
-     // on transforme l'image de uint16_t a unint32_t pour pouvoir appliquer les opération de morphologie mathématique
-    uint16_t *I1;
-    int32_t *I2;
-    int32_t typemax=VFF_TYP_4_BYTE;
-    index_t i, rs, cs, ds, N;
-
-    I1=USHORTDATA(image);
-    rs=rowsize(image);
-    cs=colsize(image);
-    ds=depth(image);
-    N=rs*cs*ds;
-
-    I2 = SLONGDATA(result);
-
-    for (i=0 ; i<N; i++)
-    {
-        I2[i]=(int32_t)I1[i];
-    }
-
-     /// !!!!!!!! jamais freeimage(*image);
-
-     return 1;
-
- }
-
-
- /* =============================================================== */
-    int long2short(xvimage *image, xvimage *result)
-/* =============================================================== */
- {
-     // on transforme l'image de uint16_t a unint32_t pour pouvoir appliquer les opération de morphologie mathématique
-    xvimage *im;
-    int32_t *I1;
-    uint16_t *I2;
-    int32_t typemax=VFF_TYP_2_BYTE;
-    index_t i, rs, cs, ds, N;
-
-    I1=SLONGDATA(image);
-    rs=rowsize(image);
-    cs=colsize(image);
-    ds=depth(image);
-    N=rs*cs*ds;
-
-    I2 = USHORTDATA(result);
-
-    for (i=0 ; i<N; i++)
-    {
-        I2[i]=(uint16_t)I1[i];
-    }
-
-     /// !!!!!!!!!  freeimage(*image);
-
-    return 1;
- }
-
-
-/* =============================================================== */
-    void binning(xvimage **image)
-/* =============================================================== */
- {
-  xvimage *im;
-  uint16_t *Image, *I2;
-  int32_t typemax=VFF_TYP_2_BYTE;
-  index_t i, j, rs, cs, ds, N;
-  int32_t m, a=0, y;
-  //I2=(uint16_t *)malloc(colsize*rowsize/4 * sizeof(uint16_t));
-  Image=USHORTDATA(*image);
-  rs=rowsize(*image);
-  cs=colsize(*image);
-  ds=depth(*image);
-  N=rs*cs*ds;
-  im = allocimage(NULL, rs/2, cs/2, ds, typemax);
-  I2=USHORTDATA(im);
-
-  for (i=0 ; i<cs; i+=2)
-  {
-      for (j=0; j<rs; j+=2)
-      {
-          y= i*rs+j;
-          m=Image[y]+Image[y+1]+Image[y+rs]+Image[y+rs+1];
-          m=m/4;
-          I2[a]=m;
-          a++;
-      }
-   }
-
-
-  freeimage(*image);
-  *image = im;
- }
-
-
-/* =============================================================== */
-    int32_t mean_long(int32_t *Image, int colsize, int rowsize)
-/* =============================================================== */
- {
-  int i, l;
-  int64_t p=0, n=0;
-  l=  colsize*rowsize;
-
-
-  for (i=rowsize ; i<l; i++)
-   {
-       if (Image[i]>0)
-       {
-           p+=abs(Image[i]);
-           n++;
-       }
-   }
-
-   p=p/n;
-   return(p);
- }
-
-
- /* =============================================================== */
-    void clean_long(int32_t *Image, int colsize, int rowsize)
-/* =============================================================== */
- {
-  int i;
-  size_t l;
-  int32_t p;
-  //p=80;
-  p=mean_long(Image, colsize, rowsize);
-  l=colsize*rowsize;
-
-
- for (i=0 ; i<l; i++)
-   {
-        if (Image[i]-p>0)
-        {
-            Image[i]=Image[i]-p;
-        }
-        else
-        {
-            Image[i]=0;
-        }
-   }
-
-
- }
-
-
-/* =============================================================== */
-  void  clean_long2(int32_t *Image, int colsize, int rowsize)
- /* =============================================================== */
- {
-  int i, j;
-  size_t l;
-  int32_t m, y, p;
-
-
-  for (i=0 ; i<colsize-1; i++)
-  {
-      for (j=0; j<rowsize-1; j++)
-      {
-          y= i*rowsize+j;
-          if ( (y<colsize*rowsize) && Image[y]>0)
-          {
-              m=Image[y-rowsize-1]+Image[y-rowsize]+Image[y-rowsize+1]+Image[y]+Image[y+1]+Image[y-1]+Image[y+rowsize-1]+Image[y+rowsize]+Image[y+rowsize+1];
-              m=m/9;
-              Image[y]=m;
+              m/=4.0;
+              Image[y]=(int32_t)m;
           }
           else
           {
@@ -382,9 +153,57 @@ void clean2(uint16_t *Image, int colsize, int rowsize)
 
 
 
+/* =============================================================== */
+    xvimage *tophat(xvimage *original, int w)
+/* =============================================================== */
+ {
+    /**
+    ARGUMENTS:
+	uint16_t *Image:      Image à étudier
+	int w:                largeur de la ligne
+
+	DESCRIPTION
+	Cette fonstion utilise des opérateurs de morphologie mathématique.
+	Le but est de netoyer l'image, c'est à dire, de réduire un maximum
+	le bruit de fond de l'image.
+	**/
+
+
+    xvimage *final;
+    uint16_t *Original;
+    uint16_t *Final;
+    int b;
+    index_t i, rs, cs, N;
+
+    imfclose_rect(original, w, w , original); // On commence par faire une fermeture pour enlever le bruit de fond
+
+    // maintenant on fais le tophat
+    final=copyimage(original);
+    imfopen_rect(final, 25, 25, final);
+
+    Original=USHORTDATA(original);
+    Final=USHORTDATA(final);
+    rs=rowsize(original);
+    cs=colsize(original);
+    N=rs*cs;
+
+
+    for (i=0 ; i<N; i++)
+    {
+        Final[i]=Original[i]-Final[i];
+    }
+
+
+    //imfdilat_rect(final, 11, 11, final);
+    return(final);
+
+}
+
+
+
  /* ============================================================================================== */
-void get_edge_long(int32_t *Image, vector<int32_t> *Bord1, vector<int32_t> *Bord2, vector<int32_t> *Bord3,
-                vector<int32_t> *Bord4,int rowsize, int colsize)
+void get_edge(uint16_t *Image, vector<int32_t> *Bord1, vector<int32_t> *Bord2, vector<int32_t> *Bord3,
+                vector<int32_t> *Bord4,int rowsize, int colsize, int b1, int b2, int b3, int b4)
   /* =========================================================================================== */
 {
     int a, b, c, d;
@@ -392,445 +211,222 @@ void get_edge_long(int32_t *Image, vector<int32_t> *Bord1, vector<int32_t> *Bord
     n=rowsize;
     m=colsize;
     int32_t q, r ,s, p;
-
-//
-//    // we look for a lit pixel on the first line
-//    for (a=n, s=0; a<n*2; a++,s++)
-//    {
-//        if ( (Image[a]>0) && (Image[a-1]>0) && (Image[a+1]>0) && (Image[a-2]>0) && (Image[a+2]>0))
-//        {
-//            //cout << "point sur la premiere ligne "<< s << endl;
-//            Bord1->push_back(s);
-//        }
-//    }
-
-    // we look for a lit pixel on the first column
-    for (c=450, q=0; c<m*n; c=c+n,q++)
-     {
-         if ( (Image[c]>0) && (Image[c-n]>0) && (Image[c+n]>0) && (Image[c-2*n]>0) && (Image[c+2*n]>0))
-         {
-             cout << "point sur la  premiere colonne "<< q << endl;
-             Bord2->push_back(q);
-         }
-     }
-
-    // we look for a lit pixel on the last colum
-    for (d=n-1-45, r=0; d<n*m; d=d+n,r++)
-     {
-         if ( (Image[d]>0) && (Image[d-n]>0) && (Image[d+n]>0) && (Image[d-2*n]>0) && (Image[d+2*n]>0) )
-         {
-             cout << "point sur la derniere colonne "<< r << endl;
-             Bord3->push_back(r);
-         }
-     }
-
-////         // we look for a lit pixel on the last line
-//    for (b=m*n-1-34*n,p=n-1-34; b>=(m-1)*n-34*n;b--,p--)
-//     {
-//         if ( (Image[b]>0) && (Image[b-1]>0) && (Image[b+1]>0) && (Image[d-2]>0) && (Image[d+2]>0) )
-//         {
-//             //cout << "point sur la  derniere ligne "<< p << endl;
-//             Bord4->push_back(p);
-//         }
-//     }
-
-
-}
-
-
-
-/* =============================================================== */
-void get_best_line_long(int32_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, vector<int32_t> Bord1,
-               vector<int32_t> Bord4,int rowsize, int colsize, int w)
-/* =============================================================== */
-{
-    int i, j;
-    int32_t y1, x1=33;
-    int32_t best_y1=0, best_x2=0, best_y2=0;
-    double nb=0;
-    double nb_max=0;
-
-
-    for (i=0; i<Bord2.size(); i++)
-    {
-        y1=Bord2[i];
-
-//        for (j=0; j<Bord1.size(); j++) //line between bord2 and bord1
-//        {
-//            nb=bresen_test_long(I,x1,y1,Bord1[j], 1, rowsize,colsize, w);
-//            if (nb>nb_max)
-//                {
-//                    nb_max=nb;
-//                    best_y1=y1;
-//                    best_x2=Bord1[j];
-//                    best_y2=1;
-//                }
-//        }
-
-
-        for (j=0; j<Bord3.size(); j++) //line between bord2 and bord3
-        {
-             nb=bresen_test_long(I,x1,y1,rowsize, Bord3[j], rowsize-33,colsize, w);
-             if (nb> nb_max)
-                    {
-                        nb_max=nb;
-                        best_y1=y1;
-                        best_x2=rowsize-33;
-                        best_y2= Bord3[j];
-                    }
-        }
-
-//        for (j=1; j<=Bord4.size(); j++) //line between bord2 and bord4
-//        {
-//            nb=bresen_test_long(I,x1,y1,Bord4[j], colsize-35, rowsize,colsize, w);
-//            if (nb>nb_max)
-//                    {
-//                        nb_max=nb;
-//                        best_y1=y1;
-//                        best_x2=Bord4[j];
-//                        best_y2=colsize-35;
-//                    }
-//        }
-    }
-
-
-    // Draw the bresenham best line in the image
-     cout << "ligne entre le point (33,"<< best_y1<< ") et le point ("<< best_x2<<"," << best_y2 << ")"<< endl;
-     //bresen_final(I2, x1, best_y1, best_x2, best_y2, rowsize,colsize, w);
-
-}
-
-
-
-/* ============================================================================================== */
-double bresen_test_long(int32_t *Image,int32_t x1,int32_t y1,int32_t x2,int32_t y2,int rowsize, int colsize, int w)
-/* ============================================================================================== */
-{
-/**
-ARGUMENTS:
-	int x1:      x starting coordinate
-	int y1:      y starting corrdinate
-	int x1:      x last coordinate
-	int y1:      y last corrdinate
-	int colsize:  width of the image
-	int rowsize: height of the image
-
-DISCRIPTION:
-        This function makes a Bresenham line between two point.
-
-HISTORY:
-        Written by Hugues Talbot/Juliette Charpentier	31 mars 2011
-TESTS:
-        The core of this program has been written in 1991.
-        Many tests including purify.
-**/
-
-    int32_t       dx, dy;
-    int32_t       i, e, nb=0, dist=0;
-    int32_t       incx, incy, inc1, inc2;
-    int32_t       x, y;  /* the actual positions */
-
-    dx = abs(x1 - x2);
-    dy = abs(y1 - y2);
-
-
-    incx = 1;
-    if (x2 < x1)
-    {
-        incx = -1;
-    }
-
-    incy = 1;
-    if (y2 < y1)
-    {
-        incy = -1;
-    }
-
-    /* starting position */
-    if(x1 > x2)
-      {
-            x = x2;
-            y = y2;
-      }
-    else
-      {
-            x = x1;
-            y = y1;
-      }
-
-
-
-
-    if (dx > dy)
-    {
-        e = 2*dy ;
-        inc1 = 2*(dy-dx);
-        inc2 = 2*dy;
-        for (i = 0 ; i < dx ; i++) {
-            if (e >= 0) {
-                nb+= query_long(Image,x,y,w,rowsize,colsize);
-                dist++;
-                y += incy;
-                e += inc1;
-            }
-            else
-            {
-                nb+= query_long(Image,x,y,w,rowsize,colsize);
-                dist++;
-                e += inc2;
-            }
-             x += incx;
-        }
-    }
-    else
-    {
-        e = 2*dx ;
-        inc1 = 2*(dx-dy);
-        inc2 = 2*dx;
-        for (i = 0 ; i < dy ; i++)
-        {
-            if (e >= 0)
-            {
-                nb+= query_long(Image,x,y,w,rowsize,colsize);
-                dist++;
-                x += incx;
-                e += inc1;
-            }
-            else
-            {
-                nb+= query_long(Image,x,y,w,rowsize,colsize);
-                dist++;
-                e += inc2;
-            }
-            y += incy;
-        }
-
-	}
-
-    return((double)nb/dist);
-
-    }
-
-
-
-/* ============================================================================================== */
-int32_t query_long(int32_t *Image,int32_t x,int32_t y,int w,int rowsize, int colsize)
-/* ============================================================================================== */
-{
-int i;
-int32_t nb=0;
-
-for (i=-w; i<=w; i++)
-{
-    if ( ((y+i)*rowsize+x<rowsize*colsize) && ((y+i)*rowsize+x>=0)  )
-    {
-        if (Image[(y+i)*rowsize+x]>0)
-        {
-            nb=nb+1;
-        }
-    }
-}
-
-return(nb);
-}
-
-
-
- /* ============================================================================================== */
-uint16_t *get_edge(uint16_t *Image,uint16_t *Image2, vector<int32_t> *Bord1, vector<int32_t> *Bord2, vector<int32_t> *Bord3,
-                vector<int32_t> *Bord4,int rowsize, int colsize)
-  /* =========================================================================================== */
-{
-    int a, b, c, d;
-    int m, n;
-    n=rowsize;
-    m=colsize;
-    int32_t q, r ,s, p;
+    int seuil=30;
 
     //clean1(Image, colsize, rowsize);
     clean3(Image, colsize, rowsize);
     clean4(Image, colsize, rowsize);
-    clean4(Image, colsize, rowsize);
-
 
     // we look for a lit pixel on the first line
-//    for (a=n, s=0; a<n*2; a++,s++)
-//    {
-//        if ( (Image[a]>0) && (Image[a-1]>0) && (Image[a+1]>0) && (Image[a-2]>0) && (Image[a+2]>0))
-//        {
-//            //cout << "point sur la premiere ligne "<< s << endl;
-//            Bord1->push_back(s);
-//        }
-//    }
+    for (a=n, s=0; a<n*2; a++,s++)
+    {
+        if ( (Image[a]>0) && (Image[a-1]>0) && (Image[a+1]>0) )
+        {
+            //cout << "point sur la premiere ligne "<< s << endl;
+            Bord1->push_back(s);
+            a+=3;
+            s+=3;
+        }
+    }
 
     // we look for a lit pixel on the first column
-    for (c=583, q=0; c<m*n; c=c+n,q++)
+    for (c=b2, q=0; c<m*n; c=c+n,q++)
      {
-         if ( (Image[c]>0) && (Image[c-n]>0) && (Image[c+n]>0) && (Image[c-2*n]>0) && (Image[c+2*n]>0))
+         if ( (Image[c]>seuil) && (Image[c-n]>seuil) && (Image[c+n]>seuil) && (Image[c-2*n]>seuil) && (Image[c+2*n]>seuil))
+
          {
-             cout << "point sur la  premiere colonne "<< q << endl;
+             //cout << "point sur la  premiere colonne "<< q << endl;
              Bord2->push_back(q);
+             c=c+4*n;
+             q+=4;
          }
      }
 
     // we look for a lit pixel on the last colum
-    for (d=n-1-200, r=0; d<n*m; d=d+n,r++)
+    for (d=n-b3-1, r=0; d<n*m; d=d+n,r++)
      {
-         if ( (Image[d]>0) && (Image[d-n]>0) && (Image[d+n]>0) && (Image[d-2*n]>0) && (Image[d+2*n]>0) )
+         if ((Image[d]>seuil) && (Image[d-n]>seuil) && (Image[d+n]>seuil) && (Image[d-2*n]>seuil) && (Image[d+2*n]>seuil))
+
          {
-             cout << "point sur la derniere colonne "<< r << endl;
+             //cout << "point sur la derniere colonne "<< r << endl;
              Bord3->push_back(r);
+             d=d+3*n;
+             r+=3;
          }
      }
 
-//         // we look for a lit pixel on the last line
-//    for (b=m*n-1-34*n,p=n-1-34; b>=(m-1)*n-34*n;b--,p--)
-//     {
-//         if ( (Image[b]>0) && (Image[b-1]>0) && (Image[b+1]>0) && (Image[d-2]>0) && (Image[d+2]>0) )
-//         {
-//             //cout << "point sur la  derniere ligne "<< p << endl;
-//             Bord4->push_back(p);
-//         }
-//    }
 
-//  if ( (Bord2->empty()==1) || (Bord3->empty()==1))
-//    {
-////        clean4(Image2, colsize, rowsize);
-////        clean2(Image2, colsize, rowsize);
-//        a=0, b=0, c=0, d=0;
-//
-////        for (a=n, s=0; a<n*2; a++,s++)
-////        {
-////            if ( (Image[a]>0) && (Image[a-1]>0) && (Image[a+1]>0) && (Image[a-2]>0) && (Image[a+2]>0))
-////            {
-////                //cout << "point sur la premiere ligne "<< s << endl;
-////                Bord1->push_back(s);
-////            }
-////        }
-////
-////         for (b=m*n-1-34*n,p=n-1-34; b>=(m-1)*n-34*n;b--,p--)
-////         {
-////             if ( (Image[b]>0) && (Image[b-1]>0) && (Image[b+1]>0) && (Image[d-2]>0) && (Image[d+2]>0) )
-////             {
-////                 //cout << "point sur la  derniere ligne "<< p << endl;
-////                 Bord4->push_back(p);
-////             }
-////        }
-//
-//
-//        for (c=60, q=0; c<m*n; c=c+n,q++)
-//         {
-//             if ( (Image2[c]>0) && (Image2[c-n]>0) && (Image2[c+n]>0) && (Image2[c-2*n]>0) && (Image2[c+2*n]>0))
-//             {
-//                 cout << "point sur la  premiere colonne "<< q << endl;
-//                 Bord2->push_back(q);
-//             }
-//         }
-//
-//    // we look for a lit pixel on the last colum
-//        for (d=n-1-35, r=0; d<n*m; d=d+n,r++)
-//         {
-//             if ( (Image2[d]>0) && (Image2[d-n]>0) && (Image2[d+n]>0) && (Image2[d-2*n]>0) && (Image2[d+2*n]>0) )
-//             {
-//                 cout << "point sur la derniere colonne "<< r << endl;
-//                 Bord3->push_back(r);
-//             }
-//         }
-//         return(Image2);
-//    }
-//    else if ( (Bord2->empty()==1) || (Bord3->empty()==1))
-//    {
-//        clean1(Image2, colsize, rowsize);
-//        clean3(Image2, colsize, rowsize);
-//        for (c=35, q=0; c<m*n; c=c+n,q++)
-//         {
-//             if ( (Image2[c]>0) && (Image2[c-n]>0) && (Image2[c+n]>0) && (Image2[c-2*n]>0) && (Image2[c+2*n]>0))
-//             {
-//                 //cout << "point sur la  premiere colonne "<< q << endl;
-//                 Bord2->push_back(q);
-//             }
-//         }
-//
-//    // we look for a lit pixel on the last colum
-//        for (d=n-1-35, r=0; d<n*m; d=d+n,r++)
-//         {
-//             if ( (Image2[d]>0) && (Image2[d-n]>0) && (Image2[d+n]>0) && (Image2[d-2*n]>0) && (Image2[d+2*n]>0) )
-//             {
-//                 //cout << "point sur la derniere colonne "<< r << endl;
-//                 Bord3->push_back(r);
-//             }
-//         }
-//         return(Image2);
-//    }
-//    else
-//    {
-        return(Image);
-//    }
+    // we look for a lit pixel on the last line
+    for (b=m*n-1-b4*n,p=n-1; p>0 ;b--,p--)
+     {
+         if ( (Image[b]>seuil) && (Image[b-1]>seuil) && (Image[b+1]>seuil) )
+         {
+             //cout << "point sur la  derniere ligne "<< p << endl;
+             Bord4->push_back(p);
+             p-=3;
+             b-=3;
+         }
+      }
+
 
 }
 
 
 
 /* =============================================================== */
-void get_best_line(uint16_t *I,uint16_t *I2, vector<int32_t> Bord2, vector<int32_t> Bord3, vector<int32_t> Bord1,
-               vector<int32_t> Bord4,int rowsize, int colsize, int w)
+void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, vector<int32_t> Bord1,
+               vector<int32_t> Bord4,int rowsize, int colsize, int w, int b1, int b2, int b3, int b4)
 /* =============================================================== */
 {
+
+    /**
+    ARGUMENTS:
+	uint16_t *Image:        Image à étudier
+	vector<int32_t> Bord:   vecteur contenant les points non nuls de chacun des bords
+	int32_t x, y:           coordonnées du point sur lequel on se trouve
+	int colsize:            hauteur de l'image
+	int rowsize:            largeur of the image
+	int bi:                 largeurs des bandes noires sur les bords de l'image
+
+    DESCRIPTION:
+    On parcours toutes les lignes entre les paires de points repérés par la fonction get_edge.
+    Pour chaque ligne, on fait un compte du nombre de point sur la ligne digitale de largueur 2*w.
+
+    Si ce compte est supérieur à 600, c'est que c'est une trace de satellite. On stock alors les
+    coordonnées de depart et d'arrivée de la ligne.
+
+    De plus, il peut y avoir 2 lignes sur la meme image. Il faut donc faire attention à
+    ne pas considerer plusieurs fois la meme ligne.
+    **/
+
     int i, j;
-    int32_t y1, x1=33;
-    int32_t best_y1=0, best_x2=0, best_y2=0;
-    double nb=0;
-    double nb_max=0;
+    int32_t y1, x1=b2,x2, y2;
+    int32_t best_y1_ligne1=0, best_x2_ligne1=0, best_y2_ligne1=0; //coordonnées de la 1ere ligne
+    int32_t best_y1_ligne2=0, best_x2_ligne2=0, best_y2_ligne2=0; // coordonnées de la 2eme ligne
+    double nb=0, nb2=0, nb3=0;
+    double seuil=600;
+    double max_ligne1=600, max_ligne2=600;
 
 
 
+    // Pour chacun des points du bord 2, on test les lignes avec les points du bord 1, 3 et 4
      for (i=0; i<Bord2.size(); i++)
     {
         y1=Bord2[i];
-        cout << "on en est au point: "<< y1 << endl;
+        if (y1*rowsize+x1>rowsize*colsize)
+                break; // on est plus dans l'image
 
-//        for (j=0; j<Bord1.size(); j++) //line between bord2 and bord1
-//        {
-//            nb=bresen_test(I,x1,y1,Bord1[j], 1, rowsize,colsize, w);
-//            if (nb>nb_max)
-//                {
-//                    nb_max=nb;
-//                    best_y1=y1;
-//                    best_x2=Bord1[j];
-//                    best_y2=1;
-//                }
-//        }
+        // On test les lignes avec le bord 1
+        for (j=0; j<Bord1.size(); j++) //line between bord2 and bord1
+        {
+            x2=Bord1[j];
+            y2=b1;
+            nb=bresen_test(I,x1,y1,x2, y2, rowsize,colsize, w);
+            if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
+                && (nb>max_ligne1) )
+            {
+                max_ligne1=nb;
+                best_y1_ligne1=y1;
+                best_x2_ligne1=x2;
+                best_y2_ligne1=y2;
+            }
+                 //else if ( (abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
+            else
+            {
+                if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w))
+                   && ((abs(best_y1_ligne2-y1)>4*w) || (abs(best_x2_ligne2-x2)>4*w))
+                   && (nb>max_ligne2) )
+                {
+                    max_ligne2=nb;
+                    best_y1_ligne2=y1;
+                    best_x2_ligne2=x2;
+                    best_y2_ligne2=y2;
+                }
+            }
+        }
 
 
         for (j=0; j<Bord3.size(); j++) //line between bord2 and bord3
         {
-             nb=bresen_test(I,x1,y1,rowsize, Bord3[j], rowsize-33,colsize, w);
-             if (nb> nb_max)
-                    {
-                        nb_max=nb;
-                        best_y1=y1;
-                        best_x2=rowsize-33;
-                        best_y2= Bord3[j];
-                    }
+             x2=rowsize-b3;
+             y2=Bord3[j];
+
+             if (y2*rowsize+x2>rowsize*colsize)
+                break;  // on est plus dans l'image
+
+             nb=bresen_test(I,x1,y1,x2, y2, rowsize,colsize, w);
+             if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_y2_ligne1-y2)>4*w) )
+                && (nb>max_ligne1) )
+             {
+                max_ligne1=nb;
+                best_y1_ligne1=y1;
+                best_x2_ligne1=x2;
+                best_y2_ligne1=y2;
+             }
+                 //else if ( (abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
+             else
+             {
+                if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_y2_ligne1-y2)>4*w))
+                   && ((abs(best_y1_ligne2-y1)>4*w) || (abs(best_y2_ligne2-y2)>4*w))
+                   && (nb>max_ligne2) )
+                {
+                    max_ligne2=nb;
+                    best_y1_ligne2=y1;
+                    best_x2_ligne2=x2;
+                    best_y2_ligne2=y2;
+                }
+            }
         }
 
-//        for (j=1; j<=Bord4.size(); j++) //line between bord2 and bord4
-//        {
-//            nb=bresen_test(I,x1,y1,Bord4[j], colsize-35, rowsize,colsize, w);
-//            if (nb>nb_max)
-//                    {
-//                        nb_max=nb;
-//                        best_y1=y1;
-//                        best_x2=Bord4[j];
-//                        best_y2=colsize-35;
-//                    }
-//        }
+
+        for (j=1; j<=Bord4.size(); j++) //line between bord2 and bord4
+        {
+            x2=Bord4[j];
+            y2=colsize-b4;
+
+            if (y2*rowsize+x2>rowsize*colsize)
+                break;  // on est plus dans l'image
+
+            nb=bresen_test(I,x1,y1,x2, y2, rowsize,colsize, w);
+            if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
+                && (nb>max_ligne1) )
+            {
+                max_ligne1=nb;
+                best_y1_ligne1=y1;
+                best_x2_ligne1=x2;
+                best_y2_ligne1=y2;
+            }
+                 //else if ( (abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
+            else
+            {
+                if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w))
+                   && ((abs(best_y1_ligne2-y1)>4*w) || (abs(best_x2_ligne2-x2)>4*w))
+                   && (nb>max_ligne2) )
+                {
+                    max_ligne2=nb;
+                    best_y1_ligne2=y1;
+                    best_x2_ligne2=x2;
+                    best_y2_ligne2=y2;
+                }
+            }
+        }
+
+
     }
 
 
-    // Draw the bresenham best line in the image
-     cout << "ligne entre le point (33,"<< best_y1<< ") et le point ("<< best_x2<<"," << best_y2 << ")"<< endl;
-     //bresen_final(I2, x1, best_y1, best_x2, best_y2, rowsize,colsize, w);
+
+    //cout << "nombre de point sur la droite "<< nb_max<< endl;
+    cout <<  nb_max1<< endl;
+
+     // Si best_y1 est différent de zéro, cela signifie que les coordonnées correspondent à une trace de satellite.
+     if (best_y1_ligne1!=0)
+        cout << "ligne entre le point ("<<x1<<","<< best_y1_ligne1<< ") et le point ("<< best_x2_ligne1<<"," << best_y2_ligne1 << ")"<< endl;
+
+//     if (best_y1_ligne2!=0)
+//     cout << "ligne entre le point ("<<x1<<","<< best_y1_ligne2<< ") et le point ("<< best_x2_ligne2<<"," << best_y2_ligne2 << ")"<< endl;
+
+     //bresen_final(I, x1,best_y1,best_x2,best_y2,rowsize, colsize, w);
 
 }
 
@@ -838,23 +434,46 @@ void get_best_line(uint16_t *I,uint16_t *I2, vector<int32_t> Bord2, vector<int32
 int32_t query(uint16_t *Image,int32_t x,int32_t y,int w,int rowsize, int colsize)
 /* ============================================================================================== */
 {
+/**
+ARGUMENTS:
+	uint16_t *Image:      Image à étudier
+	int32_t x, y:         coordonnées du point sur lequel on se trouve
+	int colsize:          hauteur de l'image
+	int rowsize:          largeur of the image
+
+DESCRIPTION:
+Ce programme sert à compter les points le long de la droite pendant l'algo bresen_test.
+Pour chaque pixel considere par l'algorithme, on regarde si la valeur de celui-ci.
+Si la valeur est compris entre 30 et 2000, on ajoute la valeur du pixel au compte.
+
+On ne prend pas en compte les pixel dont la valeur est inférieur à 30, car ceci correspond
+au fond de ciel. Et on ne prend pas en compte ceux superieur à 2000, car ceci correspondent
+à des étoiles.
+
+De plus, comme on considere la droite digital de largeur 2*w, on regarde la valeur des w pixels
+au dessus et au dessous du pixel de coordonnées (x,y)
+**/
+
 int32_t i;
 int32_t nb=0;
+long    index, nbpix;
 
+nbpix = rowsize*colsize;
 for (i=-w; i<=w; i++)
 {
-    if ( ((y+i)*rowsize+x<rowsize*colsize) && ((y+i)*rowsize+x>=0)  )
+    index = (y+i)*rowsize + x;
+
+    if ( (index < nbpix) && (index >=0)  )
     {
-        if (Image[(y+i)*rowsize+x]>0)
+        if ( (Image[index]>30) && (Image[index]<2000))
         {
-            nb=nb+1;
+            nb += Image[index];
         }
     }
 }
 
 return(nb);
 }
-
 
 
 
@@ -872,7 +491,11 @@ ARGUMENTS:
 	int rowsize: height of the image
 
 DISCRIPTION:
-        This function makes a Bresenham line between two point.
+        Cette fonction determine la ligne de bresenham entre les points (x1,y1) et
+        (x2,y2).
+        Pour chacun des pixels consideres comme sur la ligne, on applique la fonction
+        query pour calculer le nombre de point sur la ligne.
+        Pour finir on divise ce nombre par la taille de la ligne.
 
 HISTORY:
         Written by Hugues Talbot/Juliette Charpentier	31 mars 2011
@@ -882,13 +505,15 @@ TESTS:
 **/
 
     int32_t       dx, dy;
-    int32_t       i, e, nb=0, dist=0;
+    int32_t       i, e, nb=0, nb2=0;
+    double        dist=0;
     int32_t       incx, incy, inc1, inc2;
     int32_t       x, y;  /* the actual positions */
 
+
     dx = abs(x1 - x2);
     dy = abs(y1 - y2);
-    //dist= sqrt(dx^2+dy^2); // Ca marche pas avec cette def de dist
+    dist= sqrt(dx*dx+dy*dy); //calcul la distance entre les deux points
 
     incx = 1;
     if (x2 < x1)
@@ -922,10 +547,10 @@ TESTS:
         e = 2*dy ;
         inc1 = 2*(dy-dx);
         inc2 = 2*dy;
-        for (i = 0 ; i < dx ; i++) {
+        for (i = 0 ; i < dx ; i++)
+        {
             if (e >= 0) {
                 nb+= query(Image,x,y,w,rowsize,colsize);
-                dist++;
                 y += incy;
                 e += inc1;
             }
@@ -933,9 +558,9 @@ TESTS:
             {
                 nb+= query(Image,x,y,w,rowsize,colsize);
                 e += inc2;
-                dist++;
             }
-             x += incx;
+            x += incx;
+
         }
     }
     else
@@ -948,24 +573,24 @@ TESTS:
             if (e >= 0)
             {
                 nb+= query(Image,x,y,w,rowsize,colsize);
-                dist++;
                 x += incx;
                 e += inc1;
             }
             else
             {
                 nb+= query(Image,x,y,w,rowsize,colsize);
-                dist++;
                 e += inc2;
             }
             y += incy;
+
         }
 
 	}
 
-    return((double)nb/dist);
 
-    }
+        return((double)nb/dist);
+
+}
 
 
 
@@ -1117,35 +742,49 @@ void mask_line(uint16_t *Image,int32_t x1,int32_t y1,int32_t x2,int32_t y2,int r
 
 
 
-    /* =============================================================== */
+/* =============================================================== */
     int new_edge1(uint16_t *Image,int colsize, int rowsize)
 /* =============================================================== */
 {
     int i, l, n=colsize;
-    int b1=0, b4=0;
+    int b1=0;
     l=  colsize*rowsize;
 
     for (i=rowsize/2 ; i<l; i=i+rowsize, b1++)
     {
-       if (Image[i]>98)
+       if (Image[i]>99)
        {
            break;
        }
     }
 
+    //cout << "bord1= "<< b1+1<< endl;
+    return(b1+1);
+
+}
+
+
+/* =============================================================== */
+    int new_edge4(uint16_t *Image,int colsize, int rowsize)
+/* =============================================================== */
+{
+    int i, l, n=colsize;
+    int b4=0;
+    l=  colsize*rowsize;
 
     for (i=l-rowsize/2 ; i>0; i-=rowsize, b4++)
     {
-       if (Image[i]>98)
+       if (Image[i]>99)
        {
            break;
        }
     }
 
-    n=n-b4-b1;
-    return(n);
+    //cout << "bord4= "<< b4+1<< endl;
+    return(b4+1);
 
 }
+
 
 
 /* =============================================================== */
@@ -1153,28 +792,43 @@ void mask_line(uint16_t *Image,int32_t x1,int32_t y1,int32_t x2,int32_t y2,int r
 /* =============================================================== */
 {
     int i, j, l, n=rowsize;
-    int b2=0, b3=0;
+    int b2=0;
     l=  colsize*rowsize;
 
 
-    for (i=(colsize/2)*rowsize ; i<l; i++, b2++)
+    for (i=colsize*rowsize/4 ; i<l; i++, b2++)
     {
-       if (Image[i]>98)
+       if (Image[i]>99)
        {
            break;
        }
     }
+
+    //cout << "bord2= "<< b2+1<< endl;
+    return(b2+1);
+
+}
+
+
+
+/* =============================================================== */
+    int new_edge3(uint16_t *Image, int colsize, int rowsize)
+/* =============================================================== */
+{
+    int i, j, l, n=rowsize;
+    int b3=0;
+    l=  colsize*rowsize;
+
 
     for (i=(colsize/2)*rowsize ; i>0; i--, b3++)
     {
-       if (Image[i]>98)
+       if (Image[i]>99)
        {
            break;
        }
     }
 
-
-    n=n-b3-b2;
-    return(n);
+    //cout << "bord3= "<< b3+1<< endl;
+    return(b3+1);
 
 }

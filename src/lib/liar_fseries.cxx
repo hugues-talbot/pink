@@ -55,7 +55,7 @@ Running time in independent of the size of the SE.
 #include "fseries.hpp"
 #include "liar_fseries.h"
 
-/* square morphological operation*/
+/* 3D square morphological operation*/
 
 /* erosion by a flat square structuring element */
 int imferode3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
@@ -197,7 +197,7 @@ int imfclose3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct
 }
 
 /*-------------------------------------------------------------------------------------------------*/
-/* Line morphological operation*/
+/* Line 3D morphological operation*/
 
 /* erosion by a line structuring element */
 int imferode3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz,int length, struct xvimage *output)
@@ -351,3 +351,293 @@ int imfclose3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz, int le
 }
 
 
+
+
+
+/*!--------------------------------------------------------------------------------------------*/
+/*!                                  2D operation                                              */
+/*!--------------------------------------------------------------------------------------------*/
+
+/*! 2D square morphological operation*/
+
+/* erosion by a flat square structuring element */
+int imferode_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *output)
+{
+    switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lferode_rect<PIX_TYPE>(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           SEnx, SEny));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lferode_rect< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           SEnx, SEny));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lferode_rect< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           SEnx, SEny));
+    break;
+    }
+    return 0;
+}
+
+/* dilatation by a flat square structuring element */
+int imfdilat_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *output)
+{
+	switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lfdilate_rect<PIX_TYPE>(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           SEnx, SEny));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lfdilate_rect< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           SEnx, SEny));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lfdilate_rect< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           SEnx, SEny));
+    break;
+    }
+
+    return 0;
+}
+
+
+/* openning by a flat square structuring element */
+int imfopen_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *output)
+{
+    switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lfopen_rect< PIX_TYPE >(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           SEnx, SEny));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lfopen_rect< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           SEnx, SEny));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lfopen_rect< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           SEnx, SEny));
+    break;
+    }
+}
+
+/* closing by a flat square structuring element */
+int imfclose_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *output)
+{
+   switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lfclose_rect<PIX_TYPE>(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           SEnx, SEny));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lfclose_rect< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           SEnx, SEny));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lfclose_rect< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           SEnx, SEny));
+    break;
+//    }
+
+    return 0;
+}
+}
+
+/*-------------------------------------------------------------------------------------------------*/
+/*! Line 2D morphological operation*/
+
+/* erosion by a line structuring element */
+int imferode_line( struct xvimage *input, int length,int angle, struct xvimage *output)
+{
+
+    switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lferode_line<PIX_TYPE>(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           length,
+                           angle,
+                           0));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lferode_line< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           length,
+                           angle,
+                           0));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lferode_line< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           length,
+                           angle,
+                           0));
+    break;
+    }
+    return 0;
+}
+
+/* dilatation by a line structuring element */
+int imfdilat_line( struct xvimage *input, int length,int angle, struct xvimage *output)
+{
+	switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lfdilate_line<PIX_TYPE>(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           length,
+                           angle,
+                           0));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lfdilate_line< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           length,
+                           angle,
+                           0));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lfdilate_line< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           length,
+                           angle,
+                           0));
+    break;
+    }
+
+    return 0;
+}
+
+
+/* openning by a line structuring element */
+int imfopen_line( struct xvimage *input, int length,int angle, struct xvimage *output)
+{
+    switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lfopen_line< PIX_TYPE >(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           length,
+                           angle,
+                           0));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lfopen_line< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           length,
+                           angle,
+                           0));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lfopen_line< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           length,
+                           angle,
+                           0));
+    break;
+    }
+}
+
+/* closing by a line structuring element */
+int imfclose_line( struct xvimage *input, int length,int angle, struct xvimage *output)
+{
+   switch (input->data_storage_type) {
+     case    VFF_TYP_1_BYTE:
+    	return( lfclose_line<PIX_TYPE>(UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           length,
+                           angle,
+                           0));
+     break;
+
+    case  VFF_TYP_2_BYTE:
+    	return( lfclose_line< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           length,
+                           angle,
+                           0));
+    break;
+
+    case  VFF_TYP_4_BYTE:
+    	return( lfclose_line< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           length,
+                           angle,
+                           0));
+    break;
+//    }
+
+    return 0;
+}
+}
