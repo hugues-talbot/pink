@@ -66,6 +66,7 @@ TESTS: Linted and purified, tested with experience.
     long *p,*pn;
     int i,cont,start,end,period;
     double m,thetrad=M_PI/180.0;
+
 //#if (LPTHREAD_STYLE == LP_DYNAMIC)
 //    const int LPTHREAD_COUNT=lget_pthread_count();
 //#endif

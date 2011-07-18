@@ -54,7 +54,7 @@ int lfopen_rect(Type *inbuf, Type *outbuf,int ncol, int nrow, int dimx, int dimy
 {
   char LIARstrbuf[1024];
 
-  sprintf(LIARstrbuf, "Opening by a 3d rect (char version), %d x %d x ", dimx, dimy);
+  sprintf(LIARstrbuf, "Opening by a rect (char version), %d x %d x ", dimx, dimy);
   LIARdebug(LIARstrbuf);
 
   /* if not writing to same buffer then copy contents of original */

@@ -60,7 +60,7 @@ int lfdilate_rect(Type *inbuf,       /* pointer to input image */
 {
   char LIARstrbuf[1024];
 
-  sprintf(LIARstrbuf, "Dilation by a 3d rect (version char), %d x %d x ", dimx, dimy );
+  sprintf(LIARstrbuf, "Dilation by a rect (version char), %d x %d x ", dimx, dimy );
   LIARdebug(LIARstrbuf);
 
   /* if out buffer is different to in buffer then copy contents */
