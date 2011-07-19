@@ -3296,7 +3296,7 @@ int32_t lskelfilter2b(skel *S)
 //Mark A0 (MARK1)
   SK_MARK1(A0);
 #ifdef DEBUG_lskelfilter2b
-  printf("mark initial arc: %d    \n", A0);
+  printf("mark initial arc: %d  (length %d)  \n", A0, tailleptliste(S->tskel[A0].pts));
 #endif	  
   
 //Let E1, E2 be the vertices adjacent to A0
@@ -3414,7 +3414,8 @@ int32_t lskelfilter2b(skel *S)
 	} // if (angle <= minangle)
       } // while (IS_JUNC(E) && (!SK_MARKED1(E)) && (!SK_MARKED2(E)))
 
-//    If E is an end junction then Unmark E
+#ifdef UNMARK_END_JUNCTIONS
+      //    If E is an end junction then Unmark E
       if (IS_JUNC(E) && (SK_MARKED1(E))) 
       {
 	SK_UNMARK1(E);
@@ -3422,6 +3423,8 @@ int32_t lskelfilter2b(skel *S)
 	printf("  unmark end junction %d\n", E);
 #endif	  	
       }
+#endif
+
     } // for (i = 0; i < 2; i++)
   } // if (p != NULL) 
 
@@ -4103,12 +4106,16 @@ struct xvimage * lskelfilter6(skel *S, double maxbridgelength, double maxelbowan
 
     // remove branches adjacent to F and not longer than maxbridgelength
     for (j = S->e_curv; j < S->e_junc; j++) // scan all junctions
+    {
+//printf("jonction %d deleted %d mark1 %d mark2 %d\n", j, SK_DELETED(j), SK_MARKED1(j), SK_MARKED2(j));      
       if (!SK_DELETED(j) && (SK_MARKED1(j) || SK_MARKED2(j)))
       {
+//printf("examen jonction %d\n", j);
 	na = nd = 0; // for counting remaining adjacent arcs
 	for (p = S->tskel[j].adj; p != NULL; p = p->next)
 	  if (IS_CURV(p->val) && !SK_DELETED(p->val))
 	  {
+//printf("examen arc adjacent %d\n", p->val);
 	    na++;
 	    if (tailleptliste(S->tskel[p->val].pts) <= maxbridgelength) 
 	    { 
@@ -4120,7 +4127,8 @@ struct xvimage * lskelfilter6(skel *S, double maxbridgelength, double maxelbowan
 	  }
 	// and unmark 
 	SK_UNMARK1(j); SK_UNMARK2(j);
-      } // scan junctions
+      } // if (!SK_DELETED(j) && (SK_MARKED1(j) || SK_MARKED2(j)))
+    } // for j
 
     // update skeleton (merge branches at 2-junctions that are not elbows)
     for (j = S->e_curv; j < S->e_junc; j++) // scan all junctions

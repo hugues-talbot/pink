@@ -34,12 +34,17 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*! \file skel2pgm.c
 
-\brief generation of a binary image from a curvilinear skeleton
+\brief generation of a labelled image from a curvilinear skeleton
 
 <B>Usage:</B> skel2pgm in.skel [id] out.pgm
 
 <B>Description:</B>
-Generation of a binary image from a curvilinear skeleton.
+Generation of a labelled image from a curvilinear skeleton.
+Points of the skeleton are labelled with:
+\li 1: isolated
+\li 2: end
+\li 3: curve
+\li 4: junction
 
 If the optional argument \b id is given, then only the skeleton element having this index is considered.
 
