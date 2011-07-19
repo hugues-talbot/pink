@@ -417,7 +417,7 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
 
 
     //cout << "nombre de point sur la droite "<< nb_max<< endl;
-    cout <<  nb_max1<< endl;
+     // LuM not declared // cout <<  nb_max1<< endl;
 
      // Si best_y1 est différent de zéro, cela signifie que les coordonnées correspondent à une trace de satellite.
      if (best_y1_ligne1!=0)

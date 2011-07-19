@@ -15,8 +15,15 @@
 
 #include "mcimage.h"
 #include "ujimage.hpp"
+
 #include <boost/thread.hpp>
 #include <boost/smart_ptr.hpp>
+
+// for detecting the hardware concurrency
+#if defined(__APPLE__) || defined(__FreeBSD__)
+#  include <sys/types.h>
+#  include <sys/sysctl.h>
+#endif /* defined(__APPLE__) || defined(__FreeBSD__) */
 
 // This is more of a curiosity question than something that needs
 // actual solving, but is there a way to determine how many cores a
@@ -156,7 +163,15 @@ namespace pink {
     index_t num_cpu = 1;
 
     // getting the number of cpu-s on the system
+    // note this is a hack directly from boost thread.cpp 1.42
+#   if defined(__APPLE__) || defined(__FreeBSD__)
+    int count;
+    size_t size = sizeof(count);
+    num_cpu = sysctlbyname("hw.ncpu",&count,&size,NULL,0)?0:count;
+#   else /* NOT defined(__APPLE__) || defined(__FreeBSD__) */
     num_cpu = boost::thread::hardware_concurrency();
+#   endif /* NOT defined(__APPLE__) || defined(__FreeBSD__) */
+
     num_cpu = std::max<index_t>(1, num_cpu);
     
 #   if UJIMAGE_DEBUG > 1

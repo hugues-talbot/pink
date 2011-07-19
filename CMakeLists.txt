@@ -65,6 +65,8 @@ if (CMAKE_HOST_UNIX)
 	SET(BOOST_INCLUDEDIR "/usr/include" CACHE PATH "The directory of the boost headers. Remember in the case of /usr/local/include/boost, you specify /usr/local/include." )
     endif(NOT BOOST_INCLUDEDIR)
 
+    option( 64BIT "Compiles Pink in 64bit mode. This is necessary for files which could be larger than 2GB. Note that the library always obey the system architecture." ON )
+
 ### **********************************************************************************************
 ### **********************************************************************************************
 ### *************************** Functions in development *****************************************
@@ -84,6 +86,10 @@ if (CMAKE_HOST_UNIX)
 ### *************************** Library **********************************************************
 ### **********************************************************************************************
 ### **********************************************************************************************
+
+    if (64BIT)
+	add_definitions( -DMC_64_BITS )
+    endif (64BIT)
 
     CHECK_INCLUDE_FILE( X11/Xlib.h  HTEST1 ) 
     if (NOT HTEST1) 

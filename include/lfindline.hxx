@@ -11,7 +11,7 @@ using namespace std;
 #  include "mccodimage.h"
 
 
-int32_t mean2(uint16_t  *Image, int colsize, int rowsize);
+double mean2(uint16_t  *Image, int colsize, int rowsize);
 
 void control(uint16_t *Image, int colsize, int rowsize);
 
