@@ -10,9 +10,16 @@
   ujoimro@gmail.com
 */
 
+#include <stdio.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+
 #include "ldist.h"
+#include "lsquelbin.h"
 #include "lskeletons.h"
 #include "pink_python.h"
+
 
 
 using namespace boost::python;
@@ -218,6 +225,67 @@ namespace pink {
     } /* skeleton_im_prioim_connex_inhibimage */
 
 
+    char_image skeleton_end_char(
+      const char_image & input_image, 
+      int connex,
+      int seuil			     
+      ) 
+    {
+
+      char_image res;
+      xvimage *xvinput;
+      res.copy(input_image);
+      
+      xvinput = res.get_output();
+      
+      if (depth(xvinput) == 1) {
+	if (! lsquelbin(xvinput, connex, seuil)) {
+	  pink_error("lsquelbin failed");
+	  return res;
+	}
+	  
+      } else {
+	uint8_t *endpoint;
+	char tablefilename[128];
+	int32_t tablesize, ret;
+	FILE *fd;
+
+	tablesize = 1<<24;
+	endpoint = (uint8_t *)malloc(tablesize);
+	if (! endpoint)
+	  {
+	    pink_error("skelend: malloc failed");
+	    return res;
+	  }
+
+
+	sprintf(tablefilename, "%s/src/tables/TabEndPoints.txt", getenv("PINK"));
+	fd = fopen (tablefilename, "r");
+	if (fd == NULL) 
+	  {   
+	    pink_error("skelend: error while opening table\n");
+	    return res;
+	  }
+	ret = fread(endpoint, sizeof(char), tablesize, fd);
+	if (ret != tablesize)
+	  {
+	    pink_error("fread failed");
+	    return res;
+	  }
+	fclose(fd);
+	if (! lskelend3d(xvinput, connex, endpoint, seuil))
+	{
+	  pink_error("lskelend3d failed");
+	  return res;
+	}
+      	free(endpoint);
+
+  
+	return res;
+
+      }
+    }
+
   } /* namespace python */
 } /* namespace pink */
 
@@ -249,6 +317,17 @@ void skeleton2_export()
     doc__skeleton__c__
     );
 
+  def( "skeleton_end_char", &pink::python::skeleton_end_char,
+       args("image", "connexity", "threshold"),
+       "Description: \n"
+       "Homotopic skeletonization by iterative removal of simple,\n"
+       "non-end points. Breadth-first strategy.\n"
+       "During the first  n iterations (default 0), the end points\n"
+       "are removed as well.\n"
+       "If  n = -1, the end points are always removed.\n"
+       "\n"
+       "Types supported: byte 2d, byte 3d"
+       );
   
 } /* skeleton_export */
 

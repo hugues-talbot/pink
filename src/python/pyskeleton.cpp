@@ -10,8 +10,14 @@
   ujoimro@gmail.com
 */
 
+#include <stdio.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+
 #include "ldist.h"
 #include "lskeletons.h"
+#include "lsquelbin.h"
 #include "pink_python.h"
 
 using namespace boost::python;
@@ -389,6 +395,9 @@ namespace pink {
       return result;
     };
 
+
+
+
   } /* namespace python */
 } /* namespace pink */
 
@@ -405,7 +414,7 @@ namespace pink {
 ***********************************************************************************************
  */
 
-void skeleton_export()
+void skeleton_export() 
 {
   def( "skeleton_im_int_int_void", &pink::python::skeleton_im_int_int_void,
        args("image", "priority value", "connexity"),
@@ -436,6 +445,8 @@ void skeleton_export()
        args("image", "priority_image", "connexity", "inhibited value"),
        "the help is in 'help(pink.skeleton)'"
     );  
+
+ 
 } /* py_skeleton_export */
 
 
