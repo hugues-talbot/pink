@@ -3773,14 +3773,19 @@ static void reverse_curve(int32_t *X, int32_t *Y, int32_t *Z, int32_t n)
 // ----------------------------------------------------------------------
 static double calc_inv_angle(int32_t *X, int32_t *Y, int32_t *Z, int32_t n, int32_t j, double thickness)
 // ----------------------------------------------------------------------
+// WARNING: may modify the input data in X, Y, Z (see comment below)
 {
+#undef F_NAME
+#define F_NAME "calc_inv_angle"
 #define EPS 1e-6
   double xi, yi, zi, xj, yj, zj, xk, yk, zk, angle;
   int32_t i, k;
-  k = FindDSSs3D(n, *X, *Y, *Z, j, thickness);
-  reverse_curve(*X, *Y, *Z, n);
-  i = FindDSSs3D(n, *X, *Y, *Z, n-j, thickness);
-  
+  k = FindDSSs3D(n, X, Y, Z, j, thickness);
+  reverse_curve(X, Y, Z, n);
+  i = FindDSSs3D(n, X, Y, Z, n-j, thickness);
+// uncomment next line to avoid side effect, comment to save time (if safe)
+  reverse_curve(X, Y, Z, n); 
+  i = n - i;
   xi = X[i]; yi = Y[i]; zi = Z[i];
   xj = X[j]; yj = Y[j]; zj = Z[j];
   xk = X[k]; yk = Y[k]; zk = Z[k];
@@ -3915,7 +3920,8 @@ static int32_t compute_vectors_from_junction6(
     }
 
     // calcul de la courbure au point ijunc
-    curv[i+j-1+ajust] = calc_courbure(X, Y, Z, npoints, ijunc);
+//    curv[i+j-1+ajust] = calc_courbure(X, Y, Z, npoints, ijunc);
+    curv[i+j-1+ajust] = calc_inv_angle(X, Y, Z, npoints, ijunc, 2.3);
 
 #ifdef DEBUG_lskelfilter6
     printf("%s: courbe %d - %d   ", F_NAME, i, j);
