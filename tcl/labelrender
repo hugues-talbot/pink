@@ -33,7 +33,7 @@
 #
 #sh
 # The next line is executed by /bin/sh, but not Tcl \
-exec vtk $0 $1 $2 $3 $4 $5 $6 $7
+exec vtk $0 $1
 
 # A renderer for label images - Michel Couprie 2011
 package require vtk
@@ -44,7 +44,7 @@ wm title . "Renderer for label images"
 
 # get input image file name as first argument
 if {$argc != 1} { 
-  puts stderr "usage: render in"
+  puts stderr "usage: labelrender in"
   exit 
 }
 
@@ -77,10 +77,12 @@ proc my_read_val {filename} {
  set RENDER(cs) 600
  set RENDER(active) 0
  set RENDER(opacity) 1.0
+ set RENDER(oldlabel) 0
  set RENDER(label) 0
  set RENDER(wireframe) 0
  set RENDER(indexframe) 0
  set RENDER(nblab) 1
+ set RENDER(nbmaxlab) 25
 
 # white (for any label)
  set RENDER_COL0 "1.0 1.0 1.0"
@@ -108,41 +110,49 @@ vtkInteractorStyleTrackballCamera style
     iren SetInteractorStyle style
 
 # global image (all labels)
-my_exec_f threshold $RENDER(infilename) 1 "/tmp/$RENDER(name)_bin"
+my_exec_f threshold $RENDER(infilename) 1 /tmp/$RENDER(name)_0
+my_exec_f 3dkhalimskize /tmp/$RENDER(name)_0 h /tmp/$RENDER(name)_0.k
+my_exec_f 3dborder /tmp/$RENDER(name)_0.k /tmp/$RENDER(name)_0.k
+my_exec_f pgm2vtk /tmp/$RENDER(name)_0.k 1 /tmp/$RENDER(name)_0.vtk
 
 # counts the number of labels
 my_exec_f max1 $RENDER(infilename) "/tmp/$RENDER(name)_max1"
 set RENDER(nblab) [my_read_val "/tmp/$RENDER(name)_max1"]
 
-# the initial current (highlighted) object is empty
-my_exec_f threshold $RENDER(infilename) [expr $RENDER(nblab)+1] "/tmp/$RENDER(name)_curlab" 
+if {$RENDER(nblab) > $RENDER(nbmaxlab)} { 
+  puts stderr "labelrender: too many labels ($RENDER(nblab), max = $RENDER(nbmaxlab))"
+  exit 
+}
+
+# explodes the label image into several binary images
+for {set i 1} {$i <= $RENDER(nblab)} {incr i} {
+  my_exec_f selndg $RENDER(infilename) $i $i /tmp/$RENDER(name)_$i
+  my_exec_f threshold /tmp/$RENDER(name)_$i 1 /tmp/$RENDER(name)_$i
+  my_exec_f 3dkhalimskize /tmp/$RENDER(name)_$i h /tmp/$RENDER(name)_$i.k
+  my_exec_f 3dborder /tmp/$RENDER(name)_$i.k /tmp/$RENDER(name)_$i.k
+  my_exec_f pgm2vtk /tmp/$RENDER(name)_$i.k 1 /tmp/$RENDER(name)_$i.vtk
+}
 
 # CHARGEMENT DES DIFFERENTES GEOMETRIES
-# pour l'objet total (union des labels)
-  vtkPolyDataReader obj0
-  obj0 SetFileName "/tmp/$RENDER(name)_bin"
-  vtkPolyDataNormals normals0
-  normals0 SetInput [obj0 GetOutput]
-  normals0 FlipNormalsOn
-  vtkPolyDataMapper objMapper0
-  objMapper0 SetInput [normals0 GetOutput]
-  vtkActor objActor0
-  objActor0 SetMapper objMapper0
-  eval [objActor0 GetProperty] SetColor $RENDER_COL0
-  ren1 AddProp objActor0
-
-# pour l'objet courant (celui dont le label est sélectionné)
-  vtkPolyDataReader obj1
-  obj1 SetFileName "/tmp/$RENDER(name)_curlab" 
-  vtkPolyDataNormals normals1
-  normals1 SetInput [obj1 GetOutput]
-  normals1 FlipNormalsOn
-  vtkPolyDataMapper objMapper1
-  objMapper1 SetInput [normals1 GetOutput]
-  vtkActor objActor1
-  objActor1 SetMapper objMapper1
-  eval [objActor1 GetProperty] SetColor $RENDER_COL1
-  ren1 AddProp objActor1
+for {set i 0} {$i <= $RENDER(nblab)} {incr i} {
+  vtkPolyDataReader obj$i
+  obj$i SetFileName "/tmp/$RENDER(name)_$i.vtk"
+  vtkPolyDataNormals normals$i
+  normals$i SetInput [obj$i GetOutput]
+  normals$i FlipNormalsOn
+  vtkPolyDataMapper objMapper$i
+  objMapper$i SetInput [normals$i GetOutput]
+  vtkActor objActor$i
+  objActor$i SetMapper objMapper$i
+  if {$i == 0} { 
+   eval [objActor$i GetProperty] SetColor $RENDER_COL0
+   eval [objActor$i GetProperty] SetOpacity 1
+  } else {
+   eval [objActor$i GetProperty] SetColor $RENDER_COL1
+   eval [objActor$i GetProperty] SetOpacity 0
+  }
+  ren1 AddProp objActor$i
+}
 
 set cam1 [ren1 GetActiveCamera]
 $cam1 ParallelProjectionOff
@@ -171,11 +181,12 @@ set wirebutton [checkbutton .commands.wire -text "Wireframe" \
                 -variable RENDER(wireframe) -command RENDER_togglewire\
                 -activebackground white]
 set setlabel [scale .commands.setlabel \
-        -from 0 -to 10 -res 1 \
+        -from 0 -to $RENDER(nblab) -res 1 \
         -orient horizontal \
         -label "Label" \
 	-variable RENDER(label) \
         -command RENDER_setLabel]
+
 set opacity [scale .commands.opacity \
         -from 0.0 -to 1.0 -res 0.1 \
         -orient horizontal \
@@ -193,9 +204,14 @@ proc RENDER_setOpacity {opa} {
 
 proc RENDER_setLabel {curlab} {
   global RENDER
-  global obj1
-  set RENDER(label) $curlab
-  my_exec_q selndg $RENDER(infilename) $RENDER(label) $RENDER(label) "/tmp/$RENDER(name)_curlab"  
+  global objActor$RENDER(label)
+  global objActor$curlab
+  if {$RENDER(oldlabel) != 0} {   
+    eval [objActor$RENDER(oldlabel) GetProperty] SetOpacity 0
+  }
+  eval [objActor$curlab GetProperty] SetOpacity 1
+  renWin Render
+  set RENDER(oldlabel) $curlab
   renWin Render
 }
 
@@ -234,8 +250,12 @@ proc RENDER_setpos {} {
 }
 
 proc RENDER_bye {} {
-    vtkCommand DeleteAllObjects
-    exit
+  global RENDER
+  foreach file [glob -nocomplain "/tmp/$RENDER(name)_*"] {
+    exec rm -f $file
+  }
+  vtkCommand DeleteAllObjects
+  exit
 }
 
 proc RENDER_togglewire {} {

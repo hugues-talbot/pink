@@ -871,6 +871,188 @@ Reference:
 } // CoverByDSSs3D()
 
 //--------------------------------------------------------------------------
+int32_t FindDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, int32_t i, double thickness)
+//--------------------------------------------------------------------------
+/*! \fn void FindDSSs(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, int32_t i, double thickness)
+    \param npoints (input): number of points in points list
+    \param X (input): ordered list of points (1st coord)
+    \param Y (input): ordered list of points (2nd coord)
+    \param Z (input): ordered list of points (3rd coord)
+    \param i (input): index of starting DSS point
+    \param thickness (input): thickness choosen for the recognition
+    \return index of the DSS extremity
+    \brief computes the maximal DSS in the discrete curve in arrays X,Y,Z starting at position 'i'. 
+
+Reference: 
+
+@Article{	  IGMI_Buz2007,
+  author	= {Lilian Buzer},
+  title		= {{A Simple Algorithm for Digital Line Recognition in the General Case}},
+  journal	= {Pattern Recognition},
+  year		= {2007},
+  volume	= {40},
+  pages		= {1675-1684},
+  number	= {6}
+}
+
+*/
+{
+#undef F_NAME
+#define F_NAME "FindDSSs3D"
+	
+  int pos = i;
+  Q ep((int)floor(thickness*PRECISION),PRECISION); // thickness choosen for the recognition
+  Q curEp;	
+  Reco * MOxy[4], * MOxz[4], * MOyz[4];
+  point *pointsxy, *pointsyz, *pointsxz;
+  int xytypemax = 0, yztypemax = 0, xztypemax = 0;
+  int indmax, xyindmax  = 0, yzindmax  = 0, xzindmax  = 0;
+
+#ifdef DEBUG_FindDSSs3D
+  printf("%s: begin\n", F_NAME);
+#endif
+	
+  pointsxy = new point[npoints]; assert(pointsxy != NULL);
+  pointsyz = new point[npoints]; assert(pointsyz != NULL);
+  pointsxz = new point[npoints]; assert(pointsxz != NULL);
+  Fori(npoints) 
+  {
+    pointsxy[i] = point (X[i], Y[i]);
+    pointsyz[i] = point (Y[i], Z[i]);
+    pointsxz[i] = point (X[i], Z[i]);
+  }
+
+  MOxy[0] = new RecoLR(); MOxz[0] = new RecoLR(); MOyz[0] = new RecoLR();
+  MOxy[1] = new RecoRL(); MOxz[1] = new RecoRL(); MOyz[1] = new RecoRL();
+  MOxy[2] = new RecoTB(); MOxz[2] = new RecoTB(); MOyz[2] = new RecoTB();
+  MOxy[3] = new RecoBT(); MOxz[3] = new RecoBT(); MOyz[3] = new RecoBT();
+	
+  Fori(4)            // look for the longuest valid segment in projection xy
+    {
+      MOxy[i]->Init(); curEp = 0;
+      for (int k = 0; (curEp < ep) && (pos+k < npoints); k++ )
+      {
+	if ((k > 0) && (pointsxy[pos+k] == pointsxy[pos+k-1]))
+	  // projection is not a bijection: invalid segment
+	  break;
+        MOxy[i]->Insert(curEp,pointsxy[pos+k]);
+        if (curEp < ep)
+        {
+          if ((xyindmax==0) && (MOxy[i]->valid())) { xyindmax = 1; xytypemax = i; }
+          if ((xyindmax >0) && (k >= xyindmax)   ) { xyindmax = k+1; xytypemax = i; }
+        }
+      }
+    }
+		
+  Fori(4)            // look for the longuest valid segment in projection yz
+    {
+      MOyz[i]->Init(); curEp = 0;
+      for (int k = 0; (curEp < ep) && (pos+k < npoints); k++ )
+      {
+	if ((k > 0) && (pointsyz[pos+k] == pointsyz[pos+k-1]))
+	  // projection is not a bijection: invalid segment
+	  break;
+        MOyz[i]->Insert(curEp,pointsyz[pos+k]);
+        if (curEp < ep)
+        {
+          if ((yzindmax==0) && (MOyz[i]->valid())) { yzindmax = 1; yztypemax = i; }
+          if ((yzindmax >0) && (k >= yzindmax)   ) { yzindmax = k+1; yztypemax = i; }
+        }
+      }
+    }
+
+  Fori(4)            // look for the longuest valid segment in projection xz
+    {
+      MOxz[i]->Init(); curEp = 0;
+      for (int k = 0; (curEp < ep) && (pos+k < npoints); k++ )
+      {
+	if ((k > 0) && (pointsxz[pos+k] == pointsxz[pos+k-1]))
+	  // projection is not a bijection: invalid segment
+	  break;
+        MOxz[i]->Insert(curEp,pointsxz[pos+k]);
+        if (curEp < ep)
+        {
+          if ((xzindmax==0) && (MOxz[i]->valid())) { xzindmax = 1; xztypemax = i; }
+          if ((xzindmax >0) && (k >= xzindmax)   ) { xzindmax = k+1; xztypemax = i; }
+        }
+      }
+    }
+
+#ifdef DEBUG_FindDSSs3D
+  printf("%s: pos=%d indmax xy=%d yz=%d xz=%d typemax xy=%d yz=%d xz=%d \n", F_NAME,
+	   pos, xyindmax, yzindmax, xzindmax, xytypemax, yztypemax, xztypemax);
+#endif
+
+  // look for the longest 3D segment that has valid projections in at least 2 planes
+#define XY 1
+#define YZ 2
+#define XZ 3
+  int elim;
+
+  if ((xyindmax <= yzindmax) && (xyindmax <= xzindmax))
+    elim = XY;
+  else
+    {
+      if ((yzindmax <= xyindmax) && (yzindmax <= xzindmax))
+	elim = YZ;
+      else
+	elim = XZ;
+    }
+
+  switch (elim)
+    {
+    case XY: 
+      indmax = min(yzindmax,xzindmax);
+#ifdef DEBUG_FindDSSs3D
+      printf("%s: case XY indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
+#endif
+      MOyz[yztypemax]->Init(); curEp = 0;
+      Fori(indmax)
+	MOyz[yztypemax]->Insert(curEp,pointsyz[pos+i]);
+      MOxz[xztypemax]->Init(); curEp = 0;
+      Fori(indmax)
+	MOxz[xztypemax]->Insert(curEp,pointsxz[pos+i]);
+      break;
+
+    case YZ:
+      indmax = min(xyindmax,xzindmax);
+#ifdef DEBUG_FindDSSs3D
+      printf("%s: case YZ indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
+#endif
+      MOxy[xytypemax]->Init(); curEp = 0;
+      Fori(indmax)
+	MOxy[xytypemax]->Insert(curEp,pointsxy[pos+i]);
+      MOxz[xztypemax]->Init(); curEp = 0;
+      Fori(indmax)
+	MOxz[xztypemax]->Insert(curEp,pointsxz[pos+i]);
+      break;
+
+    case XZ:
+      indmax = min(xyindmax,yzindmax);
+#ifdef DEBUG_FindDSSs3D
+      printf("%s: case XZ indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
+#endif
+      MOyz[yztypemax]->Init(); curEp = 0;
+      Fori(indmax)
+	MOyz[yztypemax]->Insert(curEp,pointsyz[pos+i]);
+      MOxy[xytypemax]->Init(); curEp = 0;
+      Fori(indmax)
+	MOxy[xytypemax]->Insert(curEp,pointsxy[pos+i]);
+      break;
+    default: assert(1);
+    } // switch (elim)
+#ifdef DEBUG_FindDSSs3D
+  printf("%s: xt=%d yt=%d zt=%d\n", F_NAME, xt, yt, zt);
+#endif
+
+  pos = pos+indmax-1;
+  delete pointsxy;
+  delete pointsyz;
+  delete pointsxz;
+  return pos;
+} // FindDSSs3D()
+
+//--------------------------------------------------------------------------
 static double lambda_fct(double eik)
 {
   double e2 = eik * eik; 

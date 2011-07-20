@@ -40,13 +40,16 @@ knowledge of the CeCILL license and that you accept its terms.
 
 <B>Description:</B>
 Generation of a labelled image from a curvilinear skeleton.
-Points of the skeleton are labelled with:
+
+If the optional argument \b id is given and positive, then only the skeleton element having this index is considered.
+
+If the optional argument \b id is given and is -1, then points of the skeleton are labelled with their index in the skeleton structure (warning: no more than 255 elements)
+
+Otherwise, points of the skeleton are labelled with:
 \li 1: isolated
 \li 2: end
 \li 3: curve
 \li 4: junction
-
-If the optional argument \b id is given, then only the skeleton element having this index is considered.
 
 <B>Types supported:</B> 2Dskel, 3Dskel
 
@@ -87,7 +90,7 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  if (argc == 4) id = atoi(argv[2]); else id = -1;
+  if (argc == 4) id = atoi(argv[2]); else id = -2;
 
 #ifdef DEBUG
   printskel(S);

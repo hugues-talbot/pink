@@ -45,6 +45,7 @@ extern void ExtractDSSs(int32_t npoints, int32_t *X, int32_t *Y, double thicknes
 extern void ExtractDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness, int32_t *end, double *anglexy, double *angleyz, double *anglexz);
 extern int32_t CoverByDSSs(int32_t npoints, int32_t *X, int32_t *Y, double thickness);
 extern int32_t CoverByDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness);
+extern int32_t FindDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, int32_t i, double thickness);
 extern void LambdaMSTD(int32_t npoints, int32_t *end, double *angle, double *mstd);
 extern void LambdaMSTD3D(int32_t npoints, int32_t *end, double *Xtan, double *Ytan, double *Ztan, double *Xmstd, double *Ymstd, double *Zmstd);
 extern double ComputeLength(int32_t npoints, double *mstd);

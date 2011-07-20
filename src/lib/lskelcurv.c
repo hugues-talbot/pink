@@ -1426,7 +1426,9 @@ skel * limage2skel2(struct xvimage *image, struct xvimage *morejunctions, int32_
 /* ====================================================================== */
 struct xvimage * lskel2image(skel *S, int32_t id)
 /* ====================================================================== */
-// if id == -1 then output all skeleton elements. 
+// if id == -2 then output all skeleton elements labelled by type
+// if id == -1 then output all skeleton elements labelled as in skel structure
+//   (except element 0 which is labelled S->e_junc)
 // otherwise output element id.
 {
 #undef F_NAME
@@ -1449,7 +1451,7 @@ struct xvimage * lskel2image(skel *S, int32_t id)
   F = UCHARDATA(image);      /* l'image de depart */
   memset(F, 0, N);
 
-  if (id == -1)
+  if (id == -2)
   {
     for (i = S->e_curv; i < S->e_junc; i++)
     {
@@ -1475,6 +1477,39 @@ struct xvimage * lskel2image(skel *S, int32_t id)
     {
       for (p = S->tskel[i].pts; p != NULL; p = p->next) 
 	F[p->val] = VAL_ISOL;
+    }
+  }
+  else if (id == -1)
+  {
+    if (S->e_junc > 255)
+    {
+      fprintf(stderr, "%s: two many elements (max 255)\n", F_NAME);
+      exit(0);
+    }
+    for (i = S->e_curv; i < S->e_junc; i++)
+    {
+      for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+	F[p->val] = (i!=0?i:S->e_junc);
+    }
+    for (i = S->e_end; i < S->e_curv; i++)
+    {
+      for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+      {
+	if (S->tskel[i].tag)
+	  F[p->val] = (i!=0?i:S->e_junc);
+	else
+	  F[p->val] = (i!=0?i:S->e_junc);
+      }
+    }
+    for (i = S->e_isol; i < S->e_end; i++)
+    {
+      for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+	F[p->val] = (i!=0?i:S->e_junc);
+    }
+    for (i = 0; i < S->e_isol; i++)
+    {
+      for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+	F[p->val] = (i!=0?i:S->e_junc);
     }
   }
   else
@@ -1793,42 +1828,6 @@ static int32_t adj_point_junc(skel *S, int32_t e, int32_t J)
   }
   return 0;
 } // adj_point_junc()
-
-/* ====================================================================== */
-static int32_t adj_point_junc2(skel *S, int32_t e, int32_t J)
-/* ====================================================================== */
-{
-  SKC_pt_pcell p;
-  int32_t connex = S->connex;
-  int32_t rs = S->rs;
-  int32_t ps = rs * S->cs;
-
-  switch(connex)
-  {
-    case 4:
-      for (p = S->tskel[J].pts; p != NULL; p = p->next)
-	if (sont4voisins(p->val, e, rs)) return p->val;
-      break;
-    case 8:
-      for (p = S->tskel[J].pts; p != NULL; p = p->next)
-	if (sont8voisins(p->val, e, rs)) return p->val;
-      break;
-    case 6:
-      for (p = S->tskel[J].pts; p != NULL; p = p->next)
-	if (sont6voisins(p->val, e, rs, ps)) return p->val;
-      break;
-    case 18:
-      for (p = S->tskel[J].pts; p != NULL; p = p->next)
-	if (sont18voisins(p->val, e, rs, ps)) return p->val;
-      break;
-    case 26:
-      for (p = S->tskel[J].pts; p != NULL; p = p->next)
-	if (sont26voisins(p->val, e, rs, ps)) return p->val;
-      break;
-  }
-
-  return 0;
-} // adj_point_junc2()
 
 /* ====================================================================== */
 int32_t lskelfilter1a_old(skel *S, double delta, double theta)
@@ -3757,6 +3756,39 @@ static double calc_courbure(int32_t *X, int32_t *Y, int32_t *Z, int32_t n, int32
   free(C0);
   return courbure;
 } // calc_courbure()
+
+// ----------------------------------------------------------------------
+static void reverse_curve(int32_t *X, int32_t *Y, int32_t *Z, int32_t n)
+// ----------------------------------------------------------------------
+{
+  int32_t i; double T;
+  for(i = 0; i < n/2; i++)
+  {
+    T = X[i]; X[i] = X[n-i]; X[n-i] = T;
+    T = Y[i]; Y[i] = Y[n-i]; Y[n-i] = T;
+    T = Z[i]; Z[i] = Z[n-i]; Z[n-i] = T;
+  }
+} // reverse_curve()
+
+// ----------------------------------------------------------------------
+static double calc_inv_angle(int32_t *X, int32_t *Y, int32_t *Z, int32_t n, int32_t j, double thickness)
+// ----------------------------------------------------------------------
+{
+#define EPS 1e-6
+  double xi, yi, zi, xj, yj, zj, xk, yk, zk, angle;
+  int32_t i, k;
+  k = FindDSSs3D(n, *X, *Y, *Z, j, thickness);
+  reverse_curve(*X, *Y, *Z, n);
+  i = FindDSSs3D(n, *X, *Y, *Z, n-j, thickness);
+  
+  xi = X[i]; yi = Y[i]; zi = Z[i];
+  xj = X[j]; yj = Y[j]; zj = Z[j];
+  xk = X[k]; yk = Y[k]; zk = Z[k];
+  angle = acos(scalarprod(xj-xi, yj-yi, zj-zi, xj-xk, yj-yk, zj-zk) / 
+	       (norm(xj-xi, yj-yi, zj-zi) * norm(xj-xk, yj-yk, zj-zk)));
+  if (angle < EPS) return 1.0/EPS;
+  return 1.0/angle;
+} // calc_inv_angle()
 
 // ----------------------------------------------------------------------
 static int32_t compute_vectors_from_junction6(
