@@ -195,7 +195,7 @@ int main(int argc, char **argv)
 
 
 
-    writeimage(image2,argv[2]);
+    //writeimage(image2,argv[2]);
     freeimage(image);
     freeimage(image2);
 //

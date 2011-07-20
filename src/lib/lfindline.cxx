@@ -415,12 +415,86 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
     }
 
 
+    // on parcours maintenant les points du bord3 pour faire les lignes entre le bord 3 et les bors 1 et 4
+    for (i=0; i<Bord3.size(); i++)
+    {
+        x1=rowsize-b3;
+        y1=Bord3[i];
+
+        if (y1*rowsize+x1>rowsize*colsize)
+                break; // on est plus dans l'image
+
+        for (j=0; j<Bord1.size(); j++) //line between bord3 and bord1
+        {
+            x2=Bord1[j];
+            y2=b1;
+            nb=bresen_test(I,x2, y2, x1,y1,rowsize,colsize, w);
+            if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
+                && (nb>max_ligne1) )
+            {
+                max_ligne1=nb;
+                best_y1_ligne1=y1;
+                best_x2_ligne1=x2;
+                best_y2_ligne1=y2;
+            }
+                 //else if ( (abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
+            else
+            {
+                if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w))
+                   && ((abs(best_y1_ligne2-y1)>4*w) || (abs(best_x2_ligne2-x2)>4*w))
+                   && (nb>max_ligne2) )
+                {
+                    max_ligne2=nb;
+                    best_y1_ligne2=y1;
+                    best_x2_ligne2=x2;
+                    best_y2_ligne2=y2;
+                }
+            }
+        }
+
+
+        for (j=1; j<=Bord4.size(); j++) //line between bord3 and bord4
+        {
+            x2=Bord4[j];
+            y2=colsize-b4;
+
+            if (y2*rowsize+x2>rowsize*colsize)
+                break;  // on est plus dans l'image
+
+            nb=bresen_test(I,x2, y2, x1,y1,rowsize,colsize, w);
+            if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
+                && (nb>max_ligne1) )
+            {
+                max_ligne1=nb;
+                best_y1_ligne1=y1;
+                best_x2_ligne1=x2;
+                best_y2_ligne1=y2;
+            }
+                 //else if ( (abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
+            else
+            {
+                if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w))
+                   && ((abs(best_y1_ligne2-y1)>4*w) || (abs(best_x2_ligne2-x2)>4*w))
+                   && (nb>max_ligne2) )
+                {
+                    max_ligne2=nb;
+                    best_y1_ligne2=y1;
+                    best_x2_ligne2=x2;
+                    best_y2_ligne2=y2;
+                }
+            }
+        }
+
+
+    }
+
+
 
     //cout << "nombre de point sur la droite "<< nb_max<< endl;
-     // LuM not declared // cout <<  nb_max1<< endl;
+    cout <<  max_ligne1<< endl;
 
      // Si best_y1 est différent de zéro, cela signifie que les coordonnées correspondent à une trace de satellite.
-     if (best_y1_ligne1!=0)
+     if ( (max_ligne1!=600) && (best_y1_ligne1!=0))
         cout << "ligne entre le point ("<<x1<<","<< best_y1_ligne1<< ") et le point ("<< best_x2_ligne1<<"," << best_y2_ligne1 << ")"<< endl;
 
 //     if (best_y1_ligne2!=0)
