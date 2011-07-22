@@ -560,7 +560,7 @@ retourne t
 double dicho3(double f[3], double g[3], double h[3], double a, double b, double r, int32_t p, double eps)
 /*
 recherche par dichotomie d'une valeur t dans [a,b] telle que 
-integrale3(f, g, h, a, t, p) = r avec une erreur max de eps   
+integrale3(f, g, h, a, t, p) = r avec une erreur max de eps
 retourne t
 */
 {
@@ -573,7 +573,7 @@ retourne t
     else if (tmp > r) b = u;
 	 else a = u;
   }
-  return u;                    
+  return u;
 } // dicho3()
 
 /* ==================================== */

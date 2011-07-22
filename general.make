@@ -415,6 +415,7 @@ $(BDIR)/planarity \
 $(BDIR)/point \
 $(BDIR)/proj \
 $(BDIR)/proj3d \
+$(BDIR)/project_contact \
 $(BDIR)/projsphere \
 $(BDIR)/quasishear \
 $(BDIR)/recalagerigide \
@@ -1826,6 +1827,9 @@ $(BDIR)/proj3d:	$(CDIR)/proj3d.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 
 $(BDIR)/projsphere:	$(CDIR)/projsphere.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/projsphere.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/projsphere
+
+$(BDIR)/project_contact: $(CDIR)/project_contact.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo3d.h $(IDIR)/mcsplines.h $(OBJ_COMMON) $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/lcurves.o $(ODIR)/mclifo.o $(ODIR)/mcsplines.o $(ODIR)/mclin.o
+	$(CC) $(CCFLAGS) -lm -I$(IDIR) $(CDIR)/project_contact.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/lcurves.o $(ODIR)/mclifo.o $(ODIR)/mcsplines.o $(ODIR)/mclin.o -o $(BDIR)/project_contact
 
 $(BDIR)/quasishear:	$(CDIR)/quasishear.c $(IDIR)/mcimage.h $(IDIR)/mclin.h $(IDIR)/mcgeo.h $(IDIR)/lrotations.h $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/lrotations.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/quasishear.c $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/lrotations.o $(LIBS) -o $(BDIR)/quasishear

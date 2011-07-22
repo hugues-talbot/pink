@@ -2491,6 +2491,8 @@ static int32_t compute_vectors_from_junction(
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
       adj = adj->next;
       adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      break;
+    default : assert(0);
     }
   }
   else
@@ -2562,6 +2564,8 @@ static int32_t compute_vectors_from_junction(
       adj->vx = -1; adj->vy = 0; adj->vz = 0;
       adj = adj->next;
       adj->vx = 1; adj->vy = 0; adj->vz = 0;
+      break;
+    default : assert(0);
     }
   }
 

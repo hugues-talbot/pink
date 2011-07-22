@@ -37,6 +37,8 @@ extern "C" {
 #endif
 extern int32_t lcurves_extractcurve( uint8_t *B, int32_t i, int32_t rs, int32_t N, int32_t connex, int32_t ** X, int32_t ** Y, int32_t * npoints);
 extern int32_t lcurves_extractcurve3d( uint8_t *B, int32_t i, int32_t rs, int32_t ps, int32_t N, int32_t connex, int32_t ** X, int32_t ** Y, int32_t ** Z, int32_t * npoints);
+extern int32_t is_endlab(int32_t x, int32_t *F, int32_t rs, int32_t ps, int32_t N, int32_t connex);
+extern int32_t lcurves_extractcurve3dlab( int32_t *B, int32_t i, int32_t rs, int32_t ps, int32_t N, int32_t connex, int32_t ** X, int32_t ** Y, int32_t ** Z, int32_t * npoints);
 #ifdef __cplusplus
 }
 #endif

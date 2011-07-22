@@ -106,6 +106,65 @@ static void trouve2voisins(int32_t i, int32_t rs, int32_t ps, int32_t N, int32_t
 } // trouve2voisins()
 
 /* ====================================================================== */
+static void trouve2voisinslab(int32_t i, int32_t rs, int32_t ps, int32_t N, int32_t connex, int32_t *F, int32_t *v1, int32_t *v2)
+/* ====================================================================== */
+// retourne dans v1 et v2 les 2 voisins de i qui sont des points objet (F)
+{
+#undef F_NAME
+#define F_NAME "trouve2voisinslab"
+  int32_t j, k, n = 0;
+  switch (connex)
+  {
+  case 4:
+    for (k = 0; k < 8; k += 2)
+    {
+      j = voisin(i, k, rs, N);
+      if ((j != -1) && (F[j]==F[i]))
+      { if (n == 0) *v1 = j; else *v2 = j; n++; }
+    } // for k
+    break;
+  case 8:
+    for (k = 0; k < 8; k += 1)
+    {
+      j = voisin(i, k, rs, N);
+      if ((j != -1) && (F[j]==F[i]))
+      { if (n == 0) *v1 = j; else *v2 = j; n++; }
+    } // for k
+    break;
+  case 6:
+    for (k = 0; k <= 10; k += 2)
+    {
+      j = voisin6(i, k, rs, ps, N);
+      if ((j != -1) && (F[j]==F[i]))
+      { if (n == 0) *v1 = j; else *v2 = j; n++; }
+    } // for k
+    break;
+  case 18:
+    for (k = 0; k < 18; k += 1)
+    {
+      j = voisin18(i, k, rs, ps, N);
+      if ((j != -1) && (F[j]==F[i]))
+      { if (n == 0) *v1 = j; else *v2 = j; n++; }
+    } // for k
+    break;
+  case 26:
+    for (k = 0; k < 26; k += 1)
+    {
+      j = voisin26(i, k, rs, ps, N);
+      if ((j != -1) && (F[j]==F[i]))
+      { if (n == 0) *v1 = j; else *v2 = j; n++; }
+    } // for k
+    break;
+  default:
+    fprintf(stderr, "%s: bad connectivity: %d\n", F_NAME, connex);
+    exit(0);
+  } // switch (connex)
+  if (n != 2) printf("%s: error n = %d != 2; point %d %d %d\n", F_NAME, n, 
+		     i % rs, (i % ps) / rs, i / ps);
+  assert(n == 2);
+} // trouve2voisinslab()
+
+/* ====================================================================== */
 static int32_t trouve1voisin(int32_t i, int32_t rs, int32_t ps, int32_t N, int32_t connex, uint8_t *F)
 /* ====================================================================== */
 // retourne un voisin de i qui est un point objet (F), ou -1 si non trouvé
@@ -158,6 +217,58 @@ static int32_t trouve1voisin(int32_t i, int32_t rs, int32_t ps, int32_t N, int32
 } // trouve1voisin()
 
 /* ====================================================================== */
+static int32_t trouve1voisinlab(int32_t i, int32_t rs, int32_t ps, int32_t N, int32_t connex, int32_t *F)
+/* ====================================================================== */
+// retourne un voisin de i qui est un point objet (F), ou -1 si non trouvé
+{
+#undef F_NAME
+#define F_NAME "trouve1voisinlab"
+  int32_t j, k = 0;
+  switch (connex)
+  {
+  case 4:
+    for (k = 0; k < 8; k += 2)
+    {
+      j = voisin(i, k, rs, N);
+      if ((j != -1) && (F[j]==F[i])) return j;
+    } // for k
+    break;
+  case 8:
+    for (k = 0; k < 8; k += 1)
+    {
+      j = voisin(i, k, rs, N);
+      if ((j != -1) && (F[j]==F[i])) return j;
+    } // for k
+    break;
+  case 6:
+    for (k = 0; k <= 10; k += 2)
+    {
+      j = voisin6(i, k, rs, ps, N);
+      if ((j != -1) && (F[j]==F[i])) return j;
+    } // for k
+    break;
+  case 18:
+    for (k = 0; k < 18; k += 1)
+    {
+      j = voisin18(i, k, rs, ps, N);
+      if ((j != -1) && (F[j]==F[i])) return j;
+    } // for k
+    break;
+  case 26:
+    for (k = 0; k < 26; k += 1)
+    {
+      j = voisin26(i, k, rs, ps, N);
+      if ((j != -1) && (F[j]==F[i])) return j;
+    } // for k
+    break;
+  default:
+    fprintf(stderr, "%s: bad connectivity: %d\n", F_NAME, connex);
+    exit(0);
+  } // switch (connex)
+  return -1;
+} // trouve1voisinlab()
+
+/* ====================================================================== */
 static int32_t is_end(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t N, int32_t connex)
 /* ====================================================================== */
 {
@@ -176,6 +287,26 @@ static int32_t is_end(int32_t x, uint8_t *F, int32_t rs, int32_t ps, int32_t N, 
   default: assert(0);
   }
 } // is_end()
+
+/* ====================================================================== */
+int32_t is_endlab(int32_t x, int32_t *F, int32_t rs, int32_t ps, int32_t N, int32_t connex)
+/* ====================================================================== */
+{
+  switch (connex)
+  {
+  case 4:
+    fprintf(stderr,"non implémenté\n"); assert(0);
+  case 8:
+    fprintf(stderr,"non implémenté\n"); assert(0);
+  case 6:
+    if (mctopo3d_nbvoislab6(F, x, rs, ps, N) == 1) return 1; else return 0;
+  case 18:
+    if (mctopo3d_nbvoislab18(F, x, rs, ps, N) == 1) return 1; else return 0;
+  case 26:
+    if (mctopo3d_nbvoislab26(F, x, rs, ps, N) == 1) return 1; else return 0;
+  default: assert(0);
+  }
+} // is_endlab()
 
 /* ========================================== */
 int32_t lcurves_extractcurve(
@@ -278,3 +409,60 @@ int32_t lcurves_extractcurve3d(
   }  
   return 1;
 } // lcurves_extractcurve3d()
+
+
+/* ========================================== */
+int32_t lcurves_extractcurve3dlab(
+  int32_t *B,        // entrée : pointeur base image
+  int32_t i,         // entrée : index du point de départ
+  int32_t rs,        // entrée : taille rangee
+  int32_t ps,        // entrée : taille plan
+  int32_t N,         // entrée : taille image
+  int32_t connex,    // entrée : 6, 18 ou 26
+  int32_t ** X,      // sortie : points
+  int32_t ** Y,
+  int32_t ** Z,
+  int32_t * npoints) // sortie : nombre de points
+/* ========================================== */
+// extrait de l'image B la courbe débutant au point extrémité i
+{
+#undef F_NAME
+#define F_NAME "lcurves_extractcurve3dlab"
+  int32_t n = 0;     // compte le nombre de points
+  int32_t v1, v2, ii, jj;
+
+  ii = i;
+  assert(is_endlab(ii, B, rs, ps, N, connex)); n++;
+  jj = trouve1voisinlab(ii, rs, ps, N, connex, B); n++;
+  while (!is_endlab(jj, B, rs, ps, N, connex))
+  {
+    trouve2voisinslab(jj, rs, ps, N, connex, B, &v1, &v2);
+    if (v1 == ii) { ii = jj; jj = v2; } else { ii = jj; jj = v1; } 
+    n++;
+  }
+  *npoints = n;
+  *X = (int32_t *)malloc(n * sizeof(int32_t)); assert(*X != NULL); 
+  *Y = (int32_t *)malloc(n * sizeof(int32_t)); assert(*Y != NULL); 
+  *Z = (int32_t *)malloc(n * sizeof(int32_t)); assert(*Z != NULL); 
+  n = 0;
+  ii = i;
+  (*X)[n] = ii % rs;
+  (*Y)[n] = (ii % ps) / rs;
+  (*Z)[n] = ii / ps;
+  jj = trouve1voisinlab(ii, rs, ps, N, connex, B); n++;
+  (*X)[n] = jj % rs;
+  (*Y)[n] = (jj % ps) / rs;
+  (*Z)[n] = jj / ps;
+  while (!is_endlab(jj, B, rs, ps, N, connex))
+  {
+    trouve2voisinslab(jj, rs, ps, N, connex, B, &v1, &v2);
+    if (v1 == ii) { ii = jj; jj = v2; } else { ii = jj; jj = v1; } 
+    n++;
+    (*X)[n] = jj % rs;
+    (*Y)[n] = (jj % ps) / rs;
+    (*Z)[n] = jj / ps;
+  }
+  return 1;
+} // lcurves_extractcurve3dlab()
+
+
