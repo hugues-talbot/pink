@@ -91,6 +91,13 @@ struct contact_splines{
 	struct contact_splines *next;
 };
 
+struct resultat{
+	int32_t Ncontacts;
+	struct contact_splines * liste_contact;
+        int32_t * n_ctrl;
+        double ** coef_splines;
+};
+
 /* ===================================================== */
 void extract_fibres(
 /* ===================================================== */
@@ -232,7 +239,7 @@ assert(n_courbe>0);
 
 
 /* ===================================================== */
-struct contact* project_all_surfaces_on_fibres(
+struct resultat* project_all_surfaces_on_fibres(
 /* ===================================================== */
 	struct xvimage * imlab,			// input : image d'entree labélisée
 	int32_t Nfib,				// input : nombre de fibres
@@ -246,7 +253,7 @@ struct contact* project_all_surfaces_on_fibres(
 #undef F_NAME
 #define F_NAME "project_all_surfaces_on_fibres"
 
-  int32_t i, j, x, v, f1, f2, i11, i12, i21, i22, k, npointsmax;
+  int32_t i, j, x, v, f1, f2, i11, i12, i21, i22, k, npointsmax=0;
   double *d = NULL;
   int32_t rs = rowsize(imlab);         /* taille ligne */
   int32_t cs = colsize(imlab);         /* taille colonne */
@@ -262,6 +269,8 @@ struct contact* project_all_surfaces_on_fibres(
   struct contact *contact_temp = NULL;
   struct contact_splines *list_contact_splines = NULL;
   struct contact_splines *contact_splines_temp = NULL;
+
+  struct resultat *result = (struct resultat*)malloc(sizeof(struct resultat));
 
 #ifdef VISU_PROJECTION
     *pimvisu = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
@@ -390,7 +399,7 @@ struct contact* project_all_surfaces_on_fibres(
     // on projete ce contour sur chacunes des fibres correspondantes
 	f1 = label%(Nfib+1);
 	f2 = label/(Nfib+1);
-//fprintf(stderr,"f1=%d ; f2=%d\n",f1,f2);
+//fprintf(stderr,"label=%d ; Nfib=%d ; f1=%d ; f2=%d\n",label,Nfib,f1,f2);
 
 	project_contour_on_curve2( n, Xcontour, Ycontour, Zcontour, npoints[f1-1], X[f1-1], Y[f1-1], Z[f1-1], &i11, &i12);
 	project_contour_on_curve2( n, Xcontour, Ycontour, Zcontour, npoints[f2-1], X[f2-1], Y[f2-1], Z[f2-1], &i21, &i22);
@@ -421,34 +430,49 @@ struct contact* project_all_surfaces_on_fibres(
   LifoTermine(LIFO);
 
   // on trouve l'équation des splines des fibres
-  int32_t n_ctrl[Nfib], C[npointsmax];
-  double C0[npointsmax], C1[npointsmax], C2[npointsmax], C3[npointsmax], D0[npointsmax], D1[npointsmax], D2[npointsmax], D3[npointsmax], E0[npointsmax], E1[npointsmax], E2[npointsmax], E3[npointsmax];
+  int32_t *n_ctrl=(int32_t*)malloc(Nfib*sizeof(int32_t));
+  int32_t *C=(int32_t*)malloc(npointsmax*sizeof(int32_t));
+  double *C0=(double*)malloc(npointsmax*sizeof(double));
+  double *C1=(double*)malloc(npointsmax*sizeof(double));
+  double *C2=(double*)malloc(npointsmax*sizeof(double));
+  double *C3=(double*)malloc(npointsmax*sizeof(double));
+  double *D0=(double*)malloc(npointsmax*sizeof(double));
+  double *D1=(double*)malloc(npointsmax*sizeof(double));
+  double *D2=(double*)malloc(npointsmax*sizeof(double));
+  double *D3=(double*)malloc(npointsmax*sizeof(double));
+  double *E0=(double*)malloc(npointsmax*sizeof(double));
+  double *E1=(double*)malloc(npointsmax*sizeof(double));
+  double *E2=(double*)malloc(npointsmax*sizeof(double));
+  double *E3=(double*)malloc(npointsmax*sizeof(double));
+
   double **coef_splines =(double**)malloc(Nfib*sizeof(double*));
 
   for(i=0;i<Nfib;i++) {
-    scn_approxcurve3d( X[i], Y[i], Z[i], npoints[i], deltamax, C, n_ctrl+i, C0, C1, C2, C3, D0, D1, D2, D3, E0, E1, E2, E3);
+    scn_approxcurve3d( X[i], Y[i], Z[i], npoints[i]-2, deltamax, C, n_ctrl+i, C0, C1, C2, C3, D0, D1, D2, D3, E0, E1, E2, E3);
     coef_splines[i] =(double*)malloc((n_ctrl[i]-1)*12*sizeof(double));
     for(j=0;j<n_ctrl[i]-1;j++){
       d = coef_splines[i];
-      d[j*12] = C0[j];
-      d[j*12+1] = D0[j];
-      d[j*12+2] = E0[j];
-      d[j*12+3] = C1[j];
-      d[j*12+4] = D1[j];
-      d[j*12+5] = E1[j];
-      d[j*12+6] = C2[j];
-      d[j*12+7] = D2[j];
-      d[j*12+8] = E2[j];
-      d[j*12+9] = C3[j];
-      d[j*12+10] = D3[j];
-      d[j*12+11] = E3[j];
+      d[j] = C0[j];
+      d[(n_ctrl[i]-1)+j] = C1[j];
+      d[2*(n_ctrl[i]-1)+j] = C2[j];
+      d[3*(n_ctrl[i]-1)+j] = C3[j];
+      d[4*(n_ctrl[i]-1)+j] = D0[j];
+      d[5*(n_ctrl[i]-1)+j] = D1[j];
+      d[6*(n_ctrl[i]-1)+j] = D2[j];
+      d[7*(n_ctrl[i]-1)+j] = D3[j];
+      d[8*(n_ctrl[i]-1)+j] = E0[j];
+      d[9*(n_ctrl[i]-1)+j] = E1[j];
+      d[10*(n_ctrl[i]-1)+j] = E2[j];
+      d[11*(n_ctrl[i]-1)+j] = E3[j];
     } // for j
 
   } // for i
 
   // on trouve les indices des contacts
+  int32_t Ncontacts = 0;
   for(contact_temp=list_contact;contact_temp!=NULL;contact_temp=contact_temp->next)
   {
+    Ncontacts++;
     label = contact_temp->contact;
     f1 = contact_temp->f1;
     f2 = contact_temp->f2;
@@ -461,22 +485,40 @@ struct contact* project_all_surfaces_on_fibres(
     contact_splines_temp->id_contact = label;
     contact_splines_temp->id_f1 = f1;
 
-/*
-scn_splinequerypoint3d( X[f1-1][i11], Y[f1-1][i11], Z[f1-1][i11], double p, n_ctrl[f1-1], 
-			       double *C0, double *C1, double *C2, double *C3,
-			       double *D0, double *D1, double *D2, double *D3,
-			       double *E0, double *E1, double *E2, double *E3);
-*/
+    contact_splines_temp->d1 = scn_splinequerypoint3d( X[f1-1][i11], Y[f1-1][i11], Z[f1-1][i11], p, n_ctrl[f1-1], 
+			coef_splines[f1-1], coef_splines[f1-1]+n_ctrl[f1-1]-1, coef_splines[f1-1]+2*(n_ctrl[f1-1]-1), coef_splines[f1-1]+3*(n_ctrl[f1-1]-1),
+			coef_splines[f1-1]+4*(n_ctrl[f1-1]-1), coef_splines[f1-1]+5*(n_ctrl[f1-1]-1), coef_splines[f1-1]+6*(n_ctrl[f1-1]-1), coef_splines[f1-1]+7*(n_ctrl[f1-1]-1),
+			coef_splines[f1-1]+8*(n_ctrl[f1-1]-1), coef_splines[f1-1]+9*(n_ctrl[f1-1]-1), coef_splines[f1-1]+10*(n_ctrl[f1-1]-1), coef_splines[f1-1]+11*(n_ctrl[f1-1]-1));
+
+    contact_splines_temp->f1 = scn_splinequerypoint3d( X[f1-1][i12], Y[f1-1][i12], Z[f1-1][i12], p, n_ctrl[f1-1], 
+			coef_splines[f1-1], coef_splines[f1-1]+n_ctrl[f1-1]-1, coef_splines[f1-1]+2*(n_ctrl[f1-1]-1), coef_splines[f1-1]+3*(n_ctrl[f1-1]-1),
+			coef_splines[f1-1]+4*(n_ctrl[f1-1]-1), coef_splines[f1-1]+5*(n_ctrl[f1-1]-1), coef_splines[f1-1]+6*(n_ctrl[f1-1]-1), coef_splines[f1-1]+7*(n_ctrl[f1-1]-1),
+			coef_splines[f1-1]+8*(n_ctrl[f1-1]-1), coef_splines[f1-1]+9*(n_ctrl[f1-1]-1), coef_splines[f1-1]+10*(n_ctrl[f1-1]-1), coef_splines[f1-1]+11*(n_ctrl[f1-1]-1));
 
     contact_splines_temp->id_f2 = f2;
 
+    contact_splines_temp->d2 = scn_splinequerypoint3d( X[f2-1][i21], Y[f2-1][i21], Z[f2-1][i21], p, n_ctrl[f2-1], 
+			coef_splines[f2-1], coef_splines[f2-1]+n_ctrl[f2-1]-1, coef_splines[f2-1]+2*(n_ctrl[f2-1]-1), coef_splines[f2-1]+3*(n_ctrl[f2-1]-1),
+			coef_splines[f2-1]+4*(n_ctrl[f2-1]-1), coef_splines[f2-1]+5*(n_ctrl[f2-1]-1), coef_splines[f2-1]+6*(n_ctrl[f2-1]-1), coef_splines[f2-1]+7*(n_ctrl[f2-1]-1),
+			coef_splines[f2-1]+8*(n_ctrl[f2-1]-1), coef_splines[f2-1]+9*(n_ctrl[f2-1]-1), coef_splines[f2-1]+10*(n_ctrl[f2-1]-1), coef_splines[f2-1]+11*(n_ctrl[f2-1]-1));
+
+    contact_splines_temp->f2 = scn_splinequerypoint3d( X[f2-1][i22], Y[f2-1][i22], Z[f2-1][i22], p, n_ctrl[f2-1], 
+			coef_splines[f2-1], coef_splines[f2-1]+n_ctrl[f2-1]-1, coef_splines[f2-1]+2*(n_ctrl[f2-1]-1), coef_splines[f2-1]+3*(n_ctrl[f2-1]-1),
+			coef_splines[f2-1]+4*(n_ctrl[f2-1]-1), coef_splines[f2-1]+5*(n_ctrl[f2-1]-1), coef_splines[f2-1]+6*(n_ctrl[f2-1]-1), coef_splines[f2-1]+7*(n_ctrl[f2-1]-1),
+			coef_splines[f2-1]+8*(n_ctrl[f2-1]-1), coef_splines[f2-1]+9*(n_ctrl[f2-1]-1), coef_splines[f2-1]+10*(n_ctrl[f2-1]-1), coef_splines[f2-1]+11*(n_ctrl[f2-1]-1));
 
     contact_splines_temp->next=list_contact_splines;
     list_contact_splines=contact_splines_temp;
 
   }
 
-  return list_contact;
+  // retourne les resultats
+  result->Ncontacts=Ncontacts;
+  result->liste_contact = list_contact_splines;
+  result->n_ctrl = n_ctrl;
+  result->coef_splines = coef_splines;
+
+  return result;
 
 } // project_all_surfaces_on_fibres()
 
@@ -489,11 +531,33 @@ int main(int argc, char **argv)
   int32_t Nfib = atoi(argv[2]);				
   double deltamax = atof(argv[3]);
   double p = atof(argv[4]);
+  double *d;
   struct xvimage * imvisu=NULL;
+  struct contact_splines *contacts = NULL;
 
+  struct resultat* result = project_all_surfaces_on_fibres( imlab, Nfib, connex, deltamax, p, &imvisu);
 
-  project_all_surfaces_on_fibres( imlab, Nfib, connex, deltamax, p, &imvisu);
+  FILE * fd = fopen("out.txt","w");
 
+  fprintf(fd,"fibres %d\n",Nfib);
+
+  int32_t i, j, n;
+  for(i=0;i<Nfib;i++){
+    n = result->n_ctrl[i];
+    fprintf(fd,"F %d %d %d\n",i+1,i+1,n);
+    for(j=0;j<(n-1);j++){
+      d = result->coef_splines[i];
+      fprintf(fd,"%.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f\n",d[j],d[j+(n-1)],d[j+2*(n-1)],d[j+3*(n-1)],d[j+4*(n-1)],d[j+5*(n-1)],d[j+6*(n-1)],d[j+7*(n-1)],d[j+8*(n-1)],d[j+9*(n-1)],d[j+10*(n-1)],d[j+11*(n-1)]);
+    }
+  }
+
+  fprintf(fd,"contacts %d\n",result->Ncontacts);
+
+  for(contacts=result->liste_contact;contacts!=NULL;contacts=contacts->next){
+    fprintf(fd,"C %d %d %.4f %.4f %d %.4f %.4f\n",contacts->id_contact,contacts->id_f1,contacts->d1,contacts->f1,contacts->id_f2,contacts->d2,contacts->f2);
+  }
+
+  fclose(fd);
 
 #ifdef VISU_PROJECTION
   writeimage(imvisu, argv[argc-1]); 
