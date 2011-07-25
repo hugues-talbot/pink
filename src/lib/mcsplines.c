@@ -1931,7 +1931,7 @@ double scn_splinequerypoint3d(double x, double y, double z, double p, int32_t n,
   int32_t i;
   
   dmin = dist3(x, y, z, C0[0], D0[0], E0[0]);
-  for (smin = s = 0.0, i = 0; s <= (double)(n); s += p)
+  for (smin = s = 0.0, i = 0; s <= (double)(n-1); s += p)
   {
     if (s > (double)(i+1)) i++;
     f[0] = C0[i]; f[1] = C1[i]; f[2] = C2[i]; f[3] = C3[i];
