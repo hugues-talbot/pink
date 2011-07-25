@@ -42,11 +42,14 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mctopo.h>
 #include <mctopo3d.h>
 #include <mcutil.h>
+#include <mcindic.h>
+#include <mcrlifo.h>
 #include <lskelpar3d.h>
 
 #define I_INHIBIT     1
@@ -101,6 +104,8 @@ int32_t trace = 1;
 
 #define RESIDUEL6
 #define DIRTOURNE
+
+#define EN_LIFO       0
 
 /* ==================================== */
 static void extract_vois(
@@ -635,7 +640,7 @@ static int32_t match2(uint8_t *v)
   isometrieXZ_vois(v);
   isometrieYZ_vois(v);
   if (match_vois2(v)) ret = 1;
-  isometrieYZ_vois(v);
+  isometrieYZ_vois(v); // nécessaire à cause du insert_vois qui suit
   return ret;
 } /* match2() */
 
@@ -650,7 +655,7 @@ static int32_t match2s(uint8_t *v)
   isometrieXZ_vois(v);
   isometrieYZ_vois(v);
   if (match_vois2s(v)) ret = 1;
-  isometrieYZ_vois(v);
+  isometrieYZ_vois(v); // nécessaire à cause du insert_vois qui suit
   return ret;
 } /* match2s() */
 
@@ -665,7 +670,7 @@ static int32_t match1(uint8_t *v)
   isometrieXZ_vois(v);
   isometrieYZ_vois(v);
   if (match_vois1(v)) ret = 1;
-  isometrieYZ_vois(v);
+  isometrieYZ_vois(v); // nécessaire à cause du insert_vois qui suit
   return ret;
 } /* match1() */
 
@@ -680,7 +685,7 @@ static int32_t match1s(uint8_t *v)
   isometrieXZ_vois(v);
   isometrieYZ_vois(v);
   if (match_vois1s(v)) ret = 1;
-  isometrieYZ_vois(v);
+  isometrieYZ_vois(v); // nécessaire à cause du insert_vois qui suit
   return ret;
 } /* match1s() */
 
@@ -1687,9 +1692,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     for (i = 0; i < N; i++) 
       if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N) && (!I || !I[i]))
 	SET_SIMPLE(S[i]);
-#ifdef DEBUG
-writeimage(image,"_S");
-#endif
     // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2M-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
@@ -1698,53 +1700,29 @@ writeimage(image,"_S");
 	if (match2(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-#ifdef DEBUG
-memset(R, 0, N);
-for (i = 0; i < N; i++) if (IS_2M_CRUCIAL(S[i])) R[i] = 255;
-writeimage(r,"_C2");
-#endif
 
     // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1M-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
-#ifdef DEBUG
-printf("%d %d %d\n", i % rs, (i % ps) / rs, i / ps);
-#endif
 	extract_vois(S, i, rs, ps, N, v);
 	if (match1(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-#ifdef DEBUG
-memset(R, 0, N);
-for (i = 0; i < N; i++) if (IS_1M_CRUCIAL(S[i])) R[i] = 255;
-writeimage(r,"_C1");
-#endif
 
     // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0M-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
-#ifdef DEBUG
-printf("%d %d %d\n", i % rs, (i % ps) / rs, i / ps);
-#endif
 	extract_vois(S, i, rs, ps, N, v);
 	if (match0(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-#ifdef DEBUG
-memset(R, 0, N);
-for (i = 0; i < N; i++) if (IS_0M_CRUCIAL(S[i])) R[i] = 255;
-writeimage(r,"_C0");
-#endif
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
       if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
 	T[i] = 1;
-#ifdef DEBUG
-writeimage(t,"_T");
-#endif
 
     for (i = 0; i < N; i++)
       if (S[i] && !T[i]) 
@@ -2343,6 +2321,9 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   return(1);
 } /* lskelAMK3() */
 
+//#define DEBUG_STEP 3
+//#define OLD_lskelACK3a
+#ifndef NEW_lskelACK3a
 /* ==================================== */
 int32_t lskelACK3a(struct xvimage *image, 
 	     int32_t n_steps,
@@ -2435,11 +2416,17 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]) && !IS_INHIBIT(I[i]) && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
 
+#ifdef DEBUG
+    if (step == DEBUG_STEP) writeimage(image, "_old1");
+#endif
     // DEMARQUE PTS DE COURBE ET LES MEMORISE DANS I
     for (i = 0; i < N; i++)
     { 
       if (IS_CURVE(S[i])) { UNSET_SIMPLE(S[i]); SET_INHIBIT(I[i]); }
     }
+#ifdef DEBUG
+    if (step == DEBUG_STEP) writeimage(image, "_old2");
+#endif
     // MARQUE LES POINTS 2M-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
@@ -2448,6 +2435,9 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (asym_match2(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
+#ifdef DEBUG
+    if (step == DEBUG_STEP) writeimage(image, "_old3");
+#endif
     // MARQUE LES POINTS 1M-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
@@ -2456,6 +2446,9 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (asym_match1(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
+#ifdef DEBUG
+    if (step == DEBUG_STEP) writeimage(image, "_old4");
+#endif
     // MARQUE LES POINTS 0M-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
@@ -2464,6 +2457,9 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (asym_match0(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
+#ifdef DEBUG
+    if (step == DEBUG_STEP) writeimage(image, "_old5");
+#endif
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
@@ -2496,6 +2492,236 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   mctopo3d_termine_topo3d();
   return(1);
 } /* lskelACK3a() */
+#else
+EN DEVELOPPEMENT
+BUG A CORRIGER - UTILISER $PINK/images/3d/test3.k
+
+/* ==================================== */
+int32_t lskelACK3a(struct xvimage *image, 
+	     int32_t n_steps,
+	     int32_t n_earlysteps,
+	     struct xvimage *inhibit)
+/* ==================================== */
+/*
+Squelette asymétrique curviligne
+Algo ACK3a données: S
+Répéter jusqu'à stabilité
+  C := points de courbe de S
+  I := I \cup C
+  P := voxels simples pour S et pas dans I
+  C2 := voxels 2M-cruciaux (asym_match2)
+  C1 := voxels 1M-cruciaux (asym_match1)
+  C0 := voxels 0M-cruciaux (asym_match0)
+  P := P  \  [C2 \cup C1 \cup C0]
+  S := S \ P
+
+Les points de courbe détectés dans les n_earlysteps premières étapes
+sont marqués dans l'image de sortie par une valeur 127 (au lieu de 255)
+
+Implementation avec listes de points candidats
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+*/
+#undef F_NAME
+#define F_NAME "lskelACK3a"
+{ 
+  int32_t i, j, k, x;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  struct xvimage *t = copyimage(image); 
+  uint8_t *T = UCHARDATA(t);
+  uint8_t *I;
+  int32_t step, nonstab;
+  int32_t top, topb;
+  uint8_t v[27];
+  Rlifo * RLIFO1, * RLIFO2, * RLIFO3;
+
+  if (inhibit == NULL) 
+  {
+    inhibit = copyimage(image); 
+    razimage(inhibit);
+    I = UCHARDATA(inhibit);
+  }
+  else
+  {
+    I = UCHARDATA(inhibit);
+    for (i = 0; i < N; i++) if (I[i]) I[i] = I_INHIBIT;
+  }
+
+  if (n_steps == -1) n_steps = 1000000000;
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+
+  mctopo3d_init_topo3d();
+
+  RLIFO1 = CreeRlifoVide(2 * cs +  2 * rs +  2 * ps); assert(RLIFO1 != NULL);
+  RLIFO2 = CreeRlifoVide(2 * cs +  2 * rs +  2 * ps); assert(RLIFO2 != NULL);
+
+  IndicsInit(N);
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  for (i = 0; i < N; i++) if (S[i])
+  {
+    if (!IS_INHIBIT(I[i]) && mctopo3d_simple26(S, i, rs, ps, N))
+    {     // MARQUE LES POINTS SIMPLES NON DANS I
+      RlifoPush(&RLIFO1, i);
+      SET_SIMPLE(S[i]);
+      Set(i, EN_LIFO);		        
+    }
+    mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+    if (top > 1) 
+    { 
+      SET_CURVE(S[i]);
+      if (step <= n_earlysteps) SET_EARLYCURVE(I[i]);
+    }
+  }
+
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+#ifdef DEBUG
+    if (step == DEBUG_STEP) writeimage(image, "_new1");
+#endif
+    // DEMARQUE PTS DE COURBE ET LES MEMORISE DANS I
+    for (x = 0; x < RLIFO1->Sp; x++)
+    {
+      i = RLIFO1->Pts[x];
+      if (IS_CURVE(S[i])) { UNSET_SIMPLE(S[i]); SET_INHIBIT(I[i]); }
+    }
+#ifdef DEBUG
+    if (step == DEBUG_STEP) writeimage(image, "_new2");
+#endif
+    // MARQUE LES POINTS 2M-CRUCIAUX
+    for (x = 0; x < RLIFO1->Sp; x++)
+    {
+      i = RLIFO1->Pts[x];
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match2(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    }
+#ifdef DEBUG
+    if (step == DEBUG_STEP) writeimage(image, "_new3");
+#endif
+    // MARQUE LES POINTS 1M-CRUCIAUX
+    for (x = 0; x < RLIFO1->Sp; x++)
+    {
+      i = RLIFO1->Pts[x];
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match1(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    }
+#ifdef DEBUG
+    if (step == DEBUG_STEP) writeimage(image, "_new4");
+#endif
+    // MARQUE LES POINTS 0M-CRUCIAUX
+    for (x = 0; x < RLIFO1->Sp; x++)
+    {
+      i = RLIFO1->Pts[x];
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match0(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    }
+#ifdef DEBUG
+    if (step == DEBUG_STEP) writeimage(image, "_new5");
+#endif
+
+    memset(T, 0, N);
+    for (x = 0; x < RLIFO1->Sp; x++)
+    {
+      i = RLIFO1->Pts[x];
+      // T := [S \ P] \cup M, où M représente les pts marqués
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_SELECTED(S[i]))
+	T[i] = 1;
+    }
+
+    for (x = 0; x < RLIFO1->Sp; x++)
+    {
+      i = RLIFO1->Pts[x];
+      if (S[i] && !T[i]) 
+      {
+	S[i] = 0; 
+	nonstab = 1; 
+      }
+      UnSet(i, EN_LIFO);
+    }
+    for (x = 0; x < RLIFO1->Sp; x++)
+    {
+      i = RLIFO1->Pts[x];
+      if (S[i]) S[i] = S_OBJECT;
+      else
+      for (k = 0; k < 125; k += 1)        /* parcourt les voisins */
+      {                                  /* pour empiler les voisins */
+	j = voisin125(i, k, rs, ps, N);
+	if ((j != -1) && S[j])
+	{
+	  if (!IsSet(j, EN_LIFO) && !IS_INHIBIT(I[j]) && mctopo3d_simple26(S, j, rs, ps, N))
+	  {     // MARQUE LES POINTS SIMPLES NON DANS I ET LES MET EN FIFO
+	    RlifoPush(&RLIFO2, j);
+	    SET_SIMPLE(S[j]);
+	    Set(j, EN_LIFO);		        
+	  }
+	  mctopo3d_top26(S, j, rs, ps, N, &top, &topb);
+	  if (top > 1) 
+	  { 
+	    SET_CURVE(S[j]);
+	    if (step <= n_earlysteps) SET_EARLYCURVE(I[j]);
+	  }
+	}
+      }
+    }
+
+    // SWAP LIFOS
+    RlifoFlush(RLIFO1);
+    RLIFO3 = RLIFO2;
+    RLIFO2 = RLIFO1;
+    RLIFO1 = RLIFO3;
+
+  } // while (nonstab && (step < n_steps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) 
+    if (S[i]) 
+    {
+      if (IS_EARLYCURVE(I[i]))
+	S[i] = NDG_EARLY;
+      else
+	S[i] = NDG_MAX;
+    }
+
+  freeimage(t);
+  mctopo3d_termine_topo3d();
+  RlifoTermine(RLIFO1);
+  RlifoTermine(RLIFO2);
+  IndicsTermine();
+  return(1);
+} /* lskelACK3a() */
+#endif
 
 /* ==================================== */
 int32_t lskelACK3(struct xvimage *image, 

@@ -63,6 +63,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define PARANO
 
 //#define VERBOSE
+//#define DEBUG
 
 //#define PRIODIR
 
@@ -3568,13 +3569,9 @@ static void rotate90_vois(uint8_t *vois)
 // Tout point candidat (donc simple) a une étiquette >= CAN
 #define OBJ 1
 #define CAN 2
-#define CR1 3
-#define CR0 4
-
-#define CA1 3
-#define CA2 4
-#define CA3 5
-#define CA4 6
+#define CR2 3
+#define CR1 4
+#define CR0 5
 
 /* ==================================== */
 static void CrucialPass1( /* pour un objet en 8-connexite */
@@ -3650,204 +3647,6 @@ x x x  pour que le point central soit étiqueté CR0
   }
 } // CrucialPass2()
 
-//#define OLD
-#ifdef OLD
-/* ==================================== */
-static void NonCrucialPass1( /* pour un objet en 8-connexite */
-  uint8_t *X,      /* pointeur base image */
-  index_t p,       /* index du point */
-  index_t rs,      /* taille rangee */
-  index_t N)       /* taille image */
-/*
-  Repère et marque les cliques cruciales pour <X,C> contenant le point p.
-  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
-*/
-/* ==================================== */
-{
-  int32_t i;
-  uint8_t v[8];
-
-  extract_vois(X, p, rs, N, v);
-
-/*
-x a a
-x C C  avec au moins un des a et au moins un des b non nuls
-x b b  ou : tous les a et tous les b nuls
-*/
-  for (i = 0; i < 4; i++)
-  {
-    if (v[0] < CAN) goto fail1;
-    if ((v[1] == 0) && (v[2] == 0) && (v[6] == 0) && (v[7] == 0)) 
-    { X[p] = CA1; return; }
-    if ((v[1] == 0) && (v[2] == 0)) goto fail1;
-    if ((v[6] == 0) && (v[7] == 0)) goto fail1;
-    X[p] = CA1; 
-    return;
-  fail1:
-    rotate90_vois(v);
-  }
-/*
-x 0 C
-x C 0
-x x x
-*/
-  for (i = 0; i < 4; i++)
-  {
-    if (v[1] < CAN) goto fail2;
-    if ((v[0] != 0) || (v[2] != 0)) goto fail2;
-    X[p] = CA2; 
-    return;
-  fail2:
-    rotate90_vois(v);
-  }
-/*
-0 C 0
-0 C C
-x 0 0
-*/
-  for (i = 0; i < 4; i++)
-  {
-    if ((v[0] < CAN) || (v[2] < CAN)) goto fail3a;
-    if ((v[1] != 0) || (v[3] != 0) || (v[4] != 0) || (v[6] != 0) || (v[7] != 0)) goto fail3a;
-    X[p] = CA3; 
-    return;
-  fail3a:
-    rotate90_vois(v);
-  }
-/*
-x 0 C
-x C C
-x 0 0
-*/
-  for (i = 0; i < 4; i++)
-  {
-    if ((v[0] < CAN) || (v[1] < CAN)) goto fail3b;
-    if ((v[2] != 0) || (v[6] != 0) || (v[7] != 0)) goto fail3b;
-    X[p] = CA3; 
-    return;
-  fail3b:
-    rotate90_vois(v);
-  }
-/*
-x 0 0
-x C C
-x 0 C
-*/
-  for (i = 0; i < 4; i++)
-  {
-    if ((v[0] < CAN) || (v[7] < CAN)) goto fail3c;
-    if ((v[2] != 0) || (v[6] != 0) || (v[1] != 0)) goto fail3c;
-    X[p] = CA3; 
-    return;
-  fail3c:
-    rotate90_vois(v);
-  }
-/*
-0 C C
-0 C C
-x 0 0
-*/
-  for (i = 0; i < 4; i++)
-  {
-    if ((v[0] < CAN) || (v[1] < CAN) || (v[2] < CAN)) goto fail4;
-    if ((v[3] != 0) || (v[4] != 0) || (v[6] != 0) || (v[7] != 0)) goto fail4;
-    X[p] = CA4; 
-    return;
-  fail4:
-    rotate90_vois(v);
-  }
-} // NonCrucialPass1()
-
-/* ==================================== */
-static int32_t NonCrucial( /* pour un objet en 8-connexite */
-  uint8_t *X,      /* pointeur base image */
-  index_t p,       /* index du point */
-  index_t rs,      /* taille rangee */
-  index_t N)       /* taille image */
-/*
-  Teste si le point p est non-crucial pour <X,C>.
-  Les points de l'image X doivent avoir préalablement été étiquetés
-  (voir NonCrucialPass1) 
-*/
-/* ==================================== */
-{
-  int32_t i;
-  uint8_t v[8];
-
-  if (X[p] == CAN) return 1;
-
-  extract_vois(X, p, rs, N, v);
-
-/*
-x a a
-x C C  avec au moins un des a et au moins un des b non nuls
-x b b  ou : tous les a et tous les b nuls
-*/
-  if (X[p] == CA1)
-  {
-    for (i = 0; i < 4; i++)
-    {
-      if (v[0] == CA1) return 0;
-      rotate90_vois(v);
-    }
-    return 1;
-  }
-/*
-x 0 C
-x C 0
-x x x
-*/
-  if (X[p] == CA2)
-  {
-    for (i = 0; i < 4; i++)
-    {
-      if (v[1] == CA2) return 0;
-      rotate90_vois(v);
-    }
-    return 1;
-  }
-/*
-0 C 0
-0 C C
-x 0 0
-
-x 0 C
-x C C
-x 0 0
-
-x 0 0
-x C C
-x 0 C
-*/
-  if (X[p] == CA3)
-  {
-    for (i = 0; i < 4; i++)
-    {
-      if ((v[0] == CA3) && (v[2] == CA3)) return 0;
-      if ((v[0] == CA3) && (v[1] == CA3)) return 0;
-      if ((v[0] == CA3) && (v[7] == CA3)) return 0;
-      rotate90_vois(v);
-    }
-    return 1;
-  }
-/*
-0 C C
-0 C C
-x 0 0
-*/
-  if (X[p] == CA4)
-  {
-    for (i = 0; i < 4; i++)
-    {
-      if ((v[0] == CA4) && (v[1] == CA4) && (v[2] == CA4)) return 0;
-      rotate90_vois(v);
-    }
-    return 1;
-  }
-  assert(1); // this should never happen
-  return 1;
-} // NonCrucial()
-#endif
 
 #define NONCRUCIAL 1
 
@@ -3961,23 +3760,15 @@ int32_t lskelCKG2(struct xvimage *image,
       }
     } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
 
-#ifndef OLD
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass1(F, x, rs, N); }
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass2(F, x, rs, N); }
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
-#else
-    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; NonCrucialPass1(F, x, rs, N); }
-#endif
 
     for (i = 0; i < RLIFO->Sp; i++)
     {
       x = RLIFO->Pts[i];
-#ifndef OLD
       if (F[x] == CAN)
-#else
-      if (NonCrucial(F, x, rs, N))
-#endif
       {
 #ifdef DEBUG_lskelCKG2
 	printf("Non Crucial: %d\n", x);
@@ -4137,23 +3928,15 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
       }
     } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
 
-#ifndef OLD
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass1(F, x, rs, N); }
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass2(F, x, rs, N); }
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
-#else
-    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; NonCrucialPass1(F, x, rs, N); }
-#endif
 
     for (i = 0; i < RLIFO->Sp; i++)
     {
       x = RLIFO->Pts[i];
-#ifndef OLD
       if (F[x] == CAN)
-#else
-      if (NonCrucial(F, x, rs, N))
-#endif
       {
 #ifdef DEBUG_lskelCKG2
 	printf("Non Crucial: %d\n", x);
@@ -4210,6 +3993,401 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
   return(1);
 } /* lskelCKG2map() */
 
+
+#ifdef _3D_A_FINIR
+int32_t lskelCKG3(struct xvimage *image,
+		  struct xvimage *imageprio, 
+		  double val)
+{}
+#else
+/* ==================================== */
+static void extract_vois3d(
+  uint8_t *img,          /* pointeur base image */
+  int32_t p,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N,                       /* taille image */
+  uint8_t *vois)    
+/* 
+  retourne dans "vois" les valeurs des 27 voisins de p, dans l'ordre suivant: 
+
+               12      11      10       
+               13       8       9
+               14      15      16
+
+		3	2	1			
+		4      26	0
+		5	6	7
+
+               21      20      19
+               22      17      18
+               23      24      25
+
+  le point p ne doit pas être un point de bord de l'image
+*/
+/* ==================================== */
+{
+#undef F_NAME
+#define F_NAME "extract_vois3d"
+  register uint8_t * ptr = img+p;
+  if ((p%rs==rs-1) || (p%ps<rs) || (p%rs==0) || (p%ps>=ps-rs) || 
+      (p < ps) || (p >= N-ps)) /* point de bord */
+  {
+    printf("%s: ERREUR: point de bord\n", F_NAME);
+    exit(0);
+  }
+  vois[ 0] = *(ptr+1);
+  vois[ 1] = *(ptr+1-rs);
+  vois[ 2] = *(ptr-rs);
+  vois[ 3] = *(ptr-rs-1);
+  vois[ 4] = *(ptr-1);
+  vois[ 5] = *(ptr-1+rs);
+  vois[ 6] = *(ptr+rs);
+  vois[ 7] = *(ptr+rs+1);
+
+  vois[ 8] = *(ptr-ps);
+  vois[ 9] = *(ptr-ps+1);
+  vois[10] = *(ptr-ps+1-rs);
+  vois[11] = *(ptr-ps-rs);
+  vois[12] = *(ptr-ps-rs-1);
+  vois[13] = *(ptr-ps-1);
+  vois[14] = *(ptr-ps-1+rs);
+  vois[15] = *(ptr-ps+rs);
+  vois[16] = *(ptr-ps+rs+1);
+
+  vois[17] = *(ptr+ps);
+  vois[18] = *(ptr+ps+1);
+  vois[19] = *(ptr+ps+1-rs);
+  vois[20] = *(ptr+ps-rs);
+  vois[21] = *(ptr+ps-rs-1);
+  vois[22] = *(ptr+ps-1);
+  vois[23] = *(ptr+ps-1+rs);
+  vois[24] = *(ptr+ps+rs);
+  vois[25] = *(ptr+ps+rs+1);
+
+  vois[26] = *(ptr);
+} /* extract_vois3d() */
+
+/* ==================================== */
+static void insert_vois3d(
+  uint8_t *vois,			
+  uint8_t *img,          /* pointeur base image */
+  int32_t p,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N)                       /* taille image */    
+/* 
+  recopie vois dans le voisinage de p
+  le point p ne doit pas être un point de bord de l'image
+*/
+/* ==================================== */
+{
+#undef F_NAME
+#define F_NAME "insert_vois3d"
+  register uint8_t * ptr = img+p;
+  if ((p%rs==rs-1) || (p%ps<rs) || (p%rs==0) || (p%ps>=ps-rs) || 
+      (p < ps) || (p >= N-ps)) /* point de bord */
+  {
+    printf("%s: ERREUR: point de bord\n", F_NAME);
+    exit(0);
+  }
+  *(ptr+1) = vois[ 0];
+  *(ptr+1-rs) = vois[ 1];
+  *(ptr-rs) = vois[ 2];
+  *(ptr-rs-1) = vois[ 3];
+  *(ptr-1) = vois[ 4];
+  *(ptr-1+rs) = vois[ 5];
+  *(ptr+rs) = vois[ 6];
+  *(ptr+rs+1) = vois[ 7];
+
+  *(ptr-ps) = vois[ 8];
+  *(ptr-ps+1) = vois[ 9];
+  *(ptr-ps+1-rs) = vois[10];
+  *(ptr-ps-rs) = vois[11];
+  *(ptr-ps-rs-1) = vois[12];
+  *(ptr-ps-1) = vois[13];
+  *(ptr-ps-1+rs) = vois[14];
+  *(ptr-ps+rs) = vois[15];
+  *(ptr-ps+rs+1) = vois[16];
+
+  *(ptr+ps) = vois[17];
+  *(ptr+ps+1) = vois[18];
+  *(ptr+ps+1-rs) = vois[19];
+  *(ptr+ps-rs) = vois[20];
+  *(ptr+ps-rs-1) = vois[21];
+  *(ptr+ps-1) = vois[22];
+  *(ptr+ps-1+rs) = vois[23];
+  *(ptr+ps+rs) = vois[24];
+  *(ptr+ps+rs+1) = vois[25];
+
+  *(ptr) = vois[26];
+} /* insert_vois3d() */
+
+/* ==================================== */
+static void isometrieXZ_vois(uint8_t *vois) 
+// effectue une isométrie du voisinage "vois" par échange des axes X et Z (+ symétries)
+// cette isométrie est de plus une involution
+/* ==================================== */
+{
+  uint8_t v[26];
+  int32_t i;
+  v[ 0] = vois[17];  v[ 1] = vois[20];  v[ 2] = vois[ 2];  v[ 3] = vois[11];
+  v[ 4] = vois[ 8];  v[ 5] = vois[15];  v[ 6] = vois[ 6];  v[ 7] = vois[24];
+  v[ 8] = vois[ 4];  v[ 9] = vois[22];  v[10] = vois[21];  v[11] = vois[ 3];
+  v[12] = vois[12];  v[13] = vois[13];  v[14] = vois[14];  v[15] = vois[ 5];
+  v[16] = vois[23];  v[17] = vois[ 0];  v[18] = vois[18];  v[19] = vois[19];
+  v[20] = vois[ 1];  v[21] = vois[10];  v[22] = vois[ 9];  v[23] = vois[16];
+  v[24] = vois[ 7];  v[25] = vois[25];
+  for (i = 0; i < 26; i++) vois[i] = v[i];
+} /* isometrieXZ_vois() */
+
+/* ==================================== */
+static void isometrieYZ_vois(uint8_t *vois)
+// effectue une isométrie du voisinage "vois" par échange des axes Y et Z (+ symétries)  
+// cette isométrie est de plus une involution
+/* ==================================== */
+{
+  uint8_t v[26];
+  int32_t i;
+  v[ 0] = vois[ 0];  v[ 1] = vois[18];  v[ 2] = vois[17];  v[ 3] = vois[22];
+  v[ 4] = vois[ 4];  v[ 5] = vois[13];  v[ 6] = vois[ 8];  v[ 7] = vois[ 9];
+  v[ 8] = vois[ 6];  v[ 9] = vois[ 7];  v[10] = vois[25];  v[11] = vois[24];
+  v[12] = vois[23];  v[13] = vois[ 5];  v[14] = vois[14];  v[15] = vois[15];
+  v[16] = vois[16];  v[17] = vois[ 2];  v[18] = vois[ 1];  v[19] = vois[19];
+  v[20] = vois[20];  v[21] = vois[21];  v[22] = vois[ 3];  v[23] = vois[12];
+  v[24] = vois[11];  v[25] = vois[10];
+  for (i = 0; i < 26; i++) vois[i] = v[i];
+} /* isometrieYZ_vois() */
+
+#ifdef DEBUG
+static int trace = 1;
+#endif
+
+/* ==================================== */
+static int32_t match_vois2(uint8_t *v)
+/* ==================================== */
+/*
+               12      11      10       
+               13       8       9
+               14      15      16
+
+		3	2	1			
+		4      26	0
+		5	6	7
+Teste si les conditions suivantes sont réunies:
+1: v[8] et v[26] doivent être marqués CAN
+2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit être non 2D-simple
+Si le test réussit, les points 8, 26 sont marqués CR2
+*/
+{
+  uint8_t t;
+#ifdef DEBUG
+  if (trace)
+  {  
+    printf("match_vois2\n");
+    //    print_vois(v);
+  }
+#endif
+  if ((v[8] < CAN) || (v[26] < CAN)) return 0;
+  if (v[0] || v[9]) t = 1; else t = 0;
+  if (v[1] || v[10]) t |= 2;
+  if (v[2] || v[11]) t |= 4;
+  if (v[3] || v[12]) t |= 8;
+  if (v[4] || v[13]) t |= 16;
+  if (v[5] || v[14]) t |= 32;
+  if (v[6] || v[15]) t |= 64;
+  if (v[7] || v[16]) t |= 128;
+  if ((t4b(t) == 1) && (t8(t) == 1)) return 0; // simple 2D
+  v[8] = v[26] = CR2;
+#ifdef DEBUG
+  if (trace)
+    printf("match !\n");
+#endif
+  return 1;
+} // match_vois2()
+
+/* ==================================== */
+static int32_t match_vois1(uint8_t *v)
+/* ==================================== */
+// A A  P1 P2  B B
+// A A  P3 P4  B B
+// avec pour localisations possibles :
+// 12 11   3  2   21 20 
+// 13  8   4 26   22 17
+// et :
+// 11 10    2 1   20 19
+//  8  9   26 0   17 18
+//
+// Teste si les trois conditions suivantes sont réunies:
+// 1: (P1 et P4) ou (P2 et P3)
+// 2: tous les points Pi non nuls doivent être simples et non marqués CR2
+// 3: A et B sont tous nuls ou [au moins un A non nul et au moins un B non nul]
+// Si le test réussit, les points Pi non nuls sont marqués CR1
+{
+  int32_t ret = 0;
+#ifdef DEBUG
+  if (trace)
+  {  
+    printf("match_vois1\n");
+    //    print_vois(v);
+  }
+#endif
+  if (!((v[2] && v[4]) || (v[3] && v[26]))) goto next1;
+  if ((v[2]  && (v[2] != CAN)) ||
+      (v[3]  && (v[3] != CAN)) ||
+      (v[4]  && (v[4] != CAN)) ||
+      (v[26] && (v[26] != CAN))) goto next1;
+  if ((v[12] || v[11] || v[13] || v[8] || v[21] || v[20] || v[22] || v[17]) &&
+      ((!v[12] && !v[11] && !v[13] && !v[8]) || 
+       (!v[21] && !v[20] && !v[22] && !v[17]))) goto next1;
+  if (v[2])  v[2] = CR1;
+  if (v[3])  v[3] = CR1;
+  if (v[4])  v[4] = CR1;
+  if (v[26]) v[26] = CR1;
+  ret = 1;
+ next1:
+  if (!((v[2] && v[0]) || (v[1] && v[26]))) goto next2;
+  if ((v[2]  && (v[2] != CAN)) ||
+      (v[1]  && (v[1] != CAN)) ||
+      (v[0]  && (v[0] != CAN)) ||
+      (v[26]  && (v[26] != CAN))) goto next2;
+  if ((v[10] || v[11] || v[9] || v[8] || v[19] || v[20] || v[18] || v[17]) &&
+      ((!v[10] && !v[11] && !v[9] && !v[8]) || 
+       (!v[19] && !v[20] && !v[18] && !v[17]))) goto next2;
+  if (v[2])  v[2] = CR1;
+  if (v[1])  v[1] = CR1;
+  if (v[0])  v[0] = CR1;
+  if (v[26]) v[26] = CR1;
+  ret = 1;
+ next2:
+#ifdef DEBUG
+  if (trace && ret)
+    printf("match !\n");
+#endif
+  return ret;
+} // match_vois1()
+
+/* ==================================== */
+static int32_t match_vois0(uint8_t *v)
+/* ==================================== */
+/*
+               12      11
+               13       8
+
+		3	2
+		4      26
+
+Teste si les conditions suivantes sont réunies:
+1: au moins un des ensembles {12,26}, {11,4}, {13,2}, {8,3} est inclus dans l'objet, et
+2: les points non nuls sont tous simples, non marqués 2M_CRUCIAL et non marqués 1M_CRUCIAL
+Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
+*/
+{
+#ifdef DEBUG
+  if (trace)
+  {  
+    printf("match_vois0\n");
+    //    print_vois(v);
+  }
+#endif
+  if (!((v[12]&&v[26]) || (v[11]&&v[4]) || (v[13]&&v[2]) || (v[8]&&v[3]) )) return 0;
+
+  if (v[12] && (v[12] != CAN)) return 0;
+  if (v[26] && (v[26] != CAN)) return 0;
+  if (v[11] && (v[11] != CAN)) return 0;
+  if (v[ 4] && (v[ 4] != CAN)) return 0;
+  if (v[13] && (v[13] != CAN)) return 0;
+  if (v[ 2] && (v[ 2] != CAN)) return 0;
+  if (v[ 8] && (v[ 8] != CAN)) return 0;
+  if (v[ 3] && (v[ 3] != CAN)) return 0;
+
+  if (v[12]) v[12] = CR0;
+  if (v[26]) v[26] = CR0;
+  if (v[11]) v[11] = CR0;
+  if (v[ 4]) v[ 4] = CR0;
+  if (v[13]) v[13] = CR0;
+  if (v[ 2]) v[ 2] = CR0;
+  if (v[ 8]) v[ 8] = CR0;
+  if (v[ 3]) v[ 3] = CR0;
+#ifdef DEBUG
+  if (trace)
+    printf("match !\n");
+#endif
+  return 1;
+} // match_vois0()
+
+/* ==================================== */
+static void CrucialPass3d2(
+  uint8_t *X,      /* pointeur base image */
+  index_t p,       /* index du point */
+  index_t rs,      /* taille rangee */
+  int32_t ps,      /* taille plan */
+  index_t N)       /* taille image */
+/*
+  Repère et marque CR2 les cliques 2-cruciales pour <X,C> contenant le point p.
+  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
+  Il est supposé que X[p] == CAN (pas de test).
+*/
+/* ==================================== */
+{
+  uint8_t v[27];
+  extract_vois3d(X, p, rs, ps, N, v);
+  (void)match_vois2(v);
+  isometrieXZ_vois(v);
+  (void)match_vois2(v);
+  isometrieXZ_vois(v);
+  isometrieYZ_vois(v);
+  (void)match_vois2(v);
+  isometrieYZ_vois(v);
+  insert_vois3d(v, X, p, rs, ps, N);
+} // CrucialPass3d2()
+
+/* ==================================== */
+static void CrucialPass3d1(
+  uint8_t *X,      /* pointeur base image */
+  index_t p,       /* index du point */
+  index_t rs,      /* taille rangee */
+  int32_t ps,      /* taille plan */
+  index_t N)       /* taille image */
+/*
+  Repère et marque CR1 les cliques 1-cruciales pour <X,C> contenant le point p.
+  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
+  Il est supposé que X[p] == CAN (pas de test).
+*/
+/* ==================================== */
+{
+  uint8_t v[27];
+  extract_vois3d(X, p, rs, ps, N, v);
+  (void)match_vois1(v);
+  isometrieXZ_vois(v);
+  (void)match_vois1(v);
+  isometrieXZ_vois(v);
+  isometrieYZ_vois(v);
+  (void)match_vois1(v);
+  isometrieYZ_vois(v);
+  insert_vois3d(v, X, p, rs, ps, N);
+} // CrucialPass3d1()
+
+/* ==================================== */
+static void CrucialPass3d0(
+  uint8_t *X,      /* pointeur base image */
+  index_t p,       /* index du point */
+  index_t rs,      /* taille rangee */
+  int32_t ps,      /* taille plan */
+  index_t N)       /* taille image */
+/*
+  Repère et marque CR0 les cliques 0-cruciales pour <X,C> contenant le point p.
+  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
+  Il est supposé que X[p] == CAN (pas de test).
+*/
+/* ==================================== */
+{
+  uint8_t v[27];
+  extract_vois3d(X, p, rs, ps, N, v);
+  (void)match_vois0(v);
+  insert_vois3d(v, X, p, rs, ps, N);
+} // CrucialPass3d0()
+
 /* ==================================== */
 int32_t lskelCKG3(struct xvimage *image,
 		  struct xvimage *imageprio, 
@@ -4223,7 +4401,9 @@ int32_t lskelCKG3(struct xvimage *image,
   index_t x, y;                    /* index de pixel */
   index_t rs = rowsize(imageprio); /* taille ligne */
   index_t cs = colsize(imageprio); /* taille colonne */
-  index_t N = rs * cs;             /* taille image */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(imageprio);   /* nb plans */
+  index_t N = ps * ds;             /* taille image */
   int32_t *P = NULL;   /* l'image de priorites (cas int32) */
   uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
   float   *PF = NULL;  /* l'image de priorites (cas float) */
@@ -4234,10 +4414,151 @@ int32_t lskelCKG3(struct xvimage *image,
   Rlifo * RLIFO;
   double curprio;
 
-  ONLY_2D(image); // 3D NOT YET IMPLEMENTED !!!!
+  ONLY_3D(image);
   ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
   ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
   COMPARE_SIZE(image, imageprio);
 
+  mctopo3d_init_topo3d();  
+  IndicsInit(N);
+
+  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
+    P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
+  else 
+  {
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
+    return(0);
+  }
+
+  taillemaxrbt = 2 * cs +  2 * rs +  2 * ps;
+  /* cette taille est indicative, le RBT est realloue en cas de depassement */
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
+  if (RBT == NULL)
+  {
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
+    return(0);
+  }
+  RLIFO = CreeRlifoVide(taillemaxrbt);
+  if (RLIFO == NULL)
+  {
+    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
+    return(0);
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  /* ========================================================= */
+  /*   INITIALISATION DU RBT */
+  /* ========================================================= */
+
+  for (x = 0; x < N; x++)
+  {
+    if (F[x]) F[x] = OBJ;
+    if (F[x] && mctopo3d_bordext26(F, x, rs, ps, N))
+    {
+      switch(datatype(imageprio))
+      {
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
+      }
+      Set(x, EN_RBT);
+    }
+  }
+
+  /* ================================================ */
+  /*                  DEBUT SATURATION                */
+  /* ================================================ */
+
+  while (!mcrbt_RbtVide(RBT))
+  {
+    curprio = RbtMinLevel(RBT);
+//#define DEBUG_lskelCKG3
+#ifdef DEBUG_lskelCKG3
+      printf("entering loop, curprio: %g\n", curprio);
+#endif
+    if (curprio >= val) break;
+    do
+    {
+      x = RbtPopMin(RBT);
+#ifdef DEBUG_lskelCKG3
+      printf("pop: %d\n", x);
+#endif
+      UnSet(x, EN_RBT);
+      if (F[x] && mctopo3d_simple26(F, x, rs, ps, N))
+      {
+	RlifoPush(&RLIFO, x);
+	F[x] = CAN;
+      }
+    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
+
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass3d2(F, x, rs, ps, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass3d1(F, x, rs, ps, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass3d0(F, x, rs, ps, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+
+    for (i = 0; i < RLIFO->Sp; i++)
+    {
+      x = RLIFO->Pts[i];
+
+      if (F[x] == CAN)
+      {
+#ifdef DEBUG_lskelCKG3
+	printf("Non Crucial: %d\n", x);
+#endif
+	Set(x, NONCRUCIAL); // marque le point pour effacement ulterieur
+        for (k = 0; k < 26; k += 1) // parcourt les voisins en 8-connexite
+        {                          // pour empiler les voisins non deja empiles
+          y = voisin26(x, k, rs, ps, N);
+          if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
+          {
+	    switch(datatype(imageprio))
+	    {
+	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
+	    }
+#ifdef DEBUG_lskelCKG3
+	    printf("push: %d\n", y);
+#endif
+            Set(y, EN_RBT);
+          } // if y
+        } // for k
+      } // if (NonCrucial(F, C, x, rs, N)
+    } // for (i = 0; i < RLIFO->Sp; i++)
+
+    for (i = 0; i < RLIFO->Sp; i++)
+    {
+      x = RLIFO->Pts[i];
+      if (IsSet(x, NONCRUCIAL)) F[x] = 0;
+    }
+
+    RlifoFlush(RLIFO);
+
+  } // while (!mcrbt_RbtVide(RBT))
+
+  for (x = 0; x < N; x++) if (F[x]) F[x] = NDG_MAX;
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  mctopo3d_termine_topo3d();
+  mcrbt_RbtTermine(RBT);
+  RlifoTermine(RLIFO);
   return(1);
 } /* lskelCKG3() */
+#endif

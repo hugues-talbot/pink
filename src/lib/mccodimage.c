@@ -716,3 +716,28 @@ int32_t sont18voisins(index_t p, index_t q, index_t rs, index_t ps)
   index_t az = mcabs(zp-zq);
   return ((mcmax(axy,az) == 1) && ((ax + ay + az) <= 2));
 }
+
+/* ==================================== */
+int32_t voisin125(index_t i, int32_t k, index_t rs, index_t ps, index_t N)
+/* i : index du point dans l'image */
+/* k : index du voisin (entre 0 et 124) */
+/* rs : taille d'une rangee */
+/* ps : taille d'un plan */
+/* N : taille de l'image 3D */
+/* retourne -1 si le voisin n'existe pas */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "voisin125"
+{
+  int32_t x, y, z, dx, dy, dz, cs = ps / rs, ds =  N / ps;
+  dx = (k % 5) - 2;
+  dy = ((k % 25) / 5) - 2;
+  dz = (k / 25) - 2;
+  x = (i % rs) + dx;
+  y = ((i % ps) / rs) + dy;
+  z = (i / ps) + dz;
+  if ((x < 0) || (x >= rs)) return -1;
+  if ((y < 0) || (y >= cs)) return -1;
+  if ((z < 0) || (z >= ds)) return -1;
+  return z*ps + y*rs + x;
+} // voisin125()

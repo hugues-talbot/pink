@@ -225,6 +225,7 @@ extern int32_t sont6voisins(index_t p, index_t q, index_t rs, index_t ps);
 extern int32_t sont18voisins(index_t p, index_t q, index_t rs, index_t ps);
 extern int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps);
 
+extern int32_t voisin125(index_t i, int32_t k, index_t rs, index_t ps, index_t N);
 
 #  define                                               \
   ACCEPTED_TYPES1(I, T0)                                \

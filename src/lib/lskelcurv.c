@@ -3925,7 +3925,7 @@ static int32_t compute_vectors_from_junction6(
 
     // calcul de la courbure au point ijunc
 //    curv[i+j-1+ajust] = calc_courbure(X, Y, Z, npoints, ijunc);
-    curv[i+j-1+ajust] = calc_inv_angle(X, Y, Z, npoints, ijunc, 2.3);
+    curv[i+j-1+ajust] = calc_inv_angle(X, Y, Z, npoints, ijunc, 2.6);
 
 #ifdef DEBUG_lskelfilter6
     printf("%s: courbe %d - %d   ", F_NAME, i, j);
