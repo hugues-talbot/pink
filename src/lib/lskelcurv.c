@@ -3806,6 +3806,7 @@ static int32_t compute_vectors_from_junction6(
    int32_t *cube,	   // variable temporaire : tableau de 216 int32_t
    int32_t *listpoints,    // variable temporaire : points de courbe
    int32_t nmaxpoints,     // taille max de la liste listpoints (nmaxpoints >> nbr de points d'une courbe)
+   double thickness,       // pour l'estimation des angles
    int32_t *X, int32_t *Y, int32_t *Z	 // variable temporaire : tableau des points de courbe (coordonnées)
 )
 // ----------------------------------------------------------------------
@@ -3925,7 +3926,7 @@ static int32_t compute_vectors_from_junction6(
 
     // calcul de la courbure au point ijunc
 //    curv[i+j-1+ajust] = calc_courbure(X, Y, Z, npoints, ijunc);
-    curv[i+j-1+ajust] = calc_inv_angle(X, Y, Z, npoints, ijunc, 2.6);
+    curv[i+j-1+ajust] = calc_inv_angle(X, Y, Z, npoints, ijunc, thickness);
 
 #ifdef DEBUG_lskelfilter6
     printf("%s: courbe %d - %d   ", F_NAME, i, j);
@@ -4065,7 +4066,7 @@ static int32_t compute_vectors_from_junction6(
 } // compute_vectors_from_junction6()
 
 /* ---------------------------------------------------------------------- */
-struct xvimage * lskelfilter6(skel *S, double maxbridgelength, double maxelbowangle)
+struct xvimage * lskelfilter6(skel *S, double maxbridgelength, double maxelbowangle, double thickness)
 /* ---------------------------------------------------------------------- */
 /*
   "Mikado game" algorithm
@@ -4114,7 +4115,7 @@ struct xvimage * lskelfilter6(skel *S, double maxbridgelength, double maxelbowan
   // compute all tangent vectors
   for (j = S->e_curv; j < S->e_junc; j++) // scan all junctions
   {
-    ret = compute_vectors_from_junction6( S, j, cube, listpoints, nmaxpoints, X, Y, Z);
+    ret = compute_vectors_from_junction6( S, j, cube, listpoints, nmaxpoints, thickness, X, Y, Z);
   }
 
   free(listpoints);
