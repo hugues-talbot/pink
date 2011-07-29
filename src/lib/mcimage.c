@@ -1930,7 +1930,7 @@ struct xvimage *readtiffimage(char *filename)
 //HAVE_TIFF_LIB
 
 /* ==================================== */
-struct xvimage * readimage(char *filename)
+struct xvimage * readimage( const char *filename )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "readimage"

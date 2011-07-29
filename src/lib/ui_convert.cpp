@@ -59,8 +59,8 @@ namespace pink {
   
     xvimage * res = long2byte( local_copy.get_output(), mode, nbnewval );
 
-    char_image result(*res);
-    freeimage(res);
+    char_image result(res);
+    free(res); // NOT freeimage!!!!
 
     return result;    
   } /* long2byte */

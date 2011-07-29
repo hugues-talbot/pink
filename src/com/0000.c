@@ -11,8 +11,9 @@ different fields. It is a free software licensed under the
 license. 
 
 \section screenshots Screenshots
-<A HREF="http://developer.berlios.de/screenshots/?group_id=12429"> The
-screenshots can be found here </A>.
+
+<A HREF="http://developer.berlios.de/screenshots/?group_id=12429">
+Screenshots can be found here. </A>
 
 \section download Download
 

@@ -250,18 +250,18 @@ namespace pink {
 
 
   
-    char_image skeleton_ultimate( char_image * uj_image, 
-                                     int_image * uj_prio,
-                                     int priocode,
-                                     int connex, 
-                                     char_image * uj_inhibit,
-                                     int inhibitcode,
-                                     bool inhibit_image, // true if there is an inhibit image
-                                     bool inhibit_value, // true if there is an inhibit value
-                                     bool prio_image, // if true, than the priority is an image, 
-                                     // else it's a number, which is important
-                                     bool prio_value
-                                 
+    char_image skeleton_ultimate(
+      char_image * uj_image, 
+      int_image  * uj_prio,
+      int          priocode,
+      int          connex, 
+      char_image * uj_inhibit,
+      int          inhibitcode,
+      bool         inhibit_image, // true if there is an inhibit image
+      bool         inhibit_value, // true if there is an inhibit value
+      bool         prio_image, // if true, than the priority is an image, 
+      // else it's a number, which is important
+      bool         prio_value
       )
     {
 
@@ -273,12 +273,12 @@ namespace pink {
       int32_t inhibvalue;
 
       image = uj_image->get_output(); // xvimage* uj_image -> operator&()
-      if ( inhibit_image )
+      if (inhibit_image)
       {
         inhibimage = uj_inhibit->get_output();
       } /* inhibit_image */
 
-      if ( prio_image )
+      if (prio_image)
       {
         prio = uj_prio->get_output();
       }
@@ -301,7 +301,8 @@ namespace pink {
     
 
         // calculating the appropriate distance map
-        switch ( priocode ){
+        switch ( priocode )
+        {
       
         case 0:
           if ( depth( image ) == 1 )
@@ -358,14 +359,14 @@ namespace pink {
             pink_error("lskelubp2 failed");
           }
 
-          result = *image;
+          result.copy(*uj_image); // image == uj_image
         }
         else  /* not (inhibit_image) */
         {
           if (! lskelubp( image, prio, connex, inhibvalue ) )
             pink_error("lskelubp failed");
       
-          result = *image;
+          result.copy(*uj_image); // image == uj_image
         }
       } 
       else /* not  (depth(image) == 1) */ 
@@ -377,7 +378,7 @@ namespace pink {
             pink_error("lskelubp3d2 failed");
           }
 
-          result = *image;
+          result.copy(*uj_image); // image == uj_image
         }
         else /* not (inhibit_image) */
         {
@@ -386,12 +387,12 @@ namespace pink {
             pink_error("lskelubp3d failed");
           }
       
-          result = *image;
+          result.copy(*uj_image); // image == uj_image
         }
       } /* not (depth(image) == 1) */
 
 
-      if (!prio_image ) freeimage(prio);
+      if (!prio_image) freeimage(prio);
       return result;
     };
 

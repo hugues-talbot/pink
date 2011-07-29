@@ -119,8 +119,8 @@ namespace pink {
         if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
         
       
-      int_image result(*prio);
-      freeimage(prio);
+      int_image result(prio);
+      free(prio); // NOT freeimage!!!
       
       return result;      
     } /* priority_image */

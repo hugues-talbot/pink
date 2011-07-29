@@ -27,17 +27,12 @@
 #ifndef __UJIMAGE_HPP
 #define __UJIMAGE_HPP
 
-#include <fstream>
 #include <string>
+#include <fstream>
 
-#include "uiFibreTypes.h"
-#include "mccodimage.h"
 #include "mcimage.h"
-
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in ujimage.hpp: " << msg; call_error(fullmessage.str());}
-
-//#define UJIMAGE_DEBUG
+#include "mccodimage.h"
+#include "uiFibreTypes.h"
 
 
 
@@ -104,26 +99,26 @@ namespace pink
 //#error: this image type is not defined
     std::string imtype() const 
       {         			      
-	error("unimplemented image type specialization");
+	pink_error("unimplemented image type specialization");
       }
     index_t int_pixel_type() const 
       {
-        error("unimplemented image type specialization");
+        pink_error("unimplemented image type specialization");
       }
     
     pixel_type sub( pixel_type a, pixel_type b )
       {
-        error("unimplemented image type specialization");
+        pink_error("unimplemented image type specialization");
       }
     
     pixel_type add( pixel_type a, pixel_type b)
       {
-        error("unimplemented image type specialization");
+        pink_error("unimplemented image type specialization");
       }
 
     void init_pixel( pixel_type & a )
       {
-        error("unimplemented image type specialization");
+        pink_error("unimplemented image type specialization");
       }
     
     
@@ -197,6 +192,35 @@ namespace pink
     std::string imtype(); // returns the image type
   }; /* xvImage: xvimage */
  
+
+
+  /**
+  \brief This structure frees the images, that have been allocated by
+  readimage.
+
+  description As readimage is a C function, it uses malloc to allocate
+  it's images. The images can not be pre-allocated as their type and
+  size is not known at the time readimage is called. This object is
+  used to 'free' the memory when ujoi is created from an xvimage. Note
+  that the data is not copyed, so the xvimage structure should not be
+  automatically freed.
+  */  
+  struct liberator_t
+  {
+
+    template<class T0>
+    inline void operator()( T0 * p )
+      {
+#       if UJIMAGE_DEBUG >= 2
+        std::cout << "liberator_t called" << std::endl;
+#       endif /* UJIMAGE_DEBUG >= 2 */
+        free(reinterpret_cast<void*>(p));
+      }
+  
+  }; /* struct liberator_t */
+
+
+
   /**
   \brief This class forms the base of all image classes.
   
@@ -314,10 +338,20 @@ namespace pink
     ujoi( std::string filename, std::string debug="" );
 
     /**
-    \brief Deep constructor. 
-    Takes 'xvimage' and makes a copy. It is not embeddable becouse
-    readimage's using malloc/free, whereas boost's using new/delete 
+    \brief Embedding constructor. 
+    Takes 'xvimage' DOES NOT make a copy. It is embedded 
+    supposing that xvimage was created with malloc/free.
     \param src Source object.
+    \param debug Holds an optional name for debug purposes. Never
+    really catched on.
+    */    
+    ujoi( xvimage * src, std::string debug="" ); 
+
+    /**
+    \brief Deep constructor. 
+
+    Takes 'xvimage' and makes a copy.
+    
     \param debug Holds an optional name for debug purposes. Never
     really catched on.
     */    
@@ -584,7 +618,6 @@ namespace pink
     operator form.
     */
     image_type operator=( pixel_type value ); // equivalent with function fill
-
 
     bool operator==( const image_type & other ) const;
     image_type operator+=( const image_type & other );
@@ -996,6 +1029,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi<pixel_type >::ujoi( const std::string & filename ) */
 
 
+  
   template <class pixel_type>
   ujoi<pixel_type>::ujoi( std::string filename, std::string debug )
   {
@@ -1009,14 +1043,14 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     if (! (tmp = readimage(const_cast<char*>(filename.c_str()))) ) // readimage takes char* but hopefully does not change it
     {
-      error("cannot read file '" + filename + "'");      
+      pink_error("cannot read file '" + filename + "'");      
     } 
     
     writeimage(tmp, "tmp.pgm");
     
     if (tmp->data_storage_type != this->int_pixel_type() )
     {
-      error("The image type of '" + filename + "' is '" + image_type_string(tmp->data_storage_type)
+      pink_error("The image type of '" + filename + "' is '" + image_type_string(tmp->data_storage_type)
             + "', but expected '" + this->imtype() + "'." );
     } /* if */
       
@@ -1043,9 +1077,47 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     freeimage(tmp);
     
   } /* ujoi::ujoi */
+
+
   
   template <class pixel_type >
-  ujoi<pixel_type >::ujoi( const struct xvimage & src, std::string debug ) {
+  ujoi<pixel_type >::ujoi( xvimage * src, std::string debug )
+    : pixels( reinterpret_cast<pixel_type*>(src->image_data), liberator_t() )
+  {
+    
+#   if UJIMAGE_DEBUG >= 2
+    this->debug=debug; // representing the name of the object if debugged
+    std::cerr << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << std::endl;
+#   endif /* UJIMAGE_DEBUG */
+
+    if (image_type_string(src->data_storage_type)!=this->imtype())
+    {
+      pink_error("The image type is '" + image_type_string(src->data_storage_type)
+            + "', but expected '" + this->imtype() + "'." );
+    } /* image_type(src.data_storage_type)!=this->imtype() */
+    
+    this->size.reset(
+      new vint(
+        *getDimensions( // detecting the dimensions according to row-, col-, depth- and time_size.
+          src->row_size, 
+          src->col_size, 
+          src->depth_size, 
+          src->time_size
+          )
+        )
+      );
+
+    // setting up the center
+    this->center.reset( new vint( size->size(), -1 ));
+
+    // the pixels are fetched at the constructor.
+  } /* ujoi::ujoi */
+
+
+  
+  template <class pixel_type >
+  ujoi<pixel_type >::ujoi( const xvimage & src, std::string debug )
+  {
     
 #   if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
@@ -1054,7 +1126,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     if (image_type_string(src.data_storage_type)!=this->imtype())
     {
-      error("The image type is '" + image_type_string(src.data_storage_type)
+      pink_error("The image type is '" + image_type_string(src.data_storage_type)
             + "', but expected '" + this->imtype() + "'." );
     } /* image_type(src.data_storage_type)!=this->imtype() */
     
@@ -1071,16 +1143,19 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     // setting up the center
     this->center.reset( new vint( size->size(), -1 ));
-  
-    this->pixels.reset( new pixel_type[ size->prod() ] ); // allocating the array for the pixel types
 
-    std::copy( &(static_cast<pixel_type*>(src.image_data)[0]),
-               &(static_cast<pixel_type*>(src.image_data)[this->size->prod()]),
-               this->pixels.get()
+    this->pixels.reset( new pixel_type[ size->prod() ] ); // allocating the array for the pixel types
+    
+    std::copy(
+      &(static_cast<pixel_type*>(src.image_data)[0]),
+      &(static_cast<pixel_type*>(src.image_data)[this->size->prod()]),
+      this->pixels.get()
       );
 
   } /* ujoi::ujoi */
 
+
+  
   template <class im_type >
   ujoi<im_type>::ujoi( const ujoi< im_type > & src, std::string debug ) // SHALLOW_copy_constructor
     : size(src.size), center(src.center), old_school(src.old_school), pixels(src.pixels)
@@ -1093,6 +1168,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::ujoi */
 
 
+  
   template <class im_type>
   ujoi<im_type> ujoi<im_type>::operator=( const image_type & other )     // SHALLOW_copy constructor
   {
@@ -1129,11 +1205,11 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     FOR(q, size->prod())
     {      
       this->init_pixel(this->pixels[q]);      
-    };
-    
-
+    };  
   } /* ujoi::ujoi */
 
+
+  
   template <class pixel_type >
   ujoi<pixel_type >::ujoi( const boost::python::list & dim, std::string debug ){
 
@@ -1152,10 +1228,10 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     {      
       this->init_pixel(this->pixels[q]);      
     };
-
   } /* ujoi::ujoi */
 
 
+  
   template <class pixel_type >
   ujoi<pixel_type >::~ujoi( ){
 
@@ -1210,7 +1286,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   template<class pixel_type>
   void write_a_pixel( std::fstream & s, pixel_type & value ) 
   {
-    error("write_a_pixel called with a wrong pixel type");
+    pink_error("write_a_pixel called with a wrong pixel type");
   } /* write_a_pixel default */
 
   template<> // implemented in 'ujimage.cpp'
@@ -1222,9 +1298,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
   template <class pixel_type >
   void ujoi<pixel_type >::_write_amira( const std::string & filename ) const // exports the image into an amira mesh (.am) file
-  { 
-  
-    
+  {   
     std::string typetext;
   
     switch (this->int_pixel_type())  { 
@@ -1239,13 +1313,13 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       
     default:
       std::cerr << "\nfile: " << filename; 
-      error("you can export only 'char' and 'float' images at this point");	
+      pink_error("you can export only 'char' and 'float' images at this point");	
     } /* switch */
         
     if (this->size->size()!=3)
     {
       std::cerr << "file: " << filename; 
-      error("you can export only 3D images at this point");
+      pink_error("you can export only 3D images at this point");
     } 
     else /* NOT this->size.size()!=3 */
     {
@@ -1309,6 +1383,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     return this->get_output();    
   } /* ujoi::xvimage*  */
 
+
+  
   template <class pixel_type>
   ujoi<pixel_type>::operator const xvimage* () const // this method is not exported to python. It could not even be, as boost doesn't support pointers.
   {
@@ -1316,10 +1392,11 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::xvimage*  */
 
 
+  
   template <class pixel_type >
   xvimage* ujoi<pixel_type >::get_output(){
     if (this->size->size()>4){
-      error("error: Images with more than four dimensions can not be extracted to 'xvimage'");
+      pink_error("error: Images with more than four dimensions can not be extracted to 'xvimage'");
     }; /* this->size.size()>4 */
 
     this->old_school.reset( new shallow_xvimage( *size, this->int_pixel_type() ) );
@@ -1344,7 +1421,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     if ( ( pos < 0 ) or (pos > this->size->prod()) ) // note pos == size->prod intentionally left in for std::copy
     {
       std::cerr << "error: number of elements is " << this->size->prod() << " while pos = " << pos << std::endl;
-      error("You are trying to access elements outside of the image\n");
+      pink_error("You are trying to access elements outside of the image\n");
     } /* if */
 #   endif /* UJIMAGE_DEBUG */
 
@@ -1365,7 +1442,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     if ( ( pos < 0 ) or (pos > this->size->prod()) ) // note pos == size->prod intentionally left in for std::copy
     {
       std::cerr << "error: number of elements is " << this->size->prod() << " while pos = " << pos << std::endl;
-      error("You are trying to access elements outside of the image\n");
+      pink_error("You are trying to access elements outside of the image\n");
     } /* if */
 #   endif /* UJIMAGE_DEBUG */
 
@@ -1401,7 +1478,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     if ( not size->inside(pos) )
     {
       std::cerr << "error: image dimensions are " << this->size->repr() << " while pos = " << pos.repr() << "\n";
-      error("You are trying to access elements outside of the image\n");
+      pink_error("You are trying to access elements outside of the image\n");
     } /* if */
 #   endif /* UJIMAGE_DEBUG */
 
@@ -1421,7 +1498,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     if ( not size->inside(pos) )
     {
       std::cerr << "error: image dimensions are " << this->size->repr() << " while pos = " << pos.repr() << "\n";
-      error("You are trying to access elements outside of the image\n");
+      pink_error("You are trying to access elements outside of the image\n");
     } /* if */
 #   endif /* UJIMAGE_DEBUG */
 
@@ -1534,12 +1611,16 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     return *size;
   } /* ujoi:: get_size */
 
+
+  
   template <class pixel_type >
   const vint & ujoi<pixel_type >::get_center() const
   {
     return *center;
   } /* ujoi::get_center */
 
+
+  
   template <class pixel_type >
   vint & ujoi<pixel_type >::get_center()
   {
@@ -1553,7 +1634,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     if ( new_center.size() != size->size() )
     {      
-      error("set_center: the center coordinate has to have the same dimension as the image");      
+      pink_error("set_center: the center coordinate has to have the same dimension as the image");      
     }
     else 
     {
@@ -1562,6 +1643,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     
   } /* ujoi::set_center_vint */
 
+
+  
   template <class pixel_type >
   const vint & ujoi<pixel_type >::get_center_vint() const
   {
@@ -1578,7 +1661,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     if ( vint_new_center.size() != size->size() )
     {      
-      error("set_center: the center coordinate has to have the same dimension as the image");
+      pink_error("set_center: the center coordinate has to have the same dimension as the image");
     }
     else /* NOT vint_new_center.size() != size->size() */
     {      
@@ -1613,6 +1696,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::get_pixels */
 
 
+  
   template <class pixel_type >
   std::string ujoi<pixel_type >::repr() const
   {
@@ -1626,6 +1710,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     return result;
   } /* ujoi::repr */
 
+
+  
   template <class pixel_type >
   ujoi<pixel_type> ujoi<pixel_type >::fill( pixel_type value ) 
   {
@@ -1637,12 +1723,14 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     return *this;    
   } /* ujoi::fill */
   
+
   
   template <class pixel_type>
   ujoi<pixel_type> ujoi<pixel_type>::operator=( pixel_type value ) // equivalent with function fill
   {
     this->fill(value);    
   } /* ujoi::operator= */
+
 
   
   template <class pixel_type >
@@ -1659,6 +1747,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     return true;
   } /* ujoi::operator== */
 
+  
 
   template <class pixel_type >
   ujoi<pixel_type> ujoi<pixel_type >::operator+=( const image_type & other )
@@ -1670,7 +1759,6 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     
     return *this;    
   } /* ujoi::operator+= */
-
 
 
 
@@ -1800,6 +1888,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::volume */
   
 
+  
   template <class pixel_type >
   void ujoi<pixel_type >::reset( image_type & other )
   {
@@ -1809,6 +1898,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     this->pixels=other.pixels;  
   } /* ujoi::reset */
 
+
+  
   template <class pixel_type>
   ujoi<pixel_type> ujoi<pixel_type >::copy( const image_type & other )
   {
@@ -1835,6 +1926,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::copy */
 
 
+  
   template <class pixel_type>
   ujoi<pixel_type> ujoi<pixel_type >::swap( image_type other )
   {

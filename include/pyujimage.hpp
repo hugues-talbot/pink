@@ -74,13 +74,13 @@ Python class pink.image / c++ pink::ujoi
     
     
     
-    .def( boost::python::init< xvimage > (
-	    boost::python::args("self", "src"), 
-	    "This constructor creates an 'image' object from a pink 'xvimage' structure. "
-	    "It is used mainly by pink's readimage function and as the image object of "
-	    "pink's C functions. "
-	    )
-      )
+    // .def( boost::python::init< xvimage* > (
+    //         boost::python::args("self", "src"), 
+    //         "This constructor creates an 'image' object from a pink 'xvimage' structure. "
+    //         "It is used mainly by pink's readimage function and as the image object of "
+    //         "pink's C functions. "
+    //         )
+    //   )
 
 
 
@@ -135,8 +135,8 @@ Python class pink.image / c++ pink::ujoi
 
     
     .def( "__repr__", &image_type::repr,
-	  boost::python::args("self"),
-	  "writes a short string of information about the image"
+          boost::python::args("self"),
+          "writes a short string of information about the image"
       )
 
 

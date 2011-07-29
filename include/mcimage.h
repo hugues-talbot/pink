@@ -64,6 +64,7 @@ extern "C" {
 
 #ifdef UNIXIO
 #  define __pink__inline inline
+#  include <stdint.h>
 #else /* NOT UNIXIO */
 #  define __pink__inline
 typedef unsigned char u_int8_t;
@@ -188,7 +189,7 @@ extern void writergbascimage(
 \return A Pointer to a newly allocated image. 
 */
 extern struct xvimage * readimage(
-  char *filename
+  const char *filename
 );
 
 extern struct xvimage * readheader(

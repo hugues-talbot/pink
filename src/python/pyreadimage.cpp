@@ -52,14 +52,13 @@ namespace pink {
         
       boost::python::list result;
       
-      FOR(q, image->num_data_bands)
+      FOR( q, image->num_data_bands )
       {
         // this changes the pointer to the first pixel of the current layer
-        //image->image_data = &reinterpret_cast<typename image_type::pixel_type*>(pixels.get())[q*layer_size];
-        image->image_data = &(reinterpret_cast<typename image_type::pixel_type*>(first_pixel)[q*layer_size]);
+        image->image_data = &( reinterpret_cast<typename image_type::pixel_type*>(first_pixel)[q*layer_size] );
         char_image layer(*image);
         result.append(layer);
-      }
+      } /* FOR q in num_data_bands */
 
       // we set back the image to the original
       image->image_data = first_pixel;
@@ -71,12 +70,12 @@ namespace pink {
 // NOTE THIS FUNCTION NEEDS CLEAN-UP !!!!!!    
     boost::python::object py_readimage( std::string filename )
     {
-      boost::python::object * result;
+      //boost::python::object * result;
             
-      xvimage * tmp=NULL;
-      tmp=readimage( const_cast<char*>(filename.c_str())); // reading the image
+      xvimage * tmp = NULL;
+      tmp = readimage( filename.c_str() ); // reading the image
       
-      if (tmp==NULL)
+      if ( tmp == NULL )
       {
         pink_error("error reading file: '" + filename + "'" );
       }
@@ -99,8 +98,9 @@ namespace pink {
         {
           boost::python::list images;
           images = xvimage_to_python_list<char_image>(tmp);
-                
-          result = new boost::python::object(images);
+          
+          boost::python::object result(images);
+          return result;
         }      
         break;
         
@@ -109,7 +109,8 @@ namespace pink {
           boost::python::list images;
           images = xvimage_to_python_list<short_image>(tmp);
                 
-          result = new boost::python::object(images);
+          boost::python::object result(images);
+          return result;
         }      
         break;
         
@@ -118,7 +119,8 @@ namespace pink {
           boost::python::list images;
           images = xvimage_to_python_list<int_image>(tmp);
                 
-          result = new boost::python::object(images);
+          boost::python::object result(images);
+          return result;
         }
         break;
         
@@ -127,7 +129,8 @@ namespace pink {
           boost::python::list images;
           images = xvimage_to_python_list<float_image>(tmp);
                 
-          result = new boost::python::object(images);
+          boost::python::object result(images);
+          return result;
         }
         break;
         
@@ -136,7 +139,8 @@ namespace pink {
           boost::python::list images;
           images = xvimage_to_python_list<double_image>(tmp);
                 
-          result = new boost::python::object(images);
+          boost::python::object result(images);
+          return result;
         }
         break;
 
@@ -145,7 +149,8 @@ namespace pink {
           boost::python::list images;
           images = xvimage_to_python_list<fcomplex_image>(tmp);
                 
-          result = new boost::python::object(images);
+          boost::python::object result(images);
+          return result;
         }
         break;
         
@@ -154,7 +159,8 @@ namespace pink {
           boost::python::list images;
           images = xvimage_to_python_list<dcomplex_image>(tmp);
                 
-          result = new boost::python::object(images);
+          boost::python::object result(images);
+          return result;
         }
         break;
       
@@ -162,9 +168,7 @@ namespace pink {
           pink_error("c_readimage returned bad image type");
         } /* switch im_type */
       
-        // freeimage( tmp ); // tmp had become result, so we don't free it. it will be freed by smart ptr      
-        return *result;
-
+        return boost::python::object(); // default return ( never happens )
       }
       else /* NOT tmp->num_data_bands!=1 */
       {
@@ -174,50 +178,64 @@ namespace pink {
         {        
         case VFF_TYP_1_BYTE: /* pixels are byte (uint8_t) */
         {
-          char_image a(*tmp);
-          result = new boost::python::object(a);
-        }      
+          char_image a(tmp);
+          free(tmp); // NOT freeimage!!!
+          boost::python::object result(a); // if there are some exceptions
+          return result;
+        }
         break;
         
         case VFF_TYP_2_BYTE: /* pixels are two byte (int16_t) */
         {        
-          short_image a(*tmp);        
-          result = new boost::python::object(a);
+          short_image a(tmp);
+          free(tmp); // NOT freeimage!!!
+          boost::python::object result(a); // if there are some exceptions
+          return result;
         }      
         break;
         
         case VFF_TYP_4_BYTE: /* pixels are four byte (integer) */
         {        
-          int_image a(*tmp);        
-          result = new boost::python::object(a);
+          int_image a(tmp);
+          free(tmp); // NOT freeimage!!!
+          boost::python::object result(a); // if there are some exceptions
+          return result;
         }
         break;
         
         case VFF_TYP_FLOAT: /* pixels are float (single precision) */
         {        
-          float_image a(*tmp);        
-          result = new boost::python::object(a);
+          float_image a(tmp);
+          free(tmp); // NOT freeimage!!!
+          boost::python::object result(a); // if there are some exceptions
+          return result;
         }
         break;
         
         case VFF_TYP_DOUBLE: /* pixels are float (double precision)*/
         {        
-          double_image a(*tmp);        
-          result = new boost::python::object(a);
+          double_image a(tmp);
+          free(tmp); // NOT freeimage!!!
+          boost::python::object result(a); // if there are some exceptions
+          return result;
         }
         break;
 
         case VFF_TYP_COMPLEX: /* pixels are float (single precision) */
         {        
-          fcomplex_image a(*tmp);        
-          result = new boost::python::object(a);
+          fcomplex_image a(tmp);
+          free(tmp); // NOT freeimage!!!
+          boost::python::object result(a); // if there are some exceptions
+          return result;
         }
         break;
         
         case VFF_TYP_DCOMPLEX: /* pixels are float (double precision)*/
         {        
-          dcomplex_image a(*tmp);        
-          result = new boost::python::object(a);
+          dcomplex_image a(tmp);
+          free(tmp); // NOT freeimage!!!
+          boost::python::object result(a); // if there are some exceptions
+          return result;
         }
         break;
       
@@ -225,8 +243,7 @@ namespace pink {
           pink_error("c_readimage returned bad image type");
         } /* switch im_type */
       
-        // freeimage( tmp ); // tmp had become result, so we don't free it. it will be freed by smart ptr      
-        return *result;
+        return boost::python::object();
 
       } /* NOT tmp->num_data_bands!=1 */
       
@@ -234,7 +251,6 @@ namespace pink {
     
   } /* namespace python */
 } /* namespace pink */
-
 
 UI_EXPORT_ONE_FUNCTION (
   readimage,

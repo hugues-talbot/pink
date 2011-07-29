@@ -40,9 +40,9 @@ namespace pink {
              fx, fy, fz 
         );
     
-      image_type result(*out);
+      image_type result(out);
 
-      freeimage(out);
+      free(out); // NOT freeimage !!!!
  
       return result;
     } /* zoom */

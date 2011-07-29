@@ -36,12 +36,13 @@ namespace pink {
       char_image result;
       result.copy(image);
 
-      char_image loc_inhibit;
+      // ???????
+      // char_image loc_inhibit;
       
-      if (inhibit!=0)
-      {
-        loc_inhibit = inhibit;        
-      }
+      // if (inhibit!=0)
+      // {
+      //   loc_inhibit = inhibit;        
+      // }
       
       
       if (image.get_size().size()==2)
