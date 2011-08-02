@@ -155,12 +155,9 @@ namespace pink {
       vector2D<dibble_t> compact_pot;
       vector3D<dibble_t> compact_flow;      
       vector2D<dibble_t> compact_cons;
-
       vector3D<dibble_t> resolut_pot;
       vector4D<dibble_t> resolut_flow;
       vector3D<dibble_t> resolut_cons;
-      
-      
       vector2D<dibble_t> synchro_src;
       vector2D<dibble_t> synchro_sink;
       vector2D<dibble_t> synchro_pot;
@@ -171,33 +168,26 @@ namespace pink {
       
     protected:
 
-      index_t d;
-      index_t length_glob;
-      vint    dim;
-      float   tau;
-      
-      progressBar sentinel;
-
+      index_t     d;
+      vint        dim;
+      float       tau;
       // the number of desired iterations
-      index_t       iteration;
-
+      bool        verbose;
+      progressBar sentinel;
+      index_t     iteration;
+      index_t     length_glob;
       /* changed from std::vector*/ std::vector<dibble_t> dib_constrain;
       /* changed from std::vector*/ std::vector<dibble_t> dib_potencial;
 
       // this way when the vector destroys the array it will
       // destroy all the elements as well
       vector2D<dibble_t> dib_flow; 
-
-
       
       // functions for calculation
       template <class array_t, class fiterator>
       void update_constrain( const array_t & array, fiterator iterator )        
       //void update_constrain(index_t startDibble, index_t endDibble)
         {
-
-          //typedef typename boost::function_types::result_type<fiterator>::type iterator_t;
-
           // getting iterator's first parameter's type
           typedef typename boost::mpl::at_c<
           boost::function_types::parameter_types<fiterator>,0 >::type riterator_t; // this type still contains the reference (&)
@@ -224,8 +214,7 @@ namespace pink {
           }
 
           FOR(e, array.size())
-          {
-	
+          {	
             // //for (/*int*/ e=0; e<=dib_constrain->length-1; e++){
             // for (index_t e=start_dibble; e < end_dibble; e++)
             // {
@@ -627,8 +616,7 @@ namespace pink {
                 if ( pot_glob.node(pot_second) == reference_node )
                 {
                   pot_is_in_good_node = true;                    
-                }
-                
+                }                
               } // check the potencial
               
               {// now we check the pixels of the flow
@@ -669,16 +657,10 @@ namespace pink {
               
               
             } /* FOR q, dib_potencial->size */                            
-            
-            std::cout << "in the POTENCIAL there are " << pure_dibbles << " pure dibbles from " << dib_potencial.size()
-                      << "; that makes " << 100 * pure_dibbles / dib_potencial.size() << "%" << std::endl;
 
-            // std::cout << "they are divided in [";
-            // FOR(q, number_of_nodes - 1 )
-            // {
-            //   std::cout << 100 * pures_per_nodes[q] / dib_potencial.size() << "%, ";            
-            // }
-            // std::cout << 100 * pures_per_nodes[ number_of_nodes - 1 ] / dib_potencial.size() << "%]" << std::endl;            
+            if (verbose)
+              std::cout << "in the POTENCIAL there are " << pure_dibbles << " pure dibbles from " << dib_potencial.size()
+                        << "; that makes " << 100 * pure_dibbles / dib_potencial.size() << "%" << std::endl;
             
           } // potencial
       
@@ -745,8 +727,9 @@ namespace pink {
                 
               } /* FOR(q, dib_flow->size()) */
 
-              std::cout << "in the FLOW there are " << pure_dibbles << " pure dibbles from " << dib_flow[w].size()
-                        << "; that makes " << 100 * pure_dibbles / dib_flow[w].size() << "%" << std::endl;
+              if (verbose)
+                std::cout << "in the FLOW there are " << pure_dibbles << " pure dibbles from " << dib_flow[w].size()
+                          << "; that makes " << 100 * pure_dibbles / dib_flow[w].size() << "%" << std::endl;
               
               // std::cout << "they are divided in [";
               // FOR(q, number_of_nodes - 1 )
@@ -813,8 +796,9 @@ namespace pink {
                             
             } /* FOR q dibContrain->size() */
 
-            std::cout << "in the CONSTRAIN there are " << pure_dibbles << " pure dibbles from " << dib_constrain.size()
-                      << "; that makes " << 100 * pure_dibbles / dib_constrain.size() << "%" << std::endl;
+            if (verbose)
+              std::cout << "in the CONSTRAIN there are " << pure_dibbles << " pure dibbles from " << dib_constrain.size()
+                        << "; that makes " << 100 * pure_dibbles / dib_constrain.size() << "%" << std::endl;
             
             // std::cout << "they are divided in [";
             // FOR(q, number_of_nodes - 1 )
@@ -839,7 +823,8 @@ namespace pink {
       void distribute_dibbles()
         {
 
-          std::cout << "compacting the source and the sink" << std::endl;
+          if (verbose)
+            std::cout << "compacting the source and the sink" << std::endl;
 
           // note here:
           //   - 0 will be the regular cells (neither src nor sink)
@@ -849,8 +834,9 @@ namespace pink {
 
           synchro_src  = partition( compact_srcsink[1], number_of_threads );
           synchro_sink = partition( compact_srcsink[2], number_of_threads );
-          
-          std::cout << "compacting the potencial" << std::endl;          
+
+          if (verbose)
+            std::cout << "compacting the potencial" << std::endl;          
 
           compact_pot = pure_sort( pure_pot, dib_potencial, number_of_nodes );
           
@@ -870,8 +856,9 @@ namespace pink {
           } /* FOR q, number_of_nodes */
 
           synchro_pot = partition( compact_pot[number_of_nodes], number_of_threads );
-                    
-          std::cout << "compacting the flow" << std::endl;
+
+          if (verbose)
+            std::cout << "compacting the flow" << std::endl;
 
           resolut_flow.resize(d);          
           FOR(q, d)
@@ -891,7 +878,8 @@ namespace pink {
             
           } /* FOR q in d */
 
-          std::cout << "compacting the constrain" << std::endl;
+          if (verbose)
+            std::cout << "compacting the constrain" << std::endl;
 
           compact_cons =
             pure_sort( pure_cons, dib_constrain, number_of_nodes );          
@@ -904,11 +892,11 @@ namespace pink {
           {
             resolut_cons[q] = partition( compact_cons[q], resolution );
           } /* FOR q, number_of_nodes */
-
           
           synchro_cons = partition( compact_cons[number_of_nodes], number_of_threads );
 
-          std::cout << "compacted everything" << std::endl;
+          if (verbose)
+            std::cout << "compacted everything" << std::endl;
         } /* distflow::uiDistributeDibbles */
       
 
@@ -953,40 +941,28 @@ namespace pink {
         const char_image & SS,     /* image of the source and of the sink (not the original image) */
         const image_type & gg,     /* Boundaries */
         index_t iteration,         /* number of iterations */
-        float   tau,		   /* timestep */
+        float   tau               = 0.132, /* timestep */
         index_t number_of_threads = 0, /* the number of threads to execute if in parallel mode */
-        index_t resolution = 1     /* the size of the packet to process */
+        bool verbose              = false
         ) :
         tau(tau),
-        d( gg.get_size().size() ),
-        dim( gg.get_size() ),
+        verbose(verbose),
+        d(gg.get_size().size()),
+        dim(gg.get_size()),
         iteration(iteration),
         flow_calculated(false),
         number_of_threads(number_of_threads),
-        resolution(resolution),
         packet_size(packet_size),
-        length_glob( gg.get_size().prod() ),
-        //g_glob( number_of_threads, gg.get_size().prod(), NUMA ),
-        //pot_glob( number_of_threads, gg.get_size().prod(), NUMA ),
-        //flow_glob( gg.get_size().size(), poly_array_t(number_of_threads, gg.get_size().prod(), NUMA) ), // number_of_threads, d*length_glob, NUMA )
-        g_glob( gg.get_size().prod() ),
-        pot_glob( gg.get_size().prod() ),
-        flow_glob( gg.get_size().size() ), // number_of_threads, d*length_glob, NUMA )
-
+        length_glob(gg.get_size().prod()),
+        g_glob(gg.get_size().prod()),
+        pot_glob(gg.get_size().prod()),
+        flow_glob(gg.get_size().size()), // number_of_threads, d*length_glob, NUMA )
         dib_potencial(),
         dib_constrain(),
         dib_flow( gg.get_size().size() + 3 ), // we are adding here 3 because of the parallelization later
-        //pure_flow( gg.get_size().size() ), // the size is d
         potencial(gg.get_size()), // we will put the result in this image
-        // compact_pot(0),
         compact_flow(gg.get_size().size()), // the proper size
-        // compact_cons(0),
-        // compact_srcsink(0),
-        // synchro_src(0),
-        // synchro_sink(0),
-        // synchro_pot(0),
-        synchro_flow(gg.get_size().size()) //,
-        // synchro_cons(0)
+        synchro_flow(gg.get_size().size()) //,        
         {
 #         ifdef UJIMAGE_DEBUG
           std::cout << "creating the distflow object (" << static_cast<void*>(this) << ")" << std::endl;	
@@ -1003,24 +979,28 @@ namespace pink {
             this->number_of_threads = std::max<index_t>( 1, this->number_of_threads );            
           } /* number_of_threads == 0 */
           this->number_of_nodes = pot_glob.number_of_nodes;
-          this->resolution      = this->number_of_threads/number_of_nodes;
-          this->semaphores.reset( new semaphores_t<>(number_of_threads) );          
-          
-          std::cout << std::endl << "NUMA dibble edition" << std::endl;
-          // creating a local copy of image, srcsink potencial and flows ---------------------------
-          std::cout << "dimension   = " << dim.repr() << " (" << d << "D)" << std::endl;
-          std::cout << "length_glob = " << this->length_glob << std::endl;
-          std::cout << "tau         = " << this->tau << std::endl;
-          std::cout << "iteration   = " << this->iteration << std::endl;
-          std::cout << "threads     = " << this->number_of_threads << " (of " << boost::thread::hardware_concurrency() << ")" <<  std::endl;
-          std::cout << "nodes       = " << this->number_of_nodes <<  std::endl;
-          std::cout << "threads/node= " << this->resolution <<  std::endl << std::endl;          
+          this->resolution      = this->number_of_threads / this->number_of_nodes;
+          this->semaphores.reset( new semaphores_t<>(this->number_of_threads) );          
+
+          if (verbose)
+          {            
+            std::cout << std::endl << "NUMA dibble edition" << std::endl;
+            // creating a local copy of image, srcsink potencial and flows ---------------------------
+            std::cout << "dimension   = " << dim.repr() << " (" << d << "D)" << std::endl;
+            std::cout << "length_glob = " << this->length_glob << std::endl;
+            std::cout << "tau         = " << this->tau << std::endl;
+            std::cout << "iteration   = " << this->iteration << std::endl;
+            std::cout << "threads     = " << this->number_of_threads << " (of " << boost::thread::hardware_concurrency() << ")" <<  std::endl;
+            std::cout << "nodes       = " << this->number_of_nodes <<  std::endl;
+            std::cout << "threads/node= " << this->resolution <<  std::endl << std::endl;          
+          } /* if verbose */
           
           // Now we copy the pointers to global variables, so the threads can see them.
           // boost::shared_ptr is boost's 'shared_array' smart pointer.
           this->gg.copy(gg);
 
-          std::cout << "initializing the distributed array" << std::endl;
+          if (verbose)
+            std::cout << "initializing the distributed array" << std::endl;
 
           FOR(q, d)
           {
@@ -1045,17 +1025,22 @@ namespace pink {
           
           src_sink.copy(SS);	
           //// --------------------- breaking the fields into dibbles ----------------------------
-	
-          std::cout << "breaking up the field into dibbles" << std::endl;        
+
+          if (verbose)
+            std::cout << "breaking up the field into dibbles" << std::endl;        
           create_dibbles();
 
-          std::cout << "looking for the tainted dibbles" << std::endl;
+          if (verbose)
+            std::cout << "looking for the tainted dibbles" << std::endl;
           tainted_dibbles();
 
-          std::cout << "distributing the dibbles between threads" << std::endl;
+          if (verbose)
+            std::cout << "distributing the dibbles between threads" << std::endl;
           distribute_dibbles();          
 
-          std::cout << "copying g_glob" << std::endl;
+          if (verbose)
+            std::cout << "copying g_glob" << std::endl;
+          
           FOR(q, gg.get_size().prod())
           {
             g_glob[q]=gg(q);            
@@ -1074,8 +1059,6 @@ namespace pink {
           // Posix threading
           typedef typename boost::shared_ptr<boost::thread> pthread_t;
 
-          _DEBUG(number_of_threads);
-          
           boost::shared_array<pthread_t>
             threads( new pthread_t[number_of_threads] );
           
@@ -1084,7 +1067,8 @@ namespace pink {
           distributor_t node_distributor( number_of_threads, number_of_nodes );
                     
           sentinel.start();
-          std::cout << "starting the iteration" << std::endl;
+          if (verbose)
+            std::cout << "starting the iteration" << std::endl;
 
                     // Creating the threads
           FOR( w, number_of_threads )
@@ -1103,15 +1087,19 @@ namespace pink {
           {
             threads[w]->join();
           } /* FOR(w, number_of_threads) */
-          std::cout << "the iteration has finished" << std::endl;          
+          if (verbose)
+            std::cout << "the iteration has finished" << std::endl;          
 
           //// --------------------- printing out the measured time ------------------------------
           sentinel.stop();
-          std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
+          if (verbose)
+            std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
 
           vint time_cheat(src_sink.get_size().size(), 0);
           time_cheat[0]=sentinel.elapsedSeconds();
-          std::cout << "setting time_cheat to " << time_cheat.repr() << std::endl;    
+          
+          if (verbose)
+            std::cout << "setting time_cheat to " << time_cheat.repr() << std::endl;    
           // !!!!!! potencial.set_center_vint(time_cheat);    
     
           this->flow_calculated = true; 
@@ -1227,11 +1215,11 @@ namespace pink {
     image_type
     distflow( 
       char_image SS,  /* image of the source and of the sink (not the original image) */
-      image_type gg, /* Boundaries */
-      index_t    iteration,         /* number of iterations */
-      float      glob_tau,	     /* timestep */
-      index_t    number_of_threads, /* the number of threads to execute if in parallel mode */
-      index_t    resolution = 1     /* the resolution of the iteration */
+      image_type gg,  /* Boundaries */
+      index_t    iteration,            /* number of iterations */
+      float      glob_tau = 0.132,     /* timestep */
+      index_t    number_of_threads = 0, /* the number of threads to execute if in parallel mode */
+      bool       verbose = false
       )
     {
       distributed_flow<image_type> obj(
@@ -1240,7 +1228,7 @@ namespace pink {
         iteration,
         glob_tau,
         number_of_threads,
-        resolution
+        verbose
         );
 
       image_type result = frame_remove(obj.start());
