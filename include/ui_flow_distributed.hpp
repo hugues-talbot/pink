@@ -34,224 +34,49 @@
 
 
 
-
-
 namespace pink {
   
   namespace numa {
 
 #   define REPORT_INTERVAL 10
 
-    class semaphores_t
+    template <class T0 = index_t> // for not initializing if not explicitly needed
+    struct semaphores_t
     {
-      typedef boost::shared_mutex shared_mutex_t;
-      typedef boost::shared_ptr<shared_mutex_t> pshared_mutex_t;
-      typedef boost::shared_ptr<bool> pbool_t;      
-
-    public:
-
-      pbool_t keep_up;      
+      typedef boost::barrier barrier_t;
       
-      pshared_mutex_t iteration_begin;
-      pshared_mutex_t potencial_begin;
-      pshared_mutex_t flow_begin;
-      pshared_mutex_t const_begin;
-      pshared_mutex_t srcsink_begin;
-      
-      pshared_mutex_t iteration_end;
-      pshared_mutex_t potencial_end;
-      pshared_mutex_t flow_end;
-      pshared_mutex_t const_end;
-      pshared_mutex_t srcsink_end;
+      T0        tag;
+      barrier_t flow;
+      barrier_t potencial;
+      barrier_t constrain;
 
-      pshared_mutex_t loop_begin;
-      pshared_mutex_t loop_end;
-      pshared_mutex_t loop_restart;
-      pshared_mutex_t loop_restart_lockable;
+      template <class MT0>
+      semaphores_t( MT0 number_of_threads )
+        : flow(number_of_threads), potencial(number_of_threads),
+          constrain(number_of_threads)
+        { }
       
+    }; /* struct semaphores_t */
 
-      semaphores_t():
-        keep_up( new bool ),
-        
-        iteration_begin( new shared_mutex_t ),
-        potencial_begin( new shared_mutex_t ),
-        flow_begin     ( new shared_mutex_t ),
-        const_begin    ( new shared_mutex_t ),
-        srcsink_begin  ( new shared_mutex_t ),
-        
-        iteration_end  ( new shared_mutex_t ),
-        potencial_end  ( new shared_mutex_t ),
-        flow_end       ( new shared_mutex_t ),       
-        const_end      ( new shared_mutex_t ),
-        srcsink_end    ( new shared_mutex_t ),
-
-        loop_begin     ( new shared_mutex_t ),
-        loop_end       ( new shared_mutex_t ),
-        loop_restart   ( new shared_mutex_t ),
-        loop_restart_lockable ( new shared_mutex_t )
-        
-        { } /* semaphores_t constructor */
-      
-      
-    }; /* semaphores_t */
     
-    template <class CT0>
-    class dealers_t
-    {
-    public:
-      typedef CT0 dealer_t;
-      typedef typename dealer_t::array_t array_t;
-
-      std::vector<dealer_t> potencial;
-      vector2D<dealer_t>      flow;
-      std::vector<dealer_t> constrain;
-      index_t number_of_nodes;
-      index_t d;      
-
-      template <class T0, class T1, class T2, class T3, class T4>
-      dealers_t( T0 potencials, T1 flows, T2 constrains, T3 number_of_nodes, T4 d )
-        : number_of_nodes(number_of_nodes), d(d)
-        {
-          potencial.resize(number_of_nodes);
-          FOR(q, number_of_nodes)
-          {
-            potencial[q] = dealer_t(potencials[q]);
-          } /* FOR q, number_of_nodes */
-                    
-          flow.resize(d);
-          FOR(q, d)
-          {
-            flow[q].resize(number_of_nodes);            
-            FOR(w, number_of_nodes)
-            {
-              flow[q][w] = dealer_t(flows[q][w]);              
-            } /* FOR q, number_of_nodes */
-            
-          } /* q, d */
- 
-          constrain.resize(number_of_nodes);
-          FOR(q, number_of_nodes)
-          {
-            constrain[q] = dealer_t(constrains[q]);
-          } /* q, number_of_nodes */
-         
-          
-        } /* dealers_t */
-      
-      void reset()
-        {
-          FOR(q, number_of_nodes)
-          {
-            potencial[q].reset();            
-          } /* FOR q, number_of_nodes */
-                    
-          FOR(q, d)
-          {
-            FOR(w, number_of_nodes)
-            {
-              flow[q][w].reset();              
-            } /* FOR q, number_of_nodes */
-          } /* q, d */
- 
-          FOR(q, number_of_nodes)
-          {
-            constrain[q].reset();            
-          } /* q, number_of_nodes */
-          
-        } /* dealers_t reset */
-      
-      
-    }; /* class dealers_t */
-    
-    
-      
-    template<class mutex_t>
-    void checkpoint( mutex_t & mutex )
-    {
-      mutex->lock();
-      mutex->unlock();   
-    } /* checkpoint */
-
-    template<class mutex_t>
-    void shared_checkpoint( mutex_t & mutex )
-    {
-      mutex->lock_shared();
-      mutex->unlock_shared();   
-    } /* shared_checkpoint */
-
 
     template <class T>
     inline T isqr(const T & x)
     {
       return x * x;
     }
-    
-    
-    
-    /**
-       \brief Charges the mutex for signaling the end of the
-       calculation.
-       
-       description This function takes a boost shared_mutex and
-       lock_shared 's it N times.  This way each thread can
-       unlock_shared it after the thread has finished its part of the
-       calculation. When the last thread shared_unlock -ed the mutex,
-       the mutex becomes checkpointable.
 
-       \param mutex The shared mutex to charge \param
-       number_of_threads The number of the threads which are
-       calculating.
 
-       \return void
-    */    
-    template<class mutex_t, class nbt_t >
-    void charge_mutex( mutex_t & mutex, nbt_t number_of_threads )
+    template <class T0>
+    inline
+    T0 put_in(T0 & t0)
     {
-      FOR(q, number_of_threads)
-      {
-        mutex->lock_shared();        
-      } /* for number_of_threads */
-      
-    } /* charge_mutex */
+      if (t0>1) return 1;
+      return (t0<0) ? 0 : t0;      
+    }
     
     
-
-    // /**
-    //    \brief This class manages a shared pointer array
-       
-    // description The class behaves is a 2D array of smart pointers, but
-    // its interface is that of a simple 2D array. It can be allocated by:
     
-    // ptr_array<array_t> array(length)
-
-    // initialized as:
-
-    // array.reset(q, new array_t(array_t_length) )
-
-    // and accessed as:
-
-    // array[q][w]
-    // */    
-    // template<class data_t>
-    // class ptr_array
-    // {
-    // private:
-    //   boost::shared_array< boost::shared_ptr<data_t> > data;
-      
-    // public:
-    //   ptr_array(index_t size): data(new boost::shared_ptr<data_t>[size]) {}
-
-    //   data_t & operator[](index_t q)
-    //     {
-    //       return (*data[q]);      
-    //     }
-      
-    //   void reset(index_t q, data_t * newptr )
-    //     {
-    //       data[q].reset(newptr);
-    //     }
-    // }; // ptr_array
-
     template <class image_type>
     class distributed_flow;    
     
@@ -264,28 +89,21 @@ namespace pink {
       );    
 
     
+    
     template <class image_type>
     class distributed_flow 
     {
       
     private:
 
-      typedef typename image_type::pixel_type   pixel_type;
-      //typedef typename pink::numa::poly_array<pixel_type>     poly_array_t;
-      //typedef std::vector<pixel_type> poly_array_t;
-      typedef poly_array<pixel_type>            poly_array_t;      
-
-      typedef boost::shared_mutex               shared_mutex_t;
-      typedef boost::shared_ptr<shared_mutex_t> pshared_mutex_t;
-
-      typedef dealer_t<vector2D<dibble_t> >     mdealer_t;      
-      typedef dealers_t<mdealer_t>              mdealers_t;
-      typedef mdealer_t::packet_t               packet_t;      
+      typedef typename image_type::pixel_type    pixel_type;
+      typedef poly_array<pixel_type>             poly_array_t;      
+      typedef boost::shared_mutex                shared_mutex_t;
+      typedef boost::shared_ptr<semaphores_t<> > psemaphores_t;
+      typedef boost::shared_ptr<shared_mutex_t>  pshared_mutex_t;
+      
       
 
-      friend void checkpoint       <pshared_mutex_t> ( pshared_mutex_t& );
-      friend void shared_checkpoint<pshared_mutex_t> ( pshared_mutex_t& );
-      friend void charge_mutex     <pshared_mutex_t> ( pshared_mutex_t&, index_t );
       friend void maxflow_iterator <image_type> (
         pink::numa::distributed_flow<image_type> & obj,
         index_t ID,
@@ -298,8 +116,6 @@ namespace pink {
       image_type gg;
       char_image src_sink;
       image_type potencial;      
-
-//    boost::shared_array<pixel_type> pot_glob;
 
       // these distributed arrays contain the fields during the iterations
       /* changed from std::vector*/ std::vector<poly_array_t> flow_glob; // flow is allocated in each direction, so we have as many flows as directions
@@ -328,15 +144,13 @@ namespace pink {
       // in at least one calculation. If the value is positive and
       // greater then the number of threads, then the particular
       // dibble has not yet been considered.
-      vint         pure_pot;
+      vint          pure_pot;
       /* changed from std::vector*/ std::vector<vint> pure_flow;
-      vint         pure_cons;
-      semaphores_t semaphores;
-      boost::shared_ptr<mdealers_t>   dealers;      
+      vint          pure_cons;
+      psemaphores_t semaphores;
 
       // this structure holds the compactified pure dibbles as well as
       // the collected tainted dibbles for the synchronizer
-
       vector2D<dibble_t> compact_srcsink;      
       vector2D<dibble_t> compact_pot;
       vector3D<dibble_t> compact_flow;      
@@ -352,17 +166,9 @@ namespace pink {
       vector2D<dibble_t> synchro_pot;
       vector3D<dibble_t> synchro_flow;      
       vector2D<dibble_t> synchro_cons;
-      
+
 
       
-      // these structures hold the pure dibbles partitioned by the
-      // nodes. If there are 4 nodes in the system, then
-      // thread_pot.size() is 4 and thread_pot[0] holds the list of
-      // the pure dibbles on node 0.
-      // /* changed to shared_vector */ shared_vector<vint> thread_pot;
-      // /* changed to shared_vector */ shared_vector< /* changed to shared_vector */ shared_vector<vint> > thread_flow;
-      // /* changed to shared_vector */ shared_vector<vint> thread_cons;
-            
     protected:
 
       index_t d;
@@ -1171,7 +977,6 @@ namespace pink {
         dib_constrain(),
         dib_flow( gg.get_size().size() + 3 ), // we are adding here 3 because of the parallelization later
         //pure_flow( gg.get_size().size() ), // the size is d
-        semaphores(),
         potencial(gg.get_size()), // we will put the result in this image
         // compact_pot(0),
         compact_flow(gg.get_size().size()), // the proper size
@@ -1187,22 +992,7 @@ namespace pink {
           std::cout << "creating the distflow object (" << static_cast<void*>(this) << ")" << std::endl;	
 #         endif /* UJIMAGE_DEBUG */        
 
-          // these lines are no longer valid!
-          // potencial.copy(gg); // "potencial";
-          // potencial.fill(0.);
-
-          // creating a local copy of image, srcsink potencial and flows ---------------------------
-          std::cout << "dimension = " << d << "D" << std::endl;
-          std::cout << "length_glob=" << this->length_glob << std::endl;
-
-          // nodes
-          this->number_of_nodes = pot_glob.number_of_nodes;
-          this->resolution = number_of_threads/number_of_nodes;
-          _DEBUG(this->resolution);
-          _DEBUG(this->number_of_nodes);
-          
-          
-          if (number_of_threads<=0)
+          if (number_of_threads<0)
           {
             pink_error("Wrong number of threads!");
           }
@@ -1212,8 +1002,19 @@ namespace pink {
             this->number_of_threads = boost::thread::hardware_concurrency();
             this->number_of_threads = std::max<index_t>( 1, this->number_of_threads );            
           } /* number_of_threads == 0 */
-
-          std::cout << "Using " << this->number_of_threads << " threads from " << boost::thread::hardware_concurrency() << std::endl;
+          this->number_of_nodes = pot_glob.number_of_nodes;
+          this->resolution      = this->number_of_threads/number_of_nodes;
+          this->semaphores.reset( new semaphores_t<>(number_of_threads) );          
+          
+          std::cout << std::endl << "NUMA dibble edition" << std::endl;
+          // creating a local copy of image, srcsink potencial and flows ---------------------------
+          std::cout << "dimension   = " << dim.repr() << " (" << d << "D)" << std::endl;
+          std::cout << "length_glob = " << this->length_glob << std::endl;
+          std::cout << "tau         = " << this->tau << std::endl;
+          std::cout << "iteration   = " << this->iteration << std::endl;
+          std::cout << "threads     = " << this->number_of_threads << " (of " << boost::thread::hardware_concurrency() << ")" <<  std::endl;
+          std::cout << "nodes       = " << this->number_of_nodes <<  std::endl;
+          std::cout << "threads/node= " << this->resolution <<  std::endl << std::endl;          
           
           // Now we copy the pointers to global variables, so the threads can see them.
           // boost::shared_ptr is boost's 'shared_array' smart pointer.
@@ -1226,14 +1027,6 @@ namespace pink {
             poly_array_t   flow_line( gg.get_size().prod() );            
             flow_glob[q] = flow_line;            
           }
-          
-          
-          // FLOW IS ALREADY GOOD
-          // setting up the flow
-          // FOR(q, d)
-          // {
-          //   flow_glob.reset( q, new poly_array_t( number_of_threads, length_glob, NUMA ));        
-          // } /* for d */ 
 
           //cleaning the flow
           //#pragma omp parallel for schedule(guided) num_threads(this->number_of_threads)
@@ -1250,28 +1043,16 @@ namespace pink {
             pot_glob[q]=0.;            
           }
           
-          
-          
-          //!!! std::cout << "debug: copying the source" << std::endl;
-          // making 
-          ///!!!! src_sink.reset(new char_image(SS, "distflow::src_sink"));
-          src_sink.copy(SS);
-
-          std::cout << "tau=" << this->tau << std::endl;
-          std::cout << "iteration=" << this->iteration << std::endl;
-	
+          src_sink.copy(SS);	
           //// --------------------- breaking the fields into dibbles ----------------------------
 	
-          std::cout << "breaking up the field into dibbles" << std::endl;
-        
+          std::cout << "breaking up the field into dibbles" << std::endl;        
           create_dibbles();
 
           std::cout << "looking for the tainted dibbles" << std::endl;
-
           tainted_dibbles();
 
           std::cout << "distributing the dibbles between threads" << std::endl;
-
           distribute_dibbles();          
 
           std::cout << "copying g_glob" << std::endl;
@@ -1279,27 +1060,6 @@ namespace pink {
           {
             g_glob[q]=gg(q);            
           }          
-          
-          std::cout << "setting up source" << std::endl;
-    
-          // FOR(q, gg.get_size().prod())
-          // {
-          //   if ( src_sink(q) == 1 ) 
-          //   {
-          //     pot_glob[q]=1.; 
-          //   } /* ( *ss == 1. ) */
-          //   else /* NOT ( *ss == 1. ) */
-          //   {
-          //     if ( src_sink(q)==255 )
-          //     { 
-          //       pot_glob[q]=0.;	
-          //     } /* if ( *ss==-1. ) */
-          //   } /* NOT ( *ss == 1. ) */
-          // } /* FOR q */
-          
-          
-          //!!! std::cout << "debug: initialization of the distflow object has finished" << std::endl;
-
           
         } /* constructor distflow */
       
@@ -1313,39 +1073,20 @@ namespace pink {
 
           // Posix threading
           typedef typename boost::shared_ptr<boost::thread> pthread_t;
+
+          _DEBUG(number_of_threads);
           
           boost::shared_array<pthread_t>
             threads( new pthread_t[number_of_threads] );
-
-
-          // initializing the mutexes and setting them to locked/charged state          
-          semaphores.iteration_begin->lock();
-          semaphores.potencial_begin->lock();
-          semaphores.flow_begin     ->lock();
-          semaphores.const_begin    ->lock();
-          semaphores.srcsink_begin  ->lock();
-          semaphores.loop_begin     ->lock();
           
-          
-          charge_mutex( semaphores.potencial_end,         number_of_threads );
-          charge_mutex( semaphores.flow_end,              number_of_threads );
-          charge_mutex( semaphores.const_end,             number_of_threads );
-          charge_mutex( semaphores.srcsink_end,           number_of_threads );
-          charge_mutex( semaphores.loop_end,              number_of_threads );
-          charge_mutex( semaphores.loop_restart_lockable, number_of_threads );
-          
-          (*semaphores.keep_up)=true;
-
-          //// --------- initializing the dealers ----------
-          dealers.reset(
-            new mdealers_t(resolut_pot, resolut_flow, resolut_cons, number_of_nodes, d)
-            );
-
           // this distributor will distribute the threads between the
           // nodes. Note: the order of parameters is contraintuitive.
           distributor_t node_distributor( number_of_threads, number_of_nodes );
                     
-          // Creating the threads
+          sentinel.start();
+          std::cout << "starting the iteration" << std::endl;
+
+                    // Creating the threads
           FOR( w, number_of_threads )
           {
             threads[w].reset( new boost::thread(
@@ -1356,144 +1097,13 @@ namespace pink {
                                 )
               );            
           } /* FOR(q, number_of_threads) */
-                    
-          // restricting the threads to appropriate nodes is done in
-          // the thredder (distflow_iterator) function
-
-
           
-          sentinel.start();
-          std::cout << "starting the iteration" << std::endl;
-          
-          semaphores.iteration_begin->unlock();          
-          
-          //typedef poly_array< typename image_type::pixel_type > array_t;
-
-          typedef BOOST_TYPEOF(pot_glob) array_t;
-
-          // FOR(e, iteration)
-          // {
-
-          //   if ( e % REPORT_INTERVAL == 0 ) 
-          //   {
-          //     if ( sentinel.timeToReport() )
-          //     {
-          //       std::cout << "Estimated time remaining: " << (sentinel << e) << std::endl;
-          //     } /* timeToReport() */
-          //   } /* if iterations ... */
-
-            
-          //   FOR(ID, number_of_threads)
-          //   {
-              
-          //     update_potencial( compact_pot[ID], fast_iterator<array_t> ); /// here I calculate my part of the potencial
-          //     update_potencial( synchro_pot[ID], slow_iterator<array_t> ); // updating the common part
-            
-          //     // here I calculate my part of the flow
-          //     FOR(w, d)
-          //     {
-          //       update_flow( compact_flow[w][ID], fast_iterator<array_t>, w );
-          //       update_flow( synchro_flow[w][ID], slow_iterator<array_t>, w );
-          //     }
-            
-          //     // here I calculate my part of the constrain
-          //     update_constrain(compact_cons[ID], fast_iterator<array_t> );
-          //     // updating the common part
-          //     update_constrain(synchro_cons[ID], slow_iterator<array_t> );
-            
-          //     // in this instant the srcsink is updated in the threads (right here)
-          //     update_srcsink( synchro_src [ID], 1. );
-          //     update_srcsink( synchro_sink[ID], 0. );            
-
-          //   }
-            
-          // }
-          
-          
-          FOR( e, iteration )
-          {
-            if ( e % REPORT_INTERVAL == 0 ) 
-            {
-              if ( sentinel.timeToReport() )
-              {
-                std::cout << "Estimated time remaining: " << (sentinel << e) << std::endl;
-              } /* timeToReport() */
-            } /* if iterations ... */
-
-            // checkpoint(semaphores.loop_restart_lockable);
-            // semaphores.loop_restart->lock();            
-            // semaphores.loop_begin->unlock();
-            // checkpoint(semaphores.loop_end);
-            // charge_mutex(semaphores.loop_restart_lockable, number_of_threads);
-            // dealers->reset();
-            // semaphores.loop_begin->lock();
-            // charge_mutex(semaphores.loop_end, number_of_threads);
-            // semaphores.loop_restart->unlock();
-
-            // ****************************************************
-            // **************  potencial update  ******************
-            // ****************************************************
-
-            semaphores.potencial_begin->unlock(); // lets the threads begin the potencial calculation
-            
-            checkpoint(semaphores.potencial_end); // waits until all the threads finish the potencial calculation
-            charge_mutex(semaphores.potencial_end, number_of_threads); // charges the mutex for the next iteration             
-            semaphores.potencial_begin->lock(); // prepares the mutex for the next iteration
-            
-            // ****************************************************
-            // ****************  flow update  *********************
-            // ****************************************************
-
-            semaphores.flow_begin->unlock();
-            
-            checkpoint(semaphores.flow_end);
-            charge_mutex(semaphores.flow_end, number_of_threads);
-            semaphores.flow_begin->lock();
-            
-            // ****************************************************
-            // **************  constrain update  ******************
-            // ****************************************************
-            
-            semaphores.const_begin->unlock();
-            
-            checkpoint(semaphores.const_end);
-            charge_mutex(semaphores.const_end, number_of_threads);
-            semaphores.const_begin->lock();                       
-            
-            // // ****************************************************
-            // // ******************  final test  ********************
-            // // ****************************************************
-            
-            // // testing if the iteration will be the last.
-            // if (e>=iteration-1)
-            // {
-            //   *(semaphores.keep_up)=false;              
-            // }
-            
-            // ****************************************************
-            // ****************  srcsink update  ******************
-            // ****************************************************
-            
-            semaphores.srcsink_begin->unlock();
-            
-            checkpoint(semaphores.srcsink_end);
-            
-            charge_mutex(semaphores.srcsink_end, number_of_threads);
-            semaphores.srcsink_begin->lock();
-
-            // dealers->reset();
-
-            
-            
-
-          } /* FOR q, iteration */
-
-          std::cout << "the iteration has finished. joining the threads" << std::endl;          
           // waiting for the threads to shut down
           FOR( w, number_of_threads )
           {
             threads[w]->join();
           } /* FOR(w, number_of_threads) */
+          std::cout << "the iteration has finished" << std::endl;          
 
           //// --------------------- printing out the measured time ------------------------------
           sentinel.stop();
@@ -1512,7 +1122,8 @@ namespace pink {
           // copy the calculated potencial to the 'potencial' image
           FOR(q, dim.prod())
           {
-            potencial(q)=pot_glob[q];            
+            //potencial(q) = put_in(pot_glob[q]);
+            potencial(q) = pot_glob[q];
           } /* for q */
           
           potencial.set_center_vint(time_cheat);
@@ -1552,29 +1163,17 @@ namespace pink {
       index_t node_of_this_thread
       )
     {
-      //typedef poly_array< typename image_type::pixel_type > array_t;
       typedef typename pink::numa::distributed_flow<image_type>::poly_array_t array_t;
-      typedef typename pink::numa::distributed_flow<image_type>::packet_t packet_t;
-
-      bool remains;
-      packet_t packet;
       index_t resolution = obj.resolution;
-      
-      
-      
-      //!!! std::cout << "thread " << ID << " started" << std::endl;
-      
+
       // *********************************************************
       // *********************************************************
       // ************ Initializing the NUMA part *****************
       // *********************************************************
       // *********************************************************
 
-      //!!! std::cout << "binding the thread " << ID << " to the node " << node_of_this_thread << std::endl;     
-      
       // restricting myself for the node, where the segment was
       // allocated
-
       // // for numa 2.0
       // struct bitmask * mask = numa_bitmask_alloc(numa_num_possible_nodes());
       // numa_bitmask_setbit(mask, node_of_this_thread);
@@ -1586,19 +1185,6 @@ namespace pink {
       nodemask_zero(&mask);
       nodemask_set(&mask, node_of_this_thread);
       numa_bind(&mask);
-
-      // // restricting myself to a particular core and nothing else
-      // cpu_set_t cpu_set;      
-      
-      // size_t size;
-      // int num_cpus, cpu;
-      // num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
-
-      // CPU_ZERO(&cpu_set);
-      // CPU_SET(ID, &cpu_set);
-
-      // sched_setaffinity(getpid(), sizeof(cpu_set), &cpu_set);      
-      // //CPU_FREE(cpu_set);
       
       // *********************************************************
       // *********************************************************
@@ -1607,88 +1193,31 @@ namespace pink {
       // *********************************************************
 
       //!!! std::cout << "starting the iteration in thread " << ID << std::endl;
-
-      // waiting for the permission to start the iteration
-      obj.semaphores.iteration_begin->lock_shared();
-      
       FOR(q, obj.iteration)
-        //while (*obj.semaphores.keep_up)
       {
-        //obj.semaphores.loop_restart_lockable->unlock_shared();        
-        //shared_checkpoint(obj.semaphores.loop_begin);
-        
-        shared_checkpoint( obj.semaphores.potencial_begin); // waiting for the permission to begin the potencial
-                
-        // beginning the distributed calculation
-        // packet  = obj.dealers->potencial[node_of_this_thread]();
-        // remains = packet.second;
-        
-        // while (remains) 
-        // {
-        //   obj.update_potencial( packet.first, fast_iterator<array_t> );
-        //   packet  = obj.dealers->potencial[node_of_this_thread]();
-        //   remains = packet.second;
-        // } /* while remains */
-
-        //obj.update_potencial( obj.compact_pot[ID], fast_iterator<array_t> ); /// here I calculate my part of the potencial
+        obj.semaphores->potencial.wait();        
         obj.update_potencial( obj.resolut_pot[node_of_this_thread][ ID % resolution ], fast_iterator<array_t> ); /// here I calculate my part of the potencial
         obj.update_potencial( obj.synchro_pot[ID], slow_iterator<array_t> ); // updating the common part
-        
-        obj.semaphores.potencial_end->unlock_shared(); // I'm reporting that I have finished with my part of the potencial
-        shared_checkpoint(obj.semaphores.flow_begin); // waiting for the permission to begin the flow
 
+        obj.semaphores->flow.wait();
         // here I calculate my part of the flow
         FOR(w, obj.d)
         {
-          // beginning the distributed calculation
-          // packet  = obj.dealers->flow[w][node_of_this_thread]();
-          // remains = packet.second;          
-          
-          // while (remains) 
-          // {
-          //   obj.update_flow( packet.first, fast_iterator<array_t>, w );
-          //   packet  = obj.dealers->flow[w][node_of_this_thread]();
-          //   remains = packet.second;
-          // } /* while remains */
-        
-          //obj.update_flow( obj.compact_flow[w][ID], fast_iterator<array_t>, w );
           obj.update_flow( obj.resolut_flow[w][node_of_this_thread][ ID % resolution ], fast_iterator<array_t>, w );
           obj.update_flow( obj.synchro_flow[w][ID], slow_iterator<array_t>, w );
         }
 
-        obj.semaphores.flow_end->unlock_shared(); // I'm reporting that I have finished with my part of the flow
-        shared_checkpoint(obj.semaphores.const_begin); // waiting for the permission to begin the constrain
-
-        // // here I calculate my part of the constrain
-        // // beginning the distributed calculation
-        // packet  = obj.dealers->constrain[node_of_this_thread]();
-        // remains = packet.second;          
-        
-        // while (remains) 
-        // {
-        //   obj.update_constrain( packet.first, fast_iterator<array_t> );
-        //   packet  = obj.dealers->constrain[node_of_this_thread]();
-        //   remains = packet.second;
-        // } /* while remains */
-
+        obj.semaphores->constrain.wait();
         //obj.update_constrain(obj.compact_cons[ID], fast_iterator<array_t> );
         obj.update_constrain(obj.resolut_cons[node_of_this_thread][ ID % resolution ], fast_iterator<array_t> );
         // updating the common part
         obj.update_constrain(obj.synchro_cons[ID], slow_iterator<array_t> );
         
-        obj.semaphores.const_end->unlock_shared(); // I'm reporting that I have finished with my part of the constrain        
-        shared_checkpoint(obj.semaphores.srcsink_begin); // waiting for the permission to update the flow with the source and the sink
-
         // in this instant the srcsink is updated in the threads (right here)
         obj.update_srcsink( obj.synchro_src [ID], 1. );
         obj.update_srcsink( obj.synchro_sink[ID], 0. );
-
-        // obj.semaphores.loop_end->unlock_shared();        
-        // shared_checkpoint(obj.semaphores.loop_restart);        
-
-        obj.semaphores.srcsink_end->unlock_shared(); // I'm reporting that I have finished with my part of updating the source and the sink
-      } /* For q, iterations */      
-
+        
+      } /* FOR q, iterations */
     } /* maxflow_iterator */
 
 
