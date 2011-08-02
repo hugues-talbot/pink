@@ -45,6 +45,7 @@ namespace pink {
       "    __kernel void kernel_pot(             \n"                    \
       "      __global float * pot,               \n"                    \
       "      __global float * flow,              \n"                    \
+      "      __global float * srcsink,           \n"                    \
       "      __const  int   p_c,                 \n"                    \
       "      __const  int   f_out,               \n"                    \
       "      __const  int   f_in,                \n"                    \
@@ -54,7 +55,9 @@ namespace pink {
       "    {                                     \n"                    \
       "      size_t id  = get_global_id(0);      \n"                    \
       "      if (id >= length) return;           \n"                    \
-      "      pot[ p_c + id ] -= tau * ( flow[ f_out + id ] - flow[ f_in + id ] );\n" \
+      "      float norm = fabs(srcsink[ p_c + id ]) > 0 ? 0 : pot[ p_c + id ]; \n" \
+      "      norm = srcsink[ p_c + id ] > 0 ? 1 : norm; \n"             \
+      "      pot[ p_c + id ] = norm - tau * ( flow[ f_out + id ] - flow[ f_in + id ] );\n" \
       "    }                                     \n"                    \
       "                                          \n"                    \
       "                                          \n"                    \
@@ -123,12 +126,10 @@ namespace pink {
       "      dFabs[1] = -locInFlow[1] > locOutFlow[1] ? -locInFlow[1] : locOutFlow[1];\n" \
       "      v += (0. < dFabs[1]) * dFabs[1] * dFabs[1];\n"             \
       "\n"                                                              \
-      "      if ( locG * locG < v ) \n"                                 \
-      "      {\n"                                                       \
-      "        float quotient = ( locG / sqrt(v) );\n"                  \
-      "        dFabs[0] *= quotient;\n"                                 \
-      "        dFabs[1] *= quotient;\n"                                 \
-      "      }\n"                                                       \
+      "      float quotient = ( locG * locG < v ) ? (locG / sqrt(v)) : 1; \n" \
+      "\n"                                                              \
+      "      dFabs[0] *= quotient; \n"                                  \
+      "      dFabs[1] *= quotient; \n"                                  \
       "      if ( locInFlow[0]  < -dFabs[0]) flow[ length_glob * 0 + start - fm1s_0 + id ] = -dFabs[0];\n" \
       "      if ( locOutFlow[0] > dFabs[0] ) flow[ length_glob * 0 + start + id ]          =  dFabs[0];\n" \
       "      if ( locInFlow[1]  < -dFabs[1]) flow[ length_glob * 1 + start - fm1s_1 + id ] = -dFabs[1];\n" \
@@ -173,7 +174,7 @@ namespace pink {
     private:                                          
       cl_context            context;                  
       cl_context_properties properties[3];                  
-      cl_kernel             kernel_pot, kernel_flow, kernel_cons, kernel_srcsink;      
+      cl_kernel             kernel_pot, kernel_flow, kernel_cons;      
       cl_command_queue      command_queue;            
       cl_program            program;                  
       cl_int                choosen_platform; 
@@ -181,18 +182,19 @@ namespace pink {
       cl_platform_id        platform_ids[10];              
       cl_device_id          device_ids[10];                
       cl_uint               num_of_devices;
-      cl_mem                gpu_pot, gpu_flow, gpu_g, gpu_srcsink, gpu_src;
+      cl_mem                gpu_pot, gpu_flow, gpu_g, gpu_srcsink;
+      bool                  verbose;      
 
     public:
 
-      template <class MT0, class MT1, class MT2, class MT3, class MT4>
+      template <class MT0, class MT1, class MT2, class MT3>
       opencl_t(
         MT0 & cpu_pot,
         MT1 & cpu_flow,
         MT2 & cpu_g,
-        MT3 & cpu_src,
-        MT4 & cpu_srcsink
-        )
+        MT3 & cpu_srcsink,
+        bool verbose = false
+        ) : verbose(verbose)      
         {
           cl_int err;
           
@@ -200,7 +202,10 @@ namespace pink {
           size_t namesize;
           // retreive the number of platforms avaible          
           clGetPlatformIDs (0, NULL, &num_of_platforms);
-          std::cout << num_of_platforms << " opencl platforms found" << std::endl;
+          if (verbose)
+          {            
+            std::cout << num_of_platforms << " opencl platforms found" << std::endl;
+          }          
 
           if (clGetPlatformIDs(num_of_platforms, platform_ids, NULL )!= CL_SUCCESS)
           {
@@ -211,15 +216,21 @@ namespace pink {
           {
             char cBuffer[1024];
             clGetPlatformInfo(platform_ids[i], CL_PLATFORM_NAME, 1024, cBuffer, NULL);
-            std::cout << "platform [" << i << "]: " << cBuffer << std::endl;
+            if (verbose)
+            {              
+              std::cout << "platform [" << i << "]: " << cBuffer << std::endl;
+            }            
             // if(strstr(cBuffer, "NVIDIA") != NULL)
             // {
               choosen_platform = i;              
               //}
-          }
+          } /* for i in num_of_platforms */
 
-          std::cout << "Choosen device = " << choosen_platform << std::endl;
-          
+          if (verbose)
+          {            
+            std::cout << "Choosen device = " << choosen_platform << std::endl;
+          } /* if verbose */
+                    
           // retreive OpenCL device CPU or GPU
           // try to get a supported GPU device
           if (clGetDeviceIDs(platform_ids[choosen_platform], CL_DEVICE_TYPE_ALL, 10, device_ids, &num_of_devices) != CL_SUCCESS)
@@ -231,13 +242,15 @@ namespace pink {
           {
             pink_error("You have more than 10 OpenCL enabled devices. You need to make an adjustment in the source for this to succeed");            
           }
-          
-          
+                    
           FOR (q, num_of_devices)
           {
             clGetDeviceInfo(device_ids[q], CL_DEVICE_NAME, 500, dname, &namesize);
-            std::cout << "Device #" << q << " name = " << dname << std::endl;            
-          }
+            if (verbose)
+            {              
+              std::cout << "Device #" << q << " name = " << dname << std::endl;
+            }            
+          } /* FOR q in num_of_devices */
 
           // context properties list - must be terminated with 0
           properties[0] = CL_CONTEXT_PLATFORM;
@@ -282,9 +295,6 @@ namespace pink {
           success(err, "kernel_flow");
           kernel_cons    = clCreateKernel(program, "kernel_constrain", &err);
           success(err, "kernel_cons");
-          kernel_srcsink = clCreateKernel(program, "kernel_srcsink",   &err);
-          success(err, "kernel_srcsink");
-
           
           // create memory objects 
           gpu_pot     = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(value_type) * cpu_pot .size(),    NULL, &err);
@@ -293,8 +303,6 @@ namespace pink {
           success(err, "gpu_flow");
           gpu_g       = clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(value_type) * cpu_g.size(),       NULL, &err);
           success(err, "gpu_g");
-          gpu_src     = clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(value_type) * cpu_src.size(),     NULL, &err);
-          success(err, "gpu_src");
           gpu_srcsink = clCreateBuffer(context, CL_MEM_READ_ONLY,  sizeof(value_type) * cpu_srcsink.size(), NULL, &err);
           success(err, "gpu_srcsink");
 
@@ -302,26 +310,20 @@ namespace pink {
           success(clEnqueueWriteBuffer(command_queue, gpu_pot,     CL_TRUE, 0, sizeof(value_type) * cpu_pot .size(),    cpu_pot .get(),    0, NULL, NULL), "gpu_pot copy to gpu");
           success(clEnqueueWriteBuffer(command_queue, gpu_flow,    CL_TRUE, 0, sizeof(value_type) * cpu_flow.size(),    cpu_flow.get(),    0, NULL, NULL), "gpu_flow copy to gpu");
           success(clEnqueueWriteBuffer(command_queue, gpu_g,       CL_TRUE, 0, sizeof(value_type) * cpu_g.size(),       cpu_g.get(),       0, NULL, NULL), "gpu_g copy to gpu");
-          success(clEnqueueWriteBuffer(command_queue, gpu_src,     CL_TRUE, 0, sizeof(value_type) * cpu_src.size(),     cpu_src.get(),     0, NULL, NULL), "gpu_src copy to gpu");
           success(clEnqueueWriteBuffer(command_queue, gpu_srcsink, CL_TRUE, 0, sizeof(value_type) * cpu_srcsink.size(), cpu_srcsink.get(), 0, NULL, NULL), "gpu_srcsink copy to gpu");
-
           
           success(clFinish(command_queue), "write_sync" );
 
           // default kernel arguments (the ones which do not change)
           clSetKernelArg( kernel_pot, 0, sizeof(cl_mem),   &gpu_pot  );
-          clSetKernelArg( kernel_pot, 1, sizeof(cl_mem),   &gpu_flow );          
+          clSetKernelArg( kernel_pot, 1, sizeof(cl_mem),   &gpu_flow );
+          clSetKernelArg( kernel_pot, 2, sizeof(cl_mem),   &gpu_srcsink );
 
           clSetKernelArg( kernel_flow, 0, sizeof(cl_mem),   &gpu_pot  );
           clSetKernelArg( kernel_flow, 1, sizeof(cl_mem),   &gpu_flow );
 
-          clSetKernelArg( kernel_srcsink, 0, sizeof(cl_mem),   &gpu_pot );
-          clSetKernelArg( kernel_srcsink, 1, sizeof(cl_mem),   &gpu_src );
-          clSetKernelArg( kernel_srcsink, 2, sizeof(cl_mem),   &gpu_srcsink );
-
           success( clSetKernelArg( kernel_cons, 0, sizeof(cl_mem), &gpu_flow    ), "constrain_arg1");
           success( clSetKernelArg( kernel_cons, 1, sizeof(cl_mem), &gpu_g       ), "constrain_arg2");
-
 
         } /* opencl::opencl */
 
@@ -335,17 +337,6 @@ namespace pink {
           success(clFinish(command_queue), "ramread barrier");
         } /* opencl::sync */
       
-
-      
-      // template <class MT0, class MT1>
-      // void fetch( MT0 & cpu_pot, MT1 & cpu_flow )
-      //   {
-      //     // copy data to memory objects
-      //     success(clEnqueueWriteBuffer(command_queue, gpu_pot,  CL_TRUE, 0, sizeof(value_type) * cpu_pot .size(), cpu_pot .get(), 0, NULL, NULL), "gpu_pot copy to gpu");
-      //     success(clEnqueueWriteBuffer(command_queue, gpu_flow, CL_TRUE, 0, sizeof(value_type) * cpu_flow.size(), cpu_flow.get(), 0, NULL, NULL), "gpu_flow copy to gpu");
-      //     success(clFinish(command_queue), "ramwrite barrier");
-      //   }
-      
       
       
       void update_potencial(
@@ -357,12 +348,13 @@ namespace pink {
         {
           cl_int err;
           // clSetKernelArg( kernel_pot, 0, sizeof(cl_mem),   &gpu_pot  );
-          // clSetKernelArg( kernel_pot, 1, sizeof(cl_mem),   &gpu_flow );          
-          clSetKernelArg( kernel_pot, 2, sizeof(cl_int),   &p_c      );          
-          clSetKernelArg( kernel_pot, 3, sizeof(cl_int),   &f_out    );          
-          clSetKernelArg( kernel_pot, 4, sizeof(cl_int),   &f_in     );          
-          clSetKernelArg( kernel_pot, 5, sizeof(cl_float), &tau      );
-          clSetKernelArg( kernel_pot, 6, sizeof(cl_int),   &length );
+          // clSetKernelArg( kernel_pot, 1, sizeof(cl_mem),   &gpu_flow );
+          // clSetKernelArg( kernel_srcsink, 2, sizeof(cl_mem),   &gpu_srcsink );          
+          clSetKernelArg( kernel_pot, 3, sizeof(cl_int),   &p_c      );          
+          clSetKernelArg( kernel_pot, 4, sizeof(cl_int),   &f_out    );          
+          clSetKernelArg( kernel_pot, 5, sizeof(cl_int),   &f_in     );          
+          clSetKernelArg( kernel_pot, 6, sizeof(cl_float), &tau      );
+          clSetKernelArg( kernel_pot, 7, sizeof(cl_int),   &length );
           
           size_t local_ws = CUDA_CORES;
           size_t global   = shrRoundUp(local_ws, length ); // Total number of work-item
@@ -399,23 +391,6 @@ namespace pink {
           //success(clFinish(command_queue), "ramread barrier");
         } /* update_flow */
 
-
-      
-      void update_srcsink(
-        cl_int length
-        )
-        {
-          cl_int err;          
-          size_t local_ws = CUDA_CORES;
-          size_t global   = shrRoundUp(local_ws, length ); // Total number of work-item
-
-          clSetKernelArg( kernel_srcsink, 3, sizeof(cl_int), &length );
-          
-          // enqueue kernel in command queue
-          err = clEnqueueNDRangeKernel( command_queue, kernel_srcsink, 1, NULL, &global, &local_ws, 0, NULL, NULL );
-          success(err, "srcsink_calculation");
-          //success(clFinish(command_queue), "ramread barrier");
-        } /* update_srcsink */
 
       
       template <class MT0>
@@ -456,17 +431,12 @@ namespace pink {
           clReleaseProgram(      program  );
           clReleaseKernel(       kernel_pot );
           clReleaseKernel(       kernel_flow );
-          clReleaseKernel(       kernel_srcsink );
           clReleaseCommandQueue( command_queue );
           clReleaseContext(      context );
         } /* opencl::~opencl */
-      
-
-      
+        
     }; /* class opencl */
-      
     
-  
     
     
     template <class image_type>
@@ -486,9 +456,9 @@ namespace pink {
       poly_array_t  g_glob;
       poly_array_t  pot_glob;
       poly_array_t  srcsink_glob;
-      poly_array_t  src_glob;
 
       index_t starttime;
+      bool verbose; // for debugging      
       
       boost::shared_ptr<opencl_t<pixel_type> > opencl;
       
@@ -623,37 +593,44 @@ namespace pink {
         const image_type & gg,     /* Boundaries */
         index_t iteration,         /* number of iterations */
         float   tau,		   /* timestep */
-        index_t number_of_threads = 0, /* the number of threads to execute if in parallel mode */
-        index_t resolution = 1     /* the size of the packet to process */
+        bool    verbose = false    /* debug info */
         ) :
-        tau(               tau),
-        d(                 gg.get_size().size() ),
-        dim(               gg.get_size() ),
-        iteration(         iteration ),
-        length_glob(       gg.get_size().prod()),
-        g_glob(            gg.get_size().prod()),
-        pot_glob(          gg.get_size().prod()),
-        src_glob(          gg.get_size().prod()),
-        srcsink_glob(      gg.get_size().prod()),
-        flow_glob(         gg.get_size().prod() * gg.get_size().size() ), // number_of_threads, d*length_glob, NUMA )
-        potencial(         gg.get_size() ) // we will put the result in this image
+        tau(          tau),
+        d(            gg.get_size().size() ),
+        dim(          gg.get_size() ),
+        iteration(    iteration ),
+        length_glob(  gg.get_size().prod()),
+        g_glob(       gg.get_size().prod()),
+        pot_glob(     gg.get_size().prod()),
+        srcsink_glob( gg.get_size().prod()),
+        flow_glob(    gg.get_size().prod() * gg.get_size().size() ), // number_of_threads, d*length_glob, NUMA )
+        potencial(    gg.get_size() ), // we will put the result in this image
+        verbose(      verbose)
         {
 #         ifdef UJIMAGE_DEBUG
           std::cout << "creating the clflow object (" << static_cast<void*>(this) << ")" << std::endl;	
 #         endif /* UJIMAGE_DEBUG */        
 
+          if ( d != 2 )
+          {
+            pink_error("this function is only prepared for 2D images at this time");            
+          } /* d != 2 */
+          
           // these lines are no longer valid!
           // potencial.copy(gg); // "potencial";
           // potencial.fill(0.);
 
-          // creating a local copy of image, srcsink potencial and flows ---------------------------
-          std::cout << "dimension = " << d << "D" << std::endl;
-          std::cout << "length_glob=" << this->length_glob << std::endl;
-          std::cout << "tau=" << this->tau << std::endl;
-          std::cout << "iteration=" << this->iteration << std::endl;
+          if (verbose)
+          {            
+            // creating a local copy of image, srcsink potencial and flows ---------------------------          
+            std::cout << "dimension = " << dim.repr() << " " << d << "D" << std::endl;
+            std::cout << "length_glob=" << this->length_glob << std::endl;
+            std::cout << "tau=" << this->tau << std::endl;
+            std::cout << "iteration=" << this->iteration << std::endl;
 
-          std::cout << "initializing the arrays" << std::endl;
-
+            std::cout << "initializing the arrays" << std::endl;
+          } /* if verbose */
+          
           //cleaning the flow
           //#pragma omp parallel for schedule(guided) num_threads(this->number_of_threads)
           FOR(q, d * length_glob)
@@ -665,7 +642,6 @@ namespace pink {
           {                      
             g_glob[q]       = 0.;
             pot_glob[q]     = 0.;
-            src_glob[q]     = 0.;
             srcsink_glob[q] = 0.;
           }
           
@@ -673,37 +649,31 @@ namespace pink {
           {
             g_glob[q]   = gg(q);            
           }
-	
-          std::cout << "setting up source" << std::endl;   
 
+          if (verbose)
+          {            
+            std::cout << "setting up source" << std::endl;
+          } /* if verbose */
+          
           FOR(q, SS.get_size().prod() /* NOT length_glob*/)
           {
-            // setting up the source keeper part
-            if (SS(q)==1)
-            {
-              src_glob[q] = 1.;
-            }           
-            else
-            {
-              src_glob[q] = 0.;              
-            }            
-
             // setting up the eliminator part
-            if ((SS(q)==1) or (SS(q)==255))
-            {
-              srcsink_glob[q] = 0.;
-            }
-            else
+            if (SS(q)==1) 
             {
               srcsink_glob[q] = 1.;
             }
+            else if (SS(q)==255)
+            {
+              srcsink_glob[q] = -1.;
+            }
           }
-          
-          std::cout << "initializing OpenCL" << std::endl;
 
-          opencl.reset( new opencl_t<pixel_type>( pot_glob, flow_glob, g_glob, src_glob, srcsink_glob ) );
-          
-          
+          if (verbose)
+          {            
+            std::cout << "initializing OpenCL" << std::endl;
+          } /* if verbose */
+          opencl.reset( new opencl_t<pixel_type>( pot_glob, flow_glob, g_glob, srcsink_glob, verbose ) );
+                    
         } /* constructor opencl_flow */
       
 
@@ -716,30 +686,19 @@ namespace pink {
           sentinel << 0;
 
           sentinel.start();
-          std::cout << "starting the iteration" << std::endl;
+          
+          if (verbose)
+          {            
+            std::cout << "starting the iteration" << std::endl;
+          }          
           
           FOR(e, iteration)
           {
-            
-            if ( e % REPORT_INTERVAL == 0 ) 
-            {
-              if ( sentinel.timeToReport() )
-              {
-                std::cout << "Estimated time remaining: " << (sentinel << e) << std::endl;
-              } /* timeToReport() */
-            } /* if iterations ... */
-            
-            update_srcsink();
-            
-            update_potencial(); /// here I calculate my part of the potencial
-            
-            // // here I calculate my part of the flow
+            update_potencial();
             FOR(w, d)
             {
               update_flow(w);
-            }
-            
-            // // // here I calculate my part of the constrain
+            }            
              update_constrain();
           } /* FOR e in iteration */
 
@@ -748,15 +707,21 @@ namespace pink {
           opencl->sync(pot_glob);          
 
           sentinel.stop();
-          std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
+          if (verbose)
+          {            
+            std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
+          }          
 
           vint time_cheat(potencial.get_size().size(), 0);
           time_cheat[0] = sentinel.elapsedSeconds();
-          std::cout << "setting time_cheat to " << time_cheat.repr() << std::endl;    
-          // !!!!!! potencial.set_center_vint(time_cheat);    
-    
+
+          if (verbose)
+          {            
+            std::cout << "setting time_cheat to " << time_cheat.repr() << std::endl;
+          }          
+
           // copy the calculated potencial to the 'potencial' image
-          FOR(q, dim.prod())
+          FOR( q, dim.prod() )
           {
             potencial(q)=pot_glob[q];            
           } /* for q */
@@ -782,10 +747,9 @@ namespace pink {
     clflow( 
       char_image SS,  /* image of the source and of the sink (not the original image) */
       image_type gg, /* Boundaries */
-      index_t    iteration,         /* number of iterations */
-      float      glob_tau,	     /* timestep */
-      index_t    number_of_threads, /* the number of threads to execute if in parallel mode */
-      index_t    resolution = 1     /* the resolution of the iteration */
+      index_t    iteration,          /* number of iterations */
+      float      glob_tau = 0.132,   /* timestep */
+      bool       verbose = false     /* print details about the iteration */
       )
     {
       opencl_flow<image_type> obj(
@@ -793,13 +757,10 @@ namespace pink {
         frame_around(gg, 0.),
         iteration,
         glob_tau,
-        number_of_threads,
-        resolution
+        verbose
         );
       
       image_type result = frame_remove(obj.start());
-
-
       return result;
     } /* clflow */
     

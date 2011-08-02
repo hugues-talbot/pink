@@ -93,9 +93,8 @@ void pydevel()
     (arg("source and sink"),
      arg("constraint image"),
      arg("iterations"),
-     arg("tau"),
-     arg("number of threads")=1,
-     arg("resolution")=0),
+     arg("tau")=0.132,
+     arg("verbose")=false),
     doc__maxflow__cpp__
     );
 # endif /* PINK_HAVE_OPENCL */
