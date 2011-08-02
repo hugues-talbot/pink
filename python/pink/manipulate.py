@@ -4,7 +4,7 @@
 # CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
 # This software comes in hope that it will be useful but 
-# without any warranty to the extent permitted by aplicable law.
+# without any warranty to the extent permitted by applicable law.
 
 # (C) UjoImro <ujoimro@gmail.com>, 2011 
 # (C) M. Couprie <coupriem@esiee.fr>, 2011
