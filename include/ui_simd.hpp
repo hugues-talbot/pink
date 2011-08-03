@@ -3,15 +3,15 @@
   CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
   This software comes in hope that it will be useful but
-  without any warranty to the extent permitted by aplicable law.
+  without any warranty to the extent permitted by applicable law.
 
   (C) UjoImro, 2011
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
 
-#ifndef UIFLOW_SIMD_HPP_
-#define UIFLOW_SIMD_HPP_
+#ifndef SIMD_HPP_
+#define SIMD_HPP_
 
 #include <immintrin.h>
 
@@ -60,7 +60,8 @@ namespace pink {
 
 
 
-    inline vec::operator v4sf&()
+    inline
+    vec::operator v4sf&()
     {
       return (this->v);      
     }
@@ -185,5 +186,5 @@ namespace pink {
   } /* namespace simd */
 } /* end namespace pink */
 
-#endif /* UIFLOW_SIMD_HPP_ */
+#endif /* SIMD_HPP_ */
 // LuM end of file

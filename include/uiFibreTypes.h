@@ -300,6 +300,17 @@ uiVal_type uiAbs( uiVal_type x );
 uiVal_type uiSqr( uiVal_type x );
 //void vReset(vint & v);
 
+        
+template <class T0>
+T0 round_up( T0 global_size, T0 group_size )
+{
+  T0 r = global_size % group_size;
+  if( r == 0 )
+    return global_size;
+  return global_size + group_size - r;
+} /* round_up */
+
+
 //int vProd(const vint & v);
 
 /* class uiScalarField{ */

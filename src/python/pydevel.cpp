@@ -26,6 +26,7 @@ using boost::python::def;
 # include "uiGradient.hpp"
 # include "ui_measure.hpp"
 # include "uiUngerFlow.hpp"
+# include "ui_flow_simd.hpp"
 # include "ui_polythread.hpp"
 # include "ui_fit_circle.hpp"
 # include "ui_flow_opencl.hpp"
@@ -86,6 +87,20 @@ void pydevel()
     doc__maxflow__cpp__
     );
 
+  
+  def(
+    "simdflow",
+    pink::numa::simdflow<pink::float_image>,
+    (arg("source and sink"),
+     arg("constraint image"),
+     arg("iterations"),
+     arg("tau") = 0.132,
+     arg("number of threads") = 0,
+     arg("verbose") = false ),
+    doc__maxflow__cpp__
+    );
+
+  
 # ifdef PINK_HAVE_OPENCL
   def(
     "clflow",

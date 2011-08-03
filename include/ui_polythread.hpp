@@ -1,4 +1,14 @@
-// UjoImro, 2011
+/*
+  This software is licensed under
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
+
+  This software comes in hope that it will be useful but
+  without any warranty to the extent permitted by aplicable law.
+
+  (C) UjoImro, 2011
+  Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+  ujoimro@gmail.com
+*/
 
 // This is a research implementation of the NUMA polymorphic
 // array. This array is allocated in several threads. The array can be
@@ -52,29 +62,31 @@ namespace pink
     public:
       typedef typename array_t::value_type value_type;
 
+
     private:
       value_type * value;
-      index_t nextm1; // m1 stands for minus 1
-      index_t pos;
+      value_type * nextm1; // m1 stands for minus 1
+      index_t node;
       array_t array;
       
     public:      
 
       slow_iterator_t( array_t & array, index_t pos )
-        : array(array), pos(pos), nextm1( array.segment_high(array.node(pos)) - 1 )
+        : array(array)
         {
-          value = &(array[pos]);
+          node   = array.node(pos);          
+          value  = &(array[pos]);          
+          nextm1 = &(array[array.segment_high(node) - 1]);          
         } /* slow_iterator_t */
 
-      slow_iterator_t(): pos(-1), array() { }
+      slow_iterator_t(): node(-1), array() { }
 
       void reset( array_t & array, index_t pos )
         {
-          this->array=array; // boost shared array is copied only if they are different
-                    
-          this->pos    = pos;
-          this->value  = &(this->array[this->pos]);
-          this->nextm1 = array.segment_high( array.node(pos)) - 1;          
+          this->array  = array; // boost shared array is copied only if they are different
+          this->node   = array.node(pos);          
+          this->value  = &(this->array[pos]);
+          this->nextm1 = &(array[array.segment_high(node) - 1]);          
         }
           
             
@@ -85,17 +97,21 @@ namespace pink
       
       void operator++(int)
         {
-          if (pos<nextm1)
+          if (value < nextm1)
           {            
-            value++; pos++;            
+            value++;
+            return;            
           }
-          else
-          {
-            pos++;
-            value = &(array[pos]);
-            nextm1 = array.segment_high( array.node(pos)) - 1;            
-          }
-        }    
+          
+          value = &(array[array.segment_high(node)]);            
+          node++;
+          nextm1 = &(array[array.segment_high(node) - 1]);
+        }
+
+      operator char*()
+        {
+          return reinterpret_cast<char*>(this->value);
+        }
       
     }; /* class slow_iterator_t */
    
@@ -137,8 +153,12 @@ namespace pink
       
             
     public:
+
+
       
       poly_array(): size_(0) { }
+
+
       
       poly_array( index_t size )
         : size_(size),
@@ -162,7 +182,33 @@ namespace pink
           {
             init(q);
           }
-         
+        } /* poly_array::poly_array */
+
+
+
+      void reset( index_t size )
+        {
+          size_ = size;
+          number_of_nodes = numa_max_node() + 1;          
+
+          if ((size < number_of_nodes) or (size == 0))
+          {
+            pink_error("Distributed polymorphic array size is too small. "
+                       "Either 0 or less then the number of threads.");            
+          }
+
+          segments.reset(new segment_t[number_of_nodes]);
+                    
+          // Getting the numa characteristics from the system
+          if (numa_available() < 0)
+          {
+            pink_error("poly_array called in numa mode, but your system does not support the NUMA API");
+          } /* if numa_available */
+
+          FOR(q, number_of_nodes)
+          {
+            init(q);
+          }
         } /* poly_array::poly_array */
 
 

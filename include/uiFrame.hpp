@@ -15,72 +15,8 @@
 
 #include "mcimage.h"
 #include "ujimage.hpp"
-
 #include <boost/thread.hpp>
 #include <boost/smart_ptr.hpp>
-
-
-// This is more of a curiosity question than something that needs
-// actual solving, but is there a way to determine how many cores a
-// machine has from C++ in a platform-independent way? If no such
-// thing exists, what about determining it per-platform
-// (Windows/*nix/Mac)?
-
-// Win32:
-
-// SYSTEM_INFO sysinfo;
-// GetSystemInfo( &sysinfo );
-
-// numCPU = sysinfo.dwNumberOfProcessors;
-
-// Linux, Solaris, & AIX (per comments):
-
-//  numCPU = sysconf( _SC_NPROCESSORS_ONLN );
-
-// FreeBSD, MacOS X, NetBSD, OpenBSD, etc.:
-
-// int mib[4];
-// size_t len = sizeof(numCPU); 
-
-// /* set the mib for hw.ncpu */
-// mib[0] = CTL_HW;
-// mib[1] = HW_AVAILCPU;  // alternatively, try HW_NCPU;
-
-// /* get the number of CPUs from the system */
-// sysctl(mib, 2, &numCPU, &len, NULL, 0);
-
-// if( numCPU < 1 ) 
-// {
-//      mib[1] = HW_NCPU;
-//      sysctl( mib, 2, &numCPU, &len, NULL, 0 );
-
-//      if( numCPU < 1 )
-//      {
-//           numCPU = 1;
-//      }
-// }
-
-// HPUX:
-
-// numCPU = mpctl(MPC_GETNUMSPUS, NULL, NULL);
-
-// IRIX:
-
-// numCPU = sysconf( _SC_NPROC_ONLN );
-
-// Mac OS X using Objective-C (10.5 and higher):
-
-// NSUInteger a = [[NSProcessInfo processInfo] processorCount];
-// NSUInteger b = [[NSProcessInfo processInfo] activeProcessorCount];
-
-// link|edit|flag
-	
-// edited Dec 31 '10 at 15:41
-
-	
-// answered Sep 29 '08 at 22:14
-// ceretullis
-// 7,16852056
 
 namespace pink { 
 
@@ -120,7 +56,7 @@ namespace pink {
     )
   {
     vint size(result.get_size());
-    index_t d=size.size();
+    index_t d = size.size();
     vint curr(d);
 
     for (index_t q = from; q < to; q++)
@@ -261,6 +197,45 @@ namespace pink {
 
 
 
+  template <class image_type>
+  image_type align_size( const image_type & image, index_t group_size,
+                         typename image_type::pixel_type fillval )
+  {
+    vint size( image.get_size() );    
+    index_t d = size.size();
+    vint curr(d);    
+    vint new_size( d, -1 );    
+    FOR(q, d)
+    {
+      new_size[q] = round_up( size[q] + 2 , group_size ); // rounding up for the simd operations
+    } /* q in d*/
+    index_t new_prod = new_size.prod();
+    index_t prod     = size.prod();
+    
+    image_type result(new_size);
+
+    // filling up the image with the values from around
+    FOR(q, new_prod)
+    {
+      result(q) = fillval;      
+    } /* q in new_prod */
+    
+    // copying the image. the rest of the pixels remain withval
+    FOR(q, prod)
+    {
+      size.nextStep( q, curr );
+      FOR(w, d)
+      {
+        curr[w]++;        
+      }
+
+      result[curr] = image(q);
+      
+    } /* FOR q in prod */
+
+    return result;
+  } /* align_size */
+  
 
 
 
