@@ -754,6 +754,10 @@ namespace pink {
 	
     this->flow_calculated = true; 
 
+    vint time_cheat(potencial.get_size().size(), 0);
+    time_cheat[0] = sentinel.elapsedSeconds();
+    potencial.set_center_vint(time_cheat);
+    
     return potencial; /* measure field picture */
     //local variables are deleted automaticly
   } /*    maxflow<image_type>::start() */
