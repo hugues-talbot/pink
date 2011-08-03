@@ -459,8 +459,7 @@ namespace pink {
       typedef std::vector< poly_array_t >               vpoly_array_t;      
       typedef typename boost::shared_ptr<boost::thread> pthread_t;      
       typedef std::pair< pkernel_update_t, index_t >    chunk_t;
-      typedef std::queue<chunk_t>                       queue_t;
-      typedef boost::shared_ptr<queue_t>                pqueue_t;
+
 
 
     private:
@@ -480,8 +479,8 @@ namespace pink {
       // vec * srcsink_glob __attribute__ ((aligned(16)));
       // vec * src_glob     __attribute__ ((aligned(16)));
 
-      index_t starttime;
-      queue_t queue;
+      index_t  starttime;
+
       
 
     protected:
@@ -517,7 +516,7 @@ namespace pink {
 
          \return
       */
-      void update_potencial()
+      chunk_t update_potencial()
         {
           typedef BOOST_TYPEOF(pot_glob)     pot_t;
           typedef BOOST_TYPEOF(flow_glob)    flow_t;
@@ -537,14 +536,13 @@ namespace pink {
               )
             );
           chunk_t chunk( kernel_update, length - max );
-          queue.push(chunk);
-
-          return;          
+          
+          return chunk;          
         } /* update_potencial */
 
 
 
-      void update_flow()
+      chunk_t update_flow()
         {
           typedef BOOST_TYPEOF(pot_glob) pot_t;
           typedef BOOST_TYPEOF(flow_glob) flow_t;
@@ -562,15 +560,14 @@ namespace pink {
             );
 
           chunk_t chunk( kernel_update, length );
-          queue.push(chunk);
-
-          return;          
+          
+          return chunk;          
         } /* update_flow */
 
 
 
       // functions for calculation
-      void update_constrain() 
+      chunk_t update_constrain() 
         {
           typedef BOOST_TYPEOF(flow_glob) flow_t;
           typedef BOOST_TYPEOF(g_glob)    g_t;
@@ -587,9 +584,8 @@ namespace pink {
             );
           
           chunk_t chunk( kernel_update, length );
-          queue.push(chunk);
           
-          return;          
+          return chunk;          
         } /* update_constrain */
 
 
@@ -755,7 +751,7 @@ namespace pink {
 
           //// --------------------- initializing the time measure -------------------------------
           progressBar sentinel;
-          sentinel.maxPos(queue.size());
+          sentinel.maxPos(iteration);
           sentinel.minPos(0);
           sentinel << 0;
 
@@ -763,28 +759,22 @@ namespace pink {
           if (verbose)
             std::cout << "starting the iteration" << std::endl;
 
-          scheduler_t<> scheduler( number_of_threads, /*resolution*/ 1, queue.size() );
-          index_t e = 0;
-          
-          while (not queue.empty())
-          {
-            kernel_update = queue.front().first;
-            size = queue.front().second;
-            scheduler.schedule_work( kernel_update, range_t(0, size) );
-            queue.pop();
+          std::pair<pkernel_update_t, index_t> pot  = update_potencial();
+          std::pair<pkernel_update_t, index_t> flow = update_flow();
+          std::pair<pkernel_update_t, index_t> cons = update_constrain();
+                    
+          scheduler_t<> scheduler(
+            number_of_threads,
+            iteration,
+            pot.first,
+            flow.first,
+            cons.first,
+            range_t( 0, pot.second  ),
+            range_t( 0, flow.second ),
+            range_t( 0, cons.second )
+            );
 
-            if (verbose)
-            {              
-              if ( e % REPORT_INTERVAL == 0 )
-              {
-                if ( sentinel.timeToReport() )
-                {
-                  std::cout << "Estimated time remaining: " << (sentinel << e) << std::endl;                
-                } // timeToReport()
-              } // if iterations ...
-            e++;
-            } /* if verbose */
-          } /* while not queue.empty */
+          scheduler.schedule_work();
           
           sentinel.stop();
           if (verbose)

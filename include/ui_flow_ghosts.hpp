@@ -10,7 +10,6 @@
   ujoimro@gmail.com
 */
 
-// parts of this code are based on http://www.justsoftwaresolutions.co.uk/threading/implementing-a-thread-safe-queue-using-condition-variables.html
 // -O3 -DNDEBUG -ipo -no-prec-div -fp-model fast=2 -msse4.2
 
 #ifndef UI_FLOW_GHOSTS__HPP__
@@ -21,7 +20,6 @@
 //!! the z size of the image
 #define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
 #include <set>
-#include <queue>
 #include <numa.h>
 #include <sched.h>
 #include <sys/types.h>
@@ -54,124 +52,6 @@ namespace pink {
     typedef boost::shared_ptr<mutex_t> pmutex_t;    
     typedef boost::lock_guard<mutex_t> scoped_lock;
 
-
-    
-    template<class T0>
-    struct cmpkernel
-    {
-      inline bool operator()( const T0& a, const T0& b)
-        {
-          return a.first < b.first;  
-        }
-    }; /* class cmpfirst */
-
-
-
-    template<class T0>
-    struct cmptime
-    {
-      inline bool operator()( const T0& a, const T0& b)
-        {
-          return a.second > b.second;  
-        }
-    }; /* class cmpsecond */
-
-
-    
-    template <class T0 = index_t>
-    class partitioner_t
-    {
-    public:
-
-      T0      tag;      
-      range_t size;
-      
-    private:
-      
-      mutex_t guard;
-      index_t grain_size;
-      
-
-  
-    public:
-
-      partitioner_t( range_t size, index_t grain_size = 1 )
-        : size(size), grain_size(grain_size), guard() { }
-
-
-
-      partitioner_t( index_t grain_size = 1 )
-        : size(-1,-1), grain_size(grain_size), guard() { }
-
-  
-
-      void reset( range_t size )
-        {          
-          this->size = size;
-          return;      
-        }
-  
-
-      range_t pop()
-        {
-          range_t result;
-          scoped_lock scp(guard);          
-          if ((size.second - size.first) <= grain_size)
-          {
-            result = size;
-            size.first = -1;
-            size.second = -1;
-          }
-          else
-          {
-            result.first  = size.first;
-            result.second = size.first + (size.second - size.first) / 2;
-            size.first    = result.second;
-          }
-      
-          return (result);
-        } /* pop */
-  
-
-  
-      index_t occupancy() const
-        {          
-          return (size.second - size.first);      
-        }
-  
-  
-  
-      range_t steal()
-        {
-          range_t result;
-          scoped_lock scp(guard);
-          if ((size.second - size.first) <= grain_size)
-          {
-            result      = size;
-            size.first  = -1;
-            size.second = -1;
-          }
-          else
-          {
-            result.second = size.second;
-            result.first  = size.first + (size.second - size.first) / 2;
-            size.second   = result.first;
-          }
-
-          return (result);
-        } /* steal */ 
-
-
-  
-      bool empty()
-        {
-          return (size.first == size.second);
-        }
-  
-    }; /* partitioner_t */
-
-
-    
     class kernel_update_t
     {
     public:
@@ -188,128 +68,58 @@ namespace pink {
 
 
     
-    template <class task_t>
-    class mutable_priority_queue_t
-    {
-    public:
-      typedef std::pair<task_t, index_t> value_type;
-      typedef std::set<value_type, cmpkernel<value_type> >    kernel_t;
-      typedef std::multiset<value_type, cmptime<value_type> > time_t;
-    
-    private:
-
-      time_t   times;
-      pmutex_t guard;
-      kernel_t kernels;  
-
-      
-  
-    public:
-
-      mutable_priority_queue_t()
-        : guard(new mutex_t) { }
-
-
-      
-      bool empty()
-        {
-          // scoped_lock scl(guard);
-          return kernels.empty();      
-        } /* mpq::empty */
-  
-
-      
-      void push( value_type val )
-        {
-          scoped_lock scl(guard);
-          kernels.insert(val);
-          times.insert(val);      
-        } /* mpq::push */
-
-
-
-      value_type pop()
-        {
-          value_type result(-1, -1);
-          scoped_lock scl(guard);
-          if (not times.empty())
-          {
-            result = (*times.begin());
-            kernels.erase( kernels.find( *times.begin() ));
-            times  .erase( times.begin() );
-          }
-          
-          return(result);
-        } /* mpq::pop */
-  
-  
-  
-      void try_erase( value_type val )
-        {
-          scoped_lock scl(guard);
-          times  .erase(val);
-          kernels.erase(val);      
-        } /* mpq::try_erase */
-
-    }; /* mutable_priority_queue_t */
-
-
-
     template < class T0 = index_t >
     struct thread_private_t
     {
-      typedef boost::shared_ptr<partitioner_t<> > ppartitioner_t;
-
       T0      tag;      
       index_t node;
       index_t core;
       index_t part; // the assigned partitioner      
-      ppartitioner_t partitioner;
+      range_t pot_range, flow_range, cons_range;
       
-      thread_private_t( index_t core, index_t node, index_t part, ppartitioner_t partitioner )
-        : node(node), core(core), part(part), partitioner(partitioner) { }
+
+      
+      template <BOOST_PP_ENUM_PARAMS(6, class MT)>
+      thread_private_t(
+        MT0 core, MT1 node, MT2 part, 
+        MT3 pot, MT4 flow, MT5 cons
+        )
+        : node(node), core(core), part(part),
+          pot_range(pot), flow_range(flow), cons_range(cons) { }
       
     }; /* struct thread_private_t */
-    typedef boost::shared_ptr<thread_private_t<> > pthread_private_t;    
     
     
 
     template < class T0 = index_t >
     struct thread_common_t
     {
-      typedef typename thread_private_t<>::ppartitioner_t ppartitioner_t;      
-      typedef std::vector<ppartitioner_t>                 partitioners_t;
-
-      T0               tag;      
-      bool             quit;
-      pkernel_update_t kernel;
-      boost::barrier   work_end;
-      boost::barrier   work_begin;
-      partitioners_t   partitioners;
-      mutable_priority_queue_t<index_t> grand_queue;      
-      std::vector< mutable_priority_queue_t<index_t> > queues;
+      typedef boost::barrier barrier_t;
       
+      T0 tag;
+      pkernel_update_t pot, flow, cons;
+      barrier_t sync, work_end, work_begin;
+      index_t number_of_threads, iteration;
 
       
-      thread_common_t( index_t nodes, index_t number_of_threads, index_t grain_size )
-        : quit(false), queues(nodes),
-          // note that the + 1 is for the scheduler
+
+      template <BOOST_PP_ENUM_PARAMS(5, class MT)>
+      thread_common_t(
+        MT0 number_of_threads, MT1 iteration,
+        MT2 pot, MT3 flow, MT4 cons
+        )
+        : // note that the + 1 is for the scheduler
           work_begin( number_of_threads + 1 ), work_end( number_of_threads + 1 ),
-          partitioners(number_of_threads)
-        {
-          FOR( q, number_of_threads )
-          {
-            partitioners[q].reset( new partitioner_t<>(grain_size) );            
-          } /* FOR q in number_of_threads */
-        } /* thread_common_t */
+          sync(number_of_threads), number_of_threads(number_of_threads),
+          pot(pot), flow(flow), cons(cons), iteration(iteration)
+        { }
 
     }; /* struct thread_common */
-    typedef boost::shared_ptr<thread_common_t<> > pthread_common_t;    
 
     
     
-    template <BOOST_PP_ENUM_PARAMS(3, class T)>
-    void laborer( T0 thread_common, T1 thread_private, T2 iterations )
+    template <BOOST_PP_ENUM_PARAMS(2, class T)>
+    void laborer( T0 thread_common, T1 thread_private )
     {
       index_t core  = thread_private->core;
       index_t node  = thread_private->node;
@@ -328,14 +138,20 @@ namespace pink {
       CPU_SET( core, &cpu_set );
       sched_setaffinity( gettid(), sizeof(cpu_set), &cpu_set );
 
-      range_t range, advertise;
-
       // eager to work
-      thread_common->work_begin.wait();
-      while ( not thread_common->quit )
-      //FOR(q, iterations)
-      {
-        thread_common->kernel->execute( thread_private->partitioner->size );        
+      thread_common->work_begin.wait(); // wait for the scheduler      
+      FOR( q, thread_common->iteration )
+      {       
+        thread_common->pot->execute( thread_private->pot_range );
+        thread_common->sync.wait(); 
+
+        thread_common->flow->execute( thread_private->flow_range );
+        thread_common->sync.wait();        
+
+        thread_common->cons->execute( thread_private->cons_range );
+        thread_common->sync.wait();        
+        
+        //thread_common->kernel->execute( thread_private->partitioner->size );        
         // // in the first part of the computation I extinguish my calculcations (pop)
         // while ( not thread_private->partitioner->empty() )
         // {
@@ -380,10 +196,11 @@ namespace pink {
         // } /* while there are tasks left on the node */
 
 
-        thread_common->work_end.wait();
-        thread_common->work_begin.wait();
+        // thread_common->work_end.wait();
+        //thread_common->work_begin.wait();
       } /* while not thread_common->quit */
-      
+
+      thread_common->work_end.wait(); // wait for the other laborers to finish
       return;      
     } /* void laborer */
         
@@ -393,27 +210,34 @@ namespace pink {
     class scheduler_t
     {
     public:
-      T0 tag;      
-      typedef boost::shared_ptr<boost::thread>          pthread_t;
-      typedef std::vector<pthread_t>                    threads_t;
+      T0 tag;
+      
+      typedef boost::shared_ptr<boost::thread>  pthread_t;
+      typedef std::vector<pthread_t>            threads_t;
+      typedef boost::shared_ptr< thread_common_t<> >  pthread_common_t;
+      typedef boost::shared_ptr< thread_private_t<> > pthread_private_t;      
 
 
       
     private:
-      index_t grain_size;
+      
+      threads_t threads;
       index_t number_of_cores;      
       index_t number_of_nodes;
       index_t threads_per_node;
-      index_t number_of_threads;
-      
-      threads_t        threads;
-      pthread_common_t thread_common;      
+      index_t number_of_threads;            
+      pthread_common_t thread_common;
 
 
       
     public:
-      scheduler_t( index_t number_of_threads, index_t resolution, index_t iterations )
-        : number_of_threads(number_of_threads), grain_size(resolution)
+
+      template <BOOST_PP_ENUM_PARAMS(8, class MT)>
+      scheduler_t( MT0 number_of_threads, MT1 iteration, 
+                   MT2 pot, MT3 flow, MT4 cons,
+                   MT5 pot_range, MT6 flow_range, MT7 cons_range
+        )
+        : number_of_threads(number_of_threads)
         {
           // Getting the numa characteristics from the system
           if (numa_available() < 0)
@@ -424,29 +248,38 @@ namespace pink {
           number_of_nodes  = numa_max_node() + 1;
           number_of_cores  = boost::thread::hardware_concurrency();
           threads_per_node = number_of_threads / number_of_nodes;
-          thread_common.reset( new thread_common_t<>( number_of_nodes, number_of_threads, grain_size ) );
+          thread_common.reset(
+            new thread_common_t<>(
+              number_of_threads, iteration, pot, flow, cons ) );
           
           // creating the worker threads, the threads will be bound to
           // the core for the cache scheduling
           threads.resize(number_of_cores);
+
+          // creating ranges:
+          numa::distributor_t dist_pot ( pot_range.second  - pot_range.first,  number_of_threads );
+          numa::distributor_t dist_flow( flow_range.second - flow_range.first, number_of_threads );
+          numa::distributor_t dist_cons( cons_range.second - cons_range.first, number_of_threads );
           
           FOR( node, number_of_nodes )
           {
             FOR( q, threads_per_node )
             {
+              index_t part = node * threads_per_node + q;
+              
               threads[ node * threads_per_node + q ].reset(
                 new boost::thread(
-                  laborer<pthread_common_t, pthread_private_t, index_t>,
+                  laborer<pthread_common_t, pthread_private_t>,
                   thread_common,
                   pthread_private_t(
                     new thread_private_t<>(
                       /* core */ node * (number_of_cores / number_of_nodes) + q,
                       /* node */ node,
-                      /* part */ node * threads_per_node + q,
-                      thread_common->partitioners[ node * threads_per_node + q ]
-                      )),
-                  iterations
-                  ));
+                      /* part */ part,
+                      range_t( pot_range.first  + dist_pot.low(part),  pot_range.first  + dist_pot.high(part)  ),
+                      range_t( flow_range.first + dist_flow.low(part), flow_range.first + dist_flow.high(part) ),
+                      range_t( cons_range.first + dist_cons.low(part), cons_range.first + dist_cons.high(part) )                                              
+                      ))));
             } /* FOR q in threads_per_node */
           } /* FOR node in number_of_nodes */
           
@@ -457,9 +290,6 @@ namespace pink {
 
       ~ scheduler_t()
         {
-          thread_common->quit = true;
-          thread_common->work_begin.wait();          
-          
           FOR(q, number_of_threads)
           {
             threads[q]->join();            
@@ -468,18 +298,20 @@ namespace pink {
       
 
 
-      void schedule_work( pkernel_update_t kernel, range_t range )
-        {          
-          thread_common->kernel = kernel;
-          // distributing the range equally among the laborers
-          numa::distributor_t distributor( range.second - range.first, number_of_threads );
-          FOR(q, number_of_threads)
-          {
-            thread_common->partitioners[q]->reset( range_t( range.first + distributor.low(q), range.first + distributor.high(q)));
-          } /* for q in number_of_threads */
+      void schedule_work( )
+        {
+          // thread_common->kernel = kernel;
+          // // distributing the range equally among the laborers
+          
+          // numa::distributor_t distributor( range.second - range.first, number_of_threads );
+          // FOR(q, number_of_threads)
+          // {
+          //   thread_common->partitioners[q]->reset( range_t( range.first + distributor.low(q), range.first + distributor.high(q)));
+          // } /* for q in number_of_threads */
           
           // // launch the threads
           thread_common->work_begin.wait();
+          
           // wait for the threads to finish the calculation
           thread_common->work_end.wait();
           return;          
