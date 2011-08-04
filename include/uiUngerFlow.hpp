@@ -21,7 +21,7 @@
 namespace pink { 
 
   template<class image_type>
-  class ungerflow : public maxflow<image_type> {
+  class ungerflow : public max_flow<image_type> {
     
   public:
     typedef typename image_type::pixel_type pixel_type;
@@ -93,7 +93,7 @@ namespace pink {
     int iteration,
     float tau,
     float theta
-    ) : maxflow<image_type>( src_sink, gg, iteration, tau/* /theta */ , 1)
+    ) : max_flow<image_type>( src_sink, gg, iteration, tau/* /theta */ , 1)
   {
 #   ifdef UJIMAGE_DEBUG
     std::cerr << "creating the ungerflow object (" << static_cast<void*>(this) << ")\n";	

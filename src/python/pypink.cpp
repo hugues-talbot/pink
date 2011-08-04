@@ -139,7 +139,7 @@ void generate_rgb_image_export(); void closing_export(); /*void closeball_export
 void skelcurv_export(); void distc_export();
 void readimage_export(); void skelsurf_export(); void toposhrink_export(); void htkern_export();
 /*void openball_export();*/ void gradmorph_export(); void mcube_export(); void minima_export();
-void complex_export(); void fft_export(); void mult_export();
+void complex_export(); void fft_export(); void mult_export(); void pymaxflow();
 
 // juliette
 int short2long(xvimage *image, xvimage *result);
@@ -385,33 +385,20 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   Pimview_force_socket_export();
   Pimview_sendcommand_export();
 # endif /* UNIXIO */
-
-
-  pycomplex();
-
-  pyconversion();
-
-  pydevel();
-
-  pyimage_types();
-
-  pynormalization();
-
-  pywshed();
-
-  pypoints();
-
-  pyliar();
-
-  pyconnect();
-
+  
   pytopo();
-
-  pymorpho();
-
-  pyarithmetic();
-
-
+  pyliar();
+  pywshed();
+  pydevel();
+  pymorpho();  
+  pypoints();
+  pyconnect();
+  pymaxflow();  
+  pycomplex();  
+  pyarithmetic();  
+  pyconversion();  
+  pyimage_types();
+  pynormalization();
 
 } /* BOOST_PYTHON_MODULE */
 

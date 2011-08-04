@@ -622,15 +622,16 @@ namespace pink {
 
           if (verbose)
           {            
-            // creating a local copy of image, srcsink potencial and flows ---------------------------          
-            std::cout << "dimension = " << dim.repr() << " " << d << "D" << std::endl;
-            std::cout << "length_glob=" << this->length_glob << std::endl;
-            std::cout << "tau=" << this->tau << std::endl;
-            std::cout << "iteration=" << this->iteration << std::endl;
-
-            std::cout << "initializing the arrays" << std::endl;
+            std::cout << "opencl edition" << std::endl;
+            // creating a local copy of image, srcsink potencial and flows ---------------------------
+            std::cout << "dimension   = " << dim.repr() << " (" << d << "D)" << std::endl;
+            std::cout << "length_glob = " << this->length_glob << std::endl;
+            std::cout << "tau         = " << this->tau << std::endl;
+            std::cout << "iteration   = " << this->iteration << std::endl;
           } /* if verbose */
-          
+
+          if (verbose)
+            std::cout << "initializing the arrays" << std::endl;
           //cleaning the flow
           //#pragma omp parallel for schedule(guided) num_threads(this->number_of_threads)
           FOR(q, d * length_glob)

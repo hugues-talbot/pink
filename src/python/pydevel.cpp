@@ -12,25 +12,20 @@
 // The pink python wrapper core file
 
 #ifndef PINK_DEVELOPMENT
-#  include <pink_python.h>
+#  include "pink_python.h"
 #else /* PINK_DEVELOPMENT */
-#  include <pink_development.h>
+#  include "pink_development.h"
 #endif /* PINK_DEVELOPMENT */
 
 using boost::python::arg;
 using boost::python::def;
 
 #ifdef PINK_DEVELOPMENT
-# include "uiFlow.hpp"
 # include "uiCircle.hpp"
 # include "uiGradient.hpp"
 # include "ui_measure.hpp"
-# include "uiUngerFlow.hpp"
-# include "ui_flow_simd.hpp"
 # include "ui_polythread.hpp"
 # include "ui_fit_circle.hpp"
-# include "ui_flow_opencl.hpp"
-# include "ui_flow_distributed.hpp"
 #endif /* PINK_DEVELOPMENT */
 
 void pydevel()
@@ -62,71 +57,6 @@ void pydevel()
        "  a*x^2 + a*y^2 + b*x + c*y + d == 0\n"
        "the output vector is [center_x, center_y, r], where\n"
        "  (x-center_x)^2 + (y-center_y)^2 == r^2 "
-    );
-
-  def(
-    "maxflow",
-    pink::maxflow_float,
-    (arg("source and sink"),
-     arg("constraint image"),
-     arg("iterations"),
-     arg("tau"),
-     arg("number of threads")=0),
-    doc__maxflow__cpp__
-    );
-
-  def(
-    "distflow",
-    pink::numa::distflow<pink::float_image>,
-    (arg("source and sink"),
-     arg("constraint image"),
-     arg("iterations"),
-     arg("tau")=0.132,
-     arg("number of threads")=0,
-     arg("verbose") = false ),
-    doc__maxflow__cpp__
-    );
-
-  
-  def(
-    "simdflow",
-    pink::numa::simdflow<pink::float_image>,
-    (arg("source and sink"),
-     arg("constraint image"),
-     arg("iterations"),
-     arg("tau") = 0.132,
-     arg("number of threads") = 0,
-     arg("verbose") = false ),
-    doc__maxflow__cpp__
-    );
-
-  
-# ifdef PINK_HAVE_OPENCL
-  def(
-    "clflow",
-    pink::opencl::clflow<pink::float_image>,
-    (arg("source and sink"),
-     arg("constraint image"),
-     arg("iterations"),
-     arg("tau") = 0.132,
-     arg("verbose") = false),
-    doc__maxflow__cpp__
-    );
-# endif /* PINK_HAVE_OPENCL */
-  
-  def(
-    "ungerflow",
-    pink::lungerflow<pink::float_image>,
-    (arg("source and sink"),
-     arg("gradient image"),
-     arg("lambda image"),
-     arg("guidence image"),
-     arg("number of iterations"),
-     arg("tau"),
-     arg("theta") /*,
-                    arg("number of threads")=0*/
-      ),
-    doc__ungerflow__cpp__
     );
 
   def(

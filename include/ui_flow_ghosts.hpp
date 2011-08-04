@@ -273,7 +273,7 @@ namespace pink {
                   thread_common,
                   pthread_private_t(
                     new thread_private_t<>(
-                      /* core */ node * (number_of_cores / number_of_nodes) + q,
+                      /* core */ node * (number_of_cores / number_of_nodes) + 2 * q,
                       /* node */ node,
                       /* part */ part,
                       range_t( pot_range.first  + dist_pot.low(part),  pot_range.first  + dist_pot.high(part)  ),

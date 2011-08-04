@@ -626,6 +626,11 @@ namespace pink {
           std::cout << "creating the numaflow object (" << static_cast<void*>(this) << ")" << std::endl;	
 #         endif /* UJIMAGE_DEBUG */
 
+          if (( this->number_of_threads == 0 ) or (this->number_of_threads > boost::thread::hardware_concurrency() ))
+          {
+            this->number_of_threads = boost::thread::hardware_concurrency();            
+          }
+          
           FOR(q, d)
             simdim[q] = dim[q];          
            
@@ -647,11 +652,6 @@ namespace pink {
 
           this->number_of_nodes = g_glob.number_of_nodes;
           // queue.resize( number_of_nodes );
-
-          if( this->number_of_threads == 0 )
-          {
-            this->number_of_threads = boost::thread::hardware_concurrency();            
-          }
 
           this->threads_per_node = this->number_of_threads / this->number_of_nodes;
 
