@@ -156,9 +156,8 @@ c++ class shallow_xvimage
 */
 
   shallow_xvimage::shallow_xvimage()
-  { 
-    name = new char[1];
-    strcpy(name, "");
+  {
+    this->name = NULL;
   } /* shallow_xvimage::shallow_xvimage */
 
 
@@ -167,9 +166,8 @@ c++ class shallow_xvimage
     // Carefully, the image data is not copied. 
     // It will be created by 'ujoi::operato&'
     // for functions which use xvimage from python
-    name=new char[1];  // I allocate it if anything wanted to use it. It will be empty anyway.
-    strcpy(name, "");
-    image_data=NULL;   // the image data is never allocated and therefore destroyed !
+    this->name = NULL;  
+    image_data = NULL;   // the image data is never allocated and therefore destroyed !
     // it is only used for 'ujoi::operator&'
     this->row_size=src.row_size;
     this->col_size=src.col_size;
@@ -194,9 +192,8 @@ c++ class shallow_xvimage
     // Carefully, the image data is not copied. 
     // It will be created by 'ujoi::operato&'
     // for functions which use xvimage from python
-    name=new char[1];  // I allocate it if anything wanted to use it. It will be empty anyway.
-    strcpy(name, "");
-    image_data=NULL;   // the image data is never allocated and therefore destroyed !
+    this->name = NULL; 
+    image_data = NULL;   // the image data is never allocated and therefore destroyed !
     // it is only used for 'ujoi::operator&'
     this->row_size=src.row_size;
     this->col_size=src.col_size;
@@ -220,24 +217,19 @@ c++ class shallow_xvimage
     // // Carefully, the image data  
     // will be created by 'ujoi::operator&'
     // for functions which use xvimage from python
-    name=new char[1];  // I allocate it if anything wanted to use it. It will be empty anyway.
-    strcpy(name, "");
-    image_data=NULL;   // the image data is never allocated and therefore destroyed !
+    this->name = NULL; 
+    image_data = NULL;   // the image data is never allocated and therefore destroyed !
     // it is only used for 'ujoi::operator&'
 
     index_t x,y,z,t;
     setDimensions( dim, x, y, z, t );
-
   
     this->row_size   = x;
     this->col_size   = y;
     this->depth_size = z;
     this->time_size  = t;
-
     this->num_data_bands    = 1;
-
     this->data_storage_type = int_im_type; /// !!!!!!!!
-
     this->xdim = -1;
     this->ydim = -1;
     this->zdim = -1;
@@ -252,7 +244,6 @@ c++ class shallow_xvimage
 
   shallow_xvimage::~shallow_xvimage()
   {
-    delete name;
     ////// /// !!!!!!!!!! delete image->image_data; // this is a shallow container 
     // image data is not to be deleted!
     /////!!!!!!! cout<< "deleting shallow_xvimage" << std::endl;
@@ -339,10 +330,6 @@ c++ class pink::deep_xvimage
   {
     s << value;
   } /* write_a_pixel char */
-
-  
-
-
 
 
 } /* namespace pink */

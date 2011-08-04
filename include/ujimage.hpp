@@ -178,7 +178,8 @@ namespace pink
 
   // this class will only copy the properties and set up a fake image name
   // it is used in ujoi, to generate fast an 'struct xvimage' for PInK's C functions
-  class shallow_xvimage: public xvimage {
+  class shallow_xvimage: public xvimage
+  {
   public:
     shallow_xvimage(); // default constructor
     shallow_xvimage( const xvimage & src ); // upcast shallow copy constructor. It does not 
@@ -311,10 +312,10 @@ namespace pink
         
   private:
 
-    boost::shared_ptr<shallow_xvimage> old_school;
     boost::shared_ptr<vint> size;
     boost::shared_ptr<vint> center;
     boost::shared_array<pixel_type> pixels;
+    boost::shared_ptr<shallow_xvimage> old_school;
 
 #   ifdef UJIMAGE_DEBUG
     std::string debug; // representing the name of the object if debugged
@@ -1401,7 +1402,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
     this->old_school.reset( new shallow_xvimage( *size, this->int_pixel_type() ) );
     
-    this->old_school->image_data=pixels.get();
+    this->old_school->image_data = pixels.get();
     // setting up the data type. This is an 
     // unsafe action, and is only allowed 
     // for backward compatibility.

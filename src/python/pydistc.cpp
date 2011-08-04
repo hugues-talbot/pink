@@ -5,7 +5,7 @@
   This software comes in hope that it will be useful but 
   without any warranty to the extent permitted by applicable law.
   
-  (C) UjoImro, 2010
+  (C) UjoImro, 2010-2011
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
@@ -36,11 +36,10 @@ namespace pink {
       int mode
       )
     {
-      pink_image * result;
+      int        N;
+      uint8_t   *F;
       char_image image;
       image.copy(original_image);
-      int N;
-      uint8_t *F;
 
       if ((mode != 0) && (mode != 1) && (mode != 2) && (mode != 3) && (mode != 5) &&
           (mode != 4) && (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26) &&
@@ -52,12 +51,12 @@ namespace pink {
               "                40, 80 (2D), 60, 180, 260 (3D)\n");
       } /* if mode */
 
-      if (mode < 40)        
-        // result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
-        result = new int_image(image.get_size());      
-      else
-        // result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
-        result = new char_image(image.get_size());
+      // if (mode < 40)        
+      //   // result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
+      //   result = new int_image(image.get_size());      
+      // else
+      //   // result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
+      //   result = new char_image(image.get_size());
       
       // if (result == NULL)
       // {   
@@ -69,109 +68,144 @@ namespace pink {
 
       if (mode == 0)
       {
+
+        int_image rimage( image.get_size() );        
+
         for (int i = 0; i < N; i++) // inverse l'image
-          if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
-        if (depth(image.get_output()) == 1)
         {
-          if (! ldisteuc(image, *result))
+          if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
+        }
+        
+        if (depth(image.get_output()) == 1) /* the image is 2D */
+        {
+          if (! ldisteuc(image, rimage))
           {
             pink_error("%s: ldisteuc failed");
           }
         }
-        else
+        else /* NOT the image is 2D */
         {
-          if (! ldisteuc3d(image, *result))
+          if (! ldisteuc3d(image, rimage))
           {
             pink_error("%s: ldisteuc3d failed");
           }
-        }
-      }
+        } /* NOT the image is 2D */
+
+        boost::python::object result (rimage);
+        return result;
+
+      } /* mode == 0 */
       else if (mode == 1)
       {
+
+        int_image rimage( image.get_size() );
+
         for (int i = 0; i < N; i++) // inverse l'image
-          if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
-        if (depth(image.get_output()) == 1)
         {
-          if (! ldistquad(image, *result))
+          if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
+        }
+        
+        if (depth(image.get_output()) == 1) /* the image is 2D */
+        {
+          if (! ldistquad(image, rimage))
           {
             pink_error("%s: ldistquad failed");
           }
         }
-        else
+        else /* NOT the image is 2D */
         {
-          if (! ldistquad3d(image, *result))
+          if (! ldistquad3d(image, rimage))
           {
             pink_error("%s: ldistquad3d failed");
           }
-        }
+        } /* NOT the image is 2D */
+
+        boost::python::object result (rimage);
+        return result;
+
       }
       else if (mode == 2)
       {
+
+        int_image rimage( image.get_size() );
+
         for (int i = 0; i < N; i++) // inverse l'image
+        {
           if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
-        if (! lchamfrein(image, *result))
+        }
+        
+        if (! lchamfrein(image, rimage))
         {
           pink_error("%s: lchamfrein failed");
         }
+
+        boost::python::object result (rimage);
+        return result;
+
       }
       else if ((mode == 3) || (mode == 5))
       {
-        if (! lsedt_meijster(image, *result))
+
+        int_image rimage( image.get_size() );        
+
+        if (! lsedt_meijster(image, rimage))
         {
           pink_error("%s: lsedt_meijster failed");
         }
+        
         if (mode == 5)
         {
-          float *D;
-          pink_image * tmp = result;
-          result = new float_image();
-          polymorphic_cast<float_image*>(result)->copy(pink::convert2float(*polymorphic_cast<int_image*>(tmp)));
-          delete tmp;          
-          //convertfloat(&result);
-          D = FLOATDATA(polymorphic_cast<float_image*>(result)->get_output());
-          for (int i = 0; i < N; i++) D[i] = (float)sqrt(D[i]);
-        }
+          float_image rfimage = pink::convert2float(rimage);  //convertfloat(&result);
+       
+          for (int i = 0; i < N; i++)
+          {
+            rfimage[i] = sqrt(rfimage[i]); // D[i] = static_cast<float>(sqrt(D[i]));
+          }
+          
+          boost::python::object result (rfimage);
+          return result;
+   
+        } /* mode == 5 */
+
+        boost::python::object result (rimage);
+        return result;
+        
       }
       else if (mode < 40)
       {
+
+        int_image rimage( image.get_size() );        
+
         for (int i = 0; i < N; i++) // inverse l'image
+        {
           if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
-        if (! ldist(image, mode, *result))
-        {
-          pink_error("%s: ldist failed");
         }
-      }
-      else
-      {
-        if (! ldistbyte(image, mode, *result))
-        {
-          pink_error("%s: ldist failed");
-        }
-      }
-
-
-      boost::python::object * to_return;
-
-      if (mode == 5)
-      {
-        to_return = new boost::python::object( *polymorphic_cast<float_image*>(result) );
-      }
-      else  /* NOT mode == 5 */
-      {
         
-        if (mode < 40)
-        {        
-          //result = new int_image(image.get_size());
-          to_return = new boost::python::object( *polymorphic_cast<int_image*>(result) );
-        }        
-        else /* NOT mode < 40 */
-        {        
-          //result = new char_image(image.get_size());
-          to_return = new boost::python::object( *polymorphic_cast<char_image*>(result) );
-        }      
-      } /* NOT mode == 5 */      
+        if (! ldist(image, mode, rimage))
+        {
+          pink_error("%s: ldist failed");
+        }
+
+        boost::python::object result (rimage);
+        return result;
+
+      }
+      else /* NOT mode < 40 */
+      {
+        char_image rimage( image.get_size() );        
+
+        if (! ldistbyte(image, mode, rimage))
+        {
+          pink_error("%s: ldist failed");
+        }
+
+        boost::python::object result (rimage);
+        return result;
+        
+      } /* NOT mode < 40 */
+
+      return boost::python::object();
       
-      return *to_return;
     } /* distc */
   
     
@@ -182,11 +216,10 @@ namespace pink {
       int mode
       )
     {
-      pink_image * result;
-      char_image image;
-      image.copy(original_image);
       int N;
       uint8_t *F;
+      char_image image;
+      image.copy(original_image);
 
       if ((mode != 0) && (mode != 1) && (mode != 2) && (mode != 3) && (mode != 5) &&
           (mode != 4) && (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26) &&
@@ -198,12 +231,12 @@ namespace pink {
               "                40, 80 (2D), 60, 180, 260 (3D)\n");
       } /* if mode */
 
-      if (mode < 40)        
-        // result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
-        result = new int_image(image.get_size());      
-      else
-        // result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
-        result = new char_image(image.get_size());
+      // if (mode < 40)        
+      //   // result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
+      //   result = new int_image(image.get_size());      
+      // else
+      //   // result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
+      //   result = new char_image(image.get_size());
       
       // if (result == NULL)
       // {   
@@ -215,104 +248,125 @@ namespace pink {
 
       if (mode == 0)
       {
-        if (depth(image.get_output()) == 1)
+        int_image rimage( image.get_size() );
+        
+        if (depth(image.get_output()) == 1) /* image is 2D */
         {
-          if (! ldisteuc(image, *result))
+          if (! ldisteuc(image, rimage))
           {
             pink_error("%s: ldisteuc failed");
           }
         }
-        else
+        else /* NOT image is 2D */
         {
-          if (! ldisteuc3d(image, *result))
+          if (! ldisteuc3d(image, rimage))
           {
             pink_error("%s: ldisteuc3d failed");
           }
-        }
+        } /* NOT image is 2D */
+
+        boost::python::object result (rimage);
+        return result;
       }
       else if (mode == 1)
       {
-        if (depth(image.get_output()) == 1)
+        int_image rimage( image.get_size() );        
+
+        if (depth(image.get_output()) == 1) /* image is 2D */
         {
-          if (! ldistquad(image, *result))
+          if (! ldistquad(image, rimage))
           {
             pink_error("%s: ldistquad failed");
           }
         }
-        else
+        else /* NOT image is 2D */
         {
-          if (! ldistquad3d(image, *result))
+          if (! ldistquad3d(image, rimage))
           {
             pink_error("%s: ldistquad3d failed");
           }
-        }
+        } /* NOT image is 2D */
+
+        boost::python::object result (rimage);
+        return result;
+
       }
       else if (mode == 2)
       {
-        if (! lchamfrein(image, *result))
+        
+        int_image rimage( image.get_size() );
+
+        if (! lchamfrein(image, rimage))
         {
           pink_error("%s: lchamfrein failed");
         }
+        
+        boost::python::object result (rimage);
+        return result;
+        
       }
       else if ((mode == 3) || (mode == 5))
       {
+
+        int_image rimage( image.get_size() );  
+        
         for (int i = 0; i < N; i++) // inverse l'image
           if (F[i]) F[i] = 0; else F[i] = NDG_MAX;
 
-        if (! lsedt_meijster(image, *result))
+        if (! lsedt_meijster(image, rimage))
         {
           pink_error("%s: lsedt_meijster failed");
         }
+        
         if (mode == 5)
         {
-          float *D;
-          pink_image * tmp = result;
-          result = new float_image();
-          polymorphic_cast<float_image*>(result)->copy(pink::convert2float(*polymorphic_cast<int_image*>(tmp)));
-          delete tmp;          
-          //convertfloat(&result);
-          D = FLOATDATA(polymorphic_cast<float_image*>(result)->get_output());
-          for (int i = 0; i < N; i++) D[i] = (float)sqrt(D[i]);
-        }
+
+          float_image rfimage = pink::convert2float(rimage);  //convertfloat(&result);
+          
+          for (int i = 0; i < N; i++)
+          {
+            rfimage[i] = sqrt(rfimage[i]); // D[i] = static_cast<float>(sqrt(D[i]));
+          }
+          
+          boost::python::object result (rfimage);
+          return result;
+ 
+        } /* mode == 5 */
+
+        boost::python::object result (rimage);
+        return result;
+  
       }
       else if (mode < 40)
       {
-        if (! ldist(image, mode, *result))
+
+        int_image rimage( image.get_size() );        
+
+        if (! ldist(image, mode, rimage))
         {
           pink_error("%s: ldist failed");
         }
+
+        boost::python::object result (rimage);
+        return result;
+
       }
-      else
+      else /* NOT mode < 40 */
       {
-        if (! ldistbyte(image, mode, *result))
+        char_image rimage( image.get_size() );        
+
+        if (! ldistbyte(image, mode, rimage))
         {
           pink_error("%s: ldist failed");
         }
-      }
-
-
-      boost::python::object * to_return;
-
-      if (mode == 5)
-      {
-        to_return = new boost::python::object( *polymorphic_cast<float_image*>(result) );
-      }
-      else  /* NOT mode == 5 */
-      {
         
-        if (mode < 40)
-        {        
-          //result = new int_image(image.get_size());
-          to_return = new boost::python::object( *polymorphic_cast<int_image*>(result) );
-        }        
-        else /* NOT mode < 40 */
-        {        
-          //result = new char_image(image.get_size());
-          to_return = new boost::python::object( *polymorphic_cast<char_image*>(result) );
-        }      
-      } /* NOT mode == 5 */      
+        boost::python::object result (rimage);
+        return result;
+
+      } /* NOT mode < 40 */
+
+      return boost::python::object();
       
-      return *to_return;
     } /* dist */
   
         
