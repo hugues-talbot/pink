@@ -36,9 +36,11 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts a "long" image to a "float" image
 
-<B>Usage:</B> long2float in out
+<B>Usage:</B> long2float in [out]
 
 <B>Description:</B> For each pixel x, out[x] = (float)in[x]
+
+If the last argument \b out is omitted, then out = in.
 
 <B>Types supported:</B> long 2d, long 3d.
 
@@ -69,9 +71,9 @@ int main(int argc, char **argv)
 
   int32_t rs, cs, d, N;
 
-  if (argc != 3)
+  if ((argc != 2) && (argc != 3))
   {
-    fprintf(stderr, "usage: %s in1.pgm out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in1.pgm [out.pgm] \n", argv[0]);
     exit(1);
   }
 
@@ -108,7 +110,7 @@ int main(int argc, char **argv)
   for (x = 0; x < N; x++)
     L[x] = (float)B[x];
 
-  writeimage(imagefloat, argv[2]);
+  writeimage(imagefloat, argv[argc-1]);
   freeimage(imagefloat);
   freeimage(imagelong);
 

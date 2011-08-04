@@ -93,9 +93,11 @@ int main(int argc, char **argv)
 
 #ifdef VERBOSE
   if (ret)
-    printf("%s: the images are equal\n", argv[0]);
+    //    printf("%s: the images are equal\n", argv[0]);
+    printf("1\n", argv[0]);
   else
-    printf("%s: the images are different\n", argv[0]);
+    //    printf("%s: the images are different\n", argv[0]);
+    printf("0\n", argv[0]);
 #endif
 
   freeimage(image1);

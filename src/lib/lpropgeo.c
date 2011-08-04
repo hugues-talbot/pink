@@ -79,6 +79,7 @@ knowledge of the CeCILL license and that you accept its terms.
 *            les points frontieres sont des points qui ont un label = 0 dans l'image masque
 *          update juillet 98: valeur taboue (pour les points frontiere)
 *          update avril 99: RANDB
+*          update aout 2011: 3D
 *
 ****************************************************************/
 
@@ -131,31 +132,24 @@ int32_t lpropgeo(
   int32_t *MASKLONG = SLONGDATA(mask);
   int32_t rs = rowsize(img1);
   int32_t cs = colsize(img1);
-  int32_t N = rs * cs;
+  int32_t ds = depth(img1);
+  int32_t ps = rs * cs;
+  int32_t N = ps * ds;
   Lifo * LIFO;
 #ifdef PERF
   chrono chrono1;
 #endif
 
-  if (depth(img1) != 1) 
-  {
-    fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
-
-  if (img1->data_storage_type != VFF_TYP_1_BYTE)
-    return lpropgeolong(img1, mask, connex, function);
-
-  if ((rowsize(mask) != rs) || (colsize(mask) != cs))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
+  COMPARE_SIZE(img1, mask);
+  ACCEPTED_TYPES1(img1, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES2(mask, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE);
 
   switch (connex)
   {
     case 4: incr_vois = 2; incr_voisb = 1; break;
     case 8: incr_vois = 1; incr_voisb = 2; break;
+    case 6:
+    case 26: break;
     default: 
       fprintf(stderr, "%s: mauvaise connexite: %d\n", F_NAME, connex);
       return 0;
@@ -201,33 +195,95 @@ int32_t lpropgeo(
           if ((SOURCE[w] > max)) max = SOURCE[w];
           surf += 1;
           sumndg += SOURCE[w];
-          for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
-          {
-            y = voisin(w, k, rs, N);
-            if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE1)))
+	  switch (connex)
+	  {
+	  case 4: 
+	  case 8: 
+	    for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
             {
-              LifoPush(LIFO, y);
-              Set(y, TRAITE1);
-            } 
-          } /* for k ... */
-          for (k = 0; k < 8; k += incr_voisb) /* parcourt les voisins dans le complementaire */
-          {
-            y = voisin(w, k, rs, N);
+	      y = voisin(w, k, rs, N);
+	      if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE1)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    for (k = 0; k < 8; k += incr_voisb) /* parcourt les voisins dans le complementaire */
+	    {
+	      y = voisin(w, k, rs, N);
 #ifdef VALEURTABOUE
-            if ((y != -1) && (MASK[y] == 0) && (!IsSet(y, TRAITE1)) && (SOURCE[y] != VALEURTABOUE))
+	      if ((y != -1) && (MASK[y] == 0) && (!IsSet(y, TRAITE1)) && (SOURCE[y] != VALEURTABOUE))
 #else
-            if ((y != -1) && (MASK[y] == 0) && (!IsSet(y, TRAITE1)))
+	      if ((y != -1) && (MASK[y] == 0) && (!IsSet(y, TRAITE1)))
 #endif
+	      {
+		if ((SOURCE[y] < minb)) minb = SOURCE[y];
+		if ((SOURCE[y] > maxb)) maxb = SOURCE[y];
+		surfb += 1;
+		sumndgb += SOURCE[y];
+		sumndgc += SOURCE[y] * SOURCE[y];
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    break;
+	  case 6:
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins */
             {
-              if ((SOURCE[y] < minb)) minb = SOURCE[y];
-              if ((SOURCE[y] > maxb)) maxb = SOURCE[y];
-              surfb += 1;
-              sumndgb += SOURCE[y];
-              sumndgc += SOURCE[y] * SOURCE[y];
-              Set(y, TRAITE1);
-            } 
-          } /* for k ... */
-        } /* while (! LifoVide(LIFO)) */
+	      y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE1)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins dans le complementaire */
+	    {
+	      y = voisin26(w, k, rs, ps, N);
+#ifdef VALEURTABOUE
+	      if ((y != -1) && (MASK[y] == 0) && (!IsSet(y, TRAITE1)) && (SOURCE[y] != VALEURTABOUE))
+#else
+	      if ((y != -1) && (MASK[y] == 0) && (!IsSet(y, TRAITE1)))
+#endif
+	      {
+		if ((SOURCE[y] < minb)) minb = SOURCE[y];
+		if ((SOURCE[y] > maxb)) maxb = SOURCE[y];
+		surfb += 1;
+		sumndgb += SOURCE[y];
+		sumndgc += SOURCE[y] * SOURCE[y];
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    break;
+	  case 26:
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins */
+            {
+	      y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE1)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins dans le complementaire */
+	    {
+	      y = voisin6(w, k, rs, ps, N);
+#ifdef VALEURTABOUE
+	      if ((y != -1) && (MASK[y] == 0) && (!IsSet(y, TRAITE1)) && (SOURCE[y] != VALEURTABOUE))
+#else
+	      if ((y != -1) && (MASK[y] == 0) && (!IsSet(y, TRAITE1)))
+#endif
+	      {
+		if ((SOURCE[y] < minb)) minb = SOURCE[y];
+		if ((SOURCE[y] > maxb)) maxb = SOURCE[y];
+		surfb += 1;
+		sumndgb += SOURCE[y];
+		sumndgc += SOURCE[y] * SOURCE[y];
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    break;
+	  } // switch (connex)
+        } // while (! LifoVide(LIFO))
         moy = (uint8_t)(sumndg/surf);
         if (surfb > 0) { moyb = (uint8_t)(sumndgb/surfb); moybd = ((double)sumndgb)/surfb; }
         else           { moyb = 0; moybd = 0.0; }
@@ -285,25 +341,64 @@ printf("composante %d - surf=%d ; sumndg=%d ; surfb=%d ; sumndgb=%d ; max=%d\n",
               fprintf(stderr, "%s: bad argument\n", F_NAME);
               return(0);
           }
-          for (k = 0; k < 8; k += incr_voisb) /* parcourt les voisins dans le complementaire */
-          {                                   /* pour les demarquer (TRAITE1) */
-            y = voisin(w, k, rs, N);
-            if ((y != -1) && (MASK[y] == 0) && (IsSet(y, TRAITE1)))
-              UnSet(y, TRAITE1);
-          } /* for k ... */
-          for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
-          {
-            y = voisin(w, k, rs, N);
-            if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE2)))
-            {
-              LifoPush(LIFO, y);
-              Set(y, TRAITE2);
-            } 
-          } /* for k ... */
-        } /* while (! LifoVide(LIFO)) */
-  
-      } /* if (MASK[x] && (!IsSet(x, TRAITE1))) */
+	  switch (connex)
+	  {
+	  case 4: 
+	  case 8: 
+	    for (k = 0; k < 8; k += incr_voisb) /* parcourt les voisins dans le complementaire */
+	    {                                   /* pour les demarquer (TRAITE1) */
+	      y = voisin(w, k, rs, N);
+	      if ((y != -1) && (MASK[y] == 0) && (IsSet(y, TRAITE1)))
+		UnSet(y, TRAITE1);
+	    } /* for k ... */
+	    for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
+	    {
+	      y = voisin(w, k, rs, N);
+	      if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE2)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE2);
+	      } 
+	    } // for k ... 
+	    break;
+	  case 6:
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins dans le complementaire */
+	    {                                   /* pour les demarquer (TRAITE1) */
+	      y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (MASK[y] == 0) && (IsSet(y, TRAITE1)))
+		UnSet(y, TRAITE1);
+	    } /* for k ... */
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins */
+	    {
+	      y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE2)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE2);
+	      } 
+	    } // for k ... 
+	    break;
+	  case 26:
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins dans le complementaire */
+	    {                                   /* pour les demarquer (TRAITE1) */
+	      y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (MASK[y] == 0) && (IsSet(y, TRAITE1)))
+		UnSet(y, TRAITE1);
+	    } /* for k ... */
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins */
+	    {
+	      y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE2)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE2);
+	      } 
+	    } // for k ... 
+	    break;
 
+	  } // switch (connex)
+        } // while (! LifoVide(LIFO))
+      } /* if (MASK[x] && (!IsSet(x, TRAITE1))) */
     } /* for (x = 0; x < N; x++) */
   } /* if (mask->data_storage_type == VFF_TYP_1_BYTE) */
   else if (mask->data_storage_type == VFF_TYP_4_BYTE)
@@ -334,49 +429,99 @@ printf("Set TRAITE1 %d (%d,%d)\n",x, x%rs, x/rs);
           if ((SOURCE[w] > max)) max = SOURCE[w];
           surf += 1;
           sumndg += SOURCE[w];
-          for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
-          {
-            y = voisin(w, k, rs, N);
-            if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE1)))
-            {
-              LifoPush(LIFO, y);
-              Set(y, TRAITE1);
-#ifdef DEBUG
-printf("Set TRAITE1 %d (%d,%d)\n",y, y%rs, y/rs);
-#endif
-            } 
-          } /* for k ... */
-          for (k = 0; k < 8; k += incr_voisb) /* parcourt les voisins dans le complementaire */
-          {
-            y = voisin(w, k, rs, N);
+	  switch (connex)
+	  {
+	  case 4: 
+	  case 8: 
+	    for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
+	    {
+	      y = voisin(w, k, rs, N);
+	      if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE1)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    for (k = 0; k < 8; k += incr_voisb) /* parcourt les voisins dans le complementaire */
+	    {
+	      y = voisin(w, k, rs, N);
 #ifdef VALEURTABOUE
-            if ((y != -1) && (MASKLONG[y] == 0) && (!IsSet(y, TRAITE1)) && (SOURCE[y] != VALEURTABOUE))
+	      if ((y != -1) && (MASKLONG[y] == 0) && (!IsSet(y, TRAITE1)) && (SOURCE[y] != VALEURTABOUE))
 #else
-            if ((y != -1) && (MASKLONG[y] == 0) && (!IsSet(y, TRAITE1)))
+	      if ((y != -1) && (MASKLONG[y] == 0) && (!IsSet(y, TRAITE1)))
 #endif
-            {
-              if ((SOURCE[y] < minb)) minb = SOURCE[y];
-              if ((SOURCE[y] > maxb)) maxb = SOURCE[y];
-              surfb += 1;
-              sumndgb += SOURCE[y];
-              sumndgc += SOURCE[y] * SOURCE[y];
-              Set(y, TRAITE1);
-#ifdef DEBUG
-printf("Set TRAITE1 %d (%d,%d)\n",y, y%rs, y/rs);
+	      {
+		if ((SOURCE[y] < minb)) minb = SOURCE[y];
+		if ((SOURCE[y] > maxb)) maxb = SOURCE[y];
+		surfb += 1;
+		sumndgb += SOURCE[y];
+		sumndgc += SOURCE[y] * SOURCE[y];
+		Set(y, TRAITE1);
+	      } 
+	    } // for k ...
+	    break;
+	  case 6:
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins */
+	    {
+	      y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE1)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins dans le complementaire */
+	    {
+	      y = voisin26(w, k, rs, ps, N);
+#ifdef VALEURTABOUE
+	      if ((y != -1) && (MASKLONG[y] == 0) && (!IsSet(y, TRAITE1)) && (SOURCE[y] != VALEURTABOUE))
+#else
+	      if ((y != -1) && (MASKLONG[y] == 0) && (!IsSet(y, TRAITE1)))
 #endif
-            } 
-          } /* for k ... */
+	      {
+		if ((SOURCE[y] < minb)) minb = SOURCE[y];
+		if ((SOURCE[y] > maxb)) maxb = SOURCE[y];
+		surfb += 1;
+		sumndgb += SOURCE[y];
+		sumndgc += SOURCE[y] * SOURCE[y];
+		Set(y, TRAITE1);
+	      } 
+	    } // for k ...
+	    break;
+	  case 26:
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins */
+	    {
+	      y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE1)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins dans le complementaire */
+	    {
+	      y = voisin6(w, k, rs, ps, N);
+#ifdef VALEURTABOUE
+	      if ((y != -1) && (MASKLONG[y] == 0) && (!IsSet(y, TRAITE1)) && (SOURCE[y] != VALEURTABOUE))
+#else
+	      if ((y != -1) && (MASKLONG[y] == 0) && (!IsSet(y, TRAITE1)))
+#endif
+	      {
+		if ((SOURCE[y] < minb)) minb = SOURCE[y];
+		if ((SOURCE[y] > maxb)) maxb = SOURCE[y];
+		surfb += 1;
+		sumndgb += SOURCE[y];
+		sumndgc += SOURCE[y] * SOURCE[y];
+		Set(y, TRAITE1);
+	      } 
+	    } // for k ...
+	    break;
+	  } // switch (connex)
         } /* while (! LifoVide(LIFO)) */
         moy = (uint8_t)(sumndg/surf);
         if (surfb > 0) { moyb = (uint8_t)(sumndgb/surfb); moybd = ((double)sumndgb)/surfb; }
         else           { moyb = 0; moybd = 0.0; }
-        devb = sqrt(((double)sumndgc)/surfb - ((double)sumndgb * sumndgb)/(surfb * surfb));
-
-#ifdef DEBUG
-printf("composante %d - surf=%d ; sumndg=%d ; surfb=%d ; sumndgb=%d ; max=%d\n", 
-        valcomplong, surf, sumndg, surfb, sumndgb, max);
-#endif
-  
+        devb = sqrt(((double)sumndgc)/surfb - ((double)sumndgb * sumndgb)/(surfb * surfb));  
         LifoPush(LIFO, x);
         Set(x, TRAITE2);
         mintrouve = 0;
@@ -424,30 +569,69 @@ printf("composante %d - surf=%d ; sumndg=%d ; surfb=%d ; sumndgb=%d ; max=%d\n",
               fprintf(stderr, "%s: bad argument\n", F_NAME);
               return(0);
           }
-          for (k = 0; k < 8; k += incr_voisb) /* parcourt les voisins dans le complementaire */
-          {                                   /* pour les demarquer (TRAITE1) */
-            y = voisin(w, k, rs, N);
-            if ((y != -1) && (MASKLONG[y] == 0) && (IsSet(y, TRAITE1)))
+	  switch (connex)
+	  {
+	  case 4: 
+	  case 8: 	  
+	    for (k = 0; k < 8; k += incr_voisb) /* parcourt les voisins dans le complementaire */
+	    {                                   /* pour les demarquer (TRAITE1) */
+	      y = voisin(w, k, rs, N);
+	      if ((y != -1) && (MASKLONG[y] == 0) && (IsSet(y, TRAITE1)))
+	      {
+		UnSet(y, TRAITE1);
+	      }
+	    } /* for k ... */
+	    for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
 	    {
-              UnSet(y, TRAITE1);
-#ifdef DEBUG
-printf("UnSet TRAITE1 %d (%d,%d)\n",y, y%rs, y/rs);
-#endif
-	    }
-          } /* for k ... */
-          for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
-          {
-            y = voisin(w, k, rs, N);
-            if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE2)))
-            {
-              LifoPush(LIFO, y);
-              Set(y, TRAITE2);
-            } 
-          } /* for k ... */
+	      y = voisin(w, k, rs, N);
+	      if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE2)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE2);
+	      } 
+	    } // for k ...
+	    break;
+	  case 6:
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins dans le complementaire */
+	    {                                   /* pour les demarquer (TRAITE1) */
+	      y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (MASKLONG[y] == 0) && (IsSet(y, TRAITE1)))
+	      {
+		UnSet(y, TRAITE1);
+	      }
+	    } /* for k ... */
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins */
+	    {
+	      y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE2)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE2);
+	      } 
+	    } // for k ...
+	    break;
+	  case 26:
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins dans le complementaire */
+	    {                                   /* pour les demarquer (TRAITE1) */
+	      y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (MASKLONG[y] == 0) && (IsSet(y, TRAITE1)))
+	      {
+		UnSet(y, TRAITE1);
+	      }
+	    } /* for k ... */
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins */
+	    {
+	      y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE2)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE2);
+	      } 
+	    } // for k ...
+	    break;
+	  } // switch (connex)
         } /* while (! LifoVide(LIFO)) */
-  
       } /* if (MASKLONG[x] && (!IsSet(x, TRAITE1))) */
-
     } /* for (x = 0; x < N; x++) */
   } /* if (mask->data_storage_type == VFF_TYP_4_BYTE) */
   else
@@ -513,34 +697,25 @@ int32_t lpropgeolong(
   int32_t *MASKLONG = SLONGDATA(mask);
   int32_t rs = rowsize(img1);
   int32_t cs = colsize(img1);
-  int32_t N = rs * cs;
+  int32_t ds = depth(img1);
+  int32_t ps = rs * cs;
+  int32_t N = ps * ds;
   Lifo * LIFO;
 #ifdef PERF
   chrono chrono1;
 #endif
 
-  if (depth(img1) != 1) 
-  {
-    fprintf(stderr, "%s: cette version ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
-
-  if (img1->data_storage_type != VFF_TYP_4_BYTE)
-  {
-    fprintf(stderr, "%s: datatype for arg1 must be int32_t\n", F_NAME);
-    return 0;
-  }
-
-  if ((rowsize(mask) != rs) || (colsize(mask) != cs))
-  {
-    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    return 0;
-  }
+  COMPARE_SIZE(img1, mask);
+  ACCEPTED_TYPES1(img1, VFF_TYP_4_BYTE);
+  ACCEPTED_TYPES2(mask, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE);
 
   switch (connex)
   {
     case 4: incr_vois = 2; incr_voisb = 1; break;
     case 8: incr_vois = 1; incr_voisb = 2; break;
+    case 6:
+    case 26:
+      break;
     default: 
       fprintf(stderr, "%s: mauvaise connexite: %d\n", F_NAME, connex);
       return 0;
@@ -580,15 +755,43 @@ int32_t lpropgeolong(
           if ((SOURCE[w] > max)) max = SOURCE[w];
           surf += 1;
           sumndg += SOURCE[w];
-          for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
-          {
-            y = voisin(w, k, rs, N);
-            if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE1)))
-            {
-              LifoPush(LIFO, y);
-              Set(y, TRAITE1);
-            } 
-          } /* for k ... */
+	  switch (connex)
+	  {
+	  case 4: 
+	  case 8: 	  
+	    for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
+	    {
+	      y = voisin(w, k, rs, N);
+	      if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE1)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    break;
+	  case 6:
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins */
+	    {
+	      y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE1)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    break;
+	  case 26:
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins */
+	    {
+	      y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE1)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    break;
+	  } // switch (connex)
         } /* while (! LifoVide(LIFO)) */
         moy = (int32_t)(sumndg/surf);
 
@@ -615,21 +818,61 @@ int32_t lpropgeolong(
               fprintf(stderr, "%s: bad argument\n", F_NAME);
               return(0);
           }
-          for (k = 0; k < 8; k += incr_voisb) /* parcourt les voisins dans le complementaire */
-          {                                   /* pour les demarquer (TRAITE1) */
-            y = voisin(w, k, rs, N);
-            if ((y != -1) && (MASK[y] == 0) && (IsSet(y, TRAITE1)))
-              UnSet(y, TRAITE1);
-          } /* for k ... */
-          for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
-          {
-            y = voisin(w, k, rs, N);
-            if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE2)))
-            {
-              LifoPush(LIFO, y);
-              Set(y, TRAITE2);
-            } 
-          } /* for k ... */
+	  switch (connex)
+	  {
+	  case 4: 
+	  case 8: 	  
+	    for (k = 0; k < 8; k += incr_voisb) /* parcourt les voisins dans le complementaire */
+	    {                                   /* pour les demarquer (TRAITE1) */
+	      y = voisin(w, k, rs, N);
+	      if ((y != -1) && (MASK[y] == 0) && (IsSet(y, TRAITE1)))
+		UnSet(y, TRAITE1);
+	    } /* for k ... */
+	    for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
+	    {
+	      y = voisin(w, k, rs, N);
+	      if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE2)))
+		{
+		  LifoPush(LIFO, y);
+		  Set(y, TRAITE2);
+		} 
+	    } /* for k ... */
+	    break;
+	  case 6:
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins dans le complementaire */
+	    {                                   /* pour les demarquer (TRAITE1) */
+	      y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (MASK[y] == 0) && (IsSet(y, TRAITE1)))
+		UnSet(y, TRAITE1);
+	    } /* for k ... */
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins */
+	    {
+	      y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE2)))
+		{
+		  LifoPush(LIFO, y);
+		  Set(y, TRAITE2);
+		} 
+	    } /* for k ... */
+	    break;
+	  case 26:
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins dans le complementaire */
+	    {                                   /* pour les demarquer (TRAITE1) */
+	      y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (MASK[y] == 0) && (IsSet(y, TRAITE1)))
+		UnSet(y, TRAITE1);
+	    } /* for k ... */
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins */
+	    {
+	      y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (MASK[y] == valcomp) && (!IsSet(y, TRAITE2)))
+		{
+		  LifoPush(LIFO, y);
+		  Set(y, TRAITE2);
+		} 
+	    } /* for k ... */
+	    break;
+	  } // switch (connex)
         } /* while (! LifoVide(LIFO)) */
   
       } /* if (MASK[x] && (!IsSet(x, TRAITE1))) */
@@ -661,18 +904,43 @@ printf("Set TRAITE1 %d (%d,%d)\n",x, x%rs, x/rs);
           if ((SOURCE[w] > max)) max = SOURCE[w];
           surf += 1;
           sumndg += SOURCE[w];
-          for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
-          {
-            y = voisin(w, k, rs, N);
-            if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE1)))
-            {
-              LifoPush(LIFO, y);
-              Set(y, TRAITE1);
-#ifdef DEBUG
-printf("Set TRAITE1 %d (%d,%d)\n",y, y%rs, y/rs);
-#endif
-            } 
-          } /* for k ... */
+	  switch (connex)
+	  {
+	  case 4: 
+	  case 8: 	  
+	    for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
+	    {
+	      y = voisin(w, k, rs, N);
+	      if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE1)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    break;
+	  case 6:
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins */
+	    {
+	      y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE1)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    break;
+	  case 26:
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins */
+	    {
+	      y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE1)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE1);
+	      } 
+	    } /* for k ... */
+	    break;
+	  } // switch (connex)
         } /* while (! LifoVide(LIFO)) */
         moy = (int32_t)(sumndg/surf);
   
@@ -699,26 +967,67 @@ printf("Set TRAITE1 %d (%d,%d)\n",y, y%rs, y/rs);
               fprintf(stderr, "%s: bad argument\n", F_NAME);
               return(0);
           }
-          for (k = 0; k < 8; k += incr_voisb) /* parcourt les voisins dans le complementaire */
-          {                                   /* pour les demarquer (TRAITE1) */
-            y = voisin(w, k, rs, N);
-            if ((y != -1) && (MASKLONG[y] == 0) && (IsSet(y, TRAITE1)))
+	  switch (connex)
+	  {
+	  case 4: 
+	  case 8: 	  
+	    for (k = 0; k < 8; k += incr_voisb) /* parcourt les voisins dans le complementaire */
+	    {                                   /* pour les demarquer (TRAITE1) */
+	      y = voisin(w, k, rs, N);
+	      if ((y != -1) && (MASKLONG[y] == 0) && (IsSet(y, TRAITE1)))
+	      {
+		UnSet(y, TRAITE1);
+	      }
+	    } /* for k ... */
+	    for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
 	    {
-              UnSet(y, TRAITE1);
-#ifdef DEBUG
-printf("UnSet TRAITE1 %d (%d,%d)\n",y, y%rs, y/rs);
-#endif
-	    }
-          } /* for k ... */
-          for (k = 0; k < 8; k += incr_vois) /* parcourt les voisins */
-          {
-            y = voisin(w, k, rs, N);
-            if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE2)))
-            {
-              LifoPush(LIFO, y);
-              Set(y, TRAITE2);
-            } 
-          } /* for k ... */
+	      y = voisin(w, k, rs, N);
+	      if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE2)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE2);
+	      } 
+	    } /* for k ... */
+	    break;
+	  case 6:
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins dans le complementaire */
+	    {                                   /* pour les demarquer (TRAITE1) */
+	      y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (MASKLONG[y] == 0) && (IsSet(y, TRAITE1)))
+	      {
+		UnSet(y, TRAITE1);
+	      }
+	    } /* for k ... */
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins */
+	    {
+	      y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE2)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE2);
+	      } 
+	    } /* for k ... */
+	    break;
+	  case 26:
+	    for (k = 0; k < 26; k += 1) /* parcourt les voisins dans le complementaire */
+	    {                                   /* pour les demarquer (TRAITE1) */
+	      y = voisin26(w, k, rs, ps, N);
+	      if ((y != -1) && (MASKLONG[y] == 0) && (IsSet(y, TRAITE1)))
+	      {
+		UnSet(y, TRAITE1);
+	      }
+	    } /* for k ... */
+	    for (k = 0; k <= 10; k += 2) /* parcourt les voisins */
+	    {
+	      y = voisin6(w, k, rs, ps, N);
+	      if ((y != -1) && (MASKLONG[y] == valcomplong) && (!IsSet(y, TRAITE2)))
+	      {
+		LifoPush(LIFO, y);
+		Set(y, TRAITE2);
+	      } 
+	    } /* for k ... */
+	    break;
+	  } // switch (connex)
         } /* while (! LifoVide(LIFO)) */
   
       } /* if (MASKLONG[x] && (!IsSet(x, TRAITE1))) */

@@ -62,6 +62,7 @@ Argument \b attrib defines the considered attribute:
 \li 7: vertical size (of bounding box)
 \li 8: depth size (of bounding box)
 \li 9: max of horizontal, vertical [and depth] sizes (of bounding box)
+\li 10: maximum diameter (Euclidean distance between most distant points): not yet implemented
 
 \warning In 3D only the attributes 0 and 6-9 are implemented.
 

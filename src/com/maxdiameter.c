@@ -41,7 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Description:</B>
 
 Find two points x, y in a set X (binary image <B>in</B>) such that 
-d(x,y) is less or equal to d(v,w) for any two points v, w in X.
+d(x,y) is greater or equal to d(v,w) for any two points v, w in X.
 The distance d is the Euclidean distance.
 
 <B>Types supported:</B> byte 2d, byte 3d

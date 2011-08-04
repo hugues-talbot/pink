@@ -82,7 +82,8 @@ proc my_read_val {filename} {
  set RENDER(wireframe) 0
  set RENDER(indexframe) 0
  set RENDER(nblab) 1
- set RENDER(nbmaxlab) 25
+ set RENDER(nbmaxlab) 40
+ set RENDER(coordfilename) "_multirender_coord_camera"
 
 # white (for any label)
  set RENDER_COL0 "1.0 1.0 1.0"
@@ -230,18 +231,20 @@ pack $opacity .buttons -side top -anchor nw -fill both
 pack $vtkw .commands -side top -fill both -expand yes
 
 proc RENDER_savepos {} {
+  global RENDER
   global ren1
   set pos [[ren1 GetActiveCamera] GetPosition]
   set foc [[ren1 GetActiveCamera] GetFocalPoint]
   set vup [[ren1 GetActiveCamera] GetViewUp]
   set sca [[ren1 GetActiveCamera] GetParallelScale]
-  my_write_text "_labelrender_coord_camera" "$pos\n$foc\n$vup\n$sca"
+  my_write_text $RENDER(coordfilename) "$pos\n$foc\n$vup\n$sca"
 }
 
 proc RENDER_setpos {} {
+  global RENDER
   global ren1
   global renWin
-  set pos [my_read_text "_labelrender_coord_camera"]
+  set pos [my_read_text $RENDER(coordfilename)]
   [ren1 GetActiveCamera] SetPosition [lindex $pos 0] [lindex $pos 1] [lindex $pos 2]
   [ren1 GetActiveCamera] SetFocalPoint [lindex $pos 3] [lindex $pos 4] [lindex $pos 5]
   [ren1 GetActiveCamera] SetViewUp [lindex $pos 6] [lindex $pos 7] [lindex $pos 8]

@@ -43,21 +43,20 @@ Propagates certain values of the original image <B>in.pgm</B>,
 geodesicaly wrt the connected components of the binary image <B>mask.pgm</B>.
 The connexity is specified by the parameter <B>connex</B>.
 The <B>mode</B> is one of the following ones:
-\li    min   : propagates the minimal value of the component
-\li    min1  : selects one point the value of which is equal to the min
-\li    max   : propagates the maximal value of the component
-\li    max1  : selects one point the value of which is equal to the max
-\li    moy   : propagates the mean grayscale value of the component
-\li    moy1  : selects one point the value of which is nearest to the mean
-\li    minb  : propagates the minimal value of the external border of the component
-\li    maxb  : propagates the maximal value of the external border of the component
-\li    moyb  : propagates the mean value of the external border of the component
-\li    randb : fills the component with random values, with a normal distribution
-            centered around the value computed as for moyb
+\li 0 | min   : propagates the minimal value of the component
+\li 1 | max   : propagates the maximal value of the component
+\li 2 | moy   : propagates the mean grayscale value of the component
+\li 3 | min1  : selects one point the value of which is equal to the min
+\li 4 | max1  : selects one point the value of which is equal to the max
+\li 5 | moy1  : selects one point the value of which is nearest to the mean
+\li 6 | minb  : propagates the minimal value of the external border of the component
+\li 7 | maxb  : propagates the maximal value of the external border of the component
+\li 8 | moyb  : propagates the mean value of the external border of the component
+\li 9 | randb : fills the component with random values, with a normal distribution centered around the value computed as for moyb
 
 Only modes min, max and moy are available for int32_t images.
 
-<B>Types supported:</B> byte 2d, int32_t 2d
+<B>Types supported:</B> byte 2d, int32_t 2d byte 3d, int32_t 3d
 
 <B>Category:</B> connect
 \ingroup connect
@@ -115,15 +114,23 @@ int main(int argc, char **argv)
   if (strcmp(argv[4], "moy") == 0) function = MOY; else
   if (strcmp(argv[4], "moyb") == 0) function = MOYB; else
   if (strcmp(argv[4], "randb") == 0) function = RANDB; else
-  {
-    fprintf(stderr, "usage: %s filein.pgm mask.pgm connex {min1|min|minb|max1|max|maxb|moy1|moy|moyb|randb} fileout.pgm\n", argv[0]);
-    exit(1);
-  }
+    function = atoi(argv[4]);
 
-  if (! lpropgeo(image, masque, connex, function))
+  if (datatype(image) == VFF_TYP_1_BYTE)
   {
-    fprintf(stderr, "%s: lpropgeo failed\n", argv[0]);
-    exit(1);
+    if (! lpropgeo(image, masque, connex, function))
+    {
+      fprintf(stderr, "%s: lpropgeo failed\n", argv[0]);
+      exit(1);
+    }
+  }
+  else
+  {
+    if (! lpropgeolong(image, masque, connex, function))
+    {
+      fprintf(stderr, "%s: lpropgeolong failed\n", argv[0]);
+      exit(1);
+    }
   }
 
   writeimage(image, argv[5]);
