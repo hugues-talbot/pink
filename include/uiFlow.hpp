@@ -90,9 +90,8 @@ namespace pink {
     char_image src_sink;
 
 //    boost::shared_array<pixel_type> pot_glob;
-    boost::shared_array<pixel_type> flow_glob;
     boost::shared_array<pixel_type> g_glob;
-
+    boost::shared_array<pixel_type> flow_glob;
 
     index_t starttime;
     index_t number_of_threads;
@@ -108,6 +107,7 @@ namespace pink {
                      // dibbles for on one charge. n dibbles is called
                      // a packet.
     
+
     
   protected:
 
@@ -571,12 +571,13 @@ namespace pink {
     global_lock( new boost::mutex ),
     shared_lock( new boost::shared_mutex ),
     tau(tau), iteration(iteration),
-    flow_calculated(false)
+    flow_calculated(false),
+    number_of_threads(number_of_threads)
   {
 #   ifdef UJIMAGE_DEBUG
     std::cout << "creating the max_flow object (" << static_cast<void*>(this) << ")" << std::endl;	
 #   endif /* UJIMAGE_DEBUG */        
-   
+
     potencial.copy(gg); // "potencial";
     potencial.fill(0.);
     
@@ -618,6 +619,7 @@ namespace pink {
 
     if (verbose)
       std::cout << "setting up source" << std::endl;
+    
     pixel_type *ps;
     unsigned char *ss;
 		
@@ -651,10 +653,10 @@ namespace pink {
     uiCreateDibbles();
     if (verbose)
       std::cout << "the initialization is finished" << std::endl;
-
   } /*   max_flow<image_type>::max_flow */	
 
 
+  
   /**
      \brief Gets the flow from the object.
      
@@ -702,9 +704,9 @@ namespace pink {
 
     if (verbose)
       std::cout << "starting the iteration" << std::endl;
-
-    int nbt = this -> number_of_threads;
-
+    
+    index_t nbt = this -> number_of_threads;
+    
     boost::shared_array< boost::shared_ptr<boost::thread> >
       threads(new boost::shared_ptr<boost::thread>[nbt]);
 
@@ -712,16 +714,13 @@ namespace pink {
       packets(new boost::shared_ptr<packet<image_type> >[nbt]);
 
     // Thread attributes
-
     reference.reset(new packet<image_type>());
     reference->etap = maxflow_types::pot;
-
     FOR( q, nbt )
     {
       packets[q].reset( new packet<image_type>() );
       threads[q].reset( new boost::thread( (*packets[q]), q, this ) );
     } /* FOR(q, nbt) */
-
 
     FOR( q, nbt )
     {
@@ -732,7 +731,6 @@ namespace pink {
     sentinel.stop();
     if (verbose)
       std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
-	
     this->flow_calculated = true; 
 
     vint time_cheat(potencial.get_size().size(), 0);
@@ -863,15 +861,16 @@ namespace pink {
 	} 
 	else /* NOT current_iteration >= iterations - 1 */	  
 	{
-
-	  if ( reference->current_iteration % REPORT_INTERVAL == 0 ) 
-	  {
-	    if ( sentinel.timeToReport() )
-	    {
-	      std::cout << "Estimated time remaining: " << (sentinel << reference -> current_iteration) << std::endl;
-	    } /* timeToReport() */
-	  } /* if iterations ... */
-
+          if (verbose)
+          {            
+            if ( reference->current_iteration % REPORT_INTERVAL == 0 ) 
+            {
+              if ( sentinel.timeToReport() )
+              {
+                std::cout << "Estimated time remaining: " << (sentinel << reference -> current_iteration) << std::endl;
+              } /* timeToReport() */
+            } /* if current_iterations ... */
+          } /* if verbose */          
 	  
 	  shared_lock->lock(); // we wait for all threads to finish the calculation
 	  reference->current_iteration++;
@@ -969,7 +968,8 @@ namespace pink {
       verbose
       );
 
-    image_type result = frame_remove(maxflow_obj.start());    
+    image_type result = frame_remove(maxflow_obj.start());
+    
     return result;    
   } /* maxflow_float */
 

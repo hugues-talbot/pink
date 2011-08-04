@@ -33,8 +33,9 @@ void pymaxflow()
     (arg("source and sink"),
      arg("constraint image"),
      arg("iterations"),
-     arg("tau"),
-     arg("number of threads")=0,
+     arg("tau") = 0.132,
+     arg("number of threads") = 0,
+     arg("packet size") = 8,
      arg("verbose") = false ),
     doc__maxflow__cpp__
     );
@@ -62,6 +63,7 @@ void pymaxflow()
      arg("iterations"),
      arg("tau") = 0.132,
      arg("number of threads") = 0,
+     arg("hyper threading") = false,
      arg("verbose") = false ),
     doc__maxflow__cpp__
     );

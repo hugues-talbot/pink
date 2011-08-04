@@ -499,6 +499,7 @@ namespace pink {
       index_t iteration; // the number of desired iterations
       index_t length_glob;
       index_t number_of_nodes;
+      bool    hyper_threading;      
       index_t threads_per_node;      
       index_t number_of_threads;
 
@@ -610,13 +611,15 @@ namespace pink {
         index_t iteration,         /* number of iterations */
         float   tau = 0.132,	   /* timestep */
         index_t number_of_threads = 0, /* the number of threads to execute if in parallel mode */
-        index_t verbose = false     /* the size of the packet to process */
+        bool    hyper_threading = false,
+        bool    verbose = false     /* the size of the packet to process */
         ) :
         tau(          tau),
         d(            gg.get_size().size() ),
         dim(          gg.get_size() ),
         simdim(       gg.get_size() ),
         verbose(      verbose ),
+        hyper_threading(hyper_threading),
         iteration(    iteration ),
         length_glob(  gg.get_size().prod()),
         potencial(    gg.get_size() ), // we will put the result in this image
@@ -771,7 +774,8 @@ namespace pink {
             cons.first,
             range_t( 0, pot.second  ),
             range_t( 0, flow.second ),
-            range_t( 0, cons.second )
+            range_t( 0, cons.second ),
+            hyper_threading
             );
 
           scheduler.schedule_work();
@@ -820,6 +824,7 @@ namespace pink {
       index_t    iteration,             /* number of iterations */
       float      glob_tau = 0.132,      /* timestep */
       index_t    number_of_threads = 0, /* the number of threads to execute if in parallel mode */
+      bool       hyper_threading = false,
       bool       verbose = false        /* the resolution of the iteration */
       )
     {
@@ -829,6 +834,7 @@ namespace pink {
         iteration,
         glob_tau,
         number_of_threads,
+        hyper_threading,
         verbose
         );
       

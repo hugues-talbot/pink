@@ -232,10 +232,11 @@ namespace pink {
       
     public:
 
-      template <BOOST_PP_ENUM_PARAMS(8, class MT)>
+      template <BOOST_PP_ENUM_PARAMS(9, class MT)>
       scheduler_t( MT0 number_of_threads, MT1 iteration, 
                    MT2 pot, MT3 flow, MT4 cons,
-                   MT5 pot_range, MT6 flow_range, MT7 cons_range
+                   MT5 pot_range, MT6 flow_range, MT7 cons_range,
+                   MT8 hyper_threading = false
         )
         : number_of_threads(number_of_threads)
         {
@@ -266,6 +267,15 @@ namespace pink {
             FOR( q, threads_per_node )
             {
               index_t part = node * threads_per_node + q;
+              index_t core;
+              if (hyper_threading)
+              {
+                core = node * (number_of_cores / number_of_nodes) + 2 * q; /* 2* for hyper-threading */
+              }
+              else /* NOT hyper_threading */
+              {
+                core = node * (number_of_cores / number_of_nodes) + /*2 **/ q; /* 2* for hyper-threading */
+              } /* NOT hyper_threading */              
               
               threads[ node * threads_per_node + q ].reset(
                 new boost::thread(
@@ -273,7 +283,7 @@ namespace pink {
                   thread_common,
                   pthread_private_t(
                     new thread_private_t<>(
-                      /* core */ node * (number_of_cores / number_of_nodes) + 2 * q,
+                      /* core */ core,
                       /* node */ node,
                       /* part */ part,
                       range_t( pot_range.first  + dist_pot.low(part),  pot_range.first  + dist_pot.high(part)  ),
