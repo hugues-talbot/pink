@@ -26,8 +26,8 @@ namespace pink
   namespace benchmark
   {
 
-    const index_t test_size = 100 * 1024 * 1024 / 4;  // 100 MiB of data
-    const index_t simd_size = 100 * 1024 * 1024 / 16; // 100 MiB of data
+    const index_t test_size = 20 * 1024 * 1024 / 4;  // 20 MiB of data
+    const index_t simd_size = 20 * 1024 * 1024 / 16; // 20 MiB of data
     const index_t repeat    = 100;
     
 
@@ -236,21 +236,21 @@ namespace pink
     void numa_dancer( index_t node, index_t nbt )
     {
       index_t number_of_nodes  = numa_max_node() + 1;
-      std::vector< boost::shared_ptr<boost::thread> > threads(number_of_nodes);
+      std::vector< boost::shared_ptr<boost::thread> > threads(nbt);
 
       std::cout << "sequential numa read-write test" << std::endl;
       
-      FOR(q, number_of_nodes)
+      FOR(q, nbt)
       {
         std::cout << "the speed of node " << q << " is " << numa_worker(q) << " MiBps" << std::endl;
       } /* q in number_of_nodes */
 
       std::cout << "parallel numa read-write test" << std::endl;
       typedef boost::shared_ptr<boost::barrier> pbarrier_t;
-      pbarrier_t barrier_start( new boost::barrier(number_of_nodes + 1) );
-      pbarrier_t barrier_end(   new boost::barrier(number_of_nodes + 1) );
+      pbarrier_t barrier_start( new boost::barrier(nbt + 1) );
+      pbarrier_t barrier_end(   new boost::barrier(nbt + 1) );
        
-      FOR( q, number_of_nodes )
+      FOR( q, nbt )
       {
         threads[q].reset( new boost::thread( numa_thread<index_t, pbarrier_t, pbarrier_t>, q, barrier_start, barrier_end ) );
       }
@@ -264,7 +264,7 @@ namespace pink
             
       std::cout << "numa parallel speed = " << numa_speed << " MiBps" << std::endl;
             
-      FOR( q, number_of_nodes )
+      FOR( q, nbt )
       {
         threads[q]->join();
       }
