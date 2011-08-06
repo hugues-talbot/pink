@@ -188,6 +188,8 @@ void pymorpho();
 
 void pyarithmetic();
 
+void pymemtest();
+
 
 // for wrapping every type with one function
 // template <class image_type>
@@ -392,6 +394,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   pydevel();
   pymorpho();  
   pypoints();
+  pymemtest();
   pyconnect();
   pymaxflow();  
   pycomplex();  
