@@ -26,9 +26,9 @@ namespace pink
   namespace benchmark
   {
 
-    const index_t test_size = 10 * 1024 * 1024 / 4;  // 20 MiB of data
-    const index_t simd_size = 10 * 1024 * 1024 / 16; // 20 MiB of data
-    const index_t repeat    = 100;
+    const index_t test_size = 200 * 1024 * 1024 / 4;  // 200 MiB of data
+    const index_t simd_size = 200 * 1024 * 1024 / 16; // 200 MiB of data
+    const index_t repeat    = 10;
     
 
     
