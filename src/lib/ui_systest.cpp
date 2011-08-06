@@ -128,8 +128,29 @@ namespace pink
       nodemask_set(&mask, node);
       numa_bind(&mask);
 
+      double float_speed = 0.;
+      float * from = reinterpret_cast<float*>( numa_alloc_onnode(test_size * sizeof(float), node ) );
+      float * to   = reinterpret_cast<float*>( numa_alloc_onnode(test_size * sizeof(float), node ) );
+
+      FOR(q, repeat)
+      {
+        srand(now());
+        // filling up the memory with pseudo-random numbers
+        for (index_t q=0; q<test_size; q++)
+        {
+          from[q]=rand();
+        }
+        // copying the data
+        double start = now();
+        std::copy( &(from[0]), &(from[test_size]), &(to[0]) );
+        double end = now();
+        float_speed += static_cast<double>(test_size * 4) / (1024. * 1024.) / (end - start) / static_cast<double>(repeat);
+      } /* for q in repeat */
+
+      numa_free( reinterpret_cast<void*>(from), test_size * sizeof(float));
+      numa_free( reinterpret_cast<void*>(to  ), test_size * sizeof(float));
       
-      return float_speed();
+      return float_speed;
     } /* numa_worker () */
 
 
@@ -187,7 +208,6 @@ namespace pink
       FOR( q, number_of_nodes )
       {
         threads[q].reset( new boost::thread( numa_thread<index_t, pbarrier_t, pbarrier_t>, q, barrier_start, barrier_end ) );
-        
       }
 
       double start = now();
