@@ -166,8 +166,8 @@ namespace pink
       numa_bind(&mask);
 
       double float_speed = 0.;
-      boost::scoped_array<float> from (new float[test_size]);
-      boost::scoped_array<float> to   (new float[test_size]);
+      float * from = reinterpret_cast<float*>( numa_alloc_onnode(test_size * sizeof(float), node ) );
+      float * to   = reinterpret_cast<float*>( numa_alloc_onnode(test_size * sizeof(float), node ) );
       
       srand(now());
       // filling up the memory with pseudo-random numbers
@@ -179,10 +179,14 @@ namespace pink
       barrier_start->wait();
       FOR(q, repeat)
       {
-        std::copy( &(to[0]), &(to[test_size]), &(from[0]) );
-        std::copy( &(from[0]), &(from[test_size]), &(to[0]) );
-      }      
+        std::copy( &(to[0]), &(to[test_size]), &(from[0])  );
+        std::copy( &(from[0]), &(from[test_size]), &(to[0]));
+      }
       barrier_end->wait();
+
+      numa_free( reinterpret_cast<void*>(from), test_size * sizeof(float));
+      numa_free( reinterpret_cast<void*>(to  ), test_size * sizeof(float));
+
       return;
     } /* numa_worker () */
 
