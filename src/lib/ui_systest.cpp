@@ -260,7 +260,7 @@ namespace pink
       barrier_end->wait();
       double end = now();
 
-      double numa_speed = static_cast<double>( repeat * number_of_nodes * 2 * test_size * 4) / (1024. * 1024.) / static_cast<double>(end - start);
+      double numa_speed = static_cast<double>( repeat * nbt * 2 * test_size * 4) / (1024. * 1024.) / static_cast<double>(end - start);
             
       std::cout << "numa parallel speed = " << numa_speed << " MiBps" << std::endl;
             
