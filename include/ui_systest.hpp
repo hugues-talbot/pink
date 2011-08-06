@@ -31,6 +31,7 @@ namespace pink
 
 #   ifdef PINK_HAVE_NUMA
     void numaspeed();
+    void numa_dancer( index_t node, index_t nbt );
 #   endif /* PINK_HAVE_NUMA */
 
         

@@ -35,6 +35,14 @@ void pymemtest()
     //(arg(),)
     "Tests single processor memory speed of a numa system."
     );
+
+  def(
+    "numa_dancer",
+    pink::benchmark::numa_dancer,
+    (arg("node"), arg("number of threads")),
+    "Test the memory speed on one node with multiple threads."
+    );
+  
 #   endif /* PINK_HAVE_NUMA */
 
     

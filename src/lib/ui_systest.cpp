@@ -230,6 +230,49 @@ namespace pink
       
       return;
     } /* numaspeed */    
+
+
+
+    void numa_dancer( index_t node, index_t nbt )
+    {
+      index_t number_of_nodes  = numa_max_node() + 1;
+      std::vector< boost::shared_ptr<boost::thread> > threads(number_of_nodes);
+
+      std::cout << "sequential numa read-write test" << std::endl;
+      
+      FOR(q, number_of_nodes)
+      {
+        std::cout << "the speed of node " << q << " is " << numa_worker(q) << " MiBps" << std::endl;
+      } /* q in number_of_nodes */
+
+      std::cout << "parallel numa read-write test" << std::endl;
+      typedef boost::shared_ptr<boost::barrier> pbarrier_t;
+      pbarrier_t barrier_start( new boost::barrier(number_of_nodes + 1) );
+      pbarrier_t barrier_end(   new boost::barrier(number_of_nodes + 1) );
+       
+      FOR( q, number_of_nodes )
+      {
+        threads[q].reset( new boost::thread( numa_thread<index_t, pbarrier_t, pbarrier_t>, q, barrier_start, barrier_end ) );
+      }
+
+      double start = now();
+      barrier_start->wait();
+      barrier_end->wait();
+      double end = now();
+
+      double numa_speed = static_cast<double>( repeat * number_of_nodes * 2 * test_size * 4) / (1024. * 1024.) / static_cast<double>(end - start);
+            
+      std::cout << "numa parallel speed = " << numa_speed << " MiBps" << std::endl;
+            
+      FOR( q, number_of_nodes )
+      {
+        threads[q]->join();
+      }
+      
+      return;      
+    } /* numa_dancer */
+    
+
 #   endif /* PINK_HAVE_NUMA */
 
     
