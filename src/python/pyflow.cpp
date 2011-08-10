@@ -17,7 +17,9 @@
 #include "uiFlow.hpp"
 #include "uiUngerFlow.hpp"
 #include "ui_flow_simd.hpp"
-#include "ui_flow_opencl.hpp"
+#ifdef PINK_HAVE_OPENCL
+# include "ui_flow_opencl.hpp"
+#endif /* PINK_HAVE_OPENCL */
 #include "ui_flow_distributed.hpp"
 
 using boost::python::arg;

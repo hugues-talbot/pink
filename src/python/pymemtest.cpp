@@ -22,26 +22,21 @@ using boost::python::def;
 void pymemtest()
 {
   def(
-    "memspeed",
-    pink::benchmark::memspeed,
-    //(arg(),)
-    "Tests single processor memory speed of the system."
+    "memspeed64",
+    pink::benchmark::memspeed<double>,
+    (arg("memory size (MiB)")=100, arg("number_of_threads")=0),
+    "Tests non-numa parallel memory speed of the system."
     );
 
 #   ifdef PINK_HAVE_NUMA
-  def(
-    "numaspeed",
-    pink::benchmark::numaspeed,
-    //(arg(),)
-    "Tests single processor memory speed of a numa system."
-    );
 
   def(
-    "numa_dancer",
-    pink::benchmark::numa_dancer,
-    (arg("node"), arg("number of threads")),
-    "Test the memory speed on one node with multiple threads."
+    "numaspeed64",
+    pink::benchmark::numa::memspeed<double>,
+    (arg("memory size (MiB)")=100, arg("number_of_threads")=0),
+    "Tests numa parallel memory speed of the system."
     );
+
   
 #   endif /* PINK_HAVE_NUMA */
 

@@ -54,7 +54,7 @@ namespace pink
   {
 
 
-    class numa_deleter_t;
+    class deleter_t;
     
     template <class array_t>
     class slow_iterator_t
@@ -368,7 +368,7 @@ namespace pink
           }
           
           // the following object will take care of the deletion of the object
-          numa_deleter_t cleaner(segment_size(q));          
+          numa::deleter_t cleaner( segment_size(q) * sizeof(value_type) );          
 
           // after the attribution to this smart shared array, the deletion of the
           // memory should happen automaticly
@@ -399,21 +399,65 @@ namespace pink
           }          
         }
       
-
-
-
-
-
-
-
-
-
-
-      
     }; /* class poly_array */
+
+
+
+    /**
+    \brief This is a shared_array object, which allocates an array on
+    a specific numa node.
+
+    description Instead of genereral allocation with the new command,
+    this command allocates an array of specific size on a given numa
+    node. You can shallow-copy this object without reallocation, and
+    the memory is properly freed when the last reference is being
+    destroyed.
+    */    
+    template <class T0>
+    class array
+    {    
+    public:
+      typedef T0 value_type;
+
+    private:
+      boost::shared_array<value_type> data;    
     
+    public:
+    
+      array( index_t node, index_t num_elem )
+        {
+          index_t size = num_elem * sizeof(value_type);        
+          value_type * data_ = reinterpret_cast<value_type*>( numa_alloc_onnode( size, node ) );
+          if (data_ == NULL)
+          {
+            std::cout << "error: numa allocation error" << std::endl;            
+          }
+          
+          numa::deleter_t deleter(size);
+          data.reset( data_, deleter );        
+        } /* array::array */
+
+
       
+      value_type & operator[]( index_t pos )
+        {
+          return data[pos];        
+        } /* array::operator[] */
+
+
+      
+      value_type * get()
+        {
+          return data.get();          
+        } /* array::get */
+
+      
+
+      virtual ~array() { }
     
+    }; /* class numa::array */
+
+      
     
     /**
        \brief This is a special deleter function for numa_arrays.
@@ -421,13 +465,13 @@ namespace pink
        description Instead of delete, this function will call the
        'numa_free' function.
     */    
-    class numa_deleter_t
+    class deleter_t
     {
     private:
       index_t size;
 
     public:
-      numa_deleter_t(index_t size): size(size)
+      deleter_t(index_t size): size(size)
         {}
             
       template <class T0>       
@@ -437,7 +481,7 @@ namespace pink
           //delete[] ptr;          
         } /* operator() */
       
-    }; /* class numa_deleter_t */
+    }; /* class numa::deleter_t */
 
     
     
