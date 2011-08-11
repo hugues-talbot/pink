@@ -187,7 +187,7 @@ namespace pink
          \return The memory bandwidth (in MiBps)
       */    
       template <class T0>
-      double memspeed( index_t mem_size, index_t tpn )
+      double memspeed( index_t mem_size, index_t tpn, index_t node_restrict = 0 )
       {
         typedef T0 value_type;        
         index_t number_of_nodes  = numa_max_node() + 1;
@@ -209,17 +209,32 @@ namespace pink
         pbarrier_t barrier_start( new boost::barrier(nbt + 1) );
         pbarrier_t barrier_end(   new boost::barrier(nbt + 1) );
 
-        FOR( node, number_of_nodes )
-          FOR( q, tpn )
+        if (node_restrict==0)
         {
-          threads[ tpn * node + q ].reset(
-            new boost::thread(
-              thread<value_type, index_t, index_t, pbarrier_t, pbarrier_t>,
-              node, tsize, barrier_start, barrier_end
-              )
-            );
-        } /* for q in nbt */
-
+          FOR( node, number_of_nodes )
+            FOR( q, tpn )
+          {
+            threads[ tpn * node + q ].reset(
+              new boost::thread(
+                thread<value_type, index_t, index_t, pbarrier_t, pbarrier_t>,
+                node, tsize, barrier_start, barrier_end
+                )
+              );
+          } /* for q in tpn, number_of_nodes */
+        }
+        else /* NOT node_restrict */
+        {
+          FOR(q, nbt)
+          {
+            threads[q].reset(
+              new boost::thread(
+                thread<value_type, index_t, index_t, pbarrier_t, pbarrier_t>,
+                node_restrict, tsize, barrier_start, barrier_end
+                )
+              );
+          } /* for q in nbt */
+        } /* NOT node_restrict */
+        
         barrier_end->wait();
         double start = now();
         barrier_start->wait();
@@ -236,6 +251,8 @@ namespace pink
         return numa_speed;      
       } /* memspeed() */
 
+
+      
   } /* namespace numa */
   
 #   endif /* PINK_HAVE_NUMA */

@@ -33,8 +33,10 @@ void pymemtest()
   def(
     "numaspeed64",
     pink::benchmark::numa::memspeed<double>,
-    (arg("memory size (MiB)")=100, arg("number_of_threads")=0),
-    "Tests numa parallel memory speed of the system."
+    (arg("memory size (MiB)")=100, arg("number_of_threads")=0, arg("node")=0),
+    "Tests numa parallel memory speed of the system. If the node is specified, than the \n"
+    "thread will be restricted to that specific NUMA node. If it's omitted the threads \n"
+    "will be optimally distributed.\n"
     );
 
   
