@@ -275,7 +275,7 @@ proc ESEDIT_quit {} {
 
 
   if {$ESEDIT(fileformat) == "pgm"} {
-    puts $fileid "P4"
+    puts $fileid "P2"
     puts $fileid "#origin $xo $yo $zo"
     puts $fileid "$ESEDIT(rs) $ESEDIT(cs) $ESEDIT(ds)"
     puts $fileid "255"

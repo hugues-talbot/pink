@@ -2082,7 +2082,7 @@ struct xvimage * readimage( const char *filename )
         case 'E': ascii = 0; typepixel = VFF_TYP_COMPLEX; break;
         case 'F': ascii = 1; typepixel = VFF_TYP_COMPLEX; break;
         default:
-          fprintf(stderr,"%s: invalid image format: P%c\n", F_NAME, buffer[1]);
+          fprintf(stderr,"%s: invalid image format: P%c\n", F_NAME, tag);
           return NULL;
       } /* switch */
 
