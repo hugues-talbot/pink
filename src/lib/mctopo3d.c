@@ -68,7 +68,6 @@ static Lifo * LIFO_topo3d2 = NULL;
 static voxel cube_topo3d[27];
 static voxel cubec_topo3d[27];
 
-
 static __pink__inline int32_t is_on_frame(index_t p, index_t rs, index_t ps, index_t N)
 {
   if ((p < ps) || (p >= N-ps) ||         /* premier ou dernier plan */
@@ -85,23 +84,31 @@ void mctopo3d_init_topo3d()
 #undef F_NAME
 #define F_NAME "mctopo3d_init_topo3d"
 {
-  LIFO_topo3d1 = CreeLifoVide(27);
-  LIFO_topo3d2 = CreeLifoVide(27);
-  if ((LIFO_topo3d1 == NULL) || (LIFO_topo3d2 == NULL))
-  {   
-    fprintf(stderr, "mccube() : CreeLifoVide failed\n");
-    exit(0);
+  if (LIFO_topo3d1 == NULL)
+  {
+    LIFO_topo3d1 = CreeLifoVide(27);
+    LIFO_topo3d2 = CreeLifoVide(27);
+    if ((LIFO_topo3d1 == NULL) || (LIFO_topo3d2 == NULL))
+    {   
+      fprintf(stderr, "mccube() : CreeLifoVide failed\n");
+      exit(0);
+    }
+    mctopo3d_construitcube(cube_topo3d);
+    mctopo3d_construitcube(cubec_topo3d);
   }
-  mctopo3d_construitcube(cube_topo3d);
-  mctopo3d_construitcube(cubec_topo3d);
 } /* mctopo3d_init_topo3d() */
 
 /* ========================================== */
 void mctopo3d_termine_topo3d()
 /* ========================================== */
 {
-  LifoTermine(LIFO_topo3d1);
-  LifoTermine(LIFO_topo3d2);
+  if (LIFO_topo3d1 != NULL)
+  {
+    LifoTermine(LIFO_topo3d1);
+    LifoTermine(LIFO_topo3d2);
+    LIFO_topo3d1 = NULL;
+    LIFO_topo3d2 = NULL;
+  }
 } /* mctopo3d_termine_topo3d() */
 
 /* ========================================== */

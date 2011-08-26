@@ -43,7 +43,7 @@ knowledge of the CeCILL license and that you accept its terms.
    - skeleton filtering
    Update 2011:
    - skeleton filtering
-
+   - skeleton smoothing
 */
 
 #include <stdio.h>
@@ -64,9 +64,11 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <llabelextrema.h>
 #include <lseltopo.h>
 #include <lmoments.h>
+#include <ldraw.h>
 #include <ltangents.h>
 
 //#define VERBOSE
+//#define DEBUG
 //#define DEBUG_lskelfilter3
 //#define DEBUG_lskelfilter2b
 //#define DEBUG_lskelfilter6
@@ -75,7 +77,7 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define DEBUGADJ
 //#define DEBUGPOINT
 //#define DEBUGDRAW
-//#define DEBUG
+//#define DEBUGSMOOTH
 
 #ifdef DEBUGPOINT
 static uint32_t nptsisol=0;
@@ -96,6 +98,7 @@ static uint32_t nadjjunc=0;
 #define VAL_JUNC 4
 
 #define MAXANGLE (M_PI/4)
+#define MAXNCURVEPOINTS 10000
 
 /* ==================================== */
 static double dist3(double x1, double y1, double z1, double x2, double y2, double z2)
@@ -940,7 +943,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
     for (y = 1; y < cs - 1; y++) F[y * rs + rs - 1] = 0;
   }
 
-  // detection des differents types de points
+  // Détection des différents types de points
   temp0 = copyimage(image); assert(temp0);
   temp1 = copyimage(image); assert(temp1);
   temp2 = copyimage(image); assert(temp2);
@@ -956,13 +959,63 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
   ret = lptcurve(temp2, connex); assert(ret);
   ret = lptsimple(temp3, connex); assert(ret);
 
+  // Vérification : pas de point simple
   for (i = 0; i < N; i++)
+  {
     if (T3[i] && !T1[i])
     {
-      fprintf(stderr, "%s: input image is not a curvilinear skeleton %d\n", F_NAME, i);
+      fprintf(stderr, "%s: input image is not a curvilinear skeleton: %d is simple\n", F_NAME, i);
       return NULL;
     }
-      
+  }
+
+  // Vérification : pas de point de surface
+  if (connex == 26)
+  {
+    int32_t t, tb;
+    mctopo3d_init_topo3d();
+    for (i = 0; i < N; i++) if (F[i])
+    {
+      mctopo3d_top26(F, i, rs, ps, N, &t, &tb);
+      if (tb >= 2)
+      {
+	fprintf(stderr, "%s: input image is not a curvilinear skeleton %d is separating\n", F_NAME, i);
+	return NULL;
+      }
+    }
+    mctopo3d_termine_topo3d();
+  }
+  else if (connex == 6)
+  {
+    int32_t t, tb;
+    mctopo3d_init_topo3d();
+    for (i = 0; i < N; i++) if (F[i])
+    {
+      mctopo3d_top6(F, i, rs, ps, N, &t, &tb);
+      if (tb >= 2)
+      {
+	fprintf(stderr, "%s: input image is not a curvilinear skeleton %d is separating\n", F_NAME, i);
+	return NULL;
+      }
+    }
+    mctopo3d_termine_topo3d();
+  }
+  else if (connex == 18)
+  {
+    int32_t t, tb;
+    mctopo3d_init_topo3d();
+    for (i = 0; i < N; i++) if (F[i])
+    {
+      mctopo3d_top18(F, i, rs, ps, N, &t, &tb);
+      if (tb >= 2)
+      {
+	fprintf(stderr, "%s: input image is not a curvilinear skeleton %d is separating\n", F_NAME, i);
+	return NULL;
+      }
+    }
+    mctopo3d_termine_topo3d();
+  }
+    
   copy2image(temp3, image);
 
   // detection des points de jonction (T3) par complementation
@@ -1555,6 +1608,438 @@ struct xvimage * lskelmarked2image(skel *S)
 } /* lskelmarked2image() */
 
 /* ====================================================================== */
+static int32_t point_at_head(skel *S, int32_t A)
+/* ====================================================================== */
+// détermine le point au "début" de l'arc de courbe A
+{
+  SKC_pt_pcell p = S->tskel[A].pts;
+  assert(p != NULL);
+  return p->val;
+} // point_at_head()
+
+#ifdef COMPILE_UNUSED
+/* ====================================================================== */
+static int32_t point_at_tail(skel *S, int32_t A)
+/* ====================================================================== */
+// détermine le point en "fin" de l'arc de courbe A
+{
+  SKC_pt_pcell p = S->tskel[A].pts;
+  int32_t pt;
+
+  assert(p != NULL);
+  for (; p != NULL; p = p->next) pt = p->val;
+  return pt;
+} // point_at_tail()
+#endif
+
+/* ====================================================================== */
+static void barycentre(skel *S, int32_t V, double *x, double *y, double *z)
+/* ====================================================================== */
+// détermine le barycentre des points correspondant à l'élément V du squelette S
+{
+  int32_t npoints, e;
+  int32_t rs = S->rs;
+  int32_t ps = rs * S->cs;
+  SKC_pt_pcell p = S->tskel[V].pts;
+  double xx, yy, zz;
+  
+  assert(p != NULL);
+  xx = yy = zz = npoints = 0;
+  for (; p != NULL; p = p->next)
+  {
+    e = p->val;
+    xx += (double)(e % rs);
+    yy += (double)((e % ps) / rs);
+    zz += (double)(e / ps);
+    npoints += 1;
+  }
+  *x = xx / npoints;
+  *y = yy / npoints;
+  *z = zz / npoints;
+} // barycentre()
+
+/* ====================================================================== */
+static int32_t adj_point_junc(skel *S, int32_t e, int32_t J)
+/* ====================================================================== */
+{
+  SKC_pt_pcell p;
+  int32_t connex = S->connex;
+  int32_t rs = S->rs;
+  int32_t ps = rs * S->cs;
+
+  switch(connex)
+  {
+    case 4:
+      for (p = S->tskel[J].pts; p != NULL; p = p->next)
+	if (sont4voisins(p->val, e, rs)) return 1;
+      break;
+    case 8:
+      for (p = S->tskel[J].pts; p != NULL; p = p->next)
+	if (sont8voisins(p->val, e, rs)) return 1;
+      break;
+    case 6:
+      for (p = S->tskel[J].pts; p != NULL; p = p->next)
+	if (sont6voisins(p->val, e, rs, ps)) return 1;
+      break;
+    case 18:
+      for (p = S->tskel[J].pts; p != NULL; p = p->next)
+	if (sont18voisins(p->val, e, rs, ps)) return 1;
+      break;
+    case 26:
+      for (p = S->tskel[J].pts; p != NULL; p = p->next)
+	if (sont26voisins(p->val, e, rs, ps)) return 1;
+      break;
+  }
+  return 0;
+} // adj_point_junc()
+
+/* ====================================================================== */
+skel * lskelsmoothing(skel *S, int32_t mode, double param)
+/* ====================================================================== */
+{
+#undef F_NAME
+#define F_NAME "lskelsmoothing"
+  int32_t ind, nseg, npoints, pt, E1, E2, E, i, j;
+  int32_t rs = S->rs, cs = S->cs, ds = S->ds, ps = rs*cs;
+  SKC_pt_pcell p;
+  SKC_adj_pcell a;
+  double x, y, z;
+  skel * SS; // smoothed skeleton
+
+  SS = initskel(rs, cs, ds, S->e_junc, 2*S->nbptcell, S->nbadjcell, S->connex);
+  if (SS == NULL)
+  {
+    fprintf(stderr, "%s: function initskel failed\n", F_NAME);
+    return NULL;
+  }
+
+  // copy skeleton structure
+  SS->e_isol = S->e_isol;
+  SS->e_end = S->e_end;
+  SS->e_curv = S->e_curv;
+  SS->e_junc = S->e_junc;
+  for (ind = 0; ind < S->e_junc; ind++)
+  {
+    SS->tskel[ind].tag = S->tskel[ind].tag; 
+    SS->tskel[ind].fval = S->tskel[ind].fval;
+    for (a = S->tskel[ind].adj; a != NULL; a = a->next)
+      addadjlist(SS, ind, a->val);
+    if (ind < S->e_end) 
+      for (p = S->tskel[ind].pts; p != NULL; p = p->next)
+	addptslist(SS, ind, p->val);
+  }
+
+  if (ds == 1)
+  {
+    int32_t *X, *Y, *Xp, *Yp, Np, xi, yi;
+    double *Xd, *Yd;
+    X = (int32_t *)malloc(MAXNCURVEPOINTS * sizeof(int32_t)); assert(X != NULL);
+    Y = (int32_t *)malloc(MAXNCURVEPOINTS * sizeof(int32_t)); assert(Y != NULL);
+    Xp = (int32_t *)malloc(MAXNCURVEPOINTS * sizeof(int32_t)); assert(Xp != NULL);
+    Yp = (int32_t *)malloc(MAXNCURVEPOINTS * sizeof(int32_t)); assert(Yp != NULL);
+    if ((mode == 1) || (mode == 2))
+    {
+      Xd = (double *)malloc(MAXNCURVEPOINTS * sizeof(double)); assert(Xd != NULL);
+      Yd = (double *)malloc(MAXNCURVEPOINTS * sizeof(double)); assert(Yd != NULL);
+    }
+
+    // scan curves and smooth them
+    for (ind = S->e_end; ind < S->e_curv; ind++)
+    {
+      //Let E1, E2 be the vertices adjacent to ind
+      a = S->tskel[ind].adj;
+      if (a != NULL) // si arc non fermé
+      {
+	assert(a->next != NULL); // soit 0, soit 2 adjacences
+	E1 = a->val;
+	E2 = a->next->val;
+
+	pt = point_at_head(S, ind);
+        if (IS_JUNC(E1))
+	{
+	  if (!adj_point_junc(S, pt, E1)) { E = E1; E1 = E2; E2 = E; }
+	}
+	else
+	{
+	  assert(IS_END(E1));
+	  p = S->tskel[E1].pts;
+	  if (p->val != pt) { E = E1; E1 = E2; E2 = E; }
+	}
+      }
+
+      npoints = 0;
+      if ((a != NULL) && (IS_JUNC(E1)))
+      {
+	barycentre(S, E1, &x, &y, &z);
+	X[npoints] = arrondi(x);
+	Y[npoints] = arrondi(y);
+#ifdef DEBUGSMOOTH
+	printf("%s: junction %d ; point %d,%d\n", F_NAME, ind, X[npoints], Y[npoints]);
+#endif
+	npoints++;
+      }
+
+      for (p = S->tskel[ind].pts; p != NULL; p = p->next) 
+      {
+	assert(npoints < MAXNCURVEPOINTS);
+	X[npoints] = p->val % rs;
+	Y[npoints] = p->val / rs;
+#ifdef DEBUGSMOOTH
+	printf("%s: curve %d ; point %d,%d\n", F_NAME, ind, X[npoints], Y[npoints]);
+#endif
+	npoints++;
+      }
+
+      if ((a != NULL) && (IS_JUNC(E2)))
+      {
+	barycentre(S, E2, &x, &y, &z);
+	X[npoints] = arrondi(x);
+	Y[npoints] = arrondi(y);
+#ifdef DEBUGSMOOTH
+	printf("%s: junction %d ; point %d,%d\n", F_NAME, ind, X[npoints], Y[npoints]);
+#endif
+	npoints++;
+      }
+
+      switch (mode)
+      {
+	int32_t pt, lastpt;
+      case 0:
+	nseg = CoverByDSSs(npoints, X, Y, param);
+	for (i = 0; i < nseg-1; i++)
+	{ // draws a straight line segment between points i and i+1
+	  Np = MAXNCURVEPOINTS;
+	  ldrawlinelist(Xp, Yp, &Np, X[i], Y[i], X[i+1], Y[i+1]);
+	  if (i == 0)
+	  {
+	    lastpt = pt = Yp[0]*rs + Xp[0];
+	    addptslist(SS, ind, pt);
+	  }
+	  for (j = 1; j < Np; j++)
+	  {
+	    pt = Yp[j]*rs + Xp[j];
+	    if (pt != lastpt) { addptslist(SS, ind, pt); lastpt = pt; }
+	  }
+	} // for (i = 0; i < npoints-1; i++)  
+	break;
+      case 1:
+	nseg = CoverByDSSs(npoints, X, Y, param);
+	for (i = 0; i < nseg; i++)
+	{
+#ifdef DEBUGSMOOTH
+	  printf("%s: elt %d ; control point %d,%d\n", F_NAME, ind, X[i], Y[i]);
+#endif
+	  Xd[i] = (double)X[i];
+	  Yd[i] = (double)Y[i];
+	}
+	Np = MAXNCURVEPOINTS;
+	scn_drawsplinelist(Xp, Yp, &Np, Xd, Yd, nseg);
+	lastpt = -1;
+	for (i = 0; i < Np; i++)
+	{
+	  pt = Yp[i]*rs + Xp[i];
+	  if (pt != lastpt) { addptslist(SS, ind, pt); lastpt = pt; }
+	}
+	break;
+      case 2:
+	{
+	  scn_approxcurve2(X, Y, &npoints, param);
+	  for (i = 0; i < npoints; i++)
+	  {
+#ifdef DEBUGSMOOTH
+	    printf("%s: elt %d ; control point %d,%d\n", F_NAME, ind, X[i], Y[i]);
+#endif
+	    Xd[i] = (double)X[i];
+	    Yd[i] = (double)Y[i];
+	  }
+	  Np = MAXNCURVEPOINTS;
+	  scn_drawsplinelist(Xp, Yp, &Np, Xd, Yd, npoints);
+	  lastpt = -1;
+	  for (i = 0; i < Np; i++)
+	  {
+	    pt = Yp[i]*rs + Xp[i];
+	    if (pt != lastpt) { addptslist(SS, ind, pt); lastpt = pt; }
+	  }
+	}
+	break;
+      } // switch (mode)
+    } // for (ind = S->e_end; ind < S->e_curv; ind++)
+
+    free(X); free(Y); free(Xp); free(Yp);
+    if ((mode == 1) || (mode == 2)) { free(Xd); free(Yd); }
+
+    // scan junctions and compute their barycentres
+    // (must be done again AFTER processing curves because of adj_point_junc)
+    for (ind = S->e_curv; ind < S->e_junc; ind++)
+    {
+      barycentre(S, ind, &x, &y, &z);
+      xi = arrondi(x);
+      yi = arrondi(y);
+      addptslist(SS, ind, yi*rs + xi);
+    }
+  }
+  else // 3D
+  {
+    int32_t *X, *Y, *Z, *Xp, *Yp, *Zp, Np, xi, yi, zi;
+    double *Xd, *Yd, *Zd;
+    X = (int32_t *)malloc(MAXNCURVEPOINTS * sizeof(int32_t)); assert(X != NULL);
+    Y = (int32_t *)malloc(MAXNCURVEPOINTS * sizeof(int32_t)); assert(Y != NULL);
+    Z = (int32_t *)malloc(MAXNCURVEPOINTS * sizeof(int32_t)); assert(Z != NULL);
+    Xp = (int32_t *)malloc(MAXNCURVEPOINTS * sizeof(int32_t)); assert(Xp != NULL);
+    Yp = (int32_t *)malloc(MAXNCURVEPOINTS * sizeof(int32_t)); assert(Yp != NULL);
+    Zp = (int32_t *)malloc(MAXNCURVEPOINTS * sizeof(int32_t)); assert(Zp != NULL);
+    if ((mode == 1) || (mode == 2))
+    {
+      Xd = (double *)malloc(MAXNCURVEPOINTS * sizeof(double)); assert(Xd != NULL);
+      Yd = (double *)malloc(MAXNCURVEPOINTS * sizeof(double)); assert(Yd != NULL);
+      Zd = (double *)malloc(MAXNCURVEPOINTS * sizeof(double)); assert(Zd != NULL);
+    }
+
+    // scan curves and smooth them
+    for (ind = S->e_end; ind < S->e_curv; ind++)
+    {
+      //Let E1, E2 be the vertices adjacent to ind
+      a = S->tskel[ind].adj;
+      if (a != NULL) // si arc non fermé
+      {
+	assert(a->next != NULL); // soit 0, soit 2 adjacences
+	E1 = a->val;
+	E2 = a->next->val;
+
+	pt = point_at_head(S, ind);
+        if (IS_JUNC(E1))
+	{
+	  if (!adj_point_junc(S, pt, E1)) { E = E1; E1 = E2; E2 = E; }
+	}
+	else
+	{
+	  assert(IS_END(E1));
+	  p = S->tskel[E1].pts;
+	  if (p->val != pt) { E = E1; E1 = E2; E2 = E; }
+	}
+      }
+
+      npoints = 0;
+      if ((a != NULL) && (IS_JUNC(E1)))
+      {
+	barycentre(S, E1, &x, &y, &z);
+	X[npoints] = arrondi(x);
+	Y[npoints] = arrondi(y);
+	Z[npoints] = arrondi(z);
+#ifdef DEBUGSMOOTH
+	printf("%s: junction %d ; point %d,%d,%d\n", F_NAME, ind, X[npoints], Y[npoints], Z[npoints]);
+#endif
+	npoints++;
+      }
+
+      for (p = S->tskel[ind].pts; p != NULL; p = p->next) 
+      {
+	assert(npoints < MAXNCURVEPOINTS);
+	X[npoints] = p->val % rs;
+	Y[npoints] = (p->val % ps) / rs;
+	Z[npoints] = p->val / ps;
+#ifdef DEBUGSMOOTH
+	printf("%s: curve %d ; point %d,%d,%d\n", F_NAME, ind, X[npoints], Y[npoints], Z[npoints]);
+#endif
+	npoints++;
+      }
+
+      if ((a != NULL) && (IS_JUNC(E2)))
+      {
+	barycentre(S, E2, &x, &y, &z);
+	X[npoints] = arrondi(x);
+	Y[npoints] = arrondi(y);
+	Z[npoints] = arrondi(z);
+#ifdef DEBUGSMOOTH
+	printf("%s: junction %d ; point %d,%d,%d\n", F_NAME, ind, X[npoints], Y[npoints], Z[npoints]);
+#endif
+	npoints++;
+      }
+
+      switch (mode)
+      {
+	int32_t pt, lastpt;
+      case 0:
+	nseg = CoverByDSSs3D(npoints, X, Y, Z, param);
+	for (i = 0; i < nseg-1; i++)
+	{ // draws a straight line segment between points i and i+1
+	  Np = MAXNCURVEPOINTS;
+	  ldrawline3dlist(Xp, Yp, Zp, &Np, X[i], Y[i], Z[i], X[i+1], Y[i+1], Z[i+1]);
+	  if (i == 0)
+	  {
+	    lastpt = pt = Zp[0]*ps + Yp[0]*rs + Xp[0];
+	    addptslist(SS, ind, pt);
+	  }
+	  for (j = 1; j < Np; j++)
+	  {
+	    pt = Zp[j]*ps + Yp[j]*rs + Xp[j];
+	    if (pt != lastpt) { addptslist(SS, ind, pt); lastpt = pt; }
+	  }
+	} // for (i = 0; i < npoints-1; i++)  
+	break;
+      case 1:
+	nseg = CoverByDSSs3D(npoints, X, Y, Z, param);
+	for (i = 0; i < nseg; i++)
+	{
+	  Xd[i] = (double)X[i];
+	  Yd[i] = (double)Y[i];
+	  Zd[i] = (double)Z[i];
+	}
+	Np = MAXNCURVEPOINTS;
+	scn_drawspline3dlist(Xp, Yp, Zp, &Np, Xd, Yd, Zd, nseg);
+#ifdef DEBUGSMOOTH
+	printf("%s: nseg = %d ; Np = %d\n", F_NAME, nseg, Np);
+#endif
+	lastpt = -1;
+	for (i = 0; i < Np; i++)
+	{
+	  pt = Zp[i]*ps + Yp[i]*rs + Xp[i];
+	  if (pt != lastpt) { addptslist(SS, ind, pt); lastpt = pt; }
+	}
+	break;
+      case 2:
+	{
+	  scn_approxcurve3d2(X, Y, Z, &npoints, param);
+	  for (i = 0; i < npoints; i++)
+	  {
+	    Xd[i] = (double)X[i];
+	    Yd[i] = (double)Y[i];
+	    Zd[i] = (double)Z[i];
+	  }
+	  Np = MAXNCURVEPOINTS;
+	  scn_drawspline3dlist(Xp, Yp, Zp, &Np, Xd, Yd, Zd, npoints);
+#ifdef DEBUGSMOOTH
+	  printf("%s: npoints = %d ; Np = %d\n", F_NAME, npoints, Np);
+#endif
+	  lastpt = -1;
+	  for (i = 0; i < Np; i++)
+	  {
+	    pt = Zp[i]*ps + Yp[i]*rs + Xp[i];
+	    if (pt != lastpt) { addptslist(SS, ind, pt); lastpt = pt; }
+	  }
+	}
+	break;
+      } // switch (mode)
+    } // for (ind = S->e_end; ind < S->e_curv; ind++)
+
+    free(X); free(Y); free(Z); free(Xp); free(Yp); free(Zp);
+    if ((mode == 1) || (mode == 2)) { free(Xd); free(Yd); free(Zd); }
+
+    // scan junctions and compute their barycentres
+    // (must be done again AFTER processing curves because of adj_point_junc)
+    for (ind = S->e_curv; ind < S->e_junc; ind++)
+    {
+      barycentre(S, ind, &x, &y, &z);
+      xi = arrondi(x);
+      yi = arrondi(y);
+      zi = arrondi(z);
+      addptslist(SS, ind, zi*ps + yi*rs + xi);
+    }
+  }
+  return SS;
+} /* lskelsmoothing() */
+
+/* ====================================================================== */
 static void coordvertex(skel *S, int32_t V, double *Vx, double *Vy, double *Vz)
 /* ====================================================================== */
 // computes the coordinates (Vx, Vy, Vz) of vertex V in S 
@@ -1698,14 +2183,14 @@ Parameter \b length is given in pixels, parameter \b angle in radians.
 } /* lskelfilter1_old() */
 
 /* ====================================================================== */
-static void points_at_head(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
+static void points_at_head(skel *S, int32_t A, double delta, int32_t *e, int32_t *f)
 /* ====================================================================== */
-// détermine deux points e et f au "début" de l'arc de courbe Ai, 
+// détermine deux points e et f au "début" de l'arc de courbe A, 
 // séparés d'une distance euclidienne d'au moins delta
 {
   int32_t rs = S->rs;
   int32_t ps = rs * S->cs;
-  SKC_pt_pcell p = S->tskel[Ai].pts;
+  SKC_pt_pcell p = S->tskel[A].pts;
   double x, y, z, xx, yy, zz;
 
   assert(p != NULL);
@@ -1714,7 +2199,7 @@ static void points_at_head(skel *S, int32_t Ai, double delta, int32_t *e, int32_
   {
     *f = p->val;
 #ifdef VERBOSE
-    printf("Warning: arc %d length 1\n", Ai);
+    printf("Warning: arc %d length 1\n", A);
 #endif    
     return;
   }
@@ -1735,7 +2220,7 @@ static void points_at_head(skel *S, int32_t Ai, double delta, int32_t *e, int32_
     {
       *f = p->val;
 #ifdef VERBOSE
-      printf("Warning: arc %d length %g\n", Ai, dist3(x, y, z, xx, yy, zz));
+      printf("Warning: arc %d length %g\n", A, dist3(x, y, z, xx, yy, zz));
 #endif    
       return;
     }
@@ -1743,14 +2228,14 @@ static void points_at_head(skel *S, int32_t Ai, double delta, int32_t *e, int32_
 } // points_at_head()
 
 /* ====================================================================== */
-static void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_t *f)
+static void points_at_tail(skel *S, int32_t A, double delta, int32_t *e, int32_t *f)
 /* ====================================================================== */
-// détermine deux points e et f en "fin" de l'arc de courbe Ai, 
+// détermine deux points e et f en "fin" de l'arc de courbe A, 
 // séparés d'une distance euclidienne d'au moins delta
 {
   int32_t rs = S->rs;
   int32_t ps = rs * S->cs;
-  SKC_pt_pcell p = S->tskel[Ai].pts, pp;
+  SKC_pt_pcell p = S->tskel[A].pts, pp;
   double x, y, z, xx, yy, zz;
 
   assert(p != NULL);
@@ -1758,7 +2243,7 @@ static void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_
   {
     *e = *f = p->val;
 #ifdef VERBOSE
-    printf("Warning: arc %d length 1\n", Ai);
+    printf("Warning: arc %d length 1\n", A);
 #endif    
     return;
   }
@@ -1769,7 +2254,7 @@ static void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_
   y = (double)((*e % ps) / rs);
   z = (double)(*e / ps);
 
-  pp = S->tskel[Ai].pts;
+  pp = S->tskel[A].pts;
   xx = (double)(pp->val % rs);
   yy = (double)((pp->val % ps) / rs);
   zz = (double)(pp->val / ps);
@@ -1777,7 +2262,7 @@ static void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_
   {
     *f = pp->val;
 #ifdef VERBOSE
-    printf("Warning: arc %d length %g\n", Ai, dist3(x, y, z, xx, yy, zz));
+    printf("Warning: arc %d length %g\n", A, dist3(x, y, z, xx, yy, zz));
 #endif    
     return;
   }
@@ -1793,41 +2278,6 @@ static void points_at_tail(skel *S, int32_t Ai, double delta, int32_t *e, int32_
   }
   *f = pp->val;
 } // points_at_tail()
-
-/* ====================================================================== */
-static int32_t adj_point_junc(skel *S, int32_t e, int32_t J)
-/* ====================================================================== */
-{
-  SKC_pt_pcell p;
-  int32_t connex = S->connex;
-  int32_t rs = S->rs;
-  int32_t ps = rs * S->cs;
-
-  switch(connex)
-  {
-    case 4:
-      for (p = S->tskel[J].pts; p != NULL; p = p->next)
-	if (sont4voisins(p->val, e, rs)) return 1;
-      break;
-    case 8:
-      for (p = S->tskel[J].pts; p != NULL; p = p->next)
-	if (sont8voisins(p->val, e, rs)) return 1;
-      break;
-    case 6:
-      for (p = S->tskel[J].pts; p != NULL; p = p->next)
-	if (sont6voisins(p->val, e, rs, ps)) return 1;
-      break;
-    case 18:
-      for (p = S->tskel[J].pts; p != NULL; p = p->next)
-	if (sont18voisins(p->val, e, rs, ps)) return 1;
-      break;
-    case 26:
-      for (p = S->tskel[J].pts; p != NULL; p = p->next)
-	if (sont26voisins(p->val, e, rs, ps)) return 1;
-      break;
-  }
-  return 0;
-} // adj_point_junc()
 
 /* ====================================================================== */
 int32_t lskelfilter1a_old(skel *S, double delta, double theta)
@@ -3721,6 +4171,7 @@ struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double max
   return result;
 } /* lskelfilter5() */
 
+#ifdef COMPILE_UNUSED
 // ----------------------------------------------------------------------
 static double calc_courbure(int32_t *X, int32_t *Y, int32_t *Z, int32_t n, int32_t i)
 // ----------------------------------------------------------------------
@@ -3760,6 +4211,7 @@ static double calc_courbure(int32_t *X, int32_t *Y, int32_t *Z, int32_t n, int32
   free(C0);
   return courbure;
 } // calc_courbure()
+#endif
 
 // ----------------------------------------------------------------------
 static void reverse_curve(int32_t *X, int32_t *Y, int32_t *Z, int32_t n)

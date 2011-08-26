@@ -49,6 +49,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <ldraw.h>
 
 //#define DEBUG_DL3
+//#define DEBUG_DC3
 
 /* ==================================== */
 static double dist3(double x1, double y1, double z1, double x2, double y2, double z2)
@@ -81,6 +82,20 @@ int32_t ldrawline(struct xvimage * image1, int32_t x1, int32_t y1, int32_t x2, i
 } // ldrawline()
 
 /* ==================================== */
+int32_t ldrawlinelist(int32_t *lx, int32_t *ly, int32_t *npoints, int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+/* ==================================== */
+// draws a straight line segment between two points
+// mere call to lbresenlist
+// the result is put in the list represented by (lx, ly, npoints)
+// the arrays lx, ly must be allocated with a size that is given initially by npoints
+#undef F_NAME
+#define F_NAME "ldrawlinelist"
+{
+  lbresenlist(x1, y1, x2, y2, lx, ly, npoints);
+  return 1;
+} // ldrawlinelist()
+
+/* ==================================== */
 int32_t ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1, int32_t x2, int32_t y2, int32_t z2)
 /* ==================================== */
 /* draws a 3D straight line segment between two points */
@@ -88,16 +103,16 @@ int32_t ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1,
 #undef F_NAME
 #define F_NAME "ldrawline3d"
 {
-  int32_t i, rs, cs, ds, ps, x, y, z;
+  int32_t i, rs, cs, ds, ps, x, y, z, NBSAMPLES;
   uint8_t *F;
-
-  double len =  dist3(x1, y1, z1, x2, y2, z2);
-  int32_t NBSAMPLES = (int32_t)(10 * len);
-  if (NBSAMPLES == 0) return 1; // do nothing
+  double len;
 
 #ifdef DEBUG_DL3
   printf("%s: %d %d %d   %d %d %d\n", F_NAME, x1, y1, z1, x2, y2, z2);
 #endif
+
+  len =  dist3(x1, y1, z1, x2, y2, z2);
+  NBSAMPLES = (int32_t)(10 * len);
 
   rs = rowsize(image1);
   cs = colsize(image1);
@@ -105,17 +120,58 @@ int32_t ldrawline3d(struct xvimage * image1, int32_t x1, int32_t y1, int32_t z1,
   ps = rs * cs;
   F = UCHARDATA(image1);
     
-  for (i = 0; i <= NBSAMPLES; i++)
+  x = x1; y = y1; z = z1; 
+  if (!((x<0) || (x>=rs) || (y<0) || (y>=cs) || (z<0) || (z>=ds)))
+  {
+    F[z*ps + y*rs + x] = NDG_MAX;
+  }
+  for (i = 1; i <= NBSAMPLES; i++)
   {
     x = x1 + (i * (x2 - x1)) / NBSAMPLES;
     y = y1 + (i * (y2 - y1)) / NBSAMPLES;
     z = z1 + (i * (z2 - z1)) / NBSAMPLES;
     if (!((x<0) || (x>=rs) || (y<0) || (y>=cs) || (z<0) || (z>=ds)))
+    {
       F[z*ps + y*rs + x] = NDG_MAX;
+    }
   }
 
   return 1;
 } // ldrawline3d()
+
+/* ==================================== */
+int32_t ldrawline3dlist(int32_t *lx, int32_t *ly, int32_t *lz, int32_t *npoints, int32_t x1, int32_t y1, int32_t z1, int32_t x2, int32_t y2, int32_t z2)
+/* ==================================== */
+// draws a 3D straight line segment between two points
+// the result is put in the list represented by (lx, ly, lz, npoints)
+// the arrays lx, ly, lz must be allocated with a size that is given initially by npoints
+// NAIVE ALGORITHM - TO IMPROVE !!!!
+#undef F_NAME
+#define F_NAME "ldrawline3dlist"
+{
+  int32_t i, nmaxpoints = *npoints, np = 0, x, y, z;
+  double len =  dist3(x1, y1, z1, x2, y2, z2);
+  int32_t NBSAMPLES = (int32_t)(10 * len);
+  if (NBSAMPLES > nmaxpoints-1) NBSAMPLES = nmaxpoints-1;
+
+#ifdef DEBUG_DL3
+  printf("%s: %d %d %d   %d %d %d\n", F_NAME, x1, y1, z1, x2, y2, z2);
+#endif
+    
+  lx[0] = x1;
+  ly[0] = y1;
+  lz[0] = z1;
+  for (np = i = 1; i <= NBSAMPLES; i++)
+  {
+    x = x1 + (i * (x2 - x1)) / NBSAMPLES;
+    y = y1 + (i * (y2 - y1)) / NBSAMPLES;
+    z = z1 + (i * (z2 - z1)) / NBSAMPLES;
+    if ((x != lx[np-1]) || (y != ly[np-1]) || (z != lz[np-1]))
+    { lx[np] = x; ly[np] = y; lz[np] = z; np++; }
+  }
+  *npoints = np;
+  return 1;
+} // ldrawline3dlist()
 
 /* ==================================== */
 int32_t ldrawline2(struct xvimage * image1)
@@ -207,18 +263,21 @@ void ldrawcubic1(struct xvimage * image1, double *x, double *y, int32_t nseg, do
 /* ==================================== */
 void ldrawcubic2(struct xvimage * image1, double *x, double *y, int32_t nseg, double tmin, double tmax)
 /* ==================================== */
-/* draws a cubic line segment */
+/*! \fn void ldrawcubic2(struct xvimage * image1, double *x, double *y, int32_t nseg, double tmin, double tmax)
+    \param image1 (entrée/sortie) : image où dessiner le résutat
+    \param x (entrée) : coefficients 0, 1, 2, 3 du polynome des abcisses
+    \param y (entrée) : coefficients 0, 1, 2, 3 du polynome des ordonnées
+    \param nseg (entrée) : nombre de pas de discrétisation
+    \param tmin, tmax (entrée) : valeurs min et max du paramètre des polynomes
+    \brief draws a cubic line segment 
+    \warning le résultat n'est pas forcément une courbe discrète
+*/
 #undef F_NAME
 #define F_NAME "ldrawcubic2"
 {
-  int32_t i, rs, cs, x1, y1, x2, y2;
-  uint8_t *F;
+  int32_t i, x1, y1, x2, y2;
   double X, Y, r = (tmax - tmin) / nseg, t = tmin, t2, t3;
 
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  F = UCHARDATA(image1);
-  
   t2 = t*t; t3 = t2 * t;
   X = x[0] + t*x[1] +  t2*x[2] +  t3*x[3];
   Y = y[0] + t*y[1] +  t2*y[2] +  t3*y[3];
@@ -231,34 +290,130 @@ void ldrawcubic2(struct xvimage * image1, double *x, double *y, int32_t nseg, do
     Y = y[0] + t*y[1] +  t2*y[2] +  t3*y[3];
     x2 = arrondi(X);
     y2 = arrondi(Y);
+printf("ldrawline %d %d ; %d %d\n", x1, y1, x2, y2);
     ldrawline(image1, x1, y1, x2, y2);
     x1 = x2; y1 = y2;
   }
 } // ldrawcubic2()
 
 /* ==================================== */
-void ldrawcubic3d(
-		  struct xvimage * image1,         // image (entree/sortie)  
-		  double *x, double *y, double *z, // trois polynomes de degre 3 
-		  int32_t nseg,                    // pas de discretisation 
-		  double tmin, double tmax)        // bornes pour le coeff. des polynomes
+void ldrawcubic2list(int32_t *lx, int32_t *ly, int32_t *npoints, double *x, double *y, int32_t nseg, double tmin, double tmax)
 /* ==================================== */
-/* draws a cubic line segment */
+/*! \fn void ldrawcubic2list(int32_t *lx, int32_t *ly, int32_t *npoints, double *x, double *y, int32_t nseg, double tmin, double tmax)
+    \param lx (sortie) : liste des abcisses des points dessinés
+    \param ly (sortie) : liste des ordonnées des points dessinés
+    \param npoints (entrée) : taille des tableaux lx, ly ; (sortie) : nombre de points dessinés
+    \param x (entrée) : coefficients 0, 1, 2, 3 du polynome des abcisses
+    \param y (entrée) : coefficients 0, 1, 2, 3 du polynome des ordonnées
+    \param nseg (entrée) : nombre de pas de discrétisation
+    \param tmin, tmax (entrée) : valeurs min et max du paramètre des polynomes
+    \brief draws a cubic line segment 
+    \warning les tableaux lx, ly doivent avoir été alloués
+    \warning le résultat n'est pas forcément une courbe discrète
+*/
+#undef F_NAME
+#define F_NAME "ldrawcubic2list"
+{
+  int32_t i, x1, y1, x2, y2, np, npp, nmaxpoints = *npoints;
+  double X, Y, r = (tmax - tmin) / nseg, t = tmin, t2, t3;
+  
+  t2 = t*t; t3 = t2 * t;
+  X = x[0] + t*x[1] +  t2*x[2] +  t3*x[3];
+  Y = y[0] + t*y[1] +  t2*y[2] +  t3*y[3];
+  x1 = arrondi(X);
+  y1 = arrondi(Y);
+  np = 0;
+  for (i = 0; i < nseg; i++)
+  {
+    t += r; t2 = t*t; t3 = t2 * t;
+    X = x[0] + t*x[1] +  t2*x[2] +  t3*x[3];
+    Y = y[0] + t*y[1] +  t2*y[2] +  t3*y[3];
+    x2 = arrondi(X);
+    y2 = arrondi(Y);
+    npp = nmaxpoints - np;
+#ifdef DEBUG
+printf("ldrawlinelist np=%d ;  npp=%d\n", np, npp);
+#endif
+    ldrawlinelist(lx+np, ly+np, &npp, x1, y1, x2, y2);
+    np += npp;
+#ifdef DEBUG
+printf("ldrawlinelist %d %d ; %d %d ; np=%d\n", x1, y1, x2, y2, np);
+#endif
+    x1 = x2; y1 = y2;
+  }
+  *npoints = np;
+} // ldrawcubic2list()
+
+/* ==================================== */
+void ldrawcubic3d(struct xvimage * image1, double *x, double *y, double *z, int32_t nseg, double tmin, double tmax)
+/* ==================================== */
+/*! \fn void ldrawcubic3d(struct xvimage * image1, double *x, double *y, double *z, int32_t nseg, double tmin, double tmax)
+    \param image1 (entrée/sortie) : image où dessiner le résutat
+    \param x (entrée) : coefficients 0, 1, 2, 3 du polynome des abcisses
+    \param y (entrée) : coefficients 0, 1, 2, 3 du polynome des ordonnées
+    \param z (entrée) : coefficients 0, 1, 2, 3 du polynome des cotes
+    \param nseg (entrée) : nombre de pas de discrétisation
+    \param tmin, tmax (entrée) : valeurs min et max du paramètre des polynomes
+    \brief draws a cubic line segment 
+    \warning le résultat n'est pas forcément une courbe discrète
+*/
 #undef F_NAME
 #define F_NAME "ldrawcubic3d"
 {
-  int32_t i, rs, cs, ds, x1, y1, z1, x2, y2, z2;
-  uint8_t *F;
+  int32_t i, x1, y1, z1, x2, y2, z2;
   double X, Y, Z, r = (tmax - tmin) / nseg, t = tmin, t2, t3;
 
 #ifdef DEBUG_DC3
-  printf("%s: %d %d\n", F_NAME, tmin, tmax);
+  printf("%s: %g %g\n", F_NAME, tmin, tmax);
 #endif
 
-  rs = rowsize(image1);
-  cs = colsize(image1);
-  ds = depth(image1);
-  F = UCHARDATA(image1);
+  t2 = t*t; t3 = t2 * t;
+  X = x[0] + t*x[1] +  t2*x[2] +  t3*x[3];
+  Y = y[0] + t*y[1] +  t2*y[2] +  t3*y[3];
+  Z = z[0] + t*z[1] +  t2*z[2] +  t3*z[3];
+  x1 = arrondi(X);
+  y1 = arrondi(Y);
+  z1 = arrondi(Z);
+  for (i = 0; i < nseg; i++)
+  {
+    t += r; t2 = t*t; t3 = t2 * t;
+    X = x[0] + t*x[1] +  t2*x[2] +  t3*x[3];
+    Y = y[0] + t*y[1] +  t2*y[2] +  t3*y[3];
+    Z = z[0] + t*z[1] +  t2*z[2] +  t3*z[3];
+    x2 = arrondi(X);
+    y2 = arrondi(Y);
+    z2 = arrondi(Z);
+#ifdef DEBUG_DC3
+    printf("%s: ldrawline3d %d,%d,%d -> %d,%d,%d\n", F_NAME, x1, y1, z1, x2, y2, z2);
+#endif
+    ldrawline3d(image1, x1, y1, z1, x2, y2, z2);
+    x1 = x2; y1 = y2; z1 = z2;
+  }
+} // ldrawcubic3d()
+
+/* ==================================== */
+void ldrawcubic3dlist(int32_t *lx, int32_t *ly, int32_t *lz, int32_t *npoints, double *x, double *y, double *z, int32_t nseg, double tmin, double tmax)
+/* ==================================== */
+/*! \fn void ldrawcubic3dlist(int32_t *lx, int32_t *ly, int32_t *lz, int32_t *npoints, double *x, double *y, double *z, int32_t nseg, double tmin, double tmax)
+    \param lx (sortie) : liste des abcisses des points dessinés
+    \param ly (sortie) : liste des ordonnées des points dessinés
+    \param lz (sortie) : liste des ordonnées des points dessinés
+    \param npoints (entrée) : taille des tableaux lx, ly, lz ; (sortie) : nombre de points dessinés
+    \param x (entrée) : coefficients 0, 1, 2, 3 du polynome des abcisses
+    \param y (entrée) : coefficients 0, 1, 2, 3 du polynome des ordonnées
+    \param z (entrée) : coefficients 0, 1, 2, 3 du polynome des cotes
+    \param nseg (entrée) : nombre de pas de discrétisation
+    \param tmin, tmax (entrée) : valeurs min et max du paramètre des polynomes
+    \brief draws a cubic line segment 
+    \warning les tableaux lx, ly, lz doivent avoir été alloués
+    \warning le résultat n'est pas forcément une courbe discrète
+    \warning certains points peuvent être dupliqués
+*/
+#undef F_NAME
+#define F_NAME "ldrawcubic3dlist"
+{
+  int32_t i, x1, y1, z1, x2, y2, z2, np = 0, npp, nmaxpoints = *npoints;
+  double X, Y, Z, r = (tmax - tmin) / nseg, t = tmin, t2, t3;
   
   t2 = t*t; t3 = t2 * t;
   X = x[0] + t*x[1] +  t2*x[2] +  t3*x[3];
@@ -276,10 +431,13 @@ void ldrawcubic3d(
     x2 = arrondi(X);
     y2 = arrondi(Y);
     z2 = arrondi(Z);
-    ldrawline3d(image1, x1, y1, z1, x2, y2, z2);
+    npp = nmaxpoints - np;
+    ldrawline3dlist(lx+np, ly+np, lz+np, &npp, x1, y1, z1, x2, y2, z2);
+    np += npp;
     x1 = x2; y1 = y2; z1 = z2;
   }
-} // ldrawcubic3d()
+  *npoints = np;
+} // ldrawcubic3dlist()
 
 /* ==================================== */
 void ldrawtangents2d(

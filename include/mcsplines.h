@@ -52,6 +52,7 @@ extern int32_t scn_curvatures3d(double *x, double *y, double *z, int32_t n, int3
 extern int32_t scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_t *n, 
                             double *C0, double *C1, double *C2, double *C3,
                             double *D0, double *D1, double *D2, double *D3);
+extern int32_t scn_approxcurve2(int32_t *X, int32_t *Y, int32_t *N, double deltamax);
 extern int32_t scn_approxcurve_with_initial_control_points(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_t *n, 
                             double *C0, double *C1, double *C2, double *C3,
                             double *D0, double *D1, double *D2, double *D3);
@@ -60,6 +61,7 @@ extern int32_t scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, 
                               double *C0, double *C1, double *C2, double *C3,
                               double *D0, double *D1, double *D2, double *D3,
 			      double *E0, double *E1, double *E2, double *E3);
+extern int32_t scn_approxcurve3d2(int32_t *X, int32_t *Y, int32_t *Z, int32_t *N, double deltamax);
 extern int32_t scn_approxcurve3d_with_initial_control_points(
                               int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double deltamax, 
                               int32_t *C, int32_t *n, 
@@ -81,7 +83,10 @@ extern double scn_splinequerycurvature3d(double s, int32_t n,
 			       double *C0, double *C1, double *C2, double *C3,
 			       double *D0, double *D1, double *D2, double *D3,
 			       double *E0, double *E1, double *E2, double *E3);
-
+extern void scn_drawspline(struct xvimage * image, double *x, double *y, int32_t nctrl);
+extern void scn_drawsplinelist(int32_t *lx, int32_t *ly, int32_t *npoints, double *x, double *y, int32_t nctrl);
+extern void scn_drawspline3d(struct xvimage * image, double *x, double *y, double *z, int32_t nctrl);
+extern void scn_drawspline3dlist(int32_t *lx, int32_t *ly, int32_t *lz, int32_t *npoints, double *x, double *y, double *z, int32_t nctrl);
 #ifdef __cplusplus
 }
 #endif

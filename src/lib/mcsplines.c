@@ -96,6 +96,7 @@ scn_lengthspline3d(
 #include <math.h>
 #include <mcutil.h>
 #include <mclin.h>
+#include <ldraw.h>
 #include <mcsplines.h>
 
 //#define TEST
@@ -109,7 +110,7 @@ scn_lengthspline3d(
 #define HUGE_VAL 1E+100
 #endif
 
-static double cube(double x) { return x * x * x; }
+//static double cube(double x) { return x * x * x; }
 static double dist3(double x1, double y1, double z1, double x2, double y2, double z2)
 {
   return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1));
@@ -175,8 +176,6 @@ int32_t scn_solvespline(double *x, double *y, int32_t n,
   if (!lin_solvetridiag(M, P, z, n-2))
   {
     printf("%s: lin_solvetridiag failed\n", F_NAME);
-#ifdef DEBUG    
-#endif
     return 0;
   }
 
@@ -271,8 +270,6 @@ int32_t scn_solvespline_noalloc(double *x, double *y, int32_t n,
   if (!lin_solvetridiag(M, P, z, n-2))
   {
     printf("%s: lin_solvetridiag failed\n", F_NAME);
-#ifdef DEBUG    
-#endif
     return 0;
   }
 
@@ -353,8 +350,6 @@ int32_t scn_solvespline1(double *y, int32_t n,
   if (!lin_solvetridiag(M, P, z, n-2))
   {
     printf("%s: lin_solvetridiag failed\n", F_NAME);
-#ifdef DEBUG    
-#endif
     return 0;
   }
 
@@ -1443,10 +1438,9 @@ void printctrlpoints3d(int32_t *C, int32_t *X, int32_t *Y, int32_t *Z, int32_t n
 }
 
 /* ==================================== */
-int32_t scn_approxcurve1(int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_t *n, 
-                      double *C0, double *C1, double *C2, double *C3)
+int32_t scn_approxcurve1(int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_t *n, double *C0, double *C1, double *C2, double *C3)
 /* ==================================== */
-/*! \fn int32_t scn_approxcurve1(double *Y, int32_t N, double *Z, int32_t *n)
+/*! \fn int32_t scn_approxcurve1(int32_t *Y, int32_t N, double deltamax, int32_t *Z, int32_t *n, double *C0, double *C1, double *C2, double *C3)
     \param Y (entrée) : tableau des ordonnées des points du graphe de la fonction (taille N)
     \param N (entrée) : nombre de points de la courbe
     \param deltamax (entrée) : tolérance sur l'approximation
@@ -1550,11 +1544,9 @@ int32_t scn_approxcurve1(int32_t *Y, int32_t N, double deltamax, int32_t *Z, int
 } // scn_approxcurve1()
 
 /* ==================================== */
-int32_t scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *C, int32_t *n, 
-                     double *C0, double *C1, double *C2, double *C3,
-                     double *D0, double *D1, double *D2, double *D3)
+int32_t scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *C, int32_t *n, double *C0, double *C1, double *C2, double *C3, double *D0, double *D1, double *D2, double *D3)
 /* ==================================== */
-/*! \fn int32_t scn_approxcurve(double *Y, int32_t N, double *C, int32_t *n)
+/*! \fn int32_t scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *C, int32_t *n, double *C0, double *C1, double *C2, double *C3, double *D0, double *D1, double *D2, double *D3)
     \param X (entrée) : tableau des abscisses des points de la courbe (taille N)
     \param Y (entrée) : tableau des ordonnées des points de la courbe (taille N)
     \param N (entrée) : nombre de points de la courbe
@@ -1586,13 +1578,61 @@ int32_t scn_approxcurve(int32_t *X, int32_t *Y, int32_t N, double deltamax, int3
 } // scn_approxcurve()
 
 /* ==================================== */
-int32_t scn_approxcurve_with_initial_control_points(
-                     int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *C, int32_t *n, 
-                     double *C0, double *C1, double *C2, double *C3,
-                     double *D0, double *D1, double *D2, double *D3)
+int32_t scn_approxcurve2(int32_t *X, int32_t *Y, int32_t *N, double deltamax)
 /* ==================================== */
-/*! \fn int32_t scn_approxcurve_with_initial_control_points(
-           double *Y, int32_t N, double *C, int32_t *n)
+/*! \fn int32_t scn_approxcurve2(int32_t *X, int32_t *Y, int32_t *N, double deltamax)
+    \param X (entrée/sortie) : tableau des abscisses des points (taille N)
+    \param Y (entrée/sortie) : tableau des ordonnées des points (taille N)
+    \param N (entrée/sortie) : nombre de points de la courbe
+    \param deltamax (entrée) : tolérance sur l'approximation
+    \brief trouve une approximation par deux splines cubiques de la courbe discrete définie par X, Y. Le résultat (liste de points de contrôle) est retourné dans X, Y, N.
+*/
+#undef F_NAME
+#define F_NAME "scn_approxcurve2"
+{
+  int32_t *C;
+  int32_t ret, n, i, npoints = *N;
+  double *C0, *C1, *C2, *C3, *D0, *D1, *D2, *D3;
+  
+  C = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(C != NULL);
+  C0 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(C0 != NULL);
+  C1 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(C1 != NULL);
+  C2 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(C2 != NULL);
+  C3 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(C3 != NULL);
+  D0 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(D0 != NULL);
+  D1 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(D1 != NULL);
+  D2 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(D2 != NULL);
+  D3 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(D3 != NULL);
+  
+  C[0] = 0;
+  C[1] = npoints/2;
+  C[2] = npoints-1;
+  n = 3;
+  ret = scn_approxcurve_with_initial_control_points(
+	   X, Y, npoints, deltamax, C, &n, 
+           C0, C1, C2, C3, D0, D1, D2, D3);
+  if (ret == 0)
+  {
+    fprintf(stderr, "%s: scn_approxcurve_with_initial_control_points failed\n", F_NAME);
+    return 0;
+  }
+
+  for (i = 0; i < n; i++) 
+  {
+    X[i] = X[C[i]];
+    Y[i] = Y[C[i]];
+  }
+  *N = n;
+  free(C); 
+  free(C0); free(C1); free(C2); free(C3); 
+  free(D0); free(D1); free(D2); free(D3);
+  return 1;
+} // scn_approxcurve2()
+
+/* ==================================== */
+int32_t scn_approxcurve_with_initial_control_points(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *C, int32_t *n, double *C0, double *C1, double *C2, double *C3, double *D0, double *D1, double *D2, double *D3)
+/* ==================================== */
+/*! \fn int32_t scn_approxcurve_with_initial_control_points(int32_t *X, int32_t *Y, int32_t N, double deltamax, int32_t *C, int32_t *n, double *C0, double *C1, double *C2, double *C3, double *D0, double *D1, double *D2, double *D3)
     \param X (entrée) : tableau des abscisses des points de la courbe (taille N)
     \param Y (entrée) : tableau des ordonnées des points de la courbe (taille N)
     \param N (entrée) : nombre de points de la courbe
@@ -1768,6 +1808,65 @@ int32_t scn_approxcurve3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double 
 						       E0, E1, E2, E3);
 } // scn_approxcurve3d()
 
+/* ==================================== */
+int32_t scn_approxcurve3d2(int32_t *X, int32_t *Y, int32_t *Z, int32_t *N, double deltamax)
+/* ==================================== */
+/*! \fn 
+    \param X (entrée/sortie) : tableau des abscisses des points (taille N)
+    \param Y (entrée/sortie) : tableau des ordonnées des points (taille N)
+    \param Z (entrée/sortie) : tableau des cotes des points (taille N)
+    \param N (entrée/sortie) : nombre de points de la courbe
+    \param deltamax (entrée) : tolérance sur l'approximation
+    \brief trouve une approximation par deux splines cubiques de la courbe discrete définie par X, Y, Z. Le résultat (liste de points de contrôle) est retourné dans X, Y, Z, N.
+*/
+#undef F_NAME
+#define F_NAME "scn_approxcurve3d2"
+{
+  int32_t *C;
+  int32_t ret, n, i, npoints = *N;
+  double *C0, *C1, *C2, *C3, *D0, *D1, *D2, *D3, *E0, *E1, *E2, *E3;
+  
+  C = (int32_t *)calloc(1,npoints*sizeof(int32_t)); assert(C != NULL);
+  C0 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(C0 != NULL);
+  C1 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(C1 != NULL);
+  C2 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(C2 != NULL);
+  C3 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(C3 != NULL);
+  D0 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(D0 != NULL);
+  D1 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(D1 != NULL);
+  D2 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(D2 != NULL);
+  D3 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(D3 != NULL);
+  E0 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(E0 != NULL);
+  E1 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(E1 != NULL);
+  E2 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(E2 != NULL);
+  E3 = (double *)calloc(1,(npoints-1)*sizeof(double)); assert(E3 != NULL);
+  
+  C[0] = 0;
+  C[1] = npoints/2;
+  C[2] = npoints-1;
+  n = 3;
+  ret = scn_approxcurve3d_with_initial_control_points(
+           X, Y, Z, npoints, deltamax, C, &n, 
+           C0, C1, C2, C3, D0, D1, D2, D3, E0, E1, E2, E3);
+  if (ret == 0)
+  {
+    fprintf(stderr, "%s: scn_approxcurve3d_with_initial_control_points failed\n", F_NAME);
+    return 0;
+  }
+
+  for (i = 0; i < n; i++) 
+  {
+    X[i] = X[C[i]];
+    Y[i] = Y[C[i]];
+    Z[i] = Z[C[i]];
+  }
+  *N = n;
+  free(C); 
+  free(C0); free(C1); free(C2); free(C3); 
+  free(D0); free(D1); free(D2); free(D3);
+  free(E0); free(E1); free(E2); free(E3);
+  return 1;
+} // scn_approxcurve3d2()
+
 /* ==================================== */ 
 int32_t scn_approxcurve3d_with_initial_control_points(
   int32_t *X, int32_t *Y, int32_t *Z, int32_t N, double deltamax, 
@@ -1905,7 +2004,10 @@ double scn_splinequerypoint3d(double x, double y, double z, double p, int32_t n,
 			       double *D0, double *D1, double *D2, double *D3,
 			       double *E0, double *E1, double *E2, double *E3)
 /* ==================================== */
-/*! \fn 
+/*! \fn double scn_splinequerypoint3d(double x, double y, double z, double p, int32_t n, 
+			       double *C0, double *C1, double *C2, double *C3,
+			       double *D0, double *D1, double *D2, double *D3,
+			       double *E0, double *E1, double *E2, double *E3)
     \param x,y,z (entrée) : un point
     \param p (entrée) : précision (valeur dont on incrémente l'abs. curv. à chaque étape) 
     \param n (entrée) : nombre de points de contrôle de la spline
@@ -1952,7 +2054,10 @@ double scn_splinequerycurvature3d(double s, int32_t n,
 			       double *D0, double *D1, double *D2, double *D3,
 			       double *E0, double *E1, double *E2, double *E3)
 /* ==================================== */
-/*! \fn 
+/*! \fn double scn_splinequerycurvature3d(double s, int32_t n,
+			       double *C0, double *C1, double *C2, double *C3,
+			       double *D0, double *D1, double *D2, double *D3,
+			       double *E0, double *E1, double *E2, double *E3)
     \param s (entrée) : abcisse curviligne d'un point de la spline
     \param n (entrée) : nombre de points de contrôle de la spline
     \param C0 (entrée) : tableau des coef. spline X de degré 0 (taille n-1) 
@@ -2005,6 +2110,295 @@ double scn_splinequerycurvature3d(double s, int32_t n,
   if (tmp2 < SCN_EPSILON2) return 0.0;
   return tmp2 / tmp1;
 } // scn_splinequerycurvature3d()
+
+// =================================================
+// CONVERT SPLINES INTO DISCRETE 'CURVES'
+// =================================================
+
+/* ==================================== */
+void scn_drawspline(struct xvimage * image, double *x, double *y, int32_t nctrl)
+/* ==================================== */
+/*! \fn void scn_drawspline(struct xvimage * image, double *x, double *y, int32_t nctrl)
+    \param image (entrée/sortie)
+    \param x (entrée) : abcisses des points de contrôle de la spline
+    \param y (entrée) : ordonnées des points de contrôle de la spline
+    \param nctrl (entrée) : nombre de points de contrôle de la spline
+    \brief dessine la spline de points de contrôle donnés dans 'image'
+    \warning le résultat n'est pas forcément une courbe discrète
+*/
+#undef F_NAME
+#define F_NAME "scn_drawspline"
+{
+  double Px[4], Py[4];
+  double *X0, *X1, *X2, *X3, *Y0, *Y1, *Y2, *Y3, *t;
+  int32_t j;
+
+  t = (double *)calloc(1,nctrl*sizeof(double)); assert(t != NULL);
+  X0 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X0 != NULL);
+  X1 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X1 != NULL);
+  X2 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X2 != NULL);
+  X3 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X3 != NULL);
+  Y0 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y0 != NULL);
+  Y1 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y1 != NULL);
+  Y2 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y2 != NULL);
+  Y3 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y3 != NULL);
+
+  for (j = 0; j < nctrl; j++) t[j] = (double)j;
+
+  if (nctrl == 2)
+  {
+    X0[0] = x[0]; X1[0] = x[1] - x[0]; X2[0] = X3[0] = 0.0; 
+    Y0[0] = y[0]; Y1[0] = y[1] - y[0]; Y2[0] = Y3[0] = 0.0; 
+  }
+  else
+  {
+    if ((x[0] != x[nctrl-1]) || (y[0] != y[nctrl-1]))
+    {
+      scn_solvespline(t, x, nctrl, X0, X1, X2, X3);
+      scn_solvespline(t, y, nctrl, Y0, Y1, Y2, Y3);
+    }
+    else
+    {
+      scn_solveclosedspline(t, x, nctrl, X0, X1, X2, X3);
+      scn_solveclosedspline(t, y, nctrl, Y0, Y1, Y2, Y3);
+    }
+  }    
+    
+  for (j = 0; j < nctrl-1; j++)
+  {
+    Px[0] = X0[j]; Px[1] = X1[j]; Px[2] = X2[j]; Px[3] = X3[j];
+    Py[0] = Y0[j]; Py[1] = Y1[j]; Py[2] = Y2[j]; Py[3] = Y3[j];
+    ldrawcubic2(image, (double *)Px, (double *)Py, 10, t[j], t[j+1]);
+  }
+  free(t);
+  free(X0); free(X1); free(X2); free(X3);
+  free(Y0); free(Y1); free(Y2); free(Y3);
+} // scn_drawspline()
+
+/* ==================================== */
+void scn_drawsplinelist(int32_t *lx, int32_t *ly, int32_t *npoints, double *x, double *y, int32_t nctrl)
+/* ==================================== */
+/*! \fn void scn_drawsplinelist(int32_t *lx, int32_t *ly, int32_t *npoints, double *x, double *y, int32_t nctrl)
+    \param lx (sortie) : liste des abcisses des points dessinés
+    \param ly (sortie) : liste des ordonnées des points dessinés
+    \param npoints (entrée) : taille des tableaux lx, ly (sortie) : nombre de points dessinés
+    \param x (entrée) : abcisses des points de contrôle de la spline
+    \param y (entrée) : ordonnées des points de contrôle de la spline
+    \param nctrl (entrée) : nombre de points de contrôle de la spline
+    \brief dessine la spline de points de contrôle donnés dans 'image'
+    \warning les tableaux lx, ly doivent avoir été alloués
+    \warning le résultat n'est pas forcément une courbe discrète
+*/
+#undef F_NAME
+#define F_NAME "scn_drawsplinelist"
+{
+  double Px[4], Py[4];
+  double *X0, *X1, *X2, *X3, *Y0, *Y1, *Y2, *Y3, *t;
+  int32_t j, nmaxpoints = *npoints, np, npp;
+
+  t = (double *)calloc(1,nctrl*sizeof(double)); assert(t != NULL);
+  X0 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X0 != NULL);
+  X1 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X1 != NULL);
+  X2 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X2 != NULL);
+  X3 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X3 != NULL);
+  Y0 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y0 != NULL);
+  Y1 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y1 != NULL);
+  Y2 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y2 != NULL);
+  Y3 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y3 != NULL);
+
+  for (j = 0; j < nctrl; j++) t[j] = (double)j;
+
+  if (nctrl == 2)
+  {
+    X0[0] = x[0]; X1[0] = x[1] - x[0]; X2[0] = X3[0] = 0.0; 
+    Y0[0] = y[0]; Y1[0] = y[1] - y[0]; Y2[0] = Y3[0] = 0.0; 
+  }
+  else
+  {
+    if ((x[0] != x[nctrl-1]) || (y[0] != y[nctrl-1]))
+    {
+      scn_solvespline(t, x, nctrl, X0, X1, X2, X3);
+      scn_solvespline(t, y, nctrl, Y0, Y1, Y2, Y3);
+    }
+    else
+    {
+      scn_solveclosedspline(t, x, nctrl, X0, X1, X2, X3);
+      scn_solveclosedspline(t, y, nctrl, Y0, Y1, Y2, Y3);
+    }
+  }    
+
+  np = 0;    
+#ifdef DEBUG
+printf("nctrl=%d\n", nctrl);
+#endif
+  for (j = 0; j < nctrl-1; j++)
+  {
+    Px[0] = X0[j]; Px[1] = X1[j]; Px[2] = X2[j]; Px[3] = X3[j];
+    Py[0] = Y0[j]; Py[1] = Y1[j]; Py[2] = Y2[j]; Py[3] = Y3[j];
+    npp = nmaxpoints - np;
+#ifdef DEBUG
+printf("ldrawcubic2list np=%d ;  npp=%d\n", np, npp);
+#endif
+    ldrawcubic2list(lx+np, ly+np, &npp, (double *)Px, (double *)Py, 10, t[j], t[j+1]);
+    np += npp;
+#ifdef DEBUG
+printf("j=%d ; np=%d ; npp=%d\n", j, np, npp);
+#endif
+  }
+  *npoints = np;
+
+  free(t);
+  free(X0); free(X1); free(X2); free(X3);
+  free(Y0); free(Y1); free(Y2); free(Y3);
+
+} // scn_drawsplinelist()
+
+/* ==================================== */
+void scn_drawspline3d(struct xvimage * image, double *x, double *y, double *z, int32_t nctrl)
+/* ==================================== */
+/*! \fn void scn_drawspline3d(struct xvimage * image, double *x, double *y, double *z, int32_t nctrl)
+    \param image (entrée/sortie)
+    \param x (entrée) : abcisses des points de contrôle de la spline
+    \param y (entrée) : ordonnées des points de contrôle de la spline
+    \param z (entrée) : cotes des points de contrôle de la spline
+    \param nctrl (entrée) : nombre de points de contrôle de la spline
+    \brief dessine la spline de points de contrôle donnés dans 'image'
+*/
+#undef F_NAME
+#define F_NAME "scn_drawspline3d"
+{
+  double Px[4], Py[4], Pz[4];
+  double *X0, *X1, *X2, *X3, *Y0, *Y1, *Y2, *Y3, *Z0, *Z1, *Z2, *Z3, *t;
+  int32_t j;
+
+  t = (double *)calloc(1,nctrl*sizeof(double)); assert(t != NULL);
+  X0 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X0 != NULL);
+  X1 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X1 != NULL);
+  X2 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X2 != NULL);
+  X3 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X3 != NULL);
+  Y0 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y0 != NULL);
+  Y1 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y1 != NULL);
+  Y2 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y2 != NULL);
+  Y3 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y3 != NULL);
+  Z0 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Z0 != NULL);
+  Z1 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Z1 != NULL);
+  Z2 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Z2 != NULL);
+  Z3 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Z3 != NULL);
+
+  for (j = 0; j < nctrl; j++) t[j] = (double)j;
+
+  if (nctrl == 2)
+  {
+    X0[0] = x[0]; X1[0] = x[1] - x[0]; X2[0] = X3[0] = 0.0; 
+    Y0[0] = y[0]; Y1[0] = y[1] - y[0]; Y2[0] = Y3[0] = 0.0; 
+    Z0[0] = z[0]; Z1[0] = z[1] - z[0]; Z2[0] = Z3[0] = 0.0; 
+  }
+  else
+  {
+    if ((x[0] != x[nctrl-1]) || (y[0] != y[nctrl-1]) || (z[0] != z[nctrl-1]))
+    {
+      scn_solvespline(t, x, nctrl, X0, X1, X2, X3);
+      scn_solvespline(t, y, nctrl, Y0, Y1, Y2, Y3);
+      scn_solvespline(t, z, nctrl, Z0, Z1, Z2, Z3);
+    }
+    else
+    {
+      scn_solveclosedspline(t, x, nctrl, X0, X1, X2, X3);
+      scn_solveclosedspline(t, y, nctrl, Y0, Y1, Y2, Y3);
+      scn_solveclosedspline(t, z, nctrl, Z0, Z1, Z2, Z3);
+    }
+  }    
+    
+  for (j = 0; j < nctrl-1; j++)
+  {
+    Px[0] = X0[j]; Px[1] = X1[j]; Px[2] = X2[j]; Px[3] = X3[j];
+    Py[0] = Y0[j]; Py[1] = Y1[j]; Py[2] = Y2[j]; Py[3] = Y3[j];
+    Pz[0] = Z0[j]; Pz[1] = Z1[j]; Pz[2] = Z2[j]; Pz[3] = Z3[j];
+    ldrawcubic3d(image, (double *)Px, (double *)Py, (double *)Pz, 10, t[j], t[j+1]);
+  }
+
+  free(t);
+  free(X0); free(X1); free(X2); free(X3);
+  free(Y0); free(Y1); free(Y2); free(Y3);
+  free(Z0); free(Z1); free(Z2); free(Z3);
+} // scn_drawspline3d()
+
+/* ==================================== */
+void scn_drawspline3dlist(int32_t *lx, int32_t *ly, int32_t *lz, int32_t *npoints, double *x, double *y, double *z, int32_t nctrl)
+/* ==================================== */
+/*! \fn void scn_drawspline3dlist(int32_t *lx, int32_t *ly, int32_t *lz, int32_t *npoints, double *x, double *y, double *z, int32_t nctrl)
+    \param lx (sortie) : liste des abcisses des points dessinés
+    \param ly (sortie) : liste des ordonnées des points dessinés
+    \param lz (sortie) : liste des cotes des points dessinés
+    \param npoints (entrée) : taille des tableaux lx, ly, lz (sortie) : nombre de points dessinés
+    \param x (entrée) : abcisses des points de contrôle de la spline
+    \param y (entrée) : ordonnées des points de contrôle de la spline
+    \param z (entrée) : cotes des points de contrôle de la spline
+    \param nctrl (entrée) : nombre de points de contrôle de la spline
+    \brief dessine la spline de points de contrôle donnés dans 'image'
+    \warning les tableaux lx, ly, lz doivent avoir été alloués
+    \warning le résultat n'est pas forcément une courbe discrète
+*/
+#undef F_NAME
+#define F_NAME "scn_drawspline3dlist"
+{
+  double Px[4], Py[4], Pz[4];
+  double *X0, *X1, *X2, *X3, *Y0, *Y1, *Y2, *Y3, *Z0, *Z1, *Z2, *Z3, *t;
+  int32_t j, nmaxpoints = *npoints, np = 0, npp;
+
+  t = (double *)calloc(1,nctrl*sizeof(double)); assert(t != NULL);
+  X0 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X0 != NULL);
+  X1 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X1 != NULL);
+  X2 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X2 != NULL);
+  X3 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(X3 != NULL);
+  Y0 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y0 != NULL);
+  Y1 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y1 != NULL);
+  Y2 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y2 != NULL);
+  Y3 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Y3 != NULL);
+  Z0 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Z0 != NULL);
+  Z1 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Z1 != NULL);
+  Z2 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Z2 != NULL);
+  Z3 = (double *)calloc(1,(nctrl-1)*sizeof(double)); assert(Z3 != NULL);
+
+  for (j = 0; j < nctrl; j++) t[j] = (double)j;
+
+  if (nctrl == 2)
+  {
+    X0[0] = x[0]; X1[0] = x[1] - x[0]; X2[0] = X3[0] = 0.0; 
+    Y0[0] = y[0]; Y1[0] = y[1] - y[0]; Y2[0] = Y3[0] = 0.0; 
+    Z0[0] = z[0]; Z1[0] = z[1] - z[0]; Z2[0] = Z3[0] = 0.0; 
+  }
+  else
+  {
+    if ((x[0] != x[nctrl-1]) || (y[0] != y[nctrl-1]) || (z[0] != z[nctrl-1]))
+    {
+      scn_solvespline(t, x, nctrl, X0, X1, X2, X3);
+      scn_solvespline(t, y, nctrl, Y0, Y1, Y2, Y3);
+      scn_solvespline(t, z, nctrl, Z0, Z1, Z2, Z3);
+    }
+    else
+    {
+      scn_solveclosedspline(t, x, nctrl, X0, X1, X2, X3);
+      scn_solveclosedspline(t, y, nctrl, Y0, Y1, Y2, Y3);
+      scn_solveclosedspline(t, z, nctrl, Z0, Z1, Z2, Z3);
+    }
+  }    
+    
+  for (j = 0; j < nctrl-1; j++)
+  {
+    Px[0] = X0[j]; Px[1] = X1[j]; Px[2] = X2[j]; Px[3] = X3[j];
+    Py[0] = Y0[j]; Py[1] = Y1[j]; Py[2] = Y2[j]; Py[3] = Y3[j];
+    Pz[0] = Z0[j]; Pz[1] = Z1[j]; Pz[2] = Z2[j]; Pz[3] = Z3[j];
+    npp = nmaxpoints - np;
+    ldrawcubic3dlist(lx+np, ly+np, lz+np, &npp, (double *)Px, (double *)Py, (double *)Pz, 10, t[j], t[j+1]);
+    np += npp;
+  }
+  *npoints = np;
+  free(t);
+  free(X0); free(X1); free(X2); free(X3);
+  free(Y0); free(Y1); free(Y2); free(Y3);
+  free(Z0); free(Z1); free(Z2); free(Z3);
+} // scn_drawspline3dlist()
 
 // =================================================
 // TESTS

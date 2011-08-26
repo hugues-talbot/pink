@@ -677,7 +677,7 @@ printf("xp=%d zp=%d\n", xp, zp);
 //--------------------------------------------------------------------------
 int32_t CoverByDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness)
 //--------------------------------------------------------------------------
-/*! \fn void CoverByDSSs(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness)
+/*! \fn int32_t CoverByDSSs3D(int32_t npoints, int32_t *X, int32_t *Y, int32_t *Z, double thickness)
     \param npoints (input): number of points in points list
     \param X (input/output): ordered list of points (1st coord)
     \param Y (input/output): ordered list of points (2nd coord)
