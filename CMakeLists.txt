@@ -268,25 +268,6 @@ if (CMAKE_HOST_UNIX)
 
 ### **********************************************************************************************
 ### **********************************************************************************************
-### ******************************** DOXYGEN Documentation ***************************************
-### **********************************************************************************************
-### **********************************************************************************************
-
-    find_package(Doxygen)
-    if ( NOT DOXYGEN_FOUND )
-	option( BUILD_DOCUMENTATION "Builds the documentation files with Doxygen" OFF )
-    else ( NOT DOXYGEN_FOUND )
-        #message( "not building documentation" )
-	option( BUILD_DOCUMENTATION "Builds the documentation files with Doxygen" OFF )
-    endif ( NOT DOXYGEN_FOUND )
-
-    if (BUILD_DOCUMENTATION)
-	add_subdirectory( doc doc )
-    endif(BUILD_DOCUMENTATION)
-
-
-### **********************************************************************************************
-### **********************************************************************************************
 ### *************************** Python front-end *************************************************
 ### **********************************************************************************************
 ### **********************************************************************************************
@@ -447,6 +428,24 @@ if (CMAKE_HOST_UNIX)
 ### **********************************************************************************************
 
     INCLUDE(UJ_GenerateRPM.cmake)
+
+### **********************************************************************************************
+### **********************************************************************************************
+### ******************************** DOXYGEN Documentation ***************************************
+### **********************************************************************************************
+### **********************************************************************************************
+
+    find_package(Doxygen)
+    if ( NOT DOXYGEN_FOUND )
+	option( BUILD_DOCUMENTATION "Builds the documentation files with Doxygen" OFF )
+    else ( NOT DOXYGEN_FOUND )
+        #message( "not building documentation" )
+	option( BUILD_DOCUMENTATION "Builds the documentation files with Doxygen" OFF )
+    endif ( NOT DOXYGEN_FOUND )
+
+    if (BUILD_DOCUMENTATION)
+	add_subdirectory( doc doc )
+    endif(BUILD_DOCUMENTATION)
 
 
 

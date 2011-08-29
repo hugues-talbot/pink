@@ -12,9 +12,9 @@ license.
 
 In august 2011 Pink has been presented at the European Python
 Scientific Conference as a poster. Below you can see the conference
-poster (also in <a href=""> pdf </a> and hi-res <a href="pink_euroscipy_web.jpeg"> jpeg </a>).
+poster (also in <a href="pink_euroscipy_web.pdf"> pdf </a> and hi-res <a href="pink_euroscipy_web.jpeg"> jpeg </a>).
 
-\image html pink_euroscipy_web_thumb.jpeg "EuroSciPy 2011 poster" width=10cm
+\image html pink_euroscipy_web_thumb.jpeg "EuroSciPy 2011 poster"
 
 \section screenshots Screenshots
 
