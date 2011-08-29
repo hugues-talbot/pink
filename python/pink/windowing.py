@@ -22,6 +22,8 @@ class windowing:
         self.options=options()
         try:
             from Tkinter import Tk, Toplevel
+            Tkinter.wantobjects = False
+
             self.root=Tk()
             self.root.withdraw()
             # self.top=Toplevel(self.root)

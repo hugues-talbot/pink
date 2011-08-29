@@ -10,6 +10,12 @@ different fields. It is a free software licensed under the
 <A HREF="http://www.cecill.info/index.en.html"> CeCILL </A>
 license. 
 
+In august 2011 Pink has been presented at the European Python
+Scientific Conference as a poster. Below you can see the conference
+poster (also in <a href=""> pdf </a> and hi-res <a href="pink_euroscipy_web.jpeg"> jpeg </a>).
+
+\image html pink_euroscipy_web_thumb.jpeg "EuroSciPy 2011 poster" width=10cm
+
 \section screenshots Screenshots
 
 <A HREF="http://developer.berlios.de/screenshots/?group_id=12429">
