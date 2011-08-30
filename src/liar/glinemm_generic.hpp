@@ -20,15 +20,17 @@
  * converted into a stand-alone C file by Hugues Talbot	13 Mar 1995
  */
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <algorithm>
+
 //#include "liarlmts.h"
 #include "liarp.h"
 
-#ifndef max
-#define max(a,b) ((a)<(b)) ? (b):(a)
-#endif
+// #ifndef max
+// #define max(a,b) ((a)<(b)) ? (b):(a)
+// #endif
 
 
 template <typename Type>
@@ -71,7 +73,7 @@ TESTS: Linted and purified, tested with experience.
 //    const int LPTHREAD_COUNT=lget_pthread_count();
 //#endif
 
-    m = max(fabs(cos(thetrad*(double)theta)),fabs(sin(thetrad*(double)theta)));
+    m = std::max(fabs(cos(thetrad*(double)theta)),fabs(sin(thetrad*(double)theta)));
     k=((double)k*m+0.5);/* +0.5 is for having the nearest integer */
 
     if (abs(theta)<=45) {     /* set up offsets to scan image top to bottom */

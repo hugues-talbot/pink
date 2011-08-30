@@ -86,7 +86,7 @@ extern int32_t lskeleton_ST(struct xvimage* f, struct xvimage* res);
 extern int32_t lopeningfunction(struct xvimage *img, struct xvimage *res, int32_t mode);
   extern float ldistsets(struct xvimage *img1, struct xvimage *img2, int32_t mode, float cut);
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif
 
 #endif /* LDIST__H__ */

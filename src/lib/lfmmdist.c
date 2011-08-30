@@ -116,5 +116,4 @@ int lfmmdist(
 	BIMAGE_destructor(distance);
 
 	return 0;
-}
-
+} /* lfmmdist */

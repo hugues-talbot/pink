@@ -60,6 +60,11 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifndef BIMAGE_H
 #define BIMAGE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 /* For simplifying some of the code, we'll fix the maximum number of dimensions */
 #define MAXDIMS 32
 
@@ -337,5 +342,9 @@ int BIMAGE_upsample(
 
 );
 
+#ifdef __cplusplus
+} /* extern "C" */
 #endif
+
+#endif /* BIMAGE_H */
 

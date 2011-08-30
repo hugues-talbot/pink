@@ -17,6 +17,7 @@
 
 #include "uiFrame.hpp"
 #include "pyujimage.hpp"
+#include "ui_systest.hpp"
 
 namespace pink { 
 
@@ -53,7 +54,7 @@ namespace pink {
   public:
 
     typedef max_flow<image_type> parent_type;
-    void operator( )( index_t ID, parent_type * parent );    
+    void operator()( index_t ID, parent_type * parent, boost::shared_ptr<boost::barrier> barrier );    
     packet();
     ~packet();
     
@@ -178,13 +179,15 @@ namespace pink {
   template<class image_type>
   void packet<image_type>::operator()( 
     index_t ID, 
-    max_flow<image_type> * parent 
+    max_flow<image_type> * parent,
+    boost::shared_ptr<boost::barrier> barrier
     )
   {
 
     this->ID = ID;
     this->parent = parent;
-
+    barrier->wait(); // signalling that we are ready to start the iteration
+    barrier->wait(); // waiting to start the iteration
     bool _continue;
     
     ATOMIC(
@@ -231,7 +234,7 @@ namespace pink {
     }
 
     parent->shared_lock->unlock_shared();
-    
+    barrier->wait(); // signalling the end of the the iteration
   } /* packet::operator() */
 
 
@@ -697,15 +700,12 @@ namespace pink {
   image_type max_flow<image_type>::start()
   {
     //// --------------------- initializing the time measure -------------------------------
-    sentinel.maxPos(iteration);
-    sentinel.minPos(0);
-    sentinel << 0;
-    sentinel.start();
-
+        
     if (verbose)
       std::cout << "starting the iteration" << std::endl;
     
     index_t nbt = this -> number_of_threads;
+    boost::shared_ptr<boost::barrier> barrier(new boost::barrier(number_of_threads + 1) );    
     
     boost::shared_array< boost::shared_ptr<boost::thread> >
       threads(new boost::shared_ptr<boost::thread>[nbt]);
@@ -719,18 +719,34 @@ namespace pink {
     FOR( q, nbt )
     {
       packets[q].reset( new packet<image_type>() );
-      threads[q].reset( new boost::thread( (*packets[q]), q, this ) );
+      threads[q].reset( new boost::thread( (*packets[q]), q, this, barrier ) );
     } /* FOR(q, nbt) */
 
+    barrier->wait(); // waiting the threads to initialize
+    sentinel.maxPos(iteration);
+    sentinel.minPos(0);
+    sentinel << 0;
+    sentinel.start(); // new time measurement
+    double starttime = pink::benchmark::now();    
+    barrier->wait(); // signalling the threads to begin the iteration
+
+
+    barrier->wait(); // waiting the threads to finish the iteration    
+    //// --------------------- printing out the measured time ------------------------------
+    sentinel.stop();
+    double endtime = pink::benchmark::now();
+    
+    
     FOR( q, nbt )
     {
       threads[q]->join();
     } /* FOR(q, nbt) */
 
-    //// --------------------- printing out the measured time ------------------------------
-    sentinel.stop();
-    if (verbose)
+
+    if (verbose)      
       std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
+    std::cout << "total time of iteration (timer)   : " << static_cast<double>(endtime-starttime) << std::endl;
+    
     this->flow_calculated = true; 
 
     vint time_cheat(potencial.get_size().size(), 0);

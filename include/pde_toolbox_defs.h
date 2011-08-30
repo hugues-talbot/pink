@@ -59,6 +59,10 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* these can change */
 //typedef  uint32_t  INT4_TYPE; !!! CHANGED by MC nov. 16, 2009
 typedef  int32_t  INT4_TYPE;
@@ -127,4 +131,8 @@ typedef  float    DBL_TYPE;
 static const float direction_weighting[] = {1.0f, 1.0f, 1.0f, 1.0f};
 #endif
 
+#ifdef __cplusplus
+} /* extern "C" */
 #endif
+
+#endif /* PDE_DEFS_H */

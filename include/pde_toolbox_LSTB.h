@@ -62,6 +62,11 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "pde_toolbox_bimage.h"
 /* #include "FMM.h" */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 typedef void (pde_hook_func)(void);
 
 /********************************* Data Structures *********************************/
@@ -378,5 +383,9 @@ int maxflow(
 	BIMAGE * * F						/* The flows (scaled to floating point) */
 );
 
+#ifdef __cplusplus
+} /* extern "C" */
 #endif
+ 
+#endif /* LSTB_H */
 

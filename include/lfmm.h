@@ -63,6 +63,11 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "pde_toolbox_bimage.h"
 #include "pde_toolbox_LSTB.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 /******************************** Definitions *************************************/
 /* Fast Marching Method node states */
 #define KNOWNNODE	-1
@@ -265,17 +270,17 @@ void FLOATVECT_postmul(
 
 /* Riemann surface related functions */
 RIE_INT * RIE_INT_constructor(void);
-void RIE_INT_destructor(RIE_INT * this);
+void RIE_INT_destructor(RIE_INT * self);
 RIE_FLOAT * RIE_FLOAT_constructor(void);
-void RIE_FLOAT_destructor(RIE_FLOAT * this);
+void RIE_FLOAT_destructor(RIE_FLOAT * self);
 RIE_SURF * RIE_SURF_constructor(void);
-void RIE_SURF_destructor(RIE_SURF * this);
-int RIE_INT_add(int dx, int dy, char restrict_to_surface, RIE_SURF * rie_surf, RIE_INT * this);
-int RIE_FLOAT_add(float dx, float dy, char restrict_to_surface, RIE_SURF * rie_surf, RIE_FLOAT * this);
-int RIE_INT_to_index(RIE_INT * this, RIE_SURF * rie_surf);
+void RIE_SURF_destructor(RIE_SURF * self);
+int RIE_INT_add(int dx, int dy, char restrict_to_surface, RIE_SURF * rie_surf, RIE_INT * self);
+int RIE_FLOAT_add(float dx, float dy, char restrict_to_surface, RIE_SURF * rie_surf, RIE_FLOAT * self);
+int RIE_INT_to_index(RIE_INT * self, RIE_SURF * rie_surf);
 int index_to_RIE_INT(int index, RIE_INT * coord, RIE_SURF * rie_surf);
-char RIE_INT_on_surface(RIE_INT * this, RIE_SURF * rie_surf);
-char RIE_FLOAT_on_surface(RIE_FLOAT * this, RIE_SURF * rie_surf);
+char RIE_INT_on_surface(RIE_INT * self, RIE_SURF * rie_surf);
+char RIE_FLOAT_on_surface(RIE_FLOAT * self, RIE_SURF * rie_surf);
 
 /* Major functions */
 int geodist(
@@ -326,5 +331,8 @@ int oumgac(
 	BIMAGE * out				/* The output image */
 );
 
+#ifdef __cplusplus
+} /* extern "C" */
 #endif
 
+#endif /* FMM_H */

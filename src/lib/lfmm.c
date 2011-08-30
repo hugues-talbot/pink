@@ -74,6 +74,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #  endif
 #endif /* UNIXIO */
 
+
+
 /***************************************** FUNCTIONS *****************************************/
 /* HEAPSTRUCT_constructor:
 	Allocates memory for the HEAPSTRUCT

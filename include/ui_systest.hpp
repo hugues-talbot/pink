@@ -22,7 +22,7 @@
 #include <iostream>
 #include <boost/thread.hpp>
 
-#include "pink.h"
+//#include "pink.h"
 #include "ui_simd.hpp"
 #include "ui_polythread.hpp"
 

@@ -12,7 +12,7 @@
 // This file contains the wrappers of maxflow functions
 
 
-#include <pink_python.h>
+#include "pink_python.h"
 
 #include "uiFlow.hpp"
 #include "uiUngerFlow.hpp"
@@ -24,6 +24,8 @@
 
 using boost::python::arg;
 using boost::python::def;
+
+void fmm_export();
 
 
 
@@ -101,7 +103,8 @@ void pymaxflow()
     doc__ungerflow__cpp__
     );
 
-
+  fmm_export();
+    
 } /* pymaxflow */
 
 

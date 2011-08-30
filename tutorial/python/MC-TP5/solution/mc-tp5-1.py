@@ -86,11 +86,11 @@ imview(seg)
 def analj(q): return analyzejoints(joints, segment(joints,q) )
 
 if debug:
-    manipulate(analj, 0, 100, joints)
+    d=manipulate(analj, 0, 100, joints)
 else:
     analyzejoints(joints, seg)
 
-
+pink.surimp(joints, analj(d), "joints_seg.ppm")
 
 
 

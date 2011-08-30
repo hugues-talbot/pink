@@ -20,7 +20,7 @@ inv = pink.inverse
 # ## uncomment to ask before quitting dialogs
 # wd.options.silent=False
 
-debug=False
+debug=True
 # ## uncomment to perform the debug operations
 # debug=True
 

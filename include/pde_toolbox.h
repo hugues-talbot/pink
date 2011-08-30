@@ -63,6 +63,11 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "pde_toolbox_LSTB.h"
 #include "pde_toolbox_defs.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 int llsinitcontour(
 	char *in,						/* The desired contours */
 	int * dim_buf,					/* The image dimensions */
@@ -477,5 +482,9 @@ int lmaxflow(
 	DBL_TYPE * dbl_type,		/* Label image of node types */
 	DBL_TYPE * out				/* The output */
 );
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* PDE_TOOLBOX_H */

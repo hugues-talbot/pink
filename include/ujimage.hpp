@@ -957,7 +957,7 @@ dcomplex IMAGE
   /**
   \brief The int_image specialization.
   */
-  typedef ujoi</*long*/int/*,                   VFF_TYP_4_BYTE*/ >    int_image; // LONG INT is 8 byte's on 64 bit system
+  typedef ujoi</*long*/int32_t/*,               VFF_TYP_4_BYTE*/ >    int_image; // LONG INT is 8 byte's on 64 bit system
 
   /**
   \brief The float_image specialization.
@@ -1307,6 +1307,10 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     case VFF_TYP_1_BYTE:
       typetext.assign("byte");
       break;
+
+    case VFF_TYP_4_BYTE:
+      typetext.assign("int");
+      break;
       
     case VFF_TYP_FLOAT:
       typetext.assign("float");
@@ -1314,7 +1318,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       
     default:
       std::cerr << "\nfile: " << filename; 
-      pink_error("you can export only 'char' and 'float' images at this point");	
+      pink_error("you can export only 'char', 'int'(32bit) and 'float' images at this point");	
     } /* switch */
         
     if (this->size->size()!=3)
@@ -1355,8 +1359,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 	    curr[0]=e;
 	    curr[1]=w;
 	    curr[2]=q;
-	    
-	    
+	 	    
 	    s.write( 
 	      reinterpret_cast<char*>(&pixels[ 
 					size->position(curr)
