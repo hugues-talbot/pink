@@ -11,26 +11,27 @@
 */
 
 #ifndef UIFLOW_DISTRIBUTED_HPP_
-#define UIFLOW_DISTRIBUTED_HPP_
+# define UIFLOW_DISTRIBUTED_HPP_
 
-#define BOOST_DISABLE_ASSERTS
+# define BOOST_DISABLE_ASSERTS
 
-#define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
-#include <numa.h>
-#include <vector>
-#include <utility>
-#include <sched.h>
-#include <boost/mpl/at.hpp>
-#include <boost/thread.hpp>
-#include <boost/typeof/typeof.hpp>
-#include <boost/function_types/result_type.hpp>
-#include <boost/function_types/parameter_types.hpp>
+# define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
+# ifdef /* PINK_HAVE_NUMA */
+#   include <numa.h>
+#   include <vector>
+#   include <utility>
+#   include <sched.h>
+#   include <boost/mpl/at.hpp>
+#   include <boost/thread.hpp>
+#   include <boost/typeof/typeof.hpp>
+#   include <boost/function_types/result_type.hpp>
+#   include <boost/function_types/parameter_types.hpp>
 
 //#include "uiFlow.hpp"
-#include "uiFrame.hpp"
-#include "pyujimage.hpp"
-#include "ui_compactor.hpp"
-#include "ui_polythread.hpp"
+#   include "uiFrame.hpp"
+#   include "pyujimage.hpp"
+#   include "ui_compactor.hpp"
+#   include "ui_polythread.hpp"
 
 
 
@@ -1242,7 +1243,7 @@ namespace pink {
 
 
 // cleaning up after us
-#undef REPORT_INTERVAL
+#   undef REPORT_INTERVAL
 
 // // obsolete, replaced by enum
 // #undef __ETAP_POT
@@ -1253,8 +1254,9 @@ namespace pink {
 // #undef PACKET_SIZE
 
 
-#undef ATOMIC
+#   undef ATOMIC
 
+# endif /* PINK_HAVE_NUMA */
 
 #endif /* UIFLOW_DISTRIBUTED_HPP_*/
 /* LuM end of file */

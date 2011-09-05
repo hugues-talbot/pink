@@ -15,16 +15,19 @@
 // and parallel computational power test
 
 #ifndef UI_SYSTEST_HPP___
-#define UI_SYSTEST_HPP___
+# define UI_SYSTEST_HPP___
 
-#define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
-#include <numa.h>
-#include <iostream>
-#include <boost/thread.hpp>
+# define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
+
+# ifdef PINK_HAVE_NUMA
+
+#   include <numa.h>
+#   include <iostream>
+#   include <boost/thread.hpp>
 
 //#include "pink.h"
-#include "ui_simd.hpp"
-#include "ui_polythread.hpp"
+#   include "ui_simd.hpp"
+#   include "ui_polythread.hpp"
 
 namespace pink
 {
@@ -254,13 +257,13 @@ namespace pink
 
       
   } /* namespace numa */
-  
-#   endif /* PINK_HAVE_NUMA */
+
 
         
   } /* namespace benchmark */
 } /* namespace pink */
 
+# endif /* PINK_HAVE_NUMA */
 
 #endif /* UI_SYSTEST_HPP___ */
 

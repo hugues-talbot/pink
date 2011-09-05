@@ -19,16 +19,17 @@
 //!! note this is a hack. Pink's using depth as a macro for accessing
 //!! the z size of the image
 #define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
-#include <set>
-#include <numa.h>
-#include <sched.h>
-#include <sys/types.h>
-#include <linux/unistd.h>
-#include <boost/thread.hpp>
-#include <boost/smart_ptr.hpp>
+#ifdef PINK_HAVE_NUMA
+# include <set>
+# include <numa.h>
+# include <sched.h>
+# include <sys/types.h>
+# include <linux/unistd.h>
+# include <boost/thread.hpp>
+# include <boost/smart_ptr.hpp>
 
-#include "uiFibreTypes.h"
-#include "ui_polythread.hpp"
+# include "uiFibreTypes.h"
+# include "ui_polythread.hpp"
 
 // system call for the thread binding
 inline
@@ -334,5 +335,8 @@ namespace pink {
     
   } /* end namespace numa */
 } /* end namespace pink */
+
+# endif /* PINK_HAVE_NUMA */
+
 #endif /* UI_FLOW_GHOSTS__HPP__ */
 /* LuM end of file */
