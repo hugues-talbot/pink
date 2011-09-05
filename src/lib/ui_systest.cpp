@@ -13,7 +13,6 @@
 #define BOOST_DISABLE_ASSERTS
 #define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
 
-#include <numa.h>
 #include <iostream>
 #include <boost/thread.hpp>
 #include <boost/smart_ptr.hpp>
@@ -39,8 +38,7 @@ namespace pink
     } /* now */
 
 
-#   ifdef PINK_HAVE_NUMA
-#   endif /* PINK_HAVE_NUMA */
+
 
     
   } /* namespace benchmark */

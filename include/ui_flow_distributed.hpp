@@ -16,7 +16,7 @@
 # define BOOST_DISABLE_ASSERTS
 
 # define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
-# ifdef /* PINK_HAVE_NUMA */
+# ifdef PINK_HAVE_NUMA
 #   include <numa.h>
 #   include <vector>
 #   include <utility>

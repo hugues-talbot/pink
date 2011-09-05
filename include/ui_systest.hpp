@@ -20,14 +20,14 @@
 # define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
 
 # ifdef PINK_HAVE_NUMA
-
 #   include <numa.h>
-#   include <iostream>
-#   include <boost/thread.hpp>
+# endif /* PINK_HAVE_NUMA */
+# include <iostream>
+# include <boost/thread.hpp>
 
 //#include "pink.h"
-#   include "ui_simd.hpp"
-#   include "ui_polythread.hpp"
+# include "ui_simd.hpp"
+# include "ui_polythread.hpp"
 
 namespace pink
 {
@@ -37,7 +37,7 @@ namespace pink
     const index_t repeat = 100;
     double now();
 
-
+    
 
     /**
        \brief Memory speed test function, non numa version.
@@ -49,12 +49,12 @@ namespace pink
     {
       typedef T0 value_type;
 
-      // restricting myself to this node
-      // for numa 1.0
-      nodemask_t mask;
-      nodemask_zero(&mask);
-      nodemask_set(&mask,/* node*/ 0);
-      numa_bind(&mask);
+      // // restricting myself to this node
+      // // for numa 1.0
+      // nodemask_t mask;
+      // nodemask_zero(&mask);
+      // nodemask_set(&mask,/* node*/ 0);
+      // numa_bind(&mask);
 
       
       srand(now());
@@ -258,12 +258,12 @@ namespace pink
       
   } /* namespace numa */
 
-
+# endif /* PINK_HAVE_NUMA */
         
   } /* namespace benchmark */
 } /* namespace pink */
 
-# endif /* PINK_HAVE_NUMA */
+
 
 #endif /* UI_SYSTEST_HPP___ */
 

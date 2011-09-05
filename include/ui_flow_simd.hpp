@@ -11,24 +11,25 @@
 */
 
 #ifndef UIFLOW_SIMD_HPP_
-#define UIFLOW_SIMD_HPP_
+# define UIFLOW_SIMD_HPP_
+# define BOOST_DISABLE_ASSERTS
+# ifdef PINK_HAVE_NUMA
 
-#define BOOST_DISABLE_ASSERTS
-
-#include <vector>
-#include <utility>
-#include <boost/preprocessor.hpp>
-#include <boost/typeof/typeof.hpp>
+#   include <vector>
+#   include <utility>
+#   include <boost/preprocessor.hpp>
+#   include <boost/typeof/typeof.hpp>
 
 //#include "uiFlow.hpp"
-#include "ui_simd.hpp"
-#include "uiFrame.hpp"
-#include "lminmax.hpp"
-#include "ui_simd.hpp"
-#include "pyujimage.hpp"
-#include "ui_numa_types.hpp"
-#include "ui_polythread.hpp"
-#include "ui_flow_ghosts.hpp"
+
+#   include "ui_simd.hpp"
+#   include "uiFrame.hpp"
+#   include "lminmax.hpp"
+#   include "ui_simd.hpp"
+#   include "pyujimage.hpp"
+#   include "ui_numa_types.hpp"
+#   include "ui_polythread.hpp"
+#   include "ui_flow_ghosts.hpp"
 
 namespace pink {
 
@@ -858,6 +859,7 @@ namespace pink {
 // // obsolete, loaded as a parameter
 // #undef PACKET_SIZE
 
+# endif /* PINK_HAVE_NUMA */
 
 #endif /* UIFLOW_SIMD_HPP_*/
 /* LuM end of file */
