@@ -11,13 +11,17 @@ then
 	echo $USAGE
         exit
 fi
+
+export PINKBIN=$PINK/bash
+echo $PINKBIN
 #Double the image size
-${PINK}/linux/bin/zoomint $1 2 _double.pgm
+#${PINKBIN}/zoomint $1 2 _double.pgm
+cp $1 _double.pgm
 #Compute the gradient on the edges
-${PINK}/linux/bin/pgm2GA _double.pgm 0 _GA.pgm
+${PINKBIN}/pgm2GA _double.pgm 0 _GA.pgm
 #Compute the alpha hierarchy
-${PINK}/linux/bin/saliencyGA _GA.pgm 1 _alphaGA.pgm
+${PINKBIN}/saliencyGA _GA.pgm 1 _alphaGA.pgm
 #Compute the alpha-omega hierarchy
-${PINK}/linux/bin/saliencyGA _alphaGA.pgm 3 _alphaOmegaGA.pgm _double.pgm
+${PINKBIN}/saliencyGA _alphaGA.pgm 3 _alphaOmegaGA.pgm _double.pgm
 #To visualize, make it khalimsky
-${PINK}/linux/bin/GA2khalimsky _alphaOmegaGA.pgm 0 $2
+${PINKBIN}/GA2khalimsky _alphaOmegaGA.pgm 0 $2
