@@ -21,8 +21,8 @@ class windowing:
     def __init__(self):
         self.options=options()
         try:
-            from Tkinter import Tk, Toplevel
-            Tkinter.wantobjects = False
+            from Tkinter import Tk, Toplevel, wantobjects
+            wantobjects = False
 
             self.root=Tk()
             self.root.withdraw()
@@ -30,7 +30,7 @@ class windowing:
             # self.top.withdraw()
             # self.top.protocol('WM_DELETE_WINDOW', self.top.quit)
         except:
-            print("waring: could not initialize windowing, try to install python-tk or tkinter")
+            print("Warning: could not initialize windowing, try to install python-tk or tkinter")
             pass
         
     root=False
