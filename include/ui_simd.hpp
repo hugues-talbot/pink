@@ -13,7 +13,11 @@
 #ifndef SIMD_HPP_
 #define SIMD_HPP_
 
+#if defined PINK_USE_SIMD
+
+
 #include <immintrin.h>
+
 
 #if defined (__SSE4_2__) || defined (__SSE4_1__)
 # warning: highest simd instruction set available at compilation SSE4
@@ -185,6 +189,8 @@ namespace pink {
     
   } /* namespace simd */
 } /* end namespace pink */
+
+#endif // PINK_USE_SIMD
 
 #endif /* SIMD_HPP_ */
 // LuM end of file
