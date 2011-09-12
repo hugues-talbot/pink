@@ -10,8 +10,8 @@
   ujoimro@gmail.com
 */
 
-// this header defines a function wrapper make_function
-/** \file ui_make_function.hpp
+// this header defines a function wrapper make_malloc
+/** \file ui_make_malloc.hpp
   \ingroup development
 
   \brief This is a helper function for exporting Pink C functions in
@@ -45,26 +45,15 @@
   you should include a function call in pypink.cpp of the form
 
   \code
-  def( 
-    "function's name in Python",
-    &make_function<char_image, T1, T2, ..., Tn, &pink_c_function>,
-    (arg("argument 1 name"), arg("argument 2 name"), ..., arg(argument n name) )
-    doc__my_c_function__c__
-  )
   \endcode
 
-  make_function is a template. In the first parameter you specify the
+  make_malloc is a template. In the first parameter you specify the
   image type.  Second, you specify the types of the parameters and
   last you put the pointer to your Pink function. 
 
   Example:
 
   \code
-  def( "ptisolated",
-       &make_function<char_image, int, &lptisolated>,
-       ( arg("image"), arg("connexity") ),
-       doc__ptisolated__c__
-     );
   \endcode
 
   \section advanced Advanced
@@ -74,66 +63,9 @@
   preprocessor. The generated code looks like this:
 
   \code
-  template < class image_type,
-             int (*mcfunction) (
-               typename convert_if<image_type>::type
-               )
-             >
-  image_type make_function( const image_type& image )
-  {
-    image_type result;
-    result.copy(image);
-    if (!mcfunction(result )) { {
-        std::stringstream fullmessage;
-        fullmessage << "in ui_make_function.hpp: " << "mcfunction failed";
-        call_error(fullmessage.str());
-      };
-    }
-    return result;
-  };
-  
-  template < class image_type,
-             class T0 ,
-             int (*mcfunction) (
-               typename convert_if<image_type>::type ,
-               typename convert_if<T0>::type )
-             >
-  image_type make_function( const image_type& image , T0 t0 )
-  {
-    image_type result;
-    result.copy(image);
-    if (!mcfunction(result , t0)) { {
-        std::stringstream fullmessage;
-        fullmessage << "in ui_make_function.hpp: " << "mcfunction failed";
-        call_error(fullmessage.str());
-      };
-    }
-    return result;
-  };
-  
-  template < class image_type,
-             class T0 ,
-             class T1 ,
-             int (*mcfunction) (
-               typename convert_if<image_type>::type ,
-               typename convert_if<T0>::type ,
-               typename convert_if<T1>::type )
-             >
-  image_type make_function( const image_type& image , T0 t0 , T1 t1 )
-  {
-    image_type result;
-    result.copy(image);
-    if (!mcfunction(result , t0 , t1)) { {
-        std::stringstream fullmessage;
-        fullmessage << "in ui_make_function.hpp: " << "mcfunction failed";
-        call_error(fullmessage.str());
-      };
-    }
-    return result;
-  };
   \endcode
 
-  The macro generates the make_function template for each number of
+  The macro generates the make_malloc template for each number of
   parameters. The template takes the specified parameters and wraps
   the function in Python. The most important part of the macro is the
   conversion of the 'xvimage*' pointer into the appropriate image
@@ -142,13 +74,14 @@
 
 
 
-#ifndef UI_MAKE_FUNCTION_HPP
-#define UI_MAKE_FUNCTION_HPP
+#ifndef UI_MAKE_MALLOC_HPP
+#define UI_MAKE_MALLOC_HPP
 
+
+#include <boost/python.hpp>
 #include <boost/preprocessor.hpp>
-
-#include "uiFibreTypes.h"
 #include "ui_convert_if.hpp"
+#include "uiFibreTypes.h"
 
 using namespace pink::python;
 
@@ -170,28 +103,31 @@ using namespace pink::python;
 //BOOST_PP_ENUM_PARAMS( MAX_PARAMETERS, class param_type)
 
 #define                                                                 \
-  MAKE_FUNCTION(z, n, text)                                             \
+  MAKE_MALLOC(z, n, text)                                               \
   template < class image_type,                                          \
   BOOST_PP_ENUM_PARAMS(n, class T ) BOOST_PP_COMMA_IF(n)                \
-  int (*mcfunction) (                                                   \
+  xvimage * (*mcfunction) (                                             \
     typename convert_if<image_type>::type BOOST_PP_COMMA_IF(n)          \
     BOOST_PP_ENUM(n, CONVERT_IF, ~)                                     \
     )                                                                   \
   >                                                                     \
-  image_type make_function( const image_type & image BOOST_PP_COMMA_IF(n) \
+  boost::python::object make_malloc( image_type image BOOST_PP_COMMA_IF(n) \
                             BOOST_PP_ENUM(n, PARAM, ~)                  \
     )                                                                   \
   {                                                                     \
-  image_type result;                                                    \
-  result.copy(image);                                                   \
                                                                         \
-  if (!mcfunction(result BOOST_PP_COMMA_IF(n) BOOST_PP_ENUM_PARAMS(n, t))) \
+  xvimage * presult;                                                    \
+  presult = mcfunction(image BOOST_PP_COMMA_IF(n) BOOST_PP_ENUM_PARAMS(n, t)); \
+                                                                        \
+  if (presult == NULL)                                                  \
   {                                                                     \
   pink_error("mcfunction failed");                                      \
   }                                                                     \
                                                                         \
+  image_type iresult(presult);                                          \
+  boost::python::object result(iresult);                                \
   return result;                                                        \
-  };                                                                    \
+  };                                                                    
   
 
 
@@ -203,24 +139,27 @@ namespace pink
     // the special case with one parameter for ui_make_funcion
 
     template < class image_type,
-               class result_type,
-               result_type (*mcfunction) (
+               xvimage * (*mcfunction) (
                  typename convert_if<image_type>::type
                  )
                >
-    image_type make_function_one( const image_type & image )
+    boost::python::object make_malloc_one( image_type image )
     {
-      image_type result;
-      result.copy(image);
-      if (!mcfunction(result))
+      xvimage * presult;
+      presult = mcfunction(image);
+
+      if (presult == NULL)
       {
         pink_error("mcfunction failed!\n");        
       }
+
+      image_type iresult(presult);      
+      boost::python::object result(iresult);
       return result;
     };
        
     
-    BOOST_PP_REPEAT(MAX_PARAMETERS, MAKE_FUNCTION, ~)
+    BOOST_PP_REPEAT(MAX_PARAMETERS, MAKE_MALLOC, ~);    
 
   } /* namespace python */
 } /* namespace pink */
@@ -229,7 +168,7 @@ namespace pink
 // cleaning up after us
 #undef CONVERT_IF
 #undef PARAM
-#undef MAKE_FUNCTION
+#undef MAKE_MALLOC
 #undef error
 #ifdef CLEAN_UP_MAX_PARAMETERS
 #  undef MAX_PARAMETERS
@@ -238,5 +177,5 @@ namespace pink
 
 
 
-#endif /* UI_MAKE_FUNCTION_HPP */
+#endif /* UI_MAKE_MALLOC_HPP */
 // LuM end of file

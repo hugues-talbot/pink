@@ -190,6 +190,7 @@ void pyarithmetic();
 
 void pymemtest();
 
+void pysept();
 
 // for wrapping every type with one function
 // template <class image_type>
@@ -387,7 +388,8 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   Pimview_force_socket_export();
   Pimview_sendcommand_export();
 # endif /* UNIXIO */
-  
+
+  pysept();  
   pytopo();
   pyliar();
   pywshed();
