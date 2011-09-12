@@ -453,7 +453,7 @@ namespace pink {
               // std::cout << " dim " << w << " and position " << q << std::endl;              
 	      if (started){
 		currlength++;
-		if ((p[q]!=0) and (pp1[w][q]!=0)){
+		if ((p[q]!=0) && (pp1[w][q]!=0)){
 		  end=q;
 		  dibFlow[w]->addElement(start, end);
 		  ///!!! std::cout << "dibFlow[" << w << "]->addElement(" << start << "," << end << ")\n";
@@ -469,7 +469,7 @@ namespace pink {
 		    started=false;
 		  } /* (currlength>=MaxDibble) */
 	      } else { /* NOT (started) */
-		if ((p[q]==0) or (pp1[w][q]==0)){
+		if ((p[q]==0) || (pp1[w][q]==0)){
 		  started=true;
 		  start=q;
 		  currlength=1;
@@ -508,9 +508,9 @@ namespace pink {
             bool i_am_a_source = (p[q]==1.);
             bool there_is_a_regular_point_near = false;
             FOR(w, d) {
-              if ((pp1[w][q]==0.) or (pm1[w][q]==0.)) there_is_a_regular_point_near=true;
+              if ((pp1[w][q]==0.) || (pm1[w][q]==0.)) there_is_a_regular_point_near=true;
 	    }
-	    bool i_want_to_be_in_a_dibble = (i_am_a_regular_point or (i_am_a_source and there_is_a_regular_point_near));
+	    bool i_want_to_be_in_a_dibble = (i_am_a_regular_point || (i_am_a_source && there_is_a_regular_point_near));
 	    //bool i_want_to_be_in_a_dibble = (i_am_a_regular_point or i_am_a_source);
 	    if (started){
 	      currlength++;
@@ -584,7 +584,7 @@ namespace pink {
     potencial.copy(gg); // "potencial";
     potencial.fill(0.);
     
-    if (( this->number_of_threads == 0 ) or (this->number_of_threads > boost::thread::hardware_concurrency() ))
+    if (( this->number_of_threads == 0 ) || (this->number_of_threads > boost::thread::hardware_concurrency() ))
     {
       this->number_of_threads = boost::thread::hardware_concurrency();            
     }
