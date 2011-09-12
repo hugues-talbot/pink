@@ -33,7 +33,7 @@ namespace pink {
     typedef typename image_type::pixel_type pixel_type;
 
     // the variable to hold the maximum value
-    pixel_type max = I[0];
+    pixel_type max = I(0);
     
 
     //calculating the number of pixels in the image
@@ -60,7 +60,7 @@ namespace pink {
     typedef typename image_type::pixel_type pixel_type;
 
     // the variable to hold the minimum value
-    pixel_type min = I[0];
+    pixel_type min = I(0);
     
 
     //calculating the number of pixels in the image
