@@ -23,7 +23,7 @@ namespace pink
       boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
       boost::posix_time::time_duration diff = now - boost::posix_time::ptime(boost::gregorian::date(1970,1,1));
       
-      double duration = double(diff.total_seconds()) + double(microseconds) / 1000000.;
+      double duration = double(diff.total_seconds()) + double(diff.microseconds()) / 1000000.;
 
       return duration;
       
