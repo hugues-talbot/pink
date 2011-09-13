@@ -90,7 +90,7 @@ namespace pink
     double memspeed( index_t mem_size, index_t nbt )
     {
       typedef T0 value_type;
-      if ((nbt<1) or (nbt> boost::thread::hardware_concurrency()))
+      if ((nbt<1) || /*or*/ (nbt> boost::thread::hardware_concurrency()))
       {
         nbt = boost::thread::hardware_concurrency();        
       } /* adjust the number of threads if necessary */
@@ -195,7 +195,7 @@ namespace pink
         typedef T0 value_type;        
         index_t number_of_nodes  = numa_max_node() + 1;
         
-        if ((tpn<1) or (tpn > (boost::thread::hardware_concurrency() / number_of_nodes )))
+        if ((tpn<1) ||/*or*/ (tpn > (boost::thread::hardware_concurrency() / number_of_nodes )))
         {
           tpn = boost::thread::hardware_concurrency() / number_of_nodes;        
         } /* adjust the number of threads if necessary */
