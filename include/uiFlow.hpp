@@ -515,7 +515,7 @@ namespace pink {
 	    if (started){
 	      currlength++;
 	      bool too_long = (currlength>=MaxDibble);
-	      if (not i_want_to_be_in_a_dibble){
+	      if (! /*not*/ i_want_to_be_in_a_dibble){
 		end=q;
 		dibConstrain->addElement(start, end);
 		///!!! std::cout << "dibConstrain->addElement(" << start << ", " << end << ")" << std::endl;
@@ -674,7 +674,7 @@ namespace pink {
   boost::shared_array<typename image_type::pixel_type>
   max_flow<image_type>::get_flow()
   {
-    if (not flow_calculated)
+    if ( /*not*/ ! flow_calculated)
     {
       pink_error("The flow has not yet been calculated. You can only call get_flow after at least 1 iteration."
 	    " For the courious souls after the 0th iteration the flow is zero everywhere");
