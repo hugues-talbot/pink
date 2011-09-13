@@ -297,10 +297,10 @@ namespace pink {
   template <class image_type>
   void max_flow<image_type>::upDateConstrain(index_t startDibble, index_t endDibble){
 //     //local copies
-    pixel_type dFabs[d/*compileDim*/];
-    pixel_type * locInFlow[d/*compileDim*/];
-    pixel_type * locOutFlow[d/*compileDim*/];
-    pixel_type * locG;
+    pixel_type *  dFabs      = new pixel_type [d/*compileDim*/];
+    pixel_type ** locInFlow  = new pixel_type*[d/*compileDim*/];
+    pixel_type ** locOutFlow = new pixel_type*[d/*compileDim*/];
+    pixel_type *  locG;
     pixel_type v;
 	
     //locals
@@ -433,7 +433,7 @@ namespace pink {
 	{
 	  bool started=false;
 	  index_t start=0, end=0;
-	  unsigned char *pp1[d];
+          std::vector<unsigned char*> pp1(d);
 	  boost::shared_array<unsigned char> p;
 	  vint pp1_vec(d);
 	  index_t currlength=0;
@@ -487,7 +487,7 @@ namespace pink {
 	{
 	  bool started=false;
 	  index_t start=0, end=0;
-	  unsigned char *pp1[d], *pm1[d];
+          std::vector<unsigned char*> pp1(d), pm1(d);
 	  boost::shared_array<unsigned char> p;
 	  vint pp1_vec(d);
 	  index_t currlength=0;
