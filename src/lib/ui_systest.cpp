@@ -11,14 +11,7 @@
 */
 
 #define BOOST_DISABLE_ASSERTS
-#define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
-
-#include <iostream>
-#include <boost/thread.hpp>
-#include <boost/smart_ptr.hpp>
-
-#include "pink.h"
-#include "ui_simd.hpp"
+#include <boost/date_time/local_time/local_time.hpp>
 
 namespace pink
 {
@@ -27,14 +20,21 @@ namespace pink
 
     double now()
     {
-      struct timeval tp;
-      double sec, usec, result;
-// Time stamp before the computations
-      gettimeofday( &tp, NULL );
-      sec    = static_cast<double>( tp.tv_sec );
-      usec   = static_cast<double>( tp.tv_usec )/1E6;
-      result = sec + usec;
-      return result;
+      boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+      boost::posix_time::time_duration diff = now - boost::posix_time::ptime(boost::gregorian::date(1970,1,1));
+      
+      double duration = double(diff.total_seconds()) + double(microseconds) / 1000000.;
+
+      return duration;
+      
+//       struct timeval tp;
+//       double sec, usec, result;
+// // Time stamp before the computations
+//       gettimeofday( &tp, NULL );
+//       sec    = static_cast<double>( tp.tv_sec );
+//       usec   = static_cast<double>( tp.tv_usec )/1E6;
+//       result = sec + usec;
+//       return result;
     } /* now */
 
 
