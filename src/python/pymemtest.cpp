@@ -28,6 +28,16 @@ void pymemtest()
     "Tests non-numa parallel memory speed of the system."
     );
 
+
+  def(
+    "barispeed",
+    pink::benchmark::barispeed<index_t, index_t>,
+    (arg("number of threads")=1, arg("number of iterations")=1000),
+    "Tests the synchronization time needed for n threads. It is useful to benchmark the "
+    "fine-grained--parallel algorithms. "
+    );
+  
+    
 #   ifdef PINK_HAVE_NUMA
 
   def(

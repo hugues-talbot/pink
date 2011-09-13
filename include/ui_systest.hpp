@@ -35,6 +35,20 @@ namespace pink
   {
 
     const index_t repeat = 100;
+
+
+    /**
+       \brief Returns the system wall time with microsecond resolution.
+       
+       description This function checks the system time with
+       microsecond resolution. It is used to measure the duration of a
+       functions. The difference between two calls of this functions
+       is the elapsed time in seconds with microsecond resolution (+-
+       0.000001s).
+
+    \return The number of seconds (with microsecond resolution) since
+    1970-01-01.
+    */    
     double now();
 
     
@@ -259,7 +273,45 @@ namespace pink
   } /* namespace numa */
 
 # endif /* PINK_HAVE_NUMA */
-        
+
+
+    template<class T0, class T1>
+    void synchro( T0 iterations, T1 barrier)
+    {
+      for ( index_t q = 0; q < iterations; q++ )
+      {
+        barrier->wait();        
+      }      
+    } /* synchro */
+    
+
+    
+    template <class T0, class T1>
+    double barispeed( T0 number_of_threads, T1 iterations )
+    {
+      double start = now();
+
+      std::vector< boost::shared_ptr<boost::thread> > threads(number_of_threads);
+      typedef boost::shared_ptr<boost::barrier> pbarrier_t;
+
+      pbarrier_t barrier(new boost::barrier(number_of_threads));      
+            
+      FOR(q, number_of_threads )
+      {
+        threads[q].reset(new boost::thread(synchro<T1, pbarrier_t>, iterations, barrier));
+      }
+
+      FOR(q, number_of_threads )
+      {
+        threads[q]->join();
+      }
+
+      double end = now();
+      
+      return end - start;      
+    } /* barispeed */
+    
+    
   } /* namespace benchmark */
 } /* namespace pink */
 
