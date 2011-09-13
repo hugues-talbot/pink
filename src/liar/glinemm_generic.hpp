@@ -27,6 +27,7 @@
 
 //#include "liarlmts.h"
 #include "liarp.h"
+#include "mcutil.h"
 
 // #ifndef max
 // #define max(a,b) ((a)<(b)) ? (b):(a)
