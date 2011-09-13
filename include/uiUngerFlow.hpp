@@ -93,7 +93,7 @@ namespace pink {
     int iteration,
     float tau,
     float theta
-    ) : max_flow<image_type>( src_sink, gg, iteration, tau/* /theta */ , 1)
+    ) : max_flow<image_type>( src_sink, gg, iteration, tau/* /theta */ , 1, /* packet_size = */ 1000, /* verbose = */ false)
   {
 #   ifdef UJIMAGE_DEBUG
     std::cerr << "creating the ungerflow object (" << static_cast<void*>(this) << ")\n";	
