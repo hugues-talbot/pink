@@ -13,7 +13,7 @@
 #ifndef SIMD_HPP_
 #define SIMD_HPP_
 
-#if defined PINK_USE_SIMD
+#if defined PINK_HAVE_SIMD
 
 
 #include <immintrin.h>
@@ -190,7 +190,7 @@ namespace pink {
   } /* namespace simd */
 } /* end namespace pink */
 
-#endif // PINK_USE_SIMD
+#endif // PINK_HAVE_SIMD
 
 #endif /* SIMD_HPP_ */
 // LuM end of file

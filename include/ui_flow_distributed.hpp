@@ -152,18 +152,18 @@ namespace pink {
 
       // this structure holds the compactified pure dibbles as well as
       // the collected tainted dibbles for the synchronizer
-      vector2D<dibble_t> compact_srcsink;      
-      vector2D<dibble_t> compact_pot;
-      vector3D<dibble_t> compact_flow;      
-      vector2D<dibble_t> compact_cons;
-      vector3D<dibble_t> resolut_pot;
-      vector4D<dibble_t> resolut_flow;
-      vector3D<dibble_t> resolut_cons;
-      vector2D<dibble_t> synchro_src;
-      vector2D<dibble_t> synchro_sink;
-      vector2D<dibble_t> synchro_pot;
-      vector3D<dibble_t> synchro_flow;      
-      vector2D<dibble_t> synchro_cons;
+      types::vector2D<types::dibble_t> compact_srcsink;      
+      types::vector2D<types::dibble_t> compact_pot;
+      types::vector3D<types::dibble_t> compact_flow;      
+      types::vector2D<types::dibble_t> compact_cons;
+      types::vector3D<types::dibble_t> resolut_pot;
+      types::vector4D<types::dibble_t> resolut_flow;
+      types::vector3D<types::dibble_t> resolut_cons;
+      types::vector2D<types::dibble_t> synchro_src;
+      types::vector2D<types::dibble_t> synchro_sink;
+      types::vector2D<types::dibble_t> synchro_pot;
+      types::vector3D<types::dibble_t> synchro_flow;      
+      types::vector2D<types::dibble_t> synchro_cons;
 
 
       
@@ -177,12 +177,12 @@ namespace pink {
       progressBar sentinel;
       index_t     iteration;
       index_t     length_glob;
-      /* changed from std::vector*/ std::vector<dibble_t> dib_constrain;
-      /* changed from std::vector*/ std::vector<dibble_t> dib_potencial;
+      /* changed from std::vector*/ std::vector<types::dibble_t> dib_constrain;
+      /* changed from std::vector*/ std::vector<types::dibble_t> dib_potencial;
 
       // this way when the vector destroys the array it will
       // destroy all the elements as well
-      vector2D<dibble_t> dib_flow; 
+      types::vector2D<types::dibble_t> dib_flow; 
       
       // functions for calculation
       template <class array_t, class fiterator>
@@ -409,7 +409,7 @@ namespace pink {
                     currlength++;
                     if (curr[q]!=0) {
                       end=q;
-                      dib_potencial.push_back(dibble_t(start, end));
+                      dib_potencial.push_back(types::dibble_t(start, end));
                       ///!!! std::cout << "dib_potencial->addElement(" << start << ", " << end << ");" << std::endl;  //////
                       start=0;
                       end=0;
@@ -417,7 +417,7 @@ namespace pink {
                     } else /* NOT (curr[q]!=0) */
                       if (currlength>=MaxDibble) {
                         end=q+1;
-                        dib_potencial.push_back(dibble_t(start, end));
+                        dib_potencial.push_back(types::dibble_t(start, end));
                         ///!!! std::cout << "maxdibble dib_potencial->addElement(" << start << ", " << end << ");" << std::endl;  //////
                         start=0;
                         end=0;
@@ -463,7 +463,7 @@ namespace pink {
                       currlength++;
                       if ((p[q]!=0) and (pp1[w][q]!=0)){
                         end=q;
-                        dib_flow[w].push_back(dibble_t(start, end));
+                        dib_flow[w].push_back(types::dibble_t(start, end));
                         ///!!! std::cout << "dibFlow[" << w << "]->addElement(" << start << "," << end << ")" << std::endl;
                         start=0;
                         end=0;
@@ -471,7 +471,7 @@ namespace pink {
                       } else /* NOT ((p[q]!=0) and (pp1[w][q]!=0)) */
                         if (currlength>=MaxDibble){
                           end=q+1;/////!!!!!!!!!!!!!!!
-                          dib_flow[w].push_back(dibble_t(start, end));
+                          dib_flow[w].push_back(types::dibble_t(start, end));
                           start=0;
                           end=0;
                           started=false;
@@ -522,7 +522,7 @@ namespace pink {
                     bool too_long = (currlength>=MaxDibble);
                     if (not i_want_to_be_in_a_dibble){
                       end=q;
-                      dib_constrain.push_back(dibble_t(start, end));
+                      dib_constrain.push_back(types::dibble_t(start, end));
                       ///!!! std::cout << "dib_constrain->addElement(" << start << ", " << end << ")" << std::endl;
                       start=0;
                       end=0;
@@ -530,7 +530,7 @@ namespace pink {
                     } else if (too_long){
                       //printf("uiNotice: breaking because of the MaxDibble" << std::endl;);
                       end=q+1;///////!!!!!!
-                      dib_constrain.push_back(dibble_t(start, end));
+                      dib_constrain.push_back(types::dibble_t(start, end));
                       start=0;
                       end=0;
                       started=false;

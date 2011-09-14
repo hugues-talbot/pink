@@ -21,6 +21,7 @@
 
 # ifdef PINK_HAVE_NUMA
 #   include <numa.h>
+#   include "ui_flow_ghosts.hpp"
 # endif /* PINK_HAVE_NUMA */
 # include <iostream>
 # include <boost/thread.hpp>
@@ -268,6 +269,48 @@ namespace pink
         return numa_speed;      
       } /* memspeed() */
 
+
+      template<class T0, class T1, class T2>
+      void synchro( T0 iterations, T1 barrier, T2 core )
+      {
+        // restricting myself to a particular core and nothing else
+        cpu_set_t cpu_set;
+        CPU_ZERO(&cpu_set);
+        CPU_SET( core, &cpu_set );
+        sched_setaffinity( gettid(), sizeof(cpu_set), &cpu_set );
+
+        for ( index_t q = 0; q < iterations; q++ )
+        {
+          barrier->wait();        
+        }      
+      } /* synchro */
+    
+
+    
+      template <class T0, class T1>
+      double barispeed( T0 number_of_threads, T1 iterations )
+      {
+        double start = now();
+
+        std::vector< boost::shared_ptr<boost::thread> > threads(number_of_threads);
+        typedef boost::shared_ptr<boost::barrier> pbarrier_t;
+
+        pbarrier_t barrier(new boost::barrier(number_of_threads));      
+            
+        FOR(q, number_of_threads )
+        {
+          threads[q].reset(new boost::thread(synchro<T1, pbarrier_t, index_t>, iterations, barrier, q));
+        }
+
+        FOR(q, number_of_threads )
+        {
+          threads[q]->join();
+        }
+
+        double end = now();
+      
+        return end - start;      
+      } /* barispeed */
 
       
   } /* namespace numa */

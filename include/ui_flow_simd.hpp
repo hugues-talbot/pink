@@ -13,7 +13,7 @@
 #ifndef UIFLOW_SIMD_HPP_
 # define UIFLOW_SIMD_HPP_
 # define BOOST_DISABLE_ASSERTS
-# ifdef PINK_HAVE_NUMA
+# if (defined PINK_HAVE_NUMA) && (defined PINK_HAVE_SIMD)
 
 #   include <vector>
 #   include <utility>
@@ -859,7 +859,7 @@ namespace pink {
 // // obsolete, loaded as a parameter
 // #undef PACKET_SIZE
 
-# endif /* PINK_HAVE_NUMA */
+# endif /* (defined PINK_HAVE_NUMA) && (defined PINK_HAVE_SIMD) */
 
 #endif /* UIFLOW_SIMD_HPP_*/
 /* LuM end of file */

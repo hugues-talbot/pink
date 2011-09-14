@@ -49,6 +49,15 @@ void pymemtest()
     "will be optimally distributed.\n"
     );
 
+
+  def(
+    "barinuma",
+    pink::benchmark::numa::barispeed<index_t, index_t>,
+    (arg("number of threads")=1, arg("number of iterations")=1000),
+    "Tests the synchronization time needed for n threads. It is useful to benchmark the "
+    "fine-grained--parallel algorithms. This function restricts the threads to their cores. "
+    );
+
   
 #   endif /* PINK_HAVE_NUMA */
 

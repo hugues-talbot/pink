@@ -67,6 +67,13 @@ if (CMAKE_HOST_UNIX)
 
     option( 64BIT "Compiles Pink in 64bit mode. This is necessary for files which could be larger than 2GB. Note that the library always obey the system architecture." ON )
 
+    if(NOT CMAKE_BUILD_TYPE)
+	SET( CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE )
+	SET( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -mtune=native" CACHE STRING "Optimization flags for the C++ compiler in Release mode" FORCE )
+	SET( CMAKE_C_FLAGS_RELEASE   "-O3 -DNDEBUG -mtune=native" CACHE STRING "Optimization flags for the C   compiler in Release mode" FORCE )
+    endif(NOT CMAKE_BUILD_TYPE)
+	
+
 ### **********************************************************************************************
 ### **********************************************************************************************
 ### *************************** Functions in development *****************************************
@@ -76,6 +83,7 @@ if (CMAKE_HOST_UNIX)
     option( DEVELOPMENT "Compiles additional functions which are not-yet part of the core library (Mostly because they require additional dependencies). " OFF )
     option( OPENCL "Compiles the functions which use OpenCL. " OFF )
     option( NUMA "Compiles the functions which use The NUMA api. " OFF )
+    option( SIMD "Compiles the functions with the SIMD (SSE2, SSE3, SSE4, SSE4.1) instruction set. " ON )
 
     ## LIAR is incomporated in the PYTHON_FRONT_END
     # option( LIAR "Compiles additional functions adapted from the Library of Image Analysis Routines," OFF)
@@ -249,6 +257,10 @@ if (CMAKE_HOST_UNIX)
  	endif(NOT HTEST16)
 	ADD_DEFINITIONS(-DPINK_HAVE_NUMA)
     endif (NUMA)
+
+    if (SIMD)
+	ADD_DEFINITIONS(-DPINK_HAVE_SIMD)
+    endif (SIMD)
 
     add_subdirectory( src/lib lib )
 

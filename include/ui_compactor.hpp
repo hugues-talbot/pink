@@ -205,7 +205,7 @@ namespace pink
       if (first_dibble==second_dibble)
       {
         result.push_back(
-          dibble_t(
+          types::dibble_t(
             vectors[first_dibble].first + first_dibble_element,
             vectors[second_dibble].first + second_dibble_element
             )
@@ -215,7 +215,7 @@ namespace pink
       {
         // creating the first dibble
         result.push_back(
-          dibble_t(
+          types::dibble_t(
             vectors[first_dibble].first + first_dibble_element,
             vectors[first_dibble].second
             )
@@ -228,7 +228,7 @@ namespace pink
         
         // creating the last dibble
         result.push_back(
-          dibble_t(
+          types::dibble_t(
             vectors[second_dibble].first,
             vectors[second_dibble].first + second_dibble_element
             )
@@ -260,10 +260,10 @@ namespace pink
     
     
     template <class array_t, class T1, class T2>
-    vector2D<dibble_t>
+    types::vector2D<types::dibble_t>
     collector( array_t & input, T1 size, T2 number_of_nodes )
     {
-      vector2D<dibble_t> result(number_of_nodes+1);
+      types::vector2D<types::dibble_t> result(number_of_nodes+1);
       
       index_t q=0;  
       bool inside=false;
@@ -280,11 +280,11 @@ namespace pink
         
         if (input[first] < number_of_nodes)
         {      
-          result[ input[first] ].push_back(dibble_t(first, second));
+          result[ input[first] ].push_back(types::dibble_t(first, second));
         }
         else
         {
-          result[number_of_nodes].push_back(dibble_t(first, second));
+          result[number_of_nodes].push_back(types::dibble_t(first, second));
         }
         
       } /* while q < input.size() */
@@ -303,12 +303,12 @@ namespace pink
     \return 
     */    
     template <class array_t, class T1>
-    vector2D<dibble_t> partition( array_t & array, T1 number_of_packets )
+    types::vector2D<types::dibble_t> partition( array_t & array, T1 number_of_packets )
     {
       
       distributor_t distributor(len(array), number_of_packets);
 
-      vector2D<dibble_t> result(number_of_packets);
+      types::vector2D<types::dibble_t> result(number_of_packets);
 
       FOR(q, number_of_packets)
       {
@@ -359,10 +359,10 @@ namespace pink
     // } /* fine_partition */
     
     template <class T0, class T1, class T2>
-    vector2D<dibble_t>
+    types::vector2D<types::dibble_t>
     pure_sort( T0 & pure, T1 & dibbles, T2 number_of_nodes )
     {
-      vector2D<dibble_t> result;
+      types::vector2D<types::dibble_t> result;
       
       result.resize( number_of_nodes + 1 );
 

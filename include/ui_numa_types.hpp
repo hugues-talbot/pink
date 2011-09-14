@@ -23,7 +23,7 @@
 
 namespace pink {
   
-  namespace numa {
+  namespace types {
     
     enum alloc_t { GLOBAL, SEMI_LOCAL, LOCAL, NUMA };
     
@@ -338,7 +338,7 @@ namespace pink {
     
     
     
-  } /* namespace numa */
+  } /* namespace types */
   
 } /* namespace pink */
 

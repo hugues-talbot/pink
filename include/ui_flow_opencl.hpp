@@ -16,7 +16,6 @@
 
 #define BOOST_DISABLE_ASSERTS
 
-#define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
 #include <CL/cl.h>
 #include <vector>
 #include <utility>
@@ -25,6 +24,7 @@
 #include "uiFrame.hpp"
 #include "lminmax.hpp"
 #include "pyujimage.hpp"
+#include "ui_numa_types.hpp"
 
 
 namespace pink {
@@ -445,8 +445,8 @@ namespace pink {
       
     private:
 
-      typedef typename image_type::pixel_type       pixel_type;
-      typedef pink::numa::shared_vector<pixel_type> poly_array_t;      
+      typedef typename image_type::pixel_type        pixel_type;
+      typedef pink::types::shared_vector<pixel_type> poly_array_t;      
 
       // the result will be put in this image
       image_type potencial;      
@@ -476,7 +476,7 @@ namespace pink {
 
       // this way when the vector destroys the array it will
       // destroy all the elements as well
-      pink::numa::vector2D<pink::numa::dibble_t> dib_flow; 
+      pink::types::vector2D<pink::types::dibble_t> dib_flow; 
       
       
       // functions for calculation
