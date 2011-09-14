@@ -428,15 +428,15 @@ namespace pink
     
       array( index_t node, index_t num_elem )
         {
-          index_t size = num_elem * sizeof(value_type);        
-          value_type * data_ = reinterpret_cast<value_type*>( numa_alloc_onnode( size, node ) );
+          size_t size = num_elem * sizeof(value_type);
+          void * data_ = numa_alloc_onnode( size, node );
           if (data_ == NULL)
           {
             std::cout << "error: numa allocation error" << std::endl;            
           }
           
           numa::deleter_t deleter(size);
-          data.reset( data_, deleter );        
+          data.reset( reinterpret_cast<value_type*>(data_), deleter );
         } /* array::array */
 
 
@@ -470,14 +470,15 @@ namespace pink
     class deleter_t
     {
     private:
-      index_t size;
+      size_t size;
+      void * ptr;      
 
     public:
-      deleter_t(index_t size): size(size)
+      deleter_t(size_t size): size(size)
         {}
             
       template <class T0>       
-      void operator()(T0 ptr)
+      void operator()(T0)
         {
           numa_free( reinterpret_cast<void*>(ptr), size );
           //delete[] ptr;          

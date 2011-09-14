@@ -175,11 +175,10 @@ namespace pink
 
         pink::numa::array<value_type> from (node, size);
         pink::numa::array<value_type> to   (node, size);
-
+        
         // filling up the memory with pseudo-random numbers
         FOR( q, size )
         {
-//        _DEBUG(q);        
           from[q] = rand();
         }
 
@@ -205,7 +204,7 @@ namespace pink
          \return The memory bandwidth (in MiBps)
       */    
       template <class T0>
-      double memspeed( index_t mem_size, index_t tpn, index_t node_restrict = 0 )
+      double memspeed( index_t mem_size, index_t tpn, index_t node_restrict = -1 )
       {
         typedef T0 value_type;        
         index_t number_of_nodes  = numa_max_node() + 1;
@@ -222,12 +221,12 @@ namespace pink
         // of the number of threads
         index_t csize = mem_size * 1024 * 1024 / sizeof(value_type); // cumulated size
         index_t tsize = csize / nbt; // the allocation size per thread
-      
+
         typedef boost::shared_ptr<boost::barrier> pbarrier_t;
         pbarrier_t barrier_start( new boost::barrier(nbt + 1) );
         pbarrier_t barrier_end(   new boost::barrier(nbt + 1) );
 
-        if (node_restrict==0)
+        if (node_restrict==-1)
         {
           FOR( node, number_of_nodes )
             FOR( q, tpn )
@@ -240,7 +239,7 @@ namespace pink
               );
           } /* for q in tpn, number_of_nodes */
         }
-        else /* NOT node_restrict */
+        else /* NOT node_restrict == -1; we want to run the simulation on a specific node */
         {
           FOR(q, nbt)
           {
@@ -251,15 +250,20 @@ namespace pink
                 )
               );
           } /* for q in nbt */
-        } /* NOT node_restrict */
+        } /* NOT node_restrict == -1; we want to run the simulation on a specific node */
         
         barrier_end->wait();
         double start = now();
         barrier_start->wait();
         barrier_end->wait();
         double end = now();
-
-        double numa_speed = static_cast<double>( repeat * 2 * nbt * tsize * sizeof(value_type)) / (1024. * 1024.) / static_cast<double>(end - start);
+        
+        double numa_speed = 0;
+        
+        if (fabs(end - start) > 0.0000001)
+        {          
+          numa_speed = static_cast<double>( repeat * 2 * nbt * tsize * sizeof(value_type)) / (1024. * 1024.) / static_cast<double>(end - start);
+        }
       
         FOR( q, nbt )
         {
