@@ -205,15 +205,15 @@ namespace pink
   used to 'free' the memory when ujoi is created from an xvimage. Note
   that the data is not copyed, so the xvimage structure should not be
   automatically freed.
-  */  
+  */
   struct liberator_t
   {
-
-    template<class T0>
-    inline void operator()( T0 * p )
+    
+    template<class PT0>
+    void operator()( PT0 * p )
       {
 #       if UJIMAGE_DEBUG >= 2
-        std::cout << "liberator_t called" << std::endl;
+        std::cout << "liberator_t called on " << p << std::endl;
 #       endif /* UJIMAGE_DEBUG >= 2 */
         free(reinterpret_cast<void*>(p));
       }

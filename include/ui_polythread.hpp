@@ -56,7 +56,7 @@ namespace pink
   {
 
 
-    class deleter_t;
+    class liberator_t;
     
     template <class array_t>
     class slow_iterator_t
@@ -370,7 +370,7 @@ namespace pink
           }
           
           // the following object will take care of the deletion of the object
-          numa::deleter_t cleaner( segment_size(q) * sizeof(value_type) );          
+          numa::liberator_t cleaner( segment_size(q) * sizeof(value_type) );          
 
           // after the attribution to this smart shared array, the deletion of the
           // memory should happen automaticly
@@ -422,7 +422,8 @@ namespace pink
       typedef T0 value_type;
 
     private:
-      boost::shared_array<value_type> data;    
+      boost::shared_array<value_type> data;
+      // value_type * data;
     
     public:
     
@@ -434,9 +435,12 @@ namespace pink
           {
             std::cout << "error: numa allocation error" << std::endl;            
           }
+
+          //data = data_;
           
-          numa::deleter_t deleter(size);
+          numa::liberator_t deleter(size);
           data.reset( reinterpret_cast<value_type*>(data_), deleter );
+         
         } /* array::array */
 
 
@@ -467,24 +471,24 @@ namespace pink
        description Instead of delete, this function will call the
        'numa_free' function.
     */    
-    class deleter_t
+    class liberator_t
     {
     private:
       size_t size;
-      void * ptr;      
 
     public:
-      deleter_t(size_t size): size(size)
+
+      liberator_t(size_t size): size(size)
         {}
             
       template <class T0>       
-      void operator()(T0)
+      void operator()( T0 * p )
         {
-          numa_free( reinterpret_cast<void*>(ptr), size );
+          numa_free( reinterpret_cast<void*>(p), size );
           //delete[] ptr;          
         } /* operator() */
       
-    }; /* class numa::deleter_t */
+    }; /* class numa::liberator_t */
 
     
     

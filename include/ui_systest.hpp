@@ -173,8 +173,13 @@ namespace pink
 
         srand(now());
 
-        pink::numa::array<value_type> from (node, size);
-        pink::numa::array<value_type> to   (node, size);
+        //pink::numa::array<value_type> from (node, size * sizeof(value_type) );
+        //pink::numa::array<value_type> to   (node, size * sizeof(value_type) );
+
+        // for debugging
+        std::vector<value_type> from(size);
+        std::vector<value_type> to  (size);
+        
         
         // filling up the memory with pseudo-random numbers
         FOR( q, size )
