@@ -14,11 +14,23 @@
    pink_error(errormessage);                                               \
  };
 
+typedef char *   pchar;
+typedef char ** ppchar;
+
+typedef sqlite3 * psqlite3;
+
+typedef sqlite3_blob *   psqlite3_blob;
+typedef sqlite3_blob ** ppsqlite3_blob;
+
+typedef sqlite3_stmt *   psqlite3_stmt;
+typedef sqlite3_stmt ** ppsqlite3_stmt;
+
+
 
 namespace pink{
 
-  void set_dimensions(const vint & dim, index_t & x, index_t & y, index_t & z, index_t & t);
-  boost::shared_ptr<vint> get_dimensions(const index_t x, const index_t y, const index_t z, const index_t t);
+  void set_dimensions(const types::vint & dim, index_t & x, index_t & y, index_t & z, index_t & t);
+  boost::shared_ptr<types::vint> get_dimensions(const index_t x, const index_t y, const index_t z, const index_t t);
 
   
 /**
@@ -52,7 +64,7 @@ namespace pink{
     std::string get_image_type( int ID = -1 );
 
     boost::shared_ptr<std::vector<std::string> > get_commands (int ID = -1 );
-    boost::shared_ptr<vint> list_images ( );
+    boost::shared_ptr<types::vint> list_images ( );
 
   private:
 
@@ -64,10 +76,10 @@ namespace pink{
     int  get_SQL_value(const std::stringstream & command);
     void sql_execute(const std::stringstream & command, std::string error_message="couldn't execute the command");
     void insert_blob(void * data, const int size, const std::stringstream & ss);
-    boost::shared_ptr<vint> read_data_details( char ** results, int pos , int d );
+    boost::shared_ptr<types::vint> read_data_details( char ** results, int pos , int d );
     void touch(); // update the last-modified stamp in the fileinfo table.
     boost::shared_ptr<std::string> get_command( int ID );
-    boost::shared_ptr<vint> get_dependencies( const vint & IDs );
+    boost::shared_ptr<types::vint> get_dependencies( const types::vint & IDs );
     void init_attributes ( ) ;
 
 
@@ -77,7 +89,7 @@ namespace pink{
   
   template <class image_type>  
   boost::shared_ptr<image_type> uiSqhool::get_image( int ID ){
-    progressBar sentinel;
+    types::progress_bar sentinel;
     sentinel.start();
     
     char ** results;
@@ -107,7 +119,7 @@ namespace pink{
     sstype << results[5+4];
     sqlite3_free_table(results);
     
-    boost::shared_ptr<vint> dim = get_dimensions(x,y,z,t);
+    boost::shared_ptr<types::vint> dim = get_dimensions(x,y,z,t);
     int d = dim->size();
 //   FOR (q,int(dim.size())){
 //     std::cout << "dim[" << q << "]=" << dim[q] << std::endl;
@@ -126,8 +138,8 @@ namespace pink{
     
     FOR(q, row){ // the ids are from 1 to row, that is q+1
       sqlite3_int64 iRow;
-      boost::shared_ptr<vint> pos  = read_data_details( results, 9*(q+1)+1, d );
-      boost::shared_ptr<vint> size = read_data_details( results, 9*(q+1)+5, d );
+      boost::shared_ptr<types::vint> pos  = read_data_details( results, 9*(q+1)+1, d );
+      boost::shared_ptr<types::vint> size = read_data_details( results, 9*(q+1)+5, d );
       
       FOR( w, int(size->size()) ) {
 	std::cout << "(*size)[" << w << "]=" << (*size)[w] << std::endl;
@@ -184,7 +196,7 @@ namespace pink{
     ) {
     //In a later time an image can be broken up in order to respect the 10E6 byte blob limit.
     
-    progressBar sentinel;
+    types::progress_bar sentinel;
     sentinel.start();
 
 
