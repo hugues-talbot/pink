@@ -14,7 +14,7 @@
 #ifndef UI_EXTRACTPLANE_HPP_
 #define UI_EXTRACTPLANE_HPP_
 
-#include "uiFibreTypes.h"
+#include "ui_pink_types.hpp"
 
 namespace pink {
 
@@ -48,7 +48,7 @@ namespace pink {
 
     if ((mode[0] == 'x') && (mode[1] == 'y'))
     {
-      vint size(2,0);
+      pink::types::vint size(2,0);
       size << rs,cs;      
       image_type result(size);
       if ((n < 0) || (n >= ds))
@@ -63,7 +63,7 @@ namespace pink {
     } 
     else if ((mode[0] == 'y') && (mode[1] == 'x'))
     {
-      vint size(2,0);
+      pink::types::vint size(2,0);
       size << cs,rs;      
       image_type result(size);
       if ((n < 0) || (n >= ds))
@@ -79,7 +79,7 @@ namespace pink {
     }
     else if ((mode[0] == 'x') && (mode[1] == 'z'))
     {
-      vint size(2,0);
+      pink::types::vint size(2,0);
       size << rs,ds;      
       image_type result(size);
 
@@ -96,7 +96,7 @@ namespace pink {
     }
     else if ((mode[0] == 'z') && (mode[1] == 'x'))
     {
-      vint size(2,0);
+      pink::types::vint size(2,0);
       size << ds,rs;      
       image_type result(size);
       
@@ -113,7 +113,7 @@ namespace pink {
     }
     else if ((mode[0] == 'y') && (mode[1] == 'z'))
     {
-      vint size(2,0);
+      pink::types::vint size(2,0);
       size << cs,ds;      
       image_type result(size);
      
@@ -130,7 +130,7 @@ namespace pink {
     }
     else if ((mode[0] == 'z') && (mode[1] == 'y'))
     {
-      vint size(2,0);
+      pink::types::vint size(2,0);
       size << ds,cs;      
       image_type result(size);
       

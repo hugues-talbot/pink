@@ -81,10 +81,10 @@ Python class pink.vint / c++ pink::vint
 
 void vint_object_export(){
 
-  class_< vint, 
-    boost::shared_ptr<vint>, 
+  class_< pink::types::vint, 
+    boost::shared_ptr<pink::types::vint>, 
     bases<vector_int> >
-  ( "vint", 
+  ( "pink::types::vint", 
     "This class is an extended 'vector_int' "
     "which is used as the dimension of the images "
     "and also as the coordinates of the pixels.",
@@ -93,7 +93,7 @@ void vint_object_export(){
   
   
 //   .def( 
-//     init< vint >     
+//     init< pink::types::vint >     
 //     (
 //       args("self","src") , 
 //       "copy constructor" ) 
@@ -104,7 +104,7 @@ void vint_object_export(){
 //   .def( 
 //     init< int  > ( 
 //       args("self", "length"), 
-//       "constructs a 'vint' with a givel length") 
+//       "constructs a 'pink::types::vint' with a givel length") 
 //     )
   
   
@@ -112,7 +112,7 @@ void vint_object_export(){
 //   .def( 
 //     init< int, int > ( 
 //       args("self", "length", "default_value"),
-//       "constructs a 'vint' with a given 'length' and 'default_value' "
+//       "constructs a 'pink::types::vint' with a given 'length' and 'default_value' "
 //       ) 
 //     )
   
@@ -121,94 +121,94 @@ void vint_object_export(){
   .def(
     init< boost::python::list >(
       args("self","src"),
-      "creates a 'vint' object from the elements of the 'src' python list. "
+      "creates a 'pink::types::vint' object from the elements of the 'src' python list. "
       "All the elements of the python list must be convertible into c++ 'int'."
       )
     )
   
   
   
-  .def( "reset"       , &vint::reset, 
+  .def( "reset"       , &pink::types::vint::reset, 
 	args("self"), 
-	"sets the values of 'vint' zero"
+	"sets the values of 'pink::types::vint' zero"
     )
   
   
   
-  .def( "prod"        , &vint::prod,
+  .def( "prod"        , &pink::types::vint::prod,
 	args("self"),
-	"calculates the product of all the values of the 'vint'"
+	"calculates the product of all the values of the 'pink::types::vint'"
     )
   
   
   
-  .def( "prodExcept"  , &vint::prodExcept,
+  .def( "prodExcept"  , &pink::types::vint::prod_except,
 	args("self", "p"),
 	"calculates the product of all the values, but the p-th"
     )
   
   
   
-  .def( "fabs"         , &vint::fabs,
+  .def( "fabs"         , &pink::types::vint::fabs,
 	args("self"),
 	"calculates the absolute value of the vector"
     )
   
   
   
-  .def( "nextStep"    , &vint::nextStep,
+  .def( "nextStep"    , &pink::types::vint::next_step,
 	args("self", "step", "result"),
-	"Suppose, that the 'vint' represents the dimensions of the image. "
-	"This image is stored in an array: pixels = new imtype[vint::prod()]. "
+	"Suppose, that the 'pink::types::vint' represents the dimensions of the image. "
+	"This image is stored in an array: pixels = new imtype[pink::types::vint::prod()]. "
 	"This method calculates the coordinate corresponding with the given position 'step'."
 	"The inverse function of 'nextStep' is 'position'."
     )
 
   
   
-  .def( "nextStep_it" , &vint::nextStep_it, 
+    .def( "nextStep_it" , &pink::types::vint::next_step_it, 
 	args("self", "result"),
-	"Suppose, that the 'vint' represents the dimensions of the image. "
-	"This image is stored in an array: pixels = new imtype[vint::prod()]. "
+	"Suppose, that the 'pink::types::vint' represents the dimensions of the image. "
+	"This image is stored in an array: pixels = new imtype[pink::types::vint::prod()]. "
 	"If the parameter result represents the coordinates of the 'pixels[pos]' "
 	"then this method calculates the coordinates of 'pixels[pos+1]'"
     )
   
   
 
-  .def( "__eq__", &vint::operator==,
+  .def( "__eq__", &pink::types::vint::operator==,
 	args("self", "other"),
 	"compares two vectors coordinate by coordinate"	
     )
   
   
   
-  .def( "__ne__", &vint::operator!=,
+  .def( "__ne__", &pink::types::vint::operator!=,
 	args("self", "other"),
 	"compares two vectors coordinate by coordinate"	
     )
   
   
   
-  .def( "position", &vint::position, 
+  .def( "position", &pink::types::vint::position, 
 	args("self", "elem"),
-	"Suppose, that the 'vint' represents the dimensions of the image. "
-	"This image is stored in an array: pixels = new imtype[vint::prod()]. "
+	"Suppose, that the 'pink::types::vint' represents the dimensions of the image. "
+	"This image is stored in an array: pixels = new imtype[pink::types::vint::prod()]. "
 	"If 'elem' stores the coordinates of the pixel in space, this method "
 	"calculates the 'pos' of the corresponding 'pixel[pos]'. "
 	"The inverse function of 'position' is 'nextStep'."
     )
     
-/*.def("addSet", &vint::addSet, "I have no idea what this function does. And why?")*/
+/*.def("addSet", &pink::types::vint::addSet, "I have no idea what this function does. And why?")*/
     
-    .def( "__repr__", &vint::repr, 
+    .def( "__repr__", &pink::types::vint::repr, 
 	  args("self"),
 	  "returns a string with the values in the vector" 
       )
     
     ;
   
-}; /* vint_object_export */
+}; /* pink::types::vint_object_export */
 
 
 

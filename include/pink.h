@@ -313,7 +313,7 @@ knowledge of the CeCILL license and that you accept its terms.
 // uiFibres header files
 #ifdef __cplusplus
 // my comment
-#  include "uiFibreTypes.h"
+#  include "ui_pink_types.hpp"
 #  include "ujimage.hpp"
 #  include "uiFrame.hpp"
 #  include "uiSqhool.hpp"

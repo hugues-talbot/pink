@@ -18,7 +18,7 @@
 
 #include <fstream>
 
-#include "uiFibreTypes.h"
+#include "ui_pink_types.hpp"
 #include "ui_fit_circle.hpp"
 
 USING_PART_OF_NAMESPACE_EIGEN

@@ -19,7 +19,7 @@
 #include <boost/smart_ptr.hpp>
 
 #include "mcimage.h"
-#include "uiFibreTypes.h"
+#include "ui_pink_types.hpp"
 
 namespace pink {
   

@@ -233,7 +233,7 @@ sqlite3.h
 uiBorder.h
 #uiFibres.h#
 uiFibres.h
-uiFibreTypes.h
+ui_pink_types.hpp
 uiFlow_appleton.h
 uiFlow.hpp
 uiFrame.hpp

@@ -151,11 +151,11 @@ namespace pink {
     char_image result;
     result.copy(original);
 
-    vint curr( result.get_size().size(), "curr"  );
+    pink::types::vint curr( result.get_size().size(), "curr"  );
     
     FOR(q, result.get_size().prod())
     {
-      result.get_size().nextStep( q, curr );
+      result.get_size().next_step( q, curr );
       
 //       if ( uiAbs(a*curr[0]+b*curr[1]+c*curr[2]+d) 
 // 	   / sqrt( a*a + b*b + c*c ) <= 0.5 )
@@ -185,7 +185,7 @@ namespace pink {
     )
   {
 
-    vint size2D;
+    pink::types::vint size2D;
     size2D << src.get_size()[0], src.get_size()[1];
     
     char_image result;
@@ -331,8 +331,8 @@ namespace pink {
 
     VectorXd point(4);
     VectorXd inpoint(4);
-    vint curr;
-    vint pcurr;
+    pink::types::vint curr;
+    pink::types::vint pcurr;
     
     FOR(q, result.get_size()[0])
     {

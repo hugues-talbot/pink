@@ -13,6 +13,8 @@
 #ifndef UIFLOW_HPP_
 #define UIFLOW_HPP_
 
+#include <vector>
+#include <algorithm>
 #include <boost/thread.hpp>
 
 #include "uiFrame.hpp"
@@ -29,6 +31,9 @@ namespace pink {
     enum etap { pot, flow, constr, unknown };
     
   } /* namespace maxflow_types */
+
+  const index_t MaxDibble = 1000;  
+  typedef std::pair<index_t, index_t> dibble_t;  
   
 // // obsolete, replaced by enum  
 // #define __ETAP_POT 1717
@@ -77,7 +82,7 @@ namespace pink {
   class max_flow {
 
   private:
-
+    
     // variables for threading
     boost::shared_ptr<boost::mutex> global_lock;
     boost::shared_ptr<boost::shared_mutex> shared_lock;
@@ -117,8 +122,8 @@ namespace pink {
     bool    verbose;   // debug info messages
     index_t iteration; // the number of desired iterations
     index_t length_glob;
-    progressBar sentinel;    
-    boost::shared_ptr<vint> dim;
+    pink::types::progress_bar sentinel;    
+    boost::shared_ptr<pink::types::vint> dim;
 
     // functions for calculation 
     void upDateConstrain(index_t startDibble, index_t endDibble);
@@ -127,15 +132,15 @@ namespace pink {
     void upDateSrcSink();
     index_t uiCreateDibbles( );
 
-    boost::shared_ptr<uiDibbles> dibConstrain;
-    boost::shared_ptr<uiDibbles> dibPotencial;
+    std::vector<dibble_t> dibConstrain;
+    std::vector<dibble_t> dibPotencial;
 
     image_type potencial;
 
 
     // this way when the smart pointer destroyes the array it will
     // destroy all the elements as well
-    boost::shared_array< boost::shared_ptr<uiDibbles> > dibFlow; 
+    std::vector< std::vector<dibble_t> > dibFlow; 
 
   public:
 
@@ -245,15 +250,15 @@ namespace pink {
     pixel_type * f_out;
     pixel_type * f_in;
     index_t fm1 /*fm1_vec[d]*/, start, end, length, q, w, e;
-    vint fm1_vec(d);
+    pink::types::vint fm1_vec(d);
     
     FORR(w, d){
       fm1_vec.reset();
       fm1_vec[w]=1;//we are calculating the distance the opposite direction but it should be the same
       fm1=dim->position(fm1_vec);
       for (/*int*/ e=startDibble; e<=endDibble-1; e++){
-	start=dibPotencial->values[e].start;
-	end=dibPotencial->values[e].end;
+	start = dibPotencial[e].first; // start
+	end   = dibPotencial[e].second; // end
 	
 	p_c=&(potencial[start]);
 	f_out=&(flow_glob[w*length_glob+start]);
@@ -273,15 +278,15 @@ namespace pink {
   void max_flow<image_type>::upDateFlow(index_t startDibble, index_t endDibble, index_t w /*direction*/){
     pixel_type *p, *pp1, *f;
     index_t start, end, length, pp1_pos, q, e;
-    vint pp1_vec(d);
+    pink::types::vint pp1_vec(d);
 
     pp1_vec.reset();
     pp1_vec[w]=1;
     pp1_pos=dim->position(pp1_vec);
 
     for ( /*int*/ e=startDibble; e<=endDibble-1; e++ ){
-      start=dibFlow[w]->values[e].start;
-      end=dibFlow[w]->values[e].end;
+      start=dibFlow[w][e].first;
+      end=dibFlow[w][e].second;
       f=&(flow_glob[w*length_glob+start]);
       p=&(potencial[start]);
       pp1=&(potencial[start+pp1_pos]);
@@ -304,7 +309,7 @@ namespace pink {
     pixel_type v;
 	
     //locals
-    vint fm1s(d), fm1_vec(d);
+    pink::types::vint fm1s(d), fm1_vec(d);
     index_t start, end, length, q, w, e;
 	
     // calculating differences between the flow and the point
@@ -316,8 +321,8 @@ namespace pink {
 	
     //for (/*int*/ e=0; e<=dibConstrain->length-1; e++){
     for (/*int*/ e=startDibble; e<=endDibble-1; e++){
-      start=dibConstrain->values[e].start;
-      end=dibConstrain->values[e].end;
+      start=dibConstrain[e].first;
+      end=dibConstrain[e].second;
       length=end-start;
       locG=&(g_glob[start]);
       FORR(w,d) {
@@ -399,7 +404,7 @@ namespace pink {
 	      currlength++;
 	      if (curr[q]!=0) {
 		end=q;
-		dibPotencial->addElement(start, end);
+		dibPotencial.push_back(dibble_t(start, end));
 		///!!! std::cout << "dibPotencial->addElement(" << start << ", " << end << ");" << std::endl;  //////
 		start=0;
 		end=0;
@@ -407,7 +412,7 @@ namespace pink {
 	      } else /* NOT (curr[q]!=0) */
 		if (currlength>=MaxDibble) {
 		  end=q+1;
-		  dibPotencial->addElement(start, end);
+		  dibPotencial.push_back(dibble_t(start, end));
 		  ///!!! std::cout << "maxdibble dibPotencial->addElement(" << start << ", " << end << ");" << std::endl;  //////
 		  start=0;
 		  end=0;
@@ -435,9 +440,9 @@ namespace pink {
 	  index_t start=0, end=0;
           std::vector<unsigned char*> pp1(d);
 	  boost::shared_array<unsigned char> p;
-	  vint pp1_vec(d);
+	  pink::types::vint pp1_vec(d);
 	  index_t currlength=0;
-	  vint pp1_pos(d);
+	  pink::types::vint pp1_pos(d);
 	  // Calculating the shift of the neighbourh elements
 	  FOR(w, d) {
 	    pp1_vec.reset();
@@ -455,7 +460,7 @@ namespace pink {
 		currlength++;
 		if ((p[q]!=0) && (pp1[w][q]!=0)){
 		  end=q;
-		  dibFlow[w]->addElement(start, end);
+		  dibFlow[w].push_back(dibble_t(start, end));
 		  ///!!! std::cout << "dibFlow[" << w << "]->addElement(" << start << "," << end << ")\n";
 		  start=0;
 		  end=0;
@@ -463,7 +468,7 @@ namespace pink {
 		} else /* NOT ((p[q]!=0) and (pp1[w][q]!=0)) */
 		  if (currlength>=MaxDibble){
 		    end=q+1;/////!!!!!!!!!!!!!!!
-		    dibFlow[w]->addElement(start, end);
+		    dibFlow[w].push_back(dibble_t(start, end));
 		    start=0;
 		    end=0;
 		    started=false;
@@ -489,7 +494,7 @@ namespace pink {
 	  index_t start=0, end=0;
           std::vector<unsigned char*> pp1(d), pm1(d);
 	  boost::shared_array<unsigned char> p;
-	  vint pp1_vec(d);
+	  pink::types::vint pp1_vec(d);
 	  index_t currlength=0;
 	  index_t max=0;
 	  FOR(w, d) {
@@ -517,7 +522,7 @@ namespace pink {
 	      bool too_long = (currlength>=MaxDibble);
 	      if (! /*not*/ i_want_to_be_in_a_dibble){
 		end=q;
-		dibConstrain->addElement(start, end);
+		dibConstrain.push_back(dibble_t(start, end));
 		///!!! std::cout << "dibConstrain->addElement(" << start << ", " << end << ")" << std::endl;
 		start=0;
 		end=0;
@@ -525,7 +530,7 @@ namespace pink {
 	      } else if (too_long){
 		//printf("uiNotice: breaking because of the MaxDibble" << std::endl);
 		end=q+1;///////!!!!!!
-		dibConstrain->addElement(start, end);
+		dibConstrain.push_back(dibble_t(start, end));
 		start=0;
 		end=0;
 		started=false;
@@ -604,7 +609,7 @@ namespace pink {
     // making 
     src_sink.copy(SS);	
     //int dim [d];
-    dim.reset(new vint(potencial.get_size()));
+    dim.reset(new pink::types::vint(potencial.get_size()));
 
     if (verbose)
     {      
@@ -648,10 +653,10 @@ namespace pink {
     if (verbose)
       std::cout << "breaking up the field into dibbles" << std::endl;
     
-    dibPotencial.reset( new uiDibbles() );
-    dibConstrain.reset( new uiDibbles() );
-    dibFlow.reset( new boost::shared_ptr<uiDibbles>[d+3] ); // we adding here 3 becaus of the parallelization later
-    FOR(q,d+3) dibFlow[q].reset(new uiDibbles()); // we adding here 3 becaus of the parallelization later
+    //dibPotencial.reset( new uiDibbles() );
+    //dibConstrain.reset( new uiDibbles() );
+    dibFlow.resize(d+3); //reset( new boost::shared_ptr<uiDibbles>[d+3] ); // we adding here 3 becaus of the parallelization later
+    //FOR(q,d+3) dibFlow[q].reset(new uiDibbles()); // we adding here 3 becaus of the parallelization later
 	
     uiCreateDibbles();
     if (verbose)
@@ -707,18 +712,16 @@ namespace pink {
     index_t nbt = this -> number_of_threads;
     boost::shared_ptr<boost::barrier> barrier(new boost::barrier(number_of_threads + 1) );    
     
-    boost::shared_array< boost::shared_ptr<boost::thread> >
-      threads(new boost::shared_ptr<boost::thread>[nbt]);
+    std::vector< boost::shared_ptr<boost::thread> > threads(nbt);
 
-    boost::shared_array< boost::shared_ptr< packet<image_type> > >
-      packets(new boost::shared_ptr<packet<image_type> >[nbt]);
+    std::vector< boost::shared_ptr< packet<image_type> > > packets(nbt);
 
     // Thread attributes
-    reference.reset(new packet<image_type>());
+    reference.reset( new packet<image_type> );
     reference->etap = maxflow_types::pot;
     FOR( q, nbt )
     {
-      packets[q].reset( new packet<image_type>() );
+      packets[q].reset( new packet<image_type> );
       threads[q].reset( new boost::thread( (*packets[q]), q, this, barrier ) );
     } /* FOR(q, nbt) */
 
@@ -749,7 +752,7 @@ namespace pink {
     
     this->flow_calculated = true; 
 
-    vint time_cheat(potencial.get_size().size(), 0);
+    pink::types::vint time_cheat(potencial.get_size().size(), 0);
     time_cheat[0] = sentinel.elapsedSeconds();
     potencial.set_center_vint(time_cheat);
     
@@ -784,12 +787,12 @@ namespace pink {
     switch ( reference->etap )
     {
     case maxflow_types::pot:
-      if (reference->end_dibble >= dibPotencial->get_length()) // the case, when the last iteration has been assigned and now we begin the next part
+      if (reference->end_dibble >= dibPotencial.size()) // the case, when the last iteration has been assigned and now we begin the next part
       {
 	shared_lock->lock(); // we wait for the threads to finish the calculation
 	reference->etap = maxflow_types::flow;
 	reference->start_dibble = 0;
-	reference->end_dibble = _min( this->packet_size, dibFlow[0]->get_length() );
+	reference->end_dibble = std::min<index_t>( this->packet_size, dibFlow[0].size() );
 	reference->direction = 0;
 
 	thread.start_dibble = reference->start_dibble;
@@ -802,7 +805,7 @@ namespace pink {
       else /* NOT reference->end_dibble >= dibPotencial->get_length() */
       {
 	reference->start_dibble = reference->end_dibble;
-	reference->end_dibble = _min( reference->end_dibble + this->packet_size, dibPotencial->get_length() );
+	reference->end_dibble = std::min<index_t>( reference->end_dibble + this->packet_size, dibPotencial.size() );
 
 	thread.etap = reference->etap;
 	thread.start_dibble = reference->start_dibble;
@@ -814,7 +817,7 @@ namespace pink {
       
     case maxflow_types::flow:
 
-      if (reference->end_dibble >= dibFlow[reference->direction]->get_length()) // the case, when the last iteration has been assigned and now we begin the next part
+      if (reference->end_dibble >= dibFlow[reference->direction].size()) // the case, when the last iteration has been assigned and now we begin the next part
       {
 
 	if ( reference->direction >= d - 1 )
@@ -822,7 +825,7 @@ namespace pink {
 	  shared_lock->lock(); // we wait for all threads to finish the calculation	  
 	  reference->etap = maxflow_types::constr;
 	  reference->start_dibble = 0;
-	  reference->end_dibble = _min( this->packet_size, dibConstrain->get_length());
+	  reference->end_dibble = std::min<index_t>( this->packet_size, dibConstrain.size());
 	  
 	  thread.start_dibble = reference->start_dibble;
 	  thread.end_dibble = reference->end_dibble;
@@ -836,8 +839,8 @@ namespace pink {
 
 	  reference->direction += 1;
 	  reference->start_dibble = 0;
-	  reference->end_dibble = _min( this->packet_size, 
-					dibFlow[reference->direction] -> get_length());
+	  reference->end_dibble = std::min<index_t>( this->packet_size, 
+					dibFlow[reference->direction].size());
 	  
 	  thread.start_dibble = reference->start_dibble;
 	  thread.end_dibble = reference->end_dibble;
@@ -851,7 +854,7 @@ namespace pink {
       else /* NOT reference->end_dibble >= dibFlow->get_length() */
       {
 	reference->start_dibble = reference->end_dibble;
-	reference->end_dibble = _min( reference->end_dibble + this->packet_size, dibFlow[reference->direction]->get_length());
+	reference->end_dibble = std::min<index_t>( reference->end_dibble + this->packet_size, dibFlow[reference->direction].size());
 
 	thread.start_dibble = reference->start_dibble;
 	thread.end_dibble = reference->end_dibble;
@@ -864,7 +867,7 @@ namespace pink {
       
     case maxflow_types::constr:
       
-      if (reference->end_dibble >= dibConstrain->get_length()) // the case, when the last iteration has been assigned and now we begin the next part
+      if (reference->end_dibble >= dibConstrain.size()) // the case, when the last iteration has been assigned and now we begin the next part
       {
 	if ( reference->current_iteration >= iteration - 1 )
 	{ // we are finished with the iterations.
@@ -893,7 +896,7 @@ namespace pink {
 
 	  reference->etap = maxflow_types::pot;
 	  reference->start_dibble = 0;
-	  reference->end_dibble = _min(this->packet_size, dibPotencial->get_length());
+	  reference->end_dibble = std::min<index_t>(this->packet_size, dibPotencial.size());
 
 	  thread.start_dibble = reference->start_dibble;
 	  thread.end_dibble = reference->end_dibble;
@@ -907,7 +910,7 @@ namespace pink {
       else /* NOT reference->end_dibble 1 >= dibConstraint->get_length() */
       {
 	reference->start_dibble = reference->end_dibble;
-	reference->end_dibble = _min( reference->end_dibble + this->packet_size, dibConstrain->get_length());
+	reference->end_dibble = std::min<index_t>( reference->end_dibble + this->packet_size, dibConstrain.size());
 
 	thread.start_dibble = reference->start_dibble;
 	thread.end_dibble = reference->end_dibble;

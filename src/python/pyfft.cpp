@@ -46,7 +46,7 @@ namespace pink {
 
       if ((rs2 != rs) || (cs2 != cs))
       {
-        vint new_size(2);
+        pink::types::vint new_size(2);
         new_size << rs2, cs2;
         
         result = new fcomplex_image(new_size);

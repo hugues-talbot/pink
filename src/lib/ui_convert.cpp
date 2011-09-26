@@ -12,7 +12,7 @@
 
 #ifdef __cplusplus
 
-#include "uiFibreTypes.h"
+#include "ui_pink_types.hpp"
 #include "ujimage.hpp"
 #include "mcutil.h"
 #include "lminmax.hpp"

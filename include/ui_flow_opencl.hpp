@@ -466,10 +466,10 @@ namespace pink {
 
       index_t d;
       index_t length_glob;
-      vint    dim;
+      pink::types::vint    dim;
       float   tau;
       
-      progressBar sentinel;
+      pink::types::progress_bar sentinel;
 
       // the number of desired iterations
       index_t       iteration;
@@ -484,7 +484,7 @@ namespace pink {
         {
 
           //locals
-          vint fm1s(d), fm1_vec(d);
+          pink::types::vint fm1s(d), fm1_vec(d);
           index_t start, end, length, max;
 
           max = 0;
@@ -525,7 +525,7 @@ namespace pink {
       void update_potencial()
         {
           index_t fm1 /*fm1_vec[d]*/, start, end;            
-          vint fm1_vec(d);
+          pink::types::vint fm1_vec(d);
             
           FOR(w, d)
           {
@@ -549,7 +549,7 @@ namespace pink {
       void update_flow(MT0 w /*direction*/)
         {
           index_t pp1_pos;
-          vint pp1_vec(d);
+          pink::types::vint pp1_vec(d);
 
           pp1_vec.reset();
           pp1_vec[w]=1;
@@ -713,7 +713,7 @@ namespace pink {
             std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
           }          
 
-          vint time_cheat(potencial.get_size().size(), 0);
+          pink::types::vint time_cheat(potencial.get_size().size(), 0);
           time_cheat[0] = sentinel.elapsedSeconds();
 
           if (verbose)

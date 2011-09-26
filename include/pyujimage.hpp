@@ -69,7 +69,7 @@ Python class pink.image / c++ pink::ujoi
   boost::python::class_<image_type, boost::python::bases<pink::pink_image> > (
     object_name,
     object_description,
-    boost::python::init<vint>(boost::python::args("self","size"), "Default constructor. Creates an empty image of size 'dim'.")
+    boost::python::init<pink::types::vint>(boost::python::args("self","size"), "Default constructor. Creates an empty image of size 'dim'.")
     )
     
     
@@ -93,7 +93,7 @@ Python class pink.image / c++ pink::ujoi
     
 
     
-    .def( boost::python::init< vint, boost::shared_array< pixel_type > > (
+    .def( boost::python::init< pink::types::vint, boost::shared_array< pixel_type > > (
 	    boost::python::args("self", "dim", "data"),
 	    "This constructor creates an 'image' object from a data 'ARRAY' and the "
 	    "corresponding 'dim' dimension. It is used by the 'uiSqhool' objects "
@@ -173,8 +173,8 @@ Python class pink.image / c++ pink::ujoi
 		     &image_type::get_size, 
 		     boost::python::return_value_policy<boost::python::copy_const_reference>()
 		     ),
-		   "Returns a 'vint' vector with the dimensions of the image. "
-		   "The 'vint' is read-only, but it would be no point in changing it "
+		   "Returns a 'pink::types::vint' vector with the dimensions of the image. "
+		   "The 'pink::types::vint' is read-only, but it would be no point in changing it "
 		   "as it wouldn't invoke the reallocation of the data"
       )
    

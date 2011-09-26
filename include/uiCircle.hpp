@@ -22,7 +22,7 @@
 #include <gsl/gsl_interp.h> // uiGradient is using it
 #include <gsl/gsl_multifit_nlin.h> // uiCircle is using it
 
-#include "uiFibreTypes.h"
+#include "ui_pink_types.hpp"
 
 namespace pink { 
 

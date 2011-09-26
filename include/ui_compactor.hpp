@@ -74,7 +74,7 @@
 //#include <boost/multi_array.hpp>
 
 #include "mcimage.h" // for index_t
-#include "uiFibreTypes.h"
+#include "ui_pink_types.hpp"
 #include "ui_polythread.hpp" // for distributed_t
 #include "ui_numa_types.hpp"
 

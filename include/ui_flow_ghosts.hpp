@@ -28,7 +28,7 @@
 # include <boost/thread.hpp>
 # include <boost/smart_ptr.hpp>
 
-# include "uiFibreTypes.h"
+# include "ui_pink_types.hpp"
 # include "ui_polythread.hpp"
 
 // system call for the thread binding

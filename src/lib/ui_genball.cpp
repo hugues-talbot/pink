@@ -14,9 +14,6 @@
 
 #include "ujimage.hpp"
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in ui_genball.cpp: " << msg; call_error(fullmessage.str());}
-
 // you shouldn't use one character macros
 #undef N
 
@@ -32,7 +29,7 @@ namespace pink {
     
     if (dim==2) 
     {
-      vint size(2), curr(2), tmp(2);
+      pink::types::vint size(2), curr(2), tmp(2);
       size << 2*radius+1, 2*radius+1;
       
       result=char_image(size);
@@ -42,8 +39,8 @@ namespace pink {
       {    
         FOR(w, result.get_size()[1])
         {
-          curr << radius-q,radius-w;          
-          if (curr.fabs()<=radius)
+          curr << radius-q, radius-w;          
+          if (curr.fabs() <= radius)
           {
             tmp << q,w;            
             result[tmp]=255;            
@@ -55,7 +52,7 @@ namespace pink {
     {
       if (dim==3)
       {               
-        vint size(3), curr(3), tmp(3);
+        pink::types::vint size(3), curr(3), tmp(3);
         size << 2*radius+1, 2*radius+1, 2*radius+1;
       
         result=char_image(size);
@@ -67,7 +64,7 @@ namespace pink {
           {
             FOR(e, result.get_size()[2])
             {
-              curr << radius-q,radius-w, radius-e;
+              curr << radius-q, radius-w, radius-e;
               if (curr.fabs()<=radius)
               {
                 tmp << q,w,e;            
@@ -80,7 +77,7 @@ namespace pink {
       }
       else /* NOT dim == 3 */
       {
-        error("only 2D and 3D supported in this moment.");           
+        pink_error("only 2D and 3D supported in this moment.");           
       } /* NOT dim == 3 */      
     } /* NOT dim == 2 */
 

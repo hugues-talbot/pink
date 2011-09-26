@@ -84,9 +84,6 @@ typedef enum { IM_ERROR=0, IM_UNSPEC=1, IM_SINGLE=2, IM_SPECTRUM=3, IM_RGB=4, IM
 
 
 
-#undef error
-#define error(msg) {std::stringstream fullmessage; fullmessage << "in readpnm.cpp: " << msg; call_error(fullmessage.str());}
-
 //can't hurt that much, can it?
 #define HAVE_PINK_PGM_EXTENSIONS
 
@@ -165,7 +162,7 @@ pink::float_image readPNMImage(const std::string & filename)
   
   if ((fp = fopen(filename.c_str(),"rb")) == NULL){
     std::cout << "problems with reading file '" << filename << "'" << std::endl;
-    error("couldn't open the file");
+    pink_error("couldn't open the file");
   };
 
   /* in case nothing is read */
@@ -204,7 +201,7 @@ pink::float_image readPNMImage(const std::string & filename)
   
 #ifdef HAVE_PINK_PGM_EXTENSIONS
   case '7':
-    error("readPNMImage: obsolete PINK PGM format\n");
+    pink_error("readPNMImage: obsolete PINK PGM format\n");
     break;
         
   case '8':
@@ -222,19 +219,19 @@ pink::float_image readPNMImage(const std::string & filename)
         
   case 'A':
     // ascii float 2D-3D
-    error("PINK ascii float PGM extension not implemented yet, nag the developer\n");
+    pink_error("PINK ascii float PGM extension not implemented yet, nag the developer\n");
     break;
         
   case 'B':
     // ascii long 2D-3D
-    error("PINK ascii long PGM extension not implemented yet, nag the developer\n");
+    pink_error("PINK ascii long PGM extension not implemented yet, nag the developer\n");
     break;  
         
         
 #endif
 
   default:
-    error("Unsupported PNM format\n");
+    pink_error("Unsupported PNM format\n");
     retval = 100; // unsupported format
     break;
   }
@@ -259,10 +256,10 @@ pink::float_image readPNMImage(const std::string & filename)
 
   if (( theimgtype != IM_SPECTRUM ) && (theimgtype != IM_SINGLE)) {
     std::cout << "theimgtype =" << theimgtype << std::endl;
-    error("color images are out of question.");    
+    pink_error("color images are out of question.");    
   };
 
-  vint dim;
+  pink::types::vint dim;
 
   if ((end[2]-start[2]+1)==1) { // the image is 2D
     dim.resize(2,-1);
@@ -275,33 +272,33 @@ pink::float_image readPNMImage(const std::string & filename)
   pink::float_image presult(dim);
 
   if ((end[2]-start[2]+1)==1) { // the image is 2D
-    vint curr(2,-1);
+    pink::types::vint curr(2,-1);
     int n = dim.prod();
     FOR(q, n) {
       curr[0]=q % dim[0] ;
       curr[1]=q / dim[0];
       switch (thepixtype){
       case (IM_UINT1):
-	presult[curr]=uiVal_type(((unsigned char*)((void**)p)[0])[q]);
+	presult[curr]=double(((unsigned char*)((void**)p)[0])[q]);
 	break;
       case (IM_SHORT):
-	presult[curr]=uiVal_type(((unsigned short*)((void**)p)[0])[q]);
+	presult[curr]=double(((unsigned short*)((void**)p)[0])[q]);
 	break;
       case (IM_INT4):
-	presult[curr]=uiVal_type(((unsigned int*)((void**)p)[0])[q]);
+	presult[curr]=double(((unsigned int*)((void**)p)[0])[q]);
 	break;
       case (IM_FLOAT):
-	presult[curr]=uiVal_type(((float*)((void**)p)[0])[q]);
+	presult[curr]=double(((float*)((void**)p)[0])[q]);
 	break;
       default:
 	std::cout << "image type= "<< thepixtype << std::endl;
-	error("3D, This imagetype is not implemented (only tested on char and short, int4 and float, exiting...)");
+	pink_error("3D, This imagetype is not implemented (only tested on char and short, int4 and float, exiting...)");
 	break;
       };
     };
   } else { // the image is 3D
-    vint curr(3,-1);
-    int n = dim.prod();
+    pink::types::vint curr(3,-1);
+    index_t n = dim.prod();
     FOR(q, n){
       curr[0]=(q % ( dim[1] * dim[0] )) % dim[0];
       curr[1]=(q % ( dim[1] * dim[0] )) / dim[0];
@@ -318,11 +315,11 @@ pink::float_image readPNMImage(const std::string & filename)
 	presult[curr]=float(((unsigned int*)((void**)p)[0])[q]);
 	break;
       case (IM_FLOAT):
-	presult[curr]=uiVal_type(((float*)((void**)p)[0])[q]);
+	presult[curr]=double(((float*)((void**)p)[0])[q]);
 	break;
       default:
 	std::cout << "image type= "<< thepixtype << std::endl;
-	error("3D, This imagetype is not implemented (only tested on char and short, int4 and float, exiting...)");
+	pink_error("3D, This imagetype is not implemented (only tested on char and short, int4 and float, exiting...)");
 	break;
       };
       

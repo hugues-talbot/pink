@@ -21,7 +21,7 @@
 #include <boost/smart_ptr.hpp>
 
 #include "ujimage.hpp"
-#include "uiFibreTypes.h"
+#include "ui_pink_types.hpp"
 
 
 // general gradient ---------------------------------------------------------------------------------

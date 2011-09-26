@@ -134,26 +134,26 @@ namespace pink {
       // {
         
       
-        FOR( par, this->dibPotencial->get_length() ) 
+      FOR( par, this->dibPotencial.size() ) 
+      {
+        this->upDatePotencial( par, par + 1 ); /// for all the dibbles update the potencial on dible par 
+        /// (from par to par+1 not included)
+      } /* FOR */
+        
+        
+        
+      FOR( w, this->d ){
+        FOR( par, this->dibFlow[w].size() )
         {
-          this->upDatePotencial( par, par + 1 ); /// for all the dibbles update the potencial on dible par 
-          /// (from par to par+1 not included)
+          this->upDateFlow( par, par + 1, w );
         } /* FOR */
+      } /* FOR(w,d) */ 
         
         
-        
-        FOR( w, this->d ){
-          FOR( par, this->dibFlow[w]->get_length() )
-          {
-            this->upDateFlow( par, par + 1, w );
-          } /* FOR */
-        } /* FOR(w,d) */ 
-        
-        
-        FOR( par, this->dibConstrain->get_length() )
-        {
-          this->upDateConstrain( par, par + 1 );
-        } /* FOR */
+      FOR( par, this->dibConstrain.size() )
+      {
+        this->upDateConstrain( par, par + 1 );
+      } /* FOR */
         
 //      } /* FOR r */
       

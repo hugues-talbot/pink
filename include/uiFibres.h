@@ -40,7 +40,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 
-#include <uiFibreTypes.h>
+#include <ui_pink_types.hpp>
 
 ////!!!!!!!!!!!!! LuM #include <uiSqhool.h>
 #include <ujimage.hpp>

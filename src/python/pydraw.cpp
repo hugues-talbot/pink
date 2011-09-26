@@ -24,9 +24,9 @@ namespace pink {
   namespace python {
 
     char_image drawcurve2D(
-      const vint & size,
-      const vint & coordX,
-      const vint & coordY
+      const pink::types::vint & size,
+      const pink::types::vint & coordX,
+      const pink::types::vint & coordY
       )
     {
       if (size.size()!=2)

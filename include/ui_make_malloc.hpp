@@ -81,7 +81,7 @@
 #include <boost/python.hpp>
 #include <boost/preprocessor.hpp>
 #include "ui_convert_if.hpp"
-#include "uiFibreTypes.h"
+#include "ui_pink_types.hpp"
 
 using namespace pink::python;
 

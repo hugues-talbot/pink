@@ -23,33 +23,6 @@ using namespace pink;
   };
 
 
-int atoi( const std::string & src ){
-  int result;
-  std::stringstream ss;
-  ss << src;
-  ss >> result;
-  return result;
-};
-
-int atoi( char * src ){
-  int result;
-  std::stringstream ss;
-  ss << src;
-  ss >> result;
-  return result;
-};
-
-
-// int strlen(const char *str)
-// {
-//   const char *s;
-  
-//   for (s = str; *s; ++s);
-  
-//   return (s - str);
-// }
-
-
 uiSqhool::uiSqhool ( ){
 // intentionally left empty
 };
@@ -245,14 +218,14 @@ void uiSqhool::init ( const std::string & filename, const std::string & creator,
 //   return presult;
 // };
 
-boost::shared_ptr<vint> uiSqhool::read_data_details( char ** results, int pos , int d ){
-  boost::shared_ptr<vint> presult (new vint(d,-1));
-  vint & result = *presult;
+boost::shared_ptr<pink::types::vint> uiSqhool::read_data_details( char ** results, int pos , int d ){
+  boost::shared_ptr<pink::types::vint> presult (new pink::types::vint(d,-1));
+  pink::types::vint & result = *presult;
 
   if ((d<=1) || (d>=4)) {pink_error("read error: dimension wrong or unsupported");}
 
   FOR(q,d)
-    result[q]=atoi(results[q+pos]);
+    result[q]=boost::lexical_cast<index_t>(results[q+pos]);
 
   return presult;
 };
@@ -273,8 +246,7 @@ int uiSqhool::get_SQL_value(const std::stringstream & command){
     &errmsg           // char **pzErrmsg       /* Error msg written here */
     );
 
-  std::stringstream atoi(results[1]); 
-  atoi >> res;
+  res = boost::lexical_cast<int>(results[1]);  
   sqlite3_free_table(results);
 
   return res;
@@ -293,24 +265,24 @@ void uiSqhool::sql_execute(const std::stringstream & command, std::string error_
 };
 
 
-boost::shared_ptr<vint> pink::get_dimensions( const index_t x, const index_t y, const index_t z, const index_t t ){
-  boost::shared_ptr<vint> presult;
+boost::shared_ptr<pink::types::vint> pink::get_dimensions( const index_t x, const index_t y, const index_t z, const index_t t ){
+  boost::shared_ptr<pink::types::vint> presult;
   if (t>1) {
     /////!!!!!!! std::cout<< "I've desided for 4D." << std::endl;
-    presult.reset(new vint(4,-1));
+    presult.reset(new pink::types::vint(4,-1));
     (*presult)[0]=x;
     (*presult)[1]=y;
     (*presult)[2]=z;
     (*presult)[3]=t;
   } else if (z>1){
     /////!!!!!!! std::cout<< "I've desided for 3D." << std::endl;
-    presult.reset(new vint(3,-1));
+    presult.reset(new pink::types::vint(3,-1));
     (*presult)[0]=x;
     (*presult)[1]=y;
     (*presult)[2]=z;
   } else if (y>1){
     /////!!!!!!! std::cout<< "I've desided for 2D." << std::endl;
-    presult.reset(new vint(2,-1));
+    presult.reset(new pink::types::vint(2,-1));
     (*presult)[0]=x;
     (*presult)[1]=y;
   } else if (x>1){
@@ -325,7 +297,7 @@ boost::shared_ptr<vint> pink::get_dimensions( const index_t x, const index_t y, 
 }
 
 
-void pink::set_dimensions(const vint & dim, index_t & x, index_t & y, index_t & z, index_t & t){
+void pink::set_dimensions(const pink::types::vint & dim, index_t & x, index_t & y, index_t & z, index_t & t){
   int d = dim.size();
   bool result = true;
   x=y=z=t=1;
@@ -509,7 +481,7 @@ boost::shared_ptr<std::string> uiSqhool::get_command( int ID ){
   return presult;
 };
 
-boost::shared_ptr<vint> uiSqhool::get_dependencies( const vint & IDs ){
+boost::shared_ptr<pink::types::vint> uiSqhool::get_dependencies( const pink::types::vint & IDs ){
   char ** results;
   int row;
   int column;
@@ -529,9 +501,9 @@ boost::shared_ptr<vint> uiSqhool::get_dependencies( const vint & IDs ){
   sqlite3(sqlite3_get_table(database, ss.str().c_str(), &results, &row, &column, &errmsg ), 
 	  "couldn't get the list of dependencies.");
 
-  boost::shared_ptr<vint> presult(new vint(row));
+  boost::shared_ptr<pink::types::vint> presult(new pink::types::vint(row));
   FOR (q, row)
-    (*presult)[q]=atoi(results[q+1]);
+    (*presult)[q]=boost::lexical_cast<int>(results[q+1]);
   
 
   sqlite3_free_table(results);
@@ -539,12 +511,12 @@ boost::shared_ptr<vint> uiSqhool::get_dependencies( const vint & IDs ){
 };
 
 boost::shared_ptr<std::vector<std::string> > uiSqhool::get_commands ( int ID ){
-  boost::shared_ptr<vint> dependencies(new vint(1));
+  boost::shared_ptr<pink::types::vint> dependencies(new pink::types::vint(1));
   (*dependencies)[0]=ID;
   
-  boost::shared_ptr<vint> dep = get_dependencies(*dependencies);
+  boost::shared_ptr<pink::types::vint> dep = get_dependencies(*dependencies);
   
-  while (dependencies->addSet(*dep)) { // Here I iterate over the set of know dependencies (starting with a set {ID}).
+  while (dependencies->add_set(*dep)) { // Here I iterate over the set of know dependencies (starting with a set {ID}).
     dep = get_dependencies(*dependencies);
   };// In the end I should have all the images that where used to create image 1;
 
@@ -569,7 +541,7 @@ boost::shared_ptr<std::vector<std::string> > uiSqhool::get_commands ( int ID ){
 
 };
 
-boost::shared_ptr<vint> uiSqhool::list_images ( ) {
+boost::shared_ptr<pink::types::vint> uiSqhool::list_images ( ) {
   char ** results;
   int row;
   int column;
@@ -583,10 +555,10 @@ boost::shared_ptr<vint> uiSqhool::list_images ( ) {
     pink_error("couldn't get the list of the images.");    
   };
   
-  boost::shared_ptr<vint> result(new vint(row,-1));
+  boost::shared_ptr<pink::types::vint> result(new pink::types::vint(row,-1));
   
   FOR(q, row) {
-    (*result)[q]=atoi(results[q+1]);
+    (*result)[q] = boost::lexical_cast<int>(results[q+1]);
   }
 
   sqlite3_free_table(results);

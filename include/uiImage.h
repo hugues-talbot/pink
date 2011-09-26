@@ -13,7 +13,7 @@
 #ifndef UIIMAGE_H_
 #define UIIMAGE_H_
 
-#include "uiFibreTypes.h"
+#include "ui_pink_types.hpp"
 #include "ujimage.hpp"
 
 namespace pink
@@ -41,7 +41,7 @@ namespace pink
     }
     else /* NOT (image.get_size().prod()>1000) or (image.get_size().size()>2) */
     {
-      vint curr;
+      pink::types::vint curr;
       int tmp; // for converting the references. Apparently std::cout does not like them.      
       result << "[\n";      
       FOR(q, image.get_size()[0])

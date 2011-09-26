@@ -42,7 +42,7 @@
 #   include <boost/smart_ptr.hpp>
 
 //#include <glib/gchecksum.h>
-#   include "uiFibreTypes.h"
+#   include "ui_pink_types.hpp"
 #   include "ui_numa_types.hpp"
 
 // uncomment the following line to activate some additional limit
@@ -438,8 +438,8 @@ namespace pink
 
           //data = data_;
           
-          numa::liberator_t deleter(size);
-          data.reset( reinterpret_cast<value_type*>(data_), deleter );
+          numa::liberator_t liberator(size);
+          data.reset( reinterpret_cast<value_type*>(data_), liberator );
          
         } /* array::array */
 
@@ -478,13 +478,13 @@ namespace pink
 
     public:
 
-      liberator_t(size_t size): size(size)
-        {}
+      liberator_t( size_t size ): size(size) { }
             
       template <class T0>       
-      void operator()( T0 * p )
+      void operator()( T0* & p )
         {
           numa_free( reinterpret_cast<void*>(p), size );
+          p = NULL;          
           //delete[] ptr;          
         } /* operator() */
       

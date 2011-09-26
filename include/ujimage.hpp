@@ -32,7 +32,7 @@
 
 #include "mcimage.h"
 #include "mccodimage.h"
-#include "uiFibreTypes.h"
+#include "ui_pink_types.hpp"
 
 
 
@@ -143,9 +143,9 @@ namespace pink
   /**
      helper function for reading and writing from and to xvimage
   */
-  boost::shared_ptr<vint> getDimensions( const index_t x, const index_t y, const index_t z, const index_t t );
+  boost::shared_ptr<types::vint> getDimensions( const index_t x, const index_t y, const index_t z, const index_t t );
   
-  void setDimensions(const vint & dim, index_t & x, index_t & y, index_t & z, index_t & t);
+  void setDimensions(const types::vint & dim, index_t & x, index_t & y, index_t & z, index_t & t);
 
   /**
      This function is a wrap around readimage. It returns a C++ class
@@ -187,7 +187,7 @@ namespace pink
     shallow_xvimage( const shallow_xvimage & src ); // copy constructor. RAISES AND ERROR!
                                                     // it's not yet implemented, raises an
                                                     // error if called implicitly
-    shallow_xvimage( const vint & dim, index_t int_pixel_type );  // construct from dimension. The data 
+    shallow_xvimage( const types::vint & dim, index_t int_pixel_type );  // construct from dimension. The data 
     // type must be specified. See mcimage.h
     virtual ~shallow_xvimage(); // default destructor
     std::string imtype(); // returns the image type
@@ -210,12 +210,13 @@ namespace pink
   {
     
     template<class PT0>
-    void operator()( PT0 * p )
+    void operator()( PT0* & p )
       {
 #       if UJIMAGE_DEBUG >= 2
         std::cout << "liberator_t called on " << p << std::endl;
 #       endif /* UJIMAGE_DEBUG >= 2 */
         free(reinterpret_cast<void*>(p));
+        p = NULL;        
       }
   
   }; /* struct liberator_t */
@@ -312,8 +313,8 @@ namespace pink
         
   private:
 
-    boost::shared_ptr<vint> size;
-    boost::shared_ptr<vint> center;
+    boost::shared_ptr<types::vint> size;
+    boost::shared_ptr<types::vint> center;
     boost::shared_array<pixel_type> pixels;
     boost::shared_ptr<shallow_xvimage> old_school;
 
@@ -378,7 +379,7 @@ namespace pink
     \code
     char_image function( ... )
     {
-      vint size(3);
+      types::vint size(3);
       size << 1000, 1000, 1000;
       char_image result(size);
       
@@ -442,7 +443,7 @@ namespace pink
     \param dim The dimensions of the image
     \param debug
     */        
-    ujoi( const vint & dim, std::string debug="" );
+    ujoi( const types::vint & dim, std::string debug="" );
 
 
     /**
@@ -453,7 +454,7 @@ namespace pink
     /**
       Used to construct from ujif.
     */
-    ujoi( const vint & dim, boost::shared_array<pixel_type> data, std::string debug="" );
+    ujoi( const types::vint & dim, boost::shared_array<pixel_type> data, std::string debug="" );
 
     /**
     \brief Index access to the pixels
@@ -464,7 +465,7 @@ namespace pink
 
     Example:
     \code
-    vint size(3);
+    types::vint size(3);
     size << 10,20,30;
     char_image I(size);
     std::cout << I[100];
@@ -481,9 +482,9 @@ namespace pink
     const pixel_type & operator()( index_t pos ) const;
 
     /**
-    \brief 'vint' access to the pixels
+    \brief 'types::vint' access to the pixels
     With this operator you can access the pixels, by specifying the
-    position of the pixel with a 'vint' vector. 
+    position of the pixel with a 'types::vint' vector. 
     \param pos A vector pointing somewhere in the image. 
     \return Reference to the pixel.
     
@@ -494,10 +495,10 @@ namespace pink
 
     Example:
     \code
-    vint size(3);
+    types::vint size(3);
     size << 10,20,30;
 
-    vint position(3);
+    types::vint position(3);
     position << 3,4,2;
 
     char_image I(size);
@@ -506,8 +507,8 @@ namespace pink
     I[position]=3;
     \endcode
     */    
-    pixel_type & operator[]( const vint & pos ); // vint acces to the elements
-    const pixel_type & operator[]( const vint & pos ) const;  // const vint acces to the elements
+    pixel_type & operator[]( const types::vint & pos ); // types::vint acces to the elements
+    const pixel_type & operator[]( const types::vint & pos ) const;  // const types::vint acces to the elements
 
     /**
     \brief Python vector access to the pixels.
@@ -534,8 +535,8 @@ namespace pink
     const pixel_type & get_operator_int( index_t pos ) const;
     void set_operator_int( index_t pos, const pixel_type & value );
 
-    const pixel_type & get_operator_vint( const vint& pos ) const;
-    void set_operator_vint( const vint & pos, const pixel_type & value );
+    const pixel_type & get_operator_vint( const types::vint& pos ) const;
+    void set_operator_vint( const types::vint & pos, const pixel_type & value );
 
     const pixel_type & get_operator_list( const boost::python::list & pos ) const;
     void set_operator_list( const boost::python::list & pos, const pixel_type & value );
@@ -570,14 +571,14 @@ namespace pink
     /**
     \brief Returns a vector with the size of the image object
     */
-    const vint & get_size() const;
+    const types::vint & get_size() const;
 
     /**
     \brief Returns a vector with the center of the image object
     */
-    const vint & get_center() const;
-    vint & get_center();
-    const vint & get_center_vint() const;
+    const types::vint & get_center() const;
+    types::vint & get_center();
+    const types::vint & get_center_vint() const;
 
     /**
     \brief Sets the center of the image. 
@@ -585,7 +586,7 @@ namespace pink
     The image center is mainly used in masks. For example the opening
     operator applies the image relative to it's center. 
     */    
-    void set_center_vint( const vint & new_center );
+    void set_center_vint( const types::vint & new_center );
 
     /**
     \brief Sets the center of the image. This method is called from Python
@@ -1025,7 +1026,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 #   endif /* UJIMAGE_DEBUG */
 
     // defining the size for the isnull function
-    this->size.reset(new vint(1,0));    
+    this->size.reset(new types::vint(1,0));    
     
   } /* ujoi<pixel_type >::ujoi( const std::string & filename ) */
 
@@ -1055,7 +1056,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
             + "', but expected '" + this->imtype() + "'." );
     } /* if */
       
-    this->size.reset( new vint(
+    this->size.reset( new types::vint(
                         *getDimensions( // detecting the dimensions according to row-, col-, depth- and time_size.
                           tmp->row_size, 
                           tmp->col_size, 
@@ -1066,7 +1067,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       );
 
     // setting up the center
-    this->center.reset(new vint( size->size(), -1 ));
+    this->center.reset(new types::vint( size->size(), -1 ));
   
     this->pixels.reset( new pixel_type[ size->prod() ] ); // allocating the array for the pixel types
 
@@ -1098,7 +1099,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     } /* image_type(src.data_storage_type)!=this->imtype() */
     
     this->size.reset(
-      new vint(
+      new types::vint(
         *getDimensions( // detecting the dimensions according to row-, col-, depth- and time_size.
           src->row_size, 
           src->col_size, 
@@ -1109,7 +1110,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       );
 
     // setting up the center
-    this->center.reset( new vint( size->size(), -1 ));
+    this->center.reset( new types::vint( size->size(), -1 ));
 
     // the pixels are fetched at the constructor.
   } /* ujoi::ujoi */
@@ -1132,7 +1133,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     } /* image_type(src.data_storage_type)!=this->imtype() */
     
     this->size.reset(
-      new vint(
+      new types::vint(
         *getDimensions( // detecting the dimensions according to row-, col-, depth- and time_size.
           src.row_size, 
           src.col_size, 
@@ -1143,7 +1144,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       );
 
     // setting up the center
-    this->center.reset( new vint( size->size(), -1 ));
+    this->center.reset( new types::vint( size->size(), -1 ));
 
     this->pixels.reset( new pixel_type[ size->prod() ] ); // allocating the array for the pixel types
     
@@ -1190,7 +1191,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
   
   template <class pixel_type >
-  ujoi<pixel_type >::ujoi( const vint & dim, std::string debug ){
+  ujoi<pixel_type >::ujoi( const types::vint & dim, std::string debug ){
 
 #   if UJIMAGE_DEBUG >= 2
     this->debug=debug; // representing the name of the object if debugged
@@ -1198,8 +1199,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 #   endif /* UJIMAGE_DEBUG */
 
 
-    this->size.reset(new vint( dim )); // creating a copy of the size
-    this->center.reset(new vint( size->size(), -1 ));
+    this->size.reset(new types::vint( dim )); // creating a copy of the size
+    this->center.reset(new types::vint( size->size(), -1 ));
     this->pixels.reset( new pixel_type[ size->prod() ] ); // allocating memory for the pixels
 
     // setting up elements zero
@@ -1219,8 +1220,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     std::cerr << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << std::endl;
 #   endif /* UJIMAGE_DEBUG */
 
-    this->size.reset( new vint(dim)); // creating a copy of the size
-    this->center.reset( new vint( size->size(), -1 ));
+    this->size.reset( new types::vint(dim)); // creating a copy of the size
+    this->center.reset( new types::vint( size->size(), -1 ));
 
     this->pixels.reset( new pixel_type[ size->prod() ] ); // allocating memory for the pixels
 
@@ -1247,7 +1248,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  ujoi<pixel_type >::ujoi( const vint & dim, boost::shared_array<pixel_type> data, std::string debug )
+  ujoi<pixel_type >::ujoi( const types::vint & dim, boost::shared_array<pixel_type> data, std::string debug )
   {
 
 #   if UJIMAGE_DEBUG >= 2
@@ -1255,8 +1256,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     std::cerr << "creating image " << debug << std::endl;
 #   endif /* UJIMAGE_DEBUG */
 
-    size.reset(new vint( dim )); // creating a copy of the size
-    center.reset(new vint( size->size(), -1 ));
+    size.reset(new types::vint( dim )); // creating a copy of the size
+    center.reset(new types::vint( size->size(), -1 ));
     pixels.reset( new pixel_type[ size->prod() ] ); // allocating memory for the pixels
 
     if (this->size->size()<=4){
@@ -1350,7 +1351,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       // Multidimensional arrays indexed via [k][j][i] are read with i running fastest. 
       
       
-      vint curr(3);
+      types::vint curr(3);
       
       FOR(q, (*size)[2]) {
 	FOR(w, (*size)[1]) { 
@@ -1473,7 +1474,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  pixel_type & ujoi<pixel_type >::operator[](const vint & pos){ // vint acces to the elements
+  pixel_type & ujoi<pixel_type >::operator[](const types::vint & pos){ // vint acces to the elements
 
     // CAPABILITY TEST IN DEBUG MODE
     // this is a test which would be slow in an everyday situation,
@@ -1493,7 +1494,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  const pixel_type & ujoi<pixel_type >::operator[](const vint & pos) const { // const vint acces to the elements
+  const pixel_type & ujoi<pixel_type >::operator[](const types::vint & pos) const { // const types::vint acces to the elements
 
     // CAPABILITY TEST IN DEBUG MODE
     // this is a test which would be slow in an everyday situation,
@@ -1515,7 +1516,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   template <class pixel_type >
   pixel_type & ujoi<pixel_type >::operator[]( const boost::python::list & pos ){ // python list acces to the elements
 
-    vint vint_pos(pos);
+    types::vint vint_pos(pos);
 
     return (*this)[vint_pos];
 
@@ -1526,7 +1527,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   template <class pixel_type >
   const pixel_type & ujoi<pixel_type >::operator[]( const boost::python::list & pos ) const { // const python list acces to the elements
 
-    vint vint_pos(pos);
+    types::vint vint_pos(pos);
 
     return (*this)[vint_pos];
 
@@ -1549,14 +1550,14 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  const pixel_type & ujoi<pixel_type >::get_operator_vint( const vint & pos ) const {
+  const pixel_type & ujoi<pixel_type >::get_operator_vint( const types::vint & pos ) const {
     return (*this)[pos];
   }
 
 
 
   template <class pixel_type >
-  void ujoi<pixel_type >::set_operator_vint( const vint & pos, const pixel_type & value ){
+  void ujoi<pixel_type >::set_operator_vint( const types::vint & pos, const pixel_type & value ){
     (*this)[pos]=value;
   }
 
@@ -1610,7 +1611,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  const vint & ujoi<pixel_type >::get_size() const
+  const types::vint & ujoi<pixel_type >::get_size() const
   {
     return *size;
   } /* ujoi:: get_size */
@@ -1618,7 +1619,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
   
   template <class pixel_type >
-  const vint & ujoi<pixel_type >::get_center() const
+  const types::vint & ujoi<pixel_type >::get_center() const
   {
     return *center;
   } /* ujoi::get_center */
@@ -1626,7 +1627,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
   
   template <class pixel_type >
-  vint & ujoi<pixel_type >::get_center()
+  types::vint & ujoi<pixel_type >::get_center()
   {
     return *center;
   } /* ujoi::get_center */
@@ -1634,7 +1635,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
 
   template <class pixel_type >
-  void ujoi<pixel_type >::set_center_vint( const vint & new_center ){
+  void ujoi<pixel_type >::set_center_vint( const types::vint & new_center ){
 
     if ( new_center.size() != size->size() )
     {      
@@ -1642,7 +1643,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     }
     else 
     {
-      center.reset( new vint( new_center ));
+      center.reset( new types::vint( new_center ));
     }
     
   } /* ujoi::set_center_vint */
@@ -1650,7 +1651,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
   
   template <class pixel_type >
-  const vint & ujoi<pixel_type >::get_center_vint() const
+  const types::vint & ujoi<pixel_type >::get_center_vint() const
   {
     return *center;    
   } /* ujoi::get_center_vint */
@@ -1661,7 +1662,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   void ujoi<pixel_type >::set_center_list( const boost::python::list & new_center ){
 
 
-    vint vint_new_center = vint( new_center ); // converting 'boost::python::list' into 'vint'
+    types::vint vint_new_center = types::vint( new_center ); // converting 'boost::python::list' into 'vint'
 
     if ( vint_new_center.size() != size->size() )
     {      
@@ -1669,7 +1670,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     }
     else /* NOT vint_new_center.size() != size->size() */
     {      
-      center.reset( new vint( vint_new_center ) );
+      center.reset( new types::vint( vint_new_center ) );
     } /* NOT vint_new_center.size() != size->size() */
   } /* ujoi::set_center_list */
 
@@ -1917,8 +1918,8 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       return *this;      
     }
     
-    this->size.reset( new vint( *other.size ));
-    this->center.reset( new vint( *other.center ));
+    this->size.reset( new types::vint( *other.size ));
+    this->center.reset( new types::vint( *other.center ));
     this->old_school.reset(new shallow_xvimage( (*other.size), other.int_pixel_type() )); // creating a new xvimage for the 'pink::ujoi' object
     // the constructor will not copy the data
   

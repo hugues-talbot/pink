@@ -30,11 +30,11 @@ namespace pink {
     image_type result;
     result.copy(src_image);
 
-    vint curr( src_image.get_size() );
+    pink::types::vint curr( src_image.get_size() );
     
     FOR(q, src_image.get_size().prod())
     {
-      src_image.get_size().nextStep( q, curr );
+      src_image.get_size().next_step( q, curr );
       if (src_image.get_size().on_side( curr ))
       {
 	result[q]=withval;	
@@ -55,15 +55,15 @@ namespace pink {
     typename image_type::pixel_type withval
     )
   {
-    vint size(result.get_size());
+    pink::types::vint size(result.get_size());
     index_t d = size.size();
-    vint curr(d);
+    pink::types::vint curr(d);
 
     for (index_t q = from; q < to; q++)
     {
       
       // first we treat the case of the sides      
-      size.nextStep( q, curr );
+      size.next_step( q, curr );
 
       if (size.on_side(curr))
       {
@@ -102,7 +102,7 @@ namespace pink {
     std::cout << "Framing; I have detected " << num_cpu << " cpu cores" << std::endl;
 #   endif /* UJIMAGE_DEBUG */
     
-    vint new_size(src_image.get_size().size(), "new_size" );
+    pink::types::vint new_size(src_image.get_size().size(), "new_size" );
     
     // calculating the size of the framed image
     FOR(q, new_size.size() )
@@ -117,7 +117,7 @@ namespace pink {
     // saving the center of the image
     result.set_center_vint(src_image.get_center());
     
-    vint curr( src_image.get_size().size(), "curr"  );
+    pink::types::vint curr( src_image.get_size().size(), "curr"  );
 
     if (nbp > 1000000)
     {
@@ -165,7 +165,7 @@ namespace pink {
   image_type frame_remove( const image_type & src_image )
   {
     
-    vint new_size(src_image.get_size().size());
+    pink::types::vint new_size(src_image.get_size().size());
     
     // calculating the size of the framed image
     FOR( q, new_size.size() )
@@ -178,12 +178,12 @@ namespace pink {
     // saving the center of the image
     result.set_center_vint(src_image.get_center());
     
-    vint curr( src_image.get_size() );
+    pink::types::vint curr( src_image.get_size() );
         
     // copying the original image into the new image
     FOR( q, result.get_size().prod() )
     {
-      result.get_size().nextStep(q, curr);
+      result.get_size().next_step(q, curr);
       FOR( w, new_size.size() )
       {
 	curr[w]+=1;  // same as with frame around
@@ -201,13 +201,13 @@ namespace pink {
   image_type align_size( const image_type & image, index_t group_size,
                          typename image_type::pixel_type fillval )
   {
-    vint size( image.get_size() );    
+    pink::types::vint size( image.get_size() );    
     index_t d = size.size();
-    vint curr(d);    
-    vint new_size( d, -1 );    
+    pink::types::vint curr(d);    
+    pink::types::vint new_size( d, -1 );    
     FOR(q, d)
     {
-      new_size[q] = round_up( size[q] + 2 , group_size ); // rounding up for the simd operations
+      new_size[q] = pink::round_up( size[q] + 2 , group_size ); // rounding up for the simd operations
     } /* q in d*/
     index_t new_prod = new_size.prod();
     index_t prod     = size.prod();
@@ -223,7 +223,7 @@ namespace pink {
     // copying the image. the rest of the pixels remain withval
     FOR(q, prod)
     {
-      size.nextStep( q, curr );
+      size.next_step( q, curr );
       FOR(w, d)
       {
         curr[w]++;        

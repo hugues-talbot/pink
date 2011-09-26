@@ -27,10 +27,10 @@ namespace pink {
     image_type result;
     result.copy(big_image);
     int d = big_image.get_size().size();
-    vint shift_vec(shift);
+    pink::types::vint shift_vec(shift);
 
-    vint curr(d);
-    vint new_pos(d);
+    pink::types::vint curr(d);
+    pink::types::vint new_pos(d);
 
     DEBUG(shift_vec.repr());
     DEBUG(big_image.get_size().repr());
@@ -40,7 +40,7 @@ namespace pink {
 
     FOR(q, small_image.get_size().prod())
     {
-      small_image.get_size().nextStep( q, curr );
+      small_image.get_size().next_step( q, curr );
       
       FOR(w, d)
       {
@@ -68,10 +68,10 @@ namespace pink {
     image_type result;
     result.copy(big_image);
     int d = big_image.get_size().size();
-    vint shift_vec(shift);
+    pink::types::vint shift_vec(shift);
 
-    vint curr(d);
-    vint new_pos(d);
+    pink::types::vint curr(d);
+    pink::types::vint new_pos(d);
 
     DEBUG(shift_vec.repr());
     DEBUG(big_image.get_size().repr());
@@ -81,7 +81,7 @@ namespace pink {
 
     FOR(q, small_image.get_size().prod())
     {
-      small_image.get_size().nextStep( q, curr );
+      small_image.get_size().next_step( q, curr );
       
       FOR(w, d)
       {

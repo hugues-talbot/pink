@@ -145,9 +145,9 @@ namespace pink {
       // in at least one calculation. If the value is positive and
       // greater then the number of threads, then the particular
       // dibble has not yet been considered.
-      vint          pure_pot;
-      /* changed from std::vector*/ std::vector<vint> pure_flow;
-      vint          pure_cons;
+      pink::types::vint          pure_pot;
+      /* changed from std::vector*/ std::vector<pink::types::vint> pure_flow;
+      pink::types::vint          pure_cons;
       psemaphores_t semaphores;
 
       // this structure holds the compactified pure dibbles as well as
@@ -170,11 +170,11 @@ namespace pink {
     protected:
 
       index_t     d;
-      vint        dim;
+      pink::types::vint        dim;
       float       tau;
       // the number of desired iterations
       bool        verbose;
-      progressBar sentinel;
+      pink::types::progress_bar sentinel;
       index_t     iteration;
       index_t     length_glob;
       /* changed from std::vector*/ std::vector<types::dibble_t> dib_constrain;
@@ -203,7 +203,7 @@ namespace pink {
           pixel_type v;
 	
           //locals
-          vint fm1s(d), fm1_vec(d);
+          pink::types::vint fm1s(d), fm1_vec(d);
           index_t start, end, length;
 	
           // calculating differences between the flow and the point
@@ -294,7 +294,7 @@ namespace pink {
 
           iterator_t p_c, f_out, f_in;          
           index_t fm1 /*fm1_vec[d]*/, start, end;            
-          vint fm1_vec(d);
+          pink::types::vint fm1_vec(d);
             
           FOR(w, d)
           {
@@ -341,7 +341,7 @@ namespace pink {
           iterator_t p, pp1, f;
             
           index_t start, end, pp1_pos;
-          vint pp1_vec(d);
+          pink::types::vint pp1_vec(d);
 
           pp1_vec.reset();
           pp1_vec[w]=1;
@@ -444,9 +444,9 @@ namespace pink {
                 index_t start=0, end=0;
                 unsigned char *pp1[d];
                 boost::shared_array<unsigned char> p;
-                vint pp1_vec(d);
+                pink::types::vint pp1_vec(d);
                 index_t currlength=0;
-                vint pp1_pos(d);
+                pink::types::vint pp1_pos(d);
                 // Calculating the shift of the neighbourh elements
                 FOR(w, d) {
                   pp1_vec.reset();
@@ -495,7 +495,7 @@ namespace pink {
                 index_t start=0, end=0;
                 unsigned char *pp1[d], *pm1[d];
                 boost::shared_array<unsigned char> p;
-                vint pp1_vec(d);
+                pink::types::vint pp1_vec(d);
                 index_t currlength=0;
                 index_t max=0;
                 FOR(w, d) {
@@ -624,7 +624,7 @@ namespace pink {
                 
                 index_t flow_first;
                 index_t flow_second;
-                vint fm1_vec(d);
+                pink::types::vint fm1_vec(d);
                 
                 FOR(e, d)
                 {
@@ -682,7 +682,7 @@ namespace pink {
               FOR(q, dib_flow[w].size())
               {
 
-                vint pp1_vec(d);
+                pink::types::vint pp1_vec(d);
                 index_t pp1_pos;              
                 bool pot_is_in_good_node  = true; // here we use the optimistic approach
                 bool flow_is_in_good_node = true; // here we use the optimistic approach
@@ -753,7 +753,7 @@ namespace pink {
               pures_per_node[q]=0;              
             }
 
-            vint fm1s(d), fm1_vec(d);                          
+            pink::types::vint fm1s(d), fm1_vec(d);                          
             FOR( w, d )
             {
               fm1_vec.reset();
@@ -980,6 +980,11 @@ namespace pink {
             this->number_of_threads = std::max<index_t>( 1, this->number_of_threads );            
           } /* number_of_threads == 0 */
           this->number_of_nodes = pot_glob.number_of_nodes;
+          if ( this->number_of_threads % this->number_of_nodes != 0 )
+          {
+            pink_error("the number of threads must be divisible with the number of nodes !");            
+          }
+
           this->resolution      = this->number_of_threads / this->number_of_nodes;
           this->semaphores.reset( new semaphores_t<>(this->number_of_threads) );          
 
@@ -1096,7 +1101,7 @@ namespace pink {
           if (verbose)
             std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
 
-          vint time_cheat(src_sink.get_size().size(), 0);
+          pink::types::vint time_cheat(src_sink.get_size().size(), 0);
           time_cheat[0]=sentinel.elapsedSeconds();
           
           if (verbose)
@@ -1116,7 +1121,7 @@ namespace pink {
           } /* for q */
           
           potencial.set_center_vint(time_cheat);
-          
+
           return potencial;          
         } /* virtual start*/
       

@@ -28,26 +28,22 @@
 #include "lminmax.hpp"
 #include "ujimage.hpp"
 
-
-#undef error
-#define error(msg) std::stringstream fullmessage; fullmessage << "in uiImage.cpp: " << msg; call_error(fullmessage.str());
-
 namespace pink
 {
 
 void uiWriteFloatImage3D( float_image& image, const std::string& filename )
 {
   std::ofstream s;
-  vint dim;
+  pink::types::vint dim;
   int x, y, z, currX, currY, currZ;
   ////!!!!!!!!!!!!!1unsigned char pix;
   int pix;
-  uiVal_type piq, min, max;
+  double piq, min, max;
   std::stringstream ss;
 
   s.open(filename.c_str(), std::ios_base::out | std::ios_base::trunc ); // create a new file, or empty existing one
 
-  dim = vint(3);
+  dim = pink::types::vint(3);
   x = image.get_size()[0];
   y = image.get_size()[1];
   z = image.get_size()[2];
@@ -87,16 +83,16 @@ void uiWriteImage3D( float_image& image, const std::string& filename )
   std::cout << "warning: uiWriteImage3D has been tuned to the CELL PROJECT\n";
   std::cout << "Writing image to file '" << filename << "'" << std::endl;
   std::ofstream s;
-  vint dim;
+  pink::types::vint dim;
   int x, y, z, currX, currY, currZ;
   unsigned char pix;
-  uiVal_type piq;
-  uiVal_type min;
-  uiVal_type max;
+  double piq;
+  double min;
+  double max;
 
   s.open(filename.c_str(), std::ios_base::out | std::ios_base::trunc);
 
-  dim = vint( 3 );
+  dim = pink::types::vint( 3 );
   x = image.get_size()[0];
   y = image.get_size()[1];
   z = image.get_size()[2];
@@ -130,9 +126,9 @@ void uiWriteImage2D( float_image& image, const std::string& filename )
 {
   std::ofstream s;
   std::stringstream ss;
-  vint dim;
+  pink::types::vint dim;
   int x, y, pix;
-  uiVal_type piq, min, max;
+  double piq, min, max;
   std::string tmp;
 
   s.open( filename.c_str(), std::ios_base::out | std::ios_base::trunc );
@@ -140,7 +136,7 @@ void uiWriteImage2D( float_image& image, const std::string& filename )
   ss << "P2\n";
   ss << "# UjoImro Design Group, 2006\n";
 
-  dim = vint(2);
+  dim = pink::types::vint(2);
   x = image.get_size()[0];
   y = image.get_size()[1];
 
@@ -156,8 +152,9 @@ void uiWriteImage2D( float_image& image, const std::string& filename )
   std::cout << "Image.max = " << max  << std::endl;
   std::cout << "Image.min = " << min  << std::endl;
 
-  if (max==min) {
-    error("uiWarning: every element equals in the image")
+  if (max==min)
+  {
+    pink_error("uiWarning: every element equals in the image")
   };
 
   s << ss.str(); //writing image header
@@ -203,8 +200,10 @@ void uiWriteImage ( float_image& image, const std::string& filename )
     if ( image.get_size().size() == 3 ) {
       uiWriteImage3D( image, filename );
 
-    } else {
-      error("error uiWriteImage: image of this dimension can not be saved (saving not implemented)\n");
+    }
+    else
+    {
+      pink_error("error uiWriteImage: image of this dimension can not be saved (saving not implemented)\n");
     };
 }; /*  uiWriteImage  */
 

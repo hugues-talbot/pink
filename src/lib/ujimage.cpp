@@ -25,13 +25,13 @@ namespace pink{
   } /* pink_image cast xvimage* */
   
 
-  boost::shared_ptr<vint> getDimensions( const index_t x, const index_t y, const index_t z, const index_t t )
+  boost::shared_ptr<pink::types::vint> getDimensions( const index_t x, const index_t y, const index_t z, const index_t t )
   {
 
-    boost::shared_ptr<vint> presult;
+    boost::shared_ptr<pink::types::vint> presult;
     if (t>1) {
       /////!!!!!!! cout<< "I've desided for 4D." << std::endl;
-      presult.reset(new vint(4,-1));
+      presult.reset(new pink::types::vint(4,-1));
       (*presult)[0]=x;
       (*presult)[1]=y;
       (*presult)[2]=z;
@@ -40,7 +40,7 @@ namespace pink{
     else if (z>1)
     {
       /////!!!!!!! cout<< "I've desided for 3D." << std::endl;
-      presult.reset(new vint(3,-1));
+      presult.reset(new pink::types::vint(3,-1));
       (*presult)[0]=x;
       (*presult)[1]=y;
       (*presult)[2]=z;
@@ -48,7 +48,7 @@ namespace pink{
     else if (y>1)
     {
       /////!!!!!!! cout<< "I've desided for 2D." << std::endl;
-      presult.reset(new vint(2,-1));
+      presult.reset(new pink::types::vint(2,-1));
       (*presult)[0]=x;
       (*presult)[1]=y;
     }
@@ -58,7 +58,7 @@ namespace pink{
 #     ifdef UJIMAGE_DEBUG
       std::cout << "x>1 and y==1; Here I assume 2D image of size [" << x << ", 1]" << std::endl;
 #     endif /* UJIMAGE_DEBUG */
-      presult.reset(new vint(2,-1));
+      presult.reset(new pink::types::vint(2,-1));
       (*presult)[0]=x;
       (*presult)[1]=1;      
     }
@@ -71,7 +71,7 @@ namespace pink{
   } /* getDimensions */
 
 
-  void setDimensions(const vint & dim, index_t & x, index_t & y, index_t & z, index_t & t)
+  void setDimensions(const pink::types::vint & dim, index_t & x, index_t & y, index_t & z, index_t & t)
   {
     index_t d = dim.size();
     bool result = true;
@@ -212,7 +212,7 @@ c++ class shallow_xvimage
     this->zmax=src.zmax;
   } /* shallow_xvimage::shallow_xvimage */
 
-  shallow_xvimage::shallow_xvimage( const vint & dim, index_t int_im_type )
+  shallow_xvimage::shallow_xvimage( const pink::types::vint & dim, index_t int_im_type )
   { 
     // // Carefully, the image data  
     // will be created by 'ujoi::operator&'

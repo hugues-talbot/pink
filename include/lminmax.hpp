@@ -18,7 +18,7 @@
 #include <boost/algorithm/minmax_element.hpp>
 
 #include "ujimage.hpp"
-#include "uiFibreTypes.h"
+#include "ui_pink_types.hpp"
 
 
 #undef error

@@ -35,7 +35,7 @@ namespace pink {
   
       typedef typename image_type::pixel_type pixel_type;
 
-      vint dim(python_dim);
+      pink::types::vint dim(python_dim);
   
       std::ifstream file;
   

@@ -315,12 +315,12 @@ namespace pink {
       pot_t     gpu_pot;
       flow_t    gpu_flow;
       srcsink_t srcsink;
-      vint      fm1s;
+      pink::types::vint      fm1s;
       index_t   p_c, f_out, f_in, d, max, simlength;
       float     tau;
 
     public:
-      kernel_pot_t( pot_t gpu_pot, srcsink_t srcsink, flow_t gpu_flow, vint fm1s, index_t f_in, index_t d, index_t simlength, index_t max, float tau )
+      kernel_pot_t( pot_t gpu_pot, srcsink_t srcsink, flow_t gpu_flow, pink::types::vint fm1s, index_t f_in, index_t d, index_t simlength, index_t max, float tau )
         : gpu_pot(gpu_pot), srcsink(srcsink), gpu_flow(gpu_flow), fm1s(fm1s), f_in(f_in), d(d), simlength(simlength), max(max), tau(tau)
         { }
 
@@ -387,12 +387,12 @@ namespace pink {
       pot_t   gpu_pot;
       flow_t  gpu_flow;
       index_t f, p, d, w;
-      vint    fm1s;      
+      pink::types::vint    fm1s;      
       float   tau;
 
       
     public:
-      kernel_flow_t( pot_t gpu_pot, flow_t gpu_flow, index_t f, index_t p, vint fm1s, index_t d, float tau )
+      kernel_flow_t( pot_t gpu_pot, flow_t gpu_flow, index_t f, index_t p, pink::types::vint fm1s, index_t d, float tau )
         : gpu_pot(gpu_pot), gpu_flow(gpu_flow), f(f), p(p), fm1s(fm1s), d(d), tau(tau)
         { }
 
@@ -429,10 +429,10 @@ namespace pink {
       g_t     gpu_g;
       index_t max, d, length_glob;
       float   tau;
-      vint    fm1s;
+      pink::types::vint    fm1s;
 
     public:
-      kernel_constrain_t( flow_t gpu_flow, g_t gpu_g, index_t max, index_t length_glob, vint fm1s, index_t d )
+      kernel_constrain_t( flow_t gpu_flow, g_t gpu_g, index_t max, index_t length_glob, pink::types::vint fm1s, index_t d )
         : gpu_flow(gpu_flow), gpu_g(gpu_g), max(max), length_glob(length_glob), fm1s(fm1s), d(d)
         { }
 
@@ -487,14 +487,14 @@ namespace pink {
     protected:
 
       index_t d;
-      vint    dim;
+      pink::types::vint    dim;
       index_t max;
       float   tau;
-      vint    fm1s;
+      pink::types::vint    fm1s;
       index_t start;
       index_t length;
-      vint    simdim;      
-      vint    fm1_vec;      
+      pink::types::vint    simdim;      
+      pink::types::vint    fm1_vec;      
       bool    verbose;
       index_t simlength; // this holds the length of the vector calculation;
       index_t iteration; // the number of desired iterations
@@ -754,7 +754,7 @@ namespace pink {
           index_t size;
 
           //// --------------------- initializing the time measure -------------------------------
-          progressBar sentinel;
+          pink::types::progress_bar sentinel;
           sentinel.maxPos(iteration);
           sentinel.minPos(0);
           sentinel << 0;
@@ -785,7 +785,7 @@ namespace pink {
           if (verbose)
             std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
 
-          vint time_cheat(potencial.get_size().size(), 0);
+          pink::types::vint time_cheat(potencial.get_size().size(), 0);
           time_cheat[0] = sentinel.elapsedSeconds();
           if (verbose)
             std::cout << "setting time_cheat to " << time_cheat.repr() << std::endl;
