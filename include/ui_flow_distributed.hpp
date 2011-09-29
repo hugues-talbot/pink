@@ -174,7 +174,7 @@ namespace pink {
       float       tau;
       // the number of desired iterations
       bool        verbose;
-      pink::types::progress_bar sentinel;
+      
       index_t     iteration;
       index_t     length_glob;
       /* changed from std::vector*/ std::vector<types::dibble_t> dib_constrain;
@@ -905,6 +905,9 @@ namespace pink {
 
     public:
 
+      // this variable will hold the elapsed time
+      double time;      
+      
       /**
          \brief returns the calculated flow in raw format
          
@@ -1057,11 +1060,6 @@ namespace pink {
 
       virtual image_type start()
         {
-          //// --------------------- initializing the time measure -------------------------------
-          sentinel.maxPos(iteration);
-          sentinel.minPos(0);
-          sentinel << 0;
-
           // Posix threading
           typedef typename boost::shared_ptr<boost::thread> pthread_t;
 
@@ -1072,11 +1070,12 @@ namespace pink {
           // nodes. Note: the order of parameters is contraintuitive.
           distributor_t node_distributor( number_of_threads, number_of_nodes );
                     
-          sentinel.start();
           if (verbose)
             std::cout << "starting the iteration" << std::endl;
 
-                    // Creating the threads
+          double starttime = pink::benchmark::now();
+          
+          // Creating the threads
           FOR( w, number_of_threads )
           {
             threads[w].reset( new boost::thread(
@@ -1093,25 +1092,19 @@ namespace pink {
           {
             threads[w]->join();
           } /* FOR(w, number_of_threads) */
+
+          double endtime = pink::benchmark::now();
+
+          this->time = static_cast<double>( endtime - starttime );          
+
           if (verbose)
             std::cout << "the iteration has finished" << std::endl;          
 
           //// --------------------- printing out the measured time ------------------------------
-          sentinel.stop();
           if (verbose)
-            std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
-
-          pink::types::vint time_cheat(src_sink.get_size().size(), 0);
-          time_cheat[0]=sentinel.elapsedSeconds();
-          
-          if (verbose)
-            std::cout << "setting time_cheat to " << time_cheat.repr() << std::endl;    
-          // !!!!!! potencial.set_center_vint(time_cheat);    
+            std::cout << "total time of iteration: " << this->time << "s" << std::endl;
     
           this->flow_calculated = true; 
-
-          /// !!!!!!!!!!!!! return potencial; /* measure field picture */
-          //local variables are deleted automaticly
 
           // copy the calculated potencial to the 'potencial' image
           FOR(q, dim.prod())
@@ -1120,8 +1113,6 @@ namespace pink {
             potencial(q) = pot_glob[q];
           } /* for q */
           
-          potencial.set_center_vint(time_cheat);
-
           return potencial;          
         } /* virtual start*/
       
@@ -1218,14 +1209,15 @@ namespace pink {
 
 
     template <class image_type>
-    image_type
+    boost::python::object
     distflow( 
       char_image SS,  /* image of the source and of the sink (not the original image) */
       image_type gg,  /* Boundaries */
       index_t    iteration,            /* number of iterations */
       float      glob_tau = 0.132,     /* timestep */
       index_t    number_of_threads = 0, /* the number of threads to execute if in parallel mode */
-      bool       verbose = false
+      bool       verbose = false,
+      bool       debug   = false
       )
     {
       distributed_flow<image_type> obj(
@@ -1237,10 +1229,18 @@ namespace pink {
         verbose
         );
 
-      image_type result = frame_remove(obj.start());
+      image_type rimage = frame_remove(obj.start());
 
-
-      return result;
+      if (debug)
+      {        
+        boost::python::tuple result = boost::python::make_tuple(rimage, obj.time);         
+        return result;
+      }
+      else /* NOT debug */
+      {
+        boost::python::object result(rimage);
+        return result;        
+      } /* NOT debug */
     } /* distflow */
     
   } /* namespace numa */   

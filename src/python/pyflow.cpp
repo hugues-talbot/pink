@@ -40,7 +40,8 @@ void pymaxflow()
      arg("tau") = 0.132,
      arg("number of threads") = 0,
      arg("packet size") = 8,
-     arg("verbose") = false ),
+     arg("verbose") = false,
+     arg("debug") = false ),    
     doc__maxflow__cpp__
     );
 
@@ -54,7 +55,8 @@ void pymaxflow()
      arg("iterations"),
      arg("tau")=0.132,
      arg("number of threads")=0,
-     arg("verbose") = false ),
+     arg("verbose") = false,
+     arg("debug") = false ),
     doc__maxflow__cpp__
     );
 
@@ -68,7 +70,8 @@ void pymaxflow()
      arg("tau") = 0.132,
      arg("number of threads") = 0,
      arg("hyper threading") = false,
-     arg("verbose") = false ),
+     arg("verbose") = false,
+     arg("debug") = false ),
     doc__maxflow__cpp__
     );
   
@@ -83,7 +86,8 @@ void pymaxflow()
      arg("constraint image"),
      arg("iterations"),
      arg("tau") = 0.132,
-     arg("verbose") = false),
+     arg("verbose") = false,
+     arg("debug") = false ),    
     doc__maxflow__cpp__
     );
 # endif /* PINK_HAVE_OPENCL */

@@ -28,22 +28,19 @@
 
 #ifndef UI__POLYTHREAD__HPP__
 #define UI__POLYTHREAD__HPP__
+# include <vector>
+# include <iostream>
+# include <boost/timer.hpp>
+# include <boost/thread.hpp>
+# include <boost/smart_ptr.hpp>
+# include "ui_pink_types.hpp"
 
-# define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
 
 # ifdef PINK_HAVE_NUMA
+#   define NUMA_VERSION1_COMPATIBILITY // blade's don't have the new numa api
 #   include <numa.h>
-#   include <vector>
-#   include <iostream>
-#   include <boost/timer.hpp>
-#   include <boost/thread.hpp>
-//#include <boost/random.hpp>
-//#include <boost/date_time.hpp>
-#   include <boost/smart_ptr.hpp>
-
-//#include <glib/gchecksum.h>
-#   include "ui_pink_types.hpp"
 #   include "ui_numa_types.hpp"
+# endif /* PINK_HAVE_NUMA */
 
 // uncomment the following line to activate some additional limit
 // checking and debug messages
@@ -138,7 +135,17 @@ namespace pink
     } /* slow_iterator */
 
 
+    
+// ****************************************************************************
+// ****************************************************************************
+// ****************************************************************************
+#   ifdef PINK_HAVE_NUMA
+// ****************************************************************************
+// ****************************************************************************
+// ****************************************************************************
 
+
+    
     template <class T0>
     class poly_array
     {
@@ -404,7 +411,7 @@ namespace pink
     }; /* class poly_array */
 
 
-
+    
     /**
     \brief This is a shared_array object, which allocates an array on
     a specific numa node.
@@ -490,7 +497,17 @@ namespace pink
       
     }; /* class numa::liberator_t */
 
+
     
+// ****************************************************************************
+// ****************************************************************************
+// ****************************************************************************
+#   endif /* PINK_HAVE_NUMA */
+// ****************************************************************************
+// ****************************************************************************
+// ****************************************************************************
+
+
     
     class distributor_t
     {
@@ -539,8 +556,6 @@ namespace pink
   } /* namespace numa */
   
 } /* namespace pink */
-
-# endif /* PINK_HAVE_NUMA */
 
 #endif /* UI__POLYTHREAD__HPP__ */
 // LuM end of file

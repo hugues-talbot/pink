@@ -17,6 +17,7 @@
 
 #   include <vector>
 #   include <utility>
+#   include <boost/python.hpp>
 #   include <boost/preprocessor.hpp>
 #   include <boost/typeof/typeof.hpp>
 
@@ -27,6 +28,7 @@
 #   include "lminmax.hpp"
 #   include "ui_simd.hpp"
 #   include "pyujimage.hpp"
+#   include "ui_systest.hpp"
 #   include "ui_numa_types.hpp"
 #   include "ui_polythread.hpp"
 #   include "ui_flow_ghosts.hpp"
@@ -594,6 +596,8 @@ namespace pink {
       
     public:
 
+      // this variable will hold the elapsed time
+      double time;      
 
 
       /**
@@ -753,13 +757,7 @@ namespace pink {
           pkernel_update_t kernel_update;      
           index_t size;
 
-          //// --------------------- initializing the time measure -------------------------------
-          pink::types::progress_bar sentinel;
-          sentinel.maxPos(iteration);
-          sentinel.minPos(0);
-          sentinel << 0;
-
-          sentinel.start();
+          double starttime = pink::benchmark::now();          
           if (verbose)
             std::cout << "starting the iteration" << std::endl;
 
@@ -781,14 +779,11 @@ namespace pink {
 
           scheduler.schedule_work();
           
-          sentinel.stop();
+          double endtime = pink::benchmark::now();
+          this->time = static_cast<double>(endtime - starttime);
+          
           if (verbose)
-            std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
-
-          pink::types::vint time_cheat(potencial.get_size().size(), 0);
-          time_cheat[0] = sentinel.elapsedSeconds();
-          if (verbose)
-            std::cout << "setting time_cheat to " << time_cheat.repr() << std::endl;
+            std::cout << "total time of iteration: " << this->time << "s" << std::endl;
 
           // copy the calculated potencial to the 'potencial' image          
           FOR(q, simlength)
@@ -798,8 +793,6 @@ namespace pink {
             potencial( 4 * q + 2 ) = pot_glob[q].f[2];
             potencial( 4 * q + 3 ) = pot_glob[q].f[3];            
           } /* for q */
-
-          potencial.set_center_vint(time_cheat);
 
           return potencial;
         } /* virtual start*/
@@ -818,7 +811,7 @@ namespace pink {
 
 
     template <class image_type>
-    image_type
+    boost::python::object
     simdflow(
       char_image SS,                    /* image of the source and of the sink (not the original image) */
       image_type gg,                    /* Boundaries */
@@ -826,7 +819,8 @@ namespace pink {
       float      glob_tau = 0.132,      /* timestep */
       index_t    number_of_threads = 0, /* the number of threads to execute if in parallel mode */
       bool       hyper_threading = false,
-      bool       verbose = false        /* the resolution of the iteration */
+      bool       verbose = false,        /* the resolution of the iteration */
+      bool       debug = false           /* returns the time of the iteration */
       )
     {
       simd_flow_t<image_type> obj(
@@ -839,9 +833,19 @@ namespace pink {
         verbose
         );
       
-      image_type result = obj.iterate();
+      image_type rimage = obj.iterate();
+
+      if (debug)
+      {        
+        boost::python::tuple result = boost::python::make_tuple(rimage, obj.time);         
+        return result;
+      }
+      else /* NOT debug */
+      {
+        boost::python::object result(rimage);
+        return result;        
+      } /* NOT debug */
       
-      return result;
     } /* clflow */
 
   } /* namespace numa */

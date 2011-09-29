@@ -15,6 +15,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <boost/python.hpp>
 #include <boost/thread.hpp>
 
 #include "uiFrame.hpp"
@@ -144,6 +145,8 @@ namespace pink {
 
   public:
 
+    double time;    
+    
     boost::shared_array<pixel_type> get_flow(); // returns the calculated flow in raw format (the length 
                                // of the array is dimension * pixels, and the vectors are grouped by direction)
     
@@ -738,24 +741,20 @@ namespace pink {
     //// --------------------- printing out the measured time ------------------------------
     sentinel.stop();
     double endtime = pink::benchmark::now();
-    
+    this->time = static_cast<double>( endtime - starttime );
     
     FOR( q, nbt )
     {
       threads[q]->join();
     } /* FOR(q, nbt) */
 
-
+    this->time = static_cast<double>(endtime - starttime);
+    
     if (verbose)      
-      std::cout << "total time of iteration: " << sentinel.elapsedTime() << std::endl;
-    std::cout << "total time of iteration (timer)   : " << static_cast<double>(endtime-starttime) << std::endl;
+      std::cout << "total time of iteration (timer)   : " << this->time << "s" << std::endl;
     
     this->flow_calculated = true; 
 
-    pink::types::vint time_cheat(potencial.get_size().size(), 0);
-    time_cheat[0] = sentinel.elapsedSeconds();
-    potencial.set_center_vint(time_cheat);
-    
     return potencial; /* measure field picture */
     //local variables are deleted automaticly
   } /*    max_flow<image_type>::start() */
@@ -967,17 +966,19 @@ namespace pink {
   
 
   template <class image_type>
-  image_type maxflow( 
+  boost::python::object
+  maxflow( 
     char_image SS,         /* image of the source and of the sink (not the original image) */
     image_type gg,        /* Boundaries */
     index_t    iteration,         /* number of iterations */
     float      glob_tau,	   /* timestep */
     index_t    number_of_threads,  /* the number of threads to execute if in parallel mode */
     index_t    packet_size,
-    bool       verbose = false    
+    bool       verbose = false,
+    bool       debug = false    
     )
   {
-    max_flow<image_type> maxflow_obj(
+    max_flow<image_type> obj(
       frame_around(SS, -1),
       frame_around(gg, 0.),
       iteration,
@@ -987,9 +988,19 @@ namespace pink {
       verbose
       );
 
-    image_type result = frame_remove(maxflow_obj.start());
-    
-    return result;    
+    image_type rimage = frame_remove(obj.start());
+
+    if (debug)
+    {        
+      boost::python::tuple result = boost::python::make_tuple(rimage, obj.time);         
+      return result;
+    }
+    else /* NOT debug */
+    {
+      boost::python::object result(rimage);
+      return result;        
+    } /* NOT debug */
+
   } /* maxflow_float */
 
 } /* end namespace pink */
