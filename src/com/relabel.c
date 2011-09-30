@@ -32,76 +32,66 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file normalize.c
+/*! \file relabel.c
 
-\brief normalization of grayscale values
+\brief eliminates 'voids' in the labelling
 
-<B>Usage:</B> normalize in.pgm [[nmin nmax] out.pgm]
+<B>Usage:</B> relabel in.pgm [out.pgm]
 
 <B>Description:</B>
-Grayscale of \b in.pgm values are normalized to span the range of [nmin...nmax].
-The parameters \b nmin and \b nmax are optional.
-For byte and int32_t images, the default values are \b nmin = 0 and \b nmax = 255.
-For float images, the default values are \b nmin = 0 and \b nmax = 1.
 
-<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
+Modifies the labels of image \b in.pgm in such a way that the resulting labels are consecutive integers.
 
-<B>Category:</B> arith
-\ingroup  arith
+If \b out.pgm is not specified, then out.pgm = in.pgm.
+
+<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d
+
+<B>Category:</B> histo
+\ingroup histo
 
 \author Michel Couprie
 */
+
+/*
+   Michel Couprie - september 2011
+ */
 
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <mccodimage.h>
 #include <mcimage.h>
-#include <larith.h>
+#include <mccodimage.h>
+#include <mcutil.h>
+#include <lhisto.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * image1;
-  float nmin, nmax;
+  struct xvimage * image;
 
-  if ((argc != 2) && (argc != 3) && (argc != 5))
+  if ((argc != 2) && (argc != 3))
   {
-    fprintf(stderr, "usage: %s in.pgm [[nmin nmax] out.pgm] \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm [out.pgm] \n", argv[0]);
     exit(1);
   }
 
-  image1 = readimage(argv[1]);
-  if (image1 == NULL)
+  image = readimage(argv[1]);  
+  if (image == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  if (argc == 5)
+  if (!lrelabel(image))
   {
-    nmin = (float)(atof(argv[2]));
-    nmax = (float)(atof(argv[3]));
-  }
-  else
-  {
-    nmin = (float)0;
-    if (datatype(image1) == VFF_TYP_FLOAT)
-      nmax = (float)1;
-    else
-      nmax = (float)255;
-  }
-
-  if (! lnormalize(image1, nmin, nmax))
-  {
-    fprintf(stderr, "%s: function lnormalize failed\n", argv[0]);
+    fprintf(stderr, "%s: lrelabel failed\n", argv[0]);
     exit(1);
   }
 
-  writeimage(image1, argv[argc-1]);
-  freeimage(image1);
+  writeimage(image, argv[argc-1]);
+  freeimage(image);
 
   return 0;
 } /* main */

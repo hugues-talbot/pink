@@ -162,7 +162,7 @@ __pink__inline int32_t Sep(int32_t i, int32_t u, int32_t gi2, int32_t gu2) {
 /**
  **************************************************
  * @b phaseVoronoiX
- * @param V Input volume
+ * @param img Input volume
  * @param sdt_x SDT along the x-direction
  * @param dx the first component of the Voronoi labeling
  **************************************************/

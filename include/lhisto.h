@@ -91,6 +91,8 @@ extern double lhisto_distance_modulo (index_t * A, index_t * B, int32_t n);
 extern double lhisto_distance_ordinal (index_t * A, index_t * B, int32_t n);
 extern int32_t lseuilhisto (struct xvimage *image, struct xvimage *masque, double p);
 extern int32_t lcountvalues(struct xvimage *image, struct xvimage *mask);
+extern int32_t lhistosieve(struct xvimage *image, int32_t val);
+extern int32_t lrelabel(struct xvimage *image);
 #ifdef __cplusplus
 }
 #endif

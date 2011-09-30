@@ -286,6 +286,7 @@ $(BDIR)/skel_MK3 \
 $(BDIR)/skel_NK2 \
 $(BDIR)/skel_PSG \
 $(BDIR)/skelend \
+$(BDIR)/skelendlab \
 $(BDIR)/skelcurv \
 $(BDIR)/skeleton \
 $(BDIR)/skeleucl \
@@ -453,6 +454,7 @@ $(BDIR)/histosieve \
 $(BDIR)/histstretch \
 $(BDIR)/printhisto \
 $(BDIR)/printstats \
+$(BDIR)/relabel \
 $(BDIR)/seuilhisto \
 $(BDIR)/stretch
 
@@ -1429,6 +1431,9 @@ $(BDIR)/skel_PSG:	$(CDIR)/skel_PSG.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(ID
 $(BDIR)/skelend:	$(CDIR)/skelend.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcindic.h $(IDIR)/mcfifo.h $(IDIR)/lsquelbin.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcindic.o $(ODIR)/mcfifo.o $(ODIR)/mclifo.o $(ODIR)/mcgeo.o $(ODIR)/mcrbt.o $(ODIR)/lsquelbin.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skelend.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/lsquelbin.o $(ODIR)/mcindic.o $(ODIR)/mcfifo.o $(ODIR)/mcgeo.o $(ODIR)/mclifo.o $(ODIR)/mcrbt.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(LIBS) -o $(BDIR)/skelend
 
+$(BDIR)/skelendlab:	$(CDIR)/skelendlab.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcindic.h $(IDIR)/mcfifo.h $(IDIR)/lsquelbin.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcindic.o $(ODIR)/mcfifo.o $(ODIR)/mclifo.o $(ODIR)/mcgeo.o $(ODIR)/mcrbt.o $(ODIR)/lsquelbin.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o 
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skelendlab.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/lsquelbin.o $(ODIR)/mcindic.o $(ODIR)/mcfifo.o $(ODIR)/mcgeo.o $(ODIR)/mclifo.o $(ODIR)/mcrbt.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(LIBS) -o $(BDIR)/skelendlab
+
 $(BDIR)/skelcurv:	$(CDIR)/skelcurv.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcindic.h $(IDIR)/lskeletons.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mcfifo.o $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skelcurv.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(LIBS) -o $(BDIR)/skelcurv
 
@@ -1929,6 +1934,9 @@ $(BDIR)/printhisto:	$(CDIR)/printhisto.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(OD
 
 $(BDIR)/printstats:	$(CDIR)/printstats.c $(IDIR)/mcimage.h $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/printstats.c $(OBJ_COMMON) $(LIBS) -o $(BDIR)/printstats
+
+$(BDIR)/relabel:	$(CDIR)/relabel.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto.o $(OBJ_COMMON)
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/relabel.c $(ODIR)/lhisto.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/relabel
 
 $(BDIR)/seuilhisto:	$(CDIR)/seuilhisto.c $(IDIR)/lhisto.h $(IDIR)/mcimage.h $(ODIR)/lhisto.o $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/seuilhisto.c $(ODIR)/lhisto.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/seuilhisto

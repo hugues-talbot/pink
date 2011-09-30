@@ -36,11 +36,13 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief eliminates points with values that are seldom in the histogram
 
-<B>Usage:</B> histosieve in.pgm val out.pgm
+<B>Usage:</B> histosieve in.pgm val [out.pgm]
 
 <B>Description:</B>
 
 The points which value appear strictly less than \b val times in the image are eliminated.
+
+If \b out.pgm is not specified, then out.pgm = in.pgm.
 
 <B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d
 
@@ -69,14 +71,11 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  index_t x;
-  index_t *histo;
-  int32_t val, nbval;
-  index_t rs, cs, d, N;
+  int32_t val;
 
-  if (argc != 4)
+  if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s in1.pgm val out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm val [out.pgm] \n", argv[0]);
     exit(1);
   }
 
@@ -87,53 +86,15 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  rs = rowsize(image);
-  cs = colsize(image);
-  d = depth(image);
-  N = rs * cs * d;
-
   val = atoi(argv[2]);  
 
-  if (datatype(image) == VFF_TYP_1_BYTE)
+  if (!lhistosieve(image, val))
   {
-    uint8_t *F = UCHARDATA(image);
-
-    histo = (index_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(index_t));
-    if (histo == NULL)
-    {
-      fprintf(stderr, "%s: malloc failed\n", argv[0]);
-      exit(1);
-    }
-
-    if (! lhisto1(image, histo))
-    {
-      fprintf(stderr, "%s: function lhisto1 failed\n", argv[0]);
-      exit(1);
-    }
-
-    for (x = 0; x < N; x++) 
-      if (histo[F[x]] < val) F[x] = 0;
-  }
-  else if (datatype(image) == VFF_TYP_4_BYTE)
-  {
-    int32_t *F = SLONGDATA(image);
-    if (! lhistolong(image, NULL, &histo, &nbval))
-    {
-      fprintf(stderr, "%s: function lhistolong failed\n", argv[0]);
-      exit(1);
-    }
-
-    for (x = 0; x < N; x++) 
-      if (histo[F[x]] < val) F[x] = 0;
-  }
-  else
-  {
-    fprintf(stderr, "%s: bad data type\n", argv[0]);
+    fprintf(stderr, "%s: lhistosieve failed\n", argv[0]);
     exit(1);
   }
 
-  free(histo);
-  writeimage(image, argv[argc-1]);
+  if (argc == 4) writeimage(image, argv[argc-1]); else writeimage(image, argv[1]);
   freeimage(image);
 
   return 0;

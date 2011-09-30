@@ -76,7 +76,6 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-
   dist = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
   vor = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
   if ((dist == NULL) || (vor == NULL))

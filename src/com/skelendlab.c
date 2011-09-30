@@ -32,76 +32,86 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file normalize.c
+/*! \file skelendlab.c
 
-\brief normalization of grayscale values
+\brief homotopic skeleton of a 2d or 3d label image with dynamic detection of end points
 
-<B>Usage:</B> normalize in.pgm [[nmin nmax] out.pgm]
+<B>Usage:</B> skelendlab in.pgm connex [n] out.pgm
 
 <B>Description:</B>
-Grayscale of \b in.pgm values are normalized to span the range of [nmin...nmax].
-The parameters \b nmin and \b nmax are optional.
-For byte and int32_t images, the default values are \b nmin = 0 and \b nmax = 255.
-For float images, the default values are \b nmin = 0 and \b nmax = 1.
+Homotopic skeletonization by iterative removal of simple, non-end points. 
+Each label is treated separately as a binary image.
+Breadth-first strategy.
+During the first \b n iterations (default 0), the end points
+are removed as well.
+If \b n = -1, the end points are always removed.
 
-<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
+<B>Types supported:</B> byte 2d, byte 3d
 
-<B>Category:</B> arith
-\ingroup  arith
+<B>Category:</B> topobin
+\ingroup  topobin
+
+\warning This operator is very sensitive to small contour irregularities. 
+See skelcurv for a more robust operator. Useful for reducing quasi-curvilinear objects.
 
 \author Michel Couprie
 */
-
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <larith.h>
+#include <mcgeo.h>
+#include <ldist.h>
+#include <lsquelbin.h>
+#include <lskeletons.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * image1;
-  float nmin, nmax;
+  struct xvimage * image;
+  int32_t connex;
+  int32_t niseuil;
+  FILE *fd;
 
-  if ((argc != 2) && (argc != 3) && (argc != 5))
+  if ((argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s in.pgm [[nmin nmax] out.pgm] \n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm connex [n] fileout.pgm\n", 
+                    argv[0]);
     exit(1);
   }
 
-  image1 = readimage(argv[1]);
-  if (image1 == NULL)
+  image = readimage(argv[1]);
+  if (image == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  if (argc == 5)
-  {
-    nmin = (float)(atof(argv[2]));
-    nmax = (float)(atof(argv[3]));
-  }
+  connex = atoi(argv[2]);
+  if (argc == 4)
+    niseuil = 0;
   else
-  {
-    nmin = (float)0;
-    if (datatype(image1) == VFF_TYP_FLOAT)
-      nmax = (float)1;
-    else
-      nmax = (float)255;
-  }
+    niseuil = atoi(argv[3]);
 
-  if (! lnormalize(image1, nmin, nmax))
+  if (depth(image) == 1) // 2D
   {
-    fprintf(stderr, "%s: function lnormalize failed\n", argv[0]);
+    fprintf(stderr, "%s: 2D not yet implemented\n", argv[0]);
     exit(1);
   }
+  else // 3D
+  {
+    if (! lskelendcurvlab3d(image, connex, niseuil))
+    {
+      fprintf(stderr, "%s: lskelend3dlab failed\n", argv[0]);
+      exit(1);
+    }
+  }
 
-  writeimage(image1, argv[argc-1]);
-  freeimage(image1);
+  writeimage(image, argv[argc - 1]);
+  freeimage(image);
 
   return 0;
 } /* main */

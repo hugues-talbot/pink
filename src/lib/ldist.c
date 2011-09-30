@@ -51,7 +51,6 @@ knowledge of the CeCILL license and that you accept its terms.
 *              Michel Couprie Juillet 04 (REDT exacte Coeurjolly)
 *              Michel Couprie Août 04 (SEDT exacte lineaire Meijster et al.)
 *              Jean Cousty janvier 2005 (REDT 3D)
-*              Michel Couprie mai 2007 (Feature Transform Hesselink et al.) (NON TESTE)
 *              Michel Couprie août 2009 (lopeningfunction)
 *
 ****************************************************************/

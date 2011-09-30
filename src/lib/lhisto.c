@@ -847,3 +847,127 @@ int32_t lcountvalues(struct xvimage *image, struct xvimage *mask)
   }
   return(count);
 } /* lcountvalues() */
+
+/* ==================================== */
+int32_t lhistosieve(struct xvimage *image, int32_t val)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lhistosieve"
+{
+  index_t x;
+  index_t *histo;
+  int32_t nbval;
+  index_t rs, cs, ds, N;
+
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  N = rs * cs * ds;
+
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(image);
+
+    histo = (index_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(index_t));
+    if (histo == NULL)
+    {
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return 0;
+    }
+
+    if (! lhisto1(image, histo))
+    {
+      fprintf(stderr, "%s: function lhisto1 failed\n", F_NAME);
+      return 0;
+    }
+
+    for (x = 0; x < N; x++) 
+      if (histo[F[x]] < val) F[x] = 0;
+  }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    int32_t *F = SLONGDATA(image);
+    if (! lhistolong(image, NULL, &histo, &nbval))
+    {
+      fprintf(stderr, "%s: function lhistolong failed\n", F_NAME);
+      return 0;
+    }
+
+    for (x = 0; x < N; x++) 
+      if (histo[F[x]] < val) F[x] = 0;
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad data type\n", F_NAME);
+    return 0;
+  }
+
+  free(histo);
+  return 1;
+} // lhistosieve()
+
+/* ==================================== */
+int32_t lrelabel(struct xvimage *image)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lrelabel"
+{
+  index_t x;
+  index_t *histo;
+  int32_t i, nbval, newnbval;
+  index_t rs, cs, ds, N;
+
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  N = rs * cs * ds;
+
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(image);
+
+    histo = (index_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(index_t));
+    if (histo == NULL)
+    {
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return 0;
+    }
+
+    if (! lhisto1(image, histo))
+    {
+      fprintf(stderr, "%s: function lhisto1 failed\n", F_NAME);
+      return 0;
+    }
+
+    newnbval = 0;
+    for (i = NDG_MIN; i <= NDG_MAX; i++)
+      if (histo[i] != 0)
+	histo[i] = (index_t)newnbval++;
+
+    for (x = 0; x < N; x++) F[x] = histo[F[x]];
+    free(histo);
+  }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    int32_t *F = SLONGDATA(image);
+    if (! lhistolong(image, NULL, &histo, &nbval))
+    {
+      fprintf(stderr, "%s: function lhistolong failed\n", F_NAME);
+      return 0;
+    }
+
+    newnbval = 0;
+    for (i = 0; i < nbval; i++)
+      if (histo[i] != 0)
+	histo[i] = (index_t)newnbval++;
+
+    for (x = 0; x < N; x++) F[x] = (int32_t)(histo[F[x]]);
+    free(histo);
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad data type\n", F_NAME);
+    return 0;
+  }
+  return 1;
+} // lrelabel()

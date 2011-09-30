@@ -39,7 +39,7 @@
  exec wish $0 $1 $2
 
  if {($argc != 2)} { 
-   puts stderr "usage: 3dview2 labels.pgm lut.ppm"
+   puts stderr "usage: 3dviewlab labels.pgm lut.ppm"
    exit 
  }
 
@@ -76,7 +76,7 @@
  # quit : boolean
  # saved : boolean
  # changed : boolean
- set SEG3D(name) "3dview2"
+ set SEG3D(name) "3dviewlab"
  append SEG3D(name) [clock seconds]
  set SEG3D(xline)       1
  set SEG3D(yline)       1
@@ -130,9 +130,11 @@
  set SEG3D(imxy) [image create photo imxyname -file "/tmp/$SEG3D(name)_xy"]
  my_exec_f extractplane "/tmp/$SEG3D(name)_d" 0 xz "/tmp/$SEG3D(name)_xz" 
  my_exec_f pgmrawmode "/tmp/$SEG3D(name)_xz" 
+ my_exec_f colorize "/tmp/$SEG3D(name)_xz" "$SEG3D(lutfilename)" "/tmp/$SEG3D(name)_xz" 
  set SEG3D(imxz) [image create photo imxzname -file "/tmp/$SEG3D(name)_xz"]
  my_exec_f extractplane "/tmp/$SEG3D(name)_d" 0 zy "/tmp/$SEG3D(name)_zy" 
  my_exec_f pgmrawmode "/tmp/$SEG3D(name)_zy" 
+ my_exec_f colorize "/tmp/$SEG3D(name)_zy" "$SEG3D(lutfilename)" "/tmp/$SEG3D(name)_zy" 
  set SEG3D(imzy) [image create photo imzyname -file "/tmp/$SEG3D(name)_zy"]
 
  # get image size

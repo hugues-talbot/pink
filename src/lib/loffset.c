@@ -87,7 +87,7 @@ int32_t loffset(
   /* calcul du resultat */
   /* ---------------------------------------------------------- */
 
-  printf("%d %d %d %d %d %d %d\n", rs, cs, ds, ox, oy, oz, mode);
+  //  printf("%d %d %d %d %d %d %d\n", rs, cs, ds, ox, oy, oz, mode);
 
   switch (mode)
   {

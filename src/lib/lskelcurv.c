@@ -969,6 +969,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
     }
   }
 
+#ifdef VERIF_SURF
   // Vérification : pas de point de surface
   if (connex == 26)
   {
@@ -1015,6 +1016,7 @@ skel * limage2skel(struct xvimage *image, int32_t connex, int32_t len)
     }
     mctopo3d_termine_topo3d();
   }
+#endif
     
   copy2image(temp3, image);
 
@@ -2645,9 +2647,14 @@ int32_t lien(
 
   struct SKC_pt_cell * pts;
 
-  int32_t xmin = mcmin(p1%rs,p2%rs), ymin = mcmin((p1%ps)/rs,(p2%ps)/rs), zmin = mcmin(p1/ps,p2/ps);
-  int32_t xmax = mcmax(p1%rs,p2%rs), ymax = mcmax((p1%ps)/rs,(p2%ps)/rs), zmax = mcmax(p1/ps,p2/ps);
-  assert(xmax-xmin<6);   assert(ymax-ymin<6);   assert(zmax-zmin<6);
+  int32_t xmin = mcmin(p1%rs,p2%rs), 
+          ymin = mcmin((p1%ps)/rs,(p2%ps)/rs), 
+          zmin = mcmin(p1/ps,p2/ps);
+  int32_t xmax = mcmax(p1%rs,p2%rs), 
+          ymax = mcmax((p1%ps)/rs,(p2%ps)/rs), 
+          zmax = mcmax(p1/ps,p2/ps);
+  if ((xmax-xmin >= 6) || (ymax-ymin >= 6) || (zmax-zmin >= 6))
+    return -1; // on ne sait pas traiter
 
   pts = (S->tskel)[J].pts;
   while ( pts != NULL )
@@ -2657,14 +2664,8 @@ int32_t lien(
     xmax = mcmax(xmax,x), ymax = mcmax(ymax,y), zmax = mcmax(zmax,z);
     pts = pts->next;
   }
-  assert(xmax-xmin<6);   assert(ymax-ymin<6);   assert(zmax-zmin<6);
-/*if ( ((xmax-xmin)>5) | ((ymax-ymin)>5) | ((zmax-zmin)>5) ) {
-	  fprintf(stderr,"%d %d %d %d %d %d\n",xmax,xmin,ymax,ymin,zmax,zmin);
-	  fprintf(stderr,"pts d'arc : %d ; %d\n",p1, p2);
-	  pts = (S->tskel[J]).pts;
-	  for (;pts!=NULL;pts=pts->next) fprintf(stderr,"point : %d\n",pts->val);
-exit(0);
-}*/
+  if ((xmax-xmin >= 6) || (ymax-ymin >= 6) || (zmax-zmin >= 6))
+    return -1; // on ne sait pas traiter
 
   for(i=0;i<216;i++) cube[i]=0;
   p1_ = (p1/ps-zmin)*36+((p1%ps)/rs-ymin)*6+(p1%rs-xmin); 
@@ -2688,42 +2689,41 @@ exit(0);
   // pour tous voisins non marqués de list[i]
   // marquer le voisin
   // ajouter le voisin à list
-  for(k=0;k<26;k++) {
+  for (k=0; k < 26; k++) 
+  {
     indice = voisin26(list[i],k,6,36,216);
-    if ( indice != -1 && cube[indice] == -1 ) { cube[indice]=cube[list[i]]+1; list[j]=indice; j++; assert(j<20); }
+    if ( indice != -1 && cube[indice] == -1 ) 
+    { 
+      cube[indice]=cube[list[i]]+1; 
+      list[j]=indice; j++; 
+      if (j >= 20) return -1; // on ne sait pas traiter 
+    }
   }  
   i++;
   }  
 
-/*
-//affichage du cube
-fprintf(stderr,"cube :\n");
-for(i=0;i<6;i++)
-{  for(j=0;j<6;j++)
-   {  for(k=0;k<6;k++)
-        fprintf(stderr,"%d ",cube[i*36+j*6+k]);
-   fprintf(stderr,"\n");}
-fprintf(stderr,"\n");
-}*/
-
   // extraire chemin de p1 à p2
   i = cube[p2_]-2;
-  assert(i<5); // on conjecture qu'il n'y a jamais plus de 4 points pour faire la jonction
+  // on conjecture qu'il n'y a jamais plus de 4 points pour faire la jonction
+  if (i > 4)  return -1; // on ne sait pas traiter
   j = p2_;
-  while( j != p1_ ){
-    for(k=0;k<26;k++){
+  while( j != p1_ )
+  {
+    for (k = 0; k < 26; k++)
+    {
       indice = voisin26(j,k,6,36,216);
-      if ( indice != -1 && cube[indice] == cube[j]-1 ) { 
-		j=indice;
-		i--;
-		x = j%6+xmin;
-		y = (j%36)/6+ymin;
-		z = j/36+zmin;
-		listpoints[i]= z*ps+y*rs+x;
-		k=26;
-      }
-    }    
-  }
+      if ( indice != -1 && cube[indice] == cube[j]-1 ) 
+      { 
+	j=indice;
+	i--;
+	x = j%6+xmin;
+	y = (j%36)/6+ymin;
+	z = j/36+zmin;
+	listpoints[i]= z*ps+y*rs+x;
+	k=26;
+      } // if
+    } // for (k = 0; k < 26; k++)
+  } // while( j != p1_ )
 
   return cube[p2_]-2;
 } // lien()
@@ -2757,25 +2757,28 @@ static int32_t compute_vectors_from_junction(
   adj = adj->next;
   c[1] = adj->val;
   narc = 2;
-  if ( (adj=adj->next)==NULL) { //fprintf(stderr,"appel : nbr arc = %d\n",narc); 
-	  adj = (S->tskel[J]).adj;
-	  adj->vx = -1; adj->vy = 0; adj->vz = 0;
-	  adj = adj->next;
-	  adj->vx = 0; adj->vy = 1; adj->vz = 0;
-	return 0; } // la jonction est un coude
+  if ( (adj=adj->next)==NULL)  // la jonction est un coude
+  {
+    adj = (S->tskel[J]).adj;
+    adj->vx = -1; adj->vy = 0; adj->vz = 0;
+    adj = adj->next;
+    adj->vx = 0; adj->vy = 1; adj->vz = 0;
+    return 0; 
+  }
   c[2] = adj->val;
   narc++;
-  if ( (adj=adj->next) != NULL ) { 
+  if ( (adj=adj->next) != NULL ) 
+  { 
     c[3] = adj->val; 
     narc++;
-  while ( (adj=adj->next) != NULL ) { // plus de 4 arcs
-    narc++; }
+    while ( (adj=adj->next) != NULL ) { narc++; } // plus de 4 arcs
   }
 
-//  fprintf(stderr,"appel : nbr arc = %d\n",narc);
-  if (narc>4) {
+  if (narc > 4) // plus de 4 arcs : on ne sait pas traiter
+  {
     adj = (S->tskel[J]).adj;
-    while (adj != NULL) {
+    while (adj != NULL) 
+    {
       adj->vx = 0; adj->vy = 0; adj->vz = 0;
       adj = adj->next;
     }
@@ -2799,66 +2802,6 @@ static int32_t compute_vectors_from_junction(
     }
     ntemp = npoints;
 
-//v1
-/*  // on place le point de jonction entre c[i] et J
-    listpoints[ntemp] = adj_point_junc2( S, listpoints[ntemp-1], J);
-
-    // on laisse une place pour le point de jonction entre J et c[j]
-    npoints = nmaxpoints - ntemp -2;
-
-    // on place c[j]
-    list_points_at_head2(S, c[j], listpoints+ntemp+2, &npoints);
-    assert(npoints > 0);
-
-    if (!adj_point_junc(S, listpoints[ntemp+2], J))
-    { // arc c[j] arrivant à la jonction , retourner c[j]
-      npoints = nmaxpoints - ntemp -2;
-      list_points_at_tail2(S, c[j], listpoints+ntemp+2, &npoints);
-      assert(npoints > 0);
-    }
-
-    // on place le second point de jonction
-    listpoints[ntemp+1] = adj_point_junc2( S, listpoints[ntemp+2], J);
-
-    npoints = npoints + ntemp + 2;
-
-    if ( listpoints[ntemp]==listpoints[ntemp+1] ) { // si il n'y a qu'un point de jonction
-      for (n1=ntemp+1;n1<npoints-1;n1++) { listpoints[n1]=listpoints[n1+1]; }
-      npoints=npoints-1;
-    }
-    else
-    {
-    // on vérifie que les deux points de jonction sont voisins (notre conjecture)
-    switch(S->connex)
-    {
-      case 4:
-        assert(sont4voisins(listpoints[ntemp], listpoints[ntemp+1], rs));
-        break;
-      case 8:
-        assert(sont8voisins(listpoints[ntemp], listpoints[ntemp+1], rs));
-        break;
-      case 6:
-  	assert(sont6voisins(listpoints[ntemp], listpoints[ntemp+1], rs, ps));
-        break;
-      case 18:
-  	assert(sont18voisins(listpoints[ntemp], listpoints[ntemp+1], rs, ps));
-      break;
-      case 26:
-	assert(sont26voisins(listpoints[ntemp], listpoints[ntemp+1], rs, ps));
-//	if (!sont26voisins(listpoints[ntemp], listpoints[ntemp+1], rs, ps)) 
-//	{
-//	  fprintf(stderr,"non voisins : %d ; %d ; rs=%d ; ps=%d\n",listpoints[ntemp], listpoints[ntemp+1],rs,ps);
-//	  fprintf(stderr,"pts d'arc : %d ; %d\n",listpoints[ntemp-1], listpoints[ntemp+2]);
-//	  pts = (S->tskel[J]).pts;
-//	  for (;pts!=NULL;pts=pts->next) fprintf(stderr,"point : %d\n",pts->val);
-//	}
-      break;
-    }
-    }
-*/
-//fin v1
-
-//v2
     // on laisse 4 places pour la jonction
     npoints = nmaxpoints-ntemp-4;
 
@@ -2875,6 +2818,16 @@ static int32_t compute_vectors_from_junction(
 
     // on place la jonction
     n = lien(S,J,listpoints[ntemp-1],listpoints[ntemp+4],cube,listpoints+ntemp);
+    if (n == -1) // on ne sait pas traiter
+    {
+      adj = (S->tskel[J]).adj;
+      while (adj != NULL) 
+      {
+	adj->vx = 0; adj->vy = 0; adj->vz = 0;
+	adj = adj->next;
+      }
+      return 0;
+    }
 
     // on repositionne le second arc si nécessaire
     if ( n<4 )
@@ -4358,6 +4311,16 @@ static int32_t compute_vectors_from_junction6(
 
     // on place la jonction
     n = lien(S,J,listpoints[ntemp-1],listpoints[ntemp+4],cube,listpoints+ntemp);
+    if (n == -1) // on ne sait pas traiter
+    {
+      adj = (S->tskel[J]).adj;
+      while (adj != NULL) 
+      {
+	adj->vx = 0; adj->vy = 0; adj->vz = 0;
+	adj = adj->next;
+      }
+      return 0;
+    }
 
     // choix d'un point de contrôle dans la jonction
     ijunc = ntemp + (n/2);

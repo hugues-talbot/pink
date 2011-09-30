@@ -41,7 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Description:</B>
 Generates a color image from a grayscale image and a lookup table (see genlut.c).
 
-<B>Types supported:</B> byte 2D
+<B>Types supported:</B> byte 2D, long 2D
 
 <B>Category:</B> convert
 \ingroup  convert
@@ -65,12 +65,10 @@ int main(int argc, char **argv)
   struct xvimage * g1;
   struct xvimage * g2;
   struct xvimage * g3;
-  uint8_t r[256]; /* la LookUp Table */
-  uint8_t g[256];
-  uint8_t b[256];
-  int32_t rs, cs, N;
-  int32_t i;
-  uint8_t v;
+  uint8_t *r; /* la LookUp Table */
+  uint8_t *g;
+  uint8_t *b;
+  int32_t rs, cs, N, i, lutsize;
 
   if (argc != 4)
   {
@@ -85,7 +83,6 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
-  assert(datatype(in) == VFF_TYP_1_BYTE);
   rs = rowsize(in);
   cs = colsize(in);
   N = rs * cs;
@@ -96,11 +93,16 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: readrgbimage failed\n", argv[0]);
     exit(1);
   }
-  assert(rowsize(g1) >= 256);
   assert(colsize(g1) == 1);
   assert(depth(g1) == 1);
   assert(datatype(g1) == VFF_TYP_1_BYTE);
-  for (i = 0; i < 256; i++)
+
+  lutsize = rowsize(g1);
+  r = (uint8_t *)malloc(lutsize * sizeof(uint8_t)); assert(r != NULL);
+  g = (uint8_t *)malloc(lutsize * sizeof(uint8_t)); assert(g != NULL);
+  b = (uint8_t *)malloc(lutsize * sizeof(uint8_t)); assert(b != NULL);
+
+  for (i = 0; i < lutsize; i++)
   {  
     r[i] = (UCHARDATA(g1))[i];
     g[i] = (UCHARDATA(g2))[i];
@@ -116,19 +118,40 @@ int main(int argc, char **argv)
   g3 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(g3 != NULL);
 
   // Applique la LUT
-  for (i = 0; i < N; i++)
+  if (datatype(in) == VFF_TYP_1_BYTE)
   {
-    v = (UCHARDATA(in))[i];
-    (UCHARDATA(g1))[i] = r[v];
-    (UCHARDATA(g2))[i] = g[v];
-    (UCHARDATA(g3))[i] = b[v];
+    uint8_t v;
+    for (i = 0; i < N; i++)
+    {
+      v = ((UCHARDATA(in))[i])%lutsize;
+      (UCHARDATA(g1))[i] = r[v];
+      (UCHARDATA(g2))[i] = g[v];
+      (UCHARDATA(g3))[i] = b[v];
+    }
   }
-  
+  else if (datatype(in) == VFF_TYP_4_BYTE)
+  {
+    uint32_t v;
+    for (i = 0; i < N; i++)
+    {
+      v = ((ULONGDATA(in))[i])%lutsize;
+      (UCHARDATA(g1))[i] = r[v];
+      (UCHARDATA(g2))[i] = g[v];
+      (UCHARDATA(g3))[i] = b[v];
+    }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad data type\n", argv[0]);
+    exit(1);
+  }
+
   writergbimage(g1, g2, g3, argv[argc-1]);
   freeimage(in);
   freeimage(g1);
   freeimage(g2);
   freeimage(g3);
+  free(r); free(g); free(b);
 
   return 0;
 } /* main */
