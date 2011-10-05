@@ -28,7 +28,7 @@ namespace pink {
       // testing if the center of the 'structuring_element' is set
       if ( image.get_size()[1] == -1 )
       {    
-        pink_error("medianfilter: the structuring element must be set");
+        pink_error("medianfilter: the center of the structuring element must be set");
       }  
   
       char_image result;
