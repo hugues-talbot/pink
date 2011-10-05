@@ -194,9 +194,24 @@ if (CMAKE_HOST_UNIX)
 	endif(TIFF_FOUND)
 
 
-### the LIAR is no longer an option
+### the LIAR is no longer an option 
 ### endif (PYTHON_FRONT_END) # end of LIAR
 
+	## the GNU Scientific Library is no longer an option either
+	## this is unfortunate.
+	find_library( GSL_LIB libgsl.${LIBEXT} ${POTENTIAL_LIBDIRS} )
+ 	set( LIBS ${LIBS} ${GSL_LIB} )
+
+	find_library( GSLCBLAS_LIB libgslcblas.${LIBEXT} ${POTENTIAL_LIBDIRS} )
+ 	set( LIBS ${LIBS} ${GSLCBLAS_LIB} )
+
+ 	find_library( LAPACK_LIB liblapack.${LIBEXT} ${POTENTIAL_LIBDIRS} )
+ 	set( LIBS ${LIBS} ${LAPACK_LIB} )
+
+ 	CHECK_INCLUDE_FILE( gsl/gsl_interp.h HTEST )
+ 	if (NOT HTEST)
+ 	    message( FATAL_ERROR "gsl header file failed to compile. If it is installed, than check the gsl flags") 
+         endif(NOT HTEST)
 
     ### ******************************************************
     ### *************** Option Development *******************
