@@ -38,9 +38,19 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
+
+
+
 //#define SPEEDY
 #ifndef POWERWATSEGM_H
 #define POWERWATSEGM_H
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 
 #define epsilon 0.00001
 #define MAX_DEGREE 3000
@@ -55,7 +65,14 @@ int compute_power_watershed(struct xvimage *image_r,
                             struct xvimage *image_b,
                             struct xvimage *seeds,
                             struct xvimage *output,
-                            bool geodesic) ;
+                            bool geodesic,
+                            bool mult) ;
 
 
+#ifdef __cplusplus
+}
+#endif
+
+
+    
 #endif // POWERWATSEGM_H

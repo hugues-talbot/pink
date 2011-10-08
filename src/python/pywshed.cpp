@@ -83,7 +83,7 @@ namespace wshed
   UI_WRAP_FUNCTION(
     "powerwatershed",
     compute_power_watershed,
-    (arg("image_r"), arg("image_g"), arg("image_b"), arg("seeds"), arg("output"), arg("geodesic")),
+    (arg("image_r"), arg("image_g"), arg("image_b"), arg("seeds"), arg("output"), arg("geodesic"), arg("multiple")),
     doc__wshedval__c__
     );
 # include BOOST_PP_UPDATE_COUNTER()

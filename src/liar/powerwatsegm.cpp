@@ -82,7 +82,7 @@ int compute_power_watershed(struct xvimage *image_r,
                             struct xvimage *image_g,
                             struct xvimage *image_b,
                             struct xvimage *seeds,
-                            struct xvimage **output,
+                            struct xvimage *output,
                             bool geod, // perform geodesic reconstruction or not ?
                             bool mult // multiple or binary seeds, grabcut style ?
     )
@@ -159,8 +159,8 @@ int compute_power_watershed(struct xvimage *image_r,
     
       // print_gradient(G->Edges, G->RecWeights, rs, cs, ds );
     //writing results
-    *output= allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-    unsigned char *Temp = UCHARDATA(*output);
+    //*output= allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+    unsigned char *Temp = UCHARDATA(output);
     ArgMax(G->Solution, G->P+1, G->N, Temp) ;
     
     free(G->RecWeights);
