@@ -50,4 +50,12 @@ typedef float DBL_TYPE;
 #include <mclifo.h>
 extern int powerwatsegm(int algo, char * image_name, char * seeds_name, bool geod) ;
 
-#endif
+int compute_power_watershed(struct xvimage *image_r,
+                            struct xvimage *image_g,
+                            struct xvimage *image_b,
+                            struct xvimage *seeds,
+                            struct xvimage *output,
+                            bool geodesic) ;
+
+
+#endif // POWERWATSEGM_H

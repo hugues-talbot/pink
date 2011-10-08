@@ -52,6 +52,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <assert.h>
 
 #include "mcimage.h"
 #include "mccodimage.h"
@@ -192,9 +193,45 @@ A seed image from the GrabCut database contains
 }
 
 
+int StoresMultiSeeds(struct xvimage *seeds,
+                      struct graph *G) 
+/* =============================================================================== */
+  /* IN : image structure and the structure Graph 
+     OUT : two arrays of the structure graph filled from the seed image 
+- the array G->SeededNodes contains the vertices indexes of seeded nodes, 
+- the array G->Labels contains the associated values to those seeds.
+
+The multiseed format for a seed image contains 
+- value 0 for unseeded pixels
+- values 1, 2, ... as labeled values for seeded points. 
+  */
+{
+    int i, j, retval=0;
+    unsigned char * s;
+
+    assert(seeds != NULL);
+  
+    s = UCHARDATA(seeds);
+    j=0;
+    G->P = 0;
+    for (i=0;i<G->N;i++)
+        if(s[i]>0)
+        {
+            G->SeededNodes[j]=i;
+            G->Labels[j]=s[i];
+            j++;
+            if(s[i]>G->P) {G->P = s[i]; } 
+        }
+    G->S = j;
+    printf("%d \n", G->S);
+    G->P = G->P-1;
+
+    return retval;
+}
+
 
 /* =============================================================================== */
-void StoresMultiSeeds(char * image_name,
+int StoresMultiSeeds(char * image_name,
 		     struct graph *G) 
 /* =============================================================================== */
   /* IN : image name and the structure Graph 
@@ -207,26 +244,19 @@ The multiseed format for a seed image contains
 - values 1, 2, ... as labeled values for seeded points. 
   */
 {
-  int i, j;
   struct xvimage * seeds;
-  unsigned char * s;
+
   seeds = readimage(image_name);
-  if (seeds == NULL) { fprintf(stderr, "msf_rw: readimage failed\n"); exit(1); }
-  s = UCHARDATA(seeds);
-  j=0;
-  G->P = 0;
-  for (i=0;i<G->N;i++)
-    if(s[i]>0)
-      {
-	G->SeededNodes[j]=i;
-	G->Labels[j]=s[i];
-	j++;
-	if(s[i]>G->P) {G->P = s[i]; } 
-      }
-  G->S = j;
-  printf("%d \n", G->S);
-  G->P = G->P-1;
+  if (seeds == NULL) {
+      return(1);
+  }
+
+  // call function just above
+  StoresMultiSeeds(seeds, G);
+
   freeimage(seeds);
+
+  return (0);
 }
 
 
@@ -409,37 +439,37 @@ struct xvimage * mult_image_value(struct xvimage * image,
 /*=====================================================*/
 //multiply image values by a constant number n
 {
-  struct xvimage * output;
-  int rs = rowsize(image);
-  int cs = colsize(image);
-  int ds = depth(image);
-  int t = datatype(image);
+    struct xvimage * output;
+    int rs = rowsize(image);
+    int cs = colsize(image);
+    int ds = depth(image);
+    int t = datatype(image);
  
-  // fprintf(stderr, "data type = %d \n", t);
-  int i;
-  unsigned char *img, *out;
-  uint32_t *imgl, *outl;
-  output = allocimage(NULL, rs, cs, ds, t);
-  switch (t)
-  {
+    // fprintf(stderr, "data type = %d \n", t);
+    int i;
+    unsigned char *img, *out;
+    uint32_t *imgl, *outl;
+    output = allocimage(NULL, rs, cs, ds, t);
+    switch (t)
+    {
     case VFF_TYP_1_BYTE:       
-      img = UCHARDATA(image);  
-      out = UCHARDATA(output);
-      for (i=0; i<rs*cs*ds;i++)
-	out[i] = n*img[i];
-      break;
+        img = UCHARDATA(image);  
+        out = UCHARDATA(output);
+        for (i=0; i<rs*cs*ds;i++)
+            out[i] = static_cast<unsigned char>(n*img[i]);
+        break;
     case VFF_TYP_4_BYTE: 
         imgl = ULONGDATA(image); //UINT32DATA(image);
         outl = ULONGDATA(output); //UINT32DATA(output);
-      for (i=0; i<rs*cs*ds;i++)
-	outl[i] = n*imgl[i];
-      break;
+        for (i=0; i<rs*cs*ds;i++)
+            outl[i] = static_cast<uint32_t>(n*imgl[i]);
+        break;
     default: fprintf(stderr,"bad data type %d\n", t);
-             return NULL;
-  } /* switch (t) */
+        return NULL;
+    } /* switch (t) */
 
 
-  return output; 
+    return output; 
 }
 
 

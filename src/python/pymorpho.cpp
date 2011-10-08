@@ -32,8 +32,10 @@
 #include "ldilateros3d.h"
 #include "lfiltrestopo.h"
 #include "lfiltreordre.h"
+#include "powerwatsegm.h"
 #include "lattribheight.h"
 #include "llabelextrema.h"
+
 
 #include <boost/preprocessor/slot/counter.hpp>
 

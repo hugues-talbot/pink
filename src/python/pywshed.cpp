@@ -15,6 +15,7 @@
 //#include "llpemeyer.h"
 #include "lwshedtopo.h"
 #include "pink_python.h"
+#include "powerwatsegm.h"
 #include "ldynamique_grimaud.h"
 
 #include <boost/preprocessor/slot/counter.hpp>
@@ -78,7 +79,16 @@ namespace wshed
     doc__wshedval__c__
     );
 # include BOOST_PP_UPDATE_COUNTER()
+    
+  UI_WRAP_FUNCTION(
+    "powerwatershed",
+    compute_power_watershed,
+    (arg("image_r"), arg("image_g"), arg("image_b"), arg("seeds"), arg("output"), arg("geodesic")),
+    doc__wshedval__c__
+    );
+# include BOOST_PP_UPDATE_COUNTER()
 
+    
 } /* namespace pywshed */
 
 using namespace wshed;

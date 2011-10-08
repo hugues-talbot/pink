@@ -41,7 +41,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include<powerwatsegm.h>
 void StoresGrabCutFormatSeeds(char * image_name, struct graph*) ;
 
-void StoresMultiSeeds(char * image_name,struct graph* ) ;
+int StoresMultiSeeds(char * image_name,struct graph* ) ;
+int StoresMultiSeeds(struct xvimage *seeds, struct graph *G);
 
 void ComputeSeedsSurfRec(char * image_name, struct graph *G) ;
 void ArgMax (DBL_TYPE ** array, int nb_arg, int size_array,  unsigned char * result) ;

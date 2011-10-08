@@ -82,18 +82,21 @@ int compute_power_watershed(struct xvimage *image_r,
                             struct xvimage *image_g,
                             struct xvimage *image_b,
                             struct xvimage *seeds,
-                            struct xvimage *output)
+                            struct xvimage **output,
+                            bool geod, // perform geodesic reconstruction or not ?
+                            bool mult // multiple or binary seeds, grabcut style ?
+    )
 {
     struct graph *G;
-    bool          mult, geod, quicksort = false, color=false, color3D=false;
+    bool          quicksort = false, color=false, color3D=false;
     int           rs, cs, ds, degreMax, doubleweights ;
     int           i, j;
     double        beta;
 
     // image dimensions
-    rs = rowsize(output);
-    cs = colsize(output);
-    ds = depth(output);
+    rs = rowsize(image_r);
+    cs = colsize(image_r);
+    ds = depth(image_r);
 
     beta= 500;       // to be documented
     doubleweights=0; // weights are integer or double.
@@ -112,9 +115,18 @@ int compute_power_watershed(struct xvimage *image_r,
     compute_edges(G, rs, cs, ds);
 
     // colour image ?
-    if ((image_g != NULL) && (image_b != NULL))
+    if ((image_g != NULL) && (image_b != NULL)) {
         color = true;
+        // does this make sense (HT) ?
+        if (ds > 1)
+            color3D = true;
+    }
+    
 
+    // input the seed image
+    if (mult)
+        StoresMultiSeeds(seeds, G);
+    
     // The PWSH algorithm
 
     G->RecWeights = (uint32_t *)calloc(G->M,sizeof(uint32_t));
@@ -147,8 +159,8 @@ int compute_power_watershed(struct xvimage *image_r,
     
       // print_gradient(G->Edges, G->RecWeights, rs, cs, ds );
     //writing results
-    output= allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-    unsigned char *Temp = UCHARDATA(output);
+    *output= allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+    unsigned char *Temp = UCHARDATA(*output);
     ArgMax(G->Solution, G->P+1, G->N, Temp) ;
     
     free(G->RecWeights);
