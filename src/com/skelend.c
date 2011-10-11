@@ -73,7 +73,6 @@ int main(int argc, char **argv)
   struct xvimage * image;
   int32_t connex;
   int32_t niseuil;
-  FILE *fd;
 
   if ((argc != 4) && (argc != 5))
   {
@@ -105,62 +104,11 @@ int main(int argc, char **argv)
   }
   else // 3D
   {
-    uint8_t *endpoint;
-    char tablefilename[128];
-    int32_t tablesize, ret;
-
-#ifdef PRIO
-    prio = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
-    if (prio == NULL)
-    {   
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }    
-#ifdef DIST6
-    if (! ldist(image, 6, prio))
+    if (! lskelendcurv3d(image, connex, niseuil))
     {
-      fprintf(stderr, "%s: ldist failed\n", argv[0]);
+      fprintf(stderr, "%s: lskelendcurv3d failed\n", argv[0]);
       exit(1);
     }
-#else
-    if (! lsedt_meijster(image, prio))
-    {
-      fprintf(stderr, "%s: lsedt_meijster failed\n", argv[0]);
-      exit(1);
-    }
-#endif
-#endif
-    tablesize = 1<<24;
-    endpoint = (uint8_t *)malloc(tablesize);
-    if (! endpoint)
-    {
-      fprintf(stderr, "%s: malloc failed\n", argv[0]);
-      exit(1);
-    }
-    
-    sprintf(tablefilename, "%s/src/tables/TabEndPoints.txt", getenv("PINK"));
-    fd = fopen (tablefilename, "r");
-    if (fd == NULL) 
-    {   
-      fprintf(stderr, "%s: error while opening table\n", argv[0]);
-      exit(1);
-    }
-    ret = fread(endpoint, sizeof(char), tablesize, fd);
-    if (ret != tablesize)
-    {
-      fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", argv[0], tablesize, ret);
-      exit(1);
-    }
-    fclose(fd);
-
-    //    if (! lskelend3d(image, prio, connex, endpoint))
-    if (! lskelend3d(image, connex, endpoint, niseuil))
-    {
-      fprintf(stderr, "%s: lskelend3d failed\n", argv[0]);
-      exit(1);
-    }
-    //    freeimage(prio);
-    free(endpoint);
   }
 
   writeimage(image, argv[argc - 1]);

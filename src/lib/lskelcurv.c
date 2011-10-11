@@ -1610,6 +1610,41 @@ struct xvimage * lskelmarked2image(skel *S)
 } /* lskelmarked2image() */
 
 /* ====================================================================== */
+struct xvimage * lskelnotmarked2image(skel *S)
+/* ====================================================================== */
+// only the not marked items are transfered
+{
+#undef F_NAME
+#define F_NAME "lskelnotmarked2image"
+  int32_t i;
+  int32_t rs = S->rs;
+  int32_t cs = S->cs;
+  int32_t ds = S->ds;
+  int32_t N = ds * cs * rs;
+  uint8_t *F;      /* l'image de depart */
+  SKC_pt_pcell p;
+  struct xvimage * image;
+
+  image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
+  if (image == NULL)
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return NULL;
+  }
+  F = UCHARDATA(image);      /* l'image de depart */
+  memset(F, 0, N);
+
+  for (i = 0; i < S->e_junc; i++)
+  {
+    if (!S->tskel[i].tag)
+      for (p = S->tskel[i].pts; p != NULL; p = p->next) 
+	F[p->val] = NDG_MAX;
+  }
+
+  return image;
+} /* lskelnotmarked2image() */
+
+/* ====================================================================== */
 static int32_t point_at_head(skel *S, int32_t A)
 /* ====================================================================== */
 // détermine le point au "début" de l'arc de courbe A
@@ -2108,6 +2143,49 @@ int32_t lskelmarkvertex(skel *S, int32_t vertex_id)
   S->tskel[vertex_id].tag = 1; // marked
   return 1;
 } /* lskelmarkvertex() */
+
+/* ====================================================================== */
+int32_t lskelpruning(skel *S, double length)
+/* ====================================================================== */
+/*
+The skeleton found in S is searched for "small" branches which satisfy the following criteria:
+\li Branch has exactly one end
+\li Branch length is less than or equal to \b length parameter.
+The matching branches are marked (field "tag" = 1)
+Parameter \b length is a number pixels
+*/
+{
+#undef F_NAME
+#define F_NAME "lskelpruning"
+  int32_t i, A, B, len;
+  SKC_adj_pcell p;
+
+  for (i = S->e_end; i < S->e_curv; i++) // scan branches
+  {
+    S->tskel[i].tag = 0; // default: not marked
+    p = S->tskel[i].adj;
+    if (p != NULL) // not a closed branch
+    {
+      A = p->val;
+      assert(p->next != NULL); // either 0 or 2 adjacent branches
+      p = p->next;
+      B = p->val;
+      assert(p->next == NULL); // idem
+      len = tailleptliste(S->tskel[i].pts);
+      if ((IS_END(A) && IS_JUNC(B)) && (len <= length)) 
+      {
+	  S->tskel[i].tag = 1; // mark for deletion
+	  S->tskel[A].tag = 1; // mark for deletion
+      }
+      if ((IS_END(B) && IS_JUNC(A)) && (len <= length)) 
+      {
+	  S->tskel[i].tag = 1; // mark for deletion
+	  S->tskel[B].tag = 1; // mark for deletion
+      }
+    } // if (p != NULL)
+  } // for (i = S->e_end; i < S->e_curv; i++)
+  return 1;
+} /* lskelpruning() */
 
 /* ====================================================================== */
 int32_t lskelfilter1_old(skel *S, double length, double angle)

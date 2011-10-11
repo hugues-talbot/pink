@@ -32,67 +32,103 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file addconst.c
+/*! \file skelpruning.c
 
-\brief adds a constant value to an image
+\brief pruning of "short end branches" in a curvilinear skeleton
 
-<B>Usage:</B> addconst in.pgm const [out.pgm]
+<B>Usage:</B> skelpruning in.skel length out.pgm
 
 <B>Description:</B>
-For each pixel x, out[x] = in[x] + const. If out[x] 
-exceeds 255, then out[x] is set to 255.
 
-If \b out.pgm is not specified, then out.pgm = in.pgm.
+The skeleton found in \in.skel is searched for "small" branches which satisfy the following criteria:
+\li Branch has exactly one end
+\li Branch length is less than or equal to \b length parameter.
 
-<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d
+Parameter \b length is a number pixels.
 
-<B>Category:</B> arith
-\ingroup  arith
+Matching arcs are written in \b out.pgm.
 
-\author Michel Couprie
+<B>Types supported:</B> skel 2d, skel 3d
+
+<B>Category:</B> topobin
+\ingroup  topobin
+
+\author Michel Couprie 2011
+*/
+
+/*
+%TEST skelpruning %IMAGES/2dskel/s2skel4.skel 35 %RESULTS/skelpruning_s2skel4.skel
+%TEST skelpruning %IMAGES/2dskel/s2skel8.skel 35 %RESULTS/skelpruning_s2skel8.skel
+%TEST skelpruning %IMAGES/3dskel/s3skel6.skel 35 %RESULTS/skelpruning_s3skel6.skel
+%TEST skelpruning %IMAGES/3dskel/s3skel26.skel 35 %RESULTS/skelpruning_s3skel26.skel
 */
 
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <mcutil.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <larith.h>
+#include <mcskelcurv.h>
+#include <lskelcurv.h>
+#include <lsquelbin.h>
+#include <lskeletons.h>
 
 /* =============================================================== */
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * image1;
-  int32_t constante;
-
-  if ((argc != 3) && (argc != 4))
+  struct xvimage * image;
+  skel * S;
+  double length;
+  if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in.pgm constante [out.pgm] \n", argv[0]);
+    fprintf(stderr, "usage: %s in.skel length out.pgm\n", argv[0]);
     exit(1);
   }
 
-  image1 = readimage(argv[1]);  
-  if (image1 == NULL)
+  S = readskel(argv[1]);
+  if (S == NULL)
   {
-    fprintf(stderr, "%s: readimage failed\n", argv[0]);
+    fprintf(stderr, "%s: readskel failed\n", argv[0]);
+    exit(1);
+  }
+  
+  length = atof(argv[2]);
+
+  if (!lskelpruning(S, length))
+  {
+    fprintf(stderr, "%s: function lskelpruning failed\n", argv[0]);
     exit(1);
   }
 
-  constante = atoi(argv[2]);
-
-  if (! laddconst(image1, constante))
+  if (! (image = lskelnotmarked2image(S)))
   {
-    fprintf(stderr, "%s: function laddconst failed\n", argv[0]);
+    fprintf(stderr, "%s: function lskelnotmarked2image failed\n", argv[0]);
     exit(1);
   }
 
-  if (argc == 3) writeimage(image1, argv[1]);
-  else writeimage(image1, argv[argc-1]);
-  freeimage(image1);
+  if (depth(image) == 1) // 2D
+  {
+    if (! lsquelbin(image, S->connex, -1))
+    {
+      fprintf(stderr, "%s: lsquelbin failed\n", argv[0]);
+      exit(1);
+    }
+  }
+  else // 3D
+  {
+    if (! lskelendcurv3d(image, S->connex, -1))
+    {
+      fprintf(stderr, "%s: lskelendcurv3d failed\n", argv[0]);
+      exit(1);
+    }
+  }
+
+  writeimage(image, argv[argc-1]);
+  termineskel(S);
+  freeimage(image);
 
   return 0;
 } /* main */
-
-

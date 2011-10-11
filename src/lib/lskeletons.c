@@ -192,13 +192,13 @@ static int32_t testabaisse8bin(uint8_t *F, index_t x, index_t rs, index_t N)
 } /* testabaisse8bin() */
 
 /* ==================================== */
-static int32_t lskeletons_testabaisse6bin(uint8_t *F, index_t x, index_t rs, index_t ps, index_t N)
+static int32_t testabaisse6bin(uint8_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
   if (mctopo3d_simple6(F, x, rs, ps, N)) { modifie = 1; F[x] = NDG_MIN; }
   return modifie;
-} /* lskeletons_testabaisse6bin() */
+} /* testabaisse6bin() */
 
 /* ==================================== */
 static int32_t testabaisse18bin(uint8_t *F, index_t x, index_t rs, index_t ps, index_t N)
@@ -223,13 +223,13 @@ static int32_t testabaisse26bin(uint8_t *F, index_t x, index_t rs, index_t ps, i
 } /* testabaisse26bin() */
 
 /* ==================================== */
-static int32_t lskeletons_testabaisse6lab(int32_t *F, index_t x, index_t rs, index_t ps, index_t N)
+static int32_t testabaisse6lab(int32_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
   int32_t modifie = 0;
   if (mctopo3d_simple6lab(F, x, rs, ps, N)) { modifie = 1; F[x] = 0; }
   return modifie;
-} /* lskeletons_testabaisse6lab() */
+} /* testabaisse6lab() */
 
 /* ==================================== */
 static int32_t testabaisse18lab(int32_t *F, index_t x, index_t rs, index_t ps, index_t N)
@@ -658,7 +658,7 @@ resultat: F
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
-      if (lskeletons_testabaisse6bin(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
+      if (testabaisse6bin(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
       {
         for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
         {                                              /* pour empiler les voisins */
@@ -669,7 +669,7 @@ resultat: F
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
-      } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
+      } /* if (testabaisse6bin(F, x, rs, N)) */
     } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 6) */
   else
@@ -724,8 +724,8 @@ int32_t lskelubp3d2(struct xvimage *image,
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
   index_t ps = rs * cs;            /* taille plan */
-  index_t d = depth(image);
-  index_t N = d * ps;              /* taille image */
+  index_t ds = depth(image);
+  index_t N = ds * ps;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *I = NULL; /* l'image d'inhibition */
   int32_t *P = NULL;  /* l'image de priorites (cas int32) */
@@ -744,26 +744,17 @@ int32_t lskelubp3d2(struct xvimage *image,
     fprintf(stderr, "%s: imageprio is needed\n", F_NAME);
     return(0);
   }
+  if (imageinhib != NULL) 
+  {
+    COMPARE_SIZE(image, imageinhib);
+    ACCEPTED_TYPES1(imageinhib, VFF_TYP_1_BYTE);
+    I = UCHARDATA(imageinhib);
+  }
+  COMPARE_SIZE(image, imageprio);
+  ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
-  if ((rowsize(imageprio) != rs) || (colsize(imageprio) != cs) || (depth(imageprio) != d))
-  {
-    fprintf(stderr, "%s: bad size for imageprio\n", F_NAME);
-    return(0);
-  }
-  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = SLONGDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
-    PB = UCHARDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
-    PF = FLOATDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
-    PD = DOUBLEDATA(imageprio); 
-  else 
-  {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
-    return(0);
-  }
-  taillemaxrbt = 2 * rs * cs +  2 * rs * d +  2 * d * cs;
+  taillemaxrbt = 2 * rs * cs +  2 * rs * ds +  2 * ds * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
   RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
@@ -771,7 +762,6 @@ int32_t lskelubp3d2(struct xvimage *image,
     fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
-  if (imageinhib != NULL) I = UCHARDATA(imageinhib);
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -806,7 +796,7 @@ int32_t lskelubp3d2(struct xvimage *image,
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
-      if (lskeletons_testabaisse6bin(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
+      if (testabaisse6bin(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
       {
         for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
         {                                              /* pour empiler les voisins */
@@ -823,7 +813,7 @@ int32_t lskelubp3d2(struct xvimage *image,
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
-      } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
+      } /* if (testabaisse6bin(F, x, rs, N)) */
     } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 6) */
   else
@@ -868,6 +858,176 @@ int32_t lskelubp3d2(struct xvimage *image,
   mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelubp3d2() */
+
+/* ==================================== */
+int32_t lskelubp3d2lab(struct xvimage *image, 
+		       struct xvimage *imageprio, 
+		       int32_t connex, 
+		       struct xvimage *imageinhib)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lskelubp3d2lab"
+{ 
+  int32_t k;
+  index_t x;                       /* index de pixel */
+  index_t y;                       /* index (generalement un voisin de x) */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(image);
+  index_t N = ds * ps;              /* taille image */
+  int32_t *F = SLONGDATA(image);   /* l'image de depart */
+  uint8_t *I = NULL; /* l'image d'inhibition */
+  int32_t *P = NULL;  /* l'image de priorites (cas int32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
+  Rbt * RBT;
+  index_t taillemaxrbt;
+
+  IndicsInit(N);
+
+  mctopo3d_init_topo3d();
+
+  if (imageprio == NULL)
+  {
+    fprintf(stderr, "%s: imageprio is needed\n", F_NAME);
+    return(0);
+  }
+  if (imageinhib != NULL) 
+  {
+    COMPARE_SIZE(image, imageinhib);
+    ACCEPTED_TYPES1(imageinhib, VFF_TYP_1_BYTE);
+    I = UCHARDATA(imageinhib);
+  }
+  COMPARE_SIZE(image, imageprio);
+  ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
+  ACCEPTED_TYPES1(image, VFF_TYP_4_BYTE);
+
+  taillemaxrbt = 2 * rs * cs +  2 * rs * ds +  2 * ds * cs;
+  /* cette taille est indicative, le RBT est realloue en cas de depassement */
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
+  if (RBT == NULL)
+  {
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
+    return(0);
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  /* ========================================================= */
+  /*   INITIALISATION DU RBT */
+  /* ========================================================= */
+
+  if (connex == 6)
+  {
+    for (x = 0; x < N; x++)
+    {
+      if (F[x] && (!I || !I[x]) && mctopo3d_simple6lab(F, x, rs, ps, N))
+      {
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
+	}
+	Set(x, EN_RBT);
+      }
+    }
+  }
+  else if (connex == 26)
+  {
+    for (x = 0; x < N; x++)
+    {
+      if (F[x] && (!I || !I[x]) && mctopo3d_simple26lab(F, x, rs, ps, N))
+      {
+	switch(datatype(imageprio))
+	{
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
+	}
+	Set(x, EN_RBT);
+      }
+    }
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
+    return(0);
+  }
+
+  /* ================================================ */
+  /*                  DEBUT SATURATION                */
+  /* ================================================ */
+
+  if (connex == 6)
+  {
+    while (!mcrbt_RbtVide(RBT))
+    {
+      x = RbtPopMin(RBT);
+      UnSet(x, EN_RBT);
+      if (testabaisse6lab(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
+      {
+        for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
+        {                                              /* pour empiler les voisins */
+          y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
+          if ((y != -1) && (F[y]) && (!I || !I[y]) && (! IsSet(y, EN_RBT)))
+          {
+	    switch(datatype(imageprio))
+	    {
+	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
+	    }
+            Set(y, EN_RBT);
+          } /* if y */
+        } /* for k */      
+      } /* if (testabaisse6lab(F, x, rs, N)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
+  } /* if (connex == 6) */
+  else
+  if (connex == 26)
+  {
+    while (!mcrbt_RbtVide(RBT))
+    {
+      x = RbtPopMin(RBT);
+      UnSet(x, EN_RBT);
+      if (testabaisse26lab(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
+      {
+        for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
+        {                                              /* pour empiler les voisins */
+          y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
+          if ((y != -1) && (F[y]) && (!I || !I[y]) && (! IsSet(y, EN_RBT)))
+          {
+	    switch(datatype(imageprio))
+	    {
+	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
+	    }
+            Set(y, EN_RBT);
+          } /* if y */
+        } /* for k */      
+      } /* if (testabaisse26lab(F, x, rs, N)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
+  } /* if (connex == 26) */
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  mctopo3d_termine_topo3d();
+  IndicsTermine();
+  mcrbt_RbtTermine(RBT);
+  return(1);
+} /* lskelubp3d2lab() */
 
 /* ==================================== */
 int32_t lskelcurv(struct xvimage *image, 
@@ -1458,7 +1618,7 @@ resultat: F
         x = FifoPop(FIFO1);
         UnSet(x,EN_RBT);
 
-        if ((! IsSet(x, CONTRAINTE)) && lskeletons_testabaisse6bin(F, x, rs, ps, N))
+        if ((! IsSet(x, CONTRAINTE)) && testabaisse6bin(F, x, rs, ps, N))
         {
           for (k = 0; k <= 10; k += 2)        /* parcourt les voisins en 6-connexite */
           {                                              /* pour empiler les voisins */
@@ -1798,7 +1958,7 @@ resultat: F
         x = FifoPop(FIFO1);
         UnSet(x,EN_RBT);
 
-        if ((! IsSet(x, CONTRAINTE)) && lskeletons_testabaisse6bin(F, x, rs, ps, N))
+        if ((! IsSet(x, CONTRAINTE)) && testabaisse6bin(F, x, rs, ps, N))
         {
           for (k = 0; k <= 10; k += 2)        /* parcourt les voisins en 6-connexite */
           {                                              /* pour empiler les voisins */
@@ -2262,7 +2422,7 @@ resultat: F
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
-      } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
+      } /* if (testabaisse6bin(F, x, rs, N)) */
     } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 6) */
   else
@@ -2291,7 +2451,7 @@ resultat: F
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
-      } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
+      } /* if (testabaisse6bin(F, x, rs, N)) */
     } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 18) */
   else
@@ -2320,7 +2480,7 @@ resultat: F
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
-      } /* if (lskeletons_testabaisse6bin(F, x, rs, N)) */
+      } /* if (testabaisse6bin(F, x, rs, N)) */
     } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 26) */
   else
@@ -2792,6 +2952,52 @@ resultat: F
 } /* lskelend3d_sav() */
 
 /* ==================================== */
+int32_t lskelendcurv3d(struct xvimage *image, 
+		   int32_t connex, 
+		   int32_t niseuil)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lskelendcurv3d"
+{ 
+  uint8_t *endpoint;
+  char tablefilename[128];
+  int32_t tablesize, ret;
+  FILE *fd;
+
+    tablesize = 1<<24;
+    endpoint = (uint8_t *)malloc(tablesize);
+    if (! endpoint)
+    {
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return 0;
+    }
+    
+    sprintf(tablefilename, "%s/src/tables/TabEndPoints.txt", getenv("PINK"));
+    fd = fopen (tablefilename, "r");
+    if (fd == NULL) 
+    {   
+      fprintf(stderr, "%s: error while opening table\n", F_NAME);
+      return 0;
+    }
+    ret = fread(endpoint, sizeof(char), tablesize, fd);
+    if (ret != tablesize)
+    {
+      fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, tablesize, ret);
+      return 0;
+    }
+    fclose(fd);
+
+    if (! lskelend3d(image, connex, endpoint, niseuil))
+    {
+      fprintf(stderr, "%s: lskelend3d failed\n", F_NAME);
+      return 0;
+    }
+    //    freeimage(prio);
+    free(endpoint);
+    return 1;
+} // lskelendcurv3d()
+
+/* ==================================== */
 int32_t lskelend3d(struct xvimage *image, 
 		   int32_t connex, 
 		   uint8_t *endpoint,
@@ -2891,7 +3097,7 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
       {
 	x = RbtPopMin(RBT);
 	config = encodevois(x, F, rs, ps, N);
-	if (((nbiter < niseuil) || (!IsEnd(config))) && lskeletons_testabaisse6bin(F, x, rs, ps, N)) nbdel++;
+	if (((nbiter < niseuil) || (!IsEnd(config))) && testabaisse6bin(F, x, rs, ps, N)) nbdel++;
       } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
         if (F[x] && mctopo3d_simple6(F, x, rs, ps, N))
@@ -3049,7 +3255,7 @@ Algo par passes directionnelles.
       while (!mcrbt_RbtVide(RBT))
       {
 	x = RbtPopMin(RBT);
-	if (((nbiter < niseuil) || (mctopo3d_nbvoislab6(F, x, rs, ps, N) > 1)) && lskeletons_testabaisse6lab(F, x, rs, ps, N)) nbdel++;
+	if (((nbiter < niseuil) || (mctopo3d_nbvoislab6(F, x, rs, ps, N) > 1)) && testabaisse6lab(F, x, rs, ps, N)) nbdel++;
       } /* while (!mcrbt_RbtVide(RBT)) */
       for (x = 0; x < N; x++)
         if (F[x] && mctopo3d_simple6lab(F, x, rs, ps, N))

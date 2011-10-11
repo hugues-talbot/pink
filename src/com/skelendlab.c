@@ -74,7 +74,6 @@ int main(int argc, char **argv)
   struct xvimage * image;
   int32_t connex;
   int32_t niseuil;
-  FILE *fd;
 
   if ((argc != 4) && (argc != 5))
   {
@@ -105,7 +104,7 @@ int main(int argc, char **argv)
   {
     if (! lskelendcurvlab3d(image, connex, niseuil))
     {
-      fprintf(stderr, "%s: lskelend3dlab failed\n", argv[0]);
+      fprintf(stderr, "%s: lskelendcurvlab3d failed\n", argv[0]);
       exit(1);
     }
   }

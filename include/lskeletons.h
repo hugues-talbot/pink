@@ -66,6 +66,12 @@ extern int32_t lskelubp3d2(
         int32_t connex, 
         struct xvimage *imageinhib
 );
+extern int32_t lskelubp3d2lab(
+	struct xvimage *image, 
+	struct xvimage *imageprio, 
+	int32_t connex, 
+	struct xvimage *imageinhib
+);
 extern int32_t lskelcurv(
         struct xvimage *image, 
         struct xvimage *imageprio, 
@@ -104,13 +110,16 @@ extern int32_t ltoposhrink3d(
         int32_t tbmax, 
         struct xvimage *imageinhibit
 );
-
 extern int32_t lskeleucl(
 	struct xvimage *image, 
         int32_t connex, 
         struct xvimage *imageinhib
 );
-
+extern int32_t lskelendcurv3d(
+        struct xvimage *image, 
+	int32_t connex, 
+	int32_t niseuil
+);
 extern int32_t lskelend3d(
         struct xvimage *image, 
 	int32_t connex, 

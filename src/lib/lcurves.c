@@ -108,18 +108,18 @@ static void trouve2voisins(int32_t i, int32_t rs, int32_t ps, int32_t N, int32_t
 /* ====================================================================== */
 static void trouve2voisinslab(int32_t i, int32_t rs, int32_t ps, int32_t N, int32_t connex, int32_t *F, int32_t *v1, int32_t *v2)
 /* ====================================================================== */
-// retourne dans v1 et v2 les 2 voisins de i qui sont des points objet (F)
+// retourne dans v1 et v2 les 2 voisins de i qui sont des points de même label
 {
 #undef F_NAME
 #define F_NAME "trouve2voisinslab"
-  int32_t j, k, n = 0;
+  int32_t j, k, n = 0, lab = F[i];
   switch (connex)
   {
   case 4:
     for (k = 0; k < 8; k += 2)
     {
       j = voisin(i, k, rs, N);
-      if ((j != -1) && (F[j]==F[i]))
+      if ((j != -1) && (F[j]==lab))
       { if (n == 0) *v1 = j; else *v2 = j; n++; }
     } // for k
     break;
@@ -127,7 +127,7 @@ static void trouve2voisinslab(int32_t i, int32_t rs, int32_t ps, int32_t N, int3
     for (k = 0; k < 8; k += 1)
     {
       j = voisin(i, k, rs, N);
-      if ((j != -1) && (F[j]==F[i]))
+      if ((j != -1) && (F[j]==lab))
       { if (n == 0) *v1 = j; else *v2 = j; n++; }
     } // for k
     break;
@@ -135,7 +135,7 @@ static void trouve2voisinslab(int32_t i, int32_t rs, int32_t ps, int32_t N, int3
     for (k = 0; k <= 10; k += 2)
     {
       j = voisin6(i, k, rs, ps, N);
-      if ((j != -1) && (F[j]==F[i]))
+      if ((j != -1) && (F[j]==lab))
       { if (n == 0) *v1 = j; else *v2 = j; n++; }
     } // for k
     break;
@@ -143,7 +143,7 @@ static void trouve2voisinslab(int32_t i, int32_t rs, int32_t ps, int32_t N, int3
     for (k = 0; k < 18; k += 1)
     {
       j = voisin18(i, k, rs, ps, N);
-      if ((j != -1) && (F[j]==F[i]))
+      if ((j != -1) && (F[j]==lab))
       { if (n == 0) *v1 = j; else *v2 = j; n++; }
     } // for k
     break;
@@ -151,7 +151,7 @@ static void trouve2voisinslab(int32_t i, int32_t rs, int32_t ps, int32_t N, int3
     for (k = 0; k < 26; k += 1)
     {
       j = voisin26(i, k, rs, ps, N);
-      if ((j != -1) && (F[j]==F[i]))
+      if ((j != -1) && (F[j]==lab))
       { if (n == 0) *v1 = j; else *v2 = j; n++; }
     } // for k
     break;
@@ -159,9 +159,12 @@ static void trouve2voisinslab(int32_t i, int32_t rs, int32_t ps, int32_t N, int3
     fprintf(stderr, "%s: bad connectivity: %d\n", F_NAME, connex);
     exit(0);
   } // switch (connex)
-  if (n != 2) printf("%s: error n = %d != 2; point %d %d %d\n", F_NAME, n, 
-		     i % rs, (i % ps) / rs, i / ps);
-  assert(n == 2);
+  if (n != 2) 
+  {
+    printf("%s: error n = %d != 2; point %d %d %d, label %d\n", F_NAME, n, 
+		     i % rs, (i % ps) / rs, i / ps, lab);
+    exit(0);
+  }
 } // trouve2voisinslab()
 
 /* ====================================================================== */
@@ -223,42 +226,42 @@ static int32_t trouve1voisinlab(int32_t i, int32_t rs, int32_t ps, int32_t N, in
 {
 #undef F_NAME
 #define F_NAME "trouve1voisinlab"
-  int32_t j, k = 0;
+  int32_t j, k = 0, lab = F[i];
   switch (connex)
   {
   case 4:
     for (k = 0; k < 8; k += 2)
     {
       j = voisin(i, k, rs, N);
-      if ((j != -1) && (F[j]==F[i])) return j;
+      if ((j != -1) && (F[j]==lab)) return j;
     } // for k
     break;
   case 8:
     for (k = 0; k < 8; k += 1)
     {
       j = voisin(i, k, rs, N);
-      if ((j != -1) && (F[j]==F[i])) return j;
+      if ((j != -1) && (F[j]==lab)) return j;
     } // for k
     break;
   case 6:
     for (k = 0; k <= 10; k += 2)
     {
       j = voisin6(i, k, rs, ps, N);
-      if ((j != -1) && (F[j]==F[i])) return j;
+      if ((j != -1) && (F[j]==lab)) return j;
     } // for k
     break;
   case 18:
     for (k = 0; k < 18; k += 1)
     {
       j = voisin18(i, k, rs, ps, N);
-      if ((j != -1) && (F[j]==F[i])) return j;
+      if ((j != -1) && (F[j]==lab)) return j;
     } // for k
     break;
   case 26:
     for (k = 0; k < 26; k += 1)
     {
       j = voisin26(i, k, rs, ps, N);
-      if ((j != -1) && (F[j]==F[i])) return j;
+      if ((j != -1) && (F[j]==lab)) return j;
     } // for k
     break;
   default:
