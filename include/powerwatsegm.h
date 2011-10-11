@@ -60,14 +60,19 @@ typedef float DBL_TYPE;
 #include <mclifo.h>
 extern int powerwatsegm(int algo, char * image_name, char * seeds_name, bool geod) ;
 
-int compute_power_watershed(struct xvimage *image_r,
-                            struct xvimage *image_g,
-                            struct xvimage *image_b,
-                            struct xvimage *seeds,
-                            struct xvimage *output,
-                            bool geodesic,
-                            bool mult) ;
+    int compute_power_watershed_col(struct xvimage *image_r,
+                                    struct xvimage *image_g,
+                                    struct xvimage *image_b,
+                                    struct xvimage *seeds,
+                                    bool geodesic,
+                                    bool mult,
+                                    struct xvimage *output    ) ;
 
+    int compute_power_watershed_bw(struct xvimage *image_r,
+                                   struct xvimage *seeds,
+                                   bool geodesic,
+                                   bool mult,
+                                   struct xvimage *output    ) ;   
 
 #ifdef __cplusplus
 }

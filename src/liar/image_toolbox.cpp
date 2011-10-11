@@ -262,7 +262,7 @@ The multiseed format for a seed image contains
 
 
 /* =============================================================================== */
-void ArgMax (DBL_TYPE ** array, int nb_arg, int size_array,  unsigned char * result) 
+void ArgMax (DBL_TYPE ** array, int nb_arg, int size_array,  unsigned int * result) 
 /* =============================================================================== */
   /* IN : two-dimentional array of doubles representing nb_arg arrays of size size_array
      OUT : result : one-dimentional array taking the argmax values of array.
@@ -286,7 +286,7 @@ void ArgMax (DBL_TYPE ** array, int nb_arg, int size_array,  unsigned char * res
 	 
 	 }  
        if (val>maxi) argmax = i;
-       result[j] = ((argmax)*255)/(nb_arg-1);
+       result[j] = argmax; // ((argmax)*255)/(nb_arg-1);
      } 
 }
 

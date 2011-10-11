@@ -79,16 +79,28 @@ namespace wshed
     doc__wshedval__c__
     );
 # include BOOST_PP_UPDATE_COUNTER()
+
+
+    UI_WRAP_RESULT(
+        int_image,
+        "powerwatershedCol",
+        compute_power_watershed_col,
+        (arg("image_r"), arg("image_g"), arg("image_b"), arg("seeds"), arg("geodesic"), arg("multiple")),
+        doc__powerwshedval__c__
+        );
+
+# include BOOST_PP_UPDATE_COUNTER()
     
-  UI_WRAP_FUNCTION(
-    "powerwatershed",
-    compute_power_watershed,
-    (arg("image_r"), arg("image_g"), arg("image_b"), arg("seeds"), arg("output"), arg("geodesic"), arg("multiple")),
-    doc__wshedval__c__
-    );
+    UI_WRAP_RESULT(
+        int_image,
+        "powerwatershedBW",
+        compute_power_watershed_bw,
+        (arg("image_bw"), arg("seeds"), arg("geodesic"), arg("multiple")),
+        doc__powerwshedval__c__
+        );
+
 # include BOOST_PP_UPDATE_COUNTER()
 
-    
 } /* namespace pywshed */
 
 using namespace wshed;

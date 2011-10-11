@@ -50,6 +50,7 @@ knowledge of the CeCILL license and that you accept its terms.
 \ingroup segm
 
 \author Camille Couprie
+\changes Hugues Talbot, Python version
 */
 
 
@@ -78,13 +79,14 @@ knowledge of the CeCILL license and that you accept its terms.
 
 
 
-int compute_power_watershed(struct xvimage *image_r,
-                            struct xvimage *image_g,
-                            struct xvimage *image_b,
-                            struct xvimage *seeds,
-                            struct xvimage *output,
-                            bool geod, // perform geodesic reconstruction or not ?
-                            bool mult // multiple or binary seeds, grabcut style ?
+// colour Power Watershed
+int compute_power_watershed_col(struct xvimage *image_r,
+                                struct xvimage *image_g,
+                                struct xvimage *image_b,
+                                struct xvimage *seeds,
+                                bool geod, // perform geodesic reconstruction or not ?
+                                bool mult, // multiple or binary seeds, grabcut style ?
+                                struct xvimage *output // must be already allocated when calling
     )
 {
     struct graph *G;
@@ -160,7 +162,7 @@ int compute_power_watershed(struct xvimage *image_r,
       // print_gradient(G->Edges, G->RecWeights, rs, cs, ds );
     //writing results
     //*output= allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-    unsigned char *Temp = UCHARDATA(output);
+    unsigned int *Temp = ULONGDATA(output); // this is really 32-bit unsigned int
     ArgMax(G->Solution, G->P+1, G->N, Temp) ;
     
     free(G->RecWeights);
@@ -170,6 +172,17 @@ int compute_power_watershed(struct xvimage *image_r,
     free(G->Edges);
 
     return 0;
+}
+
+
+int compute_power_watershed_bw(struct xvimage *image_bw,
+                               struct xvimage *seeds,
+                               bool geod, // perform geodesic reconstruction or not ?
+                               bool mult, // multiple or binary seeds, grabcut style ?
+                               struct xvimage *output // must be already allocated when calling
+    )
+{
+    return compute_power_watershed_col(image_bw, NULL, NULL, seeds, geod, mult, output);
 }
 
 /// This is old code for reference only at this stage

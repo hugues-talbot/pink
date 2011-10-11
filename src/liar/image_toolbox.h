@@ -45,7 +45,7 @@ int StoresMultiSeeds(char * image_name,struct graph* ) ;
 int StoresMultiSeeds(struct xvimage *seeds, struct graph *G);
 
 void ComputeSeedsSurfRec(char * image_name, struct graph *G) ;
-void ArgMax (DBL_TYPE ** array, int nb_arg, int size_array,  unsigned char * result) ;
+void ArgMax (DBL_TYPE ** array, int nb_arg, int size_array,  unsigned int * result) ;
  void printweights(uint32_t * weights, int rs, int cs);
  void printweights_double(DBL_TYPE * weights, int rs, int cs);
  void overlay(int algo, struct xvimage * image_r,  struct xvimage * image_v,  struct xvimage * image_b, struct xvimage * output,  bool color, char * name);
