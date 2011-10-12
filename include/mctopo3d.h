@@ -512,6 +512,9 @@ extern int32_t mctopo3d_nbvoislabc26(
 extern int32_t mctopo3d_curve6(uint8_t *img, index_t p, index_t rs, index_t ps, index_t N);
 extern int32_t mctopo3d_curve18(uint8_t *img, index_t p, index_t rs, index_t ps, index_t N);
 extern int32_t mctopo3d_curve26(uint8_t *img, index_t p, index_t rs, index_t ps, index_t N);
+extern int32_t mctopo3d_curve6lab(int32_t *img, index_t p, index_t rs, index_t ps, index_t N);
+extern int32_t mctopo3d_curve18lab(int32_t *img, index_t p, index_t rs, index_t ps, index_t N);
+extern int32_t mctopo3d_curve26lab(int32_t *img, index_t p, index_t rs, index_t ps, index_t N);
 #ifdef __cplusplus
 }
 #endif

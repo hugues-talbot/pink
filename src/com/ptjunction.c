@@ -40,11 +40,11 @@ knowledge of the CeCILL license and that you accept its terms.
 
 <B>Description:</B>
 Detects junction points in the 2d or 3d binary image \b in.pgm, which is supposed to contain a skeleton.
-A junction point is a white point x such that #(Nn[x] inter X) > 2,
-where Nn[x] stands for the n-neighborhood of x (excluding x), and
-n = 4, 8 in 2D or n = 6, 18, 26 in 3D, as set by the parameter \b connex.
+A junction point is a white point x such that #(Nn[x] inter X) > 2, where Nn[x] stands for the n-neighborhood of x (excluding x), and n = 4, 8 in 2D or n = 6, 18, 26 in 3D, as set by the parameter \b connex.
 
-<B>Types supported:</B> byte 2D, byte 3D
+When the type of \b in.pgm is 4_BYTE, the image is treated as a label image, where each label is processed as a separate binary image (all other labels are considered as background).
+
+<B>Types supported:</B> byte 2D, byte 3D, long 3D
 
 <B>Category:</B> topobin
 \ingroup  topobin
@@ -82,13 +82,32 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[2]);
 
-  if (! lptjunction(image, connex))
+  if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    fprintf(stderr, "%s: function lptjunction failed\n", argv[0]);
-    exit(1);
+    struct xvimage * res = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
+    if (res == NULL)
+    {
+      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+      exit(1);
+    }
+    if (! lptjunctionlab(image, connex, res))
+    {
+      fprintf(stderr, "%s: function lptjunctionlab failed\n", argv[0]);
+      exit(1);
+    }
+    writeimage(res, argv[argc-1]);
+    freeimage(res);
+  }
+  else 
+  {
+    if (! lptjunction(image, connex))
+    {
+      fprintf(stderr, "%s: function lptjunction failed\n", argv[0]);
+      exit(1);
+    }
+    writeimage(image, argv[argc-1]);
   }
 
-  writeimage(image, argv[argc-1]);
   freeimage(image);
 
   return 0;

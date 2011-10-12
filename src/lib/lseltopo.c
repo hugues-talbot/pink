@@ -38,6 +38,7 @@ knowledge of the CeCILL license and that you accept its terms.
 // update janvier 2008 add lsimplepair
 // update juillet 2010 modif lptmultiple
 // update juillet 2010 add lptjunction
+// update octobre 2011 versions labels
 
 #include <stdio.h>
 #include <stdint.h>
@@ -58,14 +59,16 @@ int32_t lptisolated(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptisolated"
 {
-  int32_t x;
+  index_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -108,8 +111,9 @@ int32_t lptisolated(struct xvimage * image, int32_t connex)
         RES[x] = NDG_MAX;
   }
   else
-  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
-      return 0;
+  {
+    fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
+    return 0;
   }
   for (x = 0; x < N; x++) SOURCE[x] = RES[x];
   free(RES);
@@ -122,14 +126,16 @@ int32_t lptinterior(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptinterior"
 {
-  int32_t x;
+  index_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -186,15 +192,17 @@ int32_t lptmultiple(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptmultiple"
 {
-  int32_t x;
+  index_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
   int32_t t, tb;
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -271,14 +279,16 @@ int32_t lptend(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptend"
 {
-  int32_t x;
+  index_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -338,14 +348,16 @@ int32_t lptcurve(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptcurve"
 {
-  int32_t x;
+  index_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -408,14 +420,16 @@ int32_t lptjunction(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptjunction"
 {
-  int32_t x;
+  index_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -475,14 +489,16 @@ int32_t lptseparatinggray(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptseparatinggray"
 {
-  int32_t x;
+  index_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -526,14 +542,16 @@ such that there exists c verifying F(p)-h < c <= F(p) and
 #undef F_NAME
 #define F_NAME "lpthseparatinggray"
 {
-  int32_t x;
+  index_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -568,15 +586,17 @@ int32_t lptseparating(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptseparating"
 {
-  int32_t x;
+  index_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
   int32_t t, tb;
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -654,15 +674,17 @@ int32_t lptsimple(struct xvimage * image, int32_t connex)
 #undef F_NAME
 #define F_NAME "lptsimple"
 {
-  int32_t x;
+  index_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
   int32_t t, tb;
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -737,15 +759,17 @@ int32_t lseltopo(struct xvimage * image, int32_t connex, int32_t tm, int32_t tp,
 #undef F_NAME
 #define F_NAME "lseltopo"
 {
-  int32_t x;
+  index_t x;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
   int32_t t, tb;
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -823,14 +847,16 @@ int32_t lsimplepair(struct xvimage * image, uint32_t onepair)
 #undef F_NAME
 #define F_NAME "lsimplepair"
 {
-  int32_t x, y, z, p, p1;
+  index_t x, y, z, p, p1;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -895,14 +921,16 @@ int32_t lminimalsimplepair(struct xvimage * image, uint32_t onepair)
 #undef F_NAME
 #define F_NAME "lminimalsimplepair"
 {
-  int32_t x, y, z, p, p1;
+  index_t x, y, z, p, p1;
   uint8_t *SOURCE = UCHARDATA(image);
   uint8_t *RES;
-  int32_t rs = rowsize(image);
-  int32_t cs = colsize(image);
-  int32_t ds = depth(image);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
+  index_t rs = rowsize(image);
+  index_t cs = colsize(image);
+  index_t ds = depth(image);
+  index_t ps = rs * cs;          /* taille plan */
+  index_t N = ps * ds;           /* taille image */
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
 
   RES = (uint8_t *)calloc(N, sizeof(char));
   if (RES == NULL)
@@ -966,3 +994,431 @@ int32_t lminimalsimplepair(struct xvimage * image, uint32_t onepair)
   free(RES);
   return 1;
 } /* lminimalsimplepair() */
+
+// =======================================================
+// FOR LABEL IMAGES
+// =======================================================
+
+/* ==================================== */
+int32_t lptisolatedlab(struct xvimage * image, int32_t connex, struct xvimage * res)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lptisolatedlab"
+{
+  index_t x;
+  int32_t *SOURCE = SLONGDATA(image);
+  uint8_t *RES = UCHARDATA(res);
+  index_t rs = rowsize(image), cs = colsize(image), ds = depth(image);
+  index_t ps = rs * cs, N = ps * ds;
+
+  ACCEPTED_TYPES1(image, VFF_TYP_4_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_1_BYTE);
+  COMPARE_SIZE(image, res);
+
+  razimage(res);
+
+  /* ---------------------------------------------------------- */
+  /* calcul du resultat */
+  /* ---------------------------------------------------------- */
+
+  if (connex == 4)
+  {
+    fprintf(stderr,"%s: 2D not yet implemented\n", F_NAME);
+    return 0;
+#ifdef WHEN_IMPLEMENTED
+    for (x = 0; x < N; x++)
+      if ((nonbord(x, rs, N)) && (typetopobin(SOURCE, x, rs, N) == ISOLE))
+        RES[x] = NDG_MAX;
+#endif
+  }
+  else if (connex == 8)
+  {
+    fprintf(stderr,"%s: 2D not yet implemented\n", F_NAME);
+    return 0;
+#ifdef WHEN_IMPLEMENTED
+    for (x = 0; x < N; x++)
+      if ((nonbord(x, rs, N)) && (typetopobin8(SOURCE, x, rs, N) == ISOLE))
+        RES[x] = NDG_MAX;
+#endif
+  }
+  else if (connex == 6)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (mctopo3d_nbvoislab6(SOURCE, x, rs, ps, N) == 0))
+        RES[x] = NDG_MAX;
+  }
+  else if (connex == 18)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (mctopo3d_nbvoislab18(SOURCE, x, rs, ps, N) == 0))
+        RES[x] = NDG_MAX;
+  }
+  else if (connex == 26)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (mctopo3d_nbvoislab26(SOURCE, x, rs, ps, N) == 0))
+        RES[x] = NDG_MAX;
+  }
+  else
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
+      return 0;
+  }
+  return 1;
+} /* lptisolatedlab() */
+
+/* ==================================== */
+int32_t lptinteriorlab(struct xvimage * image, int32_t connex, struct xvimage * res)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lptinteriorlab"
+{
+  index_t x;
+  int32_t *SOURCE = SLONGDATA(image);
+  uint8_t *RES = UCHARDATA(res);
+  index_t rs = rowsize(image), cs = colsize(image), ds = depth(image);
+  index_t ps = rs * cs, N = ps * ds;
+
+  ACCEPTED_TYPES1(image, VFF_TYP_4_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_1_BYTE);
+  COMPARE_SIZE(image, res);
+  razimage(res);
+
+  /* ---------------------------------------------------------- */
+  /* calcul du resultat */
+  /* ---------------------------------------------------------- */
+
+  if (connex == 4)
+  {
+    fprintf(stderr,"%s: 2D not yet implemented\n", F_NAME);
+    return 0;
+#ifdef WHEN_IMPLEMENTED
+    for (x = 0; x < N; x++)
+      if ((nonbord(x, rs, N)) && (typetopobin(SOURCE, x, rs, N) == INTERIEUR))
+        RES[x] = NDG_MAX;
+#endif
+  }
+  else if (connex == 8)
+  {
+    fprintf(stderr,"%s: 2D not yet implemented\n", F_NAME);
+    return 0;
+#ifdef WHEN_IMPLEMENTED
+    for (x = 0; x < N; x++)
+      if ((nonbord(x, rs, N)) && (typetopobin8(SOURCE, x, rs, N) == INTERIEUR))
+        RES[x] = NDG_MAX;
+#endif
+  }
+  else if (connex == 6)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (mctopo3d_nbvoislab6(SOURCE, x, rs, ps, N) == 6))
+        RES[x] = NDG_MAX;
+  }
+  else if (connex == 18)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (mctopo3d_nbvoislab18(SOURCE, x, rs, ps, N) == 18))
+        RES[x] = NDG_MAX;
+  }
+  else if (connex == 26)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && (mctopo3d_nbvoislab26(SOURCE, x, rs, ps, N) == 26))
+        RES[x] = NDG_MAX;
+  }
+  else
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
+      return 0;
+  }
+  return 1;
+} /* lptinteriorlab() */
+
+/* ==================================== */
+int32_t lptmultiplelab(struct xvimage * image, int32_t connex, struct xvimage * res)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lptmultiplelab"
+{
+  index_t x;
+  int32_t *SOURCE = SLONGDATA(image);
+  uint8_t *RES = UCHARDATA(res);
+  index_t rs = rowsize(image), cs = colsize(image), ds = depth(image);
+  index_t ps = rs * cs, N = ps * ds;
+  int32_t t, tb;
+
+  ACCEPTED_TYPES1(image, VFF_TYP_4_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_1_BYTE);
+  COMPARE_SIZE(image, res);
+  razimage(res);
+
+  /* ---------------------------------------------------------- */
+  /* calcul du resultat */
+  /* ---------------------------------------------------------- */
+
+  if (connex == 4)
+  {
+    fprintf(stderr,"%s: 2D not yet implemented\n", F_NAME);
+    return 0;
+#ifdef WHEN_IMPLEMENTED
+    for (x = 0; x < N; x++)
+      if ((nonbord(x, rs, N)) && (typetopobin(SOURCE, x, rs, N) == MULTIPLE))
+        RES[x] = NDG_MAX;
+#endif
+  }
+  else if (connex == 8)
+  {
+    fprintf(stderr,"%s: 2D not yet implemented\n", F_NAME);
+    return 0;
+#ifdef WHEN_IMPLEMENTED
+    for (x = 0; x < N; x++)
+      if ((nonbord(x, rs, N)) && (typetopobin8(SOURCE, x, rs, N) == MULTIPLE))
+        RES[x] = NDG_MAX;
+#endif
+/*
+  ancienne version : 
+      if ((nonbord(x, rs, N)) && SOURCE[x] && (nbtrans8(SOURCE, x, rs, N) > 2))
+        RES[x] = NDG_MAX;
+*/
+  }
+  else if (connex == 6)
+  {
+    mctopo3d_init_topo3d();
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N))
+      {
+        mctopo3d_top6lab(SOURCE, x, rs, ps, N, &t, &tb);
+        if (t > 2) RES[x] = NDG_MAX;
+      }
+    mctopo3d_termine_topo3d();
+  }
+  else if (connex == 26)
+  {
+    mctopo3d_init_topo3d();
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N))
+      {
+        mctopo3d_top26lab(SOURCE, x, rs, ps, N, &t, &tb);
+        if (t > 2) RES[x] = NDG_MAX;
+      }
+    mctopo3d_termine_topo3d();
+  }
+  else if (connex == 18)
+  {
+    mctopo3d_init_topo3d();
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N))
+      {
+        mctopo3d_top18lab(SOURCE, x, rs, ps, N, &t, &tb);
+        if (t > 2) RES[x] = NDG_MAX;
+      }
+    mctopo3d_termine_topo3d();
+  }
+  else
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
+      return 0;
+  }
+  return 1;
+} /* lptmultiplelab() */
+
+/* ==================================== */
+int32_t lptendlab(struct xvimage * image, int32_t connex, struct xvimage * res)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lptendlab"
+{
+  index_t x;
+  int32_t *SOURCE = SLONGDATA(image);
+  uint8_t *RES = UCHARDATA(res);
+  index_t rs = rowsize(image), cs = colsize(image), ds = depth(image);
+  index_t ps = rs * cs, N = ps * ds;
+
+  ACCEPTED_TYPES1(image, VFF_TYP_4_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_1_BYTE);
+  COMPARE_SIZE(image, res);
+  razimage(res);
+
+  /* ---------------------------------------------------------- */
+  /* calcul du resultat */
+  /* ---------------------------------------------------------- */
+
+  if (connex == 4)
+  {
+    fprintf(stderr,"%s: 2D not yet implemented\n", F_NAME);
+    return 0;
+#ifdef WHEN_IMPLEMENTED
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord(x, rs, N)) && (nbvois4(SOURCE, x, rs, N) == 1))
+        RES[x] = NDG_MAX;
+#endif
+  }
+  else if (connex == 8)
+  {
+    fprintf(stderr,"%s: 2D not yet implemented\n", F_NAME);
+    return 0;
+#ifdef WHEN_IMPLEMENTED
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord(x, rs, N)) && (nbvois8(SOURCE, x, rs, N) == 1))
+        RES[x] = NDG_MAX;
+#endif
+  }
+  else if (connex == 6)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (mctopo3d_nbvoislab6(SOURCE, x, rs, ps, N) == 1))
+        RES[x] = NDG_MAX;
+  }
+  else if (connex == 18)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (mctopo3d_nbvoislab18(SOURCE, x, rs, ps, N) == 1))
+        RES[x] = NDG_MAX;
+  }
+  else if (connex == 26)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (mctopo3d_nbvoislab26(SOURCE, x, rs, ps, N) == 1))
+        RES[x] = NDG_MAX;
+  }
+  else
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
+      return 0;
+  }
+  return 1;
+} /* lptendlab() */
+
+/* ==================================== */
+int32_t lptcurvelab(struct xvimage * image, int32_t connex, struct xvimage * res)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lptcurvelab"
+{
+  index_t x;
+  int32_t *SOURCE = SLONGDATA(image);
+  uint8_t *RES = UCHARDATA(res);
+  index_t rs = rowsize(image), cs = colsize(image), ds = depth(image);
+  index_t ps = rs * cs, N = ps * ds;
+
+  ACCEPTED_TYPES1(image, VFF_TYP_4_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_1_BYTE);
+  COMPARE_SIZE(image, res);
+  razimage(res);
+
+  /* ---------------------------------------------------------- */
+  /* calcul du resultat */
+  /* ---------------------------------------------------------- */
+
+  if (connex == 4)
+  {
+    fprintf(stderr,"%s: 2D not yet implemented\n", F_NAME);
+    return 0;
+#ifdef WHEN_IMPLEMENTED
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord(x, rs, N) && curve4(SOURCE, x, rs, N))
+        RES[x] = NDG_MAX;
+#endif
+  }
+  else if (connex == 8)
+  {
+    fprintf(stderr,"%s: 2D not yet implemented\n", F_NAME);
+    return 0;
+#ifdef WHEN_IMPLEMENTED
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord(x, rs, N) && curve8(SOURCE, x, rs, N))
+        RES[x] = NDG_MAX;
+#endif
+  }
+  else if (connex == 6)
+  {
+    mctopo3d_init_topo3d();
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && mctopo3d_curve6lab(SOURCE, x, rs, ps, N))
+        RES[x] = NDG_MAX;
+    mctopo3d_termine_topo3d();
+  }
+  else if (connex == 18)
+  {
+    mctopo3d_init_topo3d();
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && mctopo3d_curve18lab(SOURCE, x, rs, ps, N))
+        RES[x] = NDG_MAX;
+    mctopo3d_termine_topo3d();
+  }
+  else if (connex == 26)
+  {
+    mctopo3d_init_topo3d();
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && nonbord3d(x, rs, ps, N) && mctopo3d_curve26lab(SOURCE, x, rs, ps, N))
+        RES[x] = NDG_MAX;
+    mctopo3d_termine_topo3d();
+  }
+  else
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
+      return 0;
+  }
+  return 1;
+} /* lptcurvelab() */
+
+/* ==================================== */
+int32_t lptjunctionlab(struct xvimage * image, int32_t connex, struct xvimage * res)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lptjunctionlab"
+{
+  index_t x;
+  int32_t *SOURCE = SLONGDATA(image);
+  uint8_t *RES = UCHARDATA(res);
+  index_t rs = rowsize(image), cs = colsize(image), ds = depth(image);
+  index_t ps = rs * cs, N = ps * ds;
+
+  ACCEPTED_TYPES1(image, VFF_TYP_4_BYTE);
+  ACCEPTED_TYPES1(res, VFF_TYP_1_BYTE);
+  COMPARE_SIZE(image, res);
+  razimage(res);
+
+  /* ---------------------------------------------------------- */
+  /* calcul du resultat */
+  /* ---------------------------------------------------------- */
+
+  if (connex == 4)
+  {
+    fprintf(stderr,"%s: 2D not yet implemented\n", F_NAME);
+    return 0;
+#ifdef WHEN_IMPLEMENTED
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord(x, rs, N)) && (nbvois4(SOURCE, x, rs, N) >= 3))
+        RES[x] = NDG_MAX;
+#endif
+  }
+  else if (connex == 8)
+  {
+    fprintf(stderr,"%s: 2D not yet implemented\n", F_NAME);
+    return 0;
+#ifdef WHEN_IMPLEMENTED
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord(x, rs, N)) && (nbvois8(SOURCE, x, rs, N) >= 3))
+        RES[x] = NDG_MAX;
+#endif
+  }
+  else if (connex == 6)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (mctopo3d_nbvoislab6(SOURCE, x, rs, ps, N) >= 3))
+        RES[x] = NDG_MAX;
+  }
+  else if (connex == 18)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (mctopo3d_nbvoislab18(SOURCE, x, rs, ps, N) >= 3))
+        RES[x] = NDG_MAX;
+  }
+  else if (connex == 26)
+  {
+    for (x = 0; x < N; x++)
+      if (SOURCE[x] && (nonbord3d(x, rs, ps, N)) && (mctopo3d_nbvoislab26(SOURCE, x, rs, ps, N) >= 3))
+        RES[x] = NDG_MAX;
+  }
+  else
+  {   fprintf(stderr,"%s: bad connexity: %d\n", F_NAME, connex);
+      return 0;
+  }
+  return 1;
+} /* lptjunctionlab() */

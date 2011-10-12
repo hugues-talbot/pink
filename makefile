@@ -316,6 +316,7 @@ $(BDIR)/skelend \
 $(BDIR)/skelendlab \
 $(BDIR)/skelcurv \
 $(BDIR)/skeleton \
+$(BDIR)/skeletonlab \
 $(BDIR)/skeleucl \
 $(BDIR)/skelfindelbows \
 $(BDIR)/skelpar \

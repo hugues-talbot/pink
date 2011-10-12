@@ -2539,3 +2539,51 @@ int32_t mctopo3d_curve26( /* point de courbe en 26-connexite */
   if ((mctopo3d_T26(cube_topo3d) == 2) && (mctopo3d_nbvoiso26(img, p, rs, ps, N) == 2)) return 1;
   return 0;
 } /* mctopo3d_curve26() */
+
+/* ==================================== */
+int32_t mctopo3d_curve6lab( /* point de courbe en 6-connexite */
+  int32_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
+/* ==================================== */
+{
+  assert(!is_on_frame(p, rs, ps, N));
+  if (img[p] == 0) return 0;
+  preparecubeslab(img, p, rs, ps, N);
+  if ((mctopo3d_T6(cube_topo3d) == 2) && (mctopo3d_nbvoislab6(img, p, rs, ps, N) == 2)) return 1;
+  return 0;
+} /* mctopo3d_curve6lab() */
+
+/* ==================================== */
+int32_t mctopo3d_curve18lab( /* point de courbe en 18-connexite */
+  int32_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
+/* ==================================== */
+{
+  assert(!is_on_frame(p, rs, ps, N));
+  if (img[p] == 0) return 0;
+  preparecubeslab(img, p, rs, ps, N);
+  if ((mctopo3d_T18(cube_topo3d) == 2) && (mctopo3d_nbvoislab18(img, p, rs, ps, N) == 2)) return 1;
+  return 0;
+} /* mctopo3d_curve18lab() */
+
+/* ==================================== */
+int32_t mctopo3d_curve26lab( /* point de courbe en 26-connexite */
+  int32_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
+/* ==================================== */
+{
+  assert(!is_on_frame(p, rs, ps, N));
+  if (img[p] == 0) return 0;
+  preparecubeslab(img, p, rs, ps, N);
+  if ((mctopo3d_T26(cube_topo3d) == 2) && (mctopo3d_nbvoislab26(img, p, rs, ps, N) == 2)) return 1;
+  return 0;
+} /* mctopo3d_curve26lab() */

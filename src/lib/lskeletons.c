@@ -753,6 +753,14 @@ int32_t lskelubp3d2(struct xvimage *image,
   COMPARE_SIZE(image, imageprio);
   ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
   ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
+    P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
 
   taillemaxrbt = 2 * rs * cs +  2 * rs * ds +  2 * ds * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
@@ -903,6 +911,14 @@ int32_t lskelubp3d2lab(struct xvimage *image,
   COMPARE_SIZE(image, imageprio);
   ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
   ACCEPTED_TYPES1(image, VFF_TYP_4_BYTE);
+  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
+    P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
 
   taillemaxrbt = 2 * rs * cs +  2 * rs * ds +  2 * ds * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */

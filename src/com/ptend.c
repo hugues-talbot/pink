@@ -39,10 +39,11 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> ptend in.pgm connex out.pgm
 
 <B>Description:</B>
-An end point is a white point, which has exactly 1 white n-neighbour
-(n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter \b connex)
+An end point is a white point, which has exactly 1 white n-neighbour (n = 4, 8 (2d) or 6, 18, 26 (3d), as set by the parameter \b connex)
 
-<B>Types supported:</B> byte 2d, byte 3d
+When the type of \b in.pgm is 4_BYTE, the image is treated as a label image, where each label is processed as a separate binary image (all other labels are considered as background).
+
+<B>Types supported:</B> byte 2D, byte 3D, long 3D
 
 <B>Category:</B> topobin
 \ingroup  topobin
@@ -79,13 +80,31 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[2]);
 
-  if (! lptend(image, connex))
+  if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    fprintf(stderr, "%s: function lptend failed\n", argv[0]);
-    exit(1);
+    struct xvimage * res = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
+    if (res == NULL)
+    {
+      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+      exit(1);
+    }
+    if (! lptendlab(image, connex, res))
+    {
+      fprintf(stderr, "%s: function lptendlab failed\n", argv[0]);
+      exit(1);
+    }
+    writeimage(res, argv[argc-1]);
+    freeimage(res);
   }
-
-  writeimage(image, argv[argc-1]);
+  else 
+  {
+    if (! lptend(image, connex))
+    {
+      fprintf(stderr, "%s: function lptend failed\n", argv[0]);
+      exit(1);
+    }
+    writeimage(image, argv[argc-1]);
+  }
   freeimage(image);
 
   return 0;
