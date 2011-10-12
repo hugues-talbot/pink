@@ -86,7 +86,8 @@ namespace wshed
         "powerwatershedCol",
         compute_power_watershed_col,
         (arg("image_r"), arg("image_g"), arg("image_b"), arg("seeds"), arg("geodesic"), arg("multiple")),
-        doc__powerwshedval__c__
+        "WRITE ME!!!"
+        //doc__powerwshedval__c__
         );
 
 # include BOOST_PP_UPDATE_COUNTER()
@@ -96,7 +97,8 @@ namespace wshed
         "powerwatershedBW",
         compute_power_watershed_bw,
         (arg("image_bw"), arg("seeds"), arg("geodesic"), arg("multiple")),
-        doc__powerwshedval__c__
+        "WRITE ME!!!"
+        //doc__powerwshedval__c__
         );
 
 # include BOOST_PP_UPDATE_COUNTER()
