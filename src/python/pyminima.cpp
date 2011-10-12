@@ -33,9 +33,9 @@ namespace pink {
       // copying the values back to the result
       // note the values never depass 255 so copying is fine
       std::copy(
-        &image[0],
-        &image[image.get_size().prod()],
-        &result[0]
+        &image(0),
+        &image(image.get_size().prod()),
+        &result(0)
         );
       
       

@@ -378,7 +378,8 @@ namespace pink {
         MT2 & cpu_g,
         MT3 & cpu_srcsink,
         MT4 dimension,
-        bool verbose = false
+        bool verbose = false,
+        int  device = 0
         ) : verbose(verbose), dimension(dimension)      
         {
           cl_int err;
@@ -437,7 +438,7 @@ namespace pink {
             }            
           } /* FOR q in num_of_devices */
 
-          index_t choosen_device = 0;// !!!!!!!!!
+          index_t choosen_device = device;
           if (verbose)
           {
             std::cout << "Choosen device #" << choosen_device << std::endl;
@@ -816,7 +817,8 @@ namespace pink {
         const image_type & gg,     /* Boundaries */
         index_t iteration,         /* number of iterations */
         float   tau,		   /* timestep */
-        bool    verbose = false    /* debug info */
+        bool    verbose = false,    /* debug info */
+        index_t device = 0
         ) :
         tau(          tau),
         d(            gg.get_size().size() ),
@@ -828,7 +830,7 @@ namespace pink {
         srcsink_glob( gg.get_size().prod()),
         flow_glob(    gg.get_size().prod() * gg.get_size().size() ), // number_of_threads, d*length_glob, NUMA )
         potencial(    gg.get_size() ), // we will put the result in this image
-        verbose(      verbose)
+        verbose(      verbose)        
         {
 #         ifdef UJIMAGE_DEBUG
           std::cout << "creating the clflow object (" << static_cast<void*>(this) << ")" << std::endl;	
@@ -898,7 +900,7 @@ namespace pink {
           {            
             std::cout << "initializing OpenCL" << std::endl;
           } /* if verbose */
-          opencl.reset( new opencl_t<pixel_type>( pot_glob, flow_glob, g_glob, srcsink_glob, d, verbose ) );
+          opencl.reset( new opencl_t<pixel_type>( pot_glob, flow_glob, g_glob, srcsink_glob, d, verbose, device ) );
                     
         } /* constructor opencl_flow */
       
@@ -964,7 +966,8 @@ namespace pink {
       index_t    iteration,          /* number of iterations */
       float      glob_tau = 0.132,   /* timestep */
       bool       verbose = false,     /* print details about the iteration */
-      bool       debug   = false // returns the iteration time and perhaps other data later
+      bool       debug   = false, // returns the iteration time and perhaps other data later
+      index_t    device  = 0
       )
     {
       opencl_flow<image_type> obj(
@@ -972,7 +975,8 @@ namespace pink {
         frame_around(gg, 0.),
         iteration,
         glob_tau,
-        verbose
+        verbose,
+        device
         );
       
       image_type rimage = frame_remove(obj.start());

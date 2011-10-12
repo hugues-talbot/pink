@@ -1925,7 +1925,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   
     this->pixels.reset(new pixel_type[size->prod()]); // allocating the array for the pixel types
 
-    std::copy( &other[0], &other[size->prod()], this->pixels.get());
+    std::copy( &other(0), &other(size->prod()), this->pixels.get());
         
     return *this;
   } /* ujoi::copy */

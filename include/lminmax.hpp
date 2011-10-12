@@ -92,7 +92,7 @@ namespace pink {
     
     
     std::pair< const pixel_type * , const pixel_type *> 
-      tmp = boost::minmax_element( (&I[0]), (&I[I.get_size().prod()]) ); // here the prod is the correct position because it iterates up to
+      tmp = boost::minmax_element( (&I(0)), (&I(I.get_size().prod())) ); // here the prod is the correct position because it iterates up to
 
     result.first = (*tmp.first);
     result.second = (*tmp.second);

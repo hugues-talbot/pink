@@ -453,7 +453,7 @@ namespace pink {
 	    int currpos = dim->position(pp1_vec);
 ///!!!	std::cout << "currpos=" << currpos << "" << std::endl;
 	    pp1_pos[w]=currpos;
-	    pp1[w]=&(src_sink[currpos]);
+	    pp1[w]=&(src_sink(currpos));
 	  } /* FOR(w, d) */
 	  p=src_sink.get_pixels();
 	  FOR(w, d) {
@@ -634,8 +634,8 @@ namespace pink {
     pixel_type *ps;
     unsigned char *ss;
 		
-    ss = &( src_sink[0] );
-    ps = &( potencial[0]);
+    ss = &( src_sink(0) );
+    ps = &( potencial(0));
 
     FOR(q, length_glob) {
       if ( ss[q] == 1 ) 

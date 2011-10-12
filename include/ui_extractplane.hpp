@@ -57,7 +57,7 @@ namespace pink {
       }
       t = rs * cs;
       offset = n * t;
-      for (i = 0; i < t; i++) result[i] = image[i + offset];
+      for (i = 0; i < t; i++) result(i) = image(i + offset);
 
       return result;      
     } 
@@ -73,7 +73,7 @@ namespace pink {
       t = rs * cs;
       for (j = 0; j < cs ; j++)
         for (i = 0; i < rs ; i++)
-          result[i*cs + j] = image[n*t + j*rs + i];
+          result(i*cs + j) = image(n*t + j*rs + i);
 
       return result;      
     }
@@ -90,7 +90,7 @@ namespace pink {
       t = rs * cs;
       for (k = 0; k < ds ; k++)
         for (i = 0; i < rs ; i++)
-          result[k*rs + i] = image[k*t + n*rs + i];
+          result(k*rs + i) = image(k*t + n*rs + i);
 
       return result;      
     }
@@ -107,7 +107,7 @@ namespace pink {
       t = rs * cs;
       for (k = 0; k < ds ; k++)
         for (i = 0; i < rs ; i++)
-          result[i*ds + k] = image[k*t + n*rs + i];
+          result(i*ds + k) = image(k*t + n*rs + i);
       
       return result;      
     }
@@ -124,7 +124,7 @@ namespace pink {
       t = rs * cs;
       for (k = 0; k < ds ; k++)
         for (j = 0; j < cs ; j++)
-          result[k*cs + j] = image[k*t + j*rs + n];
+          result(k*cs + j) = image(k*t + j*rs + n);
 
       return result;      
     }
@@ -141,7 +141,7 @@ namespace pink {
       t = rs * cs;
       for (k = 0; k < ds ; k++)
         for (j = 0; j < cs ; j++)
-          result[j*ds + k] = image[k*t + j*rs + n];
+          result(j*ds + k) = image(k*t + j*rs + n);
 
       return result;      
     }

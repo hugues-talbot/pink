@@ -159,7 +159,7 @@ namespace pink {
        
           for (int i = 0; i < N; i++)
           {
-            rfimage[i] = sqrt(rfimage[i]); // D[i] = static_cast<float>(sqrt(D[i]));
+            rfimage(i) = sqrt(rfimage(i)); // D[i] = static_cast<float>(sqrt(D[i]));
           }
           
           boost::python::object result (rfimage);
@@ -325,7 +325,7 @@ namespace pink {
           
           for (int i = 0; i < N; i++)
           {
-            rfimage[i] = sqrt(rfimage[i]); // D[i] = static_cast<float>(sqrt(D[i]));
+            rfimage(i) = sqrt(rfimage(i)); // D[i] = static_cast<float>(sqrt(D[i]));
           }
           
           boost::python::object result (rfimage);
