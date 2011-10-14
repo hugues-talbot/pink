@@ -57,6 +57,7 @@ Experimental
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mcutil.h>
 #include <mcgeo.h>
 #include <ldist.h>
 #include <lmedialaxis.h>
@@ -125,15 +126,19 @@ int main(int argc, char **argv)
   max=0;
   for (i = 0; i < N; i++)
   {
-    if (sqrt(O[i]) > max) max=sqrt(O[i]);	  
+    if (O[i] > max) max=O[i];	  
   }
-  lambda = atof(argv[3]);
-  lowlambda = atof(argv[2]);
+  lambda = atof(argv[2]);
+  lambda = (lambda*M_PI_4)/100;
+  lowlambda = atof(argv[3]);
 	  
   for (i = 0; i < N; i++)
   {
-    //    if (L[i] <= lowlambda/L[i]+O[i]/max)
-    if (L[i]*L[i] <= (sqrt(O[i])*lambda)/max)
+    //if (L[i] <= ((lowlambda/L[i])+((O[i]*lambda)/max))) // michal
+    //if (L[i]*L[i] <= ((O[i]*lambda)/max))
+    if (L[i] <  O[i]*tan(lambda))
+    //if (L[i]*L[i] <  (O[i]*tan(lambda)*O[i]*tan(lambda)))
+    //if (L[i] < (O[i] - (max - ((lambda*max)/M_PI_4)))) pas bon
     {
       I[i] = NDG_MIN;
     }

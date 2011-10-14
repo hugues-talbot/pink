@@ -84,10 +84,19 @@ set LAMBDAMEDIALAXIS2(outfilename) [lindex $argv 1]
 # compute the opening - store in medial 5
 my_exec $PINK/linux/bin/openingfunction $LAMBDAMEDIALAXIS2(infilename) 3 [tmpfile 5]
 my_exec $PINK/linux/bin/long2float [tmpfile 5] [tmpfile 5]
-#my_exec $PINK/linux/bin/pow [tmpfile 5] 0.5 [tmpfile 5]
+my_exec $PINK/linux/bin/pow [tmpfile 5] 0.5 [tmpfile 5]
+my_exec $PINK/linux/bin/dilation [tmpfile 5] $PINK/masks/disque5.pgm [tmpfile 5]
 
 # compute the lambda map - store in tmpfile 0
-my_exec $PINK/linux/bin/lambdamedialaxis2 $LAMBDAMEDIALAXIS2(infilename) -1 0 [tmpfile 5] [tmpfile 0]
+my_exec $PINK/linux/bin/lambdamedialaxis $LAMBDAMEDIALAXIS2(infilename) [tmpfile 0]
+
+
+
+my_exec cp [tmpfile 0] "_lambda"
+my_exec cp [tmpfile 5] "_openf"
+
+
+
 
 # create a frame for buttons
 frame .top -borderwidth 10
