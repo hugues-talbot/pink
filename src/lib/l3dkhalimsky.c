@@ -60,6 +60,8 @@ knowledge of the CeCILL license and that you accept its terms.
    l3dbeta: beta-dilatation
    l3dalpha: alpha-dilatation
      Michel Couprie - juillet 2007
+
+   update MC octobre 2011 mode 7 (border) de l3dkhalimskize
 */
 
 #include <stdio.h>
@@ -81,7 +83,7 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 
 /* =============================================================== */
-int32_t l3dkhalimskize(struct xvimage * i, struct xvimage **k, int32_t mode)
+int32_t l3dkhalimskize(struct xvimage * ima, struct xvimage **k, int32_t mode)
 /* =============================================================== */
 /* 
    passage de z3 a la grille de Khalimsky
@@ -93,25 +95,25 @@ int32_t l3dkhalimskize(struct xvimage * i, struct xvimage **k, int32_t mode)
      4 : emulation de la 6-connexite, idem "miss"
      5 : moyenne
      6 : reverse (Khalimsky -> Z3) : selection cubes
-
+     7 : border
 */
 #undef F_NAME
 #define F_NAME "l3dkhalimskize"
 {
 
-  ACCEPTED_TYPES3(i, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT);
-  ONLY_3D(i);
+  ACCEPTED_TYPES3(ima, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT);
+  ONLY_3D(ima);
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
 #endif
 
   if ((mode == 1) || (mode == 2) || (mode == 5))
-    *k = KhalimskizeNDG3d(i);
+    *k = KhalimskizeNDG3d(ima);
   else if (mode == 6)
-    *k = DeKhalimskize3d(i);
+    *k = DeKhalimskize3d(ima);
   else
-    *k = Khalimskize3d(i);
+    *k = Khalimskize3d(ima);
   if (*k == NULL)
   {
     fprintf(stderr, "%s: Khalimskize3d failed\n", F_NAME);

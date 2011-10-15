@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief converts a 3D image into a 3D Khalimsky order
 
-<B>Usage:</B> 3dkhalimskize in.pgm {6|26|h|m|M|a} out.pgm
+<B>Usage:</B> 3dkhalimskize in.pgm {6|26|h|m|M|a|R|b} out.pgm
 
 <B>Description:</B>
 Converts a 3D image into a 3D Khalimsky order.
@@ -51,8 +51,9 @@ Mode =
 \li    h : "hit",
 \li    m : min, 
 \li    M : max,
-\li    a : average.
-\li    R : reverse.
+\li    a : average,
+\li    R : reverse,
+\li    b : border.
 
 <B>Types supported:</B> byte 3d, long 3d, float 3d
 
@@ -73,6 +74,7 @@ Mode =
 */
 
 /* Michel Couprie - novembre 1999 */
+// update octobre 2011 mode 'b'
 
 #include <stdio.h>
 #include <stdint.h>
@@ -93,7 +95,7 @@ int main(int argc, char **argv)
   
   if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in.pgm {6|26|h|m|M|a|R} out.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {6|26|h|m|M|a|R|b} out.pgm \n", argv[0]);
     exit(1);
   }
 
@@ -118,10 +120,11 @@ int main(int argc, char **argv)
   if (mode == 'h') mode = 0; else 
   if (mode == 'm') mode = 1; else 
   if (mode == 'M') mode = 2; else 
+  if (mode == '2') mode = 3; else 
+  if (mode == '6') mode = 4; else
   if (mode == 'a') mode = 5; else 
   if (mode == 'R') mode = 6; else 
-  if (mode == '2') mode = 3; else 
-  if (mode == '6') mode = 4;
+  if (mode == 'b') mode = 7;
 
   if (! l3dkhalimskize(o, &k, mode))
   {
