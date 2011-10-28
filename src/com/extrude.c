@@ -103,7 +103,7 @@ int main(int argc, char **argv)
   }
   O = UCHARDATA(image_out);
 
-  for (j = 1; j < seqsize; j++)
+  for (j = 0; j < seqsize; j++)
     for (i = 0; i < N; i++) O[j * N + i] = I[i];
 
   if (argc == 7)

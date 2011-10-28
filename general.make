@@ -2819,6 +2819,18 @@ $(ODIR)/mcset.o:	$(LDIR)/mcset.c $(IDIR)/mcset.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcset.c -o $(ODIR)/mcset.o
 	ar rcs $(ODIR)/libpink.a $(ODIR)/mcset.o
 
+$(ODIR)/mcskel3d.o:	$(LDIR)/mcskel3d.c $(IDIR)/mcskel3d.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcskel3d.c -o $(ODIR)/mcskel3d.o
+	ar rcs $(ODIR)/libpink.a $(ODIR)/mcskel3d.o
+
+$(ODIR)/mcskel2d.o:	$(LDIR)/mcskel2d.c $(IDIR)/mcskel2d.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcskel2d.c -o $(ODIR)/mcskel2d.o
+	ar rcs $(ODIR)/libpink.a $(ODIR)/mcskel2d.o
+
+$(ODIR)/mcskel2d3d.o:	$(LDIR)/mcskel2d3d.c $(IDIR)/mcskel2d3d.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcskel2d3d.c -o $(ODIR)/mcskel2d3d.o
+	ar rcs $(ODIR)/libpink.a $(ODIR)/mcskel2d3d.o
+
 $(ODIR)/mcskelcurv.o:	$(LDIR)/mcskelcurv.c $(IDIR)/mcskelcurv.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcskelcurv.c -o $(ODIR)/mcskelcurv.o
 	ar rcs $(ODIR)/libpink.a $(ODIR)/mcskelcurv.o

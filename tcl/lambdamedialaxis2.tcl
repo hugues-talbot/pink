@@ -90,13 +90,9 @@ my_exec $PINK/linux/bin/dilation [tmpfile 5] $PINK/masks/disque5.pgm [tmpfile 5]
 # compute the lambda map - store in tmpfile 0
 my_exec $PINK/linux/bin/lambdamedialaxis $LAMBDAMEDIALAXIS2(infilename) [tmpfile 0]
 
-
-
-my_exec cp [tmpfile 0] "_lambda"
-my_exec cp [tmpfile 5] "_openf"
-
-
-
+# for debugging:
+#my_exec cp [tmpfile 0] "_lambda"
+#my_exec cp [tmpfile 5] "_openf"
 
 # create a frame for buttons
 frame .top -borderwidth 10
