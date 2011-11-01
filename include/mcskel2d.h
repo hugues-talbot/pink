@@ -32,6 +32,10 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+#ifndef MCSKEL2D__H__
+#define MCSKEL2D__H__
+
 #include "mctypes.h"
 
 #define FLAG_PRINC  0x01
@@ -56,14 +60,14 @@ extern boolean K2_CheckFrame(struct xvimage *k);
 extern void K2_MarkObj(struct xvimage *k);
 extern void K2_SelMarked(struct xvimage *k, unsigned char mask);
 extern void K2_Binarize(struct xvimage *k);
-extern void K2_MarkAlphaCarre(struct xvimage *k, int f, unsigned char mask);
-extern void K2_UnMarkAlphaCarre(struct xvimage *k, int f, unsigned char mask);
+extern void K2_MarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask);
+extern void K2_UnMarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask);
 extern void K2_MarkPrinc(struct xvimage *k);
 extern void K2_MarkEss(struct xvimage *k);
-extern int  K2_MarkCore(struct xvimage *k, int f);
-extern int  K2_MarkCore2(struct xvimage *k, struct xvimage *m, int f);
-extern int  K2_CardCore(struct xvimage *k, int f);
-extern int  K2_CardCore2(struct xvimage *k, struct xvimage *m, int f);
+extern int32_t K2_MarkCore(struct xvimage *k, index_t f);
+extern int32_t K2_MarkCore2(struct xvimage *k, struct xvimage *m, index_t f);
+extern int32_t K2_CardCore(struct xvimage *k, index_t f);
+extern int32_t K2_CardCore2(struct xvimage *k, struct xvimage *m, index_t f);
 extern void K2_MarkRegul(struct xvimage *k);
 extern void K2_MarkRegul2(struct xvimage *k, struct xvimage *m);
 extern void K2_MarkCritic(struct xvimage *k);
@@ -72,20 +76,21 @@ extern void K2_MarkCritic2(struct xvimage *k, struct xvimage *m);
 extern void K2_MarkCritic3(struct xvimage *k, struct xvimage *m);
 extern void K2_MarkMCritic(struct xvimage *k);
 extern void K2_MarkMCritic2(struct xvimage *k, struct xvimage *m);
-extern int  K2_Critic2Obj(struct xvimage *k);
-extern int  K2_MCritic2Obj(struct xvimage *k);
-extern int  K2_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m);
-extern int  K2_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m);
+extern int32_t K2_Critic2Obj(struct xvimage *k);
+extern int32_t K2_MCritic2Obj(struct xvimage *k);
+extern int32_t K2_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m);
+extern int32_t K2_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m);
 extern void K2_MarkThin(struct xvimage *k, struct xvimage *m);
 extern void K2_HitPrinc(struct xvimage *k);
 extern void K2_MarkEnd(struct xvimage *k, struct xvimage *m);
 extern void K2_MarkEnd2(struct xvimage *k, struct xvimage *m);
 extern void K2_MarkNotNeighInterior(struct xvimage *k, struct xvimage *m);
-extern void K2_LabelDifference(struct xvimage *k, struct xvimage *m, struct xvimage *l, int lab);
+extern void K2_LabelDifference(struct xvimage *k, struct xvimage *m, struct xvimage *l, index_t lab);
 
-extern void lskel2d4(struct xvimage * k, int nsteps);
-extern void lskel2d4b(struct xvimage * k, struct xvimage * m, int nsteps);
-extern void lskel2d5(struct xvimage * k, int nsteps);
-extern void lskel2d7(struct xvimage * k, int nsteps);
-extern void lskel2d9(struct xvimage * k, int nsteps);
+extern void lskel2d4(struct xvimage * k, index_t nsteps);
+extern void lskel2d4b(struct xvimage * k, struct xvimage * m, index_t nsteps);
+extern void lskel2d5(struct xvimage * k, index_t nsteps);
+extern void lskel2d7(struct xvimage * k, index_t nsteps);
+extern void lskel2d9(struct xvimage * k, index_t nsteps);
 
+#endif /* MCSKEL2D__H__ */

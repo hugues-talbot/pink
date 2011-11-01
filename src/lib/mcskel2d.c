@@ -82,7 +82,7 @@ boolean K2_CheckFrame(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_CheckFrame"
-  int x, y, rs = rowsize(k), cs = colsize(k);
+  index_t x, y, rs = rowsize(k), cs = colsize(k);
   unsigned char *K = UCHARDATA(k);
 
   for (x = 0; x < rs; x++)     if (K[x]) return 0;
@@ -103,9 +103,10 @@ boolean K2_CheckComplex(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_CheckComplex"
-  int x, y, rs = rowsize(k), cs = colsize(k);
+  index_t x, y, rs = rowsize(k), cs = colsize(k);
   unsigned char *K = UCHARDATA(k);
-  int tab[8], u, n;
+  index_t tab[8], u;
+  int32_t n;
   
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -131,7 +132,7 @@ void K2_MarkObj(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkObj"
-  int i, N = rowsize(k) * colsize(k);
+  index_t i, N = rowsize(k) * colsize(k);
   unsigned char *K = UCHARDATA(k);
   for (i = 0; i < N; i++) if (K[i]) K[i] = FLAG_OBJ; else K[i] = 0;
 } // K2_MarkObj()
@@ -146,7 +147,7 @@ void K2_Binarize(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_Binarize"
-  int i, N = rowsize(k) * colsize(k);
+  index_t i, N = rowsize(k) * colsize(k);
   unsigned char *K = UCHARDATA(k);
   for (i = 0; i < N; i++) if (K[i]) K[i] = NDG_MAX; else K[i] = 0;
 } // K2_Binarize()
@@ -162,7 +163,7 @@ void K2_SelMarked(struct xvimage *k, unsigned char mask)
 {
 #undef F_NAME
 #define F_NAME "K2_SelMarked"
-  int i, N = rowsize(k) * colsize(k);
+  index_t i, N = rowsize(k) * colsize(k);
   unsigned char *K = UCHARDATA(k);
   for (i = 0; i < N; i++) if (K[i] & mask) K[i] = FLAG_OBJ; else K[i] = 0;
 } // K2_SelMarked()
@@ -174,13 +175,14 @@ void K2_SelMarked(struct xvimage *k, unsigned char mask)
     \param mask : valeur de la marque (mot 8 bits avec un seul bit à 1)
     \brief ajoute la marque mask à tous les éléments de alphacarre(f)
 */
-void K2_MarkAlphaCarre(struct xvimage *k, int f, unsigned char mask)
+void K2_MarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
 /* ========================================== */
 {
 #undef F_NAME
 #define F_NAME "K2_MarkAlphaCarre"
-  int rs = rowsize(k), cs = colsize(k), x = f%rs, y = f/rs;
-  int tab[8], u, n;
+  index_t rs = rowsize(k), cs = colsize(k), x = f%rs, y = f/rs;
+  index_t tab[8], u;
+  int32_t n;
   unsigned char *K = UCHARDATA(k);
   Alphacarre2d(rs, cs, x, y, tab, &n);
   for (u = 0; u < n; u++) K[tab[u]] |= mask;
@@ -193,13 +195,14 @@ void K2_MarkAlphaCarre(struct xvimage *k, int f, unsigned char mask)
     \param mask : valeur de la marque (mot 8 bits avec un seul bit à 1)
     \brief retire la marque mask de tous les éléments de alphacarre(f)
 */
-void K2_UnMarkAlphaCarre(struct xvimage *k, int f, unsigned char mask)
+void K2_UnMarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
 /* ========================================== */
 {
 #undef F_NAME
 #define F_NAME "K2_UnMarkAlphaCarre"
-  int rs = rowsize(k), cs = colsize(k), x = f%rs, y = f/rs;
-  int tab[8], u, n;
+  index_t rs = rowsize(k), cs = colsize(k), x = f%rs, y = f/rs;
+  index_t tab[8], u;
+  int32_t n;
   unsigned char *K = UCHARDATA(k);
   Alphacarre2d(rs, cs, x, y, tab, &n);
   for (u = 0; u < n; u++) K[tab[u]] &= ~mask;
@@ -215,9 +218,10 @@ void K2_MarkPrinc(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkPrinc"
-  int card, i, x, y, rs = rowsize(k), cs = colsize(k);
+  index_t card, i, x, y, rs = rowsize(k), cs = colsize(k);
   unsigned char *K = UCHARDATA(k);
-  int tab[8], u, n;
+  index_t tab[8], u;
+  int32_t n;
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
   {
@@ -243,9 +247,10 @@ void K2_MarkEss(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkEss"
-  int x, y, i, rs = rowsize(k), cs = colsize(k);
+  index_t x, y, i, rs = rowsize(k), cs = colsize(k);
   unsigned char *K = UCHARDATA(k);
-  int tab[8], u, n;
+  index_t tab[8], u;
+  int32_t n;
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
   {
@@ -258,7 +263,7 @@ void K2_MarkEss(struct xvimage *k)
       }
       else if (INTER(x,y)) 
       {
-	int card = 0;
+	index_t card = 0;	
 	Betacarre2d(rs, cs, x, y, tab, &n);
 	for (u = 0; u < n; u++) if (IS_PRINC(K[tab[u]])) card++;
 	if (IS_PRINC(K[i]) && ((card == 0) || (card == 2))) K[i] |= FLAG_ESS; 
@@ -266,7 +271,7 @@ void K2_MarkEss(struct xvimage *k)
       }
       else // SINGL
       {
-	int mask = 0, bitmask = 1;
+	index_t mask = 0, bitmask = 1;
 	Betacarre2d(rs, cs, x, y, tab, &n);
 	for (u = 0; u < n; u++) 
 	{
@@ -287,15 +292,16 @@ void K2_MarkEss(struct xvimage *k)
     \brief marque le complexe formé du noyau (core) de la face f pour le complexe k
     \warning les faces essentielles doivent avoir été marquées auparavant
 */
-int K2_MarkCore(struct xvimage *k, int f)
+int K2_MarkCore(struct xvimage *k, index_t f)
 /* ========================================== */
 {
 #undef F_NAME
 #define F_NAME "K2_MarkCore"
-  int rs = rowsize(k), cs = colsize(k), nf = 0;
+  index_t rs = rowsize(k), cs = colsize(k), nf = 0;
   unsigned char *K = UCHARDATA(k);
-  int tab[8], tabi[8], u, v, n, ni, i, j;
-  int x = f % rs, y = f / rs, xi, yi;
+  index_t tab[8], tabi[8], u, v, i, j;
+  int32_t n, ni;
+  index_t x = f % rs, y = f / rs, xi, yi;
 
   Alphacarre2d(rs, cs, x, y, tab, &n);
   for (u = 0; u < n; u++) 
@@ -332,7 +338,7 @@ printf("mark_core_aux : %d,%d\n", j%rs, j/rs);
 } // K2_MarkCore()
 
 /* ========================================== */
-/*! \fn int K2_MarkCore2(struct xvimage *k, struct xvimage *m, int f)
+/*! \fn int K2_MarkCore2(struct xvimage *k, struct xvimage *m, index_t f)
     \param k : un complexe
     \param m : un complexe "marqueur"
     \param f : une face de k
@@ -342,16 +348,17 @@ printf("mark_core_aux : %d,%d\n", j%rs, j/rs);
     \warning les faces essentielles doivent avoir été marquées auparavant,
     pas de vérification de compatibilité entre k et m
 */
-int K2_MarkCore2(struct xvimage *k, struct xvimage *m, int f)
+int K2_MarkCore2(struct xvimage *k, struct xvimage *m, index_t f)
 /* ========================================== */
 {
 #undef F_NAME
 #define F_NAME "K2_MarkCore2"
-  int rs = rowsize(k), cs = colsize(k), nf = 0;
+  index_t rs = rowsize(k), cs = colsize(k), nf = 0;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int tab[8], tabi[8], u, v, n, ni, i, j;
-  int x = f % rs, y = f / rs, xi, yi;
+  index_t tab[8], tabi[8], u, v, i, j;
+  int32_t n, ni;
+  index_t x = f % rs, y = f / rs, xi, yi;
 
   Alphacarre2d(rs, cs, x, y, tab, &n);
   for (u = 0; u < n; u++) 
@@ -403,15 +410,16 @@ int K2_MarkCore2(struct xvimage *k, struct xvimage *m, int f)
     \brief retourne le cardinal du noyau de f, i.e., le nombre de faces marquées MARK2_ESS du noyau 
     \warning les faces essentielles doivent avoir été marquées auparavant
 */
-int K2_CardCore(struct xvimage *k, int f)
+int K2_CardCore(struct xvimage *k, index_t f)
 /* ========================================== */
 {
 #undef F_NAME
 #define F_NAME "K2_CardCore"
-  int rs = rowsize(k), cs = colsize(k), nf = 0;
+  index_t rs = rowsize(k), cs = colsize(k), nf = 0;
   unsigned char *K = UCHARDATA(k);
-  int tab[8], u, n;
-  int x = f % rs, y = f / rs;
+  index_t tab[8], u;
+  index_t x = f % rs, y = f / rs;
+  int32_t n;
 
   Alphacarre2d(rs, cs, x, y, tab, &n);
   for (u = 0; u < n; u++) if (IS_ESS(K[tab[u]])) nf++; 
@@ -419,7 +427,7 @@ int K2_CardCore(struct xvimage *k, int f)
 } // K2_CardCore()
 
 /* ========================================== */
-/*! \fn int K2_CardCore2(struct xvimage *k, struct xvimage *m, int f)
+/*! \fn int K2_CardCore2(struct xvimage *k, struct xvimage *m, index_t f)
     \param k : un complexe
     \param m : un complexe "marqueur"
     \param f : une face de k
@@ -430,17 +438,18 @@ int K2_CardCore(struct xvimage *k, int f)
     \warning les faces essentielles doivent avoir été marquées auparavant,
     pas de vérification de compatibilité entre k et m
 */
-int K2_CardCore2(struct xvimage *k, struct xvimage *m, int f)
+int K2_CardCore2(struct xvimage *k, struct xvimage *m, index_t f)
 /* ========================================== */
 {
 #undef F_NAME
 #define F_NAME "K2_CardCore2"
-  int rs = rowsize(k), cs = colsize(k), nf = 0;
+  index_t rs = rowsize(k), cs = colsize(k), nf = 0;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int tab[8], u, n;
-  int x = f % rs, y = f / rs;
-
+  index_t tab[8], u;
+  index_t x = f % rs, y = f / rs;
+  int32_t n;
+  
   Alphacarre2d(rs, cs, x, y, tab, &n);
   for (u = 0; u < n; u++) if (IS_ESS(K[tab[u]]) || M[tab[u]]) nf++; 
   return nf;
@@ -458,9 +467,9 @@ void K2_MarkRegul(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkRegul"
-  int x, y, i, rs = rowsize(k), cs = colsize(k);
+  index_t x, y, i, rs = rowsize(k), cs = colsize(k);
   unsigned char *K = UCHARDATA(k);
-  int n, ncore, ntrans;
+  index_t n, ncore, ntrans;
 
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -514,9 +523,9 @@ void K2_MarkRegul2(struct xvimage *k, struct xvimage *m)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkRegul2"
-  int x, y, i, rs = rowsize(k), cs = colsize(k);
+  index_t x, y, i, rs = rowsize(k), cs = colsize(k);
   unsigned char *K = UCHARDATA(k);
-  int n, ncore, ntrans;
+  index_t n, ncore, ntrans;
 
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -564,7 +573,7 @@ void K2_MarkCritic(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkCritic"
-  int i, N = rowsize(k) * colsize(k);
+  index_t i, N = rowsize(k) * colsize(k);
   unsigned char *K = UCHARDATA(k);
   for (i = 0; i < N; i++) if (IS_ESS(K[i]) && !IS_REGUL(K[i])) 
   {
@@ -585,7 +594,7 @@ void K2_MarkCritic1(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkCritic1"
-  int i, N = rowsize(k) * colsize(k);
+  index_t i, N = rowsize(k) * colsize(k);
   unsigned char *K = UCHARDATA(k);
   for (i = 0; i < N; i++) if (IS_ESS(K[i]) && !IS_REGUL(K[i])) 
   {
@@ -609,7 +618,7 @@ void K2_MarkCritic2(struct xvimage *k, struct xvimage *m)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkCritic2"
-  int i, N = rowsize(k) * colsize(k);
+  index_t i, N = rowsize(k) * colsize(k);
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
   for (i = 0; i < N; i++) if (M[i] || (IS_ESS(K[i]) && !IS_REGUL(K[i])))
@@ -635,7 +644,7 @@ void K2_MarkCritic3(struct xvimage *k, struct xvimage *m)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkCritic3"
-  int i, N = rowsize(k) * colsize(k);
+  index_t i, N = rowsize(k) * colsize(k);
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
   for (i = 0; i < N; i++) if (M[i] || (IS_ESS(K[i]) && !IS_REGUL(K[i])))
@@ -655,9 +664,10 @@ void K2_MarkMCritic(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkMCritic"
-  int i, rs = rowsize(k), cs = colsize(k), N = rs * cs;
+  index_t i, rs = rowsize(k), cs = colsize(k), N = rs * cs;
   unsigned char *K = UCHARDATA(k);
-  int tab[8], u, n;
+  index_t tab[8], u;
+  int32_t n;
   for (i = 0; i < N; i++) if (IS_ESS(K[i]) && !IS_REGUL(K[i])) 
   {
     K[i] |= FLAG_CRITIC;
@@ -690,10 +700,11 @@ void K2_MarkMCritic2(struct xvimage *k, struct xvimage *m)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkMCritic2"
-  int i, rs = rowsize(k), cs = colsize(k), N = rs * cs;
+  index_t i, rs = rowsize(k), cs = colsize(k), N = rs * cs;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int tab[8], u, n;
+  index_t tab[8], u;
+  int32_t n;
   for (i = 0; i < N; i++) if (M[i] || (IS_ESS(K[i]) && !IS_REGUL(K[i])))
   {
     K[i] |= FLAG_CRITIC;
@@ -722,7 +733,7 @@ int K2_Critic2Obj(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_Critic2Obj"
-  int i, N = rowsize(k) * colsize(k), n = 0;
+  index_t i, N = rowsize(k) * colsize(k), n = 0;
   unsigned char *K = UCHARDATA(k);
   for (i = 0; i < N; i++) 
     if (IS_CRITIC(K[i]))
@@ -748,9 +759,10 @@ int K2_MCritic2Obj(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_MCritic2Obj"
-  int i, j, x, y, rs = rowsize(k), cs = colsize(k), N = rs * cs, n = 0;
+  index_t i, j, x, y, rs = rowsize(k), cs = colsize(k), N = rs * cs, n = 0;
   unsigned char *K = UCHARDATA(k);
-  int tab1[8], tab2[8], u, v, n1, n2;
+  index_t tab1[8], tab2[8], u, v;
+  int32_t n1, n2;
   for (i = 0; i < N; i++) K[i] &= ~FLAG_OBJ;
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -794,9 +806,10 @@ int K2_MCriticSE2Obj(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_MCriticSE2Obj"
-  int i, j, x, y, xj, yj, rs = rowsize(k), cs = colsize(k), N = rs * cs, n = 0;
+  index_t i, j, x, y, xj, yj, rs = rowsize(k), cs = colsize(k), N = rs * cs, n = 0;
   unsigned char *K = UCHARDATA(k);
-  int tab1[8], tab2[8], u, v, n1, n2;
+  index_t tab1[8], tab2[8], u, v;
+  int32_t n1, n2;
   for (i = 0; i < N; i++) K[i] &= ~FLAG_OBJ;
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -852,10 +865,11 @@ int K2_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
 {
 #undef F_NAME
 #define F_NAME "K2_MCriticOrMarked2Obj"
-  int i, j, x, y, rs = rowsize(k), cs = colsize(k), N = rs * cs, n = 0;
+  index_t i, j, x, y, rs = rowsize(k), cs = colsize(k), N = rs * cs, n = 0;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int tab1[8], tab2[8], u, v, n1, n2;
+  index_t tab1[8], tab2[8], u, v;
+  int32_t n1, n2;
   for (i = 0; i < N; i++) K[i] &= ~FLAG_OBJ;
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -896,10 +910,10 @@ void K2_MarkThin(struct xvimage *k, struct xvimage *m)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkThin"
-  int x, y, i, rs = rowsize(k), cs = colsize(k), N = rs*cs;
+  index_t x, y, i, rs = rowsize(k), cs = colsize(k), N = rs*cs;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int n, ncore, ntrans;
+  index_t n, ncore, ntrans;
 
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -959,7 +973,7 @@ int K2_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
 {
 #undef F_NAME
 #define F_NAME "K2_CriticOrMarked2Obj"
-  int i, N = rowsize(k) * colsize(k), nobj = 0;
+  index_t i, N = rowsize(k) * colsize(k), nobj = 0;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
   for (i = 0; i < N; i++) 
@@ -977,9 +991,10 @@ void K2_HitPrinc(struct xvimage *k)
 {
 #undef F_NAME
 #define F_NAME "K2_HitPrinc"
-  int i, j, x, y, rs = rowsize(k), cs = colsize(k);
+  index_t i, j, x, y, rs = rowsize(k), cs = colsize(k);
   unsigned char *K = UCHARDATA(k);
-  int tab1[8], tab2[8], u, v, n1, n2;
+  index_t tab1[8], tab2[8], u, v;
+  int32_t n1, n2;
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
   {
@@ -1023,10 +1038,11 @@ void K2_MarkEnd(struct xvimage *k, struct xvimage *m)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkEnd"
-  int x, y, i, rs = rowsize(k), cs = colsize(k), N = rs*cs;
+  index_t x, y, i, rs = rowsize(k), cs = colsize(k), N = rs*cs;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int ncore, tab[8], u, n, card;
+  index_t ncore, tab[8], u, card;
+  int32_t n;
 
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -1079,10 +1095,11 @@ void K2_MarkEnd2(struct xvimage *k, struct xvimage *m)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkEnd2"
-  int x, y, i, rs = rowsize(k), cs = colsize(k), N = rs*cs;
+  index_t x, y, i, rs = rowsize(k), cs = colsize(k), N = rs*cs;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int ncritic, tab[8], u, n;
+  index_t ncritic, tab[8], u;
+  int32_t n;
 
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -1131,7 +1148,7 @@ void K2_MarkSE(struct xvimage *k, struct xvimage *m)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkSE"
-  int x, y, i, rs = rowsize(k), cs = colsize(k), N = rs*cs;
+  index_t x, y, i, rs = rowsize(k), cs = colsize(k), N = rs*cs;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
   unsigned char vE, vSE, vS, vSW;
@@ -1169,10 +1186,10 @@ void K2_MarkNotNeighInterior(struct xvimage *k, struct xvimage *m)
 {
 #undef F_NAME
 #define F_NAME "K2_MarkNotNeighInterior"
-  int x, y, xx, yy, HasNeighInt, i, j, rs = rowsize(k), cs = colsize(k), N = rs*cs;
+  index_t x, y, xx, yy, HasNeighInt, i, j, rs = rowsize(k), cs = colsize(k), N = rs*cs;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int ncore, tab[8], u, n;
+  index_t ncore, tab[8], u, n;
 
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -1214,12 +1231,12 @@ void K2_MarkNotNeighInterior(struct xvimage *k, struct xvimage *m)
     \brief pour chaque face dans k et pas dans m,
     met le label "lab" dans l'élément correspondant de "l"
 */
-void K2_LabelDifference(struct xvimage *k, struct xvimage *m, struct xvimage *l, int lab)
+void K2_LabelDifference(struct xvimage *k, struct xvimage *m, struct xvimage *l, index_t lab)
 /* ========================================== */
 {
 #undef F_NAME
 #define F_NAME "K2_LabelDifference"
-  int i, rs = rowsize(k), cs = colsize(k), N = rs * cs;
+  index_t i, rs = rowsize(k), cs = colsize(k), N = rs * cs;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
   unsigned char *L = UCHARDATA(l);
@@ -1235,7 +1252,7 @@ void K2_LabelDifference(struct xvimage *k, struct xvimage *m, struct xvimage *l,
 /* ==================================================================================== */
 
 /* =============================================================== */
-void lskel2d4(struct xvimage * k, int nsteps) 
+void lskel2d4(struct xvimage * k, index_t nsteps) 
 /* =============================================================== */
 /*
     \brief Noyau homotopique, version "Z^2 directe" (sans reconstruction) - version efficace basée sur Khalimski 2D
@@ -1247,7 +1264,7 @@ void lskel2d4(struct xvimage * k, int nsteps)
 #ifdef DEBUG
   struct xvimage * k2;
 #endif
-  int n_old, n_new, n;
+  index_t n_old, n_new, n;
 
   if (nsteps == -1) nsteps = 2000000000;
   if (nsteps == 0) return;
@@ -1297,7 +1314,7 @@ void lskel2d4(struct xvimage * k, int nsteps)
 } // lskel2d4()
 
 /* =============================================================== */
-void lskel2d4b(struct xvimage * k, struct xvimage * m, int nsteps) 
+void lskel2d4b(struct xvimage * k, struct xvimage * m, index_t nsteps) 
 /* =============================================================== */
 /*
     \brief Noyau homotopique avec contrainte, version "Z^2 directe" (sans reconstruction) - version efficace basée sur Khalimski 2D
@@ -1309,7 +1326,7 @@ void lskel2d4b(struct xvimage * k, struct xvimage * m, int nsteps)
 #ifdef DEBUG
   struct xvimage * k2;
 #endif
-  int n_old, n_new, n;
+  index_t n_old, n_new, n;
 
   if (nsteps == -1) nsteps = 2000000000;
   if (nsteps == 0) return;
@@ -1366,7 +1383,7 @@ void lskel2d4b(struct xvimage * k, struct xvimage * m, int nsteps)
 } // lskel2d4b()
 
 /* =============================================================== */
-void lskel2d5(struct xvimage * k, int nsteps) 
+void lskel2d5(struct xvimage * k, index_t nsteps) 
 /* =============================================================== */
 /*
   \brief Squelette curviligne, version "Z^2" avec détection de points extrémités 
@@ -1380,7 +1397,7 @@ void lskel2d5(struct xvimage * k, int nsteps)
   struct xvimage * k2;
 #endif
   struct xvimage * m;
-  int n_old, n_new, n;
+  index_t n_old, n_new, n;
 
   if (nsteps == -1) nsteps = 2000000000;
   if (nsteps == 0) return;
@@ -1472,7 +1489,7 @@ void lskel2d5(struct xvimage * k, int nsteps)
 } // lskel2d5()
 
 /* =============================================================== */
-void lskel2d7(struct xvimage * k, int nsteps) 
+void lskel2d7(struct xvimage * k, index_t nsteps) 
 /* =============================================================== */
 /*
     \brief Squelette curviligne, version "Z^2" avec détection de points extrémités 
@@ -1487,7 +1504,7 @@ void lskel2d7(struct xvimage * k, int nsteps)
   struct xvimage * k2;
 #endif
   struct xvimage * m;
-  int n_old, n_new, n;
+  index_t n_old, n_new, n;
 
   if (nsteps == -1) nsteps = 2000000000;
   if (nsteps == 0) return;
@@ -1581,7 +1598,7 @@ fin:
 } // lskel2d7()
 
 /* =============================================================== */
-void lskel2d7b(struct xvimage * k, int nsteps) 
+void lskel2d7b(struct xvimage * k, index_t nsteps) 
 /* =============================================================== */
 /*
     \brief Squelette curviligne, version "Z^2" avec détection
@@ -1596,7 +1613,7 @@ void lskel2d7b(struct xvimage * k, int nsteps)
   struct xvimage * k2;
 #endif
   struct xvimage * m;
-  int n_old, n_new, n;
+  index_t n_old, n_new, n;
 
   if (nsteps == -1) nsteps = 2000000000;
   if (nsteps == 0) return;
@@ -1683,7 +1700,7 @@ fin:
 } // lskel2d7b()
 
 /* =============================================================== */
-void lskel2d9(struct xvimage * k, int nsteps) 
+void lskel2d9(struct xvimage * k, index_t nsteps) 
 /* =============================================================== */
 /*
   \brief Squelette ultime asymétrique, version "Z^2" 
@@ -1697,7 +1714,7 @@ void lskel2d9(struct xvimage * k, int nsteps)
   struct xvimage * k2;
 #endif
   struct xvimage * m;
-  int n_old, n_new, n;
+  index_t n_old, n_new, n;
 
   if (nsteps == -1) nsteps = 2000000000;
   if (nsteps == 0) return;

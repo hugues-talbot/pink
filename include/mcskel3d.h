@@ -32,8 +32,12 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+#ifndef MCSKEL3D__H__
+#define MCSKEL3D__H__
+
 #include "mctypes.h"
-#include <mcliste.h>
+#include "mcliste.h"
 
 #define FLAG_PRINC    0x01
 #define FLAG_ESS      0x02
@@ -61,42 +65,45 @@ knowledge of the CeCILL license and that you accept its terms.
 #define IS_MARKED2(f) (f&MARK2)
 #define IS_MARKED3(f) (f&MARK3)
 
-extern boolean K3_CheckFrame(struct xvimage *k);
-extern void K3_CloseComplex(struct xvimage *k);
-extern void K3_MarkObj(struct xvimage *k);
-extern void K3_SelMarked(struct xvimage *k, unsigned char mask);
-extern void K3_Binarize(struct xvimage *k);
-extern void K3_MarkAlphaCarre(struct xvimage *k, int f, unsigned char mask);
-extern void K3_UnMarkAlphaCarre(struct xvimage *k, int f, unsigned char mask);
-extern void K3_MarkPrinc(struct xvimage *k);
-extern void K3_MarkEss(struct xvimage *k);
-extern int  K3_MarkCore(struct xvimage *k, int f);
-extern int  K3_MarkCore2(struct xvimage *k, struct xvimage *m, int f);
-extern int  K3_CardCore(struct xvimage *k, int f);
-extern int  K3_CardCore2(struct xvimage *k, struct xvimage *m, int f);
-extern void K3_MarkCritic(struct xvimage *k);
-extern void K3_MarkCritic2(struct xvimage *k, struct xvimage *m);
-extern void K3_MarkCritic3(struct xvimage *k, struct xvimage *m);
-extern void K3_MarkMCritic(struct xvimage *k);
-extern void K3_MarkMCritic2(struct xvimage *k, struct xvimage *m);
-extern int  K3_Critic2Obj(struct xvimage *k);
-extern int  K3_CriticE2Obj(struct xvimage *k);
-extern int  K3_MCritic2Obj(struct xvimage *k);
-extern int  K3_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m);
-extern int  K3_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m);
-extern void K3_MarkThin(struct xvimage *k, struct xvimage *m);
-extern void K3_HitPrinc(struct xvimage *k);
-extern void K3_MarkEnd(struct xvimage *k, struct xvimage *m);
-extern void K3_MarkEnd2(struct xvimage *k, struct xvimage *m);
-extern void K3_MarkNotNeighInterior(struct xvimage *k, struct xvimage *m);
-extern void K3_LabelDifference(struct xvimage *k, struct xvimage *m, struct xvimage *l, int lab);
+// already defined in mcskel2d3d.h
+extern boolean mcskel3d_K3_CheckFrame(struct xvimage *k);
+extern void mcskel3d_K3_CloseComplex(struct xvimage *k);
+extern void mcskel3d_K3_MarkObj(struct xvimage *k);
+extern void mcskel3d_K3_SelMarked(struct xvimage *k, unsigned char mask);
+extern void mcskel3d_K3_Binarize(struct xvimage *k);
+extern void mcskel3d_K3_MarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask);
+extern void mcskel3d_K3_UnMarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask);
+extern void mcskel3d_K3_MarkPrinc(struct xvimage *k);
+extern void mcskel3d_K3_MarkEss(struct xvimage *k);
+extern int32_t mcskel3d_K3_MarkCore(struct xvimage *k, index_t f);
+extern int32_t mcskel3d_K3_MarkCore2(struct xvimage *k, struct xvimage *m, index_t f);
+extern int32_t mcskel3d_K3_CardCore(struct xvimage *k, index_t f);
+extern int32_t mcskel3d_K3_CardCore2(struct xvimage *k, struct xvimage *m, index_t f);
+extern void mcskel3d_K3_MarkCritic(struct xvimage *k);
+extern void mcskel3d_K3_MarkCritic2(struct xvimage *k, struct xvimage *m);
+extern void mcskel3d_K3_MarkCritic3(struct xvimage *k, struct xvimage *m);
+extern void mcskel3d_K3_MarkMCritic(struct xvimage *k);
+extern void mcskel3d_K3_MarkMCritic2(struct xvimage *k, struct xvimage *m);
+extern int32_t mcskel3d_K3_Critic2Obj(struct xvimage *k);
+extern int32_t mcskel3d_K3_CriticE2Obj(struct xvimage *k);
+extern int32_t mcskel3d_K3_MCritic2Obj(struct xvimage *k);
+extern int32_t mcskel3d_K3_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m);
+extern int32_t mcskel3d_K3_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m);
+extern void mcskel3d_K3_MarkThin(struct xvimage *k, struct xvimage *m);
+extern void mcskel3d_K3_HitPrinc(struct xvimage *k);
+extern void mcskel3d_K3_MarkEnd(struct xvimage *k, struct xvimage *m);
+extern void mcskel3d_K3_MarkEnd2(struct xvimage *k, struct xvimage *m);
+extern void mcskel3d_K3_MarkNotNeighInterior(struct xvimage *k, struct xvimage *m);
+extern void mcskel3d_K3_LabelDifference(struct xvimage *k, struct xvimage *m, struct xvimage *l, index_t lab);
 
 extern void K3List_MarkPrinc(struct xvimage *k, Liste *l);
 extern void K3List_MarkEss(struct xvimage *k, Liste *l);
-extern int  K3List_MarkCore2(struct xvimage *k, unsigned char *I, int f);
+extern int32_t K3List_MarkCore2(struct xvimage *k, unsigned char *I, index_t f);
 extern void K3List_MarkCritic2(struct xvimage *k, unsigned char *I, Liste *l);
 
-extern void lskel3d4(struct xvimage * k, int nsteps) ;
-extern void lskel3d4b(struct xvimage * k, struct xvimage * m, int nsteps) ;
-extern void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps) ;
-extern void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps) ;
+extern void mcskel3d_lskel3d4(struct xvimage * k, index_t nsteps) ;
+extern void lskel3d4b(struct xvimage * k, struct xvimage * m, index_t nsteps) ;
+extern void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, index_t nsteps) ;
+extern void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, index_t nsteps) ;
+
+#endif /* MCSKEL3D__H__ */

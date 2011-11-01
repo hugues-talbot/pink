@@ -192,59 +192,61 @@ uint32_t PrincBetacarre3d(uint8_t *X, int32_t rs, int32_t cs, int32_t ds, int32_
   return b;
 } /* PrincBetacarre3d() */
 
+// already implemented in mcskel2d3d.c
 /* ========================================== */
-/*! \fn int K3_CheckFrame(struct xvimage *k)
+/*! \fn int32_t mcskel3d_K3_CheckFrame(struct xvimage *k)
     \param k : un complexe
     \return : booléen
     \brief teste si le bord est vide (0)
 */
-boolean K3_CheckFrame(struct xvimage *k)
+boolean mcskel3d_K3_CheckFrame(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_CheckFrame"
-  int x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs;
+#define F_NAME "mcskel3d_K3_CheckFrame"
+  index_t x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs;
   unsigned char *K = UCHARDATA(k);
 
   for (x = 0; x < rs; x++)
-    for (y = 0; y < cs; y++) 
+    for (y = 0; y < cs; y++)
       if (K[0 * ps + y * rs + x]) return 0;          /* plan z = 0 */
   for (x = 0; x < rs; x++)
-    for (y = 0; y < cs; y++) 
+    for (y = 0; y < cs; y++)
       if (K[(ds-1) * ps + y * rs + x]) return 0;     /* plan z = ds-1 */
 
   for (x = 0; x < rs; x++)
-    for (z = 0; z < ds; z++) 
+    for (z = 0; z < ds; z++)
       if (K[z * ps + 0 * rs + x]) return 0;          /* plan y = 0 */
   for (x = 0; x < rs; x++)
-    for (z = 0; z < ds; z++) 
+    for (z = 0; z < ds; z++)
       if (K[z * ps + (cs-1) * rs + x]) return 0;     /* plan y = cs-1 */
 
   for (y = 0; y < cs; y++)
-    for (z = 0; z < ds; z++) 
+    for (z = 0; z < ds; z++)
       if (K[z * ps + y * rs + 0]) return 0;          /* plan x = 0 */
   for (y = 0; y < cs; y++)
-    for (z = 0; z < ds; z++) 
+    for (z = 0; z < ds; z++)
       if (K[z * ps + y * rs + (rs-1)]) return 0;     /* plan x = rs-1 */
 
   return 1;
-} // K3_CheckFrame()
+} // mcskel3d_K3_CheckFrame()
 
 /* ========================================== */
-/*! \fn int K3_CheckComplex(struct xvimage *k)
+/*! \fn int32_t mcskel3d_K3_CheckComplex(struct xvimage *k)
     \param k : un sous-ensemble de H^2
     \return : booléen
     \brief teste si k est un complexe
 */
-boolean K3_CheckComplex(struct xvimage *k)
+boolean mcskel3d_K3_CheckComplex(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_CheckComplex"
-  int x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs;
+#define F_NAME "mcskel3d_K3_CheckComplex"
+  index_t x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs;
   unsigned char *K = UCHARDATA(k);
-  int tab[26], u, n;
-  
+  index_t tab[26], u;
+  int32_t n;
+
   for (z = 0; z < ds; z++)
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -258,22 +260,23 @@ boolean K3_CheckComplex(struct xvimage *k)
   printf("%s: complex OK\n", F_NAME);  
 #endif
   return 1;
-} // K3_CheckComplex()
+} // mcskel3d_K3_CheckComplex()
 
 /* ========================================== */
-/*! \fn void K3_CloseComplex(struct xvimage *k)
+/*! \fn void mcskel3d_K3_CloseComplex(struct xvimage *k)
     \param k : un sous-ensemble de H^3
     \brief en sortie, k est un complexe qui est la fermeture de l'ensemble de départ
 */
-void K3_CloseComplex(struct xvimage *k)
+void mcskel3d_K3_CloseComplex(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_CloseComplex"
-  int x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs;
+#define F_NAME "mcskel3d_K3_CloseComplex"
+  index_t x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs;
   unsigned char *K = UCHARDATA(k);
-  int tab[26], u, n;
-  
+  index_t tab[26], u;
+  int32_t n;
+
   for (z = 0; z < ds; z++)
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -282,117 +285,126 @@ void K3_CloseComplex(struct xvimage *k)
       Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
       for (u = 0; u < n; u++) K[tab[u]] = FLAG_OBJ;
     }
-} // K3_CloseComplex()
+} // mcskel3d_K3_CloseComplex()
 
+// already implemented in mcskel2d3d.c
 /* ========================================== */
-/*! \fn void K3_MarkObj(struct xvimage *k)
+/*! \fn void mcskel3d_K3_MarkObj(struct xvimage *k)
     \param k : un complexe
     \brief marque FLAG_OBJ toutes les faces du complexe k
 */
-void K3_MarkObj(struct xvimage *k)
+void mcskel3d_K3_MarkObj(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MarkObj"
-  int i, N = rowsize(k) * colsize(k) * depth(k);
+#define F_NAME "mcskel3d_K3_MarkObj"
+  index_t i, N = rowsize(k) * colsize(k) * depth(k);
   unsigned char *K = UCHARDATA(k);
   for (i = 0; i < N; i++) if (K[i]) K[i] = FLAG_OBJ; else K[i] = 0;
-} // K3_MarkObj()
+} // mcskel3d_K3_MarkObj()
+
 
 /* ========================================== */
-int K3_CardObj(struct xvimage *k)
+int32_t mcskel3d_K3_CardObj(struct xvimage *k)
 /* ========================================== */
 {
-  int i, N = rowsize(k) * colsize(k) * depth(k), n=0;
+  index_t i, N = rowsize(k) * colsize(k) * depth(k), n=0;
   unsigned char *K = UCHARDATA(k);
   for (i = 0; i < N; i++) if (K[i]) n++;
   return n;
-} // K3_CardObj()
+} // mcskel3d_K3_CardObj()
 
+// already implemented in mcskel2d3d.c
 /* ========================================== */
-/*! \fn void K3_Binarize(struct xvimage *k)
+/*! \fn void mcskel3d_K3_Binarize(struct xvimage *k)
     \param k : un complexe
     \brief marque NDG_MAX toutes les faces du complexe k
 */
-void K3_Binarize(struct xvimage *k)
+void mcskel3d_K3_Binarize(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_Binarize"
-  int i, N = rowsize(k) * colsize(k) * depth(k);
+#define F_NAME "mcskel3d_K3_Binarize"
+  index_t i, N = rowsize(k) * colsize(k) * depth(k);
   unsigned char *K = UCHARDATA(k);
   for (i = 0; i < N; i++) if (K[i]) K[i] = NDG_MAX; else K[i] = 0;
-} // K3_Binarize()
+} // mcskel3d_K3_Binarize()
 
+// already implemented in mcskel2d3d.c
 /* ========================================== */
-/*! \fn void K3_SelMarked(struct xvimage *k, unsigned char mask)
+/*! \fn void mcskel3d_K3_SelMarked(struct xvimage *k, unsigned char mask)
     \param k : un complexe
     \param mask : une marque (mot 8 bits avec un seul bit à 1)
     \brief met a FLAG_OBJ tous le éléments marqués, à 0 les autres
 */
-void K3_SelMarked(struct xvimage *k, unsigned char mask)
+void mcskel3d_K3_SelMarked(struct xvimage *k, unsigned char mask)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_SelMarked"
-  int i, N = rowsize(k) * colsize(k) * depth(k);
+#define F_NAME "mcskel3d_K3_SelMarked"
+  index_t i, N = rowsize(k) * colsize(k) * depth(k);
   unsigned char *K = UCHARDATA(k);
   for (i = 0; i < N; i++) if (K[i] & mask) K[i] = FLAG_OBJ; else K[i] = 0;
-} // K3_SelMarked()
+} // mcskel3d_K3_SelMarked()
 
+// already implemented in mcskel2d3d.c
 /* ========================================== */
-/*! \fn void K3_MarkAlphaCarre(struct xvimage *k, int f, unsigned char mask)
+/*! \fn void mcskel3d_K3_MarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
     \param k : un complexe
     \param f : une face
     \param mask : valeur de la marque (mot 8 bits avec un seul bit à 1)
     \brief ajoute la marque mask à tous les éléments de alphacarre(f)
 */
-void K3_MarkAlphaCarre(struct xvimage *k, int f, unsigned char mask)
+void mcskel3d_K3_MarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MarkAlphaCarre"
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs; 
-  int x = f%rs, y = (f%ps)/rs, z = f/ps;
-  int tab[26], u, n;
+#define F_NAME "mcskel3d_K3_MarkAlphaCarre"
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs; 
+  index_t x = f%rs, y = (f%ps)/rs, z = f/ps;
+  index_t tab[26], u;
+  int32_t n;
   unsigned char *K = UCHARDATA(k);
   Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
   for (u = 0; u < n; u++) K[tab[u]] |= mask;
-} // K3_MarkAlphaCarre()
+} // mcskel3d_K3_MarkAlphaCarre()
 
 /* ========================================== */
-/*! \fn void K3_UnMarkAlphaCarre(struct xvimage *k, int f, unsigned char mask)
+/*! \fn void mcskel3d_K3_UnMarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
     \param k : un complexe
     \param f : une face
     \param mask : valeur de la marque (mot 8 bits avec un seul bit à 1)
     \brief retire la marque mask de tous les éléments de alphacarre(f)
 */
-void K3_UnMarkAlphaCarre(struct xvimage *k, int f, unsigned char mask)
+void mcskel3d_K3_UnMarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_UnMarkAlphaCarre"
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs; 
-  int x = f%rs, y = (f%ps)/rs, z = f/ps;
-  int tab[26], u, n;
+#define F_NAME "mcskel3d_K3_UnMarkAlphaCarre"
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs; 
+  index_t x = f%rs, y = (f%ps)/rs, z = f/ps;
+  index_t tab[26], u;
+  int32_t n;
   unsigned char *K = UCHARDATA(k);
   Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
   for (u = 0; u < n; u++) K[tab[u]] &= ~mask;
-} // K3_UnMarkAlphaCarre()
+} // mcskel3d_K3_UnMarkAlphaCarre()
 
+// already implemented in mcskel2d3d.c
 /* ========================================== */
-/*! \fn void K3_MarkPrinc(struct xvimage *k)
+/*! \fn void mcskel3d_K3_MarkPrinc(struct xvimage *k)
     \param k : un complexe
     \brief pour chaque face principale f de k, rajoute (OR) la marque FLAG_PRINC au label de f
 */
-void K3_MarkPrinc(struct xvimage *k)
+void mcskel3d_K3_MarkPrinc(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MarkPrinc"
-  int card, i, x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs; 
+#define F_NAME "mcskel3d_K3_MarkPrinc"
+  index_t card, i, x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs; 
   unsigned char *K = UCHARDATA(k);
-  int tab[26], u, n;
+  index_t tab[26], u;
+  int32_t n;
   for (z = 0; z < ds; z++)
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
@@ -406,34 +418,35 @@ void K3_MarkPrinc(struct xvimage *k)
       if (card == 0) K[i] |= FLAG_PRINC;
     }
   }
-} // K3_MarkPrinc()
+} // mcskel3d_K3_MarkPrinc()
 
 static u_int8_t *EssTab3 = NULL;
 
 /* ========================================== */
-/*! \fn void K3_MarkEss(struct xvimage *k)
+/*! \fn void mcskel3d_K3_MarkEss(struct xvimage *k)
     \param k : un complexe
     \brief pour chaque face essentielle f de k, rajoute (OR) la marque FLAG_ESS au label de f
     \warning les faces principales doivent avoir été marquées auparavant
 */
-void K3_MarkEss(struct xvimage *k)
+void mcskel3d_K3_MarkEss(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MarkEss"
-  int x, y, z, i, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
+#define F_NAME "mcskel3d_K3_MarkEss"
+  index_t x, y, z, i, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
   unsigned char *K = UCHARDATA(k);
   unsigned char *P;
-  int tab[26], u, n;
+  index_t tab[26], u;
+  int32_t n;
   char tablefilename[256];
 
   if (EssTab3 == NULL) 
   {
     FILE *fd;
-    int ret, tablesize = 1<<23;
+    index_t ret, tablesize = 1<<23;
 
     // ON EN PROFITE POUR INITIALISER LA TABLE DES POINTS SIMPLES
-    init_topo3d();
+    mctopo3d_init_topo3d();
 
     EssTab3 = malloc(tablesize);
     if (EssTab3 == NULL)
@@ -446,7 +459,7 @@ void K3_MarkEss(struct xvimage *k)
     fd = fopen (tablefilename, "r");
     if (fd == NULL) 
     {   
-      int ret;
+      index_t ret;
       char command[256];
       sprintf(command, "cp %s/src/tables/%s %s", getenv("PINK"), ESS3DTABNAME, tablefilename);
       ret = system(command);
@@ -491,7 +504,7 @@ void K3_MarkEss(struct xvimage *k)
       }
       else if (CARRE3D(x,y,z)) 
       {
-	int card = 0;
+	index_t card = 0;
 	Betacarre3d(rs, cs, ds, x, y, z, tab, &n);
 	for (u = 0; u < n; u++) if (P[tab[u]]) card++;
 	if (P[i] && ((card == 0) || (card == 2))) K[i] |= FLAG_ESS; 
@@ -513,25 +526,26 @@ void K3_MarkEss(struct xvimage *k)
     }
   }
   free(P);
-} // K3_MarkEss()
+} // mcskel3d_K3_MarkEss()
 
 /* ========================================== */
-/*! \fn int K3_MarkCore(struct xvimage *k, int f)
+/*! \fn int32_t mcskel3d_K3_MarkCore(struct xvimage *k, index_t f)
     \param k : un complexe
     \param f : une face de k
     \return le cardinal (nombre de faces) de la fermeture du noyau
     \brief marque le complexe formé du noyau (core) de la face f pour le complexe k
     \warning les faces essentielles doivent avoir été marquées auparavant
 */
-int K3_MarkCore(struct xvimage *k, int f)
+int32_t mcskel3d_K3_MarkCore(struct xvimage *k, index_t f)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MarkCore"
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs * cs, nf = 0;
+#define F_NAME "mcskel3d_K3_MarkCore"
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs * cs, nf = 0;
   unsigned char *K = UCHARDATA(k);
-  int tab[26], tabi[26], u, v, n, ni, i, j;
-  int x = f % rs, y = (f % ps) / rs, z = f / ps, xi, yi, zi;
+  index_t tab[26], tabi[26], u, v, i, j;
+  int32_t n, ni;
+  index_t x = f % rs, y = (f % ps) / rs, z = f / ps, xi, yi, zi;
 
   Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
   for (u = 0; u < n; u++) 
@@ -565,10 +579,10 @@ printf("mark_core_aux : %d,%d,%d\n", j%rs, (j%ps)/rs, j/ps);
     }
   }
   return nf;
-} // K3_MarkCore()
+} // mcskel3d_K3_MarkCore()
 
 /* ========================================== */
-/*! \fn int K3_MarkCore2(struct xvimage *k, struct xvimage *m, int f)
+/*! \fn int32_t mcskel3d_K3_MarkCore2(struct xvimage *k, struct xvimage *m, index_t f)
     \param k : un complexe
     \param m : un complexe "marqueur"
     \param f : une face de k
@@ -577,16 +591,17 @@ printf("mark_core_aux : %d,%d,%d\n", j%rs, (j%ps)/rs, j/ps);
     \warning les faces essentielles doivent avoir été marquées auparavant,
     pas de vérification de compatibilité entre k et m
 */
-int K3_MarkCore2(struct xvimage *k, struct xvimage *m, int f)
+int32_t mcskel3d_K3_MarkCore2(struct xvimage *k, struct xvimage *m, index_t f)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MarkCore2"
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, nf = 0;
+#define F_NAME "mcskel3d_K3_MarkCore2"
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, nf = 0;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int tab[26], tabi[26], u, v, n, ni, i, j;
-  int x = f % rs, y = (f % ps) / rs, z = f / ps, xi, yi, zi;
+  index_t tab[26], tabi[26], u, v, i, j;
+  int32_t n, ni;
+  index_t x = f % rs, y = (f % ps) / rs, z = f / ps, xi, yi, zi;
 
   Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
   for (u = 0; u < n; u++) 
@@ -639,60 +654,62 @@ printf("mark_core2_aux : %d,%d,%d\n", j%rs, (j%ps)/rs, j/ps);
     }
   }
   return nf;
-} // K3_MarkCore2()
+} // mcskel3d_K3_MarkCore2()
 
 /* ========================================== */
-/*! \fn int K3_CardCore(struct xvimage *k, int f)
+/*! \fn int32_t mcskel3d_K3_CardCore(struct xvimage *k, index_t f)
     \param k : un complexe
     \param f : une face de k
     \return un entier 
-    \brief retourne le cardinal du noyau de f, i.e., le nombre de faces marquées MARK3_ESS du noyau 
+    \brief retourne le cardinal du noyau de f, i.e., le nombre de faces marquées MARmcskel3d_K3_ESS du noyau 
     \warning les faces essentielles doivent avoir été marquées auparavant
 */
-int K3_CardCore(struct xvimage *k, int f)
+int32_t mcskel3d_K3_CardCore(struct xvimage *k, index_t f)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_CardCore"
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, nf = 0;
+#define F_NAME "mcskel3d_K3_CardCore"
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, nf = 0;
   unsigned char *K = UCHARDATA(k);
-  int tab[26], u, n;
-  int x = f % rs, y = (f % ps) / rs, z = f / ps;
+  index_t tab[26], u;
+  int32_t n;
+  index_t x = f % rs, y = (f % ps) / rs, z = f / ps;
 
   Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
   for (u = 0; u < n; u++) if (IS_ESS(K[tab[u]])) nf++; 
   return nf;
-} // K3_CardCore()
+} // mcskel3d_K3_CardCore()
 
 /* ========================================== */
-/*! \fn int K3_CardCore2(struct xvimage *k, struct xvimage *m, int f)
+/*! \fn int32_t mcskel3d_K3_CardCore2(struct xvimage *k, struct xvimage *m, index_t f)
     \param k : un complexe
     \param m : un complexe "marqueur"
     \param f : une face de k
     \return un entier 
     \brief retourne le cardinal du noyau de f pour k conditionné par m, i.e.,
-    le nombre de faces marquées MARK3_ESS ou appartenant à m dans le noyau 
+    le nombre de faces marquées MARmcskel3d_K3_ESS ou appartenant à m dans le noyau 
     \warning les faces essentielles doivent avoir été marquées auparavant,
     pas de vérification de compatibilité entre k et m
 */
-int K3_CardCore2(struct xvimage *k, struct xvimage *m, int f)
+int32_t mcskel3d_K3_CardCore2(struct xvimage *k, struct xvimage *m, index_t f)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_CardCore2"
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, nf = 0;
+#define F_NAME "mcskel3d_K3_CardCore2"
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, nf = 0;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int tab[26], u, n;
-  int x = f % rs, y = (f % ps) / rs, z = f / ps;
+  index_t tab[26], u;
+  int32_t n;
+  index_t x = f % rs, y = (f % ps) / rs, z = f / ps;
 
   Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
   for (u = 0; u < n; u++) if (IS_ESS(K[tab[u]]) || M[tab[u]]) nf++; 
   return nf;
-} // K3_CardCore2()
+} // mcskel3d_K3_CardCore2()
 
 /* ==================================== */
-int32_t get3Dconfiguration(
+int32_t  get3Dconfiguration(
   u_int8_t *img,                   /* pointeur base image */
   int32_t flag,
   int32_t p,                       /* index du point */
@@ -791,23 +808,24 @@ int32_t get2Dconfiguration(
   return mask;
 } /* get2Dconfiguration() */
 
-extern int32_t simple26mask(u_int32_t mask); // voir $PINK/src/lib/mctopo3d.c.table
+// LuM I hope this is the right function
+extern int32_t mctopo3d_table_simple26mask(u_int32_t mask); // voir $PINK/src/lib/mctopo3d.c.table
 
 /* ========================================== */
-/*! \fn void K3_MarkCritic(struct xvimage *k)
+/*! \fn void mcskel3d_K3_MarkCritic(struct xvimage *k)
     \param k : un complexe
     \brief marque FLAG_CRITIC_E les fermetures des faces critiques du complexe k
            et marque FLAG_CRITIC les faces critiques du complexe k
     \warning les faces essentielles doivent avoir été marquées auparavant
 */
-void K3_MarkCritic(struct xvimage *k)
+void mcskel3d_K3_MarkCritic(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MarkCritic"
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
+#define F_NAME "mcskel3d_K3_MarkCritic"
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
   unsigned char *K = UCHARDATA(k);
-  int x, y, z, i, n, ncore;
+  index_t x, y, z, i, n, ncore;
   u_int32_t mask;
 
   for (i = 0; i < N; i++) if (IS_ESS(K[i])) K[i] |= FLAG_CRITIC; 
@@ -823,33 +841,33 @@ void K3_MarkCritic(struct xvimage *k)
 
     if (IS_ESS(K[i])) 
     {
-      ncore = K3_MarkCore(k, i);
+      ncore = mcskel3d_K3_MarkCore(k, i);
 #ifdef DEBUGMARKCRITIC
 printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 #endif
       if (ncore == 0) goto next;
       if (ncore == n) 
       { 
-	K3_UnMarkAlphaCarre(k, i, FLAG_CORE); 
+	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE); 
 	goto next; 
       }
       // le core d'un singl est forcément vide (cas déjà traité)
       if (INTER3D(x,y,z))
       {
 	if (ncore == 1) K[i] &= ~FLAG_CRITIC;
-	K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
+	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
 	goto next;
       }
       if (CARRE3D(x,y,z))
       {
 	mask = get2Dconfiguration(K, FLAG_CORE, x, y, z, rs, ps);
 	if ((t8(mask) == 1) && (t4b(mask) == 1)) K[i] &= ~FLAG_CRITIC;
-	K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
+	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
       }
       //if (CUBE3D(x,y,z)) // inutile car c'est le seul choix qui reste
       mask = get3Dconfiguration(K, FLAG_CORE, i, rs, ps, N);
-      if (simple26mask(mask)) K[i] &= ~FLAG_CRITIC;
-      K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
+      if (mctopo3d_table_simple26mask(mask)) K[i] &= ~FLAG_CRITIC;
+      mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
 
     next:;
     }
@@ -859,12 +877,12 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
     if (IS_CRITIC(K[i])) 
     {
       K[i] |= FLAG_CRITIC_E;
-      K3_MarkAlphaCarre(k, i, FLAG_CRITIC_E);
+      mcskel3d_K3_MarkAlphaCarre(k, i, FLAG_CRITIC_E);
     }
-} // K3_MarkCritic()
+} // mcskel3d_K3_MarkCritic()
 
 /* ========================================== */
-/*! \fn void K3_MarkCritic2(struct xvimage *k, struct xvimage *m)
+/*! \fn void mcskel3d_K3_MarkCritic2(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
     \brief marque FLAG_CRITIC_E les fermetures des faces critiques du complexe k, conditionné par m, et 
@@ -873,15 +891,15 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
     \warning les faces essentielles (conditionnellement à m) doivent avoir été marquées auparavant,
     pas de vérification de compatibilité entre k et m
 */
-void K3_MarkCritic2(struct xvimage *k, struct xvimage *m)
+void mcskel3d_K3_MarkCritic2(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MarkCritic2"
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
+#define F_NAME "mcskel3d_K3_MarkCritic2"
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int x, y, z, i, n, ncore;
+  index_t x, y, z, i, n, ncore;
   u_int32_t mask;
 
   for (i = 0; i < N; i++) if (IS_ESS(K[i])) K[i] |= FLAG_CRITIC; 
@@ -896,14 +914,14 @@ void K3_MarkCritic2(struct xvimage *k, struct xvimage *m)
     i = z*ps + y*rs + x;
     if (IS_ESS(K[i])) 
     {
-      ncore = K3_MarkCore2(k, m, i);
+      ncore = mcskel3d_K3_MarkCore2(k, m, i);
 #ifdef DEBUGMARKCRITIC2
 printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 #endif
       if (ncore == 0) goto next;
       if (ncore == n) 
       { 
-	K3_UnMarkAlphaCarre(k, i, FLAG_CORE); 
+	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE); 
 	goto next; 
       }
       // le core d'un singl est forcément vide (cas déjà traité)
@@ -916,7 +934,7 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 printf("  inter, REGUL\n");
 #endif
 	}
-	K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
+	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
 	goto next;
       }
       if (CARRE3D(x,y,z))
@@ -929,12 +947,12 @@ printf("  inter, REGUL\n");
 printf("  carre, REGUL\n");
 #endif
 	}
-	K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
+	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
 	goto next;
       }
       //if (CUBE3D(x,y,z)) // inutile car c'est le seul choix qui reste
       mask = get3Dconfiguration(K, FLAG_CORE, i, rs, ps, N);
-      if (simple26mask(mask)) 
+      if (mctopo3d_table_simple26mask(mask)) 
       {	
 	K[i] &= ~FLAG_CRITIC;
 #ifdef DEBUGMARKCRITIC2
@@ -942,7 +960,7 @@ printf("  cube, REGUL\n");
 print3Dconfiguration(mask);
 #endif
       }
-      K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
+      mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
 
     next:;
     }
@@ -952,25 +970,26 @@ print3Dconfiguration(mask);
   {
     K[i] |= FLAG_CRITIC_E;
     K[i] |= FLAG_CRITIC;
-    K3_MarkAlphaCarre(k, i, FLAG_CRITIC_E);
+    mcskel3d_K3_MarkAlphaCarre(k, i, FLAG_CRITIC_E);
   }
-} // K3_MarkCritic2()
+} // mcskel3d_K3_MarkCritic2()
 
 /* ========================================== */
-/*! \fn void K3_MarkMCritic(struct xvimage *k)
+/*! \fn void mcskel3d_K3_MarkMCritic(struct xvimage *k)
     \param k : un complexe 
     \brief marque FLAG_CRITIC les faces m-critiques du complexe k
     \warning les faces essentielles doivent avoir été marquées auparavant
     \warning utilise le flag TMP1
 */
-void K3_MarkMCritic(struct xvimage *k)
+void mcskel3d_K3_MarkMCritic(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MarkMCritic"
-  int i, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
+#define F_NAME "mcskel3d_K3_MarkMCritic"
+  index_t i, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
   unsigned char *K = UCHARDATA(k);
-  int tab[26], u, x, y, z, n, ncore;
+  index_t tab[26], u, x, y, z, ncore;
+  int32_t n;
   u_int32_t mask;
 
   for (i = 0; i < N; i++) if (IS_ESS(K[i])) K[i] |= FLAG_CRITIC; 
@@ -986,33 +1005,33 @@ void K3_MarkMCritic(struct xvimage *k)
 
     if (IS_ESS(K[i])) 
     {
-      ncore = K3_MarkCore(k, i);
+      ncore = mcskel3d_K3_MarkCore(k, i);
 #ifdef DEBUGMARKCRITIC
 printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 #endif
       if (ncore == 0) goto next;
       if (ncore == n) 
       { 
-	K3_UnMarkAlphaCarre(k, i, FLAG_CORE); 
+	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE); 
 	goto next; 
       }
       // le core d'un singl est forcément vide (cas déjà traité)
       if (INTER3D(x,y,z))
       {
 	if (ncore == 1) K[i] &= ~FLAG_CRITIC;
-	K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
+	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
 	goto next;
       }
       if (CARRE3D(x,y,z))
       {
 	mask = get2Dconfiguration(K, FLAG_CORE, x, y, z, rs, ps);
 	if ((t8(mask) == 1) && (t4b(mask) == 1)) K[i] &= ~FLAG_CRITIC;
-	K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
+	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
       }
       //if (CUBE3D(x,y,z)) // inutile car c'est le seul choix qui reste
       mask = get3Dconfiguration(K, FLAG_CORE, i, rs, ps, N);
-      if (simple26mask(mask)) K[i] &= ~FLAG_CRITIC;
-      K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
+      if (mctopo3d_table_simple26mask(mask)) K[i] &= ~FLAG_CRITIC;
+      mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
 
     next:;
     }
@@ -1029,10 +1048,10 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
     if (!IS_TMP1(K[i])) K[i] &= ~FLAG_CRITIC;
     K[i] &= ~FLAG_TMP1;
   }
-} // K3_MarkMCritic()
+} // mcskel3d_K3_MarkMCritic()
 
 /* ========================================== */
-/*! \fn void K3_MarkMCritic2(struct xvimage *k, struct xvimage *m)
+/*! \fn void mcskel3d_K3_MarkMCritic2(struct xvimage *k, struct xvimage *m)
     \param k : un complexe 
     \param m : un complexe "marqueur"
     \brief marque FLAG_CRITIC les faces M-critiques du complexe k, conditionné par m
@@ -1040,15 +1059,16 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
     \warning pas de vérification de compatibilité entre k et m
     \warning utilise le flag TMP1
 */
-void K3_MarkMCritic2(struct xvimage *k, struct xvimage *m)
+void mcskel3d_K3_MarkMCritic2(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MarkMCritic2"
-  int i, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
+#define F_NAME "mcskel3d_K3_MarkMCritic2"
+  index_t i, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int tab[26], x, y, z, u, n, ncore;
+  index_t tab[26], x, y, z, u, ncore;
+  int32_t n;
   u_int32_t mask;
 
   for (i = 0; i < N; i++) if (IS_ESS(K[i])) K[i] |= FLAG_CRITIC; 
@@ -1063,7 +1083,7 @@ void K3_MarkMCritic2(struct xvimage *k, struct xvimage *m)
     i = z*ps + y*rs + x;
     if (IS_ESS(K[i])) 
     {
-      ncore = K3_MarkCore2(k, m, i);
+      ncore = mcskel3d_K3_MarkCore2(k, m, i);
 #ifdef DEBUGMARKCRITIC2
 printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 #endif
@@ -1075,7 +1095,7 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
       if (ncore == n) 
       { 
 	K[i] |= FLAG_CRITIC;
-	K3_UnMarkAlphaCarre(k, i, FLAG_CORE); 
+	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE); 
 	goto next; 
       }
       // le core d'un singl est forcément vide (cas déjà traité)
@@ -1088,7 +1108,7 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 printf("  inter, REGUL\n");
 #endif
 	}
-	K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
+	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
 	goto next;
       }
       if (CARRE3D(x,y,z))
@@ -1101,11 +1121,11 @@ printf("  inter, REGUL\n");
 printf("  carre, REGUL\n");
 #endif
 	}
-	K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
+	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
       }
       //if (CUBE3D(x,y,z)) // inutile car c'est le seul choix qui reste
       mask = get3Dconfiguration(K, FLAG_CORE, i, rs, ps, N);
-      if (simple26mask(mask)) 
+      if (mctopo3d_table_simple26mask(mask)) 
       {	
 	K[i] &= ~FLAG_CRITIC;
 #ifdef DEBUGMARKCRITIC2
@@ -1113,7 +1133,7 @@ printf("  cube, REGUL\n");
 print3Dconfiguration(mask);
 #endif
       }
-      K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
+      mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE);
 
     next:;
     }
@@ -1131,20 +1151,20 @@ print3Dconfiguration(mask);
     if (!IS_TMP1(K[i])) K[i] &= ~FLAG_CRITIC;
     K[i] &= ~FLAG_TMP1;
   }
-} // K3_MarkMCritic2()
+} // mcskel3d_K3_MarkMCritic2()
 
 /* ========================================== */
-/*! \fn int K3_Critic2Obj(struct xvimage *k)
+/*! \fn int32_t mcskel3d_K3_Critic2Obj(struct xvimage *k)
     \param k : un complexe
     \return le nombre de faces objet trouvées
     \brief marque FLAG_OBJ les faces marquées FLAG_CRITIC du complexe k et remet à 0 les autres marques
 */
-int K3_Critic2Obj(struct xvimage *k)
+int32_t mcskel3d_K3_Critic2Obj(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_Critic2Obj"
-  int i, N = rowsize(k) * colsize(k) * depth(k), n = 0;
+#define F_NAME "mcskel3d_K3_Critic2Obj"
+  index_t i, N = rowsize(k) * colsize(k) * depth(k), n = 0;
   unsigned char *K = UCHARDATA(k);
   for (i = 0; i < N; i++) 
     if (IS_CRITIC(K[i]))
@@ -1155,20 +1175,20 @@ int K3_Critic2Obj(struct xvimage *k)
     else
       K[i] = 0;
   return n;
-} // K3_Critic2Obj()
+} // mcskel3d_K3_Critic2Obj()
 
 /* ========================================== */
-/*! \fn int K3_CriticE2Obj(struct xvimage *k)
+/*! \fn int32_t mcskel3d_K3_CriticE2Obj(struct xvimage *k)
     \param k : un complexe
     \return le nombre de faces objet trouvées
     \brief marque FLAG_OBJ les faces marquées FLAG_CRITIC_E du complexe k et remet à 0 les autres marques
 */
-int K3_CriticE2Obj(struct xvimage *k)
+int32_t mcskel3d_K3_CriticE2Obj(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_CriticE2Obj"
-  int i, N = rowsize(k) * colsize(k) * depth(k), n = 0;
+#define F_NAME "mcskel3d_K3_CriticE2Obj"
+  index_t i, N = rowsize(k) * colsize(k) * depth(k), n = 0;
   unsigned char *K = UCHARDATA(k);
   for (i = 0; i < N; i++) 
     if (IS_CRITIC_E(K[i]))
@@ -1179,24 +1199,25 @@ int K3_CriticE2Obj(struct xvimage *k)
     else
       K[i] = 0;
   return n;
-} // K3_CriticE2Obj()
+} // mcskel3d_K3_CriticE2Obj()
 
 /* ========================================== */
-/*! \fn int K3_MCritic2Obj(struct xvimage *k)
+/*! \fn int32_t mcskel3d_K3_MCritic2Obj(struct xvimage *k)
     \param k : un complexe
     \return le nombre de faces objet trouvées
     \brief marque FLAG_OBJ les fermetures des faces non nulles 
     contenant des faces m-critiques (marquées FLAG_CRITIC) 
     du complexe k et remet à 0 les autres marques
 */
-int K3_MCritic2Obj(struct xvimage *k)
+int32_t mcskel3d_K3_MCritic2Obj(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MCritic2Obj"
-  int i, j, x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds, n = 0;
+#define F_NAME "mcskel3d_K3_MCritic2Obj"
+  index_t i, j, x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds, n = 0;
   unsigned char *K = UCHARDATA(k);
-  int tab1[26], tab2[26], u, v, n1, n2;
+  index_t tab1[26], tab2[26], u, v;
+  int32_t n1, n2;
   for (i = 0; i < N; i++) K[i] &= ~FLAG_OBJ;
 
   for (z = 0; z < ds; z++)
@@ -1226,10 +1247,10 @@ int K3_MCritic2Obj(struct xvimage *k)
   for (i = 0; i < N; i++) 
     if (IS_OBJ(K[i])) { n++; K[i] = FLAG_OBJ; } else K[i] = 0;
   return n;
-} // K3_MCritic2Obj()
+} // mcskel3d_K3_MCritic2Obj()
 
 /* ========================================== */
-/*! \fn int K3_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
+/*! \fn int32_t mcskel3d_K3_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
     \return le nombre de faces objet trouvées
@@ -1237,15 +1258,16 @@ int K3_MCritic2Obj(struct xvimage *k)
     contenant des faces m-critiques (marquées FLAG_CRITIC)
     du complexe k ou des faces de m et remet à 0 les autres marques.
 */
-int K3_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
+int32_t mcskel3d_K3_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MCriticOrMarked2Obj"
-  int i, j, x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds, n = 0;
+#define F_NAME "mcskel3d_K3_MCriticOrMarked2Obj"
+  index_t i, j, x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds, n = 0;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int tab1[26], tab2[26], u, v, n1, n2;
+  index_t tab1[26], tab2[26], u, v;
+  int32_t n1, n2;
   for (i = 0; i < N; i++) K[i] &= ~FLAG_OBJ;
 
   for (z = 0; z < ds; z++)
@@ -1272,41 +1294,42 @@ int K3_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
   for (i = 0; i < N; i++) 
     if (IS_OBJ(K[i])) { n++; K[i] = FLAG_OBJ; } else K[i] = 0;
   return n;
-} // K3_MCriticOrMarked2Obj()
+} // mcskel3d_K3_MCriticOrMarked2Obj()
 
 /* ========================================== */
-/*! \fn int K3_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
+/*! \fn int32_t mcskel3d_K3_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
     \return le nombre de faces critiques ou marquées trouvées
     \brief marque FLAG_OBJ les faces CRITIC ou CRITIC_E du complexe k ou marquées par m et remet à 0 les flags dans k
 */
-int K3_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
+int32_t mcskel3d_K3_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_CriticOrMarked2Obj"
-  int i, N = rowsize(k) * colsize(k) * depth(k), nobj = 0;
+#define F_NAME "mcskel3d_K3_CriticOrMarked2Obj"
+  index_t i, N = rowsize(k) * colsize(k) * depth(k), nobj = 0;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
   for (i = 0; i < N; i++) 
     if (M[i] || IS_CRITIC(K[i]) || IS_CRITIC_E(K[i])) { K[i] = FLAG_OBJ; nobj++; } else K[i] = 0;
   return nobj;
-} // K3_CriticOrMarked2Obj()
+} // mcskel3d_K3_CriticOrMarked2Obj()
 
 /* ========================================== */
-/*! \fn void K3_HitPrinc(struct xvimage *k)
+/*! \fn void mcskel3d_K3_HitPrinc(struct xvimage *k)
     \param k : un complexe
     \brief pour chaque face f marquée FLAG_PRINC de k, marque FLAG_OBJ le alpha du beta de f
 */
-void K3_HitPrinc(struct xvimage *k)
+void mcskel3d_K3_HitPrinc(struct xvimage *k)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_HitPrinc"
-  int i, j, x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs;
+#define F_NAME "mcskel3d_K3_HitPrinc"
+  index_t i, j, x, y, z, rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs;
   unsigned char *K = UCHARDATA(k);
-  int tab1[26], tab2[26], u, v, n1, n2;
+  index_t tab1[26], tab2[26], u, v;
+  int32_t n1, n2;
 
   for (z = 0; z < ds; z++)
   for (y = 0; y < cs; y++)
@@ -1328,10 +1351,10 @@ void K3_HitPrinc(struct xvimage *k)
       for (v = 0; v < n2; v++) K[tab2[v]] |= FLAG_OBJ;
     }
   }
-} // K3_HitPrinc()
+} // mcskel3d_K3_HitPrinc()
 
 /* ==================================== */
-void K3_CopieComplCore3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvimage *g)
+void mcskel3d_K3_CopieComplCore3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvimage *g)
 /* ==================================== */
 /* 
   Copie le complementaire du core du point i,j,k de B dans l'image G.
@@ -1352,7 +1375,7 @@ void K3_CopieComplCore3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, str
 
   memset(G, VAL_NULLE, gN); /* init a VAL_NULLE */
 
-  (void)K3_MarkCore(b, I);
+  (void)mcskel3d_K3_MarkCore(b, I);
   
   /* copie le Alphacarre */
   if (i % 2)
@@ -1403,12 +1426,12 @@ void K3_CopieComplCore3d(struct xvimage *b, int32_t i, int32_t j, int32_t k, str
     if (!(((i+1)<rs)&&((j+1)<cs)&&((k+1)<ds))||!IS_CORE(B[(k+1)*ps+(j+1)*rs+i+1])) G[(z+1)*gps+(y+1)*grs+x+1] = VAL_OBJET;
   }
 
-  K3_UnMarkAlphaCarre(b, I, FLAG_CORE); 
+  mcskel3d_K3_UnMarkAlphaCarre(b, I, FLAG_CORE); 
 
-} /* K3_CopieComplCore3d() */
+} /* mcskel3d_K3_CopieComplCore3d() */
 
 /* ==================================== */
-int32_t K3_Tbar3D(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvimage *g)
+int32_t mcskel3d_K3_Tbar3D(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvimage *g)
 /* ==================================== */
 /* 
   Retourne le nombre de composantes connexes du
@@ -1416,12 +1439,12 @@ int32_t K3_Tbar3D(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvi
   g (image temporaire) doit etre allouee de taille 7x7x7.
 */    
 {
-  K3_CopieComplCore3d(b, i, j, k, g);
+  mcskel3d_K3_CopieComplCore3d(b, i, j, k, g);
   return NbCompConnexe3d(g);
-} /* K3_Tbar3D() */
+} /* mcskel3d_K3_Tbar3D() */
 
 /* ========================================== */
-/*! \fn void K3_MarkThin(struct xvimage *k, struct xvimage *m)
+/*! \fn void mcskel3d_K3_MarkThin(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
     (m est un ensemble de faces qui doivent être préservées)
@@ -1429,17 +1452,17 @@ int32_t K3_Tbar3D(struct xvimage *b, int32_t i, int32_t j, int32_t k, struct xvi
     \warning les faces essentielles doivent avoir été marquées auparavant,
     pas de vérification de compatibilité entre k et m
 */
-void K3_MarkThin(struct xvimage *k, struct xvimage *m)
+void mcskel3d_K3_MarkThin(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
 {
 #undef F_NAME
-#define F_NAME "K3_MarkThin"
-  int x, y, z, i;
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k);
-  int ps = rs*cs, N = ps*ds;
+#define F_NAME "mcskel3d_K3_MarkThin"
+  index_t x, y, z, i;
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k);
+  index_t ps = rs*cs, N = ps*ds;
   unsigned char *K = UCHARDATA(k);
   unsigned char *M = UCHARDATA(m);
-  int n, ncore;
+  index_t n, ncore;
   struct xvimage *g;
 
   g = allocimage(NULL, 7, 7, 7, VFF_TYP_1_BYTE);
@@ -1463,23 +1486,23 @@ void K3_MarkThin(struct xvimage *k, struct xvimage *m)
 	if (IS_PRINC(K[i]))
 	{
 	  K[i] |= FLAG_TMP1;
-	  K3_MarkAlphaCarre(k, i, FLAG_TMP1);
+	  mcskel3d_K3_MarkAlphaCarre(k, i, FLAG_TMP1);
 	}
 	goto next;
       }
       else // CUBE3D
       {
-	if (K3_Tbar3D(k, x, y, z, g) > 1)
+	if (mcskel3d_K3_Tbar3D(k, x, y, z, g) > 1)
 	{
 	  K[i] |= FLAG_TMP1;
-	  K3_MarkAlphaCarre(k, i, FLAG_TMP1);
+	  mcskel3d_K3_MarkAlphaCarre(k, i, FLAG_TMP1);
 	}
       }
     }
   next:;
   }
   for (i = 0; i < N; i++) if (IS_TMP1(K[i])) M[i] = 1;
-} // K3_MarkThin()
+} // mcskel3d_K3_MarkThin()
 
 /* ==============================================================================*/
 /* ==============================================================================*/
@@ -1490,7 +1513,7 @@ void K3_MarkThin(struct xvimage *k, struct xvimage *m)
 /* ==============================================================================*/
 
 /* =============================================================== */
-void lskel3d1(struct xvimage * k, int nsteps) 
+void lskel3d1(struct xvimage * k, index_t nsteps) 
 /* =============================================================== */
 /*
     \brief Noyau homotopique - version efficace basée sur Khalimski 3D
@@ -1499,45 +1522,45 @@ void lskel3d1(struct xvimage * k, int nsteps)
 {
 #undef F_NAME
 #define F_NAME "lskel3d1"
-  int n_old, n_new, n;
+  index_t n_old, n_new, n;
 
   if (nsteps == -1) nsteps = 2000000000;
   if (nsteps == 0) return;
 
-  if (!K3_CheckComplex(k))
+  if (!mcskel3d_K3_CheckComplex(k))
   {
     fprintf(stderr, "%s: not a complex\n", F_NAME);
     exit(0);
   }
 
-  if (!K3_CheckFrame(k))
+  if (!mcskel3d_K3_CheckFrame(k))
   {
     fprintf(stderr, "%s: complex must not hit the frame\n", F_NAME);
     exit(0);
   }
 
-  K3_MarkObj(k);
+  mcskel3d_K3_MarkObj(k);
   n_new = -1;
   n = 0;
   do
   {
     n++;
     n_old = n_new;
-    K3_MarkPrinc(k);
-    K3_MarkEss(k);
-    K3_MarkCritic(k);
-    n_new = K3_CriticE2Obj(k);
+    mcskel3d_K3_MarkPrinc(k);
+    mcskel3d_K3_MarkEss(k);
+    mcskel3d_K3_MarkCritic(k);
+    n_new = mcskel3d_K3_CriticE2Obj(k);
 #ifdef VERBOSE
     printf("step %d ; new %d ; old %d\n", n, n_new, n_old);
 #endif
   } while ((n_new != n_old) && (n < nsteps));
 
-  K3_SelMarked(k, FLAG_OBJ);
-  K3_Binarize(k);
+  mcskel3d_K3_SelMarked(k, FLAG_OBJ);
+  mcskel3d_K3_Binarize(k);
 } // lskel3d1()
 
 /* =============================================================== */
-void lskel3d1b(struct xvimage * k, struct xvimage * m, int nsteps) 
+void lskel3d1b(struct xvimage * k, struct xvimage * m, index_t nsteps) 
 /* =============================================================== */
 /*
     \brief Noyau homotopique avec contrainte - version efficace basée sur Khalimski 3D
@@ -1546,45 +1569,45 @@ void lskel3d1b(struct xvimage * k, struct xvimage * m, int nsteps)
 {
 #undef F_NAME
 #define F_NAME "lskel3d1b"
-  int n_old, n_new, n;
+  index_t n_old, n_new, n;
 
   if (nsteps == -1) nsteps = 2000000000;
   if (nsteps == 0) return;
 
-  if (!K3_CheckComplex(k))
+  if (!mcskel3d_K3_CheckComplex(k))
   {
     fprintf(stderr, "%s: not a complex\n", F_NAME);
     exit(0);
   }
 
-  if (!K3_CheckFrame(k))
+  if (!mcskel3d_K3_CheckFrame(k))
   {
     fprintf(stderr, "%s: complex must not hit the frame\n", F_NAME);
     exit(0);
   }
 
-  K3_MarkObj(k);
+  mcskel3d_K3_MarkObj(k);
   n_new = -1;
   n = 0;
   do
   {
     n++;
     n_old = n_new;
-    K3_MarkPrinc(k);
-    K3_MarkEss(k);
-    K3_MarkCritic2(k, m);
-    n_new = K3_CriticOrMarked2Obj(k, m); 
+    mcskel3d_K3_MarkPrinc(k);
+    mcskel3d_K3_MarkEss(k);
+    mcskel3d_K3_MarkCritic2(k, m);
+    n_new = mcskel3d_K3_CriticOrMarked2Obj(k, m); 
 #ifdef VERBOSE
     printf("step %d ; new %d ; old %d\n", n, n_new, n_old);
 #endif
   } while ((n_new != n_old) && (n < nsteps));
 
-  K3_SelMarked(k, FLAG_OBJ);
-  K3_Binarize(k);
+  mcskel3d_K3_SelMarked(k, FLAG_OBJ);
+  mcskel3d_K3_Binarize(k);
 } // lskel3d1b()
 
 /* =============================================================== */
-void lskel3d2(struct xvimage * k, int nsteps) 
+void lskel3d2(struct xvimage * k, index_t nsteps) 
 /* =============================================================== */
 /*
     \brief Squelette surfacique (dans H3) par sélection et mémorisation
@@ -1595,18 +1618,18 @@ void lskel3d2(struct xvimage * k, int nsteps)
 #undef F_NAME
 #define F_NAME "lskel3d2"
   struct xvimage * m; // pour marquer les éléments "minces"
-  int n_old, n_new, n;
+  index_t n_old, n_new, n;
 
   if (nsteps == -1) nsteps = 2000000000;
   if (nsteps == 0) return;
 
-  if (!K3_CheckComplex(k))
+  if (!mcskel3d_K3_CheckComplex(k))
   {
     fprintf(stderr, "%s: not a complex\n", F_NAME);
     exit(0);
   }
 
-  if (!K3_CheckFrame(k))
+  if (!mcskel3d_K3_CheckFrame(k))
   {
     fprintf(stderr, "%s: complex must not hit the frame\n", F_NAME);
     exit(0);
@@ -1615,31 +1638,31 @@ void lskel3d2(struct xvimage * k, int nsteps)
   m = copyimage(k);
   razimage(m);
 
-  K3_MarkObj(k);
+  mcskel3d_K3_MarkObj(k);
   n_new = -1;
   n = 0;
   do
   {
     n++;
     n_old = n_new;
-    K3_MarkPrinc(k);
-    K3_MarkEss(k);
-    K3_MarkThin(k, m);
-    K3_MarkCritic2(k, m);
-    n_new = K3_CriticOrMarked2Obj(k, m); 
+    mcskel3d_K3_MarkPrinc(k);
+    mcskel3d_K3_MarkEss(k);
+    mcskel3d_K3_MarkThin(k, m);
+    mcskel3d_K3_MarkCritic2(k, m);
+    n_new = mcskel3d_K3_CriticOrMarked2Obj(k, m); 
 #ifdef VERBOSE
     printf("step %d ; new %d ; old %d\n", n, n_new, n_old);
 #endif
   } while ((n_new != n_old) && (n < nsteps));
 
-  K3_SelMarked(k, FLAG_OBJ);
-  K3_Binarize(k);
+  mcskel3d_K3_SelMarked(k, FLAG_OBJ);
+  mcskel3d_K3_Binarize(k);
 
   freeimage(m);
 } // lskel3d2()
 
 /* =============================================================== */
-void lskel3d4(struct xvimage * k, int nsteps) 
+void mcskel3d_lskel3d4(struct xvimage * k, index_t nsteps) 
 /* =============================================================== */
 /*
     \brief Noyau homotopique, version "Z^3 directe" (sans reconstruction) - version efficace basée sur Khalimski 3D
@@ -1651,48 +1674,48 @@ void lskel3d4(struct xvimage * k, int nsteps)
 #ifdef DEBUG
   struct xvimage * k2;
 #endif
-  int n_old, n_new, n;
+  index_t n_old, n_new, n;
 
   if (nsteps == -1) nsteps = 2000000000;
   if (nsteps == 0) return;
 
-  if (!K3_CheckComplex(k))
+  if (!mcskel3d_K3_CheckComplex(k))
   {
     fprintf(stderr, "%s: not a complex\n", F_NAME);
     exit(0);
   }
 
-  if (!K3_CheckFrame(k))
+  if (!mcskel3d_K3_CheckFrame(k))
   {
     fprintf(stderr, "%s: complex must not hit the frame\n", F_NAME);
     exit(0);
   }
 
-  K3_MarkObj(k);
+  mcskel3d_K3_MarkObj(k);
   n_new = -1;
   n = 0;
   do
   {
     n++;
     n_old = n_new;
-    K3_MarkPrinc(k);
-    K3_MarkEss(k);
-    K3_MarkMCritic(k);
+    mcskel3d_K3_MarkPrinc(k);
+    mcskel3d_K3_MarkEss(k);
+    mcskel3d_K3_MarkMCritic(k);
 
 #ifdef DEBUG
     k2 = copyimage(k);
-    K3_SelMarked(k2, FLAG_CRITIC);
+    mcskel3d_K3_SelMarked(k2, FLAG_CRITIC);
     writeimage(k2, "_k_critic");
 #endif
 
-    n_new = K3_MCritic2Obj(k);
+    n_new = mcskel3d_K3_MCritic2Obj(k);
 #ifdef VERBOSE
     printf("step %d ; new %d ; old %d\n", n, n_new, n_old);
 #endif
   } while ((n_new != n_old) && (n < nsteps));
 
-  K3_SelMarked(k, FLAG_OBJ);
-  K3_Binarize(k);
+  mcskel3d_K3_SelMarked(k, FLAG_OBJ);
+  mcskel3d_K3_Binarize(k);
   
 #ifdef DEBUG
     freeimage(k2);
@@ -1700,7 +1723,7 @@ void lskel3d4(struct xvimage * k, int nsteps)
 } // lskel3d4()
 
 /* =============================================================== */
-void lskel3d4b(struct xvimage * k, struct xvimage * m, int nsteps) 
+void lskel3d4b(struct xvimage * k, struct xvimage * m, index_t nsteps) 
 /* =============================================================== */
 /*
     \brief Noyau homotopique avec contrainte, version "Z^3 directe" (sans reconstruction) - version efficace basée sur Khalimski 3D
@@ -1712,45 +1735,45 @@ void lskel3d4b(struct xvimage * k, struct xvimage * m, int nsteps)
 #ifdef DEBUG
   struct xvimage * k2;
 #endif
-  int n_old, n_new, n;
+  index_t n_old, n_new, n;
 
   if (nsteps == -1) nsteps = 2000000000;
   if (nsteps == 0) return;
 
-  if (!K3_CheckComplex(k))
+  if (!mcskel3d_K3_CheckComplex(k))
   {
     fprintf(stderr, "%s: not a complex\n", F_NAME);
     exit(0);
   }
 
-  if (!K3_CheckFrame(k))
+  if (!mcskel3d_K3_CheckFrame(k))
   {
     fprintf(stderr, "%s: complex must not hit the frame\n", F_NAME);
     exit(0);
   }
 
-  K3_MarkObj(k);
+  mcskel3d_K3_MarkObj(k);
   n_new = -1;
   n = 0;
   do
   {
     n++;
     n_old = n_new;
-    K3_MarkPrinc(k);
-    K3_MarkEss(k);
-    K3_MarkMCritic2(k, m);
+    mcskel3d_K3_MarkPrinc(k);
+    mcskel3d_K3_MarkEss(k);
+    mcskel3d_K3_MarkMCritic2(k, m);
 
 #ifdef DEBUG
     k2 = copyimage(k);
-    K3_SelMarked(k2, FLAG_CRITIC);
+    mcskel3d_K3_SelMarked(k2, FLAG_CRITIC);
     writeimage(k2, "_k_critic");
 #endif
 
-    n_new = K3_MCritic2Obj(k);
+    n_new = mcskel3d_K3_MCritic2Obj(k);
 
 #ifdef DEBUG
     k2 = copyimage(k);
-    K3_SelMarked(k2, FLAG_OBJ);
+    mcskel3d_K3_SelMarked(k2, FLAG_OBJ);
     writeimage(k2, "_k_obj");
 #endif
 
@@ -1759,8 +1782,8 @@ void lskel3d4b(struct xvimage * k, struct xvimage * m, int nsteps)
 #endif
   } while ((n_new != n_old) && (n < nsteps));
 
-  K3_SelMarked(k, FLAG_OBJ);
-  K3_Binarize(k);
+  mcskel3d_K3_SelMarked(k, FLAG_OBJ);
+  mcskel3d_K3_Binarize(k);
 
 #ifdef DEBUG
     freeimage(k2);
@@ -1768,7 +1791,7 @@ void lskel3d4b(struct xvimage * k, struct xvimage * m, int nsteps)
 } // lskel3d4b()
 
 /* =============================================================== */
-void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps) 
+void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, index_t nsteps) 
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "lskeleuc3d"
@@ -1786,7 +1809,7 @@ void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 #ifdef DEBUG
   struct xvimage * k2;
 #endif
-  int n_new, i, j, l, j2, q, rs, cs, ds, ps, n, N, x, y, z;
+  index_t n_new, i, j, l, j2, q, rs, cs, ds, ps, n, N, x, y, z;
   unsigned char *K, *M, *M2, *I = NULL;
   double *D, d;
   double *P, p, t;
@@ -1800,13 +1823,13 @@ void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
   N = ps * ds;
   K = UCHARDATA(k);
 
-  if (!K3_CheckComplex(k))
+  if (!mcskel3d_K3_CheckComplex(k))
   {
     fprintf(stderr, "%s: not a complex\n", F_NAME);
     exit(0);
   }
 
-  if (!K3_CheckFrame(k))
+  if (!mcskel3d_K3_CheckFrame(k))
   {
     fprintf(stderr, "%s: complex must not hit the frame\n", F_NAME);
     exit(0);
@@ -1862,16 +1885,16 @@ void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 // --------------------------
 // Init RBT
 // --------------------------
-  RBT = CreeRbtVide(N);
+  RBT = mcrbt_CreeRbtVide(N);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s : mcrbt_CreeRbtVide failed\n", F_NAME);
     exit(1);
   }
   for (i = 0; i < N; i++)
   {
     P[i] = 1e15;
-    if (K[i] && (!I[i]) && bordext26(K, i, rs, ps, N))
+    if (K[i] && (!I[i]) && mctopo3d_bordext26(K, i, rs, ps, N))
     {
       p = D[i];
       for (l = 0; l < 26; l += 1)
@@ -1912,7 +1935,7 @@ void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
       if (p < P[i])
       {
 	P[i] = p;
-	RbtInsert(&RBT, p, i);
+	mcrbt_RbtInsert(&RBT, p, i);
       }
     }
   } // for (i = 0; i < N; i++)
@@ -1925,15 +1948,15 @@ void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 // MAIN LOOP
 // --------------------------
   n = 0;
-  while (!RbtVide(RBT) && (n < nsteps))
+  while (!mcrbt_RbtVide(RBT) && (n < nsteps))
   {
     n++;
     p = RbtMinLevel(RBT); 
 #ifdef VERBOSE
     printf("step %d, prio %g ", n, p);
 #endif
-    K3_MarkObj(k);
-    while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    mcskel3d_K3_MarkObj(k);
+    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
     {
       i = RbtPopMin(RBT);
       if (IS_OBJ(K[i]) && M[i]) 
@@ -1950,23 +1973,23 @@ void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
     writeimage(k, "_k");
 #endif
     copy2image(m2, m);
-    K3_CloseComplex(m2);
-    K3_MarkPrinc(k);
-    K3_MarkEss(k);
+    mcskel3d_K3_CloseComplex(m2);
+    mcskel3d_K3_MarkPrinc(k);
+    mcskel3d_K3_MarkEss(k);
 #ifdef DEBUG
     k2 = copyimage(k);
-    K3_SelMarked(k2, FLAG_ESS);
+    mcskel3d_K3_SelMarked(k2, FLAG_ESS);
     writeimage(k2, "_k_ess");
 #endif
-    K3_MarkCritic2(k, m2);
+    mcskel3d_K3_MarkCritic2(k, m2);
 #ifdef DEBUG
     k2 = copyimage(k);
-    K3_SelMarked(k2, FLAG_CRITIC);
+    mcskel3d_K3_SelMarked(k2, FLAG_CRITIC);
     writeimage(k2, "_k_critic");
 #endif
 
 #ifdef PARANO
-    if (!K3_CheckComplex(k))
+    if (!mcskel3d_K3_CheckComplex(k))
     {
       fprintf(stderr, "%s: not a complex\n", F_NAME);
       exit(0);
@@ -1989,7 +2012,7 @@ void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 		    (double)(i%rs), (double)((i % ps) / rs), (double)(i/ps));
 	    if (p < P[j])
 	    {
-	      RbtInsert(&RBT, p, j);
+	      mcrbt_RbtInsert(&RBT, p, j);
 	      P[j] = p;
 	    }	    
 	  }
@@ -2014,7 +2037,7 @@ void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 			  (double)(i%rs), (double)((i % ps) / rs), (double)(i/ps));
 		  if (p < P[j])
 		  {
-		    RbtInsert(&RBT, p, j);
+		    mcrbt_RbtInsert(&RBT, p, j);
 		    P[j] = p;
 		  }
 		}
@@ -2033,7 +2056,7 @@ void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 	    p = D[j];
 	    if (p < P[j])
 	    {
-	      RbtInsert(&RBT, p, j);
+	      mcrbt_RbtInsert(&RBT, p, j);
 	      P[j] = p;
 	    }
 	  }
@@ -2041,19 +2064,19 @@ void lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
       }
     } // while (!ListeVide(LIST))
 
-    n_new = K3_CriticE2Obj(k);
+    n_new = mcskel3d_K3_CriticE2Obj(k);
 
 #ifdef VERBOSE
     printf("  fin step : nb. points = %d\n", n_new);
 #endif
   } // while (!RbtVide(RBT) && (n < nsteps))
 
-  K3_SelMarked(k, FLAG_OBJ);
-  K3_Binarize(k);
+  mcskel3d_K3_SelMarked(k, FLAG_OBJ);
+  mcskel3d_K3_Binarize(k);
 
  fin:
   ListeTermine(LIST);
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   freeimage(dist);
   freeimage(prio);
   freeimage(m);
@@ -2087,10 +2110,11 @@ void K3List_MarkPrinc(struct xvimage *k, Liste *l)
 {
 #undef F_NAME
 #define F_NAME "K3List_MarkPrinc"
-  int card, i, p, q, x, y, z, xx, yy, zz;
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs; 
+  index_t card, i, p, q, x, y, z, xx, yy, zz;
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs; 
   unsigned char *K = UCHARDATA(k);
-  int tabu[26], tabv[26], u, n, v, m;
+  index_t tabu[26], tabv[26], u, v, m;
+  int32_t n;
 
   for (i = 0; i < l->Sp; i++)
   {
@@ -2129,19 +2153,19 @@ void K3List_MarkEss(struct xvimage *k, Liste *l)
 {
 #undef F_NAME
 #define F_NAME "K3List_MarkEss"
-  int x, y, z, i, p; 
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
+  index_t x, y, z, i, p; 
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
   unsigned char *K = UCHARDATA(k);
-  int tab[26], u, n;
+  index_t tab[26], u, n;
   char tablefilename[256];
 
   if (EssTab3 == NULL) 
   {
     FILE *fd;
-    int ret, tablesize = 1<<23;
+    index_t ret, tablesize = 1<<23;
 
     // ON EN PROFITE POUR INITIALISER LA TABLE DES POINTS SIMPLES
-    init_topo3d();
+    mctopo3d_init_topo3d();
 
     EssTab3 = malloc(tablesize);
     if (EssTab3 == NULL)
@@ -2154,7 +2178,7 @@ void K3List_MarkEss(struct xvimage *k, Liste *l)
     fd = fopen (tablefilename, "r");
     if (fd == NULL) 
     {   
-      int ret;
+      index_t ret;
       char command[256];
       sprintf(command, "cp %s/src/tables/%s %s", getenv("PINK"), ESS3DTABNAME, tablefilename);
       ret = system(command);
@@ -2190,7 +2214,7 @@ void K3List_MarkEss(struct xvimage *k, Liste *l)
       }
       else if (CARRE3D(x,y,z)) 
       {
-	int card = 0;
+	index_t card = 0;
 	Betacarre3d(rs, cs, ds, x, y, z, tab, &n);
 	for (u = 0; u < n; u++) if (IS_PRINC(K[tab[u]])) card++;
 	if (IS_PRINC(K[p]) && ((card == 0) || (card == 2))) K[p] |= FLAG_ESS; 
@@ -2214,7 +2238,7 @@ void K3List_MarkEss(struct xvimage *k, Liste *l)
 } // K3List_MarkEss()
 
 /* ========================================== */
-/*! \fn int K3List_MarkCore2(struct xvimage *k, unsigned char *I, int f)
+/*! \fn int32_t K3List_MarkCore2(struct xvimage *k, unsigned char *I, index_t f)
     \param k : un complexe
     \param I : un "marqueur" m représenté par le flag MARK3
     \param f : une face de k
@@ -2223,15 +2247,16 @@ void K3List_MarkEss(struct xvimage *k, Liste *l)
     \warning les faces essentielles doivent avoir été marquées auparavant,
     pas de vérification de compatibilité entre k et m
 */
-int K3List_MarkCore2(struct xvimage *k, unsigned char *I, int f)
+int32_t K3List_MarkCore2(struct xvimage *k, unsigned char *I, index_t f)
 /* ========================================== */
 {
 #undef F_NAME
 #define F_NAME "K3List_MarkCore2"
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, nf = 0;
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, nf = 0;
   unsigned char *K = UCHARDATA(k);
-  int tab[26], tabi[26], u, v, n, ni, i, j;
-  int x = f % rs, y = (f % ps) / rs, z = f / ps, xi, yi, zi;
+  index_t tab[26], tabi[26], u, v, i, j;
+  int32_t n, ni;
+  index_t x = f % rs, y = (f % ps) / rs, z = f / ps, xi, yi, zi;
 
   Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
   for (u = 0; u < n; u++) 
@@ -2305,10 +2330,11 @@ void K3List_MarkCritic2(struct xvimage *k, unsigned char *I, Liste *l)
 #undef F_NAME
 #define F_NAME "K3List_MarkCritic2"
   unsigned char *K = UCHARDATA(k);
-  int rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
-  int x, y, z, n, ncore, i, p, q;
+  index_t rs = rowsize(k), cs = colsize(k), ds = depth(k), ps = rs*cs, N = ps*ds;
+  index_t x, y, z, ncore, i, p, q;
+  int32_t n;
   u_int32_t mask;
-  int tab[26], u;
+  index_t tab[26], u;
   
   for (i = 0; i < l->Sp; i++) 
   {
@@ -2345,14 +2371,14 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
       if (ncore == n) 
       { 
 	K[p] |= FLAG_CRITIC;
-	K3_UnMarkAlphaCarre(k, p, FLAG_CORE); 
+	mcskel3d_K3_UnMarkAlphaCarre(k, p, FLAG_CORE); 
 	goto next; 
       }
       // le core d'un singl est forcément vide (cas déjà traité)
       if (INTER3D(x,y,z))
       {
 	if (ncore != 1) K[p] |= FLAG_CRITIC;
-	K3_UnMarkAlphaCarre(k, p, FLAG_CORE);
+	mcskel3d_K3_UnMarkAlphaCarre(k, p, FLAG_CORE);
 	goto next;
       }
       if (CARRE3D(x,y,z))
@@ -2360,14 +2386,14 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 	mask = get2Dconfiguration(K, FLAG_CORE, x, y, z, rs, ps);
 	if ((t8(mask) != 1) || (t4b(mask) != 1)) 
 	  K[p] |= FLAG_CRITIC;
-	K3_UnMarkAlphaCarre(k, p, FLAG_CORE);
+	mcskel3d_K3_UnMarkAlphaCarre(k, p, FLAG_CORE);
 	goto next;
       }
       //if (CUBE3D(x,y,z)) // inutile car c'est le seul choix qui reste
       mask = get3Dconfiguration(K, FLAG_CORE, p, rs, ps, N);
-      if (!simple26mask(mask)) 
+      if (!mctopo3d_table_simple26mask(mask)) 
         K[p] |= FLAG_CRITIC;
-      K3_UnMarkAlphaCarre(k, p, FLAG_CORE);
+      mcskel3d_K3_UnMarkAlphaCarre(k, p, FLAG_CORE);
 
     next:;
     } // if (IS_ESS(K[p])) 
@@ -2381,13 +2407,13 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
     {
       K[p] |= FLAG_CRITIC_E;
       K[p] |= FLAG_CRITIC;
-      K3_MarkAlphaCarre(k, p, FLAG_CRITIC_E);
+      mcskel3d_K3_MarkAlphaCarre(k, p, FLAG_CRITIC_E);
     } // if (IS_MARKED3(I[p]) || (IS_ESS(K[p]) && IS_CRITIC(K[p])))
   } // for (i = 0; i < l->Sp; i++)
 } // K3List_MarkCritic2()
 
 /* =============================================================== */
-void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps) 
+void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, index_t nsteps) 
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "llistskeleuc3d"
@@ -2401,15 +2427,16 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 {
   struct xvimage * dist;
   struct xvimage * prio;
-  int i, ii, j, l, j2, q, rs, cs, ds, ps, n, N, x, y, z, xx, yy, zz;
+  index_t i, ii, j, l, j2, q, rs, cs, ds, ps, n, N, x, y, z, xx, yy, zz;
   unsigned char *K, *I = NULL;
   double *D, d;
   double *P, p, t;
-  int tabu[26], tabv[26], u, nu, v, nv;
+  index_t tabu[26], tabv[26], u, v;
+  int32_t nv, nu;
   Rbt * RBT;
   Liste * LIST;
 #ifdef VERBOSE
-  int nd;
+  index_t nd;
 #endif
 #ifdef DEBUG
   struct xvimage * k2;
@@ -2423,13 +2450,13 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
   N = ps * ds;
   K = UCHARDATA(k);
 
-  if (!K3_CheckComplex(k))
+  if (!mcskel3d_K3_CheckComplex(k))
   {
     fprintf(stderr, "%s: not a complex\n", F_NAME);
     exit(0);
   }
 
-  if (!K3_CheckFrame(k))
+  if (!mcskel3d_K3_CheckFrame(k))
   {
     fprintf(stderr, "%s: complex must not hit the frame\n", F_NAME);
     exit(0);
@@ -2437,7 +2464,7 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 
   I = UCHARDATA(inhi);
 
-  K3_MarkObj(k);
+  mcskel3d_K3_MarkObj(k);
   for (i = 0; i < N; i++) if (K[i])
   {
     if (I[i]) I[i] = MARK1;
@@ -2477,16 +2504,16 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 // --------------------------
 // Init RBT
 // --------------------------
-  RBT = CreeRbtVide(N);
+  RBT = mcrbt_CreeRbtVide(N);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s : mcrbt_CreeRbtVide failed\n", F_NAME);
     exit(1);
   }
   for (i = 0; i < N; i++)
   {
     P[i] = 1e15;
-    if (K[i] && (!IS_MARKED1(I[i])) && bordext26(K, i, rs, ps, N))
+    if (K[i] && (!IS_MARKED1(I[i])) && mctopo3d_bordext26(K, i, rs, ps, N))
     {
       p = D[i];
       for (l = 0; l < 26; l += 1)
@@ -2525,7 +2552,7 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
       if (p < P[i])
       {
 	P[i] = p;
-	RbtInsert(&RBT, p, i);
+	mcrbt_RbtInsert(&RBT, p, i);
 #ifdef DEBUG1
 	      printf("RbtInsert 0 : prio = %g, pt = %d\n", p, i);
 #endif
@@ -2537,8 +2564,8 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
   printf("RBT initialized\n");
 #endif
 
-  K3_MarkPrinc(k);
-  K3_MarkEss(k);
+  mcskel3d_K3_MarkPrinc(k);
+  mcskel3d_K3_MarkEss(k);
   for (i = 0; i < N; i++)
     if (IS_OBJ(K[i]))
     {
@@ -2549,7 +2576,7 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 // MAIN LOOP
 // --------------------------
   n = 0;
-  while (!RbtVide(RBT) && (n < nsteps))
+  while (!mcrbt_RbtVide(RBT) && (n < nsteps))
   {
     n++;
     p = RbtMinLevel(RBT); 
@@ -2558,7 +2585,7 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 #endif
 
     // CONSTRUIT LA LISTE DES POINTS A TRAITER ET MAJ. MARQUEUR COURANT (MARK2)
-    while (!RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
     {
       i = RbtPopMin(RBT);
       if (IS_OBJ(K[i]) && IS_MARKED2(I[i])) 
@@ -2602,10 +2629,10 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 
 #ifdef DEBUG
     copy2image(k2, inhi);
-    K3_SelMarked(k2, MARK2);
+    mcskel3d_K3_SelMarked(k2, MARK2);
     writeimage(k2, "_i_mark2");
     copy2image(k2, inhi);
-    K3_SelMarked(k2, MARK3);
+    mcskel3d_K3_SelMarked(k2, MARK3);
     writeimage(k2, "_i_mark3");
 #endif
 
@@ -2613,20 +2640,20 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 
 #ifdef DEBUG
     copy2image(k2, k);
-    K3_SelMarked(k2, FLAG_PRINC);
+    mcskel3d_K3_SelMarked(k2, FLAG_PRINC);
     writeimage(k2, "_k_princ_1");
     copy2image(k2, k);
-    K3_SelMarked(k2, FLAG_ESS);
+    mcskel3d_K3_SelMarked(k2, FLAG_ESS);
     writeimage(k2, "_k_ess_1");
     copy2image(k2, k);
-    K3_SelMarked(k2, FLAG_CRITIC);
+    mcskel3d_K3_SelMarked(k2, FLAG_CRITIC);
     writeimage(k2, "_k_critic");
     copy2image(k2, k);
-    K3_SelMarked(k2, FLAG_CRITIC_E);
+    mcskel3d_K3_SelMarked(k2, FLAG_CRITIC_E);
     writeimage(k2, "_k_critic_E");
 #endif
 #ifdef PARANO
-    if (!K3_CheckComplex(k))
+    if (!mcskel3d_K3_CheckComplex(k))
     {
       fprintf(stderr, "%s: not a complex\n", F_NAME);
       exit(0);
@@ -2647,7 +2674,7 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 	    p = D[j];
 	    if (p < P[j])
 	    {
-	      RbtInsert(&RBT, p, j);
+	      mcrbt_RbtInsert(&RBT, p, j);
 #ifdef DEBUG1
 	      printf("RbtInsert 3 : prio = %g, pt = %d\n", p, j);
 #endif
@@ -2669,7 +2696,7 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 		    (double)(i%rs), (double)((i % ps) / rs), (double)(i/ps));
 	    if (p < P[j])
 	    {
-	      RbtInsert(&RBT, p, j);
+	      mcrbt_RbtInsert(&RBT, p, j);
 #ifdef DEBUG1
 	      printf("RbtInsert 1 : prio = %g, pt = %d\n", p, j);
 #endif
@@ -2695,7 +2722,7 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 			  (double)(i%rs), (double)((i % ps) / rs), (double)(i/ps));
 		  if (p < P[j])
 		  {
-		    RbtInsert(&RBT, p, j);
+		    mcrbt_RbtInsert(&RBT, p, j);
 #ifdef DEBUG1
 	      printf("RbtInsert 2 : prio = %g, pt = %d\n", p, j);
 #endif
@@ -2777,25 +2804,25 @@ void llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int nsteps)
 
 #ifdef DEBUG
     copy2image(k2, k);
-    K3_SelMarked(k2, FLAG_PRINC);
+    mcskel3d_K3_SelMarked(k2, FLAG_PRINC);
     writeimage(k2, "_k_princ_2");
     copy2image(k2, k);
-    K3_SelMarked(k2, FLAG_ESS);
+    mcskel3d_K3_SelMarked(k2, FLAG_ESS);
     writeimage(k2, "_k_ess_2");
 #endif
 
 #ifdef VERBOSE
-    printf("nb. pts = %d\n", K3_CardObj(k));
+    printf("nb. pts = %d\n", mcskel3d_K3_CardObj(k));
 #endif
   } // while (!RbtVide(RBT) && (n < nsteps))
 
-  K3_SelMarked(k, FLAG_CRITIC);
-  K3_CloseComplex(k);
-  K3_Binarize(k);
+  mcskel3d_K3_SelMarked(k, FLAG_CRITIC);
+  mcskel3d_K3_CloseComplex(k);
+  mcskel3d_K3_Binarize(k);
 
  fin:
   ListeTermine(LIST);
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   freeimage(dist);
   freeimage(prio);
 } // llistskeleuc3d()
