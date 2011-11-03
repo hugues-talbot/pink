@@ -369,6 +369,7 @@ $(BDIR)/3dmakepolygons \
 $(BDIR)/3dplane \
 $(BDIR)/3drecons \
 $(BDIR)/3dseltopo \
+$(BDIR)/3dskelck \
 $(BDIR)/3dskelsurf \
 $(BDIR)/3dthin
 
@@ -1631,8 +1632,11 @@ $(BDIR)/3dplane:	$(CDIR)/3dplane.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l3dkh
 $(BDIR)/3drecons:	$(CDIR)/3drecons.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l3dkhalimsky.h $(ODIR)/l3dkhalimsky.o $(IDIR)/mckhalimsky3d.h $(ODIR)/mckhalimsky3d.o $(ODIR)/mclifo.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/3drecons.c $(OBJ_COMMON) $(ODIR)/l3dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(LIBS) -o $(BDIR)/3drecons
 
-$(BDIR)/3dseltopo:	$(CDIR)/3dseltopo.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l3dkhalimsky.h $(ODIR)/l3dkhalimsky.o $(IDIR)/mckhalimsky3d.h $(ODIR)/mckhalimsky3d.o $(ODIR)/mclifo.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o
+$(BDIR)/3dseltopo:	$(CDIR)/3dseltopo.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l3dkhalimsky.h $(ODIR)/l3dkhalimsky.o $(IDIR)/mckhalimsky3d.h $(ODIR)/mckhalimsky3d.o $(ODIR)/mclifo.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(ODIR)/libpink.a
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/3dseltopo.c $(OBJ_COMMON) $(ODIR)/l3dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(LIBS) -o $(BDIR)/3dseltopo
+
+$(BDIR)/3dskelck:	$(CDIR)/3dskelck.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/mcskel3d.h $(ODIR)/mcskel3d.o $(IDIR)/mckhalimsky3d.h $(ODIR)/mckhalimsky3d.o $(ODIR)/mclifo.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/3dskelck.c $(OBJ_COMMON) $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/3dskelck
 
 $(BDIR)/3dskelsurf:	$(CDIR)/3dskelsurf.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/l3dkhalimsky.h $(ODIR)/l3dkhalimsky.o $(IDIR)/mckhalimsky3d.h $(ODIR)/mckhalimsky3d.o $(ODIR)/mclifo.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/3dskelsurf.c $(OBJ_COMMON) $(ODIR)/l3dkhalimsky.o $(ODIR)/mclifo.o $(ODIR)/mckhalimsky3d.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(LIBS) -o $(BDIR)/3dskelsurf
@@ -2845,6 +2849,18 @@ $(ODIR)/mcsegment.o:	$(LDIR)/mcsegment.c $(IDIR)/mcsegment.h
 $(ODIR)/mcset.o:	$(LDIR)/mcset.c $(IDIR)/mcset.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcset.c -o $(ODIR)/mcset.o
 	ar rcs $(ODIR)/libpink.a $(ODIR)/mcset.o
+
+$(ODIR)/mcskel3d.o:	$(LDIR)/mcskel3d.c $(IDIR)/mcskel3d.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcskel3d.c -o $(ODIR)/mcskel3d.o
+	ar rcs $(ODIR)/libpink.a $(ODIR)/mcskel3d.o
+
+$(ODIR)/mcskel2d.o:	$(LDIR)/mcskel2d.c $(IDIR)/mcskel2d.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcskel2d.c -o $(ODIR)/mcskel2d.o
+	ar rcs $(ODIR)/libpink.a $(ODIR)/mcskel2d.o
+
+$(ODIR)/mcskel2d3d.o:	$(LDIR)/mcskel2d3d.c $(IDIR)/mcskel2d3d.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcskel2d3d.c -o $(ODIR)/mcskel2d3d.o
+	ar rcs $(ODIR)/libpink.a $(ODIR)/mcskel2d3d.o
 
 $(ODIR)/mcskelcurv.o:	$(LDIR)/mcskelcurv.c $(IDIR)/mcskelcurv.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/mcskelcurv.c -o $(ODIR)/mcskelcurv.o

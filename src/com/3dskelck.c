@@ -1,4 +1,3 @@
-/*! \file 3dskelck.c
 /*
 Copyright ESIEE (2009) 
 
@@ -48,22 +47,20 @@ until stability.
 
 The parameter \b mode specifies the algorithm used for thinning.
 Possible choices are:
-\li 0: 
+\li 0: ultimate crucial thinning, symmetrical
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
 
-\warning Input must be a complex with no point on the image border
+\warning Input must be a complex with no point on the image border.
 
 References:<BR> 
 
-[Ber07] G. Bertrand: <A HREF="http://www.esiee.fr/~info/ck/CK_biblio.html#Ber07">"On critical kernels"</A>, Comptes-rendus de l'Académie des Sciences, série math., Vol. I, Nb. 345, pp. 363-367, 2007.<BR>
-
-[BC08] G. Bertrand and M. Couprie: <A HREF="http://www.esiee.fr/~info/ck/CK_biblio.html#BC08">"Two-dimensional thinning algorithms based on critical kernels"</A>, Journal of Mathematical Imaging and Vision, Vol. 31, Nb. 1, pp. 35-56, 2008.<BR>
+[Ber07] G. Bertrand: <A HREF="http://www.esiee.fr/~info/ck/CK_biblio.html#Ber07">"On critical kernels"</A>, Comptes-rendus de l'AcadÃ©mie des Sciences, sÃ©rie math., Vol. I, Nb. 345, pp. 363-367, 2007.<BR>
 
 [BC09] G. Bertrand and M. Couprie: <A HREF="http://www.esiee.fr/~info/ck/CK_biblio.html#BC09">"On parallel thinning algorithms: minimal non-simple sets, P-simple points and critical kernels"</A>, Journal of Mathematical Imaging and Vision, Vol. 35, Nb. 1, pp. 23-35, 2009.<BR>
 
-<B>Types supported:</B> byte 2d, byte 3d
+<B>Types supported:</B> byte 3d
 
 <B>Category:</B> topobin
 \ingroup  topobin
@@ -78,7 +75,6 @@ References:<BR>
 #include <stdlib.h>
 #include <mcutil.h>
 #include <mcimage.h>
-#include <mcsetsys.h>
 #include "mcskel3d.h"
 
 /* =============================================================== */
@@ -87,8 +83,8 @@ int main(argc, argv)
   int argc; char **argv; 
 {
   struct xvimage * k;
-  struct xvimage * inhi;
-  int nsteps;
+  struct xvimage * inhi = NULL;
+  int nsteps, mode;
 
   if ((argc != 5) && (argc != 6))
   {
@@ -103,18 +99,23 @@ int main(argc, argv)
     exit(0);
   }
 
-  nsteps = atoi(argv[2]);
+  mode = atoi(argv[2]);
+  nsteps = atoi(argv[3]);
 
-  inhi = readimage(argv[3]);
-  if (inhi == NULL)
+  if (argc == 6)
   {
-    fprintf(stderr, "%s: readimage failed\n", argv[0]);
-    exit(0);
+    inhi = readimage(argv[3]);
+    if (inhi == NULL)
+    {
+      fprintf(stderr, "%s: readimage failed\n", argv[0]);
+      exit(0);
+    }
   }
 
-  lskel3d4b(k, inhi, nsteps);
+  l3dskelck(k, mode, nsteps, inhi);
   writeimage(k, argv[argc-1]);
 
   freeimage(k);
-  freeimage(inhi);
+  if (inhi) freeimage(inhi);
+  return 0;
 } /* main() */

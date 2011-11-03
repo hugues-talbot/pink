@@ -82,7 +82,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcimage.h>
 #include <mcfahpure.h>
 #include <mctopo3d.h>
-//#include <mctopo3d_table.h>
+#include <mctopo3d_table.h>
 #include <mcutil.h>
 #include <mcindic.h>
 #include <mcgeo.h>

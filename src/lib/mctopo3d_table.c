@@ -84,39 +84,37 @@ void mctopo3d_table_init_topo3d()
 #undef F_NAME
 #define F_NAME "mctopo3d_table_init_topo3d"
 {
-  char tablefilename[128];
-  int32_t tablesize, ret;
-  FILE *fd;
-
-  if (table_mctopo3d_table_simple26 != NULL)
-  {
-    fprintf(stderr, "%s: table_mctopo3d_table_simple26 already loaded\n", F_NAME);
-    exit(1);
-  }
-  tablesize = 1<<23; // 2^26 / 8
-  table_mctopo3d_table_simple26 = (uint8_t *)malloc(tablesize);
   if (table_mctopo3d_table_simple26 == NULL)
   {
-    fprintf(stderr, "%s: malloc failed\n", F_NAME);
-    exit(1);
-  }
-  sprintf(tablefilename, "%s/src/tables/%s", getenv("PINK"), TABSIMP26NAME);
-  fd = fopen (tablefilename, "r");
-  if (fd == NULL) 
-  {   
-    fprintf(stderr, "%s: error while opening table\n", F_NAME);
-    exit(1);
-  }
-  ret = fread(table_mctopo3d_table_simple26, sizeof(uint8_t), tablesize, fd);
-  if (ret != tablesize)
-  {
-    fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, tablesize, ret);
-    exit(1);
-  }
-  fclose(fd);
+    char tablefilename[128];
+    int32_t tablesize, ret;
+    FILE *fd;
+
+    tablesize = 1<<23; // 2^26 / 8
+    table_mctopo3d_table_simple26 = (uint8_t *)malloc(tablesize);
+    if (table_mctopo3d_table_simple26 == NULL)
+    {
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      exit(1);
+    }
+    sprintf(tablefilename, "%s/src/tables/%s", getenv("PINK"), TABSIMP26NAME);
+    fd = fopen (tablefilename, "r");
+    if (fd == NULL) 
+    {   
+      fprintf(stderr, "%s: error while opening table\n", F_NAME);
+      exit(1);
+    }
+    ret = fread(table_mctopo3d_table_simple26, sizeof(uint8_t), tablesize, fd);
+    if (ret != tablesize)
+    {
+      fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, tablesize, ret);
+      exit(1);
+    }
+    fclose(fd);
 #ifdef VERBOSE
-  printf("%s: %s loaded\n", F_NAME, TABSIMP26NAME);
+    printf("%s: %s loaded\n", F_NAME, TABSIMP26NAME);
 #endif
+  }
 } /* mctopo3d_table_init_topo3d() */
 
 /* ========================================== */
