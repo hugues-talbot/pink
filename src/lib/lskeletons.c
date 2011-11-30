@@ -3189,6 +3189,102 @@ Le prédicat "endpoint" est défini par un tableau de 2^27 booléens
 } /* lskelend3d() */
 
 /* ==================================== */
+int32_t lskelend2d(struct xvimage *image, 
+		   int32_t connex, 
+		   int32_t niseuil)
+/* ==================================== */
+/* 
+Squelette curviligne ou surfacique 2D binaire.
+Algo par passes directionnelles.
+*/
+#undef F_NAME
+#define F_NAME "lskelend2d"
+{ 
+  index_t x;                       /* index de pixel */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  Rbt * RBT;
+  index_t taillemaxrbt;
+
+#ifdef DEBUG_lskelend2d
+ printf("%s: begin niseuil=%d\n", F_NAME, niseuil);
+#endif
+
+  IndicsInit(N);
+
+  taillemaxrbt = 2 * rs +  2 * cs;
+  /* cette taille est indicative, le RBT est realloue en cas de depassement */
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
+  if (RBT == NULL)
+  {
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
+    return(0);
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  /* ========================================================= */
+  /*   INITIALISATION DU RBT */
+  /* ========================================================= */
+
+  if (connex == 4)
+  {
+    for (x = 0; x < N; x++)
+      if (F[x] && simple4(F, x, rs, N))
+        mcrbt_RbtInsert(&RBT, typedir2d(F, x, rs, N), x);
+  }
+  else if (connex == 8)
+  {
+    for (x = 0; x < N; x++)
+      if (F[x] && simple8(F, x, rs, N))
+        mcrbt_RbtInsert(&RBT, typedir2d(F, x, rs, N), x);
+  }
+  else
+  {
+    fprintf(stderr, "%s: bad value for connex\n", F_NAME);
+    return(0);
+  }
+
+  /* ================================================ */
+  /*                  DEBUT SATURATION                */
+  /* ================================================ */
+
+  if (connex == 4)
+  {
+    int32_t nbdel = 1; 
+    int32_t nbiter = 0; 
+    while (nbdel)
+    {
+      nbdel = 0; 
+      nbiter++;
+      while (!mcrbt_RbtVide(RBT))
+      {
+	x = RbtPopMin(RBT);
+	if (((nbiter < niseuil) || (nbvois4(F, x, rs, N) != 1)) && testabaisse4bin(F, x, rs, N)) nbdel++;
+      } /* while (!mcrbt_RbtVide(RBT)) */
+      for (x = 0; x < N; x++)
+        if (F[x] && simple4(F, x, rs, N))
+          mcrbt_RbtInsert(&RBT, typedir2d(F, x, rs, N), x);
+#ifdef VERBOSE
+      printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
+#endif
+    } /* while (!mcrbt_RbtVide(RBT)) */
+  } /* if (connex == 4) */
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  mcrbt_RbtTermine(RBT);
+  return(1);
+} /* lskelend2d() */
+
+/* ==================================== */
 int32_t lskelendcurvlab3d(struct xvimage *image, 
 			  int32_t connex, 
 			  int32_t niseuil)
