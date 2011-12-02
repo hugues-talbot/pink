@@ -286,7 +286,7 @@ void ArgMax (DBL_TYPE ** array, int nb_arg, int size_array,  unsigned int * resu
 	 
 	 }  
        if (val>maxi) argmax = i;
-       result[j] = argmax; // ((argmax)*255)/(nb_arg-1);
+       result[j] = argmax; // no normalization // ((argmax)*255)/(nb_arg-1);
      } 
 }
 
