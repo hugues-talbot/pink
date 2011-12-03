@@ -115,6 +115,11 @@ extern int32_t lskeleucl(
         int32_t connex, 
         struct xvimage *imageinhib
 );
+extern int32_t lskelend2d(
+        struct xvimage *image, 
+	int32_t connex, 
+	int32_t niseuil
+);
 extern int32_t lskelendcurv3d(
         struct xvimage *image, 
 	int32_t connex, 

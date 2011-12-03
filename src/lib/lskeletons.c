@@ -70,6 +70,35 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define TEST_SIMPLE_PAR_COLLAPSE
 
 /* ==================================== */
+static int32_t typedir2d(uint8_t *F, index_t x, index_t rs, index_t N)
+/* ==================================== */
+{
+  index_t y;
+  int32_t n, s, e, o, sum;
+  n = s = e = o = 0;
+  y = voisin(x, NORD, rs, N); if ((y!=-1) && (F[y]==0)) n = 1;
+  y = voisin(x, SUD, rs, N); if ((y!=-1) && (F[y]==0)) s = 1;
+  y = voisin(x, EST, rs, N); if ((y!=-1) && (F[y]==0)) e = 1;
+  y = voisin(x, OUEST, rs, N); if ((y!=-1) && (F[y]==0)) o = 1;
+  sum = n + s + e + o;
+  if (sum == 0) return 9 - 0;
+  else if (sum == 1) 
+  {
+    if (n)      return 9 - 1;
+    else if (s) return 9 - 2;
+    else if (e) return 9 - 3;
+    else /* if (o) */ return 9 - 4;
+  }
+  else // if (sum >= 2) 
+  {
+    if (n && e)      return 9 - 5;
+    else if (s && o) return 9 - 6;
+    else if (n && o) return 9 - 7;
+    else /* if (s && e) */ return 9 - 8;
+  }
+} /* typedir2d() */
+
+/* ==================================== */
 static int32_t typedir3d(uint8_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
@@ -3274,6 +3303,27 @@ Algo par passes directionnelles.
 #endif
     } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 4) */
+  else // if (connex == 8)
+  {
+    int32_t nbdel = 1; 
+    int32_t nbiter = 0; 
+    while (nbdel)
+    {
+      nbdel = 0; 
+      nbiter++;
+      while (!mcrbt_RbtVide(RBT))
+      {
+	x = RbtPopMin(RBT);
+	if (((nbiter < niseuil) || (nbvois8(F, x, rs, N) != 1)) && testabaisse8bin(F, x, rs, N)) nbdel++;
+      } /* while (!mcrbt_RbtVide(RBT)) */
+      for (x = 0; x < N; x++)
+        if (F[x] && simple8(F, x, rs, N))
+          mcrbt_RbtInsert(&RBT, typedir2d(F, x, rs, N), x);
+#ifdef VERBOSE
+      printf("nbiter : %d ; nbdel : %d\n", nbiter, nbdel);
+#endif
+    } /* while (!mcrbt_RbtVide(RBT)) */
+  } /* if (connex == 8) */
 
   /* ================================================ */
   /* UN PEU DE MENAGE                                 */

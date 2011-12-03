@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 
   if (depth(image) == 1) // 2D
   {
-    if (! lsquelbin(image, connex, niseuil))
+    if (! lskelend2d(image, connex, niseuil))
     {
       fprintf(stderr, "%s: lsquelbin failed\n", argv[0]);
       exit(1);
