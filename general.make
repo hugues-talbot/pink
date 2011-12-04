@@ -1760,8 +1760,8 @@ $(BDIR)/detectcercles:	$(CDIR)/detectcercles.c $(IDIR)/mcimage.h $(IDIR)/mccodim
 $(BDIR)/directions:	$(CDIR)/directions.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/ldirections.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/ldirections.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/directions.c $(ODIR)/ldirections.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/directions
 
-$(BDIR)/eden:	$(CDIR)/eden.cxx $(IDIR)/leden.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/leden.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcset.o
-	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/eden.cxx $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(ODIR)/mcset.o $(ODIR)/leden.o $(LIBS) -o $(BDIR)/eden
+$(BDIR)/eden:	$(CDIR)/eden.cxx $(IDIR)/leden.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/leden.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcset.o $(ODIR)/mcprobas.o
+	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/eden.cxx $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mclifo.o $(ODIR)/mcset.o $(ODIR)/mcprobas.o $(ODIR)/leden.o $(LIBS) -o $(BDIR)/eden
 
 $(BDIR)/ellipsefit:	$(CDIR)/ellipsefit.c $(IDIR)/lellipsefit.h $(IDIR)/mcimage.h $(IDIR)/mclin.h $(IDIR)/lbresen.h $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/lellipsefit.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/ellipsefit.c $(OBJ_COMMON) $(ODIR)/mclin.o $(ODIR)/lbresen.o $(ODIR)/mcliste.o $(ODIR)/lellipsefit.o $(LIBS) -o $(BDIR)/ellipsefit
