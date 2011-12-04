@@ -21,6 +21,8 @@
  * With topological constraints
  *  - make sure the point to add or remove is simple
  *
+ update MC 4/12/2012 : fix bug: replace 
+	  borderqueue.push_back(pix-1); by 	  borderqueue.push_back(pix+1); lines 201 and 309
  */
 
 #include <deque>
