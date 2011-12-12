@@ -28,8 +28,6 @@ using namespace boost::python;
 
 namespace liar
 {
-  
-
 
   UI_WRAP_RESULT(
     char_image,
@@ -39,7 +37,48 @@ namespace liar
     "This performs a fast erosion by a parallelepiped."
     );
 # include BOOST_PP_UPDATE_COUNTER()
-  
+
+    UI_WRAP_RESULT(
+    char_image,
+    "feroderect",
+    imferode_rect,
+    (arg("input"), arg("SEnx"), arg("SEny")),
+    "This performs a fast erosion by a rectangle."
+        );
+
+   # include BOOST_PP_UPDATE_COUNTER()
+
+    UI_WRAP_RESULT(
+    char_image,
+    "fopenrect",
+    imfopen_rect,
+    (arg("input"), arg("SEnx"), arg("SEny")),
+    "This performs a fast erosion by a rectangle."
+        );
+
+    # include BOOST_PP_UPDATE_COUNTER()
+
+    UI_WRAP_RESULT(
+    char_image,
+    "fdilaterect",
+    imfdilat_rect,
+    (arg("input"), arg("SEnx"), arg("SEny")),
+    "This performs a fast erosion by a rectangle."
+        );
+
+    # include BOOST_PP_UPDATE_COUNTER()
+
+    UI_WRAP_RESULT(
+    char_image,
+    "fcloserect",
+    imfclose_rect,
+    (arg("input"), arg("SEnx"), arg("SEny")),
+    "This performs a fast erosion by a rectangle."
+        );
+
+    
+# include BOOST_PP_UPDATE_COUNTER()
+    
   
   UI_WRAP_RESULT(
     char_image,
@@ -47,9 +86,38 @@ namespace liar
     imferode3D_rect,
     (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
     "This performs a fast erosion by a parallelepiped."
-    );
-  
+      );
 # include BOOST_PP_UPDATE_COUNTER()
+    
+    UI_WRAP_RESULT(
+    char_image,
+    "fdilate3drect",
+    imfdilat3D_rect,
+    (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
+    "This performs a fast dilation by a parallelepiped."
+          );
+    
+# include BOOST_PP_UPDATE_COUNTER()
+
+    UI_WRAP_RESULT(
+    char_image,
+    "fopen3drect",
+    imfopen3D_rect,
+    (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
+    "This performs a fast opening by a parallelepiped."
+        );
+
+# include BOOST_PP_UPDATE_COUNTER()
+
+    UI_WRAP_RESULT(
+    char_image,
+    "fclose3drect",
+    imfclose3D_rect,
+    (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
+    "This performs a fast closing by a parallelepiped."
+      );
+# include BOOST_PP_UPDATE_COUNTER()
+    
 } /* namespace liar */
 
 using namespace liar;
