@@ -25,6 +25,7 @@ Here is a list of all documented files with brief descriptions:\begin{DoxyCompac
 \item\contentsline{section}{{\bf 3dplane.c} (Builds the discretization of a plane in the 3d Khalimsky space )}{\pageref{3dplane_8c}}{}
 \item\contentsline{section}{{\bf 3drecons.c} (Geodesic reconstruction in a 3d khalimsky order )}{\pageref{3drecons_8c}}{}
 \item\contentsline{section}{{\bf 3dseltopo.c} (Selects points in the 3d khalimsky grid according to a local topological criterion )}{\pageref{3dseltopo_8c}}{}
+\item\contentsline{section}{{\bf 3dskelck.c} (Homotopic thinning based on critical kernels )}{\pageref{3dskelck_8c}}{}
 \item\contentsline{section}{{\bf 3dskelsurf.c} (Surfacic skeleton )}{\pageref{3dskelsurf_8c}}{}
 \item\contentsline{section}{{\bf 3dsurfacecollapse.c} (Parallel directional constrained collapse with surface detection and preservation )}{\pageref{3dsurfacecollapse_8c}}{}
 \item\contentsline{section}{{\bf 3dthin.c} (Homotopic thinning of a 3d Khalimsky image )}{\pageref{3dthin_8c}}{}
@@ -312,6 +313,7 @@ Here is a list of all documented files with brief descriptions:\begin{DoxyCompac
 \item\contentsline{section}{{\bf recalagerigide.c} (Rigid registration of two closed contours )}{\pageref{recalagerigide_8c}}{}
 \item\contentsline{section}{{\bf recalagerigide\_\-num.c} (Rigid registration of two grayscale images )}{\pageref{recalagerigide__num_8c}}{}
 \item\contentsline{section}{{\bf redt.c} (Reverse euclidean distance transform )}{\pageref{redt_8c}}{}
+\item\contentsline{section}{{\bf relabel.c} (Eliminates 'voids' in the labelling )}{\pageref{relabel_8c}}{}
 \item\contentsline{section}{{\bf rgb2hls.c} (Converts a ppm color file to hls representation )}{\pageref{rgb2hls_8c}}{}
 \item\contentsline{section}{{\bf rotate.c} (Rotation of an image )}{\pageref{rotate_8c}}{}
 \item\contentsline{section}{{\bf rotate3dbin.c} (Rotation of an image )}{\pageref{rotate3dbin_8c}}{}
@@ -355,12 +357,15 @@ Here is a list of all documented files with brief descriptions:\begin{DoxyCompac
 \item\contentsline{section}{{\bf skel\_\-MK3.c} (Parallel 3D binary ultimate skeleton )}{\pageref{skel__MK3_8c}}{}
 \item\contentsline{section}{{\bf skelcurv.c} (Curvilinear binary skeleton guided by a priority image )}{\pageref{skelcurv_8c}}{}
 \item\contentsline{section}{{\bf skelend.c} (Homotopic skeleton of a 2d or 3d binary image with dynamic detection of end points )}{\pageref{skelend_8c}}{}
+\item\contentsline{section}{{\bf skelendlab.c} (Homotopic skeleton of a 2d or 3d label image with dynamic detection of end points )}{\pageref{skelendlab_8c}}{}
 \item\contentsline{section}{{\bf skeleton.c} (Ultimate binary skeleton guided by a priority image (see [BC07]) )}{\pageref{skeleton_8c}}{}
+\item\contentsline{section}{{\bf skeletonlab.c} (Ultimate binary skeleton on label image guided by a priority image (see [BC07]) )}{\pageref{skeletonlab_8c}}{}
 \item\contentsline{section}{{\bf skeleucl.c} (Euclidean binary skeleton )}{\pageref{skeleucl_8c}}{}
 \item\contentsline{section}{{\bf skelfindelbows.c} (Detection of \char`\"{}elbows\char`\"{} in a curvilinear skeleton )}{\pageref{skelfindelbows_8c}}{}
 \item\contentsline{section}{{\bf skelpar.c} (Parallel binary skeleton )}{\pageref{skelpar_8c}}{}
 \item\contentsline{section}{{\bf skelpar3d.c} (Parallel 3D binary skeleton )}{\pageref{skelpar3d_8c}}{}
 \item\contentsline{section}{{\bf skelpar3d\_\-others.cxx} (Parallel 3D binary skeleton DirectionalSkeletonizer {\bfseries Usage:} skelpar3d in.pgm algorithm nsteps [inhibit] out.pgm )}{\pageref{skelpar3d__others_8cxx}}{}
+\item\contentsline{section}{{\bf skelpruning.c} (Pruning of \char`\"{}short end branches\char`\"{} in a curvilinear skeleton )}{\pageref{skelpruning_8c}}{}
 \item\contentsline{section}{{\bf skelsmoothing.c} (Computes a smmothed version of a curvilinear skeleton )}{\pageref{skelsmoothing_8c}}{}
 \item\contentsline{section}{{\bf skelsurf.c} (Surfacic binary skeleton guided by a priority image )}{\pageref{skelsurf_8c}}{}
 \item\contentsline{section}{{\bf skelvertex.c} (Selection of a specified vertex in a curvilinear skeleton )}{\pageref{skelvertex_8c}}{}
@@ -379,6 +384,7 @@ Here is a list of all documented files with brief descriptions:\begin{DoxyCompac
 \item\contentsline{section}{{\bf tuf.c} (Topological upper filter )}{\pageref{tuf_8c}}{}
 \item\contentsline{section}{{\bf ui\_\-convert\_\-if.hpp} (This function is used for automated type casting. It contains template algorithms that cast the 'ujoi$<$$>$' classes to 'xvimage$\ast$'. As it is a casting it is done in constant time, no pixel values are copied )}{\pageref{ui__convert__if_8hpp}}{}
 \item\contentsline{section}{{\bf ui\_\-make\_\-function.hpp} (This is a helper function for exporting Pink C functions in Python. Note that this template file is rarely used directly and is called by the UI\_\-WRAP\_\-FUNCTION macro )}{\pageref{ui__make__function_8hpp}}{}
+\item\contentsline{section}{{\bf ui\_\-make\_\-malloc.hpp} (This is a helper function for exporting Pink C functions in Python. Note that this template file is rarely used directly and is called by the UI\_\-WRAP\_\-FUNCTION macro )}{\pageref{ui__make__malloc_8hpp}}{}
 \item\contentsline{section}{{\bf ui\_\-make\_\-result.hpp} (This is a helper function for exporting Pink C functions in Python. Note that this template file is rarely used directly and is called by the UI\_\-WRAP\_\-RESULT macro )}{\pageref{ui__make__result_8hpp}}{}
 \item\contentsline{section}{{\bf ui\_\-make\_\-value.hpp} (This is a helper function for exporting Pink C functions in Python. Note that this template file is rarely used directly and is called by the UI\_\-WRAP\_\-VALUE macro )}{\pageref{ui__make__value_8hpp}}{}
 \item\contentsline{section}{{\bf ui\_\-wrap\_\-function.hpp} (This is a helper function for exporting Pink C functions in Python. This file defines 'UI\_\-WRAP\_\-FUNCTION' )}{\pageref{ui__wrap__function_8hpp}}{}

@@ -44,8 +44,6 @@ extern void mctopo3d_table_init_topo3d();
 extern void mctopo3d_table_termine_topo3d();
 extern void mctopo3d_table_init_topoCN3d();
 extern void mctopo3d_table_termine_topoCN3d();
-extern uint32_t mctopo3d_table_encodecube();
-extern void mctopo3d_table_construitcube(voxel * cube);
 extern void mctopo3d_table_top6(
   uint8_t *img,          /* pointeur base image */
   index_t p,                       /* index du point */
@@ -142,11 +140,6 @@ extern int32_t mctopo3d_table_tbar26h(              /* pour un objet en 26-conne
   index_t rs,                      /* taille rangee */
   index_t ps,                      /* taille plan */
   index_t N);                      /* taille image */
-extern uint8_t mctopo3d_table_P_simple(voxel * cube, voxel * cubep, voxel * cubec, uint8_t connex);
-
-
-
-
 extern int32_t mctopo3d_table_pdestr6(                   /* pour des minima en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   index_t p,                       /* index du point */

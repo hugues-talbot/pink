@@ -110,10 +110,10 @@ int32_t trace = 1;
 /* ==================================== */
 static void extract_vois(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N,                       /* taille image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
   uint8_t *vois)    
 /* 
   retourne dans "vois" les valeurs des 27 voisins de p, dans l'ordre suivant: 
@@ -179,10 +179,10 @@ static void extract_vois(
 static void insert_vois(
   uint8_t *vois,			
   uint8_t *img,          /* pointeur base image */
-  int32_t p,                       /* index du point */
-  int32_t rs,                      /* taille rangee */
-  int32_t ps,                      /* taille plan */
-  int32_t N)                       /* taille image */    
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */    
 /* 
   recopie vois dans le voisinage de p
   le point p ne doit pas être un point de bord de l'image
@@ -717,12 +717,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelMK3a"
 { 
-  int32_t i;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -853,12 +853,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelEK3"
 { 
-  int32_t i;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -983,12 +983,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelCK3a"
 { 
-  int32_t i;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -1139,12 +1139,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelCK3b"
 { 
-  int32_t i, j, k;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i, j, k;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -1319,12 +1319,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelCK3"
 { 
-  int32_t i, j, k;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i, j, k;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -1498,12 +1498,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelAK3"
 { 
-  int32_t i;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -1653,12 +1653,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelMK3"
 { 
-  int32_t i;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -1759,12 +1759,12 @@ Les points non enlevés sont marqués MARK_INFTY.
 //#define MARK_INFTY 2000000000
 #define MARK_INFTY 255
 { 
-  int32_t i;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -1886,12 +1886,12 @@ Retourne dans image l'axe topologique.
 #define MARK_INFTY 2000000000
 //#define MARK_INFTY 255
 { 
-  int32_t i, j, k;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i, j, k;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -2229,12 +2229,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelAMK3"
 { 
-  int32_t i;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -2322,7 +2322,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 } /* lskelAMK3() */
 
 //#define DEBUG_STEP 3
-//#define OLD_lskelACK3a
+//#define NEW_lskelACK3a
 #ifndef NEW_lskelACK3a
 /* ==================================== */
 int32_t lskelACK3a(struct xvimage *image, 
@@ -2351,12 +2351,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelACK3a"
 { 
-  int32_t i;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -2495,7 +2495,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #else
 EN DEVELOPPEMENT
 BUG A CORRIGER - UTILISER $PINK/images/3d/test3.k
-
+lskelACK3b DEVRA ETRE ADAPTE AUSSI
 /* ==================================== */
 int32_t lskelACK3a(struct xvimage *image, 
 	     int32_t n_steps,
@@ -2525,12 +2525,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelACK3a"
 { 
-  int32_t i, j, k, x;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i, j, k, x;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -2722,6 +2722,150 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   return(1);
 } /* lskelACK3a() */
 #endif
+/* ==================================== */
+int32_t lskelACK3b(struct xvimage *image, 
+	     int32_t n_steps,
+	     int32_t isthmus_persistence,
+	     struct xvimage *inhibit)
+/* ==================================== */
+/*
+Squelette asymétrique curviligne
+Algo ACK3a données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
+Pour tout x de S faire T[x] := -1
+Pour i := 0; i < n; i++
+  C := points de courbe de S
+  Pour tout x de C tq T[x] == -1 faire T[x] := i
+  I := I \cup {x | T[x] > -1 et (i - T[x]) > p}
+  P := voxels simples pour S et pas dans I
+  C2 := voxels 2M-cruciaux (asym_match2)
+  C1 := voxels 1M-cruciaux (asym_match1)
+  C0 := voxels 0M-cruciaux (asym_match0)
+  P := P  \  [C2 \cup C1 \cup C0]
+  S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+*/
+#undef F_NAME
+#define F_NAME "lskelACK3b"
+{ 
+  index_t i; // index de pixel
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);   /* l'image de depart */
+  int16_t *T;
+  uint8_t *I;
+  int32_t step, nonstab;
+  int32_t top, topb;
+  uint8_t v[27];
+
+  assert(n_steps <= INT16_MAX);
+  if (n_steps == -1) n_steps = INT16_MAX;
+
+  if (inhibit == NULL) 
+  {
+    inhibit = copyimage(image); 
+    razimage(inhibit);
+    I = UCHARDATA(inhibit);
+  }
+  else
+  {
+    I = UCHARDATA(inhibit);
+    for (i = 0; i < N; i++) if (I[i]) I[i] = I_INHIBIT;
+  }
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+
+  T = (int16_t *)malloc(N * sizeof(int16_t)); assert(T != NULL);
+  for (i = 0; i < N; i++) T[i] = -1;
+
+  mctopo3d_init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    // MARQUE LES POINTS DE COURBE (3)
+    for (i = 0; i < N; i++)
+    {
+      if (IS_OBJECT(S[i]))
+      {    
+	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+	if (top > 1) 
+	{ 
+	  SET_CURVE(S[i]);
+	  T[i] = step;
+	}
+      }
+    }
+
+    // MARQUE LES POINTS SIMPLES NON DANS I
+    for (i = 0; i < N; i++) 
+      if (IS_OBJECT(S[i]) && !IS_INHIBIT(I[i]) && mctopo3d_simple26(S, i, rs, ps, N))
+	SET_SIMPLE(S[i]);
+    // MEMORISE DANS I LES ISTHMES PERSISTANTS
+    for (i = 0; i < N; i++)
+    { 
+      if (IS_CURVE(S[i]) && ((step - T[i]) > isthmus_persistence)) 
+      { 
+	UNSET_SIMPLE(S[i]); 
+	SET_INHIBIT(I[i]); 
+      }
+    }
+    // MARQUE LES POINTS 2M-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match2(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    // MARQUE LES POINTS 1M-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match1(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    // MARQUE LES POINTS 0M-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match0(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+
+    for (i = 0; i < N; i++)
+      if (S[i] && IS_SIMPLE(S[i]) && !IS_SELECTED(S[i])) 
+      {
+	S[i] = 0; 
+	nonstab = 1; 
+      }
+    for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+  }
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  free(T);
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lskelACK3b() */
 
 /* ==================================== */
 int32_t lskelACK3(struct xvimage *image, 
@@ -2749,12 +2893,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelACK3"
 { 
-  int32_t i, j, k;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i, j, k;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -2921,12 +3065,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelRK3"
 { 
-  int32_t i, j, k;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i, j, k;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -3078,12 +3222,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelSK3"
 { 
-  int32_t i;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
@@ -3211,11 +3355,11 @@ writeimage(t,"_T");
 /* ==================================== */
 static int32_t direction(
   uint8_t *img,          /* pointeur base image */
-  int32_t p,             /* index du point */
+  index_t p,             /* index du point */
   int32_t dir,           /* indice direction */
-  int32_t rs,            /* taille rangee */
-  int32_t ps,            /* taille plan */
-  int32_t N              /* taille image */
+  index_t rs,            /* taille rangee */
+  index_t ps,            /* taille plan */
+  index_t N              /* taille image */
 )    
 /* 
   retourne 1 si p a un voisin nul dans la direction dir, 0 sinon :
@@ -3308,17 +3452,17 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #undef F_NAME
 #define F_NAME "lskelDK3"
 { 
-  int32_t i, d;
-  int32_t rs = rowsize(image);     /* taille ligne */
-  int32_t cs = colsize(image);     /* taille colonne */
-  int32_t ds = depth(image);       /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t = copyimage(image); 
   uint8_t *T = UCHARDATA(t);
   uint8_t *I = NULL;
-  int32_t step, nonstab;
+  int32_t step, nonstab, d;
   uint8_t v[27];
 
   if (n_steps == -1) n_steps = 1000000000;
