@@ -42,7 +42,7 @@ knowledge of the CeCILL license and that you accept its terms.
    - Couprie curviligne avec reconstruction
    - Rutovitz
    - Zhang & Wang
-   - Han & La & Rhee (merdique et peu int32_téressant)
+   - Han & La & Rhee (peu intéressant)
    - Guo & Hall
    - Chin & Wan & Stover & Iverson
    - Jang & Chin
@@ -181,6 +181,9 @@ knowledge of the CeCILL license and that you accept its terms.
 
    Michel Couprie - juillet 2001
    Benjamin Raynal 2010 - algos Nemeth & Palagyi
+   Nivando Bezerra 2011 - lhthinpar* : skel en niveaux de gris
+   Michel Couprie 2011 - lskelACK2b : Squelette asymétrique curviligne
+             #ifdef NOT_FINISHED
 */
 
 #include <stdio.h>
@@ -4013,6 +4016,25 @@ A   2*  B
   return 1;
 } /* bertrand_match1() */
 
+#ifdef NOT_FINISHED
+/* ==================================== */
+int32_t cruc_asym_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+/* ==================================== */
+/*
+A     A
+2*    2
+B     B
+*/
+{
+  uint8_t v[8];
+  extract_vois(F, x, rs, N, v);
+  if (v[0] != 2) return 0;
+  if ((v[1] == 0) && (v[2] == 0)) return 0;
+  if ((v[6] == 0) && (v[7] == 0)) return 0;
+  return 1;
+} /* bertrand_match1() */
+#endif
+
 /* ==================================== */
 int32_t lskelNK2(struct xvimage *image,
 	      int32_t nsteps,
@@ -4253,6 +4275,162 @@ int32_t lskelNK2b(struct xvimage *image,
   freeimage(tmp);
   return(1);
 } /* lskelNK2b() */
+
+#ifdef NOT_FINISHED
+/* ==================================== */
+int32_t lskelACK2b(struct xvimage *image, 
+	     int32_t n_steps,
+	     int32_t isthmus_persistence,
+	     struct xvimage *inhibit)
+/* ==================================== */
+/*
+Squelette asymétrique curviligne
+Algo ACK2b données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
+Pour tout x de S faire T[x] := -1
+Pour i := 0; i < n; i++
+  C := points de courbe de S
+  Pour tout x de C tq T[x] == -1 faire T[x] := i
+  I := I \cup {x | T[x] > -1 et (i - T[x]) >= p}
+  P := pixels simples pour S et pas dans I
+  C1 := pixels 1-D-cruciaux (cruc_asym_match1)
+  C0 := pixels 0-D-cruciaux (cruc_asym_match0)
+  P := P  \  [C1 \cup C0]
+  S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+*/
+#undef F_NAME
+#define F_NAME "lskelACK2b"
+{ 
+  index_t i; // index de pixel
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  uint8_t *S = UCHARDATA(image);   /* l'image de depart */
+  int16_t *T;
+  uint8_t *I;
+  int32_t step, nonstab;
+  int32_t top, topb;
+
+#ifdef VERBOSE
+  printf("%s: n_steps = %d ; isthmus_persistence = %d\n", F_NAME, n_steps, isthmus_persistence);
+#endif
+
+  assert(n_steps <= INT16_MAX);
+  if (n_steps == -1) n_steps = INT16_MAX;
+
+  if (inhibit == NULL) 
+  {
+    inhibit = copyimage(image); 
+    razimage(inhibit);
+    I = UCHARDATA(inhibit);
+  }
+  else
+  {
+    I = UCHARDATA(inhibit);
+    for (i = 0; i < N; i++) if (I[i]) I[i] = I_INHIBIT;
+  }
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+
+  T = (int16_t *)malloc(N * sizeof(int16_t)); assert(T != NULL);
+  for (i = 0; i < N; i++) T[i] = -1;
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    // MARQUE LES POINTS DE COURBE (3)
+    for (i = 0; i < N; i++)
+    {
+      if (IS_OBJECT(S[i]))
+      {    
+	top8(S, i, rs, N, &top, &topb);
+	if ((top > 1) && (T[i] == -1))
+	  T[i] = (int16_t)step;
+      }
+    }
+
+    // MARQUE LES POINTS SIMPLES NON DANS I
+    for (i = 0; i < N; i++) 
+      if (IS_OBJECT(S[i]) && !IS_INHIBIT(I[i]) && simple8(S, i, rs, N))
+	SET_SIMPLE(S[i]);
+    // MEMORISE DANS I LES ISTHMES PERSISTANTS
+    for (i = 0; i < N; i++)
+    { 
+      if ((T[i] >= 0) && ((step - T[i]) >= isthmus_persistence)) 
+      { 
+	UNSET_SIMPLE(S[i]); 
+	SET_INHIBIT(I[i]); 
+      }
+    }
+
+    for (i = 0; i < N; i++)
+    { 
+
+	m1 = bertrand_match1(F, i, rs, N);
+	m2 = bertrand_match2(F, i, rs, N);
+	mc1 = mc_match1b(F, i, rs, N);
+	mc2 = mc_match2(F, i, rs, N);
+	mc3 = mc_match3b(F, i, rs, N);
+	mc4 = mc_match4b(F, i, rs, N);
+	mc5 = mc_match5b(F, i, rs, N);
+	mc6 = mc_match6(F, i, rs, N);
+	if (m1 || m2)
+	{
+	  T[i] = 1; // preserve point
+	}
+	if (mc1 || mc2 || mc3 || mc4 || mc5 || mc6)
+	{
+	  F[i] = T[i] = 1; // preserve point and unmark as simple
+	}
+
+    }
+
+    // MARQUE LES POINTS 1-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, N, v);
+	if (asym_match1(v))
+	  insert_vois(v, S, i, rs, N);
+      }
+    // MARQUE LES POINTS 0-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, N, v);
+	if (asym_match0(v))
+	  insert_vois(v, S, i, rs, N);
+      }
+
+    for (i = 0; i < N; i++)
+      if (S[i] && IS_SIMPLE(S[i]) && !IS_SELECTED(S[i])) 
+      {
+	S[i] = 0; 
+	nonstab = 1; 
+      }
+    for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+  } // while (nonstab && (step < n_steps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  free(T);
+  return(1);
+} /* lskelACK2b() */
+#endif
 
 /* ==================================== */
 int32_t bertrand_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
@@ -5154,3 +5332,737 @@ Voir "Parallel thinning algorithms based on Ronse's sufficient conditions for to
   freeimage(tmp);
   return(1);
 } /* lskelnemethpalagyi() */
+
+
+
+// ====================================================
+// ====================================================
+// squelettes en niveaux de gris - Nivando Bezerra
+// ====================================================
+// ====================================================
+
+#define  E(_p,_rs) (_p+1)      
+#define NE(_p,_rs) (_p+1-_rs)   
+#define  S(_p,_rs) (_p+_rs)     
+#define SW(_p,_rs) (_p+_rs-1)   
+#define  W(_p,_rs) (_p-1)      
+#define NW(_p,_rs) (_p-1-_rs)   
+#define  N(_p,_rs) (_p-_rs)     
+#define SE(_p,_rs) (_p+_rs+1)   
+       	              
+#define NN(_p,_rs) (N(_p,_rs) - _rs)  
+#define SS(_p,_rs) (S(_p,_rs) + _rs)   
+#define WW(_p,_rs) (W(_p,_rs) - 1)    
+#define EE(_p,_rs) (E(_p,_rs) + 1)    
+       	              
+#define NEE(_p,_rs) (EE(_p,_rs) - _rs) 
+#define NWW(_p,_rs) (WW(_p,_rs) - _rs) 
+#define SEE(_p,_rs) (EE(_p,_rs) + _rs) 
+#define SWW(_p,_rs) (WW(_p,_rs) + _rs) 
+#define NNE(_p,_rs) (NN(_p,_rs) + 1)  
+#define NNW(_p,_rs) (NN(_p,_rs) - 1)  
+#define SSE(_p,_rs) (SS(_p,_rs) + 1)  
+#define SSW(_p,_rs) (SS(_p,_rs) - 1)
+
+#define _nnw55         1
+#define _nn55 	       2
+#define _nne55	       3
+#define _nww55	       5
+#define _nw55 	       6
+#define _n55  	       7
+#define _ne55 	       8
+#define _nee55	       9
+#define	_ww55 	      10
+#define _w55  	      11
+#define _center55     12
+#define _e55  	      13
+#define _ee55 	      14
+#define	_sww55	      15
+#define _sw55 	      16
+#define _s55  	      17
+#define _se55	      18
+#define _see55	      19
+#define _ssw55	      21
+#define _ss55 	      22
+#define _sse55        23
+
+#define IN_SET 1
+#define NB_SIMPLE 2
+#define NON_DESTRUCTIBLE 0
+#define DESTRUCTIBLE 1
+#define DESTRUCTIBLE_PAR 2
+#define CRUCIAL 3
+#define CRUCIAL_C 9
+#define CRUCIAL_C1 5
+#define TRUE 1
+#define FALSE 0
+
+#define DEBUG
+
+/* C1 */
+/* |---+---| */
+/* | 0 | P | */
+/* |---+---| */
+/* | P | 0 | */
+/* |---+---| */
+
+/* C2 */
+/* |---+---| */
+/* | 0 | 0 | */
+/* |---+---| */
+/* | P | P | */
+/* |---+---| */
+/* | 0 | 0 | */
+/* |---+---| */
+
+/* C3 */
+/* |---+---+---| */
+/* |   | 0 | 0 | */
+/* |---+---+---| */
+/* | 0 | P | P | */
+/* |---+---+---| */
+/* | 0 | P | 0 | */
+/* |---+---+---| */
+
+/* C4 */
+/* |---+---+---+---| */
+/* |   | 0 | 0 |   | */
+/* |---+---+---+---| */
+/* | 0 | P | P | 0 | */
+/* |---+---+---+---| */
+/* | 0 | P | P | 0 | */
+/* |---+---+---+---| */
+/* |   | 0 | 0 |   | */
+/* |---+---+---+---| */
+
+/*
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <mccodimage.h>
+#include <mcimage.h>
+#include <mctopo.h>
+*/
+
+// D: set of destructible points
+// verify p and ne match in mask C1
+#define MATCH_C1(D, p, ne, n, e) (D[p] && D[ne] && (!D[n]) && (!D[e]))
+
+// D: set of destructible points
+// verify p and e match in mask C2
+#define MATCH_C2(D, p, n, e, s, ne, se) (D[p] && D[e] && (!D[s]) && (!D[n]) && (!D[ne]) && (!D[se]))
+
+// D: set of destructible points
+// verify p  match in mask C3
+#define MATCH_C3(D, p, n, e, s, w, ne, se, sw) \
+  (D[p] && D[e] && D[s] && !D[n] && !D[ne] && !D[se] && !D[sw] && !D[w])
+
+// D: set of destructible points
+// verify p  match in mask C4
+#define MATCH_C4(D, p, n, e, s, w, ne, se, sw, ee, see, sse, ss) \
+  (D[p] && D[e] && D[s] && D[se] && !D[n] && !D[ne] && !D[ee] && !D[see] && !D[sse] && !D[ss] && !D[sw] && !D[w])
+
+#define MATCH_C(D, p, n, e, s, ne, se) (D[p] && D[e] && (D[n]||D[ne]) && (D[s] || D[se]))
+
+void getNeighborhood(uint8_t *F, uint32_t rs, uint32_t N, uint32_t p, uint8_t k, uint8_t * neighborhood);
+void printNeighborhood(uint8_t *neighborhood);
+void match_C1(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N);
+void match_C2(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N);
+void match_C3(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N);
+void match_C4(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N);
+void match_C(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N);
+
+void match_C1_asymmetric(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N);
+void match_C2_asymmetric(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N);
+void match_C3_asymmetric(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N);
+void match_C4_asymmetric(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N);
+void match_C_asymmetric(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N);
+
+/* |--------+--------+-------+--------+--------| */
+/* |        | 1  nnw | 2  nn | 3  nne |        | */
+/* |--------+--------+-------+--------+--------| */
+/* | 5  nww | 6   nw | 7   n | 8   ne | 9  nee | */
+/* |--------+--------+-------+--------+--------| */
+/* | 10  ww | 11   w | 12  P | 13   e | 14  ee | */
+/* |--------+--------+-------+--------+--------| */
+/* | 15 sww | 16  sw | 17  s | 18  se | 19 see | */
+/* |--------+--------+-------+--------+--------| */
+/* |        | 21 sww | 22 ss | 23 sse |        | */
+/* |--------+--------+-------+--------+--------| */
+
+void getNeighborhood(uint8_t *F, uint32_t rs, uint32_t N, uint32_t p, uint8_t k, uint8_t * neighborhood)
+/* neighborhood is a 25 (5x5) elements array */
+{
+  neighborhood[ 1] = F[NNW(p,rs)]>=k ? IN_SET : 0;  //nnw
+  neighborhood[ 2] = F[NN(p,rs) ]>=k ? IN_SET : 0;  //nn 
+  neighborhood[ 3] = F[NNE(p,rs)]>=k ? IN_SET : 0;  //nne
+  neighborhood[ 5] = F[NWW(p,rs)]>=k ? IN_SET : 0;  //nww
+  neighborhood[ 6] = F[NW(p,rs) ]>=k ? IN_SET : 0;  //nw 
+  neighborhood[ 7] = F[N(p,rs)  ]>=k ? IN_SET : 0;  //n  
+  neighborhood[ 8] = F[NE(p,rs) ]>=k ? IN_SET : 0;  //ne 
+  neighborhood[ 9] = F[NEE(p,rs)]>=k ? IN_SET : 0;  //nee
+  neighborhood[10] = F[WW(p,rs) ]>=k ? IN_SET : 0;  //ww 
+  neighborhood[11] = F[W(p,rs)  ]>=k ? IN_SET : 0;  //w  
+  neighborhood[12] = F[p]        >=k ? IN_SET : 0;  //center
+  neighborhood[13] = F[E(p,rs)  ]>=k ? IN_SET : 0;  //e  
+  neighborhood[14] = F[EE(p,rs) ]>=k ? IN_SET : 0;  //ee 
+  neighborhood[15] = F[SWW(p,rs)]>=k ? IN_SET : 0;  //sww
+  neighborhood[16] = F[SW(p,rs) ]>=k ? IN_SET : 0;  //sw 
+  neighborhood[17] = F[S(p,rs)  ]>=k ? IN_SET : 0;  //s  
+  neighborhood[18] = F[SE(p,rs) ]>=k ? IN_SET : 0;  //se 
+  neighborhood[19] = F[SEE(p,rs)]>=k ? IN_SET : 0;  //see
+  neighborhood[21] = F[SSW(p,rs)]>=k ? IN_SET : 0;  //ssw
+  neighborhood[22] = F[SS(p,rs) ]>=k ? IN_SET : 0;  //ss 
+  neighborhood[23] = F[SSE(p,rs)]>=k ? IN_SET : 0;  //sse
+
+  neighborhood[0] = neighborhood[4] = neighborhood[20] = neighborhood[24] = 0; // not used
+}
+
+
+void printNeighborhood(uint8_t *neighborhood)
+{
+  int l, c; 
+  int32_t p = 0;
+  for (l = 0; l<5; l++)
+    {
+      for (c = 0; c<5; c++)
+      {
+	printf("%d ", neighborhood[p]);
+	p++;
+      }
+      printf("\n");
+    }
+}
+
+int32_t lhthinpar(struct xvimage *image, int32_t nsteps)
+{
+#undef F_NAME
+#define F_NAME "lhthinpar"
+  int32_t p;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t N = rs * cs;             /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab;
+  
+  struct xvimage *destructible = copyimage(image);
+  if (destructible == NULL)
+  {
+    fprintf(stderr, "%s: copyimage failed\n", F_NAME);
+    return 0;
+  }
+  uint8_t *D = UCHARDATA(destructible);       
+
+  struct xvimage *alpha = copyimage(image);
+  if (alpha == NULL)
+  {
+    fprintf(stderr, "%s: copyimage failed\n", F_NAME);
+    return 0;
+  }
+  uint8_t *A = UCHARDATA(alpha);       
+
+  struct xvimage *tempimage = copyimage(image);
+  if (tempimage == NULL)
+  {
+    fprintf(stderr, "%s: copyimage failed\n", F_NAME);
+    return 0;
+  }
+  uint8_t *G = UCHARDATA(tempimage);       
+
+  if (nsteps == -1) nsteps = 1000000000;
+  
+  step = 0;
+  
+  do {
+    nonstab = 0;
+
+    // compute D and A
+     for (p=0; p<N; p++) {
+      A[p] =  alpha8m(F, p, rs, N);
+      if ( pdestr4(F, p, rs, N)) 
+	D[p] = DESTRUCTIBLE;
+      else 
+	D[p] = NON_DESTRUCTIBLE;
+    }
+
+#ifdef DEBUG
+     writeimage(destructible, "DESTR.pgm");
+     writeimage(alpha, "ALPHA.pgm");
+#endif
+
+
+     // find crucial points
+     match_C(F, D, A, rs, N);
+     match_C1(F, D, A, rs, N);
+     match_C2(F, D, A, rs, N);
+     match_C3(F, D, A, rs, N);
+     match_C4(F, D, A, rs, N);
+    
+#ifdef DEBUG
+     writeimage(destructible, "CRUCIAL.pgm");
+#endif
+
+    for (p=0; p<N; p++)
+      if (D[p]==DESTRUCTIBLE) {
+	G[p] = A[p];
+	nonstab = 1;
+      }
+      else
+	G[p] = F[p];
+    
+    step++;
+    memcpy(F, G, N);
+     
+  } while (nonstab && step<nsteps);
+
+  return 1;
+} 
+
+
+int32_t lhthinpar_asymmetric(struct xvimage *image, int32_t nsteps)
+{
+#undef F_NAME
+#define F_NAME "lhthinpar_asymmetric"
+  int32_t p;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t N = rs * cs;             /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab;
+  
+  struct xvimage *destructible = copyimage(image);
+  if (destructible == NULL)
+  {
+    fprintf(stderr, "%s: copyimage failed\n", F_NAME);
+    return 0;
+  }
+  uint8_t *D = UCHARDATA(destructible);       
+
+  struct xvimage *alpha = copyimage(image);
+  if (alpha == NULL)
+  {
+    fprintf(stderr, "%s: copyimage failed\n", F_NAME);
+    return 0;
+  }
+  uint8_t *A = UCHARDATA(alpha);       
+
+  struct xvimage *tempimage = copyimage(image);
+  if (tempimage == NULL)
+  {
+    fprintf(stderr, "%s: copyimage failed\n", F_NAME);
+    return 0;
+  }
+  uint8_t *G = UCHARDATA(tempimage);       
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  step = 0;
+  
+  do {
+    nonstab = 0;
+
+    // compute D and A
+     for (p=0; p<N; p++) {
+      A[p] =  alpha8m(F, p, rs, N);
+      if ( pdestr4(F, p, rs, N)) 
+	D[p] = DESTRUCTIBLE;
+      else 
+	D[p] = NON_DESTRUCTIBLE;
+    }
+
+#ifdef DEBUG
+     writeimage(destructible, "DESTR.pgm");
+     writeimage(alpha, "ALPHA.pgm");
+#endif
+
+
+     // find crucial points
+     match_C_asymmetric(F, D, A, rs, N);
+     match_C1_asymmetric(F, D, A, rs, N);
+     match_C2_asymmetric(F, D, A, rs, N);
+     match_C3_asymmetric(F, D, A, rs, N);
+     match_C4_asymmetric(F, D, A, rs, N);
+    
+#ifdef DEBUG
+     writeimage(destructible, "CRUCIAL.pgm");
+#endif
+
+    for (p=0; p<N; p++)
+      if (D[p]==DESTRUCTIBLE) {
+	G[p] = A[p];
+	nonstab = 1;
+      }
+      else
+	G[p] = F[p];
+    
+    step++;
+    memcpy(F, G, N);
+     
+  } while (nonstab && step<nsteps);
+
+  return 1;
+} 
+
+void match_C1(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N) {
+  uint32_t p;
+  uint8_t k;
+  uint8_t Fk[25];
+
+  for (p=0; p<N; p++) {     
+    if (D[p]) {
+      
+      k = F[p];
+      getNeighborhood(F, rs, N, p, k, Fk);	  
+
+      // MASK C1
+      if ( D[NE(p,rs)]==DESTRUCTIBLE &&
+	   MATCH_C1(Fk, _center55, _ne55, _n55, _e55) &&
+	   A[NE(p,rs)]<k ) {
+	D[p] = D[NE(p,rs)] = CRUCIAL;
+      }
+      if ( D[SE(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C1(Fk, _center55, _se55, _s55, _e55) &&
+	   A[SE(p,rs)]<k ) {
+	D[p] = D[SE(p,rs)] = CRUCIAL;         
+      }
+      if ( D[NW(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C1(Fk, _center55, _nw55, _n55, _w55) &&
+	   A[NW(p,rs)]<k ) { 
+	D[p] = D[NW(p,rs)] = CRUCIAL; 
+      }
+      if ( D[SW(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C1(Fk, _center55, _sw55, _s55, _w55) && 
+	   A[SW(p,rs)]<k ) { 
+	D[p] = D[SW(p,rs)] = CRUCIAL; 
+      }
+    }
+  }
+}
+
+
+void match_C1_asymmetric(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N) {
+  uint32_t p;
+  uint8_t k;
+  uint8_t Fk[25];
+
+  for (p=0; p<N; p++) {     
+    if (D[p]) {
+      
+      k = F[p];
+      getNeighborhood(F, rs, N, p, k, Fk);	  
+
+      // MASK C1
+      if ( D[NE(p,rs)]==DESTRUCTIBLE &&
+	   MATCH_C1(Fk, _center55, _ne55, _n55, _e55) &&
+	   A[NE(p,rs)]<k ) {
+	D[p] = CRUCIAL;
+      }
+      if ( D[SE(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C1(Fk, _center55, _se55, _s55, _e55) &&
+	   A[SE(p,rs)]<k ) {
+	D[p] = CRUCIAL;         
+      }
+      if ( D[NW(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C1(Fk, _center55, _nw55, _n55, _w55) &&
+	   A[NW(p,rs)]<k ) { 
+	D[p] = CRUCIAL; 
+      }
+      if ( D[SW(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C1(Fk, _center55, _sw55, _s55, _w55) && 
+	   A[SW(p,rs)]<k ) { 
+	D[p] = CRUCIAL; 
+      }
+    }
+  }
+}
+
+void match_C2(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N) {
+  uint32_t p;
+  uint8_t k;
+  uint8_t Fk[25];
+
+  for (p=0; p<N; p++) {     
+    if (D[p]) {
+      
+      k = F[p];
+      getNeighborhood(F, rs, N, p, k, Fk);	  
+
+      if ( D[E(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C2(Fk, _center55, _n55, _e55, _s55, _ne55, _se55) &&
+	   A[E(p,rs)]<k) {
+	D[p] = D[E(p,rs)] = CRUCIAL;
+      }
+      if ( D[S(p,rs)]==DESTRUCTIBLE &&
+	   MATCH_C2(Fk, _center55, _e55, _s55, _w55, _se55, _sw55) &&
+	   A[S(p,rs)]<k ) {
+	D[p] = D[S(p,rs)] = CRUCIAL;
+      }
+      if ( D[W(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C2(Fk, _center55, _s55, _w55, _n55, _sw55, _nw55) &&
+	   A[W(p,rs)]<k) {
+	D[p] = D[W(p,rs)] = CRUCIAL;
+      }
+      if ( D[N(p,rs)]==DESTRUCTIBLE &&
+	   MATCH_C2(Fk, _center55, _w55, _n55, _e55, _nw55, _ne55) &&
+	   A[N(p,rs)]<k ) {
+	D[p] = D[N(p,rs)] = CRUCIAL;
+      }
+    }
+  }
+}
+
+
+void match_C2_asymmetric(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N) {
+  uint32_t p;
+  uint8_t k;
+  uint8_t Fk[25];
+
+  for (p=0; p<N; p++) {     
+    if (D[p]) {
+      
+      k = F[p];
+      getNeighborhood(F, rs, N, p, k, Fk);	  
+
+      if ( D[E(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C2(Fk, _center55, _n55, _e55, _s55, _ne55, _se55) &&
+	   A[E(p,rs)]<k) {
+	D[p] = CRUCIAL;
+      }
+      if ( D[S(p,rs)]==DESTRUCTIBLE &&
+	   MATCH_C2(Fk, _center55, _e55, _s55, _w55, _se55, _sw55) &&
+	   A[S(p,rs)]<k ) {
+	D[p] = CRUCIAL;
+      }
+      if ( D[W(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C2(Fk, _center55, _s55, _w55, _n55, _sw55, _nw55) &&
+	   A[W(p,rs)]<k) {
+	D[p] = CRUCIAL;
+      }
+      if ( D[N(p,rs)]==DESTRUCTIBLE &&
+	   MATCH_C2(Fk, _center55, _w55, _n55, _e55, _nw55, _ne55) &&
+	   A[N(p,rs)]<k ) {
+	D[p] = CRUCIAL;
+      }
+    }
+  }
+}
+
+void match_C3(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N) {
+  uint32_t p;
+  uint8_t k;
+  uint8_t Fk[25];
+
+  for (p=0; p<N; p++) {     
+    if (D[p]) {
+      
+      k = F[p];
+      getNeighborhood(F, rs, N, p, k, Fk);	  
+
+      if ( D[E(p,rs)]==DESTRUCTIBLE && D[S(p,rs)]==DESTRUCTIBLE &&
+	   MATCH_C3(Fk, _center55, _n55, _e55, _s55, _w55, _ne55, _se55, _sw55) &&
+	   A[E(p,rs)]<k && A[S(p,rs)]<k) {
+	D[p] = D[E(p,rs)] = D[S(p,rs)] = CRUCIAL;
+      }
+      if ( D[S(p,rs)]==DESTRUCTIBLE && D[W(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C3(Fk, _center55, _e55, _s55, _w55, _n55, _se55, _sw55, _nw55) &&
+	   A[S(p,rs)]<k && A[W(p,rs)]<k ) {
+	D[p] = D[S(p,rs)] = D[W(p,rs)] = CRUCIAL;
+      }
+      if ( D[W(p,rs)]==DESTRUCTIBLE && D[N(p,rs)]==DESTRUCTIBLE &&
+	   MATCH_C3(Fk, _center55, _s55, _w55, _n55, _e55, _sw55, _nw55, _ne55) &&
+	   A[W(p,rs)]<k && A[N(p,rs)]<k ) {
+	D[p] = D[W(p,rs)] = D[N(p,rs)] = CRUCIAL;
+      }
+      if ( D[N(p,rs)]==DESTRUCTIBLE && D[E(p,rs)]==DESTRUCTIBLE &&
+	   MATCH_C3(Fk, _center55, _w55, _n55, _e55, _s55, _nw55, _ne55, _se55) &&
+	  A[N(p,rs)]<k && A[E(p,rs)]<k) {
+	D[p] = D[N(p,rs)] = D[E(p,rs)] = CRUCIAL;
+      }
+    }
+  }
+}
+
+
+void match_C3_asymmetric(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N) {
+  uint32_t p;
+  uint8_t k;
+  uint8_t Fk[25];
+
+  for (p=0; p<N; p++) {     
+    if (D[p]) {
+      
+      k = F[p];
+      getNeighborhood(F, rs, N, p, k, Fk);	  
+
+      if ( D[E(p,rs)]==DESTRUCTIBLE && D[S(p,rs)]==DESTRUCTIBLE &&
+	   MATCH_C3(Fk, _center55, _n55, _e55, _s55, _w55, _ne55, _se55, _sw55) &&
+	   A[E(p,rs)]<k && A[S(p,rs)]<k) {
+	D[p] = CRUCIAL;
+      }
+      if ( D[S(p,rs)]==DESTRUCTIBLE && D[W(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C3(Fk, _center55, _e55, _s55, _w55, _n55, _se55, _sw55, _nw55) &&
+	   A[S(p,rs)]<k && A[W(p,rs)]<k ) {
+	D[p] = CRUCIAL;
+      }
+      if ( D[W(p,rs)]==DESTRUCTIBLE && D[N(p,rs)]==DESTRUCTIBLE &&
+	   MATCH_C3(Fk, _center55, _s55, _w55, _n55, _e55, _sw55, _nw55, _ne55) &&
+	   A[W(p,rs)]<k && A[N(p,rs)]<k ) {
+	D[p] = CRUCIAL;
+      }
+      if ( D[N(p,rs)]==DESTRUCTIBLE && D[E(p,rs)]==DESTRUCTIBLE &&
+	   MATCH_C3(Fk, _center55, _w55, _n55, _e55, _s55, _nw55, _ne55, _se55) &&
+	  A[N(p,rs)]<k && A[E(p,rs)]<k) {
+	D[p] = CRUCIAL;
+      }
+    }
+  }
+}
+
+void match_C4(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N) {
+  uint32_t p;
+  uint8_t k;
+  uint8_t Fk[25];
+
+  for (p=0; p<N; p++) {     
+    if (D[p]==DESTRUCTIBLE) {
+      
+      k = F[p];
+      getNeighborhood(F, rs, N, p, k, Fk);	  
+      
+      if (D[E(p,rs)]==DESTRUCTIBLE && D[S(p,rs)]==DESTRUCTIBLE && D[SE(p,rs)]==DESTRUCTIBLE &&
+	  MATCH_C4(Fk, _center55, _n55, _e55, _s55, _w55, _ne55, _se55, _sw55, _ee55, _see55, _sse55, _ss55) &&
+	  A[E(p,rs)]<k && A[S(p,rs)]<k && A[SE(p,rs)]<k) {
+	D[p] = D[E(p,rs)] = D[S(p,rs)] = D[SE(p,rs)] = CRUCIAL;
+      }
+      
+      if (D[S(p,rs)]==DESTRUCTIBLE && D[W(p,rs)]==DESTRUCTIBLE && D[SW(p,rs)]==DESTRUCTIBLE &&
+	  MATCH_C4(Fk, _center55, _e55, _s55, _w55, _n55, _se55, _sw55, _nw55, _ss55, _ssw55, _sww55, _ww55) &&
+	  A[S(p,rs)]<k && A[W(p,rs)]<k && A[SW(p,rs)]<k ) {
+	D[p] = D[S(p,rs)] = D[W(p,rs)] = D[SW(p,rs)] = CRUCIAL;
+      }
+      
+      if (D[W(p,rs)]==DESTRUCTIBLE && D[N(p,rs)]==DESTRUCTIBLE && D[NW(p,rs)]==DESTRUCTIBLE && 
+	  MATCH_C4(Fk, _center55, _s55, _w55, _n55, _e55, _sw55, _nw55, _ne55, _ww55, _nww55, _nnw55, _nn55) &&
+	  A[W(p,rs)]<k && A[N(p,rs)]<k && A[NW(p,rs)]<k ) {
+	D[p] = D[W(p,rs)] = D[N(p,rs)] = D[NW(p,rs)] = CRUCIAL;
+      }
+      
+      if (D[N(p,rs)]==DESTRUCTIBLE && D[E(p,rs)]==DESTRUCTIBLE && D[NE(p,rs)]==DESTRUCTIBLE &&
+	  MATCH_C4(Fk, _center55, _w55, _n55, _e55, _s55, _nw55, _ne55, _se55, _nn55, _nne55, _nee55, _ee55) &&
+	  A[N(p,rs)]<k && A[E(p,rs)]<k && A[NE(p,rs)]<k ) {
+	D[p] = D[N(p,rs)] = D[E(p,rs)] = D[NE(p,rs)] = CRUCIAL;
+      }
+    }
+  }
+}
+
+void match_C4_asymmetric(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N) {
+  uint32_t p;
+  uint8_t k;
+  uint8_t Fk[25];
+
+  for (p=0; p<N; p++) {     
+    if (D[p]==DESTRUCTIBLE) {
+      
+      k = F[p];
+      getNeighborhood(F, rs, N, p, k, Fk);	  
+      
+      if (D[E(p,rs)]==DESTRUCTIBLE && D[S(p,rs)]==DESTRUCTIBLE && D[SE(p,rs)]==DESTRUCTIBLE &&
+	  MATCH_C4(Fk, _center55, _n55, _e55, _s55, _w55, _ne55, _se55, _sw55, _ee55, _see55, _sse55, _ss55) &&
+	  A[E(p,rs)]<k && A[S(p,rs)]<k && A[SE(p,rs)]<k) {
+	D[p] = CRUCIAL;
+      }
+      
+      if (D[S(p,rs)]==DESTRUCTIBLE && D[W(p,rs)]==DESTRUCTIBLE && D[SW(p,rs)]==DESTRUCTIBLE &&
+	  MATCH_C4(Fk, _center55, _e55, _s55, _w55, _n55, _se55, _sw55, _nw55, _ss55, _ssw55, _sww55, _ww55) &&
+	  A[S(p,rs)]<k && A[W(p,rs)]<k && A[SW(p,rs)]<k ) {
+	D[p] = CRUCIAL;
+      }
+      
+      if (D[W(p,rs)]==DESTRUCTIBLE && D[N(p,rs)]==DESTRUCTIBLE && D[NW(p,rs)]==DESTRUCTIBLE && 
+	  MATCH_C4(Fk, _center55, _s55, _w55, _n55, _e55, _sw55, _nw55, _ne55, _ww55, _nww55, _nnw55, _nn55) &&
+	  A[W(p,rs)]<k && A[N(p,rs)]<k && A[NW(p,rs)]<k ) {
+	D[p] = CRUCIAL;
+      }
+      
+      if (D[N(p,rs)]==DESTRUCTIBLE && D[E(p,rs)]==DESTRUCTIBLE && D[NE(p,rs)]==DESTRUCTIBLE &&
+	  MATCH_C4(Fk, _center55, _w55, _n55, _e55, _s55, _nw55, _ne55, _se55, _nn55, _nne55, _nee55, _ee55) &&
+	  A[N(p,rs)]<k && A[E(p,rs)]<k && A[NE(p,rs)]<k ) {
+	D[p] = CRUCIAL;
+      }
+    }
+  }
+}
+
+void match_C(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N) {
+  uint32_t p;
+  uint8_t k;
+  uint8_t Fk[25];
+
+  for (p=0; p<N; p++) {     
+    if (D[p]==DESTRUCTIBLE) {
+      
+      k = F[p];
+      getNeighborhood(F, rs, N, p, k, Fk);
+      
+      if (D[E(p,rs)]==DESTRUCTIBLE && MATCH_C(Fk, _center55, _n55, _e55, _s55, _ne55, _se55) && 
+	  A[E(p,rs)]<k ) {
+	D[p] = D[E(p,rs)] = CRUCIAL_C;
+      }
+      
+      if ( D[W(p,rs)]==DESTRUCTIBLE && MATCH_C(Fk, _center55, _s55, _w55, _n55, _sw55, _nw55) &&
+	   A[W(p,rs)]<k ) {
+	D[p] = D[W(p,rs)] = CRUCIAL_C;
+      }
+
+      if ( D[S(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C(Fk, _center55, _e55, _s55, _w55, _se55, _sw55) &&
+	   A[S(p,rs)]<k  ) {
+	D[p] = D[S(p,rs)] = CRUCIAL_C;
+      }
+      
+      if ( MATCH_C(Fk, _center55, _w55, _n55, _e55, _nw55, _ne55) &&  
+	   A[N(p,rs)]<k ) {
+	D[p] = D[N(p,rs)] = CRUCIAL_C;
+      }    
+    }    
+  }
+}
+
+
+void match_C_asymmetric(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N) {
+  uint32_t p;
+  uint8_t k;
+  uint8_t Fk[25];
+
+  for (p=0; p<N; p++) {     
+    if (D[p]==DESTRUCTIBLE) {
+      
+      k = F[p];
+      getNeighborhood(F, rs, N, p, k, Fk);
+      
+      if (D[E(p,rs)]==DESTRUCTIBLE && MATCH_C(Fk, _center55, _n55, _e55, _s55, _ne55, _se55) && 
+	  A[E(p,rs)]<k ) {
+	D[p] = CRUCIAL_C;
+      }
+      
+      if ( D[W(p,rs)]==DESTRUCTIBLE && MATCH_C(Fk, _center55, _s55, _w55, _n55, _sw55, _nw55) &&
+	   A[W(p,rs)]<k ) {
+	D[p] = CRUCIAL_C;
+      }
+
+      if ( D[S(p,rs)]==DESTRUCTIBLE && 
+	   MATCH_C(Fk, _center55, _e55, _s55, _w55, _se55, _sw55) &&
+	   A[S(p,rs)]<k  ) {
+	D[p] = CRUCIAL_C;
+      }
+      
+      if ( MATCH_C(Fk, _center55, _w55, _n55, _e55, _nw55, _ne55) &&  
+	   A[N(p,rs)]<k ) {
+	D[p] = CRUCIAL_C;
+      }    
+    }    
+  }
+}

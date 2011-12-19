@@ -47,7 +47,7 @@ is continued until stability.
 When a point x is detected as a 1D isthmus, a counter p(x) is
 associated to this point and initialized with value 1. This counter is
 incremented a each iteration as long as x is still an isthmus. At each
-iteration, the isthmuses x such that p(x) > \b isthmus_persistence are
+iteration, the isthmuses x such that p(x) >= \b isthmus_persistence are
 stored as a constraint set (see also \b inhibit parameter).
 
 If the parameter \b inhibit is given and is a binary image name,

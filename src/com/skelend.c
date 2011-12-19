@@ -63,7 +63,6 @@ See skelcurv for a more robust operator. Useful for reducing quasi-curvilinear o
 #include <mcimage.h>
 #include <mcgeo.h>
 #include <ldist.h>
-#include <lsquelbin.h>
 #include <lskeletons.h>
 
 /* =============================================================== */
@@ -98,7 +97,7 @@ int main(int argc, char **argv)
   {
     if (! lskelend2d(image, connex, niseuil))
     {
-      fprintf(stderr, "%s: lsquelbin failed\n", argv[0]);
+      fprintf(stderr, "%s: lskelend2d failed\n", argv[0]);
       exit(1);
     }
   }

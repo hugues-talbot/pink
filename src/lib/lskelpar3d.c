@@ -34,7 +34,8 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /* 
    Algorithmes 3D "fully parallel" de squelettisation
-
+   
+   Update 19/12/2011 : introduction des cliques D-cruciales
 */
 
 #include <stdio.h>
@@ -64,36 +65,28 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #define S_OBJECT      1
 #define S_SIMPLE      2
-#define S_2M_CRUCIAL  4
-#define S_1M_CRUCIAL  8
-#define S_0M_CRUCIAL 16
+#define S_DCRUCIAL    4
 #define S_CURVE      32
 #define S_SURF       64
 #define S_SELECTED  128
 
 #define IS_OBJECT(f)     (f&S_OBJECT)
 #define IS_SIMPLE(f)     (f&S_SIMPLE)
-#define IS_2M_CRUCIAL(f) (f&S_2M_CRUCIAL)
-#define IS_1M_CRUCIAL(f) (f&S_1M_CRUCIAL)
-#define IS_0M_CRUCIAL(f) (f&S_0M_CRUCIAL)
+#define IS_DCRUCIAL(f)   (f&S_DCRUCIAL)
 #define IS_CURVE(f)      (f&S_CURVE)
 #define IS_SURF(f)       (f&S_SURF)
 #define IS_SELECTED(f)   (f&S_SELECTED)
 
 #define SET_OBJECT(f)     (f|=S_OBJECT)
 #define SET_SIMPLE(f)     (f|=S_SIMPLE)
-#define SET_2M_CRUCIAL(f) (f|=S_2M_CRUCIAL)
-#define SET_1M_CRUCIAL(f) (f|=S_1M_CRUCIAL)
-#define SET_0M_CRUCIAL(f) (f|=S_0M_CRUCIAL)
+#define SET_DCRUCIAL(f)   (f|=S_DCRUCIAL)
 #define SET_CURVE(f)      (f|=S_CURVE)
 #define SET_SURF(f)       (f|=S_SURF)
 #define SET_SELECTED(f)   (f|=S_SELECTED)
 
 #define UNSET_OBJECT(f)     (f&=~S_OBJECT)
 #define UNSET_SIMPLE(f)     (f&=~S_SIMPLE)
-#define UNSET_2M_CRUCIAL(f) (f&=~S_2M_CRUCIAL)
-#define UNSET_1M_CRUCIAL(f) (f&=~S_1M_CRUCIAL)
-#define UNSET_0M_CRUCIAL(f) (f&=~S_0M_CRUCIAL)
+#define UNSET_DCRUCIAL(f)   (f&=~S_DCRUCIAL)
 #define UNSET_SELECTED(f)   (f&=~S_SELECTED)
 
 //#define VERBOSE
@@ -376,7 +369,7 @@ static int32_t match_vois2(uint8_t *v)
 Teste si les conditions suivantes sont réunies:
 1: v[8] et v[26] doivent être dans l'objet et simples
 2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit être non 2D-simple
-Si le test réussit, les points 8, 26 sont marqués 2M_CRUCIAL
+Si le test réussit, les points 8, 26 sont marqués DCRUCIAL
 */
 {
   uint8_t t;
@@ -397,8 +390,8 @@ Si le test réussit, les points 8, 26 sont marqués 2M_CRUCIAL
   if (v[6] || v[15]) t |= 64;
   if (v[7] || v[16]) t |= 128;
   if ((t4b(t) == 1) && (t8(t) == 1)) return 0; // simple 2D
-  SET_2M_CRUCIAL(v[8]);
-  SET_2M_CRUCIAL(v[26]);
+  SET_DCRUCIAL(v[8]);
+  SET_DCRUCIAL(v[26]);
 #ifdef DEBUG
   if (trace)
     printf("match !\n");
@@ -421,7 +414,7 @@ Pour les conditions de courbe et de surface.
 Teste si les deux conditions suivantes sont réunies:
 1: v[8] et v[26] doivent être simples
 2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit être non 2D-simple
-Si le test réussit, alors les points 8, 26 sont marqués 2M_CRUCIAL, de plus:
+Si le test réussit, alors les points 8, 26 sont marqués DCRUCIAL, de plus:
   Si t4b(w[0...7]) == 0 alors les points 8, 26 sont marqués SURF
   Sinon, si t8(w[0...7]) > 1 alors les points 8, 26 sont marqués CURVE
 */
@@ -444,8 +437,8 @@ Si le test réussit, alors les points 8, 26 sont marqués 2M_CRUCIAL, de plus:
   if (v[6] || v[15]) t |= 64;
   if (v[7] || v[16]) t |= 128;
   if ((t4b(t) == 1) && (t8(t) == 1)) return 0; // simple 2D
-  SET_2M_CRUCIAL(v[8]);
-  SET_2M_CRUCIAL(v[26]);
+  SET_DCRUCIAL(v[8]);
+  SET_DCRUCIAL(v[26]);
   if (t4b(t) == 0) { SET_SURF(v[8]); SET_SURF(v[26]); }
   else if (t8(t) > 1) 
   { 
@@ -473,9 +466,9 @@ static int32_t match_vois1(uint8_t *v)
 //
 // Teste si les trois conditions suivantes sont réunies:
 // 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent être simples et non marqués 2M_CRUCIAL
+// 2: tous les points Pi non nuls doivent être simples et non marqués DCRUCIAL
 // 3: A et B sont tous nuls ou [au moins un A non nul et au moins un B non nul]
-// Si le test réussit, les points Pi non nuls sont marques 1M_CRUCIAL
+// Si le test réussit, les points Pi non nuls sont marques DCRUCIAL
 {
   int32_t ret = 0;
 #ifdef DEBUG
@@ -486,31 +479,31 @@ static int32_t match_vois1(uint8_t *v)
   }
 #endif
   if (!((v[2] && v[4]) || (v[3] && v[26]))) goto next1;
-  if ((IS_OBJECT(v[2])  && (!IS_SIMPLE(v[2])  || IS_2M_CRUCIAL(v[2]))) ||
-      (IS_OBJECT(v[3])  && (!IS_SIMPLE(v[3])  || IS_2M_CRUCIAL(v[3]))) ||
-      (IS_OBJECT(v[4])  && (!IS_SIMPLE(v[4])  || IS_2M_CRUCIAL(v[4]))) ||
-      (IS_OBJECT(v[26]) && (!IS_SIMPLE(v[26]) || IS_2M_CRUCIAL(v[26])))) goto next1;
+  if ((IS_OBJECT(v[2])  && (!IS_SIMPLE(v[2])  || IS_DCRUCIAL(v[2]))) ||
+      (IS_OBJECT(v[3])  && (!IS_SIMPLE(v[3])  || IS_DCRUCIAL(v[3]))) ||
+      (IS_OBJECT(v[4])  && (!IS_SIMPLE(v[4])  || IS_DCRUCIAL(v[4]))) ||
+      (IS_OBJECT(v[26]) && (!IS_SIMPLE(v[26]) || IS_DCRUCIAL(v[26])))) goto next1;
   if ((v[12] || v[11] || v[13] || v[8] || v[21] || v[20] || v[22] || v[17]) &&
       ((!v[12] && !v[11] && !v[13] && !v[8]) || 
        (!v[21] && !v[20] && !v[22] && !v[17]))) goto next1;
-  if (v[2])  SET_1M_CRUCIAL(v[2]);
-  if (v[3])  SET_1M_CRUCIAL(v[3]);
-  if (v[4])  SET_1M_CRUCIAL(v[4]);
-  if (v[26]) SET_1M_CRUCIAL(v[26]);
+  if (v[2])  SET_DCRUCIAL(v[2]);
+  if (v[3])  SET_DCRUCIAL(v[3]);
+  if (v[4])  SET_DCRUCIAL(v[4]);
+  if (v[26]) SET_DCRUCIAL(v[26]);
   ret = 1;
  next1:
   if (!((v[2] && v[0]) || (v[1] && v[26]))) goto next2;
-  if ((IS_OBJECT(v[2])  && (!IS_SIMPLE(v[2])  || IS_2M_CRUCIAL(v[2]))) ||
-      (IS_OBJECT(v[1])  && (!IS_SIMPLE(v[1])  || IS_2M_CRUCIAL(v[1]))) ||
-      (IS_OBJECT(v[0])  && (!IS_SIMPLE(v[0])  || IS_2M_CRUCIAL(v[0]))) ||
-      (IS_OBJECT(v[26]) && (!IS_SIMPLE(v[26]) || IS_2M_CRUCIAL(v[26])))) goto next2;
+  if ((IS_OBJECT(v[2])  && (!IS_SIMPLE(v[2])  || IS_DCRUCIAL(v[2]))) ||
+      (IS_OBJECT(v[1])  && (!IS_SIMPLE(v[1])  || IS_DCRUCIAL(v[1]))) ||
+      (IS_OBJECT(v[0])  && (!IS_SIMPLE(v[0])  || IS_DCRUCIAL(v[0]))) ||
+      (IS_OBJECT(v[26]) && (!IS_SIMPLE(v[26]) || IS_DCRUCIAL(v[26])))) goto next2;
   if ((v[10] || v[11] || v[9] || v[8] || v[19] || v[20] || v[18] || v[17]) &&
       ((!v[10] && !v[11] && !v[9] && !v[8]) || 
        (!v[19] && !v[20] && !v[18] && !v[17]))) goto next2;
-  if (v[2])  SET_1M_CRUCIAL(v[2]);
-  if (v[1])  SET_1M_CRUCIAL(v[1]);
-  if (v[0])  SET_1M_CRUCIAL(v[0]);
-  if (v[26]) SET_1M_CRUCIAL(v[26]);
+  if (v[2])  SET_DCRUCIAL(v[2]);
+  if (v[1])  SET_DCRUCIAL(v[1]);
+  if (v[0])  SET_DCRUCIAL(v[0]);
+  if (v[26]) SET_DCRUCIAL(v[26]);
   ret = 1;
  next2:
 #ifdef DEBUG
@@ -535,7 +528,7 @@ static int32_t match_vois1s(uint8_t *v)
 // Pour la condition de courbe. 
 // Teste si les trois conditions suivantes sont réunies:
 // 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent être simples et non 2M_CRUCIAL
+// 2: tous les points Pi non nuls doivent être simples et non DCRUCIAL
 // 3: au moins un A non nul et au moins un B non nul
 // Si le test réussit, les points Pi non nuls sont marques CURVE
 {
@@ -548,10 +541,10 @@ static int32_t match_vois1s(uint8_t *v)
   }
 #endif
   if (!((v[2] && v[4]) || (v[3] && v[26]))) goto next1;
-  if ((IS_OBJECT(v[2])  && (!IS_SIMPLE(v[2]) || IS_2M_CRUCIAL(v[2]))) ||
-      (IS_OBJECT(v[3])  && (!IS_SIMPLE(v[3]) || IS_2M_CRUCIAL(v[3]))) ||
-      (IS_OBJECT(v[4])  && (!IS_SIMPLE(v[4]) || IS_2M_CRUCIAL(v[4]))) ||
-      (IS_OBJECT(v[26]) && (!IS_SIMPLE(v[26]) || IS_2M_CRUCIAL(v[26])))) goto next1;
+  if ((IS_OBJECT(v[2])  && (!IS_SIMPLE(v[2]) || IS_DCRUCIAL(v[2]))) ||
+      (IS_OBJECT(v[3])  && (!IS_SIMPLE(v[3]) || IS_DCRUCIAL(v[3]))) ||
+      (IS_OBJECT(v[4])  && (!IS_SIMPLE(v[4]) || IS_DCRUCIAL(v[4]))) ||
+      (IS_OBJECT(v[26]) && (!IS_SIMPLE(v[26]) || IS_DCRUCIAL(v[26])))) goto next1;
   if ((!v[12] && !v[11] && !v[13] && !v[8]) || 
       (!v[21] && !v[20] && !v[22] && !v[17])) goto next1;
   if (v[2])  SET_CURVE(v[2]);
@@ -561,10 +554,10 @@ static int32_t match_vois1s(uint8_t *v)
   ret = 1;
  next1:
   if (!((v[2] && v[0]) || (v[1] && v[26]))) goto next2;
-  if ((IS_OBJECT(v[2])  && (!IS_SIMPLE(v[2]) || IS_2M_CRUCIAL(v[2]))) ||
-      (IS_OBJECT(v[1])  && (!IS_SIMPLE(v[1]) || IS_2M_CRUCIAL(v[1]))) ||
-      (IS_OBJECT(v[0])  && (!IS_SIMPLE(v[0]) || IS_2M_CRUCIAL(v[0]))) ||
-      (IS_OBJECT(v[26]) && (!IS_SIMPLE(v[26]) || IS_2M_CRUCIAL(v[26])))) goto next2;
+  if ((IS_OBJECT(v[2])  && (!IS_SIMPLE(v[2]) || IS_DCRUCIAL(v[2]))) ||
+      (IS_OBJECT(v[1])  && (!IS_SIMPLE(v[1]) || IS_DCRUCIAL(v[1]))) ||
+      (IS_OBJECT(v[0])  && (!IS_SIMPLE(v[0]) || IS_DCRUCIAL(v[0]))) ||
+      (IS_OBJECT(v[26]) && (!IS_SIMPLE(v[26]) || IS_DCRUCIAL(v[26])))) goto next2;
   if ((!v[10] && !v[11] && !v[9] && !v[8]) || 
       (!v[19] && !v[20] && !v[18] && !v[17])) goto next2;
   if (v[2])  SET_CURVE(v[2]);
@@ -592,8 +585,8 @@ static int32_t match_vois0(uint8_t *v)
 
 Teste si les conditions suivantes sont réunies:
 1: au moins un des ensembles {12,26}, {11,4}, {13,2}, {8,3} est inclus dans l'objet, et
-2: les points non nuls sont tous simples, non marqués 2M_CRUCIAL et non marqués 1M_CRUCIAL
-Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
+2: les points non nuls sont tous simples, non marqués DCRUCIAL et non marqués DCRUCIAL
+Si le test réussit, les points non nuls sont marqués DCRUCIAL
 */
 {
 #ifdef DEBUG
@@ -605,23 +598,23 @@ Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 #endif
   if (!((v[12]&&v[26]) || (v[11]&&v[4]) || (v[13]&&v[2]) || (v[8]&&v[3]) )) return 0;
 
-  if (v[12] && (!IS_SIMPLE(v[12]) || IS_2M_CRUCIAL(v[12]) || IS_1M_CRUCIAL(v[12]))) return 0;
-  if (v[26] && (!IS_SIMPLE(v[26]) || IS_2M_CRUCIAL(v[26]) || IS_1M_CRUCIAL(v[26]))) return 0;
-  if (v[11] && (!IS_SIMPLE(v[11]) || IS_2M_CRUCIAL(v[11]) || IS_1M_CRUCIAL(v[11]))) return 0;
-  if (v[ 4] && (!IS_SIMPLE(v[ 4]) || IS_2M_CRUCIAL(v[ 4]) || IS_1M_CRUCIAL(v[ 4]))) return 0;
-  if (v[13] && (!IS_SIMPLE(v[13]) || IS_2M_CRUCIAL(v[13]) || IS_1M_CRUCIAL(v[13]))) return 0;
-  if (v[ 2] && (!IS_SIMPLE(v[ 2]) || IS_2M_CRUCIAL(v[ 2]) || IS_1M_CRUCIAL(v[ 2]))) return 0;
-  if (v[ 8] && (!IS_SIMPLE(v[ 8]) || IS_2M_CRUCIAL(v[ 8]) || IS_1M_CRUCIAL(v[ 8]))) return 0;
-  if (v[ 3] && (!IS_SIMPLE(v[ 3]) || IS_2M_CRUCIAL(v[ 3]) || IS_1M_CRUCIAL(v[ 3]))) return 0;
+  if (v[12] && (!IS_SIMPLE(v[12]) || IS_DCRUCIAL(v[12]))) return 0;
+  if (v[26] && (!IS_SIMPLE(v[26]) || IS_DCRUCIAL(v[26]))) return 0;
+  if (v[11] && (!IS_SIMPLE(v[11]) || IS_DCRUCIAL(v[11]))) return 0;
+  if (v[ 4] && (!IS_SIMPLE(v[ 4]) || IS_DCRUCIAL(v[ 4]))) return 0;
+  if (v[13] && (!IS_SIMPLE(v[13]) || IS_DCRUCIAL(v[13]))) return 0;
+  if (v[ 2] && (!IS_SIMPLE(v[ 2]) || IS_DCRUCIAL(v[ 2]))) return 0;
+  if (v[ 8] && (!IS_SIMPLE(v[ 8]) || IS_DCRUCIAL(v[ 8]))) return 0;
+  if (v[ 3] && (!IS_SIMPLE(v[ 3]) || IS_DCRUCIAL(v[ 3]))) return 0;
 
-  if (v[12]) SET_0M_CRUCIAL(v[12]);
-  if (v[26]) SET_0M_CRUCIAL(v[26]);
-  if (v[11]) SET_0M_CRUCIAL(v[11]);
-  if (v[ 4]) SET_0M_CRUCIAL(v[ 4]);
-  if (v[13]) SET_0M_CRUCIAL(v[13]);
-  if (v[ 2]) SET_0M_CRUCIAL(v[ 2]);
-  if (v[ 8]) SET_0M_CRUCIAL(v[ 8]);
-  if (v[ 3]) SET_0M_CRUCIAL(v[ 3]);
+  if (v[12]) SET_DCRUCIAL(v[12]);
+  if (v[26]) SET_DCRUCIAL(v[26]);
+  if (v[11]) SET_DCRUCIAL(v[11]);
+  if (v[ 4]) SET_DCRUCIAL(v[ 4]);
+  if (v[13]) SET_DCRUCIAL(v[13]);
+  if (v[ 2]) SET_DCRUCIAL(v[ 2]);
+  if (v[ 8]) SET_DCRUCIAL(v[ 8]);
+  if (v[ 3]) SET_DCRUCIAL(v[ 3]);
 #ifdef DEBUG
   if (trace)
     printf("match !\n");
@@ -774,7 +767,7 @@ writeimage(image,"_S");
       }
 #ifdef DEBUG
 memset(R, 0, N);
-for (i = 0; i < N; i++) if (IS_2M_CRUCIAL(S[i])) R[i] = 255;
+for (i = 0; i < N; i++) if (IS_DCRUCIAL(S[i])) R[i] = 255;
 writeimage(r,"_M2");
 #endif
 
@@ -791,13 +784,13 @@ printf("%d %d %d\n", i % rs, (i % ps) / rs, i / ps);
       }
 #ifdef DEBUG
 memset(R, 0, N);
-for (i = 0; i < N; i++) if (IS_1M_CRUCIAL(S[i])) R[i] = 255;
+for (i = 0; i < N; i++) if (IS_DCRUCIAL(S[i])) R[i] = 255;
 writeimage(r,"_M1");
 #endif
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
-      if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]))
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
 writeimage(t,"_T");
@@ -841,9 +834,9 @@ Algo EK3 données: S
 Répéter jusqu'à stabilité
   E := points extrémité de S
   P := voxels simples pour S et pas dans E
-  C2 := voxels 2M-cruciaux (match2)
-  C1 := voxels 1M-cruciaux (match1)
-  C0 := voxels 0M-cruciaux (match0)
+  C2 := voxels 2-D-cruciaux (match2)
+  C1 := voxels 1-D-cruciaux (match1)
+  C0 := voxels 0-D-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
@@ -906,7 +899,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]) && !I[i] && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
 
-    // MARQUE LES POINTS 2M-CRUCIAUX
+    // MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -914,7 +907,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match2(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 1M-CRUCIAUX
+    // MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -922,7 +915,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match1(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 0M-CRUCIAUX
+    // MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -933,7 +926,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
-      if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
 writeimage(t,"_T");
@@ -971,9 +964,9 @@ Répéter jusqu'à stabilité
   C := points de courbe de S
   I := I \cup C
   P := voxels simples pour S et pas dans I
-  C2 := voxels 2M-cruciaux (match2)
-  C1 := voxels 1M-cruciaux (match1)
-  C0 := voxels 0M-cruciaux (match0)
+  C2 := voxels 2-D-cruciaux (match2)
+  C1 := voxels 1-D-cruciaux (match1)
+  C0 := voxels 0-D-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
@@ -1056,10 +1049,10 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     // DEMARQUE PTS DE COURBE ET LES MEMORISE DANS I
     for (i = 0; i < N; i++)
     { 
-      UNSET_2M_CRUCIAL(S[i]);
+      UNSET_DCRUCIAL(S[i]);
       if (IS_CURVE(S[i])) { UNSET_SIMPLE(S[i]); I[i] = 1; }
     }
-    // MARQUE LES POINTS 2M-CRUCIAUX
+    // MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1067,7 +1060,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match2(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 1M-CRUCIAUX
+    // MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1075,7 +1068,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match1(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 0M-CRUCIAUX
+    // MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1086,7 +1079,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
-      if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
 writeimage(t,"_T");
@@ -1127,9 +1120,9 @@ Répéter jusqu'à stabilité
   C := C union [E inter gamma(C)] 
   I := I \cup C
   P := voxels simples pour S et pas dans I
-  C2 := voxels 2M-cruciaux (match2)
-  C1 := voxels 1M-cruciaux (match1)
-  C0 := voxels 0M-cruciaux (match0)
+  C2 := voxels 2-D-cruciaux (match2)
+  C1 := voxels 1-D-cruciaux (match1)
+  C0 := voxels 0-D-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
@@ -1224,7 +1217,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     // AJOUTE AUX POINTS DE COURBE LEURS VOISINS QUI SONT DANS E
     for (i = 0; i < N; i++)
     { 
-      UNSET_2M_CRUCIAL(S[i]);
+      UNSET_DCRUCIAL(S[i]);
       if (IS_CURVE(S[i])) 
       {
         for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
@@ -1240,7 +1233,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	I[i] = 1; 
       }
     }
-    // MARQUE LES POINTS 2M-CRUCIAUX
+    // MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1248,7 +1241,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match2(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 1M-CRUCIAUX
+    // MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1256,7 +1249,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match1(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 0M-CRUCIAUX
+    // MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1267,7 +1260,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
-      if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
 writeimage(t,"_T");
@@ -1307,9 +1300,9 @@ Algo CK3 données: S
 Répéter jusqu'à stabilité
   C := points de courbe de S
   P := voxels simples pour S et pas dans C
-  C2 := voxels 2M-cruciaux (match2)
-  C1 := voxels 1M-cruciaux (match1)
-  C0 := voxels 0M-cruciaux (match0)
+  C2 := voxels 2-D-cruciaux (match2)
+  C1 := voxels 1-D-cruciaux (match1)
+  C0 := voxels 0-D-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
@@ -1386,7 +1379,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     // DEMARQUE PTS ET REND "NON-SIMPLES" LES CANDIDATS
     for (i = 0; i < N; i++)
     { 
-      UNSET_2M_CRUCIAL(S[i]);
+      UNSET_DCRUCIAL(S[i]);
       if (IS_OBJECT(S[i])) 
       {
 #ifdef RESIDUEL6
@@ -1414,7 +1407,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	}
       }
     }
-    // MARQUE LES POINTS 2M-CRUCIAUX
+    // MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1422,7 +1415,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match2(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 1M-CRUCIAUX
+    // MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1430,7 +1423,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match1(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 0M-CRUCIAUX
+    // MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1441,7 +1434,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
-      if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
 writeimage(t,"_T");
@@ -1603,7 +1596,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     // D := [S \ P] \cup  R, où R représente les pts marqués
     memset(D, 0, N);
     for (i = 0; i < N; i++) 
-      if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]))
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	D[i] = 1;
 
     for (i = 0; i < N; i++) // pour  tester la stabilité
@@ -1641,9 +1634,9 @@ Version révisée d'après le papier IWCIA 2006
 Algo MK3 données: S, I
 Répéter jusqu'à stabilité
   P := voxels simples pour S et non dans I
-  C2 := voxels 2M-cruciaux (match2)
-  C1 := voxels 1M-cruciaux (match1)
-  C0 := voxels 0M-cruciaux (match0)
+  C2 := voxels 2-D-cruciaux (match2)
+  C1 := voxels 1-D-cruciaux (match1)
+  C0 := voxels 0-D-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
@@ -1692,7 +1685,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     for (i = 0; i < N; i++) 
       if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N) && (!I || !I[i]))
 	SET_SIMPLE(S[i]);
-    // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2M-CRUCIAUX
+    // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1701,7 +1694,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	  insert_vois(v, S, i, rs, ps, N);
       }
 
-    // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1M-CRUCIAUX
+    // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1710,7 +1703,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	  insert_vois(v, S, i, rs, ps, N);
       }
 
-    // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0M-CRUCIAUX
+    // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1721,7 +1714,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
-      if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 
     for (i = 0; i < N; i++)
@@ -1821,7 +1814,7 @@ Les points non enlevés sont marqués MARK_INFTY.
 #ifdef DEBUG
 writeimage(image,"_S");
 #endif
-    // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2M-CRUCIAUX
+    // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1830,7 +1823,7 @@ writeimage(image,"_S");
 	  insert_vois(v, S, i, rs, ps, N);
       }
 
-    // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1M-CRUCIAUX
+    // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1839,7 +1832,7 @@ writeimage(image,"_S");
 	  insert_vois(v, S, i, rs, ps, N);
       }
 
-    // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0M-CRUCIAUX
+    // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -1850,7 +1843,7 @@ writeimage(image,"_S");
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
-      if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
     for (i = 0; i < N; i++)
       if (S[i] && !T[i]) 
@@ -1964,7 +1957,7 @@ Retourne dans image l'axe topologique.
       }
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
-      if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]))
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
     memset(R, 0, N);
     for (i = 0; i < N; i++)
@@ -2217,9 +2210,9 @@ Squelette asymétrique ultime avec ensemble de contrainte
 Algo AMK3c données: S
 Répéter jusqu'à stabilité
   P := voxels simples pour S et non dans I
-  C2 := voxels 2M-cruciaux (asym_match2)
-  C1 := voxels 1M-cruciaux (asym_match1)
-  C0 := voxels 0M-cruciaux (asym_match0)
+  C2 := voxels 2-D-cruciaux (asym_match2)
+  C1 := voxels 1-D-cruciaux (asym_match1)
+  C0 := voxels 0-D-cruciaux (asym_match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
@@ -2269,7 +2262,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N) && (!I || !I[i]))
 	SET_SIMPLE(S[i]);
 
-    // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2M-CRUCIAUX
+    // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -2278,7 +2271,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	  insert_vois(v, S, i, rs, ps, N);
       }
 
-    // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1M-CRUCIAUX
+    // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -2287,7 +2280,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	  insert_vois(v, S, i, rs, ps, N);
       }
 
-    // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0M-CRUCIAUX
+    // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -2337,9 +2330,9 @@ Répéter jusqu'à stabilité
   C := points de courbe de S
   I := I \cup C
   P := voxels simples pour S et pas dans I
-  C2 := voxels 2M-cruciaux (asym_match2)
-  C1 := voxels 1M-cruciaux (asym_match1)
-  C0 := voxels 0M-cruciaux (asym_match0)
+  C2 := voxels 2-D-cruciaux (asym_match2)
+  C1 := voxels 1-D-cruciaux (asym_match1)
+  C0 := voxels 0-D-cruciaux (asym_match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
@@ -2364,6 +2357,11 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   int32_t step, nonstab;
   int32_t top, topb;
   uint8_t v[27];
+
+#define VERBOSE
+#ifdef VERBOSE
+  printf("%s: n_steps = %d ; n_earlysteps = %d\n", F_NAME, n_steps, n_earlysteps);
+#endif
 
   if (inhibit == NULL) 
   {
@@ -2427,7 +2425,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #ifdef DEBUG
     if (step == DEBUG_STEP) writeimage(image, "_old2");
 #endif
-    // MARQUE LES POINTS 2M-CRUCIAUX
+    // MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -2438,7 +2436,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #ifdef DEBUG
     if (step == DEBUG_STEP) writeimage(image, "_old3");
 #endif
-    // MARQUE LES POINTS 1M-CRUCIAUX
+    // MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -2449,7 +2447,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #ifdef DEBUG
     if (step == DEBUG_STEP) writeimage(image, "_old4");
 #endif
-    // MARQUE LES POINTS 0M-CRUCIAUX
+    // MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -2509,9 +2507,9 @@ Répéter jusqu'à stabilité
   C := points de courbe de S
   I := I \cup C
   P := voxels simples pour S et pas dans I
-  C2 := voxels 2M-cruciaux (asym_match2)
-  C1 := voxels 1M-cruciaux (asym_match1)
-  C0 := voxels 0M-cruciaux (asym_match0)
+  C2 := voxels 2-D-cruciaux (asym_match2)
+  C1 := voxels 1-D-cruciaux (asym_match1)
+  C0 := voxels 0-D-cruciaux (asym_match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
@@ -2605,7 +2603,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #ifdef DEBUG
     if (step == DEBUG_STEP) writeimage(image, "_new2");
 #endif
-    // MARQUE LES POINTS 2M-CRUCIAUX
+    // MARQUE LES POINTS 2-D-CRUCIAUX
     for (x = 0; x < RLIFO1->Sp; x++)
     {
       i = RLIFO1->Pts[x];
@@ -2619,7 +2617,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #ifdef DEBUG
     if (step == DEBUG_STEP) writeimage(image, "_new3");
 #endif
-    // MARQUE LES POINTS 1M-CRUCIAUX
+    // MARQUE LES POINTS 1-D-CRUCIAUX
     for (x = 0; x < RLIFO1->Sp; x++)
     {
       i = RLIFO1->Pts[x];
@@ -2633,7 +2631,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #ifdef DEBUG
     if (step == DEBUG_STEP) writeimage(image, "_new4");
 #endif
-    // MARQUE LES POINTS 0M-CRUCIAUX
+    // MARQUE LES POINTS 0-D-CRUCIAUX
     for (x = 0; x < RLIFO1->Sp; x++)
     {
       i = RLIFO1->Pts[x];
@@ -2735,11 +2733,11 @@ Pour tout x de S faire T[x] := -1
 Pour i := 0; i < n; i++
   C := points de courbe de S
   Pour tout x de C tq T[x] == -1 faire T[x] := i
-  I := I \cup {x | T[x] > -1 et (i - T[x]) > p}
+  I := I \cup {x | T[x] > -1 et (i - T[x]) >= p}
   P := voxels simples pour S et pas dans I
-  C2 := voxels 2M-cruciaux (asym_match2)
-  C1 := voxels 1M-cruciaux (asym_match1)
-  C0 := voxels 0M-cruciaux (asym_match0)
+  C2 := voxels 2-D-cruciaux (asym_match2)
+  C1 := voxels 1-D-cruciaux (asym_match1)
+  C0 := voxels 0-D-cruciaux (asym_match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
@@ -2760,6 +2758,10 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   int32_t step, nonstab;
   int32_t top, topb;
   uint8_t v[27];
+
+#ifdef VERBOSE
+  printf("%s: n_steps = %d ; isthmus_persistence = %d\n", F_NAME, n_steps, isthmus_persistence);
+#endif
 
   assert(n_steps <= INT16_MAX);
   if (n_steps == -1) n_steps = INT16_MAX;
@@ -2803,11 +2805,8 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]))
       {    
 	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
-	if (top > 1) 
-	{ 
-	  SET_CURVE(S[i]);
-	  T[i] = step;
-	}
+	if ((top > 1) && (T[i] == -1))
+	  T[i] = (int16_t)step;
       }
     }
 
@@ -2818,13 +2817,13 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     // MEMORISE DANS I LES ISTHMES PERSISTANTS
     for (i = 0; i < N; i++)
     { 
-      if (IS_CURVE(S[i]) && ((step - T[i]) > isthmus_persistence)) 
+      if ((T[i] >= 0) && ((step - T[i]) >= isthmus_persistence)) 
       { 
 	UNSET_SIMPLE(S[i]); 
 	SET_INHIBIT(I[i]); 
       }
     }
-    // MARQUE LES POINTS 2M-CRUCIAUX
+    // MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -2832,7 +2831,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (asym_match2(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 1M-CRUCIAUX
+    // MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -2840,7 +2839,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (asym_match1(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 0M-CRUCIAUX
+    // MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -2856,7 +2855,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	nonstab = 1; 
       }
     for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
-  }
+  } // while (nonstab && (step < n_steps))
 
 #ifdef VERBOSE1
     printf("number of steps: %d\n", step);
@@ -2881,9 +2880,9 @@ Répéter jusqu'à stabilité
   C := points de courbe de S
   I := I \cup C
   P := voxels simples pour S et pas dans I
-  C2 := voxels 2M-cruciaux (asym_match2)
-  C1 := voxels 1M-cruciaux (asym_match1)
-  C0 := voxels 0M-cruciaux (asym_match0)
+  C2 := voxels 2-D-cruciaux (asym_match2)
+  C1 := voxels 1-D-cruciaux (asym_match1)
+  C0 := voxels 0-D-cruciaux (asym_match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
@@ -2960,7 +2959,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     // DEMARQUE PTS ET REND "NON-SIMPLES" LES CANDIDATS
     for (i = 0; i < N; i++)
     { 
-      UNSET_2M_CRUCIAL(S[i]);
+      UNSET_DCRUCIAL(S[i]);
       if (IS_OBJECT(S[i])) 
       {
 	for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
@@ -2982,7 +2981,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     for (i = 0; i < N; i++)  UNSET_SELECTED(S[i]);
 
-    // MARQUE LES POINTS 2M-CRUCIAUX
+    // MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -2990,7 +2989,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (asym_match2(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 1M-CRUCIAUX
+    // MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -2998,7 +2997,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (asym_match1(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 0M-CRUCIAUX
+    // MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -3053,9 +3052,9 @@ Algo RK3 données: S
 Répéter jusqu'à stabilité
   C := points résiduels de S
   P := voxels simples pour S et pas dans C
-  C2 := voxels 2M-cruciaux (match2)
-  C1 := voxels 1M-cruciaux (match1)
-  C0 := voxels 0M-cruciaux (match0)
+  C2 := voxels 2-D-cruciaux (match2)
+  C1 := voxels 1-D-cruciaux (match1)
+  C0 := voxels 0-D-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
@@ -3145,7 +3144,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 #endif
       }
     }
-    // MARQUE LES POINTS 2M-CRUCIAUX
+    // MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -3153,7 +3152,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match2(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 1M-CRUCIAUX
+    // MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -3161,7 +3160,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match1(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 0M-CRUCIAUX
+    // MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -3172,7 +3171,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
-      if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
 writeimage(t,"_T");
@@ -3210,9 +3209,9 @@ Algo SK3 données: S
 Répéter jusqu'à stabilité
   C := points de surface de S
   P := voxels simples pour S et pas dans C
-  C2 := voxels 2M-cruciaux (match2)
-  C1 := voxels 1M-cruciaux (match1)
-  C0 := voxels 0M-cruciaux (match0)
+  C2 := voxels 2-D-cruciaux (match2)
+  C1 := voxels 1-D-cruciaux (match1)
+  C0 := voxels 0-D-cruciaux (match0)
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
 
@@ -3288,11 +3287,11 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     // DEMARQUE PTS, STOCKE ET REND "NON-SIMPLES" LES CANDIDATS
     for (i = 0; i < N; i++)
     { 
-      UNSET_2M_CRUCIAL(S[i]);
+      UNSET_DCRUCIAL(S[i]);
       if (IS_SURF(S[i])) I[i] = 1; 
       if (I[i]) UNSET_SIMPLE(S[i]);
     }
-    // MARQUE LES POINTS 2M-CRUCIAUX
+    // MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -3300,7 +3299,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match2(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 1M-CRUCIAUX
+    // MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -3308,7 +3307,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match1(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-    // MARQUE LES POINTS 0M-CRUCIAUX
+    // MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
@@ -3319,7 +3318,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
-      if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	T[i] = 1;
 #ifdef DEBUG
 writeimage(t,"_T");
@@ -3440,9 +3439,9 @@ Algo DK3 données: S, I
 Répéter jusqu'à stabilité
   Pour Dir dans {0..5}
     P := voxels simples pour S, de direction Dir et non dans I
-    C2 := voxels 2M-cruciaux (match2)
-    C1 := voxels 1M-cruciaux (match1)
-    C0 := voxels 0M-cruciaux (match0)
+    C2 := voxels 2-D-cruciaux (match2)
+    C1 := voxels 1-D-cruciaux (match1)
+    C0 := voxels 0-D-cruciaux (match0)
     P := P  \  [C2 \cup C1 \cup C0]
     S := S \ P
 
@@ -3496,7 +3495,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	    direction(S, i, d, rs, ps, N) && (!I || !I[i]))
 	  SET_SIMPLE(S[i]);
 
-      // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2M-CRUCIAUX
+      // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2-D-CRUCIAUX
       for (i = 0; i < N; i++) 
 	if (IS_SIMPLE(S[i]))
 	{ 
@@ -3505,7 +3504,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	    insert_vois(v, S, i, rs, ps, N);
 	}
 
-      // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1M-CRUCIAUX
+      // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1-D-CRUCIAUX
       for (i = 0; i < N; i++) 
 	if (IS_SIMPLE(S[i]))
 	{ 
@@ -3514,7 +3513,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	    insert_vois(v, S, i, rs, ps, N);
 	}
 
-      // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0M-CRUCIAUX
+      // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0-D-CRUCIAUX
       for (i = 0; i < N; i++) 
 	if (IS_SIMPLE(S[i]))
 	{ 
@@ -3525,7 +3524,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
       memset(T, 0, N);
       for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
-	if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+	if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	  T[i] = 1;
 
       for (i = 0; i < N; i++)
@@ -3562,9 +3561,9 @@ Répéter jusqu'à stabilité
   Pour Dir dans {0..5}
     R := points résiduels de S ; I := I \cup R
     P := voxels simples pour S, de direction Dir et non dans I
-    C2 := voxels 2M-cruciaux (match2)
-    C1 := voxels 1M-cruciaux (match1)
-    C0 := voxels 0M-cruciaux (match0)
+    C2 := voxels 2-D-cruciaux (match2)
+    C1 := voxels 1-D-cruciaux (match1)
+    C0 := voxels 0-D-cruciaux (match0)
     P := P  \  [C2 \cup C1 \cup C0]
     S := S \ P
 
@@ -3654,7 +3653,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	}
       }
 
-      // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2M-CRUCIAUX
+      // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2-D-CRUCIAUX
       for (i = 0; i < N; i++) 
 	if (IS_SIMPLE(S[i]))
 	{ 
@@ -3663,7 +3662,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	    insert_vois(v, S, i, rs, ps, N);
 	}
 
-      // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1M-CRUCIAUX
+      // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1-D-CRUCIAUX
       for (i = 0; i < N; i++) 
 	if (IS_SIMPLE(S[i]))
 	{ 
@@ -3672,7 +3671,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	    insert_vois(v, S, i, rs, ps, N);
 	}
 
-      // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0M-CRUCIAUX
+      // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0-D-CRUCIAUX
       for (i = 0; i < N; i++) 
 	if (IS_SIMPLE(S[i]))
 	{ 
@@ -3683,7 +3682,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
       memset(T, 0, N);
       for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
-	if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+	if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	  T[i] = 1;
 
       for (i = 0; i < N; i++)
@@ -3720,9 +3719,9 @@ Répéter jusqu'à stabilité
   Pour Dir dans {0..5}
     C := points de surface de S ; I := I \cup C
     P := voxels simples pour S, de direction Dir et non dans I
-    C2 := voxels 2M-cruciaux (match2)
-    C1 := voxels 1M-cruciaux (match1)
-    C0 := voxels 0M-cruciaux (match0)
+    C2 := voxels 2-D-cruciaux (match2)
+    C1 := voxels 1-D-cruciaux (match1)
+    C0 := voxels 0-D-cruciaux (match0)
     P := P  \  [C2 \cup C1 \cup C0]
     S := S \ P
 
@@ -3792,7 +3791,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	}
       }
 
-      // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2M-CRUCIAUX
+      // DEUXIEME SOUS-ITERATION : MARQUE LES POINTS 2-D-CRUCIAUX
       for (i = 0; i < N; i++) 
 	if (IS_SIMPLE(S[i]))
 	{ 
@@ -3801,7 +3800,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	    insert_vois(v, S, i, rs, ps, N);
 	}
 
-      // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1M-CRUCIAUX
+      // TROISIEME SOUS-ITERATION : MARQUE LES POINTS 1-D-CRUCIAUX
       for (i = 0; i < N; i++) 
 	if (IS_SIMPLE(S[i]))
 	{ 
@@ -3810,7 +3809,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	    insert_vois(v, S, i, rs, ps, N);
 	}
 
-      // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0M-CRUCIAUX
+      // QUATRIEME SOUS-ITERATION : MARQUE LES POINTS 0-D-CRUCIAUX
       for (i = 0; i < N; i++) 
 	if (IS_SIMPLE(S[i]))
 	{ 
@@ -3821,7 +3820,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 
       memset(T, 0, N);
       for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
-	if ((S[i] && !IS_SIMPLE(S[i])) || IS_2M_CRUCIAL(S[i]) || IS_1M_CRUCIAL(S[i]) || IS_0M_CRUCIAL(S[i]))
+	if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
 	  T[i] = 1;
 
       for (i = 0; i < N; i++)

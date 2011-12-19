@@ -66,6 +66,7 @@ bug tracker</a>.
     <li> <b>Laurent Mercier</b>: gestion d'un masque dans delaunay
     <li> <a href="http://www.ujoimro.com"> <b>Laszlo Marak (ujoimro)</b> </a>: continuous maximum flows,
     Unger flows, Python front-end, native Microsoft Windows port
+    <li><b>Nivando Bezerra</b>: parallel grayscale thinning
    </ul>
   <li> Code under different free software licenses
     <ul>
