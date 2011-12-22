@@ -36,6 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
   lcrop
   lcrop3d
   lenframe
+  lenframe3d
   lsetframe
   linsert
   lexpandframe
@@ -422,6 +423,8 @@ struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width)
 #undef F_NAME
 #define F_NAME "lenframe"
 {
+  if (depth(image) > 1) return lenframe3d(image, grayval, width);
+
   index_t rs, cs, ds, ps, N, x, y, z, nb, n;
   index_t rs2, cs2, ds2, ps2, N2;
   struct xvimage * imageout;
@@ -434,29 +437,16 @@ struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width)
   N = ds * ps;
   rs2 = rs + 2*width;
   cs2 = cs + 2*width;
-  if (ds > 1) ds2 = ds + 2*width; else ds2 = 1;
+  ds2 = 1;
   ps2 = rs2 * cs2;
   N2 = ds2 * ps2;
 
   assert(tsize(image) == 1);
-
-  if (ds > 1)
+  imageout = allocmultimage(NULL, rs+2*width, cs+2*width, 1, 1, nb, datatype(image));
+  if (imageout == NULL)
   {
-    imageout = allocmultimage(NULL, rs+2*width, cs+2*width, ds+2*width, 1, nb, datatype(image));
-    if (imageout == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-      return NULL;
-    }
-  }
-  else
-  {
-    imageout = allocmultimage(NULL, rs+2*width, cs+2*width, 1, 1, nb, datatype(image));
-    if (imageout == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", F_NAME);
-      return NULL;
-    }
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return NULL;
   }
 
   if (datatype(image) == VFF_TYP_1_BYTE)
@@ -464,213 +454,78 @@ struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width)
     uint8_t *Imout = UCHARDATA(imageout);
     uint8_t *Im = UCHARDATA(image);
     uint8_t grayvalue = (uint8_t)grayval;
-
-    if (ds > 1)
-    {
-      for (n = 0; n < nb; n++)
-      for (z = 0; z < width; z++)
-      for (x = 0; x < rs2; x++)
-      for (y = 0; y < cs2; y++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue; /* plans z = 0.. */
-      for (n = 0; n < nb; n++)
-      for (z = 0; z < width; z++)
-      for (x = 0; x < rs2; x++)
-      for (y = 0; y < cs2; y++) 
-        Imout[n * N2 + (ds2-1-z) * ps2 + y * rs2 + x] = grayvalue; /* plans z = ..ds2-1 */
-  
-      for (n = 0; n < nb; n++)
+    for (n = 0; n < nb; n++)
       for (y = 0; y < width; y++)
-      for (x = 0; x < rs2; x++)
-      for (z = 0; z < ds2; z++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans y = 0.. */
-      for (n = 0; n < nb; n++)
+	for (x = 0; x < rs2; x++) Imout[n * N2 + y*rs2 + x] = grayvalue;
+    
+    for (n = 0; n < nb; n++)
       for (y = 0; y < width; y++)
-      for (x = 0; x < rs2; x++)
-      for (z = 0; z < ds2; z++) 
-        Imout[n * N2 + z * ps2 + (cs2-1-y) * rs2 + x] = grayvalue; /* plans y = ..cs2-1 */
-  
-      for (n = 0; n < nb; n++)
+	for (x = 0; x < rs2; x++) Imout[n * N2 + (cs2-1-y)*rs2 + x] = grayvalue;
+    
+    for (n = 0; n < nb; n++)
       for (x = 0; x < width; x++)
-      for (y = 0; y < cs2; y++)
-      for (z = 0; z < ds2; z++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans x = 0.. */
-      for (n = 0; n < nb; n++)
+	for (y = 1; y < cs2 - 1; y++) Imout[n * N2 + y*rs2 + x] = grayvalue;
+    
+    for (n = 0; n < nb; n++)
       for (x = 0; x < width; x++)
-      for (y = 0; y < cs2; y++)
-      for (z = 0; z < ds2; z++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + (rs2-1-x)] = grayvalue; /* plans x = ..rs2-1 */
-  
-      for (n = 0; n < nb; n++)
+	for (y = 1; y < cs2 - 1; y++) Imout[n * N2 + y*rs2 + rs2-1-x] = grayvalue;
+    
+    for (n = 0; n < nb; n++)
       for (x = width; x < rs2-width; x++)
-      for (y = width; y < cs2-width; y++) 
-      for (z = width; z < ds2-width; z++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + x] = Im[n * N + (z-width) * ps + (y-width) * rs + (x-width)];
-    }
-    else
-    {
-      for (n = 0; n < nb; n++)
-      for (y = 0; y < width; y++)
-      for (x = 0; x < rs2; x++) Imout[n * N2 + y*rs2 + x] = grayvalue;
-
-      for (n = 0; n < nb; n++)
-      for (y = 0; y < width; y++)
-      for (x = 0; x < rs2; x++) Imout[n * N2 + (cs2-1-y)*rs2 + x] = grayvalue;
-  
-      for (n = 0; n < nb; n++)
-      for (x = 0; x < width; x++)
-      for (y = 1; y < cs2 - 1; y++) Imout[n * N2 + y*rs2 + x] = grayvalue;
-
-      for (n = 0; n < nb; n++)
-      for (x = 0; x < width; x++)
-      for (y = 1; y < cs2 - 1; y++) Imout[n * N2 + y*rs2 + rs2-1-x] = grayvalue;
-  
-      for (n = 0; n < nb; n++)
-      for (x = width; x < rs2-width; x++)
-      for (y = width; y < cs2-width; y++) 
-        Imout[n * N2 + y * rs2 + x] = Im[n * N + (y-width) * rs + (x-width)];
-    }
+	for (y = width; y < cs2-width; y++) 
+	  Imout[n * N2 + y * rs2 + x] = Im[n * N + (y-width) * rs + (x-width)];
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
     int32_t *Imout = SLONGDATA(imageout);
     int32_t *Im = SLONGDATA(image);
     int32_t grayvalue = (int32_t)grayval;
-
-    if (ds > 1)
-    {
-      for (n = 0; n < nb; n++)
-      for (z = 0; z < width; z++)
-      for (x = 0; x < rs2; x++)
-      for (y = 0; y < cs2; y++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans z = 0.. */
-      for (n = 0; n < nb; n++)
-      for (z = 0; z < width; z++)
-      for (x = 0; x < rs2; x++)
-      for (y = 0; y < cs2; y++) 
-        Imout[n * N2 + (ds2-1-z) * ps2 + y * rs2 + x] = grayvalue; /* plans z = ..ds2-1 */
-  
-      for (n = 0; n < nb; n++)
+    for (n = 0; n < nb; n++)
       for (y = 0; y < width; y++)
-      for (x = 0; x < rs2; x++)
-      for (z = 0; z < ds2; z++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans y = 0.. */
-      for (n = 0; n < nb; n++)
+	for (x = 0; x < rs2; x++) Imout[n * N2 + y*rs2 + x] = grayvalue;
+    
+    for (n = 0; n < nb; n++)
       for (y = 0; y < width; y++)
-      for (x = 0; x < rs2; x++)
-      for (z = 0; z < ds2; z++) 
-        Imout[n * N2 + z * ps2 + (cs2-1-y) * rs2 + x] = grayvalue; /* plans y = ..cs2-1 */
-  
-      for (n = 0; n < nb; n++)
+	for (x = 0; x < rs2; x++) Imout[n * N2 + (cs2-1-y)*rs2 + x] = grayvalue;
+    
+    for (n = 0; n < nb; n++)
       for (x = 0; x < width; x++)
-      for (y = 0; y < cs2; y++)
-      for (z = 0; z < ds2; z++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans x = 0.. */
-      for (n = 0; n < nb; n++)
+	for (y = 1; y < cs2 - 1; y++) Imout[n * N2 + y*rs2 + x] = grayvalue;
+    
+    for (n = 0; n < nb; n++)
       for (x = 0; x < width; x++)
-      for (y = 0; y < cs2; y++)
-      for (z = 0; z < ds2; z++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + (rs2-1-x)] = grayvalue; /* plans x = ..rs2-1 */
-  
-      for (n = 0; n < nb; n++)
+	for (y = 1; y < cs2 - 1; y++) Imout[n * N2 + y*rs2 + rs2-1-x] = grayvalue;
+    
+    for (n = 0; n < nb; n++)
       for (x = width; x < rs2-width; x++)
-      for (y = width; y < cs2-width; y++) 
-      for (z = width; z < ds2-width; z++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + x] = Im[n * N + (z-width) * ps + (y-width) * rs + (x-width)];
-    }
-    else
-    {
-      for (n = 0; n < nb; n++)
-      for (y = 0; y < width; y++)
-      for (x = 0; x < rs2; x++) Imout[n * N2 + y*rs2 + x] = grayvalue;
-
-      for (n = 0; n < nb; n++)
-      for (y = 0; y < width; y++)
-      for (x = 0; x < rs2; x++) Imout[n * N2 + (cs2-1-y)*rs2 + x] = grayvalue;
-  
-      for (n = 0; n < nb; n++)
-      for (x = 0; x < width; x++)
-      for (y = 1; y < cs2 - 1; y++) Imout[n * N2 + y*rs2 + x] = grayvalue;
-
-      for (n = 0; n < nb; n++)
-      for (x = 0; x < width; x++)
-      for (y = 1; y < cs2 - 1; y++) Imout[n * N2 + y*rs2 + rs2-1-x] = grayvalue;
-  
-      for (n = 0; n < nb; n++)
-      for (x = width; x < rs2-width; x++)
-      for (y = width; y < cs2-width; y++) 
-        Imout[n * N2 + y * rs2 + x] = Im[n * N + (y-width) * rs + (x-width)];
-    }
+	for (y = width; y < cs2-width; y++) 
+	  Imout[n * N2 + y * rs2 + x] = Im[n * N + (y-width) * rs + (x-width)];
   }
   else if (datatype(image) == VFF_TYP_FLOAT)
   {
     float *Imout = FLOATDATA(imageout);
     float *Im = FLOATDATA(image);
     float grayvalue = (float)grayval;
-
-    if (ds > 1)
-    {
-      for (n = 0; n < nb; n++)
-      for (z = 0; z < width; z++)
-      for (x = 0; x < rs2; x++)
-      for (y = 0; y < cs2; y++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans z = 0.. */
-      for (n = 0; n < nb; n++)
-      for (z = 0; z < width; z++)
-      for (x = 0; x < rs2; x++)
-      for (y = 0; y < cs2; y++) 
-        Imout[n * N2 + (ds2-1-z) * ps2 + y * rs2 + x] = grayvalue; /* plans z = ..ds2-1 */
-  
-      for (n = 0; n < nb; n++)
+    for (n = 0; n < nb; n++)
       for (y = 0; y < width; y++)
-      for (x = 0; x < rs2; x++)
-      for (z = 0; z < ds2; z++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans y = 0.. */
-      for (n = 0; n < nb; n++)
+	for (x = 0; x < rs2; x++) Imout[n * N2 + y*rs2 + x] = grayvalue;
+    
+    for (n = 0; n < nb; n++)
       for (y = 0; y < width; y++)
-      for (x = 0; x < rs2; x++)
-      for (z = 0; z < ds2; z++) 
-        Imout[n * N2 + z * ps2 + (cs2-1-y) * rs2 + x] = grayvalue; /* plans y = ..cs2-1 */
-  
-      for (n = 0; n < nb; n++)
+	for (x = 0; x < rs2; x++) Imout[n * N2 + (cs2-1-y)*rs2 + x] = grayvalue;
+    
+    for (n = 0; n < nb; n++)
       for (x = 0; x < width; x++)
-      for (y = 0; y < cs2; y++)
-      for (z = 0; z < ds2; z++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans x = 0.. */
-      for (n = 0; n < nb; n++)
+	for (y = 1; y < cs2 - 1; y++) Imout[n * N2 + y*rs2 + x] = grayvalue;
+    
+    for (n = 0; n < nb; n++)
       for (x = 0; x < width; x++)
-      for (y = 0; y < cs2; y++)
-      for (z = 0; z < ds2; z++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + (rs2-1-x)] = grayvalue; /* plans x = ..rs2-1 */
-  
-      for (n = 0; n < nb; n++)
+	for (y = 1; y < cs2 - 1; y++) Imout[n * N2 + y*rs2 + rs2-1-x] = grayvalue;
+    
+    for (n = 0; n < nb; n++)
       for (x = width; x < rs2-width; x++)
-      for (y = width; y < cs2-width; y++) 
-      for (z = width; z < ds2-width; z++) 
-        Imout[n * N2 + z * ps2 + y * rs2 + x] = Im[n * N + (z-width) * ps + (y-width) * rs + (x-width)];
-    }
-    else
-    {
-      for (n = 0; n < nb; n++)
-      for (y = 0; y < width; y++)
-      for (x = 0; x < rs2; x++) Imout[n * N2 + y*rs2 + x] = grayvalue;
-
-      for (n = 0; n < nb; n++)
-      for (y = 0; y < width; y++)
-      for (x = 0; x < rs2; x++) Imout[n * N2 + (cs2-1-y)*rs2 + x] = grayvalue;
-  
-      for (n = 0; n < nb; n++)
-      for (x = 0; x < width; x++)
-      for (y = 1; y < cs2 - 1; y++) Imout[n * N2 + y*rs2 + x] = grayvalue;
-
-      for (n = 0; n < nb; n++)
-      for (x = 0; x < width; x++)
-      for (y = 1; y < cs2 - 1; y++) Imout[n * N2 + y*rs2 + rs2-1-x] = grayvalue;
-  
-      for (n = 0; n < nb; n++)
-      for (x = width; x < rs2-width; x++)
-      for (y = width; y < cs2-width; y++) 
-        Imout[n * N2 + y * rs2 + x] = Im[n * N + (y-width) * rs + (x-width)];
-    }
+	for (y = width; y < cs2-width; y++) 
+	  Imout[n * N2 + y * rs2 + x] = Im[n * N + (y-width) * rs + (x-width)];
   }
   else
   {
@@ -680,6 +535,183 @@ struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width)
 
   return imageout;
 } /* lenframe() */
+
+/* =============================================================== */
+struct xvimage * lenframe3d(struct xvimage *image, int32_t grayval, int32_t width) 
+/* =============================================================== */
+// adds a border with a given gray value to an image
+// produces a 3d image, even when the depth of input image is 1
+#undef F_NAME
+#define F_NAME "lenframe3d"
+{
+  index_t rs, cs, ds, ps, N, x, y, z, nb, n;
+  index_t rs2, cs2, ds2, ps2, N2;
+  struct xvimage * imageout;
+
+  rs = rowsize(image);
+  cs = colsize(image);
+  ds = depth(image);
+  nb = nbands(image);
+  ps = rs * cs;
+  N = ds * ps;
+  rs2 = rs + 2*width;
+  cs2 = cs + 2*width;
+  ds2 = ds + 2*width;
+  ps2 = rs2 * cs2;
+  N2 = ds2 * ps2;
+
+  assert(tsize(image) == 1);
+
+  imageout = allocmultimage(NULL, rs+2*width, cs+2*width, ds+2*width, 1, nb, datatype(image));
+  if (imageout == NULL)
+  {
+    fprintf(stderr, "%s: allocimage failed\n", F_NAME);
+    return NULL;
+  }
+
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *Imout = UCHARDATA(imageout);
+    uint8_t *Im = UCHARDATA(image);
+    uint8_t grayvalue = (uint8_t)grayval;
+
+    for (n = 0; n < nb; n++)
+      for (z = 0; z < width; z++)
+	for (x = 0; x < rs2; x++)
+	  for (y = 0; y < cs2; y++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue; /* plans z = 0.. */
+    for (n = 0; n < nb; n++)
+      for (z = 0; z < width; z++)
+	for (x = 0; x < rs2; x++)
+	  for (y = 0; y < cs2; y++) 
+	    Imout[n * N2 + (ds2-1-z) * ps2 + y * rs2 + x] = grayvalue; /* plans z = ..ds2-1 */
+  
+    for (n = 0; n < nb; n++)
+      for (y = 0; y < width; y++)
+	for (x = 0; x < rs2; x++)
+	  for (z = 0; z < ds2; z++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans y = 0.. */
+    for (n = 0; n < nb; n++)
+      for (y = 0; y < width; y++)
+	for (x = 0; x < rs2; x++)
+	  for (z = 0; z < ds2; z++) 
+	    Imout[n * N2 + z * ps2 + (cs2-1-y) * rs2 + x] = grayvalue; /* plans y = ..cs2-1 */
+  
+    for (n = 0; n < nb; n++)
+      for (x = 0; x < width; x++)
+	for (y = 0; y < cs2; y++)
+	  for (z = 0; z < ds2; z++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans x = 0.. */
+    for (n = 0; n < nb; n++)
+      for (x = 0; x < width; x++)
+	for (y = 0; y < cs2; y++)
+	  for (z = 0; z < ds2; z++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + (rs2-1-x)] = grayvalue; /* plans x = ..rs2-1 */
+  
+    for (n = 0; n < nb; n++)
+      for (x = width; x < rs2-width; x++)
+	for (y = width; y < cs2-width; y++) 
+	  for (z = width; z < ds2-width; z++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + x] = Im[n * N + (z-width) * ps + (y-width) * rs + (x-width)];
+  }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    int32_t *Imout = SLONGDATA(imageout);
+    int32_t *Im = SLONGDATA(image);
+    int32_t grayvalue = (int32_t)grayval;
+
+    for (n = 0; n < nb; n++)
+      for (z = 0; z < width; z++)
+	for (x = 0; x < rs2; x++)
+	  for (y = 0; y < cs2; y++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans z = 0.. */
+    for (n = 0; n < nb; n++)
+      for (z = 0; z < width; z++)
+	for (x = 0; x < rs2; x++)
+	  for (y = 0; y < cs2; y++) 
+	    Imout[n * N2 + (ds2-1-z) * ps2 + y * rs2 + x] = grayvalue; /* plans z = ..ds2-1 */
+  
+    for (n = 0; n < nb; n++)
+      for (y = 0; y < width; y++)
+	for (x = 0; x < rs2; x++)
+	  for (z = 0; z < ds2; z++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans y = 0.. */
+    for (n = 0; n < nb; n++)
+      for (y = 0; y < width; y++)
+	for (x = 0; x < rs2; x++)
+	  for (z = 0; z < ds2; z++) 
+	    Imout[n * N2 + z * ps2 + (cs2-1-y) * rs2 + x] = grayvalue; /* plans y = ..cs2-1 */
+  
+    for (n = 0; n < nb; n++)
+      for (x = 0; x < width; x++)
+	for (y = 0; y < cs2; y++)
+	  for (z = 0; z < ds2; z++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans x = 0.. */
+    for (n = 0; n < nb; n++)
+      for (x = 0; x < width; x++)
+	for (y = 0; y < cs2; y++)
+	  for (z = 0; z < ds2; z++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + (rs2-1-x)] = grayvalue; /* plans x = ..rs2-1 */
+  
+    for (n = 0; n < nb; n++)
+      for (x = width; x < rs2-width; x++)
+	for (y = width; y < cs2-width; y++) 
+	  for (z = width; z < ds2-width; z++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + x] = Im[n * N + (z-width) * ps + (y-width) * rs + (x-width)];
+  }
+  else if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    float *Imout = FLOATDATA(imageout);
+    float *Im = FLOATDATA(image);
+    float grayvalue = (float)grayval;
+
+    for (n = 0; n < nb; n++)
+      for (z = 0; z < width; z++)
+	for (x = 0; x < rs2; x++)
+	  for (y = 0; y < cs2; y++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans z = 0.. */
+    for (n = 0; n < nb; n++)
+      for (z = 0; z < width; z++)
+	for (x = 0; x < rs2; x++)
+	  for (y = 0; y < cs2; y++) 
+	    Imout[n * N2 + (ds2-1-z) * ps2 + y * rs2 + x] = grayvalue; /* plans z = ..ds2-1 */
+  
+    for (n = 0; n < nb; n++)
+      for (y = 0; y < width; y++)
+	for (x = 0; x < rs2; x++)
+	  for (z = 0; z < ds2; z++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans y = 0.. */
+    for (n = 0; n < nb; n++)
+      for (y = 0; y < width; y++)
+	for (x = 0; x < rs2; x++)
+	  for (z = 0; z < ds2; z++) 
+	    Imout[n * N2 + z * ps2 + (cs2-1-y) * rs2 + x] = grayvalue; /* plans y = ..cs2-1 */
+  
+    for (n = 0; n < nb; n++)
+      for (x = 0; x < width; x++)
+	for (y = 0; y < cs2; y++)
+	  for (z = 0; z < ds2; z++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + x] = grayvalue;         /* plans x = 0.. */
+    for (n = 0; n < nb; n++)
+      for (x = 0; x < width; x++)
+	for (y = 0; y < cs2; y++)
+	  for (z = 0; z < ds2; z++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + (rs2-1-x)] = grayvalue; /* plans x = ..rs2-1 */
+  
+    for (n = 0; n < nb; n++)
+      for (x = width; x < rs2-width; x++)
+	for (y = width; y < cs2-width; y++) 
+	  for (z = width; z < ds2-width; z++) 
+	    Imout[n * N2 + z * ps2 + y * rs2 + x] = Im[n * N + (z-width) * ps + (y-width) * rs + (x-width)];
+  }
+  else
+  {
+    fprintf(stderr, "%s : bad data type\n", F_NAME);
+    return NULL;
+  }
+
+  return imageout;
+} /* lenframe3d() */
 
 /* =============================================================== */
 int32_t linsert(struct xvimage *a, struct xvimage *b, int32_t x, int32_t y, int32_t z) 

@@ -426,6 +426,7 @@ $(BDIR)/ellipseparams \
 $(BDIR)/ellipticite \
 $(BDIR)/encadre \
 $(BDIR)/enframe \
+$(BDIR)/enframe3d \
 $(BDIR)/expandframe \
 $(BDIR)/extractline \
 $(BDIR)/extractplane \
@@ -1815,6 +1816,9 @@ $(BDIR)/encadre:	$(CDIR)/encadre.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/lcrop
 
 $(BDIR)/enframe:	$(CDIR)/enframe.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/lcrop.h $(ODIR)/lcrop.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/enframe.c $(OBJ_COMMON) $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/enframe
+
+$(BDIR)/enframe3d:	$(CDIR)/enframe3d.c $(IDIR)/mcimage.h $(OBJ_COMMON) $(IDIR)/lcrop.h $(ODIR)/lcrop.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/enframe3d.c $(OBJ_COMMON) $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/enframe3d
 
 $(BDIR)/expandframe:	$(CDIR)/expandframe.c $(IDIR)/mcimage.h $(IDIR)/lcrop.h $(OBJ_COMMON) $(ODIR)/lcrop.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/expandframe.c $(OBJ_COMMON) $(ODIR)/lcrop.o $(LIBS) -o $(BDIR)/expandframe

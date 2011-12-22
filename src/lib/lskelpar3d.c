@@ -2857,6 +2857,8 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
   } // while (nonstab && (step < n_steps))
 
+  for (i = 0; i < N; i++) if (S[i]) S[i] = NDG_MAX;
+
 #ifdef VERBOSE1
     printf("number of steps: %d\n", step);
 #endif
