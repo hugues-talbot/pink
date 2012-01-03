@@ -115,7 +115,7 @@ static void extract_vois(
                13       8       9
                14      15      16
 
-		3	2	1			
+		3	2	1
 		4      26	0
 		5	6	7
 
@@ -3395,7 +3395,7 @@ static int32_t direction(
 /* ==================================== */
 {
 #undef F_NAME
-#define F_NAME "extract_vois"
+#define F_NAME "direction"
   register uint8_t * ptr = img+p;
   if ((p%rs==rs-1) || (p%ps<rs) || (p%rs==0) || (p%ps>=ps-rs) || 
       (p < ps) || (p >= N-ps)) /* point de bord */

@@ -235,8 +235,6 @@ $(BDIR)/GA2tikz \
 $(BDIR)/GAwatershed \
 $(BDIR)/GAwatershedDouble
 
-#$(BDIR)/skelpar3d_others \
-
 TOPO=\
 $(BDIR)/alpha \
 $(BDIR)/asft \
@@ -325,6 +323,7 @@ $(BDIR)/skeleucl \
 $(BDIR)/skelfindelbows \
 $(BDIR)/skelpar \
 $(BDIR)/skelpar3d \
+$(BDIR)/skelpar3d_others \
 $(BDIR)/skelpruning \
 $(BDIR)/skelsmoothing \
 $(BDIR)/skelsurf \
@@ -1502,8 +1501,8 @@ $(BDIR)/skelpar:	$(CDIR)/skelpar.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR
 $(BDIR)/skelpar3d:	$(CDIR)/skelpar3d.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcindic.h $(IDIR)/lskelpar3d.h $(IDIR)/ldist.h $(IDIR)/mcgeo.h $(IDIR)/lmedialaxis.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ltopotypes.o $(ODIR)/lskelpar3d.o $(ODIR)/mcrlifo.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skelpar3d.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/lskelpar3d.o $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ltopotypes.o $(ODIR)/mcrlifo.o $(LIBS) -o $(BDIR)/skelpar3d
 
-$(BDIR)/skelpar3d_others:	$(CDIR)/skelpar3d_others.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcindic.h $(IDIR)/lskelpar3d_others.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lskelpar3d_others.o $(ODIR)/DirectionalSkeletonizer.o
-	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/skelpar3d_others.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/lskelpar3d_others.o $(ODIR)/DirectionalSkeletonizer.o $(LIBS) -o $(BDIR)/skelpar3d_others
+$(BDIR)/skelpar3d_others:	$(CDIR)/skelpar3d_others.cxx $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mcindic.h $(IDIR)/lskelpar3d_others.h $(OBJ_COMMON) $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/lskelpar3d_others.o $(ODIR)/DirectionalSkeletonizer.o
+	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/skelpar3d_others.cxx $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/skelpar3d_others
 
 $(BDIR)/skelpruning:	$(CDIR)/skelpruning.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lskelcurv.h $(IDIR)/lseltopo.h $(ODIR)/libpink.a
 	$(CPP) $(CCFLAGS) -I$(IDIR) $(CDIR)/skelpruning.c $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/skelpruning
@@ -2450,7 +2449,7 @@ $(ODIR)/lskelpar3d.o:	$(LDIR)/lskelpar3d.c $(IDIR)/mccodimage.h $(IDIR)/mctopo.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lskelpar3d.c -o $(ODIR)/lskelpar3d.o
 	ar rcs $(ODIR)/libpink.a $(ODIR)/lskelpar3d.o
 
-$(ODIR)/lskelpar3d_others.o:	$(LDIR)/lskelpar3d_others.c $(IDIR)/mccodimage.h
+$(ODIR)/lskelpar3d_others.o:	$(LDIR)/lskelpar3d_others.c $(IDIR)/mccodimage.h $(IDIR)/lskelpar3d_others.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lskelpar3d_others.c -o $(ODIR)/lskelpar3d_others.o
 	ar rcs $(ODIR)/libpink.a $(ODIR)/lskelpar3d_others.o
 
@@ -2462,8 +2461,8 @@ $(ODIR)/ltopotypes.o:	$(LDIR)/ltopotypes.c $(IDIR)/mccodimage.h $(IDIR)/mctopo.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/ltopotypes.c -o $(ODIR)/ltopotypes.o
 	ar rcs $(ODIR)/libpink.a $(ODIR)/ltopotypes.o
 
-$(ODIR)/DirectionalSkeletonizer.o:	$(LDIR)/DirectionalSkeletonizer.cpp $(IDIR)/DirectionalSkeletonizer.hpp $(IDIR)/FIFO.hpp 
-	$(CPP) -std=c++0x -c $(CCFLAGS) -I$(IDIR) $(LDIR)/DirectionalSkeletonizer.cpp -o $(ODIR)/DirectionalSkeletonizer.o
+$(ODIR)/DirectionalSkeletonizer.o:	$(LDIR)/DirectionalSkeletonizer.cxx $(IDIR)/DirectionalSkeletonizer.hpp $(IDIR)/FIFO.hpp 
+	$(CPP) -std=c++0x -c $(CCFLAGS) -I$(IDIR) $(LDIR)/DirectionalSkeletonizer.cxx -o $(ODIR)/DirectionalSkeletonizer.o
 	ar rcs $(ODIR)/libpink.a $(ODIR)/DirectionalSkeletonizer.o
 
 # *********************************

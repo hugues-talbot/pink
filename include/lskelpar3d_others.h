@@ -34,18 +34,16 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 
 /* ordering of deletion directions - DON'T MODIFY THEM */
-  #define U     0
-  #define D     1
-  #define N     2
-  #define S     3
-  #define E     4
-  #define W     5
+  #define PALAGYI_U     0
+  #define PALAGYI_D     1
+  #define PALAGYI_N     2
+  #define PALAGYI_S     3
+  #define PALAGYI_E     4
+  #define PALAGYI_W     5
 
-  #define UD      0
-  #define NS      1
-  #define EW      2
-
-
+  #define PALAGYI_UD      0
+  #define PALAGYI_NS      1
+  #define PALAGYI_EW      2
 
   typedef struct {
 		unsigned long int addr;
@@ -95,6 +93,17 @@ extern int palagyi_skelpar_curv_98(struct xvimage *input);
 extern int palagyi_skelpar_curv_06(struct xvimage *input);
 extern int palagyi_skelpar_surf_02(struct xvimage *input);
 extern int palagyi_skelpar_surf_08(struct xvimage *input);
+extern int32_t llohoubertrandsymcurv2007(
+				  struct xvimage *image,
+				  struct xvimage *inhibit,
+				  int32_t nsteps);
+extern int32_t lmawanchangcurv2subfields2002(
+				  struct xvimage *image,
+				  int32_t nsteps);
+extern int32_t ltsaofu6dircurv1982(
+				  struct xvimage *image,
+				  struct xvimage *inhibit,
+				  int32_t n_steps);
 #ifdef __cplusplus
 }
 #endif

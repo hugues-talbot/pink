@@ -3508,6 +3508,8 @@ EXPERIMENTAL - Ne pas utiliser dans des applications
     return lskelPSG3(image, imageprio, val);
 } // lskelPSG()
 
+#define LARGE_VAL 1E40
+
 /* ==================================== */
 int32_t lskelPSG2(struct xvimage *image,
 		  struct xvimage *imageprio, 
@@ -3539,6 +3541,8 @@ int32_t lskelPSG2(struct xvimage *image,
   ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
   ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
   COMPARE_SIZE(image, imageprio);
+
+  if (val == -1) val = LARGE_VAL;
 
   IndicsInit(N);
 
@@ -3709,6 +3713,13 @@ int32_t lskelPSG3(struct xvimage *image,
   Rlifo * RLIFO;
   double curprio;
 
+  if (val == -1) val = LARGE_VAL;
+
+#define DEBUG_lskelPSG3
+#ifdef DEBUG_lskelPSG3
+  printf("entering %s: val = %g\n", F_NAME, val);
+#endif
+
   ONLY_3D(imageprio);
   ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
   ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
@@ -3787,6 +3798,9 @@ int32_t lskelPSG3(struct xvimage *image,
   while (!mcrbt_RbtVide(RBT))
   {
     curprio = RbtMinLevel(RBT);
+#ifdef DEBUG_lskelPSG3
+  printf("%s: curprio = %g\n", F_NAME, curprio);
+#endif
     if (curprio >= val) break;
     do
     {
@@ -3804,7 +3818,10 @@ int32_t lskelPSG3(struct xvimage *image,
       x = RLIFO->Pts[i];
       if (P_simple26(F, C, x, rs, ps, N))
       {
-	Set(x, PSIMPLE); // marque le point pour effacement ulterieur
+	Set(x, PSIMPLE); // marque le point pour effacement ultérieur
+#ifdef DEBUG_lskelPSG3
+	printf("P_simple: %d\n", x);
+#endif
         for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
         {                                              /* pour empiler les voisins */
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
@@ -3829,6 +3846,8 @@ int32_t lskelPSG3(struct xvimage *image,
       if (IsSet(x, PSIMPLE)) F[x] = 0;
       C[x] = 0;
     }
+
+    RlifoFlush(RLIFO);
 
   } // while (!mcrbt_RbtVide(RBT))
 

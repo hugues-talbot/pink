@@ -62,11 +62,15 @@ Update sep. 2009 : ajout des tests is_on_frame()
 #include <mccodimage.h>
 #include <mctopo3d.h>
 
+//#define DEBUG
+//#define DEBUG_mctopo3d_tsao_fu_nonend
+
 /* globales privees */
 static Lifo * LIFO_topo3d1 = NULL;
 static Lifo * LIFO_topo3d2 = NULL;
 static voxel cube_topo3d[27];
 static voxel cubec_topo3d[27];
+static voxel cubep_topo3d[27];
 
 static __pink__inline int32_t is_on_frame(index_t p, index_t rs, index_t ps, index_t N)
 {
@@ -95,6 +99,7 @@ void mctopo3d_init_topo3d()
     }
     mctopo3d_construitcube(cube_topo3d);
     mctopo3d_construitcube(cubec_topo3d);
+    mctopo3d_construitcube(cubep_topo3d);
   }
 } /* mctopo3d_init_topo3d() */
 
@@ -171,6 +176,29 @@ void mctopo3d_construitcube(voxel * cube)
       	    }  /* for w v u */
       } /* for z y x */
 } /* mctopo3d_construitcube() */
+
+#ifdef DEBUG
+/* ========================================== */
+static void printcube(voxel * cube)
+/* ========================================== */
+{
+  uint8_t x,y,z;
+  pvoxel p;
+  for (z = 0; z < 3; z++)
+  {
+    for (y = 0; y < 3; y++)
+    {
+      for (x = 0; x < 3; x++)
+      {
+      	p = &(cube[encode(x,y,z)]);
+      	printf("%d ", p->val);
+      } // for x
+      printf("\n");
+    } // for y
+    printf("\n");
+  } // for z
+} /* printcube() */
+#endif
 
 /* ========================================== */
 uint32_t mctopo3d_encodecube()
@@ -860,6 +888,100 @@ static uint8_t simple(voxel * cube, voxel * cubec, uint8_t connex)
 } /* simple() */
 
 /* ==================================== */
+static void preparecube(
+  uint8_t *B,            /* pointeur base image */
+  index_t i,             /* index du point */
+  index_t rs,            /* taille rangee */
+  index_t ps,            /* taille plan */
+  index_t N,             /* taille image */
+  voxel *cube)           /* le resultat */
+/* ==================================== */
+/*
+  Transfere le voisinage de i pour l'image 3d img dans la 
+  structure cube.
+  ATTENTION: i ne doit pas etre un point de bord (test a faire avant).
+ */
+{
+  /* plan "HAUT" (+ps) */
+  if (B[ps+i+1])    cube[23].val = 1; else cube[23].val = 0;
+  if (B[ps+i+1-rs]) cube[20].val = 1; else cube[20].val = 0;
+  if (B[ps+i-rs])   cube[19].val = 1; else cube[19].val = 0;
+  if (B[ps+i-rs-1]) cube[18].val = 1; else cube[18].val = 0;
+  if (B[ps+i-1])    cube[21].val = 1; else cube[21].val = 0;
+  if (B[ps+i-1+rs]) cube[24].val = 1; else cube[24].val = 0;
+  if (B[ps+i+rs])   cube[25].val = 1; else cube[25].val = 0;
+  if (B[ps+i+rs+1]) cube[26].val = 1; else cube[26].val = 0;
+  if (B[ps+i])      cube[22].val = 1; else cube[22].val = 0;
+  /* plan "COURANT" () */
+  if (B[i+1])       cube[14].val = 1; else cube[14].val = 0;
+  if (B[i+1-rs])    cube[11].val = 1; else cube[11].val = 0;
+  if (B[i-rs])      cube[10].val = 1; else cube[10].val = 0;
+  if (B[i-rs-1])    cube[9].val = 1; else cube[9].val = 0;
+  if (B[i-1])       cube[12].val = 1; else cube[12].val = 0;
+  if (B[i-1+rs])    cube[15].val = 1; else cube[15].val = 0;
+  if (B[i+rs])      cube[16].val = 1; else cube[16].val = 0;
+  if (B[i+rs+1])    cube[17].val = 1; else cube[17].val = 0;
+  if (B[i])         cube[13].val = 1; else cube[13].val = 0;
+  /* plan "BAS" (-ps) */
+  if (B[-ps+i+1])    cube[5].val = 1; else cube[5].val = 0;
+  if (B[-ps+i+1-rs]) cube[2].val = 1; else cube[2].val = 0;
+  if (B[-ps+i-rs])   cube[1].val = 1; else cube[1].val = 0;
+  if (B[-ps+i-rs-1]) cube[0].val = 1; else cube[0].val = 0;
+  if (B[-ps+i-1])    cube[3].val = 1; else cube[3].val = 0;
+  if (B[-ps+i-1+rs]) cube[6].val = 1; else cube[6].val = 0;
+  if (B[-ps+i+rs])   cube[7].val = 1; else cube[7].val = 0;
+  if (B[-ps+i+rs+1]) cube[8].val = 1; else cube[8].val = 0;
+  if (B[-ps+i])      cube[4].val = 1; else cube[4].val = 0;
+} /* preparecube() */
+
+/* ==================================== */
+static void preparecubeval(
+  uint8_t *B,            /* pointeur base image */
+  index_t i,             /* index du point */
+  uint8_t v,             /* une valeur */
+  index_t rs,            /* taille rangee */
+  index_t ps,            /* taille plan */
+  index_t N,             /* taille image */
+  voxel *cube)           /* le resultat */
+/* ==================================== */
+/*
+  Transfere les points ayant la valeur v dans le voisinage de i pour l'image 3d img dans la structure cube.
+  ATTENTION: i ne doit pas etre un point de bord (test a faire avant).
+ */
+{
+  /* plan "HAUT" (+ps) */
+  if (B[ps+i+1]==v)    cube[23].val = 1; else cube[23].val = 0;
+  if (B[ps+i+1-rs]==v) cube[20].val = 1; else cube[20].val = 0;
+  if (B[ps+i-rs]==v)   cube[19].val = 1; else cube[19].val = 0;
+  if (B[ps+i-rs-1]==v) cube[18].val = 1; else cube[18].val = 0;
+  if (B[ps+i-1]==v)    cube[21].val = 1; else cube[21].val = 0;
+  if (B[ps+i-1+rs]==v) cube[24].val = 1; else cube[24].val = 0;
+  if (B[ps+i+rs]==v)   cube[25].val = 1; else cube[25].val = 0;
+  if (B[ps+i+rs+1]==v) cube[26].val = 1; else cube[26].val = 0;
+  if (B[ps+i]==v)      cube[22].val = 1; else cube[22].val = 0;
+  /* plan "COURANT" () */
+  if (B[i+1]==v)       cube[14].val = 1; else cube[14].val = 0;
+  if (B[i+1-rs]==v)    cube[11].val = 1; else cube[11].val = 0;
+  if (B[i-rs]==v)      cube[10].val = 1; else cube[10].val = 0;
+  if (B[i-rs-1]==v)    cube[9].val = 1; else cube[9].val = 0;
+  if (B[i-1]==v)       cube[12].val = 1; else cube[12].val = 0;
+  if (B[i-1+rs]==v)    cube[15].val = 1; else cube[15].val = 0;
+  if (B[i+rs]==v)      cube[16].val = 1; else cube[16].val = 0;
+  if (B[i+rs+1]==v)    cube[17].val = 1; else cube[17].val = 0;
+  if (B[i]==v)         cube[13].val = 1; else cube[13].val = 0;
+  /* plan "BAS" (-ps) */
+  if (B[-ps+i+1]==v)    cube[5].val = 1; else cube[5].val = 0;
+  if (B[-ps+i+1-rs]==v) cube[2].val = 1; else cube[2].val = 0;
+  if (B[-ps+i-rs]==v)   cube[1].val = 1; else cube[1].val = 0;
+  if (B[-ps+i-rs-1]==v) cube[0].val = 1; else cube[0].val = 0;
+  if (B[-ps+i-1]==v)    cube[3].val = 1; else cube[3].val = 0;
+  if (B[-ps+i-1+rs]==v) cube[6].val = 1; else cube[6].val = 0;
+  if (B[-ps+i+rs]==v)   cube[7].val = 1; else cube[7].val = 0;
+  if (B[-ps+i+rs+1]==v) cube[8].val = 1; else cube[8].val = 0;
+  if (B[-ps+i]==v)      cube[4].val = 1; else cube[4].val = 0;
+} /* preparecubeval() */
+
+/* ==================================== */
 static void preparecubes(
   uint8_t *B,            /* pointeur base image */
   index_t i,                       /* index du point */
@@ -873,7 +995,6 @@ static void preparecubes(
   ATTENTION: i ne doit pas etre un point de bord (test a faire avant).
  */
 {
-
   /* plan "HAUT" (+ps) */
   if (B[ps+i+1])    cube_topo3d[23].val = 1; else cube_topo3d[23].val = 0;
   if (B[ps+i+1-rs]) cube_topo3d[20].val = 1; else cube_topo3d[20].val = 0;
@@ -1068,8 +1189,8 @@ static void preparecubeslab(
 /* ******************************************************************************* */
 
 /* ==================================== */
-void mctopo3d_top6(                   /* pour un objet en 6-connexite */
-  uint8_t *img,          /* pointeur base image */
+void mctopo3d_top6(                /* pour un objet en 6-connexite */
+  uint8_t *img,                    /* pointeur base image */
   index_t p,                       /* index du point */
   index_t rs,                      /* taille rangee */
   index_t ps,                      /* taille plan */
@@ -1085,8 +1206,8 @@ void mctopo3d_top6(                   /* pour un objet en 6-connexite */
 } /* mctopo3d_top6() */
 
 /* ==================================== */
-void mctopo3d_top18(                   /* pour un objet en 18-connexite */
-  uint8_t *img,          /* pointeur base image */
+void mctopo3d_top18(               /* pour un objet en 18-connexite */
+  uint8_t *img,                    /* pointeur base image */
   index_t p,                       /* index du point */
   index_t rs,                      /* taille rangee */
   index_t ps,                      /* taille plan */
@@ -1102,8 +1223,8 @@ void mctopo3d_top18(                   /* pour un objet en 18-connexite */
 } /* mctopo3d_top18() */
 
 /* ==================================== */
-void mctopo3d_top26(                   /* pour un objet en 26-connexite */
-  uint8_t *img,          /* pointeur base image */
+void mctopo3d_top26(               /* pour un objet en 26-connexite */
+  uint8_t *img,                    /* pointeur base image */
   index_t p,                       /* index du point */
   index_t rs,                      /* taille rangee */
   index_t ps,                      /* taille plan */
@@ -1556,8 +1677,10 @@ int32_t P_simple26( /* pour un objet en 26-connexite */
   index_t N)       /* taille image */
 /* ==================================== */
 {
-  fprintf(stderr, "P_simple26: not yet implemented\n"); 
-  exit(0); 
+  // Warning: point p MUST belong to P (no test done)
+  preparecube(X, p, rs, ps, N, cube_topo3d);
+  preparecube(P, p, rs, ps, N, cubep_topo3d);
+  return (int32_t)mctopo3d_P_simple(cube_topo3d, cubep_topo3d, cubec_topo3d, 26);
 } // P_simple26()
 
 /* ******************************************************************************* */
@@ -2587,3 +2710,90 @@ int32_t mctopo3d_curve26lab( /* point de courbe en 26-connexite */
   if ((mctopo3d_T26(cube_topo3d) == 2) && (mctopo3d_nbvoislab26(img, p, rs, ps, N) == 2)) return 1;
   return 0;
 } /* mctopo3d_curve26lab() */
+
+/* ==================================== */
+int32_t mctopo3d_tsao_fu_nonend( /* pour l'algo de Tsao et Fu (voir lskelpar3d_others.c) */
+  uint8_t *img,                    /* pointeur base image */
+  index_t p,                       /* index du point */
+  uint8_t v,                       /* valeur du marquage des points simples */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
+/* ==================================== */
+{
+  pvoxel x, xp, y, yp, zp;  /* point de cube */
+  int32_t n, m;
+
+#ifdef DEBUG_mctopo3d_tsao_fu_nonend
+  printf("simple point: %d, v: %d\n", p, v);
+#endif
+
+  assert(!is_on_frame(p, rs, ps, N));
+  preparecubeval(img, p, v, rs, ps, N, cubep_topo3d); // image B
+  preparecube(img, p, rs, ps, N, cube_topo3d); // image
+  
+  x = &(cube_topo3d[13]); x->val = 0;
+  xp = &(cubep_topo3d[13]); xp->val = 0;
+  for (n = 0; n < x->n26v; n++) // marque les points objet non simples
+  {
+    y = x->v26[n]; yp = xp->v26[n];
+    if (y->val && !yp->val) yp->val = 1; else yp->val = 0;
+  }
+
+#ifdef DEBUG_mctopo3d_tsao_fu_nonend
+  printcube(cube_topo3d);
+  printf("------------\n");
+  printcube(cubep_topo3d);
+#endif
+
+  // p must be ajacent to at least one point of B
+  if (mctopo3d_nbvois26(cubep_topo3d) == 0) 
+  {
+#ifdef DEBUG_mctopo3d_tsao_fu_nonend
+    printf("not nonend, reason 1\n");
+#endif
+    return 0;
+  }
+
+  // p has at least two neighbors
+  if (mctopo3d_nbvois26(cube_topo3d) < 2)
+  {
+#ifdef DEBUG_mctopo3d_tsao_fu_nonend
+    printf("not nonend, reason 2\n");
+#endif
+    return 0;
+  }
+
+  // the term "directly adjacent" (see below) is not defined in Tsao&Fu's paper
+  // it must be defined as 26-adjacent otherwise topology is not always preserved
+  for (n = 0; n < x->n26v; n++) // for every "directly adjacent" point y of p
+  {
+    y = x->v26[n]; yp = xp->v26[n];
+    if (y->val)
+    {
+      for (m = 0; m < yp->n26v; m++) // there must be at least one neighbor in B
+      {
+	zp = yp->v26[m];
+	if (zp->val) break; 
+      } // for (m = 0; m < yp->n26v; m++)
+      if (m >= yp->n26v) // no neighbor found for one y
+      {
+#ifdef DEBUG_mctopo3d_tsao_fu_nonend
+	printf("not nonend, reason 3\n");
+#endif
+        return 0;
+      }
+    } // if (y->val)
+  } // for (n = 0; n < pc->n6v; n++)
+  
+  // the points in B inter N(p) are connected in N(p)
+  if (mctopo3d_T26(cubep_topo3d) != 1)
+  {
+#ifdef DEBUG_mctopo3d_tsao_fu_nonend
+    printf("not nonend, reason 4\n");
+#endif
+    return 0;
+  }
+
+  return 1;
+} /* mctopo3d_tsao_fu_nonend() */

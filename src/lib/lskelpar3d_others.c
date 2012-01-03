@@ -33,9 +33,12 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 /*
-   Algorithmes 3D "fully parallel" de squelettisation
+   Algorithmes 3D de squelettisation
 
-   Algo. de Palagyi
+   Algo. de Palagyi (curviligne 6 subiterations, PRL 1998. Adapté par John Chaussard)
+   Algo. de Lohou et Bertrand (curviligne symmétrique, Pat. Rec. 2007) 
+   Algo. de Ma, Wan & Chang (curviligne 2 subfields, PRL 2002)
+   Algo. de Tsao & Fu (curviligne 6 subiterations, IEEE PRIP 1982)
 */
 
 #include <string.h>
@@ -43,7 +46,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
-#include <stdlib.h>
+#include <assert.h>
 
 // #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
 #ifdef UNIXIO
@@ -57,12 +60,910 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcutil.h>
+#include <mcindic.h>
+#include <mctopo3d.h>
 #include <lskelpar3d_others.h>
 
-
-
-
 #define VERBOSE
+
+/* ==================================== */
+static void extract_vois(
+  uint8_t *img,          /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N,                       /* taille image */
+  uint8_t *vois)    
+/* 
+  retourne dans "vois" les valeurs des 27 voisins de p, dans l'ordre suivant: 
+
+               12      11      10       
+               13       8       9
+               14      15      16
+
+		3	2	1
+		4      26	0
+		5	6	7
+
+               21      20      19
+               22      17      18
+               23      24      25
+
+  le point p ne doit pas être un point de bord de l'image
+*/
+/* ==================================== */
+{
+#undef F_NAME
+#define F_NAME "extract_vois"
+  register uint8_t * ptr = img+p;
+  if ((p%rs==rs-1) || (p%ps<rs) || (p%rs==0) || (p%ps>=ps-rs) || 
+      (p < ps) || (p >= N-ps)) /* point de bord */
+  {
+    printf("%s: ERREUR: point de bord\n", F_NAME);
+    exit(0);
+  }
+  vois[ 0] = *(ptr+1);
+  vois[ 1] = *(ptr+1-rs);
+  vois[ 2] = *(ptr-rs);
+  vois[ 3] = *(ptr-rs-1);
+  vois[ 4] = *(ptr-1);
+  vois[ 5] = *(ptr-1+rs);
+  vois[ 6] = *(ptr+rs);
+  vois[ 7] = *(ptr+rs+1);
+
+  vois[ 8] = *(ptr-ps);
+  vois[ 9] = *(ptr-ps+1);
+  vois[10] = *(ptr-ps+1-rs);
+  vois[11] = *(ptr-ps-rs);
+  vois[12] = *(ptr-ps-rs-1);
+  vois[13] = *(ptr-ps-1);
+  vois[14] = *(ptr-ps-1+rs);
+  vois[15] = *(ptr-ps+rs);
+  vois[16] = *(ptr-ps+rs+1);
+
+  vois[17] = *(ptr+ps);
+  vois[18] = *(ptr+ps+1);
+  vois[19] = *(ptr+ps+1-rs);
+  vois[20] = *(ptr+ps-rs);
+  vois[21] = *(ptr+ps-rs-1);
+  vois[22] = *(ptr+ps-1);
+  vois[23] = *(ptr+ps-1+rs);
+  vois[24] = *(ptr+ps+rs);
+  vois[25] = *(ptr+ps+rs+1);
+
+  vois[26] = *(ptr);
+} /* extract_vois() */
+
+/* ==================================== */
+static index_t return_vois(
+  index_t p,
+  int32_t dir,
+  index_t rs,                      /* taille rangee */
+  index_t ps)                      /* taille plan */
+/* 
+  retourne l'index du point voisin q de p dans la direction dir
+
+               12      11      10       
+               13       8       9
+               14      15      16
+
+		3	2	1
+		4      26	0
+		5	6	7
+
+               21      20      19
+               22      17      18
+               23      24      25
+
+  le point p ne doit pas être un point de bord de l'image
+*/
+/* ==================================== */
+{
+#undef F_NAME
+#define F_NAME "return_vois"
+  switch (dir)
+  {
+  case 0: return p+1;
+  case 1: return p+1-rs;
+  case 2: return p-rs;
+  case 3: return p-rs-1;
+  case 4: return p-1;
+  case 5: return p-1+rs;
+  case 6: return p+rs;
+  case 7: return p+rs+1;
+
+  case 8: return p-ps;
+  case 9: return p-ps+1;
+  case 10: return p-ps+1-rs;
+  case 11: return p-ps-rs;
+  case 12: return p-ps-rs-1;
+  case 13: return p-ps-1;
+  case 14: return p-ps-1+rs;
+  case 15: return p-ps+rs;
+  case 16: return p-ps+rs+1;
+
+  case 17: return p+ps;
+  case 18: return p+ps+1;
+  case 19: return p+ps+1-rs;
+  case 20: return p+ps-rs;
+  case 21: return p+ps-rs-1;
+  case 22: return p+ps-1;
+  case 23: return p+ps-1+rs;
+  case 24: return p+ps+rs;
+  case 25: return p+ps+rs+1;
+  case 26: return p;
+  default: 
+    printf("%s: ERREUR: mauvais code dir %d\n", F_NAME, dir);
+    exit(0);
+  }
+} /* return_vois() */
+
+#ifdef DEBUG
+/* ==================================== */
+static index_t print_vois(uint8_t *v)
+/* ==================================== */
+{
+  printf("%d %d %d\n", v[12], v[11], v[10]);
+  printf("%d %d %d\n", v[13], v[8], v[9]);
+  printf("%d %d %d\n\n", v[15], v[15], v[16]);
+  printf("%d %d %d\n", v[3], v[2], v[1]);
+  printf("%d %d %d\n", v[4], v[26], v[0]);
+  printf("%d %d %d\n\n", v[5], v[6], v[7]);
+  printf("%d %d %d\n", v[21], v[20], v[19]);
+  printf("%d %d %d\n", v[22], v[17], v[18]);
+  printf("%d %d %d\n\n", v[23], v[24], v[25]);
+} // print_vois()
+#endif
+
+/* ==================================== */
+static int32_t direction(
+  uint8_t *img,          /* pointeur base image */
+  index_t p,             /* index du point */
+  int32_t dir,           /* indice direction */
+  index_t rs,            /* taille rangee */
+  index_t ps,            /* taille plan */
+  index_t N              /* taille image */
+)    
+/* 
+  retourne 1 si p a un voisin nul dans la direction dir, 0 sinon :
+
+#ifdef DIRTOURNE
+                .       .       .       
+                .       2       .       
+                .       .       .       
+
+		.	1	.			
+		0       x	3
+                .       4       .       
+
+                .       .       .       
+                .       5       .       
+                .       .       .       
+#else
+                .       .       .       
+                .       4       .       
+                .       .       .       
+
+		.	2	.			
+		0       x	1
+                .       3       .       
+
+                .       .       .       
+                .       5       .       
+                .       .       .       
+#endif
+  le point p ne doit pas être un point de bord de l'image
+*/
+/* ==================================== */
+{
+#undef F_NAME
+#define F_NAME "direction"
+  register uint8_t * ptr = img+p;
+  if ((p%rs==rs-1) || (p%ps<rs) || (p%rs==0) || (p%ps>=ps-rs) || 
+      (p < ps) || (p >= N-ps)) /* point de bord */
+  {
+    printf("%s: ERREUR: point de bord\n", F_NAME);
+    exit(0);
+  }
+
+  switch (dir)
+  {
+#ifdef DIRTOURNE
+  case 0: if (*(ptr-1)) return 0; else return 1;
+  case 1: if (*(ptr-rs)) return 0; else return 1;
+  case 2: if (*(ptr-ps)) return 0; else return 1;
+
+  case 3: if (*(ptr+1)) return 0; else return 1;
+  case 4: if (*(ptr+rs)) return 0; else return 1;
+  case 5: if (*(ptr+ps)) return 0; else return 1;
+#else
+  case 0: if (*(ptr-1)) return 0; else return 1;
+  case 1: if (*(ptr+1)) return 0; else return 1;
+
+  case 2: if (*(ptr-rs)) return 0; else return 1;
+  case 3: if (*(ptr+rs)) return 0; else return 1;
+
+  case 4: if (*(ptr-ps)) return 0; else return 1;
+  case 5: if (*(ptr+ps)) return 0; else return 1;
+#endif
+  default:
+    printf("%s: ERREUR: bad dir = %d\n", F_NAME, dir);
+    exit(0);
+  } // switch (dir)
+} /* direction() */
+
+/* ==================================== */
+static void isometrieXZ_vois(uint8_t *vois) 
+// effectue une isométrie du voisinage "vois" par échange des axes X et Z (+ symétries)
+// cette isométrie est de plus une involution
+/* ==================================== */
+{
+  uint8_t v[26];
+  int32_t i;
+  v[ 0] = vois[17];  v[ 1] = vois[20];  v[ 2] = vois[ 2];  v[ 3] = vois[11];
+  v[ 4] = vois[ 8];  v[ 5] = vois[15];  v[ 6] = vois[ 6];  v[ 7] = vois[24];
+  v[ 8] = vois[ 4];  v[ 9] = vois[22];  v[10] = vois[21];  v[11] = vois[ 3];
+  v[12] = vois[12];  v[13] = vois[13];  v[14] = vois[14];  v[15] = vois[ 5];
+  v[16] = vois[23];  v[17] = vois[ 0];  v[18] = vois[18];  v[19] = vois[19];
+  v[20] = vois[ 1];  v[21] = vois[10];  v[22] = vois[ 9];  v[23] = vois[16];
+  v[24] = vois[ 7];  v[25] = vois[25];
+  for (i = 0; i < 26; i++) vois[i] = v[i];
+} /* isometrieXZ_vois() */
+
+/* ==================================== */
+static void isometrieYZ_vois(uint8_t *vois)
+// effectue une isométrie du voisinage "vois" par échange des axes Y et Z (+ symétries)  
+// cette isométrie est de plus une involution
+/* ==================================== */
+{
+  uint8_t v[26];
+  int32_t i;
+  v[ 0] = vois[ 0];  v[ 1] = vois[18];  v[ 2] = vois[17];  v[ 3] = vois[22];
+  v[ 4] = vois[ 4];  v[ 5] = vois[13];  v[ 6] = vois[ 8];  v[ 7] = vois[ 9];
+  v[ 8] = vois[ 6];  v[ 9] = vois[ 7];  v[10] = vois[25];  v[11] = vois[24];
+  v[12] = vois[23];  v[13] = vois[ 5];  v[14] = vois[14];  v[15] = vois[15];
+  v[16] = vois[16];  v[17] = vois[ 2];  v[18] = vois[ 1];  v[19] = vois[19];
+  v[20] = vois[20];  v[21] = vois[21];  v[22] = vois[ 3];  v[23] = vois[12];
+  v[24] = vois[11];  v[25] = vois[10];
+  for (i = 0; i < 26; i++) vois[i] = v[i];
+} /* isometrieYZ_vois() */
+
+static void rotate_90_Z(uint8_t *v)
+{
+  uint8_t t;
+  t = v[9]; v[9] = v[11]; v[11] = v[13]; v[13] = v[15]; v[15] = t;
+  t = v[10]; v[10] = v[12]; v[12] = v[14]; v[14] = v[16]; v[16] = t;
+  t = v[0]; v[0] = v[2]; v[2] = v[4]; v[4] = v[6]; v[6] = t;
+  t = v[1]; v[1] = v[3]; v[3] = v[5]; v[5] = v[7]; v[7] = t;
+  t = v[18]; v[18] = v[20]; v[20] = v[22]; v[22] = v[24]; v[24] = t;
+  t = v[19]; v[19] = v[21]; v[21] = v[23]; v[23] = v[25]; v[25] = t;
+} // rotate_90_Z()
+
+static void swap_U_L(uint8_t *v)
+{
+  uint8_t t;
+  t = v[8]; v[8] = v[17]; v[17] = t;
+  t = v[9]; v[9] = v[18]; v[18] = t;
+  t = v[10]; v[10] = v[19]; v[19] = t;
+  t = v[11]; v[11] = v[20]; v[20] = t;
+  t = v[12]; v[12] = v[21]; v[21] = t;
+  t = v[13]; v[13] = v[22]; v[22] = t;
+  t = v[14]; v[14] = v[23]; v[23] = t;
+  t = v[15]; v[15] = v[24]; v[24] = t;
+  t = v[16]; v[16] = v[25]; v[25] = t;
+} // swap_U_L()
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de Tsao & Fu (curviligne 6 subiterations, IEEE PRIP 1982)
+// M. Couprie, jan. 2012
+/* ============================================================ */
+/* ============================================================ */
+
+#define T_OBJECT      1
+#define T_SIMPLE      2
+#define T_NONEND      4
+
+#define IS_T_OBJECT(f)     (f&T_OBJECT)
+#define IS_T_SIMPLE(f)     (f&T_SIMPLE)
+#define IS_T_NONEND(f)     (f&T_NONEND)
+
+#define SET_T_OBJECT(f)    (f|=T_OBJECT)
+#define SET_T_SIMPLE(f)    (f|=T_SIMPLE)
+#define SET_T_NONEND(f)    (f|=T_NONEND)
+
+#define UNSET_T_OBJECT(f)  (f&=~T_OBJECT)
+#define UNSET_T_SIMPLE(f)  (f&=~T_SIMPLE)
+
+/* ==================================== */
+int32_t ltsaofu6dircurv1982(struct xvimage *image,
+			    struct xvimage *inhibit,
+			    int32_t n_steps)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "ltsaofu6dircurv1982"
+{
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  uint8_t *I = NULL;
+  int32_t step, nonstab, d;
+
+  if (n_steps == -1) n_steps = 1000000000;
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = T_OBJECT;
+
+  if (inhibit != NULL) I = UCHARDATA(inhibit);
+
+  mctopo3d_init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("%s: step %d\n", F_NAME, step);
+#endif
+
+    for (d = 0; d < 6; d++)
+    {
+#ifdef VERBOSE
+      printf("%s: substep %d\n", F_NAME, d);
+#endif
+      // PREMIERE PASSE : MARQUE LES POINTS SIMPLES DE DIRECTION d ET PAS DANS I
+      for (i = 0; i < N; i++) 
+	if (IS_T_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N) && 
+	    direction(S, i, d, rs, ps, N) && (!I || !I[i]))
+	  {
+	    SET_T_SIMPLE(S[i]);
+	  }
+      // DEUXIEME PASSE : MARQUE LES POINTS SIMPLES NONEND
+      for (i = 0; i < N; i++) 
+	if (IS_T_SIMPLE(S[i]))
+	{ 
+	  if (mctopo3d_tsao_fu_nonend(S, i, T_OBJECT|T_SIMPLE, rs, ps, N))
+	    SET_T_NONEND(S[i]);
+	}
+
+      // TROISIEME PASSE : EFFACE LES POINTS SIMPLES NONEND
+      for (i = 0; i < N; i++)
+	if (IS_T_NONEND(S[i]))
+	{
+	  S[i] = 0; 
+	  nonstab = 1; 
+	}
+
+      for (i = 0; i < N; i++) if (S[i]) S[i] = T_OBJECT;
+#ifdef DEBUG_ltsaofu6dircurv1982
+      if (d==0) writeimage(image, "_ss0");
+      if (d==1) writeimage(image, "_ss1");
+      if (d==2) writeimage(image, "_ss2");
+      if (d==3) writeimage(image, "_ss3");
+      if (d==4) writeimage(image, "_ss4");
+      if (d==5) writeimage(image, "_ss5");
+#endif
+    } // for (d = 0; d < 6; d++)
+  } // while (nonstab && (step < n_steps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  mctopo3d_termine_topo3d();
+  return(1);
+  
+} // ltsaofu6dircurv1982()
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de Ma, Wan & Chang (curviligne 2 subfields, PRL 2002)
+// M. Couprie, dec. 2011
+/* ============================================================ */
+/* ============================================================ */
+
+#define M_OBJECT      1
+#define M_ORTH        2
+#define M_DIAG        4
+#define M_DIAGPRES    8
+#define M_TWIG        16
+
+#define IS_ORTH(f) (f&M_ORTH)
+#define SET_ORTH(f) (f|=M_ORTH)
+#define IS_DIAG(f) (f&M_DIAG)
+#define SET_DIAG(f) (f|=M_DIAG)
+//#define UNSET_DIAG(f) (f&=~M_DIAG)
+#define IS_DIAGPRES(f) (f&M_DIAGPRES)
+#define SET_DIAGPRES(f) (f|=M_DIAGPRES)
+#define IS_TWIG(f) (f&M_TWIG)
+#define SET_TWIG(f) (f|=M_TWIG)
+
+static int32_t ORTH_U_deletable(uint8_t *v)
+{
+  if (v[8]) return 0;
+  if (!v[17]) return 0;
+  if (v[9] && !v[0]) return 0;
+  if (v[16] && !v[0] && !v[6]) return 0;
+  if (v[11] && !v[2]) return 0;
+  if (v[10] && !v[2] && !v[0]) return 0;
+  if (v[13] && !v[4]) return 0;
+  if (v[12] && !v[4] && !v[2]) return 0;
+  if (v[15] && !v[6]) return 0;
+  if (v[14] && !v[6] && !v[4]) return 0;
+  return 1;
+} // ORTH_U_deletable()
+
+static int32_t ORTH_deletable(uint8_t *v)
+{
+  if (ORTH_U_deletable(v)) return 1; // U-deletable
+  swap_U_L(v);
+  if (ORTH_U_deletable(v)) return 1; // L-deletable
+
+  isometrieXZ_vois(v);
+  if (ORTH_U_deletable(v)) return 1; // E-deletable
+  swap_U_L(v);
+  if (ORTH_U_deletable(v)) return 1; // W-deletable
+  isometrieXZ_vois(v);
+
+  isometrieYZ_vois(v);
+  if (ORTH_U_deletable(v)) return 1; // N-deletable
+  swap_U_L(v);
+  if (ORTH_U_deletable(v)) return 1; // S-deletable
+  isometrieYZ_vois(v);
+
+  return 0;
+} // ORTH_deletable()
+
+static int32_t DIAG_UE_deletable(uint8_t *v)
+{
+  //#define DEBUG_lmawanchangcurv2subfields2002
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  print_vois(v);
+#endif
+  if (!v[22]) return 0;
+  if (v[4] || v[13] || v[8] || v[9] || v[0] || v[18] || v[17]) return 0;
+
+  if (v[16] && !v[15] && !v[7] && !v[6]) return 0; // a1
+  if (v[10] && !v[11] && !v[1] && !v[2]) return 0; // a2
+
+  if ((v[15] || v[14]) && !v[6] && !v[5]) return 0; // b1 or c1
+  if ((v[11] || v[12]) && !v[2] && !v[3]) return 0; // b2 or c2
+
+  if ((v[7] || v[25]) && !v[6] && !v[24]) return 0; // d1 or g1
+  if ((v[1] || v[19]) && !v[2] && !v[20]) return 0; // d2 or g2
+
+  if (!v[6] && v[5] && v[7] && v[24] && v[16]) return 0; // e1
+  if (!v[2] && v[1] && v[3] && v[20] && v[11]) return 0; // e2
+
+  return 1;
+} // DIAG_UE_deletable()
+
+static int32_t DIAG_deletable(uint8_t *v)
+{
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  printf("DIAG_UE\n");
+#endif
+  if (DIAG_UE_deletable(v)) return 1; // UE
+  rotate_90_Z(v);
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  printf("DIAG_UN\n");
+#endif
+  if (DIAG_UE_deletable(v)) return 1; // UN
+  rotate_90_Z(v);
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  printf("DIAG_UW\n");
+#endif
+  if (DIAG_UE_deletable(v)) return 1; // UW
+  rotate_90_Z(v);
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  printf("DIAG_US\n");
+#endif
+  if (DIAG_UE_deletable(v)) return 1; // US
+  rotate_90_Z(v);
+  swap_U_L(v);
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  printf("DIAG_LE\n");
+#endif
+  if (DIAG_UE_deletable(v)) return 1; // LE
+  rotate_90_Z(v);
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  printf("DIAG_LN\n");
+#endif
+  if (DIAG_UE_deletable(v)) return 1; // LN
+  rotate_90_Z(v);
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  printf("DIAG_LW\n");
+#endif
+  if (DIAG_UE_deletable(v)) return 1; // LW
+  rotate_90_Z(v);
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  printf("DIAG_LS\n");
+#endif
+  if (DIAG_UE_deletable(v)) return 1; // LS
+  rotate_90_Z(v);
+  swap_U_L(v);
+
+  isometrieYZ_vois(v);
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  printf("DIAG_O1\n");
+#endif
+  if (DIAG_UE_deletable(v)) return 1;
+  rotate_90_Z(v);
+  rotate_90_Z(v);
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  printf("DIAG_O2\n");
+#endif
+  if (DIAG_UE_deletable(v)) return 1;
+  swap_U_L(v);
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  printf("DIAG_O3\n");
+#endif
+  if (DIAG_UE_deletable(v)) return 1;
+  rotate_90_Z(v);
+  rotate_90_Z(v);
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  printf("DIAG_O4\n");
+#endif
+  if (DIAG_UE_deletable(v)) return 1;
+  
+  return 0;
+} // DIAG_deletable()
+
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+static void TEST_DIAG_deletable()
+{
+  int i; uint8_t v[27];  
+  for (i = 0; i < 27; i++) v[i] = 10+i;
+  (void)DIAG_deletable(v);
+}
+#endif
+
+static void DIAG_preserve(uint8_t *v, index_t p, uint8_t *S, index_t rs, index_t ps)
+{
+  index_t q;
+  //#define VARIANT_DIAG_preserve
+#ifndef VARIANT_DIAG_preserve
+  if (v[13] && !v[8] && !v[4]) // UE
+  { q = return_vois(p, 13, rs, ps); SET_DIAGPRES(S[q]); }
+  if (v[11] && !v[8] && !v[2]) // UN
+  { q = return_vois(p, 11, rs, ps); SET_DIAGPRES(S[q]); }
+  if (v[9] && !v[8] && !v[0])  // UW
+  { q = return_vois(p, 9, rs, ps); SET_DIAGPRES(S[q]); }
+  if (v[15] && !v[8] && !v[6]) // US
+  { q = return_vois(p, 15, rs, ps); SET_DIAGPRES(S[q]); }
+  if (v[1] && !v[2] && !v[0])  // NW
+  { q = return_vois(p, 1, rs, ps); SET_DIAGPRES(S[q]); }
+  if (v[7] && !v[6] && !v[0])  // SW
+  { q = return_vois(p, 7, rs, ps); SET_DIAGPRES(S[q]); }
+#else
+  if (v[22] && !v[17] && !v[4]) // LE
+  { q = return_vois(p, 22, rs, ps); SET_DIAGPRES(S[q]); }
+  if (v[20] && !v[17] && !v[2]) // LN
+  { q = return_vois(p, 20, rs, ps); SET_DIAGPRES(S[q]); }
+  if (v[18] && !v[17] && !v[0]) // LW
+  { q = return_vois(p, 18, rs, ps); SET_DIAGPRES(S[q]); }
+  if (v[24] && !v[17] && !v[6]) // LS
+  { q = return_vois(p, 24, rs, ps); SET_DIAGPRES(S[q]); }
+  if (v[5] && !v[4] && !v[6]) // SE
+  { q = return_vois(p, 5, rs, ps); SET_DIAGPRES(S[q]); }
+  if (v[3] && !v[4] && !v[2]) // NE
+  { q = return_vois(p, 3, rs, ps); SET_DIAGPRES(S[q]); }
+#endif
+} // DIAG_preserve()
+
+static int32_t TWIG(  
+  uint8_t *B,
+  index_t x,
+  index_t rs,
+  index_t ps,
+  index_t N)
+{
+  int32_t n = 0;
+  index_t y = -1, z;
+  if (((x<N-ps)&&(x%rs!=rs-1)) && B[ps+x+1]) { n++; if (y==-1) y=ps+x+1; else z=ps+x+1; }
+  if (((x<N-ps)&&(x%rs!=rs-1)&&(x%ps>=rs)) && B[ps+x+1-rs]) { n++; if (y==-1) y=ps+x+1-rs; else z=ps+x+1-rs; }
+  if (((x<N-ps)&&(x%ps>=rs)) && B[ps+x-rs]) { n++; if (y==-1) y=ps+x-rs; else z=ps+x-rs; }
+  if (((x<N-ps)&&(x%ps>=rs)&&(x%rs!=0)) && B[ps+x-rs-1]) { n++; if (y==-1) y=ps+x-rs-1; else z=ps+x-rs-1; }
+  if (((x<N-ps)&&(x%rs!=0)) && B[ps+x-1]) { n++; if (y==-1) y=ps+x-1; else z=ps+x-1; }
+  if (((x<N-ps)&&(x%rs!=0)&&(x%ps<ps-rs)) && B[ps+x-1+rs]) { n++; if (y==-1) y=ps+x-1+rs; else z=ps+x-1+rs; }
+  if (((x<N-ps)&&(x%ps<ps-rs)) && B[ps+x+rs]) { n++; if (y==-1) y=ps+x+rs; else z=ps+x+rs; }
+  if (((x<N-ps)&&(x%ps<ps-rs)&&(x%rs!=rs-1)) && B[ps+x+rs+1]) { n++; if (y==-1) y=ps+x+rs+1; else z=ps+x+rs+1; }
+  if (((x<N-ps)) && B[ps+x]) { n++; if (y==-1) y=ps+x; else z=ps+x; }
+  if (((x%rs!=rs-1)) && B[x+1]) { n++; if (y==-1) y=x+1; else z=x+1; }
+  if (((x%rs!=rs-1)&&(x%ps>=rs)) && B[x+1-rs]) { n++; if (y==-1) y=x+1-rs; else z=x+1-rs; }
+  if (((x%ps>=rs)) && B[x-rs]) { n++; if (y==-1) y=x-rs; else z=x-rs; }
+  if (((x%ps>=rs)&&(x%rs!=0)) && B[x-rs-1]) { n++; if (y==-1) y=x-rs-1; else z=x-rs-1; }
+  if (((x%rs!=0)) && B[x-1]) { n++; if (y==-1) y=x-1; else z=x-1; }
+  if (((x%rs!=0)&&(x%ps<ps-rs)) && B[x-1+rs]) { n++; if (y==-1) y=x-1+rs; else z=x-1+rs; }
+  if (((x%ps<ps-rs)) && B[x+rs]) { n++; if (y==-1) y=x+rs; else z=x+rs; }
+  if (((x%ps<ps-rs)&&(x%rs!=rs-1)) && B[x+rs+1]) { n++; if (y==-1) y=x+rs+1; else z=x+rs+1; }
+  if (((x>=ps)&&(x%rs!=rs-1)) && B[-ps+x+1]) { n++; if (y==-1) y=-ps+x+1; else z=-ps+x+1; }
+  if (((x>=ps)&&(x%rs!=rs-1)&&(x%ps>=rs)) && B[-ps+x+1-rs]) { n++; if (y==-1) y=-ps+x+1-rs; else z=-ps+x+1-rs; }
+  if (((x>=ps)&&(x%ps>=rs)) && B[-ps+x-rs]) { n++; if (y==-1) y=-ps+x-rs; else z=-ps+x-rs; }
+  if (((x>=ps)&&(x%ps>=rs)&&(x%rs!=0)) && B[-ps+x-rs-1]) { n++; if (y==-1) y=-ps+x-rs-1; else z=-ps+x-rs-1; }
+  if (((x>=ps)&&(x%rs!=0)) && B[-ps+x-1]) { n++; if (y==-1) y=-ps+x-1; else z=-ps+x-1; }
+  if (((x>=ps)&&(x%rs!=0)&&(x%ps<ps-rs)) && B[-ps+x-1+rs]) { n++; if (y==-1) y=-ps+x-1+rs; else z=-ps+x-1+rs; }
+  if (((x>=ps)&&(x%ps<ps-rs)) && B[-ps+x+rs]) { n++; if (y==-1) y=-ps+x+rs; else z=-ps+x+rs; }
+  if (((x>=ps)&&(x%ps<ps-rs)&&(x%rs!=rs-1)) && B[-ps+x+rs+1]) { n++; if (y==-1) y=-ps+x+rs+1; else z=-ps+x+rs+1; }
+  if (((x>=ps)) && B[-ps+x]) { n++; if (y==-1) y=-ps+x; else z=-ps+x; }
+  if (n == 1)
+  {
+    int32_t ny = 0;
+    B[x] = 0;
+    if (((y<N-ps)&&(y%rs!=rs-1)) && B[ps+y+1]) { ny++; z=ps+y+1; }
+    if (((y<N-ps)&&(y%rs!=rs-1)&&(y%ps>=rs)) && B[ps+y+1-rs]) { ny++; z=ps+y+1-rs; }
+    if (((y<N-ps)&&(y%ps>=rs)) && B[ps+y-rs]) { ny++; z=ps+y-rs; }
+    if (((y<N-ps)&&(y%ps>=rs)&&(y%rs!=0)) && B[ps+y-rs-1]) { ny++; z=ps+y-rs-1; }
+    if (((y<N-ps)&&(y%rs!=0)) && B[ps+y-1]) { ny++; z=ps+y-1; }
+    if (((y<N-ps)&&(y%rs!=0)&&(y%ps<ps-rs)) && B[ps+y-1+rs]) { ny++; z=ps+y-1+rs; }
+    if (((y<N-ps)&&(y%ps<ps-rs)) && B[ps+y+rs]) { ny++; z=ps+y+rs; }
+    if (((y<N-ps)&&(y%ps<ps-rs)&&(y%rs!=rs-1)) && B[ps+y+rs+1]) { ny++; z=ps+y+rs+1; }
+    if (((y<N-ps)) && B[ps+y]) { ny++; z=ps+y; }
+    if (((y%rs!=rs-1)) && B[y+1]) { ny++; z=y+1; }
+    if (((y%rs!=rs-1)&&(y%ps>=rs)) && B[y+1-rs]) { ny++; z=y+1-rs; }
+    if (((y%ps>=rs)) && B[y-rs]) { ny++; z=y-rs; }
+    if (((y%ps>=rs)&&(y%rs!=0)) && B[y-rs-1]) { ny++; z=y-rs-1; }
+    if (((y%rs!=0)) && B[y-1]) { ny++; z=y-1; }
+    if (((y%rs!=0)&&(y%ps<ps-rs)) && B[y-1+rs]) { ny++; z=y-1+rs; }
+    if (((y%ps<ps-rs)) && B[y+rs]) { ny++; z=y+rs; }
+    if (((y%ps<ps-rs)&&(y%rs!=rs-1)) && B[y+rs+1]) { ny++; z=y+rs+1; }
+    if (((y>=ps)&&(y%rs!=rs-1)) && B[-ps+y+1]) { ny++; z=-ps+y+1; }
+    if (((y>=ps)&&(y%rs!=rs-1)&&(y%ps>=rs)) && B[-ps+y+1-rs]) { ny++; z=-ps+y+1-rs; }
+    if (((y>=ps)&&(y%ps>=rs)) && B[-ps+y-rs]) { ny++; z=-ps+y-rs; }
+    if (((y>=ps)&&(y%ps>=rs)&&(y%rs!=0)) && B[-ps+y-rs-1]) { ny++; z=-ps+y-rs-1; }
+    if (((y>=ps)&&(y%rs!=0)) && B[-ps+y-1]) { ny++; z=-ps+y-1; }
+    if (((y>=ps)&&(y%rs!=0)&&(y%ps<ps-rs)) && B[-ps+y-1+rs]) { ny++; z=-ps+y-1+rs; }
+    if (((y>=ps)&&(y%ps<ps-rs)) && B[-ps+y+rs]) { ny++; z=-ps+y+rs; }
+    if (((y>=ps)&&(y%ps<ps-rs)&&(y%rs!=rs-1)) && B[-ps+y+rs+1]) { ny++; z=-ps+y+rs+1; }
+    if (((y>=ps)) && B[-ps+y]) { ny++; z=-ps+y; }
+    B[x] = M_OBJECT;
+    if (ny >= 2) return 1;
+    if ((ny == 1) && (mctopo3d_nbvoiso26(B, z, rs, ps, N) >= 3)) return 1;
+    return 0;
+  } // if (n == 1)
+  else if ((n == 2) && voisins26(y, z, rs, ps))
+  {
+    if (mctopo3d_nbvoiso26(B, y, rs, ps, N) >= 3) return 1;
+    if (mctopo3d_nbvoiso26(B, z, rs, ps, N) >= 3) return 1;
+  }
+  return 0;
+} // TWIG()
+
+
+/* ==================================== */
+int32_t lmawanchangcurv2subfields2002(
+				  struct xvimage *image,
+				  int32_t nsteps)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lmawanchangcurv2subfields2002"
+{ 
+  int32_t i, j, k, x;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab[2];
+  uint8_t v[27];
+
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  TEST_DIAG_deletable();
+#endif
+
+#define PATCH_MC
+#ifdef PATCH_MC
+  mctopo3d_init_topo3d();
+#endif
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+#define INITSTEP -1
+  //#define INITSTEP 0
+  step = INITSTEP;
+  nonstab[0] = nonstab[1] = 1;
+  while ((nonstab[0] || nonstab[1]) && (step < nsteps+INITSTEP))
+  {
+    step++;
+    nonstab[step%2] = 0;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    for (i = 0; i < N; i++) if (S[i]) S[i] = M_OBJECT;
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if (((k+j+i)%2) == (step%2))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && (mctopo3d_nbvoisc6(S, x, rs, ps, N) >= 1))
+	{
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+printf("point %d %d %d\n", i, j, k);	  
+#endif
+	  extract_vois(S, x, rs, ps, N, v);
+	  if (ORTH_deletable(v)) SET_ORTH(S[x]);
+	  if (DIAG_deletable(v)) SET_DIAG(S[x]);
+	  if (TWIG(S, x, rs, ps, N)) SET_TWIG(S[x]);
+	} // if (S[x])
+      } // for i, j, k
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if (((k+j+i)%2) == (step%2))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && IS_DIAG(S[x]))
+	{
+	  extract_vois(S, x, rs, ps, N, v);
+	  DIAG_preserve(v, x, S, rs, ps);
+	} // if (S[x])
+      } // for i, j, k
+
+    //if (step%2) writeimage(image, "_S1"); else writeimage(image, "_S0");
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if (((k+j+i)%2) == (step%2))
+      {
+	x = k*ps + j*rs + i;
+	if (IS_ORTH(S[x]) || (IS_DIAG(S[x]) && !IS_DIAGPRES(S[x])) || IS_TWIG(S[x]))
+	{
+#ifdef PATCH_MC
+	  if (mctopo3d_simple26(S, x, rs, ps, N))
+#endif
+	  {
+	    S[x] = 0;
+	    nonstab[step%2] = 1;
+	  }
+	}
+      } // for i, j, k
+
+  } // while (nonstab && (step < nsteps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+  return(1);
+} /* lmawanchangcurv2subfields2002() */
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de Lohou et Bertrand (curviligne symmétrique, Pat. Rec. 2007) 
+// M. Couprie, dec. 2011
+/* ============================================================ */
+/* ============================================================ */
+
+/* ==================================== */
+int32_t llohoubertrandsymcurv2007(
+				  struct xvimage *image,
+				  struct xvimage *inhibit,
+				  int32_t nsteps)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "llohoubertrandsymcurv2007"
+{
+  int32_t i, j, k, x, y, v;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  struct xvimage *t = copyimage(image); assert(t != NULL);
+  uint8_t *T = UCHARDATA(t);
+  struct xvimage *c = copyimage(image); assert(c != NULL);
+  uint8_t *C = UCHARDATA(c);
+  uint8_t *I = NULL;
+  int32_t step, nonstab, top, topbar;
+
+  mctopo3d_init_topo3d();
+
+  if (nsteps == -1) nsteps = 1000000000;
+  if (inhibit != NULL) I = UCHARDATA(inhibit);
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < nsteps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+    
+    razimage(c);
+    for (k = 2; k < ds-2; k++) // prépare l'ensemble C des points candidats
+      for (j = 2; j < cs-2; j++)
+	for (i = 2; i < rs-2; i++)
+	{
+	  x = k*ps + j*rs + i;
+	  if (T[x] && ((I==NULL) || !I[x]))
+	  {
+	    mctopo3d_top26(T, x, rs, ps, N, &top, &topbar);
+	    if (topbar == 1)
+	    {
+	      for (v = 0; v < 12; v += 2)
+	      {
+		y = voisin6(x, v, rs, ps, N);
+		if ((y != -1) && (T[y]))
+		{
+		  mctopo3d_top26(T, y, rs, ps, N, &top, &topbar);
+		  if (topbar == 1)
+		  {
+		    T[y] = 0;
+		    mctopo3d_top26(T, x, rs, ps, N, &top, &topbar);
+		    T[y] = 1;
+		    if (topbar != 1) break;
+		  } // if (topbar y == 1)
+		} // if ((y != -1) && (T[y]))
+	      } // for (v = 0; v <= 10; v += 2)
+	      if (v == 12) C[x] = 1;
+	    } // if (topbar x == 1)
+	  } // if (T[x])
+	} // for i, j, k
+
+    //#define DEBUG_llohoubertrandsymcurv2007
+#ifdef DEBUG_llohoubertrandsymcurv2007
+    writeimage(c, "_c");
+#endif
+
+    for (k = 2; k < ds-2; k++) // retire en parallèle les points PC_simples
+      for (j = 2; j < cs-2; j++)
+	for (i = 2; i < rs-2; i++)
+	{
+	  x = k*ps + j*rs + i;
+	  if (C[x] && ((I==NULL) || !I[x]) && P_simple26(T, C, x, rs, ps, N))
+	  {
+	    S[x] = 0;
+	    nonstab = 1;
+	  }
+	} // for k,j,i
+
+    memcpy(T, S, N);
+  } // while (nonstab && (step < nsteps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  mctopo3d_termine_topo3d();
+  freeimage(t);
+  freeimage(c);
+  return(1);
+} /* llohoubertrandsymcurv2007() */
+
+/* ============================================================ */
+/* ============================================================ */
+
 
 /* global variables */
   long int           long_mask[26];
@@ -71,7 +972,7 @@ knowledge of the CeCILL license and that you accept its terms.
   unsigned long int  neighbours_UD;
   unsigned long int  neighbours_NS;
   unsigned long int  neighbours_EW;
-  unsigned long int  direction;
+  unsigned long int  GLOBAL_direction;
   unsigned char     *lut_deletable;
   unsigned long int  size_x;
   unsigned long int  size_y;
@@ -89,9 +990,6 @@ knowledge of the CeCILL license and that you accept its terms.
   unsigned char      *lut_simple;
   unsigned long int  z_size_xy, zm_size_xy, zp_size_xy;
   unsigned long int  y_size_x, ym_size_x, yp_size_x;
-
-
-
 
 
 //#define DEBUG
@@ -868,16 +1766,11 @@ knowledge of the CeCILL license and that you accept its terms.
 //} /* main */
 //#endif
 
-
-
-
 /*******************************************************************************
 *
 *       Author:              K. Palagyi (adapted by J. Chaussard for PINK)
 *
 *******************************************************************************/
-
-
 
 /*========= function read_image =========*/
 /* -------------
@@ -1175,7 +2068,7 @@ void collect_26_neighbours( void )
 
     neighbours = 0x00000000;
 
-    if ( direction == U )
+    if ( GLOBAL_direction == PALAGYI_U )
       {
         /*  U
           indices in "neighbours":
@@ -1241,7 +2134,7 @@ void collect_26_neighbours( void )
       } /* endif U */
    else
       { /* not-U */
-       if ( direction == D )
+       if ( GLOBAL_direction == PALAGYI_D )
       {
         /*  D
           indices in "neighbours":
@@ -1307,7 +2200,7 @@ void collect_26_neighbours( void )
       } /* endif D */
     else
       { /* not-D */
-    if ( direction == N )
+    if ( GLOBAL_direction == PALAGYI_N )
       {
         /*  N
           indices in "neighbours":
@@ -1373,7 +2266,7 @@ void collect_26_neighbours( void )
       } /* endif N */
     else
       { /* not-N */
-     if ( direction == S )
+     if ( GLOBAL_direction == PALAGYI_S )
       {
         /*  S
           indices in "neighbours":
@@ -1439,7 +2332,7 @@ void collect_26_neighbours( void )
       } /* endif S */
     else
       { /* not-S */
-     if ( direction == E )
+     if ( GLOBAL_direction == PALAGYI_E )
       {
         /*  E
           indices in "neighbours":
@@ -1505,7 +2398,7 @@ void collect_26_neighbours( void )
       } /* endif E */
     else
       { /* not-E */
-     if ( direction == W )
+     if ( GLOBAL_direction == PALAGYI_W )
       {
         /*  W
           indices in "neighbours":
@@ -1602,42 +2495,42 @@ unsigned char maybe;
 
       maybe = 0;
 
-      if ( direction == U )
+      if ( GLOBAL_direction == PALAGYI_U )
         {
           if ( *(image + act_addr - size_xy ) == 0 )
             maybe = 1;
 	} /* endif U */
       else
         { /* not-U */
-      if ( direction == D )
+      if ( GLOBAL_direction == PALAGYI_D )
         {
           if ( *(image + act_addr + size_xy ) == 0 )
             maybe = 1;
 	}  /* endif D */
       else
         { /* not-D */
-      if ( direction == N )
+      if ( GLOBAL_direction == PALAGYI_N )
         {
           if ( *(image + act_addr - size_x  ) == 0 )
             maybe = 1;
 	} /* endif N */
       else
         { /* not-N */
-      if ( direction == S )
+      if ( GLOBAL_direction == PALAGYI_S )
         {
           if ( *(image + act_addr + size_x  ) == 0 )
             maybe = 1;
 	} /* endif S */
       else
         { /* not-S */
-      if ( direction == E )
+      if ( GLOBAL_direction == PALAGYI_E )
         {
           if ( *(image + act_addr - 1       ) == 0 )
             maybe = 1;
 	} /* endif E */
       else
         { /* not_E */
-      if ( direction == W )
+      if ( GLOBAL_direction == PALAGYI_W )
         {
           if ( *(image + act_addr + 1       ) == 0 )
             maybe = 1;
@@ -1674,7 +2567,7 @@ unsigned int thinning_iteration_step(void)
   changed = 0;
   for ( i=0; i<6; i++ )                          /* 6-subiteration alg. */
     {
-      direction = i;
+      GLOBAL_direction = i;
       CreatePointList(&s);
       DetectDeletablePoints(&s);
       while ( s.Length > 0 )
@@ -2130,19 +3023,19 @@ unsigned long int x, y, z;
       z_size_xy  = z*size_xy;
       zm_size_xy = z_size_xy - size_xy;
       zp_size_xy = z_size_xy + size_xy;
-      switch( direction )
+      switch( GLOBAL_direction )
         {
-          case U: value = *(image + x   + ym_size_x + z_size_xy  );
+          case PALAGYI_U: value = *(image + x   + ym_size_x + z_size_xy  );
                   break;
-          case D: value = *(image + x   + yp_size_x + z_size_xy  );
+          case PALAGYI_D: value = *(image + x   + yp_size_x + z_size_xy  );
                   break;
-          case N: value = *(image + x   + y_size_x  + zm_size_xy );
+          case PALAGYI_N: value = *(image + x   + y_size_x  + zm_size_xy );
                   break;
-          case S: value = *(image + x   + y_size_x  + zp_size_xy );
+          case PALAGYI_S: value = *(image + x   + y_size_x  + zp_size_xy );
                   break;
-          case E: value = *(image + x+1 + y_size_x  + z_size_xy  );
+          case PALAGYI_E: value = *(image + x+1 + y_size_x  + z_size_xy  );
                   break;
-          case W: value = *(image + x-1 + y_size_x  + z_size_xy  );
+          case PALAGYI_W: value = *(image + x-1 + y_size_x  + z_size_xy  );
                   break;
         } /* endswitch */
       if( value == 0 )
@@ -2174,7 +3067,7 @@ unsigned int thinning_iteration_step2(void)
   changed = 0;
   for ( i=0; i<6; i++ )
     {
-      direction = i;
+      GLOBAL_direction = i;
       CreatePointList(&s);
       DetectSimpleBorderPoints2(&s);
       while ( s.Length > 0 )
@@ -2321,7 +3214,7 @@ void collect_26_neighbours3( void )
 
     neighbours = 0x00000000;
 
-    if ( direction == UD )
+    if ( GLOBAL_direction == PALAGYI_UD )
       {
         /*  UD
           indices in "neighbours":
@@ -2391,7 +3284,7 @@ void collect_26_neighbours3( void )
     else
       {
 
-    if ( direction == NS )
+    if ( GLOBAL_direction == PALAGYI_NS )
       {
         /*  NS
           indices in "neighbours":
@@ -2461,7 +3354,7 @@ void collect_26_neighbours3( void )
     else
       {
 
-    if ( direction == EW )
+    if ( GLOBAL_direction == PALAGYI_EW )
       {
         /*  EW
           indices in "neighbours":
@@ -2613,7 +3506,7 @@ PointList r;
       act_addr = (*LE3).addr;
 
       maybe = 0;
-      if ( direction == UD )
+      if ( GLOBAL_direction == PALAGYI_UD )
         {
            if ( ( ( *(image + act_addr - size_xy           ) == 0 ) &&
 	          ( *(image + act_addr + size_xy           )      ) &&
@@ -2625,7 +3518,7 @@ PointList r;
 	}
       else
         {
-      if ( direction == NS )
+      if ( GLOBAL_direction == PALAGYI_NS )
         {
 	   if ( ( ( *(image + act_addr - size_x            ) == 0 ) &&
 	          ( *(image + act_addr + size_x            )      ) &&
@@ -2637,7 +3530,7 @@ PointList r;
 	}
       else
         {
-      if ( direction == EW )
+      if ( GLOBAL_direction == PALAGYI_EW )
         {
            if ( ( ( *(image + act_addr - 1                 ) == 0 ) &&
 	          ( *(image + act_addr + 1                 )      ) &&
@@ -2676,7 +3569,7 @@ unsigned int thinning_iteration_step3(void)
   changed = 0;
   for ( i=0; i<3; i++ )   /* 3-subiteration alg. */
     {
-      direction = i;
+      GLOBAL_direction = i;
       CreatePointList(&s);
       DetectDeletablePoints3(&s);
       while ( s.Length > 0 )

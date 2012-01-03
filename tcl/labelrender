@@ -44,7 +44,7 @@ wm title . "Renderer for label images"
 
 # get input image file name as first argument
 if {$argc != 1} { 
-  puts stderr "usage: labelrender in"
+  puts stderr "usage: labelrender in.pgm"
   exit 
 }
 

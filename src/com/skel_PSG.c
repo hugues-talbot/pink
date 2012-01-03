@@ -43,7 +43,7 @@ P-simple points. The parameter \b in.pgm specifies the set
 (object) to be thinned. The parameter \b prio.pgm specifies the priority
 function. The parameter \b val is a threshold: any
 pixel having a priority greater than or equal to \b val will be preserved
-from deletion.  If \b val equals -1, then all points will be
+from deletion. If \b val equals -1, then all points will be
 considered for deletion.
 
 <B>Warning:</B> The object must not have any point on the frame of the image.

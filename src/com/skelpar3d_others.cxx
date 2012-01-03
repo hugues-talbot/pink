@@ -47,10 +47,15 @@ until stability.
 The parameter \b algorithm is a numerical code
 indicating which method will be used for the thinning.
 The possible choices are:
-\li 0: Palagyi (curvilinear, directional, 1998 - 6-subiterations directional curve-thinning)
+\li 0: Palagyi (curvilinear, 6-subiterations directional, 1998)
 \li 1: Palagyi (curvilinear, sequential, 2006)
-\li 2: Palagyi (surfacic, parallel directional, 2002)
-\li 3: Palagyi (surfacic, fully parallel, 2008)
+\li 2: Palagyi (surface, parallel directional, 2002)
+\li 3: Palagyi (surface, fully parallel, 2008)
+\li 4: Raynal  (curvilinear, directional, 2010)
+\li 5: Raynal  (surface, directional, 2010)
+\li 6: Lohou-Bertrand  (curvilinear, symmetric, 2007)
+\li 7: Ma-Wan-Chang (curvilinear, 2 subfields, 2002)
+\li 8: Tsao-Fu (curvilinear, 6-subiterations directional, 1982)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -60,7 +65,7 @@ then the points of this image will be left unchanged.
 <B>Category:</B> topobin
 \ingroup  topobin
 
-\author Michel Couprie
+\author Michel Couprie, Benjamin Raynal
 */
 
 // I'm confused, this should be a C++ file...
@@ -92,10 +97,13 @@ int main(int32_t argc, char **argv)
     fprintf(stderr, "usage: %s in.pgm algorithm nsteps [inhibit] out.pgm\n", argv[0]);
     fprintf(stderr, "   0: Palagyi (curvilinear, parallel directional, 1998)\n");
     fprintf(stderr, "   1: Palagyi (curvilinear, sequential, 2006)\n");
-    fprintf(stderr, "   2: Palagyi (surfacic, parallel directional, 2002)\n");
-    fprintf(stderr, "   3: Palagyi (surfacic, fully parallel, 2008)\n");
+    fprintf(stderr, "   2: Palagyi (surface, parallel directional, 2002)\n");
+    fprintf(stderr, "   3: Palagyi (surface, fully parallel, 2008)\n");
     fprintf(stderr, "   4: Raynal (curvilinear, directional, 2010)\n");
-    fprintf(stderr, "   5: Raynal (surfacic, directional, 2010)\n");
+    fprintf(stderr, "   5: Raynal (surface, directional, 2010)\n");
+    fprintf(stderr, "   6: Lohou-Bertrand (curvilinear, symmetric, 2007)\n");
+    fprintf(stderr, "   7: Ma-Wan-Chang (curvilinear, 2 subfields, 2002)\n");
+    fprintf(stderr, "   8: Tsao-Fu (curvilinear, 6-subiterations directional, 1982)\n");
     exit(1);
   }
 
@@ -130,54 +138,65 @@ int main(int32_t argc, char **argv)
 		fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
 	  else if (nsteps!=-1)
 		fprintf(stderr, "%s: warning: step mode not implemented for algo %d\n", argv[0], mode);
-      if (palagyi_skelpar_curv_98(image)!=0)
-      {
-	fprintf(stderr, "%s: palagyi_skelpar_curv_98 failed\n", argv[0]);
-	exit(1);
-      } break;
-	case 1:
+      (void)palagyi_skelpar_curv_98(image);
+      break;
+    case 1:
       if (argc == 6)
 		fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
 	  else if (nsteps!=-1)
 		fprintf(stderr, "%s: warning: step mode not implemented for algo %d\n", argv[0], mode);
-      if (palagyi_skelpar_curv_06(image)!=0)
-      {
-	fprintf(stderr, "%s: palagyi_skelpar_curv_06 failed\n", argv[0]);
-	exit(1);
-      } break;
-	case 2:
+      (void)palagyi_skelpar_curv_06(image);
+      break;
+    case 2:
       if (argc == 6)
 		fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
 	  else if (nsteps!=-1)
 		fprintf(stderr, "%s: warning: step mode not implemented for algo %d\n", argv[0], mode);
-      if (palagyi_skelpar_surf_02(image)!=0)
-      {
-	fprintf(stderr, "%s: palagyi_skelpar_surf_02 failed\n", argv[0]);
-	exit(1);
-      } break;
-	case 3:
+      (void)palagyi_skelpar_surf_02(image);
+      break;
+    case 3:
       if (argc == 6)
 		fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
 	  else if (nsteps!=-1)
 		fprintf(stderr, "%s: warning: step mode not implemented for algo %d\n", argv[0], mode);
-      if (palagyi_skelpar_surf_08(image)!=0)
-      {
-	fprintf(stderr, "%s: palagyi_skelpar_surf_08 failed\n", argv[0]);
-	exit(1);
-      } break;
-     case 4:
+      (void)palagyi_skelpar_surf_08(image);
+      break;
+    case 4:
       if (nsteps==-1) nsteps=0;
       if(inhibit!=NULL)
       dskel1.skeletonize((unsigned char*)(image->image_data), true, nsteps, (unsigned char*)(inhibit->image_data));
       else
       dskel1.skeletonize((unsigned char*)(image->image_data), true, nsteps);
       break;
-     case 5:
+    case 5:
       if (nsteps==-1) nsteps=0;
       if(inhibit!=NULL)
       dskel1.skeletonize((unsigned char*)(image->image_data), false, nsteps, (unsigned char*)(inhibit->image_data));
       else
       dskel1.skeletonize((unsigned char*)(image->image_data), false, nsteps);
+      break;
+    case 6:
+      if (!llohoubertrandsymcurv2007(image, inhibit, nsteps))
+      {
+	fprintf(stderr, "%s: llohoubertrandsymcurv2007 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 7:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lmawanchangcurv2subfields2002(image, nsteps))
+      {
+	fprintf(stderr, "%s: lmawanchangcurv2subfields2002 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 8:
+      if (!ltsaofu6dircurv1982(image, inhibit, nsteps))
+      {
+	fprintf(stderr, "%s: ltsaofu6dircurv1982 failed\n", argv[0]);
+	exit(1);
+      } 
       break;
     default:
       fprintf(stderr, "%s: mode %d not implemented\n", argv[0], mode);
@@ -190,7 +209,7 @@ int main(int32_t argc, char **argv)
     exit(1);
   }
 
-  if(inhibit!=NULL) freeimage(inhibit);
+  if (inhibit!=NULL) freeimage(inhibit);
   writeimage(image, argv[argc-1]);
   freeimage(image);
 
