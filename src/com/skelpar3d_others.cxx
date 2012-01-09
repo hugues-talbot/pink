@@ -56,6 +56,7 @@ The possible choices are:
 \li 6: Lohou-Bertrand  (curvilinear, symmetric, 2007)
 \li 7: Ma-Wan-Chang (curvilinear, 2 subfields, 2002)
 \li 8: Tsao-Fu (curvilinear, 6-subiterations directional, 1982)
+\li 9: Ma-Sonka (curvilinear, fully parallel, does not preserve topology 1996)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -104,6 +105,7 @@ int main(int32_t argc, char **argv)
     fprintf(stderr, "   6: Lohou-Bertrand (curvilinear, symmetric, 2007)\n");
     fprintf(stderr, "   7: Ma-Wan-Chang (curvilinear, 2 subfields, 2002)\n");
     fprintf(stderr, "   8: Tsao-Fu (curvilinear, 6-subiterations directional, 1982)\n");
+    fprintf(stderr, "   9: Ma-Sonka (curvilinear, fully parallel, does not preserve topology 1996)\n");
     exit(1);
   }
 
@@ -195,6 +197,15 @@ int main(int32_t argc, char **argv)
       if (!ltsaofu6dircurv1982(image, inhibit, nsteps))
       {
 	fprintf(stderr, "%s: ltsaofu6dircurv1982 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 9:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lmasonka1996(image, nsteps))
+      {
+	fprintf(stderr, "%s: lmasonka1996 failed\n", argv[0]);
 	exit(1);
       } 
       break;

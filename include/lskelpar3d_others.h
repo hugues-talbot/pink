@@ -104,6 +104,9 @@ extern int32_t ltsaofu6dircurv1982(
 				  struct xvimage *image,
 				  struct xvimage *inhibit,
 				  int32_t n_steps);
+extern int32_t lmasonka1996(
+		     struct xvimage *image,
+		     int32_t nsteps);
 #ifdef __cplusplus
 }
 #endif
