@@ -90,7 +90,7 @@ structuring_element.writeimage("se.pgm")
 structuring_element.center=[5,0]
 dilated = pink.dilation( inv, structuring_element )
 #dilated.writeimage("dil.pgm")
-imview(dilated)
+viewer2.show(dilated,"dilated")
 
 
 
