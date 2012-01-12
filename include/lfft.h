@@ -60,12 +60,12 @@ typedef dcomplex DCOMPLEX;
 #define FFT_FORWARD	0
 #define FFT_INVERSE 1
 
-#define PI      3.1415926535897932
-#define TWOPI   6.2831853071795865 /* 2.0 * PI */
-#define HALFPI  1.5707963267948966 /* PI / 2.0 */
-#define PI8 	0.392699081698724 /* PI / 8.0 */
-#define RT2 	1.4142135623731  /* sqrt(2.0) */
-#define IRT2 	0.707106781186548  /* 1.0/sqrt(2.0) */
+#define PINK_PI      3.1415926535897932
+#define PINK_TWOPI   6.2831853071795865 /* 2.0 * PI */
+#define PINK_HALFPI  1.5707963267948966 /* PI / 2.0 */
+#define PINK_PI8     0.392699081698724 /* PI / 8.0 */
+#define PINK_RT2     1.4142135623731  /* sqrt(2.0) */
+#define PINK_IRT2    0.707106781186548  /* 1.0/sqrt(2.0) */
 
 /* Perform forward 2D transform on a fcomplex array. */
 extern int forward_fft2f(fcomplex *array, int rows, int cols);

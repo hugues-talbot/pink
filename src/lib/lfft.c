@@ -299,7 +299,7 @@ void R8TX(int nxtlt, int nthpo, int length,
   ci6 = &(cc6[0].im);
   ci7 = &(cc7[0].im);
 
-  scale = TWOPI/length;
+  scale = PINK_TWOPI/length;
 
   for(j=1; j<=nxtlt; j++) 
     {
@@ -365,14 +365,14 @@ void R8TX(int nxtlt, int nthpo, int length,
       	      ci1[kk] = c4*(bi0-bi1) + s4*(br0-br1);
       	      ci2[kk] = c2*(bi2+br3) + s2*(br2-bi3);
       	      ci3[kk] = c6*(bi2-br3) + s6*(br2+bi3);
-      	      tr = IRT2*(br5-bi5);
-      	      ti = IRT2*(br5+bi5);
+      	      tr = PINK_IRT2*(br5-bi5);
+      	      ti = PINK_IRT2*(br5+bi5);
       	      cr4[kk] = c1*(br4+tr) - s1*(bi4+ti);
       	      ci4[kk] = c1*(bi4+ti) + s1*(br4+tr);
       	      cr5[kk] = c5*(br4-tr) - s5*(bi4-ti);
       	      ci5[kk] = c5*(bi4-ti) + s5*(br4-tr);
-      	      tr = -IRT2*(br7+bi7);
-      	      ti = IRT2*(br7-bi7);
+      	      tr = -PINK_IRT2*(br7+bi7);
+      	      ti = PINK_IRT2*(br7-bi7);
       	      cr6[kk] = c3*(br6+tr) - s3*(bi6+ti);
       	      ci6[kk] = c3*(bi6+ti) + s3*(br6+tr);
       	      cr7[kk] = c7*(br6-tr) - s7*(bi6-ti);
@@ -386,14 +386,14 @@ void R8TX(int nxtlt, int nthpo, int length,
       	      ci1[kk] = bi0 - bi1;
       	      ci2[kk] = bi2 + br3;
       	      ci3[kk] = bi2 - br3;
-      	      tr = IRT2*(br5-bi5);
-      	      ti = IRT2*(br5+bi5);
+      	      tr = PINK_IRT2*(br5-bi5);
+      	      ti = PINK_IRT2*(br5+bi5);
       	      cr4[kk] = br4 + tr;
       	      ci4[kk] = bi4 + ti;
       	      cr5[kk] = br4 - tr;
       	      ci5[kk] = bi4 - ti;
-      	      tr = -IRT2*(br7+bi7);
-      	      ti = IRT2*(br7-bi7);
+      	      tr = -PINK_IRT2*(br7+bi7);
+      	      ti = PINK_IRT2*(br7-bi7);
       	      cr6[kk] = br6 + tr;
       	      ci6[kk] = bi6 + ti;
       	      cr7[kk] = br6 - tr;
