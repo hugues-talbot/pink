@@ -1,18 +1,20 @@
-# UjoImro, 2010
+# UjoImro,HT, 2010-212
 # CeCILL free-software license
 
 # Hugues' TP-1
 
-from pink import imview
+from pink import Imview
 from pink import cpp as pink
 
 #ex 3.1-1
 #help(pink.geoeros)
 
+viewer1=Imview()
+
 #ex 3.1-2
 I=pink.readimage("../images/cells.pgm")
 eroded = pink.erosball( I, 1, 0 )
-#show(eroded)
+viewer1.show(eroded)
 
 #ex 3.1-3
 recons1 = pink.geodilat(eroded, I, 8, 10)  
