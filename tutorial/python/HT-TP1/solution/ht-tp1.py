@@ -70,7 +70,7 @@ viewer1.show(cells_filled,"cells_filled")
 
 #ex 3.4-2
 objects = pink.geodilat( holes, cells_filled, 8, -1 )
-cells_final = pink.min( cells_nohole, objects )
+cells_final = pink.min( cells_filled, objects )
 viewer1.show(cells_final,"cells_final")
 #cells_final.writeimage("cells_final.pgm")
 
