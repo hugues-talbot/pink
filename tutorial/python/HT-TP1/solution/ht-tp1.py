@@ -83,6 +83,17 @@ inv = filter_noise(inv)
 viewer2=Imview(inv)
 #inv.writeimage("circ.pgm")
 
+# Filtering out the strips to get the round ends
+round = pink.openball(inv, 5,0)
+# plus one round of geodesic dilation to get the shape back
+roundok = pink.geodilat(round, inv, 8, 1) # note the 1 here
+viewer2.show(roundok, "roundok")
+
+# get the strips by difference
+strips = inv - roundok
+viewer2.show(strips, "strips")
+
+
 ## dilation
 structuring_element = pink.char_image([11,1])
 structuring_element.fill(255)
