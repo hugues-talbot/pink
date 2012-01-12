@@ -63,7 +63,7 @@ viewer1.show(cells_notouch,"cells_notouch")
 inv = pink.inverse(cells_notouch)
 holes = remove_touching(inv)
 
-cells_filled = pink.max(cells_filled, holes)
+cells_filled = pink.max(cells_notouch, holes)
 viewer1.show(cells_filled,"cells_filled")
 #cells_filled.writeimage("cells_filled.pgm")
 
