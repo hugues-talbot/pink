@@ -5465,6 +5465,7 @@ Voir "Parallel thinning algorithms based on Ronse's sufficient conditions for to
   (D[p] && D[e] && D[s] && D[se] && !D[n] && !D[ne] && !D[ee] && !D[see] && !D[sse] && !D[ss] && !D[sw] && !D[w])
 
 #define MATCH_C(D, p, n, e, s, ne, se) (D[p] && D[e] && (D[n]||D[ne]) && (D[s] || D[se]))
+#define MATCH_C(D, p, n, e, s, ne, se) (D[p] && D[e] && (D[n]||D[ne]) && (D[s] || D[se]))
 
 void getNeighborhood(uint8_t *F, uint32_t rs, uint32_t N, uint32_t p, uint8_t k, uint8_t * neighborhood);
 void printNeighborhood(uint8_t *neighborhood);
@@ -6011,19 +6012,18 @@ void match_C(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_t N) {
 	  A[E(p,rs)]<k ) {
 	D[p] = D[E(p,rs)] = CRUCIAL_C;
       }
-      
+                
       if ( D[W(p,rs)]==DESTRUCTIBLE && MATCH_C(Fk, _center55, _s55, _w55, _n55, _sw55, _nw55) &&
 	   A[W(p,rs)]<k ) {
 	D[p] = D[W(p,rs)] = CRUCIAL_C;
       }
 
-      if ( D[S(p,rs)]==DESTRUCTIBLE && 
-	   MATCH_C(Fk, _center55, _e55, _s55, _w55, _se55, _sw55) &&
+      if ( D[S(p,rs)]==DESTRUCTIBLE && MATCH_C(Fk, _center55, _e55, _s55, _w55, _se55, _sw55) &&
 	   A[S(p,rs)]<k  ) {
 	D[p] = D[S(p,rs)] = CRUCIAL_C;
       }
       
-      if ( MATCH_C(Fk, _center55, _w55, _n55, _e55, _nw55, _ne55) &&  
+      if ( D[N(p,rs)]==DESTRUCTIBLE && MATCH_C(Fk, _center55, _w55, _n55, _e55, _nw55, _ne55) &&  
 	   A[N(p,rs)]<k ) {
 	D[p] = D[N(p,rs)] = CRUCIAL_C;
       }    
@@ -6053,14 +6053,13 @@ void match_C_asymmetric(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_
 	D[p] = CRUCIAL_C;
       }
 
-      if ( D[S(p,rs)]==DESTRUCTIBLE && 
-	   MATCH_C(Fk, _center55, _e55, _s55, _w55, _se55, _sw55) &&
+      if ( D[S(p,rs)]==DESTRUCTIBLE && MATCH_C(Fk, _center55, _e55, _s55, _w55, _se55, _sw55) &&
 	   A[S(p,rs)]<k  ) {
 	D[p] = CRUCIAL_C;
       }
       
-      if ( MATCH_C(Fk, _center55, _w55, _n55, _e55, _nw55, _ne55) &&  
-	   A[N(p,rs)]<k ) {
+      if (D[N(p,rs)]==DESTRUCTIBLE &&  MATCH_C(Fk, _center55, _w55, _n55, _e55, _nw55, _ne55) &&  
+	  A[N(p,rs)]<k ) {
 	D[p] = CRUCIAL_C;
       }    
     }    

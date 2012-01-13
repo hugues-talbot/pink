@@ -107,8 +107,8 @@ int main(int argc, char **argv)
     */
   }
 
-  if (! lhthinpar(image, nitermax))
-    //  if (! lhthinpar_asymmetric(image, nitermax))
+  //  if (! lhthinpar(image, nitermax))
+  if (! lhthinpar_asymmetric(image, nitermax))
   {
     fprintf(stderr, "%s: lhthinpar_asymmetric failed\n", argv[0]);
     exit(1);

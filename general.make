@@ -2435,7 +2435,8 @@ $(ODIR)/ltopotypes.o:	$(LDIR)/ltopotypes.c $(IDIR)/mccodimage.h $(IDIR)/mctopo.h
 	ar rcs $(ODIR)/libpink.a $(ODIR)/ltopotypes.o
 
 $(ODIR)/DirectionalSkeletonizer.o:	$(LDIR)/DirectionalSkeletonizer.cxx $(IDIR)/DirectionalSkeletonizer.hpp $(IDIR)/FIFO.hpp 
-	$(CPP) -std=c++0x -c $(CCFLAGS) -I$(IDIR) $(LDIR)/DirectionalSkeletonizer.cxx -o $(ODIR)/DirectionalSkeletonizer.o
+#	$(CPP) -std=c++0x -c $(CCFLAGS) -I$(IDIR) $(LDIR)/DirectionalSkeletonizer.cxx -o $(ODIR)/DirectionalSkeletonizer.o
+	$(CPP) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/DirectionalSkeletonizer.cxx -o $(ODIR)/DirectionalSkeletonizer.o
 	ar rcs $(ODIR)/libpink.a $(ODIR)/DirectionalSkeletonizer.o
 
 # *********************************
