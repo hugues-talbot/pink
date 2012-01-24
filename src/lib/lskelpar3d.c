@@ -2720,6 +2720,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   return(1);
 } /* lskelACK3a() */
 #endif
+
 /* ==================================== */
 int32_t lskelACK3b(struct xvimage *image, 
 	     int32_t n_steps,
@@ -2728,7 +2729,7 @@ int32_t lskelACK3b(struct xvimage *image,
 /* ==================================== */
 /*
 Squelette asymétrique curviligne
-Algo ACK3a données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
+Algo ACK3b données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
 Pour tout x de S faire T[x] := -1
 Pour i := 0; i < n; i++
   C := points de courbe de S
@@ -2867,6 +2868,126 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   mctopo3d_termine_topo3d();
   return(1);
 } /* lskelACK3b() */
+
+/* ==================================== */
+int32_t lskelACK3c(
+		   struct xvimage *image, 
+		   struct xvimage *persistence)
+/* ==================================== */
+/*
+Squelette asymétrique curviligne - fonction persistance
+Algo ACK3c données: S (image) résultat: P (persistance)
+Pour tout x de S faire P[x] := -1
+Pour i := 0; i < n; i++
+  C := points de courbe de S
+  Pour tout x de C tq P[x] == -1 faire P[x] := i // date de naissance
+  D := voxels simples pour S
+  C2 := voxels 2-D-cruciaux (asym_match2)
+  C1 := voxels 1-D-cruciaux (asym_match1)
+  C0 := voxels 0-D-cruciaux (asym_match0)
+  D := D  \  [C2 \cup C1 \cup C0]
+  Pour tout x de D tq P[x] != -1 faire P[x] := i - P[x] // date de mort - date de naissance
+  S := S \ D
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+*/
+#undef F_NAME
+#define F_NAME "lskelACK3c"
+{ 
+  index_t i; // index de pixel
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);   /* l'image de depart */
+  float *P = FLOATDATA(persistence);   /* résultat */
+  int32_t step, nonstab;
+  int32_t top, topb;
+  uint8_t v[27];
+
+  COMPARE_SIZE(image, persistence);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(persistence, VFF_TYP_FLOAT);
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+  for (i = 0; i < N; i++) P[i] = -1;
+
+  mctopo3d_init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab)
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    // ENREGISTRE LA DATE DE NAISSANCE DES POINTS DE COURBE
+    for (i = 0; i < N; i++)
+    {
+      if (IS_OBJECT(S[i]))
+      {    
+	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+	if ((top > 1) && (P[i] == -1))
+	  P[i] = (float)step;
+      }
+    }
+
+    // MARQUE LES POINTS SIMPLES
+    for (i = 0; i < N; i++) 
+      if (IS_OBJECT(S[i]) && mctopo3d_simple26(S, i, rs, ps, N))
+	SET_SIMPLE(S[i]);
+    // MARQUE LES POINTS 2-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match2(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    // MARQUE LES POINTS 1-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match1(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    // MARQUE LES POINTS 0-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match0(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+
+    for (i = 0; i < N; i++)
+      if (S[i] && IS_SIMPLE(S[i]) && !IS_SELECTED(S[i])) 
+      {
+	S[i] = 0; 
+	nonstab = 1; 
+	if (P[i] != -1) P[i] = (float)step - P[i];
+      }
+    for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+  } // while (nonstab)
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = NDG_MAX;
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lskelACK3c() */
 
 /* ==================================== */
 int32_t lskelACK3(struct xvimage *image, 

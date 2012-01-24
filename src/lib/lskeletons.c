@@ -48,6 +48,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mctopo3d.h>
 #include <mckhalimsky3d.h>
 #include <mcfifo.h>
+#include <mcliste.h>
 #include <mcrlifo.h>
 #include <mcutil.h>
 #include <mcgeo.h>
@@ -57,15 +58,16 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #define EN_RBT        0
 #define EN_FIFO       1
+#define EN_LISTE      1
 #define CONTRAINTE    2
 #define CONTRAINTE1   2
 #define CONTRAINTE2   3
 #define PARANO
 
-//#define VERBOSE
+#define VERBOSE
 //#define DEBUG
 
-//#define PRIODIR
+#define PRIODIR
 
 //#define TEST_SIMPLE_PAR_COLLAPSE
 
@@ -101,6 +103,7 @@ static int32_t typedir2d(uint8_t *F, index_t x, index_t rs, index_t N)
 /* ==================================== */
 static int32_t typedir3d(uint8_t *F, index_t x, index_t rs, index_t ps, index_t N)
 /* ==================================== */
+// classe le point x selon ses 6-voisins qui sont hors de l'objet (nombre et direction)
 {
   index_t y;
   int32_t n, s, e, o, a, d, sum;
@@ -112,7 +115,7 @@ static int32_t typedir3d(uint8_t *F, index_t x, index_t rs, index_t ps, index_t 
   y = voisin6(x, DEVANT, rs, ps, N); if ((y!=-1) && (F[y]==0)) a = 1;
   y = voisin6(x, DERRIERE, rs, ps, N); if ((y!=-1) && (F[y]==0)) d = 1;
   sum = n + s + e + o + a + d;
-  if (sum == 0) return 27 - 0;
+  if (sum == 0) return 0;
   else if (sum == 1) 
   {
     if (n)      return 27 - 1;
@@ -137,7 +140,7 @@ static int32_t typedir3d(uint8_t *F, index_t x, index_t rs, index_t ps, index_t 
     else if (a && s) return 27 - 17;
     else /* if (d && n) */ return 27 - 18;
   }
-  else //if (sum == 3) 
+  else //if (sum >= 3) 
   {
     if (n && e && a) return 27 - 19;
     else if (s && o && d) return 27 - 20;
@@ -146,7 +149,8 @@ static int32_t typedir3d(uint8_t *F, index_t x, index_t rs, index_t ps, index_t 
     else if (n && o && a) return 27 - 23;
     else if (s && e && d) return 27 - 24;
     else if (n && o && d) return 27 - 25;
-    else /* if (s && e && a) */ return 27 - 26;
+    else if (s && e && a) return 27 - 26;
+    else return 27; // all other cases : n-s-e, n-s-e-o, etc.
   }
 } /* typedir3d() */
 
@@ -200,7 +204,7 @@ static int32_t typedir3dlab(int32_t *F, index_t x, index_t rs, index_t ps, index
     else if (n && o && d) return 27 - 25;
     else /* if (s && e && a) */ return 27 - 26;
   }
-} /* typedir3d() */
+} /* typedir3dlab() */
 
 /* ==================================== */
 static int32_t testabaisse4bin(uint8_t *F, index_t x, index_t rs, index_t N)
@@ -1081,7 +1085,7 @@ int32_t lskelcurv(struct xvimage *image,
               int32_t connex)
 /* ==================================== */
 /* 
-Squelette curviligne 2D binaire guide par une image de priorites.
+Squelette curviligne 2D binaire guide par une image de priorites, basé sur les isthmes 1D
 Les valeurs les plus basses correspondent a la plus grande priorite.
 
 On definit l'operateur Curvilinear Thinning CT(F,P) : 
@@ -1091,7 +1095,7 @@ repeter jusqu'a stabilite
     et de priorite maximale (valeur de P minimale)
   F = F \ {x}
   pour tout y dans gamma(x)
-    si T(y) > 1 alors C[y] = 1
+    si T(y) > 1 alors C = C u {y}
 fin repeter 
 resultat: F
 */
@@ -1224,10 +1228,10 @@ resultat: F
 #ifdef PRIODIR
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[x]*10+typedir2d(F,x,rs,N),x); break;
         case VFF_TYP_1_BYTE: assert(0); break;
-        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[x]*10+typedir(F,x,rs,N),x); break;
-        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[x]*10+typedir2d(F,x,rs,N),x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[x]*10+typedir2d(F,x,rs,N),x); break;
 	}
 #else
 	switch(datatype(imageprio))
@@ -1240,7 +1244,7 @@ resultat: F
 #endif
         Set(x, EN_RBT);
 #ifdef DEBUG_lskelcurv
-printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
+printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir2d(F, x, rs, N));
 #endif
       }
     }
@@ -1254,10 +1258,10 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
 #ifdef PRIODIR
 	switch(datatype(imageprio))
 	{
-        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[x]*10+typedir2d(F,x,rs,N),x); break;
         case VFF_TYP_1_BYTE: assert(0); break;
-        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[x]*10+typedir(F,x,rs,N),x); break;
-        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[x]*10+typedir(F,x,rs,N),x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[x]*10+typedir2d(F,x,rs,N),x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[x]*10+typedir2d(F,x,rs,N),x); break;
 	}
 #else
 	switch(datatype(imageprio))
@@ -1270,7 +1274,7 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
 #endif
         Set(x, EN_RBT);
 #ifdef DEBUG_lskelcurv
-printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
+printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir2d(F, x, rs, N));
 #endif
       }
     }
@@ -1321,10 +1325,10 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
 #ifdef PRIODIR
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[y]*10+typedir2d(F,y,rs,N),y); break;
 		case VFF_TYP_1_BYTE: assert(0); break;
-		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[y]*10+typedir(F,y,rs,N),y); break;
-		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[y]*10+typedir2d(F,y,rs,N),y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[y]*10+typedir2d(F,y,rs,N),y); break;
 		}
 #else
 		switch(datatype(imageprio))
@@ -1390,10 +1394,10 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir(F, x, rs, N));
 #ifdef PRIODIR
 		switch(datatype(imageprio))
 		{
-		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT,P[y]*10+typedir2d(F,y,rs,N),y); break;
 		case VFF_TYP_1_BYTE: assert(0); break;
-		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[y]*10+typedir(F,y,rs,N),y); break;
-		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[y]*10+typedir(F,y,rs,N),y); break;
+		case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT,PF[y]*10+typedir2d(F,y,rs,N),y); break;
+		case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT,PD[y]*10+typedir2d(F,y,rs,N),y); break;
 		}
 #else
 		switch(datatype(imageprio))
@@ -1442,7 +1446,7 @@ int32_t lskelcurv3d(struct xvimage *image,
               int32_t connex)
 /* ==================================== */
 /* 
-Squelette curviligne 3D binaire guide par une image de priorites.
+Squelette curviligne 3D binaire guide par une image de priorites, basé sur les isthmes 1D
 Les valeurs les plus basses correspondent a la plus grande priorite.
 
 De facon tres schematique,
@@ -1453,7 +1457,7 @@ repeter jusqu'a stabilite
     et de priorite maximale (valeur de P minimale)
   F = F \ {x}
   pour tout y dans gamma(x)
-    si T(y) > 1 alors C[y] = 1
+    si T(y) > 1 alors C = C u {y}
 fin repeter 
 resultat: F
 */
@@ -3482,6 +3486,158 @@ Algo par passes directionnelles.
   mcrbt_RbtTermine(RBT);
   return(1);
 } /* lskelendcurvlab3d() */
+
+// ========================================================
+// ========================================================
+// ALGO DIRECTIONEL SEQUENTIEL
+// ========================================================
+// ========================================================
+
+/* ==================================== */
+int32_t lskeldir3d_1(struct xvimage *image, 
+              struct xvimage *inhibit, 
+              int32_t connex)
+/* ==================================== */
+/* 
+Squelette curviligne 3D binaire - algo directionel séquentiel basé sur les isthmes 1D
+
+De facon tres schématique, on définit l'opérateur Directional Thinning DT(F) : 
+C = {y in F | T(y) > 1}
+répéter jusqu'à stabilité
+  B = {x in F | x is border for F}
+  pour toutes les directions d de 1 à 27
+    choisir un point x de B, simple pour F, tel que C[x] == 0 
+      et de direction d
+    F = F \ {x}
+    pour tout y dans gamma(x)
+      si T(y) > 1 alors C = C u {y}
+    fin pour
+  fin pour
+fin répéter 
+résultat: F
+
+Variante 1 : détection des isthmes au niveau de la sous-itération
+
+Implémentation non optimisée (27 scans de la liste des points de bord)
+*/
+#undef F_NAME
+#define F_NAME "lskelcurv3d"
+{ 
+  int32_t i, k, t, tb, dir, nbiter;
+  index_t x;                       /* index de pixel */
+  index_t y;                       /* index (generalement un voisin de x) */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  index_t n;                       /* taille liste */
+  uint8_t *F = UCHARDATA(image);   /* l'image de depart */
+  Liste * LISTE1, * LISTE2, *LISTMP;
+
+  ONLY_3D(image);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+  if (connex != 26)
+  {
+    fprintf(stderr, "%s: connex %d not implemented\n", F_NAME, connex);
+    return(0);
+  }
+
+  LISTE1 = CreeListeVide(N/2);
+  LISTE2 = CreeListeVide(N/2);
+  if ((LISTE1 == NULL) || (LISTE2 == NULL))
+  {
+    fprintf(stderr, "%s: CreeListeVide failed\n", F_NAME);
+    return(0);
+  }
+  IndicsInit(N);
+  mctopo3d_init_topo3d();
+
+  if (inhibit != NULL)
+  {
+    uint8_t *I;
+    COMPARE_SIZE(image, inhibit);
+    ACCEPTED_TYPES1(inhibit, VFF_TYP_1_BYTE);
+    I = UCHARDATA(inhibit);
+    for (x = 0; x < N; x++) if (I[x]) Set(x,CONTRAINTE);
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  if (connex == 26)
+  {
+    for (x = 0; x < N; x++)
+    {
+      if (F[x] && (nonbord3d(x,rs,ps,N)))
+      {
+	mctopo3d_top26(F, x, rs, ps, N, &t, &tb);
+	if (t > 1) Set(x, CONTRAINTE);
+	if (tb > 0) { Set(x, EN_LISTE); ListePush(LISTE1, x); }
+      }
+    }
+  }
+
+  /* ================================================ */
+  /*                  DEBUT SATURATION                */
+  /* ================================================ */
+
+  nbiter = 0;
+  if (connex == 26)
+  {
+    while (!ListeVide(LISTE1))
+    {
+      nbiter++;
+      n = ListeTaille(LISTE1);
+#ifdef VERBOSE
+      printf("nbiter : %d ; nb border points : %d\n", nbiter, n);
+#endif
+      for (dir = 1; dir <= 27; dir++)
+      {
+	for (i = 0; i < n; i++)
+	{
+	  x = ListeElt(LISTE1, i);
+	  if (typedir3d(F, x, rs, ps, N) == dir)
+	  {
+	    UnSet(x, EN_LISTE);
+	    if ((!IsSet(x, CONTRAINTE)) && testabaisse26bin(F, x, rs, ps, N))
+	    { // le point x a été abaissé
+	      for (k = 0; k < 26; k += 1)
+	      {
+		y = voisin26(x, k, rs, ps, N);
+		if ((y != -1) && (F[y]))
+		{
+		  if ((!IsSet(y, CONTRAINTE)) && (nonbord3d(y,rs,ps,N)))
+		  {
+		    mctopo3d_top26(F, y, rs, ps, N, &t, &tb);
+		    if (t > 1) Set(y, CONTRAINTE);
+		  } // if ((!IsSet(y, CONTRAINTE)) && (nonbord3d(y,rs,ps,N)))
+		  if ((!IsSet(y, CONTRAINTE)) && (!IsSet(y, EN_LISTE)))
+		  {
+		    Set(y, EN_LISTE);
+		    ListePush(LISTE2, y);
+		  } // if ((!IsSet(y, CONTRAINTE)) && (!IsSet(y, EN_LISTE)))
+		} // if ((y != -1) && (F[y]))
+	      } // for (k = 0; k < 26; k += 1)
+	    } // if ((!IsSet(x, CONTRAINTE)) && testabaisse26bin(F,x,rs,ps,N))
+	  } // if (typedir3d(F, x, rs, ps, N) == dir)
+	} // for (i = 0; i < n; i++)
+      } // for (dir = 1; dir <= 26; dir++)
+      ListeFlush(LISTE1); LISTMP = LISTE2; LISTE2 = LISTE1; LISTE1 = LISTMP;
+    } // while (!ListeVide(LISTE1))
+  } // if (connex == 26)
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  ListeTermine(LISTE1);
+  ListeTermine(LISTE2);
+  IndicsTermine();
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lskeldir3d() */
 
 // ========================================================
 // ========================================================

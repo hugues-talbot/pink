@@ -4402,7 +4402,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_SIMPLE(S[i]))
       { 
 	extract_vois(S, i, rs, N, v);
-	if (asym_match1(v))
+	if (cruc_asym_match1(v))
 	  insert_vois(v, S, i, rs, N);
       }
     // MARQUE LES POINTS 0-D-CRUCIAUX
@@ -4410,7 +4410,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_SIMPLE(S[i]))
       { 
 	extract_vois(S, i, rs, N, v);
-	if (asym_match0(v))
+	if (cruc_asym_match0(v))
 	  insert_vois(v, S, i, rs, N);
       }
 

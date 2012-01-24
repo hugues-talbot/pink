@@ -32,81 +32,73 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file byte2long.c
+/*! \file skel_ACK3c.c
 
-\brief converts a "byte" image to a "int32_t" image
+\brief topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning
 
-<B>Usage:</B> byte2long in [out]
+<B>Usage:</B> skel_ACK3c in.pgm out.pgm
 
-<B>Description:</B> 
+<B>Description:</B> Topological persistence of 1D isthmuses, based on 
+parallel 3D asymetric thinning.
 
-For each pixel x, out[x] = (int32_t)in[x].
+When a point x is detected as a 1D isthmus, a counter p(x) is
+associated to this point and initialized with value 1. This counter is
+incremented a each iteration as long as x is still an isthmus. When this point x is
+eventually deleted, the value of the counter is freezed.
 
-If the last argument \b out is omitted, then out = in.
+\warning The object must not have any point on the frame of the image.
 
-<B>Types supported:</B> byte 2d, byte 3d.
+<B>Types supported:</B> byte 3d
 
-<B>Category:</B> convert
-\ingroup convert
+<B>Category:</B> topobin
+\ingroup  topobin
 
 \author Michel Couprie
 */
-
-/* Michel Couprie - mai 1998 */
-
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <mcimage.h>
 #include <mccodimage.h>
+#include <mcimage.h>
+#include <lskelpar3d.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * imagelong;
-  struct xvimage * imagebyte;
-  int32_t *L;
-  uint8_t *B;
-  index_t x, rs, cs, ds, N;
+  struct xvimage * image;
+  struct xvimage * persistence;
 
-  if ((argc != 2) && (argc != 3))
+  if (argc != 3)
   {
-    fprintf(stderr, "usage: %s in1.pgm [out.pgm] \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm out.pgm\n", argv[0]);
     exit(1);
   }
 
-  imagebyte = readimage(argv[1]); 
-  if (imagebyte == NULL)
+  image = readimage(argv[1]);
+  if (image == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
 
-  rs = rowsize(imagebyte);
-  cs = colsize(imagebyte);
-  ds = depth(imagebyte);
-  N = rs * cs * ds;
-  B = UCHARDATA(imagebyte);
-  
-  imagelong = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-  if (imagelong == NULL)
+  persistence = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_FLOAT);
+  if (persistence == NULL)
   {
     fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
-  L = SLONGDATA(imagelong);
-  imagelong->xdim = imagebyte->xdim;
-  imagelong->ydim = imagebyte->ydim;
-  imagelong->zdim = imagebyte->zdim;
 
-  for (x = 0; x < N; x++) L[x] = (int32_t)B[x];
+  if (! lskelACK3c(image, persistence))
+  {
+    fprintf(stderr, "%s: lskelACK3c failed\n", argv[0]);
+    exit(1);
+  } 
 
-  writeimage(imagelong, argv[argc-1]);
-  freeimage(imagelong);
-  freeimage(imagebyte);
+  writeimage(persistence, argv[argc-1]);
+  freeimage(image);
+  freeimage(persistence);
 
   return 0;
 } /* main */
-

@@ -54,6 +54,7 @@ the possible choices are:
 \li 6: 6-distance in 3d
 \li 18: 18-distance in 3d
 \li 26: 26-distance in 3d
+\li 5: breadth-first and directional strategy
 
 The parameter \b connex indicates the connectivity of the binary object.
 Possible choices are 4, 8 in 2d and 6, 26 in 3d.
@@ -127,7 +128,7 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * prio;
+  struct xvimage * prio = NULL;
   struct xvimage * inhibit = NULL;
   int32_t connex;
   int32_t ret, priovalue;
@@ -155,7 +156,7 @@ int main(int argc, char **argv)
       exit(1);
     }
   }
-  else
+  else if (priovalue != 5)
   {
     int32_t i, N;
     uint8_t *F;
@@ -261,16 +262,28 @@ int main(int argc, char **argv)
   }
   else
   {
-    if (! lskelcurv3d(image, prio, inhibit, connex))
+    if (priovalue == 5)
     {
-      fprintf(stderr, "%s: lskelcurv3d failed\n", argv[0]);
-      exit(1);
+      if (! lskeldir3d_1(image, inhibit, connex))
+      {
+	fprintf(stderr, "%s: lskeldir3d_1 failed\n", argv[0]);
+	exit(1);
+      }
+    }
+    else
+    {
+      if (! lskelcurv3d(image, prio, inhibit, connex))
+      {
+	fprintf(stderr, "%s: lskelcurv3d failed\n", argv[0]);
+	exit(1);
+      }
     }
   }
 
   writeimage(image, argv[argc-1]);
   freeimage(image);
-  freeimage(prio);
+  if (prio) freeimage(prio);
+  if (inhibit) freeimage(inhibit);
 
   return 0;
 } /* main */
