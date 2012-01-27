@@ -264,9 +264,9 @@ int main(int argc, char **argv)
   {
     if (priovalue == 5)
     {
-      if (! lskeldir3d_1(image, inhibit, connex))
+      if (! lskeldir3d_1(image, inhibit, connex, -1))
       {
-	fprintf(stderr, "%s: lskeldir3d_1 failed\n", argv[0]);
+	fprintf(stderr, "%s: lskeldir3d failed\n", argv[0]);
 	exit(1);
       }
     }

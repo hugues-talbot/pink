@@ -136,10 +136,17 @@ extern int32_t lskelendcurvlab3d(
 	int32_t connex, 
 	int32_t niseuil
 );
+extern int32_t lskeldir3d(
+        struct xvimage *image, 
+	struct xvimage *inhibit, 
+	int32_t connex, 
+	int32_t nsteps
+);
 extern int32_t lskeldir3d_1(
         struct xvimage *image, 
 	struct xvimage *inhibit, 
-	int32_t connex
+	int32_t connex, 
+	int32_t nsteps
 );
 extern int32_t lskelPSG(
 	struct xvimage *image, 

@@ -3157,6 +3157,154 @@ writeimage(t,"_T");
   return(1);
 } /* lskelACK3() */
 
+/* ==================================== */
+int32_t lskelASK3b(struct xvimage *image, 
+	     int32_t n_steps,
+	     int32_t isthmus_persistence,
+	     struct xvimage *inhibit)
+/* ==================================== */
+/*
+Squelette asymétrique surfacique
+Algo ASK3a données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
+Pour tout x de S faire T[x] := -1
+Pour i := 0; i < n; i++
+  C := points de surface de S
+  Pour tout x de C tq T[x] == -1 faire T[x] := i
+  I := I \cup {x | T[x] > -1 et (i - T[x]) >= p}
+  P := voxels simples pour S et pas dans I
+  C2 := voxels 2-D-cruciaux (asym_match2)
+  C1 := voxels 1-D-cruciaux (asym_match1)
+  C0 := voxels 0-D-cruciaux (asym_match0)
+  P := P  \  [C2 \cup C1 \cup C0]
+  S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+*/
+#undef F_NAME
+#define F_NAME "lskelASK3b"
+{ 
+  index_t i; // index de pixel
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);   /* l'image de depart */
+  int16_t *T;
+  uint8_t *I;
+  int32_t step, nonstab;
+  int32_t top, topb;
+  uint8_t v[27];
+
+#ifdef VERBOSE
+  printf("%s: n_steps = %d ; isthmus_persistence = %d\n", F_NAME, n_steps, isthmus_persistence);
+#endif
+
+  assert(n_steps <= INT16_MAX);
+  if (n_steps == -1) n_steps = INT16_MAX;
+
+  if (inhibit == NULL) 
+  {
+    inhibit = copyimage(image); 
+    razimage(inhibit);
+    I = UCHARDATA(inhibit);
+  }
+  else
+  {
+    I = UCHARDATA(inhibit);
+    for (i = 0; i < N; i++) if (I[i]) I[i] = I_INHIBIT;
+  }
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+
+  T = (int16_t *)malloc(N * sizeof(int16_t)); assert(T != NULL);
+  for (i = 0; i < N; i++) T[i] = -1;
+
+  mctopo3d_init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    // MARQUE LES POINTS DE SURFACE (3)
+    for (i = 0; i < N; i++)
+    {
+      if (IS_OBJECT(S[i]))
+      {    
+	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+	if ((topb > 1) && (T[i] == -1))
+	  T[i] = (int16_t)step;
+      }
+    }
+
+    // MARQUE LES POINTS SIMPLES NON DANS I
+    for (i = 0; i < N; i++) 
+      if (IS_OBJECT(S[i]) && !IS_INHIBIT(I[i]) && mctopo3d_simple26(S, i, rs, ps, N))
+	SET_SIMPLE(S[i]);
+    // MEMORISE DANS I LES ISTHMES PERSISTANTS
+    for (i = 0; i < N; i++)
+    { 
+      if ((T[i] >= 0) && ((step - T[i]) >= isthmus_persistence)) 
+      { 
+	UNSET_SIMPLE(S[i]); 
+	SET_INHIBIT(I[i]); 
+      }
+    }
+    // MARQUE LES POINTS 2-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match2(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    // MARQUE LES POINTS 1-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match1(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    // MARQUE LES POINTS 0-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (asym_match0(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+
+    for (i = 0; i < N; i++)
+      if (S[i] && IS_SIMPLE(S[i]) && !IS_SELECTED(S[i])) 
+      {
+	S[i] = 0; 
+	nonstab = 1; 
+      }
+    for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+  } // while (nonstab && (step < n_steps))
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = NDG_MAX;
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  free(T);
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lskelASK3b() */
+
 // ===================================================================
 // ===================================================================
 // SQUELETTES SURFACIQUES
