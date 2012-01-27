@@ -65,7 +65,7 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define DEBUG
 //#define DEBUG1
 //#define DEBUGMARKCRITIC
-#define VERBOSE
+//#define VERBOSE
 //#define PARANO
 
 // table des configurations de faces essentielles pour les intervalles de Khalimsky

@@ -110,6 +110,9 @@ extern int32_t lskelbertrand_asym_s(struct xvimage *image,
 extern int32_t lskelMK2(struct xvimage *image,
 		    int32_t nsteps,
 		    struct xvimage *inhibit);
+extern int32_t lskelMK2b(struct xvimage *image,
+		    int32_t nsteps,
+		    struct xvimage *inhibit);
 extern int32_t lskelAK2(struct xvimage *image,
 			int32_t nsteps,
 			struct xvimage *inhibit);

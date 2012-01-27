@@ -4454,6 +4454,53 @@ int32_t bertrand_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 } /* bertrand_match3() */
 
 /* ==================================== */
+int32_t bertrand_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+/* ==================================== */
+// A 2 B   avec origine = (1,0) et (au moins un des A et au moins un des B non nuls ou tous les A,B nuls)
+// A 2 B   (+ rotation 90)
+{
+  int32_t i;
+  uint8_t v[8];
+  extract_vois(F, x, rs, N, v);
+  for (i = 0; i < 4; i++)
+  {
+    if (v[0] != 2) goto fail;
+    if ((v[1] == 0) && (v[2] == 0) && (v[6] == 0) && (v[7] == 0)) return 1;
+    if ((v[1] == 0) && (v[2] == 0)) goto fail;
+    if ((v[6] == 0) && (v[7] == 0)) goto fail;
+    return 1;
+  fail:
+    rotate90_vois(v);
+  }
+  return 0;
+} /* bertrand_match3b() */
+
+/* ==================================== */
+int32_t bertrand_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+/* ==================================== */
+// 2 A   
+// B C   (+ rotation 90)
+// avec origine = (0,0) et 
+//      C = 2 ou A = B = 2 et
+//      pour tout x dans {A,B,C} si x > 0 alors x = 2
+{
+  int32_t i;
+  uint8_t v[8];
+  extract_vois(F, x, rs, N, v);
+  for (i = 0; i < 4; i++)
+  {
+    if ((v[7] != 2) && ((v[0] != 2) || (v[6] != 2))) goto fail;
+    if ((v[0] > 0) && (v[0] != 2)) goto fail;
+    if ((v[6] > 0) && (v[6] != 2)) goto fail;
+    if ((v[7] > 0) && (v[7] != 2)) goto fail;
+    return 1;
+  fail:
+    rotate90_vois(v);
+  }
+  return 0;
+} /* bertrand_match4() */
+
+/* ==================================== */
 int32_t lskelbertrand_sym(struct xvimage *image,
 	      int32_t nsteps,
 	      struct xvimage *inhibit)
@@ -4755,6 +4802,109 @@ Répéter jusqu'à stabilité
   freeimage(r);
   return(1);
 } /* lskelMK2() */
+
+/* ==================================== */
+int32_t lskelMK2b(struct xvimage *image,
+	     int32_t nsteps,
+	     struct xvimage *inhibit)
+/* ==================================== */
+/*
+Algo MK2b données: S, I
+Répéter jusqu'à stabilité
+  P := pixels simples pour S et pas dans I
+  R := pixels de P qui vérifient bertrand_match3b
+  P := P \ R
+  R := pixels de P qui vérifient bertrand_match4  
+  S = S \ [P \ R]
+(l'ensemble P est représenté par la valeur 2 dans l'image S)
+*/
+#undef F_NAME
+#define F_NAME "lskelMK2b"
+{
+  int32_t i;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t N = rs * cs;             /* taille image */
+  uint8_t *S = UCHARDATA(image);   /* l'image de depart */
+  uint8_t *I;                      /* l'image d'inhibition */
+  struct xvimage *r = copyimage(image);
+  uint8_t *R = UCHARDATA(r);
+  int32_t step, nonstab;
+  int32_t m1;
+
+  if (inhibit != NULL)
+  {
+    if ((rowsize(inhibit) != rs) || (colsize(inhibit) != cs))
+    {
+      fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+      return 0;
+    }
+    if (datatype(inhibit) != VFF_TYP_1_BYTE)
+    {
+      fprintf(stderr, "%s: incompatible image types\n", F_NAME);
+      return 0;
+    }
+    I = UCHARDATA(inhibit);
+  }
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 1; // normalize values
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < nsteps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    for (i = 0; i < N; i++)
+      if ((S[i] == 1) && simple8(S, i, rs, N) && 
+	  ((inhibit == NULL) || (I[i] == 0)))
+	S[i] = 2; //  pixels simples pour S et pas de contrainte
+
+    memset(R, 0, N);
+    for (i = 0; i < N; i++)
+      if (S[i] == 2)
+      {
+	m1 = bertrand_match3b(S, i, rs, N);
+	if (m1) R[i] = 1; // preserve point
+      }
+    for (i = 0; i < N; i++) if (R[i]) S[i] = 1;
+
+
+    memset(R, 0, N);
+    for (i = 0; i < N; i++)
+      if (S[i] == 2)
+      {
+	m1 = bertrand_match4(S, i, rs, N);
+	if (m1) R[i] = 1; // preserve point
+      }
+
+    for (i = 0; i < N; i++) 
+      if ((S[i] == 2) && (R[i] == 0))
+      {
+	S[i] = 0;
+	nonstab = 1;
+      }
+  }
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  freeimage(r);
+  return(1);
+} /* lskelMK2b() */
 
 /* ==================================== */
 int32_t lskelAK2(struct xvimage *image,

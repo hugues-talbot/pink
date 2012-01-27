@@ -77,6 +77,7 @@ The possible choices are:
 \li 27: Nemeth et Palagyi, 2009 (2)
 \li 28: Nemeth et Palagyi, 2009 (3)
 \li 29: Couprie and Bertrand, ultimate, asymmetrical (NK2)
+\li 30: Couprie and Bertrand, ultimate, symmetrical (MK2b)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -380,6 +381,12 @@ int main(int argc, char **argv)
       if (! lskelNK2b(image, nsteps, inhibit))
       {
 	fprintf(stderr, "%s: lskelNK2b failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 30:
+      if (! lskelMK2b(image, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelMK2b failed\n", argv[0]);
 	exit(1);
       } break;
     default:

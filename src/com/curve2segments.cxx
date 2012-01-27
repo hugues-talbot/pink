@@ -44,6 +44,10 @@ Computes a covering of a digital curve by digital straight line segments.
 The input file contains a curve which is specified by the ordered list of its points.
 The output file is an ordered list of points, which are the extremities of the segments.
 
+Parameter \b tolerance gives the thickness of the digital straight line segments. Default value is 1.
+
+\warning Curves must be 8-curves in 2D of 26-curves in 3D. Greedy algorithm.
+
 <B>Types supported:</B> curve 2D, curve 3D
 
 <B>Category:</B> geo

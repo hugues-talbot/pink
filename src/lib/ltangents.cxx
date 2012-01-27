@@ -59,6 +59,8 @@ Paulin Sanselme, 2011
 
 //#define DEBUG
 //#define DEBUG_ExtractDSSs3D
+#define DEBUG_CoverByDSSs3D
+
 #define EPSILON 1E-20
 #define PRECISION 1000
 
@@ -711,7 +713,7 @@ Reference:
   int32_t n;
 
 #ifdef DEBUG_CoverByDSSs3D
-  printf("%s: begin\n", F_NAME);
+  printf("%s: begin thickness = %g\n", F_NAME, thickness);
 #endif
 	
   pointsxy = new point[npoints]; assert(pointsxy != NULL);
@@ -816,7 +818,7 @@ Reference:
     case XY: 
       indmax = min(yzindmax,xzindmax);
 #ifdef DEBUG_CoverByDSSs3D
-      printf("%s: case XY indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
+      printf("%s: case XY indmax=%d pos+indmax-1=%d\n", F_NAME, indmax, pos+indmax-1);
 #endif
       MOyz[yztypemax]->Init(); curEp = 0;
       Fori(indmax)
@@ -829,7 +831,7 @@ Reference:
     case YZ:
       indmax = min(xyindmax,xzindmax);
 #ifdef DEBUG_CoverByDSSs3D
-      printf("%s: case YZ indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
+      printf("%s: case YZ indmax=%d pos+indmax-1=%d\n", F_NAME, indmax, pos+indmax-1);
 #endif
       MOxy[xytypemax]->Init(); curEp = 0;
       Fori(indmax)
@@ -842,7 +844,7 @@ Reference:
     case XZ:
       indmax = min(xyindmax,yzindmax);
 #ifdef DEBUG_CoverByDSSs3D
-      printf("%s: case XZ indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
+      printf("%s: case XZ indmax=%d pos+indmax-1=%d\n", F_NAME, indmax, pos+indmax-1);
 #endif
       MOyz[yztypemax]->Init(); curEp = 0;
       Fori(indmax)
@@ -853,9 +855,6 @@ Reference:
       break;
     default: assert(1);
     } // switch (elim)
-#ifdef DEBUG_CoverByDSSs3D
-    printf("%s: xt=%d yt=%d zt=%d\n", F_NAME, xt, yt, zt);
-#endif
 
     pos = pos+indmax-1;
     X[n] = X[pos];
