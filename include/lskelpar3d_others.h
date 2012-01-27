@@ -89,10 +89,10 @@ knowledge of the CeCILL license and that you accept its terms.
 extern "C" {
 #endif
 //extern int32_t lpalagyi(struct xvimage *image, int32_t nsteps);
-extern int palagyi_skelpar_curv_98(struct xvimage *input);
-extern int palagyi_skelpar_curv_06(struct xvimage *input);
-extern int palagyi_skelpar_surf_02(struct xvimage *input);
-extern int palagyi_skelpar_surf_08(struct xvimage *input);
+extern int32_t palagyi_skelpar_curv_98(struct xvimage *input);
+extern int32_t palagyi_skelpar_curv_06(struct xvimage *input);
+extern int32_t palagyi_skelpar_surf_02(struct xvimage *input);
+extern int32_t palagyi_skelpar_surf_08(struct xvimage *input);
 extern int32_t llohoubertrandsymcurv2007(
 				  struct xvimage *image,
 				  struct xvimage *inhibit,
@@ -105,8 +105,17 @@ extern int32_t ltsaofu6dircurv1982(
 				  struct xvimage *inhibit,
 				  int32_t n_steps);
 extern int32_t lmasonka1996(
-		     struct xvimage *image,
-		     int32_t nsteps);
+			          struct xvimage *image,
+			          int32_t nsteps);
+extern int32_t lmawan2000(
+			          struct xvimage *image,
+				  int32_t n_steps);
+extern int32_t llohoubertrand12dir2004(
+				  struct xvimage *image,
+				  int32_t nsteps);
+extern int32_t llohoubertrand6dir2005(
+				  struct xvimage *image,
+				  int32_t nsteps);
 #ifdef __cplusplus
 }
 #endif

@@ -181,7 +181,7 @@ int32_t bord(index_t i, index_t rs, index_t nb)
 
 */
 
-/* Cette fonction indique a quel bord appartient le point */
+/* Cette fonction indique si le point appartient à un bord */
 /* ==================================== */
 int32_t bord3d(index_t i, index_t rs, index_t ps, index_t nb)
 /* ==================================== */

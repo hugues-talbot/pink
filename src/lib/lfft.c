@@ -702,17 +702,17 @@ int32_t lfft2(struct xvimage *image1, struct xvimage *image2, int32_t dir)
     return(0);
   }
 
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs))
-  {
-    fprintf(stderr,"%s: images must have the same size\n", F_NAME);
-    return(0);
-  }
-
   cs = colsize(image1);            /* Number of rows */
   rs = rowsize(image1);            /* Number of columns */
   N = rs * cs;
   I1 = FLOATDATA(image1);
   I2 = FLOATDATA(image2);
+
+  if ((rowsize(image2) != rs) || (colsize(image2) != cs))
+  {
+    fprintf(stderr,"%s: images must have the same size\n", F_NAME);
+    return(0);
+  }
 
   /* Make sure size is legal for an FFT (otherwise pad it) */
   if((!power_of_2(rs)) || (!power_of_2(cs)))

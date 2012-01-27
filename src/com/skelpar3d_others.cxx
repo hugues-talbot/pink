@@ -57,6 +57,9 @@ The possible choices are:
 \li 7: Ma-Wan-Chang (curvilinear, 2 subfields, 2002)
 \li 8: Tsao-Fu (curvilinear, 6-subiterations directional, 1982)
 \li 9: Ma-Sonka (curvilinear, fully parallel, does not preserve topology 1996)
+\li 10: Ma-Wan (curvilinear (18/6) 6 subiterations, CVIU 2000)
+\li 11: Lohou-Bertrand (curvilinear 6 subiterations, DAM 2005)
+\li 12: Lohou-Bertrand (curvilinear 12 subiterations, DAM 2004)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -66,7 +69,7 @@ then the points of this image will be left unchanged.
 <B>Category:</B> topobin
 \ingroup  topobin
 
-\author Michel Couprie, Benjamin Raynal
+\author Michel Couprie, Benjamin Raynal, John Chaussard
 */
 
 // I'm confused, this should be a C++ file...
@@ -106,6 +109,9 @@ int main(int32_t argc, char **argv)
     fprintf(stderr, "   7: Ma-Wan-Chang (curvilinear, 2 subfields, 2002)\n");
     fprintf(stderr, "   8: Tsao-Fu (curvilinear, 6-subiterations directional, 1982)\n");
     fprintf(stderr, "   9: Ma-Sonka (curvilinear, fully parallel, does not preserve topology 1996)\n");
+    fprintf(stderr, "   10: Ma-Wan (curvilinear (18/6) 6 subiterations, CVIU 2000)\n");
+    fprintf(stderr, "   11: Lohou-Bertrand (curvilinear 6 subiterations, DAM 2005)\n");
+    fprintf(stderr, "   12: Lohou-Bertrand (curvilinear 12 subiterations, DAM 2004)\n");
     exit(1);
   }
 
@@ -206,6 +212,33 @@ int main(int32_t argc, char **argv)
       if (!lmasonka1996(image, nsteps))
       {
 	fprintf(stderr, "%s: lmasonka1996 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 10:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lmawan2000(image, nsteps))
+      {
+	fprintf(stderr, "%s: lmawan2000 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 11:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!llohoubertrand6dir2005(image, nsteps))
+      {
+	fprintf(stderr, "%s: llohoubertrand6dir2005 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 12:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!llohoubertrand12dir2004(image, nsteps))
+      {
+	fprintf(stderr, "%s: llohoubertrand12dir2004 failed\n", argv[0]);
 	exit(1);
       } 
       break;

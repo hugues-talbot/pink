@@ -40,6 +40,9 @@ knowledge of the CeCILL license and that you accept its terms.
    Algo. de Ma, Wan & Chang (curviligne 2 subfields, PRL 2002)
    Algo. de Tsao & Fu (curviligne 6 subiterations, IEEE PRIP 1982)
    Algo. de Ma & Sonka (curviligne fully parallel, CVIU 1996)
+   Algo. de Ma & Wan (curviligne (18/6) 6 subiterations, CVIU 2000)
+   Algo. de Lohou et Bertrand (curviligne 12 subiterations, DAM 2004)
+   Algo. de Lohou et Bertrand (curviligne 6 subiterations, DAM 2005)
 */
 
 #include <string.h>
@@ -67,6 +70,8 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #define VERBOSE
 #define DEBUG
+
+#define PATCH_MC
 
 /* ==================================== */
 static void extract_vois(
@@ -202,7 +207,7 @@ static index_t return_vois(
 
 #ifdef DEBUG
 /* ==================================== */
-static index_t print_vois(uint8_t *v)
+static void print_vois(uint8_t *v)
 /* ==================================== */
 {
   printf("%d %d %d\n", v[12], v[11], v[10]);
@@ -355,6 +360,7 @@ static void swap_U_L(uint8_t *v)
   t = v[16]; v[16] = v[25]; v[25] = t;
 } // swap_U_L()
 
+#ifdef COMPILE_NOTUSED
 /* ==================================== */
 static void extract_vois125(
   uint8_t *img,                    /* pointeur base image */
@@ -430,6 +436,7 @@ static void extract_vois125(
       }
 
 } /* extract_vois125() */
+#endif
 
 /* ==================================== */
 static void extract_vois27(
@@ -460,7 +467,7 @@ static void extract_vois27(
 /* ==================================== */
 {
 #undef F_NAME
-#define F_NAME "extract_vois25"
+#define F_NAME "extract_vois27"
   uint32_t xx, yy, zz, i, j, k;
   if ((p%rs>=rs-1) || (p%ps<rs) || (p%rs<=0) || (p%ps>=ps-rs) ||
       (p < ps) || (p >= N-ps)) /* point de bord */
@@ -548,19 +555,68 @@ static index_t return_vois27(
 
 #ifdef DEBUG
 /* ==================================== */
-static index_t print_vois27(uint8_t *v)
+static void print_vois27(uint8_t *v)
 /* ==================================== */
 {
-  printf("%d %d %d\n", v[0], v[1], v[2]);
-  printf("%d %d %d\n", v[3], v[4], v[5]);
-  printf("%d %d %d\n\n", v[6], v[7], v[8]);
-  printf("%d %d %d\n", v[9], v[10], v[11]);
-  printf("%d %d %d\n", v[12], v[13], v[14]);
-  printf("%d %d %d\n\n", v[15], v[16], v[17]);
-  printf("%d %d %d\n", v[18], v[19], v[20]);
-  printf("%d %d %d\n", v[21], v[22], v[23]);
-  printf("%d %d %d\n\n", v[24], v[25], v[26]);
+  int32_t i, j, k;
+  for (k = 0; k < 3; k++)
+  {
+    for (j = 0; j < 3; j++)
+    {
+      for (i = 0; i < 3; i++) printf("%d ", v[(k * 9) + (j * 3) + i]);
+      printf("\n");
+    }
+    printf("\n");
+  }
 } // print_vois27()
+
+/* ==================================== */
+static void print_vois125(uint8_t *v)
+/* ==================================== */
+{
+  int32_t i, j, k;
+  for (k = 0; k < 5; k++)
+  {
+    for (j = 0; j < 5; j++)
+    {
+      for (i = 0; i < 5; i++) printf("%d ", v[(k * 25) + (j * 5) + i]);
+      printf("\n");
+    }
+    printf("\n");
+  }
+} // print_vois125()
+
+/* ==================================== */
+static void printf_vois125(
+  uint8_t *img,                    /* pointeur base image */
+  int32_t p,                       /* index du point */
+  int32_t rs,                      /* taille rangee */
+  int32_t ps,                      /* taille plan */
+  int32_t N)                       /* taille image */
+/* ==================================== */
+{
+  uint32_t xx, yy, zz, i, j, k;
+  if ((p%rs>=rs-2) || (p%ps<rs-1) || (p%rs<=1) || (p%ps>=ps-rs-rs) ||
+      (p < ps-1) || (p >= N-ps-ps)) /* point de bord */
+  {
+    printf("%s: ERREUR: point de bord\n", F_NAME);
+    exit(0);
+  }
+
+  zz = p / ps;
+  yy = (p % ps) / rs;
+  xx = p % rs;
+  for (k = 0; k < 5; k++)
+  {
+    for (j = 0; j < 5; j++)
+    {
+      for (i = 0; i < 5; i++)
+	printf("%d ", img[((zz-2+k) * ps) + ((yy-2+j) * rs) + xx-2+i]);
+      printf("\n");
+    }
+    printf("\n");
+  }
+} /* printf_vois125() */
 #endif
 
 /* ==================================== */
@@ -571,15 +627,12 @@ static void isometrieXZ_vois27(uint8_t *vois)
 /* ==================================== */
 {
   uint8_t v[27];
-  int32_t i;
-  v[14] = vois[22];  v[11] = vois[19];  v[10] = vois[10];  v[ 9] = vois[ 1];
-  v[12] = vois[ 4];  v[15] = vois[ 7];  v[16] = vois[16];  v[17] = vois[25];
-  v[ 4] = vois[12];  v[ 5] = vois[21];  v[ 2] = vois[18];  v[ 1] = vois[ 9];
-  v[ 0] = vois[ 0];  v[ 3] = vois[ 3];  v[ 6] = vois[ 6];  v[ 7] = vois[15];
-  v[ 8] = vois[24];  v[22] = vois[14];  v[23] = vois[23];  v[20] = vois[20];
-  v[19] = vois[11];  v[18] = vois[ 2];  v[21] = vois[ 5];  v[24] = vois[ 8];
-  v[25] = vois[17];  v[26] = vois[26];
-  for (i = 0; i < 26; i++) vois[i] = v[i];
+  int32_t i, j, k;
+  for (k = 0; k < 3; k++)
+    for (j = 0; j < 3; j++)
+      for (i = 0; i < 3; i++)
+	v[k*9 + j*3 + i] = vois[i*9 + j*3 + k];
+  for (i = 0; i < 27; i++) vois[i] = v[i];
 } /* isometrieXZ_vois27() */
 
 /* ==================================== */
@@ -590,15 +643,12 @@ static void isometrieYZ_vois27(uint8_t *vois)
 /* ==================================== */
 {
   uint8_t v[27];
-  int32_t i;
-  v[14] = vois[14];  v[11] = vois[23];  v[10] = vois[22];  v[ 9] = vois[21];
-  v[12] = vois[12];  v[15] = vois[ 3];  v[16] = vois[ 4];  v[17] = vois[ 5];
-  v[ 4] = vois[16];  v[ 5] = vois[17];  v[ 2] = vois[26];  v[ 1] = vois[25];
-  v[ 0] = vois[24];  v[ 3] = vois[15];  v[ 6] = vois[ 6];  v[ 7] = vois[ 7];
-  v[ 8] = vois[ 8];  v[22] = vois[10];  v[23] = vois[11];  v[20] = vois[20];
-  v[19] = vois[19];  v[18] = vois[18];  v[21] = vois[ 9];  v[24] = vois[ 0];
-  v[25] = vois[ 1];  v[26] = vois[ 2];
-  for (i = 0; i < 26; i++) vois[i] = v[i];
+  int32_t i, j, k;
+  for (k = 0; k < 3; k++)
+    for (j = 0; j < 3; j++)
+      for (i = 0; i < 3; i++)
+	v[k*9 + j*3 + i] = vois[j*9 + k*3 + i];
+  for (i = 0; i < 27; i++) vois[i] = v[i];
 } /* isometrieYZ_vois27() */
 
 static void rotate_90_Z_27(uint8_t *v)
@@ -650,10 +700,10 @@ int32_t ma_sonka_match_A(uint8_t *v)
       !v[0] && !v[1] && !v[2] && !v[3] && !v[4] && !v[5] &&
       !v[6] && !v[7] && !v[8])
   {
-    printf("ma_sonka_match_A : MATCH\n"); // DEBUG
+    //printf("ma_sonka_match_A : MATCH\n"); // DEBUG
     return 1;
   }
-  printf("ma_sonka_match_A : no match\n"); // DEBUG
+  //printf("ma_sonka_match_A : no match\n"); // DEBUG
   return 0;
 } // ma_sonka_match_A()
 
@@ -751,7 +801,7 @@ int32_t ma_sonka_dir_ABC(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t 
   index_t s, w, d;
   int32_t x, y, z;
 
-  printf("DEBUG: ma_sonka_dir_ABC begins - p = %d\n", p);
+  //printf("DEBUG: ma_sonka_dir_ABC begins - p = %d\n", p);
   x = p % rs; y = (p % ps) / rs; z = p / ps;
 
   s = return_vois27(13, MS_S, 3, 9);
@@ -762,12 +812,12 @@ int32_t ma_sonka_dir_ABC(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t 
     dxs = -1 + (s % 3); dys = -1 + ((s % 9) / 3); dzs = -1 + (s / 9); 
     // calcule ss
     ss = (z+dzs+dzs)*ps + (y+dys+dys)*rs + (x+dxs+dxs);
-    printf("ma_sonka_match_ABC : s=%d objet, dxs=%d, dys=%d, dzs=%d\n", s, dxs, dys, dzs); // DEBUG
-    print_vois27(v);  // DEBUG
-    printf("ma_sonka_match_ABC : ss=%d (%d,%d,%d)\n", ss, ss%rs, (ss%ps)/rs, ss/ps); // DEBUG
+    //printf("ma_sonka_dir_ABC : s=%d objet, dxs=%d, dys=%d, dzs=%d\n", s, dxs, dys, dzs); // DEBUG
+    //print_vois27(v);  // DEBUG
+    //printf("ma_sonka_dir_ABC : ss=%d (%d,%d,%d)\n", ss, ss%rs, (ss%ps)/rs, ss/ps); // DEBUG
     if (!S[ss]) 
     {
-      printf("ma_sonka_match_ABC : no match\n"); // DEBUG
+      //printf("ma_sonka_dir_ABC : no match\n"); // DEBUG
       return 0;
     }
   }
@@ -780,12 +830,12 @@ int32_t ma_sonka_dir_ABC(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t 
     dxw = -1 + (w % 3); dyw = -1 + ((w % 9) / 3); dzw = -1 + (w / 9); 
     // calcule ww
     ww = (z+dzw+dzw)*ps + (y+dyw+dyw)*rs + (x+dxw+dxw);
-    printf("ma_sonka_match_ABC : w=%d objet, dxw=%d, dyw=%d, dzw=%d\n", w, dxw, dyw, dzw); // DEBUG
-    print_vois27(v);  // DEBUG
-    printf("ma_sonka_match_ABC : ww=%d (%d,%d,%d)\n", ww, ww%rs, (ww%ps)/rs, ww/ps); // DEBUG
+    //printf("ma_sonka_dir_ABC : w=%d objet, dxw=%d, dyw=%d, dzw=%d\n", w, dxw, dyw, dzw); // DEBUG
+    //print_vois27(v);  // DEBUG
+    //printf("ma_sonka_dir_ABC : ww=%d (%d,%d,%d)\n", ww, ww%rs, (ww%ps)/rs, ww/ps); // DEBUG
     if (!S[ww]) 
     {
-      printf("ma_sonka_match_ABC : no match\n"); // DEBUG
+      //printf("ma_sonka_dir_ABC : no match\n"); // DEBUG
       return 0;
     }
   }
@@ -798,12 +848,12 @@ int32_t ma_sonka_dir_ABC(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t 
     dxd = -1 + (d % 3); dyd = -1 + ((d % 9) / 3); dzd = -1 + (d / 9); 
     // calcule dd
     dd = (z+dzd+dzd)*ps + (y+dyd+dyd)*rs + (x+dxd+dxd);
-    printf("ma_sonka_match_ABC : d=%d objet, dxd=%d, dyd=%d, dzd=%d\n", d, dxd, dyd, dzd); // DEBUG
-    print_vois27(v);  // DEBUG
-    printf("ma_sonka_match_ABC : dd=%d (%d,%d,%d)\n", dd, dd%rs, (dd%ps)/rs, dd/ps); // DEBUG
+    //printf("ma_sonka_dir_ABC : d=%d objet, dxd=%d, dyd=%d, dzd=%d\n", d, dxd, dyd, dzd); // DEBUG
+    //print_vois27(v);  // DEBUG
+    //printf("ma_sonka_dir_ABC : dd=%d (%d,%d,%d)\n", dd, dd%rs, (dd%ps)/rs, dd/ps); // DEBUG
     if (!S[dd])
     {
-      printf("ma_sonka_match_ABC : no match\n"); // DEBUG
+      //printf("ma_sonka_dir_ABC : no match\n"); // DEBUG
       return 0;
     }
   }
@@ -980,88 +1030,96 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
 int32_t ma_sonka_deletable(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps)
 /* ==================================== */
 {
-  printf("DEBUG: ma_sonka_deletable begins - p = %d\n", p);
-  if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1; // U
+  uint8_t w[27]; int32_t i; for (i = 0; i < 26; i++) w[i] = v[i];
+
+  //printf("DEBUG: ma_sonka_deletable begins - p = %d\n", p);
+  //if (p==274) print_vois27(v);  // DEBUG
+  if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1; // U
   swap_U_L_27(v);
-  if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1; // D
+  //if (p==274) print_vois27(v);  // DEBUG
+  if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1; // D
   swap_U_L_27(v); // retour
 
   isometrieXZ_vois27(v);
-  if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1; // E
+  //if (p==274) print_vois27(v);  // DEBUG
+  if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1; // E
   swap_U_L_27(v);
-  if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1; // W
+  //if (p==274) print_vois27(v);  // DEBUG
+  if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1; // W
   swap_U_L_27(v); // retour
   isometrieXZ_vois27(v); // retour
 
   isometrieYZ_vois27(v);
-  if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1; // N
+  //if (p==274) print_vois27(v);  // DEBUG
+  if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1; // N
   swap_U_L_27(v);
-  if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1; // S
+  //if (p==274) print_vois27(v);  // DEBUG
+  if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1; // S
   swap_U_L_27(v); // retour
   isometrieYZ_vois27(v); // retour
 
-  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
-  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
-  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
-  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
 
   swap_U_L_27(v);
-  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
-  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
-  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
-  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_C(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
   swap_U_L_27(v); // retour
 
-  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
-  if (ma_sonka_match_D(v) && ma_sonka_dir_D(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_D(v) && ma_sonka_dir_D(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
-  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
-  if (ma_sonka_match_D(v) && ma_sonka_dir_D(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_D(v) && ma_sonka_dir_D(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
-  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
-  if (ma_sonka_match_D(v) && ma_sonka_dir_D(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_D(v) && ma_sonka_dir_D(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
-  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
-  if (ma_sonka_match_D(v) && ma_sonka_dir_D(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_D(v) && ma_sonka_dir_D(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
 
   swap_U_L_27(v);
-  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
-  if (ma_sonka_match_D(v) && ma_sonka_dir_D(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_D(v) && ma_sonka_dir_D(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
-  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
-  if (ma_sonka_match_D(v) && ma_sonka_dir_D(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_D(v) && ma_sonka_dir_D(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
-  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
-  if (ma_sonka_match_D(v) && ma_sonka_dir_D(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_D(v) && ma_sonka_dir_D(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
-  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
-  if (ma_sonka_match_D(v) && ma_sonka_dir_D(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_D(v) && ma_sonka_dir_D(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
   swap_U_L_27(v); // retour
 
   isometrieYZ_vois27(v);
-  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
-  if (ma_sonka_match_D(v) && ma_sonka_dir_D(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_D(v) && ma_sonka_dir_D(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
   rotate_90_Z_27(v);
-  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
-  if (ma_sonka_match_D(v) && ma_sonka_dir_D(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_D(v) && ma_sonka_dir_D(w, S, p, rs, ps)) return 1;
   swap_U_L_27(v);
-  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
-  if (ma_sonka_match_D(v) && ma_sonka_dir_D(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_D(v) && ma_sonka_dir_D(w, S, p, rs, ps)) return 1;
   rotate_90_Z_27(v);
   rotate_90_Z_27(v);
-  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(v, S, p, rs, ps)) return 1;
-  if (ma_sonka_match_D(v) && ma_sonka_dir_D(v, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_B(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1;
+  if (ma_sonka_match_D(v) && ma_sonka_dir_D(w, S, p, rs, ps)) return 1;
   swap_U_L_27(v); // retour
   isometrieYZ_vois27(v); // retour
 
@@ -1136,10 +1194,10 @@ int32_t lmasonka1996(
       if (S[x] && mctopo3d_simple26(S, x, rs, ps, N))
       {
 	extract_vois27(S, x, rs, ps, N, v);
-	printf("%s: point %d,%d,%d (%d)\n",F_NAME, i, j, k, x); // DEBUG
+	//printf("%s: point %d,%d,%d (%d)\n",F_NAME, i, j, k, x); // DEBUG
 	if (ma_sonka_nontail(v,S,x,rs,ps,N) && ma_sonka_deletable(v,S,x,rs,ps))
 	{
-	  printf("%s: point %d,%d,%d (%d) nontail and deletable\n", F_NAME, i, j, k, x); // DEBUG
+	  //printf("%s: point %d,%d,%d (%d) nontail and deletable\n", F_NAME, i, j, k, x); // DEBUG
 	  SET_MS_DELETABLE(S[x]);
 	}
       } // if (S[x])
@@ -1165,6 +1223,250 @@ int32_t lmasonka1996(
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
   return(1);
 } /* lmasonka1996() */
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de Ma & Wan (curviligne (18/6) 6 subiterations, CVIU 2000)
+// M. Couprie, jan. 2012
+/* ============================================================ */
+/* ============================================================ */
+
+#define MW_OBJECT      1
+#define MW_DELETE      2
+
+#define IS_MW_OBJECT(f)     (f&MW_OBJECT)
+#define IS_MW_DELETE(f)     (f&MW_DELETE)
+
+#define SET_MW_OBJECT(f)    (f|=MW_OBJECT)
+#define SET_MW_DELETE(f)    (f|=MW_DELETE)
+
+static void mw_copyslice1(uint8_t *v, uint8_t *w)
+{
+  memset(w, 0, 27);
+  w[1] = v[1]; w[4] = v[4]; w[7] = v[7];
+  w[10] = v[10]; w[13] = v[13]; w[16] = v[16];
+  w[19] = v[19]; w[22] = v[22]; w[25] = v[25];
+} // mw_copyslice1()
+
+static void mw_copyslice2(uint8_t *v, uint8_t *w)
+{
+  memset(w, 0, 27);
+  w[3] = v[3]; w[4] = v[4]; w[5] = v[5];
+  w[12] = v[12]; w[13] = v[13]; w[14] = v[14];
+  w[21] = v[21]; w[22] = v[22]; w[23] = v[23];
+} // mw_copyslice2()
+
+static void mw_copyclique1(uint8_t *v, uint8_t *w)
+{
+  memset(w, 0, 27);
+  w[13] = v[13]; w[14] = v[14]; w[16] = v[16]; w[17] = v[17];
+  w[22] = v[22]; w[23] = v[23]; w[25] = v[25]; w[26] = v[26];
+} // mw_copyclique1()
+
+static void mw_copyclique2(uint8_t *v, uint8_t *w)
+{
+  memset(w, 0, 27);
+  w[13] = v[13]; w[14] = v[14]; w[10] = v[10]; w[11] = v[11];
+  w[22] = v[22]; w[23] = v[23]; w[19] = v[19]; w[20] = v[20];
+} // mw_copyclique2()
+
+static void mw_copyclique3(uint8_t *v, uint8_t *w)
+{
+  memset(w, 0, 27);
+  w[9] = v[9]; w[10] = v[10]; w[12] = v[12]; w[13] = v[13];
+  w[18] = v[18]; w[19] = v[19]; w[21] = v[21]; w[22] = v[22];
+} // mw_copyclique3()
+
+static void mw_copyclique4(uint8_t *v, uint8_t *w)
+{
+  memset(w, 0, 27);
+  w[12] = v[12]; w[13] = v[13]; w[15] = v[15]; w[16] = v[16];
+  w[21] = v[21]; w[22] = v[22]; w[24] = v[24]; w[25] = v[25];
+} // mw_copyclique4()
+
+/* ==================================== */
+static int32_t mw_cond1(uint8_t *v)
+/* ==================================== */
+{
+  uint8_t w[27]; 
+  int32_t top, topb;
+
+  if (!v[22]) return 0;
+
+  mw_copyslice1(v, w);
+  mctopo3d_top18(w, 13, 3, 9, 27, &top, &topb);
+  if (top != 1) return 0;
+  mw_copyslice2(v, w);
+  mctopo3d_top18(w, 13, 3, 9, 27, &top, &topb);
+  if (top != 1) return 0;
+
+  mw_copyclique1(v, w);
+  mctopo3d_top18(w, 13, 3, 9, 27, &top, &topb);
+  if (top != 1) return 0;
+  mw_copyclique2(v, w);
+  mctopo3d_top18(w, 13, 3, 9, 27, &top, &topb);
+  if (top != 1) return 0;
+  mw_copyclique3(v, w);
+  mctopo3d_top18(w, 13, 3, 9, 27, &top, &topb);
+  if (top != 1) return 0;
+  mw_copyclique4(v, w);
+  mctopo3d_top18(w, 13, 3, 9, 27, &top, &topb);
+  if (top != 1) return 0;
+
+  return 1;
+} // mw_cond1()
+
+/* ==================================== */
+static int32_t mw_cond2_aux(uint8_t *v)
+/* ==================================== */
+{
+  if (!v[25]) return 0;
+  if (v[16] || v[7] || v[4] || v[1] || v[10] || v[19] || v[22]) return 0;
+  if (v[5] && !v[14]) return 0;
+  if (v[3] && !v[12]) return 0;
+  if (v[14] && !v[23] && !v[26]) return 0;
+  if (v[12] && !v[21] && !v[24]) return 0;
+  if (v[11] && !v[14] && !v[23]) return 0;
+  if (v[9] && !v[12] && !v[21]) return 0;
+  return 1;
+} // mw_cond2_aux()
+
+/* ==================================== */
+static int32_t mw_cond2(uint8_t *v)
+/* ==================================== */
+{
+  if (mw_cond2_aux(v)) return 1;
+  rotate_90_Z_27(v);
+  if (mw_cond2_aux(v)) return 1;
+  rotate_90_Z_27(v);
+  if (mw_cond2_aux(v)) return 1;
+  rotate_90_Z_27(v);
+  if (mw_cond2_aux(v)) return 1;
+  rotate_90_Z_27(v);
+  return 0;
+} // mw_cond2()
+
+/* ==================================== */
+int32_t lmawan2000(struct xvimage *image,
+			    int32_t n_steps)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lmawan2000"
+{
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab;
+  uint8_t v[27];
+
+  if (n_steps == -1) n_steps = 1000000000;
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = MW_OBJECT;
+
+  mctopo3d_init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("%s: step %d\n", F_NAME, step);
+#endif
+
+    // SUBITERATION FOR UPPER VOXELS
+    // PREMIERE PASSE : MARQUE LES POINTS EFFACABLES
+    for (i = 0; i < N; i++) 
+      if (S[i] && (mctopo3d_nbvoiso18(S, i, rs, ps, N) != 1))
+      {
+	extract_vois27(S, i, rs, ps, N, v);
+	if (!v[4] && (mw_cond1(v) || mw_cond2(v))) SET_MW_DELETE(S[i]);
+      }
+    // DEUXIEME PASSE : EFFACE LES POINTS MARQUES DELETE
+    for (i = 0; i < N; i++) if (IS_MW_DELETE(S[i])) { S[i] = 0; nonstab = 1; }
+
+    // SUBITERATION FOR LOWER VOXELS
+    // PREMIERE PASSE : MARQUE LES POINTS EFFACABLES
+    for (i = 0; i < N; i++) 
+      if (S[i] && (mctopo3d_nbvoiso18(S, i, rs, ps, N) != 1))
+      {
+	extract_vois27(S, i, rs, ps, N, v);
+	swap_U_L_27(v);
+	if (!v[4] && (mw_cond1(v) || mw_cond2(v))) SET_MW_DELETE(S[i]);
+      }
+    // DEUXIEME PASSE : EFFACE LES POINTS MARQUES DELETE
+    for (i = 0; i < N; i++) if (IS_MW_DELETE(S[i])) { S[i] = 0; nonstab = 1; }
+
+    // SUBITERATION FOR EAST VOXELS
+    // PREMIERE PASSE : MARQUE LES POINTS EFFACABLES
+    for (i = 0; i < N; i++) 
+      if (S[i] && (mctopo3d_nbvoiso18(S, i, rs, ps, N) != 1))
+      {
+	extract_vois27(S, i, rs, ps, N, v);
+	isometrieXZ_vois27(v);
+	if (!v[4] && (mw_cond1(v) || mw_cond2(v))) SET_MW_DELETE(S[i]);
+      }
+    // DEUXIEME PASSE : EFFACE LES POINTS MARQUES DELETE
+    for (i = 0; i < N; i++) if (IS_MW_DELETE(S[i])) { S[i] = 0; nonstab = 1; }
+
+    // SUBITERATION FOR WEST VOXELS
+    // PREMIERE PASSE : MARQUE LES POINTS EFFACABLES
+    for (i = 0; i < N; i++) 
+      if (S[i] && (mctopo3d_nbvoiso18(S, i, rs, ps, N) != 1))
+      {
+	extract_vois27(S, i, rs, ps, N, v);
+	isometrieXZ_vois27(v);
+	swap_U_L_27(v);
+	if (!v[4] && (mw_cond1(v) || mw_cond2(v))) SET_MW_DELETE(S[i]);
+      }
+    // DEUXIEME PASSE : EFFACE LES POINTS MARQUES DELETE
+    for (i = 0; i < N; i++) if (IS_MW_DELETE(S[i])) { S[i] = 0; nonstab = 1; }
+
+    // SUBITERATION FOR NORTH VOXELS
+    // PREMIERE PASSE : MARQUE LES POINTS EFFACABLES
+    for (i = 0; i < N; i++) 
+      if (S[i] && (mctopo3d_nbvoiso18(S, i, rs, ps, N) != 1))
+      {
+	extract_vois27(S, i, rs, ps, N, v);
+	isometrieYZ_vois27(v);
+	if (!v[4] && (mw_cond1(v) || mw_cond2(v))) SET_MW_DELETE(S[i]);
+      }
+    // DEUXIEME PASSE : EFFACE LES POINTS MARQUES DELETE
+    for (i = 0; i < N; i++) if (IS_MW_DELETE(S[i])) { S[i] = 0; nonstab = 1; }
+    // SUBITERATION FOR SOUTH VOXELS
+    // PREMIERE PASSE : MARQUE LES POINTS EFFACABLES
+    for (i = 0; i < N; i++) 
+      if (S[i] && (mctopo3d_nbvoiso18(S, i, rs, ps, N) != 1))
+      {
+	extract_vois27(S, i, rs, ps, N, v);
+	isometrieYZ_vois27(v);
+	swap_U_L_27(v);
+	if (!v[4] && (mw_cond1(v) || mw_cond2(v))) SET_MW_DELETE(S[i]);
+      }
+    // DEUXIEME PASSE : EFFACE LES POINTS MARQUES DELETE
+    for (i = 0; i < N; i++) if (IS_MW_DELETE(S[i])) { S[i] = 0; nonstab = 1; }
+
+  } // while (nonstab && (step < n_steps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  mctopo3d_termine_topo3d();
+  return(1);
+  
+} // lmawan2000()
 
 /* ============================================================ */
 /* ============================================================ */
@@ -1538,7 +1840,6 @@ int32_t lmawanchangcurv2subfields2002(
   TEST_DIAG_deletable();
 #endif
 
-#define PATCH_MC
 #ifdef PATCH_MC
   mctopo3d_init_topo3d();
 #endif
@@ -1603,7 +1904,6 @@ printf("point %d %d %d\n", i, j, k);
       {
 	x = k*ps + j*rs + i;
 	if (IS_ORTH(S[x]) || (IS_DIAG(S[x]) && !IS_DIAGPRES(S[x])) || IS_TWIG(S[x]))
-	{
 #ifdef PATCH_MC
 	  if (mctopo3d_simple26(S, x, rs, ps, N))
 #endif
@@ -1611,7 +1911,6 @@ printf("point %d %d %d\n", i, j, k);
 	    S[x] = 0;
 	    nonstab[step%2] = 1;
 	  }
-	}
       } // for i, j, k
 
   } // while (nonstab && (step < nsteps))
@@ -1735,6 +2034,383 @@ int32_t llohoubertrandsymcurv2007(
   freeimage(c);
   return(1);
 } /* llohoubertrandsymcurv2007() */
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de Lohou et Bertrand (curviligne 6 subiterations, DAM 2005) 
+// M. Couprie, jan. 2012
+/* ============================================================ */
+/* ============================================================ */
+
+#define LB6_OBJECT      1
+#define LB6_PXSIMPLE        2
+
+#define IS_PXSIMPLE(f) (f&LB6_PXSIMPLE)
+#define SET_PXSIMPLE(f) (f|=LB6_PXSIMPLE)
+
+static int32_t lb6_matchmask(uint8_t *s, int32_t i, int32_t j, int32_t k)
+// tests if point i,j,k in s matches (restriction of) one of the masks
+{
+  if (k < 1) return 1;
+  if (s[(k-1)*9 + j*3 + i]) return 0;
+  if ((j >= 1) && !s[k*9 + (j-1)*3 + i] && s[(k-1)*9 + (j-1)*3 + i]) return 0;
+  if ((j <= 1) && !s[k*9 + (j+1)*3 + i] && s[(k-1)*9 + (j+1)*3 + i]) return 0;
+  if ((i >= 1) && !s[k*9 + j*3 + i-1] && s[(k-1)*9 + j*3 + i-1]) return 0;
+  if ((i <= 1) && !s[k*9 + j*3 + i+1] && s[(k-1)*9 + j*3 + i+1]) return 0;
+  return 1;
+} // lb6_matchmask()
+
+static void lb6_setp(uint8_t *s, uint8_t *p)
+{
+  int32_t i, j, k;
+  memset(p, 0, 27); 
+  for (k = 0; k < 3; k++)
+    for (j = 0; j < 3; j++)
+      for (i = 0; i < 3; i++)
+	if (s[k*9 + j*3 + i])
+	{
+	  if (lb6_matchmask(s, i, j, k)) 
+	    p[k*9 + j*3 + i] = 1;
+	}
+}
+
+static int32_t lb6_match(int32_t d, uint8_t *S, index_t i, index_t rs, index_t ps, index_t N)
+{
+  uint8_t s[27], p[27]; 
+//printf("lb12_match: point %d\n", i);//DEBUG
+  extract_vois27(S, i, rs, ps, N, s); 
+  switch (d)
+  {
+  case 0: break;
+  case 1: swap_U_L_27(s); break;
+  case 2: isometrieXZ_vois27(s); break;
+  case 3: isometrieXZ_vois27(s); swap_U_L_27(s); break;
+  case 4: isometrieYZ_vois27(s); break;
+  case 5: isometrieYZ_vois27(s); swap_U_L_27(s); break;
+  }
+  lb6_setp(s, p); 
+//printf("lb6_match: s = \n");//DEBUG
+//print_vois27(s);//DEBUG
+//printf("lb6_match: p = \n");//DEBUG
+//print_vois27(p);//DEBUG
+//if (p[13]) printf("lb6_match: point %d, dir %d\n", i, d);//DEBUG
+  return p[13] && P_simple26(s, p, 13, 3, 9, 27);
+}
+
+/* ==================================== */
+int32_t llohoubertrand6dir2005(
+				  struct xvimage *image,
+				  int32_t nsteps)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "llohoubertrand6dir2005"
+{
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab, d;
+
+  mctopo3d_init_topo3d();
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  for (i = 0; i < N; i++) if (S[i]) assert(!bord3d(i, rs, ps, N));
+  for (i = 0; i < N; i++) if (S[i]) S[i] = LB6_OBJECT; 
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < nsteps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    for (d = 0; d < 6; d++)
+    {
+      for (i = 0; i < N; i++) 
+	if (S[i] && (mctopo3d_nbvoiso26(S, i, rs, ps, N) > 1) && lb6_match(d, S, i, rs, ps, N)) 
+	  SET_PXSIMPLE(S[i]);
+      for (i = 0; i < N; i++) 
+	if (IS_PXSIMPLE(S[i])) 
+	{ 
+	  S[i] = 0; 
+	  nonstab = 1; 
+	}
+    } // for (d = 0; d < 6; d++)
+  } // while (nonstab && (step < nsteps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* llohoubertrand6dir2005() */
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de Lohou et Bertrand (curviligne 12 subiterations, DAM 2004) 
+// M. Couprie, jan. 2012
+/* ============================================================ */
+/* ============================================================ */
+
+#define LB12_OBJECT      1
+#define LB12_PXSIMPLE        2
+
+#undef IS_PXSIMPLE
+#undef SET_PXSIMPLE
+#define IS_PXSIMPLE(f) (f&LB12_PXSIMPLE)
+#define SET_PXSIMPLE(f) (f|=LB12_PXSIMPLE)
+
+// 0: don't care; 1: object; 2: background; 3: at least one is object
+static uint8_t lb12_mask1[27] = {
+  2, 2, 2, 2, 2, 2, 2, 2, 2, 
+  0, 0, 0, 0, 1, 0, 0, 1, 0,
+  0, 0, 0, 0, 1, 0, 0, 0, 0
+};
+
+static uint8_t lb12_mask2[27] = {
+  0, 0, 0, 0, 1, 0, 2, 2, 2,
+  0, 1, 0, 0, 1, 0, 2, 2, 2,
+  0, 0, 0, 0, 0, 0, 2, 2, 2
+};
+
+static uint8_t lb12_mask3[27] = {
+  0, 0, 0, 0, 2, 0, 0, 2, 0,
+  0, 3, 0, 0, 1, 0, 0, 2, 0,
+  0, 3, 0, 0, 3, 0, 0, 0, 0
+};
+
+static uint8_t *lb12_masks_1[12];
+static uint8_t *lb12_masks_2[12];
+static uint8_t *lb12_masks_3[12];
+
+static int32_t lb12_matchmask(uint8_t *s, int32_t i, int32_t j, int32_t k, uint8_t *m)
+// tests if point i,j,k in s matches (restriction of) mask m
+{
+  int32_t x, y, z;
+  int32_t t = 0, n = 0;
+  for (z = -1; z <= 1; z++) if (((k+z) >= 0) && ((k+z) < 3))
+  {
+    for (y = -1; y <= 1; y++) if (((j+y) >= 0) && ((j+y) < 3))
+    {
+      for (x = -1; x <= 1; x++) if (((i+x) >= 0) && ((i+x) < 3))
+      {
+	if (!s[(k+z)*9 + (j+y)*3 + i+x] && (m[(1+z)*9 + (1+y)*3 + 1+x] == 1)) 
+	{
+//printf("lb12_matchmask: fail1 with i,j,k = %d %d %d ; x,y,z = %d %d %d\n", i, j, k, x, y, z); DEBUG
+	  return 0;
+	}
+	if (s[(k+z)*9 + (j+y)*3 + i+x] && (m[(1+z)*9 + (1+y)*3 + 1+x] == 2)) 
+	{
+//printf("lb12_matchmask: fail2 with i,j,k = %d %d %d ; x,y,z = %d %d %d\n", i, j, k, x, y, z);DEBUG
+	  return 0;
+	}
+	if (m[z*9 + y*3 + x] == 3) 
+	{
+	  t++; 
+	  if (s[(k+z)*9 + (j+y)*3 + i+x]) n++;
+	} 
+      }
+    }
+  }
+  if ((t == 3) && (n == 0)) 
+  {
+//printf("lb12_matchmask: fail3\n"); DEBUG
+    return 0;
+  }
+  return 1;
+}
+
+static void lb12_setp(int32_t d, uint8_t *s, uint8_t *p)
+{
+  int32_t i, j, k;
+  memset(p, 0, 27); 
+  for (k = 0; k < 3; k++)
+    for (j = 0; j < 3; j++)
+      for (i = 0; i < 3; i++)
+	if (s[k*9 + j*3 + i])
+	{
+//printf("lb12_setp: i,j,k = %d,%d,%d, matchmask1 = %d\n", i, j, k, DEBUG
+//lb12_matchmask(s, i, j, k, lb12_masks_1[d]));DEBUG
+//printf("lb12_setp: i,j,k = %d,%d,%d, matchmask2 = %d\n", i, j, k, DEBUG
+//lb12_matchmask(s, i, j, k, lb12_masks_2[d]));DEBUG
+//printf("lb12_setp: i,j,k = %d,%d,%d, matchmask3 = %d\n", i, j, k, DEBUG
+//lb12_matchmask(s, i, j, k, lb12_masks_3[d]));DEBUG
+	  if (lb12_matchmask(s, i, j, k, lb12_masks_1[d]) ||
+	      lb12_matchmask(s, i, j, k, lb12_masks_2[d]) ||
+	      lb12_matchmask(s, i, j, k, lb12_masks_3[d])) 
+	    p[k*9 + j*3 + i] = 1;
+	}
+}
+
+static int32_t lb12_match(int32_t d, uint8_t *S, index_t i, index_t rs, index_t ps, index_t N)
+{
+  uint8_t s[27], p[27]; 
+  //printf("lb12_match: point %d\n", i);DEBUG
+  extract_vois27(S, i, rs, ps, N, s); 
+  lb12_setp(d, s, p); 
+  //printf("lb12_match: s = \n");DEBUG
+  //print_vois27(s);DEBUG
+  //printf("lb12_match: p = \n");DEBUG
+  //print_vois27(p);DEBUG
+  //if (p[13]) printf("lb12_match: point %d, dir %d\n", i, d);DEBUG
+  return p[13] && P_simple26(s, p, 13, 3, 9, 27);
+}
+
+/* ==================================== */
+int32_t llohoubertrand12dir2004(
+				  struct xvimage *image,
+				  int32_t nsteps)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "llohoubertrand12dir2004"
+{
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab, d;
+  uint8_t v1[27], v2[27], v3[27]; 
+
+  mctopo3d_init_topo3d();
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  for (i = 0; i < N; i++) if (S[i]) assert(!bord3d(i, rs, ps, N));
+  for (i = 0; i < N; i++) if (S[i]) S[i] = LB12_OBJECT; 
+
+  /* ================================================ */
+  /* Préparation des masques */
+  /* ================================================ */
+
+  for (d = 0; d < 12; d++)
+  {
+    lb12_masks_1[d] = (uint8_t *)malloc(27 * sizeof(uint8_t)); assert(lb12_masks_1[d]);
+    lb12_masks_2[d] = (uint8_t *)malloc(27 * sizeof(uint8_t)); assert(lb12_masks_2[d]);
+    lb12_masks_3[d] = (uint8_t *)malloc(27 * sizeof(uint8_t)); assert(lb12_masks_3[d]);
+  }
+
+  extract_vois27(lb12_mask1, 13, 3, 9, 27, v1);
+  extract_vois27(lb12_mask2, 13, 3, 9, 27, v2);
+  extract_vois27(lb12_mask3, 13, 3, 9, 27, v3);
+ 
+  memcpy(lb12_masks_1[0], (uint8_t *)v1, 27);
+  memcpy(lb12_masks_2[0], (uint8_t *)v2, 27);
+  memcpy(lb12_masks_3[0], (uint8_t *)v3, 27);
+  rotate_90_Z_27(v1); rotate_90_Z_27(v2); rotate_90_Z_27(v3);
+  memcpy(lb12_masks_1[2], (uint8_t *)v1, 27);
+  memcpy(lb12_masks_2[2], (uint8_t *)v2, 27);
+  memcpy(lb12_masks_3[2], (uint8_t *)v3, 27);
+  rotate_90_Z_27(v1); rotate_90_Z_27(v2); rotate_90_Z_27(v3);
+  memcpy(lb12_masks_1[4], (uint8_t *)v1, 27);
+  memcpy(lb12_masks_2[4], (uint8_t *)v2, 27);
+  memcpy(lb12_masks_3[4], (uint8_t *)v3, 27);
+  rotate_90_Z_27(v1); rotate_90_Z_27(v2); rotate_90_Z_27(v3);
+  memcpy(lb12_masks_1[6], (uint8_t *)v1, 27);
+  memcpy(lb12_masks_2[6], (uint8_t *)v2, 27);
+  memcpy(lb12_masks_3[6], (uint8_t *)v3, 27);
+  rotate_90_Z_27(v1); rotate_90_Z_27(v2); rotate_90_Z_27(v3);
+
+  swap_U_L_27(v1); swap_U_L_27(v2); swap_U_L_27(v3);
+  memcpy(lb12_masks_1[5], (uint8_t *)v1, 27);
+  memcpy(lb12_masks_2[5], (uint8_t *)v2, 27);
+  memcpy(lb12_masks_3[5], (uint8_t *)v3, 27);
+  rotate_90_Z_27(v1); rotate_90_Z_27(v2); rotate_90_Z_27(v3);
+  memcpy(lb12_masks_1[7], (uint8_t *)v1, 27);
+  memcpy(lb12_masks_2[7], (uint8_t *)v2, 27);
+  memcpy(lb12_masks_3[7], (uint8_t *)v3, 27);
+  rotate_90_Z_27(v1); rotate_90_Z_27(v2); rotate_90_Z_27(v3);
+  memcpy(lb12_masks_1[1], (uint8_t *)v1, 27);
+  memcpy(lb12_masks_2[1], (uint8_t *)v2, 27);
+  memcpy(lb12_masks_3[1], (uint8_t *)v3, 27);
+  rotate_90_Z_27(v1); rotate_90_Z_27(v2); rotate_90_Z_27(v3);
+  memcpy(lb12_masks_1[3], (uint8_t *)v1, 27);
+  memcpy(lb12_masks_2[3], (uint8_t *)v2, 27);
+  memcpy(lb12_masks_3[3], (uint8_t *)v3, 27);
+  rotate_90_Z_27(v1); rotate_90_Z_27(v2); rotate_90_Z_27(v3);
+  swap_U_L_27(v1); swap_U_L_27(v2); swap_U_L_27(v3);
+
+  isometrieYZ_vois27(v1); isometrieYZ_vois27(v2); isometrieYZ_vois27(v3);
+  memcpy(lb12_masks_1[8], (uint8_t *)v1, 27);
+  memcpy(lb12_masks_2[8], (uint8_t *)v2, 27);
+  memcpy(lb12_masks_3[8], (uint8_t *)v3, 27);
+  rotate_90_Z_27(v1); rotate_90_Z_27(v2); rotate_90_Z_27(v3);
+  rotate_90_Z_27(v1); rotate_90_Z_27(v2); rotate_90_Z_27(v3);
+  memcpy(lb12_masks_1[10], (uint8_t *)v1, 27);
+  memcpy(lb12_masks_2[10], (uint8_t *)v2, 27);
+  memcpy(lb12_masks_3[10], (uint8_t *)v3, 27);
+  swap_U_L_27(v1); swap_U_L_27(v2); swap_U_L_27(v3);
+  memcpy(lb12_masks_1[9], (uint8_t *)v1, 27);
+  memcpy(lb12_masks_2[9], (uint8_t *)v2, 27);
+  memcpy(lb12_masks_3[9], (uint8_t *)v3, 27);
+  rotate_90_Z_27(v1); rotate_90_Z_27(v2); rotate_90_Z_27(v3);
+  rotate_90_Z_27(v1); rotate_90_Z_27(v2); rotate_90_Z_27(v3);
+  memcpy(lb12_masks_1[11], (uint8_t *)v1, 27);
+  memcpy(lb12_masks_2[11], (uint8_t *)v2, 27);
+  memcpy(lb12_masks_3[11], (uint8_t *)v3, 27);
+
+//printf("mask v1\n");DEBUG
+//print_vois27(lb12_masks_1[0]);DEBUG
+
+//printf("mask v2\n");DEBUG
+//print_vois27(lb12_masks_2[0]);DEBUG
+
+//printf("mask v3\n");DEBUG
+//print_vois27(lb12_masks_3[0]);DEBUG
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < nsteps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    for (d = 0; d < 12; d++)
+    {
+      for (i = 0; i < N; i++) 
+	if (S[i] && lb12_match(d, S, i, rs, ps, N)) 
+	  SET_PXSIMPLE(S[i]);
+      for (i = 0; i < N; i++) 
+	if (IS_PXSIMPLE(S[i])) 
+	{ 
+	  S[i] = 0; 
+	  nonstab = 1; 
+	}
+    } // for (d = 0; d < 12; d++)
+  } // while (nonstab && (step < nsteps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* llohoubertrand12dir2004() */
 
 /* ============================================================ */
 /* ============================================================ */
@@ -3419,7 +4095,7 @@ void thinning(void)
 /*========= end of function thinning =========*/
 
 
-int palagyi_skelpar_curv_98(struct xvimage *input)
+int32_t palagyi_skelpar_curv_98(struct xvimage *input)
 {
 #undef F_NAME
 #define F_NAME "palagyi_skelpar_curv_98"
@@ -3945,7 +4621,7 @@ void sequential_thinning2(void)
 /*========= end of function sequential_thinning =========*/
 
 
-int palagyi_skelpar_curv_06(struct xvimage *input)
+int32_t palagyi_skelpar_curv_06(struct xvimage *input)
 {
 #undef F_NAME
 #define F_NAME "palagyi_skelpar_curv_06"
@@ -4422,7 +5098,7 @@ void thinning3(void)
 
 
 
-int palagyi_skelpar_surf_02(struct xvimage *input)
+int32_t palagyi_skelpar_surf_02(struct xvimage *input)
 {
 #undef F_NAME
 #define F_NAME "palagyi_skelpar_surf_02"
@@ -4976,7 +5652,7 @@ void thinning4(void)
 /*========= end of function thinning =========*/
 
 
-int palagyi_skelpar_surf_08(struct xvimage *input)
+int32_t palagyi_skelpar_surf_08(struct xvimage *input)
 {
 #undef F_NAME
 #define F_NAME "palagyi_skelpar_surf_08"
