@@ -59,11 +59,10 @@ extern Indicstype *Indics;       /* en global pour etre efficace */
 /* ============== */
 
 extern void IndicsInit(index_t Size); 
-
+extern void IndicsReInit(index_t Size);
 extern void Indics1bitInit(index_t Size); 
-
+extern void Indics1bitReInit(index_t Size);
 extern void IndicsTermine();
-
 
 #ifdef __cplusplus
 }

@@ -65,6 +65,13 @@ void IndicsInit(index_t Size)
 }
 
 /* ==================================== */
+void IndicsReInit(index_t Size)
+/* ==================================== */
+{
+  memset(Indics, 0, Size * sizeof(Indicstype));
+}
+
+/* ==================================== */
 void Indics1bitInit(index_t Size)
 /* ==================================== */
 {

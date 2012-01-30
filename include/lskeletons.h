@@ -190,6 +190,11 @@ extern int32_t lskelCKG3map(
 	struct xvimage *imageprio,
 	struct xvimage *image
 );
+extern int32_t lskelCKSC3(
+	struct xvimage *image, 
+	struct xvimage *inhibit,
+	int32_t nsteps
+);
 #ifdef __cplusplus
 }
 #endif
