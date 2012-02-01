@@ -115,6 +115,11 @@ int main(int argc, char **argv)
   }
 
   filein = fopen(argv[1],"r");
+  if (filein == NULL)
+  {
+    fprintf(stderr, "%s: cannot open %s\n", argv[0], argv[1]);
+    exit(0);
+  }
   if (formatin == T_MCM) LoadMeshMCM(filein);
   if (formatin == T_IFS) LoadMeshIFS(filein);
   if (formatin == T_VTK) LoadBuildVTK(filein);
