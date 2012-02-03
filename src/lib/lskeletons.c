@@ -76,11 +76,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #define LARGE_VAL 1E40
 
 #define VERBOSE
-//#define DEBUG
-//#define DEBUGlskelCKSC3
-//#define DEBUG_callmatch
-//#define DEBUG_resmatch
-//#define DEBUGmatch
+#define DEBUG
+#define DEBUGlskelCKSC3
+#define DEBUG_callmatch
+#define DEBUG_resmatch
+#define DEBUGmatch
+
+#define lskelCKSC3_VARIANTE_C
 
 #define PRIODIR
 
@@ -5705,46 +5707,82 @@ printf("match 1c - 2\n");
 static int32_t match_seq_vois0(uint8_t *v)
 /* ==================================== */
 /*
-  12 11
-  13  8
+  12 11  ou  11 10  ou   8  9  ou  13  8
+  13  8       8  9      15 16      14 15
 
-   3  2
-   4 26
+   3  2       2  1      26  1       4 26
+   4 26      26  0       6  7       5  6
 
 Teste si les conditions suivantes sont réunies:
-1: au moins un des ensembles {12,26}, {11,4}, {13,2}, {8,3} est inclus dans l'objet, et
+1: au moins un des ensembles {12,26}, {11,4}, {13,2}, {8,3} (pour le 1er) est inclus dans l'objet, et
 2: les points non nuls sont tous simples, non marqués 2M_CRUCIAL et non marqués 1M_CRUCIAL
 Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 */
-// C = {x, x-ps, x-1, x-ps-1, x-rs, x-ps-rs, x-rs-1, x-ps-rs-1}
-// ATTENTION : ISOMETRIES NON TESTEES
 {
-  if (!((v[12]&&v[26]) || (v[11]&&v[4]) || (v[13]&&v[2]) || (v[8]&&v[3]) )) return 0;
-
-  if (v[12] && (v[12] != CAN)) return 0;
-  if (v[26] && (v[26] != CAN)) return 0;
-  if (v[11] && (v[11] != CAN)) return 0;
-  if (v[ 4] && (v[ 4] != CAN)) return 0;
-  if (v[13] && (v[13] != CAN)) return 0;
-  if (v[ 2] && (v[ 2] != CAN)) return 0;
-  if (v[ 8] && (v[ 8] != CAN)) return 0;
-  if (v[ 3] && (v[ 3] != CAN)) return 0;
-  /*
-  if (v[12]) v[12] = CR0;
-  if (v[26]) v[26] = CR0;
-  if (v[11]) v[11] = CR0;
-  if (v[ 4]) v[ 4] = CR0;
-  if (v[13]) v[13] = CR0;
-  if (v[ 2]) v[ 2] = CR0;
-  if (v[ 8]) v[ 8] = CR0;
-  if (v[ 3]) v[ 3] = CR0;
-  */
+  if (!((v[12]&&v[26]) || (v[11]&&v[4]) || (v[13]&&v[2]) || (v[8]&&v[3]) )) goto next1;
+  if (v[12] && (v[12] != CAN)) goto next1;
+  if (v[26] && (v[26] != CAN)) goto next1;
+  if (v[11] && (v[11] != CAN)) goto next1;
+  if (v[ 4] && (v[ 4] != CAN)) goto next1;
+  if (v[13] && (v[13] != CAN)) goto next1;
+  if (v[ 2] && (v[ 2] != CAN)) goto next1;
+  if (v[ 8] && (v[ 8] != CAN)) goto next1;
+  if (v[ 3] && (v[ 3] != CAN)) goto next1;
 #ifdef DEBUGmatch
-printf("match 0\n");
+printf("match 0 - 1\n");
 #endif
-  return 1;
+  return 1; // C = {x, x-ps, x-1, x-ps-1, x-rs, x-ps-rs, x-rs-1, x-ps-rs-1}
+
+ next1:
+  if (!((v[10]&&v[26]) || (v[11]&&v[0]) || (v[9]&&v[2]) || (v[8]&&v[1]) )) goto next2;
+  if (v[10] && (v[10] != CAN)) goto next2;
+  if (v[26] && (v[26] != CAN)) goto next2;
+  if (v[11] && (v[11] != CAN)) goto next2;
+  if (v[ 1] && (v[ 1] != CAN)) goto next2;
+  if (v[ 9] && (v[ 9] != CAN)) goto next2;
+  if (v[ 2] && (v[ 2] != CAN)) goto next2;
+  if (v[ 8] && (v[ 8] != CAN)) goto next2;
+  if (v[ 0] && (v[ 0] != CAN)) goto next2;
+#ifdef DEBUGmatch
+printf("match 0 - 2\n");
+#endif
+  return 2; // C = {x, x-ps, x+1, x-ps+1, x-rs, x-ps-rs, x-rs+1, x-ps-rs+1}
+
+ next2:
+  if (!((v[12]&&v[26]) || (v[11]&&v[4]) || (v[13]&&v[2]) || (v[8]&&v[3]) )) goto next3;
+  if (v[12] && (v[12] != CAN)) goto next3;
+  if (v[26] && (v[26] != CAN)) goto next3;
+  if (v[11] && (v[11] != CAN)) goto next3;
+  if (v[ 4] && (v[ 4] != CAN)) goto next3;
+  if (v[13] && (v[13] != CAN)) goto next3;
+  if (v[ 2] && (v[ 2] != CAN)) goto next3;
+  if (v[ 8] && (v[ 8] != CAN)) goto next3;
+  if (v[ 3] && (v[ 3] != CAN)) goto next3;
+#ifdef DEBUGmatch
+printf("match 0 - 3\n");
+#endif
+  return 3; // C = {x, x-ps, x-1, x-ps-1, x-rs, x-ps-rs, x-rs-1, x-ps-rs-1}
+
+ next3:
+  if (!((v[12]&&v[26]) || (v[11]&&v[4]) || (v[13]&&v[2]) || (v[8]&&v[3]) )) goto next4;
+  if (v[12] && (v[12] != CAN)) goto next4;
+  if (v[26] && (v[26] != CAN)) goto next4;
+  if (v[11] && (v[11] != CAN)) goto next4;
+  if (v[ 4] && (v[ 4] != CAN)) goto next4;
+  if (v[13] && (v[13] != CAN)) goto next4;
+  if (v[ 2] && (v[ 2] != CAN)) goto next4;
+  if (v[ 8] && (v[ 8] != CAN)) goto next4;
+  if (v[ 3] && (v[ 3] != CAN)) goto next4;
+#ifdef DEBUGmatch
+printf("match 0 - 4\n");
+#endif
+  return 4; // C = {x, x-ps, x-1, x-ps-1, x-rs, x-ps-rs, x-rs-1, x-ps-rs-1}
+
+ next4:
+  return 0;
 } // match_seq_vois0()
 
+#ifdef lskelCKSC3_VARIANTE_A0
 /* ==================================== */
 int32_t lskelCKSC3(
 		   struct xvimage *image, 
@@ -5758,15 +5796,17 @@ repeter
   Y = X ; W = {points non simples de X}
   pour dim = 2,1,0
     pour dir = a,b,c
-      pour chaque clique cruciale C de dimension dim et de direction dir
+      pour chaque clique cruciale C de X de dimension dim et de direction dir
         W = W u {points de C inter Y et non simples pour Y}
+        s'il existe une clique C' dim+1 cruciale pour Y incluse dans C\W alors
+          choisir un point de C' et le rajouter à W	
         s'il existe des points dans C inter Y inter W alors
           retirer de Y les points de C non dans W
         sinon
           choisir un point x dans C inter Y
           W = W u {x}
           retirer de Y les autres points de C inter Y      
-        X = W
+  X = W
 */
 #undef F_NAME
 #define F_NAME "lskelCKSC3"
@@ -6104,7 +6144,6 @@ printf("call match 1a: %d %d %d\n", i, j, k);
 #ifdef DEBUG_resmatch
 printf("match1a: %d %d %d - %d %d %d - %d %d %d - %d %d %d ; Y: %d %d %d %d\n", 
        x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps, x2%rs, (x2%ps)/rs, x2/ps, x3%rs, (x3%ps)/rs, x3/ps, Y[x], Y[x1], Y[x2], Y[x3]);
- if ((i == 4) && (j == 4) && (k == 6)) writeimage(imageY, "_imageY");
 #endif
 	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N))
 	  {
@@ -6651,7 +6690,7 @@ printf("set_ W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
 	stab = 0;
       }
     }
-  } // while (!mcrbt_RbtVide(RBT))
+  } // while (!stab && (nbiter < nsteps))
 
   for (x = 0; x < N; x++) if (F[x]) F[x] = NDG_MAX;
 
@@ -6664,3 +6703,2216 @@ printf("set_ W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
   free(Y);
   return(1);
 } /* lskelCKSC3() */
+#endif
+
+#ifdef lskelCKSC3_VARIANTE_A
+/* ==================================== */
+int32_t lskelCKSC3(
+		   struct xvimage *image, 
+		   struct xvimage *inhibit,
+		   int32_t nsteps)
+/* ==================================== */
+/* 3D binary sequential curvilinear thinning
+ EXPERIMENTAL - Ne pas utiliser dans des applications
+
+repeter
+  Y = X ; W = {points non simples de X}
+  pour dim = 2,1,0
+    pour dir = a,b,c
+      pour chaque clique cruciale C de X de dimension dim et de direction dir
+        W = W u {points de C inter Y et non simples pour Y}
+        s'il existe des points dans C inter Y inter W alors
+          pour tout x dans (C inter Y) \ W
+	    si x simple pour Y alors Y = Y \ {x} sinon W = W u {x}
+        sinon
+          choisir un point x dans C inter Y
+          W = W u {x}
+          retirer de Y les autres points de C inter Y      
+  X = W
+*/
+#undef F_NAME
+#define F_NAME "lskelCKSC3"
+{ 
+  int32_t i, j, k, t, tb, stab, nbiter, ret;
+  index_t x, x1, x2, x3, x4, x5, x6, x7; /* index de pixel */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(image);       /* nb plans */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *F = UCHARDATA(image);   /* objet */
+  struct xvimage *imageY = copyimage(image);
+  uint8_t *Y = UCHARDATA(imageY);
+  uint8_t v[27];
+
+  ONLY_3D(image);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
+
+  if (inhibit != NULL)
+  {
+    uint8_t *I;
+    COMPARE_SIZE(image, inhibit);
+    ACCEPTED_TYPES1(inhibit, VFF_TYP_1_BYTE);
+    I = UCHARDATA(inhibit);
+    for (x = 0; x < N; x++) if (I[x]) Set(x,CONTRAINTE);
+  }
+
+  mctopo3d_init_topo3d();  
+  IndicsInit(N);
+  //  Y = (uint8_t *)calloc(N, sizeof(uint8_t)); assert(Y != NULL);
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  for (k = 1; k < ds-1; k++) 
+  for (j = 1; j < cs-1; j++) 
+  for (i = 1; i < rs-1; i++) 
+  {
+    x = k*ps + j*rs + i;
+    if (F[x] && ((k<2)||(j<2)||(i<2)||(k>ds-3)||(j>cs-3)||(i>rs-3))) 
+      printf("%s: WARNING - points on extended border may not be treated\n", F_NAME);
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  nbiter = 0;
+  stab = 0;
+  while (!stab && (nbiter < nsteps))
+  {
+    nbiter++;
+#ifdef VERBOSE
+    printf("%s: nbiter %d\n", F_NAME, nbiter);
+#endif
+    stab = 1;
+
+    for (x = 0; x < N; x++) if (F[x]) F[x] = OBJ;
+    memset(Y, 0, N * sizeof(uint8_t));
+
+    // détection des isthmes 1D
+    for (x = 0; x < N; x++) 
+      if (F[x])
+      { 
+	mctopo3d_top26(F, x, rs, ps, N, &t, &tb);
+	if (t > 1) Set(x, CONTRAINTE);
+      }
+
+    for (k = 1; k < ds-1; k++) 
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	Y[x] = CAN;
+	if (!mctopo3d_simple26(F, x, rs, ps, N) || IsSet(x,CONTRAINTE))
+	  Set(x, IN_SET_W);
+	else
+	{
+	  UnSet(x, IN_SET_W);
+	  F[x] = CAN;
+	}
+      }
+    }
+
+    // DIM = 2
+    // =============================
+    for (k = 1; k < ds-1; k++) // dim = 2, C = {x, x-ps}
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 2a: %d %d %d\n", i, j, k);
+#endif
+	if (match_seq_vois2_a(v))
+	{
+	  //insert_vois3d(v, F, x, rs, ps, N);
+	  x1 = x-ps;
+#ifdef DEBUG_resmatch
+printf("match2a: %d %d %d - %d %d %d\n", x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	  //     W = W u {points de C inter Y et non simples pour Y}
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	    Set(x,IN_SET_W);
+	  }
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	    Set(x1,IN_SET_W);
+	  }
+	  //     s'il existe des points dans C inter Y inter W alors
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)))
+	  {
+	    //      retirer de Y les points de C non dans W
+	    if (Y[x] && !IsSet(x,IN_SET_W)) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Y[x] = 0;
+	    }
+	    if (Y[x1] && !IsSet(x1,IN_SET_W)) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Y[x1] = 0;
+	    }
+	  }
+	  else
+	  {
+	    //      choisir un point x dans C inter Y
+	    //      W = W u {x}
+	    //      retirer de Y les autres points de C inter Y
+	    if (Y[x]) 
+	    { 
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Set(x,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Y[x1] = 0; 
+	    } 
+	    else if (Y[x1]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Set(x1,IN_SET_W);
+	    }
+	  }
+	}
+      }
+    }
+
+    for (k = 1; k < ds-1; k++) // dim = 2, C = {x, x-rs}
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 2b: %d %d %d\n", i, j, k);
+#endif
+	if (match_seq_vois2_b(v))
+	{
+	  //insert_vois3d(v, F, x, rs, ps, N);
+	  x1 = x-rs;
+#ifdef DEBUG_resmatch
+printf("match2b: %d %d %d - %d %d %d\n", x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	    Set(x,IN_SET_W);
+	  }
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	    Set(x1,IN_SET_W);
+	  }
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)))
+	  {
+	    if (Y[x] && !IsSet(x,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Y[x] = 0;
+	    }
+	    if (Y[x1] && !IsSet(x1,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Y[x1] = 0;
+	    }
+	  }
+	  else
+	  {
+	    if (Y[x]) 
+	    { 
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Set(x,IN_SET_W); 
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Y[x1] = 0; 
+	    } 
+	    else if (Y[x1])
+	     {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Set(x1,IN_SET_W);
+	     }
+	  }
+	}
+      }
+    }
+
+    for (k = 1; k < ds-1; k++) // dim = 2, C = {x, x-1}
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 2c: %d %d %d\n", i, j, k);
+#endif
+	if (match_seq_vois2_c(v))
+	{
+	  //insert_vois3d(v, F, x, rs, ps, N);
+	  x1 = x-1;
+#ifdef DEBUG_resmatch
+printf("match2c: %d %d %d - %d %d %d\n", x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	    Set(x,IN_SET_W);
+	  }
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	    Set(x1,IN_SET_W);
+	  }
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)))
+	  {
+	    if (Y[x] && !IsSet(x,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Y[x] = 0;
+	    }
+	    if (Y[x1] && !IsSet(x1,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Y[x1] = 0;
+	    }
+	  }
+	  else
+	  {
+	    if (Y[x]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Set(x,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Y[x1] = 0;
+	    } 
+	    else if (Y[x1])
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Set(x1,IN_SET_W);
+	    }
+	  }
+	}
+      }
+    }
+
+    // DIM = 1
+    // =============================
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 1a: %d %d %d\n", i, j, k);
+#endif
+	if ((ret = match_seq_vois1_a(v)))
+	{
+	  //insert_vois3d(v, F, x, rs, ps, N);
+	  if (ret == 1) { x1 = x-rs; x2 = x-1; x3 = (x-rs)-1; }
+	  else          { x1 = x-rs; x2 = x+1; x3 = (x-rs)+1; }
+#ifdef DEBUG_resmatch
+printf("match1a: %d %d %d - %d %d %d - %d %d %d - %d %d %d ; Y: %d %d %d %d\n", 
+       x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps, x2%rs, (x2%ps)/rs, x2/ps, x3%rs, (x3%ps)/rs, x3/ps, Y[x], Y[x1], Y[x2], Y[x3]);
+#endif
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	    Set(x,IN_SET_W);
+	  }
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	    Set(x1,IN_SET_W);
+	  }
+	  if (Y[x2] && !mctopo3d_simple26(Y, x2, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+	    Set(x2,IN_SET_W);
+	  }
+	  if (Y[x3] && !mctopo3d_simple26(Y, x3, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	    Set(x3,IN_SET_W);
+	  }
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)) ||
+	      (Y[x2] && IsSet(x2,IN_SET_W)) || (Y[x3] && IsSet(x3,IN_SET_W)))
+	  {
+	    //         s'il existe des points dans C inter Y inter W alors
+	    //          retirer de Y les points de C non dans W
+	    if (Y[x] && !IsSet(x,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+              if (mctopo3d_simple26(Y, x, rs, ps, N)) Y[x] = 0;
+	      else Set(x,IN_SET_W);
+	    }
+	    if (Y[x1] && !IsSet(x1,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+              if (mctopo3d_simple26(Y, x1, rs, ps, N)) Y[x1] = 0;
+	      else Set(x1,IN_SET_W);
+	    }
+	    if (Y[x2] && !IsSet(x2,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+              if (mctopo3d_simple26(Y, x2, rs, ps, N)) Y[x2] = 0;
+	      else Set(x2,IN_SET_W);
+	    }
+	    if (Y[x3] && !IsSet(x3,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+              if (mctopo3d_simple26(Y, x3, rs, ps, N)) Y[x3] = 0;
+	      else Set(x3,IN_SET_W);
+	    }
+	  }
+	  else
+	  {
+	    if (Y[x]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Set(x,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x1] = Y[x2] = Y[x3] = 0;
+	    }
+	    else if (Y[x1]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Set(x1,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x2] = Y[x3] = 0;
+	    }
+	    else if (Y[x2]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+	      Set(x2,IN_SET_W); 
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x3] = 0;
+	    }
+	    else if (Y[x3])
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Set(x3,IN_SET_W);
+	    }
+	  }
+	}
+      }
+    }
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 1b: %d %d %d\n", i, j, k);
+#endif
+	if ((ret = match_seq_vois1_b(v)))
+	{
+	  //insert_vois3d(v, F, x, rs, ps, N);
+	  if (ret == 1) { x1 = x+rs; x2 = x-ps; x3 = x-ps+rs; }
+	  else          { x1 = x-rs; x2 = x-ps; x3 = x-ps-rs; }
+#ifdef DEBUG_resmatch
+printf("match1b: %d %d %d - %d %d %d - %d %d %d - %d %d %d\n", 
+x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps, x2%rs, (x2%ps)/rs, x2/ps, x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	    Set(x,IN_SET_W);
+	  }
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	    Set(x1,IN_SET_W);
+	  }
+	  if (Y[x2] && !mctopo3d_simple26(Y, x2, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+	    Set(x2,IN_SET_W);
+	  }
+	  if (Y[x3] && !mctopo3d_simple26(Y, x3, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	    Set(x3,IN_SET_W);
+	  }
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)) ||
+	      (Y[x2] && IsSet(x2,IN_SET_W)) || (Y[x3] && IsSet(x3,IN_SET_W)))
+	  {
+	    //         s'il existe des points dans C inter Y inter W alors
+	    //          retirer de Y les points de C non dans W
+	    if (Y[x] && !IsSet(x,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+              if (mctopo3d_simple26(Y, x, rs, ps, N)) Y[x] = 0;
+	      else Set(x,IN_SET_W);
+	    }
+	    if (Y[x1] && !IsSet(x1,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+              if (mctopo3d_simple26(Y, x1, rs, ps, N)) Y[x1] = 0;
+	      else Set(x1,IN_SET_W);
+	    }
+	    if (Y[x2] && !IsSet(x2,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+              if (mctopo3d_simple26(Y, x2, rs, ps, N)) Y[x2] = 0;
+	      else Set(x2,IN_SET_W);
+	    }
+	    if (Y[x3] && !IsSet(x3,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+              if (mctopo3d_simple26(Y, x3, rs, ps, N)) Y[x3] = 0;
+	      else Set(x3,IN_SET_W);
+	    }
+	  }
+	  else
+	  {
+	    if (Y[x]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Set(x,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x1] = Y[x2] = Y[x3] = 0;
+	    }
+	    else if (Y[x1]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Set(x1,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x2] = Y[x3] = 0;
+	    }
+	    else if (Y[x2]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+	      Set(x2,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x3] = 0;
+	    }
+	    else if (Y[x3])
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Set(x3,IN_SET_W);
+	    }
+	  }
+	}
+      }
+    }
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 1c: %d %d %d\n", i, j, k);
+#endif
+	if ((ret = match_seq_vois1_c(v)))
+	{
+	  //insert_vois3d(v, F, x, rs, ps, N);
+	  if (ret == 1) { x1 = x-ps; x2 = x+1; x3 = x-ps+1; }
+	  else          { x1 = x-ps; x2 = x-1; x3 = x-ps-1; }
+#ifdef DEBUG_resmatch
+printf("match1c: %d %d %d - %d %d %d - %d %d %d - %d %d %d\n", 
+x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps, x2%rs, (x2%ps)/rs, x2/ps, x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	    Set(x,IN_SET_W);
+	  }
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	    Set(x1,IN_SET_W);
+	  }
+	  if (Y[x2] && !mctopo3d_simple26(Y, x2, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+	    Set(x2,IN_SET_W);
+	  }
+	  if (Y[x3] && !mctopo3d_simple26(Y, x3, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	    Set(x3,IN_SET_W);
+	  }
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)) ||
+	      (Y[x2] && IsSet(x2,IN_SET_W)) || (Y[x3] && IsSet(x3,IN_SET_W)))
+	  {
+	    //         s'il existe des points dans C inter Y inter W alors
+	    //          retirer de Y les points de C non dans W
+	    if (Y[x] && !IsSet(x,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+              if (mctopo3d_simple26(Y, x, rs, ps, N)) Y[x] = 0;
+	      else Set(x,IN_SET_W);
+	    }
+	    if (Y[x1] && !IsSet(x1,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+              if (mctopo3d_simple26(Y, x1, rs, ps, N)) Y[x1] = 0;
+	      else Set(x1,IN_SET_W);
+	    }
+	    if (Y[x2] && !IsSet(x2,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+              if (mctopo3d_simple26(Y, x2, rs, ps, N)) Y[x2] = 0;
+	      else Set(x2,IN_SET_W);
+	    }
+	    if (Y[x3] && !IsSet(x3,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+              if (mctopo3d_simple26(Y, x3, rs, ps, N)) Y[x3] = 0;
+	      else Set(x3,IN_SET_W);
+	    }
+	  }
+	  else
+	  {
+	    if (Y[x])
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Set(x,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x1] = Y[x2] = Y[x3] = 0;
+	    }
+	    else if (Y[x1]) 
+	    { 
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Set(x1,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x2] = Y[x3] = 0;
+	    }
+	    else if (Y[x2])
+	    { 
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+	      Set(x2,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x3] = 0;
+	    }
+	    else if (Y[x3])
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Set(x3,IN_SET_W);
+	    }
+	  }
+	}
+      }
+    }
+
+    // DIM = 0
+    // =============================
+    for (k = 1; k < ds-1; k++) // dim = 0, C = {x, x-ps, x-1, x-ps-1, x-rs, x-ps-rs, x-rs-1, x-ps-rs-1}
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+	if (match_seq_vois0(v))
+	{
+	  //insert_vois3d(v, F, x, rs, ps, N);
+	  x1 = x-ps; x2 = x-1; x3 = x-ps-1; 
+	  x4 = x-rs; x5 = x-ps-rs; x6 = x-rs-1; x7 = x-ps-rs-1;
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N)) Set(x,IN_SET_W);
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N)) Set(x1,IN_SET_W);
+	  if (Y[x2] && !mctopo3d_simple26(Y, x2, rs, ps, N)) Set(x2,IN_SET_W);
+	  if (Y[x3] && !mctopo3d_simple26(Y, x3, rs, ps, N)) Set(x3,IN_SET_W);
+	  if (Y[x4] && !mctopo3d_simple26(Y, x4, rs, ps, N)) Set(x4,IN_SET_W);
+	  if (Y[x5] && !mctopo3d_simple26(Y, x5, rs, ps, N)) Set(x5,IN_SET_W);
+	  if (Y[x6] && !mctopo3d_simple26(Y, x6, rs, ps, N)) Set(x6,IN_SET_W);
+	  if (Y[x7] && !mctopo3d_simple26(Y, x7, rs, ps, N)) Set(x7,IN_SET_W);
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)) ||
+	      (Y[x2] && IsSet(x2,IN_SET_W)) || (Y[x3] && IsSet(x3,IN_SET_W)) ||
+	      (Y[x4] && IsSet(x4,IN_SET_W)) || (Y[x5] && IsSet(x5,IN_SET_W)) ||
+	      (Y[x6] && IsSet(x6,IN_SET_W)) || (Y[x7] && IsSet(x7,IN_SET_W))
+	     )
+	  {
+	    if (mctopo3d_simple26(Y, x, rs, ps, N)) Y[x] = 0; else Set(x,IN_SET_W);
+	    if (mctopo3d_simple26(Y, x1, rs, ps, N)) Y[x1] = 0; else Set(x1,IN_SET_W);
+	    if (mctopo3d_simple26(Y, x2, rs, ps, N)) Y[x2] = 0; else Set(x2,IN_SET_W);
+	    if (mctopo3d_simple26(Y, x3, rs, ps, N)) Y[x3] = 0; else Set(x3,IN_SET_W);
+	    if (mctopo3d_simple26(Y, x4, rs, ps, N)) Y[x4] = 0; else Set(x4,IN_SET_W);
+	    if (mctopo3d_simple26(Y, x5, rs, ps, N)) Y[x5] = 0; else Set(x5,IN_SET_W);
+	    if (mctopo3d_simple26(Y, x6, rs, ps, N)) Y[x6] = 0; else Set(x6,IN_SET_W);
+	    if (mctopo3d_simple26(Y, x7, rs, ps, N)) Y[x7] = 0; else Set(x7,IN_SET_W);
+	  }
+	  else
+	  {
+	    if (Y[x]) { Set(x,IN_SET_W); Y[x1] = Y[x2] = Y[x3] = Y[x4] = Y[x5] = Y[x6] = Y[x7] = 0; }
+	    else if (Y[x1]) { Set(x1,IN_SET_W); Y[x2] = Y[x3] = Y[x4] = Y[x5] = Y[x6] = Y[x7] = 0; }
+	    else if (Y[x2]) { Set(x2,IN_SET_W); Y[x3] = Y[x4] = Y[x5] = Y[x6] = Y[x7] = 0; }
+	    else if (Y[x3]) { Set(x3,IN_SET_W); Y[x4] = Y[x5] = Y[x6] = Y[x7] = 0; }
+	    else if (Y[x4]) { Set(x4,IN_SET_W); Y[x5] = Y[x6] = Y[x7] = 0; }
+	    else if (Y[x5]) { Set(x5,IN_SET_W); Y[x6] = Y[x7] = 0; }
+	    else if (Y[x6]) { Set(x6,IN_SET_W); Y[x7] = 0; }
+	    else if (Y[x7]) Set(x7,IN_SET_W);
+	  }
+	}
+      }
+    }
+
+    for (x = 0; x < N; x++)
+    {
+      if (F[x] && !IsSet(x,IN_SET_W))
+      {
+        F[x] = 0;
+	stab = 0;
+      }
+    }
+  } // while (!stab && (nbiter < nsteps))
+
+  for (x = 0; x < N; x++) if (F[x]) F[x] = NDG_MAX;
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  mctopo3d_termine_topo3d();
+  free(Y);
+  return(1);
+} /* lskelCKSC3() */
+#endif
+
+#ifdef lskelCKSC3_VARIANTE_B
+/* ==================================== */
+int32_t lskelCKSC3(
+		   struct xvimage *image, 
+		   struct xvimage *inhibit,
+		   int32_t nsteps)
+/* ==================================== */
+/* 3D binary sequential curvilinear thinning
+ EXPERIMENTAL - Ne pas utiliser dans des applications
+
+repeter
+  Y = X ; W = {points non simples de X}
+  pour dim = 2,1,0
+    pour dir = a,b,c
+      pour chaque clique cruciale C de X de dimension dim et de direction dir
+        W = W u {points de C inter Y et non simples pour Y}
+	si C inter Y non vide
+          s'il existe des points dans C inter Y inter W alors
+            pour tout x dans (C inter Y) \ W faire Y = Y \ {x}
+          sinon
+            choisir un point x dans C inter Y
+            W = W u {x}
+            retirer de Y les autres points de C inter Y      
+	sinon
+	  choisir un point x dans C
+	  Y = Y u {x}
+  X = W
+*/
+#undef F_NAME
+#define F_NAME "lskelCKSC3"
+{ 
+  int32_t i, j, k, t, tb, stab, nbiter, ret;
+  index_t x, x1, x2, x3, x4, x5, x6, x7; /* index de pixel */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(image);       /* nb plans */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *F = UCHARDATA(image);   /* objet */
+  struct xvimage *imageY = copyimage(image);
+  uint8_t *Y = UCHARDATA(imageY);
+  uint8_t v[27];
+
+  ONLY_3D(image);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
+
+  if (inhibit != NULL)
+  {
+    uint8_t *I;
+    COMPARE_SIZE(image, inhibit);
+    ACCEPTED_TYPES1(inhibit, VFF_TYP_1_BYTE);
+    I = UCHARDATA(inhibit);
+    for (x = 0; x < N; x++) if (I[x]) Set(x,CONTRAINTE);
+  }
+
+  mctopo3d_init_topo3d();  
+  IndicsInit(N);
+  //  Y = (uint8_t *)calloc(N, sizeof(uint8_t)); assert(Y != NULL);
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  for (k = 1; k < ds-1; k++) 
+  for (j = 1; j < cs-1; j++) 
+  for (i = 1; i < rs-1; i++) 
+  {
+    x = k*ps + j*rs + i;
+    if (F[x] && ((k<2)||(j<2)||(i<2)||(k>ds-3)||(j>cs-3)||(i>rs-3))) 
+      printf("%s: WARNING - points on extended border may not be treated\n", F_NAME);
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  nbiter = 0;
+  stab = 0;
+  while (!stab && (nbiter < nsteps))
+  {
+    nbiter++;
+#ifdef VERBOSE
+    printf("%s: nbiter %d\n", F_NAME, nbiter);
+#endif
+    stab = 1;
+
+    for (x = 0; x < N; x++) if (F[x]) F[x] = OBJ;
+    memset(Y, 0, N * sizeof(uint8_t));
+
+    // détection des isthmes 1D
+    for (x = 0; x < N; x++) 
+      if (F[x])
+      { 
+	mctopo3d_top26(F, x, rs, ps, N, &t, &tb);
+	if (t > 1) Set(x, CONTRAINTE);
+      }
+
+    for (k = 1; k < ds-1; k++) 
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	Y[x] = CAN;
+	if (!mctopo3d_simple26(F, x, rs, ps, N) || IsSet(x,CONTRAINTE))
+	  Set(x, IN_SET_W);
+	else
+	{
+	  UnSet(x, IN_SET_W);
+	  F[x] = CAN;
+	}
+      }
+    }
+
+    // DIM = 2
+    // =============================
+    for (k = 1; k < ds-1; k++) // dim = 2, C = {x, x-ps}
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 2a: %d %d %d\n", i, j, k);
+#endif
+	if (match_seq_vois2_a(v))
+	{
+	 x1 = x-ps;
+#ifdef DEBUG_resmatch
+printf("match2a: %d %d %d - %d %d %d\n", x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+         // 	si C inter Y non vide
+         if (Y[x] || Y[x1])
+         {
+	  //     W = W u {points de C inter Y et non simples pour Y}
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	    Set(x,IN_SET_W);
+	  }
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	    Set(x1,IN_SET_W);
+	  }
+	  //     s'il existe des points dans C inter Y inter W alors
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)))
+	  {
+	    //      retirer de Y les points de C non dans W
+	    if (Y[x] && !IsSet(x,IN_SET_W)) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Y[x] = 0;
+	    }
+	    if (Y[x1] && !IsSet(x1,IN_SET_W)) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Y[x1] = 0;
+	    }
+	  }
+	  else
+	  {
+	    //      choisir un point x dans C inter Y
+	    //      W = W u {x}
+	    //      retirer de Y les autres points de C inter Y
+	    if (Y[x]) 
+	    { 
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Set(x,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Y[x1] = 0; 
+	    } 
+	    else if (Y[x1]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Set(x1,IN_SET_W);
+	    }
+	  }
+	 }
+	 else // C inter Y est vide
+	 {
+	   Y[x] = CAN;
+	   Set(x,IN_SET_W);
+	 }
+	}
+      }
+    }
+
+    for (k = 1; k < ds-1; k++) // dim = 2, C = {x, x-rs}
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 2b: %d %d %d\n", i, j, k);
+#endif
+	if (match_seq_vois2_b(v))
+	{
+	 x1 = x-rs;
+#ifdef DEBUG_resmatch
+printf("match2b: %d %d %d - %d %d %d\n", x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+         // 	si C inter Y non vide
+         if (Y[x] || Y[x1])
+         {
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	    Set(x,IN_SET_W);
+	  }
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	    Set(x1,IN_SET_W);
+	  }
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)))
+	  {
+	    if (Y[x] && !IsSet(x,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Y[x] = 0;
+	    }
+	    if (Y[x1] && !IsSet(x1,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Y[x1] = 0;
+	    }
+	  }
+	  else
+	  {
+	    if (Y[x]) 
+	    { 
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Set(x,IN_SET_W); 
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Y[x1] = 0; 
+	    } 
+	    else if (Y[x1])
+	     {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Set(x1,IN_SET_W);
+	     }
+	  }
+	 }
+	 else // C inter Y est vide
+	 {
+	   Y[x] = CAN;
+	   Set(x,IN_SET_W);
+	 }
+	}
+      }
+    }
+
+    for (k = 1; k < ds-1; k++) // dim = 2, C = {x, x-1}
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 2c: %d %d %d\n", i, j, k);
+#endif
+	if (match_seq_vois2_c(v))
+	{
+	 x1 = x-1;
+#ifdef DEBUG_resmatch
+printf("match2c: %d %d %d - %d %d %d\n", x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+         // 	si C inter Y non vide
+         if (Y[x] || Y[x1])
+         {
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	    Set(x,IN_SET_W);
+	  }
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	    Set(x1,IN_SET_W);
+	  }
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)))
+	  {
+	    if (Y[x] && !IsSet(x,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Y[x] = 0;
+	    }
+	    if (Y[x1] && !IsSet(x1,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Y[x1] = 0;
+	    }
+	  }
+	  else
+	  {
+	    if (Y[x]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Set(x,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Y[x1] = 0;
+	    } 
+	    else if (Y[x1])
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Set(x1,IN_SET_W);
+	    }
+	  }
+	 }
+	 else // C inter Y est vide
+	 {
+	   Y[x] = CAN;
+	   Set(x,IN_SET_W);
+	 }
+	}
+      }
+    }
+
+    // DIM = 1
+    // =============================
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 1a: %d %d %d\n", i, j, k);
+#endif
+	if ((ret = match_seq_vois1_a(v)))
+	{
+	 if (ret == 1) { x1 = x-rs; x2 = x-1; x3 = (x-rs)-1; }
+	 else          { x1 = x-rs; x2 = x+1; x3 = (x-rs)+1; }
+#ifdef DEBUG_resmatch
+printf("match1a: %d %d %d - %d %d %d - %d %d %d - %d %d %d ; Y: %d %d %d %d\n", 
+       x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps, x2%rs, (x2%ps)/rs, x2/ps, x3%rs, (x3%ps)/rs, x3/ps, Y[x], Y[x1], Y[x2], Y[x3]);
+#endif
+         // 	si C inter Y non vide
+         if (Y[x] || Y[x1] || Y[x2] || Y[x3])
+         {
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	    Set(x,IN_SET_W);
+	  }
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	    Set(x1,IN_SET_W);
+	  }
+	  if (Y[x2] && !mctopo3d_simple26(Y, x2, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+	    Set(x2,IN_SET_W);
+	  }
+	  if (Y[x3] && !mctopo3d_simple26(Y, x3, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	    Set(x3,IN_SET_W);
+	  }
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)) ||
+	      (Y[x2] && IsSet(x2,IN_SET_W)) || (Y[x3] && IsSet(x3,IN_SET_W)))
+	  {
+	    //         s'il existe des points dans C inter Y inter W alors
+	    //          retirer de Y les points de C non dans W
+	    if (Y[x] && !IsSet(x,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+              Y[x] = 0;
+	    }
+	    if (Y[x1] && !IsSet(x1,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+              Y[x1] = 0;
+	    }
+	    if (Y[x2] && !IsSet(x2,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+              Y[x2] = 0;
+	    }
+	    if (Y[x3] && !IsSet(x3,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+              Y[x3] = 0;
+	    }
+	  }
+	  else
+	  {
+	    if (Y[x]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Set(x,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x1] = Y[x2] = Y[x3] = 0;
+	    }
+	    else if (Y[x1]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Set(x1,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x2] = Y[x3] = 0;
+	    }
+	    else if (Y[x2]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+	      Set(x2,IN_SET_W); 
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x3] = 0;
+	    }
+	    else if (Y[x3])
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Set(x3,IN_SET_W);
+	    }
+	  }
+	 }
+	 else // C inter Y est vide
+	 {
+	   Y[x] = CAN;
+	   Set(x,IN_SET_W);
+	 }
+	}
+      }
+    }
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 1b: %d %d %d\n", i, j, k);
+#endif
+	if ((ret = match_seq_vois1_b(v)))
+	{
+	 if (ret == 1) { x1 = x+rs; x2 = x-ps; x3 = x-ps+rs; }
+	 else          { x1 = x-rs; x2 = x-ps; x3 = x-ps-rs; }
+#ifdef DEBUG_resmatch
+printf("match1b: %d %d %d - %d %d %d - %d %d %d - %d %d %d\n", 
+x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps, x2%rs, (x2%ps)/rs, x2/ps, x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+         // 	si C inter Y non vide
+         if (Y[x] || Y[x1] || Y[x2] || Y[x3])
+         {
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	    Set(x,IN_SET_W);
+	  }
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	    Set(x1,IN_SET_W);
+	  }
+	  if (Y[x2] && !mctopo3d_simple26(Y, x2, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+	    Set(x2,IN_SET_W);
+	  }
+	  if (Y[x3] && !mctopo3d_simple26(Y, x3, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	    Set(x3,IN_SET_W);
+	  }
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)) ||
+	      (Y[x2] && IsSet(x2,IN_SET_W)) || (Y[x3] && IsSet(x3,IN_SET_W)))
+	  {
+	    //         s'il existe des points dans C inter Y inter W alors
+	    //          retirer de Y les points de C non dans W
+	    if (Y[x] && !IsSet(x,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+              Y[x] = 0;
+	    }
+	    if (Y[x1] && !IsSet(x1,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+              Y[x1] = 0;
+	    }
+	    if (Y[x2] && !IsSet(x2,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+              Y[x2] = 0;
+	    }
+	    if (Y[x3] && !IsSet(x3,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+              Y[x3] = 0;
+	    }
+	  }
+	  else
+	  {
+	    if (Y[x]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Set(x,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x1] = Y[x2] = Y[x3] = 0;
+	    }
+	    else if (Y[x1]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Set(x1,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x2] = Y[x3] = 0;
+	    }
+	    else if (Y[x2]) 
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+	      Set(x2,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x3] = 0;
+	    }
+	    else if (Y[x3])
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Set(x3,IN_SET_W);
+	    }
+	  }
+	 }
+	 else // C inter Y est vide
+	 {
+	   Y[x] = CAN;
+	   Set(x,IN_SET_W);
+	 }
+	}
+      }
+    }
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 1c: %d %d %d\n", i, j, k);
+#endif
+	if ((ret = match_seq_vois1_c(v)))
+	{
+	 if (ret == 1) { x1 = x-ps; x2 = x+1; x3 = x-ps+1; }
+	 else          { x1 = x-ps; x2 = x-1; x3 = x-ps-1; }
+#ifdef DEBUG_resmatch
+printf("match1c: %d %d %d - %d %d %d - %d %d %d - %d %d %d\n", 
+x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps, x2%rs, (x2%ps)/rs, x2/ps, x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+         // 	si C inter Y non vide
+         if (Y[x] || Y[x1] || Y[x2] || Y[x3])
+         {
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	    Set(x,IN_SET_W);
+	  }
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	    Set(x1,IN_SET_W);
+	  }
+	  if (Y[x2] && !mctopo3d_simple26(Y, x2, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+	    Set(x2,IN_SET_W);
+	  }
+	  if (Y[x3] && !mctopo3d_simple26(Y, x3, rs, ps, N))
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("set W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	    Set(x3,IN_SET_W);
+	  }
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)) ||
+	      (Y[x2] && IsSet(x2,IN_SET_W)) || (Y[x3] && IsSet(x3,IN_SET_W)))
+	  {
+	    //         s'il existe des points dans C inter Y inter W alors
+	    //          retirer de Y les points de C non dans W
+	    if (Y[x] && !IsSet(x,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+              Y[x] = 0;
+	    }
+	    if (Y[x1] && !IsSet(x1,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+              Y[x1] = 0;
+	    }
+	    if (Y[x2] && !IsSet(x2,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+              Y[x2] = 0;
+	    }
+	    if (Y[x3] && !IsSet(x3,IN_SET_W))
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("unset Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+              Y[x3] = 0;
+	    }
+	  }
+	  else
+	  {
+	    if (Y[x])
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+	      Set(x,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x1] = Y[x2] = Y[x3] = 0;
+	    }
+	    else if (Y[x1]) 
+	    { 
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	      Set(x1,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x2] = Y[x3] = 0;
+	    }
+	    else if (Y[x2])
+	    { 
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+	      Set(x2,IN_SET_W);
+#ifdef DEBUGlskelCKSC3
+printf("unset_ Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Y[x3] = 0;
+	    }
+	    else if (Y[x3])
+	    {
+#ifdef DEBUGlskelCKSC3
+printf("set_ W: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	      Set(x3,IN_SET_W);
+	    }
+	  }
+	 }
+	 else // C inter Y est vide
+	 {
+	   Y[x] = CAN;
+	   Set(x,IN_SET_W);
+	 }
+	}
+      }
+    }
+
+    // DIM = 0
+    // =============================
+    for (k = 1; k < ds-1; k++) // dim = 0, C = {x, x-ps, x-1, x-ps-1, x-rs, x-ps-rs, x-rs-1, x-ps-rs-1}
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+	if (match_seq_vois0(v))
+	{
+	 x1 = x-ps; x2 = x-1; x3 = x-ps-1; 
+	 x4 = x-rs; x5 = x-ps-rs; x6 = x-rs-1; x7 = x-ps-rs-1;
+         // 	si C inter Y non vide
+         if (Y[x] || Y[x1] || Y[x2] || Y[x3] || Y[x4] || Y[x5] || Y[x6] || Y[x7])
+         {
+	  if (Y[x] && !mctopo3d_simple26(Y, x, rs, ps, N)) Set(x,IN_SET_W);
+	  if (Y[x1] && !mctopo3d_simple26(Y, x1, rs, ps, N)) Set(x1,IN_SET_W);
+	  if (Y[x2] && !mctopo3d_simple26(Y, x2, rs, ps, N)) Set(x2,IN_SET_W);
+	  if (Y[x3] && !mctopo3d_simple26(Y, x3, rs, ps, N)) Set(x3,IN_SET_W);
+	  if (Y[x4] && !mctopo3d_simple26(Y, x4, rs, ps, N)) Set(x4,IN_SET_W);
+	  if (Y[x5] && !mctopo3d_simple26(Y, x5, rs, ps, N)) Set(x5,IN_SET_W);
+	  if (Y[x6] && !mctopo3d_simple26(Y, x6, rs, ps, N)) Set(x6,IN_SET_W);
+	  if (Y[x7] && !mctopo3d_simple26(Y, x7, rs, ps, N)) Set(x7,IN_SET_W);
+	  if ((Y[x] && IsSet(x,IN_SET_W)) || (Y[x1] && IsSet(x1,IN_SET_W)) ||
+	      (Y[x2] && IsSet(x2,IN_SET_W)) || (Y[x3] && IsSet(x3,IN_SET_W)) ||
+	      (Y[x4] && IsSet(x4,IN_SET_W)) || (Y[x5] && IsSet(x5,IN_SET_W)) ||
+	      (Y[x6] && IsSet(x6,IN_SET_W)) || (Y[x7] && IsSet(x7,IN_SET_W))
+	     )
+	  {
+	    if (Y[x] && !IsSet(x,IN_SET_W)) Y[x] = 0;
+	    if (Y[x1] && !IsSet(x1,IN_SET_W)) Y[x1] = 0;
+	    if (Y[x2] && !IsSet(x2,IN_SET_W)) Y[x2] = 0;
+	    if (Y[x3] && !IsSet(x3,IN_SET_W)) Y[x3] = 0;
+	    if (Y[x4] && !IsSet(x4,IN_SET_W)) Y[x4] = 0;
+	    if (Y[x5] && !IsSet(x5,IN_SET_W)) Y[x5] = 0;
+	    if (Y[x6] && !IsSet(x6,IN_SET_W)) Y[x6] = 0;
+	    if (Y[x7] && !IsSet(x7,IN_SET_W)) Y[x7] = 0;
+	  }
+	  else
+	  {
+	    if (Y[x]) { Set(x,IN_SET_W); Y[x1] = Y[x2] = Y[x3] = Y[x4] = Y[x5] = Y[x6] = Y[x7] = 0; }
+	    else if (Y[x1]) { Set(x1,IN_SET_W); Y[x2] = Y[x3] = Y[x4] = Y[x5] = Y[x6] = Y[x7] = 0; }
+	    else if (Y[x2]) { Set(x2,IN_SET_W); Y[x3] = Y[x4] = Y[x5] = Y[x6] = Y[x7] = 0; }
+	    else if (Y[x3]) { Set(x3,IN_SET_W); Y[x4] = Y[x5] = Y[x6] = Y[x7] = 0; }
+	    else if (Y[x4]) { Set(x4,IN_SET_W); Y[x5] = Y[x6] = Y[x7] = 0; }
+	    else if (Y[x5]) { Set(x5,IN_SET_W); Y[x6] = Y[x7] = 0; }
+	    else if (Y[x6]) { Set(x6,IN_SET_W); Y[x7] = 0; }
+	    else if (Y[x7]) Set(x7,IN_SET_W);
+	  }
+	 }
+	 else // C inter Y est vide
+	 {
+	   Y[x] = CAN;
+	   Set(x,IN_SET_W);
+	 }
+	}
+      }
+    }
+
+    for (x = 0; x < N; x++)
+    {
+      if (F[x] && !IsSet(x,IN_SET_W))
+      {
+        F[x] = 0;
+	stab = 0;
+      }
+    }
+  } // while (!stab && (nbiter < nsteps))
+
+  for (x = 0; x < N; x++) if (F[x]) F[x] = NDG_MAX;
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  mctopo3d_termine_topo3d();
+  free(Y);
+  return(1);
+} /* lskelCKSC3() */
+#endif
+
+
+#ifdef lskelCKSC3_VARIANTE_C
+/* ==================================== */
+int32_t lskelCKSC3(
+		   struct xvimage *image, 
+		   struct xvimage *inhibit,
+		   int32_t nsteps)
+/* ==================================== */
+/* 3D binary sequential curvilinear thinning
+ EXPERIMENTAL - Ne pas utiliser dans des applications
+
+repeter
+  Y = X; W = {}
+  pour dim = 2,1,0
+    pour dir = a,b,c
+      pour chaque clique cruciale C de X de dimension dim et de direction dir
+        pour tout x dans C
+	  W = W u {x}
+	  si x simple pour Y faire Y = Y \ {x}
+  pour chaque point de Y \ W simple pour X faire Y = Y \ {x}
+  X = Y
+*/
+#undef F_NAME
+#define F_NAME "lskelCKSC3"
+{ 
+  int32_t i, j, k, t, tb, stab, nbiter, ret;
+  index_t x, x1, x2, x3, x4, x5, x6, x7; /* index de pixel */
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(image);       /* nb plans */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *F = UCHARDATA(image);   /* objet */
+  struct xvimage *imageY = copyimage(image);
+  uint8_t *Y = UCHARDATA(imageY);
+  uint8_t v[27];
+
+  ONLY_3D(image);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
+
+  if (inhibit != NULL)
+  {
+    uint8_t *I;
+    COMPARE_SIZE(image, inhibit);
+    ACCEPTED_TYPES1(inhibit, VFF_TYP_1_BYTE);
+    I = UCHARDATA(inhibit);
+    for (x = 0; x < N; x++) if (I[x]) Set(x,CONTRAINTE);
+  }
+
+  mctopo3d_init_topo3d();  
+  IndicsInit(N);
+  //  Y = (uint8_t *)calloc(N, sizeof(uint8_t)); assert(Y != NULL);
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  for (k = 1; k < ds-1; k++) 
+  for (j = 1; j < cs-1; j++) 
+  for (i = 1; i < rs-1; i++) 
+  {
+    x = k*ps + j*rs + i;
+    if (F[x] && ((k<2)||(j<2)||(i<2)||(k>ds-3)||(j>cs-3)||(i>rs-3))) 
+      printf("%s: WARNING - points on extended border may not be treated\n", F_NAME);
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  nbiter = 0;
+  stab = 0;
+  while (!stab && (nbiter < nsteps))
+  {
+    nbiter++;
+#ifdef VERBOSE
+    printf("%s: nbiter %d\n", F_NAME, nbiter);
+#endif
+    stab = 1;
+
+    for (x = 0; x < N; x++) if (F[x]) F[x] = OBJ;
+    memset(Y, 0, N * sizeof(uint8_t));
+
+    // détection des isthmes 1D
+    for (x = 0; x < N; x++) 
+      if (F[x])
+      { 
+	mctopo3d_top26(F, x, rs, ps, N, &t, &tb);
+	if (t > 1) Set(x, CONTRAINTE);
+	if ((t == 1) && (tb == 1)) F[x] = CAN;
+      }
+
+    for (x = 0; x < N; x++) 
+      if (F[x])
+      { 
+	Y[x] = OBJ;
+	UnSet(x, IN_SET_W);
+      }
+
+    // DIM = 2
+    // =============================
+    for (k = 1; k < ds-1; k++) // dim = 2, C = {x, x-ps}
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 2a: %d %d %d\n", i, j, k);
+#endif
+	if (match_seq_vois2_a(v))
+	{
+	  x1 = x-ps;
+	  Set(x,IN_SET_W); Set(x1,IN_SET_W);
+#ifdef DEBUG_resmatch
+printf("match2a: %d %d %d - %d %d %d\n", x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	  if (Y[x] && mctopo3d_simple26(Y, x, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+            Y[x] = 0;
+	  }
+	  if (Y[x1] && mctopo3d_simple26(Y, x1, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+            Y[x1] = 0;
+	  }
+	} // if (match_seq_vois2_a(v))
+      } // if (F[x])
+    } // for k j i
+
+    for (k = 1; k < ds-1; k++) // dim = 2, C = {x, x-rs}
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 2b: %d %d %d\n", i, j, k);
+#endif
+	if (match_seq_vois2_b(v))
+	{
+	  x1 = x-rs;
+	  Set(x,IN_SET_W); Set(x1,IN_SET_W);
+#ifdef DEBUG_resmatch
+printf("match2b: %d %d %d - %d %d %d\n", x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	  if (Y[x] && mctopo3d_simple26(Y, x, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+            Y[x] = 0;
+	  }
+	  if (Y[x1] && mctopo3d_simple26(Y, x1, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+            Y[x1] = 0;
+	  }
+	} // if (match_seq_vois2_b(v))
+      } // if (F[x])
+    } // for k j i
+
+    for (k = 1; k < ds-1; k++) // dim = 2, C = {x, x-1}
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 2c: %d %d %d\n", i, j, k);
+#endif
+	if (match_seq_vois2_c(v))
+	{
+	  x1 = x-1;
+	  Set(x,IN_SET_W); Set(x1,IN_SET_W);
+#ifdef DEBUG_resmatch
+printf("match2c: %d %d %d - %d %d %d\n", x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+	  if (Y[x] && mctopo3d_simple26(Y, x, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+            Y[x] = 0;
+	  }
+	  if (Y[x1] && mctopo3d_simple26(Y, x1, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+            Y[x1] = 0;
+	  }
+	} // if (match_seq_vois2_c(v))
+      } // if (F[x])
+    } // for k j i
+
+    // DIM = 1
+    // =============================
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 1a: %d %d %d\n", i, j, k);
+#endif
+	if ((ret = match_seq_vois1_a(v)))
+	{
+	  if (ret == 1) { x1 = x-rs; x2 = x-1; x3 = (x-rs)-1; }
+	  else          { x1 = x-rs; x2 = x+1; x3 = (x-rs)+1; }
+	  Set(x,IN_SET_W); Set(x1,IN_SET_W); Set(x2,IN_SET_W); Set(x3,IN_SET_W);
+#ifdef DEBUG_resmatch
+printf("match1a: %d %d %d - %d %d %d - %d %d %d - %d %d %d ; Y: %d %d %d %d\n", 
+       x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps, x2%rs, (x2%ps)/rs, x2/ps, x3%rs, (x3%ps)/rs, x3/ps, Y[x], Y[x1], Y[x2], Y[x3]);
+#endif
+	  if (Y[x] && mctopo3d_simple26(Y, x, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+            Y[x] = 0;
+	  }
+	  if (Y[x1] && mctopo3d_simple26(Y, x1, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+            Y[x1] = 0;
+	  }
+	  if (Y[x2] && mctopo3d_simple26(Y, x2, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+            Y[x2] = 0;
+	  }
+	  if (Y[x3] && mctopo3d_simple26(Y, x3, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+            Y[x3] = 0;
+	  }
+	} // if (match_seq_vois1_a(v))
+      } // if (F[x])
+    } // for k j i
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 1b: %d %d %d\n", i, j, k);
+#endif
+	if ((ret = match_seq_vois1_b(v)))
+	{
+	  if (ret == 1) { x1 = x+rs; x2 = x-ps; x3 = x-ps+rs; }
+	  else          { x1 = x-rs; x2 = x-ps; x3 = x-ps-rs; }
+	  Set(x,IN_SET_W); Set(x1,IN_SET_W); Set(x2,IN_SET_W); Set(x3,IN_SET_W);
+#ifdef DEBUG_resmatch
+printf("match1b: %d %d %d - %d %d %d - %d %d %d - %d %d %d\n", 
+x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps, x2%rs, (x2%ps)/rs, x2/ps, x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	  if (Y[x] && mctopo3d_simple26(Y, x, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+            Y[x] = 0;
+	  }
+	  if (Y[x1] && mctopo3d_simple26(Y, x1, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+            Y[x1] = 0;
+	  }
+	  if (Y[x2] && mctopo3d_simple26(Y, x2, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+            Y[x2] = 0;
+	  }
+	  if (Y[x3] && mctopo3d_simple26(Y, x3, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+            Y[x3] = 0;
+	  }
+	} // if (match_seq_vois1_b(v))
+      } // if (F[x])
+    } // for k j i
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+	extract_vois3d(F, x, rs, ps, N, v);
+#ifdef DEBUG_callmatch
+printf("call match 1c: %d %d %d\n", i, j, k);
+#endif
+	if ((ret = match_seq_vois1_c(v)))
+	{
+	  if (ret == 1) { x1 = x-ps; x2 = x+1; x3 = x-ps+1; }
+	  else          { x1 = x-ps; x2 = x-1; x3 = x-ps-1; }
+	  Set(x,IN_SET_W); Set(x1,IN_SET_W); Set(x2,IN_SET_W); Set(x3,IN_SET_W);
+#ifdef DEBUG_resmatch
+printf("match1c: %d %d %d - %d %d %d - %d %d %d - %d %d %d\n", 
+x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps, x2%rs, (x2%ps)/rs, x2/ps, x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+	  if (Y[x] && mctopo3d_simple26(Y, x, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+            Y[x] = 0;
+	  }
+	  if (Y[x1] && mctopo3d_simple26(Y, x1, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+            Y[x1] = 0;
+	  }
+	  if (Y[x2] && mctopo3d_simple26(Y, x2, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+            Y[x2] = 0;
+	  }
+	  if (Y[x3] && mctopo3d_simple26(Y, x3, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+            Y[x3] = 0;
+	  }
+	} // if (match_seq_vois1_c(v))
+      } // if (F[x])
+    } // for k j i
+
+    // DIM = 0
+    // =============================
+    for (k = 1; k < ds-1; k++) // dim = 0, C = {x, x-ps, x-1, x-ps-1, x-rs, x-ps-rs, x-rs-1, x-ps-rs-1}
+    for (j = 1; j < cs-1; j++) 
+    for (i = 1; i < rs-1; i++) 
+    {
+      x = k*ps + j*rs + i;
+      if (F[x])
+      { 
+#ifdef DEBUG_callmatch
+printf("call match 0: %d %d %d\n", i, j, k);
+#endif
+	extract_vois3d(F, x, rs, ps, N, v);
+	if (match_seq_vois0(v))
+	{
+	  x1 = x-ps; x2 = x-1; x3 = x-ps-1; 
+	  x4 = x-rs; x5 = x-ps-rs; x6 = x-rs-1; x7 = x-ps-rs-1;
+	  Set(x,IN_SET_W); Set(x1,IN_SET_W); Set(x2,IN_SET_W); Set(x3,IN_SET_W);
+	  Set(x4,IN_SET_W); Set(x5,IN_SET_W); Set(x6,IN_SET_W); Set(x7,IN_SET_W);
+#ifdef DEBUG_resmatch
+printf("match0: %d %d %d - %d %d %d - %d %d %d - %d %d %d -  %d %d %d - %d %d %d - %d %d %d - %d %d %d\n", 
+       x%rs, (x%ps)/rs, x/ps, x1%rs, (x1%ps)/rs, x1/ps, x2%rs, (x2%ps)/rs, x2/ps, x3%rs, (x3%ps)/rs, x3/ps,
+       x4%rs, (x4%ps)/rs, x4/ps, x5%rs, (x5%ps)/rs, x5/ps, x6%rs, (x6%ps)/rs, x6/ps, x7%rs, (x7%ps)/rs, x7/ps);
+#endif
+	  if (Y[x] && mctopo3d_simple26(Y, x, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x%rs, (x%ps)/rs, x/ps);
+#endif
+            Y[x] = 0;
+	  }
+	  if (Y[x1] && mctopo3d_simple26(Y, x1, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x1%rs, (x1%ps)/rs, x1/ps);
+#endif
+            Y[x1] = 0;
+	  }
+	  if (Y[x2] && mctopo3d_simple26(Y, x2, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x2%rs, (x2%ps)/rs, x2/ps);
+#endif
+            Y[x2] = 0;
+	  }
+	  if (Y[x3] && mctopo3d_simple26(Y, x3, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x3%rs, (x3%ps)/rs, x3/ps);
+#endif
+            Y[x3] = 0;
+	  }
+	  if (Y[x4] && mctopo3d_simple26(Y, x4, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x4%rs, (x4%ps)/rs, x4/ps);
+#endif
+            Y[x4] = 0;
+	  }
+	  if (Y[x5] && mctopo3d_simple26(Y, x5, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x5%rs, (x5%ps)/rs, x5/ps);
+#endif
+            Y[x5] = 0;
+	  }
+	  if (Y[x6] && mctopo3d_simple26(Y, x6, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x6%rs, (x6%ps)/rs, x6/ps);
+#endif
+            Y[x6] = 0;
+	  }
+	  if (Y[x7] && mctopo3d_simple26(Y, x7, rs, ps, N)) 
+	  {
+#ifdef DEBUGlskelCKSC3
+printf("delete from Y: %d %d %d\n", x7%rs, (x7%ps)/rs, x7/ps);
+#endif
+            Y[x7] = 0;
+	  }
+	} // if (match_seq_vois0(v))
+      } // if (F[x])
+    } // for k j i
+
+    //  pour chaque point de Y \ W simple pour X faire Y = Y \ {x}
+    for (x = 0; x < N; x++)
+      if (Y[x] && !IsSet(x,IN_SET_W) && mctopo3d_simple26(F, x, rs, ps, N))
+        Y[x] = 0;
+
+    //  X = Y
+    for (x = 0; x < N; x++)
+      if (F[x] && !Y[x])
+      {
+	F[x] = 0;
+	stab = 0;
+      }
+
+  } // while (!stab && (nbiter < nsteps))
+
+  for (x = 0; x < N; x++) if (F[x]) F[x] = NDG_MAX;
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  mctopo3d_termine_topo3d();
+  free(Y);
+  return(1);
+} /* lskelCKSC3() */
+#endif
