@@ -69,9 +69,10 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <lskelpar3d_others.h>
 
 #define VERBOSE
-#define DEBUG
+//#define DEBUG
+//#define DEBUG_lmasonka1996
 
-#define PATCH_MC
+//#define PATCH_MC
 
 /* ==================================== */
 static void extract_vois(
@@ -801,7 +802,9 @@ int32_t ma_sonka_dir_ABC(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t 
   index_t s, w, d;
   int32_t x, y, z;
 
-  //printf("DEBUG: ma_sonka_dir_ABC begins - p = %d\n", p);
+#ifdef DEBUG_lmasonka1996
+  printf("DEBUG: ma_sonka_dir_ABC begins - p = %d\n", p);
+#endif
   x = p % rs; y = (p % ps) / rs; z = p / ps;
 
   s = return_vois27(13, MS_S, 3, 9);
@@ -865,10 +868,12 @@ int32_t ma_sonka_dir_ABC(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t 
 int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps)
 /* ==================================== */
 {
-  index_t q;
-  int32_t x, y, z, xq, yq, zq;
+  index_t qq;
+  int32_t q, x, y, z, xq, yq, zq;
 
-  //printf("DEBUG: ma_sonka_dir_D begins\n");
+#ifdef DEBUG_lmasonka1996
+  printf("DEBUG: ma_sonka_dir_D begins - p = %d\n", p);
+#endif
   x = p % rs;
   y = (p % ps) / rs;
   z = p / ps;
@@ -878,9 +883,13 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
   {
     int32_t dxs, dys, dzs, dxu, dyu, dzu, dxsu, dysu, dzsu;
     index_t s, u, ss, ssu, susu, usu, uu; // su = q
-    xq = q % rs;
-    yq = (q % ps) / rs;
-    zq = q / ps;
+#ifdef DEBUG_lmasonka1996
+  printf("DEBUG: ma_sonka_dir_D 1 - q = %d\n", q);
+#endif
+    qq = return_vois27(p, MS_SU, rs, ps);
+    xq = qq % rs;
+    yq = (qq % ps) / rs;
+    zq = qq/ ps;
     s = return_vois27(13, MS_S, 3, 9);
     u = return_vois27(13, MS_U, 3, 9);
     // coord. relatives de s par rapport au point central de v
@@ -895,7 +904,7 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
     susu = (zq+dzsu)*ps + (yq+dysu)*rs + (xq+dxsu);
     usu = (zq+dzu)*ps + (yq+dyu)*rs + (xq+dxu);
     uu = (z+dzu+dzu)*ps + (y+dyu+dyu)*rs + (x+dxu+dxu);
-    if (!S[ss] && !S[ssu] && !S[susu] && !S[usu] && !S[uu]) return 0;
+    if (!S[ss] && !S[ssu] && !S[susu] && !S[usu] && !S[uu]) goto fail;
   }
 
   q = return_vois27(13, MS_SD, 3, 9);
@@ -903,9 +912,13 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
   {
     int32_t dxs, dys, dzs, dxd, dyd, dzd, dxsd, dysd, dzsd;
     index_t s, d, ss, ssd, sdsd, dsd, dd; // sd = q
-    xq = q % rs;
-    yq = (q % ps) / rs;
-    zq = q / ps;
+#ifdef DEBUG_lmasonka1996
+  printf("DEBUG: ma_sonka_dir_D 2 - q = %d\n", q);
+#endif
+    qq = return_vois27(p, MS_SU, rs, ps);
+    xq = qq % rs;
+    yq = (qq % ps) / rs;
+    zq = qq / ps;
     s = return_vois27(13, MS_S, 3, 9);
     d = return_vois27(13, MS_D, 3, 9);
     // coord. relatives de s par rapport au point central de v
@@ -920,7 +933,7 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
     sdsd = (zq+dzsd)*ps + (yq+dysd)*rs + (xq+dxsd);
     dsd = (zq+dzd)*ps + (yq+dyd)*rs + (xq+dxd);
     dd = (z+dzd+dzd)*ps + (y+dyd+dyd)*rs + (x+dxd+dxd);
-    if (!S[ss] && !S[ssd] && !S[sdsd] && !S[dsd] && !S[dd]) return 0;
+    if (!S[ss] && !S[ssd] && !S[sdsd] && !S[dsd] && !S[dd]) goto fail;
   }
 
   q = return_vois27(13, MS_SW, 3, 9);
@@ -928,9 +941,13 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
   {
     int32_t dxs, dys, dzs, dxw, dyw, dzw, dxsw, dysw, dzsw;
     index_t s, w, ss, ssw, swsw, wsw, ww; // sw = q
-    xq = q % rs;
-    yq = (q % ps) / rs;
-    zq = q / ps;
+#ifdef DEBUG_lmasonka1996
+  printf("DEBUG: ma_sonka_dir_D 3 - q = %d\n", q);
+#endif
+    qq = return_vois27(p, MS_SU, rs, ps);
+    xq = qq % rs;
+    yq = (qq % ps) / rs;
+    zq = qq / ps;
     s = return_vois27(13, MS_S, 3, 9);
     w = return_vois27(13, MS_W, 3, 9);
     // coord. relatives de s par rapport au point central de v
@@ -945,7 +962,7 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
     swsw = (zq+dzsw)*ps + (yq+dysw)*rs + (xq+dxsw);
     wsw = (zq+dzw)*ps + (yq+dyw)*rs + (xq+dxw);
     ww = (z+dzw+dzw)*ps + (y+dyw+dyw)*rs + (x+dxw+dxw);
-    if (!S[ss] && !S[ssw] && !S[swsw] && !S[wsw] && !S[ww]) return 0;
+    if (!S[ss] && !S[ssw] && !S[swsw] && !S[wsw] && !S[ww]) goto fail;
   }
 
   q = return_vois27(13, MS_SE, 3, 9);
@@ -953,9 +970,13 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
   {
     int32_t dxs, dys, dzs, dxe, dye, dze, dxse, dyse, dzse;
     index_t s, e, ss, sse, sese, ese, ee; // se = q
-    xq = q % rs;
-    yq = (q % ps) / rs;
-    zq = q / ps;
+#ifdef DEBUG_lmasonka1996
+  printf("DEBUG: ma_sonka_dir_D 4 - q = %d\n", q);
+#endif
+    qq = return_vois27(p, MS_SU, rs, ps);
+    xq = qq % rs;
+    yq = (qq % ps) / rs;
+    zq = qq / ps;
     s = return_vois27(13, MS_S, 3, 9);
     e = return_vois27(13, MS_E, 3, 9);
     // coord. relatives de s par rapport au point central de v
@@ -970,7 +991,7 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
     sese = (zq+dzse)*ps + (yq+dyse)*rs + (xq+dxse);
     ese = (zq+dze)*ps + (yq+dye)*rs + (xq+dxe);
     ee = (z+dze+dze)*ps + (y+dye+dye)*rs + (x+dxe+dxe);
-    if (!S[ss] && !S[sse] && !S[sese] && !S[ese] && !S[ee]) return 0;
+    if (!S[ss] && !S[sse] && !S[sese] && !S[ese] && !S[ee]) goto fail;
   }
 
   q = return_vois27(13, MS_WU, 3, 9);
@@ -978,9 +999,13 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
   {
     int32_t dxw, dyw, dzw, dxu, dyu, dzu, dxwu, dywu, dzwu;
     index_t w, u, ww, wwu, wuwu, uwu, uu; // wu = q
-    xq = q % rs;
-    yq = (q % ps) / rs;
-    zq = q / ps;
+#ifdef DEBUG_lmasonka1996
+  printf("DEBUG: ma_sonka_dir_D 5 - q = %d\n", q);
+#endif
+    qq = return_vois27(p, MS_SU, rs, ps);
+    xq = qq % rs;
+    yq = (qq % ps) / rs;
+    zq = qq / ps;
     w = return_vois27(13, MS_W, 3, 9);
     u = return_vois27(13, MS_U, 3, 9);
     // coord. relatives de w par rapport au point central de v
@@ -995,7 +1020,7 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
     wuwu = (zq+dzwu)*ps + (yq+dywu)*rs + (xq+dxwu);
     uwu = (zq+dzu)*ps + (yq+dyu)*rs + (xq+dxu);
     uu = (z+dzu+dzu)*ps + (y+dyu+dyu)*rs + (x+dxu+dxu);
-    if (!S[ww] && !S[wwu] && !S[wuwu] && !S[uwu] && !S[uu]) return 0;
+    if (!S[ww] && !S[wwu] && !S[wuwu] && !S[uwu] && !S[uu]) goto fail;
   }
 
   q = return_vois27(13, MS_WD, 3, 9);
@@ -1003,9 +1028,13 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
   {
     int32_t dxw, dyw, dzw, dxd, dyd, dzd, dxwd, dywd, dzwd;
     index_t w, d, ww, wwd, wdwd, dwd, dd; // wd = q
-    xq = q % rs;
-    yq = (q % ps) / rs;
-    zq = q / ps;
+#ifdef DEBUG_lmasonka1996
+  printf("DEBUG: ma_sonka_dir_D 6 - q = %d\n", q);
+#endif
+    qq = return_vois27(p, MS_SU, rs, ps);
+    xq = qq % rs;
+    yq = (qq % ps) / rs;
+    zq = qq / ps;
     w = return_vois27(13, MS_W, 3, 9);
     d = return_vois27(13, MS_D, 3, 9);
     // coord. relatives de w par rapport au point central de v
@@ -1020,10 +1049,18 @@ int32_t ma_sonka_dir_D(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps
     wdwd = (zq+dzwd)*ps + (yq+dywd)*rs + (xq+dxwd);
     dwd = (zq+dzd)*ps + (yq+dyd)*rs + (xq+dxd);
     dd = (z+dzd+dzd)*ps + (y+dyd+dyd)*rs + (x+dxd+dxd);
-    if (!S[ww] && !S[wwd] && !S[wdwd] && !S[dwd] && !S[dd]) return 0;
+    if (!S[ww] && !S[wwd] && !S[wdwd] && !S[dwd] && !S[dd]) goto fail;
   }
 
+#ifdef DEBUG_lmasonka1996
+  printf("DEBUG: ma_sonka_dir_D ends: success\n");
+#endif
   return 1;
+ fail:
+#ifdef DEBUG_lmasonka1996
+  printf("DEBUG: ma_sonka_dir_D ends: fail\n");
+#endif
+  return 0;
 } // ma_sonka_dir_D()
 
 /* ==================================== */
@@ -1032,28 +1069,24 @@ int32_t ma_sonka_deletable(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_
 {
   uint8_t w[27]; int32_t i; for (i = 0; i < 26; i++) w[i] = v[i];
 
-  //printf("DEBUG: ma_sonka_deletable begins - p = %d\n", p);
-  //if (p==274) print_vois27(v);  // DEBUG
+#ifdef DEBUG_lmasonka1996
+  printf("DEBUG: ma_sonka_deletable begins - p = %d\n", p);
+#endif
   if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1; // U
   swap_U_L_27(v);
-  //if (p==274) print_vois27(v);  // DEBUG
   if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1; // D
   swap_U_L_27(v); // retour
 
   isometrieXZ_vois27(v);
-  //if (p==274) print_vois27(v);  // DEBUG
   if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1; // E
   swap_U_L_27(v);
-  //if (p==274) print_vois27(v);  // DEBUG
   if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1; // W
   swap_U_L_27(v); // retour
   isometrieXZ_vois27(v); // retour
 
   isometrieYZ_vois27(v);
-  //if (p==274) print_vois27(v);  // DEBUG
   if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1; // N
   swap_U_L_27(v);
-  //if (p==274) print_vois27(v);  // DEBUG
   if (ma_sonka_match_A(v) && ma_sonka_dir_ABC(w, S, p, rs, ps)) return 1; // S
   swap_U_L_27(v); // retour
   isometrieYZ_vois27(v); // retour
@@ -1130,7 +1163,9 @@ int32_t ma_sonka_deletable(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_
 int32_t ma_sonka_nontail(uint8_t *v, uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 {
-  //printf("DEBUG: ma_sonka_nontail begins\n");
+#ifdef DEBUG_lmasonka1996
+  printf("DEBUG: ma_sonka_nontail begins\n");
+#endif
   if (mctopo3d_nbvoiso26(S, p, rs, ps, N) == 1) // line_end point = tail
     return 0;
   if (mctopo3d_nbvoiso26(S, p, rs, ps, N) == 2)
@@ -1588,23 +1623,23 @@ int32_t ltsaofu6dircurv1982(struct xvimage *image,
 /* ============================================================ */
 /* ============================================================ */
 
-#define M_OBJECT      1
-#define M_ORTH        2
-#define M_DIAG        4
-#define M_DIAGPRES    8
-#define M_TWIG        16
+#define MWC_OBJECT      1
+#define MWC_ORTH        2
+#define MWC_DIAG        4
+#define MWC_DIAGPRES    8
+#define MWC_TWIG        16
 
-#define IS_ORTH(f) (f&M_ORTH)
-#define SET_ORTH(f) (f|=M_ORTH)
-#define IS_DIAG(f) (f&M_DIAG)
-#define SET_DIAG(f) (f|=M_DIAG)
-//#define UNSET_DIAG(f) (f&=~M_DIAG)
-#define IS_DIAGPRES(f) (f&M_DIAGPRES)
-#define SET_DIAGPRES(f) (f|=M_DIAGPRES)
-#define IS_TWIG(f) (f&M_TWIG)
-#define SET_TWIG(f) (f|=M_TWIG)
+#define IS_MWC_ORTH(f) (f&MWC_ORTH)
+#define SET_MWC_ORTH(f) (f|=MWC_ORTH)
+#define IS_MWC_DIAG(f) (f&MWC_DIAG)
+#define SET_MWC_DIAG(f) (f|=MWC_DIAG)
+//#define UNSET_MWC_DIAG(f) (f&=~MWC_DIAG)
+#define IS_MWC_DIAGPRES(f) (f&MWC_DIAGPRES)
+#define SET_MWC_DIAGPRES(f) (f|=MWC_DIAGPRES)
+#define IS_MWC_TWIG(f) (f&MWC_TWIG)
+#define SET_MWC_TWIG(f) (f|=MWC_TWIG)
 
-static int32_t ORTH_U_deletable(uint8_t *v)
+static int32_t MWC_ORTH_U_deletable(uint8_t *v)
 {
   if (v[8]) return 0;
   if (!v[17]) return 0;
@@ -1617,30 +1652,30 @@ static int32_t ORTH_U_deletable(uint8_t *v)
   if (v[15] && !v[6]) return 0;
   if (v[14] && !v[6] && !v[4]) return 0;
   return 1;
-} // ORTH_U_deletable()
+} // MWC_ORTH_U_deletable()
 
-static int32_t ORTH_deletable(uint8_t *v)
+static int32_t MWC_ORTH_deletable(uint8_t *v)
 {
-  if (ORTH_U_deletable(v)) return 1; // U-deletable
+  if (MWC_ORTH_U_deletable(v)) return 1; // U-deletable
   swap_U_L(v);
-  if (ORTH_U_deletable(v)) return 1; // L-deletable
+  if (MWC_ORTH_U_deletable(v)) return 1; // L-deletable
 
   isometrieXZ_vois(v);
-  if (ORTH_U_deletable(v)) return 1; // E-deletable
+  if (MWC_ORTH_U_deletable(v)) return 1; // E-deletable
   swap_U_L(v);
-  if (ORTH_U_deletable(v)) return 1; // W-deletable
+  if (MWC_ORTH_U_deletable(v)) return 1; // W-deletable
   isometrieXZ_vois(v);
 
   isometrieYZ_vois(v);
-  if (ORTH_U_deletable(v)) return 1; // N-deletable
+  if (MWC_ORTH_U_deletable(v)) return 1; // N-deletable
   swap_U_L(v);
-  if (ORTH_U_deletable(v)) return 1; // S-deletable
+  if (MWC_ORTH_U_deletable(v)) return 1; // S-deletable
   isometrieYZ_vois(v);
 
   return 0;
-} // ORTH_deletable()
+} // MWC_ORTH_deletable()
 
-static int32_t DIAG_UE_deletable(uint8_t *v)
+static int32_t MWC_DIAG_UE_deletable(uint8_t *v)
 {
   //#define DEBUG_lmawanchangcurv2subfields2002
 #ifdef DEBUG_lmawanchangcurv2subfields2002
@@ -1658,89 +1693,89 @@ static int32_t DIAG_UE_deletable(uint8_t *v)
   if ((v[7] || v[25]) && !v[6] && !v[24]) return 0; // d1 or g1
   if ((v[1] || v[19]) && !v[2] && !v[20]) return 0; // d2 or g2
 
-  if (!v[6] && v[5] && v[7] && v[24] && v[16]) return 0; // e1
+  if (!v[6] && v[5] && v[7] && v[24] && v[15]) return 0; // e1
   if (!v[2] && v[1] && v[3] && v[20] && v[11]) return 0; // e2
 
   return 1;
-} // DIAG_UE_deletable()
+} // MWC_DIAG_UE_deletable()
 
-static int32_t DIAG_deletable(uint8_t *v)
+static int32_t MWC_DIAG_deletable(uint8_t *v)
 {
-  if (DIAG_UE_deletable(v)) return 1; // UE
+  if (MWC_DIAG_UE_deletable(v)) return 1; // UE
   rotate_90_Z(v);
-  if (DIAG_UE_deletable(v)) return 1; // UN
+  if (MWC_DIAG_UE_deletable(v)) return 1; // UN
   rotate_90_Z(v);
-  if (DIAG_UE_deletable(v)) return 1; // UW
+  if (MWC_DIAG_UE_deletable(v)) return 1; // UW
   rotate_90_Z(v);
-  if (DIAG_UE_deletable(v)) return 1; // US
+  if (MWC_DIAG_UE_deletable(v)) return 1; // US
   rotate_90_Z(v);
   swap_U_L(v);
-  if (DIAG_UE_deletable(v)) return 1; // LE
+  if (MWC_DIAG_UE_deletable(v)) return 1; // LE
   rotate_90_Z(v);
-  if (DIAG_UE_deletable(v)) return 1; // LN
+  if (MWC_DIAG_UE_deletable(v)) return 1; // LN
   rotate_90_Z(v);
-  if (DIAG_UE_deletable(v)) return 1; // LW
+  if (MWC_DIAG_UE_deletable(v)) return 1; // LW
   rotate_90_Z(v);
-  if (DIAG_UE_deletable(v)) return 1; // LS
+  if (MWC_DIAG_UE_deletable(v)) return 1; // LS
   rotate_90_Z(v);
   swap_U_L(v);
   isometrieYZ_vois(v);
-  if (DIAG_UE_deletable(v)) return 1;
+  if (MWC_DIAG_UE_deletable(v)) return 1;
   rotate_90_Z(v);
   rotate_90_Z(v);
-  if (DIAG_UE_deletable(v)) return 1;
+  if (MWC_DIAG_UE_deletable(v)) return 1;
   swap_U_L(v);
-  if (DIAG_UE_deletable(v)) return 1;
+  if (MWC_DIAG_UE_deletable(v)) return 1;
   rotate_90_Z(v);
   rotate_90_Z(v);
-  if (DIAG_UE_deletable(v)) return 1;
+  if (MWC_DIAG_UE_deletable(v)) return 1;
   
   return 0;
-} // DIAG_deletable()
+} // MWC_DIAG_deletable()
 
 #ifdef DEBUG_lmawanchangcurv2subfields2002
-static void TEST_DIAG_deletable()
+static void TEST_MWC_DIAG_deletable()
 {
   int i; uint8_t v[27];  
   for (i = 0; i < 27; i++) v[i] = 10+i;
-  (void)DIAG_deletable(v);
+  (void)MWC_DIAG_deletable(v);
 }
 #endif
 
-static void DIAG_preserve(uint8_t *v, index_t p, uint8_t *S, index_t rs, index_t ps)
+static void MWC_DIAG_preserve(uint8_t *v, index_t p, uint8_t *S, index_t rs, index_t ps)
 {
   index_t q;
-  //#define VARIANT_DIAG_preserve
-#ifndef VARIANT_DIAG_preserve
+  //#define VARIANT_MWC_DIAG_preserve
+#ifndef VARIANT_MWC_DIAG_preserve
   if (v[13] && !v[8] && !v[4]) // UE
-  { q = return_vois(p, 13, rs, ps); SET_DIAGPRES(S[q]); }
+  { q = return_vois(p, 13, rs, ps); SET_MWC_DIAGPRES(S[q]); }
   if (v[11] && !v[8] && !v[2]) // UN
-  { q = return_vois(p, 11, rs, ps); SET_DIAGPRES(S[q]); }
+  { q = return_vois(p, 11, rs, ps); SET_MWC_DIAGPRES(S[q]); }
   if (v[9] && !v[8] && !v[0])  // UW
-  { q = return_vois(p, 9, rs, ps); SET_DIAGPRES(S[q]); }
+  { q = return_vois(p, 9, rs, ps); SET_MWC_DIAGPRES(S[q]); }
   if (v[15] && !v[8] && !v[6]) // US
-  { q = return_vois(p, 15, rs, ps); SET_DIAGPRES(S[q]); }
+  { q = return_vois(p, 15, rs, ps); SET_MWC_DIAGPRES(S[q]); }
   if (v[1] && !v[2] && !v[0])  // NW
-  { q = return_vois(p, 1, rs, ps); SET_DIAGPRES(S[q]); }
+  { q = return_vois(p, 1, rs, ps); SET_MWC_DIAGPRES(S[q]); }
   if (v[7] && !v[6] && !v[0])  // SW
-  { q = return_vois(p, 7, rs, ps); SET_DIAGPRES(S[q]); }
+  { q = return_vois(p, 7, rs, ps); SET_MWC_DIAGPRES(S[q]); }
 #else
   if (v[22] && !v[17] && !v[4]) // LE
-  { q = return_vois(p, 22, rs, ps); SET_DIAGPRES(S[q]); }
+  { q = return_vois(p, 22, rs, ps); SET_MWC_DIAGPRES(S[q]); }
   if (v[20] && !v[17] && !v[2]) // LN
-  { q = return_vois(p, 20, rs, ps); SET_DIAGPRES(S[q]); }
+  { q = return_vois(p, 20, rs, ps); SET_MWC_DIAGPRES(S[q]); }
   if (v[18] && !v[17] && !v[0]) // LW
-  { q = return_vois(p, 18, rs, ps); SET_DIAGPRES(S[q]); }
+  { q = return_vois(p, 18, rs, ps); SET_MWC_DIAGPRES(S[q]); }
   if (v[24] && !v[17] && !v[6]) // LS
-  { q = return_vois(p, 24, rs, ps); SET_DIAGPRES(S[q]); }
+  { q = return_vois(p, 24, rs, ps); SET_MWC_DIAGPRES(S[q]); }
   if (v[5] && !v[4] && !v[6]) // SE
-  { q = return_vois(p, 5, rs, ps); SET_DIAGPRES(S[q]); }
+  { q = return_vois(p, 5, rs, ps); SET_MWC_DIAGPRES(S[q]); }
   if (v[3] && !v[4] && !v[2]) // NE
-  { q = return_vois(p, 3, rs, ps); SET_DIAGPRES(S[q]); }
+  { q = return_vois(p, 3, rs, ps); SET_MWC_DIAGPRES(S[q]); }
 #endif
-} // DIAG_preserve()
+} // MWC_DIAG_preserve()
 
-static int32_t TWIG(  
+static int32_t MWC_TWIG_detect(  
   uint8_t *B,
   index_t x,
   index_t rs,
@@ -1805,7 +1840,7 @@ static int32_t TWIG(
     if (((y>=ps)&&(y%ps<ps-rs)) && B[-ps+y+rs]) { ny++; z=-ps+y+rs; }
     if (((y>=ps)&&(y%ps<ps-rs)&&(y%rs!=rs-1)) && B[-ps+y+rs+1]) { ny++; z=-ps+y+rs+1; }
     if (((y>=ps)) && B[-ps+y]) { ny++; z=-ps+y; }
-    B[x] = M_OBJECT;
+    B[x] = MWC_OBJECT;
     if (ny >= 2) return 1;
     if ((ny == 1) && (mctopo3d_nbvoiso26(B, z, rs, ps, N) >= 3)) return 1;
     return 0;
@@ -1816,7 +1851,7 @@ static int32_t TWIG(
     if (mctopo3d_nbvoiso26(B, z, rs, ps, N) >= 3) return 1;
   }
   return 0;
-} // TWIG()
+} // MWC_TWIG_detect()
 
 /* ==================================== */
 int32_t lmawanchangcurv2subfields2002(
@@ -1837,7 +1872,7 @@ int32_t lmawanchangcurv2subfields2002(
   uint8_t v[27];
 
 #ifdef DEBUG_lmawanchangcurv2subfields2002
-  TEST_DIAG_deletable();
+  TEST_MWC_DIAG_deletable();
 #endif
 
 #ifdef PATCH_MC
@@ -1862,7 +1897,7 @@ int32_t lmawanchangcurv2subfields2002(
     printf("step %d\n", step);
 #endif
 
-    for (i = 0; i < N; i++) if (S[i]) S[i] = M_OBJECT;
+    for (i = 0; i < N; i++) if (S[i]) S[i] = MWC_OBJECT;
 
     for (k = 1; k < ds-1; k++)
     for (j = 1; j < cs-1; j++)
@@ -1876,9 +1911,9 @@ int32_t lmawanchangcurv2subfields2002(
 printf("point %d %d %d\n", i, j, k);	  
 #endif
 	  extract_vois(S, x, rs, ps, N, v);
-	  if (ORTH_deletable(v)) SET_ORTH(S[x]);
-	  if (DIAG_deletable(v)) SET_DIAG(S[x]);
-	  if (TWIG(S, x, rs, ps, N)) SET_TWIG(S[x]);
+	  if (MWC_ORTH_deletable(v)) SET_MWC_ORTH(S[x]);
+	  if (MWC_DIAG_deletable(v)) SET_MWC_DIAG(S[x]);
+	  if (MWC_TWIG_detect(S, x, rs, ps, N)) SET_MWC_TWIG(S[x]);
 	} // if (S[x])
       } // for i, j, k
 
@@ -1888,10 +1923,10 @@ printf("point %d %d %d\n", i, j, k);
       if (((k+j+i)%2) == (step%2))
       {
 	x = k*ps + j*rs + i;
-	if (S[x] && IS_DIAG(S[x]))
+	if (S[x] && IS_MWC_DIAG(S[x]))
 	{
 	  extract_vois(S, x, rs, ps, N, v);
-	  DIAG_preserve(v, x, S, rs, ps);
+	  MWC_DIAG_preserve(v, x, S, rs, ps);
 	} // if (S[x])
       } // for i, j, k
 
@@ -1903,7 +1938,7 @@ printf("point %d %d %d\n", i, j, k);
       if (((k+j+i)%2) == (step%2))
       {
 	x = k*ps + j*rs + i;
-	if (IS_ORTH(S[x]) || (IS_DIAG(S[x]) && !IS_DIAGPRES(S[x])) || IS_TWIG(S[x]))
+	if (IS_MWC_ORTH(S[x]) || (IS_MWC_DIAG(S[x]) && !IS_MWC_DIAGPRES(S[x])) || IS_MWC_TWIG(S[x]))
 #ifdef PATCH_MC
 	  if (mctopo3d_simple26(S, x, rs, ps, N))
 #endif
@@ -1920,8 +1955,332 @@ printf("point %d %d %d\n", i, j, k);
 #endif
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+#ifdef PATCH_MC
+  mctopo3d_termine_topo3d();
+#endif
   return(1);
 } /* lmawanchangcurv2subfields2002() */
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de Ma, Wan & Lee (curviligne 4 subfields, PAMI 2002)
+// M. Couprie, feb. 2012
+/* ============================================================ */
+/* ============================================================ */
+
+#define MWL_OBJECT      1
+#define MWL_ORTH        2
+#define MWL_DIAG        4
+#define MWL_WEAKEND     8
+#define MWL_UL_END     16
+
+#define IS_MWL_ORTH(f) (f&MWL_ORTH)
+#define SET_MWL_ORTH(f) (f|=MWL_ORTH)
+#define IS_MWL_DIAG(f) (f&MWL_DIAG)
+#define SET_MWL_DIAG(f) (f|=MWL_DIAG)
+//#define UNSET_MWL_DIAG(f) (f&=~MWL_DIAG)
+#define IS_MWL_WEAKEND(f) (f&MWL_WEAKEND)
+#define SET_MWL_WEAKEND(f) (f|=MWL_WEAKEND)
+#define IS_MWL_UL_END(f) (f&MWL_UL_END)
+#define SET_MWL_UL_END(f) (f|=MWL_UL_END)
+
+static int32_t MWL_ORTH_U_deletable(uint8_t *v)
+{
+  if (v[8]) return 0;
+  if (!v[17]) return 0;
+  if (v[9] && !v[0]) return 0;
+  if (v[16] && !v[0] && !v[6] && !v[7]) return 0;
+  return 1;
+} // MWL_ORTH_U_deletable()
+
+static int32_t MWL_ORTH_deletable(uint8_t *v)
+{
+  if (MWL_ORTH_U_deletable(v)) return 1; // U-deletable
+  swap_U_L(v);
+  if (MWL_ORTH_U_deletable(v)) return 1; // L-deletable
+
+  isometrieXZ_vois(v);
+  if (MWL_ORTH_U_deletable(v)) return 1; // E-deletable
+  swap_U_L(v);
+  if (MWL_ORTH_U_deletable(v)) return 1; // W-deletable
+  isometrieXZ_vois(v);
+
+  isometrieYZ_vois(v);
+  if (MWL_ORTH_U_deletable(v)) return 1; // N-deletable
+  swap_U_L(v);
+  if (MWL_ORTH_U_deletable(v)) return 1; // S-deletable
+  isometrieYZ_vois(v);
+
+  return 0;
+} // MWL_ORTH_deletable()
+
+static int32_t MWL_DIAG_UE_deletable(uint8_t *v)
+{
+  //#define DEBUG_lmawanchangcurv2subfields2002
+#ifdef DEBUG_lmawanchangcurv2subfields2002
+  print_vois(v);
+#endif
+  if (!v[22]) return 0;
+  if (v[4] || v[13] || v[8] || v[9] || v[0] || v[18] || v[17]) return 0;
+
+  if (!v[6] && v[15] && v[7]) return 0; // a1
+  if (!v[2] && v[11] && v[1]) return 0; // a2
+
+  return 1;
+} // MWL_DIAG_UE_deletable()
+
+static int32_t MWL_DIAG_deletable(uint8_t *v)
+{
+  int32_t top, topb;
+  mctopo3d_top26(v, 13, 3, 9, 27, &top, &topb);
+  if (top != 1) return 0;
+  if (MWL_DIAG_UE_deletable(v)) return 1; // UE
+  rotate_90_Z(v);
+  if (MWL_DIAG_UE_deletable(v)) return 1; // UN
+  rotate_90_Z(v);
+  if (MWL_DIAG_UE_deletable(v)) return 1; // UW
+  rotate_90_Z(v);
+  if (MWL_DIAG_UE_deletable(v)) return 1; // US
+  rotate_90_Z(v);
+  swap_U_L(v);
+  if (MWL_DIAG_UE_deletable(v)) return 1; // LE
+  rotate_90_Z(v);
+  if (MWL_DIAG_UE_deletable(v)) return 1; // LN
+  rotate_90_Z(v);
+  if (MWL_DIAG_UE_deletable(v)) return 1; // LW
+  rotate_90_Z(v);
+  if (MWL_DIAG_UE_deletable(v)) return 1; // LS
+  rotate_90_Z(v);
+  swap_U_L(v);
+  isometrieYZ_vois(v);
+  if (MWL_DIAG_UE_deletable(v)) return 1;
+  rotate_90_Z(v);
+  rotate_90_Z(v);
+  if (MWL_DIAG_UE_deletable(v)) return 1;
+  swap_U_L(v);
+  if (MWL_DIAG_UE_deletable(v)) return 1;
+  rotate_90_Z(v);
+  rotate_90_Z(v);
+  if (MWL_DIAG_UE_deletable(v)) return 1;
+  
+  return 0;
+} // MWL_DIAG_deletable()
+
+static void MWL_copysliceW(uint8_t *v, uint8_t *w)
+{
+  memset(w, 0, 27);
+  w[3] = v[3]; w[4] = v[4]; w[5] = v[5];
+  w[12] = v[12]; w[13] = v[13]; w[14] = v[14];
+  w[21] = v[21]; w[22] = v[22]; w[23] = v[23];
+} // MWL_copysliceW()
+
+static void MWL_copysliceE(uint8_t *v, uint8_t *w)
+{
+  memset(w, 0, 27);
+  w[1] = v[1]; w[0] = v[0]; w[7] = v[7];
+  w[10] = v[10]; w[9] = v[9]; w[16] = v[16];
+  w[19] = v[19]; w[18] = v[18]; w[25] = v[25];
+} // MWL_copysliceE()
+
+static void MWL_copysliceU(uint8_t *v, uint8_t *w)
+{
+  memset(w, 0, 27);
+  w[12] = v[12]; w[11] = v[11]; w[10] = v[10];
+  w[13] = v[13]; w[8] = v[8]; w[9] = v[9];
+  w[14] = v[14]; w[15] = v[15]; w[16] = v[16];
+} // MWL_copysliceU()
+
+static void MWL_copysliceL(uint8_t *v, uint8_t *w)
+{
+  memset(w, 0, 27);
+  w[21] = v[21]; w[20] = v[20]; w[19] = v[19];
+  w[22] = v[22]; w[17] = v[17]; w[18] = v[18];
+  w[23] = v[23]; w[24] = v[24]; w[25] = v[25];
+} // MWL_copysliceL()
+
+static void MWL_copysliceN(uint8_t *v, uint8_t *w)
+{
+  memset(w, 0, 27);
+  w[12] = v[12]; w[11] = v[11]; w[10] = v[10];
+  w[3] = v[3]; w[2] = v[2]; w[1] = v[1];
+  w[21] = v[21]; w[20] = v[20]; w[19] = v[19];
+} // MWL_copysliceN()
+
+static void MWL_copysliceS(uint8_t *v, uint8_t *w)
+{
+  memset(w, 0, 27);
+  w[14] = v[14]; w[15] = v[15]; w[16] = v[16];
+  w[5] = v[5]; w[6] = v[6]; w[7] = v[7];
+  w[23] = v[23]; w[24] = v[24]; w[25] = v[25];
+} // MWL_copysliceS()
+
+static int32_t MWL_WeaklyEnd(uint8_t *v)
+{
+  uint8_t w[27];
+  int32_t top, topb;
+  int32_t n = mctopo3d_nbvoiso26(v, 13, 3, 9, 27);
+  if (n == 2)
+  {
+    mctopo3d_top26(v, 13, 3, 9, 27, &top, &topb);
+    if (top == 1) return 1;
+    return 0;
+  }
+  if (n == 3)
+  {
+    MWL_copysliceW(v, w); if (mctopo3d_nbvoiso26(w, 13, 3, 9, 27) == 3) return 1;
+    MWL_copysliceE(v, w); if (mctopo3d_nbvoiso26(w, 13, 3, 9, 27) == 3) return 1;
+    MWL_copysliceU(v, w); if (mctopo3d_nbvoiso26(w, 13, 3, 9, 27) == 3) return 1;
+    MWL_copysliceL(v, w); if (mctopo3d_nbvoiso26(w, 13, 3, 9, 27) == 3) return 1;
+    MWL_copysliceN(v, w); if (mctopo3d_nbvoiso26(w, 13, 3, 9, 27) == 3) return 1;
+    MWL_copysliceS(v, w); if (mctopo3d_nbvoiso26(w, 13, 3, 9, 27) == 3) return 1;
+    return 0;
+  }
+  return 0;
+} // MWL_WeaklyEnd()
+
+static int32_t MWL_UpperEnd(uint8_t *v)
+{
+  int32_t i, n=0, q;
+  for (i = 0; i < 26; i++) if (v[i]) { q = i; n++; }
+  if (n != 1) return 0;
+  if ((q==19) || (q==21) || (q==23) || (q==25)) return 0;
+  return 1;
+} // MWL_UpperEnd()
+
+static int32_t MWL_LowerEnd(uint8_t *v)
+{
+  int32_t i, n=0, q;
+  for (i = 0; i < 26; i++) if (v[i]) { q = i; n++; }
+  if (n != 1) return 0;
+  if ((q==10) || (q==12) || (q==14) || (q==16)) return 0;
+  return 1;
+} // MWL_LowerEnd()
+
+/* ==================================== */
+int32_t lmawanleecurv4subfields2002(
+				  struct xvimage *image,
+				  int32_t nsteps)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lmawanleecurv4subfields2002"
+{ 
+  int32_t i, j, k, x;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab[4];
+  uint8_t v[27];
+
+  mctopo3d_init_topo3d();
+
+  if (nsteps == -1) nsteps = 100000000;
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab[0] = nonstab[1] = nonstab[2] = nonstab[3] = 1;
+  while ((nonstab[0] || nonstab[1] || nonstab[2] || nonstab[3]) && 
+	 (step < 4*nsteps))
+  {
+    nonstab[step%4] = 0;
+#ifdef VERBOSE
+    printf("step %d, substep %d\n", step/4, step%4);
+#endif
+
+    for (i = 0; i < N; i++) if (S[i]) S[i] = MWL_OBJECT;
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == (step/2)))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && (mctopo3d_nbvoiso26(S, x, rs, ps, N) > 1))
+	{
+#ifdef DEBUG_lmawanleecurv4subfields2002
+printf("point %d %d %d\n", i, j, k);	  
+#endif
+	  extract_vois(S, x, rs, ps, N, v);
+	  if (MWL_ORTH_deletable(v)) SET_MWL_ORTH(S[x]);
+	  if (MWL_DIAG_deletable(v)) SET_MWL_DIAG(S[x]);
+	} // if (S[x])
+      } // for i, j, k
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == (step/2)))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && (IS_MWL_ORTH(S[x]) || IS_MWL_DIAG(S[x])))
+	{
+	  S[x] = 0;
+	  nonstab[step%4] = 1;
+	} // if (S[x])
+      } // for i, j, k
+    step++;
+  } // while (nonstab && (step < nsteps))
+
+  // SECOND PASS - "CLEANING"
+  nsteps = (int32_t)ceilf(((float)step)/2);
+  step = 0;
+  nonstab[0] = nonstab[1] = nonstab[2] = nonstab[3] = 1;
+  while ((nonstab[0] || nonstab[1] || nonstab[2] || nonstab[3]) && 
+	 (step < nsteps))
+  {
+    nonstab[step%4] = 0;
+#ifdef VERBOSE
+    printf("2nd pass: step %d, substep %d\n", step/4, step%4);
+#endif
+
+    for (i = 0; i < N; i++) if (S[i]) S[i] = MWL_OBJECT;
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == (step/2)))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && (mctopo3d_nbvoiso26(S, x, rs, ps, N) > 1))
+	{
+#ifdef DEBUG_lmawanleecurv4subfields2002
+printf("point %d %d %d\n", i, j, k);	  
+#endif
+	  extract_vois(S, x, rs, ps, N, v);
+	  if (MWL_WeaklyEnd(v)) SET_MWL_WEAKEND(S[x]);
+	  if (((step%2) == 0) && MWL_UpperEnd(v)) SET_MWL_UL_END(S[x]);
+	  if (((step%2) == 1) && MWL_LowerEnd(v)) SET_MWL_UL_END(S[x]);
+	} // if (S[x])
+      } // for i, j, k
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == (step/2)))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && (IS_MWL_WEAKEND(S[x]) || IS_MWL_UL_END(S[x])))
+	{
+	  S[x] = 0;
+	  nonstab[step%4] = 1;
+	} // if (S[x])
+      } // for i, j, k
+    step++;
+  } // while (nonstab && (step < nsteps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lmawanleecurv4subfields2002() */
 
 /* ============================================================ */
 /* ============================================================ */

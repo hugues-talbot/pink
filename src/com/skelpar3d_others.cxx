@@ -60,6 +60,9 @@ The possible choices are:
 \li 10: Ma-Wan (curvilinear (18/6) 6 subiterations, CVIU 2000)
 \li 11: Lohou-Bertrand (curvilinear 6 subiterations, DAM 2005)
 \li 12: Lohou-Bertrand (curvilinear 12 subiterations, DAM 2004)
+\li 13: ACK3a
+\li 14: CKSC
+\li 15: Ma-Wan-Lee (curvilinear, 4 subfields, 2002)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -85,6 +88,8 @@ then the points of this image will be left unchanged.
 #include <ldist.h>
 #include <lskelpar3d_others.h>
 #include <lmedialaxis.h>
+#include <lskeletons.h>
+#include <lskelpar3d.h>
 #include <DirectionalSkeletonizer.hpp>
 #include <FIFO.hpp>
 
@@ -112,6 +117,9 @@ int main(int32_t argc, char **argv)
     fprintf(stderr, "   10: Ma-Wan (curvilinear (18/6) 6 subiterations, CVIU 2000)\n");
     fprintf(stderr, "   11: Lohou-Bertrand (curvilinear 6 subiterations, DAM 2005)\n");
     fprintf(stderr, "   12: Lohou-Bertrand (curvilinear 12 subiterations, DAM 2004)\n");
+    fprintf(stderr, "   13: ACK3a\n");
+    fprintf(stderr, "   14: CKSC\n");
+    fprintf(stderr, "   15: Ma-Wan-Lee (curvilinear, 4 subfields, 2002)\n");
     exit(1);
   }
 
@@ -239,6 +247,29 @@ int main(int32_t argc, char **argv)
       if (!llohoubertrand12dir2004(image, nsteps))
       {
 	fprintf(stderr, "%s: llohoubertrand12dir2004 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 13:
+      if (! lskelACK3a(image, nsteps, 0, inhibit))
+      {
+	fprintf(stderr, "%s: lskelACK3a failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 14:
+      if (! lskelCKSC3(image, inhibit, nsteps))
+      {
+	fprintf(stderr, "%s: lskelCKSC3 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 15:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lmawanleecurv4subfields2002(image, nsteps))
+      {
+	fprintf(stderr, "%s: lmawanleecurv4subfields2002 failed\n", argv[0]);
 	exit(1);
       } 
       break;

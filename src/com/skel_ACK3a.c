@@ -36,7 +36,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief parallel 3D binary curvilinear, asymetric skeleton based on thin 1D isthmus
 
-<B>Usage:</B> skel_ACK3a in.pgm nsteps ndel [inhibit] out.pgm
+<B>Usage:</B> skel_ACK3a in.pgm nsteps [ndel [inhibit]] out.pgm
 
 <B>Description:</B> Parallel 3D binary thinning or curvilinear,
 asymetric skeleton based on thin 1D isthmus. The parameter \b nsteps
@@ -44,8 +44,7 @@ gives, if positive, the number of parallel thinning steps to be
 processed.  If the value given for \b nsteps equals -1, the thinning
 is continued until stability.
 
-During the first \b ndel steps, detected curve points are marked: 
-they are indicated by a value 127 (instead of 255) in the output image.
+During the first \b ndel steps (default value 0), detected curve points are marked: they are indicated by a value 127 (instead of 255) in the output image.
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged. 
@@ -77,9 +76,9 @@ int main(int argc, char **argv)
   struct xvimage * inhibit = NULL;
   int32_t nsteps, ndel;
 
-  if ((argc != 5) && (argc != 6))
+  if ((argc != 4) && (argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s in.pgm nsteps ndel [inhibit] out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm nsteps [ndel [inhibit]] out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -91,7 +90,7 @@ int main(int argc, char **argv)
   }
 
   nsteps = atoi(argv[2]);
-  ndel = atoi(argv[3]);
+  if (argc > 4) ndel = atoi(argv[3]); else ndel = 0;
   if (argc == 6)
   {
     inhibit = readimage(argv[4]);

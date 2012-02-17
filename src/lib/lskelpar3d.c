@@ -2358,7 +2358,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   int32_t top, topb;
   uint8_t v[27];
 
-#define VERBOSE
 #ifdef VERBOSE
   printf("%s: n_steps = %d ; n_earlysteps = %d\n", F_NAME, n_steps, n_earlysteps);
 #endif

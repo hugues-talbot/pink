@@ -100,6 +100,9 @@ extern int32_t llohoubertrandsymcurv2007(
 extern int32_t lmawanchangcurv2subfields2002(
 				  struct xvimage *image,
 				  int32_t nsteps);
+extern int32_t lmawanleecurv4subfields2002(
+				  struct xvimage *image,
+				  int32_t nsteps);
 extern int32_t ltsaofu6dircurv1982(
 				  struct xvimage *image,
 				  struct xvimage *inhibit,
