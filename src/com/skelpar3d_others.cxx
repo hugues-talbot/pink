@@ -63,6 +63,15 @@ The possible choices are:
 \li 13: ACK3a
 \li 14: CKSC
 \li 15: Ma-Wan-Lee (curvilinear, 4 subfields, 2002)
+\li 16: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 1)
+\li 17: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 2)
+\li 18: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 3)
+\li 19: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 1)
+\li 20: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 2)
+\li 21: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 3)
+\li 22: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 1)
+\li 23: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 2)
+\li 24: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 3)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -120,6 +129,15 @@ int main(int32_t argc, char **argv)
     fprintf(stderr, "   13: ACK3a\n");
     fprintf(stderr, "   14: CKSC\n");
     fprintf(stderr, "   15: Ma-Wan-Lee (curvilinear, 4 subfields, 2002)\n");
+    fprintf(stderr, "   16: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 1))\n");
+    fprintf(stderr, "   17: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 2))\n");
+    fprintf(stderr, "   18: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 3))\n");
+    fprintf(stderr, "   19: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 1))\n");
+    fprintf(stderr, "   20: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 2))\n");
+    fprintf(stderr, "   21: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 3))\n");
+    fprintf(stderr, "   22: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 1))\n");
+    fprintf(stderr, "   23: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 2))\n");
+    fprintf(stderr, "   24: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 3))\n");
     exit(1);
   }
 
@@ -270,6 +288,86 @@ int main(int32_t argc, char **argv)
       if (!lmawanleecurv4subfields2002(image, nsteps))
       {
 	fprintf(stderr, "%s: lmawanleecurv4subfields2002 failed\n", argv[0]);
+	exit(1);
+      } 
+    case 16:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lnemethetalcurv2subfields2010(image, nsteps, 1))
+      {
+	fprintf(stderr, "%s: lnemethetalcurv2subfields2010 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 17:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lnemethetalcurv2subfields2010(image, nsteps, 2))
+      {
+	fprintf(stderr, "%s: lnemethetalcurv2subfields2010 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 18:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lnemethetalcurv2subfields2010(image, nsteps, 3))
+      {
+	fprintf(stderr, "%s: lnemethetalcurv2subfields2010 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 19:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lnemethetalcurv4subfields2010(image, nsteps, 1))
+      {
+	fprintf(stderr, "%s: lnemethetalcurv4subfields2010 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 20:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lnemethetalcurv4subfields2010(image, nsteps, 2))
+      {
+	fprintf(stderr, "%s: lnemethetalcurv4subfields2010 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 21:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lnemethetalcurv4subfields2010(image, nsteps, 3))
+      {
+	fprintf(stderr, "%s: lnemethetalcurv4subfields2010 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 22:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lnemethetalcurv8subfields2010(image, nsteps, 1))
+      {
+	fprintf(stderr, "%s: lnemethetalcurv8subfields2010 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 23:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lnemethetalcurv8subfields2010(image, nsteps, 2))
+      {
+	fprintf(stderr, "%s: lnemethetalcurv8subfields2010 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 24:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lnemethetalcurv8subfields2010(image, nsteps, 3))
+      {
+	fprintf(stderr, "%s: lnemethetalcurv8subfields2010 failed\n", argv[0]);
 	exit(1);
       } 
       break;

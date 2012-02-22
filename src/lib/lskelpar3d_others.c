@@ -71,8 +71,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #define VERBOSE
 //#define DEBUG
 //#define DEBUG_lmasonka1996
-
-//#define PATCH_MC
+//#define DEBUG_lmawanleecurv4subfields2002
+//#define DEBUG_lnemethetalcurv4subfields2010
 
 /* ==================================== */
 static void extract_vois(
@@ -1875,10 +1875,6 @@ int32_t lmawanchangcurv2subfields2002(
   TEST_MWC_DIAG_deletable();
 #endif
 
-#ifdef PATCH_MC
-  mctopo3d_init_topo3d();
-#endif
-
   if (nsteps == -1) nsteps = 1000000000;
 
   /* ================================================ */
@@ -1939,9 +1935,6 @@ printf("point %d %d %d\n", i, j, k);
       {
 	x = k*ps + j*rs + i;
 	if (IS_MWC_ORTH(S[x]) || (IS_MWC_DIAG(S[x]) && !IS_MWC_DIAGPRES(S[x])) || IS_MWC_TWIG(S[x]))
-#ifdef PATCH_MC
-	  if (mctopo3d_simple26(S, x, rs, ps, N))
-#endif
 	  {
 	    S[x] = 0;
 	    nonstab[step%2] = 1;
@@ -1955,9 +1948,6 @@ printf("point %d %d %d\n", i, j, k);
 #endif
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
-#ifdef PATCH_MC
-  mctopo3d_termine_topo3d();
-#endif
   return(1);
 } /* lmawanchangcurv2subfields2002() */
 
@@ -1989,26 +1979,50 @@ static int32_t MWL_ORTH_U_deletable(uint8_t *v)
   if (v[8]) return 0;
   if (!v[17]) return 0;
   if (v[9] && !v[0]) return 0;
+  if (v[11] && !v[2]) return 0;
+  if (v[13] && !v[4]) return 0;
+  if (v[15] && !v[6]) return 0;
   if (v[16] && !v[0] && !v[6] && !v[7]) return 0;
+  if (v[10] && !v[0] && !v[1] && !v[2]) return 0;
+  if (v[12] && !v[2] && !v[3] && !v[4]) return 0;
+  if (v[14] && !v[4] && !v[5] && !v[6]) return 0;
   return 1;
 } // MWL_ORTH_U_deletable()
 
 static int32_t MWL_ORTH_deletable(uint8_t *v)
 {
-  if (MWL_ORTH_U_deletable(v)) return 1; // U-deletable
+  if (MWL_ORTH_U_deletable(v)) // U-deletable
+  {
+     return 1;
+  }
   swap_U_L(v);
-  if (MWL_ORTH_U_deletable(v)) return 1; // L-deletable
+  if (MWL_ORTH_U_deletable(v)) // L-deletable
+  {
+     return 1;
+  }
 
   isometrieXZ_vois(v);
-  if (MWL_ORTH_U_deletable(v)) return 1; // E-deletable
+  if (MWL_ORTH_U_deletable(v)) // E-deletable
+  {
+     return 1;
+  }
   swap_U_L(v);
-  if (MWL_ORTH_U_deletable(v)) return 1; // W-deletable
+  if (MWL_ORTH_U_deletable(v)) // W-deletable
+  {
+     return 1;
+  }
   isometrieXZ_vois(v);
 
   isometrieYZ_vois(v);
-  if (MWL_ORTH_U_deletable(v)) return 1; // N-deletable
+  if (MWL_ORTH_U_deletable(v)) // N-deletable
+  {
+     return 1;
+  }
   swap_U_L(v);
-  if (MWL_ORTH_U_deletable(v)) return 1; // S-deletable
+  if (MWL_ORTH_U_deletable(v)) // S-deletable
+  {
+     return 1;
+  }
   isometrieYZ_vois(v);
 
   return 0;
@@ -2016,10 +2030,6 @@ static int32_t MWL_ORTH_deletable(uint8_t *v)
 
 static int32_t MWL_DIAG_UE_deletable(uint8_t *v)
 {
-  //#define DEBUG_lmawanchangcurv2subfields2002
-#ifdef DEBUG_lmawanchangcurv2subfields2002
-  print_vois(v);
-#endif
   if (!v[22]) return 0;
   if (v[4] || v[13] || v[8] || v[9] || v[0] || v[18] || v[17]) return 0;
 
@@ -2031,37 +2041,70 @@ static int32_t MWL_DIAG_UE_deletable(uint8_t *v)
 
 static int32_t MWL_DIAG_deletable(uint8_t *v)
 {
-  int32_t top, topb;
-  mctopo3d_top26(v, 13, 3, 9, 27, &top, &topb);
-  if (top != 1) return 0;
-  if (MWL_DIAG_UE_deletable(v)) return 1; // UE
+  if (MWL_DIAG_UE_deletable(v)) // UE
+  {
+    return 1;
+  }
   rotate_90_Z(v);
-  if (MWL_DIAG_UE_deletable(v)) return 1; // UN
+  if (MWL_DIAG_UE_deletable(v)) // UN
+  {
+    return 1;
+  }
   rotate_90_Z(v);
-  if (MWL_DIAG_UE_deletable(v)) return 1; // UW
+  if (MWL_DIAG_UE_deletable(v)) // UW
+  {
+    return 1;
+  }
   rotate_90_Z(v);
-  if (MWL_DIAG_UE_deletable(v)) return 1; // US
+  if (MWL_DIAG_UE_deletable(v)) // US
+  {
+    return 1;
+  }
   rotate_90_Z(v);
   swap_U_L(v);
-  if (MWL_DIAG_UE_deletable(v)) return 1; // LE
+  if (MWL_DIAG_UE_deletable(v)) // LE
+  {
+    return 1;
+  }
   rotate_90_Z(v);
-  if (MWL_DIAG_UE_deletable(v)) return 1; // LN
+  if (MWL_DIAG_UE_deletable(v)) // LN
+  {
+    return 1;
+  }
   rotate_90_Z(v);
-  if (MWL_DIAG_UE_deletable(v)) return 1; // LW
+  if (MWL_DIAG_UE_deletable(v)) // LW
+  {
+    return 1;
+  }
   rotate_90_Z(v);
-  if (MWL_DIAG_UE_deletable(v)) return 1; // LS
+  if (MWL_DIAG_UE_deletable(v)) // LS
+  {
+    return 1;
+  }
   rotate_90_Z(v);
   swap_U_L(v);
   isometrieYZ_vois(v);
-  if (MWL_DIAG_UE_deletable(v)) return 1;
+  if (MWL_DIAG_UE_deletable(v))
+  {
+    return 1;
+  }
   rotate_90_Z(v);
   rotate_90_Z(v);
-  if (MWL_DIAG_UE_deletable(v)) return 1;
+  if (MWL_DIAG_UE_deletable(v))
+  {
+    return 1;
+  }
   swap_U_L(v);
-  if (MWL_DIAG_UE_deletable(v)) return 1;
+  if (MWL_DIAG_UE_deletable(v))
+  {
+    return 1;
+  }
   rotate_90_Z(v);
   rotate_90_Z(v);
-  if (MWL_DIAG_UE_deletable(v)) return 1;
+  if (MWL_DIAG_UE_deletable(v))
+  {
+    return 1;
+  }
   
   return 0;
 } // MWL_DIAG_deletable()
@@ -2114,25 +2157,26 @@ static void MWL_copysliceS(uint8_t *v, uint8_t *w)
   w[23] = v[23]; w[24] = v[24]; w[25] = v[25];
 } // MWL_copysliceS()
 
+static int32_t MWL_NbPtVois(uint8_t *v)
+{
+  int32_t i, n = 0;
+  for (i = 0; i < 26; i++) if (v[i]) n++;
+  return n;
+}
+
 static int32_t MWL_WeaklyEnd(uint8_t *v)
 {
   uint8_t w[27];
-  int32_t top, topb;
-  int32_t n = mctopo3d_nbvoiso26(v, 13, 3, 9, 27);
-  if (n == 2)
-  {
-    mctopo3d_top26(v, 13, 3, 9, 27, &top, &topb);
-    if (top == 1) return 1;
-    return 0;
-  }
+  int32_t n = MWL_NbPtVois(v);
+  if (n == 2) return 1;
   if (n == 3)
   {
-    MWL_copysliceW(v, w); if (mctopo3d_nbvoiso26(w, 13, 3, 9, 27) == 3) return 1;
-    MWL_copysliceE(v, w); if (mctopo3d_nbvoiso26(w, 13, 3, 9, 27) == 3) return 1;
-    MWL_copysliceU(v, w); if (mctopo3d_nbvoiso26(w, 13, 3, 9, 27) == 3) return 1;
-    MWL_copysliceL(v, w); if (mctopo3d_nbvoiso26(w, 13, 3, 9, 27) == 3) return 1;
-    MWL_copysliceN(v, w); if (mctopo3d_nbvoiso26(w, 13, 3, 9, 27) == 3) return 1;
-    MWL_copysliceS(v, w); if (mctopo3d_nbvoiso26(w, 13, 3, 9, 27) == 3) return 1;
+    MWL_copysliceW(v, w); if (MWL_NbPtVois(w) == 3) return 1;
+    MWL_copysliceE(v, w); if (MWL_NbPtVois(w) == 3) return 1;
+    MWL_copysliceU(v, w); if (MWL_NbPtVois(w) == 3) return 1;
+    MWL_copysliceL(v, w); if (MWL_NbPtVois(w) == 3) return 1;
+    MWL_copysliceN(v, w); if (MWL_NbPtVois(w) == 3) return 1;
+    MWL_copysliceS(v, w); if (MWL_NbPtVois(w) == 3) return 1;
     return 0;
   }
   return 0;
@@ -2173,6 +2217,7 @@ int32_t lmawanleecurv4subfields2002(
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
   int32_t step, nonstab[4];
   uint8_t v[27];
+  int32_t top, topb;
 
   mctopo3d_init_topo3d();
 
@@ -2191,13 +2236,18 @@ int32_t lmawanleecurv4subfields2002(
 #ifdef VERBOSE
     printf("step %d, substep %d\n", step/4, step%4);
 #endif
+#ifdef DEBUG_lmawanleecurv4subfields2002
+    char buf[128];
+    sprintf(buf,"_begiter%d",step);
+    writeimage(image, buf);
+#endif
 
     for (i = 0; i < N; i++) if (S[i]) S[i] = MWL_OBJECT;
 
     for (k = 1; k < ds-1; k++)
     for (j = 1; j < cs-1; j++)
     for (i = 1; i < rs-1; i++)
-      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == (step/2)))
+      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == ((step%4)/2)))
       {
 	x = k*ps + j*rs + i;
 	if (S[x] && (mctopo3d_nbvoiso26(S, x, rs, ps, N) > 1))
@@ -2206,19 +2256,40 @@ int32_t lmawanleecurv4subfields2002(
 printf("point %d %d %d\n", i, j, k);	  
 #endif
 	  extract_vois(S, x, rs, ps, N, v);
-	  if (MWL_ORTH_deletable(v)) SET_MWL_ORTH(S[x]);
-	  if (MWL_DIAG_deletable(v)) SET_MWL_DIAG(S[x]);
+	  if (MWL_ORTH_deletable(v))
+	  { 
+	    SET_MWL_ORTH(S[x]);
+#ifdef DEBUG_lmawanleecurv4subfields2002
+	    printf("set ORTH\n");	  	  
+#endif
+	  }
+	  mctopo3d_top26(S, x, rs, ps, N, &top, &topb);
+	  if ((top == 1) && MWL_DIAG_deletable(v))
+	  {
+	    SET_MWL_DIAG(S[x]);
+#ifdef DEBUG_lmawanleecurv4subfields2002
+	    printf("set DIAG\n");	  	  
+#endif
+	  }
 	} // if (S[x])
       } // for i, j, k
 
     for (k = 1; k < ds-1; k++)
     for (j = 1; j < cs-1; j++)
     for (i = 1; i < rs-1; i++)
-      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == (step/2)))
+      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == ((step%4)/2)))
       {
 	x = k*ps + j*rs + i;
 	if (S[x] && (IS_MWL_ORTH(S[x]) || IS_MWL_DIAG(S[x])))
 	{
+#ifdef DEBUG_lmawanleecurv4subfields2002
+	  printf("deleting point %d %d %d\n", i, j, k);
+	  if (!mctopo3d_simple26(S, x, rs, ps, N))
+	  {
+	    printf("ERROR: simple point\n");
+	    exit(0);
+	  }
+#endif
 	  S[x] = 0;
 	  nonstab[step%4] = 1;
 	} // if (S[x])
@@ -2226,6 +2297,8 @@ printf("point %d %d %d\n", i, j, k);
     step++;
   } // while (nonstab && (step < nsteps))
 
+#define PASS2
+#ifdef PASS2
   // SECOND PASS - "CLEANING"
   nsteps = (int32_t)ceilf(((float)step)/2);
   step = 0;
@@ -2237,13 +2310,18 @@ printf("point %d %d %d\n", i, j, k);
 #ifdef VERBOSE
     printf("2nd pass: step %d, substep %d\n", step/4, step%4);
 #endif
+#ifdef DEBUG_lmawanleecurv4subfields2002
+    char buf[128];
+    sprintf(buf,"_begp2iter%d",step);
+    writeimage(image, buf);
+#endif
 
     for (i = 0; i < N; i++) if (S[i]) S[i] = MWL_OBJECT;
 
     for (k = 1; k < ds-1; k++)
     for (j = 1; j < cs-1; j++)
     for (i = 1; i < rs-1; i++)
-      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == (step/2)))
+      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == ((step%4)/2)))
       {
 	x = k*ps + j*rs + i;
 	if (S[x] && (mctopo3d_nbvoiso26(S, x, rs, ps, N) > 1))
@@ -2252,7 +2330,8 @@ printf("point %d %d %d\n", i, j, k);
 printf("point %d %d %d\n", i, j, k);	  
 #endif
 	  extract_vois(S, x, rs, ps, N, v);
-	  if (MWL_WeaklyEnd(v)) SET_MWL_WEAKEND(S[x]);
+	  if (MWL_WeaklyEnd(v) && mctopo3d_simple26(S, x, rs, ps, N)) 
+	    SET_MWL_WEAKEND(S[x]);
 	  if (((step%2) == 0) && MWL_UpperEnd(v)) SET_MWL_UL_END(S[x]);
 	  if (((step%2) == 1) && MWL_LowerEnd(v)) SET_MWL_UL_END(S[x]);
 	} // if (S[x])
@@ -2261,7 +2340,7 @@ printf("point %d %d %d\n", i, j, k);
     for (k = 1; k < ds-1; k++)
     for (j = 1; j < cs-1; j++)
     for (i = 1; i < rs-1; i++)
-      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == (step/2)))
+      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == ((step%4)/2)))
       {
 	x = k*ps + j*rs + i;
 	if (S[x] && (IS_MWL_WEAKEND(S[x]) || IS_MWL_UL_END(S[x])))
@@ -2269,6 +2348,362 @@ printf("point %d %d %d\n", i, j, k);
 	  S[x] = 0;
 	  nonstab[step%4] = 1;
 	} // if (S[x])
+      } // for i, j, k
+    step++;
+  } // while (nonstab && (step < nsteps))
+#endif
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lmawanleecurv4subfields2002() */
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de Nemeth, Kardos & Palagyi (curviligne 2 subfields, IASTED 2010)
+// M. Couprie, feb. 2012
+/* ============================================================ */
+/* ============================================================ */
+
+#define NKP_OBJECT      1
+#define NKP_SELF        2
+#define NKP_SQUARE      4
+#define NKP_CUBE        8
+
+#define IS_NKP_SELF(f) (f&NKP_SELF)
+#define SET_NKP_SELF(f) (f|=NKP_SELF)
+#define UNSET_NKP_SELF(f)  (f&=~NKP_SELF)
+#define IS_NKP_SQUARE(f) (f&NKP_SQUARE)
+#define SET_NKP_SQUARE(f) (f|=NKP_SQUARE)
+#define IS_NKP_CUBE(f) (f&NKP_CUBE)
+#define SET_NKP_CUBE(f) (f|=NKP_CUBE)
+
+static int32_t NKP_end(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N, int32_t mode)
+{
+  if (mode == 1) 
+  // cette condition est la condition C1 du papier ICIAR 2010.
+  // la condition C1 du papier IASTED ne suffit pas pour préserver des branches.
+  {
+    if (mctopo3d_nbvoiso26(S, p, rs, ps, N) == 1) return 1;
+    return 0;
+  } // if (mode == 1)
+  if (mode == 2)
+  {
+    int32_t k, n=0;
+    index_t y, q;
+    for (k = 0; k < 26; k += 1)
+    {
+      y = voisin26(p, k, rs, ps, N);
+      if ((y != -1) && S[y]) { n++; q = y; }
+    } // for k
+    if (n != 1) return 0;
+    if (mctopo3d_nbvoiso26(S, q, rs, ps, N) > 2) return 0;
+    return 1;
+  } // if (mode == 2)
+  if (mode == 3)
+  {
+    int32_t k, n;
+    index_t y, q, r;
+    for (n = k = 0; k < 26; k += 1)
+    {
+      y = voisin26(p, k, rs, ps, N);
+      if ((y != -1) && S[y]) { n++; q = y; }
+    } // for k
+    if (n != 1) return 0;
+    for (n = k = 0; k < 26; k += 1)
+    {
+      y = voisin26(q, k, rs, ps, N);
+      if ((y != -1) && S[y] && (y != p)) { n++; r = y; }
+    } // for k
+    if (n == 0) return 1;
+    if ((n == 1) &&
+	mctopo3d_nbvoiso26(S, r, rs, ps, N) <= 2) return 1;
+    return 0;
+  } // if (mode == 3)
+  assert(1);
+  return 0;
+} //NKP_end()
+
+static int32_t NKP_square_deletable(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
+{
+  int32_t k;
+  index_t q;
+  if (!IS_NKP_SELF(S[p])) return 0;
+  for (k = 0; k < 12; k += 1)
+  {
+    q = voisin12(p, k, rs, ps, N);
+    if ((q != -1) && S[q]  && IS_NKP_SELF(S[q]))
+    {
+      if (!mctopo3d_simplepair26(S, p, q, rs, ps, N)) return 0;
+    }
+  } // for k
+  return 1;
+} //NKP_square_deletable()
+
+/* ==================================== */
+static int32_t NKP_match0(uint8_t *v)
+/* ==================================== */
+{
+  if (!IS_NKP_SQUARE(v[13])) return 0;
+  if (!IS_NKP_SQUARE(v[17])) return 0;
+  if (!IS_NKP_SQUARE(v[23])) return 0;
+  if (IS_NKP_SQUARE(v[14])) return 0;
+  if (IS_NKP_SQUARE(v[16])) return 0;
+  if (IS_NKP_SQUARE(v[22])) return 0;
+  if (IS_NKP_SQUARE(v[25])) return 0;
+  if (IS_NKP_SQUARE(v[26])) return 0;
+  return 1;
+} // NKP_match0()
+
+/* ==================================== */
+static int32_t NKP_match1(uint8_t *v)
+/* ==================================== */
+{
+  if (!IS_NKP_SQUARE(v[13])) return 0;
+  if (!IS_NKP_SQUARE(v[17])) return 0;
+  if (!IS_NKP_SQUARE(v[25])) return 0;
+  if (IS_NKP_SQUARE(v[14])) return 0;
+  if (IS_NKP_SQUARE(v[16])) return 0;
+  if (IS_NKP_SQUARE(v[22])) return 0;
+  if (IS_NKP_SQUARE(v[23])) return 0;
+  if (IS_NKP_SQUARE(v[26])) return 0;
+  return 1;
+} // NKP_match1()
+
+/* ==================================== */
+static int32_t NKP_match2(uint8_t *v)
+/* ==================================== */
+{
+  if (!IS_NKP_SQUARE(v[13])) return 0;
+  if (!IS_NKP_SQUARE(v[23])) return 0;
+  if (!IS_NKP_SQUARE(v[25])) return 0;
+  if (IS_NKP_SQUARE(v[14])) return 0;
+  if (IS_NKP_SQUARE(v[16])) return 0;
+  if (IS_NKP_SQUARE(v[17])) return 0;
+  if (IS_NKP_SQUARE(v[22])) return 0;
+  if (IS_NKP_SQUARE(v[26])) return 0;
+  return 1;
+} // NKP_match2()
+
+/* ==================================== */
+static int32_t NKP_match3(uint8_t *v)
+/* ==================================== */
+{
+  if (!IS_NKP_SQUARE(v[13])) return 0;
+  if (!IS_NKP_SQUARE(v[17])) return 0;
+  if (!IS_NKP_SQUARE(v[23])) return 0;
+  if (!IS_NKP_SQUARE(v[25])) return 0;
+  if (IS_NKP_SQUARE(v[14])) return 0;
+  if (IS_NKP_SQUARE(v[16])) return 0;
+  if (IS_NKP_SQUARE(v[22])) return 0;
+  if (IS_NKP_SQUARE(v[26])) return 0;
+  return 1;
+} // NKP_match3()
+
+/* ==================================== */
+static int32_t NKP_match4(uint8_t *v)
+/* ==================================== */
+{
+  if (!IS_NKP_SQUARE(v[13])) return 0;
+  if (!IS_NKP_SQUARE(v[19])) return 0;
+  if (!IS_NKP_SQUARE(v[21])) return 0;
+  if (IS_NKP_SQUARE(v[10])) return 0;
+  if (IS_NKP_SQUARE(v[9])) return 0;
+  if (IS_NKP_SQUARE(v[12])) return 0;
+  if (IS_NKP_SQUARE(v[18])) return 0;
+  if (IS_NKP_SQUARE(v[22])) return 0;
+  return 1;
+} // NKP_match4()
+
+/* ==================================== */
+static int32_t NKP_match5(uint8_t *v)
+/* ==================================== */
+{
+  if (!IS_NKP_SQUARE(v[13])) return 0;
+  if (!IS_NKP_SQUARE(v[15])) return 0;
+  if (!IS_NKP_SQUARE(v[21])) return 0;
+  if (IS_NKP_SQUARE(v[12])) return 0;
+  if (IS_NKP_SQUARE(v[16])) return 0;
+  if (IS_NKP_SQUARE(v[22])) return 0;
+  if (IS_NKP_SQUARE(v[24])) return 0;
+  if (IS_NKP_SQUARE(v[25])) return 0;
+  return 1;
+} // NKP_match5()
+
+/* ==================================== */
+static int32_t NKP_match6(uint8_t *v)
+/* ==================================== */
+{
+  if (!IS_NKP_SQUARE(v[13])) return 0;
+  if (!IS_NKP_SQUARE(v[15])) return 0;
+  if (!IS_NKP_SQUARE(v[25])) return 0;
+  if (IS_NKP_SQUARE(v[12])) return 0;
+  if (IS_NKP_SQUARE(v[16])) return 0;
+  if (IS_NKP_SQUARE(v[22])) return 0;
+  if (IS_NKP_SQUARE(v[24])) return 0;
+  if (IS_NKP_SQUARE(v[21])) return 0;
+  return 1;
+} // NKP_match6()
+
+/* ==================================== */
+static int32_t NKP_match7(uint8_t *v)
+/* ==================================== */
+{
+  if (!IS_NKP_SQUARE(v[13])) return 0;
+  if (!IS_NKP_SQUARE(v[25])) return 0;
+  if (!IS_NKP_SQUARE(v[21])) return 0;
+  if (IS_NKP_SQUARE(v[12])) return 0;
+  if (IS_NKP_SQUARE(v[16])) return 0;
+  if (IS_NKP_SQUARE(v[22])) return 0;
+  if (IS_NKP_SQUARE(v[24])) return 0;
+  if (IS_NKP_SQUARE(v[15])) return 0;
+  return 1;
+} // NKP_match7()
+
+/* ==================================== */
+static int32_t NKP_match8(uint8_t *v)
+/* ==================================== */
+{
+  if (!IS_NKP_SQUARE(v[13])) return 0;
+  if (!IS_NKP_SQUARE(v[15])) return 0;
+  if (!IS_NKP_SQUARE(v[21])) return 0;
+  if (!IS_NKP_SQUARE(v[25])) return 0;
+  if (IS_NKP_SQUARE(v[12])) return 0;
+  if (IS_NKP_SQUARE(v[16])) return 0;
+  if (IS_NKP_SQUARE(v[22])) return 0;
+  if (IS_NKP_SQUARE(v[24])) return 0;
+  return 1;
+} // NKP_match8()
+
+/* ==================================== */
+static int32_t NKP_match9(uint8_t *v)
+/* ==================================== */
+{
+  if (!IS_NKP_SQUARE(v[13])) return 0;
+  if (!IS_NKP_SQUARE(v[19])) return 0;
+  if (!IS_NKP_SQUARE(v[23])) return 0;
+  if (IS_NKP_SQUARE(v[10])) return 0;
+  if (IS_NKP_SQUARE(v[11])) return 0;
+  if (IS_NKP_SQUARE(v[14])) return 0;
+  if (IS_NKP_SQUARE(v[22])) return 0;
+  if (IS_NKP_SQUARE(v[20])) return 0;
+  return 1;
+} // NKP_match9()
+
+static int32_t NKP_cube_deletable(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
+{
+  uint8_t v[27];
+  extract_vois27(S, p, rs, ps, N, v);
+  if (NKP_match0(v)) return 0;
+  if (NKP_match1(v)) return 0;
+  if (NKP_match2(v)) return 0;
+  if (NKP_match3(v)) return 0;
+  if (NKP_match4(v)) return 0;
+  if (NKP_match5(v)) return 0;
+  if (NKP_match6(v)) return 0;
+  if (NKP_match7(v)) return 0;
+  if (NKP_match8(v)) return 0;
+  if (NKP_match9(v)) return 0;
+  return 1;
+} //NKP_cube_deletable()
+
+/* ==================================== */
+int32_t lnemethetalcurv2subfields2010(
+				  struct xvimage *image,
+				  int32_t nsteps,
+				  int32_t mode)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lnemethetalcurv2subfields2010"
+{ 
+  int32_t i, j, k, x;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab[2];
+
+  mctopo3d_init_topo3d();
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab[0] = nonstab[1] = 1;
+  while ((nonstab[0] || nonstab[1]) && (step < nsteps))
+  {
+    nonstab[step%2] = 0;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    for (i = 0; i < N; i++) if (S[i]) S[i] = NKP_OBJECT;
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if (((k+j+i)%2) == (step%2))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && mctopo3d_simple26(S, x, rs, ps, N) && !NKP_end(S, x, rs, ps, N, mode))
+	{
+#ifdef DEBUG_lnemethetalcurv2subfields2010
+printf("mark self point %d %d %d\n", i, j, k);	  
+#endif
+	  SET_NKP_SELF(S[x]);
+	}
+      } // for i, j, k
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if (((k+j+i)%2) == (step%2))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && NKP_square_deletable(S, x, rs, ps, N))
+	{
+#ifdef DEBUG_lnemethetalcurv2subfields2010
+printf("mark square point %d %d %d\n", i, j, k);	  
+#endif
+	  SET_NKP_SQUARE(S[x]);
+	}
+      } // for i, j, k
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if (((k+j+i)%2) == (step%2))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && IS_NKP_SQUARE(S[x]) && NKP_cube_deletable(S, x, rs, ps, N))
+	{
+#ifdef DEBUG_lnemethetalcurv2subfields2010
+printf("mark cube point %d %d %d\n", i, j, k);	  
+#endif
+	  SET_NKP_CUBE(S[x]);
+	}
+      } // for i, j, k
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if (((k+j+i)%2) == (step%2))
+      {
+	x = k*ps + j*rs + i;
+	if (IS_NKP_SELF(S[x]) && IS_NKP_SQUARE(S[x]) && IS_NKP_CUBE(S[x]))
+	{
+	  S[x] = 0;
+	  nonstab[step%2] = 1;
+	}
       } // for i, j, k
     step++;
   } // while (nonstab && (step < nsteps))
@@ -2280,7 +2715,273 @@ printf("point %d %d %d\n", i, j, k);
   for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
   mctopo3d_termine_topo3d();
   return(1);
-} /* lmawanleecurv4subfields2002() */
+} /* lnemethetalcurv2subfields2010() */
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de Nemeth, Kardos & Palagyi (curviligne 4 and 8 subfields, ICIAR 2010)
+// M. Couprie, feb. 2012
+/* ============================================================ */
+/* ============================================================ */
+
+#define NKP_4DELETABLE 4
+#define NKP_8DELETABLE 4
+#define NKP_BORDNONEND 8
+
+#define IS_NKP_4DELETABLE(f) (f&NKP_4DELETABLE)
+#define SET_NKP_4DELETABLE(f) (f|=NKP_4DELETABLE)
+#define UNSET_NKP_4DELETABLE(f)  (f&=~NKP_4DELETABLE)
+#define IS_NKP_8DELETABLE(f) (f&NKP_8DELETABLE)
+#define SET_NKP_8DELETABLE(f) (f|=NKP_8DELETABLE)
+#define UNSET_NKP_8DELETABLE(f)  (f&=~NKP_8DELETABLE)
+#define IS_NKP_BORDNONEND(f) (f&NKP_BORDNONEND)
+#define SET_NKP_BORDNONEND(f) (f|=NKP_BORDNONEND)
+#define UNSET_NKP_BORDNONEND(f)  (f&=~NKP_BORDNONEND)
+
+static int32_t NKP_4_deletable(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
+{
+  int32_t k;
+  index_t q;
+  if (!IS_NKP_SELF(S[p])) return 0;
+  if (mctopo3d_nbvoiso26(S, p, rs, ps, N) != 1) return 1;
+  for (k = 0; k < 26; k += 1)
+  {
+    q = voisin26(p, k, rs, ps, N);
+    if ((q != -1) && S[q]  && !voisins18(p, q, rs, ps) && 
+	(mctopo3d_nbvoiso26(S, q, rs, ps, N) == 1) &&
+	IS_NKP_SELF(S[q]))
+    {
+      if (p < q) return 0;
+    }
+  } // for k
+  return 1;
+} //NKP_4_deletable()
+
+/* ==================================== */
+int32_t lnemethetalcurv4subfields2010(
+				  struct xvimage *image,
+				  int32_t nsteps,
+				  int32_t mode)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lnemethetalcurv4subfields2010"
+{ 
+  int32_t i, j, k, x;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab[4];
+
+#ifdef VERBOSE
+  printf("%s: mode %d\n", F_NAME, mode);
+#endif
+
+  mctopo3d_init_topo3d();
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab[0] = nonstab[1] = nonstab[2] = nonstab[3] = 1;
+  while ((nonstab[0] || nonstab[1] || nonstab[2] || nonstab[3]) && (step < nsteps))
+  {
+    nonstab[step%4] = 0;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+    {
+      x = k*ps + j*rs + i;
+      if (S[x])
+      {
+	UNSET_NKP_SELF(S[x]);
+	UNSET_NKP_4DELETABLE(S[x]);
+	if ((step%4) == 0)
+	{
+	  UNSET_NKP_BORDNONEND(S[x]);
+	  if (S[x] && (mctopo3d_nbvoisc6(S, x, rs, ps, N) > 0) && 
+	      !NKP_end(S, x, rs, ps, N, mode))
+	  {
+#ifdef DEBUG_lnemethetalcurv4subfields2010
+	    printf("mark bord non end %d %d %d\n", i, j, k);	  
+#endif
+	    SET_NKP_BORDNONEND(S[x]);
+	  }
+	} // if ((step%4) == 0)
+      } // if (S[x])
+    } // for i, j, k
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == ((step%4)/2)))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && mctopo3d_simple26(S, x, rs, ps, N))
+	{
+#ifdef DEBUG_lnemethetalcurv4subfields2010
+printf("mark self %d %d %d\n", i, j, k);	  
+#endif
+	  SET_NKP_SELF(S[x]);
+	}
+      } // for i, j, k
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == ((step%4)/2)))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && NKP_4_deletable(S, x, rs, ps, N))
+	{
+#ifdef DEBUG_lnemethetalcurv4subfields2010
+printf("mark 4 deletable %d %d %d\n", i, j, k);	  
+#endif
+	  SET_NKP_4DELETABLE(S[x]);
+	}
+      } // for i, j, k
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if ((((j+i)%2) == (step%2)) && (((k+j)%2) == ((step%4)/2)))
+      {
+	x = k*ps + j*rs + i;
+	if (IS_NKP_BORDNONEND(S[x]) && IS_NKP_4DELETABLE(S[x]))
+	{
+#ifdef DEBUG_lnemethetalcurv4subfields2010
+printf("delete %d %d %d\n", i, j, k);	  
+#endif
+	  S[x] = 0;
+	  nonstab[step%4] = 1;
+	}
+      } // for i, j, k
+    step++;
+  } // while (nonstab && (step < nsteps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lnemethetalcurv4subfields2010() */
+
+/* ==================================== */
+int32_t lnemethetalcurv8subfields2010(
+				  struct xvimage *image,
+				  int32_t nsteps,
+				  int32_t mode)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lnemethetalcurv8subfields2010"
+{ 
+  int32_t i, j, k, x;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab[8];
+
+#ifdef VERBOSE
+  printf("%s: mode %d\n", F_NAME, mode);
+#endif
+
+  mctopo3d_init_topo3d();
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab[0] = nonstab[1] = nonstab[2] = nonstab[3] = 1;
+  nonstab[4] = nonstab[5] = nonstab[6] = nonstab[7] = 1;
+  while ((nonstab[0] || nonstab[1] || nonstab[2] || nonstab[3] ||
+	  nonstab[4] || nonstab[5] || nonstab[6] || nonstab[7]) && (step < nsteps))
+  {
+    nonstab[step%8] = 0;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+    {
+      x = k*ps + j*rs + i;
+      if (S[x])
+      {
+	UNSET_NKP_8DELETABLE(S[x]);
+	if ((step%8) == 0)
+	{
+	  UNSET_NKP_BORDNONEND(S[x]);
+	  if (S[x] && (mctopo3d_nbvoisc6(S, x, rs, ps, N) > 0) && 
+	      !NKP_end(S, x, rs, ps, N, mode))
+	  {
+#ifdef DEBUG_lnemethetalcurv8subfields2010
+	    printf("mark bord non end %d %d %d\n", i, j, k);	  
+#endif
+	    SET_NKP_BORDNONEND(S[x]);
+	  }
+	} // if ((step%8) == 0)
+      } // if (S[x])
+    } // for i, j, k
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if (((i%2) == (step%2)) && ((j%2) == ((step>>1)%2)) && ((k%2) == ((step>>2)%2)))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && mctopo3d_simple26(S, x, rs, ps, N))
+	{
+#ifdef DEBUG_lnemethetalcurv8subfields2010
+printf("mark 8 deletable %d %d %d\n", i, j, k);	  
+#endif
+	  SET_NKP_8DELETABLE(S[x]);
+	}
+      } // for i, j, k
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if (((i%2) == (step%2)) && ((j%2) == ((step>>1)%2)) && ((k%2) == ((step>>2)%2)))
+      {
+	x = k*ps + j*rs + i;
+	if (IS_NKP_BORDNONEND(S[x]) && IS_NKP_8DELETABLE(S[x]))
+	{
+#ifdef DEBUG_lnemethetalcurv8subfields2010
+printf("delete %d %d %d\n", i, j, k);	  
+#endif
+	  S[x] = 0;
+	  nonstab[step%8] = 1;
+	}
+      } // for i, j, k
+    step++;
+  } // while (nonstab && (step < nsteps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lnemethetalcurv8subfields2010() */
 
 /* ============================================================ */
 /* ============================================================ */

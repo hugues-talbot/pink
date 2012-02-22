@@ -103,6 +103,18 @@ extern int32_t lmawanchangcurv2subfields2002(
 extern int32_t lmawanleecurv4subfields2002(
 				  struct xvimage *image,
 				  int32_t nsteps);
+extern int32_t lnemethetalcurv2subfields2010(
+				  struct xvimage *image,
+				  int32_t nsteps,
+				  int32_t mode);
+extern int32_t lnemethetalcurv4subfields2010(
+				  struct xvimage *image,
+				  int32_t nsteps,
+				  int32_t mode);
+extern int32_t lnemethetalcurv8subfields2010(
+				  struct xvimage *image,
+				  int32_t nsteps,
+				  int32_t mode);
 extern int32_t ltsaofu6dircurv1982(
 				  struct xvimage *image,
 				  struct xvimage *inhibit,

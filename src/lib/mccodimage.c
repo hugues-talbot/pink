@@ -309,7 +309,43 @@ int32_t voisin18(index_t i, int32_t k, index_t rs, index_t ps, index_t N)
     fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
     exit(0);
   }
-}
+} // voisin18()
+
+/* ==================================== */
+int32_t voisin12(index_t i, int32_t k, index_t rs, index_t ps, index_t N)
+/* 18-voisin mais pas 6-voisin */
+/* i : index du point dans l'image */
+/* k : direction du voisin */
+/* rs : taille d'une rangee */
+/* ps : taille d'un plan */
+/* N : taille de l'image 3D */
+/* retourne -1 si le voisin n'existe pas */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "voisin12"
+{
+  switch(k)
+  {
+  /* les 4 premiers (0 a 3) sont les 4 pixels du plan "ARRIERE" (+ps) */
+  case 0:  if ((i<N-ps)&&(i%rs!=rs-1)) return ps+i+1; else return -1;
+  case 1:  if ((i<N-ps)&&(i%ps>=rs)) return ps+i-rs; else return -1;
+  case 2:  if ((i<N-ps)&&(i%rs!=0)) return ps+i-1; else return -1;
+  case 3:  if ((i<N-ps)&&(i%ps<ps-rs)) return ps+i+rs; else return -1;
+  /* les 4 suivants (4 a 7) sont les 4 pixels du plan "COURANT" () */
+  case 4:  if ((i%rs!=rs-1)&&(i%ps>=rs)) return i+1-rs; else return -1;
+  case 5:  if ((i%ps>=rs)&&(i%rs!=0)) return i-rs-1;  else return -1;
+  case 6: if ((i%rs!=0)&&(i%ps<ps-rs)) return i-1+rs; else return -1;
+  case 7: if ((i%ps<ps-rs)&&(i%rs!=rs-1)) return i+rs+1; else return -1;
+  /* les 4 derniers (8 a 11) sont les 4 pixels du plan "AVANT" (-ps) */
+  case 8: if ((i>=ps)&&(i%rs!=rs-1)) return -ps+i+1; else return -1;
+  case 9: if ((i>=ps)&&(i%ps>=rs)) return -ps+i-rs; else return -1;
+  case 10: if ((i>=ps)&&(i%rs!=0)) return -ps+i-1; else return -1;
+  case 11: if ((i>=ps)&&(i%ps<ps-rs)) return -ps+i+rs; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
+  }
+} // voisin12()
 
 /* ==================================== */
 int32_t voisins4(index_t i, index_t j, index_t rs)   

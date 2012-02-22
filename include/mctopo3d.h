@@ -143,6 +143,13 @@ extern int32_t mctopo3d_simple26(              /* pour un objet en 26-connexite 
   index_t rs,                      /* taille rangee */
   index_t ps,                      /* taille plan */
   index_t N);                      /* taille image */
+extern int32_t mctopo3d_simplepair26(     /* pour un objet en 26-connexite */
+  uint8_t *img,                    /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t q,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N);                      /* taille image */
 extern int32_t mctopo3d_simple6h(              /* pour un objet en 6-connexite */
   uint8_t *img,          /* pointeur base image */
   index_t p,                       /* index du point */

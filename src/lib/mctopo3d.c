@@ -2797,3 +2797,33 @@ int32_t mctopo3d_tsao_fu_nonend( /* pour l'algo de Tsao et Fu (voir lskelpar3d_o
 
   return 1;
 } /* mctopo3d_tsao_fu_nonend() */
+
+/* ==================================== */
+int32_t mctopo3d_simplepair26(     /* pour un objet en 26-connexite */
+  uint8_t *img,                    /* pointeur base image */
+  index_t p,                       /* index du point */
+  index_t q,                       /* index du point */
+  index_t rs,                      /* taille rangee */
+  index_t ps,                      /* taille plan */
+  index_t N)                       /* taille image */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "mctopo3d_simplepair26"
+{
+  uint8_t vp = img[p], vq = img[q];
+  int32_t res = 0;
+  if (!vp || !vq) return 0;
+  if (mctopo3d_simple26(img, p, rs, ps, N))
+  {
+    img[p] = 0;
+    if (mctopo3d_simple26(img, q, rs, ps, N)) res = 1;
+    img[p] = vp;    
+  }
+  if ((res == 0) && mctopo3d_simple26(img, q, rs, ps, N))
+  {
+    img[q] = 0;
+    if (mctopo3d_simple26(img, p, rs, ps, N)) res = 1;
+    img[q] = vq;
+  }
+  return res;
+} /* mctopo3d_simplepair26() */

@@ -204,6 +204,7 @@ extern int32_t bord(index_t i, index_t rs, index_t nb);
 extern int32_t bord3d(index_t i, index_t rs, index_t ps, index_t nb);
 extern int32_t voisin26(index_t i, int32_t k, index_t rs, index_t n, index_t nb);
 extern int32_t voisin18(index_t i, int32_t k, index_t rs, index_t n, index_t nb);
+extern int32_t voisin12(index_t i, int32_t k, index_t rs, index_t ps, index_t N);
 extern int32_t voisins4(index_t i, index_t j, index_t rs);
 extern int32_t voisins8(index_t i, index_t j, index_t rs);   
 extern int32_t voisins6(index_t i, index_t j, index_t rs, index_t ps);   
