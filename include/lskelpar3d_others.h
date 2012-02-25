@@ -115,6 +115,13 @@ extern int32_t lnemethetalcurv8subfields2010(
 				  struct xvimage *image,
 				  int32_t nsteps,
 				  int32_t mode);
+extern int32_t lsheetalcurvsym2009(
+				  struct xvimage *image,
+				  int32_t nsteps);
+extern int32_t ltsaofu6dirsurf1981(struct xvimage *image,
+				   int32_t n_steps);
+extern int32_t ltsaofu6dircurv1981(struct xvimage *image,
+				   int32_t n_steps);
 extern int32_t ltsaofu6dircurv1982(
 				  struct xvimage *image,
 				  struct xvimage *inhibit,

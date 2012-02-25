@@ -72,6 +72,9 @@ The possible choices are:
 \li 22: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 1)
 \li 23: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 2)
 \li 24: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 3)
+\li 25: She et al. (curvilinear, symmetric, DICTA 2009)
+\li 26: Tsao-Fu (surface, 6-subiterations directional, 1981)
+\li 27: Tsao-Fu (curvilinear, 6-subiterations directional, 1981)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -138,6 +141,7 @@ int main(int32_t argc, char **argv)
     fprintf(stderr, "   22: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 1))\n");
     fprintf(stderr, "   23: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 2))\n");
     fprintf(stderr, "   24: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 3))\n");
+    fprintf(stderr, "   25: She et al. (curvilinear, symmetric, DICTA 2009)\n");
     exit(1);
   }
 
@@ -368,6 +372,38 @@ int main(int32_t argc, char **argv)
       if (!lnemethetalcurv8subfields2010(image, nsteps, 3))
       {
 	fprintf(stderr, "%s: lnemethetalcurv8subfields2010 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 25:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lsheetalcurvsym2009(image, nsteps))
+      {
+	fprintf(stderr, "%s: lsheetalcurvsym2009 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 26:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!ltsaofu6dirsurf1981(image, nsteps))
+      {
+	fprintf(stderr, "%s: ltsaofu6dirsurf1981 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 27:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!ltsaofu6dirsurf1981(image, nsteps)) // 1st pass: surface thinning
+      {
+	fprintf(stderr, "%s: ltsaofu6dirsurf1981 failed\n", argv[0]);
+	exit(1);
+      } 
+      if (!ltsaofu6dircurv1981(image, nsteps)) // 2nd pass: curvilinear thinning
+      {
+	fprintf(stderr, "%s: ltsaofu6dircurv1981 failed\n", argv[0]);
 	exit(1);
       } 
       break;

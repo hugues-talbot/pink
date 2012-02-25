@@ -34,15 +34,6 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*
    Algorithmes 3D de squelettisation
-
-   Algo. de Palagyi (curviligne 6 subiterations, PRL 1998. Adapté par John Chaussard)
-   Algo. de Lohou et Bertrand (curviligne symmétrique, Pat. Rec. 2007) 
-   Algo. de Ma, Wan & Chang (curviligne 2 subfields, PRL 2002)
-   Algo. de Tsao & Fu (curviligne 6 subiterations, IEEE PRIP 1982)
-   Algo. de Ma & Sonka (curviligne fully parallel, CVIU 1996)
-   Algo. de Ma & Wan (curviligne (18/6) 6 subiterations, CVIU 2000)
-   Algo. de Lohou et Bertrand (curviligne 12 subiterations, DAM 2004)
-   Algo. de Lohou et Bertrand (curviligne 6 subiterations, DAM 2005)
 */
 
 #include <string.h>
@@ -65,10 +56,11 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcimage.h>
 #include <mcutil.h>
 #include <mcindic.h>
+#include <mctopo.h>
 #include <mctopo3d.h>
 #include <lskelpar3d_others.h>
 
-#define VERBOSE
+//#define VERBOSE
 //#define DEBUG
 //#define DEBUG_lmasonka1996
 //#define DEBUG_lmawanleecurv4subfields2002
@@ -231,7 +223,7 @@ static int32_t direction(
   index_t rs,            /* taille rangee */
   index_t ps,            /* taille plan */
   index_t N              /* taille image */
-)    
+)
 /* 
   retourne 1 si p a un voisin nul dans la direction dir, 0 sinon :
 
@@ -1502,6 +1494,290 @@ int32_t lmawan2000(struct xvimage *image,
   return(1);
   
 } // lmawan2000()
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de Tsao & Fu (surfacique et curviligne 6 subiterations, CGIP 1981)
+// M. Couprie, feb. 2012
+/* ============================================================ */
+/* ============================================================ */
+
+#define TF_OBJECT      1
+#define TF_DELETABLE   2
+
+#define IS_TF_OBJECT(f)     (f&TF_OBJECT)
+#define IS_TF_DELETABLE(f)     (f&TF_DELETABLE)
+
+#define SET_TF_OBJECT(f)    (f|=TF_OBJECT)
+#define SET_TF_DELETABLE(f)    (f|=TF_DELETABLE)
+
+static int32_t TF_3x3_deletable(uint8_t *v)
+{
+  int32_t t, tb;
+  if (nbvois8(v, 4, 3, 9) < 2) return 0;
+  top8(v, 4, 3, 9, &t, &tb);
+  if (t > 1) return 0;
+  return 1;
+} // TF_3x3_deletable()
+
+static int32_t TF_deletable(int32_t d, uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
+{
+  uint8_t v[9], w[9];
+  int32_t x, y, z, i, j, k;
+  x = p % rs; y = (p % ps) / rs; z = p / ps;
+  switch (d)
+  {
+#ifndef DIRTOURNE
+  case 0: case 1:
+    for (k = 0; k < 3; k++) 
+      for (i = 0; i < 3; i++) 
+	v[k*3 + i] = S[(z-1+k)*ps + y*rs + (x-1+i)];
+    for (j = 0; j < 3; j++) 
+      for (i = 0; i < 3; i++) 
+	w[j*3 + i] = S[z*ps + (y-1+j)*rs + (x-1+i)];
+    break;
+  case 2: case 3:
+    for (k = 0; k < 3; k++) 
+      for (j = 0; j < 3; j++) 
+	v[k*3 + j] = S[(z-1+k)*ps + (y-1+j)*rs + x];
+    for (j = 0; j < 3; j++) 
+      for (i = 0; i < 3; i++) 
+	w[j*3 + i] = S[z*ps + (y-1+j)*rs + (x-1+i)];
+    break;
+  case 4: case 5:
+    for (k = 0; k < 3; k++) 
+      for (j = 0; j < 3; j++) 
+	v[k*3 + j] = S[(z-1+k)*ps + (y-1+j)*rs + x];
+    for (k = 0; k < 3; k++) 
+      for (i = 0; i < 3; i++) 
+	w[k*3 + i] = S[(z-1+k)*ps + y*rs + (x-1+i)];
+    break;
+#else
+    assert(1);
+#endif
+  } // switch (d)
+  if (TF_3x3_deletable(v) && TF_3x3_deletable(w)) return 1;
+  return 0;
+} // TF_deletable()
+
+/* ==================================== */
+int32_t ltsaofu6dirsurf1981(struct xvimage *image,
+			    int32_t n_steps)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "ltsaofu6dirsurf1981"
+{
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab, d;
+
+  if (n_steps == -1) n_steps = 1000000000;
+
+  mctopo3d_init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("%s: step %d\n", F_NAME, step);
+#endif
+
+    for (d = 0; d < 6; d++)
+    {
+#ifdef VERBOSE
+      printf("%s: substep %d\n", F_NAME, d);
+#endif
+
+      for (i = 0; i < N; i++) if (S[i]) S[i] = TF_OBJECT;
+
+      // MARQUE LES POINTS DELETABLES DE DIRECTION d
+      for (i = 0; i < N; i++) 
+	if (S[i] && direction(S, i, d, rs, ps, N) &&
+	    (mctopo3d_nbvoiso26(S, i, rs, ps, N) > 2) && 
+	    mctopo3d_simple26(S, i, rs, ps, N) && 
+	    TF_deletable(d, S, i, rs, ps, N))
+	{
+	  SET_TF_DELETABLE(S[i]);
+	}
+
+      // EFFACE LES POINTS DELETABLE
+      for (i = 0; i < N; i++)
+	if (IS_TF_DELETABLE(S[i]))
+	{
+	  S[i] = 0; 
+	  nonstab = 1; 
+	}
+
+#ifdef DEBUG_ltsaofu6dirsurf1981
+      if (d==0) writeimage(image, "_ss0");
+      if (d==1) writeimage(image, "_ss1");
+      if (d==2) writeimage(image, "_ss2");
+      if (d==3) writeimage(image, "_ss3");
+      if (d==4) writeimage(image, "_ss4");
+      if (d==5) writeimage(image, "_ss5");
+#endif
+    } // for (d = 0; d < 6; d++)
+  } // while (nonstab && (step < n_steps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  mctopo3d_termine_topo3d();
+  return(1);
+  
+} // ltsaofu6dirsurf1981()
+
+static int32_t TF_3x3_deletablecurv(uint8_t *v)
+{
+  int32_t t, tb;
+  //printf("%d %d %d | %d %d %d | %d %d %d\n", 
+  //       v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]);
+  top8(v, 4, 3, 9, &t, &tb);
+  if (t > 1) return 0;
+  if (nbvois8(v, 4, 3, 9) >= 2) return 1;
+  // nbvois8 == 1 : allowed if it is on the opposite direction
+  if (!v[5] && !v[3]) return 0;
+  return 1;
+} // TF_3x3_deletablecurv()
+
+static int32_t TF_deletablecurv(int32_t d, uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
+{
+  uint8_t v[9], w[9];
+  int32_t x, y, z, i, j, k;
+  x = p % rs; y = (p % ps) / rs; z = p / ps;
+  //printf("dir %d point %d %d %d \n", d, x, y, z);
+  switch (d)
+  {
+#ifndef DIRTOURNE
+  case 0: case 1:
+    for (k = 0; k < 3; k++) 
+      for (i = 0; i < 3; i++) 
+	v[k*3 + i] = S[(z-1+k)*ps + y*rs + (x-1+i)];
+    for (j = 0; j < 3; j++) 
+      for (i = 0; i < 3; i++) 
+	w[j*3 + i] = S[z*ps + (y-1+j)*rs + (x-1+i)];
+    break;
+  case 2: case 3:
+    for (k = 0; k < 3; k++) 
+      for (j = 0; j < 3; j++) 
+	v[k*3 + j] = S[(z-1+k)*ps + (y-1+j)*rs + x];
+    for (j = 0; j < 3; j++) 
+      for (i = 0; i < 3; i++) 
+	w[i*3 + j] = S[z*ps + (y-1+j)*rs + (x-1+i)];
+    break;
+  case 4: case 5:
+    for (k = 0; k < 3; k++) 
+      for (j = 0; j < 3; j++) 
+	v[j*3 + k] = S[(z-1+k)*ps + (y-1+j)*rs + x];
+    for (k = 0; k < 3; k++) 
+      for (i = 0; i < 3; i++) 
+	w[i*3 + k] = S[(z-1+k)*ps + y*rs + (x-1+i)];
+    break;
+#else
+    assert(1);
+#endif
+  } // switch (d)
+  if (TF_3x3_deletablecurv(v) && TF_3x3_deletablecurv(w)) return 1;
+  return 0;
+} // TF_deletablecurv()
+
+/* ==================================== */
+int32_t ltsaofu6dircurv1981(struct xvimage *image,
+			    int32_t n_steps)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "ltsaofu6dircurv1981"
+{
+  index_t i;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab, d;
+
+  if (n_steps == -1) n_steps = 1000000000;
+
+  mctopo3d_init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("%s: step %d\n", F_NAME, step);
+#endif
+
+    for (d = 0; d < 6; d++)
+    {
+#ifdef VERBOSE
+      printf("%s: substep %d\n", F_NAME, d);
+#endif
+
+      for (i = 0; i < N; i++) if (S[i]) S[i] = TF_OBJECT;
+
+      // MARQUE LES POINTS DELETABLES DE DIRECTION d
+      for (i = 0; i < N; i++) 
+	if (S[i] && direction(S, i, d, rs, ps, N))
+	{
+	  //printf("examen point %d %d %d\n", i % rs, (i % ps) / rs, i / ps);
+	  if ((mctopo3d_nbvoiso26(S, i, rs, ps, N) >= 2) && 
+	      mctopo3d_simple26(S, i, rs, ps, N) && 
+	      TF_deletablecurv(d, S, i, rs, ps, N))
+	  SET_TF_DELETABLE(S[i]);
+	}
+
+      // EFFACE LES POINTS DELETABLE
+      for (i = 0; i < N; i++)
+	if (IS_TF_DELETABLE(S[i]))
+	{
+	  S[i] = 0; 
+	  nonstab = 1; 
+	}
+
+#ifdef DEBUG_ltsaofu6dircurv1981
+      if (d==0) writeimage(image, "_ss0");
+      if (d==1) writeimage(image, "_ss1");
+      if (d==2) writeimage(image, "_ss2");
+      if (d==3) writeimage(image, "_ss3");
+      if (d==4) writeimage(image, "_ss4");
+      if (d==5) writeimage(image, "_ss5");
+#endif
+    } // for (d = 0; d < 6; d++)
+  } // while (nonstab && (step < n_steps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  mctopo3d_termine_topo3d();
+  return(1);
+  
+} // ltsaofu6dircurv1981()
 
 /* ============================================================ */
 /* ============================================================ */
@@ -2982,6 +3258,264 @@ printf("delete %d %d %d\n", i, j, k);
   mctopo3d_termine_topo3d();
   return(1);
 } /* lnemethetalcurv8subfields2010() */
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de She et al. (curviligne symétrique, DICTA 2009)
+// M. Couprie, feb. 2012
+/* ============================================================ */
+/* ============================================================ */
+
+#define SHE_OBJECT      1
+#define SHE_MARK        2
+#define SHE_DELETE      4
+
+#define IS_SHE_MARK(f) (f&SHE_MARK)
+#define SET_SHE_MARK(f) (f|=SHE_MARK)
+#define UNSET_SHE_MARK(f)  (f&=~SHE_MARK)
+#define IS_SHE_DELETE(f) (f&SHE_DELETE)
+#define SET_SHE_DELETE(f) (f|=SHE_DELETE)
+
+static int32_t SHE_mask_A(uint8_t *v)
+{
+  if (!v[17]) return 0;
+  if (v[8] || v[9] || v[10] || v[11] || v[12] || v[13] || v[14] || v[15] || v[16]) return 0;
+  return 1;
+} // SHE_mask_A()
+
+static int32_t SHE_deletable_A(uint8_t *v)
+{
+  if (SHE_mask_A(v)) return 1; // U-deletable
+  swap_U_L(v);
+  if (SHE_mask_A(v)) return 1; // L-deletable
+
+  isometrieXZ_vois(v);
+  if (SHE_mask_A(v)) return 1; // E-deletable
+  swap_U_L(v);
+  if (SHE_mask_A(v)) return 1; // W-deletable
+  isometrieXZ_vois(v);
+
+  isometrieYZ_vois(v);
+  if (SHE_mask_A(v)) return 1; // N-deletable
+  swap_U_L(v);
+  if (SHE_mask_A(v)) return 1; // S-deletable
+  isometrieYZ_vois(v);
+
+  return 0;
+} // SHE_deletable_A()
+
+static int32_t SHE_mask_B(uint8_t *v)
+{
+  if (!v[22]) return 0;
+  if (v[4] || v[13] || v[8] || v[9] || v[0] || v[18] || v[17]) return 0;
+  return 1;
+} // SHE_mask_B()
+
+static int32_t SHE_deletable_B(uint8_t *v)
+{
+  if (SHE_mask_B(v)) return 1; // UE
+  rotate_90_Z(v);
+  if (SHE_mask_B(v)) return 1; // UN
+  rotate_90_Z(v);
+  if (SHE_mask_B(v)) return 1; // UW
+  rotate_90_Z(v);
+  if (SHE_mask_B(v)) return 1; // US
+  rotate_90_Z(v);
+  swap_U_L(v);
+  if (SHE_mask_B(v)) return 1; // LE
+  rotate_90_Z(v);
+  if (SHE_mask_B(v)) return 1; // LN
+  rotate_90_Z(v);
+  if (SHE_mask_B(v)) return 1; // LW
+  rotate_90_Z(v);
+  if (SHE_mask_B(v)) return 1; // LS
+  rotate_90_Z(v);
+  swap_U_L(v);
+  isometrieYZ_vois(v);
+  if (SHE_mask_B(v)) return 1;
+  rotate_90_Z(v);
+  rotate_90_Z(v);
+  if (SHE_mask_B(v)) return 1;
+  swap_U_L(v);
+  if (SHE_mask_B(v)) return 1;
+  rotate_90_Z(v);
+  rotate_90_Z(v);
+  if (SHE_mask_B(v)) return 1;
+  
+  return 0;
+} // SHE_deletable_B()
+
+static int32_t SHE_mask_D(uint8_t *v)
+{
+  if (!v[4] || !v[17]) return 0;
+  if (v[15] || v[11] || v[8] || v[9] || v[10] || v[16] || v[1] || v[0] || v[7]) return 0;
+  return 1;
+} // SHE_mask_D()
+
+static int32_t SHE_deletable_D(uint8_t *v)
+{
+  if (SHE_mask_D(v)) return 1; // UE
+  rotate_90_Z(v);
+  if (SHE_mask_D(v)) return 1; // UN
+  rotate_90_Z(v);
+  if (SHE_mask_D(v)) return 1; // UW
+  rotate_90_Z(v);
+  if (SHE_mask_D(v)) return 1; // US
+  rotate_90_Z(v);
+  swap_U_L(v);
+  if (SHE_mask_D(v)) return 1; // LE
+  rotate_90_Z(v);
+  if (SHE_mask_D(v)) return 1; // LN
+  rotate_90_Z(v);
+  if (SHE_mask_D(v)) return 1; // LW
+  rotate_90_Z(v);
+  if (SHE_mask_D(v)) return 1; // LS
+  rotate_90_Z(v);
+  swap_U_L(v);
+  isometrieYZ_vois(v);
+  if (SHE_mask_D(v)) return 1;
+  rotate_90_Z(v);
+  rotate_90_Z(v);
+  if (SHE_mask_D(v)) return 1;
+  swap_U_L(v);
+  if (SHE_mask_D(v)) return 1;
+  rotate_90_Z(v);
+  rotate_90_Z(v);
+  if (SHE_mask_D(v)) return 1;
+  
+  return 0;
+} // SHE_deletable_D()
+
+static int32_t SHE_mask_C(uint8_t *v)
+{
+  if (!v[4] || !v[17] || !v[6]) return 0;
+  if (v[11] || v[8] || v[9] || v[10] || v[1] || v[0] || v[2]) return 0;
+  return 1;
+} // SHE_mask_C()
+
+static int32_t SHE_deletable_C(uint8_t *v)
+{
+  if (SHE_mask_C(v)) return 1; // UE
+  rotate_90_Z(v);
+  if (SHE_mask_C(v)) return 1; // UN
+  rotate_90_Z(v);
+  if (SHE_mask_C(v)) return 1; // UW
+  rotate_90_Z(v);
+  if (SHE_mask_C(v)) return 1; // US
+  rotate_90_Z(v);
+  swap_U_L(v);
+  if (SHE_mask_C(v)) return 1; // LE
+  rotate_90_Z(v);
+  if (SHE_mask_C(v)) return 1; // LN
+  rotate_90_Z(v);
+  if (SHE_mask_C(v)) return 1; // LW
+  rotate_90_Z(v);
+  if (SHE_mask_C(v)) return 1; // LS
+  rotate_90_Z(v);
+  swap_U_L(v);  
+  return 0;
+} // SHE_deletable_C()
+
+/* ==================================== */
+int32_t lsheetalcurvsym2009(
+				  struct xvimage *image,
+				  int32_t nsteps)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lsheetalcurvsym2009"
+{ 
+  int32_t i, j, k, x;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab, nonstab2;
+  uint8_t v[27];
+
+  mctopo3d_init_topo3d();
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < nsteps))
+  {
+    step++;
+    nonstab = 0;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    for (i = 0; i < N; i++) if (S[i]) S[i] = SHE_OBJECT;
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+      if (((k+j+i)%2) == (step%2))
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && (mctopo3d_nbvoisc26(S, x, rs, ps, N) >= 1))
+	{
+#ifdef DEBUG_lsheetalcurvsym2009
+printf("point %d %d %d\n", i, j, k);	  
+#endif
+	  SET_SHE_MARK(S[x]);
+	} // if (S[x])
+      } // for i, j, k
+
+    nonstab2 = 1;
+    while (nonstab2)
+    {
+      nonstab2 = 0;
+#ifdef VERBOSE
+      printf("step %d - substep\n", step);
+#endif
+
+      for (k = 1; k < ds-1; k++)
+      for (j = 1; j < cs-1; j++)
+      for (i = 1; i < rs-1; i++)
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && IS_SHE_MARK(S[x]))
+	{
+	  extract_vois(S, x, rs, ps, N, v);
+	  if (SHE_deletable_A(v) || SHE_deletable_B(v) || SHE_deletable_C(v) || SHE_deletable_D(v))
+	    SET_SHE_DELETE(S[x]);
+	} // if (S[x])
+      } // for i, j, k
+
+      for (k = 1; k < ds-1; k++)
+      for (j = 1; j < cs-1; j++)
+      for (i = 1; i < rs-1; i++)
+      {
+	x = k*ps + j*rs + i;
+	if (S[x] && IS_SHE_DELETE(S[x]) && mctopo3d_simple26(S, x, rs, ps, N))
+	{
+	  S[x] = 0;
+	  nonstab = nonstab2 = 1;
+	} // if (S[x])
+      } // for i, j, k
+
+    } // while (nonstab2)
+
+    for (x = 0; x < N; x++) UNSET_SHE_MARK(S[x]);
+
+  } // while (nonstab && (step < nsteps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lsheetalcurvsym2009() */
 
 /* ============================================================ */
 /* ============================================================ */
