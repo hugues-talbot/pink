@@ -105,24 +105,23 @@ int main(int argc, char **argv)
     char *filename;
     vector<int32_t> Bord1, Bord2, Bord3, Bord4;
     int32_t rowsize, colsize;
-    int w;
+    int w=3;
     int b1, b2, b3, b4;
+    double seuil;
+    double zero;
 
 
     if ((argc != 2) && (argc != 3))
     {
-        fprintf(stderr, "usage: %s in.fits \n", argv[0]);
+        fprintf(stderr, "usage: %s in.fits nb zero\n", argv[0]);
         exit(1);
     }
 
-    if (argc = 2)
-    {
-        w=3;
-    }
-    else
-    {
-        w=atof(argv[2]);
-    }
+//    seuil=atof(argv[2]);
+//    zero=atof(argv[3]);
+    seuil=600;
+    zero=1;
+    //std::cerr << seuil<<' '<< zero <<std::endl;
 
     filename=argv[1];
     //image=lfits2pgm(filename);
@@ -150,11 +149,14 @@ int main(int argc, char **argv)
 //        b2= new_edge2(I1, colsize, rowsize);
 //        b3= new_edge3(I1, colsize, rowsize);
 //        b4= new_edge4(I1, colsize, rowsize);
-        b1= 10;
-        b2= 45;
-        b3= 35;
-        b4= 55;
-
+//        b1= 10;
+//        b2= 45;
+//        b3= 35;
+//        b4= 55;
+        b1= 400;
+        b2= 100;
+        b3= 100;
+        b4= 200;
 
 
 //        end=clock();
@@ -169,7 +171,7 @@ int main(int argc, char **argv)
 //        printf("%.2f secondes pour filtrer l'image et obtenir les points sur les bords. \n",elapsed);
 //        start = clock();
 
-        get_best_line(I1, Bord2, Bord3,Bord1,Bord4,rowsize,colsize, w, b1, b2, b3, b4);
+        get_best_line(I1, Bord2, Bord3,Bord1,Bord4,rowsize,colsize, w, b1, b2, b3, b4, seuil, zero);
 
 //        end=clock();
 //        elapsed=((double)end-start)/CLOCKS_PER_SEC;
@@ -195,7 +197,7 @@ int main(int argc, char **argv)
 
 
 
-    //writeimage(image2,argv[2]);
+    writeimage(image2,argv[2]);
     freeimage(image);
     freeimage(image2);
 //

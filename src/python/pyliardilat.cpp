@@ -34,23 +34,25 @@ namespace pink {
     image_t result;
     result.copy(src);
 
-    pink_error("This function has been switched off!!!! You forgot to add some files!");
-      
-    
-      // if ( src.get_size().size()==2) // the image is 2D
-      // {
-      //   if (! imfdilat_rect( result.get_output(), SEnx, SEny, result.get_output()) )
-      //   {
-      //     pink_error("function imfdilat_rect failed");
-      //   } /* (! ldilateros_ldilat( src, elem_const_away, x, y)) */
-      // }
-      // else  // NOT the image is 2D
-      // {
-      //   if (! imfdilat3D_rect( result.get_output(), SEnx, SEny, SEnz, result.get_output()) )
-      //   {
-      //     pink_error("function imfdilat3D_rect failed");
-      //   } /* (! ldilat3d( src, elem_const_away, x, y)) */
-      // } // NOT the image is 2D
+    //pink_error("This function has been switched off!!!! You forgot to add some files!");
+
+    // The low-level function imfdilat_rect etc return 0 to indicate success
+    // HT 20120227
+
+       if ( src.get_size().size()==2) // the image is 2D
+       {
+         if ( imfdilat_rect( result.get_output(), SEnx, SEny, result.get_output()) )
+         {
+           pink_error("function imfdilat_rect failed");
+         } /* (! ldilateros_ldilat( src, elem_const_away, x, y)) */
+       }
+       else  // NOT the image is 2D
+       {
+         if ( imfdilat3D_rect( result.get_output(), SEnx, SEny, SEnz, result.get_output()) )
+         {
+           pink_error("function imfdilat3D_rect failed");
+         } /* (! ldilat3d( src, elem_const_away, x, y)) */
+       } // NOT the image is 2D
 
       return result;
     } /* liardilat */

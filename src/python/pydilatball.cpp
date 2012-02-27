@@ -1,10 +1,10 @@
 /*
-  This software is licensed under 
+  This software is licensed under
   CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
-  This software comes in hope that it will be useful but 
+  This software comes in hope that it will be useful but
   without any warranty to the extent permitted by applicable law.
-  
+
   (C) UjoImro, 2009-2010
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
@@ -29,9 +29,9 @@ namespace pink {
   //     char_image result;
   //     result.copy(image);
   //     xvimage * res;
-  //     char_image * result_res;      
-      
-  //     if ((mode != 0) && (mode != 1) && (mode != 2) && (mode != 3) && (mode != 4) && 
+  //     char_image * result_res;
+
+  //     if ((mode != 0) && (mode != 1) && (mode != 2) && (mode != 3) && (mode != 4) &&
   //         (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26))
   //     {
   //       error("dist = [0|1|2|3|4|8|6|18|26] ");
@@ -50,12 +50,12 @@ namespace pink {
   //       {
   //         if (mode == 3)
   //         {
-  //           int_image tmp = byte2long(result);            
+  //           int_image tmp = byte2long(result);
   //           // if (!convertlong(&result))
   //           // {
   //           //   error("function convertlong failed");
   //           // }
-            
+
   //           if (! (res = lredt2d(tmp)))
   //           {
   //             error("function lredt2d failed");
@@ -88,17 +88,17 @@ namespace pink {
   //       }
   //     } // NOT the image is 2D
 
-  //   if (radius >= 0) 
-  //   { 
+  //   if (radius >= 0)
+  //   {
   //     //writeresult(result, argv[argc-1]);
-  //     return result;      
+  //     return result;
   //   }
-  //   else 
+  //   else
   //   {
   //     result_res = new char_image(*res);
   //     freeimage(res);
-  //     return *result_res;      
-  //     //writeresult(res, argv[argc-1]);      
+  //     return *result_res;
+  //     //writeresult(res, argv[argc-1]);
   //   }
 
   //   // results returned in the previous if-else clause
@@ -114,7 +114,7 @@ namespace pink {
 
 
 
-    
+
 // UI_EXPORT_ONE_FUNCTION(
 //   dilatball,
 //   pink::python::dilatball,

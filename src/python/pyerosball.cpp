@@ -1,10 +1,10 @@
 /*
-  This software is licensed under 
+  This software is licensed under
   CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
-  This software comes in hope that it will be useful but 
+  This software comes in hope that it will be useful but
   without any warranty to the extent permitted by applicable law.
-  
+
   (C) UjoImro, 2009
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
@@ -32,31 +32,31 @@ namespace pink {
 
     //   char_image result;
     //   result.copy(src);
-  
+
     //   if ( src.get_size().size() == 2 ) // the image is 2D
-    //   {     
+    //   {
     //     if (! lerosdisc( result.get_output(), r, mode ) )
-    //     {      
-    //       error("erosball: lerosdisc failed");      
+    //     {
+    //       error("erosball: lerosdisc failed");
     //     }
     //   }
     //   else /* NOT src.get_size().size() == 2 */
-    //   {    
+    //   {
     //     if ( src.get_size().size() == 3 ) // the image is 3D
     //     {
     //       if (! lerosball( result.get_output(), r, mode ) )
-    //       {        
-    //         error("erosball: lerosball failed");        
-    //       }      
+    //       {
+    //         error("erosball: lerosball failed");
+    //       }
     //     }
     //     else /* NOT src.get_size().size() == 3 */
-    //     {     
-    //       error("erosball: only 2D and 3D images are supported");    
+    //     {
+    //       error("erosball: only 2D and 3D images are supported");
     //     }  /* NOT src.get_size().size() == 3 */
     //   }  /* NOT src.get_size().size() == 2 */
-  
 
-    //   return result;    
+
+    //   return result;
     // } /* py_erosball */
 
   } /* namespace python */
@@ -65,7 +65,7 @@ namespace pink {
 
 // UI_EXPORT_ONE_FUNCTION(
 //   erosball,
-//   pink::python::erosball, 
+//   pink::python::erosball,
 //   ( arg("image"),arg("r"),arg("mode")=0 ),
 //   doc__erosball__c__
 //   // end of the documenation

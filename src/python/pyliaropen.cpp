@@ -33,23 +33,24 @@ namespace pink {
       image_t result;
       result.copy(src);
 
-      pink_error("This function has been switched off!!!! You forgot to add some files!");
-      
-      
-      // if ( src.get_size().size()==2) // the image is 2D
-      // {
-      //   if (! imfopen_rect( result.get_output(), SEnx, SEny, result.get_output()) )
-      //   {
-      //     pink_error("function imfopen_rect failed");
-      //   }
-      // }
-      // else  // NOT the image is 2D
-      // {
-      //   if (! imfopen3D_rect( result.get_output(), SEnx, SEny, SEnz, result.get_output()) )
-      //   {
-      //     pink_error("function imfopen3D_rect failed");
-      //   }
-      // } // NOT the image is 2D
+     // The low-level function imfopen_rect etc return 0 to indicate success
+    // HT 20120227
+
+
+       if ( src.get_size().size()==2) // the image is 2D
+       {
+         if ( imfopen_rect( result.get_output(), SEnx, SEny, result.get_output()) )
+         {
+           pink_error("function imfopen_rect failed");
+         }
+       }
+       else  // NOT the image is 2D
+       {
+         if ( imfopen3D_rect( result.get_output(), SEnx, SEny, SEnz, result.get_output()) )
+         {
+           pink_error("function imfopen3D_rect failed");
+         }
+       } // NOT the image is 2D
 
       return result;
     } /* liaropen */

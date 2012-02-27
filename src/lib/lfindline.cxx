@@ -6,6 +6,9 @@
 #  include <math.h>
 #  include <vector>
 #  include <iostream>
+#  include <fstream>
+#  include <string>
+
 
 #  include "mcimage.h"
 #  include "mccodimage.h"
@@ -275,7 +278,7 @@ void get_edge(uint16_t *Image, vector<int32_t> *Bord1, vector<int32_t> *Bord2, v
 
 /* =============================================================== */
 void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, vector<int32_t> Bord1,
-               vector<int32_t> Bord4,int rowsize, int colsize, int w, int b1, int b2, int b3, int b4)
+               vector<int32_t> Bord4,int rowsize, int colsize, int w, int b1, int b2, int b3, int b4, double seuil, double zero)
 /* =============================================================== */
 {
 
@@ -301,11 +304,10 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
 
     int i, j;
     int32_t y1, x1=b2,x2, y2;
-    int32_t best_y1_ligne1=0, best_x2_ligne1=0, best_y2_ligne1=0; //coordonnées de la 1ere ligne
-    int32_t best_y1_ligne2=0, best_x2_ligne2=0, best_y2_ligne2=0; // coordonnées de la 2eme ligne
+    int32_t best_x1_ligne1=0, best_y1_ligne1=0, best_x2_ligne1=0, best_y2_ligne1=0; //coordonnées de la 1ere ligne
+    int32_t best_x1_ligne2=0, best_y1_ligne2=0, best_x2_ligne2=0, best_y2_ligne2=0; // coordonnées de la 2eme ligne
     double nb=0, nb2=0, nb3=0;
-    double seuil=600;
-    double max_ligne1=600, max_ligne2=600;
+    double max_ligne1=seuil, max_ligne2=seuil;
 
 
 
@@ -321,11 +323,12 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
         {
             x2=Bord1[j];
             y2=b1;
-            nb=bresen_test(I,x1,y1,x2, y2, rowsize,colsize, w);
+            nb=bresen_test(I,x1,y1,x2, y2, rowsize,colsize, w, zero);
             if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
                 && (nb>max_ligne1) )
             {
                 max_ligne1=nb;
+                best_x1_ligne1=x1;
                 best_y1_ligne1=y1;
                 best_x2_ligne1=x2;
                 best_y2_ligne1=y2;
@@ -338,6 +341,7 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
                    && (nb>max_ligne2) )
                 {
                     max_ligne2=nb;
+                    best_x1_ligne2=x1;
                     best_y1_ligne2=y1;
                     best_x2_ligne2=x2;
                     best_y2_ligne2=y2;
@@ -354,11 +358,12 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
              if (y2*rowsize+x2>rowsize*colsize)
                 break;  // on est plus dans l'image
 
-             nb=bresen_test(I,x1,y1,x2, y2, rowsize,colsize, w);
+             nb=bresen_test(I,x1,y1,x2, y2, rowsize,colsize, w, zero);
              if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_y2_ligne1-y2)>4*w) )
                 && (nb>max_ligne1) )
              {
                 max_ligne1=nb;
+                best_x1_ligne1=x1;
                 best_y1_ligne1=y1;
                 best_x2_ligne1=x2;
                 best_y2_ligne1=y2;
@@ -371,6 +376,7 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
                    && (nb>max_ligne2) )
                 {
                     max_ligne2=nb;
+                    best_x1_ligne2=x1;
                     best_y1_ligne2=y1;
                     best_x2_ligne2=x2;
                     best_y2_ligne2=y2;
@@ -387,11 +393,12 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
             if (y2*rowsize+x2>rowsize*colsize)
                 break;  // on est plus dans l'image
 
-            nb=bresen_test(I,x1,y1,x2, y2, rowsize,colsize, w);
+            nb=bresen_test(I,x1,y1,x2, y2, rowsize,colsize, w, zero);
             if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
                 && (nb>max_ligne1) )
             {
                 max_ligne1=nb;
+                best_x1_ligne1=x1;
                 best_y1_ligne1=y1;
                 best_x2_ligne1=x2;
                 best_y2_ligne1=y2;
@@ -404,6 +411,7 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
                    && (nb>max_ligne2) )
                 {
                     max_ligne2=nb;
+                    best_x1_ligne2=x1;
                     best_y1_ligne2=y1;
                     best_x2_ligne2=x2;
                     best_y2_ligne2=y2;
@@ -428,11 +436,12 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
         {
             x2=Bord1[j];
             y2=b1;
-            nb=bresen_test(I,x2, y2, x1,y1,rowsize,colsize, w);
+            nb=bresen_test(I,x2, y2, x1,y1,rowsize,colsize, w, zero);
             if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
                 && (nb>max_ligne1) )
             {
                 max_ligne1=nb;
+                best_x1_ligne1=x1;
                 best_y1_ligne1=y1;
                 best_x2_ligne1=x2;
                 best_y2_ligne1=y2;
@@ -445,6 +454,7 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
                    && (nb>max_ligne2) )
                 {
                     max_ligne2=nb;
+                    best_x1_ligne2=x1;
                     best_y1_ligne2=y1;
                     best_x2_ligne2=x2;
                     best_y2_ligne2=y2;
@@ -461,11 +471,12 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
             if (y2*rowsize+x2>rowsize*colsize)
                 break;  // on est plus dans l'image
 
-            nb=bresen_test(I,x2, y2, x1,y1,rowsize,colsize, w);
+            nb=bresen_test(I,x2, y2, x1,y1,rowsize,colsize, w, zero);
             if ( ((abs(best_y1_ligne1-y1)>4*w) || (abs(best_x2_ligne1-x2)>4*w) )
                 && (nb>max_ligne1) )
             {
                 max_ligne1=nb;
+                best_x1_ligne1=x1;
                 best_y1_ligne1=y1;
                 best_x2_ligne1=x2;
                 best_y2_ligne1=y2;
@@ -478,6 +489,7 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
                    && (nb>max_ligne2) )
                 {
                     max_ligne2=nb;
+                    best_x1_ligne2=x1;
                     best_y1_ligne2=y1;
                     best_x2_ligne2=x2;
                     best_y2_ligne2=y2;
@@ -491,16 +503,19 @@ void get_best_line(uint16_t *I, vector<int32_t> Bord2, vector<int32_t> Bord3, ve
 
 
     //cout << "nombre de point sur la droite "<< nb_max<< endl;
-    cout <<  max_ligne1<< endl;
+    //cout <<  max_ligne1<< endl;
 
      // Si best_y1 est différent de zéro, cela signifie que les coordonnées correspondent à une trace de satellite.
-     if ( (max_ligne1!=600) && (best_y1_ligne1!=0))
-        cout << "ligne entre le point ("<<x1<<","<< best_y1_ligne1<< ") et le point ("<< best_x2_ligne1<<"," << best_y2_ligne1 << ")"<< endl;
-
+     if ((best_y1_ligne1!=0) && (abs(best_y1_ligne1-best_y2_ligne1)>4*w) && (abs(best_x1_ligne1-best_x2_ligne1)>4*w))
+     {
+        cout << "ligne entre le point ("<<best_x1_ligne1<<","<< best_y1_ligne1<< ") et le point ("<< best_x2_ligne1<<"," << best_y2_ligne1 << ")"<< endl;
+        //bresen_final(I, best_x1_ligne1,best_y1_ligne1,best_x2_ligne1,best_y2_ligne1,rowsize, colsize, w);
+     }
+//
 //     if (best_y1_ligne2!=0)
-//     cout << "ligne entre le point ("<<x1<<","<< best_y1_ligne2<< ") et le point ("<< best_x2_ligne2<<"," << best_y2_ligne2 << ")"<< endl;
+//     cout << "ligne entre le point ("<<best_x1_ligne2<<","<< best_y1_ligne2<< ") et le point ("<< best_x2_ligne2<<"," << best_y2_ligne2 << ")"<< endl;
 
-     //bresen_final(I, x1,best_y1,best_x2,best_y2,rowsize, colsize, w);
+     //bresen_final(I, best_x1_ligne1,best_y1_ligne1,best_x2_ligne1,best_y2_ligne1,rowsize, colsize, w);
 
 }
 
@@ -539,7 +554,7 @@ for (i=-w; i<=w; i++)
 
     if ( (index < nbpix) && (index >=0)  )
     {
-        if ( (Image[index]>30) && (Image[index]<2000))
+        if ( (Image[index]>30) && (Image[index]<1500))
         {
             nb += Image[index];
         }
@@ -552,7 +567,7 @@ return(nb);
 
 
 /* ============================================================================================== */
-double bresen_test(uint16_t *Image,int32_t x1,int32_t y1,int32_t x2,int32_t y2,int rowsize, int colsize, int w)
+double bresen_test(uint16_t *Image,int32_t x1,int32_t y1,int32_t x2,int32_t y2,int rowsize, int colsize, int w, double zero)
 /* ============================================================================================== */
 {
 /**
@@ -579,12 +594,16 @@ TESTS:
 **/
 
     int32_t       dx, dy;
-    int32_t       i, e, nb=0, nb2=0;
-    double        dist=0;
+    int32_t       i, e;
+    double        dist=0, nb=0;
     int32_t       incx, incy, inc1, inc2;
     int32_t       x, y;  /* the actual positions */
+    double        var=0;
 
 
+    if ( ((y1*rowsize + x1) >colsize*rowsize) || ((y1*rowsize + x1) <0) || ((y2*rowsize + x2) >colsize*rowsize) || ((y2*rowsize + x2) <0)){
+        return(0);}
+    else {
     dx = abs(x1 - x2);
     dy = abs(y1 - y2);
     dist= sqrt(double(dx*dx+dy*dy)); //calcul la distance entre les deux points
@@ -592,77 +611,92 @@ TESTS:
     incx = 1;
     if (x2 < x1)
     {
-        incx = -1;
-    }
+        dx = abs(x1 - x2);
+        dy = abs(y1 - y2);
+        dist= sqrt(dx*dx+dy*dy); //calcul la distance entre les deux points
 
-    incy = 1;
-    if (y2 < y1)
-    {
-        incy = -1;
-    }
+        incx = 1;
+        if (x2 < x1) incx = -1;
+        incy = 1;
+        if (y2 < y1) incy = -1;
 
-    /* starting position */
-    if(x1 > x2)
-      {
-            x = x2;
-            y = y2;
-      }
-    else
-      {
-            x = x1;
-            y = y1;
-      }
-
-
-
-
-    if (dx > dy)
-    {
-        e = 2*dy ;
-        inc1 = 2*(dy-dx);
-        inc2 = 2*dy;
-        for (i = 0 ; i < dx ; i++)
+         /* starting position */
+        if(x1 > x2)
         {
-            if (e >= 0) {
-                nb+= query(Image,x,y,w,rowsize,colsize);
-                y += incy;
-                e += inc1;
-            }
-            else
-            {
-                nb+= query(Image,x,y,w,rowsize,colsize);
-                e += inc2;
-            }
-            x += incx;
-
+                x = x2;
+                y = y2;
         }
-    }
-    else
-    {
-        e = 2*dx ;
-        inc1 = 2*(dx-dy);
-        inc2 = 2*dx;
-        for (i = 0 ; i < dy ; i++)
+        else
         {
-            if (e >= 0)
+                x = x1;
+                y = y1;
+        }
+
+
+
+
+        if (dx > dy)
+        {
+            e = 2*dy ;
+            inc1 = 2*(dy-dx);
+            inc2 = 2*dy;
+            for (i = 0 ; i < dx ; i++)
             {
-                nb+= query(Image,x,y,w,rowsize,colsize);
+                if (e >= 0) {
+                    if ( ((y*rowsize + x) <colsize*rowsize) && (Image[y*rowsize + x]==0)){
+                            var++;}
+                    nb+= query(Image,x,y,w,rowsize,colsize);
+                    y += incy;
+                    e += inc1;
+                }
+                else
+                {
+                    if ( ((y*rowsize + x) <colsize*rowsize) && (Image[y*rowsize + x]==0)){
+                            var++;}
+                    nb+= query(Image,x,y,w,rowsize,colsize);
+                    e += inc2;
+                }
                 x += incx;
-                e += inc1;
+
             }
-            else
+        }
+        else
+        {
+            e = 2*dx ;
+            inc1 = 2*(dx-dy);
+            inc2 = 2*dx;
+            for (i = 0 ; i < dy ; i++)
             {
-                nb+= query(Image,x,y,w,rowsize,colsize);
-                e += inc2;
+                if (e >= 0)
+                {
+                    if ( ((y*rowsize + x) <colsize*rowsize) && (Image[y*rowsize + x]==0)){
+                            var++;}
+                    nb+= query(Image,x,y,w,rowsize,colsize);
+                    x += incx;
+                    e += inc1;
+                }
+                else
+                {
+                    if ( ((y*rowsize + x) <colsize*rowsize) && (Image[y*rowsize + x]==0)){
+                            var++;}
+                    nb+= query(Image,x,y,w,rowsize,colsize);
+                    e += inc2;
+                }
+                y += incy;
+
             }
-            y += incy;
 
         }
 
-	}
-
-
-        return((double)nb/dist);
+            //double seuil=1;
+            var=var/dist;
+            if (var*10>zero){
+                return(0);}
+            else {
+                //cout << var<< endl;
+                return((double)nb/dist);}
+    }
+    }
 
 }
 
@@ -717,74 +751,94 @@ TESTS:
     int32_t       i, e, nb=0;
     int32_t       incx, incy, inc1, inc2;
     int32_t       x, y;  /* the actual positions */
+    double        dist,moy=0, var=0;
 
-    dx = abs(x1 - x2);
-    dy = abs(y1 - y2);
 
-    incx = 1;
-    if (x2 < x1) incx = -1;
-    incy = 1;
-    if (y2 < y1) incy = -1;
+    if ( ((y1*rowsize + x1) <colsize*rowsize) || ((y1*rowsize + x1) >0) || ((y2*rowsize + x2) <colsize*rowsize) || ((y2*rowsize + x2) >0))
+    {
+        dx = abs(x1 - x2);
+        dy = abs(y1 - y2);
+        dist= sqrt(dx*dx+dy*dy); //calcul la distance entre les deux points
 
-    /* starting position */
-    if(x1 > x2)
-      {
-            x = x2;
-            y = y2;
-      }
-    else
-      {
-            x = x1;
-            y = y1;
-      }
+        incx = 1;
+        if (x2 < x1) incx = -1;
+        incy = 1;
+        if (y2 < y1) incy = -1;
+
+         /* starting position */
+        if(x1 > x2)
+        {
+                x = x2;
+                y = y2;
+        }
+        else
+        {
+                x = x1;
+                y = y1;
+        }
 
 
 
 
         if (dx > dy)
         {
-            e = 2*dy - dx;
+            e = 2*dy ;
             inc1 = 2*(dy-dx);
             inc2 = 2*dy;
-            for (i = 0 ; i < dx ; i++) {
-                if (e >= 0)
-                {
-                    black_line(Image,x,y,w,rowsize,colsize);
+            for (i = 0 ; i < dx ; i++)
+            {
+                if (e >= 0) {
+                    if ( ((y*rowsize + x) <colsize*rowsize) && (Image[y*rowsize + x]==0)){
+                            var++;}
+
                     y += incy;
                     e += inc1;
                 }
                 else
                 {
-                    black_line(Image,x,y,w,rowsize,colsize);
+                    if ( ((y*rowsize + x) <colsize*rowsize) && (Image[y*rowsize + x]==0)){
+                            var++;}
+
                     e += inc2;
                 }
                 x += incx;
+
             }
         }
         else
         {
-            e = 2*dx- dy;
+            e = 2*dx ;
             inc1 = 2*(dx-dy);
             inc2 = 2*dx;
             for (i = 0 ; i < dy ; i++)
             {
                 if (e >= 0)
                 {
-                    black_line(Image,x,y,w,rowsize,colsize);
+                    if ( ((y*rowsize + x) <colsize*rowsize) && (Image[y*rowsize + x]==0)){
+                            var++;}
+
                     x += incx;
                     e += inc1;
                 }
                 else
                 {
-                    black_line(Image,x,y,w,rowsize,colsize);
+                    if ( ((y*rowsize + x) <colsize*rowsize) && (Image[y*rowsize + x]==0)){
+                            var++;}
+
                     e += inc2;
                 }
                 y += incy;
+
             }
 
         }
 
+            var=var/dist;
+            cout << var<< endl;
+
     }
+
+}
 
 
 
