@@ -23,7 +23,7 @@ namespace pink {
   namespace python {
 
     template <class image_t>
-    image_t liardilat
+    image_t liardilate
     (
       const image_t & src,
       const int SEnx,
@@ -41,7 +41,8 @@ namespace pink {
 
        if ( src.get_size().size()==2) // the image is 2D
        {
-         if ( imfdilat_rect( result.get_output(), SEnx, SEny, result.get_output()) )
+           struct xvimage *myxvimage = result.get_output();
+         if ( imfdilat_rect( myxvimage, SEnx, SEny, myxvimage) )
          {
            pink_error("function imfdilat_rect failed");
          } /* (! ldilateros_ldilat( src, elem_const_away, x, y)) */
@@ -57,18 +58,60 @@ namespace pink {
       return result;
     } /* liardilat */
 
+    template   <class image_t>
+    image_t liardilatepoly
+    (
+      const image_t & src,
+      const int radius,
+      const int type,
+      const int sides
+    )
+    {
+        int errorcode = 0;
+    image_t result;
+    result.copy(src);
+
+    //pink_error("This function has been switched off!!!! You forgot to add some files!");
+
+    // The low-level function imfdilat_rect etc return 0 to indicate success
+    // HT 20120227
+
+       if ( src.get_size().size()==2) // the image is 2D
+       {
+           // It's OK, imfdilate_poly does not modify the input
+           struct xvimage *myoutput = result.get_output();
+         if ( (errorcode = imfdilate_poly(myoutput, radius, type, sides, myoutput)) != 0)
+         {
+           pink_error("function imfdilat_poly failed with error = ");
+         } /* (! ldilateros_ldilat( src, elem_const_away, x, y)) */
+       }
+       else  // NOT the image is 2D
+       {
+           pink_error("function liardilatpoly not available for 3D images");
+       } // NOT the image is 2D
+
+      return result;
+    } /* liardilatpoly */
+
   } /* namespace python */
 } /* namespace pink */
 
 
 UI_EXPORT_FUNCTION(
 
-  liardilat,
-  pink::python::liardilat,
+  fdilaterect,
+  pink::python::liardilate,
   ( arg("src"), arg("SEnx"),arg("SEny"), arg("SEnz") ),
-  doc__dilation__c__
+  "Dilation by a 2D or 3D rectangle"
   );
 
+UI_EXPORT_FUNCTION(
+
+  fdilatepoly,
+  pink::python::liardilatepoly,
+  ( arg("src"), arg("Radius"),arg("Type"), arg("Sides") ),
+  "Dilation by a polygon, given a radius, a type of line (0 or 1) and a number of sides (can be zero)"
+  );
 
 
 

@@ -24,14 +24,21 @@ using namespace boost::python;
 
 // here we use namespaces, so the export_functions
 // would not interfere with each other.
-// c++ is a cool language, ain't it?
+// c++ is a cool language, ain't
+
+
+
+// HT: these function are wrapped correctly but return a zero-filled imageg.
+// not sure why
+// 2012-03-02
 
 namespace liar
 {
 
+#if 0 // these functions do not work
   UI_WRAP_RESULT(
     char_image,
-    "imferode3d_rect",
+    "ferode3d_rect",
     imferode3D_rect,
     (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
     "This performs a fast erosion by a parallelepiped."
@@ -40,7 +47,7 @@ namespace liar
 
     UI_WRAP_RESULT(
     char_image,
-    "feroderect",
+    "imferoderect",
     imferode_rect,
     (arg("input"), arg("SEnx"), arg("SEny")),
     "This performs a fast erosion by a rectangle."
@@ -50,7 +57,7 @@ namespace liar
 
     UI_WRAP_RESULT(
     char_image,
-    "fopenrect",
+    "imfopenrect",
     imfopen_rect,
     (arg("input"), arg("SEnx"), arg("SEny")),
     "This performs a fast erosion by a rectangle."
@@ -60,48 +67,49 @@ namespace liar
 
     UI_WRAP_RESULT(
     char_image,
-    "fdilaterect",
+    "imfdilaterect",
     imfdilat_rect,
     (arg("input"), arg("SEnx"), arg("SEny")),
-    "This performs a fast erosion by a rectangle."
+    "This performs a fast dilation by a rectangle."
         );
+
 
     # include BOOST_PP_UPDATE_COUNTER()
 
     UI_WRAP_RESULT(
     char_image,
-    "fcloserect",
+    "imfcloserect",
     imfclose_rect,
     (arg("input"), arg("SEnx"), arg("SEny")),
     "This performs a fast erosion by a rectangle."
         );
 
-    
+
 # include BOOST_PP_UPDATE_COUNTER()
-    
-  
+
+
   UI_WRAP_RESULT(
     char_image,
-    "ferode3drect",
+    "imferode3drect",
     imferode3D_rect,
     (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
     "This performs a fast erosion by a parallelepiped."
       );
 # include BOOST_PP_UPDATE_COUNTER()
-    
+
     UI_WRAP_RESULT(
     char_image,
-    "fdilate3drect",
+    "imfdilate3drect",
     imfdilat3D_rect,
     (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
     "This performs a fast dilation by a parallelepiped."
           );
-    
+
 # include BOOST_PP_UPDATE_COUNTER()
 
     UI_WRAP_RESULT(
     char_image,
-    "fopen3drect",
+    "imfopen3drect",
     imfopen3D_rect,
     (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
     "This performs a fast opening by a parallelepiped."
@@ -111,13 +119,15 @@ namespace liar
 
     UI_WRAP_RESULT(
     char_image,
-    "fclose3drect",
+    "imfclose3drect",
     imfclose3D_rect,
     (arg("input"), arg("SEnx"), arg("SEny"), arg("SEnz")),
     "This performs a fast closing by a parallelepiped."
       );
 # include BOOST_PP_UPDATE_COUNTER()
-    
+
+#endif // 0
+
 } /* namespace liar */
 
 using namespace liar;
@@ -126,3 +136,4 @@ void pyliar()
 {
   CALL_EXPORTED_FUNCTIONS(BOOST_PP_COUNTER);
 }
+

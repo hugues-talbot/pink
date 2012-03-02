@@ -35,6 +35,8 @@ enum {computebresen=true, computeperiod=false};
 #include "lferode.hpp"
 #include "lfdilate.hpp"
 #include "lfclose.hpp"
+#include "lfdilate_poly_generic.hpp"
+#include "circlmm.hpp"
 
 
 template <typename Type>
@@ -121,6 +123,11 @@ int lfclose_line(Type *inbuf, Type *outbuf, int ncol, int nrow, int length, int 
 
 template <typename Type>
 int lfopen_line(Type *inbuf, Type *outbuf, int ncol, int nrow, int length, int angle, int type);
+
+/* polygone 2d morphological operation */
+//template <typename Type>
+//int lfdilate_poly (Type *inbuf, Type *outbuf, int ncol, int nrow, int radius, int type, int sides);
+
 
 #endif // LIAR_FSERIES_HPP
 

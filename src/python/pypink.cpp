@@ -130,7 +130,10 @@ void skeleton2_export();void zoom_export();
 void dilation_export(); void erosion_export(); void geodilat_export();
 void geoeros_export(); void opening_export(); void drawcurve2D_export();
 void uiSqhool_object_export(); void gradient_export();
-void liardilat_export(); void liarerod_export(); void liaropen_export(); void liarclose_export();
+// Fast morpho operators
+void fdilaterect_export();
+void fdilatepoly_export();
+void liarerod_export(); void liaropen_export(); void liarclose_export();
 
 void read_raw_image_export(); void seuil_export(); void plane3d_export(); void draw_plane_export();
 void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
@@ -358,7 +361,10 @@ BOOST_PYTHON_MODULE(libcpp_pink)
 
   dilation_export(); erosion_export();  geodilat_export();  geoeros_export();
   opening_export();  drawcurve2D_export();
-  liardilat_export(); liarerod_export(); liaropen_export(); liarclose_export();
+  // liar operator functions
+  fdilaterect_export();
+  fdilatepoly_export();
+  liarerod_export(); liaropen_export(); liarclose_export();
 
 
 //  specialize_export();
@@ -389,19 +395,19 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   Pimview_sendcommand_export();
 # endif /* UNIXIO */
 
-  pysept();  
+  pysept();
   pytopo();
   pyliar();
   pywshed();
   pydevel();
-  pymorpho();  
+  pymorpho();
   pypoints();
   pymemtest();
   pyconnect();
-  pymaxflow();  
-  pycomplex();  
-  pyarithmetic();  
-  pyconversion();  
+  pymaxflow();
+  pycomplex();
+  pyarithmetic();
+  pyconversion();
   pyimage_types();
   pynormalization();
 

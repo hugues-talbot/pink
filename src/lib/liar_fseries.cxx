@@ -58,7 +58,7 @@ Running time in independent of the size of the SE.
 /* 3D square morphological operation*/
 
 /* erosion by a flat square structuring element */
-int imferode3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
+int imferode3D_rect( const struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
 {
     switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -92,7 +92,7 @@ int imferode3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct
 }
 
 /* dilatation by a flat square structuring element */
-int imfdilat3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
+int imfdilat3D_rect( const struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
 {
 	switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -128,7 +128,7 @@ int imfdilat3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct
 
 
 /* openning by a flat square structuring element */
-int imfopen3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
+int imfopen3D_rect( const struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
 {
     switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -161,7 +161,7 @@ int imfopen3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct 
 }
 
 /* closing by a flat square structuring element */
-int imfclose3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
+int imfclose3D_rect( const struct xvimage *input, int SEnx, int SEny, int SEnz, struct xvimage *output)
 {
    switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -200,7 +200,7 @@ int imfclose3D_rect( struct xvimage *input, int SEnx, int SEny, int SEnz, struct
 /* Line 3D morphological operation*/
 
 /* erosion by a line structuring element */
-int imferode3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz,int length, struct xvimage *output)
+int imferode3D_line( const struct xvimage *input, int SEnx, int SEny, int SEnz,int length, struct xvimage *output)
 {
     switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -237,7 +237,7 @@ int imferode3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz,int len
 }
 
 /* dilatation by a line structuring element */
-int imfdilat3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz, int length,struct xvimage *output)
+int imfdilat3D_line( const struct xvimage *input, int SEnx, int SEny, int SEnz, int length,struct xvimage *output)
 {
 	switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -276,7 +276,7 @@ int imfdilat3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz, int le
 
 
 /* openning by a line structuring element */
-int imfopen3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz,int length, struct xvimage *output)
+int imfopen3D_line( const struct xvimage *input, int SEnx, int SEny, int SEnz,int length, struct xvimage *output)
 {
     switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -312,7 +312,7 @@ int imfopen3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz,int leng
 }
 
 /* closing by a line structuring element */
-int imfclose3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz, int length,struct xvimage *output)
+int imfclose3D_line( const struct xvimage *input, int SEnx, int SEny, int SEnz, int length,struct xvimage *output)
 {
    switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -361,7 +361,7 @@ int imfclose3D_line( struct xvimage *input, int SEnx, int SEny, int SEnz, int le
 /*! 2D square morphological operation*/
 
 /* erosion by a flat square structuring element */
-int imferode_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *output)
+int imferode_rect( const struct xvimage *input, int SEnx, int SEny, struct xvimage *output)
 {
     switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -392,7 +392,7 @@ int imferode_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *ou
 }
 
 /* dilatation by a flat square structuring element */
-int imfdilat_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *output)
+int imfdilat_rect( const struct xvimage *input, int SEnx, int SEny, struct xvimage *output)
 {
 	switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -425,7 +425,7 @@ int imfdilat_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *ou
 
 
 /* openning by a flat square structuring element */
-int imfopen_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *output)
+int imfopen_rect( const struct xvimage *input, int SEnx, int SEny, struct xvimage *output)
 {
     switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -455,7 +455,7 @@ int imfopen_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *out
 }
 
 /* closing by a flat square structuring element */
-int imfclose_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *output)
+int imfclose_rect( const struct xvimage *input, int SEnx, int SEny, struct xvimage *output)
 {
    switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -491,7 +491,7 @@ int imfclose_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *ou
 /*! Line 2D morphological operation*/
 
 /* erosion by a line structuring element */
-int imferode_line( struct xvimage *input, int length,int angle, struct xvimage *output)
+int imferode_line( const struct xvimage *input, int length,int angle, struct xvimage *output)
 {
 
     switch (input->data_storage_type) {
@@ -529,7 +529,7 @@ int imferode_line( struct xvimage *input, int length,int angle, struct xvimage *
 }
 
 /* dilatation by a line structuring element */
-int imfdilat_line( struct xvimage *input, int length,int angle, struct xvimage *output)
+int imfdilat_line( const struct xvimage *input, int length,int angle, struct xvimage *output)
 {
 	switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -568,7 +568,7 @@ int imfdilat_line( struct xvimage *input, int length,int angle, struct xvimage *
 
 
 /* openning by a line structuring element */
-int imfopen_line( struct xvimage *input, int length,int angle, struct xvimage *output)
+int imfopen_line( const struct xvimage *input, int length,int angle, struct xvimage *output)
 {
     switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -604,7 +604,7 @@ int imfopen_line( struct xvimage *input, int length,int angle, struct xvimage *o
 }
 
 /* closing by a line structuring element */
-int imfclose_line( struct xvimage *input, int length,int angle, struct xvimage *output)
+int imfclose_line( const struct xvimage *input, int length,int angle, struct xvimage *output)
 {
    switch (input->data_storage_type) {
      case    VFF_TYP_1_BYTE:
@@ -641,3 +641,48 @@ int imfclose_line( struct xvimage *input, int length,int angle, struct xvimage *
     return 0;
 }
 }
+
+
+/*-------------------------------------------------------------------------------------------------*/
+/*! Polygone 2D morphological operation*/
+int imfdilate_poly( const struct xvimage *input, int radius, int type, int sides, struct xvimage *output )
+{
+
+   switch (input->data_storage_type) {
+        case    VFF_TYP_1_BYTE:
+            return( lfdilate_poly< PIX_TYPE > (UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           radius,
+                           type,
+                           sides) );
+        break;
+
+        case  VFF_TYP_2_BYTE:
+            return( lfdilate_poly< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           radius,
+                           type,
+                           sides));
+            break;
+
+        case  VFF_TYP_4_BYTE:
+            return( lfdilate_poly< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           radius,
+                           type,
+                           sides));
+            break;
+
+        default:
+        break;
+    }
+    return 0;
+}
+
+

@@ -75,7 +75,7 @@ TESTS: Linted and purified, tested with experience.
 //#endif
 
     m = std::max(fabs(cos(thetrad*(double)theta)),fabs(sin(thetrad*(double)theta)));
-    k=((double)k*m+0.5);/* +0.5 is for having the nearest integer */
+    k=(int)((double)k*m+0.5);/* +0.5 is for having the nearest integer */
 
     if (abs(theta)<=45) {     /* set up offsets to scan image top to bottom */
         if (lineop){
@@ -103,7 +103,7 @@ TESTS: Linted and purified, tested with experience.
         totpix=nx-period+1;
     }
 
-    k=(k/period + 0.5);/* length of the structuring element divided by the epriod */
+    k=(int)(k/period + 0.5);/* length of the structuring element divided by the epriod */
 
     if (theta<=0)
         start=end=0;
