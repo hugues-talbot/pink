@@ -66,6 +66,12 @@
 #define IMAGE_TYPE(x)				\
     image_type( x, BOOST_PP_STRINGIZE(x) )
 
+// does not throw !OB
+#define pink_warning(message) \
+{ \
+std::cerr << "Pink warning: " << message << std::endl; \
+}
+
 #define pink_error(message)                                             \
     {                                                                   \
       std::cerr << std::endl << "Pink error!" << std::endl << "in '" << __FILE__<< "' (line " << __LINE__ << "): " << message << std::endl << std::endl; \

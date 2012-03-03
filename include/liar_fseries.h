@@ -52,6 +52,9 @@ int imfclose_line( const struct xvimage *input, int length,int angle, struct xvi
 
 /* 2D polygone morphological operation*/
 int imfdilate_poly(const struct xvimage *input, int radius, int type, int sides, struct xvimage *output);
+int imferode_poly(const struct xvimage *input, int radius, int type, int sides, struct xvimage *output);
+int imfclose_poly(const struct xvimage *input, int radius, int type, int sides, struct xvimage *output);
+int imfopen_poly(const struct xvimage *input, int radius, int type, int sides, struct xvimage *output);
 
 #ifdef __cplusplus
 }

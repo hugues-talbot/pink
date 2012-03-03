@@ -36,6 +36,9 @@ enum {computebresen=true, computeperiod=false};
 #include "lfdilate.hpp"
 #include "lfclose.hpp"
 #include "lfdilate_poly_generic.hpp"
+#include "lferode_poly_generic.hpp"
+#include "lfclose_poly_generic.hpp"
+#include "lfopen_poly_generic.hpp"
 #include "circlmm.hpp"
 
 
