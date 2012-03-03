@@ -57,7 +57,7 @@ int lfclose_rect(Type *inbuf, Type *outbuf, int ncol, int nrow, int dimx, int di
 {
   char LIARstrbuf[1024];
 
-  sprintf(LIARstrbuf, "Opening by a 3d rect, %d x %d y ", dimx, dimy);
+  sprintf(LIARstrbuf, "Closing by a 3d rect, %d x %d y ", dimx, dimy);
   LIARdebug(LIARstrbuf);
 
   /* if not writing to same buffer then copy contents of original */
@@ -82,7 +82,7 @@ int lfclose_line(Type *inbuf, Type *outbuf, int ncol, int nrow, int length, int 
   char LIARstrbuf[1024];
   char LIARerr;
 
-  //sprintf(LIARstrbuf, "Closing by a line, length: %d, dx: %d, dy: %d, type: %d", length, dx, dy, type);
+  sprintf(LIARstrbuf, "Closing by a line, length: %d, angle=%d, type: %d", length, angle, type);
   LIARdebug(LIARstrbuf);
 
   if (outbuf != inbuf)

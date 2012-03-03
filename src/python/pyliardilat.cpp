@@ -23,7 +23,7 @@ namespace pink {
   namespace python {
 
     template <class image_t>
-    image_t liardilate
+    image_t liardilaterect
     (
       const image_t & src,
       const int SEnx,
@@ -49,7 +49,8 @@ namespace pink {
        }
        else  // NOT the image is 2D
        {
-         if ( imfdilat3D_rect( result.get_output(), SEnx, SEny, SEnz, result.get_output()) )
+           struct xvimage *myxvimage = result.get_output();
+         if ( imfdilat3D_rect( myxvimage, SEnx, SEny, SEnz, myxvimage) )
          {
            pink_error("function imfdilat3D_rect failed");
          } /* (! ldilat3d( src, elem_const_away, x, y)) */
@@ -98,19 +99,17 @@ namespace pink {
 
 
 UI_EXPORT_FUNCTION(
-
   fdilaterect,
-  pink::python::liardilate,
+  pink::python::liardilaterect,
   ( arg("src"), arg("SEnx"),arg("SEny"), arg("SEnz") ),
-  "Dilation by a 2D or 3D rectangle"
+  "Fast dilation by a flat 2D rectangle or 3D rectangle parallelepiped"
   );
 
 UI_EXPORT_FUNCTION(
-
   fdilatepoly,
   pink::python::liardilatepoly,
   ( arg("src"), arg("Radius"),arg("Type"), arg("Sides") ),
-  "Dilation by a polygon, given a radius, a type of line (0 or 1) and a number of sides (can be zero)"
+  "Fast 2D dilation by a flat polygon, given a radius, a type of line (0=periodic or 1=Bresenham) and a number of sides (can be zero)"
   );
 
 

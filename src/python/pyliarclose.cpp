@@ -18,57 +18,91 @@ using namespace pink;
 
 namespace pink {
   namespace python {
-
     template <class image_t>
-    image_t liarclose
+    image_t liarcloserect
     (
-      const image_t & image,
+      const image_t & src,
       const int SEnx,
       const int SEny,
       const int SEnz
     )
     {
-      image_t result;
-      result.copy(image);
 
-      // The low-level function imfclose_rect etc return 0 to indicate success
+      image_t result;
+      result.copy(src);
+
+     // The low-level function imfclose_rect etc return 0 to indicate success
     // HT 20120227
 
-
-       if ( ((image.get_size().size()==2) || (image.get_size().size()==3)) )
+       if ( src.get_size().size()==2) // the image is 2D
        {
-         pink_error("Only 2D and 3D images are supported.");
-       }
-
-
-       if (image.get_size().size() == 2) /* 2Dimage */
-       {
-        if ( imfclose_rect( result.get_output(), SEnx, SEny, result.get_output()) )
+         struct xvimage *myxvimage = result.get_output();
+         if (imfclose_rect( myxvimage, SEnx, SEny, myxvimage) )
          {
            pink_error("function imfclose_rect failed");
          }
        }
-       else /* 3D image  */
+       else  // NOT the image is 2D
        {
-         if ( imfclose3D_rect( result.get_output(), SEnx, SEny, SEnz, result.get_output()) )
+         struct xvimage *myxvimage = result.get_output();
+         if (imfclose3D_rect( myxvimage, SEnx, SEny, SEnz, myxvimage) )
          {
-           pink_error("function imfdilat3D_rect failed");
+           pink_error("function imfclose3D_rect failed");
          }
-       }  /* NOT image.get_size().size() == 2 */
-
+       } // NOT the image is 2D
 
       return result;
-    } /* py_closing */
+    } /* liarclose */
+
+    template   <class image_t>
+    image_t liarclosepoly
+    (
+      const image_t & src,
+      const int radius,
+      const int type,
+      const int sides
+    )
+    {
+        int errorcode = 0;
+        image_t result;
+        result.copy(src);
+
+        // The low-level function imfclose_rect etc return 0 to indicate success
+        // HT 20120227
+
+       if ( src.get_size().size()==2) // the image is 2D
+       {
+           // It's OK, imfdilate_poly does not modify the input
+           struct xvimage *myoutput = result.get_output();
+         if ( (errorcode = imfclose_poly(myoutput, radius, type, sides, myoutput)) != 0)
+         {
+           pink_error("function imfclose_poly failed with error = ");
+         } /* (! ldilateros_ldilat( src, elem_const_away, x, y)) */
+       }
+       else  // NOT the image is 2D
+       {
+           pink_error("function liarclosepoly not available for 3D images");
+       } // NOT the image is 2D
+
+      return result;
+    } /* liardilatpoly */
   } /* namespace python */
 } /* namespace pink */
 
 
-  UI_EXPORT_FUNCTION(
-
-  liarclose,
-  pink::python::liarclose,
+UI_EXPORT_FUNCTION(
+  fcloserect,
+  pink::python::liarcloserect,
   ( arg("src"), arg("SEnx"),arg("SEny"), arg("SEnz") ),
-  doc__closing__c__
+  "Fast closing by a flat 2D rectangle or 3D rectangle parallelepiped"
+  // end of the documenation
+  );
+
+UI_EXPORT_FUNCTION(
+  fclosepoly,
+  pink::python::liarclosepoly,
+  ( arg("src"), arg("Radius"),arg("Type"), arg("Sides") ),
+  "Fast 2D closing  by a flat polygon, given a radius, a type of line (0=periodic or 1=Bresenham) and a number of sides (can be zero)"
   );
 
 

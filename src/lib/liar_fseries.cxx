@@ -51,6 +51,7 @@ Running time in independent of the size of the SE.
 #include <mccodimage.h>
 #include <mcimage.h>
 
+#include "pink.h"
 #include "liarp.h"
 #include "fseries.hpp"
 #include "liar_fseries.h"
@@ -680,9 +681,98 @@ int imfdilate_poly( const struct xvimage *input, int radius, int type, int sides
             break;
 
         default:
+            pink_warning("Pixel type not supported " << input->data_storage_type);
+            return 1;
         break;
     }
     return 0;
 }
 
+/*-------------------------------------------------------------------------------------------------*/
+/*! Polygone 2D morphological operation*/
+int imferode_poly( const struct xvimage *input, int radius, int type, int sides, struct xvimage *output )
+{
+
+   switch (input->data_storage_type) {
+        case    VFF_TYP_1_BYTE:
+            return( lferode_poly< PIX_TYPE > (UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           radius,
+                           type,
+                           sides) );
+        break;
+
+        case  VFF_TYP_2_BYTE:
+            return( lferode_poly< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           radius,
+                           type,
+                           sides));
+            break;
+
+        case  VFF_TYP_4_BYTE:
+            return( lferode_poly< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           radius,
+                           type,
+                           sides));
+            break;
+
+        default:
+            pink_warning("Pixel type not supported "<< input->data_storage_type);
+            return 1;
+        break;
+    }
+    return 0;
+}
+
+/*-------------------------------------------------------------------------------------------------*/
+/*! Polygone 2D morphological operation*/
+int imfclose_poly( const struct xvimage *input, int radius, int type, int sides, struct xvimage *output )
+{
+
+   switch (input->data_storage_type) {
+        case    VFF_TYP_1_BYTE:
+            return( lfclose_poly< PIX_TYPE > (UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           radius,
+                           type,
+                           sides) );
+        break;
+
+        case  VFF_TYP_2_BYTE:
+            return( lfclose_poly< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           radius,
+                           type,
+                           sides));
+            break;
+
+        case  VFF_TYP_4_BYTE:
+            return( lfclose_poly< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           radius,
+                           type,
+                           sides));
+            break;
+
+        default:
+            pink_warning("Pixel type not supported "<< input->data_storage_type);
+            return 1;
+        break;
+    }
+    return 0;
+}
 

@@ -133,7 +133,12 @@ void uiSqhool_object_export(); void gradient_export();
 // Fast morpho operators
 void fdilaterect_export();
 void fdilatepoly_export();
-void liarerod_export(); void liaropen_export(); void liarclose_export();
+void feroderect_export();
+void ferodepoly_export();
+void fcloserect_export();
+void fclosepoly_export();
+
+void liaropen_export();
 
 void read_raw_image_export(); void seuil_export(); void plane3d_export(); void draw_plane_export();
 void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
@@ -364,7 +369,12 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   // liar operator functions
   fdilaterect_export();
   fdilatepoly_export();
-  liarerod_export(); liaropen_export(); liarclose_export();
+  feroderect_export();
+  ferodepoly_export();
+  fcloserect_export();
+  fclosepoly_export();
+
+  liaropen_export();
 
 
 //  specialize_export();
