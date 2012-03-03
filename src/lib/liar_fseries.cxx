@@ -776,3 +776,47 @@ int imfclose_poly( const struct xvimage *input, int radius, int type, int sides,
     return 0;
 }
 
+/*-------------------------------------------------------------------------------------------------*/
+/*! Polygone 2D morphological operation*/
+int imfopen_poly( const struct xvimage *input, int radius, int type, int sides, struct xvimage *output )
+{
+
+   switch (input->data_storage_type) {
+        case    VFF_TYP_1_BYTE:
+            return( lfopen_poly< PIX_TYPE > (UCHARDATA(input),
+                           UCHARDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           radius,
+                           type,
+                           sides) );
+        break;
+
+        case  VFF_TYP_2_BYTE:
+            return( lfopen_poly< UINT2_TYPE >(USHORTDATA(input),
+                           USHORTDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           radius,
+                           type,
+                           sides));
+            break;
+
+        case  VFF_TYP_4_BYTE:
+            return( lfopen_poly< INT4_TYPE >(SLONGDATA(input),
+                           SLONGDATA(output),
+                           rowsize(input),  /* careful: rowsize is the size of a row <=> nx = number of columns = ncol */
+                           colsize(input),
+                           radius,
+                           type,
+                           sides));
+            break;
+
+        default:
+            pink_warning("Pixel type not supported "<< input->data_storage_type);
+            return 1;
+        break;
+    }
+    return 0;
+}
+

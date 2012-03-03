@@ -137,8 +137,8 @@ void feroderect_export();
 void ferodepoly_export();
 void fcloserect_export();
 void fclosepoly_export();
-
-void liaropen_export();
+void fopenrect_export();
+void fopenpoly_export();
 
 void read_raw_image_export(); void seuil_export(); void plane3d_export(); void draw_plane_export();
 void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
@@ -373,8 +373,8 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   ferodepoly_export();
   fcloserect_export();
   fclosepoly_export();
-
-  liaropen_export();
+  fopenrect_export();
+  fopenpoly_export();
 
 
 //  specialize_export();
