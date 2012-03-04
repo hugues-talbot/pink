@@ -20,6 +20,9 @@
  * converted into a stand-alone C file by Hugues Talbot	13 Mar 1995
  */
 
+#ifndef GLINEMM_GENERIC_HPP
+#define GLINENN_GENERIC_HPP
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -253,3 +256,4 @@ TESTS: Linted and purified, tested with experience.
 	return 0;
 }
 
+#endif // GLINEMM_GENERIC_HPP

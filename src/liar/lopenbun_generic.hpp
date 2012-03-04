@@ -8,6 +8,7 @@
 #ifndef LOPENBUN_HPP
 #define LOPENBUN_HPP
 
+#include <cmath>
 #include "liarp.h"
 
 /** \brief opening by union of lines
@@ -45,8 +46,8 @@ int compute_openbun(const Type *in, /**< [in] input buffer */
     memset(out,0,size*sizeof(Type));
     for(th = -90.0;th < 90.0; th += degrees) {
       memcpy(wk,in,size*sizeof(Type));
-      glineminmax(wk,nx,ny,k,(int)th,genfmin_char,bresenham);
-      glineminmax(wk,nx,ny,k,(int)th,genfmax,bresenham);
+      glineminmax(wk,nx,ny,k,(int)th,computemin,computebresen);
+      glineminmax(wk,nx,ny,k,(int)th,computemax,computebresen);
       for(j=0;j<size;j++,out++,wk++)
 	*out = *out > *wk ? *out : *wk;
       out -= size;
@@ -56,6 +57,8 @@ int compute_openbun(const Type *in, /**< [in] input buffer */
     return 0;
 }
 
+
+
 /** \brief opening by union of lines with a range of angles
  * 
  * This computes an opening by a number of line segments so as to cover some discrete angles
@@ -64,8 +67,8 @@ int compute_openbun(const Type *in, /**< [in] input buffer */
  * and a ending angle of 180 are necessary.
  * 
  * This is a classical filter in mathematical morphology for preserving thin, locally straight objects.
- * The segments all have a length 2*radius+1, this means this filters out more lines near 45 degree
- * than either horizontal or vertical lines.
+ * The segments all have a length in pixels that depends on the orientation, so that they all have the
+ * same Euclidean length.
  * 
  * 
  * \return 0 if no error in execution
@@ -80,7 +83,7 @@ int compute_openbun_limits(Type *in,       /**< [in] input buffer */
 			   double range,   /**< [in] angle range */
 			   Type *out       /**< [out] output buffer (can be same as input) */)
 {
-    int i,j,k,size;
+  int i,j,k,anglek,size;
     Type *wk;
     double degrees,th,limit1,limit2;
 
@@ -107,9 +110,12 @@ int compute_openbun_limits(Type *in,       /**< [in] input buffer */
 
     memset(out,0,size*sizeof(Type));
     for(th = limit1,i=0;i<n;++i) {
+      double theta = th*M_PI/180.0;
+      double isofactor = liarmax(std::fabs(k*std::cos(theta)), std::fabs(k*std::sin(theta)));
+      anglek = (int)std::ceil(isofactor);
 	memcpy(wk,in,size*sizeof(Type));
-	glineminmax(wk,nx,ny,k,(int)th,genfmin_char,bresenham);
-	glineminmax(wk,nx,ny,k,(int)th,genfmax,bresenham);
+	glineminmax(wk,nx,ny,anglek,(int)th,computemin,computebresen);
+	glineminmax(wk,nx,ny,anglek,(int)th,computemax,computebresen);
 	for(j=0;j<size;j++,out++,wk++)
 	    *out = *out > *wk ? *out : *wk;
 	out -= size;
@@ -160,7 +166,7 @@ int compute_openbun_rankmax(Type *in,	     /**< [in] buffer */
 			    double rank,     /**< [in] 0 <= rank <= 1 */
 			    Type *out        /**< [out] Output buffer */)			    
 {
-    int i,j,k,size;
+  int i,j,k,anglek,size;
     Type *wk, *wk2;
     double degrees,th,limit1,limit2;
 
@@ -180,6 +186,8 @@ int compute_openbun_rankmax(Type *in,	     /**< [in] buffer */
 
     k = 2 * radius; /* k HAS TO be even, otherwise at least gsrank will fail */
 
+    //fprintf(stderr, "angle=%g, range=%g\n", angle, range);
+
     limit1=angle-range/2.0;
     if (limit1<-90)
 	limit1+=180;
@@ -193,9 +201,16 @@ int compute_openbun_rankmax(Type *in,	     /**< [in] buffer */
 
     memset(out,0,size*sizeof(Type));
     for(th = limit1,i=0;i<n;++i) {
+      double theta = th*M_PI/180.0;
+      double isofactor = liarmax(std::fabs(k*std::cos(theta)), std::fabs(k*std::sin(theta)));
+      anglek = (int)std::ceil(isofactor);
+      if ((anglek % 2) != 0)
+	--anglek; // so that anglek remains even, see above
 
-	gsrank(in, wk2, nx, ny, k, (double)((int)th), rank);
-	glineminmax(wk2,nx,ny,k,(int)th,genfmax,bresenham);
+      //fprintf(stderr,"Theta = %g (degree), Anglek = %d\n", th, anglek);
+
+	gsrank(in, wk2, nx, ny, anglek, (double)((int)th), rank);
+	glineminmax(wk2,nx,ny,anglek,(int)th,computemax,computebresen);
 	li_min(in, wk2, wk, nx*ny);
 
 	for(j=0;j<size;j++,out++,wk++)

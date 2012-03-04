@@ -10,6 +10,7 @@
 #define LGRANK_GENERIC_HPP
 
 #include "liarp.h"                   
+#include "gline_generic.hpp"
 
 /* 
  *
@@ -23,15 +24,6 @@
 
 static INT4_TYPE *_GhIsT=0, _GrEy_ScAlEs=0;
 static double rank;
-
-
-
-// prototype
-void gline(PIX_TYPE *IN,
-	   PIX_TYPE *OUT,
-	   int nx,int ny,
-	   int k,
-	   double th);
 
 static void open_running_rank(INT4_TYPE no_of_grey_scales)
 {
@@ -56,7 +48,8 @@ void generic_running_rank(Type * in,
 			  Type * out,
 			  INT4_TYPE * offset,
 			  int nx, 
-			  int nk
+			  int nk,
+			  double rank
 			  )
 {
     /* in and out: input and output arrays.
@@ -191,7 +184,7 @@ void gsrank(Type *IN,	/**< [in] pointer to input image */
     while (angle < -90)
 	angle += 180;
     
-    gline(IN,OUT,nx,ny,nk, angle, generic_running_rank);
+    gline(IN,OUT,nx,ny,nk, angle,rank);
 
     close_running_rank();
 
