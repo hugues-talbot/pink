@@ -61,7 +61,7 @@ static void bres2dxy(int x1,int y1,
 #define degree2rad(x)  ((x)*0.017453293)
 #endif
 
-typedef <typename Type>
+template <typename Type>
 void gline(Type *IN,      /**< [in] input image */
 	   Type *OUT,     /**< [out] output image */
 	   int nx,        /**< [in] number of columns */
@@ -87,7 +87,7 @@ void gline(Type *IN,      /**< [in] input image */
         return;
     
 
-    kth = (k * max(fabs(cos(degree2rad(th))),fabs(sin(degree2rad(th)))) +0.5);
+    kth = (k * liarmax(fabs(cos(degree2rad(th))),fabs(sin(degree2rad(th)))) +0.5);
     kth += !(kth%2); /* add one if kth is even */
 
     /* kth = ((int)(dbl/2 +0.5) * 2 + 1); */
@@ -119,7 +119,7 @@ void gline(Type *IN,      /**< [in] input image */
 	ycoor = (int*)calloc(nshft, sizeof(int));
 	xp = ((double)(ny-1)*tan((90.0-fabs(th))*0.0174533));
 	yp = th < 0 ? (-ny+1):(ny-1);
-	BRES2DXY(0, 0, xp, yp, xcoor, ycoor);
+	bres2dxy(0, 0, xp, yp, xcoor, ycoor);
 
 	if (yp > 0){		/* translate the line to the end of the x axis */
 	    for (i=0; i<ny; i++)

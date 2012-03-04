@@ -9,7 +9,6 @@
 #define LOPENBUN_HPP
 
 #include "liarp.h"
-#include "min_generic.hpp"
 
 /** \brief opening by union of lines
  * 
