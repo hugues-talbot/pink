@@ -45,8 +45,9 @@ enum {computebresen=true, computeperiod=false};
 #include "lgrank_generic.hpp"
 #include "gline_generic.hpp"
 #include "lmin_generic.hpp"
+#include "lmax_generic.hpp"
 #include "lopenbun_generic.hpp"
-
+#include "lclosebin_generic.hpp"
 
 template <typename Type>
 void rect3dminmax(Type *in, int nx, int ny, int nz, int w, int b,

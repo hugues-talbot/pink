@@ -32,16 +32,21 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! liar_fseries.cpp
+/*! \file liar_line.cxx
 
-\brief fast flat structuring elements morphological methods
+\brief line-segment based morphological operators
 
 <B>Description:</B>
 
-Methods in this file implent fast recursive morphological operators, both 2D and 3D, using decomposition by lines.
-Running time in independent of the size of the SE.
+Functions in this file implement various morphological operators based on line segments
+for instance openings by unions of line and closings by intersection of lines.
 
-\author Hugues Talbot, based on early code by Ed Breen
+<B>Types supported:</B> byte 2d
+
+<B>Category:</B> morpho
+\ingroup morpho
+
+\author Hugues Talbot, based on earlier code by Ronald Jones and Ed Breen.
 */
 
 #include <stdio.h>
@@ -59,7 +64,7 @@ Running time in independent of the size of the SE.
 
 
 /*-------------------------------------------------------------------------------------------------*/
-/*! Polygone 2D morphological operation*/
+/*! Line segments openings */
 int imopenbun( const struct xvimage *input, /**< [in] input image */
 	       int radius,                  /**< [in] radius of line segments */
 	       int n,                       /**< [in] number of lines to consider */
@@ -82,6 +87,51 @@ int imopenbun( const struct xvimage *input, /**< [in] input image */
 							UCHARDATA(output)) );
 	  else
 	    return( compute_openbun_rankmax< PIX_TYPE > (UCHARDATA(input),
+							 rowsize(input),
+							 colsize(input),
+							 radius,
+							 n,
+							 angle,
+							 range, 
+							 rank,
+							 UCHARDATA(output)) );
+	  break;
+
+       
+
+        default:
+            pink_warning("Pixel type currently not supported "<< input->data_storage_type);
+            return 1;
+        break;
+    }
+    return 0;
+}
+
+
+/*-------------------------------------------------------------------------------------------------*/
+/*! Line segment closings */
+int imclosebin( const struct xvimage *input, /**< [in] input image */
+                int radius,                  /**< [in] radius of line segments */
+                int n,                       /**< [in] number of lines to consider */
+                double angle,                /**< [in] starting (line) angle */
+                double range,                /**< [in] line angle range */
+                double rank,                 /**< [in] 0 <= rank <= 1 */
+                struct xvimage *output       /**< [out] output image */)
+{
+
+   switch (input->data_storage_type) {
+        case    VFF_TYP_1_BYTE:
+	  if (rank == 0.0) 
+	    return( compute_closebin_limits< PIX_TYPE > (UCHARDATA(input),
+							rowsize(input),
+							colsize(input),
+							radius,
+							n,
+							angle,
+							range, 
+							UCHARDATA(output)) );
+	  else
+	    return( compute_closebin_rankmax< PIX_TYPE > (UCHARDATA(input),
 							 rowsize(input),
 							 colsize(input),
 							 radius,
