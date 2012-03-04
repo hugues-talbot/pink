@@ -139,6 +139,8 @@ void fcloserect_export();
 void fclosepoly_export();
 void fopenrect_export();
 void fopenpoly_export();
+// opening by unions of lines
+void openbun_export();
 
 void read_raw_image_export(); void seuil_export(); void plane3d_export(); void draw_plane_export();
 void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
@@ -314,7 +316,7 @@ UI_WRAP_FUNCTION(
 UI_WRAP_FUNCTION(
   "translate",
   loffset,
-  (arg("image"), arg("ox"), arg("oy"), arg("oz"), arg("mode")), // =0),
+  (arg("image"), arg("ox"), arg("oy"), arg("oz"), arg("mode") =0),
   doc__translate__c__
   );
 #include BOOST_PP_UPDATE_COUNTER()
@@ -375,7 +377,8 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   fclosepoly_export();
   fopenrect_export();
   fopenpoly_export();
-
+  
+  openbun_export();
 
 //  specialize_export();
 

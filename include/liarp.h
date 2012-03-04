@@ -213,21 +213,26 @@
 //#include "fseries.h"
 //#include "fseries3d.h"
 
+    typedef void (*computerankfunc)(PIX_TYPE *in, 
+				    PIX_TYPE *out,
+				    PIX_TYPE *offset,
+				    int nx,
+				    int nk);
 // pure C function declarations
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    int LIARdebug(const char *fmt, ...);
-    int LIARerror(const char *msg, ...);
-    long *bresenham3d(int dx, int dy, int dz,
-		       int imwidth, int imheight, int imdepth,
-		       int *ol, int *period);
-    long *periodic3d(int dx, int dy, int dz,
-		      int imwidth, int imheight, int imdepth,
+  int LIARdebug(const char *fmt, ...);
+  int LIARerror(const char *msg, ...);
+  long *bresenham3d(int dx, int dy, int dz,
+		    int imwidth, int imheight, int imdepth,
+		    int *ol, int *period);
+  long *periodic3d(int dx, int dy, int dz,
+		     int imwidth, int imheight, int imdepth,
 		      int *ol, int *period);
-	long *bresenham(int xin,int yin,int angle,int width,int *period);
-	long *periodic(int x, int y, int angle, int width, int *period);
+  long *bresenham(int xin,int yin,int angle,int width,int *period);
+  long *periodic(int x, int y, int angle, int width, int *period);
 
 #ifdef __cplusplus
 }

@@ -41,6 +41,12 @@ enum {computebresen=true, computeperiod=false};
 #include "lfopen_poly_generic.hpp"
 #include "circlmm.hpp"
 
+// not stricly fseries but eh
+#include "lgrank_generic.hpp"
+#include "gline_generic.hpp"
+#include "lmin_generic.hpp"
+#include "lopenbun_generic.hpp"
+
 
 template <typename Type>
 void rect3dminmax(Type *in, int nx, int ny, int nz, int w, int b,
