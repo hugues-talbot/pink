@@ -1,29 +1,39 @@
 /*
  * File:		lfdilate_poly_generic.h
  *
- * Written by:		Image Analysis Group staff,
- * 			CSIRO Mathematical and Information Sciences.
- *
- * Date:		March 2001
- *
- *
- * CSIRO Mathematical and Information Sciences is the owner of all
- * copyright subsisting in the software contained in this file. It may
- * not be disclosed to, or used by, anyone without the prior approval
- * of the Chief, CSIRO Mathematical and Information Sciences.
+ * C version orginally from CSIRO MIS, 2001.
+ * 
+ * C++ generic version:
+ * Hugues Talbot, LIGM, Université Paris Est
+ * March 2012.
  *
 */
 
 #ifndef LFDILATE_POLY_HPP
 #define LFDILATE_POLY_HPP
 
-//#include "liarlmts.h"
-//#include "liarp.h"
 #include "liarp.h"
-//#include "fseries.hpp"
+
+/** \brief Fast flat dilation by a polygon, approximating a disk
+ *
+ * This computes a dilation by a polygon with a specified number of sides
+ * allowing for a good approximation of disks.
+ * The computation is in constant time irrespective of the diameter of the disk,
+ * Given a fixed number of sides. If the number of sides is zero, then the function
+ * adapts the number of sides of the polygon to the radius, up to a maximum of 12 sides.
+ *
+ * Hugues Talbot 2012-03-02
+ * 
+ */
 
 template <typename Type>
-int lfdilate_poly (const Type *inbuf, Type *outbuf, int ncol, int nrow, int radius, int type, int sides)
+int lfdilate_poly (const Type *inbuf, /**< [in] Input buffer */
+		   Type *outbuf, /**< [out] result buffer (can be same as input) */
+		   int ncol, /**< [in] number of columns (x dimension) of the input image */
+		   int nrow, /**< [in] number of lines (y dimension) of the input */
+		   int radius, /**< [in] radius of the polygon */
+		   int type,  /**< [in] type of line used : 0 = periodic ; 1 = Bresenham */
+		   int sides) /**< [in] number of sides of the polygon. May be zero */
 {
     char LIARstrbuf[1024];
     int LIARerr;
