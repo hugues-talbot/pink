@@ -88,6 +88,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef HAVE_TIFF_LIB
 #  include "liarp.h"
 #  include "liarwrap.h"
+#  include "savetiff.h"
 #endif
 /* HAVE_TIFF_LIB */
 
@@ -1926,6 +1927,118 @@ struct xvimage *readtiffimage(char *filename)
     
     return image;
 }
+
+
+/* ==================================== */
+void writetiffimage(struct xvimage * image, const char *filename)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "writetiffimage"
+{
+    int    slice, datasize = 0;
+    IMAGE *tiffimage=NULL;
+
+    tiffimage = (IMAGE*)malloc(sizeof(IMAGE));
+
+    tiffimage->nx = image->row_size;
+    tiffimage->ny = image->col_size;
+    tiffimage->nz = image->depth_size;
+    tiffimage->nt = image->time_size;
+    tiffimage->nc = image->num_data_bands;
+
+    /* std::cerr << "Dimensions: nx=" << tiffimage->nx
+        <<  " ny=" << tiffimage->ny
+        <<  " nz=" << tiffimage->nz
+        <<  " nt=" << tiffimage->nt
+        <<  " nc=" << tiffimage->nc << std::endl;
+    */
+        
+    switch(image->data_storage_type) {
+        case VFF_TYP_1_BYTE:
+        tiffimage->pt = IM_UINT1;
+        datasize = 1;
+        break;
+        case VFF_TYP_2_BYTE:
+        tiffimage->pt = IM_UINT2;
+        datasize = 2;
+        break;
+        case VFF_TYP_4_BYTE:
+        tiffimage->pt = IM_INT4;
+        datasize = 4;
+        break;
+        case VFF_TYP_FLOAT:
+        tiffimage->pt = IM_FLOAT;
+        datasize = 4;
+        break;
+        case VFF_TYP_DOUBLE:
+        tiffimage->pt = IM_DOUBLE;
+        datasize = 8;
+        break;
+        default:
+            fprintf(stderr, "Unhandled data type %d\n ", (int)tiffimage->pt);
+        break;
+    }
+
+    // exclude some types of data we cannot save yet
+    do {
+        if (datasize == 0) {
+            break;
+        }
+        if (tiffimage->nc > 1) {
+            fprintf(stderr, "Multi-component TIFF not supported yet\n");
+            break;
+        }
+        if (tiffimage->nt > 1) {
+            fprintf(stderr, "Time-series TIFF not supported yet\n");
+            break;
+        }
+    //   now we should only have at most grey-level 3D images
+        for (slice = 0 ; slice < tiffimage->nz ; ++slice) {
+                long slicesize = tiffimage->nx*tiffimage->ny*datasize;
+                void *fakebuff[1];
+                int   start[2], end[2];
+                int pi, sf, spp=1, bps;
+
+                //std::cerr << "Slice= " << slice << std::endl;
+
+                setTifftype(tiffimage->pt,     /* pixel type */
+                            IM_SINGLE,     /* image type */
+                            &pi,            /* photometric interpretation */
+                            &sf,            /* sample format */
+                            &spp,           /* samples per pixel (this parameter is I/O) */
+                            &bps);
+                //std::cerr << "Type= " << pi << "spp=" << spp << std::endl;
+
+                void *theslice = (uint8_t*)image->image_data + slice*slicesize;
+                fakebuff[0] = theslice;
+
+                start[0] = 0;
+                end[0] = tiffimage->nx-1;
+                start[1] = 0;
+                end[1] = tiffimage->ny-1;
+
+                int retval = save_tiff(fakebuff,	   /* output buffer  */
+                          slice,   /* 0 = write, > 0 = append */
+                          start,	   /* dimension start */
+                          end,	   /* dimension end */
+                          pi,	   /* photometric interpretation */
+                          sf,	   /* storage format */
+                          spp,	   /* samples per pixels */
+                          bps,	   /* bits per pixel */
+                          NULL, /* colour map (RGB) */
+                          0,	   /* nb of colour in the LUT */
+                          filename,  /* output file name  */
+                          TIFF_CMP_NONE);  /* compression scheme */
+
+                if (retval != 0)
+                    fprintf(stderr, "TIFF writing failed with error %d\n", retval);
+        }
+    } while (0);
+
+    return;
+}
+
+
 #endif 
 //HAVE_TIFF_LIB
 

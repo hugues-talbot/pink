@@ -118,9 +118,9 @@ class app:
         # # then binds rendering window to a tk widget
         self.top = tk.Toplevel(root)
         self.top.title("Multiple Renderer")
-        #self.vtkw = vtkTkRenderWidget(self.top, width=600, height=600, rw=self.render.ren_win)
-        self.vtkw = vtkTkRenderWindowInteractor(self.top,width=600, height=600, rw=self.render.ren_win)
-        #self.vtkw.BindTkRenderWidget()
+        self.vtkw = vtkTkRenderWidget(self.top, width=600, height=600, rw=self.render.ren_win)
+        #self.vtkw = vtkTkRenderWindowInteractor(self.top,width=600, height=600, rw=self.render.ren_win)
+        self.vtkw.BindTkRenderWidget()
         self.top.protocol('WM_DELETE_WINDOW', self.on_exitbutton_command)
 
         # HT not sure
