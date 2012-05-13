@@ -1,5 +1,5 @@
 // -*- mode: C; coding: utf-8 -*-
-/*! \page index Main Page
+/*! \mainpage 
 
 Pink is an image processing library developed
 at <A HREF="http://www.esiee.fr">ESIEE Engineering</A> for research

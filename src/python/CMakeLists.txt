@@ -96,7 +96,7 @@ add_custom_command( TARGET cpp_pink POST_BUILD
 		    COMMAND echo "\\# UjoImro, 2010"  >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "\\# Generated automatically on"`date --iso-8601` >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND echo "" >> ${CMAKE_BINARY_DIR}/pink.sh
-		    COMMAND echo "LD_LIBRARY_PATH=\\\${LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/python:${CMAKE_BINARY_DIR}/lib" PYTHONPATH=${PYTHONPATH}:${CMAKE_BINARY_DIR}/python ${PYTHON_EXE} $$\\@  >> ${CMAKE_BINARY_DIR}/pink.sh
+		    COMMAND echo "PATH=\\\${PATH}:${CMAKE_BINARY_DIR}/bash LD_LIBRARY_PATH=\\\${LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/python:${CMAKE_BINARY_DIR}/lib" PYTHONPATH=${PYTHONPATH}:${CMAKE_BINARY_DIR}/python ${PYTHON_EXE} $$\\@  >> ${CMAKE_BINARY_DIR}/pink.sh
 		    COMMAND chmod u+x ${CMAKE_BINARY_DIR}/pink.sh
 		    )
 

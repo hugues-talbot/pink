@@ -1,4 +1,4 @@
-all: clean refman.dvi
+all: refman.dvi
 
 ps: refman.ps
 
@@ -14,7 +14,7 @@ refman.ps: refman.dvi
 refman.pdf: refman.ps
 	ps2pdf refman.ps refman.pdf
 
-refman.dvi: refman.tex doxygen.sty
+refman.dvi: clean refman.tex doxygen.sty
 	echo "Running latex..."
 	latex refman.tex
 	echo "Running makeindex..."
@@ -36,4 +36,4 @@ refman_2on1.pdf: refman_2on1.ps
 	ps2pdf refman_2on1.ps refman_2on1.pdf
 
 clean:
-	rm -f *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out refman.pdf
+	rm -f *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out *.brf *.blg *.bbl refman.pdf
