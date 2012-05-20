@@ -4,7 +4,9 @@
 
 SET(PINK_MAJOR "1")
 SET(PINK_MINOR "0")
-SET(PINK_REVISION "0")
+if (NOT PINK_REVISION)
+    SET(PINK_REVISION "0")
+endif(NOT PINK_REVISION)
 
 ### Setting up CPack for the source package generation --------
 SET(CPACK_GENERATOR                    "TBZ2;DEB" )

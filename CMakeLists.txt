@@ -18,7 +18,7 @@
 ### **********************************************************************************************
 
 cmake_minimum_required (VERSION 2.6)
-project(pink)
+project(pink-image)
 INCLUDE (UJ_CheckIncludeFile.cmake)
 INCLUDE (UJ_CheckIncludeFileCXX.cmake)
 #INCLUDE (FindCFITSIO.cmake)
