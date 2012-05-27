@@ -23,9 +23,9 @@ s = pink.skeleton(imf, 0, 8)    # get rid of simple points
 imview(s)
 
 s.writeimage("_s")
-run("pgm2skel _s 8 _s.skel")    # conversion into "skelcurv" format
-run("skel2graph _s.skel 1 _s.graph") # conversion into "graph" format
-run("graph2ps _s.graph 0.3 _s.ps") # postcript file generation
-run("gv _s.ps")                 # show ps file
+run("pink.pgm2skel _s 8 _s.skel")    # conversion into "skelcurv" format
+run("pink.skel2graph _s.skel 1 _s.graph") # conversion into "graph" format
+run("pink.graph2ps _s.graph 0.3 _s.ps") # postcript file generation
+run("pink.gv _s.ps")                 # show ps file
 
 # LuM end of file

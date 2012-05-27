@@ -288,7 +288,7 @@ void addptslist(skel * S, uint32_t k, uint32_t v)
 } /* addptslist() */
 
 /* ====================================================================== */
-void writeskel(skel * S, char *filename)
+void writeskel(skel * S, const char *filename)
 /* ====================================================================== */
 // write all elements, even those that are "deleted" 
 {
@@ -343,7 +343,7 @@ void writeskel(skel * S, char *filename)
 } /* writeskel() */
 
 /* ====================================================================== */
-void writevskel(skel * S, char *filename, struct xvimage *val)
+void writevskel(skel * S, const char *filename, struct xvimage *val)
 /* ====================================================================== */
 // idem writeskel, mais de plus chaque point est suivi d'une valeur trouvée dans l'image val,
 // et chaque vertex est suivi d'une valeur (nulle par défaut).
@@ -410,7 +410,7 @@ void writevskel(skel * S, char *filename, struct xvimage *val)
 } /* writevskel() */
 
 /* ====================================================================== */
-skel * readskel(char *filename)
+skel * readskel(const char *filename)
 /* ====================================================================== */
 {
 #undef F_NAME

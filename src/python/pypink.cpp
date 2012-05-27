@@ -160,6 +160,8 @@ int imfdilat_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *ou
 int imfopen_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *output);
 int imfclose_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *output);
 
+// skeleton
+void pyskeleton();
 
 // this part is not yet ready for windows
 #ifdef UNIXIO
@@ -421,6 +423,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   pyconnect();
   pymaxflow();
   pycomplex();
+  pyskeleton();
   pyarithmetic();
   pyconversion();
   pyimage_types();

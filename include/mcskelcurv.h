@@ -32,6 +32,10 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
+#ifndef MCSKELCURV__H__
+#define MCSKELCURV__H__
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -136,10 +140,12 @@ extern SKC_adj_pcell skeladdadjcell(skel *S, int32_t val, SKC_adj_pcell next);
 extern void addadjlist(skel * S, uint32_t k, uint32_t v);
 extern void addptslist(skel * S, uint32_t k, uint32_t v);
 extern uint32_t nb_adjacent_elts(skel * S, uint32_t i);
-extern skel * readskel(char *filename);
-extern void writeskel(skel * S, char *filename);
-extern void writevskel(skel * S, char *filename, struct xvimage *val);
+extern skel * readskel(const char *filename);
+extern void writeskel(skel * S, const char *filename);
+extern void writevskel(skel * S, const char *filename, struct xvimage *val);
 extern void skeldelete(skel * S, uint32_t i);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* MCSKELCURV__H__ */
