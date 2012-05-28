@@ -109,25 +109,25 @@ class dilatball(unittest.TestCase):
         self.assertTrue( result == gold )
 
 
-    @unittest.skip("Wrong parameter (-1)")
-    def test_14(self):
-        result = pink.cpp.dilatball( pink.cpp.readimage( IMAGES + '/3dlong/l3mortierma3.pgm' ), -1, 3)
-        gold   = pink.cpp.readimage( RESULTS + '/dilatball_l3mortierma3__1_3.pgm')
-        self.assertTrue( result == gold )
+    # @unittest.skip("Wrong parameter (-1)")
+    # def test_14(self):
+    #     result = pink.cpp.dilatball( pink.cpp.readimage( IMAGES + '/3dlong/l3mortierma3.pgm' ), -1, 3)
+    #     gold   = pink.cpp.readimage( RESULTS + '/dilatball_l3mortierma3__1_3.pgm')
+    #     self.assertTrue( result == gold )
 
 
-    @unittest.skip("Wrong parameter (-1)")
-    def test_15(self):
-        result = pink.cpp.dilatball( pink.cpp.readimage( IMAGES + '/3dlong/l3mortierma6.pgm' ), -1, 6)
-        gold   = pink.cpp.readimage( RESULTS + '/dilatball_l3mortierma6__1_6.pgm')
-        self.assertTrue( result == gold )
+    # @unittest.skip("Wrong parameter (-1)")
+    # def test_15(self):
+    #     result = pink.cpp.dilatball( pink.cpp.readimage( IMAGES + '/3dlong/l3mortierma6.pgm' ), -1, 6)
+    #     gold   = pink.cpp.readimage( RESULTS + '/dilatball_l3mortierma6__1_6.pgm')
+    #     self.assertTrue( result == gold )
 
 
-    @unittest.skip("Wrong parameter (-1)")
-    def test_16(self):
-        result = pink.cpp.dilatball( pink.cpp.readimage( IMAGES + '/3dlong/l3mortierma26.pgm' ), -1, 26)
-        gold   = pink.cpp.readimage( RESULTS + '/dilatball_l3mortierma26__1_26.pgm')
-        self.assertTrue( result == gold )
+    # @unittest.skip("Wrong parameter (-1)")
+    # def test_16(self):
+    #     result = pink.cpp.dilatball( pink.cpp.readimage( IMAGES + '/3dlong/l3mortierma26.pgm' ), -1, 26)
+    #     gold   = pink.cpp.readimage( RESULTS + '/dilatball_l3mortierma26__1_26.pgm')
+    #     self.assertTrue( result == gold )
 
 
 if __name__ == '__main__':
