@@ -32,7 +32,7 @@ namespace pink {
       )
     {
       char_image result;
-      result.copy(image);      
+      result = image.clone();
       
       
       if ((connexity != 4) && (connexity != 8) && (connexity != 6) && (connexity != 26))

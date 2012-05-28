@@ -30,7 +30,7 @@ namespace pink {
     {
 
       char_image result;
-      result.copy(orig);
+      result = orig.clone();
       if (! lwshedtopo_lwshedtopo(  result.get_output(), connex ) )
       {
         pink_error("lwshedtopo_lwshedtopo failed");

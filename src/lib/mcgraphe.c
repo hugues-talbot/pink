@@ -182,9 +182,9 @@ graphe * InitGraphe(int32_t nsom, int32_t nmaxarc)
       exit(0);
   }
 
-  g->reserve = (cell *)malloc(nmaxarc * sizeof(cell));
+  g->reserve = (cell *)calloc(nmaxarc, sizeof(cell));
   if (g->reserve == NULL)
-  {   fprintf(stderr, "%s : malloc failed\n", F_NAME);
+  {   fprintf(stderr, "%s : calloc failed\n", F_NAME);
       exit(0);
   }
 
@@ -194,30 +194,30 @@ graphe * InitGraphe(int32_t nsom, int32_t nmaxarc)
       exit(0);
   }
 
-  g->tete = (int32_t *)malloc(nmaxarc * sizeof(int32_t));
-  g->queue = (int32_t *)malloc(nmaxarc * sizeof(int32_t));
+  g->tete = (int32_t *)calloc(nmaxarc, sizeof(int32_t));
+  g->queue = (int32_t *)calloc(nmaxarc, sizeof(int32_t));
   if ((g->tete == NULL) || (g->tete == NULL))
-  {   fprintf(stderr, "%s : malloc failed\n", F_NAME);
+  {   fprintf(stderr, "%s : calloc failed\n", F_NAME);
       exit(0);
   }
 
-  g->v_arcs = (TYP_VARC *)malloc(nmaxarc * sizeof(TYP_VARC));
+  g->v_arcs = (TYP_VARC *)calloc(nmaxarc, sizeof(TYP_VARC));
   if (g->v_arcs == NULL)
-  {   fprintf(stderr, "%s : malloc failed\n", F_NAME);
+  {   fprintf(stderr, "%s : calloc failed\n", F_NAME);
       exit(0);
   }
 
-  g->v_sommets = (TYP_VSOM *)malloc(nsom * sizeof(TYP_VSOM));
+  g->v_sommets = (TYP_VSOM *)calloc(nsom, sizeof(TYP_VSOM));
   if (g->v_sommets == NULL)
-  {   fprintf(stderr, "%s : malloc failed\n", F_NAME);
+  {   fprintf(stderr, "%s : calloc failed\n", F_NAME);
       exit(0);
   }
 
-  g->x = (double *)malloc(nsom * sizeof(double));
-  g->y = (double *)malloc(nsom * sizeof(double));
-  g->z = (double *)malloc(nsom * sizeof(double));
+  g->x = (double *)calloc(nsom, sizeof(double));
+  g->y = (double *)calloc(nsom, sizeof(double));
+  g->z = (double *)calloc(nsom, sizeof(double));
   if ((g->x == NULL) || (g->y == NULL) || (g->z == NULL))
-  {   fprintf(stderr, "%s : malloc failed\n", F_NAME);
+  {   fprintf(stderr, "%s : calloc failed\n", F_NAME);
       exit(0);
   }
 
@@ -412,7 +412,7 @@ void UnitLength(graphe * g)
     \return un graphe.
     \brief Lit les données d'un graphe dans le fichier filename, retourne un pointeur sur la structure graphe construite. 
 */
-graphe * ReadGraphe(char * filename)
+graphe * ReadGraphe( const char * filename )
 /* ====================================================================== */
 #undef F_NAME
 #define F_NAME "ReadGraphe"
@@ -503,7 +503,7 @@ graphe * ReadGraphe(char * filename)
     \param filename (entrée) : nom du fichier à générer.
     \brief sauve le graphe g dans le fichier filename. 
 */
-void SaveGraphe(graphe * g, char *filename) 
+void SaveGraphe( graphe * g, const char *filename ) 
 /* ====================================================================== */
 #undef F_NAME
 #define F_NAME "SaveGraphe"
@@ -3016,7 +3016,7 @@ void AfficheValeursSommets(graphe * g)
     \param marge (entrée) : marge en x et en y.
     \brief génère une figure PostScript d'après la représentation "successeurs" du graphe g. 
 */
-void PSGraphe(graphe * g, char *filename, double r, double t, double marge) 
+void PSGraphe(graphe * g, const char *filename, double r, double t, double marge) 
 /* ====================================================================== */
 #undef F_NAME
 #define F_NAME "PSGraphe"
@@ -3120,7 +3120,7 @@ void PSGraphe(graphe * g, char *filename, double r, double t, double marge)
     \param v_arcs (entrée) : booléen indiquant s'il faut écrire les valeurs des arcs.
     \brief génère une figure PostScript d'après la représentation "successeurs" du graphe g. 
 */
-void EPSGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int32_t noms_sommets, int32_t v_sommets, int32_t col_sommets, int32_t v_arcs) 
+void EPSGraphe(graphe * g, const char *filename, double s, double r, double t, double marge, int32_t noms_sommets, int32_t v_sommets, int32_t col_sommets, int32_t v_arcs) 
 /* ====================================================================== */
 #undef F_NAME
 #define F_NAME "EPSGraphe"

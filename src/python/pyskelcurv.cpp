@@ -134,7 +134,7 @@ namespace pink {
       )
     {
       char_image result;
-      result.copy(image);
+      result = image.clone();
 
       if (image.get_size().size()==2)
       {
@@ -172,7 +172,7 @@ namespace pink {
       )
     {
       char_image result;
-      result.copy(image);      
+      result = image.clone();      
 
       result=general_skelcurv(image, prio, connex, inhibit);
 
@@ -187,7 +187,7 @@ namespace pink {
       )
     {
       char_image result;
-      result.copy(image);      
+      result = image.clone();      
 
       int_image prio;
       prio = priority_image(result, priovalue);

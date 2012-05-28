@@ -36,10 +36,10 @@ namespace pink {
       } /* ((connex!=4)&&(connex!=8)&&(connex!=6)&&(connex!=18)&&(connex!=26)) */
 
       char_image result;
-      result.copy(G);
+      result = G.clone();
 
       char_image fc;
-      fc.copy(F);
+      fc = F.clone();
       
       if (result.get_size().size()!=fc.get_size().size()){
         pink_error("error: the dimensions of F and G must be equal");

@@ -34,10 +34,10 @@ pylfmm(
   SpeedIn = speeds.get_pixels().get(); // FLOATDATA(speed);
     
   pink::int_image voronoi;
-  voronoi.copy(seeds);
+  voronoi = seeds.clone();  
   
   pink::float_image distance;
-  distance.copy(speeds);
+  distance = speeds.clone();
     
   SeedOut  = voronoi.get_pixels().get();
   SpeedOut = distance.get_pixels().get();

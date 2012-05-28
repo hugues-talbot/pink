@@ -171,8 +171,8 @@ extern void UnionGraphes(graphe * g1, graphe * g2);
 /* ====================================================================== */
 /* ====================================================================== */
 
-extern graphe * ReadGraphe(char * filename);
-extern void SaveGraphe(graphe * g, char *filename);
+extern graphe * ReadGraphe( const char * filename );
+extern void SaveGraphe( graphe * g, const char *filename);
 
 /* ====================================================================== */
 /* ====================================================================== */
@@ -185,8 +185,8 @@ extern void AfficheListe(pcell p);
 extern void AfficheSuccesseurs(graphe * g) ;
 extern void AfficheArcs(graphe * g);
 extern void AfficheValeursSommets(graphe * g);
-extern void PSGraphe(graphe * g, char *filename, double r, double t, double marge);
-extern void EPSGraphe(graphe * g, char *filename, double s, double r, double t, double marge, int32_t noms_sommets, int32_t v_sommets, int32_t col_sommets, int32_t v_arcs);
+extern void PSGraphe(graphe * g, const char *filename, double r, double t, double marge);
+extern void EPSGraphe(graphe * g, const char *filename, double s, double r, double t, double marge, int32_t noms_sommets, int32_t v_sommets, int32_t col_sommets, int32_t v_arcs);
 
 /* ====================================================================== */
 /* ====================================================================== */

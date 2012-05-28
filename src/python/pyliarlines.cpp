@@ -31,8 +31,8 @@ namespace pink {
         {
             // inefficient but don't know what else to do because of const madness
             image_t newsrc, result;
-            newsrc.copy(src);
-            result.copy(src);
+            newsrc = src.clone();
+            result = src.clone();
           
             // The low-level function compute_openbun_rankmax etc return 0 to indicate success
             // HT 20120302
@@ -67,8 +67,8 @@ namespace pink {
         {
             // inefficient but don't know what else to do because of const madness
             image_t newsrc, result;
-            newsrc.copy(src);
-            result.copy(src);
+            newsrc = src.clone();
+            result = src.clone();
 
             // The low-level function compute_openbun_rankmax etc return 0 to indicate success
             // HT 20120302

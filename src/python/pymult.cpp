@@ -34,7 +34,7 @@ namespace pink {
       }
       
       result_type result;
-      result.copy(image);
+      result = image.clone();
       
       FOR(q, result.get_size().prod())
       {

@@ -28,7 +28,7 @@ namespace pink {
   {
 
     image_type result;
-    result.copy(src_image);
+    result = src_image.clone();
 
     pink::types::vint curr( src_image.get_size() );
     

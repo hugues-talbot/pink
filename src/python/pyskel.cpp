@@ -93,6 +93,13 @@ void pyskeleton()
               ( boost::python::arg("i") ),
               "WRITE ME!!!"
             )
+
+        .def( "__repr__", &pink::skel_t<index_t>::repr,
+              boost::python::args("self"),
+              "Prints the skeleton."
+            )
+
+
         ; // pink::skel_t (skeleton)
 
 
@@ -107,7 +114,7 @@ void pyskeleton()
                         doc__pgm2skel__c__
         );
 
-    
+
 } // pyskeleton
         
 

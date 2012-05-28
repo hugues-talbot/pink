@@ -133,8 +133,8 @@ namespace pink {
       } /* inhibval == -1 */
 
       char_image result;
-      result.copy(image);
-
+      result = image.clone();
+      
       if (depth(result.get_output()) == 1)  // the image is 2D
       {
         if (! lskelubp(result.get_output(), prioimage, connex, inhibval))
@@ -163,7 +163,7 @@ namespace pink {
       )
     {
       char_image result;
-      result.copy(image);
+      result = image.clone();      
 
       int_image prio;
       prio = skeleton_distance(result, priocode);
@@ -189,7 +189,7 @@ namespace pink {
       )
     {
       char_image result;
-      result.copy(image);
+      result = image.clone();
 
       int_image prio;
       prio = skeleton_distance(result, priocode);
@@ -210,7 +210,7 @@ namespace pink {
       )
     {
       char_image result;
-      result.copy(image);
+      result = image.clone();
       
       if (depth(result.get_output()) == 1) // the image is 2D
       {
@@ -234,7 +234,7 @@ namespace pink {
 
       char_image res;
       xvimage *xvinput;
-      res.copy(input_image);
+      res = input_image.clone();
       
       xvinput = res.get_output();
       

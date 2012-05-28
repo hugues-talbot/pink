@@ -153,8 +153,7 @@ Python class pink.image / c++ pink::ujoi
           "for raw image visualisation"
       )
 
-    .def( "copy", &image_type::copy,
-          boost::python::args("self"),
+    .def( "clone", &image_type::clone,
           "makes a deep copy of the image"
       )
 

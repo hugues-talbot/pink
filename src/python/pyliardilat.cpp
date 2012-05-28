@@ -32,7 +32,7 @@ namespace pink {
     )
     {
     image_t result;
-    result.copy(src);
+    result = src.clone();
 
     //pink_error("This function has been switched off!!!! You forgot to add some files!");
 
@@ -68,9 +68,9 @@ namespace pink {
       const int sides
     )
     {
-        int errorcode = 0;
-    image_t result;
-    result.copy(src);
+      int errorcode = 0;
+      image_t result;
+      result = src.clone();
 
     //pink_error("This function has been switched off!!!! You forgot to add some files!");
 

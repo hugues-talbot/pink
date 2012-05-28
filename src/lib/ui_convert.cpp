@@ -54,8 +54,7 @@ namespace pink {
     int nbnewval
     )
   {
-    int_image local_copy;
-    local_copy.copy(src);
+    int_image local_copy = src.clone();
   
     xvimage * res = long2byte( local_copy.get_output(), mode, nbnewval );
 

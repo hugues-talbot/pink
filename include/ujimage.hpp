@@ -249,43 +249,43 @@ namespace pink
 
     friend image_type operator+( const image_type & x, const image_type & y)
       {
-        return image_type().copy(x)+=y;        
+        return x.clone()+=y;        
       }
 
     friend image_type operator-( const image_type & x, const image_type & y)
       {
-        return image_type().copy(x)-=y;        
+        return x.clone()-=y;        
       }
 
     friend image_type operator+( const image_type & x, pixel_type val)
       {
-        return image_type().copy(x)+=val;        
+        return x.clone()+=val;        
       }
 
     friend image_type operator+( pixel_type val, const image_type & x)
       {
-        return image_type().copy(x)+=val;        
+        return x.clone()+=val;        
       }
 
     friend image_type operator*( const image_type & x, pixel_type val)
       {
-        return image_type().copy(x)*=val;        
+        return x.clone()*=val;        
       }
     
     friend image_type operator*( pixel_type val, const image_type & x)
       {
-        return image_type().copy(x)*=val;        
+        return x.clone()*=val;        
       }
 
 
     friend image_type operator-( const image_type & x, pixel_type val)
       {
-        return image_type().copy(x)-=val;        
+        return x.clone()-=val;        
       }
 
     friend image_type operator/( const image_type & x, pixel_type val)
       {
-        return image_type().copy(x)/=val;        
+        return x.clone()/=val;        
       }
 
     
@@ -406,14 +406,10 @@ namespace pink
     /**
     \brief DEEP copy
     This method is used, if you need a runtime deep-copy of the
-    object. The other object needs to have the same type but NOT the
-    same size. The old data is reset; that is deleted this was the
-    last shallow copy and kept if there are other shallow objects
-    using it. 
-    \param other The image to copy
-    \return It supports multiple copies. 
+    object. The object creates a new object which is a deep copy of itself.
+    \return The cloned image
     */    
-    image_type copy( const image_type & other );
+    image_type clone(void) const;
 
 
     /**
@@ -1906,29 +1902,25 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
   
   template <class pixel_type>
-  ujoi<pixel_type> ujoi<pixel_type >::copy( const image_type & other )
+  ujoi<pixel_type> ujoi<pixel_type >::clone(void) const
   {
+    image_type result;      
 #   if UJIMAGE_DEBUG >= 2
-    this->debug=debug; // representing the name of the object if debugged
+    result.debug = debug; // representing the name of the object if debugged
     std::cerr << "creating image '" << debug << "' (" << static_cast<void*>(this) << ")" << std::endl;
 #   endif /* UJIMAGE_DEBUG */
 
-    if (this==&other) // self-assignment test
-    {
-      return *this;      
-    }
-    
-    this->size.reset( new types::vint( *other.size ));
-    this->center.reset( new types::vint( *other.center ));
-    this->old_school.reset(new shallow_xvimage( (*other.size), other.int_pixel_type() )); // creating a new xvimage for the 'pink::ujoi' object
+    result.size.reset( new types::vint(*size) );
+    result.center.reset( new types::vint(*center) );
+    result.old_school.reset( new shallow_xvimage( *this->size, this->int_pixel_type() )); // creating a new xvimage for the 'pink::ujoi' object
     // the constructor will not copy the data
   
-    this->pixels.reset(new pixel_type[size->prod()]); // allocating the array for the pixel types
+    result.pixels.reset(new pixel_type[size->prod()]); // allocating the array for the pixel types
 
-    std::copy( &other(0), &other(size->prod()), this->pixels.get());
+    std::copy( &(*this)(0), &(*this)(size->prod()), result.pixels.get());
         
-    return *this;
-  } /* ujoi::copy */
+    return result;
+  } /* ujoi::clone */
 
 
   
@@ -1952,27 +1944,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     this->pixels.swap(other.pixels); 
     
     return *this;
-  } /* ujoi::copy */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  } /* ujoi::swap */
 
   
 } /* namespace pink */

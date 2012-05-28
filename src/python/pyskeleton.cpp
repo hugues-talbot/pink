@@ -60,7 +60,7 @@ namespace pink {
     {
 
       char_image res;
-      res.copy(uj_image);
+      res = uj_image.clone();
       char_image result;
       result =  skeleton_ultimate( &res,    // char_image & uj_image, 
                                       NULL,           // char_image & uj_prio,
@@ -87,9 +87,9 @@ namespace pink {
     {
 
       char_image res;
-      res.copy(uj_image);
+      res = uj_image.clone();
       int_image nc_prio;
-      nc_prio.copy(uj_prio);
+      nc_prio = uj_prio.clone();
   
       char_image result;
       result =
@@ -121,10 +121,10 @@ namespace pink {
     {
 
       char_image res;
-      res.copy(uj_image);
+      res = uj_image.clone();
 
       char_image nc_inhibit;
-      nc_inhibit.copy(inhibit);
+      nc_inhibit = inhibit.clone();
 
       char_image result =  
         skeleton_ultimate( &res,    // char_image & uj_image, 
@@ -154,11 +154,11 @@ namespace pink {
     {
   
       char_image res;
-      res.copy(uj_image);
+      res = uj_image.clone();
       int_image nc_prio;
-      nc_prio.copy(uj_prio);
+      nc_prio = uj_prio.clone();
       char_image nc_inhibit;
-      nc_inhibit.copy(inhibit);
+      nc_inhibit = inhibit.clone();
   
       char_image result;
       result =
@@ -225,9 +225,9 @@ namespace pink {
     {
 
       char_image res;
-      res.copy(uj_image);
+      res = uj_image.clone();
       int_image nc_prio;
-      nc_prio.copy(uj_prio);
+      nc_prio = uj_prio.clone();
   
       char_image result;  
       result = skeleton_ultimate( &res,    // char_image & uj_image, 
@@ -359,14 +359,14 @@ namespace pink {
             pink_error("lskelubp2 failed");
           }
 
-          result.copy(*uj_image); // image == uj_image
+          result = uj_image->clone(); // image == uj_image
         }
         else  /* not (inhibit_image) */
         {
           if (! lskelubp( image, prio, connex, inhibvalue ) )
             pink_error("lskelubp failed");
       
-          result.copy(*uj_image); // image == uj_image
+          result = uj_image->clone(); // image == uj_image
         }
       } 
       else /* not  (depth(image) == 1) */ 
@@ -378,7 +378,7 @@ namespace pink {
             pink_error("lskelubp3d2 failed");
           }
 
-          result.copy(*uj_image); // image == uj_image
+          result = uj_image->clone(); // image == uj_image
         }
         else /* not (inhibit_image) */
         {
@@ -387,7 +387,7 @@ namespace pink {
             pink_error("lskelubp3d failed");
           }
       
-          result.copy(*uj_image); // image == uj_image
+          result = uj_image->clone(); // image == uj_image
         }
       } /* not (depth(image) == 1) */
 

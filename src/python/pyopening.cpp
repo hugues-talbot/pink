@@ -41,9 +41,9 @@ namespace pink {
       }
 
       image_t result;
-      result.copy(image);
+      result = image.clone();
       char_image elem_ca;
-      elem_ca.copy(elem);
+      elem_ca = elem.clone();
 
       if (result.get_size().size()==2)
       {

@@ -29,9 +29,9 @@ namespace pink {
       )
     {
       image_t result;
-      result.copy(image);
+      result = image.clone();
       char_image elem_ce; // this image is usually small so it's ok to copy it
-      elem_ce.copy(elem);
+      elem_ce = elem.clone();
       
 
       if (! (elem.get_size().inside(elem.get_center())))

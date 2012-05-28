@@ -82,7 +82,7 @@
   image_type make_function( const image_type& image )
   {
     image_type result;
-    result.copy(image);
+    result = image.clone();
     if (!mcfunction(result )) { {
         std::stringstream fullmessage;
         fullmessage << "in ui_make_function.hpp: " << "mcfunction failed";
@@ -101,7 +101,7 @@
   image_type make_function( const image_type& image , T0 t0 )
   {
     image_type result;
-    result.copy(image);
+    result = image.clone();
     if (!mcfunction(result , t0)) { {
         std::stringstream fullmessage;
         fullmessage << "in ui_make_function.hpp: " << "mcfunction failed";
@@ -122,7 +122,7 @@
   image_type make_function( const image_type& image , T0 t0 , T1 t1 )
   {
     image_type result;
-    result.copy(image);
+    result = image.clone();
     if (!mcfunction(result , t0 , t1)) { {
         std::stringstream fullmessage;
         fullmessage << "in ui_make_function.hpp: " << "mcfunction failed";
@@ -183,7 +183,7 @@ using namespace pink::python;
     )                                                                   \
   {                                                                     \
   image_type result;                                                    \
-  result.copy(image);                                                   \
+  result = image.clone();                                               \
                                                                         \
   if (!mcfunction(result BOOST_PP_COMMA_IF(n) BOOST_PP_ENUM_PARAMS(n, t))) \
   {                                                                     \
@@ -211,7 +211,7 @@ namespace pink
     image_type make_function_one( const image_type & image )
     {
       image_type result;
-      result.copy(image);
+      result = image.clone();
       if (!mcfunction(result))
       {
         pink_error("mcfunction failed!\n");        

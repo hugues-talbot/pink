@@ -100,9 +100,9 @@ namespace pink {
 #   endif /* UJIMAGE_DEBUG */        
 
     this->theta = theta;
-    this->guidence_f.copy(guidence_f);
-    this->lambda.copy(lambda);
-    this->dual_potencial.copy(gg); //"dual_potencial";
+    this->guidence_f = guidence_f.clone();
+    this->lambda = lambda.clone();
+    this->dual_potencial = gg.clone(); //"dual_potencial";
   } /* ungerflow::ungerflow */
   
   

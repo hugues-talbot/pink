@@ -34,7 +34,7 @@ namespace pink {
       } /* if center not inside*/
 
       image_t result;
-      result.copy(src);
+      result = src.clone();
 
 
       if ( src.get_size().size()==2) // the image is 2D

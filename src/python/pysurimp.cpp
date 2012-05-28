@@ -38,11 +38,11 @@ namespace pink {
   
 
       char_image copy_R;
-      copy_R.copy(R);
+      copy_R = R.clone();
       char_image copy_G;
-      copy_G.copy(G);
+      copy_G = G.clone();
       char_image copy_B;
-      copy_B.copy(B);
+      copy_B = B.clone();
   
       writergbimage( copy_R.get_output(),
                      copy_G.get_output(),
@@ -68,9 +68,9 @@ namespace pink {
   
 
       char_image image1;
-      image1.copy(BW);
+      image1 = BW.clone();
       char_image image2;
-      image2.copy(red);
+      image2 = red.clone();
       struct xvimage * tmp;
       struct xvimage * tmp3;
 

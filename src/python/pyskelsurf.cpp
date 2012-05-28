@@ -32,7 +32,7 @@ namespace pink {
       )
     {
       char_image result;
-      result.copy(image);
+      result = image.clone();
      
       if (! lskelsurf3d(result.get_output(), priority_image.get_output(), /*can_be_null(inhibit)*/ NULL, connexity))
       {

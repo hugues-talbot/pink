@@ -26,7 +26,7 @@ namespace pink {
   {
 
     image_type result;
-    result.copy(image);    
+    result = image.clone();
     
     float min, max;
     std::pair<float, float> mm;

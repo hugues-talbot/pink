@@ -27,7 +27,7 @@ namespace pink {
       )
     {
       char_image result;
-      result.copy(image);
+      result = image.clone();      
 
       int32_t rayonmin=min_radius, rayonmax=max_radius, rayon;
       int32_t FERMETURE_EN_1 = 0;

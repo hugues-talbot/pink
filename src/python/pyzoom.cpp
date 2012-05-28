@@ -30,8 +30,7 @@ namespace pink {
       double fx, double fy, double fz // the zoom factors 		
       )
     {
-      image_type copy;
-      copy.copy(image);
+      image_type copy = image.clone();
   
       xvimage * out;
 

@@ -68,7 +68,7 @@ namespace pink {
       else /* NOT rs2!=rs or cs2!=cs */
       {
         result = new fcomplex_image();
-        result->copy(image);
+        (*result) = image.clone();
       } /* NOT rs2!=rs or cs2!=cs */
       
   

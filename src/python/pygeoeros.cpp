@@ -36,9 +36,9 @@ namespace pink {
 
 
       char_image result;
-      result.copy(F);
+      result = F.clone();
       char_image G_const_away;
-      G_const_away.copy(G);
+      G_const_away = G.clone();
 
 
       if (result.get_size().size()!=result.get_size().size()){

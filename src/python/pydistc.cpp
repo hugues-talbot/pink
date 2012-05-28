@@ -39,7 +39,7 @@ namespace pink {
       int        N;
       uint8_t   *F;
       char_image image;
-      image.copy(original_image);
+      image = original_image.clone();
 
       if ((mode != 0) && (mode != 1) && (mode != 2) && (mode != 3) && (mode != 5) &&
           (mode != 4) && (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26) &&
@@ -219,7 +219,7 @@ namespace pink {
       int N;
       uint8_t *F;
       char_image image;
-      image.copy(original_image);
+      image = original_image.clone();
 
       if ((mode != 0) && (mode != 1) && (mode != 2) && (mode != 3) && (mode != 5) &&
           (mode != 4) && (mode != 8) && (mode != 6) && (mode != 18) && (mode != 26) &&

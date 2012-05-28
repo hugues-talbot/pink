@@ -25,7 +25,7 @@ namespace pink {
     )
   {
     image_type result;
-    result.copy(big_image);
+    result = big_image.clone();
     int d = big_image.get_size().size();
     pink::types::vint shift_vec(shift);
 
@@ -66,7 +66,7 @@ namespace pink {
     )
   {
     image_type result;
-    result.copy(big_image);
+    result = big_image.clone();    
     int d = big_image.get_size().size();
     pink::types::vint shift_vec(shift);
 

@@ -33,66 +33,24 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-/*! \file skel2graph.c
-
-\brief generation of a graph from a curvilinear skeleton
-
-<B>Usage:</B> skel2graph in.skel [mode] out.graph
-
-<B>Description:</B>
-Generation of a graph from a curvilinear skeleton.
-
-The parameter \b mode has the following meaning (default is 0):
-
-\li 0: vertices of the graphs are elements (ends, curves, junctions, isolated points) of the skeleton
-
-\li 1: vertices of the graph are only ends, isolated points and junctions of the skeleton
-
-<B>Types supported:</B> 2Dskel, 3Dskel
-
-<B>Category:</B> topobin
-\ingroup  topobin
-
-\author Michel Couprie 2009
-*/
-#include <stdio.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <stdlib.h>
-#include <assert.h>
-#include "mccodimage.h"
-#include "mcimage.h"
 #include "mcgraphe.h"
 #include "mcskelcurv.h"
-#include "lskelcurv.h"
-#include "lskel2graph.h"
+
+#ifndef LSKEL2GRAPH__H__
+#define LSKEL2GRAPH__H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
-/* =============================================================== */
-int main(int argc, char **argv)
-/* =============================================================== */
-{
-  skel * s; 
-  graphe * g; 
-  int32_t mode = 0;
-
-  if ((argc != 3) && (argc != 4))
-  {
-    fprintf(stderr, "usage: %s filein.skel [mode] fileout.graph\n", argv[0]);
-    exit(1);
-  }
-
-  s = readskel(argv[1]);
-  assert(s != NULL);
-
-  if (argc==4)
-      mode = atoi(argv[2]);
-
-  g = lskel2graph(s, mode);
+    graphe * lskel2graph(  skel * S, int32_t mode );
+    graphe * lskel2graph0( skel * S );
+    graphe * lskel2graph1( skel * S );
     
-  assert(g != NULL);
 
-  SaveGraphe(g, argv[argc-1]);  
+#ifdef __cplusplus
+} // extern C
+#endif
 
-  return 0;
-} /* main */
+#endif /* LSKEL2GRAPH__H__ */

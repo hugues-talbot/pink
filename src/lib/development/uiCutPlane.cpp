@@ -149,7 +149,7 @@ namespace pink {
     // PTR<char_image> plane(new char_image(original.get_size()));
     
     char_image result;
-    result.copy(original);
+    result = original.clone();
 
     pink::types::vint curr( result.get_size().size(), "curr"  );
     
@@ -188,8 +188,7 @@ namespace pink {
     pink::types::vint size2D;
     size2D << src.get_size()[0], src.get_size()[1];
     
-    char_image result;
-    result.copy(size2D);
+    char_image result(size2D);
     
     v3d pA(A);
     v3d pB(B);

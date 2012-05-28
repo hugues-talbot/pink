@@ -14,8 +14,8 @@
 
 // LuM end of file
 
-#ifndef SKELETON__HPP__
-#define SKELETON__HPP__
+#ifndef SKEL2GRAPH__HPP__
+#define SKEL2GRAPH__HPP__
 
 #include <limits>
 #include <boost/smart_ptr.hpp>
@@ -61,20 +61,12 @@ namespace pink {
         }
 
         skel_t( uint32_t rs, uint32_t cs, uint32_t ds, uint32_t nbvertex, uint32_t nbptcell, uint32_t nbadjcell, int32_t connex ) {
-            skel * tmp_skel = NULL;
-            tmp_skel = initskel(rs, cs, ds, nbvertex, nbptcell, nbadjcell, connex );
-            if (tmp_skel==NULL)
-                pink_error( "Could not create the skeleton." );
-            
+            skel * tmp_skel = initskel(rs, cs, ds, nbvertex, nbptcell, nbadjcell, connex );
             m_skel.reset( tmp_skel, ::termineskel );
         }        
         
-        skel_t( std::string filename ) {            
-            skel * tmp_skel = NULL;
-            tmp_skel = readskel( filename.c_str() );
-            if (tmp_skel==NULL)
-                pink_error( "Could not read the skeleton from '" + filename + "'" );
-            
+        skel_t( std::string filename ) {
+            skel * tmp_skel = readskel( filename.c_str() );
             m_skel.reset( tmp_skel, ::termineskel );
         }
 
@@ -85,7 +77,7 @@ namespace pink {
         }
 
         operator const skel * () const {
-            return m_skel.get();
+            return m_skel.get();            
         }
         
         std::string repr() {
@@ -174,12 +166,8 @@ namespace pink {
     skel_t<index_t>
     image2skel( T0 & image, int32_t connex, int32_t len ) {
         // check the type !!!
-        skel * tmp_skel = NULL;
-        tmp_skel = ::limage2skel( image, connex, len);
-
-        if (tmp_skel==NULL)
-            pink_error("The image could not have been created.");        
-
+        skel * tmp_skel = ::limage2skel( image, connex, len);
+        // check check
         skel_t<index_t> result(tmp_skel);        
 
         return result;
@@ -188,7 +176,7 @@ namespace pink {
 
     template <class T0>
     skel_t<index_t>
-    image2skel_short( T0 & image, int32_t connex ) {        
+    image2skel_short( T0 & image, int32_t connex ) {
         return image2skel<T0>( image, connex,  std::numeric_limits<int32_t>::max() );        
     } // image2skel
 
@@ -196,6 +184,6 @@ namespace pink {
 } /* namespace pink */
 
 
-#endif /* SKELETON__HPP__ */
+#endif /* SKEL2GRAPH__HPP__ */
 
 // LuM end of file

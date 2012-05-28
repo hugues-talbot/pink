@@ -34,8 +34,7 @@ namespace pink {
       )
     {
       char_image result;
-      result.copy(image);
-
+      result = image.clone();
       // ???????
       // char_image loc_inhibit;
       

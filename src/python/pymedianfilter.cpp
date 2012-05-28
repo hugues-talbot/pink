@@ -32,9 +32,9 @@ namespace pink {
       }  
   
       char_image result;
-      result.copy(image);
+      result = image.clone();
       char_image non_const_structuring_element;
-      non_const_structuring_element.copy(structuring_element);
+      non_const_structuring_element = structuring_element.clone();
   
       if ( image.get_size().size() == 2 ){ // the image is 2D
     

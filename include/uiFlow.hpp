@@ -589,7 +589,7 @@ namespace pink {
     std::cout << "creating the max_flow object (" << static_cast<void*>(this) << ")" << std::endl;	
 #   endif /* UJIMAGE_DEBUG */        
 
-    potencial.copy(gg); // "potencial";
+    potencial = gg.clone(); // "potencial";
     potencial.fill(0.);
     
     if (( this->number_of_threads == 0 ) || (this->number_of_threads > boost::thread::hardware_concurrency() ))
@@ -599,7 +599,7 @@ namespace pink {
 
     // Now we copy the pointers to global variables, so the threads can see them.
     // boost::shared_ptr is boost's 'shared_array' smart pointer.
-    this->gg.copy(gg);
+    this->gg = gg.clone();
     g_glob = this->gg.get_pixels();    
     flow_glob.reset(new pixel_type[ d * length_glob ]);
 
@@ -610,7 +610,7 @@ namespace pink {
     } /* end of parallel FOR */
 
     // making 
-    src_sink.copy(SS);	
+    src_sink = SS.clone();
     //int dim [d];
     dim.reset(new pink::types::vint(potencial.get_size()));
 

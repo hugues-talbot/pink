@@ -32,7 +32,7 @@ namespace pink {
     {
 
       image_t result;
-      result.copy(src);
+      result = src.clone();
 
      // The low-level function imferod_rect etc return 0 to indicate success
     // HT 20120227
@@ -68,7 +68,7 @@ namespace pink {
     {
         int errorcode = 0;
         image_t result;
-        result.copy(src);
+        result = src.clone();
 
         // The low-level function imferode_rect etc return 0 to indicate success
         // HT 20120227

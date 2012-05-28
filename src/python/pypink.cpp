@@ -163,6 +163,9 @@ int imfclose_rect( struct xvimage *input, int SEnx, int SEny, struct xvimage *ou
 // skeleton
 void pyskeleton();
 
+// graphs
+void pygraph();
+
 // this part is not yet ready for windows
 #ifdef UNIXIO
 // not sure this is the correct thing to do here HT
@@ -417,6 +420,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   pyliar();
   pywshed();
   pydevel();
+  pygraph();  
   pymorpho();
   pypoints();
   pymemtest();
