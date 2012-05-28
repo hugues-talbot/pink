@@ -475,6 +475,15 @@ if (CMAKE_HOST_UNIX)
     endif(BUILD_DOCUMENTATION)
 
 
+### **********************************************************************************************
+### **********************************************************************************************
+### ********************************** Testing ***************************************************
+### **********************************************************************************************
+### **********************************************************************************************
+
+    if(NOT PINKTEST_DIRECTORY)
+	SET( PINKTEST_DIRECTORY ${CMAKE_SOURCE_DIR}/"../Pinktest" CACHE PATH "The directory of the imput files for the unit testing. Mostly images, but skeletons and graph are also tested." )
+    endif(NOT PINKTEST_DIRECTORY)
 
 
 endif (CMAKE_HOST_UNIX)
