@@ -23,17 +23,17 @@ except KeyError:
 
 class areaopening(unittest.TestCase):
 
-    @unittest.skip("Error")
-    def test_0(self):
-        result = pink.cpp.areaopening( pink.cpp.readimage( IMAGES + '/2dbyte/gray/g2gel.pgm' ), 4, 20)
-        gold   = pink.cpp.readimage( RESULTS + '/areaopening_g2gel_4_20.pgm')
-        self.assertTrue( result == gold )
+    # @unittest.skip("Error")
+    # def test_0(self):
+    #     result = pink.cpp.areaopening( pink.cpp.readimage( IMAGES + '/2dbyte/gray/g2gel.pgm' ), 4, 20)
+    #     gold   = pink.cpp.readimage( RESULTS + '/areaopening_g2gel_4_20.pgm')
+    #     self.assertTrue( result == gold )
 
-    @unittest.skip("Error")
-    def test_1(self):
-        result = pink.cpp.areaopening( pink.cpp.readimage( IMAGES + '/2dbyte/gray/g2gel.pgm' ), 8, 20)
-        gold   = pink.cpp.readimage( RESULTS + '/areaopening_g2gel_8_20.pgm')
-        self.assertTrue( result == gold )
+    # @unittest.skip("Error")
+    # def test_1(self):
+    #     result = pink.cpp.areaopening( pink.cpp.readimage( IMAGES + '/2dbyte/gray/g2gel.pgm' ), 8, 20)
+    #     gold   = pink.cpp.readimage( RESULTS + '/areaopening_g2gel_8_20.pgm')
+    #     self.assertTrue( result == gold )
 
 
     def test_2(self):

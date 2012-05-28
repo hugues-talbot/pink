@@ -29,18 +29,18 @@ class seuil(unittest.TestCase):
         self.assertTrue( result == gold )
 
 
-    @unittest.skip("No testfile")
-    def test_1(self):
-        result = pink.cpp.seuil( pink.cpp.readimage( IMAGES + '/2dlong/l2fish1.pgm' ), 3)
-        gold   = pink.cpp.readimage( RESULTS + '/seuil_l2fish1_3.pgm')
-        self.assertTrue( result == gold )
+    # @unittest.skip("No testfile")
+    # def test_1(self):
+    #     result = pink.cpp.seuil( pink.cpp.readimage( IMAGES + '/2dlong/l2fish1.pgm' ), 3)
+    #     gold   = pink.cpp.readimage( RESULTS + '/seuil_l2fish1_3.pgm')
+    #     self.assertTrue( result == gold )
 
 
-    @unittest.skip("No testfile")
-    def test_2(self):
-        result = pink.cpp.seuil( pink.cpp.readimage( IMAGES + '/2dfloat/f2fish1.pgm' ), 3)
-        gold   = pink.cpp.readimage( RESULTS + '/seuil_f2fish1_3.pgm')
-        self.assertTrue( result == gold )
+    # @unittest.skip("No testfile")
+    # def test_2(self):
+    #     result = pink.cpp.seuil( pink.cpp.readimage( IMAGES + '/2dfloat/f2fish1.pgm' ), 3)
+    #     gold   = pink.cpp.readimage( RESULTS + '/seuil_f2fish1_3.pgm')
+    #     self.assertTrue( result == gold )
 
 
 if __name__ == '__main__':
