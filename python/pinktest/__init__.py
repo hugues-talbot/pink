@@ -64,6 +64,7 @@ from segmentvol import *
 from seuil import *
 from skelcurv import *
 from skeleton import *
+from skeleton_t import *
 from skelfindelbows import *
 from skelpar import *
 from skelpar3d import *
@@ -127,6 +128,7 @@ def main():
     alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(seuil));
     # alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(skelcurv));
     alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(skeleton));
+    alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(skeleton_t));
     # alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(skelfindelbows));
     #alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(skelpar));
     # alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(skelpar3d));
