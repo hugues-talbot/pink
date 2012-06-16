@@ -15,7 +15,12 @@
 This file contains Pink's exceptions called from Python.
 """
 
-class python_component_missing: BaseException
+try:
+    class python_component_missing: BaseException
+except: # python 2.4 in debian 4 (etch) does not have the BaseException class
+    class python_component_missing:
+        pass
+
 
 
 
