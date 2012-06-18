@@ -10,7 +10,6 @@
 #define LGRANK_GENERIC_HPP
 
 #include "liarp.h"                   
-#include "gline_generic.hpp"
 
 template <typename Type>
 void gline( Type *IN,      /**< [in] input image */
