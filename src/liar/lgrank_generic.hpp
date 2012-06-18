@@ -12,6 +12,16 @@
 #include "liarp.h"                   
 #include "gline_generic.hpp"
 
+template <typename Type>
+void gline( Type *IN,      /**< [in] input image */
+            Type *OUT,     /**< [out] output image */
+            int nx,        /**< [in] number of columns */
+            int ny,        /**< [in] number of lines */
+            int k,         /**< [in] horizontal length of the line */
+            double th,     /**< [in] the angle of the line */
+            double rank    /**< [in] the rank */);
+
+
 /* 
  *
  *  A 1D running median/rank routine written by Edmond J. Breen 17/5/94

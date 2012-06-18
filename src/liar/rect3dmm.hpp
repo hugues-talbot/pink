@@ -44,7 +44,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdlib.h>
 
 #include "liarp.h"
-
+#include "genfmin.hpp"
+#include "genfmax.hpp"
 
 /**
  * \brief function to replace each voxel within a 3d image with

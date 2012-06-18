@@ -31,6 +31,9 @@
 //#include "liarlmts.h"
 #include "liarp.h"
 #include "mcutil.h"
+#include "genfmin.hpp"
+#include "genfmax.hpp"
+#include "lgrank_generic.hpp"
 
 // #ifndef max
 // #define max(a,b) ((a)<(b)) ? (b):(a)
