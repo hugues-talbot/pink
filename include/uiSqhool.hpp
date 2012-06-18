@@ -210,7 +210,7 @@ namespace pink{
     std::cout << "image.get_size().size()=" << image.get_size().size() << std::endl;
     index_t x,y,z,t;
     //setting up dimensions
-    setDimensions(image.get_size(), x, y, z, t); // as 4 dimensions are supported
+    set_dimensions(image.get_size(), x, y, z, t); // as 4 dimensions are supported
     
     std::cout << "inserting image with size: (x=" << x << ", y=" << y << ", z=" << z << ", t=" << t << ")" << std::endl;
     

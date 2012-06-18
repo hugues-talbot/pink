@@ -26,14 +26,14 @@
       \code
  void py_maxflow_export(){
   
-  def( "cpp_maxflow_float", &maxflow_float,
+  boost::python::def( "cpp_maxflow_float", &maxflow_float,
        args("source and sink", "boundaries", "iteration", "tau", "the number of threads"),
        "maximal flows, returns the image (potential field) \n"
        " \n"
  // end of the documenation
     );
   
-  def( "cpp_maxflow_cami_float", &maxflow_cami,
+  boost::python::def( "cpp_maxflow_cami_float", &maxflow_cami,
        args("source and sink", "boundaries", "iteration", "tau", "the number of threads"),
        "maximal flows, returns the flow (float array of size pixels * dimension ) \n"
        " \n"
@@ -73,37 +73,37 @@
                                                                         \
   void FNAME##_export()                                                 \
   {									\
-    def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<char_image>,   \
+    boost::python::def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<pink::char_image>, \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<short_image>,  \
+    boost::python::def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<pink::short_image>,  \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<int_image>,    \
+    boost::python::def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<pink::int_image>,    \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<float_image>,  \
+    boost::python::def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<pink::float_image>,  \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<double_image>, \
+    boost::python::def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<pink::double_image>, \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<fcomplex_image>, \
+    boost::python::def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<pink::fcomplex_image>, \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<dcomplex_image>, \
+    boost::python::def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN)<pink::dcomplex_image>, \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
@@ -125,37 +125,37 @@ You can call it from BOOST_PYTHON_MODULE.
  */
 #define UI_DEFINE_FUNCTION( FNAME, FN, ARGS, DOC )                      \
   {                                                                     \
-    def( FNAME, BOOST_PP_EXPAND(FN)<char_image>,                        \
+    boost::python::def( FNAME, BOOST_PP_EXPAND(FN)<pink::char_image>,                        \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( FNAME, BOOST_PP_EXPAND(FN)<short_image>,                       \
+    boost::python::def( FNAME, BOOST_PP_EXPAND(FN)<pink::short_image>,                       \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( FNAME, BOOST_PP_EXPAND(FN)<int_image>,                         \
+    boost::python::def( FNAME, BOOST_PP_EXPAND(FN)<pink::int_image>,                         \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( FNAME, BOOST_PP_EXPAND(FN)<float_image>,                       \
+    boost::python::def( FNAME, BOOST_PP_EXPAND(FN)<pink::float_image>,                       \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( FNAME, BOOST_PP_EXPAND(FN)<double_image>,                      \
+    boost::python::def( FNAME, BOOST_PP_EXPAND(FN)<pink::double_image>,                      \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( FNAME, BOOST_PP_EXPAND(FN)<fcomplex_image>,                    \
+    boost::python::def( FNAME, BOOST_PP_EXPAND(FN)<pink::fcomplex_image>,                    \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( FNAME, BOOST_PP_EXPAND(FN)<dcomplex_image>,                    \
+    boost::python::def( FNAME, BOOST_PP_EXPAND(FN)<pink::dcomplex_image>,                    \
          ARGS,                                                          \
          DOC                                                            \
       );                                                                \
@@ -184,27 +184,27 @@ You can call it from BOOST_PYTHON_MODULE.
 #define UI_WRAP_CPP( FNAME, FN, ARGS, DOC )                             \
   void BOOST_PP_CAT(export_function, BOOST_PP_COUNTER)()                \
   {		     							\
-    def( FNAME, BOOST_PP_EXPAND(FN)<char_image>,                        \
+    boost::python::def( FNAME, BOOST_PP_EXPAND(FN)<pink::char_image>,                        \
          ARGS,								\
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( FNAME, BOOST_PP_EXPAND(FN)<short_image>,                       \
+    boost::python::def( FNAME, BOOST_PP_EXPAND(FN)<pink::short_image>,                       \
          ARGS,								\
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( FNAME, BOOST_PP_EXPAND(FN)<int_image>,                         \
+    boost::python::def( FNAME, BOOST_PP_EXPAND(FN)<pink::int_image>,                         \
          ARGS,								\
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( FNAME, BOOST_PP_EXPAND(FN)<float_image>,                       \
+    boost::python::def( FNAME, BOOST_PP_EXPAND(FN)<pink::float_image>,                       \
          ARGS,								\
          DOC                                                            \
       );                                                                \
                                                                         \
-    def( FNAME, BOOST_PP_EXPAND(FN)<double_image>,                      \
+    boost::python::def( FNAME, BOOST_PP_EXPAND(FN)<pink::double_image>,                      \
          ARGS,								\
          DOC                                                            \
       );                                                                \
@@ -232,7 +232,7 @@ You can call it from BOOST_PYTHON_MODULE.
                                                                         \
   void FNAME##_export()                                                 \
   {									\
-    def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN),               \
+    boost::python::def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN),               \
          ARGS,                                                          \
          DOC                                                            \
       );								\
@@ -241,7 +241,7 @@ You can call it from BOOST_PYTHON_MODULE.
 #define UI_DEFINE_ONE_FUNCTION( FNAME, FN, ARGS, DOC )                  \
                                                                         \
   {									\
-    def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN),               \
+    boost::python::def( BOOST_PP_STRINGIZE(FNAME), &BOOST_PP_EXPAND(FN),               \
 	 ARGS,								\
 	 DOC                                                            \
       );								\

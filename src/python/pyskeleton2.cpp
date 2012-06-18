@@ -20,12 +20,6 @@
 #include "lskeletons.h"
 #include "pink_python.h"
 
-
-
-using namespace boost::python;
-using namespace pink;
-
-
 // based on skeleton.c
 
 // ERROR N is not supposed to be used as a define macro
@@ -34,15 +28,14 @@ using namespace pink;
 namespace pink {
   namespace python {
 
-
     // the content of this functon is copycat from
     // skeleton.c
-    int_image skeleton_distance(
-      char_image & image,
+    pink::int_image skeleton_distance(
+      pink::char_image & image,
       int priocode
       )
     {
-      int_image prio(image.get_size());
+      pink::int_image prio(image.get_size());
 
       int32_t i, N;
       uint8_t *F;
@@ -116,56 +109,19 @@ namespace pink {
     } /* skeleton_distance */
 
 
-    template <class image_type>
-    char_image
-    skeleton_im_prioim_connex_inhibval (
-      const char_image & image,
-      image_type prioimage,
-      int connex,
-      int inhibval=-1
-      )
-    {
-      if (inhibval==-1)
-      {
-        char_image result;        
-        result = skeleton_im_prioim_connex_inhibimage(image, prioimage, connex, char_image());
-        return result;        
-      } /* inhibval == -1 */
-
-      char_image result;
-      result = image.clone();
-      
-      if (depth(result.get_output()) == 1)  // the image is 2D
-      {
-        if (! lskelubp(result.get_output(), prioimage, connex, inhibval))
-        {
-          pink_error("lskelubp failed");
-        }
-      }
-      else  // the image is 3D
-      {
-        if (! lskelubp3d(result.get_output(), prioimage, connex, inhibval))
-        {
-          pink_error("lskelubp3d failed");
-        }
-      }  // the image is 3D
-
-      return result;
-    } /* skeleton_im_prioim_connex_inhibimage */
-
     
-    char_image
+    pink::char_image
     skeleton_im_prioint_connex_inhibimage(
-      const char_image & image,
+      const pink::char_image & image,
       int priocode,
       int connex,
-      /*CAN_BE_NULL*/ char_image inhibimage
+      /*CAN_BE_NULL*/ pink::char_image inhibimage
       )
     {
-      char_image result;
+      pink::char_image result;
       result = image.clone();      
 
-      int_image prio;
+      pink::int_image prio;
       prio = skeleton_distance(result, priocode);
 
       if (depth(result.get_output()) == 1) // the image is 2D
@@ -180,36 +136,18 @@ namespace pink {
       return result;
     } /* skeleton_im_prioint_connex_inhibimage */
 
-    char_image
-    skeleton_im_prioint_connex_inhibval(
-      const char_image & image,
-      int priocode,
-      int connex,
-      /*CAN_BE_NULL*/ int inhibval = -1
-      )
-    {
-      char_image result;
-      result = image.clone();
-
-      int_image prio;
-      prio = skeleton_distance(result, priocode);
-
-      result = skeleton_im_prioim_connex_inhibval(image, prio, connex, inhibval);      
-      
-      return result;
-    } /* skeleton_im_prioint_connex_inhibimage */
 
 
     template <class image_type>
-    char_image
+    pink::char_image
     skeleton_im_prioim_connex_inhibimage (
-      const char_image & image,
+      const pink::char_image & image,
       image_type prioimage,
       int connex,
-      char_image inhibimage
+      pink::char_image inhibimage
       )
     {
-      char_image result;
+      pink::char_image result;
       result = image.clone();
       
       if (depth(result.get_output()) == 1) // the image is 2D
@@ -225,15 +163,74 @@ namespace pink {
     } /* skeleton_im_prioim_connex_inhibimage */
 
 
-    char_image skeleton_end_char(
-      const char_image & input_image, 
+
+    template <class image_type>
+    pink::char_image
+    skeleton_im_prioim_connex_inhibval (
+					const pink::char_image & image,
+					image_type prioimage,
+					int connex,
+					int inhibval=-1
+					)
+    {
+      if (inhibval==-1)
+	{
+	  pink::char_image result;        
+	  result = skeleton_im_prioim_connex_inhibimage(image, prioimage, connex, pink::char_image());
+	  return result;        
+	} /* inhibval == -1 */
+
+      pink::char_image result;
+      result = image.clone();
+      
+      if (depth(result.get_output()) == 1)  // the image is 2D
+	{
+	  if (! lskelubp(result.get_output(), prioimage, connex, inhibval))
+	    {
+	      pink_error("lskelubp failed");
+	    }
+	}
+      else  // the image is 3D
+	{
+	  if (! lskelubp3d(result.get_output(), prioimage, connex, inhibval))
+	    {
+	      pink_error("lskelubp3d failed");
+	    }
+	}  // the image is 3D
+
+      return result;
+    } /* skeleton_im_prioim_connex_inhibimage */
+
+    pink::char_image
+    skeleton_im_prioint_connex_inhibval(
+      const pink::char_image & image,
+      int priocode,
+      int connex,
+      /*CAN_BE_NULL*/ int inhibval = -1
+      )
+    {
+      pink::char_image result;
+      result = image.clone();
+
+      pink::int_image prio;
+      prio = skeleton_distance(result, priocode);
+
+      result = skeleton_im_prioim_connex_inhibval(image, prio, connex, inhibval);      
+      
+      return result;
+    } /* skeleton_im_prioint_connex_inhibimage */
+
+
+
+    pink::char_image skeleton_end_char(
+      const pink::char_image & input_image, 
       int connex,
       int seuil			     
       ) 
     {
 
-      char_image res;
-      xvimage *xvinput;
+      pink::char_image res;
+      ::xvimage *xvinput;
       res = input_image.clone();
       
       xvinput = res.get_output();
@@ -289,36 +286,39 @@ namespace pink {
   } /* namespace python */
 } /* namespace pink */
 
+
+
+
 void skeleton2_export()
 {
-  def( "skeleton",
+  boost::python::def( "skeleton",
        &pink::python::skeleton_im_prioint_connex_inhibimage,
-       ( arg("image"), arg("prio"), arg("connexity"), arg("inhibit") ),
+       ( boost::python::arg("image"), boost::python::arg("prio"), boost::python::arg("connexity"), boost::python::arg("inhibit") ),
        doc__skeleton__c__
     );
 
-  def( "skeleton",
+  boost::python::def( "skeleton",
        &pink::python::skeleton_im_prioint_connex_inhibval,
-       ( arg("image"), arg("prio"), arg("connexity"), arg("inhibit")=-1 ),
+       ( boost::python::arg("image"), boost::python::arg("prio"), boost::python::arg("connexity"), boost::python::arg("inhibit")=-1 ),
        doc__skeleton__c__
     );
   
   UI_DEFINE_FUNCTION(
     "skeleton",
     pink::python::skeleton_im_prioim_connex_inhibimage,
-    ( arg("image"), arg("prio"), arg("connexity"), arg("inhibit") ),
+    ( boost::python::arg("image"), boost::python::arg("prio"), boost::python::arg("connexity"), boost::python::arg("inhibit") ),
     doc__skeleton__c__
     );
 
   UI_DEFINE_FUNCTION(
     "skeleton",
     pink::python::skeleton_im_prioim_connex_inhibval,
-    ( arg("image"), arg("prio"), arg("connexity"), arg("inhibit")=-1 ),
+    ( boost::python::arg("image"), boost::python::arg("prio"), boost::python::arg("connexity"), boost::python::arg("inhibit")=-1 ),
     doc__skeleton__c__
     );
 
-  def( "skeleton_end_char", &pink::python::skeleton_end_char,
-       args("image", "connexity", "threshold"),
+  boost::python::def( "skeleton_end_char", &pink::python::skeleton_end_char,
+       boost::python::args("image", "connexity", "threshold"),
        "Description: \n"
        "Homotopic skeletonization by iterative removal of simple,\n"
        "non-end points. Breadth-first strategy.\n"
