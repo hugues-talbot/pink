@@ -65,7 +65,57 @@ namespace pink {
       return result;
     } /* xvimage_to_python_list */
     
+    // HT Experiment
+#if 0
+
+    // This is an even uglier function; to be revised later! 
+    // it does the reverse of the previous one, so that we can display 
+    // colour images for instance
+    xvimage * python_list_to_xvimage( boost::python::list imglist )
+    {
+#     ifdef UJIMAGE_DEBUG
+      std::cout << "creating an image from a list\n";
+#     endif /* UJIMAGE_DEBUG */
+      //the original pointer to the first pixel. We set the pointer at
+      //the beginning of the current layer at each iteration. Then we
+      //copy-create an image from it. NOTE THIS IS A HACK!
+      void * first_pixel = image->image_data;
+      long int layer_size =
+        /*sizeof(typename image_type::pixel_type) * */
+        colsize(image) * rowsize(image) * depth(image) * tsize(image);
+/*      * nbands(image);*/
       
+#     if UJIMAGE_DEBUG > 2
+      _DEBUG(sizeof(typename image_type::pixel_type));
+      _DEBUG(colsize(image));
+      _DEBUG(rowsize(image));
+      _DEBUG(depth(image));
+      _DEBUG(tsize(image));
+      _DEBUG(nbands(image));
+#     endif /* UJIMAGE_DEBUG > 2 */
+        
+      //boost::python::list result;
+      
+      int n = boost::python::extract<int>(imglist->attr("__len__")());
+
+      FOR( p, n) {
+	xvimage *image = boost::python::extract<char_image>(imglist[p]);
+      }
+
+      FOR( q, image->num_data_bands )
+      {
+        // this changes the pointer to the first pixel of the current layer
+        image->image_data = &( reinterpret_cast<typename image_type::pixel_type*>(first_pixel)[q*layer_size] );
+        char_image layer(*image);
+        result.append(layer);
+      } /* FOR q in num_data_bands */
+
+      // we set back the image to the original
+      image->image_data = first_pixel;
+      return result;
+    } /* xvimage_to_python_list */
+
+#endif // zero 
     
 // NOTE THIS FUNCTION NEEDS CLEAN-UP !!!!!!    
     boost::python::object py_readimage( std::string filename )

@@ -55,6 +55,11 @@ try:
 except:
     print("warning: cannot import histo")
 
+try:
+    from numpy_conv import *
+except:
+    print("warning: cannot import numpy_conv")
+
 # from python_pink import *
 # from long2byte import long2byte
 # from parallel_map import parallel_map
