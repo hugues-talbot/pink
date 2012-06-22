@@ -34,7 +34,7 @@ np2pinkdtype  = dict((v,k) for k, v in pink2npdtype.iteritems())
 
 def pink2numpy(image):
     """
-    Makes a numpy array from an image
+    Makes a numpy array from an image. Shape is lost (to be fixed)
     """
     return np.frombuffer(image.get_pixels()[:],pink2npdtype[image.imtype()])
 
