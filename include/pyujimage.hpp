@@ -151,7 +151,12 @@ Python class pink.image / c++ pink::ujoi
     .def( "get_pixels", &image_type::get_pixels_python,
           boost::python::args("self"),
           "for raw image visualisation"
-      )
+        )
+
+      .def("set_pixels", &image_type::set_pixels,
+           boost::python::args("self","ptr","nbytes"),
+           "for raw data exchange from numpy for instance"
+          )
 
     .def( "clone", &image_type::clone,
           "makes a deep copy of the image"

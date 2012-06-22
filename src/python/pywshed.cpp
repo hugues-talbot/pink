@@ -56,7 +56,7 @@ namespace wshed
 
 // by MC
   UI_WRAP_FUNCTION(
-    "watershedMeyer2lab",
+    "watershedMeyer2labnomask",
     llpemeyer2lab_nomask,
     ( arg("markers"), arg("image"), arg("connexity") ),
     doc__watershedMeyer2lab__c__

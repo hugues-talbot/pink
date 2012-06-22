@@ -598,6 +598,11 @@ namespace pink
     boost::shared_array<pixel_type> get_pixels();
     boost::shared_array<pixel_type> get_pixels() const;
 
+      /**
+         \brief Takes a pointer in and copy the data it points to onto the image buffer
+      */
+      void set_pixels(long ptr, long nbytes);
+      
     /**
     \brief Returns a string with some informations about the
     image. Generally it's size and pixel type.
@@ -1697,7 +1702,17 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::get_pixels */
 
 
-  
+  template <class pixel_type >
+  void ujoi<pixel_type >::set_pixels(long ptr, long nbytes) {
+      // brutal
+      if (nbytes == this->size->prod()*sizeof(pixel_type))
+          memcpy(reinterpret_cast<void*>(this->pixels.get()), (void*)ptr, nbytes);
+      else
+          std::cerr << "Incorrect size for buffer, nothing done" << std::endl;
+  } /* ujoi::set_pixels */
+
+
+    
   template <class pixel_type >
   std::string ujoi<pixel_type >::repr() const
   {
