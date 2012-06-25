@@ -34,9 +34,17 @@ np2pinkdtype  = dict((v,k) for k, v in pink2npdtype.iteritems())
 
 def pink2numpy(image):
     """
-    Makes a numpy array from an image. Shape is lost (to be fixed)
+    Makes a numpy array from an image. Shape is retained!
     """
-    return np.frombuffer(image.get_pixels()[:],pink2npdtype[image.imtype()])
+    nparray=np.frombuffer(image.get_pixels()[:],pink2npdtype[image.imtype()])
+    if (len(image.size) == 3):
+        reshape(nparray,(image.size[2],image.size[1],image.size[0]))
+    elif (len(image.size) == 2):
+        reshape(nparray,(image.size[1],image.size[0]))
+    else:
+        sys.stder.write("Number of dimensions not supported, data was not reshaped\n")
+
+    return nparray
 
 def numpy2pink(array):
     """
