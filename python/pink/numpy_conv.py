@@ -38,12 +38,13 @@ def pink2numpy(image):
     """
     nparray=np.frombuffer(image.get_pixels()[:],pink2npdtype[image.imtype()])
     if (len(image.size) == 3):
-        reshape(nparray,(image.size[2],image.size[1],image.size[0]))
+        print("Reshaping to %d x %d x %d" % (image.size[2],image.size[1],image.size[0]))
+        return(nparray.reshape(image.size[2],image.size[1],image.size[0]))
     elif (len(image.size) == 2):
-        reshape(nparray,(image.size[1],image.size[0]))
+        print("Reshaping to %d x %d" % (image.size[1],image.size[0]))
+        return(nparray.reshape(image.size[1],image.size[0]))
     else:
-        sys.stder.write("Number of dimensions not supported, data was not reshaped\n")
-
+        sys.stderr.write("Number of dimensions not supported, data was not reshaped\n")
     return nparray
 
 def numpy2pink(array):
