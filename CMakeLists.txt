@@ -67,12 +67,14 @@ if (CMAKE_HOST_UNIX)
 
     option( 64BIT "Compiles Pink in 64bit mode. This is necessary for files which could be larger than 2GB. Note that the library always obey the system architecture." ON )
 
+    # default optimization options
+    SET( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -msse -msse2" CACHE STRING "Optimization flags for the C++ compiler in Release mode" FORCE )
+    SET( CMAKE_C_FLAGS_RELEASE   "-O3 -DNDEBUG -msse -msse2" CACHE STRING "Optimization flags for the C   compiler in Release mode" FORCE )
+
     if(NOT CMAKE_BUILD_TYPE)
-	SET( CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE )
-	SET( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -mtune=native" CACHE STRING "Optimization flags for the C++ compiler in Release mode" FORCE )
-	SET( CMAKE_C_FLAGS_RELEASE   "-O3 -DNDEBUG -mtune=native" CACHE STRING "Optimization flags for the C   compiler in Release mode" FORCE )
+	SET( CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release" FORCE )
     endif(NOT CMAKE_BUILD_TYPE)
-	
+    SET_PROPERTY( CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Release" "Debug" )
 
 ### **********************************************************************************************
 ### **********************************************************************************************
@@ -301,9 +303,6 @@ if (CMAKE_HOST_UNIX)
 ### **********************************************************************************************
 ### **********************************************************************************************
 
-
-
-
     if ( PYTHON_FRONT_END )
 
 	find_package(PythonInterp)
@@ -442,9 +441,6 @@ if (CMAKE_HOST_UNIX)
 
 	endif (DEVELOPMENT)
 
-
-
-
 	add_subdirectory( src/python python )
 
 
@@ -455,6 +451,12 @@ if (CMAKE_HOST_UNIX)
 ### *************************** Package Generation ***********************************************
 ### **********************************************************************************************
 ### **********************************************************************************************
+
+    if( NOT PINK_PACKAGE_TYPE )
+	SET( PINK_PACKAGE_TYPE "TBZ2" CACHE STRING "The binary package to create after the compilation with the 'make package' commang." )
+    endif( NOT PINK_PACKAGE_TYPE )
+
+    SET_PROPERTY( CACHE PINK_PACKAGE_TYPE PROPERTY STRINGS "TBZ2" "ZIP" "TGZ" "RPM-GENERIC" "DEB-GENERIC" "DEB-DEBIAN4" "DEB-DEBIAN6" "RPM-FEDORA17" "RPM-OpenSuSE12.1" )
 
     INCLUDE(UJ_GenerateRPM.cmake)
 
