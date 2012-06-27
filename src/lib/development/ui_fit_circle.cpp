@@ -18,12 +18,14 @@
 
 #include <fstream>
 
+#ifdef PINK_HAVE_PYTHON
+# include <boost/python.hpp>
+#endif /* PINK_HAVE_PYTHON */
+
 #include "ui_pink_types.hpp"
 #include "ui_fit_circle.hpp"
 
 USING_PART_OF_NAMESPACE_EIGEN
-
-
 
 namespace pink
 {
@@ -174,6 +176,8 @@ namespace pink
     return result;    
   } /* fit_circle */
 
+# ifdef PINK_HAVE_PYTHON
+
   boost::python::list py_fit_circle(
     const boost::python::list & py_x,
     const boost::python::list & py_y,
@@ -222,6 +226,7 @@ namespace pink
     return result;    
   } /* py_circle_equation_to_coordinates */
   
+# endif /* PINK_HAVE_PYTHON */
 
   
 } /* namespace pink */

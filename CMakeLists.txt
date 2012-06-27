@@ -102,6 +102,10 @@ if (CMAKE_HOST_UNIX)
 	add_definitions( -DMC_64_BITS )
     endif (64BIT)
 
+    if ( PYTHON_FRONT_END )
+	add_definitions(-DPINK_HAVE_PYTHON)
+    endif( PYTHON_FRONT_END )
+
     CHECK_INCLUDE_FILE( X11/Xlib.h  HTEST1 ) 
     if (NOT HTEST1) 
 	message( FATAL_ERROR "error X11 header file X11/Xlib.h not found") 
@@ -305,6 +309,7 @@ if (CMAKE_HOST_UNIX)
 
     if ( PYTHON_FRONT_END )
 
+	add_definitions(-DPINK_HAVE_PYTHON)
 	option( NUMPY "Compiles numpy<->pink conversion utilities." OFF )
 
 	find_package(PythonInterp)
@@ -426,9 +431,6 @@ if (CMAKE_HOST_UNIX)
 	    endif( NOT EXISTS ${NUMPY_INCLUDE}/numpy/arrayobject.h )
 	    add_definitions( -DPINK_HAVE_NUMPY )
 	endif (NUMPY)
-
-
-	add_definitions(-DPINK_HAVE_PYTHON)
 
         ### ******************************************************
         ### *************** Option Development *******************

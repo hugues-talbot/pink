@@ -17,12 +17,6 @@
 #ifdef __cplusplus
 
 #include <sstream>
-using std::stringstream;
-
-
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in ssexport.cpp: " << msg; call_error(fullmessage.str());}
-
 // NO NAMESPACE, this is a hack
 // namespace pink { 
 
@@ -34,7 +28,7 @@ extern "C" {
 void ui_mesh_export_cstring( void * ss, char * data )
 {
   #ifdef __cplusplus
-  (*reinterpret_cast<stringstream *>(ss)) << data;
+  (*reinterpret_cast<std::stringstream *>(ss)) << data;
   #endif
 } /* ui_mesh_export_cstring */
 
@@ -42,7 +36,7 @@ void ui_mesh_export_cstring( void * ss, char * data )
 void ui_mesh_export_int    ( void * ss, int data )
 {
   #ifdef __cplusplus
-  (*reinterpret_cast<stringstream *>(ss)) << data;
+  (*reinterpret_cast<std::stringstream *>(ss)) << data;
   #endif
 } /* ui_mesh_export_int */
 
@@ -50,7 +44,7 @@ void ui_mesh_export_int    ( void * ss, int data )
 void ui_mesh_export_double ( void * ss, double data )
 {
   #ifdef __cplusplus
-  (*reinterpret_cast<stringstream *>(ss)) << data;
+  (*reinterpret_cast<std::stringstream *>(ss)) << data;
   #endif
 } /* ui_mesh_export_double */
 

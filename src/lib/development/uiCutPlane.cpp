@@ -10,9 +10,13 @@
   ujoimro@gmail.com
 */
 
-
 #include <gsl/gsl_interp.h>
-#include <gsl/gsl_multifit_nlin.h>
+
+#include <boost/python.hpp>
+
+#ifdef PINK_HAVE_PYTHON
+# include <gsl/gsl_multifit_nlin.h>
+#endif /* PINK_HAVE_PYTHON */
 
 #include <eigen2/Eigen/Core>
 #include <eigen2/Eigen/LU>
@@ -55,6 +59,8 @@ namespace pink {
 	} /* FOR */
 	
       } /* v3d */
+
+#   ifdef PINK_HAVE_PYTHON
     v3d( const boost::python::list & src )
       {
 	if ( boost::python::len(src) < 3 )
@@ -73,6 +79,7 @@ namespace pink {
 	  }
 	} /* FOR */
       } /* v3d */
+#   endif /* PINK_HAVE_PYTHON */
 
         
   }; /* class v3d */
@@ -176,7 +183,8 @@ namespace pink {
     return result;
   } /* draw_plane */
 
-  
+
+# ifdef PINK_HAVE_PYTHON
   char_image project_plane( const char_image & src,
                             const boost::python::list & A,
                             const boost::python::list & B,
@@ -366,6 +374,7 @@ namespace pink {
     return result;
     
   } /* project_plane */
+# endif /* PINK_HAVE_PYTHON */
   
  
 

@@ -86,6 +86,10 @@ knowledge of the CeCILL license and that you accept its terms.
 #  include <boost/thread.hpp>
 #  include <boost/operators.hpp>
 #  include <boost/smart_ptr.hpp>
+#  ifdef PINK_HAVE_PYTHON
+#    include <boost/python.hpp>
+#    include <boost/smart_ptr.hpp>
+#  endif /* PINK_HAVE_PYTHON */
 #  include <boost/preprocessor.hpp>
 #  include <boost/shared_array.hpp>
 #  include <boost/lexical_cast.hpp>
@@ -138,7 +142,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "mctree.h"
 #include "mcunionfind.h"
 #include "mcutil.h"
-#include "mcxbib.h"
+// #include "mcxbib.h" not used
 #include "mcpowell.h"
 #include "avscrop.h"
 #include "avsimage.h"
@@ -243,7 +247,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lmeshwarp.h"
 #include "lminima.h"
 #include "lmoments.h"
-#include "lnbtopo.h"
 #include "lnbvois.h"
 #include "loffset.h"
 #include "lpoint.h"
@@ -334,7 +337,7 @@ knowledge of the CeCILL license and that you accept its terms.
 // // new with mixed language declarations (c/c++)
 //#include "larith.h"
 
-
+#include "lnbtopo.h"
 
 #undef min
 #undef max

@@ -10,9 +10,6 @@
   ujoimro@gmail.com
 */
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiFrame.cpp: " << msg; call_error(fullmessage.str());}
-
 namespace pink { 
 
   

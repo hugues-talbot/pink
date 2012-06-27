@@ -14,25 +14,19 @@
 
 #include <pink.h>
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in uiFileIO.cpp: " << msg; call_error(fullmessage.str());}
-
-
-using namespace std;
-
 namespace pink {
 
-  int file_size( const string & filename )
+  int file_size( const std::string & filename )
   {
     int result;
-    ifstream file;
+    std::ifstream file;
 
-    file.open( filename.c_str(), ios::binary );
-    file.seekg( 0, ios::end );
+    file.open( filename.c_str(), std::ios::binary );
+    file.seekg( 0, std::ios::end );
     
     result = file.tellg();
 
-    file.seekg( 0, ios::beg );
+    file.seekg( 0, std::ios::beg );
     file.close(); 
     
     return result;

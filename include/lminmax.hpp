@@ -21,9 +21,6 @@
 #include "ui_pink_types.hpp"
 
 
-#undef error
-#define error(msg) {stringstream fullmessage; fullmessage << "in lminmax.hpp: " << msg; call_error(fullmessage.str());}
-
 namespace pink { 
 
   template <class image_type>  
@@ -35,10 +32,8 @@ namespace pink {
     // the variable to hold the maximum value
     pixel_type max = I(0);
     
-
     //calculating the number of pixels in the image
     int length_glob = I.get_size().prod();
-
 
     FOR(q, length_glob)
     {

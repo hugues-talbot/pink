@@ -15,6 +15,10 @@
 
 #define epsilon 0.001
 
+#ifdef PINK_HAVE_PYTHON
+# include <boost/python.hpp>
+#endif /* PINK_HAVE_PYTHON */
+
 extern "C"
 {
   // this is the lapack generalized eigenvalue calculation function
@@ -36,33 +40,31 @@ extern "C"
 namespace pink
 {
 
- int outer_stride( const Eigen::MatrixXd & );
- bool generalized_eigenvalue(const Eigen::MatrixXd&,
-                             const Eigen::MatrixXd&,
-                             Eigen::MatrixXd&,
-                             Eigen::MatrixXd&
-   );
- Eigen::VectorXd fit_circle( const Eigen::VectorXd &, const Eigen::VectorXd & );
+  int outer_stride( const Eigen::MatrixXd & );
+  bool generalized_eigenvalue(const Eigen::MatrixXd&,
+                              const Eigen::MatrixXd&,
+                              Eigen::MatrixXd&,
+                              Eigen::MatrixXd&
+    );
+  Eigen::VectorXd fit_circle( const Eigen::VectorXd &, const Eigen::VectorXd & );
 
- // the same as 'fit_circle' but with python conversion
- boost::python::list py_fit_circle(
-   const boost::python::list & py_x,
-   const boost::python::list & py_y,
-   const std::string & filename = ""
-   );
-
-
- boost::python::list py_circle_equation_to_coordinates(
-   const boost::python::list & equation
-   );
-
- boost::python::list py_circle_equation_to_coordinates(
-   const boost::python::list & equation
-   );
+# ifdef PINK_HAVE_PYTHON
+  // the same as 'fit_circle' but with python conversion
+  boost::python::list py_fit_circle(
+    const boost::python::list & py_x,
+    const boost::python::list & py_y,
+    const std::string & filename = ""
+    );
 
 
+  boost::python::list py_circle_equation_to_coordinates(
+    const boost::python::list & equation
+    );
 
-
+  boost::python::list py_circle_equation_to_coordinates(
+    const boost::python::list & equation
+    );
+# endif /* PINK_HAVE_PYTHON */
 } /* end namespace pink */
 
 
