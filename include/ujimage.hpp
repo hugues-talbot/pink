@@ -452,6 +452,14 @@ namespace pink
     */
     ujoi( const types::vint & dim, boost::shared_array<pixel_type> data, std::string debug="" );
 
+
+    /**
+       Creates a deep copy from a BLAS-style array. The pointer, and the
+       dimensions are specified.
+     */
+    ujoi( const types::vint & dim, pixel_type * data, std::string debug="" );
+    
+    
     /**
     \brief Index access to the pixels
     With this operator you can access the pixels, as the image was a
@@ -1269,7 +1277,33 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
 
   } /* ujoi::ujoi */
 
+  
+  template <class pixel_type>
+  ujoi<pixel_type>::ujoi (
+    const types::vint & dim,
+    pixel_type * data,
+    std::string debug
+    )
+  {
+#   if UJIMAGE_DEBUG >= 2
+    this->debug=debug; // representing the name of the object if debugged
+    std::cerr << "creating image " << debug << std::endl;
+#   endif /* UJIMAGE_DEBUG */
 
+    size.reset(new types::vint( dim )); // creating a copy of the size
+    center.reset(new types::vint( size->size(), -1 ));
+    pixels.reset( new pixel_type[ size->prod() ] ); // allocating memory for the pixels
+
+    if (this->size->size()<=4){
+      old_school.reset( new shallow_xvimage( *size, this->int_pixel_type() ) );
+    };
+
+    // making a copy of the elements
+    std::copy( (&data[0]), (&data[size->prod()]), pixels.get());
+  } // ujoi::ujoi
+  
+
+  
 
   template <class pixel_type >
   void ujoi<pixel_type >::_writeimage( const std::string & filename ) const // exports the image into a pgm file

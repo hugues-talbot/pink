@@ -11,6 +11,9 @@
 */
 // The pink python wrapper core file
 
+#include <Python.h>
+#include <numpy/arrayobject.h>
+
 #ifndef PINK_DEVELOPMENT
 #  include "pink_python.h"
 #else /* PINK_DEVELOPMENT */
@@ -208,6 +211,8 @@ void pymemtest();
 
 void pysept();
 
+void numpy_export();
+
 // for wrapping every type with one function
 // template <class image_type>
 // void ujoi_class_export( const char* object_name, const char* object_description );
@@ -400,7 +405,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   asfbin_export();  skelcurv_export();
   readimage_export();  distc_export();  skelsurf_export();  toposhrink_export();
   htkern_export();  /*openball_export();*/    gradmorph_export(); mcube_export(); minima_export();
-  complex_export(); fft_export();  mult_export();
+  complex_export(); fft_export();  mult_export();  numpy_export();
 
 
   // this part is not yet ready for windows
