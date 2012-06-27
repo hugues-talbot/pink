@@ -14,6 +14,7 @@
 #ifndef UI_CONVERT_HPP_
 #define UI_CONVERT_HPP_
 
+#include <cmath>
 
 #include "ujimage.hpp"
 
@@ -164,7 +165,7 @@ namespace pink {
       FOR(q, nbp) 
       {
 
-        T = sqrt( static_cast<double>( image[q]) );
+        T = std::sqrt( static_cast<double>( image[q]) );
         tmp = uiround(T);
         tmp = std::min<double>( maxval, tmp );
         tmp = std::max<double>( 0, tmp );

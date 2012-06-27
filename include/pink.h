@@ -84,13 +84,11 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #  include <boost/cast.hpp>
 #  include <boost/thread.hpp>
-#  include <boost/python.hpp>
 #  include <boost/operators.hpp>
 #  include <boost/smart_ptr.hpp>
 #  include <boost/preprocessor.hpp>
 #  include <boost/shared_array.hpp>
 #  include <boost/lexical_cast.hpp>
-#  include <boost/python/extract.hpp>
 #  include <boost/algorithm/minmax_element.hpp>
 #  include <boost/type_traits/function_traits.hpp>
 

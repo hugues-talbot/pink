@@ -29,6 +29,13 @@
 
 #include <string>
 #include <fstream>
+#include <climits>
+#include <string.h>
+
+#ifdef PINK_HAVE_PYTHON
+# include <boost/python.hpp>
+#endif /* PINK_HAVE_PYTHON */
+#include <boost/smart_ptr.hpp>
 
 #include "mcimage.h"
 #include "mccodimage.h"
@@ -429,8 +436,11 @@ namespace pink
 
     \param dim The dimensions of the image
     \param debug
-    */    
+    */
+#   ifdef PINK_HAVE_PYTHON
     ujoi( const boost::python::list & dim, std::string debug="" );
+#   endif /* PINK_HAVE_PYTHON */
+
 
 
     /**
@@ -531,9 +541,11 @@ namespace pink
     somewhere in the image. 
 
     \return A reference to the pixel
-    */    
+    */
+#   ifdef PINK_HAVE_PYTHON
     pixel_type & operator[]( const boost::python::list & pos ); // python list acces to the elements
     const pixel_type & operator[]( const boost::python::list & pos ) const; // const python list acces to the elements
+#   endif /* PINK_HAVE_PYTHON */
 
     // these methods are the operators renamed so they could be wrapped by boost
     const pixel_type & get_operator_int( index_t pos ) const;
@@ -542,14 +554,17 @@ namespace pink
     const pixel_type & get_operator_vint( const types::vint& pos ) const;
     void set_operator_vint( const types::vint & pos, const pixel_type & value );
 
+#   ifdef PINK_HAVE_PYTHON
     const pixel_type & get_operator_list( const boost::python::list & pos ) const;
     void set_operator_list( const boost::python::list & pos, const pixel_type & value );
-
+#   endif /* PINK_HAVE_PYTHON */
+    
     void _writeimage( const std::string & filename ) const; // exports the image into a pgm file
     void _write_amira( const std::string & filename ) const; // exports the image into an amira mesh (.am) file
 
+#   ifdef PINK_HAVE_PYTHON
     PyObject * get_pixels_python();
-    
+#   endif /* PINK_HAVE_PYTHON */    
     // cast operators
 
     /**
@@ -597,8 +612,10 @@ namespace pink
 
     The image center is mainly used in masks. For example the opening
     operator applies the image relative to it's center. 
-    */    
+    */
+#   ifdef PINK_HAVE_PYTHON
     void set_center_list( const boost::python::list & new_center );
+#   endif /* PINK_HAVE_PYTHON */
 
     /**
     \brief Returns a smart pointer to the array of the pixels. 
@@ -1220,7 +1237,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::ujoi */
 
 
-  
+# ifdef PINK_HAVE_PYTHON
   template <class pixel_type >
   ujoi<pixel_type >::ujoi( const boost::python::list & dim, std::string debug ){
 
@@ -1240,8 +1257,9 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       this->init_pixel(this->pixels[q]);      
     };
   } /* ujoi::ujoi */
+# endif /* PINK_HAVE_PYTHON */
 
-
+  
   
   template <class pixel_type >
   ujoi<pixel_type >::~ujoi( ){
@@ -1547,7 +1565,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::operator[] */
 
 
-
+# ifdef PINK_HAVE_PYTHON
   template <class pixel_type >
   pixel_type & ujoi<pixel_type >::operator[]( const boost::python::list & pos ){ // python list acces to the elements
 
@@ -1567,6 +1585,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     return (*this)[vint_pos];
 
   } /* ujoi::operator[] */
+# endif /* PINK_HAVE_PYTHON */
 
 
 
@@ -1597,7 +1616,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   }
 
 
-
+# ifdef PINK_HAVE_PYTHON
   template <class pixel_type >
   const pixel_type & ujoi<pixel_type >::get_operator_list( const boost::python::list & pos ) const {
     return (*this)[pos];
@@ -1609,6 +1628,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   void ujoi<pixel_type >::set_operator_list( const boost::python::list & pos, const pixel_type & value ){
     (*this)[pos]=value;
   }
+# endif /* PINK_HAVE_PYTHON */
 
 
 
@@ -1692,7 +1712,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   } /* ujoi::get_center_vint */
 
 
-
+# ifdef PINK_HAVE_PYTHON
   template <class pixel_type >
   void ujoi<pixel_type >::set_center_list( const boost::python::list & new_center ){
 
@@ -1720,6 +1740,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
       );    
 //    return pixels.get();
   } /* ujoi::get_pixels */
+# endif /* PINK_HAVE_PYTHON */
 
   
 

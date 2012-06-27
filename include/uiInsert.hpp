@@ -14,9 +14,15 @@
 #ifndef UIINSERT_HPP_
 #define UIINSERT_HPP_
 
+#ifdef PINK_HAVE_PYTHON
+# include <boost/python.hpp>
+#endif /* PINK_HAVE_PYTHON */
+
+#include "ujimage.hpp"
+
 namespace pink {
 
-
+# ifdef PINK_HAVE_PYTHON
   template <class image_type >
   image_type insert_image( 
     const image_type & big_image,
@@ -53,7 +59,6 @@ namespace pink {
       } /* if */
 
     } /* FOR */
-   
 
     return result;
   } /* insert_image */
@@ -103,8 +108,7 @@ namespace pink {
 
 
 
-
-
+# endif /* PINK_HAVE_PYTHON */
 
 } /* namespace pink */
 #endif /* UIINSERT_HPP_ */

@@ -10,6 +10,7 @@
   ujoimro@gmail.com
 */
 
+#include <cmath>
 
 #include "ui_pink_types.hpp"
 
@@ -201,7 +202,7 @@ pink::types::vint::vint(index_t size, index_t defvalue):std::vector<index_t>(siz
 } /* vint::vint */
 
 
-
+#ifdef PINK_HAVE_PYTHON
 pink::types::vint::vint( const boost::python::list & src ): std::vector<index_t>(boost::python::len(src),0) 
 {
   index_t length=boost::python::len(src);
@@ -217,7 +218,7 @@ pink::types::vint::vint( const boost::python::list & src ): std::vector<index_t>
       pink_error("the elements of the list must be convertible to integers.");
     }
 } /* vint::vint python list */
-
+#endif /* PINK_HAVE_PYTHON */
 
 
 pink::types::vint::~vint()
@@ -273,7 +274,7 @@ double pink::types::vint::fabs() const
     q--;    
   }
   while (q>=0);
-  return sqrt(sum);
+  return std::sqrt(sum);
 } /* vint::abs */
 
 

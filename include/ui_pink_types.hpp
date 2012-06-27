@@ -33,8 +33,10 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <boost/python.hpp>
-#include <boost/smart_ptr.hpp>
+#ifdef PINK_HAVE_PYTHON
+# include <boost/python.hpp>
+# include <boost/smart_ptr.hpp>
+#endif /* PINK_HAVE_PYTHON */
 
 #include "mcimage.h"
 #include "sqlite3.h"
@@ -92,7 +94,7 @@ std::cerr << "Pink warning: " << message << std::endl; \
 #define FOR(i,st) for (index_t i = 0; i<st; i++)
 #define FORR(i,st) for (i = 0; i<st; i++)
 
-#define round(z) ((z-(double)((int)z))<0.5?((int)z):((int)z+1))
+// #define round(z) ((z-(double)((int)z))<0.5?((int)z):((int)z+1))
 
 
 namespace pink
@@ -127,7 +129,9 @@ namespace pink
       vint( const vint & src, std::string debug ); // copy constructor with debugging
       vint( index_t size, std::string debug=""  );
       vint( index_t size, index_t defvalue );
+#     ifdef PINK_HAVE_PYTHON
       vint( const boost::python::list & src );
+#     endif /* PINK_HAVE_PYTHON */
       ~vint();
       void reset();
       index_t prod() const;

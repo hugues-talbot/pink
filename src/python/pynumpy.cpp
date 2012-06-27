@@ -11,18 +11,21 @@
 
 // Pink NumPy Conversion routine
 
-#include <Python.h>
-#include <boost/python.hpp>
-#include <numpy/arrayobject.h>
-#include <boost/smart_ptr.hpp>
+#ifdef PINK_HAVE_NUMPY
+# include <Python.h>
+# include <boost/python.hpp>
+# include <numpy/arrayobject.h>
+# include <boost/smart_ptr.hpp>
 
-#include "pink_python.h"
+# include "pink_python.h"
+#endif /* PINK_HAVE_NUMPY */
 
 namespace pink {
   namespace python {
 
-    // this code has been borrowed from
+    // part of this code has been borrowed from
     // Copyright (c) 2008, Michael Droettboom
+#   ifdef PINK_HAVE_NUMPY
 
     namespace detail {
 
@@ -75,20 +78,10 @@ namespace pink {
       const int numpy_type_map<boost::uint64_t>::typenum = NPY_UINT64;
     }   
 
-
-    struct sentinel_t {
-      ~sentinel_t () {
-        std::cout << "the result has been returned" << std::endl;                
-      }           
-    };        
-            
-
     template <class image_type>
     boost::python::object
     wrap2numpy( image_type & image )
     {
-      sentinel_t sentinel;
-            
       // the dimension of the image
       index_t nd = image.get_size().size();
       // the sizes of the image
@@ -118,8 +111,6 @@ namespace pink {
     boost::python::object
     pink2numpy( image_type & image )
     {
-      sentinel_t sentinel;
-            
       // the dimension of the image
       index_t nd = image.get_size().size();
       // the sizes of the image
@@ -219,7 +210,8 @@ namespace pink {
 
       return boost::python::object();      
     } // numpy2pink
-                
+
+#   endif /* PINK_HAVE_NUMPY */
   } /* namespace python */
 } /* namespace pink */
 
@@ -239,6 +231,7 @@ const char * numpy2pink_doc =
                              
 void numpy_export()
 {
+# ifdef PINK_HAVE_NUMPY
   boost::python::def( "wrap2numpy", &pink::python::wrap2numpy<pink::char_image>,     ( boost::python::arg("image") ), wrap2numpy_doc );
   boost::python::def( "wrap2numpy", &pink::python::wrap2numpy<pink::short_image>,    ( boost::python::arg("image") ), wrap2numpy_doc );
   boost::python::def( "wrap2numpy", &pink::python::wrap2numpy<pink::int_image>,      ( boost::python::arg("image") ), wrap2numpy_doc );
@@ -258,6 +251,7 @@ void numpy_export()
 //  boost::python::def( "pink2numpy", &pink::python::pink2numpy<pink::dcomplex_image>, ( boost::python::arg("image") ), pink2numpy_doc );
   
   import_array();  // numpy initialization
+# endif /* PINK_HAVE_NUMPY */
 } // numpy_export 
 
 // LuM end of file

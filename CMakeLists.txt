@@ -305,6 +305,8 @@ if (CMAKE_HOST_UNIX)
 
     if ( PYTHON_FRONT_END )
 
+	option( NUMPY "Compiles numpy<->pink conversion utilities." OFF )
+
 	find_package(PythonInterp)
 
 	if(NOT PYTHON_LIBRARY)
@@ -316,7 +318,6 @@ if (CMAKE_HOST_UNIX)
 	    find_package(PythonLibs)
 	    SET(PYTHON_INCLUDE ${PYTHON_INCLUDE_PATH} CACHE PATH "The directory of the python headers." )
 	endif(NOT PYTHON_INCLUDE)
-
 
 	find_package(Boost COMPONENTS python thread )
 
@@ -412,6 +413,22 @@ if (CMAKE_HOST_UNIX)
 	    message( FATAL_ERROR "error boost/operators.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
 	endif(NOT HTEST921)
 
+	if (NUMPY)
+	## Try to determine the directory of numpy headers
+	    execute_process ( COMMAND python -c "from numpy import distutils; path=distutils.misc_util.get_numpy_include_dirs(); print path[0]" OUTPUT_VARIABLE NUMPY_INCLUDEDIR OUTPUT_STRIP_TRAILING_WHITESPACE )
+	    if (NOT NUMPY_INCLUDE)
+		SET(NUMPY_INCLUDE ${NUMPY_INCLUDEDIR} CACHE PATH "Directory for the numpy headers. If it is not set automatically it is determined by python distutils." )
+            endif( NOT NUMPY_INCLUDE)
+
+	    include_directories( ${NUMPY_INCLUDE} )
+	    if( NOT EXISTS ${NUMPY_INCLUDE}/numpy/arrayobject.h )
+	        message( FATAL_ERROR "${NUMPY_INCLUDE}/numpy/arrayobject.h header is not found. If it is installed, than check the python flags and numpy header directories") 
+	    endif( NOT EXISTS ${NUMPY_INCLUDE}/numpy/arrayobject.h )
+	    add_definitions( -DPINK_HAVE_NUMPY )
+	endif (NUMPY)
+
+
+	add_definitions(-DPINK_HAVE_PYTHON)
 
         ### ******************************************************
         ### *************** Option Development *******************
