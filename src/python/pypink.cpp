@@ -11,9 +11,6 @@
 */
 // The pink python wrapper core file
 
-#include <Python.h>
-#include <numpy/arrayobject.h>
-
 #ifndef PINK_DEVELOPMENT
 #  include "pink_python.h"
 #else /* PINK_DEVELOPMENT */
