@@ -49,6 +49,7 @@ from lambdamedialaxisauto import *
 from long2byte import *
 from medialaxis import *
 from medianfilter import *
+from numpymodule import *
 from openball import *
 from pca import *
 from pgm2curve import *
@@ -113,6 +114,7 @@ def main():
     # alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(long2byte));
     # alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(medialaxis));
     # alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(medianfilter));
+    alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(numpymodule));
     alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(openball));
     # alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(pca));
     # alltests.addTest(unittest.TestLoader().loadTestsFromTestCase(pgm2curve));
