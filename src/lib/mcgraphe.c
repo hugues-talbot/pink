@@ -867,6 +867,7 @@ struct xvimage *Graphe2Image(graphe * g, int32_t rs)
 void AjouteArc(graphe * g, int32_t i, int32_t s)
 /* ====================================================================== */
 {
+  assert(g->narc < g->nmaxarc);
   AjouteTete(&(g->libre), &(g->gamma[i]), s, 0);
   g->narc++;
 } /* AjouteArc() */
@@ -882,6 +883,7 @@ void AjouteArc(graphe * g, int32_t i, int32_t s)
 void AjouteArcValue(graphe * g, int32_t i, int32_t s, TYP_VARC v)
 /* ====================================================================== */
 {
+  assert(g->narc < g->nmaxarc);
   AjouteTete(&(g->libre), &(g->gamma[i]), s, v);
   g->narc++;
 } /* AjouteArcValue() */

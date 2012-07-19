@@ -97,6 +97,7 @@ int32_t trace = 1;
 
 #define RESIDUEL6
 #define DIRTOURNE
+//#define USE_NKP_END
 
 #define EN_LIFO       0
 
@@ -2317,6 +2318,27 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 //#define DEBUG_STEP 3
 //#define NEW_lskelACK3a
 #ifndef NEW_lskelACK3a
+static int32_t NKP_end(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
+{
+  int32_t k, n;
+  index_t y, q, r;
+  for (n = k = 0; k < 26; k += 1)
+  {
+    y = voisin26(p, k, rs, ps, N);
+    if ((y != -1) && S[y]) { n++; q = y; }
+  } // for k
+  if (n != 1) return 0;
+  for (n = k = 0; k < 26; k += 1)
+  {
+    y = voisin26(q, k, rs, ps, N);
+    if ((y != -1) && S[y] && (y != p)) { n++; r = y; }
+  } // for k
+  if (n == 0) return 1;
+  if ((n == 1) &&
+      mctopo3d_nbvoiso26(S, r, rs, ps, N) <= 2) return 1;
+  return 0;
+} //NKP_end()
+
 /* ==================================== */
 int32_t lskelACK3a(struct xvimage *image, 
 	     int32_t n_steps,
@@ -2399,12 +2421,16 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     {
       if (IS_OBJECT(S[i]))
       {    
+#ifdef USE_NKP_END
+	if (NKP_end(S, i, rs, ps, N)) SET_CURVE(S[i]);
+#else
 	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
 	if (top > 1) 
 	{ 
 	  SET_CURVE(S[i]);
 	  if (step <= n_earlysteps) SET_EARLYCURVE(I[i]);
 	}
+#endif
       }
     }
 

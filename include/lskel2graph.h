@@ -44,9 +44,11 @@ extern "C" {
 #endif
 
 
-    graphe * lskel2graph(  skel * S, int32_t mode );
+    graphe * lskel2graph(  skel * S, int32_t mode, double param );
     graphe * lskel2graph0( skel * S );
     graphe * lskel2graph1( skel * S );
+    graphe * lskel2graph2( skel * S, double param );
+    graphe * lskel2graph3( skel * S, double param );
     
 
 #ifdef __cplusplus

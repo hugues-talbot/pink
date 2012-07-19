@@ -75,6 +75,9 @@ The possible choices are:
 \li 25: She et al. (curvilinear, symmetric, DICTA 2009)
 \li 26: Tsao-Fu (surface, 6-subiterations directional, 1981)
 \li 27: Tsao-Fu (curvilinear, 6-subiterations directional, 1981)
+\li 28: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 0)
+\li 29: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 0)
+\li 30: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 0)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -132,17 +135,21 @@ int main(int32_t argc, char **argv)
     fprintf(stderr, "   13: ACK3a\n");
     fprintf(stderr, "   14: CKSC\n");
     fprintf(stderr, "   15: Ma-Wan-Lee (curvilinear, 4 subfields, 2002)\n");
-    fprintf(stderr, "   16: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 1))\n");
-    fprintf(stderr, "   17: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 2))\n");
-    fprintf(stderr, "   18: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 3))\n");
-    fprintf(stderr, "   19: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 1))\n");
-    fprintf(stderr, "   20: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 2))\n");
-    fprintf(stderr, "   21: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 3))\n");
-    fprintf(stderr, "   22: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 1))\n");
-    fprintf(stderr, "   23: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 2))\n");
-    fprintf(stderr, "   24: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 3))\n");
+    fprintf(stderr, "   16: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 1)\n");
+    fprintf(stderr, "   17: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 2)\n");
+    fprintf(stderr, "   18: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 3)\n");
+    fprintf(stderr, "   19: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 1)\n");
+    fprintf(stderr, "   20: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 2)\n");
+    fprintf(stderr, "   21: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 3)\n");
+    fprintf(stderr, "   22: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 1)\n");
+    fprintf(stderr, "   23: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 2)\n");
+    fprintf(stderr, "   24: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 3)\n");
     fprintf(stderr, "   25: She et al. (curvilinear, symmetric, DICTA 2009)\n");
+    fprintf(stderr, "   27: Tsao-Fu (curvilinear, 6-subiterations directional, 1981)\n");
     exit(1);
+    fprintf(stderr, "   28: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 0)\n");
+    fprintf(stderr, "   29: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 0)\n");
+    fprintf(stderr, "   30: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 0)\n");    
   }
 
   image = readimage(argv[1]);
@@ -404,6 +411,33 @@ int main(int32_t argc, char **argv)
       if (!ltsaofu6dircurv1981(image, nsteps)) // 2nd pass: curvilinear thinning
       {
 	fprintf(stderr, "%s: ltsaofu6dircurv1981 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 28:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lnemethetalcurv2subfields2010(image, nsteps, 0))
+      {
+	fprintf(stderr, "%s: lnemethetalcurv2subfields2010 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 29:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lnemethetalcurv4subfields2010(image, nsteps, 0))
+      {
+	fprintf(stderr, "%s: lnemethetalcurv4subfields2010 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 30:
+      if (argc == 6)
+	fprintf(stderr, "%s: warning: inhibit mode not implemented for algo %d\n", argv[0], mode);
+      if (!lnemethetalcurv8subfields2010(image, nsteps, 0))
+      {
+	fprintf(stderr, "%s: lnemethetalcurv8subfields2010 failed\n", argv[0]);
 	exit(1);
       } 
       break;

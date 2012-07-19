@@ -64,6 +64,7 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define DEBUG
 //#define DEBUG_lmasonka1996
 //#define DEBUG_lmawanleecurv4subfields2002
+//#define DEBUG_lnemethetalcurv2subfields2010
 //#define DEBUG_lnemethetalcurv4subfields2010
 
 /* ==================================== */
@@ -1953,7 +1954,6 @@ static int32_t MWC_ORTH_deletable(uint8_t *v)
 
 static int32_t MWC_DIAG_UE_deletable(uint8_t *v)
 {
-  //#define DEBUG_lmawanchangcurv2subfields2002
 #ifdef DEBUG_lmawanchangcurv2subfields2002
   print_vois(v);
 #endif
@@ -2649,6 +2649,7 @@ printf("point %d %d %d\n", i, j, k);
 #define NKP_SELF        2
 #define NKP_SQUARE      4
 #define NKP_CUBE        8
+#define NKP_END        16
 
 #define IS_NKP_SELF(f) (f&NKP_SELF)
 #define SET_NKP_SELF(f) (f|=NKP_SELF)
@@ -2657,17 +2658,28 @@ printf("point %d %d %d\n", i, j, k);
 #define SET_NKP_SQUARE(f) (f|=NKP_SQUARE)
 #define IS_NKP_CUBE(f) (f&NKP_CUBE)
 #define SET_NKP_CUBE(f) (f|=NKP_CUBE)
+#define IS_NKP_END(f) (f&NKP_END)
+#define SET_NKP_END(f) (f|=NKP_END)
+#define UNSET_NKP_END(f)  (f&=~NKP_END)
 
 static int32_t NKP_end(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N, int32_t mode)
 {
+  if (mode == 0) 
+  // cette condition est la condition C1 du papier IASTED
+  {
+    int32_t top, topbar;
+    mctopo3d_top26(S, p, rs, ps, N, &top, &topbar);
+    if (top > 1) return 1;
+    return 0;
+  } // if (mode == 0)
   if (mode == 1) 
-  // cette condition est la condition C1 du papier ICIAR 2010.
-  // la condition C1 du papier IASTED ne suffit pas pour préserver des branches.
+  // cette condition est la condition C1 du papier ICIAR 2010
   {
     if (mctopo3d_nbvoiso26(S, p, rs, ps, N) == 1) return 1;
     return 0;
   } // if (mode == 1)
   if (mode == 2)
+  // cette condition est la condition C2 des papiers ICIAR et IASTED
   {
     int32_t k, n=0;
     index_t y, q;
@@ -2681,6 +2693,7 @@ static int32_t NKP_end(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N,
     return 1;
   } // if (mode == 2)
   if (mode == 3)
+  // cette condition est la condition C3 des papiers ICIAR et IASTED
   {
     int32_t k, n;
     index_t y, q, r;
@@ -2909,6 +2922,8 @@ int32_t lnemethetalcurv2subfields2010(
 
   if (nsteps == -1) nsteps = 1000000000;
 
+  for (i = 0; i < N; i++) if (S[i]) S[i] = NKP_OBJECT;
+
   /* ================================================ */
   /*               DEBUT ALGO                         */
   /* ================================================ */
@@ -2922,7 +2937,22 @@ int32_t lnemethetalcurv2subfields2010(
     printf("step %d\n", step);
 #endif
 
-    for (i = 0; i < N; i++) if (S[i]) S[i] = NKP_OBJECT;
+    if (mode == 0)
+    {
+      for (i = 0; i < N; i++) 
+	if (S[i]) 
+	{
+	  if (IS_NKP_END(S[i])) // pour le mode 0
+	  {
+	    S[i] = NKP_OBJECT;
+	    SET_NKP_END(S[i]);
+	  }
+	  else
+	    S[i] = NKP_OBJECT;
+	}
+    }
+    else
+      for (i = 0; i < N; i++) if (S[i]) S[i] = NKP_OBJECT;
 
     for (k = 1; k < ds-1; k++)
     for (j = 1; j < cs-1; j++)
@@ -2930,7 +2960,8 @@ int32_t lnemethetalcurv2subfields2010(
       if (((k+j+i)%2) == (step%2))
       {
 	x = k*ps + j*rs + i;
-	if (S[x] && mctopo3d_simple26(S, x, rs, ps, N) && !NKP_end(S, x, rs, ps, N, mode))
+	if (S[x] && NKP_end(S, x, rs, ps, N, mode)) SET_NKP_END(S[x]);
+	if (S[x] && mctopo3d_simple26(S, x, rs, ps, N) && !IS_NKP_END(S[x]))
 	{
 #ifdef DEBUG_lnemethetalcurv2subfields2010
 printf("mark self point %d %d %d\n", i, j, k);	  
@@ -3059,6 +3090,8 @@ int32_t lnemethetalcurv4subfields2010(
 
   if (nsteps == -1) nsteps = 1000000000;
 
+  for (i = 0; i < N; i++) if (S[i]) S[i] = NKP_OBJECT;
+
   /* ================================================ */
   /*               DEBUT ALGO                         */
   /* ================================================ */
@@ -3083,9 +3116,11 @@ int32_t lnemethetalcurv4subfields2010(
 	UNSET_NKP_4DELETABLE(S[x]);
 	if ((step%4) == 0)
 	{
+	  if (mode != 0) UNSET_NKP_END(S[x]);
+	  if (NKP_end(S, x, rs, ps, N, mode)) SET_NKP_END(S[x]);
 	  UNSET_NKP_BORDNONEND(S[x]);
 	  if (S[x] && (mctopo3d_nbvoisc6(S, x, rs, ps, N) > 0) && 
-	      !NKP_end(S, x, rs, ps, N, mode))
+	      !IS_NKP_END(S[x]))
 	  {
 #ifdef DEBUG_lnemethetalcurv4subfields2010
 	    printf("mark bord non end %d %d %d\n", i, j, k);	  
@@ -3178,6 +3213,8 @@ int32_t lnemethetalcurv8subfields2010(
   mctopo3d_init_topo3d();
 
   if (nsteps == -1) nsteps = 1000000000;
+  
+  for (i = 0; i < N; i++) if (S[i]) S[i] = NKP_OBJECT;
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -3204,9 +3241,11 @@ int32_t lnemethetalcurv8subfields2010(
 	UNSET_NKP_8DELETABLE(S[x]);
 	if ((step%8) == 0)
 	{
+	  if (mode != 0) UNSET_NKP_END(S[x]);
+	  if (NKP_end(S, x, rs, ps, N, mode)) SET_NKP_END(S[x]);
 	  UNSET_NKP_BORDNONEND(S[x]);
 	  if (S[x] && (mctopo3d_nbvoisc6(S, x, rs, ps, N) > 0) && 
-	      !NKP_end(S, x, rs, ps, N, mode))
+	      !IS_NKP_END(S[x]))
 	  {
 #ifdef DEBUG_lnemethetalcurv8subfields2010
 	    printf("mark bord non end %d %d %d\n", i, j, k);	  

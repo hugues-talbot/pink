@@ -1645,7 +1645,7 @@ struct xvimage * lskelnotmarked2image(skel *S)
 } /* lskelnotmarked2image() */
 
 /* ====================================================================== */
-static int32_t point_at_head(skel *S, int32_t A)
+int32_t point_at_head(skel *S, int32_t A)
 /* ====================================================================== */
 // détermine le point au "début" de l'arc de courbe A
 {
@@ -1696,7 +1696,7 @@ static void barycentre(skel *S, int32_t V, double *x, double *y, double *z)
 } // barycentre()
 
 /* ====================================================================== */
-static int32_t adj_point_junc(skel *S, int32_t e, int32_t J)
+int32_t adj_point_junc(skel *S, int32_t e, int32_t J)
 /* ====================================================================== */
 {
   SKC_pt_pcell p;

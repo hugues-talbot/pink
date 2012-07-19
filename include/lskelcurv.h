@@ -57,6 +57,8 @@ extern struct xvimage * lskelfilter3(skel *S, double delta1, double delta2, doub
 extern struct xvimage * lskelfilter5(skel *S, int32_t mask, int32_t fenetre, double maxbridgelength, double maxelbowangle);
 extern struct xvimage * lskelfilter6(skel *S, double maxbridgelength, double maxelbowangle, double thickness);
 extern struct xvimage * lskelfindelbows(skel *S, double length, double angle);
+extern int32_t point_at_head(skel *S, int32_t A);
+extern int32_t adj_point_junc(skel *S, int32_t e, int32_t J);
 #ifdef __cplusplus
 }
 #endif

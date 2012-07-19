@@ -47,7 +47,7 @@ extern "C" {
 /* structure for point lists */
 
 typedef struct SKC_pt_cell {
-  int32_t val;
+  index_t val;
   struct SKC_pt_cell * next;
 } SKC_pt_cell;
 

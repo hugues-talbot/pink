@@ -37,7 +37,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 \brief generation of a graph from a curvilinear skeleton
 
-<B>Usage:</B> skel2graph in.skel [mode] out.graph
+<B>Usage:</B> skel2graph in.skel [mode [param]] out.graph
 
 <B>Description:</B>
 Generation of a graph from a curvilinear skeleton.
@@ -48,6 +48,10 @@ The parameter \b mode has the following meaning (default is 0):
 
 \li 1: vertices of the graph are only ends, isolated points and junctions of the skeleton
 
+\li 2: each curve of the skeleton (not including its ends) is represented by N edges and N-1 vertices of the graph, where N is set to \b param
+
+\li 3: each curve of the skeleton (not including its end) is represented by N edges and N-1 vertices of the graph, where N is set to max(1, trunc(len / \b param)), where len is the number of points of the curve.
+
 <B>Types supported:</B> 2Dskel, 3Dskel
 
 <B>Category:</B> topobin
@@ -55,6 +59,8 @@ The parameter \b mode has the following meaning (default is 0):
 
 \author Michel Couprie 2009
 */
+// UPDATE MC 13/07/2012: adding modes 2 and 3
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -67,7 +73,6 @@ The parameter \b mode has the following meaning (default is 0):
 #include "lskelcurv.h"
 #include "lskel2graph.h"
 
-
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
@@ -75,20 +80,24 @@ int main(int argc, char **argv)
   skel * s; 
   graphe * g; 
   int32_t mode = 0;
+  double param = 1.0;
 
-  if ((argc != 3) && (argc != 4))
+  if ((argc != 3) && (argc != 4) && (argc != 5))
   {
-    fprintf(stderr, "usage: %s filein.skel [mode] fileout.graph\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.skel [mode [param]] fileout.graph\n", argv[0]);
     exit(1);
   }
 
   s = readskel(argv[1]);
   assert(s != NULL);
 
-  if (argc==4)
-      mode = atoi(argv[2]);
+  if (argc >= 4)
+    mode = atoi(argv[2]);
 
-  g = lskel2graph(s, mode);
+  if (argc == 5)
+    param = atof(argv[3]);
+
+  g = lskel2graph(s, mode, param);
     
   assert(g != NULL);
 

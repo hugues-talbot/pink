@@ -89,7 +89,8 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define CONJECTURE_1
 #define CONJECTURE_2
 
-#define lskelCKSC3_VARIANTE_A
+#define lskelCKSC3_VARIANTE_C
+//#define USE_NKP_END
 //#define lskelCKSC3_SANS_CONTRAINTE
 //#define DCRUCIAL_MARK
 
@@ -7520,6 +7521,27 @@ static void lskelCKSC3_aux0(uint8_t *Y,  int32_t x, int32_t x1, int32_t x2, int3
 	 }
 } // lskelCKSC3_aux0
 
+static int32_t NKP_end(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
+{
+  int32_t k, n;
+  index_t y, q, r;
+  for (n = k = 0; k < 26; k += 1)
+  {
+    y = voisin26(p, k, rs, ps, N);
+    if ((y != -1) && S[y]) { n++; q = y; }
+  } // for k
+  if (n != 1) return 0;
+  for (n = k = 0; k < 26; k += 1)
+  {
+    y = voisin26(q, k, rs, ps, N);
+    if ((y != -1) && S[y] && (y != p)) { n++; r = y; }
+  } // for k
+  if (n == 0) return 1;
+  if ((n == 1) &&
+      mctopo3d_nbvoiso26(S, r, rs, ps, N) <= 2) return 1;
+  return 0;
+} //NKP_end()
+
 /* ==================================== */
 int32_t lskelCKSC3(
 		   struct xvimage *image, 
@@ -7613,6 +7635,9 @@ repeter
     for (x = 0; x < N; x++) 
       if (F[x])
       { 
+#ifdef USE_NKP_END
+	if (NKP_end(F, x, rs, ps, N)) Set(x,CONTRAINTE);
+#else
 	mctopo3d_top26(F, x, rs, ps, N, &t, &tb);
 	if (!IsSet(x,CONTRAINTE))
 	{
@@ -7623,6 +7648,7 @@ repeter
 	  if ((t == 1) && (mctopo3d_nbvoiso26(F, x, rs, ps, N) > 1)) 
 	    UnSet(x,CONTRAINTE);
 	}
+#endif
       }
 #endif
 
