@@ -114,10 +114,26 @@ namespace pink {
 
     template <class T0>
     pink::graph_t<T0>
-    skel2graph( pink::skel_t<T0> & skel, int32_t mode )
+    skel2graph( pink::skel_t<T0> & skel, int32_t mode, double param )
     {
         graphe * tmp = NULL;        
-        tmp = lskel2graph( skel, mode );
+        tmp = lskel2graph( skel, mode, param );
+        if (tmp == NULL)
+            pink_error("The graph could not have been created.");
+        
+        pink::graph_t<T0> result(tmp);
+
+        return result;        
+    } // skel2graph
+
+
+    template <class T0>
+    pink::graph_t<T0>
+    skel2graph_short( pink::skel_t<T0> & skel, int32_t mode )
+    {
+        assert( (mode == 0) || (mode == 1) );
+        graphe * tmp = NULL;        
+        tmp = lskel2graph( skel, mode, 0 );
         if (tmp == NULL)
             pink_error("The graph could not have been created.");
         

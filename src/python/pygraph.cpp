@@ -79,7 +79,12 @@ void pygraph()
         ; // pink::skel_t (skeleton)
     
     boost::python::def( "skel2graph", pink::skel2graph<index_t>,
-                        ( boost::python::arg("skeleton"), boost::python::arg("mode") ),
+                        ( boost::python::arg("skeleton"), boost::python::arg("mode"), boost::python::arg("param") ),
+                        doc__skel2graph__c__
+        );
+
+    boost::python::def( "skel2graph", pink::skel2graph_short<index_t>,
+                        ( boost::python::arg("skeleton"), boost::python::arg("mode")=0 ),
                         doc__skel2graph__c__
         );
 
