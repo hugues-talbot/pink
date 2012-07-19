@@ -16,6 +16,9 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef _WINDOWS
+# include <process.h>
+#endif /* _WINDOWS */
 
 #include "liarp.h"
 #include "liarwrap.h"
@@ -38,6 +41,7 @@ namespace pink {
 
         int Pimview (void)
         {
+#           ifndef _WINDOWS
             const char *directory = getenv("TMPDIR"); // should work on most unices
             if (directory == NULL) {
                 directory = "/tmp"; // but just in case
@@ -94,6 +98,9 @@ namespace pink {
             
             // fill the port pointer as an integer
             return(atoi(buffer));
+#           else /* NOT _WINDOWS */
+	    pink_error("The Windows(tm) Imview named pipes are not yet implemented. Nag the developer.");
+#           endif /* NOT _WINDOWS */
         }
 
         // login onto the image server.

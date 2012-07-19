@@ -17,6 +17,9 @@
 
 #ifdef __cplusplus
 
+#  ifdef _WINDOWS
+#    define BOOST_PYTHON_STATIC_LIB
+#  endif /* _WINDOWS */
 #  include <boost/python.hpp>
 #  include <boost/python/def.hpp>
 #  include <boost/python/module.hpp>

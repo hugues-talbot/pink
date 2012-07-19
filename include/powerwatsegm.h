@@ -52,9 +52,9 @@ extern "C" {
 
 
 
-#define epsilon 0.00001
-#define MAX_DEGREE 3000
-//#define SIZE_MAX_PLATEAU 2000000
+  //  const double epsilon=0.00001;
+  //  const index_t MAX_DEGREE=3000;
+  // // #define SIZE_MAX_PLATEAU 2000000
 typedef float DBL_TYPE;
 #include <stdint.h>
 #include <mclifo.h>

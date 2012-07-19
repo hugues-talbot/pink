@@ -39,7 +39,9 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 
 
-#include<stdbool.h>
+#ifndef _WINDOWS
+# include<stdbool.h>
+#endif /* _WINDOWS */
 #include<stdio.h>
 #include<stdint.h>
 

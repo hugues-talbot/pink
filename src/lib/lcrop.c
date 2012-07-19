@@ -423,11 +423,11 @@ struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width)
 #undef F_NAME
 #define F_NAME "lenframe"
 {
-  if (depth(image) > 1) return lenframe3d(image, grayval, width);
-
   index_t rs, cs, ds, ps, N, x, y, z, nb, n;
   index_t rs2, cs2, ds2, ps2, N2;
   struct xvimage * imageout;
+
+  if (depth(image) > 1) return lenframe3d(image, grayval, width);
 
   rs = rowsize(image);
   cs = colsize(image);

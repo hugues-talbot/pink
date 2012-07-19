@@ -14,12 +14,19 @@ if (DEVELOPMENT)
 endif (DEVELOPMENT)
 
 add_library( cpp_pink SHARED ${py_src_cpp} ${py_src_development_cpp} ${py_documentation} )
-add_dependencies( cpp_pink pink  )
-
-target_link_libraries( cpp_pink pink ${LIBS} )
+if (NOT THIS_IS_MSVC)
+    add_dependencies( cpp_pink pink  )
+    target_link_libraries( cpp_pink pink ${LIBS} )
+else (NOT THIS_IS_MSVC)
+    add_dependencies( cpp_pink pinkstatic  )
+    target_link_libraries( cpp_pink pinkstatic ${LIBS} )
+endif (NOT THIS_IS_MSVC)
 
 # unix defines
-add_definitions( -DUNIXIO -DPC )
+if (CMAKE_HOST_UNIX)
+    add_definitions( -DUNIXIO -DPC )
+endif (CMAKE_HOST_UNIX)
+
 set( CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} ${PYTHON_FLAG} )
 include_directories( ${PYTHON_INCLUDE}  ${BOOST_INCLUDE} )
 set( CMAKE_INCLUDE_DIRS_CONFIG ${CMAKE_REQUIRED_INCLUDES} )
@@ -44,11 +51,11 @@ if (NOT PYTHON_MODULE_INSTALL_PATH )
     if ( NOT PYTHON_DOCUMENTATION_EXE )
 	set( PYTHON_MODULE_INSTALL_PATH "UNKNOWN" CACHE STRING "The place to put the modules after the installation" )
     else ( NOT PYTHON_DOCUMENTATION_EXE )
-	execute_process ( COMMAND python -c "from distutils.sysconfig import get_python_lib; path=get_python_lib(); print path[ path[1:].find('/') + 2 :]" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE )
+	execute_process ( COMMAND python -c "from distutils.sysconfig import get_python_lib; path=get_python_lib().replace('\\\\','/'); print path[ path[1:].find('/') + 2 :]" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE )
 	#message( "PYTHON_SITE_PACKAGES = '" ${PYTHON_SITE_PACKAGES} "'" )
 	set( PYTHON_MODULE_INSTALL_PATH ${PYTHON_SITE_PACKAGES} CACHE STRING "The place to put the modules after the installation" )
+	#message( "PYTHON_MODULE_INSTALL_PATH = '" ${PYTHON_MODULE_INSTALL_PATH} "'" )
     endif ( NOT PYTHON_DOCUMENTATION_EXE )
-
 endif (NOT PYTHON_MODULE_INSTALL_PATH )
 
 if ( NOT CMAKE_INSTALL_PREFIX )
@@ -78,7 +85,6 @@ add_custom_command( OUTPUT ${py_documentation}
 #                     COMMAND ${PYTHON_DOCUMENTATION_EXE} ${CMAKE_SOURCE_DIR}/python_documenter.py ${CMAKE_SOURCE_DIR}/src/com ${CMAKE_SOURCE_DIR}/include/python_doc.h
 #                     )
 
-
 add_dependencies( cpp_pink ${py_documentation} )
 
 ### **********************************************************************************************
@@ -86,7 +92,6 @@ add_dependencies( cpp_pink ${py_documentation} )
 ### ******************************** Pink.sh Generation for **************************************
 ### ******************************** local testing ***********************************************
 ### **********************************************************************************************
-
 
 if (THIS_IS_LINUX)
 add_custom_command( TARGET cpp_pink POST_BUILD 
@@ -118,7 +123,7 @@ add_custom_command( TARGET cpp_pink POST_BUILD
 
 
 
-elseif (CMAKE_HOST_WIN32)
+elseif (THIS_IS_CYGWIN)
 add_custom_command( TARGET cpp_pink POST_BUILD 
 		    COMMAND cp -r ${CMAKE_SOURCE_DIR}/python/* ${CMAKE_BINARY_DIR}/python/
 		    COMMAND echo "\\#\\!" /bin/bash > ${CMAKE_BINARY_DIR}/pink.sh
@@ -129,8 +134,11 @@ add_custom_command( TARGET cpp_pink POST_BUILD
 		    COMMAND chmod u+x ${CMAKE_BINARY_DIR}/pink.sh
 		    )
 
-
-
+elseif (THIS_IS_MSVC)
+add_custom_command( TARGET cpp_pink POST_BUILD 
+		    COMMAND cp -r ${CMAKE_SOURCE_DIR}/python/* ${CMAKE_BINARY_DIR}/python/
+		    COMMAND cp ${CMAKE_BINARY_DIR}/python/cpp_pink.dll ${CMAKE_BINARY_DIR}/python/libcpp_pink.pyd
+		    )
 endif (THIS_IS_LINUX)
 
 ### **********************************************************************************************
@@ -139,17 +147,22 @@ endif (THIS_IS_LINUX)
 ### **********************************************************************************************
 ### **********************************************************************************************
 
-INSTALL(TARGETS cpp_pink
-        DESTINATION ${PYTHON_MODULE_INSTALL_PATH}
-        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-
 ### The scripts written in Python
 INSTALL(
     DIRECTORY ${CMAKE_BINARY_DIR}/python/pink 
     DESTINATION ${PYTHON_MODULE_INSTALL_PATH}
 )
 
-
+if (THIS_IS_MSVC)
+    INSTALL(
+	FILES ${CMAKE_BINARY_DIR}/python/libcpp_pink.pyd
+	DESTINATION ${PYTHON_MODULE_INSTALL_PATH}
+	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE )
+else (THIS_IS_MSVC) # on unix like system
+    INSTALL(TARGETS cpp_pink
+	DESTINATION ${PYTHON_MODULE_INSTALL_PATH}
+	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE )
+endif (THIS_IS_MSVC)
 
 
 

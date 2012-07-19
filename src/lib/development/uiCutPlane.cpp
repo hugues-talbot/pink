@@ -12,7 +12,12 @@
 
 #include <gsl/gsl_interp.h>
 
-#include <boost/python.hpp>
+#ifdef PINK_HAVE_PYTHON
+#  ifdef _WINDOWS
+#    define BOOST_PYTHON_STATIC_LIB
+#  endif /* _WINDOWS */
+#  include <boost/python.hpp>
+#endif /* PINK_HAVE_PYTHON */
 
 #ifdef PINK_HAVE_PYTHON
 # include <gsl/gsl_multifit_nlin.h>

@@ -10,10 +10,14 @@
   ujoimro@gmail.com
 */
 
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#ifdef PINK_HAVE_PYTHON
+# ifdef _WINDOWS
+#   define BOOST_PYTHON_STATIC_LIB
+# endif /* _WINDOWS */
+# include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#endif /* PINK_HAVE_PYTHON */
 
 #include "pink_python.h"
-
 
 using namespace boost::python;
 using namespace pink;

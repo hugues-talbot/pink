@@ -3540,12 +3540,18 @@ int32_t llohoubertrandsymcurv2007(
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
   uint8_t *S = UCHARDATA(image);      /* l'image de depart */
-  struct xvimage *t = copyimage(image); assert(t != NULL);
-  uint8_t *T = UCHARDATA(t);
-  struct xvimage *c = copyimage(image); assert(c != NULL);
-  uint8_t *C = UCHARDATA(c);
-  uint8_t *I = NULL;
+  struct xvimage *t;
+  uint8_t *T;
+  struct xvimage *c;
+  uint8_t *C;
+  uint8_t *I;
   int32_t step, nonstab, top, topbar;
+
+  t = copyimage(image); assert(t != NULL);
+  T = UCHARDATA(t);
+  c = copyimage(image); assert(c != NULL);
+  C = UCHARDATA(c);
+  I = NULL;
 
   mctopo3d_init_topo3d();
 

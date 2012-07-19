@@ -1911,7 +1911,9 @@ struct xvimage *readtiffimage(char *filename)
         image->image_data = (void *)malloc(totalsize * sizeof(char));
         if (image->image_data != NULL) {
             for (i = 0 ; i < tiffimage->nc ; ++i) {
-                memcpy(image->image_data + i*componentsize, tiffimage->buff[i], componentsize);
+	      // the void* does not work in Windows(tm), but char* should have the same size and properties
+	      // unit test for tiffs!
+	      memcpy( (char*)image->image_data + i*componentsize, tiffimage->buff[i], componentsize);
             }
         } else {
             fprintf(stderr, "Not enough memory, requested=%ld bytes\n", totalsize);
@@ -1998,7 +2000,8 @@ void writetiffimage(struct xvimage * image, const char *filename)
                 void *fakebuff[1];
                 int   start[2], end[2];
                 int pi, sf, spp=1, bps;
-
+		void *theslice;
+		int retval;
                 //std::cerr << "Slice= " << slice << std::endl;
 
                 setTifftype(tiffimage->pt,     /* pixel type */
@@ -2009,7 +2012,7 @@ void writetiffimage(struct xvimage * image, const char *filename)
                             &bps);
                 //std::cerr << "Type= " << pi << "spp=" << spp << std::endl;
 
-                void *theslice = (uint8_t*)image->image_data + slice*slicesize;
+                theslice = (uint8_t*)image->image_data + slice*slicesize;
                 fakebuff[0] = theslice;
 
                 start[0] = 0;
@@ -2017,7 +2020,7 @@ void writetiffimage(struct xvimage * image, const char *filename)
                 start[1] = 0;
                 end[1] = tiffimage->ny-1;
 
-                int retval = save_tiff(fakebuff,	   /* output buffer  */
+                retval = save_tiff(fakebuff,	   /* output buffer  */
                           slice,   /* 0 = write, > 0 = append */
                           start,	   /* dimension start */
                           end,	   /* dimension end */

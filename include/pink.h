@@ -43,7 +43,7 @@ knowledge of the CeCILL license and that you accept its terms.
 // #include <curses.h>
 #include <time.h>
 
-// #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
+// #include <unistd.h> in Microsoft Windows(tm) it does not exist, but we only need a subset of it
 #ifdef UNIXIO
 #  include <unistd.h>
 #  include <sys/time.h>
@@ -87,6 +87,9 @@ knowledge of the CeCILL license and that you accept its terms.
 #  include <boost/operators.hpp>
 #  include <boost/smart_ptr.hpp>
 #  ifdef PINK_HAVE_PYTHON
+#    ifdef _WINDOWS
+#      define BOOST_PYTHON_STATIC_LIB
+#    endif /* _WINDOWS */
 #    include <boost/python.hpp>
 #    include <boost/smart_ptr.hpp>
 #  endif /* PINK_HAVE_PYTHON */

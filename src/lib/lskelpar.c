@@ -5697,30 +5697,37 @@ int32_t lhthinpar(struct xvimage *image, int32_t nsteps)
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t step, nonstab;
-  
-  struct xvimage *destructible = copyimage(image);
+  // Windows(tm) the declaration must go on the beginning of the block
+  struct xvimage *destructible;
+  uint8_t *D;
+  struct xvimage *alpha;
+  uint8_t *A;
+  struct xvimage *tempimage;
+  uint8_t *G;
+
+  destructible = copyimage(image);
   if (destructible == NULL)
   {
     fprintf(stderr, "%s: copyimage failed\n", F_NAME);
     return 0;
   }
-  uint8_t *D = UCHARDATA(destructible);       
+  D = UCHARDATA(destructible);       
 
-  struct xvimage *alpha = copyimage(image);
+  alpha = copyimage(image);
   if (alpha == NULL)
   {
     fprintf(stderr, "%s: copyimage failed\n", F_NAME);
     return 0;
   }
-  uint8_t *A = UCHARDATA(alpha);       
-
-  struct xvimage *tempimage = copyimage(image);
+  A = UCHARDATA(alpha);       
+  
+  tempimage = copyimage(image);
   if (tempimage == NULL)
   {
     fprintf(stderr, "%s: copyimage failed\n", F_NAME);
     return 0;
   }
-  uint8_t *G = UCHARDATA(tempimage);       
+  G = UCHARDATA(tempimage);       
 
   if (nsteps == -1) nsteps = 1000000000;
   
@@ -5782,30 +5789,36 @@ int32_t lhthinpar_asymmetric(struct xvimage *image, int32_t nsteps)
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   int32_t step, nonstab;
-  
-  struct xvimage *destructible = copyimage(image);
+  struct xvimage *destructible;
+  uint8_t *D;
+  struct xvimage *alpha;
+  uint8_t *A;
+  struct xvimage *tempimage;
+  uint8_t *G;
+
+  destructible = copyimage(image);
   if (destructible == NULL)
   {
     fprintf(stderr, "%s: copyimage failed\n", F_NAME);
     return 0;
   }
-  uint8_t *D = UCHARDATA(destructible);       
+  D = UCHARDATA(destructible);       
 
-  struct xvimage *alpha = copyimage(image);
+  alpha = copyimage(image);
   if (alpha == NULL)
   {
     fprintf(stderr, "%s: copyimage failed\n", F_NAME);
     return 0;
   }
-  uint8_t *A = UCHARDATA(alpha);       
+  A = UCHARDATA(alpha);       
 
-  struct xvimage *tempimage = copyimage(image);
+  tempimage = copyimage(image);
   if (tempimage == NULL)
   {
     fprintf(stderr, "%s: copyimage failed\n", F_NAME);
     return 0;
   }
-  uint8_t *G = UCHARDATA(tempimage);       
+  G = UCHARDATA(tempimage);       
 
   if (nsteps == -1) nsteps = 1000000000;
 

@@ -46,6 +46,7 @@ knowledge of the CeCILL license and that you accept its terms.
 *
 ****************************************************************/
 
+#include <complex>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -440,7 +441,7 @@ void grey_weights( char * image_name , /* image name */
   if (geod==false)
     {
       for (i=0;i<G->M;i++)
-	G->Weights[i]= 255-abs(img[G->Edges[0][i]]-img[G->Edges[1][i]]);
+	G->Weights[i]= 255-labs(img[G->Edges[0][i]]-img[G->Edges[1][i]]);
     }
   else 
     {
@@ -449,7 +450,7 @@ void grey_weights( char * image_name , /* image name */
       uint32_t * seeds_function =(uint32_t *)calloc(G->M,sizeof(uint32_t));
      
       for (i=0;i<G->M;i++)
-	weights_tmp[i]=255-abs(img[G->Edges[0][i]]-img[G->Edges[1][i]]) ;
+	weights_tmp[i]=255-labs(img[G->Edges[0][i]]-img[G->Edges[1][i]]) ;
 	
       for (j=0;j<G->S;j++)
 	for (k=1;k<=G->DegreMax; k++)
@@ -485,7 +486,7 @@ void grey_weights_PW(struct xvimage *image, /* already read */
   img = UCHARDATA(image); 
 
   for (i=0;i<G->M;i++)
-     G->Weights[i]=  255-abs(img[G->Edges[0][i]]-img[G->Edges[1][i]]);
+     G->Weights[i]=  255-labs(img[G->Edges[0][i]]-img[G->Edges[1][i]]);
 
   for (j=0;j<G->S;j++)
     for (k=1;k<=G->DegreMax; k++)
@@ -560,9 +561,9 @@ void color_standard_weights_PW( struct xvimage *image_r , /* image */
   for (i=0;i<G->M;i++)
     {
       // PAMI
-      wr = abs(img_r[G->Edges[0][i]]-img_r[G->Edges[1][i]]) ;
-      wv = abs(img_v[G->Edges[0][i]]-img_v[G->Edges[1][i]]) ;
-      wb = abs(img_b[G->Edges[0][i]]-img_b[G->Edges[1][i]]) ;
+      wr = labs(img_r[G->Edges[0][i]]-img_r[G->Edges[1][i]]) ;
+      wv = labs(img_v[G->Edges[0][i]]-img_v[G->Edges[1][i]]) ;
+      wb = labs(img_b[G->Edges[0][i]]-img_b[G->Edges[1][i]]) ;
       G->Weights[i] = wr*wr+wv*wv+wb*wb;
       if (G->Weights[i]> *maxi) *maxi = G->Weights[i];
       
@@ -662,9 +663,9 @@ void color_3D_weights_PW( struct xvimage *image_r , /* IN : image name */
         {
             // weights used in PAMI
             i++;
-            wr = abs(img_r[G->Edges[0][i]]-img_r[G->Edges[1][i]]) ;
-            wv = abs(img_v[G->Edges[0][i]]-img_v[G->Edges[1][i]]) ;
-            wb = abs(img_b[G->Edges[0][i]]-img_b[G->Edges[1][i]]) ;
+            wr = labs(img_r[G->Edges[0][i]]-img_r[G->Edges[1][i]]) ;
+            wv = labs(img_v[G->Edges[0][i]]-img_v[G->Edges[1][i]]) ;
+            wb = labs(img_b[G->Edges[0][i]]-img_b[G->Edges[1][i]]) ;
      
             G->Weights[i] = wr*wr+wv*wv+wb*wb;
             if (G->Weights[i]> *maxi) *maxi = G->Weights[i];
@@ -674,9 +675,9 @@ void color_3D_weights_PW( struct xvimage *image_r , /* IN : image name */
             for(j=k*rs_cs;j<(k+1)*rs_cs;j++) 
             {
                 i++;
-                wr = abs(img_r[G->Edges[0][i]]-img_r[G->Edges[1][i]]) ;
-                wv = abs(img_v[G->Edges[0][i]]-img_v[G->Edges[1][i]]) ;
-                wb = abs(img_b[G->Edges[0][i]]-img_b[G->Edges[1][i]]) ;
+                wr = labs(img_r[G->Edges[0][i]]-img_r[G->Edges[1][i]]) ;
+                wv = labs(img_v[G->Edges[0][i]]-img_v[G->Edges[1][i]]) ;
+                wb = labs(img_b[G->Edges[0][i]]-img_b[G->Edges[1][i]]) ;
                 mm = wr*wr; 
                 G->Weights[i] =(mm*4);
                 if (G->Weights[i]> *maxi) *maxi = G->Weights[i];
@@ -711,7 +712,7 @@ void color_3D_weights_PW( struct xvimage *image_r , /* IN : image name */
     for (i=0;i<G->M-1;i++)
     {
         G->RecWeights[Es[i]] = j;
-        if(abs(G->Weights[Es[i]]-G->Weights[Es[i+1]])>epsilon)
+        if(labs(G->Weights[Es[i]]-G->Weights[Es[i+1]])>epsilon)
             j++;
     }
     G->RecWeights[Es[G->M-1]] = j-1;
@@ -811,9 +812,9 @@ int color_standard_weights( char * image_name , /* image name */
       if (weights[i]> maxi) (maxi) = weights[i];*/
 
       //ICCV
-      wr = abs(img_r[G->Edges[0][i]]-img_r[G->Edges[1][i]]);
-      wv = abs(img_v[G->Edges[0][i]]-img_v[G->Edges[1][i]]);
-      wb = abs(img_b[G->Edges[0][i]]-img_b[G->Edges[1][i]]);
+      wr = labs(img_r[G->Edges[0][i]]-img_r[G->Edges[1][i]]);
+      wv = labs(img_v[G->Edges[0][i]]-img_v[G->Edges[1][i]]);
+      wb = labs(img_b[G->Edges[0][i]]-img_b[G->Edges[1][i]]);
       
       weights[i] = 255-wr;
       if (255-wv < (int)weights[i]) weights[i] = 255-wv; 
@@ -940,9 +941,9 @@ void color_standard_weights_double( char * image_name ,
 	 
   for (i=0;i<M;i++)
     {
-      wr = fabs(img_r[G->Edges[0][i]]-img_r[G->Edges[1][i]]) ;
-      wv = fabs(img_v[G->Edges[0][i]]-img_v[G->Edges[1][i]]) ;
-      wb = fabs(img_b[G->Edges[0][i]]-img_b[G->Edges[1][i]]) ;
+      wr = labs(img_r[G->Edges[0][i]]-img_r[G->Edges[1][i]]) ;
+      wv = labs(img_v[G->Edges[0][i]]-img_v[G->Edges[1][i]]) ;
+      wb = labs(img_b[G->Edges[0][i]]-img_b[G->Edges[1][i]]) ;
       weights[i] =sqrt(wr*wr+wv*wv+wb*wb);
       if (weights[i]> maxi) (maxi) = weights[i];
     }
@@ -983,7 +984,7 @@ void grey_weights_double( char * image_name,
   M = ds*rs*(cs-1)+ds*(rs-1)*cs+(ds-1)*cs*rs;  /*number of G->Edges*/
   
    for (i=0;i<M;i++)
-      weights[i]= exp(-beta*(fabs(img[G->Edges[0][i]]-img[G->Edges[1][i]]))/255)+epsilon;
+      weights[i]= exp(-beta*(labs(img[G->Edges[0][i]]-img[G->Edges[1][i]]))/255)+epsilon;
   
   freeimage(image);
 }

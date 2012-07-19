@@ -64,14 +64,21 @@ extern "C" {
 
 #ifdef UNIXIO
 #  define __pink__inline inline
+#  define __pink__export export
+#  define __pink__import
 #  include <stdint.h>
 #else /* NOT UNIXIO */
 #  define __pink__inline
-typedef unsigned char u_int8_t;
-typedef unsigned int  u_int32_t;
-typedef unsigned char uint8_t;
-typedef int           int32_t;
-typedef unsigned int  uint32_t;
+#  define __pink__export __declspec(dllexport)
+#  define __pink__import __declspec(dllimport)
+  typedef unsigned char u_int8_t;
+  typedef unsigned int  u_int32_t;
+  typedef unsigned char uint8_t;
+  typedef int           int32_t;
+  typedef unsigned int  uint32_t;
+  typedef long long     int64_t;
+  typedef unsigned long long uint64_t;
+  typedef unsigned long long u_int64_t;
 #endif /* UNIXIO */
 
 

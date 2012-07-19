@@ -48,7 +48,9 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <sys/time.h>
+#ifndef _WINDOWS
+# include <sys/time.h>
+#endif /* _WINDOWS */
 #include <time.h>
 
 #include "mccodimage.h"

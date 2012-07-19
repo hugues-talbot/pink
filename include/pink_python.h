@@ -13,6 +13,9 @@
 #ifndef PINK_PYTHON_H
 #define PINK_PYTHON_H
 
+#ifdef _WINDOWS
+# define BOOST_PYTHON_STATIC_LIB
+#endif /* _WINDOWS */
 #include <boost/python.hpp>
 
 #include "ujimage.hpp"

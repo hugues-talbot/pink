@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -24,6 +25,9 @@
 
 int startim_main()
 {
+
+#ifndef _WINDOWS
+
   char *execstring = IMVIEWCMD;
   char buffer[5];
   int   portnum, filenum, res;
@@ -53,6 +57,8 @@ int startim_main()
 
   close(filenum);
   unlink(PIPESTR); 
+
+#endif /* _WINDOWS */
 
   return 0;
 }

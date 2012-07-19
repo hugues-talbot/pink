@@ -55,12 +55,16 @@ knowledge of the CeCILL license and that you accept its terms.
 
 
 #include <sys/types.h>
-#include <sys/time.h>
+#ifndef _WINDOWS
+# include <sys/time.h>
+#endif /* _WINDOWS */
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <unistd.h>
+#ifndef _WINDOWS
+# include <unistd.h>
+#endif /* _WINDOWS */
 
 #include "graph_utils.h"
 #include "mccodimage.h"

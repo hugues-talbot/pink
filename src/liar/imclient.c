@@ -22,11 +22,13 @@
 
 #include <errno.h>
 #include <sys/types.h>
+
 #include "liarp.h"
 #include "liarwrap.h"
 #include "imclient.h"
 
-#define ANSWER_MAX_SIZE 1024
+//#define ANSWER_MAX_SIZE 1024
+#define ANSWER_MAX_SIZE 10
 #define BIN_MAX_SIZE    8192
 #define HNDSHK_SIZE     300
 #define DEFAULTPORT     7600
@@ -41,10 +43,12 @@
 #define NET_PUT         "put"          /* using socket for data transfer */
 #define SYSV_SHM_PUT    "putm"         /* using System V shared memory for data transfer */
 #define PX_SHM_PUT      "putp"         /* using Posix shared memory for data transfer */
+#define WAS_STATIC
 
-static int     force_socket = 0;
 
-static const char *putcmd[] = {
+WAS_STATIC int     force_socket = 0;
+
+WAS_STATIC const char *putcmd[] = {
     NET_PUT,
     PX_SHM_PUT,
     SYSV_SHM_PUT
@@ -59,8 +63,8 @@ static const char *putcmd[] = {
 
 #define SHM_SIZE 400000 /* valid for all shared memory models */
 
-//static ipctype use_shm_default = SHM_POSIX; /* by default we use POSIX IPC if we can */
-static ipctype use_shm_default = SHM_SYSV; /* by default we use SYSV IPC, as it is better tested */
+//WAS_STATIC ipctype use_shm_default = SHM_POSIX; /* by default we use POSIX IPC if we can */
+WAS_STATIC ipctype use_shm_default = SHM_SYSV; /* by default we use SYSV IPC, as it is better tested */
 
 /* data needed to describe a connection */
 typedef struct connection_ {
@@ -78,13 +82,14 @@ int winsock_started=0;
 
 
 #ifndef WIN32
-#  include <sys/socket.h>
-#  include <netinet/in.h>
-#  include <netdb.h>
-#  define im_close close
-#  define USRID    "USER"
-#else
-#  include <windows.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <netdb.h>
+# define im_close close
+# define USRID    "USER"
+#else /* NOT WIN32 */
+# include <windows.h>
+# include <winsock.h>
 struct timezone
 {
     int tz_minuteswest;         /* Minutes west of GMT.  */
@@ -95,24 +100,24 @@ struct timezone
      Else, define a new function for WIN32 :)
      extern int gettimeofday();
   */
-#  define gettimeofday(tvp, tzp) (timerclear(tvp))
-#  define im_close closesocket
-#  define USRID    "USERNAME"
-#endif
+# define gettimeofday(tvp, tzp) (timerclear(tvp))
+# define im_close closesocket
+# define USRID    "USERNAME"
+#endif /* NOT WIN32 */
 
 
 /* system V IPC */
 #ifdef HAVE_SYSV_IPC
-#include <sys/ipc.h>
-#include <sys/sem.h>
-#include <sys/shm.h>
+# include <sys/ipc.h>
+# include <sys/sem.h>
+# include <sys/shm.h>
 
 /* not sure this is still needed, this is very weird
    Hugues Talbot	21 Dec 2010*/
-#ifdef Linux
-#  if defined(__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
+# ifdef Linux
+#   if defined(__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
 /* union semun is defined by including <sys/sem.h> */
-#  else
+#   else /* NOT GNU lib, etc */
 /* according to X/OPEN we have to define it ourselves */
 union semun {
     int val;                    /* value for SETVAL */
@@ -120,58 +125,60 @@ union semun {
     unsigned short int *array;  /* array for GETALL, SETALL */
     struct seminfo *__buf;      /* buffer for IPC_INFO */
 };
-#  endif /* GNU lib, etc */
-#endif /* Linux */
+#   endif /* NOT GNU lib, etc */
+# endif /* Linux */
 
-#define SEM_ACS  0
-#define SEM_RD   1
-#define SEM_WR   2
+# define SEM_ACS  0
+# define SEM_RD   1
+# define SEM_WR   2
 
 /* convenient globals */
 int               semid, shmid;
-static  char     *sysv_shm_data;
+WAS_STATIC  char *sysv_shm_data;
 
 
 #endif /* HAVE_SYSV_IPC */
 
 /* POSIX IPC */
 #ifdef HAVE_POSIX_IPC
-#  include <semaphore.h>
-#  include <sys/mman.h>
+# include <semaphore.h>
+# include <sys/mman.h>
 
 // #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
 // time.h is on different place
-#ifdef UNIXIO
-#  include <unistd.h>
-#  include <sys/time.h>
-#else /* NOT UNIXIO */
-#  include <stdlib.h>
-#  include <io.h>
-#  include <time.h>
-#endif /* NOT UNIXIO */
+# ifdef UNIXIO
+#   include <unistd.h>
+#   include <sys/time.h>
+# else /* NOT UNIXIO */
+#   include <stdlib.h>
+#   include <io.h>
+#   include <time.h>
+# endif /* NOT UNIXIO */
 
-#  include <errno.h>
-#  include <fcntl.h>
+# include <errno.h>
+# include <fcntl.h>
 
-#  define STR_ACCESS   "_ACCESS"
-#  define STR_READ     "_READ"
-#  define STR_WRITE    "_WRITE"
-#  define STR_SHM      "_SHM"
+# define STR_ACCESS   "_ACCESS"
+# define STR_READ     "_READ"
+# define STR_WRITE    "_WRITE"
+# define STR_SHM      "_SHM"
 
 
-#  define SEM_ACCESS   0
-#  define SEM_READ     1
-#  define SEM_WRITE    2
+# define SEM_ACCESS   0
+# define SEM_READ     1
+# define SEM_WRITE    2
 
-#  define IPC_FILE_MODE 0600 // rw for creator only, must be Octal!
+// rw for creator only, must be Octal!
+# define IPC_FILE_MODE 0600 
 
-/* convenience static global */
-static  char       *posix_shm_data;
-static  sem_t      *imview_px_sem[3];
-static  char        ipc_base_path[ANSWER_MAX_SIZE];
-char               *px_templ_name;
+/* convenience WAS_STATIC global */
+WAS_STATIC  char  *posix_shm_data;
+WAS_STATIC  sem_t *imview_px_sem[3];
+// WAS_STATIC  char  *ipc_base_path[ANSWER_MAX_SIZE]; // original definition
 
-static const char  *px_resource_name[] = {
+char              *px_templ_name;
+
+WAS_STATIC const char  *px_resource_name[] = {
     STR_ACCESS,
     STR_READ,
     STR_WRITE
@@ -179,12 +186,12 @@ static const char  *px_resource_name[] = {
 
 #endif /* HAVE_POSIX_IPC */
 
+char  *ipc_base_path[ANSWER_MAX_SIZE];
 
 
 
-
-static connection conn_array[MAX_CONN_ARRAY];
-static int        conn_inited = 0; 
+WAS_STATIC connection conn_array[MAX_CONN_ARRAY];
+WAS_STATIC int        conn_inited = 0; 
 
 /* static functions prototypes */
 static int imview_open_connection(const char *hostname,
@@ -891,11 +898,11 @@ static char *imview_px_ipc_name(const char *name)
 
     /* can override default directory with environment variable */
     if ( (dir = getenv("PX_IPC_NAME")) == NULL) {
-#ifdef	POSIX_IPC_PREFIX
+# ifdef	POSIX_IPC_PREFIX
         dir = POSIX_IPC_PREFIX;		/* from "config.h" */
-#else
+# else // NOT POSIX_IPC_PREFIX
         dir = "/tmp/";				/* default */
-#endif
+# endif // NOT POSIX_IPC_PREFIX
     }
 		/* dir must end in a slash */
     slash = (dir[strlen(dir) - 1] == '/') ? "" : "/";

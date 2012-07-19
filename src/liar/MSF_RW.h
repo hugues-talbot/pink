@@ -52,6 +52,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "graph_utils.h"
 #include "memory.h"
 //epsilon plateau
+
+namespace {
+  const double epsilon=0.00001;
+  const index_t SIZE_MAX_PLATEAU=1800000; // 2000000
+  const index_t MAX_DEGREE=3000;
+} // unnamed namespace; the variables declared in this namespace will only be
+// visible in this translation unit (file)
 #define eps 0.000000001
 
 

@@ -108,7 +108,7 @@ namespace pink
     
     pink::gsl::vector::~vector() // default destructor
     {
-      if (not wrapper) // we do not delete pointers in wrapper mode
+      if (! wrapper) // we do not delete pointers in wrapper mode
       {  
         if (self)
         {        
@@ -239,7 +239,7 @@ namespace pink
   
     matrix::~matrix() // default destructor
     {
-      if (not wrapper) // we do not delete pointers in wrapper mode
+      if (! wrapper) // we do not delete pointers in wrapper mode
       {  
         if (self)
         {        
@@ -408,7 +408,9 @@ namespace pink
         now = this->position();
           
       } while (dist(now, before) > epsilon);
-    }
+
+      return 1;
+   }
     
     
     vector fdfsolver::position()

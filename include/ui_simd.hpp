@@ -19,20 +19,31 @@
 //#include <immintrin.h>
 
 
+
 #if defined (__SSE4_2__) || defined (__SSE4_1__)
-# warning: highest simd instruction set available at compilation SSE4
+# ifndef _WINDOWS
+#   warning: highest simd instruction set available at compilation SSE4
+# endif /* _WINDOWS */
 #elif defined (__SSE3__)
-# warning: highest simd instruction set available at compilation SSE3
+# ifndef _WINDOWS
+#   warning: highest simd instruction set available at compilation SSE3
+# endif /* _WINDOWS */
 # define _mm_blendv_ps(a, b, m) _mm_xor_ps(a, _mm_and_ps(_mm_xor_ps(b, a), m))
 #elif defined (__SSE2__)
 # define _mm_blendv_ps(a, b, m) _mm_xor_ps(a, _mm_and_ps(_mm_xor_ps(b, a), m))
-# warning: highest simd instruction set available at compilation SSE2
+# ifndef _WINDOWS
+#   warning: highest simd instruction set available at compilation SSE2
+# endif /* _WINDOWS */
 #elif defined (__SSE__)
 # define _mm_blendv_ps(a, b, m) _mm_xor_ps(a, _mm_and_ps(_mm_xor_ps(b, a), m))
-# warning: highest simd instruction set available at compilation SSE1
+# ifndef _WINDOWS
+#   warning: highest simd instruction set available at compilation SSE1
+# endif /* _WINDOWS */
 #else /* NOT defined (__SSE__) */
 # define _mm_blendv_ps(a, b, m) _mm_xor_ps(a, _mm_and_ps(_mm_xor_ps(b, a), m))
-# warning: NO SIMD SUPPORT
+# ifndef _WINDOWS
+#   warning: NO SIMD SUPPORT
+# endif /* _WINDOWS */
 #endif /* NOT defined (__SSE__) */
 
 // equivalent with a < b ? c : d

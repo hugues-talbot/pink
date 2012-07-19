@@ -46,9 +46,10 @@ extern "C" {
 #endif
 
 
-#define epsilon 0.00001
-#define MAX_DEGREE 3000
-#define SIZE_MAX_PLATEAU 1800000
+  //  const double epsilon=0.00001;
+  // #define MAX_DEGREE 3000
+  // #define SIZE_MAX_PLATEAU 1800000
+
 typedef float DBL_TYPE;
 
 #include <stdio.h>

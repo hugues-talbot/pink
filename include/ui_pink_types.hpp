@@ -34,6 +34,9 @@
 #include <sstream>
 #include <iostream>
 #ifdef PINK_HAVE_PYTHON
+# ifdef _WINDOWS
+#   define BOOST_PYTHON_STATIC_LIB
+# endif /* _WINDOWS */
 # include <boost/python.hpp>
 # include <boost/smart_ptr.hpp>
 #endif /* PINK_HAVE_PYTHON */

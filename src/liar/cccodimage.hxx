@@ -48,16 +48,19 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <stdint.h>
 #include <string.h>
 #include <sys/types.h>
-#include <math.h>
 #include <time.h>
-#include <unistd.h>
+#ifndef _WINDOWS
+# include <unistd.h>
+#endif /* _WINDOWS */
 
 #include "mccodimage.h"
 #include "mcimage.h"
 #include "mcindic.h"
 #include "mclifo.h"
 #include "mcutil.h"
-#include "stdbool.h"
+#ifndef _WINDOWS
+# include "stdbool.h"
+#endif /* _WINDOWS */
 #include "lMSF.h"
 #include "union_find.h"
 

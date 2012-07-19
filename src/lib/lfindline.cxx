@@ -613,7 +613,7 @@ TESTS:
     {
         dx = abs(x1 - x2);
         dy = abs(y1 - y2);
-        dist= sqrt(dx*dx+dy*dy); //calcul la distance entre les deux points
+        dist= sqrt(static_cast<double>(dx*dx+dy*dy)); //calcul la distance entre les deux points
 
         incx = 1;
         if (x2 < x1) incx = -1;
@@ -758,7 +758,7 @@ TESTS:
     {
         dx = abs(x1 - x2);
         dy = abs(y1 - y2);
-        dist= sqrt(dx*dx+dy*dy); //calcul la distance entre les deux points
+        dist= sqrt(static_cast<double>(dx*dx+dy*dy)); //calcul la distance entre les deux points
 
         incx = 1;
         if (x2 < x1) incx = -1;

@@ -19,7 +19,10 @@
 #include <fstream>
 
 #ifdef PINK_HAVE_PYTHON
-# include <boost/python.hpp>
+#  ifdef _WINDOWS
+#    define BOOST_PYTHON_STATIC_LIB
+#  endif /* _WINDOWS */
+#  include <boost/python.hpp>
 #endif /* PINK_HAVE_PYTHON */
 
 #include "ui_pink_types.hpp"

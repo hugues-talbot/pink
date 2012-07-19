@@ -54,6 +54,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <powerwatsegm.h>
 #include<stdint.h>
 #include <stdio.h>
+#include <boost/smart_ptr.hpp>
 
 template <class wtype> wtype * linsortimageup(wtype *F,uint32_t  N, int maxi);
 template <class wtype> wtype * linsortimagedown(uint32_t *F, uint32_t N, int maxi);
@@ -226,7 +227,8 @@ template <class wtype> wtype * linsortimageup(wtype *F, uint32_t N, int maxi)
 #undef F_NAME
 #define F_NAME "linsortimageup"
 {
-    int i, j, k, H[maxi+1];
+  int i, j, k; 
+  boost::scoped_array<int> H( new int[maxi+1] );
     uint32_t *T = (uint32_t *)calloc(1,N * sizeof(uint32_t));
     if (T == NULL)
     {   fprintf(stderr, "%s() : calloc failed for T\n", F_NAME);
@@ -269,7 +271,8 @@ template <class wtype> wtype * linsortimagedown(wtype *F, uint32_t N, int maxi)
 #undef F_NAME
 #define F_NAME "linsortimagedown"
 {
-    int i, j, k, H[maxi+1];
+  int i, j, k;
+  boost::scoped_array<int> H( new int[maxi+1] );
     uint32_t *T = (uint32_t *)calloc(1,N* sizeof(uint32_t));
     if (T == NULL)
     {   fprintf(stderr, "%s() : calloc failed for T\n", F_NAME);

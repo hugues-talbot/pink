@@ -17,6 +17,7 @@ string( COMPARE EQUAL ${PINK_PACKAGE_TYPE} DEB-DEBIAN4  DEB-DEBIAN4PACKAGE )
 string( COMPARE EQUAL ${PINK_PACKAGE_TYPE} DEB-DEBIAN6  DEB-DEBIAN6PACKAGE )
 string( COMPARE EQUAL ${PINK_PACKAGE_TYPE} RPM-FEDORA17      RPM-FEDORA17PACKAGE )
 string( COMPARE EQUAL ${PINK_PACKAGE_TYPE} RPM-OpenSuSE12.1  RPM-OpenSuSE12.1PACKAGE )
+string( COMPARE EQUAL ${PINK_PACKAGE_TYPE} NSIS-WINDOWS      EXE-NSISPACKAGE )
 
 if (TBZ2PACKAGE)
 	SET( CPACK_RPM_PACKAGE_REQUIRES   "" )
@@ -54,7 +55,15 @@ elseif (RPM-OpenSuSE12.1PACKAGE)
 	SET( CPACK_RPM_PACKAGE_REQUIRES   "python >= 2.6.0, IPython, python-imaging, python-tk, python-matplotlib, python-matplotlib-tk, python-numpy" )
 	SET( CPACK_DEBIAN_PACKAGE_DEPENDS "" )
 	SET( CPACK_GENERATOR              "RPM;TBZ2" )
-else()
+elseif (EXE-NSISPACKAGE)
+	SET( CPACK_RPM_PACKAGE_REQUIRES   "" )
+	SET( CPACK_DEBIAN_PACKAGE_DEPENDS "" )
+	SET( CPACK_GENERATOR              "NSIS" )
+	if (NOT PACKAGE_INSTALL_DIRECTORY)
+	    execute_process ( COMMAND python -c "from distutils.sysconfig import get_python_lib; path=get_python_lib(); print(path)" OUTPUT_VARIABLE PACKAGE_INSTALL_DIRECTORY OUTPUT_STRIP_TRAILING_WHITESPACE )
+	endif(NOT PACKAGE_INSTALL_DIRECTORY)
+	SET( CPACK_PACKAGE_INSTALL_DIRECTORY ${PACKAGE_INSTALL_DIRECTORY} )
+else ()
 	MESSAGE( FATAL "cmake configuration error: unknown package type" )
 endif()
 ### Setting up CPack for the source package generation --------
@@ -116,7 +125,26 @@ SET( CPACK_DEBIAN_PACKAGE_RECOMMENDS "ipython" )
 SET( CPACK_DEBIAN_PACKAGE_SUGGESTS "python-vtk" )
 #SET( CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/CMake/debian/postinst;${CMAKE_CURRENT_SOURCE_DIR}/CMake/debian/prerm;" )
 
+# **************************************************************
+# ********************* NSIS Windows(tm) EXE *******************
+# **************************************************************
 
+#SET( CPACK_NSIS_MUI_ICON "" )                 # The icon file (.ico) for the generated install program. Both this and CPACK_NSIS_MUI_UNIICON need to set for this to have any effect. 	installer.ico
+#SET( CPACK_NSIS_MUI_UNIICON "" )              # The icon file (.ico) for the generated uninstall program. Both this and CPACK_NSIS_MUI_ICON need to set for this to have any effect. 	uninstaller.ico
+#SET( CPACK_PACKAGE_ICON "" )                  # A branding image that will be displayed on the top bar inside the installer. 	installer.bmp
+#SET( CPACK_NSIS_EXTRA_INSTALL_COMMANDS "" )   # Extra NSIS commands that will be added to the install Section. 	ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q:a'
+#SET( CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "" ) # Extra NSIS commands that will be added to the uninstall Section. 	
+#SET( CPACK_NSIS_COMPRESSOR "" )               # The arguments that will be passed to the NSIS SetCompressor command. 	/SOLID lzma
+#SET( CPACK_NSIS_MODIFY_PATH "" )              # If this is set to "ON", then an extra page will appear in the installer that will allow the user to choose whether the program directory should be added to the system PATH variable. 	ON
+SET( CPACK_NSIS_DISPLAY_NAME "Pink Image Processing Library" ) # Undocumented. "${CPACK_PACKAGE_INSTALL_DIRECTORY} My Famous Project"
+#SET( CPACK_NSIS_INSTALLED_ICON_NAME "" )      # Set the icon used for the Windows "Add or Remove Programs" tool. 	"bin\\\\MyExecutable.exe"
+#SET( CPACK_NSIS_HELP_LINK  "" )               # Adds link to registry. URI. 	"http:\\\\\\\\www.my-project-home-page.org"
+#SET( CPACK_NSIS_URL_INFO_ABOUT "" )           # Adds link to registry and the vendor in add/remove programs' "Click here for support information" in program entry links here. 	"http:\\\\\\\\www.my-personal-home-page.com"
+SET( CPACK_NSIS_CONTACT "https://www.pinkhq.com" )                  # Adds link to add/remove programs' "Click here for support information" in program entry. 	"me@my-personal-home-page.com"
+#SET( CPACK_NSIS_CREATE_ICONS_EXTRA "" )       # Additional NSIS commands for creating start menu shortcuts. 	set(CPACK_NSIS_CREATE_ICONS "CreateShortCut '\$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\${PROJECT_NAME}.lnk' '\$INSTDIR\\\\${PROJECT_NAME}.exe'")
+#SET( CPACK_NSIS_DELETE_ICONS_EXTRA "" )       # Undocumented. Possibly: Additional NSIS commands to uninstall start menu shortcuts. 	
+#SET( CPACK_NSIS_MENU_LINKS "" )               # Used to override the Start Menu links. 	"doc/cmake-@CMake_VERSION_MAJOR@.@CMake_VERSION_MINOR@/CMakeSetup.html" "CMakeSetup Help"
+#SET( CPACK_NSIS_MUI_FINISHPAGE_RUN "" )       # If used, will make it possible for user to choose (on an additional page, displayed at the end of the installation) to run intalled program. Should point to program name to run, seemingly without any sub-directories of the installation directory in case program installed in such sub-directories (but please check generated NSIS script if you can't make it work). 	"MyExecutable.exe" 
 
 ### Calling CPack ---------------------------------------------
 INCLUDE(CPack)
