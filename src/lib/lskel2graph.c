@@ -48,6 +48,25 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lskelcurv.h"
 #include "lskel2graph.h"
 
+double pink_round(double number)
+{
+#ifdef _WINDOWS
+  return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);
+#else /* _WINDOWS */
+  return round(number);
+#endif /* _WINDOWS */
+} // pink_round
+
+double pink_trunc( double x )
+{
+#ifdef _WINDOWS
+  return (((number) < 0) ? ceil((number)) : floor((number)));
+#else /* _WINDOWS */
+  return round(number);
+#endif /* _WINDOWS */
+} // pink_trunc
+
+
 /* ====================================================================== */
 graphe * 
 lskel2graph( skel * S, int32_t mode, double param )
@@ -284,7 +303,7 @@ graphe * lskel2graph2(skel * S, double param)
   int32_t i, j, rs, ps, v, n, E, E1, E2, pt;
   double x, y, z, inter;
   int32_t nsom, nextrasom, newsom, newsom2, ncurv, len;
-  int32_t Nd = (int32_t)round(param);
+  int32_t Nd = (int32_t)pink_round(param);
   SKC_pt_pcell p, pp;
   SKC_adj_pcell a;
 
@@ -530,7 +549,7 @@ graphe * lskel2graph3(skel * S, double param)
   {
     // trouve la longueur de la courbe
     for (len = 0, p = S->tskel[i].pts; p != NULL; p = p->next) len++;
-    nextrasom += mcmax(1, (int32_t)trunc((double)len / param)) - 1;
+    nextrasom += mcmax(1, (int32_t)pink_trunc((double)len / param)) - 1;
     a = S->tskel[i].adj; // si arc fermé rajoute un sommet
     if (a == NULL) nextrasom += 1;
   } // for (i = S->e_end; i < S->e_curv; i++)
@@ -588,7 +607,7 @@ graphe * lskel2graph3(skel * S, double param)
       if (IS_END(E1)) len--; // les points extrémités sont dans la courbe,
       if (IS_END(E2)) len--; // les points de jonction non
       // trouve le nombre de sommets intermédiaires
-      nextrasom = mcmax(1, (int32_t)trunc((double)len / param)) - 1;
+      nextrasom = mcmax(1, (int32_t)pink_trunc((double)len / param)) - 1;
       // trouve le nombre de points moyen entre 2 sommets
       inter = ((double)len) / (nextrasom+1);
 //printf("len = %d nextrasom = %d inter = %g\n", len, nextrasom, inter);
@@ -661,7 +680,7 @@ graphe * lskel2graph3(skel * S, double param)
       // trouve la longueur de la courbe
       for (len = 0, p = S->tskel[i].pts; p != NULL; p = p->next) len++;
       // trouve le nombre de sommets intermédiaires
-      nextrasom = mcmax(1, (int32_t)trunc((double)len / param)) - 1;
+      nextrasom = mcmax(1, (int32_t)pink_trunc((double)len / param)) - 1;
       // trouve le nombre de points moyen entre 2 sommets
       inter = ((double)len) / (nextrasom+1);
 
