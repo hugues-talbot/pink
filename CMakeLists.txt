@@ -476,7 +476,7 @@ if ( PYTHON_FRONT_END )
 
     if (NUMPY)
 	## Try to determine the directory of numpy headers
-	execute_process ( COMMAND python -c "from numpy import distutils; path=distutils.misc_util.get_numpy_include_dirs(); print path[0]" OUTPUT_VARIABLE NUMPY_INCLUDEDIR OUTPUT_STRIP_TRAILING_WHITESPACE )
+	execute_process ( COMMAND python -c "from numpy import distutils; path=distutils.misc_util.get_numpy_include_dirs(); print(path[0])" OUTPUT_VARIABLE NUMPY_INCLUDEDIR OUTPUT_STRIP_TRAILING_WHITESPACE )
 	if (NOT NUMPY_INCLUDE)
 	    SET(NUMPY_INCLUDE ${NUMPY_INCLUDEDIR} CACHE PATH "Directory for the numpy headers. If it is not set automatically it is determined by python distutils." )
         endif( NOT NUMPY_INCLUDE)
