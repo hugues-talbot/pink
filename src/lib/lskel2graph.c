@@ -57,7 +57,7 @@ double pink_round(double number)
 #endif /* _WINDOWS */
 } // pink_round
 
-double pink_trunc( double x )
+double pink_trunc( double number )
 {
 #ifdef _WINDOWS
   return (((number) < 0) ? ceil((number)) : floor((number)));
