@@ -149,10 +149,10 @@ def parse_filename(filename):
 
 if len(argv)!=3:
 #                                0               1           2
-    print "error: usage: ./python_documenter directory documentation.c"
+    print("error: usage: ./python_documenter directory documentation.c")
     exit(1)
 
-print "Boost python documenter"
+print("Boost python documenter")
 
 dir = argv[1]
 outfile = open(argv[2], "w")
@@ -164,10 +164,10 @@ for q in listdir(dir):
         filedesc = open(join(dir, q), "r")
         opened = True
     except:
-        print "skipping " + join(dir, q)
+        print("skipping " + join(dir, q))
 
     if opened:
-        print "processing file " + join(dir, q)
+        print("processing file " + join(dir, q))
         outfile.write( parse_file( filedesc, parse_filename(q) ) )
         filedesc.close()
         outfile.write("\n\n\n")
