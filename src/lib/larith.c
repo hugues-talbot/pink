@@ -37,6 +37,8 @@ knowledge of the CeCILL license and that you accept its terms.
     ladd
     laddconst
     larea
+    largmax
+    largmin
     laverage
     linverse
     ldiff
@@ -67,6 +69,7 @@ knowledge of the CeCILL license and that you accept its terms.
 /* Camille Couprie - octobre 2002 (xor) */
 /* Michel Couprie - décembre 2010 (modulus) */
 /* Michel Couprie - février 2011 (gamma) */
+/* Michel Couprie - juillet 2012 (argmin, argmax) */
 
 #include <stdio.h>
 #include <stdint.h>
@@ -872,6 +875,82 @@ double lmin1(struct xvimage * image1)
 
   return minval;
 } /* lmin1() */
+
+/* ==================================== */
+index_t largmin(struct xvimage * image1)
+/* index of the minimum value in an image */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "largmin"
+{
+  index_t i, arg, N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
+  double minval;
+
+  arg = 0;
+  if (datatype(image1) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(image1);
+    minval = (double)F[0];
+    for (i = 1; i < N; i++) if ((double)F[i] < minval) { minval = (double)F[i]; arg = i; }
+  }
+  else if (datatype(image1) == VFF_TYP_4_BYTE)
+  {
+    int32_t *F = SLONGDATA(image1);
+    minval = (double)F[0];
+    for (i = 1; i < N; i++) if ((double)F[i] < minval) { minval = (double)F[i]; arg = i; }
+  }
+  else if (datatype(image1) == VFF_TYP_FLOAT)
+  {
+    float *F = FLOATDATA(image1);
+    minval = (double)F[0];
+    for (i = 1; i < N; i++) if ((double)F[i] < minval) { minval = (double)F[i]; arg = i; }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return(0);
+  }
+
+  return arg;
+} /* largmin() */
+
+/* ==================================== */
+index_t largmax(struct xvimage * image1)
+/* index of the maximum value in an image */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "largmax"
+{
+  index_t i, arg, N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
+  double maxval;
+
+  arg = 0;
+  if (datatype(image1) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *F = UCHARDATA(image1);
+    maxval = (double)F[0];
+    for (i = 1; i < N; i++) if ((double)F[i] > maxval) { maxval = (double)F[i]; arg = i; }
+  }
+  else if (datatype(image1) == VFF_TYP_4_BYTE)
+  {
+    int32_t *F = SLONGDATA(image1);
+    maxval = (double)F[0];
+    for (i = 1; i < N; i++) if ((double)F[i] > maxval) { maxval = (double)F[i]; arg = i; }
+  }
+  else if (datatype(image1) == VFF_TYP_FLOAT)
+  {
+    float *F = FLOATDATA(image1);
+    maxval = (double)F[0];
+    for (i = 1; i < N; i++) if ((double)F[i] > maxval) { maxval = (double)F[i]; arg = i; }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return(0);
+  }
+
+  return arg;
+} /* largmax() */
 
 /* ==================================== */
 int32_t lmin(

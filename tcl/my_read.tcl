@@ -40,7 +40,7 @@ proc my_readpgmheader {filename} {
   while {([string index $line 0] == "#") || ([string length $line] == 0)} {
     set line [gets $input]
   }
-  scan $line "%d %d" rs cs
+  scan $line "%d%d" rs cs
   close $input
   return [list $tag $rs $cs]
 }

@@ -55,6 +55,9 @@ extern index_t larea(
   struct xvimage * image
 );
 
+extern index_t largmax(struct xvimage * image1);
+extern index_t largmin(struct xvimage * image1);
+
 extern int32_t laverage(
   struct xvimage * image1,
   struct xvimage * image2,

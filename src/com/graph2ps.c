@@ -75,7 +75,7 @@ int main(int argc, char **argv)
   g = ReadGraphe(argv[1]);             /* lit le graphe a partir du fichier */
 
   if (argc == 3) 
-    scale = 20;
+    scale = 5;
   else
     scale = atof(argv[2]);
 
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 
   EPSGraphe(g, argv[argc-1], 
 	    2, // facteur d'échelle à appliquer aux coordonnées des sommets
-	    25, // rayon des cercles qui représentent les sommets
+	    10, // rayon des cercles qui représentent les sommets
 	    0, // taille (demi-longueur) des flèches pour les arcs
 	    10, // marge en x et en y
 	    0, // booléen indiquant s'il faut écrire les noms des sommets

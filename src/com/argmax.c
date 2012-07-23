@@ -32,85 +32,76 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file ppm2pgm.c
+/*! \file argmax.c
 
-\brief converts a color ppm image into 3 grayscale pgm images
+\brief return the coordinates of a pixel having the maximal value
 
-<B>Usage:</B> ppm2pgm in.ppm r.pgm g.pgm b.pgm
+<B>Usage:</B> argmax in.pgm [out.list]
 
 <B>Description:</B>
-Converts a color ppm image \b in.ppm into 3 grayscale pgm images
-<B>r.pgm</B>, <B>g.pgm</B> and <B>b.pgm</B> which are the red, 
-green and blue color planes of the original color image.
+This function returns (in the list <B>out.list</B>) 
+coordinates of a pixel having the maximal value in the image \b in.pgm .
 
-<B>Types supported:</B> byte color 2d
+If the parameter \b out.list is ommitted, the result is printed on the standard output.
 
-<B>Category:</B> convert
-\ingroup  convert
+<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
+
+<B>Category:</B> arith
+\ingroup  arith
 
 \author Michel Couprie
 */
-/* explose une image en couleurs pour donner trois images en ndg */
 
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <larith.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * r;
-  struct xvimage * g;
-  struct xvimage * b;
-  index_t i, rs, cs, N;
-  uint8_t *I, *R, *G, *B;
-
-  if (argc != 5)
-  {
-    fprintf(stderr, "usage: %s in.ppm r.pgm g.pgm b.pgm\n", argv[0]);
-    exit(1);
-  }
-
-  /*
-  if (readrgbimage(argv[1], &r, &g, &b) == 0)
-  {
-    fprintf(stderr, "%s: readrgbimage failed\n", argv[0]);
-    exit(1);
-  }
-  */
-
-  image = readimage(argv[1]); assert(image != NULL);
-  rs = rowsize(image);
-  cs = colsize(image);
-  N = rs * cs;
-  I = UCHARDATA(image);
+  int32_t rs, ps;
+  index_t arg;
+  FILE *fd = NULL;
   
-  r = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(r != NULL);
-  g = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(g != NULL);
-  b = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(b != NULL);
-  R = UCHARDATA(r);
-  G = UCHARDATA(g);
-  B = UCHARDATA(b);
-
-  for (i = 0; i < N; i++)
+  if ((argc != 3) && (argc != 2))
   {
-    R[i] = I[i]; 
-    G[i] = I[N+i]; 
-    B[i] = I[N+N+i]; 
+    fprintf(stderr, "usage: %s in.pgm [out.list]\n", argv[0]);
+    exit(1);
   }
 
-  writeimage(r, argv[2]);
-  writeimage(g, argv[3]);
-  writeimage(b, argv[4]);
-  freeimage(r);
-  freeimage(g);
-  freeimage(b);
+  image = readimage(argv[1]);
+  if (image == NULL)
+  {
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
+    exit(1);
+  }
+
+  rs = rowsize(image);
+  ps = rs * colsize(image);
+
+  arg = largmax(image);
+ 
+  if (argc == 3)
+  {
+    fd = fopen(argv[argc - 1],"w");
+    if (!fd)
+    {
+      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc - 1]);
+      exit(1);
+    }
+    fprintf(fd, "e %d\n", 3); 
+    fprintf(fd, "%d %d %d\n", arg % rs, (arg % ps) / rs, arg/ps); 
+    fclose(fd);
+  }
+  else
+    printf("%d %d %d\n", arg % rs, (arg % ps) / rs, arg/ps); 
+
   freeimage(image);
 
   return 0;

@@ -32,6 +32,8 @@ ARITH=\
 $(BDIR)/add \
 $(BDIR)/addconst \
 $(BDIR)/area \
+$(BDIR)/argmax \
+$(BDIR)/argmin \
 $(BDIR)/average \
 $(BDIR)/complex_modulus \
 $(BDIR)/complex_real \
@@ -462,6 +464,7 @@ $(BDIR)/rotate \
 $(BDIR)/rotate3dbin \
 $(BDIR)/rotatebin \
 $(BDIR)/rotse \
+$(BDIR)/seamcarving \
 $(BDIR)/section \
 $(BDIR)/selrect \
 $(BDIR)/shrinkondisk \
@@ -625,6 +628,12 @@ $(BDIR)/addconst:	$(CDIR)/addconst.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_CO
 
 $(BDIR)/area:	$(CDIR)/area.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/area.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/area
+
+$(BDIR)/argmax:	$(CDIR)/argmax.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/argmax.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/argmax
+
+$(BDIR)/argmin:	$(CDIR)/argmin.c $(IDIR)/mcimage.h $(IDIR)/larith.h $(OBJ_COMMON) $(ODIR)/larith.o
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/argmin.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/argmin
 
 $(BDIR)/average:	$(CDIR)/average.c $(IDIR)/larith.h $(IDIR)/mcimage.h $(OBJ_COMMON) $(ODIR)/larith.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/average.c $(ODIR)/larith.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/average
@@ -913,6 +922,9 @@ $(BDIR)/GA2khalimsky:	 $(CDIR)/GA2khalimsky.c $(IDIR)/mcimage.h $(IDIR)/jcimage.
 
 $(BDIR)/GA2tikz:	 $(CDIR)/GA2tikz.c $(IDIR)/mcimage.h $(IDIR)/jcimage.h $(IDIR)/mccodimage.h $(ODIR)/jcimage.o $(ODIR)/mccodimage.o $(OBJ_COMMON)
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/GA2tikz.c $(ODIR)/jcimage.o $(ODIR)/mccodimage.o $(OBJ_COMMON) $(LIBS) -o $(BDIR)/GA2tikz
+
+$(BDIR)/seamcarving:	$(CDIR)/seamcarving.c $(IDIR)/mcimage.h $(IDIR)/lseamcarving.h $(ODIR)/lseamcarving.o $(ODIR)/libpink.a
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/seamcarving.c $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/seamcarving
 
 $(BDIR)/section:	$(CDIR)/section.c $(IDIR)/mcimage.h $(IDIR)/lgeo.h $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mclin.o $(ODIR)/mcgeo.o $(ODIR)/mcliste.o $(ODIR)/lbresen.o $(ODIR)/llabelextrema.o $(ODIR)/lgeo.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/section.c $(OBJ_COMMON) $(ODIR)/mclifo.o $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/mcgeo.o $(ODIR)/mclin.o $(ODIR)/mcliste.o $(ODIR)/lbresen.o $(ODIR)/llabelextrema.o $(ODIR)/lgeo.o $(LIBS) -o $(BDIR)/section
@@ -2518,6 +2530,10 @@ $(ODIR)/lbdigitalline.o:	$(LDIR)/lbdigitalline.cxx $(IDIR)/lbdigitalline.h
 $(ODIR)/ltangents.o:	$(LDIR)/ltangents.cxx $(IDIR)/ltangents.h $(IDIR)/lbdigitalline.h
 	$(CPP) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/ltangents.cxx -o $(ODIR)/ltangents.o
 	ar rcs $(ODIR)/libpink.a $(ODIR)/ltangents.o
+
+$(ODIR)/lseamcarving.o:	$(LDIR)/lseamcarving.c $(IDIR)/mccodimage.h $(IDIR)/mclifo.h $(IDIR)/mctopo.h $(IDIR)/lseamcarving.h
+	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lseamcarving.c -o $(ODIR)/lseamcarving.o
+	ar rcs $(ODIR)/libpink.a $(ODIR)/lseamcarving.o
 
 $(ODIR)/lattribute.o:	$(LDIR)/lattribute.c $(IDIR)/mccodimage.h $(IDIR)/mclifo.h $(IDIR)/mctopo.h $(IDIR)/lattribute.h
 	$(CC) -c $(CCFLAGS) -I$(IDIR) $(LDIR)/lattribute.c -o $(ODIR)/lattribute.o
