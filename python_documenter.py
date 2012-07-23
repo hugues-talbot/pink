@@ -30,6 +30,7 @@ The program should be used as:
 ./python_documenter directory documentation.c
 """
 
+import sys
 from sys import argv
 from os import listdir
 from os.path import join
@@ -163,7 +164,10 @@ outfile.write(header())
 for q in listdir(dir):
     opened = False
     try:
-        filedesc = open(join(dir, q), "r")
+        if sys.version_info[0] >= 3:
+            filedesc = open( join(dir, q), "r", encoding="latin1" )
+        else:
+            filedesc = open( join(dir, q), "r" )
         opened = True
     except:
         print("skipping " + join(dir, q))
