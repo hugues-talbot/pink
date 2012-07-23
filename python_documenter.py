@@ -1,15 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# # This software is licensed under 
-# # CeCILL FREE SOFTWARE LICENSE AGREEMENT
+# This software is licensed under 
+# CeCILL FREE SOFTWARE LICENSE AGREEMENT
 
-# # This software comes in hope that it will be useful but 
-# # without any warranty to the extent permitted by applicable law.
+# This software comes in hope that it will be useful but 
+# without any warranty to the extent permitted by applicable law.
   
-# # (C) UjoImro, 2011
-# # Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
-# # ujoimro@gmail.com
+# (C) UjoImro, 2011
+# Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
+# ujoimro@gmail.com
+
+# (C) UjoImro, 2012
+# ProCarPlan s.r.o.
+# ujoimro@gmail.com
+
 #
 
 """ 
@@ -29,7 +34,6 @@ from sys import argv
 from os import listdir
 from os.path import join
 from time import strftime
-from string import replace, find
 
 def header():
     result = ""
@@ -52,9 +56,9 @@ def footer():
 
 def simple_filter(text):
     result = text
-    result = replace( result, "\n", "")
-    result = replace( result, "/*!", "")
-    result = replace( result, "*/", "")
+    result = result.replace( "\n", ""  )
+    result = result.replace( "/*!", "" )
+    result = result.replace( "*/", ""  )
     return result
 
 def advanced_filter(text):
@@ -115,14 +119,14 @@ def get_raw_text(filedesc):
     q = filedesc.readline()
     while q!="":
 
-        if not inside_documentation and (find(q, "/*!")!=-1):
+        if not inside_documentation and (q.find("/*!")!=-1):
             documented = True
             inside_documentation = True            
 
         if inside_documentation:            
             result.append(q)
 
-        if inside_documentation and (find(q, "*/")!=-1):
+        if inside_documentation and (q.find("*/")!=-1):
             inside_documentation = False
 
         q = filedesc.readline()
@@ -134,9 +138,7 @@ def get_raw_text(filedesc):
 
 
 def parse_filename(filename):
-    return "#define doc__" + replace(replace(filename, ".", "__"), "#", "") + "__ "
-
-
+    return "#define doc__" + filename.replace(".", "__").replace("#", "") + "__ "
 
 
 ### **********************************************************************
