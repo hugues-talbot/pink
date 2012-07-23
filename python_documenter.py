@@ -158,7 +158,11 @@ if len(argv)!=3:
 print("Boost python documenter")
 
 dir = argv[1]
-outfile = open(argv[2], "w")
+if sys.version_info[0] >= 3:
+    outfile = open( argv[2], "w", encoding="latin1" )
+else:
+    outfile = open( argv[2], "w" )
+
 outfile.write(header())
 
 for q in listdir(dir):
