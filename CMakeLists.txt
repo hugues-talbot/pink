@@ -98,7 +98,9 @@ if(NOT CMAKE_BUILD_TYPE)
     SET( CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release" FORCE )
 endif(NOT CMAKE_BUILD_TYPE)
 
+if (CMAKE_MINOR_VERSION>=8) # cmake 2.6 required; cmake 2.8 or newer desirable
 SET_PROPERTY( CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Release" "Debug" )
+endif (CMAKE_MINOR_VERSION>=8)
 
 ### **********************************************************************************************
 ### **********************************************************************************************
@@ -530,7 +532,9 @@ if( NOT PINK_PACKAGE_TYPE )
     SET( PINK_PACKAGE_TYPE "TBZ2" CACHE STRING "The binary package to create after the compilation with the 'make package' commang." )
 endif( NOT PINK_PACKAGE_TYPE )
 
-SET_PROPERTY( CACHE PINK_PACKAGE_TYPE PROPERTY STRINGS "TBZ2" "ZIP" "TGZ" "RPM-GENERIC" "DEB-GENERIC" "DEB-DEBIAN4" "DEB-DEBIAN6" "RPM-FEDORA17" "RPM-OpenSuSE12.1" )
+if (CMAKE_MINOR_VERSION>=8) # cmake 2.6 required; cmake 2.8 or newer desirable
+    SET_PROPERTY( CACHE PINK_PACKAGE_TYPE PROPERTY STRINGS "TBZ2" "ZIP" "TGZ" "RPM-GENERIC" "DEB-GENERIC" "DEB-DEBIAN4" "DEB-DEBIAN6" "RPM-FEDORA17" "RPM-OpenSuSE12.1" "RPM-CENTOS6" )
+endif(CMAKE_MINOR_VERSION>=8)
 
 INCLUDE(UJ_GenerateRPM.cmake)
 

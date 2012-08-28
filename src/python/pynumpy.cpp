@@ -14,6 +14,7 @@
 #ifdef PINK_HAVE_NUMPY
 # include <Python.h>
 # include <boost/python.hpp>
+# include <boost/cstdint.hpp>
 # include <numpy/arrayobject.h>
 # include <boost/smart_ptr.hpp>
 
