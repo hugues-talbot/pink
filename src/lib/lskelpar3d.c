@@ -35,7 +35,10 @@ knowledge of the CeCILL license and that you accept its terms.
 /* 
    Algorithmes 3D "fully parallel" de squelettisation
    
-   Update 19/12/2011 : introduction des cliques D-cruciales
+   Michel Couprie
+
+   Update MC 19/12/2011 : introduction des cliques D-cruciales
+   Update MC 03/08/2012 : fix bug asym_match_vois0
 */
 
 #include <stdio.h>
@@ -2128,37 +2131,86 @@ int32_t asym_match_vois1(uint8_t *v)
 int32_t asym_match_vois0(uint8_t *v)
 /* ==================================== */
 /*
-               12      11
+               12      11      10
+               13       8       9
+               14      15      16
+
+		3	2	1
+		4      26	0
+		5	6	7
+
+               21      20      19
+               22      17      18
+               23      24      25
+
+Teste si les conditions suivantes sont réunies:
+1: au moins un des ensembles {26,12}, {26,10}, {26,14}, {26,21} est inclus dans l'objet, et
+2: les points non nuls du cube 2x2x2 contenant cet ensemble sont tous simples, 
+   non marqués SELECTED
+Si le test réussit, le point 26 est marqué SELECTED
+*/
+{
+  if (!v[26]) return 0;
+  if (!IS_SIMPLE(v[26]) || IS_SELECTED(v[26])) return 0;
+  if (!(v[12] || v[10] || v[14] || v[21])) return 0;
+  if (v[12])
+  { /*         12      11
                13       8
 
 		3	2
+		4      26 */
+     if (!IS_SIMPLE(v[12]) || IS_SELECTED(v[12])) return 0;
+     if (v[11] && (!IS_SIMPLE(v[11]) || IS_SELECTED(v[11]))) return 0;
+     if (v[13] && (!IS_SIMPLE(v[13]) || IS_SELECTED(v[13]))) return 0;
+     if (v[ 8] && (!IS_SIMPLE(v[ 8]) || IS_SELECTED(v[ 8]))) return 0;
+     if (v[ 3] && (!IS_SIMPLE(v[ 3]) || IS_SELECTED(v[ 3]))) return 0;
+     if (v[ 2] && (!IS_SIMPLE(v[ 2]) || IS_SELECTED(v[ 2]))) return 0;
+     if (v[ 4] && (!IS_SIMPLE(v[ 4]) || IS_SELECTED(v[ 4]))) return 0;
+  }
+  if (v[10])
+  { /*
+               11      10
+               8       9
+
+		2	1
+		26	0 */
+     if (!IS_SIMPLE(v[10]) || IS_SELECTED(v[10])) return 0;
+     if (v[11] && (!IS_SIMPLE(v[11]) || IS_SELECTED(v[11]))) return 0;
+     if (v[ 8] && (!IS_SIMPLE(v[ 8]) || IS_SELECTED(v[ 8]))) return 0;
+     if (v[ 9] && (!IS_SIMPLE(v[ 9]) || IS_SELECTED(v[ 9]))) return 0;
+     if (v[ 1] && (!IS_SIMPLE(v[ 1]) || IS_SELECTED(v[ 1]))) return 0;
+     if (v[ 2] && (!IS_SIMPLE(v[ 2]) || IS_SELECTED(v[ 2]))) return 0;
+     if (v[ 0] && (!IS_SIMPLE(v[ 0]) || IS_SELECTED(v[ 0]))) return 0;
+  }
+  if (v[14])
+  { /*         13       8
+               14      15
+
+		4      26
+		5	6 */
+     if (!IS_SIMPLE(v[14]) || IS_SELECTED(v[14])) return 0;
+     if (v[14] && (!IS_SIMPLE(v[14]) || IS_SELECTED(v[14]))) return 0;
+     if (v[13] && (!IS_SIMPLE(v[13]) || IS_SELECTED(v[13]))) return 0;
+     if (v[15] && (!IS_SIMPLE(v[15]) || IS_SELECTED(v[15]))) return 0;
+     if (v[ 6] && (!IS_SIMPLE(v[ 6]) || IS_SELECTED(v[ 6]))) return 0;
+     if (v[ 5] && (!IS_SIMPLE(v[ 5]) || IS_SELECTED(v[ 5]))) return 0;
+     if (v[ 4] && (!IS_SIMPLE(v[ 4]) || IS_SELECTED(v[ 4]))) return 0;
+  }
+  if (v[21])
+  {  /*		3	2
 		4      26
 
-Teste si les conditions suivantes sont réunies:
-1: au moins un des ensembles {12,26}, {11,4}, {13,2}, {8,3} est inclus dans l'objet, et
-2: les points non nuls sont tous simples, non marqués SELECTED
-Si le test réussit, un des points non nuls est marqué SELECTED
-*/
-{
-  if (!((v[12]&&v[26]) || (v[11]&&v[4]) || (v[13]&&v[2]) || (v[8]&&v[3]) )) return 0;
-
-  if (v[12] && (!IS_SIMPLE(v[12]) || IS_SELECTED(v[12]))) return 0;
-  if (v[26] && (!IS_SIMPLE(v[26]) || IS_SELECTED(v[26]))) return 0;
-  if (v[11] && (!IS_SIMPLE(v[11]) || IS_SELECTED(v[11]))) return 0;
-  if (v[ 4] && (!IS_SIMPLE(v[ 4]) || IS_SELECTED(v[ 4]))) return 0;
-  if (v[13] && (!IS_SIMPLE(v[13]) || IS_SELECTED(v[13]))) return 0;
-  if (v[ 2] && (!IS_SIMPLE(v[ 2]) || IS_SELECTED(v[ 2]))) return 0;
-  if (v[ 8] && (!IS_SIMPLE(v[ 8]) || IS_SELECTED(v[ 8]))) return 0;
-  if (v[ 3] && (!IS_SIMPLE(v[ 3]) || IS_SELECTED(v[ 3]))) return 0;
-
-  if (v[12]) SET_SELECTED(v[12]);
-  else if (v[26]) SET_SELECTED(v[26]);
-  else if (v[11]) SET_SELECTED(v[11]);
-  else if (v[ 4]) SET_SELECTED(v[ 4]);
-  else if (v[13]) SET_SELECTED(v[13]);
-  else if (v[ 2]) SET_SELECTED(v[ 2]);
-  else if (v[ 8]) SET_SELECTED(v[ 8]);
-  else if (v[ 3]) SET_SELECTED(v[ 3]);
+               21      20
+               22      17 */
+     if (!IS_SIMPLE(v[21]) || IS_SELECTED(v[21])) return 0;
+     if (v[17] && (!IS_SIMPLE(v[17]) || IS_SELECTED(v[17]))) return 0;
+     if (v[20] && (!IS_SIMPLE(v[20]) || IS_SELECTED(v[20]))) return 0;
+     if (v[22] && (!IS_SIMPLE(v[22]) || IS_SELECTED(v[22]))) return 0;
+     if (v[ 3] && (!IS_SIMPLE(v[ 3]) || IS_SELECTED(v[ 3]))) return 0;
+     if (v[ 2] && (!IS_SIMPLE(v[ 2]) || IS_SELECTED(v[ 2]))) return 0;
+     if (v[ 4] && (!IS_SIMPLE(v[ 4]) || IS_SELECTED(v[ 4]))) return 0;
+  }
+  SET_SELECTED(v[26]);
   return 1;
 } // asym_match_vois0()
 

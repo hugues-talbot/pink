@@ -144,6 +144,7 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
 {
   index_t i;
   uint8_t *pt1;
+  uint16_t *spt1;
   int32_t *lpt1;
   float *FPT1; 
   index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
@@ -156,6 +157,12 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
     pt1 = UCHARDATA(image1);
     for (i = 0; i < N; i++, pt1++)
       *pt1 = (uint8_t)mcmin(NDG_MAX, mcmax(NDG_MIN, (int32_t)(*pt1) + constante));
+  }
+  else if (datatype(image1) == VFF_TYP_2_BYTE)
+  {
+    spt1 = USHORTDATA(image1);
+    for (i = 0; i < N; i++, spt1++)
+      *spt1 = (uint16_t)mcmin(USHRT_MAX,mcmax(0,(uint16_t)(*spt1)+constante));
   }
   else if (datatype(image1) == VFF_TYP_4_BYTE)
   {
@@ -855,6 +862,12 @@ double lmin1(struct xvimage * image1)
     minval = (double)F[0];
     for (i = 1; i < N; i++) if ((double)F[i] < minval) minval = (double)F[i];
   }
+  else if (datatype(image1) == VFF_TYP_2_BYTE)
+  {
+    int16_t *F = SSHORTDATA(image1);
+    minval = (double)F[0];
+    for (i = 1; i < N; i++) if ((double)F[i] < minval) minval = (double)F[i];
+  }
   else if (datatype(image1) == VFF_TYP_4_BYTE)
   {
     int32_t *F = SLONGDATA(image1);
@@ -964,6 +977,7 @@ int32_t lmin(
   index_t i;
   uint8_t *pt1, *pt2;
   int32_t *PT1, *PT2; 
+  uint16_t *SPT1, *SPT2; 
   float *FPT1, *FPT2; 
   index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
 
@@ -974,6 +988,12 @@ int32_t lmin(
     pt1 = UCHARDATA(image1); pt2 = UCHARDATA(image2);
     for (i = 0; i < N; i++, pt1++, pt2++)
       *pt1 = mcmin(*pt1, *pt2);
+  }
+  else if ((datatype(image1) == VFF_TYP_2_BYTE) && (datatype(image2) == VFF_TYP_2_BYTE))
+  {
+    SPT1 = USHORTDATA(image1); SPT2 = USHORTDATA(image2);
+    for (i = 0; i < N; i++, SPT1++, SPT2++)
+      *SPT1 = mcmin(*SPT1, *SPT2);
   }
   else if ((datatype(image1) == VFF_TYP_4_BYTE) && (datatype(image2) == VFF_TYP_4_BYTE))
   {

@@ -109,6 +109,17 @@ struct xvimage * lcrop(struct xvimage *in, int32_t x, int32_t y, int32_t w, int3
 	  T1[(n*N1) + (j*i1) + i] = I[(n*N) + (yy*rs) + xx];
 	}
   }
+  else if (datatype(in) == VFF_TYP_2_BYTE)
+  {
+    int16_t *T1L = SSHORTDATA(temp1);
+    int16_t *IL = SSHORTDATA(in);
+    for (n = 0; n < nb; n++)
+      for (j = j0, yy = y0; j < j1; j++, yy++)
+	for (i = i0, xx = x0; i < i1; i++, xx++)
+	{
+	  T1L[(n*N1) + (j*i1) + i] = IL[(n*N) + (yy*rs) + xx];
+	}
+  }
   else if (datatype(in) == VFF_TYP_4_BYTE)
   {
     int32_t *T1L = SLONGDATA(temp1);
