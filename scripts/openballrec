@@ -1,12 +1,7 @@
 #!/bin/sh
 # ouverture par reconstruction (erosion suivie d'une reconstruction geodesique) par une boule euclidienne
 USAGE="Usage: $0 in r connex out"
-if [ $# -gt 4 ]
-then
-	echo $USAGE
-        exit
-fi
-if [ $# -lt 4 ]
+if [ $# -ne 4 ]
 then
 	echo $USAGE
         exit

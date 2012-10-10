@@ -40,8 +40,8 @@ knowledge of the CeCILL license and that you accept its terms.
 
       janvier 2005 : DepthTree, MaxDiameterTree, Lee
       février 2005 : LCA (non efficace)
-
       juillet-août 2009 : CircuitsNiveaux, BellmanSC, Forêts...
+      octobre 2012 : ldrawgraph
 */
 
 #include <stdio.h>
@@ -60,6 +60,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcutil.h>
 #include <mcdrawps.h>
 #include <mcgraphe.h>
+#include <ldraw.h>
 
 #define PARANO
 
@@ -422,6 +423,7 @@ graphe * ReadGraphe( const char * filename )
   int32_t i, n, m, t, q;
   char buf[TAILLEBUF];
   char *ret;
+  int status;
 
   FILE *fd = NULL;
 
@@ -432,13 +434,21 @@ graphe * ReadGraphe( const char * filename )
     return NULL;
   }
 
-  fscanf(fd, "%d %d\n", &n, &m);
+  status = fscanf(fd, "%d %d\n", &n, &m);
+  if (status != 2)
+  {
+    fprintf(stderr, "%s: bad contents: %s\n", F_NAME, filename);
+    return NULL;
+  }
+
+  status = 0;
   g = InitGraphe(n, m);
   do
   {
     ret = fgets(buf, TAILLEBUF, fd);
     if ((ret != NULL) && (strncmp(buf, "noms sommets", 12) == 0))
     {
+      status++;
       g->nomsommet = (char **)malloc(n * sizeof(char *));
       if (g->nomsommet == NULL)
       {   fprintf(stderr, "%s : malloc failed\n", F_NAME);
@@ -459,6 +469,7 @@ graphe * ReadGraphe( const char * filename )
     else if ((ret != NULL) && (strncmp(buf, "val sommets", 11) == 0))
     {
       double v;
+      status++;
       for (i = 0; i < n; i++)  
       {
         fscanf(fd, "%d %lf\n", &t, &v);
@@ -468,6 +479,7 @@ graphe * ReadGraphe( const char * filename )
     else if ((ret != NULL) && (strncmp(buf, "coord sommets", 13) == 0))
     {
       double x, y;
+      status++;
       for (i = 0; i < n; i++)  
       {
         fscanf(fd, "%d %lf %lf\n", &t, &x, &y);
@@ -478,6 +490,7 @@ graphe * ReadGraphe( const char * filename )
     else if ((ret != NULL) && (strncmp(buf, "arcs values", 11) == 0))
     {
       double v;
+      status++;
       for (i = 0; i < m; i++)  
       {
         fscanf(fd, "%d %d %lf\n", &t, &q, &v);
@@ -486,6 +499,7 @@ graphe * ReadGraphe( const char * filename )
     } /*  if ((ret != NULL) && (strncmp(buf, "arcs values", 11) == 0)) */
     else if ((ret != NULL) && (strncmp(buf, "arcs", 4) == 0))
     {
+      status++;
       for (i = 0; i < m; i++)  
       {
         fscanf(fd, "%d %d\n", &t, &q);
@@ -493,6 +507,12 @@ graphe * ReadGraphe( const char * filename )
       }
     } /*  if ((ret != NULL) && (strncmp(buf, "arcs", 4) == 0)) */
   } while (ret != NULL);
+
+  if (status == 0)
+  {
+    fprintf(stderr, "%s: bad contents: %s\n", F_NAME, filename);
+    return NULL;
+  }
 
   return g;
 } /* ReadGraphe() */
@@ -3251,6 +3271,61 @@ void EPSGraphe(graphe * g, const char *filename, double s, double r, double t, d
   fclose(fd);
 } /* EPSGraphe() */
 
+
+/* ====================================================================== */
+/* ====================================================================== */
+/* GENERATION PGM */
+/* ====================================================================== */
+/* ====================================================================== */
+
+/* ====================================================================== */
+/*! \fn void ldrawgraph(graphe * g, xvimage *image) 
+    \param g (entrée) : un graphe.
+    \param image (entrée) : image dans laquelle dessiner le graphe
+    \brief dessine le graphe g dans image d'après la représentation "successeurs" du graphe g. 
+*/
+void ldrawgraph(graphe * g, xvimage *image) 
+/* ====================================================================== */
+#undef F_NAME
+#define F_NAME "ldrawgraph"
+{
+  int32_t i, j, n = g->nsom;
+  int32_t X1, Y1, X2, Y2;
+  index_t rs = rowsize(image);    /* taille ligne */
+  index_t cs = colsize(image);    /* taille colonne */
+  uint8_t *F = UCHARDATA(image);  /* l'image de depart */
+  pcell p;
+  
+  if (g->gamma == NULL) 
+  {  fprintf(stderr, "%s: representation successeurs absente\n", F_NAME);
+     return;
+  }
+  
+  if (g->x == NULL) 
+  {  fprintf(stderr, "%s: coordonnees des sommets absentes\n", F_NAME);
+     return;
+  }
+  
+  /* dessine les sommets */
+  for (i = 0; i < n; i++) 
+  {
+    X1 = (int32_t)floor(g->x[i]); 
+    Y1 = (int32_t)floor(g->y[i]); 
+    if ((X1 >= 0) && (Y1 >= 0) && (X1 < rs) && (Y1 < cs)) F[Y1*rs + X1] = NDG_MAX;
+  }
+
+  /* dessine les arcs */
+  for (i = 0; i < n; i++) 
+    for (p = g->gamma[i]; p != NULL; p = p->next)
+    {
+      j = p->som;
+      X1 = (int32_t)floor(g->x[i]); 
+      Y1 = (int32_t)floor(g->y[i]); 
+      X2 = (int32_t)floor(g->x[j]); 
+      Y2 = (int32_t)floor(g->y[j]); 
+      ldrawline(image, X1, Y1, X2, Y2);
+    }
+} /* ldrawgraph() */
 
 /* ====================================================================== */
 /* ====================================================================== */

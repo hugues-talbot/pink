@@ -188,6 +188,8 @@ extern void AfficheValeursSommets(graphe * g);
 extern void PSGraphe(graphe * g, const char *filename, double r, double t, double marge);
 extern void EPSGraphe(graphe * g, const char *filename, double s, double r, double t, double marge, int32_t noms_sommets, int32_t v_sommets, int32_t col_sommets, int32_t v_arcs);
 
+extern void ldrawgraph(graphe * g, xvimage *image);
+
 /* ====================================================================== */
 /* ====================================================================== */
 /* FONCTIONS DE PLONGEMENT DE GRAPHES DANS LE PLAN */

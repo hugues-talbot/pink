@@ -75,7 +75,9 @@ int main(int argc, char **argv)
   g = ReadGraphe(argv[1]);             /* lit le graphe a partir du fichier */
 
   if (argc == 3) 
-    scale = 5;
+  {
+    scale = 1;
+  }
   else
     scale = atof(argv[2]);
 
