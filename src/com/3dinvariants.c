@@ -35,13 +35,13 @@ knowledge of the CeCILL license and that you accept its terms.
 /*! \file 3dinvariants.c
 
 \brief computes the numbers of connected components,
-cavities and tunnels of a 3D Khalimsky order
+cavities and tunnels of a 3D cubical complex
 
 <B>Usage:</B> 3dinvariants in.pgm
 
 <B>Description:</B>
 Computes the numbers of connected components,
-cavities and tunnels of a 3D Khalimsky order
+cavities and tunnels of a 3D cubical complex
 
 <B>Types supported:</B> byte 3d
 
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
 
   if (argc != 2)
   {
-    fprintf(stderr, "usage: %s in.pgm \n", argv[0]);
+    fprintf(stderr, "usage: %s complex.pgm \n", argv[0]);
     exit(1);
   }
 

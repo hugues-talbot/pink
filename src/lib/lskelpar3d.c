@@ -37,6 +37,23 @@ knowledge of the CeCILL license and that you accept its terms.
    
    Michel Couprie
 
+\li 0: ultimate, without constraint (MK3a)
+\li 1: curvilinear, based on 1D isthmus (CK3a)
+\li 2: medial axis preservation (AK3) - parameter inhibit represents the minimal radius of medial axis balls which are considered
+\li 3: ultimate (MK3) - if nsteps = -2, returns the topological distance
+\li 4: curvilinear based on ends (EK3)
+\li 5: curvilinear based on ends, with end reconstruction (CK3b)
+\li 6: topological axis (not homotopic)
+\li 7: curvilinear, based on residual points and 2D isthmus (CK3)
+\li 8: ultimate, asymetric (AMK3)
+\li 9: curvilinear, asymetric, based on thin 1D isthmus (ACK3a)
+\li 10: curvilinear, asymetric, based on 3D and 2D residuals (ACK3)
+\li 11: surfacic, based on residual points (RK3)
+\li 12: surfacic, based on 2D isthmuses (SK3)
+\li 13: ultimate, directional, (DK3)
+\li 14: surfacic, directional, based on residual points (DRK3)
+\li 15: surfacic, directional, based on 2D isthmuses (DSK3)
+
    Update MC 19/12/2011 : introduction des cliques D-cruciales
    Update MC 03/08/2012 : fix bug asym_match_vois0
 */

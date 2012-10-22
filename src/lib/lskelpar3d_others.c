@@ -34,6 +34,40 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /*
    Algorithmes 3D de squelettisation
+
+\li 0: Palagyi (curvilinear, 6-subiterations directional, 1998)
+\li 1: Palagyi (curvilinear, sequential, 2006)
+\li 2: Palagyi (surface, parallel directional, 2002)
+\li 3: Palagyi (surface, fully parallel, 2008)
+\li 4: Raynal  (curvilinear, directional, 2010)
+\li 5: Raynal  (surface, directional, 2010)
+\li 6: Lohou-Bertrand  (curvilinear, symmetric, 2007)
+\li 7: Ma-Wan-Chang (curvilinear, 2 subfields, 2002)
+\li 8: Tsao-Fu (curvilinear, 6-subiterations directional, 1982)
+\li 9: Ma-Sonka (curvilinear, fully parallel, does not preserve topology 1996)
+\li 10: Ma-Wan (curvilinear (18/6) 6 subiterations, CVIU 2000)
+\li 11: Lohou-Bertrand (curvilinear 6 subiterations, DAM 2005)
+\li 12: Lohou-Bertrand (curvilinear 12 subiterations, DAM 2004)
+\li 13: ACK3a
+\li 14: CKSC
+\li 15: Ma-Wan-Lee (curvilinear, 4 subfields, 2002)
+\li 16: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 1)
+\li 17: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 2)
+\li 18: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 3)
+\li 19: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 1)
+\li 20: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 2)
+\li 21: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 3)
+\li 22: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 1)
+\li 23: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 2)
+\li 24: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 3)
+\li 25: She et al. (curvilinear, symmetric, DICTA 2009)
+\li 26: Tsao-Fu (surface, 6-subiterations directional, 1981)
+\li 27: Tsao-Fu (curvilinear, 6-subiterations directional, 1981)
+\li 28: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 0)
+\li 29: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 0)
+\li 30: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 0)
+\li 31: Lohou-Bertrand  (surface, symmetric, 2007)
+
 */
 
 #include <string.h>
@@ -3578,7 +3612,7 @@ int32_t llohoubertrandsymcurv2007(
   int32_t ds = depth(image);       /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  uint8_t *X = UCHARDATA(image);      /* l'image de depart */
   struct xvimage *t;
   uint8_t *T;
   struct xvimage *c;
@@ -3654,25 +3688,126 @@ int32_t llohoubertrandsymcurv2007(
 	  x = k*ps + j*rs + i;
 	  if (C[x] && ((I==NULL) || !I[x]) && P_simple26(T, C, x, rs, ps, N))
 	  {
-	    S[x] = 0;
+	    X[x] = 0;
 	    nonstab = 1;
 	  }
 	} // for k,j,i
 
-    memcpy(T, S, N);
+    memcpy(T, X, N);
   } // while (nonstab && (step < nsteps))
 
 #ifdef VERBOSE1
     printf("number of steps: %d\n", step);
 #endif
 
-  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+  for (i = 0; i < N; i++) if (X[i]) X[i] = 255; // normalize values
 
   mctopo3d_termine_topo3d();
   freeimage(t);
   freeimage(c);
   return(1);
 } /* llohoubertrandsymcurv2007() */
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de Lohou et Bertrand (surfacique symmétrique, Pat. Rec. 2007) 
+// M. Couprie, sept. 2012
+/* ============================================================ */
+/* ============================================================ */
+
+/* ==================================== */
+int32_t llohoubertrandsymsurf2007(
+				  struct xvimage *image,
+				  struct xvimage *inhibit,
+				  int32_t nsteps)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "llohoubertrandsymsurf2007"
+{
+
+  int32_t i, j, k, x;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *X = UCHARDATA(image);      /* l'image de depart */
+  struct xvimage *t;
+  uint8_t *T;
+  struct xvimage *s;
+  uint8_t *S;
+  uint8_t *I;
+  int32_t step, nonstab, top, topbar;
+
+  t = copyimage(image); assert(t != NULL);
+  T = UCHARDATA(t);
+  s = copyimage(image); assert(s != NULL);
+  S = UCHARDATA(s);
+  I = NULL;
+
+  mctopo3d_init_topo3d();
+
+  if (nsteps == -1) nsteps = 1000000000;
+  if (inhibit != NULL) I = UCHARDATA(inhibit);
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < nsteps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+    
+    razimage(s);
+    for (k = 2; k < ds-2; k++) // prépare l'ensemble S des points candidats
+      for (j = 2; j < cs-2; j++)
+	for (i = 2; i < rs-2; i++)
+	{
+	  x = k*ps + j*rs + i;
+	  if (T[x] && ((I==NULL) || !I[x]))
+	  {
+	    mctopo3d_top26(T, x, rs, ps, N, &top, &topbar);
+	    if (topbar == 1) S[x] = 1;
+	  } // if (T[x])
+	} // for i, j, k
+
+    //#define DEBUG_llohoubertrandsymsurf2007
+#ifdef DEBUG_llohoubertrandsymsurf2007
+    writeimage(s, "_s");
+#endif
+
+    for (k = 2; k < ds-2; k++) // retire en parallèle les points PS_simples
+      for (j = 2; j < cs-2; j++)
+	for (i = 2; i < rs-2; i++)
+	{
+	  x = k*ps + j*rs + i;
+	  if (S[x] && ((I==NULL) || !I[x]) && P_simple26(T, S, x, rs, ps, N))
+	  {
+	    X[x] = 0;
+	    nonstab = 1;
+	  }
+	} // for k,j,i
+
+    memcpy(T, X, N);
+  } // while (nonstab && (step < nsteps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (X[i]) X[i] = 255; // normalize values
+
+  mctopo3d_termine_topo3d();
+  freeimage(t);
+  freeimage(s);
+  return(1);
+} /* llohoubertrandsymsurf2007() */
 
 /* ============================================================ */
 /* ============================================================ */
@@ -7329,3 +7464,179 @@ int32_t palagyi_skelpar_surf_08(struct xvimage *input)
 
     return(0);
 }
+
+
+/* ============================================================ */
+/* ============================================================ */
+// Algo. de Manzanera et al., (surfacique symétrique, DGCI 1999)
+// M. Couprie, oct. 2012
+/* ============================================================ */
+/* ============================================================ */
+
+#define MAN_OBJECT      1
+#define MAN_DELETABLE   2
+
+#define IS_MAN_DELETABLE(f) (f&MAN_DELETABLE)
+#define SET_MAN_DELETABLE(f) (f|=MAN_DELETABLE)
+#define UNSET_MAN_DELETABLE(f) (f&=~MAN_DELETABLE)
+
+// "tas" des vecteurs utiles pour les masques
+// alpha2: a' b c d e f g
+// alpha1: a' b f h' i j k l
+// alpha0: a' b c h' l n' o p q r
+// beta1: b f' i' 
+// beta0: b' l s'
+static int32_t MAN_VECT[19][3] = {
+  {0, 0, 1}, // a
+  {0, 0, -1}, // f
+  {0, 1, -1}, // c
+  {0, -1, -1}, // e
+  {1, 0, -1}, // b
+  {-1, 0, -1}, // d
+  {0, 0, -2}, // g
+  {-1, 0, 0}, // h
+  {1, 0, 0}, // i
+  {1, 1, -1}, // l
+  {1, -1, -1}, // m
+  {2, 0, -1}, // j
+  {1, 0, -2}, // k
+  {0, -1, 0}, // n
+  {1, 1, 0}, // o
+  {1, 2, -1}, // p
+  {1, 1, -2}, // q
+  {2, 1, -1}, // r
+  {0, 1, 0} // s
+}
+
+static const int
+  Ma = 0,
+  Mf = 1,
+  Mc = 2,
+  Me = 3,
+  Mb = 4,
+  Md = 5,
+  Mg = 6,
+  Mh = 7,
+  Mi = 8,
+  Ml = 9,
+  Mm = 10,
+  Mj = 11,
+  Mk = 12,
+  Mn = 13,
+  Mo = 14,
+  Mp = 15,
+  Mq = 16,
+  Mr = 17,
+  Ms = 18;
+
+
+/* ==================================== */
+static void apply_rot(in32_t * M, in32_t * V , in32_t * R)
+/* ==================================== */
+/*! \fn void apply_rot(in32_t * M, in32_t * V , in32_t * R)
+    \param M (entrée) : matrice de rotation
+    \param V (entrée) : vecteur
+    \param R (sortie) : résultat
+    \brief multiplication matrice \b M par vecteur \b V, résultat vecteur \b R
+    \warning la mémoire pour stocker le résultat \b R doit avoir été allouée
+*/
+{
+  int32_t i, j, t;
+  for (i = 0; i < 3; i++)
+  {
+    t = 0;
+    for (j = 0; j < 3; j++)  
+      t += M[i * q + j] * V[j * r];
+    R[i * r] = t;    
+  }
+} // apply_rot()
+
+static void check_MAN_DELETABLE(uint8_t *S, int32_t p, int32_t rs, int32_t ps, int32_t N)
+)
+{
+  int32_t MVEC[19][3];
+  memcpy((void *)MVEC, (void *)MAN_VECT, 19*3*sizeof(int32_t));
+  
+  if (check_MAN_ALPHA2(MVEC, S, p, rs, ps, N)) 
+    SET_MAN_DELETABLE(S[p]);
+  else 
+  { 
+    if (check_MAN_ALPHA1(MVEC, S, p, rs, ps, N)) 
+      SET_MAN_DELETABLE(S[p]);
+    else
+      if (check_MAN_ALPHA0(MVEC, S, p, rs, ps, N)) SET_MAN_DELETABLE(S[p]);
+  }
+  if (IS_MAN_DELETABLE(S[p]))
+  {
+    if (check_MAN_BETA1(MVEC, S, p, rs, ps, N)) 
+      UNSET_MAN_DELETABLE(S[p]);
+    else if (check_MAN_BETA0(MVEC, S, p, rs, ps, N)) 
+      UNSET_MAN_DELETABLE(S[p]);
+  }
+} // check_MAN_DELETABLE()
+
+/* ==================================== */
+int32_t lmanzanerasurf1999(
+				  struct xvimage *image,
+				  int32_t nsteps)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lmanzanerasurf1999"
+{ 
+  int32_t i, j, k, x;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t ds = depth(image);       /* nb plans */
+  int32_t ps = rs * cs;            /* taille plan */
+  int32_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  int32_t step, nonstab;
+  uint8_t v[27];
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+#define INITSTEP -1
+  step = INITSTEP;
+  nonstab = 1;
+  while (nonstab && (step < nsteps+INITSTEP))
+  {
+    step++;
+    nonstab = 0;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    for (i = 0; i < N; i++) if (S[i]) S[i] = MAN_OBJECT;
+
+    for (k = 2; k < ds-2; k++)
+    for (j = 2; j < cs-2; j++)
+    for (i = 2; i < rs-2; i++)
+    {
+      x = k*ps + j*rs + i;
+      if (check_MAN_DELETABLE(S, x, rs, ps, N)) SET_MAN_DELETABLE(S[x]);
+    } // for i, j, k
+
+    for (k = 1; k < ds-1; k++)
+    for (j = 1; j < cs-1; j++)
+    for (i = 1; i < rs-1; i++)
+    {
+      x = k*ps + j*rs + i;
+      if (IS_MAN_DELETABLE(S[x]))
+      {
+	S[x] = 0;
+	nonstab = 1;
+      }
+    } // for i, j, k
+  } // while (nonstab && (step < nsteps))
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+  return(1);
+} /* lmanzanerasurf1999 */

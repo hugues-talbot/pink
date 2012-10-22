@@ -78,6 +78,7 @@ The possible choices are:
 \li 28: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 0)
 \li 29: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 0)
 \li 30: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 0)
+\li 31: Lohou-Bertrand  (surface, symmetric, 2007)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -146,10 +147,11 @@ int main(int32_t argc, char **argv)
     fprintf(stderr, "   24: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 3)\n");
     fprintf(stderr, "   25: She et al. (curvilinear, symmetric, DICTA 2009)\n");
     fprintf(stderr, "   27: Tsao-Fu (curvilinear, 6-subiterations directional, 1981)\n");
-    exit(1);
     fprintf(stderr, "   28: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 0)\n");
     fprintf(stderr, "   29: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 0)\n");
     fprintf(stderr, "   30: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 0)\n");    
+    fprintf(stderr, "   31: Lohou-Bertrand (surface, symmetric, 2007)\n");
+    exit(1);
   }
 
   image = readimage(argv[1]);
@@ -438,6 +440,13 @@ int main(int32_t argc, char **argv)
       if (!lnemethetalcurv8subfields2010(image, nsteps, 0))
       {
 	fprintf(stderr, "%s: lnemethetalcurv8subfields2010 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 31:
+      if (!llohoubertrandsymsurf2007(image, inhibit, nsteps))
+      {
+	fprintf(stderr, "%s: llohoubertrandsymsurf2007 failed\n", argv[0]);
 	exit(1);
       } 
       break;
