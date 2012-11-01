@@ -303,6 +303,24 @@ namespace pink
 
   // template<>
   // bool operator!=( )
+
+
+  class image {
+    
+  private:
+    boost::python::object mother;
+
+  public:
+    template <class MT0 pixel_type>
+    operator image<pixel_type>;
+
+    operator xvimage *;
+    
+    operator PyArrayObject *;
+    
+  }; // class image
+  
+    
   
   
   /**
@@ -312,7 +330,7 @@ namespace pink
      while int_pixel_type is the type's encoding into integer. See 'mccodimage.h'     
   */
   template <class pixel_type_> 
-  class ujoi:
+  class image_:
     public pink_image,
     public image_type_specific<pixel_type_>,
     public ujimage_operators< ujoi<pixel_type_>, pixel_type_ >
