@@ -1,7 +1,8 @@
 # -*- sh -*-
 # UjoImro, 2010
 
-#message("Abandon every hope, ye who entereth here.")
+
+#message( STATUS "Abandon every hope, ye who entereth here.")
 
 #message(CMAKE_SYSTEM_TYPE\ ${CMAKE_SYSTEM_TYPE} )
 #message(CMAKE_HOST_SYSTEM_NAME\ ${CMAKE_HOST_SYSTEM_NAME} )
