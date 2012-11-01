@@ -339,6 +339,9 @@ if (SIMD)
     ADD_DEFINITIONS(-DPINK_HAVE_SIMD)
 endif (SIMD)
 
+
+## Hugues Talbot	 1 Nov 2012
+## why do that now and not later ?
 add_subdirectory( src/lib lib )
 
 
@@ -378,7 +381,7 @@ if ( PYTHON_FRONT_END )
 	SET(PYTHON_INCLUDE ${PYTHON_INCLUDE_PATH} CACHE PATH "The directory of the python headers." )
     endif(NOT PYTHON_INCLUDE)
 
-    find_package(Boost COMPONENTS python thread )
+    find_package(Boost COMPONENTS python thread system)
 
     ## The following test fails on centos: cmake 2.6 patch 2
     # if ( (NOT Boost_FOUND) AND ( (NOT Boost_PYTHON) OR (NOT Boost_THREAD) ) )
@@ -387,6 +390,7 @@ if ( PYTHON_FRONT_END )
 	    #${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY}
 	    SET( Boost_PYTHON "NOT FOUND" CACHE FILEPATH "The boost.python library.")
 	    SET( Boost_THREAD "NOT FOUND" CACHE FILEPATH "The boost.thread library.")
+	    SET( Boost_SYSTEM "NOT FOUND" CACHE FILEPATH "The boost.system library.")
 	    message( FATAL_ERROR "Boost libraries where not found. If they are installed, please set the Boost_PYTHON and the Boost_THREAD variables.")
 	endif(NOT Boost_PYTHON)
     endif(NOT Boost_FOUND)
@@ -401,21 +405,24 @@ if ( PYTHON_FRONT_END )
     #        message( FATAL_ERROR "For the core components you need a boost version at least " ${Boost_MAJOR_VERSION_REQUIRED} "." ${Boost_MINOR_VERSION_REQUIRED} )
     #    endif ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
 
-    set( LIBS ${LIBS} ${Boost_LIBRARIES} ${Boost_PYTHON} ${Boost_THREAD} ${PYTHON_LIBRARY} )
+    set( LIBS ${LIBS} ${Boost_LIBRARIES} ${Boost_PYTHON} ${Boost_THREAD} ${Boost_SYSTEM} ${PYTHON_LIBRARY} )
 
-    #message( STATUS "Boost_LIBRARIES=" ${Boost_LIBRARIES} )
-    #message( STATUS "Boost_LIBRARIES=" ${Boost_LIBRARIES} )
+    #message("LIBS = " "${LIBS}")
+    #message( "Boost_LIBRARIES=" ${Boost_LIBRARIES} )
+    #message( STATUS "Boost_LIBRARIES=" "${Boost_LIBRARIES}" )
     #message( STATUS "Boost_PYTHON_LIBRARY=" ${Boost_PYTHON_LIBRARY} )
 
     # looking for the python library 
     if (NOT THIS_IS_MSVC)
-	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_LIBRARY} ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_PYTHON} ${Boost_THREAD} )
+	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_LIBRARY} ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_PYTHON} ${Boost_THREAD} ${Boost_SYSTEM} )
     else (NOT THIS_IS_MSVC)
 	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}  )
     endif (NOT THIS_IS_MSVC)
-    set( CMAKE_REQUIRED_INCLUDES  ${Boost_INCLUDE_DIR} ${CMAKE_REQUIRED_INCLUDES} ${INCLUDES} ${PYTHON_INCLUDE} ${EIGEN_INCLUDE} )
+    set( CMAKE_REQUIRED_INCLUDES  ${Boost_INCLUDE_DIR} ${CMAKE_REQUIRED_INCLUDES} ${INCLUDES} ${PYTHON_INCLUDE} ${EIGEN_INCLUDE})
+    
     include_directories( ${CMAKE_REQUIRED_INCLUDES} )
-
+    
+    ###message( "Before UJ stuff CMAKE_REQUIRED_FLAGS=" ${CMAKE_REQUIRED_FLAGS} )
 
     CHECK_INCLUDE_FILE( ${PYTHON_INCLUDE}/pyconfig.h HTEST )
     if (NOT HTEST)
@@ -461,7 +468,13 @@ if ( PYTHON_FRONT_END )
 	message( FATAL_ERROR "error boost/lexical_cast.hpp does not compile. Check if its correctly installed. You may need a newer version or set up python paths correctly.")
     endif(NOT HTEST7)
 	 
-    CHECK_INCLUDE_FILE_CXX( boost/thread.hpp  HTEST8 )
+    ## this may not be a good idea but this is what I propose
+    ## Hugues Talbot	 1 Nov 2012
+    set( CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS} )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Boost_SYSTEM_LIBRARY}") ## the system library is necessary for these tests
+    ## MESSAGE("From top: CMAKE_CXX_FLAGS=" ${CMAKE_CXX_FLAGS})
+    SET (CMAKE_FLAGS ${CMAKE_CXX_FLAGS})
+    CHECK_INCLUDE_FILE_CXX( boost/thread.hpp  HTEST8  )
     if (NOT HTEST8)
 	message( FATAL_ERROR "error boost/thread.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST8)
@@ -475,6 +488,9 @@ if ( PYTHON_FRONT_END )
     if (NOT HTEST921)
 	message( FATAL_ERROR "error boost/operators.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST921)
+
+    ## restore flags Hugues Talbot	 1 Nov 2012
+    set ( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE} )
 
     if (NUMPY)
 	## Try to determine the directory of numpy headers
@@ -566,23 +582,5 @@ endif(BUILD_DOCUMENTATION)
 if(NOT PINKTEST_DIRECTORY)
     SET( PINKTEST_DIRECTORY ${CMAKE_SOURCE_DIR}/"../Pinktest" CACHE PATH "The directory of the imput files for the unit testing. Mostly images, but skeletons and graph are also tested." )
 endif(NOT PINKTEST_DIRECTORY)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # LuM end of file
