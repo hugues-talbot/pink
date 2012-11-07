@@ -4361,10 +4361,8 @@ EXPERIMENTAL - Ne pas utiliser dans des applications
 { 
   if (depth(image) == 1)
     return lskelCKG2map(imageprio, image);
-
-  fprintf(stderr, "lskelCKGmap: 3D not yet implemented\n");
-  return(0);
-    //    return lskelCKG3map(imageprio, image);
+  else
+    return lskelCKG3map(imageprio, image);
 } // lskelCKGmap()
 
 /* ==================================== */
@@ -4396,444 +4394,6 @@ static void extract_vois(uint8_t *img, int32_t p, int32_t rs, int32_t N, uint8_t
   vois[6] = *(ptr+rs);
   vois[7] = *(ptr+rs+1);
 } /* extract_vois() */
-
-/* ==================================== */
-static void rotate90_vois(uint8_t *vois)
-/*
-   effectue une rotation du voisinage "vois" de 90 degres dans le sens
-   trigonométrique
-*/
-/* ==================================== */
-{
-  uint8_t tmp;
-  tmp = vois[0]; vois[0] = vois[6]; vois[6] = vois[4]; vois[4] = vois[2]; vois[2] = tmp;
-  tmp = vois[7]; vois[7] = vois[5]; vois[5] = vois[3]; vois[3] = vois[1]; vois[1] = tmp;
-} /* rotate90_vois() */
-
-// Etiquetage des points objet
-// Tout point objet a une étiquette >= OBJ
-// Tout point candidat (donc simple) a une étiquette >= CAN
-
-/* ==================================== */
-static void CrucialPass1( /* pour un objet en 8-connexite */
-  uint8_t *X,      /* pointeur base image */
-  index_t p,       /* index du point */
-  index_t rs,      /* taille rangee */
-  index_t N)       /* taille image */
-/*
-  Repère et marque CR1 les cliques 1-cruciales pour <X,C> contenant le point p.
-  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
-  Il est supposé que X[p] == CAN (pas de test).
-*/
-/* ==================================== */
-{
-  int32_t i;
-  uint8_t v[8];
-
-  extract_vois(X, p, rs, N, v);
-
-/*
-x a a
-x C C  avec au moins un des a et au moins un des b non nuls
-x b b  ou : tous les a et tous les b nuls
-*/
-  for (i = 0; i < 4; i++)
-  {
-    if (v[0] < CAN) goto fail1;
-    if ((v[1] == 0) && (v[2] == 0) && (v[6] == 0) && (v[7] == 0)) 
-    { X[p] = CR1; return; }
-    if ((v[1] == 0) && (v[2] == 0)) goto fail1;
-    if ((v[6] == 0) && (v[7] == 0)) goto fail1;
-    X[p] = CR1; 
-    return;
-  fail1:
-    if (i < 3) rotate90_vois(v);
-  }
-} // CrucialPass1()
-
-/* ==================================== */
-static void CrucialPass2( /* pour un objet en 8-connexite */
-  uint8_t *X,      /* pointeur base image */
-  index_t p,       /* index du point */
-  index_t rs,      /* taille rangee */
-  index_t N)       /* taille image */
-/*
-  Repère et marque CR0 les cliques 0-cruciales pour <X,C> contenant le point p.
-  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
-  Il est supposé que X[p] == CAN (pas de test).
-  Les cliques 1-cruciales doivent avoir préalablement été étiquetées CR1 (voir CrucialPass1).
-*/
-/* ==================================== */
-{
-  int32_t i;
-  uint8_t v[8];
-
-  extract_vois(X, p, rs, N, v);
-
-/*
-x b a  on doit avoir le point 'a' ou les 2 points 'b' dans X (ou les deux), 
-x C b  et tous les points 'a,b' de X marqués CAN,
-x x x  pour que le point central soit étiqueté CR0
-*/
-  for (i = 0; i < 4; i++)
-  {
-    if ((v[1] == 0) && ((v[0] == 0) || (v[2] == 0))) goto fail1;
-    if (v[0] && (v[0] < CAN)) goto fail1;
-    if (v[1] && (v[1] < CAN)) goto fail1;
-    if (v[2] && (v[2] < CAN)) goto fail1;
-    X[p] = CR0;
-    return;
-  fail1:
-    if (i < 3) rotate90_vois(v);
-  }
-} // CrucialPass2()
-
-
-#define NONCRUCIAL 1
-
-/* ==================================== */
-int32_t lskelCKG2(struct xvimage *image,
-		  struct xvimage *imageprio, 
-		  double val)
-/* ==================================== */
-// parallel 2D binary guided thinning
-// EXPERIMENTAL - Ne pas utiliser dans des applications
-#undef F_NAME
-#define F_NAME "lskelCKG2"
-{ 
-  int32_t i, k;
-  index_t x, y;                    /* index de pixel */
-  index_t rs = rowsize(imageprio); /* taille ligne */
-  index_t cs = colsize(imageprio); /* taille colonne */
-  index_t N = rs * cs;             /* taille image */
-  int32_t *P = NULL;   /* l'image de priorites (cas int32) */
-  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
-  float   *PF = NULL;  /* l'image de priorites (cas float) */
-  double  *PD = NULL;  /* l'image de priorites (cas double) */
-  Rbt * RBT;
-  index_t taillemaxrbt;
-  uint8_t *F = UCHARDATA(image);   /* objet */
-  Rlifo * RLIFO;
-  double curprio;
-
-  ONLY_2D(image);
-  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
-  ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
-  COMPARE_SIZE(image, imageprio);
-
-  IndicsInit(N);
-
-  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = SLONGDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
-    PB = UCHARDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
-    PF = FLOATDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
-    PD = DOUBLEDATA(imageprio); 
-  else 
-  {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
-    return(0);
-  }
-
-  taillemaxrbt = 2 * cs +  2 * rs;
-  /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
-  if (RBT == NULL)
-  {
-    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
-    return(0);
-  }
-  RLIFO = CreeRlifoVide(taillemaxrbt);
-  if (RLIFO == NULL)
-  {
-    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
-    return(0);
-  }
-
-  /* ================================================ */
-  /*               DEBUT ALGO                         */
-  /* ================================================ */
-
-  /* ========================================================= */
-  /*   INITIALISATION DU RBT */
-  /* ========================================================= */
-
-  for (x = 0; x < N; x++)
-  {
-    if (F[x]) F[x] = OBJ;
-    if (F[x] && bordext8(F, x, rs, N))
-    {
-      switch(datatype(imageprio))
-      {
-        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
-      }
-      Set(x, EN_RBT);
-    }
-  }
-
-  /* ================================================ */
-  /*                  DEBUT SATURATION                */
-  /* ================================================ */
-
-  while (!mcrbt_RbtVide(RBT))
-  {
-    curprio = RbtMinLevel(RBT);
-//#define DEBUG_lskelCKG2
-#ifdef DEBUG_lskelCKG2
-      printf("entering loop, curprio: %g\n", curprio);
-#endif
-    if (curprio >= val) break;
-    do
-    {
-      x = RbtPopMin(RBT);
-#ifdef DEBUG_lskelCKG2
-      printf("pop: %d\n", x);
-#endif
-      UnSet(x, EN_RBT);
-      if (F[x] && simple8(F, x, rs, N))
-      {
-	RlifoPush(&RLIFO, x);
-	F[x] = CAN;
-      }
-    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
-
-    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass1(F, x, rs, N); }
-    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
-    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass2(F, x, rs, N); }
-    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
-
-    for (i = 0; i < RLIFO->Sp; i++)
-    {
-      x = RLIFO->Pts[i];
-      if (F[x] == CAN)
-      {
-#ifdef DEBUG_lskelCKG2
-	printf("Non Crucial: %d\n", x);
-#endif
-	Set(x, NONCRUCIAL); // marque le point pour effacement ulterieur
-        for (k = 0; k < 8; k += 1) // parcourt les voisins en 8-connexite
-        {                          // pour empiler les voisins non deja empiles
-          y = voisin(x, k, rs, N);
-          if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
-          {
-	    switch(datatype(imageprio))
-	    {
-	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
-	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
-	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
-	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
-	    }
-#ifdef DEBUG_lskelCKG2
-	    printf("push: %d\n", y);
-#endif
-            Set(y, EN_RBT);
-          } // if y
-        } // for k
-      } // if (NonCrucial(F, C, x, rs, N)
-    } // for (i = 0; i < RLIFO->Sp; i++)
-
-    for (i = 0; i < RLIFO->Sp; i++)
-    {
-      x = RLIFO->Pts[i];
-      if (IsSet(x, NONCRUCIAL)) F[x] = 0;
-    }
-
-    RlifoFlush(RLIFO);
-
-  } // while (!mcrbt_RbtVide(RBT))
-
-  for (x = 0; x < N; x++) if (F[x]) F[x] = NDG_MAX;
-
-  /* ================================================ */
-  /* UN PEU DE MENAGE                                 */
-  /* ================================================ */
-
-  IndicsTermine();
-  mcrbt_RbtTermine(RBT);
-  RlifoTermine(RLIFO);
-  return(1);
-} /* lskelCKG2() */
-
-/* ==================================== */
-int32_t lskelCKG2map(struct xvimage *imageprio,
-		     struct xvimage *image)
-/* ==================================== */
-// EXPERIMENTAL - Ne pas utiliser dans des applications
-// the result is in imageprio : a "topological map"
-#undef F_NAME
-#define F_NAME "lskelCKG2map"
-{ 
-  int32_t i, k;
-  index_t x, y;                    /* index de pixel */
-  index_t rs = rowsize(imageprio); /* taille ligne */
-  index_t cs = colsize(imageprio); /* taille colonne */
-  index_t N = rs * cs;             /* taille image */
-  int32_t *P = NULL;   /* l'image de priorites (cas int32) */
-  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
-  float   *PF = NULL;  /* l'image de priorites (cas float) */
-  double  *PD = NULL;  /* l'image de priorites (cas double) */
-  Rbt * RBT;
-  index_t taillemaxrbt;
-  uint8_t *F = UCHARDATA(image);   /* objet */
-  Rlifo * RLIFO;
-  double curprio, incrprio;
-
-  ONLY_2D(image);
-  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
-  ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
-  COMPARE_SIZE(image, imageprio);
-
-  IndicsInit(N);
-
-  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = SLONGDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
-    PB = UCHARDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
-    PF = FLOATDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
-    PD = DOUBLEDATA(imageprio); 
-  else 
-  {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
-    return(0);
-  }
-
-  taillemaxrbt = 2 * cs +  2 * rs;
-  /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
-  if (RBT == NULL)
-  {
-    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
-    return(0);
-  }
-  RLIFO = CreeRlifoVide(taillemaxrbt);
-  if (RLIFO == NULL)
-  {
-    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
-    return(0);
-  }
-
-  /* ================================================ */
-  /*               DEBUT ALGO                         */
-  /* ================================================ */
-
-  /* ========================================================= */
-  /*   INITIALISATION DU RBT */
-  /* ========================================================= */
-
-  for (x = 0; x < N; x++)
-  {
-    if (F[x]) F[x] = OBJ;
-    if (F[x] && bordext8(F, x, rs, N))
-    {
-      switch(datatype(imageprio))
-      {
-        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
-      }
-      Set(x, EN_RBT);
-    }
-  }
-
-  /* ================================================ */
-  /*                  DEBUT SATURATION                */
-  /* ================================================ */
-
-  incrprio = DOUBLE_MIN; // this value will only increase during execution
-  while (!mcrbt_RbtVide(RBT))
-  {
-    curprio = RbtMinLevel(RBT);
-    if (curprio > incrprio) incrprio = curprio;
-//#define DEBUG_lskelCKG2
-#ifdef DEBUG_lskelCKG2
-    printf("entering loop, curprio = %g, incrprio = %g\n", curprio, incrprio);
-#endif
-    do
-    {
-      x = RbtPopMin(RBT);
-#ifdef DEBUG_lskelCKG2
-      printf("pop: %d\n", x);
-#endif
-      UnSet(x, EN_RBT);
-      if (F[x] && simple8(F, x, rs, N))
-      {
-	RlifoPush(&RLIFO, x);
-	F[x] = CAN;
-      }
-    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
-
-    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass1(F, x, rs, N); }
-    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
-    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass2(F, x, rs, N); }
-    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
-
-    for (i = 0; i < RLIFO->Sp; i++)
-    {
-      x = RLIFO->Pts[i];
-      if (F[x] == CAN)
-      {
-#ifdef DEBUG_lskelCKG2
-	printf("Non Crucial: %d\n", x);
-#endif
-	Set(x, NONCRUCIAL); // marque le point pour effacement ulterieur
-        for (k = 0; k < 8; k += 1) // parcourt les voisins en 8-connexite
-        {                          // pour empiler les voisins non deja empiles
-          y = voisin(x, k, rs, N);
-          if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
-          {
-	    switch(datatype(imageprio))
-	    {
-	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
-	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
-	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
-	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
-	    }
-#ifdef DEBUG_lskelCKG2
-	    printf("push: %d\n", y);
-#endif
-            Set(y, EN_RBT);
-          } // if y
-        } // for k
-      } // if (NonCrucial(F, C, x, rs, N)
-    } // for (i = 0; i < RLIFO->Sp; i++)
-
-    for (i = 0; i < RLIFO->Sp; i++)
-    {
-      x = RLIFO->Pts[i];
-      if (IsSet(x, NONCRUCIAL)) 
-      {
-	F[x] = 0;
-	switch(datatype(imageprio))
-	{
-	case VFF_TYP_4_BYTE: P[x] = (int32_t)incrprio; break;
-	case VFF_TYP_1_BYTE: PB[x] = (uint8_t)incrprio; break;
-	case VFF_TYP_FLOAT : PF[x] = (float)incrprio; break;
-	case VFF_TYP_DOUBLE: PD[x] = incrprio; break;
-	}
-      }
-    }
-
-    RlifoFlush(RLIFO);
-
-  } // while (!mcrbt_RbtVide(RBT))
-
-  /* ================================================ */
-  /* UN PEU DE MENAGE                                 */
-  /* ================================================ */
-
-  IndicsTermine();
-  mcrbt_RbtTermine(RBT);
-  RlifoTermine(RLIFO);
-  return(1);
-} /* lskelCKG2map() */
 
 /* ==================================== */
 static void extract_vois3d(
@@ -4957,6 +4517,97 @@ static void insert_vois3d(
 
   *(ptr) = vois[26];
 } /* insert_vois3d() */
+
+/* ==================================== */
+static void rotate90_vois(uint8_t *vois)
+/*
+   effectue une rotation du voisinage "vois" de 90 degres dans le sens
+   trigonométrique
+*/
+/* ==================================== */
+{
+  uint8_t tmp;
+  tmp = vois[0]; vois[0] = vois[6]; vois[6] = vois[4]; vois[4] = vois[2]; vois[2] = tmp;
+  tmp = vois[7]; vois[7] = vois[5]; vois[5] = vois[3]; vois[3] = vois[1]; vois[1] = tmp;
+} /* rotate90_vois() */
+
+// Etiquetage des points objet
+// Tout point objet a une étiquette >= OBJ
+// Tout point candidat (donc simple) a une étiquette >= CAN
+
+/* ==================================== */
+static void CrucialPass1( /* pour un objet en 8-connexite */
+  uint8_t *X,      /* pointeur base image */
+  index_t p,       /* index du point */
+  index_t rs,      /* taille rangee */
+  index_t N)       /* taille image */
+/*
+  Repère et marque CR1 les cliques 1-cruciales pour <X,C> contenant le point p.
+  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
+  Il est supposé que X[p] == CAN (pas de test).
+*/
+/* ==================================== */
+{
+  int32_t i;
+  uint8_t v[8];
+
+  extract_vois(X, p, rs, N, v);
+
+/*
+x a a
+x C C  avec au moins un des a et au moins un des b non nuls
+x b b  ou : tous les a et tous les b nuls
+*/
+  for (i = 0; i < 4; i++)
+  {
+    if (v[0] < CAN) goto fail1;
+    if ((v[1] == 0) && (v[2] == 0) && (v[6] == 0) && (v[7] == 0)) 
+    { X[p] = CR1; return; }
+    if ((v[1] == 0) && (v[2] == 0)) goto fail1;
+    if ((v[6] == 0) && (v[7] == 0)) goto fail1;
+    X[p] = CR1; 
+    return;
+  fail1:
+    if (i < 3) rotate90_vois(v);
+  }
+} // CrucialPass1()
+
+/* ==================================== */
+static void CrucialPass0( /* pour un objet en 8-connexite */
+  uint8_t *X,      /* pointeur base image */
+  index_t p,       /* index du point */
+  index_t rs,      /* taille rangee */
+  index_t N)       /* taille image */
+/*
+  Repère et marque CR0 les cliques 0-cruciales pour <X,C> contenant le point p.
+  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
+  Il est supposé que X[p] == CAN (pas de test).
+  Les cliques 1-cruciales doivent avoir préalablement été étiquetées CR1 (voir CrucialPass1).
+*/
+/* ==================================== */
+{
+  int32_t i;
+  uint8_t v[8];
+
+  extract_vois(X, p, rs, N, v);
+
+/*
+x b a  on doit avoir le point 'a' ou les 2 points 'b' dans X (ou les deux), 
+x C b  et tous les points 'a,b' de X marqués CAN,
+x x x  pour que le point central soit étiqueté CR0
+*/
+  for (i = 0; i < 4; i++)
+  {
+    if ((v[1] == 0) && ((v[0] == 0) || (v[2] == 0))) goto fail1;
+    if (v[0] && (v[0] < CAN)) goto fail1;
+    if (v[1] && (v[1] < CAN)) goto fail1;
+    if (v[2] && (v[2] < CAN)) goto fail1;
+    X[p] = CR0;
+    return;
+  fail1:
+    if (i < 3) rotate90_vois(v);
+  }
+} // CrucialPass0()
 
 /* ==================================== */
 static void isometrieXZ_vois(uint8_t *vois) 
@@ -5223,6 +4874,534 @@ static void CrucialPass3d0(
   insert_vois3d(v, X, p, rs, ps, N);
 } // CrucialPass3d0()
 
+#define NONCRUCIAL 1
+
+/* ==================================== */
+int32_t lskelCKG2(struct xvimage *image,
+		  struct xvimage *imageprio, 
+		  double val)
+/* ==================================== */
+// parallel 2D binary guided thinning
+// EXPERIMENTAL - Ne pas utiliser dans des applications
+#undef F_NAME
+#define F_NAME "lskelCKG2"
+{ 
+  int32_t i, k;
+  index_t x, y;                    /* index de pixel */
+  index_t rs = rowsize(imageprio); /* taille ligne */
+  index_t cs = colsize(imageprio); /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  int32_t *P = NULL;   /* l'image de priorites (cas int32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
+  Rbt * RBT;
+  index_t taillemaxrbt;
+  uint8_t *F = UCHARDATA(image);   /* objet */
+  Rlifo * RLIFO;
+  double curprio;
+
+  ONLY_2D(image);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
+  ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
+  COMPARE_SIZE(image, imageprio);
+
+  IndicsInit(N);
+
+  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
+    P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
+  else 
+  {
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
+    return(0);
+  }
+
+  taillemaxrbt = 2 * cs +  2 * rs;
+  /* cette taille est indicative, le RBT est realloue en cas de depassement */
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
+  if (RBT == NULL)
+  {
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
+    return(0);
+  }
+  RLIFO = CreeRlifoVide(taillemaxrbt);
+  if (RLIFO == NULL)
+  {
+    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
+    return(0);
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  /* ========================================================= */
+  /*   INITIALISATION DU RBT */
+  /* ========================================================= */
+
+  for (x = 0; x < N; x++)
+  {
+    if (F[x]) F[x] = OBJ;
+    if (F[x] && bordext8(F, x, rs, N))
+    {
+      switch(datatype(imageprio))
+      {
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
+      }
+      Set(x, EN_RBT);
+    }
+  }
+
+  /* ================================================ */
+  /*                  DEBUT SATURATION                */
+  /* ================================================ */
+
+  while (!mcrbt_RbtVide(RBT))
+  {
+    curprio = RbtMinLevel(RBT);
+//#define DEBUG_lskelCKG2
+#ifdef DEBUG_lskelCKG2
+      printf("entering loop, curprio: %g\n", curprio);
+#endif
+    if (curprio >= val) break;
+    do
+    {
+      x = RbtPopMin(RBT);
+#ifdef DEBUG_lskelCKG2
+      printf("pop: %d\n", x);
+#endif
+      UnSet(x, EN_RBT);
+      if (F[x] && simple8(F, x, rs, N))
+      {
+	RlifoPush(&RLIFO, x);
+	F[x] = CAN;
+      }
+    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
+
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass1(F, x, rs, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass0(F, x, rs, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+
+    for (i = 0; i < RLIFO->Sp; i++)
+    {
+      x = RLIFO->Pts[i];
+      if (F[x] == CAN)
+      {
+#ifdef DEBUG_lskelCKG2
+	printf("Non Crucial: %d\n", x);
+#endif
+	Set(x, NONCRUCIAL); // marque le point pour effacement ulterieur
+        for (k = 0; k < 8; k += 1) // parcourt les voisins en 8-connexite
+        {                          // pour empiler les voisins non deja empiles
+          y = voisin(x, k, rs, N);
+          if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
+          {
+	    switch(datatype(imageprio))
+	    {
+	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
+	    }
+#ifdef DEBUG_lskelCKG2
+	    printf("push: %d\n", y);
+#endif
+            Set(y, EN_RBT);
+          } // if y
+        } // for k
+      } // if (NonCrucial(F, C, x, rs, N)
+    } // for (i = 0; i < RLIFO->Sp; i++)
+
+    for (i = 0; i < RLIFO->Sp; i++)
+    {
+      x = RLIFO->Pts[i];
+      if (IsSet(x, NONCRUCIAL)) F[x] = 0;
+    }
+
+    RlifoFlush(RLIFO);
+
+  } // while (!mcrbt_RbtVide(RBT))
+
+  for (x = 0; x < N; x++) if (F[x]) F[x] = NDG_MAX;
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  mcrbt_RbtTermine(RBT);
+  RlifoTermine(RLIFO);
+  return(1);
+} /* lskelCKG2() */
+
+/* ==================================== */
+int32_t lskelCKG2map(struct xvimage *imageprio,
+		     struct xvimage *image)
+/* ==================================== */
+// EXPERIMENTAL - Ne pas utiliser dans des applications
+// the result is in imageprio : a "topological map"
+#undef F_NAME
+#define F_NAME "lskelCKG2map"
+{ 
+  int32_t i, k;
+  index_t x, y;                    /* index de pixel */
+  index_t rs = rowsize(imageprio); /* taille ligne */
+  index_t cs = colsize(imageprio); /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  int32_t *P = NULL;   /* l'image de priorites (cas int32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
+  Rbt * RBT;
+  index_t taillemaxrbt;
+  uint8_t *F = UCHARDATA(image);   /* objet */
+  Rlifo * RLIFO;
+  double curprio, incrprio;
+
+  ONLY_2D(image);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
+  ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
+  COMPARE_SIZE(image, imageprio);
+
+  IndicsInit(N);
+
+  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
+    P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
+  else 
+  {
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
+    return(0);
+  }
+
+  taillemaxrbt = 2 * cs +  2 * rs;
+  /* cette taille est indicative, le RBT est realloue en cas de depassement */
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
+  if (RBT == NULL)
+  {
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
+    return(0);
+  }
+  RLIFO = CreeRlifoVide(taillemaxrbt);
+  if (RLIFO == NULL)
+  {
+    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
+    return(0);
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  /* ========================================================= */
+  /*   INITIALISATION DU RBT */
+  /* ========================================================= */
+
+  for (x = 0; x < N; x++)
+  {
+    if (F[x]) F[x] = OBJ;
+    if (F[x] && bordext8(F, x, rs, N))
+    {
+      switch(datatype(imageprio))
+      {
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
+      }
+      Set(x, EN_RBT);
+    }
+  }
+
+  /* ================================================ */
+  /*                  DEBUT SATURATION                */
+  /* ================================================ */
+
+  incrprio = DOUBLE_MIN; // this value will only increase during execution
+  while (!mcrbt_RbtVide(RBT))
+  {
+    curprio = RbtMinLevel(RBT);
+    if (curprio > incrprio) incrprio = curprio;
+//#define DEBUG_lskelCKG2
+#ifdef DEBUG_lskelCKG2
+    printf("entering loop, curprio = %g, incrprio = %g\n", curprio, incrprio);
+#endif
+    do
+    {
+      x = RbtPopMin(RBT);
+#ifdef DEBUG_lskelCKG2
+      printf("pop: %d\n", x);
+#endif
+      UnSet(x, EN_RBT);
+      if (F[x] && simple8(F, x, rs, N))
+      {
+	RlifoPush(&RLIFO, x);
+	F[x] = CAN;
+      }
+    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
+
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass1(F, x, rs, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass0(F, x, rs, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+
+    for (i = 0; i < RLIFO->Sp; i++)
+    {
+      x = RLIFO->Pts[i];
+      if (F[x] == CAN)
+      {
+#ifdef DEBUG_lskelCKG2
+	printf("Non Crucial: %d\n", x);
+#endif
+	Set(x, NONCRUCIAL); // marque le point pour effacement ulterieur
+        for (k = 0; k < 8; k += 1) // parcourt les voisins en 8-connexite
+        {                          // pour empiler les voisins non deja empiles
+          y = voisin(x, k, rs, N);
+          if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
+          {
+	    switch(datatype(imageprio))
+	    {
+	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
+	    }
+#ifdef DEBUG_lskelCKG2
+	    printf("push: %d\n", y);
+#endif
+            Set(y, EN_RBT);
+          } // if y
+        } // for k
+      } // if (NonCrucial(F, C, x, rs, N)
+    } // for (i = 0; i < RLIFO->Sp; i++)
+
+    for (i = 0; i < RLIFO->Sp; i++)
+    {
+      x = RLIFO->Pts[i];
+      if (IsSet(x, NONCRUCIAL)) 
+      {
+	F[x] = 0;
+	switch(datatype(imageprio))
+	{
+	case VFF_TYP_4_BYTE: P[x] = (int32_t)incrprio; break;
+	case VFF_TYP_1_BYTE: PB[x] = (uint8_t)incrprio; break;
+	case VFF_TYP_FLOAT : PF[x] = (float)incrprio; break;
+	case VFF_TYP_DOUBLE: PD[x] = incrprio; break;
+	}
+      }
+    }
+
+    RlifoFlush(RLIFO);
+
+  } // while (!mcrbt_RbtVide(RBT))
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  mcrbt_RbtTermine(RBT);
+  RlifoTermine(RLIFO);
+  return(1);
+} /* lskelCKG2map() */
+
+/* ==================================== */
+int32_t lskelCKG3map(struct xvimage *imageprio,
+		     struct xvimage *image)
+/* ==================================== */
+// EXPERIMENTAL - Ne pas utiliser dans des applications
+// the result is in imageprio : a "topological map"
+#undef F_NAME
+#define F_NAME "lskelCKG3map"
+{ 
+  int32_t i, k;
+  index_t x, y;                    /* index de pixel */
+  index_t rs = rowsize(imageprio); /* taille ligne */
+  index_t cs = colsize(imageprio); /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(imageprio);   /* nb plans */
+  index_t N = ps * ds;             /* taille image */
+  int32_t *P = NULL;   /* l'image de priorites (cas int32) */
+  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
+  float   *PF = NULL;  /* l'image de priorites (cas float) */
+  double  *PD = NULL;  /* l'image de priorites (cas double) */
+  Rbt * RBT;
+  index_t taillemaxrbt;
+  uint8_t *F = UCHARDATA(image);   /* objet */
+  Rlifo * RLIFO;
+  double curprio, incrprio;
+
+  ONLY_3D(image);
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
+  ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
+  COMPARE_SIZE(image, imageprio);
+
+  mctopo3d_init_topo3d();  
+  IndicsInit(N);
+
+  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
+    P = SLONGDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
+    PB = UCHARDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
+    PF = FLOATDATA(imageprio); 
+  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
+    PD = DOUBLEDATA(imageprio); 
+  else 
+  {
+    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
+    return(0);
+  }
+
+  taillemaxrbt = 2 * cs +  2 * rs +  2 * ps;
+  /* cette taille est indicative, le RBT est realloue en cas de depassement */
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
+  if (RBT == NULL)
+  {
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
+    return(0);
+  }
+  RLIFO = CreeRlifoVide(taillemaxrbt);
+  if (RLIFO == NULL)
+  {
+    fprintf(stderr, "%s : CreeRlifoVide failed\n", F_NAME);
+    return(0);
+  }
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  /* ========================================================= */
+  /*   INITIALISATION DU RBT */
+  /* ========================================================= */
+
+  for (x = 0; x < N; x++)
+  {
+    if (F[x]) F[x] = OBJ;
+    if (F[x] && mctopo3d_bordext26(F, x, rs, ps, N))
+    {
+      switch(datatype(imageprio))
+      {
+        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
+        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
+        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
+        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
+      }
+      Set(x, EN_RBT);
+    }
+  }
+
+  /* ================================================ */
+  /*                  DEBUT SATURATION                */
+  /* ================================================ */
+
+  incrprio = DOUBLE_MIN; // this value will only increase during execution
+  while (!mcrbt_RbtVide(RBT))
+  {
+    curprio = RbtMinLevel(RBT);
+    if (curprio > incrprio) incrprio = curprio;
+//#define DEBUG_lskelCKG2
+#ifdef DEBUG_lskelCKG2
+    printf("entering loop, curprio = %g, incrprio = %g\n", curprio, incrprio);
+#endif
+    do
+    {
+      x = RbtPopMin(RBT);
+#ifdef DEBUG_lskelCKG2
+      printf("pop: %d\n", x);
+#endif
+      UnSet(x, EN_RBT);
+      if (F[x] && mctopo3d_simple26(F, x, rs, ps, N))
+      {
+	RlifoPush(&RLIFO, x);
+	F[x] = CAN;
+      }
+    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
+
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass3d2(F, x, rs, ps, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass3d1(F, x, rs, ps, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass3d0(F, x, rs, ps, N); }
+    for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
+
+    for (i = 0; i < RLIFO->Sp; i++)
+    {
+      x = RLIFO->Pts[i];
+      if (F[x] == CAN)
+      {
+#ifdef DEBUG_lskelCKG2
+	printf("Non Crucial: %d\n", x);
+#endif
+	Set(x, NONCRUCIAL); // marque le point pour effacement ulterieur
+        for (k = 0; k < 26; k += 1) // parcourt les voisins en 26-connexite
+        {                          // pour empiler les voisins non deja empiles
+          y = voisin26(x, k, rs, ps, N);
+          if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
+          {
+	    switch(datatype(imageprio))
+	    {
+	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
+	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
+	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
+	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
+	    }
+#ifdef DEBUG_lskelCKG2
+	    printf("push: %d\n", y);
+#endif
+            Set(y, EN_RBT);
+          } // if y
+        } // for k
+      } // if (NonCrucial(F, C, x, rs, N)
+    } // for (i = 0; i < RLIFO->Sp; i++)
+
+    for (i = 0; i < RLIFO->Sp; i++)
+    {
+      x = RLIFO->Pts[i];
+      if (IsSet(x, NONCRUCIAL)) 
+      {
+	F[x] = 0;
+	switch(datatype(imageprio))
+	{
+	case VFF_TYP_4_BYTE: P[x] = (int32_t)incrprio; break;
+	case VFF_TYP_1_BYTE: PB[x] = (uint8_t)incrprio; break;
+	case VFF_TYP_FLOAT : PF[x] = (float)incrprio; break;
+	case VFF_TYP_DOUBLE: PD[x] = incrprio; break;
+	}
+      }
+    }
+
+    RlifoFlush(RLIFO);
+
+  } // while (!mcrbt_RbtVide(RBT))
+
+  /* ================================================ */
+  /* UN PEU DE MENAGE                                 */
+  /* ================================================ */
+
+  IndicsTermine();
+  mctopo3d_termine_topo3d();
+  mcrbt_RbtTermine(RBT);
+  RlifoTermine(RLIFO);
+  return(1);
+} /* lskelCKG3map() */
+
 /* ==================================== */
 int32_t lskelCKG3(struct xvimage *image,
 		  struct xvimage *imageprio, 
@@ -5354,7 +5533,7 @@ int32_t lskelCKG3(struct xvimage *image,
 	printf("Non Crucial: %d\n", x);
 #endif
 	Set(x, NONCRUCIAL); // marque le point pour effacement ulterieur
-        for (k = 0; k < 26; k += 1) // parcourt les voisins en 8-connexite
+        for (k = 0; k < 26; k += 1) // parcourt les voisins en 26-connexite
         {                          // pour empiler les voisins non deja empiles
           y = voisin26(x, k, rs, ps, N);
           if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))

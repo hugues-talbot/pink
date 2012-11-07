@@ -39,10 +39,16 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> skelpar3d in.pgm algorithm nsteps [inhibit] out.pgm
 
 <B>Description:</B>
-Parallel 3D binary thinning or skeleton. The parameter \b nsteps gives,
-if positive, the number of parallel thinning steps to be processed.
-If the value given for \b nsteps equals -1, the thinning is continued
-until stability.
+
+Parallel 3D binary thinning or skeleton. 
+
+The parameter \b nsteps gives, if positive, the number of parallel
+thinning steps to be processed.  If the value given for \b nsteps
+equals -1, the thinning is continued until stability.
+
+For some algorithms (16 to ??), the parameter \b nsteps has a
+different meaning which is related to the notion of persistence (see
+[REF A AJOUTER]). It plays the role of a filtering parameter.
 
 The parameter \b algorithm is a numerical code
 indicating which method will be used for the thinning.
@@ -55,17 +61,23 @@ The possible choices are:
 \li 5: curvilinear based on ends, with end reconstruction (CK3b)
 \li 6: topological axis (not homotopic)
 \li 7: curvilinear, based on residual points and 2D isthmus (CK3)
-\li 8: ultimate, asymetric (AMK3)
-\li 9: curvilinear, asymetric, based on thin 1D isthmus (ACK3a)
-\li 10: curvilinear, asymetric, based on 3D and 2D residuals (ACK3)
+\li 8: ultimate, asymmetric (AMK3)
+\li 9: curvilinear, asymmetric, based on thin 1D isthmus (ACK3a)
+\li 10: curvilinear, asymmetric, based on 3D and 2D residuals (ACK3)
 \li 11: surface, based on residual points (RK3)
 \li 12: surface, based on 2D isthmuses (SK3)
 \li 13: ultimate, directional, (DK3)
 \li 14: surface, directional, based on residual points (DRK3)
 \li 15: surface, directional, based on 2D isthmuses (DSK3)
+\li 16: curvilinear, asymmetric, based on thin 1D isthmus with persistence (ACK3p)
+\li 17: surface, asymmetric, based on thin 2D isthmus with persistence (ASK3p)
+\li 18: curvilinear, symmetric, based on 1D isthmus with persistence (CK3p)
+\li 19: surface, symmetric, based on 2D isthmus with persistence (SK3p)
+\li 20: surface and curvilinear, symmetric, based on 1D and 2D isthmus with persistence (SCK3p)
 
-In modes other than 2, if the parameter \b inhibit is given and is a binary image name,
-then the points of this image will be left unchanged. 
+In modes other than 2, if the parameter \b inhibit is given and is a
+binary image name, then the points of this image will be left
+unchanged.
 
 The following codes give access to auxiliary functions, for isthmus detection. 
 Parameter \b nsteps will not be used in this case (any value can be given).
@@ -131,14 +143,20 @@ int main(int argc, char **argv)
     fprintf(stderr, "   5: curvilinear based on ends, with end reconstruction (CK3b)\n");
     fprintf(stderr, "   6: topological axis (not homotopic)\n");
     fprintf(stderr, "   7: curvilinear, based on residual points and 2D isthmus (CK3)\n");
-    fprintf(stderr, "   8: ultimate, asymetric (AMK3)\n");
-    fprintf(stderr, "   9: curvilinear, asymetric, based on thin 1D isthmus (ACK3a)\n");
-    fprintf(stderr, "  10: curvilinear, asymetric, based on 3D and 2D residuals (ACK3)\n");
+    fprintf(stderr, "   8: ultimate, asymmetric (AMK3)\n");
+    fprintf(stderr, "   9: curvilinear, asymmetric, based on thin 1D isthmus (ACK3a)\n");
+    fprintf(stderr, "  10: curvilinear, asymmetric, based on 3D and 2D residuals (ACK3)\n");
     fprintf(stderr, "  11: surface, based on residual points (RK3)\n");
     fprintf(stderr, "  12: surface, based on 2D isthmuses (SK3)\n");
     fprintf(stderr, "  13: ultimafe, directional (DRK3)\n");
     fprintf(stderr, "  14: surface, directional, based on residual points (DRK3)\n");
     fprintf(stderr, "  15: surface, directional, based on 2D isthmuses (DSK3)\n");
+    fprintf(stderr, "  16: curvilinear, asymmetric, based on thin 1D isthmus with persistence (ACK3p)\n");
+    fprintf(stderr, "  17: surface, asymmetric, based on thin 2D isthmus with persistence (ASK3p)\n");
+    fprintf(stderr, "  18: curvilinear, symmetric, based on 1D isthmus with persistence (CK3p)\n");
+    fprintf(stderr, "  19: surface, symmetric, based on 2D isthmus with persistence (SK3p)\n");
+    fprintf(stderr, "  20: surface and curvilinear, symmetric, based on 1D and 2D isthmus with persistence (SCK3p)\n");
+
     fprintf(stderr, "\n");
     fprintf(stderr, " 100: 1D isthmus points detection\n");
     exit(1);
@@ -294,6 +312,36 @@ int main(int argc, char **argv)
       if (! lskelDSK3(image, nsteps, inhibit))
       {
 	fprintf(stderr, "%s: lskelDSK3 failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 16:
+      if (! lskelACK3p(image, -1, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelACK3p failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 17:
+      if (! lskelASK3p(image, -1, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelASK3p failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 18:
+      if (! lskelCK3p(image, -1, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelCK3p failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 19:
+      if (! lskelSK3p(image, -1, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelSK3p failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 20:
+      if (! lskelSCK3p(image, -1, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelSCK3p failed\n", argv[0]);
 	exit(1);
       } break;
     case 100:

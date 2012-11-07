@@ -32,26 +32,19 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file skel_ACK3b.c
+/*! \file skel_CK3_pers.c
 
-\brief parallel 3D binary curvilinear, asymetric skeleton based on thin 1D isthmus
+\brief topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning
 
-<B>Usage:</B> skel_ACK3b in.pgm nsteps isthmus_persistence [inhibit] out.pgm
+<B>Usage:</B> skel_CK3_pers in.pgm out.pgm
 
-<B>Description:</B> Parallel 3D binary thinning or curvilinear,
-asymetric skeleton based on thin 1D isthmus. The parameter \b nsteps
-gives, if positive, the number of parallel thinning steps to be
-processed.  If the value given for \b nsteps equals -1, the thinning
-is continued until stability.
+<B>Description:</B> Topological persistence of 1D isthmuses, based on 
+parallel 3D asymetric thinning.
 
 When a point x is detected as a 1D isthmus, a counter p(x) is
 associated to this point and initialized with value 1. This counter is
-incremented a each iteration as long as x is still an isthmus. At each
-iteration, the isthmuses x such that p(x) >= \b isthmus_persistence are
-stored as a constraint set (see also \b inhibit parameter).
-
-If the parameter \b inhibit is given and is a binary image name,
-then the points of this image will be left unchanged. 
+incremented a each iteration as long as x is still an isthmus. When this point x is
+eventually deleted, the value of the counter is freezed.
 
 \warning The object must not have any point on the frame of the image.
 
@@ -75,12 +68,11 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image;
-  struct xvimage * inhibit = NULL;
-  int32_t nsteps, isthmus_persistence;
+  struct xvimage * persistence;
 
-  if ((argc != 5) && (argc != 6))
+  if (argc != 3)
   {
-    fprintf(stderr, "usage: %s in.pgm nsteps isthmus_persistence [inhibit] out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm out.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -91,34 +83,22 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  nsteps = atoi(argv[2]);
-  isthmus_persistence = atoi(argv[3]);
-  if (argc == 6)
+  persistence = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_FLOAT);
+  if (persistence == NULL)
   {
-    inhibit = readimage(argv[4]);
-    if (inhibit == NULL)
-    {
-      fprintf(stderr, "%s: readimage failed\n", argv[0]);
-      exit(1);
-    }
-  }
-
-  if (depth(image) != 1)
-  {
-    if (! lskelACK3b(image, nsteps, isthmus_persistence, inhibit))
-    {
-      fprintf(stderr, "%s: lskelACK3b failed\n", argv[0]);
-      exit(1);
-    } 
-  }
-  else
-  {
-    fprintf(stderr, "%s: image must be 3D\n", argv[0]);
+    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
 
-  writeimage(image, argv[argc-1]);
+  if (! lskelCK3_pers(image, persistence))
+  {
+    fprintf(stderr, "%s: lskelCK3_pers failed\n", argv[0]);
+    exit(1);
+  } 
+
+  writeimage(persistence, argv[argc-1]);
   freeimage(image);
+  freeimage(persistence);
 
   return 0;
 } /* main */
