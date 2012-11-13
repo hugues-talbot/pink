@@ -22,6 +22,9 @@ else (NOT THIS_IS_MSVC)
     target_link_libraries( cpp_pink pinkstatic ${LIBS} )
 endif (NOT THIS_IS_MSVC)
 
+## This is correct 
+##message("Libs for linking libcpp=" "${LIBS}")
+
 # unix defines
 if (CMAKE_HOST_UNIX)
     add_definitions( -DUNIXIO -DPC )

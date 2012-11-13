@@ -40,13 +40,12 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 
 #include <powerwatsegm.h>
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #include <cs.h>
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*******************************************************
 Function RandomWalker computes the solution to the Dirichlet problem (RW potential function) 

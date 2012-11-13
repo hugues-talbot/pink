@@ -46,7 +46,10 @@ else ( NOT PYTHON_FRONT_END )
     if (THIS_IS_MSVC)
 	add_library(pinkstatic STATIC ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     endif (THIS_IS_MSVC)
-    set( LIBS ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${PYTHON_LIBRARY} )
+    # Hugues Talbot	 1 Nov 2012
+    # how is is possible that this LIBS does not include the boost stuff ?
+    #message("Where is this LIB coming from ? = " "${LIBS}")
+    set( LIBS ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${PYTHON_LIBRARY} )
 endif ( NOT PYTHON_FRONT_END )
 
     #message( info= ${LIBS} )
