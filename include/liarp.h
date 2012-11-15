@@ -223,16 +223,65 @@
 extern "C" {
 #endif
 
-  int LIARdebug(const char *fmt, ...);
-  int LIARerror(const char *msg, ...);
-  long *bresenham3d(int dx, int dy, int dz,
+    int LIARdebug(const char *fmt, ...);
+    int LIARerror(const char *msg, ...);
+    long *bresenham3d(int dx, int dy, int dz,
 		    int imwidth, int imheight, int imdepth,
 		    int *ol, int *period);
-  long *periodic3d(int dx, int dy, int dz,
+    long *periodic3d(int dx, int dy, int dz,
 		     int imwidth, int imheight, int imdepth,
 		      int *ol, int *period);
-  long *bresenham(int xin,int yin,int angle,int width,int *period);
-  long *periodic(int x, int y, int angle, int width, int *period);
+    long *bresenham(int xin,int yin,int angle,int width,int *period);
+    long *periodic(int x, int y, int angle, int width, int *period);
+
+    /* from chngeval.c */
+    void changePIXval(PIX_TYPE *IN, long size,
+                      PIX_TYPE val1,
+                      PIX_TYPE val2);
+    
+    void changeSEEDval(SEED_TYPE *IN, long size,
+                       SEED_TYPE val1,
+                       SEED_TYPE val2);
+
+    INT4_TYPE testINTneighs(SEED_TYPE *v,LONG_TYPE *func,INT4_TYPE n);
+
+    void getsubset_3d(void *in,         /* Input buffer  */
+                      void **out,       /* Output buffer */
+                      int size,         /* Image pixel size */
+                      int inx,          /* nb of cols (input) */
+                      int iny,          /* nb of rows (input) */
+                      int inz,          /* nb of slices (input) */
+                      int *outx,        /* nb of cols (output) */
+                      int *outy,        /* nb of rows (output) */
+                      int *outz,        /* nb of slices (output) */
+                      int offsetx,      /* offset value in x */
+                      int offsety,      /* offset value in y */
+                      int offsetz);      /* offset value in z */
+    
+    void addborder_3d(void *in,         /* Input buffer  */
+                      void **out,       /* Output buffer */
+                      int size,         /* Image pixel size */
+                      int inx,          /* nb of cols (input) */
+                      int iny,          /* nb of rows (input) */
+                      int inz,          /* nb of slices (input) */
+                      int *outx,        /* nb of cols (output) */
+                      int *outy,        /* nb of rows (output) */
+                      int *outz,        /* nb of slices (output) */
+                      int offsetx,      /* offset value in x */
+                      int offsety,      /* offset value in y */
+                      int offsetz);      /* offset value in z */
+    
+    
+    /* from setpxbrd.c */
+    void setPIXborder(PIX_TYPE *image, int nx, int ny, int nz,
+                      PIX_TYPE val);
+
+    /* from setneigh.c */
+    int setNeighFunc3d(long *Nf,	 /* pointer to a long vector of size 26  */
+                       int con,	 /*  */
+                       int nx,	 /*  */
+                       int ny,	 /*  */
+                       int nz);	 /*  */
 
 #ifdef __cplusplus
 }

@@ -20,7 +20,8 @@
 #include <math.h>
 #include "liarp.h"
 #include "liarwrap.h"
-
+#include "splayq.h"
+#include "darray.h"
 
 #define BORDER -1
 
