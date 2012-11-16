@@ -283,6 +283,23 @@ extern "C" {
                        int ny,	 /*  */
                        int nz);	 /*  */
 
+    /* from lsrgrow3d.c */
+    int lsrgrow3d(void **bufin,	/* input buffer */
+                  SEED_TYPE **bufout,	/* output buffer */
+                  SEED_TYPE *seeds,	/* seed image */
+                  int inimagetype,               /*  pixel type of input image */
+                  int inpixsize,                  /* pixel size of input image */
+                  int seedpixsize,             /* pixel size of seeds image */
+                  int inx,		/* nb of cols in the input */
+                  int iny,		/* nb of rows in the input */
+                  int inz,		/* nb of slices in the input */
+                  int comps,		/* nb of components in the input */
+                  int metric,	/* distance measures */
+                  int borders,	/* to display region borders only */
+                  int connect,	/* connectivity of the image */
+                  int showgrey);	/* output greyscale using pixel avge */
+        
+
 #ifdef __cplusplus
 }
 #endif
