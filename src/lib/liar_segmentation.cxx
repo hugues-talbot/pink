@@ -58,30 +58,37 @@ methods, complementary to the watershed.
 
 #include "pink.h"
 #include "liarp.h"
+#include "liar_segmentation.h"
 
 
 /*-------------------------------------------------------------------------------------------------*/
 /*! Line segments openings */
-int imsrgrow3d(const struct xvimage *input, /**< [in] input image */
-               const struct xvimage *seeds, /**< [in] seed (a.k.a. markers) image */
+int imsrgrow3d(struct xvimage *input,    /**< [in] input image */
+               struct xvimage *seedsout, /**< [inout] seed (a.k.a. markers) image */
 	       int metric,                  /**< [in] metric used */
 	       int borders,                 /**< [in] boolean showing borders or not */
                int connectivity,            /**< [in] connectivity */
-               int showgrey,                /**< [in] showing average grey-levels or not */
-	       struct xvimage *output       /**< [out] output image */)
+               int showgrey)                /**< [in] showing average grey-levels or not */
 {
     void **srcbuf = NULL;
-
+    
     
     srcbuf = (void**)malloc(sizeof(void*)); /* only one buffer */
 
     switch (input->data_storage_type) {
     case    VFF_TYP_1_BYTE:
     {
+        if (seedsout->data_storage_type != VFF_TYP_4_BYTE) {
+            pink_warning("Seed/marker (second arg) pixel type currently not supported, must be int32 "<< seedsout->data_storage_type);
+        }
+        
         pixtype inpixtype = IM_UINT1; /* not sure about this */
         srcbuf[0] = UCHARDATA(input);
-        SEED_TYPE *outputdatabuf = SLONGDATA(output);
-        SEED_TYPE *seeddatabuf = SLONGDATA(seeds);
+        SEED_TYPE *outputdatabuf = NULL;
+        SEED_TYPE *seeddatabuf = SLONGDATA(seedsout);
+
+        /* because Pink requires the SECOND image to be in/out ??? */
+        memset(outputdatabuf, 0, rowsize(seedsout)*colsize(seedsout)*depth(seedsout));
         
         return( lsrgrow3d (srcbuf,
                            &outputdatabuf,
@@ -104,7 +111,7 @@ int imsrgrow3d(const struct xvimage *input, /**< [in] input image */
         
 
     default:
-        pink_warning("Pixel type currently not supported "<< input->data_storage_type);
+        pink_warning("Input (first arg) pixel type currently not supported, must be CHAR "<< input->data_storage_type);
         return 1;
         break;
     }
