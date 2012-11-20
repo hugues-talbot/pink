@@ -15,12 +15,12 @@ extern "C" {
 /* these are all pure C functions */
 
 /*1/2/3D Segmentation by Seeded Region Growing method*/
-int imsrgrow3d(struct xvimage *input, /**< [in] input image */
-               struct xvimage *seedsout, /**< [inout] seed (a.k.a. markers) image */
+int imsrgrow3d(struct xvimage *seedsout,    /**< [inout] seed (a.k.a. markers) image */
+               struct xvimage *input,       /**< [in] input image */
                int metric,                  /**< [in] metric used */
                int borders,                 /**< [in] boolean showing borders or not */
                int connectivity,            /**< [in] connectivity */
-               int showgrey);                /**< [in] showing average grey-levels or not */
+               int showgrey);               /**< [in] showing average grey-levels or not */
 
 
 #ifdef __cplusplus
