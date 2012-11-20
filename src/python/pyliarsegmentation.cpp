@@ -17,12 +17,14 @@
 
 using namespace boost::python;
 using namespace pink;
-;
 
+
+#if 0 // this function is not used !! 
 namespace pink {
     namespace python {
         // seeded region growing
         // Adams & Bischof PAMI 16(6) 641--647 1994
+        
         template <class image_t>
         image_t liarsrgrow3d
         (
@@ -53,6 +55,8 @@ namespace pink {
     } /* namespace python */
 } /* namespace pink */
 
+#endif // 0 THIS FUNCTION IS NOT USED
+
 namespace liarseg
 {
 
@@ -69,13 +73,15 @@ namespace liarseg
 //   // end of the documenation
 //   );
 
+    // Please note: the output image is the first image in the list
+    // the type of the image is not meant to change.
 UI_WRAP_FUNCTION(
     "srgrow",
     imsrgrow3d,
-    ( arg("input"), arg("markers"), arg("metric"), arg("borders"), arg("connectivity"), arg("showgrey") ),
+    (  arg("markers"), arg("input"), arg("metric"), arg("borders"), arg("connectivity"), arg("showgrey") ),
     "1D, 2D and 3D Segmentation by Seeded Region Growing method\n"
-    " src = grey-level source images\n"
     " mark = int32 markers image\n"
+    " src = grey-level source images\n"
     " metric = 0 (absolute) or 1 (Eudlidean) difference between pixel and regions\n"
     " connectivity = 2 (1D) ; 4/8 (2D) or (6-18-26) (3D)\n"
     " showgrey: output consist of regions averages\n"
