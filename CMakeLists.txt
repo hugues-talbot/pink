@@ -340,12 +340,6 @@ if (SIMD)
     ADD_DEFINITIONS(-DPINK_HAVE_SIMD)
 endif (SIMD)
 
-
-## Hugues Talbot	 1 Nov 2012
-## why do that now and not later ?
-add_subdirectory( src/lib lib )
-
-
 ### **********************************************************************************************
 ### **********************************************************************************************
 ### *************************** Bash front-end ***************************************************
@@ -538,6 +532,11 @@ if ( PYTHON_FRONT_END )
     add_subdirectory( src/python python )
 
 endif ( PYTHON_FRONT_END )
+
+## Hugues Talbot	 1 Nov 2012
+## why do that now and not later ?
+add_subdirectory( src/lib lib )
+
 
 ### **********************************************************************************************
 ### **********************************************************************************************
