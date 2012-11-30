@@ -27,8 +27,7 @@
 #include "liarwrap.h"
 #include "imclient.h"
 
-//#define ANSWER_MAX_SIZE 1024
-#define ANSWER_MAX_SIZE 10
+#define ANSWER_MAX_SIZE 1024
 #define BIN_MAX_SIZE    8192
 #define HNDSHK_SIZE     300
 #define DEFAULTPORT     7600
@@ -1189,7 +1188,7 @@ int imviewlogin(const char *user,        /* user name (default NULL: current use
     }
 
     if (username[0] == '\0') {
-	imexception("%s: no user name specified and no USER environment variable\n");
+	imexception("%s: no user name specified and no USER environment variable\n", FnName);
 	return 5;
     }
 
@@ -1221,7 +1220,7 @@ int imviewlogin(const char *user,        /* user name (default NULL: current use
     LIARdebug("Login command result: %s", login_answer);
     nbscanned = sscanf(login_answer, "Welcome, %s %s", login_result, sync_filename);
     if ((nbscanned != 2) || (strcmp(login_result, username) != 0)) {
-	imexception("%s: login failed, incorrect user name or unexpected response from server\n", FnName);
+	imexception("%s: login failed, incorrect user name or unexpected response <%s> from server\n", FnName, login_answer);
 	imview_close_connection(fd);
 	return 8;
     }
@@ -1337,6 +1336,11 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
     if (!I || !name) {
 	imexception("%s: requires an image and a name\n", FnName);
 	return 1;
+    }
+
+    if (conn_id < 0) {
+        imexception("%s: connection not established\n", FnName);
+	return 2;
     }
 
     LIARdebug("Basic checks on the image");
