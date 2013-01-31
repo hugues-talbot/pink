@@ -54,7 +54,7 @@ The parameter \b algorithm is a numerical code
 indicating which method will be used for the thinning.
 The possible choices are:
 \li 0: ultimate, without constraint (MK3a)
-\li 1: curvilinear, based on 1D isthmus (CK3a)
+\li 1: curvilinear, symmetric, based on 1D isthmus (CK3a)
 \li 2: medial axis preservation (AK3) - parameter inhibit represents the minimal radius of medial axis balls which are considered
 \li 3: ultimate (MK3) - if nsteps = -2, returns the topological distance
 \li 4: curvilinear based on ends (EK3)
@@ -64,8 +64,8 @@ The possible choices are:
 \li 8: ultimate, asymmetric (AMK3)
 \li 9: curvilinear, asymmetric, based on thin 1D isthmus (ACK3a)
 \li 10: curvilinear, asymmetric, based on 3D and 2D residuals (ACK3)
-\li 11: surface, based on residual points (RK3)
-\li 12: surface, based on 2D isthmuses (SK3)
+\li 11: surface, symmetric, based on residual points (RK3)
+\li 12: surface, symmetric, based on 2D isthmuses (SK3)
 \li 13: ultimate, directional, (DK3)
 \li 14: surface, directional, based on residual points (DRK3)
 \li 15: surface, directional, based on 2D isthmuses (DSK3)
@@ -136,7 +136,7 @@ int main(int argc, char **argv)
   {
     fprintf(stderr, "usage: %s in.pgm algorithm nsteps [inhibit] out.pgm\n", argv[0]);
     fprintf(stderr, "   0: ultimate, without constraint (MK3a)\n");
-    fprintf(stderr, "   1: curvilinear, based on 1D isthmus (CK3a)\n");
+    fprintf(stderr, "   1: curvilinear, symmetric, based on 1D isthmus (CK3a)\n");
     fprintf(stderr, "   2: medial axis preservation (AK3) - parameter inhibit represents the minimal radius of medial axis balls which are considered\n");
     fprintf(stderr, "   3: ultimate (MK3) - if nsteps = -2, returns the topological distance\n");
     fprintf(stderr, "   4: curvilinear based on ends (EK3)\n");
@@ -146,8 +146,8 @@ int main(int argc, char **argv)
     fprintf(stderr, "   8: ultimate, asymmetric (AMK3)\n");
     fprintf(stderr, "   9: curvilinear, asymmetric, based on thin 1D isthmus (ACK3a)\n");
     fprintf(stderr, "  10: curvilinear, asymmetric, based on 3D and 2D residuals (ACK3)\n");
-    fprintf(stderr, "  11: surface, based on residual points (RK3)\n");
-    fprintf(stderr, "  12: surface, based on 2D isthmuses (SK3)\n");
+    fprintf(stderr, "  11: surface, symmetric, based on residual points (RK3)\n");
+    fprintf(stderr, "  12: surface, symmetric, based on 2D isthmuses (SK3)\n");
     fprintf(stderr, "  13: ultimafe, directional (DRK3)\n");
     fprintf(stderr, "  14: surface, directional, based on residual points (DRK3)\n");
     fprintf(stderr, "  15: surface, directional, based on 2D isthmuses (DSK3)\n");

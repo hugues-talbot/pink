@@ -136,7 +136,9 @@ extern int32_t lskelnemethpalagyi(struct xvimage *image,
 					int32_t type);
 extern int32_t lhthinpar(struct xvimage *image, int32_t nsteps);
 extern int32_t lhthinpar_asymmetric(struct xvimage *image, int32_t nsteps);
-
+extern int32_t lskelCK2(struct xvimage *image,
+			int32_t nsteps,
+			struct xvimage *inhibit);
 #ifdef __cplusplus
 }
 #endif

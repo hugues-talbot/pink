@@ -184,6 +184,7 @@ knowledge of the CeCILL license and that you accept its terms.
    Nivando Bezerra 2011 - lhthinpar* : skel en niveaux de gris
    Michel Couprie 2011 - lskelACK2b : Squelette asymétrique curviligne
              #ifdef NOT_FINISHED
+   Michel Couprie 2012 - lskelCK2 : Squelette symétrique curviligne basé sur les isthmes 1D	     
 */
 
 #include <stdio.h>
@@ -204,6 +205,28 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define VERBOSE1
 //#define ETUDE
 //#define ANIMATE
+
+#define I_INHIBIT     1
+
+#define S_OBJECT      1
+#define S_SIMPLE      2
+#define S_CRUCIAL     4
+#define S_CURVE       8
+
+#define IS_OBJECT(f)     (f&S_OBJECT)
+#define IS_SIMPLE(f)     (f&S_SIMPLE)
+#define IS_CRUCIAL(f)    (f&S_CRUCIAL)
+#define IS_CURVE(f)      (f&S_CURVE)
+
+#define SET_OBJECT(f)     (f|=S_OBJECT)
+#define SET_SIMPLE(f)     (f|=S_SIMPLE)
+#define SET_CRUCIAL(f)    (f|=S_CRUCIAL)
+#define SET_CURVE(f)      (f|=S_CURVE)
+
+#define UNSET_OBJECT(f)     (f&=~S_OBJECT)
+#define UNSET_SIMPLE(f)     (f&=~S_SIMPLE)
+#define UNSET_CRUCIAL(f)    (f&=~S_CRUCIAL)
+#define UNSET_CURVE(f)      (f&=~S_CURVE)
 
 static int32_t jangrec_match23(uint8_t *F, int32_t x, int32_t rs, int32_t N);
 static int32_t jang_match27b(uint8_t *F, int32_t x, int32_t rs, int32_t N);
@@ -3229,7 +3252,7 @@ static int32_t mc_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   extract_vois(F, x, rs, N, v);
   for (i = 0; i < 4; i++)
   {
-    if (v[0] != 2) goto fail;
+    if (!IS_SIMPLE(v[0])) goto fail;
     if ((v[1] == 0) && (v[2] == 0) && (v[6] == 0) && (v[7] == 0)) return 1;
     if ((v[1] == 0) && (v[2] == 0)) goto fail;
     if ((v[6] == 0) && (v[7] == 0)) goto fail;
@@ -3251,7 +3274,7 @@ static int32_t mc_match1b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   extract_vois(F, x, rs, N, v);
   for (i = 0; i < 4; i++)
   {
-    if (v[0] != 2) goto fail;
+    if (!IS_SIMPLE(v[0])) goto fail;
     if ((v[1] == 0) && (v[2] == 0) && (v[6] == 0) && (v[7] == 0)) return 1;
   fail:
     rotate90_vois(v);
@@ -3269,7 +3292,7 @@ static int32_t mc_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   if (!extract_vois2(F, x, rs, N, v2)) return 0;
   for (i = 0; i < 4; i++)
   {
-    if ((v[0] != 2) || (v[1] != 2) || (v[2] != 2)) goto fail;
+    if ((!IS_SIMPLE(v[0])) || (!IS_SIMPLE(v[1])) || (!IS_SIMPLE(v[2]))) goto fail;
     if ((v2[0] != 0) || (v2[1] != 0) || (v2[3] != 0) || (v2[4] != 0) ||
 	(v[3] != 0) || (v[4] != 0) || (v[6] != 0) || (v[7] != 0)) goto fail;
     return 1;
@@ -3291,7 +3314,7 @@ static int32_t mc_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   if (!extract_vois2(F, x, rs, N, v2)) return 0;
   for (i = 0; i < 4; i++)
   {
-    if ((v[0] != 0) || (v[1] != 2) || (v[2] != 2)) goto fail;
+    if ((v[0] != 0) || (!IS_SIMPLE(v[1])) || (!IS_SIMPLE(v[2]))) goto fail;
     if ((v2[0] != 0) || (v2[3] != 0) || (v2[4] != 0) ||
 	(v[3] != 0) || (v[4] != 0) || (v[7] != 0)) goto fail;
     return 1;
@@ -3313,7 +3336,7 @@ static int32_t mc_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   if (!extract_vois2(F, x, rs, N, v2)) return 0;
   for (i = 0; i < 4; i++)
   {
-    if ((v[0] != 0) || (v[1] != 2) || (v[2] != 2)) goto fail;
+    if ((v[0] != 0) || (!IS_SIMPLE(v[1])) || (!IS_SIMPLE(v[2]))) goto fail;
     if ((v2[3] != 0) || (v2[4] != 0) ||
 	(v[3] != 0) || (v[4] != 0)) goto fail;
     return 1;
@@ -3335,7 +3358,7 @@ static int32_t mc_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   if (!extract_vois2(F, x, rs, N, v2)) return 0;
   for (i = 0; i < 4; i++)
   {
-    if ((v[0] != 2) || (v[1] != 2) || (v[2] != 0)) goto fail;
+    if ((!IS_SIMPLE(v[0])) || (!IS_SIMPLE(v[1])) || (v[2] != 0)) goto fail;
     if ((v2[0] != 0) || (v2[1] != 0) || (v2[4] != 0) ||
 	(v[3] != 0) || (v[6] != 0) || (v[7] != 0)) goto fail;
     return 1;
@@ -3358,7 +3381,7 @@ static int32_t mc_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   if (!extract_vois2(F, x, rs, N, v2)) return 0;
   for (i = 0; i < 4; i++)
   {
-    if ((v[0] != 2) || (v[1] != 0) || (v[2] != 2)) goto fail;
+    if ((!IS_SIMPLE(v[0])) || (v[1] != 0) || (!IS_SIMPLE(v[2]))) goto fail;
     if ((v2[1] != 0) || (v2[3] != 0) ||
 	(v[3] != 0) || (v[4] != 0) || (v[6] != 0) || (v[7] != 0)) goto fail;
     return 1;
@@ -3380,7 +3403,7 @@ static int32_t mc_match4b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   if (!extract_vois2(F, x, rs, N, v2)) return 0;
   for (i = 0; i < 4; i++)
   {
-    if ((v[0] != 2) || (v[1] != 2) || (v[2] != 0)) goto fail;
+    if ((!IS_SIMPLE(v[0])) || (!IS_SIMPLE(v[1])) || (v[2] != 0)) goto fail;
     if ((v2[0] != 0) || (v2[1] != 0) ||
 	(v[6] != 0) || (v[7] != 0)) goto fail;
     return 1;
@@ -3400,7 +3423,7 @@ static int32_t mc_match5b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   extract_vois(F, x, rs, N, v);
   for (i = 0; i < 4; i++)
   {
-    if ((v[0] != 2) || (v[1] != 0) || (v[2] != 2)) goto fail;
+    if ((!IS_SIMPLE(v[0])) || (v[1] != 0) || (!IS_SIMPLE(v[2]))) goto fail;
     if ((v[3] != 0) || (v[4] != 0) || (v[6] != 0) || (v[7] != 0)) goto fail;
     return 1;
   fail:
@@ -3418,7 +3441,7 @@ static int32_t mc_match6(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   extract_vois(F, x, rs, N, v);
   for (i = 0; i < 4; i++)
   {
-    if ((v[3] != 2) || (v[2] != 0) || (v[4] != 0)) goto fail;
+    if ((!IS_SIMPLE(v[3])) || (v[2] != 0) || (v[4] != 0)) goto fail;
     return 1;
   fail:
     rotate90_vois(v);
@@ -3994,7 +4017,7 @@ B     B
 {
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
-  if (v[0] != 2) return 0;
+  if (!IS_SIMPLE(v[0])) return 0;
   if ((v[1] == 0) && (v[2] == 0)) return 0;
   if ((v[6] == 0) && (v[7] == 0)) return 0;
   return 1;
@@ -4010,7 +4033,7 @@ A   2*  B
 {
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
-  if (v[2] != 2) return 0;
+  if (!IS_SIMPLE(v[2])) return 0;
   if ((v[0] == 0) && (v[1] == 0)) return 0;
   if ((v[3] == 0) && (v[4] == 0)) return 0;
   return 1;
@@ -4028,7 +4051,7 @@ B     B
 {
   uint8_t v[8];
   extract_vois(F, x, rs, N, v);
-  if (v[0] != 2) return 0;
+  if (!IS_SIMPLE(v[0])) return 0;
   if ((v[1] == 0) && (v[2] == 0)) return 0;
   if ((v[6] == 0) && (v[7] == 0)) return 0;
   return 1;
@@ -4443,7 +4466,7 @@ int32_t bertrand_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   extract_vois(F, x, rs, N, v);
   for (i = 0; i < 4; i++)
   {
-    if (v[0] != 2) goto fail;
+    if (!IS_SIMPLE(v[0])) goto fail;
     if ((v[1] == 0) && (v[2] == 0)) goto fail;
     if ((v[6] == 0) && (v[7] == 0)) goto fail;
     return 1;
@@ -4464,7 +4487,7 @@ int32_t bertrand_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   extract_vois(F, x, rs, N, v);
   for (i = 0; i < 4; i++)
   {
-    if (v[0] != 2) goto fail;
+    if (!IS_SIMPLE(v[0])) goto fail;
     if ((v[1] == 0) && (v[2] == 0) && (v[6] == 0) && (v[7] == 0)) return 1;
     if ((v[1] == 0) && (v[2] == 0)) goto fail;
     if ((v[6] == 0) && (v[7] == 0)) goto fail;
@@ -4489,10 +4512,10 @@ int32_t bertrand_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   extract_vois(F, x, rs, N, v);
   for (i = 0; i < 4; i++)
   {
-    if ((v[7] != 2) && ((v[0] != 2) || (v[6] != 2))) goto fail;
-    if ((v[0] > 0) && (v[0] != 2)) goto fail;
-    if ((v[6] > 0) && (v[6] != 2)) goto fail;
-    if ((v[7] > 0) && (v[7] != 2)) goto fail;
+    if ((!IS_SIMPLE(v[7])) && ((!IS_SIMPLE(v[0])) || (!IS_SIMPLE(v[6])))) goto fail;
+    if ((v[0] > 0) && (!IS_SIMPLE(v[0]))) goto fail;
+    if ((v[6] > 0) && (!IS_SIMPLE(v[6]))) goto fail;
+    if ((v[7] > 0) && (!IS_SIMPLE(v[7]))) goto fail;
     return 1;
   fail:
     rotate90_vois(v);
@@ -6228,3 +6251,130 @@ void match_C_asymmetric(uint8_t* F, uint8_t* D, uint8_t* A, uint32_t rs, uint32_
     }    
   }
 }
+
+/* ==================================== */
+int32_t lskelCK2(struct xvimage *image,
+		 int32_t nsteps,
+		 struct xvimage *inhibit)
+/* ==================================== */
+/*
+Squelette symétrique curviligne basé sur les isthmes 1D
+Algo CK2 données: S (image), I (inhibit), n (n_steps)
+Pour tout x de S faire T[x] := -1
+Pour i := 0; i < n; i++
+  C := points de courbe (isthmes) de S
+  I := I \cup C
+  P := voxels simples pour S et pas dans I
+  C2 := voxels cruciaux (matchXXX)
+  P := P \ C2
+  S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+*/
+#undef F_NAME
+#define F_NAME "lskelCK2"
+{
+  int32_t i;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t N = rs * cs;             /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  struct xvimage *tmp = copyimage(image);
+  uint8_t *I;
+  uint8_t *T = UCHARDATA(tmp);
+  int32_t step, nonstab;
+  int32_t m1, m2, m3, m4, m5, m6;
+
+  if (inhibit == NULL) 
+  {
+    inhibit = copyimage(image); 
+    razimage(inhibit);
+    I = UCHARDATA(inhibit);
+  }
+  else
+  {
+    I = UCHARDATA(inhibit);
+    for (i = 0; i < N; i++) if (I[i]) I[i] = I_INHIBIT;
+  }
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  for (i = 0; i < N; i++) if (F[i]) F[i] = S_OBJECT; // normalize values
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < nsteps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+    memset(T, 0, N);
+
+    for (i = 0; i < N; i++)
+      if (F[i] && simple8(F, i, rs, N))
+	SET_SIMPLE(F[i]);
+
+    for (i = 0; i < N; i++)
+      if (F[i])
+      {
+	if (IS_SIMPLE(F[i]) && mc_match1(F, i, rs, N))
+	  I[i] = I_INHIBIT;
+	else if (t8(mask(F, i, rs, N)) > 1)
+	  I[i] = I_INHIBIT;
+      }
+
+    for (i = 0; i < N; i++)
+      if (I[i] == I_INHIBIT)
+	UNSET_SIMPLE(F[i]);
+
+    for (i = 0; i < N; i++)
+      if (IS_SIMPLE(F[i]))
+      {
+	m1 = mc_match1(F, i, rs, N);
+	m2 = mc_match2(F, i, rs, N);
+	m3 = mc_match3b(F, i, rs, N);
+	m4 = mc_match4b(F, i, rs, N);
+	m5 = mc_match5b(F, i, rs, N);
+	m6 = mc_match6(F, i, rs, N);
+	if (m1 || m2 || m3 || m4 || m5 || m6)
+	{
+#ifdef DEBUG_MC
+	  printf("point %d,%d : m1 = %d; m2 = %d; m3 = %d; m4 = %d; m5 = %d; m6 = %d\n",
+		 i % rs, i / rs, m1, m2, m3, m4, m5, m6);
+#endif
+	  T[i] = 1; // preserve point
+	}
+      }
+
+#ifdef DEBUG_MC
+    printf("\n");
+    for (j = 0; j < cs; j++)
+    {
+      for (i = 0; i < rs; i++) printf("%d ", F[j*rs + i]);
+      printf("      ");
+      for (i = 0; i < rs; i++) printf("%d ", T[j*rs + i]);
+      printf("\n");
+    }
+    printf("\n");
+#endif
+
+    for (i = 0; i < N; i++)
+      if (IS_SIMPLE(F[i]) && !T[i]) { F[i] = 0; nonstab = 1; }
+    for (i = 0; i < N; i++) if (F[i]) F[i] = S_OBJECT;
+  }
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (F[i]) F[i] = NDG_MAX; // normalize values
+
+  freeimage(tmp);
+  return(1);
+} /* lskelCK2() */

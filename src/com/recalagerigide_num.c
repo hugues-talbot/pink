@@ -91,7 +91,7 @@ in the same format as the output, an initial deformation which is
 #include <lrecalagerigide.h>
 #include <lrotations.h>
 
-//#define VERBOSE
+#define VERBOSE
 const double PRECISION = 0.0001;
 
 /* =============================================================== */

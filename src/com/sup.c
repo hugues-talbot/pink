@@ -39,7 +39,7 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Usage:</B> sup in1.pgm in2.pgm out.pgm
 
 <B>Description:</B>
-For each pixel x, if in1[x] <= in2[x] then out[x] = 255 else out[x] = 0.
+For each pixel x, if in1[x] >= in2[x] then out[x] = 255 else out[x] = 0.
 Images must be of the same type and same dimensions.
 
 <B>Types supported:</B> byte 2D, byte 3D
