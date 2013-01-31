@@ -188,7 +188,7 @@ WAS_STATIC const char  *px_resource_name[] = {
 
 #endif /* HAVE_POSIX_IPC */
 
-char  *ipc_base_path[ANSWER_MAX_SIZE];
+char  ipc_base_path[ANSWER_MAX_SIZE];
 
 
 
