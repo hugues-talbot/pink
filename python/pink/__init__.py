@@ -60,6 +60,11 @@ try:
 except:
     print("warning: cannot import numpy_conv")
 
+
+try:
+    from matplotlib_helper import *
+except:
+    print("warning: cannot import matplotlib")
 # from python_pink import *
 # from long2byte import long2byte
 # from parallel_map import parallel_map
