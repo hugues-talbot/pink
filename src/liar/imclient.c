@@ -27,8 +27,10 @@
 #include "liarwrap.h"
 #include "imclient.h"
 
-//#define ANSWER_MAX_SIZE 1024
-#define ANSWER_MAX_SIZE 10
+// PLEASE DO NOT CHANGE THIS SIZE
+// It causes Imview to fail to upload images
+// Hugues Talbot	31 Jan 2013
+#define ANSWER_MAX_SIZE 1024
 #define BIN_MAX_SIZE    8192
 #define HNDSHK_SIZE     300
 #define DEFAULTPORT     7600
