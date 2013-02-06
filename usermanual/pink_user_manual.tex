@@ -1,0 +1,42 @@
+\documentclass[11pt]{book}
+\usepackage[ruled,boxed]{algorithm2e} 
+\usepackage[fleqn,reqno]{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{a4wide}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage[utf8]{inputenc}
+\usepackage[french,english]{babel}
+\usepackage{natbib} %% citations
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subfigure}
+\usepackage{color} 
+\usepackage{xspace}
+%%\usepackage{slashbox} %% no longer in texlive
+\usepackage{diagbox} %% replacement
+\usepackage{pdfpages}
+\usepackage{marvosym}
+
+%%% indexation
+\makeindex
+
+%%% very strange missing counter within pdflatex
+\newcounter{Hy@AnnotLevel}
+
+%% fraction texte sur figure moins conservatrice
+\renewcommand{\topfraction}{.85}
+\renewcommand{\bottomfraction}{.7}
+\renewcommand{\textfraction}{.15}
+\renewcommand{\floatpagefraction}{.66}
+\renewcommand{\dbltopfraction}{.66}
+\renewcommand{\dblfloatpagefraction}{.66}
+
+\begin{document}
+
+\input{titlepage}
+
+
+
+\end{document}
