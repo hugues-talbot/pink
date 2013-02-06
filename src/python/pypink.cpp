@@ -143,6 +143,10 @@ void fopenpoly_export();
 void openbun_export();
 void closebin_export();
 
+// from segmentation
+// seeded region growing
+//void srgrow_export();
+
 void read_raw_image_export(); void seuil_export(); void plane3d_export(); void draw_plane_export();
 void project_plane_export(); void border_export(); void identifyline_export(); void surimp_export();
 void generate_rgb_image_export(); void closing_export(); /*void closeball_export();*/ void minmax_export();
@@ -191,6 +195,8 @@ void pynormalization();
 void pyimage_types();
 
 void pywshed();
+
+void pyliarseg();
 
 void pypoints();
 
@@ -389,6 +395,9 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   openbun_export();
   closebin_export();
 
+  // segmentation
+  //  srgrow_export();
+
 //  specialize_export();
 
   uiSqhool_object_export();
@@ -421,6 +430,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   pytopo();
   pyliar();
   pywshed();
+  pyliarseg(); /* HT + Lilian Santos 20121119 */
   pydevel();
   pygraph();  
   pymorpho();

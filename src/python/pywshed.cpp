@@ -64,6 +64,7 @@ namespace wshed
 # include BOOST_PP_UPDATE_COUNTER()
 
 // by HT for Claire
+    // Note: here the output image is the first image
   UI_WRAP_FUNCTION(
     "watershedMeyer2NM",
     llpemeyer2_nomask,

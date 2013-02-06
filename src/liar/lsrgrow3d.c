@@ -18,8 +18,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <liarlmts.h>
 #include "liarp.h"
+#include "liarwrap.h"
+#include "splayq.h"
+#include "darray.h"
 
 #define BORDER -1
 
