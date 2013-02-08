@@ -439,24 +439,29 @@ if ( PYTHON_FRONT_END )
     if (NOT HTEST4)
 	message( FATAL_ERROR "error boost/shared_array.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST4)
+
+#
+# HT: I think at the moment these tests are not serving any purpose at all
+#     furthermore they are detrimental
+#
 	 
-    if (NOT HTEST5)
-	CHECK_INCLUDE_FILE_CXX( boost/python/list.hpp  HTEST5 )
-    endif (NOT HTEST5)
+#    if (NOT HTEST5)
+#	CHECK_INCLUDE_FILE_CXX( boost/python/list.hpp  HTEST5 )
+#    endif (NOT HTEST5)
 
-    if (NOT HTEST5)
-	message( FATAL_ERROR "error boost/python/list.hpp does not compile. You need at least version 1.37 or newer. Check if its correctly installed. There is a known issue. If "
- 	    "PYTHON_LIBRARY='" ${PYTHON_LIBRARY} "' does not point to the correct location of python's libraries, please specify them manually"
-	    " or delete the file in question. (seen on OpenSuSE 11.2)" )
-    endif(NOT HTEST5)
+#    if (NOT HTEST5)
+#	message( FATAL_ERROR "error boost/python/list.hpp does not compile. You need at least version 1.37 or newer. Check if its correctly installed. There is a known issue. If "
+# 	    "PYTHON_LIBRARY='" ${PYTHON_LIBRARY} "' does not point to the correct location of python's libraries, please specify them manually"
+#	    " or delete the file in question. (seen on OpenSuSE 11.2)" )
+#    endif(NOT HTEST5)
 
-    if (NOT HTEST6)
-	CHECK_INCLUDE_FILE_CXX( boost/python/extract.hpp  HTEST6 )
-    endif(NOT HTEST6)
+#    if (NOT HTEST6)
+#	CHECK_INCLUDE_FILE_CXX( boost/python/extract.hpp  HTEST6 )
+#    endif(NOT HTEST6)
 
-    if (NOT HTEST6)
-	message( FATAL_ERROR "error boost/python/extract.hpp does not compile. Check if its correctly installed. You may need a newer version or set up python paths correctly.")
-    endif(NOT HTEST6)
+#    if (NOT HTEST6)
+#	message( FATAL_ERROR "error boost/python/extract.hpp does not compile. Check if its correctly installed. You may need a newer version or set up python paths correctly.")
+#    endif(NOT HTEST6)
 			    
     CHECK_INCLUDE_FILE_CXX( boost/lexical_cast.hpp  HTEST7 )
     if (NOT HTEST7)
