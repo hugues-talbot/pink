@@ -21,6 +21,15 @@
 \usepackage{anysize}
 \usepackage{makeidx}
 \usepackage{xspace}
+\usepackage{fancyvrb, listings, color}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+
+
+%%% Python (kind of important)
+\lstloadlanguages{Python}
+
+\definecolor{gogetit}{HTML}{6C8B9F}
+
 
 %%% Margins
 
@@ -100,6 +109,23 @@
 
 \begin{document}
 
+%% Listings
+
+\fvset{numbers=left,numbersep=3pt,fontsize=\small,fontfamily=helvetica,frame=lines,resetmargins=true}  
+
+\lstset{
+  language=Python,
+  fancyvrb=true,
+  showstringspaces=false,
+  tabsize=4,
+  keywordstyle=\color{blue}\textbf,
+  identifierstyle=,
+  commentstyle=\color{gogetit}\textit,
+  stringstyle=\color{red},
+}
+
+
+
 \include{titlepage}
 
 \include{dedicace}
@@ -118,6 +144,7 @@
 \include{00_introduction}
 
 \include{01_tutorial}
+
 
 \appendix
 \include{A00_installing}
