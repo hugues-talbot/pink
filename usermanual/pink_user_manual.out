@@ -1,0 +1,21 @@
+\BOOKMARK [0][-]{Doc-Start}{Table of contents}{}% 1
+\BOOKMARK [0][-]{chapter.1}{Introduction}{}% 2
+\BOOKMARK [0][-]{chapter.2}{Tutorial}{}% 3
+\BOOKMARK [1][-]{section.2.1}{Starting Pink and related software}{chapter.2}% 4
+\BOOKMARK [1][-]{section.2.2}{Examples}{chapter.2}% 5
+\BOOKMARK [2][-]{subsection.2.2.1}{Binary image processing}{section.2.2}% 6
+\BOOKMARK [2][-]{subsection.2.2.2}{Grey-level segmentation}{section.2.2}% 7
+\BOOKMARK [2][-]{subsection.2.2.3}{Discrete geometry}{section.2.2}% 8
+\BOOKMARK [2][-]{subsection.2.2.4}{3D image processing}{section.2.2}% 9
+\BOOKMARK [1][-]{section.2.3}{Pink and other image-related software}{chapter.2}% 10
+\BOOKMARK [2][-]{subsection.2.3.1}{Pink and numpy}{section.2.3}% 11
+\BOOKMARK [2][-]{subsection.2.3.2}{Pink and scikit}{section.2.3}% 12
+\BOOKMARK [2][-]{subsection.2.3.3}{Pink and VTK}{section.2.3}% 13
+\BOOKMARK [2][-]{subsection.2.3.4}{Pink and ITK}{section.2.3}% 14
+\BOOKMARK [1][-]{section.2.4}{Exercises}{chapter.2}% 15
+\BOOKMARK [0][-]{appendix.A}{Compiling and installing Pink}{}% 16
+\BOOKMARK [0][-]{appendix*.5}{LICENSE}{}% 17
+\BOOKMARK [0][-]{appendix*.5}{Table of figures}{}% 18
+\BOOKMARK [0][-]{appendix*.6}{List of tables}{}% 19
+\BOOKMARK [0][-]{appendix*.7}{Bibliography}{}% 20
+\BOOKMARK [0][-]{appendix*.7}{Index}{}% 21

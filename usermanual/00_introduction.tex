@@ -1,0 +1,71 @@
+\chapter{Introduction}\label{chap:introduction}
+
+\Pink is an image processing library developed at \href {http://www.esiee.fr}{ESIEE
+  Paris} for research and teaching purposes. It
+contains implementations of over 200 algorithms for image segmentation and
+filtering. Most of the operators come from mathematical morphology, but it
+contains operators from different fields. Pink is free software licensed under
+the CeCILL license.
+
+We are interested in the continuous development of Pink. It has already been
+proven useful in many applications and we are constantly looking for new ones.
+
+This manual aims at referencing all the functions of 
+
+\section*{History}
+Pink is Not Khoros
+
+\section*{Related software}
+For optimal use, the following packages should be installed: 
+
+\begin{itemize}
+\item \href {http://www.sf.net/projects/imview}{imview}
+\item Python (version 2.7 preferred) ; with the following packages:
+  \begin{itemize}
+  \item numpy
+  \item scipy
+  \item matplotlib
+  \item python-vtk
+  \item python-image (PIL)
+ \item python-image-tk
+  \end{itemize}
+\item Doxygen
+\item ActiveTcl 8.3
+\item VTK
+\item MPlayer
+\item Gnuplot
+\end{itemize}
+
+\section*{Contributors}
+\Pink is the result of many thousands of hours of work, and includes
+contributions from this (non-exhaustive) list of people
+
+Code under the main CeCILL license:
+\begin{itemize}
+\item Michel Couprie : main author, initial design
+\item László Marak (ujoimro) : library, port to Python, continuous maximum flows, Total-Variation denoising, Python front-end, native Microsoft Windows port.
+\item Laurent Najman : localextrema, saliency
+\item Hugues Talbot : fmm, fast morphological operators, region growing; this documentation.
+\item Jean Cousty : redt 3d (reverse euclidean distance transform - algo de D. Coeurjolly), watershedthin, opérateurs sur les graphes d'arêtes (GA), minimum cost forest (MSF), waterfall, recalagerigide translateplane
+\item Xavier Daragon: dist, distc (Quadratic Euclidian Distance in 3D)
+\item André Vital Saude: radialopening, divers scripts tcl, hma
+\item Nicolas Combaret: toposhrinkgray, ptselectgray
+\item John Chaussard: lballincl, cropondisk, shrinkondisk
+\item Christophe Doublier: zoomint
+\item Hildegard Koehler: lintophat
+\item Cédric Allène: gettree, histolisse, labeltree, nbcomp, pgm2vtk, seuilauto
+\item Gu Jun: maxdiameter
+\item Sébastien Couprie: mcsplines.c
+\item Rita Zrour: medialaxis (exact Euclidean medial axis - algorithm of Rémy Thiel), dist, distc (Quadratic exact Euclidean distance - algorithm of Saito-Toriwaki, in 2D)
+\item Laurent Mercier: gestion d'un masque dans delaunay
+\item Benjamin Raynal: parallel 3D thinning
+\item Nivando Bezerra: parallel grayscale thinning
+\end{itemize}
+
+Code under different free software licenses:
+\begin{itemize}
+\item David Coeurjolly: lvoronoilabelling.c
+\item Dario Bressanini: mcpowell.c
+\item Andrew W. Fitzgibbon: lbresen.c
+\item Lilian Buzer: lbdigitalline.cxx
+\end{itemize}

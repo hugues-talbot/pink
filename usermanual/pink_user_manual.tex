@@ -1,4 +1,4 @@
-\documentclass[11pt]{book}
+\documentclass[a4paper,11pt]{book}
 \usepackage[ruled,boxed]{algorithm2e} 
 \usepackage[fleqn,reqno]{amsmath}
 \usepackage{amsfonts}
@@ -18,6 +18,13 @@
 \usepackage{diagbox} %% replacement
 \usepackage{pdfpages}
 \usepackage{marvosym}
+\usepackage{anysize}
+\usepackage{makeidx}
+\usepackage{xspace}
+
+%%% Margins
+
+\marginsize{2cm}{2cm}{2cm}{2cm}
 
 %%% indexation
 \makeindex
@@ -33,10 +40,116 @@
 \renewcommand{\dbltopfraction}{.66}
 \renewcommand{\dblfloatpagefraction}{.66}
 
+%%%%%%%%%%%%%% Useful macros %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newenvironment{myitem}{\begin{list}{$\bullet$}{\partopsep 0pt plus 1pt
+\topsep 0pt plus 1pt \itemsep 0pt \labelwidth 5pt}}{\end{list}}
+
+\newenvironment{myit}{\begin{list}{$-$}{\partopsep 0pt plus 1pt
+\topsep 0pt plus 1pt \itemsep 0pt \labelwidth 5pt}}{\end{list}}
+
+\catcode`\@=11\relax
+\def\rightarrowfill{$\m@th \mathord- \mkern-6mu
+  \cleaders\hbox{$\mkern-2mu \mathord- \mkern-2mu$}\hfill
+  \mkern-6mu \mathord\rightarrow$}
+
+\def\vector#1{\vbox{\ialign{##\crcr
+     \rightarrowfill\crcr\noalign{\kern-1pt\nointerlineskip}
+     $\hfil\displaystyle{#1}\hfil$\crcr}}}
+\catcode`\@=12\relax
+
+
+\newcommand{\Pink}{{\sc Pink}\xspace}
+\renewcommand{\figurename}[0]{Figure}
+
+\pagestyle{fancyplain}
+\addtolength{\headheight}{8pt}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+ \lhead[\fancyplain{}{\bf\thepage}]{\fancyplain{}{\bf\rightmark}}
+ \rhead[\fancyplain{}{\bf\leftmark}]{\fancyplain{}{\bf\thepage}}
+ \cfoot{}
+
+
+%\pssilent
+\tolerance10000
+\emergencystretch40pt
+\sloppy
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Option pour le style frenchb
+
+\ThinSpaceInFrenchNumbers
+\addto\captionsfrench{\def\CaptionSeparator{\space\textemdash\space}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% liste des inclusions
+
+
+%\includeonly{titlepage}
+
+\renewcommand{\newline}{~ \par}
+
+
+%%
+%% The document starts here
+%%
+
+
 \begin{document}
 
-\input{titlepage}
+\include{titlepage}
+
+\include{dedicace}
+
+%%%%%% Table of Contents
+
+\emergencystretch40pt
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\thispagestyle{empty}
+\addcontentsline{toc}{chapter}{Table of contents}
+\tableofcontents
+
+%% All the chapters
+\include{00_introduction}
+
+\include{01_tutorial}
+
+\appendix
+\include{A00_installing}
 
 
+
+\include{A01_function_reference}
+
+\include{licence}
+
+%------------------------- Table des symboles ---------------------
+%\include{symbol}
+
+%------------------------- table des figures -----------------------
+%\thispagestyle{empty}
+\addcontentsline{toc}{chapter}{Table of figures}
+\listoffigures
+
+%------------------------- table des tables -----------------------
+%\thispagestyle{empty}
+\addcontentsline{toc}{chapter}{List of tables}
+\listoftables
+
+%------------------------- La biblio ------------------------------
+%\bibliographystyle{alpha_hut}
+\bibliographystyle{apalike}
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliography{/Users/talbot/text/TeX/bibs/talbotOnly,/Users/talbot/text/TeX/bibs/talbotOthers}
+
+%------------------------- Index ----------------------------------
+%\thispagestyle{empty}
+\addcontentsline{toc}{chapter}{Index}
+\printindex
 
 \end{document}
