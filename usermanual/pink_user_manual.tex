@@ -23,7 +23,8 @@
 \usepackage{xspace}
 \usepackage{fancyvrb, listings, color}
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
-
+%%
+\usepackage{python}
 
 %%% Python (kind of important)
 \lstloadlanguages{Python}
@@ -40,6 +41,11 @@
 
 %%% very strange missing counter within pdflatex
 \newcounter{Hy@AnnotLevel}
+
+%% a real new counter for custom python listings
+\newcounter{codein}
+\setcounter{codein}{0}
+\newcommand{\mypylist}[1]{\refstepcounter{codein}\label{#1}}
 
 %% fraction texte sur figure moins conservatrice
 \renewcommand{\topfraction}{.85}
