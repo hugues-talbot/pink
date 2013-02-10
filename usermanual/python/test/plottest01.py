@@ -1,8 +1,4 @@
 import numpy as np
-import matplotlib
-# non-interactive backend
-matplotlib.use('PDF') 
-
 import matplotlib.pyplot as plt
 
 fig = plt.figure()
