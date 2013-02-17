@@ -58,6 +58,7 @@ knowledge of the CeCILL license and that you accept its terms.
 \li 18: curvilinear, symmetric, based on 1D isthmus with persistence (CK3p)
 \li 19: surface, symmetric, based on 2D isthmus with persistence (SK3p)
 \li 20: surface and curvilinear, symmetric, based on 1D and 2D isthmus with persistence (SCK3p)
+\li 21: surface, symmetric, based on residual points (RK3), variant (uses 26-connectivity to define residual points)
 
    Update MC 19/12/2011 : introduction des cliques D-cruciales
    Update MC 03/08/2012 : fix bug asym_match_vois0
@@ -3083,7 +3084,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     { 
       if (IS_OBJECT(S[i])) 
       {
-#ifdef RESIDUEL6
         for (k = 0; k < 12; k += 2)        /* parcourt les voisins en 6-connexite */
         {
           j = voisin6(i, k, rs, ps, N);
@@ -3091,15 +3091,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	}
 	if (k == 12) // le voxel est résiduel
 	  UNSET_SIMPLE(S[i]);
-#else
-	for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
-        {
-	  j = voisin26(i, k, rs, ps, N);
-          if ((j != -1) && IS_SELECTED(S[j])) break;
-	}
-	if (k == 26) // le voxel est résiduel
-	  UNSET_SIMPLE(S[i]);
-#endif
       }
     }
     // MARQUE LES POINTS 2-D-CRUCIAUX
@@ -3154,6 +3145,153 @@ writeimage(t,"_T");
   mctopo3d_termine_topo3d();
   return(1);
 } /* lskelRK3() */
+
+/* ==================================== */
+int32_t lskelRK3_26(struct xvimage *image, 
+	     int32_t n_steps,
+	     struct xvimage *inhibit)
+/* ==================================== */
+/*
+Squelette symétrique surfacique (par préservation des points résiduels)
+Les points résiduels sont les points qui ne sont pas voisins d'un point interieur
+Algo RK3 données: S
+Répéter jusqu'à stabilité
+  C := points résiduels de S
+  P := voxels simples pour S et pas dans C
+  C2 := voxels 2-D-cruciaux (match2)
+  C1 := voxels 1-D-cruciaux (match1)
+  C0 := voxels 0-D-cruciaux (match0)
+  P := P  \  [C2 \cup C1 \cup C0]
+  S := S \ P
+
+Attention : l'objet ne doit pas toucher le bord de l'image
+
+*/
+#undef F_NAME
+#define F_NAME "lskelRK3_26"
+{ 
+  index_t i, j, k;
+  index_t rs = rowsize(image);     /* taille ligne */
+  index_t cs = colsize(image);     /* taille colonne */
+  index_t ds = depth(image);       /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  uint8_t *S = UCHARDATA(image);      /* l'image de depart */
+  struct xvimage *t = copyimage(image); 
+  uint8_t *T = UCHARDATA(t);
+  uint8_t *I;
+  int32_t step, nonstab;
+  int32_t top, topb;
+  uint8_t v[27];
+
+  if (inhibit == NULL) 
+  {
+    inhibit = copyimage(image); 
+    razimage(inhibit);
+  }
+  I = UCHARDATA(inhibit);
+
+  if (n_steps == -1) n_steps = 1000000000;
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+
+  mctopo3d_init_topo3d();
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < n_steps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    // MARQUE LES POINTS SIMPLES NON DANS I
+    for (i = 0; i < N; i++) 
+      if (IS_OBJECT(S[i]) && !I[i] && mctopo3d_simple26(S, i, rs, ps, N))
+	SET_SIMPLE(S[i]);
+
+    // MARQUE LES POINTS INTERIEURS
+    for (i = 0; i < N; i++)
+    {
+      if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
+      {    
+	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+	if (topb == 0) SET_SELECTED(S[i]);
+      }
+    }
+
+    // DEMARQUE PTS ET REND "NON-SIMPLES" LES POINTS RESIDUELS
+    for (i = 0; i < N; i++)
+    { 
+      if (IS_OBJECT(S[i])) 
+      {
+	for (k = 0; k < 26; k += 1)        /* parcourt les voisins en 26-connexite */
+        {
+	  j = voisin26(i, k, rs, ps, N);
+          if ((j != -1) && IS_SELECTED(S[j])) break;
+	}
+	if (k == 26) // le voxel est résiduel
+	  UNSET_SIMPLE(S[i]);
+      }
+    }
+    // MARQUE LES POINTS 2-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (match2(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    // MARQUE LES POINTS 1-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (match1(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+    // MARQUE LES POINTS 0-D-CRUCIAUX
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (match0(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
+
+    memset(T, 0, N);
+    for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
+      if ((S[i] && !IS_SIMPLE(S[i])) || IS_DCRUCIAL(S[i]))
+	T[i] = 1;
+#ifdef DEBUG
+writeimage(t,"_T");
+#endif
+
+    for (i = 0; i < N; i++)
+      if (S[i] && !T[i]) 
+      {
+	S[i] = 0; 
+	nonstab = 1; 
+      }
+    for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
+  }
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (S[i]) S[i] = 255; // normalize values
+
+  freeimage(t);
+  mctopo3d_termine_topo3d();
+  return(1);
+} /* lskelRK3_26() */
 
 /* ==================================== */
 int32_t lskelSK3(struct xvimage *image, 

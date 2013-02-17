@@ -74,6 +74,8 @@ The possible choices are:
 \li 18: curvilinear, symmetric, based on 1D isthmus with persistence (CK3p)
 \li 19: surface, symmetric, based on 2D isthmus with persistence (SK3p)
 \li 20: surface and curvilinear, symmetric, based on 1D and 2D isthmus with persistence (SCK3p)
+\li 21: surface, symmetric, based on residual points (RK3), variant (uses 26-connectivity to define residual points)
+
 
 In modes other than 2, if the parameter \b inhibit is given and is a
 binary image name, then the points of this image will be left
@@ -156,6 +158,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "  18: curvilinear, symmetric, based on 1D isthmus with persistence (CK3p)\n");
     fprintf(stderr, "  19: surface, symmetric, based on 2D isthmus with persistence (SK3p)\n");
     fprintf(stderr, "  20: surface and curvilinear, symmetric, based on 1D and 2D isthmus with persistence (SCK3p)\n");
+    fprintf(stderr, "  21: surface, symmetric, based on residual points (RK3), variant (uses 26-connectivity to define residual points)\n");
 
     fprintf(stderr, "\n");
     fprintf(stderr, " 100: 1D isthmus points detection\n");
@@ -342,6 +345,12 @@ int main(int argc, char **argv)
       if (! lskelSCK3p(image, -1, nsteps, inhibit))
       {
 	fprintf(stderr, "%s: lskelSCK3p failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 21:
+      if (! lskelRK3_26(image, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelRK3 failed\n", argv[0]);
 	exit(1);
       } break;
     case 100:
