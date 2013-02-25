@@ -154,7 +154,7 @@ namespace morpho
   UI_WRAP_FUNCTION(
     "heightselnb",
     lheightselnb,
-    ( arg("image"), arg("connexity"), arg("height"), arg("mode") ),
+    ( arg("image"), arg("connexity"), arg("height") ),
     doc__heightselnb__c__
     );
 # include BOOST_PP_UPDATE_COUNTER()
