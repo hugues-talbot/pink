@@ -115,21 +115,16 @@ printf("%d\n", nblabels);
     }
   }
 
-  for (i = 0; i < nblabels; i++) if (surf[i] == 0) break;
-  if (i < nblabels)
-    fprintf(stderr, "%s WARNING: labels must be consecutive integers\n", F_NAME);
-
   for (i = 0; i < nblabels; i++)
-  {
-    bxx[i] = bxx[i] / surf[i];
-    byy[i] = byy[i] / surf[i];
-    bzz[i] = bzz[i] / surf[i];
-
+    if (surf[i]) 
+    {
+      bxx[i] = bxx[i] / surf[i];
+      byy[i] = byy[i] / surf[i];
+      bzz[i] = bzz[i] / surf[i];
 #ifdef DEBUG
 printf("%g %g %g\n", bxx[i], byy[i], bzz[i]);
 #endif
-
-  }
+    }
 
   /* ---------------------------------------------------------- */
   /* marque l'emplacement approximatif des barycentres dans l'image */
@@ -138,12 +133,11 @@ printf("%g %g %g\n", bxx[i], byy[i], bzz[i]);
   for (j = 0; j < N; j++) F[j] = 0;
 
   for (i = 0; i < nblabels; i++)
-  {
-    F[(int32_t)(arrondi(bzz[i])) * ps + 
-      (int32_t)(arrondi(byy[i])) * rs + 
-      (int32_t)(arrondi(bxx[i]))
-     ] = i+1;
-  }
+    if (surf[i])  
+      F[(int32_t)(arrondi(bzz[i])) * ps + 
+	(int32_t)(arrondi(byy[i])) * rs + 
+	(int32_t)(arrondi(bxx[i]))
+       ] = i+1;
 
   free(bxx);
   free(byy);
