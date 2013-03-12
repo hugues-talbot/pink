@@ -570,10 +570,10 @@ namespace pink {
     const char_image & SS, /* image of the source and of the sink (not the original image) */
     const image_type & gg, /* Boundaries */
     index_t iteration,     /* number of iterations */
-    float   tau               = 0.132,   /* timestep */
-    index_t number_of_threads = 0, /* the number of threads to execute if in parallel mode */
-    index_t packet_size       = 1000,
-    bool    verbose           = false
+    float   tau,               /* = 0.132,   ** timestep */
+    index_t number_of_threads, /* = 0, ** the number of threads to execute if in parallel mode */
+    index_t packet_size,       /* = 1000, */
+    bool    verbose           /* = false */
     ) :
     packet_size(packet_size), verbose(verbose),
     d(gg.get_size().size()),

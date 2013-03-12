@@ -281,7 +281,7 @@ double laverage1(struct xvimage * image1)
   else 
   {
     fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-    exit(0);
+    return(0);
   }
 
   if (n == 0) return 0.0;
@@ -307,13 +307,13 @@ double laverage2(struct xvimage * image1, struct xvimage * mask)
   if ((rowsize(mask) != rs) || (colsize(mask) != cs) || (depth(mask) != ds))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
+    return(0);
   }
 
   if (datatype(mask) != VFF_TYP_1_BYTE)
   {
     fprintf(stderr, "%s: mask image must be byte\n", F_NAME);
-    exit(0);
+    return(0);
   }
 
   if (datatype(image1) == VFF_TYP_1_BYTE)
@@ -334,7 +334,7 @@ double laverage2(struct xvimage * image1, struct xvimage * mask)
   else 
   {
     fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-    exit(0);
+    return(0);
   }
 
   if (n == 0) return 0.0;
@@ -393,7 +393,7 @@ double lvariance1(struct xvimage * image1)
   else 
   {
     fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-    exit(0);
+    return(0);
   }
 
   if (m0 == 0.0) return 0.0;
@@ -419,13 +419,13 @@ double lvariance2(struct xvimage * image1, struct xvimage * mask)
   if ((rowsize(mask) != rs) || (colsize(mask) != cs) || (depth(mask) != ds))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-    exit(0);
+    return(0);
   }
 
   if (datatype(mask) != VFF_TYP_1_BYTE)
   {
     fprintf(stderr, "%s: mask image must be byte\n", F_NAME);
-    exit(0);
+    return(0);
   }
 
   m1 = m2 = m0 = (double)0.0;
@@ -468,7 +468,7 @@ double lvariance2(struct xvimage * image1, struct xvimage * mask)
   else 
   {
     fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
-    exit(0);
+    return(0);
   }
 
   if (m0 == 0.0) return 0.0;
