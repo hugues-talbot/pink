@@ -1,44 +1,23 @@
-#include "libRPO/RPO.h"
+#include "RPO.hpp"
 
 
 //initialize constructor attribute
 
-RPO::RPO(std::vector<int>& _orientation, int _L, int _K, int _reconstruction, vtkImageData* _im_input):
-	orientation(_orientation), L(_L), K(_K), reconstruction(_reconstruction), im_input(_im_input),im_output(NULL) {}
+RPO::RPO(std::vector<int>& _orientation, int _L, int _K, int _reconstruction, PixelType * _input_buffer, PixelType *_output_buffer, int _dimx, int _dimy, int _dimz):
+	orientation(_orientation), L(_L), K(_K), reconstruction(_reconstruction), input_buffer(_input_buffer), output_buffer(_output_buffer)
+	dimx=_dimx, dimy=_dimy, dimz=_dimz,
+	output_buffer(NULL) {}
 	
 //processing function
 void RPO::Execute() 
 {	
-	//cast input image to int
-	vtkImageCast *castFilter = vtkImageCast::New();
-  	castFilter->SetOutputScalarTypeToInt();
-  	castFilter->SetInput(im_input);
-  	castFilter->Update();
-	//define scalar typede
-	typedef int PixelType; 
-	
-	//get image dimensions
-	PixelType* dim = (castFilter->GetOutput())->GetDimensions();
-	
-	//creating a two pixels wide dark border around the image (for opening)
-	//to constrain the path to image domain
-	vtkImageConstantPad *pad = vtkImageConstantPad::New();
-	pad->SetInput(castFilter->GetOutput());
-	pad->SetConstant(0);
-	pad->SetOutputWholeExtent (-2,dim[0]+1,-2,dim[1]+1,-2,dim[2]+1);	
-	pad->Update();
-	
-	//get padded image dimensions
 	int* dim_padded = new int[3];
-	dim_padded[0] = dim[0]+4; // x axis
-	dim_padded[1] = dim[1]+4; // y axis
-	dim_padded[2] = dim[2]+4; // z axis
+	dim_padded[0] = dimx; // x axis
+	dim_padded[1] = dimy; // y axis
+	dim_padded[2] = dimz; // z axis
 
 	int image_size = dim_padded[0]*dim_padded[1]*dim_padded[2];
 	int frame_size = dim_padded[0]*dim_padded[1];
-	
-	//get input image binary data
-	PixelType *input_buffer = static_cast<PixelType*> (pad->GetOutput()->GetScalarPointer());
 	
 	//creating and init temporaries buffers
 	std::vector<PixelType> originalI(image_size);
@@ -747,34 +726,14 @@ void RPO::Execute()
         }     
     }
     
-	//copy output buffer
-	int* temp = new int[image_size];
-	memcpy(&temp[0],&originalI[0],image_size*sizeof(int));
-	
-	// allocate output image
-	vtkImageData* temp_im_output = NULL;
-	temp_im_output = vtkImageData::New();
-	vtkIntArray *array = vtkIntArray::New();
-	array->SetArray(&temp[0],dim_padded[0]*dim_padded[1]*dim_padded[2],0);
-	temp_im_output->GetPointData()->SetScalars(array);
-	temp_im_output->SetNumberOfScalarComponents(1);
-	temp_im_output->SetDimensions(dim_padded);
-	temp_im_output->SetScalarTypeToInt();
-	
-	//delete output image's borders
-	im_output = vtkImageData::New();
-	vtkImageClip *clip = vtkImageClip::New();
-	clip->SetOutputWholeExtent(2,dim[0]+1,2,dim[1]+1,2,dim[2]+1);
-	clip->SetInput(temp_im_output);
-	clip->ClipDataOn();
-	clip->Update();
-	im_output = clip->GetOutput();
-	//free memory
-	delete[] dim_padded;
+    // reste a libérer la mémoire 
+    // voir comment gérer originalI qui est un type <vector>	
+
+    output_buffer= &originalI[0];
 	
 }
 
-vtkImageData* RPO::GetResult() 
+PixelType* RPO::GetResult() 
 {
-	return im_output;
+	return output_buffer;
 }
