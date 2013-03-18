@@ -86,6 +86,53 @@ namespace pink {
 
       return result;
     } /* liaropenpoly */
+
+    template   <class image_t>
+    image_t liarRPO
+    (
+      const image_t & input_image,
+      const int orientationx,
+      const int orientationy,
+      const int orientationz,
+      const int L,
+      const int K,
+      const int reconstruct
+    )
+    {
+        int errorcode = 0;
+        image_t result;
+        result_image = input_image.clone();
+
+        // The low-level function seems to always succeed
+	//
+
+	// user-specified orientation
+	std::vector<int> orientation(3);
+	orientation[0] = orientationx;
+	orientation[1] = orientationy;
+	orientation[2] = orientationz;
+	
+	// image structures
+	xvimage *inputxvimage  = input_image.get_output();	
+	xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = inputxvimage->row_size;
+        int ny = inputxvimage->col_size;
+        int nz = inputxvimage->depth_size;
+	
+	// buffers
+	
+	PixelType *input_buffer = inputxvimage->image_data;
+	PixelType *output_buffer = outputxvimage->image_data;
+
+	// create the RPO object
+        RPO RPO1(orientation, L, K, reconstruct, input_buffer, output_buffer, nx, ny, nz);
+
+	// Execute
+	
+    } /* liaropenpoly */
+
   } /* namespace python */
 } /* namespace pink */
 
