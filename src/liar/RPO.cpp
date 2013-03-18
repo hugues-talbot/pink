@@ -3,10 +3,16 @@
 
 //initialize constructor attribute
 
-RPO::RPO(std::vector<int>& _orientation, int _L, int _K, int _reconstruction, PixelType * _input_buffer, PixelType *_output_buffer, int _dimx, int _dimy, int _dimz):
-	orientation(_orientation), L(_L), K(_K), reconstruction(_reconstruction), input_buffer(_input_buffer), output_buffer(_output_buffer)
-	dimx=_dimx, dimy=_dimy, dimz=_dimz,
-	output_buffer(NULL) {}
+RPO::RPO(std::vector<int>& _orientation, 
+		int _L, int _K, 
+		int _reconstruction, 
+		PixelType *_input_buffer, PixelType *_output_buffer, 
+		int _dimx, int _dimy, int _dimz):
+	orientation(_orientation), 
+	L(_L), K(_K), 
+	reconstruction(_reconstruction), 
+	input_buffer(_input_buffer), output_buffer(_output_buffer),
+	dimx(_dimx), dimy(_dimy), dimz(_dimz) {}
 	
 //processing function
 void RPO::Execute() 
@@ -48,7 +54,7 @@ void RPO::Execute()
 	std::vector<PixelType> im_idx_sort(image_size);
 	
 	//copy input data
-	memcpy(	&originalI[0],
+	std::memcpy(	&originalI[0],
 			&input_buffer[0],
 			image_size*sizeof(PixelType));
 
@@ -730,6 +736,9 @@ void RPO::Execute()
     // voir comment gérer originalI qui est un type <vector>	
 
     output_buffer= &originalI[0];
+
+    std::memcpy(output_buffer,&originalI[0],
+			image_size*sizeof(PixelType));
 	
 }
 
