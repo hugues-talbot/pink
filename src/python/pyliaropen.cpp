@@ -11,6 +11,7 @@
 */
 #include "liar_fseries.h"
 #include "pink_python.h"
+#include "RPO.hpp"
 
 using namespace boost::python;
 using namespace pink;
@@ -100,8 +101,7 @@ namespace pink {
     )
     {
         int errorcode = 0;
-        image_t result;
-        result_image = input_image.clone();
+        image_t result_image = input_image.clone();
 
         // The low-level function seems to always succeed
 	//
@@ -112,25 +112,27 @@ namespace pink {
 	orientation[1] = orientationy;
 	orientation[2] = orientationz;
 	
-	// image structures
-	xvimage *inputxvimage  = input_image.get_output();	
-	xvimage *outputxvimage = result_image.get_output();
+	// image structure
+	struct xvimage *outputxvimage = result_image.get_output();
 
 	// dimensions
-	int nx = inputxvimage->row_size;
-        int ny = inputxvimage->col_size;
-        int nz = inputxvimage->depth_size;
+	int nx = outputxvimage->row_size;
+        int ny = outputxvimage->col_size;
+        int nz = outputxvimage->depth_size;
 	
 	// buffers
-	
-	PixelType *input_buffer = inputxvimage->image_data;
-	PixelType *output_buffer = outputxvimage->image_data;
+	// this looks weird, but input_buffer is copied immediately inside RPO
+	PixelType *input_buffer = (PixelType*) (outputxvimage->image_data); // at this stage the output buffer contains the input image because of the clone() above
+	PixelType *output_buffer = (PixelType *) (outputxvimage->image_data);
 
 	// create the RPO object
         RPO RPO1(orientation, L, K, reconstruct, input_buffer, output_buffer, nx, ny, nz);
 	
 	// Execute
 	RPO1.Execute();	
+
+	// get result
+	return (result_image);
 
     } /* liaropenpoly */
 
@@ -151,6 +153,25 @@ UI_EXPORT_FUNCTION(
   pink::python::liaropenpoly,
   ( arg("src"), arg("Radius"),arg("Type"), arg("Sides") ),
   "Fast 2D opening  by a flat polygon, given a radius, a type of line (0=periodic or 1=Bresenham) and a number of sides (can be zero)"
+  );
+
+
+UI_EXPORT_FUNCTION(
+  RPO,
+  pink::python::liarRPO,
+  ( arg("input_image"), arg("orientationX"),arg("orientationY"), arg("orientationZ"), arg("L"), arg("K"),arg("reconstruction") ),
+  "Robust 3D path opening, given an orientation (x,y,z); a length L, a noise robustness factor K, and optional reconstruction\n"
+  "the following orientations are legal:\n"
+  "   0  0  1  : depth direction\n"
+  "   0  1  0  : vertical\n"
+  "   1  0  0  : horizontal\n"
+  "   1  1  1  : diagonal NE/SW+depth\n"
+  "   1  1 -1  : diagonal NE/SW-depth\n"
+  "  -1  1  1  : diagonal NW/SE+depth\n"
+  "  -1  1 -1  : diagonal NW/SE-depth\n"
+  "\n"
+  "For 2D images, directions (0 1), (1 0), (1 1) and (-1 1) are sufficient\n"
+  "reconstruction parameter is 0 or 1\n"
   );
 
 
