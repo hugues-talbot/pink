@@ -128,9 +128,10 @@ namespace pink {
 
 	// create the RPO object
         RPO RPO1(orientation, L, K, reconstruct, input_buffer, output_buffer, nx, ny, nz);
-
-	// Execute
 	
+	// Execute
+	RPO1.Execute();	
+
     } /* liaropenpoly */
 
   } /* namespace python */
