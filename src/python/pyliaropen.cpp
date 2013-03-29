@@ -12,6 +12,7 @@
 #include "liar_fseries.h"
 #include "pink_python.h"
 #include "RPO.hpp"
+#include "BilateralFilter.h"
 
 using namespace boost::python;
 using namespace pink;
@@ -111,7 +112,7 @@ namespace pink {
 	orientation[0] = orientationx;
 	orientation[1] = orientationy;
 	orientation[2] = orientationz;
-	
+
 	// image structure
 	struct xvimage *outputxvimage = result_image.get_output();
 
@@ -119,22 +120,64 @@ namespace pink {
 	int nx = outputxvimage->row_size;
         int ny = outputxvimage->col_size;
         int nz = outputxvimage->depth_size;
-	
+
 	// buffers
 	// this looks weird, but input_buffer is copied immediately inside RPO
-	PixelType *input_buffer = (PixelType*) (outputxvimage->image_data); // at this stage the output buffer contains the input image because of the clone() above
-	PixelType *output_buffer = (PixelType *) (outputxvimage->image_data);
+	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
+	// at this stage the output buffer contains the input image because of the clone() above
+
 
 	// create the RPO object
-        RPO RPO1(orientation, L, K, reconstruct, input_buffer, output_buffer, nx, ny, nz);
-	
+        RPO RPO1(orientation, L, K, reconstruct, output_buffer, output_buffer, nx, ny, nz);
+
 	// Execute
-	RPO1.Execute();	
+	RPO1.Execute();
 
 	// get result
 	return (result_image);
 
-    } /* liaropenpoly */
+    } /* liarRPO*/
+
+
+     template   <class image_t>
+    image_t liarBilateralFilter
+    (
+      const image_t & input_image,
+      const int alpha,
+      const int beta,
+      const int window_size
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+        // The low-level function seems to always succeed
+	//
+
+
+	// image structure
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+        int ny = outputxvimage->col_size;
+        int nz = outputxvimage->depth_size;
+
+    // buffers
+
+	PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
+
+
+	// create the RPO object
+    BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny, nz);
+
+	// Execute
+	BF1.Execute();
+
+	// get result
+	return (result_image);
+
+    } /* liarBilateralFilter */
 
   } /* namespace python */
 } /* namespace pink */
@@ -175,7 +218,14 @@ UI_EXPORT_FUNCTION(
   );
 
 
-
+UI_EXPORT_FUNCTION(
+  BilateralFilter,
+  pink::python::liarBilateralFilter,
+  ( arg("input_image"), arg("window_size"), arg("alpha"), arg("beta")),
+  "Bilateral Filter, given a window size and weights alpha beta. \n"
+  " alpha is the weight of the distance factor \n"
+  " beta is the weight of the intensity factor \n"
+  );
 
 
 

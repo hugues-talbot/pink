@@ -735,7 +735,7 @@ void RPO::Execute()
     // reste a libérer la mémoire 
     // voir comment gérer originalI qui est un type <vector>	
 
-    output_buffer= &originalI[0];
+    //output_buffer= &originalI[0];
 
     std::memcpy(output_buffer,&originalI[0],
 			image_size*sizeof(PixelType));
