@@ -12,14 +12,19 @@ typedef int PixelType;
 class BilateralFilter
 {
     public :
-        BilateralFilter(int *_image, int _window_size, int _alpha, int _beta, int _dimx, int dimy, int dimz);
-        void Execute();
+        BilateralFilter(PixelType *_image, int _window_size, double _alpha, double _beta, int _dimx, int dimy, int dimz=-1);
+        void Execute2D();
+        void Execute3D();
+        PixelType* GetResult();
+
+        inline int index3D(int x, int y, int z);
+        inline int index2D(int x, int y);
 
     private :
-        int *image;
+        PixelType *image;
         int window_size;
-        int alpha;
-        int beta;
+        double alpha;
+        double beta;
         int dimx;
         int dimy;
         int dimz;

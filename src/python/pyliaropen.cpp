@@ -143,9 +143,9 @@ namespace pink {
     image_t liarBilateralFilter
     (
       const image_t & input_image,
-      const int alpha,
-      const int beta,
-      const int window_size
+      const int window_size,
+      const double alpha,
+      const double beta
     )
     {
         int errorcode = 0;
@@ -153,7 +153,6 @@ namespace pink {
 
         // The low-level function seems to always succeed
 	//
-
 
 	// image structure
 	struct xvimage *outputxvimage = result_image.get_output();
@@ -163,16 +162,32 @@ namespace pink {
         int ny = outputxvimage->col_size;
         int nz = outputxvimage->depth_size;
 
-    // buffers
 
-	PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
+	// 2 Dimensions
 
+	if (nz==1)
+	{
+   	    // buffers
+       	    PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
 
-	// create the RPO object
-    BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny, nz);
+	    // create the RPO object
+            BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny,1);
 
-	// Execute
-	BF1.Execute();
+   	    // Execute
+  	    BF1.Execute2D();
+	}
+
+	else
+	{
+   	    // buffers
+       	    PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
+
+	    // create the RPO object
+            BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny,nz);
+
+   	    // Execute
+  	    BF1.Execute3D();
+	}
 
 	// get result
 	return (result_image);
@@ -225,6 +240,7 @@ UI_EXPORT_FUNCTION(
   "Bilateral Filter, given a window size and weights alpha beta. \n"
   " alpha is the weight of the distance factor \n"
   " beta is the weight of the intensity factor \n"
+  " Works in 2 and 3 dimensions \n"
   );
 
 

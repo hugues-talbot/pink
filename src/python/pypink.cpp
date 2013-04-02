@@ -140,6 +140,7 @@ void fclosepoly_export();
 void fopenrect_export();
 void fopenpoly_export();
 void RPO_export();
+void BilateralFilter_export();
 // opening by unions of lines
 void openbun_export();
 void closebin_export();
@@ -393,6 +394,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   fopenrect_export();
   fopenpoly_export();
   RPO_export();
+  BilateralFilter_export();
   
   openbun_export();
   closebin_export();
