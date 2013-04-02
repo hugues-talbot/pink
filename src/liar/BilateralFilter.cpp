@@ -37,34 +37,39 @@ void BilateralFilter::Execute3D()
 
     int const r_window=floor(window_size/2);
 
-    int z, y ,x, dz, dy, dx;
-    float w, v;
-    float W=0, V=0;
 
+    int z, y ,x, dz, dy, dx;
+    double w=0, v=0;
+    double W=0, V=0;
+
+    #pragma omp parallel for
     for (z=0; z<dimz; z++)
     {
         for (y=0; y<dimy; y++)
         {
             for (x=0; x<dimx; x++)
             {
+                W=0;
+                V=0;
+
                 for (dz=-r_window; dz<=r_window; dz++)
                 {
                     for (dy=-r_window; dy<=r_window; dy++)
                     {
                         for (dx=-r_window; dx<=r_window; dx++)
                         {
-                            // (X,Y,Z) : Coordinates of the current pixel in the window centered on the (x,y,z) pixel
+                            // (X,Y) : Coordinates of the current pixel in the window centered on the (x,y,z) pixel
                             int X=x+dx;
                             int Y=y+dy;
                             int Z=z+dz;
 
-                            if (X>=0 && X<dimx && Y>=0 && Y<dimy && Z>=0 && Z<dimz) // If the current pixel is inside the image
+                            if ((X>=0) && (X<dimx) && (Y>=0) && (Y<dimy) && (Z>=0) && (Z<dimz)) // If the current pixel is inside the image
                             {
                                 double d=sqrt(dx*dx+dy*dy+dz*dz); // Distance between the central pixel and the current pixel
                                 int d1=(image[index3D(X,Y,Z)]-image[index3D(x,y,z)]);
                                 int dI=d1*d1; // Difference of intensity between the central pixel and the current pixel
 
-                                w=exp(-alpha*d)*exp(-beta*dI); // Weight of the (X,Y,Z) pixel.
+                                w=exp(-alpha*d)*exp(-beta*dI); // Weight of the (X,Y) pixel.
                                 v=w*image[index3D(X,Y,Z)]; // New intensity of the central pixel depending only on the current pixel.
 
                                 W+=w; // Sum of the weight
@@ -73,9 +78,9 @@ void BilateralFilter::Execute3D()
                         }
                     }
                 }
-
                 V=int(V/W+0.5); // Normalisation and conversion to int
                 outputI[index3D(x,y,z)]=V;
+
             }
         }
     }
