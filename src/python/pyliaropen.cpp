@@ -13,6 +13,7 @@
 #include "pink_python.h"
 #include "RPO.hpp"
 #include "BilateralFilter.h"
+#include "NonLocalFilter.h"
 
 using namespace boost::python;
 using namespace pink;
@@ -184,7 +185,7 @@ namespace pink {
 
 	    // create the RPO object
             BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny,nz);
-
+	    		
    	    // Execute
   	    BF1.Execute3D();
 	}
@@ -193,6 +194,61 @@ namespace pink {
 	return (result_image);
 
     } /* liarBilateralFilter */
+
+     template   <class image_t>
+    image_t liarNonLocalFilter
+    (
+      const image_t & input_image,
+      const int patch_size,
+      const int search_size,
+      const double alpha
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+        // The low-level function seems to always succeed
+	//
+
+	// image structure
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+        int ny = outputxvimage->col_size;
+        int nz = outputxvimage->depth_size;
+
+
+	// 2 Dimensions
+
+	if (nz==1)
+	{
+   	    //buffers
+       	    PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
+
+	    //create the BilateralFilter object
+            NonLocalFilter NL1(input_buffer, patch_size, search_size, alpha, nx, ny,1);
+
+   	    // Execute
+  	    NL1.Execute2D();
+	}
+
+	else
+	{
+   	    // buffers
+       	    PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
+
+	    // create the RPO object
+            NonLocalFilter NL1(input_buffer, patch_size, search_size, alpha, nx, ny,nz);
+
+   	    // Execute
+  	    NL1.Execute3D();
+	}
+
+	// get result
+	return (result_image);
+
+    } /* liarNonLocalFilter */
 
   } /* namespace python */
 } /* namespace pink */
@@ -243,7 +299,14 @@ UI_EXPORT_FUNCTION(
   " Works in 2 and 3 dimensions \n"
   );
 
-
+UI_EXPORT_FUNCTION(
+  NonLocalFilter,
+  pink::python::liarNonLocalFilter,
+  ( arg("input_image"), arg("patch_size"), arg("search_size"), arg("alpha")),
+  "Non Local Filter, given the patch size, the search window size and the weight alpha. \n"
+  " alpha is the weight of the sum of squared differences \n"
+  " Works in 2 and 3 dimensions \n"
+  );
 
 
 

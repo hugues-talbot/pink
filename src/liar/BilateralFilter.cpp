@@ -42,7 +42,7 @@ void BilateralFilter::Execute3D()
     double w=0, v=0;
     double W=0, V=0;
 
-    #pragma omp parallel for
+    //#pragma parallel for private(x,y,z,dx,dy,dz,W,V,w,v)
     for (z=0; z<dimz; z++)
     {
         for (y=0; y<dimy; y++)
@@ -77,10 +77,9 @@ void BilateralFilter::Execute3D()
                             }
                         }
                     }
-                }
-                V=int(V/W+0.5); // Normalisation and conversion to int
-                outputI[index3D(x,y,z)]=V;
-
+              	}
+		V=V/W;
+                outputI[index3D(x,y,z)]=static_cast<int>(V+0.5);
             }
         }
     }

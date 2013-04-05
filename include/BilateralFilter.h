@@ -6,7 +6,6 @@
 #include <cstring>
 
 
-
 typedef int PixelType;
 
 class BilateralFilter
