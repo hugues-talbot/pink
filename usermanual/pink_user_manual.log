@@ -1,8 +1,8 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.2.6)  15 MAR 2013 15:16
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2013.2.6)  8 APR 2013 15:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**pink_user_manual.tex
+**pink_user_manual
 (./pink_user_manual.tex
 LaTeX2e <2011/06/27>
 Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, lo
@@ -836,7 +836,8 @@ Package frenchb.ldf Warning: Type \frenchbsetup{ThinSpaceInFrenchNumbers}
 (frenchb.ldf)                Command \ThinSpaceInFrenchNumbers is no longer
 (frenchb.ldf)                defined in frenchb v.2, on input line 98.
 
-No file pink_user_manual.aux.
+(./pink_user_manual.aux (./titlepage.aux) (./dedicace.aux)
+(./00_introduction.aux) (./01_tutorial.aux))
 \openout1 = `pink_user_manual.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 116.
@@ -853,6 +854,7 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 116.
 LaTeX Font Info:    ... okay on input line 116.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 116.
 LaTeX Font Info:    ... okay on input line 116.
+
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count153
@@ -903,6 +905,8 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 116.
 LaTeX Info: Redefining \pageref on input line 116.
 LaTeX Info: Redefining \nameref on input line 116.
+
+(./pink_user_manual.out) (./pink_user_manual.out)
 \@outlinefile=\write7
 \openout7 = `pink_user_manual.out'.
 
@@ -918,8 +922,8 @@ File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
 )
 \openout2 = `titlepage.aux'.
 
- (./titlepage.tex <images/Pink_a_User_Manual.png, id=4, 320.1561pt x 316.0608pt
->
+ (./titlepage.tex <images/Pink_a_User_Manual.png, id=12, 320.1561pt x 316.0608p
+t>
 File: images/Pink_a_User_Manual.png Graphic file (type png)
 
 <use images/Pink_a_User_Manual.png>
@@ -963,7 +967,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 16--17
 [2
 
 
-])
+]) (./pink_user_manual.toc)
 \tf@toc=\write8
 \openout8 = `pink_user_manual.toc'.
 
@@ -1062,517 +1066,6 @@ l.38 \end{python}
                  
 (Press Enter to retry, or Control-D to exit)
 Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
-! I can't find file `pink_user_manual.py.out'.
-<to be read again> 
-                   \def 
-l.38 \end{python}
-                 
-(Press Enter to retry, or Control-D to exit)
-Please type another input file name: 
 ! Emergency stop.
 <to be read again> 
                    \def 
@@ -1582,11 +1075,11 @@ End of file on the terminal!
 
  
 Here is how much of TeX's memory you used:
- 14112 strings out of 495059
- 196964 string characters out of 3182031
+ 14135 strings out of 495059
+ 197342 string characters out of 3182031
  367586 words of memory out of 3000000
- 17008 multiletter control sequences out of 15000+200000
+ 17015 multiletter control sequences out of 15000+200000
  14989 words of font info for 51 fonts, out of 3000000 for 9000
  14 hyphenation exceptions out of 8191
- 41i,12n,43p,323b,1306s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 41i,12n,43p,319b,1306s stack positions out of 5000i,500n,10000p,200000b,50000s
 !  ==> Fatal error occurred, no output PDF file produced!
