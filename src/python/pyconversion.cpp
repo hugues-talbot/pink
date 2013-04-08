@@ -28,14 +28,14 @@ namespace conversion
 {
   
 
-  UI_WRAP_CPP(
-    "convert2float",
-    pink::convert2float,
-    (arg("image")),
-    "converts an image to float type"
-    // end of the documenation
-    );
-# include BOOST_PP_UPDATE_COUNTER()
+//  UI_WRAP_CPP(
+//    "convert2float",
+//    pink::convert2float,
+//    (arg("image")),
+//    "converts an image to float type"
+//    // end of the documenation
+//  );
+//# include BOOST_PP_UPDATE_COUNTER()
 
 // #ifdef JULIETTE
 // // juliette
@@ -91,6 +91,14 @@ void pyconversion()
     pink::float2byte,
     ( arg("source image"), arg("mode")=2 ),
     doc__float2byte__c__
+    // end of the documenation
+    );
+
+  def(
+    "double2byte",
+    pink::double2byte,
+    ( arg("source image"), arg("mode")=2 ),
+    doc__double2byte__c__
     // end of the documenation
     );
   

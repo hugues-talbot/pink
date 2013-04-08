@@ -33,6 +33,7 @@ namespace pink {
     return floor(val + 0.5);
   }
 
+  char_image double2byte( const double_image & src, int mode=0 );
   char_image  float2byte(  const float_image & src, int mode=0 );
   short_image long2short( const int_image &   src, int mode=0 );
   char_image  short2byte( const short_image &   src, int mode=0 );

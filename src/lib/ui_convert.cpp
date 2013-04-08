@@ -68,6 +68,11 @@ namespace pink {
   {
     return convert_image<float_image, char_image>(src, mode);
   } /* float2byte */
+  
+  char_image double2byte( const double_image & src, int mode )
+  { 
+    return convert_image<double_image, char_image>(src,mode);
+  } /* double2byte */
 
   short_image long2short( const int_image & src, int mode )
   {
