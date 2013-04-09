@@ -535,7 +535,8 @@ static void mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attrib
   }
 }
 
-__pink__inline uint8_t salScale(int32_t input, int32_t maxim, int32_t param)
+// C99 inline semantic are now different
+static __pink__inline uint8_t salScale(int32_t input, int32_t maxim, int32_t param)
 {
   int32_t result;
   switch(param) {
