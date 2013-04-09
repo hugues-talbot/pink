@@ -1,0 +1,25 @@
+\select@language {english}
+\contentsline {chapter}{Table of contents}{3}{Doc-Start}
+\contentsline {chapter}{\numberline {1}Introduction}{5}{chapter.1}
+\contentsline {chapter}{\numberline {2}Tutorial}{7}{chapter.2}
+\contentsline {section}{\numberline {2.1}Starting {\sc Pink}\xspace and related software}{7}{section.2.1}
+\contentsline {section}{\numberline {2.2}Examples}{7}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Code highlighting}{7}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}Dynamic content}{7}{subsection.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}Image processing}{8}{subsection.2.2.3}
+\contentsline {subsection}{\numberline {2.2.4}Binary image processing}{9}{subsection.2.2.4}
+\contentsline {subsection}{\numberline {2.2.5}Grey-level segmentation}{9}{subsection.2.2.5}
+\contentsline {subsection}{\numberline {2.2.6}Discrete geometry}{9}{subsection.2.2.6}
+\contentsline {subsection}{\numberline {2.2.7}3D image processing}{9}{subsection.2.2.7}
+\contentsline {section}{\numberline {2.3}{\sc Pink}\xspace and other image-related software}{9}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}{\sc Pink}\xspace and numpy}{9}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}{\sc Pink}\xspace and scikit}{9}{subsection.2.3.2}
+\contentsline {subsection}{\numberline {2.3.3}{\sc Pink}\xspace and VTK}{9}{subsection.2.3.3}
+\contentsline {subsection}{\numberline {2.3.4}{\sc Pink}\xspace and ITK}{9}{subsection.2.3.4}
+\contentsline {section}{\numberline {2.4}Exercises}{9}{section.2.4}
+\contentsline {chapter}{\numberline {A}Compiling and installing {\sc Pink}\xspace }{11}{appendix.A}
+\contentsline {chapter}{LICENSE}{13}{appendix*.7}
+\contentsline {chapter}{Table of figures}{14}{appendix*.7}
+\contentsline {chapter}{List of tables}{15}{appendix*.8}
+\contentsline {chapter}{Bibliography}{17}{appendix*.9}
+\contentsline {chapter}{Index}{17}{appendix*.9}

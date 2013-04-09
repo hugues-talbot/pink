@@ -1,0 +1,13 @@
+# use glob syntax.
+syntax: glob
+
+*.elc
+*.pyc
+*~
+*.aux
+*.log
+*.out
+*.lot
+*.lof
+*.err
+usermanual/dynamic/*.pdf
