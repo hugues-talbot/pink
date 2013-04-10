@@ -64,10 +64,24 @@ void NonLocalFilterSioux :: Execute2D()
             {
                 for (int sy=0; sy<image_size; sy++)
                 {
-                    w=Sdxy[index2D(sx+m_patch_size,sy+m_patch_size)]
-                      -Sdxy[index2D(sx+m_patch_size,sy-m_patch_size)]
-                      -Sdxy[index2D(sx-m_patch_size,sy+m_patch_size)]
-                      +Sdxy[index2D(sx-m_patch_size,sy-m_patch_size)];
+                    w=0;
+                    if (((sx+m_patch_size)<image_size) && ((sy+m_patch_size<image_size)))
+                    {
+                        w+=Sdxy[index2D(sx+m_patch_size,sy+m_patch_size)];
+                    }
+                    if (((sx+m_patch_size)<image_size) && ((sy-m_patch_size>=0)))
+                    {
+                        w-=Sdxy[index2D(sx+m_patch_size,sy-m_patch_size)];
+                    }
+                    if (((sx-m_patch_size)>=0) && ((sy+m_patch_size<image_size)))
+                    {
+                       w-=Sdxy[index2D(sx-m_patch_size,sy+m_patch_size)];
+                    }
+                    if (((sx-m_patch_size)>=0) && ((sy-m_patch_size>=0)))
+                    {
+                        w+=Sdxy[index2D(sx-m_patch_size,sy-m_patch_size)];
+                    }
+
                     outputI[index2D(sx,sy)]=outputI[index2D(sx,sy)]+w*outputI[index2D(sx+dx,sy+dy)];
                     M[index2D(sx,sy)]=std::max(M[index2D(sx,sy)],w);
                     Z[index2D(sx,sy)]+=w;
@@ -80,6 +94,11 @@ void NonLocalFilterSioux :: Execute2D()
         for (int sy=0; sy<image_size; sy++)
         {
             outputI[index2D(sx,sy)]+=M[index2D(sx,sy)]*m_image[index2D(sx,sy)];
+
+            if ((M[index2D(sx,sy)]+Z[index2D(sx,sy)])==0)
+            {
+                std::cout << "Division par 0" << std::endl;
+            }
             outputI[index2D(sx,sy)]=outputI[index2D(sx,sy)]/(M[index2D(sx,sy)]+Z[index2D(sx,sy)]);
         }
     }
@@ -137,14 +156,39 @@ void NonLocalFilterSioux :: Execute3D()
                     {
                         for (int sx=0; sx<image_size; sx++)
                         {
-                            w=Sdxyz[index3D(sx+m_patch_size,sy+m_patch_size,sz+m_patch_size)]
-                              -Sdxyz[index3D(sx+m_patch_size,sy-m_patch_size,sz+m_patch_size)]
-                              -Sdxyz[index3D(sx-m_patch_size,sy+m_patch_size,sz+m_patch_size)]
-                              -Sdxyz[index3D(sx+m_patch_size,sy+m_patch_size,sz-m_patch_size)]
-                              +Sdxyz[index3D(sx-m_patch_size,sy-m_patch_size,sz+m_patch_size)]
-                              +Sdxyz[index3D(sx-m_patch_size,sy+m_patch_size,sz-m_patch_size)]
-                              +Sdxyz[index3D(sx+m_patch_size,sy-m_patch_size,sz-m_patch_size)]
-                              -Sdxyz[index3D(sx-m_patch_size,sy-m_patch_size,sz-m_patch_size)];
+                            w=0;
+                            if (((sx+m_patch_size)<image_size) && ((sy+m_patch_size)<image_size) && ((sz+m_patch_size)<image_size))
+                            {
+                                w+=Sdxyz[index3D(sx+m_patch_size,sy+m_patch_size,sz+m_patch_size)];
+                            }
+                            if (((sx+m_patch_size)<image_size) && ((sy-m_patch_size)>=0) && ((sz+m_patch_size)<image_size))
+                            {
+                                w-=Sdxyz[index3D(sx+m_patch_size,sy-m_patch_size,sz+m_patch_size)];
+                            }
+                            if (((sx-m_patch_size)>=0) && ((sy+m_patch_size)<image_size) && ((sz+m_patch_size)<image_size))
+                            {
+                                w-=Sdxyz[index3D(sx-m_patch_size,sy+m_patch_size,sz+m_patch_size)];
+                            }
+                            if (((sx+m_patch_size)<image_size) && ((sy+m_patch_size)<image_size) && ((sz-m_patch_size)>=0))
+                            {
+                                w-=Sdxyz[index3D(sx+m_patch_size,sy+m_patch_size,sz-m_patch_size)];
+                            }
+                            if (((sx-m_patch_size)>=0) && ((sy-m_patch_size)>=0) && ((sz+m_patch_size)<image_size))
+                            {
+                                w+=Sdxyz[index3D(sx-m_patch_size,sy-m_patch_size,sz+m_patch_size)];
+                            }
+                            if (((sx-m_patch_size)>=0) && ((sy+m_patch_size)<image_size) && ((sz-m_patch_size)>=0))
+                            {
+                                w+=Sdxyz[index3D(sx-m_patch_size,sy+m_patch_size,sz-m_patch_size)];
+                            }
+                            if (((sx+m_patch_size)<image_size) && ((sy-m_patch_size)>=0) && ((sz-m_patch_size)>=0))
+                            {
+                                w+=Sdxyz[index3D(sx+m_patch_size,sy-m_patch_size,sz-m_patch_size)];
+                            }
+                            if (((sx-m_patch_size)>=0) && ((sy-m_patch_size)>=0) && ((sz-m_patch_size)>=0))
+                            {
+                                w+=Sdxyz[index3D(sx-m_patch_size,sy-m_patch_size,sz-m_patch_size)];
+                            }
 
                             outputI[index3D(sx,sy,sz)]=outputI[index3D(sx,sy,sz)]+w*outputI[index3D(sx+dx,sy+dy,sz+dz)];
                             M[index3D(sx,sy,sz)]=std::max(M[index3D(sx,sy,sz)],w);
