@@ -400,7 +400,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   RPO_export();
   BilateralFilter_export();
   NonLocalFilter_export();
-  NonLocalFilter_export();
+  NonLocalFilterSioux_export();
   
   openbun_export();
   closebin_export();

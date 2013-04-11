@@ -368,10 +368,9 @@ UI_EXPORT_FUNCTION(
   NonLocalFilterSioux,
   pink::python::liarNonLocalFilterSioux,
   ( arg("input_image"), arg("patch_size"), arg("search_size"), arg("alpha")),
-  "Non Local Filter, given the patch size, the search window size and the weight alpha. \n"
+  "\n Non Local Filter, given the patch size, the search window size and the weight alpha. \n"
   " alpha is the weight of the sum of squared differences \n"
   " Works in 2 and 3 dimensions \n" 
-  " \n"
   " This function uses the algorithm of Darbon &al in ""Fast NonLocal Filtering Applied to Electron Cryomicroscopy"" (2008) \n"
   );
 

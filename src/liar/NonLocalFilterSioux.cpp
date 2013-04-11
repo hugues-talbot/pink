@@ -31,14 +31,15 @@ void NonLocalFilterSioux :: Execute2D()
 
 	std::memcpy(&outputI[0], &m_image[0],image_size*sizeof(PixelType));
 
-    std::vector<double> Sdxy(image_size);
+    std::vector<PixelType> Sdxy(image_size);
     std::vector<PixelType> M(image_size);
     std::vector<PixelType> Z(image_size);
     PixelType V,w;
+    PixelType SXP, SXM, SYP, SYM;
 
     for (int dx=-m_search_size; dx<=m_search_size; dx++)
     {
-        for (int dy=-m_search_size; dy<=-m_search_size; dy++)
+        for (int dy=-m_search_size; dy<=m_search_size; dy++)
         {
             V=0;
             for (int y=0; y<image_size; y++)
@@ -64,25 +65,33 @@ void NonLocalFilterSioux :: Execute2D()
             {
                 for (int sy=0; sy<image_size; sy++)
                 {
+                    SXP = std::min(sx+m_patch_size,image_size-1);
+                    SXM = std::max(sx-m_patch_size,0);
+                    SYP = std::min(sy+m_patch_size,image_size-1);
+                    SYM = std::max(sy-m_patch_size,0);
                     w=0;
-                    if (((sx+m_patch_size)<image_size) && ((sy+m_patch_size<image_size)))
+
+                    if ((SXP<image_size) && (SYP<image_size))
                     {
-                        w+=Sdxy[index2D(sx+m_patch_size,sy+m_patch_size)];
+                        w+=Sdxy[index2D(SXP,SYP)];
                     }
-                    if (((sx+m_patch_size)<image_size) && ((sy-m_patch_size>=0)))
+                    if ((SXP<image_size) && (SYM>=0))
                     {
-                        w-=Sdxy[index2D(sx+m_patch_size,sy-m_patch_size)];
+                        w-=Sdxy[index2D(SXP,SYM)];
                     }
-                    if (((sx-m_patch_size)>=0) && ((sy+m_patch_size<image_size)))
+                    if ((SXM>=0) && (SYP<image_size))
                     {
-                       w-=Sdxy[index2D(sx-m_patch_size,sy+m_patch_size)];
+                       w-=Sdxy[index2D(SXM,SYP)];
                     }
-                    if (((sx-m_patch_size)>=0) && ((sy-m_patch_size>=0)))
+                    if ((SXM>=0) && (SYM>=0))
                     {
-                        w+=Sdxy[index2D(sx-m_patch_size,sy-m_patch_size)];
+                        w+=Sdxy[index2D(SXM,SYM)];
                     }
 
-                    outputI[index2D(sx,sy)]=outputI[index2D(sx,sy)]+w*outputI[index2D(sx+dx,sy+dy)];
+                    if (((sx+dx)>=0) && ((sx+dx)<image_size) && ((sy+dy)>=0) && ((sy+dy)<image_size))
+                    {
+                        outputI[index2D(sx,sy)]+=w*outputI[index2D(sx+dx,sy+dy)];
+                    }
                     M[index2D(sx,sy)]=std::max(M[index2D(sx,sy)],w);
                     Z[index2D(sx,sy)]+=w;
                 }
@@ -119,12 +128,13 @@ void NonLocalFilterSioux :: Execute3D()
     std::vector<PixelType> M(image_size);
     std::vector<PixelType> Z(image_size);
     PixelType V,w;
+    PixelType SXP, SXM, SYP, SYM, SZP, SZM;
 
     for (int dz=-m_search_size; dz<=m_search_size; dz++)
     {
-        for (int dx=-m_search_size; dx<=m_search_size; dx++)
+        for (int dy=-m_search_size; dy<=m_search_size; dy++)
         {
-            for (int dy=-m_search_size; dy<=-m_search_size; dy++)
+            for (int dx=-m_search_size; dx<=m_search_size; dx++)
             {
                 V=0;
                 for (int z=0; z<image_size; z++)
@@ -156,41 +166,53 @@ void NonLocalFilterSioux :: Execute3D()
                     {
                         for (int sx=0; sx<image_size; sx++)
                         {
+                            SXP = std::min(sx+m_patch_size,image_size-1);
+                            SXM = std::max(sx-m_patch_size,0);
+                            SYP = std::min(sy+m_patch_size,image_size-1);
+                            SYM = std::max(sy-m_patch_size,0);
+                            SZP = std::min(sz+m_patch_size,image_size-1);
+                            SZM = std::max(sz-m_patch_size,0);
+
                             w=0;
-                            if (((sx+m_patch_size)<image_size) && ((sy+m_patch_size)<image_size) && ((sz+m_patch_size)<image_size))
+                            if ((SXP<image_size) && (SYP<image_size) && (SZP<image_size))
                             {
-                                w+=Sdxyz[index3D(sx+m_patch_size,sy+m_patch_size,sz+m_patch_size)];
+                                w+=Sdxyz[index3D(SXP,SYP,SZP)];
                             }
-                            if (((sx+m_patch_size)<image_size) && ((sy-m_patch_size)>=0) && ((sz+m_patch_size)<image_size))
+                            if ((SXP<image_size) && (SYM>=0) && (SZP<image_size))
                             {
-                                w-=Sdxyz[index3D(sx+m_patch_size,sy-m_patch_size,sz+m_patch_size)];
+                                w-=Sdxyz[index3D(SXP,SYM,SZP)];
                             }
-                            if (((sx-m_patch_size)>=0) && ((sy+m_patch_size)<image_size) && ((sz+m_patch_size)<image_size))
+                            if ((SXM>=0) && (SYP<image_size) && (SZP<image_size))
                             {
-                                w-=Sdxyz[index3D(sx-m_patch_size,sy+m_patch_size,sz+m_patch_size)];
+                                w-=Sdxyz[index3D(SXM,SYP,SZP)];
                             }
-                            if (((sx+m_patch_size)<image_size) && ((sy+m_patch_size)<image_size) && ((sz-m_patch_size)>=0))
+                            if ((SXP<image_size) && (SYP<image_size) && (SZM>=0))
                             {
-                                w-=Sdxyz[index3D(sx+m_patch_size,sy+m_patch_size,sz-m_patch_size)];
+                                w-=Sdxyz[index3D(SXP,SYP,SZM)];
                             }
-                            if (((sx-m_patch_size)>=0) && ((sy-m_patch_size)>=0) && ((sz+m_patch_size)<image_size))
+                            if ((SXM>=0) && (SYM>=0) && (SZP<image_size))
                             {
-                                w+=Sdxyz[index3D(sx-m_patch_size,sy-m_patch_size,sz+m_patch_size)];
+                                w+=Sdxyz[index3D(SXM,SYM,SZP)];
                             }
-                            if (((sx-m_patch_size)>=0) && ((sy+m_patch_size)<image_size) && ((sz-m_patch_size)>=0))
+                            if ((SXM>=0) && (SYP<image_size) && (SZM>=0))
                             {
-                                w+=Sdxyz[index3D(sx-m_patch_size,sy+m_patch_size,sz-m_patch_size)];
+                                w+=Sdxyz[index3D(SXM,SYP,SZM)];
                             }
-                            if (((sx+m_patch_size)<image_size) && ((sy-m_patch_size)>=0) && ((sz-m_patch_size)>=0))
+                            if ((SXP<image_size) && (SYM>=0) && (SZM>=0))
                             {
-                                w+=Sdxyz[index3D(sx+m_patch_size,sy-m_patch_size,sz-m_patch_size)];
+                                w+=Sdxyz[index3D(SXP,SYM,SZM)];
                             }
-                            if (((sx-m_patch_size)>=0) && ((sy-m_patch_size)>=0) && ((sz-m_patch_size)>=0))
+                            if ((SXM>=0) && (SYM>=0) && (SZM>=0))
                             {
-                                w+=Sdxyz[index3D(sx-m_patch_size,sy-m_patch_size,sz-m_patch_size)];
+                                w+=Sdxyz[index3D(SXM,SYM,SZM)];
                             }
 
-                            outputI[index3D(sx,sy,sz)]=outputI[index3D(sx,sy,sz)]+w*outputI[index3D(sx+dx,sy+dy,sz+dz)];
+                            if (((sx+dx)>=0) && ((sx+dx)<image_size)
+                                && ((sy+dy)>=0) && ((sy+dy)<image_size)
+                                && ((sz+dz)>=0) && ((sz+dz)<image_size))
+                            {
+                                outputI[index3D(sx,sy,sz)]=outputI[index3D(sx,sy,sz)]+w*outputI[index3D(sx+dx,sy+dy,sz+dz)];
+                            }
                             M[index3D(sx,sy,sz)]=std::max(M[index3D(sx,sy,sz)],w);
                             Z[index3D(sx,sy,sz)]+=w;
                         }
@@ -206,6 +228,7 @@ void NonLocalFilterSioux :: Execute3D()
         {
             for (int sx=0; sx<image_size; sx++)
             {
+
                 outputI[index3D(sx,sy,sz)]+=M[index3D(sx,sy,sz)]*m_image[index3D(sx,sy,sz)];
                 outputI[index3D(sx,sy,sz)]=outputI[index3D(sx,sy,sz)]/(M[index3D(sx,sy,sz)]+Z[index3D(sx,sy,sz)]);
             }
