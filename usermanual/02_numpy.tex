@@ -1,0 +1,17 @@
+\chapter{Complementary python tools: numpy, scipy, scikit-image, etc}\label{chap:python-tools}
+This chapters describes working with complementary python tools, such as numpy, scipy, the scikits, etc. 
+
+In recent years, python has become a credible replacement for Matlab, thanks to a huge community effort in porting basic numerical facilities to python. Other efforts such as those of Enthought, a company that provides a well-designed distribution of python oriented towards parallel numerical tools, have made python a performance tool suitable for many enterprise-level applications.
+
+The aim of this section is to show how these tools complement \Pink.
+
+\section{Converting from/to numpy}
+The {\em lingua franca} of numerical computing under python is numpy. \Pink provides means to swap back and forth between its internal format and numpy arrays.
+
+\pylabel{numpy01}
+\VerbatimInput[label=\fbox{\textbf{Program \ref{numpy01}:} Numpy conversion}]{"python/numpy/numpy01.py"}
+
+The plan for future versions of \Pink is to make this conversion automatic and transparent, so that 
+for the Python user, \Pink image data is always a numpy array.
+
+\section{Basic numpy usage}
