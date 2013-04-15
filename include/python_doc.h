@@ -1,6 +1,6 @@
 // This file has been generated automatically by the 
 // python_documenter, part of the PInK package (UjoImro, 2011)
-// the date of generation: 2013-04-09T10:22:15Z
+// the date of generation: 2013-04-09T16:27:43Z
 // warning: DO NOT EDIT. All your changes will be lost at 
 // the next generation
 
@@ -921,182 +921,6 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__CMakeLists__txt__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__GA2khalimsky__c__ "  GA2khalimsky.c\n"         \
-"\n"         \
-" Convert a 4-connected edge-weighted graph (a GA) into its\n"         \
-"representation in the Khalimsky grid\n"         \
-"\n"         \
-"Usage: GA2khalimsky GA.pgm type out.pgm \n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Convert a 4-connected (6-connected, in 3D) edge-weighted graph\n"         \
-"(graph.ga) into its Khalimsky grid representation (depending on\n"         \
-"the parameter type), stored as a pgm image\n"         \
-"(out.pgm). The vertices of the graph are associated to the\n"         \
-"square of the Khalimsky grid, and the edges of the graphs are\n"         \
-"associated to the line segments.\n"         \
-"\n"         \
-"If type = 0, then the closure of the set of weighted-edges is used\n"         \
-"(usefull for representing contours).  \n"         \
-"\n"         \
-"If type = 1, then the dual of the closure of the set of weighted edges\n"         \
-"is used (usefull for representing regions).\n"         \
-"\n"         \
-"\n"         \
-"Types supported: ga 2d, ga 3d\n"         \
-"\n"         \
-"Category: GA\n"         \
-" GA\n"         \
-"\n"         \
-" Jean Cousty\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__GA2pgm__c__ "  GA2pgm.c\n"         \
-"\n"         \
-" Convert a 4-connected edge-weighted graph (a GA) into a pgm image \n"         \
-"\n"         \
-"Usage: GA2pgm graph.ga param out.pgm \n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Convert a 4-connected edge-weighted graph (graph.ga) into a pgm\n"         \
-"image (out.pgm) where each pixel represents a vertex of the\n"         \
-"input graph and the gray level of a pixel is obtained from the values\n"         \
-"of its incident edges by means of an operation depending of the\n"         \
-"parameter param.\n"         \
-"\n"         \
-"If param = 1, then max is used, and if param = 2, min is used.\n"         \
-"\n"         \
-"Types supported: ga 2d, ga 3d\n"         \
-"\n"         \
-"Category: GA\n"         \
-" GA\n"         \
-"\n"         \
-" Jean Cousty\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__GA2tikz__c__ "  GA2tikz.c\n"         \
-"\n"         \
-" converts from GA to latex for illustrating small image configurations\n"         \
-"\n"         \
-"Usage: GA2tikz in.ga [b] out.tikz\n"         \
-"\n"         \
-"Description:\n"         \
-"Produces a LaTeX file from a binary or grayscale GA image.\n"         \
-"If b is present, the result is binary otherwise the edges are greyscale colored.\n"         \
-"\n"         \
-"The result should be compiled with pdflatex to produce a pdf file.\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: convert\n"         \
-"  convert\n"         \
-"\n"         \
-" Laurent Najman\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__GAwatershed__c__ "  GAwatershed.c\n"         \
-"\n"         \
-" Compute the watershed of a 4-connected edge-weighted graph (a GA)\n"         \
-"\n"         \
-"Usage: GAwatershed in.ga out.pgm [type]\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Compute the watershed of a 4-connected edge-weighted graph (a GA).\n"         \
-"\n"         \
-"If type = 0, then outputs a watershed by an M-border algorithm. The\n"         \
-"file out.pgm is a GA.\n"         \
-"\n"         \
-"If type = 1, then outputs a watershed by a non-recursive algorithm\n"         \
-"based on streams. The file out.pgm is a GA (this is the default) (not\n"         \
-"available for floats).\n"         \
-"\n"         \
-"If type = 2 outputs a watershed by a recursive algorithm based on\n"         \
-"streams. The file out.pgm is a GA (not available for floats).\n"         \
-"\n"         \
-"If type = 3 outputs an M-border watershed. The file out.pgm is a GA\n"         \
-"(not available for floats).\n"         \
-"\n"         \
-"If type = 4 outputs a flow mapping. The file out.pgm is a long integer\n"         \
-"image that represents a labeled partition induced by a watershed cut\n"         \
-"of the input GA (not available for floats).\n"         \
-"\n"         \
-"\n"         \
-"\n"         \
-"Types supported: GA byte 2D, GA float 2D\n"         \
-"\n"         \
-"Category: GA\n"         \
-"  GA\n"         \
-"\n"         \
-" Jean Cousty\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__GAwatershedDouble__c__ "  GAwatershedDouble.c\n"         \
-"\n"         \
-" Compute the watershed of a 4-connected edge-weighted graph (a GA) where the weights are doubles.\n"         \
-"\n"         \
-"Usage: \n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Types supported: GA byte 2D \n"         \
-"\n"         \
-"Category: \n"         \
-"  \n"         \
-"\n"         \
-" Jean Cousty\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__MSF__c__ "  MSF.c\n"         \
-"\n"         \
-" \n"         \
-"Compute a minimum spanning forest of a GA from a set of markers\n"         \
-"\n"         \
-"Usage: MSF GAin.ga marqueurs.pgm typeResul Result.?? \n"         \
-"\n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Compute a minimum spanning forest of GAin.ga (a 4-connected 2D\n"         \
-"or 6-connected 3D edge-weighted graph) relative to the connected\n"         \
-"components of the non-zero pixels of marqueurs.pgm. If\n"         \
-"TypeResult = 0, then Result.?? is a GA whose non-zero edges form the\n"         \
-"induced MSF cut, otherwise Result.?? is a label image that represents\n"         \
-"the vertex partition induced by the MSF (the connected components of\n"         \
-"the MSF are marked with distinct labels).\n"         \
-"\n"         \
-"See [COUSTYetAl-PAMI2009] and [COUSTYetAl-PAMI2010] for more details.\n"         \
-"\n"         \
-"Types supported: GA byte 2D, GA byte 3D\n"         \
-"\n"         \
-"Category: \n"         \
-"  GA\n"         \
-"\n"         \
-" Jean Cousty\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__MSF4d__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -2131,6 +1955,10 @@
 "\n"
 
 
+#define doc__CMakeLists__txt__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__colorize__c__ "  colorize.c\n"         \
 "\n"         \
 " generates a color image from a grayscale image and a lookup table\n"         \
@@ -2898,44 +2726,6 @@
 "\n"
 
 
-#define doc__diZenzo__c__ "  diZenzo.c\n"         \
-"\n"         \
-" diZenzo gradient pour les images couleurs\n"         \
-"\n"         \
-"Usage: diZenzo imageRVB.ppm alpha [mode] out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"Le gradient de diZenzo est défini par la donnée de p, q, et t:\n"         \
-"\n"         \
-"p = Rx*Rx + Vx*Vx + Bx*Bx\n"         \
-"\n"         \
-"q = Ry*Ry + Vy*Vy + By*By\n"         \
-"\n"         \
-"t = Rx*Ry + Vx*Vy + Bx*By\n"         \
-"\n"         \
-"(ou Rx = dérivée en x de la bande rouge, Ry est la dérivée en y de la bande rouge, etc.)\n"         \
-"\n"         \
-"et le module est donnée par\n"         \
-"\n"         \
-"G = sqrt(1/2*(p+q+sqrt((p+q)*(p+q) -4(pq-t*t))))\n"         \
-"\n"         \
-"La direction est donnée par 1/2*atan(2*t/(p-q))\n"         \
-"\n"         \
-"Si le mode est égale à 0 (valeur défaut) alors l'image de sortie est le gradient, \n"         \
-"sinon l'image de sortie est une int32_t entre 0 et 360.\n"         \
-"\n"         \
-"Les gradients sont calculés par les filtres de Deriche, de paramètre alpha\n"         \
-"\n"         \
-"Types supported: byte 2D\n"         \
-"\n"         \
-"Category: signal\n"         \
-"  signal\n"         \
-"\n"         \
-" Laurent Najman\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__diffimages__c__ "  diffimages.c\n"         \
 "\n"         \
 " pixelwise absolute value difference of 2 images\n"         \
@@ -3293,6 +3083,44 @@
 "  arith\n"         \
 "\n"         \
 " Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__diZenzo__c__ "  diZenzo.c\n"         \
+"\n"         \
+" diZenzo gradient pour les images couleurs\n"         \
+"\n"         \
+"Usage: diZenzo imageRVB.ppm alpha [mode] out.pgm\n"         \
+"\n"         \
+"Description:\n"         \
+"Le gradient de diZenzo est défini par la donnée de p, q, et t:\n"         \
+"\n"         \
+"p = Rx*Rx + Vx*Vx + Bx*Bx\n"         \
+"\n"         \
+"q = Ry*Ry + Vy*Vy + By*By\n"         \
+"\n"         \
+"t = Rx*Ry + Vx*Vy + Bx*By\n"         \
+"\n"         \
+"(ou Rx = dérivée en x de la bande rouge, Ry est la dérivée en y de la bande rouge, etc.)\n"         \
+"\n"         \
+"et le module est donnée par\n"         \
+"\n"         \
+"G = sqrt(1/2*(p+q+sqrt((p+q)*(p+q) -4(pq-t*t))))\n"         \
+"\n"         \
+"La direction est donnée par 1/2*atan(2*t/(p-q))\n"         \
+"\n"         \
+"Si le mode est égale à 0 (valeur défaut) alors l'image de sortie est le gradient, \n"         \
+"sinon l'image de sortie est une int32_t entre 0 et 360.\n"         \
+"\n"         \
+"Les gradients sont calculés par les filtres de Deriche, de paramètre alpha\n"         \
+"\n"         \
+"Types supported: byte 2D\n"         \
+"\n"         \
+"Category: signal\n"         \
+"  signal\n"         \
+"\n"         \
+" Laurent Najman\n"         \
 "\n"         \
 "\n"
 
@@ -4620,6 +4448,87 @@
 "\n"
 
 
+#define doc__GA2khalimsky__c__ "  GA2khalimsky.c\n"         \
+"\n"         \
+" Convert a 4-connected edge-weighted graph (a GA) into its\n"         \
+"representation in the Khalimsky grid\n"         \
+"\n"         \
+"Usage: GA2khalimsky GA.pgm type out.pgm \n"         \
+"\n"         \
+"Description:\n"         \
+"\n"         \
+"Convert a 4-connected (6-connected, in 3D) edge-weighted graph\n"         \
+"(graph.ga) into its Khalimsky grid representation (depending on\n"         \
+"the parameter type), stored as a pgm image\n"         \
+"(out.pgm). The vertices of the graph are associated to the\n"         \
+"square of the Khalimsky grid, and the edges of the graphs are\n"         \
+"associated to the line segments.\n"         \
+"\n"         \
+"If type = 0, then the closure of the set of weighted-edges is used\n"         \
+"(usefull for representing contours).  \n"         \
+"\n"         \
+"If type = 1, then the dual of the closure of the set of weighted edges\n"         \
+"is used (usefull for representing regions).\n"         \
+"\n"         \
+"\n"         \
+"Types supported: ga 2d, ga 3d\n"         \
+"\n"         \
+"Category: GA\n"         \
+" GA\n"         \
+"\n"         \
+" Jean Cousty\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__GA2pgm__c__ "  GA2pgm.c\n"         \
+"\n"         \
+" Convert a 4-connected edge-weighted graph (a GA) into a pgm image \n"         \
+"\n"         \
+"Usage: GA2pgm graph.ga param out.pgm \n"         \
+"\n"         \
+"Description:\n"         \
+"\n"         \
+"Convert a 4-connected edge-weighted graph (graph.ga) into a pgm\n"         \
+"image (out.pgm) where each pixel represents a vertex of the\n"         \
+"input graph and the gray level of a pixel is obtained from the values\n"         \
+"of its incident edges by means of an operation depending of the\n"         \
+"parameter param.\n"         \
+"\n"         \
+"If param = 1, then max is used, and if param = 2, min is used.\n"         \
+"\n"         \
+"Types supported: ga 2d, ga 3d\n"         \
+"\n"         \
+"Category: GA\n"         \
+" GA\n"         \
+"\n"         \
+" Jean Cousty\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__GA2tikz__c__ "  GA2tikz.c\n"         \
+"\n"         \
+" converts from GA to latex for illustrating small image configurations\n"         \
+"\n"         \
+"Usage: GA2tikz in.ga [b] out.tikz\n"         \
+"\n"         \
+"Description:\n"         \
+"Produces a LaTeX file from a binary or grayscale GA image.\n"         \
+"If b is present, the result is binary otherwise the edges are greyscale colored.\n"         \
+"\n"         \
+"The result should be compiled with pdflatex to produce a pdf file.\n"         \
+"\n"         \
+"Types supported: byte 2d\n"         \
+"\n"         \
+"Category: convert\n"         \
+"  convert\n"         \
+"\n"         \
+" Laurent Najman\n"         \
+"\n"         \
+"\n"
+
+
 #define doc__gammacor__c__ "  gammacor.c\n"         \
 "\n"         \
 " performs gamma correction on image\n"         \
@@ -4665,6 +4574,63 @@
 "  signal\n"         \
 "\n"         \
 " Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__GAwatershed__c__ "  GAwatershed.c\n"         \
+"\n"         \
+" Compute the watershed of a 4-connected edge-weighted graph (a GA)\n"         \
+"\n"         \
+"Usage: GAwatershed in.ga out.pgm [type]\n"         \
+"\n"         \
+"Description:\n"         \
+"\n"         \
+"Compute the watershed of a 4-connected edge-weighted graph (a GA).\n"         \
+"\n"         \
+"If type = 0, then outputs a watershed by an M-border algorithm. The\n"         \
+"file out.pgm is a GA.\n"         \
+"\n"         \
+"If type = 1, then outputs a watershed by a non-recursive algorithm\n"         \
+"based on streams. The file out.pgm is a GA (this is the default) (not\n"         \
+"available for floats).\n"         \
+"\n"         \
+"If type = 2 outputs a watershed by a recursive algorithm based on\n"         \
+"streams. The file out.pgm is a GA (not available for floats).\n"         \
+"\n"         \
+"If type = 3 outputs an M-border watershed. The file out.pgm is a GA\n"         \
+"(not available for floats).\n"         \
+"\n"         \
+"If type = 4 outputs a flow mapping. The file out.pgm is a long integer\n"         \
+"image that represents a labeled partition induced by a watershed cut\n"         \
+"of the input GA (not available for floats).\n"         \
+"\n"         \
+"\n"         \
+"\n"         \
+"Types supported: GA byte 2D, GA float 2D\n"         \
+"\n"         \
+"Category: GA\n"         \
+"  GA\n"         \
+"\n"         \
+" Jean Cousty\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__GAwatershedDouble__c__ "  GAwatershedDouble.c\n"         \
+"\n"         \
+" Compute the watershed of a 4-connected edge-weighted graph (a GA) where the weights are doubles.\n"         \
+"\n"         \
+"Usage: \n"         \
+"\n"         \
+"Description:\n"         \
+"\n"         \
+"Types supported: GA byte 2D \n"         \
+"\n"         \
+"Category: \n"         \
+"  \n"         \
+"\n"         \
+" Jean Cousty\n"         \
 "\n"         \
 "\n"
 
@@ -7540,6 +7506,40 @@
 "\n"
 
 
+#define doc__MSF__c__ "  MSF.c\n"         \
+"\n"         \
+" \n"         \
+"Compute a minimum spanning forest of a GA from a set of markers\n"         \
+"\n"         \
+"Usage: MSF GAin.ga marqueurs.pgm typeResul Result.?? \n"         \
+"\n"         \
+"\n"         \
+"Description:\n"         \
+"\n"         \
+"Compute a minimum spanning forest of GAin.ga (a 4-connected 2D\n"         \
+"or 6-connected 3D edge-weighted graph) relative to the connected\n"         \
+"components of the non-zero pixels of marqueurs.pgm. If\n"         \
+"TypeResult = 0, then Result.?? is a GA whose non-zero edges form the\n"         \
+"induced MSF cut, otherwise Result.?? is a label image that represents\n"         \
+"the vertex partition induced by the MSF (the connected components of\n"         \
+"the MSF are marked with distinct labels).\n"         \
+"\n"         \
+"See [COUSTYetAl-PAMI2009] and [COUSTYetAl-PAMI2010] for more details.\n"         \
+"\n"         \
+"Types supported: GA byte 2D, GA byte 3D\n"         \
+"\n"         \
+"Category: \n"         \
+"  GA\n"         \
+"\n"         \
+" Jean Cousty\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__MSF4d__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__mult__c__ "  mult.c\n"         \
 "\n"         \
 " pixelwise multiplication of two images\n"         \
@@ -7825,72 +7825,6 @@
 "\n"
 
 
-#define doc__pgm2GA__c__ "  pgm2GA.c\n"         \
-"\n"         \
-" Computes an edge-weighted graph from an image\n"         \
-"\n"         \
-"Usage: pgm2GA im.pgm param [alpha] out.ga \n"         \
-"\n"         \
-"Description:\n"         \
-"\n"         \
-"Computes a GA (an edge-weighted graph) from an image. The values of an\n"         \
-"edge linking two pixels {x,y} is computed according to the parameter\n"         \
-"param.\n"         \
-"\n"         \
-"If param = 0, the absolute difference of intensity between x and y is used.\n"         \
-"\n"         \
-"If param = 1, the maximum between the intensities of x and y is used.\n"         \
-"\n"         \
-"If param = 2, the minimum between the intensities of x and y is used.\n"         \
-"\n"         \
-"If param = 3, a Deriche-like gradient is used, the optional parameter\n"         \
-"alpha specifies the spatial extention of the filter (by default alpha\n"         \
-"is set to  1]),\n"         \
-"\n"         \
-"If im.pgm is a 2D (resp. 3D) image, then out.ga is a 2D (resp\n"         \
-"3D GA), that is a 2D 4-connected edge-weighted graph (resp. a 2D\n"         \
-"6-connected edge-weighted graph).\n"         \
-"\n"         \
-"\n"         \
-"Types supported: GA byte 2D, GA byte 3D, GA float 2D\n"         \
-"\n"         \
-"Category: \n"         \
-"  GA\n"         \
-"\n"         \
-" Jean Cousty\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__pgm2GA4d__c__ "  pgm2GA4d.c\n"         \
-"\n"         \
-" Create a 4D edge-weighted graph from a series of 3D images\n"         \
-"\n"         \
-"\n"         \
-"Usage: pgm2GA4d prefix_in first last mode GA4d_out.ga\n"         \
-"\n"         \
-"Description: Create a 4D GA (edge-weighted graph) from the 4D\n"         \
-"image obtained by concatenation of the series of 3D images \n"         \
-"prefix_inxxxx.pgm | xxxx is a four digit decimal integer of the\n"         \
-"interval [ first , last]  . The values of the edges\n"         \
-"are computed according to the parameter mode. If mode is\n"         \
-"set to 0, then the value of an edge { x,y } is the absolute diference\n"         \
-"of intensity between the pixels x and y and if mode is set to 1\n"         \
-"the maximum of intensity between x and y is used. The output\n"         \
-"GA4d_out.ga is a 4D GA, that is a 4D, 8-connected,\n"         \
-"edge-weighted grah, (i.e. the adjacency is the direct adjacency in\n"         \
-"dimension 4).\n"         \
-"\n"         \
-"Types supported: byte 2d, byte 3d, byte 4d\n"         \
-"\n"         \
-"Category: convert\n"         \
-" convert\n"         \
-"\n"         \
-" Jean Cousty - janvier 2006\n"         \
-"\n"         \
-"\n"
-
-
 #define doc__pgm2bmp__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -7986,6 +7920,72 @@
 "  convert geo\n"         \
 "\n"         \
 " Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__pgm2GA__c__ "  pgm2GA.c\n"         \
+"\n"         \
+" Computes an edge-weighted graph from an image\n"         \
+"\n"         \
+"Usage: pgm2GA im.pgm param [alpha] out.ga \n"         \
+"\n"         \
+"Description:\n"         \
+"\n"         \
+"Computes a GA (an edge-weighted graph) from an image. The values of an\n"         \
+"edge linking two pixels {x,y} is computed according to the parameter\n"         \
+"param.\n"         \
+"\n"         \
+"If param = 0, the absolute difference of intensity between x and y is used.\n"         \
+"\n"         \
+"If param = 1, the maximum between the intensities of x and y is used.\n"         \
+"\n"         \
+"If param = 2, the minimum between the intensities of x and y is used.\n"         \
+"\n"         \
+"If param = 3, a Deriche-like gradient is used, the optional parameter\n"         \
+"alpha specifies the spatial extention of the filter (by default alpha\n"         \
+"is set to  1]),\n"         \
+"\n"         \
+"If im.pgm is a 2D (resp. 3D) image, then out.ga is a 2D (resp\n"         \
+"3D GA), that is a 2D 4-connected edge-weighted graph (resp. a 2D\n"         \
+"6-connected edge-weighted graph).\n"         \
+"\n"         \
+"\n"         \
+"Types supported: GA byte 2D, GA byte 3D, GA float 2D\n"         \
+"\n"         \
+"Category: \n"         \
+"  GA\n"         \
+"\n"         \
+" Jean Cousty\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__pgm2GA4d__c__ "  pgm2GA4d.c\n"         \
+"\n"         \
+" Create a 4D edge-weighted graph from a series of 3D images\n"         \
+"\n"         \
+"\n"         \
+"Usage: pgm2GA4d prefix_in first last mode GA4d_out.ga\n"         \
+"\n"         \
+"Description: Create a 4D GA (edge-weighted graph) from the 4D\n"         \
+"image obtained by concatenation of the series of 3D images \n"         \
+"prefix_inxxxx.pgm | xxxx is a four digit decimal integer of the\n"         \
+"interval [ first , last]  . The values of the edges\n"         \
+"are computed according to the parameter mode. If mode is\n"         \
+"set to 0, then the value of an edge { x,y } is the absolute diference\n"         \
+"of intensity between the pixels x and y and if mode is set to 1\n"         \
+"the maximum of intensity between x and y is used. The output\n"         \
+"GA4d_out.ga is a 4D GA, that is a 4D, 8-connected,\n"         \
+"edge-weighted grah, (i.e. the adjacency is the direct adjacency in\n"         \
+"dimension 4).\n"         \
+"\n"         \
+"Types supported: byte 2d, byte 3d, byte 4d\n"         \
+"\n"         \
+"Category: convert\n"         \
+" convert\n"         \
+"\n"         \
+" Jean Cousty - janvier 2006\n"         \
 "\n"         \
 "\n"
 
@@ -8511,6 +8511,10 @@
 "\n"
 
 
+#define doc__ppm2bmp__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__ppm2GA__c__ "  ppm2GA.c\n"         \
 "\n"         \
 " Computes an edge-weighted graph from an color .ppm image\n"         \
@@ -8543,10 +8547,6 @@
 "\n"         \
 " Jean Cousty\n"         \
 "\n"         \
-"\n"
-
-
-#define doc__ppm2bmp__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -8715,25 +8715,6 @@
 " connect\n"         \
 "\n"         \
 " Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__ptWsimple__c__ "  ptWsimple.c\n"         \
-"\n"         \
-" detects W-simple points in a 2D binary image\n"         \
-"\n"         \
-"Usage: ptWsimple in.pgm connex out.pgm\n"         \
-"\n"         \
-"Description:\n"         \
-"The argument  connex selects the connectivity (4, 8 in 2D).\n"         \
-"\n"         \
-"Types supported: byte 2d\n"         \
-"\n"         \
-"Category: connect\n"         \
-"  connect\n"         \
-"\n"         \
-" Jean Cousty (2007)\n"         \
 "\n"         \
 "\n"
 
@@ -8994,6 +8975,25 @@
 "  topobin\n"         \
 "\n"         \
 " Michel Couprie 2003\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__ptWsimple__c__ "  ptWsimple.c\n"         \
+"\n"         \
+" detects W-simple points in a 2D binary image\n"         \
+"\n"         \
+"Usage: ptWsimple in.pgm connex out.pgm\n"         \
+"\n"         \
+"Description:\n"         \
+"The argument  connex selects the connectivity (4, 8 in 2D).\n"         \
+"\n"         \
+"Types supported: byte 2d\n"         \
+"\n"         \
+"Category: connect\n"         \
+"  connect\n"         \
+"\n"         \
+" Jean Cousty (2007)\n"         \
 "\n"         \
 "\n"
 

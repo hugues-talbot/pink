@@ -16,9 +16,12 @@
 \BOOKMARK [2][-]{subsection.2.3.3}{Pink and VTK}{section.2.3}% 16
 \BOOKMARK [2][-]{subsection.2.3.4}{Pink and ITK}{section.2.3}% 17
 \BOOKMARK [1][-]{section.2.4}{Exercises}{chapter.2}% 18
-\BOOKMARK [0][-]{appendix.A}{Compiling and installing Pink}{}% 19
-\BOOKMARK [0][-]{appendix*.7}{LICENSE}{}% 20
-\BOOKMARK [0][-]{appendix*.7}{Table of figures}{}% 21
-\BOOKMARK [0][-]{appendix*.8}{List of tables}{}% 22
-\BOOKMARK [0][-]{appendix*.9}{Bibliography}{}% 23
-\BOOKMARK [0][-]{appendix*.9}{Index}{}% 24
+\BOOKMARK [0][-]{chapter.3}{Complementary python tools: numpy, scipy, scikit-image, etc}{}% 19
+\BOOKMARK [1][-]{section.3.1}{Converting from/to numpy}{chapter.3}% 20
+\BOOKMARK [1][-]{section.3.2}{Basic numpy usage}{chapter.3}% 21
+\BOOKMARK [0][-]{appendix.A}{Compiling and installing Pink}{}% 22
+\BOOKMARK [0][-]{appendix*.7}{LICENSE}{}% 23
+\BOOKMARK [0][-]{appendix*.7}{Table of figures}{}% 24
+\BOOKMARK [0][-]{appendix*.8}{List of tables}{}% 25
+\BOOKMARK [0][-]{appendix*.9}{Bibliography}{}% 26
+\BOOKMARK [0][-]{appendix*.9}{Index}{}% 27
