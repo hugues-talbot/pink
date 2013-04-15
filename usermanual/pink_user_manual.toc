@@ -17,12 +17,12 @@
 \contentsline {subsection}{\numberline {2.3.3}{\sc Pink}\xspace and VTK}{8}{subsection.2.3.3}
 \contentsline {subsection}{\numberline {2.3.4}{\sc Pink}\xspace and ITK}{8}{subsection.2.3.4}
 \contentsline {section}{\numberline {2.4}Exercises}{8}{section.2.4}
-\contentsline {chapter}{\numberline {3}Complementary python tools: numpy, scipy, scikit-image, etc}{9}{chapter.3}
-\contentsline {section}{\numberline {3.1}Converting from/to numpy}{9}{section.3.1}
-\contentsline {section}{\numberline {3.2}Basic numpy usage}{9}{section.3.2}
-\contentsline {chapter}{\numberline {A}Compiling and installing {\sc Pink}\xspace }{11}{appendix.A}
-\contentsline {chapter}{LICENSE}{13}{appendix*.7}
-\contentsline {chapter}{Table of figures}{14}{appendix*.7}
-\contentsline {chapter}{List of tables}{15}{appendix*.8}
-\contentsline {chapter}{Bibliography}{17}{appendix*.9}
-\contentsline {chapter}{Index}{17}{appendix*.9}
+\contentsline {chapter}{\numberline {3}Complementary python tools: numpy, scipy, scikit-image, etc}{11}{chapter.3}
+\contentsline {section}{\numberline {3.1}Converting from/to numpy}{11}{section.3.1}
+\contentsline {section}{\numberline {3.2}Basic numpy usage}{11}{section.3.2}
+\contentsline {chapter}{\numberline {A}Compiling and installing {\sc Pink}\xspace }{13}{appendix.A}
+\contentsline {chapter}{LICENSE}{15}{appendix*.7}
+\contentsline {chapter}{Table of figures}{16}{appendix*.7}
+\contentsline {chapter}{List of tables}{17}{appendix*.8}
+\contentsline {chapter}{Bibliography}{19}{appendix*.9}
+\contentsline {chapter}{Index}{19}{appendix*.9}
