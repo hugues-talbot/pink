@@ -51,3 +51,56 @@ make[1]: quittant le répertoire « /home/odyssee/Projets/Pink/pink_lilian/CMake
 make: *** [cmTryCompileExec2657368614/fast] Erreur 2
 
 
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/odyssee/Projets/Pink/pink_lilian/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec4059933131/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec4059933131.dir/build.make CMakeFiles/cmTryCompileExec4059933131.dir/build
+make[1]: entrant dans le répertoire « /home/odyssee/Projets/Pink/pink_lilian/CMakeFiles/CMakeTmp »
+/usr/bin/cmake -E cmake_progress_report /home/odyssee/Projets/Pink/pink_lilian/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec4059933131.dir/CheckSymbolExists.c.o
+/usr/bin/gcc    -o CMakeFiles/cmTryCompileExec4059933131.dir/CheckSymbolExists.c.o   -c /home/odyssee/Projets/Pink/pink_lilian/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTryCompileExec4059933131
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec4059933131.dir/link.txt --verbose=1
+/usr/bin/gcc         CMakeFiles/cmTryCompileExec4059933131.dir/CheckSymbolExists.c.o  -o cmTryCompileExec4059933131 -rdynamic 
+CMakeFiles/cmTryCompileExec4059933131.dir/CheckSymbolExists.c.o: dans la fonction « main »:
+CheckSymbolExists.c:(.text+0x16): référence indéfinie vers « pthread_create »
+collect2: erreur: ld a retourné 1 code d'état d'exécution
+make[1]: *** [cmTryCompileExec4059933131] Erreur 1
+make[1]: quittant le répertoire « /home/odyssee/Projets/Pink/pink_lilian/CMakeFiles/CMakeTmp »
+make: *** [cmTryCompileExec4059933131/fast] Erreur 2
+
+File /home/odyssee/Projets/Pink/pink_lilian/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/odyssee/Projets/Pink/pink_lilian/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec528731373/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec528731373.dir/build.make CMakeFiles/cmTryCompileExec528731373.dir/build
+make[1]: entrant dans le répertoire « /home/odyssee/Projets/Pink/pink_lilian/CMakeFiles/CMakeTmp »
+/usr/bin/cmake -E cmake_progress_report /home/odyssee/Projets/Pink/pink_lilian/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec528731373.dir/CheckFunctionExists.c.o
+/usr/bin/gcc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTryCompileExec528731373.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-2.8/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec528731373
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec528731373.dir/link.txt --verbose=1
+/usr/bin/gcc     -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTryCompileExec528731373.dir/CheckFunctionExists.c.o  -o cmTryCompileExec528731373 -rdynamic -lpthreads 
+/usr/bin/ld: ne peut trouver -lpthreads
+collect2: erreur: ld a retourné 1 code d'état d'exécution
+make[1]: quittant le répertoire « /home/odyssee/Projets/Pink/pink_lilian/CMakeFiles/CMakeTmp »
+make[1]: *** [cmTryCompileExec528731373] Erreur 1
+make: *** [cmTryCompileExec528731373/fast] Erreur 2
+
+

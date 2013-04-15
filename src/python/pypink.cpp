@@ -28,6 +28,7 @@
 #include "ltopotypes.h"
 #include "lfiltrestopo.h"
 
+
 using namespace boost::python;
 using namespace pink;
 
@@ -142,6 +143,7 @@ void fopenpoly_export();
 void RPO_export();
 void BilateralFilter_export();
 void NonLocalFilter_export();
+void NonLocalFilterSioux_export();
 
 // opening by unions of lines
 void openbun_export();
@@ -398,6 +400,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   RPO_export();
   BilateralFilter_export();
   NonLocalFilter_export();
+  NonLocalFilterSioux_export();
   
   openbun_export();
   closebin_export();
