@@ -20,8 +20,10 @@
 \BOOKMARK [1][-]{section.3.1}{Converting from/to numpy}{chapter.3}% 20
 \BOOKMARK [1][-]{section.3.2}{Basic numpy usage}{chapter.3}% 21
 \BOOKMARK [0][-]{appendix.A}{Compiling and installing Pink}{}% 22
-\BOOKMARK [0][-]{appendix*.7}{LICENSE}{}% 23
-\BOOKMARK [0][-]{appendix*.7}{Table of figures}{}% 24
-\BOOKMARK [0][-]{appendix*.8}{List of tables}{}% 25
-\BOOKMARK [0][-]{appendix*.9}{Bibliography}{}% 26
-\BOOKMARK [0][-]{appendix*.9}{Index}{}% 27
+\BOOKMARK [1][-]{section.A.1}{Git branches}{appendix.A}% 23
+\BOOKMARK [1][-]{section.A.2}{Compiling}{appendix.A}% 24
+\BOOKMARK [0][-]{appendix*.7}{LICENSE}{}% 25
+\BOOKMARK [0][-]{appendix*.7}{Table of figures}{}% 26
+\BOOKMARK [0][-]{appendix*.8}{List of tables}{}% 27
+\BOOKMARK [0][-]{appendix*.9}{Bibliography}{}% 28
+\BOOKMARK [0][-]{appendix*.9}{Index}{}% 29
