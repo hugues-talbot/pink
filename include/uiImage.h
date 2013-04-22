@@ -42,14 +42,15 @@ namespace pink
     else /* NOT (image.get_size().prod()>1000) or (image.get_size().size()>2) */
     {
       pink::types::vint curr;
-      int tmp; // for converting the references. Apparently std::cout does not like them.      
+      double tmp; // for converting the references. Apparently std::cout does not like them.      
       result << "[\n";      
       FOR(q, image.get_size()[0])
       {        
         FOR(w, image.get_size()[1])
         {
-          tmp = image[curr << q,w];          
-          std::cout << tmp << ", ";          
+            // This will work even for int types
+            tmp = static_cast<double>(image[curr << q,w]);          
+            std::cout << tmp << ", ";          
         } /* FOR w */
         std::cout << "\n";        
       } /* FOR q */

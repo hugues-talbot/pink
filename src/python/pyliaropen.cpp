@@ -129,14 +129,16 @@ namespace pink {
 	// at this stage the output buffer contains the input image because of the clone() above
 
 
-	// create the RPO object
-        RPO RPO1(orientation, L, K, reconstruct, output_buffer, output_buffer, nx, ny, nz);
-
-	// Execute
-	RPO1.Execute();
-
-	// get result
-	return (result_image);
+        if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE) {
+            // create the RPO object
+            RPO RPO1(orientation, L, K, reconstruct, output_buffer, output_buffer, nx, ny, nz);
+            // Execute
+            RPO1.Execute();
+        } else {
+            pink_error("Pixel type not yet supported\n");
+        } 
+        
+        return result_image;
 
     } /* liarRPO*/
 
@@ -165,31 +167,35 @@ namespace pink {
         int nz = outputxvimage->depth_size;
 
 
-	// 2 Dimensions
+        if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE) {
+            // 2 Dimensions
 
-	if (nz==1)
-	{
-   	    // buffers
-       	    PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
-
-	    // create the RPO object
-            BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny,1);
-
-   	    // Execute
-  	    BF1.Execute2D();
-	}
-
-	else
-	{
-   	    // buffers
-       	    PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
-
-	    // create the RPO object
-            BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny,nz);
-	    		
-   	    // Execute
-  	    BF1.Execute3D();
-	}
+            if (nz==1)
+            {
+                // buffers
+                PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
+                
+                // create the RPO object
+                BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny,1);
+                
+                // Execute
+                BF1.Execute2D();
+            }
+            
+            else
+            {
+                // buffers
+                PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
+                
+                // create the RPO object
+                BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny,nz);
+                
+                // Execute
+                BF1.Execute3D();
+            }
+        } else {
+            pink_error("Pixel type not yet supported\n");
+        }
 
 	// get result
 	return (result_image);
@@ -221,30 +227,29 @@ namespace pink {
 
 
 	// 2 Dimensions
-
-	if (nz==1)
-	{
-   	    //buffers
-       	    PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
-
-	    //create the BilateralFilter object
-            NonLocalFilter NL1(input_buffer, patch_size, search_size, alpha, nx, ny,1);
-
-   	    // Execute
-  	    NL1.Execute2D();
-	}
-
-	else
-	{
-   	    // buffers
-       	    PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
-
-	    // create the RPO object
-            NonLocalFilter NL1(input_buffer, patch_size, search_size, alpha, nx, ny,nz);
-
-   	    // Execute
-  	    NL1.Execute3D();
-	}
+        if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE) {
+            if (nz==1) {
+                //buffers
+                PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
+                
+                //create the BilateralFilter object
+                NonLocalFilter NL1(input_buffer, patch_size, search_size, alpha, nx, ny,1);
+                
+                // Execute
+                NL1.Execute2D();
+            } else {
+                // buffers
+                PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
+                
+                // create the RPO object
+                NonLocalFilter NL1(input_buffer, patch_size, search_size, alpha, nx, ny,nz);
+                
+                // Execute
+                NL1.Execute3D();
+            }
+        } else {
+            pink_error("Pixel type not yet supported\n");
+        }
 
 	// get result
 	return (result_image);
