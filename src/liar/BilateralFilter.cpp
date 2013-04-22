@@ -7,7 +7,8 @@
 
 
 // Constructor
-BilateralFilter::BilateralFilter(PixelType *_image, int _window_size, double _alpha, double _beta, int _dimx, int _dimy, int _dimz) :
+template <typename PixelType>
+BilateralFilter<PixelType>::BilateralFilter(PixelType *_image, int _window_size, double _alpha, double _beta, int _dimx, int _dimy, int _dimz) :
     image(_image),
     window_size(_window_size),
     alpha(_alpha),
@@ -16,18 +17,20 @@ BilateralFilter::BilateralFilter(PixelType *_image, int _window_size, double _al
     dimy(_dimy),
     dimz(_dimz){}
 
-
-inline int BilateralFilter :: index3D(int x, int y, int z)
+template <typename PixelType>
+inline int BilateralFilter<PixelType> :: index3D(int x, int y, int z)
 {
     return (x+dimx*y+dimx*dimy*z);
 }
 
-inline int BilateralFilter :: index2D(int x, int y)
+template <typename PixelType>
+inline int BilateralFilter<PixelType> :: index2D(int x, int y)
 {
     return (x+dimx*y);
 }
 
-void BilateralFilter::Execute3D()
+template <typename PixelType>
+void BilateralFilter<PixelType>::Execute3D()
 {
     int const image_size=dimx*dimy*dimz;
     std::vector<PixelType> outputI(image_size);
@@ -88,7 +91,8 @@ void BilateralFilter::Execute3D()
 	std::memcpy( &image[0], &outputI[0],image_size*sizeof(PixelType));
 }
 
-void BilateralFilter::Execute2D()
+template <typename PixelType>
+void BilateralFilter<PixelType>::Execute2D()
 {
     int const image_size=dimx*dimy;
     std::vector<PixelType> outputI(image_size);
@@ -142,7 +146,8 @@ void BilateralFilter::Execute2D()
 	std::memcpy( &image[0], &outputI[0],image_size*sizeof(PixelType));
 }
 
-PixelType* BilateralFilter::GetResult()
+template <typename PixelType>
+PixelType* BilateralFilter<PixelType>::GetResult()
 {
 	return image;
 }

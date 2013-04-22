@@ -13,6 +13,7 @@
 #include "pink_python.h"
 #include "RPO.hpp"
 #include "BilateralFilter.h"
+#include "BilateralFilter.hpp"
 #include "NonLocalFilter.h"
 #include "NonLocalFilterSioux.h"
 
@@ -176,7 +177,7 @@ namespace pink {
                 PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
                 
                 // create the RPO object
-                BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny,1);
+                BilateralFilter<PixelType> BF1(input_buffer, window_size, alpha, beta, nx, ny,1);
                 
                 // Execute
                 BF1.Execute2D();
@@ -188,7 +189,7 @@ namespace pink {
                 PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
                 
                 // create the RPO object
-                BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny,nz);
+                BilateralFilter<PixelType> BF1(input_buffer, window_size, alpha, beta, nx, ny,nz);
                 
                 // Execute
                 BF1.Execute3D();
