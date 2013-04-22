@@ -27,7 +27,7 @@ inline int NonLocalFilter :: index3D(int x, int y , int z)
 void NonLocalFilter :: Execute3D()
 {
 
-     int const image_size=m_dimx*m_dimy*m_dimz;
+    int const image_size=m_dimx*m_dimy*m_dimz;
     int const r_patch=floor(m_patch_size/2);
     int const r_search=floor(m_search_size/2);
 

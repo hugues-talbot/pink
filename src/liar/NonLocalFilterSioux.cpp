@@ -31,9 +31,9 @@ void NonLocalFilterSioux :: Execute2D()
 
 	std::memcpy(&outputI[0], &m_image[0],image_size*sizeof(PixelType));
 
-    std::vector<PixelType> Sdxy(image_size);
-    std::vector<PixelType> M(image_size);
-    std::vector<PixelType> Z(image_size);
+    std::vector<PixelType> Sdxy(image_size,0);
+    std::vector<PixelType> M(image_size,0);
+    std::vector<PixelType> Z(image_size,0);
     PixelType V,w;
     PixelType SXP, SXM, SYP, SYM;
 
@@ -41,29 +41,30 @@ void NonLocalFilterSioux :: Execute2D()
     {
         for (int dy=-m_search_size; dy<=m_search_size; dy++)
         {
-            V=0;
-            for (int y=0; y<image_size; y++)
+            for (int y=0; y<m_dimy; y++)
             {
-                for (int x=0; x<image_size; x++)
+                for (int x=0; x<m_dimx; x++)
                 {
-
+                    V=0;
                     for (int Y=0; Y<=y; Y++)
                     {
                         for (int X=0; X<=x; X++)
                         {
-                            if (((X+dx)>=0) && ((X+dx)<image_size) && ((Y+dy)>=0) && ((Y+dy)<image_size))
+                            if (((X+dx)>=0) && ((X+dx)<m_dimx) && ((Y+dy)>=0) && ((Y+dy)<m_dimy))
                             {
                                 V+=(m_image[index2D(X,Y)]-m_image[index2D(X+dx,Y+dy)])*(m_image[index2D(X,Y)]-m_image[index2D(X+dx,Y+dy)]);
+                                //std :: cout << "[" << X << "," << Y << "]= " << ", [" << X+dx << "," << Y+dy << "]= " << V << std ::endl;
                             }
                         }
                     }
                     Sdxy[index2D(x,y)]=V;
+                    //std :: cout << "Sdxy[" << x << "," << y << "]= " << Sdxy[index2D(x,y)] << std ::endl;
                 }
             }
 
-            for (int sx=0; sx<image_size; sx++)
+            for (int sx=0; sx<m_dimx; sx++)
             {
-                for (int sy=0; sy<image_size; sy++)
+                for (int sy=0; sy<m_dimy; sy++)
                 {
                     SXP = std::min(sx+m_patch_size,image_size-1);
                     SXM = std::max(sx-m_patch_size,0);
@@ -71,15 +72,15 @@ void NonLocalFilterSioux :: Execute2D()
                     SYM = std::max(sy-m_patch_size,0);
                     w=0;
 
-                    if ((SXP<image_size) && (SYP<image_size))
+                    if ((SXP<m_dimx) && (SYP<m_dimy))
                     {
                         w+=Sdxy[index2D(SXP,SYP)];
                     }
-                    if ((SXP<image_size) && (SYM>=0))
+                    if ((SXP<m_dimx) && (SYM>=0))
                     {
                         w-=Sdxy[index2D(SXP,SYM)];
                     }
-                    if ((SXM>=0) && (SYP<image_size))
+                    if ((SXM>=0) && (SYP<m_dimy))
                     {
                        w-=Sdxy[index2D(SXM,SYP)];
                     }
@@ -88,9 +89,12 @@ void NonLocalFilterSioux :: Execute2D()
                         w+=Sdxy[index2D(SXM,SYM)];
                     }
 
-                    if (((sx+dx)>=0) && ((sx+dx)<image_size) && ((sy+dy)>=0) && ((sy+dy)<image_size))
+                    //std :: cout << "SXP: " << SXP<< "  SXM: " << SXM << "  SYP: " << SYP << "  SYM: "<< SYM << std ::endl;
+                    if ( (w>0) &&(SXP>=0) && (SXP<m_dimx) && (SYP>=0) && (SYP<m_dimy))
                     {
-                        outputI[index2D(sx,sy)]+=w*outputI[index2D(sx+dx,sy+dy)];
+                        outputI[index2D(sx,sy)]+=w*outputI[index2D(SXP,SYP)];
+                       // std :: cout << "w= " << w << std ::endl;
+                       // std :: cout << "outputI[" << sx << "," << sy << "]= " << outputI[index2D(sx,sy)] << std ::endl;
                     }
                     M[index2D(sx,sy)]=std::max(M[index2D(sx,sy)],w);
                     Z[index2D(sx,sy)]+=w;
@@ -98,9 +102,9 @@ void NonLocalFilterSioux :: Execute2D()
             }
         }
     }
-    for (int sx=0; sx<image_size; sx++)
+    for (int sx=0; sx<m_dimx; sx++)
     {
-        for (int sy=0; sy<image_size; sy++)
+        for (int sy=0; sy<m_dimy; sy++)
         {
             outputI[index2D(sx,sy)]+=M[index2D(sx,sy)]*m_image[index2D(sx,sy)];
 
@@ -108,7 +112,10 @@ void NonLocalFilterSioux :: Execute2D()
             {
                 std::cout << "Division par 0" << std::endl;
             }
+            std :: cout << "poids= "  <<  M[index2D(sx,sy)]+Z[index2D(sx,sy)] << std ::endl;
+            std :: cout << "outputI= "  << outputI[index2D(sx,sy)] << std ::endl;
             outputI[index2D(sx,sy)]=outputI[index2D(sx,sy)]/(M[index2D(sx,sy)]+Z[index2D(sx,sy)]);
+            std :: cout << "outputI[" << sx << "," << sy << "]= " << outputI[index2D(sx,sy)] << std ::endl;
         }
     }
 
@@ -239,4 +246,10 @@ void NonLocalFilterSioux :: Execute3D()
         std::memcpy( &m_image[0], &outputI[0],image_size*sizeof(PixelType));
 
 }
+
+PixelType* NonLocalFilterSioux::GetResult()
+{
+	return m_image;
+}
+
 
