@@ -44,6 +44,7 @@ void NonLocalFilter :: Execute3D()
     //copy of the input data
 	std::memcpy(&outputI[0], &m_image[0],image_size*sizeof(PixelType));
 
+   #pragma omp parallel for private(x,y,z,Z,Y,X,dx,dy,dz,W,Wt,V,w,v)
     for (z=0; z<m_dimz; z++)
     {
         for (y=0; y<m_dimy; y++)
@@ -129,6 +130,7 @@ void NonLocalFilter :: Execute2D()
     //copy of the input data
 	std::memcpy(&outputI[0], &m_image[0],image_size*sizeof(PixelType));
 
+  		#pragma omp parallel for private(x,y,Y,X,dx,dy,W,Wt,V,w,v)
         for (y=0; y<m_dimy; y++)
         {
             for (x=0; x<m_dimx; x++)

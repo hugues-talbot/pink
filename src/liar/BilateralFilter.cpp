@@ -103,6 +103,7 @@ void BilateralFilter::Execute2D()
     double w=0, v=0;
     double W=0, V=0;
 
+    #pragma omp parallel for private(x,y,dx,dy,W,V,w,v)
     for (y=0; y<dimy; y++)
     {
         for (x=0; x<dimx; x++)
