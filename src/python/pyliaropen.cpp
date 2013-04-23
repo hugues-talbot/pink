@@ -14,6 +14,7 @@
 #include "RPO.hpp"
 #include "BilateralFilter.h"
 #include "BilateralFilter.hpp"
+#include "NonLocalFilter.hpp"
 #include "NonLocalFilter.h"
 #include "NonLocalFilterSioux.h"
 
@@ -234,7 +235,7 @@ namespace pink {
                 PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
                 
                 //create the BilateralFilter object
-                NonLocalFilter NL1(input_buffer, patch_size, search_size, alpha, nx, ny,1);
+                NonLocalFilter<PixelType> NL1(input_buffer, patch_size, search_size, alpha, nx, ny,1);
                 
                 // Execute
                 NL1.Execute2D();
@@ -243,7 +244,7 @@ namespace pink {
                 PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
                 
                 // create the RPO object
-                NonLocalFilter NL1(input_buffer, patch_size, search_size, alpha, nx, ny,nz);
+                NonLocalFilter<PixelType> NL1(input_buffer, patch_size, search_size, alpha, nx, ny,nz);
                 
                 // Execute
                 NL1.Execute3D();
