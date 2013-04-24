@@ -14,8 +14,8 @@
 #include "RPO.hpp"
 #include "BilateralFilter.h"
 #include "BilateralFilter.hpp"
-#include "NonLocalFilter.hpp"
 #include "NonLocalFilter.h"
+#include "NonLocalFilter.hpp"
 #include "NonLocalFilterSioux.h"
 
 using namespace boost::python;

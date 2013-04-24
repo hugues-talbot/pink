@@ -1,4 +1,4 @@
-#include "../include/NonLocalFilter.h"
+#include "NonLocalFilter.h"
 
 #include <math.h>
 #include <iostream>

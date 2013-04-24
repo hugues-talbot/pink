@@ -5,8 +5,7 @@
 #include <ctime>
 #include <cstring>
 
-typedef int PixelType;
-
+template <typename PixelType>
 class NonLocalFilter
 {
     public:
