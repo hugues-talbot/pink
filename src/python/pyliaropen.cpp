@@ -13,11 +13,15 @@
 #include "liar_fseries.h"
 #include "pink_python.h"
 #include "RPO.hpp"
+
 #include "BilateralFilter.h"
 #include "BilateralFilter.hpp"
+
 #include "NonLocalFilter.h"
 #include "NonLocalFilter.hpp"
+
 #include "NonLocalFilterSioux.h"
+
 #include "rotate3d.h"
 #include "rotate3d_generic.h"
 
@@ -359,9 +363,9 @@ namespace pink {
             int col0=round(ny/2);
             int slice0=round(nz/2);
             
-            lrotate3d
+            int res=lrotate3d<PixelType>
 			  (input_buffer, output_buffer, nx, ny, nz, fnx, fny, fnz,			
-			   alpha, beta, gamma, interpolate, value, rmbdr, row0, col0, slice0);             
+			   alpha, beta, gamma, interpolate, value, rmbdr, row0, col0, slice0);     
         } 
             
         else {
