@@ -206,7 +206,7 @@ int main(int argc, char **argv)
   {
     case 0:
       for (x = 0; x < N; x++)
-        B[x] = (uint8_t)mcmin(L[x],255);
+        B[x] = (uint8_t)mcmax(mcmin(L[x],255),0);
       break;
     case 1:
       for (x = 0; x < N; x++)

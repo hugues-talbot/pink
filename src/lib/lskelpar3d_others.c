@@ -48,8 +48,8 @@ knowledge of the CeCILL license and that you accept its terms.
 \li 10: Ma-Wan (curvilinear (18/6) 6 subiterations, CVIU 2000)
 \li 11: Lohou-Bertrand (curvilinear 6 subiterations, DAM 2005)
 \li 12: Lohou-Bertrand (curvilinear 12 subiterations, DAM 2004)
-\li 13: ACK3a
-\li 14: CKSC
+\li 13: ACK3a - see lskelpar3d.c
+\li 14: CKSC - see lskeletons.c
 \li 15: Ma-Wan-Lee (curvilinear, 4 subfields, 2002)
 \li 16: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 1)
 \li 17: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 2)
@@ -95,7 +95,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mctopo3d.h>
 #include <lskelpar3d_others.h>
 
-#define VERBOSE
+//#define VERBOSE
 //#define DEBUG
 //#define DEBUG_lmasonka1996
 //#define DEBUG_lmawanleecurv4subfields2002

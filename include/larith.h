@@ -51,6 +51,11 @@ extern int32_t laddconst(
         int32_t constante
 );
 
+extern int32_t laddconst2(
+        struct xvimage *image1,
+        double constante
+);
+
 extern index_t larea(
   struct xvimage * image
 );

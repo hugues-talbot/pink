@@ -60,8 +60,8 @@ The possible choices are:
 \li 10: Ma-Wan (curvilinear (18/6) 6 subiterations, CVIU 2000)
 \li 11: Lohou-Bertrand (curvilinear 6 subiterations, DAM 2005)
 \li 12: Lohou-Bertrand (curvilinear 12 subiterations, DAM 2004)
-\li 13: ACK3a
-\li 14: CKSC
+\li 13: ACK3a - see lskelpar3d.c
+\li 14: CKSC - see lskeletons.c
 \li 15: Ma-Wan-Lee (curvilinear, 4 subfields, 2002)
 \li 16: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 1)
 \li 17: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 2)

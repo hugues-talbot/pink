@@ -298,6 +298,14 @@ extern int32_t voisin125(index_t i, int32_t k, index_t rs, index_t ps, index_t N
   return 0;                                                             \
   }
   
+#  define                                                               \
+  COMPARE_TYPE(I0, I1)                                                  \
+  if (datatype(I0)!=datatype(I1))                                       \
+  {                                                                     \
+  fprintf(stderr, "%s: incompatible image types\n", F_NAME);            \
+  return 0;                                                             \
+  }
+  
 #  define                                                       \
   ONLY_2D(I)                                                    \
   if (depth(I)!=1)                                              \
