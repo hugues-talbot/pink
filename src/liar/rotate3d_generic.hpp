@@ -91,6 +91,7 @@ int xrotp90_3d (Type *bufin,	    /* Input buffer  */
  * \author John Lin
  * \date 03 Dec 1998
 */
+
 template <typename Type>
 static int xrotm90_3d
   (Type *bufin,	    /* Input buffer  */
