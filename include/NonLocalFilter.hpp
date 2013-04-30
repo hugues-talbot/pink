@@ -1,11 +1,12 @@
-#include "../include/NonLocalFilter.h"
+#include "NonLocalFilter.h"
 
 #include <math.h>
 #include <iostream>
 #include <vector>
 #include <stdlib.h>
 
-NonLocalFilter :: NonLocalFilter(PixelType *_image, int _patch_size, int _search_size, double _alpha, int _dimx, int _dimy, int _dimz):
+template <typename PixelType>
+NonLocalFilter<PixelType> :: NonLocalFilter(PixelType *_image, int _patch_size, int _search_size, double _alpha, int _dimx, int _dimy, int _dimz):
     m_image(_image),
     m_patch_size(_patch_size),
     m_search_size(_search_size),
@@ -14,20 +15,23 @@ NonLocalFilter :: NonLocalFilter(PixelType *_image, int _patch_size, int _search
     m_dimy(_dimy),
     m_dimz(_dimz){}
 
-inline int NonLocalFilter :: index2D(int x, int y)
+template <typename PixelType>
+inline int NonLocalFilter<PixelType> :: index2D(int x, int y)
 {
     return (x+m_dimx*y);
 }
 
-inline int NonLocalFilter :: index3D(int x, int y , int z)
+template <typename PixelType>
+inline int NonLocalFilter<PixelType> :: index3D(int x, int y , int z)
 {
      return (x+m_dimx*y+m_dimx*m_dimy*z);
 }
 
-void NonLocalFilter :: Execute3D()
+template <typename PixelType>
+void NonLocalFilter<PixelType> :: Execute3D()
 {
 
-     int const image_size=m_dimx*m_dimy*m_dimz;
+    int const image_size=m_dimx*m_dimy*m_dimz;
     int const r_patch=floor(m_patch_size/2);
     int const r_search=floor(m_search_size/2);
 
@@ -44,6 +48,7 @@ void NonLocalFilter :: Execute3D()
     //copy of the input data
 	std::memcpy(&outputI[0], &m_image[0],image_size*sizeof(PixelType));
 
+   #pragma omp parallel for private(x,y,z,Z,Y,X,dx,dy,dz,W,Wt,V,w,v)
     for (z=0; z<m_dimz; z++)
     {
         for (y=0; y<m_dimy; y++)
@@ -109,7 +114,8 @@ void NonLocalFilter :: Execute3D()
         std::memcpy(&m_image[0], &outputI[0],image_size*sizeof(PixelType));
 }
 
-void NonLocalFilter :: Execute2D()
+template <typename PixelType>
+void NonLocalFilter<PixelType> :: Execute2D()
 {
 
     int const image_size=m_dimx*m_dimy;
@@ -129,6 +135,7 @@ void NonLocalFilter :: Execute2D()
     //copy of the input data
 	std::memcpy(&outputI[0], &m_image[0],image_size*sizeof(PixelType));
 
+  		#pragma omp parallel for private(x,y,Y,X,dx,dy,W,Wt,V,w,v)
         for (y=0; y<m_dimy; y++)
         {
             for (x=0; x<m_dimx; x++)
@@ -185,8 +192,8 @@ void NonLocalFilter :: Execute2D()
         std::memcpy(&m_image[0], &outputI[0],image_size*sizeof(PixelType));
 }
 
-
-PixelType* NonLocalFilter :: GetResult()
+template <typename PixelType>
+PixelType* NonLocalFilter<PixelType> :: GetResult()
 {
 	return m_image;
 }

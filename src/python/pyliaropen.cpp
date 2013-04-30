@@ -9,12 +9,24 @@
   Université Paris-Est, Laboratoire d'Informatique Gaspard-Monge, Equipe A3SI, ESIEE Paris, 93162, Noisy le Grand CEDEX
   ujoimro@gmail.com
 */
+
+#include <cassert>
+
 #include "liar_fseries.h"
 #include "pink_python.h"
 #include "RPO.hpp"
+
 #include "BilateralFilter.h"
+#include "BilateralFilter.hpp"
+
 #include "NonLocalFilter.h"
+#include "NonLocalFilter.hpp"
+
 #include "NonLocalFilterSioux.h"
+
+#include "rotate3d.h"
+#include "rotate3d_generic.h"
+
 
 using namespace boost::python;
 using namespace pink;
@@ -176,7 +188,7 @@ namespace pink {
                 PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
                 
                 // create the RPO object
-                BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny,1);
+                BilateralFilter<PixelType> BF1(input_buffer, window_size, alpha, beta, nx, ny,1);
                 
                 // Execute
                 BF1.Execute2D();
@@ -188,7 +200,7 @@ namespace pink {
                 PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
                 
                 // create the RPO object
-                BilateralFilter BF1(input_buffer, window_size, alpha, beta, nx, ny,nz);
+                BilateralFilter<PixelType> BF1(input_buffer, window_size, alpha, beta, nx, ny,nz);
                 
                 // Execute
                 BF1.Execute3D();
@@ -233,7 +245,7 @@ namespace pink {
                 PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
                 
                 //create the BilateralFilter object
-                NonLocalFilter NL1(input_buffer, patch_size, search_size, alpha, nx, ny,1);
+                NonLocalFilter<PixelType> NL1(input_buffer, patch_size, search_size, alpha, nx, ny,1);
                 
                 // Execute
                 NL1.Execute2D();
@@ -242,7 +254,7 @@ namespace pink {
                 PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
                 
                 // create the RPO object
-                NonLocalFilter NL1(input_buffer, patch_size, search_size, alpha, nx, ny,nz);
+                NonLocalFilter<PixelType> NL1(input_buffer, patch_size, search_size, alpha, nx, ny,nz);
                 
                 // Execute
                 NL1.Execute3D();
@@ -310,6 +322,87 @@ namespace pink {
 	return (result_image);
 
     } /* liarNonLocalFilterSioux */
+
+
+    template   <class image_t>
+    image_t liarRotation3D
+    (
+      const image_t & input_image,
+      const double alpha,
+      const double beta,
+      const double gamma,
+      const int interpolate,
+      const int value,
+      const int rmbdr           
+    )
+    
+    {
+        int errorcode = 0;
+        image_t output_image;
+        
+        // definition of local templated pixel_type
+        typedef typename image_t::pixel_type pixel_type;
+
+        // The low-level function seems to always succeed
+	//
+
+	// image structure
+	struct xvimage *outputxvimage = input_image.get_output();
+
+	// dimensions
+	    int nx = outputxvimage->row_size;
+        int ny = outputxvimage->col_size;
+        int nz = outputxvimage->depth_size;
+		int image_size = nx*ny*nz;
+
+        int fnx;
+        int fny;
+        int fnz;
+        int row0=round(nx/2);
+        int col0=round(ny/2);
+        int slice0=round(nz/2);
+
+
+        if ((outputxvimage->data_storage_type == VFF_TYP_1_BYTE) ||
+            (outputxvimage->data_storage_type == VFF_TYP_4_BYTE))   {
+            // buffers
+            PixelType *input_buffer = (pixel_type*) (outputxvimage->image_data);
+            PixelType *output_buffer = NULL;
+            
+            int res=lrotate3d<pixel_type>
+			  (input_buffer, &output_buffer, nx, ny, nz, &fnx, &fny, &fnz,			
+			   alpha, beta, gamma, interpolate, value, 
+			   1, // we force border removal
+			   row0, col0, slice0);   
+			//std::assert(output_buffer != NULL);
+			
+			
+			boost::python::list dimlist;
+			dimlist.append(fnx);
+			dimlist.append(fny);
+			dimlist.append(fnz);
+			
+			pink::types::vint dim(dimlist);
+			
+			boost::shared_array<pixel_type> data(new pixel_type[dim.prod()]);
+			
+			std::memcpy(&data[0], output_buffer,image_size*sizeof(pixel_type));
+			output_image = new image_t( dim, data );
+			     
+        } else {
+            pink_error("Pixel type not yet supported\n");
+        }
+
+
+	// get result
+	return (output_image);
+
+    } /* liarRotation3D */
+
+
+
+
+
 
   } /* namespace python */
 } /* namespace pink */
@@ -380,12 +473,16 @@ UI_EXPORT_FUNCTION(
   );
 
 
-
-
-
-
-
-
+//UI_EXPORT_FUNCTION(
+//  Rotation3D,
+//  pink::python::liarRotation3D,
+//  ( arg("input_image"), arg("alpha"), arg("beta"), arg("gamma"), arg("interpolate"), arg("value"), arg("rmbdr")),
+//  "\n Rotation of a 3D image \n"
+//  " alpha, beta, gamma : Euler angle in degrees \n"
+//  " interpolate : 0 means Nearest neighbor interpolation, 1 means linear interpolation \n"
+//  " value : value of the pixel added during the rotation (usually set to 0) \n"
+//  " rmbdr : mode for the border ? \n"
+//  );
 
 
 

@@ -15,6 +15,7 @@ class NonLocalFilterSioux
         inline int index3D(int _x, int _y, int _z);
         void Execute2D();
         void Execute3D();
+        PixelType* GetResult();
 
     private:
         PixelType *m_image;
