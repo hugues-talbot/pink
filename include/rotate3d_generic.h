@@ -132,7 +132,6 @@ template <typename Type>
 static int trimborder_3d
   (Type *in,	    /* Input buffer  */
    Type **out,   /* Output buffer */
-   int pixcode,	    /* code for input/output image */
    int dx,	    /* nb of border cols */
    int dy,	    /* nb of border rows */
    int dz,	    /* nb of border slices */

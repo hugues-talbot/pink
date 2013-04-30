@@ -217,7 +217,7 @@ int neworig2d(int oldx,  /* old origin, from top-left corner */
 }
 
 
-#define Type int
+#define Type char
 
  template 
 int lrotate3d(Type *bufin,		/* input buffer  */
@@ -239,7 +239,26 @@ int lrotate3d(Type *bufin,		/* input buffer  */
    int slice0);               /* col center of rot */ 
 
 
+#define Type int
 
+ template 
+int lrotate3d(Type *bufin,		/* input buffer  */
+   Type **bufout,	/* output buffer */
+   int inx,			/* nb of cols in the input */
+   int iny,			/* nb of rows in the input */
+   int inz,			/* nb of slices in the input */
+   int *fnx,			/* nb of cols in the output */
+   int *fny,			/* nb of rows in the output */
+   int *fnz,			/* nb of slices in the output */
+   double alpha,		/* Euler angle 1, in degrees */
+   double beta,		/* Euler angle 2, in degrees */
+   double gamma,		/* Euler angle 3, in degrees */
+   int interpolate,		/* interpolate rotated image */
+   int value,		/* fill the image with this value */
+   int rmbdr,		/* remove zero border around image */
+   int row0,                 /* row center of rot */
+   int col0,                 /* col center of rot */
+   int slice0);               /* col center of rot */ 
 
 
 

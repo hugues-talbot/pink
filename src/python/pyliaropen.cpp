@@ -10,6 +10,8 @@
   ujoimro@gmail.com
 */
 
+#include <cassert>
+
 #include "liar_fseries.h"
 #include "pink_python.h"
 #include "RPO.hpp"
@@ -348,25 +350,45 @@ namespace pink {
 	    int nx = outputxvimage->row_size;
         int ny = outputxvimage->col_size;
         int nz = outputxvimage->depth_size;
+		int image_size = nx*ny*nz;
+
+        int fnx;
+        int fny;
+        int fnz;
+        int row0=round(nx/2);
+        int col0=round(ny/2);
+        int slice0=round(nz/2);
 
 
-        if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
+        if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE){
+            #undef PixelType
+            #define PixelType char
+            // buffers
+            PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
+            PixelType *output_buffer = NULL;
             
+            int res=lrotate3d<PixelType>
+			  (input_buffer, &output_buffer, nx, ny, nz, &fnx, &fny, &fnz,			
+			   alpha, beta, gamma, interpolate, value, 
+			   1, // we force border removal
+			   row0, col0, slice0);   
+			//std::assert(output_buffer != NULL);
+			std::memcpy(input_buffer, output_buffer,image_size*sizeof(PixelType));
+			     
+        } 
+        
+        else if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
+            #undef PixelType
+            #define PixelType int
             // buffers
             PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
             PixelType **output_buffer = (PixelType**) (outputxvimage->image_data);
             
-            int *fnx;
-            int *fny;
-            int *fnz;
-            int row0=round(nx/2);
-            int col0=round(ny/2);
-            int slice0=round(nz/2);
-            
             int res=lrotate3d<PixelType>
-			  (input_buffer, output_buffer, nx, ny, nz, fnx, fny, fnz,			
+			  (input_buffer, output_buffer, nx, ny, nz, &fnx, &fny, &fnz,			
 			   alpha, beta, gamma, interpolate, value, rmbdr, row0, col0, slice0);     
         } 
+        
             
         else {
             pink_error("Pixel type not yet supported\n");

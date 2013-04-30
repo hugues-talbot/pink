@@ -624,7 +624,6 @@ template <typename Type>
 static int trimborder_3d
   (Type *in,	    /* Input buffer  */
    Type **out,   /* Output buffer */
-   int pixcode,	    /* code for input/output image */
    int dx,	    /* nb of border cols */
    int dy,	    /* nb of border rows */
    int dz,	    /* nb of border slices */
@@ -820,7 +819,7 @@ static int pullrotated_3d
     LIARdebug("BoundingBox: Left:%3.1f, Top:%3.1f, Front:%3.1f", leftx, topy, frontz);
     LIARdebug("Xborder: %d, Yborder:%d, Zborder:%d", borderx, bordery, borderz);
 
-    res = trimborder_3d(in, out, PIX_CODE, borderx, bordery, borderz,\
+    res = trimborder_3d(in, out, borderx, bordery, borderz,\
 			inx, iny, inz, outx, outy, outz);
     if (res == 0)
 	LIARdebug("Final image is %d x %d x %d", *outx, *outy, *outz);
