@@ -338,13 +338,16 @@ namespace pink {
     
     {
         int errorcode = 0;
-        image_t result_image = input_image.clone();
+        image_t output_image;
+        
+        // definition of local templated pixel_type
+        typedef typename image_t::pixel_type pixel_type;
 
         // The low-level function seems to always succeed
 	//
 
 	// image structure
-	struct xvimage *outputxvimage = result_image.get_output();
+	struct xvimage *outputxvimage = input_image.get_output();
 
 	// dimensions
 	    int nx = outputxvimage->row_size;
@@ -373,7 +376,19 @@ namespace pink {
 			   1, // we force border removal
 			   row0, col0, slice0);   
 			//std::assert(output_buffer != NULL);
-			std::memcpy(input_buffer, output_buffer,image_size*sizeof(PixelType));
+			
+			
+			boost::python::list dimlist;
+			dimlist.append(fnx);
+			dimlist.append(fny);
+			dimlist.append(fnz);
+			
+			pink::types::vint dim(dimlist);
+			
+			boost::shared_array<pixel_type> data(new pixel_type[dim.prod()]);
+			
+			std::memcpy(&data[0], output_buffer,image_size*sizeof(PixelType));
+			//output_image = new image_t( dim, data );
 			     
         } 
         
@@ -394,8 +409,9 @@ namespace pink {
             pink_error("Pixel type not yet supported\n");
         }
 
+
 	// get result
-	return (result_image);
+	return (output_image);
 
     } /* liarRotation3D */
 
@@ -490,17 +506,16 @@ UI_EXPORT_FUNCTION(
   );
 
 
-UI_EXPORT_FUNCTION(
-  Rotation3D,
-  pink::python::liarRotation3D,
-  ( arg("input_image"), arg("alpha"), arg("beta"), arg("gamma"), arg("interpolate"), arg("value"), arg("rmbdr")),
-  "\n Rotation of a 3D image \n"
-  " alpha, beta, gamma : Euler angle in degrees \n"
-  " interpolate : 0 means Nearest neighbor interpolation, 1 means linear interpolation \n"
-  " value : value of the pixel added during the rotation (usually set to 0) \n"
-  " rmbdr : mode for the border ? \n"
-
-  );
+//UI_EXPORT_FUNCTION(
+//  Rotation3D,
+//  pink::python::liarRotation3D,
+//  ( arg("input_image"), arg("alpha"), arg("beta"), arg("gamma"), arg("interpolate"), arg("value"), arg("rmbdr")),
+//  "\n Rotation of a 3D image \n"
+//  " alpha, beta, gamma : Euler angle in degrees \n"
+//  " interpolate : 0 means Nearest neighbor interpolation, 1 means linear interpolation \n"
+//  " value : value of the pixel added during the rotation (usually set to 0) \n"
+//  " rmbdr : mode for the border ? \n"
+//  );
 
 
 
