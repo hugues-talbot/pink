@@ -363,14 +363,13 @@ namespace pink {
         int slice0=round(nz/2);
 
 
-        if (outputxvimage->data_storage_type == VFF_TYP_1_BYTE){
-            #undef PixelType
-            #define PixelType char
+        if ((outputxvimage->data_storage_type == VFF_TYP_1_BYTE) ||
+            (outputxvimage->data_storage_type == VFF_TYP_4_BYTE))   {
             // buffers
-            PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
+            PixelType *input_buffer = (pixel_type*) (outputxvimage->image_data);
             PixelType *output_buffer = NULL;
             
-            int res=lrotate3d<PixelType>
+            int res=lrotate3d<pixel_type>
 			  (input_buffer, &output_buffer, nx, ny, nz, &fnx, &fny, &fnz,			
 			   alpha, beta, gamma, interpolate, value, 
 			   1, // we force border removal
@@ -387,25 +386,10 @@ namespace pink {
 			
 			boost::shared_array<pixel_type> data(new pixel_type[dim.prod()]);
 			
-			std::memcpy(&data[0], output_buffer,image_size*sizeof(PixelType));
-			//output_image = new image_t( dim, data );
+			std::memcpy(&data[0], output_buffer,image_size*sizeof(pixel_type));
+			output_image = new image_t( dim, data );
 			     
-        } 
-        
-        else if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE){
-            #undef PixelType
-            #define PixelType int
-            // buffers
-            PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
-            PixelType **output_buffer = (PixelType**) (outputxvimage->image_data);
-            
-            int res=lrotate3d<PixelType>
-			  (input_buffer, output_buffer, nx, ny, nz, &fnx, &fny, &fnz,			
-			   alpha, beta, gamma, interpolate, value, rmbdr, row0, col0, slice0);     
-        } 
-        
-            
-        else {
+        } else {
             pink_error("Pixel type not yet supported\n");
         }
 
@@ -414,23 +398,6 @@ namespace pink {
 	return (output_image);
 
     } /* liarRotation3D */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
