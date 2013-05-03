@@ -28,6 +28,7 @@
 
 #include <stdlib.h>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -1628,6 +1629,8 @@ int lrotate3d
     beta = get_angle(beta);
     gamma = get_angle(gamma);
 
+    LIARdebug("Modified rotation angles: %.3f %.3f, %.3f", alpha, beta, gamma);
+    
     realinx = inx;
     realiny = iny;
     realinz = inz;
@@ -1695,6 +1698,9 @@ int lrotate3d
 	a = myround(-tan((radian1+radian3)/2));
 	b = myround(cos((radian1-radian3)/2) / cos((radian1+radian3)/2) * tan(radian2/2));
 	c = myround(-sin(radian3) * tan(radian2/2));
+
+        LIARdebug("Shear factors: %.3f %.3f, %.3f", a, b, c);
+        
 	if (interpolate == 1)
 	    res = shear1_itp(bufin, bufout, nx, ny, nz, &onx, &ony, &onz, \
 			     a, b, c, value);
@@ -1757,8 +1763,12 @@ int lrotate3d
 			*bufout = tmpbuf;
 		    }
 		}
-	    }
-	}
+	    } else {
+                LIARdebug("Shear 2 failed\n");
+            }
+	} else {
+            LIARdebug("Shear 1 failed\n");
+        }
     }
 
     /* if we used an extra buffer */

@@ -22,7 +22,7 @@
 #define top(x)	  ((x) == 0.0 ? 0 : (int)floor((x))+1)
 #define bottom(x) ((int)floor((x)))
 #define LARGEDBL   10000000000.0
-#define myround(x) (rint(x))/* standard technique to avoid rounding errors, that doesnt work */
+#define myround(x) (x) /* use to be standard technique to avoid rounding errors, that doesnt work */
 
 #define SWAPINT(a,b) do {int c; c = (a); (a) = (b) ; (b) = c;  } while (0)
 

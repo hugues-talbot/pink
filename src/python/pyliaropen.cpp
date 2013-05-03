@@ -11,6 +11,7 @@
 */
 
 #include <cassert>
+#include <iostream>
 
 #include "liar_fseries.h"
 #include "pink_python.h"
@@ -327,7 +328,7 @@ namespace pink {
     template   <class image_t>
     image_t liarRotation3D
     (
-      image_t & input_image,
+      const image_t & input_image,
       const double alpha,
       const double beta,
       const double gamma,
@@ -338,6 +339,7 @@ namespace pink {
     
     {
         int errorcode = 0;
+        image_t copy = input_image.clone();
         image_t output_image;
         
         // definition of local templated pixel_type
@@ -347,7 +349,7 @@ namespace pink {
 	//
 
 	// image structure
-	struct xvimage *inputxvimage = input_image.get_output();
+	struct xvimage *inputxvimage = copy.get_output();
 
 	// dimensions
         int nx = inputxvimage->row_size;
@@ -370,26 +372,37 @@ namespace pink {
             pixel_type *output_buffer = NULL;
             
             int res=lrotate3d<pixel_type>
-			  (input_buffer, &output_buffer, nx, ny, nz, &fnx, &fny, &fnz,			
-			   alpha, beta, gamma, interpolate, value, 
-			   1, // we force border removal
-			   row0, col0, slice0);   
-			//std::assert(output_buffer != NULL);
-			
-			
-			boost::python::list dimlist;
-			dimlist.append(fnx);
-			dimlist.append(fny);
-			dimlist.append(fnz);
-			
-			pink::types::vint dim(dimlist);
-			
-			boost::shared_array<pixel_type> data(new pixel_type[dim.prod()]);
-			
-			std::memcpy(&data[0], output_buffer,image_size*sizeof(pixel_type));
-			image_t tmp_image( dim, data );
-                        output_image = tmp_image;
-			     
+                (input_buffer, &output_buffer, nx, ny, nz, &fnx, &fny, &fnz,			
+                 alpha, beta, gamma, interpolate, value, 
+                 1, // we force border removal
+                 row0, col0, slice0);   
+            //std::assert(output_buffer != NULL);
+            
+            
+            boost::python::list dimlist;
+            
+            dimlist.append(fnx);
+            dimlist.append(fny);
+            dimlist.append(fnz);
+
+            pink::types::vint dim(dimlist);
+
+            
+            long newimage_size = dim.prod();
+
+            std::cerr << "new dimx = " << fnx
+                      << ", new dimy = " << fny
+                      << ", new dimz = " << fnz
+                      << ", prod = " << newimage_size << std::endl;
+            
+ 
+            boost::shared_array<pixel_type> data(new pixel_type[newimage_size]);
+            
+            std::memcpy(&data[0], output_buffer,newimage_size*sizeof(pixel_type));
+            free(output_buffer); // not freeimage !
+            
+            image_t tmp_image( dim, data );
+            output_image = tmp_image;	     
         } else {
             pink_error("Pixel type not yet supported\n");
         }
