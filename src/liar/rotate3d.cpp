@@ -27,6 +27,7 @@
 #include <string.h>
 #include <math.h>
 #include "liarp.h"
+#include "mccodimage.h"
 #include "rotate3d.h"
 #include "rotate3d_generic.hpp"
 
@@ -216,51 +217,33 @@ int neworig2d(int oldx,  /* old origin, from top-left corner */
 
 }
 
+//
+// Explicit instanciations are necessary here
+//
+// Hugues Talbot	 3 May 2013
 
-#define Type char
-
- template 
-int lrotate3d(Type *bufin,		/* input buffer  */
-   Type **bufout,	/* output buffer */
-   int inx,			/* nb of cols in the input */
-   int iny,			/* nb of rows in the input */
-   int inz,			/* nb of slices in the input */
-   int *fnx,			/* nb of cols in the output */
-   int *fny,			/* nb of rows in the output */
-   int *fnz,			/* nb of slices in the output */
-   double alpha,		/* Euler angle 1, in degrees */
-   double beta,		/* Euler angle 2, in degrees */
-   double gamma,		/* Euler angle 3, in degrees */
-   int interpolate,		/* interpolate rotated image */
-   int value,		/* fill the image with this value */
-   int rmbdr,		/* remove zero border around image */
-   int row0,                 /* row center of rot */
-   int col0,                 /* col center of rot */
-   int slice0);               /* col center of rot */ 
-
-
+#define Type unsigned char
+template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0); 
+#undef Type
 #define Type int
+template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0); 
 
- template 
-int lrotate3d(Type *bufin,		/* input buffer  */
-   Type **bufout,	/* output buffer */
-   int inx,			/* nb of cols in the input */
-   int iny,			/* nb of rows in the input */
-   int inz,			/* nb of slices in the input */
-   int *fnx,			/* nb of cols in the output */
-   int *fny,			/* nb of rows in the output */
-   int *fnz,			/* nb of slices in the output */
-   double alpha,		/* Euler angle 1, in degrees */
-   double beta,		/* Euler angle 2, in degrees */
-   double gamma,		/* Euler angle 3, in degrees */
-   int interpolate,		/* interpolate rotated image */
-   int value,		/* fill the image with this value */
-   int rmbdr,		/* remove zero border around image */
-   int row0,                 /* row center of rot */
-   int col0,                 /* col center of rot */
-   int slice0);               /* col center of rot */ 
-
-
+#undef Type
+#define Type double
+template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0); 
+#undef Type
+#define Type unsigned short
+template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0); 
+#undef Type
+#define Type float
+template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0); 
+#undef Type
+#define Type fcomplex
+template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0);
+#undef Type
+#define Type dcomplex
+template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0);
+    
 
 
 

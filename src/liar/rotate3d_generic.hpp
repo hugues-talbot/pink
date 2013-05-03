@@ -1769,4 +1769,19 @@ int lrotate3d
 
 }
 
+
+template<>
+int lrotate3d(fcomplex *bufin, fcomplex **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0)
+{
+    //
+    return 0;
+}
+
+template<>
+int lrotate3d(dcomplex *bufin, dcomplex **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0)
+{
+    //
+    return 0;
+}
+
 #endif // ROTATE3D_HPP

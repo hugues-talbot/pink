@@ -214,7 +214,7 @@ namespace pink {
 
     } /* liarBilateralFilter */
 
-     template   <class image_t>
+    template   <class image_t>
     image_t liarNonLocalFilter
     (
       const image_t & input_image,
@@ -268,7 +268,7 @@ namespace pink {
 
     } /* liarNonLocalFilter */
 
-     template   <class image_t>
+    template   <class image_t>
     image_t liarNonLocalFilterSioux
     (
       const image_t & input_image,
@@ -327,7 +327,7 @@ namespace pink {
     template   <class image_t>
     image_t liarRotation3D
     (
-      const image_t & input_image,
+      image_t & input_image,
       const double alpha,
       const double beta,
       const double gamma,
@@ -347,13 +347,13 @@ namespace pink {
 	//
 
 	// image structure
-	struct xvimage *outputxvimage = input_image.get_output();
+	struct xvimage *inputxvimage = input_image.get_output();
 
 	// dimensions
-	    int nx = outputxvimage->row_size;
-        int ny = outputxvimage->col_size;
-        int nz = outputxvimage->depth_size;
-		int image_size = nx*ny*nz;
+        int nx = inputxvimage->row_size;
+        int ny = inputxvimage->col_size;
+        int nz = inputxvimage->depth_size;
+        int image_size = nx*ny*nz;
 
         int fnx;
         int fny;
@@ -363,11 +363,11 @@ namespace pink {
         int slice0=round(nz/2);
 
 
-        if ((outputxvimage->data_storage_type == VFF_TYP_1_BYTE) ||
-            (outputxvimage->data_storage_type == VFF_TYP_4_BYTE))   {
+        if ((inputxvimage->data_storage_type == VFF_TYP_1_BYTE) ||
+            (inputxvimage->data_storage_type == VFF_TYP_4_BYTE))   {
             // buffers
-            PixelType *input_buffer = (pixel_type*) (outputxvimage->image_data);
-            PixelType *output_buffer = NULL;
+            pixel_type *input_buffer = (pixel_type*) (inputxvimage->image_data);
+            pixel_type *output_buffer = NULL;
             
             int res=lrotate3d<pixel_type>
 			  (input_buffer, &output_buffer, nx, ny, nz, &fnx, &fny, &fnz,			
@@ -387,7 +387,8 @@ namespace pink {
 			boost::shared_array<pixel_type> data(new pixel_type[dim.prod()]);
 			
 			std::memcpy(&data[0], output_buffer,image_size*sizeof(pixel_type));
-			output_image = new image_t( dim, data );
+			image_t tmp_image( dim, data );
+                        output_image = tmp_image;
 			     
         } else {
             pink_error("Pixel type not yet supported\n");
@@ -473,16 +474,16 @@ UI_EXPORT_FUNCTION(
   );
 
 
-//UI_EXPORT_FUNCTION(
-//  Rotation3D,
-//  pink::python::liarRotation3D,
-//  ( arg("input_image"), arg("alpha"), arg("beta"), arg("gamma"), arg("interpolate"), arg("value"), arg("rmbdr")),
-//  "\n Rotation of a 3D image \n"
-//  " alpha, beta, gamma : Euler angle in degrees \n"
-//  " interpolate : 0 means Nearest neighbor interpolation, 1 means linear interpolation \n"
-//  " value : value of the pixel added during the rotation (usually set to 0) \n"
-//  " rmbdr : mode for the border ? \n"
-//  );
+UI_EXPORT_FUNCTION(
+    Rotation3D,
+    pink::python::liarRotation3D,
+  ( arg("input_image"), arg("alpha"), arg("beta"), arg("gamma"), arg("interpolate"), arg("value"), arg("rmbdr")),
+  "\n Rotation of a 3D image \n"
+  " alpha, beta, gamma : Euler angle in degrees \n"
+  " interpolate : 0 means Nearest neighbor interpolation, 1 means linear interpolation \n"
+  " value : value of the pixel added during the rotation (usually set to 0) \n"
+  " rmbdr : mode for the border ? \n"
+  );
 
 
 
