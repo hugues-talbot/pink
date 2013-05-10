@@ -132,6 +132,10 @@ Python class pink.image / c++ pink::ujoi
 	  "writes the image from the object into amira binary mesh file 'filename'"
       )
 
+   .def( "writeavizo", &image_type::_write_avizo,
+            boost::python::args("self","filename"),
+            "writes the iamge into an avizo 3D 2.0 lattice 'filaneme'"
+     )
 
     
     .def( "__repr__", &image_type::repr,

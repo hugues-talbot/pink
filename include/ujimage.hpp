@@ -564,7 +564,8 @@ namespace pink
     
     void _writeimage( const std::string & filename ) const; // exports the image into a pgm file
     void _write_amira( const std::string & filename ) const; // exports the image into an amira mesh (.am) file
-
+      void _write_avizo( const std::string & filenam) const; // exports the iamge in avizo format (not same as amira)
+      
 #   ifdef PINK_HAVE_PYTHON
     PyObject * get_pixels_python();
 #   endif /* PINK_HAVE_PYTHON */    
@@ -1435,6 +1436,94 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
     } /* NOT this->size.size()!=3 */
     std::cerr << "file '" << filename << "' exported in Amira format\n";
   } /* ujoi<pixel_type >::_write_amira */
+
+
+    // HT: 2013-05-10
+    // Amira mesh is no longer recognized as voxel data by Avizo 7.x
+
+    template <class pixel_type >
+  void ujoi<pixel_type >::_write_avizo( const std::string & filename ) const // exports the image into an amira mesh (.am) file
+  {   
+    std::string typetext;
+  
+    switch (this->int_pixel_type())  { 
+      
+    case VFF_TYP_1_BYTE:
+      typetext.assign("byte");
+      break;
+
+    case VFF_TYP_4_BYTE:
+      typetext.assign("int");
+      break;
+      
+    case VFF_TYP_FLOAT:
+      typetext.assign("float");
+      break;
+      
+    default:
+      std::cerr << "\nfile: " << filename; 
+      pink_error("you can export only 'char', 'int'(32bit) and 'float' images at this point");	
+    } /* switch */
+        
+    if (this->size->size()!=3)
+    {
+      std::cerr << "file: " << filename; 
+      pink_error("you can export only 3D images at this point");
+    } 
+    else /* NOT this->size.size()!=3 */
+    {
+        std::time_t time_creation = std::time(NULL);
+  
+      std::fstream s;
+      s.open ( filename.c_str(), std::fstream::out );
+      s << "# Avizo 3D BINARY-LITTLE-ENDIAN 2.0 \n\n\n"
+        << "# CreationDate: " << std::ctime(&time_creation) << "\n\n"
+	<< "define Lattice " << " " << (*this->size)[0] << " " << (*this->size)[1] << " " << (*this->size)[2] << "\n\n"
+	<< "Parameters {\n"
+	<< "\tContent \"" << (*this->size)[0] << "x" << (*this->size)[1] << "x" << (*this->size)[2] << " " << typetext << ", uniform coordinates\",\n"
+        << "\tBoundingBox 0 " << (*this->size)[0]-1 << " 0 " << (*this->size)[1]-1 << " 0 " << (*this->size)[2]-1 << ",\n"
+	<< "\tCoordType \"uniform\"\n"
+	<< "}\n\n"
+	<< "Lattice { " << typetext << " Data } @1\n\n"
+	<< "# Data section follows\n"
+	<< "@1\n";
+      
+      
+      // From avizo 6.0 manual:
+      // ... the specified number of bytes is read in binary format. 
+      // It is assumed that sizeof(short) is 2, sizeof(int) is 4, 
+      // sizeof(float) is 4, sizeof(double) is 8, and sizeof(complex) is 8. 
+      // Multidimensional arrays indexed via [k][j][i] are read with i running fastest. 
+      
+      
+      types::vint curr(3);
+      
+      FOR(q, (*size)[2]) {
+	FOR(w, (*size)[1]) { 
+	  FOR(e, (*size)[0]) {
+	    
+	    curr[0]=e;
+	    curr[1]=w;
+	    curr[2]=q;
+	 	    
+	    s.write( 
+	      reinterpret_cast<char*>(&pixels[ 
+					size->position(curr)
+					] 
+		),
+	      sizeof(pixel_type)
+	      );
+	    
+	  }; /* FOR(i, size[2]) */
+	}; /* FOR(j, size[1]) */
+      }; /* FOR(k, size[0]) */
+      
+      
+      s << "\n";
+      s.close();
+    } /* NOT this->size.size()!=3 */
+    std::cerr << "file '" << filename << "' exported in Avizo format\n";
+  } /* ujoi<pixel_type >::_write_avizo */
 
 
 
