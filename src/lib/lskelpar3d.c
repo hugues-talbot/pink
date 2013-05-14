@@ -471,11 +471,7 @@ Si le test réussit, alors les points 8, 26 sont marqués DCRUCIAL, de plus:
   SET_DCRUCIAL(v[8]);
   SET_DCRUCIAL(v[26]);
   if (t4b(t) == 0) { SET_SURF(v[8]); SET_SURF(v[26]); }
-  else if (t8(t) > 1) 
-  { 
-    SET_CURVE(v[8]); 
-    SET_CURVE(v[26]); 
-  }
+  else if (t8(t) > 1) { SET_CURVE(v[8]); SET_CURVE(v[26]); }
 #ifdef DEBUG
   if (trace)
     printf("match !\n");
@@ -3380,7 +3376,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       }
     }
 
-    // DEMARQUE PTS, STOCKE ET REND "NON-SIMPLES" LES CANDIDATS
+    // DEMARQUE PTS, STOCKE ET REND "NON-SIMPLES" LES POINTS D'ANCRAGE
     for (i = 0; i < N; i++)
     { 
       UNSET_DCRUCIAL(S[i]);
