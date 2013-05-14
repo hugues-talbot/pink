@@ -125,6 +125,7 @@ knowledge of the CeCILL license and that you accept its terms.
 int32_t trace = 1;
 #endif
 
+#define NEW_ISTHMUS
 #define RESIDUEL6
 #define DIRTOURNE
 //#define USE_NKP_END
@@ -471,7 +472,11 @@ Si le test réussit, alors les points 8, 26 sont marqués DCRUCIAL, de plus:
   SET_DCRUCIAL(v[8]);
   SET_DCRUCIAL(v[26]);
   if (t4b(t) == 0) { SET_SURF(v[8]); SET_SURF(v[26]); }
+#ifdef NEW_ISTHMUS
+  else if (t8(t) == 2) { SET_CURVE(v[8]); SET_CURVE(v[26]); }
+#else
   else if (t8(t) > 1) { SET_CURVE(v[8]); SET_CURVE(v[26]); }
+#endif
 #ifdef DEBUG
   if (trace)
     printf("match !\n");
@@ -1070,7 +1075,11 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
       {    
 	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+#ifdef NEW_ISTHMUS
+	if ((top == 2) && (topb == 1)) SET_CURVE(S[i]);
+#else
 	if (top > 1) SET_CURVE(S[i]);
+#endif
       }
     }
     // DEMARQUE PTS DE COURBE ET LES MEMORISE DANS I
