@@ -25,6 +25,9 @@
 
 #include "NonLocalFilterSioux.h"
 
+#include "liarp.h"
+
+
 #include "rotate3d.h"
 #include "rotate3d_generic.h"
 
@@ -239,22 +242,22 @@ namespace pink {
         int nz = outputxvimage->depth_size;
 
 
-	// 2 Dimensions
-        if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE) {
-            if (nz==1) {
-                //buffers
+	
+        if ((outputxvimage->data_storage_type == VFF_TYP_1_BYTE) ||
+            (outputxvimage->data_storage_type == VFF_TYP_4_BYTE)) {
+            if (nz==1) { // 2D image
                 PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
                 
-                //create the BilateralFilter object
+                //create the NonLocalFilter object
                 NonLocalFilter<PixelType> NL1(input_buffer, patch_size, search_size, alpha, nx, ny,1);
                 
                 // Execute
                 NL1.Execute2D();
-            } else {
-                // buffers
+                
+            } else { // 3D image
                 PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
                 
-                // create the RPO object
+                // create the NonLocalFilter object
                 NonLocalFilter<PixelType> NL1(input_buffer, patch_size, search_size, alpha, nx, ny,nz);
                 
                 // Execute
@@ -412,7 +415,92 @@ namespace pink {
 	return (output_image);
 
     } /* liarRotation3D */
+    
+    
+    
 
+    /*template   <class image_t>
+    image_t liarRPO_parallel
+    (
+      const image_t & input_image,
+      const int L,
+      const int K,
+      const int R
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+        // The low-level function seems to always succeed
+	//
+
+	// image structure
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+    int ny = outputxvimage->col_size;
+    int nz = outputxvimage->depth_size;
+
+    // buffers
+   	    PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
+   	    PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
+
+    // create the RPO_parallel object
+        RPO_parallel RPOP(input_buffer, output_buffer,L,K,R,nx,ny,nz)
+
+    // Execute
+    RPOP.Execute();
+    
+
+	// get result
+	return (result_image);
+
+    } /* liarRPO_parallel */
+
+
+
+
+    template   <class image_t>
+    image_t liaropenline3d
+    (
+      const image_t & input_image,
+      const int k,
+      const int dx,
+      const int dy,
+      const int dz
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+		// definition of local templated pixel_type
+        // typedef typename image_t::pixel_type pixel_type;
+
+        // The low-level function seems to always succeed
+	//
+
+	// image structure
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	//	int nx = outputxvimage->row_size;
+    //    int ny = outputxvimage->col_size;
+    //    int nz = outputxvimage->depth_size;
+
+
+    // buffers
+   	//   char *input_buffer = (char *) (outputxvimage->image_data);
+
+    // Call the Cpp-function
+    
+    	imfopen3D_line(outputxvimage, dx, dy, dz, k, outputxvimage); 
+     	 ///glineminmax3d(input_buffer,nx,ny,nz,k,dx,dy,dz,operation,lineop);
+
+	// get result
+	return (result_image);
+
+    } /* liarglineminmax3d */
 
 
 
@@ -499,9 +587,23 @@ UI_EXPORT_FUNCTION(
   );
 
 
+UI_EXPORT_FUNCTION(
+    fopenline3d,
+    pink::python::liaropenline3d,
+  ( arg("input_image"), arg("dx"), arg("dy"), arg("dz"), arg("k")),
+	"\n This function performs erosion or dilation along a line parallel to a given direction vector (dx,dy,dz). \n"
+	"Whether an erosion or a dilation is performed, specified by the operation argument, this being either genfmin (set operation to 1) for erosion or genfmax (set operation to 0) for dilation.\n"
+	"The lineop argument is then used to specify whether this operation uses a periodic  (set lineop to 0) or a bresenham line (set lineop to 1) by passing either periodic3d or bresenham3d.\n"
+	"As with the two dimensional case, cascading this function can be used to generate other erosions and dilations.\n"
 
-
-
+ 	"param input_image: input image \n"
+	"param k: length of structuring element \n"
+	"param dx: x dimension of SE direction vector \n"
+	"param dy: y dimension of SE direction vector \n"
+	"param dz: z dimension of SE direction vector \n"
+	"param operation : min (set to 1) or max (set to 0) operation \n"
+	"param lineop : line operation to use bresenham3d (set to 1) or periodic3d (set to 0) \n"
+	);
 
 
 

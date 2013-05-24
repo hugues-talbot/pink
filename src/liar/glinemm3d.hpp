@@ -47,6 +47,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "liarp.h"
 
 
+
 /**
  * \brief 3d implementation of glineminmax function
 
@@ -79,6 +80,9 @@ knowledge of the CeCILL license and that you accept its terms.
  * <br> 7 Jan 1998: Modified by Ian Sowden to incorporate periodic lines
  * \date 5 Jan 1998
 */
+
+
+
 template <typename Type>
 int glineminmax3d(Type *f, int nx, int ny, int nz, int k,
 		   int dx, int dy, int dz,
