@@ -465,10 +465,10 @@ namespace pink {
     image_t liaropenline3d
     (
       const image_t & input_image,
-      const int k,
       const int dx,
       const int dy,
-      const int dz
+      const int dz,
+      const int k
     )
     {
         int errorcode = 0;
