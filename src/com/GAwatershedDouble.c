@@ -1,6 +1,40 @@
-/* \file GAwatershed.c
+/*
+Copyright ESIEE (2009) 
 
-\brief 
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
+/*! \file GAwatershedDouble.c
+
+\brief Compute the watershed of a 4-connected edge-weighted graph (a GA) where the weights are doubles.
 
 <B>Usage:</B> 
 
@@ -60,6 +94,7 @@ connect
 #include <llpeGA.h>
 #include <lppm2GA.h>
 //#include <jclabelextrema.h>
+#include <mcutil.h>
 
 #ifdef TIME_WATERSHED_TEST
 #include <time.h>
@@ -67,7 +102,7 @@ connect
 
 
 /* =============================================================== */
-int32_t main(argc, argv) 
+int main(argc, argv) 
 /* =============================================================== */
   int32_t argc; char **argv; 
 {
@@ -78,13 +113,13 @@ int32_t main(argc, argv)
   struct xvimage *watershed;
   double *F;
   double TA, TB,r,rprime;
-  int32_t type,i,j,k,y;
+  int32_t i,j,k,y;
 #ifdef TIME_WATERSHED_TEST
   clock_t t1,t2;
 #endif
   int32_t rs;               /* taille ligne */
   int32_t cs;               /* taille colonne */
-  uint32_t *FlowMapping; 
+  int32_t *FlowMapping; 
   double max = 0;
   double *G;
   if (argc != 5 )
@@ -109,60 +144,6 @@ int32_t main(argc, argv)
   }
   fclose(fd);
   F = DOUBLEDATA(image);
-#define TITI 1
-#define CONSTANTE1 (double)100000000000000000.0
-#define CONSTANTE (double)0.001
-#ifdef TITI
-  for(j = 0; j < cs; j++)
-    for(i = 0; i < rs; i++){
-      r = ((i - 115) * (i - 115)) + ((j - 90) * (j - 90)); 
-      rprime = ((i - 115) * (i - 115)) + ((j + 92) * (j + 92)); 
-      if((rprime - r) <= 0) printf("A: (i,j) = (%d,%d)",i,j);
-      TA = CONSTANTE1 * (double)(CONSTANTE * (rprime + r)) / ((CONSTANTE * (double)(rprime - r)));
-    
-      r = ( (i - 60) * (i - 60)) + ((j - 150) * (j - 150)); 
-      rprime = ((i - 60) * (i - 60))+ ((j + 152) * (j + 152)); 
-      if((rprime - r) <= 0) printf("B: (i,j) = (%d,%d)",i,j);
-      TB = CONSTANTE1 * (double)(CONSTANTE * (rprime + r)) / ((CONSTANTE * (double)(rprime - r)));
-      F[j*rs +i] = min(TA,TB); 
-      if( F[j*rs +i] > max) max =  F[j*rs +i];
-      //      printf("val %lf \t", F[j*rs +i]);
-    }
-
-  //Dilatation de la fonction
-  G = (double *)malloc(sizeof(double)*rs*cs);
-  for(j = 0; j < cs; j++)
-    for(i = 0; i < rs; i++){
-      G[j*rs +i] = 0.0;
-      for(k = 0; k < 8; k+=2){
-	y = voisin(j*rs +i, k, rs, rs*cs);
-	if ((y != -1) && ( F[y] >  G[j*rs +i]) ) {G[j*rs +i] = F[y]; printf("toto");}
-      }
-      //      printf("val %lf \t", F[j*rs +i]);
-    }
-  for(j = 0; j < cs; j++)
-    for(i = 0; i < rs; i++) F[j*rs + i] = G[j*rs +i];
-  free(G);
-
-  i = 240; j =151;
-  printf("(%d,%d) = %lf\n",i,j,F[j*rs +i]);
-  i = 239; j =152;
-  printf("(%d,%d) = %lf\n",i,j,F[j*rs +i]);
-  i = 240; j =152;
-  printf("(%d,%d) = %lf\n",i,j,F[j*rs +i]);
-  i = 241; j =152;
-  printf("(%d,%d) = %lf\n",i,j,F[j*rs +i]);
-  i = 239; j =153;
-  printf("(%d,%d) = %lf\n",i,j,F[j*rs +i]);
-  i = 240; j =153;
-  printf("(%d,%d) = %lf\n",i,j,F[j*rs +i]);
-  i = 241; j =153;
-  printf("(%d,%d) = %lf\n",i,j,F[j*rs +i]);
-  i = 240; j =154;
-  printf("(%d,%d) = %lf\n",i,j,F[j*rs +i]);
-
-  printf("max %lf",max);
-#endif
   ga = allocGAimage(NULL, rs, cs, 1, VFF_TYP_GADOUBLE);
   if( lpgm2gaDouble(image,ga, 1, 18) != 1 )
   {
@@ -174,7 +155,7 @@ int32_t main(argc, argv)
     exit(0);
   }
 
-  FlowMapping = ULONGDATA(watershed);
+  FlowMapping = SLONGDATA(watershed);
   flowMappingDouble(ga, FlowMapping); 
   printf("Je suis dans le bon type\n");
   fflush(stdout);

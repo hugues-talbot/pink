@@ -1,3 +1,37 @@
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
    Manipulation de graphes binaires à aretes valués ou "graphe
    d'adjacence" (arete value + attributs sur les sommets)
@@ -11,6 +45,7 @@
 #include <sys/types.h>
 #include <sys/types.h>
 #include <mccodimage.h>
+#include <mcutil.h>
 #include <jccodimage.h>
 //#include <mcimage.h>
 #include <jcimage.h>
@@ -20,10 +55,12 @@
 /* Manipulation des graphes binaires (BasicGraph) */
 GrapheBasic *initGrapheBasic(int32_t nsom, int32_t nmaxarc)
 { 
+#undef F_NAME
+#define F_NAME "initGrapheBasic"
   int i;
   struct GrapheBasic * g = (GrapheBasic *)malloc(sizeof(GrapheBasic));
   if (g == NULL){   
-    fprintf(stderr, "initGrapheBasic : malloc failed\n");
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
     exit(0);
   }
   g->nsom = nsom;
@@ -32,13 +69,13 @@ GrapheBasic *initGrapheBasic(int32_t nsom, int32_t nmaxarc)
   
   g->reserve = (BasicCell *)malloc(nmaxarc * sizeof(BasicCell));
   if (g->reserve == NULL){ 
-    fprintf(stderr, "initGrapheBasic : malloc reserve failed\n");
+    fprintf(stderr, "%s: malloc reserve failed\n", F_NAME);
     exit(0);
   }
 
   g->gamma = (PBasicCell *)calloc(nsom, sizeof(PBasicCell)); /* calloc met a 0 la memoire allouee */
   if (g->gamma == NULL){
-    (stderr, "initGrapheBasic : calloc gamma failed\n");
+    fprintf(stderr, "%s: calloc gamma failed\n", F_NAME);
     exit(0);
   }
   for(i = 0; i < nsom; i++)g->gamma[i] = NULL;
@@ -53,7 +90,6 @@ GrapheBasic *initGrapheBasic(int32_t nsom, int32_t nmaxarc)
 void termineGrapheBasic(GrapheBasic *g)
 /* ====================================================================== */
 {
-  int32_t i, n = g->nsom;
   free(g->reserve);
   if (g->gamma) free(g->gamma);
   free(g);
@@ -114,7 +150,6 @@ void termineGrapheValue(GrapheValue * gv)
 int32_t updateArcValue(GrapheValue *gv, int32_t i, int32_t s, uint8_t val)
 {
   PBasicCell p;
-  PBasicCell p1;
   uint32_t index;
 
   GrapheBasic *g = gv->g;
@@ -124,7 +159,7 @@ int32_t updateArcValue(GrapheValue *gv, int32_t i, int32_t s, uint8_t val)
   for (p = g->gamma[i]; p != NULL; p = p->next)
     /* Si la region s est deja adjacente a i */
     if (p->vertex == s){
-      F[p->edge] = min(F[p->edge],val);
+      F[p->edge] = mcmin(F[p->edge],val);
       return 1;
     }
   
@@ -160,6 +195,10 @@ RAG *initRAG(int32_t nsom, int32_t nmaxarc)
     fprintf(stderr, "initRAG : malloc failed\n");
     exit(0);
   }
+  if( (_rag->altitude = (uint32_t *)malloc(sizeof(uint32_t)*nsom)) == NULL){
+    fprintf(stderr, "initRAG : malloc failed\n");
+    exit(0);
+  }
   if( (_rag->tete = (uint32_t *)malloc(sizeof(uint32_t)*nmaxarc)) == NULL){
     fprintf(stderr, "initRAG : malloc failed\n");
     exit(0);
@@ -178,6 +217,7 @@ void termineRAG(RAG * rag)
   free(rag->F);
   free(rag->profondeur);
   free(rag->surface);
+  free(rag->altitude);
   free(rag->tete);
   free(rag->queue);
   free(rag);
@@ -190,7 +230,7 @@ int32_t updateRAGArc(RAG *rag, int32_t i, int32_t s, uint8_t val)
 #undef F_NAME
 #define F_NAME "UpdateArc"
 { 
-  PBasicCell p, p1;
+  PBasicCell p;
   GrapheBasic *g = rag->g;
   uint32_t index;
   uint8_t *F = rag->F;
@@ -201,7 +241,7 @@ int32_t updateRAGArc(RAG *rag, int32_t i, int32_t s, uint8_t val)
   for (p = g->gamma[i]; p != NULL; p = p->next)
     /* Si la region s est deja adjacente a i */
     if (p->vertex == s){ 
-      F[p->edge] = min(val,F[p->edge]);
+      F[p->edge] = mcmin(val,F[p->edge]);
       return 1; 
     }    
   /* On a trouve un nouvel arc */

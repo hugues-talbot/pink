@@ -1,51 +1,77 @@
-/* \file GAwatershed.c
+/*
+Copyright ESIEE (2009) 
 
-\brief 
+m.couprie@esiee.fr
 
-<B>Usage:</B> 
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
+
+/*! \file GAwatershed.c
+
+\brief Compute the watershed of a 4-connected edge-weighted graph (a GA)
+
+<B>Usage:</B> GAwatershed in.ga out.pgm [type]
 
 <B>Description:</B>
 
-<B>Types supported:</B> GA byte 2D 
-
-<B>Category:</B> 
-\ingroup  
-
-\author Jean Cousty
-*/
-/* 
-NAME
-
-<B>GAwatershed</B> - watershed of a 4-connected edge-weighted graph
-
-SYNOPSIS
-
-<B>GAwatershed</B> GAin.pgm out.pgm [type]
-
-DESCRIPTION
+Compute the watershed of a 4-connected edge-weighted graph (a GA).
 
 If type = 0, then outputs a watershed by an M-border algorithm. The
 file out.pgm is a GA.
 
 If type = 1, then outputs a watershed by a non-recursive algorithm
-based on streams. The file out.pgm is a GA.
+based on streams. The file out.pgm is a GA (this is the default) (not
+available for floats).
 
 If type = 2 outputs a watershed by a recursive algorithm based on
-streams (generally the most efficient one). The file out.pgm is a GA.
+streams. The file out.pgm is a GA (not available for floats).
 
-If type = 3 outputs an M-border watershed. The file out.pgm is a GA.
+If type = 3 outputs an M-border watershed. The file out.pgm is a GA
+(not available for floats).
 
 If type = 4 outputs a flow mapping. The file out.pgm is a long integer
-image.
+image that represents a labeled partition induced by a watershed cut
+of the input GA (not available for floats).
 
-Types supported: GA byte 2D.
 
-CLASS 
 
-connect
+<B>Types supported:</B> GA byte 2D, GA float 2D
 
+<B>Category:</B> GA
+\ingroup  GA
+
+\author Jean Cousty
 */
-//#define TIME_WATERSHED_TEST 1
+
+
+/* //#define TIME_WATERSHED_TEST 1 */
 
 #include <stdio.h>
 #include <stdint.h>
@@ -67,7 +93,7 @@ connect
 
 
 /* =============================================================== */
-int32_t main(argc, argv) 
+int main(argc, argv) 
 /* =============================================================== */
   int32_t argc; char **argv; 
 {
@@ -80,12 +106,12 @@ int32_t main(argc, argv)
 #endif
   int32_t rs;               /* taille ligne */
   int32_t cs;               /* taille colonne */
-  uint32_t *FlowMapping; 
+  int32_t *FlowMapping; 
 
 
   if ( (argc != 3) && (argc != 4) )
   {
-            fprintf(stderr, "usage: %s GAin.pgm out.pgm [type] \n\tif type = 0, then produces a watershed by M-border algorithm;\n\tif type = 1, then outputs a watershed by a non-recursive algorithm based on stream;\n\tif type = 2 outputs a watershed by a recursive algorithm based on streams;\n\tif type = 3 outputs an M-border watershed;\n\tif type = 4 outputs a flow mapping, out.pgm is a long integer image;\n\tdefault type = 2.\n", argv[0]); 
+            fprintf(stderr, "usage: %s GAin.pgm out.pgm [type] \n\tif type = 0, then produces a watershed by M-border algorithm;\n\tif type = 1, then outputs a watershed by a non-recursive algorithm based on stream;\n\tif type = 2 outputs a watershed by a recursive algorithm based on streams;\n\tif type = 3 outputs an M-border watershed;\n\tif type = 4 outputs a flow mapping, out.pgm is a long integer image;\n\tdefault type = 1.\n", argv[0]); 
 	    exit(1);
   }
   ga = readGAimage(argv[1]);
@@ -97,9 +123,9 @@ int32_t main(argc, argv)
   if(argc == 4)
     type = atoi(argv[3]);
   else
-    type = 2;
+    type = 1;
   if( (type > 4) || (type < 0)){
-    fprintf(stderr, "usage: %s GAin.pgm out.pgm [type] \n\tif type = 0, then produces a watershed by M-border algorithm;\n\tif type = 1, then outputs a watershed by a non-recursive algorithm based on stream;\n\tif type = 2 outputs a watershed by a recursive algorithm based on streams;\n\tif type = 3 outputs an M-border watershed;\n\tif type = 4 outputs a flow mapping, out.pgm is a long integer image;\n\tdefault type = 2.\n", argv[0]); 
+    fprintf(stderr, "usage: %s GAin.pgm out.pgm [type] \n\tif type = 0, then produces a watershed by M-border algorithm;\n\tif type = 1, then outputs a watershed by a non-recursive algorithm based on stream;\n\tif type = 2 outputs a watershed by a recursive algorithm based on streams;\n\tif type = 3 outputs an M-border watershed;\n\tif type = 4 outputs a flow mapping, out.pgm is a long integer image;\n\tdefault type = 1.\n", argv[0]); 
   }
   switch(datatype(ga)){
   case VFF_TYP_GABYTE:
@@ -117,7 +143,7 @@ int32_t main(argc, argv)
       fprintf(stderr, "%s : erreur de malloc\n",argv[0]);
       exit(0);
     }
-    FlowMapping = ULONGDATA(watershed);
+    FlowMapping = SLONGDATA(watershed);
     flowMapping(ga, FlowMapping);
     gaout = SeparatingEdge(watershed);
     writerawGAimage(gaout,argv[2]);
@@ -129,7 +155,7 @@ int32_t main(argc, argv)
       fprintf(stderr, "%s : erreur de malloc\n",argv[0]);
       exit(0);
     }
-    FlowMapping = ULONGDATA(watershed);
+    FlowMapping = SLONGDATA(watershed);
     flowMappingRecursif(ga, FlowMapping); 
     gaout = SeparatingEdge(watershed);
     writerawGAimage(gaout,argv[2]);
@@ -145,7 +171,7 @@ int32_t main(argc, argv)
       fprintf(stderr, "%s : erreur de malloc\n",argv[0]);
       exit(0);
     }
-    FlowMapping = ULONGDATA(watershed);
+    FlowMapping = SLONGDATA(watershed);
     flowMappingRecursif(ga, FlowMapping);
     writeimage(watershed,argv[2]);
   }
@@ -155,7 +181,7 @@ int32_t main(argc, argv)
     t1 = clock();   
     watershed = mBorderWshed2d(ga);
     t2 = clock(); 
-    printf("temps (border_watershed) %d ms\n", 
+    printf("temps (border_watershed) %ld ms\n", 
 	   (t2 - t1)/ (CLOCKS_PER_SEC / 1000)); 
     gaout = SeparatingEdge(watershed);
     writerawGAimage(gaout,argv[2]);
@@ -168,10 +194,10 @@ int32_t main(argc, argv)
       fprintf(stderr, "%s : erreur de malloc\n",argv[0]);
       exit(0);
     }
-    FlowMapping = ULONGDATA(watershed);
+    FlowMapping = SLONGDATA(watershed);
     flowMapping(ga, FlowMapping);
     t2 = clock();
-    printf("temps (stream_non_recursif) %d ms\n", 
+    printf("temps (stream_non_recursif) %ld ms\n", 
 	   (t2 - t1)/ (CLOCKS_PER_SEC / 1000));
     gaout = SeparatingEdge(watershed);
     writerawGAimage(gaout,argv[2]);
@@ -184,10 +210,10 @@ int32_t main(argc, argv)
       fprintf(stderr, "%s : erreur de malloc\n",argv[0]);
       exit(0);
     }
-    FlowMapping = ULONGDATA(watershed);
+    FlowMapping = SLONGDATA(watershed);
     flowMappingRecursif(ga, FlowMapping);
     t2 = clock();
-    printf("temps (stream_recursif) %d ms\n", 
+    printf("temps (stream_recursif) %ld ms\n", 
 	   (t2 - t1)/ (CLOCKS_PER_SEC / 1000));
     gaout = SeparatingEdge(watershed);
     writerawGAimage(gaout,argv[2]);
@@ -196,7 +222,7 @@ int32_t main(argc, argv)
       t1 = clock();   
       watershed = mBorderWshed2drapide(ga);
       t2 = clock(); 
-      printf("temps (border_watershed_rapide) %d ms\n", 
+      printf("temps (border_watershed_rapide) %ld ms\n", 
 	     (t2 - t1)/ (CLOCKS_PER_SEC / 1000)); 
       gaout = SeparatingEdge(watershed);
       writerawGAimage(gaout,argv[2]);
@@ -213,7 +239,7 @@ int32_t main(argc, argv)
       fprintf(stderr, "%s : erreur de malloc\n",argv[0]);
       exit(0);
     }
-    FlowMapping = ULONGDATA(watershed);
+    FlowMapping = SLONGDATA(watershed);
     printf("Je suis dans le bon type\n"); 
     fflush(stdout);
     flowMappingFloat(ga, FlowMapping); // Il faut l'ecrire

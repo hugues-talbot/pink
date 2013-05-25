@@ -1,4 +1,37 @@
-/* $Id: longestplateau.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file longestplateau.c
 
 \brief finds the location of the longest plateau in 1D sequence
@@ -10,7 +43,7 @@
 Reads the sequence S from the file <B>in.list</B>. 
 This file must have the following format:
 <pre>  
-  e <n>
+  e &lt;n&gt;
   x1
   x2
   ...
@@ -18,7 +51,7 @@ This file must have the following format:
 </pre>
 The tolerance t (float) is given by the parameter <B>tolerance</B>
 (default value is 0).
-A <it>plateau</it> is a subsequence P of S formed by consecutive elements of P, 
+A <i>plateau</i> is a subsequence P of S formed by consecutive elements of P, 
 between indices i and j, and such that max{P[k];i<=k<=j} - min{P[k];i<=k<=j} <= t.
 The program returns the base index and length of the first occurence of a plateau with 
 maximal length in S.
@@ -60,12 +93,11 @@ int32_t longest(double *tab, int32_t n, int32_t i, double tol)
 } // longest()
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   FILE *fd = NULL;
-  int32_t n, i, j, l, imax, lmax;
+  int32_t n, i, l, imax, lmax;
   char type;
   double v, tol, *tab;
 

@@ -1,47 +1,78 @@
-/* $Id: colorize.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
-/* \file colorize.c
+/*
+Copyright ESIEE (2009) 
 
-\brief 
+m.couprie@esiee.fr
 
-<B>Usage:</B> 
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
+/*! \file colorize.c
+
+\brief generates a color image from a grayscale image and a lookup table
+
+<B>Usage:</B> colorize in.pgm lut.ppm out.ppm
 
 <B>Description:</B>
+Generates a color image from a grayscale image and a lookup table (see genlut.c).
 
-<B>Types supported:</B> byte 2D
+<B>Types supported:</B> byte 2D, long 2D
 
-<B>Category:</B> 
-\ingroup  
+<B>Category:</B> convert
+\ingroup  convert
 
 \author Michel Couprie
 */
-/* genere une image en couleurs a partir d'une image en gris et d'une LookUp Table */
 
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * in;
   struct xvimage * g1;
   struct xvimage * g2;
   struct xvimage * g3;
-  uint8_t r[256]; /* la LookUp Table */
-  uint8_t g[256];
-  uint8_t b[256];
-  int32_t rs, cs, N;
-  int32_t i;
-  uint8_t v;
+  uint8_t *r; /* la LookUp Table */
+  uint8_t *g;
+  uint8_t *b;
+  int32_t rs, cs, N, i, lutsize;
 
-  if (argc != 3)
+  if (argc != 4)
   {
-    fprintf(stderr, "usage: %s in.pgm out.ppm \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm lut.ppm out.ppm \n", argv[0]);
     exit(1);
   }
 
@@ -49,43 +80,78 @@ int main(argc, argv)
 
   if (in == NULL)
   {
-    fprintf(stderr, "randrgb: readimage failed\n");
+    fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
-
-  rs = in->row_size;
-  cs = in->col_size;
+  rs = rowsize(in);
+  cs = colsize(in);
   N = rs * cs;
 
-  g1 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
-  g2 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
-  g3 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
-  if ((g1 == NULL) || (g2 == NULL) || (g3 == NULL))
+  // Charge la LUT
+  if (!readrgbimage(argv[2], &g1, &g2, &g3))
   {
-    fprintf(stderr, "randrgb: allocimage failed\n");
+    fprintf(stderr, "%s: readrgbimage failed\n", argv[0]);
+    exit(1);
+  }
+  assert(colsize(g1) == 1);
+  assert(depth(g1) == 1);
+  assert(datatype(g1) == VFF_TYP_1_BYTE);
+
+  lutsize = rowsize(g1);
+  r = (uint8_t *)malloc(lutsize * sizeof(uint8_t)); assert(r != NULL);
+  g = (uint8_t *)malloc(lutsize * sizeof(uint8_t)); assert(g != NULL);
+  b = (uint8_t *)malloc(lutsize * sizeof(uint8_t)); assert(b != NULL);
+
+  for (i = 0; i < lutsize; i++)
+  {  
+    r[i] = (UCHARDATA(g1))[i];
+    g[i] = (UCHARDATA(g2))[i];
+    b[i] = (UCHARDATA(g3))[i];
+  }
+
+  freeimage(g1);
+  freeimage(g2);
+  freeimage(g3);
+
+  g1 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(g1 != NULL);
+  g2 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(g2 != NULL);
+  g3 = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE); assert(g3 != NULL);
+
+  // Applique la LUT
+  if (datatype(in) == VFF_TYP_1_BYTE)
+  {
+    uint8_t v;
+    for (i = 0; i < N; i++)
+    {
+      v = ((UCHARDATA(in))[i])%lutsize;
+      (UCHARDATA(g1))[i] = r[v];
+      (UCHARDATA(g2))[i] = g[v];
+      (UCHARDATA(g3))[i] = b[v];
+    }
+  }
+  else if (datatype(in) == VFF_TYP_4_BYTE)
+  {
+    uint32_t v;
+    for (i = 0; i < N; i++)
+    {
+      v = ((ULONGDATA(in))[i])%lutsize;
+      (UCHARDATA(g1))[i] = r[v];
+      (UCHARDATA(g2))[i] = g[v];
+      (UCHARDATA(g3))[i] = b[v];
+    }
+  }
+  else 
+  {
+    fprintf(stderr, "%s: bad data type\n", argv[0]);
     exit(1);
   }
 
-  /* init la LUT */
-  r[0] = g[0] = b[0] = 0;
-  r[1] = 255; g[1] =   0; b[1] =   0; /* rouge */
-  r[2] =   0; g[2] = 255; b[2] =   0; /* vert */
-  r[3] =   0; g[3] =   0; b[3] = 255; /* bleu */
-  r[4] = 255; g[4] = 255; b[4] =   0; /* jaune */
-
-  for (i = 0; i < N; i++)
-  {
-    v = (UCHARDATA(in))[i];
-    (UCHARDATA(g1))[i] = r[v];
-    (UCHARDATA(g2))[i] = g[v];
-    (UCHARDATA(g3))[i] = b[v];
-  }
-  
-  writergbimage(g1, g2, g3, argv[2]);
+  writergbimage(g1, g2, g3, argv[argc-1]);
   freeimage(in);
   freeimage(g1);
   freeimage(g2);
   freeimage(g3);
+  free(r); free(g); free(b);
 
   return 0;
 } /* main */

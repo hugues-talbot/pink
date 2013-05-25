@@ -1,4 +1,37 @@
-/* $Id: gaussianfilter.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file gaussianfilter.c
 
 \brief Gaussian filter operator
@@ -6,17 +39,27 @@
 <B>Usage:</B> gaussianfilter in.pgm alpha out.pgm
 
 <B>Description:</B>
-Deriche's recursive implementation of the Gaussian filter
-operator (convolution with a Gaussian kernel). The parameter 
-\b alpha (double) controls the spatial extension of the
-filter: 0 < alpha < infinity, typical value: alpha = 1
+Deriche's recursive implementation of the smoothing filter
+operator (approximates the convolution with a Gaussian kernel). 
+The parameter \b alpha (double) controls the spatial extension of the
+filter: 0 < alpha < infinity, typical value: alpha = 1. 
+Intuitively, the "width" of the Gaussian kernel corresponds to 1/\b alpha.
 
-<B>Types supported:</B> byte 2d, byte 3d
+Reference:<BR> 
+[Der90] R. Deriche, "Fast algorithms for low-level vision",
+IEEE Transactions on PAMI, 12(1), 78-87, 1990.<BR>
+
+<B>Types supported:</B> byte 2d, long 2d, float 2d, byte 3d, long 3d, float 3d
 
 <B>Category:</B> signal
 \ingroup  signal
 
 \author Michel Couprie
+*/
+
+/*
+%TEST gaussianfilter %IMAGES/2dbyte/gray/g2gel.pgm 1 %RESULTS/gaussianfilter_g2gel_1.pgm
+%TEST gaussianfilter %IMAGES/3dbyte/gray/g3a.pgm 1 %RESULTS/gaussianfilter_g3a_1.pgm
 */
 
 #include <stdio.h>
@@ -26,16 +69,13 @@ filter: 0 < alpha < infinity, typical value: alpha = 1
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <lderiche.h>
-#include <lderiche3d.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image1;
   double alpha;
-  double dummy;
 
   if (argc != 4)
   {
@@ -52,21 +92,10 @@ int main(argc, argv)
   }
   alpha = atof(argv[2]);
 
-  if (depth(image1) == 1)
+  if (! lgaussianfilter(image1, alpha))
   {
-    if (! lderiche(image1, alpha, 4, dummy))
-    {
-      fprintf(stderr, "%s: function lderiche failed\n", argv[0]);
-      exit(1);
-    }
-  }
-  else
-  {
-    if (! lderiche3d(image1, alpha, 4, dummy))
-    {
-      fprintf(stderr, "%s: function lderiche3d failed\n", argv[0]);
-      exit(1);
-    }
+    fprintf(stderr, "%s: function lgaussianfilter failed\n", argv[0]);
+    exit(1);
   }
 
   writeimage(image1, argv[argc-1]);

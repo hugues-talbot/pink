@@ -1,4 +1,37 @@
-/* $Id: meshregul.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file meshregul.c
 
 \brief mesh smoothing
@@ -16,6 +49,7 @@ The possible choices for parameter <B>mode</B> are:
 \li 4: Hamam method [HC07], variant: theta = infty (SOWA, param1 = number of iterations, default value 5)
 \li 5: Hamam method [HC07], conjugate gradient algorithm (SOWA, param1 = theta, default value 1.0)
 \li 6: Taubin method [Tau95] (param1 = lambda, param2 = mu, param3 = N, default values 0.33 and -0.34 and 60)
+\li 7: Laplacian smoothing for a 2D polygon, with border edges preservation (param1 = number of iterations, default value 10)
 
 [HC07] Y. Hamam and M. Couprie, "An optimisation-based approach to mesh smoothing: reformulation and extensions", to appear, 2007.
 
@@ -44,13 +78,14 @@ pp. 852-857, 1995.
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mcrbtp.h>
 #include <mcmesh.h>
 #include <mciomesh.h>
 #include <mcgeo.h>
 
 //#define VERBOSE
-#define EVALUATION
-#define NOISEPARAM 0.05
+//#define EVALUATION
+//#define NOISEPARAM 0.05
 
 /* =============================================================== */
 int main(int argc, char **argv) 
@@ -58,9 +93,9 @@ int main(int argc, char **argv)
 {
   FILE *filein = NULL;
   FILE *fileout = NULL;
-  int32_t i, mode;
+  int32_t mode;
   int32_t formatin, formatout;
-  double v, p1 = -1.0, p2 = -1.0, p3 = -1.0, md0, md, err;
+  double p1 = -1.0, p2 = -1.0, p3 = -1.0;
 #ifdef EVALUATION
   double xc, yc, zc;
   double MSE;
@@ -72,22 +107,22 @@ int main(int argc, char **argv)
     exit(0);
   }
   formatin = UNKNOWN;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".MCM") == 0) formatin = MCM;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".mcm") == 0) formatin = MCM;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".VTK") == 0) formatin = VTK;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".vtk") == 0) formatin = VTK;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".IFS") == 0) formatin = IFS;
-  if (strcmp(argv[1]+strlen(argv[1])-4, ".ifs") == 0) formatin = IFS;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".MCM") == 0) formatin = T_MCM;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".mcm") == 0) formatin = T_MCM;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".VTK") == 0) formatin = T_VTK;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".vtk") == 0) formatin = T_VTK;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".IFS") == 0) formatin = T_IFS;
+  if (strcmp(argv[1]+strlen(argv[1])-4, ".ifs") == 0) formatin = T_IFS;
   if (formatin == UNKNOWN)
   {
     fprintf(stderr, "%s: bad input file format\n", argv[0]);
     exit(0);
   }
   formatout = UNKNOWN;
-  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".MCM") == 0) formatout = MCM;
-  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".mcm") == 0) formatout = MCM;
-  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".VTK") == 0) formatout = VTK;
-  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".vtk") == 0) formatout = VTK;
+  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".MCM") == 0) formatout = T_MCM;
+  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".mcm") == 0) formatout = T_MCM;
+  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".VTK") == 0) formatout = T_VTK;
+  if (strcmp(argv[argc-1]+strlen(argv[argc-1])-4, ".vtk") == 0) formatout = T_VTK;
   if (formatout == UNKNOWN)
   {
     fprintf(stderr, "%s: bad output file format\n", argv[0]);
@@ -100,9 +135,9 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[1]);
     exit(0);
   }
-  if (formatin == MCM) LoadMeshMCM(filein);
-  if (formatin == IFS) LoadBuildIFS(filein);
-  if (formatin == VTK) LoadBuildVTK(filein);
+  if (formatin == T_MCM) LoadMeshMCM(filein);
+  if (formatin == T_IFS) LoadBuildIFS(filein);
+  if (formatin == T_VTK) LoadBuildVTK(filein);
   fclose(filein);
   mode = atoi(argv[2]);
   if (argc > 4) p1 = atof(argv[3]);
@@ -131,6 +166,7 @@ int main(int argc, char **argv)
   else if (mode == 4) { if (p1 == -1.0) p1 = 5; RegulMeshHamam2((int32_t)p1); } // A^2, theta = infty
   else if (mode == 5) { if (p1 == -1.0) p1 = 1.0; RegulMeshHamam3(p1); } // gradient conjugue
   else if (mode == 6) { if (p1 == -1.0) p1 = 0.33; if (p2 == -1.0) p2 = -0.34; if (p3 == -1.0) p3 = 60; RegulMeshTaubin(p1, p2, (int)p3); }
+  else if (mode == 7) { if (p1 == -1.0) p1 = 10; RegulMeshLaplacian2D((int32_t)p1); }
   else
   {
     fprintf(stderr, "%s: bad mode: %d\n", argv[0], mode);
@@ -155,11 +191,12 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc-1]);
     exit(0);
   }
-  if (formatout == MCM) SaveMeshMCM(fileout);
-  if (formatout == VTK) 
+  if (formatout == T_MCM) SaveMeshMCM(fileout);
+  if (formatout == T_VTK) 
   {
-    genheaderVTK(fileout, "mcube output");    
+    genheaderVTK(fileout, (char *)"mcube output");    
     SaveMeshVTK(fileout);
   }
   fclose(fileout);
+  return 0;
 } /* main */

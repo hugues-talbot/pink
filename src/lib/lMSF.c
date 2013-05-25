@@ -1,3 +1,37 @@
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -9,6 +43,7 @@
 #include <jccodimage.h>
 #include <mcimage.h>
 #include <jcimage.h>
+#include <mcutil.h>
 #include <mcindic.h>
 #include <lMSF.h>
 #include <mcrbt.h>
@@ -37,8 +72,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
   int32_t cs = colsize(ga);                     /* taille colonne */
   int32_t N = rs * cs;                          /* taille image */
   uint8_t *F = UCHARDATA(ga);         /* valuation des aretes de depart */
-  uint32_t *G = ULONGDATA(marqueurs); /* labels des sommets du graph */
-  int32_t nlabels;                              /* nombre de labels differents */
+  int32_t *G = SLONGDATA(marqueurs); /* labels des sommets du graph */
   int32_t N_t=2*N;                              /* index maximum d'un arete de ga */
   Rbt *L;                            /* ensembles des aretes adjacentes à exactement un label */
 
@@ -52,20 +86,20 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
     return 0;
   }
   IndicsInit(N_t);
-  L = CreeRbtVide(N_t);
+  L = mcrbt_CreeRbtVide(N_t);
   for(u = 0; u < N_t; u ++){
     if( ( (u < N) && (u%rs < rs-1)) || ((u >= N) && (u < N_t - rs))){
       x = Sommetx(u,N,rs);
       y = Sommety(u,N,rs);
-      if((min(G[x],G[y]) == 0) && (max(G[x],G[y]) > 0)){
+      if((mcmin(G[x],G[y]) == 0) && (mcmax(G[x],G[y]) > 0)){
 	/* u est growing edge */
-	RbtInsert(&L, (TypRbtKey)F[u], u);
+	mcrbt_RbtInsert(&L, (TypRbtKey)F[u], u);
 	Set(u, TRUE);
       }else Set(u, FALSE);
     }else Set(u,FALSE);
   }
   
- while(!RbtVide(L)){
+ while(!mcrbt_RbtVide(L)){
    u = RbtPopMin(L);
 #ifdef DEBUG
    printf("poped arete u no: %d de niveau %d\n",u,F[u]);
@@ -76,7 +110,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
 #ifdef DEBUG
    printf("extremites de u (%d,%d);(%d,%d) \n",x%rs, x/rs, y%rs, y/rs); 
 #endif
-   if((min(G[x],G[y]) == 0) && (max(G[x],G[y]) > 0)){
+   if((mcmin(G[x],G[y]) == 0) && (mcmax(G[x],G[y]) > 0)){
      /* si u est une growing edge */
 #ifdef DEBUG
      printf("label x: %d, label y :%d\n", G[x], G[y]);
@@ -95,9 +129,9 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
 #ifdef DEBUG
 	 printf("extremites de v (%d), incidente à u (%d,%d);(%d,%d) \n",v, x_1%rs, x_1/rs, y_1%rs, y_1/rs);
 #endif
-	 if((min(G[x_1],G[y_1]) == 0) && (max(G[x_1],G[y_1]) > 0)){
+	 if((mcmin(G[x_1],G[y_1]) == 0) && (mcmax(G[x_1],G[y_1]) > 0)){
 	   /* v est une growing edge */
-	   RbtInsert(&L, (TypRbtKey)F[v], v);
+	   mcrbt_RbtInsert(&L, (TypRbtKey)F[v], v);
 	   Set(v,TRUE);
 	 }	  
        }
@@ -108,11 +142,11 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
  
  for(u = 0; u < N_t; u++)
    if( ((u < N) && (u%rs < rs-1)) || ((u >= N) && (u < N_t - rs))){
-     if(G[Sommetx(u,N,rs)] != G[Sommety(u,N,rs)]) F[u] = 255; else F[u] = 0;
+     if(G[Sommetx(u,N,rs)] != G[Sommety(u,N,rs)])/*F[u]=255*/; else F[u] = 0;
    }
   /* Terminer indicateur + R&B tree ... */
  IndicsTermine();
- RbtTermine(L);
+ mcrbt_RbtTermine(L);
  return 1;
 }
 //#define DEBUG
@@ -130,8 +164,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
   int32_t ds = depth(ga);                       /* taille plan */
   int32_t N = ds * ps;                          /* taille image */
   uint8_t *F = UCHARDATA(ga);         /* valuation des aretes de depart */
-  uint32_t *G =  ULONGDATA(marqueurs); /* labels des sommets du graph */
-  int32_t nlabels;                              /* nombre de labels differents */
+  int32_t *G =  SLONGDATA(marqueurs); /* labels des sommets du graph */
   int32_t N_t=3*N;                              /* index maximum d'une arete de ga */
   Rbt *L;                                   /* ensembles des aretes adjacentes à exactement un label */
 
@@ -144,23 +177,23 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
     return 0;
   }
   IndicsInit(N_t);
-  L = CreeRbtVide(N_t);
+  L = mcrbt_CreeRbtVide(N_t);
   for(u = 0; u < N_t; u ++){
     if( ( (u < N) && (u%rs < rs-1)) ||
 	((u >= N) && (u < 2*N) && ( (u%ps) < (ps-rs))) ||
 	((u >= 2*N) && (((u- (2*N))/ps) < (ds-1)))){
       x = Sommetx3d(u,N,rs,ps);
       y = Sommety3d(u,N,rs,ps);
-      if((min(G[x],G[y]) == 0) && (max(G[x],G[y]) > 0)){
+      if((mcmin(G[x],G[y]) == 0) && (mcmax(G[x],G[y]) > 0)){
 	/* u est growing edge */
 	/*	printf("Initialisation: ds Rbt: (%d,%d)\n", x,y);*/
-	RbtInsert(&L, (TypRbtKey)F[u], u);
+	mcrbt_RbtInsert(&L, (TypRbtKey)F[u], u);
 	Set(u, TRUE);
       }else Set(u, FALSE);
     }else Set(u,FALSE);
   }
   
-  while(!RbtVide(L)){
+  while(!mcrbt_RbtVide(L)){
     u = RbtPopMin(L);
 #ifdef DEBUG
     printf("poped arete u no: %d de niveau %d\n",u,F[u]);
@@ -171,7 +204,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
 #ifdef DEBUG
     printf("extremites de u (%d,%d);(%d,%d) \n",x%rs, x/rs, y%rs, y/rs); 
 #endif
-    if((min(G[x],G[y]) == 0) && (max(G[x],G[y]) > 0)){
+    if((mcmin(G[x],G[y]) == 0) && (mcmax(G[x],G[y]) > 0)){
       /* si u est une growing edge */
 #ifdef DEBUG
       printf("label x: %d, label y :%d\n", G[x], G[y]);
@@ -190,9 +223,9 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
 #ifdef DEBUG
 	  printf("extremites de v (%d), incidente à u (%d,%d);(%d,%d) \n",v, x_1%rs, x_1/rs, y_1%rs, y_1/rs);
 #endif
-	  if((min(G[x_1],G[y_1]) == 0) && (max(G[x_1],G[y_1]) > 0)){
+	  if((mcmin(G[x_1],G[y_1]) == 0) && (mcmax(G[x_1],G[y_1]) > 0)){
 	    /* v est une growing edge */
-	    RbtInsert(&L, (TypRbtKey)F[v], v);
+	    mcrbt_RbtInsert(&L, (TypRbtKey)F[v], v);
 	    Set(v,TRUE);
 	  }	  
 	}
@@ -210,7 +243,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
   /* Terminer indicateur + R&B tree ... */
 
   IndicsTermine();
-  RbtTermine(L);
+  mcrbt_RbtTermine(L);
   return 1;
 }
 
@@ -247,7 +280,7 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
   }
   IndicsInit(N_t);
   /*Pas du tout robuste c'est juste qqch pour passer sur des images 4d du coeur*/
-  L = CreeRbtVide(N_t/10);
+  L = mcrbt_CreeRbtVide(N_t/10);
   for(u = 0; u < N_t; u ++){
     if( ( (u < N) && (u%rs < rs-1)) ||
 	( (u >= N) && (u < 2*N) && ( (u%ps) < (ps-rs) ) ) ||
@@ -261,16 +294,16 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
       y = Sommety4d(u,N,rs,ps,vs);
       /* On pourrait faire plus rapide avec une representation memoire
 	 plus adequat des images 4d */
-      if((min(G[x/vs][x%vs],G[y/vs][y%vs]) == 0) && (max(G[x/vs][x%vs],G[y/vs][y%vs]) > 0)){
+      if((mcmin(G[x/vs][x%vs],G[y/vs][y%vs]) == 0) && (mcmax(G[x/vs][x%vs],G[y/vs][y%vs]) > 0)){
 	/* u est growing edge */
 	/*	printf("Initialisation: ds Rbt: (%d,%d)\n", x,y);*/
-	RbtInsert(&L, (TypRbtKey)F[u], u);
+	mcrbt_RbtInsert(&L, (TypRbtKey)F[u], u);
 	Set(u, TRUE);
       }else Set(u, FALSE);
     }else Set(u,FALSE);
   }
   printf("Initialisation OK \n");
-  while(!RbtVide(L)){
+  while(!mcrbt_RbtVide(L)){
     u = RbtPopMin(L);
 #ifdef DEBUG
     printf("Arete poped F[(%d,%d,%d,%d),%d] = %d\n", u%rs, (u%ps)/rs, (u%vs)/ps, (u%N)/vs, u/N,F[u]); 
@@ -280,7 +313,7 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
 #ifdef DEBUG
     printf("extremites de u (%d,%d);(%d,%d) \n",x%rs, x/rs, y%rs, y/rs); 
 #endif
-    if((min(G[x/vs][x%vs],G[y/vs][y%vs]) == 0) && (max(G[x/vs][x%vs],G[y/vs][y%vs]) > 0)){
+    if((mcmin(G[x/vs][x%vs],G[y/vs][y%vs]) == 0) && (mcmax(G[x/vs][x%vs],G[y/vs][y%vs]) > 0)){
       /* si u est une growing edge */
 #ifdef DEBUG
       printf("Arete growing F[(%d,%d,%d,%d),%d] = %d\n", u%rs, (u%ps)/rs, (u%vs)/ps, (u%N)/vs, u/N,F[u]);
@@ -300,12 +333,12 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
 #ifdef DEBUG
 	  printf("extremites de v (%d), incidente à u (%d,%d);(%d,%d) \n",v, x_1%rs, x_1/rs, y_1%rs, y_1/rs);
 #endif
-	  if((min(G[x_1/vs][x_1%vs],G[y_1/vs][y_1%vs]) == 0) && (max(G[x_1/vs][x_1%vs],G[y_1/vs][y_1%vs]) > 0)){
+	  if((mcmin(G[x_1/vs][x_1%vs],G[y_1/vs][y_1%vs]) == 0) && (mcmax(G[x_1/vs][x_1%vs],G[y_1/vs][y_1%vs]) > 0)){
 	    /* v est une growing edge */
 #ifdef DEBUG
 	    printf("Arete pushed F[(%d,%d,%d,%d),%d] = %d\n", v%rs, (v%ps)/rs, (v%vs)/ps, (v%N)/vs, v/N,F[v]);
 #endif	    
-	    RbtInsert(&L, (TypRbtKey)F[v], v);
+	    mcrbt_RbtInsert(&L, (TypRbtKey)F[v], v);
 	    Set(v,TRUE);
 	  }	  
 	}
@@ -327,6 +360,6 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
   /* Terminer indicateur + R&B tree ... */
   
   IndicsTermine();
-  RbtTermine(L);
+  mcrbt_RbtTermine(L);
   return 1;
 }

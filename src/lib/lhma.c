@@ -1,3 +1,37 @@
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
 lhma.c
 
@@ -19,16 +53,18 @@ Andre Vital Saude - jan 2006
 #include <mccodimage.h>
 #include <avsimage.h>
 #include <llut.h>
+#include <mcgeo.h>
+#include <ldist.h>
 #include <lhma.h>
 
 //private Functions
-void applyConstrainedSnSyms2d(PointSet *set, Point vec, Point orig, int32_t rs, int32_t cs);
-void applyConstrainedSnSyms3d(PointSet *set, Point vec, Point orig, int32_t rs, int32_t cs, int32_t ds);
-int32_t EnRmin2d(Point x, int32_t R, Point v, int32_t Rv, SQDLut SQDn);
-int32_t EnRmin3d(Point x, int32_t R, Point v, int32_t Rv, SQDLut SQDn);
-int32_t IsHMAEnhanced2d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
+void applyConstrainedSnSyms2d(AVS_PointSet *set, AVS_Point vec, AVS_Point orig, int32_t rs, int32_t cs);
+void applyConstrainedSnSyms3d(AVS_PointSet *set, AVS_Point vec, AVS_Point orig, int32_t rs, int32_t cs, int32_t ds);
+int32_t EnRmin2d(AVS_Point x, int32_t R, AVS_Point v, int32_t Rv, SQDLut SQDn);
+int32_t EnRmin3d(AVS_Point x, int32_t R, AVS_Point v, int32_t Rv, SQDLut SQDn);
+int32_t IsHMAEnhanced2d(AVS_Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
 		    MLut mlut, RTLutCol Lut, SQDLut SQDn, int32_t rs, int32_t cs);
-int32_t IsHMAEnhanced3d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh, 
+int32_t IsHMAEnhanced3d(AVS_Point x, /*int32_t Rmax,*/ uint32_t *D2Xh, 
 		    MLut mlut, RTLutCol Lut, SQDLut SQDn, int32_t rs, int32_t cs, int32_t ds);
 
 
@@ -56,7 +92,7 @@ struct xvimage *lhma(struct xvimage *Xh)
   int32_t rs, cs, ds, ps, N;
 
   //aux
-  Point p;
+  AVS_Point p;
   int32_t rmax;
 
   //tables
@@ -134,8 +170,8 @@ struct xvimage *lhma(struct xvimage *Xh)
   if (ds == 1) {
     for(p.y = 0; p.y < cs; p.y++) 
       for(p.x = 0; p.x < rs; p.x++) {
-	if(point2d(D2Xh, p, rs) !=0) 
-	  point2d(HMA, p, rs) = IsHMAEnhanced2d(p, D2Xh, mlut, Lut, SQDn, rs, cs);
+	if(AVS_point2d(D2Xh, p, rs) !=0) 
+	  AVS_point2d(HMA, p, rs) = IsHMAEnhanced2d(p, D2Xh, mlut, Lut, SQDn, rs, cs);
       }
   }
   else
@@ -143,9 +179,9 @@ struct xvimage *lhma(struct xvimage *Xh)
     for (p.z = 0; p.z < ds; p.z++) 
       for(p.y = 0; p.y < cs; p.y++) 
 	for(p.x = 0; p.x < rs; p.x++) 
-	  if(point3d(D2Xh, p, ps, rs) != 0) {
-	    point3d(HMA, p, ps, rs) = IsHMAEnhanced3d(p, D2Xh, mlut, Lut, SQDn, rs, cs, ds);
-	    if (point3d(HMA, p, ps, rs) == 1) printf("p=(%d,%d,%d)\n", p.x, p.y, p.z);
+	  if(AVS_point3d(D2Xh, p, ps, rs) != 0) {
+	    AVS_point3d(HMA, p, ps, rs) = IsHMAEnhanced3d(p, D2Xh, mlut, Lut, SQDn, rs, cs, ds);
+	    if (AVS_point3d(HMA, p, ps, rs) == 1) printf("p=(%d,%d,%d)\n", p.x, p.y, p.z);
 	  }
 
   }
@@ -188,7 +224,7 @@ struct xvimage *lhma_givenTables(struct xvimage *Xh, MLut mlut, RTLutCol Lut, SQ
   int32_t rs, cs, ds, ps, N;
 
   //aux
-  Point p;
+  AVS_Point p;
 
   //test parameters
   if (!Xh) {
@@ -226,8 +262,8 @@ struct xvimage *lhma_givenTables(struct xvimage *Xh, MLut mlut, RTLutCol Lut, SQ
   if (ds == 1) {
     for(p.y = 0; p.y < cs; p.y++) 
       for(p.x = 0; p.x < rs; p.x++) {
-	if(point2d(D2Xh, p, rs) !=0) 
-	  point2d(HMA, p, rs) = IsHMAEnhanced2d(p, D2Xh, mlut, Lut, SQDn, rs, cs);
+	if(AVS_point2d(D2Xh, p, rs) !=0) 
+	  AVS_point2d(HMA, p, rs) = IsHMAEnhanced2d(p, D2Xh, mlut, Lut, SQDn, rs, cs);
       }
   }
   else
@@ -235,8 +271,8 @@ struct xvimage *lhma_givenTables(struct xvimage *Xh, MLut mlut, RTLutCol Lut, SQ
     for (p.z = 0; p.z < ds; p.z++) 
       for(p.y = 0; p.y < cs; p.y++) 
 	for(p.x = 0; p.x < rs; p.x++) 
-	  if(point3d(D2Xh, p, ps, rs) != 0)
-	    point3d(HMA, p, ps, rs) = IsHMAEnhanced3d(p, D2Xh, mlut, Lut, SQDn, rs, cs, ds);
+	  if(AVS_point3d(D2Xh, p, ps, rs) != 0)
+	    AVS_point3d(HMA, p, ps, rs) = IsHMAEnhanced3d(p, D2Xh, mlut, Lut, SQDn, rs, cs, ds);
   }
 
   //Free
@@ -246,14 +282,14 @@ struct xvimage *lhma_givenTables(struct xvimage *Xh, MLut mlut, RTLutCol Lut, SQ
 } // lhma_build()
 
 /* ==================================== */
-int32_t EnRmin2d(Point x, int32_t R, Point v,
+int32_t EnRmin2d(AVS_Point x, int32_t R, AVS_Point v,
 	     int32_t Rv, SQDLut SQDn)
 /* ==================================== */
 {
   int32_t i;
   int32_t Rvless;
-  Point rg, xplusv, S;
-  Point r1, r2;
+  AVS_Point rg, xplusv, S;
+  AVS_Point r1, r2;
 
   S.x = (v.x < 0) ? -1 : 1; S.y = (v.y < 0) ? -1 : 1;
   xplusv.x = x.x + v.x;  xplusv.y = x.y + v.y;
@@ -289,14 +325,14 @@ int32_t EnRmin2d(Point x, int32_t R, Point v,
 }
 
 /* ==================================== */
-int32_t EnRmin3d(Point x, int32_t R, Point v,
+int32_t EnRmin3d(AVS_Point x, int32_t R, AVS_Point v,
 	     int32_t Rv, SQDLut SQDn)
 /* ==================================== */
 {
   int32_t i, j;
   int32_t Rvless;
-  Point rg, xplusv, S;
-  Point psyms[6];
+  AVS_Point rg, xplusv, S;
+  AVS_Point psyms[6];
 
   S.x = (v.x < 0) ? -1 : 1; S.y = (v.y < 0) ? -1 : 1; S.z = (v.z < 0) ? -1 : 1;
   xplusv.x = x.x + v.x;  xplusv.y = x.y + v.y;  xplusv.z = x.z + v.z;
@@ -320,7 +356,7 @@ int32_t EnRmin3d(Point x, int32_t R, Point v,
       psyms[5].x = rg.z; psyms[5].y = rg.y; psyms[5].z = rg.x;
       for(j = 0; j < 6; j++) {
 	//r <- SP'rg
-	Point r = psyms[j];
+	AVS_Point r = psyms[j];
 	r.x *= S.x; r.y*=S.y; r.z *=S.z;
 
 	//if (((x+v-r) in En) and ((v-r)^2 < R) then return Rv
@@ -340,13 +376,13 @@ int32_t EnRmin3d(Point x, int32_t R, Point v,
 }
 
 /* ==================================== */
-int32_t EnRminAuto2d(Point x, int32_t R,
+int32_t EnRminAuto2d(AVS_Point x, int32_t R,
 		 SQDLut SQDn)
 /* ==================================== */
 {
   int32_t i, Rless;
   int32_t Enx = En2d(x.x, x.y);
-  Point rg;
+  AVS_Point rg;
 
   //while (R>0)
   while(R > 0) {
@@ -364,13 +400,13 @@ int32_t EnRminAuto2d(Point x, int32_t R,
 
 
 /* ==================================== */
-int32_t EnRminAuto3d(Point x, int32_t R,
+int32_t EnRminAuto3d(AVS_Point x, int32_t R,
 		 SQDLut SQDn)
 /* ==================================== */
 {
   int32_t i, Rless;
   int32_t Enx = En3d(x.x, x.y, x.z);
-  Point rg;
+  AVS_Point rg;
 
   /*
   if ((R == 1)&&( Enx == En3d(0, 0, 0)) ) {
@@ -395,7 +431,7 @@ int32_t EnRminAuto3d(Point x, int32_t R,
 
 
 /* ==================================== */
-int32_t IsHMAEnhanced2d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
+int32_t IsHMAEnhanced2d(AVS_Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
 		    MLut mlut, RTLutCol Lut, SQDLut SQDn, int32_t rs, int32_t cs)
 /* ==================================== */
 /*
@@ -407,11 +443,11 @@ int32_t IsHMAEnhanced2d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
 {
   int32_t Rx, Rv;
   int32_t i,j;
-  PointSet Svg;
-  Point v;
+  AVS_PointSet Svg;
+  AVS_Point v;
 
   //Rx = EnRmin(x, D2Xh(x), 0)
-  Rx = EnRminAuto2d(x, point2d(D2Xh, x, rs), SQDn);
+  Rx = EnRminAuto2d(x, AVS_point2d(D2Xh, x, rs), SQDn);
   if (Rx == 0) return 0; //En(B<(x, D2Xh(x))) is empty
 
   //avoid zero values in RTLut
@@ -425,17 +461,17 @@ int32_t IsHMAEnhanced2d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
     for (j = 0; j < Svg.size; j++) {
       v = Svg.points[j];
       Rv = EnRmin2d(x, Rx, v, Lut[mlut.indmap[i] + Rx], SQDn);
-      if (pixel(D2Xh, x.x + v.x, x.y + v.y, rs) >= Rv) return 0;
+      if (AVS_pixel(D2Xh, x.x + v.x, x.y + v.y, rs) >= Rv) return 0;
     }
   }
 
-  return point2d(D2Xh, x, rs);
+  return AVS_point2d(D2Xh, x, rs);
 } // IsHMAEnhanced2d()
 
 
 
 /* ==================================== */
-int32_t IsHMAEnhanced3d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
+int32_t IsHMAEnhanced3d(AVS_Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
 		    MLut mlut, RTLutCol Lut, SQDLut SQDn, int32_t rs, int32_t cs, int32_t ds)
 /* ==================================== */
 /*
@@ -448,11 +484,11 @@ int32_t IsHMAEnhanced3d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
   int32_t Rx, Rv;
   int32_t i,j;
   int32_t ps = rs*cs;
-  PointSet Svg;
-  Point v;
+  AVS_PointSet Svg;
+  AVS_Point v;
 
   //Rx = EnRmin(x, D2Xh(x), 0)
-  Rx = EnRminAuto3d(x, point3d(D2Xh, x, ps, rs), SQDn);
+  Rx = EnRminAuto3d(x, AVS_point3d(D2Xh, x, ps, rs), SQDn);
   if (Rx == 0) return 0; //En(B<(x, D2Xh(x))) is empty
 
   //avoid zero values in RTLut
@@ -466,20 +502,20 @@ int32_t IsHMAEnhanced3d(Point x, /*int32_t Rmax,*/ uint32_t *D2Xh,
     for (j = 0; j < Svg.size; j++) {
       v = Svg.points[j];
       Rv = EnRmin3d(x, Rx, v, Lut[mlut.indmap[i] + Rx], SQDn);
-      if (voxel(D2Xh, x.x + v.x, x.y + v.y, x.z + v.z, ps, rs) >= Rv) return 0;
+      if (AVS_voxel(D2Xh, x.x + v.x, x.y + v.y, x.z + v.z, ps, rs) >= Rv) return 0;
     }
   }
 
-  if (point3d(D2Xh, x, ps, rs) == 1)
+  if (AVS_point3d(D2Xh, x, ps, rs) == 1)
     printf("x=(%d,%d,%d)\n", x.x, x.y, x.z);
 
-  return point3d(D2Xh, x, ps, rs);
+  return AVS_point3d(D2Xh, x, ps, rs);
 } // IsHMAEnhanced3d()
 
 
 
 //----------------------------------
-void applyConstrainedSnSyms2d(PointSet *set, Point vec, Point orig, int32_t rs, int32_t cs)
+void applyConstrainedSnSyms2d(AVS_PointSet *set, AVS_Point vec, AVS_Point orig, int32_t rs, int32_t cs)
 //----------------------------------
 /*
   Apply Sn symmetries to vec with the constraint that orig+vec=(x,y) is
@@ -517,7 +553,7 @@ void applyConstrainedSnSyms2d(PointSet *set, Point vec, Point orig, int32_t rs, 
 
 
 //----------------------------------
-void applyConstrainedSnSyms3d(PointSet *set, Point vec, Point orig, int32_t rs, int32_t cs, int32_t ds)
+void applyConstrainedSnSyms3d(AVS_PointSet *set, AVS_Point vec, AVS_Point orig, int32_t rs, int32_t cs, int32_t ds)
 //----------------------------------
 /*
   Apply Sn symmetries to vec with the constraint that orig+vec=(x,y,z) is

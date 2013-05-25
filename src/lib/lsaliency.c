@@ -1,4 +1,37 @@
-/* $Id: lsaliency.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 
 #include <stdio.h>
 #include <stdint.h>
@@ -23,7 +56,7 @@ typedef struct _basinT {
   int32_t dynamics;
   int32_t surface;
   int32_t volume;
-  TypListe* neighbors;
+  TypListechainee* neighbors;
   int32_t flag;
   int32_t father;
   //struct _basinT *father;
@@ -152,7 +185,7 @@ int32_t lsaliency(
 #undef F_NAME
 #define F_NAME "lsaliency"
 {
-  struct xvimage * minima, *label, *tmp;
+  struct xvimage *label;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t srs = 2*rs+1;
@@ -160,16 +193,13 @@ int32_t lsaliency(
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *MA;                             /* l'image de masque */
-  uint8_t *M;
-  uint32_t *T, *S;
+  int32_t *S;
   uint32_t *it;
   int32_t * L;
   int32_t nbmin; /* Nb of minima */
-  int32_t incr_vois, passold, pass;
+  int32_t incr_vois;
   register int32_t i, j, k, x, y;
-  TypListe* l;
   basinT *basins;
-  basinT **orig;
   //const int32_t WSHED_HMAX  =       512;    // Max grey value
   const int32_t INIT	=	-1;	// initial value of pixels of out 
   const int32_t MASK	=	-2;     // Initial value for each level
@@ -211,7 +241,7 @@ int32_t lsaliency(
     exit(1);
   }
   */
-  /* min = ULONGDATA(minima); */
+  /* min = SLONGDATA(minima); */
   label = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
   if (label == NULL)
   {   
@@ -227,7 +257,7 @@ int32_t lsaliency(
   printf("found %d minima\n", nbmin);
   */
 
-  L = ULONGDATA(label);
+  L = SLONGDATA(label);
   // sort in pixels by increasing grey level
   for (h = 0; h <= WSHED_HMAX; h++) 
     hi[h] = 0;
@@ -398,7 +428,7 @@ int32_t lsaliency(
   {
     int32_t xx, yy, max;
   //printf("scs = %d, srs = %d\n", scs, srs);
-  S = ULONGDATA(saliency);
+  S = SLONGDATA(saliency);
   // mettre les barres horizontales et verticales à la saillence
   for (i = 0; i < cs; i++) {
     for (j = 0; j < rs; j++) {
@@ -435,7 +465,7 @@ int32_t lsaliency(
     
   /*
   M = UCHARDATA(minima);
-  T = ULONGDATA(tmp);
+  T = SLONGDATA(tmp);
   for (i = 0; i < N; i++) 
     if (T[i]) M[i] = 1;
   freeimage(tmp);
@@ -467,13 +497,13 @@ int32_t lsaliency(
   for (i=0; i<nbmin; i++) {
     basins[i].father = NULL;
     basins[i].label = i;
-    basins[i].neighbors = ListeVide();
+    basins[i].neighbors = ListechaineeVide();
   }
 
   if (masque) MA = UCHARDATA(masque);
 
-  L = ULONGDATA(label);
-  T = ULONGDATA(tmp);
+  L = SLONGDATA(label);
+  T = SLONGDATA(tmp);
   for (x = 0; x < N; x++)   {
     // Get the altitude of the minimum
     if (M[x] != 0) basins[L[x]].altitude = F[x];
@@ -529,7 +559,7 @@ int32_t lsaliency(
     }
     printf("Basin %d ; dyn = %d\n", i, basins[i].dynamics);
     printf("Voisin de %d: ", i);
-    AfficheListe(basins[i].neighbors);
+    AfficheListechainee(basins[i].neighbors);
     printf("\n");
   }
   qsort(basins, nbmin, sizeof(basinT), compareBasin);
@@ -567,7 +597,7 @@ int32_t lsaliency(
     }
     orig[lab]->neighbors = Union(orig[lab]->neighbors, basins[i].neighbors);
     printf("Voisin de %d: ", lab);
-    AfficheListe(orig[lab]->neighbors);
+    AfficheListechainee(orig[lab]->neighbors);
     printf("\n");
     //basins[i] = *orig[lab]; 
   }
@@ -575,7 +605,7 @@ int32_t lsaliency(
   {
     int32_t xx, yy, max;
   //printf("scs = %d, srs = %d\n", scs, srs);
-  S = ULONGDATA(saliency);
+  S = SLONGDATA(saliency);
   // mettre les barres horizontales et verticales à la saillence
   for (i = 0; i < cs; i++) {
     for (j = 0; j < rs; j++) {
@@ -611,7 +641,7 @@ int32_t lsaliency(
   }
 
   for (i=0; i<nbmin; i++)
-    DetruitListe(basins[i].neighbors);
+    DetruitListechainee(basins[i].neighbors);
   freeimage(tmp);
   */
   free(basins);
@@ -631,22 +661,19 @@ int32_t lsaliency6b(
 #undef F_NAME
 #define F_NAME "lsaliency6b"
 {
-  struct xvimage * minima, *label, *tmp;
+  struct xvimage *label;
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *MA;                        /* l'image de masque */
-  uint8_t *M;
-  uint32_t *T, *S;
+  int32_t *S;
   uint32_t *it;
   int32_t * L;
   int32_t nbmin; /* Nb of minima */
-  int32_t incr_vois, passold, pass;
-  register int32_t i, j, k, x, y;
-  TypListe* l;
+  int32_t incr_vois;
+  register int32_t k, x, y;
   basinT *basins;
-  basinT **orig;
   //const int32_t WSHED_HMAX  =       512;    // Max grey value
   const int32_t INIT	=	-1;	// initial value of pixels of out 
   const int32_t MASK	=	-2;     // Initial value for each level
@@ -673,7 +700,7 @@ int32_t lsaliency6b(
     exit(1);
   }
 
-  L = ULONGDATA(label);
+  L = SLONGDATA(label);
   // sort in pixels by increasing grey level
   for (h = 0; h <= WSHED_HMAX; h++) 
     hi[h] = 0;
@@ -838,11 +865,11 @@ int32_t lsaliency6b(
     
   }
   FifoTermine(fifo);
-  //#ifdef _DEBUG_SALIENCY_
+#ifdef _DEBUG_SALIENCY_
   writeimage(label, "label.pgm");
   printf("%d minima found\n", nbmin);
-  //#endif
-  S = ULONGDATA(saliency);
+#endif
+  S = SLONGDATA(saliency);
   for (x=0; x<N; x++) {
     if (L[x] == WSHED) {
       int32_t c1, c2;

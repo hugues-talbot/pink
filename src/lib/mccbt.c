@@ -1,4 +1,37 @@
-/* $Id: mccbt.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
 Librairie mccbt :
 
@@ -36,7 +69,7 @@ Michel Couprie --- novembre 1996
 /* ============================================= */
 
 /* ==================================== */
-int32_t NotIn(
+int32_t mccbt_NotIn(
   int32_t e,
   int32_t *list,                   
   int32_t n)                       
@@ -49,7 +82,7 @@ int32_t NotIn(
   while (n > 0)
     if (list[--n] == e) return 0;
   return 1;
-} /* NotIn() */
+} /* mccbt_NotIn() */
 
 /* ==================================== */
 int32_t RgMinimum(
@@ -262,7 +295,7 @@ printf(") -> ");
         a = arbre[a].father;
     }
     if (a != argv[i]) arbre[argv[i]].ancestor = a;
-    if (NotIn(a, argv, nv))
+    if (mccbt_NotIn(a, argv, nv))
     {
       argv[nv] = a;
       nv += 1;
@@ -441,7 +474,7 @@ int32_t * Regularise(
 printf("Regularise()");
 #endif
 
-  T = calloc(nbcell - nbleaf, sizeof(int32_t));
+ T = (int32_t *)calloc(nbcell - nbleaf, sizeof(int32_t));
   if (T == NULL)
   {
     fprintf(stderr, "Regularise: calloc failed\n");
@@ -557,8 +590,8 @@ int32_t * InverseCBT(
 printf("InverseCBT()");
 #endif
 
-  I = calloc(1,nbcell * sizeof(int32_t));
-  T = calloc(nbcell - nbleaf, sizeof(int32_t));
+ I = (int32_t *)calloc(1,nbcell * sizeof(int32_t));
+ T = (int32_t *)calloc(nbcell - nbleaf, sizeof(int32_t));
   if ((I == NULL) || (T == NULL))
   {
     fprintf(stderr, "InverseCBT: allocation failed\n");

@@ -1,4 +1,37 @@
-/* $Id: points2spline.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file points2spline.c
 
 \brief converts a sequence of control points into a spline
@@ -34,7 +67,7 @@ x3 y3 z3<br>
 
 The output file format is the following for 2D:
 
-s n+1 (where n+1 denotes the number of control points)<br>
+c n+1 (where n+1 denotes the number of control points)<br>
 x1 y1<br>
 ...<br>
 xn+1 yn+1<br>
@@ -44,7 +77,7 @@ C0Xn C0Yn C1Xn C1Yn C2Xn C2Yn C3Xn C3Yn<br>
 
 and in the 3D case:
 
-S n+1 (where n+1 denotes the number of control points)<br>
+C n+1 (where n+1 denotes the number of control points)<br>
 x1 y1 z1<br>
 ...<br>
 xn+1 yn+1 zn+1<br>
@@ -52,12 +85,12 @@ C0X1 C0Y1 C0Z1 C1X1 C1Y1 C1Z1 C2X1 C2Y1 C2Z1 C3X1 C3Y1 C3Z1<br>
 ...<br>
 C0Xn C0Yn C0Zn C1Xn C1Yn C1Zn C2Xn C2Yn C2Zn C3Xn C3Yn C3Zn<br>
 
-The ith segment of the parametric curve P is then defined by:
+The ith segment (starting from i=0) of the parametric curve P is then defined by:
 
 x(t) = C3Xi * t^3 + C2Xi * t^2 + C1Xi * t + C0Xi<br>
 y(t) = C3Yi * t^3 + C2Yi * t^2 + C1Yi * t + C0Yi<br>
 z(t) = C3Zi * t^3 + C2Zi * t^2 + C1Zi * t + C0Zi<br>
-with t in [0,1]
+with t in [i,i+1]
 
 <B>Types supported:</B> list 2D, list 3D
 
@@ -65,6 +98,11 @@ with t in [0,1]
 \ingroup  draw geo
 
 \author Michel Couprie
+*/
+
+/*
+%TEST points2spline %IMAGES/2dlist/binary/l2points1.list %RESULTS/points2spline_l2points1.spline
+%TEST points2spline %IMAGES/3dlist/binary/l3points1.list %RESULTS/points2spline_l3points1.spline
 */
 
 #include <stdio.h>
@@ -76,9 +114,8 @@ with t in [0,1]
 #include <mcsplines.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   FILE *fd = NULL;
   int32_t i, npoints;
@@ -171,7 +208,7 @@ int main(argc, argv)
       exit(1);
     }
   
-    fprintf(fd, "s %d\n", npoints);
+    fprintf(fd, "c %d\n", npoints);
     for (i = 0; i < npoints; i++) fprintf(fd, "%d %d\n", (int32_t)X[i], (int32_t)Y[i]);
     for (i = 0; i < npoints-1; i++) fprintf(fd, "%g %g %g %g %g %g %g %g\n", 
                                           C0[i], D0[i], C1[i], D1[i], C2[i], D2[i], C3[i], D3[i]);
@@ -251,7 +288,7 @@ int main(argc, argv)
       exit(1);
     }
   
-    fprintf(fd, "S %d\n", npoints);
+    fprintf(fd, "C %d\n", npoints);
     for (i = 0; i < npoints; i++) fprintf(fd, "%d %d %d\n", (int32_t)X[i], (int32_t)Y[i], (int32_t)Z[i]);
     for (i = 0; i < npoints-1; i++) fprintf(fd, "%g %g %g %g %g %g %g %g %g %g %g %g\n", 
                                           C0[i], D0[i], E0[i], C1[i], D1[i], E1[i], C2[i], D2[i], E2[i], C3[i], D3[i], E3[i]);

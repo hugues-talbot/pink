@@ -1,4 +1,37 @@
-/* $Id: mcliste.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* structure de liste d'entiers */
 
 /* #define TESTListe */
@@ -11,8 +44,15 @@
 /* ==================================== */
 Liste * CreeListeVide(int32_t taillemax)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "CreeListeVide"
 {
   Liste * L = (Liste *)calloc(1,sizeof(Liste) + sizeof(int32_t) * (taillemax-1));
+  if (L == NULL)
+  {
+    fprintf(stderr, "%s: erreur calloc\n", F_NAME);
+    exit(1);
+  }
   L->Max = taillemax;
   L->Sp = 0;
   return L;
@@ -26,6 +66,13 @@ void ListeFlush(Liste * L)
 }
 
 /* ==================================== */
+int32_t ListeTaille(Liste * L)
+/* ==================================== */
+{
+  return (L->Sp);
+}
+
+/* ==================================== */
 int32_t ListeVide(Liste * L)
 /* ==================================== */
 {
@@ -33,12 +80,28 @@ int32_t ListeVide(Liste * L)
 }
 
 /* ==================================== */
+int32_t ListeElt(Liste * L, uint32_t n)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "ListeElt"
+{
+  if (n >= L->Sp)
+  {
+    fprintf(stderr, "%s: erreur hors limite\n", F_NAME);
+    exit(1);
+  }
+  return L->Pts[n];
+}
+
+/* ==================================== */
 int32_t ListePop(Liste * L)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "ListePop"
 {
   if (L->Sp == 0)
   {
-    fprintf(stderr, "erreur Liste vide\n");
+    fprintf(stderr, "%s: erreur Liste vide\n", F_NAME);
     exit(1);
   }
   L->Sp -= 1;
@@ -46,16 +109,19 @@ int32_t ListePop(Liste * L)
 }
   
 /* ==================================== */
-void ListePush(Liste * L, int32_t V)
+int32_t ListePush(Liste * L, int32_t V)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "ListePush"
 {
   if (L->Sp > L->Max - 1)
   {
-    fprintf(stderr, "erreur Liste pleine\n");
+    fprintf(stderr, "%s: erreur Liste pleine\n", F_NAME);
     exit(1);
   }
   L->Pts[L->Sp] = V;
   L->Sp += 1;
+  return L->Sp - 1; 
 }
 
 /* ==================================== */

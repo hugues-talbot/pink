@@ -1,15 +1,51 @@
-/* $Id: list2pgm.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file list2pgm.c
 
 \brief converts from point list representation to pgm
 
-<B>Usage:</B> list2pgm in.list <in.pgm|rs cs ds> [scale] out.pgm
+<B>Usage:</B> list2pgm in.list {in.pgm|r
+
+
+s cs ds} [scale] out.pgm
 
 <B>Description:</B>
 
 Reads the file <B>in.list</B>. This file must have one of the following formats:
 <pre>  
-  e <n>       s <n>         b <n>         n <n>            B <n>            N <n>    
+  e &lt;n&gt;       s &lt;n&gt;         b &lt;n&gt;         n &lt;n&gt;            B &lt;n&gt;            N &lt;n&gt;    
   x1          x1 v1         x1 y1         x1 y1 v1         x1 y1 z1         x1 y1 z1 v1
   x2    or    x2 v2   or    x2 y2   or    x2 y2 v2   or    x2 y2 z2   or    z2 x2 y2 v2
   ...         ...           ...           ...              ...              ...
@@ -40,27 +76,44 @@ The optional parameter \b scale allows to scale the coordinates.
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcutil.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   FILE *fd = NULL;
-  int32_t rs, cs, ds, ps, N, x, y, z, v, n, i;
+  int32_t rs, cs, ds, ps, N, x, y, z, n, i;
   double xx, yy, zz, vv, scale;
   uint8_t *F;
+  float *FF;
   char type;
 
   if ((argc != 4) && (argc != 6) && (argc != 5) && (argc != 7))
   {
-    fprintf(stderr, "usage: %s in.list <in.pgm|rs cs ds> [scale] out.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.list {in.pgm|rs cs ds} [scale] out.pgm\n", argv[0]);
     exit(1);
   }
+
+  fd = fopen(argv[1],"r");
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[1]);
+    exit(1);
+  }
+
+  fscanf(fd, "%c", &type);
+  if ((type != 'e') && (type != 's') && (type != 'b') && (type != 'n') && (type != 'B') && (type != 'N'))
+  {
+    fprintf(stderr, "usage: %s: bad file format : %c \n", argv[0], type);
+    exit(1);
+  }
+
+  fscanf(fd, "%d\n", &n);
 
   if ((argc == 4) || (argc == 5))
   {
@@ -75,7 +128,16 @@ int main(argc, argv)
     ds = depth(image);
     ps = rs * cs;
     N = ps * ds;
-    F = UCHARDATA(image);
+    if ((type == 'e') || (type == 'b') || (type == 'B'))
+    {
+      F = UCHARDATA(image);
+      assert(datatype(image) == VFF_TYP_1_BYTE);
+    }
+    else
+    {
+      FF = FLOATDATA(image);
+      assert(datatype(image) == VFF_TYP_FLOAT);
+    }
   }
   else
   {
@@ -84,39 +146,26 @@ int main(argc, argv)
     ds = atoi(argv[4]);
     ps = rs * cs;
     N = ps * ds;
-    image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE);
-    if (image == NULL)
+    if ((type == 'e') || (type == 'b') || (type == 'B'))
     {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
+      image = allocimage(NULL, rs, cs, ds, VFF_TYP_1_BYTE); assert(image != NULL);
+      F = UCHARDATA(image);
     }
-    F = UCHARDATA(image);
-    memset(F, 0, N);
+    else
+    {
+      image = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT); assert(image != NULL);
+      FF = FLOATDATA(image);
+    }
+    razimage(image);
   }
 
   if ((argc == 5) || (argc == 7)) scale = atof(argv[argc-2]); else scale = 1.0;
-
-  fd = fopen(argv[1],"r");
-  if (!fd)
-  {
-    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[1]);
-    exit(1);
-  }
-
-  fscanf(fd, "%c", &type);
-  if ((type != 'b') && (type != 'n') && (type != 'B') && (type != 'N'))
-  {
-    fprintf(stderr, "usage: %s: bad file format : %c \n", argv[0], type);
-    exit(1);
-  }
-
-  fscanf(fd, "%d\n", &n);
 
   if (type == 'e') 
   {
     if ((cs != 1) || (ds != 1))
     {
-      fprintf(stderr, "%s: type e is for 1D images\n", type);
+      fprintf(stderr, "%s: type %c is for 1D images\n", argv[0], type);
       exit(1);
     }
     for (i = 0; i < n; i++)
@@ -132,7 +181,7 @@ int main(argc, argv)
   {
     if ((cs != 1) || (ds != 1))
     {
-      fprintf(stderr, "%s: type s is for 1D images\n", type);
+      fprintf(stderr, "%s: type %c is for 1D images\n", argv[0], type);
       exit(1);
     }
     for (i = 0; i < n; i++)
@@ -140,16 +189,15 @@ int main(argc, argv)
       fscanf(fd, "%lf %lf\n", &xx, &vv);
       xx *= scale;
       x = arrondi(xx);
-      v = arrondi(vv);
-      if ((x >= 0) && (x < rs) && (v >= 0) && (v < 256))
-        F[x] = v;
+      if ((x >= 0) && (x < rs))
+        FF[x] = (float)vv;
     }
   }
   else if (type == 'b') 
   {
     if (ds != 1)
     {
-      fprintf(stderr, "%s: type b is for 2D images\n", type);
+      fprintf(stderr, "%s: type %c is for 2D images\n", argv[0], type);
       exit(1);
     }
     for (i = 0; i < n; i++)
@@ -167,7 +215,7 @@ int main(argc, argv)
   {
     if (ds != 1)
     {
-      fprintf(stderr, "%s: type n is for 2D images\n", type);
+      fprintf(stderr, "%s: type %c is for 2D images\n", argv[0], type);
       exit(1);
     }
     for (i = 0; i < n; i++)
@@ -177,9 +225,8 @@ int main(argc, argv)
       yy *= scale;
       x = arrondi(xx);
       y = arrondi(yy);
-      v = arrondi(vv);
-      if ((x >= 0) && (x < rs) && (y >= 0) && (y < cs) && (v >= 0) && (v < 256))
-        F[y * rs + x] = v;
+      if ((x >= 0) && (x < rs) && (y >= 0) && (y < cs))
+        FF[y * rs + x] = (float)vv;
     }
   } else if (type == 'B') 
   {
@@ -207,9 +254,8 @@ int main(argc, argv)
       x = arrondi(xx);
       y = arrondi(yy);
       z = arrondi(zz);
-      v = arrondi(vv);
-      if ((x >= 0) && (x < rs) && (y >= 0) && (y < cs) && (z >= 0) && (z < ds) && (v >= 0) && (v < 256))
-        F[z * ps + y * rs + x] = v;
+      if ((x >= 0) && (x < rs) && (y >= 0) && (y < cs) && (z >= 0) && (z < ds))
+        FF[z * ps + y * rs + x] = (float)vv;
     }
   }
 

@@ -1,9 +1,42 @@
-/* $Id: ptWsimple.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
-/*! \file label.c
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
+/*! \file ptWsimple.c
 
 \brief detects W-simple points in a 2D binary image
 
-<B>Usage:</B> label in.pgm connex out.pgm
+<B>Usage:</B> ptWsimple in.pgm connex out.pgm
 
 <B>Description:</B>
 The argument \b connex selects the connectivity (4, 8 in 2D).
@@ -27,14 +60,13 @@ The argument \b connex selects the connectivity (4, 8 in 2D).
 #include <llabelextrema.h>
 
 /* =============================================================== */
-int32_t main(argc, argv) 
+int main(int32_t argc, char **argv) 
 /* =============================================================== */
-  int32_t argc; char **argv; 
 {
   int32_t nblabels, connex, i,y,k;
   int32_t rs, cs, d, n, N, label;
   uint8_t *G;
-  uint32_t *LABEL;
+  int32_t *LABEL;
   struct xvimage * image;
   struct xvimage * result;
   struct xvimage * result2;
@@ -86,7 +118,7 @@ int32_t main(argc, argv)
   
   result2 = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_1_BYTE);
   
-  LABEL = ULONGDATA(result);
+  LABEL = SLONGDATA(result);
   G = UCHARDATA(result2);
   memset(G,0,N);
   for(i = 0; i < N; i++){
@@ -96,11 +128,17 @@ int32_t main(argc, argv)
       for(k = 0; k < 8; k += incr){
 	y = voisin(i, k, rs, N);
 	if (y != -1)
+	{
 	  if(LABEL[y] > 0) // y appartient à \Bar{X}
-	    if(label != -1){ 
-	      if(label != LABEL[y])
-		G[i] = 0;
-	    } else label = LABEL[y];
+	  {
+	    if(label != -1) 
+	    {
+	      if(label != LABEL[y]) G[i] = 0;
+	    } 
+	    else 
+	      label = LABEL[y];
+	  }
+	}
       }//for(k = 0 ... )
     }// if(LABEL[i] ...)
   }// for(i = 0...)

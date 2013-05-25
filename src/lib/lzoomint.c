@@ -1,4 +1,37 @@
-/* $Id: lzoomint.c,v 1.1.1.1 2008-11-25 08:01:44 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* zoom par sous- ou sur-echantillonage */
 /* Michel Couprie - septembre 1996 Christophe Doublier - mai 2002 */
 
@@ -137,12 +170,16 @@ struct xvimage* lzoomintxyz(
   int32_t fill) /* booleen : remplit l'espace inter-pixels */
 /* ==================================== */
 {
+#undef F_NAME
+#define F_NAME "lzoomintxyz"
   int32_t xx, yy, zz;
   int32_t i, j, k;
   uint8_t *ptin;
   uint8_t *ptout;
   int32_t rs, cs, ds, ps, N, rsz, csz, dsz, psz;
   struct xvimage * out;
+
+  printf("%s: zoomx=%d, zoomy=%d, zoomz=%d, fill=%d\n", F_NAME, zoomx, zoomy, zoomz, fill);
 
   rs = in->row_size;
   cs = in->col_size;
@@ -253,7 +290,7 @@ struct xvimage* lzoomintxyz(
         for (zz = 0; zz < ds; zz++)
           for (yy = 0; yy < cs; yy++)
             for (xx = 0; xx < rs; xx++)
-              ptout[(zz*zoomz)*psz + yy*rsz + xx] = ptin[zz*zoomz*ps + yy*zoomy*rs + xx*zoomx];
+              ptout[(zz*zoomz)*psz + (yy*zoomy)*rsz + (xx*zoomx)] = ptin[zz*ps + yy*rs + xx];
     } 
     else // zoomx<0 et zoomy<0 et zoomz<0 
       for (zz = 0; zz < ds; zz++)

@@ -1,4 +1,37 @@
-/* $Id: drawtriangulation.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file drawtriangulation.c
 
 \brief draw a triangulation
@@ -8,7 +41,7 @@
 <B>Description:</B>
 Reads a triangulation in file <B>in.list</B> under the following format:
 <pre>
-    G <n>
+    G &lt;n&gt;
     x1 y1 v1 ec1 ns1 s11 s12 ... s1ns1
     x2 y2 v2 ec2 ns2 s21 s22 ... s1ns2
     ...
@@ -44,21 +77,20 @@ Draws the triangulation in image in.pgm, output image is out.pgm
 #include <lbresen.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   FILE *fd = NULL;
   int32_t n, i, j;
   int32_t x, y, val, e, nbvois;
   char type;
-  point * S;
+  mcgeo_point * S;
   double * V;
   int32_t **vois; /* la table des listes de voisins (reperes par leur indice dans S) */
   int32_t *nv; /* la table des nombres de voisins */
   int32_t *ec; /* table de booleens indiquant les points de l'enveloppe convexe */
   struct xvimage * image;
-  int32_t rs, cs, ds, N;
+  int32_t rs, cs, N;
   uint8_t *F;
   int32_t Ax, Ay, Bx, By, v;
 
@@ -83,7 +115,7 @@ int main(argc, argv)
   }
 
   fscanf(fd, "%d\n", &n);
-  S = (point *)calloc(1, n * sizeof(point));
+  S = (mcgeo_point *)calloc(1, n * sizeof(mcgeo_point));
   V = (double *)calloc(1, n * sizeof(double));
   nv = (int32_t *)calloc(n, sizeof(int32_t));
   ec = (int32_t *)calloc(n, sizeof(int32_t));

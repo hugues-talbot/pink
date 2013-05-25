@@ -1,4 +1,4 @@
-/* $Id: meshregul.c.sav,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/* $Id: meshregul.c.sav,v 1.2 2009-01-22 07:05:36 mcouprie Exp $ */
 /*! \file meshregul.c
 
 \brief mesh smoothing
@@ -43,7 +43,7 @@ The possible choices for parameter <B>mode</B> are:
 #define NOISEPARAM 0.05
 
 /* =============================================================== */
-int32_t main(int32_t argc, char **argv) 
+int main(int32_t argc, char **argv) 
 /* =============================================================== */
 {
   FILE *filein = NULL;

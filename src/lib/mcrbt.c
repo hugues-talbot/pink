@@ -1,4 +1,37 @@
-/* $Id: mcrbt.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
    Librairie mcrbt :
 
@@ -31,7 +64,7 @@ typedef struct RBTELT {
 } RbtElt;
 
   Le classement des elements s'opere selon la valeur du champ "key", qui est par defaut 
-  un entier int32_t mais peut facilement etre change en tout type scalaire (double, etc): 
+  un entier index_t mais peut facilement etre change en tout type scalaire (double, etc): 
   il suffit de changer la declaration de "TypRbtKey".
 
   Un champ "auxdata" est prevu pour contenir une donnee quelconque utile pour l'application,
@@ -43,20 +76,20 @@ typedef struct RBTELT {
 
   L'utilisateur manipule la structure RBT exclusivement a travers les fonctions suivantes:
 
-  Rbt * CreeRbtVide(int32_t taillemax) : 
+  Rbt * mcrbt_CreeRbtVide(index_t taillemax) : 
      alloue l'espace memoire necessaire pour un RBT dont la taille n'excedera pas taillemax
      (cette taille est indicative, le RBT est realloue en cas de depassement)
 
   RbtElt * RbtSearch(Rbt * T, TypRbtKey k) : 
      recherche dans l'arbre T l'element ayant une valeur de "key" egale a k, retourne
-     un pointeur sur l'element en cas de succes, ou NULL sinon.
+     un pointeur sur l'element en cas de succes, ou RBT->nil sinon.
 
-  RbtElt * RbtInsert(Rbt ** T, TypRbtKey k, TypRbtAuxData d) : 
+  RbtElt * mcrbt_RbtInsert(Rbt ** T, TypRbtKey k, TypRbtAuxData d) : 
      insere un nouvel element dans l'arbre T, de valeur "key" egale a k 
      et de valeur "auxdata" egale a d
      retourne un pointeur sur l'element insere
 
-  void RbtDelete(Rbt * T, RbtElt * z) : 
+  void mcrbt_RbtDelete(Rbt * T, RbtElt * z) : 
      efface l'element z de l'arbre T
   
   int32_t RbtVide(Rbt * T) : 
@@ -71,7 +104,7 @@ typedef struct RBTELT {
   TypRbtAuxData RbtPopMax(Rbt * T) : 
      retire du RBT l'element de valeur "key" maximale, et retourne la valeur de son champ "auxdata"
 
-  RbtElt * RbtMinimum(Rbt * T, RbtElt * x) : 
+  RbtElt * mcrbt_RbtMinimum(Rbt * T, RbtElt * x) : 
      retourne un pointeur sur l'element de valeur "key" minimum, dans la sous-arborescence de racine x
      de l'arbre T 
 
@@ -85,13 +118,13 @@ typedef struct RBTELT {
   TypRbtKey RbtMax(Rbt * T) : 
      retourne la clé de l'element de valeur "key" maximum, dans l'arbre T 
 
-  RbtElt * RbtSuccessor(Rbt * T, RbtElt * x) : 
+  RbtElt * mcrbt_RbtSuccessor(Rbt * T, RbtElt * x) : 
      retourne un pointeur sur l'element de valeur "key" immediatement superieure a celle de l'element x
 
   void RbtPrint(Rbt * T) : 
      affiche le contenu du RBT (pour le DEBUG)
 
-  void RbtTermine(Rbt * T) : 
+  void mcrbt_RbtTermine(Rbt * T) : 
      libere l'espace memoire occupe par l'arbre T
 
 */
@@ -100,26 +133,26 @@ typedef struct RBTELT {
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdio.h>
+#include <assert.h>
 #include <mcrbt.h>
 
 /* #define TESTRBT */
 /* #define VERBOSE */
 
-#define PARANO
 //#define DEBUGDELETE
 //#define DEBUGINSERT
 
 /* ==================================== */
-Rbt * CreeRbtVide(
-  int32_t taillemax)
+Rbt * mcrbt_CreeRbtVide(
+  index_t taillemax)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   Rbt * T = (Rbt *)calloc(1,sizeof(Rbt) + taillemax*sizeof(RbtElt));
   /* le tableau Elts du Rbt peut stocker taillemax+1 elements, dont 1 pour nil */
   /* l'element 0 du tableau est reserve pour representer nil */
   if (T == NULL)
-  {   fprintf(stderr, "CreeRbtVide() : malloc failed\n");
+  {   fprintf(stderr, "mcrbt_CreeRbtVide() : malloc failed\n");
       return NULL;
   }
   T->max = taillemax;
@@ -135,16 +168,15 @@ Rbt * CreeRbtVide(
   T->libre = &(T->elts[1]);
 
   return T;
-} /* CreeRbtVide() */
+} /* mcrbt_CreeRbtVide() */
 
 /* ==================================== */
 void RbtTransRec(
   Rbt **T, Rbt * A, RbtElt * x)
 /* ==================================== */
 {
-  int32_t i;
   if (x == A->nil) return;
-  RbtInsert(T, x->key, x->auxdata);
+  mcrbt_RbtInsert(T, x->key, x->auxdata);
   RbtTransRec(T, A, x->left);
   RbtTransRec(T, A, x->right);
 } /* RbtTransRec() */
@@ -153,14 +185,18 @@ void RbtTransRec(
 void RbtReAlloc(Rbt **A)
 /* ==================================== */
 {
-  int32_t i, taillemax;
+  index_t taillemax;
   Rbt * T, *Tmp;
 
 #ifdef VERBOSE
+#ifdef MC_64_BITS
+  printf("RbtReAlloc: ancienne taille %lld nouvelle taille %lld\n", (*A)->max, 2 * (*A)->max);
+#else
   printf("RbtReAlloc: ancienne taille %d nouvelle taille %d\n", (*A)->max, 2 * (*A)->max);
 #endif
+#endif
   taillemax = 2 * (*A)->max;  /* alloue le double de l'ancienne taille */ 
-  T = CreeRbtVide(taillemax);
+  T = mcrbt_CreeRbtVide(taillemax);
   RbtTransRec(&T, *A, (*A)->root);
   Tmp = *A;
   *A = T;
@@ -172,7 +208,7 @@ void RbtFlush(
   Rbt * T)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   T->util = 0;
   for (i = 0; i < T->max - 1; i++) T->elts[i].right = &(T->elts[i+1]);
   T->elts[T->max - 1].right = NULL;
@@ -180,15 +216,15 @@ void RbtFlush(
 } /* RbtFlush() */
 
 /* ==================================== */
-int32_t RbtVide(
+int32_t mcrbt_RbtVide(
   Rbt * T)
 /* ==================================== */
 {
   return (T->util == 0);
-} /* RbtVide() */
+} /* mcrbt_RbtVide() */
 
 /* ==================================== */
-void RbtTermine(
+void mcrbt_RbtTermine(
   Rbt * T)
 /* ==================================== */
 {
@@ -196,18 +232,22 @@ void RbtTermine(
   printf("Rbt: taux d'utilisation: %g\n", (double)T->maxutil / (double)T->max);
 #endif
   free(T);
-} /* RbtTermine() */
+} /* mcrbt_RbtTermine() */
 
 /* ==================================== */
 void RbtPrintRec(
-  Rbt * T, RbtElt * x, int32_t niv)
+  Rbt * T, RbtElt * x, index_t niv)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   if (x == T->nil) return;
   RbtPrintRec(T, x->left, niv+1);
   for (i = 0; i < niv; i++) printf("    ");
+#ifdef MC_64_BITS
+  printf("%g [%lld] (", x->key, x->auxdata);
+#else
   printf("%g [%d] (", x->key, x->auxdata);
+#endif
   if (x->color == RBT_Red) printf("r"); else  printf("b");
   printf(")\n");
   RbtPrintRec(T, x->right, niv+1);
@@ -233,13 +273,13 @@ RbtElt * RbtSearch(
 } /* RbtSearch() */
 
 /* ==================================== */
-RbtElt * RbtMinimum(
+RbtElt * mcrbt_RbtMinimum(
   Rbt * T, RbtElt * x)
 /* ==================================== */
 {
   while (x->left != T->nil) x = x->left;
   return x;
-} /* RbtMinimum() */
+} /* mcrbt_RbtMinimum() */
 
 /* ==================================== */
 RbtElt * RbtMaximum(
@@ -251,12 +291,12 @@ RbtElt * RbtMaximum(
 } /* RbtMaximum() */
 
 /* ==================================== */
-RbtElt * RbtSuccessor(
+RbtElt * mcrbt_RbtSuccessor(
   Rbt * T, RbtElt * x)
 /* ==================================== */
 {
   RbtElt * y;
-  if (x->right != T->nil) return RbtMinimum(T, x->right);
+  if (x->right != T->nil) return mcrbt_RbtMinimum(T, x->right);
   y = x->parent;
   while ((y != T->nil) && (x == y->right))
   {
@@ -264,10 +304,10 @@ RbtElt * RbtSuccessor(
     y = y->parent;
   }
   return y;
-} /* RbtSuccessor() */
+} /* mcrbt_RbtSuccessor() */
 
 /* ==================================== */
-void RbtInsertSimple(
+void mcrbt_RbtInsertSimple(
   Rbt * T, RbtElt * z)
 /* ==================================== */
 {
@@ -275,7 +315,7 @@ void RbtInsertSimple(
   RbtElt * y;
 
 #ifdef DEBUGINSERT
-printf("RbtInsertSimple  ");
+printf("mcrbt_RbtInsertSimple  ");
 printf("z=%x ; z->key = %g\n", (int32_t)z, z->key);
 #endif
 
@@ -293,20 +333,20 @@ printf("z=%x ; z->key = %g\n", (int32_t)z, z->key);
     if (z->key < y->key) y->left = z; else y->right = z;
 
 #ifdef DEBUGINSERT
-printf("FIN RbtInsertSimple\n");
+printf("FIN mcrbt_RbtInsertSimple\n");
 #endif
 
-} /* RbtInsertSimple() */
+} /* mcrbt_RbtInsertSimple() */
 
 /* ==================================== */
-RbtElt * RbtInsertAux(  /* allocation et insertion simple */
+RbtElt * mcrbt_RbtInsertAux(  /* allocation et insertion simple */
   Rbt ** T, TypRbtKey k, TypRbtAuxData d)
 /* ==================================== */
 {
   RbtElt * z;
 
 #ifdef DEBUGINSERT
-printf("RbtInsertAux\n");
+printf("mcrbt_RbtInsertAux\n");
 #endif
 
   if ((*T)->libre == NULL) RbtReAlloc(T);
@@ -318,17 +358,17 @@ printf("RbtInsertAux\n");
   z->auxdata = d;
   z->left = (*T)->nil;
   z->right = (*T)->nil;
-  RbtInsertSimple((*T), z);
+  mcrbt_RbtInsertSimple((*T), z);
 
 #ifdef DEBUGINSERT
-printf("FIN RbtInsertAux\n");
+printf("FIN mcrbt_RbtInsertAux\n");
 #endif
 
   return z;
-} /* RbtInsertAux() */
+} /* mcrbt_RbtInsertAux() */
 
 /* ==================================== */
-void LeftRotate(
+static void LeftRotate(
   Rbt * T, RbtElt * x)
 /* ==================================== */
 {
@@ -352,7 +392,7 @@ void LeftRotate(
 } /* LeftRotate() */
 
 /* ==================================== */
-void RightRotate(
+static void RightRotate(
   Rbt * T, RbtElt * x)
 /* ==================================== */
 {
@@ -376,7 +416,7 @@ void RightRotate(
 } /* RightRotate() */
 
 /* ==================================== */
-RbtElt * RbtInsert(
+RbtElt * mcrbt_RbtInsert(
   Rbt ** T, TypRbtKey k, TypRbtAuxData d)
 /* ==================================== */
 {
@@ -385,10 +425,10 @@ RbtElt * RbtInsert(
   RbtElt * uncle;
 
 #ifdef DEBUGINSERT
-printf("RbtInsert: data = %d ; key = %g\n", d, k);
+printf("mcrbt_RbtInsert: data = %d ; key = %g\n", d, k);
 #endif
 
-  xc = x = RbtInsertAux(T, k, d);          /* allocation et insertion simple */
+  xc = x = mcrbt_RbtInsertAux(T, k, d);          /* allocation et insertion simple */
   x->color = RBT_Red;
 
   /* re-equilibrage de l'arbre */
@@ -442,25 +482,23 @@ printf("RbtInsert: data = %d ; key = %g\n", d, k);
   (*T)->root->color = RBT_Black;
 
 #ifdef DEBUGINSERT
-printf("FIN RbtInsert xc->data = %d ; xc->key = %g\n", xc->auxdata, xc->key);
+printf("FIN mcrbt_RbtInsert xc->data = %d ; xc->key = %g\n", xc->auxdata, xc->key);
 #endif
 
-#ifdef PARANO
-  if (xc->auxdata != d) printf("BUG RbtInsert xc->auxdata = %d ; d = %d\n", xc->auxdata, d);
-#endif
+  assert(xc->auxdata == d);
 
   return xc;                      /* modif mc: retourne xc plutot que x (sinon: BUG) */
-} /* RbtInsert() */
+} /* mcrbt_RbtInsert() */
 
 /* ==================================== */
-void RbtDeleteFixup(
+void mcrbt_RbtDeleteFixup(
   Rbt * T, RbtElt * x)
 /* ==================================== */
 {
   RbtElt * s;
 
 #ifdef DEBUGDELETE
-printf("RbtDeleteFixup\n");
+printf("mcrbt_RbtDeleteFixup\n");
 #endif
 
   while ((x != T->root) && (x->color == RBT_Black))
@@ -531,13 +569,13 @@ printf("RbtDeleteFixup\n");
   x->color = RBT_Black;
 
 #ifdef DEBUGDELETE
-printf("FINRbtDeleteFixup\n");
+printf("FINmcrbt_RbtDeleteFixup\n");
 #endif
 
-} /* RbtDeleteFixup() */
+} /* mcrbt_RbtDeleteFixup() */
 
 /* ==================================== */
-RbtElt * RbtDeleteAux(         /* return deleted node */
+RbtElt * mcrbt_RbtDeleteAux(         /* return deleted node */
   Rbt * T, RbtElt * z)
 /* ==================================== */
 {
@@ -545,13 +583,13 @@ RbtElt * RbtDeleteAux(         /* return deleted node */
   RbtElt * d;
 
 #ifdef DEBUGDELETE
-printf("RbtDeleteAux\n");
+printf("mcrbt_RbtDeleteAux\n");
 #endif
 
   if ((z->left == T->nil) || (z->right == T->nil))
     d = z;
   else 
-    d = RbtSuccessor(T, z);
+    d = mcrbt_RbtSuccessor(T, z);
   if (d->left != T->nil)
     c = d->left;
   else 
@@ -572,35 +610,35 @@ printf("RbtDeleteAux\n");
     z->auxdata = d->auxdata;
   }
   if (d->color == RBT_Black)
-    RbtDeleteFixup(T, c);     /* c is now "Double-Black" */
+    mcrbt_RbtDeleteFixup(T, c);     /* c is now "Double-Black" */
 
 #ifdef DEBUGDELETE
-printf("FIN RbtDeleteAux\n");
+printf("FIN mcrbt_RbtDeleteAux\n");
 #endif
 
   return d;
-} /* RbtDeleteAux() */
+} /* mcrbt_RbtDeleteAux() */
 
 /* ==================================== */
-void RbtDelete(
+void mcrbt_RbtDelete(
   Rbt * T, RbtElt * z)
 /* ==================================== */
 {
 
 #ifdef DEBUGDELETE
-printf("RbtDelete\n");
+printf("mcrbt_RbtDelete\n");
 #endif
 
-  z = RbtDeleteAux(T, z);
+  z = mcrbt_RbtDeleteAux(T, z);
   z->right = T->libre;
   T->libre = z;
   T->util -= 1;
 
 #ifdef DEBUGDELETE
-printf("FIN RbtDelete\n");
+printf("FIN mcrbt_RbtDelete\n");
 #endif
 
-} /* RbtDelete() */
+} /* mcrbt_RbtDelete() */
 
 /* ==================================== */
 TypRbtAuxData RbtPopMin(
@@ -613,7 +651,7 @@ TypRbtAuxData RbtPopMin(
 {
   RbtElt * z = T->root;
   while (z->left != T->nil) z = z->left; /* recherche le min */
-  z = RbtDeleteAux(T, z);                /* efface de l'arbre */
+  z = mcrbt_RbtDeleteAux(T, z);                /* efface de l'arbre */
   z->right = T->libre;
   T->libre = z;
   T->util -= 1;
@@ -631,7 +669,7 @@ TypRbtAuxData RbtPopMax(
 {
   RbtElt * z = T->root;
   while (z->left != T->nil) z = z->right; /* recherche le max */
-  z = RbtDeleteAux(T, z);                 /* efface de l'arbre */
+  z = mcrbt_RbtDeleteAux(T, z);                 /* efface de l'arbre */
   z->right = T->libre;
   T->libre = z;
   T->util -= 1;
@@ -661,7 +699,7 @@ TypRbtKey RbtMaxLevel(
 #ifdef TESTRBTINTERACTIVE
 int32_t main()
 {
-  Rbt * T = CreeRbtVide(1);
+  Rbt * T = mcrbt_CreeRbtVide(1);
   char r[80];
   double p;
   RbtElt * x;
@@ -676,13 +714,13 @@ int32_t main()
       case 'u':
         printf("valeur > ");
         scanf("%lf", &p);
-        (void)RbtInsert(&T, p, 0);
+        (void)mcrbt_RbtInsert(&T, p, 0);
         break;
       case 'd':
         printf("valeur > ");
         scanf("%lf", &p);
         x = RbtSearch(T, p);
-        if (x != T->nil) RbtDelete(T, x);
+        if (x != T->nil) mcrbt_RbtDelete(T, x);
         else printf("pas trouve !\n");
         break;
       case 's':
@@ -692,7 +730,7 @@ int32_t main()
         printf("trouve: %d\n", x != T->nil);
         break;
       case 'i':
-        x = RbtMinimum(T, T->root);
+        x = mcrbt_RbtMinimum(T, T->root);
         printf("minimum: %g\n", x->key);
         break;
       case 'a':
@@ -706,29 +744,29 @@ int32_t main()
         printf("trouve: %d\n", x != T->nil);
         if (x != T->nil)
 	{
-          x = RbtSuccessor(T, x);
+          x = mcrbt_RbtSuccessor(T, x);
           if (x != T->nil) printf("succ: %g\n", x->key);
 	}
         break;
       case 'o': 
-        if (RbtVide(T)) 
+        if (mcrbt_RbtVide(T)) 
           printf("vide\n");
         else
           (void)RbtPopMin(T); 
         break;
       case 'p': RbtPrint(T); break;
-      case 'v': printf("vide: %d\n", RbtVide(T)); break;
+      case 'v': printf("vide: %d\n", mcrbt_RbtVide(T)); break;
       case 'q': break;
     }
   } while (r[0] != 'q');
-  RbtTermine(T);
+  mcrbt_RbtTermine(T);
 }
 #endif
 
 #ifdef TESTRBTRANDOM
 int32_t main()
 {
-  Rbt * T = CreeRbtVide(1);
+  Rbt * T = mcrbt_CreeRbtVide(1);
   int32_t n = 0, d;
 
   do
@@ -736,13 +774,13 @@ int32_t main()
     if (rand()%2)
     {
        d = rand();
-       (void)RbtInsert(&T, (double)d, d);
+       (void)mcrbt_RbtInsert(&T, (double)d, d);
        n++;
        printf("j'insère %ld; n = %d\n", d, n);
     }
     else
     {
-      if (RbtVide(T)) 
+      if (mcrbt_RbtVide(T)) 
         printf("vide\n");
       else
       {
@@ -752,6 +790,6 @@ int32_t main()
       }
     }
   } while (1);
-  RbtTermine(T);
+  mcrbt_RbtTermine(T);
 }
 #endif

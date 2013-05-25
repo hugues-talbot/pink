@@ -2,12 +2,7 @@
 
 param="moy"
 USAGE="Usage: $0 in lissage filtrage out"
-if [ $# -gt 3 ]
-then
-	echo $USAGE
-        exit
-fi
-if [ $# -lt 3 ]
+if [ $# -ne 3 ]
 then
 	echo $USAGE
         exit

@@ -1,4 +1,4 @@
-/* $Id: lmedialaxis.c.replace,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/* $Id: lmedialaxis.c.replace,v 1.2 2009-01-12 08:59:38 mcouprie Exp $ */
 /* 
 Fonctions pour l'axe médian exact ou approché, et
 pour la fonction bissectrice.
@@ -94,12 +94,12 @@ int32_t lmedax_talbot(struct xvimage *img,   /* donnee: image binaire */
 #undef F_NAME
 #define F_NAME "lmedax_talbot"
 { 
-  u_int32_t n1,n2,n3;     /* normes des vecteurs (au carre) */
+  uint32_t n1,n2,n3;     /* normes des vecteurs (au carre) */
   int32_t rs = img->row_size;
   int32_t cs = img->col_size;
   int32_t N= rs * cs;            /* taille de l'image */
-  u_int8_t *F;          /* pointeur sur l'image */
-  u_int32_t *M;          /* donnees de l'image resultat */
+  uint8_t *F;          /* pointeur sur l'image */
+  uint32_t *M;          /* donnees de l'image resultat */
   vect2Dint *L;              /* tableau de vecteur associe a un point de l'image */
   int32_t h, i, j, k;
   vect2Dint v1;
@@ -186,14 +186,14 @@ int32_t lmedax_meyer(struct xvimage *img,   /* donnee: image binaire */
   int32_t rs = img->row_size;
   int32_t cs = img->col_size;
   int32_t N= rs * cs;            /* taille de l'image */
-  u_int8_t *F = UCHARDATA(img);          /* pointeur sur l'image */
-  u_int32_t *M = ULONGDATA(res);          /* donnees de l'image resultat */
-  u_int32_t *D;          /* distance */
-  u_int32_t *H;          /* tampon */
+  uint8_t *F = UCHARDATA(img);          /* pointeur sur l'image */
+  uint32_t *M = ULONGDATA(res);          /* donnees de l'image resultat */
+  uint32_t *D;          /* distance */
+  uint32_t *H;          /* tampon */
   struct xvimage *inv;
-  u_int8_t *I;          /* image inverse */
+  uint8_t *I;          /* image inverse */
   int32_t x, y, k;
-  u_int32_t inf, sup;
+  uint32_t inf, sup;
   int32_t incr_vois = 2;
 
   if (depth(img) != 1)
@@ -209,12 +209,12 @@ int32_t lmedax_meyer(struct xvimage *img,   /* donnee: image binaire */
     return(0);
   }
   freeimage(inv);
-  H = (u_int32_t *)calloc(1,N*sizeof(int32_t));
+  H = (uint32_t *)calloc(1,N*sizeof(int32_t));
   if (H == NULL)
   { fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
     return(0);
   }
-  D = (u_int32_t *)calloc(1,N*sizeof(int32_t));
+  D = (uint32_t *)calloc(1,N*sizeof(int32_t));
   if (D == NULL)
   { fprintf(stderr,"%s() : malloc failed for D\n", F_NAME);
     return(0);
@@ -269,14 +269,14 @@ int32_t lmedax_meyer3d(struct xvimage *img,   /* donnee: image binaire */
   int32_t ds = depth(img);
   int32_t ps = rs * cs;
   int32_t N = ps * ds;                            /* taille de l'image */
-  u_int8_t *F = UCHARDATA(img);          /* pointeur sur l'image */
-  u_int32_t *M = ULONGDATA(res);          /* donnees de l'image resultat */
-  u_int32_t *D;          /* distance */
-  u_int32_t *H;          /* tampon */
+  uint8_t *F = UCHARDATA(img);          /* pointeur sur l'image */
+  uint32_t *M = ULONGDATA(res);          /* donnees de l'image resultat */
+  uint32_t *D;          /* distance */
+  uint32_t *H;          /* tampon */
   struct xvimage *inv;
-  u_int8_t *I;          /* image inverse */
+  uint8_t *I;          /* image inverse */
   int32_t x, y, k;
-  u_int32_t inf, sup;
+  uint32_t inf, sup;
 
   inv = copyimage(img);
   I = UCHARDATA(inv);
@@ -287,12 +287,12 @@ int32_t lmedax_meyer3d(struct xvimage *img,   /* donnee: image binaire */
     return(0);
   }
   freeimage(inv);
-  H = (u_int32_t *)calloc(1,N*sizeof(int32_t));
+  H = (uint32_t *)calloc(1,N*sizeof(int32_t));
   if (H == NULL)
   { fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
     return(0);
   }
-  D = (u_int32_t *)calloc(1,N*sizeof(int32_t));
+  D = (uint32_t *)calloc(1,N*sizeof(int32_t));
   if (D == NULL)
   { fprintf(stderr,"%s() : malloc failed for D\n", F_NAME);
     return(0);
@@ -343,15 +343,15 @@ int32_t lmedax_mc(struct xvimage *f)
   int32_t ds = depth(f);
   int32_t ps = rs * cs;
   int32_t N = ps * ds;            /* taille image f */
-  u_int8_t *F = UCHARDATA(f);
+  uint8_t *F = UCHARDATA(f);
   struct xvimage *tmp1 = copyimage(f);
   struct xvimage *tmp2 = copyimage(f);
   struct xvimage *res = copyimage(f);
-  u_int8_t *T1 = UCHARDATA(tmp1);
-  u_int8_t *T2 = UCHARDATA(tmp2);
-  u_int8_t *R = UCHARDATA(res);
+  uint8_t *T1 = UCHARDATA(tmp1);
+  uint8_t *T2 = UCHARDATA(tmp2);
+  uint8_t *R = UCHARDATA(res);
   struct xvimage *dist;
-  u_int32_t *D;
+  uint32_t *D;
   int32_t r, rmax = 0;
   double tmp;
 
@@ -487,7 +487,7 @@ from the article: " Exact Medial Axis With Euclidean Distance"
   revision: Andre Vital Saude 04/2006 (use of llut.h)
 */
 
-typedef u_int32_t * Image;
+typedef uint32_t * Image;
 
 typedef struct {		//used to store all possible neighbors of (1/8) Z2 or (1/48) Z3
     Coordinates neig[48];
@@ -609,7 +609,7 @@ int32_t ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y
 
 //----------------------------------
 int32_t IsMA(int32_t x, int32_t y, 
-	     u_int32_t *image, int32_t rs, int32_t cs,
+	     uint32_t *image, int32_t rs, int32_t cs,
 	     MLut mlut, RTLutCol Lut)
 //----------------------------------
 {
@@ -635,7 +635,7 @@ int32_t IsMA(int32_t x, int32_t y,
 
 //----------------------------------
 int32_t IsMA3d(int32_t x, int32_t y, int32_t z,
-	       u_int32_t *image, int32_t rs, int32_t cs, int32_t ds,
+	       uint32_t *image, int32_t rs, int32_t cs, int32_t ds,
 	       MLut mlut, RTLutCol Lut)
 //----------------------------------
 {
@@ -686,8 +686,8 @@ from the article: " Exact Medial Axis With Euclidean Distance"
   int32_t ds = depth(ImageDist);
   int32_t ps = rs * cs;
   int32_t N = ps * ds;            /* taille image f */
-  u_int32_t *imagedist;
-  u_int32_t *imagemedial;
+  uint32_t *imagedist;
+  uint32_t *imagemedial;
   FILE *fd = NULL;
 
   //aux
@@ -799,9 +799,9 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
   int32_t ds = depth(f);
   int32_t ps = rs * cs;
   int32_t N = ps * ds;            /* taille image f */
-  u_int8_t *F = UCHARDATA(f);
+  uint8_t *F = UCHARDATA(f);
   struct xvimage *medial;
-  u_int32_t *D;
+  uint32_t *D;
   int32_t rmax = min((rs/2),(cs/2));
   double tmp;
 
@@ -882,7 +882,7 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
     if ((mode == 4) && (ds == 1))
     {
       struct xvimage *dist;
-      u_int32_t *T1;
+      uint32_t *T1;
       for (i = 0; i < N; i++) if (F[i]) F[i] = NDG_MIN; else F[i] = NDG_MAX; // inverse et seuille a 1 
       if (! ldist(f, 4, medial)) // calcule la fonction distance
       {
@@ -905,7 +905,7 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
     if ((mode == 8) && (ds == 1))
     {
       struct xvimage *dist;
-      u_int32_t *T1;
+      uint32_t *T1;
       for (i = 0; i < N; i++) if (F[i]) F[i] = NDG_MIN; else F[i] = NDG_MAX; // inverse et seuille a 1 
       if (! ldist(f, 8, medial)) // calcule la fonction distance
       {
@@ -928,7 +928,7 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
     if (mode == 6)
     {
       struct xvimage *dist;
-      u_int32_t *T1;
+      uint32_t *T1;
       for (i = 0; i < N; i++) if (F[i]) F[i] = NDG_MIN; else F[i] = NDG_MAX; // inverse et seuille a 1 
       if (! ldist(f, 6, medial)) // calcule la fonction distance
       {
@@ -951,7 +951,7 @@ struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
     if (mode == 26)
     {
       struct xvimage *dist;
-      u_int32_t *T1;
+      uint32_t *T1;
       for (i = 0; i < N; i++) if (F[i]) F[i] = NDG_MIN; else F[i] = NDG_MAX; // inverse et seuille a 1 
       if (! ldist(f, 26, medial)) // calcule la fonction distance
       {
@@ -1019,9 +1019,9 @@ int32_t lmedialaxisbin(struct xvimage *f, int32_t mode)
 #define F_NAME "lmedialaxisbin"
   int32_t i;
   int32_t N = rowsize(f) * colsize(f) * depth(f);
-  u_int8_t *F = UCHARDATA(f);
+  uint8_t *F = UCHARDATA(f);
   struct xvimage *dist;
-  u_int32_t *D;
+  uint32_t *D;
 
   dist = lmedialaxis(f, mode);
   if (dist == NULL)
@@ -1528,8 +1528,8 @@ int32_t lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
   int32_t *TabIndDec;
   Coordinates *ListDecs;
   FILE *fd=NULL;
-  u_int32_t *imagedist = ULONGDATA(id);
-  u_int8_t *imagemask = UCHARDATA(im);
+  uint32_t *imagedist = ULONGDATA(id);
+  uint8_t *imagemask = UCHARDATA(im);
   float *imageangle = FLOATDATA(ia);
   char tablefilename[512];
   int32_t distmax; 
@@ -1830,8 +1830,8 @@ int32_t lbisector_Rita(struct xvimage *id, struct xvimage *im, struct xvimage *i
   tabulateCTg YcoodCTg;
   tabulateCTg XcoodCTg;
   FILE *fd=NULL;
-  u_int32_t *imagedist;
-  u_int8_t *imagemask;
+  uint32_t *imagedist;
+  uint8_t *imagemask;
   float *imageangle;
   char tablefilename[512];
 
@@ -1917,7 +1917,7 @@ int32_t lbisector_talbot(struct xvimage * image, struct xvimage *angles)
 #undef F_NAME
 #define F_NAME "lbisector_talbot"
   int32_t N, i, j, y, rs, cs;
-  u_int8_t *F;
+  uint8_t *F;
   float *A;
   vect2Dint *L;              /* tableau de vecteur associe a un point de l'image */
   vect2Dint v1,v2;
@@ -2077,8 +2077,8 @@ int32_t lmaxball(struct xvimage *ImageDist, struct xvimage *Result)
   int32_t ds = depth(ImageDist);
   int32_t ps = rs * cs;
   int32_t N = ps * ds;            /* taille image f */
-  u_int32_t *image1;
-  u_int32_t *result;
+  uint32_t *image1;
+  uint32_t *result;
   FILE *fd = NULL;
 
   fprintf(stderr, "%s: Not Yet Implemented\n", F_NAME);
@@ -2218,7 +2218,7 @@ int32_t lprintdownstream(struct xvimage *id)
   int32_t *TabIndDec;
   Coordinates *ListDecs;
   FILE *fd=NULL;
-  u_int32_t *imagedist = ULONGDATA(id);
+  uint32_t *imagedist = ULONGDATA(id);
   char tablefilename[512];
   int32_t distmax; 
   int32_t card_downstream, n;

@@ -1,4 +1,37 @@
-/* $Id: recalagerigide.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* ATTENTION: 
   version peu testée en 2D
   VERSION NON TESTEE EN 3D 
@@ -64,15 +97,12 @@ In 3d, the parameters are:
 #include <lrecalagerigide.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image1;
   struct xvimage * image2;
-  int32_t rs, cs, ds, ps, N, x, y, z, n;
-  uint8_t *F;
-  int32_t n1, n2;
+  index_t n1, n2;
   double * P1, * P2, *Gamma;
 
   if (argc != 4)
@@ -100,7 +130,7 @@ int main(argc, argv)
 
   if (depth(image1) == 1) // 2D
   {
-    Gamma = lrecalagerigide2d(P1, n1, P2, n2);
+    Gamma = lrecalagerigide_lrecalagerigide2d(P1, n1, P2, n2);
     printf("sx = %g\n", Gamma[0]);
     printf("sy = %g\n", Gamma[1]);
     printf("theta = %g = %g deg\n", Gamma[2], (Gamma[2]*180)/M_PI);

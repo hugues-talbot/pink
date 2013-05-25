@@ -1,4 +1,37 @@
-/* $Id: mcfah.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
    Librairie mcfah :
 
@@ -29,11 +62,11 @@
 
 /* ==================================== */
 Fah * CreeFahVide(
-  int32_t taillemax)
+  index_t taillemax)
 /* ==================================== */
 {
-  int32_t i;
-  Fah * L = (Fah *)calloc(1,4 * sizeof(int32_t) + 
+  index_t i;
+  Fah * L = (Fah *)calloc(1,4 * sizeof(index_t) + 
                           (NPRIO+4)*sizeof(FahElt *) + 
                           taillemax*sizeof(FahElt));
   if (L == NULL)
@@ -61,7 +94,7 @@ void FahFlush(
   Fah * L)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   L->Niv = 0;
   L->Util = 0;
   for (i = 0; i < L->Max - 1; i++)
@@ -115,11 +148,11 @@ int32_t FahNiveau(
 } /* FahNiveau() */
 
 /* ==================================== */
-int32_t FahPop(
+index_t FahPop(
   Fah * L)
 /* ==================================== */
 {
-  int32_t V;
+  index_t V;
   FahElt * FE;
   if ((L->QueueUrg == NULL) && (L->Queue == NULL))
   {
@@ -155,12 +188,10 @@ int32_t FahPop(
 } /* FahPop() */
   
 /* ==================================== */
-int32_t FahFirst(
+index_t FahFirst(
   Fah * L)
 /* ==================================== */
 {
-  int32_t V;
-  FahElt * FE;
   if ((L->QueueUrg == NULL) && (L->Queue == NULL))
   {
     fprintf(stderr, "erreur Fah vide\n");
@@ -174,7 +205,7 @@ int32_t FahFirst(
 /* ==================================== */
 void FahPush(
   Fah * L,
-  int32_t Po,
+  index_t Po,
   int32_t Ni)
 /* ==================================== */
 {
@@ -272,7 +303,11 @@ void FahPrint(
   {
     printf("Urg [ ");
     for (;FE != NULL; FE = FE->Next)
+#ifdef MC_64_BITS
+      printf("%lld ", FE->Point);
+#else
       printf("%d ", FE->Point);
+#endif
     printf(" ]\n");
   }
   FE = L->Queue;
@@ -281,8 +316,16 @@ void FahPrint(
     {
       printf("%d [ ", i);
       for (;FE != L->Tete[i]; FE = FE->Next)
+#ifdef MC_64_BITS
+        printf("%lld ", FE->Point);
+#else
         printf("%d ", FE->Point);
+#endif
+#ifdef MC_64_BITS
+      printf("%lld ]\n", FE->Point);
+#else
       printf("%d ]\n", FE->Point);
+#endif
       FE = FE->Next;
     }
 } /* FahPrint() */

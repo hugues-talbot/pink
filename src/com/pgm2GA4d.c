@@ -1,19 +1,55 @@
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file pgm2GA4d.c
 
-\brief converts a series of 3
+\brief Create a 4D edge-weighted graph from a series of 3D images
 
-<B>Usage:</B> pgm2GA4d prefix_in first last prefix_mark mode GA4d_out.pgm
 
-<B>Description:</B> 
-Create a 4D weighted-edges graph from the 4D image made of the
-concatenation of the 3D images <B>prefix_inxxxx.pgm</B> (where nnnn is
-a four digit decimal integer and where <B>first</B> and <B>last</B>
-specify respectively the first and the last volume). The values of
-edges are computed according to the parameter mode. If mode is set to
-0 then the intensity diference between the two extremities pixels of
-the edges is choosen for. Otherwise the maximum value is taken. The
-outputed GA is necessarily 4D, 8-connected (i.e. it corresponds to the
-direct adjacency in dimension 4).
+<B>Usage:</B> pgm2GA4d prefix_in first last mode GA4d_out.ga
+
+<B>Description:</B> Create a 4D GA (edge-weighted graph) from the 4D
+image obtained by concatenation of the series of 3D images \<
+<B>prefix_inxxxx.pgm</B> | xxxx is a four digit decimal integer of the
+interval [ <B>first</B> , <B>last</B>] \> . The values of the edges
+are computed according to the parameter <B>mode</B>. If <B>mode</B> is
+set to 0, then the value of an edge { x,y } is the absolute diference
+of intensity between the pixels x and y and if <B>mode</B> is set to 1
+the maximum of intensity between x and y is used. The output
+<B>GA4d_out.ga</B> is a 4D GA, that is a 4D, 8-connected,
+edge-weighted grah, (i.e. the adjacency is the direct adjacency in
+dimension 4).
 
 <B>Types supported:</B> byte 2d, byte 3d, byte 4d
 
@@ -35,7 +71,7 @@ direct adjacency in dimension 4).
 #include <lppm2GA.h>
 
 /* =============================================================== */
-int32_t main(argc, argv) 
+int main(argc, argv) 
 /* =============================================================== */
   int32_t argc; char **argv; 
 {

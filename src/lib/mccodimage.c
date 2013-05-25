@@ -1,4 +1,37 @@
-/* $Id: mccodimage.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
    Librairie mccodimage : 
 
@@ -11,6 +44,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <mcimage.h>
 #include <mccodimage.h>
 #include <mcutil.h>
 
@@ -46,7 +80,7 @@
 */
 
 /* ==================================== */
-int32_t voisin(int32_t i, int32_t k, int32_t rs, int32_t nb)   
+int32_t voisin(index_t i, int32_t k, index_t rs, index_t nb)   
 /* i : index du point dans l'image */
 /* k : direction du voisin */
 /* rs : taille d'une rangee */
@@ -73,7 +107,7 @@ int32_t voisin(int32_t i, int32_t k, int32_t rs, int32_t nb)
 } // voisin()
 
 /* ==================================== */
-int32_t voisin2(int32_t i, int32_t k, int32_t rs, int32_t nb)   
+int32_t voisin2(index_t i, int32_t k, index_t rs, index_t nb)   
 /* i : index du point dans l'image */
 /* k : index du voisin (24 possibilités - voisinage étendu) */
 /* rs : taille d'une rangee */
@@ -117,7 +151,7 @@ int32_t voisin2(int32_t i, int32_t k, int32_t rs, int32_t nb)
 
 /* Cette fonction indique a quel bord appartient le point */
 /* ==================================== */
-int32_t bord(int32_t i, int32_t rs, int32_t nb)
+int32_t bord(index_t i, index_t rs, index_t nb)
 /* ==================================== */
 {
 	/* valeurs renvoyees :
@@ -147,9 +181,9 @@ int32_t bord(int32_t i, int32_t rs, int32_t nb)
 
 */
 
-/* Cette fonction indique a quel bord appartient le point */
+/* Cette fonction indique si le point appartient à un bord */
 /* ==================================== */
-int32_t bord3d(int32_t i, int32_t rs, int32_t ps, int32_t nb)
+int32_t bord3d(index_t i, index_t rs, index_t ps, index_t nb)
 /* ==================================== */
 {
   if (i%rs == rs-1)     return 1;
@@ -162,7 +196,7 @@ int32_t bord3d(int32_t i, int32_t rs, int32_t ps, int32_t nb)
 }
 
 /* ==================================== */
-int32_t voisin6(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
+int32_t voisin6(index_t i, int32_t k, index_t rs, index_t ps, index_t N)
 /* i : index du point dans l'image */
 /* k : direction du voisin */
 /* rs : taille d'une rangee */
@@ -170,6 +204,8 @@ int32_t voisin6(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
 /* N : taille de l'image 3D */
 /* retourne -1 si le voisin n'existe pas */
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "voisin6"
 {
   switch(k)
   {
@@ -179,11 +215,14 @@ int32_t voisin6(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
   case SUD:        if ((i%ps)<ps-rs) return i+rs; else return -1;
   case DEVANT:     if (i>=ps) return i-ps; else return -1;
   case DERRIERE:   if (i<N-ps) return i+ps; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
 /* ==================================== */
-int32_t voisin26(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
+int32_t voisin26(index_t i, int32_t k, index_t rs, index_t ps, index_t N)
 /* i : index du point dans l'image */
 /* k : direction du voisin */
 /* rs : taille d'une rangee */
@@ -191,6 +230,8 @@ int32_t voisin26(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
 /* N : taille de l'image 3D */
 /* retourne -1 si le voisin n'existe pas */
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "voisin26"
 {
   switch(k)
   {
@@ -223,11 +264,14 @@ int32_t voisin26(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
   case 23: if ((i>=ps)&&(i%ps<ps-rs)) return -ps+i+rs; else return -1;
   case 24: if ((i>=ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) return -ps+i+rs+1; else return -1;
   case 25: if ((i>=ps)) return -ps+i; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
 /* ==================================== */
-int32_t voisin18(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
+int32_t voisin18(index_t i, int32_t k, index_t rs, index_t ps, index_t N)
 /* i : index du point dans l'image */
 /* k : direction du voisin */
 /* rs : taille d'une rangee */
@@ -235,6 +279,8 @@ int32_t voisin18(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
 /* N : taille de l'image 3D */
 /* retourne -1 si le voisin n'existe pas */
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "voisin18"
 {
   switch(k)
   {
@@ -259,101 +305,140 @@ int32_t voisin18(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
   case 15: if ((i>=ps)&&(i%rs!=0)) return -ps+i-1; else return -1;
   case 16: if ((i>=ps)&&(i%ps<ps-rs)) return -ps+i+rs; else return -1;
   case 17: if ((i>=ps)) return -ps+i; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
-}
+} // voisin18()
 
 /* ==================================== */
-int32_t voisins4(int32_t i, int32_t j, int32_t rs)   
+int32_t voisin12(index_t i, int32_t k, index_t rs, index_t ps, index_t N)
+/* 18-voisin mais pas 6-voisin */
+/* i : index du point dans l'image */
+/* k : direction du voisin */
+/* rs : taille d'une rangee */
+/* ps : taille d'un plan */
+/* N : taille de l'image 3D */
+/* retourne -1 si le voisin n'existe pas */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "voisin12"
+{
+  switch(k)
+  {
+  /* les 4 premiers (0 a 3) sont les 4 pixels du plan "ARRIERE" (+ps) */
+  case 0:  if ((i<N-ps)&&(i%rs!=rs-1)) return ps+i+1; else return -1;
+  case 1:  if ((i<N-ps)&&(i%ps>=rs)) return ps+i-rs; else return -1;
+  case 2:  if ((i<N-ps)&&(i%rs!=0)) return ps+i-1; else return -1;
+  case 3:  if ((i<N-ps)&&(i%ps<ps-rs)) return ps+i+rs; else return -1;
+  /* les 4 suivants (4 a 7) sont les 4 pixels du plan "COURANT" () */
+  case 4:  if ((i%rs!=rs-1)&&(i%ps>=rs)) return i+1-rs; else return -1;
+  case 5:  if ((i%ps>=rs)&&(i%rs!=0)) return i-rs-1;  else return -1;
+  case 6: if ((i%rs!=0)&&(i%ps<ps-rs)) return i-1+rs; else return -1;
+  case 7: if ((i%ps<ps-rs)&&(i%rs!=rs-1)) return i+rs+1; else return -1;
+  /* les 4 derniers (8 a 11) sont les 4 pixels du plan "AVANT" (-ps) */
+  case 8: if ((i>=ps)&&(i%rs!=rs-1)) return -ps+i+1; else return -1;
+  case 9: if ((i>=ps)&&(i%ps>=rs)) return -ps+i-rs; else return -1;
+  case 10: if ((i>=ps)&&(i%rs!=0)) return -ps+i-1; else return -1;
+  case 11: if ((i>=ps)&&(i%ps<ps-rs)) return -ps+i+rs; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
+  }
+} // voisin12()
+
+/* ==================================== */
+int32_t voisins4(index_t i, index_t j, index_t rs)   
 /* i, j : index des deux points dans l'image */
 /* rs : taille d'une rangee */
 /* retourne 1 si les points i et j sont 4-voisins */
 /* ==================================== */
 {
-  int32_t xi = i % rs;
-  int32_t xj = j % rs;
-  int32_t yi = i / rs;
-  int32_t yj = j / rs;
-  if (abs(xi-xj) + abs(yi-yj) != 1) return 0;
+  index_t xi = i % rs;
+  index_t xj = j % rs;
+  index_t yi = i / rs;
+  index_t yj = j / rs;
+  if (mcabs(xi-xj) + mcabs(yi-yj) != 1) return 0;
   return 1;
 } // voisins4()
 
 /* ==================================== */
-int32_t voisins8(int32_t i, int32_t j, int32_t rs)   
+int32_t voisins8(index_t i, index_t j, index_t rs)   
 /* i, j : index des deux points dans l'image */
 /* rs : taille d'une rangee */
 /* retourne 1 si les points i et j sont 8-voisins */
 /* ==================================== */
 {
-  int32_t xi = i % rs;
-  int32_t xj = j % rs;
-  int32_t yi = i / rs;
-  int32_t yj = j / rs;
-  if (abs(xi-xj) > 1) return 0;
-  if (abs(yi-yj) > 1) return 0;
+  index_t xi = i % rs;
+  index_t xj = j % rs;
+  index_t yi = i / rs;
+  index_t yj = j / rs;
+  if (mcabs(xi-xj) > 1) return 0;
+  if (mcabs(yi-yj) > 1) return 0;
   return 1;
 } // voisins8()
 
 /* ==================================== */
-int32_t voisins6(int32_t i, int32_t j, int32_t rs, int32_t ps)   
+int32_t voisins6(index_t i, index_t j, index_t rs, index_t ps)   
 /* i, j : index des deux points dans l'image */
 /* rs : taille d'une rangee */
 /* ps : taille d'un plan */
 /* retourne 1 si les points i et j sont 6-voisins (en 3D) */
 /* ==================================== */
 {
-  int32_t xi = i % rs;
-  int32_t xj = j % rs;
-  int32_t yi = (i%ps) / rs;
-  int32_t yj = (j%ps) / rs;
-  int32_t zi = i / ps;
-  int32_t zj = j / ps;
-  if (abs(xi-xj) + abs(yi-yj) + abs(zi-zj) != 1) return 0;
+  index_t xi = i % rs;
+  index_t xj = j % rs;
+  index_t yi = (i%ps) / rs;
+  index_t yj = (j%ps) / rs;
+  index_t zi = i / ps;
+  index_t zj = j / ps;
+  if (mcabs(xi-xj) + mcabs(yi-yj) + mcabs(zi-zj) != 1) return 0;
   return 1;
 } // voisins6()
 
 /* ==================================== */
-int32_t voisins18(int32_t i, int32_t j, int32_t rs, int32_t ps)   
+int32_t voisins18(index_t i, index_t j, index_t rs, index_t ps)   
 /* i, j : index des deux points dans l'image */
 /* rs : taille d'une rangee */
 /* ps : taille d'un plan */
 /* retourne 1 si les points i et j sont 18-voisins (en 3D) */
 /* ==================================== */
 {
-  int32_t xi = i % rs;
-  int32_t xj = j % rs;
-  int32_t yi = (i%ps) / rs;
-  int32_t yj = (j%ps) / rs;
-  int32_t zi = i / ps;
-  int32_t zj = j / ps;
-  if (abs(xi-xj) > 1) return 0;
-  if (abs(yi-yj) > 1) return 0;
-  if (abs(zi-zj) > 1) return 0;
-  if ((abs(xi-xj) == 1) && (abs(yi-yj) == 1) && (abs(zi-zj) == 1)) return 0;
+  index_t xi = i % rs;
+  index_t xj = j % rs;
+  index_t yi = (i%ps) / rs;
+  index_t yj = (j%ps) / rs;
+  index_t zi = i / ps;
+  index_t zj = j / ps;
+  if (mcabs(xi-xj) > 1) return 0;
+  if (mcabs(yi-yj) > 1) return 0;
+  if (mcabs(zi-zj) > 1) return 0;
+  if ((mcabs(xi-xj) == 1) && (mcabs(yi-yj) == 1) && (mcabs(zi-zj) == 1)) return 0;
   return 1;
 } // voisins18()
 
 /* ==================================== */
-int32_t voisins26(int32_t i, int32_t j, int32_t rs, int32_t ps)   
+int32_t voisins26(index_t i, index_t j, index_t rs, index_t ps)   
 /* i, j : index des deux points dans l'image */
 /* rs : taille d'une rangee */
 /* ps : taille d'un plan */
 /* retourne 1 si les points i et j sont 26-voisins (en 3D) */
 /* ==================================== */
 {
-  int32_t xi = i % rs;
-  int32_t xj = j % rs;
-  int32_t yi = (i%ps) / rs;
-  int32_t yj = (j%ps) / rs;
-  int32_t zi = i / ps;
-  int32_t zj = j / ps;
-  if (abs(xi-xj) > 1) return 0;
-  if (abs(yi-yj) > 1) return 0;
-  if (abs(zi-zj) > 1) return 0;
+  index_t xi = i % rs;
+  index_t xj = j % rs;
+  index_t yi = (i%ps) / rs;
+  index_t yj = (j%ps) / rs;
+  index_t zi = i / ps;
+  index_t zj = j / ps;
+  if (mcabs(xi-xj) > 1) return 0;
+  if (mcabs(yi-yj) > 1) return 0;
+  if (mcabs(zi-zj) > 1) return 0;
   return 1;
 } // voisins26()
 
 /* ==================================== */
-int32_t voisin5(int32_t i, int32_t k, int32_t rs, int32_t nb)   
+int32_t voisin5(index_t i, int32_t k, index_t rs, index_t nb)   
 /* i : index du point dans l'image */
 /* k : direction du voisin */
 /* rs : taille d'une rangee */
@@ -367,8 +452,10 @@ int32_t voisin5(int32_t i, int32_t k, int32_t rs, int32_t nb)
      4 + + + 7
      + 5 + 6 +
 */
+#undef F_NAME
+#define F_NAME "voisin5"
 {
-  int32_t rs2;
+  index_t rs2;
   switch(k)
   {
   case 0:              if ((i%rs<rs-2)&&(i>=rs))    return i -rs  +2;  else return -1;
@@ -379,6 +466,9 @@ int32_t voisin5(int32_t i, int32_t k, int32_t rs, int32_t nb)
   case 5: rs2 = rs+rs; if ((i%rs>0)&&(i<nb-rs2))    return i +rs2 -1; else return -1;
   case 6: rs2 = rs+rs; if ((i%rs<rs-1)&&(i<nb-rs2)) return i +rs2 +1; else return -1;
   case 7:              if ((i%rs<rs-2)&&(i<nb-rs))  return i +rs  +2;  else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
@@ -386,7 +476,7 @@ int32_t voisin5(int32_t i, int32_t k, int32_t rs, int32_t nb)
 /* renvoie l'index du voisin si il      */
 /* appartient a gamma b sinon renvoie   */ 
 /* -1                                   */
-int32_t voisin6b(int32_t i, int32_t k, int32_t rs, int32_t nb, int32_t par)   
+int32_t voisin6b(index_t i, int32_t k, index_t rs, index_t nb, index_t par)   
 /* i : index du point dans l'image */
 /* k : direction du voisin */
 /* rs : taille d'une rangee */
@@ -411,7 +501,7 @@ int32_t voisin6b(int32_t i, int32_t k, int32_t rs, int32_t nb, int32_t par)
 /*      2 X 5       */
 /*      * 3 4       */
 
-int32_t voisinNOSE(int32_t i, int32_t k, int32_t rs, int32_t nb)
+int32_t voisinNOSE(index_t i, int32_t k, index_t rs, index_t nb)
 {
   switch(k)
     {      
@@ -428,7 +518,7 @@ int32_t voisinNOSE(int32_t i, int32_t k, int32_t rs, int32_t nb)
 /*      * 0 5      */
 /*      1 X 4      */
 /*      2 3 *      */
-int32_t voisinNESO(int32_t i, int32_t k, int32_t rs, int32_t nb)
+int32_t voisinNESO(index_t i, int32_t k, index_t rs, index_t nb)
 {
   switch(k)
     { 
@@ -451,9 +541,9 @@ int32_t voisinNESO(int32_t i, int32_t k, int32_t rs, int32_t nb)
 /* eviter de recalculer les coords du   */
 /* point courannt                       */
 
-int32_t voisin14b(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
+int32_t voisin14b(index_t i, int32_t k, index_t rs, index_t ps, index_t N)
 {
-  int32_t px, py, pz, ix, iy, iz;
+  index_t px, py, pz;
   px = (i%rs)%2;
   py = (i/ps)%2;
   pz = ((i%ps)/rs)%2;
@@ -473,7 +563,9 @@ int32_t voisin14b(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N)
    d'AVANT vers l'ARRIERE.
    les voisin sont numérotés suivant cet ordre
 */
-int32_t voisinONAV(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
+int32_t voisinONAV(index_t i, int32_t k, index_t rs, index_t ps, index_t N )
+#undef F_NAME
+#define F_NAME "voisinONAV"
 {
   switch(k)
   {
@@ -493,10 +585,15 @@ int32_t voisinONAV(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
   case 11: if ( (i < N-ps ) && (i%rs < rs-1)) return i+ps+1; else return -1;
   case 12: if ( (i < N-ps) &&  (i%ps < ps-rs)) return i+ps+rs; else return -1;
   case 13: if ((i < N-ps ) && (i%rs < rs-1)  && (i%ps < ps-rs)) return i+ps+rs+1; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
-int32_t  voisinENAR(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
+int32_t  voisinENAR(index_t i, int32_t k, index_t rs, index_t ps, index_t N )
+#undef F_NAME
+#define F_NAME "voisinENAR"
 {
   switch(k)
   {
@@ -516,10 +613,15 @@ int32_t  voisinENAR(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
   case 11: if ( (i%rs < rs-1) && ((i%ps)/rs != 0) && (i < N-ps ))  return i+ps-rs+1; else return -1;
   case 12: if (i < N-ps ) return i+ps; else return -1;
   case 13: if ((i%rs < rs-1) && (i < N-ps )) return i+ps+1; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
-int32_t voisinENAV(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
+int32_t voisinENAV(index_t i, int32_t k, index_t rs, index_t ps, index_t N )
+#undef F_NAME
+#define F_NAME "voisinENAV"
 {
   switch(k)
   {
@@ -539,10 +641,15 @@ int32_t voisinENAV(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
   case 11: if (i < N-ps) return i+ps; else return -1; 
   case 12: if ( (i%rs !=0) && (i%ps<ps-rs) && (i < N-ps )) return i+ps+rs-1; else return -1;
   case 13: if ( (i%ps<ps-rs) && (i < N-ps ) ) return i+ps+rs; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
-int32_t voisinONAR(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
+int32_t voisinONAR(index_t i, int32_t k, index_t rs, index_t ps, index_t N )
+#undef F_NAME
+#define F_NAME "voisinONAR"
 {
   switch(k)
   {
@@ -562,11 +669,14 @@ int32_t voisinONAR(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N )
   case 11: if (((i%ps)/rs != 0) &&   (i < N-ps )) return i+ps-rs; else return -1;
   case 12: if ((i%rs !=0) &&  (i < N-ps )) return i+ps-1; else return -1;
   case 13: if (i < N-ps ) return i+ps; else return -1;
+  default: 
+    fprintf(stderr, "%s: bad index value %d\n", F_NAME, k);
+    exit(0);
   }
 }
 
 /* ==================================== */
-uint32_t maskvois26(uint8_t *F, uint32_t bitmask, int32_t i, int32_t rs, int32_t ps, int32_t N)
+uint32_t maskvois26(uint8_t *F, uint32_t bitmask, index_t i, index_t rs, index_t ps, index_t N)
 /* F : pointeur de base de l'image */
 /* bitmask : masque du bit à tester */
 /* i : index du point dans l'image */
@@ -576,7 +686,8 @@ uint32_t maskvois26(uint8_t *F, uint32_t bitmask, int32_t i, int32_t rs, int32_t
 /* ==================================== */
 {
   uint32_t mask = 0;
-  int32_t k, v;
+  index_t v;
+  int32_t k;
   for (k = 0; k < 26; k++)
   {
     v = voisin26(i, k, rs, ps, N);
@@ -585,3 +696,84 @@ uint32_t maskvois26(uint8_t *F, uint32_t bitmask, int32_t i, int32_t rs, int32_t
   }
   return mask;
 }
+
+/* ==================================== */
+int32_t sont4voisins(index_t p, index_t q, index_t rs)
+/* ==================================== */
+{
+  index_t xp = p % rs, xq = q % rs, yp = p / rs, yq = q / rs;
+  return ((mcabs(xp-xq) + mcabs(yp-yq)) == 1);
+}
+
+/* ==================================== */
+int32_t sont8voisins(index_t p, index_t q, index_t rs)
+/* ==================================== */
+{
+  index_t xp = p % rs, xq = q % rs, yp = p / rs, yq = q / rs;
+  index_t ax = mcabs(xp-xq);
+  index_t ay = mcabs(yp-yq);
+  return (mcmax(ax,ay) == 1);
+}
+
+/* ==================================== */
+int32_t sont6voisins(index_t p, index_t q, index_t rs, index_t ps)
+/* ==================================== */
+{
+  index_t xp = p % rs, xq = q % rs; 
+  index_t yp = (p%ps) / rs, yq = (q%ps) / rs; 
+  index_t zp = p / ps, zq = q / ps;
+  return ((mcabs(xp-xq) + mcabs(yp-yq) + mcabs(zp-zq)) == 1);
+}
+
+/* ==================================== */
+int32_t sont26voisins(index_t p, index_t q, index_t rs, index_t ps)
+/* ==================================== */
+{
+  index_t xp = p % rs, xq = q % rs; 
+  index_t yp = (p%ps) / rs, yq = (q%ps) / rs; 
+  index_t zp = p / ps, zq = q / ps;
+  index_t ax = mcabs(xp-xq);
+  index_t ay = mcabs(yp-yq);
+  index_t axy = mcmax(ax,ay);
+  index_t az = mcabs(zp-zq);
+  return (mcmax(axy,az) == 1);
+}
+
+/* ==================================== */
+int32_t sont18voisins(index_t p, index_t q, index_t rs, index_t ps)
+/* ==================================== */
+{
+  index_t xp = p % rs, xq = q % rs; 
+  index_t yp = (p%ps) / rs, yq = (q%ps) / rs; 
+  index_t zp = p / ps, zq = q / ps;
+  index_t ax = mcabs(xp-xq);
+  index_t ay = mcabs(yp-yq);
+  index_t axy = mcmax(ax,ay);
+  index_t az = mcabs(zp-zq);
+  return ((mcmax(axy,az) == 1) && ((ax + ay + az) <= 2));
+}
+
+/* ==================================== */
+int32_t voisin125(index_t i, int32_t k, index_t rs, index_t ps, index_t N)
+/* i : index du point dans l'image */
+/* k : index du voisin (entre 0 et 124) */
+/* rs : taille d'une rangee */
+/* ps : taille d'un plan */
+/* N : taille de l'image 3D */
+/* retourne -1 si le voisin n'existe pas */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "voisin125"
+{
+  int32_t x, y, z, dx, dy, dz, cs = ps / rs, ds =  N / ps;
+  dx = (k % 5) - 2;
+  dy = ((k % 25) / 5) - 2;
+  dz = (k / 25) - 2;
+  x = (i % rs) + dx;
+  y = ((i % ps) / rs) + dy;
+  z = (i / ps) + dz;
+  if ((x < 0) || (x >= rs)) return -1;
+  if ((y < 0) || (y >= cs)) return -1;
+  if ((z < 0) || (z >= ds)) return -1;
+  return z*ps + y*rs + x;
+} // voisin125()

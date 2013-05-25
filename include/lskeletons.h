@@ -1,4 +1,46 @@
-/* $Id: lskeletons.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
+
+#ifndef LSKELETONS__H__
+#define LSKELETONS__H__
+
+#include "ldist.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int32_t lskelubp(
         struct xvimage *image,
@@ -23,6 +65,12 @@ extern int32_t lskelubp3d2(
         struct xvimage *imageprio, 
         int32_t connex, 
         struct xvimage *imageinhib
+);
+extern int32_t lskelubp3d2lab(
+	struct xvimage *image, 
+	struct xvimage *imageprio, 
+	int32_t connex, 
+	struct xvimage *imageinhib
 );
 extern int32_t lskelcurv(
         struct xvimage *image, 
@@ -62,15 +110,93 @@ extern int32_t ltoposhrink3d(
         int32_t tbmax, 
         struct xvimage *imageinhibit
 );
-
 extern int32_t lskeleucl(
 	struct xvimage *image, 
         int32_t connex, 
         struct xvimage *imageinhib
 );
-
+extern int32_t lskelend2d(
+        struct xvimage *image, 
+	int32_t connex, 
+	int32_t niseuil
+);
+extern int32_t lskelendcurv3d(
+        struct xvimage *image, 
+	int32_t connex, 
+	int32_t niseuil
+);
 extern int32_t lskelend3d(
         struct xvimage *image, 
 	int32_t connex, 
-	uint8_t *endpoint
+	uint8_t *endpoint,
+	int32_t niseuil
 );
+extern int32_t lskelendcurvlab3d(
+	struct xvimage *image, 
+	int32_t connex, 
+	int32_t niseuil
+);
+extern int32_t lskeldir3d(
+        struct xvimage *image, 
+	struct xvimage *inhibit, 
+	int32_t connex, 
+	int32_t nsteps
+);
+extern int32_t lskeldir3d_1(
+        struct xvimage *image, 
+	struct xvimage *inhibit, 
+	int32_t connex, 
+	int32_t nsteps
+);
+extern int32_t lskelPSG(
+	struct xvimage *image, 
+	struct xvimage *imageprio, 
+	double val
+);
+extern int32_t lskelPSG2(
+	struct xvimage *image, 
+	struct xvimage *imageprio, 
+	double val
+);
+extern int32_t lskelPSG3(
+	struct xvimage *image, 
+	struct xvimage *imageprio, 
+	double val
+);
+extern int32_t lskelCKG(
+	struct xvimage *image,
+	struct xvimage *imageprio, 
+	double val
+);
+extern int32_t lskelCKG2(
+	struct xvimage *image,
+	struct xvimage *imageprio, 
+	double val
+);
+extern int32_t lskelCKG3(
+	struct xvimage *image,
+	struct xvimage *imageprio, 
+	double val
+);
+extern int32_t lskelCKGmap(
+	struct xvimage *imageprio,
+	struct xvimage *image
+);
+extern int32_t lskelCKG2map(
+	struct xvimage *imageprio,
+	struct xvimage *image
+);
+extern int32_t lskelCKG3map(
+	struct xvimage *imageprio,
+	struct xvimage *image
+);
+extern int32_t lskelCKSC3(
+	struct xvimage *image, 
+	struct xvimage *inhibit,
+	int32_t nsteps
+);
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* LSKELETONS__H__ */

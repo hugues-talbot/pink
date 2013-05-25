@@ -1,4 +1,37 @@
-/* $Id: lbresen.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
   Trace un segment de droite dans une image.
   Utilise l'algorithme de Bresenham.
@@ -32,12 +65,14 @@
 #define DEBUG 0
 #define DEBUGLIST
 
+// commentaire inutile
+
 /* ================================================= */
 void lbresen(uint8_t *F, int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By)
 /* ================================================= */
 {
-  int32_t dX = abs(Bx - Ax);
-  int32_t dY = abs(By - Ay);
+  int32_t dX = mcabs(Bx - Ax);
+  int32_t dY = mcabs(By - Ay);
   int32_t P;
   int32_t dPp;
   int32_t dPm;
@@ -160,20 +195,24 @@ void lbresen(uint8_t *F, int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t
 } /* lbresen() */
 
 /* ================================================= */
-void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int32_t *lp, int32_t *n)
+void lbresenlist(int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int32_t *lx, int32_t *ly, int32_t *n)
 /* ================================================= */
 /*
-  resultat dans la liste lp,n (n est le nb de points).
-  lp doit etre prealablement alloue.
+  resultat dans la liste représentée par lx, ly et n (*n est le nb de points).
+  lx et ly doivent etre prealablement allouees.
+  n doit contenir au départ le nombre max de points autorisés.
+  si le segment est plus long que cette valeur, lbresenlist se termine.
 */
+#undef F_NAME
+#define F_NAME "lbresenlist"
 {
-  int32_t dX = abs(Bx - Ax);
-  int32_t dY = abs(By - Ay);
+  int32_t dX = mcabs(Bx - Ax);
+  int32_t dY = mcabs(By - Ay);
   int32_t P;
   int32_t dPp;
   int32_t dPm;
   int32_t x, y;
-  int32_t nn;
+  int32_t nn, nmax = *n;
 
   nn = 0;                 /* pour compter les points */
 
@@ -189,7 +228,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Est-Nord */
         for (x = Ax; x <= Bx; x++)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) goto fin;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { y++; P += dPp; }
           else
@@ -200,7 +241,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Est-Sud */
         for (x = Ax; x <= Bx; x++)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) goto fin;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { y--; P += dPp; }
           else
@@ -214,7 +257,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Ouest-Nord */
         for (x = Ax; x >= Bx; x--)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) goto fin;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { y++; P += dPp; }
           else
@@ -225,7 +270,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Ouest-Sud */
         for (x = Ax; x >= Bx; x--)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) goto fin;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { y--; P += dPp; }
           else
@@ -246,7 +293,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Nord-Est */
         for (y = Ay; y <= By; y++)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) goto fin;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { x++; P += dPp; }
           else
@@ -257,7 +306,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Nord-Ouest */
         for (y = Ay; y <= By; y++)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) goto fin;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { x--; P += dPp; }
           else
@@ -271,7 +322,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Sud-Est */
         for (y = Ay; y >= By; y--)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) goto fin;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { x++; P += dPp; }
           else
@@ -282,7 +335,9 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       {               /* octant Sud-Ouest */
         for (y = Ay; y >= By; y--)
         {
-          lp[nn++] = y * rs + x;
+	  if (nn >= nmax) goto fin;
+          lx[nn] = x;
+          ly[nn++] = y;
           if (P > 0)
           { x--; P += dPp; }
           else
@@ -291,6 +346,7 @@ void lbresenlist(int32_t rs, int32_t Ax, int32_t Ay, int32_t Bx, int32_t By, int
       }
     }
   }
+ fin:
   *n = nn;
 } /* lbresenlist() */
 
@@ -321,7 +377,7 @@ int32_t getoctant(int32_t gx, int32_t gy)
 /* ================================================= */
 {
   /* Use gradient to identify octant. */
-  int32_t upper = abs(gx)>abs(gy);
+  int32_t upper = mcabs(gx)>mcabs(gy);
   if (gx>=0)                            /* Right-pointing */
     if (gy>=0)                          /*    Up */
       return 4 - upper;
@@ -457,7 +513,7 @@ void lconic(uint8_t *I, int32_t rs, int32_t cs, int32_t xs, int32_t ys, int32_t 
     if (DEBUG)
       fprintf(stderr,"-- %d -------------------------\n", octant); 
     
-    if (odd(octant)) {
+    if (mcodd(octant)) {
       while (2*v <= k2) {
         /* Plot this point */
         plot(I, rs, cs, x+xoffset, y+yoffset, NDG_MAX);
@@ -528,7 +584,7 @@ void lconic(uint8_t *I, int32_t rs, int32_t cs, int32_t xs, int32_t ys, int32_t 
   if (DEBUG)
     fprintf(stderr,"-- %d (final) -----------------\n", octant); 
     
-  if (odd(octant)) {
+  if (mcodd(octant)) {
     while (2*v <= k2) {
       /* Plot this point */
       plot(I, rs, cs, x+xoffset, y+yoffset, NDG_MAX);
@@ -774,7 +830,7 @@ void lconiclist(ellipse *ell, int32_t rs, int32_t cs, int32_t xs, int32_t ys, in
     if (DEBUG)
       fprintf(stderr,"-- %d -------------------------\n", octant); 
     
-    if (odd(octant)) {
+    if (mcodd(octant)) {
       while (2*v <= k2) {
         /* Plot this point */
         plotlist(ell, rs, cs, x+xoffset, y+yoffset);
@@ -845,7 +901,7 @@ void lconiclist(ellipse *ell, int32_t rs, int32_t cs, int32_t xs, int32_t ys, in
   if (DEBUG)
     fprintf(stderr,"-- %d (final) -----------------\n", octant); 
     
-  if (odd(octant)) {
+  if (mcodd(octant)) {
     while (2*v <= k2) {
       /* Plot this point */
       plotlist(ell, rs, cs, x+xoffset, y+yoffset);
@@ -943,7 +999,6 @@ void lellipsearclist(ellipse *ell, int32_t rs, int32_t cs, int32_t xp, int32_t y
 ellipse *AllocEllipseList(int32_t rs, int32_t cs)
 /* ================================================= */
 {
-  int32_t i;
   ellipse *ell = (ellipse *)calloc(1,sizeof(ellipse));
   if (ell == NULL)
   {   fprintf(stderr,"allocellipselist() : malloc failed\n");
@@ -1151,7 +1206,7 @@ void lconicliste(Liste *lp, int32_t rs, int32_t cs, int32_t xs, int32_t ys, int3
     if (DEBUG)
       fprintf(stderr,"-- %d -------------------------\n", octant); 
     
-    if (odd(octant)) {
+    if (mcodd(octant)) {
       while (2*v <= k2) {
         /* Plot this point */
         plotliste(lp, rs, x+xoffset, y+yoffset);
@@ -1222,7 +1277,7 @@ void lconicliste(Liste *lp, int32_t rs, int32_t cs, int32_t xs, int32_t ys, int3
   if (DEBUG)
     fprintf(stderr,"-- %d (final) -----------------\n", octant); 
     
-  if (odd(octant)) {
+  if (mcodd(octant)) {
     while (2*v <= k2) {
       /* Plot this point */
       plotliste(lp, rs, x+xoffset, y+yoffset);

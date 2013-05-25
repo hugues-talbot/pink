@@ -1,4 +1,37 @@
-/* $Id: l3dkhalimsky.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
    Operateurs agissant dans la grille de Khalimsky 3d:
 
@@ -27,6 +60,8 @@
    l3dbeta: beta-dilatation
    l3dalpha: alpha-dilatation
      Michel Couprie - juillet 2007
+
+   update MC octobre 2011 mode 7 (border) de l3dkhalimskize
 */
 
 #include <stdio.h>
@@ -34,6 +69,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mclifo.h>
@@ -47,7 +83,7 @@
 */
 
 /* =============================================================== */
-int32_t l3dkhalimskize(struct xvimage * i, struct xvimage **k, int32_t mode)
+int32_t l3dkhalimskize(struct xvimage * ima, struct xvimage **k, int32_t mode)
 /* =============================================================== */
 /* 
    passage de z3 a la grille de Khalimsky
@@ -59,21 +95,25 @@ int32_t l3dkhalimskize(struct xvimage * i, struct xvimage **k, int32_t mode)
      4 : emulation de la 6-connexite, idem "miss"
      5 : moyenne
      6 : reverse (Khalimsky -> Z3) : selection cubes
-
+     7 : border
 */
 #undef F_NAME
 #define F_NAME "l3dkhalimskize"
 {
+
+  ACCEPTED_TYPES3(ima, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT);
+  ONLY_3D(ima);
+
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
 #endif
 
   if ((mode == 1) || (mode == 2) || (mode == 5))
-    *k = KhalimskizeNDG3d(i);
+    *k = KhalimskizeNDG3d(ima);
   else if (mode == 6)
-    *k = DeKhalimskize3d(i);
+    *k = DeKhalimskize3d(ima);
   else
-    *k = Khalimskize3d(i);
+    *k = Khalimskize3d(ima);
   if (*k == NULL)
   {
     fprintf(stderr, "%s: Khalimskize3d failed\n", F_NAME);
@@ -110,9 +150,42 @@ int32_t l3dmakecomplex(struct xvimage * i)
    effectue la fermeture par inclusion de l'ensemble i
 */
 {
+  ACCEPTED_TYPES1(i, VFF_TYP_1_BYTE);
+  ONLY_3D(i);
   AjouteAlphacarre3d(i);
   return 1;
 } /* l3dmakecomplex() */
+
+/* =============================================================== */
+int32_t l3d_is_complex(struct xvimage * k)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "l3d_is_complex"
+/* 
+   teste si k est un complexe
+*/
+{
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
+  index_t ds = depth(k);
+  index_t ps = rs * cs;
+  uint8_t *K = UCHARDATA(k);
+  int32_t u, n;
+  index_t x, y, z, tab[GRS3D*GCS3D*GDS3D];
+
+  ACCEPTED_TYPES1(k, VFF_TYP_1_BYTE);
+  ONLY_3D(k);
+
+  for (z = 0; z < ds; z++)
+  for (y = 0; y < cs; y++)
+  for (x = 0; x < rs; x++)
+  if (K[z*ps + y*rs + x])
+  {
+    Alphacarre3d(rs, cs, ds, x, y, z, tab, &n);
+    for (u = 0; u < n; u++) if (!K[tab[u]]) return 0;
+  }
+  return 1;
+} /* l3d_is_complex() */
 
 /* =============================================================== */
 int32_t l3dalpha(struct xvimage * i)
@@ -123,6 +196,9 @@ int32_t l3dalpha(struct xvimage * i)
    alpha-dilatation (idem fermeture par inclusion) 
 */
 {
+  ACCEPTED_TYPES1(i, VFF_TYP_1_BYTE);
+  ONLY_3D(i);
+
   AjouteAlphacarre3d(i);
   return 1;
 } /* l3dalpha() */
@@ -136,6 +212,9 @@ int32_t l3dbeta(struct xvimage * i)
    beta-dilatation
 */
 {
+  ACCEPTED_TYPES1(i, VFF_TYP_1_BYTE);
+  ONLY_3D(i);
+
   AjouteBetacarre3d(i);
   return 1;
 } /* l3dbeta() */
@@ -149,6 +228,9 @@ int32_t l3dcolor(struct xvimage * k)
 #undef F_NAME
 #define F_NAME "l3dcolor"
 {
+  ACCEPTED_TYPES1(k, VFF_TYP_1_BYTE);
+  ONLY_3D(k);
+
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
 #endif
@@ -167,10 +249,10 @@ int32_t l3dplane(struct xvimage * k, double a, double b, double c, double d)
 #undef F_NAME
 #define F_NAME "l3dplane"
 {
-  int32_t rs, cs, ps, ds, N;
+  index_t rs, cs, ps, ds, N;
   uint8_t * K;
-  int32_t x, y, z;             // coordinates in the continuous space
-  int32_t xx, yy, zz;          // coordinates in the khalimsky space
+  index_t x, y, z;             // coordinates in the continuous space
+  index_t xx, yy, zz;          // coordinates in the khalimsky space
   double A, X, X1, X2, X3, X4;
 
   if (a * b * c == 0)
@@ -192,7 +274,7 @@ int32_t l3dplane(struct xvimage * k, double a, double b, double c, double d)
   N = ps * ds;
   K = UCHARDATA(k);
 
-  A = (abs(a) + abs(b) + abs(c)) / 2;
+  A = (mcabs(a) + mcabs(b) + mcabs(c)) / 2;
 
   for (z = 0; z < (ds+1)/2; z++)
   for (y = 0; y < (cs+1)/2; y++)
@@ -253,7 +335,7 @@ int32_t l3dplane(struct xvimage * k, double a, double b, double c, double d)
 } /* l3dplane() */
 
 /* =============================================================== */
-int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double r)
+int32_t l3dsphere(struct xvimage * k, index_t x0, index_t y0, index_t z0, double r)
 /* =============================================================== */
 /* 
   Draws into the Khalimsky volume \b k, the discretized sphere of center 
@@ -262,13 +344,13 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
 #undef F_NAME
 #define F_NAME "l3dsphere"
 {
-  int32_t rs, cs, ps, ds, N;
+  index_t rs, cs, ps, ds, N;
   uint8_t * K;
-  int32_t x, y, z;             // coordinates in the continuous plane
-  int32_t xmin, ymin, zmin, xmax, ymax, zmax;
-  int32_t xx, yy, zz, x00, y00, z00; // coord. in the khalimsky space
+  index_t x, y, z;             // coordinates in the continuous plane
+  index_t xmin, ymin, zmin, xmax, ymax, zmax;
+  index_t xx, yy, zz, x00, y00, z00; // coord. in the khalimsky space
   double t, t_, r2 = r*r;
-  int32_t tab[27]; int32_t i, n;
+  index_t tab[27]; int32_t i, n;
 
   rs = rowsize(k);
   cs = colsize(k);
@@ -280,8 +362,8 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
   x00 = x0 * 2;
   y00 = y0 * 2;
   z00 = z0 * 2;
-  zmin = ymin = xmin = -((int32_t)r+1);
-  zmax = ymax = xmax = (int32_t)r+1;
+  zmin = ymin = xmin = -((index_t)r+1);
+  zmax = ymax = xmax = (index_t)r+1;
 
 #define D2(x,y,z) (double)((x)*(x)+(y)*(y)+(z)*(z))
 
@@ -297,13 +379,11 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
       t = D2((x+1),y,z);
       if (t_ == r2) 
       {
-        printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
       }
       if ((t_ > r2) && (t < r2)) 
       {
-        printf("ecrit seg %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx+1 >= 0) && (xx+1 < rs))
           K[zz*ps + yy*rs + xx+1] = NDG_INTER3DX;
         Betacarre3d(rs, cs, ds, xx+1, yy, zz, tab, &n);
@@ -318,13 +398,11 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
       t = D2((x+1),y,z);
       if (t_ == r2) 
       {
-        printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
       }
       if ((t_ < r2) && (t > r2)) 
       {
-        printf("ecrit seg %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx+1 >= 0) && (xx+1 < rs))
           K[zz*ps + yy*rs + xx+1] = NDG_INTER3DX;
         Betacarre3d(rs, cs, ds, xx+1, yy, zz, tab, &n);
@@ -336,7 +414,6 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
     if (t == r2) 
     {
       xx = xmax * 2 + x00;
-      printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
       if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
         K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
     }
@@ -355,13 +432,11 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
       t = D2(x,y,(z+1));
       if (t_ == r2) 
       {
-        printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
       }
       if ((t_ > r2) && (t < r2)) 
       {
-        printf("ecrit seg %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz+1 >= 0) && (zz+1 < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[(zz+1)*ps + yy*rs + xx] = NDG_INTER3DZ;
         Betacarre3d(rs, cs, ds, xx, yy, zz+1, tab, &n);
@@ -376,13 +451,11 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
       t = D2(x,y,(z+1));
       if (t_ == r2) 
       {
-        printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
       }
       if ((t_ < r2) && (t > r2)) 
       {
-        printf("ecrit seg %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz+1 >= 0) && (zz+1 < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[(zz+1)*ps + yy*rs + xx] = NDG_INTER3DZ;
         Betacarre3d(rs, cs, ds, xx, yy, zz+1, tab, &n);
@@ -394,7 +467,6 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
     if (t == r2) 
     {
       zz = zmax * 2 + z00;
-      printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
       if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
         K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
     }
@@ -413,13 +485,11 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
       t = D2(x,(y+1),z);
       if (t_ == r2) 
       {
-        printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
       }
       if ((t_ > r2) && (t < r2)) 
       {
-        printf("ecrit seg %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy+1 >= 0) && (yy+1 < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + (yy+1)*rs + xx] = NDG_INTER3DY;
         Betacarre3d(rs, cs, ds, xx, yy+1, zz, tab, &n);
@@ -434,13 +504,11 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
       t = D2(x,(y+1),z);
       if (t_ == r2) 
       {
-        printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
       }
       if ((t_ < r2) && (t > r2)) 
       {
-        printf("ecrit seg %d %d %d %g %g\n", x, y, z, t_, t);
         if ((zz >= 0) && (zz < ds) && (yy+1 >= 0) && (yy+1 < cs) && (xx >= 0) && (xx < rs))
           K[zz*ps + (yy+1)*rs + xx] = NDG_INTER3DY;
         Betacarre3d(rs, cs, ds, xx, yy+1, zz, tab, &n);
@@ -452,7 +520,6 @@ int32_t l3dsphere(struct xvimage * k, int32_t x0, int32_t y0, int32_t z0, double
     if (t == r2) 
     {
       yy = ymax * 2 + y00;
-      printf("ecrit point %d %d %d %g %g\n", x, y, z, t_, t);
       if ((zz >= 0) && (zz < ds) && (yy >= 0) && (yy < cs) && (xx >= 0) && (xx < rs))
         K[zz*ps + yy*rs + xx] = NDG_SINGL3D;
     }
@@ -471,9 +538,9 @@ int32_t l3dthin(struct xvimage * k, int32_t nsteps)
 #define F_NAME "l3dthin"
 {
   struct xvimage * kp;
-  int32_t stablealpha, stablebeta;
-  int32_t i, x, y, z;
-  int32_t rs, cs, ps, d, N;
+  int32_t stablealpha, stablebeta, i;
+  index_t x, y, z;
+  index_t rs, cs, ps, d, N;
   uint8_t * K;
   uint8_t * KP;
 
@@ -543,9 +610,9 @@ int32_t l3dskelsurf(struct xvimage * k, int32_t nsteps)
 #define F_NAME "l3dskelsurf"
 {
   struct xvimage * kp;
-  int32_t stablealpha, stablebeta;
-  int32_t i, x, y, z;
-  int32_t rs, cs, ps, d, N;
+  int32_t stablealpha, stablebeta, i;
+  index_t x, y, z;
+  index_t rs, cs, ps, d, N;
   uint8_t * K;
   uint8_t * KP;
 
@@ -617,8 +684,8 @@ int32_t l3disthmus(struct xvimage * f)
 {
   struct xvimage * g;
   struct xvimage * fp;
-  int32_t rs, cs, ds, ps, N;
-  int32_t x;
+  index_t rs, cs, ds, ps, N;
+  index_t x;
   uint8_t *F;
   uint8_t *FP;
 
@@ -680,13 +747,13 @@ int32_t l3dlabel(struct xvimage * f, struct xvimage * lab)
 #undef F_NAME
 #define F_NAME "l3dlabel"
 {
-  int32_t rs, cs, ds, ps, N;
-  int32_t x, y, w;
+  index_t rs, cs, ds, ps, N;
+  index_t x, y, w;
   uint8_t *F;
-  uint32_t *LAB;
-  uint32_t nlabels = 0;
+  int32_t *LAB;
+  index_t nlabels = 0;
   Lifo * LIFO;
-  int32_t tab[27]; int32_t n, k;
+  index_t tab[27]; int32_t n, k;
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -698,7 +765,19 @@ int32_t l3dlabel(struct xvimage * f, struct xvimage * lab)
   ps = rs * cs;
   N = ps * ds;
   F = UCHARDATA(f);
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
+
+  if (datatype(lab) != VFF_TYP_4_BYTE) 
+  {
+    fprintf(stderr, "%s: le resultat doit etre de type VFF_TYP_4_BYTE\n", F_NAME);
+    return 0;
+  }
+
+  if ((rowsize(lab) != rs) || (colsize(lab) != cs) || (depth(lab) != ds))
+  {
+    fprintf(stderr, "%s: tailles images incompatibles\n", F_NAME);
+    return 0;
+  }
 
   LIFO = CreeLifoVide(N);
   if (LIFO == NULL)
@@ -750,7 +829,7 @@ int32_t l3dlabel(struct xvimage * f, struct xvimage * lab)
 } /* l3dlabel() */
 
 /* =============================================================== */
-int32_t l3drecons(struct xvimage * f, uint32_t *tab, int32_t n)
+int32_t l3drecons(struct xvimage * f, index_t *tab, int32_t n)
 /* =============================================================== */
 /* 
   Reconstruction geodesique (au sens du theta-voisinage) de l'ensemble
@@ -761,15 +840,15 @@ int32_t l3drecons(struct xvimage * f, uint32_t *tab, int32_t n)
 #define F_NAME "l3drecons"
 {
   struct xvimage * fp;
-  int32_t rs, cs, ds, ps, N;
-  int32_t x, y, i;
+  index_t rs, cs, ds, ps, N;
+  index_t x, y;
   uint8_t *F;
   uint8_t *FP;
   Lifo * LIFO1;
   Lifo * LIFO2;
   Lifo * LIFO3;
-  int32_t vois[27];
-  int32_t nv;
+  index_t vois[27];
+  int32_t nv, i;
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -852,7 +931,7 @@ int32_t l3drecons(struct xvimage * f, uint32_t *tab, int32_t n)
 
 
 /* =============================================================== */
-int32_t l3dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbcav, int32_t *nbtun, int32_t *euler)
+int32_t l3dinvariants(struct xvimage *f, index_t *nbcc, index_t *nbcav, index_t *nbtun, index_t *euler)
 /* =============================================================== */
 /*
   Calculs des nombres de composantes connexes, cavites et tunnels.
@@ -860,14 +939,14 @@ int32_t l3dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbcav, int32_t 
 #undef F_NAME
 #define F_NAME "l3dinvariants"
 {
-  int32_t rs, cs, ds, ps, N;
-  int32_t x, y, w;
+  index_t rs, cs, ds, ps, N;
+  index_t x, y, w;
   uint8_t *F;
   struct xvimage * lab;
-  uint32_t *LAB;
-  uint32_t nlabels;
+  int32_t *LAB;
+  index_t nlabels;
   Lifo * LIFO;
-  int32_t tab[27]; int32_t n, k;
+  index_t tab[27]; int32_t n, k;
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -886,7 +965,7 @@ int32_t l3dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbcav, int32_t 
     return(0);
     
   }
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   LIFO = CreeLifoVide(N);
   if (LIFO == NULL)
@@ -991,20 +1070,22 @@ int32_t l3dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbcav, int32_t 
 } /* l3dinvariants() */
 
 /* =============================================================== */
-int32_t l3dborder(struct xvimage * f)
+int32_t l3dboundary(struct xvimage * f)
 /* =============================================================== */
 /* 
    extrait la frontière interne
+   def: {x in F | theta(x) inter Fbar neq emptyset}
 */
 {
 #undef F_NAME
-#define F_NAME "l3dborder"
+#define F_NAME "l3dboundary"
   struct xvimage * g;
-  int32_t rs, cs, ds, ps, N;
-  int32_t x, y, z;
+  index_t rs, cs, ds, ps, N;
+  index_t x, y, z;
   uint8_t *F;
   uint8_t *G;
-  int32_t tab[26], n, u;
+  index_t tab[26];
+  int32_t n, u;
 
   rs = rowsize(f);
   cs = colsize(f);
@@ -1038,7 +1119,46 @@ int32_t l3dborder(struct xvimage * f)
   
   freeimage(g);
   return 1;
-} /* l3border() */
+} /* l3dboundary() */
+
+/* =============================================================== */
+int32_t l3dborder(struct xvimage * f)
+/* =============================================================== */
+/* 
+   extrait la frontière interne
+   def: closure{x in F | x free for F}
+*/
+{
+#undef F_NAME
+#define F_NAME "l3dborder"
+  struct xvimage * g;
+  index_t rs, cs, ds, ps;
+  index_t x, y, z;
+  uint8_t *F;
+  uint8_t *G;
+
+  assert(datatype(f) == VFF_TYP_1_BYTE);
+  rs = rowsize(f);
+  cs = colsize(f);
+  ds = depth(f);
+  ps = rs * cs;
+  F = UCHARDATA(f);
+  g = copyimage(f);
+  if (g == NULL)
+  {   fprintf(stderr,"%s: copyimage failed\n", F_NAME);
+      return 0;
+  }  
+  G = UCHARDATA(g);
+  razimage(f);
+  for (z = 0; z < ds; z++)
+    for (y = 0; y < cs; y++)
+      for (x = 0; x < rs; x++)
+	if (G[z*ps + y*rs + x] && FaceLibre3d(g, x, y, z))
+	  F[z*ps + y*rs + x] = VAL_OBJET;
+  l3dmakecomplex(f);
+  freeimage(g);
+  return 1;
+} /* l2dborder() */
 
 /* =============================================================== */
 int32_t l3dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8_t a2, uint8_t b1, uint8_t b2)
@@ -1057,11 +1177,11 @@ int32_t l3dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8
 #undef F_NAME
 #define F_NAME "l3dseltype"
 {
-  int32_t rs, cs, ps, ds, N, i1, j1, k1, i2, j2, k2, x, y, a, b, d;
+  index_t rs, cs, ps, ds, N, i1, j1, k1, i2, j2, k2, x, y;
   uint8_t * K;
   struct xvimage * kp;
   uint8_t * KP;
-  int32_t tab[27]; int32_t n, u;
+  index_t tab[27]; int32_t n, u, a, b, d;
 
   rs = rowsize(k);
   cs = colsize(k);

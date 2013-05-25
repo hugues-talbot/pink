@@ -1,4 +1,37 @@
-/* $Id: extractline.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file extractline.c
 
 \brief extracts a line between two given points from a 3D image
@@ -30,15 +63,14 @@ points (x1,y1) and (x2,y2) extracted from <B>in.pgm</B>.
 #include <lbresen.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * imgres;
-  int32_t i, j, n, nn, rs, cs, x1, y1, x2, y2;
+  int32_t i, n, nn, rs, cs, x1, y1, x2, y2;
   uint8_t *I, *R;
-  int32_t *listpoints;
+  int32_t *lx, *ly;
 
   if (argc != 7)
   {
@@ -75,15 +107,17 @@ int main(argc, argv)
   /* extraction d'une ligne */
   /* ---------------------------------------------------------- */
 
-  n = max(abs(x2-x1),(y2-y1))+1;
-  listpoints = (int32_t *)calloc(n, sizeof(int32_t));
+  n = mcmax(mcabs(x2-x1),(y2-y1))+1;
+  lx = (int32_t *)calloc(n, sizeof(int32_t));
+  ly = (int32_t *)calloc(n, sizeof(int32_t));
   if (image == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", argv[0]);
     exit(1);
   }
 
-  lbresenlist(rs, x1, y1, x2, y2, listpoints, &nn);
+  nn = n;
+  lbresenlist(x1, y1, x2, y2, lx, ly, &nn);
 #ifdef PARANO
   if (nn != n)
   {
@@ -93,12 +127,13 @@ int main(argc, argv)
 #endif
   imgres = allocimage(NULL, n, 1, 1, datatype(image));
   R = UCHARDATA(imgres);
-  for (i = 0; i < n; i++) R[i] = I[listpoints[i]];    
+  for (i = 0; i < n; i++) R[i] = I[ly[i]*rs + lx[i]];    
 
   writeimage(imgres, argv[argc-1]);
   freeimage(imgres);
   freeimage(image);
-  free(listpoints);
+  free(lx);
+  free(ly);
   return 0;
 } /* main */
 

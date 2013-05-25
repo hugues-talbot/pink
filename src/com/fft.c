@@ -1,82 +1,94 @@
-/* $Id: fft.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file fft.c
 
 \brief fast Fourier transform
 
-<B>Usage:</B> fft in1 in2 dir out1 out2
+<B>Usage:</B> fft in.pgm [dir] out.pgm
 
 <B>Description:</B>
-computes the 2 dimensional Fast Fourier Transform of an image.
-The input image must be square and the number of rows (or columns)
-MUST be a power of two.
+Computes the 2 dimensional Fast Fourier Transform of an image.
 
 This program will compute either a forward or inverse FFT, depending on
 the direction requested with the \b dir option.  A \b dir value of 0
 will result in a forward FFT, and a \b dir value of 1 will result
 in an inverse FFT. 
 
-The input arguments are described as follows:
+The arguments are described as follows:
 
-\b in1
-specifies the input image, which can be of data type BYTE, LONG or FLOAT.
-If the input image is of data type BYTE, then the data will first be
-converted to FLOAT before proceeding.
-If the first input image is of type BYTE or FLOAT, then it is assumed that 
-it is the real component of the complex pair, and the imaginary component 
-may be input using the optional in2 input argument.  
-If no imaginary component is specified when
-using a real input, then the imaginary component is assumed to be zero.  
+\b in.pgm specifies the input image, which must be of data type COMPLEX.
 
-\b in2
-specifies the optional input image, which can be of data type BYTE, LONG
-or FLOAT. The keyword "null" may be used.
-It is assumed that this image represents the imaginary component of the
-complex pair.  
+\b out.pgm output image, which will be an image of data type COMPLEX. 
+If row size or column size of in.pgm is not an integral power of 2, then input data is padded and dimensions of out.pgm may be different from those of in.pgm . 
 
-\b out1
-specifies the real output image, which will be a single band image of data
-type FLOAT.  This image contains only the real component of the complex pair.
-
-\b out2
-specifies the imaginary output image, which will be a single band image of data
-type FLOAT.  This image contains only the imaginary component of the complex
-pair.
-
-\b dir
-specifies the FFT direction.  A \b dir of 0 will result in a forward FFT, 
+\b dir (optional)
+specifies the FFT direction.  A \b dir of 0 (default) will result in a forward FFT, 
 and a \b dir of 1 will result in an inverse FFT.
 
-Note that it is the users responsibility to ensure that the correct components
-of the image are used when requesting an FFT or Inverse FFT.  Unexpected 
-results may occur if the user requests an inverse FFT and only inputs the real 
-component of an image.  If an FFT of an image is taken, then both the real and 
-imaginary components must be used to obtain a correct inverse FFT.
+This particular implementation of the DFT uses the transform pair defined as follows:
 
-For a forward FFT, the input data is multiplied by (-1)**(x+y) where (x,y) is
-the pixel coordinate. This has the effect of shifting the frequency domain
-result so that the DC component is at (N/2,N/2) rather than (0,0). For the
-inverse FFT case, the data is multiplied by (-1)**(x+y) AFTER the
-FFT processing, accounting for the fact that the input frequency domain data
-was center-shifted by the forward FFT. The center-shifted frequency domain
-representation is much easier to visualize and filter than it would be
-if not shifted. For more information on the shifting teqchnique, see
-R.C. Gonsalez and P. Wintz, "Digital Image Processing, 2nd ed, sec 3.2.2,
-p. 77. (1987). The center-shifting should really be an option.
+Let there be two complex arrays each with n rows and m columns.
 
-For the forward FFT, there is no scaling on the data. For the inverse FFT,
-the data is scaled by 1/(N*N). Thus, to generate a sinewave of amplitude
-1.0 for a 64x64 complex image to be handed to the inverse FFT, there should
-be two impulses at conjugate locations (symmetric about the center of the image)
-each with amplitude 0.5/(64*64). Why 0.5? It's because each impulse carries
-half of the power! The scaling should really be an option, but it currently
-is not (perhaps in a future patch).
+Index them as 
 
-<B>Types supported:</B> byte 2d, int32_t 2d, float 2d
+f(x,y):    0 <= x <= m - 1,  0 <= y <= n - 1
+
+F(u,v):    -m/2 <= u <= m/2 - 1,  -n/2 <= v <= n/2 - 1
+
+Then the forward and inverse transforms are related as follows.
+
+Forward:
+
+F(u,v) = \sum_{x=0}^{m-1} \sum_{y=0}^{n-1} f(x,y) \exp{-2\pi i (ux/m + vy/n)}
+
+Inverse:
+
+f(x,y) = 1/(mn) \sum_{u=-m/2}^{m/2-1} \sum_{v=-n/2}^{n/2-1} F(u,v) \exp{2\pi i (ux/m + vy/n)}
+
+Therefore, the transforms have these properties:
+
+1.  \sum_x \sum_y  f(x,y) = F(0,0)
+
+2.  m n \sum_x \sum_y |f(x,y)|^2 = \sum_u \sum_v |F(u,v)|^2
+
+<B>Types supported:</B> complex 2d
 
 <B>Category:</B> signal
 \ingroup signal
 
-\author Scott Wilson, Rick Bogart, Lyle Bacon
+\author Stefan Gustavson (stegu@itn.liu.se) 2003-10-20
 */
 
 #include <stdio.h>
@@ -84,217 +96,74 @@ is not (perhaps in a future patch).
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <mcutil.h>
+#include <lcrop.h>
 #include <lfft.h>
 
 #define VERBOSE
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
-  struct xvimage * image1;
+  struct xvimage * image;
   struct xvimage * image2;
-  int32_t dir, rs, cs, rs2, cs2, x, y;
+  int32_t dir = 0;
+  int32_t rs, cs, cs2, rs2;
 
-  if (argc != 6)
+  if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s in1 in2 dir out1 out2 \n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm [dir] out.pgm \n", argv[0]);
     exit(1);
   }
 
-  image1 = readimage(argv[1]);
-  if (image1 == NULL)
+  image = readimage(argv[1]);
+  if (image == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
+  rs = rowsize(image);
+  cs = colsize(image);
 
-  rs = rowsize(image1);
-  cs = colsize(image1);
-
-  if (strcmp(argv[2],"null") == 0) 
+  if ((datatype(image) != VFF_TYP_COMPLEX) || (depth(image) != 1))
   {
-    float *L;
-    image2 = allocimage(NULL, rs, cs, 1, VFF_TYP_FLOAT);
-    if (image2 == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(image2);
-    for (x = 0; x < rs*cs; x++) L[x] = 0.0;
-  }
-  else
-  {
-    image2 = readimage(argv[2]);
-    if (image2 == NULL)
-    {
-      fprintf(stderr, "%s: readimage failed\n", argv[0]);
-      exit(1);
-    }
-  }
-
-  if ((rowsize(image2) != rs) || (colsize(image2) != cs))
-  {
-    fprintf(stderr, "%s: Input images must be of the same size\n", argv[0]);
-    exit(1);
-  }
-  rs2 = max(rs,cs);
-  cs2 = 1;
-  while (cs2 < rs2) cs2 = cs2 << 1;
-  rs2 = cs2;
-
-#ifdef VERBOSE
-  printf("rs=%d cs=%d ; after padding: rs2=%d cs2=%d\n", rs, cs, rs2, cs2);
-#endif
-
-  if (datatype(image1) == VFF_TYP_1_BYTE)
-  {
-    uint8_t *B = UCHARDATA(image1);
-    struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
-    float *L;
-    if (imagefloat == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(imagefloat);
-    imagefloat->xdim = image1->xdim;
-    imagefloat->ydim = image1->ydim;
-    imagefloat->zdim = image1->zdim;
-    for (y = 0; y < cs; y++) 
-      for (x = 0; x < rs; x++) 
-        L[y*rs2 + x] = (float)B[y*rs + x];    
-    freeimage(image1);
-    image1 = imagefloat;
-  }
-  else if (datatype(image1) == VFF_TYP_4_BYTE)
-  {
-    uint32_t *B = ULONGDATA(image1);
-    struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
-    float *L;
-    if (imagefloat == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(imagefloat);
-    imagefloat->xdim = image1->xdim;
-    imagefloat->ydim = image1->ydim;
-    imagefloat->zdim = image1->zdim;
-    for (y = 0; y < cs; y++) 
-      for (x = 0; x < rs; x++) 
-        L[y*rs2 + x] = (float)B[y*rs + x];    
-    freeimage(image1);
-    image1 = imagefloat;
-  }
-  else if (datatype(image1) == VFF_TYP_FLOAT)
-  {
-    float *B = FLOATDATA(image1);
-    struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
-    float *L;
-    if (imagefloat == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(imagefloat);
-    imagefloat->xdim = image1->xdim;
-    imagefloat->ydim = image1->ydim;
-    imagefloat->zdim = image1->zdim;
-    for (y = 0; y < cs; y++) 
-      for (x = 0; x < rs; x++) 
-        L[y*rs2 + x] = B[y*rs + x];    
-    freeimage(image1);
-    image1 = imagefloat;
-  }
-  else
-  {
-    fprintf(stderr, "%s: bad datatype for image1\n", argv[0]);
+    fprintf(stderr,"%s: input image type must be complex 2D\n", argv[0]);
     exit(1);
   }
 
-  if (datatype(image2) == VFF_TYP_1_BYTE)
+  if (argc == 4) dir = atoi(argv[2]);
+
+  rs2 = cs2 = 1;
+  while (rs2 < rs) rs2 = rs2 << 1;
+  while (cs2 < cs) cs2 = cs2 << 1;
+  if ((rs2 != rs) || (cs2 != cs))
   {
-    uint8_t *B = UCHARDATA(image2);
-    struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
-    float *L;
-    if (imagefloat == NULL)
+    image2 = allocimage(NULL, rs2, cs2, 1, VFF_TYP_COMPLEX);
+    assert(image2 != NULL);
+    image2->xdim = image->xdim;
+    image2->ydim = image->ydim;
+    image2->zdim = image->zdim;
+    razimage(image2);
+    if (!linsert(image, image2, 0, 0, 0))
     {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+      fprintf(stderr, "%s: function linsert failed\n", argv[0]);
       exit(1);
     }
-    L = FLOATDATA(imagefloat);
-    imagefloat->xdim = image2->xdim;
-    imagefloat->ydim = image2->ydim;
-    imagefloat->zdim = image2->zdim;
-    for (y = 0; y < cs; y++) 
-      for (x = 0; x < rs; x++) 
-        L[y*rs2 + x] = (float)B[y*rs + x];    
-    freeimage(image2);
-    image2 = imagefloat;
-  }
-  else if (datatype(image2) == VFF_TYP_4_BYTE)
-  {
-    uint32_t *B = ULONGDATA(image2);
-    struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
-    float *L;
-    if (imagefloat == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(imagefloat);
-    imagefloat->xdim = image2->xdim;
-    imagefloat->ydim = image2->ydim;
-    imagefloat->zdim = image2->zdim;
-    for (y = 0; y < cs; y++) 
-      for (x = 0; x < rs; x++) 
-        L[y*rs2 + x] = (float)B[y*rs + x];    
-    freeimage(image2);
-    image2 = imagefloat;
-  }
-  else if (datatype(image2) == VFF_TYP_FLOAT)
-  {
-    float *B = FLOATDATA(image2);
-    struct xvimage *imagefloat = allocimage(NULL, rs2, cs2, 1, VFF_TYP_FLOAT);
-    float *L;
-    if (imagefloat == NULL)
-    {
-      fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-      exit(1);
-    }
-    L = FLOATDATA(imagefloat);
-    imagefloat->xdim = image2->xdim;
-    imagefloat->ydim = image2->ydim;
-    imagefloat->zdim = image2->zdim;
-    for (y = 0; y < cs; y++) 
-      for (x = 0; x < rs; x++) 
-        L[y*rs2 + x] = B[y*rs + x];    
-    freeimage(image2);
-    image2 = imagefloat;
-  }
-  else
-  {
-    fprintf(stderr, "%s: bad datatype for image2\n", argv[0]);
-    exit(1);
+    freeimage(image);
+    image = image2;
   }
 
-  dir = atoi(argv[3]);
-  if (! lfft(image1, image2, dir))
+  if (! lfft(image, dir))
   {
     fprintf(stderr, "%s: function lfft failed\n", argv[0]);
     exit(1);
   }
 
-  writeimage(image1, argv[argc-2]);
-  writeimage(image2, argv[argc-1]);
-  freeimage(image1);
-  freeimage(image2);
+  writeimage(image, argv[argc-1]);
+  freeimage(image);
 
   return 0;
 } /* main */

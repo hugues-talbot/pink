@@ -1,5 +1,13 @@
-3dborder $1 _1
-pgm2vtk _1 1 _1.vtk
-3dborder $2 _2
-pgm2vtk _2 1 _2.vtk
-multirender _1.vtk _2.vtk &
+#!/bin/sh
+USAGE="Usage: $0 in1.k in2.k"
+if [ $# -ne 2 ]
+then
+	echo $USAGE
+        exit
+fi
+3dborder $1 /tmp/visu2k_1
+pgm2vtk /tmp/visu2k_1 1 /tmp/visu2k_1.vtk
+3dborder $2 /tmp/visu2k_2
+pgm2vtk /tmp/visu2k_2 1 /tmp/visu2k_2.vtk
+multirender /tmp/visu2k_1.vtk /tmp/visu2k_2.vtk
+rm -f /tmp/visu2k_*

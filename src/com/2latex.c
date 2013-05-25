@@ -1,4 +1,37 @@
-/* $Id: 2latex.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* \file pgm2latex.c
 
 \brief converts a grayscale image into a latex file
@@ -35,9 +68,8 @@ Converts a grayscale image into a latex file. The value of each pixel is printed
 #include <mcimage.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * bold = NULL;
@@ -120,16 +152,16 @@ int main(argc, argv)
       if (bold && *(UCHARDATA(bold) + y * rs + x))
       {
         if (underl && *(UCHARDATA(underl) + y * rs + x))
-          macro = "\\zc";
+          macro = (char *)"\\zc";
         else
-          macro = "\\za";
+          macro = (char *)"\\za";
       }
       else
       {
         if (underl && *(UCHARDATA(underl) + y * rs + x))
-          macro = "\\zd";
+          macro = (char *)"\\zd";
         else
-          macro = "\\zb";
+          macro = (char *)"\\zb";
       }
       fprintf(fd, "%s{%3d}", macro, *(UCHARDATA(image) + y * rs + x));
       if (x != rs - 1) fprintf(fd, "&");

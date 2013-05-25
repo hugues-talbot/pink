@@ -1,12 +1,48 @@
-/* $Id: lgeo.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
+
+/*
+Update 12/02/2010 M. Couprie: corr. bug lsection()
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#ifdef HP
-#define _INCLUDE_XOPEN_SOURCE
-#endif
+#include <assert.h>
 #include <math.h>
 #include <mcimage.h>
 #include <mccodimage.h>
@@ -36,9 +72,8 @@
 
 #define MAXITER 100
 
-/*
-#define DEBUG
-*/
+//#define DEBUG
+
 
 /* ==================================== */
 int32_t initrectanglearrondi(rectanglearrondi *r)
@@ -47,7 +82,7 @@ int32_t initrectanglearrondi(rectanglearrondi *r)
   double l = r->w, L = r->h, theta = r->angle, x = r->centre.x, y = r->centre.y;
   double d, alpha;
 
-  if (L < EPSILON) /* c'est un cercle : on ne remplit que r->c1 */
+  if (L < MCGEO_EPSILON) /* c'est un cercle : on ne remplit que r->c1 */
   {
     r->c1.x0 = x;
     r->c1.y0 = y;
@@ -90,7 +125,7 @@ printf("c2 = %g,%g,%g\n", r->c2.x0, r->c2.y0, r->c2.r);
 } /* initrectanglearrondi() */
 
 /* ==================================== */
-double distpointrectanglearrondi(point p, rectanglearrondi *r)
+double distpointrectanglearrondi(mcgeo_point p, rectanglearrondi *r)
 /* ==================================== */
 /* 
    Calcule la distance d'un point a un rectangle arrondi.
@@ -103,7 +138,7 @@ printf("distpointrectanglearrondi: h = %g ; a,b,c = %g,%g,%g\n", r->h, r->s1.a, 
 printf("c1 = %g,%g,%g  ", r->c1.x0, r->c1.y0, r->c1.r);
 printf("c2 = %g,%g,%g\n", r->c2.x0, r->c2.y0, r->c2.r);
 #endif
-  if (r->h < EPSILON) return distpointcercle(p, r->c1);
+  if (r->h < MCGEO_EPSILON) return distpointcercle(p, r->c1);
 
   a = r->s1.a; b = r->s1.b; c = r->s1.c; /* distance au premier cote */
   det = a * a + b * b;
@@ -112,7 +147,7 @@ printf("c2 = %g,%g,%g\n", r->c2.x0, r->c2.y0, r->c2.r);
   y = (- b * c - cc * a) / det;
 
   /* verifie si le point d'intersection appartient au premier cote */
-  x1 = min(r->s1.x1,r->s1.x2); x2 = max(r->s1.x1,r->s1.x2);
+  x1 = mcmin(r->s1.x1,r->s1.x2); x2 = mcmax(r->s1.x1,r->s1.x2);
   if ((x >= x1) && (x <= x2))
   {
     dx = x - p.x;
@@ -149,7 +184,7 @@ double SomCarDist(int32_t *pb, int32_t npb, rectangle *R, int32_t rs)
 /* calcule la somme des carres des distances des points du bord au rectangle */
 {
   int32_t i; 
-  point p; 
+  mcgeo_point p; 
   double d, c1 = 0;
   for (i = 0; i < npb; i++) 
   {
@@ -167,7 +202,7 @@ double SomCarDistRA(int32_t *pb, int32_t npb, rectanglearrondi *R, int32_t rs)
 /* calcule la somme des carres des distances des points du bord au rectangle arrondi */
 {
   int32_t i; 
-  point p; 
+  mcgeo_point p; 
   double d, c1 = 0;
   for (i = 0; i < npb; i++) 
   {
@@ -195,7 +230,7 @@ rectangle *AjusteRectangle(int32_t *pb, int32_t npb, double xc, double yc, doubl
  */
 {
   rectangle *R;
-  double c, cp, cm, d; 
+  double c, cp, cm;
   double dh = INCRH;
   double dw = INCRW;
   double dx = INCRX;
@@ -367,7 +402,7 @@ rectanglearrondi *AjusteRectangleArrondi(int32_t *pb, int32_t npb, double xc, do
 /* ==================================== */
 {
   rectanglearrondi *R;
-  double c, cp, cm, d; 
+  double c, cp, cm;
   double dh = INCRH;
   double dw = INCRW;
   double dx = INCRX;
@@ -400,7 +435,7 @@ rectanglearrondi *AjusteRectangleArrondi(int32_t *pb, int32_t npb, double xc, do
       if (cp < c) c = cp;
       else
       {
-        R->h = max((R->h-(dh+dh)),0); /* pas de valeurs negatives */
+        R->h = mcmax((R->h-(dh+dh)),0); /* pas de valeurs negatives */
         initrectanglearrondi(R);
         cm = SomCarDistRA(pb, npb, R, rs);
         if (cm < c) c = cm;
@@ -539,16 +574,16 @@ int32_t lfenetreincluante(
 #undef F_NAME
 #define F_NAME "lfenetreincluante"
 {
-  int32_t i, k, l, n;
-  int32_t w, x, y, z;
+  int32_t k, n;
+  int32_t w, x, y;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
   int32_t d = depth(img);
   int32_t N = rs * cs;          /* taille image */
   struct xvimage * labels;
-  uint32_t *LABEL;
-  uint32_t label;
+  int32_t *LABEL;
+  int32_t label;
   struct xvimage * result;
   uint8_t *RES;
   Lifo * LIFO;
@@ -577,7 +612,7 @@ int32_t lfenetreincluante(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LABEL = ULONGDATA(labels);
+  LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, LABMAX, labels, &n))
   {
@@ -684,7 +719,6 @@ int32_t lboxmin(struct xvimage *img)
   int32_t cs = colsize(img);
   int32_t ds = depth(img);
   int32_t ps = rs * cs;
-  int32_t N = ps * ds;          /* taille image */
   int32_t xmin, xmax, ymin, ymax, zmin, zmax;
 
   xmin = rs; xmax = -1; 
@@ -731,16 +765,16 @@ int32_t lmatchrect(
 #undef F_NAME
 #define F_NAME "lmatchrect"
 {
-  int32_t i, k, l, n;
-  int32_t w, x, y, z;
+  int32_t k, n;
+  int32_t w, x, y;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
   int32_t d = depth(img);
   int32_t N = rs * cs;          /* taille image */
   struct xvimage * labels;
-  uint32_t *LABEL;
-  uint32_t label;
+  int32_t *LABEL;
+  int32_t label;
   struct xvimage * result;
   uint8_t *RES;
   Lifo * LIFO;
@@ -749,8 +783,7 @@ int32_t lmatchrect(
   double Mxy1, Mx2, My2, Mxy2, delta;
   double lambda1, lambda2;
   int32_t incr_vois;
-  double xx, yy, xc, yc, a;
-  double x1, y1, x2, y2;
+  double xc, yc;
   double theta;
   rectanglearrondi *Ra;
   rectangle *R;
@@ -778,7 +811,7 @@ int32_t lmatchrect(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LABEL = ULONGDATA(labels);
+  LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, LABMAX, labels, &n))
   {
@@ -859,7 +892,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < EPSILON) 
+      if (mcabs(Mx2 - My2) < MCGEO_EPSILON) 
         theta = 0.0;
       else
       {
@@ -947,16 +980,16 @@ int32_t lrectangleincluant(
 #undef F_NAME
 #define F_NAME "lrectangleincluant"
 {
-  int32_t i, k, l, n;
-  int32_t w, x, y, z;
+  int32_t k, n;
+  int32_t w, x, y;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
   int32_t d = depth(img);
   int32_t N = rs * cs;          /* taille image */
   struct xvimage * labels;
-  uint32_t *LABEL;
-  uint32_t label;
+  int32_t *LABEL;
+  int32_t label;
   struct xvimage * result;
   uint8_t *RES;
   Lifo * LIFO;
@@ -965,8 +998,7 @@ int32_t lrectangleincluant(
   double Mxy1, Mx2, My2, Mxy2, delta;
   double lambda1, lambda2;
   int32_t incr_vois;
-  double xx, yy, xc, yc, a;
-  double x1, y1, x2, y2;
+  double xc, yc;
   double theta;
 #ifdef RECTARRONDI
   rectanglearrondi *R;
@@ -997,7 +1029,7 @@ int32_t lrectangleincluant(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LABEL = ULONGDATA(labels);
+  LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, LABMAX, labels, &n))
   {
@@ -1078,7 +1110,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < EPSILON) 
+      if (mcabs(Mx2 - My2) < MCGEO_EPSILON) 
         theta = 0.0;
       else
       {
@@ -1157,8 +1189,8 @@ int32_t lmatchellipse(
 #undef F_NAME
 #define F_NAME "lmatchellipse"
 {
-  int32_t k, l, n;
-  int32_t w, x, y, z;
+  int32_t k, n;
+  int32_t w, x, y;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
@@ -1167,15 +1199,15 @@ int32_t lmatchellipse(
   struct xvimage * result;
   uint8_t *RES;
   struct xvimage * labels;
-  uint32_t *LABEL;
-  uint32_t label;
+  int32_t *LABEL;
+  int32_t label;
   Lifo * LIFO;
   int32_t area;
   double mx1, my1, mx2, my2, mxy1;
   double Mxy1, Mx2, My2, Mxy2, delta;
   double lambda1, lambda2;
   int32_t incr_vois;
-  double xx, yy, xc, yc, a;
+  double xc, yc;
   double x1, y1, x2, y2;
   double theta;
   ellipse *ell;
@@ -1209,7 +1241,7 @@ int32_t lmatchellipse(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LABEL = ULONGDATA(labels);
+  LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, LABMAX, labels, &n))
   {
@@ -1277,7 +1309,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < EPSILON) 
+      if (mcabs(Mx2 - My2) < MCGEO_EPSILON) 
         theta = 0.0;
       else
       {
@@ -1363,23 +1395,23 @@ int32_t lellipticite(
 #undef F_NAME
 #define F_NAME "lellipticite"
 {
-  int32_t k, l, n;
-  int32_t w, x, y, z;
+  int32_t k, n;
+  int32_t w, x, y;
   uint8_t *SOURCE = UCHARDATA(img);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
   int32_t d = depth(img);
   int32_t N = rs * cs;          /* taille image */
   struct xvimage * labels;
-  uint32_t *LABEL;
-  uint32_t label;
+  int32_t *LABEL;
+  int32_t label;
   Lifo * LIFO;
   int32_t area;
   double mx1, my1, mx2, my2, mxy1;
   double Mxy1, Mx2, My2, Mxy2, delta;
   double lambda1, lambda2;
   int32_t incr_vois;
-  double xx, yy, xc, yc, a;
+  double xc, yc;
   double x1, y1, x2, y2;
   double theta;
   ellipse *ell;
@@ -1407,7 +1439,7 @@ int32_t lellipticite(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LABEL = ULONGDATA(labels);
+  LABEL = SLONGDATA(labels);
 
   if (!llabelextrema(img, connex, LABMAX, labels, &n))
   {
@@ -1475,7 +1507,7 @@ printf("lambda1 = %g ; lambda2 = %g\n", lambda1, lambda2);
         return 0;
       }
 
-      if (abs(Mx2 - My2) < EPSILON) 
+      if (mcabs(Mx2 - My2) < MCGEO_EPSILON) 
         theta = 0.0;
       else
       {
@@ -1569,7 +1601,6 @@ double MeanGrayCircle(struct xvimage *img, cercle *C)
   uint8_t *I = UCHARDATA(img);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
-  int32_t N = rs * cs;          /* taille image */
   double sumgray = 0.0; 
   Liste *lp = lellipseliste(rs, cs, 0, C->r, C->r, 0, C->x0, C->y0);
   int32_t p, i, numpoints = lp->Sp;
@@ -1681,7 +1712,6 @@ cercle *AjusteCercle2(struct xvimage *img, double xc, double yc, double r)
   double cost, cp, cm; 
   double dx = INCRX;
   double dy = INCRY;
-  double dr = INCRR;
   int32_t i, stab;
 
   C = (cercle *)calloc(1,sizeof(cercle));
@@ -1744,7 +1774,6 @@ struct xvimage *lcar2pol(struct xvimage *img, double xc, double yc)
   uint8_t *R;
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
-  int32_t N = rs * cs;          /* taille image */
   int32_t angle_res, xi, yi, xs, ys, r, a;
   double angle_step, max_r, t, x, y, f1, f2, f;
 
@@ -1804,11 +1833,10 @@ int32_t lpol2car(struct xvimage *img, struct xvimage *res, double xc, double yc)
   uint8_t *R = UCHARDATA(res);
   int32_t rsp = rowsize(img);
   int32_t csp = colsize(img);
-  int32_t Np = rsp * csp;          /* taille image polaire */
   int32_t rsc = rowsize(res);
   int32_t csc = colsize(res);
   int32_t N = rsc * csc;           /* taille image cartesienne */
-  double max_r, t, angle_step, r, a, f1, f2, f;
+  double r, a, f1, f2, f;
   int32_t ri, rs, ai, as, x, y;
 
   memset(R, 0, N);
@@ -1835,126 +1863,6 @@ int32_t lpol2car(struct xvimage *img, struct xvimage *res, double xc, double yc)
 } // lpol2car()
 
 /* ==================================== */
-struct xvimage *lsection_old(struct xvimage *img, 
-                         double x0, double y0, double z0,
-                         double x1, double y1, double z1,
-                         double x2, double y2, double z2
-                        )
-/* ==================================== */
-#undef F_NAME
-#define F_NAME  "lsection"
-/*
-  2d cross-section from a 3d image
-*/
-{
-  struct xvimage *result;
-  uint8_t *F = UCHARDATA(img);
-  uint8_t *R;
-  int32_t rs = rowsize(img);
-  int32_t cs = colsize(img);
-  int32_t ds = depth(img);
-  int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
-  double xdim = img->xdim;
-  double ydim = img->ydim;
-  double zdim = img->zdim;
-  int32_t rs2, cs2, N2; 
-  double dx1, dy1, dz1, dx2, dy2, dz2, x, y, z;
-  double fziyi, fziys, fzsyi, fzsys, fzi, fzs, f;
-  int32_t i, j, imin, imax, jmin, jmax, ii, jj, xi, yi, zi, xs, ys, zs;
-
-  // computes the size of the resulting image
-  if ((x0 < 0) || (x0 > rs-1) || (y0 < 0) || (y0 > cs-1) || (z0 < 0) || (z0 > ds-1))
-  {
-    fprintf(stderr, "%s : base point out of bounds\n", F_NAME);
-    return NULL;
-  }  
-  x = x0; y = y0; z = z0; 
-  dx1 = (x1 - x0) / xdim; 
-  dy1 = (y1 - y0) / ydim; 
-  dz1 = (z1 - z0) / zdim;
-  i = 0; 
-  while (! ((x < 0) || (x > rs-1) || (y < 0) || (y > cs-1) || (z < 0) || (z > ds-1)))
-  {
-    x += dx1; y += dy1; z += dz1; i++; 
-  }
-  imax = i - 1;
-
-  printf("x0=%f, y0=%f, z0=%f, x1=%f, y1=%f, z1=%f, x2=%f, y2=%f, z2=%f, dx1=%f, dy1=%f, dz1=%f, imax=%d\n", x0, y0, z0, x1, y1, z1, x2, y2, z2, dx1, dy1, dz1, imax);
-  fflush(stdout);
-
-  x = x0; y = y0; z = z0; 
-  i = 0; 
-  while (! ((x < 0) || (x > rs-1) || (y < 0) || (y > cs-1) || (z < 0) || (z > ds-1)))
-  {
-    x -= dx1; y -= dy1; z -= dz1; i--; 
-  }
-  imin = i + 1;
-
-  x = x0; y = y0; z = z0; 
-  dx2 = (x2 - x0) / xdim; 
-  dy2 = (y2 - y0) / ydim; 
-  dz2 = (z2 - z0) / zdim;
-  j = 0; 
-  while (! ((x < 0) || (x > rs-1) || (y < 0) || (y > cs-1) || (z < 0) || (z > ds-1)))
-  {
-    x += dx2; y += dy2; z += dz2; j++; 
-  }
-  jmax = j - 1;
-
-  x = x0; y = y0; z = z0; 
-  j = 0; 
-  while (! ((x < 0) || (x > rs-1) || (y < 0) || (y > cs-1) || (z < 0) || (z > ds-1)))
-  {
-    x -= dx2; y -= dy2; z -= dz2; j--; 
-  }
-  jmin = j + 1;
-
-  rs2 = imax - imin;
-  cs2 = jmax - jmin;
-  N2 = rs2 * cs2; 
-
-  result = allocimage(NULL, rs2, cs2, 1, VFF_TYP_1_BYTE);
-  if (result == NULL)
-  {
-    fprintf(stderr, "%s : allocimage failed\n", F_NAME);
-    return NULL;
-  }
-  R = UCHARDATA(result);
-  memset(R, 0, N2);
-
-  // interpolation loop
-
-  for (j = 0; j < cs2; j++)
-  {
-    jj = jmin + j;
-    for (i = 0; i < rs2; i++)
-    {
-      ii = imin + i;
-      x = x0 + ii*dx1 + jj*dx2;
-      y = y0 + ii*dy1 + jj*dy2;
-      z = z0 + ii*dz1 + jj*dz2;
-      xi = (int32_t)floor(x); xs = xi + 1;
-      yi = (int32_t)floor(y); ys = yi + 1;
-      zi = (int32_t)floor(z); zs = zi + 1;
-      if ((xi >= 0) && (yi >= 0) && (zi >= 0) && (xs < rs) && (ys < cs) && (zs < ds))
-      {
-        fziyi = (x - xi) * F[zi*ps + yi*rs + xs] + (xs - x) * F[zi*ps + yi*rs + xi];
-        fziys = (x - xi) * F[zi*ps + ys*rs + xs] + (xs - x) * F[zi*ps + ys*rs + xi];
-        fzsyi = (x - xi) * F[zs*ps + yi*rs + xs] + (xs - x) * F[zs*ps + yi*rs + xi];
-        fzsys = (x - xi) * F[zs*ps + ys*rs + xs] + (xs - x) * F[zs*ps + ys*rs + xi];
-        fzi = (y - yi) * fziys + (ys - y) * fziyi;
-        fzs = (y - yi) * fzsys + (ys - y) * fzsyi;
-        f = (z - zi) * fzs + (zs - z) * fzi;
-        R[j*rs2 + i] = arrondi(f);
-      }
-    }
-  }
-
-  return result;
-} // lsection()
-
-/* ==================================== */
 struct xvimage *lsection(struct xvimage *img, 
                          double x0, double y0, double z0,
                          double x1, double y1, double z1,
@@ -1973,58 +1881,85 @@ struct xvimage *lsection(struct xvimage *img,
   int32_t cs = colsize(img);
   int32_t ds = depth(img);
   int32_t ps = rs * cs;          /* taille plan */
-  int32_t N = ps * ds;           /* taille image */
   double xdim = img->xdim;
   double ydim = img->ydim;
   double zdim = img->zdim;
   int32_t rs2, cs2, N2; 
-  double dx1, dy1, dz1, dx2, dy2, dz2, x, y, z;
+  double dx1, dy1, dz1, dx2, dy2, dz2, d1, d2, x, y, z, L;
   double fziyi, fziys, fzsyi, fzsys, fzi, fzs, f;
   int32_t i, j, imin, imax, jmin, jmax, ii, jj, xi, yi, zi, xs, ys, zs;
+  int32_t xmin, xmax, ymin, ymax;
+
+  assert((datatype(img)==VFF_TYP_1_BYTE) || (datatype(img)==VFF_TYP_4_BYTE));
 
   // computes the size of the resulting image
   if ((x0 < 0) || (x0 > rs-1) || (y0 < 0) || (y0 > cs-1) || (z0 < 0) || (z0 > ds-1))
   {
-    fprintf(stderr, "%s : base point out of bounds\n", F_NAME);
+    fprintf(stderr, "%s: base point out of bounds\n", F_NAME);
     return NULL;
   }  
-  x = x0; y = y0; z = z0; 
+
+#ifdef DEBUG
+  printf("x0=%g ; y0 = %g ; z0 = %g\n", x0, y0, z0);
+  printf("x1=%g ; y1 = %g ; z1 = %g\n", x1, y1, z1);
+  printf("x2=%g ; y2 = %g ; z2 = %g\n", x2, y2, z2);
+#endif
+
   dx1 = (x1 - x0) / xdim; 
   dy1 = (y1 - y0) / ydim; 
   dz1 = (z1 - z0) / zdim;
-  i = 0; 
-  while (! ((x < 0) || (x > rs-1) || (y < 0) || (y > cs-1) || (z < 0) || (z > ds-1)))
-  {
-    x += dx1; y += dy1; z += dz1; i++; 
-  }
-  imax = i - 1;
-
-  x = x0; y = y0; z = z0; 
-  i = 0; 
-  while (! ((x < 0) || (x > rs-1) || (y < 0) || (y > cs-1) || (z < 0) || (z > ds-1)))
-  {
-    x -= dx1; y -= dy1; z -= dz1; i--; 
-  }
-  imin = i + 1;
-
-  x = x0; y = y0; z = z0; 
+  d1 = sqrt(dx1*dx1 + dy1*dy1 + dz1*dz1);
   dx2 = (x2 - x0) / xdim; 
   dy2 = (y2 - y0) / ydim; 
   dz2 = (z2 - z0) / zdim;
-  j = 0; 
-  while (! ((x < 0) || (x > rs-1) || (y < 0) || (y > cs-1) || (z < 0) || (z > ds-1)))
-  {
-    x += dx2; y += dy2; z += dz2; j++; 
-  }
-  jmax = j - 1;
+  d2 = sqrt(dx2*dx2 + dy2*dy2 + dz2*dz2);
+#ifdef DEBUG
+  printf("dx1=%g ; dx2 = %g\n", dx1, dx2);
+  printf("dy1=%g ; dy2 = %g\n", dy1, dy2);
+  printf("dz1=%g ; dz2 = %g\n", dz1, dz2);
+  printf("d1=%g ; d2 = %g\n", d1, d2);
+#endif
 
-  x = x0; y = y0; z = z0; 
-  j = 0; 
-  while (! ((x < 0) || (x > rs-1) || (y < 0) || (y > cs-1) || (z < 0) || (z > ds-1)))
+  // find size of the resulting 2D image
+
+  // 1st step: let L be the length of the diagonal of the box, 
+  // expressed in "real world" unit.
+  // The resulting image lies in a square S = [-L,L]x[-L,L] (real), or
+  // [-L/d1,L/d1]x[-L/d2,L/d2] (logical).
+  L = sqrt(rs*rs + cs*cs + ds*ds);
+#ifdef DEBUG
+    printf("L=%g\n", L);
+#endif
+
+  // 2nd step: scan S using logical coordinates, and finds out 
+  // which points lie in the real box. 
+  // Compute logical coordinates of the bounding axes-aligned 
+  // rectangle containing all these points
+  xmin = (int32_t)floor(-L / d1);
+  ymin = (int32_t)floor(-L / d2);
+  xmax = (int32_t)ceil(L / d1);
+  ymax = (int32_t)ceil(L / d2);
+#ifdef DEBUG
+    printf("xmin=%d ; xmax=%d ; ymin=%d ; ymax=%d\n", xmin, xmax, ymin, ymax);
+#endif
+  jmin = imin = INT32_MAX;
+  jmax = imax = INT32_MIN;
+  for (j = ymin; j <= ymax; j++)
   {
-    x -= dx2; y -= dy2; z -= dz2; j--; 
+    for (i = xmin; i < xmax; i++)
+    {
+      x = x0 + i*dx1 + j*dx2;
+      y = y0 + i*dy1 + j*dy2;
+      z = z0 + i*dz1 + j*dz2;
+      if ((x >= 0) && (y >= 0) && (z >= 0) && (x < rs) && (y < cs) && (z < ds))
+      {
+	if (i < imin) imin = i;
+	if (j < jmin) jmin = j;
+	if (i > imax) imax = i;
+	if (j > jmax) jmax = j;
+      }
+    }
   }
-  jmin = j + 1;
 
   rs2 = imax - imin;
   cs2 = jmax - jmin;
@@ -2037,74 +1972,73 @@ struct xvimage *lsection(struct xvimage *img,
     return NULL;
   }
 
-  if (imType == VFF_TYP_1_BYTE) {
+  if (imType == VFF_TYP_1_BYTE) 
+  {
     uint8_t *F = UCHARDATA(img);
     uint8_t *R = UCHARDATA(result);
-
     memset(R, 0, N2);
 
     // interpolation loop
-
     for (j = 0; j < cs2; j++)
+    {
+      jj = jmin + j;
+      for (i = 0; i < rs2; i++)
       {
-	jj = jmin + j;
-	for (i = 0; i < rs2; i++)
-	  {
-	    ii = imin + i;
-	    x = x0 + ii*dx1 + jj*dx2;
-	    y = y0 + ii*dy1 + jj*dy2;
-	    z = z0 + ii*dz1 + jj*dz2;
-	    xi = (int32_t)floor(x); xs = xi + 1;
-	    yi = (int32_t)floor(y); ys = yi + 1;
-	    zi = (int32_t)floor(z); zs = zi + 1;
-	    if ((xi >= 0) && (yi >= 0) && (zi >= 0) && (xs < rs) && (ys < cs) && (zs < ds))
-	      {
-		fziyi = (x - xi) * F[zi*ps + yi*rs + xs] + (xs - x) * F[zi*ps + yi*rs + xi];
-		fziys = (x - xi) * F[zi*ps + ys*rs + xs] + (xs - x) * F[zi*ps + ys*rs + xi];
-		fzsyi = (x - xi) * F[zs*ps + yi*rs + xs] + (xs - x) * F[zs*ps + yi*rs + xi];
-		fzsys = (x - xi) * F[zs*ps + ys*rs + xs] + (xs - x) * F[zs*ps + ys*rs + xi];
-		fzi = (y - yi) * fziys + (ys - y) * fziyi;
-		fzs = (y - yi) * fzsys + (ys - y) * fzsyi;
-		f = (z - zi) * fzs + (zs - z) * fzi;
-		R[j*rs2 + i] = arrondi(f);
-	      }
-	  }
+	ii = imin + i;
+	x = x0 + ii*dx1 + jj*dx2;
+	y = y0 + ii*dy1 + jj*dy2;
+	z = z0 + ii*dz1 + jj*dz2;
+	xi = (int32_t)floor(x); xs = xi + 1;
+	yi = (int32_t)floor(y); ys = yi + 1;
+	zi = (int32_t)floor(z); zs = zi + 1;
+	if ((xi >= 0) && (yi >= 0) && (zi >= 0) && (xs < rs) && (ys < cs) && (zs < ds))
+	{
+	  fziyi = (x-xi) * F[zi*ps + yi*rs + xs] + (xs-x) * F[zi*ps + yi*rs + xi];
+	  fziys = (x-xi) * F[zi*ps + ys*rs + xs] + (xs-x) * F[zi*ps + ys*rs + xi];
+	  fzsyi = (x-xi) * F[zs*ps + yi*rs + xs] + (xs-x) * F[zs*ps + yi*rs + xi];
+	  fzsys = (x-xi) * F[zs*ps + ys*rs + xs] + (xs-x) * F[zs*ps + ys*rs + xi];
+	  fzi = (y - yi) * fziys + (ys - y) * fziyi;
+	  fzs = (y - yi) * fzsys + (ys - y) * fzsyi;
+	  f = (z - zi) * fzs + (zs - z) * fzi;
+	  R[j*rs2 + i] = arrondi(f);
+	}
       }
-  } else if (imType == VFF_TYP_4_BYTE) {
-    uint32_t *F = ULONGDATA(img);
-    uint32_t *R = ULONGDATA(result);
-
+    }
+  } 
+  else if (imType == VFF_TYP_4_BYTE) 
+  {
+    int32_t *F = SLONGDATA(img);
+    int32_t *R = SLONGDATA(result);
     memset(R, 0, 4*N2);
 
     // interpolation loop
-
     for (j = 0; j < cs2; j++)
+    {
+      jj = jmin + j;
+      for (i = 0; i < rs2; i++)
       {
-	jj = jmin + j;
-	for (i = 0; i < rs2; i++)
-	  {
-	    ii = imin + i;
-	    x = x0 + ii*dx1 + jj*dx2;
-	    y = y0 + ii*dy1 + jj*dy2;
-	    z = z0 + ii*dz1 + jj*dz2;
-	    xi = (int32_t)floor(x); xs = xi + 1;
-	    yi = (int32_t)floor(y); ys = yi + 1;
-	    zi = (int32_t)floor(z); zs = zi + 1;
-	    if ((xi >= 0) && (yi >= 0) && (zi >= 0) && (xs < rs) && (ys < cs) && (zs < ds))
-	      {
-		fziyi = (x - xi) * F[zi*ps + yi*rs + xs] + (xs - x) * F[zi*ps + yi*rs + xi];
-		fziys = (x - xi) * F[zi*ps + ys*rs + xs] + (xs - x) * F[zi*ps + ys*rs + xi];
-		fzsyi = (x - xi) * F[zs*ps + yi*rs + xs] + (xs - x) * F[zs*ps + yi*rs + xi];
-		fzsys = (x - xi) * F[zs*ps + ys*rs + xs] + (xs - x) * F[zs*ps + ys*rs + xi];
-		fzi = (y - yi) * fziys + (ys - y) * fziyi;
-		fzs = (y - yi) * fzsys + (ys - y) * fzsyi;
-		f = (z - zi) * fzs + (zs - z) * fzi;
-		R[j*rs2 + i] = arrondi(f);
-	      }
-	  }
+	ii = imin + i;
+	x = x0 + ii*dx1 + jj*dx2;
+	y = y0 + ii*dy1 + jj*dy2;
+	z = z0 + ii*dz1 + jj*dz2;
+	xi = (int32_t)floor(x); xs = xi + 1;
+	yi = (int32_t)floor(y); ys = yi + 1;
+	zi = (int32_t)floor(z); zs = zi + 1;
+	if ((xi >= 0) && (yi >= 0) && (zi >= 0) && (xs < rs) && (ys < cs) && (zs < ds))
+	{
+	  fziyi = (x-xi) * F[zi*ps + yi*rs + xs] + (xs-x) * F[zi*ps + yi*rs + xi];
+	  fziys = (x-xi) * F[zi*ps + ys*rs + xs] + (xs-x) * F[zi*ps + ys*rs + xi];
+	  fzsyi = (x-xi) * F[zs*ps + yi*rs + xs] + (xs-x) * F[zs*ps + yi*rs + xi];
+	  fzsys = (x-xi) * F[zs*ps + ys*rs + xs] + (xs-x) * F[zs*ps + ys*rs + xi];
+	  fzi = (y - yi) * fziys + (ys - y) * fziyi;
+	  fzs = (y - yi) * fzsys + (ys - y) * fzsyi;
+	  f = (z - zi) * fzs + (zs - z) * fzi;
+	  R[j*rs2 + i] = arrondi(f);
+	}
       }
+    }
   } else {
-    fprintf(stderr, "%s : image datatype not supported\n", F_NAME);
+    fprintf(stderr, "%s: image datatype not supported\n", F_NAME);
     return NULL;
   }
 

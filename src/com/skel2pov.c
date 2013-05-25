@@ -1,4 +1,37 @@
-/* $Id: skel2pov.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file skel2pov.c
 
 \brief generation of a 3d illustration from a curvilinear skeleton
@@ -31,25 +64,25 @@ Generation of a 3d illustration from a curvilinear skeleton.
 #define SCALEY 1
 #define SCALEZ 1
 
-#define HEAD1 "#include \"colors.inc\""
-#define HEAD2 "#include \"shapes.inc\""
-#define HEAD3 "#include \"textures.inc\""
-#define HEAD4 "#include \"stones.inc\""
+#define HEAD1 (char*)"#include \"colors.inc\""
+#define HEAD2 (char*)"#include \"shapes.inc\""
+#define HEAD3 (char*)"#include \"textures.inc\""
+#define HEAD4 (char*)"#include \"stones.inc\""
 
-#define DECL1  "#declare ColIsol = color red 1.0 green 1.0 blue 0.0;"
-#define DECL2  "#declare ColCurve = color red 0.0 green 0.0 blue 1.0;"
-#define DECL3  "#declare ColEnd  = color red 1.0 green 0.0 blue 0.0;"
-#define DECL4  "#declare ColJunc = color red 0.0 green 1.0 blue 0.0;"
-#define DECL5  "#declare RadSphere = 5;"
-#define DECL6  "#declare RadCylinder = 1;"
+#define DECL1  (char*)"#declare ColIsol = color red 1.0 green 1.0 blue 0.0;"
+#define DECL2  (char*)"#declare ColCurve = color red 0.0 green 0.0 blue 1.0;"
+#define DECL3  (char*)"#declare ColEnd  = color red 1.0 green 0.0 blue 0.0;"
+#define DECL4  (char*)"#declare ColJunc = color red 0.0 green 1.0 blue 0.0;"
+#define DECL5  (char*)"#declare RadSphere = 5;"
+#define DECL6  (char*)"#declare RadCylinder = 1;"
 
-#define LIGHT0 "light_source { <0,0,-200> color White }"
-#define LIGHT1 "light_source { <200,400,-300> color White }"
-#define LIGHT2 "light_source { <-200,-400,-150> color Gray80 }"
-#define LIGHT3 "light_source { <200,-100,150> color Gray80 }"
-#define LIGHT4 "light_source { <-200,0,0> color Gray80 }"
-#define DEBIMAGE "#declare Image = union {"
-#define FINIMAGE "} // Image"
+#define LIGHT0 (char*)"light_source { <0,0,-200> color White }"
+#define LIGHT1 (char*)"light_source { <200,400,-300> color White }"
+#define LIGHT2 (char*)"light_source { <-200,-400,-150> color Gray80 }"
+#define LIGHT3 (char*)"light_source { <200,-100,150> color Gray80 }"
+#define LIGHT4 (char*)"light_source { <-200,0,0> color Gray80 }"
+#define DEBIMAGE (char*)"#declare Image = union {"
+#define FINIMAGE (char*)"} // Image"
 
 /* =============================================================== */
 void camera (FILE * fd, double x, double y, double z, double lx, double ly, double lz)
@@ -82,7 +115,7 @@ void cylinder (FILE * fd, double x1, double y1, double z1,
               x1, y1, z1, x2, y2, z2, r, color);
 }
 /* ====================================================================== */
-static void barycentre(pcell p, int32_t rs, int32_t ps, double *x, double *y, double *z)
+static void barycentre(SKC_pt_pcell p, int32_t rs, int32_t ps, double *x, double *y, double *z)
 /* ====================================================================== */
 {
   uint32_t v; 
@@ -104,9 +137,8 @@ static void barycentre(pcell p, int32_t rs, int32_t ps, double *x, double *y, do
 } /* barycentre() */
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   skel * S;
   FILE *fd = NULL;
@@ -115,7 +147,7 @@ int main(argc, argv)
   int32_t npoints = 0;
   double bx, by, bz; //pour le calcul du barycentre global
   double *X, *Y, *Z; // tableaux pour les coordonnées
-  pcell p;
+  SKC_adj_pcell a;
 
   if (argc != 3)
   {
@@ -165,7 +197,7 @@ int main(argc, argv)
   {
     barycentre(S->tskel[i].pts, rs, ps, &x, &y, &z);
     X[i] = x; Y[i] = y; Z[i] = z;
-    sphere(fd, x, y, z, "RadSphere", "ColIsol");
+    sphere(fd, x, y, z, (char*)"RadSphere", (char*)"ColIsol");
     npoints++; bx += x; by += y; bz += z;
   }
 
@@ -173,7 +205,7 @@ int main(argc, argv)
   {
     barycentre(S->tskel[i].pts, rs, ps, &x, &y, &z);
     X[i] = x; Y[i] = y; Z[i] = z;
-    sphere(fd, x, y, z, "RadSphere", "ColEnd");
+    sphere(fd, x, y, z, (char*)"RadSphere", (char*)"ColEnd");
     npoints++; bx += x; by += y; bz += z;
   }
 
@@ -181,7 +213,7 @@ int main(argc, argv)
   {
     barycentre(S->tskel[i].pts, rs, ps, &x, &y, &z);
     X[i] = x; Y[i] = y; Z[i] = z;
-    sphere(fd, x, y, z, "RadSphere", "ColJunc");    
+    sphere(fd, x, y, z, (char*)"RadSphere", (char*)"ColJunc");    
     npoints++; bx += x; by += y; bz += z;
   }
 
@@ -189,17 +221,17 @@ int main(argc, argv)
 
   for (i = S->e_end; i < S->e_curv; i++)
   {
-    p = S->tskel[i].adj; 
-    if ((p == NULL) || (p->next == NULL))
+    a = S->tskel[i].adj; 
+    if ((a == NULL) || (a->next == NULL))
     {
       fprintf(stderr, "%s: error in skelton structure\n", argv[0]);
       exit(1);
     }
-    j = p->val;
-    k = p->next->val;
+    j = a->val;
+    k = a->next->val;
     if (j > k)
     {
-      cylinder(fd, X[j], Y[j], Z[j], X[k], Y[k], Z[k], "RadCylinder", "ColCurve");    
+      cylinder(fd, X[j], Y[j], Z[j], X[k], Y[k], Z[k], (char*)"RadCylinder", (char*)"ColCurve");    
     }
   } // for i
 

@@ -1,11 +1,6 @@
 #!/bin/sh
 USAGE="Usage: $0 in connex nb out"
-if [ $# -gt 4 ]
-then
-	echo $USAGE
-        exit
-fi
-if [ $# -lt 4 ]
+if [ $# -ne 4 ]
 then
 	echo $USAGE
         exit

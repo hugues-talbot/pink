@@ -1,4 +1,37 @@
-/* $Id: ldynamique.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
   Calcul de la dynamique ordonnée (nouvelle version)
 
@@ -42,7 +75,7 @@ Algo:
 #include <ldynamique.h>
 #include <assert.h>
 
-#define EN_FAH     0 
+#define EN_FAHS     0 
 #define WATERSHED  1
 #define MASSIF     2
 #define MODIFIE    4
@@ -129,7 +162,7 @@ int32_t lordermaxima(struct xvimage *image, struct xvimage *order, int32_t conne
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *O = ULONGDATA(order);      /* l'image de labels */
+  int32_t *O = SLONGDATA(order);      /* l'image de labels */
   int32_t *A; // table de correspondance pour le tri
   int32_t *T; // table avec l'altitude de chaque maximum
   
@@ -161,6 +194,7 @@ int32_t lordermaxima(struct xvimage *image, struct xvimage *order, int32_t conne
 
   free(A);
   free(T);
+  return 1;
 } // lordermaxima()
 
 /* ==================================== */
@@ -184,10 +218,10 @@ int32_t lordermaximasurf(struct xvimage *image, struct xvimage *order, int32_t c
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *O = ULONGDATA(order);      /* l'image de labels */
+  int32_t *O = SLONGDATA(order);      /* l'image de labels */
   int32_t *A; // table de correspondance pour le tri
   int32_t *T; // table avec l'altitude de chaque maximum
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t *CM;                      /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
   
@@ -197,9 +231,9 @@ int32_t lordermaximasurf(struct xvimage *image, struct xvimage *order, int32_t c
     exit(0);
   }
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s() : CreeFahVide failed\n", F_NAME);
+  FAHS = CreeFahsVide(N);
+  if (FAHS == NULL)
+  {   fprintf(stderr, "%s() : CreeFahsVide failed\n", F_NAME);
       return 0;
   }
   if ((connex == 4) || (connex == 8))
@@ -217,7 +251,7 @@ int32_t lordermaximasurf(struct xvimage *image, struct xvimage *order, int32_t c
     }
   }
   else
-  { fprintf(stderr, "%s() : bad value for connex : %s\n", F_NAME, connex);
+  { fprintf(stderr, "%s() : bad value for connex : %d\n", F_NAME, connex);
     return 0;
   }
 
@@ -263,11 +297,12 @@ int32_t lordermaximasurf(struct xvimage *image, struct xvimage *order, int32_t c
     if (O[i])
       O[i] = T[O[i]];
 
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   ComponentTreeFree(CT);
   free(CM);
   free(A);
   free(T);
+  return 1;
 } // lordermaximasurf()
 
 /* ==================================== */
@@ -291,10 +326,10 @@ int32_t lordermaximavol(struct xvimage *image, struct xvimage *order, int32_t co
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *O = ULONGDATA(order);      /* l'image de labels */
+  int32_t *O = SLONGDATA(order);      /* l'image de labels */
   int32_t *A; // table de correspondance pour le tri
   int32_t *T; // table avec l'altitude de chaque maximum
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t *CM;                      /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
   
@@ -304,9 +339,9 @@ int32_t lordermaximavol(struct xvimage *image, struct xvimage *order, int32_t co
     exit(0);
   }
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s() : CreeFahVide failed\n", F_NAME);
+  FAHS = CreeFahsVide(N);
+  if (FAHS == NULL)
+  {   fprintf(stderr, "%s() : CreeFahsVide failed\n", F_NAME);
       return 0;
   }
   if ((connex == 4) || (connex == 8))
@@ -324,7 +359,7 @@ int32_t lordermaximavol(struct xvimage *image, struct xvimage *order, int32_t co
     }
   }
   else
-  { fprintf(stderr, "%s() : bad value for connex : %s\n", F_NAME, connex);
+  { fprintf(stderr, "%s() : bad value for connex : %d\n", F_NAME, connex);
     return 0;
   }
 
@@ -370,17 +405,18 @@ int32_t lordermaximavol(struct xvimage *image, struct xvimage *order, int32_t co
     if (O[i])
       O[i] = T[O[i]];
 
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   ComponentTreeFree(CT);
   free(CM);
   free(A);
   free(T);
+  return 1;
 } // lordermaximavol()
 
 /* ==================================== */
-int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
+int32_t ldynamique_ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
 /* ==================================== */
-/*! \fn int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
+/*! \fn int32_t ldynamique_ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
     \param image (entrée/sortie) : une image
     \param order (entrée) : labels définissant un ordre sur les maxima (de 1 à nbmaxima)
     \param connex (entrée) : 4 ou 8 (2D), 6, 18 ou 26 (3D) 
@@ -388,24 +424,22 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
     \brief calcule la dynamique ordonnée des maxima
 */
 #undef F_NAME
-#define F_NAME "ldynamique"
+#define F_NAME "ldynamique_ldynamique"
 {
-  register int32_t i, j, k, l;      /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, j, k, x;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *O = ULONGDATA(order);      /* l'image de labels */
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  int32_t *O = SLONGDATA(order);      /* l'image de labels */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t *CM;                      /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
   int32_t *mu;                      /* pour représenter l'ordre */
   int32_t *alpha;                   /* pour certains calculs intermédiaires */
   int32_t *dyn;                     /* pour représenter la dynamique */
-  int32_t nbleafs;                  /* les labels dans O sont entre 1 et nbleafs */
   
   if ((rowsize(order) != rs) || (colsize(order) != cs) || (depth(order) != ds))
   {
@@ -413,9 +447,9 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
     exit(0);
   }
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s() : CreeFahVide failed\n", F_NAME);
+  FAHS = CreeFahsVide(N);
+  if (FAHS == NULL)
+  {   fprintf(stderr, "%s() : CreeFahsVide failed\n", F_NAME);
       return 0;
   }
   if ((connex == 4) || (connex == 8))
@@ -433,7 +467,7 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
     }
   }
   else
-  { fprintf(stderr, "%s() : bad value for connex : %s\n", F_NAME, connex);
+  { fprintf(stderr, "%s() : bad value for connex : %d\n", F_NAME, connex);
     return 0;
   }
 
@@ -486,14 +520,14 @@ int32_t ldynamique(struct xvimage *image, struct xvimage *order, int32_t connex)
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   ComponentTreeFree(CT);
   free(CM);
   free(mu);
   free(dyn);
   free(alpha);
   return(1);
-} /* ldynamique() */
+} /* ldynamique_ldynamique() */
 
 /* ==================================== */
 int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t connex, int32_t seuil)
@@ -509,22 +543,20 @@ int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t c
 #undef F_NAME
 #define F_NAME "lfiltredynamique"
 {
-  register int32_t i, j, k, l;      /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, j, k, x;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *O = ULONGDATA(order);      /* l'image de labels */
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  int32_t *O = SLONGDATA(order);      /* l'image de labels */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t *CM;                      /* etat d'un pixel */
   ctree * CT;                   /* resultat : l'arbre des composantes */
   int32_t *mu;                      /* pour représenter l'ordre */
   int32_t *alpha;                   /* pour certains calculs intermédiaires */
   int32_t *dyn;                     /* pour représenter la dynamique */
-  int32_t nbleafs;                  /* les labels dans O sont entre 1 et nbleafs */
   int32_t noleaf;
 
   if ((rowsize(order) != rs) || (colsize(order) != cs) || (depth(order) != ds))
@@ -533,9 +565,9 @@ int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t c
     exit(0);
   }
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s() : CreeFahVide failed\n", F_NAME);
+  FAHS = CreeFahsVide(N);
+  if (FAHS == NULL)
+  {   fprintf(stderr, "%s() : CreeFahsVide failed\n", F_NAME);
       return 0;
   }
   if ((connex == 4) || (connex == 8))
@@ -553,14 +585,13 @@ int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t c
     }
   }
   else
-  { fprintf(stderr, "%s() : bad value for connex : %s\n", F_NAME, connex);
+  { fprintf(stderr, "%s() : bad value for connex : %d\n", F_NAME, connex);
     return 0;
   }
 
 #ifdef DEBUG
   ComponentTreePrint(CT);
 #endif
-  writeimage(order, "_o");
 
   mu = (int32_t *)calloc(CT->nbleafs+1, sizeof(int32_t)); // 0 non utilise
   dyn = (int32_t *)calloc(CT->nbleafs+1, sizeof(int32_t)); // 0 non utilise
@@ -632,7 +663,7 @@ int32_t lfiltredynamique(struct xvimage *image, struct xvimage *order, int32_t c
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   ComponentTreeFree(CT);
   free(CM);
   free(mu);

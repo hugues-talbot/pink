@@ -1,4 +1,37 @@
-/* $Id: mcube.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file mcube.c
 
 \brief topologically correct "marching cubes"-like algorithm
@@ -42,6 +75,7 @@ Possible values are 6 and 26 (default).
 #include <math.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mcrbtp.h>
 #include <mcmesh.h>
 #include <mciomesh.h>
 
@@ -64,31 +98,31 @@ Possible values are 6 and 26 (default).
 static int32_t LUT[256][19];
 /* table de decodage des sommets de facettes */
 static int32_t DSF[26][2] = {
-0, 0, /* lignes paires non utilisees */
-0, 1, /* voxels adjacents au sommet 1 */ 0, 0, /* etc */
-0, 2, 0, 0, /* sommet 3 */
-1, 3, 0, 0, /* sommet 5 */
-2, 3, 0, 0, /* sommet 7 */
-0, 4, 0, 0, /* sommet 9 */
-1, 5, 0, 0, /* sommet 11 */
-0, 0, 0, 0, /* sommet 13 (absent) */
-2, 6, 0, 0, /* sommet 15 */
-3, 7, 0, 0, /* sommet 17 */
-4, 5, 0, 0, /* sommet 19 */
-4, 6, 0, 0, /* sommet 21 */
-5, 7, 0, 0, /* sommet 23 */
-6, 7        /* sommet 25 */
+ {0, 0}, /* lignes paires non utilisees */
+ {0, 1}, {0, 0}, /* voxels adjacents au sommet 1, 2, etc */
+ {0, 2}, {0, 0}, /* sommet 3 */
+ {1, 3}, {0, 0}, /* sommet 5 */
+ {2, 3}, {0, 0}, /* sommet 7 */
+ {0, 4}, {0, 0}, /* sommet 9 */
+ {1, 5}, {0, 0}, /* sommet 11 */
+ {0, 0}, {0, 0}, /* sommet 13 (absent) */
+ {2, 6}, {0, 0}, /* sommet 15 */
+ {3, 7}, {0, 0}, /* sommet 17 */
+ {4, 5}, {0, 0}, /* sommet 19 */
+ {4, 6}, {0, 0}, /* sommet 21 */
+ {5, 7}, {0, 0}, /* sommet 23 */
+ {6, 7}          /* sommet 25 */
 };
 /* table des offsets des sommets du cube */
 static int32_t SC[8][3] = {
-0, 0, 0, /* sommet 0 */
-1, 0, 0, /* sommet 1 */
-0, 1, 0, /* sommet 2 */
-1, 1, 0, /* sommet 3 */
-0, 0, 1, /* sommet 4 */
-1, 0, 1, /* sommet 5 */
-0, 1, 1, /* sommet 6 */
-1, 1, 1  /* sommet 7 */
+  {0, 0, 0}, /* sommet 0 */
+  {1, 0, 0}, /* sommet 1 */
+  {0, 1, 0}, /* sommet 2 */
+  {1, 1, 0}, /* sommet 3 */
+  {0, 0, 1}, /* sommet 4 */
+  {1, 0, 1}, /* sommet 5 */
+  {0, 1, 1}, /* sommet 6 */
+  {1, 1, 1}  /* sommet 7 */
 };
 
 void InitLUT();
@@ -213,10 +247,7 @@ int32_t lmarchingcubes(struct xvimage * f, uint8_t v,
   uint8_t cube[8];
   uint8_t s;
   double x1, y1, z1, x2, y2, z2, x3, y3, z3 ;
-  meshvertex V;
-  double v0, v1, fc;
   meshbox MB0; 
-  double shrink;
 
   /* v est la valeur de seuil. si v == 0 alors il s'agit d'une image binaire */
   if (v == 0) s = 1; else s = v;
@@ -280,7 +311,7 @@ int32_t lmarchingcubes(struct xvimage * f, uint8_t v,
 
   switch (format)
   {
-    case POV:
+    case T_POV:
       CalculNormales();
       BoundingBoxMesh(&MB0);
       genheaderPOV(fileout, obj_id, MB0);
@@ -291,7 +322,7 @@ int32_t lmarchingcubes(struct xvimage * f, uint8_t v,
 #endif
       genfooterPOV(fileout);
       break;
-    case POVB:
+    case T_POVB:
       CalculNormales();
 #ifdef PHONG
       SaveMeshSPOV(fileout);
@@ -299,33 +330,33 @@ int32_t lmarchingcubes(struct xvimage * f, uint8_t v,
       SaveMeshPOV(fileout);
 #endif
       break;
-    case COL:
+    case T_COL:
       genheaderCOL(fileout, Faces->cur);
       CalculNormales();
       SaveMeshCOL(fileout, obj_id);
       break;
-    case MCM:
+    case T_MCM:
       CalculNormales();
       CalculNormalesFaces();
       Edges = AllocEdges(1000);
       ComputeEdges();
       SaveMeshMCM(fileout);
       break;
-    case AC:
+    case T_AC:
       BoundingBoxMesh(&MB0);
-      genheaderAC(fileout, MB0, 1.0, 1.0, 1.0, "");
+      genheaderAC(fileout, MB0, 1.0, 1.0, 1.0, (char *)"");
       SaveMeshAC(fileout);
       genfooterAC(fileout);
       break;
-    case GL:
+    case T_GL:
       CalculNormales();
       SaveMeshGL(fileout, obj_id);
       break;
-    case VTK:
-      genheaderVTK(fileout, "mcube output");
+    case T_VTK:
+      genheaderVTK(fileout, (char *)"mcube output");
       SaveMeshVTK(fileout);
       break;
-    case RAW:
+    case T_RAW:
       CalculNormales();
       CalculNormalesFaces();
       fprintf(fileout, "%d %d %d %d\n", Vertices->cur, Faces->cur, 
@@ -390,19 +421,15 @@ int32_t lmarchingcubes2(struct xvimage * f,
    deux points de valeurs differentes et tous deux > 0 est mis a 1
 */
 {
-  int32_t i, j, k, ic, x, y, z, nbfac, fac;
+  int32_t i, j, k, x, y, z, nbfac, fac;
   int32_t rs, cs, ps, ds, N;
   double xoff, yoff, zoff;
   double xdim, ydim, zdim;
   uint32_t c;
   uint8_t * F;
   uint8_t cube[8];
-  uint8_t s;
   double x1, y1, z1, x2, y2, z2, x3, y3, z3 ;
-  meshvertex V;
-  double v0, v1, fc;
   meshbox MB0; 
-  double shrink;
   int32_t fix1, fix2, fix3;
 
   rs = rowsize(f);
@@ -471,40 +498,40 @@ int32_t lmarchingcubes2(struct xvimage * f,
 
   switch (format)
   {
-    case POV:
+    case T_POV:
       BoundingBoxMesh(&MB0);
       genheaderPOV(fileout, obj_id, MB0);
       SaveMeshSPOV(fileout);
       genfooterPOV(fileout);
       break;
-    case POVB:
+    case T_POVB:
       SaveMeshSPOV(fileout);
       break;
-    case COL:
+    case T_COL:
       genheaderCOL(fileout, Faces->cur);
       CalculNormales();
       SaveMeshCOL(fileout, obj_id);
       break;
-    case MCM:
+    case T_MCM:
       CalculNormales();
       CalculNormalesFaces();
       SaveMeshMCM(fileout);
       break;
-    case AC:
+    case T_AC:
       BoundingBoxMesh(&MB0);
-      genheaderAC(fileout, MB0, 1.0, 1.0, 1.0, "");
+      genheaderAC(fileout, MB0, 1.0, 1.0, 1.0, (char *)"");
       SaveMeshAC(fileout);
       genfooterAC(fileout);
       break;
-    case GL:
+    case T_GL:
       CalculNormales();
       SaveMeshGL(fileout, obj_id);
       break;
-    case VTK:
-      genheaderVTK(fileout, "mcube output");
+    case T_VTK:
+      genheaderVTK(fileout, (char *)"mcube output");
       SaveMeshVTK(fileout);
       break;
-    case RAW:
+    case T_RAW:
       CalculNormales();
       CalculNormalesFaces();
       fprintf(fileout, "%d %d %d %d\n", Vertices->cur, Faces->cur, 
@@ -580,21 +607,21 @@ int main(int argc, char **argv)
   nregul = atoi(argv[3]);
   obj_id = atoi(argv[4]);
   if ((strcmp(argv[5], "pov") == 0) || (strcmp(argv[5], "POV") == 0))
-    format = POV;
+    format = T_POV;
   else if ((strcmp(argv[5], "povb") == 0) || (strcmp(argv[5], "POVB") == 0))
-    format = POVB;
+    format = T_POVB;
   else if ((strcmp(argv[5], "col") == 0) || (strcmp(argv[5], "COL") == 0))
-    format = COL;
+    format = T_COL;
   else if ((strcmp(argv[5], "mcm") == 0) || (strcmp(argv[5], "MCM") == 0))
-    format = MCM;
+    format = T_MCM;
   else if ((strcmp(argv[5], "ac") == 0) || (strcmp(argv[5], "AC") == 0))
-    format = AC;
+    format = T_AC;
   else if ((strcmp(argv[5], "gl") == 0) || (strcmp(argv[5], "GL") == 0))
-    format = GL;
+    format = T_GL;
   else if ((strcmp(argv[5], "vtk") == 0) || (strcmp(argv[5], "VTK") == 0))
-    format = VTK;
+    format = T_VTK;
   else if ((strcmp(argv[5], "raw") == 0) || (strcmp(argv[5], "RAW") == 0))
-    format = RAW;
+    format = T_RAW;
   else 
   {
     fprintf(stderr, "%s: formats: POV, POVB, COL, MCM, AC, GL, VTK, RAW\n", argv[0]);
@@ -648,7 +675,7 @@ int main(int argc, char **argv)
   TermineMesh();
   freeimage(f);
   fclose(fileout);
-
+  return 0;
 } /* main */
 
 

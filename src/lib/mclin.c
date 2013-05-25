@@ -1,4 +1,37 @@
-/* $Id: mclin.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
 Librairie mclin : 
 
@@ -7,6 +40,7 @@ fonctions de base d'algebre lineaire
 Michel Couprie, mars 2002
 
 Nov. 2006: cor. bug abs->fabs dans lin_solvebidiag
+Mar. 2010: lin_solve et lin_solvebidiag et lin_solvetridiag renvoient un code err sur div. 0
 */
 
 /*
@@ -22,7 +56,9 @@ conventions :
 #include <sys/types.h>
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 #include <mcutil.h>
+#include <mcimage.h>
 #include <mclin.h>
 
 /*
@@ -377,7 +413,7 @@ int32_t lin_decomposition_LUP(double * A, int32_t * pi, int32_t n)
     p = 0;
     for (i = k; i < n; i++)
     {
-      t = abs(A[i*n+k]);
+      t = mcabs(A[i*n+k]);
       if (t > p) { p = t; kp = i; }
     }
     if (p < MCLIN_EPSILON) return 0;
@@ -391,7 +427,7 @@ int32_t lin_decomposition_LUP(double * A, int32_t * pi, int32_t n)
         A[i*n+j] -= (A[i*n+k] * A[k*n+j]);
     }    
   }
-  for (k = 0; k < n; k++) if (abs(A[k*n+k]) < MCLIN_EPSILON) return 0; 
+  for (k = 0; k < n; k++) if (mcabs(A[k*n+k]) < MCLIN_EPSILON) return 0; 
   return 1;
 } // lin_decomposition_LUP()
 
@@ -472,7 +508,6 @@ int32_t lin_inverse_gauss(double *TB, double *InvB, int32_t N)
       int32_t npivot;
       int32_t mB = N + 2;
       int32_t mA = (N+1) * 2;
-      int32_t mC = N + 1;
       double *B = (double *)calloc((N+1) * (N+2), sizeof(double));
       double *A = (double *)calloc((N+1) * (N+1) * 2, sizeof(double));
       double eps = 10e-20;
@@ -491,12 +526,12 @@ int32_t lin_inverse_gauss(double *TB, double *InvB, int32_t N)
       }
       for (k=1;k<=N;k++)
       {
-	maxpivot=abs(A[k*mA+k]);
+	maxpivot=mcabs(A[k*mA+k]);
 	npivot=k;
 	for (i=k;i<=N;i++)
-	  if (maxpivot>abs(A[i*mA+k])) // 2/3/2006 : cor. BUG ( < )
+	  if (maxpivot>mcabs(A[i*mA+k])) // 2/3/2006 : cor. BUG ( < )
 	  {
-	    maxpivot=abs(A[i*mA+k]);
+	    maxpivot=mcabs(A[i*mA+k]);
 	    npivot=i;
 	  }
 	if (maxpivot>=eps)
@@ -527,7 +562,7 @@ int32_t lin_inverse_gauss(double *TB, double *InvB, int32_t N)
 	  return 0;
 	}
       }
-      /**   Copia il risultato nella matrice InvB  ***/
+      /* Copie le résultat dans la matrice InvB */
       for (k=1,p=0;k<=N;k++,p++)
 	for (j=N+2,q=0;j<=2*N+1;j++,q++)
 	  InvB[p*N+q]=A[k*mA+j];
@@ -552,7 +587,8 @@ int32_t lin_jacobi(double * A, int32_t n, double * D, double * V, int32_t nrot)
     \param V (sortie) : vecteurs propres
     \param nrot (entrée) : non utilisé
     \return 0 si erreur (trop d'itérations), 1 sinon
-    \brief calcul des valeurs et vecteurs de a par la méthode de Jacobi
+    \brief calcul des valeurs et vecteurs propres de a par la méthode de Jacobi
+    \warning la matrice A doit être symétrique
     \warning la mémoire pour stocker les résultat \b D et \b V doit avoir été allouée
 */
 {
@@ -582,7 +618,7 @@ int32_t lin_jacobi(double * A, int32_t n, double * D, double * V, int32_t nrot)
 	  sm=0.0;
 	  for (ip=1;ip<=n-1;ip++) {
 	    for (iq=ip+1;iq<=n;iq++)
-	      sm += abs(a[ip*N+iq]);
+	      sm += mcabs(a[ip*N+iq]);
 	  }
 	  if (sm == 0.0) goto fin;
 	  if (i < 4)
@@ -591,17 +627,17 @@ int32_t lin_jacobi(double * A, int32_t n, double * D, double * V, int32_t nrot)
 	    tresh=0.0;
 	  for (ip=1;ip<=n-1;ip++) {
 	    for (iq=ip+1;iq<=n;iq++) {
-	      g=100.0*abs(a[ip*N+iq]);
-	      if (i > 4 && abs(d[ip])+g == abs(d[ip])
-		  && abs(d[iq])+g == abs(d[iq]))
+	      g=100.0*mcabs(a[ip*N+iq]);
+	      if (i > 4 && mcabs(d[ip])+g == mcabs(d[ip])
+		  && mcabs(d[iq])+g == mcabs(d[iq]))
 		a[ip*N+iq]=0.0;
-	      else if (abs(a[ip*N+iq]) > tresh) {
+	      else if (mcabs(a[ip*N+iq]) > tresh) {
 		h=d[iq]-d[ip];
-		if (abs(h)+g == abs(h))
+		if (mcabs(h)+g == mcabs(h))
 		  t=(a[ip*N+iq])/h;
 		else {
 		  theta=0.5*h/(a[ip*N+iq]);
-		  t=1.0/(abs(theta)+sqrt(1.0+theta*theta));
+		  t=1.0/(mcabs(theta)+sqrt(1.0+theta*theta));
 		  if (theta < 0.0) t = -t;
 		}
 		c=1.0/sqrt(1+t*t);
@@ -734,7 +770,7 @@ void lin_solveLUP(double * LU, int32_t *P, double * b, double * x, int32_t n)
 } // lin_solveLUP()
 
 /* ==================================== */
-void lin_solve(double * A, double * b, double * x, int32_t n)
+int32_t lin_solve(double * A, double * b, double * x, int32_t n)
 /* ==================================== */
 /*! \fn void lin_solve(double * A, double * b, double * x, int32_t n)
     \param A (entrée) : matrice du système
@@ -754,17 +790,18 @@ void lin_solve(double * A, double * b, double * x, int32_t n)
     exit(0);
   }
   ret = lin_decomposition_LUP((double *)A, (int32_t *)pi, n);
-  if (ret == 0)
+  if (ret == 0) 
   {
-    fprintf(stderr, "%s: singular matrix\n", F_NAME);
-    exit(0);
+    free(pi);
+    return 0;
   }
   lin_solveLUP((double *)A, (int32_t *)pi, (double *)b, (double *)x, n);
   free(pi);
+  return 1;
 } // lin_solve()
 
 /* ==================================== */
-void lin_solvebidiag(double * A, double * b, double * x, int32_t n)
+int32_t lin_solvebidiag(double * A, double * b, double * x, int32_t n)
 /* ==================================== */
 /*! \fn void lin_solvebidiag(double * A, double * b, double * x, int32_t n)
     \param A (entrée) : matrice du système (doit être bi-diagonale supérieure)
@@ -780,19 +817,17 @@ void lin_solvebidiag(double * A, double * b, double * x, int32_t n)
   int32_t i;
   for (i = n-1; i >= 0; i--)
     if (fabs(A[i*n+i]) < MCLIN_EPSILON) 
-    {
-      fprintf(stderr, "%s: 0 DIVIDE\n", F_NAME);
-      exit(0);
-    }
+      return 0;
   x[n-1] = b[n-1] / A[(n-1)*n + n-1];
   for (i = n-2; i >= 0; i--)
   {
     x[i] = (b[i] - (A[i*n + i+1] * x[i+1])) / A[i*n + i];
   }
+  return 1;
 } // lin_solvebidiag()
 
 /* ==================================== */
-void lin_solvetridiag(double * A, double * b, double * x, int32_t n)
+int32_t lin_solvetridiag(double * A, double * b, double * x, int32_t n)
 /* ==================================== */
 /*! \fn void lin_solvetridiag(double * A, double * b, double * x, int32_t n)
     \param A (entrée) : matrice du système (doit être tri-diagonale)
@@ -816,7 +851,7 @@ void lin_solvetridiag(double * A, double * b, double * x, int32_t n)
     b[i] = A[(i)*n + i-1] * b[i-1] - A[(i-1)*n + i-1] * b[i];
     // A[(i)*n + i-1] = 0.0; // inutile pour la suite 
   }
-  lin_solvebidiag(A, b, x, n);
+  return lin_solvebidiag(A, b, x, n);
 } // lin_solvetridiag()
 
 /* ==================================== */
@@ -879,7 +914,7 @@ int32_t lin_inverseLUP(double * A, double * R, int32_t n)
     \return 0 si la matrice est singulière, 1 sinon
     \brief inversion de la matrice, d'apres une décomposition LUP de A
     \warning la mémoire pour stocker le résultat \b R doit avoir été allouée
-    \warning le contenu de la matrice A sont effacées
+    \warning le contenu de la matrice A est effacé
 */
 {
   int32_t i, j, ret;
@@ -894,11 +929,8 @@ int32_t lin_inverseLUP(double * A, double * R, int32_t n)
     exit(0);
   }
   ret = lin_decomposition_LUP(A, pi, n);
-  if (ret == 0) 
-  {
-    fprintf(stderr, "%s: singular matrix\n", F_NAME);
-    exit(0);
-  }
+  if (ret == 0) return 0;
+
   x = (double *)calloc(1,n * sizeof(double));
   e = (double *)calloc(n, sizeof(double));
   if ((x == NULL) || (e == NULL))
@@ -966,6 +998,318 @@ int32_t lin_trouvemin(double * x, double * d, double (*F)(double *, int32_t), in
   if (k < MAXITER) return k+1; else return 0;
  
 } // lin_trouvemin()
+
+/* ==================================== */
+int32_t lidentifyline(double *pbx, double *pby, int32_t npb, double *a, double *b)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lidentifyline"
+/*
+ Identifie les parametres (a,b) de l'equation y = ax + b d'une droite
+ pour minimiser l'ecart (au sens des moindres carres)
+ entre cette droite et les points contenus dans la liste de points (pbx,pby).
+ Régression linéaire (voir http://en.wikipedia.org/wiki/Linear_regression ).
+ */
+{
+  int32_t i, ret, noresult = 1;
+  double *X, *Y, *XtX, *XtXi, *XtY, *RtXtY, *YtY, *R;
+
+  if (npb < 2)
+  {
+    fprintf(stderr, "%s: not enough points\n", F_NAME);
+    return 0;
+  }  
+
+  X = lin_zeros(npb, 2);
+  Y = lin_zeros(npb, 1);
+  XtX = lin_zeros(2, 2);
+  XtXi = lin_zeros(2, 2);
+  XtY = lin_zeros(2, 1);
+  R = lin_zeros(2, 1);
+  RtXtY = lin_zeros(1, 1);
+  YtY = lin_zeros(1, 1);
+
+  for (i = 0; i < npb; i++)
+  {
+    X[2*i] = 1.0;
+    X[2*i + 1] = pbx[i];
+    Y[i] = pby[i];
+  }  
+  lin_multAtB(X, X, XtX, npb, 2, npb, 2);
+  ret = lin_invmat2(XtX, XtXi);
+  if (ret != 0)
+  { 
+    noresult = 0;
+    lin_multAtB(X, Y, XtY, npb, 2, npb, 1);
+    lin_mult(XtXi, XtY, R, 2, 2, 1);
+    *a = R[1];
+    *b = R[0];
+  }
+
+  free(X);
+  free(Y);
+  free(XtX);
+  free(XtXi);
+  free(XtY);
+  free(RtXtY);
+  free(YtY);
+  free(R);
+  if (noresult) return 0;
+  return 1;
+} /* lidentifyline() */
+
+/* ==================================== */
+int32_t lidentifyparabola3(double *pbx, double *pby, int32_t npb, double *a, double *b, double *c)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lidentifyparabola"
+/*
+ Identifie les parametres (a,b,c) de l'equation y = ax^2 + bx + c d'une parabole, 
+ pour minimiser l'ecart (au sens des moindres carres)
+ entre cette parabole et les points contenus dans la liste de points (pbx,pby).
+ Régression linéaire (voir http://en.wikipedia.org/wiki/Linear_regression ).
+ */
+{
+  int32_t i, ret, noresult = 1;
+  double *X, *Y, *XtX, *XtXi, *XtY, *RtXtY, *YtY, *R;
+
+  if (npb < 3)
+  {
+    fprintf(stderr, "%s: not enough points\n", F_NAME);
+    return 0;
+  }  
+
+  X = lin_zeros(npb, 3);
+  Y = lin_zeros(npb, 1);
+  XtX = lin_zeros(3, 3);
+  XtXi = lin_zeros(3, 3);
+  XtY = lin_zeros(3, 1);
+  R = lin_zeros(3, 1);
+  RtXtY = lin_zeros(1, 1);
+  YtY = lin_zeros(1, 1);
+
+  for (i = 0; i < npb; i++)
+  {
+    X[3*i] = 1.0;
+    X[3*i + 1] = pbx[i];
+    X[3*i + 2] = pbx[i] * pbx[i];
+    Y[i] = pby[i];
+  }  
+  lin_multAtB(X, X, XtX, npb, 3, npb, 3);
+  ret = lin_invmat3(XtX, XtXi);
+  if (ret != 0)
+  { 
+    noresult = 0;
+    lin_multAtB(X, Y, XtY, npb, 3, npb, 1);
+    lin_mult(XtXi, XtY, R, 3, 3, 1);
+    *a = R[2];
+    *b = R[1];
+    *c = R[0];
+  }
+
+  free(X);
+  free(Y);
+  free(XtX);
+  free(XtXi);
+  free(XtY);
+  free(RtXtY);
+  free(YtY);
+  free(R);
+  if (noresult) return 0;
+  return 1;
+} /* lidentifyparabola() */
+
+/* ==================================== */
+int32_t lidentifyparabola2(double *pbx, double *pby, int32_t npb, double *a, double *b)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lidentifyparabola"
+/*
+ Identifie les parametres (a,b,c) de l'equation y = ax^2 + b d'une parabole
+ d'axe de symétrie vertical, pour minimiser l'ecart (au sens des moindres carres)
+ entre cette parabole et les points contenus dans la liste de points (pbx,pby).
+ Régression linéaire (voir http://en.wikipedia.org/wiki/Linear_regression ).
+ */
+{
+  int32_t i, ret, noresult = 1;
+  double *X, *Y, *XtX, *XtXi, *XtY, *RtXtY, *YtY, *R;
+
+  if (npb < 3)
+  {
+    fprintf(stderr, "%s: not enough points\n", F_NAME);
+    return 0;
+  }  
+
+  X = lin_zeros(npb, 2);
+  Y = lin_zeros(npb, 1);
+  XtX = lin_zeros(2, 2);
+  XtXi = lin_zeros(2, 2);
+  XtY = lin_zeros(2, 1);
+  R = lin_zeros(2, 1);
+  RtXtY = lin_zeros(1, 1);
+  YtY = lin_zeros(1, 1);
+
+  for (i = 0; i < npb; i++)
+  {
+    X[2*i] = 1.0;
+    X[2*i + 1] = pbx[i] * pbx[i];
+    Y[i] = pby[i];
+  }  
+  lin_multAtB(X, X, XtX, npb, 2, npb, 2);
+  ret = lin_invmat2(XtX, XtXi);
+  if (ret != 0)
+  { 
+    noresult = 0;
+    lin_multAtB(X, Y, XtY, npb, 2, npb, 1);
+    lin_mult(XtXi, XtY, R, 2, 2, 1);
+    *a = R[1];
+    *b = R[0];
+  }
+
+  free(X);
+  free(Y);
+  free(XtX);
+  free(XtXi);
+  free(XtY);
+  free(RtXtY);
+  free(YtY);
+  free(R);
+  if (noresult) return 0;
+  return 1;
+} /* lidentifyparabola() */
+
+/* ==================================== */
+int32_t lidentifyplane(double *pbx, double *pby, double *pbz, index_t npb, double *a, double *b, double *c, double *d, double *error)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lidentifyplane"
+/*
+ Identifie les parametres (a, b, c, d) de l'equation d'un plan 3D
+ pour minimiser l'ecart (au sens des moindres carres)
+ entre ce plan et les points contenus dans la liste de points (pbx,pby,pbz).
+ Régression linéaire (voir http://en.wikipedia.org/wiki/Linear_regression ).
+ */
+{
+  index_t i;
+  int32_t ret, noresult = 1;
+  double *X, *Y, *XtX, *XtXi, *XtY, *RtXtY, *YtY, *R;
+  double err;
+
+  if (npb < 3)
+  {
+    fprintf(stderr, "%s: not enough points\n", F_NAME);
+    return 0;
+  }  
+
+  X = lin_zeros(npb, 3);
+  Y = lin_zeros(npb, 1);
+  XtX = lin_zeros(3, 3);
+  XtXi = lin_zeros(3, 3);
+  XtY = lin_zeros(3, 1);
+  R = lin_zeros(3, 1);
+  RtXtY = lin_zeros(1, 1);
+  YtY = lin_zeros(1, 1);
+
+  // L'équation cherchée est du type : ax + by + cz + d = 0.
+  // Pour réduire le nombre d'inconnues à 3, on force l'un des 
+  // trois paramètres a,b,c à -1.
+  // Pour savoir lequel, on fait les trois calculs et l'on retient
+  // celui qui donne l'erreur minimale.
+
+  err = FLT_MAX;
+  for (i = 0; i < npb; i++)
+  {
+    X[3*i] = 1.0;
+    X[3*i + 1] = pbx[i];
+    X[3*i + 2] = pby[i];
+    Y[i] = pbz[i];
+  }  
+  lin_multAtB(X, X, XtX, npb, 3, npb, 3);
+  ret = lin_invmat3(XtX, XtXi);
+  if (ret != 0)
+  { 
+    noresult = 0;
+    lin_multAtB(X, Y, XtY, npb, 3, npb, 1);
+    lin_mult(XtXi, XtY, R, 3, 3, 1);
+    // calcule l'erreur
+    lin_multAtB(R, XtY, RtXtY, 3, 1, 3, 1);
+    lin_multAtB(Y, Y, YtY, npb, 1, npb, 1);
+    err = *YtY - *RtXtY;
+    //    printf("cas 1 : erreur %g\n", err);
+    *a = R[1];
+    *b = R[2];
+    *c = -1;
+    *d = R[0];
+  }
+
+  for (i = 0; i < npb; i++)
+  {
+    X[3*i] = 1.0;
+    X[3*i + 1] = pbz[i];
+    X[3*i + 2] = pbx[i];
+    Y[i] = pby[i];
+  }  
+  lin_multAtB(X, X, XtX, npb, 3, npb, 3);
+  ret = lin_invmat3(XtX, XtXi);
+  if (ret != 0)
+  { 
+    noresult = 0;
+    lin_multAtB(X, Y, XtY, npb, 3, npb, 1);
+    lin_mult(XtXi, XtY, R, 3, 3, 1);
+    // calcule l'erreur
+    lin_multAtB(R, XtY, RtXtY, 3, 1, 3, 1);
+    lin_multAtB(Y, Y, YtY, npb, 1, npb, 1);
+    //    printf("cas 2 : erreur %g\n", *YtY - *RtXtY);
+    if (*YtY - *RtXtY < err)
+    {
+      err = *YtY - *RtXtY;
+      *a = R[2];
+      *b = -1;
+      *c = R[1];
+      *d = R[0];
+    }
+  }
+
+  for (i = 0; i < npb; i++)
+  {
+    X[3*i] = 1.0;
+    X[3*i + 1] = pby[i];
+    X[3*i + 2] = pbz[i];
+    Y[i] = pbx[i];
+  }  
+  lin_multAtB(X, X, XtX, npb, 3, npb, 3);
+  ret = lin_invmat3(XtX, XtXi);
+  if (ret != 0)
+  { 
+    noresult = 0;
+    lin_multAtB(X, Y, XtY, npb, 3, npb, 1);
+    lin_mult(XtXi, XtY, R, 3, 3, 1);
+    // calcule l'erreur
+    lin_multAtB(R, XtY, RtXtY, 3, 1, 3, 1);
+    lin_multAtB(Y, Y, YtY, npb, 1, npb, 1);
+    //    printf("cas 3 : erreur %g\n", *YtY - *RtXtY);
+    if (*YtY - *RtXtY < err)
+    {
+      err = *YtY - *RtXtY;
+      *a = -1;
+      *b = R[1];
+      *c = R[2];
+      *d = R[0];
+    }
+  }
+  *error = err;
+
+  free(X);
+  free(Y);
+  free(XtX);
+  free(XtXi);
+  free(XtY);
+  free(RtXtY);
+  free(YtY);
+  free(R);
+  if (noresult) return 0;
+  return 1;
+} /* lidentifyplane() */
 
 /* ============================================= */
 /* ============================================= */

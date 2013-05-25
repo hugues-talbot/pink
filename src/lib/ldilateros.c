@@ -1,4 +1,37 @@
-/* $Id: ldilateros.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009)
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use,
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info".
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability.
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or
+data to be ensured and,  more generally, to use and operate it in the
+same conditions as regards security.
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* operateurs de dilatation et d'erosion morphologique */
 /* Michel Couprie - avril 1997 */
 
@@ -6,15 +39,19 @@
 #include <stdint.h>
 #include <string.h>
 #include <sys/types.h>
+#include <pinktypes.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcutil.h>
 #include <ldilateros.h>
 
+//#define VERBOSE
+
 /* ==================================== */
-int32_t ldilatnum( struct xvimage *f, 
-            struct xvimage *m, 
-            int32_t xc, 
+int32_t ldilatnum( struct xvimage *f,
+            struct xvimage *m,
+            int32_t xc,
             int32_t yc)
 /* dilatation numerique par un element structurant de taille quelconque */
 /* attention algo non optimal - voir l'implementation de dilat */
@@ -24,60 +61,95 @@ int32_t ldilatnum( struct xvimage *f,
 #undef F_NAME
 #define F_NAME "ldilatnum"
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t i, j;           /* index muet */
-  register int32_t k, l;           /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  uint8_t *M = UCHARDATA(m);
-  uint8_t *F = UCHARDATA(f);
-  uint8_t *H;                     /* image de travail */
-  int32_t sup;
-  int32_t t;
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t i, j;           /* index muet */
+  register index_t k, l;           /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
 
-  if (depth(f) != 1) 
+  ACCEPTED_TYPES2(f, VFF_TYP_1_BYTE, VFF_TYP_FLOAT);
+  ONLY_2D(f);
+  COMPARE_TYPE(f, m);
+
+  if (datatype(f) == VFF_TYP_1_BYTE)
   {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
-
-  H = (uint8_t *)calloc(1,N*sizeof(char));
-  if (H == NULL)
-  {   fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
+    uint8_t *M = UCHARDATA(m);
+    uint8_t *F = UCHARDATA(f);
+    uint8_t *H;                     /* image de travail */
+    int32_t sup;
+    int32_t t;
+    H = (uint8_t *)calloc(1,N*sizeof(uint8_t));
+    if (H == NULL)
+    {   fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
       return(0);
-  }
-  for (x = 0; x < N; x++) H[x] = F[x];
+    }
+    for (x = 0; x < N; x++) H[x] = F[x];
 
-  for (y = 0; y < cs; y++)
-  for (x = 0; x < rs; x++)
-  {
-    sup = NDG_MIN;
-    for (j = 0; j < csm; j += 1)
-    for (i = 0; i < rsm; i += 1)
-    {
-      t = (int32_t)M[j * rsm + i];
-      if (t)
+    for (y = 0; y < cs; y++)
+      for (x = 0; x < rs; x++)
       {
-        l = y + j - yc;
-        k = x + i - xc;
-        if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && ((int32_t)H[l * rs + k] + t > sup))
-           sup = (int32_t)H[l * rs + k] + t;
+	sup = NDG_MIN;
+	for (j = 0; j < csm; j += 1)
+	  for (i = 0; i < rsm; i += 1)
+	  {
+	    t = (int32_t)M[j * rsm + i];
+	    if (t)
+	    {
+	      l = y + j - yc;
+	      k = x + i - xc;
+	      if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && ((int32_t)H[l * rs + k] + t > sup))
+		sup = (int32_t)H[l * rs + k] + t;
+	    }
+	  }
+	F[y * rs + x] = (uint8_t)mcmin(sup, NDG_MAX);
       }
-    } 
-    F[y * rs + x] = (uint8_t)min(sup, NDG_MAX);
+    free(H);
   }
+  else if (datatype(f) == VFF_TYP_FLOAT)
+  {
+    float *M = FLOATDATA(m);
+    float *F = FLOATDATA(f);
+    float *H;                     /* image de travail */
+    float sup;
+    float t;
+printf("rsm=%d csm=%d\n", rsm, csm);
+    H = (float *)calloc(1,N*sizeof(float));
+    if (H == NULL)
+    {   fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
+      return(0);
+    }
+    for (x = 0; x < N; x++) H[x] = F[x];
 
-  free(H);
+    for (y = 0; y < cs; y++)
+      for (x = 0; x < rs; x++)
+      {
+	sup = FLOAT_MIN;
+	for (j = 0; j < csm; j += 1)
+	  for (i = 0; i < rsm; i += 1)
+	  {
+	    t = M[j * rsm + i];
+	    if (t)
+	    {
+	      l = y + j - yc;
+	      k = x + i - xc;
+	      if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && (H[l * rs + k] + t > sup))
+		sup = H[l * rs + k] + t;
+	    }
+	  }
+	F[y * rs + x] = sup;
+      }
+    free(H);
+  }
   return 1;
 } /* ldilatnum() */
 
 /* ==================================== */
 int32_t lerosnum( struct xvimage *f,
-           struct xvimage *m,  
+           struct xvimage *m,
            int32_t xc,
            int32_t yc)
 /* operateur d'erosion numerique par un element structurant de taille quelconque */
@@ -88,26 +160,23 @@ int32_t lerosnum( struct xvimage *f,
 #undef F_NAME
 #define F_NAME "lerosnum"
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t i, j;                    /* index muet */
-  int32_t k, l;                    /* index muet */
-  register int32_t rs = rowsize(f);         /* taille ligne */
-  register int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t i, j;                    /* index muet */
+  index_t k, l;                    /* index muet */
+  register index_t rs = rowsize(f);         /* taille ligne */
+  register index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                     /* image de travail */
   int32_t inf;
   int32_t t;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -127,12 +196,12 @@ int32_t lerosnum( struct xvimage *f,
       if (t)
       {
         l = y + j - yc;
-        k = x + i - xc; 
+        k = x + i - xc;
         if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && ((int32_t)H[l * rs + k] - t < inf))
            inf = (int32_t)H[l * rs + k] - t;
       }
-    } 
-    F[y * rs + x] = (uint8_t)max(inf, NDG_MIN);
+    }
+    F[y * rs + x] = (uint8_t)mcmax(inf, NDG_MIN);
   }
 
   free(H);
@@ -140,7 +209,7 @@ int32_t lerosnum( struct xvimage *f,
 } /* lerosnum() */
 
 /* ==================================== */
-int32_t ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+int32_t ldilateros_ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 /* operateur de dilatation binaire par un element structurant de taille quelconque */
 /* ATTENTION: l'element structurant doit etre CONNEXE et REFLEXIF */
 /* Michel Couprie - avril 1998 */
@@ -148,17 +217,17 @@ int32_t ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 /* xc, yc : coordonnees de l'origine de l'element structurant */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "ldilatbin"
+#define F_NAME "ldilateros_ldilatbin"
 {
-  int32_t x, y, z, w;              /* index muet de pixel */
-  register int32_t i, j;           /* index muet */
-  register int32_t k, l;           /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t Nm = rsm * csm;
+  index_t x, y, z, w;              /* index muet de pixel */
+  register index_t i, j;           /* index muet */
+  register index_t k, l;           /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t Nm = rsm * csm;
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
@@ -168,11 +237,8 @@ int32_t ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   int32_t c;
   int32_t frontiere;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   if (!M[yc * rsm + xc]) /* l'element structurant N'est PAS reflexif */
   {
@@ -182,7 +248,7 @@ int32_t ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
      return(0);
   }
@@ -197,7 +263,7 @@ int32_t ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   tab_es_x = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   tab_es_y = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   if ((tab_es_x == NULL) || (tab_es_y == NULL))
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for tab_es\n", F_NAME);
      return(0);
   }
@@ -226,14 +292,14 @@ int32_t ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
         if ((z != -1) && (!H[z])) { frontiere = 1; break; }
       } /* for k... */
 
-      if (!frontiere) 
+      if (!frontiere)
         F[w] = NDG_MAX;
       else
       {
         for (c = 0; c < nptb ; c += 1)
         {
           l = y + tab_es_y[c] - yc;
-          k = x + tab_es_x[c] - xc; 
+          k = x + tab_es_x[c] - xc;
           if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs))
 	    F[l * rs + k] = NDG_MAX;
         }
@@ -245,10 +311,10 @@ int32_t ldilatbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   free(tab_es_x);
   free(tab_es_y);
   return 1;
-} /* ldilatbin() */
+} /* ldilateros_ldilatbin() */
 
 /* ==================================== */
-int32_t lerosbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+int32_t ldilateros_lerosbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 /* operateur d'erosion binaire par un element structurant de taille quelconque */
 /* ATTENTION: l'element structurant doit etre CONNEXE et REFLEXIF */
 /* Michel Couprie - avril 1998 */
@@ -256,17 +322,17 @@ int32_t lerosbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 /* xc, yc : coordonnees de l'origine de l'element structurant */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lerosbin"
+#define F_NAME "ldilateros_lerosbin"
 {
-  int32_t x, y, z, w;              /* index muet de pixel */
-  register int32_t i, j;           /* index muet */
-  register int32_t k, l;           /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t Nm = rsm * csm;
+  index_t x, y, z, w;              /* index muet de pixel */
+  register index_t i, j;           /* index muet */
+  register index_t k, l;           /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t Nm = rsm * csm;
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
@@ -276,11 +342,8 @@ int32_t lerosbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   int32_t c;
   int32_t frontiere;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   if (!M[yc * rsm + xc]) /* l'element structurant N'est PAS reflexif */
   {
@@ -290,7 +353,7 @@ int32_t lerosbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
      return(0);
   }
@@ -305,7 +368,7 @@ int32_t lerosbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   tab_es_x = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   tab_es_y = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   if ((tab_es_x == NULL) || (tab_es_y == NULL))
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for tab_es\n", F_NAME);
      return(0);
   }
@@ -334,14 +397,14 @@ int32_t lerosbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
         if ((z != -1) && (H[z])) { frontiere = 1; break; }
       } /* for k... */
 
-      if (!frontiere) 
+      if (!frontiere)
         F[w] = NDG_MIN;
       else
       {
         for (c = 0; c < nptb ; c += 1)
         {
           l = y + tab_es_y[c] - yc;
-          k = x + tab_es_x[c] - xc; 
+          k = x + tab_es_x[c] - xc;
           if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs))
 	    F[l * rs + k] = NDG_MIN;
         }
@@ -353,33 +416,30 @@ int32_t lerosbin(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   free(tab_es_x);
   free(tab_es_y);
   return 1;
-} /* lerosbin() */
+} /* ldilateros_lerosbin() */
 
 /* ==================================== */
-int32_t ldilatfast(struct xvimage *f, uint8_t *mask) 
+int32_t ldilateros_ldilatfast(struct xvimage *f, uint8_t *mask)
 /* operateur de dilatation numerique par un element structurant de taille inferieure a 3x3 */
 /* UNIQUEMENT POUR DES ELEMENTS STRUCTURANTS REFLEXIFS */
 /* Michel Couprie - juillet 1996 */
 /* mask : masque du 8-voisinage representant l'element structurant */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "ldilatfast"
+#define F_NAME "ldilateros_ldilatfast"
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t k;                       /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t k;                       /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                     /* image de travail */
   uint8_t sup;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -405,12 +465,12 @@ int32_t ldilatfast(struct xvimage *f, uint8_t *mask)
 
   free(H);
   return 1;
-} /* ldilatfast() */
+} /* ldilateros_ldilatfast() */
 
 #define BORDZERO
 
 /* ==================================== */
-int32_t lerosfast(struct xvimage *f, uint8_t *mask)
+int32_t ldilateros_lerosfast(struct xvimage *f, uint8_t *mask)
 /* operateur d'erosion numerique  par un element structurant de taille inferieure a 3x3 */
 /* UNIQUEMENT POUR DES ELEMENTS STRUCTURANTS REFLEXIFS */
 /* Michel Couprie - juillet 1996 */
@@ -418,23 +478,20 @@ int32_t lerosfast(struct xvimage *f, uint8_t *mask)
 /* mask : masque du 8-voisinage representant l'element structurant */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lerosfast"
+#define F_NAME "ldilateros_lerosfast"
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t k;                       /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  index_t k;                       /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                     /* image de travail */
   uint8_t inf;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -462,7 +519,7 @@ int32_t lerosfast(struct xvimage *f, uint8_t *mask)
 
   free(H);
   return 1;
-} /* lerosfast() */
+} /* ldilateros_lerosfast() */
 
 /* ==================================== */
 int32_t ldilatbyte(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
@@ -474,16 +531,16 @@ int32_t ldilatbyte(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 #undef F_NAME
 #define F_NAME "ldilatbyte"
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t i, j;                    /* index muet */
-  register int32_t k, l;                    /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t Nm = rsm * csm;
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t i, j;                    /* index muet */
+  register index_t k, l;                    /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t Nm = rsm * csm;
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
@@ -493,15 +550,12 @@ int32_t ldilatbyte(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t c;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
      return(0);
   }
@@ -516,7 +570,7 @@ int32_t ldilatbyte(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   tab_es_x = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   tab_es_y = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   if ((tab_es_x == NULL) || (tab_es_y == NULL))
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for tab_es\n", F_NAME);
      return(0);
   }
@@ -540,7 +594,7 @@ int32_t ldilatbyte(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
     for (c = 0; c < nptb ; c += 1)
     {
       l = y + tab_es_y[c] - yc;
-      k = x + tab_es_x[c] - xc; 
+      k = x + tab_es_x[c] - xc;
       if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && (H[l * rs + k] > sup))
 	sup = H[l * rs + k];
     }
@@ -563,39 +617,36 @@ int32_t ldilatlong(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 #undef F_NAME
 #define F_NAME "ldilatlong"
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t i, j;                    /* index muet */
-  register int32_t k, l;                    /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t Nm = rsm * csm;
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t i, j;                    /* index muet */
+  register index_t k, l;                    /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t Nm = rsm * csm;
   uint8_t *M = UCHARDATA(m);
-  uint32_t *F = ULONGDATA(f);
-  uint32_t *H;                    /* image de travail */
-  uint32_t sup;
+  int32_t *F = SLONGDATA(f);
+  int32_t *H;                      /* image de travail */
+  int32_t sup;
   int32_t nptb;                    /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t c;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
 
-  H = (uint32_t *)calloc(1,N*sizeof(int32_t));
+ //ACCEPTED_TYPES1(f, VFF_TYP_4_BYTE);  ONLY_2D(f);
+
+  H = (int32_t *)calloc(1,N*sizeof(int32_t));
   if (H == NULL)
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
      return(0);
   }
 
-  memcpy(H, F, 4*N);
+  memcpy(H, F, N*sizeof(int32_t));
 
   nptb = 0;
   for (i = 0; i < Nm; i += 1)
@@ -605,7 +656,7 @@ int32_t ldilatlong(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   tab_es_x = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   tab_es_y = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   if ((tab_es_x == NULL) || (tab_es_y == NULL))
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for tab_es\n", F_NAME);
      return(0);
   }
@@ -625,11 +676,11 @@ int32_t ldilatlong(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
   {
-    sup = 0;
+    sup = INT32_MIN;
     for (c = 0; c < nptb ; c += 1)
     {
       l = y + tab_es_y[c] - yc;
-      k = x + tab_es_x[c] - xc; 
+      k = x + tab_es_x[c] - xc;
       if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && (H[l * rs + k] > sup))
 	sup = H[l * rs + k];
     }
@@ -643,6 +694,92 @@ int32_t ldilatlong(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 } /* ldilatlong() */
 
 /* ==================================== */
+int32_t ldilatfloat(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+/* operateur de dilatation numerique par un element structurant plan de taille quelconque */
+/* Michel Couprie - juillet 1997 */
+/* m : masque representant l'element structurant */
+/* xc, yc : coordonnees du "centre" de l'element structurant */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "ldilatfloat"
+{
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t i, j;                    /* index muet */
+  register index_t k, l;                    /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t Nm = rsm * csm;
+  uint8_t *M = UCHARDATA(m);
+  float *F = FLOATDATA(f);
+  float *H;                      /* image de travail */
+  float sup;
+  int32_t nptb;                    /* nombre de points de l'e.s. */
+  int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
+  int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
+  int32_t c;
+
+  ACCEPTED_TYPES1(f, VFF_TYP_FLOAT);
+  ONLY_2D(f);
+
+  H = (float *)calloc(1,N*sizeof(float));
+  if (H == NULL)
+  {
+     fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
+     return(0);
+  }
+
+  memcpy(H, F, N*sizeof(float));
+
+  nptb = 0;
+  for (i = 0; i < Nm; i += 1)
+    if (M[i])
+      nptb += 1;
+
+  tab_es_x = (int32_t *)calloc(1,nptb * sizeof(int32_t));
+  tab_es_y = (int32_t *)calloc(1,nptb * sizeof(int32_t));
+  if ((tab_es_x == NULL) || (tab_es_y == NULL))
+  {
+     fprintf(stderr,"%s() : malloc failed for tab_es\n", F_NAME);
+     return(0);
+  }
+
+  k = 0;
+  for (j = 0; j < csm; j += 1)
+    for (i = 0; i < rsm; i += 1)
+      if (M[j * rsm + i])
+      {
+         tab_es_x[k] = rsm - 1 - i;  /* symetrique de l'e.s. */
+         tab_es_y[k] = csm - 1 - j;
+         k += 1;
+      }
+  xc = rsm - 1 - xc;
+  yc = csm - 1 - yc;
+
+  for (y = 0; y < cs; y++)
+  for (x = 0; x < rs; x++)
+  {
+    sup = FLOAT_MIN;
+    for (c = 0; c < nptb ; c += 1)
+    {
+      l = y + tab_es_y[c] - yc;
+      k = x + tab_es_x[c] - xc;
+      if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && (H[l * rs + k] > sup))
+	sup = H[l * rs + k];
+    }
+    F[y * rs + x] = sup;
+  }
+
+  free(H);
+  free(tab_es_x);
+  free(tab_es_y);
+  return 1;
+} /* ldilatfloat() */
+
+/* ==================================== */
 int32_t ldilat2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_es_y, int32_t xc, int32_t yc)
 /* nptb :                   nombre de points de l'e.s. */
 /* tab_es_x :               liste des coord. x des points de l'e.s. */
@@ -652,27 +789,23 @@ int32_t ldilat2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab
 #undef F_NAME
 #define F_NAME "ldilat2"
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t i, j;           /* index muet */
-  register int32_t k, l;           /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t k, l;           /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;            /* image de travail */
   uint8_t sup;
   int32_t c;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
      return(0);
   }
@@ -686,7 +819,7 @@ int32_t ldilat2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab
     for (c = 0; c < nptb ; c += 1)
     {
       l = y + tab_es_y[c] - yc;
-      k = x + tab_es_x[c] - xc; 
+      k = x + tab_es_x[c] - xc;
       if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && (H[l * rs + k] > sup))
 	sup = H[l * rs + k];
     }
@@ -709,21 +842,24 @@ int32_t ldilat3(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab
 #undef F_NAME
 #define F_NAME "ldilat3"
 {
-  int32_t x, y, z;
-  register int32_t i, j, k;
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t N = ds * ps;
+  index_t x, y, z;
+  register index_t i, j, k;
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(f);           /* nb plans */
+  index_t N = ds * ps;
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;            /* image de travail */
   uint8_t sup;
   int32_t c;
 
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_3D(f);
+
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
      return(0);
   }
@@ -739,7 +875,7 @@ int32_t ldilat3(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab
     {
       k = z + tab_es_z[c] - zc;
       j = y + tab_es_y[c] - yc;
-      i = x + tab_es_x[c] - xc; 
+      i = x + tab_es_x[c] - xc;
       if ((i >= 0) && (i < rs) && (j >= 0) && (j < cs) && (k >= 0) && (k < ds) && (H[k*ps + j*rs + i] > sup))
 	sup = H[k*ps + j*rs + i];
     }
@@ -754,7 +890,7 @@ int32_t ldilat3(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab
 /* ==================================== */
 int32_t lerosbyte(
         struct xvimage *f,
-        struct xvimage *m,  
+        struct xvimage *m,
         int32_t xc,
         int32_t yc)
 /* operateur d'erosion numerique par un element structurant plan de taille quelconque */
@@ -765,17 +901,16 @@ int32_t lerosbyte(
 #undef F_NAME
 #define F_NAME "lerosbyte"
 {
-  char buf[32];
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t i, j;                    /* index muet */
-  register int32_t k, l;                    /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t Nm = rsm * csm;
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t i, j;                    /* index muet */
+  register index_t k, l;                    /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t Nm = rsm * csm;
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
@@ -785,15 +920,12 @@ int32_t lerosbyte(
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t c;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
      return(0);
   }
@@ -808,7 +940,7 @@ int32_t lerosbyte(
   tab_es_x = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   tab_es_y = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   if ((tab_es_x == NULL) || (tab_es_y == NULL))
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for tab_es\n", F_NAME);
      return(0);
   }
@@ -832,7 +964,7 @@ int32_t lerosbyte(
     for (c = 0; c < nptb ; c += 1)
     {
       l = y + tab_es_y[c] - yc;
-      k = x + tab_es_x[c] - xc; 
+      k = x + tab_es_x[c] - xc;
       if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && (H[l * rs + k] < inf))
 	inf = H[l * rs + k];
     }
@@ -848,7 +980,7 @@ int32_t lerosbyte(
 /* ==================================== */
 int32_t leroslong(
         struct xvimage *f,
-        struct xvimage *m,  
+        struct xvimage *m,
         int32_t xc,
         int32_t yc)
 /* operateur d'erosion numerique par un element structurant plan de taille quelconque */
@@ -859,39 +991,37 @@ int32_t leroslong(
 #undef F_NAME
 #define F_NAME "leroslong"
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t i, j;                    /* index muet */
-  register int32_t k, l;                    /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t Nm = rsm * csm;
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t i, j;                    /* index muet */
+  register index_t k, l;                    /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t Nm = rsm * csm;
   uint8_t *M = UCHARDATA(m);
-  uint32_t *F = ULONGDATA(f);
-  uint32_t *H;                    /* image de travail */
-  uint32_t inf;
+  int32_t *F = SLONGDATA(f);
+  int32_t *H;                      /* image de travail */
+  int32_t inf;
   int32_t nptb;                    /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t c;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  //ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
 
-  H = (uint32_t *)calloc(1,N*sizeof(int32_t));
+  ONLY_2D(f);
+
+  H = (int32_t *)calloc(1,N*sizeof(int32_t));
   if (H == NULL)
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
      return(0);
   }
 
-  memcpy(H, F, 4*N);
+  memcpy(H, F, N*sizeof(int32_t));
 
   nptb = 0;
   for (i = 0; i < Nm; i += 1)
@@ -901,7 +1031,7 @@ int32_t leroslong(
   tab_es_x = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   tab_es_y = (int32_t *)calloc(1,nptb * sizeof(int32_t));
   if ((tab_es_x == NULL) || (tab_es_y == NULL))
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for tab_es\n", F_NAME);
      return(0);
   }
@@ -921,11 +1051,11 @@ int32_t leroslong(
   for (y = 0; y < cs; y++)
   for (x = 0; x < rs; x++)
   {
-    inf = ULONG_MAX;
+    inf = INT32_MAX;
     for (c = 0; c < nptb ; c += 1)
     {
       l = y + tab_es_y[c] - yc;
-      k = x + tab_es_x[c] - xc; 
+      k = x + tab_es_x[c] - xc;
       if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && (H[l * rs + k] < inf))
 	inf = H[l * rs + k];
     }
@@ -939,6 +1069,96 @@ int32_t leroslong(
 } /* leroslong() */
 
 /* ==================================== */
+int32_t lerosfloat(
+        struct xvimage *f,
+        struct xvimage *m,
+        int32_t xc,
+        int32_t yc)
+/* operateur d'erosion numerique par un element structurant plan de taille quelconque */
+/* Michel Couprie - juillet 1997 */
+/* m : masque representant l'element structurant */
+/* xc, yc : coordonnees du "centre" de l'element structurant */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lerosfloat"
+{
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t i, j;                    /* index muet */
+  register index_t k, l;                    /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t Nm = rsm * csm;
+  uint8_t *M = UCHARDATA(m);
+  float *F = FLOATDATA(f);
+  float *H;                      /* image de travail */
+  float inf;
+  int32_t nptb;                    /* nombre de points de l'e.s. */
+  int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
+  int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
+  int32_t c;
+
+  ACCEPTED_TYPES1(f, VFF_TYP_FLOAT);
+  ONLY_2D(f);
+
+  H = (float *)calloc(1,N*sizeof(float));
+  if (H == NULL)
+  {
+     fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
+     return(0);
+  }
+
+  memcpy(H, F, N*sizeof(float));
+
+  nptb = 0;
+  for (i = 0; i < Nm; i += 1)
+    if (M[i])
+      nptb += 1;
+
+  tab_es_x = (int32_t *)calloc(1,nptb * sizeof(int32_t));
+  tab_es_y = (int32_t *)calloc(1,nptb * sizeof(int32_t));
+  if ((tab_es_x == NULL) || (tab_es_y == NULL))
+  {
+     fprintf(stderr,"%s() : malloc failed for tab_es\n", F_NAME);
+     return(0);
+  }
+
+  k = 0;
+  for (j = 0; j < csm; j += 1)
+    for (i = 0; i < rsm; i += 1)
+      if (M[j * rsm + i])
+      {
+         tab_es_x[k] = rsm - 1 - i;  /* symetrique de l'e.s. */
+         tab_es_y[k] = csm - 1 - j;
+         k += 1;
+      }
+  xc = rsm - 1 - xc;
+  yc = csm - 1 - yc;
+
+  for (y = 0; y < cs; y++)
+  for (x = 0; x < rs; x++)
+  {
+    inf = FLOAT_MAX;
+    for (c = 0; c < nptb ; c += 1)
+    {
+      l = y + tab_es_y[c] - yc;
+      k = x + tab_es_x[c] - xc;
+      if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && (H[l * rs + k] < inf))
+	inf = H[l * rs + k];
+    }
+    F[y * rs + x] = inf;
+  }
+
+  free(H);
+  free(tab_es_x);
+  free(tab_es_y);
+  return 1;
+} /* lerosfloat() */
+
+/* ==================================== */
 int32_t leros2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_es_y, int32_t xc, int32_t yc)
 /* nptb :                   nombre de points de l'e.s. */
 /* tab_es_x :               liste des coord. x des points de l'e.s. */
@@ -948,27 +1168,23 @@ int32_t leros2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_
 #undef F_NAME
 #define F_NAME "leros2"
 {
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t i, j;           /* index muet */
-  register int32_t k, l;           /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t k, l;           /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;            /* image de travail */
   uint8_t inf;
   int32_t c;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: not for 3d images\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
      return(0);
   }
@@ -982,7 +1198,7 @@ int32_t leros2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_
     for (c = 0; c < nptb ; c += 1)
     {
       l = y + tab_es_y[c] - yc;
-      k = x + tab_es_x[c] - xc; 
+      k = x + tab_es_x[c] - xc;
       if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && (H[l * rs + k] < inf))
 	inf = H[l * rs + k];
     }
@@ -1004,21 +1220,24 @@ int32_t leros3(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_
 #undef F_NAME
 #define F_NAME "leros3"
 {
-  int32_t x, y, z;
-  register int32_t i, j, k;
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t N = ds * ps;
+  index_t x, y, z;
+  register index_t i, j, k;
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t ds = depth(f);           /* nb plans */
+  index_t N = ds * ps;
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;            /* image de travail */
   uint8_t inf;
   int32_t c;
 
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_3D(f);
+
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
-  {  
+  {
      fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
      return(0);
   }
@@ -1034,7 +1253,7 @@ int32_t leros3(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_
     {
       k = z + tab_es_z[c] - zc;
       j = y + tab_es_y[c] - yc;
-      i = x + tab_es_x[c] - xc; 
+      i = x + tab_es_x[c] - xc;
       if ((i >= 0) && (i < rs) && (j >= 0) && (j < cs) && (k >= 0) && (k < ds) && (H[k*ps + j*rs + i] < inf))
 	inf = H[k*ps + j*rs + i];
     }
@@ -1047,43 +1266,269 @@ int32_t leros3(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_
 } /* leros3() */
 
 /* ==================================== */
-int32_t ldilat(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+int32_t ldilateros_ldilat(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 /* operateur de dilatation numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - juillet 1997 */
 /* m : masque representant l'element structurant */
 /* xc, yc : coordonnees du "centre" de l'element structurant */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "ldilat"
+#define F_NAME "ldilateros_ldilat"
 {
-  if (datatype(f) == VFF_TYP_1_BYTE) 
+  if (datatype(f) == VFF_TYP_1_BYTE)
     return ldilatbyte(f, m, xc, yc);
-  else if (datatype(f) == VFF_TYP_4_BYTE) 
+  else if (datatype(f) == VFF_TYP_4_BYTE)
     return ldilatlong(f, m, xc, yc);
+  else if (datatype(f) == VFF_TYP_FLOAT)
+    return ldilatfloat(f, m, xc, yc);
   else
   {
     fprintf(stderr, "%s: bad datatype\n", F_NAME);
     return 0;
   }
-} // ldilat()
+} // ldilateros_ldilat()
 
 /* ==================================== */
-int32_t leros(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
+int32_t ldilateros_leros(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc)
 /* operateur d'erosion numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - juillet 1997 */
 /* m : masque representant l'element structurant */
 /* xc, yc : coordonnees du "centre" de l'element structurant */
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "leros"
+#define F_NAME "ldilateros_leros"
 {
-  if (datatype(f) == VFF_TYP_1_BYTE) 
+  if (datatype(f) == VFF_TYP_1_BYTE)
     return lerosbyte(f, m, xc, yc);
-  else if (datatype(f) == VFF_TYP_4_BYTE) 
+  else if (datatype(f) == VFF_TYP_4_BYTE)
     return leroslong(f, m, xc, yc);
+  else if (datatype(f) == VFF_TYP_FLOAT)
+    return lerosfloat(f, m, xc, yc);
   else
   {
     fprintf(stderr, "%s: bad datatype\n", F_NAME);
     return 0;
   }
-} // leros()
+} // ldilateros_leros()
+
+
+/* ==================================== */
+int32_t ldilateros_lasf(struct xvimage *image, int32_t rayonmax, int32_t rayonmin)
+/*
+Alternate sequential filter for grayscale images.
+
+Disc-shaped structuring elements of increasing radius, ranging from 1
+(or <B>rmin</B> if this parameter is specified) to <B>rmax</B>, are
+generated.
+
+Let D1...Dn be these structuring elements, sorted by increasing radius.
+
+Let I0 = <B>in.pgm</B>, the ith intermediate result Ii is obtained by
+the closing of the opening of Ii-1 by the structuring element Di.
+
+The result <B>out.pgm</B> contains the final result In.
+
+Giving a value 0 for the optional parameter <B>rmin</B> has the effect
+of beginning by a closing instead of an opening.
+ */
+/* Michel Couprie */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "ldilateros_lasf"
+{
+  int32_t rayon, d, xc, yc, zc, x, y, z, nptb;
+  int32_t *tab_es_x, *tab_es_y, *tab_es_z;
+  int32_t FERMETURE_EN_1 = 0;
+
+  ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
+
+  if (rayonmin == 0)
+  {
+    rayonmin = 1;
+    FERMETURE_EN_1 = 1;
+  }
+
+  assert(rayonmin >= 0);
+  assert(rayonmax >= rayonmin);
+
+  if (depth(image) == 1)
+  {
+    d = 2 * rayonmax + 1;
+    tab_es_x = (int32_t *)calloc(1,d * d * sizeof(int32_t));
+    tab_es_y = (int32_t *)calloc(1,d * d * sizeof(int32_t));
+    if ((tab_es_x == NULL) || (tab_es_y == NULL))
+    {
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return(1);
+    }
+
+    for (rayon = rayonmin; rayon <= rayonmax; rayon++)
+    {
+#ifdef VERBOSE
+      fprintf(stderr, "%s: rayon = %d\n", F_NAME, rayon);
+#endif
+      /* genere l'element structurant circulaire sous forme de liste des coord. des points */
+      yc = xc = rayon;
+      d = 2 * rayon + 1;
+      nptb = 0;
+      for (x = 0; x < d; x++)
+        for (y = 0; y < d; y++)
+          if (((x - xc) * (x - xc) + (y - yc) * (y - yc)) <= (rayon * rayon))
+	  {
+            tab_es_x[nptb] = x;
+            tab_es_y[nptb] = y;
+            nptb++;
+	  }
+
+      if (FERMETURE_EN_1)
+      {
+        /* fermeture par l'element structurant */
+        if (! ldilat2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function ldilat2 failed\n", F_NAME);
+          return(1);
+        }
+
+        if (! leros2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function leros2 failed\n", F_NAME);
+          return(1);
+        }
+        /* ouverture par l'element structurant */
+        if (! leros2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function leros2 failed\n", F_NAME);
+          return(1);
+        }
+
+        if (! ldilat2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function ldilat2 failed\n", F_NAME);
+          return(1);
+        }
+      }
+      else
+      {
+        /* ouverture par l'element structurant */
+        if (! leros2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function leros2 failed\n", F_NAME);
+          return(1);
+        }
+
+        if (! ldilat2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function ldilat2 failed\n", F_NAME);
+          return(1);
+        }
+        /* fermeture par l'element structurant */
+        if (! ldilat2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function ldilat2 failed\n", F_NAME);
+          return(1);
+        }
+
+        if (! leros2(image, nptb, tab_es_x, tab_es_y, xc, yc))
+        {
+          fprintf(stderr, "%s: function leros2 failed\n", F_NAME);
+          return(1);
+        }
+      }
+    } /* for (rayon = 1; rayon <= rayonmax; rayon++) */
+    free(tab_es_x);
+    free(tab_es_y);
+  }
+  else
+  {
+    d = 2 * rayonmax + 1;
+    tab_es_x = (int32_t *)calloc(1,d * d * d * sizeof(int32_t));
+    tab_es_y = (int32_t *)calloc(1,d * d * d * sizeof(int32_t));
+    tab_es_z = (int32_t *)calloc(1,d * d * d * sizeof(int32_t));
+    if ((tab_es_x == NULL) || (tab_es_y == NULL) || (tab_es_z == NULL))
+    {
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      return(1);
+    }
+
+    for (rayon = rayonmin; rayon <= rayonmax; rayon++)
+    {
+#ifdef VERBOSE
+      fprintf(stderr, "%s: rayon = %d\n", F_NAME, rayon);
+#endif
+      /* genere l'element structurant circulaire sous forme de liste des coord. des points */
+      zc = yc = xc = rayon;
+      d = 2 * rayon + 1;
+      nptb = 0;
+      for (x = 0; x < d; x++)
+        for (y = 0; y < d; y++)
+          for (z = 0; z < d; z++)
+          if (((x - xc) * (x - xc) + (y - yc) * (y - yc) + (z - zc) * (z - zc)) <= (rayon * rayon))
+	  {
+            tab_es_x[nptb] = x;
+            tab_es_y[nptb] = y;
+            tab_es_z[nptb] = z;
+            nptb++;
+	  }
+
+      if (FERMETURE_EN_1)
+      {
+        /* fermeture par l'element structurant */
+        if (! ldilat3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function ldilat3 failed\n", F_NAME);
+          return(1);
+        }
+
+        if (! leros3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function leros3 failed\n", F_NAME);
+          return(1);
+        }
+        /* ouverture par l'element structurant */
+        if (! leros3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function leros3 failed\n", F_NAME);
+          return(1);
+        }
+
+        if (! ldilat3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function ldilat3 failed\n", F_NAME);
+          return(1);
+        }
+      }
+      else
+      {
+        /* ouverture par l'element structurant */
+        if (! leros3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function leros3 failed\n", F_NAME);
+          return(1);
+        }
+
+        if (! ldilat3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function ldilat3 failed\n", F_NAME);
+          return(1);
+        }
+        /* fermeture par l'element structurant */
+        if (! ldilat3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function ldilat3 failed\n", F_NAME);
+          return(1);
+        }
+
+        if (! leros3(image, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+        {
+          fprintf(stderr, "%s: function leros3 failed\n", F_NAME);
+          return(1);
+        }
+      }
+    } /* for (rayon = 1; rayon <= rayonmax; rayon++) */
+    free(tab_es_x);
+    free(tab_es_y);
+    free(tab_es_z);
+  }
+
+  return 1;
+} //ldilateros_lasf()

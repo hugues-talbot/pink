@@ -16,7 +16,7 @@ typedef struct {
   int x, y, z, w, RR;
 } Weighting;
 
-#define MAXWEIGHTING 200 // max. number of vg (neighbors) that must be entered
+#define MAXWEIGHTING 400 // max. number of vg (neighbors) that must be entered
 
 typedef struct {
   Weighting vg[MAXWEIGHTING];
@@ -280,7 +280,7 @@ void CompLutMask (int L, MaskG * MgL, long int * LutColumn, int Rknown, int Rtar
 #define Sep_3_3d(v,u,f,i,j) (((u*u)-(v*v)+f[u*ps+j*rs+i]-f[v*ps+j*rs+i])/(2*(u-v)))
 
 /* ======================================================== */
-static void SEDT3d_line(unsigned char *f, long int *g, int rs, int cs, int ds)
+static void SEDT3d_line(long int *f, long int *g, int rs, int cs, int ds)
 /* ======================================================== */
 {
   int i, j, k, ps = rs*cs;
@@ -387,13 +387,30 @@ void CompSEDT3D(long int * D, int rs, int cs, int ds)
 /* =============================================================== */
 /* Function for the distance map */
 {
-  int i, N = rs * cs * ds;
-  unsigned char *F = (unsigned char *)malloc(N * sizeof(char));
-  long int *T = (long int *)malloc(N * sizeof(long int));
-  for (i = 0; i < N; i++) F[i] = (unsigned char)D[i];
-  SEDT3d_line(F, D, rs, cs, ds);
-  SEDT3d_column(D, T, rs, cs, ds);
-  SEDT3d_planes(T, D, rs, cs, ds);
+  int i;
+  static int N = 0;
+  //static long int *F=NULL;
+  static long int *T=NULL;
+  
+  if (N != rs*cs*ds)
+  {
+	N=rs*cs*ds;
+	//if(F) free(F);
+	if(T) free(T);
+	if(N > 0)
+	{
+		//F = (long int *)malloc(N * sizeof(long int));
+   		T = (long int *)malloc(N * sizeof(long int));
+	}
+  }
+  
+  if(N>0)
+  { 
+  	//memcpy(F, D, N * sizeof(long int));
+	SEDT3d_line(D, D, rs, cs, ds);
+  	SEDT3d_column(D, T, rs, cs, ds);
+  	SEDT3d_planes(T, D, rs, cs, ds);
+  }
 } // CompSEDT3D()
 
 /* =============================================================== */
@@ -482,6 +499,7 @@ int main(argc, argv)
   MgL1.ng = 0;
   Rknown1 = 0;
   CompLutMask (L1, &MgL1, LutColumn1, Rknown1, Rtarget1);
+  CompSEDT3D(NULL, 0, 0, 0); //free memory
   Rknown1 = Rtarget1;
 
   fd = fopen (argv[argc-1], "w");

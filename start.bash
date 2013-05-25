@@ -1,4 +1,4 @@
-PINK=$HOME/Pink
+PINK=$HOME/Documents/src/PinkSVN
 export PINK
 PATH=$PATH:$PINK/linux/bin:$PINK/scripts:$PINK/tcl
 export PATH

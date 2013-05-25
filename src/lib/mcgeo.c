@@ -1,4 +1,37 @@
-/* $Id: mcgeo.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
 Librairie mcgeo : 
 
@@ -11,9 +44,7 @@ Michel Couprie, mars 1997
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#ifdef HP
-#define _INCLUDE_XOPEN_SOURCE
-#endif
+#include <string.h>
 #include <math.h>
 #include <mcutil.h>
 #include <mcgeo.h>
@@ -30,7 +61,7 @@ Michel Couprie, mars 1997
 /* ==================================================================== */
 
 /* ==================================== */
-double detpq_qr(point p, point q, point r)
+double detpq_qr(mcgeo_point p, mcgeo_point q, mcgeo_point r)
 /* ==================================== */
 {
   double pqx, pqy, qrx, qry;
@@ -40,7 +71,7 @@ double detpq_qr(point p, point q, point r)
 } /* detpq_pr() */
 
 /* ==================================== */
-int32_t estsitue(point p, point q, point r)
+int32_t estsitue(mcgeo_point p, mcgeo_point q, mcgeo_point r)
 /* ==================================== */
 /* prend la valeur 1, 0 ou -1 selon que p est situe a gauche, sur ou a droite */
 /* de la droite orientee qr */
@@ -52,28 +83,28 @@ int32_t estsitue(point p, point q, point r)
 } /* estsitue() */
 
 /* ==================================== */
-int32_t estagauche(point p, point q, point r)
+int32_t estagauche(mcgeo_point p, mcgeo_point q, mcgeo_point r)
 /* ==================================== */
 {
   return (estsitue(p, q, r) == 1);
 } /* estagauche() */
 
 /* ==================================== */
-int32_t estadroite(point p, point q, point r)
+int32_t estadroite(mcgeo_point p, mcgeo_point q, mcgeo_point r)
 /* ==================================== */
 {
   return (estsitue(p, q, r) == -1);
 } /* estadtroite() */
 
 /* ==================================== */
-double carrenorme(point p)
+double carrenorme(mcgeo_point p)
 /* ==================================== */
 {
   return p.x * p.x + p.y * p.y;
 } /* carrenorme() */
 
 /* ==================================== */
-double carredistance(point p, point q)
+double carredistance(mcgeo_point p, mcgeo_point q)
 /* ==================================== */
 {
   double dx, dy; 
@@ -96,7 +127,7 @@ double dist3(double x1, double y1, double z1, double x2, double y2, double z2)
 }
 
 /* ==================================== */
-double cosangle(point p, point q, point r)
+double cosangle(mcgeo_point p, mcgeo_point q, mcgeo_point r)
 /* ==================================== */
 /* calcule le cos de l'angle entre les vecteurs pq et pr */
 {
@@ -107,7 +138,7 @@ double cosangle(point p, point q, point r)
 } /* cosangle() */
 
 /* ==================================== */
-double direction(point p1, point p2, point p3)
+static double direction(mcgeo_point p1, mcgeo_point p2, mcgeo_point p3)
 /* ==================================== */
 /* calcule le produit en croix (p3-p1) x (p2-p1) */
 {
@@ -115,19 +146,19 @@ double direction(point p1, point p2, point p3)
 } /* direction() */
 
 /* ==================================== */
-double sursegment(point p1, point p2, point p3)
+double sursegment(mcgeo_point p1, mcgeo_point p2, mcgeo_point p3)
 /* ==================================== */
 /* calcule le produit en croix (p3-p1) x (p2-p1) */
 {
   return 
-    (min(p1.x,p2.x) <= p3.x) &&
-    (p3.x <= max(p1.x,p2.x)) &&
-    (min(p1.y,p2.y) <= p3.y) &&
-    (p3.y <= max(p1.y,p2.y));
+    (mcmin(p1.x,p2.x) <= p3.x) &&
+    (p3.x <= mcmax(p1.x,p2.x)) &&
+    (mcmin(p1.y,p2.y) <= p3.y) &&
+    (p3.y <= mcmax(p1.y,p2.y));
 } /* sursegment() */
 
 /* ==================================== */
-int32_t sontsecants(point p1, point p2, point p3, point p4)
+int32_t sontsecants(mcgeo_point p1, mcgeo_point p2, mcgeo_point p3, mcgeo_point p4)
 /* ==================================== */
 /* retourne 1 si les segments [p1,p2] et [p3,p4] sont secants, 0 sinon */
 /* d'apres Cormen & al., "Introduction a l'algorithmique" 2e. Ed. p. 905 */
@@ -148,7 +179,7 @@ int32_t sontsecants(point p1, point p2, point p3, point p4)
 } /* sontsecants() */
 
 /* ==================================== */
-double distpointdroite(point p, droite d)
+double distpointdroite(mcgeo_point p, droite d)
 /* ==================================== */
 /* 
    Calcule la distance d'un point a une droite.
@@ -169,7 +200,7 @@ double distpointdroite(point p, droite d)
 } /* distpointdroite() */
 
 /* ==================================== */
-double distpointsegment(point p, segment s)
+double distpointsegment(mcgeo_point p, segment s)
 /* ==================================== */
 /* 
    Calcule la distance d'un point a un segment (voir distpointdroite). 
@@ -183,7 +214,7 @@ double distpointsegment(point p, segment s)
   y = (- b * c - cc * a) / det;
 
   /* verifie si le point d'intersection appartient au segment */
-  x1 = min(s.x1,s.x2); x2 = max(s.x1,s.x2);
+  x1 = mcmin(s.x1,s.x2); x2 = mcmax(s.x1,s.x2);
   if ((x >= x1) && (x <= x2))
   {
     dx = x - p.x;
@@ -197,11 +228,11 @@ double distpointsegment(point p, segment s)
   dx = s.x2 - p.x;
   dy = s.y2 - p.y;
   d2 = sqrt(dx * dx + dy * dy);
-  return min(d1,d2);
+  return mcmin(d1,d2);
 } /* distpointsegment() */
 
 /* ==================================== */
-double distpointcercle(point p, cercle c)
+double distpointcercle(mcgeo_point p, cercle c)
 /* ==================================== */
 /* 
    Calcule la distance d'un point a un cercle.
@@ -214,7 +245,7 @@ double distpointcercle(point p, cercle c)
 } /* distpointcercle() */
 
 /* ==================================== */
-double distpointrectangle(point p, rectangle *r)
+double distpointrectangle(mcgeo_point p, rectangle *r)
 /* ==================================== */
 /* 
    Calcule la distance d'un point a un rectangle.
@@ -223,9 +254,9 @@ double distpointrectangle(point p, rectangle *r)
   double d, dd;
 
   d =  distpointsegment(p, r->s1);
-  dd = distpointsegment(p, r->s2); d = min(d,dd);
-  dd = distpointsegment(p, r->s3); d = min(d,dd);
-  dd = distpointsegment(p, r->s4); return min(d,dd);
+  dd = distpointsegment(p, r->s2); d = mcmin(d,dd);
+  dd = distpointsegment(p, r->s3); d = mcmin(d,dd);
+  dd = distpointsegment(p, r->s4); return mcmin(d,dd);
 } /* distpointrectangle() */
 
 /* ==================================== */
@@ -235,7 +266,7 @@ int32_t initrectangle(rectangle *r)
   double l = r->w, L = r->h, theta = r->angle, x = r->centre.x, y = r->centre.y;
   double d, alpha;
 
-  if (L < EPSILON) return 0;
+  if (L < MCGEO_EPSILON) return 0;
   d = sqrt(l*l + L*L) / 2.0;
   alpha = atan(l/L);
 
@@ -300,7 +331,7 @@ double distpointdroite3(point3 p, point3 p1, point3 p2)
   bx = p2.x - p1.x; by = p2.y - p1.y; bz = p2.z - p1.z;
   x = p.x - p1.x; y = p.y - p1.y; z = p.z - p1.z;
   nb = bx * bx + by * by + bz * bz;
-  if (nb < EPSILON)
+  if (nb < MCGEO_EPSILON)
   {
     fprintf(stderr, "warning: %s: failed\n", F_NAME);
     return 0.0;
@@ -377,10 +408,10 @@ int32_t solsyst2(
 {
   mat22 m1;
   double d, d1, d2;
-  int32_t i, j;
+  int32_t i;
   
   d = det2(m);
-  if (((d >= 0) && (d < EPSILON)) || ((d <= 0) && (-d < EPSILON))) return 0;
+  if (((d >= 0) && (d < MCGEO_EPSILON)) || ((d <= 0) && (-d < MCGEO_EPSILON))) return 0;
 
   for (i = 0; i < 2; i++) m1[i][0] = b[i]; 
   for (i = 0; i < 2; i++) m1[i][1] = m[i][1];
@@ -407,7 +438,7 @@ int32_t solsyst3(
   int32_t i, j;
   
   d = det3(m);
-  if (((d >= 0) && (d < EPSILON)) || ((d <= 0) && (-d < EPSILON))) return 0;
+  if (((d >= 0) && (d < MCGEO_EPSILON)) || ((d <= 0) && (-d < MCGEO_EPSILON))) return 0;
 
   for (i = 0; i < 3; i++) m1[i][0] = b[i]; 
   for (i = 0; i < 3; i++)
@@ -436,7 +467,7 @@ int32_t invmat2(
 /* ==================================== */
 {
   double det = det2( ma );
-  if ( fabs( det ) < EPSILON ) return 0;
+  if ( fabs( det ) < MCGEO_EPSILON ) return 0;
   mr[0][0] =   ma[1][1] / det;
   mr[1][0] = - ma[1][0] / det;
   mr[0][1] = - ma[0][1] / det;
@@ -451,7 +482,7 @@ int32_t invmat3(
 /* ==================================== */
 {
   double det = det3( ma );
-  if ( fabs( det ) < EPSILON ) return 0;
+  if ( fabs( det ) < MCGEO_EPSILON ) return 0;
   mr[0][0] =  ( ma[1][1]*ma[2][2] - ma[1][2]*ma[2][1] ) / det;
   mr[0][1] = -( ma[0][1]*ma[2][2] - ma[2][1]*ma[0][2] ) / det;
   mr[0][2] =  ( ma[0][1]*ma[1][2] - ma[1][1]*ma[0][2] ) / det;
@@ -632,158 +663,6 @@ int32_t dansdisque(
   else return 0;
 }
 
-/* ==================================== */
-mesh * readmesh(
-  char *filename)
-/* ==================================== */
-#undef F_NAME
-#define F_NAME "readmesh"
-{
-  mesh *msh;
-  FILE *fd = NULL;
-  int32_t rs, cs, i;
-
-  fd = fopen(filename,"r");
-  if (!fd)
-  {
-    fprintf(stderr, "%s: file not found: %s\n", filename, F_NAME);
-    return NULL;
-  }
-
-  msh = (mesh *)calloc(1,sizeof(mesh));
-  if (msh == NULL)
-  {
-    fprintf(stderr, "%s: malloc failed(1)\n", F_NAME);
-    return NULL;
-  }
-
-  fscanf(fd, "%d %d", &rs, &cs);
-  msh->tab = (int32_t *)calloc(1,rs * cs * 2 * sizeof(int32_t));
-  if (msh->tab == NULL)
-  {
-    fprintf(stderr, "%s: malloc failed(2)\n", F_NAME);
-    return NULL;
-  }
-  msh->rs = rs;
-  msh->cs = cs;
-
-  for (i = 0; i < rs * cs * 2; i++)
-    fscanf(fd, "%d", &(msh->tab[i]));
-
-  fclose(fd);
-  return msh;
-}
-
-/* ==================================== */
-int32_t writemesh(
-  mesh *msh,
-  char *filename)
-/* ==================================== */
-#undef F_NAME
-#define F_NAME "writemesh"
-{
-  FILE *fd = NULL;
-  int32_t rs, cs, i, j;
-
-  fd = fopen(filename,"w");
-  if (!fd)
-  {
-    fprintf(stderr, "%s: bad file name: %s\n", F_NAME, filename);
-    return 0;
-  }
-
-  rs = msh->rs;
-  cs = msh->cs;
-  fprintf(fd, "%d %d\n", rs, cs);
-
-  for (j = 0; j < cs; j++)
-  {
-    for (i = 0; i < rs; i++)
-      fprintf(fd, "%d %d   ", msh->tab[j * rs * 2 + 2 * i], msh->tab[j * rs * 2 + 2 * i + 1]);
-    fprintf(fd, "\n");
-  }
-
-  fclose(fd);
-  return 1;
-}
-
-/* ==================================== */
-mesh * allocmesh(
-  int32_t rs,
-  int32_t cs)
-/* ==================================== */
-#undef F_NAME
-#define F_NAME "allocmesh"
-{
-  mesh *msh;
-
-  msh = (mesh *)calloc(1,sizeof(mesh));
-  if (msh == NULL)
-  {
-    fprintf(stderr, "%s: malloc failed(1)\n", F_NAME);
-    return NULL;
-  }
-
-  msh->tab = (int32_t *)calloc(1,rs * cs * 2 * sizeof(int32_t));
-  if (msh->tab == NULL)
-  {
-    fprintf(stderr, "%s: malloc failed(2)\n", F_NAME);
-    return NULL;
-  }
-  msh->rs = rs;
-  msh->cs = cs;
-
-  return msh;
-}
-
-/* ==================================== */
-void printmesh(
-  mesh *msh)
-/* ==================================== */
-{
-  int32_t i, j;
-
-  printf("rs = %d ; cs = %d\n", msh->rs, msh->cs);
-  for (j = 0; j < msh->cs; j++)
-  {
-    for (i = 0; i < msh->rs; i++)
-      printf("%d %d|", msh->tab[j * msh->rs * 2 + 2 * i], msh->tab[j * msh->rs * 2 + 2 * i + 1]);
-    printf("\n");
-  }    
-  printf("\n");
-}
-
-/* ==================================== */
-int32_t checkmesh(
-  mesh *msh,
-  int32_t rs,
-  int32_t cs)
-/* ==================================== */
-{
-  int32_t i, j, x, y;
-
-  for (j = 0; j < msh->cs; j++)
-    for (i = 0; i < msh->rs; i++)
-    {
-      x = msh->tab[j * msh->rs * 2 + 2 * i];
-      if (x < 0) return 0;
-      if (x >= rs) return 0;
-      y = msh->tab[j * msh->rs * 2 + 2 * i + 1];
-      if (y < 0) return 0;
-      if (y >= cs) return 0;
-    }    
-  return 1;
-}
-
-/* ==================================== */
-void freemesh(
-  mesh *msh)
-/* ==================================== */
-{
-  free(msh->tab);
-  free(msh);
-}
-
 /* ===================================================================
 Identification de ((x0, y0), r), centre et rayon du cercle minimisant
 la somme des distances algebriques de n points (xi, yi) au cercle.
@@ -862,7 +741,7 @@ int32_t writescene(scene *scn, char *filename)
 #define F_NAME "writescene"
 {
   FILE *fd = NULL;
-  int32_t i, j, nobj, npoints;
+  int32_t i, j, nobj;
 
   fd = fopen(filename, "w");
   if (!fd)
@@ -1042,7 +921,7 @@ scene * readscene(char *filename)
 #define F_NAME "readscene"
 {
   FILE *fd = NULL;
-  int32_t i, j, nobj, npoints, ret;
+  int32_t j, nobj, ret;
   scene *scn;
   char buf[1024];
 
@@ -1112,7 +991,6 @@ object * copyline(object *o)
 #define F_NAME "copyline"
 {
   int32_t npoints, j;
-  double x, y, z;
   object *oc;
 
   npoints = o->npoints;
@@ -1148,7 +1026,6 @@ object * copyclosedline(object *o)
 #define F_NAME "copyclosedline"
 {
   int32_t npoints, j;
-  double x, y, z;
   object *oc;
 
   npoints = o->npoints;
@@ -1182,7 +1059,6 @@ object * copyspline(object *o)
 #define F_NAME "copyspline"
 {
   int32_t npoints, j;
-  double x, y, z;
   object *oc;
 
   npoints = o->npoints;
@@ -1218,7 +1094,6 @@ object * copyclosedspline(object *o)
 #define F_NAME "copyclosedspline"
 {
   int32_t npoints, j;
-  double x, y, z;
   object *oc;
 
   npoints = o->npoints;

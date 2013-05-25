@@ -1,107 +1,124 @@
-/*! \mainpage
- 
-  \section warning Avertissement
- 
-Cette bibliothèque d'opérateurs de traitement d'images a été 
-développée exclusivement à des fins d'enseignement, de recherche et d'expérimentation.
-Elle ne doit en aucun cas être diffusée sans l'accord de:
+// -*- mode: C; coding: utf-8 -*-
+/*! \mainpage 
 
-\verbatim
-Michel Couprie  -  Professeur  -  ESIEE-Paris
-Laboratoire D'Informatique Gaspard-Monge, Université Paris-Est
-ESIEE 2, Bd Blaise Pascal - B.P. 99
-93162 Noisy-Le-Grand CEDEX
-mail: m.couprie@esiee.fr 
-url:  http://www.esiee.fr/~coupriem
-tel:  01 45 92 66 88          fax:  01 45 92 66 99          
-\endverbatim
+Pink is an image processing library developed
+at <A HREF="http://www.esiee.fr">ESIEE Engineering</A> for research
+and teaching purposes. It contains implementations of over 200
+algorithms for image segmentation and filtering. Most of the operators
+come from mathematical morphology, but it contains operators from
+different fields. It is a free software licensed under the
+<A HREF="http://www.cecill.info/index.en.html"> CeCILL </A>
+license. 
 
-  \section contributors Contributeurs
+In august 2011 Pink has been presented at the European Python
+Scientific Conference as a poster. Below you can see the conference
+poster (also in <a href="pink_euroscipy_web.pdf"> pdf </a> and hi-res <a href="pink_euroscipy_web.jpeg"> jpeg </a>).
 
-Michel Couprie<br>
-Laurent Najman: localextrema, saliency<br>
-Xavier Daragon: dist, distc (distance euclidienne quadratique 3D)<br>
-Christophe Doublier: zoomint<br>
-Hildegard Koehler: lintophat<br>
-Cédric Allène: gettree, histolisse, labeltree, nbcomp, pgm2vtk, seuilauto<br>
-Gu Jun: maxdiameter<br>
-Sébastien Couprie: mcsplines.c<br>
-Rita Zrour: medialaxis (axe médian euclidien exact - algo de Rémy-Thiel),
-dist, distc (distance euclidienne quadratique exacte - algo de Saito-Toriwaki)<br>
-Jean Cousty: redt 3d (reverse euclidean distance transform - algo de D. Coeurjolly), watershedthin, opérateurs sur les graphes d'arêtes (GA), forêts de poids min (MSF), waterfall, recalagerigide_translateplane<br>
-André Vital Saude: radialopening, divers scripts tcl, hma<br>
-Laurent Mercier: gestion d'un masque dans delaunay.c<br>
-Nicolas Combaret: toposhrinkgray, ptselectgray<br>
+\image html pink_euroscipy_web_thumb.jpeg "EuroSciPy 2011 poster"
 
-  \section install Installation
+\section screenshots Screenshots
 
-\subsection linux Linux
+<A HREF="http://developer.berlios.de/screenshots/?group_id=12429">
+Screenshots can be found here. </A>
 
-Pour installer la bibliothèque sous Linux, tapez:
-\verbatim
-tar zxvf pink.tgz
-mv Pinktmp Pink
-cd Pink
-makelin
-\endverbatim
+\section download Download
 
-Les exécutables se trouvent dans Pink/linux/bin,
-les scripts dans Pink/scripts et dans Pink/tcl
-Mettez à jour votre variable $path en conséquence.
-Par exemple (en csh): 
+The source code and the binary packages can be accessed from the \ref
+download page.
 
-\verbatim
-setenv PINK ~coupriem/Pink
-set path=( $path $PINK/linux/bin $PINK/scripts $PINK/tcl )
-\endverbatim
+\section mailing Mailing list 
 
-\subsection windows Windows
+If you are interested in the daily life of Pink, please subscribe to
+the <a href="https://lists.berlios.de/mailman/listinfo/pink-image-devel">
+Pink Developer mailing list </a>. You can also post questions
+concerning the usage or raise issues. 
 
-Installez tout d'abord <A HREF="http://www.mingw.org/">MinGW</A> (Minimalist GNU For Windows), 
-ainsi que le programme "make" de la distribution MinGW (installation séparée).
+\section bughunt Bug-hunt!
 
-Décompressez l'archive pink.tgz (par exemple avec WinZip ou WinRar).
+If you have discovered a bug, please report it at
+the <a href="https://developer.berlios.de/bugs/?group_id=12429" >
+bug tracker</a>.
 
-Modifiez selon votre configuration, les fichiers "mgw.make" et "makemgw.bat".
+\section credits Credits
 
-Ouvrez une fenêtre DOS et mettez-vous dans le répertoire principal de Pink.
+<ul>
+  <li> Code licensed under CeCILL license
+  <ul> 
+    <li> <a href="http://www.esiee.fr/~coupriem"><b>Michel Couprie</b> </a>
+    <li> <a href="http://www.laurentnajman.org"> <b>Laurent Najman</b> </a>: localextrema, saliency
+    <li> <a href="http://hugues.zahlt.info">     <b>Hugues Talbot </b> </a>: fmm 
+    <li> <a href="http://www.esiee.fr/~coustyj"> <b>Jean
+    Cousty</b> </a>: redt 3d (reverse euclidean distance transform -
+    algo de D. Coeurjolly), watershedthin, opÃ©rateurs sur les graphes
+    d'arÃªtes (GA), forÃªts de poids min (MSF), waterfall,
+    recalagerigide_translateplane
+    <li> <b>Xavier Daragon</b>: dist, distc (distance euclidienne quadratique 3D)
+    <li> <b>AndrÃ© Vital Saude</b>: radialopening, divers scripts tcl, hma
+    <li> <b>Nicolas Combaret</b>: toposhrinkgray, ptselectgray
+    <li> <b>John Chaussard</b>: lballincl, cropondisk, shrinkondisk
+    <li> <b>Christophe Doublier</b>: zoomint
+    <li> <b>Hildegard Koehler</b>: lintophat
+    <li> <b>CÃ©dric AllÃ¨ne</b>: gettree, histolisse, labeltree, nbcomp, pgm2vtk, seuilauto
+    <li> <b>Gu Jun</b>: maxdiameter
+    <li> <b>SÃ©bastien Couprie</b>: mcsplines.c
+    <li> <b>Rita Zrour</b>: medialaxis (axe mÃ©dian euclidien exact - algo de RÃ©my-Thiel),
+      dist, distc (distance euclidienne quadratique exacte - algo de Saito-Toriwaki)
+    <li> <b>Laurent Mercier</b>: gestion d'un masque dans delaunay
+    <li> <a href="http://www.ujoimro.com"> <b>Laszlo Marak (ujoimro)</b> </a>: continuous maximum flows,
+    Unger flows, Python front-end, native Microsoft Windows port
+    <li><b>Benjamin Raynal</b>: parallel 3D thinning
+    <li><b>Nivando Bezerra</b>: parallel grayscale thinning
+   </ul>
+  <li> Code under different free software licenses
+    <ul>
+      <li> <b>David Coeurjolly</b>: lvoronoilabelling.c
+      <li> <b>Dario Bressanini</b>: mcpowell.c
+      <li> <b>Andrew W. Fitzgibbon</b>: lbresen.c
+      <li> <b>Lilian Buzer</b>: lbdigitalline.cxx
+   </ul>
+</ul>
+\section compiling Compiling
 
-tapez: makemgw
+Pink can be compiled with two sets of tools. For the compilation with
+dependency checking and Python front-end, visit the page \ref
+compiling_cmake. For the classical compilation look at \ref
+compiling_make. You can also compile Pink on windows (including the
+Python front-end). For details on compiling on windows look at \ref
+compiling_windows. 
 
-Les exécutables se trouvent dans Pink/bin,
-mettez à jour votre variable PATH en conséquence.
-Par exemple :
 
-\verbatim
-set PATH=c:\Pink\bin;%PATH%
-\endverbatim
+\section development Development
+For developing Pink look at the \ref dev_conventions page. For
+exporting functions in Python look at the \ref python_export page. 
 
-Erreurs de compilation possibles et solutions:
-
-message d'erreur contenant "M_PI"
-cause: version MinGW obsolete
-solution rapide: recopier le contenu du fichier Pink/tools/pinkconst.h
-dans le fichier MinGW/include/math.h
-
-message d'erreur contenant "uint8_t", "int8_t", "uint16_t", etc 
-cause: version MinGW obsolete
-solution rapide: recopier le contenu du fichier Pink/tools/pinktypes.h
-dans le fichier MinGW/include/math.h
-
-message d'erreur contenant "chrono"
-cause: flag de mise au point oublié
-solution rapide: chercher le "#define CHRONO" dans le fichier source et le retirer
-
-\subsection associes Logiciels associés
-
-Pour une utilisation optimale, les logiciels suivants doivent être
-installés:<br><br>
+\section dependencies Dependencies
+For optimal use, the following packages should be installed:
+<br><br>
+<A HREF="http://hugues.zahlt.info/Imview.html">imview</A><br>
+<A HREF="http://www.python.org">Python</A><br>
 <A HREF="http://www.doxygen.org">Doxygen</A><br>
 <A HREF="http://dev.scriptics.com/">ActiveTcl 8.3</A><br>
 <A HREF="http://public.kitware.com/VTK/">VTK</A><br>
 <A HREF="http://www.mplayerhq.hu/design7/news.html">MPlayer</A><br>
 <A HREF="http://www.gnuplot.info/">Gnuplot</A><br>
 
+Note, that the detailed dependencies can be found in file
+'dependencies'.
+
+The Python front-end has been financially supported
+by <a href="http://www.edf.fr"> EDF </a>.  The
+project management is alpha-hosted
+at <a href="http://developer.berlios.de">
+<img src="http://developer.berlios.de/bslogo.php?group_id=12429"
+width="124" height="32" border="0" alt="BerliOS Logo" />BerliOs</a>.
+
+<HR>
+Michel Couprie  -  Professeur  -  ESIEE Paris
+Laboratoire d'Informatique Gaspard-Monge, UniversitÃ© Paris-Est
+ESIEE 2, Bd Blaise Pascal - B.P. 99
+93162 Noisy-Le-Grand CEDEX
+m(dot)couprie(at)esiee(dot)fr 
+url:  http://www.esiee.fr/~coupriem
  */
 
 /*!
@@ -153,6 +170,16 @@ installés:<br><br>
 */
 
 /*!
+\defgroup stats Statistics
+*/
+
+/*!
 \defgroup mesh3d Three-dimensional meshing
 */
 
+/*!
+\defgroup development Development
+*/
+
+
+// LuM end of file

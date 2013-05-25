@@ -4,12 +4,7 @@
 # $3 : image binaire, objet 255, fond 0
 # $4 : image resultat
 USAGE="Usage: $0 i1.ndg i2.bin i3.bin out"
-if [ $# -gt 4 ]
-then
-	echo $USAGE
-        exit
-fi
-if [ $# -lt 4 ]
+if [ $# -ne 4 ]
 then
 	echo $USAGE
         exit

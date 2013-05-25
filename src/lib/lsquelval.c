@@ -1,4 +1,37 @@
-/* $Id: lsquelval.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
 Squelette 2D ou 3D binaire guide par une fonction distance 
 et value.
@@ -59,11 +92,11 @@ resultat: X, DT
 #define VERBOSE
 
 /* ==================================== */
-int32_t abaisse8(int32_t x, uint32_t *DT, int32_t rs, int32_t N)
+int32_t abaisse8(int32_t x, int32_t *DT, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t y, k, abaisse;
-  int32_t t4mm, t4m, t8p, t8pp, t8mm, t8m, t4p, t4pp;
+  int32_t t4mm, t4m, t8p, t8pp;
   uint32_t d, old;
 
   old = DT[x];
@@ -78,7 +111,7 @@ int32_t abaisse8(int32_t x, uint32_t *DT, int32_t rs, int32_t N)
       if ((t8p == 1) && (t4mm == 1))
       {
         d = alpha8m_l(DT, x, rs, N);
-        d = min((DT[x]-1),(d+1));
+        d = mcmin((DT[x]-1),(d+1));
         DT[x] = d;
         abaisse = 1;
 #ifdef DEBUG
@@ -101,11 +134,11 @@ int32_t abaisse8(int32_t x, uint32_t *DT, int32_t rs, int32_t N)
 } // abaisse8()
 
 /* ==================================== */
-int32_t abaisse4(int32_t x, uint32_t *DT, int32_t rs, int32_t N)
+int32_t abaisse4(int32_t x, int32_t *DT, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t y, k, abaisse;
-  int32_t t4mm, t4m, t8p, t8pp, t8mm, t8m, t4p, t4pp;
+  int32_t t8mm, t8m, t4p, t4pp;
   uint32_t d, old;
 
   old = DT[x];
@@ -119,7 +152,7 @@ int32_t abaisse4(int32_t x, uint32_t *DT, int32_t rs, int32_t N)
       if ((t4p == 1) && (t8mm == 1))
       {
         d = alpha8m_l(DT, x, rs, N);
-        d = min((DT[x]-1),(d+1));
+        d = mcmin((DT[x]-1),(d+1));
         DT[x] = d;
         abaisse = 1;
 #ifdef DEBUG
@@ -150,7 +183,7 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
 #undef F_NAME
 #define F_NAME "lsquelval"
 { 
-  int32_t i, j, k;
+  int32_t k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
   int32_t rs = rowsize(image);     /* taille ligne */
@@ -163,7 +196,6 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
   uint32_t d;
   Rbt * RBT;
   int32_t taillemaxrbt;
-  int32_t stabilite;
 
   IndicsInit(N);
   if ((rowsize(dx) != rs) || (colsize(dx) != cs) || (depth(dx) != 1))
@@ -181,10 +213,10 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
   DT = ULONGDATA(dt); 
   taillemaxrbt = 2 * rs + 2 * cs ;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s() : mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -203,14 +235,14 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
   for (x = 0; x < N; x++)
     if (IM[x] && (DX[x] != val_inhibit) && bordext8(IM, x, rs, N))
     {
-      RbtInsert(&RBT, DX[x], x);
+      mcrbt_RbtInsert(&RBT, DX[x], x);
       Set(x, EN_RBT);
     } // if, for
 
   d = 1;
   if (connex == 4)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -227,17 +259,17 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
           y = voisin(x, k, rs, N);                             /* non deja empiles */
           if ((y != -1) && (IM[y]) && (DX[y] != val_inhibit) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, DX[y], y);
+            mcrbt_RbtInsert(&RBT, DX[y], y);
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } // if (simple4(IM, x, rs, N))
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 4) */
   else
   if (connex == 8)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -254,12 +286,12 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
           y = voisin(x, k, rs, N);                             /* non deja empiles */
           if ((y != -1) && (IM[y]) && (DX[y] != val_inhibit) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, DX[y], y);
+            mcrbt_RbtInsert(&RBT, DX[y], y);
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
       } // if (simple8(IM, x, rs, N))
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 8) */
 
 #ifdef DEBUG
@@ -285,12 +317,12 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
       for (i = 1; i < rs-1; i++) 
       {
         x = j * rs + i;
-        if (DT[x] && (DT[x] != INFINI)) RbtInsert(&RBT, DT[x], x);
+        if (DT[x] && (DT[x] != INFINI)) mcrbt_RbtInsert(&RBT, DT[x], x);
       }
 
     if (connex == 4)
     {
-      while (!RbtVide(RBT))
+      while (!mcrbt_RbtVide(RBT))
       {
         x = RbtPopMin(RBT);
 #ifdef DEBUG
@@ -303,13 +335,13 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
           printf("abaisse a %ld\n", DT[x]);
 #endif
 	} // if (abaisse4(x, DT, rs, N)) 
-      } // while (!RbtVide(RBT))
+      } // while (!mcrbt_RbtVide(RBT))
     } // if (connex == 4)
     else
     if (connex == 8)
     {
       int32_t abaisse;
-      while (!RbtVide(RBT))
+      while (!mcrbt_RbtVide(RBT))
       {
         x = RbtPopMin(RBT);
 #ifdef DEBUG
@@ -322,7 +354,7 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
           printf("abaisse a %ld\n", DT[x]);
 #endif
 	} // if (abaisse8(x, DT, rs, N)) 
-      } // while (!RbtVide(RBT))
+      } // while (!mcrbt_RbtVide(RBT))
     } // if (connex == 8)
   } // while (!stabilite)
 
@@ -339,7 +371,7 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
   /* ================================================ */
 
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   freeimage(dt);
   return(1);
 } /* lsquelval() */
@@ -354,7 +386,6 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
   int32_t i, j, k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t ps = rs * cs;            /* taille plan */
@@ -367,10 +398,10 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
   uint32_t d;
   Rbt * RBT;
   int32_t taillemaxrbt;
-  int32_t t6mm, t26mm, t6p, t26p;
+  int32_t mctopo3d_t6mm, mctopo3d_t26mm, t6p, mctopo3d_t26p;
 
   IndicsInit(N);
-  init_topo3d();
+  mctopo3d_init_topo3d();
   if ((rowsize(dx) != rs) || (colsize(dx) != cs) || (depth(dx) != ds))
   {
     fprintf(stderr, "%s() : bad size for dx\n", F_NAME);
@@ -386,10 +417,10 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
   DT = ULONGDATA(dt); 
   taillemaxrbt = 2 * rs * cs +  2 * rs * ds +  2 * ds * cs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s() : mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -406,20 +437,20 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
 
   // INITIALISATION DU RBT
   for (x = 0; x < N; x++)
-    if (IM[x] && (DX[x] != val_inhibit) && bordext26(IM, x, rs, ps, N))
+    if (IM[x] && (DX[x] != val_inhibit) && mctopo3d_bordext26(IM, x, rs, ps, N))
     {
-      RbtInsert(&RBT, DX[x], x);
+      mcrbt_RbtInsert(&RBT, DX[x], x);
       Set(x, EN_RBT);
     } // if, for
 
   d = 1;
   if (connex == 6)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
-      if (simple6(IM, x, rs, ps, N))
+      if (mctopo3d_simple6(IM, x, rs, ps, N))
       {
         DT[x] = d;
         IM[x] = 0;
@@ -429,21 +460,21 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (IM[y]) && (DX[y] != val_inhibit) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, DX[y], y);
+            mcrbt_RbtInsert(&RBT, DX[y], y);
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
-      } // if (simple6(IM, x, rs, N))
-    } /* while (!RbtVide(RBT)) */
+      } // if (mctopo3d_simple6(IM, x, rs, N))
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 6) */
   else
   if (connex == 26)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
-      if (simple26(IM, x, rs, ps, N))
+      if (mctopo3d_simple26(IM, x, rs, ps, N))
       {
         DT[x] = d;
         IM[x] = 0;
@@ -453,12 +484,12 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
           y = voisin26(x, k, rs, ps, N);                       /* non deja empiles */
           if ((y != -1) && (IM[y]) && (DX[y] != val_inhibit) && (! IsSet(y, EN_RBT)))
           {
-            RbtInsert(&RBT, DX[y], y);
+            mcrbt_RbtInsert(&RBT, DX[y], y);
             Set(y, EN_RBT);
           } /* if y */
         } /* for k */      
-      } // if (simple26(IM, x, rs, N))
-    } /* while (!RbtVide(RBT)) */
+      } // if (mctopo3d_simple26(IM, x, rs, N))
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 26) */
 
   /* ================================================ */
@@ -475,57 +506,57 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
       for (i = 1; i < rs-1; i++) 
       {
         x = k * ps + j * rs + i;
-        if (DT[x]) RbtInsert(&RBT, DT[x], x);
+        if (DT[x]) mcrbt_RbtInsert(&RBT, DT[x], x);
       }
 
   if (connex == 6)
   {
     int32_t abaisse;
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       do
       {
         abaisse = 0;
-        nbtopoh3d26_l(DT, x, DT[x], rs, ps, N, &t6p, &t26mm);
-        if ((t6p == 1) && (t26mm == 1))
+        mctopo3d_nbtopoh3d26_l((int32_t *)DT, x, DT[x], rs, ps, N, &t6p, &mctopo3d_t26mm);
+        if ((t6p == 1) && (mctopo3d_t26mm == 1))
 	{
-          nbtopoh3d26_l(DT, x, DT[x], rs, ps, N, &t6p, &t26mm);
-          if ((t6p == 1) && (t26mm == 1))
+          mctopo3d_nbtopoh3d26_l((int32_t *)DT, x, DT[x], rs, ps, N, &t6p, &mctopo3d_t26mm);
+          if ((t6p == 1) && (mctopo3d_t26mm == 1))
 	  {
-            d = alpha26m_l(DT, x, rs, ps, N);
-            d = min((DT[x]-1),(d+1));
+            d = mctopo3d_alpha26m_l((int32_t *)DT, x, rs, ps, N);
+            d = mcmin((DT[x]-1),(d+1));
             DT[x] = d;
             abaisse = 1;
 	  }
         }
       } while (abaisse);
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 6) */
   else
   if (connex == 26)
   {
     int32_t abaisse;
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       do
       {
         abaisse = 0;
-        nbtopoh3d6_l(DT, x, DT[x], rs, ps, N, &t26p, &t6mm);
-        if ((t26p == 1) && (t6mm == 1))
+        mctopo3d_nbtopoh3d6_l((int32_t *)DT, x, DT[x], rs, ps, N, &mctopo3d_t26p, &mctopo3d_t6mm);
+        if ((mctopo3d_t26p == 1) && (mctopo3d_t6mm == 1))
 	{
-          nbtopoh3d26_l(DT, x, DT[x], rs, ps, N, &t26p, &t6mm);
-          if ((t26p == 1) && (t6mm == 1))
+          mctopo3d_nbtopoh3d26_l((int32_t *)DT, x, DT[x], rs, ps, N, &mctopo3d_t26p, &mctopo3d_t6mm);
+          if ((mctopo3d_t26p == 1) && (mctopo3d_t6mm == 1))
 	  {
-            d = alpha26m_l(DT, x, rs, ps, N);
-            d = min((DT[x]-1),(d+1));
+            d = mctopo3d_alpha26m_l((int32_t *)DT, x, rs, ps, N);
+            d = mcmin((DT[x]-1),(d+1));
             DT[x] = d;
             abaisse = 1;
 	  }
         }
       } while (abaisse);
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 26) */
 
 
@@ -539,9 +570,9 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   freeimage(dt);
   return(1);
 } /* lsquelval3d() */
@@ -556,7 +587,6 @@ int32_t smooth(struct xvimage *image, int32_t x, int32_t r, Liste *cx, Liste *cy
 { 
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
   uint8_t *IM = UCHARDATA(image);      /* l'image de depart */
   int32_t y, z, i, j, k, l, open, joker;
 
@@ -600,7 +630,7 @@ int32_t lsquelsmoothval(struct xvimage *image, // entree/sortie: image originale
 #undef F_NAME
 #define F_NAME "lsquelsmoothval"
 { 
-  int32_t i, j, k;
+  int32_t k;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
   int32_t rs = rowsize(image);     /* taille ligne */
@@ -615,7 +645,6 @@ int32_t lsquelsmoothval(struct xvimage *image, // entree/sortie: image originale
   uint32_t d;
   Rbt * RBT;
   int32_t taillemaxrbt;
-  int32_t stabilite;
   Liste * cx;                  // pour le cercle de centre x
   Liste * cy;                  // pour le cercle de centre y
   uint32_t dmax;
@@ -640,10 +669,10 @@ int32_t lsquelsmoothval(struct xvimage *image, // entree/sortie: image originale
   DT = ULONGDATA(dt); 
   taillemaxrbt = 2 * rs + 2 * cs ;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
-  RBT = CreeRbtVide(taillemaxrbt);
+  RBT = mcrbt_CreeRbtVide(taillemaxrbt);
   if (RBT == NULL)
   {
-    fprintf(stderr, "%s() : CreeRbtVide failed\n", F_NAME);
+    fprintf(stderr, "%s() : mcrbt_CreeRbtVide failed\n", F_NAME);
     return(0);
   }
 
@@ -656,7 +685,7 @@ int32_t lsquelsmoothval(struct xvimage *image, // entree/sortie: image originale
   for (x = 0; x < N; x++)
     if (IM[x] && (DX[x] != val_inhibit) && bordext8(IM, x, rs, N))
     {
-      RbtInsert(&RBT, DX[x], x);
+      mcrbt_RbtInsert(&RBT, DX[x], x);
       Set(x, EN_RBT);
     } // if, for
 
@@ -666,7 +695,7 @@ int32_t lsquelsmoothval(struct xvimage *image, // entree/sortie: image originale
   d = 1;
   if (connex == 4)
   {
-    while (!RbtVide(RBT))
+    while (!mcrbt_RbtVide(RBT))
     {
       x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
@@ -686,7 +715,7 @@ int32_t lsquelsmoothval(struct xvimage *image, // entree/sortie: image originale
             y = voisin(x, k, rs, N);                             /* non deja empiles */
             if ((y != -1) && (IM[y]) && (DX[y] != val_inhibit) && (! IsSet(y, EN_RBT)))
             {
-              RbtInsert(&RBT, DX[y], y);
+              mcrbt_RbtInsert(&RBT, DX[y], y);
               Set(y, EN_RBT);
             } /* if y */
           } /* for k */      
@@ -695,11 +724,11 @@ int32_t lsquelsmoothval(struct xvimage *image, // entree/sortie: image originale
 	{
           DX[x] += INCR_PRIO;
           if (DX[x] > dmax) break;
-          RbtInsert(&RBT, DX[x], x);
+          mcrbt_RbtInsert(&RBT, DX[x], x);
           Set(x, EN_RBT);
 	}
       } // if (simple4(IM, x, rs, N))
-    } /* while (!RbtVide(RBT)) */
+    } /* while (!mcrbt_RbtVide(RBT)) */
   } /* if (connex == 4) */
   else
   if (connex == 8)
@@ -718,7 +747,7 @@ int32_t lsquelsmoothval(struct xvimage *image, // entree/sortie: image originale
   /* ================================================ */
 
   IndicsTermine();
-  RbtTermine(RBT);
+  mcrbt_RbtTermine(RBT);
   freeimage(dt);
   ListeTermine(cx);  
   ListeTermine(cy);  

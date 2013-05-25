@@ -1,4 +1,37 @@
-/* $Id: ltopotypes.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* calcul des types topologiques des points d' une image */
 /* Michel Couprie - juillet 1996 */
 
@@ -85,8 +118,8 @@ int32_t lt4pp(struct xvimage * image)
   struct xvimage * temp;
   uint8_t *pti;
   uint8_t *ptt;
-  uint32_t *pti_l;
-  uint32_t *ptt_l;
+  int32_t *pti_l;
+  int32_t *ptt_l;
   int32_t rs = image->row_size;
   int32_t cs = image->col_size;
   int32_t N = rs * cs;
@@ -119,12 +152,12 @@ int32_t lt4pp(struct xvimage * image)
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    pti_l = ULONGDATA(image);
-    ptt_l = ULONGDATA(temp);
+    pti_l = SLONGDATA(image);
+    ptt_l = SLONGDATA(temp);
     memset(pti_l, 0, 4*N);
     for (j = 1; j < cs - 1; j++) 
       for (i = 1; i < rs - 1; i++) 
-        pti_l[j * rs + i] = (uint32_t)t4pp_l(ptt_l, j * rs + i, rs, N);
+        pti_l[j * rs + i] = (int32_t)t4pp_l(ptt_l, j * rs + i, rs, N);
   }
   else
   {
@@ -146,8 +179,8 @@ int32_t lt8pp(struct xvimage * image)
   struct xvimage * temp;
   uint8_t *pti;
   uint8_t *ptt;
-  uint32_t *pti_l;
-  uint32_t *ptt_l;
+  int32_t *pti_l;
+  int32_t *ptt_l;
   int32_t rs = image->row_size;
   int32_t cs = image->col_size;
   int32_t N = rs * cs;
@@ -180,12 +213,12 @@ int32_t lt8pp(struct xvimage * image)
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    pti_l = ULONGDATA(image);
-    ptt_l = ULONGDATA(temp);
+    pti_l = SLONGDATA(image);
+    ptt_l = SLONGDATA(temp);
     memset(pti_l, 0, 4*N);
     for (j = 1; j < cs - 1; j++) 
       for (i = 1; i < rs - 1; i++) 
-        pti_l[j * rs + i] = (uint32_t)t8pp_l(ptt_l, j * rs + i, rs, N);
+        pti_l[j * rs + i] = (int32_t)t8pp_l(ptt_l, j * rs + i, rs, N);
   }
   else
   {
@@ -207,8 +240,8 @@ int32_t lt6pp(struct xvimage * image)
   struct xvimage * temp;
   uint8_t *pti;
   uint8_t *ptt;
-  uint32_t *pti_l;
-  uint32_t *ptt_l;
+  int32_t *pti_l;
+  int32_t *ptt_l;
   int32_t rs = image->row_size;
   int32_t cs = image->col_size;
   int32_t ds = depth(image);
@@ -222,7 +255,7 @@ int32_t lt6pp(struct xvimage * image)
     return(0);
   }
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -236,17 +269,17 @@ int32_t lt6pp(struct xvimage * image)
     for (k = 1; k < ds - 1; k++) 
       for (j = 1; j < cs - 1; j++) 
         for (i = 1; i < rs - 1; i++) 
-          pti[k*ps + j*rs + i] = (uint8_t)t6pp(ptt, k*ps + j*rs + i, rs, ps, N);
+          pti[k*ps + j*rs + i] = (uint8_t)mctopo3d_t6pp(ptt, k*ps + j*rs + i, rs, ps, N);
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    pti_l = ULONGDATA(image);
-    ptt_l = ULONGDATA(temp);
+    pti_l = SLONGDATA(image);
+    ptt_l = SLONGDATA(temp);
     memset(pti_l, 0, 4*N);
     for (k = 1; k < ds - 1; k++) 
       for (j = 1; j < cs - 1; j++) 
         for (i = 1; i < rs - 1; i++) 
-          pti_l[k*ps + j*rs + i] = (uint32_t)t6pp_l(ptt_l, k*ps + j*rs + i, rs, ps, N);
+          pti_l[k*ps + j*rs + i] = (int32_t)mctopo3d_t6pp_l(ptt_l, k*ps + j*rs + i, rs, ps, N);
   }
   else
   {
@@ -254,23 +287,23 @@ int32_t lt6pp(struct xvimage * image)
     return(0);
   }
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   freeimage(temp);
   return 1;
 } /* lt6pp() */
 
 /* ==================================== */
-int32_t lt26pp(struct xvimage * image)
+int32_t ltopotypes_t26pp(struct xvimage * image)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lt26pp"
+#define F_NAME "ltopotypes_t26pp"
 {
   int32_t i, j, k;
   struct xvimage * temp;
   uint8_t *pti;
   uint8_t *ptt;
-  uint32_t *pti_l;
-  uint32_t *ptt_l;
+  int32_t *pti_l;
+  int32_t *ptt_l;
   int32_t rs = image->row_size;
   int32_t cs = image->col_size;
   int32_t ds = depth(image);
@@ -284,7 +317,7 @@ int32_t lt26pp(struct xvimage * image)
     return(0);
   }
 
-  init_topo3d();
+  mctopo3d_init_topo3d();
 
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
@@ -298,17 +331,17 @@ int32_t lt26pp(struct xvimage * image)
     for (k = 1; k < ds - 1; k++) 
       for (j = 1; j < cs - 1; j++) 
         for (i = 1; i < rs - 1; i++) 
-          pti[k*ps + j*rs + i] = (uint8_t)t26pp(ptt, k*ps + j*rs + i, rs, ps, N);
+          pti[k*ps + j*rs + i] = (uint8_t)mctopo3d_t26pp(ptt, k*ps + j*rs + i, rs, ps, N);
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    pti_l = ULONGDATA(image);
-    ptt_l = ULONGDATA(temp);
+    pti_l = SLONGDATA(image);
+    ptt_l = SLONGDATA(temp);
     memset(pti_l, 0, 4*N);
     for (k = 1; k < ds - 1; k++) 
       for (j = 1; j < cs - 1; j++) 
         for (i = 1; i < rs - 1; i++) 
-          pti_l[k*ps + j*rs + i] = (uint32_t)t26pp_l(ptt_l, k*ps + j*rs + i, rs, ps, N);
+          pti_l[k*ps + j*rs + i] = (int32_t)mctopo3d_t26pp_l(ptt_l, k*ps + j*rs + i, rs, ps, N);
   }
   else
   {
@@ -316,10 +349,10 @@ int32_t lt26pp(struct xvimage * image)
     return(0);
   }
 
-  termine_topo3d();
+  mctopo3d_termine_topo3d();
   freeimage(temp);
   return 1;
-} /* lt26pp() */
+} /* ltopotypes_t26pp() */
 
 /* ==================================== */
 int32_t lalpha(struct xvimage * image, int32_t connex, char sign)
@@ -327,7 +360,7 @@ int32_t lalpha(struct xvimage * image, int32_t connex, char sign)
 #undef F_NAME
 #define F_NAME "lalpha"
 {
-  int32_t i, j, k;
+  int32_t k;
   struct xvimage * temp;
   uint8_t *pti;
   uint8_t *ptt;
@@ -358,11 +391,11 @@ int32_t lalpha(struct xvimage * image, int32_t connex, char sign)
     {
       if (connex == 26)
 	for (k = 0; k < N; k++) 
-	  pti[k] = (uint8_t)alpha26m(ptt, k, rs, ps, N);
+	  pti[k] = (uint8_t)mctopo3d_alpha26m(ptt, k, rs, ps, N);
       else
       if (connex == 6)
 	for (k = 0; k < N; k++) 
-	  pti[k] = (uint8_t)alpha6m(ptt, k, rs, ps, N);
+	  pti[k] = (uint8_t)mctopo3d_alpha6m(ptt, k, rs, ps, N);
       else
       if (connex == 8)
 	for (k = 0; k < N; k++) 
@@ -382,11 +415,11 @@ int32_t lalpha(struct xvimage * image, int32_t connex, char sign)
     {
       if (connex == 26)
 	for (k = 0; k < N; k++) 
-	  pti[k] = (uint8_t)alpha26p(ptt, k, rs, ps, N);
+	  pti[k] = (uint8_t)mctopo3d_alpha26p(ptt, k, rs, ps, N);
       else
       if (connex == 6)
 	for (k = 0; k < N; k++) 
-	  pti[k] = (uint8_t)alpha6p(ptt, k, rs, ps, N);
+	  pti[k] = (uint8_t)mctopo3d_alpha6p(ptt, k, rs, ps, N);
       else
       if (connex == 8)
 	for (k = 0; k < N; k++) 

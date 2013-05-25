@@ -1,4 +1,37 @@
-/* $Id: llambdakern.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* noyau lambda-homotopique ou de nivellement par abaissement */
 /* Michel Couprie - avril 1999 */
 
@@ -17,7 +50,7 @@
 #include <llabelextrema.h>
 #include <llambdakern.h>
 
-#define EN_FAH       0
+#define EN_FAHP       0
 #define EN_LIFO      1
 #define PARANO
 #define VERBOSE
@@ -55,6 +88,20 @@ if (modifie) printf("========> ABAISSE : %d\n", F[x]);
   return modifie;
 } /* testabaisse4() */
 
+// this is a workaround for pink::python. I will think about it
+// later ... maybe
+/* ==================================== */
+int32_t llambdakern_short(
+  struct xvimage *image, 
+  int32_t connex,
+  int32_t lambda)
+/* ==================================== */
+{
+  return llambdakern(image, NULL, connex, lambda );
+} /* llambdakern_short */
+
+
+
 /* ==================================== */
 int32_t llambdakern(
   struct xvimage *image, 
@@ -65,10 +112,8 @@ int32_t llambdakern(
 #undef F_NAME
 #define F_NAME "llambdakern"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -76,9 +121,9 @@ int32_t llambdakern(
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *G;            /* l'image de contrainte */
   struct xvimage *lab;
-  uint32_t *M;            /* l'image d'etiquettes de composantes connexes */
+  int32_t *M;            /* l'image d'etiquettes de composantes connexes */
   int32_t nminima;                 /* nombre de minima differents */
-  Fah * FAH;
+  Fahp * FAHP;
 
 #ifdef VERBOSE
   printf("%s: connex=%d\n", F_NAME, connex);
@@ -111,7 +156,7 @@ int32_t llambdakern(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  M = ULONGDATA(lab);
+  M = SLONGDATA(lab);
 
   if (!llabelextrema(image, connex, LABMIN, lab, &nminima))
   {   
@@ -121,9 +166,9 @@ int32_t llambdakern(
 
   IndicsInit(N);
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s : CreeFahVide failed\n", F_NAME);
+  FAHP = CreeFahpVide(N);
+  if (FAHP == NULL)
+  {   fprintf(stderr, "%s : CreeFahpVide failed\n", F_NAME);
       return(0);
   }
 
@@ -132,7 +177,7 @@ int32_t llambdakern(
   /* ================================================ */
 
   /* ========================================================= */
-  /*   INITIALISATION DE LA FAH: empile les voisins des minima */
+  /*   INITIALISATION DE LA FAHP: empile les voisins des minima */
   /* ========================================================= */
 
   for (x = 0; x < N; x++)
@@ -142,8 +187,8 @@ int32_t llambdakern(
       for (k = 0; k < 8; k++)
       {
         y = voisin(x, k, rs, N);
-        if ((y!=-1) && (M[y]==0) && !IsSet(y,EN_FAH) && nonbord(y,rs,N))
-        { FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+        if ((y!=-1) && (M[y]==0) && !IsSet(y,EN_FAHP) && nonbord(y,rs,N))
+        { FahpPush(FAHP, y, F[y]); Set(y, EN_FAHP); }
       }
     } /* if (M[x] != 0) */
   } /* for x */
@@ -156,19 +201,19 @@ int32_t llambdakern(
 
   if (connex == 4)
   {
-    while (! FahVide(FAH))
+    while (! FahpVide(FAHP))
     {
-      x = FahPop(FAH);
-      UnSet(x, EN_FAH);
+      x = FahpPop(FAHP);
+      UnSet(x, EN_FAHP);
       if ((F[x] > G[x]) && testabaisse4(F, x, rs, N, lambda))         
         /* modifie l'image le cas echeant */
         for (k = 0; k < 8; k++)
         {
           y = voisin(x, k, rs, N);
-          if ((y!=-1) && !IsSet(y,EN_FAH) && nonbord(y,rs,N))
-          { FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+          if ((y!=-1) && !IsSet(y,EN_FAHP) && nonbord(y,rs,N))
+          { FahpPush(FAHP, y, F[y]); Set(y, EN_FAHP); }
         }
-    } /* while (! FahVide(FAH)) */
+    } /* while (! FahpVide(FAHP)) */
   }
   else /* connex == 8 */
   {
@@ -181,7 +226,7 @@ int32_t llambdakern(
   /* ================================================ */
 
   IndicsTermine();
-  FahTermine(FAH);
+  FahpTermine(FAHP);
   return(1);
 } // llambdakern()
 
@@ -219,10 +264,8 @@ int32_t llambdathin(
 #undef F_NAME
 #define F_NAME "llambdathin"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
-  uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
+  int32_t y;              /* index muet (generalement un voisin de x) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -232,7 +275,6 @@ int32_t llambdathin(
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t a;
 
@@ -371,11 +413,11 @@ int32_t llambdathin(
         if (lambdadestr4(F,x,lambda,rs,N))
 #endif
 	{
-          F[x] = max(alpha8m(F, x, rs, N),a);
+          F[x] = mcmax(alpha8m(F, x, rs, N),a);
 #ifdef DEBUG
           printf("Abaisse x a %d\n", F[x]);
 #endif
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (lambdadestr4(F,x,lambda,rs,N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -458,11 +500,11 @@ int32_t llambdathin(
         if (lambdadestr8(F,x,lambda,rs,N))
 #endif
 	{
-          F[x] = max(alpha8m(F, x, rs, N),a);
+          F[x] = mcmax(alpha8m(F, x, rs, N),a);
 #ifdef DEBUG
           printf("Abaisse x a %d\n", F[x]);
 #endif
-          if (imagecond != NULL) F[x] = max(F[x],G[x]);
+          if (imagecond != NULL) F[x] = mcmax(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (lambdadestr8(F,x,lambda,rs,N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -538,10 +580,8 @@ int32_t llambdathick(
 #undef F_NAME
 #define F_NAME "llambdathick"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
-  uint32_t y;              /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
+  int32_t y;              /* index muet (generalement un voisin de x) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -551,7 +591,6 @@ int32_t llambdathick(
   int32_t niter;                   /* nombre d'iterations effectuees */
   Lifo * LIFO1;
   Lifo * LIFO2;
-  Lifo * LIFOtmp;
   int32_t incr_vois;
   int32_t a;
 
@@ -660,8 +699,8 @@ int32_t llambdathick(
 #endif
         if (lambdaconstr4(F,x,lambda,rs,N))
 	{
-          F[x] = min(alpha8p(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = min(F[x],G[x]);
+          F[x] = mcmin(alpha8p(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (lambdaconstr4(F,x,lambda,rs,N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -726,8 +765,8 @@ int32_t llambdathick(
 #endif
         if (lambdaconstr8(F,x,lambda,rs,N))
 	{
-          F[x] = min(alpha8p(F, x, rs, N),a);
-          if (imagecond != NULL) F[x] = min(F[x],G[x]);
+          F[x] = mcmin(alpha8p(F, x, rs, N),a);
+          if (imagecond != NULL) F[x] = mcmin(F[x],G[x]);
           LifoPush(LIFO2, x);
         } /* if (lambdaconstr8(F,x,lambda,rs,N)) */
       } /* while (!LifoVide(LIFO1)) */
@@ -787,6 +826,21 @@ int32_t llambdathick(
 /* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */
 
 /* ==================================== */
+int32_t lgrayskel_short(
+  struct xvimage *image, 
+  int32_t connex,
+  int32_t lambda)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lgrayskel_short"
+{
+  int result;
+  result = lgrayskel(image, NULL, connex, lambda);
+  return result;
+} /* lgrayskel_short */
+
+
+/* ==================================== */
 int32_t lgrayskel(
   struct xvimage *image, 
   struct xvimage *imcon, 
@@ -796,10 +850,8 @@ int32_t lgrayskel(
 #undef F_NAME
 #define F_NAME "lgrayskel"
 { 
-  int32_t i;
   int32_t x;                       /* index muet de pixel */
   int32_t y;                       /* index muet (generalement un voisin de x) */
-  int32_t z;                       /* index muet (generalement un voisin de y) */
   int32_t k;                       /* index muet */
   int32_t rs = rowsize(image);     /* taille ligne */
   int32_t cs = colsize(image);     /* taille colonne */
@@ -807,9 +859,9 @@ int32_t lgrayskel(
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *G;            /* l'image de contrainte */
   struct xvimage *lab;
-  uint32_t *M;            /* l'image d'etiquettes de composantes connexes */
+  int32_t *M;            /* l'image d'etiquettes de composantes connexes */
   int32_t nminima;                 /* nombre de minima differents */
-  Fah * FAH;
+  Fahp * FAHP;
 
 #ifdef VERBOSE
   printf("%s: connex=%d\n", F_NAME, connex);
@@ -841,7 +893,7 @@ int32_t lgrayskel(
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  M = ULONGDATA(lab);
+  M = SLONGDATA(lab);
 
   if (!llabelextrema(image, connex, LABMIN, lab, &nminima))
   {   
@@ -851,9 +903,9 @@ int32_t lgrayskel(
 
   IndicsInit(N);
 
-  FAH = CreeFahVide(N);
-  if (FAH == NULL)
-  {   fprintf(stderr, "%s : CreeFahVide failed\n", F_NAME);
+  FAHP = CreeFahpVide(N);
+  if (FAHP == NULL)
+  {   fprintf(stderr, "%s : CreeFahpVide failed\n", F_NAME);
       return(0);
   }
 
@@ -862,7 +914,7 @@ int32_t lgrayskel(
   /* ================================================ */
 
   /* ========================================================= */
-  /*   INITIALISATION DE LA FAH: empile les voisins des minima */
+  /*   INITIALISATION DE LA FAHP: empile les voisins des minima */
   /* ========================================================= */
 
   for (x = 0; x < N; x++)
@@ -872,8 +924,8 @@ int32_t lgrayskel(
       for (k = 0; k < 8; k++)
       {
         y = voisin(x, k, rs, N);
-        if ((y!=-1) && (M[y]==0) && !IsSet(y,EN_FAH) && nonbord(y,rs,N))
-        { FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+        if ((y!=-1) && (M[y]==0) && !IsSet(y,EN_FAHP) && nonbord(y,rs,N))
+        { FahpPush(FAHP, y, F[y]); Set(y, EN_FAHP); }
       }
     } /* if (M[x] != 0) */
   } /* for x */
@@ -886,22 +938,26 @@ int32_t lgrayskel(
 
   if (connex == 4)
   {
-    while (! FahVide(FAH))
+    while (! FahpVide(FAHP))
     {
-      x = FahPop(FAH);
-      UnSet(x, EN_FAH);
+      x = FahpPop(FAHP);
+      UnSet(x, EN_FAHP);
       if ((F[x] > G[x]) && testabaisse4(F, x, rs, N, lambda))         
+      {
         /* modifie l'image le cas echeant */
         if (museparant4(F, x, rs, N, lambda))
-          G[x] = F[x];
+	  { G[x] = F[x]; }
         else
+	{
           for (k = 0; k < 8; k++)
           {
             y = voisin(x, k, rs, N);
-            if ((y!=-1) && !IsSet(y,EN_FAH) && nonbord(y,rs,N))
-            { FahPush(FAH, y, F[y]); Set(y, EN_FAH); }
+            if ((y!=-1) && !IsSet(y,EN_FAHP) && nonbord(y,rs,N))
+            { FahpPush(FAHP, y, F[y]); Set(y, EN_FAHP); }
           }
-    } /* while (! FahVide(FAH)) */
+	}
+      }
+    } /* while (! FahpVide(FAHP)) */
   }
   else /* connex == 8 */
   {
@@ -914,6 +970,6 @@ int32_t lgrayskel(
   /* ================================================ */
 
   IndicsTermine();
-  FahTermine(FAH);
+  FahpTermine(FAHP);
   return(1);
 } // lgrayskel()

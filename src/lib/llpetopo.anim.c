@@ -1,4 +1,37 @@
-/* $Id: llpetopo.anim.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* operateur de calcul de la ligne de partage des eaux topologique */
 /* utilise une File d'Attente Hierarchique */
 /* utilise un arbre des bassins versants (captation basin tree, CBT) */
@@ -176,9 +209,10 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <curses.h>
+//#include <curses.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcfah.h>
@@ -195,7 +229,7 @@
 #define DISPARU  3
 
 /* ==================================== */
-int32_t llpetopo(
+int32_t llpetopo_anim_llpetopo(
         struct xvimage *image,
         struct xvimage *marqueurs,
         int32_t trace)
@@ -237,34 +271,34 @@ int32_t llpetopo(
 
   if (depth(image) != 1) 
   {
-    fprintf(stderr, "llpetopo: cette version ne traite pas les images volumiques\n");
+    fprintf(stderr, "llpetopo_anim_llpetopo: cette version ne traite pas les images volumiques\n");
     exit(0);
   }
   
   if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs))
   {
-    fprintf(stderr, "llpetopo: incompatible image sizes\n");
+    fprintf(stderr, "llpetopo_anim_llpetopo: incompatible image sizes\n");
     return 0;
   }
 
   IndicsInit(N);
   FAH = CreeFahVide(N+1);
   if (FAH == NULL)
-  {   fprintf(stderr, "llpetopo() : CreeFah failed\n");
+  {   fprintf(stderr, "llpetopo_anim_llpetopo() : CreeFah failed\n");
       return(0);
   }
 
   lab = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
   if (lab == NULL)
   {   
-    fprintf(stderr, "llpetopo: allocimage failed\n");
+    fprintf(stderr, "llpetopo_anim_llpetopo: allocimage failed\n");
     return 0;
   }
-  M = ULONGDATA(lab);
+  M = SLONGDATA(lab);
 
   if (!llabelextrema(image, 4, LABMIN, lab, &nminima))
   {   
-    fprintf(stderr, "llpetopo: llabelextrema failed\n");
+    fprintf(stderr, "llpetopo_anim_llpetopo: llabelextrema failed\n");
     return 0;
   }
 
@@ -272,7 +306,7 @@ int32_t llpetopo(
   nbmaxcell = nminima * 2;
   CBT = (cbtcell *)calloc(1,nbmaxcell * sizeof(cbtcell));
   if (CBT == NULL)
-  {   fprintf(stderr, "llpetopo() : malloc failed for CBT\n");
+  {   fprintf(stderr, "llpetopo_anim_llpetopo() : malloc failed for CBT\n");
       return(0);
   }
 
@@ -409,7 +443,7 @@ int32_t llpetopo(
 
   T = Regularise(CBT, nminima, nbcell);
   if (T == NULL)
-  {   fprintf(stderr, "llpetopo() : Regularise failed\n");
+  {   fprintf(stderr, "llpetopo_anim_llpetopo() : Regularise failed\n");
       return(0);
   }
 
@@ -446,13 +480,13 @@ int32_t llpetopo(
 
   T = (int32_t *) calloc(nbcell, sizeof(int32_t));
   if (T == NULL)
-  {   fprintf(stderr, "llpetopo() : calloc failed for T\n");
+  {   fprintf(stderr, "llpetopo_anim_llpetopo() : calloc failed for T\n");
       return(0);
   }
 
   I = InverseCBT(CBT, nminima, nbcell);
   if (I == NULL)
-  {   fprintf(stderr, "llpetopo() : InverseCBT failed\n");
+  {   fprintf(stderr, "llpetopo_anim_llpetopo() : InverseCBT failed\n");
       return(0);
   }
 

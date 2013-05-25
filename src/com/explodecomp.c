@@ -1,10 +1,43 @@
-/* $Id: explodecomp.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file explodecomp.c
 
 \brief converts single 2D pgm file into a series of 2D pgm files,
   where each file of the series contains one component of the original image
 
-<B>Usage:</B> explodecomp in.pgm connex <min|max|pla> name_prefix
+<B>Usage:</B> explodecomp in.pgm connex {min|max|pla} name_prefix
 
 <B>Description:</B>
 Generated file names are of the form: <B>name_prefix</B>nnnn.pgm, 
@@ -40,11 +73,10 @@ to be labeled:
 #include <llabelplateaux.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
-  int32_t i, j, k, x, connex, nblabels;
+  int32_t i, k, connex, nblabels;
   char bufname[1024];
   int32_t namelen;
   struct xvimage * image_in;
@@ -53,12 +85,12 @@ int main(argc, argv)
   int32_t rs, cs, ds, ps, N;
   uint8_t *I;
   uint8_t *O;
-  uint32_t *L;
+  int32_t *L;
   int32_t function;
 
   if (argc != 5)
   {
-    fprintf(stderr, "usage: %s in.pgm connex <min|max|pla> name_prefix\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm connex {min|max|pla} name_prefix\n", argv[0]);
     exit(1);
   }
 
@@ -81,7 +113,7 @@ int main(argc, argv)
   if (strcmp(argv[3], "max") == 0) function = LABMAX; else
   if (strcmp(argv[3], "pla") == 0) function = LABPLA; else
   {
-    fprintf(stderr, "usage: %s in.pgm connex <min|max|pla> name_prefix\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm connex {min|max|pla} name_prefix\n", argv[0]);
     exit(1);
   }
 
@@ -102,7 +134,7 @@ int main(argc, argv)
     fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
-  L = ULONGDATA(labels);
+  L = SLONGDATA(labels);
   
   if (function != LABPLA)
   {

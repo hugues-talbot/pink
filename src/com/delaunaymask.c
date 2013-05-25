@@ -1,4 +1,37 @@
-/* $Id: delaunaymask.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file delaunaymask.c
 
 \brief delaunay triangulation
@@ -11,7 +44,7 @@
 <B>Description:</B>
 Reads a point list in file <B>in.list</B> under the following format:
 <pre>  
-    b <n>         n <n>    
+    b &lt;n&gt;         n &lt;n&gt;    
     x1 y1         x1 y1 v1
     x2 y2   ou    x2 y2 v2
     ...           ...
@@ -22,7 +55,7 @@ Computes a Delaunay triangulation and stores the resulting graph
 
 into file <B>out.graph</B> under the following format:
 <pre>
-    G <n>
+    G &lt;n&gt;
     x1 y1 v1 ec1 ns1 s11 s12 ... s1ns1
     x2 y2 v2 ec2 ns2 s21 s22 ... s1ns2
     ...
@@ -58,15 +91,14 @@ the adjacent vertices (counted from 0).
 #define isnotinmask(x,y) (!M[y*rss+x])
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   FILE *fd = NULL;
   int32_t n, i, j, k, rss, css, N;
   double xx, yy, vv;
   char type;
-  point * S;
+  mcgeo_point * S;
   double * V;
   int32_t **v; /* la table des listes de voisins (reperes par leur indice dans S) */
   int32_t *nv; /* la table des nombres de voisins */
@@ -76,7 +108,7 @@ int main(argc, argv)
   uint8_t *M;
   int32_t npoints;
   int32_t newnv;
-  int32_t *del, *lp;
+  int32_t *del, *lx, *ly;
 
   if (argc != 4)
   {
@@ -99,7 +131,7 @@ int main(argc, argv)
   }
 
   fscanf(fd, "%d\n", &n);
-  S = (point *)calloc(1,n * sizeof(point));
+  S = (mcgeo_point *)calloc(1,n * sizeof(mcgeo_point));
   V = (double *)calloc(1,n * sizeof(double));
 
   if (type == 'b') 
@@ -153,8 +185,9 @@ int main(argc, argv)
   rss = mask->row_size;
   css = mask->col_size;
   N = rss * css; 
-  longlpmax=max(rss,css);
-  lp = (int32_t*)malloc(longlpmax*sizeof(int32_t));
+  longlpmax=mcmax(rss,css);
+  lx = (int32_t*)malloc(longlpmax*sizeof(int32_t));
+  ly = (int32_t*)malloc(longlpmax*sizeof(int32_t));
   del = (int32_t*)malloc(longlpmax*sizeof(int32_t));
   npoints = 0;
 
@@ -174,10 +207,11 @@ int main(argc, argv)
 	vois = v[i][j];
 	Dx = arrondi(S[vois].x);
 	Dy = arrondi(S[vois].y);
-	lbresenlist(rss, Cx, Cy, Dx, Dy, lp, &npoints);
+	npoints = longlpmax;
+	lbresenlist(Cx, Cy, Dx, Dy, lx, ly, &npoints);
 	for (k = 0; k < npoints; k++)
 	{
-	  if (M[lp[k]]) // si le point du segment est dans le masque
+	  if (M[ly[k]*rss + lx[k]]) // si le point du segment est dans le masque
 	  {
 	    del[j]=1;
 	    newnv--;
@@ -198,6 +232,8 @@ int main(argc, argv)
       fprintf(fd, "%g %g %g %d %d\n", S[i].x, S[i].y, V[i], ec[i], 0);	
   }
   fclose(fd);
-  free(lp);
+  free(lx);
+  free(ly);
   free(del);
+  return 0;
 }

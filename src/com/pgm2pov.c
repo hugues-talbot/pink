@@ -1,4 +1,37 @@
-/* $Id: pgm2pov.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file pgm2pov.c
 
 \brief generates a povray file from a 3D image
@@ -108,7 +141,7 @@ void cylinder (FILE * fd, double x1, double y1, double z1,
 }
 
 /* =============================================================== */
-void voxel (FILE * fd, double x, double y, double z, char *texture)
+void voxcube (FILE * fd, double x, double y, double z, char *texture)
 /* =============================================================== */
 {
   fprintf(fd, "box { <%g,%g,%g>, <%g,%g,%g> %s }\n", 
@@ -117,9 +150,8 @@ void voxel (FILE * fd, double x, double y, double z, char *texture)
 }
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   char * filename;
@@ -307,9 +339,9 @@ int main(argc, argv)
         for (y = 0; y < cs; y++)
           for (x = 0; x < rs; x++)
             if (F[z * ps + y * rs + x] == 1) 
-              voxel(fd, x, y, z, "texture {texture1}");
+              voxcube(fd, x, y, z, (char *)"texture {texture1}");
 	    else if (F[z * ps + y * rs + x] == 2) 
-              voxel(fd, x, y, z, "texture {texture2}");
+              voxcube(fd, x, y, z, (char *)"texture {texture2}");
   }
 
   if (mode != 5)
@@ -323,13 +355,13 @@ int main(argc, argv)
             if (F[z * ps + y * rs + x]) 
  	    {
               if (CUBE3D(x,y,z))
-                sphere(fd, x, y, z, "RadCube", "ColCube");
+                sphere(fd, x, y, z, (char *)"RadCube", (char *)"ColCube");
               else if (CARRE3D(x,y,z))
-                sphere(fd, x, y, z, "RadCarre", "ColCarre");
+                sphere(fd, x, y, z, (char *)"RadCarre", (char *)"ColCarre");
               else if (INTER3D(x,y,z))
-                sphere(fd, x, y, z, "RadInter", "ColInter");
+                sphere(fd, x, y, z, (char *)"RadInter", (char *)"ColInter");
               else if (SINGL3D(x,y,z))
-                sphere(fd, x, y, z, "RadSingl", "ColSingl");
+                sphere(fd, x, y, z, (char *)"RadSingl", (char *)"ColSingl");
 	    }
     }
     else
@@ -337,7 +369,7 @@ int main(argc, argv)
       for (z = 0; z < d; z++)
         for (y = 0; y < cs; y++)
           for (x = 0; x < rs; x++)
-            if (F[z * ps + y * rs + x]) sphere(fd, x, y, z, "RadSphere", "ColSphere");
+            if (F[z * ps + y * rs + x]) sphere(fd, x, y, z, (char *)"RadSphere", (char *)"ColSphere");
     }
   }
 
@@ -358,7 +390,7 @@ int main(argc, argv)
         }
         if (xmax > xmin) 
           for (x = xmin; x < xmax; x++) 
-            cylinder(fd, x, y, z, x+1, y, z, "RadCylinder", "ColCylinder");
+            cylinder(fd, x, y, z, x+1, y, z, (char *)"RadCylinder", (char *)"ColCylinder");
       }
 
     /* trace les barreaux a x,z constant (verticaux)  */
@@ -375,7 +407,7 @@ int main(argc, argv)
         }
         if (ymax > ymin) 
           for (y = ymin; y < ymax; y++) 
-            cylinder(fd, x, y, z, x, y+1, z, "RadCylinder", "ColCylinder");
+            cylinder(fd, x, y, z, x, y+1, z, (char *)"RadCylinder", (char *)"ColCylinder");
       }
 
     /* trace les barreaux a x,y constant (horizontaux en profondeur)  */
@@ -392,7 +424,7 @@ int main(argc, argv)
         }
         if (zmax > zmin) 
           for (z = zmin; z < zmax; z++) 
-            cylinder(fd, x, y, z, x, y, z+1, "RadCylinder", "ColCylinder");
+            cylinder(fd, x, y, z, x, y, z+1, (char *)"RadCylinder", (char *)"ColCylinder");
       }
   }
 
@@ -428,7 +460,7 @@ int main(argc, argv)
             y1 = y % rs;
             y2 = (y % ps) / rs;
             y3 = y / ps;
-            cylinder(fd, x1, x2, x3, y1, y2, y3, "RadCylinder", "ColCylinder");
+            cylinder(fd, x1, x2, x3, y1, y2, y3, (char *)"RadCylinder", (char *)"ColCylinder");
 	  }
 	}
       }    
@@ -470,7 +502,7 @@ int main(argc, argv)
             y1 = y % rs;
             y2 = (y % ps) / rs;
             y3 = y / ps;
-            cylinder(fd, x1, x2, x3, y1, y2, y3, "RadCylinder", "ColCylinder");
+            cylinder(fd, x1, x2, x3, y1, y2, y3, (char *)"RadCylinder", (char *)"ColCylinder");
 	  }
 	}
       }    

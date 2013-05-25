@@ -1,3 +1,37 @@
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -34,29 +68,37 @@ struct xvimage *allocGAimage(
   int32_t N = rs * cs * d;             /* taille image */
   struct xvimage *g;
   int32_t ts;                          /* type size */
-
   switch (t)
   {
-  case VFF_TYP_GABYTE:   if(d == 1) ts = 2; else ts = 3; break;      /* cas d'une image d'arete en 2D, chaque pixel a 2 aretes */
+  case VFF_TYP_GABYTE: if(d == 1) ts = 2; else ts = 3; break;      /* cas d'une image d'arete en 2D, chaque pixel a 2 aretes */
   case VFF_TYP_GAFLOAT: if(d == 1) ts = 2*sizeof(float); else ts = 3*sizeof(float); break;
   case VFF_TYP_GADOUBLE: if(d == 1) ts = 2*sizeof(double); else ts = 3*sizeof(float); break;
-  default: fprintf(stderr,"%s() : bad data type, ne gère que les GAs %d\n", F_NAME, t);
+  default: fprintf(stderr,"%s: bad data type, ne gère que les GAs %d\n", F_NAME, t);
     return NULL;
   } /* switch (t) */
 
-  g = (struct xvimage *)malloc(sizeof(struct xvimage) - 1 + (N * ts));
+
+  g = (struct xvimage *)malloc(sizeof(struct xvimage));
   if (g == NULL)
-  {   fprintf(stderr,"%s() : malloc failed (%d bytes)\n", F_NAME, sizeof(struct xvimage) - 1 + (N * ts));
+  {   fprintf(stderr,"%s: malloc failed (%d bytes)\n", F_NAME, sizeof(struct xvimage));
       return NULL;
   }
+
+  g->image_data = (void*)calloc(1, N*ts);
+  if (g->image_data == NULL) {
+    fprintf(stderr,"%s: malloc failed (%d bytes)\n", F_NAME, ((N*ts-1)));
+    return NULL;
+  }
+
+
   if (name != NULL)
   {
     g->name = (char *)malloc(strlen(name)+1);
     if (g->name == NULL)
-    {   fprintf(stderr,"%s() : malloc failed for name\n", F_NAME);
+    {   fprintf(stderr,"%s: malloc failed for name\n", F_NAME);
         return NULL;
     }
-    strcpy((void *)(g->name), name);
+    strcpy((char *)(g->name), name);
   }
   else
     g->name = NULL;
@@ -66,7 +108,7 @@ struct xvimage *allocGAimage(
   depth(g) = d;
   datatype(g) = t;
   g->xdim = g->ydim = g->zdim = 0.0;
-
+    
   return g;
 } /* allocGAimage() */
  
@@ -78,7 +120,7 @@ void writerawGAimage(struct xvimage * image, char *filename)
 #define F_NAME "writerawGAimage"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, d, N, i, ret;
+  int32_t rs, cs, d, N, ret;
   int32_t ts;
 
   rs = rowsize(image);
@@ -132,7 +174,7 @@ void writerawGAimage(struct xvimage * image, char *filename)
     }
     break;
   default:
-    fprintf(stderr,"%s() : bad datatype, ne traite que les GAs : %d\n", F_NAME, datatype(image));
+    fprintf(stderr,"%s: bad datatype, ne traite que les GAs : %d\n", F_NAME, datatype(image));
     exit(0);
   }//switch
 
@@ -147,7 +189,7 @@ struct xvimage * readGAimage(char *filename)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, ndgmax, N, i;
+  int32_t rs, cs, d, ndgmax, N;
   struct xvimage * image;
   int32_t ascii;  
   int32_t typepixel;
@@ -176,7 +218,7 @@ struct xvimage * readGAimage(char *filename)
                                  /* PB: ascii int32_t 2d-3d  ==  extension MC */
                                  /* PC: graphe d'arete == extension JC */
                                  /* PD: graphe d'arete flottant == extension JC */ 
- 
+
   if (buffer[0] != 'P')
   {   fprintf(stderr,"%s : invalid image format\n", F_NAME);
       return NULL;
@@ -189,6 +231,7 @@ struct xvimage * readGAimage(char *filename)
     fprintf(stderr,"%s : invalid image format, ne traite que les GAs\n", F_NAME);
       return NULL;
   } /* switch */
+
 
   do 
   {
@@ -217,13 +260,15 @@ struct xvimage * readGAimage(char *filename)
   {   fprintf(stderr,"%s : alloc failed\n", F_NAME);
       return(NULL);
   }
+
   image->xdim = xdim;
   image->ydim = ydim;
   image->zdim = zdim;
   if (typepixel == VFF_TYP_GABYTE)
   {
+    int32_t ret;
     if(d == 1) ts=2; else ts = 3;
-    int32_t ret = fread(UCHARDATA(image), sizeof(char), ts*N, fd);
+    ret = fread(UCHARDATA(image), sizeof(char), ts*N, fd);
     if (ret != ts*N)
     {
       fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
@@ -234,8 +279,9 @@ struct xvimage * readGAimage(char *filename)
 
   if (typepixel == VFF_TYP_GAFLOAT)
   {
+    int32_t ret;
     if(d == 1) ts=2; else ts = 3;
-    int32_t ret = fread(UCHARDATA(image), sizeof(float), ts*N, fd);
+    ret = fread(UCHARDATA(image), sizeof(float), ts*N, fd);
     if (ret != ts*N)
     {
       fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
@@ -279,7 +325,7 @@ struct xvimage4D *allocimage4D(
 
 
 /* ==================================== */
-struct xvimage4D *freeimage4D(struct xvimage4D * im)     /* derniere frame */
+void freeimage4D(struct xvimage4D * im)     /* derniere frame */
 /* ==================================== */
 {
   int32_t i;
@@ -297,7 +343,6 @@ struct xvimage4D *readimage4D(char *prefix,   /* prefixe des noms d'images */
 #define F_NAME "readimage4D"
 {
   struct xvimage4D * image;
-  struct xvimage * im;
   int32_t seqsize, prefixlen, cs, rs, ds,j;
   char bufname[1024];
   
@@ -396,9 +441,8 @@ struct GA4d * readGA4d(char *filename)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, ndgmax, N, i, ss;
+  int32_t rs, cs, d, ndgmax, N, ss;
   struct GA4d * image;
-  int32_t ascii;  
   double xdim=1.0, ydim=1.0, zdim=1.0, tdim=1.0;
   int32_t ret,c;
   
@@ -429,7 +473,7 @@ struct GA4d * readGA4d(char *filename)
   }
   if (buffer[1] != 'D')
   {
-    fprintf(stderr,"%s: not 4d weighted-edge graph"); 
+    fprintf(stderr,"%s: not 4d weighted-edge graph", F_NAME);
     return NULL;
   } /* if */
 
@@ -489,17 +533,17 @@ struct GA4d *allocGA4d(
   struct GA4d *g;
   g = (struct GA4d *)malloc(sizeof(struct GA4d) - 1 + (N * 4));
   if (g == NULL)
-  {   fprintf(stderr,"%s() : malloc failed (%d bytes)\n", F_NAME, sizeof(struct xvimage) - 1 + (N * 4));
+  {   fprintf(stderr,"%s: malloc failed (%d bytes)\n", F_NAME, sizeof(struct xvimage) - 1 + (N * 4));
       return NULL;
   }
   if (name != NULL)
   {
     g->name = (char *)malloc(strlen(name)+1);
     if (g->name == NULL)
-    {   fprintf(stderr,"%s() : malloc failed for name\n", F_NAME);
+    {   fprintf(stderr,"%s: malloc failed for name\n", F_NAME);
         return NULL;
     }
-    strcpy((void *)(g->name), name);
+    strcpy((char *)(g->name), name);
   }
   else
     g->name = NULL;
@@ -520,7 +564,7 @@ void writeGA4d(struct GA4d * image, char *filename)
 #define F_NAME "writeGA4d"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, d, N, i, ret, ss;
+  int32_t rs, cs, d, N, ret, ss;
 
   rs = rowsize(image);
   cs = colsize(image);
@@ -553,7 +597,7 @@ void writeGA4d(struct GA4d * image, char *filename)
   fclose(fd);
 } /* writeGA4d() */
 
-struct GA4d *freeGA4d(struct GA4d  *im)
+void freeGA4d(struct GA4d  *im)
 {
   free(im);
 }

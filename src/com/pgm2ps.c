@@ -1,9 +1,42 @@
-/* $Id: pgm2ps.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file pgm2ps.c
 
 \brief converts from pgm to ps for illustrating small image configurations
 
-<B>Usage:</B> pgm2ps in.pgm mode <label.pgm|null> <marker.pgm|null> coord maxval out.ps
+<B>Usage:</B> pgm2ps in.pgm mode {label.pgm|null} {marker.pgm|null} coord maxval out.ps
 
 <B>Description:</B>
 Produces a Postscript file from a binary or grayscale image.
@@ -61,9 +94,16 @@ The parameter \b maxval is an integer which indicates the maximum grayscale valu
 #include <mckhalimsky2d.h>
 
 #define BOLDCIRCLES
-#define KHALIMSKY2
+#define KHALIMSKY1
 
 #ifdef KHALIMSKY1
+/* parametres pour les elements de Khalimsky: */
+#define R1 14  /* rayon des cercles, demi-largeur des rectangles */
+#define R2 28  /* demi cote des carres */
+#define GS 54  /* pas de la grille */
+#endif
+
+#ifdef KHALIMSKY1bis
 /* parametres pour les elements de Khalimsky: */
 #define R1 18  /* rayon des cercles, demi-largeur des rectangles */
 #define R2 24  /* demi cote des carres */
@@ -71,6 +111,14 @@ The parameter \b maxval is an integer which indicates the maximum grayscale valu
 #endif
 
 #ifdef KHALIMSKY2
+/* parametres pour les elements de Khalimsky: */
+#define R0 6  /* rayon des cercles */
+#define R1 3  /* demi-largeur des rectangles */
+#define R2 24  /* demi cote des carres */
+#define GS 24  /* pas de la grille */
+#endif
+
+#ifdef KHALIMSKY2bis
 /* parametres pour les elements de Khalimsky: */
 #define R0 3  /* rayon des cercles */
 #define R1 1  /* demi-largeur des rectangles */
@@ -81,7 +129,7 @@ The parameter \b maxval is an integer which indicates the maximum grayscale valu
 //#define FONTHEIGHT 24
 #define FONTHEIGHT 18
 //#define FONTSCALE 32
-#define FONTSCALE 24
+#define FONTSCALE 16
 #define GLOBALSCALE 0.25
 #define P2P_EPSILON 2
 
@@ -394,13 +442,12 @@ void psheader(FILE *fd, int32_t w, int32_t h, double scale)
 }
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image, *marker, *label;
   FILE *fd = NULL;
-  int32_t rs, cs, N, x, y, n, maxval, color;
+  int32_t rs, cs, N, x, y, maxval;
   double X, Y;
   uint8_t *F, *G, *H;
   char type;
@@ -409,7 +456,7 @@ int main(argc, argv)
 
   if (argc != 8) 
   {
-    fprintf(stderr, "usage: %s in.pgm <b|c|n|d|i|a|p|g|v|B|N|G|C|M|H> <label.pgm|null> <marker.pgm|null> coord maxval out.ps\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {b|c|n|d|i|a|p|g|v|B|N|G|C|M|H} {label.pgm|null} {marker.pgm|null} coord maxval out.ps\n", argv[0]);
     exit(1);
   }
 
@@ -469,7 +516,7 @@ int main(argc, argv)
       (type != 'g') && (type != 'B') && (type != 'N') && (type != 'G') && (type != 'd') && (type != 'v') && 
       (type != 'C') && (type != 'M') && (type != 'H'))
   {
-    fprintf(stderr, "usage: %s in.pgm <b|c|n|m|d|i|a|p|g|v|B|N|G|C|M|H> <label.pgm|null> <marker.pgm|null> coord maxval out.ps\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm {b|c|n|m|d|i|a|p|g|v|B|N|G|C|M|H} {label.pgm|null} {marker.pgm|null} coord maxval out.ps\n", argv[0]);
     exit(1);
   }
 
@@ -568,10 +615,14 @@ int main(argc, argv)
 	    sprintf(buf, "%c", (char)(H[y * rs + x]-1+'A'));
 	  } else 	if (type == 'm') 
 	  {
-	    sprintf(buf, "%d", H[y * rs + x]);
+		if(datatype(label)==VFF_TYP_FLOAT)
+			sprintf(buf, "%1.1f", FLOATDATA(label)[y * rs + x]);
+		else
+	    		sprintf(buf, "%d", H[y * rs + x]);
 	  } else 
 	  {
 	    sprintf(buf, "%d", F[y * rs + x]);
+	    //sprintf(buf, "%c.%c", F[y * rs + x]/10+'0', F[y * rs + x]%10+'0');
 	  }
 	  if (((type == 'd') && (sqrt(F[y * rs + x]) > maxval/2)) || 
 	      ((type != 'd') && (F[y * rs + x] > maxval/2)))
@@ -650,7 +701,7 @@ int main(argc, argv)
     } // if (datatype(image) == VFF_TYP_1_BYTE)
     else if (datatype(image) == VFF_TYP_4_BYTE)
     {
-      uint32_t *F = ULONGDATA(image);
+      int32_t *F = SLONGDATA(image);
       if (printcoords)
 	psheader(fd, (rs+1) * GS, (cs+1) * GS, GLOBALSCALE);
       else

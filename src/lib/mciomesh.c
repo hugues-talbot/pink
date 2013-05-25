@@ -1,16 +1,50 @@
-/* $Id: mciomesh.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
+#include <mcrbtp.h>
 #include <mcmesh.h>
-#include <mcrbt1.h>
 #include <mciomesh.h>
+#include <ssexport.h>
 
-//#define VERBOSE
+#define VERBOSE
 
-extern Rbt * RBT;
+extern Rbtp * RBTP;
 
 uint16_t LE_ReadUnsignedShort(FILE *fd)
 {
@@ -72,7 +106,7 @@ void genheaderPOV(FILE *fileout, int32_t obj_id, meshbox MB)
   fprintf(fileout, "light_source { <%g,%g,%g> color White }\n", 
                    2*MB.bxmax, 2*MB.bymax, 2*MB.bzmin);
   fprintf(fileout, "light_source { <%g,%g,%g> color White }\n", 
-                   0, 0, 3*MB.bzmax);
+	  (double)0, (double)0, 3*MB.bzmax);
   fprintf(fileout, "\n");
   fprintf(fileout, "#declare mytexture = Bright_Bronze\n");
   fprintf(fileout, "\n");
@@ -102,6 +136,20 @@ void genheaderVTK(FILE *fileout, char *name)
     fprintf(fileout, "ASCII\n");
     fprintf(fileout, "DATASET POLYDATA\n");
 } /* genheaderVTK() */
+
+/* =============================================================== */
+void genheaderVTK_PYTHON(void * ss/* stringstream */, char *name)
+/* =============================================================== */
+{
+  ui_mesh_export_cstring(ss, "# vtk DataFile Version 3.0\n");
+  ui_mesh_export_cstring(ss, name);
+  ui_mesh_export_cstring(ss, "\n");
+  ui_mesh_export_cstring(ss, "ASCII\n");
+  ui_mesh_export_cstring(ss, "DATASET POLYDATA\n");
+
+  /* return void */
+} /* genheaderVTK() */
+
 
 /* =============================================================== */
 void genheaderCOL(FILE *fileout, int32_t nbfaces)
@@ -417,7 +465,7 @@ POLYGONS %d %d    // Faces - champ obligatoire
    ...
 */
 {
-  int32_t i, j;
+  int32_t i;
 
   // SOMMETS
   fprintf(fileout, "POINTS %d float\n", Vertices->cur);
@@ -437,11 +485,106 @@ POLYGONS %d %d    // Faces - champ obligatoire
 } /* SaveMeshVTK() */
 
 /* ==================================== */
+void SaveMeshVTK_PYTHON(void * ss/* stringstream */)
+/* ==================================== */
+/* fileout doit avoir ete ouvert en ecriture */
+/* format: 
+POINTS %d float   // Sommets - champ obligatoire
+%g %g %g          // coord. vertex
+   ...
+POLYGONS %d %d    // Faces - champ obligatoire 
+                  // arg1: nb polygones; arg2: nb valeurs (=4*arg1 pour des triangles)
+3 %d %d %d        // face: ind. vertices
+   ...
+*/
+{
+  int32_t i;
+
+  // SOMMETS
+  ui_mesh_export_cstring( ss, "POINTS " );
+  ui_mesh_export_int( ss, Vertices->cur );
+  ui_mesh_export_cstring( ss, " float\n" );
+
+  for (i = 0; i < Vertices->cur; i++)
+  {
+    ui_mesh_export_double( ss, Vertices->v[i].x );
+    ui_mesh_export_cstring( ss, " " );
+    ui_mesh_export_double( ss, Vertices->v[i].y );
+    ui_mesh_export_cstring( ss, " " );
+    ui_mesh_export_double( ss, Vertices->v[i].z );
+    ui_mesh_export_cstring( ss, "\n" );
+  }
+  ui_mesh_export_cstring( ss, "\n" );
+
+  // FACES
+  ui_mesh_export_cstring( ss, "POLYGONS " );
+  ui_mesh_export_int( ss, Faces->cur );
+  ui_mesh_export_cstring( ss, " " );
+  ui_mesh_export_int( ss, 4*Faces->cur );
+  ui_mesh_export_cstring( ss, "\n" );
+
+  for (i = 0; i < Faces->cur; i++)
+  {
+    ui_mesh_export_cstring( ss, "3 " );
+    ui_mesh_export_int( ss, Faces->f[i].vert[0] );
+    ui_mesh_export_cstring( ss, " " );
+    ui_mesh_export_int( ss, Faces->f[i].vert[1] );
+    ui_mesh_export_cstring( ss, " " );
+    ui_mesh_export_int( ss, Faces->f[i].vert[2] );
+    ui_mesh_export_cstring( ss, "\n" );
+  }
+  ui_mesh_export_cstring( ss, "\n" );
+
+  /* return void */
+} /* SaveMeshVTK() */
+
+
+/* ==================================== */
+void MCM_SaveVTK(MCM *M, FILE *fileout)
+/* ==================================== */
+/* fileout doit avoir ete ouvert en ecriture */
+/* format: 
+POINTS %d float   // Sommets - champ obligatoire
+%g %g %g          // coord. vertex
+   ...
+POLYGONS %d %d    // Faces - champ obligatoire 
+                  // arg1: nb polygones; arg2: nb valeurs (=4*arg1 pour des triangles)
+3 %d %d %d        // face: ind. vertices
+   ...
+Attention : les faces dont le champ "aux" est différent de 0 ne sont pas sauvées
+*/
+{
+  int32_t i, n, m;
+
+  genheaderVTK(fileout, "MCM_SaveVTK output");
+
+  // SOMMETS
+  fprintf(fileout, "POINTS %d float\n", M->Vertices->cur);
+  for (i = 0; i < M->Vertices->cur; i++)
+  {
+    fprintf(fileout, "%g %g %g", M->Vertices->v[i].x, M->Vertices->v[i].y, M->Vertices->v[i].z);
+    //printf("%g %g %g\n", M->Vertices->v[i].x, M->Vertices->v[i].y, M->Vertices->v[i].z);
+    fprintf(fileout, "\n");
+  }
+  fprintf(fileout, "\n");
+
+  // FACES
+  n = m = 0;
+  for (i = 0; i < M->Faces->cur; i++)
+    if (M->Faces->f[i].aux == 0) { n++; m += 4; }
+  fprintf(fileout, "POLYGONS %d %d\n", n, m);
+  for (i = 0; i < M->Faces->cur; i++)
+    if (M->Faces->f[i].aux == 0)
+      fprintf(fileout, "3 %d %d %d\n", M->Faces->f[i].vert[0], M->Faces->f[i].vert[1], M->Faces->f[i].vert[2]);
+  fprintf(fileout, "\n");
+} /* MCM_SaveVTK() */
+
+/* ==================================== */
 void SaveMeshAC(FILE *fileout)
 /* ==================================== */
 /* fileout doit avoir ete ouvert en ecriture */
 {
-  int32_t i, j;
+  int32_t i;
 
   fprintf(fileout, "numvert %d\n", Vertices->cur);
   for (i = 0; i < Vertices->cur; i++)
@@ -482,7 +625,7 @@ static GLfloat face_indiciess<obj_id>[<nfaces>][6] = {
 };
 */
 {
-  int32_t i, j;
+  int32_t i;
 
   fprintf(fileout, "static GLfloat normals%d[%d][3] = {\n", obj_id, Vertices->cur);
   for (i = 0; i < Vertices->cur-1; i++)
@@ -534,6 +677,8 @@ void SaveMeshDXF(FILE *fileout, int32_t obj_id)
 /* ==================================== */
 void LoadMeshMCM(FILE *filein)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadMeshMCM"
 /* filein doit avoir ete ouvert en lecture */
 /* format: 
    V %d     (Sommets - champ obligatoire)
@@ -552,7 +697,7 @@ void LoadMeshMCM(FILE *filein)
    %d (ind. vertex)
    ...
 
-   F %d     (Faces - champ obligatoire)
+   F %d     (Faces - champ optionnel)
    %d %d %d (face: ind. vertices)
    ...
 
@@ -577,7 +722,7 @@ void LoadMeshMCM(FILE *filein)
     if (buf[0]=='V')
     {
       sscanf(buf+1, "%d", &nvert);
-      Vertices = AllocVertices(nvert);
+      Vertices = MCM_AllocVertices(nvert);
       Vertices->cur = nvert;
       for (i = 0; i < nvert; i++)
       {
@@ -588,7 +733,7 @@ void LoadMeshMCM(FILE *filein)
     else if (buf[0]=='F')
     {
       sscanf(buf+1, "%d", &nfaces);
-      Faces = AllocFaces(nfaces);
+      Faces = MCM_AllocFaces(nfaces);
       Faces->cur = nfaces;
       for (i = 0; i < nfaces; i++)
         fscanf(filein, "%d%d%d", &(Faces->f[i].vert[0]), 
@@ -607,7 +752,7 @@ void LoadMeshMCM(FILE *filein)
     {
       if (nvert == -1)
       {
-        fprintf(stderr, "LoadMeshMCM: bad file format\n");
+        fprintf(stderr, "%s: bad file format\n", F_NAME);
         exit(0);
       }
       for (i = 0; i < nvert; i++)
@@ -620,7 +765,7 @@ void LoadMeshMCM(FILE *filein)
     {
       if (nvert == -1)
       {
-        fprintf(stderr, "LoadMeshMCM: bad file format\n");
+        fprintf(stderr, "%s: bad file format\n", F_NAME);
         exit(0);
       }
       for (i = 0; i < nvert; i++)
@@ -635,7 +780,7 @@ void LoadMeshMCM(FILE *filein)
     {
       if (nfaces == -1)
       {
-        fprintf(stderr, "LoadMeshMCM: bad file format\n");
+        fprintf(stderr, "%s: bad file format\n", F_NAME);
         exit(0);
       }
       for (i = 0; i < nfaces; i++)
@@ -647,9 +792,10 @@ void LoadMeshMCM(FILE *filein)
   } // while (1)
 
  end:
-  if ((nvert == -1) || (nfaces == -1))
+  //  if ((nvert == -1) || (nfaces == -1))
+  if (nvert == -1)
   {
-    fprintf(stderr, "LoadMeshMCM: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
 } /* LoadMeshMCM() */
@@ -657,6 +803,8 @@ void LoadMeshMCM(FILE *filein)
 /* ==================================== */
 void LoadMeshIFS(FILE *filein)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadMeshIFS"
 /* filein doit avoir ete ouvert en lecture */
 /*
 The little-endian IFS (indexed face set) file format is:
@@ -687,18 +835,17 @@ Models "face" along the negative z-direction.  For example, the P51 Mustang
 should fly along its object space -z axis.
 */
 {
-  int32_t i, j, n, nvert=-1, nfaces=-1, nvertfix;
+  int32_t i, nvert=-1, nfaces=-1;
   float version;
 #define sbuf 1024
   char buf[sbuf];
-  char *ret;
   uint32_t s;
 
   s = LE_ReadUnsignedLong(filein);
   fread(buf, sizeof(char), s, filein);
   if (strcmp(buf, "IFS") != 0)
   {
-    fprintf(stderr, "LoadMeshIFS: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
   version = ReadFloat32(filein);
@@ -714,9 +861,9 @@ should fly along its object space -z axis.
   fread(buf, sizeof(char), s, filein);
   nvert = (int32_t)ReadUnsignedLong(filein);
 #ifdef VERBOSE
-  printf("%s: %ld\n", buf, nvert);
+  printf("%s: %ld\n", buf, (long int)nvert);
 #endif
-  Vertices = AllocVertices(nvert);
+  Vertices = MCM_AllocVertices(nvert);
   Vertices->cur = nvert;
   for (i = 0; i < nvert; i++)
   {
@@ -728,9 +875,9 @@ should fly along its object space -z axis.
   fread(buf, sizeof(char), s, filein);
   nfaces = (int32_t)ReadUnsignedLong(filein);
 #ifdef VERBOSE
-  printf("%s: %ld\n", buf, nfaces);
+  printf("%s: %ld\n", buf, (long int)nfaces);
 #endif
-  Faces = AllocFaces(nfaces);
+  Faces = MCM_AllocFaces(nfaces);
   Faces->cur = nfaces;
   for (i = 0; i < nfaces; i++)
   {
@@ -740,14 +887,119 @@ should fly along its object space -z axis.
   }
   if ((nvert == -1) || (nfaces == -1))
   {
-    fprintf(stderr, "LoadMeshIFS: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
 } /* LoadMeshIFS() */
 
 /* ==================================== */
+void LoadMeshCGAL(FILE *filein)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadMeshCGAL"
+/* filein doit avoir ete ouvert en lecture */
+/*
+The file format is:
+
+file :=
+  fileheader +
+  vertex* +
+  tri*
+
+fileheader   := (uint32)numVertices+1  (uint32)numFaces  (uint32)dim
+vertex       := (float32)x  (float32)y [ (float32)z ]
+tri          := (uint32)v0 + (uint32)v1 + (uint32)v2
+*/
+{
+  int32_t i, nvert=-1, nfaces=-1, dim;
+  int32_t *f1, *f2, *f3, nf, F1, F2, F3;
+  double x, y;
+
+  fscanf(filein, "%d%d%d", &nvert, &nfaces, &dim);
+
+  nvert -= 1; // le point 000 est implicite
+#ifdef VERBOSE
+  printf("nombre sommets %ld\n", (long int)nvert);
+  printf("nombre faces %ld\n", (long int)nfaces);
+  printf("dim %ld\n", (long int)dim);
+#endif
+
+  if ((nvert == -1) || (nfaces == -1))
+  {
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
+    exit(0);
+  }
+
+  Vertices = MCM_AllocVertices(nvert);
+
+  if (Vertices == NULL)
+  {
+    fprintf(stderr, "%s: MCM_AllocVertices failed\n", F_NAME);
+    exit(0);
+  }
+
+  Vertices->cur = nvert;
+  for (i = 0; i < nvert; i++)
+  {
+    //    fscanf(filein, "%lf%lf%lf", &x, &y, &z);
+    fscanf(filein, "%lf%lf", &x, &y);
+    //    Vertices->v[i].x = x; Vertices->v[i].y = y; Vertices->v[i].z = z;
+    Vertices->v[i].x = x; Vertices->v[i].y = y; Vertices->v[i].z = 0;
+  } // for i
+
+  f1 = (int32_t *)malloc(nfaces * sizeof(int32_t));
+  f2 = (int32_t *)malloc(nfaces * sizeof(int32_t));
+  f3 = (int32_t *)malloc(nfaces * sizeof(int32_t));
+
+  if ((f1 == NULL) || (f2 == NULL) || (f3 == NULL))
+  {
+    fprintf(stderr, "%s: malloc failed\n", F_NAME);
+    exit(0);
+  }
+
+  nf = 0;
+  for (i = 0; i < nfaces; i++)
+  {
+    fscanf(filein, "%d%d%d", &F1, &F2, &F3);
+    f1[i] = F1; f2[i] = F2; f3[i] = F3; 
+    if ((F1 != 0) && (F2 != 0) && (F3 != 0)) nf++;
+  }
+
+#ifdef VERBOSE
+  printf("nombre faces effectives %ld\n", (long int)nf);
+#endif
+
+  Faces = MCM_AllocFaces(nf);
+
+  if (Faces == NULL)
+  {
+    fprintf(stderr, "%s: MCM_AllocFaces failed\n", F_NAME);
+    exit(0);
+  }
+
+  Faces->cur = nf;
+  nf = 0;
+  for (i = 0; i < nfaces; i++)
+  {
+    if ((f1[i] != 0) && (f2[i] != 0) && (f3[i] != 0)) 
+    {
+      Faces->f[nf].vert[0] = f1[i]-1; 
+      Faces->f[nf].vert[1] = f2[i]-1; 
+      Faces->f[nf].vert[2] = f3[i]-1; 
+      nf++;
+    }
+  }
+
+  free(f3);
+  free(f2);
+  free(f1);
+} /* LoadMeshCGAL() */
+
+/* ==================================== */
 void LoadBuildMCM(FILE *filein)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadBuildMCM"
 /* filein doit avoir ete ouvert en lecture */
 /* format: 
    V %d     (Sommets - champ obligatoire)
@@ -760,7 +1012,7 @@ void LoadBuildMCM(FILE *filein)
   
 */
 {
-  int32_t i, j, n, nvert=-1, nfaces=-1, nvertfix;
+  int32_t i, nvert=-1, nfaces=-1;
   double x, y, z;
 #define sbuf 1024
   char buf[sbuf];
@@ -775,8 +1027,8 @@ void LoadBuildMCM(FILE *filein)
     if (buf[0]=='V')
     {
       sscanf(buf+1, "%d", &nvert);
-      Vertices = AllocVertices(nvert);
-      RBT = CreeRbtVide(nvert);
+      Vertices = MCM_AllocVertices(nvert);
+      RBTP = CreeRbtpVide(nvert);
       vx = (double *)calloc(1,nvert * sizeof(double));
       vy = (double *)calloc(1,nvert * sizeof(double));
       vz = (double *)calloc(1,nvert * sizeof(double));
@@ -789,7 +1041,7 @@ void LoadBuildMCM(FILE *filein)
     else if (buf[0]=='F')
     {
       sscanf(buf+1, "%d", &nfaces);
-      Faces = AllocFaces(nfaces);
+      Faces = MCM_AllocFaces(nfaces);
       for (i = 0; i < nfaces; i++)
       {
         fscanf(filein, "%d%d%d", &f1,  &f2,  &f3);
@@ -801,16 +1053,18 @@ void LoadBuildMCM(FILE *filein)
  end:
   if ((nvert == -1) || (nfaces == -1))
   {
-    fprintf(stderr, "LoadBuildMCM: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
-  RbtTermine(RBT);
+  RbtpTermine(RBTP);
 
 } /* LoadBuildMCM() */
 
 /* ==================================== */
 void LoadBuildVTK(FILE *filein)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadBuildVTK"
 /* filein doit avoir ete ouvert en lecture */
 /* format: 
 # vtk DataFile Version 3.0
@@ -826,7 +1080,7 @@ POLYGONS %d %d     (Faces - champ obligatoire)
    ...
 */
 {
-  int32_t i, j, n, nvert=-1, nfaces=-1, nvertfix;
+  int32_t i, nvert=-1, nfaces=-1;
   double x, y, z;
 #define sbuf 1024
   char buf[sbuf];
@@ -844,8 +1098,8 @@ POLYGONS %d %d     (Faces - champ obligatoire)
 #ifdef VERBOSE
       printf("LoadBuildVTK: loading %d points\n", nvert);
 #endif
-      Vertices = AllocVertices(nvert);
-      RBT = CreeRbtVide(nvert);
+      Vertices = MCM_AllocVertices(nvert);
+      RBTP = CreeRbtpVide(nvert);
       vx = (double *)calloc(1,nvert * sizeof(double));
       vy = (double *)calloc(1,nvert * sizeof(double));
       vz = (double *)calloc(1,nvert * sizeof(double));
@@ -861,13 +1115,13 @@ POLYGONS %d %d     (Faces - champ obligatoire)
 #ifdef VERBOSE
       printf("LoadBuildVTK: loading %d faces\n", nfaces);
 #endif
-      Faces = AllocFaces(nfaces);
+      Faces = MCM_AllocFaces(nfaces);
       for (i = 0; i < nfaces; i++)
       {
         fscanf(filein, "%d%d%d%d", &nf, &f1,  &f2,  &f3);
         if (nf != 3)
         {
-          fprintf(stderr, "LoadMeshVTK: faces must be triangles\n");
+          fprintf(stderr, "%s: faces must be triangles\n", F_NAME);
           exit(0);
         }        
         AddFace(vx[f1], vy[f1], vz[f1], vx[f2], vy[f2], vz[f2], vx[f3], vy[f3], vz[f3]);
@@ -878,10 +1132,10 @@ POLYGONS %d %d     (Faces - champ obligatoire)
  end:
   if ((nvert == -1) || (nfaces == -1))
   {
-    fprintf(stderr, "LoadMeshVTK: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
-  RbtTermine(RBT);
+  RbtpTermine(RBTP);
   free(vx); 
   free(vy); 
   free(vz); 
@@ -890,6 +1144,8 @@ POLYGONS %d %d     (Faces - champ obligatoire)
 /* ==================================== */
 void LoadBuildIFS(FILE *filein)
 /* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadBuildIFS"
 /* filein doit avoir ete ouvert en lecture */
 /*
 The little-endian IFS (indexed face set) file format is:
@@ -920,11 +1176,10 @@ Models "face" along the negative z-direction.  For example, the P51 Mustang
 should fly along its object space -z axis.
 */
 {
-  int32_t i, j, n, nvert=-1, nfaces=-1, nvertfix;
+  int32_t i, nvert=-1, nfaces=-1;
   float version;
 #define sbuf 1024
   char buf[sbuf];
-  char *ret;
   uint32_t s;
   double *vx, *vy, *vz;
   int32_t f1, f2, f3;
@@ -933,7 +1188,7 @@ should fly along its object space -z axis.
   fread(buf, sizeof(char), s, filein);
   if (strcmp(buf, "IFS") != 0)
   {
-    fprintf(stderr, "LoadMeshIFS: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
   version = ReadFloat32(filein);
@@ -949,10 +1204,10 @@ should fly along its object space -z axis.
   fread(buf, sizeof(char), s, filein);
   nvert = (int32_t)ReadUnsignedLong(filein);
 #ifdef VERBOSE
-  printf("%s: %ld\n", buf, nvert);
+  printf("%s: %ld\n", buf, (long int)nvert);
 #endif
-  Vertices = AllocVertices(nvert);
-  RBT = CreeRbtVide(nvert);
+  Vertices = MCM_AllocVertices(nvert);
+  RBTP = CreeRbtpVide(nvert);
   vx = (double *)calloc(1,nvert * sizeof(double));
   vy = (double *)calloc(1,nvert * sizeof(double));
   vz = (double *)calloc(1,nvert * sizeof(double));
@@ -966,9 +1221,9 @@ should fly along its object space -z axis.
   fread(buf, sizeof(char), s, filein);
   nfaces = (int32_t)ReadUnsignedLong(filein);
 #ifdef VERBOSE
-  printf("%s: %ld\n", buf, nfaces);
+  printf("%s: %ld\n", buf, (long int)nfaces);
 #endif
-  Faces = AllocFaces(nfaces);
+  Faces = MCM_AllocFaces(nfaces);
   Faces->cur = nfaces;
   for (i = 0; i < nfaces; i++)
   {
@@ -980,7 +1235,7 @@ should fly along its object space -z axis.
 
   if ((nvert == -1) || (nfaces == -1))
   {
-    fprintf(stderr, "LoadMeshIFS: bad file format\n");
+    fprintf(stderr, "%s: bad file format\n", F_NAME);
     exit(0);
   }
   free(vx); 
@@ -988,6 +1243,32 @@ should fly along its object space -z axis.
   free(vz); 
 } /* LoadBuildIFS() */
 
+/* ==================================== */
+void LoadBuildCGAL(FILE *filein)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "LoadBuildCGAL"
+/* filein doit avoir ete ouvert en lecture */
+/*
+The file format is:
+
+file :=
+  fileheader +
+  vertex* +
+  tri*
+
+fileheader   := (uint32)numVertices+1  (uint32)numFaces  (uint32)dummy
+vertex       := (float32)x + (float32)y + (float32)z
+tri          := (uint32)v0 + (uint32)v1 + (uint32)v2
 
 
+A FINIR !!!!!!!!!!
 
+
+*/
+{
+
+  fprintf(stderr, "%s: Not Yet Implemented\n", F_NAME);
+  exit(0);
+
+} /* LoadBuildCGAL() */

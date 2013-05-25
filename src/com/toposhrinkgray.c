@@ -1,9 +1,42 @@
-/* $Id: toposhrinkgray.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file toposhrinkgray.c
 
 \brief topologically controled grayscale shrinking (one step)
 
-<B>Usage:</B> toposhrinkgray in.pgm connex t+min t+max t--min t--max <0|a|d> [inhibit] out.pgm
+<B>Usage:</B> toposhrinkgray in.pgm connex t+min t+max t--min t--max {0|a|d} [inhibit] out.pgm
 
 <B>Description:</B>
 Topologically controled grayscale shrinking (one step).
@@ -61,7 +94,7 @@ int32_t ltoposhrinkgray(struct xvimage *image,
                         int32_t tpmax, 
                         int32_t tmmmin, 
                         int32_t tmmmax,
-                        uint8_t(*ThinningMethod)(uint8_t*, int32_t, int32_t, int32_t));
+                        uint8_t(*ThinningMethod)(uint8_t*, index_t, index_t, index_t));
                        
 int32_t ltoposhrinkgray3d(struct xvimage *image,
                           struct xvimage * imageinhibit,
@@ -70,7 +103,7 @@ int32_t ltoposhrinkgray3d(struct xvimage *image,
                           int32_t tpmax, 
                           int32_t tmmmin, 
                           int32_t tmmmax,
-                          uint8_t(*ThinningMethod)(uint8_t*, int32_t, int32_t, int32_t, int32_t));
+                          uint8_t(*ThinningMethod)(uint8_t*, index_t, index_t, index_t, index_t));
                      
 
 
@@ -80,12 +113,12 @@ int main(int argc, char** argv)
     int32_t connex;
     struct xvimage * inhibimage = NULL;
     int32_t tpmin, tpmax, tmmmin, tmmmax;
-    uint8_t(*pValAb)(uint8_t*, int32_t, int32_t, int32_t);
-    uint8_t(*pValAb3d)(uint8_t*, int32_t, int32_t, int32_t, int32_t);
+    uint8_t(*pValAb)(uint8_t*, index_t, index_t, index_t);
+    uint8_t(*pValAb3d)(uint8_t*, index_t, index_t, index_t, index_t);
 
     if ((argc != 9) && (argc != 10))
     {
-        fprintf(stderr, "usage: %s in.pgm connex t+min t+max t--min t--max <0|a|d> [inhibit] out.pgm\n", argv[0]);
+        fprintf(stderr, "usage: %s in.pgm connex t+min t+max t--min t--max {0|a|d} [inhibit] out.pgm\n", argv[0]);
         exit(1);
     }
 
@@ -112,7 +145,7 @@ int main(int argc, char** argv)
         if (strcmp(argv[7], "a") == 0)
         {
             pValAb = alpha8m;
-            pValAb3d = alpha26m;
+            pValAb3d = mctopo3d_alpha26m;
         }
         else
         {
@@ -121,7 +154,7 @@ int main(int argc, char** argv)
                 if ((tpmin == 1) && (tpmax == 1) && (tmmmin == 1) && (tmmmin == 1))
                 {
                     if (connex == 8) pValAb = delta8m; else pValAb = delta4m;
-                    if (connex == 26) pValAb3d = delta26m; else pValAb3d = delta6m;
+                    if (connex == 26) pValAb3d = mctopo3d_delta26m; else pValAb3d = mctopo3d_delta6m;
                 }
                 else
                 {
@@ -176,9 +209,9 @@ int main(int argc, char** argv)
 
 /* ==================================== */
 int32_t largepdestr4(uint8_t *img,          /* pointeur base image */
-                     int32_t p,                       /* index du point */
-                     int32_t rs,                      /* taille rangee */
-                     int32_t N,                       /* taille de l'image */
+                     index_t p,                       /* index du point */
+                     index_t rs,                      /* taille rangee */
+                     index_t N,                       /* taille de l'image */
                      int32_t t8pmin,
                      int32_t t8pmax,
                      int32_t t4mmmin,
@@ -201,9 +234,9 @@ int32_t largepdestr4(uint8_t *img,          /* pointeur base image */
 
 /* ==================================== */
 int32_t largepdestr8(uint8_t *img,          /* pointeur base image */
-                     int32_t p,                       /* index du point */
-                     int32_t rs,                      /* taille rangee */
-                     int32_t N,                       /* taille image */
+                     index_t p,                       /* index du point */
+                     index_t rs,                      /* taille rangee */
+                     index_t N,                       /* taille image */
                      int32_t t4pmin,
                      int32_t t4pmax,
                      int32_t t8mmmin,
@@ -229,17 +262,15 @@ int32_t ltoposhrinkgray(struct xvimage *image,
                         int32_t tpmax, 
                         int32_t tmmmin, 
                         int32_t tmmmax,
-                        uint8_t(*ThinningMethod)(uint8_t*, int32_t, int32_t, int32_t))
+                        uint8_t(*ThinningMethod)(uint8_t*, index_t, index_t, index_t))
         /* ==================================== */
 #undef F_NAME
 #define F_NAME "ltoposhrinkgray"
 { 
-    int32_t x;                       /* index muet de pixel */
-    int32_t y;                       /* index muet (generalement un voisin de x) */
-    int32_t k;                       /* index muet */
-    int32_t rs = rowsize(image);     /* taille ligne */
-    int32_t cs = colsize(image);     /* taille colonne */
-    int32_t N = rs * cs;             /* taille image */
+    index_t x;                       /* index muet de pixel */
+    index_t rs = rowsize(image);     /* taille ligne */
+    index_t cs = colsize(image);     /* taille colonne */
+    index_t N = rs * cs;             /* taille image */
     uint8_t *F = UCHARDATA(image);      /* l'image de depart */
     struct xvimage *travail = copyimage(image);
     uint8_t *G = UCHARDATA(travail);/* l'image de travail */
@@ -303,10 +334,10 @@ int32_t ltoposhrinkgray(struct xvimage *image,
 
 /* ==================================== */
 int32_t largepdestr6(uint8_t *img,          /* pointeur base image */
-                     int32_t p,                       /* index du point */
-                     int32_t rs,                      /* taille rangee */
-                     int32_t ps,                      /* taille plan */
-                     int32_t N,                       /* taille de l'image */
+                     index_t p,                       /* index du point */
+                     index_t rs,                      /* taille rangee */
+                     index_t ps,                      /* taille plan */
+                     index_t N,                       /* taille de l'image */
                      int32_t t26pmin,
                      int32_t t26pmax,
                      int32_t t6mmmin,
@@ -319,16 +350,16 @@ int32_t largepdestr6(uint8_t *img,          /* pointeur base image */
 //         return 0;
 // 
 //     preparecubesh(img, p, img[p], rs, ps, N);
-    return ((t26pmin <= t26p(img, p, rs, ps, N)) && (t26p(img, p, rs, ps, N) <= t26pmax) &&
-            (t6mmmin <= t6mm(img, p, rs, ps, N)) && (t6mm(img, p, rs, ps, N) <= t6mmmax));
+    return ((t26pmin <= mctopo3d_t26p(img, p, rs, ps, N)) && (mctopo3d_t26p(img, p, rs, ps, N) <= t26pmax) &&
+            (t6mmmin <= mctopo3d_t6mm(img, p, rs, ps, N)) && (mctopo3d_t6mm(img, p, rs, ps, N) <= t6mmmax));
 } /* largepdestr6() */
 
 /* ==================================== */
 int32_t largepdestr26(uint8_t *img,          /* pointeur base image */
-                        int32_t p,                       /* index du point */
-                        int32_t rs,                      /* taille rangee */
-                        int32_t ps,                      /* taille plan */
-                        int32_t N,                       /* taille image */
+                        index_t p,                       /* index du point */
+                        index_t rs,                      /* taille rangee */
+                        index_t ps,                      /* taille plan */
+                        index_t N,                       /* taille image */
                         int32_t t6pmin,
                         int32_t t6pmax,
                         int32_t t26mmmin,
@@ -340,8 +371,8 @@ int32_t largepdestr26(uint8_t *img,          /* pointeur base image */
 //          (p%rs == 0) || (p%rs == rs-1))     /* premiere ou derniere ligne */
 //         return 0;
 //     preparecubesh(img, p, img[p], rs, ps, N);
-    return ((t6pmin <= t6p(img, p, rs, ps, N)) && (t6p(img, p, rs, ps, N) <= t6pmax) &&
-            (t26mmmin <= t26mm(img, p, rs, ps, N)) && (t26mm(img, p, rs, ps, N) <= t26mmmax));
+    return ((t6pmin <= mctopo3d_t6p(img, p, rs, ps, N)) && (mctopo3d_t6p(img, p, rs, ps, N) <= t6pmax) &&
+            (t26mmmin <= mctopo3d_t26mm(img, p, rs, ps, N)) && (mctopo3d_t26mm(img, p, rs, ps, N) <= t26mmmax));
 } /* largepdestr26() */
 
 /* ==================================== */
@@ -352,25 +383,23 @@ int32_t ltoposhrinkgray3d(struct xvimage *image,
                           int32_t tpmax, 
                           int32_t tmmmin, 
                           int32_t tmmmax,
-                          uint8_t(*ThinningMethod)(uint8_t*, int32_t, int32_t, int32_t, int32_t))
+                          uint8_t(*ThinningMethod)(uint8_t*, index_t, index_t, index_t, index_t))
         /* ==================================== */
 #undef F_NAME
 #define F_NAME "ltoposhrinkgray3d"
 { 
-    int32_t x;                       /* index muet de pixel */
-    int32_t y;                       /* index muet (generalement un voisin de x) */
-    int32_t k;                       /* index muet */
-    int32_t rs = rowsize(image);     /* taille ligne */
-    int32_t cs = colsize(image);     /* taille colonne */
-    int32_t ps = rs * cs;            /* taille plan */
-    int32_t ds = depth(image);       /* nombre plans */
-    int32_t N = ds * ps;             /* taille image */
+    index_t x;                       /* index muet de pixel */
+    index_t rs = rowsize(image);     /* taille ligne */
+    index_t cs = colsize(image);     /* taille colonne */
+    index_t ps = rs * cs;            /* taille plan */
+    index_t ds = depth(image);       /* nombre plans */
+    index_t N = ds * ps;             /* taille image */
     uint8_t *F = UCHARDATA(image);  /* l'image de depart */
     struct xvimage *travail = copyimage(image);
     uint8_t *G = UCHARDATA(travail);/* l'image de travail */
     uint8_t *I = NULL;
 
-    init_topo3d();
+    mctopo3d_init_topo3d();
     
     if (imageinhibit != NULL)
     {
@@ -418,7 +447,7 @@ int32_t ltoposhrinkgray3d(struct xvimage *image,
         }
     }
 
-    termine_topo3d();
+    mctopo3d_termine_topo3d();
     freeimage(travail);
     return(1);
 } /* ltoposhrinkgray3d() */

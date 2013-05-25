@@ -1,9 +1,42 @@
-/* $Id: seuilauto.c,v 1.0 2003/05/12 */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file seuilauto.c
 
 \brief automatic threshold
 
-<B>Usage:</B> seuilauto in.pgm L <min|max> [n] out.pgm
+<B>Usage:</B> seuilauto in.pgm L {min|max} [n] out.pgm
 
 <B>Description:</B>
 Determine automatically a threshold thanks to the smoothed histogram
@@ -35,26 +68,25 @@ to be kept:
 #include <lhisto.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   int32_t seuil;
   struct xvimage * image;
   struct xvimage * imagebin;
-  int32_t rs;          /* taille ligne */
-  int32_t cs;          /* taille colonne */
-  int32_t d;           /* nb. plans */
-  int32_t N;           /* taille image */
+  index_t rs;          /* taille ligne */
+  index_t cs;          /* taille colonne */
+  index_t d;           /* nb. plans */
+  index_t N;           /* taille image */
   uint8_t *F;
-  uint32_t *FL;
-  uint32_t * histo;
-  uint32_t * histolisse;
-  int32_t x, y, z, somme, diff, compteur, lissage;
+  int32_t *FL;
+  index_t * histo;
+  index_t * histolisse, somme;
+  int32_t x, y, diff, compteur, lissage;
 
   if ((argc != 5) && (argc != 6))
   {
-    fprintf(stderr, "usage: %s filein.pgm L <min|max> [n] fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm L {min|max} [n] fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -79,7 +111,7 @@ int main(argc, argv)
 
 
 /* Initialisation de l'histogramme */
-  histo = (uint32_t *)calloc((NDG_MAX - NDG_MIN + 1) * sizeof(int32_t), 1);
+  histo = (index_t *)calloc((NDG_MAX - NDG_MIN + 1) * sizeof(index_t), 1);
   if (histo == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", argv[0]);
@@ -96,7 +128,7 @@ int main(argc, argv)
 
   
 /* Initialisation de l'histogramme lisse*/
-  histolisse = (uint32_t *)calloc((NDG_MAX - NDG_MIN + 1) * sizeof(int32_t), 1);
+  histolisse = (index_t *)calloc((NDG_MAX - NDG_MIN + 1) * sizeof(index_t), 1);
   if (histolisse == NULL)
   {
     fprintf(stderr, "%s: malloc failed\n", argv[0]);
@@ -109,8 +141,8 @@ int main(argc, argv)
   {
     somme = 0;
     for (y=-lissage/2; y<=lissage/2; y++)
-      if ((x-y)>=0) somme = somme + (int32_t)histo[x-y];
-    histolisse [x]=(uint32_t)(somme/(lissage+1));
+      if ((x-y)>=0) somme = somme + histo[x-y];
+    histolisse [x]=(index_t)(somme/(lissage+1));
   }
 
 
@@ -167,7 +199,7 @@ int main(argc, argv)
   }
   else
   {
-    fprintf(stderr, "usage: %s filein.pgm L <min|max> fileout.pgm\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm L {min|max} fileout.pgm\n", argv[0]);
     exit(1);
   }
 
@@ -182,7 +214,7 @@ int main(argc, argv)
       exit(1);
     }
     F = UCHARDATA(imagebin);
-    FL = ULONGDATA(image);
+    FL = SLONGDATA(image);
     for (x = 0; x < N; x++) F[x] = (uint8_t)FL[x];
     writeimage(imagebin, argv[argc-1]);
     freeimage(imagebin);

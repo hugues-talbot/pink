@@ -1,4 +1,37 @@
-/* $Id: mcimage.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
    Librairie mcimage : 
 
@@ -7,77 +40,152 @@
 
    Michel Couprie 1996
 
-   Avertissement: la lecture des fichiers PGM en 65535 ndg (ascii) provoque un sous-echantillonage
-   a 256 ndg. A MODIFIER.
-
-   Update septembre 2000 : lecture de fichiers BMP truecolor
-   Update octobre 2000 : ecriture de fichiers BMP truecolor
-   Update janvier 2002 : lecture d'elements structurants (readse)
-   Update mars 2002 : nettoie la gestion des noms
-   Update decembre 2002 : type FLOAT
-   Update decembre 2002 : convertgen
-   Update avril 2003 : convertfloat, convertlong
-   Update janvier 2006 : adoption des nouveaux "magic numbers" pour
-                         les formats byte 3d, idem 2d (P2 et P5)
-			 P7 (raw 3d) est conservé pour la compatibilité
-   Update mars 2008 : fixe bug perte mémoire dans convertXXXX
-   Update aout 2008 : nouveaux formats pgm étendus PC, PD pour les "double"
+   MC Update septembre 2000 : lecture de fichiers BMP truecolor
+   MC Update octobre 2000 : ecriture de fichiers BMP truecolor
+   MC Update janvier 2002 : lecture d'elements structurants (readse)
+   MC Update mars 2002 : nettoie la gestion des noms
+   MC Update decembre 2002 : type FLOAT
+   MC Update decembre 2002 : convertgen
+   MC Update avril 2003 : convertfloat, convertlong
+   MC Update janvier 2006 : adoption des nouveaux "magic numbers" pour
+                            les formats byte 3d, idem 2d (P2 et P5)
+		            P7 (raw 3d) est conservé pour la compatibilité
+   MC Update mars 2008 : fixe bug perte mémoire dans convertXXXX
+   MC Update aout 2008 : nouveaux formats pgm étendus PC, PD pour les "double"
+   MC Update janvier 2011 : types COMPLEX DCOMPLEX
+   MC Update mars 2011 : lecture/écriture des images 'short'
+   HT Update avril 2011 : lecture des images TIFF
+   MC Update avril 2011 : les images couleurs sont maintenant lues 
+                          par readimage comme 'multiband'
+			  les images 2D à 3 bandes sont traitées 
+			  par writeimage comme des images couleurs 
+   MC Update juillet 2011 : fonctions writelist2, writelist3
 */
 
 #include <stdio.h>
 #include <stdint.h>
+
+#ifndef INT32_MAX
+# define INT32_MAX		(2147483647)
+#endif
+
+// #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
+#ifdef UNIXIO
+#  include <unistd.h>
+#else /* NOT UNIXIO */
+#  include <stdlib.h>
+#  include <io.h>
+#endif /* NOT UNIXIO */
+
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <mcutil.h>
-#include <mcimage.h>
-#include <mccodimage.h>
+#include <assert.h>
+
+
+#ifdef HAVE_TIFF_LIB
+#  include "liarp.h"
+#  include "liarwrap.h"
+#  include "savetiff.h"
+#endif
+/* HAVE_TIFF_LIB */
+
+/* keep those private */
+#include "mcutil.h"
+#include "mcimage.h"
+#include "mccodimage.h"
 
 #define BUFFERSIZE 10000
-
 /*
 #define VERBOSE
 */
 
+// define the following to print a warning when allocating huge image (>=2Gb)
+#define WARN_HUGE
+
+// Fopen strategy
+__pink__inline FILE* pink_fopen_read( char * filename )
+{
+# ifdef UNIXIO
+  return fopen( filename, "r" );
+# else /* NOT UNIXIO */
+#   ifdef DOSIO
+    return fopen( filename, "rb" );
+#   else /* NOT DOSIO */
+    //#     warning: FALLING BACK ON DEFAULT
+      return fopen( filename, "rb" );
+#   endif /* NOT DOSIO */
+# endif /* NOT UNIXIO */
+} /* pink_fopen_read */
+
+__pink__inline FILE* pink_fopen_write( char * filename )
+{
+# ifdef UNIXIO
+  return fopen( filename, "w" );
+# else /* NOT UNIXIO */
+#   ifdef DOSIO
+    return fopen( filename, "wb" );
+#   else /* NOT DOSIO */
+    //#     warning: FALLING BACK ON DEFAULT
+      return fopen( filename, "wb" );
+#   endif /* NOT DOSIO */
+# endif /* NOT UNIXIO */
+} /* pink_fopen_write */
+
+
 /* ==================================== */
 struct xvimage *allocimage(
   char * name,
-  int32_t rs,   /* row size */
-  int32_t cs,   /* col size */
-  int32_t d,    /* depth */
-  int32_t t)    /* data type */
+  index_t rs,   /* row size */
+  index_t cs,   /* col size */
+  index_t ds,   /* depth */
+  int32_t dt)   /* data type */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "allocimage"
 {
-  int32_t N = rs * cs * d;             /* taille image */
+  index_t N = rs * cs * ds;             /* taille image */
   struct xvimage *g;
-  int32_t ts;                          /* type size */
+  index_t es;                          /* type size */
 
-  switch (t)
+#ifdef WARN_HUGE
+  if (((int64_t)rs * (int64_t)cs * (int64_t)ds) >= HUGE_IMAGE_SIZE)
   {
-    case VFF_TYP_BIT:      ts = 1; break;
-    case VFF_TYP_1_BYTE:   ts = 1; break;
-    case VFF_TYP_2_BYTE:   ts = 2; break;
-    case VFF_TYP_4_BYTE:   ts = 4; break;
-    case VFF_TYP_FLOAT:    ts = sizeof(float); break;
-    case VFF_TYP_DOUBLE:   ts = sizeof(double); break;
-    default: fprintf(stderr,"%s : bad data type %d\n", F_NAME, t);
+    fprintf(stderr, "%s: WARNING huge image\n", F_NAME);
+  }
+#endif
+
+  switch (dt)
+  {
+    case VFF_TYP_BIT:      es = 1; break;
+    case VFF_TYP_1_BYTE:   es = 1; break;
+    case VFF_TYP_2_BYTE:   es = 2; break;
+    case VFF_TYP_4_BYTE:   es = 4; break;
+    case VFF_TYP_FLOAT:    es = sizeof(float); break;
+    case VFF_TYP_DOUBLE:   es = sizeof(double); break;
+    case VFF_TYP_COMPLEX:  es = 2*sizeof(float); break;
+    case VFF_TYP_DCOMPLEX: es = 2*sizeof(double); break;
+    default: fprintf(stderr,"%s: bad data type %d\n", F_NAME, dt);
              return NULL;
   } /* switch (t) */
 
   g = (struct xvimage *)malloc(sizeof(struct xvimage));
   if (g == NULL)
   {   
-    fprintf(stderr,"%s : malloc failed (%d bytes)\n", F_NAME, sizeof(struct xvimage));
+    fprintf(stderr,"%s: malloc failed (%d bytes)\n", F_NAME, (int)sizeof(struct xvimage));
     return NULL;
   }
 
-  g->image_data = (void *)calloc(1, N * ts);
-  if (g == NULL)
+  g->image_data = (void *)calloc(1, N * es);
+  if (g->image_data == NULL)
   {   
-    fprintf(stderr,"%s : calloc failed (%d bytes)\n", F_NAME, N * ts);
+#ifdef MC_64_BITS
+    fprintf(stderr,"%s: calloc failed (%lld bytes)\n", F_NAME, (long long int)(N * es));
+#else
+    fprintf(stderr,"%s: calloc failed (%ld bytes)\n", F_NAME, (long int)(N * es));
+#endif
     return NULL;
   }
 
@@ -85,7 +193,7 @@ struct xvimage *allocimage(
   {
     g->name = (char *)calloc(1,strlen(name)+1);
     if (g->name == NULL)
-    {   fprintf(stderr,"%s : malloc failed for name\n", F_NAME);
+    {   fprintf(stderr,"%s: malloc failed for name\n", F_NAME);
         return NULL;
     }
     strcpy((char *)(g->name), name);
@@ -95,12 +203,97 @@ struct xvimage *allocimage(
 
   rowsize(g) = rs;
   colsize(g) = cs;
-  depth(g) = d;
-  datatype(g) = t;
+  depth(g) = ds;
+  datatype(g) = dt;
+  tsize(g) = 1;
+  nbands(g) = 1;
   g->xdim = g->ydim = g->zdim = 0.0;
+  g->xmin = g->ymin = g->zmin = 0;
+  g->xmax = g->ymax = g->zmax = 0;
 
   return g;
 } /* allocimage() */
+
+/* ==================================== */
+struct xvimage *allocmultimage(
+  char * name,
+  index_t rs,   /* row size */
+  index_t cs,   /* col size */
+  index_t ds,   /* depth */
+  index_t ts,   /* time size */
+  index_t nb,   /* nb of bands */
+  int32_t dt)   /* data type */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "allocmultimage"
+{
+  index_t N = rs * cs * ds * ts * nb; /* taille image */
+  struct xvimage *g;
+  index_t es;                    /* type size */
+
+#ifdef WARN_HUGE
+  if (((int64_t)rs * (int64_t)cs * (int64_t)ds * (int64_t)ts * (int64_t)nb) >= HUGE_IMAGE_SIZE)
+  {
+    fprintf(stderr, "%s: WARNING huge image\n", F_NAME);
+  }
+#endif
+
+  switch (dt)
+  {
+    case VFF_TYP_BIT:      es = 1; break;
+    case VFF_TYP_1_BYTE:   es = 1; break;
+    case VFF_TYP_2_BYTE:   es = 2; break;
+    case VFF_TYP_4_BYTE:   es = 4; break;
+    case VFF_TYP_FLOAT:    es = sizeof(float); break;
+    case VFF_TYP_DOUBLE:   es = sizeof(double); break;
+    case VFF_TYP_COMPLEX:  es = 2*sizeof(float); break;
+    case VFF_TYP_DCOMPLEX: es = 2*sizeof(double); break;
+    default: fprintf(stderr,"%s: bad data type %d\n", F_NAME, dt);
+             return NULL;
+  } /* switch (t) */
+
+  g = (struct xvimage *)malloc(sizeof(struct xvimage));
+  if (g == NULL)
+  {   
+    fprintf(stderr,"%s: malloc failed (%d bytes)\n", F_NAME, (int)sizeof(struct xvimage));
+    return NULL;
+  }
+
+  g->image_data = (void *)calloc(1, N * es);
+  if (g->image_data == NULL)
+  {   
+#ifdef MC_64_BITS
+    fprintf(stderr,"%s: calloc failed (%lld bytes)\n", F_NAME, (long long int)(N * es));
+#else
+    fprintf(stderr,"%s: calloc failed (%ld bytes)\n", F_NAME, (long int)(N * es));
+#endif
+    return NULL;
+  }
+
+  if (name != NULL)
+  {
+    g->name = (char *)calloc(1,strlen(name)+1);
+    if (g->name == NULL)
+    {   fprintf(stderr,"%s: malloc failed for name\n", F_NAME);
+        return NULL;
+    }
+    strcpy((char *)(g->name), name);
+  }
+  else
+    g->name = NULL;
+
+  rowsize(g) = rs;
+  colsize(g) = cs;
+  depth(g) = ds;
+  tsize(g) = ts;
+  nbands(g) = nb;
+  datatype(g) = dt;
+  g->xdim = g->ydim = g->zdim = 0.0;
+  g->xmin = g->ymin = g->zmin = 0;
+  g->xmax = g->ymax = g->zmax = 0;
+
+  return g;
+} /* allocmultimage() */
 
 /* ==================================== */
 void razimage(struct xvimage *f)
@@ -108,33 +301,37 @@ void razimage(struct xvimage *f)
 #undef F_NAME
 #define F_NAME "razimage"
 {
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t N = rs * cs * ds;        /* taille image */
-  int32_t ts; 
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb plans */
+  index_t ts = tsize(f);           /* time size */
+  index_t nb = nbands(f);          /* nb of bands */
+  index_t N = rs * cs * ds * ts * nb;   /* taille image */
+  index_t es; 
   uint8_t *F = UCHARDATA(f);
 
   switch(datatype(f))
   {
-    case VFF_TYP_BIT:      ts = 1; break;
-    case VFF_TYP_1_BYTE:   ts = 1; break;
-    case VFF_TYP_2_BYTE:   ts = 2; break;
-    case VFF_TYP_4_BYTE:   ts = 4; break;
-    case VFF_TYP_FLOAT:    ts = sizeof(float); break;
-    case VFF_TYP_DOUBLE:   ts = sizeof(double); break;
-    default: fprintf(stderr,"%s : bad data type %d\n", F_NAME, datatype(f));
+    case VFF_TYP_BIT:      es = 1; break;
+    case VFF_TYP_1_BYTE:   es = 1; break;
+    case VFF_TYP_2_BYTE:   es = 2; break;
+    case VFF_TYP_4_BYTE:   es = 4; break;
+    case VFF_TYP_FLOAT:    es = sizeof(float); break;
+    case VFF_TYP_DOUBLE:   es = sizeof(double); break;
+    case VFF_TYP_COMPLEX:  es = 2*sizeof(float); break;
+    case VFF_TYP_DCOMPLEX: es = 2*sizeof(double); break;
+    default: fprintf(stderr,"%s: bad data type %d\n", F_NAME, datatype(f));
              return;
   } /* switch (t) */
-  memset(F, 0, N*ts);
+  memset(F, 0, N * es);
 } /* razimage() */
 
 /* ==================================== */
 struct xvimage *allocheader(
   char * name,
-  int32_t rs,   /* row size */
-  int32_t cs,   /* col size */
-  int32_t d,    /* depth */
+  index_t rs,   /* row size */
+  index_t cs,   /* col size */
+  index_t d,    /* depth */
   int32_t t)    /* data type */
 /* ==================================== */
 #undef F_NAME
@@ -144,14 +341,14 @@ struct xvimage *allocheader(
 
   g = (struct xvimage *)malloc(sizeof(struct xvimage));
   if (g == NULL)
-  {   fprintf(stderr,"%s : malloc failed\n", F_NAME);
+  {   fprintf(stderr,"%s: malloc failed\n", F_NAME);
       return NULL;
   }
   if (name != NULL)
   {
     g->name = (char *)calloc(1,strlen(name)+1);
     if (g->name == NULL)
-    {   fprintf(stderr,"%s : malloc failed for name\n", F_NAME);
+    {   fprintf(stderr,"%s: malloc failed for name\n", F_NAME);
         return NULL;
     }
     strcpy((char *)(g->name), name);
@@ -177,14 +374,12 @@ int32_t showheader(char * name)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, c;
+  struct stat fdstat;
+  index_t rs, cs, ds, nb, c, fs, es;
   char *read;
-#ifdef UNIXIO
-  fd = fopen(name,"r");
-#endif
-#ifdef DOSIO
-  fd = fopen(name,"rb");
-#endif
+
+  fd = pink_fopen_read(name);
+
   if (!fd)
   {
     fprintf(stderr, "%s: file not found: %s\n", F_NAME, name);
@@ -199,25 +394,27 @@ int32_t showheader(char * name)
   }
   if (buffer[0] != 'P')
   {   
-    fprintf(stderr,"%s : invalid image format : %c%c\n", F_NAME, buffer[0], buffer[1]);
+    fprintf(stderr,"%s: invalid image format: %c%c\n", F_NAME, buffer[0], buffer[1]);
     return 0;
   }
   switch (buffer[1])
   {
-    case '2': printf("type : P%c (ascii byte)\n", buffer[1]); break;
-    case '3': printf("type : P%c (ascii byte rgb)\n", buffer[1]); break;
-    case '5': printf("type : P%c (raw byte)\n", buffer[1]); break;
-    case '6': printf("type : P%c (raw byte rgb)\n", buffer[1]); break;
-    case '7': printf("type : P%c (raw byte 3d - ext. MC [OBSOLETE - USE P5])\n", buffer[1]); break;
-    case '8': printf("type : P%c (raw int32_t - ext. MC)\n", buffer[1]); break;
-    case '9': printf("type : P%c (raw float - ext. MC)\n", buffer[1]); break;
-    case 'A': printf("type : P%c (ascii float - ext. LN)\n", buffer[1]); break;
-    case 'B': printf("type : P%c (ascii int32_t - ext. MC)\n", buffer[1]); break;
-    case 'C': printf("type : P%c (raw double - ext. MC)\n", buffer[1]); break;
-    case 'D': printf("type : P%c (ascii double - ext. LN)\n", buffer[1]); break;
+    case '2': printf("type: P%c (ascii byte)\n", buffer[1]); es = sizeof(int8_t); break;
+    case '3': printf("type: P%c (ascii byte rgb)\n", buffer[1]); es = sizeof(int8_t); break;
+    case '5': printf("type: P%c (raw byte)\n", buffer[1]); es = sizeof(int8_t); break;
+    case '6': printf("type: P%c (raw byte rgb)\n", buffer[1]); es = sizeof(int8_t); break;
+    case '7': printf("type: P%c (raw byte 3d - ext. MC [OBSOLETE - USE P5])\n", buffer[1]); es = sizeof(int8_t); break;
+    case '8': printf("type: P%c (raw int32_t - ext. MC)\n", buffer[1]); es = sizeof(int32_t); break;
+    case '9': printf("type: P%c (raw float - ext. MC)\n", buffer[1]); es = sizeof(float); break;
+    case 'A': printf("type: P%c (ascii float - ext. LN)\n", buffer[1]); es = sizeof(float); break;
+    case 'B': printf("type: P%c (ascii int32_t - ext. MC)\n", buffer[1]); es = sizeof(int32_t); break;
+    case 'C': printf("type: P%c (raw double - ext. MC)\n", buffer[1]); es = sizeof(double); break;
+    case 'D': printf("type: P%c (ascii double - ext. LN)\n", buffer[1]); es = sizeof(double); break;
+    case 'E': printf("type: P%c (raw single precision complex - ext. MC)\n", buffer[1]); es = sizeof(fcomplex); break;
+    case 'F': printf("type: P%c (ascii single precision complex - ext. MC)\n", buffer[1]); es = sizeof(fcomplex); break;
               break;
     default:
-      fprintf(stderr,"%s : invalid image format : P%c\n", F_NAME, buffer[1]);
+      fprintf(stderr,"%s: invalid image format: P%c\n", F_NAME, buffer[1]);
       return 0;
   } /* switch */
 
@@ -230,17 +427,51 @@ int32_t showheader(char * name)
       return 0;
     }
     if (buffer[0] == '#') /* commentaire */
-      printf("comment : %s", buffer+1);
+      printf("comment: %s", buffer+1);
   } while (!isdigit(buffer[0]));
 
-  c = sscanf(buffer, "%d %d %d", &rs, &cs, &d);
-  if (c == 2) printf("size : rowsize = %d ; colsize = %d\n", rs, cs);
-  else if (c == 3) printf("size : rowsize = %d ; colsize = %d ; depth = %d\n", rs, cs, d);
+#ifdef MC_64_BITS
+  c = sscanf(buffer, "%lld %lld %lld %lld", (long long int *)&rs, (long long int *)&cs, (long long int *)&ds, (long long int *)&nb);
+#else
+  c = sscanf(buffer, "%d %d %d %d", (int *)&rs, (int *)&cs, (int *)&ds, (int *)&nb);
+#endif
+  if (c == 2) 
+  {
+#ifdef MC_64_BITS
+    printf("size: rowsize = %lld ; colsize = %lld\n", (long long int)rs, (long long int)cs);
+#else
+    printf("size: rowsize = %d ; colsize = %d\n", rs, cs);
+#endif
+    ds = nb = 1;
+  }
+  else if (c == 3) 
+  {
+#ifdef MC_64_BITS
+    printf("size: rowsize = %lld ; colsize = %lld ; depth = %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+    printf("size: rowsize = %d ; colsize = %d ; depth = %d\n", rs, cs, ds); 
+#endif
+    nb = 1;
+  }
+  else if (c == 4) 
+#ifdef MC_64_BITS
+    printf("size: rowsize = %lld ; colsize = %lld ; depth = %lld ; n. bands = %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb);
+#else
+    printf("size: rowsize = %d ; colsize = %d ; depth = %d ; n. bands = %d\n", rs, cs, ds, nb);
+#endif
   else
   {   
-    fprintf(stderr,"%s : invalid image format : cannot find image size\n", F_NAME);
+    fprintf(stderr,"%s: invalid image format: cannot find image size\n", F_NAME);
     return 0;
   }
+
+  c = stat(name, &fdstat); assert(c == 0);
+  fs = (index_t)fdstat.st_size;
+#ifdef MC_64_BITS
+  printf("header size = %lld\n", (long long int)(fs - (es * rs * cs * ds * nb)));
+#else
+  printf("header size = %d\n", fs - (es * rs * cs * ds * nb));
+#endif
 
   fclose(fd);
   return 1;
@@ -261,28 +492,33 @@ struct xvimage *copyimage(struct xvimage *f)
 #undef F_NAME
 #define F_NAME "copyimage"
 {
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t N = rs * cs * ds;        /* taille image */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb plans */
+  index_t ts = tsize(f);           /* time size */
+  index_t nb = nbands(f);          /* nb of bands */
+  index_t N = rs * cs * ds * ts * nb;        /* taille image */
   int32_t type = datatype(f);
   struct xvimage *g;
 
-  g = allocimage(NULL, rs, cs, ds, type);
+  g = allocmultimage(NULL, rs, cs, ds, ts, nb, type);
   if (g == NULL)
   {
-    fprintf(stderr,"%s : allocimage failed\n", F_NAME);
+    fprintf(stderr,"%s: allocimage failed\n", F_NAME);
     return NULL;
   }
 
   switch(type)
   {
-    case VFF_TYP_1_BYTE: memcpy(g->image_data, f->image_data, (N*sizeof(int8_t))); break;
-    case VFF_TYP_4_BYTE: memcpy(g->image_data, f->image_data, (N*sizeof(int32_t))); break;
-    case VFF_TYP_FLOAT:  memcpy(g->image_data, f->image_data, (N*sizeof(float))); break;
-    case VFF_TYP_DOUBLE: memcpy(g->image_data, f->image_data, (N*sizeof(double))); break;
-    default:
-      fprintf(stderr,"%s : bad data type %d\n", F_NAME, type);
+  case VFF_TYP_1_BYTE: memcpy(g->image_data, f->image_data, (N*sizeof(int8_t))); break;
+  case VFF_TYP_2_BYTE: memcpy(g->image_data, f->image_data,  (N*sizeof(int16_t))); break;
+  case VFF_TYP_4_BYTE: memcpy(g->image_data, f->image_data, (N*sizeof(int32_t))); break;
+  case VFF_TYP_FLOAT:  memcpy(g->image_data, f->image_data, (N*sizeof(float))); break;
+  case VFF_TYP_DOUBLE: memcpy(g->image_data, f->image_data, (N*sizeof(double))); break;
+  case VFF_TYP_COMPLEX:  memcpy(g->image_data, f->image_data, (2*N*sizeof(float))); break;
+  case VFF_TYP_DCOMPLEX: memcpy(g->image_data, f->image_data, (2*N*sizeof(double))); break;
+  default:
+      fprintf(stderr,"%s: bad data type %d\n", F_NAME, type);
       return NULL;
   } /* switch(f->datatype) */
 
@@ -290,7 +526,7 @@ struct xvimage *copyimage(struct xvimage *f)
   {
     g->name = (char *)calloc(1,strlen(f->name) + 1);
     if (g->name == NULL)
-    {   fprintf(stderr,"%s : malloc failed for name\n", F_NAME);
+    {   fprintf(stderr,"%s: malloc failed for name\n", F_NAME);
         return NULL;
     }
     strcpy(g->name, f->name);
@@ -304,10 +540,12 @@ int32_t copy2image(struct xvimage *dest, struct xvimage *source)
 #undef F_NAME
 #define F_NAME "copy2image"
 {
-  int32_t rs = rowsize(source);         /* taille ligne */
-  int32_t cs = colsize(source);         /* taille colonne */
-  int32_t ds = depth(source);           /* nb plans */
-  int32_t N = rs * cs * ds;             /* taille image */
+  index_t rs = rowsize(source);         /* taille ligne */
+  index_t cs = colsize(source);         /* taille colonne */
+  index_t ds = depth(source);           /* nb plans */
+  index_t ts = tsize(source);           /* time size */
+  index_t nb = nbands(source);          /* nb of bands */
+  index_t N = rs * cs * ds * ts * nb;   /* taille image */
   if ((rowsize(dest) != rs) || (colsize(dest) != cs) || (depth(dest) != ds))
   {
     fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
@@ -329,8 +567,8 @@ int32_t copy2image(struct xvimage *dest, struct xvimage *source)
       }
     case VFF_TYP_4_BYTE:
       {
-        uint32_t *S = ULONGDATA(source);
-        uint32_t *D = ULONGDATA(dest);
+        int32_t *S = SLONGDATA(source);
+        int32_t *D = SLONGDATA(dest);
         memcpy(D, S, N*sizeof(int32_t));
         break;
       }
@@ -348,8 +586,22 @@ int32_t copy2image(struct xvimage *dest, struct xvimage *source)
         memcpy(D, S, N*sizeof(double));
         break;
       }
+    case VFF_TYP_COMPLEX:
+      {
+        float *S = FLOATDATA(source);
+        float *D = FLOATDATA(dest);
+        memcpy(D, S, 2*N*sizeof(float));
+        break;
+      }
+    case VFF_TYP_DCOMPLEX:
+      {
+        double *S = DOUBLEDATA(source);
+        double *D = DOUBLEDATA(dest);
+        memcpy(D, S, 2*N*sizeof(double));
+        break;
+      }
     default:
-      fprintf(stderr,"%s : bad data type %d\n", F_NAME, datatype(source));
+      fprintf(stderr,"%s: bad data type %d\n", F_NAME, datatype(source));
       return 0;
   } /* switch(f->datatype) */
   return 1;
@@ -362,11 +614,15 @@ int32_t equalimages(struct xvimage *im1, struct xvimage *im2)
 #undef F_NAME
 #define F_NAME "equalimages"
 {
-  int32_t rs = rowsize(im1);         /* taille ligne */
-  int32_t cs = colsize(im1);         /* taille colonne */
-  int32_t ds = depth(im1);           /* nb plans */
-  int32_t N = rs * cs * ds;             /* taille image */
-  if ((rowsize(im2) != rs) || (colsize(im2) != cs) || (depth(im2) != ds)) return 0;
+  index_t rs = rowsize(im1);          /* taille ligne */
+  index_t cs = colsize(im1);          /* taille colonne */
+  index_t ds = depth(im1);            /* nb plans */
+  index_t ts = tsize(im1);            /* time size */
+  index_t nb = nbands(im1);           /* nb of bands */
+  index_t N = rs * cs * ds * ts * nb; /* taille image */
+
+  if ((rowsize(im2) != rs) || (colsize(im2) != cs) || (depth(im2) != ds) ||
+      (tsize(im2) != ts) || (nbands(im2) != nb)) return 0;
   if (datatype(im2) != datatype(im1)) return 0;
   switch(datatype(im1))
   {
@@ -379,8 +635,8 @@ int32_t equalimages(struct xvimage *im1, struct xvimage *im2)
       }
     case VFF_TYP_4_BYTE:
       {
-        uint32_t *I1 = ULONGDATA(im1);
-        uint32_t *I2 = ULONGDATA(im2);
+        int32_t *I1 = SLONGDATA(im1);
+        int32_t *I2 = SLONGDATA(im2);
         if (memcmp(I1, I2, N*sizeof(int32_t)) != 0) return 0;
         break;
       }
@@ -396,6 +652,20 @@ int32_t equalimages(struct xvimage *im1, struct xvimage *im2)
         double *I1 = DOUBLEDATA(im1);
         double *I2 = DOUBLEDATA(im2);
         if (memcmp(I1, I2, N*sizeof(double)) != 0) return 0;
+        break;
+      }
+    case VFF_TYP_COMPLEX:
+      {
+        float *I1 = FLOATDATA(im1);
+        float *I2 = FLOATDATA(im2);
+        if (memcmp(I1, I2, 2*N*sizeof(float)) != 0) return 0;
+        break;
+      }
+    case VFF_TYP_DCOMPLEX:
+      {
+        double *I1 = DOUBLEDATA(im1);
+        double *I2 = DOUBLEDATA(im2);
+        if (memcmp(I1, I2, 2*N*sizeof(double)) != 0) return 0;
         break;
       }
   } /* switch(f->datatype) */
@@ -415,46 +685,52 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
   struct xvimage *im3;
   int32_t type1 = datatype(im1);
   int32_t type2 = datatype(im2);
-  int32_t type, typemax = max(type1,type2);
+  int32_t type, typemax = mcmax(type1,type2);
 
   if (type1 == type2) return type1;
-  if (type1 < type2) { im1 = *f2;  im2 = *f1; } // im1 : rien a changer
+  if (type1 < type2) { im1 = *f2;  im2 = *f1; } // im1: rien a changer
   // il faut convertir 'im2' a 'typemax'
   type = datatype(im2);
   if (type == VFF_TYP_1_BYTE)
   {
-    int32_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
+    index_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
     uint8_t *F = UCHARDATA(im2);
     im3 = allocimage(NULL, rs, cs, ds, typemax);
     if (im3 == NULL)
     {
-      fprintf(stderr,"%s : allocimage failed\n", F_NAME);
+      fprintf(stderr,"%s: allocimage failed\n", F_NAME);
       return 0;
     }
     if (typemax == VFF_TYP_4_BYTE)
     {
-      uint32_t *L = ULONGDATA(im3);
-      for (i = 0; i < N; i++) L[i] = (uint32_t)F[i];
+      int32_t *L = SLONGDATA(im3);
+      for (i = 0; i < N; i++) L[i] = (int32_t)F[i];
     }
     else if (typemax == VFF_TYP_FLOAT)
     {
       float *FL = FLOATDATA(im3);
       for (i = 0; i < N; i++) FL[i] = (float)F[i];
     }
+    else if (typemax == VFF_TYP_COMPLEX)
+    {
+      fcomplex *CL = COMPLEXDATA(im3);
+      razimage(im3);
+      for (i = 0; i < N; i++) CL[i].re = (float)F[i];
+    }
     else
     {
-      fprintf(stderr,"%s : bad data type\n", F_NAME);
+      fprintf(stderr,"%s: bad data type\n", F_NAME);
       return 0;
     }
   }
   else if (type == VFF_TYP_4_BYTE)
   {
-    int32_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
-    uint32_t *L = ULONGDATA(im2);
+    index_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
+    int32_t *L = SLONGDATA(im2);
     im3 = allocimage(NULL, rs, cs, ds, typemax);
     if (im3 == NULL)
     {
-      fprintf(stderr,"%s : allocimage failed\n", F_NAME);
+      fprintf(stderr,"%s: allocimage failed\n", F_NAME);
       return 0;
     }
     if (typemax == VFF_TYP_FLOAT)
@@ -463,14 +739,43 @@ int32_t convertgen(struct xvimage **f1, struct xvimage **f2)
       for (i = 0; i < N; i++) FL[i] = (float)L[i];
     }
     else
+    if (typemax == VFF_TYP_COMPLEX)
     {
-      fprintf(stderr,"%s : bad data type\n", F_NAME);
+      fcomplex *CL = COMPLEXDATA(im3);
+      razimage(im3);
+      for (i = 0; i < N; i++) CL[i].re = (float)L[i];
+    }
+    else
+    {
+      fprintf(stderr,"%s: bad data type\n", F_NAME);
+      return 0;
+    }
+  }
+  else if (type == VFF_TYP_FLOAT)
+  {
+    index_t i, rs=rowsize(im2), cs=colsize(im2), ds=depth(im2), N=rs*cs*ds;
+    float *FL = FLOATDATA(im2);
+    im3 = allocimage(NULL, rs, cs, ds, typemax);
+    if (im3 == NULL)
+    {
+      fprintf(stderr,"%s: allocimage failed\n", F_NAME);
+      return 0;
+    }
+    if (typemax == VFF_TYP_COMPLEX)
+    {
+      fcomplex *CL = COMPLEXDATA(im3);
+      razimage(im3);
+      for (i = 0; i < N; i++) CL[i].re = (float)FL[i];
+    }
+    else
+    {
+      fprintf(stderr,"%s: bad data type\n", F_NAME);
       return 0;
     }
   }
   else
   {
-    fprintf(stderr,"%s : bad data type\n", F_NAME);
+    fprintf(stderr,"%s: bad data type\n", F_NAME);
     return 0;
   }
 
@@ -497,32 +802,33 @@ int32_t convertlong(struct xvimage **f1)
   struct xvimage *im1 = *f1;
   struct xvimage *im3;
   int32_t type = datatype(im1);
-  int32_t i, rs=rowsize(im1), cs=colsize(im1), ds=depth(im1), N=rs*cs*ds;
-  uint32_t *FL;
+  index_t i, rs=rowsize(im1), cs=colsize(im1), ds=depth(im1);
+  index_t N=rs*cs*ds;
+  int32_t *FL;
 
   if (type == VFF_TYP_4_BYTE) return 1;
 
   im3 = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
   if (im3 == NULL)
   {
-    fprintf(stderr,"%s : allocimage failed\n", F_NAME);
+    fprintf(stderr,"%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  FL = ULONGDATA(im3);
+  FL = SLONGDATA(im3);
 
   if (type == VFF_TYP_1_BYTE)
   {
     uint8_t *F = UCHARDATA(im1);
-    for (i = 0; i < N; i++) FL[i] = (uint32_t)F[i];
+    for (i = 0; i < N; i++) FL[i] = (int32_t)F[i];
   }
   else if (type == VFF_TYP_FLOAT)
   {
     float *F = FLOATDATA(im1);
-    for (i = 0; i < N; i++) FL[i] = (uint32_t)F[i];
+    for (i = 0; i < N; i++) FL[i] = (int32_t)F[i];
   }
   else
   {
-    fprintf(stderr,"%s : bad data type\n", F_NAME);
+    fprintf(stderr,"%s: bad data type\n", F_NAME);
     return 0;
   }
 
@@ -541,7 +847,8 @@ int32_t convertfloat(struct xvimage **f1)
   struct xvimage *im1 = *f1;
   struct xvimage *im3;
   int32_t type = datatype(im1);
-  int32_t i, rs=rowsize(im1), cs=colsize(im1), ds=depth(im1), N=rs*cs*ds;
+  index_t i, rs=rowsize(im1), cs=colsize(im1), ds=depth(im1); 
+  index_t N=rs*cs*ds;
   float *FL;
 
   if (type == VFF_TYP_FLOAT) return 1;
@@ -549,7 +856,7 @@ int32_t convertfloat(struct xvimage **f1)
   im3 = allocimage(NULL, rs, cs, ds, VFF_TYP_FLOAT);
   if (im3 == NULL)
   {
-    fprintf(stderr,"%s : allocimage failed\n", F_NAME);
+    fprintf(stderr,"%s: allocimage failed\n", F_NAME);
     return 0;
   }
   FL = FLOATDATA(im3);
@@ -561,12 +868,12 @@ int32_t convertfloat(struct xvimage **f1)
   }
   else if (type == VFF_TYP_4_BYTE)
   {
-    uint32_t *F = ULONGDATA(im1);
+    int32_t *F = SLONGDATA(im1);
     for (i = 0; i < N; i++) FL[i] = (float)F[i];
   }
   else
   {
-    fprintf(stderr,"%s : bad data type\n", F_NAME);
+    fprintf(stderr,"%s: bad data type\n", F_NAME);
     return 0;
   }
 
@@ -576,12 +883,13 @@ int32_t convertfloat(struct xvimage **f1)
 } // convertfloat()
 
 /* ==================================== */
-void list2image(struct xvimage * image, double *P, int32_t n)
+void list2image(struct xvimage * image, double *P, index_t n)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "list2image"
 {
-  int32_t rs, cs, ds, ps, N, x, y, z, i;
+  index_t rs, cs, ds, ps, x, y, z, i;
+  index_t N;
   uint8_t *F;
 
   rs = rowsize(image);
@@ -613,14 +921,15 @@ void list2image(struct xvimage * image, double *P, int32_t n)
 } // list2image()
 
 /* ==================================== */
-double * image2list(struct xvimage * image, int32_t *n)
+double * image2list(struct xvimage * image, index_t *n)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "image2list"
 {
-  int32_t rs, cs, ds, ps, N, x, y, z;
+  index_t rs, cs, ds, ps, x, y, z;
+  index_t N;
   uint8_t *F;
-  int32_t n1;
+  index_t n1;
   double * P1;
 
   rs = rowsize(image);
@@ -636,7 +945,7 @@ double * image2list(struct xvimage * image, int32_t *n)
     P1 = (double *)calloc(1, n1 * 2 * sizeof(double));
     if (P1 == NULL) 
     {   
-      fprintf(stderr,"%s : malloc failed for P1\n", F_NAME);
+      fprintf(stderr,"%s: malloc failed for P1\n", F_NAME);
       return NULL;
     }
     n1 = 0;
@@ -649,7 +958,7 @@ double * image2list(struct xvimage * image, int32_t *n)
     P1 = (double *)calloc(1, n1 * 3 * sizeof(double));
     if (P1 == NULL) 
     {   
-      fprintf(stderr,"%s : malloc failed for P1\n", F_NAME);
+      fprintf(stderr,"%s: malloc failed for P1\n", F_NAME);
       return NULL;
     }
     n1 = 0;
@@ -674,14 +983,20 @@ void writeimage(struct xvimage * image, char *filename)
 #undef F_NAME
 #define F_NAME "writeimage"
 {
-  int32_t rs, cs, ds;
+  index_t rs, cs, ds, np;
   rs = rowsize(image);
   cs = colsize(image);
   ds = depth(image);
-  if ((rs<=25) && (cs<=25) && (ds<=25) &&
+  np = nbands(image);
+
+  if ((rs<=25) && (cs<=25) && (ds<=25) &&// (np==1) &&
       ((datatype(image) == VFF_TYP_1_BYTE) || (datatype(image) == VFF_TYP_4_BYTE) || 
-       (datatype(image) == VFF_TYP_FLOAT) || (datatype(image) == VFF_TYP_DOUBLE)))
+       (datatype(image) == VFF_TYP_FLOAT) || (datatype(image) == VFF_TYP_DOUBLE) ||
+       (datatype(image) == VFF_TYP_COMPLEX) || (datatype(image) == VFF_TYP_DCOMPLEX)))
+  {
+    fprintf(stderr,"%s: writing image in ASCII mode\n", F_NAME);
     writeascimage(image, filename); 
+  }
   else
     writerawimage(image, filename); 
 } /* writeimage() */
@@ -693,19 +1008,18 @@ void writerawimage(struct xvimage * image, char *filename)
 #define F_NAME "writerawimage"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, d, N, i, ret;
+  index_t i, rs, cs, ds, nb;
+  index_t N, ret;
+  int32_t color = 0;
 
   rs = rowsize(image);
   cs = colsize(image);
-  d = depth(image);
-  N = rs * cs * d;
+  ds = depth(image);
+  nb = nbands(image);
+  N = rs * cs * ds * nb;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"w");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"wb");
-#endif
+  fd = pink_fopen_write(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -714,91 +1028,261 @@ void writerawimage(struct xvimage * image, char *filename)
 
   if (datatype(image) == VFF_TYP_1_BYTE)
   {
-    fputs("P5\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((ds == 1) && (nb == 3)) color = 1;
+    if (color)
+      fputs("P6\n", fd);
+    else
+      fputs("P5\n", fd);
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if ((image->xdim != 0.0) && (d == 1))
+    if ((image->xdim != 0.0) && (ds == 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n", image->xdim, image->ydim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+
+    if ((nb > 1) && !color)
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
     fprintf(fd, "255\n");
 
-    ret = fwrite(UCHARDATA(image), sizeof(char), N, fd);
-    if (ret != N)
+    if (color)
     {
-      fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
-      exit(0);
+      uint8_t *b1, *b2, *b3;
+      N = rs * cs;
+      b1 = UCHARDATA(image);
+      b2 = b1 + N;
+      b3 = b2 + N;
+      for (i = 0; i < N; i++)
+      {
+	fputc((int32_t)(b1[i]), fd);
+	fputc((int32_t)(b2[i]), fd);
+	fputc((int32_t)(b3[i]), fd);
+      }
+    }
+    else
+    {
+      ret = fwrite(UCHARDATA(image), sizeof(char), N, fd);
+      if (ret != N)
+      {
+#ifdef MC_64_BITS
+	fprintf(stderr, "%s: only %lld items written\n", F_NAME, (long long int)ret);
+#else
+	fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
+#endif
+	exit(0);
+      }
     }
   }
   else if (datatype(image) == VFF_TYP_2_BYTE)
   {
+    uint16_t tmp;
+    uint8_t tmp1;
+    index_t i;
+
     fputs("P5\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if ((image->xdim != 0.0) && (d == 1))
+    if ((image->xdim != 0.0) && (ds == 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n", image->xdim, image->ydim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if (nb > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
     fprintf(fd, "65535\n");
 
-    ret = fwrite(USHORTDATA(image), 2*sizeof(char), N, fd);
-    if (ret != N)
-    {
-      fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
-      exit(0);
+    // Standard PGM format imposes big-endian for 2-byte images, but
+    // standard PC architectures are little-endian
+    for (i = 0; i < N; i++) 
+    { 
+      tmp = USHORTDATA(image)[i];
+      // conversion little-endian -> big-endian
+      tmp1 = tmp & 0x00ff;
+      tmp = tmp >> 8;
+      tmp = tmp | (((uint16_t)tmp1) << 8);      
+      (void)fwrite(&tmp, sizeof(uint16_t), 1, fd);
     }
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
     fputs("P8\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if ((image->xdim != 0.0) && (d == 1))
+    if ((image->xdim != 0.0) && (ds == 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n", image->xdim, image->ydim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if (nb > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
     fprintf(fd, "4294967295\n");
 
-    ret = fwrite(ULONGDATA(image), sizeof(int32_t), N, fd);
+    ret = fwrite(SLONGDATA(image), sizeof(int32_t), N, fd);
     if (ret != N)
     {
+#ifdef MC_64_BITS
+      fprintf(stderr, "%s: only %lld items written\n", F_NAME, (long long int)ret);
+#else
       fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
+#endif
       exit(0);
     }
   }
   else if (datatype(image) == VFF_TYP_FLOAT)
   {
     fputs("P9\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if ((image->xdim != 0.0) && (d == 1))
+    if ((image->xdim != 0.0) && (ds == 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n", image->xdim, image->ydim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if (nb > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
     fprintf(fd, "0\n");
 
     ret = fwrite(FLOATDATA(image), sizeof(float), N, fd);
     if (ret != N)
     {
+#ifdef MC_64_BITS
+      fprintf(stderr, "%s: only %lld items written\n", F_NAME, (long long int)ret);
+#else
       fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
+#endif
       exit(0);
     }
   }
   else if (datatype(image) == VFF_TYP_DOUBLE)
   {
     fputs("PC\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if ((image->xdim != 0.0) && (d == 1))
+    if ((image->xdim != 0.0) && (ds == 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n", image->xdim, image->ydim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if (nb > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
     fprintf(fd, "0\n");
 
     ret = fwrite(DOUBLEDATA(image), sizeof(double), N, fd);
     if (ret != N)
     {
+#ifdef MC_64_BITS
+      fprintf(stderr, "%s: only %lld items written\n", F_NAME, (long long int)ret);
+#else
       fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
+#endif
+      exit(0);
+    }
+  }
+  else if (datatype(image) == VFF_TYP_COMPLEX)
+  {
+    fputs("PE\n", fd);
+    if ((image->xdim != 0.0) && (ds > 1))
+      fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
+    if ((image->xdim != 0.0) && (ds == 1))
+      fprintf(fd, "#xdim %g\n#ydim %g\n", image->xdim, image->ydim);
+    if (nb > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
+    fprintf(fd, "0\n");
+
+    ret = fwrite(FLOATDATA(image), sizeof(float), N+N, fd);
+    if (ret != N+N)
+    {
+#ifdef MC_64_BITS
+      fprintf(stderr, "%s: only %lld items written\n", F_NAME, (long long int)ret);
+#else
+      fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
+#endif
       exit(0);
     }
   }
   else
-  {   fprintf(stderr,"%s : bad datatype : %d\n", F_NAME, datatype(image));
+  {   fprintf(stderr,"%s: bad datatype: %d\n", F_NAME, datatype(image));
       exit(0);
   }
 
@@ -806,13 +1290,14 @@ void writerawimage(struct xvimage * image, char *filename)
 } /* writerawimage() */
 
 /* ==================================== */
-void writese(struct xvimage * image, char *filename, int32_t x, int32_t y, int32_t z)
+void writese(struct xvimage * image, char *filename, index_t x, index_t y, index_t z)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writese"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, d, ps, N, i, ret;
+  index_t rs, cs, d, ps, i;
+  index_t N, ret;
 
   rs = rowsize(image);
   cs = colsize(image);
@@ -820,12 +1305,8 @@ void writese(struct xvimage * image, char *filename, int32_t x, int32_t y, int32
   ps = rs * cs;
   N = ps * d;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"w");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"wb");
-#endif
+  fd = pink_fopen_write(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -837,15 +1318,34 @@ void writese(struct xvimage * image, char *filename, int32_t x, int32_t y, int32
     if (d > 1) 
     {
       if ((rs<=25) && (cs<=25) && (d<=25)) fputs("P2\n", fd); else fputs("P5\n", fd); 
+#ifdef MC_64_BITS
+      fprintf(fd, "#origin %lld %lld %lld\n", (long long int)x, (long long int)y, (long long int)z);
+#else
       fprintf(fd, "#origin %d %d %d\n", x, y, z);
+#endif
     }
     else 
     {
       if ((rs<=25) && (cs<=25) && (d<=25)) fputs("P2\n", fd); else fputs("P5\n", fd); 
+#ifdef MC_64_BITS
+      fprintf(fd, "#origin %lld %lld\n", (long long int)x, (long long int)y);
+#else
       fprintf(fd, "#origin %d %d\n", x, y);
+#endif
     }
     /*    fputs("# CREATOR: writese by MC - 07/1996\n", fd); */
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if (d > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)d); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, d); 
+#endif
+    else  
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
     fprintf(fd, "255\n");
 
     if ((rs<=25) && (cs<=25) && (d<=25))
@@ -863,13 +1363,17 @@ void writese(struct xvimage * image, char *filename, int32_t x, int32_t y, int32
       ret = fwrite(UCHARDATA(image), sizeof(char), N, fd);
       if (ret != N)
       {
+#ifdef MC_64_BITS
+	fprintf(stderr, "%s: only %lld items written\n", F_NAME, (long long int)ret);
+#else
 	fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
+#endif
 	exit(0);
       }
     }
   }
   else
-  {   fprintf(stderr,"%s : bad datatype : %d\n", F_NAME, datatype(image));
+  {   fprintf(stderr,"%s: bad datatype: %d\n", F_NAME, datatype(image));
       exit(0);
   }
 
@@ -883,9 +1387,11 @@ void writeascimage(struct xvimage * image, char *filename)
 #define F_NAME "writeascimage"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, ps, d, nndg, N, i;
+  index_t rs, cs, ps, ds, nb, i;
+  index_t N;
+  int32_t color = 0;
 
-  fd = fopen(filename,"w");
+  fd = pink_fopen_write(filename);
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -894,48 +1400,167 @@ void writeascimage(struct xvimage * image, char *filename)
 
   rs = rowsize(image);
   cs = colsize(image);
-  d = depth(image);
+  ds = depth(image);
+  nb = nbands(image);
   ps = rs * cs;
-  N = ps * d;
+  N = ps * ds * nb;
 
   if (datatype(image) == VFF_TYP_1_BYTE)
   {
-    fputs("P2\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((ds == 1) && (nb == 3)) color = 1;
+    if (color)
+      fputs("P3\n", fd);
+    else
+      fputs("P2\n", fd);
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if ((nb > 1) && !color)
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
     fprintf(fd, "255\n");
+
+    if (color)
+    {
+      uint8_t *b1, *b2, *b3;
+      N = rs * cs;
+      b1 = UCHARDATA(image);
+      b2 = b1 + N;
+      b3 = b2 + N;
+      for (i = 0; i < N; i++)
+      {
+	if (i % rs == 0) fprintf(fd, "\n");
+	fprintf(fd, "%d ", (int32_t)(b1[i]));
+	fprintf(fd, "%d ", (int32_t)(b2[i]));
+	fprintf(fd, "%d ", (int32_t)(b3[i]));
+      } /* for i */
+    }
+    else
+    {
+      if (N > 8000) // grandes images : pas de padding (blancs)
+      { 
+	for (i = 0; i < N; i++)
+	{
+	  if (i % rs == 0) fprintf(fd, "\n");
+	  if (i % ps == 0) fprintf(fd, "\n");
+	  fprintf(fd, "%d ", (int32_t)(UCHARDATA(image)[i]));
+	} /* for i */
+      }
+      else
+      { 
+	for (i = 0; i < N; i++)
+	{
+	  if (i % rs == 0) fprintf(fd, "\n");
+	  if (i % ps == 0) fprintf(fd, "\n");
+	  fprintf(fd, "%3d ", (int32_t)(UCHARDATA(image)[i]));
+	} /* for i */
+      }
+      fprintf(fd, "\n");
+    }
+  }
+  else if (datatype(image) == VFF_TYP_2_BYTE)
+  {
+    fputs("P2\n", fd);
+    if ((image->xdim != 0.0) && (ds > 1))
+      fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
+    if (nb > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
+    fprintf(fd, "65535\n");
 
     for (i = 0; i < N; i++)
     {
       if (i % rs == 0) fprintf(fd, "\n");
       if (i % ps == 0) fprintf(fd, "\n");
-      fprintf(fd, "%3d ", (int32_t)(UCHARDATA(image)[i]));
+      fprintf(fd, "%d ", (int16_t)(USHORTDATA(image)[i]));
     } /* for i */
     fprintf(fd, "\n");
   }
   else if (datatype(image) == VFF_TYP_4_BYTE)
   {
     fputs("PB\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if (nb > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
     fprintf(fd, "4294967295\n");
 
     for (i = 0; i < N; i++)
     {
       if (i % rs == 0) fprintf(fd, "\n");
       if (i % ps == 0) fprintf(fd, "\n");
-      fprintf(fd, "%ld ", ULONGDATA(image)[i]);
+      fprintf(fd, "%ld ", (long int)(SLONGDATA(image)[i]));
     } /* for i */
     fprintf(fd, "\n");
   }
   else if (datatype(image) == VFF_TYP_FLOAT)
   {
     fputs("PA\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if (nb > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
     fprintf(fd, "1\n");
 
     for (i = 0; i < N; i++)
@@ -949,9 +1574,26 @@ void writeascimage(struct xvimage * image, char *filename)
   else if (datatype(image) == VFF_TYP_DOUBLE)
   {
     fputs("PD\n", fd);
-    if ((image->xdim != 0.0) && (d > 1))
+    if ((image->xdim != 0.0) && (ds > 1))
       fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
-    if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+    if (nb > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
     fprintf(fd, "1\n");
 
     for (i = 0; i < N; i++)
@@ -962,6 +1604,43 @@ void writeascimage(struct xvimage * image, char *filename)
     } /* for i */
     fprintf(fd, "\n");
   }
+  else if (datatype(image) == VFF_TYP_COMPLEX)
+  {
+    fputs("PF\n", fd);
+    if ((image->xdim != 0.0) && (ds > 1))
+      fprintf(fd, "#xdim %g\n#ydim %g\n#zdim %g\n", image->xdim, image->ydim, image->zdim);
+    if (nb > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds, (long long int)nb); 
+#else
+      fprintf(fd, "%d %d %d %d\n", rs, cs, ds, nb); 
+#endif
+    else if (ds > 1) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)ds); 
+#else
+      fprintf(fd, "%d %d %d\n", rs, cs, ds); 
+#endif
+    else 
+#ifdef MC_64_BITS
+      fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+      fprintf(fd, "%d %d\n", rs, cs);
+#endif
+    fprintf(fd, "1\n");
+
+    for (i = 0; i < N; i++)
+    {
+      if (i % rs == 0) fprintf(fd, "\n");
+      if (i % ps == 0) fprintf(fd, "\n");
+      fprintf(fd, "%8g %8g  ", FLOATDATA(image)[i+i], FLOATDATA(image)[i+i+1]);
+    } /* for i */
+    fprintf(fd, "\n");
+  }
+  else
+  {   fprintf(stderr,"%s: bad datatype: %d\n", F_NAME, datatype(image));
+      exit(0);
+  }
   fclose(fd);
 }
 
@@ -971,7 +1650,8 @@ void printimage(struct xvimage * image)
 #undef F_NAME
 #define F_NAME "printimage"
 {
-  int32_t rs, cs, d, ps, N, i;
+  index_t rs, cs, d, ps, i;
+  index_t N;
 
   rs = rowsize(image);
   cs = colsize(image);
@@ -979,13 +1659,20 @@ void printimage(struct xvimage * image)
   ps = rs * cs;
   N = ps * d;
 
-  for (i = 0; i < N; i++)
+  if (datatype(image) == VFF_TYP_1_BYTE)
   {
-    if (i % rs == 0) printf("\n");
-    if (i % ps == 0) printf("\n");
-    printf("%3d ", (int32_t)(UCHARDATA(image)[i]));
-  } /* for i */
-  printf("\n");
+    for (i = 0; i < N; i++)
+    {
+      if (i % rs == 0) printf("\n");
+      if (i % ps == 0) printf("\n");
+      printf("%3d ", (int32_t)(UCHARDATA(image)[i]));
+    } /* for i */
+    printf("\n");
+  }
+  else
+  {   fprintf(stderr,"%s: bad datatype: %d\n", F_NAME, datatype(image));
+      exit(0);
+  }
 }
 
 /* ==================================== */
@@ -999,14 +1686,12 @@ void writergbimage(
 #define F_NAME "writergbimage"
 {
   FILE *fd = NULL;
-  int32_t rs, cs, nndg, N, i;
+  index_t rs, cs, i;
+  index_t N;
+  int32_t nndg;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"w");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"wb");
-#endif
+  fd = pink_fopen_write(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -1028,7 +1713,11 @@ void writergbimage(
   fputs("P6\n", fd);
   /*  fputs("# CREATOR: writeimage by MC - 07/1996\n", fd); */
   fprintf(fd, "##rgb\n");
+#ifdef MC_64_BITS
+  fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
   fprintf(fd, "%d %d\n", rs, cs);
+#endif
   fprintf(fd, "%d\n", nndg);
 
   for (i = 0; i < N; i++)
@@ -1039,7 +1728,65 @@ void writergbimage(
   } /* for i */
 
   fclose(fd);
-}
+} // writergbimage()
+
+/* ==================================== */
+void writergbascimage(
+  struct xvimage * redimage,
+  struct xvimage * greenimage,
+  struct xvimage * blueimage,
+  char *filename)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "writergbascimage"
+{
+  FILE *fd = NULL;
+  index_t rs, cs, i, j;
+  index_t N;
+  int32_t nndg;
+
+  fd = pink_fopen_write(filename);
+
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
+    exit(0);
+  }
+
+  rs = redimage->row_size;
+  cs = redimage->col_size;
+  if ((greenimage->row_size != rs) || (greenimage->col_size != cs) ||
+      (blueimage->row_size != rs) || (blueimage->col_size != cs))
+  {
+    fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
+    exit(0);
+  }
+  
+  N = rs * cs;
+  nndg = 255;
+
+  fputs("P3\n", fd);
+  fprintf(fd, "##rgb\n");
+#ifdef MC_64_BITS
+  fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+  fprintf(fd, "%d %d\n", rs, cs);
+#endif
+  fprintf(fd, "%d\n", nndg);
+
+  for (j = 0; j < cs; j++)
+  {
+    for (i = 0; i < rs; i++)
+    {
+      fprintf(fd, " %d", (int32_t)(UCHARDATA(redimage)[i]));
+      fprintf(fd, " %d", (int32_t)(UCHARDATA(greenimage)[i]));
+      fprintf(fd, " %d", (int32_t)(UCHARDATA(blueimage)[i]));
+    } /* for i */
+    fprintf(fd, "\n");
+  } /* for j */
+
+  fclose(fd);
+} // writergbascimage()
 
 /* ==================================== */
 void writelongimage(struct xvimage * image,  char *filename)
@@ -1051,15 +1798,12 @@ void writelongimage(struct xvimage * image,  char *filename)
 */
 {
   FILE *fd = NULL;
-  int32_t rs, cs, d, nndg, N, i;
-  int32_t ret;
+  index_t rs, cs, d;
+  index_t N, ret;
+  int32_t nndg;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"w");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"wb");
-#endif
+  fd = pink_fopen_write(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -1074,41 +1818,252 @@ void writelongimage(struct xvimage * image,  char *filename)
 
   fputs("P8\n", fd);
   /*  fputs("# CREATOR: writelongimage by MC - 07/1996\n", fd); */
-  if (d > 1) fprintf(fd, "%d %d %d\n", rs, cs, d); else  fprintf(fd, "%d %d\n", rs, cs);
+  if (d > 1) 
+#ifdef MC_64_BITS
+    fprintf(fd, "%lld %lld %lld\n", (long long int)rs, (long long int)cs, (long long int)d); 
+#else
+    fprintf(fd, "%d %d %d\n", rs, cs, d); 
+#endif
+  else  
+#ifdef MC_64_BITS
+    fprintf(fd, "%lld %lld\n", (long long int)rs, (long long int)cs);
+#else
+    fprintf(fd, "%d %d\n", rs, cs);
+#endif
   fprintf(fd, "%d\n", nndg);
 
-  ret = fwrite(ULONGDATA(image), sizeof(int32_t), N, fd);
+  ret = fwrite(SLONGDATA(image), sizeof(int32_t), N, fd);
   if (ret != N)
   {
+#ifdef MC_64_BITS
+    fprintf(stderr, "%s: only %lld items written\n", F_NAME, (long long int)ret);
+#else
     fprintf(stderr, "%s: only %d items written\n", F_NAME, ret);
+#endif
     exit(0);
   }
 
   fclose(fd);
 } /* writelongimage() */
 
+#ifdef HAVE_TIFF_LIB
+struct xvimage *readtiffimage(char *filename)
+{
+    struct xvimage *image=NULL;
+    IMAGE *tiffimage = NULL;
+    int datasize = 0;
+
+    tiffimage = imloadtiff(filename);
+
+    /* convert tiffimage into image */
+    image = (struct xvimage *)malloc(sizeof(struct xvimage));
+    /* fairly straightforward */
+    image->row_size             = tiffimage->nx;
+    image->col_size              = tiffimage->ny;
+    image->depth_size          = tiffimage->nz;
+    image->time_size            = tiffimage->nt;
+    image->num_data_bands = tiffimage->nc; /* number of components */
+
+    fprintf(stderr, "dimensions: nx=%d, ny=%d, nz=%d, nt=%d, nc=%d\n",
+            tiffimage->nx, tiffimage->ny,tiffimage->nz, tiffimage->nt, tiffimage->nc);
+
+    /* this may be a bit dicey */
+    switch (tiffimage->pt) { /* pixel type */
+    case IM_BINARY:
+        image->data_storage_type = VFF_TYP_BIT; /* probably incorrect */
+        datasize = 1;
+        break;
+    case IM_UINT1:
+        image->data_storage_type = VFF_TYP_1_BYTE;
+        datasize = 1;
+        break;
+    case IM_UINT2:
+        image->data_storage_type = VFF_TYP_2_BYTE;
+        datasize = 2;
+        break;
+    case IM_INT4:
+        image->data_storage_type = VFF_TYP_4_BYTE;
+        datasize =4;
+        break;
+    case IM_FLOAT:
+        image->data_storage_type = VFF_TYP_FLOAT;
+        datasize = 4;
+        break;
+    case IM_DOUBLE:
+        image->data_storage_type = VFF_TYP_DOUBLE;
+        datasize = 8;
+        break;
+    default:
+        fprintf(stderr, "Unhandled data type %d\n", tiffimage->pt);
+        break;
+    }
+
+    if (datasize > 0) {
+        int i;
+        long componentsize , totalsize;
+        /* allocate memory for image */
+        componentsize = datasize* \
+            tiffimage->nx *                                     \
+            tiffimage->ny *                                     \
+            tiffimage->nz *                                     \
+            tiffimage->nt;
+        totalsize = componentsize *  tiffimage->nc;
+        image->image_data = (void *)malloc(totalsize * sizeof(char));
+        if (image->image_data != NULL) {
+            for (i = 0 ; i < tiffimage->nc ; ++i) {
+	      // the void* does not work in Windows(tm), but char* should have the same size and properties
+	      // unit test for tiffs!
+	      memcpy( (char*)image->image_data + i*componentsize, tiffimage->buff[i], componentsize);
+            }
+        } else {
+            fprintf(stderr, "Not enough memory, requested=%ld bytes\n", totalsize);
+        }
+    }
+
+    /* error conditions */
+    if ((datasize == 0) || (image->image_data == NULL)) {
+        fprintf(stderr, "Reading TIFF image failed\n");
+        free(image);
+        image=NULL;
+    }
+    
+    return image;
+}
+
+
 /* ==================================== */
-struct xvimage * readimage(char *filename)
+void writetiffimage(struct xvimage * image, const char *filename)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "writetiffimage"
+{
+    int    slice, datasize = 0;
+    IMAGE *tiffimage=NULL;
+
+    tiffimage = (IMAGE*)malloc(sizeof(IMAGE));
+
+    tiffimage->nx = image->row_size;
+    tiffimage->ny = image->col_size;
+    tiffimage->nz = image->depth_size;
+    tiffimage->nt = image->time_size;
+    tiffimage->nc = image->num_data_bands;
+
+    /* std::cerr << "Dimensions: nx=" << tiffimage->nx
+        <<  " ny=" << tiffimage->ny
+        <<  " nz=" << tiffimage->nz
+        <<  " nt=" << tiffimage->nt
+        <<  " nc=" << tiffimage->nc << std::endl;
+    */
+        
+    switch(image->data_storage_type) {
+        case VFF_TYP_1_BYTE:
+        tiffimage->pt = IM_UINT1;
+        datasize = 1;
+        break;
+        case VFF_TYP_2_BYTE:
+        tiffimage->pt = IM_UINT2;
+        datasize = 2;
+        break;
+        case VFF_TYP_4_BYTE:
+        tiffimage->pt = IM_INT4;
+        datasize = 4;
+        break;
+        case VFF_TYP_FLOAT:
+        tiffimage->pt = IM_FLOAT;
+        datasize = 4;
+        break;
+        case VFF_TYP_DOUBLE:
+        tiffimage->pt = IM_DOUBLE;
+        datasize = 8;
+        break;
+        default:
+            fprintf(stderr, "Unhandled data type %d\n ", (int)tiffimage->pt);
+        break;
+    }
+
+    // exclude some types of data we cannot save yet
+    do {
+        if (datasize == 0) {
+            break;
+        }
+        if (tiffimage->nc > 1) {
+            fprintf(stderr, "Multi-component TIFF not supported yet\n");
+            break;
+        }
+        if (tiffimage->nt > 1) {
+            fprintf(stderr, "Time-series TIFF not supported yet\n");
+            break;
+        }
+    //   now we should only have at most grey-level 3D images
+        for (slice = 0 ; slice < tiffimage->nz ; ++slice) {
+                long slicesize = tiffimage->nx*tiffimage->ny*datasize;
+                void *fakebuff[1];
+                int   start[2], end[2];
+                int pi, sf, spp=1, bps;
+		void *theslice;
+		int retval;
+                //std::cerr << "Slice= " << slice << std::endl;
+
+                setTifftype(tiffimage->pt,     /* pixel type */
+                            IM_SINGLE,     /* image type */
+                            &pi,            /* photometric interpretation */
+                            &sf,            /* sample format */
+                            &spp,           /* samples per pixel (this parameter is I/O) */
+                            &bps);
+                //std::cerr << "Type= " << pi << "spp=" << spp << std::endl;
+
+                theslice = (uint8_t*)image->image_data + slice*slicesize;
+                fakebuff[0] = theslice;
+
+                start[0] = 0;
+                end[0] = tiffimage->nx-1;
+                start[1] = 0;
+                end[1] = tiffimage->ny-1;
+
+                retval = save_tiff(fakebuff,	   /* output buffer  */
+                          slice,   /* 0 = write, > 0 = append */
+                          start,	   /* dimension start */
+                          end,	   /* dimension end */
+                          pi,	   /* photometric interpretation */
+                          sf,	   /* storage format */
+                          spp,	   /* samples per pixels */
+                          bps,	   /* bits per pixel */
+                          NULL, /* colour map (RGB) */
+                          0,	   /* nb of colour in the LUT */
+                          filename,  /* output file name  */
+                          TIFF_CMP_NONE);  /* compression scheme */
+
+                if (retval != 0)
+                    fprintf(stderr, "TIFF writing failed with error %d\n", retval);
+        }
+    } while (0);
+
+    return;
+}
+
+
+#endif 
+//HAVE_TIFF_LIB
+
+/* ==================================== */
+struct xvimage * readimage( const char *filename )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "readimage"
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, ds, ndgmax, N, i;
+  index_t rs, cs, ds, nb, N, i;
   struct xvimage * image;
-  int32_t ascii;  
+  int32_t ascii, color;
   int32_t typepixel;
-  int32_t c;
+  int32_t c, ndgmax;
   double xdim=1.0, ydim=1.0, zdim=1.0;
   char *read;
+  char tag;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
+  fd = pink_fopen_read(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: file not found: %s\n", F_NAME, filename);
@@ -1116,185 +2071,343 @@ struct xvimage * readimage(char *filename)
   }
 
   read = fgets(buffer, BUFFERSIZE, fd); 
-    /* P5: raw byte bw  ; P2: ascii bw */
+    /* P5: raw byte or short bw  ; P2: ascii byte or short bw */
     /* P6: raw byte rgb ; P3: ascii rgb */
-    /* P8: raw int32_t 2d-3d  ==  extension MC */
-    /* P9: raw float 2d-3d  ==  extension MC */
-    /* PA: ascii float 2d-3d  ==  extension LN */
-    /* PB: ascii int32_t 2d-3d  ==  extension MC */
-    /* PC: raw double 2d-3d  ==  extension MC */
-    /* PD: ascii double 2d-3d  ==  extension LN */
+    /* P8: raw int32_t 2d-3d...  ==  extension MC */
+    /* P9: raw float 2d-3d...  ==  extension MC */
+    /* PA: ascii float 2d-3d...  ==  extension LN */
+    /* PB: ascii int32_t 2d-3d...  ==  extension MC */
+    /* PC: raw double 2d-3d...  ==  extension MC */
+    /* PD: ascii double 2d-3d...  ==  extension LN */
     /* P7: raw byte 3d : OBSOLETE - left for compatibility */
+    /* PE: raw single precision complex 2d-3d...  ==  extension MC */
+    /* PF: ascii single precision complex 2d-3d...  ==  extension MC */
   if (!read)
   {
     fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
     return 0;
   }
 
-  if (buffer[0] != 'P')
-  {   fprintf(stderr,"%s : invalid image format\n", F_NAME);
-      return NULL;
-  }
-  switch (buffer[1])
-  {
-    case '2': ascii = 1; typepixel = VFF_TYP_1_BYTE; break;
-    case '5':
-    case '7': ascii = 0; typepixel = VFF_TYP_1_BYTE; break;
-    case '8': ascii = 0; typepixel = VFF_TYP_4_BYTE; break;
-    case '9': ascii = 0; typepixel = VFF_TYP_FLOAT; break;
-    case 'A': ascii = 1; typepixel = VFF_TYP_FLOAT; break;
-    case 'B': ascii = 1; typepixel = VFF_TYP_4_BYTE; break;
-    case 'C': ascii = 0; typepixel = VFF_TYP_DOUBLE; break;
-    case 'D': ascii = 1; typepixel = VFF_TYP_DOUBLE; break;
-    default:
-      fprintf(stderr,"%s : invalid image format : P%c\n", F_NAME, buffer[1]);
-      return NULL;
-  } /* switch */
+  /* HT: TIFF */
+  if ((strncmp(buffer, "II", 2) == 0) || (strncmp(buffer, "MM", 2) ==0)) {
+      image = NULL;
+#     ifdef HAVE_TIFF_LIB
+      image=readtiffimage(filename);
+#     else /* NOT HAVE_TIFF_LIB */
+      fprintf(stderr, "TIFF image not supported at this time\n");
+#     endif /* NOT HAVE_TIFF_LIB */
+      /*otherwise, return NULL */
+  } else { /* extended PGM/PNM format */
 
-  c = sscanf(buffer+2, "%d %d %d", &rs, &cs, &ndgmax);
+      if (buffer[0] != 'P')
+      {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
+          return NULL;
+      }
+      tag = buffer[1];
 
-  if (c == 3) /* format pgm MatLab : tout sur une ligne */
-  {
-    ds = 1;
-    goto readdata;
-  }
+#     ifdef MC_64_BITS
+      c = sscanf(buffer+2, "%lld %lld %d", (long long int *)&rs, (long long int *)&cs, (int *)&ndgmax);
+#     else /* NOT MC_64_BITS */
+      c = sscanf(buffer+2, "%d %d %d", (int *)&rs, (int *)&cs, (int *)&ndgmax);
+#     endif /* NOT MC_64_BITS */
 
-  do
-  {
-    read = fgets(buffer, BUFFERSIZE, fd); /* commentaire */
-    if (!read)
-    {
-      fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
-      return 0;
-    }
-    if (strncmp(buffer, "#xdim", 5) == 0)
-      sscanf(buffer+5, "%lf", &xdim);
-    else if (strncmp(buffer, "#ydim", 5) == 0)
-      sscanf(buffer+5, "%lf", &ydim);
-    else if (strncmp(buffer, "#zdim", 5) == 0)
-      sscanf(buffer+5, "%lf", &zdim);
-  } while (!isdigit(buffer[0]));
+      if (c == 3) /* format pgm MatLab : tout sur une ligne */
+      {
+          nb = ds = 1;
+          goto readdata;
+      }
 
-  c = sscanf(buffer, "%d %d %d", &rs, &cs, &ds);
-  if (c == 2) ds = 1;
-  else if (c != 3)
-  {   fprintf(stderr,"%s : invalid image format\n", F_NAME);
-      return NULL;
-  }
+      do
+      {
+          read = fgets(buffer, BUFFERSIZE, fd); /* commentaire */
+          if (!read)
+          {
+              fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
+              return 0;
+          }
+          if (strncmp(buffer, "#xdim", 5) == 0)
+              sscanf(buffer+5, "%lf", &xdim);
+          else if (strncmp(buffer, "#ydim", 5) == 0)
+              sscanf(buffer+5, "%lf", &ydim);
+          else if (strncmp(buffer, "#zdim", 5) == 0)
+              sscanf(buffer+5, "%lf", &zdim);
+      } while (!isdigit(buffer[0]));
 
-  read = fgets(buffer, BUFFERSIZE, fd);
-  if (!read)
-  {
-    fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
-    return 0;
-  }
+#     ifdef MC_64_BITS
+      c = sscanf(buffer, "%lld %lld %lld %lld", (long long int *)&rs, (long long int *)&cs, (long long int *)&ds, (long long int *)&nb);
+#     else /* NOT MC_64_BITS */
+      c = sscanf(buffer, "%d %d %d %d", (int *)&rs, (int *)&cs, (int *)&ds, (int *)&nb);
+#     endif /* NOT MC_64_BITS */
+      if (c == 2) nb = ds = 1;
+      else if (c == 3) nb = 1;
+      else if (c != 4)
+      {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
+          return NULL;
+      }
 
-  sscanf(buffer, "%d", &ndgmax);
+#     ifdef WARN_HUGE
+      if (((int64_t)rs * (int64_t)cs * (int64_t)ds * (int64_t)nb) >= HUGE_IMAGE_SIZE)
+      {
+          fprintf(stderr, "%s: WARNING huge image\n", F_NAME);
+      }
+#     endif
+
+      read = fgets(buffer, BUFFERSIZE, fd);
+      if (!read)
+      {
+          fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
+          return 0;
+      }
+      
+      sscanf(buffer, "%d", (int *)&ndgmax);
+
+      color = 0;
+      switch (tag)
+      {
+        case '3': 
+	  color = 1; nb = 3;
+        case '2': 
+          ascii = 1; 
+          if (ndgmax <= 255) typepixel = VFF_TYP_1_BYTE; 
+          else if (ndgmax <= 65535) typepixel = VFF_TYP_2_BYTE; 
+          else 
+          {
+              fprintf(stderr,"%s: wrong ndgmax = %d\n", F_NAME, ndgmax);
+              return(NULL);
+          }
+          break;
+        case '6':
+	  color = 1; nb = 3;
+        case '5':
+        case '7': 
+          ascii = 0; 
+          if (ndgmax <= 255) typepixel = VFF_TYP_1_BYTE; 
+          else if (ndgmax <= 65535) typepixel = VFF_TYP_2_BYTE; 
+          else 
+          {
+              fprintf(stderr,"%s: wrong ndgmax = %d\n", F_NAME, ndgmax);
+              return(NULL);
+          }
+          break;
+        case '8': ascii = 0; typepixel = VFF_TYP_4_BYTE; break;
+        case '9': ascii = 0; typepixel = VFF_TYP_FLOAT; break;
+        case 'A': ascii = 1; typepixel = VFF_TYP_FLOAT; break;
+        case 'B': ascii = 1; typepixel = VFF_TYP_4_BYTE; break;
+        case 'C': ascii = 0; typepixel = VFF_TYP_DOUBLE; break;
+        case 'D': ascii = 1; typepixel = VFF_TYP_DOUBLE; break;
+        case 'E': ascii = 0; typepixel = VFF_TYP_COMPLEX; break;
+        case 'F': ascii = 1; typepixel = VFF_TYP_COMPLEX; break;
+        default:
+          fprintf(stderr,"%s: invalid image format: P%c\n", F_NAME, tag);
+          return NULL;
+      } /* switch */
 
  readdata:
-  N = rs * cs * ds;
-  image = allocimage(NULL, rs, cs, ds, typepixel);
-  if (image == NULL)
-  {   fprintf(stderr,"%s : alloc failed\n", F_NAME);
-      return(NULL);
-  }
-  image->xdim = xdim;
-  image->ydim = ydim;
-  image->zdim = zdim;
-
-  if (typepixel == VFF_TYP_1_BYTE)
-  {
-    if (ascii)
-    {
-      if (ndgmax == 255)
-        for (i = 0; i < N; i++)
-        {
-          fscanf(fd, "%d", &c);
-          UCHARDATA(image)[i] = (uint8_t)c;
-        } /* for i */
-      else if (ndgmax == 65535)
-        for (i = 0; i < N; i++)
-        {
-          fscanf(fd, "%d", &c);
-          UCHARDATA(image)[i] = (uint8_t)(c/256);
-        } /* for i */
+      image = allocmultimage(NULL, rs, cs, ds, 1, nb, typepixel);
+      if (image == NULL)
+      {   fprintf(stderr,"%s: alloc failed\n", F_NAME);
+          return(NULL);
+      }
+      image->xdim = xdim;
+      image->ydim = ydim;
+      image->zdim = zdim;
+      
+      if (typepixel == VFF_TYP_1_BYTE)
+      {
+          if (ascii)
+          {
+	    if (color)
+	    {
+	      uint8_t *b1, *b2, *b3;
+	      N = rs * cs;
+	      b1 = UCHARDATA(image);
+	      b2 = b1 + N;
+	      b3 = b2 + N;
+	      for (i = 0; i < N; i++)
+              {
+		fscanf(fd, "%d", &c);
+		b1[i] = (uint8_t)c;
+		fscanf(fd, "%d", &c);
+		b2[i] = (uint8_t)c;
+		fscanf(fd, "%d", &c);
+		b3[i] = (uint8_t)c;
+              } // for i
+	    } // if color
+	    else
+	    {
+	      N = rs * cs * ds * nb;
+	      for (i = 0; i < N; i++)
+              {
+                  fscanf(fd, "%d", &c);
+                  UCHARDATA(image)[i] = (uint8_t)c;
+              } // for i
+	    } 
+          } // if (ascii)
+          else
+          {
+	    if (color)
+	    {
+	      uint8_t *b1, *b2, *b3;
+	      N = rs * cs;
+	      b1 = UCHARDATA(image);
+	      b2 = b1 + N;
+	      b3 = b2 + N;
+	      for (i = 0; i < N; i++)
+              {
+		b1[i] = fgetc(fd);
+		b2[i] = fgetc(fd);
+		b3[i] = fgetc(fd);
+              } // for i
+	    } // if (color)
+	    else 
+	    {
+	      index_t ret;
+	      N   = rs * cs * ds * nb;
+              ret = fread(UCHARDATA(image), sizeof(char), N, fd);
+              if (ret != N)
+              {
+#                 ifdef MC_64_BITS
+                  fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
+#                 else /* NOT MC_64_BITS */
+                  fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
+#                 endif /* NOT MC_64_BITS */
+                  return(NULL);
+              }
+	    }
+          }
+      } // if (typepixel == VFF_TYP_1_BYTE)
       else
       {
-        fprintf(stderr,"%s : wrong ndgmax = %d\n", F_NAME, ndgmax);
-        return(NULL);
-      }
-    }
-    else
-    {
-      int32_t ret = fread(UCHARDATA(image), sizeof(char), N, fd);
-      if (ret != N)
-      {
-        fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
-        return(NULL);
-      }
-    }
-  } /* if (typepixel == VFF_TYP_1_BYTE) */
-  else
-  if (typepixel == VFF_TYP_4_BYTE)
-  {
-    if (ascii)
-    {
-      for (i = 0; i < N; i++)
-      {
-        fscanf(fd, "%ld", &(ULONGDATA(image)[i]));
-      } /* for i */
-    }
-    else 
-    {
-      int32_t ret = fread(ULONGDATA(image), sizeof(int32_t), N, fd);
-      if (ret != N)
-      {
-        fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
-        return(NULL);
-      }
-    }
-  } /* if (typepixel == VFF_TYP_4_BYTE) */
-  else
-  if (typepixel == VFF_TYP_FLOAT)
-  {
-    if (ascii)
-    {
-      for (i = 0; i < N; i++)
-      {
-        fscanf(fd, "%f", &(FLOATDATA(image)[i]));
-      } /* for i */
-    }
-    else 
-    {
-      int32_t ret = fread(FLOATDATA(image), sizeof(float), N, fd);
-      if (ret != N)
-      {
-        fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
-        return(NULL);
-      }
-    }
-  } /* if (typepixel == VFF_TYP_FLOAT) */
-  else
-  if (typepixel == VFF_TYP_DOUBLE)
-  {
-    if (ascii)
-    {
-      for (i = 0; i < N; i++)
-      {
-        fscanf(fd, "%lf", &(DOUBLEDATA(image)[i]));
-      } /* for i */
-    }
-    else 
-    {
-      int32_t ret = fread(DOUBLEDATA(image), sizeof(double), N, fd);
-      if (ret != N)
-      {
-        fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
-        return(NULL);
-      }
-    }
-  } /* if (typepixel == VFF_TYP_DOUBLE) */
-
+          if (color)
+	  {                  
+	    fprintf(stderr,"%s: non supported color image type\n", F_NAME);
+	    return(NULL);
+	  }
+	  N = rs * cs * ds * nb;
+          if (typepixel == VFF_TYP_2_BYTE)
+          {
+              if (ascii)
+              {
+                  uint16_t tmp;
+                  for (i = 0; i < N; i++)
+                  {
+                      fscanf(fd, "%hd", &tmp); (SSHORTDATA(image)[i]) = tmp;
+                  } /* for i */
+              }
+              else // Standard PGM format imposes big-endian for 2-byte images, but
+              {    // standard PC architectures are little-endian
+                  uint16_t tmp;
+                  uint8_t tmp1;
+                  for (i = 0; i < N; i++) 
+                  { 
+                      (void)fread(&tmp, sizeof(uint16_t), 1, fd);
+                      // conversion big-endian -> little-endian
+                      tmp1 = tmp & 0x00ff;
+                      tmp = tmp >> 8;
+                      tmp = tmp | (((uint16_t)tmp1) << 8);      
+                      (SSHORTDATA(image)[i]) = (int16_t)tmp;
+                  }
+              }
+          } /* if (typepixel == VFF_TYP_2_BYTE) */
+          else
+              if (typepixel == VFF_TYP_4_BYTE)
+              {
+                  if (ascii)
+                  {
+                      long int tmp;
+                      for (i = 0; i < N; i++)
+                      {
+                          fscanf(fd, "%ld", &tmp); (SLONGDATA(image)[i]) = (int32_t)tmp;
+                      } /* for i */
+                  }
+                  else 
+                  {
+                      index_t ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
+                      if (ret != N)
+                      {
+#                         ifdef MC_64_BITS
+                          fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
+#                         else /* NOT MC_64_BITS */
+                          fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
+#                         endif /* NOT MC_64_BITS */
+                          return(NULL);
+                      }
+                  }
+              } /* if (typepixel == VFF_TYP_4_BYTE) */
+              else
+                  if (typepixel == VFF_TYP_FLOAT)
+                  {
+                      if (ascii)
+                      {
+                          for (i = 0; i < N; i++)
+                          {
+                              fscanf(fd, "%f", &(FLOATDATA(image)[i]));
+                          } /* for i */
+                      }
+                      else 
+                      {
+                          index_t ret = fread(FLOATDATA(image), sizeof(float), N, fd);
+                          if (ret != N)
+                          {
+#                             ifdef MC_64_BITS
+                              fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
+#                             else /* NOT MC_64_BITS */
+                              fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
+#                             endif /* NOT MC_64_BITS */
+                              return(NULL);
+                          }
+                      }
+                  } /* if (typepixel == VFF_TYP_FLOAT) */
+                  else
+                      if (typepixel == VFF_TYP_DOUBLE)
+                      {
+                          if (ascii)
+                          {
+                              for (i = 0; i < N; i++)
+                              {
+                                  fscanf(fd, "%lf", &(DOUBLEDATA(image)[i]));
+                              } /* for i */
+                          }
+                          else 
+                          {
+                              index_t ret = fread(DOUBLEDATA(image), sizeof(double), N, fd);
+                              if (ret != N)
+                              {
+#                                 ifdef MC_64_BITS
+                                  fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
+#                                 else /* NOT MC_64_BITS */
+                                  fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
+#                                 endif /* NOT MC_64_BITS */
+                                  return(NULL);
+                              }
+                          }
+                      } /* if (typepixel == VFF_TYP_DOUBLE) */
+                      else
+                          if (typepixel == VFF_TYP_COMPLEX)
+                          {
+                              if (ascii)
+                              {
+                                  for (i = 0; i < N+N; i++)
+                                  {
+                                      fscanf(fd, "%f", &(FLOATDATA(image)[i]));
+                                  } /* for i */
+                              }
+                              else 
+                              {
+                                  index_t ret = fread(FLOATDATA(image), sizeof(float), N+N, fd);
+                                  if (ret != N+N)
+                                  {
+#                                     ifdef MC_64_BITS
+                                      fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)(N+N), (long long int)ret);
+#                                     else /* NOT MC_64_BITS */
+                                      fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N+N, ret);
+#                                     endif /* NOT MC_64_BITS */
+                                      return(NULL);
+                                  }
+                              }
+                          } /* if (typepixel == VFF_TYP_COMPLEX) */
+      } // else if (typepixel == VFF_TYP_1_BYTE)
+  } /* if TIFF */
   fclose(fd);
 
   return image;
@@ -1308,20 +2421,16 @@ struct xvimage * readheader(char *filename)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, ndgmax, N, i;
+  index_t rs, cs, d;
   struct xvimage * image;
   int32_t ascii;  
   int32_t typepixel;
-  int32_t c;
+  int32_t c, ndgmax;
   double xdim=1.0, ydim=1.0, zdim=1.0;
   char *read;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
+  fd = pink_fopen_read(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: file not found: %s\n", F_NAME, filename);
@@ -1336,7 +2445,7 @@ struct xvimage * readheader(char *filename)
   }
   if (buffer[0] != 'P')
   {
-    fprintf(stderr,"%s : invalid image format: %c%c\n", F_NAME, buffer[0], buffer[1]);
+    fprintf(stderr,"%s: invalid image format: %c%c\n", F_NAME, buffer[0], buffer[1]);
     return NULL;
   }
   switch (buffer[1])
@@ -1350,8 +2459,10 @@ struct xvimage * readheader(char *filename)
     case 'B': ascii = 1; typepixel = VFF_TYP_4_BYTE; break;
     case 'C': ascii = 0; typepixel = VFF_TYP_DOUBLE; break;
     case 'D': ascii = 1; typepixel = VFF_TYP_DOUBLE; break;
+    case 'E': ascii = 0; typepixel = VFF_TYP_COMPLEX; break;
+    case 'F': ascii = 1; typepixel = VFF_TYP_COMPLEX; break;
     default:
-      fprintf(stderr,"%s : invalid image format: %c%c\n", F_NAME, buffer[0], buffer[1]);
+      fprintf(stderr,"%s: invalid image format: %c%c\n", F_NAME, buffer[0], buffer[1]);
       return NULL;
   } /* switch */
 
@@ -1371,10 +2482,14 @@ struct xvimage * readheader(char *filename)
       sscanf(buffer+5, "%lf", &zdim);
   } while (!isdigit(buffer[0]));
 
-  c = sscanf(buffer, "%d %d %d", &rs, &cs, &d);
+# ifdef MC_64_BITS
+  c = sscanf(buffer, "%lld %lld %lld", (long long int *)&rs, (long long int *)&cs, (long long int *)&d);
+# else /* NOT MC_64_BITS */
+  c = sscanf(buffer, "%d %d %d", (int *)&rs, (int *)&cs, (int *)&d);
+# endif /* NOT MC_64_BITS */
   if (c == 2) d = 1;
   else if (c != 3)
-  {   fprintf(stderr,"%s : invalid image format\n", F_NAME);
+  {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
       return NULL;
   }
 
@@ -1385,11 +2500,11 @@ struct xvimage * readheader(char *filename)
     return 0;
   }
 
-  sscanf(buffer, "%d", &ndgmax);
+  sscanf(buffer, "%d", (int *)&ndgmax);
 
   image = allocheader(NULL, rs, cs, d, typepixel);
   if (image == NULL)
-  {   fprintf(stderr,"%s : alloc failed\n", F_NAME);
+  {   fprintf(stderr,"%s: alloc failed\n", F_NAME);
       return(NULL);
   }
   image->xdim = xdim;
@@ -1402,7 +2517,7 @@ struct xvimage * readheader(char *filename)
 } /* readheader() */
 
 /* ==================================== */
-struct xvimage * readse(char *filename, int32_t *x, int32_t *y, int32_t*z)
+struct xvimage * readse(char *filename, index_t *x, index_t *y, index_t*z)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "readse"
@@ -1415,20 +2530,17 @@ de la forme :
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, ndgmax, N, i;
+  index_t rs, cs, d, i;
+  index_t N;
   struct xvimage * image;
   int32_t ascii;  
   int32_t typepixel;
-  int32_t c;
+  int32_t c, ndgmax;
   int32_t dimorigin = 0;
   char *read;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
+  fd = pink_fopen_read(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: file not found: %s\n", F_NAME, filename);
@@ -1442,7 +2554,7 @@ de la forme :
     return 0;
   }
   if (buffer[0] != 'P')
-  {   fprintf(stderr,"%s : invalid image format\n", F_NAME);
+  {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
       return NULL;
   }
   switch (buffer[1])
@@ -1451,7 +2563,7 @@ de la forme :
     case '5':
     case '7': ascii = 0; typepixel = VFF_TYP_1_BYTE; break;
     default:
-      fprintf(stderr,"%s : invalid image format\n", F_NAME);
+      fprintf(stderr,"%s: invalid image format\n", F_NAME);
       return NULL;
   } /* switch */
 
@@ -1465,27 +2577,46 @@ de la forme :
     }
     if (strncmp(buffer, "#origin", 7) == 0)
     {
-      dimorigin = sscanf(buffer+7, "%d %d %d", x, y, z);
+#ifdef MC_64_BITS
+      dimorigin = sscanf(buffer+7, "%lld %lld %lld", (long long int *)x, (long long int *)y, (long long int *)z);
+#else
+      dimorigin = sscanf(buffer+7, "%d %d %d", (int *)x, (int *)y, (int *)z);
+#endif
 #ifdef VERBOSE
+#ifdef MC_64_BITS
+      if (dimorigin == 2) fprintf(stderr, "%s: origin %lld %lld\n", F_NAME, (long long int)*x, (long long int)*y);
+#else
       if (dimorigin == 2) fprintf(stderr, "%s: origin %d %d\n", F_NAME, *x, *y);
+#endif
+#ifdef MC_64_BITS
+      if (dimorigin == 3) fprintf(stderr, "%s: origin %lld %lld %lld\n", F_NAME, (long long int)*x, (long long int)*y, (long long int)*z);
+#else
       if (dimorigin == 3) fprintf(stderr, "%s: origin %d %d %d\n", F_NAME, *x, *y, *z);
+#endif
 #endif
     }
   } while (buffer[0] == '#');
 
   if (!dimorigin)
-  {   fprintf(stderr,"%s : origin missing for structuring element\n", F_NAME);
-      return NULL;
+  {   
+#ifdef VERBOSE
+    fprintf(stderr,"%s: origin missing for structuring element\n", F_NAME);
+#endif
+    return NULL;
   }
 
-  c = sscanf(buffer, "%d %d %d", &rs, &cs, &d);
+#ifdef MC_64_BITS
+  c = sscanf(buffer, "%lld %lld %lld", (long long int *)&rs, (long long int *)&cs, (long long int *)&d);
+#else
+  c = sscanf(buffer, "%d %d %d", (int *)&rs, (int *)&cs, (int *)&d);
+#endif
   if (c != dimorigin)
-  {   fprintf(stderr,"%s : incompatible origin and image dimensions\n", F_NAME);
+  {   fprintf(stderr,"%s: incompatible origin and image dimensions\n", F_NAME);
       return NULL;
   }
   if (c == 2) d = 1;
   else if (c != 3)
-  {   fprintf(stderr,"%s : invalid image format\n", F_NAME);
+  {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
       return NULL;
   }
 
@@ -1493,16 +2624,16 @@ de la forme :
   if (!read)
   {
     fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
-    return 0;
+    return NULL;
   }
 
-  sscanf(buffer, "%d", &ndgmax);
+  sscanf(buffer, "%d", (int *)&ndgmax);
   N = rs * cs * d;
 
   image = allocimage(NULL, rs, cs, d, typepixel);
   if (image == NULL)
-  {   fprintf(stderr,"%s : alloc failed\n", F_NAME);
-      return(NULL);
+  {   fprintf(stderr,"%s: alloc failed\n", F_NAME);
+      return NULL;
   }
 
   if (typepixel == VFF_TYP_1_BYTE)
@@ -1522,28 +2653,36 @@ de la forme :
           UCHARDATA(image)[i] = (uint8_t)(c/256);
         } /* for i */
       else
-      {   fprintf(stderr,"%s : wrong ndgmax = %d\n", F_NAME, ndgmax);
+      {   fprintf(stderr,"%s: wrong ndgmax = %d\n", F_NAME, ndgmax);
           return(NULL);
       }
     }
     else
     {
-      int32_t ret = fread(UCHARDATA(image), sizeof(char), N, fd);
+      index_t ret = fread(UCHARDATA(image), sizeof(char), N, fd);
       if (ret != N)
       {
-        fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
-        return(NULL);
+#ifdef MC_64_BITS
+        fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
+#else
+        fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
+#endif
+        return NULL;
       }
     }
   } /* if (typepixel == VFF_TYP_1_BYTE) */
   else
   if (typepixel == VFF_TYP_4_BYTE)
   {
-    int32_t ret = fread(ULONGDATA(image), sizeof(int32_t), N, fd);
+    index_t ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
     if (ret != N)
     {
-      fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
-      return(NULL);
+#ifdef MC_64_BITS
+      fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
+#else
+      fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
+#endif
+      return NULL;
     }
   } /* if (typepixel == VFF_TYP_4_BYTE) */
 
@@ -1564,32 +2703,29 @@ int32_t readrgbimage(
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, nndg, N, i;
+  index_t rs, cs, i, ds;
+  index_t N;
   int32_t ascii = 0;  
   int32_t c;
   char *read;
+  int32_t nndg, ndgmax;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
+  fd = pink_fopen_read(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: file not found: %s\n", F_NAME, filename);
     return 0;
   }
 
-  read = fgets(buffer, BUFFERSIZE, fd); /* P5: raw int32_t bw  ; P2: ascii bw */
-                                        /* P6: raw int32_t rgb ; P3: ascii rgb */
+  read = fgets(buffer, BUFFERSIZE, fd); /* P6: raw int32_t rgb ; P3: ascii rgb */
   if (!read)
   {
     fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
     return 0;
   }
   if (buffer[0] != 'P')
-  {   fprintf(stderr,"%s : invalid image format\n", F_NAME);
+  {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
       return 0;
   }
 
@@ -1598,9 +2734,23 @@ int32_t readrgbimage(
     case '3': ascii = 1; break;
     case '6': ascii = 0; break;
     default:
-      fprintf(stderr,"%s : invalid image format\n", F_NAME);
+      fprintf(stderr,"%s: invalid image format\n", F_NAME);
       return 0;
   } /* switch */
+
+#ifdef MC_64_BITS
+  c = sscanf(buffer+2, "%lld %lld %d", (long long int *)&rs, (long long int *)&cs, &ndgmax);
+#else
+  c = sscanf(buffer+2, "%d %d %d", (int *)&rs, (int *)&cs, (int *)&ndgmax);
+#endif
+
+  if (c == 3) /* format ppm MatLab : tout sur une ligne */
+  {
+    ds = 1;
+    goto readdata;
+  }
+
+
 
   do 
   {
@@ -1612,9 +2762,13 @@ int32_t readrgbimage(
     }
   } while (!isdigit(buffer[0]));
 
-  c = sscanf(buffer, "%d %d", &rs, &cs);
+#ifdef MC_64_BITS
+  c = sscanf(buffer, "%lld %lld", (long long int *)&rs, (long long int *)&cs);
+#else
+  c = sscanf(buffer, "%d %d", (int *)&rs, (int *)&cs);
+#endif
   if (c != 2)
-  {   fprintf(stderr,"%s : invalid image format\n", F_NAME);
+  {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
       return 0;
   }
 
@@ -1624,14 +2778,16 @@ int32_t readrgbimage(
     fprintf(stderr, "%s: fgets returned without reading\n", F_NAME);
     return 0;
   }
-  sscanf(buffer, "%d", &nndg);
+  sscanf(buffer, "%d", (int *)&nndg);
+
+  readdata:
   N = rs * cs;
 
   *r = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
   *g = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
   *b = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
   if ((*r == NULL) && (*g == NULL) && (*b == NULL))
-  {   fprintf(stderr,"%s : allocimage failed\n", F_NAME);
+  {   fprintf(stderr,"%s: allocimage failed\n", F_NAME);
       return(0);
   }
 
@@ -1648,9 +2804,9 @@ int32_t readrgbimage(
   else
     for (i = 0; i < N; i++)
     {
-      (UCHARDATA(*r))[i] = fgetc(fd);    
-      (UCHARDATA(*g))[i] = fgetc(fd);    
-      (UCHARDATA(*b))[i] = fgetc(fd);    
+      (UCHARDATA(*r))[i] = fgetc(fd);
+      (UCHARDATA(*g))[i] = fgetc(fd);
+      (UCHARDATA(*b))[i] = fgetc(fd);
     } /* for i */
 
   fclose(fd);
@@ -1668,17 +2824,14 @@ struct xvimage * readlongimage(char *filename)
 {
   char buffer[BUFFERSIZE];
   FILE *fd = NULL;
-  int32_t rs, cs, d, nndg, N, i;
+  index_t rs, cs, d, ret;
+  index_t N;
   struct xvimage * image;
-  int32_t c, ret;
+  int32_t c, nndg;
   char *read;
 
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
+  fd = pink_fopen_read(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: file not found: %s\n", F_NAME, filename);
@@ -1693,7 +2846,7 @@ struct xvimage * readlongimage(char *filename)
   }
 
   if ((buffer[0] != 'P') || (buffer[1] != '8'))
-  {   fprintf(stderr,"%s : invalid image format\n", F_NAME);
+  {   fprintf(stderr,"%s: invalid image format\n", F_NAME);
       return NULL;
   }
 
@@ -1707,10 +2860,14 @@ struct xvimage * readlongimage(char *filename)
     }
   } while (buffer[0] == '#');
 
-  c = sscanf(buffer, "%d %d %d", &rs, &cs, &d);
+#ifdef MC_64_BITS
+  c = sscanf(buffer, "%lld %lld %lld", (long long int *)&rs, (long long int *)&cs, (long long int *)&d);
+#else
+  c = sscanf(buffer, "%d %d %d", (int *)&rs, (int *)&cs, (int *)&d);
+#endif
   if (c == 2) d = 1;
   else if (c != 3)
-  {   fprintf(stderr,"%s : invalid image format - c = %d \n", F_NAME, c);
+  {   fprintf(stderr,"%s: invalid image format - c = %d \n", F_NAME, c);
       return NULL;
   }
 
@@ -1721,19 +2878,23 @@ struct xvimage * readlongimage(char *filename)
     return 0;
   }
 
-  sscanf(buffer, "%d", &nndg);
+  sscanf(buffer, "%d", (int *)&nndg);
   N = rs * cs * d;
 
   image = allocimage(NULL, rs, cs, d, VFF_TYP_4_BYTE);
   if (image == NULL)
-  {   fprintf(stderr,"%s : alloc failed\n", F_NAME);
+  {   fprintf(stderr,"%s: alloc failed\n", F_NAME);
       return(NULL);
   }
 
-  ret = fread(ULONGDATA(image), sizeof(int32_t), N, fd);
+  ret = fread(SLONGDATA(image), sizeof(int32_t), N, fd);
   if (ret != N)
   {
-    fprintf(stderr,"%s : fread failed : %d asked ; %d read\n", F_NAME, N, ret);
+#ifdef MC_64_BITS
+    fprintf(stderr,"%s: fread failed: %lld asked ; %lld read\n", F_NAME, (long long int)N, (long long int)ret);
+#else
+    fprintf(stderr,"%s: fread failed: %d asked ; %d read\n", F_NAME, N, ret);
+#endif
     return(NULL);
   }
 
@@ -1748,36 +2909,36 @@ struct xvimage * readlongimage(char *filename)
 /* =========================================================================== */
 
 struct BITMAPFILEHEADER {   /* size 14 bytes */
-  char Signature[2];        /* size 2 bytes : 'BM' */
-  uint32_t FileSize;   /* size 4 bytes : File size in bytes */
-  uint32_t reserved;   /* size 4 bytes : unused (=0) */
-  uint32_t DataOffset; /* size 4 bytes : File offset to Raster Data */
+  char Signature[2];        /* size 2 bytes: 'BM' */
+  uint32_t FileSize;   /* size 4 bytes: File size in bytes */
+  uint32_t reserved;   /* size 4 bytes: unused (=0) */
+  uint32_t DataOffset; /* size 4 bytes: File offset to Raster Data */
 };
 
 struct BITMAPINFOHEADER {    /* size 40 bytes */
-  uint32_t Size;        /* size 4 bytes : Size of InfoHeader =40 */  
-  uint32_t Width;       /* size 4 bytes : Bitmap Width */
-  uint32_t Height;      /* size 4 bytes : Bitmap Height */
-  uint16_t Planes;     /* size 2 bytes : Number of Planes (=1) */
-  uint16_t BitCount;   /* size 2 bytes : Bits per Pixel    */
+  uint32_t Size;        /* size 4 bytes: Size of InfoHeader =40 */  
+  uint32_t Width;       /* size 4 bytes: Bitmap Width */
+  uint32_t Height;      /* size 4 bytes: Bitmap Height */
+  uint16_t Planes;     /* size 2 bytes: Number of Planes (=1) */
+  uint16_t BitCount;   /* size 2 bytes: Bits per Pixel    */
                              /*   1 = monochrome palette. NumColors = 1   
                                   4 = 4bit palletized. NumColors = 16   
                                   8 = 8bit palletized. NumColors = 256  
                                   16 = 16bit RGB. NumColors = 65536 (?)  
                                   24 = 24bit RGB. NumColors = 16M
 			     */
-  uint32_t Compression; /* size 4 bytes : Type of Compression    */
+  uint32_t Compression; /* size 4 bytes: Type of Compression    */
                              /*
                                   0 = BI_RGB   no compression   
                                   1 = BI_RLE8 8bit RLE encoding   
                                   2 = BI_RLE4 4bit RLE encoding
 			     */
-  uint32_t ImageSize;   /* size 4 bytes : (compressed) Size of Image   */
+  uint32_t ImageSize;   /* size 4 bytes: (compressed) Size of Image   */
                              /* It is valid to set this =0 if Compression = 0 */
-  uint32_t XpixelsPerM; /* size 4 bytes : horizontal resolution: Pixels/meter */
-  uint32_t YpixelsPerM; /* size 4 bytes : vertical resolution: Pixels/meter */
-  uint32_t ColorsUsed;  /* size 4 bytes : Number of actually used colors */
-  uint32_t ColorsImportant; /* size 4 bytes : Number of important colors (0 = all) */
+  uint32_t XpixelsPerM; /* size 4 bytes: horizontal resolution: Pixels/meter */
+  uint32_t YpixelsPerM; /* size 4 bytes: vertical resolution: Pixels/meter */
+  uint32_t ColorsUsed;  /* size 4 bytes: Number of actually used colors */
+  uint32_t ColorsImportant; /* size 4 bytes: Number of important colors (0 = all) */
 };
 
 /*
@@ -2017,18 +3178,14 @@ int32_t readbmp(char *filename, struct xvimage ** r, struct xvimage ** g, struct
 #undef F_NAME
 #define F_NAME "readbmp"
 {
-  FILE *fd;
+  FILE *fd = NULL;
   struct BITMAPFILEHEADER FileHeader;
   struct BITMAPINFOHEADER InfoHeader;
   uint8_t *R, *G, *B;
   int32_t i, j, rs, cs;
 
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
+  fd = pink_fopen_read(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -2126,7 +3283,7 @@ void writebmp(
 #undef F_NAME
 #define F_NAME "writebmp"
 {
-  FILE *fd;
+  FILE *fd = NULL;
   uint8_t *R, *G, *B;
   int32_t i, j, rs, cs, N;
 
@@ -2145,12 +3302,8 @@ void writebmp(
   G = UCHARDATA(greenimage);
   B = UCHARDATA(blueimage);
 
-#ifdef DOSIO
-  fd = fopen(filename,"wb");
-#endif
-#ifdef UNIXIO
-  fd = fopen(filename,"w");
-#endif
+  fd = pink_fopen_write(filename);
+ 
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -2197,18 +3350,18 @@ http://reality.sgi.com/grafica/sgiimage.html
 */
 
 struct RGBFILEHEADER {       /* size 108 bytes */
-  uint16_t magic;      /* size 2 bytes : magic number = 474 */
-  uint8_t compression; /* size 1 byte : 0 for no compression */
-  uint8_t bytespercha; /* size 1 byte : nb. bytes per channel */
-  uint16_t dim;        /* size 2 bytes : nb. channels */
-  uint16_t width;      /* size 2 bytes : image row size */
-  uint16_t height;     /* size 2 bytes : image col size */
-  uint16_t components; /* size 2 bytes : components */
-  uint32_t mincol;      /* size 4 bytes : 0 */
-  uint32_t maxcol;      /* size 4 bytes : 255 */
-  uint32_t dummy;       /* size 4 bytes : dummy */
-  char name[80];             /* size 80 bytes : image name or comment */
-  uint32_t cmaptype;    /* size 4 bytes : 0 for NORMAL RGB */
+  uint16_t magic;      /* size 2 bytes: magic number = 474 */
+  uint8_t compression; /* size 1 byte: 0 for no compression */
+  uint8_t bytespercha; /* size 1 byte: nb. bytes per channel */
+  uint16_t dim;        /* size 2 bytes: nb. channels */
+  uint16_t width;      /* size 2 bytes: image row size */
+  uint16_t height;     /* size 2 bytes: image col size */
+  uint16_t components; /* size 2 bytes: components */
+  uint32_t mincol;      /* size 4 bytes: 0 */
+  uint32_t maxcol;      /* size 4 bytes: 255 */
+  uint32_t dummy;       /* size 4 bytes: dummy */
+  char name[80];             /* size 80 bytes: image name or comment */
+  uint32_t cmaptype;    /* size 4 bytes: 0 for NORMAL RGB */
 }; /** plus 404 bytes dummy padding to make header 512 bytes **/
 
 /* =============================================================== */
@@ -2217,17 +3370,14 @@ int32_t readrgb(char *filename, struct xvimage ** r, struct xvimage ** g, struct
 #undef F_NAME
 #define F_NAME "readrgb"
 {
-  FILE *fd;
+  FILE *fd = NULL;
   struct RGBFILEHEADER FileHeader;
   uint8_t *R, *G, *B;
-  int32_t i, j, rs, cs, N;
+  index_t i, j, rs, cs;
+  index_t N;
 
-#ifdef DOSIO
-  fd = fopen(filename,"rb");
-#endif
-#ifdef UNIXIO
-  fd = fopen(filename,"r");
-#endif
+  fd = pink_fopen_read(filename);
+
   if (!fd)
   {
     fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
@@ -2285,17 +3435,48 @@ int32_t readrgb(char *filename, struct xvimage ** r, struct xvimage ** g, struct
   return 1;
 } /* readrgb() */
 
-#ifdef TEST
-int main()
+/* =============================================================== */
+void writelist2(char *filename, int32_t *x, int32_t *y, int32_t npoints)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "writelist2"
 {
-  struct xvimage *im = readimage("test1.pgm");
-  struct xvimage *am;
-  if (!im) exit(1);
-  am = copyimage(im);
-  printimage(am);
-  writeimage(am, "test2.pgm");
-  razimage(am);
-  copy2image(im, am);
-  writeimage(am, "test3.pgm");
-}
-#endif
+  FILE *fd = NULL;
+  int32_t i;
+
+  fd = pink_fopen_write(filename);
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
+    exit(1);
+  }
+
+  fprintf(fd, "b %d\n", npoints); 
+  for (i = 0; i < npoints; i++)
+    fprintf(fd, "%d %d\n", x[i], y[i]); 
+
+  fclose(fd);
+} // writelist2()
+
+/* =============================================================== */
+void writelist3(char *filename, int32_t *x, int32_t *y, int32_t *z, int32_t npoints)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "writelist3"
+{
+  FILE *fd = NULL;
+  int32_t i;
+
+  fd = pink_fopen_write(filename);
+  if (!fd)
+  {
+    fprintf(stderr, "%s: cannot open file: %s\n", F_NAME, filename);
+    exit(1);
+  }
+
+  fprintf(fd, "B %d\n", npoints); 
+  for (i = 0; i < npoints; i++)
+    fprintf(fd, "%d %d %d\n", x[i], y[i], z[i]); 
+
+  fclose(fd);
+} // writelist3()

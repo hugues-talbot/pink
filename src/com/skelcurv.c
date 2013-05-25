@@ -1,4 +1,37 @@
-/* $Id: skelcurv.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file skelcurv.c
 
 \brief curvilinear binary skeleton guided by a priority image
@@ -9,7 +42,7 @@
 Curvilinear binary skeleton guided by a priority image.
 The lowest values of the priority image correspond to the highest priority.
 
-The parameter \b prio is either an image (byte or int32_t), or a numerical code
+The parameter \b prio is either an image (byte or int32_t or float or double), or a numerical code
 indicating that a distance map will be used as a priority image; 
 the possible choices are:
 \li 0: approximate euclidean distance
@@ -21,6 +54,7 @@ the possible choices are:
 \li 6: 6-distance in 3d
 \li 18: 18-distance in 3d
 \li 26: 26-distance in 3d
+\li 5: breadth-first and directional strategy
 
 The parameter \b connex indicates the connectivity of the binary object.
 Possible choices are 4, 8 in 2d and 6, 26 in 3d.
@@ -58,6 +92,27 @@ References:<BR>
 
 \author Michel Couprie
 */
+
+/*
+%TEST skelcurv %IMAGES/2dbyte/binary/b2hebreu.pgm 0 8 %RESULTS/skelcurv_b2hebreu_0_8.pgm
+%TEST skelcurv %IMAGES/2dbyte/binary/b2hebreu.pgm 1 8 %RESULTS/skelcurv_b2hebreu_1_8.pgm
+%TEST skelcurv %IMAGES/2dbyte/binary/b2hebreu.pgm 2 8 %RESULTS/skelcurv_b2hebreu_2_8.pgm
+%TEST skelcurv %IMAGES/2dbyte/binary/b2hebreu.pgm 3 8 %RESULTS/skelcurv_b2hebreu_3_8.pgm
+%TEST skelcurv %IMAGES/2dbyte/binary/b2hebreu.pgm 4 8 %RESULTS/skelcurv_b2hebreu_4_8.pgm
+%TEST skelcurv %IMAGES/2dbyte/binary/b2hebreu.pgm 8 8 %RESULTS/skelcurv_b2hebreu_8_8.pgm
+%TEST skelcurv %IMAGES/2dbyte/binary/b2hebreu.pgm 0 4 %RESULTS/skelcurv_b2hebreu_0_4.pgm
+%TEST skelcurv %IMAGES/2dbyte/binary/b2hebreu.pgm 0 8 %IMAGES/2dbyte/binary/b2hebreui.pgm %RESULTS/skelcurv_b2hebreu_0_8_i.pgm
+%TEST skelcurv %IMAGES/3dbyte/binary/b3a.pgm 0 26 %RESULTS/skelcurv_b3a_0_26.pgm
+%TEST skelcurv %IMAGES/3dbyte/binary/b3a.pgm 1 26 %RESULTS/skelcurv_b3a_1_26.pgm
+%TEST skelcurv %IMAGES/3dbyte/binary/b3a.pgm 2 26 %RESULTS/skelcurv_b3a_2_26.pgm
+%TEST skelcurv %IMAGES/3dbyte/binary/b3a.pgm 3 26 %RESULTS/skelcurv_b3a_3_26.pgm
+%TEST skelcurv %IMAGES/3dbyte/binary/b3a.pgm 6 26 %RESULTS/skelcurv_b3a_6_26.pgm
+%TEST skelcurv %IMAGES/3dbyte/binary/b3a.pgm 18 26 %RESULTS/skelcurv_b3a_18_26.pgm
+%TEST skelcurv %IMAGES/3dbyte/binary/b3a.pgm 26 26 %RESULTS/skelcurv_b3a_26_26.pgm
+%TEST skelcurv %IMAGES/3dbyte/binary/b3a.pgm 0 6 %RESULTS/skelcurv_b3a_0_6.pgm
+%TEST skelcurv %IMAGES/3dbyte/binary/b3a.pgm 0 26 %IMAGES/3dbyte/binary/b3a2.pgm %RESULTS/skelcurv_b3a_0_26_i.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -69,13 +124,11 @@ References:<BR>
 #include <lskeletons.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
-  struct xvimage * prio;
-  struct xvimage * prio2;
+  struct xvimage * prio = NULL;
   struct xvimage * inhibit = NULL;
   int32_t connex;
   int32_t ret, priovalue;
@@ -96,42 +149,14 @@ int main(argc, argv)
   ret = sscanf(argv[2], "%d", &priovalue);
   if (ret == 0)
   {
-    prio2 = readimage(argv[2]);
-    if (prio2 == NULL)
+    prio = readimage(argv[2]);
+    if (prio == NULL)
     {
       fprintf(stderr, "%s: readimage failed\n", argv[0]);
       exit(1);
     }
-    if (datatype(prio2) == VFF_TYP_1_BYTE)
-    {
-      int32_t rs = rowsize(prio2);
-      int32_t cs = colsize(prio2);
-      int32_t ds = depth(prio2);
-      int32_t N = rs * cs * ds;
-      uint8_t *B = UCHARDATA(prio2);
-      uint32_t *L;
-      int32_t x;
-      prio = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
-      if (prio == NULL)
-      {
-        fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-        exit(1);
-      }
-      L = ULONGDATA(prio);
-      for (x = 0; x < N; x++) L[x] = (uint32_t)B[x];
-      freeimage(prio2);
-    }
-    else if (datatype(prio2) == VFF_TYP_4_BYTE)
-    {
-      prio = prio2;
-    }
-    else
-    {
-      fprintf(stderr, "%s: bad datatype for prio\n", argv[0]);
-      exit(1);
-    }
   }
-  else
+  else if (priovalue != 5)
   {
     int32_t i, N;
     uint8_t *F;
@@ -237,16 +262,28 @@ int main(argc, argv)
   }
   else
   {
-    if (! lskelcurv3d(image, prio, inhibit, connex))
+    if (priovalue == 5)
     {
-      fprintf(stderr, "%s: lskelcurv3d failed\n", argv[0]);
-      exit(1);
+      if (! lskeldir3d_1(image, inhibit, connex, -1))
+      {
+	fprintf(stderr, "%s: lskeldir3d failed\n", argv[0]);
+	exit(1);
+      }
+    }
+    else
+    {
+      if (! lskelcurv3d(image, prio, inhibit, connex))
+      {
+	fprintf(stderr, "%s: lskelcurv3d failed\n", argv[0]);
+	exit(1);
+      }
     }
   }
 
   writeimage(image, argv[argc-1]);
   freeimage(image);
-  freeimage(prio);
+  if (prio) freeimage(prio);
+  if (inhibit) freeimage(inhibit);
 
   return 0;
 } /* main */

@@ -1,9 +1,42 @@
-/* $Id: pgm2list.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file pgm2list.c
 
 \brief converts from pgm format to list format
 
-<B>Usage:</B> pgm2list image.pgm <e|s|b|n|B|N> out.list
+<B>Usage:</B> pgm2list image.pgm {e|s|b|n|B|N} out.list
 
 <B>Description:</B>
 Converts from pgm format to list format:
@@ -22,7 +55,7 @@ null value) are considered.
 
 Summary of list formats:
 <pre>  
-  e <n>       s <n>         b <n>         n <n>            B <n>            N <n>    
+  e &lt;n&gt;       s &lt;n&gt;         b &lt;n&gt;         n &lt;n&gt;            B &lt;n&gt;            N &lt;n&gt;    
   x1          x1 v1         x1 y1         x1 y1 v1         x1 y1 z1         x1 y1 z1 v1
   x2    or    x2 v2   or    x2 y2   or    x2 y2 v2   or    x2 y2 z2   or    z2 x2 y2 v2
   ...         ...           ...           ...              ...              ...
@@ -48,9 +81,8 @@ Summary of list formats:
 #include <mcimage.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   FILE *fd = NULL;
@@ -59,7 +91,7 @@ int main(argc, argv)
 
   if (argc != 4)
   {
-    fprintf(stderr, "usage: %s image.pgm <e|s|b|n|B|N> out.list \n", argv[0]);
+    fprintf(stderr, "usage: %s image.pgm {e|s|b|n|B|N} out.list \n", argv[0]);
     exit(1);
   }
 
@@ -79,7 +111,7 @@ int main(argc, argv)
   type = argv[2][0];
   if ((type != 'e') && (type != 's') && (type != 'b') && (type != 'n') && (type != 'B') && (type != 'N'))
   {
-    fprintf(stderr, "usage: %s image.pgm <e|s|b|n|B|N> out.list \n", argv[0]);
+    fprintf(stderr, "usage: %s image.pgm {e|s|b|n|B|N} out.list \n", argv[0]);
     exit(1);
   }
 
@@ -144,7 +176,7 @@ int main(argc, argv)
   else
   if (datatype(image) == VFF_TYP_4_BYTE)
   {
-    uint32_t *F = ULONGDATA(image);
+    int32_t *F = SLONGDATA(image);
     n = 0;                     /* compte le nombre de points non nuls */ 
     
     for (x = 0; x < N; x++) if (F[x]) n++;

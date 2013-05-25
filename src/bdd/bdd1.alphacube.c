@@ -1,11 +1,13 @@
-/* $Id: bdd1.alphacube.c,v 1.1.1.1 2008-11-25 08:01:36 mcouprie Exp $ */
+/* $Id: bdd1.alphacube.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+#include <bdd.h>
+
 int bddAlpha3SimpleCube(
   int a, int b, int c, int d, int e, int f, int g, int h, int i, int j, 
   int k, int l, int m, int n, int o, int p, int q, int r, int s, int t, 
   int u, int v, int w, int x, int y, int z)
 {
 int neg = 1;
-l709_1:	if(c)
+if(c)
 goto l267_2;
 neg = !neg; goto l1105_2;
 l267_2:	if(w)

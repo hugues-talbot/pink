@@ -1,4 +1,37 @@
-/* $Id: crestvol.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file crestvol.c
 
 \brief enhances linear structures in a grayscale image
@@ -25,7 +58,7 @@ EndFor
 
 References:<BR> 
 "Topological operators for the detection of
-curvilinar structures in grayscale images", in preparation, 2003.
+curvilinar structures in grayscale images", in preparation.
 
 <B>Types supported:</B> byte 2d
 
@@ -41,6 +74,7 @@ curvilinar structures in grayscale images", in preparation, 2003.
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <mctopo.h>
 #include <lgeodesic.h>
 #include <lhtkern.h>
 
@@ -61,7 +95,7 @@ int32_t lcrestvol(
   int32_t N = rs * cs;             /* taille image */
   uint8_t *S = UCHARDATA(skel);      /* l'image de squelette */
   uint8_t *F = UCHARDATA(orig);      /* l'image originale */
-  uint32_t *V, vol, maxvol;
+  uint32_t *V, maxvol;
   int32_t rs_es = rowsize(es);
   int32_t cs_es = colsize(es);
   int32_t N_es = rs_es * cs_es;
@@ -100,8 +134,6 @@ int32_t lcrestvol(
   for (p = 0; p < N; p++)
     if (separant4(S, p, rs, N))
       SP[p] = alpha8m(S, p, rs, N);
-
-  writeimage(sp, "_sp");
 
   t1 = allocimage(NULL, rs_es, cs_es, 1, VFF_TYP_1_BYTE);
   t2 = allocimage(NULL, rs_es, cs_es, 1, VFF_TYP_1_BYTE);
@@ -190,7 +222,7 @@ int32_t lcrestvol(
     return(0);
   }
 
-  printf("maxvol = %ld\n", maxvol);
+  printf("maxvol = %ld\n", (long int)maxvol);
 
   for (p = 0; p < N; p++)
     S[p] = (uint8_t)((V[p] * 255) / maxvol);
@@ -203,9 +235,8 @@ int32_t lcrestvol(
 } /* lcrestvol() */
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * orig;
   struct xvimage * skel;

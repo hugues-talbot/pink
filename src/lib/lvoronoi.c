@@ -1,4 +1,37 @@
-/* $Id: lvoronoi.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* diagramme de Voronoi et triangulation de Delaunay */
 /* Michel Couprie - decembre 1998 */
 /* d'apres "Mathematique et informatique - problemes resolus", vol. 2, pp. 95-109 */
@@ -20,7 +53,7 @@
 #define ADROITE -1
 
 /* ==================================== */
-int32_t LePlusProcheVoisin(point *S, int32_t n, int32_t i)
+int32_t LePlusProcheVoisin(mcgeo_point *S, int32_t n, int32_t i)
 /* ==================================== */
 {
   int32_t j, k;
@@ -60,7 +93,7 @@ int32_t EstVoisinSym(int32_t **voisins, int32_t *nbvois, int32_t i, int32_t k)
 } /* EstVoisinSym() */
 
 /* ==================================== */
-int32_t VoisinSuivant(point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, int32_t j, int32_t cote)
+int32_t VoisinSuivant(mcgeo_point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, int32_t j, int32_t cote)
 /* ==================================== */
 /*
   On determine un triangle de Delaunay en considerant une arete Si, Sj et 
@@ -90,14 +123,14 @@ int32_t VoisinSuivant(point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, 
 } /* VoisinSuivant() */
 
 /* ==================================== */
-int32_t VoisinDroit(point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, int32_t j)
+int32_t VoisinDroit(mcgeo_point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, int32_t j)
 /* ==================================== */
 {
   return VoisinSuivant(S, n, v, nv, i, j, ADROITE);
 } /* VoisinDroit() */
 
 /* ==================================== */
-int32_t VoisinGauche(point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, int32_t j)
+int32_t VoisinGauche(mcgeo_point *S, int32_t n, int32_t **v, int32_t *nv, int32_t i, int32_t j)
 /* ==================================== */
 {
   return VoisinSuivant(S, n, v, nv, i, j, AGAUCHE);
@@ -147,7 +180,7 @@ void Retirer2(int32_t **voisins, int32_t *nbvois, int32_t k, int32_t i)
 } /* Retirer2() */
 
 /* ==================================== */
-int32_t ldelaunay(point *S, int32_t n, int32_t ***v, int32_t **nv, int32_t **ec)
+int32_t ldelaunay(mcgeo_point *S, int32_t n, int32_t ***v, int32_t **nv, int32_t **ec)
 /* ==================================== */
 /* entrees : S : le tableau des points
              n : le nombre de points
@@ -234,7 +267,7 @@ printf("\n");
 }
 
 /* ==================================== */
-int32_t ltriang_delaunay(point *S, int32_t n, int32_t **v, int32_t *nv, int32_t *ec)
+int32_t ltriang_delaunay(mcgeo_point *S, int32_t n, int32_t **v, int32_t *nv, int32_t *ec)
 /* ==================================== */
 /* 
    Modifie le graphe de Delaunay donné en entrée pour assurer qu'il s'agisse
@@ -251,7 +284,7 @@ int32_t ltriang_delaunay(point *S, int32_t n, int32_t **v, int32_t *nv, int32_t 
 {
 #undef F_NAME
 #define F_NAME "ldelaunay"
-  int32_t i, j, k, h, vprec, vcour, vsuiv;
+  int32_t i, j, k, vprec, vcour, vsuiv;
   for (i = 0; i < n; i++)
   {
     k = nv[i];

@@ -1,3 +1,37 @@
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
    Segmentation d'images par hierarchie de LPE (saillance et cascade)
 
@@ -7,7 +41,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <sys/types.h>
 #include <mccodimage.h>
 #include <jccodimage.h>
 #include <mcimage.h>
@@ -16,34 +49,41 @@
 #include <llpeGA.h>
 #include <jccomptree.h>
 #include <lhierarchie.h>
+#include <mcutil.h>
 
 // Calcul les attributs surface et profondeur du RAG
-void attributNoeud(RAG *rag, struct xvimage *label, struct xvimage *ga)
+void attributNoeud(RAG *rag, struct xvimage *label, struct xvimage *ga, struct xvimage *annexe)
 {
   int32_t i;
   int32_t rs = rowsize(label);                   /* taille ligne      */
   int32_t cs = colsize(label);                   /* taille colonne    */
   int32_t N = rs * cs;                           /* taille image      */
-  uint32_t *LABEL = ULONGDATA(label);           /* les labels        */
+  int32_t *LABEL = SLONGDATA(label);           /* les labels        */
+  uint8_t *F;
   int32_t alt;
-  uint32_t l;
-  
+  int32_t l;
+
+  if (annexe!=NULL)   F = UCHARDATA(annexe);
+
   for(i = 0; i < rag->g->nsom; i++) {
     /* tout ca peut se calculer au vol lors de la construction de la LPE */
     rag->surface[i] = 0;
     rag->profondeur[i] = 255;
+    rag->altitude[i] = 0;
   }
   
   for(i = 0; i < N; i++) {
     alt = altitudePoint(ga, i);
     l = LABEL[i];
-    rag->profondeur[l] = min(alt,rag->profondeur[l]);
+    rag->profondeur[l] = mcmin(alt,rag->profondeur[l]);
     rag->surface[l] ++;
+    if (annexe!=NULL)
+      rag->altitude[l] = F[i];
   }
 }
 
 // Construit un RAG a partir d'une partition (label) et d'un ga
-RAG *construitRAG(struct xvimage *ga, struct xvimage *label)
+RAG *construitRAG(struct xvimage *ga, struct xvimage *label, struct xvimage *annexe)
 #undef F_NAME
 #define F_NAME "construitRAGOpening"
 {
@@ -53,8 +93,8 @@ RAG *construitRAG(struct xvimage *ga, struct xvimage *label)
   int32_t cs = colsize(label);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   int32_t N_t = 2*N;
-  uint32_t *LABEL = ULONGDATA(label);              /* l'image de depart */
-  uint32_t nblabels;
+  int32_t *LABEL = SLONGDATA(label);              /* l'image de depart */
+  int32_t nblabels;
 
   nblabels = 0;
   for(i = 0; i < N; i++)
@@ -71,7 +111,7 @@ RAG *construitRAG(struct xvimage *ga, struct xvimage *label)
     }
   }
   // Puis calcul les attributs de noeuds du rag
-  attributNoeud(rag,label,ga);  
+  attributNoeud(rag,label,ga,annexe);  
   return rag;
 }
 
@@ -79,9 +119,9 @@ RAG *construitRAG(struct xvimage *ga, struct xvimage *label)
 /* Calcule d'attribut d'un arbre des coupes */
 
 /* calcul de la surface des composantes de l'arbre */
-int32_t surfaceRec(ctree *CT, int32_t *SurfaceCompo, int32_t root)
+int32_t surfaceRec(JCctree *CT, int32_t *SurfaceCompo, int32_t root)
 {
-  soncell *s; 
+  JCsoncell *s; 
   if(CT->tabnodes[root].nbsons != 0){
     SurfaceCompo[root] = 0;
     for(s = CT->tabnodes[root].sonlist; s != NULL; s = s->next) 
@@ -92,17 +132,42 @@ int32_t surfaceRec(ctree *CT, int32_t *SurfaceCompo, int32_t root)
   return SurfaceCompo[root];
 }
 
+// OmegaCC
+/* calcul de omega des composantes de l'arbre */
+int32_t omegaRec(JCctree *CT, int32_t *omegaCompo, int32_t root)
+{
+  JCsoncell *s; 
+  if(CT->tabnodes[root].nbsons == 0){
+    //CT->tabnodes[root].max = CT->tabnodes[root].min = ;
+    omegaCompo[root] = 0;
+    return omegaCompo[root];
+  } else { //if(CT->tabnodes[root].nbsons != 0)
+    omegaCompo[root] = 0;
+    for(s = CT->tabnodes[root].sonlist; s != NULL; s = s->next) 
+    {
+      omegaRec(CT, omegaCompo, s->son);
+      CT->tabnodes[root].max = (CT->tabnodes[root].max > CT->tabnodes[s->son].max) ? 
+	CT->tabnodes[root].max : CT->tabnodes[s->son].max;
+      CT->tabnodes[root].min = (CT->tabnodes[root].min < CT->tabnodes[s->son].min) ? 
+	CT->tabnodes[root].min : CT->tabnodes[s->son].min;
+    }
+    omegaCompo[root] = CT->tabnodes[root].max - CT->tabnodes[root].min;
+    //printf("Node %d , omega = %d\n", root, omegaCompo[root]);
+    return omegaCompo[root];
+  }
+}
+
 /* calcule la dynamique des composantes de l'arbre de fusion */
 /* fonction inspirée par l'article de F. Meyer, ISMM 96 :    */
 /* "The dynamics of minima and contours"                     */
-void dynaRecCompTree(ctree *CT,  /* arbre des coupes    */
+void dynaRecCompTree(JCctree *CT,  /* arbre des coupes    */
 	      int32_t root,       /* racine de l'arbre   */
 	      int32_t *minSon,    /* cf ordonneMergeTree */
 	      int32_t *dynamic    /* dynamique des feuilles de CT */
 	     )
      /* dynamic est supposé alloué */
 {
-  soncell *s;
+  JCsoncell *s;
   int32_t father = CT->tabnodes[root].father;
   
   if(father == -1)
@@ -124,9 +189,9 @@ void dynaRecCompTree(ctree *CT,  /* arbre des coupes    */
     dynaRecCompTree(CT, s->son, minSon, dynamic);
 }
 
-void volumeRec(ctree *CT, int32_t *SurfaceCompo, int32_t *fuzzyAreaCompo, int32_t *volumeCompo, int32_t root)
+void volumeRec(JCctree *CT, int32_t *SurfaceCompo, int32_t *fuzzyAreaCompo, int32_t *volumeCompo, int32_t root)
 {
-  soncell *s; 
+  JCsoncell *s; 
   if(CT->tabnodes[root].nbsons == 0){
     // feuille
     fuzzyAreaCompo[root] =  SurfaceCompo[root]*(int32_t)CT->tabnodes[root].data;
@@ -155,10 +220,10 @@ void volumeRec(ctree *CT, int32_t *SurfaceCompo, int32_t *fuzzyAreaCompo, int32_
 //que soit le critère (pas seulement pour le volume). Je prefère
 //cependant attendre l'écriture définitive du papier sur la saillence
 //avant de faire des modifications
-int32_t attributOpenningRec(ctree *CT, int32_t *attributCompo, int32_t *attributMerge, int32_t root)
+int32_t attributOpenningRec(JCctree *CT, int32_t *attributCompo, int32_t *attributMerge, int32_t root)
 {
   int32_t max,v;
-  soncell *s; 
+  JCsoncell *s; 
   if(CT->tabnodes[root].father == -1){
     for(s = CT->tabnodes[root].sonlist; s != NULL; s = s->next) 
       attributOpenningRec(CT, attributCompo, attributMerge, s->son);
@@ -182,10 +247,10 @@ int32_t attributOpenningRec(ctree *CT, int32_t *attributCompo, int32_t *attribut
 /* allows to compute the value of the criterion at which a given
    component disappears. Remark that these are not equal to the
    surface of the components*/
-int32_t surfaceOpenningRec(ctree *CT, int32_t *SurfaceCompo, int32_t *SurfaceMerge, int32_t root)
+int32_t surfaceOpenningRec(JCctree *CT, int32_t *SurfaceCompo, int32_t *SurfaceMerge, int32_t root)
 {
   int32_t max,v;
-  soncell *s; 
+  JCsoncell *s; 
   if(CT->tabnodes[root].father == -1){
     for(s = CT->tabnodes[root].sonlist; s != NULL; s = s->next) 
       surfaceOpenningRec(CT, SurfaceCompo, SurfaceMerge, s->son);
@@ -206,6 +271,83 @@ int32_t surfaceOpenningRec(ctree *CT, int32_t *SurfaceCompo, int32_t *SurfaceMer
   SurfaceMerge[root] = max; 
   return SurfaceMerge[root];
 } 
+
+// Si meme altitude, meme attribut
+void propagate1(JCctree *CT, int32_t root, int32_t *omegaCompo)
+{
+  JCsoncell *s;
+  // 
+
+  if(CT->tabnodes[root].nbsons != 0){
+    // root n'est pas une feuille
+      if(CT->tabnodes[root].father != -1){
+	// On a un parent
+	if(CT->tabnodes[CT->tabnodes[root].father].data == CT->tabnodes[root].data){
+	  // l'altitude de ce pere est celle du fils
+	  omegaCompo[root] = omegaCompo[CT->tabnodes[root].father]; //On oublie et on egalise
+	}
+      }
+      
+    s = CT->tabnodes[root].sonlist;
+    propagate1(CT, s->son, omegaCompo);
+    propagate1(CT, CT->tabnodes[root].lastson->son, omegaCompo);
+  }
+  return;
+}
+
+// Valeurs extinctions
+void propagate2(JCctree *CT, int32_t root, int32_t *omegaCompo, int32_t valeur)
+{
+  JCsoncell *s;
+  // 
+  int32_t tmp;
+
+  tmp = omegaCompo[root];
+  omegaCompo[root] = valeur;
+
+  if(CT->tabnodes[root].nbsons != 0){
+    // root n'est pas une feuille
+      
+    s = CT->tabnodes[root].sonlist;
+    propagate2(CT, s->son, omegaCompo, valeur);
+    propagate2(CT, CT->tabnodes[root].lastson->son, omegaCompo, tmp);
+  }
+  return;
+}
+
+int32_t * omegaMergeTree(JCctree *CT, RAG *rag)
+#undef F_NAME
+#define F_NAME "omegaMergeTree"
+{
+  int32_t *omegaCompo;
+  int32_t *omegaMerge;
+  int32_t i;
+
+  if( (omegaCompo = (int32_t*)malloc(sizeof(int32_t) * CT->nbnodes)) == NULL){
+    fprintf(stderr,"%s: erreur de malloc\n", F_NAME);
+    exit(0);
+  }
+  if( (omegaMerge = (int32_t*)malloc(sizeof(int32_t) * CT->nbnodes)) == NULL){
+    fprintf(stderr,"%s: erreur de malloc\n", F_NAME);
+    exit(0);
+  }  
+  /* Initialisation des feuilles de CT */
+  for(i = 0; i <rag->g->nsom; i++) {
+    omegaCompo[i] = 0;
+    CT->tabnodes[i].max = CT->tabnodes[i].min = rag->altitude[i];
+  }
+  omegaRec(CT, omegaCompo, CT->root); 
+  //ComponentTreeDotty(CT);
+  
+  propagate1(CT, CT->root, omegaCompo);
+  propagate2(CT, CT->root, omegaCompo, 255);
+  //attributOpenningRec(CT, omegaCompo, omegaMerge, CT->root); 
+  for(i = 0; i < CT->nbnodes; i++)
+    omegaMerge[i] = omegaCompo[i];
+  //omegaMerge[i] = computeOmegaMerge(CT, i, omegaCompo);
+  free(omegaCompo);
+  return omegaMerge;
+}
 
 int32_t* altitudeOrdering(uint8_t* F, int32_t N)
 /* Trie par denombrement */
@@ -238,7 +380,7 @@ int32_t ordonneCompTree(int32_t *clefs,  /* tableau ordonnant les
 					     coupes clefs[i] donne la
 					     position de i pour
 					     l'ordre  */
-		ctree *CT,                /* L'arbre de fusion */
+		JCctree *CT,                /* L'arbre de fusion */
 		int32_t root,             /* racine de l'arbre */
 		int32_t *minSon           /* application de V(MT) vers
 					     l'ensemble des feuilles
@@ -250,8 +392,8 @@ int32_t ordonneCompTree(int32_t *clefs,  /* tableau ordonnant les
      /* minSon est supposé alloué */
 {
   int32_t r,x;
-  int32_t m = LONG_MAX;
-  soncell *s;
+  int32_t m = INT32_MAX;
+  JCsoncell *s;
   if(CT->tabnodes[root].nbsons == 0){
     // root est une feuille
     minSon[root] = root;  
@@ -268,7 +410,7 @@ int32_t ordonneCompTree(int32_t *clefs,  /* tableau ordonnant les
   return m;
 }
 
-int32_t * surfaceMergeTree(ctree *CT, RAG *rag)
+int32_t * surfaceMergeTree(JCctree *CT, RAG *rag)
 #undef F_NAME
 #define F_NAME "surfaceMergeTree"
 {
@@ -293,7 +435,7 @@ int32_t * surfaceMergeTree(ctree *CT, RAG *rag)
   return SurfaceMerge;
 }
 
-int32_t *dynaMergeTree(ctree *CT, RAG *rag)
+int32_t *dynaMergeTree(JCctree *CT, RAG *rag)
 #undef F_NAME
 #define F_NAME "dynaMergeTree"
 {
@@ -331,7 +473,7 @@ int32_t *dynaMergeTree(ctree *CT, RAG *rag)
   return dynaMerge;
 }
 
-int32_t *volumeMergeTree(ctree *CT, RAG *rag)
+int32_t *volumeMergeTree(JCctree *CT, RAG *rag)
 #undef F_NAME
 #define F_NAME "volumeMergeTree"
 {
@@ -374,41 +516,65 @@ int32_t *volumeMergeTree(ctree *CT, RAG *rag)
 
 // extraction du MST contenu dans un merge tree, vers un tableau d'arete
 // et revaluation des arets en fonction de Attribut
-int32_t mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attribut) 
+static void mstCompute(mtree *MT, int32_t *MST, int32_t *Valeur, int32_t *Attribut) 
      /* MST et Valeur sont supposés alloués */
 {
 
   int32_t i;
   int32_t k;
+  JCctree *CT = MT->CT;
   k = 0;
-  ctree *CT = MT->CT;
+
   // les aretes du mst sont stokées ds MT. A chaque noeud de merge
   // (i.e., les noeuds qui ne sont pas des feuilles) correspond une
   // arete du MST
   for(i = CT->nbnodes - (CT->nbnodes/2); i < CT->nbnodes; i++){
     MST[k] = MT->mergeEdge[i];
-    Valeur[k] = min(Attribut[CT->tabnodes[i].sonlist->son], Attribut[CT->tabnodes[i].lastson->son]);
+    Valeur[k] = mcmin(Attribut[CT->tabnodes[i].sonlist->son], Attribut[CT->tabnodes[i].lastson->son]);
     k++;
   }
+}
+
+__pink__inline uint8_t salScale(int32_t input, int32_t maxim, int32_t param)
+{
+  int32_t result;
+  switch(param) {
+  case DYNAMIC:
+  case OMEGA:
+    result = (uint8_t)(mcmin((int32_t)arrondi(255.*(double)input/(double)maxim), 255));   
+    break;
+  case SURFACE:
+    result = (uint8_t)(mcmin((int32_t)arrondi(sqrt((double)input)/sqrt((double)maxim)*255.), 255));
+    break;
+  case VOLUME:
+    result = (uint8_t)(mcmin((int32_t)arrondi(pow((double)input,1./3.)/pow((double)maxim,1./3.)*255.), 255));
+	  break;
+  default: fprintf(stderr, "%s #1: Parametre incorecte \n",F_NAME); exit(0);
+  }
+  return result;
 }
 
 #define LCAFAST
 /* Calcul la carte de saillance à partir du CT de saillance du ga
    d'origine et du flow mapping (label) du ga */
-int32_t computeSaliencyMap(ctree *CT, struct xvimage *ga, uint32_t *label, int32_t *attribut)
+int32_t computeSaliencyMap(JCctree *CT, struct xvimage *ga, int32_t *label, int32_t *attribut, int32_t param)
 {
+  // Note: declarations moved forward because of msvc
+  int32_t logn, nbRepresent;
+  int32_t *Euler, *Depth, *Represent, *Number, **Minim;
+
   int32_t rs = rowsize(ga);      /* taille ligne */
   int32_t cs = colsize(ga);      /* taille colonne */
   int32_t N = rs * cs;           /* taille image */
   uint8_t *F = UCHARDATA(ga);   /* l'image de depart */
   int32_t u,x,y,i,j,c1;
   /* la valeur maximum de l'attribut est à la racine */
-  double facteur = max(255/(double)attribut[CT->root], 0.05); 
-  printf("Attribut[racine] = %d et facteur %lf \n", attribut[CT->root],facteur);
+  //double facteur = mcmax(255/(double)attribut[CT->root], 0.05); 
+  //facteur = 1;
+  //printf("Attribut[racine] = %d et facteur %lf \n", attribut[CT->root],facteur);
+  printf("Attribut[racine] = %d\n", attribut[CT->root]);
 #ifdef LCAFAST 
   /* Structure de donnée pour lca fast */
-  int32_t logn, nbRepresent;
-  int32_t *Euler, *Depth, *Represent, *Number, **Minim;
   Euler = (int32_t *)calloc(2*CT->nbnodes-1, sizeof(int32_t));
   Represent = (int32_t *)calloc(2*CT->nbnodes-1, sizeof(int32_t));
   Depth = (int32_t *)calloc(CT->nbnodes, sizeof(int32_t));
@@ -416,10 +582,10 @@ int32_t computeSaliencyMap(ctree *CT, struct xvimage *ga, uint32_t *label, int32
   if ((Euler == NULL) || (Represent == NULL) 
       || (Depth == NULL) || (Number == NULL)) {
     fprintf(stderr, "%s : malloc failed\n", F_NAME);
-    return;
+    return(0);
   }
   
-  Minim = LCApreprocess(CT, Euler, Depth, Represent, Number, &nbRepresent, &logn);
+  Minim = jccomptree_LCApreprocess(CT, Euler, Depth, Represent, Number, &nbRepresent, &logn);
   printf("LCApreprocess done\n");
 #endif
   for(j = 0; j < cs; j++)
@@ -432,12 +598,12 @@ int32_t computeSaliencyMap(ctree *CT, struct xvimage *ga, uint32_t *label, int32
       }   
       if(label[x] != label[y]){		
 #ifdef LCAFAST
-	c1 = Represent[LowComAncFast((int32_t)label[x], (int32_t)label[y], Euler, Number, Depth, Minim)];
+	c1 = Represent[jccomptree_LowComAncFast((int32_t)label[x], (int32_t)label[y], Euler, Number, Depth, Minim)];
 #endif
 #ifndef LCAFAST
-	c1 = LowComAncSlow(CT, (int32_t)label[x], (int32_t)label[y]);
+	c1 = jccomptree_LowComAncSlow(CT, (int32_t)label[x], (int32_t)label[y]);
 #endif
-	F[u] = (uint8_t)(min((int32_t)(facteur * (double)attribut[c1]), 255));   
+	F[u] = salScale(attribut[c1], attribut[CT->root], param);
       } 
        else F[u] =0; 
     }
@@ -452,16 +618,16 @@ int32_t computeSaliencyMap(ctree *CT, struct xvimage *ga, uint32_t *label, int32
       }  
       if(label[x] != label[y]){
 #ifdef LCAFAST
-	c1 = Represent[LowComAncFast((int32_t)(label[x]), (int32_t)(label[y]), Euler, Number, Depth, Minim)];
+	c1 = Represent[jccomptree_LowComAncFast((int32_t)(label[x]), (int32_t)(label[y]), Euler, Number, Depth, Minim)];
 #endif
 #ifndef LCAFAST
-	c1 = LowComAncSlow(CT, (int32_t)label[x], (int32_t)label[y]);
+	c1 = jccomptree_LowComAncSlow(CT, (int32_t)label[x], (int32_t)label[y]);
 #endif
 	if(c1 < 0){
 	  printf("Erreur de lca pour %d %d retourne %d\n", (int32_t)(label[x]),  (int32_t)(label[y]), c1);
 	  exit(0);
 	} 
-	F[u] = (uint8_t)(min(255, (int32_t)(facteur * (double)attribut[c1])));  
+	F[u] = salScale(attribut[c1], attribut[CT->root], param);
       }
       else F[u] = 0;
     }
@@ -473,6 +639,7 @@ int32_t computeSaliencyMap(ctree *CT, struct xvimage *ga, uint32_t *label, int32
    free(Minim[0]);
    free(Minim);
 #endif
+   return(1);
 }
 
 /* waterfall vu comme une succession de LPE sur les aretes*/
@@ -513,9 +680,9 @@ int32_t main_cascade(struct xvimage *image, struct xvimage *ga, int32_t param)
     for (k = 0; k < 4; k += 2){
       if((y = voisin(i, k, rs, N)) != -1)
 	switch(param){
-	case 0: updateArcValue(g1,i, y, (uint8_t)max(F[i],F[y])); break;
-	case 1: updateArcValue(g1,i, y, (uint8_t)abs((uint32_t)F[i] - (uint32_t)F[y])); break;
-	default: fprintf(stderr,"%s: Mauvais parametre \n"); exit(0);
+	case 0: updateArcValue(g1,i, y, (uint8_t)mcmax(F[i],F[y])); break;
+	case 1: updateArcValue(g1,i, y, (uint8_t)mcabs((int32_t)F[i] - (int32_t)F[y])); break;
+	default: fprintf(stderr,"%s: Mauvais parametre \n", F_NAME); exit(0);
 	}
     }
   }
@@ -526,7 +693,7 @@ int32_t main_cascade(struct xvimage *image, struct xvimage *ga, int32_t param)
   while(nbregions > 1){
     printf("Un etage de la hierarchie \n"); 
     
-    g2 = initGrapheValue((int32_t)nbregions, (int32_t)min(nbregions*(nbregions-1), (int32_t)(4*N - 2*rs - 2*cs)) );   
+    g2 = initGrapheValue((int32_t)nbregions, (int32_t)mcmin(nbregions*(nbregions-1), (int32_t)(4*N - 2*rs - 2*cs)) );   
     printf("2eme graphe initialise \n");
     for(i = 0; i < N; i++){
       for(k=0; k < 2; k++)
@@ -535,10 +702,10 @@ int32_t main_cascade(struct xvimage *image, struct xvimage *ga, int32_t param)
 	    // Mise a jour de la carte de saillance du waterfall
 	    G[incidente(i,k,rs,N)] ++;
 	    switch(param){
-	    case 0: updateArcValue(g2,Label2[Label1[i]], Label2[Label1[y]], max(F[i],F[y])); break;
+	    case 0: updateArcValue(g2,Label2[Label1[i]], Label2[Label1[y]], mcmax(F[i],F[y])); break;
 	    case 1: updateArcValue(g2,Label2[Label1[i]], Label2[Label1[y]], 
-	    			   (uint8_t)abs((uint32_t)F[i] - (uint32_t)F[y])); break;
-	    default: fprintf(stderr,"%s: Mauvais parametre \n"); exit(0);
+	    			   (uint8_t)mcabs((int32_t)F[i] - (int32_t)F[y])); break;
+	    default: fprintf(stderr,"%s: Mauvais parametre \n", F_NAME); exit(0);
 	    }
 	  }
 	}
@@ -558,16 +725,14 @@ int32_t main_cascade(struct xvimage *image, struct xvimage *ga, int32_t param)
 
 /* Calcule la carte de saillance du ga d'origine pour le critere param */
 /* Le resulat est stocke ds ga */
-int32_t saliencyGa(struct xvimage *ga, int32_t param) 
+int32_t saliencyGa(struct xvimage *ga, int32_t param, struct xvimage *annexe) 
 #undef F_NAME
 #define F_NAME "saliencyGa"
 {
   struct xvimage *label;
   int32_t rs = rowsize(ga);               /* taille ligne */
   int32_t cs = colsize(ga);               /* taille colonne */
-  int32_t N = rs * cs;                    /* taille image */
-  uint8_t *F = UCHARDATA(ga);            /* l'image de depart */ 
-  uint32_t *LABEL;
+  int32_t *LABEL;
   int32_t *Attribut;                      /* Attribut de surface du merge tree */
   RAG *rag;                               /* Graph d'adjacence de
 					     régions */
@@ -575,15 +740,14 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param)
 					     saillence */
   int32_t *MST, *Valeur,*STaltitude;      /* Arete du MST et Valuation
 					     par attribut */
-  int32_t i;
-  ctree * ST;                             /* Arbre des coupes pour le calcul de la carte de saillance */
+  JCctree * ST;                             /* Arbre des coupes pour le calcul de la carte de saillance */
   if((label = allocimage(NULL,rs,cs,1,VFF_TYP_4_BYTE)) == NULL){
     fprintf(stderr,"%s : ne peut allouer label \n",F_NAME);
     exit(1);
   }
-  LABEL = ULONGDATA(label);    
-  flowMappingRecursif(ga,LABEL);
-  rag = construitRAG(ga, label);
+  LABEL = SLONGDATA(label);    
+  flowMapping(ga,LABEL);
+  rag = construitRAG(ga, label, annexe);
   
   printf("nbre de regions: %d \n",rag->g->nsom);
   
@@ -602,6 +766,9 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param)
   case VOLUME:
     Attribut = volumeMergeTree(MT->CT,rag);
     break;
+  case OMEGA:
+    Attribut = omegaMergeTree(MT->CT,rag);
+    break;
   default: fprintf(stderr, "%s #1: Parametre incorecte \n",F_NAME); exit(0);
   }
   if((MST = (int32_t *)malloc(sizeof(int32_t) * rag->g->nsom -1)) == NULL) {
@@ -618,7 +785,9 @@ int32_t saliencyGa(struct xvimage *ga, int32_t param)
     exit(0);
   }
   jcSaliencyTree_b(&ST, MST, Valeur, rag, STaltitude);
-  computeSaliencyMap(ST, ga, LABEL, STaltitude);  
+
+
+  computeSaliencyMap(ST, ga, LABEL, STaltitude, param);  
   mergeTreeFree(MT);
   componentTreeFree(ST);
   termineRAG(rag);

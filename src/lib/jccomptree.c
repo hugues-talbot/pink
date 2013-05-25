@@ -1,4 +1,37 @@
-/* $Id: jccomptree.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
   Arbre des composantes (nouvelle version)
 
@@ -31,16 +64,18 @@
 //#define PARANO
 
 /* ==================================== */
-void ComponentTreePrint(ctree * CT)
+void jccomptree_ComponentTreePrint(JCctree * CT)
 /* ==================================== */
 {
   int32_t i;
-  soncell *s;
+  JCsoncell *s;
   printf("root = %d ;  nbnodes: %d ; nbsoncells: %d\n", CT->root, CT->nbnodes, CT->nbsoncells);
   for (i = 0; i < CT->nbnodes; i++) 
   {
-    printf("node: %d ; level %d ; nbsons: %d ; father: %d ; ", 
-            i, CT->tabnodes[i].data, CT->tabnodes[i].nbsons, CT->tabnodes[i].father);
+    printf("node: %d ; level %d ; nbsons: %d ; father: %d ; max = %d ; min = %d ; ", 
+	   i, CT->tabnodes[i].data, CT->tabnodes[i].nbsons, 
+	   CT->tabnodes[i].father,
+	   CT->tabnodes[i].max, CT->tabnodes[i].min);
     if (CT->tabnodes[i].nbsons > 0)
     {
       printf("sons: ");
@@ -49,15 +84,49 @@ void ComponentTreePrint(ctree * CT)
     }
     printf("\n");
   }
-} // ComponentTreePrint() 
+} // jccomptree_ComponentTreePrint() 
+
+/* ==================================== */
+void ComponentTreeDotty(JCctree * CT)
+/* ==================================== */
+{
+  FILE *fp;
+  int32_t i;
+  JCsoncell *s;
+  fp = fopen("CT.dot", "w");
+  fprintf(fp, "digraph G {\n");
+  fprintf(fp, "size=\"8,6\"; ratio=fill;\n");
+  //printf("root = %d ;  nbnodes: %d ; nbsoncells: %d\n", CT->root, CT->nbnodes, CT->nbsoncells);
+  for (i = 0; i < CT->nbnodes; i++) 
+  {
+    /*printf("node: %d ; level %d ; nbsons: %d ; father: %d ; max = %d ; min = %d ; ", 
+            i, CT->tabnodes[i].data, CT->tabnodes[i].nbsons, CT->tabnodes[i].father,
+	   CT->tabnodes[i].max, CT->tabnodes[i].min);
+    */
+    fprintf(fp, "n%d [label = \"max = %d, min = %d, level = %d\"]\n", i,  
+	   CT->tabnodes[i].max, CT->tabnodes[i].min,
+	   CT->tabnodes[i].data);
+    if (CT->tabnodes[i].nbsons > 0)
+    {
+      //printf("sons: ");
+      for (s = CT->tabnodes[i].sonlist; s != NULL; s = s->next) {
+	fprintf(fp, "n%d -> n%d;\n", s->son, i); 
+        //printf("%d  ", s->son);
+      }
+    }
+    //printf("\n");
+  }
+  fprintf(fp, "}\n");
+  fclose(fp);
+} // jccomptree_ComponentTreePrint() 
 
 /* ==================================== */
 void mergeTreePrint(mtree * MT)
 /* ==================================== */
 {
   int32_t i;
-  soncell *s;
-  ctree *CT = MT->CT;
+  JCsoncell *s;
+  JCctree *CT = MT->CT;
   printf("root = %d ;  nbnodes: %d ; nbsoncells: %d\n", CT->root, CT->nbnodes, CT->nbsoncells);
   for (i = 0; i < CT->nbnodes; i++) 
   {
@@ -78,7 +147,7 @@ void mergeTreePrint(mtree * MT)
 
 /* ==================================== */
 int32_t LowComAncSlow(
-  ctree * CT,
+  JCctree * CT,
   int32_t c1,
   int32_t c2)
 /* Retourne le plus proche commun ancetre des cellules c1,c2
@@ -88,7 +157,7 @@ int32_t LowComAncSlow(
 #undef F_NAME
 #define F_NAME "LowComAncSlow"
 {
-  int32_t x, i, lca = -1;
+  int32_t x, lca = -1;
 
   x = c1; do
   {
@@ -127,11 +196,11 @@ int32_t LowComAncSlow(
 // from lwshedtopo.c
 
 // Depth-first preprocessing
-int32_t LCApreprocessDepthFirst(ctree *CT, int32_t node, int32_t depth, int32_t *nbr, int32_t *rep, int32_t *Euler, int32_t *Represent, int32_t *Depth, int32_t *Number)
+int32_t jccomptree_LCApreprocessDepthFirst(JCctree *CT, int32_t node, int32_t depth, int32_t *nbr, int32_t *rep, int32_t *Euler, int32_t *Represent, int32_t *Depth, int32_t *Number)
 {
   int32_t son;
-  soncell *sc;
-  //  printf("LCApreprocessDepthFirst\n");
+  JCsoncell *sc;
+  //  printf("jccomptree_LCApreprocessDepthFirst\n");
   if (CT->tabnodes[node].nbsons > -1) {
     (*nbr)++;
     Euler[*nbr] = node;
@@ -141,34 +210,39 @@ int32_t LCApreprocessDepthFirst(ctree *CT, int32_t node, int32_t depth, int32_t 
     (*rep)++;
     for (sc = CT->tabnodes[node].sonlist; sc != NULL; sc = sc->next)    {
       son = sc->son;
-      LCApreprocessDepthFirst(CT, son, depth+1, nbr, rep, Euler, Represent, Depth, Number);
+      jccomptree_LCApreprocessDepthFirst(CT, son, depth+1, nbr, rep, Euler, Represent, Depth, Number);
       Euler[++(*nbr)] = node;
     }
   }
   return *nbr;
 }
 
-int32_t ** LCApreprocess(ctree *CT, int32_t *Euler, int32_t *Depth, int32_t *Represent, int32_t *Number, int32_t *nbR, int32_t *lognR)
+int32_t ** jccomptree_LCApreprocess(JCctree *CT, int32_t *Euler, int32_t *Depth, int32_t *Represent, int32_t *Number, int32_t *nbR, int32_t *lognR)
 {
   //O(n.log(n)) preprocessing
   int32_t nbr, rep, nbNodes;
+  int32_t nbRepresent;
+  int32_t logn;
+  int32_t i,j,k1,k2;
+  int32_t *minim; 
+  int32_t **Minim;
 
   nbr = -1; // Initialization number of euler nodes
   rep = 0;
-  nbr = LCApreprocessDepthFirst(CT, CT->root, 0, &nbr, &rep, Euler, Represent, Depth, Number);
+  nbr = jccomptree_LCApreprocessDepthFirst(CT, CT->root, 0, &nbr, &rep, Euler, Represent, Depth, Number);
   nbNodes = rep;
 
   // Check that the number of nodes in the tree was correct
   assert((nbr+1) == (2*nbNodes-1));
 
-  int32_t nbRepresent = 2*nbNodes-1;
-  int32_t logn = (int32_t)(ceil(log((double)(nbRepresent))/log(2.0)));
+  nbRepresent = 2*nbNodes-1;
+  logn = (int32_t)(ceil(log((double)(nbRepresent))/log(2.0)));
   *nbR = nbRepresent;
   *lognR = logn;
 
-  int32_t i,j,k1,k2;
-  int32_t *minim = (int32_t *)calloc(logn*nbRepresent, sizeof(int32_t));
-  int32_t **Minim = (int32_t **)calloc(logn, sizeof(int32_t*));
+  minim = (int32_t *)calloc(logn*nbRepresent, sizeof(int32_t));
+  Minim = (int32_t **)calloc(logn, sizeof(int32_t*));
+
   Minim[0] = minim;
 
   for (i=0; i<nbRepresent-1; i++) {
@@ -200,9 +274,9 @@ int32_t ** LCApreprocess(ctree *CT, int32_t *Euler, int32_t *Depth, int32_t *Rep
   return Minim;
 }
 
-int32_t LowComAncFast(int32_t n1, int32_t n2, int32_t *Euler, int32_t *Number, int32_t *Depth, int32_t **Minim)
+int32_t jccomptree_LowComAncFast(int32_t n1, int32_t n2, int32_t *Euler, int32_t *Number, int32_t *Depth, int32_t **Minim)
 #undef F_NAME
-#define F_NAME "LowComAncFast"
+#define F_NAME "jccomptree_LowComAncFast"
 {
   int32_t ii, jj, kk, k;
 
@@ -227,7 +301,7 @@ int32_t LowComAncFast(int32_t n1, int32_t n2, int32_t *Euler, int32_t *Number, i
 }
 
 /* =============================================================== */
- i_Partitionner(int32_t *A, int32_t *T, int32_t p, int32_t r)
+int32_t i_Partitionner(int32_t *A, int32_t *T, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -248,7 +322,7 @@ int32_t LowComAncFast(int32_t n1, int32_t n2, int32_t *Euler, int32_t *Number, i
 } /* i_Partitionner() */
 
 /* =============================================================== */
- i_PartitionStochastique(int32_t *A, int32_t *T, int32_t p, int32_t r)
+int32_t i_PartitionStochastique(int32_t *A, int32_t *T, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -323,15 +397,15 @@ mtree * mergeTreeAlloc(int32_t N)
 } // ComponentTreeAlloc()
 
 /* ==================================== */
-ctree * componentTreeAlloc(int32_t N)
+JCctree * componentTreeAlloc(int32_t N)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "componentTreeAlloc"
 {
-  ctree *CT;
-  CT = (ctree *)malloc(sizeof(ctree));
-  CT->tabnodes = (ctreenode *)malloc(N * sizeof(ctreenode));
-  CT->tabsoncells = (soncell *)malloc(2*N * sizeof(soncell));
+  JCctree *CT;
+  CT = (JCctree *)malloc(sizeof(JCctree));
+  CT->tabnodes = (JCctreenode *)malloc(N * sizeof(JCctreenode));
+  CT->tabsoncells = (JCsoncell *)malloc(2*N * sizeof(JCsoncell));
   CT->flags = (uint8_t *)calloc(N, sizeof(char));
   memset(CT->flags, 0, N);
   if ((CT == NULL) || (CT->tabnodes == NULL) || (CT->tabsoncells == NULL))
@@ -346,7 +420,7 @@ ctree * componentTreeAlloc(int32_t N)
 
 
 /* ==================================== */
-void componentTreeFree(ctree * CT)
+void componentTreeFree(JCctree * CT)
 /* ==================================== */
 {
   free(CT->tabnodes);
@@ -364,9 +438,9 @@ void mergeTreeFree(mtree * MT)
   free(MT);
 } // ComponentTreeFree()
 
-void calculReversePointer(ctree *CT, int32_t root)  
+void calculReversePointer(JCctree *CT, int32_t root)  
 {
-  soncell *s; 
+  JCsoncell *s; 
   for(s = CT->tabnodes[root].sonlist; s != NULL; s = s->next) 
   {
     calculReversePointer(CT, s->son);
@@ -375,19 +449,19 @@ void calculReversePointer(ctree *CT, int32_t root)
 }
 
 //Compute the merge tree of a MST represented by a list of edges and
-//an array of corresponding values (Valeur). Ctree is a structure to
+//an array of corresponding values (Valeur). JCctree is a structure to
 //store a tree and STaltitude gives the altitudes of the nodes. As
 //well as the Component tree and saliency tree algorithm, this is an
 //original contribution which allows to compute a MT (hence, a CT) of
 //a watershed using only one union-find
-int32_t jcSaliencyTree_b (ctree ** SaliencyTree, int32_t *MST, int32_t *Valeur, RAG *rag, int32_t *STaltitude)
+int32_t jcSaliencyTree_b (JCctree ** SaliencyTree, int32_t *MST, int32_t *Valeur, RAG *rag, int32_t *STaltitude)
 {
-  int32_t i,x1,x2,n1,n2,z,k, STx, STy, nbsoncellsloc;
-  ctree *ST;
+  int32_t i,x1,x2,n1,n2,z,k, nbsoncellsloc;
+  JCctree *ST;
   int32_t *clefs; 
   int32_t *STmap;
-  soncell * newsoncell1;
-  soncell * newsoncell2;
+  JCsoncell * newsoncell1;
+  JCsoncell * newsoncell2;
   Tarjan *T;
   int32_t taille = rag->g->nsom;
 
@@ -470,12 +544,12 @@ int32_t mergeTree(RAG *rag, // inputs
   mtree *MT;
   int32_t *clefs; 
   int32_t *CTmap;
-  soncell * newsoncell1;
-  soncell * newsoncell2;
+  JCsoncell * newsoncell1;
+  JCsoncell * newsoncell2;
   Tarjan *T;
   int32_t nbarcs = rag->g->narc/2;
   int32_t nbsoms = rag->g->nsom;
-  ctree *CT;
+  JCctree *CT;
   if( (CTmap = (int32_t *)malloc(sizeof(int32_t) *nbsoms)) == NULL){
     fprintf(stderr, "jcSalliancyTree: erreur de malloc\n"); 
   }

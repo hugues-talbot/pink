@@ -1,15 +1,48 @@
-/* $Id: llabeltree.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /****************************************************************
 *
 * Routine Name: ldistXXX - library call for dist
 *
-* Purpose:     Calcul du niveau des branches d'un arbre en n-connexité
+* Purpose:     Calcul du niveau des branches d'un arbre en n-connexitï¿½
                (n = 4,8,6,18,26)
 *
 * Input:       X: Image binaire
 *Output:       Image en niveaux de gris (entiers longs)
 *
-* Author: Cédric Allène
+* Author: Cï¿½dric Allï¿½ne
 *
 ****************************************************************/
 
@@ -29,7 +62,7 @@
 /* ==================================== */
 int32_t llabeltree(struct xvimage *imgx,   /* donnee: image binaire */       
                int32_t connex,
-               struct xvimage *res     /* resultat: distances (doit être allouée) */
+               struct xvimage *res     /* resultat: distances (doit ï¿½tre allouï¿½e) */
 )
 /* ==================================== */
 #undef F_NAME
@@ -45,7 +78,7 @@ int32_t llabeltree(struct xvimage *imgx,   /* donnee: image binaire */
 /* ==================================== */
 int32_t llabeltree2d(struct xvimage *imgx,   /* donnee: image binaire */       
                  int32_t connex,
-                 struct xvimage *res     /* resultat: distances (doit être allouée) */
+                 struct xvimage *res     /* resultat: distances (doit ï¿½tre allouï¿½e) */
 )
 /* ==================================== */
 #undef F_NAME
@@ -54,9 +87,9 @@ int32_t llabeltree2d(struct xvimage *imgx,   /* donnee: image binaire */
   int32_t rs = imgx->row_size;
   int32_t cs = imgx->col_size;
   int32_t N = rs * cs;           /* taille de l'image */
-  uint8_t *X;          /* pointeur sur l'image x */
-  int32_t *D;               /* pointeur sur les distances */
-  int32_t i, j, k, current_pixel, incr_vois;
+  uint8_t *X;                    /* pointeur sur l'image x */
+  uint32_t *D;                   /* pointeur sur les distances */
+  int32_t i, k, current_pixel;
   int32_t d_max = 0;
 
   if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != 1))
@@ -92,7 +125,7 @@ int32_t llabeltree2d(struct xvimage *imgx,   /* donnee: image binaire */
   
   if (k!=1)
   {
-    fprintf (stderr, "%s: uniquement le point de départ de la racine sur la première ligne (y=0)\n", F_NAME);
+    fprintf (stderr, "%s: uniquement le point de dï¿½part de la racine sur la premiï¿½re ligne (y=0)\n", F_NAME);
     return 0;
   } /* if (k!=1) */
 
@@ -124,7 +157,7 @@ int32_t llabeltree2d(struct xvimage *imgx,   /* donnee: image binaire */
 /* ==================================== */
 int32_t llabeltree3d(struct xvimage *imgx,   /* donnee: image binaire */       
                  int32_t connex,
-                 struct xvimage *res     /* resultat: distances (doit être allouée) */
+                 struct xvimage *res     /* resultat: distances (doit ï¿½tre allouï¿½e) */
 )
 /* ==================================== */
 #undef F_NAME
@@ -135,9 +168,9 @@ int32_t llabeltree3d(struct xvimage *imgx,   /* donnee: image binaire */
   int32_t ds = depth(imgx);
   int32_t ps = rs * cs;          /* taille d'un plan */
   int32_t N = ps * ds;           /* taille de l'image */
-  uint8_t *X;          /* pointeur sur l'image x */
-  int32_t *D;               /* pointeur sur les distances */
-  int32_t i, j, k, current_pixel, incr_vois;
+  uint8_t *X;                    /* pointeur sur l'image x */
+  uint32_t *D;                   /* pointeur sur les distances */
+  int32_t i, k, current_pixel;
   int32_t d_max = 0;
 
   if ((rowsize(res) != rs) || (colsize(res) != cs) || (depth(res) != ds))
@@ -173,7 +206,7 @@ int32_t llabeltree3d(struct xvimage *imgx,   /* donnee: image binaire */
   
   if (k!=1)
   {
-    fprintf (stderr, "%s: uniquement le point de départ de la racine sur le plan d'origine (z=0)\n", F_NAME);
+    fprintf (stderr, "%s: uniquement le point de dï¿½part de la racine sur le plan d'origine (z=0)\n", F_NAME);
     return 0;
   } /* if (k!=1) */
 
@@ -207,10 +240,10 @@ int32_t llabeltree3d(struct xvimage *imgx,   /* donnee: image binaire */
 int32_t labelbranch2d4(uint8_t *X,  /* donnee: pointeur sur l'image x */
                    int32_t rs,            /* donnee: taille ligne */
 		   int32_t N,             /* donnee: taille image */
-                   int32_t current_pixel, /* donnee: numéro pixel courant */  
+                   int32_t current_pixel, /* donnee: numï¿½ro pixel courant */  
                    int32_t intersection,  /* donnee: flag d'intersection */  
-                   int32_t *D        /* resultat: pointeur sur distances */
-) /* Etiquette les branches avec la 4-connexité */
+                   uint32_t *D        /* resultat: pointeur sur distances */
+) /* Etiquette les branches avec la 4-connexitï¿½ */
 /* ==================================== */
 { 
   int32_t d, k, j, d_max, l;
@@ -251,10 +284,10 @@ int32_t labelbranch2d4(uint8_t *X,  /* donnee: pointeur sur l'image x */
 int32_t labelbranch2d8(uint8_t *X,  /* donnee: pointeur sur l'image x */
                    int32_t rs,            /* donnee: taille ligne */
 		   int32_t N,             /* donnee: taille image */
-                   int32_t current_pixel, /* donnee: numéro pixel courant */  
+                   int32_t current_pixel, /* donnee: numï¿½ro pixel courant */  
                    int32_t intersection,  /* donnee: flag d'intersection */  
-                   int32_t *D        /* resultat: pointeur sur distances */
-) /* Etiquette les branches avec la 8-connexité */
+                   uint32_t *D        /* resultat: pointeur sur distances */
+) /* Etiquette les branches avec la 8-connexitï¿½ */
 /* ==================================== */
 { 
   int32_t d, k, j, d_max, l;
@@ -296,16 +329,16 @@ int32_t labelbranch3d6(uint8_t *X,  /* donnee: pointeur sur l'image x */
                    int32_t rs,            /* donnee: taille ligne */
                    int32_t ps,            /* donnee: taille plan */
 		   int32_t N,             /* donnee: taille image */
-                   int32_t current_pixel, /* donnee: numéro pixel courant */  
+                   int32_t current_pixel, /* donnee: numï¿½ro pixel courant */  
                    int32_t intersection,  /* donnee: flag d'intersection */  
-                   int32_t *D        /* resultat: pointeur sur distances */
-) /* Etiquette les branches avec la 6-connexité */
+                   uint32_t *D        /* resultat: pointeur sur distances */
+) /* Etiquette les branches avec la 6-connexitï¿½ */
 /* ==================================== */
 { 
   int32_t d, k, j, d_max, l;
       
   d = D[current_pixel];
-  if (nbvoiso6 (X, current_pixel, rs, ps, N) > 2)
+  if (mctopo3d_nbvoiso6 (X, current_pixel, rs, ps, N) > 2)
   {
     if (intersection == 0) intersection = 1;
   }
@@ -341,16 +374,16 @@ int32_t labelbranch3d18(uint8_t *X,  /* donnee: pointeur sur l'image x */
                     int32_t rs,            /* donnee: taille ligne */
                     int32_t ps,            /* donnee: taille plan */
 		    int32_t N,             /* donnee: taille image */
-                    int32_t current_pixel, /* donnee: numéro pixel courant */  
+                    int32_t current_pixel, /* donnee: numï¿½ro pixel courant */  
                     int32_t intersection,  /* donnee: flag d'intersection */  
-                    int32_t *D        /* resultat: pointeur sur distances */
-) /* Etiquette les branches avec la 18-connexité */
+                    uint32_t *D        /* resultat: pointeur sur distances */
+) /* Etiquette les branches avec la 18-connexitï¿½ */
 /* ==================================== */
 { 
   int32_t d, k, j, d_max, l;
       
   d = D[current_pixel];
-  if (nbvoiso18 (X, current_pixel, rs, ps, N) > 2)
+  if (mctopo3d_nbvoiso18 (X, current_pixel, rs, ps, N) > 2)
   {
     if (intersection == 0) intersection = 1;
   }
@@ -386,16 +419,16 @@ int32_t labelbranch3d26(uint8_t *X,  /* donnee: pointeur sur l'image x */
                     int32_t rs,            /* donnee: taille ligne */
                     int32_t ps,            /* donnee: taille plan */
 		    int32_t N,             /* donnee: taille image */
-                    int32_t current_pixel, /* donnee: numéro pixel courant */  
+                    int32_t current_pixel, /* donnee: numï¿½ro pixel courant */  
                     int32_t intersection,  /* donnee: flag d'intersection */  
-                    int32_t *D        /* resultat: pointeur sur distances */
-) /* Etiquette les branches avec la 26-connexité */
+                    uint32_t *D        /* resultat: pointeur sur distances */
+) /* Etiquette les branches avec la 26-connexitï¿½ */
 /* ==================================== */
 { 
   int32_t d, k, j, d_max, l;
       
   d = D[current_pixel];
-  if (nbvoiso26 (X, current_pixel, rs, ps, N) > 2)
+  if (mctopo3d_nbvoiso26 (X, current_pixel, rs, ps, N) > 2)
   {
     if (intersection == 0) intersection = 1;
   }

@@ -1,8 +1,44 @@
-/* $Id: lgeodesic.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
-/* operateurs morphologiques geodesiques */
-/* methode : propagation des changements par fifo */
-/* d'apres la these de Michel Grimaud (pp 22) */
-/* Michel Couprie - juillet 1996 */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
+/* 
+ Operateurs morphologiques geodesiques
+ methode : propagation des changements par fifo
+ d'apres la these de Michel Grimaud (pp 22)
+ Michel Couprie - juillet 1996
+ Update 12/02/2010: MC - fix memory leakage (missing calls to IndicsTermine)
+*/
 
 #include <stdio.h>
 #include <stdint.h>
@@ -103,7 +139,7 @@ int32_t lgeodilat(
         if ((y != -1) && (G[y] > sup)) sup = G[y];
       } /* for k */
 
-      sup = min(sup, F[x]);
+      sup = mcmin(sup, F[x]);
       if (G[x] != sup) /* changement: on enregistre x ainsi que ses voisins */
       {
         nbchang += 1;
@@ -148,8 +184,23 @@ int32_t lgeodilat(
 
   FifoTermine(FIFO[0]);
   FifoTermine(FIFO[1]);
+  IndicsTermine();
   return 1;
 } /* lgeodilat() */
+
+/* ==================================== */
+int32_t lreconsdilat(
+        struct xvimage *g,
+        struct xvimage *f,
+        int32_t connex) 
+/* reconstruction de g sous f */
+/* g : image marqueur */
+/* f : image masque */
+/* resultat dans g */
+/* ==================================== */
+{
+  return lgeodilat(g, f, connex, -1);
+}
 
 /* ==================================== */
 int32_t lgeoeros(
@@ -240,7 +291,7 @@ int32_t lgeoeros(
         if ((y != -1) && (G[y] < inf)) inf = G[y];
       } /* for k */
 
-      inf = max(inf, F[x]);
+      inf = mcmax(inf, F[x]);
       if (G[x] != inf)           /* le point a change : on l'enregistre ainsi que ses voisins */
       {
         nbchang += 1;
@@ -285,6 +336,7 @@ int32_t lgeoeros(
 
   FifoTermine(FIFO[0]);
   FifoTermine(FIFO[1]);
+  IndicsTermine();
   return 1;
 } /* lgeoeros() */
 
@@ -654,7 +706,7 @@ int32_t lgeodilat3d(
           if ((y != -1) && (G[y] > sup)) sup = G[y];
         } /* for k */
   
-        sup = min(sup, F[x]);
+        sup = mcmin(sup, F[x]);
         if (G[x] != sup)
         {  /* changement: on enregistre x ainsi que ses voisins */
           nbchang += 1;
@@ -701,7 +753,7 @@ int32_t lgeodilat3d(
           if ((y != -1) && (G[y] > sup)) sup = G[y];
         } /* for k */
   
-        sup = min(sup, F[x]);
+        sup = mcmin(sup, F[x]);
         if (G[x] != sup)
         {  /* changement: on enregistre x ainsi que ses voisins */
           nbchang += 1;
@@ -748,7 +800,7 @@ int32_t lgeodilat3d(
           if ((y != -1) && (G[y] > sup)) sup = G[y];
         } /* for k */
   
-        sup = min(sup, F[x]);
+        sup = mcmin(sup, F[x]);
         if (G[x] != sup)
         {  /* changement: on enregistre x ainsi que ses voisins */
           nbchang += 1;
@@ -795,6 +847,7 @@ int32_t lgeodilat3d(
 
   FifoTermine(FIFO[0]);
   FifoTermine(FIFO[1]);
+  IndicsTermine();
   return 1;
 } // lgeodilat3d(
 
@@ -891,7 +944,7 @@ int32_t lgeoeros3d(
           if ((y != -1) && (G[y] < inf)) inf = G[y];
         } /* for k */
   
-        inf = max(inf, F[x]);
+        inf = mcmax(inf, F[x]);
         if (G[x] != inf)
         {  /* changement: on enregistre x ainsi que ses voisins */
           nbchang += 1;
@@ -938,7 +991,7 @@ int32_t lgeoeros3d(
           if ((y != -1) && (G[y] < inf)) inf = G[y];
         } /* for k */
   
-        inf = max(inf, F[x]);
+        inf = mcmax(inf, F[x]);
         if (G[x] != inf)
         {  /* changement: on enregistre x ainsi que ses voisins */
           nbchang += 1;
@@ -985,7 +1038,7 @@ int32_t lgeoeros3d(
           if ((y != -1) && (G[y] < inf)) inf = G[y];
         } /* for k */
   
-        inf = max(inf, F[x]);
+        inf = mcmax(inf, F[x]);
         if (G[x] != inf)
         {  /* changement: on enregistre x ainsi que ses voisins */
           nbchang += 1;
@@ -1032,6 +1085,7 @@ int32_t lgeoeros3d(
 
   FifoTermine(FIFO[0]);
   FifoTermine(FIFO[1]);
+  IndicsTermine();
   return 1;
 } // lgeoeros3d(
 
@@ -1066,7 +1120,7 @@ int32_t lamont(
   int32_t ds = depth(f);           /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
-  uint32_t *F = ULONGDATA(f);
+  int32_t *F = SLONGDATA(f);
   uint8_t *M = UCHARDATA(m);
   Fifo * FIFO;
   int32_t incr_vois;

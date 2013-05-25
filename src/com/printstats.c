@@ -1,4 +1,37 @@
-/* $Id: printstats.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file printstats.c
 
 \brief prints some stats of an image or a region
@@ -20,6 +53,7 @@ Calculates the histogram of \b im.pgm (masked by the binary image
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <mcutil.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 
@@ -28,9 +62,8 @@ Calculates the histogram of \b im.pgm (masked by the binary image
 */
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 #undef F_NAME
 #define F_NAME "printstats"
 {
@@ -43,10 +76,10 @@ int main(argc, argv)
   int32_t nbPoints=0;
   int32_t min, max;
   double mean;
-  int32_t i, k, s;
+  int32_t i;
   uint8_t *M;
   uint8_t *SOURCEc;      /* l'image de depart */
-  uint32_t *SOURCEi;      /* l'image de depart */
+  int32_t *SOURCEi;      /* l'image de depart */
   float *SOURCEf;      /* l'image de depart */
   int32_t pixel;
 
@@ -70,7 +103,7 @@ int main(argc, argv)
 
   switch (datatype(image)) {
   case VFF_TYP_1_BYTE:   SOURCEc = UCHARDATA(image); break;
-  case VFF_TYP_4_BYTE:   SOURCEi = ULONGDATA(image); break;
+  case VFF_TYP_4_BYTE:   SOURCEi = SLONGDATA(image); break;
   case VFF_TYP_FLOAT:    SOURCEf = FLOATDATA(image); break;
   default:
     fprintf(stderr, "%s: cette version ne traite que les images BYTE, LONG et FLOAT\n", F_NAME);
@@ -90,8 +123,8 @@ int main(argc, argv)
   }
 
   if (datatype(image) != VFF_TYP_FLOAT) {
-    min = LONG_MAX;
-    max = LONG_MIN;
+    min = INT32_MAX;
+    max = INT32_MIN;
     mean = 0.;
     if (M == NULL) {
       for (i=0; i<N; i++) {
@@ -124,8 +157,8 @@ int main(argc, argv)
     printf("Mean    : %lg\n", mean/(double)nbPoints);
   } else {
     // VFF_TYP_FLOAT
-    float minf = LONG_MAX;
-    float maxf = LONG_MIN;
+    float minf = SOURCEf[0];
+    float maxf = SOURCEf[0];
     float meanf = 0;
     float pixelf;
     if (M == NULL) {

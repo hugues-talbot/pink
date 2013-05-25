@@ -1,4 +1,37 @@
-/* $Id: lsegmentnum.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* operateur fondamental de segmentation numerique par seuillage */
 /* utilise une File d'Attente Hierarchique */
 /* utilise un arbre des bassins versants (captation basin tree, CBT) */
@@ -90,12 +123,12 @@ Il ne restera plus qu'a decider du sort des plateaux fusionnant: quelle valeur l
   pour tout point x de Dom(F)
     y = VoisinEst(x)
     si y existe ET M[x] != M[y] alors
-      g = abs(F[y] - F[x])
+      g = mcabs(F[y] - F[x])
       FahPush(FAH, x, g)
     finsi
     y = VoisinSud(x)
     si y existe ET M[x] != M[y] alors
-      g = abs(F[y] - F[x])
+      g = mcabs(F[y] - F[x])
       FahPush(FAH, x + N, g)   ;; il faudra retirer N pour recuperer la coord. du pixel 
     finsi
   finpour
@@ -185,7 +218,7 @@ int32_t lsegmentnum(
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *SOURCE = UCHARDATA(image);      /* l'image de depart */
-  uint32_t *M = ULONGDATA(result);
+  int32_t *M = SLONGDATA(result);
   int32_t *T;                      /* table de correspondance pour regularisation */
   int32_t nminima;                 /* nombre de minima differents */
   Fah * FAH;                   /* la file d'attente hierarchique */
@@ -195,8 +228,7 @@ int32_t lsegmentnum(
   int32_t *MU;                     /* pour la mesure des regions */
   int32_t etiqcc[4];
   int32_t ncc;
-  int32_t new;
-  int32_t tracedate = 0;
+  int32_t newcell;
   int32_t nbcomp = 0;
 
   if (depth(image) != 1) 
@@ -247,19 +279,19 @@ int32_t lsegmentnum(
     y = voisin(x, EST, rs, N);
     if ((y != -1) && (M[x] != M[y]))
     {
-      FahPush(FAH, x, abs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
+      FahPush(FAH, x, mcabs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
 #ifdef TRACEPUSH
           if (trace) printf("%d: empile point %d (%d,%d) au niveau %d\n", 
-                             tracedate++, x, x%rs, x/rs, abs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
+                             tracedate++, x, x%rs, x/rs, mcabs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
 #endif
     } /* if y */
     y = voisin(x, SUD, rs, N);
     if ((y != -1) && (M[x] != M[y]))
     {
-      FahPush(FAH, N + x, abs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
+      FahPush(FAH, N + x, mcabs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
 #ifdef TRACEPUSH
           if (trace) printf("%d: empile point %d (%d,%d) au niveau %d\n", 
-                             tracedate++, x, x%rs, x/rs, abs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
+                             tracedate++, x, x%rs, x/rs, mcabs((int32_t)SOURCE[y] - (int32_t)SOURCE[x]));
 #endif
     } /* if y */
   } /* for x */
@@ -314,12 +346,12 @@ int32_t lsegmentnum(
 
     if (ncc > 1)
     {
-      new = CreateCell(CBT, &nbcell, nbmaxcell);
-      SetData(CBT, new, k);                  /* conceptuellement : k + 1 */
+      newcell = CreateCell(CBT, &nbcell, nbmaxcell);
+      SetData(CBT, newcell, k);                  /* conceptuellement : k + 1 */
       for (i = 0; i < ncc; i++)
       {
-        MU[new] += MU[etiqcc[i]];
-        SetFather(CBT, etiqcc[i], new);
+        MU[newcell] += MU[etiqcc[i]];
+        SetFather(CBT, etiqcc[i], newcell);
       } /* for i */
     } /* if (ncc > 1) */
 
@@ -396,11 +428,11 @@ int32_t lsegmentnum(
     {
       switch (mesure)
       {
-        case SURFACE:    new = MU[x]; break;
-        case PROFONDEUR: new = (int32_t)Data(CBT, x); break;
-        case VOLUME:     new = MU[x] * (int32_t)Data(CBT, x); break;
+        case SURFACE:    newcell = MU[x]; break;
+        case PROFONDEUR: newcell = (int32_t)Data(CBT, x); break;
+        case VOLUME:     newcell = MU[x] * (int32_t)Data(CBT, x); break;
       } /* switch (mesure) */
-      if (new >= seuil)
+      if (newcell >= seuil)
       {
         nbcomp++;
         Label(CBT,x) = PERTINENT;

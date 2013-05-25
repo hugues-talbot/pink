@@ -1,4 +1,37 @@
-/* $Id: lfiltreordre.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* filtre d'ordre sur un voisinage quelconque */
 /* Michel Couprie - decembre 1997 */
 /* update juin 2001: 3D */
@@ -18,7 +51,7 @@
 */
 
 /* =============================================================== */
-int32_t Partitionner(uint8_t *A, int32_t p, int32_t r)
+int32_t lfiltreordre_Partitionner(uint8_t *A, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -36,10 +69,10 @@ int32_t Partitionner(uint8_t *A, int32_t p, int32_t r)
     if (i < j) { t = A[i]; A[i] = A[j]; A[j] = t; }
     else return j;
   } /* while (1) */   
-} /* Partitionner() */
+} /* lfiltreordre_Partitionner() */
 
 /* =============================================================== */
-int32_t PartitionStochastique(uint8_t *A, int32_t p, int32_t r)
+int32_t lfiltreordre_PartitionStochastique(uint8_t *A, int32_t p, int32_t r)
 /* =============================================================== */
 /*
   partitionne les elements de A entre l'indice p (compris) et l'indice r (compris)
@@ -53,11 +86,11 @@ int32_t PartitionStochastique(uint8_t *A, int32_t p, int32_t r)
   t = A[p];         /* echange A[p] et A[q] */
   A[p] = A[q]; 
   A[q] = t;
-  return Partitionner(A, p, r);
-} /* PartitionStochastique() */
+  return lfiltreordre_Partitionner(A, p, r);
+} /* lfiltreordre_PartitionStochastique() */
 
 /* =============================================================== */
-uint8_t SelectionStochastique (uint8_t * A, int32_t p, int32_t r, int32_t i)
+uint8_t lfiltreordre_SelectionStochastique (uint8_t * A, int32_t p, int32_t r, int32_t i)
 /* =============================================================== */
 /* 
   retourne la valeur de rang i dans le tableau A 
@@ -66,11 +99,11 @@ uint8_t SelectionStochastique (uint8_t * A, int32_t p, int32_t r, int32_t i)
 {
   int32_t q, k; 
   if (p == r) return A[p];
-  q = PartitionStochastique(A, p, r);
+  q = lfiltreordre_PartitionStochastique(A, p, r);
   k = q - p + 1;
-  if (i <= k) return SelectionStochastique (A, p, q, i);
-  else        return SelectionStochastique (A, q+1, r, i - k) ;
-} /* SelectionStochastique() */
+  if (i <= k) return lfiltreordre_SelectionStochastique (A, p, q, i);
+  else        return lfiltreordre_SelectionStochastique (A, q+1, r, i - k) ;
+} /* lfiltreordre_SelectionStochastique() */
 
 /* ==================================== */
 int32_t lfiltreordre(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, double r)
@@ -80,24 +113,23 @@ int32_t lfiltreordre(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t y
 /* ==================================== */
 {
   int32_t rang;
-  int32_t x;                       /* index muet de pixel */
-  int32_t y;                       /* index muet (generalement un voisin de x) */
-  register int32_t i, j;                    /* index muet */
-  register int32_t k, l;                    /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t N = rs * cs;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t Nm = rsm * csm;
+  index_t x;                       /* index muet de pixel */
+  index_t y;                       /* index muet (generalement un voisin de x) */
+  register index_t i, j;                    /* index muet */
+  register index_t k, l;                    /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t N = rs * cs;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t Nm = rsm * csm;
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
-  int32_t nptb;                    /* nombre de points de l'e.s. */
+  int32_t c, nptb;                 /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   uint8_t *tab_es_val;   /* liste des valeurs des points de l'e.s. */
-  int32_t c;
 
   if (depth(f) != 1) 
   {
@@ -154,7 +186,7 @@ int32_t lfiltreordre(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t y
       else
         tab_es_val[c] = 0;
     }
-    F[y * rs + x] = SelectionStochastique(tab_es_val, 0, nptb - 1, rang);
+    F[y * rs + x] = lfiltreordre_SelectionStochastique(tab_es_val, 0, nptb - 1, rang);
   }
 
   free(H);
@@ -172,28 +204,27 @@ int32_t lfiltreordre3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t
 /* ==================================== */
 {
   int32_t rang;
-  int32_t x,y,z;
-  register int32_t i, j, k;                 /* index muet */
-  register int32_t n, o, p;                 /* index muet */
-  int32_t rs = rowsize(f);         /* taille ligne */
-  int32_t cs = colsize(f);         /* taille colonne */
-  int32_t ds = depth(f);           /* nb plans */
-  int32_t ps = rs * cs;            /* taille plan */
-  int32_t N = ps * ds;             /* taille image */
-  int32_t rsm = rowsize(m);        /* taille ligne masque */
-  int32_t csm = colsize(m);        /* taille colonne masque */
-  int32_t dsm = depth(m);          /* nb plans masque */
-  int32_t psm = rsm * csm;         /* taille plan masque */
-  int32_t Nm = psm * dsm;          /* taille masque */
+  index_t x, y, z;
+  register index_t i, j, k;                 /* index muet */
+  register index_t n, o, p;                 /* index muet */
+  index_t rs = rowsize(f);         /* taille ligne */
+  index_t cs = colsize(f);         /* taille colonne */
+  index_t ds = depth(f);           /* nb plans */
+  index_t ps = rs * cs;            /* taille plan */
+  index_t N = ps * ds;             /* taille image */
+  index_t rsm = rowsize(m);        /* taille ligne masque */
+  index_t csm = colsize(m);        /* taille colonne masque */
+  index_t dsm = depth(m);          /* nb plans masque */
+  index_t psm = rsm * csm;         /* taille plan masque */
+  index_t Nm = psm * dsm;          /* taille masque */
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
   uint8_t *H;                    /* image de travail */
-  int32_t nptb;                    /* nombre de points de l'e.s. */
+  int32_t c, nptb;                 /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
   int32_t *tab_es_z;               /* liste des coord. z des points de l'e.s. */
   uint8_t *tab_es_val;   /* liste des valeurs des points de l'e.s. */
-  int32_t c;
 
   H = (uint8_t *)calloc(1,N*sizeof(char));
   if (H == NULL)
@@ -250,7 +281,7 @@ int32_t lfiltreordre3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t
       else
         tab_es_val[c] = 0;
     }
-    F[z * ps + y * rs + x] = SelectionStochastique(tab_es_val, 0, nptb - 1, rang);
+    F[z * ps + y * rs + x] = lfiltreordre_SelectionStochastique(tab_es_val, 0, nptb - 1, rang);
   }
 
   free(H);

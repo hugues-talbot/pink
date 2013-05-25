@@ -1,4 +1,37 @@
-/* $Id: yuv2rgb.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* \file yuv2rgb.c
 
 \brief 
@@ -51,19 +84,17 @@ typedef uint32_t pixel;
 #define PGM_MAXMAXVAL 255
 #define CCIR601 1
 
-int32_t
-main(argc, argv)
-char **argv;
+int main(int argc, char **argv)
 {
-	FILE *vf,*uf,*yf;
-	int32_t             rows, cols, format, row;
-	register int32_t    col;
-	char		*usage="<basename> <width> <height> [-split]";
-	int32_t  y,u,v,y0,y1,y2,y3,u0,u1,u2,u3,v0,v1,v2,v3;
-	uint8_t  *y1buf,*y2buf,*ubuf,*vbuf;
-	char 		ufname[256],vfname[256],yfname[256];
+	FILE *vf, *uf, *yf;
+	int32_t rows, cols, row;
+	register int32_t col;
+	char *usage=(char *)"basename width height [-split]";
+	int32_t u, v, y0, y1, y2, y3, u0, u1, u2, u3, v0, v1, v2, v3;
+	uint8_t *y1buf, *y2buf, *ubuf, *vbuf;
+	char ufname[256], vfname[256], yfname[256];
 /* Whether to create YUV in JFIF(JPEG) or CCIR.601(MPEG) scale */
-	int32_t		ccir601=CCIR601;
+	int32_t	ccir601 = CCIR601;
         struct xvimage *imr, *img, *imb;
         uint8_t *pr, *pg, *pb;
         int32_t split = 0;
@@ -71,10 +102,12 @@ char **argv;
 	if ((argc>5) || (argc<4)) { printf("usage: %s %s\n", argv[0], usage); exit(1); }
 
         if (argc==5)
-                if (strcmp(argv[4],"-split") == 0)
-                        split = 1;
-		else
-                { printf("usage: %s %s\n", argv[0], usage); exit(1); }
+	{
+          if (strcmp(argv[4],"-split") == 0)
+            split = 1;
+	  else
+          { printf("usage: %s %s\n", argv[0], usage); exit(1); }
+	}
 
 	strcpy(ufname,argv[1]);
 	strcpy(vfname,argv[1]);

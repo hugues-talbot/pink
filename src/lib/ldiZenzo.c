@@ -1,4 +1,37 @@
-/* $Id: ldiZenzo.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* diZenzo gradient based on Deriche filter: Laurent Najman juin 2004 */
 #include <sys/types.h>
 #include <stdint.h>
@@ -17,7 +50,7 @@
 int32_t ldiZenzoGradient(struct xvimage *imageR, struct xvimage *imageV, struct xvimage *imageB,
 	      double alpha)
 {
-  int32_t i, j;
+  int32_t i;
   uint8_t *imaR = UCHARDATA(imageR);
   uint8_t *imaV = UCHARDATA(imageV);
   uint8_t *imaB = UCHARDATA(imageB);
@@ -65,8 +98,8 @@ int32_t ldiZenzoGradient(struct xvimage *imageR, struct xvimage *imageV, struct 
   ImBy = (double *)calloc(1,N * sizeof(double));
   ImB = (double *)calloc(1,N * sizeof(double));
 
-  buf1 = (double *)calloc(1,max(rs, cs) * sizeof(double));
-  buf2 = (double *)calloc(1,max(rs, cs) * sizeof(double));
+  buf1 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
+  buf2 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
 
   if ((ImRx==NULL) || (ImRx==NULL) || (ImR==NULL) 
       ||(ImVx==NULL) || (ImVx==NULL) || (ImB==NULL) 
@@ -158,7 +191,7 @@ int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct
 #undef F_NAME
 #define F_NAME "ldiZenzoDirection"
 {
-  int32_t i, j;
+  int32_t i;
   uint8_t *imaR = UCHARDATA(imageR);
   uint8_t *imaV = UCHARDATA(imageV);
   uint8_t *imaB = UCHARDATA(imageB);
@@ -182,8 +215,8 @@ int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct
   double e_a;     /* stocke exp(-alpha) */
   double e_2a;    /* stocke exp(-2alpha) */
   double a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4;
-  double p,q,t, g;
-  int32_t *  dir = ULONGDATA(result);
+  double p,q,t;
+  int32_t *  dir = SLONGDATA(result);
 
 
   if ((depth(imageR) != 1) || (depth(imageB) != 1) || (depth(imageB) != 1))
@@ -213,8 +246,8 @@ int32_t ldiZenzoDirection(struct xvimage *imageR, struct xvimage *imageV, struct
   ImBy = (double *)calloc(1,N * sizeof(double));
   ImB = (double *)calloc(1,N * sizeof(double));
 
-  buf1 = (double *)calloc(1,max(rs, cs) * sizeof(double));
-  buf2 = (double *)calloc(1,max(rs, cs) * sizeof(double));
+  buf1 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
+  buf2 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
 
   if ((ImRx==NULL) || (ImRx==NULL) || (ImR==NULL) 
       ||(ImVx==NULL) || (ImVx==NULL) || (ImB==NULL) 
@@ -278,7 +311,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
 	t = ImRx[i]*ImRy[i] + ImVx[i]*ImVy[i] + ImBx[i]*ImBy[i];
 	
 	if (p!=q) {
-	  dir[i] = (uint32_t) (180.0/3.1415927*(.5*atan2(2.0*t, (p-q)))+180.);
+	  dir[i] = (int32_t) (180.0/3.1415927*(.5*atan2(2.0*t, (p-q)))+180.);
 	  //printf("%d\n", dir[i]);
 	}
 	else dir[i] = 361;

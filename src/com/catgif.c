@@ -1,4 +1,37 @@
-/* $Id: catgif.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* \file catgif.c
 
 \brief 
@@ -53,7 +86,7 @@ convert
 #include <mcimage.h>
 #include <mcutil.h>
 
-#define DEBUG
+//#define DEBUG
 
 /* =============================================================== */
 void read_global_color_table(FILE *fd, int32_t size, FILE *fdout)
@@ -166,7 +199,7 @@ void read_logical_screen(FILE *fd, FILE *fdout)
   l = getc(fd); h = getc(fd); lsheight  = h * 256 + l;
   fputc(l, fdout); fputc(h, fdout);
 #ifdef DEBUG
-  printf("lswidth = %ld ; lsheight = %ld\n", lswidth, lsheight);
+  printf("lswidth = %ld ; lsheight = %ld\n", (long int)lswidth, (long int)lsheight);
 #endif
   flags = (uint8_t)getc(fd);
   fputc(flags, fdout);
@@ -195,7 +228,7 @@ void skip_logical_screen(FILE *fd)
   l = getc(fd); h = getc(fd); lswidth = h * 256 + l;
   l = getc(fd); h = getc(fd); lsheight  = h * 256 + l;
 #ifdef DEBUG
-  printf("lswidth = %ld ; lsheight = %ld\n", lswidth, lsheight);
+  printf("lswidth = %ld ; lsheight = %ld\n", (long int)lswidth, (long int)lsheight);
 #endif
   flags = (uint8_t)getc(fd);
   bgcolindex = (uint8_t)getc(fd);  
@@ -249,8 +282,6 @@ void read_graphic_extension(FILE *fd, FILE *fdout)
 void write_graphic_extension(int32_t delay, FILE *fdout)
 /* =============================================================== */
 {
-  uint8_t flags, transcolindex;
-
   fputc(0x21, fdout); /* extension introducer */
   fputc(0xF9, fdout); /* graphic control label */
   fputc(4, fdout);    /* set block size */
@@ -318,7 +349,7 @@ void read_comment_extension(FILE *fd, FILE *fdout)
     ret = fread(buf, sizeof(char), c, fd);
     if (ret != c)
     {
-      fprintf(stderr, "read_comment_extension: FORMAT ERROR, %ld byte read\n", ret);
+      fprintf(stderr, "read_comment_extension: FORMAT ERROR, %ld byte read\n", (long int)ret);
       exit(1);
     }
 #ifdef DEBUG
@@ -343,13 +374,13 @@ void read_application_extension(FILE *fd, FILE *fdout)
   c = getc(fd); /* get block size */
   if (c != 11)
   {
-    fprintf(stderr, "read_application_extension: FORMAT ERROR\n", ret);
+    fprintf(stderr, "read_application_extension: FORMAT ERROR\n");
     exit(1);
   }
   ret = fread(buf, sizeof(char), c, fd); /* skip block */
   if (ret != c)
   {
-    fprintf(stderr, "read_application_extension: FORMAT ERROR, %ld byte read\n", ret);
+    fprintf(stderr, "read_application_extension: FORMAT ERROR, %ld byte read\n", (long int)ret);
     exit(1);
   }
   buf[8] = '\0';
@@ -366,7 +397,7 @@ void read_application_extension(FILE *fd, FILE *fdout)
     ret = fread(buf, sizeof(char), c, fd);
     if (ret != c)
     {
-      fprintf(stderr, "read_application_extension: FORMAT ERROR, %ld byte read\n", ret);
+      fprintf(stderr, "read_application_extension: FORMAT ERROR, %ld byte read\n", (long int)ret);
       exit(1);
     }
     c = getc(fd); /* get next block size */
@@ -427,7 +458,7 @@ void read_image_data(FILE *fd, FILE *fdout)
     ret = fread(buf, sizeof(char), c, fd);
     if (ret != c)
     {
-      fprintf(stderr, "read_image_data: FORMAT ERROR, %ld byte read\n", ret);
+      fprintf(stderr, "read_image_data: FORMAT ERROR, %ld byte read\n", (long int)ret);
       exit(1);
     }
     fwrite(buf, sizeof(char), c, fdout);
@@ -475,7 +506,7 @@ void read_data(FILE *fd, FILE *fdout)
       l = getc(fd); h = getc(fd); height = h * 256 + l;
       fputc(l, fdout); fputc(h, fdout);
 #ifdef DEBUG
-      printf("leftpos = %ld ; toppos = %ld ; width = %ld ; height = %ld\n", leftpos, toppos, width, height);
+      printf("leftpos = %ld ; toppos = %ld ; width = %ld ; height = %ld\n", (long int)leftpos, (long int)toppos, (long int)width, (long int)height);
 #endif
       flags = (uint8_t)getc(fd);  
       fputc(flags, fdout);
@@ -505,16 +536,12 @@ void read_trailer(FILE *fd, FILE *fdout)
 } /* read_trailer()*/
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   FILE *fd = NULL;
   FILE *fdout = NULL;
   char bufname[256];
-  char bufindex[256];
-  int32_t ret;
-  int32_t c;
   int32_t i, debut, fin, delai;
   int32_t namelen;
   int32_t interact = 0;
@@ -561,8 +588,7 @@ int main(argc, argv)
   read_logical_screen(fd, fdout);
   if (interact)
   {
-    char rep[64];
-    int32_t d;
+    long int d;
     printf("delay for image %d (-1 to quit interactive mode)?\n", debut);
     scanf("%ld", &d);
     if (d == -1) interact = 0; else delai = d;
@@ -602,8 +628,7 @@ int main(argc, argv)
     skip_logical_screen(fd);
     if (interact)
     {
-      char rep[64];
-      int32_t d;
+      long int d;
       printf("delay for image %d (-1 to quit interactive mode)?\n", i);
       scanf("%ld", &d);
       if (d == -1) interact = 0; else delai = d;

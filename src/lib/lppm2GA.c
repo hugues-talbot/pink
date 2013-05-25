@@ -1,3 +1,37 @@
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -8,11 +42,101 @@
 #include <jccodimage.h>
 #include <mcutil.h>
 #include <jclderiche.h>
+#include <lppm2GA.h>
 
 #define SCALE 10
 #define HOMO_SIGMA 1
 #define HIST_THRESHOLD 0.85
 #define FILTER 0
+
+/*****************************************************************************
+ * FUNCTION: invertMatrix
+ * DESCRIPTION: Computes the inverse of a matrix. 
+ * PARAMETERS:
+ *    a: matrix to be inverted and keep the result
+ *    n: the dimension of the matrix
+ * SIDE EFFECTS: None
+ * ENTRY CONDITIONS: None
+ * RETURN VALUE: 
+ *        <0 : fail
+ *        >0 : successful completion 
+ * EXIT CONDITIONS: None
+ * HISTORY:
+ *    Created: 7/22/00 by Ying Zhuge
+ *
+ *****************************************************************************/
+int32_t invertMatrix(a,n)
+     int32_t n;
+     double a[];
+{
+  int32_t i,j,k,m;
+  double w,g,*b;
+  
+  b= (double*)malloc(n*sizeof(double));
+  if (b == NULL)
+    return (-2);
+  for (k=0; k<=n-1; k++)
+  { 
+    w=a[0];
+    if (fabs(w)+1.0==1.0)
+    { 
+      free(b);
+      return(-2);
+    }
+    m=n-k-1;
+    for (i=1; i<=n-1; i++)
+    { 
+      g=a[i*n]; b[i]=g/w;
+      if (i<=m) b[i]=-b[i];
+      for (j=1; j<=i; j++)
+	a[(i-1)*n+j-1]=a[i*n+j]+g*b[j];
+    }
+    a[n*n-1]=1.0/w;
+    for (i=1; i<=n-1; i++)
+      a[(n-1)*n+i-1]=b[i];
+  }
+  for (i=0; i<=n-2; i++)
+    for (j=i+1; j<=n-1; j++)
+      a[i*n+j]=a[j*n+i];
+  free(b);
+  return(2);
+}
+
+/*****************************************************************************
+ * FUNCTION: multiMatrix
+ * DESCRIPTION: Compute the multipled matrix of two matrixes 
+ * PARAMETERS:
+ *    a: source matrix of m*n  
+ *    b: source matrix of n*k
+ *    c: result matrix
+ *    m: rows of matrix a
+ *    n: cols of matrix a, rows of matrix b
+ *    k: cols of matrix b
+ * SIDE EFFECTS: None
+ * ENTRY CONDITIONS: None
+ * RETURN VALUE: 
+ *       
+ *         
+ * EXIT CONDITIONS: None
+ * HISTORY:
+ *    Created: 7/24/00 by Ying Zhuge
+ *
+ *****************************************************************************/
+
+int32_t  multiMatrix(a,b,m,n,k,c)
+     int32_t m,n,k;
+     double a[],b[],c[];
+{
+  int32_t i,j,l,u;
+  for (i=0; i<=m-1; i++)
+    for (j=0; j<=k-1; j++)
+    {
+      u=i*k+j; c[u]=0.0;
+      for (l=0; l<=n-1; l++)
+	c[u]=c[u]+a[i*n+l]*b[l*k+j];
+    }
+  return 0;
+}
 
 int32_t dericheDerivateurGA(struct xvimage *image, struct xvimage *ga, double alpha) 
 {
@@ -32,8 +156,7 @@ int32_t dericheDerivateurGA(struct xvimage *image, struct xvimage *ga, double al
   double e_a;     /* stocke exp(-alpha) */
   double e_2a;    /* stocke exp(-2alpha) */
   double a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4;
-  double t1, t2;
-  double lmax, lmin;
+  double lmax;
   uint8_t *GA = UCHARDATA(ga);      /* graphe d'arete est suppose deja allouer */
 
   if (depth(image) != 1) 
@@ -45,8 +168,8 @@ int32_t dericheDerivateurGA(struct xvimage *image, struct xvimage *ga, double al
   Im1 = (double *)malloc(N * sizeof(double));
   Im2 = (double *)malloc(N * sizeof(double));
   Imd = (double *)malloc(N * sizeof(double));
-  buf1 = (double *)malloc(max(rs, cs) * sizeof(double));
-  buf2 = (double *)malloc(max(rs, cs) * sizeof(double));
+  buf1 = (double *)malloc(mcmax(rs, cs) * sizeof(double));
+  buf2 = (double *)malloc(mcmax(rs, cs) * sizeof(double));
   if ((Im1==NULL) || (Im2==NULL) || (Imd==NULL) || (buf1==NULL) || (buf2==NULL))
   {   fprintf(stderr,"lderiche() : malloc failed\n");
       return(0);
@@ -82,8 +205,8 @@ int32_t dericheDerivateurGA(struct xvimage *image, struct xvimage *ga, double al
   
   for(j = 0; j < cs; j++)
     for(i = 0; i < rs - 1; i++){
-      //      lmax = ( abs(Im1[j*rs+i]) + abs(Im1[j*rs+i+1]) / 2); 
-      lmax = min(abs(Im1[j*rs+i]), abs(Im1[j*rs+i+1])); 
+      //      lmax = ( mcabs(Im1[j*rs+i]) + mcabs(Im1[j*rs+i+1]) / 2); 
+      lmax = mcmin(mcabs(Im1[j*rs+i]), mcabs(Im1[j*rs+i+1])); 
       if (lmax <= 255)  
 	GA[j * rs + i] = (uint8_t)lmax; 
       else 
@@ -91,8 +214,8 @@ int32_t dericheDerivateurGA(struct xvimage *image, struct xvimage *ga, double al
     }
   for(j = 0; j < cs-1; j++)
     for(i = 0; i < rs; i++){
-      //  lmax = (abs(Im2[j*rs+i]) + abs(Im2[j*rs+i+1]) / 2); 
-      lmax = min(abs(Im2[j*rs+i]), abs(Im2[j*rs+i+1]));
+      //  lmax = (mcabs(Im2[j*rs+i]) + mcabs(Im2[j*rs+i+1]) / 2); 
+      lmax = mcmin(mcabs(Im2[j*rs+i]), mcabs(Im2[j*rs+i+1]));
       if (lmax <= 255)
       GA[N + j * rs + i] =(uint8_t)lmax;
       else 
@@ -116,38 +239,54 @@ int32_t lpgm2ga(struct xvimage *im, struct xvimage *ga, int32_t param, double al
   uint8_t *GA = UCHARDATA(ga);      /* graphe d'arete est suppose deja allouer */ 
   
   /* vérifier que les tailles des diférentes images sont cohérentes */
+
   switch(param)
   {
   case 0:
   for(j = 0; j < cs; j++)
     for(i = 0; i < rs - 1; i++)
     {
-      GA[j * rs + i] = (uint8_t) (abs( (int32_t)(F[j*rs+i]) - (int32_t)(F[j*rs+i+1]) ));
+      GA[j * rs + i] = (uint8_t) (mcabs( (int32_t)(F[j*rs+i]) - (int32_t)(F[j*rs+i+1]) ));
     }
   for(j = 0; j < cs-1; j++)
     for(i = 0; i < rs; i++)
     {
-      GA[N + j * rs + i] =(uint8_t)(abs((int32_t)(F[j*rs+i]) - (int32_t)(F[j*rs+i+rs]))) ; 
+      GA[N + j * rs + i] =(uint8_t)(mcabs((int32_t)(F[j*rs+i]) - (int32_t)(F[j*rs+i+rs]))) ; 
     }
   break;
   case 1:
   for(j = 0; j < cs; j++)
     for(i = 0; i < rs - 1; i++)
     {
-      GA[j * rs + i] = (uint8_t) (max( (int32_t)(F[j*rs+i]), (int32_t)(F[j*rs+i+1]) ));
+      GA[j * rs + i] = (uint8_t) (mcmax( (int32_t)(F[j*rs+i]), (int32_t)(F[j*rs+i+1]) ));
     }
    for(j = 0; j < cs-1; j++)
     for(i = 0; i < rs; i++)
     {      
-      GA[N + j * rs + i] =(uint8_t)(max((int32_t)(F[j*rs+i]),(int32_t)(F[j*rs+i+rs]))) ;
+      GA[N + j * rs + i] =(uint8_t)(mcmax((int32_t)(F[j*rs+i]),(int32_t)(F[j*rs+i+rs]))) ;
     }
    break;
-  case 2: /* Cas du Deriche, ce n'est pas tout a fait la meilleure */
+  case 2:
+    for(j = 0; j < cs; j++)
+      for(i = 0; i < rs - 1; i++)
+      {
+	GA[j * rs + i] = (uint8_t) (mcmin( (int32_t)(F[j*rs+i]), (int32_t)(F[j*rs+i+1]) ));
+      }
+    for(j = 0; j < cs-1; j++)
+      for(i = 0; i < rs; i++)
+      {      
+	GA[N + j * rs + i] =(uint8_t)(mcmin((int32_t)(F[j*rs+i]),(int32_t)(F[j*rs+i+rs]))) ;
+      }
+    break;
+
+  case 3: /* Cas du Deriche, ce n'est pas tout a fait la meilleure */
     /* implementation il faudrait proposer un Deriche specifique   */
     /* aux aretes */ 
     dericheDerivateurGA(im, ga, alpha);
     break;
   }
+  
+  
   return 1;  
 }
 
@@ -167,24 +306,24 @@ int32_t lpgm2gafloat(struct xvimage *im, struct xvimage *ga, int32_t param, doub
   for(j = 0; j < cs; j++)
     for(i = 0; i < rs - 1; i++)
     {
-      GA[j * rs + i] = (float) (abs( (float)(F[j*rs+i]) - (float)(F[j*rs+i+1]) ));
+      GA[j * rs + i] = (float) (mcabs( (float)(F[j*rs+i]) - (float)(F[j*rs+i+1]) ));
     }
   for(j = 0; j < cs-1; j++)
     for(i = 0; i < rs; i++){
-      GA[N + j * rs + i] =(float)(abs((float)(F[j*rs+i]) - (float)(F[j*rs+i+rs]))) ; 
+      GA[N + j * rs + i] =(float)(mcabs((float)(F[j*rs+i]) - (float)(F[j*rs+i+rs]))) ; 
     }
   break;
   case 1:
   for(j = 0; j < cs; j++)
     for(i = 0; i < rs - 1; i++)
     {
-      GA[j * rs + i] = (float) (max( (float)(F[j*rs+i]), (float)(F[j*rs+i+1]) ));
+      GA[j * rs + i] = (float) (mcmax( (float)(F[j*rs+i]), (float)(F[j*rs+i+1]) ));
       printf("%lf \t",GA[j * rs + i]);
     }
    for(j = 0; j < cs-1; j++)
     for(i = 0; i < rs; i++)
     {      
-      GA[N + j * rs + i] =(float)(max((float)(F[j*rs+i]),(float)(F[j*rs+i+rs]))) ;
+      GA[N + j * rs + i] =(float)(mcmax((float)(F[j*rs+i]),(float)(F[j*rs+i+rs]))) ;
     }
    break; 
   case 2: 
@@ -192,12 +331,12 @@ int32_t lpgm2gafloat(struct xvimage *im, struct xvimage *ga, int32_t param, doub
     for(j = 0; j < cs; j++)
       for(i = 0; i < rs - 1; i++)
       {
-	GA[j * rs + i] = (float) (min( (float)(F[j*rs+i]), (float)(F[j*rs+i+1]) ));
+	GA[j * rs + i] = (float) (mcmin( (float)(F[j*rs+i]), (float)(F[j*rs+i+1]) ));
       }
     for(j = 0; j < cs-1; j++)
       for(i = 0; i < rs; i++)
       {      
-	GA[N + j * rs + i] =(float)(min((float)(F[j*rs+i]), (float)(F[j*rs+i+rs]))) ;
+	GA[N + j * rs + i] =(float)(mcmin((float)(F[j*rs+i]), (float)(F[j*rs+i+rs]))) ;
       }
 
     /* Cas du Deriche, ce n'est pas tout a fait la meilleure */
@@ -205,6 +344,10 @@ int32_t lpgm2gafloat(struct xvimage *im, struct xvimage *ga, int32_t param, doub
     /* aux aretes */ 
     //  fprintf(stderr,"Deriche float: not yet implemented\n");
     //exit(0);
+    break;
+  case 3:
+    fprintf(stderr,"Deriche float: not yet implemented\n");
+    exit(0);
     break;
   }
   return 1;  
@@ -247,7 +390,7 @@ int32_t lpgm2gaDouble(struct xvimage *im, struct xvimage *ga, int32_t param, dou
       f =  ARRONDI * F[j*rs+i];
       g =  ARRONDI * F[j*rs+i+1];
 #endif 
-      GA[j * rs + i] = (abs( f - g ));
+      GA[j * rs + i] = (mcabs( f - g ));
     }
   for(j = 0; j < cs-1; j++)
     for(i = 0; i < rs; i++){
@@ -258,7 +401,7 @@ int32_t lpgm2gaDouble(struct xvimage *im, struct xvimage *ga, int32_t param, dou
       f =  ARRONDI * F[j*rs+i];
       g =  ARRONDI * F[j*rs+i+rs];
 #endif 
-      GA[N + j * rs + i] =(abs(f - g)) ; 
+      GA[N + j * rs + i] =(mcabs(f - g)) ; 
     }
   break;
   case 1:
@@ -337,21 +480,21 @@ int32_t lpgm2ga3d(struct xvimage *im, struct xvimage *ga, int32_t param)
       for(j = 0; j < cs; j++)
 	for(i = 0; i < rs - 1; i++)
 	{
-	  GA[k*ps + j*rs + i] = (uint8_t)(abs( (int32_t)(F[k*ps+j*rs+i]) - (int32_t)(F[k*ps+j*rs+i+1]) ));
+	  GA[k*ps + j*rs + i] = (uint8_t)(mcabs( (int32_t)(F[k*ps+j*rs+i]) - (int32_t)(F[k*ps+j*rs+i+1]) ));
 	  // printf("GA[%d] = %d \n",k*ps + j*rs + i,GA[k*ps + j*rs + i]); 
 	}
     for(k =0; k < ds; k++)
       for(j = 0; j < cs-1; j++)
 	for(i = 0; i < rs; i++)
 	{
-	  GA[N + k*ps + j * rs + i] =(uint8_t)(abs((int32_t)(F[k*ps + j*rs+i]) - (int32_t)(F[k*ps + j*rs+i+rs]))) ;
+	  GA[N + k*ps + j * rs + i] =(uint8_t)(mcabs((int32_t)(F[k*ps + j*rs+i]) - (int32_t)(F[k*ps + j*rs+i+rs]))) ;
 	  // printf("GA[%d] = %d \n",N+ k*ps + j*rs + i,GA[N+k*ps + j*rs + i]);
 	}
     for(k =0; k < ds-1; k++)
       for(j = 0; j < cs; j++)
 	for(i = 0; i < rs; i++)
 	{
-	  GA[2*N + k*ps + j * rs + i] =(uint8_t)(abs((int32_t)(F[k*ps + j*rs+i]) - (int32_t)(F[k*ps+j*rs+i+ps]))) ;
+	  GA[2*N + k*ps + j * rs + i] =(uint8_t)(mcabs((int32_t)(F[k*ps + j*rs+i]) - (int32_t)(F[k*ps+j*rs+i+ps]))) ;
 	  // printf("GA[%d] = %d \n",2*N+ k*ps + j*rs + i,GA[2*N+k*ps + j*rs + i]);
 	}
     break;
@@ -360,23 +503,49 @@ int32_t lpgm2ga3d(struct xvimage *im, struct xvimage *ga, int32_t param)
       for(j = 0; j < cs; j++)
 	for(i = 0; i < rs - 1; i++)
 	{
-	  GA[k*ps + j*rs + i] = (uint8_t)(max( (int32_t)(F[k*ps+j*rs+i]), (int32_t)(F[k*ps+j*rs+i+1]) ));
+	  GA[k*ps + j*rs + i] = (uint8_t)(mcmax( (int32_t)(F[k*ps+j*rs+i]), (int32_t)(F[k*ps+j*rs+i+1]) ));
 	  // printf("GA[%d] = %d \n",k*ps + j*rs + i,GA[k*ps + j*rs + i]); 
 	}
     for(k =0; k < ds; k++)
       for(j = 0; j < cs-1; j++)
 	for(i = 0; i < rs; i++)
 	{
-	  GA[N + k*ps + j * rs + i] =(uint8_t)(max((int32_t)(F[k*ps + j*rs+i]) , (int32_t)(F[k*ps + j*rs+i+rs]))) ;
+	  GA[N + k*ps + j * rs + i] =(uint8_t)(mcmax((int32_t)(F[k*ps + j*rs+i]) , (int32_t)(F[k*ps + j*rs+i+rs]))) ;
 	  // printf("GA[%d] = %d \n",N+ k*ps + j*rs + i,GA[N+k*ps + j*rs + i]);
 	}
     for(k =0; k < ds-1; k++)
       for(j = 0; j < cs; j++)
 	for(i = 0; i < rs; i++)
 	{
-	  GA[2*N + k*ps + j * rs + i] =(uint8_t)(max((int32_t)(F[k*ps + j*rs+i]) , (int32_t)(F[k*ps+j*rs+i+ps]))) ;
+	  GA[2*N + k*ps + j * rs + i] =(uint8_t)(mcmax((int32_t)(F[k*ps + j*rs+i]) , (int32_t)(F[k*ps+j*rs+i+ps]))) ;
 	  // printf("GA[%d] = %d \n",2*N+ k*ps + j*rs + i,GA[2*N+k*ps + j*rs + i]);
 	}
+    break;
+      case 2:
+    for(k = 0; k < ds; k++)
+      for(j = 0; j < cs; j++)
+	for(i = 0; i < rs - 1; i++)
+	{
+	  GA[k*ps + j*rs + i] = (uint8_t)(mcmin( (int32_t)(F[k*ps+j*rs+i]), (int32_t)(F[k*ps+j*rs+i+1]) ));
+	  // printf("GA[%d] = %d \n",k*ps + j*rs + i,GA[k*ps + j*rs + i]); 
+	}
+    for(k =0; k < ds; k++)
+      for(j = 0; j < cs-1; j++)
+	for(i = 0; i < rs; i++)
+	{
+	  GA[N + k*ps + j * rs + i] =(uint8_t)(mcmin((int32_t)(F[k*ps + j*rs+i]) , (int32_t)(F[k*ps + j*rs+i+rs]))) ;
+	  // printf("GA[%d] = %d \n",N+ k*ps + j*rs + i,GA[N+k*ps + j*rs + i]);
+	}
+    for(k =0; k < ds-1; k++)
+      for(j = 0; j < cs; j++)
+	for(i = 0; i < rs; i++)
+	{
+	  GA[2*N + k*ps + j * rs + i] =(uint8_t)(mcmin((int32_t)(F[k*ps + j*rs+i]) , (int32_t)(F[k*ps+j*rs+i+ps]))) ;
+	  // printf("GA[%d] = %d \n",2*N+ k*ps + j*rs + i,GA[2*N+k*ps + j*rs + i]);
+	}
+    break;
+  default : printf("lpgm2ga3d: Bad parameter (%d is not valid or not yet implemented)\n",param);
+
   }
   return 1;  
 }
@@ -408,7 +577,7 @@ int32_t lpgm2ga4d(struct xvimage4D *im, struct GA4d * ga, int32_t param)
       for(k = 0; k < ds; k++)
 	for(j = 0; j < cs; j++)
 	  for(i = 0; i < rs - 1; i++){
-	    GA[l*vs + k*ps + j*rs + i] = (uint8_t)(abs( (int32_t)(F[l][k*ps+j*rs+i]) - (int32_t)(F[l][k*ps+j*rs+i+1]) ));
+	    GA[l*vs + k*ps + j*rs + i] = (uint8_t)(mcabs( (int32_t)(F[l][k*ps+j*rs+i]) - (int32_t)(F[l][k*ps+j*rs+i+1]) ));
 	    //    printf("x-> F[(%d,%d,%d,%d)] = %d\n", i, j, k, l, GA[l*vs + k*ps + j*rs + i]);
 	  }
     for(l = 0; l < ss; l++)
@@ -417,14 +586,14 @@ int32_t lpgm2ga4d(struct xvimage4D *im, struct GA4d * ga, int32_t param)
 	  for(i = 0; i < rs; i++)
 	  {
 	    GA[N+ l*vs + k*ps + j * rs + i] =
-	      (uint8_t)(abs((int32_t)(F[l][k*ps + j*rs+i]) - (int32_t)(F[l][k*ps + j*rs+i+rs]))) ;
+	      (uint8_t)(mcabs((int32_t)(F[l][k*ps + j*rs+i]) - (int32_t)(F[l][k*ps + j*rs+i+rs]))) ;
 	    // printf("y-> F[(%d,%d,%d,%d)] = %d\n", i, j, k, l, GA[N+ l*vs + k*ps + j*rs + i]);
 	  }
     for(l = 0; l < ss; l++)
       for(k =0; k < ds-1; k++)
 	for(j = 0; j < cs; j++)
 	  for(i = 0; i < rs; i++) {
-	    GA[2*N + l*vs + k*ps + j * rs + i] =(uint8_t)(abs((int32_t)(F[l][k*ps + j*rs+i]) - 
+	    GA[2*N + l*vs + k*ps + j * rs + i] =(uint8_t)(mcabs((int32_t)(F[l][k*ps + j*rs+i]) - 
 								    (int32_t)(F[l][k*ps + j*rs +i + ps]))) ;
     	    //printf("->z F[(%d,%d,%d,%d)] = %d\n", i, j, k, l, GA[l*vs + k*ps + j*rs + i]);
 	  }
@@ -433,7 +602,7 @@ int32_t lpgm2ga4d(struct xvimage4D *im, struct GA4d * ga, int32_t param)
       for(k =0; k < ds; k++)
 	for(j = 0; j < cs; j++)
 	  for(i = 0; i < rs; i++){
-	    GA[3*N + l*vs + k*ps + j * rs + i] =(uint8_t)(abs((int32_t)(F[l][k*ps + j*rs+i]) - 
+	    GA[3*N + l*vs + k*ps + j * rs + i] =(uint8_t)(mcabs((int32_t)(F[l][k*ps + j*rs+i]) - 
 								    (int32_t)(F[l+1][k*ps+j*rs+i]))) ;
 	    // printf("->t F[(%d,%d,%d,%d)] = %d\n", i, j, k, l, GA[3*N+ l*vs + k*ps + j*rs + i]);
 	  }
@@ -443,99 +612,34 @@ int32_t lpgm2ga4d(struct xvimage4D *im, struct GA4d * ga, int32_t param)
       for(k = 0; k < ds; k++)
 	for(j = 0; j < cs; j++)
 	  for(i = 0; i < rs - 1; i++)
-	    GA[l*vs + k*ps + j*rs + i] = (uint8_t)(max((int32_t)(F[l][k*ps+j*rs+i]),
+	    GA[l*vs + k*ps + j*rs + i] = (uint8_t)(mcmax((int32_t)(F[l][k*ps+j*rs+i]),
 							   (int32_t)(F[l][k*ps+j*rs+i+1]) ));
     
     for(l = 0; l < ss; l++)
       for(k =0; k < ds; k++)
 	for(j = 0; j < cs-1; j++)
 	  for(i = 0; i < rs; i++)
-	    GA[N+ l*vs + k*ps + j * rs + i] =(uint8_t)(max((int32_t)(F[l][k*ps + j*rs+i]),
+	    GA[N+ l*vs + k*ps + j * rs + i] =(uint8_t)(mcmax((int32_t)(F[l][k*ps + j*rs+i]),
 								 (int32_t)(F[l][k*ps + j*rs+i+rs]))) ;
 	    
     for(l = 0; l < ss; l++)
       for(k =0; k < ds-1; k++)
 	for(j = 0; j < cs; j++)
 	  for(i = 0; i < rs; i++) 
-	    GA[2*N + l*vs + k*ps + j * rs + i] =(uint8_t)(max((int32_t)(F[l][k*ps + j*rs+i]), 
+	    GA[2*N + l*vs + k*ps + j * rs + i] =(uint8_t)(mcmax((int32_t)(F[l][k*ps + j*rs+i]), 
 								    (int32_t)(F[l][k*ps + j*rs+i+ps]))) ;
     
     for(l = 0; l < ss-1; l++)
       for(k =0; k < ds; k++)
 	for(j = 0; j < cs; j++)
 	  for(i = 0; i < rs; i++)
-	    GA[3*N + l*vs + k*ps + j * rs + i] =(uint8_t)(max((int32_t)(F[l][k*ps + j*rs+i]), 
+	    GA[3*N + l*vs + k*ps + j * rs + i] =(uint8_t)(mcmax((int32_t)(F[l][k*ps + j*rs+i]), 
 								    (int32_t)(F[l+1][k*ps+j*rs+i]))) ;
     break;
   }
   return 1;  
 }
 
-
-//#define MAX_NORM 1
-
-/* Construit un graphe d'arete 2D 4-connexe a partir d'une image rgb */
-/* Chaque arete correspond soit au max des differences d'intensite   */
-/* entre ses extremites sur  les 3  canaux                           */
-/* soit a la norme euclidienne entre les vecteurs couleurs des deux  */
-/* pixels extremites                                                 */
-int32_t lppm2ga(struct xvimage *r, struct xvimage *v, struct xvimage *b, struct xvimage *ga, int32_t param)
-{
-  int32_t i,j;                                /* index muet */
-  int32_t rs = rowsize(ga);                   /* taille ligne */ 
-  int32_t cs = colsize(ga);                   /* taille colone */
-  int32_t N = rs * cs;                        /* taille image */
-  uint8_t *R = UCHARDATA(r);        /* composante rouge */
-  uint8_t *V = UCHARDATA(v);        /* composante verte */
-  uint8_t *B = UCHARDATA(b);        /* composante bleue */
-  uint8_t *GA = UCHARDATA(ga);      /* graphe d'arete est suppose deja allouer */
-  
-  /* vérifier que les tailles des diférentes images sont cohérentes */
-  switch(param)
-  {
-  case 0:
-  for(j = 0; j < cs; j++)
-    for(i = 0; i < rs - 1; i++)
-    {
-      GA[j * rs + i] = (uint8_t)(max(abs( (int32_t)(B[j*rs+i]) - (int32_t)(B[j*rs+i+1]) ),
-			   max(abs( (int32_t)(R[j*rs+i]) - (int32_t)(R[j*rs+i+1]) ),
-			       abs( (int32_t)(V[j*rs+i]) - (int32_t)(V[j*rs+i+1])))));
-    }
-  for(j = 0; j < cs-1; j++)
-    for(i = 0; i < rs; i++)
-    {
-      GA[N + j * rs + i] =(uint8_t)(max(abs((int32_t)(B[j*rs+i]) - (int32_t)(B[j*rs+i+rs])),
-			       max(abs( (int32_t)(R[j*rs+i]) - (int32_t)(R[j*rs+i+rs]) ),
-				   abs( (int32_t)(V[j*rs+i]) - (int32_t)(V[j*rs+i+rs])))));
-    }
-  break;
-  case 1:
-  for(j = 0; j < cs; j++)
-    for(i = 0; i < rs - 1; i++)
-    {
-      GA[j * rs + i] = (uint8_t)( 0.57 * sqrt ( 
-					   ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+1])) * ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+1])) +  
-					   ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+1])) * ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+1])) +  
-					   ( (double)(V[j*rs+i]) - (double)(V[j*rs+i+1])) * ( (double)(V[j*rs+i]) - (double)(V[j*rs+i+1]))
-					   ));
-      // if (GA[j * rs + i] < 8 )  GA[j * rs + i] = 0;
-    }
-   for(j = 0; j < cs-1; j++)
-    for(i = 0; i < rs; i++)
-    {      
-      GA[N + j * rs + i] = (uint8_t)( 0.57 * sqrt ( 
-					   ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+rs]))* ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+rs])) +  
-					   ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+rs]))* ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+rs])) +  
-					   ( (double)(V[j*rs+i]) - (double)(V[j*rs+i+rs]))* ( (double)(V[j*rs+rs]) - (double)(V[j*rs+i+rs]))
-					   ));
-      //  if (GA[N + j * rs + i] < 8)  GA[N + j * rs + i] = 0;
-    }
-   break;
-  case 2:
-   laffinitynetwork(r, v, b, ga);
-  }
-  return 1;
-}
 
 int16_t (**sphere_points)[3];
 /* Construit un graphe d'arete 2D 4-connexe a partir d'une image rgb */
@@ -554,7 +658,7 @@ int32_t laffinitynetwork(struct xvimage *r, struct xvimage *v, struct xvimage *b
   int32_t diff_value_max[3];
   int32_t hist_sum[3];
   int32_t pow_value[3];
-  double anisotropy_slice, anisotropy_row, anisotropy_col,tt1,tt2, mask_total;
+  double anisotropy_row, anisotropy_col,tt1,tt2, mask_total;
   double homogeneity_cov[3][3];
   double matrixA[1][3], matrixB[1][3],matrixC[3][1],result;
   float  **homogeneity_map, *scale_map;
@@ -701,7 +805,7 @@ int32_t laffinitynetwork(struct xvimage *r, struct xvimage *v, struct xvimage *b
       yy = j;
       for (l = 0; l < 3; l++)
       {	 
-	tti1 = abs(image[l][j*rs+k] - image[l][yy*rs+xx]);		
+	tti1 = mcabs(image[l][j*rs+k] - image[l][yy*rs+xx]);		
 	if(tti1>diff_value_max[l])
 	  diff_value_max[l] = tti1;
 	histogram[l][tti1]++;
@@ -715,7 +819,7 @@ int32_t laffinitynetwork(struct xvimage *r, struct xvimage *v, struct xvimage *b
       yy = j+1;
       for (l = 0; l < 3; l++)
       {	
-	tti1 = abs(image[l][j*rs+k] - image[l][yy*rs+xx]);
+	tti1 = mcabs(image[l][j*rs+k] - image[l][yy*rs+xx]);
 	if(tti1>diff_value_max[l])
 	  diff_value_max[l] = tti1;
 	histogram[l][tti1]++;
@@ -749,7 +853,7 @@ int32_t laffinitynetwork(struct xvimage *r, struct xvimage *v, struct xvimage *b
   }
   printf("seuil r = %d v %d b %d\n", feature_thr[0], feature_thr[1], feature_thr[2]);
   printf("Histogram threshold computation is done \n");
-  homo_sigma = max( feature_thr[0] ,max(feature_thr[1] ,feature_thr[2] ));
+  homo_sigma = mcmax( feature_thr[0] ,mcmax(feature_thr[1] ,feature_thr[2] ));
   homo_sigma = 49;//homo_sigma * homo_sigma;
   /*******************************************************************************************/
   /*******************************************************************************************/
@@ -916,6 +1020,71 @@ int32_t laffinitynetwork(struct xvimage *r, struct xvimage *v, struct xvimage *b
   return 1;
 }
 
+//#define MAX_NORM 1
+
+/* Construit un graphe d'arete 2D 4-connexe a partir d'une image rgb */
+/* Chaque arete correspond soit au max des differences d'intensite   */
+/* entre ses extremites sur  les 3  canaux                           */
+/* soit a la norme euclidienne entre les vecteurs couleurs des deux  */
+/* pixels extremites                                                 */
+int32_t lppm2ga(struct xvimage *r, struct xvimage *v, struct xvimage *b, struct xvimage *ga, int32_t param)
+{
+  int32_t i,j;                                /* index muet */
+  int32_t rs = rowsize(ga);                   /* taille ligne */ 
+  int32_t cs = colsize(ga);                   /* taille colone */
+  int32_t N = rs * cs;                        /* taille image */
+  uint8_t *R = UCHARDATA(r);        /* composante rouge */
+  uint8_t *V = UCHARDATA(v);        /* composante verte */
+  uint8_t *B = UCHARDATA(b);        /* composante bleue */
+  uint8_t *GA = UCHARDATA(ga);      /* graphe d'arete est suppose deja allouer */
+  
+  /* vérifier que les tailles des diférentes images sont cohérentes */
+  switch(param)
+  {
+  case 0:
+  for(j = 0; j < cs; j++)
+    for(i = 0; i < rs - 1; i++)
+    {
+      GA[j * rs + i] = (uint8_t)(mcmax(mcabs( (int32_t)(B[j*rs+i]) - (int32_t)(B[j*rs+i+1]) ),
+			   mcmax(mcabs( (int32_t)(R[j*rs+i]) - (int32_t)(R[j*rs+i+1]) ),
+			       mcabs( (int32_t)(V[j*rs+i]) - (int32_t)(V[j*rs+i+1])))));
+    }
+  for(j = 0; j < cs-1; j++)
+    for(i = 0; i < rs; i++)
+    {
+      GA[N + j * rs + i] =(uint8_t)(mcmax(mcabs((int32_t)(B[j*rs+i]) - (int32_t)(B[j*rs+i+rs])),
+			       mcmax(mcabs( (int32_t)(R[j*rs+i]) - (int32_t)(R[j*rs+i+rs]) ),
+				   mcabs( (int32_t)(V[j*rs+i]) - (int32_t)(V[j*rs+i+rs])))));
+    }
+  break;
+  case 1:
+  for(j = 0; j < cs; j++)
+    for(i = 0; i < rs - 1; i++)
+    {
+      GA[j * rs + i] = (uint8_t)( 0.57 * sqrt ( 
+					   ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+1])) * ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+1])) +  
+					   ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+1])) * ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+1])) +  
+					   ( (double)(V[j*rs+i]) - (double)(V[j*rs+i+1])) * ( (double)(V[j*rs+i]) - (double)(V[j*rs+i+1]))
+					   ));
+      // if (GA[j * rs + i] < 8 )  GA[j * rs + i] = 0;
+    }
+   for(j = 0; j < cs-1; j++)
+    for(i = 0; i < rs; i++)
+    {      
+      GA[N + j * rs + i] = (uint8_t)( 0.57 * sqrt ( 
+					   ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+rs]))* ( (double)(B[j*rs+i]) - (double)(B[j*rs+i+rs])) +  
+					   ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+rs]))* ( (double)(R[j*rs+i]) - (double)(R[j*rs+i+rs])) +  
+					   ( (double)(V[j*rs+i]) - (double)(V[j*rs+i+rs]))* ( (double)(V[j*rs+rs]) - (double)(V[j*rs+i+rs]))
+					   ));
+      //  if (GA[N + j * rs + i] < 8)  GA[N + j * rs + i] = 0;
+    }
+   break;
+  case 2:
+   laffinitynetwork(r, v, b, ga);
+  }
+  return 1;
+}
+
 
 
 /*****************************************************************************
@@ -936,9 +1105,9 @@ int32_t laffinitynetwork(struct xvimage *r, struct xvimage *v, struct xvimage *b
  *****************************************************************************/
 int32_t compute_scale(uint8_t **image, uint8_t **scale_image, float *scale_map, int32_t *sphere_no_points, /*int16_t ***sphere_points,*/ int32_t N, int32_t rs, int32_t cs, double * feature_mean, int32_t *feature_thr, int32_t * pow_value)
 {
-  int32_t i, j, k, x, y, z, xx, yy, zz, mean_g, tti5, slice, row, col;
-  int32_t flag, tti1,tti2,edge_flag;
-  double inv_scale_sigma, count_obj, count_nonobj, tt1, tt2, tt3;
+  int32_t i, j, k, x, y, xx, yy, row, col;
+  int32_t flag, tti1, edge_flag;
+  double count_obj, count_nonobj;
   double tolerance = 15;
   int32_t mean[3],temp[3];
   double mask_f[3];
@@ -994,7 +1163,7 @@ int32_t compute_scale(uint8_t **image, uint8_t **scale_image, float *scale_map, 
 	    edge_flag = 0;
 	    for(j=0;j<3;j++)
 	    {	      
-	      temp[j] = abs((int32_t)image[j][y*rs + x] - (int32_t)mean[j]/* image[j][row*rs + col]*/ );
+	      temp[j] = mcabs((int32_t)image[j][y*rs + x] - (int32_t)mean[j]/* image[j][row*rs + col]*/ );
 	      /* if((row == 137) && (col == 178))
 		 printf("x %d y %d, k %d et %d\n ",x,y,k,temp[j]);*/
 	      tti1 = tti1+(temp[j])*pow_value[j];
@@ -1020,7 +1189,7 @@ int32_t compute_scale(uint8_t **image, uint8_t **scale_image, float *scale_map, 
 	  if (100.0 * count_nonobj >= tolerance * (count_nonobj + count_obj))
 	  {
 	  
-	    (*scale_image)[row*rs+col] = max(1, k-1);
+	    (*scale_image)[row*rs+col] = mcmax(1, k-1);
 	    flag = 1;
 	  }
 	}
@@ -1041,27 +1210,21 @@ int32_t compute_scale(uint8_t **image, uint8_t **scale_image, float *scale_map, 
 
 
 
-int32_t compute_homogeneitysb(uint8_t ** image, double *feature_mean, uint8_t *x_affinity, uint8_t *y_affinity, uint8_t* scale_image, int32_t *sphere_no_points, /*int16_t ***sphere_points,*/ int32_t *feature_thr, float **homogeneity_map, int32_t N, int32_t rs, int32_t cs, int32_t * pow_value)
+void compute_homogeneitysb(uint8_t ** image, double *feature_mean, uint8_t *x_affinity, uint8_t *y_affinity, uint8_t* scale_image, int32_t *sphere_no_points, /*int16_t ***sphere_points,*/ int32_t *feature_thr, float **homogeneity_map, int32_t N, int32_t rs, int32_t cs, int32_t * pow_value)
 {
 
-  int32_t i, j, k, tti1, tti2, xx, yy, zz, x1, x2, y1, y2, z1, z2, x, y, z, iscale, scale1, scale2;
-  double tt1, tt2, tt3, tt4, count_pos, count_neg, sum_pos, sum_neg, temp_sum_pos,
-    temp_sum_neg, inv_k, tt_pos, tt_neg, sum, count, temp_sum, inv_half_scale;
-  int32_t col, row, slice, col1, row1, slice1;
+  int32_t i, j, k, tti1, xx, yy, x1, y1, x, y, iscale;
+  double tt1, tt2, inv_k, count;
+  int32_t col, row, col1, row1;
   int32_t temp[3];
   double weight[SCALE][SCALE];  
-  double sum_temp[3],sum_total[3],filter1[3],filter2[3];
-  double *x_affn_temp, *y_affn_temp, *z_affn_temp;
   int32_t edge_flag;
   double val;
-  uint8_t binpix[8] = {128, 64, 32, 16, 8, 4, 2, 1}; 
-  
-// printf("on va calculer poids\n");
   
   for(i = 0;i<SCALE;i++)
     for(j = 0;j<SCALE;j++)
       weight[i][j] = 0;
-      // printf("poids initialise\n");
+
   for(i = 1;i <= SCALE;i++)
   {
     tt1 = (double)i*0.5;
@@ -1094,7 +1257,7 @@ int32_t compute_homogeneitysb(uint8_t ** image, double *feature_mean, uint8_t *x
 		 scale_image[row*rs+col],      row1*rs+col1,
 		 scale_image[row1*rs+col1]
 		 );
-	iscale = min(scale_image[row*rs+col],scale_image[row1*rs+col1]);
+	iscale = mcmin(scale_image[row*rs+col],scale_image[row1*rs+col1]);
 	count = 0.0;
 //printf("iscale %d ",iscale);
 	val = 0.0;
@@ -1117,7 +1280,7 @@ int32_t compute_homogeneitysb(uint8_t ** image, double *feature_mean, uint8_t *x
 	    {		
 	      for(j=0;j<3;j++)
 	      {
-		temp[j] = (int32_t) abs(image[j][y*rs + x] -
+		temp[j] = (int32_t) mcabs(image[j][y*rs + x] -
 				    image[j][y1*rs + x1]);
 		// Interet de ce edge flag a discuter ....
 		if (temp[j] > feature_thr[j])
@@ -1157,7 +1320,7 @@ int32_t compute_homogeneitysb(uint8_t ** image, double *feature_mean, uint8_t *x
       {
 	col1 = col; row1 = row+1;
 	tti1 = 0; edge_flag = 0; val = 0.0; count = 0.0;
-	iscale = min(scale_image[row*rs+col],scale_image[row1*rs+col1]);
+	iscale = mcmin(scale_image[row*rs+col],scale_image[row1*rs+col1]);
 	for(k = 0;k < iscale;k++)
 	{
 	  tt1 = weight[iscale-1][k];	  
@@ -1173,7 +1336,7 @@ int32_t compute_homogeneitysb(uint8_t ** image, double *feature_mean, uint8_t *x
 	    {
 	      for(j=0;j<3;j++)
 	      {
-		temp[j] = (int32_t) abs(image[j][y*rs+x] -
+		temp[j] = (int32_t) mcabs(image[j][y*rs+x] -
 				    image[j][y1*rs+x1]);
 		if (temp[j] > feature_thr[j])
 		  edge_flag = 1;
@@ -1199,93 +1362,79 @@ int32_t compute_homogeneitysb(uint8_t ** image, double *feature_mean, uint8_t *x
 }
 
 
-
-
-/*****************************************************************************
- * FUNCTION: invertMatrix
- * DESCRIPTION: Computes the inverse of a matrix. 
- * PARAMETERS:
- *    a: matrix to be inverted and keep the result
- *    n: the dimension of the matrix
- * SIDE EFFECTS: None
- * ENTRY CONDITIONS: None
- * RETURN VALUE: 
- *        <0 : fail
- *        >0 : successful completion 
- * EXIT CONDITIONS: None
- * HISTORY:
- *    Created: 7/22/00 by Ying Zhuge
- *
- *****************************************************************************/
-int32_t invertMatrix(a,n)
-     int32_t n;
-     double a[];
+/* param == 1, dilatation (max) ; param == 2, erosion (min) */
+int32_t lga2pgm(struct xvimage *im, struct xvimage *ga, int32_t param)
 {
-  int32_t i,j,k,m;
-  double w,g,*b;
-  
-  b= (double*)malloc(n*sizeof(double));
-  if (b == NULL)
-    return (-2);
-  for (k=0; k<=n-1; k++)
-  { 
-    w=a[0];
-    if (fabs(w)+1.0==1.0)
-    { 
-      free(b);
-      return(-2);
+  int32_t i,k,u;                                /* index muet */
+  int32_t rs = rowsize(ga);                   /* taille ligne */ 
+  int32_t cs = colsize(ga);                   /* taille colone */
+  int32_t N = rs * cs;                        /* taille image */
+  uint8_t *F = UCHARDATA(im);        /* composante rouge */
+  uint8_t *GA = UCHARDATA(ga);       /* graphe d'arete est suppose deja allouer */ 
+  /* vérifier que les tailles des diférentes images sont cohérentes */
+  switch(param)
+  {
+  case 1:
+    for(i = 0; i < N; i++){
+      F[i] = 0;
+      for(k = 0; k < 4; k++){
+	if( (u = incidente(i,k,rs,N)) != -1){
+	  if(GA[u] > F[i]) F[i] = GA[u];
+	}
+      }
     }
-    m=n-k-1;
-    for (i=1; i<=n-1; i++)
-    { 
-      g=a[i*n]; b[i]=g/w;
-      if (i<=m) b[i]=-b[i];
-      for (j=1; j<=i; j++)
-	a[(i-1)*n+j-1]=a[i*n+j]+g*b[j];
+    
+    break;
+  case 2:
+    for(i = 0; i < N; i++){
+      F[i] = 255;
+      for(k = 0; k < 4; k++){
+	if( (u = incidente(i,k,rs,N)) != -1){
+	  if(GA[u] < F[i]) F[i] = GA[u];
+	}
+      }
     }
-    a[n*n-1]=1.0/w;
-    for (i=1; i<=n-1; i++)
-      a[(n-1)*n+i-1]=b[i];
+    break;
   }
-  for (i=0; i<=n-2; i++)
-    for (j=i+1; j<=n-1; j++)
-      a[i*n+j]=a[j*n+i];
-  free(b);
-  return(2);
+  return 1;  
 }
-
-/*****************************************************************************
- * FUNCTION: multiMatrix
- * DESCRIPTION: Compute the multipled matrix of two matrixes 
- * PARAMETERS:
- *    a: source matrix of m*n  
- *    b: source matrix of n*k
- *    c: result matrix
- *    m: rows of matrix a
- *    n: cols of matrix a, rows of matrix b
- *    k: cols of matrix b
- * SIDE EFFECTS: None
- * ENTRY CONDITIONS: None
- * RETURN VALUE: 
- *       
- *         
- * EXIT CONDITIONS: None
- * HISTORY:
- *    Created: 7/24/00 by Ying Zhuge
- *
- *****************************************************************************/
-
-int32_t  multiMatrix(a,b,m,n,k,c)
-     int32_t m,n,k;
-     double a[],b[],c[];
+ 
+/* param == 1, dilatation (max) ; param == 2, erosion (min) */
+int32_t lga2pgm3d(struct xvimage *im, struct xvimage *ga, int32_t param)
 {
-  int32_t i,j,l,u;
-  for (i=0; i<=m-1; i++)
-    for (j=0; j<=k-1; j++)
-    {
-      u=i*k+j; c[u]=0.0;
-      for (l=0; l<=n-1; l++)
-	c[u]=c[u]+a[i*n+l]*b[l*k+j];
+  int32_t i,k,u;                              /* index muet */
+  int32_t rs = rowsize(ga);                   /* taille ligne */ 
+  int32_t cs = colsize(ga);                   /* taille colone */
+  int32_t ps = rs *cs;                        /* taille d'un plan */
+  int32_t ds = depth(ga);                     /* nombre de plans */ 
+  int32_t N = ps*ds;                          /* taille image */
+  uint8_t *F = UCHARDATA(im);        /* composante rouge */
+  uint8_t *GA = UCHARDATA(ga);       /* graphe d'arete est suppose deja allouer */ 
+  /* vérifier que les tailles des diférentes images sont cohérentes */
+  switch(param)
+  {
+  case 1:
+    for(i = 0; i < N; i++){
+      F[i] = 0;
+      for(k = 0; k < 6; k++){
+	if( (u = incidente3d(i,k,rs,N,ps)) != -1){
+	  if(GA[u] > F[i]) F[i] = GA[u];
+	}
+      }
     }
-  return 0;
+    
+    break;
+  case 2:
+    for(i = 0; i < N; i++){
+      F[i] = 255;
+      for(k = 0; k < 6; k++){
+	if( (u = incidente3d(i,k,rs,N,ps)) != -1){
+	  if(GA[u] < F[i]) F[i] = GA[u];
+	}
+      }
+    }
+    break;
+  }
+  return 1;  
 }
+

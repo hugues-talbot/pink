@@ -1,4 +1,37 @@
-/* $Id: minima.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file minima.c
 
 \brief regional minima 
@@ -22,22 +55,17 @@ Selects the regional minima of a grayscale image with connexity <B>connex</B>.
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <llabelextrema.h>
+#include <lminima.h>
 
 //#define VERBOSE
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
-  int32_t nblabels, connex, i;
   struct xvimage * image;
-  struct xvimage * result;
-  uint8_t * I;
-  uint32_t * IL;
-  int32_t N;
-  uint32_t * R;
+  int32_t * IL;
+  int32_t N, i;
 
   if (argc != 4)
   {
@@ -51,66 +79,14 @@ int main(argc, argv)
     fprintf(stderr, "minima: readimage failed\n");
     exit(1);
   }
-  N = rowsize(image) * colsize(image) * depth(image);
 
-  if (argv[2][0] == 'b') {
-    connex = atoi(argv[2]+1);
-  } else 
-    connex = atoi(argv[2]);
-
-  result = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_4_BYTE);
-  if (result == NULL)
-  {   
-    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+  if (!lminima(image, argv[2]))
+  {
+    fprintf(stderr, "%s: lminima failed\n", argv[0]);
     exit(1);
-  }
-  R = ULONGDATA(result);
+  } /* if ! lminima*/
 
-  if ((connex == 0) && strcmp(argv[2], "b0") && strcmp(argv[2], "b1"))
-  {
-    if (datatype(image) == VFF_TYP_1_BYTE)
-    {   
-      uint8_t absmin;
-      I = UCHARDATA(image);
-      absmin = I[0];
-      for (i = 1; i < N; i++) if (I[i] < absmin) absmin = I[i];
-      for (i = 0; i < N; i++) if (I[i] == absmin) I[i] = NDG_MAX; else I[i] = NDG_MIN;
-    }
-    else if (datatype(image) == VFF_TYP_4_BYTE) 
-    {   
-      uint32_t absmin;
-      IL = ULONGDATA(image);
-      absmin = IL[0];
-      for (i = 1; i < N; i++) if (IL[i] < absmin) absmin = IL[i];
-      for (i = 0; i < N; i++) if (IL[i] == absmin) IL[i] = (uint32_t)NDG_MAX; 
-                                             else IL[i] = (uint32_t)NDG_MIN;
-    }
-  }
-  else
-  {
-    if (! llabelextrema(image, connex, LABMIN, result, &nblabels))
-    {
-      fprintf(stderr, "%s: llabelextrema failed\n", argv[0]);
-      exit(1);
-    }
-
-#ifdef VERBOSE
-    printf("%s : NOMBRE DE MINIMA : %d\n", argv[0], nblabels-1);
-#endif
-
-    if (datatype(image) == VFF_TYP_1_BYTE)
-    {   
-      I = UCHARDATA(image);
-      for (i = 0; i < N; i++)
-        if (R[i]) I[i] = NDG_MAX; else I[i] = NDG_MIN;
-    }
-    else if (datatype(image) == VFF_TYP_4_BYTE) 
-    {   
-      IL = ULONGDATA(image);
-      for (i = 0; i < N; i++)
-        if (R[i]) IL[i] = (uint32_t)NDG_MAX; else IL[i] = (uint32_t)NDG_MIN;
-    }
-  }
+  // if the image type is int, than we convert it to byte
   if (datatype(image) == VFF_TYP_4_BYTE)
   {
     struct xvimage *im2;
@@ -127,7 +103,7 @@ int main(argc, argv)
   }
   else
     writeimage(image, argv[3]);
-  freeimage(result);
+
   freeimage(image);
 
   return 0;

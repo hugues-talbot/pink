@@ -1,12 +1,53 @@
-/* $Id: l2dkhalimsky.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
-/* Operateurs agissant dans la grille de Khalimsky 2d */
-/* Michel Couprie - mars 2000 */
+/*
+Copyright ESIEE (2009) 
 
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
+/* Operateurs agissant dans la grille de Khalimsky 2d */
+/* Michel Couprie - mars 2000 
+
+   l2dseltype: extraction d'éléments selon leur rang et leur type topologique
+     Michel Couprie - avril 2007
+
+   l2dborder: extraction de la frontière interne
+   l2dboundary: extraction de la frontière interne
+     Michel Couprie - août 2009
+ */
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mclifo.h>
@@ -31,17 +72,42 @@ int32_t l2dmakecomplex(struct xvimage * i)
    effectue la fermeture par inclusion de l'ensemble i
 */
 {
-  if (depth(i) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(i, VFF_TYP_1_BYTE);
+  ONLY_2D(i);
 
   AjouteAlphacarre2d(i);
 
   return 1;
 
 } /* l2dmakecomplex() */
+
+/* =============================================================== */
+int32_t l2d_is_complex(struct xvimage * k)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "l2d_is_complex"
+/* 
+   teste si k est un complexe
+*/
+{
+  index_t rs = rowsize(k);
+  index_t cs = colsize(k);
+  uint8_t *K = UCHARDATA(k);
+  int32_t u, n;
+  index_t i, j, tab[GRS2D*GCS2D];
+
+  ACCEPTED_TYPES1(k, VFF_TYP_1_BYTE);
+  ONLY_2D(k);
+
+  for (j = 0; j < cs; j++)
+  for (i = 0; i < rs; i++)
+  if (K[j * rs + i])
+  {
+    Alphacarre2d(rs, cs, i, j, tab, &n);
+    for (u = 0; u < n; u++) if (!K[tab[u]]) return 0;
+  }
+  return 1;
+} /* l2d_is_complex() */
 
 /* =============================================================== */
 int32_t l2dclosebeta(struct xvimage * i)
@@ -52,11 +118,8 @@ int32_t l2dclosebeta(struct xvimage * i)
    effectue la fermeture par inclusion inverse de l'ensemble i
 */
 {
-  if (depth(i) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(i, VFF_TYP_1_BYTE);
+  ONLY_2D(i);
 
   AjouteBetacarre2d(i);
 
@@ -84,17 +147,14 @@ int32_t l2dkhalimskize(struct xvimage * i, struct xvimage **k, int32_t mode)
      9 : reverse (Khalimsky -> Z2) : selection carres
 */
 {
-  if (depth(i) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES3(i, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT);
+  ONLY_2D(i);
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
 #endif
 
-  if ((mode == 1) || (mode == 2) || (mode == 5) || (mode == 6) || (mode == 7))
+  if ((mode == 0) || (mode == 1) || (mode == 2) || (mode == 5) || (mode == 6) || (mode == 7))
     *k = KhalimskizeNDG2d(i);
   else if (mode == 9)
     *k = DeKhalimskize2d(i);
@@ -163,11 +223,8 @@ int32_t l2dkhalimskize_noalloc(struct xvimage * i, struct xvimage *k, int32_t mo
      \warning pas de vérification de taille
 */
 {
-  if (depth(i) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(i, VFF_TYP_1_BYTE);
+  ONLY_2D(i);
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -224,11 +281,8 @@ int32_t l2dcolor(struct xvimage * k)
    coloriage des elements de k selon leur type 
 */
 {
-  if (depth(k) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(k, VFF_TYP_1_BYTE);
+  ONLY_2D(k);
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -249,21 +303,18 @@ int32_t l2dthin(struct xvimage * k, int32_t nsteps)
 {
   struct xvimage * kp;
   int32_t stablealpha, stablebeta;
-  int32_t i, x, y;
-  int32_t rs, cs, N;
+  int32_t i;
+  index_t rs, cs, N, x, y;
   uint8_t * K;
   uint8_t * KP;
+
+  ACCEPTED_TYPES1(k, VFF_TYP_1_BYTE);
+  ONLY_2D(k);
 
   rs = rowsize(k);
   cs = colsize(k);
   N = rs * cs;
   K = UCHARDATA(k);
-
-  if (depth(k) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -314,7 +365,7 @@ int32_t l2dthin(struct xvimage * k, int32_t nsteps)
 } /* l2dthin() */
 
 /* =============================================================== */
-int32_t l2dlabel(struct xvimage * f, struct xvimage * lab, int32_t *nlabels)
+int32_t l2dlabel(struct xvimage * f, struct xvimage * lab, index_t *nlabels)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "l2dlabel"
@@ -323,19 +374,18 @@ int32_t l2dlabel(struct xvimage * f, struct xvimage * lab, int32_t *nlabels)
   Resultat dans lab (image "longint", allouee a l'avance)
 */
 {
-  int32_t rs, cs, N;
+  index_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *F;
-  uint32_t *LAB;
+  int32_t *LAB;
   Lifo * LIFO;
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(lab, VFF_TYP_4_BYTE);
+  ONLY_2D(f);
+  COMPARE_SIZE(f, lab);
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -347,7 +397,7 @@ int32_t l2dlabel(struct xvimage * f, struct xvimage * lab, int32_t *nlabels)
   cs = colsize(f);
   N = rs * cs;
   F = UCHARDATA(f);
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
   memset(LAB, 0, N*sizeof(int32_t));
 
   LIFO = CreeLifoVide(N);
@@ -404,7 +454,7 @@ int32_t l2dlabelextrema(
       struct xvimage * f,   /* ordre value' original */
       int32_t minimum,          /* booleen */
       struct xvimage * lab, /* resultat: image de labels */
-      int32_t *nlabels)         /* resultat: nombre d'extrema traites + 1 (0 = non extremum) */
+      index_t *nlabels)         /* resultat: nombre d'extrema traites + 1 (0 = non extremum) */
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "l2dlabelextrema"
@@ -413,19 +463,18 @@ int32_t l2dlabelextrema(
   Resultat dans lab (image "longint", allouee a l'avance)
 */
 {
-  int32_t rs, cs, N;
+  index_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *F;
   int32_t *LAB, label;
   Lifo * LIFO;
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES1(lab, VFF_TYP_4_BYTE);
+  ONLY_2D(f);
+  COMPARE_SIZE(f, lab);
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -437,7 +486,7 @@ int32_t l2dlabelextrema(
   cs = colsize(f);
   N = rs * cs;
   F = UCHARDATA(f);
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   LIFO = CreeLifoVide(N);
   if (LIFO == NULL)
@@ -529,7 +578,7 @@ int32_t l2dlabelextrema(
 } /* l2dlabelextrema() */
 
 /* =============================================================== */
-static int32_t simple(int32_t w, uint32_t *LAB, int32_t rs, int32_t cs)
+static int32_t simple(index_t w, int32_t *LAB, index_t rs, index_t cs)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "simple"
@@ -538,7 +587,7 @@ static int32_t simple(int32_t w, uint32_t *LAB, int32_t rs, int32_t cs)
    sinon retourne 0
 */
 {
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k, y;
   int32_t val = 0;
 
@@ -584,28 +633,19 @@ int32_t l2dtopotess(struct xvimage * lab, struct xvimage * mask)
   Attention : on suppose que lab est nulle en dehors de mask
 */
 {
-  int32_t rs, cs, N;
+  index_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *MASK;
-  uint32_t *LAB;
+  int32_t *LAB;
   Lifo * LIFO;
   Lifo * LIFOAUX;
   Lifo * LIFOVAL;
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k;
   int32_t val;
 
-  if (depth(lab) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
-
-  if (datatype(lab) != VFF_TYP_4_BYTE)
-  {
-    fprintf(stderr, "%s: bad image type for lab\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(lab, VFF_TYP_4_BYTE);
+  ONLY_2D(lab);
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -614,22 +654,12 @@ int32_t l2dtopotess(struct xvimage * lab, struct xvimage * mask)
   rs = rowsize(lab);
   cs = colsize(lab);
   N = rs * cs;
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   if (mask)
   {
-    if ((rowsize(mask) != rs) || (colsize(mask) != cs) || (depth(mask) != 1))
-    {
-      fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-      return 0;
-    }
-
-    if (datatype(mask) != VFF_TYP_1_BYTE)
-    {
-      fprintf(stderr, "%s: bad image type for mask\n", F_NAME);
-      return 0;
-    }
-
+    ACCEPTED_TYPES1(mask, VFF_TYP_1_BYTE);
+    COMPARE_SIZE(mask, lab);
     MASK = UCHARDATA(mask);
   }
 
@@ -703,12 +733,8 @@ if (mask == NULL)
 
 #ifdef PARANO  
   for (x = 0; x < N; x++)
-  {
-    if (!LAB[x] && (val = simple(x, LAB, rs, cs))) 
-    {
-      fprintf(stderr, "PARANO: il reste des points simples : %d,%d\n", x%rs, x/rs);
-    }
-  }
+    assert(LAB[x] || (val != simple(x, LAB, rs, cs)));
+    // il reste des points simples
 #endif
 
 } /* if (mask == NULL) */
@@ -780,7 +806,7 @@ else
 } /* l2dtopotess() */
 
 /* =============================================================== */
-int32_t testlocal(int32_t w, int32_t *LAB, int32_t rs, int32_t cs)
+int32_t testlocal(index_t w, int32_t *LAB, index_t rs, index_t cs)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "testlocal"
@@ -791,7 +817,7 @@ int32_t testlocal(int32_t w, int32_t *LAB, int32_t rs, int32_t cs)
    sinon retourne -1
 */
 {
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k, y;
   int32_t val = -1;
 
@@ -825,7 +851,7 @@ int32_t testlocal(int32_t w, int32_t *LAB, int32_t rs, int32_t cs)
 } /* testlocal() */
 
 /* =============================================================== */
-int32_t testlocalmask(int32_t w, int32_t *LAB, uint8_t *MASK, int32_t rs, int32_t cs)
+int32_t testlocalmask(index_t w, int32_t *LAB, uint8_t *MASK, index_t rs, index_t cs)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "testlocalmask"
@@ -836,7 +862,7 @@ int32_t testlocalmask(int32_t w, int32_t *LAB, uint8_t *MASK, int32_t rs, int32_
    sinon retourne -1
 */
 {
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k, y;
   int32_t val = -1;
 
@@ -882,28 +908,19 @@ int32_t l2dvoronoi(struct xvimage * lab, struct xvimage * mask)
   Attention : on suppose que lab est nulle en dehors de mask
 */
 {
-  int32_t rs, cs, N;
+  index_t rs, cs, N;
   int32_t x, y, w;
   uint8_t *MASK;
   int32_t *LAB;
   Lifo * LIFO;
   Lifo * LIFOAUX;
   Lifo * LIFOVAL;
-  int32_t tab[27]; 
+  index_t tab[27]; 
   int32_t n, k;
   int32_t val;
 
-  if (depth(lab) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
-
-  if (datatype(lab) != VFF_TYP_4_BYTE)
-  {
-    fprintf(stderr, "%s: bad image type for lab\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(lab, VFF_TYP_4_BYTE);
+  ONLY_2D(lab);
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -912,22 +929,12 @@ int32_t l2dvoronoi(struct xvimage * lab, struct xvimage * mask)
   rs = rowsize(lab);
   cs = colsize(lab);
   N = rs * cs;
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   if (mask)
   {
-    if ((rowsize(mask) != rs) || (colsize(mask) != cs) || (depth(mask) != 1))
-    {
-      fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);
-      return 0;
-    }
-
-    if (datatype(mask) != VFF_TYP_1_BYTE)
-    {
-      fprintf(stderr, "%s: bad image type for mask\n", F_NAME);
-      return 0;
-    }
-
+    ACCEPTED_TYPES1(mask, VFF_TYP_1_BYTE);
+    COMPARE_SIZE(mask, lab);
     MASK = UCHARDATA(mask);
   }
 
@@ -1087,30 +1094,21 @@ int32_t l2dtopotessndg(struct xvimage * f)
   Implementation naive d'apres la definition
 */
 {
-  int32_t rs, cs, N;
-  int32_t x, y, w;
+  index_t rs, cs, N;
+  index_t x;
   struct xvimage * fk;  /* seuil de F au niveau k */ 
   struct xvimage * fkp; /* seuil de F au niveau k+1 */
   struct xvimage * lab; /* pour les labels des CC de fkp */ 
   uint8_t *F;
   uint8_t *Fk;
   uint8_t *Fkp;
-  uint32_t *LAB;
-  int32_t k, kp;
-  int32_t nlabels;
-  int32_t histo[NDG_MAX+1];
+  int32_t *LAB;
+  int32_t kp;
+  index_t nlabels;
+  index_t histo[NDG_MAX+1];
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
-
-  if (datatype(f) != VFF_TYP_1_BYTE)
-  {
-    fprintf(stderr, "%s: bad image type\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -1133,10 +1131,10 @@ int32_t l2dtopotessndg(struct xvimage * f)
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   /* calcule histo */  
-  memset(histo, 0, (NDG_MAX+1) * sizeof(int32_t));
+  memset(histo, 0, (NDG_MAX+1) * sizeof(index_t));
   for (x = 0; x < N; x++) histo[F[x]] += 1;
 
   /* monte au second niveau non vide */
@@ -1200,30 +1198,21 @@ int32_t l2dtopotessndg_inverse(struct xvimage * f)
   Implementation naive d'apres la definition
 */
 {
-  int32_t rs, cs, N;
-  int32_t x, y, w;
+  index_t rs, cs, N;
+  index_t x;
   struct xvimage * fk;  /* seuil de F au niveau k */ 
   struct xvimage * fkp; /* seuil de F au niveau k+1 */
   struct xvimage * lab; /* pour les labels des CC de fkp */ 
   uint8_t *F;
   uint8_t *Fk;
   uint8_t *Fkp;
-  uint32_t *LAB;
+  int32_t *LAB;
   int32_t k, kp;
-  int32_t nlabels;
-  int32_t histo[NDG_MAX+1];
+  index_t nlabels;
+  index_t histo[NDG_MAX+1];
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
-
-  if (datatype(f) != VFF_TYP_1_BYTE)
-  {
-    fprintf(stderr, "%s: bad image type\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -1245,10 +1234,10 @@ int32_t l2dtopotessndg_inverse(struct xvimage * f)
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   /* calcule histo */  
-  memset(histo, 0, (NDG_MAX+1) * sizeof(int32_t));
+  memset(histo, 0, (NDG_MAX+1) * sizeof(index_t));
   for (x = 0; x < N; x++) histo[F[x]] += 1;
 
   /* cherche niveau max */
@@ -1306,6 +1295,7 @@ writeimage(lab, "lab");
   freeimage(lab);
   freeimage(fk);
   freeimage(fkp);
+  return 1;
 } /* l2dtopotessndg() */
 
 /* =============================================================== */
@@ -1317,8 +1307,8 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
   Implementation naive d'apres la definition de Vincent et Soille
 */
 {
-  int32_t rs, cs, N;
-  int32_t x, y, w;
+  index_t rs, cs, N;
+  index_t x;
   struct xvimage * fk;  /* seuil de F au niveau k */ 
   struct xvimage * fkp; /* seuil de F au niveau k+1 */
   struct xvimage * lab; /* pour les labels des CC de fkp */ 
@@ -1326,23 +1316,14 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
   uint8_t *F;
   uint8_t *Fk;
   uint8_t *Fkp;
-  uint32_t *LAB;
-  uint32_t *MAXI;
-  int32_t k, kp;
-  int32_t nlabels;
-  int32_t histo[NDG_MAX+1];
+  int32_t *LAB;
+  int32_t *MAXI;
+  int32_t kp;
+  index_t nlabels;
+  index_t histo[NDG_MAX+1];
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
-
-  if (datatype(f) != VFF_TYP_1_BYTE)
-  {
-    fprintf(stderr, "%s: bad image type\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -1364,7 +1345,7 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   maxi = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
   if (maxi == NULL)
@@ -1372,7 +1353,7 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return 0;
   }
-  MAXI = ULONGDATA(maxi);
+  MAXI = SLONGDATA(maxi);
 
   /* etiquette les maxima de f */
   if (! l2dlabelextrema(f, 0, maxi, &nlabels)) /* value of nlabels not used */
@@ -1382,7 +1363,7 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
   }
 
   /* calcule histo */  
-  memset(histo, 0, (NDG_MAX+1) * sizeof(int32_t));
+  memset(histo, 0, (NDG_MAX+1) * sizeof(index_t));
   for (x = 0; x < N; x++) histo[F[x]] += 1;
 
   /* cherche niveau max */
@@ -1438,7 +1419,7 @@ int32_t l2dtopotessndgVS(struct xvimage * f)
 } /* l2dtopotessndgVS() */
 
 /* =============================================================== */
-int32_t l2dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbtrous, int32_t *euler)
+int32_t l2dinvariants(struct xvimage *f, index_t *nbcc, index_t *nbtrous, index_t *euler)
 /* =============================================================== */
 /*
   Calculs des nombres de composantes connexes et trous.
@@ -1446,20 +1427,17 @@ int32_t l2dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbtrous, int32_
 #undef F_NAME
 #define F_NAME "l2dinvariants"
 {
-  int32_t rs, cs, N;
-  int32_t x, y, w;
+  index_t rs, cs, N;
+  index_t x, y, w;
   uint8_t *F;
   struct xvimage * lab;
-  uint32_t *LAB;
-  uint32_t nlabels;
+  int32_t *LAB;
+  int32_t nlabels;
   Lifo * LIFO;
-  int32_t tab[9]; int32_t n, k;
+  index_t tab[9]; int32_t n, k;
 
-  if (depth(f) != 1) 
-  {
-    fprintf(stderr, "%s: ne traite pas les images volumiques\n", F_NAME);
-    return 0;
-  }
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
 
 #ifdef VERBOSE
   fprintf(stderr, "%s: Debut traitement\n", F_NAME);
@@ -1476,7 +1454,7 @@ int32_t l2dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbtrous, int32_
     return(0);
     
   }
-  LAB = ULONGDATA(lab);
+  LAB = SLONGDATA(lab);
 
   LIFO = CreeLifoVide(N);
   if (LIFO == NULL)
@@ -1536,3 +1514,171 @@ int32_t l2dinvariants(struct xvimage *f, int32_t *nbcc, int32_t *nbtrous, int32_
   LifoTermine(LIFO);
   return 1;
 } /* l2dinvariants() */
+
+/* =============================================================== */
+int32_t l2dboundary(struct xvimage * f)
+/* =============================================================== */
+/* 
+   extrait la frontière interne
+   def: {x in F | theta(x) inter Fbar neq emptyset}
+*/
+{
+#undef F_NAME
+#define F_NAME "l2dboundary"
+  struct xvimage * g;
+  index_t rs, cs;
+  index_t x, y;
+  uint8_t *F;
+  uint8_t *G;
+  index_t tab[8];
+  int32_t n, u;
+
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
+
+  rs = rowsize(f);
+  cs = colsize(f);
+  F = UCHARDATA(f);
+  g = copyimage(f);
+  if (g == NULL)
+  {   fprintf(stderr,"%s: copyimage failed\n", F_NAME);
+      return 0;
+  }  
+  G = UCHARDATA(g);
+  razimage(f);
+
+  for (y = 0; y < cs; y++)
+    for (x = 0; x < rs; x++)
+      if (G[y*rs + x])
+      {
+	Thetacarre2d(rs, cs, x, y, tab, &n);
+	for (u = 0; u < n; u++)
+	  if (G[tab[u]] == 0) 
+	  {
+	    F[y*rs + x] = NDG_MAX;
+	    goto next;
+	  }
+      next:;
+      } 
+  
+  freeimage(g);
+  return 1;
+} /* l2dboundary() */
+
+/* =============================================================== */
+int32_t l2dborder(struct xvimage * f)
+/* =============================================================== */
+/* 
+   extrait la frontière interne
+   def: closure{x in F | x free for F}
+*/
+{
+#undef F_NAME
+#define F_NAME "l2dborder"
+  struct xvimage * g;
+  index_t rs, cs;
+  index_t x, y;
+  uint8_t *F;
+  uint8_t *G;
+
+  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ONLY_2D(f);
+
+  rs = rowsize(f);
+  cs = colsize(f);
+  F = UCHARDATA(f);
+  g = copyimage(f);
+  if (g == NULL)
+  {   fprintf(stderr,"%s: copyimage failed\n", F_NAME);
+      return 0;
+  }  
+  G = UCHARDATA(g);
+  razimage(f);
+  for (y = 0; y < cs; y++)
+    for (x = 0; x < rs; x++)
+      if (G[y*rs + x] && FaceLibre2d(g, x, y))
+	F[y*rs + x] = VAL_OBJET;
+  l2dmakecomplex(f);
+  freeimage(g);
+  return 1;
+} /* l2dborder() */
+
+/* =============================================================== */
+int32_t l2dseltype(struct xvimage * k, uint8_t d1, uint8_t d2, uint8_t a1, uint8_t a2, uint8_t b1, uint8_t b2)
+/* =============================================================== */
+/* 
+  Selects the elements x of the Khalimsky object \b k 
+  which satisfy the following inequalities : 
+  \b a1 <= a(x) <= \b a2
+  \b b1 <= b(x) <= \b b2
+  \b d1 <= d(x) <= \b d2
+  where
+  d(x) = dimension of x
+  a(x) = number of elements under x of dimension d(x) - 1
+  b(x) = number of elements over x of dimension d(x) + 1
+*/
+#undef F_NAME
+#define F_NAME "l2dseltype"
+{
+  index_t rs, cs, N, i1, j1, i2, j2, x, y;
+  int32_t a, b, d;
+  uint8_t * K;
+  struct xvimage * kp;
+  uint8_t * KP;
+  index_t tab[9]; int32_t n, u;
+
+  ACCEPTED_TYPES1(k, VFF_TYP_1_BYTE);
+  ONLY_2D(k);
+
+#ifdef DEBUG_l2dseltype
+  printf("call %s %d %d %d %d %d %d\n", F_NAME, d1, d2, a1, a2, b1, b2);
+#endif
+
+  rs = rowsize(k);
+  cs = colsize(k);
+  N = rs * cs;
+  K = UCHARDATA(k);
+
+  kp = allocimage(NULL, rs, cs, 1, VFF_TYP_1_BYTE);
+  if (kp == NULL)
+  {   
+    fprintf(stderr,"%s : allocimage failed\n", F_NAME);
+    return(0);
+  }
+  KP = UCHARDATA(kp);
+  memset(KP, 0, N);
+
+  for (j1 = 0; j1 < cs; j1++)
+  for (i1 = 0; i1 < rs; i1++)
+  {
+    x = j1*rs + i1;
+    d = DIM2D(i1,j1);
+    if (K[x] && (d1 <= d) && (d <= d2))
+    {
+      Alphacarre2d(rs, cs, i1, j1, tab, &n);
+      for (a = u = 0; u < n; u++) /* parcourt les eventuels alpha-voisins */
+      {
+	y = tab[u];
+	i2 = y%rs; j2 = y/rs;
+	if (K[y] && (DIM2D(i2,j2) == (d-1))) a++;
+      }
+      if ((a1 <= a) && (a <= a2))
+      {
+	Betacarre2d(rs, cs, i1, j1, tab, &n);
+	for (b = u = 0; u < n; u++) /* parcourt les eventuels beta-voisins */
+	{
+	  y = tab[u];
+	  i2 = y%rs; j2 = y/rs;
+	  if (K[y] && (DIM2D(i2,j2) == (d+1))) b++;
+	}
+	if ((b1 <= b) && (b <= b2))
+	{
+	  KP[x] = NDG_MAX;
+	}
+      }
+    }
+  } // for k1, j1, i1
+  for (x = 0; x < N; x++) K[x] = KP[x];
+  freeimage(kp);
+  return 1;
+} /* l2dseltype() */

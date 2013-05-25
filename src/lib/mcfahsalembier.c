@@ -1,4 +1,37 @@
-/* $Id: mcfahsalembier.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* structure de file d'attente hierarchique de points d'image */
 /* Michel Couprie */
 
@@ -17,20 +50,20 @@
 #include <mcfahsalembier.h>
 
 /*
-#define TESTFah
+#define TESTFahs
 #define VERBOSE
 */
 
 /* ==================================== */
-Fah * CreeFahVide(
-  int32_t taillemax)
+Fahs * CreeFahsVide(
+  index_t taillemax)
 /* ==================================== */
 {
-  int32_t i;
-  Fah * L = (Fah *)calloc(1,sizeof(Fah) + (taillemax - 1) * sizeof(FahElt));
+  index_t i;
+  Fahs * L = (Fahs *)calloc(1,sizeof(Fahs) + (taillemax - 1) * sizeof(FahsElt));
   if (L == NULL)
   {
-    fprintf(stderr, "erreur allocation Fah\n");
+    fprintf(stderr, "erreur allocation Fahs\n");
     exit(1);
   }
   L->Max = taillemax;
@@ -40,56 +73,56 @@ Fah * CreeFahVide(
   for (i = 0; i < taillemax - 1; i++) L->Elts[i].Next = &(L->Elts[i+1]);
   L->Elts[taillemax - 1].Next = NULL;
   L->Libre = &(L->Elts[0]);
-  for (i = 0; i < NPRIO; i++) L->Tete[i]= NULL;
-  for (i = 0; i < NPRIO; i++) L->Queue[i]= NULL;
+  for (i = 0; i < FAHS_NPRIO; i++) L->Tete[i]= NULL;
+  for (i = 0; i < FAHS_NPRIO; i++) L->Queue[i]= NULL;
   return L;
-} /* CreeFahVide() */
+} /* CreeFahsVide() */
 
 /* ==================================== */
-void FahFlush(
-  Fah * L)
+void FahsFlush(
+  Fahs * L)
 /* ==================================== */
 {
-  int32_t i;
+  index_t i;
   L->Niv = 0;
   L->Util = 0;
   for (i = 0; i < L->Max - 1; i++) L->Elts[i].Next = &(L->Elts[i+1]);
   L->Elts[L->Max - 1].Next = NULL;
   L->Libre = &(L->Elts[0]);
-  for (i = 0; i < NPRIO; i++) L->Tete[i]= NULL;
-  for (i = 0; i < NPRIO; i++) L->Queue[i]= NULL;
-} /* FahFlush() */
+  for (i = 0; i < FAHS_NPRIO; i++) L->Tete[i]= NULL;
+  for (i = 0; i < FAHS_NPRIO; i++) L->Queue[i]= NULL;
+} /* FahsFlush() */
 
 /* ==================================== */
-int32_t FahVide(
-  Fah * L)
+int32_t FahsVide(
+  Fahs * L)
 /* ==================================== */
 {
   if (L->Util == 0) return 1;
   return 0;
-} /* FahVide() */
+} /* FahsVide() */
 
 /* ==================================== */
-int32_t FahVideNiveau(
-  Fah * L,
+int32_t FahsVideNiveau(
+  Fahs * L,
   int32_t niv)
 /* ==================================== */
 {
   if (L->Queue[niv] == NULL) return 1;
   return 0;
-} /* FahVideNiveau() */
+} /* FahsVideNiveau() */
 
 /* ==================================== */
-int32_t FahPopNiveau(
-  Fah * L, 
+index_t FahsPopNiveau(
+  Fahs * L, 
   int32_t niv)
 /* ==================================== */
 {
-  int32_t V;
-  FahElt * FE;
+  index_t V;
+  FahsElt * FE;
   if (L->Queue[niv] == NULL)
   {
-    fprintf(stderr, "erreur Fah vide au niveau %d\n", niv);
+    fprintf(stderr, "erreur Fahs vide au niveau %d\n", niv);
     exit(1);
   }
 
@@ -106,7 +139,7 @@ int32_t FahPopNiveau(
     L->Tete[niv] = NULL;
     if (niv == L->Niv)
       do (L->Niv)++;                 /* incrementer le niveau */
-      while ((L->Niv < NPRIO)          
+      while ((L->Niv < FAHS_NPRIO)          
               && (L->Tete[L->Niv] == NULL));
   }
   else if (L->Tete[niv] == L->Queue[niv]) /* seul un element reste dans la liste */
@@ -115,36 +148,36 @@ int32_t FahPopNiveau(
   }
 
   return V;
-} /* FahPopNiveau() */
+} /* FahsPopNiveau() */
 
 /* ==================================== */
-int32_t FahPop(
-  Fah * L)
+index_t FahsPop(
+  Fahs * L)
 /* ==================================== */
 {
   if (L->Util == 0)
   {
-    fprintf(stderr, "erreur Fah vide\n");
+    fprintf(stderr, "erreur Fahs vide\n");
     exit(1);
   }
-  return FahPopNiveau(L, L->Niv);
-} /* FahPop() */
+  return FahsPopNiveau(L, L->Niv);
+} /* FahsPop() */
   
 /* ==================================== */
-void FahPush(
-  Fah * L,
-  int32_t Po,
+void FahsPush(
+  Fahs * L,
+  index_t Po,
   int32_t Ni)
 /* ==================================== */
 {
   if (L->Libre == NULL)
   {
-    fprintf(stderr, "erreur Fah pleine\n");
+    fprintf(stderr, "erreur Fahs pleine\n");
     exit(1);
   }
-  if (Ni >= NPRIO)
+  if (Ni >= FAHS_NPRIO)
   {
-    fprintf(stderr, "erreur niveau = %d; max autorise = %d\n", Ni, NPRIO-1);
+    fprintf(stderr, "erreur niveau = %d; max autorise = %d\n", Ni, FAHS_NPRIO-1);
     exit(1);
   }
 
@@ -154,7 +187,7 @@ void FahPush(
   if (L->Util > L->Maxutil) L->Maxutil = L->Util;
   if (L->Tete[Ni] != NULL)   /* insertion dans la liste de niveau Ni non vide */
   {
-    FahElt * FE = L->Tete[Ni];
+    FahsElt * FE = L->Tete[Ni];
     L->Tete[Ni] = L->Libre;
     L->Libre = L->Libre->Next;
     L->Tete[Ni]->Next = FE;
@@ -170,42 +203,46 @@ void FahPush(
     L->Tete[Ni]->Prev = NULL;
     L->Tete[Ni]->Point = Po;      
   }
-} /* FahPush() */
+} /* FahsPush() */
 
 /* ==================================== */
-void FahTermine(
-  Fah * L)
+void FahsTermine(
+  Fahs * L)
 /* ==================================== */
 {
 #ifdef VERBOSE
-  printf("Fah: taux d'utilisation: %g\n", (double)L->Maxutil / (double)L->Max);
+  printf("Fahs: taux d'utilisation: %g\n", (double)L->Maxutil / (double)L->Max);
 #endif
   free(L);
-} /* FahTermine() */
+} /* FahsTermine() */
 
 /* ==================================== */
-void FahPrint(
-  Fah * L)
+void FahsPrint(
+  Fahs * L)
 /* ==================================== */
 {
   int32_t i;
-  FahElt * FE;
-  if (FahVide(L)) {printf("[]\n"); return;}
+  FahsElt * FE;
+  if (FahsVide(L)) {printf("[]\n"); return;}
   printf("niveau courant = %d\n", L->Niv);
-  for (i = 0; i < NPRIO; i++)
+  for (i = 0; i < FAHS_NPRIO; i++)
     if (L->Tete[i] != NULL) 
     {
       printf("%d [ ", i);
       for (FE = L->Tete[i]; FE != NULL; FE = FE->Next)
+#ifdef MC_64_BITS
+        printf("%lld ", FE->Point);
+#else
         printf("%d ", FE->Point);
+#endif
       printf("]\n");
     }  
-} /* FahPrint() */
+} /* FahsPrint() */
 
-#ifdef TESTFAH
+#ifdef TESTFAHS
 void main()
 {
-  Fah * L = CreeFahVide(5);
+  Fahs * L = CreeFahsVide(5);
   char r[80];
   int32_t p, n;
 
@@ -220,18 +257,18 @@ void main()
         scanf("%d", &n);
         printf("valeur > ");
         scanf("%d", &p);
-        FahPush(L, p, n);
+        FahsPush(L, p, n);
         break;
       case 'o': 
-        printf("pop: %d\n", FahPop(L));
+        printf("pop: %d\n", FahsPop(L));
         break;
-      case 'p': FahPrint(L); break;
+      case 'p': FahsPrint(L); break;
       case 'v': 
-        printf("vide: %d\n", FahVide(L));
+        printf("vide: %d\n", FahsVide(L));
         break;
       case 'q': break;
     }
   } while (r[0] != 'q');
-  FahTermine(L);
+  FahsTermine(L);
 }
 #endif

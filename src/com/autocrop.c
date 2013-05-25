@@ -1,13 +1,48 @@
-/* $Id: autocrop.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file autocrop.c
 
 \brief eliminates null regions at the periphery of an image
 
-<B>Usage:</B> autocrop in.pgm out.pgm
+<B>Usage:</B> autocrop in.pgm [threshold [out.pgm]]
 
 <B>Description:</B>
-Selects the minimum rectangle (cuboid in 3d) that contain all non-null information 
-of the image \b in.pgm .
+Selects the minimum rectangle (cuboid in 3d) 
+that contain all values of the image \b in.pgm strictly above the \b threshold (default 0).
+
+If \b out.pgm is not specified, then out.pgm = in.pgm.
 
 <B>Types supported:</B> byte 2d, byte 3d
 
@@ -23,26 +58,21 @@ of the image \b in.pgm .
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
+#include <lcrop.h>
 
 #define VERBOSE
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * in;
-  struct xvimage * temp1;
-  int32_t i, j;
-  uint8_t *I;
-  uint8_t *T1;
-  int32_t x, y, z, w, h, p;
-  int32_t xmin, xmax, ymin, ymax, zmin, zmax;
-  int32_t rs, cs, n, N, d;
+  struct xvimage * out;
+  double seuil;
 
-  if (argc != 3)
+  if ((argc != 2) && (argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s in.pgm out.ppm\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm [threshold [out.pgm]]\n", argv[0]);
     exit(1);
   }
 
@@ -53,50 +83,25 @@ int main(argc, argv)
     exit(1);
   }
   
-  rs = rowsize(in);
-  cs = colsize(in);
-  N = rs * cs;
-  d = depth(in);
-  I = UCHARDATA(in);
-  xmin = rs; xmax = 0; 
-  ymin = cs; ymax = 0; 
-  zmin = d; zmax = 0; 
-  for (z = 0; z < d; z++)
-    for (y = 0; y < cs; y++)
-      for (x = 0; x < rs; x++)
-        if (I[z * N + y * rs + x])
-        {
-          if (z < zmin) zmin = z; if (z > zmax) zmax = z; 
-          if (y < ymin) ymin = y; if (y > ymax) ymax = y; 
-          if (x < xmin) xmin = x; if (x > xmax) xmax = x; 
-        }
+  if (argc > 2) 
+    seuil = atof(argv[2]);
+  else 
+    seuil = 0;
 
-  w = xmax - xmin + 1;
-  h = ymax - ymin + 1;
-  p = zmax - zmin + 1;
-
-#ifdef VERBOSE
-  printf("Crop: xmin=%d, ymin=%d, zmin=%d, w=%d, h=%d, p=%d\n",
-	 xmin, ymin, zmin, w, h, p);
-#endif
-
-  temp1 = allocimage(NULL, w, h, p, VFF_TYP_1_BYTE);
-  if (temp1 == NULL)
+  out = lautocrop(in, seuil);
+  if (out == NULL)
   {
-    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
+    fprintf(stderr, "%s: lautocrop failed\n", argv[0]);
     exit(1);
   }
- 
-  T1 = UCHARDATA(temp1);
-  n = w * h;
-  for (z = 0; z < p; z++)
-    for (y = 0; y < h; y++)
-      for (x = 0; x < w; x++)
-        T1[z*n + y*w + x] = I[((zmin+z)*N) + ((ymin+y)*rs) + xmin+x];
 
-  writeimage(temp1, argv[2]);
+  if (argc > 3) 
+    writeimage(out, argv[argc-1]);
+  else
+    writeimage(out, argv[1]);
+
   freeimage(in);
-  freeimage(temp1);
+  freeimage(out);
 
   return 0;
 } /* main */

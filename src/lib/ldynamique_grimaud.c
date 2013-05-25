@@ -1,11 +1,44 @@
-/* $Id: ldynamique_grimaud.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
    Operateurs utilisant l'arbre des composantes.
    =============================================
    (algorithme de P. Salembier)
 
    Operateurs : 
-     ldynamique (d'apres Grimaud et L. Najman)
+     ldynamique_grimaud_ldynamique (d'apres Grimaud et L. Najman)
      lwshedtopo (d'apres MC, GB)
      lwshedval (d'apres LN, MC)
 
@@ -37,7 +70,7 @@
 
 #define ATTR_DYN
 
-#include "lattrib.c"
+#include "lattrib.h"
 
 /* ======================================================================== */
 /* ======================================================================== */
@@ -53,7 +86,7 @@ Definition Grimaud : obligation d'atteindre un maximum de niveau strictement sup
 */
 {
   uint32_t nbcomp = cpct->nbcomp;
-  int32_t i, h, ncompnivh, f, p, s;
+  int32_t i, h, ncompnivh, f, p;
   uint8_t *tmp;
 
   tmp = (uint8_t *)calloc(nbcomp, sizeof(char));
@@ -73,7 +106,7 @@ Definition Grimaud : obligation d'atteindre un maximum de niveau strictement sup
     {
       for (i = cpct->hc[h] - 1; i > cpct->hc[h] - 1 - ncompnivh; i--)
       {
-        if (NBFILS(i) == 0) /* feuille */
+        if (NBFILS(cpct, i) == 0) /* feuille */
         {
           f = i;
           p = cpct->pere[f];
@@ -91,7 +124,7 @@ Definition Grimaud : obligation d'atteindre un maximum de niveau strictement sup
             p = cpct->pere[f];
 	  } /* while ((p != f) && (tmp[p] <= h)) */
           cpct->dyn[i] = h - DECODENIV(cpct->comp[p]);
-	} /* if (NBFILS(i) == 0) */
+	} /* if (NBFILS(cpct, i) == 0) */
       } /* for i */
     } /* if (ncompnivh > 0) */
   } /* for h */
@@ -103,6 +136,7 @@ Definition Grimaud : obligation d'atteindre un maximum de niveau strictement sup
   free(tmp);
 } /* CalculeDynamiqueMaxima() */
 
+#ifdef NOT_USED
 /* ==================================== */
 static void CalculeDynamiqueContours(CompactTree * cpct)
 /* ==================================== */
@@ -112,7 +146,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
 #define CONDITION_VIOLATION 0x01
 {
   uint32_t nbcomp = cpct->nbcomp;
-  int32_t i, h, ncompnivh, f, p, s, v;
+  int32_t i, h, ncompnivh, f, p, v;
   uint8_t *tmp;
 
   tmp = (uint8_t *)calloc(nbcomp, sizeof(char));
@@ -132,7 +166,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
     {
       for (i = cpct->hc[h] - 1; i > cpct->hc[h] - 1 - ncompnivh; i--)
       {
-        if (NBFILS(i) == 0) /* feuille */
+        if (NBFILS(cpct, i) == 0) /* feuille */
         {
           f = i;
           p = cpct->pere[f];
@@ -142,7 +176,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
             jusqu'a trouver un noeud p marque (tmp) par une valeur plus forte ou egale
             ou la racine
             alors : dyn[i] = niv[i] - niv[p]
-            et (si non racine) : dyn[p] = max(dyn[p],dyn[i])
+            et (si non racine) : dyn[p] = mcmax(dyn[p],dyn[i])
                (si racine) : -1 la premiere fois, idem ensuite
 	  */
           while ((p != f) && (tmp[p] < h))
@@ -152,13 +186,13 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
             p = cpct->pere[f];
 	  } /* while ((p != f) && (tmp[p] < h)) */
           cpct->dyn[i] = h - DECODENIV(cpct->comp[p]);
-          if (p != f) cpct->dyn[p] = max(cpct->dyn[p],cpct->dyn[i]);
+          if (p != f) cpct->dyn[p] = mcmax(cpct->dyn[p],cpct->dyn[i]);
           else
 	  {
             if (cpct->dyn[p] == 0) cpct->dyn[p] = -1;
-            else cpct->dyn[p] = max(cpct->dyn[p],cpct->dyn[i]);
+            else cpct->dyn[p] = mcmax(cpct->dyn[p],cpct->dyn[i]);
 	  }
-	} /* if (NBFILS(i) == 0) */
+	} /* if (NBFILS(cpct, i) == 0) */
       } /* for i */
     } /* if (ncompnivh > 0) */
   } /* for h */
@@ -179,7 +213,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
     {
       for (i = cpct->hc[h] - 1; i > cpct->hc[h] - 1 - ncompnivh; i--)
       {
-        if (NBFILS(i) > 0) /* non feuille */
+        if (NBFILS(cpct, i) > 0) /* non feuille */
         {
           v = cpct->dyn[i];
           f = i;
@@ -191,7 +225,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
             f = p;
             p = cpct->pere[f];
 	  } /* while (p != f) */
-	} /* if (NBFILS(i) > 0) */
+	} /* if (NBFILS(cpct, i) > 0) */
       } /* for i */
     } /* if (ncompnivh > 0) */
   } /* for h */
@@ -202,6 +236,7 @@ Variante definition Grimaud : obligation d'atteindre un maximum de niveau superi
 
   free(tmp);
 } /* CalculeDynamiqueContours() */
+#endif
 
 /* ==================================== */
 static void RecupereDynamique(CompactTree * cpct,           
@@ -217,26 +252,25 @@ static void RecupereDynamique(CompactTree * cpct,
   {
     h = ORI[i];
     c = STATUS[i];
-    comp = INDEXCOMP(h,c);
+    comp = INDEXCOMP(cpct, h,c);
     ORI[i] = cpct->dyn[comp];
   }  
 } /* RecupereDynamique() */
 
 /* ==================================== */
-int32_t ldynamique(struct xvimage *image, int32_t connex)
+int32_t ldynamique_grimaud_ldynamique(struct xvimage *image, int32_t connex)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "ldynamique"
+#define F_NAME "ldynamique_grimaud_ldynamique"
 {
-  register int32_t i, k, l;         /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;         /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
   uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
                                 /* en sortie, contient le numero de la composante de niveau h */
@@ -252,7 +286,7 @@ int32_t ldynamique(struct xvimage *image, int32_t connex)
     case 8: incr_vois = 1; break;
   } /* switch (connex) */
 
-  FAH = CreeFahVide(N);
+  FAHS = CreeFahsVide(N);
 
   STATUS = (uint32_t *)calloc(1,N * sizeof(int32_t));
   if (STATUS == NULL)
@@ -285,7 +319,7 @@ int32_t ldynamique(struct xvimage *image, int32_t connex)
   for (i = 0; i < N; i++) STATUS[i] = NOT_ANALYZED;
   k = 0;             /* recherche un pixel k de niveau de gris minimal dans l'image */
   for (i = 1; i < N; i++) if (F[i] < F[k]) k = i;
-  FahPush(FAH, k, F[k]);
+  FahsPush(FAHS, k, F[k]);
 
 #ifdef VERBOSE
   fprintf(stderr, "init terminee\n");
@@ -296,9 +330,9 @@ int32_t ldynamique(struct xvimage *image, int32_t connex)
   /* ================================================ */
 
   if ((connex == 4) || (connex == 8))
-    (void)flood(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
+    (void)flood(F[k], FAHS, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
   else
-    (void)flood3d(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
+    (void)flood3d(F[k], FAHS, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
 
 #ifdef VERBOSE
   fprintf(stderr, "flood terminee\n");
@@ -334,14 +368,14 @@ int32_t ldynamique(struct xvimage *image, int32_t connex)
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   TermineCompTree(TREE);
   TermineCompactTree(CTREE);
   free(STATUS);
   free(number_nodes);
   free(node_at_level);
   return(1);
-} /* ldynamique() */
+} /* ldynamique_grimaud_ldynamique() */
 
 /* ==================================== */
 static void SimplifyComp(CompactTree *cpct, int32_t *ncomp, int32_t *tabcomp) 
@@ -380,24 +414,24 @@ static void SimplifyComp(CompactTree *cpct, int32_t *ncomp, int32_t *tabcomp)
 
 /* ================================================ */
 static void BuildTree(uint8_t *F, int32_t rs, int32_t ps, int32_t N, int32_t connex, int32_t incr_vois,
-	       Fah * FAH, uint32_t *STATUS, 
+	       Fahs * FAHS, uint32_t *STATUS, 
                uint32_t *number_nodes, uint8_t *node_at_level,
                CompTree * TREE, CompactTree ** cpct
               )
 /* ================================================ */
 {
-  int32_t i, j, k;
+  int32_t i, k;
 
   // INITIALISATIONS
   for (i = 0; i < N; i++) STATUS[i] = NOT_ANALYZED;
   k = 0;             /* recherche un pixel k de niveau de gris minimal dans l'image */
   for (i = 0; i < N; i++) if (F[i] < F[k]) k = i;
-  FahPush(FAH, k, F[k]);
+  FahsPush(FAHS, k, F[k]);
   // APPEL FONCTION RECURSIVE flood
   if ((connex == 4) || (connex == 8))
-    (void)flood(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
+    (void)flood(F[k], FAHS, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
   else
-    (void)flood3d(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
+    (void)flood3d(F[k], FAHS, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
   *cpct = CompTree2CompactTree(TREE, number_nodes);
 } // BuildTree()
 
@@ -412,7 +446,7 @@ static int32_t TrouveComposantes(int32_t x, uint8_t *F, int32_t rs, int32_t N, i
       y = voisin(x, k, rs, N);
       if ((y != -1) && (F[y] > F[x]))
       {
-        tabcomp[ncomp] = INDEXCOMP(F[y],STATUS[y]);
+        tabcomp[ncomp] = INDEXCOMP(cpct, F[y],STATUS[y]);
         ncomp++;
       }
     } /* for (k = 0; k < 8; k += incr_vois) */
@@ -454,8 +488,8 @@ static int32_t TrouveComposantes2(int32_t x, uint8_t *F, int32_t rs, int32_t N, 
     y = voisin(x, k, rs, N);
     if ((y != -1) && (F[y] > F[x]))
     {
-      if (first && (F[y] == maxval)) { tabcomp[0] = INDEXCOMP(F[y],STATUS[y]); first = 0; }
-      else                           { tabcomp[n] = INDEXCOMP(F[y],STATUS[y]); n++; }
+      if (first && (F[y] == maxval)) { tabcomp[0] = INDEXCOMP(cpct, F[y],STATUS[y]); first = 0; }
+      else                           { tabcomp[n] = INDEXCOMP(cpct, F[y],STATUS[y]); n++; }
     }
   } /* for (k = 0; k < 8; k += incr_vois) */
 #ifdef DEBUG
@@ -465,17 +499,17 @@ static int32_t TrouveComposantes2(int32_t x, uint8_t *F, int32_t rs, int32_t N, 
     return n;
 } // TrouveComposantes2() 
 
-#define EN_FAH     0 
+#define EN_FAHS     0 
 #define WATERSHED  1
 #define MASSIF     2
 #define WATERSHED2 3
 #define MODIFIE    4
 
 /* ==================================== */
-int32_t Watershed(
+void Watershed(
   struct xvimage *image,
   int32_t incr_vois, 
-  Fah * FAH,
+  Fahs * FAHS,
   uint32_t *STATUS, 
   CompactTree * cpct)
 /* ==================================== */
@@ -497,13 +531,13 @@ int32_t Watershed(
   LIFO = CreeLifoVide(N);
 
   // INITIALISATIONS
-  FahFlush(FAH); // Re-initialise la FAH
+  FahsFlush(FAHS); // Re-initialise la FAHS
 
   // etiquetage des c-maxima (doit pouvoir se faire au vol lors de la construction de l'arbre)
   for (i = 0; i < N; i++)
   {
-    c = INDEXCOMP(F[i],STATUS[i]);
-    if (NBFILS(c) == 0) Set(i,MASSIF);
+    c = INDEXCOMP(cpct, F[i],STATUS[i]);
+    if (NBFILS(cpct, c) == 0) Set(i,MASSIF);
   } // for (i = 0; i < N; i++)
 
   // empile les c-voisins des c-maxima
@@ -514,10 +548,10 @@ int32_t Watershed(
       for (k = 0; k < 8; k += incr_vois)
       {
         j = voisin(i, k, rs, N);
-        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAH)))
+        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAHS)))
 	{
-          Set(j,EN_FAH);
-          FahPush(FAH, j, NDG_MAX - F[j]);
+          Set(j,EN_FAHS);
+          FahsPush(FAHS, j, NDG_MAX - F[j]);
 	}
       } /* for (k = 0; k < 8; k += incr_vois) */
     } // if (IsSet(i,MASSIF))
@@ -525,10 +559,10 @@ int32_t Watershed(
 
   // ******************************* BOUCLE 1
   nbelev = 0;
-  while (!FahVide(FAH))
+  while (!FahsVide(FAHS))
   {
-    x = FahPop(FAH);
-    UnSet(x,EN_FAH);
+    x = FahsPop(FAHS);
+    UnSet(x,EN_FAHS);
 #ifdef DEBUG
     printf("Pop Point %d,%d Niveau %d\n", x % rs, x / rs, F[x]);
 #endif
@@ -554,7 +588,7 @@ int32_t Watershed(
 
     if (c != -1)
     {
-      if (NBFILS(c) == 0) // feuille
+      if (NBFILS(cpct, c) == 0) // feuille
       {
         nbelev++;
         F[x] = DECODENIV(cpct->comp[c]);      // eleve le niveau du point x
@@ -564,14 +598,14 @@ int32_t Watershed(
 #ifdef DEBUG
         printf("    Eleve au niveau: %d ; MASSIF\n", F[x]);
 #endif
-        // empile les c-voisins de x non marques MASSIF ni WATERSHED ni EN_FAH
+        // empile les c-voisins de x non marques MASSIF ni WATERSHED ni EN_FAHS
         for (k = 0; k < 8; k += incr_vois)
         {
           y = voisin(x, k, rs, N);
-          if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,WATERSHED)) && (!IsSet(y,EN_FAH)))
+          if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,WATERSHED)) && (!IsSet(y,EN_FAHS)))
           {
-            Set(y,EN_FAH);
-            FahPush(FAH, y, NDG_MAX - F[y]);
+            Set(y,EN_FAHS);
+            FahsPush(FAHS, y, NDG_MAX - F[y]);
 #ifdef DEBUG
             printf("        Push Point %d,%d Niveau %d\n", y % rs, y / rs, F[y]);
 #endif
@@ -580,11 +614,11 @@ int32_t Watershed(
       } // if feuille
       else 
       {
-        Set(x,EN_FAH);
+        Set(x,EN_FAHS);
         LifoPush(LIFO, x);
       }
     } // if (c != -1)
-  } // while (!FahVide(FAH))
+  } // while (!FahsVide(FAHS))
 
 #ifdef VERBOSE
   printf("Nombre d'elevations en premiere passe %d\n", nbelev);
@@ -594,7 +628,7 @@ int32_t Watershed(
   while (!LifoVide(LIFO))
   {
     x = LifoPop(LIFO);
-    UnSet(x,EN_FAH);
+    UnSet(x,EN_FAHS);
 #ifdef DEBUG
     printf("Pop Point %d,%d Niveau %d\n", x % rs, x / rs, F[x]);
 #endif
@@ -636,17 +670,17 @@ int32_t Watershed(
       Set(x,MODIFIE);
 
 #ifdef PARANO
-      if (NBFILS(c) == 0) // feuille
+      if (NBFILS(cpct, c) == 0) // feuille
         printf("ERREUR: POINT MASSIF TROUVE EN PASSE 2!!!!\n");
 #endif
 
-      // empile les c-voisins de x non marques MASSIF ni WATERSHED ni EN_FAH
+      // empile les c-voisins de x non marques MASSIF ni WATERSHED ni EN_FAHS
       for (k = 0; k < 8; k += incr_vois)
       {
         y = voisin(x, k, rs, N);
-        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,WATERSHED)) && (!IsSet(y,EN_FAH)))
+        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,WATERSHED)) && (!IsSet(y,EN_FAHS)))
         {
-          Set(y,EN_FAH);
+          Set(y,EN_FAHS);
           LifoPush(LIFO, y);
 #ifdef DEBUG
           printf("        Push Point %d,%d Niveau %d\n", y % rs, y / rs, F[y]);
@@ -662,9 +696,10 @@ int32_t Watershed(
   LifoTermine(LIFO);
 } // Watershed()
 
+#ifdef NOT_USED
 /* ==================================== */
-static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
-	      Fah * FAH, uint32_t *STATUS, CompactTree * cpct)
+static void Watershed1(struct xvimage *image, int32_t incr_vois,
+	      Fahs * FAHS, uint32_t *STATUS, CompactTree * cpct)
 /* ==================================== */
 // propage a partir d'un point constructible
 #undef F_NAME
@@ -673,14 +708,14 @@ static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
   uint8_t *F = UCHARDATA(image);
   int32_t rs = rowsize(image);
   int32_t N = rs * colsize(image);
-  int32_t i, j, k, x, y;
+  int32_t k, x, y;
   int32_t c;                        /* une composante */
   int32_t tabcomp[8];               /* liste de composantes */
   int32_t ncomp;                    /* nombre de composantes dans tabcomp */
   int32_t nbelev;                   /* nombre d'elevations effectuees */
 
   // INITIALISATIONS
-  FahFlush(FAH); // Re-initialise la FAH
+  FahsFlush(FAHS); // Re-initialise la FAHS
 
   // cherche un point constructible
   for (x = 0; x < N; x++)
@@ -692,18 +727,18 @@ static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
       c = LowestCommonAncestor(cpct, ncomp, tabcomp, F[x]);
     if (c != -1)
     {
-      Set(x,EN_FAH);
-      FahPush(FAH, x, NDG_MAX - F[x]);
+      Set(x,EN_FAHS);
+      FahsPush(FAHS, x, NDG_MAX - F[x]);
       break;
     }
   } // for (x = 0; x < N; x++)
 
   // BOUCLE PRINCIPALE
   nbelev = 0;
-  while (!FahVide(FAH))
+  while (!FahsVide(FAHS))
   {
-    x = FahPop(FAH);
-    UnSet(x,EN_FAH);
+    x = FahsPop(FAHS);
+    UnSet(x,EN_FAHS);
 #ifdef DEBUG
     printf("Pop Point %d,%d Niveau %d\n", x % rs, x / rs, F[x]);
 #endif
@@ -733,7 +768,7 @@ static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
       F[x] = DECODENIV(cpct->comp[c]);      // eleve le niveau du point x
       STATUS[x] = DECODENUM(cpct->comp[c]); // maj pointeur image -> composantes 
       Set(x,MODIFIE);
-      if (NBFILS(c) == 0) // feuille
+      if (NBFILS(cpct, c) == 0) // feuille
       {
         Set(x,MASSIF);
 #ifdef DEBUG
@@ -741,7 +776,7 @@ static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
 #endif
       } // if feuille
       else
-      if (NBFILS(c) > 1) // noeud
+      if (NBFILS(cpct, c) > 1) // noeud
       {
         Set(x,WATERSHED);
 #ifdef DEBUG
@@ -753,30 +788,31 @@ static int32_t Watershed1(struct xvimage *image, int32_t incr_vois,
         printf("%s : ERREUR COMPOSANTE BRANCHE!!!\n", F_NAME);
 #endif
 
-      // empile les c-voisins de x non marques MASSIF ni EN_FAH
+      // empile les c-voisins de x non marques MASSIF ni EN_FAHS
       for (k = 0; k < 8; k += incr_vois)
       {
         y = voisin(x, k, rs, N);
-        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAH)))
+        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAHS)))
         {
-          Set(y,EN_FAH);
-          FahPush(FAH, y, NDG_MAX - F[y]);
+          Set(y,EN_FAHS);
+          FahsPush(FAHS, y, NDG_MAX - F[y]);
 #ifdef DEBUG
           printf("        Push Point %d,%d Niveau %d\n", y % rs, y / rs, F[y]);
 #endif
         }
       } // for (k = 0; k < 8; k += incr_vois)
     } // if (c != -1)
-  } // while (!FahVide(FAH))
+  } // while (!FahsVide(FAHS))
 
 #ifdef VERBOSE
     printf("Nombre d'elevations %d\n", nbelev);
 #endif
 } // Watershed1()
+#endif
 
 /* ==================================== */
-static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
-	      Fah * FAH, uint32_t *STATUS, CompactTree * cpct)
+static void Watershed2(struct xvimage *image, int32_t incr_vois,
+	      Fahs * FAHS, uint32_t *STATUS, CompactTree * cpct)
 /* ==================================== */
 // inondation a partir des voisins des maxima, suivant les ndg decroissants
 #undef F_NAME
@@ -796,13 +832,13 @@ static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
 #endif
 
   // INITIALISATIONS
-  FahFlush(FAH); // Re-initialise la FAH
+  FahsFlush(FAHS); // Re-initialise la FAHS
 
   // etiquetage des c-maxima (doit pouvoir se faire au vol lors de la construction de l'arbre)
   for (i = 0; i < N; i++)
   {
-    c = INDEXCOMP(F[i],STATUS[i]);
-    if (NBFILS(c) == 0) Set(i,MASSIF);
+    c = INDEXCOMP(cpct, F[i],STATUS[i]);
+    if (NBFILS(cpct, c) == 0) Set(i,MASSIF);
   } // for (i = 0; i < N; i++)
 
   // empile les c-voisins des c-maxima
@@ -813,10 +849,10 @@ static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
       for (k = 0; k < 8; k += incr_vois)
       {
         j = voisin(i, k, rs, N);
-        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAH)))
+        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAHS)))
 	{
-          Set(j,EN_FAH);
-          FahPush(FAH, j, NDG_MAX - F[j]);
+          Set(j,EN_FAHS);
+          FahsPush(FAHS, j, NDG_MAX - F[j]);
 	}
       } /* for (k = 0; k < 8; k += incr_vois) */
     } // if (IsSet(i,MASSIF))
@@ -824,10 +860,10 @@ static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
 
   // BOUCLE PRINCIPALE
   nbelev = 0;
-  while (!FahVide(FAH))
+  while (!FahsVide(FAHS))
   {
-    x = FahPop(FAH);
-    UnSet(x,EN_FAH);
+    x = FahsPop(FAHS);
+    UnSet(x,EN_FAHS);
 #ifdef DEBUG
     printf("Pop Point %d,%d Niveau %d\n", x % rs, x / rs, F[x]);
 #endif
@@ -865,7 +901,7 @@ static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
       F[x] = DECODENIV(cpct->comp[c]);      // eleve le niveau du point x
       STATUS[x] = DECODENUM(cpct->comp[c]); // maj pointeur image -> composantes 
       Set(x,MODIFIE);
-      if (NBFILS(c) == 0) // feuille
+      if (NBFILS(cpct, c) == 0) // feuille
       {
         Set(x,MASSIF);
 #ifdef DEBUG
@@ -873,7 +909,7 @@ static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
 #endif
       } // if feuille
       else
-      if (NBFILS(c) > 1) // noeud
+      if (NBFILS(cpct, c) > 1) // noeud
       {
         Set(x,WATERSHED);
 #ifdef DEBUG
@@ -885,30 +921,31 @@ static int32_t Watershed2(struct xvimage *image, int32_t incr_vois,
         printf("%s : ERREUR COMPOSANTE BRANCHE!!!\n", F_NAME);
 #endif
 
-      // empile les c-voisins de x non marques MASSIF ni EN_FAH
+      // empile les c-voisins de x non marques MASSIF ni EN_FAHS
       for (k = 0; k < 8; k += incr_vois)
       {
         y = voisin(x, k, rs, N);
-        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAH)))
+        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAHS)))
         {
-          Set(y,EN_FAH);
-          FahPush(FAH, y, NDG_MAX - F[y]);
+          Set(y,EN_FAHS);
+          FahsPush(FAHS, y, NDG_MAX - F[y]);
 #ifdef DEBUG
           printf("        Push Point %d,%d Niveau %d\n", y % rs, y / rs, F[y]);
 #endif
         }
       } // for (k = 0; k < 8; k += incr_vois)
     } // if (c != -1)
-  } // while (!FahVide(FAH))
+  } // while (!FahsVide(FAHS))
 
 #ifdef VERBOSE
     printf("Nombre d'elevations %d\n", nbelev);
 #endif
 } // Watershed2()
 
+#ifdef NOT_USED
 /* ==================================== */
-static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
-	      Fah * FAH, uint32_t *STATUS, CompactTree * cpct)
+static void Watershed3(struct xvimage *image, int32_t incr_vois,
+	      Fahs * FAHS, uint32_t *STATUS, CompactTree * cpct)
 /* ==================================== */
 // propagation en largeur a partir des voisins des maxima
 #undef F_NAME
@@ -928,13 +965,13 @@ static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
 #endif
 
   // INITIALISATIONS
-  FahFlush(FAH); // Re-initialise la FAH
+  FahsFlush(FAHS); // Re-initialise la FAHS
 
   // etiquetage des c-maxima (doit pouvoir se faire au vol lors de la construction de l'arbre)
   for (i = 0; i < N; i++)
   {
-    c = INDEXCOMP(F[i],STATUS[i]);
-    if (NBFILS(c) == 0) Set(i,MASSIF);
+    c = INDEXCOMP(cpct, F[i],STATUS[i]);
+    if (NBFILS(cpct, c) == 0) Set(i,MASSIF);
   } // for (i = 0; i < N; i++)
 
   // empile les c-voisins des c-maxima
@@ -945,10 +982,10 @@ static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
       for (k = 0; k < 8; k += incr_vois)
       {
         j = voisin(i, k, rs, N);
-        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAH)))
+        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAHS)))
 	{
-          Set(j,EN_FAH);
-          FahPush(FAH, j, 0);
+          Set(j,EN_FAHS);
+          FahsPush(FAHS, j, 0);
 	}
       } /* for (k = 0; k < 8; k += incr_vois) */
     } // if (IsSet(i,MASSIF))
@@ -956,10 +993,10 @@ static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
 
   // BOUCLE PRINCIPALE
   nbelev = 0;
-  while (!FahVide(FAH))
+  while (!FahsVide(FAHS))
   {
-    x = FahPop(FAH);
-    UnSet(x,EN_FAH);
+    x = FahsPop(FAHS);
+    UnSet(x,EN_FAHS);
 #ifdef DEBUG
     printf("Pop Point %d,%d Niveau %d\n", x % rs, x / rs, F[x]);
 #endif
@@ -997,7 +1034,7 @@ static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
       F[x] = DECODENIV(cpct->comp[c]);      // eleve le niveau du point x
       STATUS[x] = DECODENUM(cpct->comp[c]); // maj pointeur image -> composantes 
       Set(x,MODIFIE);
-      if (NBFILS(c) == 0) // feuille
+      if (NBFILS(cpct, c) == 0) // feuille
       {
         Set(x,MASSIF);
 #ifdef DEBUG
@@ -1005,7 +1042,7 @@ static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
 #endif
       } // if feuille
       else
-      if (NBFILS(c) > 1) // noeud
+      if (NBFILS(cpct, c) > 1) // noeud
       {
         Set(x,WATERSHED);
 #ifdef DEBUG
@@ -1017,30 +1054,31 @@ static int32_t Watershed3(struct xvimage *image, int32_t incr_vois,
         printf("    Eleve au niveau: %d ; MASSIF\n", F[x]);
 #endif
 
-      // empile les c-voisins de x non marques MASSIF ni EN_FAH
+      // empile les c-voisins de x non marques MASSIF ni EN_FAHS
       for (k = 0; k < 8; k += incr_vois)
       {
         y = voisin(x, k, rs, N);
-        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAH)))
+        if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAHS)))
         {
-          Set(y,EN_FAH);
-          FahPush(FAH, y, 0);
+          Set(y,EN_FAHS);
+          FahsPush(FAHS, y, 0);
 #ifdef DEBUG
           printf("        Push Point %d,%d Niveau %d\n", y % rs, y / rs, F[y]);
 #endif
         }
       } // for (k = 0; k < 8; k += incr_vois)
     } // if (c != -1)
-  } // while (!FahVide(FAH))
+  } // while (!FahsVide(FAHS))
 
 #ifdef VERBOSE
     printf("Nombre d'elevations %d\n", nbelev);
 #endif
 } // Watershed3()
+#endif
 
 /* ==================================== */
-static int32_t Watershed4(struct xvimage *image, int32_t incr_vois,
-	      Fah * FAH, uint32_t *STATUS, CompactTree * cpct)
+static void Watershed4(struct xvimage *image, int32_t incr_vois,
+	      Fahs * FAHS, uint32_t *STATUS, CompactTree * cpct)
 /* ==================================== */
 // inondation a partir des voisins des maxima, suivant les ndg decroissants
 // nouvelle (08/03) caracterisation des points destructibles
@@ -1058,13 +1096,13 @@ static int32_t Watershed4(struct xvimage *image, int32_t incr_vois,
   int32_t lcalevel;                 /* niveau du lca */
 
   // INITIALISATIONS
-  FahFlush(FAH); // Re-initialise la FAH
+  FahsFlush(FAHS); // Re-initialise la FAHS
 
   // etiquetage des c-maxima (doit pouvoir se faire au vol lors de la construction de l'arbre)
   for (i = 0; i < N; i++)
   {
-    c = INDEXCOMP(F[i],STATUS[i]);
-    if (NBFILS(c) == 0) Set(i,MASSIF);
+    c = INDEXCOMP(cpct, F[i],STATUS[i]);
+    if (NBFILS(cpct, c) == 0) Set(i,MASSIF);
   } // for (i = 0; i < N; i++)
 
   // empile les c-voisins des c-maxima
@@ -1075,10 +1113,10 @@ static int32_t Watershed4(struct xvimage *image, int32_t incr_vois,
       for (k = 0; k < 8; k += incr_vois)
       {
         j = voisin(i, k, rs, N);
-        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAH)))
+        if ((j != -1) && (!IsSet(j,MASSIF)) && (!IsSet(j,EN_FAHS)))
 	{
-          Set(j,EN_FAH);
-          FahPush(FAH, j, NDG_MAX - F[j]);
+          Set(j,EN_FAHS);
+          FahsPush(FAHS, j, NDG_MAX - F[j]);
 	}
       } /* for (k = 0; k < 8; k += incr_vois) */
     } // if (IsSet(i,MASSIF))
@@ -1086,10 +1124,10 @@ static int32_t Watershed4(struct xvimage *image, int32_t incr_vois,
 
   // BOUCLE PRINCIPALE
   nbelev = 0;
-  while (!FahVide(FAH))
+  while (!FahsVide(FAHS))
   {
-    x = FahPop(FAH);
-    UnSet(x,EN_FAH);
+    x = FahsPop(FAHS);
+    UnSet(x,EN_FAHS);
 #ifdef DEBUG
     printf("Pop Point %d,%d Niveau %d\n", x % rs, x / rs, F[x]);
 #endif
@@ -1121,7 +1159,7 @@ printf("    LCA: %d ; level: %d\n", c, lcalevel);
         F[x] = lcalevel;      // eleve le niveau du point x
         STATUS[x] = DECODENUM(cpct->comp[c]); // maj pointeur image -> composantes 
         Set(x,MODIFIE);
-        if (NBFILS(c) == 0) // feuille
+        if (NBFILS(cpct, c) == 0) // feuille
         {
           Set(x,MASSIF);
 #ifdef DEBUG
@@ -1129,7 +1167,7 @@ printf("    Eleve au niveau: %d ; MASSIF\n", F[x]);
 #endif
         } // if feuille
         else
-        if (NBFILS(c) > 1) // noeud
+        if (NBFILS(cpct, c) > 1) // noeud
         {
 #ifdef DEBUG
 printf("    Eleve au niveau: %d ; LPE\n", F[x]);
@@ -1140,14 +1178,14 @@ printf("    Eleve au niveau: %d ; LPE\n", F[x]);
           printf("%s : ERREUR COMPOSANTE BRANCHE!!!\n", F_NAME);
 #endif
 
-        // empile les c-voisins de x non marques MASSIF ni EN_FAH
+        // empile les c-voisins de x non marques MASSIF ni EN_FAHS
         for (k = 0; k < 8; k += incr_vois)
         {
           y = voisin(x, k, rs, N);
-          if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAH)))
+          if ((y != -1) && (!IsSet(y,MASSIF)) && (!IsSet(y,EN_FAHS)))
           {
-            Set(y,EN_FAH);
-            FahPush(FAH, y, NDG_MAX - F[y]);
+            Set(y,EN_FAHS);
+            FahsPush(FAHS, y, NDG_MAX - F[y]);
 #ifdef DEBUG
             printf("        Push Point %d,%d Niveau %d\n", y % rs, y / rs, F[y]);
 #endif
@@ -1155,12 +1193,13 @@ printf("    Eleve au niveau: %d ; LPE\n", F[x]);
         } // for (k = 0; k < 8; k += incr_vois)
       } // if (lcalevel <= F[x])
     } // if (ncomp > 0)
-  } // while (!FahVide(FAH))
+  } // while (!FahsVide(FAHS))
 #ifdef VERBOSE
   printf("Nombre d'elevations %d\n", nbelev);
 #endif
 } // Watershed4()
 
+#ifdef NOT_USED
 /* ==================================== */
 static int32_t trouvefeuillerec(CompactTree * cpct, int32_t p, int32_t v)
 /* ==================================== */
@@ -1169,7 +1208,7 @@ static int32_t trouvefeuillerec(CompactTree * cpct, int32_t p, int32_t v)
 */ 
 {
   int32_t i, n, j, f;
-  n = NBFILS(p);
+  n = NBFILS(cpct, p);
   if (n == 0) 
   {
     if (cpct->dyn[p] == v) return p;
@@ -1177,7 +1216,7 @@ static int32_t trouvefeuillerec(CompactTree * cpct, int32_t p, int32_t v)
   }
   for (i = 0; i < n; i++) 
   {
-    j = INDEXFILS(p, i);
+    j = INDEXFILS(cpct, p, i);
     j = cpct->fils[j];
     f = trouvefeuillerec(cpct, j, v);
     if (f != -1) return f;
@@ -1219,6 +1258,7 @@ static int32_t InList(int32_t e, int32_t *list, int32_t n)
     if (list[--n] == e) return 1;
   return 0;
 } /* InList() */
+#endif
 
 /* ==================================== */
 int32_t lwshedval(struct xvimage *image, int32_t connex)
@@ -1247,8 +1287,8 @@ repeter
 jusqu'a size(tree) ==  1
 */
 {
-  register int32_t i, j, k, l;      /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;      /* index muet */
+  register int32_t x, y;      /* index muet de pixel */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
@@ -1256,7 +1296,7 @@ jusqu'a size(tree) ==  1
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
   uint8_t *V;             /* l'image resultat (valuations) */
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
   uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
                                 /* en sortie, contient le numero de la composante de niveau h */
@@ -1265,7 +1305,6 @@ jusqu'a size(tree) ==  1
   uint8_t *node_at_level; /* tableau de booleens */
   CompTree * TREE;              /* resultat : l'arbre des composantes */
   CompactTree * cpct;           /* resultat : l'arbre des composantes compacte' */
-  int32_t vmin;
 
   switch (connex)
   {
@@ -1273,7 +1312,7 @@ jusqu'a size(tree) ==  1
     case 8: incr_vois = 1; break;
   } /* switch (connex) */
 
-  FAH = CreeFahVide(N);
+  FAHS = CreeFahsVide(N);
 
   STATUS = (uint32_t *)calloc(1,N * sizeof(int32_t));
   if (STATUS == NULL)
@@ -1312,7 +1351,7 @@ jusqu'a size(tree) ==  1
   /* ======================================================================= */
 
   BuildTree(F, rs, ps, N, connex, incr_vois,
-	    FAH, STATUS, number_nodes, node_at_level, TREE, &cpct);
+	    FAHS, STATUS, number_nodes, node_at_level, TREE, &cpct);
 
   CalculeDynamiqueMaxima(cpct);
 
@@ -1324,7 +1363,7 @@ jusqu'a size(tree) ==  1
   /* 2EME ETAPE : CALCUL DE LA LIGNE DE PARTAGE DES EAUX */
   /* ======================================================================= */
 
-  Watershed2(image, incr_vois, FAH, STATUS, cpct);
+  Watershed2(image, incr_vois, FAHS, STATUS, cpct);
 
 { int32_t nbcomp = cpct->nbcomp;
   int32_t h, c, comp;  
@@ -1358,7 +1397,7 @@ printf("f = %d ; dyn = %d ; ndg = %d ; hcf = %d\n", f, cpct->dyn[f], hcf+df, hcf
     {
       h = F[x];
       c = STATUS[x];
-      comp = INDEXCOMP(h,c);
+      comp = INDEXCOMP(cpct, h,c);
       while ((comp != cpct->pere[comp]) && (cpct->flags[cpct->pere[comp]] & FILTERED_OUT)) 
         comp = cpct->pere[comp]; // remonte branche morte
       if ((comp != f) && (h == hcf))
@@ -1370,7 +1409,7 @@ printf("f = %d ; dyn = %d ; ndg = %d ; hcf = %d\n", f, cpct->dyn[f], hcf+df, hcf
 	  {
             h = F[y];
             c = STATUS[y];
-            comp = INDEXCOMP(h,c);
+            comp = INDEXCOMP(cpct, h,c);
             while ((comp != cpct->pere[comp]) && (cpct->flags[cpct->pere[comp]] & FILTERED_OUT)) 
               comp = cpct->pere[comp]; // remonte branche morte
             if (comp == f)
@@ -1396,7 +1435,7 @@ printf("ptcol = %d,%d\n", ptcol%rs, ptcol/rs);
       {
         h = F[y];
         c = STATUS[y];
-        comp = INDEXCOMP(h,c);
+        comp = INDEXCOMP(cpct, h,c);
         // while ((comp != cpct->pere[comp]) && (cpct->flags[cpct->pere[comp]] & FILTERED_OUT)) 
         //  comp = cpct->pere[comp]; // remonte branche morte
         if ((comp != f) && !(cpct->flags[comp] & FILTERED_OUT) && (NbFilsNonFiltres(cpct,comp) == 0))
@@ -1424,7 +1463,7 @@ printf("vf = %d, nvf = %d\n", vf, nvf);
         {
           h = F[y];
           c = STATUS[y];
-          comp = INDEXCOMP(h,c);
+          comp = INDEXCOMP(cpct, h,c);
 	  //          while ((comp != cpct->pere[comp]) && (cpct->flags[cpct->pere[comp]] & FILTERED_OUT)) 
           //  comp = cpct->pere[comp]; // remonte branche morte
           if (comp == f) { voisinf = 1; printf("x = %d,%d ; y = %d,%d ; voisin de f =  %d\n", x % rs, x / rs, y % rs, y / rs, f); }
@@ -1451,7 +1490,7 @@ printf("supprime %d ; nbcomp = %d\n", f, nbcomp);
     {
       h = F[x];
       c = STATUS[x];
-      comp = INDEXCOMP(h,c);
+      comp = INDEXCOMP(cpct, h,c);
       if (comp == f)
       {
         F[x] = nvf;
@@ -1477,7 +1516,9 @@ printf("supprime %d ; nbcomp = %d\n", cpct->pere[comp], nbcomp);
 	  }
 	}
 
+#ifdef DEBUG
 AfficheCompactTree(cpct);
+#endif
 
   } // while (nbcomp > 1)
 }
@@ -1489,7 +1530,7 @@ AfficheCompactTree(cpct);
   /* ================================================ */
 
   IndicsTermine();
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   TermineCompTree(TREE);
   TermineCompactTree(cpct);
   free(STATUS);
@@ -1500,26 +1541,25 @@ AfficheCompactTree(cpct);
 } /* lwshedval() */
 
 /* ==================================== */
-int32_t lwshedtopo(struct xvimage *image, int32_t connex)
+int32_t ldynamique_grimaud_ldynamique_grimaud_lwshedtopo(struct xvimage *image, int32_t connex)
 /* ==================================== */
-/*! \fn int32_t lwshedtopo(struct xvimage *image, int32_t connex)
+/*! \fn int32_t ldynamique_grimaud_ldynamique_grimaud_lwshedtopo(struct xvimage *image, int32_t connex)
     \param image (entrée/sortie) : une image 2D ndg
     \param connex (entrée) : 4 ou 8 
     \return code erreur : 0 si échec, 1 sinon
     \brief ligne de partage des eaux "topologique" (algo MC, GB)
 */
 #undef F_NAME
-#define F_NAME "lwshedtopo"
+#define F_NAME "ldynamique_grimaud_ldynamique_grimaud_lwshedtopo"
 {
-  register int32_t i, j, k, l;      /* index muet */
-  register int32_t w, x, y, z;      /* index muet de pixel */
+  register int32_t i, k;      /* index muet */
   int32_t rs = rowsize(image);      /* taille ligne */
   int32_t cs = colsize(image);      /* taille colonne */
   int32_t ds = depth(image);        /* nb plans */
   int32_t ps = rs * cs;             /* taille plan */
   int32_t N = ps * ds;              /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  Fah * FAH;                    /* la file d'attente hierarchique */
+  Fahs * FAHS;                    /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
   uint32_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
                                 /* en sortie, contient le numero de la composante de niveau h */
@@ -1535,7 +1575,7 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
     case 8: incr_vois = 1; break;
   } /* switch (connex) */
 
-  FAH = CreeFahVide(N);
+  FAHS = CreeFahsVide(N);
 
   STATUS = (uint32_t *)calloc(1,N * sizeof(int32_t));
   if (STATUS == NULL)
@@ -1572,7 +1612,7 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
   for (i = 0; i < N; i++) STATUS[i] = NOT_ANALYZED;
   k = 0;             /* recherche un pixel k de niveau de gris minimal dans l'image */
   for (i = 0; i < N; i++) if (F[i] < F[k]) k = i;
-  FahPush(FAH, k, F[k]);
+  FahsPush(FAHS, k, F[k]);
 
 #ifdef VERBOSE
   fprintf(stderr, "init terminee\n");
@@ -1583,9 +1623,9 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
   /* ================================================ */
 
   if ((connex == 4) || (connex == 8))
-    (void)flood(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
+    (void)flood(F[k], FAHS, STATUS, number_nodes, node_at_level, TREE, incr_vois, rs, N, F); 
   else
-    (void)flood3d(F[k], FAH, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
+    (void)flood3d(F[k], FAHS, STATUS, number_nodes, node_at_level, TREE, connex, rs, ps, N, F);
 
 #ifdef VERBOSE
   fprintf(stderr, "flood terminee\n");
@@ -1610,18 +1650,18 @@ int32_t lwshedtopo(struct xvimage *image, int32_t connex)
   /* ======================================================================= */
 
   IndicsInit(N);
-  Watershed4(image, incr_vois, FAH, STATUS, cpct);
+  Watershed4(image, incr_vois, FAHS, STATUS, cpct);
 
   /* ================================================ */
   /* UN PEU DE MENAGE                                 */
   /* ================================================ */
 
   IndicsTermine();
-  FahTermine(FAH);
+  FahsTermine(FAHS);
   TermineCompTree(TREE);
   TermineCompactTree(cpct);
   free(STATUS);
   free(number_nodes);
   free(node_at_level);
   return(1);
-} /* lwshedtopo() */
+} /* ldynamique_grimaud_ldynamique_grimaud_lwshedtopo() */

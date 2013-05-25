@@ -1,11 +1,6 @@
 #!/bin/sh
 USAGE="Usage: $0 in n out"
-if [ $# -gt 3 ]
-then
-	echo $USAGE
-        exit
-fi
-if [ $# -lt 3 ]
+if [ $# -ne 3 ]
 then
 	echo $USAGE
         exit
@@ -16,6 +11,6 @@ seuil2 $1 $[$2+1] 255 0 255 _$1.2
 inverse _$1.2 _$1.2
 addconst _$1.2 $[$2+1] _$1.2
 min _$1.1 _$1.2 $3
-#rm _$1.1
-#rm _$1.2
+rm _$1.1
+rm _$1.2
 

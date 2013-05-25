@@ -1,10 +1,18 @@
-3dkhalimskize $1 h _1
-3dborder _1 _1
-pgm2vtk _1 1 _1.vtk
-3dkhalimskize $2 h _2
-3dborder _2 _2
-pgm2vtk _2 1 _2.vtk
-3dkhalimskize $3 h _3
-3dborder _3 _3
-pgm2vtk _3 1 _3.vtk
-multirender _1.vtk _2.vtk _3.vtk &
+#!/bin/sh
+USAGE="Usage: $0 in1.pgm in2.pgm in3.pgm"
+if [ $# -ne 3 ]
+then
+	echo $USAGE
+        exit
+fi
+3dkhalimskize $1 h /tmp/visu3pgm_1
+3dborder /tmp/visu3pgm_1 /tmp/visu3pgm_1
+pgm2vtk /tmp/visu3pgm_1 1 /tmp/visu3pgm_1.vtk
+3dkhalimskize $2 h /tmp/visu3pgm_2
+3dborder /tmp/visu3pgm_2 /tmp/visu3pgm_2
+pgm2vtk /tmp/visu3pgm_2 1 /tmp/visu3pgm_2.vtk
+3dkhalimskize $3 h /tmp/visu3pgm_3
+3dborder /tmp/visu3pgm_3 /tmp/visu3pgm_3
+pgm2vtk /tmp/visu3pgm_3 1 /tmp/visu3pgm_3.vtk
+multirender /tmp/visu3pgm_1.vtk /tmp/visu3pgm_2.vtk /tmp/visu3pgm_3.vtk
+rm -f /tmp/visu3pgm_*

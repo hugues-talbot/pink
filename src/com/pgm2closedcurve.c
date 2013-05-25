@@ -1,4 +1,37 @@
-/* $Id: pgm2closedcurve.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file pgm2closedcurve.c
 
 \brief extracts a curve from a binary image
@@ -13,12 +46,12 @@ It may be equal to 4 or 8 in 2D, and to 6, 18 or 26 in 3D.
 If given, the point <B>(x, y, z)</B> (2D) or <B>(x, y, z)</B> (3D) 
 is taken as the starting point of the curve, and must be a curve point. 
 The output is the text file \b out.curve, with the following format:<br>
-c nbpoints<br>
+b nbpoints<br>
 x1 y1<br>
 x2 y2<br>
 ...<br>
 or (3D): 
-C nbpoints<br>
+B nbpoints<br>
 x1 y1 z1<br>
 x2 y2 z2<br>
 ...<br>
@@ -27,12 +60,12 @@ The points of the curve may also be valued. This is must be indicated by
 a value of 40, 80, 60, 180 or 260 for the parameter \b connex, instead
 of 4, 8, 6, 18 or 26 respectively. In this case,
 the output is the text file \b out.curve, with the following format:<br>
-cv nbpoints<br>
+n nbpoints<br>
 x1 y1 v1<br>
 x2 y2 v2<br>
 ...<br>
 or (3D): 
-CV nbpoints<br>
+N nbpoints<br>
 x1 y1 z1 v1<br>
 x2 y2 z2 v2<br>
 ...<br>
@@ -49,6 +82,7 @@ x2 y2 z2 v2<br>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mctopo.h>
@@ -63,11 +97,12 @@ int32_t uniquevoisin4(
 /* =============================================================== */
 /* retourne l'indice du premier voisin objet de p trouvé dans le voisinage */
 {
-	register uint8_t * ptr = img+p;
-        if ((p%rs!=rs-1) && (*(ptr+1))) return p+1;
-        if ((p>=rs) && (*(ptr-rs))) return p-rs;
-        if ((p%rs!=0) && (*(ptr-1))) return p-1;
-        if ((p<N-rs) && (*(ptr+rs))) return p+rs;  
+  register uint8_t * ptr = img+p;
+  if ((p%rs!=rs-1) && (*(ptr+1))) return p+1;
+  if ((p>=rs) && (*(ptr-rs))) return p-rs;
+  if ((p%rs!=0) && (*(ptr-1))) return p-1;
+  if ((p<N-rs) && (*(ptr+rs))) return p+rs;  
+  assert(1); exit(1);
 } // uniquevoisin4()
 
 /* =============================================================== */
@@ -79,15 +114,16 @@ int32_t uniquevoisin8(
 /* =============================================================== */
 /* retourne l'indice du premier voisin objet de p trouvé dans le voisinage */
 {
-	register uint8_t * ptr = img+p;
-        if ((p%rs!=rs-1) && (*(ptr+1))) return p+1;
-        if (((p%rs!=rs-1)&&(p>=rs)) && (*(ptr+1-rs))) return p+1-rs;
-        if ((p>=rs) && (*(ptr-rs))) return p-rs;
-        if (((p>=rs)&&(p%rs!=0)) && (*(ptr-rs-1))) return p-rs-1;
-        if ((p%rs!=0) && (*(ptr-1))) return p-1;
-        if (((p%rs!=0)&&(p<N-rs)) && (*(ptr-1+rs))) return p-1+rs;
-        if ((p<N-rs) && (*(ptr+rs))) return p+rs;
-        if (((p<N-rs)&&(p%rs!=rs-1)) && (*(ptr+rs+1))) return p+rs+1;
+  register uint8_t * ptr = img+p;
+  if ((p%rs!=rs-1) && (*(ptr+1))) return p+1;
+  if (((p%rs!=rs-1)&&(p>=rs)) && (*(ptr+1-rs))) return p+1-rs;
+  if ((p>=rs) && (*(ptr-rs))) return p-rs;
+  if (((p>=rs)&&(p%rs!=0)) && (*(ptr-rs-1))) return p-rs-1;
+  if ((p%rs!=0) && (*(ptr-1))) return p-1;
+  if (((p%rs!=0)&&(p<N-rs)) && (*(ptr-1+rs))) return p-1+rs;
+  if ((p<N-rs) && (*(ptr+rs))) return p+rs;
+  if (((p<N-rs)&&(p%rs!=rs-1)) && (*(ptr+rs+1))) return p+rs+1;
+  assert(1); exit(1);
 } // uniquevoisin8()
 
 /* ========================================== */
@@ -106,6 +142,7 @@ int32_t uniquevoisin6(
   if (((i%ps)<ps-rs) && B[i+rs]) return i+rs;
   if ((i>=ps) && B[i-ps]) return i-ps;
   if ((i<N-ps) && B[i+ps]) return i+ps;
+  assert(1); exit(1);
 } /* uniquevoisin6() */
 
 /* ========================================== */
@@ -136,6 +173,7 @@ int32_t uniquevoisin18(
   if (((i>=ps)&&(i%rs!=0)) && B[-ps+i-1]) return -ps+i-1;
   if (((i>=ps)&&(i%ps<ps-rs)) && B[-ps+i+rs]) return -ps+i+rs;
   if (((i>=ps)) && B[-ps+i]) return -ps+i;
+  assert(1); exit(1);
 } /* uniquevoisin18() */
 
 /* ========================================== */
@@ -174,12 +212,12 @@ int32_t uniquevoisin26(
   if (((i>=ps)&&(i%ps<ps-rs)) && B[-ps+i+rs]) return -ps+i+rs;
   if (((i>=ps)&&(i%ps<ps-rs)&&(i%rs!=rs-1)) && B[-ps+i+rs+1]) return -ps+i+rs+1;
   if (((i>=ps)) && B[-ps+i]) return -ps+i;
+  assert(1); exit(1);
 } /* uniquevoisin26() */
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * sav;
@@ -252,17 +290,17 @@ int main(argc, argv)
       fprintf(stderr, "%s: (x,y) not a curve point\n", argv[0]);
       exit(1);
     }
-    else if ((connex == 6) && (nbvoiso6(F, p, rs, ps, N) != 2))
+    else if ((connex == 6) && (mctopo3d_nbvoiso6(F, p, rs, ps, N) != 2))
     {
       fprintf(stderr, "%s: (x,y,z) not a curve point\n", argv[0]);
       exit(1);
     }
-    else if ((connex == 18) && (nbvoiso18(F, p, rs, ps, N) != 2))
+    else if ((connex == 18) && (mctopo3d_nbvoiso18(F, p, rs, ps, N) != 2))
     {
       fprintf(stderr, "%s: (x,y,z) not a curve point\n", argv[0]);
       exit(1);
     }
-    else if ((connex == 26) && (nbvoiso26(F, p, rs, ps, N) != 2))
+    else if ((connex == 26) && (mctopo3d_nbvoiso26(F, p, rs, ps, N) != 2))
     {
       fprintf(stderr, "%s: (x,y,z) not a curve point\n", argv[0]);
       exit(1);
@@ -276,11 +314,11 @@ int main(argc, argv)
     else if (connex == 8)
     { for (x = 0; x < N; x++) if ((F[x]) && (nbvois8(F, x, rs, N) == 2)) { p = x; break; } }
     else if (connex == 6)
-    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso6(F, x, rs, ps, N) != 2)) { p = x; break; } }
+    { for (x = 0; x < N; x++) if ((F[x]) && (mctopo3d_nbvoiso6(F, x, rs, ps, N) != 2)) { p = x; break; } }
     else if (connex == 18)
-    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso18(F, x, rs, ps, N) != 2)) { p = x; break; } }
+    { for (x = 0; x < N; x++) if ((F[x]) && (mctopo3d_nbvoiso18(F, x, rs, ps, N) != 2)) { p = x; break; } }
     else if (connex == 26)
-    { for (x = 0; x < N; x++) if ((F[x]) && (nbvoiso26(F, x, rs, ps, N) != 2)) { p = x; break; } }
+    { for (x = 0; x < N; x++) if ((F[x]) && (mctopo3d_nbvoiso26(F, x, rs, ps, N) != 2)) { p = x; break; } }
     if (p == -1)
     {
       fprintf(stderr, "%s: no curve point\n", argv[0]);
@@ -333,9 +371,9 @@ int main(argc, argv)
     {
       P[n] = p; n++; F[p] = 0;
       p = uniquevoisin6(F, p, rs, ps, N);
-    } while (nbvoiso6(F, p, rs, ps, N) == 1);
+    } while (mctopo3d_nbvoiso6(F, p, rs, ps, N) == 1);
     P[n] = p; n++;
-    if (nbvoiso6(F, p, rs, ps, N) != 0)
+    if (mctopo3d_nbvoiso6(F, p, rs, ps, N) != 0)
       fprintf(stderr, "%s: warning: final point not a curve point\n", argv[0]);
     if (!voisins6(p, sp, rs, ps))
       fprintf(stderr, "%s: warning: not a closed curve\n", argv[0]);
@@ -348,9 +386,9 @@ int main(argc, argv)
     {
       P[n] = p; n++; F[p] = 0;
       p = uniquevoisin18(F, p, rs, ps, N);
-    } while (nbvoiso18(F, p, rs, ps, N) == 1);
+    } while (mctopo3d_nbvoiso18(F, p, rs, ps, N) == 1);
     P[n] = p; n++;
-    if (nbvoiso18(F, p, rs, ps, N) != 0)
+    if (mctopo3d_nbvoiso18(F, p, rs, ps, N) != 0)
       fprintf(stderr, "%s: warning: final point not a curve point\n", argv[0]);
     if (!voisins18(p, sp, rs, ps))
       fprintf(stderr, "%s: warning: not a closed curve\n", argv[0]);
@@ -363,9 +401,9 @@ int main(argc, argv)
     {
       P[n] = p; n++; F[p] = 0;
       p = uniquevoisin26(F, p, rs, ps, N);
-    } while (nbvoiso26(F, p, rs, ps, N) == 1);
+    } while (mctopo3d_nbvoiso26(F, p, rs, ps, N) == 1);
     P[n] = p; n++;
-    if (nbvoiso26(F, p, rs, ps, N) != 0)
+    if (mctopo3d_nbvoiso26(F, p, rs, ps, N) != 0)
       fprintf(stderr, "%s: warning: final point not a curve point\n", argv[0]);
     if (!voisins26(p, sp, rs, ps))
       fprintf(stderr, "%s: warning: not a closed curve\n", argv[0]);
@@ -377,12 +415,12 @@ int main(argc, argv)
   {
     if ((connex == 4) || (connex == 8))
     {
-      fprintf(fd, "cv %d\n", n); 
+      fprintf(fd, "n %d\n", n); 
       for (x = 0; x < n; x++) fprintf(fd, "%d %d %d\n", P[x] % rs, P[x] / rs, S[P[x]]);
     }
     else
     {
-      fprintf(fd, "CV %d\n", n); 
+      fprintf(fd, "N %d\n", n); 
       for (x = 0; x < n; x++) fprintf(fd, "%d %d %d %d\n", P[x] % rs, (P[x] % ps) / rs, P[x] / ps, S[P[x]]);
     }
   }
@@ -390,12 +428,12 @@ int main(argc, argv)
   {
     if ((connex == 4) || (connex == 8))
     {
-      fprintf(fd, "c %d\n", n); 
+      fprintf(fd, "b %d\n", n); 
       for (x = 0; x < n; x++) fprintf(fd, "%d %d\n", P[x] % rs, P[x] / rs);
     }
     else
     {
-      fprintf(fd, "C %d\n", n); 
+      fprintf(fd, "B %d\n", n); 
       for (x = 0; x < n; x++) fprintf(fd, "%d %d %d\n", P[x] % rs, (P[x] % ps) / rs, P[x] / ps);
     }
   }

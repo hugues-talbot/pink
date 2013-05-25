@@ -1,4 +1,37 @@
-/* $Id: radialopening.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file radialopening.c
 
 \brief radial opening by line
@@ -31,6 +64,7 @@ of 360 by an integer.
 #include <larith.h>
 #include <ldilateros.h>
 #include <ldraw.h>
+#include <lsym.h>
 
 //#define DEBUG 
 //#define VERBOSE
@@ -74,7 +108,7 @@ void open_image(struct xvimage * img, struct xvimage * org_img, struct xvimage *
   copy2image(img, org_img);
 
   //Erosion
-  leros(img, mask, rowsize(mask)/2, colsize(mask)/2);
+  ldilateros_leros(img, mask, rowsize(mask)/2, colsize(mask)/2);
 
   
   //As mask is a line dilated by an ordinary structuring element,
@@ -85,15 +119,14 @@ void open_image(struct xvimage * img, struct xvimage * org_img, struct xvimage *
   }
 
   //Dilation
-  ldilat(img, mask, rowsize(mask)/2, colsize(mask)/2);
+  ldilateros_ldilat(img, mask, rowsize(mask)/2, colsize(mask)/2);
 
   return;
 }
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
- int argc; char **argv; 
 {
   struct xvimage * image; 
   struct xvimage * opened_image; 
@@ -101,9 +134,9 @@ int main(argc, argv)
   struct xvimage * mask;
   struct xvimage * dilatmask=NULL;
 
-  int32_t rs, cs, ds, N, Nmask;
-  int32_t sex, sey, sez;
-  int32_t length, i, j, nangles; 
+  index_t i, rs, cs, ds, N, Nmask;
+  index_t sex, sey, sez;
+  int32_t length, nangles; 
   uint8_t * mask_data;
 
   double angle=DEFAULT_ANGLE;
@@ -170,7 +203,7 @@ int main(argc, argv)
 #endif
     drawline(mask, length, angle*(double)i);
     if (dilatmask != NULL) {
-      ldilat(mask, dilatmask, sex, sey);
+      ldilateros_ldilat(mask, dilatmask, sex, sey);
     }
     open_image(opened_image, image, mask);
 #ifdef DEBUG

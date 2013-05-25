@@ -1,4 +1,37 @@
-/* $Id: barycentrelab.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file barycentrelab.c
 
 \brief compute the center of gravity of each labeled region
@@ -9,8 +42,11 @@
 Compute the center of gravity of each labeled region.
 Labels should be consecutive integers. 
 Only strictly positive labels are considered. 
+The result is an image that contains labelled points. 
+More precisely, each barycentre is represented by the nearest grid
+point that is given the same label as the region.
 
-<B>Types supported:</B> byte 2d
+<B>Types supported:</B> long 2d, long 3d
 
 <B>Category:</B> geo
 \ingroup  geo
@@ -29,16 +65,10 @@ Only strictly positive labels are considered.
 #include <lbarycentre.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
-  struct xvimage * imagebyte;
-  uint32_t *L;
-  uint8_t *B;
-  uint32_t x;
-  int32_t rs, cs, d, N;
 
   if (argc != 3)
   {
@@ -59,25 +89,8 @@ int main(argc, argv)
     exit(1);
   }
 
-  rs = rowsize(image);
-  cs = colsize(image);
-  d = depth(image);
-  N = rs * cs * d;
-  L = ULONGDATA(image);
-  
-  imagebyte = allocimage(image->name, rs, cs, d, VFF_TYP_1_BYTE);
-  if (imagebyte == NULL)
-  {
-    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
-    exit(1);
-  }
-  B = UCHARDATA(imagebyte);
-
-  for (x = 0; x < N; x++) B[x] = (uint8_t)min(L[x],255);
-
-  writeimage(imagebyte, argv[argc-1]);
+  writeimage(image, argv[argc-1]);
   freeimage(image);
-  freeimage(imagebyte);
 
   return 0;
 } /* main */

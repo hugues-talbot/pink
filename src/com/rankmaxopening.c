@@ -1,4 +1,37 @@
-/* $Id: rankmaxopening.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file rankmaxopening.c
 
 \brief rank-max opening 
@@ -10,7 +43,7 @@ Let F be the input image, G be the output image, and E the structuring
 element.
 
 The rank-max opening [Ron86]
-of structuring element $E$ and parameter \b r \in [0...1]
+of structuring element $E$ and parameter \b r in [0...1]
 may be defined by G = min(F,dilation(rankfilter(F,E,1-r),E))
 
 [Ron86] C. Ronse:
@@ -39,14 +72,13 @@ pages 77-81, 1986.
 #include <larith.h>
 
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * orig;
   struct xvimage * elem;
-  int32_t x, y, z;
+  index_t x, y, z;
   double r;
 
   if (argc != 5)
@@ -56,10 +88,15 @@ int main(argc, argv)
   }
 
   image = readimage(argv[1]);
-  elem = readse(argv[2], &x, &y, &z);
-  if ((image == NULL) || (elem == NULL))
+  if (image == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
+    exit(1);
+  }
+  elem = readse(argv[2], &x, &y, &z);
+  if (elem == NULL)
+  {
+    fprintf(stderr, "%s: readse failed\n", argv[0]);
     exit(1);
   }
   
@@ -79,7 +116,7 @@ int main(argc, argv)
       fprintf(stderr, "%s: function lfiltreordre failed\n", argv[0]);
       exit(1);
     }
-    if (! ldilat(image, elem, x, y))
+    if (! ldilateros_ldilat(image, elem, x, y))
     {
       fprintf(stderr, "%s: function lfiltreordre failed\n", argv[0]);
       exit(1);

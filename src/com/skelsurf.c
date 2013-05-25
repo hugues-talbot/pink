@@ -1,4 +1,37 @@
-/* $Id: skelsurf.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file skelsurf.c
 
 \brief surfacic binary skeleton guided by a priority image
@@ -16,8 +49,6 @@ the possible choices are:
 \li 1: approximate quadratic euclidean distance
 \li 2: chamfer distance
 \li 3: exact quadratic euclidean distance
-\li 4: 4-distance in 2d
-\li 8: 8-distance in 2d
 \li 6: 6-distance in 3d
 \li 18: 18-distance in 3d
 \li 26: 26-distance in 3d
@@ -35,7 +66,7 @@ set otherwise.
 The algorithm is the following:
 
 \verbatim
-C = null image
+C = {y in F | Tb(y) > 1}
 Repeat until stability
   choose a point x in X, simple for X, such that C[x] == 0 
     and such that P[x] is minimal
@@ -58,6 +89,19 @@ References:<BR>
 
 \author Michel Couprie
 */
+
+/*
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 0 26 %RESULTS/skelsurf_b3a_0_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 1 26 %RESULTS/skelsurf_b3a_1_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 2 26 %RESULTS/skelsurf_b3a_2_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 3 26 %RESULTS/skelsurf_b3a_3_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 6 26 %RESULTS/skelsurf_b3a_6_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 18 26 %RESULTS/skelsurf_b3a_18_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 26 26 %RESULTS/skelsurf_b3a_26_26.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 0 6 %RESULTS/skelsurf_b3a_0_6.pgm
+%TEST skelsurf %IMAGES/3dbyte/binary/b3a.pgm 0 26 %IMAGES/3dbyte/binary/b3a2.pgm %RESULTS/skelsurf_b3a_0_26_i.pgm
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -69,9 +113,8 @@ References:<BR>
 #include <lskeletons.h>
 
 /* =============================================================== */
-int32_t main(argc, argv) 
+int main(int32_t argc, char **argv)
 /* =============================================================== */
-  int32_t argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * prio;
@@ -115,7 +158,7 @@ int32_t main(argc, argv)
       int32_t ds = depth(prio2);
       int32_t N = rs * cs * ds;
       uint8_t *B = UCHARDATA(prio2);
-      uint32_t *L;
+      int32_t *L;
       int32_t x;
       prio = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
       if (prio == NULL)
@@ -123,8 +166,8 @@ int32_t main(argc, argv)
         fprintf(stderr, "%s: allocimage failed\n", argv[0]);
         exit(1);
       }
-      L = ULONGDATA(prio);
-      for (x = 0; x < N; x++) L[x] = (uint32_t)B[x];
+      L = SLONGDATA(prio);
+      for (x = 0; x < N; x++) L[x] = (int32_t)B[x];
       freeimage(prio2);
     }
     else if (datatype(prio2) == VFF_TYP_4_BYTE)

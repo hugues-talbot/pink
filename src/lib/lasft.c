@@ -1,4 +1,37 @@
-/* $Id: lasft.c,v 1.1.1.1 2008-11-25 08:01:40 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*
    lasft.c
    lhpclosing.c
@@ -27,6 +60,8 @@
 #include <lhtkern3d.h>
 #include <lasft.h>
 #include <lmedialaxis.h>
+#include <ldilateros.h>
+#include <ldilateros3d.h>
 
 #define VERBOSE
 #define FERMETURE_EN_1
@@ -77,7 +112,7 @@ void hpclosing(struct xvimage * image, int32_t nptb, int32_t * tab_es_x, int32_t
     exit(0);
   }
   // max image_cpy image_sav image_cpy
-  for (i = 0; i < N; i++) C[i] = max(C[i],S[i]);
+  for (i = 0; i < N; i++) C[i] = mcmax(C[i],S[i]);
   if (!lhthindelta(image, image_cpy, -1, connex))
   {
     fprintf(stderr, "%s: function lhthindelta failed\n", F_NAME);
@@ -138,7 +173,7 @@ void hpclosingdisc(struct xvimage * image, struct xvimage * dist, int32_t r, int
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -190,7 +225,7 @@ void hpopening(struct xvimage * image, int32_t nptb, int32_t * tab_es_x, int32_t
     exit(0);
   }
   // min image_cpy image_sav image_cpy
-  for (i = 0; i < N; i++) C[i] = min(C[i],S[i]);
+  for (i = 0; i < N; i++) C[i] = mcmin(C[i],S[i]);
   if (!lhthickdelta(image, image_cpy, -1, connex))
   {
     fprintf(stderr, "%s: function lhthickdelta failed\n", "hpopening");
@@ -250,7 +285,7 @@ void hpopeningdisc(struct xvimage * image, struct xvimage * dist, int32_t r, int
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MIN; else T[i] = NDG_MAX;
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta(image, image_tmp, -1, connex))
@@ -267,7 +302,6 @@ void hpopeningdisc_bad(struct xvimage * image, struct xvimage * dist, int32_t r,
 /* =============================================================== */
 /* juste pour montrer que ce n'est pas la bonne definition */
 {
-  struct xvimage * image_sav;
   struct xvimage * image_tmp;
   uint8_t *I, *T;
   int32_t rs, cs, N, i, r2 = r * r;
@@ -348,7 +382,7 @@ void condhpclosing(
   }
 
   // min image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],C[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],C[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta(image, image_tmp, -1, connex))
@@ -366,7 +400,7 @@ void condhpclosing(
   }
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -436,7 +470,7 @@ void condhpclosingdisc(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -507,7 +541,7 @@ void condhpclosingdisc2(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -554,7 +588,7 @@ void condhpopening(
   }
 
   // max image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],C[i]);    
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],C[i]);    
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -572,7 +606,7 @@ void condhpopening(
   }
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta(image, image_tmp, -1, connex))
@@ -622,7 +656,7 @@ void condhpopeningdisc(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],C[i]);    
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],C[i]);    
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -642,7 +676,7 @@ void condhpopeningdisc(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MIN; else T[i] = NDG_MAX;
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta(image, image_tmp, -1, connex))
@@ -693,7 +727,7 @@ void condhpopeningdisc2(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],C[i]);    
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],C[i]);    
 
   // controle topologique pour l'erosion
   if (!lhthindelta(image, image_tmp, -1, connex))
@@ -713,7 +747,7 @@ void condhpopeningdisc2(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MIN; else T[i] = NDG_MAX;
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta(image, image_tmp, -1, connex))
@@ -725,6 +759,51 @@ void condhpopeningdisc2(
   freeimage(image_tmp);
   freeimage(image_sav);
 } // condhpopeningdisc2()
+
+
+/* =============================================================== */
+int32_t lasft_2D3D(struct xvimage * image, struct xvimage * imagec, struct xvimage * imagecc, 
+                   int32_t connex, int32_t rayonmax)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "lasft_2D3D" 
+{
+  if (depth(image) == 1)
+  {
+    if (! lasft(image, imagec, imagecc, connex, rayonmax))
+    {
+      fprintf(stderr, "%s: lasft failed\n", F_NAME);
+      exit(1);
+    }
+  }
+  else
+  {
+    if (! lasft3d(image, imagec, imagecc, connex, rayonmax))
+    {
+      fprintf(stderr, "%s: lasft3d failed\n", F_NAME);
+      exit(1);
+    }
+  }
+
+  return 1;
+} /* lasft_2D3D */
+
+/* =============================================================== */
+int32_t lasft_2D3D_null(struct xvimage * image,  
+                   int32_t connex, int32_t rayonmax)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "lasft_2D3D_null" 
+{
+  if (!lasft_2D3D(image, NULL, NULL, connex, rayonmax))
+  {
+    fprintf(stderr, "%s: lasft_2D3D failed\n", F_NAME);
+    exit(1);
+  }
+  
+  return 1;
+} /* lasft_2D3D */
+
 
 /* =============================================================== */
 int32_t lasft(struct xvimage * image, struct xvimage * imagec, struct xvimage * imagecc, 
@@ -816,8 +895,6 @@ int32_t lasft_ndg(struct xvimage * image, struct xvimage * imagec, struct xvimag
 #define F_NAME "ndg" 
 {
   int32_t rayon;
-  int32_t rs = rowsize(image);         /* taille ligne */
-  int32_t cs = colsize(image);         /* taille colonne */
   int32_t d, xc, yc, x, y, nptb;
   int32_t *tab_es_x, *tab_es_y;
 
@@ -928,6 +1005,34 @@ int32_t lhpopeningdisc(struct xvimage * image, int32_t connex, int32_t rayon)
   return 1;
 } // lhpopeningdisc()
 
+
+/* =============================================================== */
+int32_t lasftmed_2D3D(struct xvimage * image, int32_t connex, int32_t rayonmax)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "lasftmed_2D3D" 
+{
+
+  if (depth(image) == 1)
+  {
+    if (! lasftmed(image, connex, rayonmax))
+    {
+      fprintf(stderr, "lasftmed failed\n");
+      exit(1);
+    }
+  }
+  else
+  {
+    if (! lasftmed3d(image, connex, rayonmax))
+    {
+      fprintf(stderr, "lasftmed3d failed\n");
+      exit(1);
+    }
+  }
+  return 1;
+
+} /* asftmed_2D3D */
+
 /* =============================================================== */
 int32_t lasftmed(struct xvimage * image, int32_t connex, int32_t rayonmax)
 /* =============================================================== */
@@ -941,17 +1046,17 @@ int32_t lasftmed(struct xvimage * image, int32_t connex, int32_t rayonmax)
   int32_t N = rowsize(image) * colsize(image);
 
   medaxis = copyimage(image);
-  if (! lmedialaxisbin(medaxis, 8))
+  if (! lmedialaxis_lmedialaxisbin(medaxis, 8))
   {
-    fprintf(stderr, "lasft: lmedialaxisbin failed\n");
+    fprintf(stderr, "lasft: lmedialaxis_lmedialaxisbin failed\n");
     exit(0);
   }
   medaxis_i = copyimage(image);
   M = UCHARDATA(medaxis_i);
   for (x = 0; x < N; x++) M[x] = NDG_MAX - M[x]; // inverse M
-  if (! lmedialaxisbin(medaxis_i, 8))
+  if (! lmedialaxis_lmedialaxisbin(medaxis_i, 8))
   {
-    fprintf(stderr, "lasft: lmedialaxisbin failed\n");
+    fprintf(stderr, "lasft: lmedialaxis_lmedialaxisbin failed\n");
     exit(0);
   }
 
@@ -1005,13 +1110,13 @@ void hpclosing3d(struct xvimage *image, int32_t nptb, int32_t *tab_es_x, int32_t
     exit(0);
   }
   memcpy(C, I, N); // copie image dans image_cpy
-  if (! lerosbin3d2(image_cpy, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+  if (! ldilateros3d_lerosbin3d2(image_cpy, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
   {
-    fprintf(stderr, "%s: function lerosbin3d2 failed\n", F_NAME);
+    fprintf(stderr, "%s: function ldilateros3d_lerosbin3d2 failed\n", F_NAME);
     exit(0);
   }
   // max image_cpy image_sav image_cpy
-  for (i = 0; i < N; i++) C[i] = max(C[i],S[i]);
+  for (i = 0; i < N; i++) C[i] = mcmax(C[i],S[i]);
   if (!lhthindelta3d(image, image_cpy, -1, connex))
   {
     fprintf(stderr, "%s: function lhthindelta3d failed\n", F_NAME);
@@ -1073,7 +1178,7 @@ void hpclosing3dball(struct xvimage *image, struct xvimage * dist, int32_t r, in
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   // controle topologique pour l'erosion
   if (!lhthindelta3d(image, image_tmp, -1, connex))
@@ -1134,9 +1239,9 @@ void hpopening3d(struct xvimage *image, int32_t nptb, int32_t *tab_es_x, int32_t
   I = UCHARDATA(image);
   S = UCHARDATA(image_sav);
   T = UCHARDATA(image_tmp);
-  if (! lerosbin3d2(image_tmp, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+  if (! ldilateros3d_lerosbin3d2(image_tmp, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
   {
-    fprintf(stderr, "%s: function lerosbin3d2 failed\n", F_NAME);
+    fprintf(stderr, "%s: function ldilateros3d_lerosbin3d2 failed\n", F_NAME);
     exit(0);
   }
   if (!lhthindelta3d(image, image_tmp, -1, connex))
@@ -1151,7 +1256,7 @@ void hpopening3d(struct xvimage *image, int32_t nptb, int32_t *tab_es_x, int32_t
     exit(0);
   }
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
   if (!lhthickdelta3d(image, image_tmp, -1, connex))
   {
     fprintf(stderr, "%s: function lhthickdelta3d failed\n", F_NAME);
@@ -1213,7 +1318,7 @@ void hpopening3dball(struct xvimage *image, struct xvimage * dist, int32_t r, in
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MIN; else T[i] = NDG_MAX;
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta3d(image, image_tmp, -1, connex))
@@ -1287,7 +1392,7 @@ void condhpclosing3d(
   }
 
   // min image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],C[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],C[i]);
 
   if (!lhthickdelta3d(image, image_tmp, -1, connex))
   {
@@ -1297,14 +1402,14 @@ void condhpclosing3d(
 
   memcpy(T, I, N); // copie image dans image_tmp
 
-  if (! lerosbin3d2(image_tmp, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+  if (! ldilateros3d_lerosbin3d2(image_tmp, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
   {
-    fprintf(stderr, "%s: function lerosbin3d2 failed\n", F_NAME);
+    fprintf(stderr, "%s: function ldilateros3d_lerosbin3d2 failed\n", F_NAME);
     exit(0);
   }
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   if (!lhthindelta3d(image, image_tmp, -1, connex))
   {
@@ -1375,7 +1480,7 @@ void condhpclosing3dball(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],S[i]);
 
   // controle topologique pour l'erosion
   if (!lhthindelta3d(image, image_tmp, -1, connex))
@@ -1417,14 +1522,14 @@ void condhpopening3d(
   S = UCHARDATA(image_sav);
   T = UCHARDATA(image_tmp);
 
-  if (! lerosbin3d2(image_tmp, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+  if (! ldilateros3d_lerosbin3d2(image_tmp, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
   {
-    fprintf(stderr, "%s: function lerosbin3d2 failed\n", F_NAME);
+    fprintf(stderr, "%s: function ldilateros3d_lerosbin3d2 failed\n", F_NAME);
     exit(0);
   }
 
   // max image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],C[i]);    
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],C[i]);    
 
   if (!lhthindelta3d(image, image_tmp, -1, connex))
   {
@@ -1441,7 +1546,7 @@ void condhpopening3d(
   }
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   if (!lhthickdelta3d(image, image_tmp, -1, connex))
   {
@@ -1492,7 +1597,7 @@ void condhpopening3dball(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MAX; else T[i] = NDG_MIN;
 
   // max image_tmp cond image_tmp
-  for (i = 0; i < N; i++) T[i] = max(T[i],C[i]);    
+  for (i = 0; i < N; i++) T[i] = mcmax(T[i],C[i]);    
 
   // controle topologique pour l'erosion
   if (!lhthindelta3d(image, image_tmp, -1, connex))
@@ -1512,7 +1617,7 @@ void condhpopening3dball(
   for(i=0; i<N; i++) if (D[i] > r2) T[i] = NDG_MIN; else T[i] = NDG_MAX;
 
   // min image_tmp image_sav image_tmp
-  for (i = 0; i < N; i++) T[i] = min(T[i],S[i]);
+  for (i = 0; i < N; i++) T[i] = mcmin(T[i],S[i]);
 
   // controle topologique pour la dilatation
   if (!lhthickdelta3d(image, image_tmp, -1, connex))
@@ -1616,9 +1721,6 @@ int32_t lasft_ndg3d(struct xvimage * image, struct xvimage * imagec, struct xvim
 #define F_NAME "ndg3d" 
 {
   int32_t rayon;
-  int32_t rs = rowsize(image);         /* taille ligne */
-  int32_t cs = colsize(image);         /* taille colonne */
-  int32_t ds = depth(image);           /* nb plans */
   int32_t d, xc, yc, zc, x, y, z, nptb;
   int32_t *tab_es_x, *tab_es_y, *tab_es_z;
 
@@ -1693,24 +1795,23 @@ int32_t lasftmed3d(struct xvimage * image, int32_t connex, int32_t rayonmax)
 #undef F_NAME
 #define F_NAME "lasftmed3d" 
 {
-  int32_t rayon;
   struct xvimage * medaxis;   // axe median de image
   struct xvimage * medaxis_i; // axe median de l'inverse de image
   uint8_t *M;
   int32_t x, N = rowsize(image) * colsize(image) * depth(image);
 
   medaxis = copyimage(image);
-  if (! lmedialaxisbin(medaxis, 26))
+  if (! lmedialaxis_lmedialaxisbin(medaxis, 26))
   {
-    fprintf(stderr, "%s: lmedialaxisbin failed\n", F_NAME);
+    fprintf(stderr, "%s: lmedialaxis_lmedialaxisbin failed\n", F_NAME);
     exit(0);
   }
   medaxis_i = copyimage(image);
   M = UCHARDATA(medaxis_i);
   for (x = 0; x < N; x++) M[x] = NDG_MAX - M[x]; // inverse M
-  if (! lmedialaxisbin(medaxis_i, 26))
+  if (! lmedialaxis_lmedialaxisbin(medaxis_i, 26))
   {
-    fprintf(stderr, "%s: lmedialaxisbin failed\n", F_NAME);
+    fprintf(stderr, "%s: lmedialaxis_lmedialaxisbin failed\n", F_NAME);
     exit(0);
   }
 

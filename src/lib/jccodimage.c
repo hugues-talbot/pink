@@ -1,3 +1,37 @@
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -5,6 +39,7 @@
 #include <sys/types.h>
 #include <sys/types.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <mccodimage.h>
 #include <jccodimage.h>
 #include <mcutil.h>
@@ -58,6 +93,7 @@ int32_t voisinGA(int32_t i, int32_t k, int32_t rs, int32_t nb)
     case 4: if((i-nb) < nb-2*rs) return i+rs;else return -1;
     case 5: if( ((i-nb) < nb-rs) && (i%rs < rs-1)) return i-nb+rs; else return -1;
     }
+  assert(1); exit(1);
 }
 
 /* ==================================== */
@@ -156,7 +192,7 @@ int32_t Sommetx3d(int32_t u, int32_t N,int32_t rs, int32_t ps)
   case 0:        return u;
   case 1:        return u-N;
   case 2:        return u-(2*N);
-  default:       printf("Erreur !!!!!!!!!!!!!!!!\n");
+  default:       assert(1); exit(1);
   } 
 }
 /* Etant donne un graphe 6connexe (en 3D) retourne l'extremite x */
@@ -168,7 +204,7 @@ int32_t Sommety3d(int32_t u, int32_t N,int32_t rs, int32_t ps)
   case 0:        return u+1;
   case 1:        return u-N+rs;
   case 2:        return u-(2*N)+ps;
-  default:       printf("Erreur !!!!!!!!!!!!!!!!\n");
+  default:       assert(1); exit(1);
   }
 }
 
@@ -180,9 +216,10 @@ int32_t Sommetx4d(int32_t u, int32_t N, int32_t rs, int32_t ps, int32_t vs)
   case 1:        return u-N;
   case 2:        return u-(2*N);
   case 3:        return u-(3*N);
-  default:       printf("Erreur !!!!!!!!!!!!!!!!\n");
+  default:       assert(1); exit(1);
   }
 }
+
 int32_t Sommety4d(int32_t u, int32_t N, int32_t rs, int32_t ps, int32_t vs)
 {
   switch(u/N)
@@ -191,7 +228,7 @@ int32_t Sommety4d(int32_t u, int32_t N, int32_t rs, int32_t ps, int32_t vs)
   case 1:        return u-N+rs;
   case 2:        return u-(2*N)+ps;
   case 3:        return u-(3*N)+vs;
-  default:       printf("Erreur !!!!!!!!!!!!!!!!\n");
+  default:       assert(1); exit(1);
   }
 }
 
@@ -206,7 +243,7 @@ int32_t Arete(int32_t x, int32_t y, int32_t rs, int32_t N)
 }
 
 /* ==================================== */
-int voisin4D8(int i, int k, int rs, int ps, int N, int Nt)
+int32_t voisin4D8(int32_t i, int32_t k, int32_t rs, int32_t ps, int32_t N, int32_t Nt)
 /* i : index du point dans l'image */
 /* k : direction du voisin */
 /* rs : taille d'une rangee */
@@ -227,4 +264,5 @@ int voisin4D8(int i, int k, int rs, int ps, int N, int Nt)
   case 6:  if (i > N) return i-N; else return -1;
   case 7:  if (i < Nt - N) return i+N; else return -1;
   }
+  assert(1); exit(1);
 }/* voisin4D8() */

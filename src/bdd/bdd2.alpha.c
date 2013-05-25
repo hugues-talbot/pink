@@ -1,8 +1,10 @@
-/* $Id: bdd2.alpha.c,v 1.1.1.1 2008-11-25 08:01:36 mcouprie Exp $ */
+/* $Id: bdd2.alpha.c,v 1.2 2009-01-06 13:18:06 mcouprie Exp $ */
+#include <bdd.h>
+
 int bddAlpha3SimpleCarreX(int a, int b, int c, int d, int e, int f, int g, int h)
 {
 int neg = 1;
-l9_1:	if(g)
+if(g)
 goto l5_2;
 neg = !neg; goto l13_2;
 l5_2:	if(f)
@@ -92,7 +94,7 @@ ret1: return !neg;
 int bddAlpha3SimpleCarreY(int a, int b, int c, int d, int e, int f, int g, int h)
 {
 int neg = 1;
-l9_1:	if(g)
+if(g)
 goto l5_2;
 neg = !neg; goto l13_2;
 l5_2:	if(f)
@@ -182,7 +184,7 @@ ret1: return !neg;
 int bddAlpha3SimpleCarreZ(int a, int b, int c, int d, int e, int f, int g, int h)
 {
 int neg = 1;
-l9_1:	if(g)
+if(g)
 goto l5_2;
 neg = !neg; goto l13_2;
 l5_2:	if(f)
@@ -272,7 +274,7 @@ ret1: return !neg;
 int bddAlpha3SimpleInterX(int a, int b)
 {
 int neg = 1;
-l0_1:	if(a)
+if(a)
 goto l0_2;
 neg = !neg; goto l0_2;
 l0_2:	if(b)
@@ -284,7 +286,7 @@ ret1: return !neg;
 int bddAlpha3SimpleInterY(int a, int b)
 {
 int neg = 1;
-l0_1:	if(a)
+if(a)
 goto l0_2;
 neg = !neg; goto l0_2;
 l0_2:	if(b)
@@ -296,7 +298,7 @@ ret1: return !neg;
 int bddAlpha3SimpleInterZ(int a, int b)
 {
 int neg = 1;
-l0_1:	if(a)
+if(a)
 goto l0_2;
 neg = !neg; goto l0_2;
 l0_2:	if(b)

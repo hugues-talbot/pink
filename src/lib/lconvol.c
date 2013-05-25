@@ -1,4 +1,37 @@
-/* $Id: lconvol.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 
 /* lconvol: operateur de convolution par un masque de taille quelconque */
 /* algorithme naif */
@@ -22,7 +55,7 @@
 #define EPSILON 1E-50
 #define BIGNUMBER 1E30
 #define VERBOSE
-#define DEBUG
+//#define DEBUG
 
 #define TRAITEBORDS
 
@@ -55,7 +88,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
   int32_t *tab_m_x;       /* liste des coord. x des points non nuls du masque. */
   int32_t *tab_m_y;       /* liste des coord. y des points non nuls du masque. */
   float *tab_m_val;   /* liste des valeurs des points non nuls du masque. */
-  float nb, sum;
+  float sum;
   int32_t rs2, cs2;
   if (depth(f) != 1) 
   {
@@ -82,7 +115,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
 
     nptb = 0;
     for (i = 0; i < Nm; i += 1)
-      if (abs(M[i]) > EPSILON)
+      if (mcabs(M[i]) > EPSILON)
         nptb += 1;
 
 #ifdef DEBUG
@@ -100,7 +133,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
     k = 0;
     for (j = 0; j < csm; j += 1)
       for (i = 0; i < rsm; i += 1)
-        if (abs(M[j * rsm + i]) > EPSILON)
+        if (mcabs(M[j * rsm + i]) > EPSILON)
         {
           tab_m_x[k] = i;
           tab_m_y[k] = j;
@@ -167,9 +200,8 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
     struct xvimage *mf1;  // FFT de maskpad (partie reelle)
     struct xvimage *mf2;  // FFT de maskpad (partie imaginaire)
     float *IF1, *IF2, *MF1, *MF2;
-    double tmp;
 
-    rs2 = max(rs+rs,cs+cs);
+    rs2 = mcmax(rs+rs,cs+cs);
     cs2 = 1;
     while (cs2 < rs2) cs2 = cs2 << 1;
     rs2 = cs2;
@@ -198,7 +230,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
 #ifdef DEBUG
     writeimage(mf1, "_maskpad");
 #endif
-    if (! lfft(mf1, mf2, 0))
+    if (! lfft2(mf1, mf2, 0))
     {
       fprintf(stderr, "%s: function lfft failed\n", F_NAME);
       return 0;
@@ -217,7 +249,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
 #ifdef DEBUG
     writeimage(if1, "_imagepad");
 #endif
-    if (! lfft(if1, if2, 0))
+    if (! lfft2(if1, if2, 0))
     {
       fprintf(stderr, "%s: function lfft failed\n", F_NAME);
       return 0;
@@ -241,7 +273,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
 #endif
 
     // FFT inverse
-    if (! lfft(if1, if2, 1))
+    if (! lfft2(if1, if2, 1))
     {
       fprintf(stderr, "%s: function lfft failed\n", F_NAME);
       return 0;
@@ -265,7 +297,7 @@ int32_t lconvol(struct xvimage *f, struct xvimage *m, int32_t mode)
   } 
   else if (mode == 3)
   {
-    int32_t n = (max(rsm,csm) + 1) / 2;
+    int32_t n = (mcmax(rsm,csm) + 1) / 2;
     struct xvimage *tmp = lexpandframe(f, n);
     if (tmp == NULL)
     {
@@ -318,17 +350,15 @@ int32_t ldirectionalfilter(
   int32_t rs = rowsize(image);
   int32_t cs = colsize(image);
   int32_t N = rs * cs;
-  float *F = FLOATDATA(image);
   struct xvimage *kernel;
-  int32_t rsk, csk, Nk;
+  int32_t rsk, csk;
   float *K;
   int32_t n, i, j, x, y, xr, yr, x0, y0;
   struct xvimage *result;
   float *R;
   struct xvimage *temp;
   float *T;
-  float mint, maxt;
-  float tmp, k1, k2, t1, t2, t3;
+  float tmp, k1, k2, t1, t2;
 #ifdef DEBUG
   float sum, sum1, sum2;
   char buf1[256];
@@ -374,9 +404,9 @@ int32_t ldirectionalfilter(
         y = j - y0;
         xr = cos(theta) * x + sin(theta) * y;
         yr = -sin(theta) * x + cos(theta) * y;
-        tmp = exp(-lambda*sqr(yr)) * exp(-sigma*sqr(xr));
+        tmp = exp(-lambda*mcsqr(yr)) * exp(-sigma*mcsqr(xr));
         t1 += tmp;
-        t2 += sqr(xr) * tmp;
+        t2 += mcsqr(xr) * tmp;
       } 
     k1 = t1 / (sigma * t2);
     // calcul de la constante de normalisation k2
@@ -388,8 +418,8 @@ int32_t ldirectionalfilter(
         y = j - y0;
         xr = cos(theta) * x + sin(theta) * y;
         yr = -sin(theta) * x + cos(theta) * y;
-        tmp = exp(-lambda*sqr(yr)) * exp(-sigma*sqr(xr));
-        t2 = 1.0 - k1 * sigma * sqr(xr); 
+        tmp = exp(-lambda*mcsqr(yr)) * exp(-sigma*mcsqr(xr));
+        t2 = 1.0 - k1 * sigma * mcsqr(xr); 
         if (t2 > 0) t1 += t2 * tmp; 
       } 
     k2 = 1.0 / t1;
@@ -405,8 +435,8 @@ int32_t ldirectionalfilter(
         y = j - y0;
         xr = cos(theta) * x + sin(theta) * y;
         yr = -sin(theta) * x + cos(theta) * y;
-        K[j * rsk + i] = (float)(k2 * exp(-lambda*sqr(yr)) *
-                         (1.0 - k1*sigma*sqr(xr)) * exp(-sigma*sqr(xr))); 
+        K[j * rsk + i] = (float)(k2 * exp(-lambda*mcsqr(yr)) *
+                         (1.0 - k1*sigma*mcsqr(xr)) * exp(-sigma*mcsqr(xr))); 
 #ifdef DEBUG
         sum += K[j * rsk + i];
         if (K[j * rsk + i] > 0) sum1 += K[j * rsk + i];
@@ -432,12 +462,10 @@ int32_t ldirectionalfilter(
     writeimage(temp, buf1);
 #endif
 
-    // result = max(result, temp)
+    // result = mcmax(result, temp)
     for (i = 0; i < N; i++) 
       if (T[i] > R[i]) R[i] = T[i];
   } // for n
-
-  writeimage(result, "_result");
 
   copy2image(image, result);
   freeimage(temp);

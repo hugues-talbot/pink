@@ -1,4 +1,37 @@
-/* $Id: recalagerigide_translateplane.c,v 1.1.1.1 2008-11-25 08:01:38 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* ATTENTION: VERSION NON TESTEE */
 
 /*! \file recalagerigide.c
@@ -60,51 +93,13 @@ In 3d, the parameters are:
 #include <mcgeo.h>
 #include <lrecalagerigide_translateplane.h>
 
-
-/* ==================================== */
-double * image2list3D(struct xvimage * image, int *n)
-/* ==================================== */
-#undef F_NAME
-#define F_NAME "image2list3D"
-{
-  int rs, cs, ds, ps, N, x, y, z;
-  unsigned char *F;
-  int n1;
-  double * P1;
-
-  rs = rowsize(image);
-  cs = colsize(image);
-  ds = depth(image);
-  ps = rs * cs;
-  N = ps * ds;
-  F = UCHARDATA(image);
-  n1 = 0;                     /* compte le nombre de points non nuls pour image1 */ 
-  for (x = 0; x < N; x++) if (F[x]) n1++;
-  P1 = (double *)malloc(n1 * 3 * sizeof(double));
-  if (P1 == NULL) 
-  {   fprintf(stderr,"%s() : malloc failed for P1\n", F_NAME);
-      return NULL;
-  }
-  n1 = 0;
-  for (y = 0; y < cs; y++)
-    for (x = 0; x < rs; x++)
-      for(z = 0; z < ds; z++ )
-	if (F[z * ps + y * rs + x]) { P1[3*n1] = (double)x; P1[3*n1 + 1] = (double)y; P1[3*n1 + 2] = (double)z; n1++; }
-  
-  *n = n1;
-  return P1;
-} // image2list()
-
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image1;
   struct xvimage * image2;
-  int rs, cs, ds, ps, N, x, y, z, n;
-  unsigned char *F;
-  int n1, n2;
+  index_t n1, n2;
   double * P1, * P2, *Gamma;
   FILE* fd;
   if (argc != 4)
@@ -127,12 +122,13 @@ int main(argc, argv)
     exit(1);
   }
 
+  P1 = image2list(image1, &n1);
+  P2 = image2list(image2, &n2);
+  //  printf("n1 et n2 : %d %d \n", n1, n2);
+
   if (depth(image1) == 1) // 2D
   {
-    P1 = image2list(image1, &n1);
-    P2 = image2list(image2, &n2);
-    printf("n1 et n2 : %d %d \n", n1, n2);
-    Gamma = lrecalagerigide2d(P1, n1, P2, n2);
+    Gamma = lrecalagerigide2d_translateplane(P1, n1, P2, n2);
     printf("sx = %g\n", Gamma[0]);
     printf("sy = %g\n", Gamma[1]);
     printf("theta = %g = %g deg\n", Gamma[2], (Gamma[2]*180)/M_PI);
@@ -144,12 +140,9 @@ int main(argc, argv)
   }
   else // 3D
   {
-    P1 = image2list3D(image1, &n1);
-    P2 = image2list3D(image2, &n2);
-    printf("n1 et n2 : %d %d \n", n1, n2);
     Gamma = lrecalagerigide3d_translateplane(P1, n1, P2, n2);
     fd = fopen(argv[argc-1],"w");
-    fprintf(fd, "Parametre de translation\n", Gamma[0]);
+    fprintf(fd, "Parametre de translation\n");
     fprintf(fd, "%d %d\n", -(int)(Gamma[0]+0.5), -(int)(Gamma[1] + 0.5));    
   }
   freeimage(image1);

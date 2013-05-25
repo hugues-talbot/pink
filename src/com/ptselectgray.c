@@ -1,14 +1,51 @@
-/* $Id: ptselectgray.c,v 1.1.1.1 2008-11-25 08:01:37 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /*! \file ptselectgray.c
 
 \brief detects points in a 2D or 3D grayscale image corresponding to a given criterion 
 
-<B>Usage:</B> ptselectgray in.pgm connex t+min t+max t--min t--max out.pgm
+<B>Usage:</B> ptselectgray in.pgm connex mint+ maxt+ mint-- maxt-- out.pgm
 
 <B>Description:</B>
 
-Select all points p such that
-t+min <= T+(p) <= t+max and t--min <= T--(p) <= t--max 
+Select all points p such that the condition:<BR>
+mint+ <= T+(p) <= maxt+ and mint-- <= T--(p) <= maxt--<BR>
+is satisfied.<BR>
+
+The parameter \b connex gives the connectivity used for the minima;
+possible choices are 4, 8 in 2D and 6, 26 in 3D.
 
 <B>Types supported:</B> byte 2d, byte 3d 
 
@@ -61,7 +98,7 @@ int main(int argc, char** argv)
 
     if (argc != 8)
     {
-        fprintf(stderr, "usage: %s in.pgm connex t+min t+max t--min t--max out.pgm\n", argv[0]);
+        fprintf(stderr, "usage: %s in.pgm connex mint+ maxt+ mint-- maxt-- out.pgm\n", argv[0]);
         exit(1);
     }
 
@@ -232,7 +269,7 @@ int32_t lptselectgray(struct xvimage *image,
 //    IndicsTermine();
     free(R);
     return(1);
-} /* ltoposhrinkgray3d() */
+} // lptselectgray()
 
 
 
@@ -255,8 +292,8 @@ int32_t largepdestr6(uint8_t *img,          /* pointeur base image */
                      int32_t t6mmmax)
 /* ==================================== */
 {
-    return ((t26pmin <= t26p(img, p, rs, ps, N)) && (t26p(img, p, rs, ps, N) <= t26pmax) &&
-            (t6mmmin <= t6mm(img, p, rs, ps, N)) && (t6mm(img, p, rs, ps, N) <= t6mmmax));
+    return ((t26pmin <= mctopo3d_t26p(img, p, rs, ps, N)) && (mctopo3d_t26p(img, p, rs, ps, N) <= t26pmax) &&
+            (t6mmmin <= mctopo3d_t6mm(img, p, rs, ps, N)) && (mctopo3d_t6mm(img, p, rs, ps, N) <= t6mmmax));
 } /* largepdestr6() */
 
 
@@ -275,8 +312,8 @@ int32_t largepdestr26(uint8_t *img,          /* pointeur base image */
                         int32_t t26mmmax)
 /* ==================================== */
 {
-    return ((t6pmin <= t6p(img, p, rs, ps, N)) && (t6p(img, p, rs, ps, N) <= t6pmax) &&
-            (t26mmmin <= t26mm(img, p, rs, ps, N)) && (t26mm(img, p, rs, ps, N) <= t26mmmax));
+    return ((t6pmin <= mctopo3d_t6p(img, p, rs, ps, N)) && (mctopo3d_t6p(img, p, rs, ps, N) <= t6pmax) &&
+            (t26mmmin <= mctopo3d_t26mm(img, p, rs, ps, N)) && (mctopo3d_t26mm(img, p, rs, ps, N) <= t26mmmax));
 } /* largepdestr26() */
 
 
@@ -303,7 +340,7 @@ int32_t lptselectgray3d(struct xvimage *image,
     uint8_t *F = UCHARDATA(image);      /* l'image de depart */
     uint8_t* R;
 
-    init_topo3d();
+    mctopo3d_init_topo3d();
 
     R = (uint8_t*)calloc(N, sizeof(uint8_t));
     if (R == NULL)
@@ -350,7 +387,7 @@ int32_t lptselectgray3d(struct xvimage *image,
     /* UN PEU DE MENAGE                                 */
     /* ================================================ */
 
-    termine_topo3d();
+    mctopo3d_termine_topo3d();
     free(R);
     return(1);
 }

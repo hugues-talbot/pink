@@ -1,7 +1,45 @@
-/* $Id: mcgeo.h,v 1.1.1.1 2008-11-25 08:02:37 mcouprie Exp $ */
-#ifndef EPSILON
-#define EPSILON 1E-20
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
+
+#ifndef MCGEO__H__
+#define MCGEO__H__
+
+#ifdef __cplusplus
+extern "C" {
 #endif
+#define MCGEO_EPSILON 1E-20
 
 typedef double vec2[2];
 typedef double vec3[3];
@@ -18,7 +56,7 @@ typedef struct {
 
 typedef struct {
   double x, y;
-} point;
+} mcgeo_point;
 
 typedef struct vecteur2Dint
 	{ int32_t x,y; } vect2Dint;   /* structure representant un vecteur entier */
@@ -43,22 +81,16 @@ typedef struct {
 
 typedef struct {
   segment s1, s2, s3, s4;
-  point centre;
+  mcgeo_point centre;
   double h, w, angle;
 } rectangle;
 
 typedef struct {
   segment s1, s2;
   cercle c1, c2;
-  point centre;
+  mcgeo_point centre;
   double h, w, angle;
 } rectanglearrondi;
-
-typedef struct {
-  int32_t rs;                     /* taille d'une ligne */
-  int32_t cs;                     /* taille d'une colonne */
-  int32_t *tab;
-} mesh;
 
 #define OBJTYPE_LINE 0
 #define OBJTYPE_CLOSEDLINE 1
@@ -80,18 +112,18 @@ typedef struct {
 /* prototypes pour mcgeo.c */
 /* ============================================= */
 
-extern double detpq_qr(point p, point q, point r);
-extern int32_t estsitue(point p, point q, point r);
-extern int32_t estagauche(point p, point q, point r);
-extern int32_t estadroite(point p, point q, point r);
-extern double carrenorme(point p);
-extern double carredistance(point p, point q);
-extern double cosangle(point p, point q, point r);
-extern int32_t sontsecants(point p1, point p2, point p3, point p4);
-extern double distpointdroite(point p, droite d);
-extern double distpointsegment(point p, segment s);
-extern double distpointcercle(point p, cercle c);
-extern double distpointrectangle(point p, rectangle *r);
+extern double detpq_qr(mcgeo_point p, mcgeo_point q, mcgeo_point r);
+extern int32_t estsitue(mcgeo_point p, mcgeo_point q, mcgeo_point r);
+extern int32_t estagauche(mcgeo_point p, mcgeo_point q, mcgeo_point r);
+extern int32_t estadroite(mcgeo_point p, mcgeo_point q, mcgeo_point r);
+extern double carrenorme(mcgeo_point p);
+extern double carredistance(mcgeo_point p, mcgeo_point q);
+extern double cosangle(mcgeo_point p, mcgeo_point q, mcgeo_point r);
+extern int32_t sontsecants(mcgeo_point p1, mcgeo_point p2, mcgeo_point p3, mcgeo_point p4);
+extern double distpointdroite(mcgeo_point p, droite d);
+extern double distpointsegment(mcgeo_point p, segment s);
+extern double distpointcercle(mcgeo_point p, cercle c);
+extern double distpointrectangle(mcgeo_point p, rectangle *r);
 extern int32_t initrectangle(rectangle *r);
 extern double distpointdroite3(point3 p, point3 p1, point3 p2);
 
@@ -112,12 +144,6 @@ extern int32_t inittriangle(triangle *t);
 extern int32_t danstriangle(triangle *t, double x, double y);
 extern void printtriangle(triangle *t);
 extern int32_t dansdisque(double x, double y, double xc, double yc, double r);
-extern mesh * readmesh(char *filename);
-extern int32_t writemesh(mesh *msh, char *filename);
-extern mesh * allocmesh(int32_t rs, int32_t cs);
-extern void printmesh(mesh *msh);
-extern int32_t checkmesh(mesh *msh, int32_t rs, int32_t cs);
-extern void freemesh(mesh *msh);
 extern double dist2(double x1, double y1, double x2, double y2);
 extern double dist3(double x1, double y1, double z1, double x2, double y2, double z2);
 extern int32_t identcercle(int32_t n, double *x, double *y, double *x0, double *y0, double *r);
@@ -126,3 +152,8 @@ extern int32_t writescene(scene *scn, char *filename);
 extern scene * copyscene(scene * s);
 
 #define _mcgeo_h
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* MCGEO__H__ */

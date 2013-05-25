@@ -1,16 +1,51 @@
-/* $Id: histo.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
-/* \file histo.c
+/*
+Copyright ESIEE (2009) 
 
-\brief 
+m.couprie@esiee.fr
 
-<B>Usage:</B> 
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
+/*! \file histo.c
+
+\brief computes the histogram of an image or a region
+
+<B>Usage:</B> histo in.pgm [mask.pgm] out.list
 
 <B>Description:</B>
+Calculates the histogram of \b im.pgm (masked by the binary image
+\b mask.pgm, if given) and saves it in file \b out.list .
 
-<B>Types supported:</B> byte 2D
+<B>Types supported:</B> byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d
 
-<B>Category:</B> 
-\ingroup  
+<B>Category:</B> histo
+\ingroup  histo
 
 \author Michel Couprie
 */
@@ -22,20 +57,23 @@
 #include <mcimage.h>
 #include <lhisto.h>
 
+#define INDEX_FIRST
+/*
+*/
+
 /* =============================================================== */
-int main(argc, argv) 
+int main(int argc, char **argv)
 /* =============================================================== */
-  int argc; char **argv; 
 {
   struct xvimage * image;
   struct xvimage * mask = NULL;
-  uint32_t * histo;
-  int32_t i;
+  index_t * histo;
+  int32_t i, s;
   FILE *fd = NULL;
 
   if ((argc != 3) && (argc != 4))
   {
-    fprintf(stderr, "usage: %s filein.pgm [mask.pgm] fileout\n", argv[0]);
+    fprintf(stderr, "usage: %s filein.pgm [mask.pgm] out.list\n", argv[0]);
     exit(1);
   }
 
@@ -46,23 +84,7 @@ int main(argc, argv)
     exit(1);
   }
 
-  histo = (uint32_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(int32_t));
-  if (histo == NULL)
-  {
-    fprintf(stderr, "%s: malloc failed\n", argv[0]);
-    exit(1);
-  }
-
-  if (argc == 3)
-  {
-    fd = fopen(argv[2],"w");
-    if (!fd)
-    {
-      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[2]);
-      exit(1);
-    }
-  }
-  else
+  if (argc == 4)
   {
     mask = readimage(argv[2]);
     if (mask == NULL)
@@ -70,31 +92,72 @@ int main(argc, argv)
       fprintf(stderr, "%s: readimage failed\n", argv[0]);
       exit(1);
     }
-    fd = fopen(argv[3],"w");
-    if (!fd)
-    {
-      fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[3]);
-      exit(1);
-    }
   }
 
-  if (! lhisto(image, mask, histo))
+  fd = fopen(argv[argc-1],"w");
+  if (!fd)
   {
-    fprintf(stderr, "%s: function lhisto failed\n", argv[0]);
+    fprintf(stderr, "%s: cannot open file: %s\n", argv[0], argv[argc-1]);
     exit(1);
   }
 
-  /* ESSAI
-  { int32_t n = lhistsum(histo);
-    lhistdilat(histo, 4);
-    printf("sum avant dilat = %d, apres = %d\n", n, lhistsum(histo));
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    histo = (index_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(index_t));
+    if (histo == NULL)
+    {
+      fprintf(stderr, "%s: malloc failed\n", argv[0]);
+      exit(1);
+    }
+
+    if (! lhisto(image, mask, histo))
+    {
+      fprintf(stderr, "%s: function lhisto failed\n", argv[0]);
+      exit(1);
+    }
+    fprintf(fd, "s %d\n", NDG_MAX-NDG_MIN+1);
+    for (i = NDG_MIN; i <= NDG_MAX; i++) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%4d %lld\n", i, histo[i]);
+#else
+      fprintf(fd, "%4d %d\n", i, histo[i]);
+#endif
+    free(histo);
   }
-  */
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    if (! lhistolong(image, mask, &histo, &s))
+    {
+      fprintf(stderr, "%s: function lhistolong failed\n", argv[0]);
+      exit(1);
+    }
+    fprintf(fd, "s %d\n", s);
+    for (i = 0; i < s; i++) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%4d %lld\n", i, histo[i]);
+#else
+      fprintf(fd, "%4d %d\n", i, histo[i]);
+#endif
+    free(histo);
+  }
+  else if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    float w, smin, smax;
+    if (! lhistofloat(image, mask, &histo, &s, &w, &smin, &smax))
+    {
+      fprintf(stderr, "%s: function lhistofloat failed\n", argv[0]);
+      exit(1);
+    }
+    fprintf(fd, "s %d\n", s);
+    for (i = 0; i < s; i++) 
+#ifdef MC_64_BITS
+      fprintf(fd, "%4d %lld\n", i, histo[i]);
+#else
+      fprintf(fd, "%4d %d\n", i, histo[i]);
+#endif
+    free(histo);
+  }
 
-  for (i = NDG_MIN; i <= NDG_MAX; i++) fprintf(fd, "%4d %d\n", i, histo[i]);
-
-  fclose(fd);
-  free(histo);
   freeimage(image);
   if (mask) freeimage(mask);
 

@@ -1,4 +1,37 @@
-/* $Id: mccolors.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -28,24 +61,24 @@
 char * colorname(double h)
 /* ======================================================================== */
 {
-  if ((h < 30.0) || (h >= 330.0)) return CN_RED;
-  if ((h >= 30.0) && (h < 90.0)) return CN_YELLOW;
-  if ((h >= 90.0) && (h < 150.0)) return CN_GREEN;
-  if ((h >= 150.0) && (h < 210.0)) return CN_CYAN;
-  if ((h >= 210.0) && (h < 270.0)) return CN_BLUE;
-  if ((h >= 270.0) && (h < 330.0)) return CN_MAGENTA;
+  if ((h < 30.0) || (h >= 330.0)) return (char *)CN_RED;
+  else if ((h >= 30.0) && (h < 90.0)) return (char *)CN_YELLOW;
+  else if ((h >= 90.0) && (h < 150.0)) return (char *)CN_GREEN;
+  else if ((h >= 150.0) && (h < 210.0)) return (char *)CN_CYAN;
+  else if ((h >= 210.0) && (h < 270.0)) return (char *)CN_BLUE;
+  else /* if ((h >= 270.0) && (h < 330.0)) */ return (char *)CN_MAGENTA;
 }
 
 /* ======================================================================== */
 char * nomcouleur(double h)
 /* ======================================================================== */
 {
-  if ((h < 30.0) || (h >= 330.0)) return CN_ROUGE;
-  if ((h >= 30.0) && (h < 90.0)) return CN_JAUNE;
-  if ((h >= 90.0) && (h < 150.0)) return CN_VERT;
-  if ((h >= 150.0) && (h < 210.0)) return CN_CYAN;
-  if ((h >= 210.0) && (h < 270.0)) return CN_BLEU;
-  if ((h >= 270.0) && (h < 330.0)) return CN_MAGENTA;
+  if ((h < 30.0) || (h >= 330.0)) return (char *)CN_ROUGE;
+  else if ((h >= 30.0) && (h < 90.0)) return (char *)CN_JAUNE;
+  else if ((h >= 90.0) && (h < 150.0)) return (char *)CN_VERT;
+  else if ((h >= 150.0) && (h < 210.0)) return (char *)CN_CYAN;
+  else if ((h >= 210.0) && (h < 270.0)) return (char *)CN_BLEU;
+  else /* if ((h >= 270.0) && (h < 330.0)) */ return (char *)CN_MAGENTA;
 }
 
 /* ======================================================================== */
@@ -57,8 +90,8 @@ void rgb2hls(double r, double g, double b, double *h, double *l, double *s)
 */
 #define UNDEFINED 0.0
 {
-  double maxi = max(max(r,g),b); 
-  double mini = min(min(r,g),b); 
+  double maxi = mcmax(mcmax(r,g),b); 
+  double mini = mcmin(mcmin(r,g),b); 
   double delta;
 
   *l = (maxi + mini) / 2.0; /* lightness */
@@ -141,8 +174,8 @@ int32_t huedistance(int32_t h1, int32_t h2)
 /* ======================================================================== */
 {
   int32_t k, h = h1 - h2;
-  h = abs(h);
+  h = mcabs(h);
   k = 360 - h;
-  h = min(h,k);
+  h = mcmin(h,k);
   return h;
 } //huedistance()

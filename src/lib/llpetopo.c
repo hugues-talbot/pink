@@ -1,4 +1,37 @@
-/* $Id: llpetopo.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* operateur de calcul de la ligne de partage des eaux topologique */
 /* utilise une File d'Attente Hierarchique */
 /* utilise un arbre des bassins versants (captation basin tree, CBT) */
@@ -46,11 +79,11 @@
     si |diffanc| == 1
       M[x] = first(diffanc)
     sinon
-      new = CreateCell(CBT)
-      M[x] = new
-      SetData(CBT, new, F[x] + 1)
+      newcell = CreateCell(CBT)
+      M[x] = newcell
+      SetData(CBT, newcell, F[x] + 1)
       pour tout a dans diffanc 
-        SetFather(CBT, a, new)
+        SetFather(CBT, a, newcell)
       finpour
     fin si
     pour tout y dans gamma4(x) pas deja dans FAH
@@ -140,10 +173,10 @@
   tant que FAH non vide
     x = FahPop(FAH);
     etiqcc = liste des M[y], y dans gamma4(x), Data(CBT,M(y)) <= F(x)
-    new = LowComAnc(CBT, etiqcc, SOURCE[x])
-    si new != NIL et Data(CBT, new) - 1 < F[x]  // point abaissable
-      F[x] = Data(CBT, new) - 1
-      M[x] = new
+    newcell = LowComAnc(CBT, etiqcc, SOURCE[x])
+    si newcell != NIL et Data(CBT, newcell) - 1 < F[x]  // point abaissable
+      F[x] = Data(CBT, newcell) - 1
+      M[x] = newcell
       pour tout y dans gamma4(x) pas deja dans FAH
         FahPush(FAH, y, SOURCE[y])
       finpour
@@ -154,6 +187,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mccodimage.h>
@@ -172,7 +206,7 @@
 #define DISPARU  3
 
 /* ==================================== */
-int32_t llpetopo(
+int32_t llpetopo_llpetopo(
         struct xvimage *image,
         struct xvimage *marqueurs,
         int32_t trace // param. obsolete - a supprimer
@@ -190,7 +224,7 @@ int32_t llpetopo(
   uint8_t *SOURCE = UCHARDATA(image);      /* l'image de depart */
   uint8_t *B = UCHARDATA(marqueurs);       /* l'image de marqueurs */
   struct xvimage *lab;
-  uint32_t *M;            /* l'image d'etiquettes de composantes connexes */
+  int32_t *M;            /* l'image d'etiquettes de composantes connexes */
   int32_t *T;                      /* table de correspondance pour regularisation */
   int32_t *I;                      /* pour l'inversion du CBT */
   int32_t nminima;                 /* nombre de minima differents */
@@ -202,38 +236,38 @@ int32_t llpetopo(
   int32_t nombre_examens = 0;
   int32_t etiqcc[4];
   int32_t ncc;
-  int32_t new;
+  int32_t newcell;
 
   if (depth(image) != 1) 
   {
-    fprintf(stderr, "llpetopo: cette version ne traite pas les images volumiques\n");
+    fprintf(stderr, "llpetopo_llpetopo: cette version ne traite pas les images volumiques\n");
     exit(0);
   }
   
   if ((rowsize(marqueurs) != rs) || (colsize(marqueurs) != cs))
   {
-    fprintf(stderr, "llpetopo: incompatible image sizes\n");
+    fprintf(stderr, "llpetopo_llpetopo: incompatible image sizes\n");
     return 0;
   }
 
   IndicsInit(N);
   FAH = CreeFahVide(N+1);
   if (FAH == NULL)
-  {   fprintf(stderr, "llpetopo() : CreeFah failed\n");
+  {   fprintf(stderr, "llpetopo_llpetopo() : CreeFah failed\n");
       return(0);
   }
 
   lab = allocimage(NULL, rs, cs, 1, VFF_TYP_4_BYTE);
   if (lab == NULL)
   {   
-    fprintf(stderr, "llpetopo: allocimage failed\n");
+    fprintf(stderr, "llpetopo_llpetopo: allocimage failed\n");
     return 0;
   }
-  M = ULONGDATA(lab);
+  M = SLONGDATA(lab);
 
   if (!llabelextrema(image, 4, LABMIN, lab, &nminima))
   {   
-    fprintf(stderr, "llpetopo: llabelextrema failed\n");
+    fprintf(stderr, "llpetopo_llpetopo: llabelextrema failed\n");
     return 0;
   }
 
@@ -241,7 +275,7 @@ int32_t llpetopo(
   nbmaxcell = nminima * 2;
   CBT = (cbtcell *)calloc(1,nbmaxcell * sizeof(cbtcell));
   if (CBT == NULL)
-  {   fprintf(stderr, "llpetopo() : malloc failed for CBT\n");
+  {   fprintf(stderr, "llpetopo_llpetopo() : malloc failed for CBT\n");
       return(0);
   }
 
@@ -311,11 +345,11 @@ int32_t llpetopo(
       M[x] = etiqcc[0];
     else
     {
-      new = CreateCell(CBT, &nbcell, nbmaxcell);
-      M[x] = new;
-      SetData(CBT, new, SOURCE[x]);    /* conceptuellement : SOURCE[x] + 1 */
+      newcell = CreateCell(CBT, &nbcell, nbmaxcell);
+      M[x] = newcell;
+      SetData(CBT, newcell, SOURCE[x]);    /* conceptuellement : SOURCE[x] + 1 */
       for (i = 0; i < ncc; i++)
-        SetFather(CBT, etiqcc[i], new);
+        SetFather(CBT, etiqcc[i], newcell);
     }
 
     for (k = 0; k < 8; k += 2)     /* parcourt les voisins en 4-connexite */
@@ -338,7 +372,7 @@ int32_t llpetopo(
 
   T = Regularise(CBT, nminima, nbcell);
   if (T == NULL)
-  {   fprintf(stderr, "llpetopo() : Regularise failed\n");
+  {   fprintf(stderr, "llpetopo_llpetopo() : Regularise failed\n");
       return(0);
   }
 
@@ -363,13 +397,13 @@ int32_t llpetopo(
 
   T = (int32_t *) calloc(nbcell, sizeof(int32_t));
   if (T == NULL)
-  {   fprintf(stderr, "llpetopo() : calloc failed for T\n");
+  {   fprintf(stderr, "llpetopo_llpetopo() : calloc failed for T\n");
       return(0);
   }
 
   I = InverseCBT(CBT, nminima, nbcell);
   if (I == NULL)
-  {   fprintf(stderr, "llpetopo() : InverseCBT failed\n");
+  {   fprintf(stderr, "llpetopo_llpetopo() : InverseCBT failed\n");
       return(0);
   }
 
@@ -501,13 +535,13 @@ int32_t llpetopo(
       } /* if y */
     } /* for k */
 
-    new = LowComAnc(CBT, ncc, etiqcc, SOURCE[x]);
+    newcell = LowComAnc(CBT, ncc, etiqcc, SOURCE[x]);
 
-    if ((new != NIL) && (Data(CBT, new) < SOURCE[x])) /* le point est CB-simple */
-    {      /* conceptuellement : Data(CBT, new) - 1 */
+    if ((newcell != NIL) && (Data(CBT, newcell) < SOURCE[x])) /* le point est CB-simple */
+    {      /* conceptuellement : Data(CBT, newcell) - 1 */
       nombre_abaissements += 1;
-      SOURCE[x] = Data(CBT, new);   /* conceptuellement : Data(CBT, new) - 1 */
-      M[x] = new;
+      SOURCE[x] = Data(CBT, newcell);   /* conceptuellement : Data(CBT, newcell) - 1 */
+      M[x] = newcell;
 
       /* propagation aux voisins */
 
@@ -527,7 +561,7 @@ int32_t llpetopo(
       FahPush(FAH, x, SOURCE[x]);
       Set(x, EN_FAH);
 
-    } /* if ((new != NIL) && (Data(CBT, new) < SOURCE[x]))  le point est CB-simple */
+    } /* if ((newcell != NIL) && (Data(CBT, newcell) < SOURCE[x]))  le point est CB-simple */
   } /* while (! FahVide(FAH)) */
   /* FIN PROPAGATION */
 

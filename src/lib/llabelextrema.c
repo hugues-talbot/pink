@@ -1,4 +1,37 @@
-/* $Id: llabelextrema.c,v 1.1.1.1 2008-11-25 08:01:43 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
@@ -32,10 +65,10 @@
 
 /* ==================================== */
 int32_t llabelextrema(
-        struct xvimage *img, /* image de depart */
+        struct xvimage *img,     /* image de depart */
         int32_t connex,          /* 4, 8 (2d) ou 6, 18, 26 (3d) 0/1 pour biconnecte */
         int32_t minimum,         /* booleen */
-        struct xvimage *lab, /* resultat: image de labels */
+        struct xvimage *lab,     /* resultat: image de labels */
         int32_t *nlabels)        /* resultat: nombre d'extrema traites + 1 (0 = non extremum) */
 /* ==================================== */
 #undef F_NAME
@@ -43,8 +76,8 @@ int32_t llabelextrema(
 {
   int32_t k, w, x, y;
   uint8_t *F;
-  uint32_t *FL;
-  uint32_t *LABEL =  ULONGDATA(lab);
+  int32_t *FL;
+  int32_t *LABEL =  SLONGDATA(lab);
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
   int32_t d = depth(img);
@@ -117,6 +150,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -148,6 +182,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
 		      label = 0;
 		      *nlabels -= 1;
 		      LABEL[w] = label;
+		      LifoFlush(LIFO);
 		      LifoPush(LIFO, w);
 		    } 
 		  else
@@ -179,6 +214,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
 		      label = 0;
 		      *nlabels -= 1;
 		      LABEL[w] = label;
+		      LifoFlush(LIFO);		      
 		      LifoPush(LIFO, w);
 		    } 
 		  else
@@ -210,6 +246,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
 		      label = 0;
 		      *nlabels -= 1;
 		      LABEL[w] = label;
+		      LifoFlush(LIFO);
 		      LifoPush(LIFO, w);
 		    } 
 		  else
@@ -241,6 +278,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -273,9 +311,10 @@ if (datatype(img) == VFF_TYP_1_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
 #ifdef DEBUG
-		  printf("Push(%d,%d), non extremum: label %d\n", y%rs, y/rs, label);
+		  printf("Push(%d,%d), non extremum: label %d\n", w%rs, w/rs, label);
 #endif
                 } 
                 else
@@ -311,6 +350,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -343,6 +383,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -366,7 +407,7 @@ if (datatype(img) == VFF_TYP_1_BYTE)
 } /* if (datatype(img) == VFF_TYP_1_BYTE) */
 else if (datatype(img) == VFF_TYP_4_BYTE) 
 {
-  FL = ULONGDATA(img);
+  FL = SLONGDATA(img);
   for (x = 0; x < N; x++)
   {
     if (LABEL[x] == -1)          /* on trouve un point x non etiquete */
@@ -398,6 +439,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -429,6 +471,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
 		      label = 0;
 		      *nlabels -= 1;
 		      LABEL[w] = label;
+		      LifoFlush(LIFO);
 		      LifoPush(LIFO, w);
 		    } 
 		  else
@@ -460,6 +503,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
 		      label = 0;
 		      *nlabels -= 1;
 		      LABEL[w] = label;
+		      LifoFlush(LIFO);
 		      LifoPush(LIFO, w);
 		    } 
 		  else
@@ -491,6 +535,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
 		      label = 0;
 		      *nlabels -= 1;
 		      LABEL[w] = label;
+		      LifoFlush(LIFO);
 		      LifoPush(LIFO, w);
 		    } 
 		  else
@@ -522,6 +567,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -554,6 +600,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -586,6 +633,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -618,6 +666,7 @@ else if (datatype(img) == VFF_TYP_4_BYTE)
                   label = 0;
                   *nlabels -= 1;
                   LABEL[w] = label;
+		  LifoFlush(LIFO);
                   LifoPush(LIFO, w);
                 } 
                 else
@@ -648,6 +697,11 @@ else
   LifoTermine(LIFO);
 //  if (tailleplateau != N) 
      *nlabels += 1; /* pour le niveau 0 */
+
+#ifdef DEBUG
+      printf("%s: end: nlabels = %d\n", F_NAME, *nlabels);
+#endif
+
   return(1);
 } /* llabelextrema() */
 
@@ -667,7 +721,7 @@ int32_t llabeldil(struct xvimage *f,
 #undef F_NAME
 #define F_NAME "llabeldil"
 {
-  int32_t x, y, z, v, w;           /* index muet de pixel */
+  int32_t x, y, v, w;           /* index muet de pixel */
   register int32_t i, j;           /* index muet */
   register int32_t k, l, c;        /* index muet */
   int32_t rs = rowsize(f);         /* taille ligne */
@@ -678,8 +732,8 @@ int32_t llabeldil(struct xvimage *f,
   int32_t Nm = rsm * csm;
   uint8_t *M = UCHARDATA(m);
   uint8_t *F = UCHARDATA(f);
-  uint32_t *LABEL = ULONGDATA(lab);
-  uint32_t label;
+  int32_t *LABEL = SLONGDATA(lab);
+  int32_t label;
   int32_t nptb;                    /* nombre de points de l'e.s. */
   int32_t *tab_es_x;               /* liste des coord. x des points de l'e.s. */
   int32_t *tab_es_y;               /* liste des coord. y des points de l'e.s. */
@@ -785,25 +839,22 @@ int32_t llabeldil(struct xvimage *f,
 int32_t llabelbin(struct xvimage *f, 
 	      int32_t connex,
 	      struct xvimage *lab, /* resultat: image de labels */
-	      int32_t *nlabels)        /* resultat: nombre de composantes + 1 */
-/* labels the connected components according to adjacency relation connex.
-   lab : 
-*/
+	      int32_t *nlabels)    /* resultat: nombre de composantes + 1 */
+/* labels the connected components according to adjacency relation connex.*/
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "llabelbin"
 {
-  int32_t x, y, z, v, w;           /* index muet de pixel */
-  register int32_t i, j;           /* index muet */
-  register int32_t k, l, c;        /* index muet */
+  int32_t x, v, w;           /* index muet de pixel */
+  register int32_t k;        /* index muet */
   int32_t rs = rowsize(f);         /* taille ligne */
   int32_t cs = colsize(f);         /* taille colonne */
   int32_t ds = depth(f);           /* nb plans */
   int32_t ps = rs * cs;            /* taille plan */
   int32_t N = ps * ds;             /* taille image */
   uint8_t *F = UCHARDATA(f);
-  uint32_t *LABEL = ULONGDATA(lab);
-  uint32_t label;
+  int32_t *LABEL = SLONGDATA(lab);
+  int32_t label;
   Lifo * LIFO;
 
   if (datatype(lab) != VFF_TYP_4_BYTE) 
@@ -910,3 +961,17 @@ int32_t llabelbin(struct xvimage *f,
   LifoTermine(LIFO);
   return 1;
 } /* llabelbin() */
+
+/* ==================================== */
+int32_t llabelfgd(struct xvimage *f, 
+		  int32_t connex,
+		  struct xvimage *lab /* resultat: image de labels */
+		  )
+/* labels the connected components according to adjacency relation connex.*/
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "llabelfgd"
+{
+  int32_t nlabels;
+  return llabelbin(f, connex, lab, &nlabels);
+} // llabelfgd()

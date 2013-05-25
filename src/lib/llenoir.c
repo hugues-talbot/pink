@@ -1,4 +1,37 @@
-/* $Id: llenoir.c,v 1.1.1.1 2008-11-25 08:01:41 mcouprie Exp $ */
+/*
+Copyright ESIEE (2009) 
+
+m.couprie@esiee.fr
+
+This software is an image processing library whose purpose is to be
+used primarily for research and teaching.
+
+This software is governed by the CeCILL  license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+As a counterpart to the access to the source code and  rights to copy,
+modify and redistribute granted by the license, users are provided only
+with a limited warranty  and the software's author,  the holder of the
+economic rights,  and the successive licensors  have only  limited
+liability. 
+
+In this respect, the user's attention is drawn to the risks associated
+with loading,  using,  modifying and/or developing or reproducing the
+software by the user in light of its specific status of free software,
+that may mean  that it is complicated to manipulate,  and  that  also
+therefore means  that it is reserved for developers  and  experienced
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or 
+data to be ensured and,  more generally, to use and operate it in the 
+same conditions as regards security. 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
 /* 
    Calcul d'une géodésique dans un espace discret (2D ou 3D)
    à partir de algorithmes de M. Alexandre Lenoir
@@ -86,7 +119,7 @@ void Lenoir(struct xvimage * image,
 	FifoPush(F, x);
 	testY = 0;
 
-	while (!FifoVide(F) & testY!=1 )//Tant que la liste n'est pas vide
+	while ((!FifoVide(F)) && (testY!=1) )//Tant que la liste n'est pas vide
 	{
 		s = FifoPop(F); //on recupère l'élement en tête de pile
 		if(s==y)//Si l'element depile est y
@@ -155,7 +188,7 @@ void Lenoir(struct xvimage * image,
 	s = y;
 	testX = 0;
 
-	while (!FifoVide(F) & testX!=1 )//Tant que la liste n'est pas vide et que l'élément dépilé n'est pas x
+	while ((!FifoVide(F)) && (testX!=1))//Tant que la liste n'est pas vide et que l'élément dépilé n'est pas x
 	{
 		s = FifoPop(F); //on recupère l'élement en tête de pile
 		//fprintf(stdout,"%d - %d : %d\n",ptrpathfrom[s],ptrpath[s],ptrpathfrom[s]*ptrpath[s]);
@@ -243,9 +276,9 @@ void Lenoir(struct xvimage * image,
 				for(direction=0; direction<8; direction=direction+1)//parcours des 8 voisins de s
 				{
 					s1 = voisin(s,direction,rs,N);//s1 un  8-voisin de s
-					if((connex==4 && voisins4(s, s1, rs)) || connex==8)
+					if(((connex==4) && voisins4(s, s1, rs)) || (connex==8))
 					{
-						if(ptrdistance[s1]<ptrdistance[s] & ptrpaththrough[s1]>maxi)
+					  if((ptrdistance[s1]<ptrdistance[s]) && (ptrpaththrough[s1]>maxi))
 						{
 							s2 = s1;
 							maxi = ptrpaththrough[s1];
@@ -260,7 +293,7 @@ void Lenoir(struct xvimage * image,
 					if(connex==6) s1 = voisin6(s,direction,rs,ps,N);
 					if(connex==18) s1 = voisin18(s,direction,rs,ps,N);
 					if(connex==26) s1 = voisin26(s,direction,rs,ps,N);
-					if(ptrdistance[s1]<ptrdistance[s] & ptrpaththrough[s1]>maxi)
+					if((ptrdistance[s1]<ptrdistance[s]) && (ptrpaththrough[s1]>maxi))
 					{
 						s2 = s1;
 						maxi = ptrpaththrough[s1];
