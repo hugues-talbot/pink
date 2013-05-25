@@ -144,8 +144,8 @@ int32_t lderiche(struct xvimage *image, double alpha)
   Im1 = (double *)calloc(1,N * sizeof(double));
   Im2 = (double *)calloc(1,N * sizeof(double));
   Imd = (double *)calloc(1,N * sizeof(double));
-  buf1 = (double *)calloc(1,max(rs, cs) * sizeof(double));
-  buf2 = (double *)calloc(1,max(rs, cs) * sizeof(double));
+  buf1 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
+  buf2 = (double *)calloc(1,mcmax(rs, cs) * sizeof(double));
   if ((Im1==NULL) || (Im2==NULL) || (Imd==NULL) || (buf1==NULL) || (buf2==NULL))
   {   printf("lderiche() : malloc failed\n");
       return(0);

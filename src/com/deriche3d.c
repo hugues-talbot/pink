@@ -106,7 +106,7 @@ int main(int argc, char **argv)
   }
   else
   { 
-    if (! lderiche_lderiche3d(image1, alpha, function, l))
+    if (! lderiche3d(image1, alpha, function, l))
     {
       fprintf(stderr, "deriche3d: function lderiche3d failed\n");
       exit(1);

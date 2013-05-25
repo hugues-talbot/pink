@@ -78,7 +78,8 @@ if (modifie) printf("========> ABAISSE : %d\n", SOURCE[x]);
 } /* testabaisse8() */
 
 /* ==================================== */
-void llvkern_empilevoisins(int32_t x, int32_t rs, int32_t N, Fifo *FIFOna, Fifo *FIFOea, Fifo *FIFOsa, Fifo *FIFOoa)
+static
+void empilevoisins(int32_t x, int32_t rs, int32_t N, Fifo *FIFOna, Fifo *FIFOea, Fifo *FIFOsa, Fifo *FIFOoa)
 /* ==================================== */
 {
   int32_t y;
@@ -238,7 +239,7 @@ if (connex == 4)
       x = FifoPop(FIFOn);
       UnSet(x, EN_FIFO);
       if (testabaisse4(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
-        llvker_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
     } /* while (! FifoVide(FIFOn)) */
 
     while (! FifoVide(FIFOs))
@@ -246,7 +247,7 @@ if (connex == 4)
       x = FifoPop(FIFOs);
       UnSet(x, EN_FIFO);
       if (testabaisse4(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
-        llvker_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
     } /* while (! FifoVide(FIFOs)) */
 
     while (! FifoVide(FIFOe))
@@ -254,7 +255,7 @@ if (connex == 4)
       x = FifoPop(FIFOe);
       UnSet(x, EN_FIFO);
       if (testabaisse4(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
-        llvker_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
     } /* while (! FifoVide(FIFOe)) */
 
     while (! FifoVide(FIFOo))
@@ -262,7 +263,7 @@ if (connex == 4)
       x = FifoPop(FIFOo);
       UnSet(x, EN_FIFO);
       if (testabaisse4(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
-        llvker_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
     } /* while (! FifoVide(FIFOo)) */
 
     FIFOtmp = FIFOn; FIFOn = FIFOna; FIFOna = FIFOtmp;
@@ -287,7 +288,7 @@ else /* connex == 8 */
       x = FifoPop(FIFOn);
       UnSet(x, EN_FIFO);
       if (testabaisse8(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
-        llvker_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
     } /* while (! FifoVide(FIFOn)) */
 
     while (! FifoVide(FIFOs))
@@ -295,7 +296,7 @@ else /* connex == 8 */
       x = FifoPop(FIFOs);
       UnSet(x, EN_FIFO);
       if (testabaisse8(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
-        llvker_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
     } /* while (! FifoVide(FIFOs)) */
 
     while (! FifoVide(FIFOe))
@@ -303,7 +304,7 @@ else /* connex == 8 */
       x = FifoPop(FIFOe);
       UnSet(x, EN_FIFO);
       if (testabaisse8(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
-        llvker_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
     } /* while (! FifoVide(FIFOe)) */
 
     while (! FifoVide(FIFOo))
@@ -311,7 +312,7 @@ else /* connex == 8 */
       x = FifoPop(FIFOo);
       UnSet(x, EN_FIFO);
       if (testabaisse8(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
-        llvker_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
     } /* while (! FifoVide(FIFOo)) */
 
     FIFOtmp = FIFOn; FIFOn = FIFOna; FIFOna = FIFOtmp;

@@ -89,7 +89,7 @@ int32_t lreconsdilat3d_lreconsdilat3d(
         }
       } /* for k */
 
-      sup = min(sup, F[x]);
+      sup = mcmin(sup, F[x]);
       if (G[x] != sup) /* changement: on enregistre x ainsi que ses voisins */
       {
         nbchang += 1;

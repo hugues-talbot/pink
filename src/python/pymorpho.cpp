@@ -455,7 +455,7 @@ namespace morpho
 
   UI_WRAP_FUNCTION(
     "dilatbin",
-    ldilatbin3d,
+    ldilatbin3d_ldilatbin3d,
     (arg("image"), arg("elem"), arg("x"), arg("y"), arg("z")),
     doc__dilatbin__c__
     );
@@ -497,7 +497,7 @@ namespace morpho
 // NOTE: lderiche the question of l parameter
   UI_WRAP_FUNCTION(
     "deriche",
-    lderiche,
+    lderiche_lderiche,
     (arg("image"), arg("alpha"), arg("function"), arg("l") ),
     doc__deriche__c__
     );

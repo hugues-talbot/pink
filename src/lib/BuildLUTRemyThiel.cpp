@@ -17,6 +17,7 @@
 */
 
 
+#include <algorithm>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,7 +51,6 @@ void CompLutMask (long int * CTg,long int * DTg, int L, MaskG * MgL, LookUpTable
 int IsMAg (int x, int y, MaskG *MgL, long int * LutColumn, long int * DTg, int L,int radiusmax);
 void CompSEDT(TabDTg DTg1,int L,int M);
 int RadiusMax(long int * gg,int LL,int MM);
-int min(int x,int y);
 void PrintLut (FILE *f, MaskG *MgL, LookUpTable & Lut,int L, int Rknown);
 void PrintMgLut (FILE *f, MaskG *M);
 void adjustCTg (int L, TabCTg & CTgg,TabCTg & CTgNew,int Rmaxx);
@@ -294,15 +294,6 @@ int IsMAg (int x, int y, MaskG *MgL, long int * Lut, long int * DTg, int L,int r
 }
 
 
-/* Function that find the minimum*/
-int min(int x,int y)
-{
-    if (x<y)
-        return x;
-    else 
-        return y;
-}
-
 
 /*Function that returns the maximum radius in the distance image*/
 int RadiusMax(long int * gg,int LL,int MM)  //LL=width of image  MM=height of image
@@ -354,7 +345,7 @@ void CompSEDT(TabDTg DTg1,int L,int M)
                 db=db+1;
             else 
                 db=0;
-            DTg1[j*L+i]=min(DTg1[j*L+i],db*db);
+            DTg1[j*L+i]=std::min<long int>(DTg1[j*L+i],db*db);
 
         }
     }
@@ -373,8 +364,8 @@ void CompSEDT(TabDTg DTg1,int L,int M)
             if(d!=0)
             {
                 rMax=int(sqrt(d))+1;
-                rStart=min(rMax,j);
-                rEnd=min(rMax,(M-1-j));
+                rStart=std::min(rMax,j);
+                rEnd=std::min(rMax,(M-1-j));
 			
                 for (n=-rStart;n<=rEnd;n++)
                 {

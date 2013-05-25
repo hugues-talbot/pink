@@ -101,7 +101,7 @@ void construitcube(voxel * cube)
                 p->v26[p->n26v++] = &(cube[encode(u,v,w)]);
 	      }
               else
-              if (max(abs(u-x), max(abs(v-y), abs(w-z))) == 1)
+              if (mcmax(abs(u-x), mcmax(abs(v-y), abs(w-z))) == 1)
               {
                 if (abs(u-x)+abs(v-y)+abs(w-z) <= 2)
 		{

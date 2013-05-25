@@ -83,7 +83,7 @@ int main(int argc, char **argv)
   }
   alpha = atof(argv[2]);
 
-  if (! lderiche(image1, alpha, 2, dummy))
+  if (! lderiche_lderiche(image1, alpha, 2, dummy))
   {
     fprintf(stderr, "laplacian: function lderiche failed\n");
     exit(1);

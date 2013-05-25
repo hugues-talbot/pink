@@ -13,10 +13,6 @@
              
 typedef int32_t Z;
 
-//int abs(int u)        { if ( u >= 0 ) return u; else  return -u; }
-static int max(int a, int b) { if ( a > b  ) return a; else  return  b; }
-static int min(int a, int b) { if ( a < b  ) return a; else  return  b; }
-
 class Q
 {
   public :

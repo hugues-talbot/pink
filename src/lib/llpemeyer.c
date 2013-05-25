@@ -119,7 +119,7 @@ int32_t llpemeyer_llpemeyer(
 #endif
 
   if (depth(image) != 1) 
-    return llpemeyer3d_llpemeyer3d(image, marqueurs, marqueursfond, masque, connex);
+    return llpemeyer_llpemeyer3d(image, marqueurs, marqueursfond, masque, connex);
 
   ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
   ACCEPTED_TYPES1(marqueurs, VFF_TYP_1_BYTE);
@@ -1302,7 +1302,7 @@ int32_t llpemeyer2_nomask(
    H. Talbot  2011/02/10
    ====================================*/
 {
-    return llpemeyer2(image, marqueurs, NULL, connex);
+    return llpemeyer_llpemeyer2(image, marqueurs, NULL, connex);
 }
    
 

@@ -56,7 +56,7 @@ int main(argc, argv)
     exit(1);
   }
 
-  if (! lmeshwarp(image, mrs))
+  if (! lmeshwarp_lmeshwarp(image, mrs))
   {
     fprintf(stderr, "meshwarp: function lmeshwarp failed\n");
     exit(1);

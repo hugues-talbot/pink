@@ -185,7 +185,7 @@ int32_t lderiche3d(struct xvimage *image, double alpha, int32_t function, double
         return(0);
     }
   }
-  sbuf = max((max(rs,cs)),ds);
+  sbuf = mcmax((mcmax(rs,cs)),ds);
   buf1 = (double *)calloc(1,sbuf * sizeof(double));
   buf2 = (double *)calloc(1,sbuf * sizeof(double));
   if ((buf1==NULL) || (buf2==NULL))
@@ -510,8 +510,8 @@ int32_t lderiche3d_llisseurrec3d(struct xvimage *image, double alpha)
   {   fprintf(stderr,"lderiche3d() : malloc failed\n");
       return(0);
   }
-  buf1 = (double *)calloc(1,max(max(rs,cs),ds) * sizeof(double));
-  buf2 = (double *)calloc(1,max(max(rs,cs),ds) * sizeof(double));
+  buf1 = (double *)calloc(1,mcmax(mcmax(rs,cs),ds) * sizeof(double));
+  buf2 = (double *)calloc(1,mcmax(mcmax(rs,cs),ds) * sizeof(double));
   if ((buf1==NULL) || (buf2==NULL))
   {   fprintf(stderr,"lderiche3d() : malloc failed\n");
       return(0);

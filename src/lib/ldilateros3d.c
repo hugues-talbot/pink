@@ -104,7 +104,7 @@ int32_t ldilateros3d_ldilatbin3d(struct xvimage *f, struct xvimage *m, int32_t x
           l += 1;
         }
 
-  if (!ldilateros3d_ldilatbin3d2(f, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
+  if (!ldilatbin3d2(f, nptb, tab_es_x, tab_es_y, tab_es_z, xc, yc, zc))
   {
      fprintf(stderr,"%s() : ldilatbin3d2 failed\n", F_NAME);
      return(0);
@@ -117,7 +117,7 @@ int32_t ldilateros3d_ldilatbin3d(struct xvimage *f, struct xvimage *m, int32_t x
 } /* ldilatbin3d() */
 
 /* ==================================== */
-int32_t ldilateros3d_ldilatbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_es_y, int32_t *tab_es_z, 
+int32_t ldilatbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t *tab_es_y, int32_t *tab_es_z, 
                  int32_t xc, int32_t yc, int32_t zc)
 /*
    Operateur de dilatation binaire 3D par un element structurant 

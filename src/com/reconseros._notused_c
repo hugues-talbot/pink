@@ -67,7 +67,7 @@ int main(argc, argv)
     exit(1);
   }
 
-  if (! lreconseros(image1, image2, connex))
+  if (! lgeodesic_lreconseros(image1, image2, connex))
   {
     fprintf(stderr, "%s: function lreconseros failed\n", argv[0]);
     exit(1);

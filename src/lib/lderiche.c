@@ -1265,7 +1265,7 @@ int32_t lgradientcd(struct xvimage *image, double alpha)
 { 
   double dummy;
   if (depth(image) == 1)
-    return lderiche(image, alpha, 0, dummy);
+    return lderiche_lderiche(image, alpha, 0, dummy);
   else
     return lderiche3d(image, alpha, 0, dummy);
 } // lgradientcd()
@@ -1278,7 +1278,7 @@ int32_t lgaussianfilter(struct xvimage *image, double alpha)
 { 
   double dummy;
   if (depth(image) == 1)
-    return lderiche(image, alpha, 4, dummy);
+    return lderiche_lderiche(image, alpha, 4, dummy);
   else
     return lderiche3d(image, alpha, 4, dummy);
 } // lgaussianfilter()

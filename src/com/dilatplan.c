@@ -72,7 +72,7 @@ int main(argc, argv)
   
   x = atoi(argv[3]);
   y = atoi(argv[4]);
-  if (! ldilat(image, elem, x, y))
+  if (! ldilateros_ldilat(image, elem, x, y))
   {
     fprintf(stderr, "%s: function ldilat failed\n", argv[0]);
     exit(1);

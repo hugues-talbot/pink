@@ -1120,7 +1120,7 @@ ReDisplayImage:
 
   ColToBlack();
   FRectangle(ImageWidth, ImageHeight, 
-    max(ImagePannelWidth,Width) - ImageWidth, ImagePannelHeight - ImageHeight);
+	     mcmax(ImagePannelWidth,Width) - ImageWidth, ImagePannelHeight - ImageHeight);
   ColToWhite();
   sprintf(coordrefstring, "%d,%d,%d", xref, yref, zref);
   String(ImageWidth + 2 * MARGE, ImageHeight + BoxHeight + MARGE, coordrefstring);

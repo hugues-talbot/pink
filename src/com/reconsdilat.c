@@ -67,7 +67,7 @@ int main(argc, argv)
     exit(1);
   }
 
-  if (! lreconsdilat(image1, image2, connex))
+  if (! lreconsdilat_lreconsdilat(image1, image2, connex))
   {
     fprintf(stderr, "%s: function lreconsdilat failed\n", argv[0]);
     exit(1);

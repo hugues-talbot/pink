@@ -89,7 +89,7 @@ int32_t lreconseros3d_lreconseros3d(
 	}
       } /* for k */
 
-      inf = max(inf, F[x]);
+      inf = mcmax(inf, F[x]);
       if (G[x] != inf)           /* le point a change : on l'enregistre ainsi que ses voisins */
       {
         nbchang += 1;

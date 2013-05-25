@@ -7,7 +7,7 @@
 #include "mccodimage.h"
 
 /* ==================================== */
-int32_t ldilatbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t ldilatbin3d_ldilatbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /*
    Operateur de dilatation binaire 3D par un element structurant 
    de taille quelconque

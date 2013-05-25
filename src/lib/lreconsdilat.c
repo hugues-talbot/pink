@@ -92,7 +92,7 @@ int32_t lreconsdilat_lreconsdilat(
         }
       } /* for k */
 
-      sup = min(sup, F[x]);
+      sup = mcmin(sup, F[x]);
       if (G[x] != sup) /* changement: on enregistre x ainsi que ses voisins */
       {
         nbchang += 1;

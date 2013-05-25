@@ -72,7 +72,7 @@ int main(argc, argv)
     exit(1);
   }
 
-  if (! lreconsdilat3d(image1, image2, mask))
+  if (! lreconsdilat3d_lreconsdilat3d(image1, image2, mask))
   {
     fprintf(stderr, "%s: function lreconsdilat3d failed\n", argv[0]);
     exit(1);
