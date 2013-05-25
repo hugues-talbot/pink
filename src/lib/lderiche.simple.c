@@ -56,6 +56,7 @@ le filtre lineaire recursif general de Deriche est defini par :
 #define abs(X) (X>=0?X:-(X))
 
 /* ==================================== */
+static
 void derichegen(double *x,               /* image a traiter */
                 int32_t M,                   /* taille ligne */
                 int32_t N,                   /* taille colonne */
@@ -109,6 +110,7 @@ printf("\n");
 } /* derichegen() */
 
 /* ==================================== */
+static
 int32_t lderiche(struct xvimage *image, double alpha)
 /* ==================================== */
 /*

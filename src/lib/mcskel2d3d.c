@@ -60,6 +60,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define IS_OBJ(f)    (f&FLAG_OBJ)
 
 /* ==================================== */
+static
 int32_t NotIn(
   index_t e,
   index_t *list,                   

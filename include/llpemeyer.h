@@ -43,7 +43,7 @@ extern "C" {
 /* prototype for llpemeyer.c */
 /* ============== */
 
-extern int32_t llpemeyer(
+extern int32_t llpemeyer_llpemeyer(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -51,7 +51,7 @@ extern int32_t llpemeyer(
         int32_t connex
 );
 
-extern int32_t llpemeyersansligne(
+extern int32_t llpemeyer_llpemeyersansligne(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -60,14 +60,14 @@ extern int32_t llpemeyersansligne(
         struct xvimage *result	
 );
 
-extern int32_t llpemeyersanslignelab(
+extern int32_t llpemeyer_llpemeyersanslignelab(
         struct xvimage *image,
         struct xvimage *marqueurs, // entree-sortie
         struct xvimage *masque,
         int32_t connex
 );
 
-extern int32_t llpemeyer2(
+extern int32_t llpemeyer_llpemeyer2(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *masque,
@@ -100,7 +100,7 @@ extern int32_t llpemeyer3(
         int32_t connex
 );
 
-extern int32_t llpemeyer3d(
+extern int32_t llpemeyer_llpemeyer3d(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -108,7 +108,7 @@ extern int32_t llpemeyer3d(
         int32_t connex
 );
 
-extern int32_t llpemeyer3dsansligne(
+extern int32_t llpemeyer_llpemeyer3dsansligne(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -124,7 +124,7 @@ extern int32_t llpemeyer3dsanslignelab(
         int32_t connex
 );
 
-extern int32_t llpemeyer3d2(
+extern int32_t llpemeyer_llpemeyer3d2(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *masque,
@@ -144,21 +144,21 @@ extern int32_t llpemeyer3d3(
         int32_t connex
 );
 
-extern int32_t llpemeyerkhalimsky(
+extern int32_t llpemeyer_llpemeyerkhalimsky(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
         struct xvimage *masque
 );
 
-extern int32_t llpemeyerbiconnecte(
+extern int32_t llpemeyer_llpemeyerbiconnecte(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
         struct xvimage *masque,
         int32_t parite);
 
-int32_t llpemeyerbiconnecte3d(
+int32_t llpemeyer_llpemeyerbiconnecte3d(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,

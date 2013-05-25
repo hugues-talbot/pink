@@ -3,7 +3,7 @@
 /* prototype for lhtkernu.c */
 /* ============== */
 
-extern int32_t lhtkernu(
+extern int32_t lhtkernu_lhtkernu(
         struct xvimage *image,
         int32_t nitermax,
         int32_t connex

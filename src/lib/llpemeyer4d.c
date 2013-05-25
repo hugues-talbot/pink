@@ -60,7 +60,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #define EN_FAH   0
 
 /* ==================================== */
-int32_t llpemeyer4d_NotIn(int32_t e, int32_t *list, int32_t n)                       
+static
+int32_t NotIn(int32_t e, int32_t *list, int32_t n)                       
 /* ==================================== */
 {
 /* renvoie 1 si e n'est pas dans list, 0 sinon */
@@ -271,7 +272,7 @@ int32_t llpemeyer4d(
         for (k = 0; k < 8; k ++)
         {
           y = voisin4D8(x, k, rs, n, N, Nt);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer4d_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;

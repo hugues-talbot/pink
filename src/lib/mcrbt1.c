@@ -50,6 +50,7 @@ Rbt * CreeRbtVide(
 } /* CreeRbtVide() */
 
 /* ==================================== */
+static
 void RbtTransRec(
   Rbt **T, Rbt * A, RbtElt * x)
 /* ==================================== */
@@ -62,6 +63,7 @@ void RbtTransRec(
 } /* RbtTransRec() */
 
 /* ==================================== */
+static
 void RbtReAlloc(Rbt **A)
 /* ==================================== */
 {
@@ -81,6 +83,7 @@ void RbtReAlloc(Rbt **A)
 } /* RbtReAlloc() */
 
 /* ==================================== */
+static
 void RbtFlush(
   Rbt * T)
 /* ==================================== */
@@ -112,6 +115,7 @@ void RbtTermine(
 } /* RbtTermine() */
 
 /* ==================================== */
+static
 void RbtPrintRec(
   Rbt * T, RbtElt * x, int32_t niv)
 /* ==================================== */
@@ -127,6 +131,7 @@ void RbtPrintRec(
 } /* RbtPrintRec() */
 
 /* ==================================== */
+static
 void RbtPrint(
   Rbt * T)
 /* ==================================== */
@@ -135,7 +140,7 @@ void RbtPrint(
 } /* RbtPrint() */
 
 /* ==================================== */
-RbtElt * RbtSearch(
+RbtElt * mcrbt1_RbtSearch(
   Rbt * T, TypRbtKey k)
 /* ==================================== */
 {
@@ -155,6 +160,7 @@ RbtElt * RbtMinimum(
 } /* RbtMinimum() */
 
 /* ==================================== */
+static
 RbtElt * RbtMaximum(
   Rbt * T, RbtElt * x)
 /* ==================================== */
@@ -222,6 +228,7 @@ RbtElt * RbtInsertAux(  /* allocation et insertion simple */
 } /* RbtInsertAux() */
 
 /* ==================================== */
+static
 void LeftRotate(
   Rbt * T, RbtElt * x)
 /* ==================================== */
@@ -246,6 +253,7 @@ void LeftRotate(
 } /* LeftRotate() */
 
 /* ==================================== */
+static
 void RightRotate(
   Rbt * T, RbtElt * x)
 /* ==================================== */
@@ -456,7 +464,7 @@ void RbtDelete(
 } /* RbtDelete() */
 
 /* ==================================== */
-TypRbtAuxData RbtPopMin(
+TypRbtAuxData mcrbt1_RbtPopMin(
   Rbt * T)
 /* ==================================== */
 /* 
@@ -474,6 +482,7 @@ TypRbtAuxData RbtPopMin(
 } /* RbtPopMin() */
 
 /* ==================================== */
+static
 TypRbtAuxData RbtPopMax(
   Rbt * T)
 /* ==================================== */
@@ -492,7 +501,7 @@ TypRbtAuxData RbtPopMax(
 } /* RbtPopMax() */
 
 /* ==================================== */
-TypRbtKey RbtMinLevel(
+TypRbtKey mcrbt1_RbtMinLevel(
   Rbt * T)
 /* ==================================== */
 {
@@ -524,14 +533,14 @@ int32_t main()
       case 'd':
         printf("valeur > ");
         scanf("%lf", &p);
-        x = RbtSearch(T, p);
+        x = mcrbt1_RbtSearch(T, p);
         if (x != T->nil) RbtDelete(T, x);
         else printf("pas trouve !\n");
         break;
       case 's':
         printf("valeur > ");
         scanf("%lf", &p);
-        x = RbtSearch(T, p);
+        x = mcrbt1_RbtSearch(T, p);
         printf("trouve: %d\n", x != T->nil);
         break;
       case 'i':
@@ -545,7 +554,7 @@ int32_t main()
       case 'c':
         printf("valeur > ");
         scanf("%lf", &p);
-        x = RbtSearch(T, p);
+        x = mcrbt1_RbtSearch(T, p);
         printf("trouve: %d\n", x != T->nil);
         if (x != T->nil)
 	{

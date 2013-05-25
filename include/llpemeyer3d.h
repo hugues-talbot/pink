@@ -3,7 +3,7 @@
 /* prototype for llpemeyer3d.c */
 /* ============== */
 
-extern int32_t llpemeyer3d(
+extern int32_t llpemeyer3d_llpemeyer3d(
         struct xvimage *image,
         struct xvimage *marqueurs,
         int32_t trace

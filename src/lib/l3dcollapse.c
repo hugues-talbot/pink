@@ -178,7 +178,7 @@ int32_t l3dcollapse(struct xvimage * k, struct xvimage * prio, struct xvimage * 
 
   while (!mcrbt_RbtVide(RBT))
   {
-    i = RbtPopMin(RBT);
+    i = mcrbt_RbtPopMin(RBT);
     UnSet(i, EN_RBT);
     x = i % rs; y = (i % ps) / rs; z = i / ps;
     u = Collapse3d(k, x, y, z);
@@ -333,10 +333,10 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
   while (!mcrbt_RbtVide(RBT))
   {
     // construit la liste de toutes les paires libres ayant la prioritÅÈ courante
-    p = RbtMinLevel(RBT); 
-    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    p = mcrbt_RbtMinLevel(RBT); 
+    while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
     {
-      g = RbtPopMin(RBT);
+      g = mcrbt_RbtPopMin(RBT);
       UnSet(g, EN_RBT);
       xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
       f = PaireLibre3d(k, xg, yg, zg);
@@ -346,7 +346,7 @@ int32_t l3dpardircollapse_l(struct xvimage * k, struct xvimage * prio, struct xv
 	RlifoPush(&RLIFO, g);
 	Set(g, EN_RLIFO);
       }
-    } // while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    } // while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
 
     for (dir = 0; dir <= 2; dir++) // For all face directions
       for (ori = 0; ori <= 1; ori++) // For both orientations
@@ -548,10 +548,10 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
   while (!mcrbt_RbtVide(RBT))
   {
     // construit la liste de toutes les paires libres ayant la prioritÅÈ courante
-    p = RbtMinLevel(RBT); 
-    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    p = mcrbt_RbtMinLevel(RBT); 
+    while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
     {
-      g = RbtPopMin(RBT);
+      g = mcrbt_RbtPopMin(RBT);
       UnSet(g, EN_RBT);
       xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
       f = PaireLibre3d(k, xg, yg, zg);
@@ -561,7 +561,7 @@ int32_t l3dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
 	RlifoPush(&RLIFO, g);
 	Set(g, EN_RLIFO);
       }
-    } // while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    } // while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
 
     for (dir = 0; dir <= 2; dir++) // For all face directions
       for (ori = 0; ori <= 1; ori++) // For both orientations
@@ -1278,10 +1278,10 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
   while (!mcrbt_RbtVide(RBT))
   {
     // construit la liste de toutes les paires libres ayant la prioritÅÈ courante
-    p = RbtMinLevel(RBT); 
-    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    p = mcrbt_RbtMinLevel(RBT); 
+    while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
     {
-      g = RbtPopMin(RBT);
+      g = mcrbt_RbtPopMin(RBT);
       UnSet(g, EN_RBT);
       xg = g % rs; yg = (g % ps) / rs; zg = g / ps;
       f = PaireLibre3d(k, xg, yg, zg);
@@ -1291,7 +1291,7 @@ graphe * l3dtopoflow_f(struct xvimage * k, struct xvimage * prio, struct xvimage
 	RlifoPush(&RLIFO, g);
 	Set(g, EN_RLIFO);
       }
-    } // while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    } // while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
 
     for (dir = 0; dir <= 2; dir++) // For all face directions
       for (ori = 0; ori <= 1; ori++) // For both orientations

@@ -62,7 +62,7 @@ int32_t main(argc, argv)
   t1 = clock();
   if ((connex == 4) || (connex == 8))
   {
-    if (! llpemeyersansligne(image, connex, result))
+    if (! llpemeyer_llpemeyersansligne(image, connex, result))
     {
       fprintf(stderr, "%s: llpemeyer failed\n", argv[0]);
       exit(1);

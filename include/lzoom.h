@@ -46,13 +46,19 @@ extern "C" {
 /* prototype for lzoom.c */
 /* ============== */
 
-// LuM not implemented
-// int32_t lzoom(
+// int32_t lresize_lzoom(
 //   struct xvimage * in,
 //   struct xvimage ** out,
 //   double zoomx, double zoomy, double zoomz
 // );
 
+    int32_t lresize_lzoom(
+        struct xvimage * in,
+        struct xvimage ** out,
+        double z );
+    
+
+    
 extern int32_t lzoom2(
   struct xvimage * in,
   struct xvimage ** out,

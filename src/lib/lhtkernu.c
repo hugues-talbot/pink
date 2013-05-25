@@ -27,6 +27,7 @@
 */
 
 /* ==================================== */
+static
 int32_t testeleve4(uint8_t *SOURCE, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
@@ -51,6 +52,7 @@ if (modifie) printf("========> ELEVE : %d\n", SOURCE[x]);
 
 
 /* ==================================== */
+static
 int32_t testeleve8(uint8_t *SOURCE, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
@@ -108,7 +110,7 @@ void testmaxi8(uint8_t *SOURCE, int32_t x, int32_t rs, int32_t N)
 } /* testmaxi8() */
 
 /* ==================================== */
-void empilevoisins(int32_t x, int32_t rs, int32_t N, Fifo *FIFOna, Fifo *FIFOea, Fifo *FIFOsa, Fifo *FIFOoa)
+void lhtkernu_empilevoisins(int32_t x, int32_t rs, int32_t N, Fifo *FIFOna, Fifo *FIFOea, Fifo *FIFOsa, Fifo *FIFOoa)
 /* ==================================== */
 {
   int32_t y;
@@ -137,10 +139,10 @@ void empilevoisins(int32_t x, int32_t rs, int32_t N, Fifo *FIFOna, Fifo *FIFOea,
   y = voisin(x, OUEST+1, rs, N);
   if ((y!=-1) && !IsSet(y,MAXI) && !IsSet(y,EN_FIFO) && nonbord(y,rs,N))
     { FifoPush(FIFOoa, y); Set(y, EN_FIFO); }
-} /* empilevoisins() */
+} /* lhtkernu_empilevoisins() */
 
 /* ==================================== */
-int32_t lhtkernu(struct xvimage *image, int32_t nitermax, int32_t connex)
+int32_t lhtkernu_lhtkernu(struct xvimage *image, int32_t nitermax, int32_t connex)
 /* ==================================== */
 { 
   int32_t i;
@@ -275,7 +277,7 @@ if (connex == 4)
       if (testeleve4(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
       {
         testmaxi4(SOURCE, x, rs, N);            /* reactualise l'image MAXI */
-        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        lhtkernu_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
       } /* if (testeleve4(SOURCE, x, rs, N)) */
     } /* while (! FifoVide(FIFOn)) */
 
@@ -286,7 +288,7 @@ if (connex == 4)
       if (testeleve4(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
       {
         testmaxi4(SOURCE, x, rs, N);            /* reactualise l'image MAXI */
-        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        lhtkernu_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
       } /* if (testeleve4(SOURCE, x, rs, N)) */
     } /* while (! FifoVide(FIFOs)) */
 
@@ -297,7 +299,7 @@ if (connex == 4)
       if (testeleve4(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
       {
         testmaxi4(SOURCE, x, rs, N);            /* reactualise l'image MAXI */
-        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        lhtkernu_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
       } /* if (testeleve4(SOURCE, x, rs, N)) */
     } /* while (! FifoVide(FIFOe)) */
 
@@ -308,7 +310,7 @@ if (connex == 4)
       if (testeleve4(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
       {
         testmaxi4(SOURCE, x, rs, N);            /* reactualise l'image MAXI */
-        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        lhtkernu_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
       } /* if (testeleve4(SOURCE, x, rs, N)) */
     } /* while (! FifoVide(FIFOo)) */
 
@@ -335,7 +337,7 @@ else /* connex == 8 */
       if (testeleve8(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
       {
         testmaxi8(SOURCE, x, rs, N);            /* reactualise l'image MAXI */
-        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        lhtkernu_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
       } /* if (testeleve8(SOURCE, x, rs, N)) */
     } /* while (! FifoVide(FIFOn)) */
 
@@ -346,7 +348,7 @@ else /* connex == 8 */
       if (testeleve8(SOURCE, x, rs, N))        /* modifie l'image le cas echeant */
       {
         testmaxi8(SOURCE, x, rs, N);           /* reactualise l'image MAXI */
-        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        lhtkernu_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
       } /* if (testeleve8(SOURCE, x, rs, N)) */
     } /* while (! FifoVide(FIFOs)) */
 
@@ -357,7 +359,7 @@ else /* connex == 8 */
       if (testeleve8(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
       {
         testmaxi8(SOURCE, x, rs, N);            /* reactualise l'image MAXI */
-        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        lhtkernu_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
       } /* if (testeleve8(SOURCE, x, rs, N)) */
     } /* while (! FifoVide(FIFOe)) */
 
@@ -368,7 +370,7 @@ else /* connex == 8 */
       if (testeleve8(SOURCE, x, rs, N))         /* modifie l'image le cas echeant */
       {
         testmaxi8(SOURCE, x, rs, N);            /* reactualise l'image MAXI */
-        empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
+        lhtkernu_empilevoisins(x, rs, N, FIFOna, FIFOea, FIFOsa, FIFOoa);
       } /* if (testeleve8(SOURCE, x, rs, N)) */
     } /* while (! FifoVide(FIFOo)) */
 

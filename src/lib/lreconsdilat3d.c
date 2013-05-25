@@ -16,7 +16,7 @@
 #include <lreconsdilat3d.h>
 
 /* ==================================== */
-int32_t lreconsdilat3d(
+int32_t lreconsdilat3d_lreconsdilat3d(
         struct xvimage *g,
         struct xvimage *f,
         uint8_t *mask) 

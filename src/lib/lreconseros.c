@@ -15,7 +15,7 @@
 #include <lreconseros.h>
 
 /* ==================================== */
-int32_t lreconseros(
+int32_t lreconseros_lreconseros(
         struct xvimage *g,
         struct xvimage *f,
         uint8_t *mask) 

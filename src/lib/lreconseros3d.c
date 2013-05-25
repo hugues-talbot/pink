@@ -16,7 +16,7 @@
 #include <lreconseros3d.h>
 
 /* ==================================== */
-int32_t lreconseros3d(
+int32_t lreconseros3d_lreconseros3d(
         struct xvimage *g,
         struct xvimage *f,
         uint8_t *mask) 

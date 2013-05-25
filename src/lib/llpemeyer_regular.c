@@ -37,6 +37,7 @@
 #define EN_FAH   0
 
 /* ==================================== */
+static
 int32_t NotIn(int32_t e, int32_t *list, int32_t n)                       
 /* ==================================== */
 {
@@ -50,7 +51,7 @@ int32_t NotIn(int32_t e, int32_t *list, int32_t n)
 } /* NotIn() */
 
 /* ==================================== */
-int32_t llpemeyer(
+int32_t llpemeyer_regular_llpemeyer(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -295,7 +296,7 @@ int32_t llpemeyer(
 } /*  /* llpemeyer() */
 
 /* ==================================== */
-int32_t llpemeyer2(
+int32_t llpemeyer_regular_llpemeyer2(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *masque,
@@ -456,7 +457,7 @@ int32_t llpemeyer2(
 } /*  /* llpemeyer2() */
 
  /* ==================================== */
- int32_t llpemeyerkhalimsky(
+ int32_t llpemeyer_regular_llpemeyerkhalimsky(
          struct xvimage *image,
          struct xvimage *marqueurs,
          struct xvimage *marqueursfond,
@@ -688,7 +689,7 @@ int32_t llpemeyer2(
  } /* llpemeyerkhalimsky() */
 
 /* ==================================== */
-int32_t llpemeyersansligne(
+int32_t llpemeyer_regular_llpemeyersansligne(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -925,7 +926,7 @@ int32_t llpemeyersansligne(
 } /*  /* llpemeyersansligne() */
 
 /* ==================================== */
-int32_t llpemeyer3d(
+int32_t llpemeyer_regular_llpemeyer3d(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -1239,7 +1240,7 @@ int32_t llpemeyer3d(
 } /* llpemeyer3d() */
 
 /* ==================================== */
-int32_t llpemeyer3dsansligne(
+int32_t llpemeyer_regular_llpemeyer3dsansligne(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -1551,7 +1552,7 @@ int32_t llpemeyer3dsansligne(
 } /* llpemeyer3dsansligne() */
 
 /* ==================================== */
-int32_t llpemeyer3d2(
+int32_t llpemeyer_regular_llpemeyer3d2(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *masque,
@@ -1569,7 +1570,7 @@ int32_t llpemeyer3d2(
 
 
 /* ==================================== */
-int32_t llpemeyerbiconnecte(
+int32_t llpemeyer_regular_llpemeyerbiconnecte(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -1806,7 +1807,7 @@ int32_t llpemeyerbiconnecte(
 
 
 /* ==================================== */
-int32_t llpemeyerbiconnecte3d(
+int32_t llpemeyer_regular_llpemeyerbiconnecte3d(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,

@@ -30,6 +30,7 @@
 #define DIRMAX  31
 
 /* ==================================== */
+static
 void deriche3dgen(double *f,               /* image a traiter */
                 int32_t rs,                  /* taille ligne */
                 int32_t cs,                  /* taille colonne */
@@ -371,6 +372,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
 }
 
 /* ==================================== */
+static
 void deriche3dgenb(uint8_t *f,     /* image a traiter */
                 int32_t rs,                  /* taille ligne */
                 int32_t cs,                  /* taille colonne */
@@ -477,7 +479,7 @@ void deriche3dgenb(uint8_t *f,     /* image a traiter */
 } /* deriche3dgenb() */
 
 /* ==================================== */
-int32_t llisseurrec3d(struct xvimage *image, double alpha)
+int32_t lderiche3d_llisseurrec3d(struct xvimage *image, double alpha)
 /* ==================================== */
 /*
     alpha : parametre (1/taille) du filtre

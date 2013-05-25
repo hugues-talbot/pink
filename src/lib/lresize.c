@@ -6,13 +6,14 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <mccodimage.h>
-#include <mcimage.h>
-#include <mcutil.h>
-#include <lzoom.h>
+
+#include "mccodimage.h"
+#include "mcimage.h"
+#include "mcutil.h"
+#include "lzoom.h"
 
 /* ==================================== */
-int32_t lzoom(
+int32_t lresize_lzoom(
   struct xvimage * in,
   struct xvimage ** out,
   double z)

@@ -119,7 +119,7 @@ int main(int argc, char **argv)
   {
     if (mode == 0)
     {
-      if (! llpemeyer2(image, marqueurs, masque, connex))
+      if (! llpemeyer_llpemeyer2(image, marqueurs, masque, connex))
       {
 	fprintf(stderr, "%s: llpemeyer2 failed\n", argv[0]);
 	exit(1);
@@ -135,7 +135,7 @@ int main(int argc, char **argv)
   {
     if (mode == 0)
     {
-      if (! llpemeyer3d2(image, marqueurs, masque, connex))
+      if (! llpemeyer_llpemeyer3d2(image, marqueurs, masque, connex))
       {
 	fprintf(stderr, "%s: llpemeyer3d2 failed\n", argv[0]);
 	exit(1);

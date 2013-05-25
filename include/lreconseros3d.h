@@ -40,7 +40,7 @@ extern "C" {
 /* ============== */
 
 
-extern int32_t lreconseros3d(
+extern int32_t lreconseros3d_lreconseros3d(
         struct xvimage *g,
         struct xvimage *f,
         uint8_t *mask

@@ -198,9 +198,9 @@ int32_t dericheDerivateurGA(struct xvimage *image, struct xvimage *ga, double al
   b1 = b3 = 2 * e_a;
   b2 = b4 = - e_2a;
 
-  derichegen(Imd, rs, cs, buf1, buf2, Im1,
+  jclderiche_derichegen(Imd, rs, cs, buf1, buf2, Im1,
 	     a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-  derichegen(Imd, rs, cs, buf1, buf2, Im2,
+  jclderiche_derichegen(Imd, rs, cs, buf1, buf2, Im2,
 	     a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
   
   for(j = 0; j < cs; j++)

@@ -179,7 +179,7 @@
 
 #include <unistd.h>
 /* ==================================== */
-void visualise(int32_t tabres[], char * c, int32_t x, int32_t y)
+static void visualise(int32_t tabres[], char * c, int32_t x, int32_t y)
 /* ==================================== */
 {
   int32_t i, lastv;
@@ -251,6 +251,7 @@ int32_t excentricity(double mx1, double my1, double mx2, double my2,
 #endif
 
 /* ==================================== */
+static
 int32_t circ(int32_t area, int32_t perim)
 /* ==================================== */
 {
@@ -264,6 +265,7 @@ int32_t circ(int32_t area, int32_t perim)
 } /* circ() */
 
 /* ==================================== */
+static
 int32_t dtrou(int32_t area, int32_t trou)
 /* ==================================== */
 {
@@ -271,6 +273,7 @@ int32_t dtrou(int32_t area, int32_t trou)
 } /* dtrou() */
 
 /* ==================================== */
+static
 void signature(int32_t mesure, int32_t X, int32_t Y, int32_t * M, cbtcell * CBT, int32_t rs, 
                int32_t *SURF, int32_t *PROF, int32_t *VOL, int32_t *PER, 
                uint8_t *RDIST, int32_t *TROU, uint8_t *EXCEN)
@@ -343,6 +346,7 @@ void signature(int32_t mesure, int32_t X, int32_t Y, int32_t * M, cbtcell * CBT,
 
 
 /* ==================================== */
+static
 void printcomp(int32_t X, int32_t Y, int32_t * M, cbtcell * CBT, int32_t rs,
                int32_t *SURF, int32_t *PROF, int32_t *VOL, int32_t *PER, 
                uint8_t *RDIST, int32_t *TROU, uint8_t *EXCEN)

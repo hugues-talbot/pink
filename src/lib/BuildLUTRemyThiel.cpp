@@ -57,7 +57,7 @@ void adjustCTg (int L, TabCTg & CTgg,TabCTg & CTgNew,int Rmaxx);
 
 
 /* Main Function*/
-int main()
+int libmain()
 {
     int L1=100;// here L1 is the length of the image
     int Rknown1=0;
