@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<testsuite errors="0" failures="0" name="pinktest.dilatball.dilatball" tests="11" time="0.000">
+	<testcase classname="pinktest.dilatball.dilatball" name="test_0" time="0.000"/>
+	<testcase classname="pinktest.dilatball.dilatball" name="test_1" time="0.000"/>
+	<testcase classname="pinktest.dilatball.dilatball" name="test_10" time="0.000"/>
+	<testcase classname="pinktest.dilatball.dilatball" name="test_11" time="0.000"/>
+	<testcase classname="pinktest.dilatball.dilatball" name="test_12" time="0.000"/>
+	<testcase classname="pinktest.dilatball.dilatball" name="test_13" time="0.000"/>
+	<testcase classname="pinktest.dilatball.dilatball" name="test_2" time="0.000"/>
+	<testcase classname="pinktest.dilatball.dilatball" name="test_3" time="0.000"/>
+	<testcase classname="pinktest.dilatball.dilatball" name="test_4" time="0.000"/>
+	<testcase classname="pinktest.dilatball.dilatball" name="test_8" time="0.000"/>
+	<testcase classname="pinktest.dilatball.dilatball" name="test_9" time="0.000"/>
+	<system-out>
+<![CDATA[]]>	</system-out>
+	<system-err>
+<![CDATA[]]>	</system-err>
+</testsuite>

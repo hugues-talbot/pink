@@ -1,0 +1,12 @@
+#!/bin/sh
+USAGE="Usage: $0 in.k"
+if [ $# -ne 1 ]
+then
+	echo $USAGE
+        exit
+fi
+3dborder $1 /tmp/visu1k_1
+pgm2vtk /tmp/visu1k_1 1 /tmp/visu1k_1.vtk
+multirender /tmp/visu1k_1.vtk
+rm -f /tmp/visu1k_*
+
