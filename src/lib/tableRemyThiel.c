@@ -1,3 +1,8 @@
+
+#include <stdint.h>
+
+#include "lmedialaxis.h"
+
 #define NBVECTNGLUT 7
 #define NBCOLLUT 1370 
 int32_t nbvectnglut = NBVECTNGLUT;

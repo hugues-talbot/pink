@@ -21,8 +21,9 @@ OBSOLETE - VOIR llpemeyer.c
 #define TRACEPOP
 #define TRACEMARQUE
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mccodimage.h>

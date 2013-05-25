@@ -1,3 +1,7 @@
+#include <stddef.h>
+#include <stdio.h>
+
+#include "mcscn.h"
 // Functions for the management of 3D scenes
 // Michel Couprie - Juillet 2004
 

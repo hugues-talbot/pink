@@ -1,48 +1,15 @@
-/*
-Copyright ESIEE (2009) 
-
-m.couprie@esiee.fr
-
-This software is an image processing library whose purpose is to be
-used primarily for research and teaching.
-
-This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software. You can  use, 
-modify and/ or redistribute the software under the terms of the CeCILL
-license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
-
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
-with a limited warranty  and the software's author,  the holder of the
-economic rights,  and the successive licensors  have only  limited
-liability. 
-
-In this respect, the user's attention is drawn to the risks associated
-with loading,  using,  modifying and/or developing or reproducing the
-software by the user in light of its specific status of free software,
-that may mean  that it is complicated to manipulate,  and  that  also
-therefore means  that it is reserved for developers  and  experienced
-professionals having in-depth computer knowledge. Users are therefore
-encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
-
-The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
-*/
+/* $Id: lmedialaxisRita.c,v 1.1.1.1 2008-11-25 08:01:39 mcouprie Exp $ */
 /* 
 Fonctions pour l'axe médian exact ou approché, et
 pour la fonction bissectrice.
 
 Michel Couprie - mai 2002
 Rita Zrour - juin 2004
-  axe médian euclidien exact (algo de Rémy-Thiel) et fonction bissectrice (lmedialaxisRita_lbisector)
-Michel Couprie - juillet 2004 - révision lmedialaxisRita_lbisector
-Laurent Najman - lmedialaxisRita_lbisector_talbot
-Michel Couprie - juillet 2004 - révision lmedialaxisRita_lbisector_talbot
-Michel Couprie - août 2005 - variante lmedialaxisRita_lbisector Coeurjolly
+  axe médian euclidien exact (algo de Rémy-Thiel) et fonction bissectrice (lbisector)
+Michel Couprie - juillet 2004 - révision lbisector
+Laurent Najman - lbisector_talbot
+Michel Couprie - juillet 2004 - révision lbisector_talbot
+Michel Couprie - août 2005 - variante lbisector Coeurjolly
 Andre Vital Saude - avril 2006 - ameliorations des look-up tables
 */
 
@@ -115,7 +82,7 @@ static double norm(vect2Dint v) { return sqrt((double)(v.x*v.x + v.y*v.y)); }
 static double pscal(vect2Dint u, vect2Dint v) { return (double)(u.x*v.x + u.y*v.y); }
 
 /* ==================================== */
-int32_t lmedialaxisRita_lmedax_talbot(struct xvimage *img,   /* donnee: image binaire */       
+int32_t lmedax_talbot(struct xvimage *img,   /* donnee: image binaire */       
                   struct xvimage *res    /* resultat: centres des boules max (approx) */
 )
 /* ==================================== */
@@ -127,7 +94,7 @@ int32_t lmedialaxisRita_lmedax_talbot(struct xvimage *img,   /* donnee: image bi
   suivant l'algo de Danielsson 4SED
 */
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lmedax_talbot"
+#define F_NAME "lmedax_talbot"
 { 
   uint32_t n1,n2,n3;     /* normes des vecteurs (au carre) */
   int32_t rs = img->row_size;
@@ -160,12 +127,12 @@ int32_t lmedialaxisRita_lmedax_talbot(struct xvimage *img,   /* donnee: image bi
   for (i = 0; i < N; i++) 
     F[i] = 255-F[i];
 
-  M = SLONGDATA(res);
+  M = ULONGDATA(res);
   for (i = 0; i < N; i++) 
     M[i] = norm(L[i]);
   writeimage(res, "_res");
 
-  M = SLONGDATA(res);
+  M = ULONGDATA(res);
   for (i = 0; i < N; i++) if (F[i])
   {
     printf("i=(%d,%d); L[i]=(%d,%d)\n", i%rs, i/rs, L[i].x, L[i].y);
@@ -205,10 +172,10 @@ int32_t lmedialaxisRita_lmedax_talbot(struct xvimage *img,   /* donnee: image bi
   }
   free(L);
   return(1);
-} // lmedialaxisRita_lmedax_talbot()
+} // lmedax_talbot()
 
 /* ==================================== */
-int32_t lmedialaxisRita_lmedax_meyer(struct xvimage *img,   /* donnee: image binaire */       
+int32_t lmedax_meyer(struct xvimage *img,   /* donnee: image binaire */       
                  struct xvimage *res    /* resultat: centres des boules max (approx) */
 )
 /* ==================================== */
@@ -216,13 +183,13 @@ int32_t lmedialaxisRita_lmedax_meyer(struct xvimage *img,   /* donnee: image bin
   Methode de Meyer (approximation)
 */
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lmedax_meyer"
+#define F_NAME "lmedax_meyer"
 { 
   int32_t rs = img->row_size;
   int32_t cs = img->col_size;
   int32_t N= rs * cs;            /* taille de l'image */
   uint8_t *F = UCHARDATA(img);          /* pointeur sur l'image */
-  uint32_t *M = SLONGDATA(res);          /* donnees de l'image resultat */
+  uint32_t *M = ULONGDATA(res);          /* donnees de l'image resultat */
   uint32_t *D;          /* distance */
   uint32_t *H;          /* tampon */
   struct xvimage *inv;
@@ -286,10 +253,10 @@ int32_t lmedialaxisRita_lmedax_meyer(struct xvimage *img,   /* donnee: image bin
     if (F[x] && (M[x] < D[x])) M[x] = D[x]; else M[x] = 0;  
   free(D);
   return(1);
-} // lmedialaxisRita_lmedax_meyer()
+} // lmedax_meyer()
 
 /* ==================================== */
-int32_t lmedialaxisRita_lmedax_meyer3d(struct xvimage *img,   /* donnee: image binaire */       
+int32_t lmedax_meyer3d(struct xvimage *img,   /* donnee: image binaire */       
                    struct xvimage *res    /* resultat: centres des boules max (approx) */
 )
 /* ==================================== */
@@ -297,7 +264,7 @@ int32_t lmedialaxisRita_lmedax_meyer3d(struct xvimage *img,   /* donnee: image b
   Methode de Meyer (approximation)
 */
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lmedax_meyer3d"
+#define F_NAME "lmedax_meyer3d"
 { 
   int32_t rs = rowsize(img);
   int32_t cs = colsize(img);
@@ -305,7 +272,7 @@ int32_t lmedialaxisRita_lmedax_meyer3d(struct xvimage *img,   /* donnee: image b
   int32_t ps = rs * cs;
   int32_t N = ps * ds;                            /* taille de l'image */
   uint8_t *F = UCHARDATA(img);          /* pointeur sur l'image */
-  uint32_t *M = SLONGDATA(res);          /* donnees de l'image resultat */
+  uint32_t *M = ULONGDATA(res);          /* donnees de l'image resultat */
   uint32_t *D;          /* distance */
   uint32_t *H;          /* tampon */
   struct xvimage *inv;
@@ -364,13 +331,13 @@ int32_t lmedialaxisRita_lmedax_meyer3d(struct xvimage *img,   /* donnee: image b
     if (F[x] && (M[x] < D[x])) M[x] = D[x]; else M[x] = 0;  
   free(D);
   return(1);
-} // lmedialaxisRita_lmedax_meyer3d()
+} // lmedax_meyer3d()
 
 /* ==================================== */
-int32_t lmedialaxisRita_lmedax_mc(struct xvimage *f)
+int32_t lmedax_mc(struct xvimage *f)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lmedax_mc"
+#define F_NAME "lmedax_mc"
 {
   int32_t i, k;
   int32_t rs = rowsize(f);        /* taille ligne f */
@@ -396,7 +363,7 @@ int32_t lmedialaxisRita_lmedax_mc(struct xvimage *f)
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return(0);
   }
-  D = SLONGDATA(dist);
+  D = ULONGDATA(dist);
 
   if (ds == 1)
   {
@@ -498,7 +465,7 @@ int32_t lmedialaxisRita_lmedax_mc(struct xvimage *f)
   freeimage(tmp2);
   freeimage(res);
   return 1;
-} // lmedialaxisRita_lmedax_mc()
+} // lmedax_mc()
 
 
 /* ==================================== */
@@ -526,10 +493,6 @@ typedef int32_t * Tabuff;
 typedef uint32_t * Image;
 typedef int32_t * TabDTg;
 
-typedef struct  Weighting{
-    int32_t x, y, z, RR;
-}  Weighting;
-
 typedef Weighting *MaskG;	      	//used to store Mglut
 
 /*
@@ -546,8 +509,8 @@ typedef struct {		//used to store all possible neighbors of (1/8) Z2 or (1/48) Z
 
 /* int32_t callcheckR(int32_t distance,MaskG M); */
 /* int32_t RadiusMax(uint32_t * gg, int32_t rs, int32_t cs, int32_t ds); */
-int32_t lmedialaxisRita_ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neigbors *Mg);
-int32_t lmedialaxisRita_ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neigbors *Mg);
+int32_t ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neigbors *Mg);
+int32_t ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neigbors *Mg);
 /* int32_t CallMedial(int32_t x, int32_t y, Image image, int32_t rs, int32_t cs, MaskG MgL, LookUpTable Lut, int32_t nbcollut, int32_t rrmax); */
 /* int32_t CallMedial3d(int32_t x, int32_t y, int32_t z, Image image, int32_t rs, int32_t cs, int32_t ds, MaskG MgL, LookUpTable Lut, int32_t nbcollut, int32_t rrmax); */
 
@@ -577,7 +540,7 @@ It takes the value of DT as a criterion to determine how many vectors are needed
 /* } */
 
 //----------------------------------
-int32_t lmedialaxisRita_ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neigbors *Mg)
+int32_t ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neigbors *Mg)
 //----------------------------------
 // ATTENTION : roles de x et y inversés (cf. Rita)
 {
@@ -604,10 +567,10 @@ int32_t lmedialaxisRita_ApplySymmetries(int32_t x, int32_t y, int32_t x1, int32_
     }
   }
   return count;	// this is important to know how many vector are present in Mg
-} // lmedialaxisRita_ApplySymmetries()
+} // ApplySymmetries()
 
 //----------------------------------
-int32_t lmedialaxisRita_ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neigbors *Mg)
+int32_t ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neigbors *Mg)
 //----------------------------------
 // ATTENTION : roles de x, y, z inversés (cf. Rita)
 {
@@ -683,7 +646,7 @@ int32_t lmedialaxisRita_ApplySymmetries3d(int32_t x, int32_t y, int32_t z, int32
     }
   }
   return count;		// this is important to know how many vector are present in Mg
-} // lmedialaxisRita_ApplySymmetries3d()
+} // ApplySymmetries3d()
 
 /*This function takes a point in the initial image find all possible neighbors in Mglut;
 calls find neighbors to check for each vector in Mglut its neighbors; puts the point in the 
@@ -700,7 +663,7 @@ correct position in LutColumn; returns 1 if the point is a medial axis point and
 
 /*   for(t = 0; t < e; t++) //t determine the position of the vector in Mglut */
 /*   {	 */
-/*     nb = lmedialaxisRita_ApplySymmetries(MgL[t].x, MgL[t].y, x, y, rs, cs, &MgN1); */
+/*     nb = ApplySymmetries(MgL[t].x, MgL[t].y, x, y, rs, cs, &MgN1); */
 /*     for(j = 0; j < nb; j++) */
 /*     { */
 /*       xx = x + MgN1.neig[j].x;  */
@@ -724,7 +687,7 @@ int32_t IsMA(int32_t x, int32_t y,
   //foreach vg in MgLut do
   for (i = 0; i < mlut.numd; i++) {
     vg = mlut.vec[i];
-    nb = lmedialaxisRita_ApplySymmetries(vg.x, vg.y, x, y, rs, cs, &MgN1);
+    nb = ApplySymmetries(vg.x, vg.y, x, y, rs, cs, &MgN1);
     for(j = 0; j < nb; j++)
     {
       xx = x + MgN1.neig[j].x; 
@@ -748,7 +711,7 @@ int32_t IsMA(int32_t x, int32_t y,
 
 /*   for(t = 0; t < e; t++) //t determine the position of the vector in Mglut */
 /*   {	 */
-/*     nb = lmedialaxisRita_ApplySymmetries3d(MgL[t].x, MgL[t].y, MgL[t].z, x, y, z, rs, cs, ds, &MgN1); */
+/*     nb = ApplySymmetries3d(MgL[t].x, MgL[t].y, MgL[t].z, x, y, z, rs, cs, ds, &MgN1); */
 /*     for(j = 0; j < nb; j++) */
 /*     { */
 /*       xx = x + MgN1.neig[j].x;  */
@@ -773,7 +736,7 @@ int32_t IsMA3d(int32_t x, int32_t y, int32_t z,
   //foreach vg in MgLut do
   for (i = 0; i < mlut.numd; i++) {
     vg = mlut.vec[i];
-    nb = lmedialaxisRita_ApplySymmetries3d(vg.x, vg.y, vg.z, x, y, z, rs, cs, ds, &MgN1);
+    nb = ApplySymmetries3d(vg.x, vg.y, vg.z, x, y, z, rs, cs, ds, &MgN1);
     for(j = 0; j < nb; j++)
     {
       xx = x + MgN1.neig[j].x; 
@@ -788,10 +751,10 @@ int32_t IsMA3d(int32_t x, int32_t y, int32_t z,
 } // IsMA3d()
 
 /* ==================================== */
-int32_t lmedialaxisRita_lmedax_Remy_Thiel(struct xvimage *ImageDist, struct xvimage *ImageMedial)
+int32_t lmedax_Remy_Thiel(struct xvimage *ImageDist, struct xvimage *ImageMedial)
 /* ==================================== */
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lmedax_Remy_Thiel"
+#define F_NAME "lmedax_Remy_Thiel"
 /*
 from the article: " Exact Medial Axis With Euclidean Distance"
   algorithm to compute the medial axis based on the look-up table
@@ -840,8 +803,8 @@ from the article: " Exact Medial Axis With Euclidean Distance"
     return 0;
   }    
 
-  imagedist = SLONGDATA(ImageDist);
-  imagemedial = SLONGDATA(ImageMedial);
+  imagedist = ULONGDATA(ImageDist);
+  imagemedial = ULONGDATA(ImageMedial);
   memset(imagemedial, 0, N*sizeof(int32_t));
 
   rmax= findMaxLong(imagedist, N);
@@ -1057,11 +1020,11 @@ from the article: " Exact Medial Axis With Euclidean Distance"
 /* #endif */
 
 /*   return 1; */
-} // lmedialaxisRita_lmedax_Remy_Thiel()
+} // lmedax_Remy_Thiel()
 
 
 /* ==================================== */
-struct xvimage *lmedialaxisRita_lmedialaxis(struct xvimage *f, int32_t mode)
+struct xvimage *lmedialaxis(struct xvimage *f, int32_t mode)
 /* ==================================== */
 /* f must be allocated */
 {
@@ -1085,23 +1048,23 @@ struct xvimage *lmedialaxisRita_lmedialaxis(struct xvimage *f, int32_t mode)
     fprintf(stderr, "%s: allocimage failed\n", F_NAME);
     return(NULL);
   }
-  D = SLONGDATA(medial);
+  D = ULONGDATA(medial);
 
     if ((mode == 0) && (ds == 1))
     {
-      if (! lmedialaxisRita_lmedax_meyer(f, medial))
-	//if (! lmedialaxisRita_lmedax_talbot(f, medial))
+      if (! lmedax_meyer(f, medial))
+	//if (! lmedax_talbot(f, medial))
       {
-        fprintf(stderr, "%s: lmedialaxisRita_lmedax_meyer failed\n", F_NAME);
+        fprintf(stderr, "%s: lmedax_meyer failed\n", F_NAME);
         return(NULL);
       }
     }
     else
     if ((mode == 0) && (ds > 1))
     {
-      if (! lmedialaxisRita_lmedax_meyer3d(f, medial))
+      if (! lmedax_meyer3d(f, medial))
       {
-        fprintf(stderr, "%s: lmedialaxisRita_lmedax_meyer3d failed\n", F_NAME);
+        fprintf(stderr, "%s: lmedax_meyer3d failed\n", F_NAME);
         return(NULL);
       }
     }
@@ -1145,9 +1108,9 @@ struct xvimage *lmedialaxisRita_lmedialaxis(struct xvimage *f, int32_t mode)
         fprintf(stderr, "%s: lsedt_meijster failed\n", F_NAME);
         return(NULL);
       }
-      if (! lmedialaxisRita_lmedax_Remy_Thiel(dist, medial))
+      if (! lmedax_Remy_Thiel(dist, medial))
       {
-        fprintf(stderr, "%s: lmedialaxisRita_lmedax_Remy_Thiel failed\n", F_NAME);
+        fprintf(stderr, "%s: lmedax_Remy_Thiel failed\n", F_NAME);
         return(NULL);
       }
       freeimage(dist);
@@ -1169,7 +1132,7 @@ struct xvimage *lmedialaxisRita_lmedialaxis(struct xvimage *f, int32_t mode)
         fprintf(stderr, "%s: function lt4pp failed\n", F_NAME);
         return(NULL);
       }
-      T1 = SLONGDATA(dist);
+      T1 = ULONGDATA(dist);
       for (i = 0; i < N; i++) 
         if ((T1[i] == 0) && (F[i] == 0)) ; // F[i] = D[i]; 
         else D[i] = 0; 
@@ -1192,7 +1155,7 @@ struct xvimage *lmedialaxisRita_lmedialaxis(struct xvimage *f, int32_t mode)
         fprintf(stderr, "%s: function lt8pp failed\n", F_NAME);
         return(NULL);
       }
-      T1 = SLONGDATA(dist);
+      T1 = ULONGDATA(dist);
       for (i = 0; i < N; i++) 
         if ((T1[i] == 0) && (F[i] == 0)) ; // F[i] = D[i]; 
         else D[i] = 0; 
@@ -1215,7 +1178,7 @@ struct xvimage *lmedialaxisRita_lmedialaxis(struct xvimage *f, int32_t mode)
         fprintf(stderr, "%s: function lt6pp failed\n", F_NAME);
         return(NULL);
       }
-      T1 = SLONGDATA(dist);
+      T1 = ULONGDATA(dist);
       for (i = 0; i < N; i++) 
         if ((T1[i] == 0) && (F[i] == 0)) ; // F[i] = D[i]; 
         else D[i] = 0; 
@@ -1233,12 +1196,12 @@ struct xvimage *lmedialaxisRita_lmedialaxis(struct xvimage *f, int32_t mode)
         return(NULL);
       }
       dist = copyimage(medial);
-      if (! lmctopo3d_t26pp(dist))           // pour les maxima de la fonction distance
+      if (! lt26pp(dist))           // pour les maxima de la fonction distance
       {
-        fprintf(stderr, "%s: function lmctopo3d_t26pp failed\n", F_NAME);
+        fprintf(stderr, "%s: function lt26pp failed\n", F_NAME);
         return(NULL);
       }
-      T1 = SLONGDATA(dist);
+      T1 = ULONGDATA(dist);
       for (i = 0; i < N; i++) 
         if ((T1[i] == 0) && (F[i] == 0)) ; // F[i] = D[i]; 
         else D[i] = 0; 
@@ -1283,10 +1246,10 @@ struct xvimage *lmedialaxisRita_lmedialaxis(struct xvimage *f, int32_t mode)
     }
 #endif
   return medial;
-} // lmedialaxisRita_lmedialaxis()
+} // lmedialaxis()
 
 /* ==================================== */
-int32_t lmedialaxisRita_lmedialaxisbin(struct xvimage *f, int32_t mode)
+int32_t lmedialaxisbin(struct xvimage *f, int32_t mode)
 /* ==================================== */
 {
 #undef F_NAME
@@ -1297,16 +1260,16 @@ int32_t lmedialaxisRita_lmedialaxisbin(struct xvimage *f, int32_t mode)
   struct xvimage *dist;
   uint32_t *D;
 
-  dist = lmedialaxisRita_lmedialaxis(f, mode);
+  dist = lmedialaxis(f, mode);
   if (dist == NULL)
   {   
     fprintf(stderr, "%s: lmedialaxis failed\n", F_NAME);
     return(0);
   }
-  D = SLONGDATA(dist);
+  D = ULONGDATA(dist);
   for (i = 0; i < N; i++) if (D[i]) F[i] = NDG_MAX; else F[i] = NDG_MIN;
   return 1;
-} // lmedialaxisRita_lmedialaxisbin()
+} // lmedialaxisbin()
 
 /* ==================================== */
 /* ==================================== */
@@ -1395,7 +1358,7 @@ double CheckAngle3d(int32_t xc, int32_t yc, int32_t zc, ZeroNeighbors ZeroNeighb
 } // CheckAngle3d()
 
 //----------------------------------
-int32_t lmedialaxisRita_ApplySymmetriesB(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neigbors *Mg)
+int32_t ApplySymmetriesB(int32_t x, int32_t y, int32_t x1, int32_t y1, int32_t rs, int32_t cs, Neigbors *Mg)
 //----------------------------------
 {
   int32_t vectx[8], vecty[8], i;
@@ -1421,10 +1384,10 @@ int32_t lmedialaxisRita_ApplySymmetriesB(int32_t x, int32_t y, int32_t x1, int32
     }
   }
   return count;	// this is important to know how many vector are present in Mg
-} // lmedialaxisRita_ApplySymmetriesB()
+} // ApplySymmetriesB()
 
 //----------------------------------
-int32_t lmedialaxisRita_ApplySymmetriesB3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neigbors *Mg)
+int32_t ApplySymmetriesB3d(int32_t x, int32_t y, int32_t z, int32_t x1, int32_t y1, int32_t z1, int32_t rs, int32_t cs, int32_t ds, Neigbors *Mg)
 //----------------------------------
 {
   int32_t vectx[48], vecty[48], vectz[48], i;
@@ -1499,10 +1462,10 @@ int32_t lmedialaxisRita_ApplySymmetriesB3d(int32_t x, int32_t y, int32_t z, int3
     }
   }
   return count;		// this is important to know how many vector are present in Mg
-} // lmedialaxisRita_ApplySymmetriesB3d()
+} // ApplySymmetriesB3d()
 
 /* ==================================== */
-double lmedialaxisRita_ComputeAngle(int32_t x, int32_t y, Image image,
+double ComputeAngle(int32_t x, int32_t y, Image image,
 		    int32_t rs, int32_t cs, 
 		    int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		    ZeroNeighbors ZeroNei)
@@ -1514,7 +1477,7 @@ double lmedialaxisRita_ComputeAngle(int32_t x, int32_t y, Image image,
 //          logiquement locale, passé en paramètre pour éviter allocations/libérations
 {
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_ComputeAngle"
+#define F_NAME "ComputeAngle"
   int32_t nb, i, j, xx, yy, rr, counter, k, c, ti, d, nbdec;
   double maxangle;
   Neigbors MgN1;
@@ -1550,7 +1513,7 @@ double lmedialaxisRita_ComputeAngle(int32_t x, int32_t y, Image image,
       for(d = 0; d < nbdec; d++)
       {
 	xnew = ListDecs[ti+d].x; ynew = ListDecs[ti+d].y;
-	nb = lmedialaxisRita_ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
+	nb = ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
 	for (j = 0; j < nb; j++)
         {
 	  xx = X[k] + MgN1.neig[j].x; yy = Y[k] + MgN1.neig[j].y; 
@@ -1597,10 +1560,10 @@ double lmedialaxisRita_ComputeAngle(int32_t x, int32_t y, Image image,
   maxangle = CheckAngle(x, y, ZeroNei, counter);
 
   return maxangle;
-} // lmedialaxisRita_ComputeAngle()
+} // ComputeAngle()
  
 /* ==================================== */
-double lmedialaxisRita_ComputeAngle_8(int32_t x, int32_t y, Image image,
+double ComputeAngle_8(int32_t x, int32_t y, Image image,
 		    int32_t rs, int32_t cs, 
 		    int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		    ZeroNeighbors ZeroNei)
@@ -1613,7 +1576,7 @@ double lmedialaxisRita_ComputeAngle_8(int32_t x, int32_t y, Image image,
 //          logiquement locale, passé en paramètre pour éviter allocations/libérations
 {
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_ComputeAngle"
+#define F_NAME "ComputeAngle"
   int32_t nb, i, j, xx, yy, rr, counter, k, c, ti, d, nbdec;
   double maxangle;
   Neigbors MgN1;
@@ -1644,7 +1607,7 @@ double lmedialaxisRita_ComputeAngle_8(int32_t x, int32_t y, Image image,
       for(d = 0; d < nbdec; d++)
       {
 	xnew = ListDecs[ti+d].x; ynew = ListDecs[ti+d].y;
-	nb = lmedialaxisRita_ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
+	nb = ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
 	for (j = 0; j < nb; j++)
         {
 	  xx = X[k] + MgN1.neig[j].x; yy = Y[k] + MgN1.neig[j].y;
@@ -1674,10 +1637,10 @@ double lmedialaxisRita_ComputeAngle_8(int32_t x, int32_t y, Image image,
   maxangle = CheckAngle(x, y, ZeroNei, counter);
 
   return maxangle;
-} // lmedialaxisRita_ComputeAngle_8()
+} // ComputeAngle_8()
 
 /* ==================================== */
-double lmedialaxisRita_ComputeAngle3d (int32_t x, int32_t y, int32_t z, Image image,
+double ComputeAngle3d (int32_t x, int32_t y, int32_t z, Image image,
 		       int32_t rs, int32_t cs, int32_t ds, 
 		       int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		       ZeroNeighbors ZeroNei)
@@ -1689,7 +1652,7 @@ double lmedialaxisRita_ComputeAngle3d (int32_t x, int32_t y, int32_t z, Image im
 //          logiquement locale, passé en paramètre pour éviter allocations/libérations
 {
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_ComputeAngle3d"
+#define F_NAME "ComputeAngle3d"
   int32_t nb, i, j, xx, yy, zz, rr, counter, k, c, ti, d, nbdec, ps = rs*cs;
   double maxangle;
   Neigbors MgN1;
@@ -1728,7 +1691,7 @@ double lmedialaxisRita_ComputeAngle3d (int32_t x, int32_t y, int32_t z, Image im
 	xnew = ListDecs[ti+d].x; // direction of search to reach the first zero (CTg table)
 	ynew = ListDecs[ti+d].y;
 	znew = ListDecs[ti+d].z;
-	nb = lmedialaxisRita_ApplySymmetriesB3d(xnew, ynew, znew, X[k], Y[k], Z[k], rs, cs, ds, &MgN1);	
+	nb = ApplySymmetriesB3d(xnew, ynew, znew, X[k], Y[k], Z[k], rs, cs, ds, &MgN1);	
 	for (j = 0; j < nb; j++)
         {
 	  xx = X[k] + MgN1.neig[j].x; 
@@ -1778,10 +1741,10 @@ double lmedialaxisRita_ComputeAngle3d (int32_t x, int32_t y, int32_t z, Image im
   maxangle = CheckAngle3d(x, y, z, ZeroNei, counter);
 
   return maxangle;
-} // lmedialaxisRita_ComputeAngle3d()
+} // ComputeAngle3d()
 
 /* ==================================== */
-int32_t lmedialaxisRita_lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
+int32_t lbisector(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
 /* ==================================== */
 /*
    Calcule la fonction bissectrice pour les points non nuls de l'image 'im'. 
@@ -1790,7 +1753,7 @@ int32_t lmedialaxisRita_lbisector(struct xvimage *id, struct xvimage *im, struct
 */
 {
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lbisector"
+#define F_NAME "lbisector"
   int32_t i, j, k, nval, npoints, npointsmax;
   int32_t rs = rowsize(id);
   int32_t cs = colsize(id);
@@ -1802,7 +1765,7 @@ int32_t lmedialaxisRita_lbisector(struct xvimage *id, struct xvimage *im, struct
   int32_t *TabIndDec;
   Coordinates *ListDecs;
   FILE *fd=NULL;
-  uint32_t *imagedist = SLONGDATA(id);
+  uint32_t *imagedist = ULONGDATA(id);
   uint8_t *imagemask = UCHARDATA(im);
   float *imageangle = FLOATDATA(ia);
   char tablefilename[512];
@@ -1906,7 +1869,7 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
       {
 	if (imagemask[j*rs + i] != 0)
         {
-	  angle = lmedialaxisRita_ComputeAngle(i, j, imagedist, rs, cs, TabIndDec, nval, ListDecs, ZeroNeigg);
+	  angle = ComputeAngle(i, j, imagedist, rs, cs, TabIndDec, nval, ListDecs, ZeroNeigg);
 	  imageangle[j*rs + i] = (float)acos(angle);				
 	}
 	else
@@ -1973,7 +1936,7 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
         {
 	  if (imagemask[k*ps + j*rs + i] != 0)
           {
-	    angle = lmedialaxisRita_ComputeAngle3d(i, j, k, imagedist, rs, cs, ds, TabIndDec, nval, ListDecs, ZeroNeigg);
+	    angle = ComputeAngle3d(i, j, k, imagedist, rs, cs, ds, TabIndDec, nval, ListDecs, ZeroNeigg);
 	    imageangle[k*ps + j*rs + i] = (float)acos(angle);				
 	  }
 	  else
@@ -2015,10 +1978,10 @@ printf("distmax = %d ; nval = %d ; npointsmax = %d ; npoints = %d\n", distmax, n
   free(TabIndDec);
   free(ListDecs);
   return 1;
-} // lmedialaxisRita_lbisector()
+} // lbisector()
  
 /* ==================================== */
-double lmedialaxisRita_ComputeAngle_Rita(
+double ComputeAngle_Rita(
 			int32_t x, int32_t y, Image image,
 			int32_t rs, int32_t cs, int32_t *distarray,
 			int32_t *xarray, int32_t *yarray, int32_t number, 
@@ -2058,7 +2021,7 @@ double lmedialaxisRita_ComputeAngle_Rita(
 	xnew = xarray[i]; // direction of search to reach the first zero (CTg table)
 	ynew = yarray[i];
 			
-	nb=lmedialaxisRita_ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
+	nb=ApplySymmetriesB(xnew, ynew, X[k], Y[k], rs, cs, &MgN1);	
 	for (j = 0; j < nb; j++)
 	{
 	  xx = X[k] + MgN1.neig[j].x;
@@ -2083,10 +2046,10 @@ double lmedialaxisRita_ComputeAngle_Rita(
 
   maxangle=CheckAngle(x,y,ZeroNei,counter);
   return maxangle;
-} // lmedialaxisRita_ComputeAngle_Rita()
+} // ComputeAngle_Rita()
 
 /* ==================================== */
-int32_t lmedialaxisRita_lbisector_Rita(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
+int32_t lbisector_Rita(struct xvimage *id, struct xvimage *im, struct xvimage *ia)
 /* ==================================== */
 /*
    Calcule la fonction bissectrice pour les points non nuls de l'image 'im'. 
@@ -2095,7 +2058,7 @@ int32_t lmedialaxisRita_lbisector_Rita(struct xvimage *id, struct xvimage *im, s
 */
 {
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lbisector_Rita"
+#define F_NAME "lbisector_Rita"
   int32_t i, j, numb;
   int32_t rs, cs, N;
   double angle;	
@@ -2119,7 +2082,7 @@ int32_t lmedialaxisRita_lbisector_Rita(struct xvimage *id, struct xvimage *im, s
     fprintf(stderr, "%s: distance image must be int32_t\n", F_NAME);
     return 0;
   }    
-  imagedist = SLONGDATA(id);
+  imagedist = ULONGDATA(id);
   rs = rowsize(id);
   cs = colsize(id);
   N = rs * cs;
@@ -2170,7 +2133,7 @@ int32_t lmedialaxisRita_lbisector_Rita(struct xvimage *id, struct xvimage *im, s
     {
       if (imagemask[i*rs + j] != 0)
       {
-	angle = lmedialaxisRita_ComputeAngle_Rita(i,j,imagedist,rs,cs,distCTg,XcoodCTg,YcoodCTg,numb,ZeroNeigg);
+	angle = ComputeAngle_Rita(i,j,imagedist,rs,cs,distCTg,XcoodCTg,YcoodCTg,numb,ZeroNeigg);
 	imageangle[i*rs + j] = (float)acos(angle);				
       }
       else
@@ -2182,14 +2145,14 @@ int32_t lmedialaxisRita_lbisector_Rita(struct xvimage *id, struct xvimage *im, s
   free(YcoodCTg);
   free(XcoodCTg);
   return 1;
-} // lmedialaxisRita_lbisector_Rita()
+} // lbisector_Rita()
 
 /* =============================================================== */
-int32_t lmedialaxisRita_lbisector_talbot(struct xvimage * image, struct xvimage *angles) 
+int32_t lbisector_talbot(struct xvimage * image, struct xvimage *angles) 
 /* =============================================================== */
 {
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lbisector_talbot"
+#define F_NAME "lbisector_talbot"
   int32_t N, i, j, y, rs, cs;
   uint8_t *F;
   float *A;
@@ -2329,7 +2292,7 @@ int32_t lmedialaxisRita_lbisector_talbot(struct xvimage * image, struct xvimage 
   } // for j
   free(L);
   return 1;
-} // lmedialaxisRita_lbisector_talbot()
+} // lbisector_talbot()
 
 /* ==================================== */
 int32_t lmaxball(struct xvimage *ImageDist, struct xvimage *Result)
@@ -2376,7 +2339,7 @@ int32_t lmaxball(struct xvimage *ImageDist, struct xvimage *Result)
 
 
 /* ==================================== */
-int32_t lmedialaxisRita_Downstream(int32_t x, int32_t y, Image image,
+int32_t Downstream(int32_t x, int32_t y, Image image,
 		int32_t rs, int32_t cs, 
 		int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		ZeroNeighbors ZeroNei)
@@ -2389,7 +2352,7 @@ int32_t lmedialaxisRita_Downstream(int32_t x, int32_t y, Image image,
 // Retourne le nombre de points de l'aval
 {
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_Downstream"
+#define F_NAME "Downstream"
   int32_t nb, i, j, xx, yy, rr, counter, k, c, ti, d, nbdec;
   Neigbors MgN1;
   int32_t xnew, ynew;
@@ -2403,7 +2366,7 @@ int32_t lmedialaxisRita_Downstream(int32_t x, int32_t y, Image image,
   for(d = 0; d < nbdec; d++)
   {
     xnew = ListDecs[ti+d].x; ynew = ListDecs[ti+d].y;
-    nb = lmedialaxisRita_ApplySymmetriesB(xnew, ynew, x, y, rs, cs, &MgN1);	
+    nb = ApplySymmetriesB(xnew, ynew, x, y, rs, cs, &MgN1);	
     for (j = 0; j < nb; j++)
     {
       xx = x + MgN1.neig[j].x; yy = y + MgN1.neig[j].y; 
@@ -2418,10 +2381,10 @@ int32_t lmedialaxisRita_Downstream(int32_t x, int32_t y, Image image,
     } // for (j = 0; j < nb; j++)
   } // for(d = 0; d < nbdec; d++)
   return counter;
-} // lmedialaxisRita_Downstream()
+} // Downstream()
 
 /* ==================================== */
-int32_t lmedialaxisRita_Downstream3d(int32_t x, int32_t y, int32_t z, Image image,
+int32_t Downstream3d(int32_t x, int32_t y, int32_t z, Image image,
 		int32_t rs, int32_t cs, int32_t ds, 
 		int32_t *TabIndDec, int32_t nval, Coordinates *ListDecs,
 		ZeroNeighbors ZeroNei)
@@ -2434,7 +2397,7 @@ int32_t lmedialaxisRita_Downstream3d(int32_t x, int32_t y, int32_t z, Image imag
 // Retourne le nombre de points de l'aval
 {
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_Downstream3d"
+#define F_NAME "Downstream3d"
   int32_t nb, i, j, xx, yy, zz, rr, counter, c, ti, d, nbdec;
   int32_t ps = rs*cs;
   Neigbors MgN1;
@@ -2451,7 +2414,7 @@ int32_t lmedialaxisRita_Downstream3d(int32_t x, int32_t y, int32_t z, Image imag
     xnew = ListDecs[ti+d].x; 
     ynew = ListDecs[ti+d].y; 
     znew = ListDecs[ti+d].z;
-    nb = lmedialaxisRita_ApplySymmetriesB3d(xnew, ynew, znew, x, y, z, rs, cs, ds, &MgN1);	
+    nb = ApplySymmetriesB3d(xnew, ynew, znew, x, y, z, rs, cs, ds, &MgN1);	
     for (j = 0; j < nb; j++)
     {
       xx = x + MgN1.neig[j].x; 
@@ -2471,17 +2434,17 @@ int32_t lmedialaxisRita_Downstream3d(int32_t x, int32_t y, int32_t z, Image imag
     } // for (j = 0; j < nb; j++)
   } // for(d = 0; d < nbdec; d++)
   return counter;
-} // lmedialaxisRita_Downstream3d()
+} // Downstream3d()
 
 /* ==================================== */
-int32_t lmedialaxisRita_lprintdownstream(struct xvimage *id)
+int32_t lprintdownstream(struct xvimage *id)
 /* ==================================== */
 /*
   Imprime le downstream de chaque point objet (pour tests)
 */
 {
 #undef F_NAME
-#define F_NAME "lmedialaxisRita_lprintdownstream"
+#define F_NAME "lprintdownstream"
   int32_t i, j, k, nval, npoints, npointsmax;
   int32_t rs = rowsize(id);
   int32_t cs = colsize(id);
@@ -2492,7 +2455,7 @@ int32_t lmedialaxisRita_lprintdownstream(struct xvimage *id)
   int32_t *TabIndDec;
   Coordinates *ListDecs;
   FILE *fd=NULL;
-  uint32_t *imagedist = SLONGDATA(id);
+  uint32_t *imagedist = ULONGDATA(id);
   char tablefilename[512];
   int32_t distmax; 
   int32_t card_downstream, n;
@@ -2562,7 +2525,7 @@ int32_t lmedialaxisRita_lprintdownstream(struct xvimage *id)
     for (j = 0; j < cs; j++)
       for (i = 0; i < rs; i++)
       {
-	card_downstream = lmedialaxisRita_Downstream(i, j, imagedist, rs, cs, TabIndDec, nval, ListDecs, ZeroNeigg);
+	card_downstream = Downstream(i, j, imagedist, rs, cs, TabIndDec, nval, ListDecs, ZeroNeigg);
 	if ((imagedist[j*rs + i]) && card_downstream)
 	{
 	  printf("[%d,%d,%d] : ", i, j, 0);//BUG
@@ -2627,7 +2590,7 @@ int32_t lmedialaxisRita_lprintdownstream(struct xvimage *id)
       for (j = 0; j < cs; j++)
 	for (i = 0; i < rs; i++)
         {
-	  card_downstream = lmedialaxisRita_Downstream3d(i, j, k, imagedist, rs, cs, ds, TabIndDec, nval, ListDecs, ZeroNeigg);
+	  card_downstream = Downstream3d(i, j, k, imagedist, rs, cs, ds, TabIndDec, nval, ListDecs, ZeroNeigg);
 	  if ((imagedist[k*ps + j*rs + i]) && card_downstream)
 	  {
 	    printf("[%d,%d,%d] : ", i, j, k);
@@ -2642,5 +2605,5 @@ int32_t lmedialaxisRita_lprintdownstream(struct xvimage *id)
   free(TabIndDec);
   free(ListDecs);
   return 1;
-} // lmedialaxisRita_lprintdownstream()
+} // lprintdownstream()
 

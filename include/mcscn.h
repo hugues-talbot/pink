@@ -4,6 +4,8 @@
 #define TYP_OBJ_CLOSEDSPLINE 3
 #define TYP_OBJ_POLYGON      4
 
+#include "stdint.h"
+
 typedef struct {
   double x, y, z;
 } point3;

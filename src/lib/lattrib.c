@@ -9,7 +9,13 @@
 
 //#define DEBUG
 
+#include <stdio.h>
+#include <stdint.h>
 #include <string.h>
+#include <stdlib.h>
+
+#include "mcfah.h"
+#include "mccodimage.h"
 
 #define FILTERED_OUT 0x01
 #define LEAFMIN      0x02

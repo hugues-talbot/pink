@@ -1,6 +1,11 @@
 /* $Id: ldilatbin3d.c,v 1.1.1.1 2008-11-25 08:01:42 mcouprie Exp $ */
 /* operateurs de dilatation et d'erosion morphologique 3D */
 
+#include <stdio.h>
+#include <stdint.h>
+
+#include "mccodimage.h"
+
 /* ==================================== */
 int32_t ldilatbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /*
