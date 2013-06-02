@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<testsuite errors="0" failures="0" name="pinktest.areaopening.areaopening" tests="3" time="0.000">
+	<testcase classname="pinktest.areaopening.areaopening" name="test_2" time="0.000"/>
+	<testcase classname="pinktest.areaopening.areaopening" name="test_3" time="0.000"/>
+	<testcase classname="pinktest.areaopening.areaopening" name="test_4" time="0.000"/>
+	<system-out>
+<![CDATA[]]>	</system-out>
+	<system-err>
+<![CDATA[]]>	</system-err>
+</testsuite>

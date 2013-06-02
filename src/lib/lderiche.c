@@ -90,7 +90,7 @@ le filtre lineaire recursif general de Deriche est defini par :
 #define DIRMAX  31
 
 /* ==================================== */
-void derichegen(double *x,               /* image a traiter */
+void lderiche_derichegen(double *x,               /* image a traiter */
                 int32_t M,                   /* taille ligne */
                 int32_t N,                   /* taille colonne */
                 double *y1,              /* zone temporaire de la taille d'une colonne */
@@ -159,10 +159,10 @@ void derichegen(double *x,               /* image a traiter */
       y[m+M*n] = y1[m] + y2[m];
   }
 
-} /* derichegen() */
+} /* lderiche_derichegen() */
 
 /* ==================================== */
-int32_t lderiche(struct xvimage *image, double alpha, int32_t function, double l)
+int32_t lderiche_lderiche(struct xvimage *image, double alpha, int32_t function, double l)
 /* ==================================== */
 /*
     alpha : parametre (1/taille) du filtre
@@ -222,6 +222,11 @@ int32_t lderiche(struct xvimage *image, double alpha, int32_t function, double l
     int32_t *ima = SLONGDATA(image);
     for (i = 0; i < N; i++) Imd[i] = (double)ima[i];
   }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    int32_t *ima = SLONGDATA(image);
+    for (i = 0; i < N; i++) Imd[i] = (double)ima[i];
+  }
   else if (datatype(image) == VFF_TYP_FLOAT)
   {
     float *ima = FLOATDATA(image);
@@ -263,9 +268,9 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       b1 = b3 = 2 * e_a;
       b2 = b4 = - e_2a;
 
-      derichegen(Imd, rs, cs, buf1, buf2, Im1,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      derichegen(Imd, rs, cs, buf1, buf2, Im2,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im2,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
       if (datatype(image) == VFF_TYP_1_BYTE)
@@ -317,9 +322,9 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       b1 = b3 = 2 * e_a;
       b2 = b4 = - e_2a;
 
-      derichegen(Imd, rs, cs, buf1, buf2, Im1,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      derichegen(Imd, rs, cs, buf1, buf2, Im2,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im2,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
       if (datatype(image) == VFF_TYP_1_BYTE)
@@ -374,9 +379,9 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       b1 = b3 = 2 * e_a;
       b2 = b4 = - e_2a;
 
-      derichegen(Imd, rs, cs, buf1, buf2, Im1,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      derichegen(Imd, rs, cs, buf1, buf2, Im2,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im2,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
       if (datatype(image) == VFF_TYP_1_BYTE)
@@ -416,9 +421,9 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       b1 = b3 = 2 * e_a;
       b2 = b4 = - e_2a;
 
-      derichegen(Imd, rs, cs, buf1, buf2, Im1,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      derichegen(Imd, rs, cs, buf1, buf2, Im2,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im2,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
       if (datatype(image) == VFF_TYP_1_BYTE)
@@ -452,7 +457,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       b1 = b3 = 2 * e_a;
       b2 = b4 = - e_2a;
 
-      derichegen(Imd, rs, cs, buf1, buf2, Im1,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
 
       if (datatype(image) == VFF_TYP_1_BYTE)
@@ -497,7 +502,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       b3 = 2 * e_a;
       b4 = - e_2a;
 
-      derichegen(Imd, rs, cs, buf1, buf2, Im1,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
 
 
@@ -539,7 +544,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       b1 = 2 * e_a;
       b2 = - e_2a;
 
-      derichegen(Imd, rs, cs, buf1, buf2, Im1,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
 
 
@@ -646,9 +651,9 @@ printf("beta = %g , e_a = %g , e_2a = %g , k = %g\n", beta, e_a, e_2a, k);
   b3 = 0;
   b4 = 0;
 
-  derichegen(Imd, rs, cs, buf1, buf2, Im1,
+  lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im1,
              a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-  derichegen(Imd, rs, cs, buf1, buf2, Im2,
+  lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im2,
              a5, a6, a7, a8, a1, a2, a3, a4, b3, b4, b1, b2);
 
   for (i = 0; i < N; i++)
@@ -673,6 +678,7 @@ printf("beta = %g , e_a = %g , e_2a = %g , k = %g\n", beta, e_a, e_2a, k);
 
 
 /* ==================================== */
+static
 void deriche3dgen(double *f,               /* image a traiter */
                 int32_t rs,                  /* taille ligne */
                 int32_t cs,                  /* taille colonne */
@@ -778,7 +784,7 @@ void deriche3dgen(double *f,               /* image a traiter */
 } /* deriche3dgen() */
 
 /* ==================================== */
-int32_t lderiche3d(struct xvimage *image, double alpha, int32_t function, double l)
+int32_t lderiche3d_lderiche3d(struct xvimage *image, double alpha, int32_t function, double l)
 /* ==================================== */
 /*
     alpha : parametre (1/taille) du filtre
@@ -789,7 +795,7 @@ int32_t lderiche3d(struct xvimage *image, double alpha, int32_t function, double
                4 = lisseur
 */
 #undef F_NAME
-#define F_NAME "lderiche3d"
+#define F_NAME "lderiche3d_lderiche3d"
 { 
   int32_t i;
   int32_t rs = rowsize(image);
@@ -1074,6 +1080,7 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
 }
 
 /* ==================================== */
+static
 void deriche3dgenb(uint8_t *f,     /* image a traiter */
                 int32_t rs,                  /* taille ligne */
                 int32_t cs,                  /* taille colonne */
@@ -1168,6 +1175,118 @@ void deriche3dgenb(uint8_t *f,     /* image a traiter */
     g2[rs-2] = a11 * g[rs-1+rs*y+ps*z] + b5 * g2[rs-1];
 #else
     g2[rs-1] = ((a11 + a12) / (1.0 - b5 - b6)) * g[rs-1+rs*y+ps*z];
+    g2[rs-2] = (a11 + a12) * g[rs-1+rs*y+ps*z] + (b5 + b6) * g2[rs-1];
+#endif
+    for (x = rs-3; x >= 0; x--)
+      g2[x] = a11 * g[x+1+rs*y+ps*z] + a12 * g[x+2+rs*y+ps*z] + b5 * g2[x+1] + b6 * g2[x+2];
+
+    for (x = 0; x < rs; x++)
+      g[x+rs*y+ps*z] = g1[x] + g2[x];
+  }
+
+} /* deriche3dgenb() */
+
+/* ==================================== */
+int32_t lderiche_llisseurrec3d(struct xvimage *image, double alpha)
+/* ==================================== */
+/*
+    alpha : parametre (1/taille) du filtre
+*/
+{ 
+  int32_t i;
+  uint8_t *ima = UCHARDATA(image);
+  int32_t rs = rowsize(image);
+  int32_t cs = colsize(image);
+  int32_t ds = depth(image);
+  int32_t ps = rs * cs;
+  int32_t N = ps * ds;
+  double *Im1;    /* image intermediaire */
+  double *buf1;   /* buffer ligne ou colonne */
+  double *buf2;   /* buffer ligne ou colonne */
+  double k;       /* constante de normalisation pour le lisseur */
+  double kp;      /* constante de normalisation pour le derivateur */
+  double kpp;     /* constante de normalisation pour le laplacien */
+  double e_a;     /* stocke exp(-alpha) */
+  double e_2a;    /* stocke exp(-2alpha) */
+  double a1, a2, a3, a4;
+  double b1, b2;
+  double t1;
+
+  Im1 = (double *)calloc(1,N * sizeof(double));
+  if (Im1==NULL)
+  {   fprintf(stderr,"lderiche3d() : malloc failed\n");
+      return(0);
+  }
+  buf1 = (double *)calloc(1,mcmax(mcmax(rs,cs),ds) * sizeof(double));
+  buf2 = (double *)calloc(1,mcmax(mcmax(rs,cs),ds) * sizeof(double));
+  if ((buf1==NULL) || (buf2==NULL))
+  {   fprintf(stderr,"lderiche3d() : malloc failed\n");
+      return(0);
+  }
+
+  e_a = exp(- alpha);
+  e_2a = exp(- 2.0 * alpha);
+  k = 1.0 - e_a;
+  k = k * k / (1.0 + (2 * alpha * e_a) - e_2a);
+  kp = 1.0 - e_a;
+  kp = - kp * kp / e_a;
+  kpp = (1.0 - e_2a) / (2 * alpha * e_a);
+
+#ifdef DEBUG
+printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
+#endif
+
+  a1 = k;
+  a2 = k * e_a * (alpha - 1.0);
+  a3 = k * e_a * (alpha + 1.0);
+  a4 = - k * e_2a;
+  b1 = 2 * e_a;
+  b2 = - e_2a;
+
+  deriche3dgenb(ima, rs, cs, ds, buf1, buf2, Im1,
+                a1, a2, a3, a4, b1, b2,           /* lisse en x */
+                a1, a2, a3, a4, b1, b2,           /* lisse en y */
+                a1, a2, a3, a4, b1, b2);          /* lisse en z */
+
+  for (i = 0; i < N; i++)      
+  {
+    t1 =  Im1[i];
+    if (t1 < 0.0) t1 = 0.0;
+    if (t1 > 255.0) t1 = 255.0;
+    ima[i] = (uint8_t)floor(t1);
+  }
+
+  free(Im1);
+  free(buf1);
+  free(buf2);
+  return 1;
+} /* llisseurrec3d() */
+
+/* ==================================== */
+int32_t lgradientcd(struct xvimage *image, double alpha)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lgradientcd"
+{ 
+  double dummy;
+  if (depth(image) == 1)
+    return lderiche_lderiche(image, alpha, 0, dummy);
+  else
+    return lderiche3d(image, alpha, 0, dummy);
+} // lgradientcd()
+
+/* ==================================== */
+int32_t lgaussianfilter(struct xvimage *image, double alpha)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lgaussianfilter"
+{ 
+  double dummy;
+  if (depth(image) == 1)
+    return lderiche_lderiche(image, alpha, 4, dummy);
+  else
+    return lderiche3d(image, alpha, 4, dummy);
+} // lgaussianfilter()
     g2[rs-2] = (a11 + a12) * g[rs-1+rs*y+ps*z] + (b5 + b6) * g2[rs-1];
 #endif
     for (x = rs-3; x >= 0; x--)

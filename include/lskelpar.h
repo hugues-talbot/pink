@@ -35,6 +35,18 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
+professionals having in-depth computer knowledge. Users are therefore
+encouraged to load and test the software's suitability as regards their
+requirements in conditions enabling the security of their systems and/or
+data to be ensured and,  more generally, to use and operate it in the
+same conditions as regards security.
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL license and that you accept its terms.
+*/
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int32_t lskelpavlidis(struct xvimage *image,
 			 int32_t nsteps,
 			 struct xvimage *inhibit);
@@ -136,7 +148,9 @@ extern int32_t lskelnemethpalagyi(struct xvimage *image,
 					int32_t type);
 extern int32_t lhthinpar(struct xvimage *image, int32_t nsteps);
 extern int32_t lhthinpar_asymmetric(struct xvimage *image, int32_t nsteps);
-
+extern int32_t lskelCK2(struct xvimage *image,
+			int32_t nsteps,
+			struct xvimage *inhibit);
 #ifdef __cplusplus
 }
 #endif

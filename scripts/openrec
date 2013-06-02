@@ -1,0 +1,16 @@
+#!/bin/sh
+# ouverture par reconstruction (erosion suivie d'une reconstruction geodesique)
+USAGE="Usage: $0 in elstruct xorig yorig out"
+if [ $# -gt 5 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 5 ]
+then
+	echo $USAGE
+        exit
+fi
+eros        $1  $2  $3  $4  _$1.eros
+reconsdilat _$1.eros  $1  vois4  $5
+rm         _$1.eros

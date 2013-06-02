@@ -39,14 +39,14 @@ extern "C" {
 /* prototype for lderiche.c */
 /* ============== */
 
-extern int32_t lderiche(
+extern int32_t jclderiche_lderiche(
         struct xvimage *image1,
         double alpha,
         int32_t function,
         double l
 );
 
-extern void derichegen(double *x,               /* image a traiter */
+extern void jclderiche_derichegen(double *x,               /* image a traiter */
                 int32_t M,                   /* taille ligne */
                 int32_t N,                   /* taille colonne */
                 double *y1,              /* zone temporaire de la taille d'une colonne */

@@ -70,42 +70,80 @@ int32_t ldilatnum( struct xvimage *f,
   index_t N = rs * cs;             /* taille image */
   index_t rsm = rowsize(m);        /* taille ligne masque */
   index_t csm = colsize(m);        /* taille colonne masque */
-  uint8_t *M = UCHARDATA(m);
-  uint8_t *F = UCHARDATA(f);
-  uint8_t *H;                     /* image de travail */
-  int32_t sup;
-  int32_t t;
 
-  ACCEPTED_TYPES1(f, VFF_TYP_1_BYTE);
+  ACCEPTED_TYPES2(f, VFF_TYP_1_BYTE, VFF_TYP_FLOAT);
   ONLY_2D(f);
+  COMPARE_TYPE(f, m);
 
-  H = (uint8_t *)calloc(1,N*sizeof(char));
-  if (H == NULL)
-  {   fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
-      return(0);
-  }
-  for (x = 0; x < N; x++) H[x] = F[x];
-
-  for (y = 0; y < cs; y++)
-  for (x = 0; x < rs; x++)
+  if (datatype(f) == VFF_TYP_1_BYTE)
   {
-    sup = NDG_MIN;
-    for (j = 0; j < csm; j += 1)
-    for (i = 0; i < rsm; i += 1)
-    {
-      t = (int32_t)M[j * rsm + i];
-      if (t)
-      {
-        l = y + j - yc;
-        k = x + i - xc;
-        if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && ((int32_t)H[l * rs + k] + t > sup))
-           sup = (int32_t)H[l * rs + k] + t;
-      }
+    uint8_t *M = UCHARDATA(m);
+    uint8_t *F = UCHARDATA(f);
+    uint8_t *H;                     /* image de travail */
+    int32_t sup;
+    int32_t t;
+    H = (uint8_t *)calloc(1,N*sizeof(uint8_t));
+    if (H == NULL)
+    {   fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
+      return(0);
     }
-    F[y * rs + x] = (uint8_t)mcmin(sup, NDG_MAX);
-  }
+    for (x = 0; x < N; x++) H[x] = F[x];
 
-  free(H);
+    for (y = 0; y < cs; y++)
+      for (x = 0; x < rs; x++)
+      {
+	sup = NDG_MIN;
+	for (j = 0; j < csm; j += 1)
+	  for (i = 0; i < rsm; i += 1)
+	  {
+	    t = (int32_t)M[j * rsm + i];
+	    if (t)
+	    {
+	      l = y + j - yc;
+	      k = x + i - xc;
+	      if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && ((int32_t)H[l * rs + k] + t > sup))
+		sup = (int32_t)H[l * rs + k] + t;
+	    }
+	  }
+	F[y * rs + x] = (uint8_t)mcmin(sup, NDG_MAX);
+      }
+    free(H);
+  }
+  else if (datatype(f) == VFF_TYP_FLOAT)
+  {
+    float *M = FLOATDATA(m);
+    float *F = FLOATDATA(f);
+    float *H;                     /* image de travail */
+    float sup;
+    float t;
+printf("rsm=%d csm=%d\n", rsm, csm);
+    H = (float *)calloc(1,N*sizeof(float));
+    if (H == NULL)
+    {   fprintf(stderr,"%s() : malloc failed for H\n", F_NAME);
+      return(0);
+    }
+    for (x = 0; x < N; x++) H[x] = F[x];
+
+    for (y = 0; y < cs; y++)
+      for (x = 0; x < rs; x++)
+      {
+	sup = FLOAT_MIN;
+	for (j = 0; j < csm; j += 1)
+	  for (i = 0; i < rsm; i += 1)
+	  {
+	    t = M[j * rsm + i];
+	    if (t)
+	    {
+	      l = y + j - yc;
+	      k = x + i - xc;
+	      if ((l >= 0) && (l < cs) && (k >= 0) && (k < rs) && (H[l * rs + k] + t > sup))
+		sup = H[l * rs + k] + t;
+	    }
+	  }
+	F[y * rs + x] = sup;
+      }
+    free(H);
+  }
   return 1;
 } /* ldilatnum() */
 

@@ -225,7 +225,7 @@ void create_query_tree(uint8_t *I,tree *T, int colsize, int rowsize)
     a=colsize%2;
     b=rowsize%2;
 
-    if (min(rowsize/2, colsize/2)==1)
+    if (std::min(rowsize/2, colsize/2)==1)
     {
         //cout << "On est dans une feuille" << endl;
         p = 0;

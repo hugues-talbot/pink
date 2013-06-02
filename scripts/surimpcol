@@ -1,0 +1,32 @@
+#!/bin/sh
+# $1 : image en ndg
+# $2 : image en couleurs (ex: marqueurs), fond noir
+# $3 : image resultat en couleurs
+USAGE="Usage: $0 i1.pgm i2.ppm out.ppm"
+if [ $# -gt 3 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 3 ]
+then
+	echo $USAGE
+        exit
+fi
+
+# genere le masque des marqueurs en couleur
+rgb2bw      $2           _$2.r          _$2.g           _$2.b
+max         _$2.r        _$2.g          _$2.m
+max         _$2.m        _$2.b          _$2.m
+seuilbin    _$2.m        1              _$2.m
+inverse     _$2.m        _$2.mi
+
+# incruste les marqueurs couleur dans l'image ndg
+min         $1           _$2.mi         _$1.i
+max         _$2.r        _$1.i          _$2.r
+max         _$2.g        _$1.i          _$2.g
+max         _$2.b        _$1.i          _$2.b
+
+bw2rgb      _$2.r        _$2.g          _$2.b          $3
+
+rm _$2.r; rm _$2.g; rm _$2.b; rm _$2.m; rm _$2.mi; rm _$1.i

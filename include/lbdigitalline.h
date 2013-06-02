@@ -13,10 +13,6 @@
              
 typedef int32_t Z;
 
-//int abs(int u)        { if ( u >= 0 ) return u; else  return -u; }
-static int max(int a, int b) { if ( a > b  ) return a; else  return  b; }
-static int min(int a, int b) { if ( a < b  ) return a; else  return  b; }
-
 class Q
 {
   public :
@@ -134,6 +130,10 @@ class Reco
 
 class RecoLR : public Reco { public : point Sym(point &P) { return point( P.x, P.y); } };
 class RecoRL : public Reco { public : point Sym(point &P) { return point(-P.x, P.y); } };
+class RecoBT : public Reco { public : point Sym(point &P) { return point( P.y, P.x); } };
+class RecoTB : public Reco { public : point Sym(point &P) { return point(-P.y,-P.x); } };
+
+#endif
 class RecoBT : public Reco { public : point Sym(point &P) { return point( P.y, P.x); } };
 class RecoTB : public Reco { public : point Sym(point &P) { return point(-P.y,-P.x); } };
 

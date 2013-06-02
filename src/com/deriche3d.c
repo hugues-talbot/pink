@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 
   if (function == 4)
   { 
-    if (! llisseurrec3d(image1, alpha))
+    if (! lderiche_llisseurrec3d(image1, alpha))
     {
       fprintf(stderr, "deriche3d: function llisseurrec3d failed\n");
       exit(1);
