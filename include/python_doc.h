@@ -1,6 +1,6 @@
 // This file has been generated automatically by the 
 // python_documenter, part of the PInK package (UjoImro, 2011)
-// the date of generation: 2013-05-25T21:40:40Z
+// the date of generation: 2013-06-03T00:36:21Z
 // warning: DO NOT EDIT. All your changes will be lost at 
 // the next generation
 
@@ -120,6 +120,32 @@
 
 
 #define doc__click3d__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
+#define doc__watershedMeyer__c__ "  watershedMeyer.c\n"         \
+"\n"         \
+" watershed transformation (Meyer's algorithm)\n"         \
+"\n"         \
+"Usage: watershedMeyer in mark {bgmark|null} {roi|null} connex out\n"         \
+"\n"         \
+"Description:\n"         \
+"Performs the watershed transformation on the image in, taking the\n"         \
+"set of markers in mark. \n"         \
+"If this parameter is present, bgmark\n"         \
+"is used as a set of markers for the background.\n"         \
+"If this parameter is present, roi\n"         \
+"indicates the region of interest on which the operation is performed.\n"         \
+"The parameter connex gives the adjacency relation (4,8 in 2D; 6,18,26 in 3D) \n"         \
+"for the makers.\n"         \
+"\n"         \
+"Types supported: byte 2d, byte 3d\n"         \
+"\n"         \
+"Category: connect\n"         \
+" connect\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
 "\n"
 
 
@@ -1174,6 +1200,13 @@
 "In modes other than 2, if the parameter  inhibit is given and is a\n"         \
 "binary image name, then the points of this image will be left\n"         \
 "unchanged.\n"         \
+"\n"         \
+"The following codes give access to auxiliary functions, for isthmus detection. \n"         \
+"Parameter  nsteps will not be used in this case (any value can be given).\n"         \
+"\n"         \
+" 100: 1D isthmus points\n"         \
+"\n"         \
+"Warning: The object must not have any point on the frame of the image.\n"         \
 "\n"         \
 "The following codes give access to auxiliary functions, for isthmus detection. \n"         \
 "Parameter  nsteps will not be used in this case (any value can be given).\n"         \
@@ -4956,6 +4989,32 @@
 "\n"
 
 
+#define doc__skel_ACK3c__c__ "  skel_ACK3c.c\n"         \
+"\n"         \
+" topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning\n"         \
+"\n"         \
+"Usage: skel_ACK3c in.pgm out.pgm\n"         \
+"\n"         \
+"Description: Topological persistence of 1D isthmuses, based on \n"         \
+"parallel 3D asymetric thinning.\n"         \
+"\n"         \
+"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
+"associated to this point and initialized with value 1. This counter is\n"         \
+"incremented a each iteration as long as x is still an isthmus. When this point x is\n"         \
+"eventually deleted, the value of the counter is freezed.\n"         \
+"\n"         \
+" The object must not have any point on the frame of the image.\n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
 #define doc__heightselnb__c__ "  heightselnb.c\n"         \
 "\n"         \
 " height based segmentation by selection of a given number or components\n"         \
@@ -8124,6 +8183,39 @@
 
 
 #define doc__lfclose_line__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
+#define doc__skel_ACK3b___notused_c__ "  skel_ACK3b.c\n"         \
+"\n"         \
+" parallel 3D binary curvilinear, asymetric skeleton based on thin 1D isthmus\n"         \
+"\n"         \
+"Usage: skel_ACK3b in.pgm nsteps isthmus_persistence [inhibit] out.pgm\n"         \
+"\n"         \
+"Description: Parallel 3D binary thinning or curvilinear,\n"         \
+"asymetric skeleton based on thin 1D isthmus. The parameter  nsteps\n"         \
+"gives, if positive, the number of parallel thinning steps to be\n"         \
+"processed.  If the value given for  nsteps equals -1, the thinning\n"         \
+"is continued until stability.\n"         \
+"\n"         \
+"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
+"associated to this point and initialized with value 1. This counter is\n"         \
+"incremented a each iteration as long as x is still an isthmus. At each\n"         \
+"iteration, the isthmuses x such that p(x) >=  isthmus_persistence are\n"         \
+"stored as a constraint set (see also  inhibit parameter).\n"         \
+"\n"         \
+"If the parameter  inhibit is given and is a binary image name,\n"         \
+"then the points of this image will be left unchanged. \n"         \
+"\n"         \
+" The object must not have any point on the frame of the image.\n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
 "\n"
 
 
