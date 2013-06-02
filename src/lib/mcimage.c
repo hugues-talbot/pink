@@ -106,7 +106,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define WARN_HUGE
 
 // Fopen strategy
-__pink__inline FILE* pink_fopen_read( char * filename )
+__pink__inline FILE* pink_fopen_read( const char * filename )
 {
 # ifdef UNIXIO
   return fopen( filename, "r" );
@@ -120,7 +120,7 @@ __pink__inline FILE* pink_fopen_read( char * filename )
 # endif /* NOT UNIXIO */
 } /* pink_fopen_read */
 
-__pink__inline FILE* pink_fopen_write( char * filename )
+__pink__inline FILE* pink_fopen_write( const char * filename )
 {
 # ifdef UNIXIO
   return fopen( filename, "w" );
@@ -978,7 +978,7 @@ double * image2list(struct xvimage * image, index_t *n)
 } // image2list()
 
 /* ==================================== */
-void writeimage(struct xvimage * image, char *filename)
+void writeimage(struct xvimage * image, const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writeimage"
@@ -1002,7 +1002,7 @@ void writeimage(struct xvimage * image, char *filename)
 } /* writeimage() */
 
 /* ==================================== */
-void writerawimage(struct xvimage * image, char *filename)
+void writerawimage(struct xvimage * image, const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writerawimage"
@@ -1290,7 +1290,7 @@ void writerawimage(struct xvimage * image, char *filename)
 } /* writerawimage() */
 
 /* ==================================== */
-void writese(struct xvimage * image, char *filename, index_t x, index_t y, index_t z)
+void writese(struct xvimage * image, const char *filename, index_t x, index_t y, index_t z)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writese"
@@ -1381,7 +1381,7 @@ void writese(struct xvimage * image, char *filename, index_t x, index_t y, index
 } /* writese() */
 
 /* ==================================== */
-void writeascimage(struct xvimage * image, char *filename)
+void writeascimage(struct xvimage * image, const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writeascimage"
@@ -1680,7 +1680,7 @@ void writergbimage(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
-  char *filename)
+  const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writergbimage"
@@ -1735,7 +1735,7 @@ void writergbascimage(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
-  char *filename)
+  const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writergbascimage"
@@ -1789,7 +1789,7 @@ void writergbascimage(
 } // writergbascimage()
 
 /* ==================================== */
-void writelongimage(struct xvimage * image,  char *filename)
+void writelongimage(struct xvimage * image,  const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "writelongimage"
@@ -1847,7 +1847,7 @@ void writelongimage(struct xvimage * image,  char *filename)
 } /* writelongimage() */
 
 #ifdef HAVE_TIFF_LIB
-struct xvimage *readtiffimage(char *filename)
+struct xvimage *readtiffimage(const char *filename)
 {
     struct xvimage *image=NULL;
     IMAGE *tiffimage = NULL;
@@ -2414,7 +2414,7 @@ struct xvimage * readimage( const char *filename )
 } /* readimage() */
 
 /* ==================================== */
-struct xvimage * readheader(char *filename)
+struct xvimage * readheader(const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "readheader"
@@ -2517,7 +2517,7 @@ struct xvimage * readheader(char *filename)
 } /* readheader() */
 
 /* ==================================== */
-struct xvimage * readse(char *filename, index_t *x, index_t *y, index_t*z)
+struct xvimage * readse(const char *filename, index_t *x, index_t *y, index_t*z)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "readse"
@@ -2693,7 +2693,7 @@ de la forme :
 
 /* ==================================== */
 int32_t readrgbimage(
-  char *filename,
+  const char *filename,
   struct xvimage ** r,
   struct xvimage ** g,
   struct xvimage ** b)
@@ -2814,7 +2814,7 @@ int32_t readrgbimage(
 } /* readrgbimage() */
 
 /* ==================================== */
-struct xvimage * readlongimage(char *filename)
+struct xvimage * readlongimage(const char *filename)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "readlongimage"
@@ -3173,7 +3173,7 @@ void freadulong(uint32_t *ptr, FILE* fd)
 }
 
 /* =============================================================== */
-int32_t readbmp(char *filename, struct xvimage ** r, struct xvimage ** g, struct xvimage ** b)
+int32_t readbmp(const char *filename, struct xvimage ** r, struct xvimage ** g, struct xvimage ** b)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "readbmp"
@@ -3278,7 +3278,7 @@ void writebmp(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
-  char *filename)
+  const char *filename)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "writebmp"
@@ -3365,7 +3365,7 @@ struct RGBFILEHEADER {       /* size 108 bytes */
 }; /** plus 404 bytes dummy padding to make header 512 bytes **/
 
 /* =============================================================== */
-int32_t readrgb(char *filename, struct xvimage ** r, struct xvimage ** g, struct xvimage ** b)
+int32_t readrgb(const char *filename, struct xvimage ** r, struct xvimage ** g, struct xvimage ** b)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "readrgb"
@@ -3436,7 +3436,7 @@ int32_t readrgb(char *filename, struct xvimage ** r, struct xvimage ** g, struct
 } /* readrgb() */
 
 /* =============================================================== */
-void writelist2(char *filename, int32_t *x, int32_t *y, int32_t npoints)
+void writelist2(const char *filename, int32_t *x, int32_t *y, int32_t npoints)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "writelist2"
@@ -3459,7 +3459,7 @@ void writelist2(char *filename, int32_t *x, int32_t *y, int32_t npoints)
 } // writelist2()
 
 /* =============================================================== */
-void writelist3(char *filename, int32_t *x, int32_t *y, int32_t *z, int32_t npoints)
+void writelist3(const char *filename, int32_t *x, int32_t *y, int32_t *z, int32_t npoints)
 /* =============================================================== */
 #undef F_NAME
 #define F_NAME "writelist3"

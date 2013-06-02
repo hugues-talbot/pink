@@ -104,7 +104,7 @@ scn_lengthspline3d(
 //#define PARANO
 
 #define SCN_EPSILON 0.000001
-#define SCN_EPSILON2 1E-30
+#define SCN_EPSILON2 1E-30 
 
 #ifndef HUGE_VAL
 #define HUGE_VAL 1E+100
@@ -621,7 +621,7 @@ int32_t scn_samplespline(double *x, double *y, int32_t n, int32_t m, double *X, 
   double sum, sumsav;
   int32_t p = m*10;
   int32_t i, j, k;
-  double f[3], g[3];
+  double f[4], g[4]; /* HT: had wrong length */
 
   if (n < 1)
   {
@@ -749,7 +749,7 @@ int32_t scn_samplespline3d(double *x, double *y, double *z, int32_t n, int32_t m
   double sum, sumsav;
   int32_t p = m*10;
   int32_t i, j, k;
-  double f[3], g[3], h[3];
+  double f[4], g[4], h[4]; /* HT: had wrong length */
 
   if (n < 1)
   {
