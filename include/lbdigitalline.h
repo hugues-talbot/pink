@@ -134,7 +134,3 @@ class RecoBT : public Reco { public : point Sym(point &P) { return point( P.y, P
 class RecoTB : public Reco { public : point Sym(point &P) { return point(-P.y,-P.x); } };
 
 #endif
-class RecoBT : public Reco { public : point Sym(point &P) { return point( P.y, P.x); } };
-class RecoTB : public Reco { public : point Sym(point &P) { return point(-P.y,-P.x); } };
-
-#endif
