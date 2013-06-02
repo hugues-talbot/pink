@@ -14,13 +14,20 @@ if (DEVELOPMENT)
 endif (DEVELOPMENT)
 
 add_library( cpp_pink SHARED ${py_src_cpp} ${py_src_development_cpp} ${py_documentation} )
-if (NOT THIS_IS_MSVC)
-    add_dependencies( cpp_pink pink  )
-    target_link_libraries( cpp_pink pink ${LIBS} )
-else (NOT THIS_IS_MSVC)
+set( LIBS ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${PYTHON_LIBRARY} )
+message( STATUS "src/pythob LIBS=" ${LIBS})
+
+if (THIS_IS_MSVC)
+    message( STATUS "Windows(tm) Linking")
     add_dependencies( cpp_pink pinkstatic  )
     target_link_libraries( cpp_pink pinkstatic ${LIBS} )
-endif (NOT THIS_IS_MSVC)
+    INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+    LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+    target_link_libraries( cpp_pink ${Boost_LIBRARIES})
+else (THIS_IS_MSVC)
+    add_dependencies( cpp_pink pink  )
+    target_link_libraries( cpp_pink pink ${LIBS} )
+endif (THIS_IS_MSVC)
 
 ## This is correct 
 ##message("Libs for linking libcpp=" "${LIBS}")
@@ -31,6 +38,7 @@ if (CMAKE_HOST_UNIX)
 endif (CMAKE_HOST_UNIX)
 
 set( CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} ${PYTHON_FLAG} )
+message( STATUS "src/python $CMAKE_SHARED_LINKER_FLAGS=" ${CMAKE_SHARED_LINKER_FLAGS} )
 include_directories( ${PYTHON_INCLUDE}  ${BOOST_INCLUDE} )
 set( CMAKE_INCLUDE_DIRS_CONFIG ${CMAKE_REQUIRED_INCLUDES} )
 

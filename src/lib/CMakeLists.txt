@@ -30,31 +30,39 @@ endif (DEVELOPMENT)
 
 # unix defines
 set( CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} ${PYTHON_FLAG} )
+message( STATUS "src/lib CMAKE_SHARED_LINKER_FLAGS=" ${CMAKE_SHARED_LINKER_FLAGS})
+
 set( LINK_FLAGS ${LINK_FLAGS} ${PYTHON_FLAG} ${BOOST_INCLUDE} )
+message( STATUS "src/lib LINK_FLAGS=" ${LINK_FLAGS} )
+
 include_directories( ${PYTHON_INCLUDE} ${Boost_INCLUDE_DIR} ${EIGEN_INCLUDE} )
 
 if ( NOT PYTHON_FRONT_END )
     #message( info= ${lib_src_cxx} )
     #message( info= ${lib_src_cpp} )
-    add_library(pink SHARED ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
+#    add_library(pink SHARED ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     if (THIS_IS_MSVC)
 	add_library(pinkstatic STATIC ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     endif (THIS_IS_MSVC)
     #message( FATAL_ERROR "pink=" ${pink} )
 else ( NOT PYTHON_FRONT_END )
-    add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
+#    add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     if (THIS_IS_MSVC)
 	add_library(pinkstatic STATIC ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     endif (THIS_IS_MSVC)
     # Hugues Talbot	 1 Nov 2012
     # how is is possible that this LIBS does not include the boost stuff ?
     #message("Where is this LIB coming from ? = " "${LIBS}")
-    set( LIBS ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${PYTHON_LIBRARY} )
+    set( LIBS ${LIBS} ${Boost_PYTHON} ${Boost_THREAD} ${Boost_SYSTEM} ${PYTHON_LIBRARY} )
+    message( STATUS "src/python LIBS=" ${LIBS} )
 endif ( NOT PYTHON_FRONT_END )
 
     #message( info= ${LIBS} )
-target_link_libraries( pink ${LIBS} )
-
+if (THIS_IS_MSVC)
+    target_link_libraries( pinkstatic ${LIBS} )
+else (THIS_IS_MSVC)
+    target_link_libraries( pink ${LIBS} )
+endif(THIS_IS_MSVC)
 # if (THIS_IS_CYGWIN)
 #     add_custom_command( TARGET pink POST_BUILD
 # 	COMMAND cp ${CMAKE_BINARY_DIR}/lib/cygpink.dll ${CMAKE_BINARY_DIR}/bash/cygpink.dll
@@ -79,7 +87,7 @@ install(
 )
 else (CMAKE_HOST_UNIX) ### on Windows(tm)
 install(
-    TARGETS pink LIBRARY
+    TARGETS pinkstatic LIBRARY
     ARCHIVE DESTINATION ${PINK_LIBDIR}
     RUNTIME DESTINATION bin )
 endif(CMAKE_HOST_UNIX)
