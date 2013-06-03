@@ -24,6 +24,8 @@ else ( NOT PYTHON_FRONT_END )
     set( com_src ${com_src_c} ${com_src_cpp} ${com_src_cxx} )
 endif ( NOT PYTHON_FRONT_END )
 
+message( STATUS "src/com LIBS=" ${LIBS} )
+
 foreach( q ${com_src} )
          string( REGEX MATCH [^/]*.c[^.]*$ filename ${q} )
 	 string( REGEX REPLACE .c[^.]*$ "" executable ${filename} )

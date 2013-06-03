@@ -1,5 +1,5 @@
 # -*- sh -*-
-# UjoImro, 2010
+# UjoImro, 2010-2013
 
 INCLUDE(CheckTypeSize)
 
@@ -30,44 +30,29 @@ endif (DEVELOPMENT)
 
 # unix defines
 set( CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} ${PYTHON_FLAG} )
-message( STATUS "src/lib CMAKE_SHARED_LINKER_FLAGS=" ${CMAKE_SHARED_LINKER_FLAGS})
-
 set( LINK_FLAGS ${LINK_FLAGS} ${PYTHON_FLAG} ${BOOST_INCLUDE} )
-message( STATUS "src/lib LINK_FLAGS=" ${LINK_FLAGS} )
-
 include_directories( ${PYTHON_INCLUDE} ${Boost_INCLUDE_DIR} ${EIGEN_INCLUDE} )
 
 if ( NOT PYTHON_FRONT_END )
-    #message( info= ${lib_src_cxx} )
-    #message( info= ${lib_src_cpp} )
-#    add_library(pink SHARED ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     if (THIS_IS_MSVC)
 	add_library(pinkstatic STATIC ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
+    else (THIS_IS_MSVC)
+	add_library(pink SHARED ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     endif (THIS_IS_MSVC)
-    #message( FATAL_ERROR "pink=" ${pink} )
 else ( NOT PYTHON_FRONT_END )
-#    add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     if (THIS_IS_MSVC)
 	add_library(pinkstatic STATIC ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
+    else (THIS_IS_MSVC)
+	add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     endif (THIS_IS_MSVC)
-    # Hugues Talbot	 1 Nov 2012
-    # how is is possible that this LIBS does not include the boost stuff ?
-    #message("Where is this LIB coming from ? = " "${LIBS}")
-    set( LIBS ${LIBS} ${Boost_PYTHON} ${Boost_THREAD} ${Boost_SYSTEM} ${PYTHON_LIBRARY} )
-    message( STATUS "src/python LIBS=" ${LIBS} )
 endif ( NOT PYTHON_FRONT_END )
 
-    #message( info= ${LIBS} )
+
 if (THIS_IS_MSVC)
     target_link_libraries( pinkstatic ${LIBS} )
 else (THIS_IS_MSVC)
     target_link_libraries( pink ${LIBS} )
 endif(THIS_IS_MSVC)
-# if (THIS_IS_CYGWIN)
-#     add_custom_command( TARGET pink POST_BUILD
-# 	COMMAND cp ${CMAKE_BINARY_DIR}/lib/cygpink.dll ${CMAKE_BINARY_DIR}/bash/cygpink.dll
-#     )
-# endif (THIS_IS_CYGWIN)
 
 ### build type (32 or 64bit)
 CHECK_TYPE_SIZE (void* POINTER_SIZE) #4 if 32bit, 8 if 64bit.
@@ -86,10 +71,12 @@ install(
     DESTINATION ${PINK_LIBDIR}
 )
 else (CMAKE_HOST_UNIX) ### on Windows(tm)
-install(
-    TARGETS pinkstatic LIBRARY
-    ARCHIVE DESTINATION ${PINK_LIBDIR}
-    RUNTIME DESTINATION bin )
+    if (THIS_IS_MSVC)
+	install(
+	    TARGETS pinkstatic LIBRARY
+	    ARCHIVE DESTINATION ${PINK_LIBDIR}
+	    RUNTIME DESTINATION bin )
+    endif (THIS_IS_MSVC)
 endif(CMAKE_HOST_UNIX)
 
 

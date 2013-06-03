@@ -29,17 +29,7 @@ set( INCLUDES include src/python /usr/include /usr/local/include )
 
 include_directories( ${INCLUDES} )
 
-## This does not work
-### I didn't think of this myself (HT)
-##set(CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules")
-###message("1- CMAKE module path = " ${CMAKE_MODULE_PATH})
-##set(EXTRA_MODULES "${pink_SOURCE_DIR}")
-###message("2- EXTRA_MODULES = " ${EXTRA_MODULES})
-##set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}  "${EXTRA_MODULES}" )
-##message("3- new CMAKE module path = " ${CMAKE_MODULE_PATH})
-
 set(CFITSIO_DIR "${pink_SOURCE_DIR}")
-
 
 # --- Library extention (.so, .dylib, .a) ---
 
@@ -345,20 +335,6 @@ endif (SIMD)
 ## why do that now and not later ?
 add_subdirectory( src/lib lib )
 
-
-### **********************************************************************************************
-### **********************************************************************************************
-### *************************** Bash front-end ***************************************************
-### **********************************************************************************************
-### **********************************************************************************************
-
-option( BASH_FRONT_END "Compiles the executable files if you switch this of you can still compile the Python front-end and the shared library." OFF )
-
-if (BASH_FRONT_END)
-    add_subdirectory( src/com bash )
-endif(BASH_FRONT_END)
-
-
 ### **********************************************************************************************
 ### **********************************************************************************************
 ### *************************** Python front-end *************************************************
@@ -382,23 +358,21 @@ if ( PYTHON_FRONT_END )
 	SET(PYTHON_INCLUDE ${PYTHON_INCLUDE_PATH} CACHE PATH "The directory of the python headers." )
     endif(NOT PYTHON_INCLUDE)
 
-    find_package(Boost COMPONENTS python thread system date_time chrono )
+    find_package(Boost COMPONENTS python thread system date_time )
 
     ## The following test fails on centos: cmake 2.6 patch 2
     # if ( (NOT Boost_FOUND) AND ( (NOT Boost_PYTHON) OR (NOT Boost_THREAD) ) )
     if(NOT Boost_FOUND) 
 	if (NOT Boost_PYTHON)
-	    #${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY}
 	    SET( Boost_PYTHON "NOT FOUND" CACHE FILEPATH "The boost.python library.")
 	    SET( Boost_THREAD "NOT FOUND" CACHE FILEPATH "The boost.thread library.")
 	    SET( Boost_SYSTEM "NOT FOUND" CACHE FILEPATH "The boost.system library.")
+	    SET( Boost_DATE_TIME "NOT FOUND" CACHE FILEPATH "The boost.date_time library.")
+	    SET( Boost_CHRONO "NOT FOUND" CACHE FILEPATH "The boost.chrono library.")
 	    message( FATAL_ERROR "Boost libraries where not found. If they are installed, please set the Boost_PYTHON and the Boost_THREAD variables.")
 	endif(NOT Boost_PYTHON)
     endif(NOT Boost_FOUND)
 
-    message( STATUS "** Boost Include:" ${Boost_INCLUDE_DIR})
-    message( STATUS "** Boost Libraries:" ${Boost_LIBRARY_DIRS})
-    message( STATUS "** Boost Libraries:" ${Boost_LIBRARIES})
     add_definitions(-DBOOST_ALL_NO_LIB)  # tell the compiler to undefine this boost macro
 
     # # required version of BOOST 1.35 or newer
@@ -411,23 +385,15 @@ if ( PYTHON_FRONT_END )
     #        message( FATAL_ERROR "For the core components you need a boost version at least " ${Boost_MAJOR_VERSION_REQUIRED} "." ${Boost_MINOR_VERSION_REQUIRED} )
     #    endif ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
 
-    set( LIBS ${LIBS} ${Boost_LIBRARIES} ${Boost_PYTHON} ${Boost_THREAD} ${Boost_SYSTEM} ${PYTHON_LIBRARY} )
-
-    message( STATUS "LIBS = " "${LIBS}")
-#    message( STATUS "Boost_LIBRARIES=" ${Boost_LIBRARIES} )
-    message( STATUS "Boost_PYTHON_LIBRARY=" ${Boost_PYTHON_LIBRARY} )
-    message( STATUS "Boost_THREAD_LIBRARY=" ${Boost_THREAD_LIBRARY} )
-    message( STATUS "Boost_SYSTEM_LIBRARY=" ${Boost_SYSTEM_LIBRARY} )
+    set( LIBS ${LIBS} ${Boost_LIBRARIES} ${PYTHON_LIBRARY} )
 
 
     # looking for the python library 
     if (THIS_IS_MSVC)
 	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}  )
     else (THIS_IS_MSVC)
-	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_LIBRARY} ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_PYTHON} ${Boost_THREAD} ${Boost_SYSTEM} )
-    else (NOT THIS_IS_MSVC)
-	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE} ${PINK_LINKING_FLAGS} )
-    endif (NOT THIS_IS_MSVC)
+	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_LIBRARY} ${LIBS} ${Boost_LIBRARIES} )
+    endif (THIS_IS_MSVC)
     set( CMAKE_REQUIRED_INCLUDES  ${Boost_INCLUDE_DIR} ${CMAKE_REQUIRED_INCLUDES} ${INCLUDES} ${PYTHON_INCLUDE} ${EIGEN_INCLUDE})
     
     include_directories( ${CMAKE_REQUIRED_INCLUDES} )
@@ -552,6 +518,19 @@ if ( PYTHON_FRONT_END )
     add_subdirectory( src/python python )
 
 endif ( PYTHON_FRONT_END )
+
+### **********************************************************************************************
+### **********************************************************************************************
+### *************************** Bash front-end ***************************************************
+### **********************************************************************************************
+### **********************************************************************************************
+
+option( BASH_FRONT_END "Compiles the executable files if you switch this of you can still compile the Python front-end and the shared library." OFF )
+
+if (BASH_FRONT_END)
+    add_subdirectory( src/com bash )
+endif(BASH_FRONT_END)
+
 
 ### **********************************************************************************************
 ### **********************************************************************************************
