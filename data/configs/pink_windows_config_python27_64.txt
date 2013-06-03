@@ -38,17 +38,25 @@ SET( CPACK_MODULE_PATH "C:/Pink/Source/Pink-hg" CACHE PATH "The path for the NSI
 ### Python 2.7
 ###########################################################################
 SET( Boost_DIR "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64" CACHE PATH "desc." )
+SET( Boost_LIBRARY_DIRS "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib" CACHE PATH "desc." )
 SET( Boost_INCLUDE_DIR "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64" CACHE PATH "desc." )
-SET( Boost_PYTHON "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_python-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
-SET( Boost_PYTHON_LIBRARY "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_python-vc100-mt-s-1_52.lib" CACHE FILEPATH "The Boost PYTHON library." )
-SET( Boost_PYTHON_LIBRARY_DEBUG "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_python-vc100-mt-sgd-1_52.lib" CACHE FILEPATH "Boost python library (debug)" )
-#Boost_PYTHON_LIBRARY_DEBUG:FILEPATH=Boost_PYTHON_LIBRARY_DEBUG-NOTFOUND
-SET( Boost_PYTHON_LIBRARY_RELEASE "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_python-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
-SET( Boost_THREAD "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_thread-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
-#Boost_THREAD_LIBRARY_DEBUG:FILEPATH=Boost_THREAD_LIBRARY_DEBUG-NOTFOUND
-SET( Boost_THREAD_LIBRARY_RELEASE "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_thread-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
+#SET( Boost_PYTHON "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_python-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
+#SET( Boost_PYTHON_LIBRARY "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_python-vc100-mt-s-1_52.lib" CACHE FILEPATH "The Boost PYTHON library." )
+#SET( Boost_PYTHON_LIBRARY_DEBUG "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_python-vc100-mt-sgd-1_52.lib" CACHE FILEPATH "Boost python library (debug)" )
+##Boost_PYTHON_LIBRARY_DEBUG:FILEPATH=Boost_PYTHON_LIBRARY_DEBUG-NOTFOUND
+#SET( Boost_PYTHON_LIBRARY_RELEASE "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_python-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
+#SET( Boost_THREAD "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_thread-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
+##Boost_THREAD_LIBRARY_DEBUG:FILEPATH=Boost_THREAD_LIBRARY_DEBUG-NOTFOUND
+#SET( Boost_THREAD_LIBRARY_RELEASE "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_thread-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
+#SET( Boost_SYSTEM_LIBRARY "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_system-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
+#SET( Boost_SYSTEM_LIBRARY_DEBUG "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_system-vc100-mt-s-1_52.lib" CACHE FILEPATH "desc." )
+#SET( Boost_SYSTEM_LIBRARY_RELEASE "C:/Pink/Build/boost_1_52_0_python/boost_1_52_0_python_2.7_x86_64/stage/lib/libboost_system-vc100-mt-sgd-1_52.lib" CACHE FILEPATH "desc." )
+SET( Boost_USE_STATIC_LIBS ON CACHE BOOST "desc." )
 #PYTHON_DEBUG_LIBRARY:FILEPATH=PYTHON_DEBUG_LIBRARY-NOTFOUND
+SET( PYTHON_DOCUMENTATION_EXE "C:/Program Files/Python/Python 2.7/x86_64/python.exe" CACHE FILEPATH "desc." )
+SET( PYTHON_MODULE_INSTALL_PATH "C:/Python27/Lib/site-packages" CACHE FILEPATH "desc." )
 SET( PYTHON_EXECUTABLE "C:/Program Files/Python/Python 2.7/x86_64/python.exe" CACHE FILEPATH "desc." )
+SET( PYTHON_EXE "C:/Program Files/Python/Python 2.7/x86_64/python.exe" CACHE FILEPATH "desc." )
 SET( PYTHON_INCLUDE "C:/Program Files/Python/Python 2.7/x86_64/include" CACHE FILEPATH "desc." )
 SET( PYTHON_INCLUDE_DIR "C:/Program Files/Python/Python 2.7/x86_64/include" CACHE FILEPATH "desc." )
 SET( PYTHON_LIBRARY "C:/Program Files/Python/Python 2.7/x86_64/libs/python27.lib" CACHE FILEPATH "desc." )
