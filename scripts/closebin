@@ -1,0 +1,18 @@
+#!/bin/sh
+# ATTENTION : version valable seulement pour des elements structurants
+# symetriques par rapport a l'origine
+USAGE="Usage: $0 in elstruct xorig yorig out"
+if [ $# -gt 5 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 5 ]
+then
+	echo $USAGE
+        exit
+fi
+dilatbin    $1  $2  $3  $4  _$1.dilat
+erosbin    _$1.dilat  $2  $3  $4  $5
+rm         _$1.dilat
+

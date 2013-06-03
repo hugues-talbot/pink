@@ -15,7 +15,7 @@ Here is a list of all documented files with brief descriptions:\begin{DoxyCompac
 \item\contentsline{section}{{\bf 3dborder.c} (Extracts the border of an object in H3 )}{\pageref{3dborder_8c}}{}
 \item\contentsline{section}{{\bf 3dcollapse.c} (Ultimate constrained collapse guided by a priority image )}{\pageref{3dcollapse_8c}}{}
 \item\contentsline{section}{{\bf 3dcolor.c} (Gives a specific color to points in a 3D khalimsky grid, according to their rank )}{\pageref{3dcolor_8c}}{}
-\item\contentsline{section}{{\bf 3dinvariants.c} (Computes the numbers of connected components, cavities and tunnels of a 3D Khalimsky order )}{\pageref{3dinvariants_8c}}{}
+\item\contentsline{section}{{\bf 3dinvariants.c} (Computes the numbers of connected components, cavities and tunnels of a 3D cubical complex )}{\pageref{3dinvariants_8c}}{}
 \item\contentsline{section}{{\bf 3disthmus.c} (Destroys 1D isthmuses in a 3D binary image )}{\pageref{3disthmus_8c}}{}
 \item\contentsline{section}{{\bf 3dkhalimskize.c} (Converts a 3D image into a 3D Khalimsky order )}{\pageref{3dkhalimskize_8c}}{}
 \item\contentsline{section}{{\bf 3dlabel.c} (Labels the theta-\/connected component of a 3D Khalimsky order )}{\pageref{3dlabel_8c}}{}
@@ -111,7 +111,7 @@ Here is a list of all documented files with brief descriptions:\begin{DoxyCompac
 \item\contentsline{section}{{\bf drawellipse.c} (Draws an ellipse )}{\pageref{drawellipse_8c}}{}
 \item\contentsline{section}{{\bf drawfield.c} (Draw line segments that represent a vector field )}{\pageref{drawfield_8c}}{}
 \item\contentsline{section}{{\bf drawfieldlists.c} (Draw line segments that represent a vector field (represented by two lists) )}{\pageref{drawfieldlists_8c}}{}
-\item\contentsline{section}{{\bf drawline.c} (Draw a straight line segment in a 2D image )}{\pageref{drawline_8c}}{}
+\item\contentsline{section}{{\bf drawline.c} (Draw a graph in a 2D image )}{\pageref{drawline_8c}}{}
 \item\contentsline{section}{{\bf drawlines.c} (Draw line segments which are specified by a text file )}{\pageref{drawlines_8c}}{}
 \item\contentsline{section}{{\bf drawrect.c} (Draws a rectangle with sides parallel to the main axes )}{\pageref{drawrect_8c}}{}
 \item\contentsline{section}{{\bf drawscene.c} (Draw a 3D scene which is specified by a text file into a 3D pgm image )}{\pageref{drawscene_8c}}{}
@@ -352,18 +352,19 @@ Here is a list of all documented files with brief descriptions:\begin{DoxyCompac
 \item\contentsline{section}{{\bf skel2pov.c} (Generation of a 3d illustration from a curvilinear skeleton )}{\pageref{skel2pov_8c}}{}
 \item\contentsline{section}{{\bf skel\_\-ACK3.c} (Parallel 3D binary curvilinear, asymetric skeleton based on 3D and 2D residuals )}{\pageref{skel__ACK3_8c}}{}
 \item\contentsline{section}{{\bf skel\_\-ACK3a.c} (Parallel 3D binary curvilinear, asymetric skeleton based on thin 1D isthmus )}{\pageref{skel__ACK3a_8c}}{}
-\item\contentsline{section}{{\bf skel\_\-ACK3b.c} (Parallel 3D binary curvilinear, asymetric skeleton based on thin 1D isthmus )}{\pageref{skel__ACK3b_8c}}{}
-\item\contentsline{section}{{\bf skel\_\-ACK3c.c} (Topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning )}{\pageref{skel__ACK3c_8c}}{}
 \item\contentsline{section}{{\bf skel\_\-AK2.c} (Parallel 2D binary curvilinear skeleton )}{\pageref{skel__AK2_8c}}{}
 \item\contentsline{section}{{\bf skel\_\-AMK.c} (Parallel 2D or 3D binary skeleton, ultimate, asymmetric )}{\pageref{skel__AMK_8c}}{}
 \item\contentsline{section}{{\bf skel\_\-ASK3b.c} (Parallel 3D binary surface, asymetric skeleton based on thin 2D isthmuses )}{\pageref{skel__ASK3b_8c}}{}
 \item\contentsline{section}{{\bf skel\_\-CK3.c} (Parallel 3D binary curvilinear skeleton )}{\pageref{skel__CK3_8c}}{}
+\item\contentsline{section}{{\bf skel\_\-CK3\_\-pers.c} (Topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning )}{\pageref{skel__CK3__pers_8c}}{}
 \item\contentsline{section}{{\bf skel\_\-CKG.c} (Parallel 2D and 3D binary guided thinning )}{\pageref{skel__CKG_8c}}{}
 \item\contentsline{section}{{\bf skel\_\-CKG\_\-map.c} (Topogical map from parallel 2D and 3D binary guided thinning )}{\pageref{skel__CKG__map_8c}}{}
 \item\contentsline{section}{{\bf skel\_\-CKSC3.c} (Sequential 3D binary curvilinear skeleton )}{\pageref{skel__CKSC3_8c}}{}
 \item\contentsline{section}{{\bf skel\_\-EK3.c} (Parallel 3D binary curvilinear skeleton based on ends )}{\pageref{skel__EK3_8c}}{}
 \item\contentsline{section}{{\bf skel\_\-MK2.c} (Parallel 2D binary ultimate skeleton, symmetrical )}{\pageref{skel__MK2_8c}}{}
 \item\contentsline{section}{{\bf skel\_\-MK3.c} (Parallel 3D binary ultimate skeleton )}{\pageref{skel__MK3_8c}}{}
+\item\contentsline{section}{{\bf skel\_\-SCK3\_\-pers.c} (Topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning )}{\pageref{skel__SCK3__pers_8c}}{}
+\item\contentsline{section}{{\bf skel\_\-SK3\_\-pers.c} (Topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning )}{\pageref{skel__SK3__pers_8c}}{}
 \item\contentsline{section}{{\bf skelcurv.c} (Curvilinear binary skeleton guided by a priority image )}{\pageref{skelcurv_8c}}{}
 \item\contentsline{section}{{\bf skelend.c} (Homotopic skeleton of a 2d or 3d binary image with dynamic detection of end points )}{\pageref{skelend_8c}}{}
 \item\contentsline{section}{{\bf skelendlab.c} (Homotopic skeleton of a 2d or 3d label image with dynamic detection of end points )}{\pageref{skelendlab_8c}}{}

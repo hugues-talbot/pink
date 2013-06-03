@@ -34,7 +34,7 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /* 
   Gestion d'un maillage polygonal
-  Michel Couprie  -  décembre 2008
+  Michel Couprie  -  dï¿½cembre 2008
 */
 
 #include <stdio.h>
@@ -245,7 +245,7 @@ int32_t MCP_AddFace(MCP *P, Liste *Face)
 void MCP_ComputeFaces(MCP *P)
 /* ==================================== */
 /*
-  Met à jour l'information "faces adjacentes" des vertices 
+  Met ï¿½ jour l'information "faces adjacentes" des vertices 
 */
 #undef F_NAME
 #define F_NAME "MCP_ComputeFaces"
@@ -312,7 +312,7 @@ void MCP_ComputeEdges(MCP *P)
     {
       a = F.vert[j]; 
       b = F.vert[(j+1)%F.n];
-      if (RbtSearch(P->RBT, (TypRbtKey)(a*N+b)) == P->RBT->nil)
+      if (mcrbt_RbtSearch(P->RBT, (TypRbtKey)(a*N+b)) == P->RBT->nil)
       {
 	e = MCP_AddEdge(P, a, b);
 	(void)mcrbt_RbtInsert(&P->RBT, (TypRbtKey)(a*N+b), (TypRbtAuxData)e);
@@ -384,7 +384,7 @@ void MCP_SubdivEdges(MCP *P, double param)
     {
       a = F.vert[j]; 
       b = F.vert[(j+1)%F.n];
-      re = RbtSearch(P->RBT, (TypRbtKey)(a*P->Vertices->nsp+b));
+      re = mcrbt_RbtSearch(P->RBT, (TypRbtKey)(a*P->Vertices->nsp+b));
       if (re != P->RBT->nil)
       {
 	E = P->Edges->e[re->auxdata];
@@ -460,7 +460,7 @@ POLYGONS %d %d    // Faces - champ obligatoire
 	fprintf(fileout, "%d ", a);
 #endif
 	b = F.vert[(j+1)%F.n];
-	re = RbtSearch(P->RBT, (TypRbtKey)(a*nsp+b));
+	re = mcrbt_RbtSearch(P->RBT, (TypRbtKey)(a*nsp+b));
 	if (re != P->RBT->nil)
 	{
 	  E = P->Edges->e[re->auxdata];
@@ -494,14 +494,14 @@ void MCP_GetPolyPoints(MCP *P, int32_t indface, int32_t *pi, double *px, double 
 /* ==================================== */
 /*
 Extrait la liste des points d'un polygone
-entrées : 
+entrï¿½es : 
   P : un maillage polygonal
-  indface : l'index du polygone considéré
+  indface : l'index du polygone considï¿½rï¿½
   *n : la taille allouee pour les tableaux pi,px,py,pz
 
 sorties : 
-  pi : tableau des indices (dans P) des points trouvés
-  px,py,pz : tableau des coordonnées des points trouvés
+  pi : tableau des indices (dans P) des points trouvï¿½s
+  px,py,pz : tableau des coordonnï¿½es des points trouvï¿½s
   *n : le nombre de points transmis  
 */
 {
@@ -523,7 +523,7 @@ sorties :
     pz[i] = P->Vertices->v[a].z; 
     i++;
     b = F.vert[(j+1)%F.n];
-    re = RbtSearch(P->RBT, (TypRbtKey)(a*nsp+b));
+    re = mcrbt_RbtSearch(P->RBT, (TypRbtKey)(a*nsp+b));
     if (re != P->RBT->nil)
     {
       E = P->Edges->e[re->auxdata];
@@ -556,7 +556,7 @@ sorties :
 MCP * MCP_LoadVTK(FILE *filein)
 /* ==================================== */
 /* fileout doit avoir ete ouvert en lecture */
-/* L'appel à MCP_Init est inclus */
+/* L'appel ï¿½ MCP_Init est inclus */
 /* format: 
 POINTS %d float   // Sommets - champ obligatoire
 %g %g %g          // coord. vertex

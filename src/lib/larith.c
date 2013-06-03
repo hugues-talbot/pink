@@ -67,8 +67,8 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /* Michel Couprie - juillet 1996 */
 /* Camille Couprie - octobre 2002 (xor) */
-/* Michel Couprie - décembre 2010 (modulus) */
-/* Michel Couprie - février 2011 (gamma) */
+/* Michel Couprie - dï¿½cembre 2010 (modulus) */
+/* Michel Couprie - fï¿½vrier 2011 (gamma) */
 /* Michel Couprie - juillet 2012 (argmin, argmax) */
 
 #include <stdio.h>
@@ -146,9 +146,10 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
   uint8_t *pt1;
   uint16_t *spt1;
   int32_t *lpt1;
-  float *FPT1; 
   index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
   
+  ACCEPTED_TYPES3(image1, VFF_TYP_1_BYTE, VFF_TYP_2_BYTE, VFF_TYP_4_BYTE);
+
   /* ---------------------------------------------------------- */
   /* calcul du resultat */
   /* ---------------------------------------------------------- */
@@ -170,7 +171,32 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
     for (i = 0; i < N; i++, lpt1++)
       *lpt1 = (int32_t)mcmin(INT32_MAX,mcmax(INT32_MIN,(int32_t)(*lpt1)+constante));
   }
-  else if (datatype(image1) == VFF_TYP_FLOAT)
+  else 
+  {
+    fprintf(stderr, "%s: bad image type(s)\n", F_NAME);
+    return 0;
+  }
+  return 1;
+} /* laddconst() */
+
+/* ==================================== */
+int32_t laddconst2(struct xvimage * image1, double constante)
+/* ajoute une constante a une image  - seuil si depassement */
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "laddconst"
+{
+  index_t i;
+  float *FPT1; 
+  index_t N = rowsize(image1) * colsize(image1) * depth(image1) * tsize(image1) * nbands(image1);
+  
+  ACCEPTED_TYPES1(image1, VFF_TYP_FLOAT);
+
+  /* ---------------------------------------------------------- */
+  /* calcul du resultat */
+  /* ---------------------------------------------------------- */
+
+  if (datatype(image1) == VFF_TYP_FLOAT)
   {
     FPT1 = FLOATDATA(image1);
     for (i = 0; i < N; i++, FPT1++)
@@ -182,7 +208,7 @@ int32_t laddconst(struct xvimage * image1, int32_t constante)
     return 0;
   }
   return 1;
-} /* laddconst() */
+} /* laddconst2() */
 
 /* ==================================== */
 index_t larea(
@@ -191,7 +217,7 @@ index_t larea(
 //,  int32_t *area
 // end of LuM
 )
-/* retourne le nombre d'éléments non nuls */
+/* retourne le nombre d'ï¿½lï¿½ments non nuls */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "larea"
@@ -458,7 +484,7 @@ int32_t lgammacor(
 /* 
    correction gamma :
    - normalisation entre 0 et 1
-   - elevation à la puissance gamma
+   - elevation ï¿½ la puissance gamma
    - inverse la normalisation
 */
 /* ==================================== */
@@ -558,7 +584,7 @@ int32_t lgammacor(
 int32_t linf(
   struct xvimage * image1,
   struct xvimage * image2)
-/* prédicat inf pixelwise */
+/* prï¿½dicat inf pixelwise */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "linf"
@@ -602,7 +628,7 @@ int32_t linf(
 int32_t lsup(
   struct xvimage * image1,
   struct xvimage * image2)
-/* prédicat sup pixelwise */
+/* prï¿½dicat sup pixelwise */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lsup"
@@ -1308,7 +1334,7 @@ int32_t lscale(
 int32_t lpow(
   struct xvimage * image,
   double p)
-/* elevation à la puissance p - seuil a NDG_MAX pour les uint8_t */
+/* elevation ï¿½ la puissance p - seuil a NDG_MAX pour les uint8_t */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lpow"

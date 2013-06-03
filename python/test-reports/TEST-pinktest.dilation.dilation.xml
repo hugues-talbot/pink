@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<testsuite errors="4" failures="0" name="pinktest.dilation.dilation" tests="4" time="0.000">
+	<testcase classname="pinktest.dilation.dilation" name="test_0" time="0.000">
+		<error message="unidentifiable C++ exception" type="RuntimeError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/dilation.py", line 26, in test_0
+    result = pink.cpp.dilation( pink.cpp.readimage( IMAGES + '/2dbyte/binary/b2hebreu.pgm' ), pink.cpp.readimage( IMAGES + '/2dbyte/binary/b2_se_5_7.pgm' ))
+RuntimeError: unidentifiable C++ exception
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.dilation.dilation" name="test_1" time="0.000">
+		<error message="unidentifiable C++ exception" type="RuntimeError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/dilation.py", line 32, in test_1
+    result = pink.cpp.dilation( pink.cpp.readimage( IMAGES + '/2dbyte/gray/g2fish1.pgm' ), pink.cpp.readimage( IMAGES + '/2dbyte/binary/b2_se_5_7.pgm' ))
+RuntimeError: unidentifiable C++ exception
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.dilation.dilation" name="test_2" time="0.000">
+		<error message="unidentifiable C++ exception" type="RuntimeError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/dilation.py", line 38, in test_2
+    result = pink.cpp.dilation( pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3a.pgm' ), pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3_se_5_5_7.pgm' ))
+RuntimeError: unidentifiable C++ exception
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.dilation.dilation" name="test_3" time="0.000">
+		<error message="unidentifiable C++ exception" type="RuntimeError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/dilation.py", line 44, in test_3
+    result = pink.cpp.dilation( pink.cpp.readimage( IMAGES + '/3dbyte/gray/g3a.pgm' ), pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3_se_5_5_7.pgm' ))
+RuntimeError: unidentifiable C++ exception
+]]>		</error>
+	</testcase>
+	<system-out>
+<![CDATA[]]>	</system-out>
+	<system-err>
+<![CDATA[]]>	</system-err>
+</testsuite>

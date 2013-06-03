@@ -1,0 +1,20 @@
+#!/bin/sh
+USAGE="Usage: $0 in.ppm out.pgm"
+if [ $# -gt 2 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 2 ]
+then
+	echo $USAGE
+        exit
+fi
+rgb2bw       $1       _$1.r       _$1.g       _$1.b
+byte2long    _$1.r       _$1.r
+byte2long    _$1.g       _$1.g
+byte2long    _$1.b       _$1.b
+add          _$1.r       _$1.g       _$1.g
+add          _$1.b       _$1.g       _$1.g
+long2byte    _$1.g       2           $2
+rm           _$1.*

@@ -105,7 +105,7 @@ int main(int argc, char **argv)
   x = atoi(argv[3]);
   y = atoi(argv[4]);
   z = atoi(argv[5]);
-  if (! ldilatbin3d(image, elem, x, y, z))
+  if (! ldilateros3d_ldilatbin3d(image, elem, x, y, z))
   {
     fprintf(stderr, "%s: function ldilatbin3d failed\n", argv[0]);
     exit(1);

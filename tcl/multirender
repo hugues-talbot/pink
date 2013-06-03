@@ -35,6 +35,15 @@
 # The next line is executed by /bin/sh, but not Tcl \
 exec vtk $0 $1 $2 $3 $4 $5 $6 $7
 
+#DEBUG
+# puts "multirender"
+# set LDPATH "$env(LD_LIBRARY_PATH)"
+# puts "$LDPATH"
+# set TCLLIBPATH "$env(TCLLIBPATH)"
+# puts "$TCLLIBPATH"
+# set VTKPATH "$env(VTKPATH)"
+# puts "$VTKPATH"
+
 # A multiple renderer - Michel Couprie 2006
 package require vtk
 package require vtkinteraction

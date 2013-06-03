@@ -1,0 +1,367 @@
+<?xml version="1.0" ?>
+<testsuite errors="9" failures="0" name="pinktest.skelsurf.skelsurf" tests="9" time="0.000">
+	<testcase classname="pinktest.skelsurf.skelsurf" name="test_0" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/skelsurf.py", line 26, in test_0
+    result = pink.cpp.skelsurf( pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3a.pgm' ), 0, 26)
+ArgumentError: Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.skelsurf.skelsurf" name="test_1" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/skelsurf.py", line 32, in test_1
+    result = pink.cpp.skelsurf( pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3a.pgm' ), 1, 26)
+ArgumentError: Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.skelsurf.skelsurf" name="test_2" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/skelsurf.py", line 38, in test_2
+    result = pink.cpp.skelsurf( pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3a.pgm' ), 2, 26)
+ArgumentError: Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.skelsurf.skelsurf" name="test_3" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/skelsurf.py", line 44, in test_3
+    result = pink.cpp.skelsurf( pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3a.pgm' ), 3, 26)
+ArgumentError: Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.skelsurf.skelsurf" name="test_4" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/skelsurf.py", line 50, in test_4
+    result = pink.cpp.skelsurf( pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3a.pgm' ), 6, 26)
+ArgumentError: Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.skelsurf.skelsurf" name="test_5" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/skelsurf.py", line 56, in test_5
+    result = pink.cpp.skelsurf( pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3a.pgm' ), 18, 26)
+ArgumentError: Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.skelsurf.skelsurf" name="test_6" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/skelsurf.py", line 62, in test_6
+    result = pink.cpp.skelsurf( pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3a.pgm' ), 26, 26)
+ArgumentError: Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.skelsurf.skelsurf" name="test_7" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/skelsurf.py", line 68, in test_7
+    result = pink.cpp.skelsurf( pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3a.pgm' ), 0, 6)
+ArgumentError: Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int)
+did not match C++ signature:
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.skelsurf.skelsurf" name="test_8" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int, char_image)
+did not match C++ signature:
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;dcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;fcomplex&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;double&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;float&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;int&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned short&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)
+    skelsurf(pink::ujoi&lt;unsigned char&gt; image, pink::ujoi&lt;unsigned char&gt; priority_image, pink::ujoi&lt;unsigned char&gt; inhibit, int connexity)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/skelsurf.py", line 74, in test_8
+    result = pink.cpp.skelsurf( pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3a.pgm' ), 0, 26, pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3a2.pgm' ))
+ArgumentError: Python argument types in
+    libcpp_pink.skelsurf(char_image, int, int, char_image)
+did not match C++ signature:
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<dcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<fcomplex> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<double> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<float> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<int> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned short> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+    skelsurf(pink::ujoi<unsigned char> image, pink::ujoi<unsigned char> priority_image, pink::ujoi<unsigned char> inhibit, int connexity)
+]]>		</error>
+	</testcase>
+	<system-out>
+<![CDATA[]]>	</system-out>
+	<system-err>
+<![CDATA[]]>	</system-err>
+</testsuite>

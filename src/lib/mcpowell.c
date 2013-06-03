@@ -60,7 +60,7 @@ Brent, R. P. (1973) Algorithms for Minimization without Derivatives. Prentice-Ha
 #include <mccodimage.h>
 #include <mcpowell.h>
 
-//#define VERBOSE 
+#define VERBOSE 
 #define MAXDIM		100
 
 static double pold[MAXDIM];
@@ -644,6 +644,8 @@ int32_t powell_num(PFNn f, struct xvimage * image1, struct xvimage * image2,
 		   double p[], int32_t n, double tol, double scale, int32_t maxiter, 
 		   double *fmin)
 {
+#undef F_NAME
+#define F_NAME "powell_num"
     double new_value, cur_value, prev_value, trial_value;
     double max_decr;		/* max. function decrease */
     double tmp;
@@ -666,6 +668,9 @@ int32_t powell_num(PFNn f, struct xvimage * image1, struct xvimage * image2,
     
     for (iter = 0; iter < maxiter; iter++) 
     {
+#ifdef VERBOSE
+      printf("%s: iter = %d\n", F_NAME, iter);
+#endif
       go_down = -1;		/* impossible direction */
       max_decr = 0.0;
       cur_value = new_value;
