@@ -31,6 +31,8 @@
 #include "rotate3d.h"
 #include "rotate3d_generic.h"
 
+#include "RPO_parallel.h"
+
 
 using namespace boost::python;
 using namespace pink;
@@ -417,9 +419,7 @@ namespace pink {
     } /* liarRotation3D */
     
     
-    
-
-    /*template   <class image_t>
+    template   <class image_t>
     image_t liarRPO_parallel
     (
       const image_t & input_image,
@@ -444,10 +444,13 @@ namespace pink {
 
     // buffers
    	    PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
-   	    PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
+   	    
+   	    // RECOMMENCER A PARTIR D'ICI : peut etre changer par : std::vector<PixelType* output_buffer
+   	    //PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
+   	    std::vector<PixelType*> output_buffer;
 
     // create the RPO_parallel object
-        RPO_parallel RPOP(input_buffer, output_buffer,L,K,R,nx,ny,nz)
+        RPO_parallel RPOP(input_buffer, output_buffer,L,K,R,nx,ny,nz);
 
     // Execute
     RPOP.Execute();
@@ -584,6 +587,24 @@ UI_EXPORT_FUNCTION(
   " interpolate : 0 means Nearest neighbor interpolation, 1 means linear interpolation \n"
   " value : value of the pixel added during the rotation (usually set to 0) \n"
   " rmbdr : mode for the border ? \n"
+  );
+
+UI_EXPORT_FUNCTION(
+  RPO_parallel,
+  pink::python::liarRPO_parallel,
+  ( arg("input_image"), arg("L"), arg("K"),arg("reconstruction") ),
+  "Robust 3D path opening, given an orientation (x,y,z); a length L, a noise robustness factor K, and optional reconstruction\n"
+  "the following orientations are legal:\n"
+  "   0  0  1  : depth direction\n"
+  "   0  1  0  : vertical\n"
+  "   1  0  0  : horizontal\n"
+  "   1  1  1  : diagonal NE/SW+depth\n"
+  "   1  1 -1  : diagonal NE/SW-depth\n"
+  "  -1  1  1  : diagonal NW/SE+depth\n"
+  "  -1  1 -1  : diagonal NW/SE-depth\n"
+  "\n"
+  "For 2D images, directions (0 1), (1 0), (1 1) and (-1 1) are sufficient\n"
+  "reconstruction parameter is 0 or 1\n"
   );
 
 

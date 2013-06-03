@@ -145,7 +145,7 @@ void BilateralFilter_export();
 void NonLocalFilter_export();
 void NonLocalFilterSioux_export();
 void Rotation3D_export();
-//void RPO_parallel_export();
+void RPO_parallel_export();
 void fopenline3d_export();
 
 // opening by unions of lines
@@ -405,7 +405,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   NonLocalFilter_export();
   NonLocalFilterSioux_export();
   Rotation3D_export();
-  //RPO_parallel_export();
+  RPO_parallel_export();
   fopenline3d_export();
   
   openbun_export();
