@@ -74,7 +74,7 @@ else (CMAKE_HOST_UNIX) ### on Windows(tm)
     if (THIS_IS_MSVC)
 	install(
 	    TARGETS pinkstatic LIBRARY
-	    ARCHIVE DESTINATION ${PINK_LIBDIR}
+	    ARCHIVE DESTINATION pink-image
 	    RUNTIME DESTINATION bin )
     endif (THIS_IS_MSVC)
 endif(CMAKE_HOST_UNIX)

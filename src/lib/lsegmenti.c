@@ -173,7 +173,14 @@
 #define K1 (256.0/21.0)
 #define K2 (13924.0/757.0)
 
-#include <unistd.h>
+// #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
+#ifdef UNIXIO
+#  include <unistd.h>
+#else /* NOT UNIXIO */
+#  include <stdlib.h>
+#  include <io.h>
+#endif /* NOT UNIXIO */
+
 /* ==================================== */
 static void visualise(int32_t tabres[], char * c, int32_t x, int32_t y)
 /* ==================================== */

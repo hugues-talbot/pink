@@ -117,7 +117,12 @@ knowledge of the CeCILL license and that you accept its terms.
 #define UNSET_DCRUCIAL(f)   (f&=~S_DCRUCIAL)
 #define UNSET_SELECTED(f)   (f&=~S_SELECTED)
 
-#define MAXFLOAT	3.40282347e+38F
+#ifdef UNIXIO
+# define MAXFLOAT	3.40282347e+38F
+#else /* NOT UNIXIO */
+# include <float.h>
+# define MAXFLOAT FLT_MAX
+#endif /* UNIXIO */
 
 //#define VERBOSE
 //#define DEBUG

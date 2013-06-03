@@ -27,6 +27,8 @@ Update nov. 2007 : modif nbcomp pour compatibilité 64 bits
 #include <mccodimage.h>
 #include <mctopo3d.h>
 
+static void construitcube(voxel * cube);
+
 /* globales privees */
 static Lifo * LIFO_topo3d1 = NULL;
 static Lifo * LIFO_topo3d2 = NULL;
@@ -59,7 +61,7 @@ void termine_topo3d()
 } /* termine_topo3d() */
 
 /* ========================================== */
-void construitcube(voxel * cube)
+static void construitcube(voxel * cube)
 /* ========================================== */
 {
   uint8_t x,y,z,u,v,w;
