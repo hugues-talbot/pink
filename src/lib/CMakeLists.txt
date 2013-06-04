@@ -71,13 +71,13 @@ install(
     TARGETS pink LIBRARY
     DESTINATION ${PINK_LIBDIR}
 )
-else (CMAKE_HOST_UNIX) ### on Windows(tm)
-    if (THIS_IS_MSVC)
-	install(
-	    TARGETS pinkstatic LIBRARY
-	    ARCHIVE DESTINATION pink-image
-	    RUNTIME DESTINATION bin )
-    endif (THIS_IS_MSVC)
+else (CMAKE_HOST_UNIX) ### on Windows(tm) static library does not have to be installed
+    # if (THIS_IS_MSVC)
+    # 	install(
+    # 	    TARGETS pinkstatic LIBRARY
+    # 	    ARCHIVE DESTINATION pink-image
+    # 	    RUNTIME DESTINATION bin )
+    # endif (THIS_IS_MSVC)
 endif(CMAKE_HOST_UNIX)
 
 
