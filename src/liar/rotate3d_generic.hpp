@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace std;
+#include "pinkconst.h"
 
 #define XFLIP_IN_USE 1
 #define ORTHOROT_IN_USE 1
@@ -812,9 +812,9 @@ static int pullrotated_3d
     centery = (double)iny/2;
     centerz = (double)inz/2;
 
-    borderx = max(bottom(centerx - rightx), 0);
-    bordery = max(bottom(centery - bottomy), 0);
-    borderz = max(bottom(centerz - backz), 0);
+    borderx = std::max(bottom(centerx - rightx), 0);
+    bordery = std::max(bottom(centery - bottomy), 0);
+    borderz = std::max(bottom(centerz - backz), 0);
 
     LIARdebug("Original: %d x %d x %d", origx, origy, origz);
     LIARdebug("BoundingBox: Left:%3.1f, Top:%3.1f, Front:%3.1f", leftx, topy, frontz);
@@ -983,9 +983,9 @@ static int shear1_itp
 	p = imin + (nxin * nyin) * z;
 	q = (*imout) + ((*nxout) * (*nyout)) * z;
 
-	startx = max(bottom(b * z - tmp1), 0);
+	startx = std::max(bottom(b * z - tmp1), 0);
 	err1 = (b * z - tmp1) - startx;
-	starty = max(bottom(c * z - tmp2), 0);
+	starty = std::max(bottom(c * z - tmp2), 0);
 	err3 = (c * z - tmp2) - starty;
 
 	q += (*nxout)*starty + startx;	/* starting position in output image */
@@ -1003,11 +1003,11 @@ static int shear1_itp
 	    r = p - nxin;
 	    q = (*imout) + ((*nxout) * (*nyout)) * z;
 
-	    startx = max(bottom(a * y + b * z - tmp1), 0);
+	    startx = std::max(bottom(a * y + b * z - tmp1), 0);
 	    err1 = (a * y + b * z - tmp1) - startx;
-	    startx1 = max(bottom(a * (y-1) + b * z - tmp1), 0);
+	    startx1 = std::max(bottom(a * (y-1) + b * z - tmp1), 0);
 	    err2 = (a * (y-1) + b * z - tmp1) - startx1;
-	    starty = max(bottom(y + c * z - tmp2), 0);
+	    starty = std::max(bottom(y + c * z - tmp2), 0);
 	    err3 = (y + c * z - tmp2) - starty;
 
 	    q += (*nxout) * starty + startx;
@@ -1143,8 +1143,8 @@ static int shear1_nn
 	    p = imin + (nxin * nyin) * z + nxin * y;
 	    q = (*imout) + ((*nxout) * (*nyout)) * z;
 
-	    startx = max(bottom(a * y + b * z - tmp1), 0);
-	    starty = max(bottom(y + c * z - tmp2), 0);
+	    startx = std::max(bottom(a * y + b * z - tmp1), 0);
+	    starty = std::max(bottom(y + c * z - tmp2), 0);
 
 	    q += (*nxout) * starty + startx;
 
@@ -1235,9 +1235,9 @@ static int shear2_itp
 	p = imin + x;
 	q = (*imout) + x;
 
-	startz = max(bottom(b * x - tmp1), 0);
+	startz = std::max(bottom(b * x - tmp1), 0);
 	err1 = (b * x - tmp1) - startz;
-	starty = max(bottom(a * x - tmp2), 0);
+	starty = std::max(bottom(a * x - tmp2), 0);
 	err3 = (a * x - tmp2) - starty;
 
 	q += ((*nxout) * (*nyout)) * startz + (*nxout) * starty;
@@ -1259,11 +1259,11 @@ static int shear2_itp
 	    r = p - nxin;
 	    q = (*imout) + x;
 
-	    startz = max(bottom(b * x + c * y - tmp1), 0);
+	    startz = std::max(bottom(b * x + c * y - tmp1), 0);
 	    err1 = (b * x + c * y - tmp1) - startz;
-	    startz1 = max(bottom(b * x + c * (y-1) - tmp1), 0);
+	    startz1 = std::max(bottom(b * x + c * (y-1) - tmp1), 0);
 	    err2 = (b * x + c * (y-1) - tmp1) - startz1;
-	    starty = max(bottom(y + a * x - tmp2), 0);
+	    starty = std::max(bottom(y + a * x - tmp2), 0);
 	    err3 = (y + a * x - tmp2) - starty;
 
 	    q += ((*nxout) * (*nyout)) * startz + (*nxout) * starty;
@@ -1414,8 +1414,8 @@ static int shear2_nn
 	    p = imin + x + nxin * y;
 	    q = (*imout) + x;
 
-	    startz = max(bottom(b * x + c * y  - tmp1), 0);
-	    starty = max(bottom(y + a * x - tmp2), 0);
+	    startz = std::max(bottom(b * x + c * y  - tmp1), 0);
+	    starty = std::max(bottom(y + a * x - tmp2), 0);
 
 	    q += ((*nxout) * (*nyout)) * startz + (*nxout) * starty;
 

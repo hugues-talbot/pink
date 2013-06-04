@@ -11,7 +11,7 @@
 
 #include "liarp.h"                   
 #include <limits>
-#include <tr1/type_traits> // for using a silent fit_char if needed
+// #include <tr1/type_traits> // for using a silent fit_char if needed
 
 template <typename Type>
 void gline( Type *IN,      /**< [in] input image */
