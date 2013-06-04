@@ -111,7 +111,8 @@ void ComputeCTg (int L, TabCTg & CTg)
     {
         for (x2 = 0; x2 <= x1; x2++)
         {
-            CTg[ x2*L + x1 ] =pow(x1,2)+pow(x2,2);
+	  // CTg[ x2*L + x1 ] =std::pow(x1,2)+std::pow(x2,2);
+	  CTg[ x2*L + x1 ] = x1*x1 + x2*x2;
         }
     }
 }
@@ -363,7 +364,7 @@ void CompSEDT(TabDTg DTg1,int L,int M)
             d=buff[j];
             if(d!=0)
             {
-                rMax=int(sqrt(d))+1;
+	      rMax=int(sqrt(static_cast<double>(d)))+1;
                 rStart=std::min(rMax,j);
                 rEnd=std::min(rMax,(M-1-j));
 			

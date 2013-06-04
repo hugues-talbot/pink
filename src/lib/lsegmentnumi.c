@@ -156,7 +156,14 @@ Il ne restera plus qu'a decider du sort des plateaux fusionnant: quelle valeur l
 #include <mcutil.h>
 #include <llabelplateaux.h>
 #include <lsegmentnumi.h>
-#include <unistd.h>
+
+// #include <unistd.h> in Microsoft Windows it does not exist, but we only need a subset of it
+#ifdef UNIXIO
+#  include <unistd.h>
+#else /* NOT UNIXIO */
+#  include <stdlib.h>
+#  include <io.h>
+#endif /* NOT UNIXIO */
 
 #define EN_FAH 0
 

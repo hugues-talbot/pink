@@ -8,6 +8,7 @@ INCLUDE(CheckTypeSize)
 # ------------------------------------
 
 FILE( GLOB lib_src_c *.c )
+FILE( GLOB lib_src_c_linux linux/*.c ) # these are the files which are specific to linux (for example they use XLib)
 # we should use only one kind of extension for C++ please
 FILE( GLOB lib_src_cpp *.cpp )
 # however, for the time being, the .cxx files are those that do not depend on Boost.
@@ -37,13 +38,13 @@ if ( NOT PYTHON_FRONT_END )
     if (THIS_IS_MSVC)
 	add_library(pinkstatic STATIC ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     else (THIS_IS_MSVC)
-	add_library(pink SHARED ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
+	add_library(pink SHARED ${lib_src_c} ${lib_src_cxx} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} ${lib_src_c_linux} )
     endif (THIS_IS_MSVC)
 else ( NOT PYTHON_FRONT_END )
     if (THIS_IS_MSVC)
 	add_library(pinkstatic STATIC ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
     else (THIS_IS_MSVC)
-	add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx} )
+	add_library(pink SHARED ${lib_src_c} ${lib_src_cpp} ${lib_src_bdd} ${lib_src_liar_c} ${lib_src_liar_cpp} ${lib_src_cxx}  ${lib_development_c} ${lib_development_cpp} ${lib_development_cxx}  ${lib_src_c_linux} )
     endif (THIS_IS_MSVC)
 endif ( NOT PYTHON_FRONT_END )
 
@@ -74,7 +75,7 @@ else (CMAKE_HOST_UNIX) ### on Windows(tm)
     if (THIS_IS_MSVC)
 	install(
 	    TARGETS pinkstatic LIBRARY
-	    ARCHIVE DESTINATION ${PINK_LIBDIR}
+	    ARCHIVE DESTINATION pink-image
 	    RUNTIME DESTINATION bin )
     endif (THIS_IS_MSVC)
 endif(CMAKE_HOST_UNIX)

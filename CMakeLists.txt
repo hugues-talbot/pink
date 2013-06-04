@@ -76,7 +76,8 @@ if (CMAKE_HOST_UNIX) ### We build with gcc
 else (CMAKE_HOST_UNIX) ## We build with MSVC
     SET( CMAKE_CXX_FLAGS_RELEASE " /O2 -DNDEBUG /MT " CACHE STRING "Optimization flags for the C++ compiler in Release mode" FORCE )
     SET( CMAKE_C_FLAGS_RELEASE   " /O2 -DNDEBUG /MT " CACHE STRING "Optimization flags for the C   compiler in Release mode" FORCE )
-    SET( PINK_LINKING_FLAGS "/DBOOST_PYTHON_STATIC_LIB /STACK:10000000 /machine:x64 /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libc.lib, /NODEFAULTLIB:msvcrt.lib, /NODEFAULTLIB:libcd.lib, /NODEFAULTLIB:libcmtd.lib, /NODEFAULTLIB:msvcrtd.lib /NODEFAULTLIB:msvcprt.lib /VERBOSE:LIB " )
+#    SET( PINK_LINKING_FLAGS "/DBOOST_PYTHON_STATIC_LIB /STACK:10000000 /machine:x64 /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libc.lib, /NODEFAULTLIB:msvcrt.lib, /NODEFAULTLIB:libcd.lib, /NODEFAULTLIB:libcmtd.lib, /NODEFAULTLIB:msvcrtd.lib /NODEFAULTLIB:msvcprt.lib /VERBOSE:LIB " )
+    SET( PINK_LINKING_FLAGS "/STACK:10000000 /machine:x64 /VERBOSE:LIB /NODEFAULTLIB:libcmt.lib" )
     SET( CMAKE_LINKER_FLAGS ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
     SET( CMAKE_LINKER_FLAGS_RELEASE ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
     SET( CMAKE_MODULE_LINKER_FLAGS ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
@@ -238,7 +239,6 @@ endif (THIS_IS_MSVC)
 FIND_PACKAGE(TIFF)
 
 if (TIFF_FOUND)
-    #message("Found libtiff headers in ${TIFF_INCLUDE_DIR}, library at ${TIFF_LIBRARIES}")
     ADD_DEFINITIONS(-DHAVE_TIFF_LIB)
     INCLUDE_DIRECTORIES(${TIFF_INCLUDE_DIR})
     set( LIBS ${LIBS} ${TIFF_LIBRARIES} )
@@ -358,7 +358,13 @@ if ( PYTHON_FRONT_END )
 	SET(PYTHON_INCLUDE ${PYTHON_INCLUDE_PATH} CACHE PATH "The directory of the python headers." )
     endif(NOT PYTHON_INCLUDE)
 
-    find_package(Boost COMPONENTS python thread system date_time )
+    if (THIS_IS_MSVC)
+        # The MSVC compiler does not support std::chrono, so wee need to use boost.chrono on Windows
+	find_package(Boost COMPONENTS python thread system date_time chrono )
+    else (THIS_IS_MSVC)
+	# On linux boost links with std::chrono, so You do not need the chrono
+	find_package(Boost COMPONENTS python thread system date_time )
+    endif(THIS_IS_MSVC)
 
     ## The following test fails on centos: cmake 2.6 patch 2
     # if ( (NOT Boost_FOUND) AND ( (NOT Boost_PYTHON) OR (NOT Boost_THREAD) ) )
@@ -386,7 +392,6 @@ if ( PYTHON_FRONT_END )
     #    endif ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
 
     set( LIBS ${LIBS} ${Boost_LIBRARIES} ${PYTHON_LIBRARY} )
-
 
     # looking for the python library 
     if (THIS_IS_MSVC)
