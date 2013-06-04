@@ -58,7 +58,7 @@ endif(THIS_IS_MSVC)
 ### build type (32 or 64bit)
 CHECK_TYPE_SIZE (void* POINTER_SIZE) #4 if 32bit, 8 if 64bit.
 
-string( COMPARE EQUAL ${POINTER_SIZE} "8" THIS_IS_64bit )
+string( COMPARE EQUAL "${POINTER_SIZE}" "8" THIS_IS_64bit )
 
 if ( THIS_IS_64bit )
     set(PINK_LIBDIR "lib64" )
@@ -71,13 +71,13 @@ install(
     TARGETS pink LIBRARY
     DESTINATION ${PINK_LIBDIR}
 )
-else (CMAKE_HOST_UNIX) ### on Windows(tm)
-    if (THIS_IS_MSVC)
-	install(
-	    TARGETS pinkstatic LIBRARY
-	    ARCHIVE DESTINATION pink-image
-	    RUNTIME DESTINATION bin )
-    endif (THIS_IS_MSVC)
+else (CMAKE_HOST_UNIX) ### on Windows(tm) static library does not have to be installed
+    # if (THIS_IS_MSVC)
+    # 	install(
+    # 	    TARGETS pinkstatic LIBRARY
+    # 	    ARCHIVE DESTINATION pink-image
+    # 	    RUNTIME DESTINATION bin )
+    # endif (THIS_IS_MSVC)
 endif(CMAKE_HOST_UNIX)
 
 

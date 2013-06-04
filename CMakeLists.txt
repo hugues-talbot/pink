@@ -330,9 +330,12 @@ if (SIMD)
     ADD_DEFINITIONS(-DPINK_HAVE_SIMD)
 endif (SIMD)
 
+### **********************************************************************************************
+### **********************************************************************************************
+### *************************** Library **********************************************************
+### **********************************************************************************************
+### **********************************************************************************************
 
-## Hugues Talbot	 1 Nov 2012
-## why do that now and not later ?
 add_subdirectory( src/lib lib )
 
 ### **********************************************************************************************
@@ -425,14 +428,14 @@ if ( PYTHON_FRONT_END )
     if (NOT HTEST4)
 	message( FATAL_ERROR "error boost/shared_array.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST4)
-	 
+
     if (THIS_IS_MSVC)
 	message( STATUS "Not tested for boost/python/list.hpp and boost/python/extract.hpp due to a bug in cmake 2.8 try_compile. try_compile ignores additional library directories, which would be needed for the boost.python libraries." )
     else(THIS_IS_MSVC)
 	if (NOT HTEST5)
 	    CHECK_INCLUDE_FILE_CXX( boost/python/list.hpp  HTEST5 )
 	endif (NOT HTEST5)
-
+	 
 	if (NOT HTEST5)
 	    message( FATAL_ERROR "error boost/python/list.hpp does not compile. You need at least version 1.37 or newer. Check if its correctly installed. There is a known issue. If "
  	    "PYTHON_LIBRARY='" ${PYTHON_LIBRARY} "' does not point to the correct location of python's libraries, please specify them manually"
@@ -442,6 +445,8 @@ if ( PYTHON_FRONT_END )
 	if (NOT HTEST6)
 	    CHECK_INCLUDE_FILE_CXX( boost/python/extract.hpp  HTEST6 )
 	endif(NOT HTEST6)
+#	    " or delete the file in question. (seen on OpenSuSE 11.2)" )
+#    endif(NOT HTEST5)
 
 	if (NOT HTEST6)
 	    message( FATAL_ERROR "error boost/python/extract.hpp does not compile. Check if its correctly installed. You may need a newer version or set up python paths correctly.")
@@ -454,16 +459,6 @@ if ( PYTHON_FRONT_END )
 	message( FATAL_ERROR "error boost/lexical_cast.hpp does not compile. Check if its correctly installed. You may need a newer version or set up python paths correctly.")
     endif(NOT HTEST7)
 	 
-    ## this may not be a good idea but this is what I propose
-    ## Hugues Talbot	 1 Nov 2012
-#    set( CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS} )
-#    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Boost_SYSTEM_LIBRARY}") ## the system library is necessary for these tests
-    ## MESSAGE("From top: CMAKE_CXX_FLAGS=" ${CMAKE_CXX_FLAGS})
-#    SET (CMAKE_FLAGS ${CMAKE_CXX_FLAGS})
-#    CHECK_INCLUDE_FILE_CXX( boost/thread.hpp  HTEST8  )
-#    if (NOT HTEST8)
-#	message( FATAL_ERROR "error boost/thread.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
-#    endif(NOT HTEST8)
 				    
     CHECK_INCLUDE_FILE_CXX( boost/algorithm/minmax_element.hpp  HTEST9 )
     if (NOT HTEST9)
@@ -474,6 +469,11 @@ if ( PYTHON_FRONT_END )
     if (NOT HTEST921)
 	message( FATAL_ERROR "error boost/operators.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST921)
+
+    if (NOT HTEST76)
+	CHECK_INCLUDE_FILE_CXX( boost/type_traits.hpp  HTEST6 )
+    endif(NOT HTEST76)
+
 
     ## restore flags Hugues Talbot	 1 Nov 2012
     set ( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE} )
