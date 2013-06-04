@@ -33,11 +33,11 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 /* \file mcskel3d.c
-    \brief algorithmes pour la squelettisation parallèle en 3D - 
+    \brief algorithmes pour la squelettisation parallï¿½le en 3D - 
            version utilisant mckhalimsky3d
-    \author Michel COUPRIE, janvier-septembre 2006, d'après Gilles Bertrand
-    update : Michel Couprie, août 2007, version par propagation
-    update : Michel Couprie, août 2007, suppression du flag REGUL (complementaire de CRITIC)
+    \author Michel COUPRIE, janvier-septembre 2006, d'aprï¿½s Gilles Bertrand
+    update : Michel Couprie, aoï¿½t 2007, version par propagation
+    update : Michel Couprie, aoï¿½t 2007, suppression du flag REGUL (complementaire de CRITIC)
 */
 
 #include <stdlib.h>
@@ -69,7 +69,7 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define PARANO
 
 // table des configurations de faces essentielles pour les intervalles de Khalimsky
-// tables générées par GenerateEssTab2x() dans mcsquel2d.c
+// tables gï¿½nï¿½rï¿½es par GenerateEssTab2x() dans mcsquel2d.c
 unsigned char EssTab2X[256] = {
   1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
   0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -197,7 +197,7 @@ uint32_t PrincBetacarre3d(uint8_t *X, index_t rs, index_t cs, index_t ds, int32_
 /* ========================================== */
 /*! \fn int32_t mcskel3d_K3_CheckFrame(struct xvimage *k)
     \param k : un complexe
-    \return : booléen
+    \return : boolï¿½en
     \brief teste si le bord est vide (0)
 */
 int32_t mcskel3d_K3_CheckFrame(struct xvimage *k)
@@ -236,7 +236,7 @@ int32_t mcskel3d_K3_CheckFrame(struct xvimage *k)
 /* ========================================== */
 /*! \fn int32_t mcskel3d_K3_CheckComplex(struct xvimage *k)
     \param k : un sous-ensemble de H^2
-    \return : booléen
+    \return : boolï¿½en
     \brief teste si k est un complexe
 */
 int32_t mcskel3d_K3_CheckComplex(struct xvimage *k)
@@ -264,7 +264,7 @@ int32_t mcskel3d_K3_CheckComplex(struct xvimage *k)
 /* ========================================== */
 /*! \fn void mcskel3d_K3_CloseComplex(struct xvimage *k)
     \param k : un sous-ensemble de H^3
-    \brief en sortie, k est un complexe qui est la fermeture de l'ensemble de départ
+    \brief en sortie, k est un complexe qui est la fermeture de l'ensemble de dï¿½part
 */
 void mcskel3d_K3_CloseComplex(struct xvimage *k)
 /* ========================================== */
@@ -333,8 +333,8 @@ void mcskel3d_K3_Binarize(struct xvimage *k)
 /* ========================================== */
 /*! \fn void mcskel3d_K3_SelMarked(struct xvimage *k, unsigned char mask)
     \param k : un complexe
-    \param mask : une marque (mot 8 bits avec un seul bit à 1)
-    \brief met a FLAG_OBJ tous le éléments marqués, à 0 les autres
+    \param mask : une marque (mot 8 bits avec un seul bit ï¿½ 1)
+    \brief met a FLAG_OBJ tous le ï¿½lï¿½ments marquï¿½s, ï¿½ 0 les autres
 */
 void mcskel3d_K3_SelMarked(struct xvimage *k, unsigned char mask)
 /* ========================================== */
@@ -351,8 +351,8 @@ void mcskel3d_K3_SelMarked(struct xvimage *k, unsigned char mask)
 /*! \fn void mcskel3d_K3_MarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
     \param k : un complexe
     \param f : une face
-    \param mask : valeur de la marque (mot 8 bits avec un seul bit à 1)
-    \brief ajoute la marque mask à tous les éléments de alphacarre(f)
+    \param mask : valeur de la marque (mot 8 bits avec un seul bit ï¿½ 1)
+    \brief ajoute la marque mask ï¿½ tous les ï¿½lï¿½ments de alphacarre(f)
 */
 void mcskel3d_K3_MarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
 /* ========================================== */
@@ -371,8 +371,8 @@ void mcskel3d_K3_MarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask
 /*! \fn void mcskel3d_K3_UnMarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
     \param k : un complexe
     \param f : une face
-    \param mask : valeur de la marque (mot 8 bits avec un seul bit à 1)
-    \brief retire la marque mask de tous les éléments de alphacarre(f)
+    \param mask : valeur de la marque (mot 8 bits avec un seul bit ï¿½ 1)
+    \brief retire la marque mask de tous les ï¿½lï¿½ments de alphacarre(f)
 */
 void mcskel3d_K3_UnMarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
 /* ========================================== */
@@ -423,7 +423,7 @@ static uint8_t *EssTab3 = NULL;
 /*! \fn void mcskel3d_K3_MarkEss(struct xvimage *k)
     \param k : un complexe
     \brief pour chaque face essentielle f de k, rajoute (OR) la marque FLAG_ESS au label de f
-    \warning les faces principales doivent avoir été marquées auparavant
+    \warning les faces principales doivent avoir ï¿½tï¿½ marquï¿½es auparavant
 */
 void mcskel3d_K3_MarkEss(struct xvimage *k)
 /* ========================================== */
@@ -530,8 +530,8 @@ void mcskel3d_K3_MarkEss(struct xvimage *k)
     \param k : un complexe
     \param f : une face de k
     \return le cardinal (nombre de faces) de la fermeture du noyau
-    \brief marque le complexe formé du noyau (core) de la face f pour le complexe k
-    \warning les faces essentielles doivent avoir été marquées auparavant
+    \brief marque le complexe formï¿½ du noyau (core) de la face f pour le complexe k
+    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant
 */
 int32_t mcskel3d_K3_MarkCore(struct xvimage *k, index_t f)
 /* ========================================== */
@@ -582,10 +582,10 @@ printf("mark_core_aux : %d,%d,%d\n", j%rs, (j%ps)/rs, j/ps);
     \param k : un complexe
     \param m : un complexe "marqueur"
     \param f : une face de k
-    \return le cardinal (nombre de faces) de la fermeture du noyau de f pour k, conditionné par m
-    \brief marque le complexe formé du noyau (core) de la face f pour le complexe k, conditionné par m
-    \warning les faces essentielles doivent avoir été marquées auparavant,
-    pas de vérification de compatibilité entre k et m
+    \return le cardinal (nombre de faces) de la fermeture du noyau de f pour k, conditionnï¿½ par m
+    \brief marque le complexe formï¿½ du noyau (core) de la face f pour le complexe k, conditionnï¿½ par m
+    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
+    pas de vï¿½rification de compatibilitï¿½ entre k et m
 */
 int32_t mcskel3d_K3_MarkCore2(struct xvimage *k, struct xvimage *m, index_t f)
 /* ========================================== */
@@ -656,8 +656,8 @@ printf("mark_core2_aux : %d,%d,%d\n", j%rs, (j%ps)/rs, j/ps);
     \param k : un complexe
     \param f : une face de k
     \return un entier 
-    \brief retourne le cardinal du noyau de f, i.e., le nombre de faces marquées MARK3_ESS du noyau 
-    \warning les faces essentielles doivent avoir été marquées auparavant
+    \brief retourne le cardinal du noyau de f, i.e., le nombre de faces marquï¿½es MARK3_ESS du noyau 
+    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant
 */
 int32_t mcskel3d_K3_CardCore(struct xvimage *k, index_t f)
 /* ========================================== */
@@ -680,10 +680,10 @@ int32_t mcskel3d_K3_CardCore(struct xvimage *k, index_t f)
     \param m : un complexe "marqueur"
     \param f : une face de k
     \return un entier 
-    \brief retourne le cardinal du noyau de f pour k conditionné par m, i.e.,
-    le nombre de faces marquées MARK3_ESS ou appartenant à m dans le noyau 
-    \warning les faces essentielles doivent avoir été marquées auparavant,
-    pas de vérification de compatibilité entre k et m
+    \brief retourne le cardinal du noyau de f pour k conditionnï¿½ par m, i.e.,
+    le nombre de faces marquï¿½es MARK3_ESS ou appartenant ï¿½ m dans le noyau 
+    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
+    pas de vï¿½rification de compatibilitï¿½ entre k et m
 */
 int32_t mcskel3d_K3_CardCore2(struct xvimage *k, struct xvimage *m, index_t f)
 /* ========================================== */
@@ -806,7 +806,7 @@ int32_t get2Dconfiguration(
     \param k : un complexe
     \brief marque FLAG_CRITIC_E les fermetures des faces critiques du complexe k
            et marque FLAG_CRITIC les faces critiques du complexe k
-    \warning les faces essentielles doivent avoir été marquées auparavant
+    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant
 */
 void mcskel3d_K3_MarkCritic(struct xvimage *k)
 /* ========================================== */
@@ -841,7 +841,7 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE); 
 	goto next; 
       }
-      // le core d'un singl est forcément vide (cas déjà traité)
+      // le core d'un singl est forcï¿½ment vide (cas dï¿½jï¿½ traitï¿½)
       if (INTER3D(x,y,z))
       {
 	if (ncore == 1) K[i] &= ~FLAG_CRITIC;
@@ -875,11 +875,11 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 /*! \fn void mcskel3d_K3_MarkCritic2(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
-    \brief marque FLAG_CRITIC_E les fermetures des faces critiques du complexe k, conditionné par m, et 
+    \brief marque FLAG_CRITIC_E les fermetures des faces critiques du complexe k, conditionnï¿½ par m, et 
            marque FLAG_CRITIC les faces critiques du complexe k (cond. m)
-    (m est un ensemble de faces qui doivent être préservées)
-    \warning les faces essentielles (conditionnellement à m) doivent avoir été marquées auparavant,
-    pas de vérification de compatibilité entre k et m
+    (m est un ensemble de faces qui doivent ï¿½tre prï¿½servï¿½es)
+    \warning les faces essentielles (conditionnellement ï¿½ m) doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
+    pas de vï¿½rification de compatibilitï¿½ entre k et m
 */
 void mcskel3d_K3_MarkCritic2(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
@@ -914,7 +914,7 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE); 
 	goto next; 
       }
-      // le core d'un singl est forcément vide (cas déjà traité)
+      // le core d'un singl est forcï¿½ment vide (cas dï¿½jï¿½ traitï¿½)
       if (INTER3D(x,y,z))
       {
 	if (ncore == 1) 
@@ -968,7 +968,7 @@ print3Dconfiguration(mask);
 /*! \fn void mcskel3d_K3_MarkMCritic(struct xvimage *k)
     \param k : un complexe 
     \brief marque FLAG_CRITIC les faces m-critiques du complexe k
-    \warning les faces essentielles doivent avoir été marquées auparavant
+    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant
     \warning utilise le flag TMP1
 */
 void mcskel3d_K3_MarkMCritic(struct xvimage *k)
@@ -1004,7 +1004,7 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE); 
 	goto next; 
       }
-      // le core d'un singl est forcément vide (cas déjà traité)
+      // le core d'un singl est forcï¿½ment vide (cas dï¿½jï¿½ traitï¿½)
       if (INTER3D(x,y,z))
       {
 	if (ncore == 1) K[i] &= ~FLAG_CRITIC;
@@ -1043,9 +1043,9 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 /*! \fn void mcskel3d_K3_MarkMCritic2(struct xvimage *k, struct xvimage *m)
     \param k : un complexe 
     \param m : un complexe "marqueur"
-    \brief marque FLAG_CRITIC les faces M-critiques du complexe k, conditionné par m
-    \warning les faces essentielles (conditionnellement à m) doivent avoir été marquées auparavant
-    \warning pas de vérification de compatibilité entre k et m
+    \brief marque FLAG_CRITIC les faces M-critiques du complexe k, conditionnï¿½ par m
+    \warning les faces essentielles (conditionnellement ï¿½ m) doivent avoir ï¿½tï¿½ marquï¿½es auparavant
+    \warning pas de vï¿½rification de compatibilitï¿½ entre k et m
     \warning utilise le flag TMP1
 */
 void mcskel3d_K3_MarkMCritic2(struct xvimage *k, struct xvimage *m)
@@ -1086,7 +1086,7 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 	mcskel3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE); 
 	goto next; 
       }
-      // le core d'un singl est forcément vide (cas déjà traité)
+      // le core d'un singl est forcï¿½ment vide (cas dï¿½jï¿½ traitï¿½)
       if (INTER3D(x,y,z))
       {
 	if (ncore == 1) 
@@ -1144,8 +1144,8 @@ print3Dconfiguration(mask);
 /* ========================================== */
 /*! \fn index_t mcskel3d_K3_Critic2Obj(struct xvimage *k)
     \param k : un complexe
-    \return le nombre de faces objet trouvées
-    \brief marque FLAG_OBJ les faces marquées FLAG_CRITIC du complexe k et remet à 0 les autres marques
+    \return le nombre de faces objet trouvï¿½es
+    \brief marque FLAG_OBJ les faces marquï¿½es FLAG_CRITIC du complexe k et remet ï¿½ 0 les autres marques
 */
 index_t mcskel3d_K3_Critic2Obj(struct xvimage *k)
 /* ========================================== */
@@ -1168,8 +1168,8 @@ index_t mcskel3d_K3_Critic2Obj(struct xvimage *k)
 /* ========================================== */
 /*! \fn index_t mcskel3d_K3_CriticE2Obj(struct xvimage *k)
     \param k : un complexe
-    \return le nombre de faces objet trouvées
-    \brief marque FLAG_OBJ les faces marquées FLAG_CRITIC_E du complexe k et remet à 0 les autres marques
+    \return le nombre de faces objet trouvï¿½es
+    \brief marque FLAG_OBJ les faces marquï¿½es FLAG_CRITIC_E du complexe k et remet ï¿½ 0 les autres marques
 */
 index_t mcskel3d_K3_CriticE2Obj(struct xvimage *k)
 /* ========================================== */
@@ -1192,10 +1192,10 @@ index_t mcskel3d_K3_CriticE2Obj(struct xvimage *k)
 /* ========================================== */
 /*! \fn index_t mcskel3d_K3_MCritic2Obj(struct xvimage *k)
     \param k : un complexe
-    \return le nombre de faces objet trouvées
+    \return le nombre de faces objet trouvï¿½es
     \brief marque FLAG_OBJ les fermetures des faces non nulles 
-    contenant des faces m-critiques (marquées FLAG_CRITIC) 
-    du complexe k et remet à 0 les autres marques
+    contenant des faces m-critiques (marquï¿½es FLAG_CRITIC) 
+    du complexe k et remet ï¿½ 0 les autres marques
 */
 index_t mcskel3d_K3_MCritic2Obj(struct xvimage *k)
 /* ========================================== */
@@ -1240,10 +1240,10 @@ index_t mcskel3d_K3_MCritic2Obj(struct xvimage *k)
 /*! \fn index_t mcskel3d_K3_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
-    \return le nombre de faces objet trouvées
+    \return le nombre de faces objet trouvï¿½es
     \brief marque FLAG_OBJ les fermetures des faces 
-    contenant des faces m-critiques (marquées FLAG_CRITIC)
-    du complexe k ou des faces de m et remet à 0 les autres marques.
+    contenant des faces m-critiques (marquï¿½es FLAG_CRITIC)
+    du complexe k ou des faces de m et remet ï¿½ 0 les autres marques.
 */
 index_t mcskel3d_K3_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
@@ -1286,8 +1286,8 @@ index_t mcskel3d_K3_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
 /*! \fn index_t mcskel3d_K3_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
-    \return le nombre de faces critiques ou marquées trouvées
-    \brief marque FLAG_OBJ les faces CRITIC ou CRITIC_E du complexe k ou marquées par m et remet à 0 les flags dans k
+    \return le nombre de faces critiques ou marquï¿½es trouvï¿½es
+    \brief marque FLAG_OBJ les faces CRITIC ou CRITIC_E du complexe k ou marquï¿½es par m et remet ï¿½ 0 les flags dans k
 */
 index_t mcskel3d_K3_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
@@ -1305,7 +1305,7 @@ index_t mcskel3d_K3_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
 /*! \fn void mcskel3d_K3_HitPrinc(struct xvimage *k)
     \param k : un complexe
-    \brief pour chaque face f marquée FLAG_PRINC de k, marque FLAG_OBJ le alpha du beta de f
+    \brief pour chaque face f marquï¿½e FLAG_PRINC de k, marque FLAG_OBJ le alpha du beta de f
 */
 void mcskel3d_K3_HitPrinc(struct xvimage *k)
 /* ========================================== */
@@ -1508,7 +1508,7 @@ int32_t mcskel3d_K3_T3D(struct xvimage *b, int32_t i, int32_t j, int32_t k, stru
 /* ==================================== */
 /* 
   Retourne le nombre de composantes connexes du
-    core du point i,j,k de b, privé du point b.
+    core du point i,j,k de b, privï¿½ du point b.
   g (image temporaire) doit etre allouee de taille 7x7x7.
 */    
 {
@@ -1520,10 +1520,10 @@ int32_t mcskel3d_K3_T3D(struct xvimage *b, int32_t i, int32_t j, int32_t k, stru
 /*! \fn void mcskel3d_K3_MarkThin(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
-    (m est un ensemble de faces qui doivent être préservées)
-    \brief ajoute au complexe m les faces séparantes (Tb > 1) du complexe k
-    \warning les faces essentielles doivent avoir été marquées auparavant,
-    pas de vérification de compatibilité entre k et m
+    (m est un ensemble de faces qui doivent ï¿½tre prï¿½servï¿½es)
+    \brief ajoute au complexe m les faces sï¿½parantes (Tb > 1) du complexe k
+    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
+    pas de vï¿½rification de compatibilitï¿½ entre k et m
 */
 void mcskel3d_K3_MarkThin(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
@@ -1550,11 +1550,11 @@ void mcskel3d_K3_MarkThin(struct xvimage *k, struct xvimage *m)
   {
     i = z*ps + y*rs + x;
     if (!K[i]) goto next;
-    if (SINGL3D(x,y,z)) goto next; // ne peut être séparant
-    if (INTER3D(x,y,z)) goto next; // ne peut être séparant
+    if (SINGL3D(x,y,z)) goto next; // ne peut ï¿½tre sï¿½parant
+    if (INTER3D(x,y,z)) goto next; // ne peut ï¿½tre sï¿½parant
     if (IS_ESS(K[i])) 
     {
-      if (CARRE3D(x,y,z)) // séparant seulement s'il est principal
+      if (CARRE3D(x,y,z)) // sï¿½parant seulement s'il est principal
       {
 	if (IS_PRINC(K[i]))
 	{
@@ -1583,10 +1583,10 @@ int32_t lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps)
 #undef F_NAME
 #define F_NAME "lskeleuc3d"
 /*
-    \brief Noyau homotopique dans H3 avec fonction de priorité (distance euclidienne)
-           Version avec correction géométrique 
+    \brief Noyau homotopique dans H3 avec fonction de prioritï¿½ (distance euclidienne)
+           Version avec correction gï¿½omï¿½trique 
     \author Michel COUPRIE
-    \warning Le complexe doit être fermé, il ne doit pas toucher le bord
+    \warning Le complexe doit ï¿½tre fermï¿½, il ne doit pas toucher le bord
  */
 {
   struct xvimage * m;
@@ -1629,7 +1629,7 @@ int32_t lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps)
 
   I = UCHARDATA(inhi);
 
-  m = copyimage(k); // tous les points sont marqués (protégés) au départ
+  m = copyimage(k); // tous les points sont marquï¿½s (protï¿½gï¿½s) au dï¿½part
   if (m == NULL)
   {   
     fprintf(stderr, "%s: copyimage failed\n", F_NAME);
@@ -1743,21 +1743,21 @@ int32_t lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps)
   while (!mcrbt_RbtVide(RBT) && (n < nsteps))
   {
     n++;
-    p = RbtMinLevel(RBT); 
+    p = mcrbt_RbtMinLevel(RBT); 
 #ifdef VERBOSE
     printf("step %d, prio %g ", n, p);
 #endif
     mcskel3d_K3_MarkObj(k);
-    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
     {
-      i = RbtPopMin(RBT);
+      i = mcrbt_RbtPopMin(RBT);
       if (IS_OBJ(K[i]) && M[i]) 
-      { // pas déjà retiré (K[i]) et pas encore traité (M[i])
+      { // pas dï¿½jï¿½ retirï¿½ (K[i]) et pas encore traitï¿½ (M[i])
 	if (I[i] == 0)
 	{  
-	  M[i] = 0; // démarque pour traiter
-	  ListePush(LIST, i); // mémorise pour la détection des nouveaux
-	                     // points du squelette apparus dans l'itération
+	  M[i] = 0; // dï¿½marque pour traiter
+	  ListePush(LIST, i); // mï¿½morise pour la dï¿½tection des nouveaux
+	                     // points du squelette apparus dans l'itï¿½ration
 	}
       }
     }
@@ -1884,19 +1884,19 @@ int32_t lskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-// Appliqués à l'image I (inhi) :
-// Le flag MARK1 sert à représenter le marqueur initial
-// Le flag MARK2 sert à représenter le marqueur courant
-// Le flag MARK3 sert à représenter la fermeture du marqueur courant
+// Appliquï¿½s ï¿½ l'image I (inhi) :
+// Le flag MARK1 sert ï¿½ reprï¿½senter le marqueur initial
+// Le flag MARK2 sert ï¿½ reprï¿½senter le marqueur courant
+// Le flag MARK3 sert ï¿½ reprï¿½senter la fermeture du marqueur courant
 
 /* ========================================== */
 /*! \fn void K3List_MarkPrinc(struct xvimage *k, Liste *l)
     \param k : un complexe
     \param l : un ensemble de faces
     \brief pour chaque face f de alphacarre(l) inter k, 
-           actualise la marque FLAG_PRINC de f et le cas échéant, 
-	   mémorise la face f en fin de la liste l.
-           Mémorise aussi les faces de l en fin de la liste l.
+           actualise la marque FLAG_PRINC de f et le cas ï¿½chï¿½ant, 
+	   mï¿½morise la face f en fin de la liste l.
+           Mï¿½morise aussi les faces de l en fin de la liste l.
 */
 void K3List_MarkPrinc(struct xvimage *k, Liste *l)
 /* ========================================== */
@@ -1938,7 +1938,7 @@ void K3List_MarkPrinc(struct xvimage *k, Liste *l)
     \param k : un complexe
     \param l : un sous-ensemble de k
     \brief pour chaque face essentielle f de l, actualise la marque FLAG_ESS
-    \warning les faces principales doivent avoir été marquées auparavant
+    \warning les faces principales doivent avoir ï¿½tï¿½ marquï¿½es auparavant
 */
 void K3List_MarkEss(struct xvimage *k, Liste *l)
 /* ========================================== */
@@ -2032,12 +2032,12 @@ void K3List_MarkEss(struct xvimage *k, Liste *l)
 /* ========================================== */
 /*! \fn int32_t K3List_MarkCore2(struct xvimage *k, unsigned char *I, int32_t f)
     \param k : un complexe
-    \param I : un "marqueur" m représenté par le flag MARK3
+    \param I : un "marqueur" m reprï¿½sentï¿½ par le flag MARK3
     \param f : une face de k
-    \return le cardinal (nombre de faces) de la fermeture du noyau de f pour k, conditionné par m
-    \brief marque le complexe formé du noyau (core) de la face f pour le complexe k, conditionné par m
-    \warning les faces essentielles doivent avoir été marquées auparavant,
-    pas de vérification de compatibilité entre k et m
+    \return le cardinal (nombre de faces) de la fermeture du noyau de f pour k, conditionnï¿½ par m
+    \brief marque le complexe formï¿½ du noyau (core) de la face f pour le complexe k, conditionnï¿½ par m
+    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
+    pas de vï¿½rification de compatibilitï¿½ entre k et m
 */
 int32_t K3List_MarkCore2(struct xvimage *k, unsigned char *I, int32_t f)
 /* ========================================== */
@@ -2105,15 +2105,15 @@ printf("mark_core2_aux : %d,%d,%d\n", j%rs, (j%ps)/rs, j/ps);
 /* ========================================== */
 /*! \fn void K3List_MarkCritic2(struct xvimage *k, unsigned char *I, Liste *l)
     \param k : un complexe
-    \param I : un "marqueur" m représenté par le flag MARK3
+    \param I : un "marqueur" m reprï¿½sentï¿½ par le flag MARK3
     \param l : un sous-ensemble de k
     \brief marque FLAG_CRITIC_E les fermetures des faces critiques de l, 
-           conditionné par m, et marque FLAG_CRITIC les faces critiques 
+           conditionnï¿½ par m, et marque FLAG_CRITIC les faces critiques 
 	   de l (cond. m)
-	   (m est un ensemble de faces qui doivent être préservées)
-    \warning les faces essentielles (conditionnellement à m) 
-           doivent avoir été marquées auparavant,
-    \warning pas de vérification de compatibilité entre k et m
+	   (m est un ensemble de faces qui doivent ï¿½tre prï¿½servï¿½es)
+    \warning les faces essentielles (conditionnellement ï¿½ m) 
+           doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
+    \warning pas de vï¿½rification de compatibilitï¿½ entre k et m
 */
 void K3List_MarkCritic2(struct xvimage *k, unsigned char *I, Liste *l)
 /* ========================================== */
@@ -2164,7 +2164,7 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 	mcskel3d_K3_UnMarkAlphaCarre(k, p, FLAG_CORE); 
 	goto next; 
       }
-      // le core d'un singl est forcément vide (cas déjà traité)
+      // le core d'un singl est forcï¿½ment vide (cas dï¿½jï¿½ traitï¿½)
       if (INTER3D(x,y,z))
       {
 	if (ncore != 1) K[p] |= FLAG_CRITIC;
@@ -2208,11 +2208,11 @@ int32_t llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps
 #undef F_NAME
 #define F_NAME "llistskeleuc3d"
 /*
-    \brief Noyau homotopique dans H3 avec fonction de priorité (distance euclidienne)
-           Version avec correction géométrique 
+    \brief Noyau homotopique dans H3 avec fonction de prioritï¿½ (distance euclidienne)
+           Version avec correction gï¿½omï¿½trique 
 	   Version avec propagation par listes
     \author Michel COUPRIE
-    \warning Le complexe doit être fermé, il ne doit pas toucher le bord
+    \warning Le complexe doit ï¿½tre fermï¿½, il ne doit pas toucher le bord
  */
 {
   struct xvimage * dist;
@@ -2264,7 +2264,7 @@ int32_t llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps
     if (I[i]) I[i] = MARK1;
     I[i] |= (MARK2 | MARK3);
   }
-  // tous les points sont marqués (protégés) au départ
+  // tous les points sont marquï¿½s (protï¿½gï¿½s) au dï¿½part
 
   dist = allocimage(NULL, rs, cs, ds, VFF_TYP_DOUBLE);
   prio = allocimage(NULL, rs, cs, ds, VFF_TYP_DOUBLE);
@@ -2373,25 +2373,25 @@ int32_t llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps
   while (!mcrbt_RbtVide(RBT) && (n < nsteps))
   {
     n++;
-    p = RbtMinLevel(RBT); 
+    p = mcrbt_RbtMinLevel(RBT); 
 #ifdef VERBOSE
     printf("step %d, prio %g ", n, p);
 #endif
 
     // CONSTRUIT LA LISTE DES POINTS A TRAITER ET MAJ. MARQUEUR COURANT (MARK2)
-    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
     {
-      i = RbtPopMin(RBT);
+      i = mcrbt_RbtPopMin(RBT);
       if (IS_OBJ(K[i]) && IS_MARKED2(I[i])) 
-      { // pas déjà retiré et pas encore traité
+      { // pas dï¿½jï¿½ retirï¿½ et pas encore traitï¿½
 	if (!IS_MARKED1(I[i]))
 	{  
-	  I[i] &= ~MARK2;     // démarque pour traiter
-	  ListePush(LIST, i); // mémorise pour la détection des nouveaux
-	                      // points du squelette apparus dans l'itération
+	  I[i] &= ~MARK2;     // dï¿½marque pour traiter
+	  ListePush(LIST, i); // mï¿½morise pour la dï¿½tection des nouveaux
+	                      // points du squelette apparus dans l'itï¿½ration
 	}
       } // if (IS_OBJ(K[i]) && IS_MARKED2(I[i])) 
-    } // while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
+    } // while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
 #ifdef DEBUG
     writeimage(k, "_k");
 #endif
@@ -2540,7 +2540,7 @@ int32_t llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps
       if (!IS_CRITIC(K[i]) && !IS_MARKED3(I[i]))
       { 
 	K[i] = 0;
-	ListePush2(LIST, i); // mémorise pour la maj des faces principales,...
+	ListePush2(LIST, i); // mï¿½morise pour la maj des faces principales,...
 #ifdef VERBOSE
 	nd++;
 #endif
@@ -2552,7 +2552,7 @@ int32_t llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps
 	  if (K[j] && !IS_CRITIC_E(K[j]) && !IS_MARKED3(I[j]))
 	  {
 	    K[j] = 0;
-	    ListePush2(LIST, j); // mémorise pour la maj des faces principales,...
+	    ListePush2(LIST, j); // mï¿½morise pour la maj des faces principales,...
 #ifdef VERBOSE
 	    nd++;
 #endif
@@ -2561,17 +2561,17 @@ int32_t llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps
       } // if (!IS_CRITIC(K[i]))
     } // for (ii = 0; ii < LIST->Sp; ii++)
 #ifdef VERBOSE
-    printf("nb. pts retirés = %d ", nd);	
+    printf("nb. pts retirï¿½s = %d ", nd);	
 #endif    
     ListeFlush1(LIST);
-    Liste2to1(LIST); // LIST(1) contient les points enlevés
+    Liste2to1(LIST); // LIST(1) contient les points enlevï¿½s
 
     K3List_MarkPrinc(k, LIST); // LIST(2) contient les points 
-    ListeFlush1(LIST);         // dont le statut PRINC a été modifié
+    ListeFlush1(LIST);         // dont le statut PRINC a ï¿½tï¿½ modifiï¿½
 
     for (ii = LIST->Sp2+1; ii < LIST->Max; ii++) 
-    { // transfère dans LIST(1) les points dont le statut ESS 
-      // doit être ré-évalué (alphacarré des points de LIST(2))
+    { // transfï¿½re dans LIST(1) les points dont le statut ESS 
+      // doit ï¿½tre rï¿½-ï¿½valuï¿½ (alphacarrï¿½ des points de LIST(2))
       i = LIST->Pts[ii];
       x = i % rs; y = (i % ps) / rs; z = i / ps;
       Alphacarre3d(rs, cs, ds, x, y, z, tabu, &nu);
@@ -2628,7 +2628,7 @@ int32_t llistskeleuc3d(struct xvimage * k, struct xvimage * inhi, int32_t nsteps
 int32_t lskel3d1(struct xvimage * k, int32_t nsteps) 
 /* =============================================================== */
 /*
-    \brief Noyau homotopique - version basée sur Khalimski 3D
+    \brief Noyau homotopique - version basï¿½e sur Khalimski 3D
     \warning L'objet ne doit pas toucher le bord
  */
 {
@@ -2678,7 +2678,7 @@ int32_t lskel3d1(struct xvimage * k, int32_t nsteps)
 int32_t lskel3d1b(struct xvimage * k, struct xvimage * m, int32_t nsteps) 
 /* =============================================================== */
 /*
-    \brief Noyau homotopique avec contrainte - version basée sur Khalimski 3D
+    \brief Noyau homotopique avec contrainte - version basï¿½e sur Khalimski 3D
     \warning L'objet ne doit pas toucher le bord
  */
 {
@@ -2728,14 +2728,14 @@ int32_t lskel3d1b(struct xvimage * k, struct xvimage * m, int32_t nsteps)
 int32_t lskel3d2(struct xvimage * k, int32_t nsteps) 
 /* =============================================================== */
 /*
-    \brief Squelette surfacique (dans H3) par sélection et mémorisation
-	  des éléments "minces" - version basée sur Khalimski 3D
+    \brief Squelette surfacique (dans H3) par sï¿½lection et mï¿½morisation
+	  des ï¿½lï¿½ments "minces" - version basï¿½e sur Khalimski 3D
     \warning L'objet ne doit pas toucher le bord
  */
 {
 #undef F_NAME
 #define F_NAME "lskel3d2"
-  struct xvimage * m; // pour marquer les éléments "minces"
+  struct xvimage * m; // pour marquer les ï¿½lï¿½ments "minces"
   index_t n_old, n_new, n;
 
   ACCEPTED_TYPES1(k, VFF_TYP_1_BYTE);
@@ -2786,7 +2786,7 @@ int32_t lskel3d2(struct xvimage * k, int32_t nsteps)
 int32_t lskel3d4(struct xvimage * k, int32_t nsteps) 
 /* =============================================================== */
 /*
-    \brief Noyau homotopique, version "Z^3 directe" (sans reconstruction) - version basée sur Khalimski 3D
+    \brief Noyau homotopique, version "Z^3 directe" (sans reconstruction) - version basï¿½e sur Khalimski 3D
     \warning L'objet ne doit pas toucher le bord
  */
 {
@@ -2850,7 +2850,7 @@ int32_t lskel3d4(struct xvimage * k, int32_t nsteps)
 int32_t lskel3d4b(struct xvimage * k, struct xvimage * m, int32_t nsteps) 
 /* =============================================================== */
 /*
-    \brief Noyau homotopique avec contrainte, version "Z^3 directe" (sans reconstruction) - version basée sur Khalimski 3D
+    \brief Noyau homotopique avec contrainte, version "Z^3 directe" (sans reconstruction) - version basï¿½e sur Khalimski 3D
     \warning L'objet ne doit pas toucher le bord
  */
 {

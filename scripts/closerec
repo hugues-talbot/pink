@@ -1,0 +1,16 @@
+#!/bin/sh
+# fermeture par reconstruction (dilatation suivie d'une reconstruction geodesique)
+USAGE="Usage: $0 in elstruct xorig yorig out"
+if [ $# -gt 5 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 5 ]
+then
+	echo $USAGE
+        exit
+fi
+dilat       $1  $2  $3  $4  _$1.dilat
+geoeros    _$1.dilat  $1  4  -1  $5
+rm         _$1.dilat

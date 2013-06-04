@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 
   if ((connex == 4) || (connex == 8))
   {
-    if (! lhtkernu(image, imagecond, connex))
+    if (! lhtkern_lhtkernu(image, imagecond, connex))
     {
       fprintf(stderr, "%s: lhtkernu failed\n", argv[0]);
       exit(1);

@@ -82,6 +82,9 @@ extern int32_t lskelACK3(struct xvimage *image,
 extern int32_t lskelRK3(struct xvimage *image, 
 			int32_t nsteps,
 			struct xvimage *inhibit);
+extern int32_t lskelRK3_26(struct xvimage *image, 
+			int32_t nsteps,
+			struct xvimage *inhibit);
 extern int32_t lskelSK3(struct xvimage *image, 
 			int32_t nsteps,
 			struct xvimage *inhibit);
@@ -95,6 +98,35 @@ extern int32_t lskelDRK3(struct xvimage *image,
 			 int32_t n_steps,
 			 struct xvimage *inhibit);
 extern int32_t lskel1Disthmuspoints(struct xvimage *image);
+extern int32_t lskelACK3p(struct xvimage *image, 
+			  int32_t n_steps,
+			  int32_t isthmus_persistence,
+			  struct xvimage *inhibit);
+extern int32_t lskelASK3p(struct xvimage *image, 
+			  int32_t n_steps,
+			  int32_t isthmus_persistence,
+			  struct xvimage *inhibit);
+extern int32_t lskelCK3p(struct xvimage *image, 
+			  int32_t n_steps,
+			  int32_t isthmus_persistence,
+			  struct xvimage *inhibit);
+extern int32_t lskelSK3p(struct xvimage *image, 
+			  int32_t n_steps,
+			  int32_t isthmus_persistence,
+			  struct xvimage *inhibit);
+extern int32_t lskelSCK3p(struct xvimage *image, 
+			  int32_t n_steps,
+			  int32_t isthmus_persistence,
+			  struct xvimage *inhibit);
+extern int32_t lskelACK3c(
+			  struct xvimage *image, 
+			  struct xvimage *persistence);
+extern int32_t lskelCK3_pers(struct xvimage *image, 
+		       struct xvimage *persistence);
+extern int32_t lskelSK3_pers(struct xvimage *image, 
+		       struct xvimage *persistence);
+extern int32_t lskelSCK3_pers(struct xvimage *image, 
+		       struct xvimage *persistence);
 #ifdef __cplusplus
 }
 #endif

@@ -80,6 +80,10 @@ int32_t lbarycentrelab(struct xvimage * imagelab)
   nblabels = 0;
   for (j = 0; j < N; j++) if (F[j] > nblabels ) nblabels = F[j];
 
+#ifdef DEBUG
+printf("%d\n", nblabels);
+#endif
+
   bxx = (double *)calloc(1,nblabels * sizeof(double)); assert(bxx != NULL);
   byy = (double *)calloc(1,nblabels * sizeof(double)); assert(byy != NULL);
   bzz = (double *)calloc(1,nblabels * sizeof(double)); assert(bzz != NULL);
@@ -111,21 +115,16 @@ int32_t lbarycentrelab(struct xvimage * imagelab)
     }
   }
 
-#ifdef DEBUG
-printf("%d\n", nblabels);
-#endif
-
   for (i = 0; i < nblabels; i++)
-  {
-    bxx[i] = bxx[i] / surf[i];
-    byy[i] = byy[i] / surf[i];
-    bzz[i] = bzz[i] / surf[i];
-
+    if (surf[i]) 
+    {
+      bxx[i] = bxx[i] / surf[i];
+      byy[i] = byy[i] / surf[i];
+      bzz[i] = bzz[i] / surf[i];
 #ifdef DEBUG
 printf("%g %g %g\n", bxx[i], byy[i], bzz[i]);
 #endif
-
-  }
+    }
 
   /* ---------------------------------------------------------- */
   /* marque l'emplacement approximatif des barycentres dans l'image */
@@ -134,11 +133,12 @@ printf("%g %g %g\n", bxx[i], byy[i], bzz[i]);
   for (j = 0; j < N; j++) F[j] = 0;
 
   for (i = 0; i < nblabels; i++)
-    F[(int32_t)(arrondi(bzz[i])) * ps + 
-      (int32_t)(arrondi(byy[i])) * rs + 
-      (int32_t)(arrondi(bxx[i]))
-     ] = NDG_MAX;
-  
+    if (surf[i])  
+      F[(int32_t)(arrondi(bzz[i])) * ps + 
+	(int32_t)(arrondi(byy[i])) * rs + 
+	(int32_t)(arrondi(bxx[i]))
+       ] = i+1;
+
   free(bxx);
   free(byy);
   free(bzz);
@@ -171,7 +171,7 @@ int32_t lbarycentre(struct xvimage * image1, int32_t connex)
   N = ps * ds;
   F = UCHARDATA(image1);
 
-  label = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
+  label = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE); assert(label != NULL);
   LABEL = SLONGDATA(label);
 
   if (! llabelextrema(image1, connex, LABMAX, label, &nblabels))
@@ -201,16 +201,14 @@ int32_t lbarycentre(struct xvimage * image1, int32_t connex)
   for (j = 0; j < cs; j++)
   for (i = 0; i < rs; i++)
   {
-    lab = LABEL[k*ps + j*rs + i] - 1; /* les valeurs des labels sont entre 1 et nblabels */
     if (F[k*ps + j*rs + i] != 0)
     {
+      lab = LABEL[k*ps + j*rs + i] - 1; /* les valeurs des labels sont entre 1 et nblabels */
       surf[lab] += 1;
       bxx[lab] += (double)i;
       byy[lab] += (double)j;
       bzz[lab] += (double)k;
     }
-    else 
-      surf[lab] = -1;          /* marque la composante "fond" */
   }
 
 #ifdef DEBUG
@@ -218,17 +216,14 @@ printf("%d\n", nblabels-1);
 #endif
 
   for (i = 0; i < nblabels-1; i++)
-    if (surf[i] != -1)
-    {
-      bxx[i] = bxx[i] / surf[i];
-      byy[i] = byy[i] / surf[i];
-      bzz[i] = bzz[i] / surf[i];
-
+  {
+    bxx[i] = bxx[i] / surf[i];
+    byy[i] = byy[i] / surf[i];
+    bzz[i] = bzz[i] / surf[i];
 #ifdef DEBUG
 printf("%g %g %g\n", bxx[i], byy[i], bzz[i]);
 #endif
-
-    }
+  }
 
   /* ---------------------------------------------------------- */
   /* marque l'emplacement approximatif des barycentres dans l'image */
@@ -237,13 +232,12 @@ printf("%g %g %g\n", bxx[i], byy[i], bzz[i]);
   for (j = 0; j < N; j++) F[j] = 0;
 
   for (i = 0; i < nblabels-1; i++)
-    if (surf[i] != -1)
-    {
-      F[(int32_t)(arrondi(bzz[i])) * ps + 
-	(int32_t)(arrondi(byy[i])) * rs + 
-	(int32_t)(arrondi(bxx[i]))
-       ] = NDG_MAX;
-    }
+  {
+    F[(int32_t)(arrondi(bzz[i])) * ps + 
+      (int32_t)(arrondi(byy[i])) * rs + 
+      (int32_t)(arrondi(bxx[i]))
+     ] = NDG_MAX;
+  }
   
   freeimage(label);
   free(bxx);

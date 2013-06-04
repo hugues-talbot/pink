@@ -93,6 +93,7 @@ extern int32_t lseuilhisto (struct xvimage *image, struct xvimage *masque, doubl
 extern int32_t lcountvalues(struct xvimage *image, struct xvimage *mask);
 extern int32_t lhistosieve(struct xvimage *image, int32_t val);
 extern int32_t lrelabel(struct xvimage *image);
+extern double lentropy(struct xvimage *image, struct xvimage *mask);
 #ifdef __cplusplus
 }
 #endif
