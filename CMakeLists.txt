@@ -470,6 +470,11 @@ if ( PYTHON_FRONT_END )
 	message( FATAL_ERROR "error boost/operators.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST921)
 
+    if (NOT HTEST76)
+	CHECK_INCLUDE_FILE_CXX( boost/type_traits.hpp  HTEST6 )
+    endif(NOT HTEST76)
+
+
     ## restore flags Hugues Talbot	 1 Nov 2012
     set ( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE} )
 

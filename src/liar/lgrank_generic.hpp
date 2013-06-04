@@ -11,7 +11,9 @@
 
 #include "liarp.h"                   
 #include <limits>
-// #include <tr1/type_traits> // for using a silent fit_char if needed
+
+// Type Traits are only supported in C++0x
+#include <boost/type_traits.hpp>
 
 template <typename Type>
 void gline( Type *IN,      /**< [in] input image */
@@ -244,7 +246,7 @@ void gsrank(Type *IN,	/**< [in] pointer to input image */
     Type   offset;
     PIX_TYPE *TrueIN, *TrueOUT; // result of conversion to 8-bit, if needed
     
-    if(!std::tr1::is_same<Type,PIX_TYPE>::value) {
+    if(!boost::is_same<Type,PIX_TYPE>::value) {
         std::cerr << "Conversion to 8-bit" << std::endl;
         to_8bit(IN, &TrueIN, nx, ny, &slope, &offset); // this allocates TrueIN
         TrueOUT = (PIX_TYPE *) malloc(nx*ny*sizeof(PIX_TYPE));
@@ -265,7 +267,7 @@ void gsrank(Type *IN,	/**< [in] pointer to input image */
 
     close_running_rank();
 
-    if (!std::tr1::is_same<Type,PIX_TYPE>::value) {
+    if (!boost::is_same<Type,PIX_TYPE>::value) {
         std::cerr << "Conversion from 8-bit" << std::endl;
         from_8bit(TrueOUT, OUT, nx, ny, slope, offset);
         free(TrueOUT);
