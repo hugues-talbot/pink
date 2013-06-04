@@ -32,8 +32,8 @@ void NonLocalFilter<PixelType> :: Execute3D()
 {
 
     int const image_size=m_dimx*m_dimy*m_dimz;
-    int const r_patch=floor(m_patch_size/2);
-    int const r_search=floor(m_search_size/2);
+    int const r_patch=floor(static_cast<double>(m_patch_size/2));
+    int const r_search=floor(static_cast<double>(m_search_size/2));
 
 
     std :: vector<PixelType> outputI(image_size);
@@ -119,8 +119,8 @@ void NonLocalFilter<PixelType> :: Execute2D()
 {
 
     int const image_size=m_dimx*m_dimy;
-    int const r_patch=floor(m_patch_size/2);
-    int const r_search=floor(m_search_size/2);
+    int const r_patch=floor(static_cast<double>(m_patch_size/2));
+    int const r_search=floor(static_cast<double>(m_search_size/2));
 
 
     std :: vector<PixelType> outputI(image_size);

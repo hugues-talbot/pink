@@ -57,37 +57,37 @@
  * \date 08 Jan 1999
 */
 
-namespace {
-  // this function does not exist on Windows(tm)
-  double rint( double x) 
-  // Copyright (C) 2001 Tor M. Aamodt, University of Toronto
-  // Permisssion to use for all purposes commercial and otherwise granted.
-  // THIS MATERIAL IS PROVIDED "AS IS" WITHOUT WARRANTY, OR ANY CONDITION OR
-  // OTHER TERM OF ANY KIND INCLUDING, WITHOUT LIMITATION, ANY WARRANTY
-  // OF MERCHANTABILITY, SATISFACTORY QUALITY, OR FITNESS FOR A PARTICULAR
-  // PURPOSE.
-  {
+
+// this function does not exist on Windows(tm)
+double pink::rint( double x) 
+// Copyright (C) 2001 Tor M. Aamodt, University of Toronto
+// Permisssion to use for all purposes commercial and otherwise granted.
+// THIS MATERIAL IS PROVIDED "AS IS" WITHOUT WARRANTY, OR ANY CONDITION OR
+// OTHER TERM OF ANY KIND INCLUDING, WITHOUT LIMITATION, ANY WARRANTY
+// OF MERCHANTABILITY, SATISFACTORY QUALITY, OR FITNESS FOR A PARTICULAR
+// PURPOSE.
+{
     if( x > 0 ) {
-      __int64 xint = (__int64) (x+0.5);
+      int64_t xint = static_cast<int64_t>(x+0.5);
       if( xint % 2 ) {
 	// then we might have an even number...
-	double diff = x - (double)xint;
+	double diff = x - static_cast<double>(xint);
 	if( diff == -0.5 )
 	  return double(xint-1);
       }
       return double(xint);
     } else {
-      __int64 xint = (__int64) (x-0.5);
+      int64_t xint = static_cast<int64_t>(x-0.5);
       if( xint % 2 ) {
 	// then we might have an even number...
-	double diff = x - (double)xint;
+	double diff = x - static_cast<double>(xint);
 	if( diff == 0.5 )
 	  return double(xint+1);
       }
       return double(xint);
     }
-  } // rint
-} // unnamed namespace
+} // rint
+
 
 	
 		
@@ -242,8 +242,8 @@ int neworig2d(int oldx,  /* old origin, from top-left corner */
 	retval = 1;
     }
 
-    *newx = ::rint(deltax + x2);
-    *newy = ::rint(deltay + y2);
+    *newx = pink::rint(deltax + x2);
+    *newy = pink::rint(deltay + y2);
 	
     return retval;
 
