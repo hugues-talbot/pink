@@ -393,7 +393,6 @@ if ( PYTHON_FRONT_END )
 
     set( LIBS ${LIBS} ${Boost_LIBRARIES} ${PYTHON_LIBRARY} )
 
-
     # looking for the python library 
     if (THIS_IS_MSVC)
 	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}  )

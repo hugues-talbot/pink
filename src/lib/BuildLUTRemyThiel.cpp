@@ -364,7 +364,7 @@ void CompSEDT(TabDTg DTg1,int L,int M)
             d=buff[j];
             if(d!=0)
             {
-	      rMax=int(std::sqrt(static_cast<double>(d)))+1;
+	      rMax=int(sqrt(static_cast<double>(d)))+1;
                 rStart=std::min(rMax,j);
                 rEnd=std::min(rMax,(M-1-j));
 			
