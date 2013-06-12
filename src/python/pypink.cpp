@@ -141,6 +141,7 @@ void fclosepoly_export();
 void fopenrect_export();
 void fopenpoly_export();
 void RPO_export();
+void UnionRPO_export();
 void BilateralFilter_export();
 void NonLocalFilter_export();
 void NonLocalFilterSioux_export();
@@ -400,6 +401,7 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   fopenrect_export();
   fopenpoly_export();
   RPO_export();
+  UnionRPO_export();
   BilateralFilter_export();
   NonLocalFilter_export();
   NonLocalFilterSioux_export();

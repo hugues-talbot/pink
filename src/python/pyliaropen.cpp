@@ -156,6 +156,46 @@ namespace pink {
         return result_image;
 
     } /* liarRPO*/
+    
+    
+    
+      template   <class image_t>
+    image_t liarUnionRPO
+    (
+      const image_t & input_image,
+      const int L,
+      const int K,
+      const int reconstruct
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+	// image structure
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+    int ny = outputxvimage->col_size;
+    int nz = outputxvimage->depth_size;
+
+	// buffers
+	// this looks weird, but input_buffer is copied immediately inside RPO
+	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
+	// at this stage the output buffer contains the input image because of the clone() above
+
+
+        if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE) {
+            // call the RPO function
+            UNION_RPO3D(output_buffer, output_buffer,L, K, reconstruct, nx, ny, nz);
+
+        } else {
+            pink_error("Pixel type not yet supported\n");
+        } 
+        
+        return result_image;
+
+    } /* liarRPO*/
 
 
      template   <class image_t>
@@ -486,7 +526,7 @@ UI_EXPORT_FUNCTION(
   RPO,
   pink::python::liarRPO,
   ( arg("input_image"), arg("orientationX"),arg("orientationY"), arg("orientationZ"), arg("L"), arg("K"),arg("reconstruction") ),
-  "Robust 3D path opening, given an orientation (x,y,z); a length L, a noise robustness factor K, and optional reconstruction\n"
+  "Robust path opening, given an orientation (x,y,z); a length L, a noise robustness factor K, and optional reconstruction\n"
   "the following orientations are legal:\n"
   "   0  0  1  : depth direction\n"
   "   0  1  0  : vertical\n"
@@ -498,6 +538,15 @@ UI_EXPORT_FUNCTION(
   "\n"
   "For 2D images, directions (0 1), (1 0), (1 1) and (-1 1) are sufficient\n"
   "reconstruction parameter is 0 or 1\n"
+  );
+
+
+UI_EXPORT_FUNCTION(
+  UnionRPO,
+  pink::python::liarUnionRPO,
+  ( arg("input_image"), arg("L"), arg("K"),arg("reconstruction") ),
+  "Compute the union of the Robust path opening in each orientation (see RPO), given a length L, a noise robustness factor K, and optional reconstruction\n"
+  "Works in 2 and 3 dimensions\n"
   );
 
 
@@ -560,15 +609,6 @@ UI_EXPORT_FUNCTION(
 	"param operation : min (set to 1) or max (set to 0) operation \n"
 	"param lineop : line operation to use bresenham3d (set to 1) or periodic3d (set to 0) \n"
 	);
-
-
-
-
-
-
-
-
-
 
 
 
