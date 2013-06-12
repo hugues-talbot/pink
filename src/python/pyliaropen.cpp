@@ -15,7 +15,7 @@
 
 #include "liar_fseries.h"
 #include "pink_python.h"
-#include "RPO.hpp"
+#include "RPO_maj_float.hpp"
 
 #include "BilateralFilter.h"
 #include "BilateralFilter.hpp"
@@ -30,8 +30,6 @@
 
 #include "rotate3d.h"
 #include "rotate3d_generic.h"
-
-#include "RPO_parallel.h"
 
 
 using namespace boost::python;
@@ -148,10 +146,9 @@ namespace pink {
 
 
         if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE) {
-            // create the RPO object
-            RPO RPO1(orientation, L, K, reconstruct, output_buffer, output_buffer, nx, ny, nz);
-            // Execute
-            RPO1.Execute();
+            // call the RPO function
+            RPO3D(output_buffer, output_buffer,orientation, L, K, reconstruct, nx, ny, nz);
+
         } else {
             pink_error("Pixel type not yet supported\n");
         } 
@@ -419,50 +416,6 @@ namespace pink {
     } /* liarRotation3D */
     
     
-    template   <class image_t>
-    image_t liarRPO_parallel
-    (
-      const image_t & input_image,
-      const int L,
-      const int K,
-      const int R
-    )
-    {
-        int errorcode = 0;
-        image_t result_image = input_image.clone();
-
-        // The low-level function seems to always succeed
-	//
-
-	// image structure
-	struct xvimage *outputxvimage = result_image.get_output();
-
-	// dimensions
-	int nx = outputxvimage->row_size;
-    int ny = outputxvimage->col_size;
-    int nz = outputxvimage->depth_size;
-
-    // buffers
-   	    PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
-   	    
-   	    // RECOMMENCER A PARTIR D'ICI : peut etre changer par : std::vector<PixelType* output_buffer
-   	    //PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
-   	    std::vector<PixelType*> output_buffer;
-
-    // create the RPO_parallel object
-        RPO_parallel RPOP(input_buffer, output_buffer,L,K,R,nx,ny,nz);
-
-    // Execute
-    RPOP.Execute();
-    
-
-	// get result
-	return (result_image);
-
-    } /* liarRPO_parallel */
-
-
-
 
     template   <class image_t>
     image_t liaropenline3d
@@ -587,24 +540,6 @@ UI_EXPORT_FUNCTION(
   " interpolate : 0 means Nearest neighbor interpolation, 1 means linear interpolation \n"
   " value : value of the pixel added during the rotation (usually set to 0) \n"
   " rmbdr : mode for the border ? \n"
-  );
-
-UI_EXPORT_FUNCTION(
-  RPO_parallel,
-  pink::python::liarRPO_parallel,
-  ( arg("input_image"), arg("L"), arg("K"),arg("reconstruction") ),
-  "Robust 3D path opening, given an orientation (x,y,z); a length L, a noise robustness factor K, and optional reconstruction\n"
-  "the following orientations are legal:\n"
-  "   0  0  1  : depth direction\n"
-  "   0  1  0  : vertical\n"
-  "   1  0  0  : horizontal\n"
-  "   1  1  1  : diagonal NE/SW+depth\n"
-  "   1  1 -1  : diagonal NE/SW-depth\n"
-  "  -1  1  1  : diagonal NW/SE+depth\n"
-  "  -1  1 -1  : diagonal NW/SE-depth\n"
-  "\n"
-  "For 2D images, directions (0 1), (1 0), (1 1) and (-1 1) are sufficient\n"
-  "reconstruction parameter is 0 or 1\n"
   );
 
 
