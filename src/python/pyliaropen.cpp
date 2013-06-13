@@ -149,7 +149,8 @@ namespace pink {
             // call the RPO function
             RPO3D(output_buffer, output_buffer,orientation, L, K, reconstruct, nx, ny, nz);
 
-        } else {
+        } 
+        else {
             pink_error("Pixel type not yet supported\n");
         } 
         
@@ -189,7 +190,8 @@ namespace pink {
             // call the RPO function
             UNION_RPO3D(output_buffer, output_buffer,L, K, reconstruct, nx, ny, nz);
 
-        } else {
+        }
+         else {
             pink_error("Pixel type not yet supported\n");
         } 
         
