@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace std;
+#include "pinkconst.h"
 
 #define XFLIP_IN_USE 1
 #define ORTHOROT_IN_USE 1
@@ -49,6 +49,34 @@ using namespace std;
  * \date 03 Dec 1998
 */
 
+// double rint( double x)
+// // Copyright (C) 2001 Tor M. Aamodt, University of Toronto
+// // Permisssion to use for all purposes commercial and otherwise granted.
+// // THIS MATERIAL IS PROVIDED "AS IS" WITHOUT WARRANTY, OR ANY CONDITION OR
+// // OTHER TERM OF ANY KIND INCLUDING, WITHOUT LIMITATION, ANY WARRANTY
+// // OF MERCHANTABILITY, SATISFACTORY QUALITY, OR FITNESS FOR A PARTICULAR
+// // PURPOSE.
+// {
+//     if( x > 0 ) {
+//         __int64 xint = (__int64) (x+0.5);
+//         if( xint % 2 ) {
+//             // then we might have an even number...
+//             double diff = x - (double)xint;
+//             if( diff == -0.5 )
+//                 return double(xint-1);
+//         }
+//         return double(xint);
+//     } else {
+//         __int64 xint = (__int64) (x-0.5);
+//         if( xint % 2 ) {
+//             // then we might have an even number...
+//             double diff = x - (double)xint;
+//             if( diff == 0.5 )
+//                 return double(xint+1);
+//         }
+//         return double(xint);
+//     }
+// }
 
 template <typename Type>
 int xrotp90_3d (Type *bufin,	    /* Input buffer  */
@@ -812,9 +840,9 @@ static int pullrotated_3d
     centery = (double)iny/2;
     centerz = (double)inz/2;
 
-    borderx = max(bottom(centerx - rightx), 0);
-    bordery = max(bottom(centery - bottomy), 0);
-    borderz = max(bottom(centerz - backz), 0);
+    borderx = std::max(bottom(centerx - rightx), 0);
+    bordery = std::max(bottom(centery - bottomy), 0);
+    borderz = std::max(bottom(centerz - backz), 0);
 
     LIARdebug("Original: %d x %d x %d", origx, origy, origz);
     LIARdebug("BoundingBox: Left:%3.1f, Top:%3.1f, Front:%3.1f", leftx, topy, frontz);
@@ -983,31 +1011,31 @@ static int shear1_itp
 	p = imin + (nxin * nyin) * z;
 	q = (*imout) + ((*nxout) * (*nyout)) * z;
 
-	startx = max(bottom(b * z - tmp1), 0);
+	startx = std::max(bottom(b * z - tmp1), 0);
 	err1 = (b * z - tmp1) - startx;
-	starty = max(bottom(c * z - tmp2), 0);
+	starty = std::max(bottom(c * z - tmp2), 0);
 	err3 = (c * z - tmp2) - starty;
 
 	q += (*nxout)*starty + startx;	/* starting position in output image */
 	area3 = err1 * (1 - err3);	/* interpolation error calculation */
 	area4 = (1 - err1) * (1 - err3);
 
-	*q++ = rint((1-area4)*fillval + (*p)*area4);	/* first point */
+	*q++ = pink::rint((1-area4)*fillval + (*p)*area4);	/* first point */
 	for (x = 1 ; x < nxin ; x++, p++)
-	    *q++ = rint((1-area3-area4)*fillval + (*p)*area3 + *(p+1)*area4);
+	    *q++ = pink::rint((1-area3-area4)*fillval + (*p)*area3 + *(p+1)*area4);
 	if (area3 > 0.0)
-	    *q = rint((1-area3)*fillval + (*p)*area3); /* last point */
+	    *q = pink::rint((1-area3)*fillval + (*p)*area3); /* last point */
 
 	for (y = 1 ; y < nyin ; y++) {
 	    p = imin + (nxin * nyin) * z + nxin * y;
 	    r = p - nxin;
 	    q = (*imout) + ((*nxout) * (*nyout)) * z;
 
-	    startx = max(bottom(a * y + b * z - tmp1), 0);
+	    startx = std::max(bottom(a * y + b * z - tmp1), 0);
 	    err1 = (a * y + b * z - tmp1) - startx;
-	    startx1 = max(bottom(a * (y-1) + b * z - tmp1), 0);
+	    startx1 = std::max(bottom(a * (y-1) + b * z - tmp1), 0);
 	    err2 = (a * (y-1) + b * z - tmp1) - startx1;
-	    starty = max(bottom(y + c * z - tmp2), 0);
+	    starty = std::max(bottom(y + c * z - tmp2), 0);
 	    err3 = (y + c * z - tmp2) - starty;
 
 	    q += (*nxout) * starty + startx;
@@ -1019,33 +1047,33 @@ static int shear1_itp
 	    /* pixel shift error in the row offsets taken into account */
 	    if (startx == startx1) {
 		count = nxin - 1;
-		*q++ = rint((area1+area3)*fillval + (*p)*area4 + (*r)*area2);
+		*q++ = pink::rint((area1+area3)*fillval + (*p)*area4 + (*r)*area2);
 	    } else if ((startx1 - startx) == 1) {
 		count = nxin - 2;
-		*q++ = rint((1-area4)*fillval + (*p)*area4);
-		*q++ = rint(area1*fillval + (*p)*area3 + *(p+1)*area4 + (*r)*area2);
+		*q++ = pink::rint((1-area4)*fillval + (*p)*area4);
+		*q++ = pink::rint(area1*fillval + (*p)*area3 + *(p+1)*area4 + (*r)*area2);
 		p++;
 	    } else {
 		count = nxin - 2;
-		*(q-1) = rint((1-area2)*fillval + (*r)*area2);
-		*q++ = rint(area3*fillval + (*p)*area4 + (*r)*area1 + *(r+1)*area2);
+		*(q-1) = pink::rint((1-area2)*fillval + (*r)*area2);
+		*q++ = pink::rint(area3*fillval + (*p)*area4 + (*r)*area1 + *(r+1)*area2);
 		r++;
 	    }
 
 	    for (x = 1 ; x <= count ; x++, p++, r++)
-		*q++ = rint((*p)*area3 + *(p+1)*area4 + (*r)*area1 + *(r+1)*area2);
+		*q++ = pink::rint((*p)*area3 + *(p+1)*area4 + (*r)*area1 + *(r+1)*area2);
 	    if (area3 > 0.0 || area1 > 0.0) {
 	    	if (startx == startx1)
-		    *q = rint((area2+area4)*fillval + (*p)*area3 + (*r)*area1);
+		    *q = pink::rint((area2+area4)*fillval + (*p)*area3 + (*r)*area1);
 		else if ((startx1 - startx) == 1) {
 		    if (nxin > 1)
-			*q++ = rint(area4*fillval + (*p)*area3 + (*r)*area1 + *(r+1)*area2);
-		    *q = rint((1-area1)*fillval + *(r+1)*area1);
+			*q++ = pink::rint(area4*fillval + (*p)*area3 + (*r)*area1 + *(r+1)*area2);
+		    *q = pink::rint((1-area1)*fillval + *(r+1)*area1);
 		}
 		else {
 		    if (nxin > 1)
-			*q++ = rint(area2*fillval + (*p)*area3 + *(p+1)*area4 + (*r)*area1);
-		    *q = rint((1-area3)*fillval + *(p+1)*area3);
+			*q++ = pink::rint(area2*fillval + (*p)*area3 + *(p+1)*area4 + (*r)*area1);
+		    *q = pink::rint((1-area3)*fillval + *(p+1)*area3);
 		}
 	    }
 	}
@@ -1057,11 +1085,11 @@ static int shear1_itp
 	area2 = (1 - err1) * err3;
 
 	if (err3 > 0.0) { /* extra row required */
-	    *q++ = rint((1-area2)*fillval + (*p)*area2);
+	    *q++ = pink::rint((1-area2)*fillval + (*p)*area2);
 	    for (x = 1 ; x < nxin ; x++, p++)
-		*q++ = rint((1-area1-area2)*fillval + (*p)*area1 + *(p+1)*area2);
+		*q++ = pink::rint((1-area1-area2)*fillval + (*p)*area1 + *(p+1)*area2);
 	    if (area1 > 0.0)
-		*q = rint((1-area1)*fillval + (*p)*area1);
+		*q = pink::rint((1-area1)*fillval + (*p)*area1);
 	}
     }
     return 0;
@@ -1143,8 +1171,8 @@ static int shear1_nn
 	    p = imin + (nxin * nyin) * z + nxin * y;
 	    q = (*imout) + ((*nxout) * (*nyout)) * z;
 
-	    startx = max(bottom(a * y + b * z - tmp1), 0);
-	    starty = max(bottom(y + c * z - tmp2), 0);
+	    startx = std::max(bottom(a * y + b * z - tmp1), 0);
+	    starty = std::max(bottom(y + c * z - tmp2), 0);
 
 	    q += (*nxout) * starty + startx;
 
@@ -1235,35 +1263,35 @@ static int shear2_itp
 	p = imin + x;
 	q = (*imout) + x;
 
-	startz = max(bottom(b * x - tmp1), 0);
+	startz = std::max(bottom(b * x - tmp1), 0);
 	err1 = (b * x - tmp1) - startz;
-	starty = max(bottom(a * x - tmp2), 0);
+	starty = std::max(bottom(a * x - tmp2), 0);
 	err3 = (a * x - tmp2) - starty;
 
 	q += ((*nxout) * (*nyout)) * startz + (*nxout) * starty;
 	area3 = err1 * (1 - err3);
 	area4 = (1 - err1) * (1 - err3);
 
-	*q = rint((1-area4)*fillval + (*p)*area4);	/* first point */
+	*q = pink::rint((1-area4)*fillval + (*p)*area4);	/* first point */
 	q += (*nxout) * (*nyout);
 	for (z = 1 ; z < nzin ; z++) {
-	    *q = rint((1-area3-area4)*fillval + (*p)*area3 + *(p+nxin*nyin)*area4);
+	    *q = pink::rint((1-area3-area4)*fillval + (*p)*area3 + *(p+nxin*nyin)*area4);
 	    q += (*nxout) * (*nyout);
 	    p += nxin * nyin;
 	}
 	if (area3 > 0.0)
-	    *q = rint((1-area3)*fillval + (*p)*area3); /* last point */
+	    *q = pink::rint((1-area3)*fillval + (*p)*area3); /* last point */
 
 	for (y = 1 ; y < nyin ; y++) {
 	    p = imin + x + nxin * y;
 	    r = p - nxin;
 	    q = (*imout) + x;
 
-	    startz = max(bottom(b * x + c * y - tmp1), 0);
+	    startz = std::max(bottom(b * x + c * y - tmp1), 0);
 	    err1 = (b * x + c * y - tmp1) - startz;
-	    startz1 = max(bottom(b * x + c * (y-1) - tmp1), 0);
+	    startz1 = std::max(bottom(b * x + c * (y-1) - tmp1), 0);
 	    err2 = (b * x + c * (y-1) - tmp1) - startz1;
-	    starty = max(bottom(y + a * x - tmp2), 0);
+	    starty = std::max(bottom(y + a * x - tmp2), 0);
 	    err3 = (y + a * x - tmp2) - starty;
 
 	    q += ((*nxout) * (*nyout)) * startz + (*nxout) * starty;
@@ -1275,45 +1303,45 @@ static int shear2_itp
 	    /* pixel shift error in the row offsets taken into account */
 	    if (startz == startz1) {
 		count = nzin - 1;
-		*q = rint((area1+area3)*fillval + (*p)*area4 + (*r)*area2);
+		*q = pink::rint((area1+area3)*fillval + (*p)*area4 + (*r)*area2);
 		q += (*nxout) * (*nyout);
 	    } else if ((startz1 - startz) == 1) {
 		count = nzin - 2;
-		*q = rint((1-area4)*fillval + (*p)*area4);
+		*q = pink::rint((1-area4)*fillval + (*p)*area4);
 		q += (*nxout) * (*nyout);
-		*q = rint(area1*fillval + (*p)*area3 + *(p+nxin*nyin)*area4 + (*r)*area2);
+		*q = pink::rint(area1*fillval + (*p)*area3 + *(p+nxin*nyin)*area4 + (*r)*area2);
 		q += (*nxout) * (*nyout);
 		p += nxin * nyin;
 	    } else {
 		count = nzin - 2;
-		*(q-(*nxout)*(*nyout)) = rint((1-area2)*fillval + (*r)*area2);
-		*q = rint(area3*fillval + (*p)*area4 + (*r)*area1 + *(r+nxin*nyin)*area2);
+		*(q-(*nxout)*(*nyout)) = pink::rint((1-area2)*fillval + (*r)*area2);
+		*q = pink::rint(area3*fillval + (*p)*area4 + (*r)*area1 + *(r+nxin*nyin)*area2);
 		q += (*nxout) * (*nyout);
 		r += nxin * nyin;
 	    }
 
 	    for (z = 1 ; z <= count ; z++) {
-		*q = rint((*p)*area3 + *(p+nxin*nyin)*area4 + (*r)*area1 + *(r+nxin*nyin)*area2);
+		*q = pink::rint((*p)*area3 + *(p+nxin*nyin)*area4 + (*r)*area1 + *(r+nxin*nyin)*area2);
 		q += (*nxout) * (*nyout);
 		p += nxin * nyin;
 		r += nxin * nyin;
 	    }
 	    if (area3 > 0.0 || area1 > 0.0) {
 	    	if (startz == startz1)
-		    *q = rint((area2+area4)*fillval + (*p)*area3 + (*r)*area1);
+		    *q = pink::rint((area2+area4)*fillval + (*p)*area3 + (*r)*area1);
 		else if ((startz1 - startz) == 1) {
 		    if (nzin > 1) {
-			*q = rint(area4*fillval + (*p)*area3 + (*r)*area1 + *(r+nxin*nyin)*area2);
+			*q = pink::rint(area4*fillval + (*p)*area3 + (*r)*area1 + *(r+nxin*nyin)*area2);
 			q += (*nxout) * (*nyout);
 		    }
-		    *q = rint((1-area1)*fillval + *(r+nxin*nyin)*area1);
+		    *q = pink::rint((1-area1)*fillval + *(r+nxin*nyin)*area1);
 		}
 		else {
 		    if (nzin > 1) {
-			*q = rint(area2*fillval + (*p)*area3 + *(p+nxin*nyin)*area4 + (*r)*area1);
+			*q = pink::rint(area2*fillval + (*p)*area3 + *(p+nxin*nyin)*area4 + (*r)*area1);
 			q += (*nxout) * (*nyout);
 		    }
-		    *q = rint((1-area3)*fillval + *(p+nxin*nyin)*area3);
+		    *q = pink::rint((1-area3)*fillval + *(p+nxin*nyin)*area3);
 		}
 	    }
 	}
@@ -1324,15 +1352,15 @@ static int shear2_itp
 	    area1 = err1 * err3;
 	    area2 = (1 - err1) * err3;
 
-	    *q = rint((1-area2)*fillval + (*p)*area2);
+	    *q = pink::rint((1-area2)*fillval + (*p)*area2);
 	    q += (*nxout) * (*nyout);
 	    for (z = 1 ; z < nzin ; z++) {
-		*q = rint((1-area1-area2)*fillval + (*p)*area1 + *(p+nxin*nyin)*area2);
+		*q = pink::rint((1-area1-area2)*fillval + (*p)*area1 + *(p+nxin*nyin)*area2);
 		q += (*nxout) * (*nyout);
 		p += nxin * nyin;
 	    }
 	    if (area1 > 0.0)
-		*q = rint((1-area1)*fillval + (*p)*area1);
+		*q = pink::rint((1-area1)*fillval + (*p)*area1);
 	}
     }
     return 0;
@@ -1414,8 +1442,8 @@ static int shear2_nn
 	    p = imin + x + nxin * y;
 	    q = (*imout) + x;
 
-	    startz = max(bottom(b * x + c * y  - tmp1), 0);
-	    starty = max(bottom(y + a * x - tmp2), 0);
+	    startz = std::max(bottom(b * x + c * y  - tmp1), 0);
+	    starty = std::max(bottom(y + a * x - tmp2), 0);
 
 	    q += ((*nxout) * (*nyout)) * startz + (*nxout) * starty;
 
@@ -1695,9 +1723,9 @@ int lrotate3d
 	radian2 = beta * M_PI / 180.0;
 	radian3 = gamma * M_PI / 180.0;
 
-	a = myround(-tan((radian1+radian3)/2));
-	b = myround(cos((radian1-radian3)/2) / cos((radian1+radian3)/2) * tan(radian2/2));
-	c = myround(-sin(radian3) * tan(radian2/2));
+	a = pink::rint(-tan((radian1+radian3)/2));
+	b = pink::rint(cos((radian1-radian3)/2) / cos((radian1+radian3)/2) * tan(radian2/2));
+	c = pink::rint(-sin(radian3) * tan(radian2/2));
 
         LIARdebug("Shear factors: %.3f %.3f, %.3f", a, b, c);
         
@@ -1708,9 +1736,9 @@ int lrotate3d
 	    res = shear1_nn(bufin, bufout, nx, ny, nz, &onx, &ony, &onz, \
 			    a, b, c, value);
 	if (res == 0) {
-	    a = myround(sin(radian1+radian3));
-	    b = myround(-sin(radian2) * cos(radian3));
-	    c = myround(-sin((radian1-radian3)/2) / cos((radian1+radian3)/2) * sin(radian2));
+	    a = pink::rint(sin(radian1+radian3));
+	    b = pink::rint(-sin(radian2) * cos(radian3));
+	    c = pink::rint(-sin((radian1-radian3)/2) / cos((radian1+radian3)/2) * sin(radian2));
 	    if (interpolate == 1)
 		res = shear2_itp(*bufout, &tmpbuf, onx, ony, onz, &nx, &ny, \
 				 &nz, a, b, c, value);
@@ -1719,9 +1747,9 @@ int lrotate3d
 				&nz, a, b, c, value);
 	    if (res == 0) {
 		free(*bufout);
-		a = myround(-tan((radian1+radian3)/2));
-		b = myround(cos(radian1) * tan(radian2/2));
-		c = myround(sin(radian1) * tan(radian2/2));
+		a = pink::rint(-tan((radian1+radian3)/2));
+		b = pink::rint(cos(radian1) * tan(radian2/2));
+		c = pink::rint(sin(radian1) * tan(radian2/2));
 		if (interpolate == BILINEAR_INTERP)
 		    res = shear1_itp(tmpbuf, bufout, nx, ny, nz, &onx, &ony, \
 				    &onz, a, b, c, value);

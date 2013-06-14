@@ -32,6 +32,7 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
+
 /*! \file liar_line.cxx
 
 \brief line-segment based morphological operators
@@ -80,6 +81,7 @@ int imopenbun( const struct xvimage *input, /**< [in] input image */
 	    return( compute_openbun_limits< PIX_TYPE > (UCHARDATA(input),
 							rowsize(input),
 							colsize(input),
+                                                        depth(input),
 							radius,
 							n,
 							angle,
@@ -89,6 +91,7 @@ int imopenbun( const struct xvimage *input, /**< [in] input image */
 	    return( compute_openbun_rankmax< PIX_TYPE > (UCHARDATA(input),
 							 rowsize(input),
 							 colsize(input),
+                                                         depth(input),
 							 radius,
 							 n,
 							 angle,
@@ -102,7 +105,6 @@ int imopenbun( const struct xvimage *input, /**< [in] input image */
         default:
             pink_warning("Pixel type currently not supported "<< input->data_storage_type);
             return 1;
-        break;
     }
     return 0;
 }

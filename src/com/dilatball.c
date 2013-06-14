@@ -46,7 +46,7 @@ In this case the result of the dilation is defined by Y = {x; d(x,X) <= r} where
 represents the original point set (non-null pixels in the original image).
 If the parameter \b r is -1, then 
 the structuring element for each point x is a ball (or a disc) of radius \b F(x),
-where F is the greyscale image  \b in.pgm .
+where F is the greyscale image \b in.pgm .
 
 The dilation is computed by thresholding a distance map.
 The distance used depends on the optional parameter \b dist (default is 0) :
@@ -60,7 +60,7 @@ The distance used depends on the optional parameter \b dist (default is 0) :
 \li 18: 18-distance in 3d
 \li 26: 26-distance in 3d
 
-\warning The input image \b in.pgm must be a binary image. No test is done.
+\warning Except for the case r=-1, the input image \b in.pgm must be a binary image. No test is done.
 
 <B>Types supported:</B> byte 2d, byte 3d
 

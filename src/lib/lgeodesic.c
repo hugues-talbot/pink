@@ -120,7 +120,7 @@ int32_t lgeodilat(
       return(0);
   }
 
-  for (x = 0; x < N; x++)      /* force G à être <= F */    
+  for (x = 0; x < N; x++)      /* force G ï¿½ ï¿½tre <= F */    
     if (G[x] > F[x]) G[x] = F[x];
 
   iter = 0;
@@ -189,7 +189,7 @@ int32_t lgeodilat(
 } /* lgeodilat() */
 
 /* ==================================== */
-int32_t lreconsdilat(
+int32_t lgeodesic_lreconsdilat(
         struct xvimage *g,
         struct xvimage *f,
         int32_t connex) 
@@ -272,7 +272,7 @@ int32_t lgeoeros(
     Set(x, 1);
   }
 
-  for (x = 0; x < N; x++)      /* force G à être >= F */    
+  for (x = 0; x < N; x++)      /* force G ï¿½ ï¿½tre >= F */    
     if (G[x] < F[x]) G[x] = F[x];
 
   iter = 0;
@@ -685,7 +685,7 @@ int32_t lgeodilat3d(
       return(0);
   }
 
-  for (x = 0; x < N; x++)      /* force G à être <= F */    
+  for (x = 0; x < N; x++)      /* force G ï¿½ ï¿½tre <= F */    
     if (G[x] > F[x]) G[x] = F[x];
 
   if (connex == 26)
@@ -852,7 +852,7 @@ int32_t lgeodilat3d(
 } // lgeodilat3d(
 
 /* ==================================== */
-int32_t lreconsdilat3d(
+int32_t lgeodesic_lreconsdilat3d(
         struct xvimage *g,
         struct xvimage *f,
         int32_t connex) 
@@ -923,7 +923,7 @@ int32_t lgeoeros3d(
       return(0);
   }
 
-  for (x = 0; x < N; x++)      /* force G à être >= F */    
+  for (x = 0; x < N; x++)      /* force G ï¿½ ï¿½tre >= F */    
     if (G[x] < F[x]) G[x] = F[x];
 
   if (connex == 26)
@@ -1090,7 +1090,7 @@ int32_t lgeoeros3d(
 } // lgeoeros3d(
 
 /* ==================================== */
-int32_t lreconseros3d(
+int32_t lgeodesic_lreconseros3d(
         struct xvimage *g,
         struct xvimage *f,
         int32_t connex) 

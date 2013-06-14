@@ -1,0 +1,207 @@
+<?xml version="1.0" ?>
+<testsuite errors="5" failures="0" name="pinktest.segmentarea.segmentarea" tests="5" time="0.000">
+	<testcase classname="pinktest.segmentarea.segmentarea" name="test_0" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.segmentarea(char_image, int, int)
+did not match C++ signature:
+    segmentarea(pink::ujoi&lt;dcomplex&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;fcomplex&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;double&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;float&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;int&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;unsigned short&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;unsigned char&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;dcomplex&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;fcomplex&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;double&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;float&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;int&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;unsigned short&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;unsigned char&gt; image, int connexity, int area, int mode)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/segmentarea.py", line 26, in test_0
+    result = pink.cpp.segmentarea( pink.cpp.readimage( IMAGES + '/2dbyte/gray/g2gel.pgm' ), 4, 100)
+ArgumentError: Python argument types in
+    libcpp_pink.segmentarea(char_image, int, int)
+did not match C++ signature:
+    segmentarea(pink::ujoi<dcomplex> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<fcomplex> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<double> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<float> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<int> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<unsigned short> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<unsigned char> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<dcomplex> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<fcomplex> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<double> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<float> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<int> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<unsigned short> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<unsigned char> image, int connexity, int area, int mode)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.segmentarea.segmentarea" name="test_1" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.segmentarea(char_image, int, int)
+did not match C++ signature:
+    segmentarea(pink::ujoi&lt;dcomplex&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;fcomplex&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;double&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;float&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;int&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;unsigned short&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;unsigned char&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;dcomplex&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;fcomplex&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;double&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;float&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;int&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;unsigned short&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;unsigned char&gt; image, int connexity, int area, int mode)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/segmentarea.py", line 32, in test_1
+    result = pink.cpp.segmentarea( pink.cpp.readimage( IMAGES + '/2dbyte/gray/g2gel.pgm' ), 8, 100)
+ArgumentError: Python argument types in
+    libcpp_pink.segmentarea(char_image, int, int)
+did not match C++ signature:
+    segmentarea(pink::ujoi<dcomplex> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<fcomplex> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<double> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<float> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<int> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<unsigned short> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<unsigned char> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<dcomplex> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<fcomplex> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<double> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<float> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<int> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<unsigned short> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<unsigned char> image, int connexity, int area, int mode)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.segmentarea.segmentarea" name="test_2" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.segmentarea(char_image, int, int)
+did not match C++ signature:
+    segmentarea(pink::ujoi&lt;dcomplex&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;fcomplex&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;double&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;float&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;int&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;unsigned short&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;unsigned char&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;dcomplex&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;fcomplex&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;double&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;float&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;int&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;unsigned short&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;unsigned char&gt; image, int connexity, int area, int mode)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/segmentarea.py", line 38, in test_2
+    result = pink.cpp.segmentarea( pink.cpp.readimage( IMAGES + '/3dbyte/gray/g3a.pgm' ), 6, 100)
+ArgumentError: Python argument types in
+    libcpp_pink.segmentarea(char_image, int, int)
+did not match C++ signature:
+    segmentarea(pink::ujoi<dcomplex> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<fcomplex> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<double> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<float> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<int> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<unsigned short> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<unsigned char> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<dcomplex> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<fcomplex> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<double> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<float> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<int> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<unsigned short> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<unsigned char> image, int connexity, int area, int mode)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.segmentarea.segmentarea" name="test_3" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.segmentarea(char_image, int, int)
+did not match C++ signature:
+    segmentarea(pink::ujoi&lt;dcomplex&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;fcomplex&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;double&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;float&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;int&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;unsigned short&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;unsigned char&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;dcomplex&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;fcomplex&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;double&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;float&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;int&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;unsigned short&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;unsigned char&gt; image, int connexity, int area, int mode)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/segmentarea.py", line 44, in test_3
+    result = pink.cpp.segmentarea( pink.cpp.readimage( IMAGES + '/3dbyte/gray/g3a.pgm' ), 18, 100)
+ArgumentError: Python argument types in
+    libcpp_pink.segmentarea(char_image, int, int)
+did not match C++ signature:
+    segmentarea(pink::ujoi<dcomplex> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<fcomplex> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<double> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<float> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<int> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<unsigned short> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<unsigned char> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<dcomplex> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<fcomplex> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<double> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<float> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<int> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<unsigned short> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<unsigned char> image, int connexity, int area, int mode)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.segmentarea.segmentarea" name="test_4" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.segmentarea(char_image, int, int)
+did not match C++ signature:
+    segmentarea(pink::ujoi&lt;dcomplex&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;fcomplex&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;double&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;float&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;int&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;unsigned short&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;unsigned char&gt; image, int connexity, int area, int m)
+    segmentarea(pink::ujoi&lt;dcomplex&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;fcomplex&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;double&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;float&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;int&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;unsigned short&gt; image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi&lt;unsigned char&gt; image, int connexity, int area, int mode)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/segmentarea.py", line 50, in test_4
+    result = pink.cpp.segmentarea( pink.cpp.readimage( IMAGES + '/3dbyte/gray/g3a.pgm' ), 26, 100)
+ArgumentError: Python argument types in
+    libcpp_pink.segmentarea(char_image, int, int)
+did not match C++ signature:
+    segmentarea(pink::ujoi<dcomplex> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<fcomplex> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<double> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<float> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<int> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<unsigned short> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<unsigned char> image, int connexity, int area, int m)
+    segmentarea(pink::ujoi<dcomplex> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<fcomplex> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<double> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<float> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<int> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<unsigned short> image, int connexity, int area, int mode)
+    segmentarea(pink::ujoi<unsigned char> image, int connexity, int area, int mode)
+]]>		</error>
+	</testcase>
+	<system-out>
+<![CDATA[]]>	</system-out>
+	<system-err>
+<![CDATA[]]>	</system-err>
+</testsuite>
