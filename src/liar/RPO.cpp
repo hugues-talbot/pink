@@ -608,6 +608,11 @@ void RPO::Execute()
 
             	in_propNoise = prop_Noise.front();
 
+
+			    if (downstreamI.size()>image_size)
+					{std::cout <<"DEPASSEMENT DE TAILLE DOWNSTREAMI"<<std :: endl;}
+				
+				std::cout <<downstreamI.size()<<std::endl;
             	propagateRobustPath(in_propNoise,
                                 	up_neighbour,
                                 	down_neighbour,
@@ -615,6 +620,9 @@ void RPO::Execute()
                                 	queueC,
                                 	flagI,
                                 	downstreamI);
+                                	
+                if (upstreamI.size()>image_size)
+					{std::cout <<"DEPASSEMENT DE TAILLE UPSTREAMI"<<std :: endl;}
             	propagateRobustPath(in_propNoise,
                                 	down_neighbour,
                                 	up_neighbour,
@@ -668,7 +676,10 @@ void RPO::Execute()
                 }
             	prop_Noise.pop();
         	}   	
-    		/***************  path propagation from seed **************/   		
+    		/***************  path propagation from seed **************/   	
+    		
+    		if (downstreamI.size()>image_size)
+				{std::cout <<"DEPASSEMENT DE TAILLE DOWNSTREAMI 22"<<std :: endl;}	
         	propagateRobustPath(seed_index,
                       up_neighbour,
                       down_neighbour,
@@ -676,6 +687,9 @@ void RPO::Execute()
                       queueC,
                       flagI,
                       downstreamI);
+                      
+            if (upstreamI.size()>image_size)
+				{std::cout <<"DEPASSEMENT DE TAILLE UPSTREAMI 2"<<std :: endl;}
         	propagateRobustPath(seed_index,
                       down_neighbour,
                       up_neighbour,

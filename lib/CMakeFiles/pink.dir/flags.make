@@ -3,11 +3,11 @@
 
 # compile C with /usr/bin/gcc
 # compile CXX with /usr/bin/c++
-C_FLAGS = -O3 -DNDEBUG -msse -msse2 -fPIC -I/home/odyssee/Projets/Pink/pink_lilian/include -I/home/odyssee/Projets/Pink/pink_lilian/src/python -I/usr/local/include -I/home/odyssee/Projets/Pink/pink_lilian/src/lib/../liar   
+C_FLAGS = -O3 -DNDEBUG -msse -msse2 -fPIC -I/home/merveilo/Projets/pink/include -I/home/merveilo/Projets/pink/src/python -I/usr/local/include -I/home/merveilo/Projets/pink/src/lib/../liar   
 
 C_DEFINES = -Dpink_EXPORTS -DMC_64_BITS -DUNIXIO -DPC -DHAVE_POSIX_IPC -DHAVE_SYSV_IPC -DHAVE_TIFF_LIB -DPINK_HAVE_SIMD
 
-CXX_FLAGS = -O3 -DNDEBUG -msse -msse2 -fPIC -I/home/odyssee/Projets/Pink/pink_lilian/include -I/home/odyssee/Projets/Pink/pink_lilian/src/python -I/usr/local/include -I/home/odyssee/Projets/Pink/pink_lilian/src/lib/../liar   
+CXX_FLAGS = -O3 -DNDEBUG -msse -msse2 -fPIC -I/home/merveilo/Projets/pink/include -I/home/merveilo/Projets/pink/src/python -I/usr/local/include -I/home/merveilo/Projets/pink/src/lib/../liar   
 
 CXX_DEFINES = -Dpink_EXPORTS -DMC_64_BITS -DUNIXIO -DPC -DHAVE_POSIX_IPC -DHAVE_SYSV_IPC -DHAVE_TIFF_LIB -DPINK_HAVE_SIMD
 
