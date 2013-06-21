@@ -1,0 +1,3 @@
+re:.*~$
+re:.*\.orig
+path:include/python_doc.h
