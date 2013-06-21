@@ -429,30 +429,7 @@ if ( PYTHON_FRONT_END )
 	message( FATAL_ERROR "error boost/shared_array.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST4)
 
-    if (THIS_IS_MSVC)
-	message( STATUS "Not tested for boost/python/list.hpp and boost/python/extract.hpp due to a bug in cmake 2.8 try_compile. try_compile ignores additional library directories, which would be needed for the boost.python libraries." )
-    else(THIS_IS_MSVC)
-	if (NOT HTEST5)
-	    CHECK_INCLUDE_FILE_CXX( boost/python/list.hpp  HTEST5 )
-	endif (NOT HTEST5)
-	 
-	if (NOT HTEST5)
-	    message( FATAL_ERROR "error boost/python/list.hpp does not compile. You need at least version 1.37 or newer. Check if its correctly installed. There is a known issue. If "
- 	    "PYTHON_LIBRARY='" ${PYTHON_LIBRARY} "' does not point to the correct location of python's libraries, please specify them manually"
-	    " or delete the file in question. (seen on OpenSuSE 11.2)" )
-	endif(NOT HTEST5)
-
-	if (NOT HTEST6)
-	    CHECK_INCLUDE_FILE_CXX( boost/python/extract.hpp  HTEST6 )
-	endif(NOT HTEST6)
-#	    " or delete the file in question. (seen on OpenSuSE 11.2)" )
-#    endif(NOT HTEST5)
-
-	if (NOT HTEST6)
-	    message( FATAL_ERROR "error boost/python/extract.hpp does not compile. Check if its correctly installed. You may need a newer version or set up python paths correctly.")
-	endif(NOT HTEST6)
-			    
-    endif (THIS_IS_MSVC)
+    message( STATUS "Not tested for boost/python/list.hpp and boost/python/extract.hpp due to a bug in cmake 2.8 try_compile. try_compile ignores additional library directories, which would be needed for the boost.python libraries." )
 
     CHECK_INCLUDE_FILE_CXX( boost/lexical_cast.hpp  HTEST7 )
     if (NOT HTEST7)
