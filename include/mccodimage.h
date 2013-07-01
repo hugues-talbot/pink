@@ -101,6 +101,7 @@ extern "C" {
 
    This class holds the image data for the C functions of Pink.
 */  
+
   struct xvimage {
 
     /** \brief Dummy - not used anymore. */
@@ -295,6 +296,14 @@ extern int32_t voisin125(index_t i, int32_t k, index_t rs, index_t ps, index_t N
       && (tsize(I0) != tsize(I1) ) && (nbands(I0) != nbands(I1) ) )                                  \
   {                                                                     \
   fprintf(stderr, "%s: incompatible image sizes\n", F_NAME);            \
+  return 0;                                                             \
+  }
+  
+#  define                                                               \
+  COMPARE_TYPE(I0, I1)                                                  \
+  if (datatype(I0)!=datatype(I1))                                       \
+  {                                                                     \
+  fprintf(stderr, "%s: incompatible image types\n", F_NAME);            \
   return 0;                                                             \
   }
   

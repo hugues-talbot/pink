@@ -37,6 +37,7 @@ knowledge of the CeCILL license and that you accept its terms.
 /* Michel Couprie - juillet 1996, novembre 1999 */
 /* update 6/4/2006 John Chaussard : cor. bug */
 /* update 11/7/2010 MC & Mohamed Amine Salem : histogrammes d'orientations */
+/* update 14/2/2103 MC : calcul de l'entropie (lentropy) */
 
 #include <stdio.h>
 #include <stdint.h>
@@ -49,6 +50,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcimage.h>
 #include <mcutil.h>
 #include <mccodimage.h>
+#include <larith.h>
 #include <lhisto.h>
 
 //#define DEBUG_lseuilhisto
@@ -971,3 +973,78 @@ int32_t lrelabel(struct xvimage *image)
   }
   return 1;
 } // lrelabel()
+
+
+/* ==================================== */
+double lentropy(struct xvimage *image, struct xvimage *mask)
+/* ==================================== */
+#undef F_NAME
+#define F_NAME "lentropy"
+{
+  index_t * histo = NULL;
+  int32_t i, s;
+  index_t N;
+  double P_i, E = 0.0;
+
+  ACCEPTED_TYPES3(image, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT);
+
+  if (mask != NULL) 
+  {
+    COMPARE_SIZE(image, mask);
+    ACCEPTED_TYPES1(mask, VFF_TYP_1_BYTE);
+    N = larea(mask);
+  }
+  else
+    N = rowsize(image) * colsize(image) * depth(image);
+
+  if (datatype(image) == VFF_TYP_1_BYTE)
+  {
+    histo = (index_t *)calloc(1,(NDG_MAX - NDG_MIN + 1) * sizeof(index_t));
+    if (histo == NULL)
+    {
+      fprintf(stderr, "%s: malloc failed\n", F_NAME);
+      exit(1);
+    }
+
+    if (! lhisto(image, mask, histo))
+    {
+      fprintf(stderr, "%s: function lhisto failed\n", F_NAME);
+      exit(1);
+    }
+    for (i = NDG_MIN; i <= NDG_MAX; i++) 
+    {
+      P_i = (double)histo[i] / N;
+      if (P_i > 0) E -= P_i * log(P_i); 
+    }
+  }
+  else if (datatype(image) == VFF_TYP_4_BYTE)
+  {
+    if (! lhistolong(image, mask, &histo, &s))
+    {
+      fprintf(stderr, "%s: function lhistolong failed\n", F_NAME);
+      exit(1);
+    }
+    for (i = 0; i < s; i++) 
+    {
+      P_i = (double)histo[i] / N;
+      if (P_i > 0) E -= P_i * log(P_i); 
+    }
+  }
+  else if (datatype(image) == VFF_TYP_FLOAT)
+  {
+    float w, smin, smax;
+    if (! lhistofloat(image, mask, &histo, &s, &w, &smin, &smax))
+    {
+      fprintf(stderr, "%s: function lhistofloat failed\n", F_NAME);
+      exit(1);
+    }
+    for (i = 0; i < s; i++) 
+    {
+      P_i = (double)histo[i] / N;
+      if (P_i > 0) E -= P_i * log(P_i); 
+    }
+  }
+  if (histo) free(histo);
+  return E;
+
+} // lentropy()

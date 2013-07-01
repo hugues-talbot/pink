@@ -10,6 +10,7 @@
   ujoimro@gmail.com
 */
 
+#include <cmath>
 #include <cassert>
 #include <iostream>
 
@@ -34,7 +35,6 @@
 
 using namespace boost::python;
 using namespace pink;
-
 
 namespace pink {
   namespace python {
@@ -404,9 +404,9 @@ namespace pink {
         int fnx;
         int fny;
         int fnz;
-        int row0=round(nx/2);
-        int col0=round(ny/2);
-        int slice0=round(nz/2);
+        int row0   = rint(nx/2);
+        int col0   = rint(ny/2);
+	int slice0 = rint(nz/2);
 
 
         if ((inputxvimage->data_storage_type == VFF_TYP_1_BYTE) ||

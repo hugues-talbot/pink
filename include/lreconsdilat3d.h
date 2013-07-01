@@ -40,7 +40,7 @@ extern "C" {
 /* ============== */
 
 
-extern int32_t lreconsdilat3d(
+extern int32_t lreconsdilat3d_lreconsdilat3d(
         struct xvimage *g,
         struct xvimage *f,
         uint8_t *mask

@@ -39,7 +39,7 @@ extern "C" {
 /* prototype for ldilatbin3d.c */
 /* ============== */
 
-extern int32_t ldilatbin3d(
+extern int32_t ldilatbin3d_ldilatbin3d(
         struct xvimage *f,
         struct xvimage *m,
         int32_t x,

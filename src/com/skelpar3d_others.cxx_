@@ -79,6 +79,7 @@ The possible choices are:
 \li 29: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 0)
 \li 30: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 0)
 \li 31: Lohou-Bertrand  (surface, symmetric, 2007)
+\li 32: Manzanera et al. (surface, symmetric, 1999)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -151,6 +152,7 @@ int main(int32_t argc, char **argv)
     fprintf(stderr, "   29: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 0)\n");
     fprintf(stderr, "   30: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 0)\n");    
     fprintf(stderr, "   31: Lohou-Bertrand (surface, symmetric, 2007)\n");
+    fprintf(stderr, "   32: Manzanera et al. (surface, symmetric, 1999)\n");
     exit(1);
   }
 
@@ -447,6 +449,13 @@ int main(int32_t argc, char **argv)
       if (!llohoubertrandsymsurf2007(image, inhibit, nsteps))
       {
 	fprintf(stderr, "%s: llohoubertrandsymsurf2007 failed\n", argv[0]);
+	exit(1);
+      } 
+      break;
+    case 32:
+      if (!lmanzanerasurf1999(image, inhibit, nsteps))
+      {
+	fprintf(stderr, "%s: lmanzanerasurf1999 failed\n", argv[0]);
 	exit(1);
       } 
       break;

@@ -51,7 +51,7 @@ extern int32_t lhtkern(
         int32_t connex
 );
 
-extern int32_t lhtkernu(
+extern int32_t lhtkern_lhtkernu(
         struct xvimage *image,
         struct xvimage *imagecond,
         int32_t connex

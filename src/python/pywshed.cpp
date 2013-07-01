@@ -39,7 +39,7 @@ namespace wshed
 // by HT for Claire
   UI_WRAP_FUNCTION(
     "watershedMeyer2",
-    llpemeyer2,
+    llpemeyer_llpemeyer2,
     ( arg("image"), arg("markers"), arg("mask"), arg("connexity") ),
     doc__watershedMeyer2__c__
     );

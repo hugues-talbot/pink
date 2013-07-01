@@ -21,6 +21,8 @@
 \contentsline {section}{\numberline {3.1}Converting from/to numpy}{11}{section.3.1}
 \contentsline {section}{\numberline {3.2}Basic numpy usage}{11}{section.3.2}
 \contentsline {chapter}{\numberline {A}Compiling and installing {\sc Pink}\xspace }{13}{appendix.A}
+\contentsline {section}{\numberline {A.1}Git branches}{13}{section.A.1}
+\contentsline {section}{\numberline {A.2}Compiling}{13}{section.A.2}
 \contentsline {chapter}{LICENSE}{15}{appendix*.7}
 \contentsline {chapter}{Table of figures}{16}{appendix*.7}
 \contentsline {chapter}{List of tables}{17}{appendix*.8}

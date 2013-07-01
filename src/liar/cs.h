@@ -11,7 +11,7 @@ extern "C" {
 
 
 #ifdef MATLAB_MEX_FILE
-#include "mex.h"
+# include "mex.h"
 #endif
 #define CS_VER 2                    /* CSparse Version 2.2.3 */
 #define CS_SUBVER 2

@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[2]);
   param = atoi(argv[3]);
-  if (! lheightselnb(image, connex, param, 0))
+  if (! lheightselnb(image, connex, param))
   {
     fprintf(stderr, "heightselnb: lheightselnb failed\n");
     exit(1);

@@ -14,16 +14,15 @@ if (DEVELOPMENT)
 endif (DEVELOPMENT)
 
 add_library( cpp_pink SHARED ${py_src_cpp} ${py_src_development_cpp} ${py_documentation} )
-if (NOT THIS_IS_MSVC)
-    add_dependencies( cpp_pink pink  )
-    target_link_libraries( cpp_pink pink ${LIBS} )
-else (NOT THIS_IS_MSVC)
+set( LIBS ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${PYTHON_LIBRARY} )
+
+if (THIS_IS_MSVC)
     add_dependencies( cpp_pink pinkstatic  )
     target_link_libraries( cpp_pink pinkstatic ${LIBS} )
-endif (NOT THIS_IS_MSVC)
-
-## This is correct 
-##message("Libs for linking libcpp=" "${LIBS}")
+else (THIS_IS_MSVC)
+    add_dependencies( cpp_pink pink  )
+    target_link_libraries( cpp_pink pink ${LIBS} )
+endif (THIS_IS_MSVC)
 
 # unix defines
 if (CMAKE_HOST_UNIX)
@@ -138,9 +137,12 @@ add_custom_command( TARGET cpp_pink POST_BUILD
 		    )
 
 elseif (THIS_IS_MSVC)
+FILE( TO_NATIVE_PATH ${CMAKE_BINARY_DIR}/python/${CMAKE_BUILD_TYPE}/cpp_pink.dll CPP_PINK_DLL )
+FILE( TO_NATIVE_PATH ${CMAKE_BINARY_DIR}/python/libcpp_pink.pyd LIBCPP_PINK_PYD )
+
 add_custom_command( TARGET cpp_pink POST_BUILD 
-		    COMMAND cp -r ${CMAKE_SOURCE_DIR}/python/* ${CMAKE_BINARY_DIR}/python/
-		    COMMAND cp ${CMAKE_BINARY_DIR}/python/cpp_pink.dll ${CMAKE_BINARY_DIR}/python/libcpp_pink.pyd
+		    COMMAND xcopy /s /f /y \"${CMAKE_SOURCE_DIR}/python\" \"${CMAKE_BINARY_DIR}/python\"
+		    COMMAND copy \"${CPP_PINK_DLL}\" \"${LIBCPP_PINK_PYD}\"
 		    )
 endif (THIS_IS_LINUX)
 

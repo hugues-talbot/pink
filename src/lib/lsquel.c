@@ -168,6 +168,7 @@ void testmini(uint8_t *SOURCE, int32_t x, int32_t rs, int32_t N, Fifo *FIFO)
 } /* testmini() */
 
 /* ==================================== */
+static 
 void empilevoisins(int32_t x, int32_t rs, int32_t N, Fifo *FIFOna, Fifo *FIFOea, Fifo *FIFOsa, Fifo *FIFOoa)
 /* ==================================== */
 {

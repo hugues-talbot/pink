@@ -78,6 +78,7 @@ The possible choices are:
 \li 28: Nemeth et Palagyi, 2009 (3)
 \li 29: Couprie and Bertrand, ultimate, asymmetrical (NK2)
 \li 30: Couprie and Bertrand, ultimate, symmetrical (MK2b)
+\li 31: Couprie and Bertrand, curvilinear, symmetrical, based on 1D isthmuses (CK2)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -162,6 +163,8 @@ int main(int argc, char **argv)
     fprintf(stderr, "  27: Nemeth and Palagyi 2009 (detects endpoints type 2)\n");
     fprintf(stderr, "  28: Nemeth and Palagyi 2009 (detects endpoints type 3)\n");
     fprintf(stderr, "  29: Couprie and Bertrand, ultimate, asymmetrical (NK2)\n");
+    fprintf(stderr, "  30: Couprie and Bertrand, ultimate, symmetrical (MK2b)\n");
+    fprintf(stderr, "  31: Couprie and Bertrand, curvilinear, symmetrical, based on 1D isthmuses (CK2)\n");
     exit(1);
   }
 
@@ -387,6 +390,12 @@ int main(int argc, char **argv)
       if (! lskelMK2b(image, nsteps, inhibit))
       {
 	fprintf(stderr, "%s: lskelMK2b failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 31:
+      if (! lskelCK2(image, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelCK2 failed\n", argv[0]);
 	exit(1);
       } break;
     default:

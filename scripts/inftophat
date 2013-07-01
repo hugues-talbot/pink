@@ -1,0 +1,18 @@
+#!/bin/sh
+USAGE="Usage: $0 in es out"
+if [ $# -gt 3 ]
+then
+	echo $USAGE
+        exit
+fi
+if [ $# -lt 3 ]
+then
+	echo $USAGE
+        exit
+fi
+
+erosion $1 $2 /tmp/_inftophat_1
+sub $1 /tmp/_inftophat_1 $3
+
+rm /tmp/_inftophat_1
+

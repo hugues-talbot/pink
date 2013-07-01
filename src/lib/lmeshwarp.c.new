@@ -1,0 +1,556 @@
+/* mesh warper */
+/* Michel Couprie - decembre 1998 */
+
+#include <stdio.h>
+#include <math.h>
+#include <mccodimage.h>
+#include <mcimage.h>
+#include <mcutil.h>
+#include <mcxbib.h>
+#include <mcgeo.h>
+#include <lbresen.h>
+#include <lvoronoi.h>
+#include <lmeshwarp.h>
+
+#define arrondi(z) ((z-(double)((int)z))<0.5?((int)z):((int)z+1))
+#define signe(z) ((z>0.0)?1.0:-1.0)
+
+#define MAXSIZEMESH 5000
+
+/* ==================================== */
+int warptriangle(
+  triangle * ts,
+  triangle * td,
+  unsigned char *F,
+  unsigned char *H,
+  int rspix)
+/* ==================================== */
+{
+  int x, y;
+  mat33 m;                              /* matrice de travail */
+  mat33 a;                              /* transformation affine dest -> source */
+  vec3 b;
+  vec3 sol;
+  double X, Y;
+
+  if (inittriangle(ts) == 0)
+  {
+    printf("mauvais triangle source\n");
+    return(0);
+  }
+
+  if (inittriangle(td) == 0)
+  {
+    printf("mauvais triangle destination\n");
+    return(0);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* identification des parametres de la transformation affine lineaire */
+  /* ------------------------------------------------------------------ */
+
+  m[0][0] = td->xa;     m[0][1] = td->ya;     m[0][2] = 1.0;
+  m[1][0] = td->xb;     m[1][1] = td->yb;     m[1][2] = 1.0;
+  m[2][0] = td->xc;     m[2][1] = td->yc;     m[2][2] = 1.0;
+
+  b[0] = ts->xa;
+  b[1] = ts->xb;
+  b[2] = ts->xc;
+  
+  if (solsyst3(m, b, sol) == 0)
+  {
+    printf("determinant nul\n");
+    return 0;
+  }
+
+  a[0][0] = sol[0];     a[0][1] = sol[1];     a[0][2] = sol[2];
+
+  b[0] = ts->ya;
+  b[1] = ts->yb;
+  b[2] = ts->yc;
+  
+  if (solsyst3(m, b, sol) == 0)
+  {
+    printf("determinant nul\n");
+    return 0;
+  }
+
+  a[1][0] = sol[0];     a[1][1] = sol[1];     a[1][2] = sol[2];
+  a[2][0] = 0.0;        a[2][1] = 0.0;        a[2][2] = 1.0;
+
+  /* ------------------------------------------------------------- */
+  /* calcul des intensites des points dans le triangle destination */
+  /* ------------------------------------------------------------- */
+  
+  for (x = (int)floor(td->xmin); x <= (int)ceil(td->xmax); x++)
+    for (y = (int)floor(td->ymin); y <= (int)ceil(td->ymax); y++)
+      if ((danstriangle(td, (double)x, (double)y)) && (F[y * rspix + x] == 0))
+      {
+        b[0] = (double)x;
+        b[1] = (double)y;
+        b[2] = 1.0;
+        multmat3vec3(a, b, sol);
+        X = sol[0];
+        Y = sol[1];
+
+        F[y * rspix + x] = H[((int)Y) * rspix + (int)X];
+      }
+  return 1;
+}
+
+
+/* ==================================== */
+int lwarp(
+  struct xvimage * in,
+  point *S, 
+  point *SD, 
+  int n, 
+  int **v, 
+  int *nv, 
+  int *ec
+)
+/* ==================================== */
+{
+  int x, a, b, c;
+  unsigned char *F;
+  unsigned char *H;                     /* image de travail */
+  int rspix, cspix, N;
+  triangle ts;
+  triangle td;
+
+  rspix = in->row_size;
+  cspix = in->col_size;
+  N = rspix * cspix;
+  F = UCHARDATA(in);
+
+  H = (unsigned char *)malloc(N*sizeof(char));
+  if (H == NULL)
+  {   fprintf(stderr,"lwarp() : malloc failed for H\n");
+      return(0);
+  }
+  for (x = 0; x < N; x++) H[x] = F[x];
+  for (x = 0; x < N; x++) F[x] = 0;
+
+  for (a = 0; a < n; a++)       /* attention : on fait 2 fois le travail ! */
+  {
+    ts.xa = (int)S[a].x; ts.ya = (int)S[a].y;
+    td.xa = (int)SD[a].x; td.ya = (int)SD[a].y;
+    b = 0;
+    for (c = 1; c < nv[a]; c++)
+    {
+      ts.xb = (int)S[v[a][b]].x; ts.yb = (int)S[v[a][b]].y;
+      ts.xc = (int)S[v[a][c]].x; ts.yc = (int)S[v[a][c]].y;
+      td.xb = (int)SD[v[a][b]].x; td.yb = (int)SD[v[a][b]].y;
+      td.xc = (int)SD[v[a][c]].x; td.yc = (int)SD[v[a][c]].y;
+      (void)warptriangle(&ts, &td, F, H, rspix);
+      b = c;
+    }
+    if (!ec[a])
+    {
+      c = 0;
+      ts.xb = (int)S[v[a][b]].x; ts.yb = (int)S[v[a][b]].y;
+      ts.xc = (int)S[v[a][c]].x; ts.yc = (int)S[v[a][c]].y;   
+      td.xb = (int)SD[v[a][b]].x; td.yb = (int)SD[v[a][b]].y;
+      td.xc = (int)SD[v[a][c]].x; td.yc = (int)SD[v[a][c]].y;  
+      (void)warptriangle(&ts, &td, F, H, rspix);
+    }
+  }
+
+  free(H);
+  return 1;
+} /* lwarp() */
+
+/* ==================================== */
+void desmesh(
+  point *S, 
+  int n, 
+  int **v, 
+  int *nv, 
+  int *ec)
+/* ==================================== */
+{
+  int i, j;
+
+  for (i = 0; i < n; i++)
+    for (j = 0; j < nv[i]; j++)
+      Line((int)S[i].x, (int)S[i].y, (int)S[v[i][j]].x, (int)S[v[i][j]].y);
+} /* desmesh() */
+
+/* ==================================== */
+void deshot(
+  int hotxpix,
+  int hotypix)
+/* ==================================== */
+{
+    /* redessine le point chaud */
+    Color(MC_RED);
+    Line(hotxpix-1, hotypix, hotxpix+1, hotypix);
+    Line(hotxpix, hotypix-1, hotxpix, hotypix+1);
+}
+
+/* ==================================== */
+void effhot(
+  int hotxpix,
+  int hotypix)
+/* ==================================== */
+{
+    /* efface le point chaud */
+    ColToWhite();
+    Line(hotxpix-1, hotypix, hotxpix+1, hotypix);
+    Line(hotxpix, hotypix-1, hotxpix, hotypix+1);
+}
+
+/* ==================================== */
+int LePlusProche(point *S, int n, double x, double y)
+/* ==================================== */
+{
+  int j, k;
+  double d, dk;
+  point p;
+
+  p.x = x; p.y = y;
+  j = 0; 
+  d = carredistance(p, S[j]);
+  for (k = 0; k < n; k++)
+  {
+    dk = carredistance(p, S[k]);
+    if (dk < d) { d = dk; j = k; }
+  } /* for k */
+  return j;
+} /* LePlusProche() */
+
+/* ==================================== */
+int lmeshwarp(
+        struct xvimage *image,
+        int mrs, 
+        int mcs)        /* mrs, mcs : taille de la grille */
+/* ==================================== */
+{
+  register int i, j, k, z;     /* index muet */
+  int xx, yy;                  /* index muet */
+  int eventtype;
+  int rs = rowsize(image);     /* taille ligne */
+  int cs = colsize(image);     /* taille colonne */
+  int N = rs * cs;             /* taille plan */
+  unsigned char *SOURCE = UCHARDATA(image);      /* l'image de depart */
+  unsigned char *SAVE;         /* l'image de sauvegarde */
+#define NBBUTTONS   3
+#define BOXWIDTH  100
+#define BOXHEIGHT  20
+#define NBLIGBUTT   4
+  char * ButtonStrings[NBLIGBUTT][NBBUTTONS];
+  int BoxWidth = BOXWIDTH;
+  int BoxHeight = BOXHEIGHT;
+  int Height = cs + BoxHeight * NBLIGBUTT;
+  int Width = rs;
+  int ImageHeight = cs;
+  int ImageWidth = rs;
+  double a = 0.1;
+  double d, x, y;
+  int showgrid = 1;
+#define MODE_EXPAND  0
+#define MODE_RETRACT 1
+#define MODE_PICK    2
+#define MODE_DEPOSE  3
+#define MODE_NEWP    4
+#define MODE_DELP    5
+  int mode = MODE_NEWP;
+  int hotx, hoty;
+  int hotxpix, hotypix;
+  int **voisins = NULL, *nbvois = NULL, *envconv = NULL;
+  point *S;
+  point *SD;
+  int nbmeshpoints = 0;
+  int picked;
+
+  if (depth(image) != 1) 
+  {
+    fprintf(stderr, "lmeshwarp: cette version ne traite pas les images volumiques\n");
+    return 0;
+  }
+  
+  S = (point *)malloc(MAXSIZEMESH * sizeof(point));
+  SD = (point *)malloc(MAXSIZEMESH * sizeof(point));
+  if ((S == NULL) || (SD == NULL))
+  {   fprintf(stderr, "lmeshwarp() : malloc failed for S\n");
+      return(0);
+  }
+
+  nbmeshpoints = 0;
+  /* calcule la grille initiale */
+  for (j = 0; j < mcs; j++)
+    for (i = 0; i < mrs; i++)
+    {
+      S[nbmeshpoints].x = (double)((rs-1) * i) / (mrs-1);
+      S[nbmeshpoints].y = (double)((cs-1) * j) / (mcs-1);
+      nbmeshpoints++;
+    }
+
+  for (i = 0; i < nbmeshpoints; i++) SD[i] = S[i];
+
+  SAVE = (unsigned char *)malloc(N * sizeof(char));
+  if (SAVE == NULL)
+  {   fprintf(stderr, "lmeshwarp() : malloc failed for SAVE\n");
+      return(0);
+  }
+
+  InitColorGraphics(0, 0, /* x, y */
+               Width, Height); /* w, h */
+
+  for (i = 0; i < NBLIGBUTT; i++) 
+    for (k = 0; k < NBBUTTONS; k++) 
+      ButtonStrings[i][k] = (char *)malloc(16);
+
+  strcpy(ButtonStrings[0][0], " WARP   ");
+  strcpy(ButtonStrings[0][1], " HIDE   ");
+  strcpy(ButtonStrings[0][2], " UNDO   ");
+
+  strcpy(ButtonStrings[1][0], " EXPAND ");
+  strcpy(ButtonStrings[1][1], " RETRACT");
+  strcpy(ButtonStrings[1][2], " PICK   ");
+
+  strcpy(ButtonStrings[2][0], " NEW P  ");
+  strcpy(ButtonStrings[2][1], " DEL P  ");
+  strcpy(ButtonStrings[2][2], " MK MESH");
+
+  strcpy(ButtonStrings[3][0], " RS MESH");
+  strcpy(ButtonStrings[3][1], " REDRAW ");
+  strcpy(ButtonStrings[3][2], " QUIT   ");
+
+ReDraw:
+
+  /* send output to the screen */
+  for (z = 0; z < N; z++)
+  {
+    Color(SOURCE[z]/4);
+    Point(z%rs, z/rs);
+  }
+
+  ldelaunay(S, nbmeshpoints, &voisins, &nbvois, &envconv);
+
+  if (showgrid)   
+  {
+    Color(MC_RED);   desmesh(S, nbmeshpoints, voisins, nbvois, envconv);
+    Color(MC_GREEN); desmesh(SD, nbmeshpoints, voisins, nbvois, envconv);
+  }
+
+ReDisplay:
+
+  ColToWhite();
+  FRectangle(0, ImageHeight, BoxWidth * NBBUTTONS, BoxHeight * NBLIGBUTT);
+  ColToBlack();
+
+  for (i = 0; i < NBLIGBUTT; i++) 
+  {
+    Line(0, ImageHeight + i * BoxHeight, Width, ImageHeight + i * BoxHeight);
+    for (k = 0; k < NBBUTTONS; k++) 
+    {
+      Line(k*BoxWidth, ImageHeight + i*BoxHeight, k*BoxWidth, ImageHeight + (i+1)*BoxHeight);
+      if ((i == 1) && (k == 0) && (mode == MODE_EXPAND)) Color(MC_RED); else
+      if ((i == 1) && (k == 1) && (mode == MODE_RETRACT)) Color(MC_RED); else
+      if ((i == 1) && (k == 2) && (mode == MODE_PICK)) Color(MC_RED); else
+      if ((i == 1) && (k == 2) && (mode == MODE_DEPOSE)) Color(MC_RED); else
+      if ((i == 2) && (k == 0) && (mode == MODE_NEWP)) Color(MC_RED); else
+      if ((i == 2) && (k == 1) && (mode == MODE_DELP)) Color(MC_RED);
+      String(k*BoxWidth + 3, ImageHeight + (i+1)*BoxHeight - 4, ButtonStrings[i][k]);
+      ColToBlack();
+    }
+  }
+
+  FlushGraphics();  
+
+  eventtype = WaitEvent(&xx, &yy);
+  switch(eventtype)
+  {
+    case KeyPress: 
+      switch(xx)
+      {
+        case key_q: goto Terminate;
+        case space: goto ReDraw;
+        case key_e: 
+        
+/*
+        case num1: mode = 1; break;
+        case num2: mode = 2; break;
+        case num0: mode = 0; break;
+        case key_x: rotallx(cube, cubec); copiecube(cube, cubec); affcube(cube);
+                    inversecube(cubec, cube); break;
+        case key_y: rotally(cube, cubec); copiecube(cube, cubec); affcube(cube);
+                    inversecube(cubec, cube); break;
+        case key_z: rotallz(cube, cubec); copiecube(cube, cubec); affcube(cube);
+                    inversecube(cubec, cube); break;
+        case key_l: scanf("%x", &i); initcubes(cube, cubec, i); affcube(cube); break;
+        case key_p: printf("%% %x\n", i); latexcube(cube, 0, 40, 20, 6, 6, 4); break;
+        case key_u: symyz(cube, cubec); copiecube(cube, cubec); affcube(cube); break;
+        case key_v: symx(cube, cubec); copiecube(cube, cubec); affcube(cube); break;
+        case key_i: symy(cube, cubec); copiecube(cube, cubec); affcube(cube); break;
+        case key_r: symz(cube, cubec); copiecube(cube, cubec); affcube(cube); break;
+        case key_s: sym(cube, cubec); copiecube(cube, cubec); affcube(cube); break;
+        case key_a:
+        case key_w: break;
+        default: printf("bad key : %d\n", xx); break;
+*/
+      }
+      goto ReDisplay;
+
+    case ButtonPress:
+
+  if ((xx >= 0) && (yy >= 0) && (xx < ImageWidth) && (yy < ImageHeight))
+  {
+    if ((mode == MODE_EXPAND) || (mode == MODE_RETRACT))
+    {
+    }
+    if (mode == MODE_PICK)
+    {
+      picked = LePlusProche(SD, nbmeshpoints, (double)xx, (double)yy);
+      hotxpix = (int)SD[picked].x;
+      hotypix = (int)SD[picked].y;
+      deshot(hotxpix, hotypix);
+      strcpy(ButtonStrings[1][2], " DEPOSE ");
+      mode = MODE_DEPOSE;
+      goto ReDisplay;
+    }
+    if (mode == MODE_DEPOSE)
+    {
+      SD[picked].x = (double)xx;
+      SD[picked].y = (double)yy;
+      strcpy(ButtonStrings[1][2], " PICK   ");
+      mode = MODE_PICK;
+      if (showgrid)   
+      {
+        Color(MC_RED);   desmesh(S, nbmeshpoints, voisins, nbvois, envconv);
+        Color(MC_GREEN); desmesh(SD, nbmeshpoints, voisins, nbvois, envconv);
+      }
+      goto ReDisplay;
+    }
+    if (mode == MODE_NEWP)
+    {
+      if (nbmeshpoints >= MAXSIZEMESH)
+        fprintf(stderr, "lmeshwarp() : trop de points\n");
+      else  
+      {
+        if (voisins)
+          for (i = 0; i < nbmeshpoints; i++) 
+            free(voisins[i]);
+        if (voisins) free(voisins);
+        if (nbvois) free(nbvois);
+        if (envconv) free(envconv);
+        voisins = NULL; nbvois = envconv = NULL;
+
+        S[nbmeshpoints].x = (double)xx;
+        S[nbmeshpoints].y = (double)yy;
+        nbmeshpoints++;
+        deshot(xx, yy);
+        goto ReDisplay;
+      }
+    } /* if (mode == MODE_NEWP) */
+    if (mode == MODE_DELP)
+    {
+      if (voisins)
+        for (i = 0; i < nbmeshpoints; i++) 
+          free(voisins[i]);
+      if (voisins) free(voisins);
+      if (nbvois) free(nbvois);
+      if (envconv) free(envconv);
+      voisins = NULL; nbvois = envconv = NULL;
+
+      picked = LePlusProche(S, nbmeshpoints, (double)xx, (double)yy);
+      hotxpix = (int)S[picked].x;
+      hotypix = (int)S[picked].y;
+      effhot(hotxpix, hotypix);
+      for (i = picked; i < nbmeshpoints-1; i++) S[i] = S[i+1];
+      nbmeshpoints-- ; 
+      goto ReDisplay;
+    }
+  }
+  else /* click hors de l'image */
+  {
+    xx /= BoxWidth;
+    yy -= ImageHeight;
+    yy /= BoxHeight;
+
+    switch(yy)
+    {
+      case 0: switch(xx)
+              {
+                case 0: /* WARP */
+                  lwarp(image, S, SD, nbmeshpoints, voisins, nbvois, envconv);
+                  goto ReDraw;
+                case 1: /* SHOW / HIDE */
+                  if (showgrid) 
+                  {
+                    strcpy(ButtonStrings[0][1], " SHOW   ");
+                    showgrid = 0; 
+                  }
+                  else
+                  { 
+                    strcpy(ButtonStrings[0][1], " HIDE   ");
+                    showgrid = 1;
+		  }
+                  goto ReDraw;
+                case 2: /* UNDO */
+                  goto ReDraw;
+	      } /* switch(xx) */
+      case 1: switch(xx)
+              {
+                case 0: mode = MODE_EXPAND; goto ReDisplay;
+                case 1: mode = MODE_RETRACT; goto ReDisplay;
+                case 2: mode = MODE_PICK; goto ReDisplay;
+	      } /* switch(xx) */
+      case 2: switch(xx)
+              {
+                case 0: mode = MODE_NEWP; goto ReDisplay;
+                case 1: mode = MODE_DELP; goto ReDisplay;
+                case 2: ldelaunay(S, nbmeshpoints, &voisins, &nbvois, &envconv);
+                        for (i = 0; i < nbmeshpoints; i++) SD[i] = S[i];
+                        goto ReDraw;
+	      } /* switch(xx) */
+      case 3: switch(xx)
+              {
+                case 0: 
+                  /* raz la grille */
+                  nbmeshpoints = 0;
+                  if (voisins)
+                    for (i = 0; i < nbmeshpoints; i++) 
+                      free(voisins[i]);
+                  if (voisins) free(voisins);
+                  if (nbvois) free(nbvois);
+                  if (envconv) free(envconv);
+                  voisins = NULL; nbvois = envconv = NULL;
+                  goto ReDraw;
+                case 1: 
+                  goto ReDraw;
+                case 2: goto Terminate;
+	      } /* switch(xx) */
+    } /* switch(yy) */
+  } /* else */
+      break;
+
+    case ButtonRelease: 
+      break;
+
+    case EnterNotify: 
+      break;
+
+  } /* switch (eventtype) */
+  goto ReDisplay;
+
+Terminate:
+  TerminateGraphics();
+  for (i = 0; i < NBLIGBUTT; i++) 
+    for (k = 0; k < NBBUTTONS; k++) 
+      free(ButtonStrings[i][k]);
+  if (voisins)
+  {
+    for (i = 0; i < nbmeshpoints; i++) 
+      free(voisins[i]);
+    free(voisins);
+  }
+  if (nbvois) free(nbvois);
+  if (envconv) free(envconv);
+  free(S);
+  free(SD);
+  free(SAVE);
+  return(1);
+}
+

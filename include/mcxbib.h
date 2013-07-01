@@ -42,7 +42,6 @@ extern "C" {
 #ifdef UNIXIO
 #  include <X11/Xlib.h>
 #  include <X11/Xutil.h>
-#else /* NOT UNIXIO */
 #endif /* NOT UNIXIO */
 
 
@@ -210,6 +209,8 @@ extern "C" {
 /* prototypes for mcxbib.c    */
 /* ============== */
 
+#ifdef UNIXIO
+
 extern void ColToWhite(
 );
 
@@ -298,6 +299,8 @@ extern void FlushGraphics(
 
 extern void TerminateGraphics(
 );
+
+#endif /* UNIXIO */
 
 #ifdef __cplusplus
 }
