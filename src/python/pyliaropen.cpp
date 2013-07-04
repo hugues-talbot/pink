@@ -15,7 +15,7 @@
 
 #include "liar_fseries.h"
 #include "pink_python.h"
-#include "RPO.hpp"
+#include "RPO_maj_float.hpp"
 
 #include "BilateralFilter.h"
 #include "BilateralFilter.hpp"
@@ -146,11 +146,52 @@ namespace pink {
 
 
         if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE) {
-            // create the RPO object
-            RPO RPO1(orientation, L, K, reconstruct, output_buffer, output_buffer, nx, ny, nz);
-            // Execute
-            RPO1.Execute();
-        } else {
+            // call the RPO function
+            RPO3D(output_buffer, output_buffer,orientation, L, K, reconstruct, nx, ny, nz);
+
+        } 
+        else {
+            pink_error("Pixel type not yet supported\n");
+        } 
+        
+        return result_image;
+
+    } /* liarRPO*/
+    
+    
+    
+      template   <class image_t>
+    image_t liarUnionRPO
+    (
+      const image_t & input_image,
+      const int L,
+      const int K,
+      const int reconstruct
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+	// image structure
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+    int ny = outputxvimage->col_size;
+    int nz = outputxvimage->depth_size;
+
+	// buffers
+	// this looks weird, but input_buffer is copied immediately inside RPO
+	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
+	// at this stage the output buffer contains the input image because of the clone() above
+
+
+        if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE) {
+            // call the RPO function
+            UNION_RPO3D(output_buffer, output_buffer,L, K, reconstruct, nx, ny, nz);
+
+        }
+         else {
             pink_error("Pixel type not yet supported\n");
         } 
         
@@ -417,49 +458,6 @@ namespace pink {
     } /* liarRotation3D */
     
     
-    
-
-    /*template   <class image_t>
-    image_t liarRPO_parallel
-    (
-      const image_t & input_image,
-      const int L,
-      const int K,
-      const int R
-    )
-    {
-        int errorcode = 0;
-        image_t result_image = input_image.clone();
-
-        // The low-level function seems to always succeed
-	//
-
-	// image structure
-	struct xvimage *outputxvimage = result_image.get_output();
-
-	// dimensions
-	int nx = outputxvimage->row_size;
-    int ny = outputxvimage->col_size;
-    int nz = outputxvimage->depth_size;
-
-    // buffers
-   	    PixelType *input_buffer = (PixelType*) (outputxvimage->image_data);
-   	    PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
-
-    // create the RPO_parallel object
-        RPO_parallel RPOP(input_buffer, output_buffer,L,K,R,nx,ny,nz)
-
-    // Execute
-    RPOP.Execute();
-    
-
-	// get result
-	return (result_image);
-
-    } /* liarRPO_parallel */
-
-
-
 
     template   <class image_t>
     image_t liaropenline3d
@@ -530,7 +528,7 @@ UI_EXPORT_FUNCTION(
   RPO,
   pink::python::liarRPO,
   ( arg("input_image"), arg("orientationX"),arg("orientationY"), arg("orientationZ"), arg("L"), arg("K"),arg("reconstruction") ),
-  "Robust 3D path opening, given an orientation (x,y,z); a length L, a noise robustness factor K, and optional reconstruction\n"
+  "Robust path opening, given an orientation (x,y,z); a length L, a noise robustness factor K, and optional reconstruction\n"
   "the following orientations are legal:\n"
   "   0  0  1  : depth direction\n"
   "   0  1  0  : vertical\n"
@@ -542,6 +540,15 @@ UI_EXPORT_FUNCTION(
   "\n"
   "For 2D images, directions (0 1), (1 0), (1 1) and (-1 1) are sufficient\n"
   "reconstruction parameter is 0 or 1\n"
+  );
+
+
+UI_EXPORT_FUNCTION(
+  UnionRPO,
+  pink::python::liarUnionRPO,
+  ( arg("input_image"), arg("L"), arg("K"),arg("reconstruction") ),
+  "Compute the union of the Robust path opening in each orientation (see RPO), given a length L, a noise robustness factor K, and optional reconstruction\n"
+  "Works in 2 and 3 dimensions\n"
   );
 
 
@@ -604,15 +611,6 @@ UI_EXPORT_FUNCTION(
 	"param operation : min (set to 1) or max (set to 0) operation \n"
 	"param lineop : line operation to use bresenham3d (set to 1) or periodic3d (set to 0) \n"
 	);
-
-
-
-
-
-
-
-
-
 
 
 
