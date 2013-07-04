@@ -1,6 +1,6 @@
 // This file has been generated automatically by the 
 // python_documenter, part of the PInK package (UjoImro, 2011)
-// the date of generation: 2013-05-30T17:18:49Z
+// the date of generation: 2013-07-04T16:06:48Z
 // warning: DO NOT EDIT. All your changes will be lost at 
 // the next generation
 
@@ -221,6 +221,26 @@
 "\n"
 
 
+#define doc__drawgraph__c__ "  drawline.c\n"         \
+"\n"         \
+" draw a graph in a 2D image\n"         \
+"\n"         \
+"Usage: drawline in.graph in.pgm out.pgm\n"         \
+"\n"         \
+"Description:\n"         \
+"\n"         \
+"Draws the graph described in file in.graph into the image in.pgm\n"         \
+"\n"         \
+"Types supported: byte 2D\n"         \
+"\n"         \
+"Category: draw\n"         \
+"  draw\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
 #define doc__skelpar3d_others__cxx___ "  skelpar3d_others.cxx\n"         \
 "\n"         \
 " parallel 3D binary skeleton\n"         \
@@ -268,6 +288,7 @@
 " 29: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 0)\n"         \
 " 30: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 0)\n"         \
 " 31: Lohou-Bertrand  (surface, symmetric, 2007)\n"         \
+" 32: Manzanera et al. (surface, symmetric, 1999)\n"         \
 "\n"         \
 "If the parameter  inhibit is given and is a binary image name,\n"         \
 "then the points of this image will be left unchanged.\n"         \
@@ -408,6 +429,10 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
+"\n"
+
+
+#define doc__reconsdilat__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -1102,6 +1127,10 @@
 "\n"
 
 
+#define doc__reconseros___notused_c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__ptinterior__c__ "  ptinterior.c\n"         \
 "\n"         \
 " detects interior points in a binary image\n"         \
@@ -1473,6 +1502,68 @@
 "\n"
 
 
+#define doc__skelpar3d_others__cxx__ "  skelpar3d_others.cxx\n"         \
+"\n"         \
+" parallel 3D binary skeleton\n"         \
+"DirectionalSkeletonizer\n"         \
+"Usage: skelpar3d in.pgm algorithm nsteps [inhibit] out.pgm\n"         \
+"\n"         \
+"Description:\n"         \
+"Parallel 3D binary thinning or skeleton. The parameter  nsteps gives,\n"         \
+"if positive, the number of parallel thinning steps to be processed.\n"         \
+"If the value given for  nsteps equals -1, the thinning is continued\n"         \
+"until stability.\n"         \
+"\n"         \
+"The parameter  algorithm is a numerical code\n"         \
+"indicating which method will be used for the thinning.\n"         \
+"The possible choices are:\n"         \
+" 0: Palagyi (curvilinear, 6-subiterations directional, 1998)\n"         \
+" 1: Palagyi (curvilinear, sequential, 2006)\n"         \
+" 2: Palagyi (surface, parallel directional, 2002)\n"         \
+" 3: Palagyi (surface, fully parallel, 2008)\n"         \
+" 4: Raynal  (curvilinear, directional, 2010)\n"         \
+" 5: Raynal  (surface, directional, 2010)\n"         \
+" 6: Lohou-Bertrand  (curvilinear, symmetric, 2007)\n"         \
+" 7: Ma-Wan-Chang (curvilinear, 2 subfields, 2002)\n"         \
+" 8: Tsao-Fu (curvilinear, 6-subiterations directional, 1982)\n"         \
+" 9: Ma-Sonka (curvilinear, fully parallel, does not preserve topology 1996)\n"         \
+" 10: Ma-Wan (curvilinear (18/6) 6 subiterations, CVIU 2000)\n"         \
+" 11: Lohou-Bertrand (curvilinear 6 subiterations, DAM 2005)\n"         \
+" 12: Lohou-Bertrand (curvilinear 12 subiterations, DAM 2004)\n"         \
+" 13: ACK3a - see lskelpar3d.c\n"         \
+" 14: CKSC - see lskeletons.c\n"         \
+" 15: Ma-Wan-Lee (curvilinear, 4 subfields, 2002)\n"         \
+" 16: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 1)\n"         \
+" 17: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 2)\n"         \
+" 18: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 3)\n"         \
+" 19: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 1)\n"         \
+" 20: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 2)\n"         \
+" 21: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 3)\n"         \
+" 22: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 1)\n"         \
+" 23: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 2)\n"         \
+" 24: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 3)\n"         \
+" 25: She et al. (curvilinear, symmetric, DICTA 2009)\n"         \
+" 26: Tsao-Fu (surface, 6-subiterations directional, 1981)\n"         \
+" 27: Tsao-Fu (curvilinear, 6-subiterations directional, 1981)\n"         \
+" 28: Nemeth-Kardos-Palagyi (curvilinear, 2 subfields, 2010, var. 0)\n"         \
+" 29: Nemeth-Kardos-Palagyi (curvilinear, 4 subfields, 2010, var. 0)\n"         \
+" 30: Nemeth-Kardos-Palagyi (curvilinear, 8 subfields, 2010, var. 0)\n"         \
+" 31: Lohou-Bertrand  (surface, symmetric, 2007)\n"         \
+" 32: Manzanera et al. (surface, symmetric, 1999)\n"         \
+"\n"         \
+"If the parameter  inhibit is given and is a binary image name,\n"         \
+"then the points of this image will be left unchanged.\n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
+"\n"         \
+" Michel Couprie, Benjamin Raynal, John Chaussard\n"         \
+"\n"         \
+"\n"
+
+
 #define doc__asfr__c__ "  asfr.c\n"         \
 "\n"         \
 " alternate sequential filter by reconstruction\n"         \
@@ -1585,6 +1676,30 @@
 "\n"
 
 
+#define doc__entropy__c__ "  entropy.c\n"         \
+"\n"         \
+" computes the Shannon entropy of an image or a region\n"         \
+"\n"         \
+"Usage: entropy in.pgm [mask.pgm] out.list\n"         \
+"\n"         \
+"Description:\n"         \
+"Calculates the Shannon entropy of  im.pgm (masked by the binary image\n"         \
+" mask.pgm, if given) and saves it in file  out.list .\n"         \
+"\n"         \
+"Let H(i), i = 0...B-1, denote the histogram of  im.pgm, where B is the number of bins.\n"         \
+"Let P(i) be the frequency of the level i in the image, that is, P(i) = H(i)/N, where N is the number of pixels of  im.pgm .\n"         \
+"Then, the Shannon entropy of  im.pgm is defined by: E = - SUM P(i) log_2 P(i), for all i in {0...B-1}.\n"         \
+"\n"         \
+"Types supported: byte 2d, byte 3d, int32_t 2d, int32_t 3d, float 2d, float 3d\n"         \
+"\n"         \
+"Category: signal\n"         \
+"  signal\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
 #define doc__ptisolated__c__ "  ptisolated.c\n"         \
 "\n"         \
 " detects isolated points in a binary image\n"         \
@@ -1627,6 +1742,36 @@
 "\n"         \
 "Category: draw\n"         \
 "  draw\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__skelpar3d_others__c___ "  skelpar3d_others.c\n"         \
+"\n"         \
+" parallel 3D binary skeleton\n"         \
+"\n"         \
+"Usage: skelpar3d in.pgm algorithm nsteps [inhibit] out.pgm\n"         \
+"\n"         \
+"Description:\n"         \
+"Parallel 3D binary thinning or skeleton. The parameter  nsteps gives,\n"         \
+"if positive, the number of parallel thinning steps to be processed.\n"         \
+"If the value given for  nsteps equals -1, the thinning is continued\n"         \
+"until stability.\n"         \
+"\n"         \
+"The parameter  algorithm is a numerical code\n"         \
+"indicating which method will be used for the thinning.\n"         \
+"The possible choices are:\n"         \
+" 0: Palagyi (fully parallel, 2007)\n"         \
+"\n"         \
+"If the parameter  inhibit is given and is a binary image name,\n"         \
+"then the points of this image will be left unchanged. \n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -1762,6 +1907,10 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
+"\n"
+
+
+#define doc__gradinf3d___notused_c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -2453,6 +2602,39 @@
 
 
 #define doc__temp3d___notused_c__ "WRITE ME!!!\n"         \
+"\n"
+
+
+#define doc__skel_ASK3b___notused_c__ "  skel_ASK3b.c\n"         \
+"\n"         \
+" parallel 3D binary surface, asymetric skeleton based on thin 2D isthmuses\n"         \
+"\n"         \
+"Usage: skel_ASK3b in.pgm nsteps isthmus_persistence [inhibit] out.pgm\n"         \
+"\n"         \
+"Description: Parallel 3D binary thinning or surface,\n"         \
+"asymetric skeleton based on thin 2D isthmuses. The parameter  nsteps\n"         \
+"gives, if positive, the number of parallel thinning steps to be\n"         \
+"processed.  If the value given for  nsteps equals -1, the thinning\n"         \
+"is continued until stability.\n"         \
+"\n"         \
+"When a point x is detected as a 2D isthmus, a counter p(x) is\n"         \
+"associated to this point and initialized with value 1. This counter is\n"         \
+"incremented a each iteration as long as x is still an isthmus. At each\n"         \
+"iteration, the isthmuses x such that p(x) >=  isthmus_persistence are\n"         \
+"stored as a constraint set (see also  inhibit parameter).\n"         \
+"\n"         \
+"If the parameter  inhibit is given and is a binary image name,\n"         \
+"then the points of this image will be left unchanged. \n"         \
+"\n"         \
+" The object must not have any point on the frame of the image.\n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
 "\n"
 
 
@@ -3377,6 +3559,10 @@
 "\n"
 
 
+#define doc__segbi___notused_c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__ptsimple__c__ "  ptsimple.c\n"         \
 "\n"         \
 " detects simple points in a binary image\n"         \
@@ -3663,6 +3849,10 @@
 "\n"
 
 
+#define doc__click3d__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__skelvertex__c__ "  skelvertex.c\n"         \
 "\n"         \
 " selection of a specified vertex in a curvilinear skeleton\n"         \
@@ -3681,6 +3871,10 @@
 "\n"         \
 " Michel Couprie 2009\n"         \
 "\n"         \
+"\n"
+
+
+#define doc__vskel2graph___notfinished_c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -4053,33 +4247,54 @@
 "Usage: skelpar3d in.pgm algorithm nsteps [inhibit] out.pgm\n"         \
 "\n"         \
 "Description:\n"         \
-"Parallel 3D binary thinning or skeleton. The parameter  nsteps gives,\n"         \
-"if positive, the number of parallel thinning steps to be processed.\n"         \
-"If the value given for  nsteps equals -1, the thinning is continued\n"         \
-"until stability.\n"         \
+"\n"         \
+"Parallel 3D binary thinning or skeleton. \n"         \
+"\n"         \
+"The parameter  nsteps gives, if positive, the number of parallel\n"         \
+"thinning steps to be processed.  If the value given for  nsteps\n"         \
+"equals -1, the thinning is continued until stability.\n"         \
+"\n"         \
+"For some algorithms (16 to ??), the parameter  nsteps has a\n"         \
+"different meaning which is related to the notion of persistence (see\n"         \
+"[REF A AJOUTER]). It plays the role of a filtering parameter.\n"         \
 "\n"         \
 "The parameter  algorithm is a numerical code\n"         \
 "indicating which method will be used for the thinning.\n"         \
 "The possible choices are:\n"         \
 " 0: ultimate, without constraint (MK3a)\n"         \
-" 1: curvilinear, based on 1D isthmus (CK3a)\n"         \
+" 1: curvilinear, symmetric, based on 1D isthmus (CK3a)\n"         \
 " 2: medial axis preservation (AK3) - parameter inhibit represents the minimal radius of medial axis balls which are considered\n"         \
 " 3: ultimate (MK3) - if nsteps = -2, returns the topological distance\n"         \
 " 4: curvilinear based on ends (EK3)\n"         \
 " 5: curvilinear based on ends, with end reconstruction (CK3b)\n"         \
 " 6: topological axis (not homotopic)\n"         \
 " 7: curvilinear, based on residual points and 2D isthmus (CK3)\n"         \
-" 8: ultimate, asymetric (AMK3)\n"         \
-" 9: curvilinear, asymetric, based on thin 1D isthmus (ACK3a)\n"         \
-" 10: curvilinear, asymetric, based on 3D and 2D residuals (ACK3)\n"         \
-" 11: surface, based on residual points (RK3)\n"         \
-" 12: surface, based on 2D isthmuses (SK3)\n"         \
+" 8: ultimate, asymmetric (AMK3)\n"         \
+" 9: curvilinear, asymmetric, based on thin 1D isthmus (ACK3a)\n"         \
+" 10: curvilinear, asymmetric, based on 3D and 2D residuals (ACK3)\n"         \
+" 11: surface, symmetric, based on residual points (RK3)\n"         \
+" 12: surface, symmetric, based on 2D isthmuses (SK3)\n"         \
 " 13: ultimate, directional, (DK3)\n"         \
 " 14: surface, directional, based on residual points (DRK3)\n"         \
 " 15: surface, directional, based on 2D isthmuses (DSK3)\n"         \
+" 16: curvilinear, asymmetric, based on thin 1D isthmus with persistence (ACK3p)\n"         \
+" 17: surface, asymmetric, based on thin 2D isthmus with persistence (ASK3p)\n"         \
+" 18: curvilinear, symmetric, based on 1D isthmus with persistence (CK3p)\n"         \
+" 19: surface, symmetric, based on 2D isthmus with persistence (SK3p)\n"         \
+" 20: surface and curvilinear, symmetric, based on 1D and 2D isthmus with persistence (SCK3p)\n"         \
+" 21: surface, symmetric, based on residual points (RK3), variant (uses 26-connectivity to define residual points)\n"         \
 "\n"         \
-"In modes other than 2, if the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
+"\n"         \
+"In modes other than 2, if the parameter  inhibit is given and is a\n"         \
+"binary image name, then the points of this image will be left\n"         \
+"unchanged.\n"         \
+"\n"         \
+"The following codes give access to auxiliary functions, for isthmus detection. \n"         \
+"Parameter  nsteps will not be used in this case (any value can be given).\n"         \
+"\n"         \
+" 100: 1D isthmus points\n"         \
+"\n"         \
+"Warning: The object must not have any point on the frame of the image.\n"         \
 "\n"         \
 "The following codes give access to auxiliary functions, for isthmus detection. \n"         \
 "Parameter  nsteps will not be used in this case (any value can be given).\n"         \
@@ -4678,6 +4893,10 @@
 "\n"
 
 
+#define doc__gradinf__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__skelsmoothing__c__ "  skelsmoothing.c\n"         \
 "\n"         \
 " computes a smmothed version of a curvilinear skeleton\n"         \
@@ -4933,6 +5152,10 @@
 "\n"
 
 
+#define doc__dilatplan__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__identifyline__c__ "  identifyline.c\n"         \
 "\n"         \
 " identification of a best matching line from a set of 2D points\n"         \
@@ -5070,6 +5293,10 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
+"\n"
+
+
+#define doc__profil__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -5465,6 +5692,10 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
+"\n"
+
+
+#define doc__segment3di__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -5937,6 +6168,10 @@
 "\n"
 
 
+#define doc__gradsup__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__lambdamedialaxis2auto__c__ "  lambdamedialaxis2.c\n"         \
 "\n"         \
 " discrete lambda-medial axis transform\n"         \
@@ -5980,7 +6215,7 @@
 "represents the original point set (non-null pixels in the original image).\n"         \
 "If the parameter  r is -1, then \n"         \
 "the structuring element for each point x is a ball (or a disc) of radius  F(x),\n"         \
-"where F is the greyscale image   in.pgm .\n"         \
+"where F is the greyscale image  in.pgm .\n"         \
 "\n"         \
 "The dilation is computed by thresholding a distance map.\n"         \
 "The distance used depends on the optional parameter  dist (default is 0) :\n"         \
@@ -5994,7 +6229,7 @@
 " 18: 18-distance in 3d\n"         \
 " 26: 26-distance in 3d\n"         \
 "\n"         \
-" The input image  in.pgm must be a binary image. No test is done.\n"         \
+" Except for the case r=-1, the input image  in.pgm must be a binary image. No test is done.\n"         \
 "\n"         \
 "Types supported: byte 2d, byte 3d\n"         \
 "\n"         \
@@ -6543,6 +6778,10 @@
 "\n"
 
 
+#define doc__reconseros3d___notused_c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__surfacerestoration__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -6568,39 +6807,6 @@
 "\n"         \
 "Category: topogray\n"         \
 "  topogray\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
-"\n"
-
-
-#define doc__skel_ASK3b__c__ "  skel_ASK3b.c\n"         \
-"\n"         \
-" parallel 3D binary surface, asymetric skeleton based on thin 2D isthmuses\n"         \
-"\n"         \
-"Usage: skel_ASK3b in.pgm nsteps isthmus_persistence [inhibit] out.pgm\n"         \
-"\n"         \
-"Description: Parallel 3D binary thinning or surface,\n"         \
-"asymetric skeleton based on thin 2D isthmuses. The parameter  nsteps\n"         \
-"gives, if positive, the number of parallel thinning steps to be\n"         \
-"processed.  If the value given for  nsteps equals -1, the thinning\n"         \
-"is continued until stability.\n"         \
-"\n"         \
-"When a point x is detected as a 2D isthmus, a counter p(x) is\n"         \
-"associated to this point and initialized with value 1. This counter is\n"         \
-"incremented a each iteration as long as x is still an isthmus. At each\n"         \
-"iteration, the isthmuses x such that p(x) >=  isthmus_persistence are\n"         \
-"stored as a constraint set (see also  inhibit parameter).\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-" The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -7200,6 +7406,32 @@
 "\n"
 
 
+#define doc__skel_SK3_pers__c__ "  skel_SK3_pers.c\n"         \
+"\n"         \
+" topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning\n"         \
+"\n"         \
+"Usage: skel_SK3_pers in.pgm out.pgm\n"         \
+"\n"         \
+"Description: Topological persistence of 1D isthmuses, based on \n"         \
+"parallel 3D asymetric thinning.\n"         \
+"\n"         \
+"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
+"associated to this point and initialized with value 1. This counter is\n"         \
+"incremented a each iteration as long as x is still an isthmus. When this point x is\n"         \
+"eventually deleted, the value of the counter is freezed.\n"         \
+"\n"         \
+" The object must not have any point on the frame of the image.\n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
 #define doc__proj__c__ "  proj.c\n"         \
 "\n"         \
 " projection parallel to one of the main axes\n"         \
@@ -7348,6 +7580,10 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
+"\n"
+
+
+#define doc__meshwarp___notused_c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -7988,6 +8224,32 @@
 "\n"
 
 
+#define doc__skel_CK3_pers__c__ "  skel_CK3_pers.c\n"         \
+"\n"         \
+" topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning\n"         \
+"\n"         \
+"Usage: skel_CK3_pers in.pgm out.pgm\n"         \
+"\n"         \
+"Description: Topological persistence of 1D isthmuses, based on \n"         \
+"parallel 3D asymetric thinning.\n"         \
+"\n"         \
+"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
+"associated to this point and initialized with value 1. This counter is\n"         \
+"incremented a each iteration as long as x is still an isthmus. When this point x is\n"         \
+"eventually deleted, the value of the counter is freezed.\n"         \
+"\n"         \
+" The object must not have any point on the frame of the image.\n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
 #define doc__redt__c__ "  redt.c\n"         \
 "\n"         \
 " reverse euclidean distance transform\n"         \
@@ -8039,39 +8301,6 @@
 
 
 #define doc__yuv2rgb__c__ "WRITE ME!!!\n"         \
-"\n"
-
-
-#define doc__skel_ACK3b__c__ "  skel_ACK3b.c\n"         \
-"\n"         \
-" parallel 3D binary curvilinear, asymetric skeleton based on thin 1D isthmus\n"         \
-"\n"         \
-"Usage: skel_ACK3b in.pgm nsteps isthmus_persistence [inhibit] out.pgm\n"         \
-"\n"         \
-"Description: Parallel 3D binary thinning or curvilinear,\n"         \
-"asymetric skeleton based on thin 1D isthmus. The parameter  nsteps\n"         \
-"gives, if positive, the number of parallel thinning steps to be\n"         \
-"processed.  If the value given for  nsteps equals -1, the thinning\n"         \
-"is continued until stability.\n"         \
-"\n"         \
-"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
-"associated to this point and initialized with value 1. This counter is\n"         \
-"incremented a each iteration as long as x is still an isthmus. At each\n"         \
-"iteration, the isthmuses x such that p(x) >=  isthmus_persistence are\n"         \
-"stored as a constraint set (see also  inhibit parameter).\n"         \
-"\n"         \
-"If the parameter  inhibit is given and is a binary image name,\n"         \
-"then the points of this image will be left unchanged. \n"         \
-"\n"         \
-" The object must not have any point on the frame of the image.\n"         \
-"\n"         \
-"Types supported: byte 3d\n"         \
-"\n"         \
-"Category: topobin\n"         \
-"  topobin\n"         \
-"\n"         \
-" Michel Couprie\n"         \
-"\n"         \
 "\n"
 
 
@@ -8381,6 +8610,10 @@
 "\n"
 
 
+#define doc__click2d__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__pgm2pov__c__ "  pgm2pov.c\n"         \
 "\n"         \
 " generates a povray file from a 3D image\n"         \
@@ -8589,7 +8822,7 @@
 "Description: \n"         \
 "Compute the center of gravity of each connected component.\n"         \
 "\n"         \
-"Types supported: byte 2d\n"         \
+"Types supported: byte 2d, byte 3d\n"         \
 "\n"         \
 "Category: geo\n"         \
 "  geo\n"         \
@@ -9112,6 +9345,10 @@
 "\n"
 
 
+#define doc__segment__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__pgm2graph__c__ "  pgm2graph.c\n"         \
 "\n"         \
 " converts a binary image into a simple graph\n"         \
@@ -9390,6 +9627,32 @@
 "\n"         \
 "Category: connect\n"         \
 " connect\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__skel_SCK3_pers__c__ "  skel_SCK3_pers.c\n"         \
+"\n"         \
+" topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning\n"         \
+"\n"         \
+"Usage: skel_SCK3_pers in.pgm out.pgm\n"         \
+"\n"         \
+"Description: Topological persistence of 1D isthmuses, based on \n"         \
+"parallel 3D asymetric thinning.\n"         \
+"\n"         \
+"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
+"associated to this point and initialized with value 1. This counter is\n"         \
+"incremented a each iteration as long as x is still an isthmus. When this point x is\n"         \
+"eventually deleted, the value of the counter is freezed.\n"         \
+"\n"         \
+" The object must not have any point on the frame of the image.\n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
@@ -10177,6 +10440,7 @@
 " 28: Nemeth et Palagyi, 2009 (3)\n"         \
 " 29: Couprie and Bertrand, ultimate, asymmetrical (NK2)\n"         \
 " 30: Couprie and Bertrand, ultimate, symmetrical (MK2b)\n"         \
+" 31: Couprie and Bertrand, curvilinear, symmetrical, based on 1D isthmuses (CK2)\n"         \
 "\n"         \
 "If the parameter  inhibit is given and is a binary image name,\n"         \
 "then the points of this image will be left unchanged.\n"         \
@@ -10221,6 +10485,10 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
+"\n"
+
+
+#define doc__visu3d__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -10535,6 +10803,10 @@
 "\n"
 
 
+#define doc__reconsdilat3d__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__pgmrawmode__c__ "  pgmrawmode.c\n"         \
 "\n"         \
 " converts a pgm file to raw mode\n"         \
@@ -10578,7 +10850,63 @@
 "\n"
 
 
+#define doc__skel_SK3__c__ "  skel_SK3.c\n"         \
+"\n"         \
+" parallel 3D binary surface skeleton based on 2D isthmuses\n"         \
+"\n"         \
+"Usage: skel_SK3 in.pgm nsteps [inhibit] out.pgm\n"         \
+"\n"         \
+"Description:\n"         \
+"Parallel 3D binary thinning or surface skeleton based on 2D isthmuses. \n"         \
+"The parameter  nsteps gives,\n"         \
+"if positive, the number of parallel thinning steps to be processed.\n"         \
+"If the value given for  nsteps equals -1, the thinning is continued\n"         \
+"until stability.\n"         \
+"\n"         \
+"If the parameter  inhibit is given and is a binary image name,\n"         \
+"then the points of this image will be left unchanged. \n"         \
+"\n"         \
+"Warning: The object must not have any point on the frame of the image.\n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
 #define doc__fits2pgm__ "WRITE ME!!!\n"         \
+"\n"
+
+
+#define doc__skel_CK3a__c__ "  skel_CK3a.c\n"         \
+"\n"         \
+" parallel 3D binary curvilinear skeleton based on 1D isthmuses\n"         \
+"\n"         \
+"Usage: skel_CK3a in.pgm nsteps [inhibit] out.pgm\n"         \
+"\n"         \
+"Description:\n"         \
+"Parallel 3D binary thinning or curvilinear skeleton based on 1D isthmuses. \n"         \
+"The parameter  nsteps gives,\n"         \
+"if positive, the number of parallel thinning steps to be processed.\n"         \
+"If the value given for  nsteps equals -1, the thinning is continued\n"         \
+"until stability.\n"         \
+"\n"         \
+"If the parameter  inhibit is given and is a binary image name,\n"         \
+"then the points of this image will be left unchanged. \n"         \
+"\n"         \
+"Warning: The object must not have any point on the frame of the image.\n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
 "\n"
 
 
@@ -10649,6 +10977,28 @@
 "\n"
 
 
+#define doc__meshoffset__c__ "  meshoffset.c\n"         \
+"\n"         \
+" applies an offset to all points of a mesh (translation)\n"         \
+"\n"         \
+"Usage: meshoffset in [ox oy oz] out\n"         \
+"\n"         \
+"Description:\n"         \
+"\n"         \
+"Applies an offset to all points of a mesh (translation). \n"         \
+"Available input formats: vtk.\n"         \
+"Available output formats: vtk.\n"         \
+"\n"         \
+"Types supported: mesh 3d\n"         \
+"\n"         \
+"Category: mesh3d\n"         \
+"  mesh3d\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
 #define doc__long2float__c__ "  long2float.c\n"         \
 "\n"         \
 " converts a \"long\" image to a \"float\" image\n"         \
@@ -10705,6 +11055,32 @@
 "  morpho\n"         \
 "\n"         \
 " Michel Couprie, Xavier Daragon\n"         \
+"\n"         \
+"\n"
+
+
+#define doc__skel_ACK3_pers__c__ "  skel_ACK3c.c\n"         \
+"\n"         \
+" topological persistence of 1D isthmuses, based on parallel 3D asymetric thinning\n"         \
+"\n"         \
+"Usage: skel_ACK3c in.pgm out.pgm\n"         \
+"\n"         \
+"Description: Topological persistence of 1D isthmuses, based on \n"         \
+"parallel 3D asymetric thinning.\n"         \
+"\n"         \
+"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
+"associated to this point and initialized with value 1. This counter is\n"         \
+"incremented a each iteration as long as x is still an isthmus. When this point x is\n"         \
+"eventually deleted, the value of the counter is freezed.\n"         \
+"\n"         \
+" The object must not have any point on the frame of the image.\n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
+"\n"         \
+" Michel Couprie\n"         \
 "\n"         \
 "\n"
 
@@ -10880,6 +11256,39 @@
 "\n"
 
 
+#define doc__skel_ACK3b___notused_c__ "  skel_ACK3b.c\n"         \
+"\n"         \
+" parallel 3D binary curvilinear, asymetric skeleton based on thin 1D isthmus\n"         \
+"\n"         \
+"Usage: skel_ACK3b in.pgm nsteps isthmus_persistence [inhibit] out.pgm\n"         \
+"\n"         \
+"Description: Parallel 3D binary thinning or curvilinear,\n"         \
+"asymetric skeleton based on thin 1D isthmus. The parameter  nsteps\n"         \
+"gives, if positive, the number of parallel thinning steps to be\n"         \
+"processed.  If the value given for  nsteps equals -1, the thinning\n"         \
+"is continued until stability.\n"         \
+"\n"         \
+"When a point x is detected as a 1D isthmus, a counter p(x) is\n"         \
+"associated to this point and initialized with value 1. This counter is\n"         \
+"incremented a each iteration as long as x is still an isthmus. At each\n"         \
+"iteration, the isthmuses x such that p(x) >=  isthmus_persistence are\n"         \
+"stored as a constraint set (see also  inhibit parameter).\n"         \
+"\n"         \
+"If the parameter  inhibit is given and is a binary image name,\n"         \
+"then the points of this image will be left unchanged. \n"         \
+"\n"         \
+" The object must not have any point on the frame of the image.\n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
+"\n"
+
+
 #define doc__point__c__ "  point.c\n"         \
 "\n"         \
 " modifies the value of a given point \n"         \
@@ -10901,6 +11310,10 @@
 
 
 #define doc__2dtopoflow__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
+#define doc__seuili__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -10931,6 +11344,10 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
+"\n"
+
+
+#define doc__segmentnumi__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -11329,7 +11746,7 @@
 "Usage: sup in1.pgm in2.pgm out.pgm\n"         \
 "\n"         \
 "Description:\n"         \
-"For each pixel x, if in1[x] \n"         \
+"For each pixel x, if in1[x] >= in2[x] then out[x] = 255 else out[x] = 0.\n"         \
 "Images must be of the same type and same dimensions.\n"         \
 "\n"         \
 "Types supported: byte 2D, byte 3D\n"         \
@@ -11501,6 +11918,10 @@
 "\n"         \
 " Michel Couprie\n"         \
 "\n"         \
+"\n"
+
+
+#define doc__hk_tophat_lin_rotall__c__ "WRITE ME!!!\n"         \
 "\n"
 
 
@@ -11777,6 +12198,10 @@
 "\n"
 
 
+#define doc__blob__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
 #define doc__seuilhisto__c__ "WRITE ME!!!\n"         \
 "\n"
 
@@ -11976,6 +12401,31 @@
 
 
 #define doc__seuilhistolocal__c__ "WRITE ME!!!\n"         \
+"\n"
+
+
+#define doc__skel_CK3p__c__ "  skel_CK3p.c\n"         \
+"\n"         \
+" parallel 3D binary curvilinear skeleton based on 1D isthmuses\n"         \
+"\n"         \
+"Usage: skel_CK3p in.pgm pers [inhibit] out.pgm\n"         \
+"\n"         \
+"Description:\n"         \
+"Parallel 3D binary thinning or curvilinear skeleton based on 1D isthmuses, \n"         \
+"with a persistence parameter:  pers.\n"         \
+"\n"         \
+"If the parameter  inhibit is given and is a binary image name,\n"         \
+"then the points of this image will be left unchanged. \n"         \
+"\n"         \
+"Warning: The object must not have any point on the frame of the image.\n"         \
+"\n"         \
+"Types supported: byte 3d\n"         \
+"\n"         \
+"Category: topobin\n"         \
+"  topobin\n"         \
+"\n"         \
+" Michel Couprie\n"         \
+"\n"         \
 "\n"
 
 
