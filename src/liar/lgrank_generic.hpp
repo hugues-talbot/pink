@@ -10,6 +10,10 @@
 #define LGRANK_GENERIC_HPP
 
 #include "liarp.h"                   
+#include <limits>
+
+// Type Traits are only supported in C++0x
+#include <boost/type_traits.hpp>
 
 template <typename Type>
 void gline( Type *IN,      /**< [in] input image */
@@ -171,9 +175,63 @@ void generic_running_rank(Type * in,
     }
 }
 
+/* because gsrank is only efficient with 8-bit images, convert to 8-bit in a reversible fashion */
+
+template <typename Type>
+static void to_8bit(Type *IN,
+                    PIX_TYPE **OUT,
+                    int nx,
+                    int ny,
+                    double *slope,
+                    Type *offset)
+{
+    *OUT = (PIX_TYPE *)malloc(nx*ny*sizeof(PIX_TYPE));
+    Type lmin = std::numeric_limits<Type>::max(); // yes, the max of the type
+    Type lmax = std::numeric_limits<Type>::min(); // yes, the min of the type !
+    int size = nx*ny;
+    /* find min and max of data */
+    Type *pIN = IN;
+    for (int i = 0 ; i < size ; ++i) {
+        if (*pIN < lmin)
+            lmin = *pIN;
+        if(*pIN > lmax)
+            lmax = *pIN;
+        ++pIN;
+    }
+    /* apply fit2char */
+    *offset = lmin;
+    *slope = 255.0 / (lmax-lmin); // what matters is the distance, i.e. the number of intervals
+    pIN = IN;
+    PIX_TYPE *pOUT = *OUT;
+    for (int i = 0 ; i < size ; ++i) {
+        *pOUT++ = static_cast<PIX_TYPE>(floor((*pIN++ - *offset) * *slope));
+    }
+    return;
+}
+
+template <typename Type>
+static void from_8bit(PIX_TYPE *IN,
+                    Type *OUT,
+                    int nx,
+                    int ny,
+                    double slope,
+                    Type offset)
+{
+    int size = nx*ny;
+
+    /* apply inverse fit2char */
+    Type *pIN = IN;
+    PIX_TYPE *pOUT = OUT;
+    for (int i = 0 ; i < size ; ++i) {
+        *pOUT++ = static_cast<Type>((*pIN++ / slope + offset));
+    }
+    return;
+}
 
 /** \brief Compute a rank filter along an arbitrary 1D line 
  *
+ * gsrank is only efficient and accurate on 8-bit data.
+ * on non-8-bit data, a conversion is silently performed to and from 8-bit data.
  */
 template <typename Type>
 void gsrank(Type *IN,	/**< [in] pointer to input image */
@@ -184,6 +242,18 @@ void gsrank(Type *IN,	/**< [in] pointer to input image */
 	    double    angle,	/**< [in] angle of line */
 	    double    rank)	/**< [in] rank */
 {
+    double slope;
+    Type   offset;
+    PIX_TYPE *TrueIN, *TrueOUT; // result of conversion to 8-bit, if needed
+    
+    if(!boost::is_same<Type,PIX_TYPE>::value) {
+        std::cerr << "Conversion to 8-bit" << std::endl;
+        to_8bit(IN, &TrueIN, nx, ny, &slope, &offset); // this allocates TrueIN
+        TrueOUT = (PIX_TYPE *) malloc(nx*ny*sizeof(PIX_TYPE));
+    } else {
+        TrueIN = IN;
+        TrueOUT = OUT;
+    }
     open_running_rank(256);
     set_rank(rank);
 
@@ -193,10 +263,18 @@ void gsrank(Type *IN,	/**< [in] pointer to input image */
     while (angle < -90)
 	angle += 180;
     
-    gline(IN,OUT,nx,ny,nk, angle,rank);
+    gline(TrueIN,TrueOUT,nx,ny,nk, angle,rank);
 
     close_running_rank();
 
+    if (!boost::is_same<Type,PIX_TYPE>::value) {
+        std::cerr << "Conversion from 8-bit" << std::endl;
+        from_8bit(TrueOUT, OUT, nx, ny, slope, offset);
+        free(TrueOUT);
+        free(TrueIN);
+    } else {
+        // nothing to do !
+    }
 }
 
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<testsuite errors="0" failures="0" name="pinktest.geodilat.geodilat" tests="4" time="0.000">
+	<testcase classname="pinktest.geodilat.geodilat" name="test_0" time="0.000"/>
+	<testcase classname="pinktest.geodilat.geodilat" name="test_1" time="0.000"/>
+	<testcase classname="pinktest.geodilat.geodilat" name="test_2" time="0.000"/>
+	<testcase classname="pinktest.geodilat.geodilat" name="test_3" time="0.000"/>
+	<system-out>
+<![CDATA[]]>	</system-out>
+	<system-err>
+<![CDATA[]]>	</system-err>
+</testsuite>

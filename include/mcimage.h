@@ -147,28 +147,28 @@ extern double * image2list(struct xvimage * image, index_t *n);
 */  
 extern void writeimage(
   struct xvimage * image,
-  char *filename
+  const char *filename
 );
 
 extern void writese(
   struct xvimage * image,
-  char *filename,
+  const char *filename,
   index_t x, index_t y, index_t z
 );
 
 extern void writelongimage(
   struct xvimage * image,
-  char *filename
+  const char *filename
 );
 
 extern void writerawimage(
   struct xvimage * image,
-  char *filename
+  const char *filename
 );
 
 extern void writeascimage(
   struct xvimage * image,
-  char *filename
+  const char *filename
 );
 
 extern void printimage(
@@ -179,14 +179,14 @@ extern void writergbimage(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
-  char *filename
+  const char *filename
 );
 
 extern void writergbascimage(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
-  char *filename
+  const char *filename
 );
 
 /**
@@ -200,24 +200,24 @@ extern struct xvimage * readimage(
 );
 
 extern struct xvimage * readheader(
-  char *filename
+  const char *filename
 );
 
-extern struct xvimage * readse(char *filename, index_t *x, index_t *y, index_t*z);
+extern struct xvimage * readse(const char *filename, index_t *x, index_t *y, index_t*z);
 
 extern struct xvimage * readlongimage(
-  char *filename
+  const char *filename
 );
 
 extern int32_t readrgbimage(
-  char *filename,
+  const char *filename,
   struct xvimage ** r,
   struct xvimage ** g,
   struct xvimage ** b
 );
 
 extern int32_t readbmp(
-  char *filename, 
+  const char *filename, 
   struct xvimage ** r, 
   struct xvimage ** g, 
   struct xvimage ** b
@@ -227,11 +227,11 @@ extern void writebmp(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
-  char *filename
+  const char *filename
 );
 
 extern int32_t readrgb(
-  char *filename, 
+  const char *filename, 
   struct xvimage ** r, 
   struct xvimage ** g, 
   struct xvimage ** b
@@ -241,8 +241,8 @@ extern int32_t convertgen(struct xvimage **f1, struct xvimage **f2);
 extern int32_t convertlong(struct xvimage **f1);
 extern int32_t convertfloat(struct xvimage **f1);
 
-extern void writelist2(char *filename, int32_t *x, int32_t *y, int32_t npoints);
-extern void writelist3(char *filename, int32_t *x, int32_t *y, int32_t *z, int32_t npoints);
+extern void writelist2(const char *filename, int32_t *x, int32_t *y, int32_t npoints);
+extern void writelist3(const char *filename, int32_t *x, int32_t *y, int32_t *z, int32_t npoints);
 
 #ifdef __cplusplus
 } /* extern "C" */

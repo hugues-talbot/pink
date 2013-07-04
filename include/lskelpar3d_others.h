@@ -142,6 +142,10 @@ extern int32_t llohoubertrand12dir2004(
 extern int32_t llohoubertrand6dir2005(
 				  struct xvimage *image,
 				  int32_t nsteps);
+extern int32_t lmanzanerasurf1999(	  
+				  struct xvimage *image,
+				  struct xvimage *inhibit,				  
+				  int32_t nsteps);
 #ifdef __cplusplus
 }
 #endif

@@ -9,6 +9,7 @@
 #define LOPENBUN_HPP
 
 #include <cmath>
+#include <limits>  // for type min(), max()
 #include "liarp.h"
 
 /** \brief opening by union of lines
@@ -69,7 +70,8 @@ int compute_openbun(const Type *in, /**< [in] input buffer */
  * This is a classical filter in mathematical morphology for preserving thin, locally straight objects.
  * The segments all have a length in pixels that depends on the orientation, so that they all have the
  * same Euclidean length.
- * 
+ *
+ * If the input image is 3D, the operator is repeated on every plane
  * 
  * \return 0 if no error in execution
  */
@@ -77,19 +79,20 @@ template <typename Type>
 int compute_openbun_limits(Type *in,       /**< [in] input buffer */
 			   int nx,	   /**< [in] number of columns (x dimension) of the input image */
 			   int ny,	   /**< [in] number of lines (y dimensions) of the input image */
+                           int nz,         /**< [in] number of planes (z dimensions) of the input image */
 			   int radius,	   /**< [in] length of all segments */ 
 			   int n,	   /**< [in] number of segments to consider */
 			   double angle,   /**< [in] starting angle */	 
 			   double range,   /**< [in] angle range */
 			   Type *out       /**< [out] output buffer (can be same as input) */)
 {
-  int i,j,k,anglek,size;
+    int i,j,k,anglek;
     Type *wk;
     double degrees,th,limit1,limit2;
+    long planesize = nx*ny, totalsize = nx*ny*nz;
 
-    size = nx*ny;
-    /* calloc() args swapped */
-    wk = (Type *)calloc(size, sizeof(Type));
+    /* we allocate the whole cube of data, but we do not initialize it */
+    wk = (Type *)malloc(totalsize * sizeof(Type));
     if(!wk) {
         LIARerror("lopenbun: Not enough memory\n");
         return 1;
@@ -108,18 +111,30 @@ int compute_openbun_limits(Type *in,       /**< [in] input buffer */
     else
 	degrees = (180 + limit2 - limit1)/(double)n;
 
-    memset(out,0,size*sizeof(Type));
+    /* initially the output image is -\infty */
+    memset(out,std::numeric_limits<Type>::min(),totalsize*sizeof(Type));
+    /* a single copy of the whole data */
+    memcpy(wk,in,totalsize*sizeof(Type));
+
     for(th = limit1,i=0;i<n;++i) {
-      double theta = th*M_PI/180.0;
-      double isofactor = liarmax(std::fabs(k*std::cos(theta)), std::fabs(k*std::sin(theta)));
-      anglek = (int)std::ceil(isofactor);
-	memcpy(wk,in,size*sizeof(Type));
-	glineminmax(wk,nx,ny,anglek,(int)th,computemin,computebresen);
-	glineminmax(wk,nx,ny,anglek,(int)th,computemax,computebresen);
-	for(j=0;j<size;j++,out++,wk++)
-	    *out = *out > *wk ? *out : *wk;
-	out -= size;
-	wk -= size;
+        double theta = th*M_PI/180.0;
+        double isofactor = liarmax(std::fabs(k*std::cos(theta)), std::fabs(k*std::sin(theta)));
+        anglek = (int)std::ceil(isofactor);
+	//memcpy(wk,in,size*sizeof(Type));
+        /* these functions only work in 2D */
+        for (int z = 0 ; z < nz ; ++z) {
+            int deltaz = z * planesize;
+            /* in-place computation */
+            glineminmax(wk+deltaz,nx,ny,anglek,(int)th,computemin,computebresen);
+            glineminmax(wk+deltaz,nx,ny,anglek,(int)th,computemax,computebresen);
+            /* take max */
+            Type *pout = out+deltaz;
+            Type *wkout = wk + deltaz;
+            for(j=0; j < planesize ; j++,out++,wk++)
+                *pout = (*pout > *wkout) ? *pout : *wkout;
+            //out -= size;
+            //wk -= size;
+        }
 	th += degrees;
 	if (th>90.0)
 	    th-=180.0;
@@ -147,8 +162,7 @@ int compute_openbun_limits(Type *in,       /**< [in] input buffer */
  * with other improvements. Tankyevych showed these filters were best in very noisy conditions to 
  * segment thin objects.
  * 
- * The segments all have a length 2*radius+1, this means this filters out more lines near 45 degree
- * than either horizontal or vertical lines.
+ * The segments have all approximately the same Euclidean length so as not to create a directional bias.
  * 
  * Due to the way the rank filter is implemented, this is only efficient for 8-bit images.
  * 
@@ -159,6 +173,7 @@ template <typename Type>
 int compute_openbun_rankmax(Type *in,	     /**< [in] buffer */
 			    int nx,	     /**< [in] number of columns */
 			    int ny,	     /**< [in] number of rows */
+                            int nz,          /**< [in] number of planes */
 			    int radius,	     /**< [in] radius of search circle */
 			    int n,	     /**< [in] number of lines considered  */
 			    double angle,    /**< [in] center angle */
@@ -166,20 +181,23 @@ int compute_openbun_rankmax(Type *in,	     /**< [in] buffer */
 			    double rank,     /**< [in] 0 <= rank <= 1 */
 			    Type *out        /**< [out] Output buffer */)			    
 {
-  int i,j,k,anglek,size;
+    int i,j,k,anglek,planesize;
     Type *wk, *wk2;
     double degrees,th,limit1,limit2;
+    long totalsize = nx*ny*nz;
+    
+    planesize = nx*ny;
 
-    size = nx*ny;
-    /* calloc() args swapped */
-    wk = (Type *)calloc(size, sizeof(Type));
+    /* allocate all 3D block */
+    wk = (Type *)malloc(totalsize * sizeof(Type));
     if(!wk) {
         LIARerror("lopenbun: Not enough memory\n");
         return 1;
     }
     /* calloc() args swapped */
-    wk2 = (Type *)calloc(size, sizeof(Type));
+    wk2 = (Type *)malloc(totalsize * sizeof(Type));
     if(!wk2) {
+        free(wk); // useless now.
         LIARerror("lopenbun: Not enough memory\n");
         return 1;
     }
@@ -199,7 +217,8 @@ int compute_openbun_rankmax(Type *in,	     /**< [in] buffer */
     else
 	degrees = (180 + limit2 - limit1)/(double)n;
 
-    memset(out,0,size*sizeof(Type));
+    /* set the initial value to -\infty */
+    memset(out,std::numeric_limits<Type>::min(),totalsize*sizeof(Type));
     for(th = limit1,i=0;i<n;++i) {
       double theta = th*M_PI/180.0;
       double isofactor = liarmax(std::fabs(k*std::cos(theta)), std::fabs(k*std::sin(theta)));
@@ -208,18 +227,21 @@ int compute_openbun_rankmax(Type *in,	     /**< [in] buffer */
 	--anglek; // so that anglek remains even, see above
 
       //fprintf(stderr,"Theta = %g (degree), Anglek = %d\n", th, anglek);
-
-	gsrank(in, wk2, nx, ny, anglek, (double)((int)th), rank);
-	glineminmax(wk2,nx,ny,anglek,(int)th,computemax,computebresen);
-	li_min(in, wk2, wk, nx*ny);
-
-	for(j=0;j<size;j++,out++,wk++)
-	    *out = *out > *wk ? *out : *wk;
-	out -= size;
-	wk -= size;
-	th += degrees;
-	if (th>90.0)
-	    th-=180.0;
+      for (int z = 0 ; z < nz ; ++z) {
+          int deltaz = z * planesize;
+          gsrank(in + deltaz, wk2 + deltaz, nx, ny, anglek, (double)((int)th), rank);
+          glineminmax(wk2+deltaz,nx,ny,anglek,(int)th,computemax,computebresen);
+          li_min(in+deltaz, wk2+deltaz, wk+deltaz, planesize);
+          // take max of all directions
+          Type *pout = out + deltaz;
+          Type *wkout = wk + deltaz;
+          for(j=0;j<planesize;j++,out++,wk++)
+              *pout = (*pout > *wkout) ? *pout : *wkout;
+      }
+          
+      th += degrees;
+      if (th>90.0)
+          th-=180.0;
     }
     free(wk);
     free(wk2);

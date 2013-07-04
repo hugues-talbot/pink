@@ -141,11 +141,11 @@ void fclosepoly_export();
 void fopenrect_export();
 void fopenpoly_export();
 void RPO_export();
+void UnionRPO_export();
 void BilateralFilter_export();
 void NonLocalFilter_export();
 void NonLocalFilterSioux_export();
 void Rotation3D_export();
-//void RPO_parallel_export();
 void fopenline3d_export();
 
 // opening by unions of lines
@@ -401,11 +401,11 @@ BOOST_PYTHON_MODULE(libcpp_pink)
   fopenrect_export();
   fopenpoly_export();
   RPO_export();
+  UnionRPO_export();
   BilateralFilter_export();
   NonLocalFilter_export();
   NonLocalFilterSioux_export();
   Rotation3D_export();
-  //RPO_parallel_export();
   fopenline3d_export();
   
   openbun_export();

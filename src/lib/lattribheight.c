@@ -613,31 +613,30 @@ int32_t lheightmaxima(struct xvimage *image, int32_t connex, int32_t param)
 } /* lheightmaxima() */
 
 /* ==================================== */
-int32_t lheightselnb(struct xvimage *image, int32_t connex, int32_t param, int32_t mode)
+int32_t lheightselnb(struct xvimage *image, int32_t connex, int32_t param)
 /* ==================================== */
 /* 
   param: nombre de composantes a trouver
-  mode: parametre obsolete
 */
 {
-  register index_t i, k;         /* index muet */
+  register index_t i, k;            /* index muet */
   index_t rs = rowsize(image);      /* taille ligne */
   index_t cs = colsize(image);      /* taille colonne */
   index_t ds = depth(image);        /* nb plans */
   index_t ps = rs * cs;             /* taille plan */
   index_t N = ps * ds;              /* taille image */
-  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  Fahs * FAHS;                    /* la file d'attente hierarchique */
+  uint8_t *F = UCHARDATA(image);    /* l'image de depart */
+  Fahs * FAHS;                      /* la file d'attente hierarchique */
   int32_t incr_vois;                /* 1 pour la 8-connexite,  2 pour la 4-connexite */
   indexcomp_t *STATUS;         /* etat d'un pixel - doit etre initialise a NOT_ANALYZED */
-                                /* en sortie, contient le numero de la composante de niveau h */
-                                /* qui contient le pixel (avec h = valeur du pixel) */
+                               /* en sortie, contient le numero de la composante de niveau h */
+                               /* qui contient le pixel (avec h = valeur du pixel) */
   indexcomp_t *number_nodes;   /* nombre de composantes par niveau */
   uint8_t *node_at_level; /* tableau de booleens */
-  CompTree * TREE;              /* resultat : l'arbre des composantes */
+  CompTree * TREE;             /* resultat : l'arbre des composantes */
   CompactTree * cpct;          /* resultat : l'arbre des composantes compacte' */
   int32_t nbcomp, nbfeuilles;
-  int32_t *A;                       /* tableau pour le tri des composantes par hauteurs croissantes */
+  int32_t *A;                  /* tableau pour le tri des composantes par hauteurs croissantes */
 
   switch (connex)
     {

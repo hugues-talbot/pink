@@ -23,6 +23,7 @@
  *
  *-----------------------------------------------------------------------*/
 
+#include <cmath>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -30,6 +31,7 @@
 #include "mccodimage.h"
 #include "rotate3d.h"
 #include "rotate3d_generic.hpp"
+#include "pinkconst.h"
 
 
 
@@ -55,6 +57,36 @@
  * \date 08 Jan 1999
 */
 
+
+// this function does not exist on Windows(tm)
+double pink::rint( double x) 
+// Copyright (C) 2001 Tor M. Aamodt, University of Toronto
+// Permisssion to use for all purposes commercial and otherwise granted.
+// THIS MATERIAL IS PROVIDED "AS IS" WITHOUT WARRANTY, OR ANY CONDITION OR
+// OTHER TERM OF ANY KIND INCLUDING, WITHOUT LIMITATION, ANY WARRANTY
+// OF MERCHANTABILITY, SATISFACTORY QUALITY, OR FITNESS FOR A PARTICULAR
+// PURPOSE.
+{
+    if( x > 0 ) {
+      int64_t xint = static_cast<int64_t>(x+0.5);
+      if( xint % 2 ) {
+	// then we might have an even number...
+	double diff = x - static_cast<double>(xint);
+	if( diff == -0.5 )
+	  return double(xint-1);
+      }
+      return double(xint);
+    } else {
+      int64_t xint = static_cast<int64_t>(x-0.5);
+      if( xint % 2 ) {
+	// then we might have an even number...
+	double diff = x - static_cast<double>(xint);
+	if( diff == 0.5 )
+	  return double(xint+1);
+      }
+      return double(xint);
+    }
+} // rint
 
 
 	
@@ -210,8 +242,8 @@ int neworig2d(int oldx,  /* old origin, from top-left corner */
 	retval = 1;
     }
 
-    *newx = rint(deltax + x2);
-    *newy = rint(deltay + y2);
+    *newx = pink::rint(deltax + x2);
+    *newy = pink::rint(deltay + y2);
 	
     return retval;
 
@@ -237,12 +269,14 @@ template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int 
 #undef Type
 #define Type float
 template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0); 
-#undef Type
-#define Type fcomplex
-template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0);
-#undef Type
-#define Type dcomplex
-template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0);
+
+// error C3416: 'lrotate3d' : an explicit specialization may not be explicitly instantiated
+// #undef Type
+// #define Type fcomplex
+// template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0);
+// #undef Type
+// #define Type dcomplex
+// template int lrotate3d(Type *bufin, Type **bufout, int inx, int iny,int inz,int *fnx,int *fny,int *fnz,double alpha,double beta,double gamma,int interpolate,int value,int rmbdr,int row0,int col0,int slice0);
     
 
 

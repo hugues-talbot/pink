@@ -1,20 +1,30 @@
+/*! \file glinem_generic.hpp
+
+\brief min-max on a line segment
+
+<B>Description:</B>
+
+Functions in this file implement the low-level min-max along a line segment arbitrarily oriented in 2D.
+
+<B>Types supported:</B> generic
+
+<B>Category:</B> morpho
+\ingroup morpho
+
+\author Hugues Talbot, based on earlier code by Ronald Jones, Ed Breen, Richard Beare and others.
+*/
+
 /*
  * File:		glinemm.c
  *
- * Written by:		Image Analysis Group staff,
+ * Written by:		Image Analysis Group,
  * 			CSIRO Mathematical and Information Sciences.
  *
  * Date:		March 2001
  *
  *
- * CSIRO Mathematical and Information Sciences is the owner of all
- * copyright subsisting in the software contained in this file. It may
- * not be disclosed to, or used by, anyone without the prior approval
- * of the Chief, CSIRO Mathematical and Information Sciences.
- *
-*/
+ */
 
-/* $Id: glinemm_generic.h,v 1.7 2003/04/17 08:26:22 kcheong Exp $ */
 /* changed for pthread use  and as a generic 22/05/2002 Yves Leveque, Richard Beare, CSIRO.
 * it must be used with glinemm.c
  * converted into a stand-alone C file by Hugues Talbot	13 Mar 1995
@@ -64,9 +74,9 @@ DESCRIPTION:
 HISTORY:
 	Written by Ed Breen and modified by Ronald Jones. CSIRO DMS.
 	Minor changes by Hugues Talbot	20 Mar 1995
-
-	pthread adds: 22/05/02 by Yves Leveque and Richard Beare .CSIRO.
-
+	pthread adds: 22/05/02 by Yves Leveque and Richard Beare.
+        template: Hugues Talbot, ESIEE. Commented out pthread stuff as well.
+        
 TESTS: Linted and purified, tested with experience.
 **/
 

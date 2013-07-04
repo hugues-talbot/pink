@@ -127,7 +127,7 @@ void drawLine(uint8_t * mask, int32_t length, int32_t x2, int32_t y2, int32_t qu
 // Get the max_value of two images and write it into img1 
 
 /* =============================================================== */
-void max(struct xvimage * img1, struct xvimage * img2) 
+void imagemax(struct xvimage * img1, struct xvimage * img2) 
 /* =============================================================== */
 {
 	index_t i, N;
@@ -292,10 +292,10 @@ int main(int argc, char **argv)
 
  	close_image(closed_image, image, mask, length/2+1, length/2+1);
 #ifdef DEBUG
-	max(result_imageII, closed_image);
+	imagemax(result_imageII, closed_image);
 #endif
  	sub(closed_image, image);
- 	max(result_image, closed_image);
+ 	imagemax(result_image, closed_image);
  	
  	
  	//Second Quater
@@ -311,10 +311,10 @@ int main(int argc, char **argv)
 
  	close_image(closed_image, image, mask, length/2+1, length/2+1);
 #ifdef DEBUG
-	max(result_imageII, closed_image);
+	imagemax(result_imageII, closed_image);
 #endif
  	sub(closed_image, image);
- 	max(result_image, closed_image);
+ 	imagemax(result_image, closed_image);
  	
  	
  	//Third Quater
@@ -330,10 +330,10 @@ int main(int argc, char **argv)
  	
  	close_image(closed_image, image, mask, length/2+1, length/2+1);
 #ifdef DEBUG
-	max(result_imageII, closed_image);
+	imagemax(result_imageII, closed_image);
 #endif
  	sub(closed_image, image);
- 	max(result_image, closed_image);
+ 	imagemax(result_image, closed_image);
  	  	
  	//Fourth Quater
  	//reset mask_data
@@ -348,10 +348,10 @@ int main(int argc, char **argv)
  	
  	close_image(closed_image, image, mask, length/2+1, length/2+1);
 #ifdef DEBUG
-	max(result_imageII, closed_image);
+	imagemax(result_imageII, closed_image);
 #endif
  	sub(closed_image, image);
- 	max(result_image, closed_image);
+ 	imagemax(result_image, closed_image);
  }
  
    

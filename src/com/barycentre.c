@@ -41,7 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 <B>Description:</B> 
 Compute the center of gravity of each connected component.
 
-<B>Types supported:</B> byte 2d
+<B>Types supported:</B> byte 2d, byte 3d
 
 <B>Category:</B> geo
 \ingroup  geo

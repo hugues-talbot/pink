@@ -38,7 +38,7 @@ void BilateralFilter<PixelType>::Execute3D()
   	//copy of the input data
 	std::memcpy(&outputI[0], &image[0],image_size*sizeof(PixelType));
 
-    int const r_window=floor(window_size/2);
+	int const r_window=floor(static_cast<double>(window_size/2));
 
 
     int z, y ,x, dz, dy, dx;
@@ -68,7 +68,7 @@ void BilateralFilter<PixelType>::Execute3D()
 
                             if ((X>=0) && (X<dimx) && (Y>=0) && (Y<dimy) && (Z>=0) && (Z<dimz)) // If the current pixel is inside the image
                             {
-                                double d=sqrt(dx*dx+dy*dy+dz*dz); // Distance between the central pixel and the current pixel
+                                double d=sqrt(static_cast<double>(dx*dx+dy*dy+dz*dz)); // Distance between the central pixel and the current pixel
                                 int d1=(image[index3D(X,Y,Z)]-image[index3D(x,y,z)]);
                                 int dI=d1*d1; // Difference of intensity between the central pixel and the current pixel
 
@@ -100,7 +100,7 @@ void BilateralFilter<PixelType>::Execute2D()
   	//copy of the input data
 	std::memcpy(&outputI[0], &image[0],image_size*sizeof(PixelType));
 
-    int const r_window=floor(window_size/2);
+	int const r_window=floor(static_cast<double>(window_size/2));
 
 
     int y ,x, dy, dx;
@@ -124,7 +124,7 @@ void BilateralFilter<PixelType>::Execute2D()
 
                     if ((X>=0) && (X<dimx) && (Y>=0) && (Y<dimy)) // If the current pixel is inside the image
                     {
-                        double d=sqrt(dx*dx+dy*dy); // Distance between the central pixel and the current pixel
+		      double d=sqrt(static_cast<double>(dx*dx+dy*dy)); // Distance between the central pixel and the current pixel
                         int d1=(image[index2D(X,Y)]-image[index2D(x,y)]);
                         int dI=d1*d1; // Difference of intensity between the central pixel and the current pixel
 

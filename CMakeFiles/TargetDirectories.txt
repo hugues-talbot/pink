@@ -1,1 +1,0 @@
-/home/merveilo/Projets/pink/lib/CMakeFiles/pink.dir

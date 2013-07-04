@@ -45,7 +45,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
    Update janvier 2000 : generation d'una animation (flag ANIMATE)
    Update janvier 2001 : mise a jour 2D-3D 
-   Update juin 2004  : "écriture" d'une version sans ligne
+   Update juin 2004  : "ï¿½criture" d'une version sans ligne
 */
 
 /*
@@ -70,7 +70,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #define EN_FAH   0
 
 /* ==================================== */
-int32_t llpemeyer_NotIn(int32_t e, int32_t *list, int32_t n)                       
+static
+int32_t NotIn(int32_t e, int32_t *list, int32_t n)                       
 /* ==================================== */
 {
 /* renvoie 1 si e n'est pas dans list, 0 sinon */
@@ -80,10 +81,10 @@ int32_t llpemeyer_NotIn(int32_t e, int32_t *list, int32_t n)
   while (n > 0)
     if (list[--n] == e) return 0;
   return 1;
-} /* llpemeyer_NotIn() */
+} /* NotIn() */
 
 /* ==================================== */
-int32_t llpemeyer(
+int32_t llpemeyer_llpemeyer(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -118,7 +119,7 @@ int32_t llpemeyer(
 #endif
 
   if (depth(image) != 1) 
-    return llpemeyer3d(image, marqueurs, marqueursfond, masque, connex);
+    return llpemeyer_llpemeyer3d(image, marqueurs, marqueursfond, masque, connex);
 
   ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
   ACCEPTED_TYPES1(marqueurs, VFF_TYP_1_BYTE);
@@ -264,7 +265,7 @@ int32_t llpemeyer(
     for (k = 0; k < 8; k += incr_vois)
     {
       y = voisin(x, k, rs, N);
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -309,16 +310,16 @@ int32_t llpemeyer(
 } // llpemeyer()
 
 /* ==================================== */
-int32_t llpemeyer2(
+int32_t llpemeyer_llpemeyer2(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *masque,
         int32_t connex)
 /* ==================================== */
 // marqueurs: image initiale de labels
-// le résultat du traitement se trouve dans marqueurs (image de labels)
+// le rï¿½sultat du traitement se trouve dans marqueurs (image de labels)
 // et dans image (binaire)
-// LPE avec ligne de séparation
+// LPE avec ligne de sï¿½paration
 #undef F_NAME
 #define F_NAME "llpemeyer2"
 {
@@ -338,7 +339,7 @@ int32_t llpemeyer2(
   index_t nlabels;
 
   if (depth(image) != 1) 
-    return llpemeyer3d2(image, marqueurs, masque, connex);
+    return llpemeyer_llpemeyer3d2(image, marqueurs, masque, connex);
 
   ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
   ACCEPTED_TYPES1(marqueurs, VFF_TYP_4_BYTE);
@@ -408,7 +409,7 @@ int32_t llpemeyer2(
     for (k = 0; k < 8; k += incr_vois)
     {
       y = voisin(x, k, rs, N);
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -458,13 +459,13 @@ int32_t llpemeyer2lab(
         int32_t connex)
 /* ==================================== */
 // marqueurs: image initiale de labels
-// le résultat du traitement se trouve dans marqueurs (image de labels)
+// le rï¿½sultat du traitement se trouve dans marqueurs (image de labels)
 // et dans image (binaire)
-// LPE avec ligne de séparation
+// LPE avec ligne de sï¿½paration
 #undef F_NAME
 #define F_NAME "llpemeyer2lab"
 {
-  return llpemeyer2(image, marqueurs, masque, connex);
+  return llpemeyer_llpemeyer2(image, marqueurs, masque, connex);
 } // llpemeyer2lab()
 
 /* ==================================== */
@@ -474,13 +475,13 @@ int32_t llpemeyer2lab_nomask(
         int32_t connex)
 /* ==================================== */
 // marqueurs: image initiale de labels
-// le résultat du traitement se trouve dans marqueurs (image de labels)
+// le rï¿½sultat du traitement se trouve dans marqueurs (image de labels)
 // et dans image (binaire)
-// LPE avec ligne de séparation
+// LPE avec ligne de sï¿½paration
 #undef F_NAME
 #define F_NAME "llpemeyer2lab_nomask"
 {
-  return llpemeyer2(image, marqueurs, NULL, connex);
+  return llpemeyer_llpemeyer2(image, marqueurs, NULL, connex);
 } // llpemeyer2lab_nomask()
 
 /* ==================================== */
@@ -490,8 +491,8 @@ int32_t llpemeyer3(
         struct xvimage *masque,
         int32_t connex)
 /* ==================================== */
-// version sans ligne de séparation
-// le résultat se trouve dans marqueurs
+// version sans ligne de sï¿½paration
+// le rï¿½sultat se trouve dans marqueurs
 #undef F_NAME
 #define F_NAME "llpemeyer3"
 {
@@ -608,7 +609,7 @@ int32_t llpemeyer3(
     for (k = 0; k < 8; k += incr_vois)
     {
       y = voisin(x, k, rs, N);
-      if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -639,7 +640,7 @@ int32_t llpemeyer3(
 } // llpemeyer3()
 
  /* ==================================== */
- int32_t llpemeyerkhalimsky(
+ int32_t llpemeyer_llpemeyerkhalimsky(
          struct xvimage *image,
          struct xvimage *marqueurs,
          struct xvimage *marqueursfond,
@@ -839,7 +840,7 @@ int32_t llpemeyer3(
      for (k = 0; k < n; k++) /* parcourt les eventuels theta-voisins */
      {
        y = tab[k];
-       if ((M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+       if ((M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
        {
          etiqcc[ncc] = M[y];        
          ncc += 1;
@@ -887,7 +888,7 @@ int32_t llpemeyer3(
  } /* llpemeyerkhalimsky() */
 
 /* ==================================== */
-int32_t llpemeyersansligne(
+int32_t llpemeyer_llpemeyersansligne(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -1108,7 +1109,7 @@ int32_t llpemeyersansligne(
     for (k = 0; k < 8; k += incr_vois)
     {
       y = voisin(x, k, rs, N);
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -1140,7 +1141,7 @@ int32_t llpemeyersansligne(
 } // llpemeyersansligne()
 
 /* ==================================== */
-int32_t llpemeyersanslignelab(
+int32_t llpemeyer_llpemeyersanslignelab(
         struct xvimage *image,
         struct xvimage *marqueurs, // marqueur initial et resultat
         struct xvimage *masque,
@@ -1258,7 +1259,7 @@ int32_t llpemeyersanslignelab(
     for (k = 0; k < 8; k += incr_vois)
     {
       y = voisin(x, k, rs, N);
-      if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -1301,12 +1302,12 @@ int32_t llpemeyer2_nomask(
    H. Talbot  2011/02/10
    ====================================*/
 {
-    return llpemeyer2(image, marqueurs, NULL, connex);
+    return llpemeyer_llpemeyer2(image, marqueurs, NULL, connex);
 }
    
 
 /* ==================================== */
-int32_t llpemeyer3d(
+int32_t llpemeyer_llpemeyer3d(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -1510,7 +1511,7 @@ int32_t llpemeyer3d(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1521,7 +1522,7 @@ int32_t llpemeyer3d(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1532,7 +1533,7 @@ int32_t llpemeyer3d(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1605,7 +1606,7 @@ int32_t llpemeyer3d(
 } /* llpemeyer3d() */
 
 /* ==================================== */
-int32_t llpemeyer3dsansligne(
+int32_t llpemeyer_llpemeyer3dsansligne(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -1851,7 +1852,7 @@ int32_t llpemeyer3dsansligne(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1862,7 +1863,7 @@ int32_t llpemeyer3dsansligne(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1873,7 +1874,7 @@ int32_t llpemeyer3dsansligne(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1933,7 +1934,7 @@ int32_t llpemeyer3dsansligne(
 } /* llpemeyer3dsansligne() */
 
 /* ==================================== */
-int32_t llpemeyer3dsanslignelab(
+int32_t llpemeyer_llpemeyer3dsanslignelab(
         struct xvimage *image,
         struct xvimage *marqueurs, // entree-sortie
         struct xvimage *masque,
@@ -2061,7 +2062,7 @@ int32_t llpemeyer3dsanslignelab(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2072,7 +2073,7 @@ int32_t llpemeyer3dsanslignelab(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2083,7 +2084,7 @@ int32_t llpemeyer3dsanslignelab(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2143,16 +2144,16 @@ int32_t llpemeyer3dsanslignelab(
 } /* llpemeyer3dsanslignelab() */
 
 /* ==================================== */
-int32_t llpemeyer3d2(
+int32_t llpemeyer_llpemeyer3d2(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *masque,
         int32_t connex)
 /* ==================================== */
 // marqueurs: image initiale de labels
-// le résultat du traitement se trouve dans marqueurs (image de labels)
+// le rï¿½sultat du traitement se trouve dans marqueurs (image de labels)
 // et dans image (binaire)
-// LPE avec ligne de séparation
+// LPE avec ligne de sï¿½paration
 {
 #undef F_NAME
 #define F_NAME "llpemeyer3d2"
@@ -2255,7 +2256,7 @@ int32_t llpemeyer3d2(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2266,7 +2267,7 @@ int32_t llpemeyer3d2(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2277,7 +2278,7 @@ int32_t llpemeyer3d2(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2351,17 +2352,17 @@ int32_t llpemeyer3d2(
 } /* llpemeyer3d2() */
 
 /* ==================================== */
-int32_t llpemeyer3d2b(
+int32_t llpemeyer_llpemeyer3d2b(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *masque,
         int32_t connex)
 /* ==================================== */
 // marqueurs: image initiale de labels
-// le résultat du traitement se trouve dans marqueurs (image de labels)
+// le rï¿½sultat du traitement se trouve dans marqueurs (image de labels)
 // et dans image (binaire)
-// LPE avec ligne de séparation
-// labels différents pour les voxels de la LPE :
+// LPE avec ligne de sï¿½paration
+// labels diffï¿½rents pour les voxels de la LPE :
 //   soit n le dernier label de l'image marqueurs, 
 //   si v est voisin de 2 labels i et j alors son label sera j*(n+1)+i, avec i<j
 //   s'il est voisin de plus de 2 labels alors son label sera n+1
@@ -2496,7 +2497,7 @@ int32_t llpemeyer3d2b(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] <= nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] <= nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2507,7 +2508,7 @@ int32_t llpemeyer3d2b(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] <= nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] <= nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2518,7 +2519,7 @@ int32_t llpemeyer3d2b(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] <= nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] <= nlabels) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2604,8 +2605,8 @@ int32_t llpemeyer3d3(
         int32_t connex)
 /* ==================================== */
 // marqueurs: image initiale de labels
-// le résultat du traitement se trouve dans marqueurs
-// LPE sans ligne de séparation
+// le rï¿½sultat du traitement se trouve dans marqueurs
+// LPE sans ligne de sï¿½paration
 #undef F_NAME
 #define F_NAME "llpemeyer3d3"
 {
@@ -2733,7 +2734,7 @@ int32_t llpemeyer3d3(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2744,7 +2745,7 @@ int32_t llpemeyer3d3(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2755,7 +2756,7 @@ int32_t llpemeyer3d3(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2818,7 +2819,7 @@ int32_t llpemeyer3d3(
 } /* llpemeyer3d3() */
 
 /* ==================================== */
-int32_t llpemeyerbiconnecte(
+int32_t llpemeyer_llpemeyerbiconnecte(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -3025,7 +3026,7 @@ int32_t llpemeyerbiconnecte(
     for (k = 0; k < 6; k += incr_vois)
     {
       y = voisin6b(x, k, rs, N, parite);
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -3071,7 +3072,7 @@ int32_t llpemeyerbiconnecte(
 
 
 /* ==================================== */
-int32_t llpemeyerbiconnecte3d(
+int32_t llpemeyer_llpemeyerbiconnecte3d(
         struct xvimage *image,
         struct xvimage *marqueurs,
         struct xvimage *marqueursfond,
@@ -3243,7 +3244,7 @@ int32_t llpemeyerbiconnecte3d(
     {
       y = voisin14b(x, k, rs, n, N);
       assert(y < N);     // sinon on innonde en dehors de l'image
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
       {
 	etiqcc[ncc] = M[y];        	
 	ncc += 1;
