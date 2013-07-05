@@ -216,6 +216,58 @@ void createNeighbourhood(	int nb_col,
 
     }
     
+        //depth orientation (version 2) [1 0 0]
+    if((depth_shift == 2 && line_shift == 0 && col_shift == 0) ||
+       (depth_shift == -2 && line_shift == 0 && col_shift == 0) ) {
+
+       upList.push_back( dim_frame - 1);
+       upList.push_back( dim_frame - nb_col);
+       upList.push_back( dim_frame + 1);
+       upList.push_back( dim_frame + nb_col);
+       upList.push_back( dim_frame );
+
+       downList.push_back( -dim_frame + 1);
+       downList.push_back( -dim_frame + nb_col);
+       downList.push_back( -dim_frame - 1);
+       downList.push_back( -dim_frame - nb_col);
+       downList.push_back( -dim_frame );
+
+    }
+    //from up to down main orientation [0 1 0]
+    if((depth_shift == 0 && line_shift == 2 && col_shift == 0) ||
+      (depth_shift == 0 && line_shift == -2 && col_shift == 0)) {
+
+       upList.push_back(nb_col - 1);
+       upList.push_back(dim_frame + nb_col);
+       upList.push_back( nb_col + 1);
+       upList.push_back( -dim_frame + nb_col);
+       upList.push_back( nb_col );
+
+       downList.push_back(-nb_col + 1);
+       downList.push_back(-dim_frame - nb_col);
+       downList.push_back( -nb_col - 1);
+       downList.push_back( dim_frame - nb_col);
+       downList.push_back( -nb_col );
+
+    }
+    //from left to right main orientation [0 0 1]
+    if((depth_shift == 0 && line_shift == 0 && col_shift == 2) ||
+      (depth_shift == 0 && line_shift == 0 && col_shift == -2)) {
+
+       upList.push_back(dim_frame + 1);
+       upList.push_back(-nb_col + 1);
+       upList.push_back(-dim_frame + 1);
+       upList.push_back( nb_col + 1);
+       upList.push_back( 1 );
+
+       downList.push_back(-dim_frame - 1);
+       downList.push_back(nb_col - 1);
+       downList.push_back(dim_frame - 1);
+       downList.push_back( -nb_col - 1);
+       downList.push_back( -1 );
+
+    }
+    
     //1st main diagonal (version2) [2 2 2]
     if((depth_shift == 2 && line_shift == 2 && col_shift == 2) ||
       (depth_shift == -2 && line_shift == -2 && col_shift == -2)) {
@@ -1307,17 +1359,17 @@ template <class T>
 
 	// orientation vector
 	std::vector<int> orientation1(3);
-	orientation1[0] = 1;
+	orientation1[0] = 2;
 	orientation1[1] = 0;
 	orientation1[2] = 0;
 	std::vector<int> orientation2(3);
 	orientation2[0] = 0;
-	orientation2[1] = 1;
+	orientation2[1] = 2;
 	orientation2[2] = 0;
 	std::vector<int> orientation3(3);
 	orientation3[0] = 0;
 	orientation3[1] = 0;
-	orientation3[2] = 1;
+	orientation3[2] = 2;
 	std::vector<int> orientation4(3);
 	orientation4[0] = 2;
 	orientation4[1] = 2;
