@@ -1245,7 +1245,7 @@ static int32_t flood(int32_t h,                 /* niveau a inonder */
   node_at_level[h] = 1; /* CORRECTION BUG: LIGNE AJOUTEE LE 02/08/00 */
   while (!FahVideNiveau(FAH, h))               /* first step : propagation */
   {                                            /* ======================== */
-    p = FahPopNiveau(FAH, h);
+      p = 0 ; // FahPopNiveau(FAH, h); // HT: function does not exist
     STATUS[p] = number_nodes[h];
 #ifdef DEBUGFLOOD
     printf("STATUS[p] %d\n", STATUS[p]);
@@ -1365,7 +1365,7 @@ static int32_t floodb(int32_t h,                 /* niveau a inonder */
   node_at_level[h] = 1; /* CORRECTION BUG: LIGNE AJOUTEE LE 02/08/00 */
   while (!FahVideNiveau(FAH, h))               /* first step : propagation */
   {                                            /* ======================== */
-    p = FahPopNiveau(FAH, h);
+      p = 0; // FahPopNiveau(FAH, h); // Function does not exist
     STATUS[p] = number_nodes[h];
 #ifdef DEBUGFLOOD
     printf("STATUS[p] %d\n", STATUS[p]);
@@ -1485,7 +1485,7 @@ static int32_t flood3d(
   node_at_level[h] = 1; /* CORRECTION BUG: LIGNE AJOUTEE LE 02/08/00 */
   while (!FahVideNiveau(FAH, h))               /* first step : propagation */
   {                                            /* ======================== */
-    p = FahPopNiveau(FAH, h);
+      p = 0; // FahPopNiveau(FAH, h); // HT: function does not exist
     STATUS[p] = number_nodes[h];
 #ifdef DEBUGFLOOD
     printf("STATUS[p] %d\n", STATUS[p]);
