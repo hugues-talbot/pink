@@ -200,7 +200,7 @@ namespace pink {
     } /* liarUnionRPO*/
 
  template   <class image_t>
-    image_t liarUnionRPO_new_diag
+    image_t liarUnionRPO_v2
     (
       const image_t & input_image,
       const int L,
@@ -227,7 +227,7 @@ namespace pink {
 
         if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE) {
             // call the RPO function
-            UNION_RPO3D_new_diag(output_buffer, output_buffer,L, K, reconstruct, nx, ny, nz);
+            UNION_RPO3D_v2(output_buffer, output_buffer,L, K, reconstruct, nx, ny, nz);
 
         }
          else {
@@ -236,7 +236,46 @@ namespace pink {
         
         return result_image;
 
-    } /* liarUnionRPO_new_diag*/
+    } /* liarUnionRPO_v2*/
+    
+    template   <class image_t>
+    image_t liarUnionRPO_v3
+    (
+      const image_t & input_image,
+      const int L,
+      const int K,
+      const int reconstruct
+    )
+    {
+        int errorcode = 0;
+        image_t result_image = input_image.clone();
+
+	// image structure
+	struct xvimage *outputxvimage = result_image.get_output();
+
+	// dimensions
+	int nx = outputxvimage->row_size;
+    int ny = outputxvimage->col_size;
+    int nz = outputxvimage->depth_size;
+
+	// buffers
+	// this looks weird, but input_buffer is copied immediately inside RPO
+	PixelType *output_buffer = (PixelType*) (outputxvimage->image_data);
+	// at this stage the output buffer contains the input image because of the clone() above
+
+
+        if (outputxvimage->data_storage_type == VFF_TYP_4_BYTE) {
+            // call the RPO function
+            UNION_RPO3D_v3(output_buffer, output_buffer,L, K, reconstruct, nx, ny, nz);
+
+        }
+         else {
+            pink_error("Pixel type not yet supported\n");
+        } 
+        
+        return result_image;
+
+    } /* liarUnionRPO_v3*/
 
 
      template   <class image_t>
@@ -591,8 +630,16 @@ UI_EXPORT_FUNCTION(
   );
 
 UI_EXPORT_FUNCTION(
-  UnionRPO_new_diag,
-  pink::python::liarUnionRPO_new_diag,
+  UnionRPO_v2,
+  pink::python::liarUnionRPO_v2,
+  ( arg("input_image"), arg("L"), arg("K"),arg("reconstruction") ),
+  "Compute the union of the Robust path opening in each orientation (see RPO), given a length L, a noise robustness factor K, and optional reconstruction\n"
+  "Works in 2 and 3 dimensions\n"
+  );
+  
+  UI_EXPORT_FUNCTION(
+  UnionRPO_v3,
+  pink::python::liarUnionRPO_v3,
   ( arg("input_image"), arg("L"), arg("K"),arg("reconstruction") ),
   "Compute the union of the Robust path opening in each orientation (see RPO), given a length L, a noise robustness factor K, and optional reconstruction\n"
   "Works in 2 and 3 dimensions\n"
