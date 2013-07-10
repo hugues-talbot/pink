@@ -395,6 +395,7 @@ if ( PYTHON_FRONT_END )
     #    endif ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
 
     set( LIBS ${LIBS} ${Boost_LIBRARIES} ${PYTHON_LIBRARY} )
+    message( "Python libraries: " ${LIBS} )
 
     # looking for the python library 
     if (THIS_IS_MSVC)
