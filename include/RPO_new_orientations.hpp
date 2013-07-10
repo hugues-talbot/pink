@@ -216,7 +216,7 @@ void createNeighbourhood(	int nb_col,
 
     }
     
-        //depth orientation (version 2) [1 0 0]
+        //depth orientation (version 2) [2 0 0]
     if((depth_shift == 2 && line_shift == 0 && col_shift == 0) ||
        (depth_shift == -2 && line_shift == 0 && col_shift == 0) ) {
 
@@ -233,7 +233,7 @@ void createNeighbourhood(	int nb_col,
        downList.push_back( -dim_frame );
 
     }
-    //from up to down main orientation [0 1 0]
+    //from up to down main orientation (version 2) [0 2 0]
     if((depth_shift == 0 && line_shift == 2 && col_shift == 0) ||
       (depth_shift == 0 && line_shift == -2 && col_shift == 0)) {
 
@@ -250,7 +250,7 @@ void createNeighbourhood(	int nb_col,
        downList.push_back( -nb_col );
 
     }
-    //from left to right main orientation [0 0 1]
+    //from left to right main orientation (version 2) [0 0 2]
     if((depth_shift == 0 && line_shift == 0 && col_shift == 2) ||
       (depth_shift == 0 && line_shift == 0 && col_shift == -2)) {
 
@@ -338,6 +338,88 @@ void createNeighbourhood(	int nb_col,
         downList.push_back(  dim_frame + 1 );
         //main direction
         downList.push_back( dim_frame - nb_col + 1 );
+
+    }
+    
+    //   Version 3
+    
+    //first depth orientation (version 3) [3 0 0]
+    if((depth_shift == 3 && line_shift == 0 && col_shift == 0) ||
+       (depth_shift == -3 && line_shift == 0 && col_shift == 0) ) {
+
+       upList.push_back( dim_frame - 1);
+       upList.push_back( dim_frame + 1);
+       upList.push_back( dim_frame );
+
+       downList.push_back( -dim_frame + 1);
+       downList.push_back( -dim_frame - 1);
+       downList.push_back( -dim_frame );
+    }
+    
+    //second depth orientation (version 3) [4 0 0]
+    if((depth_shift == 4 && line_shift == 0 && col_shift == 0) ||
+       (depth_shift == -4 && line_shift == 0 && col_shift == 0) ) {
+
+       upList.push_back( dim_frame - nb_col);
+       upList.push_back( dim_frame + nb_col);
+       upList.push_back( dim_frame );
+
+       downList.push_back( -dim_frame + nb_col);
+       downList.push_back( -dim_frame - nb_col);
+       downList.push_back( -dim_frame );
+    }
+    
+    //from up to down first main orientation (version 3) [0 3 0]
+    if((depth_shift == 0 && line_shift == 3 && col_shift == 0) ||
+      (depth_shift == 0 && line_shift == -3 && col_shift == 0)) {
+
+       upList.push_back(dim_frame + nb_col);
+       upList.push_back( -dim_frame + nb_col);
+       upList.push_back( nb_col );
+
+       downList.push_back(-dim_frame - nb_col);
+       downList.push_back( dim_frame - nb_col);
+       downList.push_back( -nb_col );
+    }
+       
+    //from up to down second main orientation (version 3) [0 4 0]
+    if((depth_shift == 0 && line_shift == 4 && col_shift == 0) ||
+      (depth_shift == 0 && line_shift == -4 && col_shift == 0)) {
+
+       upList.push_back(nb_col - 1);
+       upList.push_back( nb_col + 1);
+       upList.push_back( nb_col );
+
+       downList.push_back(-nb_col + 1);
+       downList.push_back( -nb_col - 1);
+       downList.push_back( -nb_col );
+
+    }
+    //from left to right main orientation (version 3) [0 0 3]
+    if((depth_shift == 0 && line_shift == 0 && col_shift == 3) ||
+      (depth_shift == 0 && line_shift == 0 && col_shift == -3)) {
+
+       upList.push_back(dim_frame + 1);
+       upList.push_back(-dim_frame + 1);
+       upList.push_back( 1 );
+
+       downList.push_back(-dim_frame - 1);
+       downList.push_back(dim_frame - 1);
+       downList.push_back( -1 );
+
+    }
+
+    //from left to right main orientation (version 4) [0 0 4]
+    if((depth_shift == 0 && line_shift == 0 && col_shift == 4) ||
+      (depth_shift == 0 && line_shift == 0 && col_shift == -4)) {
+
+       upList.push_back(-nb_col + 1);
+       upList.push_back( nb_col + 1);
+       upList.push_back( 1 );
+       
+       downList.push_back(nb_col - 1);
+       downList.push_back( -nb_col - 1);
+       downList.push_back( -1 );
 
     }
 
@@ -1338,7 +1420,7 @@ template <class T>
 
 //performing the union of RPO3D on seven orientations
 template <class T>
-	void UNION_RPO3D_new_diag(T* input_buffer,
+	void UNION_RPO3D_v2(T* input_buffer,
 					T* output_buffer,
 					int L,
 					int G,
@@ -1466,5 +1548,180 @@ template <class T>
 	delete[] res7;
 }
 
+
+//performing the union of RPO3D on seven orientations
+template <class T>
+	void UNION_RPO3D_v3(T* input_buffer,
+					T* output_buffer,
+					int L,
+					int G,
+					int reconstruction,
+					int dimx,
+					int dimy,
+					int dimz)
+{
+	std::cout<<"ROBUST PATH OPENINGS UNION ON 10 ORIENTATIONS : L = "<<L<<" "<<"G = "<<G<<std::endl;
+	//allocate result memory
+	T* res1= new T[	dimx*dimy*dimz];
+	T* res2= new T[	dimx*dimy*dimz];
+	T* res3= new T[	dimx*dimy*dimz];
+	T* res4= new T[	dimx*dimy*dimz];
+	T* res5= new T[	dimx*dimy*dimz];
+	T* res6= new T[	dimx*dimy*dimz];
+	T* res7= new T[	dimx*dimy*dimz];
+	T* res8= new T[	dimx*dimy*dimz];
+	T* res9= new T[	dimx*dimy*dimz];
+	T* res10=new T[dimx*dimy*dimz];
+
+	// orientation vector
+	std::vector<int> orientation1(3);
+	orientation1[0] = 3;
+	orientation1[1] = 0;
+	orientation1[2] = 0;
+	std::vector<int> orientation2(3);
+	orientation2[0] = 4;
+	orientation2[1] = 0;
+	orientation2[2] = 0;
+	std::vector<int> orientation3(3);
+	orientation3[0] = 0;
+	orientation3[1] = 0;
+	orientation3[2] = 3;
+	std::vector<int> orientation4(3);
+	orientation1[0] = 0;
+	orientation1[1] = 0;
+	orientation1[2] = 4;
+	std::vector<int> orientation5(3);
+	orientation2[0] = 0;
+	orientation2[1] = 3;
+	orientation2[2] = 0;
+	std::vector<int> orientation6(3);
+	orientation3[0] = 0;
+	orientation3[1] = 4;
+	orientation3[2] = 0;
+	std::vector<int> orientation7(3);
+	orientation4[0] = 2;
+	orientation4[1] = 2;
+	orientation4[2] = 2;
+	std::vector<int> orientation8(3);
+	orientation5[0] = 2;
+	orientation5[1] = 2;
+	orientation5[2] = -2;
+	std::vector<int> orientation9(3);
+	orientation6[0] = -2;
+	orientation6[1] = 2;
+	orientation6[2] = 2;
+	std::vector<int> orientation10(3);
+	orientation7[0] = -2;
+	orientation7[1] = 2;
+	orientation7[2] = -2;
+	//
+	//calling RPO
+	 #pragma omp parallel sections 
+	 {
+		#pragma omp section 
+	   { 
+		 RPO3D<T>(input_buffer,res1,orientation1,L,G,reconstruction,dimx,dimy,dimz);
+		 std::cout<<"orientation1 3 0 0 : passed"<<std::endl;
+	   }
+	   #pragma omp section
+	   { 
+		   RPO3D<T>( input_buffer,res2,orientation2,L,G,reconstruction,dimx,dimy,dimz);
+		   std::cout<<"orientation2 4 0 0 : passed"<<std::endl;
+	   }
+	   #pragma omp section
+	   { 
+	       RPO3D<T>( input_buffer,res3,orientation3,L,G,reconstruction,dimx,dimy,dimz);
+		   std::cout<<"orientation3 0 0 3 : passed"<<std::endl;
+	   }
+	   #pragma omp section
+	   { 
+	       RPO3D<T>( input_buffer,res4,orientation4,L,G,reconstruction,dimx,dimy,dimz);
+		   std::cout<<"orientation4 0 0 4 : passed"<<std::endl;
+	   }
+		#pragma omp section
+	   { 
+	       RPO3D<T>( input_buffer,res5,orientation5,L,G,reconstruction,dimx,dimy,dimz);
+		   std::cout<<"orientation5 0 3 0 : passed"<<std::endl;
+	   }
+	   #pragma omp section
+	   { 
+	       RPO3D<T>( input_buffer,res6,orientation6,L,G,reconstruction,dimx,dimy,dimz);
+		   std::cout<<"orientation6 0 4 0 : passed"<<std::endl;
+	   }
+	   #pragma omp section
+	   { 
+	       RPO3D<T>( input_buffer,res7,orientation7,L,G,reconstruction,dimx,dimy,dimz);
+		   std::cout<<"orientation7 2 2 2 : passed"<<std::endl;
+	   }
+	    #pragma omp section
+	   { 
+	       RPO3D<T>( input_buffer,res8,orientation8,L,G,reconstruction,dimx,dimy,dimz);
+		   std::cout<<"orientation7 2 2 -2 : passed"<<std::endl;
+	   }
+	    #pragma omp section
+	   { 
+	       RPO3D<T>( input_buffer,res9,orientation9,L,G,reconstruction,dimx,dimy,dimz);
+		   std::cout<<"orientation7 -2 2 2 : passed"<<std::endl;
+	   }
+	    #pragma omp section
+	   { 
+	       RPO3D<T>( input_buffer,res10,orientation10,L,G,reconstruction,dimx,dimy,dimz);
+		   std::cout<<"orientation7 -2 2 -2 : passed"<<std::endl;
+	   }
+	 }
+	
+	 //Union
+	#pragma omp parallel for
+	for(int i=0; i<dimx*dimy*dimz;i++)
+		output_buffer[i]=res1[i];
+	//
+	#pragma omp parallel for
+	for(int i=0; i<dimx*dimy*dimz;i++)
+		output_buffer[i]=max(res2[i],output_buffer[i]);
+	//
+	#pragma omp parallel for
+	for(int i=0; i<dimx*dimy*dimz;i++)
+		output_buffer[i]=max(res3[i],output_buffer[i]);
+	//
+	#pragma omp parallel for
+	for(int i=0; i<dimx*dimy*dimz;i++)
+		output_buffer[i]=max(res4[i],output_buffer[i]);
+	//
+	#pragma omp parallel for
+	for(int i=0; i<dimx*dimy*dimz;i++)
+		output_buffer[i]=max(res5[i],output_buffer[i]);
+	//
+	#pragma omp parallel for
+	for(int i=0; i<dimx*dimy*dimz;i++)
+		output_buffer[i]=max(res6[i],output_buffer[i]);
+	//
+	#pragma omp parallel for
+	for(int i=0; i<dimx*dimy*dimz;i++)
+		output_buffer[i]=max(res7[i],output_buffer[i]);
+	//
+	#pragma omp parallel for
+	for(int i=0; i<dimx*dimy*dimz;i++)
+		output_buffer[i]=max(res8[i],output_buffer[i]);
+	//
+	#pragma omp parallel for
+	for(int i=0; i<dimx*dimy*dimz;i++)
+		output_buffer[i]=max(res9[i],output_buffer[i]);
+	//
+	#pragma omp parallel for
+	for(int i=0; i<dimx*dimy*dimz;i++)
+		output_buffer[i]=max(res10[i],output_buffer[i]);
+
+	//desallocation
+	delete[] res1;
+	delete[] res2;
+	delete[] res3;
+	delete[] res4;
+	delete[] res5;
+	delete[] res6;
+	delete[] res7;
+	delete[] res8;
+	delete[] res9;
+	delete[] res10;
+}
 
 #endif
