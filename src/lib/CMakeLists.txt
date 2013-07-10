@@ -48,6 +48,7 @@ else ( NOT PYTHON_FRONT_END )
     endif (THIS_IS_MSVC)
 endif ( NOT PYTHON_FRONT_END )
 
+message("LIBS in lib = " ${LIBS})
 
 if (THIS_IS_MSVC)
     target_link_libraries( pinkstatic ${LIBS} )
