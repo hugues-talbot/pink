@@ -125,23 +125,25 @@ int imclosebin( const struct xvimage *input, /**< [in] input image */
         case    VFF_TYP_1_BYTE:
 	  if (rank == 0.0) 
 	    return( compute_closebin_limits< PIX_TYPE > (UCHARDATA(input),
-							rowsize(input),
-							colsize(input),
-							radius,
-							n,
-							angle,
-							range, 
-							UCHARDATA(output)) );
+                                                         rowsize(input),
+                                                         colsize(input),
+                                                         depth(input),
+                                                         radius,
+                                                         n,
+                                                         angle,
+                                                         range, 
+                                                         UCHARDATA(output)) );
 	  else
 	    return( compute_closebin_rankmax< PIX_TYPE > (UCHARDATA(input),
-							 rowsize(input),
-							 colsize(input),
-							 radius,
-							 n,
-							 angle,
-							 range, 
-							 rank,
-							 UCHARDATA(output)) );
+                                                          rowsize(input),
+                                                          colsize(input),
+                                                          depth(input),
+                                                          radius,
+                                                          n,
+                                                          angle,
+                                                          range, 
+                                                          rank,
+                                                          UCHARDATA(output)) );
 	  break;
 
        

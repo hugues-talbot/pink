@@ -22,8 +22,8 @@ structuring elements
 \author Hugues Talbot, based on very early code by Ronald Jones and Ed Breen.
 */
 
-#ifndef LCLOSEBAT_HPP
-#define LCLOSEBAT_HPP
+#ifndef LCLOSEBIN_HPP
+#define LCLOSEBIN_HPP
 
 #include <cmath>
 #include <limits>
@@ -97,21 +97,22 @@ template <typename Type>
 int compute_closebin_limits(Type *in,       /**< [in] input buffer */
                             int nx,	   /**< [in] number of columns (x dimension) of the input image */
                             int ny,	   /**< [in] number of lines (y dimensions) of the input image */
+                            int nz,        /**< [in] number of planes (z dim) of the input image */
                             int radius,	   /**< [in] length of all segments */ 
                             int n,	   /**< [in] number of segments to consider */
                             double angle,   /**< [in] starting angle */	 
                             double range,   /**< [in] angle range */
                             Type *out       /**< [out] output buffer (can be same as input) */)
 {
-  int i,j,k,anglek,size;
+  int i,j,k,anglek;
     Type *wk;
     double degrees,th,limit1,limit2;
-
-    size = nx*ny;
-    /* calloc() args swapped */
-    wk = (Type *)calloc(size, sizeof(Type));
+    long planesize = nx*ny, totalsize = nx*ny*nz;
+    
+    /* we allocate the whole cube of data, but we do not initialize it */
+    wk = (Type *)malloc(totalsize * sizeof(Type));
     if(!wk) {
-        LIARerror("lopenbun: Not enough memory\n");
+        LIARerror("lclosebin: Not enough memory\n");
         return 1;
     }
 
@@ -127,24 +128,33 @@ int compute_closebin_limits(Type *in,       /**< [in] input buffer */
 	degrees = (limit2-limit1)/(double)n;
     else
 	degrees = (180 + limit2 - limit1)/(double)n;
-
-    memset(out,std::numeric_limits<Type>::max(),size*sizeof(Type));
+    
+    /* initially the output image is +\infty */ 
+    memset(out,std::numeric_limits<Type>::max(),totalsize*sizeof(Type));
 
     for(th = limit1,i=0;i<n;++i) {
       double theta = th*M_PI/180.0;
       double isofactor = liarmax(std::fabs(k*std::cos(theta)), std::fabs(k*std::sin(theta)));
       anglek = (int)std::ceil(isofactor);
-	memcpy(wk,in,size*sizeof(Type));
-	glineminmax(wk,nx,ny,anglek,(int)th,computemax,computebresen);
-	glineminmax(wk,nx,ny,anglek,(int)th,computemin,computebresen);
-        // pointwise minimum
-	for(j=0;j<size;j++,out++,wk++)
-	    *out = *out < *wk ? *out : *wk;
-	out -= size;
-	wk -= size;
-	th += degrees;
-	if (th>90.0)
-	    th-=180.0;
+
+      /* plane by plane */
+      /* a single copy of the whole data */        
+      memcpy(wk,in,totalsize*sizeof(Type));
+
+      for (int z = 0 ; z < nz ; ++z) {
+          int deltaz = z * planesize;
+          glineminmax(wk+deltaz,nx,ny,anglek,(int)th,computemax,computebresen);
+          glineminmax(wk+deltaz,nx,ny,anglek,(int)th,computemin,computebresen);
+          // pointwise minimum
+          Type *pout = out + deltaz ;
+          Type *wkout = wk + deltaz ;
+          for(j=0;j<planesize;j++,pout++,wkout++)
+              *pout = (*pout < *wkout) ? *pout : *wkout;
+
+      }
+      th += degrees;
+      if (th>90.0)
+          th-=180.0;
     }
     free(wk);
     return 0;
@@ -181,6 +191,7 @@ template <typename Type>
 int compute_closebin_rankmax(Type *in,	     /**< [in] buffer */
                              int nx,	     /**< [in] number of columns */
                              int ny,	     /**< [in] number of rows */
+                             int nz,         /**< [in] number of planes */
                              int radius,	     /**< [in] radius of search circle */
                              int n,	     /**< [in] number of lines considered  */
                              double angle,    /**< [in] center angle */
@@ -188,21 +199,22 @@ int compute_closebin_rankmax(Type *in,	     /**< [in] buffer */
                              double rank,     /**< [in] 0 <= rank <= 1 */
                              Type *out        /**< [out] Output buffer */)			    
 {
-  int i,j,k,anglek,size;
+    int i,j,k,anglek,planesize;
     Type *wk, *wk2;
     double degrees,th,limit1,limit2;
-
-    size = nx*ny;
-    /* calloc() args swapped */
-    wk = (Type *)calloc(size, sizeof(Type));
+    long totalsize = nx*ny*nz;
+    
+    planesize = nx*ny;
+    /* allocate whole 3D block */
+    wk = (Type *)malloc(totalsize * sizeof(Type));
     if(!wk) {
         LIARerror("lopenbun: Not enough memory\n");
         return 1;
     }
-    /* calloc() args swapped */
-    wk2 = (Type *)calloc(size, sizeof(Type));
+    wk2 = (Type *)malloc(totalsize * sizeof(Type));
     if(!wk2) {
-        LIARerror("lopenbun: Not enough memory\n");
+        free(wk); // useless now.
+        LIARerror("lclosebin: Not enough memory\n");
         return 1;
     }
 
@@ -221,7 +233,8 @@ int compute_closebin_rankmax(Type *in,	     /**< [in] buffer */
     else
 	degrees = (180 + limit2 - limit1)/(double)n;
 
-    memset(out,std::numeric_limits<Type>::max(),size*sizeof(Type));
+    /* set initial value to +infty */
+    memset(out,std::numeric_limits<Type>::max(),totalsize*sizeof(Type));
 
     for(th = limit1,i=0;i<n;++i) {
       double theta = th*M_PI/180.0;
@@ -230,25 +243,26 @@ int compute_closebin_rankmax(Type *in,	     /**< [in] buffer */
       if ((anglek % 2) != 0)
 	--anglek; // so that anglek remains even, see above
 
-      //fprintf(stderr,"Theta = %g (degree), Anglek = %d\n", th, anglek);
+      for (int z = 0 ; z < nz ; ++z) {
+          int deltaz = z * planesize;
+          // HT: I think 1-rank is correct here if we want to keep the same semantic
+          gsrank(in+deltaz, wk2+deltaz, nx, ny, anglek, (double)((int)th), 1.0-rank);
+          glineminmax(wk2+deltaz,nx,ny,anglek,(int)th,computemin,computebresen);
+          li_max(in+deltaz, wk2+deltaz, wk+deltaz, planesize);
+          Type *pout = out + deltaz;
+          Type *wkout = wk + deltaz;
+          // pointwise minimum
+          for(j=0;j<planesize;j++,pout++,wkout++)
+              *pout = (*pout < *wkout) ? *pout : *wkout;
+      }
 
-      // HT: I think 1-rank is correct here if we want to keep the same semantic
-	gsrank(in, wk2, nx, ny, anglek, (double)((int)th), 1.0-rank);
-	glineminmax(wk2,nx,ny,anglek,(int)th,computemin,computebresen);
-	li_max(in, wk2, wk, nx*ny);
-
-        // pointwise minimum
-	for(j=0;j<size;j++,out++,wk++)
-	    *out = *out < *wk ? *out : *wk;
-	out -= size;
-	wk -= size;
-	th += degrees;
-	if (th>90.0)
-	    th-=180.0;
+      th += degrees;
+      if (th>90.0)
+          th-=180.0;
     }
     free(wk);
     free(wk2);
     return 0;
 }
 
-#endif // LCLOSEBAT_HPP
+#endif // LCLOSEBIN_HPP
