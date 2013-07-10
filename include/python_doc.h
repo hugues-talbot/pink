@@ -1,6 +1,6 @@
 // This file has been generated automatically by the 
 // python_documenter, part of the PInK package (UjoImro, 2011)
-// the date of generation: 2013-07-09T12:10:22Z
+// the date of generation: 2013-07-10T13:21:20Z
 // warning: DO NOT EDIT. All your changes will be lost at 
 // the next generation
 
@@ -4254,7 +4254,7 @@
 "thinning steps to be processed.  If the value given for  nsteps\n"         \
 "equals -1, the thinning is continued until stability.\n"         \
 "\n"         \
-"For some algorithms (16 to ??), the parameter  nsteps has a\n"         \
+"For some algorithms (16 to ?? ), the parameter  nsteps has a\n"         \
 "different meaning which is related to the notion of persistence (see\n"         \
 "[REF A AJOUTER]). It plays the role of a filtering parameter.\n"         \
 "\n"         \
