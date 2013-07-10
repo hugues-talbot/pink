@@ -16,7 +16,7 @@ endif (DEVELOPMENT)
 add_library( cpp_pink SHARED ${py_src_cpp} ${py_src_development_cpp} ${py_documentation} )
 set( LIBS ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${PYTHON_LIBRARY} )
 
-message("LIBS = " ${LIBS})
+# message("LIBS = " ${LIBS})
 
 if (THIS_IS_MSVC)
     add_dependencies( cpp_pink pinkstatic  )
