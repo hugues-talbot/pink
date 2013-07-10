@@ -113,27 +113,24 @@ int compute_openbun_limits(Type *in,       /**< [in] input buffer */
 
     /* initially the output image is -\infty */
     memset(out,std::numeric_limits<Type>::min(),totalsize*sizeof(Type));
-    /* a single copy of the whole data */
-    memcpy(wk,in,totalsize*sizeof(Type));
 
     for(th = limit1,i=0;i<n;++i) {
         double theta = th*M_PI/180.0;
         double isofactor = liarmax(std::fabs(k*std::cos(theta)), std::fabs(k*std::sin(theta)));
         anglek = (int)std::ceil(isofactor);
-	//memcpy(wk,in,size*sizeof(Type));
-        /* these functions only work in 2D */
+        /* plane by plane */
+        /* a single copy of the whole data */        
+        memcpy(wk,in,totalsize*sizeof(Type));
         for (int z = 0 ; z < nz ; ++z) {
             int deltaz = z * planesize;
             /* in-place computation */
             glineminmax(wk+deltaz,nx,ny,anglek,(int)th,computemin,computebresen);
             glineminmax(wk+deltaz,nx,ny,anglek,(int)th,computemax,computebresen);
-            /* take max */
+            /* take pointwise max */
             Type *pout = out+deltaz;
             Type *wkout = wk + deltaz;
-            for(j=0; j < planesize ; j++,out++,wk++)
+            for(j=0; j < planesize ; j++,pout++,wkout++)
                 *pout = (*pout > *wkout) ? *pout : *wkout;
-            //out -= size;
-            //wk -= size;
         }
 	th += degrees;
 	if (th>90.0)
@@ -233,9 +230,9 @@ int compute_openbun_rankmax(Type *in,	     /**< [in] buffer */
           glineminmax(wk2+deltaz,nx,ny,anglek,(int)th,computemax,computebresen);
           li_min(in+deltaz, wk2+deltaz, wk+deltaz, planesize);
           // take max of all directions
-          Type *pout = out + deltaz;
+          Type *pout = out + deltaz; 
           Type *wkout = wk + deltaz;
-          for(j=0;j<planesize;j++,out++,wk++)
+          for(j=0;j<planesize;j++,pout++,wkout++)
               *pout = (*pout > *wkout) ? *pout : *wkout;
       }
           

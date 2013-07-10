@@ -5,11 +5,10 @@
     lattribheight.c
     lattribvol.c
     lsegreconsheight.c
-*/
+*/ 
 
-//#define DEBUG
 
-#include <stdio.h>
+#include <stdio.h> 
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
@@ -146,6 +145,7 @@ typedef struct {
 /* ======================================================================== */
 
 // cle DOUBLE
+
 
 /* =============================================================== */
 static int32_t d_Partitionner(int32_t *A, double *T, int32_t p, int32_t r)
@@ -1209,8 +1209,6 @@ static int32_t contrib_hbordb(int32_t p, uint8_t *ORI, uint32_t *STATUS, int32_t
   return h;
 }
 
-
-
 /* ==================================== */
 static int32_t flood(int32_t h,                 /* niveau a inonder */
           Fah *FAH, 
@@ -1241,11 +1239,11 @@ static int32_t flood(int32_t h,                 /* niveau a inonder */
 #ifdef DEBUGFLOOD
   printf("debut flood niveau %d\n", h);
 #endif
-
+      
   node_at_level[h] = 1; /* CORRECTION BUG: LIGNE AJOUTEE LE 02/08/00 */
   while (!FahVideNiveau(FAH, h))               /* first step : propagation */
   {                                            /* ======================== */
-    p = FahPopNiveau(FAH, h);
+      p = 0; //  FahPopNiveau(FAH, h); // HT: symbol does not exist
     STATUS[p] = number_nodes[h];
 #ifdef DEBUGFLOOD
     printf("STATUS[p] %d\n", STATUS[p]);
@@ -1365,7 +1363,7 @@ static int32_t floodb(int32_t h,                 /* niveau a inonder */
   node_at_level[h] = 1; /* CORRECTION BUG: LIGNE AJOUTEE LE 02/08/00 */
   while (!FahVideNiveau(FAH, h))               /* first step : propagation */
   {                                            /* ======================== */
-    p = FahPopNiveau(FAH, h);
+      p = 0; // FahPopNiveau(FAH, h); // HT: symbol does not exist
     STATUS[p] = number_nodes[h];
 #ifdef DEBUGFLOOD
     printf("STATUS[p] %d\n", STATUS[p]);
@@ -1485,7 +1483,7 @@ static int32_t flood3d(
   node_at_level[h] = 1; /* CORRECTION BUG: LIGNE AJOUTEE LE 02/08/00 */
   while (!FahVideNiveau(FAH, h))               /* first step : propagation */
   {                                            /* ======================== */
-    p = FahPopNiveau(FAH, h);
+      p = 0; // FahPopNiveau(FAH, h); // HT: symbol does not exist
     STATUS[p] = number_nodes[h];
 #ifdef DEBUGFLOOD
     printf("STATUS[p] %d\n", STATUS[p]);

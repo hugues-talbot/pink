@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <malloc.h>
+//#include <malloc.h> // HT 20130704 not ISO 
 
 #include "mccodimage.h"
 
