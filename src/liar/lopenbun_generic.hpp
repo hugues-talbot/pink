@@ -118,6 +118,7 @@ int compute_openbun_limits(Type *in,       /**< [in] input buffer */
         double theta = th*M_PI/180.0;
         double isofactor = liarmax(std::fabs(k*std::cos(theta)), std::fabs(k*std::sin(theta)));
         anglek = (int)std::ceil(isofactor);
+        
         /* plane by plane */
         /* a single copy of the whole data */        
         memcpy(wk,in,totalsize*sizeof(Type));
@@ -191,7 +192,6 @@ int compute_openbun_rankmax(Type *in,	     /**< [in] buffer */
         LIARerror("lopenbun: Not enough memory\n");
         return 1;
     }
-    /* calloc() args swapped */
     wk2 = (Type *)malloc(totalsize * sizeof(Type));
     if(!wk2) {
         free(wk); // useless now.

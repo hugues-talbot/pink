@@ -73,7 +73,7 @@ namespace pink {
             // The low-level function compute_openbun_rankmax etc return 0 to indicate success
             // HT 20120302
 
-            if ( src.get_size().size()==2) // the image is 2D
+            if ( src.get_size().size() <= 3) // the image is 2D or 3D
             {
                 const struct xvimage *myxvin = newsrc.get_output();
                 struct xvimage *myxvimage = result.get_output();
@@ -82,10 +82,10 @@ namespace pink {
                     pink_error("function imclosebin failed");
                 }
             }
-            else  // NOT the image is 2D
+            else  // NOT the image is 3D
             {
-                pink_error("functions imopenbun work only on 2D images");
-            } // NOT the image is 2D
+                pink_error("functions imopenbun work only on 2D or 3D images");
+            } // NOT the image is 3D
 
             return result;
         } /* liarclosebin */
