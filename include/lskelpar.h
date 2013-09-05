@@ -119,17 +119,12 @@ extern int32_t lskelAK2(struct xvimage *image,
 extern int32_t lskelrosenfeld(struct xvimage *image,
 			      int32_t nsteps,
 			      struct xvimage *inhibit);
-
-int32_t is_hall_2dendpoint(struct xvimage* img, uint32_t x, uint32_t rs, uint32_t N, uint32_t type);
-
-int32_t is_self_deletable(struct xvimage *img, uint32_t x, uint32_t rs, uint32_t N, uint32_t type);
-
-int32_t is_double_deletable(struct xvimage *img, uint32_t x, uint32_t rs, uint32_t N, uint32_t type);
-
-int32_t is_surrounded_by_radius2_ring(struct xvimage *img, uint32_t x, uint32_t rs, uint32_t N);
-
-int32_t is_square_deletable(struct xvimage *img, uint32_t x, uint32_t rs, uint32_t N, uint32_t type);
-
+extern int32_t lskelrosenfeld_var1(struct xvimage *image,
+			           int32_t nsteps,
+			           struct xvimage *inhibit);
+extern int32_t lskelrosenfeld_var2(struct xvimage *image,
+			           int32_t nsteps,
+			           struct xvimage *inhibit);
 extern int32_t lskelnemethpalagyi(struct xvimage *image,
 					int32_t nsteps,
 					struct xvimage *inhibit,
@@ -139,6 +134,8 @@ extern int32_t lhthinpar_asymmetric(struct xvimage *image, int32_t nsteps);
 extern int32_t lskelCK2(struct xvimage *image,
 			int32_t nsteps,
 			struct xvimage *inhibit);
+extern int32_t lskelCK2_pers(struct xvimage *image, 
+			     struct xvimage *persistence);
 #ifdef __cplusplus
 }
 #endif

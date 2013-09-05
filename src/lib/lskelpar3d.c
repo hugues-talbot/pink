@@ -1245,7 +1245,11 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
       {    
 	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+#ifdef NEW_ISTHMUS
+	if ((top == 2) && (topb == 1)) SET_CURVE(S[i]);
+#else
 	if (top > 1) SET_CURVE(S[i]);
+#endif
       }
     }
 
@@ -3381,7 +3385,11 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
       {    
 	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+#ifdef NEW_ISTHMUS
+	if ((topb == 2) && (top == 1)) SET_SURF(S[i]);
+#else
 	if (topb > 1) SET_SURF(S[i]);
+#endif
       }
     }
 

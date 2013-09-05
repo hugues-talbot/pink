@@ -434,7 +434,7 @@ struct xvimage * lenframe(struct xvimage *image, int32_t grayval, int32_t width)
 #undef F_NAME
 #define F_NAME "lenframe"
 {
-  index_t rs, cs, ds, ps, N, x, y, z, nb, n;
+  index_t rs, cs, ds, ps, N, x, y, nb, n;
   index_t rs2, cs2, ds2, ps2, N2;
   struct xvimage * imageout;
 
@@ -1073,3 +1073,110 @@ struct xvimage * lautocrop(struct xvimage *in, double seuil)
   if (ds == 1) return lcrop(in, xmin, ymin, w, h);
   else return lcrop3d(in, xmin, ymin, zmin, w, h, p);
 } // lautocrop()
+
+/* =============================================================== */
+void lautocrop2(struct xvimage *in, double seuil, index_t *Xmin, index_t *Ymin, index_t *Zmin, index_t *w, index_t *h, index_t *p)
+/* =============================================================== */
+#undef F_NAME
+#define F_NAME "lautocrop2"
+{
+  index_t x, y, z, n;
+  index_t xmin, xmax, ymin, ymax, zmin, zmax;
+  index_t rs, cs, ds, ps, N, nb;
+
+  assert(tsize(in) == 1);
+
+  rs = rowsize(in);
+  cs = colsize(in);
+  ps = rs * cs;
+  ds = depth(in);
+  N = ds * ps;
+  nb = nbands(in);
+  xmin = rs; xmax = 0; 
+  ymin = cs; ymax = 0; 
+  zmin = ds; zmax = 0; 
+
+  if (datatype(in) == VFF_TYP_1_BYTE)
+  {
+    uint8_t *I = UCHARDATA(in);
+    for (n = 0; n < nb; n++)
+    for (z = 0; z < ds; z++)
+    for (y = 0; y < cs; y++)
+    for (x = 0; x < rs; x++)
+      if ((double)(I[n*N + z*ps + y*rs + x]) > seuil)
+    {
+      if (z < zmin) zmin = z; if (z > zmax) zmax = z; 
+      if (y < ymin) ymin = y; if (y > ymax) ymax = y; 
+      if (x < xmin) xmin = x; if (x > xmax) xmax = x; 
+    }
+  }
+  else if (datatype(in) == VFF_TYP_4_BYTE)
+  {
+    int32_t *I = SLONGDATA(in);
+    for (n = 0; n < nb; n++)
+    for (z = 0; z < ds; z++)
+    for (y = 0; y < cs; y++)
+    for (x = 0; x < rs; x++)
+      if ((double)(I[n*N + z*ps + y*rs + x]) > seuil)
+    {
+      if (z < zmin) zmin = z; if (z > zmax) zmax = z; 
+      if (y < ymin) ymin = y; if (y > ymax) ymax = y; 
+      if (x < xmin) xmin = x; if (x > xmax) xmax = x; 
+    }
+  }
+  else if (datatype(in) == VFF_TYP_FLOAT)
+  {
+    float *I = FLOATDATA(in);
+    for (n = 0; n < nb; n++)
+    for (z = 0; z < ds; z++)
+    for (y = 0; y < cs; y++)
+    for (x = 0; x < rs; x++)
+      if ((double)(I[n*N + z*ps + y*rs + x]) > seuil)
+    {
+      if (z < zmin) zmin = z; if (z > zmax) zmax = z; 
+      if (y < ymin) ymin = y; if (y > ymax) ymax = y; 
+      if (x < xmin) xmin = x; if (x > xmax) xmax = x; 
+    }
+  }
+  else if (datatype(in) == VFF_TYP_DOUBLE)
+  {
+    double *I = DOUBLEDATA(in);
+    for (n = 0; n < nb; n++)
+    for (z = 0; z < ds; z++)
+    for (y = 0; y < cs; y++)
+    for (x = 0; x < rs; x++)
+      if (I[n*N + z*ps + y*rs + x] > seuil)
+    {
+      if (z < zmin) zmin = z; if (z > zmax) zmax = z; 
+      if (y < ymin) ymin = y; if (y > ymax) ymax = y; 
+      if (x < xmin) xmin = x; if (x > xmax) xmax = x; 
+    }
+  }
+  else if (datatype(in) == VFF_TYP_COMPLEX)
+  {
+    fcomplex *I = COMPLEXDATA(in);
+    for (n = 0; n < nb; n++)
+    for (z = 0; z < ds; z++)
+    for (y = 0; y < cs; y++)
+    for (x = 0; x < rs; x++)
+      if (((double)(I[n*N + z*ps + y*rs + x].re) > seuil) && 
+	  ((double)(I[n*N + z*ps + y*rs + x].im) > seuil))
+    {
+      if (z < zmin) zmin = z; if (z > zmax) zmax = z; 
+      if (y < ymin) ymin = y; if (y > ymax) ymax = y; 
+      if (x < xmin) xmin = x; if (x > xmax) xmax = x; 
+    }
+  }
+  else
+  {
+    fprintf(stderr, "%s : bad data type\n", F_NAME);
+    return;
+  }
+
+  *Xmin = xmin;
+  *Ymin = ymin;
+  *Zmin = zmin;
+  *w = xmax - xmin + 1;
+  *h = ymax - ymin + 1;
+  *p = zmax - zmin + 1;
+} // lautocrop2()

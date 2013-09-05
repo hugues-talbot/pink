@@ -281,6 +281,7 @@ $(BDIR)/skel_ACK3a \
 $(BDIR)/skel_ACK3_pers \
 $(BDIR)/skel_AK2 \
 $(BDIR)/skel_AMK \
+$(BDIR)/skel_CK2_pers \
 $(BDIR)/skel_CK3 \
 $(BDIR)/skel_CK3a \
 $(BDIR)/skel_CK3p \
@@ -1641,6 +1642,9 @@ $(BDIR)/skel_CK3_pers:	$(CDIR)/skel_CK3_pers.c $(IDIR)/mcimage.h $(IDIR)/mccodim
 
 $(BDIR)/skel_CKG:	$(CDIR)/skel_CKG.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/mckhalimsky3d.h $(IDIR)/mcindic.h $(IDIR)/lskeletons.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_CKG.c $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/skel_CKG
+
+$(BDIR)/skel_CK2_pers:	$(CDIR)/skel_CK2_pers.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/mckhalimsky3d.h $(IDIR)/mcindic.h $(IDIR)/lskeletons.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_CK2_pers.c $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/skel_CK2_pers
 
 $(BDIR)/skel_CKG_map:	$(CDIR)/skel_CKG_map.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/mckhalimsky3d.h $(IDIR)/mcindic.h $(IDIR)/lskeletons.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_CKG_map.c $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/skel_CKG_map

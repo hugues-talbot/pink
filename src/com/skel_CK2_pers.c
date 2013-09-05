@@ -32,85 +32,73 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-/*! \file autocrop.c
+/*! \file skel_CK2_pers.c
 
-\brief eliminates null regions at the periphery of an image
+\brief topological persistence of 1D isthmuses, based on parallel 2D symmetric thinning
 
-<B>Usage:</B> autocrop in.pgm [threshold [out.pgm]]
+<B>Usage:</B> skel_CK2_pers in.pgm out.pgm
 
-<B>Description:</B>
-Selects the minimum rectangle (cuboid in 3d) 
-that contain all values of the image \b in.pgm strictly above the \b threshold (default 0).
+<B>Description:</B> Topological persistence of 1D isthmuses, based on 
+parallel 2D symmetric thinning.
 
-If \b out.pgm is not specified, then out.pgm = in.pgm.
+When a point x is detected as a 1D isthmus, a counter p(x) is
+associated to this point and initialized with value 1. This counter is
+incremented a each iteration as long as x is still an isthmus. When this point x is
+eventually deleted, the value of the counter is freezed.
 
-<B>Types supported:</B> byte 2d, byte 3d
+\warning The object must not have any point on the frame of the image.
 
-<B>Category:</B> geo
-\ingroup  geo
+<B>Types supported:</B> byte 2d
+
+<B>Category:</B> topobin
+\ingroup  topobin
 
 \author Michel Couprie
 */
-
 #include <stdio.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <mccodimage.h>
 #include <mcimage.h>
-#include <lcrop.h>
-
-#define VERBOSE
+#include <lskelpar.h>
 
 /* =============================================================== */
 int main(int argc, char **argv)
 /* =============================================================== */
 {
-  struct xvimage * in;
-  struct xvimage * out;
-  double seuil;
-  index_t w, h, p, xmin, ymin, zmin;
+  struct xvimage * image;
+  struct xvimage * persistence;
 
-  if ((argc != 2) && (argc != 3) && (argc != 4))
+  if (argc != 3)
   {
-    fprintf(stderr, "usage: %s in.pgm [threshold [out.pgm]]\n", argv[0]);
+    fprintf(stderr, "usage: %s in.pgm out.pgm\n", argv[0]);
     exit(1);
   }
 
-  in = readimage(argv[1]);
-  if (in == NULL)
+  image = readimage(argv[1]);
+  if (image == NULL)
   {
     fprintf(stderr, "%s: readimage failed\n", argv[0]);
     exit(1);
   }
-  
-  if (argc > 2) 
-    seuil = atof(argv[2]);
-  else 
-    seuil = 0;
 
-#ifdef VERBOSE
-  lautocrop2(in, seuil, &xmin, &ymin, &zmin, &w, &h, &p);
-  printf("Crop: xmin=%d, ymin=%d, zmin=%d, w=%d, h=%d, p=%d\n",
-	 xmin, ymin, zmin, w, h, p);
-  if (p == 1) out = lcrop(in, xmin, ymin, w, h);
-  else        out = lcrop3d(in, xmin, ymin, zmin, w, h, p);
-#else
-  out = lautocrop(in, seuil);
-#endif
-  if (out == NULL)
+  persistence = allocimage(NULL, rowsize(image), colsize(image), depth(image), VFF_TYP_FLOAT);
+  if (persistence == NULL)
   {
-    fprintf(stderr, "%s: lautocrop failed\n", argv[0]);
+    fprintf(stderr, "%s: allocimage failed\n", argv[0]);
     exit(1);
   }
 
-  if (argc > 3) 
-    writeimage(out, argv[argc-1]);
-  else
-    writeimage(out, argv[1]);
+  if (! lskelCK2_pers(image, persistence))
+  {
+    fprintf(stderr, "%s: lskelCK2_pers failed\n", argv[0]);
+    exit(1);
+  } 
 
-  freeimage(in);
-  freeimage(out);
+  writeimage(persistence, argv[argc-1]);
+  freeimage(image);
+  freeimage(persistence);
 
   return 0;
 } /* main */
