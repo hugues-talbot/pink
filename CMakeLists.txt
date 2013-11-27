@@ -25,7 +25,7 @@ INCLUDE (UJ_CheckIncludeFileCXX.cmake)
 #INCLUDE (FindCFITSIO.cmake)
 
 set( POTENTIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library )
-set( INCLUDES include src/python /usr/include /usr/local/include )
+set( INCLUDES include src/python /usr/include )
 
 include_directories( ${INCLUDES} )
 
@@ -38,7 +38,7 @@ include_directories( ${INCLUDES} )
 ##set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}  "${EXTRA_MODULES}" )
 ##message("3- new CMAKE module path = " ${CMAKE_MODULE_PATH})
 
-set(CFITSIO_DIR "${pink_SOURCE_DIR}")
+set(CFITSIO_DIR "/Users/evelyne-evain/Projets/Pink/pink-main")
 
 
 # --- Library extention (.so, .dylib, .a) ---

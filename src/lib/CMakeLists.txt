@@ -6,7 +6,7 @@ INCLUDE(CheckTypeSize)
 # ------------------------------------
 # -------- The shared library --------
 # ------------------------------------
-
+cmake_minimum_required(VERSION 2.8)
 FILE( GLOB lib_src_c *.c )
 # we should use only one kind of extension for C++ please
 FILE( GLOB lib_src_cpp *.cpp )

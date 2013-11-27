@@ -5,6 +5,7 @@
 # -------- Bash front-end ------------
 # ------------------------------------
 
+cmake_minimum_required(VERSION 2.8)
 #-lgsl -lgslcblas -lm -lX11 -lXext /usr/lib64/libboost_thread-il-mt-1_39.so.1.39.0
 FILE( GLOB com_src_c *.c )
 FILE( GLOB com_src_cpp *.cpp )
