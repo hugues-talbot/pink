@@ -155,11 +155,5 @@ csn *cs_ndone (csn *N, cs *C, void *w, void *x, int ok) ;
   }
 #endif
 
-<<<<<<< local
+#endif /* _CS_H */
 
-#endif /* CS_H */
-=======
-#ifdef __cplusplus
-}
-#endif
->>>>>>> other
