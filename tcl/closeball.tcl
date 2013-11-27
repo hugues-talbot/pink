@@ -81,7 +81,7 @@ checkbutton .top.combine -text combine -variable CLOSEBALL(combine) -command clo
 pack .top.combine -side right
 
 # create the radius button
-scale .top.radius -from -20 -to 20 -length 200 -variable CLOSEBALL(param) \
+scale .top.radius -from -50 -to 50 -length 200 -variable CLOSEBALL(param) \
   -orient horizontal -tickinterval 1 -showvalue true -command closeball_run
 pack .top.radius -side left
 

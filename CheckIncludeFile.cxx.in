@@ -1,3 +1,4 @@
+#define BOOST_PYTHON_STATIC_LIB
 #include <${CHECK_INCLUDE_FILE_VAR}>
 
 int main()

@@ -11,13 +11,17 @@ extern "C" {
 
 
 #ifdef MATLAB_MEX_FILE
-#include "mex.h"
+# include "mex.h"
 #endif
 #define CS_VER 2                    /* CSparse Version 2.2.3 */
 #define CS_SUBVER 2
 #define CS_SUBSUB 3
 #define CS_DATE "Jan 20, 2009"     /* CSparse release date */
 #define CS_COPYRIGHT "Copyright (c) Timothy A. Davis, 2006-2009"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* --- primary CSparse routines and data structures ------------------------- */
 typedef struct cs_sparse    /* matrix in compressed-column or triplet form */
@@ -151,5 +155,11 @@ csn *cs_ndone (csn *N, cs *C, void *w, void *x, int ok) ;
   }
 #endif
 
+<<<<<<< local
 
 #endif /* CS_H */
+=======
+#ifdef __cplusplus
+}
+#endif
+>>>>>>> other

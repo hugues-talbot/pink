@@ -1,0 +1,79 @@
+/*
+  This software is licensed under 
+  CeCILL FREE SOFTWARE LICENSE AGREEMENT
+
+  This software comes in hope that it will be useful but 
+  without any warranty to the extent permitted by applicable law.
+  
+  (C) UjoImro, 2012 <ujoimro@gmail.com>
+  ProCarPlan s.r.o.
+*/
+
+// Pink Graph C++ Wrapper
+
+// LuM end of file
+
+#ifndef GRAPH__HPP__
+#define GRAPH__HPP__
+
+#include <string>
+#include <boost/python.hpp>
+#include <boost/smart_ptr.hpp>
+
+#include "mcgraphe.h"
+#include "lskel2graph.h"
+#include "ui_skeleton.hpp"
+
+
+namespace pink {
+
+    template <class T0>
+    class graph_t
+    {
+
+    private:
+        typedef T0 tag;
+        boost::shared_ptr<graphe> m_graph;        
+        
+    public:
+
+        operator graphe* () { return this->m_grapth.get(); }
+        
+        graph_t( graphe * m_graph ) : m_graph( m_graph, ::TermineGraphe ) { }
+
+        graph_t( std::string filename ) {
+            graphe * tmp_graph;
+            tmp_graph = ReadGraphe( filename.c_str() );
+            // assert here
+            m_graph.reset( tmp_graph, ::TermineGraphe );            
+        }
+        
+        graph_t( ) { pink_error("You should not be calling me."); }
+        
+        ~graph_t ( ) { }
+        
+        void writegraph( std::string filename ) {
+            SaveGraphe( m_graph.get(), filename.c_str() );
+        }
+        
+    }; // class graph_t
+
+
+    template <class T0>
+    pink::graph_t<T0>
+    skel2graph( pink::skel_t<T0> & skel, int32_t mode )
+    {
+        graphe * tmp = lskel2graph( skel, mode );
+        assert( tmp != NULL );        
+        pink::graph_t<T0> result(tmp);
+
+        return result;        
+    } // skel2graph
+    
+    
+} /* namespace pink */
+
+
+#endif /* GRAPH__HPP__ */
+
+// LuM end of file

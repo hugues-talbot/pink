@@ -47,7 +47,7 @@ extern int32_t lgeodilat(
         int32_t connex,
         int32_t niter) ;
 
-extern int32_t lreconsdilat(
+extern int32_t lgeodesic_lreconsdilat(
         struct xvimage *g,
         struct xvimage *f,
         int32_t connex) ;
@@ -76,7 +76,7 @@ extern int32_t lgeodilat3d(
         int32_t connex,
         int32_t niter) ;
 
-extern int32_t lreconsdilat3d(
+extern int32_t lgeodesic_lreconsdilat3d(
         struct xvimage *g,
         struct xvimage *f,
         int32_t connex) ;
@@ -87,7 +87,7 @@ extern int32_t lgeoeros3d(
         int32_t connex,
         int32_t niter) ;
 
-extern int32_t lreconseros3d(
+extern int32_t lgeodesic_lreconseros3d(
         struct xvimage *g,
         struct xvimage *f,
         int32_t connex) ;

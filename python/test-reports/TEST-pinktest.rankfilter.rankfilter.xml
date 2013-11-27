@@ -1,0 +1,87 @@
+<?xml version="1.0" ?>
+<testsuite errors="2" failures="0" name="pinktest.rankfilter.rankfilter" tests="2" time="0.000">
+	<testcase classname="pinktest.rankfilter.rankfilter" name="test_0" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.rankfilter(char_image, char_image, float)
+did not match C++ signature:
+    rankfilter(pink::ujoi&lt;dcomplex&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;fcomplex&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;double&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;float&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;int&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;unsigned short&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;unsigned char&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;dcomplex&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi&lt;fcomplex&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi&lt;double&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi&lt;float&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi&lt;int&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi&lt;unsigned short&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi&lt;unsigned char&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/rankfilter.py", line 26, in test_0
+    result = pink.cpp.rankfilter( pink.cpp.readimage( IMAGES + '/2dbyte/gray/g2gel.pgm' ), pink.cpp.readimage( IMAGES + '/2dbyte/binary/b2_se_5_7.pgm' ), 0.8)
+ArgumentError: Python argument types in
+    libcpp_pink.rankfilter(char_image, char_image, float)
+did not match C++ signature:
+    rankfilter(pink::ujoi<dcomplex> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<fcomplex> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<double> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<float> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<int> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<unsigned short> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<unsigned char> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<dcomplex> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi<fcomplex> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi<double> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi<float> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi<int> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi<unsigned short> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi<unsigned char> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+]]>		</error>
+	</testcase>
+	<testcase classname="pinktest.rankfilter.rankfilter" name="test_1" time="0.000">
+		<error message="Python argument types in
+    libcpp_pink.rankfilter(char_image, char_image, float)
+did not match C++ signature:
+    rankfilter(pink::ujoi&lt;dcomplex&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;fcomplex&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;double&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;float&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;int&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;unsigned short&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;unsigned char&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi&lt;dcomplex&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi&lt;fcomplex&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi&lt;double&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi&lt;float&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi&lt;int&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi&lt;unsigned short&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi&lt;unsigned char&gt; image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)" type="ArgumentError">
+<![CDATA[Traceback (most recent call last):
+  File "/home/ujoimro/doc/projects/pink/pink-svn/python/pinktest/rankfilter.py", line 32, in test_1
+    result = pink.cpp.rankfilter( pink.cpp.readimage( IMAGES + '/3dbyte/gray/g3a.pgm' ), pink.cpp.readimage( IMAGES + '/3dbyte/binary/b3_se_5_5_7.pgm' ), 0.8)
+ArgumentError: Python argument types in
+    libcpp_pink.rankfilter(char_image, char_image, float)
+did not match C++ signature:
+    rankfilter(pink::ujoi<dcomplex> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<fcomplex> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<double> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<float> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<int> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<unsigned short> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<unsigned char> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, int center_z, double r)
+    rankfilter(pink::ujoi<dcomplex> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi<fcomplex> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi<double> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi<float> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi<int> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi<unsigned short> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+    rankfilter(pink::ujoi<unsigned char> image, pink::pink_image {lvalue} structuring element, int center_x, int center_y, double r)
+]]>		</error>
+	</testcase>
+	<system-out>
+<![CDATA[]]>	</system-out>
+	<system-err>
+<![CDATA[]]>	</system-err>
+</testsuite>

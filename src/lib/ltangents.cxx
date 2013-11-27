@@ -40,7 +40,7 @@ Paulin Sanselme, 2011
 */
 
 #include <lbdigitalline.h>
-
+#include <algorithm>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -95,7 +95,7 @@ void calc_tangents2D(int32_t npoints, int32_t mask, uint64_t *tab_combi, int32_t
   {
     Xdir[i] = 0;
     Ydir[i] = 0;
-    for (j = max(0,mask-i); j < min(2*mask,npoints+mask-i-1); j++)
+    for (j = std::max(0,mask-i); j < std::min(2*mask,npoints+mask-i-1); j++)
       {
 	tmp = i+j-mask+1;
 	Xdir[i] += (int64_t)(tab_combi[j]*deltaX[tmp]);
@@ -142,7 +142,7 @@ void calc_tangents3D(int32_t npoints, int32_t mask, uint64_t *tab_combi, int32_t
     Xdir[i] = 0;
     Ydir[i] = 0;
     Zdir[i] = 0;
-    for (j = max(0,mask-i); j < min(2*mask,npoints+mask-i-1); j++)
+    for (j = std::max(0,mask-i); j < std::min(2*mask,npoints+mask-i-1); j++)
       {
 	tmp = i+j-mask+1;
 	assert(tmp>=0 && tmp<npoints);
@@ -293,7 +293,7 @@ Reference:
   } // while ( pos < npoints-1 )
   end[npoints-1] = -1;
 
-  delete points;
+  delete[] points;
   return;
 } // ExtractDSSs()
 
@@ -385,7 +385,7 @@ Reference:
     n++;
   } // while ( pos < npoints-1 )
 
-  delete points;
+  delete[] points;
   return n;
 } // CoverByDSSs()
 
@@ -535,7 +535,7 @@ Reference:
     switch (elim)
     {
     case XY: 
-      indmax = min(yzindmax,xzindmax);
+      indmax = std::min(yzindmax,xzindmax);
 #ifdef DEBUG_ExtractDSSs3D
       printf("%s: case XY indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
 #endif
@@ -569,7 +569,7 @@ Reference:
       break;
 
     case YZ:
-      indmax = min(xyindmax,xzindmax);
+      indmax = std::min(xyindmax,xzindmax);
 #ifdef DEBUG_ExtractDSSs3D
       printf("%s: case YZ indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
 #endif
@@ -608,7 +608,7 @@ printf("xp=%d zp=%d\n", xp, zp);
       break;
 
     case XZ:
-      indmax = min(xyindmax,yzindmax);
+      indmax = std::min(xyindmax,yzindmax);
 #ifdef DEBUG_ExtractDSSs3D
       printf("%s: case XZ indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
 #endif
@@ -669,10 +669,14 @@ printf("xp=%d zp=%d\n", xp, zp);
       XP = Xtan[i]; YP = Ytan[i]; ZP = Ztan[i];
     }
   }
-
-  delete pointsxy;
-  delete pointsyz;
-  delete pointsxz;
+  
+  delete MOxy[0]; delete MOxz[0]; delete MOyz[0];
+  delete MOxy[1]; delete MOxz[1]; delete MOyz[1];
+  delete MOxy[2]; delete MOxz[2]; delete MOyz[2];
+  delete MOxy[3]; delete MOxz[3]; delete MOyz[3];
+  delete[] pointsxy;
+  delete[] pointsyz;
+  delete[] pointsxz;
   return;
 } // ExtractDSSs3D()
 
@@ -816,7 +820,7 @@ Reference:
     switch (elim)
     {
     case XY: 
-      indmax = min(yzindmax,xzindmax);
+      indmax = std::min(yzindmax,xzindmax);
 #ifdef DEBUG_CoverByDSSs3D
       printf("%s: case XY indmax=%d pos+indmax-1=%d\n", F_NAME, indmax, pos+indmax-1);
 #endif
@@ -829,7 +833,7 @@ Reference:
       break;
 
     case YZ:
-      indmax = min(xyindmax,xzindmax);
+      indmax = std::min(xyindmax,xzindmax);
 #ifdef DEBUG_CoverByDSSs3D
       printf("%s: case YZ indmax=%d pos+indmax-1=%d\n", F_NAME, indmax, pos+indmax-1);
 #endif
@@ -842,7 +846,7 @@ Reference:
       break;
 
     case XZ:
-      indmax = min(xyindmax,yzindmax);
+      indmax = std::min(xyindmax,yzindmax);
 #ifdef DEBUG_CoverByDSSs3D
       printf("%s: case XZ indmax=%d pos+indmax-1=%d\n", F_NAME, indmax, pos+indmax-1);
 #endif
@@ -862,10 +866,15 @@ Reference:
     Z[n] = Z[pos];
     n++;
   } // while (pos < npoints-1)
-
-  delete pointsxy;
-  delete pointsyz;
-  delete pointsxz;
+  
+  
+  delete MOxy[0]; delete MOxz[0]; delete MOyz[0];
+  delete MOxy[1]; delete MOxz[1]; delete MOyz[1];
+  delete MOxy[2]; delete MOxz[2]; delete MOyz[2];
+  delete MOxy[3]; delete MOxz[3]; delete MOyz[3];
+  delete[] pointsxy;
+  delete[] pointsyz;
+  delete[] pointsxz;
   return n;
 } // CoverByDSSs3D()
 
@@ -1001,7 +1010,7 @@ Reference:
   switch (elim)
     {
     case XY: 
-      indmax = min(yzindmax,xzindmax);
+      indmax = std::min(yzindmax,xzindmax);
 #ifdef DEBUG_FindDSSs3D
       printf("%s: case XY indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
 #endif
@@ -1014,7 +1023,7 @@ Reference:
       break;
 
     case YZ:
-      indmax = min(xyindmax,xzindmax);
+      indmax = std::min(xyindmax,xzindmax);
 #ifdef DEBUG_FindDSSs3D
       printf("%s: case YZ indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
 #endif
@@ -1027,7 +1036,7 @@ Reference:
       break;
 
     case XZ:
-      indmax = min(xyindmax,yzindmax);
+      indmax = std::min(xyindmax,yzindmax);
 #ifdef DEBUG_FindDSSs3D
       printf("%s: case XZ indmax=%d pos+indmax-1=%d lastend=%d\n", F_NAME, indmax, pos+indmax-1, lastend);
 #endif
@@ -1045,9 +1054,14 @@ Reference:
 #endif
 
   pos = pos+indmax-1;
-  delete pointsxy;
-  delete pointsyz;
-  delete pointsxz;
+  
+  delete MOxy[0]; delete MOxz[0]; delete MOyz[0];
+  delete MOxy[1]; delete MOxz[1]; delete MOyz[1];
+  delete MOxy[2]; delete MOxz[2]; delete MOyz[2];
+  delete MOxy[3]; delete MOxz[3]; delete MOyz[3];  
+  delete[] pointsxy;
+  delete[] pointsyz;
+  delete[] pointsxz;
   return pos;
 } // FindDSSs3D()
 

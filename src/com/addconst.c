@@ -65,7 +65,6 @@ int main(int argc, char **argv)
 /* =============================================================== */
 {
   struct xvimage * image1;
-  int32_t constante;
 
   if ((argc != 3) && (argc != 4))
   {
@@ -80,13 +79,26 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  constante = atoi(argv[2]);
 
-  if (! laddconst(image1, constante))
+  if (datatype(image1) == VFF_TYP_FLOAT)
   {
-    fprintf(stderr, "%s: function laddconst failed\n", argv[0]);
-    exit(1);
+    double constante = atof(argv[2]);
+    if (! laddconst2(image1, constante))
+    {
+      fprintf(stderr, "%s: function laddconst failed\n", argv[0]);
+      exit(1);
+    }
   }
+  else
+  {
+    int32_t constante = atoi(argv[2]);
+    if (! laddconst(image1, constante))
+    {
+      fprintf(stderr, "%s: function laddconst failed\n", argv[0]);
+      exit(1);
+    }
+  }
+
 
   if (argc == 3) writeimage(image1, argv[1]);
   else writeimage(image1, argv[argc-1]);

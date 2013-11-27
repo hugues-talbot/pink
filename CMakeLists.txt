@@ -29,6 +29,7 @@ set( INCLUDES include src/python /usr/include )
 
 include_directories( ${INCLUDES} )
 
+<<<<<<< local
 ## This does not work
 ### I didn't think of this myself (HT)
 ##set(CMAKE_MODULE_PATH "${CMAKE_ROOT}/Modules")
@@ -39,7 +40,9 @@ include_directories( ${INCLUDES} )
 ##message("3- new CMAKE module path = " ${CMAKE_MODULE_PATH})
 
 set(CFITSIO_DIR "/Users/evelyne-evain/Projets/Pink/pink-main")
-
+=======
+set(CFITSIO_DIR "${pink_SOURCE_DIR}")
+>>>>>>> other
 
 # --- Library extention (.so, .dylib, .a) ---
 
@@ -86,7 +89,8 @@ if (CMAKE_HOST_UNIX) ### We build with gcc
 else (CMAKE_HOST_UNIX) ## We build with MSVC
     SET( CMAKE_CXX_FLAGS_RELEASE " /O2 -DNDEBUG /MT " CACHE STRING "Optimization flags for the C++ compiler in Release mode" FORCE )
     SET( CMAKE_C_FLAGS_RELEASE   " /O2 -DNDEBUG /MT " CACHE STRING "Optimization flags for the C   compiler in Release mode" FORCE )
-    SET( PINK_LINKING_FLAGS " /STACK:10000000 /machine:x64 /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libc.lib, /NODEFAULTLIB:msvcrt.lib, /NODEFAULTLIB:libcd.lib, /NODEFAULTLIB:libcmtd.lib, /NODEFAULTLIB:msvcrtd.lib /NODEFAULTLIB:msvcprt.lib /VERBOSE:LIB " )
+#    SET( PINK_LINKING_FLAGS "/DBOOST_PYTHON_STATIC_LIB /STACK:10000000 /machine:x64 /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libc.lib, /NODEFAULTLIB:msvcrt.lib, /NODEFAULTLIB:libcd.lib, /NODEFAULTLIB:libcmtd.lib, /NODEFAULTLIB:msvcrtd.lib /NODEFAULTLIB:msvcprt.lib /VERBOSE:LIB " )
+    SET( PINK_LINKING_FLAGS "/STACK:10000000 /machine:x64 /VERBOSE:LIB /NODEFAULTLIB:libcmt.lib" )
     SET( CMAKE_LINKER_FLAGS ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
     SET( CMAKE_LINKER_FLAGS_RELEASE ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
     SET( CMAKE_MODULE_LINKER_FLAGS ${PINK_LINKING_FLAGS} CACHE STRING "default linking flags" FORCE )
@@ -105,7 +109,7 @@ endif (CMAKE_MINOR_VERSION>=8)
 
 ### **********************************************************************************************
 ### **********************************************************************************************
-### *************************** Functions in development *****************************************
+### *************************** Functions in Development *****************************************
 ### **********************************************************************************************
 ### **********************************************************************************************
 
@@ -248,7 +252,6 @@ endif (THIS_IS_MSVC)
 FIND_PACKAGE(TIFF)
 
 if (TIFF_FOUND)
-    #message("Found libtiff headers in ${TIFF_INCLUDE_DIR}, library at ${TIFF_LIBRARIES}")
     ADD_DEFINITIONS(-DHAVE_TIFF_LIB)
     INCLUDE_DIRECTORIES(${TIFF_INCLUDE_DIR})
     set( LIBS ${LIBS} ${TIFF_LIBRARIES} )
@@ -340,6 +343,7 @@ if (SIMD)
     ADD_DEFINITIONS(-DPINK_HAVE_SIMD)
 endif (SIMD)
 
+<<<<<<< local
 ### **********************************************************************************************
 ### **********************************************************************************************
 ### *************************** Bash front-end ***************************************************
@@ -353,6 +357,8 @@ if (BASH_FRONT_END)
 endif(BASH_FRONT_END)
 
 
+=======
+>>>>>>> other
 ### **********************************************************************************************
 ### **********************************************************************************************
 ### *************************** Python front-end *************************************************
@@ -376,19 +382,28 @@ if ( PYTHON_FRONT_END )
 	SET(PYTHON_INCLUDE ${PYTHON_INCLUDE_PATH} CACHE PATH "The directory of the python headers." )
     endif(NOT PYTHON_INCLUDE)
 
-    find_package(Boost COMPONENTS python thread system)
+    if (THIS_IS_MSVC)
+        # The MSVC compiler does not support std::chrono, so wee need to use boost.chrono on Windows
+	find_package(Boost COMPONENTS python thread system date_time chrono )
+    else (THIS_IS_MSVC)
+	# On linux boost links with std::chrono, so You do not need the chrono
+	find_package(Boost COMPONENTS python thread system date_time )
+    endif(THIS_IS_MSVC)
 
     ## The following test fails on centos: cmake 2.6 patch 2
     # if ( (NOT Boost_FOUND) AND ( (NOT Boost_PYTHON) OR (NOT Boost_THREAD) ) )
     if(NOT Boost_FOUND) 
 	if (NOT Boost_PYTHON)
-	    #${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY}
 	    SET( Boost_PYTHON "NOT FOUND" CACHE FILEPATH "The boost.python library.")
 	    SET( Boost_THREAD "NOT FOUND" CACHE FILEPATH "The boost.thread library.")
 	    SET( Boost_SYSTEM "NOT FOUND" CACHE FILEPATH "The boost.system library.")
+	    SET( Boost_DATE_TIME "NOT FOUND" CACHE FILEPATH "The boost.date_time library.")
+	    SET( Boost_CHRONO "NOT FOUND" CACHE FILEPATH "The boost.chrono library.")
 	    message( FATAL_ERROR "Boost libraries where not found. If they are installed, please set the Boost_PYTHON and the Boost_THREAD variables.")
 	endif(NOT Boost_PYTHON)
     endif(NOT Boost_FOUND)
+
+    add_definitions(-DBOOST_ALL_NO_LIB)  # tell the compiler to undefine this boost macro
 
     # # required version of BOOST 1.35 or newer
     #set( Boost_MAJOR_VERSION_REQUIRED 1 )
@@ -400,19 +415,14 @@ if ( PYTHON_FRONT_END )
     #        message( FATAL_ERROR "For the core components you need a boost version at least " ${Boost_MAJOR_VERSION_REQUIRED} "." ${Boost_MINOR_VERSION_REQUIRED} )
     #    endif ( Boost_MAJOR_VERSION LESS Boost_MAJOR_VERSION_REQUIRED )
 
-    set( LIBS ${LIBS} ${Boost_LIBRARIES} ${Boost_PYTHON} ${Boost_THREAD} ${Boost_SYSTEM} ${PYTHON_LIBRARY} )
-
-    #message("LIBS = " "${LIBS}")
-    #message( "Boost_LIBRARIES=" ${Boost_LIBRARIES} )
-    #message( STATUS "Boost_LIBRARIES=" "${Boost_LIBRARIES}" )
-    #message( STATUS "Boost_PYTHON_LIBRARY=" ${Boost_PYTHON_LIBRARY} )
+    set( LIBS ${LIBS} ${Boost_LIBRARIES} ${PYTHON_LIBRARY} )
 
     # looking for the python library 
-    if (NOT THIS_IS_MSVC)
-	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_LIBRARY} ${LIBS} ${Boost_PYTHON_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_PYTHON} ${Boost_THREAD} ${Boost_SYSTEM} )
-    else (NOT THIS_IS_MSVC)
+    if (THIS_IS_MSVC)
 	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}  )
-    endif (NOT THIS_IS_MSVC)
+    else (THIS_IS_MSVC)
+	set( CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${PYTHON_LIBRARY} ${LIBS} ${Boost_LIBRARIES} )
+    endif (THIS_IS_MSVC)
     set( CMAKE_REQUIRED_INCLUDES  ${Boost_INCLUDE_DIR} ${CMAKE_REQUIRED_INCLUDES} ${INCLUDES} ${PYTHON_INCLUDE} ${EIGEN_INCLUDE})
     
     include_directories( ${CMAKE_REQUIRED_INCLUDES} )
@@ -440,44 +450,69 @@ if ( PYTHON_FRONT_END )
 	message( FATAL_ERROR "error boost/shared_array.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST4)
 
+<<<<<<< local
 #
 # HT: I think at the moment these tests are not serving any purpose at all
 #     furthermore they are detrimental
 #
+=======
+	# The following should be taken as a hint that these tests are useless.    
+    if (THIS_IS_MSVC)
+	message( STATUS "Not tested for boost/python/list.hpp and boost/python/extract.hpp due to a bug in cmake 2.8 try_compile. try_compile ignores additional library directories, which would be needed for the boost.python libraries." )
+#    else(THIS_IS_MSVC)
+#	if (NOT HTEST5)
+#	    CHECK_INCLUDE_FILE_CXX( boost/python/list.hpp  HTEST5 )
+#	endif (NOT HTEST5)
+>>>>>>> other
 	 
+<<<<<<< local
 #    if (NOT HTEST5)
 #	CHECK_INCLUDE_FILE_CXX( boost/python/list.hpp  HTEST5 )
 #    endif (NOT HTEST5)
+=======
+#	if (NOT HTEST5)
+#	    message( FATAL_ERROR "error boost/python/list.hpp does not compile. You need at least version 1.37 or newer. Check if its correctly installed. There is a known issue. If "
+#	    "PYTHON_LIBRARY='" ${PYTHON_LIBRARY} "' does not point to the correct location of python's libraries, please specify them manually"
+#	    " or delete the file in question. (seen on OpenSuSE 11.2)" )
+#	endif(NOT HTEST5)
+>>>>>>> other
 
+<<<<<<< local
 #    if (NOT HTEST5)
 #	message( FATAL_ERROR "error boost/python/list.hpp does not compile. You need at least version 1.37 or newer. Check if its correctly installed. There is a known issue. If "
 # 	    "PYTHON_LIBRARY='" ${PYTHON_LIBRARY} "' does not point to the correct location of python's libraries, please specify them manually"
+=======
+#	if (NOT HTEST6)
+#	    CHECK_INCLUDE_FILE_CXX( boost/python/extract.hpp  HTEST6 )
+#	endif(NOT HTEST6)
+>>>>>>> other
 #	    " or delete the file in question. (seen on OpenSuSE 11.2)" )
 #    endif(NOT HTEST5)
 
+<<<<<<< local
 #    if (NOT HTEST6)
 #	CHECK_INCLUDE_FILE_CXX( boost/python/extract.hpp  HTEST6 )
 #    endif(NOT HTEST6)
+=======
+#	if (NOT HTEST6)
+#	    message( FATAL_ERROR "error boost/python/extract.hpp does not compile. Check if its correctly installed. You may need a newer version or set up python paths correctly.")
+#	endif(NOT HTEST6)
+			    
+    endif (THIS_IS_MSVC)
+>>>>>>> other
 
+<<<<<<< local
 #    if (NOT HTEST6)
 #	message( FATAL_ERROR "error boost/python/extract.hpp does not compile. Check if its correctly installed. You may need a newer version or set up python paths correctly.")
 #    endif(NOT HTEST6)
 			    
+=======
+>>>>>>> other
     CHECK_INCLUDE_FILE_CXX( boost/lexical_cast.hpp  HTEST7 )
     if (NOT HTEST7)
 	message( FATAL_ERROR "error boost/lexical_cast.hpp does not compile. Check if its correctly installed. You may need a newer version or set up python paths correctly.")
     endif(NOT HTEST7)
 	 
-    ## this may not be a good idea but this is what I propose
-    ## Hugues Talbot	 1 Nov 2012
-    set( CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS} )
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Boost_SYSTEM_LIBRARY}") ## the system library is necessary for these tests
-    ## MESSAGE("From top: CMAKE_CXX_FLAGS=" ${CMAKE_CXX_FLAGS})
-    SET (CMAKE_FLAGS ${CMAKE_CXX_FLAGS})
-    CHECK_INCLUDE_FILE_CXX( boost/thread.hpp  HTEST8  )
-    if (NOT HTEST8)
-	message( FATAL_ERROR "error boost/thread.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
-    endif(NOT HTEST8)
 				    
     CHECK_INCLUDE_FILE_CXX( boost/algorithm/minmax_element.hpp  HTEST9 )
     if (NOT HTEST9)
@@ -488,6 +523,11 @@ if ( PYTHON_FRONT_END )
     if (NOT HTEST921)
 	message( FATAL_ERROR "error boost/operators.hpp does not compile. Check if its correctly installed. You may need a newer version. ")
     endif(NOT HTEST921)
+
+    if (NOT HTEST76)
+	CHECK_INCLUDE_FILE_CXX( boost/type_traits.hpp  HTEST6 )
+    endif(NOT HTEST76)
+
 
     ## restore flags Hugues Talbot	 1 Nov 2012
     set ( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE} )
@@ -545,6 +585,27 @@ add_subdirectory( src/lib lib )
 
 ### **********************************************************************************************
 ### **********************************************************************************************
+### *************************** Library **********************************************************
+### **********************************************************************************************
+### **********************************************************************************************
+
+add_subdirectory( src/lib lib )
+
+### **********************************************************************************************
+### **********************************************************************************************
+### *************************** Bash front-end ***************************************************
+### **********************************************************************************************
+### **********************************************************************************************
+
+option( BASH_FRONT_END "Compiles the executable files if you switch this of you can still compile the Python front-end and the shared library." OFF )
+
+if (BASH_FRONT_END)
+    add_subdirectory( src/com bash )
+endif(BASH_FRONT_END)
+
+
+### **********************************************************************************************
+### **********************************************************************************************
 ### *************************** Package Generation ***********************************************
 ### **********************************************************************************************
 ### **********************************************************************************************
@@ -585,7 +646,7 @@ endif(BUILD_DOCUMENTATION)
 ### **********************************************************************************************
 
 if(NOT PINKTEST_DIRECTORY)
-    SET( PINKTEST_DIRECTORY ${CMAKE_SOURCE_DIR}/"../Pinktest" CACHE PATH "The directory of the imput files for the unit testing. Mostly images, but skeletons and graph are also tested." )
+    SET( PINKTEST_DIRECTORY ${CMAKE_SOURCE_DIR}/"../Pinktest" CACHE PATH "The directory of the input files for the unit testing. Mostly images, but skeletons and graph are also tested." )
 endif(NOT PINKTEST_DIRECTORY)
 
 # LuM end of file
