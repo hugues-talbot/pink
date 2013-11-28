@@ -24,8 +24,8 @@ INCLUDE (UJ_CheckIncludeFile.cmake)
 INCLUDE (UJ_CheckIncludeFileCXX.cmake)
 #INCLUDE (FindCFITSIO.cmake)
 
-set( POTENTIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library )
-set( INCLUDES include src/python /usr/include )
+set( POTENTIAL_LIBDIRS /usr/lib /usr/local/lib /opt/local/lib /usr/lib64 /usr/local/lib64 /opt/local/lib64 /Library /usr/X11/include)
+set( INCLUDES include src/python /usr/include /opt/local/include)
 
 include_directories( ${INCLUDES} )
 
@@ -551,8 +551,10 @@ endif ( PYTHON_FRONT_END )
 
 ## Hugues Talbot	 1 Nov 2012
 ## why do that now and not later ?
-add_subdirectory( src/lib lib )
-
+##
+## this might be a duplicate of the next line
+## add_subdirectory( src/lib lib )
+##
 
 ### **********************************************************************************************
 ### **********************************************************************************************

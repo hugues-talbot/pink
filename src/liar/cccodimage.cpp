@@ -53,6 +53,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <ctype.h>
 #include "cccodimage.hxx"
 
+
 /* ================================================================================================================ */
 void read3Drgbimage(const char * image_name, struct xvimage **image_r, struct xvimage **image_g, struct xvimage **image_b )
 /* ================================================================================================================ */
@@ -988,3 +989,4 @@ void grey_weights_double( char * image_name,
   
   freeimage(image);
 }
+

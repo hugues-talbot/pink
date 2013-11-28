@@ -1,7 +1,6 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 
 #include "mcscn.h"
 // Functions for the management of 3D scenes

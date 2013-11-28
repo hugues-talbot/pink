@@ -131,7 +131,7 @@ int compute_power_watershed_col(struct xvimage *image_r,
 
     // input the seed image
     if (mult)
-        StoresMultiSeeds(seeds, G);
+        StoresMultiSeeds_ImgStruct(seeds, G);
     
     // The PWSH algorithm
 
@@ -258,7 +258,7 @@ int powerwatsegm_main(int argc, char **argv)
   
 
   // Reading the seed image 
-  if (mult == true) StoresMultiSeeds(seeds_name, G);
+  if (mult == true) StoresMultiSeeds_ImgName(seeds_name, G);
   else StoresGrabCutFormatSeeds(seeds_name, G);
 
   

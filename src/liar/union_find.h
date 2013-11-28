@@ -42,8 +42,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifndef _WINDOWS
 # include<stdbool.h>
 #endif /* _WINDOWS */
-#include<stdio.h>
-#include<stdint.h>
+#include <stdio.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {

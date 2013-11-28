@@ -11,7 +11,6 @@
 #include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mcutil.h>

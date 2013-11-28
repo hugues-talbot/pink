@@ -19,10 +19,6 @@ extern "C" {
 #define CS_DATE "Jan 20, 2009"     /* CSparse release date */
 #define CS_COPYRIGHT "Copyright (c) Timothy A. Davis, 2006-2009"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* --- primary CSparse routines and data structures ------------------------- */
 typedef struct cs_sparse    /* matrix in compressed-column or triplet form */
 {

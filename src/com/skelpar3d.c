@@ -46,7 +46,7 @@ The parameter \b nsteps gives, if positive, the number of parallel
 thinning steps to be processed.  If the value given for \b nsteps
 equals -1, the thinning is continued until stability.
 
-For some algorithms (16 to ??), the parameter \b nsteps has a
+For some algorithms ( 16 to xx ), the parameter \b nsteps has a
 different meaning which is related to the notion of persistence (see
 [REF A AJOUTER]). It plays the role of a filtering parameter.
 

@@ -41,12 +41,14 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifndef GA_GEODESIC_H
 #define GA_GEODESIC_H
 
-#include <graph_utils.h>
-#include <union_find.h>
-#include <MSF_RW.h>
-#include <ccsort.hxx>
 #include <time.h>
 
+#include "graph_utils.h"
+#include "union_find.h"
+#include "MSF_RW.h"
+#include "ccsort.hxx"
+
+extern "C++" {
 
 /*===========================================================*/
 template<class wtype> void element_link_geod_dilate( int n,
@@ -183,4 +185,6 @@ int t1, t2,t3;
   free(Fth);
 } 
 
+
+} /* C++ */
 #endif
