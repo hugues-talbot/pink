@@ -1503,7 +1503,7 @@ $(BDIR)/hthiniso:	$(CDIR)/hthiniso.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(ID
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/hthiniso.c $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mctopo.o $(ODIR)/lhthiniso.o $(LIBS) -o $(BDIR)/hthiniso
 
 $(BDIR)/hthinpar:	$(CDIR)/hthinpar.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lskelpar.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/lskelpar.o 
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/hthinpar.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/lskelpar.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/hthinpar
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/hthinpar.c $(OBJ_COMMON) $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/hthinpar
 
 $(BDIR)/htkern:	$(CDIR)/htkern.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcindic.h $(IDIR)/mcfah.h $(IDIR)/mclifo.h $(IDIR)/lhisto.h $(IDIR)/llabelextrema.h $(IDIR)/lhtkern.h $(IDIR)/lhtkern3d.h $(OBJ_COMMON) $(ODIR)/libpink.a
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/htkern.c $(OBJ_COMMON) $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/htkern
@@ -1650,7 +1650,7 @@ $(BDIR)/skel_ACK3_pers:	$(CDIR)/skel_ACK3_pers.c $(IDIR)/mcimage.h $(IDIR)/mccod
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_ACK3_pers.c $(OBJ_COMMON) $(ODIR)/mctopo3d.o $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/lskelpar3d.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(ODIR)/mcrlifo.o $(LIBS) -o $(BDIR)/skel_ACK3_pers
 
 $(BDIR)/skel_AK2:	$(CDIR)/skel_AK2.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lskelpar.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/lskelpar.o 
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_AK2.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/lskelpar.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/skel_AK2
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_AK2.c $(OBJ_COMMON) $(ODIR)/libpink.a -o $(BDIR)/skel_AK2
 
 $(BDIR)/skel_AMK:	$(CDIR)/skel_AMK.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mcindic.h $(IDIR)/lskelpar3d.h $(IDIR)/ldist.h $(IDIR)/mcgeo.h $(IDIR)/lmedialaxis.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ltopotypes.o $(ODIR)/lskelpar3d.o $(ODIR)/lskelpar.o $(ODIR)/mcrlifo.o
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_AMK.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mccodimage.o $(ODIR)/lskelpar.o $(ODIR)/lskelpar3d.o $(ODIR)/mcindic.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/lballincl.o $(ODIR)/lmedialaxis.o $(ODIR)/avsimage.o $(ODIR)/llut.o $(ODIR)/ltopotypes.o $(ODIR)/mcrlifo.o $(LIBS) -o $(BDIR)/skel_AMK
@@ -1670,7 +1670,7 @@ $(BDIR)/skel_CK3_pers:	$(CDIR)/skel_CK3_pers.c $(IDIR)/mcimage.h $(IDIR)/mccodim
 $(BDIR)/skel_CKG:	$(CDIR)/skel_CKG.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/mckhalimsky3d.h $(IDIR)/mcindic.h $(IDIR)/lskeletons.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_CKG.c $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/skel_CKG
 
-$(BDIR)/skel_CK2_pers:	$(CDIR)/skel_CK2_pers.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/mckhalimsky3d.h $(IDIR)/mcindic.h $(IDIR)/lskeletons.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
+$(BDIR)/skel_CK2_pers:	$(CDIR)/skel_CK2_pers.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/mckhalimsky3d.h $(IDIR)/mcindic.h $(IDIR)/lskeletons.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o $(ODIR)/libpink.a
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_CK2_pers.c $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/skel_CK2_pers
 
 $(BDIR)/skel_CKG_map:	$(CDIR)/skel_CKG_map.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/mckhalimsky3d.h $(IDIR)/mcindic.h $(IDIR)/lskeletons.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
@@ -1683,13 +1683,13 @@ $(BDIR)/skel_EK3:	$(CDIR)/skel_EK3.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(ID
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_EK3.c $(OBJ_COMMON) $(ODIR)/mctopo3d.o $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/lskelpar3d.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(ODIR)/mcrlifo.o $(LIBS) -o $(BDIR)/skel_EK3
 
 $(BDIR)/skel_MK2:	$(CDIR)/skel_MK2.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lskelpar.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/lskelpar.o 
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_MK2.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/lskelpar.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/skel_MK2
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_MK2.c $(OBJ_COMMON) $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/skel_MK2
 
 $(BDIR)/skel_MK3:	$(CDIR)/skel_MK3.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lskelpar3d.h $(IDIR)/mctopo3d.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mctopo3d.o $(ODIR)/mctopo.o $(ODIR)/lskelpar3d.o $(ODIR)/mcindic.o $(ODIR)/mcrlifo.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_MK3.c $(OBJ_COMMON) $(ODIR)/mctopo3d.o $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/lskelpar3d.o $(ODIR)/mclifo.o $(ODIR)/mcindic.o $(ODIR)/mcrlifo.o $(LIBS) -o $(BDIR)/skel_MK3
 
 $(BDIR)/skel_NK2:	$(CDIR)/skel_NK2.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/lskelpar.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mctopo.o $(ODIR)/lskelpar.o 
-	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_NK2.c $(OBJ_COMMON) $(ODIR)/mctopo.o $(ODIR)/mccodimage.o $(ODIR)/lskelpar.o $(ODIR)/mclifo.o $(LIBS) -o $(BDIR)/skel_NK2
+	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_NK2.c $(OBJ_COMMON) $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/skel_NK2
 
 $(BDIR)/skel_PSG:	$(CDIR)/skel_PSG.c $(IDIR)/mcimage.h $(IDIR)/mccodimage.h $(IDIR)/mctopo.h $(IDIR)/mctopo3d.h $(IDIR)/mckhalimsky3d.h $(IDIR)/mcindic.h $(IDIR)/lskeletons.h $(IDIR)/ldist.h $(OBJ_COMMON) $(ODIR)/mccodimage.o $(ODIR)/mclifo.o $(ODIR)/mcfifo.o $(ODIR)/mctopo.o $(ODIR)/mctopo3d.o $(ODIR)/mckhalimsky3d.o $(ODIR)/mcindic.o $(ODIR)/mcrbt.o $(ODIR)/mcgeo.o $(ODIR)/ldist.o $(ODIR)/mcrlifo.o $(ODIR)/lskeletons.o $(ODIR)/bdd1.alphacube.o $(ODIR)/bdd2.alpha.o $(ODIR)/bdd2.beta.o $(ODIR)/bdd3.o 
 	$(CC) $(CCFLAGS) -I$(IDIR) $(CDIR)/skel_PSG.c $(ODIR)/libpink.a $(LIBS) -o $(BDIR)/skel_PSG

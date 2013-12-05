@@ -41,11 +41,13 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern int32_t lgeodilat(
-        struct xvimage *g,
-        struct xvimage *f,
-        int32_t connex,
-        int32_t niter) ;
+extern int32_t lgeodilat(struct xvimage *g, struct xvimage *f, int32_t connex, int32_t niter) ;
+extern int32_t lgeodilat2d(struct xvimage *g, struct xvimage *f, int32_t connex, int32_t niter) ;
+extern int32_t lgeodilat2d_short(struct xvimage *g, struct xvimage *f, int32_t connex, int32_t niter) ;
+extern int32_t lgeodilat2d_long(struct xvimage *g, struct xvimage *f, int32_t connex, int32_t niter) ;
+extern int32_t lgeodilat3d(struct xvimage *g, struct xvimage *f, int32_t connex, int32_t niter) ;
+extern int32_t lgeodilat3d_short(struct xvimage *g, struct xvimage *f, int32_t connex, int32_t niter) ;
+extern int32_t lgeodilat3d_long(struct xvimage *g, struct xvimage *f, int32_t connex, int32_t niter) ;
 
 extern int32_t lreconsdilat(
         struct xvimage *g,
@@ -69,12 +71,6 @@ extern int32_t lselectcomp(
         int32_t x, 
         int32_t y, 
         int32_t z) ;
-
-extern int32_t lgeodilat3d(
-        struct xvimage *g,
-        struct xvimage *f,
-        int32_t connex,
-        int32_t niter) ;
 
 extern int32_t lreconsdilat3d(
         struct xvimage *g,
