@@ -45,24 +45,8 @@ namespace pink {
       if (result.get_size().size()!=fc.get_size().size()){
         pink_error("error: the dimensions of F and G must be equal");
       }
-
-
-      if (result.get_size().size()==2)
-      {
-        lgeodilat( result.get_output(), fc.get_output(), connex, numb_iter ); 
-      } 
-      else /* NOT result.get_size().size()==2 */
-      { 
-        if (result.get_size().size()==3)
-        {      
-          lgeodilat3d( result.get_output(), fc.get_output(), connex, numb_iter );
-        } 
-        else 
-        { /* NOT result.get_size().size()==3 */
-          pink_error("error: only 2D and 3D images are supported");
-        } /* NOT result.get_size().size()==3 */
-      } /* NOT result.get_size().size()==2 */
-
+      lgeodilat( result.get_output(), fc.get_output(), connex, numb_iter ); 
+   
       return result;    
     } /* geodilat */
 
