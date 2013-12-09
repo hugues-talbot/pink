@@ -20,9 +20,10 @@ using namespace pink;
 namespace pink {
   namespace python {
 
-    char_image geodilat(
-      const char_image & G, 
-      const char_image & F, 
+	template <class image_t>
+    image_t geodilat(
+      const image_t & G, 
+      const image_t & F, 
       int connex, 
       int numb_iter=-1
       )
@@ -35,10 +36,10 @@ namespace pink {
           );
       } /* ((connex!=4)&&(connex!=8)&&(connex!=6)&&(connex!=18)&&(connex!=26)) */
 
-      char_image result;
+      image_t result;
       result = G.clone();
 
-      char_image fc;
+      image_t fc;
       fc = F.clone();
       
       if (result.get_size().size()!=fc.get_size().size()){
@@ -69,7 +70,7 @@ namespace pink {
 } /* namespace pink */
 
 
-UI_EXPORT_ONE_FUNCTION(
+UI_EXPORT_FUNCTION(
   geodilat,
   pink::python::geodilat,
   ( arg("G image"), arg("F image"), arg("connexity"), arg("number of iterations")=-1),
