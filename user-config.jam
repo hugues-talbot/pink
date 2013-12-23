@@ -1,6 +1,7 @@
 # -*- sh -*-
 # UjoImro, 2011
 
+
 #  MSVC configuration
 using msvc : 10.0 ;
 
