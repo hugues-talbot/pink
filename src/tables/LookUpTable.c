@@ -33,6 +33,9 @@ typedef struct {
 
 //#define DEBUG
 
+/* utility */
+static int min(int x, int y) { if (x<y) return x; else return y; }
+
 /* Function prototypes */
 void ComputeCTg (int L, long int * CTg);
 int AddWeighting (MaskG *M, int x, int y, int w, int RR);

@@ -376,7 +376,6 @@ if ( PYTHON_FRONT_END )
     if(NOT PYTHON_INCLUDE)
 	find_package(PythonLibs)
 	SET(PYTHON_INCLUDE ${PYTHON_INCLUDE_PATH} CACHE PATH "The directory of the python headers." )
-	message( STATUS "PYTHON_INCLUDE = " ${PYTHON_INCLUDE} )
     endif(NOT PYTHON_INCLUDE)
 
     find_package(Boost COMPONENTS python thread )

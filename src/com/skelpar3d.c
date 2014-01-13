@@ -76,7 +76,6 @@ The possible choices are:
 \li 20: surface and curvilinear, symmetric, based on 1D and 2D isthmus with persistence (SCK3p)
 \li 21: surface, symmetric, based on residual points (RK3), variant (uses 26-connectivity to define residual points)
 
-
 In modes other than 2, if the parameter \b inhibit is given and is a
 binary image name, then the points of this image will be left
 unchanged.

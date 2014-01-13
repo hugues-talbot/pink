@@ -791,7 +791,7 @@ int32_t main()
         printf("vide\n");
       else
       {
-        d = mcrbt_RbtPopMin(T); 
+        d = RbtPopMin(T); 
         n--;
         printf("je retire %ld; n = %d\n", d, n);
       }

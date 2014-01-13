@@ -80,6 +80,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mcrlifo.h>
 #include <lskelpar3d.h>
 
+#define PERS_INIT_VAL 0
+
 #define I_INHIBIT     1
 #define I_EARLYCURVE  2
 
@@ -119,7 +121,8 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #define MAXFLOAT	3.40282347e+38F
 
-//#define VERBOSE
+#define VERBOSE
+#define DEBUG_SKEL_CK3P
 //#define DEBUG
 #ifdef DEBUG
 int32_t trace = 1;
@@ -1245,7 +1248,11 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
       {    
 	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+#ifdef NEW_ISTHMUS
+	if ((top == 2) && (topb == 1)) SET_CURVE(S[i]);
+#else
 	if (top > 1) SET_CURVE(S[i]);
+#endif
       }
     }
 
@@ -3381,7 +3388,11 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]) && !IS_SIMPLE(S[i]))
       {    
 	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
+#ifdef NEW_ISTHMUS
+	if ((topb == 2) && (top == 1)) SET_SURF(S[i]);
+#else
 	if (topb > 1) SET_SURF(S[i]);
+#endif
       }
     }
 
@@ -4029,11 +4040,11 @@ int32_t lskelACK3p(struct xvimage *image,
 /*
 Squelette asymétrique curviligne
 Algo ACK3p données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
-Pour tout x de S faire T[x] := -1
+Pour tout x de S faire T[x] := PERS_INIT_VAL
 Pour i := 0; i < n; i++
   C := points de courbe de S
-  Pour tout x de C tq T[x] == -1 faire T[x] := i
-  I := I \cup {x | T[x] > -1 et (i - T[x]) >= p}
+  Pour tout x de C tq T[x] == PERS_INIT_VAL faire T[x] := i
+  I := I \cup {x | T[x] > PERS_INIT_VAL et (i - T[x]) >= p}
   P := voxels simples pour S et pas dans I
   C2 := voxels 2-D-cruciaux (asym_match2)
   C1 := voxels 1-D-cruciaux (asym_match1)
@@ -4081,7 +4092,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
   T = (int16_t *)malloc(N * sizeof(int16_t)); assert(T != NULL);
-  for (i = 0; i < N; i++) T[i] = -1;
+  for (i = 0; i < N; i++) T[i] = PERS_INIT_VAL;
 
   mctopo3d_init_topo3d();
 
@@ -4105,7 +4116,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]))
       {    
 	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
-	if ((top > 1) && (T[i] == -1))
+	if ((top > 1) && (T[i] == PERS_INIT_VAL))
 	  T[i] = (int16_t)step;
       }
     }
@@ -4117,7 +4128,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     // MEMORISE DANS I LES ISTHMES PERSISTANTS
     for (i = 0; i < N; i++)
     { 
-      if ((T[i] >= 0) && ((step - T[i]) >= isthmus_persistence)) 
+      if ((T[i] > PERS_INIT_VAL) && ((step - T[i]) >= isthmus_persistence)) 
       { 
 	UNSET_SIMPLE(S[i]); 
 	SET_INHIBIT(I[i]); 
@@ -4176,18 +4187,18 @@ int32_t lskelACK3c(
 /*
 Squelette asymétrique curviligne - fonction persistance
 Algo ACK3c données: S (image) résultat: P (persistance)
-Pour tout x de S faire P[x] := -1
+Pour tout x de S faire P[x] := PERS_INIT_VAL
 i := 0
 Répéter jusqu'à stabilité
   i := i + 1
   C := points de courbe de S
-  Pour tout x de C tq P[x] == -1 faire P[x] := i // date de naissance
+  Pour tout x de C tq P[x] == PERS_INIT_VAL faire P[x] := i // date de naissance
   D := voxels simples pour S
   C2 := voxels 2-D-cruciaux (asym_match2)
   C1 := voxels 1-D-cruciaux (asym_match1)
   C0 := voxels 0-D-cruciaux (asym_match0)
   D := D  \  [C2 \cup C1 \cup C0]
-  Pour tout x de D tq P[x] != -1 faire P[x] := i - P[x] // date de mort - date de naissance
+  Pour tout x de D tq P[x] != PERS_INIT_VAL faire P[x] := i - P[x] // date de mort - date de naissance
   S := S \ D
 Pour tout x de S faire P[x] := INFINITY
 
@@ -4213,7 +4224,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   ACCEPTED_TYPES1(persistence, VFF_TYP_FLOAT);
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
-  for (i = 0; i < N; i++) P[i] = -1;
+  for (i = 0; i < N; i++) P[i] = PERS_INIT_VAL;
 
   mctopo3d_init_topo3d();
 
@@ -4237,7 +4248,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]))
       {    
 	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
-	if ((top > 1) && (P[i] == -1))
+	if ((top > 1) && (P[i] == PERS_INIT_VAL))
 	  P[i] = (float)step;
       }
     }
@@ -4276,7 +4287,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       {
 	S[i] = 0; 
 	nonstab = 1; 
-	if (P[i] != -1) P[i] = (float)step - P[i];
+	if (P[i] != PERS_INIT_VAL) P[i] = (float)step - P[i];
       }
     for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
   } // while (nonstab)
@@ -4300,11 +4311,11 @@ int32_t lskelASK3p(struct xvimage *image,
 /*
 Squelette asymétrique surfacique
 Algo ASK3a données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
-Pour tout x de S faire T[x] := -1
+Pour tout x de S faire T[x] := PERS_INIT_VAL
 Pour i := 0; i < n; i++
   C := points de surface de S
-  Pour tout x de C tq T[x] == -1 faire T[x] := i
-  I := I \cup {x | T[x] > -1 et (i - T[x]) >= p}
+  Pour tout x de C tq T[x] == PERS_INIT_VAL faire T[x] := i
+  I := I \cup {x | T[x] > PERS_INIT_VAL et (i - T[x]) >= p}
   P := voxels simples pour S et pas dans I
   C2 := voxels 2-D-cruciaux (asym_match2)
   C1 := voxels 1-D-cruciaux (asym_match1)
@@ -4352,7 +4363,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
   T = (int16_t *)malloc(N * sizeof(int16_t)); assert(T != NULL);
-  for (i = 0; i < N; i++) T[i] = -1;
+  for (i = 0; i < N; i++) T[i] = PERS_INIT_VAL;
 
   mctopo3d_init_topo3d();
 
@@ -4376,7 +4387,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]))
       {    
 	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
-	if ((topb > 1) && (T[i] == -1))
+	if ((topb > 1) && (T[i] == PERS_INIT_VAL))
 	  T[i] = (int16_t)step;
       }
     }
@@ -4388,7 +4399,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     // MEMORISE DANS I LES ISTHMES PERSISTANTS
     for (i = 0; i < N; i++)
     { 
-      if ((T[i] >= 0) && ((step - T[i]) >= isthmus_persistence)) 
+      if ((T[i] > PERS_INIT_VAL) && ((step - T[i]) >= isthmus_persistence)) 
       { 
 	UNSET_SIMPLE(S[i]); 
 	SET_INHIBIT(I[i]); 
@@ -4448,17 +4459,21 @@ int32_t lskelCK3p(struct xvimage *image,
 /*
 Squelette symétrique curviligne
 Algo CK3p données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
-Pour tout x de S faire T[x] := -1
-Pour i := 0; i < n; i++
+Pour tout x de S faire T[x] := PERS_INIT_VAL
+i := 0 
+Repeat
+  i := i + 1
   C := points de courbe de S
-  Pour tout x de C tq T[x] == -1 faire T[x] := i
-  I := I \cup {x | T[x] > -1 et (i - T[x]) >= p}
+  Pour tout x de C tq T[x] == PERS_INIT_VAL faire T[x] := i
   P := voxels simples pour S et pas dans I
   C2 := voxels 2-D-cruciaux (match2)
   C1 := voxels 1-D-cruciaux (match1)
   C0 := voxels 0-D-cruciaux (match0)
+  Z := {x non simples ou cruciaux | T[x] > PERS_INIT_VAL et (i + 1 - T[x]) >= p}
   P := P  \  [C2 \cup C1 \cup C0]
   S := S \ P
+  I := I \cup Z 
+Until stability or i = n
 
 Attention : l'objet ne doit pas toucher le bord de l'image
 */
@@ -4500,7 +4515,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
   T = (int16_t *)malloc(N * sizeof(int16_t)); assert(T != NULL);
-  for (i = 0; i < N; i++) T[i] = -1;
+  for (i = 0; i < N; i++) T[i] = PERS_INIT_VAL;
 
   mctopo3d_init_topo3d();
 
@@ -4549,16 +4564,15 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
 	if (top > 1) SET_CURVE(S[i]);
       }
-      if (IS_CURVE(S[i]) && (T[i] == -1)) T[i] = (int16_t)step;
+      if (IS_CURVE(S[i]) && (T[i] == PERS_INIT_VAL)) 
+      { 
+	T[i] = (int16_t)step;
+#ifdef DEBUG_SKEL_CK3P
+	printf("point %d (%d %d %d) naissance step %d\n", i, i % rs, (i % ps) / rs,  i / ps, step);
+#endif	
+      }
     }
 
-    // MEMORISE DANS I LES ISTHMES PERSISTANTS
-    for (i = 0; i < N; i++)
-    { 
-      if ((T[i] >= 0) && ((step - T[i]) >= isthmus_persistence)) 
-	SET_INHIBIT(I[i]); 
-      if (IS_INHIBIT(I[i])) UNSET_SIMPLE(S[i]);
-    }
     // MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
@@ -4583,6 +4597,20 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (match0(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
+
+    // MEMORISE DANS I LES ISTHMES PERSISTANTS
+    for (i = 0; i < N; i++)
+    { 
+      if (IS_OBJECT(S[i]) && (!IS_SIMPLE(S[i]) || IS_DCRUCIAL(S[i])) &&
+	  (T[i] > PERS_INIT_VAL) && ((step+1 - T[i]) >= isthmus_persistence)) 
+      {
+	SET_INHIBIT(I[i]); 
+#ifdef DEBUG_SKEL_CK3P
+	printf("point %d (%d %d %d) ajout à K\n", i, i % rs, (i % ps) / rs,  i / ps);
+#endif	
+      }
+      if (IS_INHIBIT(I[i])) UNSET_SIMPLE(S[i]);
+    }
 
     for (i = 0; i < N; i++)
       if (S[i] && IS_SIMPLE(S[i]) && !IS_DCRUCIAL(S[i])) 
@@ -4613,11 +4641,11 @@ int32_t lskelSK3p(struct xvimage *image,
 /*
 Squelette symétrique surfacique
 Algo SK3p données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
-Pour tout x de S faire T[x] := -1
+Pour tout x de S faire T[x] := PERS_INIT_VAL
 Pour i := 0; i < n; i++
   C := points de surface de S
-  Pour tout x de C tq T[x] == -1 faire T[x] := i
-  I := I \cup {x | T[x] > -1 et (i - T[x]) >= p}
+  Pour tout x de C tq T[x] == PERS_INIT_VAL faire T[x] := i
+  I := I \cup {x | T[x] > PERS_INIT_VAL et (i - T[x]) >= p}
   P := voxels simples pour S et pas dans I
   C2 := voxels 2-D-cruciaux (match2)
   C1 := voxels 1-D-cruciaux (match1)
@@ -4629,7 +4657,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 */
 #undef F_NAME
 #define F_NAME "lskelSK3p"
-{ 
+{  
   index_t i; // index de pixel
   index_t rs = rowsize(image);     /* taille ligne */
   index_t cs = colsize(image);     /* taille colonne */
@@ -4665,7 +4693,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
   T = (int16_t *)malloc(N * sizeof(int16_t)); assert(T != NULL);
-  for (i = 0; i < N; i++) T[i] = -1;
+  for (i = 0; i < N; i++) T[i] = PERS_INIT_VAL;
 
   mctopo3d_init_topo3d();
 
@@ -4704,13 +4732,13 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	mctopo3d_top26(S, i, rs, ps, N, &top, &topb);
 	if (topb > 1) SET_SURF(S[i]);
       }
-      if (IS_SURF(S[i]) && (T[i] == -1)) T[i] = (int16_t)step;
+      if (IS_SURF(S[i]) && (T[i] == PERS_INIT_VAL)) T[i] = (int16_t)step;
     }
 
     // MEMORISE DANS I LES ISTHMES PERSISTANTS
     for (i = 0; i < N; i++)
     { 
-      if ((T[i] >= 0) && ((step - T[i]) >= isthmus_persistence)) 
+      if ((T[i] > PERS_INIT_VAL) && ((step + 1 - T[i]) >= isthmus_persistence)) 
 	SET_INHIBIT(I[i]); 
       if (IS_INHIBIT(I[i])) UNSET_SIMPLE(S[i]);
     }
@@ -4768,11 +4796,11 @@ int32_t lskelSCK3p(struct xvimage *image,
 /*
 Squelette symétrique surfacique-curviligne
 Algo SCK3p données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
-Pour tout x de S faire T[x] := -1
+Pour tout x de S faire T[x] := PERS_INIT_VAL
 Pour i := 0; i < n; i++
   C := points de surface ou de courbe de S
-  Pour tout x de C tq T[x] == -1 faire T[x] := i
-  I := I \cup {x | T[x] > -1 et (i - T[x]) >= p}
+  Pour tout x de C tq T[x] == PERS_INIT_VAL faire T[x] := i
+  I := I \cup {x | T[x] > PERS_INIT_VAL et (i - T[x]) >= p}
   P := voxels simples pour S et pas dans I
   C2 := voxels 2-D-cruciaux (match2)
   C1 := voxels 1-D-cruciaux (match1)
@@ -4820,7 +4848,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
   T = (int16_t *)malloc(N * sizeof(int16_t)); assert(T != NULL);
-  for (i = 0; i < N; i++) T[i] = -1;
+  for (i = 0; i < N; i++) T[i] = PERS_INIT_VAL;
 
   mctopo3d_init_topo3d();
 
@@ -4870,13 +4898,13 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (top > 1) SET_CURVE(S[i]);
 	if (topb > 1) SET_SURF(S[i]);
       }
-      if ((IS_CURVE(S[i]) || IS_SURF(S[i])) && (T[i] == -1)) T[i] = (int16_t)step;
+      if ((IS_CURVE(S[i]) || IS_SURF(S[i])) && (T[i] == PERS_INIT_VAL)) T[i] = (int16_t)step;
     }
 
     // MEMORISE DANS I LES ISTHMES PERSISTANTS
     for (i = 0; i < N; i++)
     { 
-      if ((T[i] >= 0) && ((step - T[i]) >= isthmus_persistence)) 
+      if ((T[i] > PERS_INIT_VAL) && ((step - T[i]) >= isthmus_persistence)) 
 	SET_INHIBIT(I[i]); 
       if (IS_INHIBIT(I[i])) UNSET_SIMPLE(S[i]);
     }
@@ -4933,18 +4961,18 @@ int32_t lskelCK3_pers(struct xvimage *image,
 Squelette symétrique curviligne - fonction persistance
 Algo CK3_pers données: S (image) résultat: P (persistance)
 
-Pour tout x de S faire P[x] := -1
+Pour tout x de S faire P[x] := PERS_INIT_VAL
 i := 0
 Répéter jusqu'à stabilité
   i := i + 1
   C := points de courbe de S
-  Pour tout x de C tq P[x] == -1 faire P[x] := i // date de naissance
+  Pour tout x de C tq P[x] == PERS_INIT_VAL faire P[x] := i // date de naissance
   D := voxels simples pour S
   C2 := voxels 2-D-cruciaux (match2)
   C1 := voxels 1-D-cruciaux (match1)
   C0 := voxels 0-D-cruciaux (match0)
   D := D  \  [C2 \cup C1 \cup C0]
-  Pour tout x de D tq P[x] != -1 faire P[x] := i - P[x] // date de mort - date de naissance
+  Pour tout x de D tq P[x] != PERS_INIT_VAL faire P[x] := i - P[x] // date de mort - date de naissance
   S := S \ D
 Pour tout x de S faire P[x] := INFINITY
 
@@ -4971,7 +4999,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   ACCEPTED_TYPES1(persistence, VFF_TYP_FLOAT);
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
-  for (i = 0; i < N; i++) P[i] = -1;
+  for (i = 0; i < N; i++) P[i] = PERS_INIT_VAL;
 
   mctopo3d_init_topo3d();
 
@@ -5025,7 +5053,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     // ENREGISTRE LA DATE DE NAISSANCE DES POINTS DE COURBE
     for (i = 0; i < N; i++)
     {
-      if ((P[i] == -1) && IS_CURVE(S[i])) P[i] = (float)step;
+      if ((P[i] == PERS_INIT_VAL) && IS_CURVE(S[i])) P[i] = (float)step;
     }
 
     // MARQUE LES POINTS 2-D-CRUCIAUX
@@ -5058,7 +5086,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       {
 	S[i] = 0; 
 	nonstab = 1; 
-	if (P[i] != -1) P[i] = (float)step - P[i];
+	if (P[i] != PERS_INIT_VAL) P[i] = (float)step - P[i];
       }
     for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
   }
@@ -5081,18 +5109,18 @@ int32_t lskelSK3_pers(struct xvimage *image,
 Squelette symétrique surfacique - fonction persistance
 Algo SK3_pers données: S (image) résultat: P (persistance)
 
-Pour tout x de S faire P[x] := -1
+Pour tout x de S faire P[x] := PERS_INIT_VAL
 i := 0
 Répéter jusqu'à stabilité
   i := i + 1
   C := points de surface de S
-  Pour tout x de C tq P[x] == -1 faire P[x] := i // date de naissance
+  Pour tout x de C tq P[x] == PERS_INIT_VAL faire P[x] := i // date de naissance
   D := voxels simples pour S
   C2 := voxels 2-D-cruciaux (match2)
   C1 := voxels 1-D-cruciaux (match1)
   C0 := voxels 0-D-cruciaux (match0)
   D := D  \  [C2 \cup C1 \cup C0]
-  Pour tout x de D tq P[x] != -1 faire P[x] := i - P[x] // date de mort - date de naissance
+  Pour tout x de D tq P[x] != PERS_INIT_VAL faire P[x] := i - P[x] // date de mort - date de naissance
   S := S \ D
 Pour tout x de S faire P[x] := INFINITY
 
@@ -5119,7 +5147,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   ACCEPTED_TYPES1(persistence, VFF_TYP_FLOAT);
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
-  for (i = 0; i < N; i++) P[i] = -1;
+  for (i = 0; i < N; i++) P[i] = PERS_INIT_VAL;
 
   mctopo3d_init_topo3d();
 
@@ -5163,7 +5191,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     // ENREGISTRE LA DATE DE NAISSANCE DES POINTS DE SURFACE
     for (i = 0; i < N; i++)
     {
-      if ((P[i] == -1) && IS_SURF(S[i])) P[i] = (float)step;
+      if ((P[i] == PERS_INIT_VAL) && IS_SURF(S[i])) P[i] = (float)step;
     }
 
     // MARQUE LES POINTS 2-D-CRUCIAUX
@@ -5196,7 +5224,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       {
 	S[i] = 0; 
 	nonstab = 1; 
-	if (P[i] != -1) P[i] = (float)step - P[i];
+	if (P[i] != PERS_INIT_VAL) P[i] = (float)step - P[i];
       }
     for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
   }
@@ -5219,18 +5247,18 @@ int32_t lskelSCK3_pers(struct xvimage *image,
 Squelette symétrique curviligne et surfacique - fonction persistance
 Algo SCK3_pers données: S (image) résultat: P (persistance)
 
-Pour tout x de S faire P[x] := -1
+Pour tout x de S faire P[x] := PERS_INIT_VAL
 i := 0
 Répéter jusqu'à stabilité
   i := i + 1
   C := points de courbe ou de surface de S
-  Pour tout x de C tq P[x] == -1 faire P[x] := i // date de naissance
+  Pour tout x de C tq P[x] == PERS_INIT_VAL faire P[x] := i // date de naissance
   D := voxels simples pour S
   C2 := voxels 2-D-cruciaux (match2)
   C1 := voxels 1-D-cruciaux (match1)
   C0 := voxels 0-D-cruciaux (match0)
   D := D  \  [C2 \cup C1 \cup C0]
-  Pour tout x de D tq P[x] != -1 faire P[x] := i - P[x] // date de mort - date de naissance
+  Pour tout x de D tq P[x] != PERS_INIT_VAL faire P[x] := i - P[x] // date de mort - date de naissance
   S := S \ D
 Pour tout x de S faire P[x] := INFINITY
 
@@ -5257,7 +5285,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   ACCEPTED_TYPES1(persistence, VFF_TYP_FLOAT);
 
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
-  for (i = 0; i < N; i++) P[i] = -1;
+  for (i = 0; i < N; i++) P[i] = PERS_INIT_VAL;
 
   mctopo3d_init_topo3d();
 
@@ -5312,7 +5340,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     // ENREGISTRE LA DATE DE NAISSANCE DES POINTS DE COURBE OU DE SURFACE
     for (i = 0; i < N; i++)
     {
-      if ((P[i] == -1) && (IS_CURVE(S[i]) || IS_SURF(S[i]))) 
+      if ((P[i] == PERS_INIT_VAL) && (IS_CURVE(S[i]) || IS_SURF(S[i]))) 
 	P[i] = (float)step;
     }
 
@@ -5346,7 +5374,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       {
 	S[i] = 0; 
 	nonstab = 1; 
-	if (P[i] != -1) P[i] = (float)step - P[i];
+	if (P[i] != PERS_INIT_VAL) P[i] = (float)step - P[i];
       }
     for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
   }

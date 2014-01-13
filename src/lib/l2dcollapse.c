@@ -549,8 +549,8 @@ int32_t l2dpardircollapse_f(struct xvimage * k, struct xvimage * prio, struct xv
   while (!mcrbt_RbtVide(RBT))
   {
     // construit la liste de toutes les paires libres ayant la prioritÅÈ courante
-    p = mcrbt_RbtMinLevel(RBT); 
-    while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == p))
+    p = RbtMinLevel(RBT); 
+    while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == p))
     {
       g = mcrbt_RbtPopMin(RBT);
       UnSet(g, EN_RBT);

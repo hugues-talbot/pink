@@ -41,7 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <mccodimage.h>
 #include <jccodimage.h>
 #include <mcutil.h>
-#include <lderiche.h>
+#include <jclderiche.h>
 #include <lppm2GA.h>
 
 #define SCALE 10

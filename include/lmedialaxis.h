@@ -60,7 +60,7 @@ typedef int32_t * LookUpTable;
 typedef int32_t * Tabuff;
 typedef int32_t * TabDTg;
 
-typedef struct Weighting{
+typedef struct  Weighting{
     int32_t x, y, z, RR;
 }  Weighting;
 
