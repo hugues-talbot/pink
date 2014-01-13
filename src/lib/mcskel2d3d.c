@@ -33,9 +33,9 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 /* \file mcskel2d3d.c
-    \brief algorithmes pour la squelettisation parallï¿½le d'objets 2D en 3D - 
+    \brief algorithmes pour la squelettisation parallèle d'objets 2D en 3D - 
            version efficace utilisant mckhalimsky3d
-    \author Michel COUPRIE, dï¿½cembre 2004, d'aprï¿½s Gilles Bertrand
+    \author Michel COUPRIE, décembre 2004, d'après Gilles Bertrand
  */
 
 #include <stdlib.h>
@@ -60,7 +60,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #define IS_OBJ(f)    (f&FLAG_OBJ)
 
 /* ==================================== */
-static
 int32_t NotIn(
   index_t e,
   index_t *list,                   
@@ -80,9 +79,9 @@ int32_t NotIn(
 void GammaS3d(index_t rs, index_t cs, index_t ds, index_t x, index_t y, index_t z, index_t *tab, index_t *n)
 /* ==================================== */
 /* 
-  (x,y,z) doit ï¿½tre un carre
-  retourne dans tab l'ensemble des carrï¿½s fortement adjacents ï¿½ (x,y,z) 
-  (i.e., par un cï¿½tï¿½)
+  (x,y,z) doit être un carre
+  retourne dans tab l'ensemble des carrés fortement adjacents à (x,y,z) 
+  (i.e., par un côté)
   *n est le cardinal de cet ensemble
   tab doit etre alloue a l'avance
 */
@@ -129,7 +128,7 @@ void GammaS3d(index_t rs, index_t cs, index_t ds, index_t x, index_t y, index_t 
 void mcskel2d3d_K3_AlphaBeta3d(index_t rs, index_t cs, index_t ds, index_t i, index_t j, index_t k, index_t x, index_t y, index_t z, index_t *tab, index_t *n)
 /* ==================================== */
 /* 
-  (i,j,k) doit ï¿½tre un singleton et (x,y,z) doit ï¿½tre un carre
+  (i,j,k) doit être un singleton et (x,y,z) doit être un carre
   retourne dans tab l'intersection de betacarre(i,j,k) et de alphacarre(x,y,z)
   *n est le cardinal de cet ensemble
   tab doit etre alloue a l'avance
@@ -245,7 +244,7 @@ int32_t mcskel2d3d_K3_Card(struct xvimage *k)
 int32_t mcskel2d3d_K3_IsBorder(struct xvimage *k, index_t f)
 /* ==================================== */
 /*
-  k doit ï¿½tre un complexe (non testï¿½).
+  k doit être un complexe (non testé).
   Cette fonction retourne 1 si f est border pour k, 0 sinon.
   On dit que f est border pour k s'il existe une face g dans alphacarre(f) inter k telle que 
   f soit la seule face de k qui contienne g.
@@ -279,7 +278,7 @@ int32_t mcskel2d3d_K3_IsBorder(struct xvimage *k, index_t f)
 /* ========================================== */
 /*! \fn boolean mcskel2d3d_K3_Check2D(struct xvimage *k)
     \param k : un complexe
-    \return : boolï¿½en
+    \return : booléen
     \brief teste si le complexe ne contient pas d'elements 3D (cubes)
 */
 boolean mcskel2d3d_K3_Check2D(struct xvimage *k)
@@ -302,7 +301,7 @@ boolean mcskel2d3d_K3_Check2D(struct xvimage *k)
 /* ========================================== */
 /*! \fn boolean mcskel2d3d_K3_Extract2Dfaces(struct xvimage *k)
     \param k : un complexe
-    \return : boolï¿½en
+    \return : booléen
     \brief extrait les faces 2d
 */
 void mcskel2d3d_K3_Extract2Dfaces(struct xvimage *k)
@@ -324,7 +323,7 @@ void mcskel2d3d_K3_Extract2Dfaces(struct xvimage *k)
 /* ========================================== */
 /*! \fn boolean mcskel2d3d_K3_CheckFrame(struct xvimage *k)
     \param k : un complexe
-    \return : boolï¿½en
+    \return : booléen
     \brief teste si le bord est vide (0)
 */
 boolean mcskel2d3d_K3_CheckFrame(struct xvimage *k)
@@ -391,8 +390,8 @@ void mcskel2d3d_K3_Binarize(struct xvimage *k)
 /* ========================================== */
 /*! \fn void mcskel2d3d_K3_SelMarked(struct xvimage *k, unsigned char mask)
     \param k : un complexe
-    \param mask : une marque (mot 8 bits avec un seul bit ï¿½ 1)
-    \brief met a FLAG_OBJ tous le ï¿½lï¿½ments marquï¿½s, ï¿½ 0 les autres
+    \param mask : une marque (mot 8 bits avec un seul bit à 1)
+    \brief met a FLAG_OBJ tous le éléments marqués, à 0 les autres
 */
 void mcskel2d3d_K3_SelMarked(struct xvimage *k, unsigned char mask)
 /* ========================================== */
@@ -408,8 +407,8 @@ void mcskel2d3d_K3_SelMarked(struct xvimage *k, unsigned char mask)
 /*! \fn void mcskel2d3d_K3_MarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
     \param k : un complexe
     \param f : une face
-    \param mask : valeur de la marque (mot 8 bits avec un seul bit ï¿½ 1)
-    \brief ajoute la marque mask ï¿½ tous les ï¿½lï¿½ments de alphacarre(f)
+    \param mask : valeur de la marque (mot 8 bits avec un seul bit à 1)
+    \brief ajoute la marque mask à tous les éléments de alphacarre(f)
 */
 void mcskel2d3d_K3_MarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
 /* ========================================== */
@@ -429,8 +428,8 @@ void mcskel2d3d_K3_MarkAlphaCarre(struct xvimage *k, index_t f, unsigned char ma
 /*! \fn void mcskel2d3d_K3_UnMarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
     \param k : un complexe
     \param f : une face
-    \param mask : valeur de la marque (mot 8 bits avec un seul bit ï¿½ 1)
-    \brief retire la marque mask de tous les ï¿½lï¿½ments de alphacarre(f)
+    \param mask : valeur de la marque (mot 8 bits avec un seul bit à 1)
+    \brief retire la marque mask de tous les éléments de alphacarre(f)
 */
 void mcskel2d3d_K3_UnMarkAlphaCarre(struct xvimage *k, index_t f, unsigned char mask)
 /* ========================================== */
@@ -477,7 +476,7 @@ void mcskel2d3d_K3_MarkPrinc(struct xvimage *k)
 /* ========================================== */
 /*! \fn void mcskel2d3d_K3_MarkInterior(struct xvimage *k)
     \param k : un complexe
-    \brief pour chaque 2-face intï¿½rieure (i.e. non border) f de k, rajoute (OR) la marque FLAG_INTERIOR au label de f
+    \brief pour chaque 2-face intérieure (i.e. non border) f de k, rajoute (OR) la marque FLAG_INTERIOR au label de f
 */
 void mcskel2d3d_K3_MarkInterior(struct xvimage *k)
 /* ========================================== */
@@ -498,9 +497,9 @@ void mcskel2d3d_K3_MarkInterior(struct xvimage *k)
     \param k : un complexe
     \param t : un complexe 
     \param m : un complexe "marqueur"
-    \brief ajoute au complexe m les faces carrï¿½es de k non voisines (par un cï¿½tï¿½) 
-    d'au moins une face carrï¿½e du complexe t
-    \warning pas de vï¿½rification de compatibilitï¿½ entre k, t et m
+    \brief ajoute au complexe m les faces carrées de k non voisines (par un côté) 
+    d'au moins une face carrée du complexe t
+    \warning pas de vérification de compatibilité entre k, t et m
 */
 void mcskel2d3d_K3_MarkNotNeigh(struct xvimage *k, struct xvimage *t, struct xvimage *m)
 /* ========================================== */
@@ -532,7 +531,7 @@ void mcskel2d3d_K3_MarkNotNeigh(struct xvimage *k, struct xvimage *t, struct xvi
 /*! \fn void mcskel2d3d_K3_MarkEss(struct xvimage *k)
     \param k : un complexe
     \brief pour chaque face essentielle f de k, rajoute (OR) la marque FLAG_ESS au label de f
-    \warning les faces principales doivent avoir ï¿½tï¿½ marquï¿½es auparavant
+    \warning les faces principales doivent avoir été marquées auparavant
 */
 void mcskel2d3d_K3_MarkEss(struct xvimage *k)
 /* ========================================== */
@@ -613,8 +612,8 @@ void mcskel2d3d_K3_MarkEss(struct xvimage *k)
     \param k : un complexe
     \param f : une face de k
     \return le cardinal (nombre de faces) de la fermeture du noyau
-    \brief marque le complexe formï¿½ du noyau (core) de la face f pour le complexe k
-    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant
+    \brief marque le complexe formé du noyau (core) de la face f pour le complexe k
+    \warning les faces essentielles doivent avoir été marquées auparavant
 */
 int32_t mcskel2d3d_K3_MarkCore(struct xvimage *k, index_t f)
 /* ========================================== */
@@ -666,10 +665,10 @@ printf("mark_core_aux : %d,%d,%d\n", j%rs, (j%ps)/rs, j/ps);
     \param k : un complexe
     \param m : un complexe "marqueur"
     \param f : une face de k
-    \return le cardinal (nombre de faces) de la fermeture du noyau de f pour k, conditionnï¿½ par m
-    \brief marque le complexe formï¿½ du noyau (core) de la face f pour le complexe k, conditionnï¿½ par m
-    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
-    pas de vï¿½rification de compatibilitï¿½ entre k et m
+    \return le cardinal (nombre de faces) de la fermeture du noyau de f pour k, conditionné par m
+    \brief marque le complexe formé du noyau (core) de la face f pour le complexe k, conditionné par m
+    \warning les faces essentielles doivent avoir été marquées auparavant,
+    pas de vérification de compatibilité entre k et m
 */
 int32_t mcskel2d3d_K3_MarkCore2(struct xvimage *k, struct xvimage *m, index_t f)
 /* ========================================== */
@@ -721,7 +720,7 @@ int32_t mcskel2d3d_K3_MarkCore2(struct xvimage *k, struct xvimage *m, index_t f)
     \param f : une face de k
     \return un entier 
     \brief retourne le cardinal du noyau de f, i.e., le nombre de faces essentielles du noyau 
-    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant
+    \warning les faces essentielles doivent avoir été marquées auparavant
 */
 int32_t mcskel2d3d_K3_CardCore(struct xvimage *k, index_t f)
 /* ========================================== */
@@ -745,10 +744,10 @@ int32_t mcskel2d3d_K3_CardCore(struct xvimage *k, index_t f)
     \param m : un complexe "marqueur"
     \param f : une face de k
     \return un entier 
-    \brief retourne le cardinal du noyau de f pour k conditionnï¿½ par m, i.e.,
-    le nombre de faces marquï¿½es FLAG_ESS ou appartenant ï¿½ m dans le noyau 
-    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
-    pas de vï¿½rification de compatibilitï¿½ entre k et m
+    \brief retourne le cardinal du noyau de f pour k conditionné par m, i.e.,
+    le nombre de faces marquées FLAG_ESS ou appartenant à m dans le noyau 
+    \warning les faces essentielles doivent avoir été marquées auparavant,
+    pas de vérification de compatibilité entre k et m
 */
 int32_t mcskel2d3d_K3_CardCore2(struct xvimage *k, struct xvimage *m, index_t f)
 /* ========================================== */
@@ -770,9 +769,9 @@ int32_t mcskel2d3d_K3_CardCore2(struct xvimage *k, struct xvimage *m, index_t f)
 /* ========================================== */
 /*! \fn void mcskel2d3d_K3_MarkRegul(struct xvimage *k)
     \param k : un complexe
-    \brief marque les faces rï¿½guliï¿½res du complexe k
-    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant
-    \warning l'objet ne doit pas toucher le bord (pas de vï¿½rification)
+    \brief marque les faces régulières du complexe k
+    \warning les faces essentielles doivent avoir été marquées auparavant
+    \warning l'objet ne doit pas toucher le bord (pas de vérification)
 */
 void mcskel2d3d_K3_MarkRegul(struct xvimage *k)
 /* ========================================== */
@@ -797,7 +796,7 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 #endif
       if (ncore == 0) goto next;
       if (ncore == n) { mcskel2d3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE); goto next; }
-      //if (SINGL(x,y,z)) goto next; // inutile car le core d'un singl est forcï¿½ment vide
+      //if (SINGL(x,y,z)) goto next; // inutile car le core d'un singl est forcément vide
       if (INTER3D(x,y,z))
       {
 	if (ncore == 1) K[i] |= FLAG_REGUL;
@@ -855,10 +854,10 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 /*! \fn void mcskel2d3d_K3_MarkRegul2(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
-    \brief marque les faces rï¿½guliï¿½res du complexe k conditionnï¿½ par le complexe m
-    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant
-    \warning l'objet ne doit pas toucher le bord (pas de vï¿½rification),
-    pas de vï¿½rification de compatibilitï¿½ entre k et m
+    \brief marque les faces régulières du complexe k conditionné par le complexe m
+    \warning les faces essentielles doivent avoir été marquées auparavant
+    \warning l'objet ne doit pas toucher le bord (pas de vérification),
+    pas de vérification de compatibilité entre k et m
 */
 void mcskel2d3d_K3_MarkRegul2(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
@@ -883,7 +882,7 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 #endif
       if (ncore == 0) goto next;
       if (ncore == n) { mcskel2d3d_K3_UnMarkAlphaCarre(k, i, FLAG_CORE); goto next; }
-      //if (SINGL(x,y,z)) goto next; // inutile car le core d'un singl est forcï¿½ment vide
+      //if (SINGL(x,y,z)) goto next; // inutile car le core d'un singl est forcément vide
       if (INTER3D(x,y,z))
       {
 	if (ncore == 1) K[i] |= FLAG_REGUL;
@@ -941,7 +940,7 @@ printf("ess : %d,%d,%d ; n = %d, ncore = %d\n", x, y, z, n, ncore);
 /*! \fn void mcskel2d3d_K3_MarkCritic(struct xvimage *k)
     \param k : un complexe
     \brief marque FLAG_CRITIC les fermetures des faces critiques du complexe k
-    \warning les faces essentielles et les faces rï¿½guliï¿½res doivent avoir ï¿½tï¿½ marquï¿½es auparavant
+    \warning les faces essentielles et les faces régulières doivent avoir été marquées auparavant
 */
 void mcskel2d3d_K3_MarkCritic(struct xvimage *k)
 /* ========================================== */
@@ -961,9 +960,9 @@ void mcskel2d3d_K3_MarkCritic(struct xvimage *k)
 /*! \fn void mcskel2d3d_K3_MarkCritic2(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
-    \brief marque FLAG_CRITIC les fermetures des faces critiques du complexe k, conditionnï¿½ par m
-    \warning les faces essentielles et les faces rï¿½guliï¿½res doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
-    pas de vï¿½rification de compatibilitï¿½ entre k et m
+    \brief marque FLAG_CRITIC les fermetures des faces critiques du complexe k, conditionné par m
+    \warning les faces essentielles et les faces régulières doivent avoir été marquées auparavant,
+    pas de vérification de compatibilité entre k et m
 */
 void mcskel2d3d_K3_MarkCritic2(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
@@ -984,7 +983,7 @@ void mcskel2d3d_K3_MarkCritic2(struct xvimage *k, struct xvimage *m)
 /*! \fn void mcskel2d3d_K3_MarkMCritic(struct xvimage *k)
     \param k : un complexe 
     \brief marque FLAG_CRITIC les faces m-critiques du complexe k
-    \warning les faces essentielles et les faces rï¿½guliï¿½res doivent avoir ï¿½tï¿½ marquï¿½es auparavant
+    \warning les faces essentielles et les faces régulières doivent avoir été marquées auparavant
 */
 void mcskel2d3d_K3_MarkMCritic(struct xvimage *k)
 /* ========================================== */
@@ -1022,10 +1021,10 @@ void mcskel2d3d_K3_MarkMCritic(struct xvimage *k)
 /*! \fn void mcskel2d3d_K3_MarkMCritic2(struct xvimage *k, struct xvimage *m)
     \param k : un complexe 
     \param m : un complexe "marqueur"
-    \brief marque FLAG_CRITIC les faces M-critiques du complexe k, conditionnï¿½ par m
-    \warning les faces essentielles et les faces rï¿½guliï¿½res (conditionnellement ï¿½ m)  
-    doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
-    pas de vï¿½rification de compatibilitï¿½ entre k et m
+    \brief marque FLAG_CRITIC les faces M-critiques du complexe k, conditionné par m
+    \warning les faces essentielles et les faces régulières (conditionnellement à m)  
+    doivent avoir été marquées auparavant,
+    pas de vérification de compatibilité entre k et m
 */
 void mcskel2d3d_K3_MarkMCritic2(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
@@ -1064,8 +1063,8 @@ void mcskel2d3d_K3_MarkMCritic2(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
 /*! \fn int32_t mcskel2d3d_K3_Critic2Obj(struct xvimage *k)
     \param k : un complexe
-    \return le nombre de faces objet trouvï¿½es
-    \brief marque FLAG_OBJ les faces marquï¿½es FLAG_CRITIC du complexe k et remet ï¿½ 0 les autres marques
+    \return le nombre de faces objet trouvées
+    \brief marque FLAG_OBJ les faces marquées FLAG_CRITIC du complexe k et remet à 0 les autres marques
 */
 int32_t mcskel2d3d_K3_Critic2Obj(struct xvimage *k)
 /* ========================================== */
@@ -1088,8 +1087,8 @@ int32_t mcskel2d3d_K3_Critic2Obj(struct xvimage *k)
 /* ========================================== */
 /*! \fn int32_t mcskel2d3d_K3_Interior2Obj(struct xvimage *k)
     \param k : un complexe
-    \return le nombre de faces objet trouvï¿½es
-    \brief marque FLAG_OBJ les faces marquï¿½es FLAG_INTERIOR du complexe k et remet ï¿½ 0 les autres marques
+    \return le nombre de faces objet trouvées
+    \brief marque FLAG_OBJ les faces marquées FLAG_INTERIOR du complexe k et remet à 0 les autres marques
 */
 int32_t mcskel2d3d_K3_Interior2Obj(struct xvimage *k)
 /* ========================================== */
@@ -1113,11 +1112,11 @@ int32_t mcskel2d3d_K3_Interior2Obj(struct xvimage *k)
 /*! \fn int32_t mcskel2d3d_K3_MCritic2Obj(struct xvimage *k, struct xvimage *o)
     \param k : un complexe
     \param o : un complexe
-    \return le nombre de faces objet trouvï¿½es
+    \return le nombre de faces objet trouvées
     \brief marque FLAG_OBJ les fermetures des faces,
-    prï¿½sentes dans le complexe o,
-    contenant des faces m-critiques (marquï¿½es FLAG_CRITIC)
-    du complexe k et remet ï¿½ 0 les autres marques.
+    présentes dans le complexe o,
+    contenant des faces m-critiques (marquées FLAG_CRITIC)
+    du complexe k et remet à 0 les autres marques.
 */
 int32_t mcskel2d3d_K3_MCritic2Obj(struct xvimage *k, struct xvimage *o)
 /* ========================================== */
@@ -1165,11 +1164,11 @@ int32_t mcskel2d3d_K3_MCritic2Obj(struct xvimage *k, struct xvimage *o)
     \param k : un complexe
     \param m : un complexe "marqueur"
     \param o : un complexe
-    \return le nombre de faces objet trouvï¿½es
+    \return le nombre de faces objet trouvées
     \brief marque FLAG_OBJ les fermetures des faces,
-    prï¿½sentes dans le complexe o,
-    contenant des faces m-critiques (marquï¿½es FLAG_CRITIC)
-    du complexe k ou des faces de m et remet ï¿½ 0 les autres marques.
+    présentes dans le complexe o,
+    contenant des faces m-critiques (marquées FLAG_CRITIC)
+    du complexe k ou des faces de m et remet à 0 les autres marques.
 */
 int32_t mcskel2d3d_K3_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m, struct xvimage *o)
 /* ========================================== */
@@ -1217,9 +1216,9 @@ int32_t mcskel2d3d_K3_MCriticOrMarked2Obj(struct xvimage *k, struct xvimage *m, 
 /*! \fn void mcskel2d3d_K3_MarkThin(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
-    \brief ajoute au complexe m les faces sï¿½parantes (Tb > 1) du complexe k
-    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
-    pas de vï¿½rification de compatibilitï¿½ entre k et m
+    \brief ajoute au complexe m les faces séparantes (Tb > 1) du complexe k
+    \warning les faces essentielles doivent avoir été marquées auparavant,
+    pas de vérification de compatibilité entre k et m
 */
 void mcskel2d3d_K3_MarkThin(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
@@ -1310,8 +1309,8 @@ printf("ess : %d,%d ; n = %d, ncore = %d\n", x, y, n, ncore);
 /*! \fn int32_t mcskel2d3d_K3_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
-    \return le nombre de faces critiques ou marquï¿½es trouvï¿½es
-    \brief marque FLAG_OBJ les faces critiques du complexe k ou marquï¿½es par m et remet ï¿½ 0 les flags dans k
+    \return le nombre de faces critiques ou marquées trouvées
+    \brief marque FLAG_OBJ les faces critiques du complexe k ou marquées par m et remet à 0 les flags dans k
 */
 int32_t mcskel2d3d_K3_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
@@ -1330,17 +1329,17 @@ int32_t mcskel2d3d_K3_CriticOrMarked2Obj(struct xvimage *k, struct xvimage *m)
 /*! \fn void mcskel2d3d_K3_MarkEnd(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
-    \brief ajoute au complexe m les faces extrï¿½mitï¿½s du complexe k
-    \warning les faces essentielles doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
-    pas de vï¿½rification de compatibilitï¿½ entre k et m
+    \brief ajoute au complexe m les faces extrémités du complexe k
+    \warning les faces essentielles doivent avoir été marquées auparavant,
+    pas de vérification de compatibilité entre k et m
 */
 void mcskel2d3d_K3_MarkEnd(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
-// une face "CARRE" est extrï¿½mitï¿½ si 
-//   i) elle est rï¿½guliï¿½re et 
+// une face "CARRE" est extrémité si 
+//   i) elle est régulière et 
 //   ii) le cardinal de son core <= 3
-// une face "INTER" est extrï¿½mitï¿½ si 
-//   i) elle est rï¿½guliï¿½re et  
+// une face "INTER" est extrémité si 
+//   i) elle est régulière et  
 //   ii) elle est principale
 {
 
@@ -1384,13 +1383,13 @@ void mcskel2d3d_K3_MarkEnd(struct xvimage *k, struct xvimage *m)
 /*! \fn void mcskel2d3d_K3_MarkEnd2(struct xvimage *k, struct xvimage *m)
     \param k : un complexe
     \param m : un complexe "marqueur"
-    \brief ajoute au complexe m les faces extrï¿½mitï¿½s du complexe k
-    \warning les faces essentielles et rï¿½guliï¿½res doivent avoir ï¿½tï¿½ marquï¿½es auparavant,
-    pas de vï¿½rification de compatibilitï¿½ entre k et m
+    \brief ajoute au complexe m les faces extrémités du complexe k
+    \warning les faces essentielles et régulières doivent avoir été marquées auparavant,
+    pas de vérification de compatibilité entre k et m
 */
 void mcskel2d3d_K3_MarkEnd2(struct xvimage *k, struct xvimage *m)
 /* ========================================== */
-// une face rï¿½guliï¿½re f est extrï¿½mitï¿½ si 
+// une face régulière f est extrémité si 
 // f est maximale et si f contient exactement une face critique
 {
 #undef F_NAME
@@ -1443,8 +1442,8 @@ void mcskel2d3d_lskel3d4(struct xvimage * k, index_t nsteps)
 /*
   \brief Squelette ultime pour des 2-complexes principaux, 
   version "Z^3" 
-         - version efficace basï¿½e sur Khalimski 3D
-  \author Michel COUPRIE, juillet 2005, d'aprï¿½s Gilles Bertrand
+         - version efficace basée sur Khalimski 3D
+  \author Michel COUPRIE, juillet 2005, d'après Gilles Bertrand
   \warning L'objet ne doit pas toucher le bord
  */
 {
@@ -1548,9 +1547,9 @@ void lskel3d5(struct xvimage * k, index_t nsteps)
 /* =============================================================== */
 /*
   \brief Squelette curviligne pour des 2-complexes principaux, 
-  version "Z^3" avec dï¿½tection de points extrï¿½mitï¿½s 
-         - version efficace basï¿½e sur Khalimski 3D
-  \author Michel COUPRIE, juillet 2005, d'aprï¿½s Gilles Bertrand
+  version "Z^3" avec détection de points extrémités 
+         - version efficace basée sur Khalimski 3D
+  \author Michel COUPRIE, juillet 2005, d'après Gilles Bertrand
   \warning L'objet ne doit pas toucher le bord
  */
 {
@@ -1662,7 +1661,7 @@ void lskel3d6(struct xvimage * k, index_t nsteps)
 /* =============================================================== */
 /*
   \brief squelette curviligne contenant l'axe topologique
-  \author Michel COUPRIE, aoï¿½t 2005, d'aprï¿½s Gilles Bertrand
+  \author Michel COUPRIE, août 2005, d'après Gilles Bertrand
   \warning L'objet ne doit pas toucher le bord
  */
 {
@@ -1788,7 +1787,7 @@ void lskel3d7(struct xvimage * k, index_t nsteps)
 /* =============================================================== */
 /*
   \brief axe topologique
-  \author Michel COUPRIE, aoï¿½t 2005, d'aprï¿½s Gilles Bertrand
+  \author Michel COUPRIE, août 2005, d'après Gilles Bertrand
   \warning L'objet ne doit pas toucher le bord
  */
 {

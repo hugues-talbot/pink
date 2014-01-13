@@ -27,12 +27,8 @@
 #include "liarwrap.h"
 #include "imclient.h"
 
-// PLEASE DO NOT CHANGE THE VALUE OF ANSWER_MAX_SIZE
-// It should be at least 1024
-// It causes Imview to fail to upload images if it is less than that
-// Hugues Talbot	31 Jan 2013
-#define ANSWER_MAX_SIZE 1024
-
+//#define ANSWER_MAX_SIZE 1024
+#define ANSWER_MAX_SIZE 10
 #define BIN_MAX_SIZE    8192
 #define HNDSHK_SIZE     300
 #define DEFAULTPORT     7600
@@ -100,10 +96,10 @@ struct timezone
     int tz_dsttime;             /* Nonzero if DST is ever in effect.  */
 }; 
 /* For now redefine gettimeofday() as timerclear()
-   ie. sets timeval to zero (see <winsock.h> and/or <sys/time.h>
-   Else, define a new function for WIN32 :)
-   extern int gettimeofday();
-*/
+     ie. sets timeval to zero (see <winsock.h> and/or <sys/time.h>
+     Else, define a new function for WIN32 :)
+     extern int gettimeofday();
+  */
 # define gettimeofday(tvp, tzp) (timerclear(tvp))
 # define im_close closesocket
 # define USRID    "USERNAME"
@@ -190,7 +186,7 @@ WAS_STATIC const char  *px_resource_name[] = {
 
 #endif /* HAVE_POSIX_IPC */
 
-char  ipc_base_path[ANSWER_MAX_SIZE];
+char  *ipc_base_path[ANSWER_MAX_SIZE];
 
 
 
@@ -817,7 +813,7 @@ int imview_sysv_ipc_setup(char *sync_filename)
 
 /* send data via shm */
 int imview_sysv_shm_sendata(char         *in_data,      /* the raw data */
-			    wsize_t        len)       /* amount of data to be sent */
+		       wsize_t        len)       /* amount of data to be sent */
 {
     int            total, this_one;
     int            tbs;
@@ -877,7 +873,7 @@ int imview_sysv_ipc_setup(const char *sync_filename)
     return 1;
 }
 int imview_sysv_shm_sendata(char         *in_data,      /* the raw data */
-			    wsize_t        len)       /* amount of data to be sent */
+		       wsize_t        len)       /* amount of data to be sent */
 {
     imexception("imview_sysv_shm_sendata should not have been called, this is just a stub.\n");
     return -1;
@@ -908,7 +904,7 @@ static char *imview_px_ipc_name(const char *name)
         dir = "/tmp/";				/* default */
 # endif // NOT POSIX_IPC_PREFIX
     }
-    /* dir must end in a slash */
+		/* dir must end in a slash */
     slash = (dir[strlen(dir) - 1] == '/') ? "" : "/";
     snprintf(dst, ANSWER_MAX_SIZE, "%s%s%s", dir, slash, name);
     
@@ -1050,7 +1046,7 @@ int imview_px_ipc_setup(const char *sync_filename)
     return 1;
 }
 int imview_px_shm_sendata(char         *in_data,      /* the raw data */
-			  wsize_t        len)       /* amount of data to be sent */
+		       wsize_t        len)       /* amount of data to be sent */
 {
     imexception("imview_px_shm_sendata should not have been called, this is just a stub.\n");
     return -1;
@@ -1265,6 +1261,7 @@ int imviewputoverlay(IMAGE     *I, /* the overlay we want to apply on the curren
 		     int          conn_id) /* current connection */
 {
     char newName[ANSWER_MAX_SIZE];
+
     strcpy(newName, OVERLAY_MARKER);
     strcat(newName, name);
     /* relay the call */
@@ -1275,40 +1272,41 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
 		   const char  *name,    /* imview descriptor (name by which the file is known) */
 		   int          conn_id) /* ID of the connection */
 {
-    /** Sends an image to an imview server after a communication has been established.
+/** Sends an image to an imview server after a communication has been established.
 
-	RETURN VALUE:	int 
-	Error code = 0 if everything went all right.
+    RETURN VALUE:	int 
+    Error code = 0 if everything went all right.
 
-	DESCRIPTION:
-	This functions takes an arbitrary image and uploads it for display to a running
-	imview server. It is assumed that a communication has been established using the
-	imview_login() function, within the same process, and that therefore the
-	connection ID is known.
+    DESCRIPTION:
+    This functions takes an arbitrary image and uploads it for display to a running
+    imview server. It is assumed that a communication has been established using the
+    imview_login() function, within the same process, and that therefore the
+    connection ID is known.
 
-	See the implementation of imviewput for an example of using this function.
+    See the implementation of imviewput for an example of using this function.
 
 
-	NOTE:
-	At the moment only single and multispectral images can be uploaded. Arbitrary multi
-	component images (with different components having different size, pixel type, etc)
-	are not uploaded in their entirety: only the first component will be uploaded in this
-	fashion. This is due to an incompatibility with the internal Imview format.
+    NOTE:
+    At the moment only single and multispectral images can be uploaded. Arbitrary multi
+    component images (with different components having different size, pixel type, etc)
+    are not uploaded in their entirety: only the first component will be uploaded in this
+    fashion. This is due to an incompatibility with the internal Imview format.
 
-	HISTORY:
-	Written by Hugues Talbot	 5 Apr 2000
+    HISTORY:
+    Written by Hugues Talbot	 5 Apr 2000
 
-	TESTS:
+    TESTS:
 
-	REFERENCES:
+    REFERENCES:
 
-	KEYWORDS:
+    KEYWORDS:
 
-	SEE ALSO:
-	imview_login
-	imviewput
+    SEE ALSO:
+    imview_login
+    imviewput
 
-    **/
+**/
+
     int            res;   /* result of the call of this function */
     int            c, nbc, nx, ny, nz, ox, oy, oz;
     const char    *imgt, *pixt; /* named version of these parameters */
@@ -1335,16 +1333,20 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
     
     gettimeofday(&start_prog, &dummy);
     sprintf(FnName,"imviewput(%p,%s,%d)", I, name, conn_id);
+    
     if (!I || !name) {
 	imexception("%s: requires an image and a name\n", FnName);
 	return 1;
     }
+
     LIARdebug("Basic checks on the image");
+     
     /* Make sure we are saving a valid image */
     if (imgetimgtype(I) == IM_BADIMAGE) {
 	imexception("%s: bad image\n", FnName);
 	return 2;
     }
+
     /* get the image basic information */
     nbc = imgetnumcomp(I);
     nx = imgetnx(I, 0);
@@ -1356,6 +1358,7 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
     imp = imgetpixtype(I, 0);
     imgt = imgetimgtypestr(I);
     pixt = imgetpixtypestr(I,0);
+
     /* some people don't set IM_MULTI correctly */
     if (imgetimgtype(I) == IM_MULTI) {
 	if (nbc > 1) {
@@ -1392,12 +1395,15 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
 	    imexception("%s: warning, IM_MULTI should be reserved for images with more than one component\n",
 			FnName);
     }
+
     /* 4D images not yet supported either */
     if (imgetnt(I,0) != 1) {
 	imexception("%s: imview can't cope with 4D images yet\n", FnName);
 	return 4;
     }   
+
     LIARdebug("Sending Put command");
+
     final_name[0] = '"';
     strncpy(final_name+1, name, ANSWER_MAX_SIZE-100);
     strcat(final_name, " <memory>\""); /* to identify the data coming from the client */
@@ -1406,7 +1412,9 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
             putcmd[conn_array[conn_id].use_shm],
 	    final_name,
 	    1);
+
     /* for the time being we only support SPECTRUM-type image (all nx, etc the same) */
+    
     sprintf(subcommand,"%d %d %d %d %d %d %s %s %d ",
 	    nx, ny, nz,
 	    ox, oy, oz,
@@ -1418,6 +1426,7 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
     
     /* send the actual command */
     LIARdebug("Shared memory type: %s", putcmd[conn_array[conn_id].use_shm] );
+
     /* priority is SYSV > POSIX > SOCKET */
     /* at this stage POSIX IPC is not well-tested */
     if (conn_array[conn_id].use_shm == SHM_SYSV) { /* using Shared Memory */
@@ -1493,6 +1502,7 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
 	    imview_release_conn_array(conn_id);
 	    return 8;
 	}
+
 	LIARdebug("Got result: %s", cmdres);
 	/* check the result. It should contain a port number and a magic number */
 	sscanf(cmdres, "%hd %u", &binport, &magic_number); /* match a shord and an unsigned */
@@ -1532,6 +1542,7 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
 	}
     }
     gettimeofday(&end_prog,&dummy);
+
     time0 = start_prog.tv_sec + start_prog.tv_usec/1e6;
     time1 = start_put.tv_sec + start_put.tv_usec/1e6;
     dt0 = time1 - time0;
@@ -1543,6 +1554,7 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
     dt3 = time4-time3;
     dt4 = time3-time1; 
     dt5 = time4-time0;
+
     LIARdebug("\n"
 	      "Timings: start to put                : %6.4f sec\n"
 	      "         put to beginning of upload  : %6.4f sec\n"
@@ -1559,6 +1571,7 @@ int imviewputimage(IMAGE       *I,       /* the image we want to display */
 		  "                       steady state : %10.3f kB/s\n"
 		  "                     whole process  : %10.3f kB/s\n",
 		  (tbs*nbc)/(dt2*1024), (tbs*nbc)/(dt4*1024), (tbs*nbc)/(dt5*1024));
+    
     return res;
 }
 

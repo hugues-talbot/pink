@@ -113,7 +113,7 @@ int main(int argc, char **argv)
     }
   }
 
-    if (! llpemeyer_llpemeyerkhalimsky(image, marqueurs, marqueursfond, masque))
+    if (! llpemeyerkhalimsky(image, marqueurs, marqueursfond, masque))
     {
       fprintf(stderr, "%s: llpemeyerkhalimsky failed\n", argv[0]);
       exit(1);

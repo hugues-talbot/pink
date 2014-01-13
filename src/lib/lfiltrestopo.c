@@ -646,9 +646,9 @@ int32_t latf_old(struct xvimage * image, int32_t connexmin, int32_t rayonmin, in
           return 0;
         }
         ndes = p_despics(image, connexmin);
-        if (! lhtkern_lhtkernu(image, copy, connexmin))
+        if (! lhtkernu(image, copy, connexmin))
         {
-          fprintf(stderr, "%s: lhtkern_lhtkernu failed\n", F_NAME);
+          fprintf(stderr, "%s: lhtkernu failed\n", F_NAME);
           return 0;
         }
       } while (ndes);
@@ -663,7 +663,7 @@ int32_t latf_old(struct xvimage * image, int32_t connexmin, int32_t rayonmin, in
         ndes = p_despuits(image, connexmin);
         if (! lhtkern(image, copy, connexmin))
         {
-          fprintf(stderr, "%s: lhtkern_lhtkern failed\n", F_NAME);
+          fprintf(stderr, "%s: lhtkern failed\n", F_NAME);
          return 0;
         }
       } while (ndes);
@@ -719,9 +719,9 @@ int32_t ltaflambda(struct xvimage * image, int32_t connexmin, int32_t rayon, int
         return 0;
       }
       ndes = p_deslambdapics(image, connexmin, lambdapics);
-      if (! lhtkern_lhtkernu(image, copy, connexmin))
+      if (! lhtkernu(image, copy, connexmin))
       {
-        fprintf(stderr, "%s: lhtkern_lhtkernu failed\n", F_NAME);
+        fprintf(stderr, "%s: lhtkernu failed\n", F_NAME);
         return 0;
       }
       subimage(copy, image);
@@ -735,7 +735,7 @@ int32_t ltaflambda(struct xvimage * image, int32_t connexmin, int32_t rayon, int
       ndes += p_deslambdapuits(image, connexmin, lambdapuits);
       if (! lhtkern(image, save, connexmin))
       {
-        fprintf(stderr, "%s: lhtkern_lhtkern failed\n", F_NAME);
+        fprintf(stderr, "%s: lhtkern failed\n", F_NAME);
         return 0;
       }
       subimage(image, copy);
@@ -794,9 +794,9 @@ int32_t ltaflambda(struct xvimage * image, int32_t connexmin, int32_t rayon, int
         return 0;
       }
       ndes = p_deslambdapics(image, connexmin, lambdapics);
-      if (! lhtkern_lhtkernu(image, copy, connexmin))
+      if (! lhtkernu(image, copy, connexmin))
       {
-        fprintf(stderr, "%s: lhtkern_lhtkernu failed\n", F_NAME);
+        fprintf(stderr, "%s: lhtkernu failed\n", F_NAME);
         return 0;
       }
       memcpy(UCHARDATA(copy), UCHARDATA(image), N);
@@ -809,7 +809,7 @@ int32_t ltaflambda(struct xvimage * image, int32_t connexmin, int32_t rayon, int
       ndes += p_deslambdapuits(image, connexmin, lambdapuits);
       if (! lhtkern(image, copy, connexmin))
       {
-        fprintf(stderr, "%s: lhtkern_lhtkern failed\n", F_NAME);
+        fprintf(stderr, "%s: lhtkern failed\n", F_NAME);
         return 0;
       }
       if (ndes) memcpy(UCHARDATA(copy), UCHARDATA(image), N);
@@ -862,9 +862,9 @@ int32_t ltaf(struct xvimage * image, int32_t connexmin, int32_t rayon)
         return 0;
       }
       ndes = p_despics(image, connexmin);
-      if (! lhtkern_lhtkernu(image, copy, connexmin))
+      if (! lhtkernu(image, copy, connexmin))
       {
-        fprintf(stderr, "%s: lhtkern_lhtkernu failed\n", F_NAME);
+        fprintf(stderr, "%s: lhtkernu failed\n", F_NAME);
         return 0;
       }
       memcpy(UCHARDATA(copy), UCHARDATA(image), N);
@@ -877,7 +877,7 @@ int32_t ltaf(struct xvimage * image, int32_t connexmin, int32_t rayon)
       ndes += p_despuits(image, connexmin);
       if (! lhtkern(image, copy, connexmin))
       {
-        fprintf(stderr, "%s: lhtkern_lhtkern failed\n", F_NAME);
+        fprintf(stderr, "%s: lhtkern failed\n", F_NAME);
         return 0;
       }
       if (ndes) memcpy(UCHARDATA(copy), UCHARDATA(image), N);
@@ -928,7 +928,7 @@ int32_t ltlf(struct xvimage * image, int32_t connexmin, int32_t rayon)
       ndes = p_despuits(image, connexmin);
       if (! lhtkern(image, copy, connexmin))
       {
-        fprintf(stderr, "%s: lhtkern_lhtkern failed\n", F_NAME);
+        fprintf(stderr, "%s: lhtkern failed\n", F_NAME);
         return 0;
       }
       if (ndes) memcpy(UCHARDATA(copy), UCHARDATA(image), N);
@@ -977,9 +977,9 @@ int32_t ltuf(struct xvimage * image, int32_t connexmin, int32_t rayon)
         return 0;
       }
       ndes = p_despics(image, connexmin);
-      if (! lhtkern_lhtkernu(image, copy, connexmin))
+      if (! lhtkernu(image, copy, connexmin))
       {
-        fprintf(stderr, "%s: lhtkern_lhtkernu failed\n", F_NAME);
+        fprintf(stderr, "%s: lhtkernu failed\n", F_NAME);
         return 0;
       }
       if (ndes) memcpy(UCHARDATA(copy), UCHARDATA(image), N);

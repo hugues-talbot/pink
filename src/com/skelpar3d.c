@@ -46,7 +46,7 @@ The parameter \b nsteps gives, if positive, the number of parallel
 thinning steps to be processed.  If the value given for \b nsteps
 equals -1, the thinning is continued until stability.
 
-For some algorithms ( 16 to xx ), the parameter \b nsteps has a
+For some algorithms (16 to ??), the parameter \b nsteps has a
 different meaning which is related to the notion of persistence (see
 [REF A AJOUTER]). It plays the role of a filtering parameter.
 
@@ -76,17 +76,9 @@ The possible choices are:
 \li 20: surface and curvilinear, symmetric, based on 1D and 2D isthmus with persistence (SCK3p)
 \li 21: surface, symmetric, based on residual points (RK3), variant (uses 26-connectivity to define residual points)
 
-
 In modes other than 2, if the parameter \b inhibit is given and is a
 binary image name, then the points of this image will be left
 unchanged.
-
-The following codes give access to auxiliary functions, for isthmus detection. 
-Parameter \b nsteps will not be used in this case (any value can be given).
-
-\li 100: 1D isthmus points
-
-<B>Warning:</B> The object must not have any point on the frame of the image.
 
 The following codes give access to auxiliary functions, for isthmus detection. 
 Parameter \b nsteps will not be used in this case (any value can be given).

@@ -35,7 +35,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern int32_t lreconsdilat_lreconsdilat(
+extern int32_t lreconsdilat(
         struct xvimage *g,
         struct xvimage *f,
         uint8_t *mask

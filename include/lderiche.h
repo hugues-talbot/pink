@@ -39,7 +39,7 @@ extern "C" {
 /* prototype for lderiche.c */
 /* ============== */
 
-extern void lderiche_derichegen(double *x,
+extern void derichegen(double *x,
 		       int32_t M,
 		       int32_t N,
 		       double *y1,
@@ -49,7 +49,7 @@ extern void lderiche_derichegen(double *x,
 		       double a5, double a6, double a7, double a8, 
 		       double b1, double b2, double b3, double b4);
 
-extern int32_t lderiche_lderiche(
+extern int32_t lderiche(
         struct xvimage *image1,
         double alpha,
         int32_t function,
@@ -65,7 +65,7 @@ extern int32_t lderiche3d(
         double l
 );
 
-    extern int32_t lderiche_llisseurrec3d(
+extern int32_t llisseurrec3d(
         struct xvimage *image1,
         double alpha
 );

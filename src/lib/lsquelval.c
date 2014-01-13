@@ -244,7 +244,7 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
 #ifdef DEBUG
       printf("pop x = %d,%d, im = %d, dx = %ld\n", x%rs, x/rs, IM[x], DX[x]);
@@ -271,7 +271,7 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
 #ifdef DEBUG
       printf("pop x = %d,%d, im = %d, dx = %ld\n", x%rs, x/rs, IM[x], DX[x]);
@@ -324,7 +324,7 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
     {
       while (!mcrbt_RbtVide(RBT))
       {
-        x = mcrbt_RbtPopMin(RBT);
+        x = RbtPopMin(RBT);
 #ifdef DEBUG
         printf("pop x = %d,%d, dt = %ld\n", x%rs, x/rs, DT[x]);
 #endif
@@ -343,7 +343,7 @@ int32_t lsquelval(struct xvimage *image, // entree/sortie: image originale / squ
       int32_t abaisse;
       while (!mcrbt_RbtVide(RBT))
       {
-        x = mcrbt_RbtPopMin(RBT);
+        x = RbtPopMin(RBT);
 #ifdef DEBUG
         printf("pop x = %d,%d, dt = %d\n", x%rs, x/rs, DT[x]);
 #endif
@@ -448,7 +448,7 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (mctopo3d_simple6(IM, x, rs, ps, N))
       {
@@ -472,7 +472,7 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (mctopo3d_simple26(IM, x, rs, ps, N))
       {
@@ -514,7 +514,7 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
     int32_t abaisse;
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       do
       {
         abaisse = 0;
@@ -539,7 +539,7 @@ int32_t lsquelval3d(struct xvimage *image, // entree/sortie: image originale / s
     int32_t abaisse;
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       do
       {
         abaisse = 0;
@@ -697,7 +697,7 @@ int32_t lsquelsmoothval(struct xvimage *image, // entree/sortie: image originale
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
 #ifdef DEBUG
       printf("pop x = %d,%d, im = %d, dx = %ld\n", x%rs, x/rs, IM[x], DX[x]);

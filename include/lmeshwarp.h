@@ -39,7 +39,7 @@ extern "C" {
 /* prototype for lmeshwarp.c */
 /* ============== */
 
-extern int32_t lmeshwarp_lmeshwarp(
+extern int32_t lmeshwarp(
   struct xvimage * in,
   int32_t mrs
 );

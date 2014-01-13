@@ -32,9 +32,6 @@ same conditions as regards security.
 The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
-
-#include "mcimage.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -60,7 +57,7 @@ typedef int32_t * LookUpTable;
 typedef int32_t * Tabuff;
 typedef int32_t * TabDTg;
 
-typedef struct Weighting{
+typedef struct  Weighting{
     int32_t x, y, z, RR;
 }  Weighting;
 

@@ -526,6 +526,10 @@ typedef int32_t * Tabuff;
 typedef uint32_t * Image;
 typedef int32_t * TabDTg;
 
+typedef struct  Weighting{
+    int32_t x, y, z, RR;
+}  Weighting;
+
 typedef Weighting *MaskG;	      	//used to store Mglut
 
 /*

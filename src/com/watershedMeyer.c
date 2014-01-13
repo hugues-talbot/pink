@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 
   connex = atoi(argv[5]);
 
-  if (! llpemeyer_llpemeyer(image, marqueurs, marqueursfond, masque, connex))
+  if (! llpemeyer(image, marqueurs, marqueursfond, masque, connex))
   {
     fprintf(stderr, "%s: llpemeyer failed\n", argv[0]);
     exit(1);

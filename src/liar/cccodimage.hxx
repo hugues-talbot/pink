@@ -64,10 +64,6 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "lMSF.h"
 #include "union_find.h"
 
-/* HT 2013-11-28 ; why is this necessary now ? */
-
-extern "C++" {
-
 void print_incidence_graph(struct graph *G) ;
 void fill_incidence_graph(struct graph *G,
 			  int rs,
@@ -99,8 +95,6 @@ void grey_weights( char * image_name , /* image name */
 		   int cs,
 		   int ds)  ;
 
-
-
 void grey_weights_PW(struct xvimage *glimage, /*IN : image name */  
 			   struct graph *G, 
 			   int rs, 
@@ -120,8 +114,6 @@ void color_standard_weights_PW( struct xvimage *image_r , /* IN : image name */
                                 struct xvimage *image_b,
 				      uint32_t * maxi,         /* OUT : the maximum weight value */
                                 struct graph *G);
-
-
 
 int color_standard_weights( char * image_name , /* image name */
 			    uint32_t * weights, /* array to store the values of weights on the edges */
@@ -144,7 +136,6 @@ void grey_weights_double( char * image_name,
 			  struct graph *G,
 			  uint32_t * seeds,
 			  int size_seeds);
-
 
 void read3Drgbimage(const char * image_name, struct xvimage **image_r, struct xvimage **image_g, struct xvimage **image_b );
 
@@ -182,8 +173,4 @@ extern struct xvimage * boundary(struct xvimage * image);
 
 void fill_incidence_graph( int ** edges, 
 struct graph G) ;*/
-
-} /* C++ */
-
-
 #endif

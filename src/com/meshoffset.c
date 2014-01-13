@@ -75,7 +75,6 @@ int main(int argc, char **argv)
   FILE *fileout = NULL;
   int32_t i;
   int32_t formatin, formatout;
-  int32_t resolution;
 
   if ((argc != 3) && (argc != 4))
   {

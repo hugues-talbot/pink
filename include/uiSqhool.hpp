@@ -192,7 +192,7 @@ namespace pink{
   template <class image_type>  
   void uiSqhool::insert_image ( const image_type & image, 
 				const std::string & relative_path, 
-				std::string full_path
+				std::string full_path=""
     ) {
     //In a later time an image can be broken up in order to respect the 10E6 byte blob limit.
     

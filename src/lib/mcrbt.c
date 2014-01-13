@@ -113,10 +113,10 @@ typedef struct RBTELT {
      de l'arbre T 
 
   TypRbtKey RbtMin(Rbt * T) : 
-     retourne la clï¿½ de l'element de valeur "key" minimum, dans l'arbre T 
+     retourne la clé de l'element de valeur "key" minimum, dans l'arbre T 
 
   TypRbtKey RbtMax(Rbt * T) : 
-     retourne la clï¿½ de l'element de valeur "key" maximum, dans l'arbre T 
+     retourne la clé de l'element de valeur "key" maximum, dans l'arbre T 
 
   RbtElt * mcrbt_RbtSuccessor(Rbt * T, RbtElt * x) : 
      retourne un pointeur sur l'element de valeur "key" immediatement superieure a celle de l'element x
@@ -171,7 +171,6 @@ Rbt * mcrbt_CreeRbtVide(
 } /* mcrbt_CreeRbtVide() */
 
 /* ==================================== */
-static
 void RbtTransRec(
   Rbt **T, Rbt * A, RbtElt * x)
 /* ==================================== */
@@ -183,7 +182,6 @@ void RbtTransRec(
 } /* RbtTransRec() */
 
 /* ==================================== */
-static
 void RbtReAlloc(Rbt **A)
 /* ==================================== */
 {
@@ -206,7 +204,6 @@ void RbtReAlloc(Rbt **A)
 } /* RbtReAlloc() */
 
 /* ==================================== */
-static
 void RbtFlush(
   Rbt * T)
 /* ==================================== */
@@ -238,7 +235,6 @@ void mcrbt_RbtTermine(
 } /* mcrbt_RbtTermine() */
 
 /* ==================================== */
-static
 void RbtPrintRec(
   Rbt * T, RbtElt * x, index_t niv)
 /* ==================================== */
@@ -258,7 +254,6 @@ void RbtPrintRec(
 } /* RbtPrintRec() */
 
 /* ==================================== */
-static
 void RbtPrint(
   Rbt * T)
 /* ==================================== */
@@ -267,7 +262,7 @@ void RbtPrint(
 } /* RbtPrint() */
 
 /* ==================================== */
-RbtElt * mcrbt_RbtSearch(
+RbtElt * RbtSearch(
   Rbt * T, TypRbtKey k)
 /* ==================================== */
 {
@@ -287,7 +282,6 @@ RbtElt * mcrbt_RbtMinimum(
 } /* mcrbt_RbtMinimum() */
 
 /* ==================================== */
-static
 RbtElt * RbtMaximum(
   Rbt * T, RbtElt * x)
 /* ==================================== */
@@ -647,7 +641,7 @@ printf("FIN mcrbt_RbtDelete\n");
 } /* mcrbt_RbtDelete() */
 
 /* ==================================== */
-TypRbtAuxData mcrbt_RbtPopMin(
+TypRbtAuxData RbtPopMin(
   Rbt * T)
 /* ==================================== */
 /* 
@@ -665,7 +659,6 @@ TypRbtAuxData mcrbt_RbtPopMin(
 } /* RbtPopMin() */
 
 /* ==================================== */
-static
 TypRbtAuxData RbtPopMax(
   Rbt * T)
 /* ==================================== */
@@ -684,7 +677,7 @@ TypRbtAuxData RbtPopMax(
 } /* RbtPopMax() */
 
 /* ==================================== */
-TypRbtKey mcrbt_RbtMinLevel(
+TypRbtKey RbtMinLevel(
   Rbt * T)
 /* ==================================== */
 {
@@ -726,14 +719,14 @@ int32_t main()
       case 'd':
         printf("valeur > ");
         scanf("%lf", &p);
-        x = mcrbt_RbtSearch(T, p);
+        x = RbtSearch(T, p);
         if (x != T->nil) mcrbt_RbtDelete(T, x);
         else printf("pas trouve !\n");
         break;
       case 's':
         printf("valeur > ");
         scanf("%lf", &p);
-        x = mcrbt_RbtSearch(T, p);
+        x = RbtSearch(T, p);
         printf("trouve: %d\n", x != T->nil);
         break;
       case 'i':
@@ -747,7 +740,7 @@ int32_t main()
       case 'c':
         printf("valeur > ");
         scanf("%lf", &p);
-        x = mcrbt_RbtSearch(T, p);
+        x = RbtSearch(T, p);
         printf("trouve: %d\n", x != T->nil);
         if (x != T->nil)
 	{
@@ -759,7 +752,7 @@ int32_t main()
         if (mcrbt_RbtVide(T)) 
           printf("vide\n");
         else
-          (void)mcrbt_RbtPopMin(T); 
+          (void)RbtPopMin(T); 
         break;
       case 'p': RbtPrint(T); break;
       case 'v': printf("vide: %d\n", mcrbt_RbtVide(T)); break;
@@ -783,7 +776,7 @@ int32_t main()
        d = rand();
        (void)mcrbt_RbtInsert(&T, (double)d, d);
        n++;
-       printf("j'insï¿½re %ld; n = %d\n", d, n);
+       printf("j'insère %ld; n = %d\n", d, n);
     }
     else
     {
@@ -791,7 +784,7 @@ int32_t main()
         printf("vide\n");
       else
       {
-        d = mcrbt_RbtPopMin(T); 
+        d = RbtPopMin(T); 
         n--;
         printf("je retire %ld; n = %d\n", d, n);
       }

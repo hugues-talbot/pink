@@ -98,7 +98,7 @@ int main(int argc, char **argv)
     l = atof(argv[4]);
   }
 
-  if (! lderiche_lderiche(image1, alpha, function, l))
+  if (! lderiche(image1, alpha, function, l))
   {
     fprintf(stderr, "%s: function lderiche failed\n", argv[0]);
     exit(1);

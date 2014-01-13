@@ -72,8 +72,8 @@ typedef struct {
 extern Rbt * mcrbt_CreeRbtVide(
   index_t taillemax);
 
-// extern void RbtFlush(
-//   Rbt * T);
+extern void RbtFlush(
+  Rbt * T);
 
 extern int32_t mcrbt_RbtVide(
   Rbt * T);
@@ -81,17 +81,17 @@ extern int32_t mcrbt_RbtVide(
 extern void mcrbt_RbtTermine(
   Rbt * T);
 
-// extern void RbtPrint(
-//   Rbt * T);
+extern void RbtPrint(
+  Rbt * T);
 
-extern RbtElt * mcrbt_RbtSearch(
+extern RbtElt * RbtSearch(
   Rbt * T, TypRbtKey k);
 
 extern RbtElt * mcrbt_RbtMinimum(
   Rbt * T, RbtElt * x);
 
-// extern RbtElt * RbtMaximum(
-//   Rbt * T, RbtElt * x);
+extern RbtElt * RbtMaximum(
+  Rbt * T, RbtElt * x);
 
 extern RbtElt * RbtSuccessor(
   Rbt * T, RbtElt * x);
@@ -102,13 +102,13 @@ extern RbtElt * mcrbt_RbtInsert(
 extern void RbtDelete(
   Rbt * T, RbtElt * z);
 
-extern TypRbtAuxData mcrbt_RbtPopMin(
+extern TypRbtAuxData RbtPopMin(
   Rbt * T);
 
-// extern TypRbtAuxData RbtPopMax(
-//   Rbt * T);
+extern TypRbtAuxData RbtPopMax(
+  Rbt * T);
 
-extern TypRbtKey mcrbt_RbtMinLevel(
+extern TypRbtKey RbtMinLevel(
   Rbt * T);
 
 extern TypRbtKey RbtMaxLevel(

@@ -724,7 +724,7 @@ int32_t lwshedtopo_lreconsdilat(
 } /* lwshedtopo_lreconsdilat() */
 
 /* ==================================== */
-int32_t lwshedtopo_lreconseros(
+int32_t lreconseros(
         struct xvimage *g,
         struct xvimage *f,
         int32_t connex) 

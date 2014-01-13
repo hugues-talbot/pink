@@ -108,7 +108,7 @@ int main(int argc, char **argv)
 
   if ((connex == 4) || (connex == 8))
   {
-    if (! llpemeyer_llpemeyersanslignelab(image, marqueurs, masque, connex))
+    if (! llpemeyersanslignelab(image, marqueurs, masque, connex))
     {
       fprintf(stderr, "%s: llpemeyersanslignelab failed\n", argv[0]);
       exit(1);
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
   }
   else if ((connex == 6) || (connex == 18) || (connex == 26))
   {
-    if (! llpemeyer_llpemeyer3dsanslignelab(image, marqueurs, masque, connex))
+    if (! llpemeyer3dsanslignelab(image, marqueurs, masque, connex))
     {
       fprintf(stderr, "%s: llpemeyer3dsanslignelab failed\n", argv[0]);
       exit(1);

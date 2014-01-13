@@ -36,7 +36,8 @@ def find_bias(image, xc, yc):
 
 # correction of the bias
 def correct_bias(image, xc, yc, alpha):
-    result = image.clone()
+    result = pink.char_image([0,0])
+    result.copy(image)
     rs = result.size[0]
     cs = result.size[1]
     for y in range(cs):

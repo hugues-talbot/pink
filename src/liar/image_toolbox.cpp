@@ -193,8 +193,8 @@ A seed image from the GrabCut database contains
 }
 
 
-int StoresMultiSeeds_ImgStruct(struct xvimage *seeds,
-			       struct graph *G) 
+int StoresMultiSeeds(struct xvimage *seeds,
+                      struct graph *G) 
 /* =============================================================================== */
   /* IN : image structure and the structure Graph 
      OUT : two arrays of the structure graph filled from the seed image 
@@ -231,8 +231,8 @@ The multiseed format for a seed image contains
 
 
 /* =============================================================================== */
-int StoresMultiSeeds_ImgName(char * image_name,
-			     struct graph *G) 
+int StoresMultiSeeds(char * image_name,
+		     struct graph *G) 
 /* =============================================================================== */
   /* IN : image name and the structure Graph 
      OUT : two arrays of the structure graph filled from the seed image 
@@ -252,7 +252,7 @@ The multiseed format for a seed image contains
   }
 
   // call function just above
-  StoresMultiSeeds_ImgStruct(seeds, G);
+  StoresMultiSeeds(seeds, G);
 
   freeimage(seeds);
 

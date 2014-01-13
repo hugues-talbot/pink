@@ -223,7 +223,6 @@ RbtElt * lhthiniso_RbtInsertAux(  /* allocation et insertion simple */
 } /* lhthiniso_RbtInsertAux() */
 
 /* ==================================== */
-static
 void LeftRotate(
   Rbt * T, RbtElt * x)
 /* ==================================== */
@@ -248,7 +247,6 @@ void LeftRotate(
 } /* LeftRotate() */
 
 /* ==================================== */
-static
 void RightRotate(
   Rbt * T, RbtElt * x)
 /* ==================================== */

@@ -125,7 +125,7 @@ int main(int argc, char **argv)
   //printf("lpebiconnexe \n");
   if(parite != 14)
   {
-    if (! llpemeyer_llpemeyerbiconnecte(image, marqueurs, marqueursfond, masque, parite))
+    if (! llpemeyerbiconnecte(image, marqueurs, marqueursfond, masque, parite))
     {
       fprintf(stderr, "%s: llpemeyerbiconnecte failed\n", argv[0]);
       exit(1);
@@ -133,7 +133,7 @@ int main(int argc, char **argv)
   }
   else
   {
-    if (! llpemeyer_llpemeyerbiconnecte3d(image, marqueurs, marqueursfond, masque))
+    if (! llpemeyerbiconnecte3d(image, marqueurs, marqueursfond, masque))
     {
       fprintf(stderr, "%s: llpemeyerbiconnecte failed\n", argv[0]);
       exit(1);

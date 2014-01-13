@@ -134,7 +134,7 @@ int main(int argc, char **argv)
 
   if ((connex == 4) || (connex == 8))
   {
-    if (! lhtkern_llvkern(image, imagecond, connex))
+    if (! llvkern(image, imagecond, connex))
     {
       fprintf(stderr, "%s: llvkern failed\n", argv[0]);
       exit(1);

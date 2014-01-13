@@ -105,7 +105,6 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 
 /* ==================================== */
-static
 int32_t testabaisse4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
@@ -129,7 +128,6 @@ if (modifie) printf("========> ABAISSE : %d\n", F[x]);
 } /* testabaisse4() */
 
 /* ==================================== */
-static
 int32_t testabaisse8(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
@@ -153,7 +151,6 @@ if (modifie) printf("========> ABAISSE : %d\n", F[x]);
 } /* testabaisse8() */
 
 /* ==================================== */
-static
 int32_t testeleve4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
@@ -177,7 +174,6 @@ if (modifie) printf("========> ELEVE : %d\n", F[x]);
 } /* testeleve4() */
 
 /* ==================================== */
-static
 int32_t testeleve8(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
@@ -362,7 +358,7 @@ int32_t lhtkern(struct xvimage *image, struct xvimage *imagecond, int32_t connex
 } /* lhtkern() */
 
 /* ==================================== */
-int32_t lhtkern_lhtkernu(struct xvimage *image, struct xvimage *imagecond, int32_t connex)
+int32_t lhtkernu(struct xvimage *image, struct xvimage *imagecond, int32_t connex)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lhtkernu"
@@ -1615,7 +1611,7 @@ if (modifie) printf("========> ELEVE : %d\n", F[x]);
 } /* testniveleve8() */
 
 /* ==================================== */
-int32_t lhtkern_llvkern(struct xvimage *image, struct xvimage *imagecond, int32_t connex)
+int32_t llvkern(struct xvimage *image, struct xvimage *imagecond, int32_t connex)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "llvkern"

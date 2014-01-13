@@ -83,15 +83,8 @@ extern void merge_node (int e1,            /* index of node 1 */
 			DBL_TYPE ** proba, /* array for storing the result x */
 			int nb_labels) ;    /* nb of labels */
 
-extern "C++" {
 
-//template<class wtype>bool equal (wtype a, wtype b);
-template <typename TYPE>
-bool equal (TYPE a, TYPE b)
-{
-  if (a<b) return b-a<eps;
-  else return a-b<eps;
-}
+template<class wtype>bool equal (wtype a, wtype b);
  
 
 /*==================================================================================================================*/
@@ -405,7 +398,12 @@ subject to data constraints */
  
 }
 
-} /* C++ */
+template <class wtype>
+bool equal (wtype a, wtype b)
+{
+  if (a<b) return b-a<eps;
+  else return a-b<eps;
+}
 
 
 
