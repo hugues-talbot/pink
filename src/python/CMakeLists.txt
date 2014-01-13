@@ -172,4 +172,18 @@ else (THIS_IS_MSVC) # on unix like system
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE )
 endif (THIS_IS_MSVC)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # LuM end of file

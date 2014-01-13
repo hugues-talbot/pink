@@ -49,8 +49,6 @@
  wm title . "3D viewer"
 
  set PINK "$env(PINK)"
- set LDPATH "$env(LD_LIBRARY_PATH)"
- puts "$LDPATH"
  source "$PINK/tcl/my_exec.tcl"
  source "$PINK/tcl/my_dialog.tcl"
  source "$PINK/tcl/my_feedback.tcl"

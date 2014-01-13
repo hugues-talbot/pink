@@ -132,16 +132,16 @@ int main(int argc, char **argv)
   }
   else if (datatype == 2)
   {
-    int16_t * I;
+    int32_t * I;
     uint16_t tmp;
     uint8_t tmp1;
-    image = allocimage(NULL, rs, cs, ds, VFF_TYP_2_BYTE);
+    image = allocimage(NULL, rs, cs, ds, VFF_TYP_4_BYTE);
     if (image == NULL)
     {   fprintf(stderr,"%s : allocimage failed\n", argv[0]);
         exit(1);
     }
     fseek(fd, headersize, SEEK_CUR);
-    I = SSHORTDATA(image);
+    I = SLONGDATA(image);
     for (i = 0; i < N; i++) 
     { 
       fread(&tmp, 2 * sizeof(char), 1, fd);
@@ -149,9 +149,9 @@ int main(int argc, char **argv)
       {
         tmp1 = tmp & 0x00ff;
         tmp = tmp >> 8;
-        tmp = tmp | (((uint16_t)tmp1) << 8);      
+        tmp = tmp | (((uint32_t)tmp1) << 8);      
       }
-      I[i] = (int16_t)tmp; 
+      I[i] = (int32_t)tmp; 
     }
   }
   else if (datatype == 4)

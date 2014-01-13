@@ -7,8 +7,8 @@ from pink import imview as imview
 from pink import manipulate as manipulate
 from pink import cpp as pink
 inv=pink.inverse
-global debug
-debug=True
+global DEBUG
+DEBUG=1
 
 # bias correction
 def correctbias(img, alpha):

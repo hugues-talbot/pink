@@ -432,7 +432,7 @@ Soit F l'objet initial.
 Soit P une fonction de D dans l'ensemble des entiers, 
 P specifie un ordre de priorite dans le traitement des points. 
 Les points ayant les plus basses valeurs sont traites en priorite.
-Les points ayant une valeur supï¿½rieure ou ï¿½gale ï¿½ une valeur 
+Les points ayant une valeur supérieure ou égale à une valeur 
 specifiee VAL_INHIBIT ne seront pas selectionnes.
 
 On definit l'operateur Ultimate Thinning UT(F,P) : 
@@ -513,7 +513,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse4bin(F, x, rs, N))          /* modifie l'image le cas echeant */
       {
@@ -534,7 +534,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse8bin(F, x, rs, N))          /* modifie l'image le cas echeant */
       {
@@ -738,7 +738,7 @@ Soit F l'objet initial.
 Soit P une fonction de D dans l'ensemble des entiers, 
 P specifie un ordre de priorite dans le traitement des points. 
 Les points ayant les plus basses valeurs sont traites en priorite.
-Les points ayant une valeur supï¿½rieure ou ï¿½gale ï¿½ une valeur 
+Les points ayant une valeur supérieure ou égale à une valeur 
 specifiee VAL_INHIBIT ne seront pas selectionnes.
 
 On definit l'operateur Ultimate Thinning UT(F,P) : 
@@ -822,7 +822,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse6bin(F, x, rs, ps, N))      /* modifie l'image le cas echeant */
       {
@@ -843,7 +843,7 @@ resultat: F
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if (testabaisse26bin(F, x, rs, ps, N))         /* modifie l'image le cas echeant */
       {
@@ -1218,7 +1218,7 @@ int32_t lskelcurv(struct xvimage *image,
               int32_t connex)
 /* ==================================== */
 /* 
-Squelette curviligne 2D binaire guide par une image de priorites, basï¿½ sur les isthmes 1D
+Squelette curviligne 2D binaire guide par une image de priorites, basé sur les isthmes 1D
 Les valeurs les plus basses correspondent a la plus grande priorite.
 
 On definit l'operateur Curvilinear Thinning CT(F,P) : 
@@ -1495,14 +1495,14 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir2d(F, x, rs, N));
   {
     while (!mcrbt_RbtVide(RBT))
     {
-      prio = (int32_t)mcrbt_RbtMinLevel(RBT) / 10;
+      prio = (int32_t)RbtMinLevel(RBT) / 10;
       oldprio = prio;
 
       while (!mcrbt_RbtVide(RBT) && (prio == oldprio)) 
       {
-        x = mcrbt_RbtPopMin(RBT);
+        x = RbtPopMin(RBT);
         FifoPush(FIFO1, x);
-        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)mcrbt_RbtMinLevel(RBT) / 10;
+        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
       } 
 
       while (!FifoVide(FIFO1))
@@ -1579,7 +1579,7 @@ int32_t lskelcurv3d(struct xvimage *image,
               int32_t connex)
 /* ==================================== */
 /* 
-Squelette curviligne 3D binaire guide par une image de priorites, basï¿½ sur les isthmes 1D
+Squelette curviligne 3D binaire guide par une image de priorites, basé sur les isthmes 1D
 Les valeurs les plus basses correspondent a la plus grande priorite.
 
 De facon tres schematique,
@@ -1785,14 +1785,14 @@ resultat: F
 
     while (!mcrbt_RbtVide(RBT))
     {
-      prio = (int32_t)mcrbt_RbtMinLevel(RBT) / 10;
+      prio = (int32_t)RbtMinLevel(RBT) / 10;
       oldprio = prio;
 
       while (!mcrbt_RbtVide(RBT) && (prio == oldprio)) 
       {
-        x = mcrbt_RbtPopMin(RBT);
+        x = RbtPopMin(RBT);
         FifoPush(FIFO1, x);
-        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)mcrbt_RbtMinLevel(RBT) / 10;
+        if (!mcrbt_RbtVide(RBT)) prio = (int32_t)RbtMinLevel(RBT) / 10;
       } 
 
       while (!FifoVide(FIFO1))
@@ -2196,7 +2196,7 @@ resultat: F
   {           
     while (!mcrbt_RbtVide(RBT))
     {
-      x = mcrbt_RbtPopMin(RBT);
+      x = RbtPopMin(RBT);
       UnSet(x, EN_RBT);
       if ((! IsSet(x,CONTRAINTE)) && testabaisse26bin(F, x, rs, ps, N))
       {
@@ -2841,7 +2841,7 @@ int32_t lskeleucl(struct xvimage *image,
       } /* if (testabaisse8bin(F, x, rs, N)) */
       else
       {
-        I[x] = 1; // le point x ne sera plus considï¿½rï¿½, il fait partie du squelette
+        I[x] = 1; // le point x ne sera plus considéré, il fait partie du squelette
         for (k = 0; k < 8; k += 1)
         {
           y = voisin(x, k, rs, N);
@@ -2883,7 +2883,7 @@ int32_t lskeleucl(struct xvimage *image,
       } /* if (testabaisse26bin(F, x, rs, N)) */
       else 
       {
-        I[x] = 1; // le point x ne sera plus considï¿½rï¿½, il fait partie du squelette
+        I[x] = 1; // le point x ne sera plus considéré, il fait partie du squelette
         for (k = 0; k < 26; k += 1)
         {
           y = voisin26(x, k, rs, ps, N);
@@ -2988,8 +2988,8 @@ int32_t lskelend3d_sav(struct xvimage *image,
 Squelette curviligne ou surfacique 3D binaire guide par une image de priorites.
 Les valeurs les plus basses correspondent a la plus grande priorite.
 
-Le prï¿½dicat "endpoint" est dï¿½fini par un tableau de 2^27 boolï¿½ens 
-(codï¿½s sur 2^24 octets) passï¿½ en paramï¿½tre.
+Le prédicat "endpoint" est défini par un tableau de 2^27 booléens 
+(codés sur 2^24 octets) passé en paramètre.
 
 De facon tres schematique,
 on definit l'operateur EndThinning CT(F,P,E) : 
@@ -3190,8 +3190,8 @@ Squelette curviligne ou surfacique 3D binaire.
 
 Algo par passes directionnelles.
 
-Le prï¿½dicat "endpoint" est dï¿½fini par un tableau de 2^27 boolï¿½ens 
-(codï¿½s sur 2^24 octets) passï¿½ en paramï¿½tre.
+Le prédicat "endpoint" est défini par un tableau de 2^27 booléens 
+(codés sur 2^24 octets) passé en paramètre.
 */
 #undef F_NAME
 #define F_NAME "lskelend3d"
@@ -3477,7 +3477,7 @@ int32_t lskelendcurvlab3d(struct xvimage *image,
 			  int32_t niseuil)
 /* ==================================== */
 /* 
-Squelette curviligne 3D sur une image de labels (chaque label est traitï¿½ comme une image binaire).
+Squelette curviligne 3D sur une image de labels (chaque label est traité comme une image binaire).
 
 Algo par passes directionnelles.
 */
@@ -3633,26 +3633,26 @@ int32_t lskeldir3d(struct xvimage *image,
 		   int32_t nsteps)
 /* ==================================== */
 /* 
-Squelette curviligne 3D binaire - algo directionel sï¿½quentiel basï¿½ sur les isthmes 1D
+Squelette curviligne 3D binaire - algo directionel séquentiel basé sur les isthmes 1D
 
-Variante 0 : dï¿½tection des isthmes au niveau de l'itï¿½ration
+Variante 0 : détection des isthmes au niveau de l'itération
 
 C = {}
-rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
+répéter jusqu'à stabilité
   C = C u {x in F | T(x) > 1}
   B = {}
   pour tout point x simple pour F
     D[x] = typedir3d(x) ; B = B u {x}
   fin pour
-  pour toutes les directions d de 0 ï¿½ NBDIR
+  pour toutes les directions d de 0 à NBDIR
     pour tout x de B\C, simple pour F tel que D[x] = d
       F = F \ {x}
     fin pour
   fin pour
-fin rï¿½pï¿½ter 
-rï¿½sultat: F
+fin répéter 
+résultat: F
 
-Implï¿½mentation non optimisï¿½e (NBDIR scans de la liste des points de bord)
+Implémentation non optimisée (NBDIR scans de la liste des points de bord)
 */
 #undef F_NAME
 #define F_NAME "lskeldir3d"
@@ -3667,7 +3667,7 @@ Implï¿½mentation non optimisï¿½e (NBDIR scans de la liste des points de bord)
   index_t n;                       /* taille liste */
   uint8_t *F = UCHARDATA(image);   /* l'image de depart */
   uint8_t *D;                      /* pour les directions */
-  Liste * LISTE1; // reprï¿½sentation de l'ensemble B (pts de bord) 
+  Liste * LISTE1; // représentation de l'ensemble B (pts de bord) 
 
   ONLY_3D(image);
   ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
@@ -3786,17 +3786,17 @@ int32_t lskeldir3d_1(struct xvimage *image,
 		   int32_t nsteps)
 /* ==================================== */
 /* 
-Squelette curviligne 3D binaire - algo directionel sï¿½quentiel basï¿½ sur les isthmes 1D
+Squelette curviligne 3D binaire - algo directionel séquentiel basé sur les isthmes 1D
 
-Variante 1 : dï¿½tection des isthmes au niveau de la sous-itï¿½ration
+Variante 1 : détection des isthmes au niveau de la sous-itération
 
 C = {x in F | T(x) > 1}
-rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
+répéter jusqu'à stabilité
   B = {}
   pour tout point x simple pour F
     D[x] = typedir3d(x) ; B = B u {x}
   fin pour
-  pour toutes les directions d de 0 ï¿½ NBDIR
+  pour toutes les directions d de 0 à NBDIR
     pour tout x de B\C 
       si T(x) > 1 alors C = C u {x}
     fin pour
@@ -3804,10 +3804,10 @@ rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
       F = F \ {x}
     fin pour
   fin pour
-fin rï¿½pï¿½ter 
-rï¿½sultat: F
+fin répéter 
+résultat: F
 
-Implï¿½mentation non optimisï¿½e (NBDIR scans de la liste des points de bord)
+Implémentation non optimisée (NBDIR scans de la liste des points de bord)
 */
 #undef F_NAME
 #define F_NAME "lskeldir3d_1"
@@ -3822,7 +3822,7 @@ Implï¿½mentation non optimisï¿½e (NBDIR scans de la liste des points de bord)
   index_t n;                       /* taille liste */
   uint8_t *F = UCHARDATA(image);   /* l'image de depart */
   uint8_t *D;                      /* pour les directions */
-  Liste * LISTE1; // reprï¿½sentation de l'ensemble B (pts de bord) 
+  Liste * LISTE1; // représentation de l'ensemble B (pts de bord) 
 
   ONLY_3D(image);
   ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);
@@ -3956,7 +3956,7 @@ int32_t lskelPSG(struct xvimage *image,
 		 double val)
 /* ==================================== */
 /*
-Squelette symï¿½trique guidï¿½ ultime basï¿½ sur les points P-simples
+Squelette symétrique guidé ultime basé sur les points P-simples
 
 Attention : l'objet ne doit pas toucher le bord de l'image
 
@@ -4277,7 +4277,7 @@ int32_t lskelPSG3(struct xvimage *image,
       x = RLIFO->Pts[i];
       if (P_simple26(F, C, x, rs, ps, N))
       {
-	Set(x, PSIMPLE); // marque le point pour effacement ultï¿½rieur
+	Set(x, PSIMPLE); // marque le point pour effacement ultérieur
 #ifdef DEBUG_lskelPSG3
 	printf("P_simple: %d\n", x);
 #endif
@@ -4334,7 +4334,7 @@ int32_t lskelCKG(struct xvimage *image,
 		 double val)
 /* ==================================== */
 /*
-Squelette symï¿½trique guidï¿½ ultime basï¿½ sur les noyaux critiques (cruciaux)
+Squelette symétrique guidé ultime basé sur les noyaux critiques (cruciaux)
 
 Attention : l'objet ne doit pas toucher le bord de l'image
 
@@ -4352,7 +4352,7 @@ int32_t lskelCKGmap(struct xvimage *imageprio,
 		    struct xvimage *image)
 /* ==================================== */
 /*
-Carte topologique par squelettisation symï¿½trique guidï¿½e ultime basï¿½e sur les noyaux critiques (cruciaux)
+Carte topologique par squelettisation symétrique guidée ultime basée sur les noyaux critiques (cruciaux)
 
 Attention : l'objet ne doit pas toucher le bord de l'image
 
@@ -4373,7 +4373,7 @@ static void extract_vois(uint8_t *img, int32_t p, int32_t rs, int32_t N, uint8_t
 		3	2	1
 		4	p	0
 		5	6	7
-  le point p ne doit pas ï¿½tre un point de bord de l'image (test effectuï¿½)
+  le point p ne doit pas être un point de bord de l'image (test effectué)
 */
 /* ==================================== */
 {
@@ -4418,7 +4418,7 @@ static void extract_vois3d(
                22      17      18
                23      24      25
 
-  le point p ne doit pas ï¿½tre un point de bord de l'image
+  le point p ne doit pas être un point de bord de l'image
 */
 /* ==================================== */
 {
@@ -4473,7 +4473,7 @@ static void insert_vois3d(
   int32_t N)                       /* taille image */    
 /* 
   recopie vois dans le voisinage de p
-  le point p ne doit pas ï¿½tre un point de bord de l'image
+  le point p ne doit pas être un point de bord de l'image
 */
 /* ==================================== */
 {
@@ -4522,7 +4522,7 @@ static void insert_vois3d(
 static void rotate90_vois(uint8_t *vois)
 /*
    effectue une rotation du voisinage "vois" de 90 degres dans le sens
-   trigonomï¿½trique
+   trigonométrique
 */
 /* ==================================== */
 {
@@ -4532,8 +4532,8 @@ static void rotate90_vois(uint8_t *vois)
 } /* rotate90_vois() */
 
 // Etiquetage des points objet
-// Tout point objet a une ï¿½tiquette >= OBJ
-// Tout point candidat (donc simple) a une ï¿½tiquette >= CAN
+// Tout point objet a une étiquette >= OBJ
+// Tout point candidat (donc simple) a une étiquette >= CAN
 
 /* ==================================== */
 static void CrucialPass1( /* pour un objet en 8-connexite */
@@ -4542,9 +4542,9 @@ static void CrucialPass1( /* pour un objet en 8-connexite */
   index_t rs,      /* taille rangee */
   index_t N)       /* taille image */
 /*
-  Repï¿½re et marque CR1 les cliques 1-cruciales pour <X,C> contenant le point p.
-  Les points simples candidats de l'image X doivent avoir prï¿½alablement ï¿½tï¿½ ï¿½tiquetï¿½s CAN.
-  Il est supposï¿½ que X[p] == CAN (pas de test).
+  Repère et marque CR1 les cliques 1-cruciales pour <X,C> contenant le point p.
+  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
+  Il est supposé que X[p] == CAN (pas de test).
 */
 /* ==================================== */
 {
@@ -4579,10 +4579,10 @@ static void CrucialPass0( /* pour un objet en 8-connexite */
   index_t rs,      /* taille rangee */
   index_t N)       /* taille image */
 /*
-  Repï¿½re et marque CR0 les cliques 0-cruciales pour <X,C> contenant le point p.
-  Les points simples candidats de l'image X doivent avoir prï¿½alablement ï¿½tï¿½ ï¿½tiquetï¿½s CAN.
-  Il est supposï¿½ que X[p] == CAN (pas de test).
-  Les cliques 1-cruciales doivent avoir prï¿½alablement ï¿½tï¿½ ï¿½tiquetï¿½es CR1 (voir CrucialPass1).
+  Repère et marque CR0 les cliques 0-cruciales pour <X,C> contenant le point p.
+  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
+  Il est supposé que X[p] == CAN (pas de test).
+  Les cliques 1-cruciales doivent avoir préalablement été étiquetées CR1 (voir CrucialPass1).
 */
 /* ==================================== */
 {
@@ -4593,8 +4593,8 @@ static void CrucialPass0( /* pour un objet en 8-connexite */
 
 /*
 x b a  on doit avoir le point 'a' ou les 2 points 'b' dans X (ou les deux), 
-x C b  et tous les points 'a,b' de X marquï¿½s CAN,
-x x x  pour que le point central soit ï¿½tiquetï¿½ CR0
+x C b  et tous les points 'a,b' de X marqués CAN,
+x x x  pour que le point central soit étiqueté CR0
 */
   for (i = 0; i < 4; i++)
   {
@@ -4611,8 +4611,8 @@ x x x  pour que le point central soit ï¿½tiquetï¿½ CR0
 
 /* ==================================== */
 static void isometrieXZ_vois(uint8_t *vois) 
-// effectue une isomï¿½trie du voisinage "vois" par ï¿½change des axes X et Z (+ symï¿½tries)
-// cette isomï¿½trie est de plus une involution
+// effectue une isométrie du voisinage "vois" par échange des axes X et Z (+ symétries)
+// cette isométrie est de plus une involution
 /* ==================================== */
 {
   uint8_t v[26];
@@ -4629,8 +4629,8 @@ static void isometrieXZ_vois(uint8_t *vois)
 
 /* ==================================== */
 static void isometrieYZ_vois(uint8_t *vois)
-// effectue une isomï¿½trie du voisinage "vois" par ï¿½change des axes Y et Z (+ symï¿½tries)  
-// cette isomï¿½trie est de plus une involution
+// effectue une isométrie du voisinage "vois" par échange des axes Y et Z (+ symétries)  
+// cette isométrie est de plus une involution
 /* ==================================== */
 {
   uint8_t v[26];
@@ -4660,10 +4660,10 @@ static int32_t match_vois2(uint8_t *v)
 		3	2	1			
 		4      26	0
 		5	6	7
-Teste si les conditions suivantes sont rï¿½unies:
-1: v[8] et v[26] doivent ï¿½tre marquï¿½s CAN
-2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit ï¿½tre non 2D-simple
-Si le test rï¿½ussit, les points 8, 26 sont marquï¿½s CR2
+Teste si les conditions suivantes sont réunies:
+1: v[8] et v[26] doivent être marqués CAN
+2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit être non 2D-simple
+Si le test réussit, les points 8, 26 sont marqués CR2
 */
 {
   uint8_t t;
@@ -4704,11 +4704,11 @@ static int32_t match_vois1(uint8_t *v)
 // 11 10    2 1   20 19
 //  8  9   26 0   17 18
 //
-// Teste si les trois conditions suivantes sont rï¿½unies:
+// Teste si les trois conditions suivantes sont réunies:
 // 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent ï¿½tre simples et non marquï¿½s CR2
+// 2: tous les points Pi non nuls doivent être simples et non marqués CR2
 // 3: A et B sont tous nuls ou [au moins un A non nul et au moins un B non nul]
-// Si le test rï¿½ussit, les points Pi non nuls sont marquï¿½s CR1
+// Si le test réussit, les points Pi non nuls sont marqués CR1
 {
   int32_t ret = 0;
 #ifdef DEBUG
@@ -4763,10 +4763,10 @@ static int32_t match_vois0(uint8_t *v)
 		3	2
 		4      26
 
-Teste si les conditions suivantes sont rï¿½unies:
+Teste si les conditions suivantes sont réunies:
 1: au moins un des ensembles {12,26}, {11,4}, {13,2}, {8,3} est inclus dans l'objet, et
-2: les points non nuls sont tous simples, non marquï¿½s 2M_CRUCIAL et non marquï¿½s 1M_CRUCIAL
-Si le test rï¿½ussit, les points non nuls sont marquï¿½s 0M_CRUCIAL
+2: les points non nuls sont tous simples, non marqués 2M_CRUCIAL et non marqués 1M_CRUCIAL
+Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 */
 {
 #ifdef DEBUG
@@ -4810,9 +4810,9 @@ static void CrucialPass3d2(
   int32_t ps,      /* taille plan */
   index_t N)       /* taille image */
 /*
-  Repï¿½re et marque CR2 les cliques 2-cruciales pour <X,C> contenant le point p.
-  Les points simples candidats de l'image X doivent avoir prï¿½alablement ï¿½tï¿½ ï¿½tiquetï¿½s CAN.
-  Il est supposï¿½ que X[p] == CAN (pas de test).
+  Repère et marque CR2 les cliques 2-cruciales pour <X,C> contenant le point p.
+  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
+  Il est supposé que X[p] == CAN (pas de test).
 */
 /* ==================================== */
 {
@@ -4836,9 +4836,9 @@ static void CrucialPass3d1(
   int32_t ps,      /* taille plan */
   index_t N)       /* taille image */
 /*
-  Repï¿½re et marque CR1 les cliques 1-cruciales pour <X,C> contenant le point p.
-  Les points simples candidats de l'image X doivent avoir prï¿½alablement ï¿½tï¿½ ï¿½tiquetï¿½s CAN.
-  Il est supposï¿½ que X[p] == CAN (pas de test).
+  Repère et marque CR1 les cliques 1-cruciales pour <X,C> contenant le point p.
+  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
+  Il est supposé que X[p] == CAN (pas de test).
 */
 /* ==================================== */
 {
@@ -4862,9 +4862,9 @@ static void CrucialPass3d0(
   int32_t ps,      /* taille plan */
   index_t N)       /* taille image */
 /*
-  Repï¿½re et marque CR0 les cliques 0-cruciales pour <X,C> contenant le point p.
-  Les points simples candidats de l'image X doivent avoir prï¿½alablement ï¿½tï¿½ ï¿½tiquetï¿½s CAN.
-  Il est supposï¿½ que X[p] == CAN (pas de test).
+  Repère et marque CR0 les cliques 0-cruciales pour <X,C> contenant le point p.
+  Les points simples candidats de l'image X doivent avoir préalablement été étiquetés CAN.
+  Il est supposé que X[p] == CAN (pas de test).
 */
 /* ==================================== */
 {
@@ -5058,10 +5058,7 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
   index_t rs = rowsize(imageprio); /* taille ligne */
   index_t cs = colsize(imageprio); /* taille colonne */
   index_t N = rs * cs;             /* taille image */
-  int32_t *P = NULL;   /* l'image de priorites (cas int32) */
-  uint8_t *PB = NULL;  /* l'image de priorites (cas uint8) */
   float   *PF = NULL;  /* l'image de priorites (cas float) */
-  double  *PD = NULL;  /* l'image de priorites (cas double) */
   Rbt * RBT;
   index_t taillemaxrbt;
   uint8_t *F = UCHARDATA(image);   /* objet */
@@ -5070,25 +5067,11 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
 
   ONLY_2D(image);
   ACCEPTED_TYPES1(image, VFF_TYP_1_BYTE);  
-  ACCEPTED_TYPES4(imageprio, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE, VFF_TYP_FLOAT, VFF_TYP_DOUBLE);
+  ACCEPTED_TYPES1(imageprio, VFF_TYP_FLOAT);
   COMPARE_SIZE(image, imageprio);
 
   IndicsInit(N);
-
-  if (datatype(imageprio) == VFF_TYP_4_BYTE) 
-    P = SLONGDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_1_BYTE) 
-    PB = UCHARDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_FLOAT) 
-    PF = FLOATDATA(imageprio); 
-  else if (datatype(imageprio) == VFF_TYP_DOUBLE) 
-    PD = DOUBLEDATA(imageprio); 
-  else 
-  {
-    fprintf(stderr, "%s: datatype(imageprio) must be uint8_t, int32_t, float or double\n", F_NAME);
-    return(0);
-  }
-
+  PF = FLOATDATA(imageprio); 
   taillemaxrbt = 2 * cs +  2 * rs;
   /* cette taille est indicative, le RBT est realloue en cas de depassement */
   RBT = mcrbt_CreeRbtVide(taillemaxrbt);
@@ -5117,13 +5100,7 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
     if (F[x]) F[x] = OBJ;
     if (F[x] && bordext8(F, x, rs, N))
     {
-      switch(datatype(imageprio))
-      {
-        case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[x], x); break;
-        case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[x], x); break;
-        case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[x], x); break;
-        case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[x], x); break;
-      }
+      mcrbt_RbtInsert(&RBT, PF[x], x);
       Set(x, EN_RBT);
     }
   }
@@ -5135,7 +5112,7 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
   incrprio = DOUBLE_MIN; // this value will only increase during execution
   while (!mcrbt_RbtVide(RBT))
   {
-    curprio = mcrbt_RbtMinLevel(RBT);
+    curprio = RbtMinLevel(RBT);
     if (curprio > incrprio) incrprio = curprio;
 //#define DEBUG_lskelCKG2
 #ifdef DEBUG_lskelCKG2
@@ -5153,7 +5130,7 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
 	RlifoPush(&RLIFO, x);
 	F[x] = CAN;
       }
-    } while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == curprio));
+    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
 
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass1(F, x, rs, N); }
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
@@ -5174,13 +5151,7 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
           y = voisin(x, k, rs, N);
           if ((y != -1) && (F[y]) && (! IsSet(y, EN_RBT)))
           {
-	    switch(datatype(imageprio))
-	    {
-	      case VFF_TYP_4_BYTE: mcrbt_RbtInsert(&RBT, P[y], y); break;
-	      case VFF_TYP_1_BYTE: mcrbt_RbtInsert(&RBT, PB[y], y); break;
-	      case VFF_TYP_FLOAT : mcrbt_RbtInsert(&RBT, PF[y], y); break;
-	      case VFF_TYP_DOUBLE: mcrbt_RbtInsert(&RBT, PD[y], y); break;
-	    }
+	    mcrbt_RbtInsert(&RBT, PF[y], y);
 #ifdef DEBUG_lskelCKG2
 	    printf("push: %d\n", y);
 #endif
@@ -5196,19 +5167,17 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
       if (IsSet(x, NONCRUCIAL)) 
       {
 	F[x] = 0;
-	switch(datatype(imageprio))
-	{
-	case VFF_TYP_4_BYTE: P[x] = (int32_t)incrprio; break;
-	case VFF_TYP_1_BYTE: PB[x] = (uint8_t)incrprio; break;
-	case VFF_TYP_FLOAT : PF[x] = (float)incrprio; break;
-	case VFF_TYP_DOUBLE: PD[x] = incrprio; break;
-	}
+	PF[x] = (float)incrprio;
       }
+      else
+	PF[x] = -1;
     }
 
     RlifoFlush(RLIFO);
 
   } // while (!mcrbt_RbtVide(RBT))
+
+  for (x = 0; x < N; x++) if (PF[x] == -1) PF[x] = (float)incrprio + 1;
 
   /* ================================================ */
   /* UN PEU DE MENAGE                                 */
@@ -5226,6 +5195,7 @@ int32_t lskelCKG3map(struct xvimage *imageprio,
 /* ==================================== */
 // EXPERIMENTAL - Ne pas utiliser dans des applications
 // the result is in imageprio : a "topological map"
+// A FAIRE: TRAITER LES POINTS NON DETRUITS - VOIR lskelCKG2map
 #undef F_NAME
 #define F_NAME "lskelCKG3map"
 { 
@@ -5332,7 +5302,7 @@ int32_t lskelCKG3map(struct xvimage *imageprio,
 	RlifoPush(&RLIFO, x);
 	F[x] = CAN;
       }
-    } while (!mcrbt_RbtVide(RBT) && (mcrbt_RbtMinLevel(RBT) == curprio));
+    } while (!mcrbt_RbtVide(RBT) && (RbtMinLevel(RBT) == curprio));
 
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; CrucialPass3d2(F, x, rs, ps, N); }
     for (i = 0; i < RLIFO->Sp; i++) { x = RLIFO->Pts[i]; if (F[x] != CAN) F[x] = OBJ; }    
@@ -5588,10 +5558,10 @@ static int32_t match_seq_vois2_a(uint8_t *v)
 		3	2	1			
 		4      26	0
 		5	6	7
-Teste si les conditions suivantes sont rï¿½unies:
-1: v[8] et v[26] doivent ï¿½tre marquï¿½s CAN
-2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit ï¿½tre non 2D-simple
-Si le test rï¿½ussit, les points 8, 26 sont marquï¿½s CR2
+Teste si les conditions suivantes sont réunies:
+1: v[8] et v[26] doivent être marqués CAN
+2: for i = 0 to 7 do w[i] = v[i] || v[i+9] ; w[0...7] doit être non 2D-simple
+Si le test réussit, les points 8, 26 sont marqués CR2
 C = {x, x-ps}
 */
 {
@@ -5627,10 +5597,10 @@ static int32_t match_seq_vois2_b(uint8_t *v)
 
                21      20      19
                22      17      18
-Teste si les conditions suivantes sont rï¿½unies:
-1: v[2] et v[26] doivent ï¿½tre marquï¿½s CAN
-2: ... doit ï¿½tre non 2D-simple
-Si le test rï¿½ussit, les points 2, 26 sont marquï¿½s CR2
+Teste si les conditions suivantes sont réunies:
+1: v[2] et v[26] doivent être marqués CAN
+2: ... doit être non 2D-simple
+Si le test réussit, les points 2, 26 sont marqués CR2
 C = {x, x-rs}
 */
 {
@@ -5670,10 +5640,10 @@ static int32_t match_seq_vois2_c(uint8_t *v)
                22      17
                23      24
 	       
-Teste si les conditions suivantes sont rï¿½unies:
-1: v[4] et v[26] doivent ï¿½tre marquï¿½s CAN
-2: le ... doit ï¿½tre non 2D-simple
-Si le test rï¿½ussit, les points 4, 26 sont marquï¿½s CR2
+Teste si les conditions suivantes sont réunies:
+1: v[4] et v[26] doivent être marqués CAN
+2: le ... doit être non 2D-simple
+Si le test réussit, les points 4, 26 sont marqués CR2
 C = {x, x-1}
 */
 {
@@ -5738,11 +5708,11 @@ static int32_t match_seq_vois1_a_1(uint8_t *v)
 // 21 20
 // 22 17
 
-// Teste si les trois conditions suivantes sont rï¿½unies:
+// Teste si les trois conditions suivantes sont réunies:
 // 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent ï¿½tre simples et non marquï¿½s CR2
+// 2: tous les points Pi non nuls doivent être simples et non marqués CR2
 // 3: A et B sont tous nuls ou [au moins un A non nul et au moins un B non nul]
-// Si le test rï¿½ussit, les points Pi non nuls sont marquï¿½s CR1
+// Si le test réussit, les points Pi non nuls sont marqués CR1
 {
   if (!((v[2] && v[4]) || (v[3] && v[26]))) return 0;
   if ((v[2]  && ((v[2] < CAN) || (v[2] == CR2))) ||
@@ -5779,11 +5749,11 @@ static int32_t match_seq_vois1_a_2(uint8_t *v)
 // 20 19
 // 17 18
 
-// Teste si les trois conditions suivantes sont rï¿½unies:
+// Teste si les trois conditions suivantes sont réunies:
 // 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent ï¿½tre simples et non marquï¿½s CR2
+// 2: tous les points Pi non nuls doivent être simples et non marqués CR2
 // 3: A et B sont tous nuls ou [au moins un A non nul et au moins un B non nul]
-// Si le test rï¿½ussit, les points Pi non nuls sont marquï¿½s CR1
+// Si le test réussit, les points Pi non nuls sont marqués CR1
 {
   if (!((v[2] && v[0]) || (v[1] && v[26]))) return 0;
   if ((v[2]  && ((v[2] < CAN) || (v[2] == CR2))) ||
@@ -5817,11 +5787,11 @@ static int32_t match_seq_vois1_b_1(uint8_t *v)
 //   3  2  1
 //   4 26  0
 //
-// Teste si les trois conditions suivantes sont rï¿½unies:
+// Teste si les trois conditions suivantes sont réunies:
 // 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent ï¿½tre simples et non marquï¿½s CR2
+// 2: tous les points Pi non nuls doivent être simples et non marqués CR2
 // 3: A et B sont tous nuls ou [au moins un A non nul et au moins un B non nul]
-// Si le test rï¿½ussit, les points Pi non nuls sont marquï¿½s CR1
+// Si le test réussit, les points Pi non nuls sont marqués CR1
 {
   if (!((v[6] && v[8]) || (v[15] && v[26]))) return 0;
   if ((v[6]  && ((v[6] < CAN) || (v[6] == CR2))) ||
@@ -5855,11 +5825,11 @@ static int32_t match_seq_vois1_b_2(uint8_t *v)
 //   4 26  0			
 //   5  6  7
 //
-// Teste si les trois conditions suivantes sont rï¿½unies:
+// Teste si les trois conditions suivantes sont réunies:
 // 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent ï¿½tre simples et non marquï¿½s CR2
+// 2: tous les points Pi non nuls doivent être simples et non marqués CR2
 // 3: A et B sont tous nuls ou [au moins un A non nul et au moins un B non nul]
-// Si le test rï¿½ussit, les points Pi non nuls sont marquï¿½s CR1
+// Si le test réussit, les points Pi non nuls sont marqués CR1
 {
   if (!((v[2] && v[8]) || (v[11] && v[26]))) return 0;
   if ((v[2]  && ((v[2] < CAN) || (v[2] == CR2))) ||
@@ -5894,11 +5864,11 @@ static int32_t match_seq_vois1_c_1(uint8_t *v)
 //   3  2
 //   4 26
 //   5  6
-// Teste si les trois conditions suivantes sont rï¿½unies:
+// Teste si les trois conditions suivantes sont réunies:
 // 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent ï¿½tre simples et non marquï¿½s CR2
+// 2: tous les points Pi non nuls doivent être simples et non marqués CR2
 // 3: A et B sont tous nuls ou [au moins un A non nul et au moins un B non nul]
-// Si le test rï¿½ussit, les points Pi non nuls sont marquï¿½s CR1
+// Si le test réussit, les points Pi non nuls sont marqués CR1
 {
   if (!((v[8] && v[0]) || (v[9] && v[26]))) return 0;
   if ((v[8]  && ((v[8] < CAN) || (v[8] == CR2))) ||
@@ -5933,11 +5903,11 @@ static int32_t match_seq_vois1_c_2(uint8_t *v)
 //   2  1
 //  26  0
 //   6  7
-// Teste si les trois conditions suivantes sont rï¿½unies:
+// Teste si les trois conditions suivantes sont réunies:
 // 1: (P1 et P4) ou (P2 et P3)
-// 2: tous les points Pi non nuls doivent ï¿½tre simples et non marquï¿½s CR2
+// 2: tous les points Pi non nuls doivent être simples et non marqués CR2
 // 3: A et B sont tous nuls ou [au moins un A non nul et au moins un B non nul]
-// Si le test rï¿½ussit, les points Pi non nuls sont marquï¿½s CR1
+// Si le test réussit, les points Pi non nuls sont marqués CR1
 {
   if (!((v[8] && v[4]) || (v[13] && v[26]))) return 0;
   if ((v[8]  && ((v[8] < CAN) || (v[8] == CR2))) ||
@@ -5969,10 +5939,10 @@ static int32_t match_seq_vois0_1(uint8_t *v)
    3  2
    4 26
 
-Teste si les conditions suivantes sont rï¿½unies:
+Teste si les conditions suivantes sont réunies:
 1: au moins un des ensembles {12,26}, {11,4}, {13,2}, {8,3} est inclus dans l'objet, et
-2: les points non nuls sont tous simples, non marquï¿½s 2M_CRUCIAL et non marquï¿½s 1M_CRUCIAL
-Si le test rï¿½ussit, les points non nuls sont marquï¿½s 0M_CRUCIAL
+2: les points non nuls sont tous simples, non marqués 2M_CRUCIAL et non marqués 1M_CRUCIAL
+Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 */
 {
   //printf("match 01:\n");
@@ -6002,10 +5972,10 @@ static int32_t match_seq_vois0_2(uint8_t *v)
    2  1
   26  0
 
-Teste si les conditions suivantes sont rï¿½unies:
+Teste si les conditions suivantes sont réunies:
 1: au moins un des ensembles ... est inclus dans l'objet, et
-2: les points non nuls sont tous simples, non marquï¿½s 2M_CRUCIAL et non marquï¿½s 1M_CRUCIAL
-Si le test rï¿½ussit, les points non nuls sont marquï¿½s 0M_CRUCIAL
+2: les points non nuls sont tous simples, non marqués 2M_CRUCIAL et non marqués 1M_CRUCIAL
+Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 */
 {
   //printf("match 02:\n");
@@ -6036,10 +6006,10 @@ static int32_t match_seq_vois0_3(uint8_t *v)
   26  0
    6  7
 
-Teste si les conditions suivantes sont rï¿½unies:
+Teste si les conditions suivantes sont réunies:
 1: au moins un des ensembles ... est inclus dans l'objet, et
-2: les points non nuls sont tous simples, non marquï¿½s 2M_CRUCIAL et non marquï¿½s 1M_CRUCIAL
-Si le test rï¿½ussit, les points non nuls sont marquï¿½s 0M_CRUCIAL
+2: les points non nuls sont tous simples, non marqués 2M_CRUCIAL et non marqués 1M_CRUCIAL
+Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 */
 {
   //printf("match 03:\n");
@@ -6069,10 +6039,10 @@ static int32_t match_seq_vois0_4(uint8_t *v)
    4 26
    5  6
 
-Teste si les conditions suivantes sont rï¿½unies:
+Teste si les conditions suivantes sont réunies:
 1: au moins un des ensembles ... est inclus dans l'objet, et
-2: les points non nuls sont tous simples, non marquï¿½s 2M_CRUCIAL et non marquï¿½s 1M_CRUCIAL
-Si le test rï¿½ussit, les points non nuls sont marquï¿½s 0M_CRUCIAL
+2: les points non nuls sont tous simples, non marqués 2M_CRUCIAL et non marqués 1M_CRUCIAL
+Si le test réussit, les points non nuls sont marqués 0M_CRUCIAL
 */
 {
   //printf("match 04:\n");
@@ -6783,7 +6753,7 @@ repeter
       pour chaque clique critique C de X de dimension dim et de direction dir
         W = W u {points de C inter Y et non simples pour Y}
         s'il existe une clique C' dim+1 critique pour Y incluse dans C\W alors
-          choisir un point de C' et le rajouter ï¿½ W	
+          choisir un point de C' et le rajouter à W	
         s'il existe des points dans C inter Y inter W alors
           retirer de Y les points de C non dans W
         sinon
@@ -6852,7 +6822,7 @@ repeter
     for (x = 0; x < N; x++) if (F[x]) F[x] = OBJ;
     memset(Y, 0, N * sizeof(uint8_t));
 
-    // dï¿½tection des isthmes 1D
+    // détection des isthmes 1D
 #ifndef lskelCKSC3_SANS_CONTRAINTE
     for (x = 0; x < N; x++) 
       if (F[x])
@@ -7226,7 +7196,7 @@ repeter
     for (x = 0; x < N; x++) if (F[x]) F[x] = OBJ;
     memset(Y, 0, N * sizeof(uint8_t));
 
-    // dï¿½tection des isthmes 1D
+    // détection des isthmes 1D
 #ifndef lskelCKSC3_SANS_CONTRAINTE
     for (x = 0; x < N; x++) 
       if (F[x])
@@ -7809,7 +7779,7 @@ repeter
     for (x = 0; x < N; x++) if (F[x]) F[x] = OBJ;
     memset(Y, 0, N * sizeof(uint8_t));
 
-    // dï¿½tection des isthmes 1D
+    // détection des isthmes 1D
 #ifndef lskelCKSC3_SANS_CONTRAINTE
     for (x = 0; x < N; x++) 
       if (F[x])
@@ -8113,7 +8083,7 @@ repeter
     for (x = 0; x < N; x++) if (F[x]) F[x] = OBJ;
     memset(Y, 0, N * sizeof(uint8_t));
 
-    // dï¿½tection des isthmes 1D
+    // détection des isthmes 1D
 #ifndef lskelCKSC3_SANS_CONTRAINTE
     for (x = 0; x < N; x++) 
       if (F[x])

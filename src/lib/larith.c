@@ -67,8 +67,8 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 /* Michel Couprie - juillet 1996 */
 /* Camille Couprie - octobre 2002 (xor) */
-/* Michel Couprie - dï¿½cembre 2010 (modulus) */
-/* Michel Couprie - fï¿½vrier 2011 (gamma) */
+/* Michel Couprie - décembre 2010 (modulus) */
+/* Michel Couprie - février 2011 (gamma) */
 /* Michel Couprie - juillet 2012 (argmin, argmax) */
 
 #include <stdio.h>
@@ -217,7 +217,7 @@ index_t larea(
 //,  int32_t *area
 // end of LuM
 )
-/* retourne le nombre d'ï¿½lï¿½ments non nuls */
+/* retourne le nombre d'éléments non nuls */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "larea"
@@ -484,7 +484,7 @@ int32_t lgammacor(
 /* 
    correction gamma :
    - normalisation entre 0 et 1
-   - elevation ï¿½ la puissance gamma
+   - elevation à la puissance gamma
    - inverse la normalisation
 */
 /* ==================================== */
@@ -584,7 +584,7 @@ int32_t lgammacor(
 int32_t linf(
   struct xvimage * image1,
   struct xvimage * image2)
-/* prï¿½dicat inf pixelwise */
+/* prédicat inf pixelwise */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "linf"
@@ -628,7 +628,7 @@ int32_t linf(
 int32_t lsup(
   struct xvimage * image1,
   struct xvimage * image2)
-/* prï¿½dicat sup pixelwise */
+/* prédicat sup pixelwise */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lsup"
@@ -1334,7 +1334,7 @@ int32_t lscale(
 int32_t lpow(
   struct xvimage * image,
   double p)
-/* elevation ï¿½ la puissance p - seuil a NDG_MAX pour les uint8_t */
+/* elevation à la puissance p - seuil a NDG_MAX pour les uint8_t */
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lpow"

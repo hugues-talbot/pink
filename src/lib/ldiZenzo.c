@@ -141,19 +141,19 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       b1 = b3 = 2 * e_a;
       b2 = b4 = - e_2a;
 
-      lderiche_derichegen(ImR, rs, cs, buf1, buf2, ImRx,
+      derichegen(ImR, rs, cs, buf1, buf2, ImRx,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      lderiche_derichegen(ImR, rs, cs, buf1, buf2, ImRy,
+      derichegen(ImR, rs, cs, buf1, buf2, ImRy,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
-      lderiche_derichegen(ImV, rs, cs, buf1, buf2, ImVx,
+      derichegen(ImV, rs, cs, buf1, buf2, ImVx,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      lderiche_derichegen(ImV, rs, cs, buf1, buf2, ImVy,
+      derichegen(ImV, rs, cs, buf1, buf2, ImVy,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
-      lderiche_derichegen(ImB, rs, cs, buf1, buf2, ImBx,
+      derichegen(ImB, rs, cs, buf1, buf2, ImBx,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      lderiche_derichegen(ImB, rs, cs, buf1, buf2, ImBy,
+      derichegen(ImB, rs, cs, buf1, buf2, ImBy,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
       for (i = 0; i < N; i++)

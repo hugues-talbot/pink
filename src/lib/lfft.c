@@ -111,6 +111,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 //#include <stdio.h>
 //#include <math.h>
+//#include <malloc.h>
 //#include "kube-gustavson-fft.h"
 
 /*

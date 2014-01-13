@@ -63,11 +63,7 @@ extern "C" {
 // ********************************************************************************************************
 
 #ifdef UNIXIO
-#  ifdef NDEBUG
-#      define __pink__inline inline
-#  else
-#      define __pink__inline // inline function should be debuggable
-#  endif
+#  define __pink__inline inline
 #  define __pink__export export
 #  define __pink__import
 #  include <stdint.h>
@@ -149,44 +145,44 @@ extern double * image2list(struct xvimage * image, index_t *n);
 \param image The pointer to the image
 \param filename The file to write the image at. 
 */  
-extern int writeimage(
+extern void writeimage(
   struct xvimage * image,
   char *filename
 );
 
-extern int writese(
+extern void writese(
   struct xvimage * image,
   char *filename,
   index_t x, index_t y, index_t z
 );
 
-extern int writelongimage(
+extern void writelongimage(
   struct xvimage * image,
   char *filename
 );
 
-extern int writerawimage(
+extern void writerawimage(
   struct xvimage * image,
   char *filename
 );
 
-extern int writeascimage(
+extern void writeascimage(
   struct xvimage * image,
   char *filename
 );
 
-extern int printimage(
+extern void printimage(
   struct xvimage * image
 );
 
-extern int writergbimage(
+extern void writergbimage(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
   char *filename
 );
 
-extern int writergbascimage(
+extern void writergbascimage(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
@@ -227,7 +223,7 @@ extern int32_t readbmp(
   struct xvimage ** b
 );
 
-extern int writebmp(
+extern void writebmp(
   struct xvimage * redimage,
   struct xvimage * greenimage,
   struct xvimage * blueimage,
@@ -245,8 +241,8 @@ extern int32_t convertgen(struct xvimage **f1, struct xvimage **f2);
 extern int32_t convertlong(struct xvimage **f1);
 extern int32_t convertfloat(struct xvimage **f1);
 
-extern int writelist2(char *filename, int32_t *x, int32_t *y, int32_t npoints);
-extern int writelist3(char *filename, int32_t *x, int32_t *y, int32_t *z, int32_t npoints);
+extern void writelist2(char *filename, int32_t *x, int32_t *y, int32_t npoints);
+extern void writelist3(char *filename, int32_t *x, int32_t *y, int32_t *z, int32_t npoints);
 
 #ifdef __cplusplus
 } /* extern "C" */

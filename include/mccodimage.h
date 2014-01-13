@@ -101,7 +101,6 @@ extern "C" {
 
    This class holds the image data for the C functions of Pink.
 */  
-
   struct xvimage {
 
     /** \brief Dummy - not used anymore. */

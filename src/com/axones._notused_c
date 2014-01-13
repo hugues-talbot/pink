@@ -766,8 +766,8 @@ double ltubule(
 
   n = 0;
   cumulndg = 0.0;
-  for (x = mcmax(0,xc-r); x < mcmin(xc+r+1,rs); x++) 
-    for (y = mcmax(0,yc-r); y < mcmin(yc+r+1,cs); y++) 
+  for (x = max(0,xc-r); x < min(xc+r+1,rs); x++) 
+    for (y = max(0,yc-r); y < min(yc+r+1,cs); y++) 
       if ((int32_t)sqrt(((x - xc) * (x - xc)) + ((y - yc) * (y - yc))) == r)
       {
         n++;

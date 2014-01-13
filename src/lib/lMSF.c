@@ -55,10 +55,10 @@ knowledge of the CeCILL license and that you accept its terms.
          1. a graphs (V,E), F: un graphe, une fonction de valuation des 
 	 aretes (embarquees ds structure ga).
 	 2. Une fonction de labels pour les points de E (images marqueurs).
-	 Les labels sont supposï¿½s connexes.
+	 Les labels sont supposés connexes.
    OUTPUT: 
-         La carte de labels des sommets de E correspondant ï¿½ une MSF de marqueurs 
-	 ds (V,E,F): rï¿½sulatat ds marqueurs
+         La carte de labels des sommets de E correspondant à une MSF de marqueurs 
+	 ds (V,E,F): résulatat ds marqueurs
  */
 
 int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs) 
@@ -74,10 +74,10 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
   uint8_t *F = UCHARDATA(ga);         /* valuation des aretes de depart */
   int32_t *G = SLONGDATA(marqueurs); /* labels des sommets du graph */
   int32_t N_t=2*N;                              /* index maximum d'un arete de ga */
-  Rbt *L;                            /* ensembles des aretes adjacentes ï¿½ exactement un label */
+  Rbt *L;                            /* ensembles des aretes adjacentes à exactement un label */
 
   if (depth(ga) != 1){
-    //fprintf(stderr, "%s: cette version ne traite pas les images volumiques, je refile le bebe ï¿½ une autre version\n", F_NAME);
+    //fprintf(stderr, "%s: cette version ne traite pas les images volumiques, je refile le bebe à une autre version\n", F_NAME);
     return MSF3d(ga, marqueurs);
   }
  
@@ -100,7 +100,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
   }
   
  while(!mcrbt_RbtVide(L)){
-   u = mcrbt_RbtPopMin(L);
+   u = RbtPopMin(L);
 #ifdef DEBUG
    printf("poped arete u no: %d de niveau %d\n",u,F[u]);
 #endif
@@ -116,7 +116,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
      printf("label x: %d, label y :%d\n", G[x], G[y]);
 #endif
      G[x] = G[y];
-     /* parcours des aretes incidente ï¿½ x */
+     /* parcours des aretes incidente à x */
      for(i = 0; i < 4; i++){
        v = incidente(x,i,rs,N);
        if((v != -1) && (!IsSet(v, TRUE))){
@@ -127,7 +127,7 @@ int32_t MSF(struct xvimage *ga, struct xvimage *marqueurs)
 	 x_1 = Sommetx(v,N,rs);
 	 y_1 = Sommety(v,N,rs);
 #ifdef DEBUG
-	 printf("extremites de v (%d), incidente ï¿½ u (%d,%d);(%d,%d) \n",v, x_1%rs, x_1/rs, y_1%rs, y_1/rs);
+	 printf("extremites de v (%d), incidente à u (%d,%d);(%d,%d) \n",v, x_1%rs, x_1/rs, y_1%rs, y_1/rs);
 #endif
 	 if((mcmin(G[x_1],G[y_1]) == 0) && (mcmax(G[x_1],G[y_1]) > 0)){
 	   /* v est une growing edge */
@@ -166,7 +166,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
   uint8_t *F = UCHARDATA(ga);         /* valuation des aretes de depart */
   int32_t *G =  SLONGDATA(marqueurs); /* labels des sommets du graph */
   int32_t N_t=3*N;                              /* index maximum d'une arete de ga */
-  Rbt *L;                                   /* ensembles des aretes adjacentes ï¿½ exactement un label */
+  Rbt *L;                                   /* ensembles des aretes adjacentes à exactement un label */
 
   if (depth(ga) == 1){
     return MSF(ga, marqueurs);
@@ -194,7 +194,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
   }
   
   while(!mcrbt_RbtVide(L)){
-    u = mcrbt_RbtPopMin(L);
+    u = RbtPopMin(L);
 #ifdef DEBUG
     printf("poped arete u no: %d de niveau %d\n",u,F[u]);
 #endif
@@ -210,7 +210,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
       printf("label x: %d, label y :%d\n", G[x], G[y]);
 #endif
       G[x] = G[y];
-      /* parcours des aretes incidente ï¿½ x */
+      /* parcours des aretes incidente à x */
       for(i = 0; i < 6; i++){
 	v = incidente3d(x,i,rs,N,ps);
 	if((v != -1) && (!IsSet(v, TRUE))){
@@ -221,7 +221,7 @@ int32_t MSF3d(struct xvimage *ga, struct xvimage *marqueurs)
 	  x_1 = Sommetx3d(v,N,rs,ps);
 	  y_1 = Sommety3d(v,N,rs,ps);
 #ifdef DEBUG
-	  printf("extremites de v (%d), incidente ï¿½ u (%d,%d);(%d,%d) \n",v, x_1%rs, x_1/rs, y_1%rs, y_1/rs);
+	  printf("extremites de v (%d), incidente à u (%d,%d);(%d,%d) \n",v, x_1%rs, x_1/rs, y_1%rs, y_1/rs);
 #endif
 	  if((mcmin(G[x_1],G[y_1]) == 0) && (mcmax(G[x_1],G[y_1]) > 0)){
 	    /* v est une growing edge */
@@ -266,7 +266,7 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
   uint8_t *F = UCHARDATA(ga);         /* graphe d'arere 4d */
   uint8_t **G;                        /* image de marqueurs 4D */
   int32_t N_t=4*N;                              /* index maximum d'une arete de ga */
-  Rbt *L;                                   /* ensembles des aretes adjacentes ï¿½ exactement un label */
+  Rbt *L;                                   /* ensembles des aretes adjacentes à exactement un label */
   
   G = (uint8_t **)malloc(sizeof(char *) * ss);
   for(i = 0; i < ss; i++)
@@ -320,7 +320,7 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
 #endif 
       if(G[x/vs][x%vs] > G[y/vs][y%vs]){z=x; x=y; y=z;}
       G[x/vs][x%vs] = G[y/vs][y%vs];
-      /* parcours des aretes incidente ï¿½ x */
+      /* parcours des aretes incidente à x */
       for(i = 0; i < 8; i++){
 	v = incidente4d(x,i,rs,N,ps,vs);
 	if((v != -1) && (!IsSet(v, TRUE))){
@@ -331,7 +331,7 @@ int32_t MSF4d(struct GA4d *ga, struct xvimage4D *marqueurs)
 	  x_1 = Sommetx4d(v,N,rs,ps,vs);
 	  y_1 = Sommety4d(v,N,rs,ps,vs);
 #ifdef DEBUG
-	  printf("extremites de v (%d), incidente ï¿½ u (%d,%d);(%d,%d) \n",v, x_1%rs, x_1/rs, y_1%rs, y_1/rs);
+	  printf("extremites de v (%d), incidente à u (%d,%d);(%d,%d) \n",v, x_1%rs, x_1/rs, y_1%rs, y_1/rs);
 #endif
 	  if((mcmin(G[x_1/vs][x_1%vs],G[y_1/vs][y_1%vs]) == 0) && (mcmax(G[x_1/vs][x_1%vs],G[y_1/vs][y_1%vs]) > 0)){
 	    /* v est une growing edge */

@@ -45,7 +45,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
    Update janvier 2000 : generation d'una animation (flag ANIMATE)
    Update janvier 2001 : mise a jour 2D-3D 
-   Update juin 2004  : "ï¿½criture" d'une version sans ligne
+   Update juin 2004  : "écriture" d'une version sans ligne
 */
 
 /*
@@ -265,7 +265,7 @@ int32_t llpemeyer_llpemeyer(
     for (k = 0; k < 8; k += incr_vois)
     {
       y = voisin(x, k, rs, N);
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -317,9 +317,9 @@ int32_t llpemeyer_llpemeyer2(
         int32_t connex)
 /* ==================================== */
 // marqueurs: image initiale de labels
-// le rï¿½sultat du traitement se trouve dans marqueurs (image de labels)
+// le résultat du traitement se trouve dans marqueurs (image de labels)
 // et dans image (binaire)
-// LPE avec ligne de sï¿½paration
+// LPE avec ligne de séparation
 #undef F_NAME
 #define F_NAME "llpemeyer2"
 {
@@ -409,7 +409,7 @@ int32_t llpemeyer_llpemeyer2(
     for (k = 0; k < 8; k += incr_vois)
     {
       y = voisin(x, k, rs, N);
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -459,9 +459,9 @@ int32_t llpemeyer2lab(
         int32_t connex)
 /* ==================================== */
 // marqueurs: image initiale de labels
-// le rï¿½sultat du traitement se trouve dans marqueurs (image de labels)
+// le résultat du traitement se trouve dans marqueurs (image de labels)
 // et dans image (binaire)
-// LPE avec ligne de sï¿½paration
+// LPE avec ligne de séparation
 #undef F_NAME
 #define F_NAME "llpemeyer2lab"
 {
@@ -475,9 +475,9 @@ int32_t llpemeyer2lab_nomask(
         int32_t connex)
 /* ==================================== */
 // marqueurs: image initiale de labels
-// le rï¿½sultat du traitement se trouve dans marqueurs (image de labels)
+// le résultat du traitement se trouve dans marqueurs (image de labels)
 // et dans image (binaire)
-// LPE avec ligne de sï¿½paration
+// LPE avec ligne de séparation
 #undef F_NAME
 #define F_NAME "llpemeyer2lab_nomask"
 {
@@ -491,8 +491,8 @@ int32_t llpemeyer3(
         struct xvimage *masque,
         int32_t connex)
 /* ==================================== */
-// version sans ligne de sï¿½paration
-// le rï¿½sultat se trouve dans marqueurs
+// version sans ligne de séparation
+// le résultat se trouve dans marqueurs
 #undef F_NAME
 #define F_NAME "llpemeyer3"
 {
@@ -609,7 +609,7 @@ int32_t llpemeyer3(
     for (k = 0; k < 8; k += incr_vois)
     {
       y = voisin(x, k, rs, N);
-      if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
       {
         etiqcc[ncc] = M[y];        
         ncc += 1;
@@ -1511,7 +1511,7 @@ int32_t llpemeyer_llpemeyer3d(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1522,7 +1522,7 @@ int32_t llpemeyer_llpemeyer3d(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1533,7 +1533,7 @@ int32_t llpemeyer_llpemeyer3d(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1852,7 +1852,7 @@ int32_t llpemeyer_llpemeyer3dsansligne(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1863,7 +1863,7 @@ int32_t llpemeyer_llpemeyer3dsansligne(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -1874,7 +1874,7 @@ int32_t llpemeyer_llpemeyer3dsansligne(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2062,7 +2062,7 @@ int32_t llpemeyer_llpemeyer3dsanslignelab(
         for (k = 0; k <= 10; k += 2)
         {
           y = voisin6(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2073,7 +2073,7 @@ int32_t llpemeyer_llpemeyer3dsanslignelab(
         for (k = 0; k < 18; k += 1) /* parcourt les 18 voisins */
         {
           y = voisin18(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2084,7 +2084,7 @@ int32_t llpemeyer_llpemeyer3dsanslignelab(
         for (k = 0; k < 26; k += 1) /* parcourt les 26 voisins */
         {
           y = voisin26(x, k, rs, n, N);
-          if ((y != -1) && (M[y] != 0) && NotIn(M[y], etiqcc, ncc)) 
+          if ((y != -1) && (M[y] != 0) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
           {
             etiqcc[ncc] = M[y];        
             ncc += 1;
@@ -2151,9 +2151,9 @@ int32_t llpemeyer_llpemeyer3d2(
         int32_t connex)
 /* ==================================== */
 // marqueurs: image initiale de labels
-// le rï¿½sultat du traitement se trouve dans marqueurs (image de labels)
+// le résultat du traitement se trouve dans marqueurs (image de labels)
 // et dans image (binaire)
-// LPE avec ligne de sï¿½paration
+// LPE avec ligne de séparation
 {
 #undef F_NAME
 #define F_NAME "llpemeyer3d2"
@@ -2359,10 +2359,10 @@ int32_t llpemeyer_llpemeyer3d2b(
         int32_t connex)
 /* ==================================== */
 // marqueurs: image initiale de labels
-// le rï¿½sultat du traitement se trouve dans marqueurs (image de labels)
+// le résultat du traitement se trouve dans marqueurs (image de labels)
 // et dans image (binaire)
-// LPE avec ligne de sï¿½paration
-// labels diffï¿½rents pour les voxels de la LPE :
+// LPE avec ligne de séparation
+// labels différents pour les voxels de la LPE :
 //   soit n le dernier label de l'image marqueurs, 
 //   si v est voisin de 2 labels i et j alors son label sera j*(n+1)+i, avec i<j
 //   s'il est voisin de plus de 2 labels alors son label sera n+1
@@ -2605,8 +2605,8 @@ int32_t llpemeyer3d3(
         int32_t connex)
 /* ==================================== */
 // marqueurs: image initiale de labels
-// le rï¿½sultat du traitement se trouve dans marqueurs
-// LPE sans ligne de sï¿½paration
+// le résultat du traitement se trouve dans marqueurs
+// LPE sans ligne de séparation
 #undef F_NAME
 #define F_NAME "llpemeyer3d3"
 {
@@ -3244,7 +3244,7 @@ int32_t llpemeyer_llpemeyerbiconnecte3d(
     {
       y = voisin14b(x, k, rs, n, N);
       assert(y < N);     // sinon on innonde en dehors de l'image
-      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && NotIn(M[y], etiqcc, ncc)) 
+      if ((y != -1) && (M[y] != 0) && (M[y] != nlabels) && llpemeyer_NotIn(M[y], etiqcc, ncc)) 
       {
 	etiqcc[ncc] = M[y];        	
 	ncc += 1;

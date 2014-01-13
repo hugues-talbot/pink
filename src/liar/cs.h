@@ -4,14 +4,8 @@
 #include <limits.h>
 #include <math.h>
 #include <stdio.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
 #ifdef MATLAB_MEX_FILE
-# include "mex.h"
+#include "mex.h"
 #endif
 #define CS_VER 2                    /* CSparse Version 2.2.3 */
 #define CS_SUBVER 2
@@ -146,10 +140,4 @@ csn *cs_ndone (csn *N, cs *C, void *w, void *x, int ok) ;
 #define CS_MARK(w,j) { w [j] = CS_FLIP (w [j]) ; }
 #define CS_CSC(A) (A && (A->nz == -1))
 #define CS_TRIPLET(A) (A && (A->nz >= 0))
-
-#ifdef __cplusplus
-  }
 #endif
-
-#endif /* _CS_H */
-

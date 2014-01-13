@@ -79,7 +79,6 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-
   if (datatype(image1) == VFF_TYP_FLOAT)
   {
     double constante = atof(argv[2]);
