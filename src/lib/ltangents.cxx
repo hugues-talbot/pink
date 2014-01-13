@@ -39,9 +39,8 @@ Michel Couprie, 2011
 Paulin Sanselme, 2011
 */
 
-#include <algorithm>
 #include <lbdigitalline.h>
-
+#include <algorithm>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -294,7 +293,7 @@ Reference:
   } // while ( pos < npoints-1 )
   end[npoints-1] = -1;
 
-  delete points;
+  delete[] points;
   return;
 } // ExtractDSSs()
 
@@ -386,7 +385,7 @@ Reference:
     n++;
   } // while ( pos < npoints-1 )
 
-  delete points;
+  delete[] points;
   return n;
 } // CoverByDSSs()
 
@@ -670,10 +669,14 @@ printf("xp=%d zp=%d\n", xp, zp);
       XP = Xtan[i]; YP = Ytan[i]; ZP = Ztan[i];
     }
   }
-
-  delete pointsxy;
-  delete pointsyz;
-  delete pointsxz;
+  
+  delete MOxy[0]; delete MOxz[0]; delete MOyz[0];
+  delete MOxy[1]; delete MOxz[1]; delete MOyz[1];
+  delete MOxy[2]; delete MOxz[2]; delete MOyz[2];
+  delete MOxy[3]; delete MOxz[3]; delete MOyz[3];
+  delete[] pointsxy;
+  delete[] pointsyz;
+  delete[] pointsxz;
   return;
 } // ExtractDSSs3D()
 
@@ -863,10 +866,15 @@ Reference:
     Z[n] = Z[pos];
     n++;
   } // while (pos < npoints-1)
-
-  delete pointsxy;
-  delete pointsyz;
-  delete pointsxz;
+  
+  
+  delete MOxy[0]; delete MOxz[0]; delete MOyz[0];
+  delete MOxy[1]; delete MOxz[1]; delete MOyz[1];
+  delete MOxy[2]; delete MOxz[2]; delete MOyz[2];
+  delete MOxy[3]; delete MOxz[3]; delete MOyz[3];
+  delete[] pointsxy;
+  delete[] pointsyz;
+  delete[] pointsxz;
   return n;
 } // CoverByDSSs3D()
 
@@ -1046,9 +1054,14 @@ Reference:
 #endif
 
   pos = pos+indmax-1;
-  delete pointsxy;
-  delete pointsyz;
-  delete pointsxz;
+  
+  delete MOxy[0]; delete MOxz[0]; delete MOyz[0];
+  delete MOxy[1]; delete MOxz[1]; delete MOyz[1];
+  delete MOxy[2]; delete MOxz[2]; delete MOyz[2];
+  delete MOxy[3]; delete MOxz[3]; delete MOyz[3];  
+  delete[] pointsxy;
+  delete[] pointsyz;
+  delete[] pointsxz;
   return pos;
 } // FindDSSs3D()
 

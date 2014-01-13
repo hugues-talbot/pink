@@ -263,9 +263,9 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       b1 = b3 = 2 * e_a;
       b2 = b4 = - e_2a;
 
-      derichegen(Imd, rs, cs, buf1, buf2, Im1,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      derichegen(Imd, rs, cs, buf1, buf2, Im2,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im2,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
       if (datatype(image) == VFF_TYP_1_BYTE)
@@ -317,9 +317,9 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       b1 = b3 = 2 * e_a;
       b2 = b4 = - e_2a;
 
-      derichegen(Imd, rs, cs, buf1, buf2, Im1,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      derichegen(Imd, rs, cs, buf1, buf2, Im2,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im2,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
       if (datatype(image) == VFF_TYP_1_BYTE)
@@ -374,9 +374,9 @@ printf("alpha = %g , e_a = %g , e_2a = %g , k = %g\n", alpha, e_a, e_2a, k);
       b1 = b3 = 2 * e_a;
       b2 = b4 = - e_2a;
 
-      derichegen(Imd, rs, cs, buf1, buf2, Im1,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im1,
                  a1, a2, a3, a4, a5, a6, a7, a8, b1, b2, b3, b4);
-      derichegen(Imd, rs, cs, buf1, buf2, Im2,
+      lderiche_derichegen(Imd, rs, cs, buf1, buf2, Im2,
                  a5, a6, a7, a8, a1, a2, a3, a4, b1, b2, b3, b4);
 
       if (datatype(image) == VFF_TYP_1_BYTE)
