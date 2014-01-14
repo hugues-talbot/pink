@@ -1,5 +1,8 @@
 # -*- sh -*-
 
+# cmake -D PINK_MAJOR:STRING=`date +%Y` -D PINK_MINOR:STRING=`date +%m` -D PINK_REVISION:STRING=`date +%d` -C ~/doc/projects/pink-hg/data/configs/pink_config_pink_anyuws_debug.txt ~/doc/projects/pink-hg/
+
+
 SET( 64BIT ON CACHE BOOL "desc." )
 SET( BASH_FRONT_END ON CACHE BOOL "desc." )
 SET( BOOST_INCLUDEDIR /usr/include CACHE PATH "desc." )
@@ -20,3 +23,5 @@ SET( PYTHON_FRONT_END ON CACHE BOOL "desc." )
 SET( SIMD ON CACHE BOOL "desc." )
 SET( NUMPY ON CACHE BOOL "desc." )
 SET( CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL "desc." )
+SET( PINK_PACKAGE_TYPE "RPM-OpenSuSE12.1" CACHE STRING "desc." )
+SET( PINK_LIBDIR "lib64" CACHE STRING "desc." )

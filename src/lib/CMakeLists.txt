@@ -61,11 +61,13 @@ CHECK_TYPE_SIZE (void* POINTER_SIZE) #4 if 32bit, 8 if 64bit.
 
 string( COMPARE EQUAL "${POINTER_SIZE}" "8" THIS_IS_64bit )
 
-if ( THIS_IS_64bit )
-    set(PINK_LIBDIR "lib64" )
-else ( THIS_IS_64bit )
-    set(PINK_LIBDIR "lib" )
-endif ( THIS_IS_64bit )
+if (NOT PINK_LIBDIR)
+    if ( THIS_IS_64bit )
+	set(PINK_LIBDIR "lib64" )
+    else ( THIS_IS_64bit )
+	set(PINK_LIBDIR "lib" )
+    endif ( THIS_IS_64bit )
+endif (NOT PINK_LIBDIR)
 
 if (CMAKE_HOST_UNIX)
 install(

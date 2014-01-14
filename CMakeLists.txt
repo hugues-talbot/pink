@@ -571,7 +571,7 @@ endif(BASH_FRONT_END)
 ### **********************************************************************************************
 
 if( NOT PINK_PACKAGE_TYPE )
-    SET( PINK_PACKAGE_TYPE "TBZ2" CACHE STRING "The binary package to create after the compilation with the 'make package' commang." )
+    SET( PINK_PACKAGE_TYPE "TBZ2" CACHE STRING "The binary package to create after the compilation with the 'make package' command." )
 endif( NOT PINK_PACKAGE_TYPE )
 
 if (CMAKE_MINOR_VERSION>=8) # cmake 2.6 required; cmake 2.8 or newer desirable
