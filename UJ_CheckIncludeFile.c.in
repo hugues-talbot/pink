@@ -1,3 +1,4 @@
+#undef _DEBUG
 #include <${CHECK_INCLUDE_FILE_VAR}>
 
 #ifdef __CLASSIC_C__
