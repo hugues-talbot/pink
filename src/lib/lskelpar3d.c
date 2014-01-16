@@ -65,6 +65,7 @@ knowledge of the CeCILL license and that you accept its terms.
    Update MC 02/11/2012 : squelettes symétriques avec persistence
 */
 
+#include <float.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -119,7 +120,8 @@ knowledge of the CeCILL license and that you accept its terms.
 #define UNSET_DCRUCIAL(f)   (f&=~S_DCRUCIAL)
 #define UNSET_SELECTED(f)   (f&=~S_SELECTED)
 
-#define MAXFLOAT	3.40282347e+38F
+//#define MAXFLOAT	3.40282347e+38F
+#define MAXFLOAT FLT_MAX
 
 #define VERBOSE
 #define DEBUG_SKEL_CK3P
