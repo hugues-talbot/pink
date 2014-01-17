@@ -32,7 +32,7 @@ SET( EIGEN_INCLUDE "C:/Pink/Build/eigen2/eigen-eigen-b23437e61a07" CACHE PATH "d
 SET( NUMPY OFF CACHE BOOL "desc." )
 SET( CMAKE_INSTALL_PREFIX "install" CACHE PATH "desc." )
 SET( PINK_PACKAGE_TYPE "NSIS-WINDOWS" CACHE STRING "Generate a Windows(tm) installer." )
-SET( CPACK_MODULE_PATH "C:/Pink/Jenkins/pink-hg" CACHE PATH "The path for the NSIS installer templates" )
+#SET( CPACK_MODULE_PATH "C:/Pink/Jenkins/pink-hg" CACHE PATH "The path for the NSIS installer templates" )
 
 ###########################################################################
 ### Python 2.7
