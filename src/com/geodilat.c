@@ -46,7 +46,7 @@ which can be one of the following ones: 4, 8 in 2d, or 6, 18, 26 in 3d.
 The parameter \b niter sets the number of iterations. If \b niter = -1,
 then the iterations continue until stability.
 
-<B>Types supported:</B> byte 2d, byte 3d.
+<B>Types supported:</B> byte 2d, byte 3d, short 2d, short 3d, long 2d, long 3d.
 
 <B>Category:</B> connect, morpho
 \ingroup  connect, morpho
@@ -105,21 +105,10 @@ int main(int argc, char **argv)
 
   niter = atoi(argv[4]);
 
-  if (depth(image1) == 1)
+  if (! lgeodilat(image1, image2, connex, niter))
   {
-    if (! lgeodilat(image1, image2, connex, niter))
-    {
-      fprintf(stderr, "%s: function lgeodilat failed\n", argv[0]);
-      exit(1);
-    }
-  }
-  else
-  {
-    if (! lgeodilat3d(image1, image2, connex, niter))
-    {
-      fprintf(stderr, "%s: function lgeodilat3d failed\n", argv[0]);
-      exit(1);
-    }
+    fprintf(stderr, "%s: function lgeodilat failed\n", argv[0]);
+    exit(1);
   }
 
   writeimage(image1, argv[argc-1]);

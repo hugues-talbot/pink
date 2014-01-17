@@ -125,7 +125,7 @@ static void extract_vois(
                22      17      18
                23      24      25
 
-  le point p ne doit pas ï¿½tre un point de bord de l'image
+  le point p ne doit pas être un point de bord de l'image
 */
 /* ==================================== */
 {
@@ -191,7 +191,7 @@ static index_t return_vois(
                22      17      18
                23      24      25
 
-  le point p ne doit pas ï¿½tre un point de bord de l'image
+  le point p ne doit pas être un point de bord de l'image
 */
 /* ==================================== */
 {
@@ -288,7 +288,7 @@ static int32_t direction(
                 .       5       .       
                 .       .       .       
 #endif
-  le point p ne doit pas ï¿½tre un point de bord de l'image
+  le point p ne doit pas être un point de bord de l'image
 */
 /* ==================================== */
 {
@@ -330,8 +330,8 @@ static int32_t direction(
 
 /* ==================================== */
 static void isometrieXZ_vois(uint8_t *vois) 
-// effectue une isomï¿½trie du voisinage "vois" par ï¿½change des axes X et Z (+ symï¿½tries)
-// cette isomï¿½trie est de plus une involution
+// effectue une isométrie du voisinage "vois" par échange des axes X et Z (+ symétries)
+// cette isométrie est de plus une involution
 /* ==================================== */
 {
   uint8_t v[27];
@@ -348,8 +348,8 @@ static void isometrieXZ_vois(uint8_t *vois)
 
 /* ==================================== */
 static void isometrieYZ_vois(uint8_t *vois)
-// effectue une isomï¿½trie du voisinage "vois" par ï¿½change des axes Y et Z (+ symï¿½tries)  
-// cette isomï¿½trie est de plus une involution
+// effectue une isométrie du voisinage "vois" par échange des axes Y et Z (+ symétries)  
+// cette isométrie est de plus une involution
 /* ==================================== */
 {
   uint8_t v[27];
@@ -424,7 +424,7 @@ static void extract_vois125(
  85  86  87  88  89
  90  91  92  93 ...
 
- le tableau vois doit avoir ï¿½tï¿½ allouï¿½
+ le tableau vois doit avoir été alloué
  
  le point central est le 62, ses voisins sont :
 
@@ -490,7 +490,7 @@ static void extract_vois27(
   21  22  23
   24  25  26
 
-  le tableau vois doit avoir ï¿½tï¿½ allouï¿½
+  le tableau vois doit avoir été alloué
   le point central est le 13
 */
 /* ==================================== */
@@ -539,7 +539,7 @@ static index_t return_vois27(
   21  22  23
   24  25  26
 
-  le point p ne doit pas ï¿½tre un point de bord de l'image
+  le point p ne doit pas être un point de bord de l'image
 */
 /* ==================================== */
 {
@@ -650,9 +650,9 @@ static void printf_vois125(
 
 /* ==================================== */
 static void isometrieXZ_vois27(uint8_t *vois) 
-// effectue une isomï¿½trie du voisinage "vois" par ï¿½change des axes X et Z (+ symï¿½tries)
-// cette isomï¿½trie est de plus une involution
-// version pour la numï¿½rotation de extract_vois27()
+// effectue une isométrie du voisinage "vois" par échange des axes X et Z (+ symétries)
+// cette isométrie est de plus une involution
+// version pour la numérotation de extract_vois27()
 /* ==================================== */
 {
   uint8_t v[27];
@@ -666,9 +666,9 @@ static void isometrieXZ_vois27(uint8_t *vois)
 
 /* ==================================== */
 static void isometrieYZ_vois27(uint8_t *vois)
-// effectue une isomï¿½trie du voisinage "vois" par ï¿½change des axes Y et Z (+ symï¿½tries)  
-// cette isomï¿½trie est de plus une involution
-// version pour la numï¿½rotation de extract_vois27()
+// effectue une isométrie du voisinage "vois" par échange des axes Y et Z (+ symétries)  
+// cette isométrie est de plus une involution
+// version pour la numérotation de extract_vois27()
 /* ==================================== */
 {
   uint8_t v[27];
@@ -682,7 +682,7 @@ static void isometrieYZ_vois27(uint8_t *vois)
 
 static void rotate_90_Z_27(uint8_t *v)
 {
-// version pour la numï¿½rotation de extract_vois27()
+// version pour la numérotation de extract_vois27()
   uint8_t t;
   t = v[ 5]; v[ 5] = v[ 1]; v[ 1] = v[ 3]; v[ 3] = v[ 7]; v[ 7] = t;
   t = v[ 2]; v[ 2] = v[ 0]; v[ 0] = v[ 6]; v[ 6] = v[ 8]; v[ 8] = t;
@@ -694,7 +694,7 @@ static void rotate_90_Z_27(uint8_t *v)
 
 static void swap_U_L_27(uint8_t *v)
 {
-// version pour la numï¿½rotation de extract_vois27()
+// version pour la numérotation de extract_vois27()
   uint8_t t;
   t = v[ 4]; v[ 4] = v[22]; v[22] = t;
   t = v[ 5]; v[ 5] = v[23]; v[23] = t;
@@ -3335,7 +3335,7 @@ printf("delete %d %d %d\n", i, j, k);
 
 /* ============================================================ */
 /* ============================================================ */
-// Algo. de She et al. (curviligne symï¿½trique, DICTA 2009)
+// Algo. de She et al. (curviligne symétrique, DICTA 2009)
 // M. Couprie, feb. 2012
 /* ============================================================ */
 /* ============================================================ */
@@ -3593,7 +3593,7 @@ printf("point %d %d %d\n", i, j, k);
 
 /* ============================================================ */
 /* ============================================================ */
-// Algo. de Lohou et Bertrand (curviligne symmï¿½trique, Pat. Rec. 2007) 
+// Algo. de Lohou et Bertrand (curviligne symmétrique, Pat. Rec. 2007) 
 // M. Couprie, dec. 2011
 /* ============================================================ */
 /* ============================================================ */
@@ -3647,7 +3647,7 @@ int32_t llohoubertrandsymcurv2007(
 #endif
     
     razimage(c);
-    for (k = 2; k < ds-2; k++) // prï¿½pare l'ensemble C des points candidats
+    for (k = 2; k < ds-2; k++) // prépare l'ensemble C des points candidats
       for (j = 2; j < cs-2; j++)
 	for (i = 2; i < rs-2; i++)
 	{
@@ -3682,7 +3682,7 @@ int32_t llohoubertrandsymcurv2007(
     writeimage(c, "_c");
 #endif
 
-    for (k = 2; k < ds-2; k++) // retire en parallï¿½le les points PC_simples
+    for (k = 2; k < ds-2; k++) // retire en parallèle les points PC_simples
       for (j = 2; j < cs-2; j++)
 	for (i = 2; i < rs-2; i++)
 	{
@@ -3711,7 +3711,7 @@ int32_t llohoubertrandsymcurv2007(
 
 /* ============================================================ */
 /* ============================================================ */
-// Algo. de Lohou et Bertrand (surfacique symmï¿½trique, Pat. Rec. 2007) 
+// Algo. de Lohou et Bertrand (surfacique symmétrique, Pat. Rec. 2007) 
 // M. Couprie, sept. 2012
 /* ============================================================ */
 /* ============================================================ */
@@ -3766,7 +3766,7 @@ int32_t llohoubertrandsymsurf2007(
 #endif
     
     razimage(s);
-    for (k = 2; k < ds-2; k++) // prï¿½pare l'ensemble S des points candidats
+    for (k = 2; k < ds-2; k++) // prépare l'ensemble S des points candidats
       for (j = 2; j < cs-2; j++)
 	for (i = 2; i < rs-2; i++)
 	{
@@ -3783,7 +3783,7 @@ int32_t llohoubertrandsymsurf2007(
     writeimage(s, "_s");
 #endif
 
-    for (k = 2; k < ds-2; k++) // retire en parallï¿½le les points PS_simples
+    for (k = 2; k < ds-2; k++) // retire en parallèle les points PS_simples
       for (j = 2; j < cs-2; j++)
 	for (i = 2; i < rs-2; i++)
 	{
@@ -4071,7 +4071,7 @@ int32_t llohoubertrand12dir2004(
   for (i = 0; i < N; i++) if (S[i]) S[i] = LB12_OBJECT; 
 
   /* ================================================ */
-  /* Prï¿½paration des masques */
+  /* Préparation des masques */
   /* ================================================ */
 
   for (d = 0; d < 12; d++)
@@ -4226,8 +4226,8 @@ int32_t llohoubertrand12dir2004(
 //typedef uint32_t mat[3][3];
 //typedef uint32_t vec[3];
 //
-//// matrices pour les 8 symï¿½tries de type 1
-//// et translations associï¿½es
+//// matrices pour les 8 symétries de type 1
+//// et translations associées
 //
 //mat R0 = {
 //  {  1,  0,  0},
@@ -4285,7 +4285,7 @@ int32_t llohoubertrand12dir2004(
 //};
 //vec T7 = {-4,-4,-4};
 //
-//// matrices pour les 6 symï¿½tries de type 2
+//// matrices pour les 6 symétries de type 2
 //
 //mat S0 = {
 //  {  1,  0,  0},
@@ -4402,7 +4402,7 @@ int32_t llohoubertrand12dir2004(
 // 85  86  87  88  89
 // 90  91  92  93 ...
 //
-// le tableau vois doit avoir ï¿½tï¿½ allouï¿½
+// le tableau vois doit avoir été alloué
 //
 //*/
 ///* ==================================== */
@@ -7487,7 +7487,7 @@ int32_t palagyi_skelpar_surf_08(struct xvimage *input)
 
 /* ============================================================ */
 /* ============================================================ */
-// Algo. de Manzanera et al., (surfacique symï¿½trique, DGCI 1999)
+// Algo. de Manzanera et al., (surfacique symétrique, DGCI 1999)
 // M. Couprie, oct. 2012
 /* ============================================================ */
 /* ============================================================ */
@@ -7534,11 +7534,11 @@ static const int Ma = 0, Mf = 1, Mc = 2, Me = 3, Mb = 4, Md = 5, Mg = 6, Mh = 7,
 static void apply_rot(int32_t * M, int32_t * V , int32_t * R)
 /* ==================================== */
 /*! \fn void apply_rot(in32_t * M, in32_t * V , in32_t * R)
-    \param M (entrï¿½e) : matrice de rotation
-    \param V (entrï¿½e) : vecteur
-    \param R (sortie) : rï¿½sultat
-    \brief multiplication matrice \b M par vecteur \b V, rï¿½sultat vecteur \b R
-    \warning la mï¿½moire pour stocker le rï¿½sultat \b R doit avoir ï¿½tï¿½ allouï¿½e
+    \param M (entrée) : matrice de rotation
+    \param V (entrée) : vecteur
+    \param R (sortie) : résultat
+    \brief multiplication matrice \b M par vecteur \b V, résultat vecteur \b R
+    \warning la mémoire pour stocker le résultat \b R doit avoir été allouée
 */
 {
   int32_t i, j, t;
@@ -7874,7 +7874,7 @@ int32_t lmanzanerasurf1999(	  struct xvimage *image,
 	{
 	  x = k*ps + j*rs + i;
 	  if (S[x] && (mctopo3d_nbvoisc6(S, x, rs, ps, N) > 0)) check_MAN_DELETABLE(S, x, rs, ps);
-	  // l'appel ï¿½ mctopo3d_nbvoisc6 est facultatif, c'est juste pour accï¿½lï¿½rer...
+	  // l'appel à mctopo3d_nbvoisc6 est facultatif, c'est juste pour accélérer...
 	} // for i, j, k
 
     for (k = 2; k < ds-2; k++)

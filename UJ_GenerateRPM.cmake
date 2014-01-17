@@ -2,11 +2,19 @@
 # UjoImro, 2011
 # This script generates an rpm source and build package
 
-SET(PINK_MAJOR "1")
-SET(PINK_MINOR "0")
+if (NOT PINK_MAJOR)
+    SET(PINK_MAJOR "1")
+endif (NOT PINK_MAJOR)
+if (NOT PINK_MINOR)
+    SET(PINK_MINOR "0")
+endif (NOT PINK_MINOR)
 if (NOT PINK_REVISION)
     SET(PINK_REVISION "0")
 endif(NOT PINK_REVISION)
+
+if (NOT BUILD_ID)
+    SET( BUILD_ID ${PINK_MAJOR}.${PINK_MINOR}.${PINK_REVISION} )
+endif (NOT BUILD_ID)
 
 string( COMPARE EQUAL ${PINK_PACKAGE_TYPE} TBZ2  TBZ2PACKAGE )
 string( COMPARE EQUAL ${PINK_PACKAGE_TYPE} ZIP   ZIPPACKAGE )
@@ -97,8 +105,8 @@ SET(CPACK_SOURCE_IGNORE_FILES ${CPACK_SOURCE_IGNORE_FILES}
 ### Special settings for RPM generation -----------------------
 SET(CPACK_RPM_PACKAGE_SUMMARY          "Pink is an image processing library" )
 SET(CPACK_RPM_PACKAGE_NAME             "pink-image" )
-SET(CPACK_RPM_PACKAGE_VERSION          ${PINK_MAJOR}.${PINK_MINOR}.${PINK_REVISION} )
 SET(CPACK_RPM_PACKAGE_ARCHITECTURE     "x86_64" )
+SET(CPACK_RPM_PACKAGE_VERSION          ${BUILD_ID}.${CPACK_RPM_PACKAGE_ARCHITECTURE} )
 SET(CPACK_RPM_PACKAGE_RELEASE 	       1 )
 SET(CPACK_RPM_PACKAGE_LICENSE 	       "CeCILL" )
 SET(CPACK_RPM_PACKAGE_GROUP 	       "Productivity/Scientific/Other" )
@@ -119,8 +127,8 @@ SET(CPACK_RPM_PACKAGE_PROVIDES         "pink-image-1.0" )
 
 ### Special settings for DEBIAN package generation -----------------------
 SET( CPACK_DEBIAN_PACKAGE_NAME   "pink-image" )
-SET( CPACK_DEBIAN_PACKAGE_VERSION ${PINK_MAJOR}.${PINK_MINOR}.${PINK_REVISION} )
 SET( CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64" )
+SET( CPACK_DEBIAN_PACKAGE_VERSION ${BUILD_ID}.${CPACK_DEBIAN_PACKAGE_ARCHITECTURE} )
 ## autoset SET( CPACK_DEBIAN_PACKAGE_DEPENDS "libgsl0ldbl, libncurses5, libboost-dev, liblapack3gf, libtiff4, python, python-imaging, python-imaging-tk, python-tk, python-numpy, python-matplotlib" )
 SET( CPACK_DEBIAN_PACKAGE_MAINTAINER "Laszlo Marak <ujoimro@gmail.com>" )
 SET( CPACK_DEBIAN_PACKAGE_DESCRIPTION "Pink is an image processing library developed at ESIEE Engineering for research and teaching purposes. It contains implementations of over 200 algorithms for image segmentation and filtering. Most of the operators come from mathematical morphology, but it contains operators from different fields. It is a free software licensed under the  CeCILL license." )

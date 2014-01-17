@@ -4,6 +4,7 @@
 # ------------------------------------
 # -------- The Python front-end ------
 # ------------------------------------ 
+cmake_minimum_required(VERSION 2.8)
 SET( py_documentation ${CMAKE_SOURCE_DIR}/include/python_doc.h )
 
 FILE( GLOB py_src_cpp *.cpp )

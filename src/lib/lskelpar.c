@@ -42,7 +42,7 @@ knowledge of the CeCILL license and that you accept its terms.
    - Couprie curviligne avec reconstruction
    - Rutovitz
    - Zhang & Wang
-   - Han & La & Rhee (peu intï¿½ressant)
+   - Han & La & Rhee (peu intéressant)
    - Guo & Hall
    - Chin & Wan & Stover & Iverson
    - Jang & Chin
@@ -148,7 +148,7 @@ knowledge of the CeCILL license and that you accept its terms.
      m1 : match   A 2 B   avec origine = (1,0) et [au moins un des A et au moins un des B non nuls]
                   A 2 B   ou [A et B tous nuls] (+ rotation 90)
 
-		  (preuve ï¿½quivalence par programme : Squel2D/ronse.c)
+		  (preuve équivalence par programme : Squel2D/ronse.c)
 
      m2 : match   0 0 0 0   avec origine = (1,2) et x = don't care
                   0 2 2 0   (+ rotations 90, 180, 270)
@@ -182,20 +182,22 @@ knowledge of the CeCILL license and that you accept its terms.
    Michel Couprie - juillet 2001
    Benjamin Raynal 2010 - algos Nemeth & Palagyi
    Nivando Bezerra 2011 - lhthinpar* : skel en niveaux de gris
-   Michel Couprie 2011 - lskelACK2b : Squelette asymï¿½trique curviligne
+   Michel Couprie 2011 - lskelACK2b : Squelette asymétrique curviligne
              #ifdef NOT_FINISHED
-   Michel Couprie 2012 - lskelCK2 : Squelette symï¿½trique curviligne basï¿½ sur les isthmes 1D	     
+   Michel Couprie 2012 - lskelCK2 : Squelette symétrique curviligne basé sur les isthmes 1D	     
 */
 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <sys/types.h>
+#include <pinktypes.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <mccodimage.h>
 #include <mcimage.h>
 #include <mctopo.h>
+#include <mcrbt.h>
 #include <mcutil.h>
 #include <lskelpar.h>
 
@@ -205,6 +207,9 @@ knowledge of the CeCILL license and that you accept its terms.
 //#define VERBOSE1
 //#define ETUDE
 //#define ANIMATE
+
+#define PERS_INIT_VAL 0
+#define PERS_INFTY_VAL FLOAT_MAX
 
 #define I_INHIBIT     1
 
@@ -246,7 +251,7 @@ static void extract_vois(
 		3	2	1
 		4	p	0
 		5	6	7
-  le point p ne doit pas ï¿½tre un point de bord de l'image
+  le point p ne doit pas être un point de bord de l'image
 */
 /* ==================================== */
 {
@@ -286,7 +291,7 @@ static void print_vois(uint8_t *vois)
 static void rotate45_vois(uint8_t *vois)
 /*
    effectue une rotation du voisinage "vois" de 45 degres dans le sens
-   trigonomï¿½trique
+   trigonométrique
 */
 /* ==================================== */
 {
@@ -300,7 +305,7 @@ static void rotate45_vois(uint8_t *vois)
 static void rotate90_vois(uint8_t *vois)
 /*
    effectue une rotation du voisinage "vois" de 90 degres dans le sens
-   trigonomï¿½trique
+   trigonométrique
 */
 /* ==================================== */
 {
@@ -324,7 +329,7 @@ static int32_t extract_vois2(
 		8   X   p   X   0
 		9   X   X   X   15
 		10  11  12  13  14
-  le point p doit ï¿½tre ï¿½ une distance minimale de 2 du bord de l'image
+  le point p doit être à une distance minimale de 2 du bord de l'image
 */
 /* ==================================== */
 {
@@ -364,7 +369,7 @@ static int32_t extract_vois2(
 static void rotate90_vois2(uint8_t *vois)
 /*
    effectue une rotation du voisinage d'ordre 2 "vois" de 90 degres dans le sens
-   trigonomï¿½trique
+   trigonométrique
 */
 /* ==================================== */
 {
@@ -432,7 +437,7 @@ static int32_t pav_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /*
   A A C   avec origine = (1,1) et au moins un des A et au moins un des B
   0 2 2   et au moins un des C non nuls - de plus si les deux C sont non
-  B B C   nuls, alors les pixels A et B peuvent ï¿½tre quelconques
+  B B C   nuls, alors les pixels A et B peuvent être quelconques
  */
 {
   int32_t i;
@@ -598,7 +603,7 @@ int32_t lskelpavlidis1(struct xvimage *image,
 /* ==================================== */
 // T. Pavlidis : "A flexible parallel thinning algorithm"
 // see also T. Pavlidis : "An asynchronous thinning algorithm - CGIP 1982"
-// Une ï¿½tape - un seul point testï¿½
+// Une étape - un seul point testé
 #undef F_NAME
 #define F_NAME "lskelpavlidis1"
 {
@@ -718,7 +723,7 @@ int32_t lskeleckhardt(struct xvimage *image,
 /* ==================================== */
 static int32_t crossing_nb(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
-// retourne le nombre de transitions 1 -> 0 dans la liste ordonnï¿½e et cyclique des voisins
+// retourne le nombre de transitions 1 -> 0 dans la liste ordonnée et cyclique des voisins
 {
   int32_t i, n = 0;
   uint8_t v[8];
@@ -737,7 +742,7 @@ static int32_t rutovitz_match(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   uint8_t v[8];
   if (!F[x]) return 0;
   n = nbvois8(F, x, rs, N);
-  //  if ((n < 2) || (n > 6)) return 0; // cond. donnï¿½e par Zhang et Wang
+  //  if ((n < 2) || (n > 6)) return 0; // cond. donnée par Zhang et Wang
   if (n < 2) return 0;
   if (crossing_nb(F, x, rs, N) != 1) return 0;
   extract_vois(F, x, rs, N, v);
@@ -2304,7 +2309,7 @@ int32_t lskeljangrec(struct xvimage *image,
   int32_t cs = colsize(image);     /* taille colonne */
   int32_t N = rs * cs;             /* taille image */
   uint8_t *F = UCHARDATA(image);      /* l'image de depart */
-  uint8_t *I;            /* l'image d'inhibition (axe mï¿½dian) */
+  uint8_t *I;            /* l'image d'inhibition (axe médian) */
   struct xvimage *tmp = copyimage(image);
   uint8_t *T = UCHARDATA(tmp);
   int32_t step, nonstab;
@@ -2878,7 +2883,7 @@ int32_t lskelhall(struct xvimage *image,
 /* ==================================== */
 // described in Hall : "Fast parallel thinning algorithms: parallel speed and connectivity preservation"
 // variante 1 : Holt et al.
-// variante 2 : variante Hall pour "mieux" prï¿½server les diagonales (?)
+// variante 2 : variante Hall pour "mieux" préserver les diagonales (?)
 #undef F_NAME
 #define F_NAME "lskelhall"
 {
@@ -3303,31 +3308,8 @@ static int32_t mc_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
   return 0;
 } /* mc_match2() */
 
-#ifdef NOT_USED
 /* ==================================== */
 static int32_t mc_match3(uint8_t *F, int32_t x, int32_t rs, int32_t N)
-/* ==================================== */
-{
-  int32_t i;
-  uint8_t v[8], v2[16];
-  extract_vois(F, x, rs, N, v);
-  if (!extract_vois2(F, x, rs, N, v2)) return 0;
-  for (i = 0; i < 4; i++)
-  {
-    if ((v[0] != 0) || (!IS_SIMPLE(v[1])) || (!IS_SIMPLE(v[2]))) goto fail;
-    if ((v2[0] != 0) || (v2[3] != 0) || (v2[4] != 0) ||
-	(v[3] != 0) || (v[4] != 0) || (v[7] != 0)) goto fail;
-    return 1;
-  fail:
-    rotate90_vois(v);
-    rotate90_vois2(v2);
-  }
-  return 0;
-} /* mc_match3() */
-#endif
-
-/* ==================================== */
-static int32_t mc_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3345,56 +3327,10 @@ static int32_t mc_match3b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
     rotate90_vois2(v2);
   }
   return 0;
-} /* mc_match3b() */
+} /* mc_match3() */
 
-#ifdef NOT_USED
 /* ==================================== */
 static int32_t mc_match4(uint8_t *F, int32_t x, int32_t rs, int32_t N)
-/* ==================================== */
-{
-  int32_t i;
-  uint8_t v[8], v2[16];
-  extract_vois(F, x, rs, N, v);
-  if (!extract_vois2(F, x, rs, N, v2)) return 0;
-  for (i = 0; i < 4; i++)
-  {
-    if ((!IS_SIMPLE(v[0])) || (!IS_SIMPLE(v[1])) || (v[2] != 0)) goto fail;
-    if ((v2[0] != 0) || (v2[1] != 0) || (v2[4] != 0) ||
-	(v[3] != 0) || (v[6] != 0) || (v[7] != 0)) goto fail;
-    return 1;
-  fail:
-    rotate90_vois(v);
-    rotate90_vois2(v2);
-  }
-  return 0;
-} /* mc_match4() */
-#endif
-
-#ifdef NOT_USED
-/* ==================================== */
-static int32_t mc_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
-/* ==================================== */
-{
-  int32_t i;
-  uint8_t v[8], v2[16];
-  extract_vois(F, x, rs, N, v);
-  if (!extract_vois2(F, x, rs, N, v2)) return 0;
-  for (i = 0; i < 4; i++)
-  {
-    if ((!IS_SIMPLE(v[0])) || (v[1] != 0) || (!IS_SIMPLE(v[2]))) goto fail;
-    if ((v2[1] != 0) || (v2[3] != 0) ||
-	(v[3] != 0) || (v[4] != 0) || (v[6] != 0) || (v[7] != 0)) goto fail;
-    return 1;
-  fail:
-    rotate90_vois(v);
-    rotate90_vois2(v2);
-  }
-  return 0;
-} /* mc_match5() */
-#endif
-
-/* ==================================== */
-static int32_t mc_match4b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3412,10 +3348,10 @@ static int32_t mc_match4b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
     rotate90_vois2(v2);
   }
   return 0;
-} /* mc_match4b() */
+} /* mc_match4() */
 
 /* ==================================== */
-static int32_t mc_match5b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t mc_match5(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 {
   int32_t i;
@@ -3430,7 +3366,7 @@ static int32_t mc_match5b(uint8_t *F, int32_t x, int32_t rs, int32_t N)
     rotate90_vois(v);
   }
   return 0;
-} /* mc_match5b() */
+} /* mc_match5() */
 
 /* ==================================== */
 static int32_t mc_match6(uint8_t *F, int32_t x, int32_t rs, int32_t N)
@@ -3584,9 +3520,9 @@ int32_t lskelmcultime(struct xvimage *image,
       {
 	m1 = mc_match1(F, i, rs, N);
 	m2 = mc_match2(F, i, rs, N);
-	m3 = mc_match3b(F, i, rs, N);
-	m4 = mc_match4b(F, i, rs, N);
-	m5 = mc_match5b(F, i, rs, N);
+	m3 = mc_match3(F, i, rs, N);
+	m4 = mc_match4(F, i, rs, N);
+	m5 = mc_match5(F, i, rs, N);
 	m6 = mc_match6(F, i, rs, N);
 	if (m1 || m2 || m3 || m4 || m5 || m6)
 	{
@@ -3675,9 +3611,9 @@ int32_t lskelmccurv(struct xvimage *image,
       {
 	m1 = mc_match1(F, i, rs, N);
 	m2 = mc_match2(F, i, rs, N);
-	m3 = mc_match3b(F, i, rs, N);
-	m4 = mc_match4b(F, i, rs, N);
-	m5 = mc_match5b(F, i, rs, N);
+	m3 = mc_match3(F, i, rs, N);
+	m4 = mc_match4(F, i, rs, N);
+	m5 = mc_match5(F, i, rs, N);
 	m6 = mc_match6(F, i, rs, N);
 	if (m1 || m2 || m3 || m4 || m5 || m6)
 	{
@@ -3808,9 +3744,9 @@ int32_t lskelmccurvrec(struct xvimage *image,
       {
 	m1 = mc_match1(X, i, rs, N);
 	m2 = mc_match2(X, i, rs, N);
-	m3 = mc_match3b(X, i, rs, N);
-	m4 = mc_match4b(X, i, rs, N);
-	m5 = mc_match5b(X, i, rs, N);
+	m3 = mc_match3(X, i, rs, N);
+	m4 = mc_match4(X, i, rs, N);
+	m5 = mc_match5(X, i, rs, N);
 	m6 = mc_match6(X, i, rs, N);
 	if (m1 || m2 || m3 || m4 || m5 || m6)
 	{
@@ -3949,9 +3885,9 @@ int32_t lskelmccurvrecold(struct xvimage *image,
       {
 	m1 = mc_match1(X, i, rs, N);
 	m2 = mc_match2(X, i, rs, N);
-	m3 = mc_match3b(X, i, rs, N);
-	m4 = mc_match4b(X, i, rs, N);
-	m5 = mc_match5b(X, i, rs, N);
+	m3 = mc_match3(X, i, rs, N);
+	m4 = mc_match4(X, i, rs, N);
+	m5 = mc_match5(X, i, rs, N);
 	m6 = mc_match6(X, i, rs, N);
 	if (m1 || m2 || m3 || m4 || m5 || m6)
 	{
@@ -4064,7 +4000,7 @@ int32_t lskelNK2(struct xvimage *image,
 	      struct xvimage *inhibit)
 /* ==================================== */
 // algo asymetrique - ultime - minimal - avec contrainte axe median
-// ATTENTION : les rï¿½sultats sont incorrects si la contrainte n'est pas l'AM
+// ATTENTION : les résultats sont incorrects si la contrainte n'est pas l'AM
 #undef F_NAME
 #define F_NAME "lskelNK2"
 {
@@ -4239,9 +4175,9 @@ int32_t lskelNK2b(struct xvimage *image,
 	m2 = bertrand_match2(F, i, rs, N);
 	mc1 = mc_match1b(F, i, rs, N);
 	mc2 = mc_match2(F, i, rs, N);
-	mc3 = mc_match3b(F, i, rs, N);
-	mc4 = mc_match4b(F, i, rs, N);
-	mc5 = mc_match5b(F, i, rs, N);
+	mc3 = mc_match3(F, i, rs, N);
+	mc4 = mc_match4(F, i, rs, N);
+	mc5 = mc_match5(F, i, rs, N);
 	mc6 = mc_match6(F, i, rs, N);
 	if (m1 || m2)
 	{
@@ -4307,13 +4243,13 @@ int32_t lskelACK2b(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette asymï¿½trique curviligne
-Algo ACK2b donnï¿½es: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
-Pour tout x de S faire T[x] := -1
+Squelette asymétrique curviligne
+Algo ACK2b données: S (image), I (inhibit), n (n_steps), p (isthmus_persistence)
+Pour tout x de S faire T[x] := PERS_INIT_VAL
 Pour i := 0; i < n; i++
   C := points de courbe de S
-  Pour tout x de C tq T[x] == -1 faire T[x] := i
-  I := I \cup {x | T[x] > -1 et (i - T[x]) >= p}
+  Pour tout x de C tq T[x] == PERS_INIT_VAL faire T[x] := i
+  I := I \cup {x | T[x] > PERS_INIT_VAL et (i - T[x]) >= p}
   P := pixels simples pour S et pas dans I
   C1 := pixels 1-D-cruciaux (cruc_asym_match1)
   C0 := pixels 0-D-cruciaux (cruc_asym_match0)
@@ -4357,7 +4293,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   for (i = 0; i < N; i++) if (S[i]) S[i] = S_OBJECT;
 
   T = (int16_t *)malloc(N * sizeof(int16_t)); assert(T != NULL);
-  for (i = 0; i < N; i++) T[i] = -1;
+  for (i = 0; i < N; i++) T[i] = PERS_INIT_VAL;
 
   /* ================================================ */
   /*               DEBUT ALGO                         */
@@ -4379,7 +4315,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]))
       {    
 	top8(S, i, rs, N, &top, &topb);
-	if ((top > 1) && (T[i] == -1))
+	if ((top > 1) && (T[i] == PERS_INIT_VAL))
 	  T[i] = (int16_t)step;
       }
     }
@@ -4405,9 +4341,9 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	m2 = bertrand_match2(F, i, rs, N);
 	mc1 = mc_match1b(F, i, rs, N);
 	mc2 = mc_match2(F, i, rs, N);
-	mc3 = mc_match3b(F, i, rs, N);
-	mc4 = mc_match4b(F, i, rs, N);
-	mc5 = mc_match5b(F, i, rs, N);
+	mc3 = mc_match3(F, i, rs, N);
+	mc4 = mc_match4(F, i, rs, N);
+	mc5 = mc_match5(F, i, rs, N);
 	mc6 = mc_match6(F, i, rs, N);
 	if (m1 || m2)
 	{
@@ -4529,9 +4465,9 @@ int32_t lskelbertrand_sym(struct xvimage *image,
 	      struct xvimage *inhibit)
 /* ==================================== */
 /*
-Algo CPSR1 donnï¿½es: S
+Algo CPSR1 données: S
 T := S
-Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
+Répéter jusqu'à stabilité
      T := T \ominus \Gamma_4
      P := pixels simples pour S et 4-voisins d'un point de T
      R := pixels de P qui s'apparient avec C2
@@ -4721,8 +4657,8 @@ int32_t lskelMK2(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Algo MK2 donnï¿½es: S, I
-Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
+Algo MK2 données: S, I
+Répéter jusqu'à stabilité
   P := pixels simples pour S
   R := pixels de P qui s'apparient avec le masque C (bertrand_match3)
   T :=  [S  \  P] \cup  R \cup  I
@@ -4832,14 +4768,14 @@ int32_t lskelMK2b(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Algo MK2b donnï¿½es: S, I
-Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
+Algo MK2b données: S, I
+Répéter jusqu'à stabilité
   P := pixels simples pour S et pas dans I
-  R := pixels de P qui vï¿½rifient bertrand_match3b
+  R := pixels de P qui vérifient bertrand_match3b
   P := P \ R
-  R := pixels de P qui vï¿½rifient bertrand_match4  
+  R := pixels de P qui vérifient bertrand_match4  
   S = S \ [P \ R]
-(l'ensemble P est reprï¿½sentï¿½ par la valeur 2 dans l'image S)
+(l'ensemble P est représenté par la valeur 2 dans l'image S)
 */
 #undef F_NAME
 #define F_NAME "lskelMK2b"
@@ -4935,10 +4871,10 @@ int32_t lskelAK2(struct xvimage *image,
 	     struct xvimage *inhibit)
 /* ==================================== */
 /*
-Amincissement symï¿½trique avec inclusion de l'axe mï¿½dian
-Algo AK2 donnï¿½es: S
+Amincissement symétrique avec inclusion de l'axe médian
+Algo AK2 données: S
 K := \emptyset ; T := S
-Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
+Répéter jusqu'à stabilité
   E := T \ominus \Gamma_4
   D := T \ [E \oplus \Gamma_4]
   T := E
@@ -5017,7 +4953,7 @@ Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
     for (i = 0; i < N; i++)
       if (D[i]) K[i] = 1;
 
-    //  P := pixels de S \ K simples pour S (P est reprï¿½sentï¿½ par les points ï¿½ 2 dans S)
+    //  P := pixels de S \ K simples pour S (P est représenté par les points à 2 dans S)
     for (i = 0; i < N; i++)
       if (S[i] && !K[i] && simple8(S, i, rs, N))
 	S[i] = 2;
@@ -5036,7 +4972,7 @@ Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
       if ((S[i] == 1) || R[i])
 	D[i] = 1;
 
-    for (i = 0; i < N; i++) // pour  tester la stabilitï¿½
+    for (i = 0; i < N; i++) // pour  tester la stabilité
       if (S[i] && !D[i])
       {
 	S[i] = 0;
@@ -5060,7 +4996,7 @@ Rï¿½pï¿½ter jusqu'ï¿½ stabilitï¿½
 } /* lskelAK2() */
 
 /* ==================================== */
-static int32_t ros_match(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+static int32_t ros_match1(uint8_t *F, int32_t x, int32_t rs, int32_t N)
 /* ==================================== */
 /*
   D D D     avec origine = (1,1) et valeurs des pixels D quelconques
@@ -5081,7 +5017,33 @@ static int32_t ros_match(uint8_t *F, int32_t x, int32_t rs, int32_t N)
     rotate90_vois(v);
   }
   return 0;
-} /* ros_match() */
+} /* ros_match1() */
+
+/* ==================================== */
+static int32_t ros_match2(uint8_t *F, int32_t x, int32_t rs, int32_t N)
+/* ==================================== */
+/*
+  D 0 0     avec origine = (1,1)
+  D P 1
+  D 0 0
+ */
+{
+  int32_t i;
+  uint8_t v[8];
+  extract_vois(F, x, rs, N, v);
+  for (i = 0; i < 4; i++)
+  {
+    if (v[1] != 0) goto fail;
+    if (v[2] != 0) goto fail;
+    if (v[6] != 0) goto fail;
+    if (v[7] != 0) goto fail;
+    if (!v[0]) goto fail;
+    return 1;
+  fail:
+    rotate90_vois(v);
+  }
+  return 0;
+} /* ros_match2() */
 
 /* ==================================== */
 static int32_t ros_north(uint8_t *F, int32_t x, int32_t rs, int32_t N)
@@ -5152,7 +5114,7 @@ int32_t lskelrosenfeld(struct xvimage *image,
 		       int32_t nsteps,
 		       struct xvimage *inhibit)
 /* ==================================== */
-// Rosenfeld : algo directionnel
+// Rosenfeld : algo directionnel (ordre NSEW)
 #undef F_NAME
 #define F_NAME "lskelrosenfeld"
 {
@@ -5191,25 +5153,25 @@ int32_t lskelrosenfeld(struct xvimage *image,
 
     memset(T, 0, N);
     for (i = 0; i < N; i++)
-      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_north(F, i, rs, N) && !ros_match(F, i, rs, N))
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_north(F, i, rs, N) && !ros_match1(F, i, rs, N) && !ros_match2(F, i, rs, N))
       { nonstab = 1; T[i] = 1; }
     for (i = 0; i < N; i++) if (T[i] == 1) F[i] = 0;
 
     memset(T, 0, N);
     for (i = 0; i < N; i++)
-      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_south(F, i, rs, N) && !ros_match(F, i, rs, N))
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_south(F, i, rs, N) && !ros_match1(F, i, rs, N) && !ros_match2(F, i, rs, N))
       { nonstab = 1; T[i] = 1; }
     for (i = 0; i < N; i++) if (T[i] == 1) F[i] = 0;
 
     memset(T, 0, N);
     for (i = 0; i < N; i++)
-      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_east(F, i, rs, N) && !ros_match(F, i, rs, N))
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_east(F, i, rs, N) && !ros_match1(F, i, rs, N) && !ros_match2(F, i, rs, N))
       { nonstab = 1; T[i] = 1; }
     for (i = 0; i < N; i++) if (T[i] == 1) F[i] = 0;
 
     memset(T, 0, N);
     for (i = 0; i < N; i++)
-      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_west(F, i, rs, N) && !ros_match(F, i, rs, N))
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_west(F, i, rs, N) && !ros_match1(F, i, rs, N) && !ros_match2(F, i, rs, N))
       { nonstab = 1; T[i] = 1; }
     for (i = 0; i < N; i++) if (T[i] == 1) F[i] = 0;
 
@@ -5224,6 +5186,162 @@ int32_t lskelrosenfeld(struct xvimage *image,
   freeimage(tmp);
   return(1);
 } /* lskelrosenfeld() */
+
+/* ==================================== */
+int32_t lskelrosenfeld_var1(struct xvimage *image,
+		       int32_t nsteps,
+		       struct xvimage *inhibit)
+/* ==================================== */
+// Rosenfeld : algo directionnel (variante : ordre WESN)
+#undef F_NAME
+#define F_NAME "lskelrosenfeld_var1"
+{
+  int32_t i;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t N = rs * cs;             /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  struct xvimage *tmp = copyimage(image);
+  uint8_t *T = UCHARDATA(tmp);
+  int32_t step, nonstab;
+
+  if (inhibit != NULL)
+  {
+    fprintf(stderr, "%s: inhibit image: not implemented\n", F_NAME);
+    return 0;
+  }
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  for (i = 0; i < N; i++) if (F[i]) F[i] = 1; // normalize values
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < nsteps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    memset(T, 0, N);
+    for (i = 0; i < N; i++)
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_west(F, i, rs, N) && !ros_match1(F, i, rs, N) && !ros_match2(F, i, rs, N))
+      { nonstab = 1; T[i] = 1; }
+    for (i = 0; i < N; i++) if (T[i] == 1) F[i] = 0;
+
+    memset(T, 0, N);
+    for (i = 0; i < N; i++)
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_east(F, i, rs, N) && !ros_match1(F, i, rs, N) && !ros_match2(F, i, rs, N))
+      { nonstab = 1; T[i] = 1; }
+    for (i = 0; i < N; i++) if (T[i] == 1) F[i] = 0;
+
+    memset(T, 0, N);
+    for (i = 0; i < N; i++)
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_south(F, i, rs, N) && !ros_match1(F, i, rs, N) && !ros_match2(F, i, rs, N))
+      { nonstab = 1; T[i] = 1; }
+    for (i = 0; i < N; i++) if (T[i] == 1) F[i] = 0;
+
+    memset(T, 0, N);
+    for (i = 0; i < N; i++)
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_north(F, i, rs, N) && !ros_match1(F, i, rs, N) && !ros_match2(F, i, rs, N))
+      { nonstab = 1; T[i] = 1; }
+    for (i = 0; i < N; i++) if (T[i] == 1) F[i] = 0;
+
+  }
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (F[i]) F[i] = 255; // normalize values
+
+  freeimage(tmp);
+  return(1);
+} /* lskelrosenfeld_var1() */
+
+/* ==================================== */
+int32_t lskelrosenfeld_var2(struct xvimage *image,
+		       int32_t nsteps,
+		       struct xvimage *inhibit)
+/* ==================================== */
+// Rosenfeld : algo directionnel (variante : ordre ENWS)
+#undef F_NAME
+#define F_NAME "lskelrosenfeld_var2"
+{
+  int32_t i;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t N = rs * cs;             /* taille image */
+  uint8_t *F = UCHARDATA(image);      /* l'image de depart */
+  struct xvimage *tmp = copyimage(image);
+  uint8_t *T = UCHARDATA(tmp);
+  int32_t step, nonstab;
+
+  if (inhibit != NULL)
+  {
+    fprintf(stderr, "%s: inhibit image: not implemented\n", F_NAME);
+    return 0;
+  }
+
+  if (nsteps == -1) nsteps = 1000000000;
+
+  for (i = 0; i < N; i++) if (F[i]) F[i] = 1; // normalize values
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab && (step < nsteps))
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    memset(T, 0, N);
+    for (i = 0; i < N; i++)
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_east(F, i, rs, N) && !ros_match1(F, i, rs, N) && !ros_match2(F, i, rs, N))
+      { nonstab = 1; T[i] = 1; }
+    for (i = 0; i < N; i++) if (T[i] == 1) F[i] = 0;
+
+    memset(T, 0, N);
+    for (i = 0; i < N; i++)
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_north(F, i, rs, N) && !ros_match1(F, i, rs, N) && !ros_match2(F, i, rs, N))
+      { nonstab = 1; T[i] = 1; }
+    for (i = 0; i < N; i++) if (T[i] == 1) F[i] = 0;
+
+    memset(T, 0, N);
+    for (i = 0; i < N; i++)
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_west(F, i, rs, N) && !ros_match1(F, i, rs, N) && !ros_match2(F, i, rs, N))
+      { nonstab = 1; T[i] = 1; }
+    for (i = 0; i < N; i++) if (T[i] == 1) F[i] = 0;
+
+    memset(T, 0, N);
+    for (i = 0; i < N; i++)
+      if ((F[i] == 1) && simple8(F, i, rs, N) && ros_south(F, i, rs, N) && !ros_match1(F, i, rs, N) && !ros_match2(F, i, rs, N))
+      { nonstab = 1; T[i] = 1; }
+    for (i = 0; i < N; i++) if (T[i] == 1) F[i] = 0;
+
+  }
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) if (F[i]) F[i] = 255; // normalize values
+
+  freeimage(tmp);
+  return(1);
+} /* lskelrosenfeld_var2() */
 
 
 //Detects endpoints of type 1, 2, 3 as defined in "Parallel connectivity preserving thinning algorithms", by Hall
@@ -6258,9 +6376,8 @@ int32_t lskelCK2(struct xvimage *image,
 		 struct xvimage *inhibit)
 /* ==================================== */
 /*
-Squelette symï¿½trique curviligne basï¿½ sur les isthmes 1D
-Algo CK2 donnï¿½es: S (image), I (inhibit), n (n_steps)
-Pour tout x de S faire T[x] := -1
+Squelette symétrique curviligne basé sur les isthmes 1D
+Algo CK2 données: S (image), I (inhibit), n (n_steps)
 Pour i := 0; i < n; i++
   C := points de courbe (isthmes) de S
   I := I \cup C
@@ -6338,9 +6455,9 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       {
 	m1 = mc_match1(F, i, rs, N);
 	m2 = mc_match2(F, i, rs, N);
-	m3 = mc_match3b(F, i, rs, N);
-	m4 = mc_match4b(F, i, rs, N);
-	m5 = mc_match5b(F, i, rs, N);
+	m3 = mc_match3(F, i, rs, N);
+	m4 = mc_match4(F, i, rs, N);
+	m5 = mc_match5(F, i, rs, N);
 	m6 = mc_match6(F, i, rs, N);
 	if (m1 || m2 || m3 || m4 || m5 || m6)
 	{
@@ -6378,3 +6495,410 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   freeimage(tmp);
   return(1);
 } /* lskelCK2() */
+
+/* ==================================== */
+int32_t lskelCK2_pers_old(struct xvimage *image, 
+			  struct xvimage *persistence)
+/* ==================================== */
+// calcule la fonction persistence de la méthode CK2
+// VERSION SANS CONTROLE TOPOLOGIQUE - OBSOLETE
+#undef F_NAME
+#define F_NAME "lskelCK2_pers_old"
+{
+  int32_t i;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t N = rs * cs;             /* taille image */
+  uint8_t *F = UCHARDATA(image);   /* l'image de depart */
+  struct xvimage *tmp = copyimage(image);
+  struct xvimage *inhibit;
+  uint8_t *I;
+  uint8_t *T = UCHARDATA(tmp);
+  int32_t step, nonstab, nsteps;
+  int32_t m1, m2, m3, m4, m5, m6;
+  float *P = FLOATDATA(persistence); /* résultat */
+
+  inhibit = copyimage(image); 
+  razimage(inhibit);
+  I = UCHARDATA(inhibit);
+
+  nsteps = 1000000000;
+
+  for (i = 0; i < N; i++) if (F[i]) F[i] = S_OBJECT; // normalize values
+  for (i = 0; i < N; i++) P[i] = PERS_INIT_VAL;
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  step = 0;
+  nonstab = 1;
+  while (nonstab)
+  {
+    nonstab = 0;
+    step++;
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+    memset(T, 0, N);
+
+    for (i = 0; i < N; i++)
+      if (F[i] && simple8(F, i, rs, N))
+	SET_SIMPLE(F[i]);
+
+    for (i = 0; i < N; i++) // detecte les isthmes
+      if (F[i])
+      {
+	if (IS_SIMPLE(F[i]) && mc_match1(F, i, rs, N))
+	  I[i] = I_INHIBIT;
+	else if (t8(mask(F, i, rs, N)) > 1)
+	  I[i] = I_INHIBIT;
+      }
+
+    // ENREGISTRE LA DATE DE NAISSANCE DES ISTHMES
+    for (i = 0; i < N; i++)
+    {
+      if ((P[i] == PERS_INIT_VAL) && (I[i] == I_INHIBIT)) P[i] = (float)step;
+    }
+
+    for (i = 0; i < N; i++)
+      if (IS_SIMPLE(F[i]))
+      {
+	m1 = mc_match1(F, i, rs, N);
+	m2 = mc_match2(F, i, rs, N);
+	m3 = mc_match3(F, i, rs, N);
+	m4 = mc_match4(F, i, rs, N);
+	m5 = mc_match5(F, i, rs, N);
+	m6 = mc_match6(F, i, rs, N);
+	if (m1 || m2 || m3 || m4 || m5 || m6)
+	{
+	  T[i] = 1; // preserve point
+	}
+      }
+
+    for (i = 0; i < N; i++)
+      if (IS_SIMPLE(F[i]) && !T[i]) 
+      { 
+	F[i] = 0; 
+	nonstab = 1; 
+	if (P[i] != PERS_INIT_VAL) P[i] = (float)step - P[i]; else P[i] = 0;
+      }
+    for (i = 0; i < N; i++) if (F[i]) F[i] = S_OBJECT;
+  }
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+  for (i = 0; i < N; i++) 
+    if (F[i]) 
+    {
+      F[i] = NDG_MAX; // normalize values
+      P[i] = PERS_INFTY_VAL;
+    }
+
+  freeimage(tmp);
+  return(1);
+} /* lskelCK2_pers_old() */
+
+/* ==================================== */
+static int32_t clique0_match(uint8_t *F, uint8_t *Y, int32_t x, int32_t rs, int32_t N)
+/* ==================================== */
+/*
+  3 2 1
+  4 . 0
+  5 6 7
+
+A B   origine C (forcément dans F et pas dans Y)
+C D   au moins AD ou BC dans F
+      tous les pts dans F sont hors de Y
+
+ */
+{
+  int32_t i;
+  uint8_t f[8];
+  uint8_t y[8];
+  extract_vois(F, x, rs, N, f);
+  extract_vois(Y, x, rs, N, y);
+  for (i = 0; i < 4; i++)
+  {
+    if (f[0] && y[0]) goto fail;
+    if (f[1] && y[1]) goto fail;
+    if (f[2] && y[2]) goto fail;
+    if (!f[1] && (!f[0] || !f[2])) goto fail;
+    return 1;
+  fail:
+    rotate90_vois(f);
+    rotate90_vois(y);
+  }
+  return 0;
+} /* clique0_match() */
+
+/* ==================================== */
+static int32_t clique1_match(uint8_t *F, uint8_t *Y, int32_t x, int32_t rs, int32_t N)
+/* ==================================== */
+/*
+  3 2 1
+  4 . 0
+  5 6 7
+
+A A   avec x : dans F mais pas dans Y
+x x   origine : premier x (dans F mais pas dans Y, déjà testé)
+B B   (+ rotation 90)
+
+  1-critique : au moins un des A et au moins un des B non nuls
+  critique mais pas 1-critique : A et B tous nuls
+
+  Si 1-critique (isthme) retourne 2
+  Sinon si critique retourne 1
+  Sinon retourne 0
+ */
+{
+  int32_t i;
+  uint8_t f[8];
+  uint8_t y[8];
+  extract_vois(F, x, rs, N, f);
+  extract_vois(Y, x, rs, N, y);
+  for (i = 0; i < 4; i++)
+  {
+    if (!f[0] || y[0]) goto fail;
+    if ((f[1] == 0) && (f[2] == 0) && (f[6] == 0) && (f[7] == 0)) return 1;
+    if ((f[1] == 0) && (f[2] == 0)) goto fail;
+    if ((f[6] == 0) && (f[7] == 0)) goto fail;
+    return 2;
+  fail:
+    rotate90_vois(f);
+    rotate90_vois(y);
+  }
+  return 0;
+} /* clique1_match() */
+
+/* ==================================== */
+static void D_Crucial_Isthmes(uint8_t *F, uint8_t *K, int32_t rs, int32_t N, uint8_t *Y, uint8_t *Z, uint8_t *A, uint8_t *B)
+/* ==================================== */
+{
+#undef F_NAME
+#define F_NAME "D_Crucial_Isthmes"
+  int32_t i, r;
+  memcpy(Y, K, N);
+  memset(Z, 0, N);
+  memset(A, 0, N);
+  memset(B, 0, N);
+  // dim = 2
+  for (i = 0; i < N; i++)
+    if (F[i] && (K[i] || !simple8(F, i, rs, N)))
+    {
+#ifdef DEBUG_D_Crucial_Isthmes
+printf("2-crucial %d %d\n", i % rs, i / rs);
+#endif
+if (i == 236*rs + 57) printf("2-crucial %d %d\n", i % rs, i / rs);
+      A[i] = 1;
+      if (!K[i] && t8(mask(F, i, rs, N)) > 1)
+      {
+#ifdef DEBUG_D_Crucial_Isthmes
+printf("isthme mince %d %d\n", i % rs, i / rs);
+#endif
+        B[i] = 1;
+      }
+    }
+  for (i = 0; i < N; i++) { if (A[i]) Y[i] = 1; if (B[i]) Z[i] = 1; }
+    
+  // dim = 1
+  for (i = 0; i < N; i++)
+    if (F[i] && !Y[i])
+    {
+      r = clique1_match(F, Y, i, rs, N);
+      if (r > 0)
+      {	
+#ifdef DEBUG_D_Crucial_Isthmes
+printf("1-crucial %d %d\n", i % rs, i / rs);
+#endif
+if (i == 236*rs + 57) printf("1-crucial %d %d\n", i % rs, i / rs);
+	A[i] = 1;
+	if (r > 1) 
+	{
+#ifdef DEBUG_D_Crucial_Isthmes
+printf("isthme epais %d %d\n", i % rs, i / rs);
+#endif
+	  B[i] = 1;
+	}
+      }
+    }
+  for (i = 0; i < N; i++) { if (A[i]) Y[i] = 1; if (B[i]) Z[i] = 1; }
+
+  // dim = 0
+  for (i = 0; i < N; i++)
+    if (F[i] && !Y[i] && clique0_match(F, Y, i, rs, N))
+    {
+#ifdef DEBUG_D_Crucial_Isthmes
+printf("0-crucial %d %d\n", i % rs, i / rs);
+#endif
+if (i == 236*rs + 57) printf("0-crucial %d %d\n", i % rs, i / rs);
+      Y[i] = 1;
+    }
+  for (i = 0; i < N; i++) { if (A[i]) Y[i] = 1; if (B[i]) Z[i] = 1; }
+} // D_Crucial_Isthmes()
+
+/* ==================================== */
+int32_t lskelCK2_pers(struct xvimage *image, 
+		      struct xvimage *persistence)
+/* ==================================== */
+/* Hiérarchie de squelettes basées sur la persistence des isthmes 1D - version symétrique
+ 
+   // ETAPE 1 : calcul des persistences et du squelette à persistence 0
+   step = 0;
+   foreach x in X do P(x) = 0;
+   repeat
+     step++;
+     Y = D_crucial(X,0); Z = Isthmes(X,0,1); 
+     foreach x in Z such that P(x) = 0 do P(x) = step;
+     foreach x in X \ Y such that P(x) > 0 do P(x) = step - P(x);
+     X = Y
+   until stability
+   foreach x in X do P(x) = +infty
+   X = {x such that P(x) > 0}
+
+   // ETAPE 2 : contrôle topologique sur toutes les coupes de la fonction P
+   foreach x in X do InsertQueue(Q,x,P(x));
+   repeat
+     lambda = MinValQueue(Q);
+     T = PopMinSetQueue(Q,lambda);
+     Y = D_crucial(X,X \ T)
+     foreach x in T inter Y do // non-deletable candidates
+       psi = +infty
+       foreach y in Gamma*(x) such that InQueue(Q,y) do
+         psi = min(psi,P(y));
+       P(x) = psi
+       InsertQueue(Q,x,psi);
+     X = Y
+   until lambda = +infty
+
+ */
+#undef F_NAME
+#define F_NAME "lskelCK2_pers"
+{
+  int32_t x;
+  int32_t rs = rowsize(image);     /* taille ligne */
+  int32_t cs = colsize(image);     /* taille colonne */
+  int32_t N = rs * cs;             /* taille image */
+  uint8_t *X = UCHARDATA(image);   /* l'image de depart */
+  struct xvimage *Yimage = copyimage(image);
+  struct xvimage *Zimage = copyimage(image);
+  struct xvimage *Kimage = copyimage(image);
+  struct xvimage *Aimage = copyimage(image);
+  struct xvimage *Bimage = copyimage(image);
+  uint8_t *A = UCHARDATA(Aimage);
+  uint8_t *B = UCHARDATA(Bimage);
+  uint8_t *Y = UCHARDATA(Yimage);
+  uint8_t *Z = UCHARDATA(Zimage);
+  uint8_t *K = UCHARDATA(Kimage);
+  int32_t step, ndel, nsteps;
+  float *P = FLOATDATA(persistence); /* résultat */
+  Rbt * Q;
+  index_t taillemaxrbt;
+
+  taillemaxrbt = 2 * rs +  2 * cs;
+  /* cette taille est indicative, le RBT est realloue en cas de depassement */
+  Q = mcrbt_CreeRbtVide(taillemaxrbt);
+  if (Q == NULL)
+  {
+    fprintf(stderr, "%s: mcrbt_CreeRbtVide failed\n", F_NAME);
+    return(0);
+  }
+
+  nsteps = 1000000000;
+  for (x = 0; x < N; x++) if (X[x]) X[x] = S_OBJECT; // normalize values
+
+  //   step = 0; K = empty; 
+  step = 0;
+  razimage(Kimage);
+  // foreach x in X do P(x) = 0;
+  for (x = 0; x < N; x++) P[x] = PERS_INIT_VAL;
+
+  /* ================================================ */
+  /*               DEBUT ALGO                         */
+  /* ================================================ */
+
+  do
+  {
+    ndel = 0;
+    step++;
+//if (step > 10) goto stop;
+#define VERBOSE
+#ifdef VERBOSE
+    printf("step %d\n", step);
+#endif
+
+    // Y = D_crucial(X,0); Z = Isthmes(X,0,1);
+    D_Crucial_Isthmes(X, K, rs, N, Y, Z, A, B);
+
+    // foreach x in Z such that P(x) = 0 do P(x) = step;
+    for (x = 0; x < N; x++)
+      if (Z[x] && (P[x] == PERS_INIT_VAL)) 
+      {
+	P[x] = (float)step;
+      }
+
+    // foreach x in X \ Y such that P(x) > 0 do
+    for (x = 0; x < N; x++)
+      if (X[x] && !Y[x] && (P[x] != PERS_INIT_VAL)) 
+      { 
+	// P(x) = step - P(x);
+	P[x] = (float)step - P[x];
+      }
+
+    // X = Y
+    for (x = 0; x < N; x++) 
+      if (X[x])
+      { 
+	if (Y[x])
+	  X[x] = S_OBJECT;
+	else
+	{
+	  X[x] = 0;
+	  ndel++; 
+	}
+      }
+
+#ifdef VERBOSE
+    printf("ndel = %d\n", ndel);
+#endif
+
+  } while (ndel > 0);
+
+stop:;
+
+#ifdef VERBOSE1
+    printf("number of steps: %d\n", step);
+#endif
+
+    for (x = 0; x < N; x++) if (X[x]) P[x] = PERS_INFTY_VAL;
+
+    for (x = 0; x < N; x++) if (P[x] > 0) X[x] = S_OBJECT;
+
+
+
+
+
+
+
+
+
+
+
+
+
+  for (x = 0; x < N; x++) 
+    if (X[x]) 
+    {
+      X[x] = NDG_MAX; // normalize values
+    }
+
+  mcrbt_RbtTermine(Q);
+  freeimage(Aimage);
+  freeimage(Bimage);
+  freeimage(Yimage);
+  freeimage(Zimage);
+  freeimage(Kimage);
+  return(1);
+} /* lskelCK2_pers() */

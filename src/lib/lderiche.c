@@ -779,7 +779,7 @@ void deriche3dgen(double *f,               /* image a traiter */
 } /* deriche3dgen() */
 
 /* ==================================== */
-int32_t lderiche3d_lderiche3d(struct xvimage *image, double alpha, int32_t function, double l)
+int32_t lderiche_lderiche3d(struct xvimage *image, double alpha, int32_t function, double l)
 /* ==================================== */
 /*
     alpha : parametre (1/taille) du filtre
@@ -790,7 +790,7 @@ int32_t lderiche3d_lderiche3d(struct xvimage *image, double alpha, int32_t funct
                4 = lisseur
 */
 #undef F_NAME
-#define F_NAME "lderiche3d_lderiche3d"
+#define F_NAME "lderiche_lderiche3d"
 { 
   int32_t i;
   int32_t rs = rowsize(image);
@@ -1209,13 +1209,13 @@ int32_t lderiche_llisseurrec3d(struct xvimage *image, double alpha)
 
   Im1 = (double *)calloc(1,N * sizeof(double));
   if (Im1==NULL)
-  {   fprintf(stderr,"lderiche3d() : malloc failed\n");
+  {   fprintf(stderr,"lderiche_lderiche3d() : malloc failed\n");
       return(0);
   }
   buf1 = (double *)calloc(1,mcmax(mcmax(rs,cs),ds) * sizeof(double));
   buf2 = (double *)calloc(1,mcmax(mcmax(rs,cs),ds) * sizeof(double));
   if ((buf1==NULL) || (buf2==NULL))
-  {   fprintf(stderr,"lderiche3d() : malloc failed\n");
+  {   fprintf(stderr,"lderiche_lderiche3d() : malloc failed\n");
       return(0);
   }
 
@@ -1267,7 +1267,7 @@ int32_t lgradientcd(struct xvimage *image, double alpha)
   if (depth(image) == 1)
     return lderiche_lderiche(image, alpha, 0, dummy);
   else
-    return lderiche3d(image, alpha, 0, dummy);
+    return lderiche_lderiche3d(image, alpha, 0, dummy);
 } // lgradientcd()
 
 /* ==================================== */
@@ -1280,5 +1280,5 @@ int32_t lgaussianfilter(struct xvimage *image, double alpha)
   if (depth(image) == 1)
     return lderiche_lderiche(image, alpha, 4, dummy);
   else
-    return lderiche3d(image, alpha, 4, dummy);
+    return lderiche_lderiche3d(image, alpha, 4, dummy);
 } // lgaussianfilter()

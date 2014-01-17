@@ -87,6 +87,7 @@ scn_lengthspline3d(
 
 */
 
+#include <float.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -106,8 +107,9 @@ scn_lengthspline3d(
 #define SCN_EPSILON 0.000001
 #define SCN_EPSILON2 1E-30 
 
-#ifndef BIG_NUM
-# define BIG_NUM 1E100
+#ifndef HUGEVAL
+// # define HUGEVAL (1E+100)
+# define HUGEVAL DBL_MAX
 #endif
 
 //static double cube(double x) { return x * x * x; }
@@ -1160,14 +1162,15 @@ int32_t scn_curvatures3d(double *x, double *y, double *z, int32_t n, int32_t m, 
 // =================================================
 
 /* ==================================== */
-void distancesegments1(int32_t *Y, int32_t *W, int32_t i1, int32_t i2, double *delta, int32_t *arg)
+static void 
+distancesegments1(int32_t *Y, int32_t *W, int32_t i1, int32_t i2, double *delta, int32_t *arg)
 /* ==================================== */
 {
   double d, dmin, del = -1;
   int32_t ar, i, j;
   for(i=i1; i<=i2; i++)
   {
-    dmin = BIG_NUM;
+    dmin = HUGEVAL;
     for(j=i1; j<=i2; j++)
     {
       d = sqrt((i-j)*(i-j) + (Y[i]-W[j])*(Y[i]-W[j]));
@@ -1187,14 +1190,15 @@ void distancesegments1(int32_t *Y, int32_t *W, int32_t i1, int32_t i2, double *d
 } // distancesegments1()
 
 /* ==================================== */
-void distancesegments(int32_t *X, int32_t *Y, int32_t *V, int32_t *W, int32_t i1, int32_t i2, double *delta, int32_t *arg)
+static void 
+distancesegments(int32_t *X, int32_t *Y, int32_t *V, int32_t *W, int32_t i1, int32_t i2, double *delta, int32_t *arg)
 /* ==================================== */
 {
   double d, dmin, del = -1;
   int32_t ar, i, j;
   for(i=i1; i<=i2; i++)
   {
-    dmin = BIG_NUM;
+    dmin = HUGEVAL;
     for(j=i1; j<=i2; j++)
     {
       d = sqrt((X[i]-V[j])*(X[i]-V[j]) + (Y[i]-W[j])*(Y[i]-W[j]));
@@ -1214,7 +1218,8 @@ void distancesegments(int32_t *X, int32_t *Y, int32_t *V, int32_t *W, int32_t i1
 } // distancesegments()
 
 /* ==================================== */
-void distancesegments3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t *U, int32_t *V, int32_t *W, int32_t i1, int32_t i2, double *delta, int32_t *arg)
+static void 
+distancesegments3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t *U, int32_t *V, int32_t *W, int32_t i1, int32_t i2, double *delta, int32_t *arg)
 /* ==================================== */
 /*! \fn void distancesegments3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t *U, int32_t *V, int32_t *W, int32_t i1, int32_t i2, double *delta, int32_t *arg)
     \param X,Y,Z (entrée) : courbe initiale C
@@ -1230,7 +1235,7 @@ void distancesegments3d(int32_t *X, int32_t *Y, int32_t *Z, int32_t *U, int32_t 
   int32_t ar, i, j;
   for(i=i1; i<=i2; i++)
   {
-    dmin = BIG_NUM;
+    dmin = HUGEVAL;
     for(j=i1; j<=i2; j++)
     {
       d = sqrt((X[i]-U[j])*(X[i]-U[j]) + (Y[i]-V[j])*(Y[i]-V[j]) + (Z[i]-W[j])*(Z[i]-W[j]));

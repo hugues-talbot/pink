@@ -78,5 +78,3 @@ def numpy2pink(array):
     return myimg 
     
 # LuM end of file
-
-# LuM end of file

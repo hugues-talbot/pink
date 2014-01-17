@@ -72,13 +72,15 @@ The possible choices are:
 \li 22: Couprie and Bertrand, ultimate asymmetrical with medial axis (NK2)
 \li 23: Bertrand curvilinear with reconstruction, asymmetrical
 \li 24: Bertrand curvilinear with reconstruction, symmetrical
-\li 25: Rosenfeld directionnel
+\li 25: Rosenfeld directionnal (NSEW order)
 \li 26: Nemeth et Palagyi, 2009 (1)
 \li 27: Nemeth et Palagyi, 2009 (2)
 \li 28: Nemeth et Palagyi, 2009 (3)
 \li 29: Couprie and Bertrand, ultimate, asymmetrical (NK2)
 \li 30: Couprie and Bertrand, ultimate, symmetrical (MK2b)
 \li 31: Couprie and Bertrand, curvilinear, symmetrical, based on 1D isthmuses (CK2)
+\li 32: Rosenfeld directionnal (variant: WESN order)
+\li 33: Rosenfeld directionnal (variant: ENWS order)
 
 If the parameter \b inhibit is given and is a binary image name,
 then the points of this image will be left unchanged.
@@ -158,13 +160,15 @@ int main(int argc, char **argv)
     fprintf(stderr, "  22: Couprie and Bertrand, ultimate asymmetrical with medial axis (NK2)\n");
     fprintf(stderr, "  23: Bertrand curvilinear with reconstruction, asymmetrical\n");
     fprintf(stderr, "  24: Bertrand curvilinear with reconstruction, symmetrical\n");
-    fprintf(stderr, "  25: Rosenfeld directionnel\n");
+    fprintf(stderr, "  25: Rosenfeld directionnal (NSEW order)\n");
     fprintf(stderr, "  26: Nemeth and Palagyi 2009 (detects endpoints type 1)\n");
     fprintf(stderr, "  27: Nemeth and Palagyi 2009 (detects endpoints type 2)\n");
     fprintf(stderr, "  28: Nemeth and Palagyi 2009 (detects endpoints type 3)\n");
     fprintf(stderr, "  29: Couprie and Bertrand, ultimate, asymmetrical (NK2)\n");
     fprintf(stderr, "  30: Couprie and Bertrand, ultimate, symmetrical (MK2b)\n");
     fprintf(stderr, "  31: Couprie and Bertrand, curvilinear, symmetrical, based on 1D isthmuses (CK2)\n");
+    fprintf(stderr, "  32: Rosenfeld directionnal (variant: WESN order)\n");
+    fprintf(stderr, "  33: Rosenfeld directionnal (variant: ENWS order)\n");
     exit(1);
   }
 
@@ -359,7 +363,7 @@ int main(int argc, char **argv)
     case 25:
       if (! lskelrosenfeld(image, nsteps, inhibit))
       {
-	fprintf(stderr, "%s: lskelbertrand_asym_s failed\n", argv[0]);
+	fprintf(stderr, "%s: lskelrosenfeld failed\n", argv[0]);
 	exit(1);
       } break;
     case 26:
@@ -396,6 +400,18 @@ int main(int argc, char **argv)
       if (! lskelCK2(image, nsteps, inhibit))
       {
 	fprintf(stderr, "%s: lskelCK2 failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 32:
+      if (! lskelrosenfeld_var1(image, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelrosenfeld_var1 failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 33:
+      if (! lskelrosenfeld_var2(image, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelrosenfeld_var2 failed\n", argv[0]);
 	exit(1);
       } break;
     default:
