@@ -1737,7 +1737,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   template <class pixel_type >
   PyObject* ujoi<pixel_type >::get_pixels_python()
   {
-#   if (PY_MAJOR_VERSION == 3) and (PY_MINOR_VERSION >= 3)
+#   if (PY_MAJOR_VERSION == 3) && (PY_MINOR_VERSION >= 3)
       return PyMemoryView_FromMemory (
           reinterpret_cast<void*>(this->pixels.get()),
           this->size->prod()*sizeof(pixel_type),
