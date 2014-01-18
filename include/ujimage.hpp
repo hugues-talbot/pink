@@ -1739,7 +1739,7 @@ c++ class pink::ujoi (this is a template class, so it stays in the header)
   {
 #   if (PY_MAJOR_VERSION == 3) && (PY_MINOR_VERSION >= 3)
       return PyMemoryView_FromMemory (
-          reinterpret_cast<void*>(this->pixels.get()),
+          reinterpret_cast<char*>(this->pixels.get()),
           this->size->prod()*sizeof(pixel_type),
           PyBUF_READ
           );
