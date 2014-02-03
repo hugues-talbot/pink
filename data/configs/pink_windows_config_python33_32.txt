@@ -49,7 +49,7 @@ SET( PYTHON_EXE "C:/Program Files (x86)/Python/Python 3.3/x86/python.exe" CACHE 
 SET( PYTHON_INCLUDE "C:/Program Files (x86)/Python/Python 3.3/x86/include" CACHE FILEPATH "desc." )
 SET( PYTHON_INCLUDE_DIR "C:/Program Files (x86)/Python/Python 3.3/x86/include" CACHE FILEPATH "desc." )
 SET( PYTHON_LIBRARY "C:/Program Files (x86)/Python/Python 3.3/x86/libs/python33.lib" CACHE FILEPATH "desc." )
-SET( PACKAGE_INSTALL_DIRECTORY "pink-image" CACHE STRING "The path of the Python installation." )
+SET( PACKAGE_INSTALL_DIRECTORY "." CACHE STRING "The path of the Python installation." )
 ###########################################################################
 ### end of Python 3.3
 ###########################################################################

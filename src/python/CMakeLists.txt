@@ -155,18 +155,24 @@ endif (THIS_IS_LINUX)
 ### **********************************************************************************************
 ### **********************************************************************************************
 
-### The scripts written in Python
-INSTALL(
-    DIRECTORY ${CMAKE_BINARY_DIR}/python/pink 
-    DESTINATION ${PYTHON_MODULE_INSTALL_PATH}
-)
 
 if (THIS_IS_MSVC)
+    ### The scripts written in Python
+    INSTALL(
+	DIRECTORY ${CMAKE_BINARY_DIR}/python/pink 
+	DESTINATION .
+    )
     INSTALL(
 	FILES ${CMAKE_BINARY_DIR}/python/libcpp_pink.pyd
-	DESTINATION ${PYTHON_MODULE_INSTALL_PATH}
+	DESTINATION .
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE )
+        MESSAGE(STATUS "PYTHON_MODULE_INSTALL_PATH = " ${PYTHON_MODULE_INSTALL_PATH} )
 else (THIS_IS_MSVC) # on unix like system
+    ### The scripts written in Python
+    INSTALL(
+	DIRECTORY ${CMAKE_BINARY_DIR}/python/pink 
+	DESTINATION ${PYTHON_MODULE_INSTALL_PATH}
+    )
     INSTALL(TARGETS cpp_pink
 	DESTINATION ${PYTHON_MODULE_INSTALL_PATH}
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE )
