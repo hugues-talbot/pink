@@ -206,7 +206,7 @@ int32_t lseamcarving(struct xvimage *in, struct xvimage *en, int32_t w, struct x
 #ifdef VERBOSE
     printf("%s: r = %d\n", F_NAME, r);
 #endif
-    // remplit le tableaux D
+    // remplit le tableau D
     for (i = 0; i < rs-r; i++) D[i] = (float)E[i]; // init 1ere ligne
     for (j = 1; j < cs; j++)
     {
