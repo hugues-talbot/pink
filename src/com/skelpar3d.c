@@ -53,10 +53,10 @@ different meaning which is related to the notion of persistence (see
 The parameter \b algorithm is a numerical code
 indicating which method will be used for the thinning.
 The possible choices are:
-\li 0: ultimate, without constraint (MK3a)
+\li 0: ultimate, symmetric, without constraint (MK3a)
 \li 1: curvilinear, symmetric, based on 1D isthmus (CK3a)
 \li 2: medial axis preservation (AK3) - parameter inhibit represents the minimal radius of medial axis balls which are considered
-\li 3: ultimate (MK3) - if nsteps = -2, returns the topological distance
+\li 3: ultimate, symmetric (MK3) - if nsteps = -2, returns the topological distance
 \li 4: curvilinear based on ends (EK3)
 \li 5: curvilinear based on ends, with end reconstruction (CK3b)
 \li 6: topological axis (not homotopic)
@@ -75,6 +75,7 @@ The possible choices are:
 \li 19: surface, symmetric, based on 2D isthmus with persistence (SK3p)
 \li 20: surface and curvilinear, symmetric, based on 1D and 2D isthmus with persistence (SCK3p)
 \li 21: surface, symmetric, based on residual points (RK3), variant (uses 26-connectivity to define residual points)
+\li 22: surface and curvilinear, asymmetric, based on 1D and 2D isthmus with persistence (ASCK3p)
 
 In modes other than 2, if the parameter \b inhibit is given and is a
 binary image name, then the points of this image will be left
@@ -136,10 +137,10 @@ int main(int argc, char **argv)
   if ((argc != 5) && (argc != 6))
   {
     fprintf(stderr, "usage: %s in.pgm algorithm nsteps [inhibit] out.pgm\n", argv[0]);
-    fprintf(stderr, "   0: ultimate, without constraint (MK3a)\n");
+    fprintf(stderr, "   0: ultimate, symmetric, without constraint (MK3a)\n");
     fprintf(stderr, "   1: curvilinear, symmetric, based on 1D isthmus (CK3a)\n");
     fprintf(stderr, "   2: medial axis preservation (AK3) - parameter inhibit represents the minimal radius of medial axis balls which are considered\n");
-    fprintf(stderr, "   3: ultimate (MK3) - if nsteps = -2, returns the topological distance\n");
+    fprintf(stderr, "   3: ultimate, symmetric (MK3) - if nsteps = -2, returns the topological distance\n");
     fprintf(stderr, "   4: curvilinear based on ends (EK3)\n");
     fprintf(stderr, "   5: curvilinear based on ends, with end reconstruction (CK3b)\n");
     fprintf(stderr, "   6: topological axis (not homotopic)\n");
@@ -158,6 +159,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "  19: surface, symmetric, based on 2D isthmus with persistence (SK3p)\n");
     fprintf(stderr, "  20: surface and curvilinear, symmetric, based on 1D and 2D isthmus with persistence (SCK3p)\n");
     fprintf(stderr, "  21: surface, symmetric, based on residual points (RK3), variant (uses 26-connectivity to define residual points)\n");
+    fprintf(stderr, "  22: surface and curvilinear, asymmetric, based on 1D and 2D isthmus with persistence (ASCK3p)\n");
 
     fprintf(stderr, "\n");
     fprintf(stderr, " 100: 1D isthmus points detection\n");
@@ -347,9 +349,15 @@ int main(int argc, char **argv)
 	exit(1);
       } break;
     case 21:
-      if (! lskelRK3_26(image, nsteps, inhibit))
+    if (! lskelRK3_26(image, nsteps, inhibit))
       {
 	fprintf(stderr, "%s: lskelRK3 failed\n", argv[0]);
+	exit(1);
+      } break;
+    case 22:
+      if (! lskelASCK3p(image, -1, nsteps, inhibit))
+      {
+	fprintf(stderr, "%s: lskelASCK3p failed\n", argv[0]);
 	exit(1);
       } break;
     case 100:

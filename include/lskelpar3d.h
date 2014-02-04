@@ -111,6 +111,10 @@ extern int32_t lskelSCK3p(struct xvimage *image,
 			  int32_t n_steps,
 			  int32_t isthmus_persistence,
 			  struct xvimage *inhibit);
+extern int32_t lskelASCK3p(struct xvimage *image, 
+			   int32_t n_steps,
+			   int32_t isthmus_persistence,
+			   struct xvimage *inhibit);
 extern int32_t lskelACK3c(
 			  struct xvimage *image, 
 			  struct xvimage *persistence);
