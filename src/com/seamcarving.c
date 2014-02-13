@@ -91,10 +91,18 @@ int main(int argc, char **argv)
   }
   
   w = atoi(argv[3]);
-  //h = atoi(argv[4]);
-  h = colsize(in);
-  printf("WARNING: reduction of h not yet implemented, h forced to %d\n", h);
-  
+  h = atoi(argv[4]);
+  if (h != colsize(in))
+  {
+    h = colsize(in);
+    printf("WARNING: change of h not yet implemented, h forced to %d\n", h);
+  }
+  if (w >= rowsize(in))
+  {
+    printf("WARNING: increase of w not yet implemented, nothing done\n");
+    return 0;
+  }
+
   out = allocmultimage(NULL, w, h, 1, 1, 3, VFF_TYP_1_BYTE);
   if (out == NULL)
   {

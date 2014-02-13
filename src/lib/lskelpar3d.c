@@ -125,7 +125,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #define VERBOSE
 #define DEBUG_SKEL_CK3P
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 int32_t trace = 1;
 #endif
@@ -735,10 +735,10 @@ int32_t lskelMK3a(struct xvimage *image,
 /* ==================================== */
 /*
 Squelette symétrique ultime
-Algo MK3 données: S
+Algo MK3a données: S
 Répéter jusqu'à stabilité
   P := voxels simples pour S
-  R := voxels de P à préserver (match2, match1)
+  R := voxels de P à préserver (match2, match1, match0)
   T :=  [S  \  P]  \cup  R
   S := T \cup [S \ (T \oplus \Gamma_26*)]
 
@@ -802,28 +802,24 @@ writeimage(image,"_S");
 	if (match2(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-#ifdef DEBUG
-memset(R, 0, N);
-for (i = 0; i < N; i++) if (IS_DCRUCIAL(S[i])) R[i] = 255;
-writeimage(r,"_M2");
-#endif
 
     // TROISIEME SOUS-ITERATION : MARQUE LES CLIQUES CRUCIALES CORRESPONDANT AUX 1-FACES
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
       { 
-#ifdef DEBUG
-printf("%d %d %d\n", i % rs, (i % ps) / rs, i / ps);
-#endif
 	extract_vois(S, i, rs, ps, N, v);
 	if (match1(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-#ifdef DEBUG
-memset(R, 0, N);
-for (i = 0; i < N; i++) if (IS_DCRUCIAL(S[i])) R[i] = 255;
-writeimage(r,"_M1");
-#endif
+
+    // QUATRIEME SOUS-ITERATION : MARQUE LES CLIQUES CRUCIALES CORRESPONDANT AUX 0-FACES
+    for (i = 0; i < N; i++) 
+      if (IS_SIMPLE(S[i]))
+      { 
+	extract_vois(S, i, rs, ps, N, v);
+	if (match0(v))
+	  insert_vois(v, S, i, rs, ps, N);
+      }
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup  R, où R représente les pts marqués
@@ -1723,7 +1719,7 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     nonstab = 0;
     step++;
 #ifdef VERBOSE
-    printf("MK3b step %d\n", step);
+    printf("MK3 step %d\n", step);
 #endif
 
     // PREMIERE SOUS-ITERATION : MARQUE LES POINTS SIMPLES ET PAS DANS I
@@ -2408,7 +2404,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
   return(1);
 } /* lskelAMK3() */
 
-//#define DEBUG_STEP 3
 //#define NEW_lskelACK3a
 #ifndef NEW_lskelACK3a
 static int32_t NKP_end(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
@@ -2532,17 +2527,11 @@ Attention : l'objet ne doit pas toucher le bord de l'image
       if (IS_OBJECT(S[i]) && !IS_INHIBIT(I[i]) && mctopo3d_simple26(S, i, rs, ps, N))
 	SET_SIMPLE(S[i]);
 
-#ifdef DEBUG
-    if (step == DEBUG_STEP) writeimage(image, "_old1");
-#endif
     // DEMARQUE PTS DE COURBE ET LES MEMORISE DANS I
     for (i = 0; i < N; i++)
     { 
       if (IS_CURVE(S[i])) { UNSET_SIMPLE(S[i]); SET_INHIBIT(I[i]); }
     }
-#ifdef DEBUG
-    if (step == DEBUG_STEP) writeimage(image, "_old2");
-#endif
     // MARQUE LES POINTS 2-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
@@ -2551,9 +2540,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (asym_match2(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-#ifdef DEBUG
-    if (step == DEBUG_STEP) writeimage(image, "_old3");
-#endif
     // MARQUE LES POINTS 1-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
@@ -2562,9 +2548,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (asym_match1(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-#ifdef DEBUG
-    if (step == DEBUG_STEP) writeimage(image, "_old4");
-#endif
     // MARQUE LES POINTS 0-D-CRUCIAUX
     for (i = 0; i < N; i++) 
       if (IS_SIMPLE(S[i]))
@@ -2573,9 +2556,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	if (asym_match0(v))
 	  insert_vois(v, S, i, rs, ps, N);
       }
-#ifdef DEBUG
-    if (step == DEBUG_STEP) writeimage(image, "_old5");
-#endif
 
     memset(T, 0, N);
     for (i = 0; i < N; i++) // T := [S \ P] \cup M, où M représente les pts marqués
@@ -2709,18 +2689,12 @@ Attention : l'objet ne doit pas toucher le bord de l'image
     printf("step %d\n", step);
 #endif
 
-#ifdef DEBUG
-    if (step == DEBUG_STEP) writeimage(image, "_new1");
-#endif
     // DEMARQUE PTS DE COURBE ET LES MEMORISE DANS I
     for (x = 0; x < RLIFO1->Sp; x++)
     {
       i = RLIFO1->Pts[x];
       if (IS_CURVE(S[i])) { UNSET_SIMPLE(S[i]); SET_INHIBIT(I[i]); }
     }
-#ifdef DEBUG
-    if (step == DEBUG_STEP) writeimage(image, "_new2");
-#endif
     // MARQUE LES POINTS 2-D-CRUCIAUX
     for (x = 0; x < RLIFO1->Sp; x++)
     {
@@ -2732,9 +2706,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	  insert_vois(v, S, i, rs, ps, N);
       }
     }
-#ifdef DEBUG
-    if (step == DEBUG_STEP) writeimage(image, "_new3");
-#endif
     // MARQUE LES POINTS 1-D-CRUCIAUX
     for (x = 0; x < RLIFO1->Sp; x++)
     {
@@ -2746,9 +2717,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	  insert_vois(v, S, i, rs, ps, N);
       }
     }
-#ifdef DEBUG
-    if (step == DEBUG_STEP) writeimage(image, "_new4");
-#endif
     // MARQUE LES POINTS 0-D-CRUCIAUX
     for (x = 0; x < RLIFO1->Sp; x++)
     {
@@ -2760,9 +2728,6 @@ Attention : l'objet ne doit pas toucher le bord de l'image
 	  insert_vois(v, S, i, rs, ps, N);
       }
     }
-#ifdef DEBUG
-    if (step == DEBUG_STEP) writeimage(image, "_new5");
-#endif
 
     memset(T, 0, N);
     for (x = 0; x < RLIFO1->Sp; x++)

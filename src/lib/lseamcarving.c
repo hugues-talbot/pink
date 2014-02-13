@@ -201,6 +201,7 @@ int32_t lseamcarving(struct xvimage *in, struct xvimage *en, int32_t w, struct x
   NO = w * cs;
   D = (float *)malloc(N * sizeof(float)); assert(D != NULL);
 
+
   for (r = 0; r < rs-w; r++)
   {
 #ifdef VERBOSE
