@@ -97,6 +97,55 @@ std::string repr_dcomplex(const dcomplex & x);
 namespace pink
 {
 
+  template <class pixel_t>
+  class cppimage : protected xvimage {
+  public:
+    typedef std::vector<index_t> vint_t;
+    
+  private:
+    
+    boost::shared_ptr<vint_t> center;
+    boost::shared_ptr<vint_t> size;
+
+  public:
+
+    template <class T0>
+    T0 * pdata();
+
+    template <class T0>
+    const T0 * pdata() const;
+
+    index_t rows() const;
+
+    index_t cols() const;
+
+    index_t depth() const;
+
+    index_t tsize() const;
+
+    index_t nbands() const;
+
+    pixel_t &
+    operator() ( index_t x );
+
+    pixel_t &
+    operator() ( index_t x, index_t y  );
+
+    pixel_t &
+    operator() ( index_t x, index_t y, index_t z  );
+
+    cppimage( char * name, index_t rs, index_t cs, index_t ds, int32_t t );
+    
+    cppimage<pixel_t> clone () const;
+
+    bool operator == ( const str & other ) const;
+    
+   
+    
+  };
+  
+    
+    
   class deep_xvimage;  
   
 //  string image_type( int pixel_type ); // returns the corresponding image types

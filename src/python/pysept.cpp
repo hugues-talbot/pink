@@ -16,6 +16,7 @@
 #include "ldist.h"
 #include "lcrop.h"
 #include "lhtkern.h"
+#include "lrotations.h"
 #include "lmedialaxis.h"
 #include "lbarycentre.h"
 #include "l2dcollapse.h"
@@ -56,7 +57,17 @@ namespace sept
     doc__autocrop__c__
     );
 # include BOOST_PP_UPDATE_COUNTER()
-  
+
+    UI_WRAP_MALLOC(
+        "rotate",
+        lrotationInter,
+        (arg("image"), arg("theta"), arg("x"), arg("y"), arg("mode")),
+        doc__rotate__c__
+        );
+
+# include BOOST_PP_UPDATE_COUNTER()
+
+    
   UI_WRAP_RESULT(
     float_image,
     "flowskeleton2d",
