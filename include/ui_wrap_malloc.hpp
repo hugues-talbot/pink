@@ -178,124 +178,124 @@
 #include "ui_make_malloc.hpp"
 
 
-using pink::python::xv2pink;
-using pink::python::make_malloc;
+// using pink::python::xv2pink;
+// using pink::python::make_malloc;
 
 
-using boost::mpl::if_c;
-using boost::mpl::int_;
-using boost::enable_if;
-//using boost::mpl::is_same;
-using boost::is_same;
-
-
-
-#ifndef MAX_PARAMETERS
-#  define MAX_PARAMETERS 15
-#  define CLEAN_UP_MAX_PARAMETERS
-#endif /* MAX_PARAMETERS */
-
-#define UI_WRAP_MALLOC_CALL_DEF(z, n, text)     \
-  def(fname, MAKE_MALLOC_(z, n, text), doc )
-
-#define UI_WRAP_MALLOC_DECOMPOSE_PARAMS(z, n, text)     \
-  FT::T##n
-
-#define UI_WRAP_MALLOC_XV2PINK(z, n, text)                      \
-  typename xv2pink< typename BOOST_PP_CAT(text, n) >::type,
-
-#define UI_WRAP_MALLOC_DEF_FOR_TYPE(image_type, n, text)                \
-  def(fname, make_malloc< image_type,                                   \
-      BOOST_PP_REPEAT_FROM_TO(1, n, UI_WRAP_MALLOC_XV2PINK, FT::T)      \
-      text>, args, doc)
-
-#define UI_WRAP_MALLOC_MAKE_INSTANCE(z, n, text)                        \
-  template <class FA>                                                   \
-  struct BOOST_PP_CAT(instance, BOOST_PP_COUNTER)<                      \
-                                                                        FA, \
-  typename enable_if< is_same<FA, int_<n> > >::type >                   \
-  {                                                                     \
-    template <class Fn, class Args>                                     \
-      void define(const char* fname, Fn fn, Args args, const char* doc) \
-    {                                                                   \
-      typedef struct decompose<Fn> FT;                                  \
-                                                                        \
-      UI_WRAP_MALLOC_DEF_FOR_TYPE(char_image   , n, text);              \
-      UI_WRAP_MALLOC_DEF_FOR_TYPE(short_image  , n, text);              \
-      UI_WRAP_MALLOC_DEF_FOR_TYPE(int_image    , n, text);              \
-      UI_WRAP_MALLOC_DEF_FOR_TYPE(float_image  , n, text);              \
-      UI_WRAP_MALLOC_DEF_FOR_TYPE(double_image , n, text);              \
-      UI_WRAP_MALLOC_DEF_FOR_TYPE(fcomplex_image , n, text);            \
-      UI_WRAP_MALLOC_DEF_FOR_TYPE(dcomplex_image , n, text);            \
-                                                                        \
-    }                                                                   \
-                                                                        \
-  };                                                                    
-
-// the function with one parameter is handled specially
-#define UI_MALLOC_FIRST_INSTANCE(FN)                                    \
-  template <class FA>                                                   \
-  struct BOOST_PP_CAT(instance,BOOST_PP_COUNTER)< FA, typename enable_if< is_same<FA, int_<1> > >::type > \
-  {                                                                     \
-    template <class Fn, class Args>                                     \
-      void define(const char* fname, Fn fn, Args args, const char* doc) \
-    {                                                                   \
-      typedef struct decompose<Fn> FT;                                  \
-                                                                        \
-      def(fname, make_malloc_one< char_image, typename FT::result_type, FN >, args, doc); \
-      def(fname, make_malloc_one< short_image, typename FT::result_type, FN >, args, doc); \
-      def(fname, make_malloc_one< int_image, typename FT::result_type, FN >, args, doc); \
-      def(fname, make_malloc_one< float_image, typename FT::result_type, FN >, args, doc); \
-      def(fname, make_malloc_one< double_image, typename FT::result_type, FN >, args, doc); \
-      def(fname, make_malloc_one< fcomplex_image, typename FT::result_type, FN >, args, doc); \
-      def(fname, make_malloc_one< dcomplex_image, typename FT::result_type, FN >, args, doc); \
-    }                                                                   \
-  };
+// using boost::mpl::if_c;
+// using boost::mpl::int_;
+// using boost::enable_if;
+// //using boost::mpl::is_same;
+// using boost::is_same;
 
 
 
-// // checking for the proper usage
-// #ifndef BOOST_PP_COUNTER
-// #error: UI_WRAP_MALLOC only makes sense with BOOST_PP_COUNTER defined
-// #endif /* BOOST_PP_COUNTER */
+// #ifndef MAX_PARAMETERS
+// #  define MAX_PARAMETERS 15
+// #  define CLEAN_UP_MAX_PARAMETERS
+// #endif /* MAX_PARAMETERS */
 
-#define UI_WRAP_MALLOC(FNAME, FN, ARGS, DOC)                            \
-  template <class T, class enabled = void>                              \
-  struct BOOST_PP_CAT(instance, BOOST_PP_COUNTER)                       \
-  {                                                                     \
-  };                                                                    \
-                                                                        \
-  UI_MALLOC_FIRST_INSTANCE(FN);                                         \
-                                                                        \
-  BOOST_PP_REPEAT_FROM_TO(2, MAX_PARAMETERS, UI_WRAP_MALLOC_MAKE_INSTANCE, FN) \
-                                                                        \
-  template <class Fn, class Args>                                       \
-  void BOOST_PP_CAT(call,BOOST_PP_COUNTER)(const char* fname, Fn fn, Args args, const char* doc) \
-  {                                                                     \
-    const int FA = decompose<Fn>::arity;                                \
-                                                                        \
-    BOOST_PP_CAT(instance,BOOST_PP_COUNTER)< int_<FA> > wrapped_function; \
-                                                                        \
-    wrapped_function.define(fname, fn, args, doc);                      \
-                                                                        \
-  }                                                                     \
-                                                                        \
-  void BOOST_PP_CAT(export_function, BOOST_PP_COUNTER)()                \
-  {                                                                     \
-    BOOST_PP_CAT(call, BOOST_PP_COUNTER)(FNAME, FN, ARGS, DOC);         \
-  }
+// #define UI_WRAP_MALLOC_CALL_DEF(z, n, text)     \
+//   def(fname, MAKE_MALLOC_(z, n, text), doc )
+
+// #define UI_WRAP_MALLOC_DECOMPOSE_PARAMS(z, n, text)     \
+//   FT::T##n
+
+// #define UI_WRAP_MALLOC_XV2PINK(z, n, text)                      \
+//   typename xv2pink< typename BOOST_PP_CAT(text, n) >::type,
+
+// #define UI_WRAP_MALLOC_DEF_FOR_TYPE(image_type, n, text)                \
+//   def(fname, make_malloc< image_type,                                   \
+//       BOOST_PP_REPEAT_FROM_TO(1, n, UI_WRAP_MALLOC_XV2PINK, FT::T)      \
+//       text>, args, doc)
+
+// #define UI_WRAP_MALLOC_MAKE_INSTANCE(z, n, text)                        \
+//   template <class FA>                                                   \
+//   struct BOOST_PP_CAT(instance, BOOST_PP_COUNTER)<                      \
+//                                                                         FA, \
+//   typename enable_if< is_same<FA, int_<n> > >::type >                   \
+//   {                                                                     \
+//     template <class Fn, class Args>                                     \
+//       void define(const char* fname, Fn fn, Args args, const char* doc) \
+//     {                                                                   \
+//       typedef struct decompose<Fn> FT;                                  \
+//                                                                         \
+//       UI_WRAP_MALLOC_DEF_FOR_TYPE(char_image   , n, text);              \
+//       UI_WRAP_MALLOC_DEF_FOR_TYPE(short_image  , n, text);              \
+//       UI_WRAP_MALLOC_DEF_FOR_TYPE(int_image    , n, text);              \
+//       UI_WRAP_MALLOC_DEF_FOR_TYPE(float_image  , n, text);              \
+//       UI_WRAP_MALLOC_DEF_FOR_TYPE(double_image , n, text);              \
+//       UI_WRAP_MALLOC_DEF_FOR_TYPE(fcomplex_image , n, text);            \
+//       UI_WRAP_MALLOC_DEF_FOR_TYPE(dcomplex_image , n, text);            \
+//                                                                         \
+//     }                                                                   \
+//                                                                         \
+//   };                                                                    
+
+// // the function with one parameter is handled specially
+// #define UI_MALLOC_FIRST_INSTANCE(FN)                                    \
+//   template <class FA>                                                   \
+//   struct BOOST_PP_CAT(instance,BOOST_PP_COUNTER)< FA, typename enable_if< is_same<FA, int_<1> > >::type > \
+//   {                                                                     \
+//     template <class Fn, class Args>                                     \
+//       void define(const char* fname, Fn fn, Args args, const char* doc) \
+//     {                                                                   \
+//       typedef struct decompose<Fn> FT;                                  \
+//                                                                         \
+//       def(fname, make_malloc_one< char_image, typename FT::result_type, FN >, args, doc); \
+//       def(fname, make_malloc_one< short_image, typename FT::result_type, FN >, args, doc); \
+//       def(fname, make_malloc_one< int_image, typename FT::result_type, FN >, args, doc); \
+//       def(fname, make_malloc_one< float_image, typename FT::result_type, FN >, args, doc); \
+//       def(fname, make_malloc_one< double_image, typename FT::result_type, FN >, args, doc); \
+//       def(fname, make_malloc_one< fcomplex_image, typename FT::result_type, FN >, args, doc); \
+//       def(fname, make_malloc_one< dcomplex_image, typename FT::result_type, FN >, args, doc); \
+//     }                                                                   \
+//   };
 
 
-// // DEBUG MODE
 
-// #define BOOST_PP_COUNTER 0
+// // // checking for the proper usage
+// // #ifndef BOOST_PP_COUNTER
+// // #error: UI_WRAP_MALLOC only makes sense with BOOST_PP_COUNTER defined
+// // #endif /* BOOST_PP_COUNTER */
 
-// UI_WRAP_MALLOC("greet", greet, (arg("image"), (arg("int"))) ,"WRITE ME!!");
+// #define UI_WRAP_MALLOC(FNAME, FN, ARGS, DOC)                            \
+//   template <class T, class enabled = void>                              \
+//   struct BOOST_PP_CAT(instance, BOOST_PP_COUNTER)                       \
+//   {                                                                     \
+//   };                                                                    \
+//                                                                         \
+//   UI_MALLOC_FIRST_INSTANCE(FN);                                         \
+//                                                                         \
+//   BOOST_PP_REPEAT_FROM_TO(2, MAX_PARAMETERS, UI_WRAP_MALLOC_MAKE_INSTANCE, FN) \
+//                                                                         \
+//   template <class Fn, class Args>                                       \
+//   void BOOST_PP_CAT(call,BOOST_PP_COUNTER)(const char* fname, Fn fn, Args args, const char* doc) \
+//   {                                                                     \
+//     const int FA = decompose<Fn>::arity;                                \
+//                                                                         \
+//     BOOST_PP_CAT(instance,BOOST_PP_COUNTER)< int_<FA> > wrapped_function; \
+//                                                                         \
+//     wrapped_function.define(fname, fn, args, doc);                      \
+//                                                                         \
+//   }                                                                     \
+//                                                                         \
+//   void BOOST_PP_CAT(export_function, BOOST_PP_COUNTER)()                \
+//   {                                                                     \
+//     BOOST_PP_CAT(call, BOOST_PP_COUNTER)(FNAME, FN, ARGS, DOC);         \
+//   }
 
-// #undef BOOST_PP_COUNTER
-// #define BOOST_PP_COUNTER 1
 
-// UI_WRAP_MALLOC("another function", another_function, (arg("image"), arg("int"), arg("connexity")=0) ,"READ ME!!");
+// // // DEBUG MODE
+
+// // #define BOOST_PP_COUNTER 0
+
+// // UI_WRAP_MALLOC("greet", greet, (arg("image"), (arg("int"))) ,"WRITE ME!!");
+
+// // #undef BOOST_PP_COUNTER
+// // #define BOOST_PP_COUNTER 1
+
+// // UI_WRAP_MALLOC("another function", another_function, (arg("image"), arg("int"), arg("connexity")=0) ,"READ ME!!");
 
 
 
