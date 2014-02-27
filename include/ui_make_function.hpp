@@ -150,90 +150,88 @@
 #include "ui_pink_types.hpp"
 #include "ui_convert_if.hpp"
 
-using namespace pink::python;
+
+// #ifndef MAX_PARAMETERS
+// #  define MAX_PARAMETERS 15
+// #  define CLEAN_UP_MAX_PARAMETERS
+// #endif /* MAX_PARAMETERS */
 
 
-#ifndef MAX_PARAMETERS
-#  define MAX_PARAMETERS 15
-#  define CLEAN_UP_MAX_PARAMETERS
-#endif /* MAX_PARAMETERS */
+// #define                                       \
+//   PARAM(z, n, text)                           \
+//   T##n t##n
 
+// #define                                         \
+//   CONVERT_IF(z, n, text)                        \
+//   typename convert_if<T##n>::type
 
-#define                                       \
-  PARAM(z, n, text)                           \
-  T##n t##n
+// //BOOST_PP_ENUM_PARAMS( MAX_PARAMETERS, class param_type)
 
-#define                                         \
-  CONVERT_IF(z, n, text)                        \
-  typename convert_if<T##n>::type
-
-//BOOST_PP_ENUM_PARAMS( MAX_PARAMETERS, class param_type)
-
-#define                                                                 \
-  MAKE_FUNCTION(z, n, text)                                             \
-  template < class image_type,                                          \
-  BOOST_PP_ENUM_PARAMS(n, class T ) BOOST_PP_COMMA_IF(n)                \
-  int (*mcfunction) (                                                   \
-    typename convert_if<image_type>::type BOOST_PP_COMMA_IF(n)          \
-    BOOST_PP_ENUM(n, CONVERT_IF, ~)                                     \
-    )                                                                   \
-  >                                                                     \
-  image_type make_function( const image_type & image BOOST_PP_COMMA_IF(n) \
-                            BOOST_PP_ENUM(n, PARAM, ~)                  \
-    )                                                                   \
-  {                                                                     \
-  image_type result;                                                    \
-  result = image.clone();                                               \
-                                                                        \
-  if (!mcfunction(result BOOST_PP_COMMA_IF(n) BOOST_PP_ENUM_PARAMS(n, t))) \
-  {                                                                     \
-  pink_error("mcfunction failed");                                      \
-  }                                                                     \
-                                                                        \
-  return result;                                                        \
-  };                                                                    \
+// #define                                                                 \
+//   MAKE_FUNCTION(z, n, text)                                             \
+//   template < class image_type,                                          \
+//   BOOST_PP_ENUM_PARAMS(n, class T ) BOOST_PP_COMMA_IF(n)                \
+//   int (*mcfunction) (                                                   \
+//     typename convert_if<image_type>::type BOOST_PP_COMMA_IF(n)          \
+//     BOOST_PP_ENUM(n, CONVERT_IF, ~)                                     \
+//     )                                                                   \
+//   >                                                                     \
+//   image_type make_function( const image_type & image BOOST_PP_COMMA_IF(n) \
+//                             BOOST_PP_ENUM(n, PARAM, ~)                  \
+//     )                                                                   \
+//   {                                                                     \
+//   image_type result;                                                    \
+//   result = image.clone();                                               \
+//                                                                         \
+//   if (!mcfunction(result BOOST_PP_COMMA_IF(n) BOOST_PP_ENUM_PARAMS(n, t))) \
+//   {                                                                     \
+//   pink_error("mcfunction failed");                                      \
+//   }                                                                     \
+//                                                                         \
+//   return result;                                                        \
+//   };                                                                    \
   
 
 
-namespace pink
-{
-  namespace python
-  {
+// namespace pink
+// {
+//   namespace python
+//   {
 
-    // the special case with one parameter for ui_make_funcion
+//     // the special case with one parameter for ui_make_funcion
 
-    template < class image_type,
-               class result_type,
-               result_type (*mcfunction) (
-                 typename convert_if<image_type>::type
-                 )
-               >
-    image_type make_function_one( const image_type & image )
-    {
-      image_type result;
-      result = image.clone();
-      if (!mcfunction(result))
-      {
-        pink_error("mcfunction failed!\n");        
-      }
-      return result;
-    };
+//     template < class image_type,
+//                class result_type,
+//                result_type (*mcfunction) (
+//                  typename convert_if<image_type>::type
+//                  )
+//                >
+//     image_type make_function_one( const image_type & image )
+//     {
+//       image_type result;
+//       result = image.clone();
+//       if (!mcfunction(result))
+//       {
+//         pink_error("mcfunction failed!\n");        
+//       }
+//       return result;
+//     };
        
     
-    BOOST_PP_REPEAT(MAX_PARAMETERS, MAKE_FUNCTION, ~)
+//     BOOST_PP_REPEAT(MAX_PARAMETERS, MAKE_FUNCTION, ~)
 
-  } /* namespace python */
-} /* namespace pink */
+//   } /* namespace python */
+// } /* namespace pink */
 
     
-// cleaning up after us
-#undef CONVERT_IF
-#undef PARAM
-#undef MAKE_FUNCTION
-#undef error
-#ifdef CLEAN_UP_MAX_PARAMETERS
-#  undef MAX_PARAMETERS
-#endif /* CLEAN_UP_MAX_PARAMETERS */
+// // cleaning up after us
+// #undef CONVERT_IF
+// #undef PARAM
+// #undef MAKE_FUNCTION
+// #undef error
+// #ifdef CLEAN_UP_MAX_PARAMETERS
+// #  undef MAX_PARAMETERS
+// #endif /* CLEAN_UP_MAX_PARAMETERS */
 
 
 
