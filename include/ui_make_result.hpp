@@ -154,63 +154,63 @@
 #include "ui_convert_if.hpp"
 #include "ui_pink_types.hpp"
 
-#ifndef MAX_PARAMETERS
-#  define MAX_PARAMETERS 15
-#  define CLEAN_UP_MAX_PARAMETERS
-#endif /* MAX_PARAMETERS */
+// #ifndef MAX_PARAMETERS
+// #  define MAX_PARAMETERS 15
+// #  define CLEAN_UP_MAX_PARAMETERS
+// #endif /* MAX_PARAMETERS */
 
-#define                                         \
-  PARAM(z, n, text)                             \
-  T##n t##n
+// #define                                         \
+//   PARAM(z, n, text)                             \
+//   T##n t##n
 
-#define                                         \
-  CONVERT_IF(z, n, text)                        \
-  typename convert_if<T##n>::type
+// #define                                         \
+//   CONVERT_IF(z, n, text)                        \
+//   typename convert_if<T##n>::type
 
-//BOOST_PP_ENUM_PARAMS( MAX_PARAMETERS, class param_type)
-
-
-#define                                                                 \
-  MAKE_RESULT(z, n, text)                                               \
-  template < class result_type, class image_type,                       \
-  BOOST_PP_ENUM_PARAMS(n, class T ) BOOST_PP_COMMA_IF(n)                \
-  int (*mcfunction) (                                                   \
-    typename convert_if<image_type>::type,                              \
-    BOOST_PP_ENUM(n, CONVERT_IF, ~) BOOST_PP_COMMA_IF(n)                \
-    typename convert_if<result_type>::type                              \
-    )                                                                   \
-  >                                                                     \
-  result_type make_result( image_type image BOOST_PP_COMMA_IF(n)        \
-                           BOOST_PP_ENUM(n, PARAM, ~)                   \
-    )                                                                   \
-  {                                                                     \
-  result_type result(image.get_size());                                 \
-                                                                        \
-  if (!mcfunction(image, BOOST_PP_ENUM_PARAMS(n, t) BOOST_PP_COMMA_IF(n) result)) \
-  {                                                                     \
-  pink_error("mcfunction failed");                                      \
-  }                                                                     \
-                                                                        \
-  return result;                                                        \
-  }
-
-namespace pink
-{
-  namespace python
-  {
-    BOOST_PP_REPEAT(MAX_PARAMETERS, MAKE_RESULT, ~)
-  } /* namespace python */
-} /* namespace pink */
+// //BOOST_PP_ENUM_PARAMS( MAX_PARAMETERS, class param_type)
 
 
-// cleaning up after us
-#undef CONVERT_IF
-#undef PARAM
-#undef MAKE_FUNCTION
-#undef error
-#ifdef CLEAN_UP_MAX_PARAMETERS
-#  undef MAX_PARAMETERS
-#endif /* CLEAN_UP_MAX_PARAMETERS */
+// #define                                                                 \
+//   MAKE_RESULT(z, n, text)                                               \
+//   template < class result_type, class image_type,                       \
+//   BOOST_PP_ENUM_PARAMS(n, class T ) BOOST_PP_COMMA_IF(n)                \
+//   int (*mcfunction) (                                                   \
+//     typename convert_if<image_type>::type,                              \
+//     BOOST_PP_ENUM(n, CONVERT_IF, ~) BOOST_PP_COMMA_IF(n)                \
+//     typename convert_if<result_type>::type                              \
+//     )                                                                   \
+//   >                                                                     \
+//   result_type make_result( image_type image BOOST_PP_COMMA_IF(n)        \
+//                            BOOST_PP_ENUM(n, PARAM, ~)                   \
+//     )                                                                   \
+//   {                                                                     \
+//   result_type result(image.get_size());                                 \
+//                                                                         \
+//   if (!mcfunction(image, BOOST_PP_ENUM_PARAMS(n, t) BOOST_PP_COMMA_IF(n) result)) \
+//   {                                                                     \
+//   pink_error("mcfunction failed");                                      \
+//   }                                                                     \
+//                                                                         \
+//   return result;                                                        \
+//   }
+
+// namespace pink
+// {
+//   namespace python
+//   {
+//     BOOST_PP_REPEAT(MAX_PARAMETERS, MAKE_RESULT, ~)
+//   } /* namespace python */
+// } /* namespace pink */
+
+
+// // cleaning up after us
+// #undef CONVERT_IF
+// #undef PARAM
+// #undef MAKE_FUNCTION
+// #undef error
+// #ifdef CLEAN_UP_MAX_PARAMETERS
+// #  undef MAX_PARAMETERS
+// #endif /* CLEAN_UP_MAX_PARAMETERS */
 
 
 
