@@ -83,96 +83,96 @@
 #include "ui_convert_if.hpp"
 #include "ui_pink_types.hpp"
 
-using namespace pink::python;
+// using namespace pink::python;
 
 
-#ifndef MAX_PARAMETERS
-#  define MAX_PARAMETERS 15
-#  define CLEAN_UP_MAX_PARAMETERS
-#endif /* MAX_PARAMETERS */
+// #ifndef MAX_PARAMETERS
+// #  define MAX_PARAMETERS 15
+// #  define CLEAN_UP_MAX_PARAMETERS
+// #endif /* MAX_PARAMETERS */
 
 
-#define                                       \
-  PARAM(z, n, text)                           \
-  T##n t##n
+// #define                                       \
+//   PARAM(z, n, text)                           \
+//   T##n t##n
 
-#define                                         \
-  CONVERT_IF(z, n, text)                        \
-  typename convert_if<T##n>::type
+// #define                                         \
+//   CONVERT_IF(z, n, text)                        \
+//   typename convert_if<T##n>::type
 
-//BOOST_PP_ENUM_PARAMS( MAX_PARAMETERS, class param_type)
+// //BOOST_PP_ENUM_PARAMS( MAX_PARAMETERS, class param_type)
 
-#define                                                                 \
-  MAKE_MALLOC(z, n, text)                                               \
-  template < class image_type,                                          \
-  BOOST_PP_ENUM_PARAMS(n, class T ) BOOST_PP_COMMA_IF(n)                \
-  xvimage * (*mcfunction) (                                             \
-    typename convert_if<image_type>::type BOOST_PP_COMMA_IF(n)          \
-    BOOST_PP_ENUM(n, CONVERT_IF, ~)                                     \
-    )                                                                   \
-  >                                                                     \
-  boost::python::object make_malloc( image_type image BOOST_PP_COMMA_IF(n) \
-                            BOOST_PP_ENUM(n, PARAM, ~)                  \
-    )                                                                   \
-  {                                                                     \
-                                                                        \
-  xvimage * presult;                                                    \
-  presult = mcfunction(image BOOST_PP_COMMA_IF(n) BOOST_PP_ENUM_PARAMS(n, t)); \
-                                                                        \
-  if (presult == NULL)                                                  \
-  {                                                                     \
-  pink_error("mcfunction failed");                                      \
-  }                                                                     \
-                                                                        \
-  image_type iresult(presult);                                          \
-  boost::python::object result(iresult);                                \
-  return result;                                                        \
-  };                                                                    
+// #define                                                                 \
+//   MAKE_MALLOC(z, n, text)                                               \
+//   template < class image_type,                                          \
+//   BOOST_PP_ENUM_PARAMS(n, class T ) BOOST_PP_COMMA_IF(n)                \
+//   xvimage * (*mcfunction) (                                             \
+//     typename convert_if<image_type>::type BOOST_PP_COMMA_IF(n)          \
+//     BOOST_PP_ENUM(n, CONVERT_IF, ~)                                     \
+//     )                                                                   \
+//   >                                                                     \
+//   boost::python::object make_malloc( image_type image BOOST_PP_COMMA_IF(n) \
+//                             BOOST_PP_ENUM(n, PARAM, ~)                  \
+//     )                                                                   \
+//   {                                                                     \
+//                                                                         \
+//   xvimage * presult;                                                    \
+//   presult = mcfunction(image BOOST_PP_COMMA_IF(n) BOOST_PP_ENUM_PARAMS(n, t)); \
+//                                                                         \
+//   if (presult == NULL)                                                  \
+//   {                                                                     \
+//   pink_error("mcfunction failed");                                      \
+//   }                                                                     \
+//                                                                         \
+//   image_type iresult(presult);                                          \
+//   boost::python::object result(iresult);                                \
+//   return result;                                                        \
+//   };                                                                    
   
 
 
-namespace pink
-{
-  namespace python
-  {
+// namespace pink
+// {
+//   namespace python
+//   {
 
-    // the special case with one parameter for ui_make_funcion
+//     // the special case with one parameter for ui_make_funcion
 
-    template < class image_type,
-               xvimage * (*mcfunction) (
-                 typename convert_if<image_type>::type
-                 )
-               >
-    boost::python::object make_malloc_one( image_type image )
-    {
-      xvimage * presult;
-      presult = mcfunction(image);
+//     template < class image_type,
+//                xvimage * (*mcfunction) (
+//                  typename convert_if<image_type>::type
+//                  )
+//                >
+//     boost::python::object make_malloc_one( image_type image )
+//     {
+//       xvimage * presult;
+//       presult = mcfunction(image);
 
-      if (presult == NULL)
-      {
-        pink_error("mcfunction failed!\n");        
-      }
+//       if (presult == NULL)
+//       {
+//         pink_error("mcfunction failed!\n");        
+//       }
 
-      image_type iresult(presult);      
-      boost::python::object result(iresult);
-      return result;
-    };
+//       image_type iresult(presult);      
+//       boost::python::object result(iresult);
+//       return result;
+//     };
        
     
-    BOOST_PP_REPEAT(MAX_PARAMETERS, MAKE_MALLOC, ~);    
+//     BOOST_PP_REPEAT(MAX_PARAMETERS, MAKE_MALLOC, ~);    
 
-  } /* namespace python */
-} /* namespace pink */
+//   } /* namespace python */
+// } /* namespace pink */
 
     
-// cleaning up after us
-#undef CONVERT_IF
-#undef PARAM
-#undef MAKE_MALLOC
-#undef error
-#ifdef CLEAN_UP_MAX_PARAMETERS
-#  undef MAX_PARAMETERS
-#endif /* CLEAN_UP_MAX_PARAMETERS */
+// // cleaning up after us
+// #undef CONVERT_IF
+// #undef PARAM
+// #undef MAKE_MALLOC
+// #undef error
+// #ifdef CLEAN_UP_MAX_PARAMETERS
+// #  undef MAX_PARAMETERS
+// #endif /* CLEAN_UP_MAX_PARAMETERS */
 
 
 
