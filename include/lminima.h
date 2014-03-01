@@ -46,7 +46,7 @@ extern "C" {
 /* ============== */
 int32_t lminima(
         struct xvimage *image,
-        char* str_connexity
+        const char * str_connexity
   );
   
 
