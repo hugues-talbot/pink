@@ -20,6 +20,7 @@
 #include "ujimage.hpp"
 #include "pink_python.h"
 
+// marked for removal
 
 void pyimage_types()
 {
