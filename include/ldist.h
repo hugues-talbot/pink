@@ -62,7 +62,7 @@ extern int32_t ldist(struct xvimage *img, int32_t connex, struct xvimage *res);
 extern int32_t ldistbyte(struct xvimage *img, int32_t connex, struct xvimage *res);
 extern int32_t ldistquad(struct xvimage *img, struct xvimage *res);
 extern int32_t ldistvect(uint8_t *F, vect2Dint *L, index_t rs, index_t cs);
-extern int32_t ldisteuc(struct xvimage *img, struct xvimage *res);
+extern int32_t ldisteuc(struct xvimage *img, const struct xvimage *res);
 extern int32_t lchamfrein(struct xvimage *img, struct xvimage *res);
 extern int32_t ldistquad3d(struct xvimage* ob, struct xvimage* res);
 extern int32_t ldisteuc3d(struct xvimage* ob, struct xvimage* res);
