@@ -41,7 +41,7 @@ extern "C" {
 
 extern int32_t lfiltreordre(
         struct xvimage *f,
-        struct xvimage *m,
+        const struct xvimage *m,
         int32_t x,
         int32_t y,
         double r
@@ -49,7 +49,7 @@ extern int32_t lfiltreordre(
 
 extern int32_t lfiltreordre3d(
         struct xvimage *f,
-        struct xvimage *m,
+        const struct xvimage *m,
         int32_t x,
         int32_t y,
         int32_t z,
