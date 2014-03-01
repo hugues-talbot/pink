@@ -48,10 +48,11 @@ knowledge of the CeCILL license and that you accept its terms.
 /* ==================================== */
 int32_t lminima(
         struct xvimage *image,
-        char* str_connexity
+        const char * str_connexity
   )
 /* ==================================== */
 {
+# define F_NAME "lminima"
   int32_t nblabels, connex, i;
 //  struct xvimage * image;
   struct xvimage * result;
@@ -60,6 +61,8 @@ int32_t lminima(
   int32_t N;
   int32_t * R;
   
+  ACCEPTED_TYPES2(image, VFF_TYP_1_BYTE, VFF_TYP_4_BYTE );
+
   N = rowsize(image) * colsize(image) * depth(image);
 
   if (str_connexity[0] == 'b') {
@@ -128,4 +131,5 @@ int32_t lminima(
   freeimage(result);
 
   return 1;
+# undef F_NAME
 } /* lminima */

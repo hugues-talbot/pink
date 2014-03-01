@@ -45,7 +45,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <ldilateros3d.h>
 
 /* ==================================== */
-int32_t ldilateros3d_ldilatbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t ldilateros3d_ldilatbin3d(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /*
    Operateur de dilatation binaire 3D par un element structurant 
    de taille quelconque
@@ -189,7 +189,7 @@ int32_t ldilatbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_es_x, int32_t
 } /* ldilatbin3d2() */
 
 /* ==================================== */
-int32_t ldilateros3d_lerosbin3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t ldilateros3d_lerosbin3d(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /*
    Operateur d'erosion binaire 3D par un element structurant 
    de taille quelconque
@@ -335,7 +335,7 @@ int32_t ldilateros3d_lerosbin3d2(struct xvimage *f, int32_t nptb, int32_t *tab_e
 } /* ldilateros3d_lerosbin3d2() */
 
 /* ==================================== */
-int32_t ldilateros3d_ldilatfast3d(struct xvimage *f, uint8_t *mask)
+int32_t ldilateros3d_ldilatfast3d(struct xvimage *f, const uint8_t *mask)
 /* operateur de dilatation numerique 3d par un element structurant de taille inferieure a 3x3x3 */
 /* Michel Couprie - juillet 1997 */
 /* mask : masque du 26-voisinage representant l'element structurant */
@@ -381,7 +381,7 @@ int32_t ldilateros3d_ldilatfast3d(struct xvimage *f, uint8_t *mask)
 } /* ldilateros3d_ldilatfast3d() */
 
 /* ==================================== */
-int32_t ldilateros3d_lerosfast3d(struct xvimage *f, uint8_t *mask)
+int32_t ldilateros3d_lerosfast3d(struct xvimage *f, const uint8_t *mask)
 /* operateur d'erosion numerique 3d par un element structurant de taille inferieure a 3x3x3 */
 /* Michel Couprie - juillet 1997 */
 /* mask : masque du 26-voisinage representant l'element structurant */
@@ -427,7 +427,7 @@ int32_t ldilateros3d_lerosfast3d(struct xvimage *f, uint8_t *mask)
 } /* ldilateros3d_lerosfast3d() */
 
 /* ==================================== */
-int32_t ldilatlong3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t ldilatlong3d(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /* operateur de dilatation numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - octobre 2002 */
 /* m : masque representant l'element structurant */
@@ -519,7 +519,7 @@ int32_t ldilatlong3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t y
 } /* ldilatlong3d() */
 
 /* ==================================== */
-int32_t leroslong3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t leroslong3d(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /* operateur d'erosion numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - octobre 2002 */
 /* m : masque representant l'element structurant */
@@ -611,7 +611,7 @@ int32_t leroslong3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc
 } /* leroslong3d() */
 
 /* ==================================== */
-int32_t ldilatfloat3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t ldilatfloat3d(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /* operateur de dilatation numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - octobre 2002 */
 /* m : masque representant l'element structurant */
@@ -703,7 +703,7 @@ int32_t ldilatfloat3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t 
 } /* ldilatfloat3d() */
 
 /* ==================================== */
-int32_t lerosfloat3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t lerosfloat3d(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /* operateur d'erosion numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - octobre 2002 */
 /* m : masque representant l'element structurant */
@@ -795,7 +795,7 @@ int32_t lerosfloat3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t y
 } /* lerosfloat3d() */
 
 /* ==================================== */
-int32_t ldilatbyte3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t ldilatbyte3d(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /* operateur de dilatation numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - octobre 2002 */
 /* m : masque representant l'element structurant */
@@ -887,7 +887,7 @@ int32_t ldilatbyte3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t y
 } /* ldilatbyte3d() */
 
 /* ==================================== */
-int32_t lerosbyte3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t lerosbyte3d(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /* operateur d'erosion numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - octobre 2002 */
 /* m : masque representant l'element structurant */
@@ -979,7 +979,7 @@ int32_t lerosbyte3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc
 } /* lerosbyte3d() */
 
 /* ==================================== */
-int32_t ldilat3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t ldilat3d(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /* operateur de dilatation numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - octobre 2002 */
 /* m : masque representant l'element structurant */
@@ -1002,7 +1002,7 @@ int32_t ldilat3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, i
 } // ldilat3d()
 
 /* ==================================== */
-int32_t leros3d(struct xvimage *f, struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
+int32_t leros3d(struct xvimage *f, const struct xvimage *m, int32_t xc, int32_t yc, int32_t zc)
 /* operateur d'erosion numerique par un element structurant plan de taille quelconque */
 /* Michel Couprie - octobre 2002 */
 /* m : masque representant l'element structurant */

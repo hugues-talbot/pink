@@ -416,10 +416,11 @@ static int32_t testabaisse26lab(int32_t *F, index_t x, index_t rs, index_t ps, i
 } /* testabaisse26lab() */
 
 /* ==================================== */
-int32_t lskelubp(struct xvimage *image, 
-              struct xvimage *imageprio, 
-              int32_t connex, 
-              int32_t val_inhibit)
+int32_t lskelubp(
+  struct xvimage *image, 
+  const struct xvimage *imageprio, 
+  int32_t connex, 
+  int32_t val_inhibit)
 /* ==================================== */
 /* 
 Squelette ultime 2D binaire guide par une image de priorites.
@@ -567,10 +568,10 @@ resultat: F
 } /* lskelubp() */
 
 /* ==================================== */
-int32_t lskelubp2(struct xvimage *image, 
-               struct xvimage *imageprio, 
-               int32_t connex, 
-               struct xvimage *imageinhib)
+int32_t lskelubp2( struct xvimage *image, 
+		   const struct xvimage *imageprio, 
+		   int32_t connex, 
+		   const struct xvimage *imageinhib)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lskelubp2"
@@ -722,10 +723,10 @@ int32_t lskelubp2(struct xvimage *image,
 } /* lskelubp2() */
 
 /* ==================================== */
-int32_t lskelubp3d(struct xvimage *image, 
-                 struct xvimage *imageprio, 
-                 int32_t connex, 
-                 int32_t val_inhibit)
+int32_t lskelubp3d( struct xvimage *image, 
+		    const struct xvimage *imageprio, 
+		    int32_t connex, 
+		    int32_t val_inhibit)
 /* ==================================== */
 /* 
 Squelette ultime 3D binaire guide par une image de priorites.
@@ -876,10 +877,10 @@ resultat: F
 } /* lskelubp3d() */
 
 /* ==================================== */
-int32_t lskelubp3d2(struct xvimage *image, 
-                 struct xvimage *imageprio, 
-                 int32_t connex, 
-                 struct xvimage *imageinhib)
+int32_t lskelubp3d2( struct xvimage *image, 
+		     const struct xvimage *imageprio, 
+		     int32_t connex, 
+		     const struct xvimage *imageinhib)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lskelubp3d2"
@@ -1034,10 +1035,10 @@ int32_t lskelubp3d2(struct xvimage *image,
 } /* lskelubp3d2() */
 
 /* ==================================== */
-int32_t lskelubp3d2lab(struct xvimage *image, 
-		       struct xvimage *imageprio, 
-		       int32_t connex, 
-		       struct xvimage *imageinhib)
+int32_t lskelubp3d2lab( struct xvimage *image, 
+			const struct xvimage *imageprio, 
+			int32_t connex, 
+			const struct xvimage *imageinhib)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lskelubp3d2lab"
@@ -1212,10 +1213,10 @@ int32_t lskelubp3d2lab(struct xvimage *image,
 } /* lskelubp3d2lab() */
 
 /* ==================================== */
-int32_t lskelcurv(struct xvimage *image, 
-              struct xvimage *imageprio, 
-              struct xvimage *inhibit, 
-              int32_t connex)
+int32_t lskelcurv( struct xvimage *image, 
+		   const struct xvimage *imageprio, 
+		   const struct xvimage *inhibit, 
+		   int32_t connex)
 /* ==================================== */
 /* 
 Squelette curviligne 2D binaire guide par une image de priorites, bas� sur les isthmes 1D
@@ -1573,10 +1574,10 @@ printf("init: push %d,%d (%d)\n", x%rs, x/rs, P[x]*10 + typedir2d(F, x, rs, N));
 } /* lskelcurv() */
 
 /* ==================================== */
-int32_t lskelcurv3d(struct xvimage *image, 
-              struct xvimage *imageprio, 
-              struct xvimage *inhibit, 
-              int32_t connex)
+int32_t lskelcurv3d( struct xvimage *image, 
+		     const struct xvimage *imageprio, 
+		     const struct xvimage *inhibit, 
+		     int32_t connex)
 /* ==================================== */
 /* 
 Squelette curviligne 3D binaire guide par une image de priorites, bas� sur les isthmes 1D
@@ -1911,10 +1912,10 @@ resultat: F
 } /* lskelcurv3d() */
 
 /* ==================================== */
-int32_t lskelsurf3d(struct xvimage *image, 
-              struct xvimage *imageprio, 
-              struct xvimage *inhibit, 
-              int32_t connex)
+int32_t lskelsurf3d( struct xvimage *image, 
+		     const struct xvimage *imageprio, 
+		     const struct xvimage *inhibit, 
+		     int32_t connex)
 /* ==================================== */
 /* 
 Squelette surfacique 3D binaire guide par une image de priorites.
@@ -2251,14 +2252,15 @@ resultat: F
 } /* lskelsurf3d() */
 
 /* ==================================== */
-int32_t ltoposhrink(struct xvimage *image, 
-              struct xvimage *imageprio, 
-              int32_t connex, 
-              int32_t tmin, 
-              int32_t tmax, 
-              int32_t tbmin, 
-              int32_t tbmax, 
-              struct xvimage *imageinhibit)
+int32_t 
+ltoposhrink( struct xvimage *image, 
+	     const struct xvimage *imageprio, 
+	     int32_t connex, 
+	     int32_t tmin, 
+	     int32_t tmax, 
+	     int32_t tbmin, 
+	     int32_t tbmax, 
+	     const struct xvimage *imageinhibit )
 /* ==================================== */
 /* 
 Amincissement 2D binaire avec controle topologique.
@@ -2450,14 +2452,15 @@ resultat: F
 } /* ltoposhrink() */
 
 /* ==================================== */
-int32_t ltoposhrink3d(struct xvimage *image, 
-                 struct xvimage *imageprio, 
-                 int32_t connex, 
-                 int32_t tmin, 
-                 int32_t tmax, 
-                 int32_t tbmin, 
-                 int32_t tbmax, 
-                 struct xvimage *imageinhibit)
+int32_t ltoposhrink3d(
+  struct xvimage *image, 
+  const struct xvimage *imageprio, 
+  int32_t connex, 
+  int32_t tmin, 
+  int32_t tmax, 
+  int32_t tbmin, 
+  int32_t tbmax, 
+  const struct xvimage *imageinhibit)
 /* ==================================== */
 /* 
 Amincissement 3D binaire avec controle topologique.
@@ -2682,9 +2685,9 @@ resultat: F
 } /* ltoposhrink3d() */
 
 /* ==================================== */
-int32_t lskeleucl(struct xvimage *image, 
-              int32_t connex, 
-              struct xvimage *imageinhib)
+int32_t lskeleucl( struct xvimage *image, 
+		   int32_t connex, 
+		   const struct xvimage *imageinhib )
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lskeleucl"
@@ -2979,10 +2982,10 @@ uint32_t encodevois(index_t p, uint8_t *F, index_t rs, index_t ps, index_t N)
 } /* encodevois() */
 
 /* ==================================== */
-int32_t lskelend3d_sav(struct xvimage *image, 
-	       struct xvimage *imageprio, 
-	       int32_t connex, 
-	       uint8_t *endpoint)
+int32_t lskelend3d_sav( struct xvimage *image, 
+			const struct xvimage *imageprio, 
+			int32_t connex, 
+			uint8_t *endpoint)
 /* ==================================== */
 /* 
 Squelette curviligne ou surfacique 3D binaire guide par une image de priorites.
@@ -3134,9 +3137,9 @@ resultat: F
 } /* lskelend3d_sav() */
 
 /* ==================================== */
-int32_t lskelendcurv3d(struct xvimage *image, 
-		   int32_t connex, 
-		   int32_t niseuil)
+int32_t lskelendcurv3d( struct xvimage *image, 
+			int32_t connex, 
+			int32_t niseuil)
 /* ==================================== */
 #undef F_NAME
 #define F_NAME "lskelendcurv3d"
@@ -3180,10 +3183,10 @@ int32_t lskelendcurv3d(struct xvimage *image,
 } // lskelendcurv3d()
 
 /* ==================================== */
-int32_t lskelend3d(struct xvimage *image, 
-		   int32_t connex, 
-		   uint8_t *endpoint,
-		   int32_t niseuil)
+int32_t lskelend3d( struct xvimage *image, 
+		    int32_t connex, 
+		    uint8_t *endpoint,
+		    int32_t niseuil)
 /* ==================================== */
 /* 
 Squelette curviligne ou surfacique 3D binaire.
@@ -3355,9 +3358,9 @@ Le pr�dicat "endpoint" est d�fini par un tableau de 2^27 bool�ens
 } /* lskelend3d() */
 
 /* ==================================== */
-int32_t lskelend2d(struct xvimage *image, 
-		   int32_t connex, 
-		   int32_t niseuil)
+int32_t lskelend2d( struct xvimage *image, 
+		    int32_t connex, 
+		    int32_t niseuil)
 /* ==================================== */
 /* 
 Squelette curviligne ou surfacique 2D binaire.
@@ -3472,9 +3475,9 @@ Algo par passes directionnelles.
 } /* lskelend2d() */
 
 /* ==================================== */
-int32_t lskelendcurvlab3d(struct xvimage *image, 
-			  int32_t connex, 
-			  int32_t niseuil)
+int32_t lskelendcurvlab3d( struct xvimage *image, 
+			   int32_t connex, 
+			   int32_t niseuil)
 /* ==================================== */
 /* 
 Squelette curviligne 3D sur une image de labels (chaque label est trait� comme une image binaire).
@@ -3627,10 +3630,10 @@ Algo par passes directionnelles.
 // ========================================================
 
 /* ==================================== */
-int32_t lskeldir3d(struct xvimage *image, 
-		   struct xvimage *inhibit, 
-		   int32_t connex, 
-		   int32_t nsteps)
+int32_t lskeldir3d( struct xvimage *image, 
+		    const struct xvimage *inhibit, 
+		    int32_t connex, 
+		    int32_t nsteps)
 /* ==================================== */
 /* 
 Squelette curviligne 3D binaire - algo directionel s�quentiel bas� sur les isthmes 1D
@@ -3780,10 +3783,10 @@ writeimage(image, DBGBUF);
 } /* lskeldir3d() */
 
 /* ==================================== */
-int32_t lskeldir3d_1(struct xvimage *image, 
-		   struct xvimage *inhibit, 
-		   int32_t connex, 
-		   int32_t nsteps)
+int32_t lskeldir3d_1( struct xvimage *image, 
+		      const struct xvimage *inhibit, 
+		      int32_t connex, 
+		      int32_t nsteps)
 /* ==================================== */
 /* 
 Squelette curviligne 3D binaire - algo directionel s�quentiel bas� sur les isthmes 1D
@@ -3951,9 +3954,9 @@ writeimage(image, DBGBUF);
 // ========================================================
 
 /* ==================================== */
-int32_t lskelPSG(struct xvimage *image, 
-		 struct xvimage *imageprio, 
-		 double val)
+int32_t lskelPSG( struct xvimage *image, 
+		  const struct xvimage *imageprio, 
+		  double val )
 /* ==================================== */
 /*
 Squelette sym�trique guid� ultime bas� sur les points P-simples
@@ -3970,9 +3973,9 @@ EXPERIMENTAL - Ne pas utiliser dans des applications
 } // lskelPSG()
 
 /* ==================================== */
-int32_t lskelPSG2(struct xvimage *image,
-		  struct xvimage *imageprio, 
-		  double val)
+int32_t lskelPSG2( struct xvimage *image,
+		   const struct xvimage *imageprio, 
+		   double val)
 /* ==================================== */
 // EXPERIMENTAL - Ne pas utiliser dans des applications
 #undef F_NAME
@@ -4145,9 +4148,9 @@ int32_t lskelPSG2(struct xvimage *image,
 } /* lskelPSG2() */
 
 /* ==================================== */
-int32_t lskelPSG3(struct xvimage *image,
-		  struct xvimage *imageprio, 
-		  double val)
+int32_t lskelPSG3( struct xvimage *image,
+		   const struct xvimage *imageprio, 
+		   double val)
 /* ==================================== */
 // EXPERIMENTAL - Ne pas utiliser dans des applications
 #undef F_NAME
@@ -4329,9 +4332,9 @@ int32_t lskelPSG3(struct xvimage *image,
 // ========================================================
 
 /* ==================================== */
-int32_t lskelCKG(struct xvimage *image, 
-		 struct xvimage *imageprio, 
-		 double val)
+int32_t lskelCKG( struct xvimage *image, 
+		  const struct xvimage *imageprio, 
+		  double val)
 /* ==================================== */
 /*
 Squelette sym�trique guid� ultime bas� sur les noyaux critiques (cruciaux)
@@ -4348,8 +4351,8 @@ EXPERIMENTAL - Ne pas utiliser dans des applications
 } // lskelCKG()
 
 /* ==================================== */
-int32_t lskelCKGmap(struct xvimage *imageprio, 
-		    struct xvimage *image)
+int32_t lskelCKGmap( struct xvimage *imageprio, 
+		     const struct xvimage *image)
 /* ==================================== */
 /*
 Carte topologique par squelettisation sym�trique guid�e ultime bas�e sur les noyaux critiques (cruciaux)
@@ -4877,9 +4880,9 @@ static void CrucialPass3d0(
 #define NONCRUCIAL 1
 
 /* ==================================== */
-int32_t lskelCKG2(struct xvimage *image,
-		  struct xvimage *imageprio, 
-		  double val)
+int32_t lskelCKG2( struct xvimage *image,
+		   const struct xvimage *imageprio, 
+		   double val)
 /* ==================================== */
 // parallel 2D binary guided thinning
 // EXPERIMENTAL - Ne pas utiliser dans des applications
@@ -5045,8 +5048,8 @@ int32_t lskelCKG2(struct xvimage *image,
 } /* lskelCKG2() */
 
 /* ==================================== */
-int32_t lskelCKG2map(struct xvimage *imageprio,
-		     struct xvimage *image)
+int32_t lskelCKG2map( struct xvimage *imageprio,
+		      const struct xvimage *image)
 /* ==================================== */
 // EXPERIMENTAL - Ne pas utiliser dans des applications
 // the result is in imageprio : a "topological map"
@@ -5221,8 +5224,8 @@ int32_t lskelCKG2map(struct xvimage *imageprio,
 } /* lskelCKG2map() */
 
 /* ==================================== */
-int32_t lskelCKG3map(struct xvimage *imageprio,
-		     struct xvimage *image)
+int32_t lskelCKG3map( struct xvimage *imageprio,
+		      const struct xvimage *image)
 /* ==================================== */
 // EXPERIMENTAL - Ne pas utiliser dans des applications
 // the result is in imageprio : a "topological map"
@@ -5404,9 +5407,9 @@ int32_t lskelCKG3map(struct xvimage *imageprio,
 } /* lskelCKG3map() */
 
 /* ==================================== */
-int32_t lskelCKG3(struct xvimage *image,
-		  struct xvimage *imageprio, 
-		  double val)
+int32_t lskelCKG3( struct xvimage *image,
+		   const struct xvimage *imageprio, 
+		   double val )
 /* ==================================== */
 // parallel 3D binary guided thinning
 // EXPERIMENTAL - Ne pas utiliser dans des applications
@@ -6770,7 +6773,7 @@ static void lskelCKSC3_aux0(uint8_t *Y,  int32_t x, int32_t x1, int32_t x2, int3
 /* ==================================== */
 int32_t lskelCKSC3(
 		   struct xvimage *image, 
-		   struct xvimage *inhibit,
+		   const struct xvimage *inhibit,
 		   int32_t nsteps)
 /* ==================================== */
 /* 3D binary sequential curvilinear thinning
@@ -7145,7 +7148,7 @@ static void lskelCKSC3_aux0(uint8_t *Y,  int32_t x, int32_t x1, int32_t x2, int3
 /* ==================================== */
 int32_t lskelCKSC3(
 		   struct xvimage *image, 
-		   struct xvimage *inhibit,
+		   const struct xvimage *inhibit,
 		   int32_t nsteps)
 /* ==================================== */
 /* 3D binary sequential curvilinear thinning
@@ -7725,7 +7728,7 @@ static int32_t NKP_end(uint8_t *S, index_t p, index_t rs, index_t ps, index_t N)
 /* ==================================== */
 int32_t lskelCKSC3(
 		   struct xvimage *image, 
-		   struct xvimage *inhibit,
+		   const struct xvimage *inhibit,
 		   int32_t nsteps)
 /* ==================================== */
 /* 3D binary sequential curvilinear thinning
@@ -8033,7 +8036,7 @@ static void lskelCKSC3_aux0(uint8_t *Y,  int32_t x, int32_t x1, int32_t x2, int3
 /* ==================================== */
 int32_t lskelCKSC3(
 		   struct xvimage *image, 
-		   struct xvimage *inhibit,
+		   const struct xvimage *inhibit,
 		   int32_t nsteps)
 /* ==================================== */
 /* 3D binary sequential curvilinear thinning
