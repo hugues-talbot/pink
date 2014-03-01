@@ -47,7 +47,7 @@ extern "C" {
 
 extern int32_t lhtkern(
         struct xvimage *image,
-        struct xvimage *imagecond,
+        const struct xvimage *imagecond,
         int32_t connex
 );
 
