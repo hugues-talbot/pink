@@ -132,12 +132,13 @@ extern int32_t showheader(char * name);
 
 \param image The pointer to the image
 */
-extern void freeimage(struct xvimage *image);
-extern struct xvimage *copyimage(struct xvimage *f);
-extern int32_t copy2image(struct xvimage *dest, struct xvimage *source);
-extern int32_t equalimages(struct xvimage *im1, struct xvimage *im2);
-extern void list2image(struct xvimage * image, double *P, index_t n);
-extern double * image2list(struct xvimage * image, index_t *n);
+  extern void freeimage(struct xvimage *image);
+  extern void freeheader(struct xvimage *image);  
+  extern struct xvimage *copyimage(struct xvimage *f);
+  extern int32_t copy2image(struct xvimage *dest, struct xvimage *source);
+  extern int32_t equalimages(struct xvimage *im1, struct xvimage *im2);
+  extern void list2image(struct xvimage * image, double *P, index_t n);
+  extern double * image2list(struct xvimage * image, index_t *n);
 
 /**
 \brief Writes an image to disk.
