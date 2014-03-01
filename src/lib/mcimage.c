@@ -481,8 +481,18 @@ int32_t showheader(char * name)
 void freeimage(struct xvimage *image)
 /* ==================================== */
 {
-  if (image->name != NULL) free(image->name); 
-  free(image->image_data);
+  assert(image);
+  if (image->name != NULL) free(image->name);
+  if (image->image_data != NULL) free(image->image_data);
+  free(image);
+}
+
+/* ==================================== */
+void freeheader(struct xvimage *image)
+/* ==================================== */
+{
+  assert(image);
+  if (image->name != NULL) free(image->name);
   free(image);
 }
 
